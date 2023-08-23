@@ -54,36 +54,6 @@ AC_FUNC_STRTOD
 AC_CHECK_FUNCS([gettimeofday memmove memset mkdir setlocale strchr strcspn strdup strerror strpbrk strrchr strstr strtol strtoul])
 
 AC_CONFIG_FILES([Makefile
-                 bin/Makefile
-                 bin/ax/Makefile
-                 bin/cx/Makefile
-                 bin/cx/new/Makefile
-                 bin/gx/Makefile
-                 bin/ox/Makefile
-                 bin/sx/Makefile
-                 bin/tx/Makefile
-                 bin/xx/Makefile
-                 bin/xx/j2x/Makefile
-                 lem/Makefile
-                 lem/frm/Makefile
-                 lem/lng/Makefile
                  lib/Makefile
-                 lib/cat/Makefile
-                 lib/collate/Makefile
-                 lib/jsn/Makefile
-                 lib/oid/Makefile
-                 lib/sll/Makefile
-                 lib/std/Makefile
-                 lib/sys/Makefile
-                 lib/xml/Makefile
-                 lib/xml/expat/Makefile
-                 lib/xml/rnv/Makefile
-                 nss/Makefile
-                 nss/asl/Makefile
-                 nss/atf/Makefile
-                 nss/cbd/Makefile
-                 nss/cbd/new/Makefile
-                 nss/gdl/Makefile
-                 nss/xpd/Makefile
-                 rnc/Makefile])
+                 ])
 AC_OUTPUT

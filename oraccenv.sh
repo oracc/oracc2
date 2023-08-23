@@ -1,0 +1,9 @@
+#!/bin/sh
+ORACC=/home/oracc
+ORACC_HOME=$ORACC
+ORACC_MODE=multi
+ORACC_USER=yes
+ORACC_HOST=build-oracc.museum.upenn.edu
+ORACC_BUILDS=/home/oracc
+export ORACC ORACC_BUILDS ORACC_HOME ORACC_MODE ORACC_USER ORACC_HOST
+. ./oraccpaths.sh

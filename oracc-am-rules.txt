@@ -1,0 +1,48 @@
+override CFLAGS = 
+AM_CFLAGS =-pedantic -Wall -g -O0
+
+ORACCIFY = $(abs_top_builddir)/oracc-subst.sh $(DESTDIR)$(prefix)
+
+cgibindir     = $(prefix)/www/cgi-bin
+cgidatadir    = $(prefix)/www/cgi-bin
+charmapdir    = $(prefix)/lib/charmap
+configdir     = $(prefix)/lib/config
+cssdir        = $(prefix)/www/css
+rncdatadir        = $(prefix)/lib/rnc
+datadir       = $(prefix)/lib/data
+emacsdatadir  = $(prefix)/lib/emacs
+espdatadir    = $(prefix)/lib/esp
+htmldir       = $(prefix)/www
+imgdir        = $(prefix)/www/img
+javadir       = $(prefix)/lib/java
+jsdir         = $(prefix)/www/js
+scriptdatadir = $(prefix)/lib/scripts
+texdatadir    = $(prefix)/lib/tex
+schemadir     = $(prefix)/www/lib/schemas
+webscriptdatadir = $(prefix)/www/lib/scripts
+webdatadir   = $(prefix)/www/lib/data
+downloadsdir   = $(prefix)/www/downloads
+
+clean-local:
+	$(top_srcdir)/oracc-clean-in.sh
+
+install-exec-local:
+	$(top_srcdir)/oracc-pm.sh $(DESTDIR)$(prefix) $(top_srcdir)
+	$(top_srcdir)/maybe-install-cgi-bin.sh
+
+SUFFIXES=.c.in .g .c .o .xnn .rnc .rng
+
+.c.in.c:
+	$(ORACCIFY) $<
+
+.g.c:
+	$(top_srcdir)/gperf-size_t.sh `basename $*` $< $@
+
+.rnc.rng:
+	java -jar ${javadir}/trang.jar $< $@
+
+.rng.xnn:
+	c2-rng2xnn.sh $@
+
+.xnn.c:
+	c2-xnn2c.plx $<
