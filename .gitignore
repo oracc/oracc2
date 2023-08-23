@@ -1,3 +1,9 @@
+# temp, junk, and backup files
+*~
+*.bak
+*.dump
+*.log
+
 # Prerequisites
 *.d
 
