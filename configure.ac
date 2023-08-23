@@ -1,0 +1,89 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+#
+# This configure.ac is still being adapated from configure.scan
+#
+AC_PREREQ([2.71])
+AC_INIT([oracc], [2.0], [stinney-at-upenn.edu])
+AC_LANG(C)
+AC_CONFIG_SRCDIR([lib/std/list.c])
+AM_INIT_AUTOMAKE([subdir-objects])
+LT_INIT
+AC_CONFIG_HEADERS([config.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_YACC
+AC_PROG_CC
+AC_PROG_LEX
+AC_PROG_INSTALL
+AC_PROG_AWK
+AC_PROG_MKDIR_P
+AC_PROG_RANLIB
+
+AM_MISSING_PROG([GPERF], [gperf])
+
+# Checks for libraries.
+AC_SEARCH_LIBS(pcre2,pcre2_exec)
+
+# Checks for header files.
+AC_FUNC_ALLOCA
+AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h malloc.h stdint.h sys/time.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT8_T
+AC_TYPE_MODE_T
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+AC_TYPE_SSIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+AC_TYPE_UINT8_T
+AC_CHECK_TYPES([ptrdiff_t])
+
+# Checks for library functions.
+AC_FUNC_FORK
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_FUNC_STRTOD
+AC_CHECK_FUNCS([gettimeofday memmove memset mkdir setlocale strchr strcspn strdup strerror strpbrk strrchr strstr strtol strtoul])
+
+AC_CONFIG_FILES([Makefile
+                 bin/Makefile
+                 bin/ax/Makefile
+                 bin/cx/Makefile
+                 bin/cx/new/Makefile
+                 bin/gx/Makefile
+                 bin/ox/Makefile
+                 bin/sx/Makefile
+                 bin/tx/Makefile
+                 bin/xx/Makefile
+                 bin/xx/j2x/Makefile
+                 lem/Makefile
+                 lem/frm/Makefile
+                 lem/lng/Makefile
+                 lib/Makefile
+                 lib/cat/Makefile
+                 lib/collate/Makefile
+                 lib/jsn/Makefile
+                 lib/oid/Makefile
+                 lib/sll/Makefile
+                 lib/std/Makefile
+                 lib/sys/Makefile
+                 lib/xml/Makefile
+                 lib/xml/expat/Makefile
+                 lib/xml/rnv/Makefile
+                 nss/Makefile
+                 nss/asl/Makefile
+                 nss/atf/Makefile
+                 nss/cbd/Makefile
+                 nss/cbd/new/Makefile
+                 nss/gdl/Makefile
+                 nss/xpd/Makefile
+                 rnc/Makefile])
+AC_OUTPUT
