@@ -3,13 +3,14 @@
 #
 # This configure.ac is still being adapated from configure.scan
 #
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 AC_INIT([oracc], [2.0], [stinney-at-upenn.edu])
 AC_LANG(C)
-AC_CONFIG_SRCDIR([lib/std/list.c])
+AC_CONFIG_SRCDIR([lib/liboracc2.c])
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_INIT
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIRS([m4])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -19,7 +20,6 @@ AC_PROG_LEX
 AC_PROG_INSTALL
 AC_PROG_AWK
 AC_PROG_MKDIR_P
-AC_PROG_RANLIB
 
 AM_MISSING_PROG([GPERF], [gperf])
 

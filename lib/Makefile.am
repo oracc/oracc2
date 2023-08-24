@@ -1,4 +1,4 @@
 include ../oracc-am-rules.txt
 SUBDIRS=
-noinst_LTLIBRARIES=liboracc.la
+noinst_LTLIBRARIES=liboracc2.la
 liboracc_la_LIBADD= 
