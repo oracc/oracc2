@@ -1,3 +1,20 @@
+# MacOS convenience link to external library header
+include/pcre2.h
+
+# Gperf derivatives
+cbdpos.c
+cbdrws.c
+cbdtags.c
+lang_atf.c
+lang_core.c
+lang_mode.c
+langrtl.c
+oid_domain.c
+oid_type.c
+sll_signlist.c
+sllext.c
+iomethod.c
+
 # .in derivatives
 fname.c
 mktablst

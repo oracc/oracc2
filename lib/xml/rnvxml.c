@@ -7,10 +7,10 @@
 #include "pool.h"
 #include "xnn.h"
 #include "rnvval.h"
-#include "rnv/erbit.h"
-#include "rnv/m.h"
-#include "rnv/rnv.h"
-#include "rnv/rnx.h"
+#include "../rnv/erbit.h"
+#include "../rnv/m.h"
+#include "../rnv/rnv.h"
+#include "../rnv/rnx.h"
 #include "rnvxml.h"
 
 extern FILE *f_xml;

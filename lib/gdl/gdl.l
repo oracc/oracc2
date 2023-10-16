@@ -1,5 +1,4 @@
 %option prefix="gdl"
-%option outfile="gdl-l.c"
 %option never-interactive noyywrap yylineno nounput
 
 %{

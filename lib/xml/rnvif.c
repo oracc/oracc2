@@ -9,18 +9,18 @@
 #include <list.h>
 #include <pool.h>
 
-#include "rnv/m.h"
-#include "rnv/s.h"
-#include "rnv/erbit.h"
-#include "rnv/drv.h"
-#include "rnv/rnl.h"
-#include "rnv/rnc.h"
-#include "rnv/rnv.h"
-#include "rnv/rnx.h"
-#include "rnv/ll.h"
-#include "rnv/dxl.h"
-#include "rnv/dsl.h"
-#include "rnv/er.h"
+#include "../rnv/m.h"
+#include "../rnv/s.h"
+#include "../rnv/erbit.h"
+#include "../rnv/drv.h"
+#include "../rnv/rnl.h"
+#include "../rnv/rnc.h"
+#include "../rnv/rnv.h"
+#include "../rnv/rnx.h"
+#include "../rnv/ll.h"
+#include "../rnv/dxl.h"
+#include "../rnv/dsl.h"
+#include "../rnv/er.h"
 
 extern int rn_notAllowed,rx_compact,drv_compact;
 

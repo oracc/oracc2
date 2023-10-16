@@ -1,11 +1,4 @@
-include ../../../oracc-am-rules.txt
-
-SUBDIRS=expat rnv
-
-AM_CPPFLAGS=\
-	-I../include \
-	-I../std \
-	-I../sys
+include ../../oracc-am-rules.txt
 
 noinst_LTLIBRARIES=libxml.la
 

@@ -1,5 +1,5 @@
-xtf.lo: xtf.c ../lib/xml/xnn.h ns-xtf.h
+xtf.lo: xtf.c ../../lib/xml/xnn.h ns-xtf.h
 
-../lib/xml/xnn.h:
+../../lib/xml/xnn.h:
 
 ns-xtf.h:

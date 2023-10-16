@@ -1,5 +1,4 @@
 %option prefix="cbd"
-%option outfile="cbd-l.c"
 %option never-interactive noyywrap yylineno nounput
 %{
 

@@ -56,5 +56,23 @@ AC_CHECK_FUNCS([gettimeofday memmove memset mkdir setlocale strchr strcspn strdu
 AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  lib/asl/Makefile
+                 lib/atf/Makefile
+                 lib/cat/Makefile
+                 lib/cbd/Makefile
+                 lib/collate/Makefile
+                 lib/expat/Makefile
+                 lib/frm/Makefile
+                 lib/gdl/Makefile
+                 lib/gvl/Makefile
+                 lib/jsn/Makefile
+                 lib/lng/Makefile
+                 lib/oid/Makefile
+                 lib/rnc/Makefile
+                 lib/rnv/Makefile
+                 lib/sll/Makefile
+                 lib/std/Makefile
+                 lib/sys/Makefile
+                 lib/xml/Makefile
+                 lib/xpd/Makefile
                  ])
 AC_OUTPUT

@@ -1,5 +1,4 @@
 %option prefix="cat"
-%option outfile="cat-l.c"
 %option never-interactive noyywrap yylineno nounput
 
 %{

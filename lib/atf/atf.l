@@ -1,5 +1,4 @@
 %option prefix="atf"
-%option outfile="atf-l.c"
 %option never-interactive noyywrap yylineno nounput
 
 %{

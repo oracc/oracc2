@@ -1,8 +1,4 @@
-include ../../../oracc-am-rules.txt
-
-AM_CPPFLAGS=\
-	-I../include \
-	-I../std
+include ../../oracc-am-rules.txt
 
 noinst_LTLIBRARIES=libsys.la
 

@@ -1,5 +1,5 @@
-asl.lo: asl.c ../lib/xml/xnn.h ns-asl.h
+asl.lo: asl.c ../../lib/xml/xnn.h ns-asl.h
 
-../lib/xml/xnn.h:
+../../lib/xml/xnn.h:
 
 ns-asl.h:

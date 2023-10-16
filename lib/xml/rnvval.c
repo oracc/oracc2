@@ -6,11 +6,11 @@
 #include "hash.h"
 #include "pool.h"
 #include "xnn.h"
-#include "rnv/erbit.h"
-#include "rnv/m.h"
-#include "rnv/rnl.h"
-#include "rnv/rnv.h"
-#include "rnv/rnx.h"
+#include "../rnv/erbit.h"
+#include "../rnv/m.h"
+#include "../rnv/rnl.h"
+#include "../rnv/rnv.h"
+#include "../rnv/rnx.h"
 #include "rnvval.h"
 
 extern int status;
