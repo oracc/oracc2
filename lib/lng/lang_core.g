@@ -1,6 +1,6 @@
 %{
 #include <string.h>
-#include "lang.h"
+#include "lng.h"
 %}
 struct langcore;
 %%
