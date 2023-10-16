@@ -12,7 +12,7 @@ gvl_bridge_qpc(void)
   static int qpc_set = 0;
   if (!qpc_set)
     {
-      (void)gvl_setup("pctc", "pctc");
+      (void)gvl_setup("pctc", "pctc", "900");
       ++qpc_set;
     }
 }
@@ -22,7 +22,7 @@ gvl_bridge_init(void)
 {
   bridge_h = hash_create(1024);
   bridge_p = pool_init();
-  (void)gvl_setup("ogsl", "ogsl");
+  (void)gvl_setup("ogsl", "ogsl", "020");
   gdlparse_init();
   mesg_init();
   gdl_flex_debug = 0;
@@ -30,7 +30,7 @@ gvl_bridge_init(void)
 }
 
 const char *
-gvl_bridge(const char *f,size_t l,const unsigned char *g)
+gvl_bridge(const char *f,size_t l,const unsigned char *g, const char *script)
 {
   Tree *tp = NULL;
 

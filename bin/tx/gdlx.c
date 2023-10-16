@@ -203,7 +203,10 @@ main(int argc, char **argv)
     }
   else
     gdlxml_setup();
-  gvl_setup(project, project);
+  if (!strcmp(project, "pctc"))
+    gvl_setup(project, project, "900");
+  else
+    gvl_setup(project, project, "020"); /*FIXME*/
   gdlparse_init();
 
   if (gsort_mode)

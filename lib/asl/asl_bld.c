@@ -84,7 +84,7 @@ asl_bld_init(void)
   /* Preload the current set of SL oids */
   oids = oid_domain_hash(NULL, "oid", "sl");
 
-  (void)gvl_setup(NULL, NULL);
+  (void)gvl_setup(NULL, NULL, NULL);
   gvl_set_lookup_ptr(asl_oid_lookup);
   
   return sl;
@@ -349,8 +349,8 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
       if (code == -1)
 	{
 	  char *dest, *src, *tmp;
-	  int llen = strlen(letter);
-	  tmp = pool_alloc(llen+1, sl->p);
+	  int llen = strlen((ccp)letter);
+	  tmp = (char*)pool_alloc(llen+1, sl->p);
 	  *tmp = 'l';
 	  strcat(tmp, letter+1);
 	  src = tmp;

@@ -135,7 +135,7 @@ main(int argc, char **argv)
   options(argc, argv, "bcdf:hinoprstvw");
 
   gdlxml_setup();
-  gvl_setup("ogsl", "ogsl");
+  gvl_setup("ogsl", "ogsl", "020");
   gdlparse_init();
   
   if (argv[optind])

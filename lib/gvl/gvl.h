@@ -29,6 +29,7 @@ typedef struct gvl_g gvl_g;
 
 struct gvl_i {
   const char *n;	/* name of SL DB */
+  const char *script;	/* script code, e.g., 020=SAC; 900=PC */
   Hash *sl;		/* in-memory signlist hash */
   Hash *h;		/* Hash of items validated */
   Memo *m;		/* Memory blocks for gvl_g nodes */
@@ -53,7 +54,7 @@ extern gvl_lookup_ptr gvl_lookup;
 
 extern unsigned const char *gvl_lookup_sl(unsigned const char *key);
 
-extern gvl_i *gvl_setup(const char *project, const char *name);
+extern gvl_i *gvl_setup(const char *project, const char *name, const char *script);
 extern void gvl_quick_setup(const char *name, Hash *h);
 extern void gvl_wrapup(const char *name);
 

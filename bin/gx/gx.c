@@ -90,7 +90,7 @@ gx_init(void)
   cbd_pool = pool_init();
   tree_init();
   mesg_init();
-  gvl_setup("ogsl","ogsl");
+  gvl_setup("ogsl","ogsl","020");
   gdlparse_init();
   lng_init();
   curr_lang_ctxt = global_lang = lang_switch(NULL,"sux",NULL,NULL,0);

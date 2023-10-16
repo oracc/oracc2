@@ -12,6 +12,8 @@
 #include "sll.h"
 #include "gvl.h"
 
+Hash *gvl_checkers = NULL;
+
 int gvl_void_messages; /* when non-zero only complain about structural
 			  issues not about unknown signs and other
 			  things that are OK if we are parsing a sign
@@ -30,12 +32,17 @@ gvl_quick_setup(const char *name, Hash *h)
 }
 
 gvl_i*
-gvl_setup(const char *project, const char *name)
+gvl_setup(const char *project, const char *name, const char *script)
 {
   gvl_i *ret = NULL;
   Hash *h = NULL;
   const char *l = NULL;
 
+  if (!gvl_checkers)
+    gvl_checkers = hash_create(5);
+  else if ((ret = hash_find(gvl_checkers, (uccp)script)))
+    return ret;
+  
   if (!(l = setlocale(LC_ALL,ORACC_LOCALE)))
     if (!(l = setlocale(LC_ALL, "en_US.UTF-8")))
       if (!(l = setlocale(LC_ALL, "C")))
@@ -60,6 +67,8 @@ gvl_setup(const char *project, const char *name)
       ret = gvl_i_init_h("voidsl", h);
       gvl_void_messages = 1;
     }
+
+  hash_add(gvl_checkers, (uccp)ret->script, ret);
 
   return ret;
 }

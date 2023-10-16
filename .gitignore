@@ -46,6 +46,9 @@ xpd.c
 # Flex derivatives
 *.lex.c
 
+# Generated files
+oracc.sed
+
 # temp, junk, and backup files
 *~
 *.bak

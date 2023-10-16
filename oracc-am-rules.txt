@@ -1,14 +1,14 @@
 override CFLAGS= 
 AM_CFLAGS=-pedantic -Wall -g -O0
 
-ORACCIFY = $(abs_top_builddir)/oracc-subst.sh $(DESTDIR)$(prefix)
+ORACCIFY = $(abs_top_builddir)/oracc-subst.sh $(top_srcdir)/oracc.sed
 
 cgibindir     = $(prefix)/www/cgi-bin
 cgidatadir    = $(prefix)/www/cgi-bin
 charmapdir    = $(prefix)/lib/charmap
 configdir     = $(prefix)/lib/config
 cssdir        = $(prefix)/www/css
-rncdatadir        = $(prefix)/lib/rnc
+rncdatadir    = $(prefix)/lib/rnc
 datadir       = $(prefix)/lib/data
 emacsdatadir  = $(prefix)/lib/emacs
 espdatadir    = $(prefix)/lib/esp
