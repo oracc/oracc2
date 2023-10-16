@@ -1,3 +1,19 @@
+# Executables; be specific so, e.g., sx ignore doesn't make whole subdir ignored
+bin/sx/sx
+bin/sx/slx
+bin/sx/slix
+bin/ax/ax
+bin/ox/oid
+bin/tx/rocox
+bin/tx/gdlx
+bin/tx/repx
+bin/tx/catx
+bin/gx/gx
+bin/jx/jx
+bin/xx/tlitsig
+bin/xx/concord
+bin/xx/xmlify
+
 # MacOS convenience link to external library header
 include/pcre2.h
 
@@ -17,6 +33,7 @@ iomethod.c
 
 # .in derivatives
 fname.c
+slix.c
 mktablst
 seq2c
 xpd.c

@@ -1,5 +1,5 @@
-override CFLAGS = 
-AM_CFLAGS =-pedantic -Wall -g -O0
+override CFLAGS= 
+AM_CFLAGS=-pedantic -Wall -g -O0
 
 ORACCIFY = $(abs_top_builddir)/oracc-subst.sh $(DESTDIR)$(prefix)
 
@@ -27,10 +27,12 @@ clean-local:
 	$(top_srcdir)/oracc-clean-in.sh
 
 install-exec-local:
-	$(top_srcdir)/oracc-pm.sh $(DESTDIR)$(prefix) $(top_srcdir)
 	$(top_srcdir)/maybe-install-cgi-bin.sh
 
-SUFFIXES=.c.in .l .y .g .c .lex.c .tab.c .o .xnn .rnc .rng
+# No Perl installed in oracc2
+#	$(top_srcdir)/oracc-pm.sh $(DESTDIR)$(prefix) $(top_srcdir)
+
+SUFFIXES=.c.in .g .c .l .lex.c .y .tab.c .o .xnn .rnc .rng
 
 .c.in.c:
 	$(ORACCIFY) $<
@@ -42,7 +44,7 @@ SUFFIXES=.c.in .l .y .g .c .lex.c .tab.c .o .xnn .rnc .rng
 	flex -d -B -DYY_NO_INPUT -o $@ $<
 
 .y.tab.c:
-	bison -vd $<
+	bison -vdt $<
 
 .rnc.rng:
 	java -jar ${javadir}/trang.jar $< $@
@@ -53,16 +55,24 @@ SUFFIXES=.c.in .l .y .g .c .lex.c .tab.c .o .xnn .rnc .rng
 .xnn.c:
 	c2-xnn2c.plx $<
 
+xLDADD=../../lib/liboracc2.la
+
 AM_CPPFLAGS=\
-	-I../../include \
-	-I../cat \
-	-I../collate \
-	-I../std \
-	-I../frm \
-	-I../lng \
-	-I../gdl \
-	-I../gvl \
-	-I../sll \
-	-I../oid \
-	-I../xml \
-	-I../sys
+	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/lib/asl \
+	-I$(top_srcdir)/lib/atf \
+	-I$(top_srcdir)/lib/cat \
+	-I$(top_srcdir)/lib/cbd \
+	-I$(top_srcdir)/lib/collate \
+	-I$(top_srcdir)/lib/rnc \
+	-I$(top_srcdir)/lib/std \
+	-I$(top_srcdir)/lib/frm \
+	-I$(top_srcdir)/lib/jsn \
+	-I$(top_srcdir)/lib/lng \
+	-I$(top_srcdir)/lib/gdl \
+	-I$(top_srcdir)/lib/gvl \
+	-I$(top_srcdir)/lib/sll \
+	-I$(top_srcdir)/lib/oid \
+	-I$(top_srcdir)/lib/xml \
+	-I$(top_srcdir)/lib/xpd \
+	-I$(top_srcdir)/lib/sys

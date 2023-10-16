@@ -74,5 +74,15 @@ AC_CONFIG_FILES([Makefile
                  lib/sys/Makefile
                  lib/xml/Makefile
                  lib/xpd/Makefile
+		 bin/Makefile
+		 bin/ax/Makefile
+		 bin/cx/Makefile
+		 bin/gx/Makefile
+		 bin/jx/Makefile
+		 bin/ox/Makefile
+		 bin/sx/Makefile
+		 bin/sx/sxweb/Makefile
+		 bin/tx/Makefile
+		 bin/xx/Makefile
                  ])
 AC_OUTPUT

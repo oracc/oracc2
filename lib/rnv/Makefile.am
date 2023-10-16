@@ -20,8 +20,7 @@ DEF=\
 WARN=-Wall -Wstrict-prototypes  -Wmissing-prototypes -Wcast-align
 OPT=-O -g
 
-override CFLAGS =
-CFLAGS=
+override CFLAGS=
 AM_CFLAGS=${INC} ${DEF} ${WARN} ${OPT}
 
 noinst_LTLIBRARIES = librnv.la
