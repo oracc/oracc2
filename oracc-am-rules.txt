@@ -30,13 +30,19 @@ install-exec-local:
 	$(top_srcdir)/oracc-pm.sh $(DESTDIR)$(prefix) $(top_srcdir)
 	$(top_srcdir)/maybe-install-cgi-bin.sh
 
-SUFFIXES=.c.in .g .c .o .xnn .rnc .rng
+SUFFIXES=.c.in .l .y .g .c .lex.c .tab.c .o .xnn .rnc .rng
 
 .c.in.c:
 	$(ORACCIFY) $<
 
 .g.c:
 	$(top_srcdir)/gperf-size_t.sh `basename $*` $< $@
+
+.l.lex.c:
+	flex -d -B -DYY_NO_INPUT -o $@ $<
+
+.y.tab.c:
+	bison -vd $<
 
 .rnc.rng:
 	java -jar ${javadir}/trang.jar $< $@
@@ -46,3 +52,12 @@ SUFFIXES=.c.in .g .c .o .xnn .rnc .rng
 
 .xnn.c:
 	c2-xnn2c.plx $<
+
+AM_CPPFLAGS=\
+	-I../../lib/include \
+	-I../../lib/std \
+	-I../../lib/gdl \
+	-I../../lib/gvl \
+	-I../../lib/sll \
+	-I../../lib/oid \
+	-I../../lib/sys

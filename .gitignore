@@ -1,8 +1,23 @@
+# .in derivatives
+fname.c
+mktablst
+seq2c
+xpd.c
+
+# Bison derivatives
+*.output
+*.tab.c
+*.tab.h
+
+# Flex derivatives
+*.lex.c
+
 # temp, junk, and backup files
 *~
 *.bak
 *.dump
 *.log
+configure.scan
 
 # Prerequisites
 *.d
@@ -79,3 +94,5 @@ ltmain.sh
 m4/
 missing
 stamp-h1
+.deps
+.libs

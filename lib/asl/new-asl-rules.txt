@@ -1,0 +1,220 @@
+* add @lref MZL432a to reference signlist items that are not otherwise
+  referenced in OGSL, explained formally through @note (required) and
+  informally through @inote
+
+* add @cite for a citation of an occurrence; same syntax as [...] proof
+
+* When the lhs of a × compound is itself a compound it may be
+  convenient to use a value as a sign, e.g., |ITI×(U.U.U)@g| rather
+  than |UD×(U.U.U)×(U.U.U)@g| (though this particular example is
+  suspicious); allowable sign name alternatives can be given with the
+  @name ITI tag
+
+* @aka can be used to create entire compound names that are also
+  accepted by GVL, e.g., @sign |MAŠ.MI| @aka |MAŠ.GI₆|
+
+* for components of compounds that are not signs, use @comp GU@90
+
+* @form entries that do not exist separately as @sign are handled
+  automatically and do not need to be declared as @signs
+
+! Should validate multiple base-values e.g., šudul₄ and šudul₅ in same sign or form
+
+* Qualified-value (qv) requirements: sl-db2.plx enforced unnecessary
+  qv requirements.  The new qv requirements are:
+
+  ** all ₓ-values must be qualified all non-ₓ-values which occur with
+  ** more than one @form must be qualified when they are written with
+  ** a form (i.e., they default to the sign-writing if they are not
+  ** qualified and there is a sign-writing)
+
+* Comments -- @inote, @note, @lit, #-comments, are always attached to
+  the most recent instance node: this means @sign, @list, @form or @v.
+  This means that when OGSL is processed, the location of these
+  comments may change slightly.  It also means that proper OGSL
+  practice is to specify these immediately after an instance node.
+
+* Possibly don't allow #-comments; use @inote or @sign-/@form-/@list-/@v- 
+
+* Does sx need a true identity mode? Or is it OK to relocate notes, for
+  example--could implement true identity by using line numbers of
+  input file as a sort key but is it worth it?
+
+* Unicode data block must come at the beginning, only at the
+  definitional instance, and can occur in any order but will be
+  reordered in processing to a fixed field sequence (give sequence).
+
+* Compute @uchar/@ucode?
+
+* should OGSL be divided into sections: Non-numeric, Numeric, for example
+
+* should there be a Unicode block tag?
+
+* Uniqueness constraints:
+
+  ** Signs must be unique across @sign and @sign- combined
+  ** Forms must be unique within each @sign across @form and @form- combined
+  ** Values must be unique within each @sign or @form across @v and @v- combined
+
+  In other words, you can't say @sign- A and @sign A, etc.
+
+* Should validation require unicode info to be repeated for @form
+  which are @sign or require it to be omitted? Should pick one and not
+  do a hybrid; require info in "defining instance", i.e., @sign or one
+  of the times a @form is used which is not a @sign
+
+* No longer use ? for unknown value; use 'x' instead; must have a unique subscript
+
+  @v	? [SF 064 = dcclt:P010655 o iii 14]
+
+  =>
+
+  @v	x₁ [SF 064 = dcclt:P010655 o iii 14]
+
+
+* No longer use ? after value to express uncertainty; use @v?
+
+  @v	dur₂?
+
+  =>
+
+  @v?	dur₂
+
+* Comments are no longer allowed as part of @v; use '@inote' instead or @v- instead
+
+  @v	#nib leb
+
+  =>
+
+  @v	leb
+  @inote nib
+  
+  OR
+
+  @v	nigidaeš
+  @v	#old nieš
+
+  =>
+
+  @v	nigidaeš
+  @v-	nieš
+  @inote old
+
+* What about
+
+  @v [...]ingara
+
+  Which ATF would complain about and cannot be validated as a (partial) value; write xingara instead?  Or have a notation to allow a validatable value e.g.
+
+  @v <xingara> [...]ingara
+
+?
+
+* We probably need split/merger tags with some sort of time/place labelling
+
+* Notation for logograms, e.g.,
+
+  @logo A
+  @equ %akk mû
+  @cgp mû[water]N
+  @ref ME 237 CD 213b ZL 435
+
+  For Akkadograms
+
+  @logo %a A
+
+  etc.
+
+* Maybe an ATF convention to say sign-X-is-written-with-glyph-Y without implying that Y has to be a known form of X
+
+* How would we define @form? Cases like A ...
+
+* Do we need a notation for X-is-abbreviated-as-Y (e.g., LAGAB×A written as A)?
+
+* Do we add such abbreviations to OGSL or are they part of spelling of words? KU in ED IIIa; probably many other examples
+
+* Do we need the ~a part of @form--is it ever used/will we ever use it? It makes sorting of forms counter-intuitive
+
+* Do we need @end form?
+
+* Should forms automatically inherit all values or should we parse the
+  corpus for actual attestations and set up OGSL based on that, then
+  add new values to @form only when they are encountered?
+
+* Should we then normalize values in @form to the versions in @sign when there are minor differences, e.g., sim/sem?
+
+* Should we provide Unicode rendering guidelines for @fake signs like PN?
+
+* I would like to reassign signs which should be forms to be forms via
+  some kind of computational process that uses ePSD to group writings
+  of addir, for example, into a single place rather than many places
+
+* Need @alias tag to allow, say, an LAK number to be a legal sign name
+  where the actual sign name is cumbersom?
+
+  Implementation: @alias would be confusable with Sumerian aliasing as
+  used in ePSD so we use @aka as the tag.  @aka in @sign or @form is a
+  simple referer: it points to the previous @form or @sign and is
+  output to the db as name;aka--this means that GVL can avoid setting
+  a reciprocal OID->AKA hash entry
+
+* Need @xref tag or implicit xreffing of notes within forms that occur
+  more than once; in which case, we probably need instance-specific
+  notes vs. global notes.
+
+  ** @inote -- internal note, no replication/xreffing/printing
+  ** @xnote -- printed note automatically gets xreffed if it the sign/form is used more than once
+  ** @lnote -- local note, only applicable to instance of sign/form where it occurs
+  ** @unote -- unicode note which is intended to be actionable in UC; otherwise use [ixl]note
+
+* Why does @fake need an argument? Just use @fake instead of @fake 1.
+
+* What are %akk values? %elx are Elamite ones: does %akk mean "only in Akkadian"
+
+* What are %akk/n values? Logograms? Remove to @inote?
+
+*** Niek 20230717
+
+* Any general thoughts at the outset?
+
+* This convo is partly general preliminary and partly some minor
+  immediate needs; would like to have a convo with an agenda and some
+  explanatory notes soon-ish
+
+* OGSL is our working data: are we OK making it a public part of the
+  Unicode Cuneiform (UC) work or do we feel that will constrain our
+  ability to change freely as we need?
+
+* If we are concerned about that freedom, would we maintain a
+  derivative of OGSL that could serve UC needs?
+
+* Does NV want to be part of this possible UC initiative?
+
+* Are there any other Assyriologists we could/should include? Emilie? Laura Hawkins?
+
+* Do we feel that Robin is sufficient for non-Assyriological input? Debbie Anderson? Everson??
+
+* Generally OK with minor changes to format of OGSL?
+
+  ** Make '?' always follow graphemes/list numbers for questionable items (no @v? always @v a?)
+  
+  ** All removed sign/form/value marked with @sign- / @form- / @v- instead of the @nosign tag
+  
+  ** Write x for unknown sign-reading rather than '?'
+  
+  ** Write [x]ingara rather than [...]ingara because with legacy in
+     effect [x]ingara would be legal ATF (this is desirable because
+     then the rule can be that anything after @sign/@form/@v (except
+     for '[Pxxx ...]' refs) must be well-formed ATF; right now that
+     can't be the case); this would mean there are values with 'x' in
+     them to indicate missing parts, like xingara which would be a
+     little odd-looking but they would be consistent and unambiguous
+     (even in CDLI ASCII ATF final 'x' must be followed by '(' so an x
+     not followed by '(' would be legal if part of zi[...] =>
+     zix). There are 36 of these partially broken values in OGSL
+
+  ** Remove Civil's /šumun/-type values? Or at least reserve them to
+     @inote?  Or give them a different tag (@word?) There are 15 of
+     them.  They can't be used as values, so they shouldn't be @v.
+
+

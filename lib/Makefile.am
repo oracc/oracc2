@@ -1,4 +1,9 @@
 include ../oracc-am-rules.txt
-SUBDIRS=
+
+SUBDIRS=asl
+
 noinst_LTLIBRARIES=liboracc2.la
-liboracc_la_LIBADD= 
+
+liboracc2_la_SOURCES=liboracc2.c
+
+liboracc2_la_LIBADD=asl/*.lo
