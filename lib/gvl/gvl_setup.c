@@ -12,8 +12,6 @@
 #include "sll.h"
 #include "gvl.h"
 
-Hash *gvl_checkers = NULL;
-
 int gvl_void_messages; /* when non-zero only complain about structural
 			  issues not about unknown signs and other
 			  things that are OK if we are parsing a sign
@@ -24,11 +22,22 @@ static void   gvl_i_term(const char *name);
 static gvl_i *sl = NULL; /* sl is always the head of the list of signlist datasets, not necessarily the current one */
 gvl_i *curr_sl = NULL; /* the sl that should be used for look up */
 
+Hash *hgvl_checkers = NULL;
+gvl_i **gvl_checkers = NULL;
+int ngvl_checkers = 0, agvl_checkers = 0;
+
 void
 gvl_quick_setup(const char *name, Hash *h)
 {
   (void)gvl_i_init_h(name, h);
   sll_set_sl(h);
+}
+
+void
+gvl_switch(int sindex)
+{
+  if (sindex >= 0 && sindex < ngvl_checkers)
+    sll_set_sl((curr_sl = gvl_checkers[sindex]->sl));
 }
 
 gvl_i*
@@ -38,10 +47,24 @@ gvl_setup(const char *project, const char *name, const char *script)
   Hash *h = NULL;
   const char *l = NULL;
 
-  if (!gvl_checkers)
-    gvl_checkers = hash_create(5);
-  else if ((ret = hash_find(gvl_checkers, (uccp)script)))
-    return ret;
+  if (!agvl_checkers)
+    {
+      agvl_checkers = 3;
+      gvl_checkers = calloc(agvl_checkers, sizeof(gvl_i*));
+      hgvl_checkers = hash_create(3);
+    }
+  else if ((ret = hash_find(hgvl_checkers, (uccp)script)))
+    {
+      return ret;
+    }
+  else
+    {
+      if (ngvl_checkers == agvl_checkers)
+	{
+	  agvl_checkers += 3;
+	  gvl_checkers = realloc(agvl_checkers*sizeof(gvl_i*));
+	}
+    }
   
   if (!(l = setlocale(LC_ALL,ORACC_LOCALE)))
     if (!(l = setlocale(LC_ALL, "en_US.UTF-8")))
@@ -53,6 +76,7 @@ gvl_setup(const char *project, const char *name, const char *script)
       if ((h = sll_init_t(project, name)))
 	{
 	  ret = gvl_i_init_h(name, h);
+	  ret->sindex = ngvl_checkers++;
 	  sll_set_sl(ret->sl);
 	}
       else
@@ -69,7 +93,6 @@ gvl_setup(const char *project, const char *name, const char *script)
     }
 
   hash_add(gvl_checkers, (uccp)ret->script, ret);
-
   return ret;
 }
 

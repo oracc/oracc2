@@ -12,7 +12,8 @@ gvl_bridge_qpc(void)
   static int qpc_set = 0;
   if (!qpc_set)
     {
-      (void)gvl_setup("pctc", "pctc", "900");
+      gvl_i *gip = gvl_setup("pctc", "pctc", "900");
+      langcore_set_sindex("900", gip->sindex);
       ++qpc_set;
     }
 }
@@ -22,7 +23,8 @@ gvl_bridge_init(void)
 {
   bridge_h = hash_create(1024);
   bridge_p = pool_init();
-  (void)gvl_setup("ogsl", "ogsl", "020");
+  gvl_i *gip = gvl_setup("ogsl", "ogsl", "020");
+  langcore_set_sindex("020", gip->sindex);
   gdlparse_init();
   mesg_init();
   gdl_flex_debug = 0;

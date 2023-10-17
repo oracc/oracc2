@@ -30,6 +30,7 @@ typedef struct gvl_g gvl_g;
 struct gvl_i {
   const char *n;	/* name of SL DB */
   const char *script;	/* script code, e.g., 020=SAC; 900=PC */
+  int sindex;		/* index into gvl's array of signlists */
   Hash *sl;		/* in-memory signlist hash */
   Hash *h;		/* Hash of items validated */
   Memo *m;		/* Memory blocks for gvl_g nodes */

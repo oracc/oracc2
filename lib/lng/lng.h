@@ -1,7 +1,12 @@
 #ifndef LANG_H_
 #define LANG_H_
 
-#include "hash.h"
+#if 0
+#include <hash.h>
+#endif
+
+#include <list.h>
+
 #undef C
 #define C(x) x,
 #define T_MODES  C(m_graphemic)C(m_normalized)C(m_morphology)C(m_alphabetic)
@@ -31,6 +36,7 @@ struct langcore
 {
   const char *name; 		/* lang code, e.g., sux */
   const char *script;		/* default script code for language */
+  int sindex;			/* index into loaded signlists for validation */
   const char *altlang;  	/* alternate lang for logograms/lang switch, 
 				   e.g., akk */
   enum t_langmode uppercase;	/* is uppercase logogram or unknown sign? */
@@ -81,9 +87,11 @@ struct lang_context
   const char *signlist;	     	/* the signlist loaded for this language for this
 				   project */
 
-  Hash *values;	     	/* sign values for the language */
-  Hash *snames;		/* canonical sign names */
-
+#if 0
+  Hash *values;	     		/* sign values for the language */
+  Hash *snames;			/* canonical sign names */
+#endif
+  
   List *sigsets;		/* this is a pointer to the list of sigsets
 				   for a language-within-a-project that is
 				   stored in the sig_context.langs */
