@@ -1,8 +1,9 @@
 #include <sys/unistd.h>
 #include <ctype128.h>
 #include <xsystem.h>
-#include "pool.h"
-#include "mesg.h"
+#include <pool.h>
+#include <mesg.h>
+#include <gvl.h>
 #include "lng.h"
 
 struct lang_context *global_lang = NULL;
@@ -13,60 +14,6 @@ struct lang_context *logo_lang = NULL;
 extern int verbose;
 
 static List *langmem;
-
-#if 0
-static int
-find_project_csl(const char *proj,const char*lang)
-{
-  static char buf[128];
-  sprintf(buf,"/home/oracc/pub/%s/csl-%s.svl",proj,lang);
-  return !xaccess(buf,R_OK,0);
-}
-
-static void
-load_signs(struct lang_context *lp)
-{
-  /* look for a project-specific signlist for the language;
-     if there is one, use it: */
-  if (lp->owner && lp->owner->name && find_project_csl(lp->owner->name,lp->tag->lang))
-    {
-      char buf[16];
-      sprintf(buf,"csl-%s",lp->tag->lang);
-      lp->snames = skl_load(lp->owner->name,buf,"simple","signs");
-      lp->values = skl_load(lp->owner->name,buf,"simple","values");
-      if (lp->snames || lp->values)
-	{
-	  sprintf(buf,"%s/csl-%s",lp->owner->name,lp->tag->lang);
-	  lp->signlist = (char *)npool_copy((unsigned char *)buf,
-					    lp->owner->owner->pool);
-	}
-      if (verbose)
-	{
-	  const char *slstat = "failed";
-	  if (lp->snames || lp->values)
-	    slstat = "succeded";
-	  fprintf(stderr,"project signlist for %s, lang %s load %s\n",
-		  lp->owner->name, lp->tag->lang, slstat);
-	}
-    }
-  /* if not, then if the signlist member is "#" we are using the 
-     built-in sign list */
-  else if (!strcmp(lp->script,"020"))
-    {
-#if 1
-      lp->signlist = "#";
-      lp->snames = lp->values = NULL;
-#else
-      lp->snames = skl_load(lp->owner->name,lp->signlist,"simple","signs");
-      lp->values = skl_load(lp->owner->name,lp->signlist,"simple","values");
-#endif
-    }
-  else
-    {
-      lp->snames = lp->values = NULL;
-    }
-}
-#endif
 
 static void
 lang_free(struct lang_context *lp)
@@ -81,6 +28,7 @@ lang_term(void)
   langmem = NULL;
 }
 
+/* Could do gvl_setup here */
 struct lang_context *
 lang_load(struct proj_context *p, struct lang_tag *lt)
 {
@@ -121,15 +69,15 @@ lang_load(struct proj_context *p, struct lang_tag *lt)
   else
     lp->mode = m_alphabetic;
 
-#if 0
-  /* Sumero-Akkadian Cuneiform may have its own sign list */
-  if (!strcmp(lp->script, "020"))
-    load_signs(lp);
+  /* Autoload ogsl for script 020 and pcsl for script 900 */
+  if (lp->core->sindex == -1)
+    {
+      if (!strcmp(lp->core->script, "020"))
+	gvl_setup("ogsl", "ogsl", "020");
+      else if (!strcmp(lp->core->script, "900"))
+	gvl_setup("pctc", "pctc", "900");
+    }
 
-  lp->cset = get_charset(lp->core->code,lp->mode);
-  if (lp->cset && lp->cset->keys && !lp->cset->to_uni)
-    chartrie_init(lp->cset);
-#endif
   return lp;
 }
 
@@ -165,6 +113,17 @@ lang_switch(struct lang_context *curr, const char *tag, int *taglenp,
 		}
 	      if (*script && !strcmp(script+1, lp->core->script))
 		*script = '\0';
+	      if (script)
+		{
+		  /* This is not ideal but at least it means that
+		     %akk-949 will switch off validation */
+		  gvl_switch(-1);
+		}
+	      else
+		{
+		  if (!curr || curr->core->sindex != lp->core->sindex)
+		    gvl_switch(lp->core->sindex);
+		}
 	    }
 	}
       else

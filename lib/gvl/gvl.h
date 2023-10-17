@@ -57,6 +57,7 @@ extern unsigned const char *gvl_lookup_sl(unsigned const char *key);
 
 extern gvl_i *gvl_setup(const char *project, const char *name, const char *script);
 extern void gvl_quick_setup(const char *name, Hash *h);
+extern int gvl_switch(int sindex);
 extern void gvl_wrapup(const char *name);
 
 extern gvl_i *gvl_i_find(const char *name);

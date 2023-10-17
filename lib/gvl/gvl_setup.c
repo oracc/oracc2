@@ -33,11 +33,14 @@ gvl_quick_setup(const char *name, Hash *h)
   sll_set_sl(h);
 }
 
-void
+int
 gvl_switch(int sindex)
 {
   if (sindex >= 0 && sindex < ngvl_checkers)
     sll_set_sl((curr_sl = gvl_checkers[sindex]->sl));
+  else
+    return -1;
+  return sindex;
 }
 
 gvl_i*
@@ -62,7 +65,7 @@ gvl_setup(const char *project, const char *name, const char *script)
       if (ngvl_checkers == agvl_checkers)
 	{
 	  agvl_checkers += 3;
-	  gvl_checkers = realloc(agvl_checkers*sizeof(gvl_i*));
+	  gvl_checkers = realloc(gvl_checkers, agvl_checkers*sizeof(gvl_i*));
 	}
     }
   
@@ -78,6 +81,7 @@ gvl_setup(const char *project, const char *name, const char *script)
 	  ret = gvl_i_init_h(name, h);
 	  ret->sindex = ngvl_checkers++;
 	  sll_set_sl(ret->sl);
+	  langcore_set_sindex(script, ret->sindex);
 	}
       else
 	fprintf(stderr, "gvl: failed to open TSV %s/%s\n", (char *)project, (char*)name);
@@ -92,7 +96,7 @@ gvl_setup(const char *project, const char *name, const char *script)
       gvl_void_messages = 1;
     }
 
-  hash_add(gvl_checkers, (uccp)ret->script, ret);
+  hash_add(hgvl_checkers, (uccp)ret->script, ret);
   return ret;
 }
 

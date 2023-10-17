@@ -6,6 +6,4 @@ ORACC_USER=yes
 ORACC_HOST=build-oracc.museum.upenn.edu
 ORACC_BUILDS=/home/oracc
 export ORACC ORACC_BUILDS ORACC_HOME ORACC_MODE ORACC_USER ORACC_HOST
-. ./oraccsed.sh
-# add TeXLive here?
 . ./oraccpaths.sh

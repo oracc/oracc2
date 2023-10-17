@@ -148,7 +148,7 @@ gx_run()
 static void
 gx_term(void)
 {
-  lang_term();
+  lng_term();
   gdlparse_term();
   mesg_term();
   pool_term(cbd_pool);

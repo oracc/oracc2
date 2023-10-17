@@ -18,6 +18,7 @@ if [ "$xetex" == "" ]; then
     echo "$0: xetex not yet installed"
     TeXLive=missing-texlive
 else
+    echo "$0: xetex found as $xetex"
     TeXLive=`dirname $xetex`
 fi
 
