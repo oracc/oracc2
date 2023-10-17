@@ -8,7 +8,7 @@
 #include <pool.h>
 #include <hash.h>
 #include <tree.h>
-
+#include <lng.h>
 #include "sll.h"
 #include "gvl.h"
 
@@ -36,8 +36,11 @@ gvl_quick_setup(const char *name, Hash *h)
 int
 gvl_switch(int sindex)
 {
-  if (sindex >= 0 && sindex < ngvl_checkers)
-    sll_set_sl((curr_sl = gvl_checkers[sindex]->sl));
+  if (sindex >= 0 && sindex <= ngvl_checkers)
+    {
+      curr_sl = gvl_checkers[sindex];
+      sll_set_sl(curr_sl->sl);
+    }
   else
     return -1;
   return sindex;
@@ -62,7 +65,7 @@ gvl_setup(const char *project, const char *name, const char *script)
     }
   else
     {
-      if (ngvl_checkers == agvl_checkers)
+      if ((ngvl_checkers+1) == agvl_checkers)
 	{
 	  agvl_checkers += 3;
 	  gvl_checkers = realloc(gvl_checkers, agvl_checkers*sizeof(gvl_i*));
@@ -79,9 +82,11 @@ gvl_setup(const char *project, const char *name, const char *script)
       if ((h = sll_init_t(project, name)))
 	{
 	  ret = gvl_i_init_h(name, h);
-	  ret->sindex = ngvl_checkers++;
+	  ret->script = script;
+	  ret->sindex = ++ngvl_checkers;
 	  sll_set_sl(ret->sl);
 	  langcore_set_sindex(script, ret->sindex);
+	  fprintf(stderr, "gvl_setup: loaded %s for script %s\n", project, script);
 	}
       else
 	fprintf(stderr, "gvl: failed to open TSV %s/%s\n", (char *)project, (char*)name);
@@ -93,9 +98,12 @@ gvl_setup(const char *project, const char *name, const char *script)
       sll_init_si();
       sll_set_sl(h);
       ret = gvl_i_init_h("voidsl", h);
+      ret->script = "void";
+      ret->sindex = 0;
       gvl_void_messages = 1;
     }
 
+  gvl_checkers[ret->sindex] = ret;
   hash_add(hgvl_checkers, (uccp)ret->script, ret);
   return ret;
 }

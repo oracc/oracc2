@@ -53,8 +53,8 @@ langcore_of(const char *lang)
 void
 langcore_set_sindex(const char *script, int sindex)
 {
-  int i;
-  for (i = 0; i < TOTAL_KEYWORDS; ++i)
-      if (!strcmp(wordlist[i].script, script))
+  int i, siz=sizeof(wordlist)/sizeof(struct langcore);
+  for (i = 0; i < siz; ++i)
+      if (*wordlist[i].name && !strcmp(wordlist[i].script, script))
           wordlist[i].sindex = sindex;
 }

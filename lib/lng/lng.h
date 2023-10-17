@@ -126,6 +126,8 @@ extern struct lang_context *logo_lang;
 
 extern struct langcore *lang_core(register const char *str,register size_t len);
 extern struct langcore *langcore_of(const char *lang);
+extern void langcore_set_sindex(const char *script, int sindex);
+
 extern struct langmode *lang_mode(register const char *str,register size_t len);
 extern struct langrtl *langrtl(register const char *str,register size_t len);
 extern struct langatf *lang_atf(register const char *str, register size_t len);
