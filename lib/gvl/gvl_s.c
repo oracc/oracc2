@@ -42,6 +42,12 @@ gvl_s(Node *ynp)
       gvl_n_sexify(ynp);
       return ynp->user;
     }
+  else if ('N' == *gp->type)
+    {
+      /* This is N01 as @sign */
+      gp->type = "s";
+      ynp->name = "g:s";
+    }
 #if 0
   else if ('R' == *gp->type)
     {

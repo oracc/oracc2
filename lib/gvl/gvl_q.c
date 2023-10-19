@@ -169,13 +169,12 @@ gvl_oid_set(gvl_g *gp)
   /* if gp is a LISTNUM then ';l' will have one or more signs it can refer to */
   s = (ccp)gvl_lookup(sll_tmp_key(gp->orig,"l"));
   if (s && *s)
-    gvl_oid_add(u, s, gp->oid);
-
+    gvl_oid_add(u, s, NULL /*gp->oid*/); /* This used to mean that the @form OID was not added to the oid set but that meant SIGₓ(LAK647) failed */
   /* if gp is a FORM then ';signs' will have one or more signs that are parents */
   s = (ccp)gvl_lookup(sll_tmp_key((uccp)gp->oid,"signs"));
   if (s && *s)
     gvl_oid_add(u, s, NULL);
-
+  
   /* if gp is a SIGN then ';forms' will have one or more forms that are alternatives for it */
   s = (ccp)gvl_lookup(sll_tmp_key((uccp)gp->oid,"forms"));
   if (s && *s)
@@ -377,6 +376,14 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 			{
 			  vq->oid = vp->oid;
 			  vq->sign = vp->sign;
+			}
+		      /* If the OID for the Q is in the OIDS for V we
+			 use that for the qv sign/oid as in
+			 ASAL₂(LAK212) */
+		      else if (strstr(voids, qp->oid))
+			{
+			  vq->oid = qp->oid;
+			  vq->sign = qp->sign;
 			}
 		      else
 			{
