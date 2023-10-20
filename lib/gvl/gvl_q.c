@@ -91,7 +91,7 @@ gvl_q(Node *ynp)
 	  if (!qs)
 	    {
 	      /* This could be q node used as a nested q, e.g., kisimₓ(|DAG.KISIM₅×LU|(LAK721)) */
-	      if ('q' == ynp->kids->next->name[2])
+	      if ('q' == ynp->kids->next->name[2] && ynp->kids->next->kids->text)
 		qs = ynp->kids->next->kids->text;
 	      else
 		qs = ynp->kids->next->text;
@@ -100,6 +100,14 @@ gvl_q(Node *ynp)
 	  p = (ucp)pool_alloc(strlen(vs) + strlen(qs) + 3, curr_sl->p);
 	  sprintf((char*)p, "%s(%s)", vs, qs);
 	  vq->c10e = (uccp)p;
+	  gvl_g *gp = ynp->kids->user;
+	  if (!gp || !gp->oid)
+	    if (ynp->kids->next)
+	      gp = ynp->kids->next->user;
+	  if (!vq->oid && gp->oid)
+	    vq->oid = gp->oid;
+	  if (!vq->sign && vq->orig)
+	    vq->sign = vq->orig;
 	}
       else
 	{

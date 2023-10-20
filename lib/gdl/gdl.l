@@ -7,6 +7,8 @@
 #include <pool.h>
 #include <sll.h>
 
+/* test */
+
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
 #define YY_USER_ACTION gdl_user_action();
