@@ -153,13 +153,16 @@ sx_w_x_group(struct sx_functions *f, struct sl_signlist *sl, struct sl_group *g,
 static void
 sx_w_x_letter(struct sx_functions *f, struct sl_signlist *sl, struct sl_letter *l, enum sx_pos_e p)
 {
-  static int in_letter = 0;
+  static int in_letter = 0, nth_num_letter = 0;
   
   xo_loc->file = "stdin"; xo_loc->line = 1;
   if (p == sx_pos_inst)
     {
       char id[32], *idp;
-      sprintf((idp=id), "l%04d", l->code);
+      if (l->code < 0)
+	sprintf((idp=id), "ln%04d", ++nth_num_letter);
+      else
+	sprintf((idp=id), "l%04d", l->code);
       if (in_letter)
 	rnvxml_ee("sl:letter");
       if (l->name)

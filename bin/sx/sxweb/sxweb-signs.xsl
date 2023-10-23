@@ -249,7 +249,6 @@
 	  </xsl:for-each>
 	</p>
       </xsl:if>
-      <xsl:if test="sl:form and count(preceding-sibling::sl:form) = 0"><hr/></xsl:if>
       <xsl:choose>
 	<xsl:when test="@compoundonly='yes'">
 	  <xsl:variable name="s">
@@ -347,6 +346,7 @@
 	</xsl:for-each>
       </xsl:if>
     </div>
+    <xsl:if test="sl:form and count(preceding-sibling::sl:form) = 0"><hr/></xsl:if>
     <xsl:if test="count(sl:v)>0">
       <div class="{$project}-values">
 	<p>
