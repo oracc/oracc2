@@ -23,25 +23,36 @@
 
 <xsl:template mode="mcol" match="sl:sign">
   <!--<xsl:message>sl:sign <xsl:value-of select="@n"/></xsl:message>-->
-  <td class="name-sign">
-    <xsl:choose>
-      <xsl:when test=".//sl:uage='4'">
+  <xsl:variable name="img" select="(.//sl:images/sl:i[@loc])[1]"/>
+  <td>
+    <xsl:attribute name="class">
+      <xsl:choose>
+	<xsl:when test="count($img)>0 or .//sl:uage='4'">
+	  <xsl:text>name-sign</xsl:text>
+	</xsl:when>
+	<xsl:otherwise><xsl:text>name-nosign</xsl:text></xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+    <esp:link page="{@xml:id}">
+      <xsl:choose>
+	<xsl:when test=".//sl:uage='4'">
 	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
 	  <p class="sl-td-seq"><xsl:text>(Sequence)</xsl:text></p>
-      </xsl:when>
-      <xsl:otherwise>
-	<esp:link page="{@xml:id}">
+	</xsl:when>
+	<xsl:otherwise>
 	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
-	  <xsl:for-each select="(.//sl:images/sl:i[@loc])[1]">
-	    <p class="sl-td-sign">
-	      <xsl:call-template name="esp-sign-image">
-		<xsl:with-param name="height" select="'40px'"/>
-	      </xsl:call-template>
-	    </p>
-	  </xsl:for-each>
-	</esp:link>
-      </xsl:otherwise>
-    </xsl:choose>
+	  <xsl:if test="count($img)>0">
+	    <xsl:for-each select="$img">
+	      <p class="sl-td-sign">
+		<xsl:call-template name="esp-sign-image">
+		  <xsl:with-param name="height" select="'40px'"/>
+		</xsl:call-template>
+	      </p>
+	    </xsl:for-each>
+	  </xsl:if>
+	</xsl:otherwise>
+      </xsl:choose>
+    </esp:link>
   </td>
 </xsl:template>
 
