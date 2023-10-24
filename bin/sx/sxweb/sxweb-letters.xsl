@@ -108,21 +108,14 @@
     </xsl:for-each>
   </xsl:variable>
   <td>
-    <xsl:choose>
-      <xsl:when test=".//sl:uage='4'">
-	<xsl:text>(Sequence)</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-	<esp:link page="{@xml:id}">
-	  <xsl:value-of select="$tdval"/><br/>
-	  <xsl:for-each select="sl:sign[1]/sl:images/sl:i[@loc][1]">
-	    <xsl:call-template name="esp-sign-image">
-	      <xsl:with-param name="height" select="'40px'"/>
-	    </xsl:call-template>
-	  </xsl:for-each>
-	</esp:link>
-      </xsl:otherwise>
-    </xsl:choose>
+    <esp:link page="{@xml:id}">
+      <xsl:value-of select="$tdval"/><br/>
+      <xsl:for-each select="sl:sign[1]/sl:images/sl:i[@loc][1]">
+	<xsl:call-template name="esp-sign-image">
+	  <xsl:with-param name="height" select="'40px'"/>
+	</xsl:call-template>
+      </xsl:for-each>
+    </esp:link>
   </td>
 </xsl:template>
 

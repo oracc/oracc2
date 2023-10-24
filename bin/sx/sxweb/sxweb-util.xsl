@@ -24,16 +24,24 @@
 <xsl:template mode="mcol" match="sl:sign">
   <!--<xsl:message>sl:sign <xsl:value-of select="@n"/></xsl:message>-->
   <td class="name-sign">
-    <esp:link page="{@xml:id}">
-      <p class="sl-td-name"><xsl:value-of select="@n"/></p>
-      <xsl:for-each select="(.//sl:images/sl:i[@loc])[1]">
-	<p class="sl-td-sign">
-	  <xsl:call-template name="esp-sign-image">
-	    <xsl:with-param name="height" select="'40px'"/>
-	  </xsl:call-template>
-	</p>
-      </xsl:for-each>
-    </esp:link>
+    <xsl:choose>
+      <xsl:when test=".//sl:uage='4'">
+	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
+	  <p class="sl-td-seq"><xsl:text>(Sequence)</xsl:text></p>
+      </xsl:when>
+      <xsl:otherwise>
+	<esp:link page="{@xml:id}">
+	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
+	  <xsl:for-each select="(.//sl:images/sl:i[@loc])[1]">
+	    <p class="sl-td-sign">
+	      <xsl:call-template name="esp-sign-image">
+		<xsl:with-param name="height" select="'40px'"/>
+	      </xsl:call-template>
+	    </p>
+	  </xsl:for-each>
+	</esp:link>
+      </xsl:otherwise>
+    </xsl:choose>
   </td>
 </xsl:template>
 
