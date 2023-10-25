@@ -3,7 +3,7 @@
 libtoolize
 aclocal
 autoheader
-automake
+automake -Wno-portability
 autoconf
 ./configure --prefix=$ORACC
 #make CFLAGS=-g

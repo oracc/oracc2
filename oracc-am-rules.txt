@@ -32,27 +32,30 @@ install-exec-local:
 # No Perl installed in oracc2
 #	$(top_srcdir)/oracc-pm.sh $(DESTDIR)$(prefix) $(top_srcdir)
 
-SUFFIXES=.c.in .g .c .l .lex.c .y .tab.c .o .xnn .rnc .rng
+#SUFFIXES=.c.in .g .c .l .lex.c .y .tab.c .o .xnn .rnc .rng
+#
+#.c.in.c:
+#	$(ORACCIFY) $<
 
-.c.in.c:
+%.c: %.c.in
 	$(ORACCIFY) $<
 
-.g.c:
+%.c: %.g
 	$(top_srcdir)/gperf-size_t.sh `basename $*` $< $@
 
-.l.lex.c:
+%.lex.c: %.l
 	flex -d -B -DYY_NO_INPUT -o $@ $<
 
-.y.tab.c:
+%.tab.c: %.y
 	bison -vdt $<
 
-.rnc.rng:
+%.rng: %.rnc
 	java -jar ${javadir}/trang.jar $< $@
 
-.rng.xnn:
+%.xnn: %.rng
 	c2-rng2xnn.sh $@
 
-.xnn.c:
+%.c: %.xnn
 	c2-xnn2c.plx $<
 
 xLDADD=../../lib/liboracc2.la

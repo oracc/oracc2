@@ -3,7 +3,7 @@
 glibtoolize
 aclocal
 autoheader
-automake
+automake -Wno-portability
 autoconf
 ./configure --prefix=/Users/stinney/orc
 #make
