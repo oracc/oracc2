@@ -35,14 +35,13 @@ unsigned char *gvl_val_base(const unsigned char *v);
 
 ucp c10e_compound(uccp g){ return (ucp)g; }
 
-#if 0
-#define gvl_BAD ""
-#define gvl_v "v"
-#define gvl_s "s"
-#define gvl_n "n"
-#define gvl_p "p"
-#define gvl_c "cs"
-#define gvl_q "qv"
+#define gvl_t_BAD ""
+#define gvl_t_v "v"
+#define gvl_t_s "s"
+#define gvl_t_n "n"
+#define gvl_t_p "p"
+#define gvl_t_c "c"
+#define gvl_t_q "q"
 
 static int
 gnr(const char *g)
@@ -59,9 +58,9 @@ gvl_type(unsigned const char *g)
 	{
 	  while (*g)
 	    if ('!' == *g)
-	      return gvl_v;
+	      return gvl_t_v;
 	    else if ('(' == *g)
-	      return gvl_q;
+	      return gvl_t_q;
 	    else
 	      ++g;
 	  abort(); /* can't happen */
@@ -73,36 +72,34 @@ gvl_type(unsigned const char *g)
 	      g += mbtowc(NULL,(const char *)g,6);
 	      while (*g)
 		if (u_islower(g))
-		  return gvl_v;
+		  return gvl_t_v;
 		else if (isdigit(*g) || '@' == *g || '~' == *g)
 		  break;
 		else
 		  g += mbtowc(NULL,(const char *)g,6);
-	      return gvl_s;
+	      return gvl_t_s;
 	    }
 	  else
-	    return gvl_v;
+	    return gvl_t_v;
 	}
     }
   else if (isdigit(*g) || *g == 'n' || *g == 'N')
-    return gvl_n;
+    return gvl_t_n;
   else if (*g == '|')
     {
       register unsigned const char *e = g;
       while (*++e != '|')
 	;
       if (*e == '(')
-	return gvl_q;
+	return gvl_t_q;
       else
-	return gvl_c;
+	return gvl_t_c;
     }
   else if (*g == '*' || *g == ':' || *g == '/')
-    return gvl_p;
+    return gvl_t_p;
   else
-    return gvl_BAD;
+    return gvl_t_BAD;
 }
-
-#endif
 
 unsigned const char *
 gvl_ucode(gvl_g*gg)
@@ -220,7 +217,7 @@ gvl_validate(unsigned const char *g)
       gp->orig = (uccp)pool_copy(g, curr_sl->p);
       gp->sign = hash_find(curr_sl->sl, (uccp)oid);
       gp->oid = (ccp)pool_copy((uccp)oid, curr_sl->p);
-      gp->type = "v";
+      gp->type = gvl_type(g);
       hash_add(curr_sl->h,gp->orig,gp);
       return gp;
     }

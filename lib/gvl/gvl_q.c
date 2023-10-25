@@ -302,7 +302,7 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	  /* If the q is unknown, report known q for v */
 	  unsigned const char *tmp2 = gvl_lookup(sll_tmp_key(vp->orig, "q"));
 	  if (tmp2)
-	    vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s", qp->orig, vp->orig, tmp2, QFIX);
+	    vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s", qp->orig, vp->orig, sll_snames_of(tmp2), QFIX);
 	  else if (!strchr((ccp)qp->orig,'X'))
 	    vq->mess = gvl_vmess("[vq]: q %s unknown: %s known as %s%s", qp->orig, vp->orig, vp->sign, QFIX);
 	}
@@ -326,7 +326,7 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	    vq->mess = gvl_vmess("[sb3] %s(%s): should be %s%s", vp->orig, qp->orig, tmp2, QFIX);
 	  ret = 1;
 	}
-      else if ('s' == *vp->type || 'c' == *vp->type)
+      else if (('s' == *vp->type || 'c' == *vp->type) && 'c' != *qp->type)
 	{
 	  /* This is a qualified uppercase value like TA@g(LAK654a) */
 	  if (vp->oid && qp->oid)
@@ -464,7 +464,7 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 			      unsigned const char *q_for_v = gvl_lookup(sll_tmp_key(vp->orig, "q"));
 			      if (q_for_v)
 				vq->mess = gvl_vmess("[vq] %s(%s): unknown. Known for %s: %s%s",
-						     vp->orig, qp->orig, vp->orig, q_for_v, QFIX);
+						     vp->orig, qp->orig, vp->orig, sll_snames_of(q_for_v), QFIX);
 			      else
 				vq->mess = gvl_vmess("[vq] %s(%s): %s is %s not %s%s",
 						     vp->orig, qp->orig, vp->orig, vp->sign, qp->orig, QFIX);
@@ -488,6 +488,15 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 			  if (!gdl_corrq && ('n' != *vp->orig && 'N' != *vp->orig))
 			    vq->mess = gvl_vmess("[vq] %s(%s): mismatched number qualifier",
 						 vp->orig, qp->orig);
+			}
+		      else if ('c' == *vp->type)
+			{
+			  if ('c' == *qp->type)
+			    mesg_vwarning(currgdlfile, gdllineno, "gvl: [vq] double compound not allowed in qualifier %s(%s)\n",
+					  vp->orig, qp->orig);
+			  else
+			    mesg_vwarning(currgdlfile, gdllineno, "gvl: [vq] compound has bad qualifier %s(%s)\n",
+					  vp->orig, qp->orig);
 			}
 		      else
 			{
