@@ -67,6 +67,8 @@ uhex2utf8(unsigned const char *uhex)
 
       if ('X' == *t)
 	wp[nhw++] = L'X';
+      else if ('O' == *t)
+	wp[nhw++] = L'O';
       else
 	wp[nhw++] = (wchar_t)hex2int((char*)t);
 

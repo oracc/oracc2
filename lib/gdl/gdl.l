@@ -123,8 +123,8 @@ NOTEMARK	"^"[0-9]+"^"
 <INITIAL,C>{L_LHS}	{ gsave; GIN=0; return L_lhs; }
 <INITIAL,C>{R_LHS}	{ gsave; GIN=0; return R_lhs; }
 
-"<("			{ gconst; GIN=0; return L_ang_par; }
-")>"			{ gconst; GIN=0; return R_ang_par; }
+<INITIAL,C>"<("		{ gconst; GIN=0; return L_ang_par; }
+<INITIAL,C>")>"	       	{ gconst; GIN=0; return R_ang_par; }
 "{{"[0-9+]:	       	{ gconst; GIN=0; return L_dbl_cur; }
 "{{"			{ gconst; GIN=0; return L_dbl_cur; }
 "}}"			{ gconst; GIN=0; return R_dbl_cur; }
