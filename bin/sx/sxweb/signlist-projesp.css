@@ -43,6 +43,8 @@ table.pretty { background-color: white; }
 
 .sl-td-seq  { width: 100%; text-align: center; }
 
+.sl-unattested { font-size: 80%; }
+
 td.name-sign { width: 10%; }
 td.name-nosign { width: 10%; background-color: lightgray; }
 td.name-sign img { }
