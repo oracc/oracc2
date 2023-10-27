@@ -287,7 +287,7 @@
 		      <xsl:value-of select="@n"/>
 		      <xsl:choose>
 			<xsl:when test="count(sl:form)=0">
-			  <xsl:text> has no attestations in corpus [</xsl:text>
+			  <xsl:text> has no attestations in corpus [uage=</xsl:text>
 			  <xsl:value-of select="sl:uage"/>
 			  <xsl:text>]</xsl:text>
 			</xsl:when>
