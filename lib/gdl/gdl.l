@@ -112,6 +112,8 @@ NOTEMARK	"^"[0-9]+"^"
 <Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv");
 			  cvq_reset(); }
 
+<INITIAL,C>"<("		{ gconst; GIN=0; return L_ang_par; }
+<INITIAL,C>")>"	       	{ gconst; GIN=0; return R_ang_par; }
 <INITIAL,C>"<<"		{ gconst; GIN=0; return L_dbl_ang; }
 <INITIAL,C>">>"		{ gconst; GIN=0; return R_dbl_ang; }
 <INITIAL,C>"<"		{ gconst; GIN=0; return '<'; }
@@ -123,8 +125,6 @@ NOTEMARK	"^"[0-9]+"^"
 <INITIAL,C>{L_LHS}	{ gsave; GIN=0; return L_lhs; }
 <INITIAL,C>{R_LHS}	{ gsave; GIN=0; return R_lhs; }
 
-<INITIAL,C>"<("		{ gconst; GIN=0; return L_ang_par; }
-<INITIAL,C>")>"	       	{ gconst; GIN=0; return R_ang_par; }
 "{{"[0-9+]:	       	{ gconst; GIN=0; return L_dbl_cur; }
 "{{"			{ gconst; GIN=0; return L_dbl_cur; }
 "}}"			{ gconst; GIN=0; return R_dbl_cur; }

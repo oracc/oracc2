@@ -282,22 +282,23 @@
 	      <xsl:for-each select="$dot">
 		<xsl:choose>
 		  <xsl:when test="count($c/*)=0 or $c/c/r[1]/c[2]='0'">
-		    <p class="sl-unattested">
-		      <xsl:text>(</xsl:text>
-		      <xsl:value-of select="@n"/>
-		      <xsl:choose>
-			<xsl:when test="count(sl:form)=0">
-			  <xsl:text> has no attestations in corpus [uage=</xsl:text>
-			  <xsl:value-of select="sl:uage"/>
-			  <xsl:text>]</xsl:text>
-			</xsl:when>
-			<xsl:otherwise>
-			  <xsl:text> has uage </xsl:text>
-			  <xsl:value-of select="sl:uage"/>
-			</xsl:otherwise>
-		      </xsl:choose>
-		      <xsl:text>)</xsl:text>
-		    </p>
+		    <xsl:choose>
+		      <xsl:when test="sl:images/sl:i[@loc]">
+			<table width="95%">
+			  <tr>
+			    <td width="5%" valign="top" class="ii-signs">
+			      <xsl:call-template name="add-images"/>
+			    </td>
+			    <td width="93%" class="ii-insts">
+			      <xsl:call-template name="add-unattested"/>
+			    </td>
+			  </tr>
+			</table>
+		      </xsl:when>
+		      <xsl:otherwise>
+			<xsl:call-template name="add-unattested"/>
+		      </xsl:otherwise>
+		    </xsl:choose>
 		  </xsl:when>
 		  <xsl:otherwise>
 		    <div class="image-insts">
@@ -314,17 +315,7 @@
 			  <td width="5%" valign="top" class="ii-signs">
 			    <xsl:choose>
 			      <xsl:when test="sl:images/sl:i[@loc]">
-				<xsl:variable name="base" select="'../../../pctc'"/>
-				<xsl:for-each select="sl:images/sl:i[@loc]">
-				  <hr/>
-				  <p>
-				    <xsl:variable name="ref" select="@ref"/>
-				    <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
-				    <span class="im-label"><xsl:value-of select="$header/@label"/>:</span><br/><br/>
-				    <esp:image width="100%" file="{$base}/{$header/@path}/{@loc}"
-					       description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
-				  </p>
-				</xsl:for-each>
+				<xsl:call-template name="add-images"/>
 			      </xsl:when>
 			      <xsl:otherwise>
 				<xsl:text>&#xa0;</xsl:text>
@@ -358,7 +349,7 @@
 	</xsl:for-each>
       </xsl:if>
     </div>
-    <xsl:if test="sl:form and count(preceding-sibling::sl:form) = 0"><hr/></xsl:if>
+    <!--<xsl:if test="sl:form and count(preceding-sibling::sl:form) = 0"><hr/></xsl:if>-->
     <xsl:if test="count(sl:v)>0">
       <div class="{$project}-values">
 	<p>
@@ -409,6 +400,39 @@
       </div>
     </xsl:if>
   </div>
+</xsl:template>
+
+<xsl:template name="add-images">
+  <xsl:variable name="base" select="'../../../pctc'"/>
+  <xsl:for-each select="sl:images/sl:i[@loc]">
+    <hr/>
+    <p>
+      <xsl:variable name="ref" select="@ref"/>
+      <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
+      <span class="im-label"><xsl:value-of select="$header/@label"/>:</span><br/><br/>
+      <esp:image width="100%" file="{$base}/{$header/@path}/{@loc}"
+		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+    </p>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="add-unattested">
+  <p class="sl-unattested">
+    <xsl:text>(</xsl:text>
+    <xsl:value-of select="@n"/>
+    <xsl:choose>
+      <xsl:when test="count(sl:form)=0">
+	<xsl:text> has no attestations in corpus [uage=</xsl:text>
+	<xsl:value-of select="sl:uage"/>
+	<xsl:text>]</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text> has uage </xsl:text>
+	<xsl:value-of select="sl:uage"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>)</xsl:text>
+  </p>
 </xsl:template>
 
 <xsl:template match="sl:glo">

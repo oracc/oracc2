@@ -117,6 +117,7 @@ struct xnn_xname asl_enames[] =
   { "g:w", "http://oracc.org/ns/gdl/1.0:w" },
   { "n:s", "http://oracc.org/ns/norm/1.0:s" },
   { "n:w", "http://oracc.org/ns/norm/1.0:w" },
+  { "sl:aka", "http://oracc.org/ns/sl/1.0:aka" },
   { "sl:compoundonly", "http://oracc.org/ns/sl/1.0:compoundonly" },
   { "sl:form", "http://oracc.org/ns/sl/1.0:form" },
   { "sl:formproxy", "http://oracc.org/ns/sl/1.0:formproxy" },

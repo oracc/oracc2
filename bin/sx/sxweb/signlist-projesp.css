@@ -12,7 +12,8 @@
 
 iframe { margin-width: 10px; border: none; border-left: 2px; }
 
-.image-insts table { border-bottom: solid; }
+/* .image-insts table { border-bottom: solid; } */
+.pctc-info { border-bottom: solid; }
 
 .ii-signs { margin-right: 10px; padding-right: 10px; padding-left: 0px; margin-left: 0px; }
 

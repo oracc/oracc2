@@ -67,6 +67,7 @@ enum asl_e_type
   asl_e_g_w,
   asl_e_n_s,
   asl_e_n_w,
+  asl_e_sl_aka,
   asl_e_sl_compoundonly,
   asl_e_sl_form,
   asl_e_sl_formproxy,

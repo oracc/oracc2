@@ -230,6 +230,27 @@ sx_w_x_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip
 	}
     }
 }
+
+static void
+sx_w_x_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
+{
+  struct memo_str *msp;
+
+  for (msp = list_first(a); msp; msp = list_next(a))
+    {
+      ratts = rnvval_aa("x", "n", msp->s, NULL);
+      rnvxml_ea("sl:aka", ratts);
+      if (!msp->user) /* AKA has literal flag stored in user */
+	{
+	  struct sl_token *tp = hash_find(sl->htoken, msp->s);
+	  rnvxml_ea("sl:name", NULL);
+	  grx_xml(tp->gdl, "g:w");
+	  rnvxml_ee("sl:name");
+	}
+      rnvxml_ee("sl:aka");
+    }
+}
+
 static void
 sx_w_x_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, enum sx_pos_e p)
 {
@@ -319,6 +340,8 @@ sx_w_x_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	      rnvxml_ea("sl:name", NULL);
 	      grx_xml(tp->gdl, "g:w");
 	      rnvxml_ee("sl:name");
+	      if (s->u.f->aka)
+		sx_w_x_aka(f, sl, s->u.f->aka);
 	      in_form = 1;
 	    }
 	}
@@ -586,6 +609,8 @@ sx_w_x_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	      grx_xml(tp->gdl, "g:w");
 	      rnvxml_ee("sl:name");
 	    }
+	  if (s->u.s->aka)
+	    sx_w_x_aka(f, sl, s->u.s->aka);
 	}
 #if 0
       else if (s->type == 'f')
