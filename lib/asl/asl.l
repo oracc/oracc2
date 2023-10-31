@@ -26,6 +26,7 @@ static void asl_user_action(void);
 static int asl_grapheme(const char *gp);
 static void check_minus(char *t);
 static void strip_literal(char *t);
+static char *skip_initial_ws(char *t);
 
 /* #if 1 to print every matched rule */
 #if 0
@@ -34,7 +35,9 @@ static void strip_literal(char *t);
 #define pmatch(m)
 #endif
 
-#define aslsave  asllval.text=xaslpool(asltext)
+#define aslsave   asllval.text=xaslpool(asltext)
+
+#define aslsave_w asllval.text=xaslpool(skip_initial_ws(asltext))
 
 #define atcmd(at,st) aslsave; check_minus(asllval.text); pmatch("###ATCMD\n"); BEGIN((st)); return(at)
 
@@ -98,7 +101,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_-]+
 <Y>{SYSNAME}/\n         	{ aslsave; BEGIN Yt; return SYSNAME; }
 <Y>{SYSNAME}/[ \t]+         	{ aslsave; BEGIN Yt; return SYSNAME; }
 <Yt>([^= \n]|=[^>])+/"=>"     	{ aslsave; return SYSGOESTO; }
-<Yt>[^\n]+/\n			{ aslsave; BEGIN(0); return SYSTEXT; }
+<Yt>[^\n]+/\n			{ aslsave_w; BEGIN(0); return SYSTEXT; }
 <Y,Yt>[ \t]+   			{ }
 
 ^@@				{ /* no-op */ }
@@ -228,6 +231,14 @@ check_minus(char *t)
     }
   else
     minus_flag = 0;
+}
+
+static char *
+skip_initial_ws(char *t)
+{
+  while (' ' == *t || '\t' == *t)
+    ++t;
+  return t;
 }
 
 static void

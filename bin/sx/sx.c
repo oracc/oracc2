@@ -15,7 +15,7 @@
 Mloc *xo_loc;
 FILE *f_xml;
 const char *file;
-int verbose;
+int quiet, verbose;
 int asltrace,rnvtrace;
 
 int status = 0; /* for rnc; should be in library there */
@@ -126,6 +126,8 @@ main(int argc, char * const*argv)
 	    {
 	      sx_list_dump(lfp, sl);
 	      fclose(lfp);
+	      if (!quiet)
+		fprintf(stderr, "sx: list data written to sx-lists.out\n");
 	    }
 	  else
 	    fprintf(stderr, "sx: unable to dump list data; can't write sx-lists.out\n");
@@ -137,9 +139,24 @@ main(int argc, char * const*argv)
 	    {
 	      sx_images_dump(lfp, sl);
 	      fclose(lfp);
+	      if (!quiet)
+		fprintf(stderr, "sx: image data written to sx-images.out\n");
 	    }
 	  else
 	    fprintf(stderr, "sx: unable to dump @image data; can't write sx-images.out\n");
+	}
+      if (syss_dump)
+	{
+	  FILE *lfp = fopen("sx-syss.out","w");
+	  if (lfp)
+	    {
+	      sx_syss_dump(lfp, sl);
+	      fclose(lfp);
+	      if (!quiet)
+		fprintf(stderr, "sx: sys data written to sx-images.out\n");
+	    }
+	  else
+	    fprintf(stderr, "sx: unable to dump @sys data; can't write sx-syss.out\n");
 	}
       
       if (listdef_check && !list_dump)
@@ -201,9 +218,11 @@ opts(int opt, char *arg)
     case 'j':
       jsn_output = 1;
       break;
+#if 0
     case 'l':
       list_dump = 1;
       break;
+#endif
     case 'n':
       list_names_mode = 1;
       break;
@@ -221,11 +240,9 @@ opts(int opt, char *arg)
     case 'o':
       oid_list = 1;
       break;
-#if 0
-    case 'r':
-      asl_raw_tokens = 1;
+    case 'q':
+      quiet = 1;
       break;
-#endif
     case 's':
       sll_output = 1;
       break;
@@ -235,11 +252,6 @@ opts(int opt, char *arg)
     case 't':
       trace_mode = 1;
       break;
-#if 0
-    case 'T':
-      tree_output = 1;
-      break;
-#endif
     case 'u':
       unicode_table = 1;
       break;
@@ -276,13 +288,15 @@ help(void)
   help_option("", "(All the following outputs are written to stdout)\n");
   help_option("a", "asl-output: this adds @letter and @group tags. See also -i.");
   help_option("j", "json-output: a JSON version of the signlist; beta");
+  help_option("o/O", "oid-output: two-column table of OID and sign/form names.\n"
+	      	     "\t\tWith 'O' dump all OIDs, with 'o' omit OIDs with uage=0.");
   help_option("s", "sll-output: data for the Sign-List-Library, sll, also used by GVL");
   help_option("S", "Sortcode-output: show a list of OIDs and sort-codes");
   help_option("x", "xml-output: an XML version of the signlist");
   
   help_heading("List and Coverage Options");
   help_option("", "(All the following outputs are written to stdout)\n");
-  help_option("l", "list-dump: show all list entries in signlist");
+  help_option("d", "images|lists|sys: show all images/lists/sys entries in signlist");
   help_option("M", "missing-all: show missing entry information for all lists");
   help_option("m [LIST]", "missing [LIST]: show missing entry information for the LIST, e.g., -m MZL");
   help_option("n", "names-of-lists: show list -names defined in signlist");

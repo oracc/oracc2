@@ -223,6 +223,7 @@ struct sl_sys
   const char *name;
   unsigned const char *v;
   unsigned const char *vv;
+  struct sl_inst *ip;
 };
 
 struct sl_letter

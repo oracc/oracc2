@@ -352,7 +352,7 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
 	  int llen = strlen((ccp)letter);
 	  tmp = (char*)pool_alloc(llen+1, sl->p);
 	  *tmp = 'l';
-	  strcat(tmp, letter+1);
+	  strcat(tmp, (ccp)letter+1);
 	  src = tmp;
 	  if ((dest = strchr(src, '~')))
 	    *dest = '\0';
@@ -1010,6 +1010,7 @@ asl_bld_sys(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned co
       sp->name = sysname;
       sp->v = v;
       sp->vv = pool_copy(vv, sl->p);
+      sp->ip = ip;
       list_add(ip->sys, sp);
     }
 }
