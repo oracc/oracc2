@@ -15,14 +15,27 @@ sx_syss_dump(FILE *fp, struct sl_signlist *sl)
 	  if (ip)
 	    {
 	      const char *oid = NULL;
+	      const char *n = NULL;
 	      if (ip->type == 's')
-		oid = ip->u.s->oid;
+		{
+		  oid = ip->u.s->oid;
+		  n = (ccp)ip->u.s->name;
+		}
 	      else if (ip->type == 'f')
-		oid = ip->u.f->oid;
+		{
+		  oid = ip->u.f->oid;
+		  n = (ccp)ip->u.f->name;
+		}
 	      else
 		fprintf(stderr, "@sys on sl_inst which is not sign or form\n");
 	      if (oid)
-		fprintf(fp, "%s\t%s\t%s\t%s\n", oid, sys->name, (sys->v ? (ccp)sys->v : ""), (sys->vv ? (ccp)sys->vv : ""));
+		{
+		  fprintf(fp, "%s\t%s\t%s\t%s\t%s\t%s\n",
+			  oid,
+			  sys->ip->type == 's' ? "sign" : "form",
+			  n,
+			  sys->name, (sys->v ? (ccp)sys->v : ""), (sys->vv ? (ccp)sys->vv : ""));
+		}
 	    }
 	}
     }

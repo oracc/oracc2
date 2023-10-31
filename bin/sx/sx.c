@@ -153,7 +153,7 @@ main(int argc, char * const*argv)
 	      sx_syss_dump(lfp, sl);
 	      fclose(lfp);
 	      if (!quiet)
-		fprintf(stderr, "sx: sys data written to sx-images.out\n");
+		fprintf(stderr, "sx: sys data written to sx-syss.out\n");
 	    }
 	  else
 	    fprintf(stderr, "sx: unable to dump @sys data; can't write sx-syss.out\n");
