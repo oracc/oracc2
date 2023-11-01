@@ -790,7 +790,7 @@ asl_bld_aka(Mloc *locp, struct sl_signlist *sl, const unsigned char *t)
       else
 	m->user = NULL;
       if (!hash_find(sl->haka, t))
-	hash_add(sl->haka, t, (void*)sl->curr_sign);
+	hash_add(sl->haka, t, (void*)sl->curr_sign->inst);
       else
 	mesg_verr(locp, "duplicate @aka %s", t);
     }

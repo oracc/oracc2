@@ -53,6 +53,8 @@ extern int cmpstringp(const void *p1, const void *p2);
 extern void sx_xml(struct sl_signlist *sl);
 extern void sx_xml_init(void);
 
+extern void sx_akas_dump(FILE *fp, struct sl_signlist *sl);
+extern void sx_syss_dump(FILE *fp, struct sl_signlist *sl);
 extern void sx_compounds(struct sl_signlist *sl);
 extern void sx_compound_digests(struct sl_signlist *sl);
 extern void sx_homophones(struct sl_signlist *sl);

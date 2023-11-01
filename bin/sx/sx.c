@@ -20,6 +20,7 @@ int asltrace,rnvtrace;
 
 int status = 0; /* for rnc; should be in library there */
 
+int akas_dump = 0;
 int asl_output = 0;
 int identity_mode = 0;
 int images_dump = 0;
@@ -118,19 +119,18 @@ main(int argc, char * const*argv)
 	  else
 	    fprintf(stderr, "sx: unable to dump @list data; can't write sx-listdata.out\n");
 	}
-      
-      if (list_dump)
+      if (akas_dump)
 	{
-	  FILE *lfp = fopen("sx-lists.out","w");
+	  FILE *lfp = fopen("sx-akas.out","w");
 	  if (lfp)
 	    {
-	      sx_list_dump(lfp, sl);
+	      sx_akas_dump(lfp, sl);
 	      fclose(lfp);
 	      if (!quiet)
-		fprintf(stderr, "sx: list data written to sx-lists.out\n");
+		fprintf(stderr, "sx: aka data written to sx-akas.out\n");
 	    }
 	  else
-	    fprintf(stderr, "sx: unable to dump list data; can't write sx-lists.out\n");
+	    fprintf(stderr, "sx: unable to dump @aka data; can't write sx-akas.out\n");
 	}
       if (images_dump)
 	{
@@ -144,6 +144,19 @@ main(int argc, char * const*argv)
 	    }
 	  else
 	    fprintf(stderr, "sx: unable to dump @image data; can't write sx-images.out\n");
+	}
+      if (list_dump)
+	{
+	  FILE *lfp = fopen("sx-lists.out","w");
+	  if (lfp)
+	    {
+	      sx_list_dump(lfp, sl);
+	      fclose(lfp);
+	      if (!quiet)
+		fprintf(stderr, "sx: list data written to sx-lists.out\n");
+	    }
+	  else
+	    fprintf(stderr, "sx: unable to dump list data; can't write sx-lists.out\n");
 	}
       if (syss_dump)
 	{
@@ -203,14 +216,16 @@ opts(int opt, char *arg)
       ctrace = 1;
       break;
     case 'd':
-      if (strstr(arg, "lists"))
-	list_dump = 1;
-      if (strstr(arg, "images"))
+      if (strstr(arg, "aka"))
+	akas_dump = 1;
+      if (strstr(arg, "image"))
 	images_dump = 1;
+      if (strstr(arg, "list"))
+	list_dump = 1;
       if (strstr(arg, "sys"))
 	syss_dump = 1;
-      if (!list_dump && !images_dump && !syss_dump)
-	fprintf(stderr, "sx: the -d option must contain any or all of 'lists,images,sys'\n");
+      if (!akas_dump && !list_dump && !images_dump && !syss_dump)
+	fprintf(stderr, "sx: the -d option must contain any or all of 'aka,list,image,sys'\n");
       break;
     case 'i':
       asl_output = identity_mode = 1;
@@ -218,11 +233,6 @@ opts(int opt, char *arg)
     case 'j':
       jsn_output = 1;
       break;
-#if 0
-    case 'l':
-      list_dump = 1;
-      break;
-#endif
     case 'n':
       list_names_mode = 1;
       break;
@@ -296,7 +306,7 @@ help(void)
   
   help_heading("List and Coverage Options");
   help_option("", "(All the following outputs are written to stdout)\n");
-  help_option("d", "images|lists|sys: show all images/lists/sys entries in signlist");
+  help_option("d", "aka|image|list|sys: show all aka/images/lists/sys entries in signlist");
   help_option("M", "missing-all: show missing entry information for all lists");
   help_option("m [LIST]", "missing [LIST]: show missing entry information for the LIST, e.g., -m MZL");
   help_option("n", "names-of-lists: show list -names defined in signlist");
