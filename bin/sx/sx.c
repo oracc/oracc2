@@ -22,6 +22,7 @@ int status = 0; /* for rnc; should be in library there */
 
 int akas_dump = 0;
 int asl_output = 0;
+int dump_stdout = 0;
 int identity_mode = 0;
 int images_dump = 0;
 int jsn_output = 0;
@@ -59,7 +60,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCd:ijm:nMoOsStTux?");
+  options(argc, argv, "abcCD:d:ijm:nMoOsStTux?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (boot_mode)
@@ -121,12 +122,13 @@ main(int argc, char * const*argv)
 	}
       if (akas_dump)
 	{
-	  FILE *lfp = fopen("sx-akas.out","w");
+	  FILE *lfp = dump_stdout ? stdout : fopen("sx-akas.out","w");
 	  if (lfp)
 	    {
 	      sx_akas_dump(lfp, sl);
-	      fclose(lfp);
-	      if (!quiet)
+	      if (!dump_stdout)
+		fclose(lfp);
+	      if (!dump_stdout && !quiet)
 		fprintf(stderr, "sx: aka data written to sx-akas.out\n");
 	    }
 	  else
@@ -134,12 +136,13 @@ main(int argc, char * const*argv)
 	}
       if (images_dump)
 	{
-	  FILE *lfp = fopen("sx-images.out","w");
+	  FILE *lfp = dump_stdout ? stdout : fopen("sx-images.out","w");
 	  if (lfp)
 	    {
 	      sx_images_dump(lfp, sl);
-	      fclose(lfp);
-	      if (!quiet)
+	      if (!dump_stdout)
+		fclose(lfp);
+	      if (!dump_stdout && !quiet)
 		fprintf(stderr, "sx: image data written to sx-images.out\n");
 	    }
 	  else
@@ -147,12 +150,13 @@ main(int argc, char * const*argv)
 	}
       if (list_dump)
 	{
-	  FILE *lfp = fopen("sx-lists.out","w");
+	  FILE *lfp = dump_stdout ? stdout : fopen("sx-lists.out","w");
 	  if (lfp)
 	    {
 	      sx_list_dump(lfp, sl);
-	      fclose(lfp);
-	      if (!quiet)
+	      if (!dump_stdout)
+		fclose(lfp);
+	      if (!dump_stdout && !quiet)
 		fprintf(stderr, "sx: list data written to sx-lists.out\n");
 	    }
 	  else
@@ -160,12 +164,13 @@ main(int argc, char * const*argv)
 	}
       if (syss_dump)
 	{
-	  FILE *lfp = fopen("sx-syss.out","w");
+	  FILE *lfp = dump_stdout ? stdout : fopen("sx-syss.out","w");
 	  if (lfp)
 	    {
 	      sx_syss_dump(lfp, sl);
-	      fclose(lfp);
-	      if (!quiet)
+	      if (!dump_stdout)
+		fclose(lfp);
+	      if (!dump_stdout && !quiet)
 		fprintf(stderr, "sx: sys data written to sx-syss.out\n");
 	    }
 	  else
@@ -215,6 +220,9 @@ opts(int opt, char *arg)
     case 'C':
       ctrace = 1;
       break;
+    case 'D':
+      dump_stdout = 1;
+      /*falls through*/
     case 'd':
       if (strstr(arg, "aka"))
 	akas_dump = 1;
