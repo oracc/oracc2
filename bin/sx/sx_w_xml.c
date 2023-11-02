@@ -113,6 +113,7 @@ sx_w_x_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 				"path", sl->iheaders[i].path,
 				"order", o,
 				"label", sl->iheaders[i].label,
+				sl->iheaders[i].thumb ? "thumb" : NULL, sl->iheaders[i].thumb ? sl->iheaders[i].thumb : NULL, 
 				NULL);
 	      rnvxml_ec("sl:iheader", ratts);
 	    }

@@ -143,6 +143,7 @@ sl.iheader = element sl:iheader { attribute xml:id { xsd:NCName } ,
 	     	     		  attribute label { text } ,
 	     	     		  attribute order { xsd:string { pattern="[0-9]+" } } ,
 	     	     		  attribute path { text } ,
+	     	     		  attribute thumb { text }? ,
 				  attribute period { text }? }
 
 sl.images = element sl:images {

@@ -21,6 +21,21 @@
 	     description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
 </xsl:template>
 
+<xsl:template name="esp-sign-thumb">
+  <xsl:variable name="ref" select="@ref"/>
+  <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
+  <xsl:choose>
+    <xsl:when test="string-length(@thumb)>0">
+      <esp:image class="middle" file="{$base}/{$header/@thumb}/{@loc}"
+		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <esp:image class="middle" height="30px" file="{$base}/{$header/@path}/{@loc}"
+		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <xsl:template mode="mcol" match="sl:sign">
   <!--<xsl:message>sl:sign <xsl:value-of select="@n"/></xsl:message>-->
   <xsl:variable name="img" select="(.//sl:images/sl:i[@loc])[1]"/>
@@ -44,7 +59,7 @@
 	  <xsl:if test="count($img)>0">
 	    <xsl:for-each select="$img">
 	      <p class="sl-td-sign">
-		<xsl:call-template name="esp-sign-image">
+		<xsl:call-template name="esp-sign-thumb">
 		  <xsl:with-param name="height" select="'40px'"/>
 		</xsl:call-template>
 	      </p>

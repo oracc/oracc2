@@ -40,6 +40,7 @@ enum asl_a_type
   asl_a_sexified,
   asl_a_sort,
   asl_a_subname,
+  asl_a_thumb,
   asl_a_title,
   asl_a_token,
   asl_a_type,

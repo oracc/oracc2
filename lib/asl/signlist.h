@@ -30,6 +30,7 @@ struct sx_iheader
   const char *id;
   const char *label;
   const char *path;
+  const char *thumb;
   const char *period;
 };
 
