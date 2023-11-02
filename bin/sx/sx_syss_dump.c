@@ -30,11 +30,22 @@ sx_syss_dump(FILE *fp, struct sl_signlist *sl)
 		fprintf(stderr, "@sys on sl_inst which is not sign or form\n");
 	      if (oid)
 		{
-		  fprintf(fp, "%s\t%s\t%s\t%s\t%s\t%s\n",
+		  const char *colon = "";
+		  const char *subname = "";
+		  if (sys->subname)
+		    {
+		      colon = ":";
+		      subname = sys->subname;
+		    }
+		  fprintf(fp, "%s\t%s\t%s\t%s%s%s\t%s\t%s\n",
 			  oid,
 			  sys->ip->type == 's' ? "sign" : "form",
 			  n,
-			  sys->name, (sys->v ? (ccp)sys->v : ""), (sys->vv ? (ccp)sys->vv : ""));
+			  sys->name,
+			  colon,
+			  subname,
+			  (sys->v ? (ccp)sys->v : ""),
+			  (sys->vv ? (ccp)sys->vv : ""));
 		}
 	    }
 	}

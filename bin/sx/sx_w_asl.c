@@ -101,7 +101,7 @@ sx_w_a_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 	{
 	  Mloc *m;
 	  for (m = list_first(sl->images); m; m = list_next(sl->images))
-	    fprintf(f->fp, "@images %s", (char*)m->user);
+	    fprintf(f->fp, "@images %s\n\n", (char*)m->user);
 	}
 #if 0
       if (nn)
@@ -327,7 +327,14 @@ sx_w_a_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
       struct sl_sys *sp;
       for (sp = list_first(ip->sys); sp; sp = list_next(ip->sys))
 	{
-	  fprintf(f->fp, "@sys\t%s %s", sp->name, sp->v);
+	  const char *colon = "";
+	  const char *subname = "";
+	  if (sp->subname)
+	    {
+	      colon = ":";
+	      subname = sp->subname;
+	    }
+	  fprintf(f->fp, "@sys\t%s%s%s %s", sp->name, colon, subname, sp->v);
 	  if (sp->vv)
 	    fprintf(f->fp, " => %s\n", sp->vv);
 	  else

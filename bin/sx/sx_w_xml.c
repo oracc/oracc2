@@ -362,7 +362,10 @@ sx_w_x_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
       struct sl_sys *sp;
       for (sp = list_first(ip->sys); sp; sp = list_next(ip->sys))
 	{
-	  ratts = rnvval_aa("x", "name", sp->name, "token", sp->v, NULL);
+	  if (sp->subname)
+	    ratts = rnvval_aa("x", "name", sp->name, "subname", sp->subname, "token", sp->v, NULL);
+	  else
+	    ratts = rnvval_aa("x", "name", sp->name, "token", sp->v, NULL);
 	  rnvxml_ea("sl:sys", ratts);
 	  if (sp->vv)
 	    rnvxml_ch((ccp)xmlify((uccp)sp->vv));

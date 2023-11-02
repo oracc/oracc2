@@ -992,9 +992,13 @@ asl_bld_sys(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned co
     mesg_verr(locp, "misplaced @sys: must belong to @sign or @form");
   if (ip)
     {
-      if (!hash_find(sl->sysdefs, (uccp)sysname))
+      char *xsysname = pool_copy(sysname, sl->p);
+      char *subname = strchr(xsysname, ':');
+      if (subname)
+	*subname++ = '\0';
+      if (!hash_find(sl->sysdefs, (uccp)xsysname))
 	{
-	  mesg_verr(locp, "undefined system name %s in @sys", sysname);
+	  mesg_verr(locp, "undefined system name '%s' in @sys", xsysname);
 	  return;
 	}
       /* FIXME: need to validate values as well, but probably best
@@ -1007,7 +1011,9 @@ asl_bld_sys(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned co
 	  list_add(sl->syslists, ip->sys);
 	}
       struct sl_sys *sp = memo_new(sl->m_syss);
-      sp->name = sysname;
+      sp->name = xsysname;
+      if (subname)
+	sp->subname = subname;
       sp->v = v;
       sp->vv = pool_copy(vv, sl->p);
       sp->ip = ip;

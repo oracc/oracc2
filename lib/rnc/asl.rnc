@@ -100,7 +100,7 @@ sl.sign    =
           | sl.lit
           | sl.note
           | sl.pname
-		| sl.sys
+	  | sl.sys
           | sl.uname
           | sl.uage
           | sl.ucun)*),
@@ -134,7 +134,10 @@ sl.listdef = element sl:listdef { attribute name { xsd:NCName | "U+" } , element
 
 sl.sysdef  = element sl:sysdef { attribute name { xsd:NCName } , element sl:info { text }? , sl.notes }
 
-sl.sys 	   = element sl:sys { attribute name { xsd:NCName } , attribute token { text } , text }
+sl.sys 	   = element sl:sys { attribute name { xsd:NCName } ,
+	     	     	      attribute subname { text }? ,
+	     	     	      attribute token { text } ,
+			      text }
 
 sl.iheader = element sl:iheader { attribute xml:id { xsd:NCName } ,
 	     	     		  attribute label { text } ,

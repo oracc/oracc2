@@ -221,6 +221,7 @@ struct sl_sysdef
 struct sl_sys
 {
   const char *name;
+  const char *subname; /* post-colon name part */
   unsigned const char *v;
   unsigned const char *vv;
   struct sl_inst *ip;
