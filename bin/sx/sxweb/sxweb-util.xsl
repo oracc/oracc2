@@ -25,7 +25,7 @@
   <xsl:variable name="ref" select="@ref"/>
   <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
   <xsl:choose>
-    <xsl:when test="string-length(@thumb)>0">
+    <xsl:when test="string-length($header/@thumb)>0">
       <esp:image class="middle" file="{$base}/{$header/@thumb}/{@loc}"
 		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
     </xsl:when>
