@@ -240,9 +240,48 @@
       </p>
       <xsl:if test="sl:list">
 	<p>
-	  Lists:
-	  <xsl:for-each select="sl:list">
-	    <xsl:value-of select="@n"/>
+	  <span class="sl-ihead">LISTS</span>
+	  <span class="sl-ibody">
+	    <xsl:for-each select="sl:list">
+	      <xsl:value-of select="@n"/>
+	      <xsl:if test="not(position()=last())">
+		<xsl:text>; </xsl:text>
+	      </xsl:if>
+	    </xsl:for-each>
+	  </span>
+	</p>
+      </xsl:if>
+      <xsl:if test="sl:aka">
+	<p>
+	  <span class="sl-ihead">AKA</span>
+	  <span class="sl-ibody">
+	    <xsl:for-each select="sl:aka">
+	      <xsl:value-of select="@n"/>
+	      <xsl:if test="not(position()=last())">
+		<xsl:text>; </xsl:text>
+	      </xsl:if>
+	    </xsl:for-each>
+	  </span>
+	</p>
+      </xsl:if>
+      <xsl:if test="sl:sys">
+	<p>
+	  <span class="sl-ihead">SYS</span>
+	  <xsl:for-each select="sl:sys">
+	    <span class="sl-sys-name">
+	      <xsl:value-of select="@name"/>
+	      <xsl:if test="@subname">
+		<xsl:value-of select="concat(':',@subname)"/>
+	      </xsl:if>
+	      <xsl:text>:&#xa0;</xsl:text>
+	    </span>
+	    <span class="sl-sys-token">
+	      <xsl:value-of select="@token"/>
+	      <xsl:if test="string-length(text())>0">
+		<xsl:text>&#x2192;</xsl:text>
+		<xsl:value-of select="text()"/>
+	      </xsl:if>
+	    </span>
 	    <xsl:if test="not(position()=last())">
 	      <xsl:text>; </xsl:text>
 	    </xsl:if>

@@ -12,8 +12,11 @@
 
 iframe { margin-width: 10px; border: none; border-left: 2px; }
 
-/* .image-insts table { border-bottom: solid; } */
+.image-insts { margin-top: 1em; }
+
 .pctc-info { border-bottom: solid; }
+
+.pctc-info p { margin: 0; }
 
 .ii-signs { margin-right: 10px; padding-right: 10px; padding-left: 0px; margin-left: 0px; }
 
@@ -51,3 +54,11 @@ td.name-nosign { width: 10%; background-color: lightgray; }
 td.name-sign img { }
 
 .pcsl-oid { font-weight: normal; font-size: 80%; }
+
+.sl-ihead { font-size: 80%; font-weight: bold; padding-right: 1em; }
+
+.sl-ibody { font-size: 90%; font-weight: normal; }
+
+.sl-sys-name { font-size: 80%; font-weight: normal; }
+
+.sl-sys-token { font-size: 90%; font-weight: normal; }
