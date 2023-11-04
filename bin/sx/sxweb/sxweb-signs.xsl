@@ -42,7 +42,7 @@
       <esp:name><xsl:value-of select="$nn"/></esp:name>
       <esp:title>
 	<xsl:value-of select="$nn"/>
-	<xsl:if test="/*/@project='pcsl'">
+	<xsl:if test="/*/@signlist='pcsl'">
 	  <xsl:if test="not(sl:smap) and not(sl:uage='0')">
 	    <xsl:text>: </xsl:text>
 	    <xsl:value-of select=".//sl:uname[1]"/>
@@ -192,7 +192,7 @@
       <h2>
 	<b>
 	  <xsl:choose>
-	    <xsl:when test="/*/@project='pcsl'">
+	    <xsl:when test="/*/@signlist='pcsl'">
 	      <xsl:value-of select="@n"/>
 	      <xsl:text>: </xsl:text>
 	      <xsl:value-of select=".//sl:uname"/>
@@ -312,7 +312,7 @@
 	  </p>
 	</xsl:when>
 	<xsl:otherwise>
-	  <xsl:if test="/*/@project = 'pcsl'">
+	  <xsl:if test="/*/@signlist = 'pcsl'">
 	    <xsl:variable name="o" select="@xml:id"/>
 	    <!--retrieve the count node without changing context -->
 	    <xsl:variable name="dot" select="."/>
@@ -412,7 +412,7 @@
       </div>
     </xsl:if>
 
-    <xsl:if test="not(/*/@project = 'pcsl')">
+    <xsl:if test="not(/*/@signlist = 'pcsl')">
       <xsl:call-template name="lex-sign"/>
     </xsl:if>
 
@@ -432,7 +432,7 @@
     </xsl:if>
     <xsl:if test="sl:form">
       <div class="{$project}-signforms">
-	<xsl:if test="not(/*/@project = 'pcsl')">
+	<xsl:if test="not(/*/@signlist = 'pcsl')">
 	  <h2 class="sl-signforms">Variant sign-forms</h2>
 	</xsl:if>
 	<xsl:apply-templates select="sl:form"/>
