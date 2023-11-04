@@ -30,6 +30,7 @@ int list_dump = 0;
 int list_names_mode = 0;
 int listdef_check = 0;
 int oid_list = 0;
+int oid_tab = 0;
 int sll_output = 0;
 int sortcode_output = 0;
 int syss_dump = 0;
@@ -183,6 +184,9 @@ main(int argc, char * const*argv)
       if (oid_list)
 	sx_oid_list(sl);
       
+      if (oid_tab)
+	sx_oid_tab(sl);
+      
       if (asl_output)
 	sx_walk(sx_w_asl_init(stdout, "-"), sl);
 
@@ -253,10 +257,10 @@ opts(int opt, char *arg)
       missing_lists = NULL;
       break;
     case 'O':
-      oid_list = 2;
+      oid_tab = 1;
       break;
     case 'o':
-      oid_list = 1;
+      ++oid_list;
       break;
     case 'q':
       quiet = 1;
@@ -306,8 +310,9 @@ help(void)
   help_option("", "(All the following outputs are written to stdout)\n");
   help_option("a", "asl-output: this adds @letter and @group tags. See also -i.");
   help_option("j", "json-output: a JSON version of the signlist; beta");
-  help_option("o/O", "oid-output: two-column table of OID and sign/form names.\n"
-	      	     "\t\tWith 'O' dump all OIDs, with 'o' omit OIDs with uage=0.");
+  help_option("o[o]", "oid-output: two-column table of OID and sign/form names.\n"
+	      	     "\t\tWith 'oo' dump all OIDs, with 'o' omit OIDs with uage=0.");
+  help_option("O", "oid-index.tab output for use with the OID resolver\n");
   help_option("s", "sll-output: data for the Sign-List-Library, sll, also used by GVL");
   help_option("S", "Sortcode-output: show a list of OIDs and sort-codes");
   help_option("x", "xml-output: an XML version of the signlist");

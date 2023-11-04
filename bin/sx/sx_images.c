@@ -46,7 +46,7 @@ sx_images(struct sl_signlist *sl)
 		      else if (!strcmp((ccp)mr->rows[i][0], "@thumb"))
 			sl->iheaders[nm].thumb = (ccp)mr->rows[i][1];
 		      else
-			fprintf(stderr, "%s:%d: unknown @-command in image map\n", m->user, i);
+			fprintf(stderr, "%s:%d: unknown @-command in image map\n", (char*)m->user, i);
 		      break;
 		    case '#':
 		      break;

@@ -107,6 +107,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@@				{ /* no-op */ }
 ^@end/[ \t].*\n        	       	{ atcmd(END,E); }
 ^@signlist/[ \t]+      		{ atcmd(SIGNLIST,S); }
+^@project/[ \t]+      		{ atcmd(PROJECT,S); }
 ^@listdef/[ \t]+       		{ atcmd(LISTDEF,L); }
 ^@sysdef/[ \t]+       		{ Ynext=S; atcmd(SYSDEF,Y); }
 ^@images/[ \t]+			{ atcmd(IMAGES,S); }

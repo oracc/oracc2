@@ -5,6 +5,7 @@ namespace sl = "http://oracc.org/ns/sl/1.0"
 start =
   element sl:signlist {
     attribute project { text } ,
+    attribute signlist { text } ,
     sl.notes ,
     sl.listdef* ,
     sl.sysdef* ,

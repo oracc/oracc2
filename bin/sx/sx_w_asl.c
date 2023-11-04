@@ -69,7 +69,8 @@ sx_w_a_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 {
   if (sx_pos_init == p)
     {
-      fprintf(f->fp, "@signlist %s\n", sl->project);
+      fprintf(f->fp, "@project %s\n", sl->project);
+      fprintf(f->fp, "@signlist %s\n", sl->signlist);
       /* Normally no blank line before notes; @signlist is an exception */
       if (sl->notes && list_len(sl->notes->notes))
 	fputc('\n', f->fp);

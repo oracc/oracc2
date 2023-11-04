@@ -36,7 +36,8 @@ struct sx_iheader
 
 struct sl_signlist
 {
-  const char *project;
+  const char *signlist; /* The signlist name may vary from the host project, e.g., pcsl in pctc */
+  const char *project;  /* The project member is the host project for the signlist, e.g., pctc */
   struct sl_inst *notes;/* Allow inotes etc., after @signlist */
   Hash *listdefs; 	/* Hash of signlist names; value is struct sl_listdef */
   Hash *sysdefs; 	/* Hash of system names; value is struct sl_sysdef */
@@ -235,6 +236,7 @@ struct sl_letter
 			   directory names, e.g., l0065, l0352, but
 			   not suitable for sorting */
   const char *lname;	/* letter name set for number_group */
+  const char *xmlid; 	/* formatted code for use as xml:id */
   Hash *hgroups;	/* hash of groups used while building structure */
   struct sl_group *groups;
   int ngroups;
@@ -289,7 +291,7 @@ struct sl_sign
 			   hashed: '#digest_by_oid' and
 			   '#digest_by_name'; the hashvals for these
 			   are both sl_compound_digest */
-  unsigned const char *letter;
+  struct sl_letter *letter;
   unsigned const char *group;
   struct sl_inst **lists;
   int nlists;

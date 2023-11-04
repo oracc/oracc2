@@ -638,12 +638,6 @@ sx_marshall(struct sl_signlist *sl)
       free(tmp);
     }
 
-#if 0
-000ab
-0123
-ab000
-#endif
-  
   for (i = 0; i < nlets; ++i)
     {
       const char **grps = NULL;

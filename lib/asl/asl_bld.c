@@ -198,6 +198,7 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
   struct sl_token *tokp;
   unsigned char *group;
   int number_group = 0;
+  static int nth_num_letter = 0;
 
   s->sl = sl;
   
@@ -378,13 +379,20 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
       if (!(lp = hash_find(sl->hletters, letter)))/* AB1: hash of letters in signlist;
 						     value is struct sl_letter* */
 	{
+	  char id[32];	  
 	  lp = memo_new(sl->m_letters);
 
 	  hash_add(sl->hletters, letter, lp);
-	  
+
+
 	  lp->name = letter;
 	  lp->lname = lname;
 	  lp->code = code;
+	  if (lp->code < 0)
+	    sprintf(id, "ln%04d", ++nth_num_letter);
+	  else
+	    sprintf(id, "l%04d", lp->code);
+	  lp->xmlid = pool_copy(id, sl->p);
 	  lp->hgroups = hash_create(32);
 	}
       else if (code == -1)
@@ -397,6 +405,9 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
 							   value is list of struct sl_sign * */
       list_add(gslist, s->inst);			/* AB3: list of signs in group,
 					   		   data member is struct sl_inst* */ /* WHAT ABOUT @comp ? */
+
+      /* set the sign's pointer to it's letter data */
+      s->letter = lp;
     }
   else
     mesg_verr(locp, "no sign name found in GDL of %s", s->name);
@@ -967,17 +978,23 @@ asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl)
 }
 
 void
-asl_bld_signlist(Mloc *locp, const unsigned char *n, int list)
+asl_bld_signlist(Mloc *locp, const unsigned char *n, int project)
 {
-  curr_asl = asl_bld_init();
-  curr_asl->mloc = *locp;
+  if (!curr_asl)
+    {
+      curr_asl = asl_bld_init();
+      curr_asl->mloc = *locp;
+      curr_asl->curr_inst = curr_asl->notes = memo_new(curr_asl->m_insts);
+    }
   if (n)
     {
       while (isspace(*n))
 	++n;
-      curr_asl->project = (ccp)n;
+      if (project)
+	curr_asl->project = (ccp)n;
+      else
+	curr_asl->signlist = (ccp)n;
     }
-  curr_asl->curr_inst = curr_asl->notes = memo_new(curr_asl->m_insts);
 }
 
 void

@@ -38,6 +38,7 @@ enum asl_a_type
   asl_a_qv,
   asl_a_ref,
   asl_a_sexified,
+  asl_a_signlist,
   asl_a_sort,
   asl_a_subname,
   asl_a_thumb,
