@@ -53,6 +53,12 @@ sxinst signlist-sl.js signlist/00res/js/sl.js
 
 cp -f 00lib/signlist-x-*.xml signlist/00web
 
+slname=`oraccopt . asl-signlist`
+if [[ "$slname" == "" ]]; then
+    slname=project.asl
+fi
+sx -O 00lib/$slname >signlist/02pub/oid-index.tab
+
 libscripts=$ORACC_BUILDS/lib/scripts
 
 xmllint --xinclude - < $libscripts/sxweb-structure.xsl >01tmp/sxweb-structure-xi.xsl
