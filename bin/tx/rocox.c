@@ -17,7 +17,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL;
   
-  options(argc, argv, "c:C:fnr:R:tTx:X?");
+  options(argc, argv, "c:C:fhnr:R:tx:X?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
@@ -48,7 +48,11 @@ opts(int opt, char *arg)
     case 'f':
       fields_from_row1 = 1;
       break;
-    case 'n':
+    case 'h':
+      roco_html_ns = 1;
+      xmltag = "table";
+      break;
+    case 'n':      
       roco_newline = 1;
       break;
     case 'R':
@@ -57,8 +61,6 @@ opts(int opt, char *arg)
     case 'r':
       rowtag = arg;
       break;
-    case 'T':
-      xmltag = "table";
     case 't':
       if (!xmltag)
 	xmltag = "-";

@@ -271,7 +271,7 @@
 	    <span class="sl-sys-name">
 	      <xsl:value-of select="@name"/>
 	      <xsl:if test="@subname">
-		<xsl:value-of select="concat(':',@subname)"/>
+		<span class="sl-sys-subname"><xsl:value-of select="concat(':',@subname)"/></span>
 	      </xsl:if>
 	      <xsl:text>:&#xa0;</xsl:text>
 	    </span>

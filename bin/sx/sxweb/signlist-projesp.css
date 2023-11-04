@@ -55,10 +55,12 @@ td.name-sign img { }
 
 .pcsl-oid { font-weight: normal; font-size: 80%; }
 
-.sl-ihead { font-size: 80%; font-weight: bold; padding-right: 1em; }
+.sl-ihead { font-size: 75%; font-weight: bold; padding-right: 1em; }
 
 .sl-ibody { font-size: 90%; font-weight: normal; }
 
-.sl-sys-name { font-size: 80%; font-weight: normal; }
+.sl-sys-name { font-size: 85%; font-weight: bold; }
+
+.sl-sys-subname { font-size: 85%; font-weight: normal; }
 
 .sl-sys-token { font-size: 90%; font-weight: normal; }
