@@ -15,7 +15,7 @@ cgi_arg(const char *arg, const char *val)
 void
 do302(const char *loc)
 {
-  printf("HTTP/1.1 302 Found\nLocation: %s\n\n", loc);
+  printf("Status: 302 Found\nLocation: %s\n\n", loc);
   exit(0);
 }
 

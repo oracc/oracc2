@@ -40,7 +40,10 @@ oid(const char *e2)
     {
       const char *v;
       v = dbx_key(dbi, e2);
-      do302(v);
+      if (v && 'u' == *v && '\t' == v[1])
+	do302(v+2);
+      else
+	do404();
       dbx_term(dbi);
       exit(0);
     }

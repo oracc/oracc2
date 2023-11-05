@@ -41,7 +41,7 @@ sx_oid_tab(struct sl_signlist *sl)
       struct sl_sign *s = sl->signs[i];
       if (s->type == sx_tle_sign && !s->xref)
 	if (s->oid)
-	  printf("%s\twww/%s/signlist/%s/%s/index.html\n",
+	  printf("%s\tu\t/%s/signlist/%s/%s/index.html\n",
 		 s->oid, sl->project, s->letter->xmlid, s->oid);
     }
   for (i = 0; i < sl->nforms; ++i)
@@ -55,7 +55,7 @@ sx_oid_tab(struct sl_signlist *sl)
 	      if ('f' == ip->type)
 		ip = ip->parent_s;
 	      if (ip)
-		printf("%s\twww/%s/signlist/%s/%s/index.html\n",
+		printf("%s\tu\t/%s/signlist/%s/%s/index.html\n",
 		       f->oid, sl->project, ip->u.s->letter->xmlid, ip->u.s->oid);
 	    }
 	}

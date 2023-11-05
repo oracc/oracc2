@@ -1,6 +1,5 @@
 #!/bin/sh
-
-function check_env_or_die {
+check_env_or_die () {
     if [ "$2" = "" ]; then
 	echo oracc-subst.sh: environment variable $1 is not set--add it to oraccenv.sh. Stop.
 	exit 1
