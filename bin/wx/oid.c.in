@@ -1,0 +1,111 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <dbxlib.h>
+#include "resolver.h"
+#include "ccgi/ccgi.h"
+
+extern void dump_vl(CGI_varlist *vl);
+
+void
+glossary_article_xml(const char *lng, const char *art)
+{
+  print_hdr_xml();
+  execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
+	project,
+	art,
+	lng,
+	"xml",
+	NULL);
+}
+
+void
+glossary_article(const char *lng, const char *art)
+{
+  print_hdr();
+  execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
+	project,
+	art,
+	lng,
+	NULL);
+}
+
+void
+oid(const char *e2)
+{
+  Dbi_index *dbi = dbx_proj_oid(project);
+  if (dbi)
+    {
+      const char *v;
+      v = dbx_key(dbi, e2);
+      do302(v);
+      dbx_term(dbi);
+      exit(0);
+    }
+  else
+    {
+      print_hdr();
+      execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
+	    project,
+	    e2,
+	    NULL);
+    }
+}
+
+static int
+countv(CGI_varlist *v)
+{
+  int i = 0;
+  const char *name;
+  for (name = CGI_first_name(v);
+       name != 0;
+       name = CGI_next_name(v))
+    ++i;
+  return i;
+}
+
+const char *
+cgi_val(CGI_varlist *v, const char *name, const char *deflt)
+{
+  CGI_value *val = CGI_lookup_all(v, name);
+  if (val)
+    return val[0];
+  else
+    return deflt;
+}
+
+void
+instances(const char *lang, const char *id)
+{
+  CGI_varlist *v = NULL;
+  int vcount = -1;
+  const char **va = NULL;
+
+  fprintf(stderr, "instances handler\n");
+
+  if (query_string)
+    setenv("QUERY_STRING", query_string, 1);
+  
+  v = CGI_get_query(v);
+  v = CGI_get_post(v, NULL);
+  dump_vl(v);
+  vcount = countv(v);
+  
+  va = malloc(8*sizeof(char*));
+  va[0] = "/usr/bin/perl";
+  va[1] = "@@ORACC_BUILDS@@/bin/xis-resolver.plx";
+  va[2] = strdup(project ? project : "nul");
+  va[3] = strdup(lang);
+  va[4] = strdup(id);
+  va[5] = v ? cgi_val(v, "page", "1") : "1";
+  va[6] = v ? cgi_val(v, "size", "25") : "25";
+  va[7] = v ? cgi_val(v, "mode", "html") : "html";
+  va[8] = v ? cgi_val(v, "all", "") : "";
+  va[9] = NULL;
+  execv("/usr/bin/perl", (char*const*)va);
+  fprintf(stderr, "execv /usr/bin/perl failed\n");  
+  exit(1);
+}
+

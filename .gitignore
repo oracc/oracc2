@@ -10,6 +10,7 @@ bin/tx/repx
 bin/tx/catx
 bin/gx/gx
 bin/jx/jx
+bin/wx/wx
 bin/xx/concord
 bin/xx/dbx
 bin/xx/dbix
@@ -20,6 +21,7 @@ bin/xx/xmlify
 include/pcre2.h
 
 # Gperf derivatives
+builtins.c
 cbdpos.c
 cbdrws.c
 cbdtags.c
@@ -29,11 +31,27 @@ lang_mode.c
 langrtl.c
 oid_domain.c
 oid_type.c
+pqx_h_tab.c
+selections.c
 sll_signlist.c
 sllext.c
 iomethod.c
 
 # .in derivatives
+bin/wx/oai.c
+bin/wx/oid.c
+bin/wx/oracc-server.c
+bin/wx/or_builtins.c
+bin/wx/or_common.c
+bin/wx/or_gdf.c
+bin/wx/or_pqx.c
+bin/wx/or_response.c
+bin/wx/or_stable_uris.c
+bin/wx/p3.c
+bin/wx/pqx_map.c
+bin/wx/sl.c
+bin/wx/xff.c
+bin/wx/xmlrpc.c
 fname.c
 slix.c
 mktablst

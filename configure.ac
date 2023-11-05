@@ -83,6 +83,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/sx/Makefile
 		 bin/sx/sxweb/Makefile
 		 bin/tx/Makefile
+		 bin/wx/Makefile
 		 bin/xx/Makefile
                  ])
 AC_OUTPUT
