@@ -58,6 +58,9 @@ if [[ "$slname" == "" ]]; then
     slname=project.asl
 fi
 sx -O 00lib/$slname >signlist/02pub/oid-index.tab
+mkdir -p signlist/02pub/oid
+dbix -d signlist/02pub/oid -n oid signlist/02pub/oid-index.tab
+chmod -R o+r signlist/02pub
 
 libscripts=$ORACC_BUILDS/lib/scripts
 
