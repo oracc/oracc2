@@ -10,8 +10,10 @@ bin/tx/repx
 bin/tx/catx
 bin/gx/gx
 bin/jx/jx
-bin/xx/tlitsig
 bin/xx/concord
+bin/xx/dbx
+bin/xx/dbix
+bin/xx/tlitsig
 bin/xx/xmlify
 
 # MacOS convenience link to external library header
