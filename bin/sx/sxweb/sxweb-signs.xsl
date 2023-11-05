@@ -213,7 +213,7 @@
 	    <esp:link bookmark="form{count(preceding-sibling::sl:form)}">
 	      <xsl:value-of select="@n"/>
 	      <xsl:if test="sl:images/sl:i[@loc]">
-		<xsl:text> = </xsl:text>
+		<xsl:text>&#xa0;=&#xa0;</xsl:text>
 		<xsl:variable name="base" select="'../../../pctc'"/>
 		<xsl:for-each select="sl:images/sl:i[@loc][1]">
 		  <xsl:variable name="ref" select="@ref"/>
