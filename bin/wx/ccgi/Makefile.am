@@ -1,4 +1,4 @@
-include ../../../../oracc-am-rules.txt
+include ../../../oracc-am-rules.txt
 SUBDIRS=
 noinst_LTLIBRARIES=libccgi.la
 libccgi_la_SOURCES=ccgi.c 

@@ -12,6 +12,7 @@ if [ ! $(whoami) = "root" ]; then
     echo Oracc preconfiguration: must run as root. Stop.
     exit 1
 fi
+. ./oraccsed.sh
 httpduser=`./httpduser.sh`
 if [ "$httpduser" = "" ]; then
     echo 'Oracc preconfiguration: unable to set httpduser (do you need to install Apache?). Stop.'
