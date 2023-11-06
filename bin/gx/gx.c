@@ -69,7 +69,6 @@ struct entry*curr_entry;
 
 extern int parser_status;
 
-int cbddebug;
 extern int cbdparse(void);
 extern void cbdrestart(FILE*);
 

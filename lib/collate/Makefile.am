@@ -1,3 +1,5 @@
+include ../../oracc-am-rules.txt
+
 AM_CPPFLAGS=-I../include
 
 COLLSRCS=unicode.c
@@ -16,3 +18,9 @@ tablist.c: mktablst unicode.c
 
 unicode.c: seq2c unicode.seq iso10646
 	perl ./seq2c $(srcdir)/unicode.seq
+
+mktablst: mktablst.in
+	$(ORACCIFY) $<
+
+seq2c: seq2c.in
+	$(ORACCIFY) $<
