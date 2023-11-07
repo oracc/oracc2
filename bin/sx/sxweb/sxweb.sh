@@ -59,12 +59,12 @@ cp -f 00lib/signlist-x-*.css signlist/00res/css
 #    slname=project.asl
 #fi
 
+libscripts=$ORACC_BUILDS/lib/scripts
+
 xsltproc $libscripts/sxweb-oid-tab.xsl 02xml/sl.xml >signlist/02pub/oid-index.tab
 mkdir -p signlist/02pub/oid
 dbix -d signlist/02pub/oid -n oid signlist/02pub/oid-index.tab
 chmod -R o+r signlist/02pub
-
-libscripts=$ORACC_BUILDS/lib/scripts
 
 xmllint --xinclude - < $libscripts/sxweb-structure.xsl >01tmp/sxweb-structure-xi.xsl
 
