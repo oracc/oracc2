@@ -54,12 +54,12 @@ sxinst signlist-sl.js signlist/00res/js/sl.js
 cp -f 00lib/signlist-x-*.xml signlist/00web
 cp -f 00lib/signlist-x-*.css signlist/00res/css
 
-slname=`oraccopt . asl-signlist`
-if [[ "$slname" == "" ]]; then
-    slname=project.asl
-fi
-#sx -O 00lib/$slname >signlist/02pub/oid-index.tab
-oid-esp2.sh
+#slname=`oraccopt . asl-signlist`
+#if [[ "$slname" == "" ]]; then
+#    slname=project.asl
+#fi
+
+xsltproc $libscripts/sxweb-oid-tab.xsl 02xml/sl.xml >signlist/02pub/oid-index.tab
 mkdir -p signlist/02pub/oid
 dbix -d signlist/02pub/oid -n oid signlist/02pub/oid-index.tab
 chmod -R o+r signlist/02pub
