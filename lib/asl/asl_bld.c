@@ -891,7 +891,8 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
       sl->curr_sign->pname = pool_copy(m, sl->p);
       sl->curr_inst = sl->curr_sign->inst;
 
-      /* There is no current sign in effect after a tle except for componly in a form */
+      /* At this point sl->curr_sign is still set, e.g., to the @lref;
+	 this means we can use the sign's inst for the list inst */
       if (type == sx_tle_lref)
 	{
 	  if (!asl_list_lref_guard(locp, sl, n, sl_ll_lref))
@@ -899,13 +900,14 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
 	      struct sl_list *l = memo_new(sl->m_lists);
 	      l->name = n;
 	      l->type = sl_ll_lref;
-	      sl->curr_inst = l->inst = memo_new(sl->m_insts);
+	      sl->curr_inst = l->inst = sl->curr_sign->inst;
 	      hash_add(sl->hlentry, n, l);
 	      asl_register_list_item(locp, sl, (ccp)n, l);
 	    }
 	}
       else
 	sl->curr_inst = sl->curr_sign->inst;
+      /* There is no current sign in effect after a tle except for componly in a form */
       sl->curr_sign = NULL;
     }
 }
