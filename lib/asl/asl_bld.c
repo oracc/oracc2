@@ -14,7 +14,7 @@
 extern int asl_literal_flag;
 
 static void check_flags(Mloc* locp, char *n, int *q, int *l);
-static void asl_register_list_item(Mloc *locp, struct sl_signlist *sl, const char *n, struct sl_list *l);
+static void asl_register_list_item(Mloc *locp, struct sl_signlist *sl, struct sl_list *l);
 
 struct sl_signlist *curr_asl = NULL;
 
@@ -485,14 +485,14 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 }
 
 static void
-asl_register_list_item(Mloc *locp, struct sl_signlist *sl, const char *n, struct sl_list *l)
+asl_register_list_item(Mloc *locp, struct sl_signlist *sl, struct sl_list *l)
 {
   /* Check that the @list is valid against the signlists's listdefs
      and register it as seen */
   char name[32];
-  if (strlen((ccp)n) < 32)
+  if (strlen((ccp)l->name) < 32)
     {
-      strcpy(name, (ccp)n);
+      strcpy(name, (ccp)l->name);
       char *end = strpbrk(name, "0123456789");
       if (end)
 	{
@@ -502,7 +502,7 @@ asl_register_list_item(Mloc *locp, struct sl_signlist *sl, const char *n, struct
 	    {
 	      if (!(hash_find(ldp->known, l->name)))
 		{
-		  mesg_verr(locp, "%s is not a known item in list %s", n, name);
+		  mesg_verr(locp, "%s is not in @listdef %s", l->name+strlen(name), name);
 		}
 	      else
 		{
@@ -511,11 +511,11 @@ asl_register_list_item(Mloc *locp, struct sl_signlist *sl, const char *n, struct
 		}
 	    }
 	  else if (!sll_signlist(name,strlen(name)))
-	    mesg_verr(locp, "@list %s has unknown list-name part %s", n, name);
+	    mesg_verr(locp, "@list %s has unknown list-name part %s", l->name, name);
 	}
       else
 	{
-	  mesg_verr(locp, "@list %s has no digits", n);
+	  mesg_verr(locp, "@list %s has no digits", l->name);
 	  return;
 	}
     }
@@ -603,7 +603,7 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
 	}
     }
 
-  asl_register_list_item(locp, sl, (ccp)n, l);
+  asl_register_list_item(locp, sl, l);
   
   i->u.l = l;
 
@@ -902,7 +902,7 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
 	      l->type = sl_ll_lref;
 	      sl->curr_inst = l->inst = sl->curr_sign->inst;
 	      hash_add(sl->hlentry, n, l);
-	      asl_register_list_item(locp, sl, (ccp)n, l);
+	      asl_register_list_item(locp, sl, l);
 	    }
 	}
       else
