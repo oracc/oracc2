@@ -11,6 +11,7 @@
     extension-element-prefixes="ex"
     version="1.0">
 
+
 <xsl:param name="title"/>
 <xsl:param name="index"/>
 
@@ -29,8 +30,8 @@
       <body>
 	<table class="pretty">
 	  <thead>
-	    <td style="width:20%;">OID</td>
-	    <td style="width:30%;">NAME</td>
+	    <!--<td style="width:20%;">OID</td>-->
+	    <td style="width:40%;">NAME</td>
 	    <td style="width:10%;">UAGE</td>
 	    <td style="width:40%;">IMAGE</td>
 	  </thead>
@@ -42,13 +43,22 @@
 		<xsl:for-each select="document('sl.xml',/)">
 		  <xsl:variable name="n" select="id($xid)"/>
 		  <tr>
-		    <td><xsl:value-of select="$xid"/></td>
-		    <td><xsl:value-of select="$n/@n"/></td>
+		    <!--<td><xsl:value-of select="$xid"/></td>-->
+		    <td>
+		      <esp:link url="/{/*/@project}/signlist/{$xid}"><xsl:value-of select="$n/@n"/></esp:link>
+		    </td>
 		    <td><xsl:value-of select="$n/sl:uage"/></td>
 		    <td>
-		      <xsl:for-each select="$n/sl:images/sl:i[@loc][1]">
-			<xsl:call-template name="esp-sign-image"/>
-		      </xsl:for-each>
+		      <xsl:choose>
+			<xsl:when test="$n/sl:images/sl:i[@loc][1]">
+			  <xsl:for-each select="$n/sl:images/sl:i[@loc][1]">
+			    <xsl:call-template name="esp-sign-image"/>
+			  </xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise>
+			  <p><xsl:value-of select="sl:note|sl:unote"/></p>
+			</xsl:otherwise>
+		      </xsl:choose>
 		    </td>
 		  </tr>
 	      </xsl:for-each>

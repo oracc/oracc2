@@ -18,7 +18,7 @@
   </xsl:for-each>
   <xsl:for-each select="*/sl:letter[@num='1']">
     <xsl:call-template name="oids">
-      <xsl:with-param name="n" select="'/number'"/>
+      <xsl:with-param name="n" select="'/numbers'"/>
     </xsl:call-template>
   </xsl:for-each>
 </xsl:template>
