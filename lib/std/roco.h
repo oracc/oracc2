@@ -22,6 +22,7 @@ struct roco
   const char *rowtag;    /* tag to wrap row output */
   const char *celtag;    /* tag to wrap cell output */
   int linkcells;	 /* The cells are Link* not char * */
+  int maxcols;
 };
 
 typedef struct roco Roco;
@@ -30,6 +31,7 @@ extern const char *roco_colorder;
 extern const char *roco_format;
 extern int roco_html_ns;
 extern int roco_newline;
+extern int roco_swap_axes;
 extern int roco_xmlify;
 
 /* Keep this on one line so GCC errors show the whole prototype
@@ -39,6 +41,7 @@ extern Hash *roco_hash(Roco *r);
 extern void roco_hash_hash(Hash *h, Roco *r);
 extern Roco *roco_load(const char *file, int fieldsr1, const char *xtag, const char *rtag, const char *ctag);
 extern void roco_row_format(FILE*fp, const unsigned char **row);
+extern Roco *roco_swap(Roco *r);
 extern void roco_write(FILE *fp, Roco *r);
 extern void roco_write_trtd(FILE *fp, Roco *r);
 extern void roco_write_xml(FILE *fp, Roco *r);

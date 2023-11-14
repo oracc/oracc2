@@ -12,6 +12,7 @@
 
 const char *roco_colorder = NULL;
 const char *roco_format = NULL;
+int roco_swap_axes = 0;
 int roco_newline = 0;
 int roco_xmlify = 1;
 
@@ -52,6 +53,8 @@ roco_load(const char *file, int fieldsr1,
 	    ++ncol;
 	  ++s;
 	}
+      if (ncol > r->maxcols)
+	r->maxcols = ncol;
       r->rows[i] = calloc(ncol+1, sizeof(unsigned char *));
       int col;
       for (col = 0, s = r->lines[i]; *s; ++col)
@@ -134,27 +137,39 @@ roco_write(FILE *fp, Roco *r)
 	    {
 	      if (j)
 		fputc('\t', fp);
-	      if (*r->rows[i][j])
+	      if (r->linkcells)
 		{
-		  if (r->linkcells)
+		  Link *lp;
+		  for (lp = (Link*)r->rows[i][j]; lp; lp = lp->next)
 		    {
-		      Link *lp;
-		      for (lp = (Link*)r->rows[i][j]; lp; lp = lp->next)
-			{
-			  fputs((const char *)lp->data, fp);
-			  if (lp->next)
-			    fputc('#', fp);
-			}
+		      fputs((const char *)lp->data, fp);
+		      if (lp->next)
+			fputc('#', fp);
 		    }
-		  else
+		}
+	      else
+		{
+		  if (*r->rows[i][j])
 		    fputs((const char *)r->rows[i][j], fp);
 		}
 	    }
 	  fputc('\n', fp);
-	}      
+	}
     }
 
   if (roco_colorder)
     free((void*)roco_format);
 }
 
+Roco *
+roco_swap(Roco *r)
+{
+  Roco *s = roco_create(r->maxcols, r->nlines);
+  int i, j;
+  for (i = 0; i < r->nlines; ++i)
+    {
+      for (j = 0; r->rows[i][j]; ++j)
+	s->rows[j][i] = r->rows[i][j];
+    }
+  return s;
+}

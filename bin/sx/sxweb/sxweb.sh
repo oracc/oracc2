@@ -82,4 +82,14 @@ else
     xsltproc -stringparam project $project $libscripts/sxweb-signs.xsl 02xml/sl.xml
 fi
 
+for a in V IV III ; do
+    xsltproc -stringparam title "Uruk $a" -stringparam index $a \
+	     $libscripts/sxweb-period.xsl 02xml/sl-corpus-counts.xml \
+	     >signlist/00web/sx-period-$a.xml
+done
+
+xsltproc -stringparam title "ED I-II" -stringparam index I \
+	 $libscripts/sxweb-period.xsl 02xml/sl-corpus-counts.xml \
+	 >signlist/00web/sx-period-I.xml
+
 (cd signlist ; o2-portal.sh)

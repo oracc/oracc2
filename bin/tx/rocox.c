@@ -15,15 +15,18 @@ const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL;
 int
 main(int argc, char *const *argv)
 {
-  Roco *r = NULL;
+  Roco *r = NULL, *s = NULL;
   
-  options(argc, argv, "c:C:fhnr:R:tx:X?");
+  options(argc, argv, "c:C:fhnr:R:stx:X?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
 
   r = roco_load("-", fields_from_row1, xmltag, rowtag, celtag);
 
+  if (roco_swap_axes)
+    r = roco_swap(s=r);
+  
   if (xml_output)
     roco_write_xml(stdout, r);
   else
@@ -60,6 +63,9 @@ opts(int opt, char *arg)
       break;
     case 'r':
       rowtag = arg;
+      break;
+    case 's':
+      roco_swap_axes = 1;
       break;
     case 't':
       if (!xmltag)
