@@ -35,21 +35,22 @@
 	    <td style="width:40%;">IMAGE</td>
 	  </thead>
 	  <tbody>
-	  <xsl:for-each select="o/c/r[c[1]=$index]">
-	    <xsl:if test="not(c[2]='0') and count(../r[c[2]='0'])=3">
-	      <xsl:variable name="xid" select="ancestor::o/@xml:id"/>
-	      <xsl:for-each select="document('sl.xml',/)">
-		<xsl:variable name="n" select="id($xid)"/>
-		<tr>
-		  <td><xsl:value-of select="$xid"/></td>
-		  <td><xsl:value-of select="$n/@n"/></td>
-		  <td><xsl:value-of select="$n/sl:uage"/></td>
-		  <td>
-		    <xsl:for-each select="$n/sl:images/sl:i[@loc][1]">
-		      <xsl:call-template name="esp-sign-image"/>
-		    </xsl:for-each>
-		  </td>
-		</tr>
+	    <xsl:for-each select="o/c/r[c[1]=$index]">
+	      <xsl:sort select="ancestor::o/@sort" data-type="number"/>
+	      <xsl:if test="not(c[2]='0') and count(../r[c[2]='0'])=3">
+		<xsl:variable name="xid" select="ancestor::o/@xml:id"/>
+		<xsl:for-each select="document('sl.xml',/)">
+		  <xsl:variable name="n" select="id($xid)"/>
+		  <tr>
+		    <td><xsl:value-of select="$xid"/></td>
+		    <td><xsl:value-of select="$n/@n"/></td>
+		    <td><xsl:value-of select="$n/sl:uage"/></td>
+		    <td>
+		      <xsl:for-each select="$n/sl:images/sl:i[@loc][1]">
+			<xsl:call-template name="esp-sign-image"/>
+		      </xsl:for-each>
+		    </td>
+		  </tr>
 	      </xsl:for-each>
 	    </xsl:if>
 	  </xsl:for-each>
