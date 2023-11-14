@@ -56,7 +56,7 @@
 			  </xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
-			  <p><xsl:value-of select="sl:note|sl:unote"/></p>
+			  <p><xsl:value-of select="$n/sl:note|$n/sl:unote"/></p>
 			</xsl:otherwise>
 		      </xsl:choose>
 		    </td>
