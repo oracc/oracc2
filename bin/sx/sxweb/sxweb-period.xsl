@@ -27,7 +27,14 @@
     <html>
       <head/>
       <body>
-	<table>
+	<table class="pretty">
+	  <thead>
+	    <td style="width:20%;">OID</td>
+	    <td style="width:30%;">NAME</td>
+	    <td style="width:10%;">UAGE</td>
+	    <td style="width:40%;">IMAGE</td>
+	  </thead>
+	  <tbody>
 	  <xsl:for-each select="o/c/r[c[1]=$index]">
 	    <xsl:if test="not(c[2]='0') and count(../r[c[2]='0'])=3">
 	      <xsl:variable name="xid" select="ancestor::o/@xml:id"/>
@@ -46,6 +53,7 @@
 	      </xsl:for-each>
 	    </xsl:if>
 	  </xsl:for-each>
+	  </tbody>
 	</table>
       </body>
     </html>
