@@ -13,6 +13,8 @@
 #include <gdl.h>
 #include "sll.h"
 
+/*int sll_cli_error_token = 0;*/
+
 static void sll_cli_error(const char *err);
 static void sll_cli_output(List *lp);
 
@@ -42,14 +44,35 @@ sll_cli_handler(unsigned const char *key)
 {
   if (sll_raw_output)
     {
-      char *gdloo = gdl_one_off("<cli>", 1, (ccp)key, sll_voidsl);
-      if (gdloo)
+      if (is_oid((ccp)key) || strchr((ccp)key, ';'))
 	{
-	  unsigned const char *res = sll_lookup((uccp)gdloo);
-	  printf("%s\t%s\t%s\n", key, gdloo, res);
+	  struct sllext *ep = NULL;
+	  unsigned char *e = NULL, *g = NULL;
+	  g = (ucp)pool_copy(key, sllpool);
+	  if ((e = (ucp)strchr((ccp)key, ';')))
+	    *e++ = '\0';
+	  sll_cli_output(sll_resolve((uccp)g, (ccp)e, ep));
 	}
       else
-	printf("%s\t#error\n", key);
+	{
+	  char *gdloo = gdl_one_off("<cli>", 1, (ccp)key, sll_voidsl);
+	  if (gdloo && strlen(gdloo))
+	    {
+	      unsigned const char *res = sll_lookup((uccp)gdloo);
+	      if (sll_raw_output > 1)
+		printf("%s\n", res);
+	      else
+		printf("%s\t%s\t%s\n", key, gdloo, res);
+	    }
+	  else
+	    {
+	      if (sll_raw_output > 1)
+		printf("\n");
+	      else
+		printf("%s\t#error\n", key);
+	    }
+	}
+      fflush(stdout);
     }
   else
     {
@@ -64,16 +87,27 @@ sll_cli_handler(unsigned const char *key)
 	{
 	  char *gdloo = (is_oid(wgrapheme) ? (char*)wgrapheme : gdl_one_off("<cli>", 1, (ccp)wgrapheme, sll_voidsl));
 	  if (!gdloo)
-	    sll_cli_error("invalid GDL grapheme syntax");
+	    {
+	      sll_cli_error("invalid GDL grapheme syntax");
+	      printf("\n");
+	    }
 	  else
 	    {
 	      if (e && !(ep = sllext((ccp)e, strlen((ccp)e))))
-		sll_cli_error("error in sll key extension");
+		{
+		  sll_cli_error("error in sll key extension");
+		  printf("\n");
+		}
 	      else
 		sll_cli_output(sll_resolve((uccp)gdloo, (ccp)e, ep));
 	      /*free(g);*/ /* NEED TO FREE AT END if !caller free(wgrapheme) */
 	    }
 	}
+      else
+	{
+	  printf("\n");
+	}
+      fflush(stdout);
     }
 }
 
@@ -89,7 +123,16 @@ sll_cli_output(List *lp)
   if (lp)
     {
       const char *d = NULL;
+      int n = 0;
       for (d = list_first(lp); d; d = list_next(lp))
-	printf("%s\n", d);
+	{
+	  ++n;
+	  printf("%s\n", d);
+	}
+      if (!n)
+	printf("\n");
     }
+  else
+    printf("\n");
+  fflush(stdout);
 }

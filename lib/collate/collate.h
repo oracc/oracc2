@@ -11,6 +11,7 @@
 extern struct Collate_info_list_node collate_infos[];
 int collate_cmp_utf8 (const Uchar *k1, const Uchar *k2);
 int collate_cmp_graphemes (const Uchar *k1, const Uchar *k2);
+int collate_cmp_graphemes_cc (const Uchar *k1c, const Uchar *k2c);
 Uchar *collate_makekey (Uchar *s);
 Uchar *collate_makekey_i (Uchar *s);
 Uchar *collate_significant (Uchar *s, Boolean foldcase);

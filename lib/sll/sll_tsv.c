@@ -141,7 +141,7 @@ sll_term_t(Hash *h)
   sll_term();
 }
 
-unsigned const char *
+unsigned char *
 sll_lookup_t(unsigned const char *key)
 {
   return key ? hash_find(sll_sl, (const unsigned char *)key) : NULL;

@@ -186,16 +186,25 @@ collate_cmp_utf8 (const Uchar *k1, const Uchar *k2)
     - (int)keyval(UTF2Unicode(kk2));
 }
 
-/* compare strings grapheme by grapheme */
+/* compare strings grapheme by grapheme
+ * collate_cmp_graphemes is for use with qsort
+ * collate_cmp_graphemes_cc is for direct comparison of keys
+ */
 int
 collate_cmp_graphemes (const Uchar *k1, const Uchar *k2)
 {
-  static Uchar k1buf[1024], k2buf[1024];
-  const Uchar *k1c, *k2c, *kk1, *kk2, *b1, *b2, *d1, *d2, *e1, *e2, *max_e1, *max_e2;
-  int first_pass = 1;
-
+  const Uchar *k1c, *k2c;
   k1c = *(const char **)k1;
   k2c = *(const char **)k2;
+  return collate_cmp_graphemes_cc(k1c, k2c);
+}
+ 
+int
+collate_cmp_graphemes_cc (const Uchar *k1c, const Uchar *k2c)
+{
+  static Uchar k1buf[1024], k2buf[1024];
+  const Uchar *kk1, *kk2, *b1, *b2, *d1, *d2, *e1, *e2, *max_e1, *max_e2;
+  int first_pass = 1;
   
 START:
 

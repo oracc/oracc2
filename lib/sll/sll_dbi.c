@@ -48,7 +48,7 @@ sll_term_d(Dbi_index *dbi)
     }
 }
 
-unsigned const char *
+unsigned char *
 sll_lookup_d(Dbi_index *dbi, unsigned const char *key)
 {
   if (dbi && key)

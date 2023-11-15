@@ -29,6 +29,7 @@ tmem_term(void)
       memo_term(tmem->keva_mem);
       pool_term(tmem->pool);
       free(tmem);
+      tmem = NULL;
     }
 }
 

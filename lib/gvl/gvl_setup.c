@@ -59,7 +59,7 @@ gvl_setup(const char *project, const char *name, const char *script)
       gvl_checkers = calloc(agvl_checkers, sizeof(gvl_i*));
       hgvl_checkers = hash_create(3);
     }
-  else if ((ret = hash_find(hgvl_checkers, (uccp)script)))
+  else if (script && (ret = hash_find(hgvl_checkers, (uccp)script)))
     {
       return ret;
     }
