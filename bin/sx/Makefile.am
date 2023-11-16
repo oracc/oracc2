@@ -3,7 +3,8 @@ include ../../oracc-am-rules.txt
 SUBDIRS=sxweb
 
 bin_PROGRAMS=sx slix slx
-bin_SCRIPTS=ogsl-update.sh sxcmp.sh sxnorm.sh sxclean.sh \
+bin_SCRIPTS=ogsl-update.sh pctc-update.sh \
+	sxcmp.sh sxnorm.sh sxclean.sh \
 	sxmissing.sh sxudata.sh sxportal.sh \
 	sxportal-listdata.sh sxportal-udata.sh sloid.sh sxoid.sh \
 	sximages.sh sx-add-oid.sh
