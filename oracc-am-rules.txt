@@ -52,6 +52,9 @@ install-exec-local:
 %.rng: %.rnc
 	java -jar ${javadir}/trang.jar $< $@
 
+%.sh: %.sh.in
+	$(ORACCIFY) $<
+
 %.xnn: %.rng
 	c2-rng2xnn.sh $@
 

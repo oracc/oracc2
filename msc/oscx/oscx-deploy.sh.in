@@ -1,0 +1,9 @@
+#!/bin/sh
+# $1=session $2=project
+umask 002
+. @@ORACC@@/sbin/oscs-server-environment.sh $*
+printenv >&2
+echo osc-deploy.sh: $2
+mkdir -p $ORACC/www/downloads
+tarball=$ORACC/www/downloads/`/bin/echo -n $project | tr / -`.tar.gz
+tar Hzcf $tarball 01bld/[PQX]* 02www 02pub 02xml

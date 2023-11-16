@@ -1,0 +1,351 @@
+#!/usr/bin/perl
+use warnings; use strict;
+use POSIX qw(strftime);
+use File::Copy "cp";
+use integer;
+
+sub xsystem;
+
+my $host = `hostname`; chomp $host;
+my $B = ($host eq 'oracc.museum.upenn.edu' ? '' : ''); # for now, omue is using localhost build
+
+my $https = ($host eq 'dev-oracc' ? '' : 's');
+
+my $BQ = "-${B}q";
+my $BR = "-${B}r";
+
+my $bin = "$ENV{'ORACC'}/bin";
+
+my $cmds = "build-clean build-corpus build-portal build-full check-texts check-gloss check-dups check-links";
+my %cmds = (); @cmds{split(/\s+/,$cmds)} = ();
+
+my($command,$file,@args) = @ARGV;
+my $qzip = 'request.zip';
+my $rzip = 'response.zip';
+unlink $qzip, $rzip, 'oracc.log';
+my $sesh = undef;
+
+usage() unless $command;
+
+my $pwd = `pwd`; chomp $pwd;
+my $begin = `date +%s`;
+warn "Begin command $command in $pwd\n";
+
+my $project = `osc-proj-from-conf.sh`;
+unless ($project) {
+    if ($ENV{'ORACC_MODE'} eq 'single') {
+	# $project = "\L$file"; # oracc init overloads file arg to be abbrev for project
+	my $pwd = `pwd`; chomp $pwd;
+	my $dir = `dirname $pwd`; chomp $dir;
+	if ($dir ne $ENV{'ORACC_HOME'}) {
+	    die "oracc: can't run 'oracc' in dir $dir in single mode\n";
+	}
+	$project = `basename $pwd`; chomp $project;
+    } elsif ($command eq 'init') {
+	# only used in ORACC multi mode because you log in to the new project-userid and then run init
+	$project = `id -u -n`;
+	chomp $project;
+    } else {
+   	die "oracc: unable to determine project name from 00lib/config.xml. Stop.\n";
+    }
+}
+
+if (-r '@@ORACC_BUILDS@@/.fakeserver') {
+    #    warn "found @@ORACC_BUILDS@@/.fakeserver\n";
+    #    warn "calling osc-fake-server.sh @ARGV\n";
+    system "date +%s >.oraccstart";
+    unshift(@args, $file) if $file;	
+    exec('osc-fake-server.sh', $project, $command, @args) || exit 1;
+}
+
+unlink '.session', '.status';
+
+unless (-d '01tmp') {
+    system 'rm', '-f', '01tmp'; # just in case there's a file called 01tmp
+    system 'mkdir', '-p', '01tmp';
+}
+
+if ($command =~ /^(un)?serve$/ || $command eq 'json') {
+    xzip('-q', $qzip, '00lib/config.xml');
+    xsystem 'osc', $BQ, $command, $project;
+    #    wait_loop($command eq 'json' ? 10 : 4);
+    wait_loop(10);
+    goto ZIP_EXIT;
+} elsif ($command eq 'atf' || $command eq 'lem') {
+    if ($file && -r $file) {
+	xzip('-q', $qzip, $file);
+	xsystem 'osc', $BQ, $command, $project, $file;
+	wait_loop(1);
+        goto ZIP_EXIT;
+    } else {
+	if ($file) {
+	    die "oracc: file $file not readable\n";
+	} else {
+	    die "oracc: must give file argument\n";
+	}
+    }
+} elsif ($command =~ /^(?:bookindex|build|catf|check|config|harvest|merge|oatf|odt|odtt|pdf|resources|tei|update)/) {
+
+    # accept both oracc build portal and oracc build-portal, but
+    # interpret them both as oracc build-portal
+    if ($file && exists($cmds{"$command-$file"})) {
+	$command = "$command-$file";
+	$file = shift @args;
+    }
+
+    my ($basecommand,$subcommand) = ($command =~ /^(.*?)(?:-(.*?))?$/);
+    $subcommand = '' unless $subcommand;
+    $file = '' unless $file;
+    xsystem('osc-pack.sh', $basecommand, $subcommand, $file);
+    exit 1 if $? >> 8;
+    my $wait = ($command eq 'resources' ? 1 : 10);
+    xsystem 'osc', $BQ, $command, $project, $file;
+    wait_loop($wait);
+    if ($basecommand eq 'harvest') {
+	xsystem 'unzip', '-o', $rzip, 'oracc.log', '*.new';
+	goto ZIP_EXIT_NO_UNZIP;
+    } elsif ($basecommand eq 'merge') {
+        if ($file) {
+            if ("00lib/$file.glo") {
+	        backup_glo($file);
+	        xsystem 'unzip', '-o', $rzip, 'oracc.log', '*.glo';
+            } else {
+                warn "oracc merge: $file.glo not found. Stop.\n";
+                exit 1;
+            }
+        } else {
+            warn "oracc merge requires a LANGUAGE (e.g., oracc merge akk-x-stdbab). Stop.\n";
+            exit 1;
+        }
+	goto ZIP_EXIT_NO_UNZIP;
+    } elsif ($basecommand eq 'odt' || $basecommand eq 'odtt') {
+	xsystem 'unzip', '-o', $rzip, '*.log', '*.odt';
+	goto ZIP_EXIT_NO_UNZIP;
+    } elsif ($basecommand eq 'pdf') {
+	xsystem 'unzip', '-o', $rzip, '*.log', '*.pdf';
+	goto ZIP_EXIT_NO_UNZIP;
+    }
+    goto ZIP_EXIT;
+} elsif ($command eq 'colours') {
+    if (-r '00lib/p3colours.txt') {
+	xzip($qzip, '00lib/p3colours.txt');
+    } else {
+	xsystem 'touch', '01tmp/dummy';
+	xzip($qzip, '01tmp/dummy');
+    }
+    xsystem 'osc', $BQ, $command, $project;
+    wait_loop(2);
+    goto ZIP_EXIT;
+} elsif ($command eq 'init' || $command eq 'subproject') {
+    my($short,$long) = ($file, join(' ',@args));
+    subproject_die("Must give short name and long name") unless $short && $long;
+    my $lsub = "\L$short";
+    if (length $lsub < 4) {
+	die "oracc: subproject must be at least four characters long\n";
+    }
+    if ($lsub !~ m/^[a-z][a-z0-9]+/) {
+	die "oracc: subproject must contain only letters and numbers\n";
+    }
+    if ($command eq 'subproject') {
+        if (-r '00lib/config.xml') {
+           if ($project) {
+               my $argproj = "$project/$lsub";
+               xsystem "$bin/subproject.sh $lsub";
+               xsystem "(cd $lsub; $bin/createproj.plx -abbr $project/$short -proj $argproj -name '$project/$long' -user)";
+           } else {
+               subproject_die("no project name found in 00lib/config.xml");
+           }
+        } else {
+           subproject_die("No 00lib/config.xml in parent project");
+        }
+    } else {
+        $project = $lsub unless $project;
+        xsystem "$bin/createproj.plx -abbr $short -proj $project -name '$long' -init";
+    }
+    exit 0;
+} else {
+    die "oracc: unhandled command\n";
+}
+
+ ZIP_EXIT:
+    xsystem 'unzip', '-o', $rzip, 'oracc.log';
+ ZIP_EXIT_NO_UNZIP:
+    xsystem 'cat', 'oracc.log';
+warn "(Message listing complete; you can also read them in oracc.log)\n";
+
+my $now = `date +%s`;
+my $sec = $now - $begin;
+my $mn = $sec / 60;
+my $sc = $sec % 60;
+if ($mn) {
+    warn "Done: elapsed time $mn minutes $sc seconds.\n";
+} else {
+    warn "Done: elapsed time $sc seconds.\n";
+}
+if ($command eq 'bookindex') {
+   warn "oracc bookindex: http$https://@@ORACC_HOST@@/$project/downloads/bookindex.zip can now be downloaded.\n"
+}
+
+exit 0;
+
+#######################################################################
+
+sub
+backup_glo {
+    my $from = shift;
+    $from = "00lib/$from.glo";
+    if (-r $from) {
+	my $to = $from;
+	my $isodate = strftime("%Y%m%d", gmtime());
+	$isodate =~ tr/-//d;
+	$to =~ s/^(0[01]...)/00bak/;
+	$to =~ s/\./-$isodate./;
+	system 'mkdir', '-p', '00bak';
+	if (cp($from,$to)) {
+	    system 'rm', '-f', $from;
+	} else {
+	    warn "oracc: unable to backup $from as $to. Stop\n";
+	    exit 1;
+	}
+    }
+}
+
+sub
+wait_loop {
+    my $wait = shift;
+    $sesh = `cat .session`;
+    my $stat = '';
+    my $iwait = 0;
+    do {
+	++$iwait;
+	warn "$command:$sesh: waiting $wait seconds ($iwait) ...\n"
+	    if $wait > 3;
+	sleep($wait);
+	$stat = `curl -k -s http$https://@@ORACC_HOST@@/p/$sesh`; chomp($stat);
+#	warn "wait_loop: $stat\n";
+#	$stat =`cat .status`;
+    } while ($stat ne 'done' && $stat !~ /^err/);
+    if ($stat eq 'done') {
+	xsystem 'osc', $BR, $sesh;
+    }
+}
+
+sub
+xsystem {
+    warn "@_\n";    
+    system @_;
+}
+
+sub
+xzip {
+    my @zipargs = @_;
+    xsystem 'zip', @zipargs;
+    if (!-r $qzip || !-s $qzip) {
+	warn "oracc: can't send empty zipfile for processing--nothing to do. Stop.\n";
+	exit 1;
+    }
+}
+
+########################################################################
+
+sub
+subproject_die {
+    warn "oracc $command failed: ", @_, "\n\n";
+
+    print <<E;
+Use
+
+    oracc init ABBREVIATED_NAME FULL NAME MULTI WORD
+
+
+To initialize a new top-level project (eop-level projects must be
+created by Oracc administrators, but subprojects can be created by
+project staff).
+
+Use
+
+    oracc subproject ABBREVIATED_NAME FULL NAME MULTI WORD
+
+To create and initialize a new subproject.
+
+In both cases, give the abbreviated name and the full name of the
+project, leaving out the name of the parent project for subprojects.
+
+A subproject name may not contain forward slashes, i.e., you must
+create nested subprojects as subprojects of the immediate parent 
+project.
+
+You may want to use uppercase or mixed case in the abbreviation--as
+ePSD does in its top-level project, for example.  This is fine: the
+abbreviation will retain its uppercase characters, but the subproject
+will be created by first converting all uppercase letters to lowercase
+and then creating directories using the all-lowercase version.
+
+E
+    exit(1);
+}
+
+sub
+usage {
+    print <<EOU;
+oracc provides a suite of commands which are run on the build server.  The commands are:
+
+    atf build check colours harvest lem merge update
+
+Some of the commands have subcommands or take additional arguments as follows:
+
+ *  oracc atf FILE
+
+    runs the ATF checker on the given file
+
+ *  oracc build [WHAT]
+
+    rebuilds the project you are logged in to.  The WHAT argument is optional: without
+    it, the default rebuild is done, which rebuilds the corpus and the web portal.  The
+    default build does not do certain time-consuming things, like rebuilding the TEI
+    version of the data.
+
+    WHAT has the following values:
+
+    * oracc build clean   :: remove all project files, then build
+    * oracc build corpus  :: rebuild only the text corpus
+    * oracc build portal  :: rebuild only the web portal
+    * oracc build full    :: rebuild everything, including TEI
+
+ * oracc check [WHAT]
+
+   performs project checks without installing anything.  The WHAT argument is optional:
+   without it, the default checking is done, namely ATF files and glossaries.
+
+   * oracc check texts    :: check the contents of 00atf
+   * oracc check dups     :: check for duplicate text identifiers in the ATF files
+   * oracc check gloss    :: check the glossaries
+   * oracc check links    :: check inter-text links in the ATF files
+
+ * oracc colors    or    oracc colours
+
+    update the colours file; useful when working on project colourization
+
+ * oracc harvest
+
+   harvest new entries for the project glossaries and return them in 01bld/new/LANGUAGE.new
+
+ * oracc lem
+
+   perform lemmatization on a file
+
+ * oracc merge LANGUAGE
+
+   merge the new data for LANGUAGE with the existing glossary
+
+ * oracc update
+
+   updates the lemmatization data for the project; this immediately affects subsequent
+   uses of oracc lem, but does not install anything new or make other changes to the
+   project
+
+EOU
+    exit 1;
+}
+
+1;

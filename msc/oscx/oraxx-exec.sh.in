@@ -1,0 +1,3 @@
+#!/bin/sh
+echo oracc-exec.sh[2]: $* >&2
+@@ORACC@@/sbin/oracc-exec.plx $*

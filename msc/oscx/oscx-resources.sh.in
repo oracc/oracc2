@@ -1,0 +1,2 @@
+#!/bin/sh
+(cd @@ORACC_BUILDS@@/$1/00res; pwd ; chmod -R o+r * ;  cp -av * @@ORACC_BUILDS@@/$1/02www/)
