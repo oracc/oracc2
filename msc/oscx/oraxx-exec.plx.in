@@ -1,0 +1,123 @@
+#!/usr/bin/perl
+use warnings; use strict; use open 'utf8';
+binmode STDERR, ':utf8'; binmode STDIN, ':utf8'; binmode STDOUT, ':utf8';
+
+sub xsystem;
+my $verbose = 1;
+my $version = '001';
+warn "oracc-exec.plx[v$version]: @ARGV\n" if $verbose;
+
+my($session,$request_zip,$command,@args) = @ARGV;
+my $oracc = '@@ORACC@@';
+my $oraccbuilds = '@@ORACC_BUILDS@@';
+my $tmpdir = "@@ORACC@@/tmp/sop/$session";
+
+my $oraccbin = "$oracc/bin";
+my $oraccsbin = "$oracc/sbin";
+my $oracc_log = "$tmpdir/oracc.log";
+my $request_log = "$tmpdir/request.log";
+my $status_file = "$tmpdir/status";
+my $zip_response = "$tmpdir/response.zip";
+
+chdir($tmpdir);
+warn "oracc_exec: pwd=",`pwd`;
+
+my @zippers = ($request_log, $oracc_log);
+my @pathed_zippers = ();
+
+set_status('run');
+
+## Always create the project because it avoids slips with directories and links
+## in the 01xxx and 02xxx dirs
+
+my $project = shift @args;
+xsystem "$oraccsbin/osc-create.sh", $session, $project;
+
+if ($command eq 'serve') {
+    xsystem "$oraccsbin/osc-serve.sh", $session, $project;
+} elsif ($command eq 'unserve') {
+    unlink "$oraccbuilds/$project/servestamp";
+    xsystem "echo \"removed $oraccbuilds/$project/servestamp\" >$oracc_log";
+} elsif ($command =~ /^atf|lem$/) {
+    my $file = join(' ', @args);
+    xsystem 'unzip', $request_zip;
+    if ($command eq 'atf') {
+	xsystem "$oraccbin/ox", '-l', $oracc_log, '-cvmD', $file;
+    } else {
+	my $auto_file = $file;
+	$auto_file =~ s/\.(atf|txt)$/-autolem.$1/;
+	xsystem "$oraccbin/ox", '-M', '-x', $auto_file, '-l', $oracc_log, $file;
+	push @pathed_zippers, $auto_file;
+    }
+} else {
+    my $projdir = "$oraccbuilds/$project";
+    my ($basecommand,$subcommand) = ($command =~ /^(.*?)(?:-(.*?))?$/);
+    $subcommand = '' unless $subcommand;
+    my $what = '';
+    if ($subcommand) {
+	$what = $subcommand;
+    } else {
+	$what = 'all';
+    }
+    xsystem('mkdir', '-', $projdir) unless -d $projdir;
+    chdir($projdir);
+
+    xsystem 'rm', '-f', '00lib/p3colours.txt' if $basecommand =~ /^colou?rs$/;
+
+    xsystem "$oraccsbin/osc-unpack.sh", $session, $project, $request_zip, $what;
+    if ($basecommand =~ /^(?:build|check)$/) {
+	$subcommand = '' if $subcommand eq 'clean';
+	xsystem "$oraccsbin/osc-$basecommand.sh", $session, $project, $request_zip, $subcommand;
+    } elsif ($basecommand eq 'update') {
+	xsystem "$oraccsbin/osc-run.sh", $session, $project, "$oraccbin/o2-update-lem.sh";
+    } elsif ($basecommand eq 'resources') {
+	xsystem "$oraccsbin/osc-resources.sh", $project;
+    } elsif ($basecommand =~ /colou?rs/) {
+	xsystem "$oraccsbin/osc-run.sh", $session, $project, "$oraccsbin/p3-colours.plx", '02www';
+    } elsif ($basecommand =~ /^(?:bookindex|catf|config|harvest|merge|oatf|odt|odtt|pdf|json|tei)/) {
+	xsystem "$oraccsbin/osc-o2.sh", $session, $project, $request_zip, $basecommand, $subcommand, @args;
+	if ($basecommand eq 'harvest') {
+	    push @pathed_zippers, <01bld/new/*.new>;
+	} elsif ($basecommand eq 'odt' || $basecommand eq 'odtt') {
+	    push @pathed_zippers, <00any/odt/project.*>;
+	} elsif ($basecommand eq 'pdf') {
+	    push @pathed_zippers, <00any/pdf/project.*>;
+	} else {
+	    # $args[0] is the langcode
+	    push @pathed_zippers, "00lib/$args[0].glo";
+	}
+      } else {
+	warn "oracc-exec.plx: internal error: command $basecommand is not yet implemented\n";
+      }
+}
+
+zip_response();
+
+set_status('done');
+
+######################################################################################
+
+sub
+set_status {
+    open(S,">$status_file");
+    print S $_[0];
+    close(S);
+}
+
+sub
+xsystem {
+    warn "xsystem @_\n" if $verbose;
+    system @_;
+}
+
+sub
+zip_response {
+    unlink($zip_response);
+    -e $oracc_log || system 'touch', $oracc_log;
+    xsystem 'zip', '-j', $zip_response, @zippers;
+    if ($#pathed_zippers >= 0) {
+	xsystem 'zip', $zip_response, @pathed_zippers;
+    }
+}
+
+1;

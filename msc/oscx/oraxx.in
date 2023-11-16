@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+# First argument is project; if project is "." use oraccopt to find it from 00lib/config.xml
+#
+# Second argument is command
+#
+# Additional arguments are passed to the command script
+#
+project=$1
+if [[ $project == "." ]]; then
+    if [ -r 00lib/config.xml ]; then
+	project=`oraccopt`
+    else
+	echo $0: you can only use 'oraxx .' in a project directory. Stop.
+	exit 1
+    fi
+fi
+if [[ "$project" != "" ]]; then
+    shift
+    command=$1
+    shift
+    echo project=$project command=$command
+    if [[ "$command" != "" ]]; then
+	bin=@@ORACC_BUILDS@@/bin
+	if [[ "$command" == "init" ]]; then
+	    $bin/oscx-git.sh $project clone
+	else
+	    projdir=@@ORACC_BUILDS@@/$project
+	    if [ -d $projdir ]; then
+		(cd $projdir 
+		 script=$bin/oscx-$command.sh
+		 if [ -x $script ]; then
+		     . $bin/oscx-server-env.sh
+		     $script $*
+		 else
+		     echo $0: unknown command $command. Stop.
+		 fi
+		 )
+	    else
+		echo $0: unknown project $project.  Do you need to run oraxx $project init?. Stop.		
+	    fi
+	fi
+    else
+	echo $0: empty command argument. Stop.
+    fi
+else
+    echo $0: empty project argument. Stop.
+fi

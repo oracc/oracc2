@@ -1,0 +1,8 @@
+#!/bin/sh
+# $1=session $2=project $3=request.zip, e.g., /var/tmp/data9J42MF $4=subcommand
+subcom=$4
+echo osc-check.sh: subcommand=$subcom
+umask 002
+. @@ORACC@@/sbin/osc-server-environment.sh $*
+printenv >&2
+@@ORACC@@/sbin/osc-check.plx $project $projdir $subcom >$tempdir/oracc.log 2>&1

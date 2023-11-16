@@ -1,0 +1,9 @@
+#!/bin/sh
+# $1=session $2=project
+umask 002
+. @@ORACC@@/sbin/osc-server-environment.sh $*
+printenv >&2
+echo osc-serve.sh: preparing $2 for webserver >>$tempdir/oracc.log
+cd @@ORACC_BUILDS@@
+serve-project.sh $2  >>$tempdir/oracc.log 2>&1
+touch $project/servestamp

@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# $1=project
+
+if [ "$project" == "" ]; then
+    echo osc-git.sh: unable to proceed with empty project name. Stop.
+    exit 1
+fi
+
+umask 002
+. @@ORACC@@/sbin/osc-server-environment.sh $*
+osc-create.sh $project
+cd $projdir ; git pull

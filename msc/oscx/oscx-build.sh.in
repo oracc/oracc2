@@ -1,0 +1,30 @@
+#!/bin/sh
+# $1=session $2=project $3=request.zip, e.g., /var/tmp/data9J42MF $4=subcommand
+subcom=$4
+echo osc-build.sh: subcommand=$subcom
+umask 002
+. @@ORACC@@/sbin/osc-server-environment.sh $*
+printenv >&2
+echo osc-build.sh: subcommand=$subcom
+
+echo osc-build.sh: calling o2-init-cnf.sh
+o2-init-cnf.sh $ORACC_BUILDS/$2 >>$tempdir/oracc.log 2>&1
+
+if [ -e $ORACC/bin/$project-rebuild.sh ]; then
+    echo osc-build.sh: calling o2-clean-build.sh to force use of o2-rebuild
+    echo this will call $ORACC/bin/$project-rebuild.sh
+    o2-clean-build.sh $subcom >>$tempdir/oracc.log 2>&1
+    exit 1
+fi
+
+if [ "$subcom" = "corpus" ]; then
+    echo osc-build.sh: calling o2-corpus.sh
+    o2-corpus.sh >>$tempdir/oracc.log 2>&1
+elif [ "$subcom" = "portal" ]; then
+    echo osc-build.sh: calling o2-web.sh
+    o2-web.sh >>$tempdir/oracc.log 2>&1
+else
+    echo osc-build.sh: calling o2-clean-build.sh
+    o2-clean-build.sh $subcom >>$tempdir/oracc.log 2>&1
+    o2-web.sh >>$tempdir/oracc.log 2>&1
+fi

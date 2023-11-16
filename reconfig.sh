@@ -1,4 +1,5 @@
 #!/bin/sh
+AUTOMAKE="automake -Wno-portability"
 . ./oraccenv.sh
 libtoolize
 aclocal

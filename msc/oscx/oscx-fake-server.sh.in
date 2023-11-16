@@ -1,0 +1,110 @@
+#!/bin/sh
+
+if [ ! -r $ORACC_BUILDS/.fakeserver ]; then
+    echo "osc-fake-server.sh: no .fakeserver. Stop."
+    exit 1
+fi
+
+if [ "$1" == "" ]; then
+    echo "osc-fake-server.sh: no project given on command line. Stop."
+    exit 1
+fi
+
+project=$1 ; shift
+projdir=@@ORACC_BUILDS@@/$project
+cmd=$1
+
+echo "osc-fake-server executing $cmd in project $project"
+
+cd @@ORACC_BUILDS@@
+mkdir -p $project bld/$project tmp/$project www/$project pub/$project xml/$project
+
+t=`ls -dl $project/01bld|cut -b1`
+if [ "$t" == "l" ]; then
+#    echo $project/01bld is a link
+    rm -f $project/01bld
+else
+    echo $project/01bld is not a link ... autofixing ...
+    rm -fr 01bld
+fi
+
+cd $projdir
+
+rm -fr 01tmp
+rm -f 02pub 02www 02xml
+#echo cbd after removing link dirs
+#ls -l 02www/cbd
+ln -sf @@ORACC_BUILDS@@/bld/$project 01bld
+ln -sf @@ORACC_BUILDS@@/pub/$project 02pub
+ln -sf @@ORACC_BUILDS@@/tmp/$project 01tmp
+ln -sf @@ORACC_BUILDS@@/www/$project 02www
+ln -sf @@ORACC_BUILDS@@/xml/$project 02xml
+top=`/bin/echo -n $project | cut -d/ -f1`
+if [ ! -L @@ORACC@@/$top ]; then
+    if [ "@@ORACC_BUILDS@@" != "@@ORACC@@" ]; then
+	ln -sf @@ORACC_BUILDS@@/$top @@ORACC@@/$top
+    fi
+fi
+
+umask 002
+
+if [ "$1" == "bookindex" ]; then
+    o2-bookindex.sh
+elif [ "$1" == "check" ]; then
+    echo osc-fake-server calling osc-check.plx $project $projdir $2
+    osc-check.plx $project $projdir $2
+elif [ "$1" == "config" ]; then
+    o2-config.sh
+elif [ "$1" == "build" ]; then
+    o2-config.sh
+    o2-clean-build.sh >build.log 2>&1
+    o2-web.sh >>build.log 2>&1
+    cat build.log
+elif [ "$1" == "harvest" ]; then
+    o2-harvest.sh
+elif [[ $1 == "init" ]]; then
+    ofs-createproj.plx $project $*    
+elif [ "$1" == "merge" ]; then
+    o2-merge.sh $2
+elif [ "$1" == "odt" ]; then
+    o2-odt.sh
+elif [ "$1" == "odtt" ]; then
+    o2-odtt.sh
+elif [ "$1" == "pdf" ]; then
+    o2-pdf.sh
+elif [ "$1" == "catf" ]; then
+    o2-catf.sh
+elif [ "$1" == "tei" ]; then
+    o2-tei.sh
+elif [ "$1" == "json" ]; then
+    o2-json.sh
+elif [ "$1" == "resources" ]; then
+    chmod -R +r 00res/*
+    cp -av 00res/* 02www/
+    true
+elif [ "$1" == "serve" ]; then
+    serve-project.sh $project
+elif [ "$1" == "subproject" ]; then
+    ofs-createproj.plx $project $*
+elif [ "$1" == "update" ]; then
+    o2-update-lem.sh
+else
+    echo "osc-fake-server.sh: command $* not handled. Stop"
+    exit 1
+fi
+if [ -r .oraccstart ]; then
+    now=`date +%s`
+    sec=`cat .oraccstart`
+    tm=$(( now - sec ))
+#    echo "now=$now; sec=$sec; tm=$tm"
+    mn=$(( tm / 60 ))
+    sc=$(( tm % 60 ))
+    if (( tm > 60 )); then
+	echo Done [elapsed time $mn minutes $sc seconds].
+    else
+	echo Done [elapsed time $tm seconds].
+    fi
+else
+    echo Done.
+fi
+exit 0

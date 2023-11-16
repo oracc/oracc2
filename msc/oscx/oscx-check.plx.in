@@ -1,0 +1,101 @@
+#!/usr/bin/perl
+use warnings; use strict;
+
+my $g2 = 1;
+
+sub xsystem;
+
+my $bin = "@@ORACC@@/bin";
+my @all_tasks = qw/gloss texts/;
+my %check_tasks = (
+    cdf =>\&check_cdf, 
+    dups =>\&check_dups, 
+    gloss=>\&check_gloss, 
+    links=>\&check_links, 
+    texts=>\&check_texts
+    );
+my @tasks = ();
+my $verbose = 0;
+
+my($project,$projdir,$subcommand) = @ARGV;
+
+chdir($projdir);
+
+if ($subcommand) {
+    @tasks = ($subcommand);
+} else {
+    @tasks = @all_tasks;
+}
+
+foreach my $t (@tasks) {
+    if ($t eq 'odf') {
+	# only works for single file; concatenate list in case filename has spaces
+	check_cdf(join(' ', @tasks[1..$#tasks]));
+    } else {
+	if (defined $check_tasks{$t}) {
+	    &{$check_tasks{$t}};
+	} else {
+	    print "oracc: unknown check task '$t'\n";
+	    usage();
+	}
+    }
+}
+
+####################################################################
+
+sub
+check_cdf {
+    my @cdf = @_;
+    @cdf = ('00lib/project.otf') unless $#cdf >= 0;
+    xsystem "$bin/ox", "-P$project", '-c', @cdf;
+}
+
+sub
+check_dups {
+    my @files = check_files();
+    xsystem "$bin/ox", "-P$project", '-lcheck.log', '-c', @files;
+    xsystem 'grep', 'duplicate', 'check.log';
+    unlink 'check.log';
+}
+
+sub
+check_files {
+    my @f = grep(/\.(?:atf|ods)$/, <00atf/*>);
+    grep !/\.ods\.atf$/, @f;
+}
+
+sub
+check_gloss {
+#    if ($g2 eq 'yes') {
+    xsystem "$bin/o2-check.sh";
+#	}
+#    } else {
+#	foreach my $glo (<00lib/*.glo>) {
+#	    if ($glo =~ /sux|qpn/) {
+#		xsystem "$bin/l2p1-sux-norm.plx", $glo;
+#	    }
+#	    xsystem "$bin/l2-glomanager.plx", '-check', $glo;
+#	}
+#    }
+}
+
+sub
+check_links {
+    my @files = check_files();
+    xsystem "$bin/ox", "-P$project", '-cX', @files;
+}
+
+sub
+check_texts {
+#    my @files = check_files();
+    #    xsystem "$bin/ox", "-P$project", '-cm', @files; # -cvm
+    xsystem "$bin/o2-check.sh", 'atf';
+}
+
+sub
+xsystem {
+    warn "xsystem @_\n" if $verbose;
+    system @_;
+}
+
+1;
