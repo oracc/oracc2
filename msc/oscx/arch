@@ -1,0 +1,83 @@
+Github:
+
+oracc is a group
+
+individual oracc maintainers have personal IDs, e.g., stinney
+
+status of 'oradmin' account on github is not clear
+
+ssh-key for oradmin needs to be installed as key for a user with
+	access to the github projects, e.g., stinney
+
+---
+
+Users:
+
+oradmin user on build-oracc:
+	uses shell=osh
+	can be logged into by oracc maintainer
+	but not by project users, e.g., ogsl
+	can build any project or subproject
+
+project users:
+	use shell=osh
+	do not have .ssh id
+	can be logged into by oracc users whose id_rsa.pub is in the .ssh/authorized_keys
+	can only rebuild their own project or subprojects
+
+---
+
+/home/oracc - owned by oradmin:www-data and +s bit set
+
+ogsl.git - anywhere on github ; must be accessible to oradmin
+
+/home/oracc/ogsl - git cloned by oradmin with oradmin:www-data owner
+
+---
+
+osh - oracc-shell; default shell for oradmin and all project users, e.g., ogsl
+
+odo - oracc-do: command interpreter for oracc runs suid oradmin; called by osh if there is a command
+
+orc - oracc-remote-command: cli to log in to oracc server and run command
+
+---
+
+orc dev ogsl build
+
+ssh -C ogsl@dev build
+
+ssh authentication ensures only ogsl project workers can perform operations
+
+osh gets:
+
+ -c build
+
+osh does:
+
+odo USER PROJECT COMMAND
+
+odo (running as oradmin) does:
+
+ (cd ogsl ; git pull ; oscx-build.sh)
+
+---
+
+oracc projects need to be initialized by being cloned in /home/oracc
+
+---
+
+some projects don't need their own userid
+
+odo oradmin [project] build
+
+ssh oradmin [project] build
+
+do something like:
+if [ user=oradmin ]
+   shift
+   project=$1
+fi
+
+---
+
