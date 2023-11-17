@@ -24,9 +24,10 @@ main(int argc, char **argv)
 	      else
 		++s;
 	    }
-	  char *av[sp+1];
 	  s = argv[2];
-	  sp = 0;
+	  char *av[sp+2];
+	  av[0] = "odo";
+	  sp = 1;
 	  while (*s)
 	    {
 	      av[sp++] = s;
@@ -39,7 +40,7 @@ main(int argc, char **argv)
 		    ++s;
 		}
 	    }
-	  av[sp] = NULL;
+	  av[sp] = NULL;	  
 	  execv("@@ORACC_BUILDS@@/bin/odo", av);
 	}
       else

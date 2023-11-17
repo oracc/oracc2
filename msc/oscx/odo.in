@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/dash
 #
 # First argument is project; if project is "." use oraccopt to find it from 00lib/config.xml
 #
@@ -7,7 +7,7 @@
 # Additional arguments are passed to the command script
 #
 project=$1
-if [[ $project == "." ]]; then
+if [ $project = "." ]; then
     if [ -r 00lib/config.xml ]; then
 	project=`oraccopt`
     else
@@ -15,20 +15,20 @@ if [[ $project == "." ]]; then
 	exit 1
     fi
 fi
-if [[ "$project" != "" ]]; then
+if [ "$project" != "" ]; then
     shift
     command=$1
-    shift
     echo project=$project command=$command
-    if [[ "$command" != "" ]]; then
+    if [ "$command" != "" ]; then
+	shift
 	bin=@@ORACC_BUILDS@@/bin
-	if [[ "$command" == "init" ]]; then
-	    $bin/oscx-git.sh $project clone
+	if [ $command = "init" ]; then
+	    $bin/odo-git.sh $project clone
 	else
 	    projdir=@@ORACC_BUILDS@@/$project
 	    if [ -d $projdir ]; then
 		(cd $projdir 
-		 script=$bin/oscx-$command.sh
+		 script=$bin/odo-$command.sh
 		 if [ -x $script ]; then
 		     . $bin/oscx-server-env.sh
 		     $script $*

@@ -1,10 +1,10 @@
 include ../../oracc-am-rules.txt
 
-bin_SCRIPTS = oscx-server-env.sh oraxx oscx-ls.sh
+bin_SCRIPTS = oscx-server-env.sh odo odo-ls.sh
 
 bin_PROGRAMS=osh
 
-oraxx: oraxx.in
+odo: odo.in
 	$(ORACCIFY) $<
 
 # oraxx-exec.plx oscx-build.sh oscx-server-environment.sh \

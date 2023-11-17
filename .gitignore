@@ -59,6 +59,7 @@ mktablst
 seq2c
 xpd.c
 msc/oscx/osh.c
+msc/oscx/odo
 
 # msc/oscx derivatives
 oscx-server-env.sh
