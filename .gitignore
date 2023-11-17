@@ -16,6 +16,7 @@ bin/xx/dbx
 bin/xx/dbix
 bin/xx/tlitsig
 bin/xx/xmlify
+msc/oscx/osh
 
 # MacOS convenience link to external library header
 include/pcre2.h
@@ -57,6 +58,7 @@ slix.c
 mktablst
 seq2c
 xpd.c
+msc/oscx/osh.c
 
 # msc/oscx derivatives
 oscx-server-env.sh

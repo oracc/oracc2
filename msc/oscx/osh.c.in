@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <unistd.h>
+
+int
+main(int argc, char **argv)
+{
+  if (argc == 3)
+    {
+      if (argv[1][0] == '-'
+	  && argv[1][1] == 'c'
+	  && argv[1][2] == '\0')
+	{
+	  int sp = 1;
+	  char *s = argv[2];
+	  while (*s)
+	    {
+	      if (isspace(*s))
+		{
+		  ++sp;
+		  while (isspace(*s))
+		    ++s;
+		}
+	      else
+		++s;
+	    }
+	  char *av[sp+1];
+	  s = argv[2];
+	  sp = 0;
+	  while (*s)
+	    {
+	      av[sp++] = s;
+	      while (*s && !isspace(*s))
+		++s;
+	      if (*s)
+		{
+		  *s++ = '\0';
+		  while (isspace(*s))
+		    ++s;
+		}
+	    }
+	  av[sp] = NULL;
+	  execv("@@ORACC_BUILDS@@/bin/odo", av);
+	}
+      else
+	{
+	  fprintf(stderr, "%s: expected -c as first argument; got %s\n", argv[0], argv[1]);
+	}
+    }
+  else
+    {
+      fprintf(stderr, "%s: wrong number of arguments\n", argv[0]);
+    }
+    
+}

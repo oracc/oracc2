@@ -2,6 +2,8 @@ include ../../oracc-am-rules.txt
 
 bin_SCRIPTS = oscx-server-env.sh oraxx oscx-ls.sh
 
+bin_PROGRAMS=osh
+
 oraxx: oraxx.in
 	$(ORACCIFY) $<
 
