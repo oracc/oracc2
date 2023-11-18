@@ -1,17 +1,13 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <stdio.h>
+#include <dx.h>
 
-#define DATA "Half a league, half a league . . ."
+#define DATA "Testing Oracc dx server"
+
+int verbose = 1;
 
 int
 main(int argc, char **argv)
 {
   int sock, rval;
-  struct sockaddr_un server;
   char buf[1024];
 
   if (argc < 2) {
@@ -19,35 +15,31 @@ main(int argc, char **argv)
     exit(1);
   }
 
-  sock = socket(AF_UNIX, SOCK_STREAM, 0);
-  if (sock < 0) {
-    perror("opening stream socket");
-    exit(1);
-  }
+  if (verbose)
+    printf("dcx: trying to connect to %s\n", DX_SERVER_NAME);
 
-  server.sun_family = AF_UNIX;
-  strcpy(server.sun_path, argv[1]);
-
-  if (connect(sock, (struct sockaddr *) &server, sizeof(struct sockaddr_un)) < 0)
+  if ((sock = dx_connect(DX_SERVER_NAME)) < 0)
     {
-      close(sock);
-      perror("connecting stream socket");
+      perror("Error connecting stream socket (dx not running?)");
       exit(1);
     }
+  else
+    printf("dcx: connection successful\n");
+
   if (write(sock, DATA, sizeof(DATA)) < 0)
     perror("writing on stream socket");
-
-  do
-    {
-      memset(buf, '\0', sizeof(buf));
-      if ((rval = read(sock, buf, 1024)) < 0)
-	perror("reading back message from dx");
-      else if (rval == 0)
-	printf("Ending dx connection\n");
-      else
-	printf("<--%s\n", buf);
-    }
-  while (rval > 0);
+  else
+    do
+      {
+	memset(buf, '\0', sizeof(buf));
+	if ((rval = read(sock, buf, 1024)) < 0)
+	  perror("Error reading back message from dx");
+	else if (rval == 0)
+	  printf("Ending dx connection\n");
+	else
+	  printf("<--%s\n", buf);
+      }
+    while (rval > 0);
   
   close(sock);
 }

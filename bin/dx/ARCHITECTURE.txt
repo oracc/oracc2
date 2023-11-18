@@ -1,0 +1,26 @@
+		ORACC TASK ARCHITECTURE (OTA)
+		=============================
+
+The OTA defines how Oracc users carry out Oracc tasks such as building
+projects or generating various kinds of outputs.
+
+Tasks are carried out by odo (Oracc Do).  Odo only works if the CWD is
+an Oracc project directory (on a Unix server, /home/oracc/PROJECT or
+/home/oracc/PROJECT/SUBPROJECT+).
+
+On a single-user Oracc installation odo can be called directly from
+the command line.
+
+On a multi-user Oracc installation odo, users invoke odo through the
+osh, the Oracc shell.  Osh has built-in commands and external
+commands: the external commands are passed to the Oracc daemon, dx,
+which runs as user oradmin and is able to executey the commands in the
+/home/oracc space.
+
+Osh can also be invoked via ssh, which is how most Oracc users will
+interact with it. This interaction is controlled by an Oracc Remote
+Client, or orc; orcs are easy to implement because they need almost no
+intelligence: they only need to send osh commands via ssh; receive
+status and filename information; and optionally retrieve log files and
+other outputs.
+

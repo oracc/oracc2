@@ -1,35 +1,20 @@
 #include <dx.h>
 
-static void set_sigactions(void);
-
 int
 main(int argc, char **argv)
 {
   int sock, msgsock, rval;
-  struct sockaddr_un server;
   char buf[1024];
 
-  set_sigactions();
+  dx_signal();
+  dx_prechecks();
+  sock = dx_listen(DX_SERVER_NAME);
   
-  sock = socket(AF_UNIX, SOCK_STREAM, 0);
-  if (sock < 0) {
-    perror("opening stream socket");
-    exit(1);
-  }
-  server.sun_family = AF_UNIX;
-  strcpy(server.sun_path, DX_SOCK_NAME);
-  if (bind(sock, (struct sockaddr *) &server, sizeof(struct sockaddr_un)))
-    {
-      perror("binding stream socket");
-      exit(1);
-    }
-  
-  printf("Socket has name %s\n", server.sun_path);
-  listen(sock, 5);
   for (;;)
     {
-      msgsock = accept(sock, 0, 0);
-      if (msgsock == -1)
+      uid_t uptr;
+      msgsock = dx_accept(sock, &uptr);
+      if (msgsock < 0)
 	perror("accept");
       else
 	do
@@ -49,34 +34,7 @@ main(int argc, char **argv)
 	while (rval > 0);
       close(msgsock);
     }
+
   close(sock);
-  unlink(DX_SOCK_NAME);
-}
-
-static void
-termination_handler(int signum)
-{
-  unlink(DX_SOCK_NAME);
-  exit(1);
-}
-
-static void
-set_sigactions(void)
-{
-  struct sigaction new_action, old_action;
-
-  /* Set up the structure to specify the new action. */
-  new_action.sa_handler = termination_handler;
-  sigemptyset (&new_action.sa_mask);
-  new_action.sa_flags = 0;
-
-  sigaction (SIGINT, NULL, &old_action);
-  if (old_action.sa_handler != SIG_IGN)
-    sigaction (SIGINT, &new_action, NULL);
-  sigaction (SIGHUP, NULL, &old_action);
-  if (old_action.sa_handler != SIG_IGN)
-    sigaction (SIGHUP, &new_action, NULL);
-  sigaction (SIGTERM, NULL, &old_action);
-  if (old_action.sa_handler != SIG_IGN)
-    sigaction (SIGTERM, &new_action, NULL);
+  unlink(DX_SERVER_NAME);
 }
