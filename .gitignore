@@ -41,6 +41,7 @@ sllext.c
 iomethod.c
 
 # .in derivatives
+bin/dx/dx-install.sh
 bin/wx/oai.c
 bin/wx/oid.c
 bin/wx/oracc-server.c

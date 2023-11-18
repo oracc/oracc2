@@ -1,0 +1,7 @@
+#!/bin/sh
+chmod go-rw @@ORACC_BUILDS@@/sbin
+sudo chown oradmin:oracc dx
+sudo chmod go-rw dx
+sudo chmod u+s dx
+sudo rm -f @@ORACC_BUILDS@@/sbin/dx
+sudo cp -fa dx @@ORACC@@/sbin
