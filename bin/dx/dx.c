@@ -1,11 +1,6 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <stdio.h>
+#include <dx.h>
 
-#define NAME "oracc-daemon-dx"
+static void set_sigactions(void);
 
 int
 main(int argc, char **argv)
@@ -14,34 +9,74 @@ main(int argc, char **argv)
   struct sockaddr_un server;
   char buf[1024];
 
+  set_sigactions();
+  
   sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if (sock < 0) {
     perror("opening stream socket");
     exit(1);
   }
   server.sun_family = AF_UNIX;
-  strcpy(server.sun_path, NAME);
-  if (bind(sock, (struct sockaddr *) &server, sizeof(struct sockaddr_un))) {
-    perror("binding stream socket");
-    exit(1);
-  }
+  strcpy(server.sun_path, DX_SOCK_NAME);
+  if (bind(sock, (struct sockaddr *) &server, sizeof(struct sockaddr_un)))
+    {
+      perror("binding stream socket");
+      exit(1);
+    }
+  
   printf("Socket has name %s\n", server.sun_path);
   listen(sock, 5);
-  for (;;) {
-    msgsock = accept(sock, 0, 0);
-    if (msgsock == -1)
-      perror("accept");
-    else do {
-	bzero(buf, sizeof(buf));
-	if ((rval = read(msgsock, buf, 1024)) < 0)
-	  perror("reading stream message");
-	else if (rval == 0)
-	  printf("Ending connection\n");
-	else
-	  printf("-->%s\n", buf);
-      } while (rval > 0);
-    close(msgsock);
-  }
+  for (;;)
+    {
+      msgsock = accept(sock, 0, 0);
+      if (msgsock == -1)
+	perror("accept");
+      else
+	do
+	  {
+	    memset(buf, '\0', sizeof(buf));
+	    if ((rval = read(msgsock, buf, 1024)) < 0)
+	      perror("reading stream message");
+	    else if (rval == 0)
+	      printf("Ending connection\n");
+	    else
+	      {
+		printf("-->%s\n", buf);
+		dx_process(msgsock, buf);
+		break;
+	      }
+	  }
+	while (rval > 0);
+      close(msgsock);
+    }
   close(sock);
-  unlink(NAME);
+  unlink(DX_SOCK_NAME);
+}
+
+static void
+termination_handler(int signum)
+{
+  unlink(DX_SOCK_NAME);
+  exit(1);
+}
+
+static void
+set_sigactions(void)
+{
+  struct sigaction new_action, old_action;
+
+  /* Set up the structure to specify the new action. */
+  new_action.sa_handler = termination_handler;
+  sigemptyset (&new_action.sa_mask);
+  new_action.sa_flags = 0;
+
+  sigaction (SIGINT, NULL, &old_action);
+  if (old_action.sa_handler != SIG_IGN)
+    sigaction (SIGINT, &new_action, NULL);
+  sigaction (SIGHUP, NULL, &old_action);
+  if (old_action.sa_handler != SIG_IGN)
+    sigaction (SIGHUP, &new_action, NULL);
+  sigaction (SIGTERM, NULL, &old_action);
+  if (old_action.sa_handler != SIG_IGN)
+    sigaction (SIGTERM, &new_action, NULL);
 }

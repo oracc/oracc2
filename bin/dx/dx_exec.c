@@ -1,17 +1,4 @@
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <errno.h>
-#include <sys/resource.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <signal.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include "soapH.h"
-#include "osc-lib.h"
+#include <dx.h>
 
 int wait_seconds = 1;
 
@@ -20,26 +7,29 @@ const char *path = "/bin/dash";
 
 #define ERR_MAX 512
 
-/* Caller gets error in err and should also call strerror(errno) */
-
+/* Caller gets error in err and should also call strerror(errno)
+ */
 int
-dx_exec(const char **keys, int nkeys, char **err)
+dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
 {
   pid_t pid;
   const char *argv[nkeys+3];
+  char request_log[strlen(tmpdir)+strlen("/request.log")+1];
 
-  assert(err);
+  sprintf(request_log, "%s/request.log", tmpdir);
+  
   *err = NULL;
   
   if (!keys || nkeys <= 0)
     {
-      
+      *err = "no keys";
       return 1;
     }
   
-  argv[0] = argv[2] = name;
-  for (i = 0; i < keys->__size; ++i)
-    argv[i+2] = keys->key[i];
+  argv[0] = argv[1] = name;
+  int i;
+  for (i = 0; keys[i]; ++i)
+    argv[i+2] = keys[i];
   argv[i+2] = NULL;
 
   if ((pid = fork()) < 0)
@@ -81,41 +71,33 @@ dx_exec(const char **keys, int nkeys, char **err)
 
       if ((pid = fork()) < 0)
 	{
-	  *err = soap_sender_fault(soap, "can't fork again", strerror(errno));
+	  *err = "can't fork again";
 	  return 1;
 	}
       else if (pid != 0) /* parent */
-	{
-#if 0
-	  int sloc;
-	  waitpid(pid, &sloc, 0);
-#endif
-	  exit(0);
-	}
+	exit(0);
 
       setsid();
 
-#if 0
-      fprintf(stderr, "oracc-exec: switching grandchild output to %s\n", request_log);
+      fprintf(stderr, "dx_exec: switching grandchild output to %s\n", request_log);
 
       if ((fd = open(request_log, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR)) < 0)
 	{
-	  *err = soap_sender_fault(soap, "child failed to open request log", NULL);
+	  *err = "child failed to open request log";
 	  return 1;
 	}
       if (dup2(fd, fileno(stderr)) < 0)
 	{
-	  *err = soap_sender_fault(soap, "child failed to attach stdout", NULL);
+	  *err = "child failed to attach stdout";
 	  return 1;
 	}
       if (dup2(fd, fileno(stdout)) < 0)
 	{
-	  *err = soap_sender_fault(soap, "child failed to attach stderr", NULL);
+	  *err = "child failed to attach stderr";
 	  return 1;
 	}
       else
 	setbuf(stdout, NULL);
-#endif
 
       if (execve(path, (char *const *)argv, NULL)) /* (char *const *)envp */
 	{

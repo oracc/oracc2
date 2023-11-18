@@ -10,8 +10,9 @@
 int
 main(int argc, char **argv)
 {
-  int sock;
+  int sock, rval;
   struct sockaddr_un server;
+  char buf[1024];
 
   if (argc < 2) {
     printf("usage:%s <pathname>", argv[0]);
@@ -35,5 +36,18 @@ main(int argc, char **argv)
     }
   if (write(sock, DATA, sizeof(DATA)) < 0)
     perror("writing on stream socket");
+
+  do
+    {
+      memset(buf, '\0', sizeof(buf));
+      if ((rval = read(sock, buf, 1024)) < 0)
+	perror("reading back message from dx");
+      else if (rval == 0)
+	printf("Ending dx connection\n");
+      else
+	printf("<--%s\n", buf);
+    }
+  while (rval > 0);
+  
   close(sock);
 }
