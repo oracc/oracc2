@@ -2,6 +2,7 @@
 bin/ax/ax
 bin/dx/dcx
 bin/dx/dx
+bin/dx/osh
 bin/gx/gx
 bin/jx/jx
 bin/ox/oid
@@ -34,6 +35,7 @@ lang_mode.c
 langrtl.c
 oid_domain.c
 oid_type.c
+osh_commands.c
 pqx_h_tab.c
 selections.c
 sll_signlist.c
@@ -42,6 +44,7 @@ iomethod.c
 
 # .in derivatives
 bin/dx/dx-install.sh
+bin/dx/osh.c
 bin/wx/oai.c
 bin/wx/oid.c
 bin/wx/oracc-server.c

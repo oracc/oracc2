@@ -1,0 +1,41 @@
+#include <dx.h>
+#include <osh.h>
+
+const char *project = NULL;
+const char *user = NULL;
+int ssh_mode = 0;
+int verbose = 0;
+
+int
+main(int argc, char **argv)
+{
+  char **optv = osh_options(argc, argv);
+  osh_project();
+  if (optv[0])
+    {
+      struct osh_info *oip = osh_commands(optv[0], strlen(optv[0]));
+      if (oip)
+	{
+	  if (verbose)
+	    fprintf(stderr, "%s: initial command is %s\n", optv[0], optv[1]);
+	  if (oip->type == OSH_BUILTIN)
+	    {
+	      osh_exec(oip->cmd, oip->arg);
+	    }
+	  else
+	    {
+	      osh_dcx(optv);
+	    }
+	}
+      else
+	{
+	  fprintf(stderr, "%s: unknown command '%s'. Stop.", argv[0], optv[0]);
+	}
+    }
+  else
+    {
+      fprintf(stderr, "%s: wrong number of arguments. Stop.\n", argv[0]);
+      exit(1);
+    }
+  return 0;
+}
