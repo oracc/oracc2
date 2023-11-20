@@ -49,7 +49,7 @@ extern unsigned char *uhex2utf8(unsigned const char *uhex);
 
 extern void help (void);
 extern int opts (int optchar, char *optarg);
-extern void options (int argc, char *const *argv, const char *optstr);
+extern int options (int argc, char *const *argv, const char *optstr);
 extern void banner(void);
 extern void usage(void);
 extern int optind, opterr;

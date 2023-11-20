@@ -1,7 +1,7 @@
 #include <dx.h>
 #include <osh.h>
 
-void
+int
 osh_exec(const char *cmd, const char *arg)
 {
   char av[4];
@@ -12,5 +12,5 @@ osh_exec(const char *cmd, const char *arg)
     fprintf(stderr, "%s: exec %s %s", cmd, arg);
   execv(cmd, av);
   fprintf(stderr, "%s: failed exec of %s: %s\n", cmd, strerror(errno));
-  exit(1);
+  return 1;
 }

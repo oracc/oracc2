@@ -11,12 +11,6 @@
 #define MAX_PATH_     2048
 
 const char *
-oracc_builds (void)
-{
-  return "@@ORACC_BUILDS@@";
-}
-
-const char *
 oracc_home (void)
 {
   static char *cached_home = NULL;

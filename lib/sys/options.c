@@ -28,7 +28,7 @@ program_values(const char *name, int major, int minor, const char *usage, const 
     copyright_string = copyright;
 }
 
-void
+int
 options (int argc, char *const *argv, const char *optstr)
 {
   int c;
@@ -42,15 +42,17 @@ options (int argc, char *const *argv, const char *optstr)
 	{
 	  /*fprintf(stderr, "%s: command line help:\n", argv[0]);*/
 	  help();
-	  exit(1);
+	  return 1;
 	}
       else if (opts (c, optarg))
 	{
 	  fprintf(stderr, "%s: unrecognized option %c\n", argv[0], c);
 	  help();
-	  exit(1);
-	}
+	  /*exit(1);*/
+	  return 1;
+	}      
     }
+  return 0;
 }
 
 void
@@ -79,5 +81,5 @@ usage ()
   banner ();
   fprintf(stderr, "Usage:\n      %s %s\n\n", prog, usage_string);
   help ();
-  exit (1);
+  /*exit (1);*/
 }

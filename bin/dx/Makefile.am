@@ -9,8 +9,8 @@ dx_SOURCES=dx.c dx_listen.c dx_accept.c dx_prechecks.c \
 
 dcx_SOURCES=dcx.c dx_connect.c
 
-osh_SOURCES=osh.c osh_commands.c osh_dcx.c osh_exec.c osh_options.c \
-	osh_project.c dx_connect.c
+osh_SOURCES=osh.c osh_options.c osh_project.c osh_commands.c osh_exec.c \
+	osh_dcx.c dx_connect.c
 osh_LDADD=$(xLDADD)
 osh_DEPENDENCIES=$(LDADD)
 

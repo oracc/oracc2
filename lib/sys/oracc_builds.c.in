@@ -1,0 +1,7 @@
+#include <oraccsys.h>
+
+const char *
+oracc_builds (void)
+{
+  return "@@ORACC_BUILDS@@";
+}

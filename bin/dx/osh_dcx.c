@@ -3,7 +3,7 @@
 
 #define DATA "hello"
 
-void
+int
 osh_dcx(char **optv)
 {
   int sock, rval;
@@ -15,13 +15,16 @@ osh_dcx(char **optv)
   if ((sock = dx_connect(DX_SERVER_NAME)) < 0)
     {
       perror("Error connecting stream socket (dx not running?)");
-      exit(1);
+      return 1;
     }
   else
     printf("dcx: connection successful\n");
 
   if (write(sock, DATA, sizeof(DATA)) < 0)
-    perror("writing on stream socket");
+    {
+      perror("writing on stream socket");
+      return 1;
+    }
   else
     do
       {
@@ -36,4 +39,5 @@ osh_dcx(char **optv)
     while (rval > 0);
   
   close(sock);
+  return 0;
 }
