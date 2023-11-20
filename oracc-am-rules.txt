@@ -1,3 +1,4 @@
+UP=../..
 override CFLAGS= 
 AM_CFLAGS=-pedantic -Wall -g -O0
 

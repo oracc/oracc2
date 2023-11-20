@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Ensure the environment is set up for Oracc work.
+#
+. @@ORACC_BUILDS@@/bin/oraccenv.sh
+

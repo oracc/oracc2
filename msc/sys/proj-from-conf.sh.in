@@ -1,0 +1,16 @@
+#!/bin/dash
+#
+# Safely obtain the project name from 00lib/(sub)config.xml.
+#
+if [ -r 00lib/subconfig.xml ]; then
+    fig=00lib/subconfig.xml
+elif [ -r 00lib/config.xml ]; then
+    fig=00lib/config.xml
+else
+    fig=""
+fi
+if [ "$fig" = "" ]; then
+    /bin/echo -n ''
+else
+    xsltproc @@ORACC_BUILDS@@/lib/scripts/config-@n.xsl $fig
+fi

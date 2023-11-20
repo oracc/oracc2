@@ -20,7 +20,7 @@ bin/xx/dbix
 bin/xx/dbx
 bin/xx/tlitsig
 bin/xx/xmlify
-msc/oscx/osh
+msc/sys/proj-from-conf.sh
 
 # MacOS convenience link to external library header
 include/pcre2.h
@@ -45,6 +45,8 @@ iomethod.c
 
 # .in derivatives
 bin/dx/dx-install.sh
+bin/dx/odo/odo-dir-links.sh
+bin/dx/odo/odo-environment.sh
 bin/dx/osh/osh.c
 bin/wx/oai.c
 bin/wx/oid.c
@@ -170,3 +172,4 @@ missing
 stamp-h1
 .deps
 .libs
+.dirstamp

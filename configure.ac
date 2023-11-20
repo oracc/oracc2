@@ -90,6 +90,6 @@ AC_CONFIG_FILES([Makefile
 		 bin/wx/ccgi/Makefile
 		 bin/xx/Makefile
 		 msc/Makefile
-		 msc/oscx/Makefile
+		 msc/sys/Makefile
                  ])
 AC_OUTPUT

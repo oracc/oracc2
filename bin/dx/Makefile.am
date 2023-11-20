@@ -12,4 +12,4 @@ dcx_SOURCES=dcx.c dx_connect.c
 install-exec-hook:
 	/bin/sh ./dx-install.sh
 
-subdirs=osh odo
+SUBDIRS=osh odo

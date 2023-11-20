@@ -1,1 +1,1 @@
-subdirs = oscx
+SUBDIRS = sys

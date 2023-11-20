@@ -1,4 +1,4 @@
-#include <dx.h>
+#include <../dx.h>
 #include <osh.h>
 
 static int osh_status(Job *jp);

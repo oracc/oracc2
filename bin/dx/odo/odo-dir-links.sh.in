@@ -1,0 +1,48 @@
+#!/bin/dash
+#
+# Ensure oracc/{bld,pub,tmp,xml,www}/$project exist and (re)set 01*
+# and 02* links to them.
+#
+# This script is run by odo after the CVS refresh but before any other
+# activity.
+#
+
+##umask 002
+
+V=-v
+
+project=$1
+
+if [ "$project" = "" ]; then
+    echo $0: no project given. Stop.
+    exit 1
+fi
+
+if [ ! -r 00lib/config.xml ]; then
+    echo $0: no 00lib/config.xml for project $project. Stop.
+    exit 1
+fi
+
+confproj=`proj-from-conf.sh`
+if [ "$confproj" != "$project" ]; then
+    echo $0: config.xml@n $confproj does not match given project $project. Stop.
+    exit 1
+fi
+
+cd @@ORACC_BUILDS@@/$1
+for dir in bld pub tmp xml www ; do
+    mkdir $V -p @@ORACC_BUILDS@@/$dir/$1
+done
+
+rm $V -f 01bld 01tmp 02pub 02www 02xml
+
+# In Oracc version one there was a rogue script that occasionally
+# created 01bld as a directory not a link; this probably no longer
+# exists but this check is retained just in case.
+if [ -d 01bld ]; then rm $V -fr 01bld ; fi
+
+ln $V -sf @@ORACC_BUILDS@@/bld/$1 01bld
+ln $V -sf @@ORACC_BUILDS@@/pub/$1 02pub
+ln $V -sf @@ORACC_BUILDS@@/tmp/$1 01tmp
+ln $V -sf @@ORACC_BUILDS@@/www/$1 02www
+ln $V -sf @@ORACC_BUILDS@@/xml/$1 02xml

@@ -6,6 +6,7 @@
 #
 # Additional arguments are passed to the command script
 #
+echo $0 called with arguments $*
 project=$1
 if [ "$project" = "." ]; then
     if [ -r 00lib/config.xml ]; then
@@ -18,19 +19,25 @@ fi
 if [ "$project" != "" ]; then
     shift
     command=$1
-    echo project=$project command=$command
     if [ "$command" != "" ]; then
 	shift
 	bin=@@ORACC_BUILDS@@/bin
 	user=`/bin/echo -n $project | cut -d/ -f1`
+	echo user=$user project=$project command=$command
 	if [ $command = "init" ]; then
-	    $bin/odo-cvs-checkout.sh $user $*
+	    cd @@ORACC_BUILDS@@
+	    if [ ! -r $user ]; then
+		$bin/odo-cvs-checkout.sh $user $*
+	    else
+		echo $0: $user already exists. Stop.
+	    fi
 	else
 	    projdir=@@ORACC_BUILDS@@/$project
 	    if [ -d $projdir ]; then
 		(cd $projdir
-		 . $bin/oscx-server-env.sh
+		 . $bin/odo-environment.sh
 		 $bin/odo-cvs-refresh.sh $user $*
+		 $bin/odo-dir-links.sh $project
 		 uscript=$bin/${user}-${command}.sh
 		 if [ -x $bin/$user-$command.sh ]; then
 		     . $uscript $*
@@ -39,12 +46,12 @@ if [ "$project" != "" ]; then
 		     if [ -x $script ]; then
 			 . $script $*
 		     else
-			 echo $0: unknown command $command (tried $uscript and $script). Stop.
+			 echo "$0: no command $uscript or $script. Stop."
 		     fi
 		 fi
 		 )
 	    else
-		echo $0: unknown project $project.  Do you need to run oraxx $project init?. Stop.		
+		echo $0: unknown project $project.  Do you need to run odo $project init? Stop.
 	    fi
 	fi
     else

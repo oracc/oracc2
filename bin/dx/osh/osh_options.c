@@ -1,6 +1,6 @@
 #include <ctype.h>
 #include <oraccsys.h>
-#include <dx.h>
+#include <../dx.h>
 #include <osh.h>
 
 static int badchar(char *s);
@@ -10,7 +10,7 @@ static int badchar(char *s);
    are all in a single string, which is split here at any whitespace.
 
    Unlike a real shell, there are is no expansion or escaping.  All
-   osh handles is commands like 'rimanum build all' or 'dcclt/nineveh
+   osh handles commands like 'rimanum build all' or 'dcclt/nineveh
    check links'.
 
    Command tokens are validated to ensure they contain only characters

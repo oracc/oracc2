@@ -1,4 +1,4 @@
-#include <dx.h>
+#include <../dx.h>
 #include <osh.h>
 
 /**osh_dcx sets up a connection to the dx server, sends the action

@@ -1,4 +1,4 @@
-#include <dx.h>
+#include <../dx.h>
 #include <osh.h>
 
 const char *progname = NULL;
@@ -18,7 +18,7 @@ main(int argc, char **argv)
     {
       /* osh_project guarantees we are in a project directory where we
 	 have permission to be */
-      if (!osh_project(optv, &j))
+      if (!strcmp(optv[1], "init") || !osh_project(optv, &j))
 	{
 	  /* osh_commands returns a pointer to static data; NULL
 	     indicates an unknown command */
