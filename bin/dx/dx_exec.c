@@ -79,7 +79,7 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
 
       setsid();
 
-      fprintf(stderr, "dx_exec: switching grandchild output to %s\n", request_log);
+      fprintf(stderr, "%s: logging to %s\n", progname, request_log);
 
       if ((fd = open(request_log, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR)) < 0)
 	{

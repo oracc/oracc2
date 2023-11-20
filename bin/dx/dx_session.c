@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/stat.h>
+#include <dx.h>
 
 const char *varoracc = "/home/oracc/tmp/sop";
 
@@ -14,7 +10,7 @@ dx_session(char **sesh_id)
 
   template = malloc(strlen(varoracc) + 10);
   sprintf(template, "%s/dxXXXXXX", varoracc);
-  fprintf(stderr, "sesh: sesh_template=%s\n", template);
+  fprintf(stderr, "%s: sesh_template=%s\n", progname, template);
   tmpdir = (char*)mkdtemp(template);  
 
   if (tmpdir)
@@ -25,7 +21,7 @@ dx_session(char **sesh_id)
       while (basename > tmpdir && '/' != basename[-1])
 	--basename;
       *sesh_id = basename;
-      fprintf(stderr, "sesh: tmpdir=%s; sesh_id=%s\n", tmpdir, basename);
+      fprintf(stderr, "%s: tmpdir=%s; sesh_id=%s\n", progname, tmpdir, basename);
       return tmpdir;
     }
   else

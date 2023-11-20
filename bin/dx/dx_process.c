@@ -9,7 +9,7 @@ dx_process(int sock, char *buf)
   sprintf(sesh_buf, "%s::%s\n", tmp, sesh_id);
   if (write(sock, sesh_buf, strlen(sesh_buf)) < 0)
     perror("writing on stream socket");
-  printf("closing dcx socket %d\n", sock);
+  fprintf(stderr, "%s: closing socket [%d]\n", progname, sock);
   char *keys[] = { "build", NULL };
   int nkeys = 1;
   char *err = NULL;

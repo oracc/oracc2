@@ -119,10 +119,14 @@ osh_project(char **optv)
       fprintf(stderr, "%s: failed to get user name from uid %ld\n", progname, (long)uid);
       goto error;
     }
+#define cleanup() \
+  if (rname) free(rname); \
+  if (projecthome) free(projecthome); \
+  if (projectworkdir) free(projectworkdir)
+  cleanup();
   return 0;
  error:
-  if (rname)
-    free(rname);
+  cleanup();
   return 1;
 }
 

@@ -18,6 +18,8 @@
 
 #define DX_SERVER_NAME "/tmp/oracc-daemon-dx"
 
+extern const char *progname;
+
 extern char *dx_session(char **sesh_id);
 extern int dx_accept(int listenfd, uid_t * uidptr);
 extern int dx_connect (const char *name);
