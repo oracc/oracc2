@@ -2,7 +2,8 @@
 bin/ax/ax
 bin/dx/dcx
 bin/dx/dx
-bin/dx/osh
+bin/dx/odo/odo
+bin/dx/osh/osh
 bin/gx/gx
 bin/jx/jx
 bin/ox/oid
@@ -44,7 +45,7 @@ iomethod.c
 
 # .in derivatives
 bin/dx/dx-install.sh
-bin/dx/osh.c
+bin/dx/osh/osh.c
 bin/wx/oai.c
 bin/wx/oid.c
 bin/wx/oracc-server.c
