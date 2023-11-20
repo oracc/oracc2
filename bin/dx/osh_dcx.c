@@ -1,22 +1,18 @@
 #include <dx.h>
 #include <osh.h>
 
+/**osh_dcx sets up a connection to the dx server, sends the action
+   request, and receives the name of the logfile for the process
+   carrying out the action.  Then it closes the connection and
+   returns.  If successful, osh_wait() will track the progress of the
+   action and return information to caller.
+ */
 int
-osh_dcx(char **optv)
+osh_dcx(char **optv, struct job *jp)
 {
   int sock, rval;
   char buf[1024];
-  char *request = NULL;
-  int i, len;
 
-  for (i = 1, len = 0; optv[i]; ++i)
-    len += strlen(optv[i]) + 1;
-  request = malloc(len+1);
-  *request = '\0';
-  for (i = 1; optv[i]; ++i)
-    strcat(strcat(request, optv[i]), " ");
-  request[strlen(request)-1] = '\0';
-  
   if (verbose)
     fprintf(stderr, "%s: dcx: trying to connect to %s\n", progname, DX_SERVER_NAME);
 
@@ -28,10 +24,10 @@ osh_dcx(char **optv)
   else if (verbose)
     fprintf(stderr, "%s: dcx[%d]: connection successful\n", progname, sock);
 
+  /* Send the request */
   if (verbose)
-    fprintf(stderr, "%s: dcx[%d]: sending %s\n", progname, sock, request);
-
-  if (write(sock, request, strlen(request)) < 0)
+    fprintf(stderr, "%s: dcx[%d]: sending %s\n", progname, sock, jp->cmd);
+  if (write(sock, jp->cmd, strlen(jp->cmd)) < 0)
     {
       perror("writing on stream socket");
       goto error;
@@ -51,17 +47,27 @@ osh_dcx(char **optv)
 		buf[strlen(buf)-1] = '\0';
 	      if (verbose)
 		fprintf(stderr, "%s: dcx[%d]: received '%s'\n", progname, sock, buf);
+	      char *p = strstr(buf, "::");
+	      if (p)
+		{
+		  jp->sesh = strdup(p + 2);
+		  *p = '\0';
+		  jp->log = strdup(buf);
+		  p = strrchr(buf, '/');
+		  strcpy(p+1, "status");
+		  jp->statusfile = strdup(p);
+		  *p = '\0';
+		  jp->tmp = strdup(p);
+		}
+	      else
+		goto error;
+	      
 	    }
 	}
       while (rval > 0);
     }
-  free(optv);
   close(sock);
-#define cleanup() \
-  if (request) free(request)
-  cleanup();
   return 0;
  error:
-  cleanup();
   return 1;
 }

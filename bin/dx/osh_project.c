@@ -23,7 +23,7 @@ static int oradmin_group(void);
   the arguments supplied to osh.
  */
 int
-osh_project(char **optv)
+osh_project(char **optv, Job *jp)
 {
   uid_t uid = getuid();
   struct passwd *pwd;
@@ -119,14 +119,17 @@ osh_project(char **optv)
       fprintf(stderr, "%s: failed to get user name from uid %ld\n", progname, (long)uid);
       goto error;
     }
-#define cleanup() \
-  if (rname) free(rname); \
-  if (projecthome) free(projecthome); \
-  if (projectworkdir) free(projectworkdir)
-  cleanup();
+  jp->user = rname;
+  jp->phome = projecthome;
+  jp->pwork = projectworkdir;
   return 0;
  error:
-  cleanup();
+  if (rname)
+    free(rname);
+  if (projecthome)
+    free(projecthome);
+  if (projectworkdir)
+    free(projectworkdir);
   return 1;
 }
 

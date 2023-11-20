@@ -2,8 +2,6 @@
 #include <osh.h>
 
 const char *progname = NULL;
-const char *project = NULL;
-const char *user = NULL;
 int ssh_mode = 0;
 int verbose = 0;
 
@@ -12,12 +10,15 @@ main(int argc, char **argv)
 {
   char **optv = NULL;
   progname = argv[0];
+  static Job j;
 
-  if ((optv = osh_options(argc, argv)))
+  j.pid = getpid();
+  
+  if ((optv = osh_options(argc, argv, &j)))
     {
       /* osh_project guarantees we are in a project directory where we
 	 have permission to be */
-      if (!osh_project(optv))
+      if (!osh_project(optv, &j))
 	{
 	  /* osh_commands returns a pointer to static data; NULL
 	     indicates an unknown command */
@@ -31,23 +32,31 @@ main(int argc, char **argv)
 		  /* On success osh has been replaced by the builtin;
 		     builtins all echo machine state data using, e.g.,
 		     ls or printenv */
-		  if (osh_exec(oip->cmd, oip->arg))
+		  if (osh_exec(oip->cmd, oip->arg, &j))
 		    goto error;
 		}
 	      else
 		{
-		  /* On success we have a live connection to the Oracc
-		     daemon via a Unix domain socket */
-		  if (osh_dcx(optv))
+		  /* On success we have called the job-manager odo to complete the job */
+		  if (osh_dcx(optv, &j))
+		    goto error;
+
+		  /* Wait for the job to complete (a future
+		     implementation will support an asynchronous mode) */
+		  if (osh_wait(&j))
+		    goto error;
+		  
+		  /* Wrap-up--send the log file back to the caller and
+		     possibly other actions */
+		  if (osh_wrapup(&j))
 		    goto error;
 		}
-	      
 	    }
 	  else
 	    {
 	      fprintf(stderr, "%s: unknown command '%s'. Stop.\n", argv[0], optv[1]);
 	      goto error;
-	    }	  
+	    }
 	}
     }
   else
@@ -55,6 +64,7 @@ main(int argc, char **argv)
       fprintf(stderr, "%s: error parsing arguments. Stop.\n", argv[0]);
       goto error;
     }
+
   return 0;
 
  error:

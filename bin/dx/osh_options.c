@@ -20,7 +20,7 @@ static int badchar(char *s);
    not yet implemented.
  */
 char **
-osh_options(int argc, char **argv)
+osh_options(int argc, char **argv, Job *jp)
 {
   char **av = NULL;
   if (!options(argc, argv, "cv"))
@@ -82,6 +82,7 @@ osh_options(int argc, char **argv)
 	      free(av);
 	      av = NULL;
 	    }
+	  int len = 0;
 	  for (i = 0; av[i]; ++i)
 	    if (badchar(av[i]))
 	      {
@@ -90,6 +91,16 @@ osh_options(int argc, char **argv)
 		av = NULL;
 		break;
 	      }
+	    else
+	      len += strlen(av[i])+1;
+
+	  /* Set up the job cmd vector and cmd string members */
+	  jp->cmdv = av;
+	  jp->cmd = malloc(len+1);
+	  *jp->cmd = '\0';
+	  for (i = 0; av[i]; ++i)
+	    strcat(strcat(jp->cmd, av[i]), " ");
+	  jp->cmd[strlen(jp->cmd)-1] = '\0';
 	}
     }
   return av;
