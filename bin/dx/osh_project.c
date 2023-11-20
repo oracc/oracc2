@@ -1,7 +1,10 @@
 #include <dx.h>
 #include <pwd.h>
+#include <grp.h>
 #include <osh.h>
 #include <oraccsys.h>
+
+static int oradmin_group(void);
 
 /**osh_project validates the project/login relationship and changes
   directory to the project.
@@ -24,30 +27,46 @@ osh_project(char **optv)
 {
   uid_t uid = getuid();
   struct passwd *pwd;
+  char *rname = NULL;
+  char *projecthome = NULL;
+  char *projectworkdir = NULL;
   if ((pwd = getpwuid(uid)))
     {
-      char *rname, *projectworkdir;
       rname = strdup(pwd->pw_name);
+
+      int oradmintrue = oradmin_group();
+
+      if (oradmintrue < 0)
+	goto error;
+      
       if (verbose)
-	fprintf(stderr, "%s: user %s requesting %s in project %s\n", progname, rname, optv[1], optv[0]);
-      if (strcmp(rname, "oradmin"))
+	fprintf(stderr, "%s: user %s%s requesting %s in project %s\n",
+		progname,
+		rname,
+		oradmintrue ? " (group oradmin)" : "",
+		optv[1], optv[0]);
+      
+      if (!oradmintrue)
 	{
 	  /* For a project user the project must start with the rname;
 	     you're only allowed to work on your own project or
 	     subproject */
 	  int namelen = strlen(rname);
 	  if (strncmp(optv[0], rname, namelen)
-	      || (optv[namelen] && '/' != *optv[namelen]))
+	      || (optv[0][namelen] && '/' != optv[0][namelen]))
 	    {
 	      fprintf(stderr, "%s: project-users can only work in their own projects (%s vs %s)\n",
 		      progname, rname, optv[0]);
 	      goto error;
 	    }
+	  projecthome = strdup(rname);
 	}
+      else
+	projecthome = strdup(optv[0]);
 
       /* For any user the project home (e.g., /home/oracc/ogsl) must also exist */
-      char projdir[strlen(oracc_builds())+strlen(rname)+2];
-      sprintf(projdir, "%s/%s", oracc_builds(), rname);
+      char projdir[strlen(oracc_builds())+strlen(projecthome)+2];
+      sprintf(projdir, "%s/%s", oracc_builds(), projecthome);
       struct stat st;
       if (stat(projdir, &st))
 	{
@@ -56,7 +75,7 @@ osh_project(char **optv)
 	}
 
       /* And it must be a directory */
-      if ((st.st_mode&S_IFMT) == S_IFDIR)
+      if ((st.st_mode&S_IFMT) != S_IFDIR)
 	{
 	  fprintf(stderr, "%s: project directory %s is not a directory!\n", progname, projdir);
 	  goto error;
@@ -74,7 +93,7 @@ osh_project(char **optv)
 	    }
 	      
 	  /* And it must be a directory */
-	  if ((st.st_mode&S_IFMT) == S_IFDIR)
+	  if ((st.st_mode&S_IFMT) != S_IFDIR)
 	    {
 	      fprintf(stderr, "%s: subproject directory %s is not a directory!\n", progname, subprojdir);
 	      goto error;
@@ -102,5 +121,32 @@ osh_project(char **optv)
     }
   return 0;
  error:
+  if (rname)
+    free(rname);
   return 1;
+}
+
+/**oradmin_group: return 1 if caller is in group oradmin; 0 if not; -1 on error
+ */
+static int
+oradmin_group(void)
+{
+  gid_t dummy[1];
+  int i, n = getgroups(0, dummy);
+  gid_t glist[n];
+  if ((n == getgroups(n, glist)))
+    {
+      for (i = 0; i < n; ++i)
+	{
+	  struct group *gp = getgrgid(glist[i]);
+	  if (gp && !strcmp(gp->gr_name, "oradmin"))
+	    return 1;
+	}
+    }
+  else
+    {
+      perror("getgroups failed");
+      return -1;
+    }
+  return 0;
 }

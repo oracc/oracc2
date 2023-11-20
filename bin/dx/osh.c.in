@@ -17,15 +17,15 @@ main(int argc, char **argv)
     {
       /* osh_project guarantees we are in a project directory where we
 	 have permission to be */
-      if (osh_project(optv))
+      if (!osh_project(optv))
 	{
 	  /* osh_commands returns a pointer to static data; NULL
 	     indicates an unknown command */
-	  struct osh_info *oip = osh_commands(optv[0], strlen(optv[0]));
+	  struct osh_info *oip = osh_commands(optv[1], strlen(optv[1]));
 	  if (oip)
 	    {
 	      if (verbose)
-		fprintf(stderr, "%s: project=%s; initial command=%s\n", optv[0], optv[1], optv[2]);
+		fprintf(stderr, "%s: project=%s; initial command=%s\n", progname, optv[0], optv[1]);
 	      if (oip->type == OSH_BUILTIN)
 		{
 		  /* On success osh has been replaced by the builtin;
@@ -45,14 +45,14 @@ main(int argc, char **argv)
 	    }
 	  else
 	    {
-	      fprintf(stderr, "%s: unknown command '%s'. Stop.", argv[0], optv[0]);
+	      fprintf(stderr, "%s: unknown command '%s'. Stop.\n", argv[0], optv[1]);
 	      goto error;
 	    }	  
 	}
     }
   else
     {
-      fprintf(stderr, "%s: wrong number of arguments. Stop.\n", argv[0]);
+      fprintf(stderr, "%s: error parsing arguments. Stop.\n", argv[0]);
       goto error;
     }
   return 0;

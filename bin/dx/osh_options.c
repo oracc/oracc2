@@ -50,15 +50,14 @@ osh_options(int argc, char **argv)
 	    {
 	      sp = (argc - optind) + 1;
 	    }
-	  av = malloc((sp+2)*sizeof(char *));
-	  av[0] = "odo";
+	  av = malloc((sp+1)*sizeof(char *));
 	  if (ssh_mode)
 	    {
 	      char *s = argv[optind];
-	      sp = 1;
+	      i = 0;
 	      while (*s)
 		{
-		  av[sp++] = s;
+		  av[i++] = s;
 		  while (*s && !isspace(*s))
 		    ++s;
 		  if (*s)
@@ -72,10 +71,16 @@ osh_options(int argc, char **argv)
 	    }
 	  else
 	    {
-	      i = 1;
+	      i = 0;
 	      while (argv[optind])
 		av[i++] = argv[optind++];
 	      av[i] = NULL;
+	    }
+	  if (!av[0] || !av[1])
+	    {
+	      fprintf(stderr, "%s: request must contain at least a project and a command\n", progname);
+	      free(av);
+	      av = NULL;
 	    }
 	  for (i = 0; av[i]; ++i)
 	    if (badchar(av[i]))
@@ -83,6 +88,7 @@ osh_options(int argc, char **argv)
 		fprintf(stderr, "%s: bad character in command token\n", argv[0]);
 		free(av);
 		av = NULL;
+		break;
 	      }
 	}
     }
@@ -123,7 +129,7 @@ badchar(char *s)
     ['-']=1,['_']=1,['/']=1
   };
   while (*s)
-    if (s < 128 && !good[(unsigned char)*s++])
+    if (*s < 128 && !good[(unsigned char)*s++])
       return 1;
   return 0;
 }
