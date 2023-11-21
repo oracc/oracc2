@@ -52,12 +52,17 @@ osh_dcx(char **optv, struct job *jp)
 		{
 		  jp->sesh = strdup(p + 2);
 		  *p = '\0';
+		  *p++ = '/';
+		  strcpy(p, "request.log");
 		  jp->log = strdup(buf);
-		  p = strrchr(buf, '/');
-		  strcpy(p+1, "status");
-		  jp->statusfile = strdup(p);
-		  *p = '\0';
-		  jp->tmp = strdup(p);
+		  strcpy(p, "status");
+		  jp->statusfile = strdup(buf);
+		  p[-1] = '\0';
+		  jp->tmp = strdup(buf);
+		  if (verbose)
+		    fprintf(stderr, "jp->sesh = %s; jp->tmp=%s\n"
+			    	"  jp->log=%s;\n  jp->statusfile=%s\n",
+			    jp->sesh, jp->tmp, jp->log, jp->statusfile);
 		}
 	      else
 		goto error;

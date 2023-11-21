@@ -32,7 +32,7 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
     argv[i+1] = keys[i];
   argv[i+1] = NULL;
 
-  fprintf(stderr, "%s: exec %s", progname, path);
+  fprintf(stderr, "%s: exec %s", progname, name/*path*/);
   for (i = 0; argv[i]; ++i)
     fprintf(stderr, " %s", argv[i]);
   fprintf(stderr, "\n");
@@ -105,7 +105,7 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
       else
 	setbuf(stdout, NULL);
 
-      if (execve(path, (char *const *)argv, NULL)) /* (char *const *)envp */
+      if (execve(name/*path*/, (char *const *)argv, NULL)) /* (char *const *)envp */
 	{
 	  fprintf(stderr, "exec failed: path=%s\n%s\n", path, strerror(errno));
 	  *err = "exec failed";

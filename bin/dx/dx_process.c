@@ -55,7 +55,7 @@ buf2keys(char *buf, int *n)
     }
   k[i] = NULL;
   *n = nk;
-  fprintf(stderr, "buf2keys: ");
+  fprintf(stderr, "buf2keys:");
   for (i = 0; k[i]; ++i)
     fprintf(stderr, " %s", k[i]);
   fprintf(stderr, "\n");
