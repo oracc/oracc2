@@ -20,12 +20,18 @@
 
 fail ()
 {
+    set_status error
+    exit 1;
+}
+
+set_status ()
+{
     if [ "$tmpdir" != "" ]; then
 	if [ -d $tmpdir ]; then
-	    print 'error' >$tmpdir/status;
+	    echo $0 writing status $1 to $tmpdir/status
+	    printf "$1" >$tmpdir/status;
 	fi
     fi
-    exit 1;
 }
 
 exec 1>&2
@@ -75,6 +81,12 @@ if [ "$project" != "" ]; then
 	    cd @@ORACC_BUILDS@@
 	    if [ ! -r $user ]; then
 		$bin/odo-cvs-checkout.sh $user $*
+		if [ $? ]; then
+		    echo $0: odo-checkout.sh $user $*: command failed
+		    fail
+		else
+		    set_status done
+		fi
 	    else
 		echo $0: $user already exists. Stop.
 		fail
@@ -82,7 +94,7 @@ if [ "$project" != "" ]; then
 	else
 	    projdir=@@ORACC_BUILDS@@/$project
 	    if [ -d $projdir ]; then
-	        print 'run' >$tmpdir/status
+	        set_status run
 		(cd $projdir
 		 . $bin/odo-environment.sh
 		 $bin/odo-cvs-refresh.sh $user $*
@@ -98,8 +110,8 @@ if [ "$project" != "" ]; then
 			 echo "$0: no command $uscript or $script. Stop."
 		     fi
 		 fi
-		 )
-		print 'done' >$tmpdir/status
+		)
+		set_status done
 	    else
 		echo $0: unknown project $project.  Do you need to run odo $project init? Stop.
 		fail

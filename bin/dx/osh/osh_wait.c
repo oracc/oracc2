@@ -13,18 +13,14 @@ osh_wait(Job *jp)
       jp->time += 3;
       if (osh_status(jp))
 	goto error;
-      if (!strcmp(jp->status, "done"))
-	{
-	  break;
-	}
-      else if (!strcmp(jp->status, "error"))
-	goto error;
-      else if (!strcmp(jp->status, "run"))
+      if (!strcmp(jp->status, "run"))
 	fprintf(stdout, "osh[%d]: session %s time %i sec\n", jp->pid, jp->sesh, jp->time);
+      else if (!strcmp(jp->status, "done") || !strcmp(jp->status, "error"))
+	break;
       else
 	{
 	  fprintf(stdout, "osh[%d]: unknown status %s found in %s\n", jp->pid, jp->status, jp->statusfile);
-	  goto error;
+	  break;
 	}      
     }
   return 0;
@@ -42,16 +38,18 @@ osh_status(Job *jp)
       if (n >= 0)
 	{
 	  jp->status[n] = '\0';
+	  if (verbose)
+	    fprintf(stderr, "osh[%d]: read %s and found status '%s'\n", jp->pid, jp->statusfile, jp->status);
 	}
       else
 	{
-	  fprintf(stdout, "osh[%d]: read %s failed; %s\n", jp->pid, jp->statusfile, strerror(errno));
+	  fprintf(stderr, "osh[%d]: read %s failed; %s\n", jp->pid, jp->statusfile, strerror(errno));
 	  goto error;
 	}
     }
   else
     {
-      fprintf(stdout, "osh[%d]: unable to open status file %s; %s\n", jp->pid, jp->statusfile, strerror(errno));
+      fprintf(stderr, "osh[%d]: unable to open status file %s; %s\n", jp->pid, jp->statusfile, strerror(errno));
       goto error;
     }
   return 0;
