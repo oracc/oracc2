@@ -6,6 +6,9 @@
 #
 # Additional arguments are passed to the command script
 #
+
+exec 1>&2
+
 echo $0 called with arguments $*
 project=$1
 if [ "$project" = "." ]; then
