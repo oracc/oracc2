@@ -15,6 +15,9 @@ osh_cleanup(Job *jp)
       osh_maybe_free(tmp);
       osh_maybe_free(phome);
       osh_maybe_free(pwork);
+      osh_maybe_free(log);
+      osh_maybe_free(sesh);
+      osh_maybe_free(statusfile);
       memset(jp, '\0', sizeof(Job));
     }
 }
