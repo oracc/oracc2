@@ -26,12 +26,18 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
       return 1;
     }
   
-  argv[0] = argv[1] = name;
+  argv[0] = name;
   int i;
   for (i = 0; keys[i]; ++i)
-    argv[i+2] = keys[i];
-  argv[i+2] = NULL;
+    argv[i+1] = keys[i];
+  argv[i+1] = NULL;
 
+  fprintf(stderr, "%s: exec %s", progname, path);
+  for (i = 0; argv[i]; ++i)
+    fprintf(stderr, " %s", argv[i]);
+  fprintf(stderr, "\n");
+  fflush(stderr);
+      
   if ((pid = fork()) < 0)
     {
       /* set error status to return to client */

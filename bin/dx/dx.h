@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <time.h>
+#include <ctype.h>
 
 #define DX_SERVER_NAME "/tmp/oracc-daemon-dx"
 
