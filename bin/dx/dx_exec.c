@@ -27,10 +27,11 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
     }
   
   argv[0] = name;
+  argv[1] = tmpdir;
   int i;
   for (i = 0; keys[i]; ++i)
-    argv[i+1] = keys[i];
-  argv[i+1] = NULL;
+    argv[i+2] = keys[i];
+  argv[i+2] = NULL;
 
   fprintf(stderr, "%s: exec %s", progname, name/*path*/);
   for (i = 0; argv[i]; ++i)

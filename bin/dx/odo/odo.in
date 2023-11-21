@@ -1,24 +1,68 @@
 #!/bin/dash
 #
-# First argument is project; if project is "." use oraccopt to find it from 00lib/config.xml
+# odo executes programs that carry out Oracc commands.
+# 
+# The first argument is the directory in which to put the status file
+# and any other outputs.  When called from osh/dx this is the tmpdir
+# which has a session code; if odo is called directly (really only for
+# testing) any directory can be used for this as long as it is
+# writable. The special tmpdir '-' can be used in which case files are
+# written to the environment TMPDIR or /tmp if TMPDIR is not set.
 #
-# Second argument is command
+# The second argument is the project; if project is "." use oraccopt
+# to find it from 00lib/config.xml
 #
-# Additional arguments are passed to the command script
+# The third argument is the base command to execute.
 #
+# Any additional arguments are passed to the command script.
+#
+
+
+fail ()
+{
+    if [ "$tmpdir" != "" ]; then
+	if [ -d $tmpdir ]; then
+	    print 'error' >$tmpdir/status;
+	fi
+    fi
+    exit 1;
+}
 
 exec 1>&2
 
+if [ $# -lt 3 ]; then
+    echo $0: not enough arguments--need at least TMPDIR PROJECT COMMAND. Stop.
+    fail
+fi
+
 echo $0 called with arguments $*
+
+tmpdir=$1
+if [ "$tmpdir" = "-" ]; then
+  if [ "$TMPDIR" != "" ]; then
+    tmpdir=$TMPDIR
+  else
+    tmpdir=/tmp
+  fi
+fi
+
+if [ ! -d $tmpdir ]; then
+    echo $0: $tmpdir is not a directory. Stop.
+    fail
+fi
+
+shift
+
 project=$1
 if [ "$project" = "." ]; then
     if [ -r 00lib/config.xml ]; then
 	project=`oraccopt`
     else
 	echo $0: you can only use 'odo .' in a project directory. Stop.
-	exit 1
+	fail
     fi
 fi
+
 if [ "$project" != "" ]; then
     shift
     command=$1
@@ -26,17 +70,19 @@ if [ "$project" != "" ]; then
 	shift
 	bin=@@ORACC_BUILDS@@/bin
 	user=`/bin/echo -n $project | cut -d/ -f1`
-	echo user=$user project=$project command=$command
+	echo "$0: tmpdir=$tmpdir; user=$user; project=$project; command=$command"
 	if [ $command = "init" ]; then
 	    cd @@ORACC_BUILDS@@
 	    if [ ! -r $user ]; then
 		$bin/odo-cvs-checkout.sh $user $*
 	    else
 		echo $0: $user already exists. Stop.
+		fail
 	    fi
 	else
 	    projdir=@@ORACC_BUILDS@@/$project
 	    if [ -d $projdir ]; then
+	        print 'run' >$tmpdir/status
 		(cd $projdir
 		 . $bin/odo-environment.sh
 		 $bin/odo-cvs-refresh.sh $user $*
@@ -53,13 +99,17 @@ if [ "$project" != "" ]; then
 		     fi
 		 fi
 		 )
+		print 'done' >$tmpdir/status
 	    else
 		echo $0: unknown project $project.  Do you need to run odo $project init? Stop.
+		fail
 	    fi
 	fi
     else
 	echo $0: empty command argument. Stop.
+	fail
     fi
 else
     echo $0: empty project argument. Stop.
+    fail
 fi
