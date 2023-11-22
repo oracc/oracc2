@@ -11,13 +11,12 @@ osh_cleanup(Job *jp)
       osh_maybe_free(cmd);
       osh_maybe_free(user);
       osh_maybe_free(project);
-      /*osh_maybe_free(sesh);*/ /* sesh is a ptr into tmp so don't free it */
       osh_maybe_free(tmp);
-      osh_maybe_free(phome);
-      osh_maybe_free(pwork);
       osh_maybe_free(log);
       osh_maybe_free(sesh);
       osh_maybe_free(statusfile);
+      osh_maybe_free(phome);
+      osh_maybe_free(pwork);
       memset(jp, '\0', sizeof(Job));
     }
 }

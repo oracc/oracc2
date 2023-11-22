@@ -31,6 +31,12 @@ dx_listen (const char *name)
       rval = -3;
       goto errout;
     }
+  if (chmod (un.sun_path, 0770))
+    {
+      rval = -5;
+      unlink (un.sun_path);
+      goto errout;
+    }
   if (listen (fd, QLEN) < 0)
     {				/* tell kernel we’re a server */
       rval = -4;

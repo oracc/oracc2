@@ -1,8 +1,9 @@
 include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=dcx
-noinst_SCRIPTS=dx-install.sh
 sbin_PROGRAMS=dx
+bin_SCRIPTS=dx-stop.sh
+noinst_SCRIPTS=dx-install.sh
 
 dx_SOURCES=dx.c dx_listen.c dx_accept.c dx_prechecks.c \
 	dx_exec.c dx_process.c dx_session.c dx_signal.c
