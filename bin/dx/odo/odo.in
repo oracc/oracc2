@@ -24,7 +24,6 @@
 # to the script invocation.
 #
 
-
 fail ()
 {
     set_status error
@@ -40,6 +39,11 @@ set_status ()
 	fi
     fi
 }
+
+if [ "$1" = "-v" ]; then
+    shift
+    V="-v"
+fi
 
 exec 1>&2
 
@@ -105,7 +109,7 @@ if [ "$project" != "" ]; then
 		(cd $projdir
 		 . $bin/odo-environment.sh
 		 $bin/odo-cvs-refresh.sh $user $*
-		 $bin/odo-dir-links.sh $project
+		 $bin/odo-dir-links.sh $project $V
 		 uscript=$bin/${user}-${command}.sh
 		 if [ -x $bin/$user-$command.sh ]; then
 		     . $uscript $user $project $*

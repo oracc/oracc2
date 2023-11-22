@@ -9,7 +9,7 @@
 
 ##umask 002
 
-V=-v
+V=$2
 
 project=$1
 
@@ -39,7 +39,7 @@ rm $V -f 01bld 01tmp 02pub 02www 02xml
 # In Oracc version one there was a rogue script that occasionally
 # created 01bld as a directory not a link; this probably no longer
 # exists but this check is retained just in case.
-if [ -d 01bld ]; then rm $V -fr 01bld ; fi
+if [ -d 01bld ]; then rm $V -fr 01bld ; 
 
 ln $V -sf @@ORACC_BUILDS@@/bld/$1 01bld
 ln $V -sf @@ORACC_BUILDS@@/pub/$1 02pub
