@@ -1,6 +1,9 @@
 		ORACC TASK ARCHITECTURE (OTA)
 		=============================
 
+Overview:
+=========
+
 The OTA defines how Oracc users carry out Oracc tasks such as building
 projects or generating various kinds of outputs.
 
@@ -23,4 +26,29 @@ Client, or orc; orcs are easy to implement because they need almost no
 intelligence: they only need to send osh commands via ssh; receive
 status and filename information; and optionally retrieve log files and
 other outputs.
+
+
+Permissions:
+============
+
+The daemon, dx, has owner oradmin:oradmin and permissions rwsr--s--x
+and should be started as oradmin or root (so it then does
+setuid/setgid).
+
+When it creates the socket, /tmp/oracc-daemon-dx, it sets the
+group-write permission and unsets user-permissions:
+
+srwxrwx--- 1 oradmin oradmin 0 Nov 22 13:10 /tmp/oracc-daemon-dx
+
+Users who need to connect to the socket (i.e., projects that need to
+be built and users-proper who have logins on the build-server) must be
+in group oradmin.
+
+The Oracc shell, osh, starts up as the user (or project-user) and is
+able to write to the dx socket because the user is in group oradmin
+and the socket is group-writable.
+
+The /home/oracc project-user directories have owner oradmin:oradmin
+and group-write permissions, allowing dx to create temp files and
+build projects.
 
