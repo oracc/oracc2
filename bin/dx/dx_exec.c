@@ -25,11 +25,15 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
       *err = "no keys";
       return 1;
     }
-  
+
+  int voff = !strcmp(keys[0], "-v");
+
   argv[0] = name;
-  argv[1] = tmpdir;
+  if (voff)
+    argv[1] = "-v";
+  argv[1+voff] = tmpdir;
   int i;
-  for (i = 0; keys[i]; ++i)
+  for (i = voff; keys[i]; ++i)
     argv[i+2] = keys[i];
   argv[i+2] = NULL;
 

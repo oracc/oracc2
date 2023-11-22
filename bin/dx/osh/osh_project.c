@@ -44,7 +44,7 @@ osh_project(char **optv, Job *jp)
 		progname,
 		rname,
 		oradmintrue ? " (group oradmin)" : "",
-		optv[1], optv[0]);
+		jp->cmd1, jp->project);
       
       if (!oradmintrue)
 	{
@@ -52,17 +52,17 @@ osh_project(char **optv, Job *jp)
 	     you're only allowed to work on your own project or
 	     subproject */
 	  int namelen = strlen(rname);
-	  if (strncmp(optv[0], rname, namelen)
-	      || (optv[0][namelen] && '/' != optv[0][namelen]))
+	  if (strncmp(jp->project, rname, namelen)
+	      || (jp->project[namelen] && '/' != jp->project[namelen]))
 	    {
 	      fprintf(stderr, "%s: project-users can only work in their own projects (%s vs %s)\n",
-		      progname, rname, optv[0]);
+		      progname, rname, jp->project);
 	      goto error;
 	    }
 	  projecthome = strdup(rname);
 	}
       else
-	projecthome = strdup(optv[0]);
+	projecthome = strdup(jp->project);
 
       /* For any user the project home (e.g., /home/oracc/ogsl) must also exist */
       char projdir[strlen(oracc_builds())+strlen(projecthome)+2];
@@ -82,10 +82,10 @@ osh_project(char **optv, Job *jp)
 	}
 
       /* If the project arg is a subproject that must also exist */
-      if (strchr(optv[0], '/'))
+      if (strchr(jp->project, '/'))
 	{
-	  char subprojdir[strlen(oracc_builds())+strlen(optv[0])+1];
-	  sprintf(subprojdir, "%s/%s", oracc_builds(), optv[0]);
+	  char subprojdir[strlen(oracc_builds())+strlen(jp->project)+1];
+	  sprintf(subprojdir, "%s/%s", oracc_builds(), jp->project);
 	  if (stat(subprojdir, &st))
 	    {
 	      fprintf(stderr, "%s: subproject directory %s failed stat\n", progname, subprojdir);

@@ -18,15 +18,15 @@ main(int argc, char **argv)
     {
       /* osh_project guarantees we are in a project directory where we
 	 have permission to be */
-      if (!strcmp(optv[1], "init") || !osh_project(optv, &j))
+      if (!strcmp(j.cmd1, "init") || !osh_project(optv, &j))
 	{
 	  /* osh_commands returns a pointer to static data; NULL
 	     indicates an unknown command */
-	  struct osh_info *oip = osh_commands(optv[1], strlen(optv[1]));
+	  struct osh_info *oip = osh_commands(j.cmd1, strlen(j.cmd1));
 	  if (oip)
 	    {
 	      if (verbose)
-		fprintf(stderr, "%s: project=%s; initial command=%s\n", progname, optv[0], optv[1]);
+		fprintf(stderr, "%s: project=%s; initial command=%s\n", progname, j.project, j.cmd1);
 	      if (oip->type == OSH_BUILTIN)
 		{
 		  /* On success osh has been replaced by the builtin;
@@ -54,7 +54,7 @@ main(int argc, char **argv)
 	    }
 	  else
 	    {
-	      fprintf(stderr, "%s: unknown command '%s'. Stop.\n", argv[0], optv[1]);
+	      fprintf(stderr, "%s: unknown command '%s'. Stop.\n", argv[0], j.cmd1);
 	      goto error;
 	    }
 	}

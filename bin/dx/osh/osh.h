@@ -16,6 +16,7 @@ typedef struct job
 {
   char **cmdv;
   char *cmd;
+  char *cmd1;
   char *user;
   char *project;
   char *sesh;  /* session component of tmpdir */

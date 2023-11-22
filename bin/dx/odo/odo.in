@@ -40,19 +40,19 @@ set_status ()
     fi
 }
 
+exec 1>&2
+
+echo $0 called with arguments $*
+
 if [ "$1" = "-v" ]; then
     shift
     V="-v"
 fi
 
-exec 1>&2
-
 if [ $# -lt 3 ]; then
     echo $0: not enough arguments--need at least TMPDIR PROJECT COMMAND. Stop.
     fail
 fi
-
-echo $0 called with arguments $*
 
 tmpdir=$1
 if [ "$tmpdir" = "-" ]; then

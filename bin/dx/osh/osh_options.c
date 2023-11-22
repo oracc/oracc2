@@ -50,7 +50,7 @@ osh_options(int argc, char **argv, Job *jp)
 	    {
 	      sp = (argc - optind) + 1;
 	    }
-	  av = malloc((sp+1)*sizeof(char *));
+	  av = malloc((sp+1+verbose)*sizeof(char *));
 	  if (ssh_mode)
 	    {
 	      char *s = argv[optind];
@@ -68,15 +68,38 @@ osh_options(int argc, char **argv, Job *jp)
 		    }
 		}
 	      av[sp] = NULL;
+	      if (av[0] && !strcmp(av[0], "-v"))
+		{
+		  if (av[1])
+		    {
+		      jp->project = strdup(av[1]);
+		      if (av[2])
+			jp->cmd1 = strdup(av[2u]);
+		    }
+		}
+	      else
+		{
+		  if (av[0])
+		    {
+		      jp->project = strdup(av[0]);
+		      if (av[1])
+			jp->cmd1 = strdup(av[1]);
+		    }
+		}
 	    }
 	  else
 	    {
 	      i = 0;
+	      if (verbose)
+		av[i++] = "-v";
+	      jp->project = strdup(argv[optind]);
+	      if (optind < argc)
+		jp->cmd1 = strdup(argv[optind+1]);
 	      while (argv[optind])
 		av[i++] = argv[optind++];
 	      av[i] = NULL;
 	    }
-	  if (!av[0] || !av[1])
+	  if (!av[0+verbose] || !av[1+verbose])
 	    {
 	      fprintf(stderr, "%s: request must contain at least a project and a command\n", progname);
 	      free(av);
@@ -95,9 +118,9 @@ osh_options(int argc, char **argv, Job *jp)
 	      len += strlen(av[i])+1;
 
 	  /* Set up the job cmd vector and cmd string members */
-	  jp->cmdv = av;
 	  jp->cmd = malloc(len+1);
 	  *jp->cmd = '\0';
+	  jp->cmdv = av;
 	  for (i = 0; av[i]; ++i)
 	    strcat(strcat(jp->cmd, av[i]), " ");
 	  jp->cmd[strlen(jp->cmd)-1] = '\0';
