@@ -31,7 +31,10 @@ other outputs.
 Permissions:
 ============
 
-The daemon, dx, has owner oradmin:oradmin and permissions rwsr--s--x
+The Oracc home, /home/oracc, has owner oradmin:oradmin and permissions
+rwsrwsr-x.
+
+The Oracc daemon, dx, has owner oradmin:oradmin and permissions rwsr--s--x
 and should be started as oradmin or root (so it then does
 setuid/setgid).
 
@@ -48,7 +51,7 @@ The Oracc shell, osh, starts up as the user (or project-user) and is
 able to write to the dx socket because the user is in group oradmin
 and the socket is group-writable.
 
-The /home/oracc project-user directories have owner oradmin:oradmin
-and group-write permissions, allowing dx to create temp files and
-build projects.
+The /home/oracc project-user directories inherit owner oradmin:oradmin
+and permissions rwsrwsr-x from the sticky bits of /home/oracc,
+allowing dx to create temp files and build projects.
 

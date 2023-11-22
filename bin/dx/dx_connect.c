@@ -24,7 +24,7 @@ dx_connect (const char *name)
   /* fill socket address structure with our address */
   memset (&un, 0, sizeof (un));
   un.sun_family = AF_UNIX;
-  sprintf (un.sun_path, "%sdxc-%06ld", CLI_PATH, (long) getpid ());
+  sprintf (un.sun_path, "%sdxc-%d", CLI_PATH, getpid ());
   len = offsetof (struct sockaddr_un, sun_path) + strlen (un.sun_path);
   unlink (un.sun_path);		/* in case it already exists */
   if (bind (fd, (struct sockaddr *) &un, len) < 0)

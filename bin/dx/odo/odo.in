@@ -14,7 +14,14 @@
 #
 # The third argument is the base command to execute.
 #
-# Any additional arguments are passed to the command script.
+# For any command except 'init', odo looks for a script
+# $user-COMMAND.sh; if not found, it looks for odo-COMMAND.sh. If
+# neither of these scripts exists it is a bad command (which should be
+# caught earlier by osh).
+#
+# The command script is then called with $user and $project as the
+# first two arguments, and any additional arguments are also appended
+# to the script invocation.
 #
 
 
@@ -101,11 +108,11 @@ if [ "$project" != "" ]; then
 		 $bin/odo-dir-links.sh $project
 		 uscript=$bin/${user}-${command}.sh
 		 if [ -x $bin/$user-$command.sh ]; then
-		     . $uscript $*
+		     . $uscript $user $project $*
 		 else
 		     script=$bin/odo-$command.sh
 		     if [ -x $script ]; then
-			 . $script $*
+			 . $script $user  $*
 		     else
 			 echo "$0: no command $uscript or $script. Stop."
 		     fi

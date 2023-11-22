@@ -88,7 +88,7 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
 
       fprintf(stderr, "%s: logging stderr to %s\n", progname, request_log);
 
-      if ((fd = open(request_log, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR)) < 0)
+      if ((fd = open(request_log, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP)) < 0)
 	{
 	  *err = "child failed to open request log";
 	  return 1;

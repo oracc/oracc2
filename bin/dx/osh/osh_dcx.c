@@ -40,7 +40,10 @@ osh_dcx(char **optv, struct job *jp)
 	  if ((rval = read(sock, buf, 1024)) < 0)
 	    perror("Error reading back message from dx");
 	  else if (rval == 0)
-	    fprintf(stderr, "%s: dcx[%d]: ending connection\n", progname, sock);
+	    {
+	      if (verbose)
+		fprintf(stderr, "%s: dcx[%d]: ending connection\n", progname, sock);
+	    }
 	  else
 	    {
 	      if ('\n' == buf[strlen(buf)-1])
