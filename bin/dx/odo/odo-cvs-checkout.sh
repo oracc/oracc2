@@ -15,7 +15,29 @@ owner=$2
 if [ "$owner" = "" ]; then
     owner=oracc
 fi
-me=`who am i`
+
+# This should be a file that will exist when the repo has been checked out.
+checkfile=$repo/.git
+
+# This is the command to check out a repo from the CVS
+checkout="git clone git@github.com:$owner/$repo.git"
+
+if [ -r $checkfile ]; then
+    echo $0: $checkfile already exists. Stop.
+    exit 1
+fi
+me=`whoami`
 echo $0: running as $me
-echo $0: checking out $owner/$repo in `pwd`
-git clone git@github.com:$owner/$repo.git
+echo $0: trying runuser -u oradmin whoami ...
+runuser -u oradmin whoami
+
+echo $0: trying runuser -u oradmin $checkout
+runuser -u oradmin $checkout
+
+if [ -r $checkfile ]; then
+    echo $0: $repo successfully checked out.
+    exit 0
+else
+    echo $0: error checking out $repo.
+    exit 1
+fi

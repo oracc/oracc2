@@ -92,8 +92,8 @@ if [ "$project" != "" ]; then
 	    cd @@ORACC_BUILDS@@
 	    if [ ! -r $user ]; then
 		$bin/odo-cvs-checkout.sh $user $*
-		if [ $? ]; then
-		    echo $0: odo-checkout.sh $user $*: command failed
+		if [ $? != 0 ]; then
+		    echo $0: odo-checkout.sh $user $*: command failed with code $?.
 		    fail
 		else
 		    set_status done
@@ -116,7 +116,7 @@ if [ "$project" != "" ]; then
 		 else
 		     script=$bin/odo-$command.sh
 		     if [ -x $script ]; then
-			 . $script $user  $*
+			 . $script $user $*
 		     else
 			 echo "$0: no command $uscript or $script. Stop."
 		     fi

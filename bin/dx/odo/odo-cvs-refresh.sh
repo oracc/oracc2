@@ -9,8 +9,8 @@
 #
 
 if [ -r .git ]; then
-    echo $0: git pull    
-    git pull
+    echo $0: git pull
+    runuser -u oradmin git pull
 else
     echo $0: `pwd` is not a git repository "(no .git)."
 fi
