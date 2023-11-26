@@ -8,7 +8,7 @@ int
 main(int argc, char **argv)
 {
   int sock, rval;
-  char buf[1024];
+  char buf[1024], *dcxtmp;
 
   if (argc < 2) {
     printf("usage:%s <pathname>", argv[0]);
@@ -18,7 +18,7 @@ main(int argc, char **argv)
   if (verbose)
     printf("dcx: trying to connect to %s\n", DX_SERVER_NAME);
 
-  if ((sock = dx_connect(DX_SERVER_NAME)) < 0)
+  if ((sock = dx_connect(DX_SERVER_NAME, &dcxtmp)) < 0)
     {
       perror("Error connecting stream socket (dx not running?)");
       exit(1);

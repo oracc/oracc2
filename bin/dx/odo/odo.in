@@ -105,7 +105,6 @@ if [ "$project" != "" ]; then
 	else
 	    projdir=@@ORACC_BUILDS@@/$project
 	    if [ -d $projdir ]; then
-	        set_status run
 		(cd $projdir
 		 . $bin/odo-environment.sh
 		 $bin/odo-cvs-refresh.sh $user $*

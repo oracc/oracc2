@@ -1,6 +1,7 @@
 #include <dx.h>
 
 static char **buf2keys(char *buf, int *n);
+static int dx_status_file(const char *tmpdir);
 
 void
 dx_process(int sock, char *buf)
@@ -8,10 +9,18 @@ dx_process(int sock, char *buf)
   char sesh_buf[1024];
   char *sesh_id = NULL;
   char *tmp = dx_session(&sesh_id);
+
+  if (dx_status_file(tmp))
+    {
+      write(sock, "error", 5);
+      return;
+    }
+
   sprintf(sesh_buf, "%s::%s\n", tmp, sesh_id);
   if (write(sock, sesh_buf, strlen(sesh_buf)) < 0)
     perror("writing on stream socket");
   fprintf(stderr, "%s: closing socket [%d]\n", progname, sock);
+  close(sock);
   char **keys = NULL;
   int nkeys = 0;
   fprintf(stderr, "%s: making keys from '%s'\n", progname, buf);
@@ -60,4 +69,27 @@ buf2keys(char *buf, int *n)
     fprintf(stderr, " %s", k[i]);
   fprintf(stderr, "\n");
   return k;
+}
+
+static int
+dx_status_file(const char *tmpdir)
+{
+  int statusfd;
+  char buf[strlen(tmpdir)+strlen("/statusX")];
+  sprintf(buf,"%s/status", tmpdir);
+  if ((statusfd = open(buf, O_WRONLY|O_CREAT, 0664)) < 0)
+    perror("creating status file");
+  else
+    {
+      if (3 != write(statusfd, "run", 3))
+	perror("writing 'run' to status file");
+      else
+	{
+	  if (close(statusfd))
+	    perror("closing status file");
+	  else
+	    return 0;
+	}
+    }
+  return 1;
 }

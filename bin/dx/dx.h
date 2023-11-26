@@ -23,7 +23,7 @@ extern const char *progname;
 
 extern char *dx_session(char **sesh_id);
 extern int dx_accept(int listenfd, uid_t * uidptr);
-extern int dx_connect (const char *name);
+extern int dx_connect (const char *name, char **dcxtmp);
 extern int dx_exec(char **keys, int nkeys, char **err, char *tmpdir);
 extern int dx_listen (const char *name);
 extern void dx_prechecks(void);

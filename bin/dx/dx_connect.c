@@ -8,7 +8,7 @@
  * Returns fd if all OK, <0 on error.
  */
 int
-dx_connect (const char *name)
+dx_connect (const char *name, char **dcxtmp)
 {
   int fd, len, err, rval;
   struct sockaddr_un un, sun;
@@ -25,6 +25,8 @@ dx_connect (const char *name)
   memset (&un, 0, sizeof (un));
   un.sun_family = AF_UNIX;
   sprintf (un.sun_path, "%sdxc-%d", CLI_PATH, getpid ());
+  if (dcxtmp)
+    *dcxtmp = strdup(un.sun_path);
   len = offsetof (struct sockaddr_un, sun_path) + strlen (un.sun_path);
   unlink (un.sun_path);		/* in case it already exists */
   if (bind (fd, (struct sockaddr *) &un, len) < 0)

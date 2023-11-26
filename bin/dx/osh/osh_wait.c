@@ -6,7 +6,7 @@ static int osh_status(Job *jp);
 int
 osh_wait(Job *jp)
 {
-  fprintf(stdout, "osh[%d]: waiting on session %s\n", jp->pid, jp->sesh);
+  fprintf(stderr, "osh[%d]: waiting on session %s\n", jp->pid, jp->sesh);
   for (;;)
     {
       sleep(3);
@@ -14,12 +14,12 @@ osh_wait(Job *jp)
       if (osh_status(jp))
 	goto error;
       if (!strcmp(jp->status, "run"))
-	fprintf(stdout, "osh[%d]: session %s time %i sec\n", jp->pid, jp->sesh, jp->time);
+	fprintf(stderr, "osh[%d]: session %s time %i sec\n", jp->pid, jp->sesh, jp->time);
       else if (!strcmp(jp->status, "done") || !strcmp(jp->status, "error"))
 	break;
       else
 	{
-	  fprintf(stdout, "osh[%d]: unknown status %s found in %s\n", jp->pid, jp->status, jp->statusfile);
+	  fprintf(stderr, "osh[%d]: unknown status %s found in %s\n", jp->pid, jp->status, jp->statusfile);
 	  break;
 	}      
     }

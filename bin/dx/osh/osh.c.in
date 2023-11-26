@@ -12,6 +12,7 @@ main(int argc, char **argv)
   progname = argv[0];
   static Job j;
 
+  setbuf(stdout, NULL);
   j.pid = getpid();
   
   if ((optv = osh_options(argc, argv, &j)))

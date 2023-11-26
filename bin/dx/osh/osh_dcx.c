@@ -11,12 +11,12 @@ int
 osh_dcx(char **optv, struct job *jp)
 {
   int sock, rval;
-  char buf[1024];
+  char buf[1024], *dcxtmp;
 
   if (verbose)
     fprintf(stderr, "%s: dcx: trying to connect to %s\n", progname, DX_SERVER_NAME);
 
-  if ((sock = dx_connect(DX_SERVER_NAME)) < 0)
+  if ((sock = dx_connect(DX_SERVER_NAME, &dcxtmp)) < 0)
     {
       perror("Error connecting stream socket (dx not running?)");
       goto error;
@@ -75,7 +75,12 @@ osh_dcx(char **optv, struct job *jp)
       while (rval > 0);
     }
   close(sock);
+#define CLEANUP \
+  if (unlink(dcxtmp)) perror("unlinking dcxtmp"); \
+  free(dcxtmp)
+  CLEANUP;
   return 0;
  error:
+  CLEANUP;
   return 1;
 }

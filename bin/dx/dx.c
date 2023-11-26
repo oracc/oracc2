@@ -31,7 +31,10 @@ main(int argc, char **argv)
 	      if ((rval = read(msgsock, buf, 1024)) < 0)
 		perror("reading stream message");
 	      else if (rval == 0)
-		fprintf(stderr, "%s: closing connection [%d]\n", progname, msgsock);
+		{
+		  fprintf(stderr, "%s: closing connection [%d]\n", progname, msgsock);
+		  close(msgsock);
+		}
 	      else
 		{
 		  if (verbose)
@@ -41,7 +44,6 @@ main(int argc, char **argv)
 		}
 	    }
 	  while (rval > 0);
-	  close(msgsock);
 	}
     }
 
