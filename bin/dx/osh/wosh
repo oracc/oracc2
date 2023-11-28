@@ -1,15 +1,20 @@
 #!/bin/dash
-echo "=ARGS= $*"
+#
+# Wrapper for Osh
+#
+# To use scp the client must use -O, e.g.,
+#
+#  scp -r -O 00res eisl@dev:
+#
 if [ "$1" = "-c" ]; then
     shift
-    echo "=CMD= '$1'"
     IFS=' '
     set -- $1
     if [ "$1" = "scp" ]; then
-	echo "=SCP= exec $*"
+	exec $*
     elif [ "$1" = "osh" ]; then
 	shift
-	echo "=OSH= exec /home/oracc/bin/osh $*"
+	exec /home/oracc/bin/osh $*
     else
 	exit 1
     fi

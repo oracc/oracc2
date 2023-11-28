@@ -67,6 +67,9 @@ slix.c
 mktablst
 seq2c
 xpd.c
+msc/adm/oadm
+msc/adm/oadmsudo
+msc/adm/oadmwrapper
 msc/oscx/osh.c
 msc/oscx/odo
 oracc_builds.c
