@@ -5,6 +5,8 @@ const char *progname = NULL;
 int ssh_mode = 0;
 int verbose = 0;
 
+static void showargs(int argc, char **argv, Job *jp);
+
 int
 main(int argc, char **argv)
 {
@@ -14,6 +16,8 @@ main(int argc, char **argv)
 
   setbuf(stdout, NULL);
   j.pid = getpid();
+
+  showargs(argc, argv, &j);
   
   if ((optv = osh_options(argc, argv, &j)))
     {
@@ -70,4 +74,14 @@ main(int argc, char **argv)
 
  error:
   return 1;
+}
+
+static void
+showargs(int argc, char **argv, Job *jp)
+{
+  int i = 0;
+  printf("osh[%d]:", jp->pid);
+  while (i < argc)
+    printf(" %s", argv[i++]);
+  printf("\n");
 }

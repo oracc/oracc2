@@ -1,0 +1,4 @@
+#!/bin/sh
+#printenv | grep ORACC
+#printenv PATH
+sudo -E -u root /home/oracc/sbin/oadmwrapper $*

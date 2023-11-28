@@ -1,1 +1,1 @@
-SUBDIRS = sys
+SUBDIRS = adm sys

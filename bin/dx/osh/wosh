@@ -1,0 +1,16 @@
+#!/bin/dash
+echo "=ARGS= $*"
+if [ "$1" = "-c" ]; then
+    shift
+    echo "=CMD= '$1'"
+    IFS=' '
+    set -- $1
+    if [ "$1" = "scp" ]; then
+	echo "=SCP= exec $*"
+    elif [ "$1" = "osh" ]; then
+	shift
+	echo "=OSH= exec /home/oracc/bin/osh $*"
+    else
+	exit 1
+    fi
+fi

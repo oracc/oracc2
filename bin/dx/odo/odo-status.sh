@@ -6,14 +6,14 @@
 
 lastmod ()
 {
-    ls -clt --time-style=long-iso $1 | cut -d' ' -f6,7
+    ls -clt --time-style=long-iso $1 | cut --output-delimiter=T -d' ' -f6,7
 }
 
 echo Status report for project $2 as of `date +%Y-%m-%dT%T%Z`:
 
 if [ -r .git ]; then
     if [ -r .oracc-git ]; then
-	t=lastmod .oracc-git
+	t=`lastmod .oracc-git`
 	echo "--git repository last refreshed $t"
     else
 	echo "--git repository never refreshed"

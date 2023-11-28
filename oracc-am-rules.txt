@@ -1,6 +1,7 @@
 UP=../..
 override CFLAGS= 
 AM_CFLAGS=-pedantic -Wall -g -O0
+ACLOCAL_AMFLAGS=-I m4 -Wno-portability
 
 ORACCIFY = $(abs_top_builddir)/oracc-subst.sh $(top_srcdir)/oracc.sed
 

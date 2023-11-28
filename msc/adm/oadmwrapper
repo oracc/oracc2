@@ -1,0 +1,3 @@
+#!/bin/sh
+PATH=$PATH:/home/oracc/bin:@@ORACC@@/sbin ; export PATH
+$*
