@@ -109,15 +109,18 @@ if [ "$project" != "" ]; then
 		 . $bin/odo-environment.sh
 		 $bin/odo-cvs-refresh.sh $user $*
 		 $bin/odo-dir-links.sh $project $V
-		 uscript=$bin/${user}-${command}.sh
-		 if [ -x $bin/$user-$command.sh ]; then
-		     . $uscript $user $project $*
-		 else
-		     script=$bin/odo-$command.sh
-		     if [ -x $script ]; then
-			 . $script $user $*
+		 $bin/odo-config.sh $project $V
+		 if [ "$command" != "config" ]; then
+		     uscript=$bin/${user}-${command}.sh
+		     if [ -x $bin/$user-$command.sh ]; then
+			 $uscript $user $project $*
 		     else
-			 echo "$0: no command $uscript or $script. Stop."
+			 script=$bin/odo-$command.sh
+			 if [ -x $script ]; then
+			     $script $user $project $*
+			 else
+			     echo "$0: no command $uscript or $script. Stop."
+			 fi
 		     fi
 		 fi
 		)

@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# osh PROJECT build calls this script with the following arguments
+#
+# $1=user $2=project $3=subcommand
+#
+subcommand=$3
+echo $0: subcommand=$subcommand
+
+if [ "$subcommand" = "corpus" ]; then
+    echo $0: calling o2-corpus.sh
+    o2-corpus.sh
+elif [ "$subcommand" = "portal" ]; then
+    echo $0: calling o2-web.sh
+    o2-web.sh
+else
+    echo $0: calling o2-clean-build.sh
+    o2-clean-build.sh $subcommand 
+    o2-web.sh
+fi

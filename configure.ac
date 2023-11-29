@@ -92,6 +92,8 @@ AC_CONFIG_FILES([Makefile
 		 msc/Makefile
 		 msc/adm/Makefile
 		 msc/adm/skel/Makefile
+		 msc/cmd/Makefile
+		 msc/cmd/config/Makefile
 		 msc/sys/Makefile
                  ])
 AC_OUTPUT
