@@ -34,6 +34,7 @@ for dir in bld pub tmp xml www ; do
     mkdir $V -p @@ORACC_BUILDS@@/$dir/$1
 done
 
+mkdir -p 01log
 rm $V -f 01bld 01tmp 02pub 02www 02xml
 
 # In Oracc version one there was a rogue script that occasionally

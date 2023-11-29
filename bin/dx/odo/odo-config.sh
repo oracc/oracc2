@@ -6,10 +6,10 @@
 # It can also be run on its own with osh PROJECT config.
 #
 
+echo $0 $*
+
 project=$1
 V=$2
-
-echo $0 $project $V
 
 if [ ! -r 00lib/config.xml ]; then
     echo $0: must be run from a project directory

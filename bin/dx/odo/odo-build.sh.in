@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/dash
 #
 # osh PROJECT build calls this script with the following arguments
 #
