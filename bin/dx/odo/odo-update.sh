@@ -5,14 +5,17 @@ echo $0 $*
 
 # update OIDs
 mcu-oids.sh
+if [ $? -ne 0 ]; then
+    exit 1
+fi
 
 # update signlist
 mcu-slix.sh
+if [ $? -ne 0 ]; then
+    exit 1
+fi
 
 # update lemm
 mcu-lemm.sh
-if [ -r 01log/glo.err ]; then
-    for a in `cat 01log/glo.err` ; do
-	cat $a
-    done
-fi
+
+exit $?

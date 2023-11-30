@@ -6,18 +6,24 @@
 projtype=`oraccopt . type`
 
 if [ "$projtype" = "signlist" ]; then
-    exit 0;
+    exit 0
 elif [ "$projtype" = "portal" ]; then
-    exit 0;
+    exit 0
 fi
 
 if [ "$projtype" = "superglo" ]; then
-    true;
+    true
 else
     set 00lib/*.glo
     if [ "$1" != "00lib/*.glo" ]; then
 	echo $0: running o2-cbdpp.sh
 	o2-cbdpp.sh
+	if [ -r 01log/glo.err ]; then
+	    for a in `cat 01log/glo.err` ; do
+		cat $a
+	    done
+	    exit 1
+	fi
     else
 	echo $0: skipping o2-cbdpp.sh because no 00lib/*.glo
     fi
