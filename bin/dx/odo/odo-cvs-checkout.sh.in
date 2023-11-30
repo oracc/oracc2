@@ -22,6 +22,7 @@ checkfile=$repo/.git
 # This is the command to check out a repo from the CVS
 checkout="git clone git@github.com:$owner/$repo.git"
 
+
 if [ -r $checkfile ]; then
     echo $0: $checkfile already exists. Stop.
     exit 1

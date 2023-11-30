@@ -34,7 +34,9 @@ set_status ()
 {
     if [ "$tmpdir" != "" ]; then
 	if [ -d $tmpdir ]; then
-	    echo $0 writing status $1 to $tmpdir/status
+	    if [ "$V" = "-v" ]; then
+		echo $0 writing status $1 to $tmpdir/status
+	    fi
 	    printf "$1" >$tmpdir/status;
 	fi
     fi

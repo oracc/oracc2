@@ -1,0 +1,25 @@
+#!/bin/dash
+#
+# mcu-slix.sh updates the signlist data for a project creating the
+# index in 02pub/sl and the XML version in 02xml/sl.xml.
+#
+set 00lib/*.asl
+if [ "$1" != "00lib/*.asl" ]; then
+    if [ "$2" != "" ]; then
+	echo $0: a project can only have one .asl file in 00lib. Stop.
+	exit 1
+    fi
+    asl=$1
+    echo $0: updating $asl
+    # check signlist
+    sx -c $asl
+    if [ $? -eq 0 ]; then
+	sx -s $asl >02pub/sl/sl.tsv
+	slix 02pub/sl/sl.tsv
+	chmod o+r 02pub/sl/*
+	sx -x $asl >02xml/sl.xml
+    else
+	echo "$0: errors in processing $asl. Stop."
+	exit 1
+    fi
+fi

@@ -14,9 +14,18 @@ osh_wait(Job *jp)
       if (osh_status(jp))
 	goto error;
       if (!strcmp(jp->status, "run"))
-	fprintf(stderr, "osh[%d]: session %s time %i sec\n", jp->pid, jp->sesh, jp->time);
+	{
+	  if (jp->time == 3)
+	    fprintf(stderr, "osh[%d]: elapsed seconds % 8d", jp->pid, jp->time);
+	  else
+	    fprintf(stderr, "\b\b\b\b\b\b\b\b% 8d", jp->time);
+	}
       else if (!strcmp(jp->status, "done") || !strcmp(jp->status, "error"))
-	break;
+	{
+	  if (jp->time > 3)
+	    fprintf(stderr, "\n");
+	  break;
+	}
       else
 	{
 	  fprintf(stderr, "osh[%d]: unknown status %s found in %s\n", jp->pid, jp->status, jp->statusfile);
