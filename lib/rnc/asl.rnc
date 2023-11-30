@@ -225,6 +225,7 @@ sl.v =
     (sl.inote | sl.lit | sl.note)*
   }
 sl.proof = element sl:proof { text }
+
 g.d =
   element g:d {
     attribute g:pos { xsd:NCName },
@@ -245,7 +246,7 @@ g.s =
     attribute g:role { xsd:NCName }?,
     attribute g:status { xsd:NCName }?,
     attribute g:utf8 { text }?,
-    (text | g.a | g.b | g.m)+
+    (text | (g.b , mods+))
   }
 g.n =
   element g:n {
@@ -258,9 +259,9 @@ g.n =
     attribute g:utf8 { text }?,
     element g:r { attribute form { text }? , text },
     (g.s | g.v)?,
-    g.a?,
-    (g.c | g.m)?,
-    g.a?)
+    mods*,
+    (g.c | mods)?,
+    mods*)
   )
   }
 g.c =
@@ -268,15 +269,15 @@ g.c =
     attribute form { text },
     attribute g:status { xsd:NCName }?,
     attribute g:utf8 { text }?,
-    (g.m
+    (mods
      | g.n
      | g.o
      | g.s
      | g.g.c)+ ,
-    (g.m | g.a)*
+    mods*
   }
 
-g.g.c = element g:g { ((g.g.c , (g.m|g.a)*) | g.o | g.n | g.s)+ }
+g.g.c = element g:g { ((g.g.c , (mods)*) | g.o | g.n | g.s)+ }
 
 g.v =
   element g:v {
@@ -285,11 +286,16 @@ g.v =
     attribute g:delim { xsd:NMTOKEN }?,
     attribute g:status { xsd:NCName }?,
     attribute g:utf8 { text }?,
-    (text | g.b | g.m)+
+    (text | (g.b , mods+))
   }
-g.m = element g:m { xsd:NMTOKEN }
+mods     = modifier | allograph
+
+modifier = element g:m { xsd:string { pattern = "[a-z]|[0-9]{1,3}" } }
+
+allograph= element g:a { xsd:string { pattern = "[a-wyz0-9]+" } 
+			| xsd:string { pattern = "[\+\-]" } }
+
 g.b = element g:b { text }
-g.a = element g:a { xsd:NCName }
 g.o =
   element g:o {
     attribute g:type { xsd:NCName },

@@ -163,7 +163,7 @@ _			{ gsave; return LANG_FLIP; }
 {NNUM}/{M}	       	{ GIN=1; gsave; return NNUM; }
 {NNUM} 			{ GIN=1; gsave; return NNUM; }
 
-[0-9]+(\/[0-9]+)?	{ GIN=1; gsave; return BARENUM; }
+[0-9]+(\/[0-9]+)?	{ GIN=1; gsave; return !strncmp(gdllval.text,"00",2) ? ZERO : BARENUM; }
 
 {G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(); }
 {G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
@@ -241,6 +241,8 @@ gdl_grapheme_type(void)
         ++d;
       if (*d == '(')
         return NUMBER;
+      else if (!strncmp(g, "00", 2))
+	return ZERO;
       else
 	return BARENUM;
     }
