@@ -15,7 +15,7 @@ enum sxc_type { sxc_initial, sxc_medial, sxc_final, sxc_container, sxc_contained
 int sxc_container_active = 0;
 static int sxc_nth = 0;
 static void sx_compound(struct sl_signlist *sl, Node *gdl, const char *oid);
-static void sx_compound_node(Node *np, struct sl_signlist *sl, const char *oid);
+static void sx_compound_node(Node *np, struct sl_signlist *sl, const char *oid, int depth);
 
 /* The list of compounds has been made while reading the input.
    Compounds are always registered under an sl_sign*: signs which only
@@ -222,7 +222,7 @@ sx_compound(struct sl_signlist *sl, Node *gdl, const char *sname)
 
       last_g = NULL;
 
-      sx_compound_node(gdl->kids, sl, sname);
+      sx_compound_node(gdl->kids, sl, sname, 0);
 
       if (last_g)
 	sx_compound_data(sl, last_g, sname, sxc_final);
@@ -230,7 +230,26 @@ sx_compound(struct sl_signlist *sl, Node *gdl, const char *sname)
 }
 
 static void
-sx_compound_node(Node *np, struct sl_signlist *sl, const char *sname)
+sx_compound_register(Node *np, struct sl_signlist *sl, const char *sname)
+{
+  if (ctrace)
+    fprintf(stderr, "ctrace/register: %s %s nth=%d contained=%d\n", np->name, np->text, sxc_nth, sxc_container_active);
+  
+  if (!sxc_nth)
+    sx_compound_data(sl, last_g, sname, sxc_initial);
+  else
+    sx_compound_data(sl, last_g, sname, sxc_medial);
+
+  if (sxc_container_active)
+    {
+      sx_compound_data(sl, last_g, sname, sxc_contained);
+      if (sxc_container_active == 1)
+	sxc_container_active = 0;
+    }
+}
+
+static void
+sx_compound_node(Node *np, struct sl_signlist *sl, const char *sname, int depth)
 {
   if (np)
     {
@@ -238,23 +257,7 @@ sx_compound_node(Node *np, struct sl_signlist *sl, const char *sname)
 	{
 
 	  last_g = np->text;
-	  
-	  if (ctrace)
-	    fprintf(stderr, "ctrace: g:s %s nth=%d contained=%d\n", np->text, sxc_nth, sxc_container_active);
-
-	  if (!sxc_nth)
-	    sx_compound_data(sl, last_g, sname, sxc_initial);
-	  else
-	    sx_compound_data(sl, last_g, sname, sxc_medial);
-	  /*list_add(cdp->i, (void*)sname);*/
-
-	  if (sxc_container_active)
-	    {
-	      sx_compound_data(sl, last_g, sname, sxc_contained);
-	      if (sxc_container_active == 1)
-		sxc_container_active = 0;
-	    }
-	  
+	  sx_compound_register(np, sl, sname);
 	  ++sxc_nth;
 
 	  /* don't process g:l/g:s kids because we have mods from s->text
@@ -277,14 +280,24 @@ sx_compound_node(Node *np, struct sl_signlist *sl, const char *sname)
 	{
 	  if (sxc_container_active)
 	    sxc_container_active = 2;
+	  if (np->text)
+	    {
+	      last_g = np->text;
+	      sx_compound_register(np, sl, sname);
+	    }
 	  for (np = np->kids; np; np = np->next)
-	    sx_compound_node(np, sl, sname);
+	    sx_compound_node(np, sl, sname, ++depth);
 	  sxc_container_active = 0;
 	}
       else if (!strcmp(np->name, "g:c") || !strcmp(np->name, "g:b"))
 	{
+	  if (depth)
+	    {
+	      last_g = np->text;
+	      sx_compound_register(np, sl, sname);
+	    }
 	  for (np = np->kids; np; np = np->next)
-	    sx_compound_node(np, sl, sname);
+	    sx_compound_node(np, sl, sname, ++depth);
 	}
       else if (!strcmp(np->name, "g:m") || !strcmp(np->name, "g:a"))
 	; /* ignore @g on |(LAK079&LAK079)@g| */

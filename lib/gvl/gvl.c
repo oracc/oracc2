@@ -20,8 +20,7 @@ int gvl_no_mesg_add = 0;
 int gvl_sans_report = 0;
 int gvl_trace = 0;
 int gvl_strict = 0;
-int c_delim_sentinel = 0;
-
+extern int c_delim_sentinel;
 extern int curr_lang;
 
 gvl_lookup_ptr gvl_lookup = gvl_lookup_sl;
@@ -225,6 +224,45 @@ gvl_validate(unsigned const char *g)
     return NULL;
 }
 
+static void
+gvl_implicit_gp(Node *dlm)
+{
+  Node *gp = tree_node(dlm->tree, NS_GDL, "g:gp", dlm->depth, dlm->mloc);
+  
+  /* The implicit group has the linkage of the delim's parent and the
+     siblings' prev/next; the group's kids pointer is the delim's prev */
+  gp->rent = dlm->rent;
+  gp->prev = dlm->prev->prev;
+  gp->next = dlm->next->next;
+  gp->kids = dlm->prev;
+
+  /* The previous sibling changes parent and prev; its prev needs to
+     point to the implicit group */
+  if (dlm->prev->prev)
+    {
+      dlm->prev->prev->next = gp;
+      dlm->prev->prev = NULL;
+    }
+  dlm->prev->rent = gp;
+
+  /* The next sibling changes parent and next; its next needs to point
+     to the implicit group */
+  if (dlm->next->next)
+    {
+      dlm->next->next->prev = gp;
+      dlm->next->next = NULL;
+    }
+  dlm->next->rent = gp;
+
+  gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "implicit", "1");
+  gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "c");
+
+  unsigned char *gp_orig = gvl_c_orig(gp);
+  unsigned char *gp_c10e = gvl_c_c10e(gp);
+  fprintf(stderr, "implicit group orig=%s; c10e=%s\n", gp_orig, gp_c10e);
+  gp->text = (ccp)pool_copy(gp_orig, curr_sl->p);
+}
+
 void
 gvl_compound(Node *ynp)
 {
@@ -285,6 +323,27 @@ gvl_compound(Node *ynp)
 	  ynp->text = (ccp)cp->c10e;
 	  gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)cp->c10e);
 	}
+
+      if (c_implicit_gps)
+	{
+	  Node *gp;
+	  List *need_gp = list_create(LIST_SINGLE);
+	  for (gp = list_first(c_implicit_gps); gp; gp = list_next(c_implicit_gps))
+	    {
+	      if (gp->prev->prev || gp->next->next)
+		{
+		  fprintf(stderr, "implicit grouping is required\n");
+		  list_add(need_gp, gp);
+		}
+	    }
+	  if (list_len(need_gp))
+	    {
+	      fprintf(stderr, "processing implicit groups\n");
+	      for (gp = list_first(need_gp); gp; gp = list_next(need_gp))
+		gvl_implicit_gp(gp);
+	    }
+	}
+      
       if (cp->mess && !gvl_no_mesg_add)
 	mesg_err(ynp->mloc, (ccp)cp->mess);
     }

@@ -22,6 +22,7 @@ enum asl_a_type
   asl_a_g_type,
   asl_a_g_utf8,
   asl_a_hex,
+  asl_a_implicit,
   asl_a_label,
   asl_a_loc,
   asl_a_n,

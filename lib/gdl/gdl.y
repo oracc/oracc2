@@ -25,8 +25,6 @@ int gdl_legacy = 0;
 int gdl_lexical = 0;
 int gdl_unicode = 0;
 
-extern int c_delim_sentinel;
-
 #define GDLLTYPE_IS_DECLARED 1
 #define GDLLTYPE Mloc
 #define yylineno gdllineno
@@ -215,13 +213,14 @@ compound:
 	  c cmaybemodflags         			{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
 	    						  gdl_modq_flush();
 							  gvl_compound(ycp);
-	    						  ynp = gdl_pop(ytp,"g:c"); }
+	    						  ynp = gdl_pop(ytp,"g:c");
+	  						  gdl_c_term(); }
 	;
 
 c:
-	C_O 						{ ycp = gdl_push(ytp,"g:c"); c_delim_sentinel = 0; }
+	C_O 						{ ycp = gdl_push(ytp,"g:c"); gdl_c_init(); }
 	cbits
-	C_C 						{ ynp = ycp; }
+	C_C 						{ ynp = ycp; c_processing = 0; }
         ;
 
 cbits:
@@ -234,7 +233,7 @@ cbit:
 	  						  if (gdl_legacy) gdl_unlegacy(ynp);
 							  gvl_simplexg(ynp); }
 	| gflag
-	| cdelim					{ ++c_delim_sentinel; }
+	| cdelim					{ }
 	| CLP			       			{ gdl_balance_state(@1,CLP,"(");
 	    					  	  gdl_push(ytp,"g:gp"); }
 	| CRP	     			    		{ if (!gdl_balance_state(@1,CRP,")"))

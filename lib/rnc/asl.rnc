@@ -234,6 +234,7 @@ g.d =
   }
 g.g =
   element g:g {
+    implicit?,
     attribute g:type { xsd:NCName }?,
     ( g.s | g.n )+
   }
@@ -277,7 +278,9 @@ g.c =
     mods*
   }
 
-g.g.c = element g:g { ((g.g.c , (mods)*) | g.o | g.n | g.s)+ }
+g.g.c = element g:g { implicit? , ctype?, ((g.g.c , (mods)*) | g.o | g.n | g.s)+ }
+
+ctype = attribute g:type { "c" }
 
 g.v =
   element g:v {
@@ -301,3 +304,5 @@ g.o =
     attribute g:type { xsd:NCName },
     text
   }
+
+implicit = attribute implicit { "1" }

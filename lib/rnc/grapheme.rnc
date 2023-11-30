@@ -57,7 +57,7 @@ c.b	 = element g:b { c.model }
 
 c        = element g:c { form? , g.meta , (c.b | c.model) , mods* }
 
-g        = element g:g { g.meta , c.model , mods* }
+g        = element g:g { implicit? , g.meta , c.model , mods* }
 
 compound = single | unary | binary
 
@@ -85,3 +85,5 @@ p.model =
     attribute g:type { "*"|":"|":'"|':"'|":."|"::"|"|"|"/"|":r:"|"·" } , 
     g.meta , 
     (v|q|s|n|c)?
+
+implicit = attribute implicit { "1" }

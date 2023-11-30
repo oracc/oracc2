@@ -497,6 +497,7 @@ x_tle_tag(enum sx_tle t)
       return NULL;
     }
 }
+
 static unsigned char *
 x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s)
 {

@@ -1,3 +1,4 @@
+
 #ifndef GDL_H_
 #define GDL_H_
 
@@ -48,11 +49,14 @@ struct gdl_g {
 };
 #endif
 
+extern int c_processing;
 extern int gdl_corrq;
 extern int curr_lang;
 extern int gdltrace, gdl_legacy, gdl_orig_mode, gvl_no_mesg_add;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
+
+extern List *c_implicit_gps;
 
 extern Pool *gdlpool;
 
@@ -121,6 +125,9 @@ extern char *gdl_one_off(const char *file, int line, const char *g, int voidsl);
 extern const char *gdlsig(Tree*tp);
 extern void gdlsig_node(Node *np, void *user);
 extern void gdl_update_state(Node *np, gdlstate_t gs_tok);
+
+extern void gdl_c_init(void);
+extern void gdl_c_term(void);
 
 extern const char *gdlsig_str(Mloc *mp, unsigned char *atf, int frag_ok, int deep);
 

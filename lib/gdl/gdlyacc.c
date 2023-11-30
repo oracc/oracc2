@@ -21,6 +21,10 @@ int deep_parse = 1;
 gdlstate_t gst; /* global gdl state */
 Node *lgp = NULL;   /* last grapheme node pointer */
 
+int c_delim_sentinel;
+int c_processing;
+List *c_implicit_gps = NULL;
+
 /***********************************************************************
  *
  * Functions for running gdl.y
@@ -231,14 +235,43 @@ gdl_cell(Tree *ytp, const char *span)
   gdl_prop_kv(cp, GP_ATTRIBUTE, PG_GDL_INFO, "span", (ccp)pool_copy((uccp)span, ytp->tm->pool));
   tree_curr(cp);
 }
+void
+gdl_c_init(void)
+{
+  c_delim_sentinel = 0;
+  c_processing = 1;
+}
+
+void
+gdl_c_term(void)
+{
+  c_processing = 0;
+  if (c_implicit_gps)
+    {
+      list_free(c_implicit_gps, NULL);
+      c_implicit_gps = NULL;
+    }
+}
 
 Node *
 gdl_delim(Tree *ytp, const char *data)
 {
   Node *np = NULL;
   if (gdltrace)
-    fprintf(stderr, "gt: DELIM: %c\n", '-');
-  np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL); 
+    fprintf(stderr, "gt: DELIM: %s\n", data);
+  np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
+  if (c_processing)
+    {
+      ++c_delim_sentinel;
+      if (strcmp(np->rent->name, "g:gp")
+	  && ('.' != *data && '-' != *data && ':' != *data))
+	{
+	  fprintf(stderr, "compound contains group without parent\n");
+	  if (!c_implicit_gps)
+	    c_implicit_gps = list_create(LIST_SINGLE);
+	  list_add(c_implicit_gps, np);
+	}
+    }
   np->text = data;
   return np;
 }

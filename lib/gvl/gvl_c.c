@@ -79,6 +79,16 @@ gvl_c_c10e(Node *ynp)
   return gvl_c_form(ynp, gvl_c_node_c10e);
 }
 
+static int
+gp_is_implicit(Node *gp)
+{
+  Prop *p = prop_find_kv(gp->props, "implicit", "1");
+  if (p)
+    return 1;
+  else
+    return 0;
+}
+
 /* lc should be 0 on first pass and 1 on final pass */
 
 static void
@@ -125,7 +135,10 @@ gvl_c_node_orig(Node *np, void *user)
       else if (np->text)
 	gvl_c_node_text(user, np, 0);
       else if (!strcmp(np->name, "g:gp"))
-	list_add((List*)user, "(");
+	{
+	  if (!gp_is_implicit(np))
+	    list_add((List*)user, "(");
+	}
     }
 }
 
@@ -155,7 +168,10 @@ gvl_c_node_c10e(Node *np, void *user)
 	    gvl_c_node_text(user, np, 1);
 	}
       else if (!strcmp(np->name, "g:gp"))
-	list_add((List*)user, "(");
+	{
+	  if (!gp_is_implicit(np))
+	    list_add((List*)user, "(");
+	}
     }
 }
 
@@ -163,7 +179,10 @@ static void
 gvl_c_node_gp_c(Node *np, void *user)
 {
   if (!strcmp(np->name, "g:gp"))
-    list_add((List*)user, ")");
+    {
+      if (!gp_is_implicit(np))
+	list_add((List*)user, ")");
+    }
 }
 
 static int
