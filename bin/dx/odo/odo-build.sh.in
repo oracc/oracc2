@@ -4,9 +4,8 @@
 #
 # $1=user $2=project $3=subcommand
 #
+echo $0: $*
 subcommand=$3
-echo $0: subcommand=$subcommand
-
 if [ "$subcommand" = "corpus" ]; then
     echo $0: calling o2-corpus.sh
     o2-corpus.sh
