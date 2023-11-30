@@ -40,8 +40,7 @@ rm $V -f 01bld 01tmp 02pub 02www 02xml
 # In Oracc version one there was a rogue script that occasionally
 # created 01bld as a directory not a link; this probably no longer
 # exists but this check is retained just in case.
-bldislink=`readlink -n 01bld`
-if [ "$bldislink" = "" ]; then
+if [ -d 01bld ]; then
     echo $0: removing 01bld directory to recreate it as a link.
     rm $V -fr 01bld
 fi

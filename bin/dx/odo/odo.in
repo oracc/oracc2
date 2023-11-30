@@ -124,6 +124,7 @@ if [ "$project" != "" ]; then
 				 $script $user $project $*
 			     else
 				 echo "$0: no command $uscript or $script. Stop."
+				 fail
 			     fi
 			 fi
 		     fi
