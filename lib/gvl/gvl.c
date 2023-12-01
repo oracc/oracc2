@@ -376,7 +376,8 @@ gvl_compound(Node *ynp)
 		{
 		  while (1)
 		    {
-		      if (last->next && !strcmp(last->next->name, "g:d") && !strcmp(last->next->text, d))
+		      if (last->next && !strcmp(last->next->name, "g:d")
+			  && (!strcmp(last->next->text, d) || !strcmp(last->next->text, "×")))
 			{
 			  if (last->next->next)
 			    last = last->next->next; /* now last is the RHS of the next delim */

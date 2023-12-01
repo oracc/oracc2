@@ -23,6 +23,7 @@ Node *lgp = NULL;   /* last grapheme node pointer */
 
 const char *c_last_implicit_delim = NULL;
 int c_delim_sentinel;
+int c_implicit_times_reset;
 int c_processing;
 List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
@@ -247,7 +248,7 @@ gdl_c_init(void)
 void
 gdl_c_term(void)
 {
-  c_processing = 0;
+  c_implicit_times_reset = c_processing = 0;
   if (c_explicit_gps)
     {
       list_free(c_explicit_gps, NULL);
@@ -290,6 +291,22 @@ gdl_delim(Tree *ytp, const char *data)
 		    c_implicit_gps = list_create(LIST_SINGLE);
 		  list_add(c_implicit_gps, np);
 		  c_last_implicit_delim = data;
+		}
+	      else if (c_last_implicit_delim && !strcmp(c_last_implicit_delim, "×"))
+		{
+		  /* If this is a second × sign reset the last list
+		     entry to point to this so in GU×DIM×KUR the
+		     DIM×KUR will be grouped.  Need to check PCSL/OGSL
+		     to see if deeper × nesting needs to be handled */
+		  if (!c_implicit_times_reset)
+		    {
+		      c_implicit_times_reset = 1;
+		      if (c_implicit_gps)
+			(void)list_pop(c_implicit_gps);
+		      if (!c_implicit_gps)
+			c_implicit_gps = list_create(LIST_SINGLE);			
+		      list_add(c_implicit_gps, np);
+		    }
 		}
 	    }
 	  else
