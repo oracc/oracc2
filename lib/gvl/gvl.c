@@ -224,42 +224,80 @@ gvl_validate(unsigned const char *g)
     return NULL;
 }
 
+/* In constructs like 3×AN the '3×' is treated as a delimiter so
+   dlm->prev can be a preceding delimiter.
+
+   When dlm->prev->prev is NULL the group is the first child of the
+   parent so gp->rent->kids needs to be reset.
+*/
 static void
 gvl_implicit_gp(Node *dlm)
 {
   Node *gp = tree_node(dlm->tree, NS_GDL, "g:gp", dlm->depth, dlm->mloc);
-  
-  /* The implicit group has the linkage of the delim's parent and the
-     siblings' prev/next; the group's kids pointer is the delim's prev */
+  Node *dlm_prev = NULL;
+
+  /* Constructs like |BA.3×AN| need special handling on the left side */
+  if (*dlm->text == '3' || *dlm->text == '4')
+    {
+      /* Preserve dlm_prev so we can test for beginning of compound
+	 (dlm_prev->prev == NULL) */
+      dlm_prev = dlm->prev;
+
+      /* This is a unary delimiter */
+      dlm->prev = NULL;
+    }
+
   gp->rent = dlm->rent;
-  gp->prev = dlm->prev->prev;
-  gp->next = dlm->next->next;
-  gp->kids = dlm->prev;
+  
+  Node *gp_prev;
+  if (dlm->prev)
+    gp_prev = dlm->prev->prev;
+  Node *gp_next;
+  if (dlm->next)
+    gp_next = dlm->next->next;
 
-  /* The previous sibling changes parent and prev; its prev needs to
-     point to the implicit group */
-  if (dlm->prev->prev)
-    {
-      dlm->prev->prev->next = gp;
-      dlm->prev->prev = NULL;
-    }
-  dlm->prev->rent = gp;
+  if (gp_prev)
+    gp_prev->next = gp;
+  if (gp_next)
+    gp->next->prev = gp;
 
-  /* The next sibling changes parent and next; its next needs to point
-     to the implicit group */
-  if (dlm->next->next)
-    {
-      dlm->next->next->prev = gp;
-      dlm->next->next = NULL;
-    }
-  dlm->next->rent = gp;
+  if (!gp->prev)
+    gp->rent->kids = gp;
+  
+  Node *gp1 = dlm->prev;
+  Node *gp2 = dlm;
+  Node *gp3 = dlm->next;
+
+  if (gp1)
+    gp1->prev = NULL;
+  if (gp3)
+    gp3->next = NULL;
+  if (gp1)
+    gp->kids = gp1;
+  else
+    gp->kids = gp2;
+
+  
 
   gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "implicit", "1");
   gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "c");
 
   unsigned char *gp_orig = gvl_c_orig(gp);
+#if 0
   unsigned char *gp_c10e = gvl_c_c10e(gp);
   fprintf(stderr, "implicit group orig=%s; c10e=%s\n", gp_orig, gp_c10e);
+#endif
+  gp->text = (ccp)pool_copy(gp_orig, curr_sl->p);
+}
+
+/* Create compound forms for groups like |(PAN&PAN)| */
+static void
+gvl_explicit_gp(Node *gp)
+{
+  unsigned char *gp_orig = gvl_c_orig(gp);
+#if 0
+  unsigned char *gp_c10e = gvl_c_c10e(gp);
+#endif
   gp->text = (ccp)pool_copy(gp_orig, curr_sl->p);
 }
 
@@ -330,18 +368,28 @@ gvl_compound(Node *ynp)
 	  List *need_gp = list_create(LIST_SINGLE);
 	  for (gp = list_first(c_implicit_gps); gp; gp = list_next(c_implicit_gps))
 	    {
-	      if (gp->prev->prev || gp->next->next)
+	      if ((gp->prev && gp->prev->prev) || (gp->next && gp->next->next))
 		{
+#if 0
 		  fprintf(stderr, "implicit grouping is required\n");
+#endif
 		  list_add(need_gp, gp);
 		}
 	    }
 	  if (list_len(need_gp))
 	    {
+#if 0
 	      fprintf(stderr, "processing implicit groups\n");
+#endif
 	      for (gp = list_first(need_gp); gp; gp = list_next(need_gp))
 		gvl_implicit_gp(gp);
 	    }
+	}
+      if (c_explicit_gps)
+	{
+	  Node *gp;
+	  for (gp = list_first(c_explicit_gps); gp; gp = list_next(c_explicit_gps))
+	    gvl_explicit_gp(gp);
 	}
       
       if (cp->mess && !gvl_no_mesg_add)

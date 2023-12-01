@@ -56,6 +56,7 @@ extern int gdltrace, gdl_legacy, gdl_orig_mode, gvl_no_mesg_add;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
+extern List *c_explicit_gps;
 extern List *c_implicit_gps;
 
 extern Pool *gdlpool;

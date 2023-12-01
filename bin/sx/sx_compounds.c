@@ -119,10 +119,35 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
   struct sl_compound *cdp = NULL;
   int new_sign = 0;
 
+  /* Try the sign as-is */
   sp = hash_find(sl->hsentry, (uccp)sgnname);
+
+  /* No? Try aka forms */
   if (!sp)
     sp = hash_find(sl->haka, (uccp)sgnname);
 
+  /* No? Is it in |(...)|? If so, try removing the parens */
+  if (!sp)
+    {
+      if ('(' == sgnname[1])
+	{
+	  const char *close_paren = strchr(sgnname, ')');
+	  if (close_paren && '|' == close_paren[1])
+	    {
+	      char sans_paren[strlen(sgnname)+1], *dst = sans_paren;
+	      const char *src = sgnname+2;
+	      *dst++ = '|';
+	      while (*src != ')')
+		*dst++ = *src++;
+	      *dst++ = '|';
+	      *dst = '\0';
+	      sp = hash_find(sl->hsentry, (uccp)sans_paren);
+	      if (!sp)
+		sp = hash_find(sl->haka, (uccp)sans_paren);
+	    }
+	}
+    }
+  
   if (!sp)
     {
       sx_compound_new_sign(sl, sgnname, cpdname);

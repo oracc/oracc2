@@ -216,7 +216,7 @@ gvl_c_form(Node *ynp, void (*fnc)(Node *np, void *user))
   *t = '\0';  
   free(p);
   list_free(lp, NULL);
-  if (!strcmp(ynp->kids->name, "g:b"))
+  if (ynp->kids && !strcmp(ynp->kids->name, "g:b"))
     {
       Node *mnp;
       for (mnp = ynp->kids; mnp->next; mnp = mnp->next)

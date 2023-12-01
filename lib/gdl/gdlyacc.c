@@ -23,6 +23,7 @@ Node *lgp = NULL;   /* last grapheme node pointer */
 
 int c_delim_sentinel;
 int c_processing;
+List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
 
 /***********************************************************************
@@ -246,6 +247,11 @@ void
 gdl_c_term(void)
 {
   c_processing = 0;
+  if (c_explicit_gps)
+    {
+      list_free(c_explicit_gps, NULL);
+      c_explicit_gps = NULL;
+    }
   if (c_implicit_gps)
     {
       list_free(c_implicit_gps, NULL);
@@ -264,12 +270,23 @@ gdl_delim(Tree *ytp, const char *data)
     {
       ++c_delim_sentinel;
       if (strcmp(np->rent->name, "g:gp")
-	  && ('.' != *data && '-' != *data && ':' != *data))
+	  && ('.' != *data && '-' != *data && ':' != *data && '+' != *data))
 	{
+#if 0
 	  fprintf(stderr, "compound contains group without parent\n");
+#endif
 	  if (!c_implicit_gps)
 	    c_implicit_gps = list_create(LIST_SINGLE);
 	  list_add(c_implicit_gps, np);
+	}
+      else
+	{
+	  if ('.' != *data && '-' != *data && ':' != *data && '+' != *data)
+	    {
+	      if (!c_explicit_gps)
+		c_explicit_gps = list_create(LIST_SINGLE);
+	      list_add(c_explicit_gps, np->rent);
+	    }
 	}
     }
   np->text = data;

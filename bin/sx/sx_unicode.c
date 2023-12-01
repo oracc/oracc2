@@ -130,7 +130,9 @@ sx_unicode(struct sl_signlist *sl)
   struct sl_inst *ip;
   for (ip = list_first(sl->compounds); ip; ip = list_next(sl->compounds))
     {
-      if (ip->valid)
+      if (ip->valid
+	  && ((ip->type == 'f' && !ip->u.f->compoundonly)
+	      || (ip->u.s->type != sx_tle_componly)))
 	{
 	  unsigned const char *name = ip->type == 's' ? ip->u.s->name : ip->u.f->name;
 	  struct sl_unicode *Up = ip->type == 's' ? &ip->u.s->U : &ip->u.f->U;
