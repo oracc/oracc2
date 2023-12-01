@@ -112,6 +112,27 @@ sx_compound_new_sign(struct sl_signlist *sl, const char *sgnname, const char *cp
     }
 }
 
+/* return the last ')' in a string assuming the parens are balanced */
+static const char *
+find_closing_paren(const char *s)
+{
+  int p = 0;
+  const char *cp = NULL;
+  while (*s)
+    {
+      if ('(' == *s)
+	++p;
+      else if (')' == *s)
+	{
+	  --p;
+	  if (!p)
+	    cp = s;
+	}
+      ++s;
+    }
+  return cp;
+}
+
 static void
 sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdname, enum sxc_type t)
 {
@@ -131,14 +152,21 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
     {
       if ('(' == sgnname[1])
 	{
-	  const char *close_paren = strchr(sgnname, ')');
+	  const char *close_paren = find_closing_paren(sgnname);
 	  if (close_paren && '|' == close_paren[1])
 	    {
 	      char sans_paren[strlen(sgnname)+1], *dst = sans_paren;
 	      const char *src = sgnname+2;
+	      int p = 0;
 	      *dst++ = '|';
-	      while (*src != ')')
-		*dst++ = *src++;
+	      while (*src != ')' || p)
+		{
+		  if ('(' == *src)
+		    ++p;
+		  else if (')' == *src)
+		    --p;
+		  *dst++ = *src++;
+		}
 	      *dst++ = '|';
 	      *dst = '\0';
 	      sp = hash_find(sl->hsentry, (uccp)sans_paren);
