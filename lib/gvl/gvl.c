@@ -366,9 +366,9 @@ gvl_compound(Node *ynp)
 	  Node *gp;
 	  for (gp = list_first(c_implicit_gps); gp; gp = list_next(c_implicit_gps))
 	    {
-	      /* Set the last node of the group; for a simply unary/binary this is
-		 dlm->next; but for multi-delim groups this has to be set to the
-		 last arg of the last delim that is the same kind as dlm->text */
+	      /* Set the last node of the group; for a simple unary/binary this is
+		 gp->next; but for multi-delim groups this has to be set to the
+		 next node of the last delim that is the same kind as gp->text */
 	      const char *d = gp->text;
 	      Node *last = gp->next;
 	      /* Don't generate implicit groups when there is a parse error */

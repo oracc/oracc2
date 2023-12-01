@@ -27,6 +27,7 @@ int c_implicit_times_reset;
 int c_processing;
 List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
+static Node *c_last_explicit_group_node = NULL;
 
 /***********************************************************************
  *
@@ -249,6 +250,7 @@ void
 gdl_c_term(void)
 {
   c_implicit_times_reset = c_processing = 0;
+  c_last_explicit_group_node = NULL;
   if (c_explicit_gps)
     {
       list_free(c_explicit_gps, NULL);
@@ -316,9 +318,13 @@ gdl_delim(Tree *ytp, const char *data)
 	{
 	  if ('.' != *data && '-' != *data && ':' != *data && '+' != *data)
 	    {
-	      if (!c_explicit_gps)
-		c_explicit_gps = list_create(LIST_SINGLE);
-	      list_add(c_explicit_gps, np->rent);
+	      if (!c_last_explicit_group_node || c_last_explicit_group_node != np->rent)
+		{
+		  if (!c_explicit_gps)
+		    c_explicit_gps = list_create(LIST_SINGLE);
+		  list_add(c_explicit_gps, np->rent);
+		  c_last_explicit_group_node = np->rent;
+		}
 	    }
 	}
     }
