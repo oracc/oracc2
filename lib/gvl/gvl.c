@@ -229,12 +229,16 @@ gvl_validate(unsigned const char *g)
 
    When dlm->prev->prev is NULL the group is the first child of the
    parent so gp->rent->kids needs to be reset.
+
+   
 */
 static void
-gvl_implicit_gp(Node *dlm)
+gvl_implicit_gp(Node *dlm, Node *last)
 {
   Node *gp = tree_node(dlm->tree, NS_GDL, "g:gp", dlm->depth, dlm->mloc);
   Node *dlm_prev = NULL;
+  Node /**first, */ *last; /* need to refactor dlm_prev to use 'first' node concept */
+
 
   /* Constructs like |BA.3×AN| need special handling on the left side */
   if (*dlm->text == '3' || *dlm->text == '4')
@@ -253,8 +257,8 @@ gvl_implicit_gp(Node *dlm)
   if (dlm->prev)
     gp_prev = dlm->prev->prev;
   Node *gp_next;
-  if (dlm->next)
-    gp_next = dlm->next->next;
+  if (last)
+    gp_next = last->next;
 
   if (gp_prev)
     gp_prev->next = gp;
@@ -266,18 +270,15 @@ gvl_implicit_gp(Node *dlm)
   
   Node *gp1 = dlm->prev;
   Node *gp2 = dlm;
-  Node *gp3 = dlm->next;
 
   if (gp1)
     gp1->prev = NULL;
-  if (gp3)
-    gp3->next = NULL;
+  if (last)
+    last->next = NULL;
   if (gp1)
     gp->kids = gp1;
   else
-    gp->kids = gp2;
-
-  
+    gp->kids = gp2;  
 
   gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "implicit", "1");
   gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "c");
@@ -368,21 +369,31 @@ gvl_compound(Node *ynp)
 	  List *need_gp = list_create(LIST_SINGLE);
 	  for (gp = list_first(c_implicit_gps); gp; gp = list_next(c_implicit_gps))
 	    {
-	      if ((gp->prev && gp->prev->prev) || (gp->next && gp->next->next))
+	      /* Set the last node of the group; for a simply unary/binary this is
+		 dlm->next; but for multi-delim groups this has to be set to the
+		 last arg of the last delim that is the same kind as dlm->text */
+	      const char *d = dlm->text;
+	      Node *last = dlm->next;
+	      /* Don't generate implicit groups when there is a parse error */
+	      if (last)
 		{
-#if 0
-		  fprintf(stderr, "implicit grouping is required\n");
-#endif
-		  list_add(need_gp, gp);
+		  while (1)
+		    {
+		      if (last->next && !strcmp(last->next->name, "g:d") && !strcmp(last->next->text, d))
+			{
+			  if (last->next->next)
+			    last = last->next->next; /* now last is the RHS of the next delim */
+			  else
+			    break; /* this can only happen if there's a parse error
+				      that has left delim with no RHS; we will already
+				      have complained about that */
+			}
+		      else
+			break;
+		    }
 		}
-	    }
-	  if (list_len(need_gp))
-	    {
-#if 0
-	      fprintf(stderr, "processing implicit groups\n");
-#endif
-	      for (gp = list_first(need_gp); gp; gp = list_next(need_gp))
-		gvl_implicit_gp(gp);
+	      if ((gp->prev && gp->prev->prev) || (last && last->next))
+		gvl_implicit_gp(gp, last);
 	    }
 	}
       if (c_explicit_gps)

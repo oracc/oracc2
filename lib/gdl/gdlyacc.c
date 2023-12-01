@@ -21,6 +21,7 @@ int deep_parse = 1;
 gdlstate_t gst; /* global gdl state */
 Node *lgp = NULL;   /* last grapheme node pointer */
 
+const char *c_last_implicit_delim = NULL;
 int c_delim_sentinel;
 int c_processing;
 List *c_explicit_gps = NULL;
@@ -269,17 +270,32 @@ gdl_delim(Tree *ytp, const char *data)
   if (c_processing)
     {
       ++c_delim_sentinel;
-      if (strcmp(np->rent->name, "g:gp")
-	  && ('.' != *data && '-' != *data && ':' != *data && '+' != *data))
+      if (strcmp(np->rent->name, "g:gp")) /* implicit group */
 	{
-#if 0
-	  fprintf(stderr, "compound contains group without parent\n");
-#endif
-	  if (!c_implicit_gps)
-	    c_implicit_gps = list_create(LIST_SINGLE);
-	  list_add(c_implicit_gps, np);
+	  if ('.' != *data && '-' != *data && ':' != *data && '+' != *data)
+	    {
+	      /* c_last_implicit_delim avoids adding successive delims
+		 of the same kind to the implicit group list. So,
+		 |AŠ&AŠ&AŠ| will only generate one implicit group node
+		 to process.  During processing, the group collects
+		 all following DELIM+ARG sequences so that AŠ&AŠ&AŠ
+		 become the children of the group.  If this is the
+		 entire sign no group will be generated because the
+		 prev/next ptrs of the first/last elements will be
+		 NULL. but in |ŠU₂.AŠ&AŠ&AŠ| a single implicit group
+		 will be created for the AŠ sequence. */
+	      if (!c_last_implicit_delim || strcmp(c_last_implicit_delim, data))
+		{
+		  if (!c_implicit_gps)
+		    c_implicit_gps = list_create(LIST_SINGLE);
+		  list_add(c_implicit_gps, np);
+		  c_last_implicit_delim = data;
+		}
+	    }
+	  else
+	    c_last_implicit_delim = NULL;
 	}
-      else
+      else /* explicit group */
 	{
 	  if ('.' != *data && '-' != *data && ':' != *data && '+' != *data)
 	    {
