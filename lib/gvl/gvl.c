@@ -259,7 +259,7 @@ gvl_implicit_gp(Node *dlm)
   if (gp_prev)
     gp_prev->next = gp;
   if (gp_next)
-    gp->next->prev = gp;
+    gp_next->prev = gp;
 
   if (!gp->prev)
     gp->rent->kids = gp;
