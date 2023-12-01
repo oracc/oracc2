@@ -237,8 +237,6 @@ gvl_implicit_gp(Node *dlm, Node *last)
 {
   Node *gp = tree_node(dlm->tree, NS_GDL, "g:gp", dlm->depth, dlm->mloc);
   Node *dlm_prev = NULL;
-  Node /**first, */ *last; /* need to refactor dlm_prev to use 'first' node concept */
-
 
   /* Constructs like |BA.3×AN| need special handling on the left side */
   if (*dlm->text == '3' || *dlm->text == '4')
@@ -252,25 +250,25 @@ gvl_implicit_gp(Node *dlm, Node *last)
     }
 
   gp->rent = dlm->rent;
-  
-  Node *gp_prev;
-  if (dlm->prev)
-    gp_prev = dlm->prev->prev;
-  Node *gp_next;
-  if (last)
-    gp_next = last->next;
 
-  if (gp_prev)
-    gp_prev->next = gp;
-  if (gp_next)
-    gp_next->prev = gp;
+  if (dlm_prev)
+    gp->prev = dlm_prev->prev;
+  else if (dlm->prev)
+    gp->prev = dlm->prev->prev;
+
+  if (last)
+    gp->next = last->next;
+
+  if (gp->prev)
+    gp->prev->next = gp;
+  if (gp->next)
+    gp->next->prev = gp;
 
   if (!gp->prev)
     gp->rent->kids = gp;
   
   Node *gp1 = dlm->prev;
   Node *gp2 = dlm;
-
   if (gp1)
     gp1->prev = NULL;
   if (last)
@@ -366,14 +364,13 @@ gvl_compound(Node *ynp)
       if (c_implicit_gps)
 	{
 	  Node *gp;
-	  List *need_gp = list_create(LIST_SINGLE);
 	  for (gp = list_first(c_implicit_gps); gp; gp = list_next(c_implicit_gps))
 	    {
 	      /* Set the last node of the group; for a simply unary/binary this is
 		 dlm->next; but for multi-delim groups this has to be set to the
 		 last arg of the last delim that is the same kind as dlm->text */
-	      const char *d = dlm->text;
-	      Node *last = dlm->next;
+	      const char *d = gp->text;
+	      Node *last = gp->next;
 	      /* Don't generate implicit groups when there is a parse error */
 	      if (last)
 		{
