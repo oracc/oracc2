@@ -82,14 +82,13 @@ else
     xsltproc -stringparam project $project $libscripts/sxweb-signs.xsl 02xml/sl.xml
 fi
 
-for a in V IV III ; do
-    xsltproc -stringparam title "Uruk $a" -stringparam index $a \
-	     $libscripts/sxweb-period.xsl 02xml/sl-corpus-counts.xml \
-	     >signlist/00web/sx-period-$a.xml
-done
-
-xsltproc -stringparam title "ED I-II" -stringparam index I \
-	 $libscripts/sxweb-period.xsl 02xml/sl-corpus-counts.xml \
-	 >signlist/00web/sx-period-I.xml
+if [ -r 00etc/signlist-periods.tab ]; then
+    cat 00etc/signlist-periods.tab | while IFS=$'\t' read index title
+    do
+	  xsltproc -stringparam title "$title" -stringparam index $index \
+		   $libscripts/sxweb-period.xsl 02xml/sl-corpus-counts.xml \
+		   >signlist/00web/sx-period-$index.xml
+    done
+fi
 
 (cd signlist ; o2-portal.sh)
