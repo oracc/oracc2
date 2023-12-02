@@ -43,6 +43,7 @@ rm -fr signlist ; mkdir signlist
 )
 
 sxinst signlist-config.xml signlist/00lib/config.xml
+sxinst signlist-index.html signlist/00lib/signlist-index.html
 sxinst signlist-parameters.xml signlist/00web/00config/parameters.xml
 sxinst signlist-home.xml signlist/00web/home.xml
 sxinst signlist-slform.html signlist/00web/slform.html
@@ -50,7 +51,6 @@ sxinst signlist-projesp.css signlist/00res/css/projesp.css
 sxinst signlist-sl.css signlist/00res/css/sl.css
 sxinst signlist-projesp.js signlist/00res/js/projesp.js
 sxinst signlist-sl.js signlist/00res/js/sl.js
-sxinst signlist-index.xml signlist/00lib/signlist-index.xml
 
 cp -f 00lib/signlist-x-*.xml signlist/00web
 cp -f 00lib/signlist-x-*.css signlist/00res/css
@@ -92,6 +92,6 @@ fi
 # Adjust home/index so that index.html is the frame that gives
 # searchable signlist and home.html is the browsable ESP portal.
 if [ -r signlist/00lib/signlist-index.html ]; then
-    (cd signlist/02www ; mv index.html home.html)
-    (cd signlist ; cp -af 00lib/signlist-index.html 02www/index.html ; chmod o+r signlist/02www/index.html
+    (cd signlist/02www ; echo cwd=`pwd` ; mv -v index.html home.html)
+    (cd signlist ; echo cwd=`pwd` ; cp -vaf 00lib/signlist-index.html 02www/index.html ; chmod o+r 02www/index.html)
 fi

@@ -16,8 +16,8 @@ if [ "$1" != "00lib/*.asl" ]; then
     if [ $? -eq 0 ]; then
 	sx -s $asl >02pub/sl/sl.tsv
 	slix 02pub/sl/sl.tsv
-	chmod o+r 02pub/sl/*
 	sx -x $asl >02xml/sl.xml
+	chmod -R o+r 02pub/sl 02xml/sl.xml
     else
 	echo "$0: errors in processing $asl. Stop."
 	exit 1

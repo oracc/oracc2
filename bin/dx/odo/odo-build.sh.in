@@ -6,6 +6,7 @@
 #
 echo $0: $*
 subcommand=$3
+projtype=`oraccopt . type`
 touch .oracc-build ; chmod 0644 .oracc-build
 if [ "$subcommand" = "corpus" ]; then
     echo $0: calling o2-corpus.sh
@@ -14,7 +15,12 @@ elif [ "$subcommand" = "portal" ]; then
     echo $0: calling o2-web.sh
     o2-web.sh
 else
-    echo $0: calling o2-clean-build.sh
-    o2-clean-build.sh $subcommand 
-    o2-web.sh
+    if [ "$projtype" = "signlist" ]; then
+	echo $0: calling odo-signlist.sh
+	odo-signlist.sh
+    else
+	echo $0: calling o2-clean-build.sh
+	o2-clean-build.sh $subcommand 
+	o2-web.sh
+    fi
 fi
