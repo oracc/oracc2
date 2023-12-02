@@ -85,5 +85,6 @@ extern Node *node_ancestor_or_self(Node *np, const char *name);
 extern Node *node_insert(Node *rent, Node *nkid);
 extern Node *node_last(Node *np);
 extern void node_replace(Node *from, Node *to);
+extern Node *node_group(Node *rep, Node *first, Node *last);
 
 #endif/*TREE_H_*/

@@ -80,6 +80,16 @@ gvl_c_c10e(Node *ynp)
 }
 
 static int
+gp_is_dangling(Node *gp)
+{
+  Prop *p = prop_find_kv(gp->props, "dangling", "1");
+  if (p)
+    return 1;
+  else
+    return 0;
+}
+
+static int
 gp_is_implicit(Node *gp)
 {
   Prop *p = prop_find_kv(gp->props, "implicit", "1");
@@ -122,11 +132,12 @@ gvl_c_node_text(List *lp, Node *np, int lc)
     }
 }
 
+/* || (strchr("am", np->name[2]) && !strcmp(np->rent->name, "g:gp")))*/ /* a and m now processed when kids of g:gp */
 static void
 gvl_c_node_orig(Node *np, void *user)
 {
   if ((strlen(np->name) == 3 || strlen(np->name) == 4)
-      && !strchr("abcfmz", np->name[2])
+      && (!strchr("abcfmz", np->name[2]))
       && 'n' != np->rent->name[2]
       && 'q' != np->rent->name[2])
     {
@@ -181,7 +192,55 @@ gvl_c_node_gp_c(Node *np, void *user)
   if (!strcmp(np->name, "g:gp"))
     {
       if (!gp_is_implicit(np))
-	list_add((List*)user, ")");
+	{
+	  list_add((List*)user, ")");
+#if 0
+	  if (!strcmp(np->rent->name, "g:gp") && gp_is_dangling(np->rent))
+	    {
+	      Node *mods = np->next;
+	      while (mods)
+		{
+		  if (!strcmp(np->next->name, "g:m"))
+		    {
+		      list_add((List *)user, "@");
+		      list_add((List *)user, (char*)mods->text);
+		      mods = mods->next;
+		    }
+		  else if (!strcmp(np->next->name, "g:a"))
+		    {
+		      list_add((List *)user, "~");
+		      list_add((List *)user, (char*)mods->text);
+		      mods = mods->next;
+		    }
+		  else
+		    break;
+		}
+	    }
+#endif
+	}
+      else
+	{
+	  if (gp_is_dangling(np))
+	    np = np->kids;
+	  Node *mods = np->next;
+	  while (mods)
+	    {
+	      if (!strcmp(np->next->name, "g:m") || !strcmp(np->next->name, "g:M"))
+		{
+		  list_add((List *)user, "@");
+		  list_add((List *)user, (char*)mods->text);
+		  mods = mods->next;
+		}
+	      else if (!strcmp(np->next->name, "g:a") || !strcmp(np->next->name, "g:A"))
+		{
+		  list_add((List *)user, "~");
+		  list_add((List *)user, (char*)mods->text);
+		  mods = mods->next;
+		}
+	      else
+		break;
+	    }
+	}
     }
 }
 
@@ -216,6 +275,8 @@ gvl_c_form(Node *ynp, void (*fnc)(Node *np, void *user))
   *t = '\0';  
   free(p);
   list_free(lp, NULL);
+
+#if 0
   if (ynp->kids && !strcmp(ynp->kids->name, "g:b"))
     {
       Node *mnp;
@@ -226,5 +287,7 @@ gvl_c_form(Node *ynp, void (*fnc)(Node *np, void *user))
 	  strcat((char*)t, mnp->next->text);
 	}
     }
+#endif
+  
   return ret;
 }

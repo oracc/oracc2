@@ -226,6 +226,50 @@ node_insert(Node *rent, Node *nkid)
   return nkid;
 }
 
+/**node_group creates a new group node.  The node replaces the arg
+ * 'rep'; the new node has the nodes from 'first' to 'last' as its
+ * kids. Some structure fields are inherited from rep; 'name' is set
+ * to "g:gp".
+ *
+ * The new node is returned.
+ */
+Node *
+node_group(Node *rep, Node *first, Node *last)
+{
+  Node *gp = tree_node(rep->tree, rep->ns, "g:gp", rep->depth, rep->mloc);
+  gp->rent = rep->rent;
+
+  if (first)
+    {
+      gp->prev = first->prev;
+      ++first->depth;
+    }
+
+  if (last)
+    {
+      gp->next = last->next;
+      ++last->depth;
+    }
+
+  if (gp->prev)
+    gp->prev->next = gp;
+  if (gp->next)
+    gp->next->prev = gp;
+
+  if (!gp->prev)
+    gp->rent->kids = gp;
+  
+  if (first)
+    first->prev = NULL;
+  if (last)
+    last->next = NULL;
+
+  gp->kids = first;
+  gp->last = last;
+
+  return gp;
+}
+
 void
 node_iterator(Node *np, void *user, void (*nodefnc)(Node *np, void *user), void (*postfnc)(Node *np, void *user))
 {

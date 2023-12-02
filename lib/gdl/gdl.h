@@ -38,7 +38,7 @@ enum gdlpropvals { GP_ATTRIBUTE, GP_IMPLICIT, GP_TRACKING,
 		   GP_BREAK_FULL, GP_BREAK_PART,
 		   GP_GLOSS_DOCGLO, GP_GLOSS_LING, GP_GLOSS_SURRO,
 		   GP_STATE_IMPLIED, GP_STATE_MAYBE, GP_STATE_SUPPLIED, GP_STATE_EXCISED,
-		   GP_SEXIFY, GP_STREAM
+		   GP_SEXIFY, GP_STREAM , GP_INFO
 };
 
 #if 0
@@ -56,6 +56,7 @@ extern int gdltrace, gdl_legacy, gdl_orig_mode, gvl_no_mesg_add;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
+extern List *c_dangling_gps;
 extern List *c_explicit_gps;
 extern List *c_implicit_gps;
 

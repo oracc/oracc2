@@ -213,19 +213,28 @@ gdl_modq_flush(void)
   Node *curr = NULL;
   for (curr = list_first(modq); curr; curr = list_next(modq))
     {
-      /* don't process if the parent of mods is a g:c because the mods
-	 are already in the right place */
-      if ('c' != curr->name[2])
+#if 0
+      if ('c' != curr->name[2]) /* this test is spurious */
 	{
+#endif
 	  if (curr != last)
 	    {
 	      last = curr;
 	      if ('n' == curr->rent->name[2])
 		gdl_mod_wrap_q(curr->rent);
+	      /* Don't gdl_mod_wrap when curr->rent is compound or group */
 	      else if ('c' != curr->rent->name[2] && strcmp(curr->rent->name, "g:gp"))
 		(void)gdl_mod_wrap(curr->rent, 0);
+	      else if (curr->prev && !strcmp(curr->prev->name, "g:gp"))
+		{
+		  if (!c_dangling_gps)
+		    c_dangling_gps = list_create(LIST_SINGLE);
+		  list_add(c_dangling_gps, curr->prev);
+		}		    
 	    }
+#if 0
 	}
+#endif
     }
   list_reset(modq);
 }
@@ -266,7 +275,7 @@ gdl_mod_wrap_q(Node *np)
       else if (tmp->name[2] == 'f' || tmp->name[2] == 'F')
 	{
 	  tmp->name = "g:f";
-	  /* ignore graphetics */
+	  /* ignore graphetics */ /* Why am I ignoring graphetics here? */
 	}
       else
 	{

@@ -25,6 +25,7 @@ const char *c_last_implicit_delim = NULL;
 int c_delim_sentinel;
 int c_implicit_times_reset;
 int c_processing;
+List *c_dangling_gps = NULL;
 List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
 static Node *c_last_explicit_group_node = NULL;
@@ -251,6 +252,12 @@ gdl_c_term(void)
 {
   c_implicit_times_reset = c_processing = 0;
   c_last_explicit_group_node = NULL;
+  c_last_implicit_delim = NULL;
+  if (c_dangling_gps)
+    {
+      list_free(c_dangling_gps, NULL);
+      c_dangling_gps = NULL;
+    }
   if (c_explicit_gps)
     {
       list_free(c_explicit_gps, NULL);

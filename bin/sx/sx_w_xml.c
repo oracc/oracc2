@@ -304,8 +304,6 @@ sx_w_x_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 		  list_add(a, "cpd-refs");
 		  list_add(a, oids);
 		}
-	      else
-		fprintf(stderr, "%s:#digest_by_oid=%s\n", s->u.f->name, " [not found]");
 
 	      atts = list2chars(a);
 	      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
@@ -530,6 +528,9 @@ x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s)
 	mesg_verr(&s->mloc, "@compoundonly entry %s not found in any compounds",
 		  s->type == 's' ? s->u.s->name : s->u.f->name);
     }
+  else
+    mesg_verr(&s->mloc, "@compoundonly entry %s not found in any compounds (no #digest_by_oid)",
+	      s->type == 's' ? s->u.s->name : s->u.f->name);
   return NULL;
 }
 
@@ -566,8 +567,6 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
 	  list_add(a, "cpd-refs");
 	  list_add(a, oids);
 	}
-      else
-	fprintf(stderr, "%s:#digest_by_oid=%s\n", s->u.s->name, "[not found]");
     }
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
