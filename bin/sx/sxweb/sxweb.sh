@@ -50,14 +50,10 @@ sxinst signlist-projesp.css signlist/00res/css/projesp.css
 sxinst signlist-sl.css signlist/00res/css/sl.css
 sxinst signlist-projesp.js signlist/00res/js/projesp.js
 sxinst signlist-sl.js signlist/00res/js/sl.js
+sxinst signlist-index.xml signlist/00lib/signlist-index.xml
 
 cp -f 00lib/signlist-x-*.xml signlist/00web
 cp -f 00lib/signlist-x-*.css signlist/00res/css
-
-#slname=`oraccopt . asl-signlist`
-#if [[ "$slname" == "" ]]; then
-#    slname=project.asl
-#fi
 
 libscripts=$ORACC_BUILDS/lib/scripts
 
@@ -92,3 +88,10 @@ if [ -r 00etc/signlist-periods.tab ]; then
 fi
 
 (cd signlist ; o2-portal.sh)
+
+# Adjust home/index so that index.html is the frame that gives
+# searchable signlist and home.html is the browsable ESP portal.
+if [ -r signlist/00lib/signlist-index.html ]; then
+    (cd signlist/02www ; mv index.html home.html)
+    (cd signlist ; cp -af 00lib/signlist-index.html 02www/index.html ; chmod o+r signlist/02www/index.html
+fi
