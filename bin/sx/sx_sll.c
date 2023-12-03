@@ -143,6 +143,9 @@ sx_s_sign(FILE *f, struct sl_sign *s)
 	    }
 	  fputc('\n', f);
 	}
+
+      if (s->pname)
+	fprintf(f, "%s\t%s\n", s->pname, curr_oid);
       
       if (s->aka)
 	sx_s_aka(f, s->oid, s->aka);

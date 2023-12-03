@@ -26,6 +26,7 @@
 
 fail ()
 {
+    echo "$0: $1. Stop."
     set_status error
     exit 1;
 }
@@ -43,6 +44,7 @@ set_status ()
 }
 
 exec 1>&2
+bin=@@ORACC_BUILDS@@/bin
 
 echo $0 called with arguments $*
 
@@ -52,8 +54,7 @@ if [ "$1" = "-v" ]; then
 fi
 
 if [ $# -lt 3 ]; then
-    echo $0: not enough arguments--need at least TMPDIR PROJECT COMMAND. Stop.
-    fail
+    fail "not enough arguments--need at least TMPDIR PROJECT COMMAND"
 fi
 
 tmpdir=$1
@@ -64,91 +65,78 @@ if [ "$tmpdir" = "-" ]; then
     tmpdir=/tmp
   fi
 fi
-
 if [ ! -d $tmpdir ]; then
-    echo $0: $tmpdir is not a directory. Stop.
-    fail
+    fail "$tmpdir is not a directory"
 fi
 
 shift
-
 project=$1
 if [ "$project" = "." ]; then
     if [ -r 00lib/config.xml ]; then
 	project=`oraccopt`
     else
-	echo $0: you can only use 'odo .' in a project directory. Stop.
-	fail
+	fail "you can only use 'odo .' in a project directory"
     fi
 fi
+if [ "$project" = "" ]; then
+    fail "empty project argument"
+else
+    user=`/bin/echo -n $project | cut -d/ -f1`
+fi
 
-if [ "$project" != "" ]; then
-    shift
-    command=$1
-    if [ "$command" != "" ]; then
-	shift
-	bin=@@ORACC_BUILDS@@/bin
-	user=`/bin/echo -n $project | cut -d/ -f1`
-	echo "$0: tmpdir=$tmpdir; user=$user; project=$project; command=$command"
-	if [ $command = "init" ]; then
-	    cd @@ORACC_BUILDS@@
-	    if [ ! -r $user ]; then
-		$bin/odo-cvs-checkout.sh $user $*
-		if [ $? != 0 ]; then
-		    echo $0: odo-checkout.sh $user $*: command failed with code $?.
-		    fail
-		else
-		    set_status done
-		fi
-	    else
-		echo $0: $user already exists. Stop.
-		fail
-	    fi
+shift
+command=$1
+if [ "$command" = "" ]; then
+    fail "empty command argument"
+fi
+
+shift
+echo "$0: tmpdir=$tmpdir; user=$user; project=$project; command=$command"
+if [ $command = "init" ]; then
+    cd @@ORACC_BUILDS@@
+    if [ ! -r $user ]; then
+	$bin/odo-cvs-checkout.sh $user $*
+	if [ $? != 0 ]; then
+	    fail "odo-checkout.sh $user $*: command failed with code $?"
 	else
-	    projdir=@@ORACC_BUILDS@@/$project
-	    if [ -d $projdir ]; then
-		(cd $projdir
-		 . $bin/odo-environment.sh
-		 $bin/odo-cvs-refresh.sh $user $*
-		 $bin/odo-dir-links.sh $project $V
-		 $bin/odo-config.sh $project $V
-		 if [ $? -eq 0 ]; then
-		     $bin/odo-update.sh $project $V
-		     if [ $? -eq 0 ]; then
-			 if [ "$command" != "config" ] && [ "$command" != "update" ]; then
-			     uscript=$bin/${user}-${command}.sh
-			     if [ -x $bin/$user-$command.sh ]; then
-				 $uscript $user $project $*
-			     else
-				 script=$bin/odo-$command.sh
-				 if [ -x $script ]; then
-				     $script $user $project $*
-				 else
-				     echo "$0: no command $uscript or $script. Stop."
-				     fail
-				 fi
-			     fi
-			 fi
-			 set_status done
-		     else
-			 echo $0: update command failed. Stop.
-			 fail
-		     fi
-		 else
-		     echo $0: config command failed. Stop.
-		     fail
-		 fi
-		)
-	    else
-		echo $0: unknown project $project.  Do you need to run odo $project init? Stop.
-		fail
-	    fi
+	    set_status done
 	fi
     else
-	echo $0: empty command argument. Stop.
-	fail
+	fail "$user already exists. Stop."
     fi
 else
-    echo $0: empty project argument. Stop.
-    fail
+    projdir=@@ORACC_BUILDS@@/$project
+    if [ -d $projdir ]; then
+	(cd $projdir
+	 . $bin/odo-environment.sh
+	 $bin/odo-cvs-refresh.sh $user $*
+	 $bin/odo-dir-links.sh $project $V
+	 $bin/odo-config.sh $project $V
+	 if [ $? -eq 0 ]; then
+	     $bin/odo-update.sh $project $V
+	     if [ $? -eq 0 ]; then
+		 if [ "$command" != "config" ] && [ "$command" != "update" ]; then
+		     uscript=$bin/${user}-${command}.sh
+		     if [ -x $bin/$user-$command.sh ]; then
+			 $uscript $user $project $*
+		     else
+			 script=$bin/odo-$command.sh
+			 if [ -x $script ]; then
+			     $script $user $project $*
+			 else
+			     fail "no command $uscript or $script"
+			 fi
+		     fi
+		 fi
+		 set_status done
+	     else
+		 fail "update command failed"
+	     fi
+	 else
+	     fail "config command failed"
+	 fi
+	)
+    else
+	fail "unknown project $project.  Do you need to run odo $project init?"
+    fi
 fi

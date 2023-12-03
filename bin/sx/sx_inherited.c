@@ -50,7 +50,13 @@ sx_inherited(struct sl_signlist *sl)
   int i;
   FILE *ifp = NULL;
   if (itrace)
-    ifp = fopen("itrace.log","w");
+    {
+      if (!(ifp = fopen("itrace.log","w")))
+	{
+	  fprintf(stderr, "sx: can't open itrace.log. Stop.\n");
+	  exit(1);
+	}
+    }
   for (i = 0; i < sl->nforms; ++i)
     {
       struct sl_inst *form_inst = NULL;
