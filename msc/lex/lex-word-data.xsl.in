@@ -170,22 +170,26 @@
       <xsl:if test="string-length(xff:f/@cf)>0">
 	<xsl:variable name="cfgw"><xsl:value-of select="concat(xff:f/@cf,'[',xff:f/@gw,']',xff:f/@pos)"/></xsl:variable>
 	<xsl:attribute name="cfgw"><xsl:value-of select="$cfgw"/></xsl:attribute>
-	<xsl:variable name="lcfgw">
+	<xsl:variable name="oid-dom">
 	  <xsl:choose>
 	    <xsl:when test="contains(xff:f/@xml:lang,'-')">
-	      <xsl:value-of select="concat('%',substring-before(xff:f/@xml:lang,'-'),':',$cfgw)"/>
+	      <xsl:value-of select="substring-before(xff:f/@xml:lang,'-')"/>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <xsl:value-of select="concat('%',xff:f/@xml:lang,':',$cfgw)"/>
+	      <xsl:value-of select="xff:f/@xml:lang"/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:variable>
 	<xsl:variable name="oid">
-	  <!-- <xsl:message>looking for <xsl:value-of select="$lcfgw"/> in <xsl:value-of select="$oid-doc"/></xsl:message> -->
 	  <xsl:for-each select="document($oid-doc)">
-	    <xsl:value-of select="key('oid',$lcfgw)/@id"/>
+	    <xsl:variable name="oid-node" select="key('oid',$cfgw)"/>
+	    <xsl:value-of select="$oid-node[@dom=$oid-dom]/@id"/>
 	  </xsl:for-each>
 	</xsl:variable>
+	<xsl:message>Found oid=<xsl:value-of select="$oid"
+	/> while looking for dom=<xsl:value-of select="$oid-dom"
+	/> and key=<xsl:value-of select="$cfgw"
+	/></xsl:message>
 	<xsl:if test="string-length($oid)>0">
 	  <xsl:attribute name="oid"><xsl:value-of select="$oid"/></xsl:attribute>
 	</xsl:if>
