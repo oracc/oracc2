@@ -147,7 +147,7 @@ sll_esp_output(List *lp)
 	  if (!letter)
 	    letter = "BAD";
 	  html = (char*)pool_alloc(strlen(wproject) + strlen(letter) + strlen(oid) + strlen("//signlist///index.html") + 1, sllpool);
-	  sprintf(html, "/%s/signlist/%s/%s/index.html", wproject, letter, oid);
+	  sprintf(html, "/%s/signlist/%s", wproject, oid);
 	  printf("Status: 302 Found\nLocation: %s\n\n", html);
 	}
     }
@@ -220,7 +220,7 @@ sll_esp_p(const char *oid, const char *sn, const char *v, const char *p)
   const char *letter = (ccp)sll_lookup(sll_tmp_key((uccp)oid,"let"));
   if (!v)
     v = "";
-  (void)sprintf(html, "/%s/signlist/%s/%s/index.html", wproject, letter, oid);
+  (void)sprintf(html, "/%s/signlist/%s", wproject, oid);
   printf("<p><a target=\"slmain\" href=\"%s\">%s%s<span class=\"sign\">%s</span></a>%s</p>\n",
 	 html, v, vx, sn, pspan);
 }

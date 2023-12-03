@@ -500,7 +500,11 @@
   ></tr>
 </xsl:template>
 
-<xsl:template mode="rest" match="sl:aka|sl:v|sl:sort|sl:uphase|sl:utf8|sl:uname|sl:list|sl:name|sl:pname|sl:inote|sl:form|sl:unote|sl:note|sl:qs|sl:inherited|sl:uage|sl:sys|sl:smap|sl:images"/>
+<xsl:template mode="rest"
+	      match="sl:aka|sl:v|sl:sort
+		     |sl:uphase|sl:utf8|sl:uname|sl:ucun
+		     |sl:list|sl:name|sl:pname|sl:inote|sl:form|sl:unote|sl:note
+		     |sl:qs|sl:inherited|sl:uage|sl:sys|sl:smap|sl:images"/>
 
 <xsl:template match="sl:listdef|sl:sysdef|sl:images|sl:compoundonly|sl:iheader"/>
 

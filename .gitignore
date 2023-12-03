@@ -18,6 +18,7 @@ bin/wx/wx
 bin/xx/concord
 bin/xx/dbix
 bin/xx/dbx
+bin/xx/rnv/rnv
 bin/xx/tlitsig
 bin/xx/xmlify
 msc/sys/proj-from-conf.sh
@@ -73,6 +74,8 @@ xpd.c
 msc/adm/oadm
 msc/adm/oadmsudo
 msc/adm/oadmwrapper
+msc/lex/lex-sign-lookup.xsl
+msc/lex/lex-word-data.xsl
 msc/oscx/osh.c
 msc/oscx/odo
 oracc_builds.c

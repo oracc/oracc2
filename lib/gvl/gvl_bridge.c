@@ -20,6 +20,12 @@ gvl_bridge_cuneify(void)
   return gvl_cuneify_gv(gbgp);
 }
 
+const char *
+gvl_bridge_oid(void)
+{
+  return gbgp->oid;
+}
+
 void
 gvl_bridge_init(void)
 {

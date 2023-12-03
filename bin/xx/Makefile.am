@@ -1,5 +1,5 @@
 include ../../oracc-am-rules.txt
-
+SUBDIRS=rnv
 bin_PROGRAMS=concord dbix dbx tlitsig xmlify
 
 concord_SOURCES = concord.c

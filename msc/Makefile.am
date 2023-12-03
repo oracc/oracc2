@@ -1,1 +1,1 @@
-SUBDIRS=adm cmd sys
+SUBDIRS=adm cmd lex sys
