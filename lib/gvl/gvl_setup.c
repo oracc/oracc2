@@ -86,7 +86,9 @@ gvl_setup(const char *project, const char *name, const char *script)
 	  ret->sindex = ++ngvl_checkers;
 	  sll_set_sl(ret->sl);
 	  langcore_set_sindex(script, ret->sindex);
+#if 0
 	  fprintf(stderr, "gvl_setup: loaded %s for script %s\n", project, script);
+#endif
 	}
       else
 	fprintf(stderr, "gvl: failed to open TSV %s/%s\n", (char *)project, (char*)name);

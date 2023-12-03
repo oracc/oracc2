@@ -153,7 +153,8 @@ prop_find_kv(Prop *p, const char *key, const char *value)
     {
       if (p->g > 0 && p->g < PU_VOIDSTAR)
 	{
-	  if (p->u.k->k
+	  if (p->u.k
+	      && p->u.k->k
 	      && !strcmp(p->u.k->k, key)
 	      && (NULL == value
 		  || (p->u.k->v && !strcmp(p->u.k->v, value))))

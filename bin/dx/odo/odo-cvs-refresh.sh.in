@@ -8,10 +8,13 @@
 # configured in various ways.
 #
 
-if [ -r .git ]; then
-    echo $0: git pull
-    runuser -u oradmin git pull
-    touch .oracc-git ; chmod 0644 .oracc-git
-else
-    echo $0: `pwd` is not a git repository "(no .git)."
-fi
+u=$1
+(cd @@ORACC_BUILDS@@/$u
+ if [ -r .git ]; then
+     echo $0: updating $u--cwd=`pwd`
+     runuser -u oradmin git pull
+     touch .oracc-git ; chmod 0644 .oracc-git
+ else
+     echo $0: `pwd` is not a git repository "(no .git)."
+ fi
+ )

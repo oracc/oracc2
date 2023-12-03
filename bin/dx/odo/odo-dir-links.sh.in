@@ -7,7 +7,8 @@
 # activity.
 #
 
-##umask 002
+# default to no-write-others
+umask 002
 
 V=$2
 
@@ -31,7 +32,9 @@ fi
 
 cd @@ORACC_BUILDS@@/$1
 for dir in bld pub tmp xml www ; do
-    mkdir $V -p @@ORACC_BUILDS@@/$dir/$1
+    md=@@ORACC_BUILDS@@/$dir/$1
+    mkdir $V -p $md
+    chmod 775 $md
 done
 
 mkdir -p 01log

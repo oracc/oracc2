@@ -18,7 +18,7 @@ else
     if [ "$1" != "00lib/*.glo" ]; then
 	echo $0: running o2-cbdpp.sh
 	o2-cbdpp.sh
-	if [ -r 01log/glo.err ]; then
+	if [ -s 01log/glo.err ]; then
 	    for a in `cat 01log/glo.err` ; do
 		cat $a
 	    done

@@ -8,6 +8,7 @@
 
 if [ -d $ORACC_BUILDS/oid ]; then
     cd $ORACC_BUILDS/oid
+    echo $0: updating OIDs--cwd=`pwd`
     # should check for stale .pulling lock file
     if [ ! -r .pulling ]; then
 	touch .pulling
