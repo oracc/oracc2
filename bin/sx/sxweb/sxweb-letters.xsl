@@ -28,12 +28,24 @@
       <html>
 	<head/>
 	<body>
-	  <xsl:call-template name="mcol">
-	    <xsl:with-param name="columns" select="'4'"/>
-	    <xsl:with-param name="nodes" select="sl:letter[@num='1']"/>
-	    <xsl:with-param name="class" select="'pretty'"/>
-	    <xsl:with-param name="tag" select="'letter'"/>
-	  </xsl:call-template>
+	  <xsl:choose>
+	    <xsl:when test="/*/@signlist='ogsl'">
+	      <xsl:call-template name="form-div">
+		<xsl:with-param name="caller" select="'esp'"/>
+	      </xsl:call-template>
+	      <xsl:for-each select="sl:letter[@num='1']/sl:sign">
+		<xsl:call-template name="sl-letter-sign"/>
+	      </xsl:for-each>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:call-template name="mcol">
+		<xsl:with-param name="columns" select="'4'"/>
+		<xsl:with-param name="nodes" select="sl:letter[@num='1']"/>
+		<xsl:with-param name="class" select="'pretty'"/>
+		<xsl:with-param name="tag" select="'letter'"/>
+	      </xsl:call-template>
+	    </xsl:otherwise>
+	  </xsl:choose>
 	</body>
       </html>
     </esp:page>
@@ -51,43 +63,23 @@
       <html>
 	<head/>
 	<body>
-<!--
-	  <xsl:call-template name="form-div">
-	    <xsl:with-param name="caller" select="'esp'"/>
-	  </xsl:call-template>
- -->
-	  <xsl:call-template name="mcol">
-	    <xsl:with-param name="columns" select="'4'"/>
-	    <xsl:with-param name="nodes" select="sl:sign"/>
-	    <xsl:with-param name="class" select="'pretty'"/>
-	  </xsl:call-template>
-<!--
-	  <xsl:for-each select="sl:sign">
-	    <p>
-	      <esp:link page="{@xml:id}">
-		<strong><xsl:value-of select="translate(@n,'|','')"/></strong>
-		<xsl:if test="count(sl:v) > 0">
-		  <xsl:text>: </xsl:text>
-		  <xsl:for-each select="sl:v">
-		    <xsl:choose>
-		      <xsl:when test="@deprecated='yes'">
-			<span class="v-drop"><xsl:value-of select="@n"/></span>
-		      </xsl:when>
-		      <xsl:when test="@uncertain='yes'">
-			<span class="v-query"><xsl:value-of select="@n"/></span>
-		      </xsl:when>
-		      <xsl:otherwise>
-			<span class="v-ok"><xsl:value-of select="@n"/></span>
-		      </xsl:otherwise>
-		    </xsl:choose>
-		    <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
-		  </xsl:for-each>
-		  <xsl:text>.</xsl:text>
-		</xsl:if>
-	      </esp:link>
-	    </p>
-	    </xsl:for-each>
--->
+	  <xsl:choose>
+	    <xsl:when test="/*/@signlist='ogsl'">
+	      <xsl:call-template name="form-div">
+		<xsl:with-param name="caller" select="'esp'"/>
+	      </xsl:call-template>
+	      <xsl:for-each select="sl:sign">
+		<xsl:call-template name="sl-letter-sign"/>
+	      </xsl:for-each>
+	    </xsl:when>
+	    <xsl:otherwise>
+  	      <xsl:call-template name="mcol">
+		<xsl:with-param name="columns" select="'4'"/>
+		<xsl:with-param name="nodes" select="sl:sign"/>
+		<xsl:with-param name="class" select="'pretty'"/>
+	      </xsl:call-template>
+	    </xsl:otherwise>
+	  </xsl:choose>
 	</body>
       </html>
     </esp:page>
@@ -120,5 +112,32 @@
 </xsl:template>
 
 <xsl:template match="text()"/>
+
+
+<xsl:template name="sl-letter-sign">
+  <p>
+    <esp:link page="{@xml:id}">
+      <strong><xsl:value-of select="translate(@n,'|','')"/></strong>
+      <xsl:if test="count(sl:v) > 0">
+	<xsl:text>: </xsl:text>
+	<xsl:for-each select="sl:v">
+	  <xsl:choose>
+	    <xsl:when test="@deprecated='yes'">
+	      <span class="v-drop"><xsl:value-of select="@n"/></span>
+	    </xsl:when>
+	    <xsl:when test="@uncertain='yes'">
+	      <span class="v-query"><xsl:value-of select="@n"/></span>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <span class="v-ok"><xsl:value-of select="@n"/></span>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+	</xsl:for-each>
+	<xsl:text>.</xsl:text>
+      </xsl:if>
+    </esp:link>
+  </p>
+</xsl:template>
 
 </xsl:transform>

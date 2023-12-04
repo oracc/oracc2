@@ -231,12 +231,19 @@
     <xsl:call-template name="icount"/>
     <div class="{$project}-info">
       <p style="font-size: 150%">
-	<xsl:for-each select="sl:name[1]//*">
-	  <xsl:choose>
-	    <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
-	    <xsl:otherwise/>
-	  </xsl:choose>
-	</xsl:for-each>
+	<xsl:choose>
+	  <xsl:when test="sl:ucun">
+	    <xsl:value-of select="sl:ucun"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:for-each select="sl:name[1]//*">
+	      <xsl:choose>
+		<xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
+		<xsl:otherwise/>
+	      </xsl:choose>
+	    </xsl:for-each>
+	  </xsl:otherwise>
+	</xsl:choose>
       </p>
       <xsl:if test="sl:list">
 	<p>

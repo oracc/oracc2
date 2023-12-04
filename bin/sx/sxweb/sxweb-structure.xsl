@@ -18,7 +18,9 @@
       <xi:fallback/>
     </xi:include>
     <hr/>
-    <struct:page file="overview.xml" id="overview" type="page"/>
+    <xsl:if test="not(/*/@signlist='ogsl')">
+      <struct:page file="overview.xml" id="overview" type="page"/>
+    </xsl:if>
     <xsl:for-each select="*/sl:letter[not(@num='1')]">
       <struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page">
 	<xsl:for-each select="sl:sign">
