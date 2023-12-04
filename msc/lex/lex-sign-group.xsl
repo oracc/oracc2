@@ -18,14 +18,16 @@
 </xsl:template>
 
 <xsl:template match="lex:data" mode="sign">
-  <lex:group type="sign" value="{@sign}" oid="{@oid}">
-    <xsl:for-each select="key('signs', @sign)[1]">
-      <xsl:variable name="nodes" select="key('signs', @sign)"/>
-      <xsl:apply-templates mode="read"
-			   select="$nodes[generate-id(.)=generate-id(key('reads',
-				   concat(@sign,':',@read))[1])]"/>	
-    </xsl:for-each>
-  </lex:group>
+  <xsl:if test="string-length(@oid)>0">
+    <lex:group type="sign" value="{@sign}" oid="{@oid}">
+      <xsl:for-each select="key('signs', @sign)[1]">
+	<xsl:variable name="nodes" select="key('signs', @sign)"/>
+	<xsl:apply-templates mode="read"
+			     select="$nodes[generate-id(.)=generate-id(key('reads',
+				     concat(@sign,':',@read))[1])]"/>	
+      </xsl:for-each>
+    </lex:group>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template match="lex:data" mode="read">

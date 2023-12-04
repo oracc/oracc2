@@ -31,8 +31,12 @@
       <xsl:copy-of select="/*/@n"/>
       <xsl:copy-of select="@xml:id"/>
       <xsl:copy-of select="@label"/>
+      <xsl:variable name="sref" select="xcl:l[preceding-sibling::xcl:d[@type='field-start'][1][@subtype='sg']]/@ref"/>
       <xsl:attribute name="sref">
-	<xsl:value-of select="xcl:l[preceding-sibling::xcl:d[@type='field-start'][1][@subtype='sg']]/@ref"/>
+	<xsl:value-of select="$sref"/>
+      </xsl:attribute>
+      <xsl:attribute name="oid">
+	<xsl:value-of select="id($sref)//*[@oid][1]/@oid"/>
       </xsl:attribute>
       <xsl:attribute name="sign">
 	<xsl:call-template name="sg"/>

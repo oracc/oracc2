@@ -186,10 +186,12 @@
 	    <xsl:value-of select="$oid-node[@dom=$oid-dom]/@id"/>
 	  </xsl:for-each>
 	</xsl:variable>
+	<!--
 	<xsl:message>Found oid=<xsl:value-of select="$oid"
 	/> while looking for dom=<xsl:value-of select="$oid-dom"
 	/> and key=<xsl:value-of select="$cfgw"
 	/></xsl:message>
+	-->
 	<xsl:if test="string-length($oid)>0">
 	  <xsl:attribute name="oid"><xsl:value-of select="$oid"/></xsl:attribute>
 	</xsl:if>

@@ -12,7 +12,7 @@
 </xsl:template>
 
 <xsl:template match="lex:group[@type='sign']">
-  <div class="lex-sign" title="{@value}">
+  <div class="lex-sign" title="{@value}" oid="{@oid}">
     <xsl:apply-templates/>
   </div>
 </xsl:template>
@@ -28,7 +28,10 @@
   <p class="lex-spel" title="{@value}">
     <span class="lex-spel-tlit"><xsl:value-of select="@value"/></span>
     <xsl:text>: </xsl:text>
-    <xsl:for-each select="lex:data">
+    <!-- The input here has a refs wrapper with an empty xis
+         attribute; should be able to fix this to link to spellings
+         -->
+    <xsl:for-each select="lex:data|*/lex:data">
       <xsl:apply-templates select="."/>
       <xsl:if test="not(position()=last())">
 	<xsl:text>; </xsl:text>
