@@ -6,7 +6,6 @@
 #include <signlist.h>
 #include <sx.h>
 
-extern int sortcode_output;
 Hash *oids;
 Hash *oid_sort_keys;
 Hash *oid_warned = NULL;
@@ -342,18 +341,21 @@ sx_marshall(struct sl_signlist *sl)
   keys = hash_keys2(sl->htoken, &nkeys);
   if (nkeys > 1)
     qsort(keys, nkeys, sizeof(char*), (cmp_fnc_t)toks_cmp);
+  sl->tokens = malloc((nkeys+1) * sizeof(struct sl_token *));
   if (sx_show_tokens)
     fprintf(stderr, "===sorted tokens===\n");
   for (i = 0; i < nkeys; ++i)
     {
       struct sl_token *tp = hash_find(sl->htoken, (ucp)keys[i]);
       tp->s = i+1;
+      sl->tokens[i] = tp;
       if (sx_show_tokens)
 	{
 	  fprintf(stderr, "%d\t", tp->s);
 	  gsort_show(tp->gsh);
 	}
     }
+  sl->tokens[i] = NULL;
   if (sx_show_tokens)
     fprintf(stderr, "===end sorted tokens===\n");
 
@@ -398,11 +400,7 @@ sx_marshall(struct sl_signlist *sl)
 		hash_add(sl->oid2ucode, (uccp)sl->signs[i]->oid, (ucp)sl->signs[i]->U.uhex);
 	    }
 	  if (sl->signs[i]->oid)
-	    {
-	      if (sortcode_output)
-		fprintf(stderr, "SIGN\t%s\t%d\n", sl->signs[i]->oid, sl->signs[i]->sort);
-	      hash_add(oid_sort_keys, (uccp)sl->signs[i]->oid, (void*)(uintptr_t)sl->signs[i]->sort);
-	    }
+	    hash_add(oid_sort_keys, (uccp)sl->signs[i]->oid, (void*)(uintptr_t)sl->signs[i]->sort);
 	}
 
 #if 0
@@ -459,11 +457,7 @@ sx_marshall(struct sl_signlist *sl)
 	}
 
       if (sl->forms[i]->oid && !hash_find(oid_sort_keys, (uccp)sl->forms[i]->oid))
-	{
-	  if (sortcode_output)
-	    fprintf(stderr, "FORM\t%s\t%d\n", sl->forms[i]->oid, sl->forms[i]->sort);
-	  hash_add(oid_sort_keys, (uccp)sl->forms[i]->oid, (void*)(uintptr_t)sl->forms[i]->sort);
-	}
+	hash_add(oid_sort_keys, (uccp)sl->forms[i]->oid, (void*)(uintptr_t)sl->forms[i]->sort);
 
       /* While we are iterating over forms, check to see if a form
 	 that has Unicode info also has a sign that is not a

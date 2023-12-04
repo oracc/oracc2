@@ -30,9 +30,11 @@
 	<body>
 	  <xsl:choose>
 	    <xsl:when test="/*/@signlist='ogsl'">
+	      <!--
 	      <xsl:call-template name="form-div">
 		<xsl:with-param name="caller" select="'esp'"/>
-	      </xsl:call-template>
+		</xsl:call-template>
+		-->
 	      <xsl:for-each select="sl:letter[@num='1']/sl:sign">
 		<xsl:call-template name="sl-letter-sign"/>
 	      </xsl:for-each>
@@ -65,9 +67,11 @@
 	<body>
 	  <xsl:choose>
 	    <xsl:when test="/*/@signlist='ogsl'">
+	      <!--
 	      <xsl:call-template name="form-div">
 		<xsl:with-param name="caller" select="'esp'"/>
-	      </xsl:call-template>
+		</xsl:call-template>
+		-->
 	      <xsl:for-each select="sl:sign">
 		<xsl:call-template name="sl-letter-sign"/>
 	      </xsl:for-each>

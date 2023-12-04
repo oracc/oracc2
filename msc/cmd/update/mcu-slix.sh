@@ -17,7 +17,9 @@ if [ "$1" != "00lib/*.asl" ]; then
 	sx -s $asl >02pub/sl/sl.tsv
 	slix 02pub/sl/sl.tsv
 	sx -x $asl >02xml/sl.xml
-	chmod -R o+r 02pub/sl 02xml/sl.xml
+	sx -S $asl | tee 02pub/sortcodes.tsv | \
+	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
+	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml
     else
 	echo "$0: errors in processing $asl. Stop."
 	exit 1

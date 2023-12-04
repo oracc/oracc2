@@ -93,7 +93,10 @@ fi
 
 # Adjust home/index so that index.html is the frame that gives
 # searchable signlist and home.html is the browsable ESP portal.
+## 2023-12-04 esp2 tweaked to write to home.html directly 
 if [ -r signlist/00lib/signlist-index.html ]; then
-    (cd signlist/02www ; echo cwd=`pwd` ; mv -v index.html home.html)
-    (cd signlist ; echo cwd=`pwd` ; cp -vaf 00lib/signlist-index.html 02www/index.html ; chmod o+r 02www/index.html)
+#    (cd signlist/02www ; echo cwd=`pwd` ; mv -v index.html home.html)
+    (cd signlist ; echo cwd=`pwd` ; rm -f 02index.html ; \
+     cp -vaf 00lib/signlist-index.html 02www/index.html ; \
+     chmod o+r 02www/index.html)
 fi

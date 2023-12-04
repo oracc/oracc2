@@ -1,6 +1,6 @@
 namespace g = "http://oracc.org/ns/gdl/1.0"
 
-grapheme = v | q | s | n | c | gloss | g | nongrapheme | punct | gsurro
+grapheme = v | q | s | n | c | gloss | g | nongrapheme | punct | gsurro | t
 form     = attribute form { text }
 sb       = element g:b { s.model }
 vb       = element g:b { v.model }
@@ -87,3 +87,6 @@ p.model =
     (v|q|s|n|c)?
 
 implicit = attribute implicit { "1" }
+
+# This is a new addition for printing the text value of GDL literals
+t = element g:t { text }

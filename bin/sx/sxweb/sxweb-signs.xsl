@@ -208,8 +208,8 @@
     <xsl:if test="count(sl:form) > 0">
       <div class="formjumps">
 	<p>
-	  <xsl:text>Jump to form: </xsl:text>
-	  <xsl:for-each select="self::*[not(sl:uage='0')]|sl:form">
+	  <xsl:text>Jump to variant form: </xsl:text>
+	  <xsl:for-each select="sl:form">
 	    <esp:link bookmark="form{count(preceding-sibling::sl:form)}">
 	      <xsl:value-of select="@n"/>
 	      <xsl:if test="sl:images/sl:i[@loc]">

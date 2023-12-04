@@ -93,9 +93,9 @@ grx_xml(Node *np, const char *gdltag)
     gdltag = np->name;
 
   rnvxml_ea(gdltag, rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
-  /* This can happen with gdl_literal; what to do in such cases? Print
-     np->text as form attribute? */
   if (np->kids)
     grx_node(np->kids);
+  else
+    rnvxml_et("g:t", NULL, np->text);
   rnvxml_ee(gdltag);
 }

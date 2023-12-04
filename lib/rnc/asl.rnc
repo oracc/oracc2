@@ -168,7 +168,7 @@ sl.name =
      | element g:w {
          attribute form { text },
          attribute xml:lang { xsd:NCName },
-         (g.g | g.s | element g:p { text })?,
+         (g.t | g.g | g.s | element g:p { text })?,
          g.d?,
          (g.c | g.n)?,
          element g:q {
@@ -306,3 +306,6 @@ g.o =
   }
 
 implicit = attribute implicit { "1" }
+
+# This is a new addition for printing the text value of GDL literals
+g.t = element g:t { text }

@@ -177,6 +177,9 @@ main(int argc, char * const*argv)
 	  else
 	    fprintf(stderr, "sx: unable to dump @sys data; can't write sx-syss.out\n");
 	}
+
+      if (sortcode_output)
+	sx_sortcodes(sl);
       
       if (listdef_check && !list_dump)
 	sx_listdefs(sl, missing_lists);

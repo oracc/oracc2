@@ -159,6 +159,15 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
   return tp;
 }
 
+/* All of the list entries in @listdef are processed here as literals;
+ * this means that when outputting <sl:name> we need to use
+ * tokp->gdl->text if tokp->gdl->kids is NULL.
+ *
+ * We could reparse literals if they occur in another context, but it
+ * should be safe to use the literal because listdef entries have a
+ * limited syntax.
+ *
+ */
 void
 asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 {
