@@ -13,7 +13,7 @@
 <xsl:output method="xml" indent="yes" encoding="utf-8"/>
 
 <xsl:template match="/">
-  <struct:page file="home.xml" id="home" type="page">
+  <struct:page file="home.xml" id="home" type="page" target="_top">
     <xi:include xml:base="." href="00lib/signlist-structure-top.xml" xpointer="xpointer(/*/*)">
       <xi:fallback/>
     </xi:include>
