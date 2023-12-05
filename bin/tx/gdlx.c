@@ -111,7 +111,8 @@ do_one(char *s)
     {
       GS_head *ghp;
       list_add(gslp, (ghp = gsort_prep(tp)));
-      gsort_show(ghp);
+      if (verbose)
+	gsort_show(ghp);
     }
   else if (!check_mode)
     {

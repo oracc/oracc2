@@ -7,6 +7,8 @@
 #include "gdl.h"
 #include "gsort.h"
 
+int gsort_trace = 0;
+
 static GS_item *gsort_item(unsigned const char *n, unsigned const char *g, unsigned const char *r);
 static void gsort_node(Node *np, List *lp);
 static const char *gsort_show_key(unsigned const char *k);
@@ -38,7 +40,8 @@ gsort_term()
   pool_term(gspool);
   hash_free(hheads, NULL);
   hash_free(hitems, NULL);
-  gsort_show_key(NULL);
+  if (gsort_trace)
+    gsort_show_key(NULL);
 }
 
 GS_head *

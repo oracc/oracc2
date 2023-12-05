@@ -16,4 +16,5 @@ scriptdata_DATA = lex-sign-data.xsl lex-sign-group.xsl			\
 	lex-pull-base.xsl lex-phra-base-group.xsl			\
 	lex-phra-base-HTML.xsl lex-provides.xsl lex-split-HTML.xsl	\
 	lex-pull-tail.xsl lex-phra-tail-group.xsl lex-merge-phra.xsl	\
-	lex-word-equi-HTML.xsl
+	lex-word-equi-HTML.xsl lex-sign-ref-codes.xsl			\
+	lex-sign-ref-sort.xsl lex-sign-sortkeys.xsl
