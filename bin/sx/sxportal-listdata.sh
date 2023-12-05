@@ -3,7 +3,7 @@
 #
 # Build list-data.xml
 #
-f=00web/list-data.xml
+f=00lib/signlist-x-list-data.xml
 cat $ORACC_BUILDS/lib/data/sx-list-head.xml >$f
 listnames=`cat 00etc/listnames.lst`
 echo '<p class="bookmarks">' >>$f

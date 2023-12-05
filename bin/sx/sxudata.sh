@@ -2,11 +2,10 @@
 dir=$1
 asl=$2
 if [ "$dir" == "" ]; then
-    if [ -d "00etc" ]; then
-	dir="00etc"
-    else
-	dir="."
+    if [ ! -d 00etc ]; then
+	mkdir -p 00etc
     fi
+    dir="00etc"
 fi
 
 if [ ! -d $dir ]; then

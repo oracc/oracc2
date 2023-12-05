@@ -6,3 +6,4 @@
 # indices etc. here.
 #
 sxweb.sh
+odo-portal.sh

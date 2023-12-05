@@ -42,13 +42,20 @@
       <esp:name><xsl:value-of select="$nn"/></esp:name>
       <esp:title>
 	<xsl:value-of select="$nn"/>
-	<xsl:if test="/*/@signlist='pcsl'">
-	  <xsl:if test="not(sl:smap) and not(sl:uage='0')">
-	    <xsl:text>: </xsl:text>
-	    <xsl:value-of select=".//sl:uname[1]"/>
-	    <span class="pcsl-oid"><xsl:value-of select="concat(' [',@xml:id,']')"/></span>
-	  </xsl:if>
-	</xsl:if>
+	<xsl:choose>
+	  <xsl:when test="/*/@signlist='pcsl'">
+	    <xsl:if test="not(sl:smap) and not(sl:uage='0')">
+	      <xsl:text>: </xsl:text>
+	      <xsl:value-of select=".//sl:uname[1]"/>
+	      <span class="pcsl-oid"><xsl:value-of select="concat(' [',@xml:id,']')"/></span>
+	    </xsl:if>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:if test="starts-with(@xml:id, 'o')">
+	      <span class="sl-oid"><xsl:value-of select="concat(' [',@xml:id,']')"/></span>
+	    </xsl:if>
+	  </xsl:otherwise>
+	</xsl:choose>
       </esp:title>
       <esp:url><xsl:value-of select="@xml:id"/></esp:url>
       <html>

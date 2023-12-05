@@ -3,6 +3,7 @@
 # mcu-slix.sh updates the signlist data for a project creating the
 # index in 02pub/sl and the XML version in 02xml/sl.xml.
 #
+project=$1
 set 00lib/*.asl
 if [ "$1" != "00lib/*.asl" ]; then
     if [ "$2" != "" ]; then

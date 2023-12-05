@@ -4,7 +4,7 @@
 # Build u-data.xml
 #
 sxudatacodes=$ORACC_BUILDS/lib/data/sx-udata-codes.tsv
-f=00web/u-data.xml
+f=00lib/signlist-x-u-data.xml
 cat $ORACC_BUILDS/lib/data/sx-udata-head.xml >$f
 headnames=`cut -f2 $sxudatacodes`
 echo '<p class="bookmarks">' >>$f

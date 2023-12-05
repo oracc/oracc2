@@ -20,6 +20,13 @@ function sxinst {
 
 stats=$*
 
+# Update portal data files in 00etc/00web before making signlist
+#if [ "$project" = "ogsl" ]; then
+    sxmissing.sh
+    sxudata.sh
+    sxportal.sh
+#fi
+
 rm -fr signlist ; mkdir signlist
 
 (cd $ORACC_BUILDS ;
