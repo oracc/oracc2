@@ -80,7 +80,7 @@ label_collapse_sub(const char *r, int nr, const char *n, int nn, int *nbits)
 
   /* return the segments that don't match; if all the segments matched
      (i == nr) return NULL */
-  if (i && i < nr)
+  if (i < nr) /* i can be 0 here if bits are 38 and 39 */
     {
       int j;
       for (j = i; j < nr; ++j)
@@ -261,9 +261,9 @@ lex_process_data(void)
 	  if (NULL == bit) /* All the bits matched */
 	    {
 	      /* This can't happen unless the input data has duplicates */
-	      abort();
+	      fprintf(stderr, "lex-collapse-refs: duplicate label @%s %s\n", dp->xmlid, dp->label);
 	    }
-	  else if (!nbits) /* None of the bits matched */
+	  else if (!nbits && strchr(r1,' ')) /* None of the bits matched and there's more than one bit */
 	    {
 	      if (range_open)
 		{
