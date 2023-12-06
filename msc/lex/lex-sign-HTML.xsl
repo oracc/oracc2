@@ -48,7 +48,7 @@
 	<xsl:value-of select="@slabel"/>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:value-of select="@n"/>
+	<xsl:value-of select="../@n"/>
 	<xsl:text>, </xsl:text>
 	<xsl:value-of select="@label"/>
       </xsl:otherwise>

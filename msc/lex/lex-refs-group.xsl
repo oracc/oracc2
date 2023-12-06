@@ -8,20 +8,26 @@
 	 use="concat(../@xml:id,':',@id_text)"/>
 
 <xsl:template match="lex:group[@xml:id]">
+  <xsl:variable name="data"
+		select="lex:data[
+			generate-id(.)
+		 	=
+			generate-id(key('refgroups',concat(../@xml:id,':',@id_text)))
+			]"/>
   <xsl:copy>
     <xsl:copy-of select="@*"/>
-    <xsl:apply-templates mode="refs"
-   		         select="lex:data[generate-id(.)
-		 	                  =generate-id(
-					   key('refgroups',
-					       concat(../@xml:id,':',@id_text)))
-					   ]"/>
+    <xsl:if test="count($data)>0">
+      <xsl:apply-templates mode="refs" select="$data"/>
+    </xsl:if>
   </xsl:copy>
 </xsl:template>
 
 <xsl:template match="lex:data" mode="refs">
   <xsl:variable name="p" select="@project"/>
   <lex:group type="refs" value="{@id_text}">
+<!--    <xsl:message>project = <xsl:value-of select="*[1]/@project"/></xsl:message>-->
+    <xsl:copy-of select="@project"/>
+    <xsl:copy-of select="@n"/>
     <xsl:attribute name="xis">
       <xsl:for-each select="key('refgroups', concat(../@xml:id,':',@id_text))/*/lex:word">
 	<xsl:value-of select="concat($p,':',@wref)"/>
@@ -30,7 +36,11 @@
 	</xsl:if>
       </xsl:for-each>
     </xsl:attribute>
-    <xsl:copy-of select="key('refgroups', concat(../@xml:id,':',@id_text))"/>
+    <xsl:for-each select="key('refgroups', concat(../@xml:id,':',@id_text))">
+      <xsl:copy>
+	<xsl:copy-of select="@xml:id|@label|@sref"/>
+      </xsl:copy>
+    </xsl:for-each>
   </lex:group>
 </xsl:template>
 

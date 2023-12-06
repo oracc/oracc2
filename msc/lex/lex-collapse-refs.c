@@ -2,14 +2,40 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "runexpat.h"
+#include <memo.h>
+#include <pool.h>
+#include <runexpat.h>
+#include <xmlify.h>
 
 extern int options(int, char**,const char*);
 extern int optind;
 int verbose = 0;
 
+typedef struct data
+{
+  const char *xmlid;
+  const char *label;
+  const char *sref;
+  struct data *next;
+} Data;
+
+typedef struct refs
+{
+  const char *value;
+  const char *project;
+  const char *n;
+  const char *xis;
+  const char *clabel;
+  Data *d;
+} Refs;
+
+static Memo *m;
+static Pool *p;
+static Refs r;
+static FILE *xfp;
+
 const char *
-label_collapse_sub(const char *r, int nr, const char *n, int nn)
+label_collapse_sub(const char *r, int nr, const char *n, int nn, int *nbits)
 {
   char rbuf[strlen(r)+1], nbuf[strlen(n)+1], *rp[nr+1], *np[nn+1];
   strcpy(rbuf, r);
@@ -47,6 +73,10 @@ label_collapse_sub(const char *r, int nr, const char *n, int nn)
       if (strcmp(rp[i], np[i]))
 	break;
     }
+
+  if (nbits)
+    *nbits = i;
+
   /* return the segments that don't match */
   if (i)
     {
@@ -84,12 +114,12 @@ nseg(const char *s)
 }
 
 const char *
-label_collapse(const char *ref_label, const char*nxt_label)
+label_collapse(const char *ref_label, const char*nxt_label, int *nbits)
 {
   int nrefseg = nseg(ref_label);
   int nnxtseg = nseg(nxt_label);
   if (nrefseg == nnxtseg)
-    return label_collapse_sub(ref_label, nrefseg, nxt_label, nnxtseg);
+    return label_collapse_sub(ref_label, nrefseg, nxt_label, nnxtseg, nbits);
   else
     return NULL;
 }
@@ -111,99 +141,217 @@ printText(const char *s, FILE *frag_fp)
     }
 }
 
-static int in_refs = 0;
-static const char *r1 = NULL;
-static const char *curr_n = NULL;
+static int
+group_of_refs(const char *name, const char **atts)
+{
+  if (!strcmp(name, "lex:group"))
+    {
+      const char *refattr = findAttr(atts, "ref");
+      if (*refattr)
+	return 1;
+    }
+  return 0;
+}
 
 void
 printStart(FILE *fp, const char *name, const char **atts)
 {
-  const char*short_label = NULL;
-  
   printText((const char*)charData_retrieve(), fp);
 
-  static int in_refs = 0;
-  if (!strcmp(name, "lex:group"))
+  if (group_of_refs(name, atts))
     {
-      /* refs is the lowest level group so it's safe to set in_refs=0
-	 if the group is not refs */
-      if (findAttr(atts, "refs"))
-	in_refs = 1;
+      if (r.value)
+	{
+	  fprintf(stderr, "internal error: r.value is set when it should be NULL\n");
+	  exit(1);
+	}
+      m = memo_init(sizeof(Data), 256);
+      p = pool_init();
+      r.value = (ccp)pool_copy((ucp)findAttr(atts, "value"), p);
+      r.project = (ccp)pool_copy((ucp)findAttr(atts, "project"), p);
+      r.n = (ccp)pool_copy((ucp)findAttr(atts, "n"), p);	  
     }
   else if (!strcmp(name, "lex:data"))
     {
-      /* lex:data only occurs inside refs; when in_refs==1 we
-	 reinitialize name and label */
-      const char *l = findAttr(atts, "label"); /* should always succeed */
-      if (l)
+      Data *dm = memo_new(m);
+      dm->xmlid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
+      dm->label = (ccp)pool_copy((ucp)findAttr(atts, "label"), p);
+      dm->sref = (ccp)pool_copy((ucp)findAttr(atts, "sref"), p);
+    }
+  else
+   {
+     fprintf(fp, "<%s", name);
+     if (atts)
+       {
+	 const char **ap;
+	 for (ap = atts; ap[0]; )
+	   {	  
+	     fprintf(fp, " %s=\"",*ap++);
+	     printText(*ap++, fp);
+	     fputc('"', fp);
+	   }
+	 fputc('>', fp);
+       }
+   }
+}
+
+static int
+range_true(const char *last_bit, const char *curr_bit)
+{
+  const char *lp = last_bit, *cp = curr_bit;
+  /* test until the first digit */
+  while (!isdigit(*lp) && *lp++ == *cp++)
+    ;
+  if (isdigit(*lp) && isdigit(*cp))
+    {
+      /* now test the numbers */
+      const char *lpp = lp, *cpp = cp;
+      while (isdigit(*lpp))
+	++lpp;
+      while (isdigit(*cpp))
+	++cpp;
+      int li = atoi(lp);
+      int ci = atoi(cp);
+      if (ci - li == 1)
 	{
-	  if (in_refs == 1)
+	  /* difference is 1--test anything after the numbers */
+	  while (!*lpp && *lpp++ == *cpp++)
+	    ;
+	  if (!*lpp && !*cpp)
+	    return 1;
+	}
+    }
+  return 0;
+}
+
+static void
+lex_process_data(void)
+{
+  if (r.d)
+    {
+      List *lbits = list_create(LIST_SINGLE);
+      List *lxis = list_create(LIST_SINGLE);
+      Data *dp = r.d;
+      int range_open = 0;
+      const char *last_bit = NULL;
+      const char *r1 = dp->label;
+      list_add(lbits, (char*)r1);
+      list_add(lxis, (char*)dp->sref);
+      for (dp = dp->next; dp; dp = dp->next)
+	{
+	  list_add(lxis, "+");
+	  list_add(lxis, (char*)dp->sref);
+	  int nbits;
+	  const char *bit = label_collapse(r1, dp->label, &nbits);
+	  /* If this is NULL there is no reduction in label */
+	  if (NULL == bit) /* All the bits matched */
 	    {
-	      const char *new_n = findAttr(atts, "n");  /* should always succeed */
-	      if (new_n)
+	      /* This can't happen unless the input data has duplicates */
+	      abort();
+	    }
+	  else if (!nbits) /* None of the bits matched */
+	    {
+	      if (range_open)
 		{
-		  curr_n = strdup(new_n);
-		  r1 = strdup(l);
+		  list_add(lbits, (char*)last_bit);
+		  range_open = 0;
+		  last_bit = NULL;
 		}
-	      ++in_refs;
+	      r1 = dp->label; /* reset the reference label */
+	      list_add(lbits, ", ");
+	      list_add(lbits, (char*)r1);
 	    }
 	  else
 	    {
-	      if (!(short_label = label_collapse(r1, l)))
-		fprintf(stderr, "lex-collapse-refs: duplicate label %s %s\n", curr_n, r1);
+	      /* some bits matched; if it's only the last bit check to
+		 see if we have a range going */
+	      if (strchr(bit, ' ') && last_bit && range_true(last_bit, bit))
+		{
+		  if (!range_open)
+		    {
+		      list_add(lbits, "-");
+		      range_open = 1;
+		    }
+		  last_bit = (ccp)pool_copy((ucp)bit,p);
+		}		
+	      else
+		{
+		  last_bit = (ccp)pool_copy((ucp)bit,p);
+		  list_add(lbits, ", ");
+		  list_add(lbits, (char*)last_bit);
+		}
 	    }
 	}
+      r.xis = (const char *)list_to_str(lxis);
+      r.clabel = (const char *)list_to_str(lbits);
     }
-  fprintf(fp, "<%s", name);
-  if (atts)
+}
+
+#define pElem(e)   fprintf(xfp, "<%s", e)
+#define pAttr(a,v) fprintf(xfp, " %s=\"%s\"",a,xmlify((ucp)v))
+static void
+pRefo(void)
+{
+  pElem("lex:group");
+  pAttr("value", r.value);
+  pAttr("project", r.project);
+  pAttr("n", r.n);
+  pAttr("xis", r.xis);
+  pAttr("clabel", r.clabel);
+  fputc('>', xfp);
+}
+
+static void
+pRefc(void)
+{
+  fputs("</lex:group>",xfp);
+}
+
+static void
+pData(void)
+{
+  Data *dp;
+  for (dp = r.d; dp; dp = dp->next)
     {
-      const char **ap;
-      for (ap = atts; ap[0]; )
-	{	  
-	  fprintf(fp, " %s=\"",*ap++);
-	  printText(*ap++, fp);
-	  fputc('"', fp);
-	}
-      if (short_label)
-	{
-	  fprintf(fp, " slabel=\"");
-	  printText(short_label, fp);
-	  fputc('"', fp);
-	  free((char*)short_label);
-	}
+      pElem("lex:data");
+      pAttr("xml:id",dp->xmlid);
+      pAttr("label",dp->label);
+      pAttr("sref",dp->sref);
+      fputs("/>",xfp);
     }
-  fputc('>', fp);
 }
 
 void
 printEnd(FILE *fp, const char *name)
 {
-  if (!strcmp(name, "lex:group") && in_refs)
+  if (!strcmp(name, "lex:group") && r.value)
     {
-      in_refs = 0;
-      if (curr_n)
-	free(curr_n);
-      if (r1)
-	free(r1);
-      curr_n = r1 = NULL;
+      xfp = fp;
+      lex_process_data();
+      pRefo();
+      pData();
+      pRefc();
+      memo_term(m);
+      pool_term(p);
+      r.value = r.project = r.n = NULL;
     }
-
-  printText((const char *)charData_retrieve(), fp);
-  fprintf(fp, "</%s>", name);
+  else
+    {
+      printText((const char *)charData_retrieve(), fp);
+      fprintf(fp, "</%s>", name);
+    }
 }
 
 void
 ei_sH(void *userData, const char *name, const char **atts)
 {
-  /*  if (strcmp(name, "rp-wrap")) */
-    printStart(userData, name, atts);
+  printStart(userData, name, atts);
 }
 
 void
 ei_eH(void *userData, const char *name)
 {
-  /*  if (strcmp(name, "rp-wrap"))*/
-    printEnd(userData, name);
+  printEnd(userData, name);
 }
 
 void
