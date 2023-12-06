@@ -11,6 +11,7 @@ bin/sx/slix
 bin/sx/slx
 bin/sx/sx
 bin/tx/catx
+bin/tx/expat-identity
 bin/tx/gdlx
 bin/tx/repx
 bin/tx/rocox

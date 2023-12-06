@@ -10,6 +10,8 @@
 #define _MAX_PATH 1023
 #endif
 
+static int runexpat_no_rp_wrap = 0;
+
 #define BUFLEN 8192 /*16384*/
 
 List *runinfo_stack = NULL;
@@ -63,6 +65,12 @@ int atf_line = 0;
 
 const char *pi_file = NULL;
 int pi_line = 0;
+
+void
+runexpat_omit_rp_wrap(void)
+{
+  runexpat_no_rp_wrap = 1;
+}
 
 const char *
 findAttr(const char **atts, const char *name)
@@ -191,8 +199,11 @@ runexpatNSuD(enum isource from,
   XML_SetProcessingInstructionHandler(parser, piHandler);
   XML_SetCharacterDataHandler(parser, charHandler);
 
-  if (!XML_Parse(parser,"<rp-wrap>",9,0))
-    fail(parser, rip);
+  if (!runexpat_omit_rp_wrap)
+    {
+      if (!XML_Parse(parser,"<rp-wrap>",9,0))
+	fail(parser, rip);
+    }
 
   set_input(rip);
   for (;;)
@@ -206,8 +217,11 @@ runexpatNSuD(enum isource from,
 	}
     }
 
-  if (!XML_Parse(parser,"</rp-wrap>",10,1))
-    fail(parser, rip);
+  if (!runexpat_omit_rp_wrap)
+    {
+      if (!XML_Parse(parser,"</rp-wrap>",10,1))
+	fail(parser, rip);
+    }
 
   XML_ParserFree(parser);
   runexpat_term(rip);

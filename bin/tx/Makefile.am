@@ -1,11 +1,15 @@
 include ../../oracc-am-rules.txt
 
-noinst_PROGRAMS=catx
+noinst_PROGRAMS=catx expat-identity
 bin_PROGRAMS=gdlx repx rocox
 
 catx_SOURCES=catx.c
 catx_LDADD = $(xLDADD)
 catx_DEPENDENCIES = $(xLDADD)
+
+expat_identity_SOURCES=expat-identity.c
+expat_identity_LDADD = $(xLDADD)
+expat_identity_DEPENDENCIES = $(xLDADD)
 
 gdlx_SOURCES=gdlx.c
 gdlx_LDADD = $(xLDADD)

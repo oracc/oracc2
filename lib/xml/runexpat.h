@@ -20,4 +20,6 @@ extern void runexpatNSuD(enum isource from, void *list,
 
 extern const char *get_xml_id(const char **atts);
 extern const char *get_xml_lang(const char **atts);
+extern void runexpat_omit_rp_wrap(void);
+
 #endif /*_RUNEXPAT_H*/
