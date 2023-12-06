@@ -27,6 +27,7 @@ typedef struct refs
   const char *xis;
   const char *clabel;
   Data *d;
+  Data *last;
 } Refs;
 
 static Memo *m;
@@ -77,8 +78,9 @@ label_collapse_sub(const char *r, int nr, const char *n, int nn, int *nbits)
   if (nbits)
     *nbits = i;
 
-  /* return the segments that don't match */
-  if (i)
+  /* return the segments that don't match; if all the segments matched
+     (i == nr) return NULL */
+  if (i && i < nr)
     {
       int j;
       for (j = i; j < nr; ++j)
@@ -146,16 +148,15 @@ group_of_refs(const char *name, const char **atts)
 {
   if (!strcmp(name, "lex:group"))
     {
-      const char *refattr = findAttr(atts, "ref");
-      if (*refattr)
-	return 1;
+      const char *type = findAttr(atts, "type");
+      return !strcmp(type,"refs");
     }
   return 0;
 }
 
 void
 printStart(FILE *fp, const char *name, const char **atts)
-{
+{  
   printText((const char*)charData_retrieve(), fp);
 
   if (group_of_refs(name, atts))
@@ -169,7 +170,7 @@ printStart(FILE *fp, const char *name, const char **atts)
       p = pool_init();
       r.value = (ccp)pool_copy((ucp)findAttr(atts, "value"), p);
       r.project = (ccp)pool_copy((ucp)findAttr(atts, "project"), p);
-      r.n = (ccp)pool_copy((ucp)findAttr(atts, "n"), p);	  
+      r.n = (ccp)pool_copy((ucp)findAttr(atts, "n"), p);
     }
   else if (!strcmp(name, "lex:data"))
     {
@@ -177,6 +178,13 @@ printStart(FILE *fp, const char *name, const char **atts)
       dm->xmlid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
       dm->label = (ccp)pool_copy((ucp)findAttr(atts, "label"), p);
       dm->sref = (ccp)pool_copy((ucp)findAttr(atts, "sref"), p);
+      if (r.last)
+	{
+	  r.last->next = dm;
+	  r.last = r.last->next;
+	}
+      else
+	r.last = r.d = dm;
     }
   else
    {
@@ -215,13 +223,19 @@ range_true(const char *last_bit, const char *curr_bit)
       if (ci - li == 1)
 	{
 	  /* difference is 1--test anything after the numbers */
-	  while (!*lpp && *lpp++ == *cpp++)
+	  while (*lpp && *lpp++ == *cpp++)
 	    ;
 	  if (!*lpp && !*cpp)
 	    return 1;
 	}
     }
   return 0;
+}
+static const char *
+last_little_bit(const char *b)
+{
+  const char *sp = strrchr(b, ' ');
+  return (ccp)pool_copy((ucp)(sp?++sp:b),p);
 }
 
 static void
@@ -233,8 +247,8 @@ lex_process_data(void)
       List *lxis = list_create(LIST_SINGLE);
       Data *dp = r.d;
       int range_open = 0;
-      const char *last_bit = NULL;
       const char *r1 = dp->label;
+      const char *last_bit = last_little_bit(r1);
       list_add(lbits, (char*)r1);
       list_add(lxis, (char*)dp->sref);
       for (dp = dp->next; dp; dp = dp->next)
@@ -260,30 +274,31 @@ lex_process_data(void)
 	      r1 = dp->label; /* reset the reference label */
 	      list_add(lbits, ", ");
 	      list_add(lbits, (char*)r1);
+	      last_bit = last_little_bit(r1);
 	    }
 	  else
 	    {
 	      /* some bits matched; if it's only the last bit check to
 		 see if we have a range going */
-	      if (strchr(bit, ' ') && last_bit && range_true(last_bit, bit))
+	      if (last_bit && range_true(last_bit, bit))
 		{
 		  if (!range_open)
 		    {
 		      list_add(lbits, "-");
 		      range_open = 1;
 		    }
-		  last_bit = (ccp)pool_copy((ucp)bit,p);
-		}		
+		}
 	      else
 		{
-		  last_bit = (ccp)pool_copy((ucp)bit,p);
-		  list_add(lbits, ", ");
 		  list_add(lbits, (char*)last_bit);
 		}
+	      last_bit = last_little_bit(bit);
 	    }
 	}
-      r.xis = (const char *)list_to_str(lxis);
-      r.clabel = (const char *)list_to_str(lbits);
+      if (range_open)
+	list_add(lbits, (char*)last_bit);
+      r.xis = (const char *)list_to_str2(lxis,"");
+      r.clabel = (const char *)list_to_str2(lbits,"");
     }
 }
 
@@ -304,7 +319,7 @@ pRefo(void)
 static void
 pRefc(void)
 {
-  fputs("</lex:group>",xfp);
+  /*fputs("</lex:group>",xfp);*/ /* let printEnd do this */
 }
 
 static void
@@ -333,9 +348,11 @@ printEnd(FILE *fp, const char *name)
       pRefc();
       memo_term(m);
       pool_term(p);
-      r.value = r.project = r.n = NULL;
+      r.value = r.project = r.n = r.xis = r.clabel = NULL;
+      r.d = r.last = NULL;
     }
-  else
+
+  if (strcmp(name, "lex:data"))
     {
       printText((const char *)charData_retrieve(), fp);
       fprintf(fp, "</%s>", name);
