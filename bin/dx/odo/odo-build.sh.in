@@ -14,6 +14,8 @@ if [ "$subcommand" = "corpus" ]; then
 elif [ "$subcommand" = "portal" ]; then
     echo $0: calling o2-web.sh
     o2-web.sh
+elif [ "$subcommand" = "lexdata" ]; then
+    odo-lexdata.sh
 else
     if [ "$projtype" = "signlist" ]; then
 	echo $0: calling odo-signlist.sh

@@ -207,6 +207,7 @@
 	    </xsl:when>
 	    <xsl:otherwise>
 	      <xsl:apply-templates select="sl:name[1]"/>
+	      <span class="sl-oid"><xsl:value-of select="concat(' [',@xml:id,']')"/></span>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</b>
@@ -451,6 +452,15 @@
 	</xsl:if>
 	<xsl:apply-templates select="sl:form"/>
       </div>
+    </xsl:if>
+  </div>
+  <div class="sl-cite-url">
+    <xsl:if test="self::sl:sign">
+      <hr/>
+      <p>Sign ID <xsl:value-of select="@xml:id"/>;
+      Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/<xsl:value-of select="@xml:id"/>
+      </p>
+      <hr/>
     </xsl:if>
   </div>
 </xsl:template>

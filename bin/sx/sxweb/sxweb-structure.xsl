@@ -32,7 +32,9 @@
       <xsl:for-each select="*/sl:letter[@num='1']">
 	<struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page" hide-menu-link="yes">
 	  <xsl:for-each select="sl:sign">
-	    <struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page" hide-menu-link="yes"/>
+	    <struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page" hide-menu-link="yes"
+			 />
+<!--			 show-small-print-link="yes" purl="/{/*/@project}/{@xml:id}" -->
 	  </xsl:for-each>
 	</struct:page>
     </xsl:for-each>

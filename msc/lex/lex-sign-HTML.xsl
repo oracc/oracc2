@@ -46,10 +46,22 @@
   <xsl:text>, </xsl:text>
   <xsl:value-of select="@label"/></esp:link>
   <xsl:choose>
-    <xsl:when test="@word">
-      <xsl:value-of select="concat(' (',@word,'/',@base,')')"/>
+    <xsl:when test="string-length(@word)>0">
+      <xsl:variable name="base">
+	<xsl:if test="string-length(@base)>0">
+	  <xsl:value-of select="concat('/',@base)"/>
+	</xsl:if>
+      </xsl:variable>
+      <xsl:choose>
+	<xsl:when test="contains(@word, ']')">
+	  <xsl:value-of select="concat(' (',substring-before(@word,']'),']',$base,')')"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="concat(' (',@word,$base,')')"/>
+	</xsl:otherwise>
+      </xsl:choose>
     </xsl:when>
-    <xsl:when test="@pos">
+    <xsl:when test="string-length(@pos)>0">
       <xsl:value-of select="concat(' (',@pos,')')"/>
     </xsl:when>
     <xsl:otherwise>
