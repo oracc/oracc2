@@ -1,5 +1,7 @@
 include ../../oracc-am-rules.txt
 
+bin_PROGRAMS=lex-collapse-refs
+
 bin_SCRIPTS = lex-sign-data.sh lex-sign-xtf.sh lex-word-data.sh		\
 	lex-word-get-data.sh lex-word-xtf.sh lex-word-base.sh		\
 	lex-word-qakk.sh lex-word-phra.sh lex-word-equi.sh		\
@@ -18,3 +20,7 @@ scriptdata_DATA = lex-sign-data.xsl lex-sign-group.xsl			\
 	lex-pull-tail.xsl lex-phra-tail-group.xsl lex-merge-phra.xsl	\
 	lex-word-equi-HTML.xsl lex-sign-ref-codes.xsl			\
 	lex-sign-ref-sort.xsl lex-sign-sortkeys.xsl
+
+lex_collapse_refs_SOURCES=lex-collapse-refs.c
+lex_collapse_refs_LDADD = $(xLDADD)
+lex_collapse_refs_DEPENDENCIES = $(xLDADD)
