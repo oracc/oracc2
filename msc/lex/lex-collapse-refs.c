@@ -79,18 +79,10 @@ label_collapse_sub(const char *r, int nr, const char *n, int nn, int *nbits)
     *nbits = i;
 
   /* return the segments that don't match; if all the segments matched
-     (i == nr) return NULL */
+     (i == nr) return NULL */  
   if (i < nr) /* i can be 0 here if bits are 38 and 39 */
     {
-      int j;
-      for (j = i; j < nr; ++j)
-	{
-	  char *t = np[j];
-	  while (*t)
-	    ++t;
-	  *t = '\0';
-	}
-      return strdup(np[i]);
+      return n + (np[i] - nbuf);
     }
   else
     return NULL;
@@ -118,12 +110,7 @@ nseg(const char *s)
 const char *
 label_collapse(const char *ref_label, const char*nxt_label, int *nbits)
 {
-  int nrefseg = nseg(ref_label);
-  int nnxtseg = nseg(nxt_label);
-  if (nrefseg == nnxtseg)
-    return label_collapse_sub(ref_label, nrefseg, nxt_label, nnxtseg, nbits);
-  else
-    return NULL;
+  return label_collapse_sub(ref_label, nseg(ref_label), nxt_label, nseg(nxt_label), nbits);
 }
 
 void
@@ -257,7 +244,7 @@ lex_process_data(void)
 	  list_add(lxis, (char*)dp->sref);
 	  int nbits;
 	  const char *bit = label_collapse(r1, dp->label, &nbits);
-	  /* If this is NULL there is no reduction in label */
+	  /* If this is NULL there is no reduction to be done in the new label */
 	  if (NULL == bit) /* All the bits matched */
 	    {
 	      /* This can't happen unless the input data has duplicates */
@@ -276,6 +263,23 @@ lex_process_data(void)
 	      list_add(lbits, (char*)r1);
 	      last_bit = last_little_bit(r1);
 	    }
+	  else if (nbits && strchr(bit, ' ')) /* Some bits matched,
+						 but the remnant is
+						 more than just the
+						 last segment, so
+						 reset r1 */
+	    {
+	      if (range_open)
+		{
+		  list_add(lbits, (char*)last_bit);
+		  range_open = 0;
+		  last_bit = NULL;
+		}
+	      r1 = dp->label;
+	      list_add(lbits, ", ");
+	      list_add(lbits, (char*)r1);
+	      last_bit = last_little_bit(r1);
+	    }
 	  else
 	    {
 	      /* some bits matched; if it's only the last bit check to
@@ -290,7 +294,8 @@ lex_process_data(void)
 		}
 	      else
 		{
-		  list_add(lbits, (char*)last_bit);
+		  list_add(lbits, ", ");
+		  list_add(lbits, (char*)bit);
 		}
 	      last_bit = last_little_bit(bit);
 	    }
