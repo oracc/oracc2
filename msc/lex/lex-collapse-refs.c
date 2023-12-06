@@ -111,50 +111,55 @@ printText(const char *s, FILE *frag_fp)
     }
 }
 
+static int in_refs = 0;
+static const char *r1 = NULL;
+static const char *curr_n = NULL;
+
 void
 printStart(FILE *fp, const char *name, const char **atts)
 {
-  static int in_refs = 0;
-  static const char *r1 = NULL;
-  const char **ap = atts, *short_label = NULL;
+  const char*short_label = NULL;
+  
   printText((const char*)charData_retrieve(), fp);
+
+  static int in_refs = 0;
   if (!strcmp(name, "lex:group"))
     {
+      /* refs is the lowest level group so it's safe to set in_refs=0
+	 if the group is not refs */
       if (findAttr(atts, "refs"))
 	in_refs = 1;
-      else
-	in_refs = 0;
     }
   else if (!strcmp(name, "lex:data"))
     {
-      const char *l = findAttr(atts, "label");
+      /* lex:data only occurs inside refs; when in_refs==1 we
+	 reinitialize name and label */
+      const char *l = findAttr(atts, "label"); /* should always succeed */
       if (l)
 	{
 	  if (in_refs == 1)
 	    {
-	      r1 = strdup(l);
-#if 0
-	      fprintf(stderr, "ref%d: %s = %s\n", in_refs, x, l);
-#endif
+	      const char *new_n = findAttr(atts, "n");  /* should always succeed */
+	      if (new_n)
+		{
+		  curr_n = strdup(new_n);
+		  r1 = strdup(l);
+		}
+	      ++in_refs;
 	    }
 	  else
 	    {
-	      short_label = label_collapse(r1, l);
-#if 0
-	      if (strcmp(r1, short_label))
-		fprintf(stderr, "ref%d: %s = %s => %s\n", in_refs, x, r1, short_label);
-	      else
-		fprintf(stderr, "ref%d: %s = %s ~~ %s\n", in_refs, x, r1, short_label);
-#endif
+	      if (!(short_label = label_collapse(r1, l)))
+		fprintf(stderr, "lex-collapse-refs: duplicate label %s %s\n", curr_n, r1);
 	    }
-	  ++in_refs;
 	}
     }
   fprintf(fp, "<%s", name);
   if (atts)
     {
+      const char **ap;
       for (ap = atts; ap[0]; )
-	{
+	{	  
 	  fprintf(fp, " %s=\"",*ap++);
 	  printText(*ap++, fp);
 	  fputc('"', fp);
@@ -173,6 +178,16 @@ printStart(FILE *fp, const char *name, const char **atts)
 void
 printEnd(FILE *fp, const char *name)
 {
+  if (!strcmp(name, "lex:group") && in_refs)
+    {
+      in_refs = 0;
+      if (curr_n)
+	free(curr_n);
+      if (r1)
+	free(r1);
+      curr_n = r1 = NULL;
+    }
+
   printText((const char *)charData_retrieve(), fp);
   fprintf(fp, "</%s>", name);
 }

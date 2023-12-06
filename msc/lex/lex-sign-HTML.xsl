@@ -43,13 +43,13 @@
 
 <xsl:template match="lex:data">
   <esp:link url="http://oracc.org/{@project}/{@sref}" site-name="{@project} on Oracc">
-    <xsl:value-of select="@n"/>
-    <xsl:text>, </xsl:text>
     <xsl:choose>
       <xsl:when test="@slabel">
 	<xsl:value-of select="@slabel"/>
       </xsl:when>
       <xsl:otherwise>
+	<xsl:value-of select="@n"/>
+	<xsl:text>, </xsl:text>
 	<xsl:value-of select="@label"/>
       </xsl:otherwise>
     </xsl:choose>
