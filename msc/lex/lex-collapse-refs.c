@@ -50,28 +50,14 @@ label_collapse_sub(const char *r, int nr, const char *n, int nn)
   /* return the segments that don't match */
   if (i)
     {
-#if 1
-      s = n+strlen(n);
-      while (s > np[i])
-	{
-	  if ('\0' == *s)
-	    *s = ' ';
-	  --s;
-	}
-#else
       int j;
-      if (i < (nn-1))
+      for (j = i; j < nr; ++j)
 	{
-	  for (j = i, p = np[i]; j < nn; ++j)
-	    {
-	      while (*p)
-		++p;
-	      if (p == n+strlen(n))
-		break;
-	      *p++ = ' ';
-	    }
+	  char *t = np[j];
+	  while (*t)
+	    ++t;
+	  *t = '\0';
 	}
-#endif
       return strdup(np[i]);
     }
   else
@@ -141,14 +127,15 @@ printStart(FILE *fp, const char *name, const char **atts)
     }
   else if (!strcmp(name, "lex:data"))
     {
-      const char *x = get_xml_id(atts);
       const char *l = findAttr(atts, "label");
       if (l)
 	{
 	  if (in_refs == 1)
 	    {
 	      r1 = strdup(l);
+#if 0
 	      fprintf(stderr, "ref%d: %s = %s\n", in_refs, x, l);
+#endif
 	    }
 	  else
 	    {
