@@ -405,8 +405,8 @@ lex_process_data(void)
 	  if (last_dp && last_dp->word)
 	    add_word(lbits,last_dp->word);
 	}
-      r.xis = (const char *)list_to_str2(lxis,"");
-      r.clabel = (const char *)list_to_str2(lbits,"");
+      r.xis = (ccp)list_to_str2(lxis,"");
+      r.clabel = (ccp)list_to_str2(lbits,"");
     }
 }
 
