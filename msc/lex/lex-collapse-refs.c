@@ -179,6 +179,7 @@ printStart(FILE *fp, const char *name, const char **atts)
       Data *dm = memo_new(m);
       dm->xmlid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
       dm->label = dAttr(atts, "label");
+      dm->sref = dAttr(atts, "sref");
       dm->wref = dAttr(atts, "wref");
       dm->word = dAttr(atts, "word");
       dm->base = dAttr(atts, "base");
@@ -215,9 +216,9 @@ add_word(List *l, const char *word)
   strcpy(w,word);
   if ((b = strchr(w, ']')))
     *++b = '\0';
-  list_add(l, " [");
+  list_add(l, " (");
   list_add(l, pool_copy((ucp)w,p));
-  list_add(l, "]");
+  list_add(l, ")");
 }
 
 static int
@@ -237,12 +238,39 @@ range_true(const char *last_bit, const char *curr_bit, Data *last_dp, Data *this
 	++cpp;
       int li = atoi(lp);
       int ci = atoi(cp);
-      if (ci - li == 1)
+      if (ci == li || ci - li == 1)
 	{
-	  /* difference is 1--test anything after the numbers */
-	  while (*lpp && *lpp++ == *cpp++)
-	    ;
-	  if (!*lpp && !*cpp)
+	  /* difference is 0 or 1--test anything after the numbers */
+	  int ok = 0;
+	  if ((!*lpp || isalpha(*lpp)) && isalpha(*cpp))
+	    {
+	      if (!*lpp && 'a' == cpp[strlen(cpp)-1])
+		ok = 1;
+	      else
+		{
+		  /* Try to detect 56a 56b schemes and merge sequences */
+		  if (strlen(lpp) == strlen(cpp))
+		    {
+		      /* strings are same length; see if the last letter
+		       * is a differerence-by-one; this is imperfect
+		       * because 56az 56ba fails, but that is rare to the
+		       * point of possibly never even happening so we just
+		       * live with the possibility that such sequences are
+		       * not collapsed.
+		       */
+		      if (cpp[strlen(cpp)-1] - lpp[strlen(lpp)-1] == 1)
+			ok = 1;
+		    }
+		}
+	    }
+	  else
+	    {
+	      while (*lpp && *lpp++ == *cpp++)
+		;	      
+	      if (!*lpp && !*cpp)
+		ok = 1;
+	    }
+	  if (ok)
 	    {
 	      /* the range itself is good; now check any word
 		 annotations; at this point we don't discriminate
@@ -276,14 +304,14 @@ lex_process_data(void)
     {
       List *lbits = list_create(LIST_SINGLE);
       List *lxis = list_create(LIST_SINGLE);
-      Data *dp = r.d, *last_dp;
+      Data *dp = r.d, *last_dp = r.d;
       int range_open = 0;
       const char *r1 = dp->label;
       const char *range_word = NULL;
       const char *last_bit = last_little_bit(r1);
       list_add(lbits, (char*)r1);
       list_add(lxis, (char*)dp->sref);
-      for (last_dp = NULL, dp = dp->next; dp; last_dp = dp, dp = dp->next)
+      for (dp = dp->next; dp; last_dp = dp, dp = dp->next)
 	{
 	  list_add(lxis, "+");
 	  list_add(lxis, (char*)dp->sref);
@@ -338,7 +366,6 @@ lex_process_data(void)
 	      list_add(lbits, ", ");
 	      list_add(lbits, (char*)r1);
 	      last_bit = last_little_bit(r1);
-	      last_dp = dp;
 	    }
 	  else
 	    {
@@ -363,7 +390,6 @@ lex_process_data(void)
 		    add_word(lbits, last_dp->word);
 		  list_add(lbits, ", ");
 		  list_add(lbits, (char*)bit);
-		  last_dp = dp;
 		}
 	      last_bit = last_little_bit(bit);
 	    }
@@ -390,6 +416,7 @@ static void
 pRefo(void)
 {
   pElem("lex:group");
+  pAttr("type","refs");
   pAttr("value", r.value);
   pAttr("project", r.project);
   pAttr("n", r.n);
@@ -414,10 +441,10 @@ pData(void)
       pAttr("xml:id",dp->xmlid);
       pAttr("label",dp->label);
       pAttr("sref",dp->sref);
-      pAttr("wref",dp->sref);
-      pAttr("word",dp->sref);
-      pAttr("base",dp->sref);
-      pAttr("pos",dp->sref);
+      pAttr("wref",dp->wref);
+      pAttr("word",dp->word);
+      pAttr("base",dp->base);
+      pAttr("pos",dp->pos);
       fputs("/>",xfp);
     }
 }

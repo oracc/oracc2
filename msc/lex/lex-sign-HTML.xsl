@@ -26,56 +26,25 @@
 
 <xsl:template match="lex:group[@type='spel']">
   <p class="lex-spel" title="{@value}">
+    <!--This should probably be revised to use gdl for the spellings,
+         and perhaps for readings as well-->
     <span class="lex-spel-tlit"><xsl:value-of select="@value"/></span>
     <xsl:text>: </xsl:text>
     <!-- The input here has a refs wrapper with an empty xis
          attribute; should be able to fix this to link to spellings
          -->
-    <xsl:for-each select="lex:data|*/lex:data">
-      <xsl:apply-templates select="."/>
+    <xsl:for-each select="lex:group[@type='refs']">
+      <esp:link url="http://oracc.org/{@project}/{*[1]/@sref}" site-name="{@project} on Oracc">
+	<xsl:value-of select="@n"/>
+	<xsl:text> </xsl:text>
+	<xsl:value-of select="@clabel"/>
+      </esp:link>
       <xsl:if test="not(position()=last())">
 	<xsl:text>; </xsl:text>
       </xsl:if>
     </xsl:for-each>
     <xsl:text>.</xsl:text>
   </p>
-</xsl:template>
-
-<xsl:template match="lex:data">
-  <esp:link url="http://oracc.org/{@project}/{@sref}" site-name="{@project} on Oracc">
-    <xsl:choose>
-      <xsl:when test="@slabel">
-	<xsl:value-of select="@slabel"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:value-of select="../@n"/>
-	<xsl:text>, </xsl:text>
-	<xsl:value-of select="@label"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </esp:link>
-  <xsl:choose>
-    <xsl:when test="string-length(@word)>0">
-      <xsl:variable name="base">
-	<xsl:if test="string-length(@base)>0">
-	  <xsl:value-of select="concat('/',@base)"/>
-	</xsl:if>
-      </xsl:variable>
-      <xsl:choose>
-	<xsl:when test="contains(@word, ']')">
-	  <xsl:value-of select="concat(' (',substring-before(@word,']'),']',$base,')')"/>
-	</xsl:when>
-	<xsl:otherwise>
-	  <xsl:value-of select="concat(' (',@word,$base,')')"/>
-	</xsl:otherwise>
-      </xsl:choose>
-    </xsl:when>
-    <xsl:when test="string-length(@pos)>0">
-      <xsl:value-of select="concat(' (',@pos,')')"/>
-    </xsl:when>
-    <xsl:otherwise>
-    </xsl:otherwise>
-  </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
