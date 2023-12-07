@@ -16,6 +16,11 @@ typedef struct data
   const char *xmlid;
   const char *label;
   const char *sref;
+  const char *wref;
+  const char *word;
+  const char *base;
+  const char *pos;
+  const char *line;
   struct data *next;
 } Data;
 
@@ -141,6 +146,16 @@ group_of_refs(const char *name, const char **atts)
   return 0;
 }
 
+static const char *
+dAttr(const char **ap, const char *key)
+{
+  const char *k = findAttr(ap, key);
+  if (k && *k)
+    return (ccp)pool_copy((ucp)k, p);
+  else
+    return NULL;
+}
+
 void
 printStart(FILE *fp, const char *name, const char **atts)
 {  
@@ -163,8 +178,11 @@ printStart(FILE *fp, const char *name, const char **atts)
     {
       Data *dm = memo_new(m);
       dm->xmlid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
-      dm->label = (ccp)pool_copy((ucp)findAttr(atts, "label"), p);
-      dm->sref = (ccp)pool_copy((ucp)findAttr(atts, "sref"), p);
+      dm->label = dAttr(atts, "label");
+      dm->wref = dAttr(atts, "wref");
+      dm->word = dAttr(atts, "word");
+      dm->base = dAttr(atts, "base");
+      dm->line = dAttr(atts, "line");
       if (r.last)
 	{
 	  r.last->next = dm;
@@ -190,8 +208,20 @@ printStart(FILE *fp, const char *name, const char **atts)
    }
 }
 
+static void
+add_word(List *l, const char *word)
+{
+  char w[strlen(word)+1], *b;
+  strcpy(w,word);
+  if ((b = strchr(w, ']')))
+    *++b = '\0';
+  list_add(l, " [");
+  list_add(l, pool_copy((ucp)w,p));
+  list_add(l, "]");
+}
+
 static int
-range_true(const char *last_bit, const char *curr_bit)
+range_true(const char *last_bit, const char *curr_bit, Data *last_dp, Data *this_dp)
 {
   const char *lp = last_bit, *cp = curr_bit;
   /* test until the first digit */
@@ -213,11 +243,25 @@ range_true(const char *last_bit, const char *curr_bit)
 	  while (*lpp && *lpp++ == *cpp++)
 	    ;
 	  if (!*lpp && !*cpp)
-	    return 1;
+	    {
+	      /* the range itself is good; now check any word
+		 annotations; at this point we don't discriminate
+		 about the associate base or POS. Since these all have
+		 the same reading/spelling, the base should be
+		 identical and if it's not it's likely an error.
+		 POS-only items are not sufficiently interesting for
+		 our purposes. */
+	      if (!last_dp
+		  || !last_dp->word
+		  || !this_dp->word
+		  || (last_dp && !strcmp(last_dp->word, this_dp->word)))
+		return 1;
+	    }
 	}
     }
   return 0;
 }
+
 static const char *
 last_little_bit(const char *b)
 {
@@ -232,13 +276,14 @@ lex_process_data(void)
     {
       List *lbits = list_create(LIST_SINGLE);
       List *lxis = list_create(LIST_SINGLE);
-      Data *dp = r.d;
+      Data *dp = r.d, *last_dp;
       int range_open = 0;
       const char *r1 = dp->label;
+      const char *range_word = NULL;
       const char *last_bit = last_little_bit(r1);
       list_add(lbits, (char*)r1);
       list_add(lxis, (char*)dp->sref);
-      for (dp = dp->next; dp; dp = dp->next)
+      for (last_dp = NULL, dp = dp->next; dp; last_dp = dp, dp = dp->next)
 	{
 	  list_add(lxis, "+");
 	  list_add(lxis, (char*)dp->sref);
@@ -257,6 +302,14 @@ lex_process_data(void)
 		  list_add(lbits, (char*)last_bit);
 		  range_open = 0;
 		  last_bit = NULL;
+		  if (range_word)
+		    add_word(lbits, range_word);
+		}
+	      else
+		{
+		  /* add any pending word from the last bit added */
+		  if (last_dp && last_dp->word)
+		    add_word(lbits,last_dp->word);
 		}
 	      r1 = dp->label; /* reset the reference label */
 	      list_add(lbits, ", ");
@@ -274,41 +327,65 @@ lex_process_data(void)
 		  list_add(lbits, (char*)last_bit);
 		  range_open = 0;
 		  last_bit = NULL;
+		  if (!range_word && dp->word)
+		    range_word = dp->word;
+		  
 		}
+	      /* add any pending word from the last bit added */
+	      if (last_dp && last_dp->word)
+		add_word(lbits,last_dp->word);
 	      r1 = dp->label;
 	      list_add(lbits, ", ");
 	      list_add(lbits, (char*)r1);
 	      last_bit = last_little_bit(r1);
+	      last_dp = dp;
 	    }
 	  else
 	    {
 	      /* some bits matched; if it's only the last bit check to
 		 see if we have a range going */
-	      if (last_bit && range_true(last_bit, bit))
+	      if (last_bit && range_true(last_bit, bit, last_dp, dp))
 		{
 		  if (!range_open)
 		    {
 		      list_add(lbits, "-");
 		      range_open = 1;
+		      if (last_dp && last_dp->word)
+			range_word = last_dp->word;
+		      else if (dp->word)
+			range_word = dp->word;
 		    }
 		}
 	      else
 		{
+		  /* add any pending word from the last bit added */
+		  if (last_dp && last_dp->word)
+		    add_word(lbits, last_dp->word);
 		  list_add(lbits, ", ");
 		  list_add(lbits, (char*)bit);
+		  last_dp = dp;
 		}
 	      last_bit = last_little_bit(bit);
 	    }
 	}
       if (range_open)
-	list_add(lbits, (char*)last_bit);
+	{
+	  list_add(lbits, (char*)last_bit);
+	  if (range_word)
+	    add_word(lbits, range_word);
+	}
+      else
+	{
+	  if (last_dp && last_dp->word)
+	    add_word(lbits,last_dp->word);
+	}
       r.xis = (const char *)list_to_str2(lxis,"");
       r.clabel = (const char *)list_to_str2(lbits,"");
     }
 }
 
 #define pElem(e)   fprintf(xfp, "<%s", e)
-#define pAttr(a,v) fprintf(xfp, " %s=\"%s\"",a,xmlify((ucp)v))
+#define pAttr(a,v) if ((v)&&(*v)) fprintf(xfp, " %s=\"%s\"",a,xmlify((ucp)v))
 static void
 pRefo(void)
 {
@@ -337,6 +414,10 @@ pData(void)
       pAttr("xml:id",dp->xmlid);
       pAttr("label",dp->label);
       pAttr("sref",dp->sref);
+      pAttr("wref",dp->sref);
+      pAttr("word",dp->sref);
+      pAttr("base",dp->sref);
+      pAttr("pos",dp->sref);
       fputs("/>",xfp);
     }
 }

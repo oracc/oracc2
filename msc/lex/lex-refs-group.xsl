@@ -38,7 +38,8 @@
     </xsl:attribute>
     <xsl:for-each select="key('refgroups', concat(../@xml:id,':',@id_text))">
       <xsl:copy>
-	<xsl:copy-of select="@xml:id|@label|@sref"/>
+	<xsl:copy-of select="@xml:id|@label|@sref|@wref|@word|@base|@pos|@line"/>
+	<xsl:copy-of select="*"/>
       </xsl:copy>
     </xsl:for-each>
   </lex:group>
