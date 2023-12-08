@@ -11,13 +11,17 @@
 echo $0: $*
 
 user=$1 ; shift
-project=$2 ; shift
-subcommand=$3 ; shift
+project=$1 ; shift
 
-if [ "$subcommand" = "" ]; then
+if [ "$1" = "" ]; then
     projtype=`oraccopt . type`
     subcommand=$projtype
+else
+    subcommand=$1 ; shift
 fi
+
+rest=$*
+set $user $project $rest
 
 touch .oracc-build ; chmod 0644 .oracc-build
 
@@ -27,5 +31,5 @@ case $subcommand in
     portal) 	odo-portal.sh $* ;;
     lexdata)    odo-lexdata.sh $* ;;
     signlist)	odo-signlist.sh $* ;;
-    *)		odo-build-default.sh $subcommand ;;
+    *)		odo-build-default.sh $1 $2 $subcommand $4 $5 ;;
 esac

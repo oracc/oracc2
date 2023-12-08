@@ -24,55 +24,55 @@ function cbd {
     if [[ $g2 == "yes" ]]; then
 	# it's OK for there to be no glossary in cbd=dynamic
 	if [ -r 01tmp/$l.glo ] ; then
-	    echo "g2=yes, creating $ldir/$l.cbd via 01tmp/$l.glo ..."
+	    echo '>>>'"creating $ldir/$l.cbd via 01tmp/$l.glo ..."
 	    l2-glomanager.plx -xml 01tmp/$l.glo -out $ldir/$l.cbd
 	elif [ -r 00lib/$l.glo ]; then
-	    echo "g2=yes, creating $ldir/$l.cbd via 01tmp/$l.glo ..."
+	    echo '>>>'"creating $ldir/$l.cbd via 01tmp/$l.glo ..."
 	    l2-glomanager.plx -xml 00lib/$l.glo -out $ldir/$l.cbd
 	else
-	    echo "g2=yes, no glossary found for $l"
+	    echo '>>>'"no glossary found for $l"
 	fi
     elif [ -r 01bld/$l.glo.norm ]; then
-	echo creating $ldir/$l.cbd via 01bld/$l.glo.norm ...
+	echo '>>>'creating $ldir/$l.cbd via 01bld/$l.glo.norm ...
 	l2-glomanager.plx -xml 01bld/$l.glo.norm -out $ldir/$l.cbd
     elif [ -r 00lib/$l.glo ]; then
-	echo creating $ldir/$l.cbd from 00lib/$l.glo ...
+	echo '>>>'creating $ldir/$l.cbd from 00lib/$l.glo ...
 	l2-glomanager.plx -xml 00lib/$l.glo -out $ldir/$l.cbd
     fi
 }
 
 function g2x {
-    echo creating $ldir/$l.g2x from $ldir/union.sig
+    echo '>>>'creating $ldir/$l.g2x from $ldir/union.sig
     withall=`oraccopt . cbd-with-all`
     if [ "$withall" = "yes" ]; then
-#	echo l2p2-g2x.plx -all -h $ldir/union.sig
+#	echo '>>>'l2p2-g2x.plx -all -h $ldir/union.sig
 	l2p2-g2x.plx -all -h $ldir/union.sig
     else
-#	echo l2p2-g2x.plx -h $ldir/union.sig
+#	echo '>>>'l2p2-g2x.plx -h $ldir/union.sig
 	l2p2-g2x.plx -h $ldir/union.sig
     fi
-    #    echo running xis $ldir $l
+    #    echo '>>>'running xis $ldir $l
     if [ "$project" == "epsd2" ]; then
-	echo running emesalify for epsd2
+	echo '>>>'running emesalify for epsd2
 	emesalify.plx
-	echo emesalify done
+	echo '>>>'emesalify done
     fi
     xis $ldir $l
     if [ -s $ldir/$l.map ]; then
-#	echo running l2p2-g2c.plx $l
+	echo '>>>'running l2p2-g2c.plx $l
 	l2p2-g2c.plx $l
 	export ORACC_HOME
 #-verb
 	l2-glomanager.plx -conf l2p2.xcf -cbdlang $l
     else
-	echo Glossary $l is empty.  Exterminate.
+	echo '>>>'Glossary $l is empty.  Exterminate.
     fi
 }
 
 rm -f 01bld/cancel
 projtype=`oraccopt . type`
 super=`oraccopt . cbd-super`
-#echo projtype=$projtype
+#echo '>>>'projtype=$projtype
 if [ "$projtype" == "superglo" ]; then
     for aa in `oraccopt . cbd-super-list` ; do
 	# new: cbd-super-list could be qpn/sux in which case drop /sux
@@ -85,10 +85,10 @@ if [ "$projtype" == "superglo" ]; then
 	    mkdir -p $ldir
 	    cbd $l $ldir
 	    if [ -e 01bld/cancel ]; then
-		echo REBUILD CANCELLED
+		echo '>>>'REBUILD CANCELLED
 		exit 1
 	    fi
-	    echo l2p2.sh: processing sigs for superglo $a
+	    echo '>>>'l2p2.sh: processing sigs for superglo $a
 	    rm -f $ldir/union.sig
 	    [ -r 01bld/project.sig ] && l2p2-sig-slicer.plx -lang $l
 	    l2-sig-union.plx -super $super -proj $project -lang $l $ldir/$l.sig >$ldir/union.sig
@@ -102,7 +102,7 @@ else
 	cbd $l
     done
     if [ -e 01bld/cancel ]; then
-	echo REBUILD CANCELLED
+	echo '>>>'REBUILD CANCELLED
 	exit 1
     fi
     for l in `l2p2-langs.plx` ; do
@@ -160,6 +160,6 @@ l2p2-new.sh $project
 #need to port this over to new build organization
 #	epsd2-usages.sh
 #    else
-#	echo l2p2.sh: "cbd-usages only works with epsd2 at the moment--tell Steve to fix this!"
+#	echo '>>>'l2p2.sh: "cbd-usages only works with epsd2 at the moment--tell Steve to fix this!"
 #    fi
 #fi

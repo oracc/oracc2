@@ -3,12 +3,12 @@
 #include <gdl.h>
 
 static Hash **bridge_a = NULL;
-static Hash *bridge_h = NULL;
+/*static Hash *bridge_h = NULL;*/
 static Pool *bridge_p = NULL;
 extern int asl_flex_debug , gdl_flex_debug, nwarning;
 static gvl_g *gbgp;
 
-const char *
+const unsigned char *
 gvl_bridge_atf2utf(void)
 {
   return gbgp->orig;
@@ -24,6 +24,12 @@ const char *
 gvl_bridge_oid(void)
 {
   return gbgp->oid;
+}
+
+const unsigned char *
+gvl_bridge_signname(void)
+{
+  return gbgp->sign;
 }
 
 void
@@ -45,7 +51,7 @@ const char *
 gvl_bridge(const char *f,size_t l,const unsigned char *g, int sindex)
 {
   Tree *tp = NULL;
-  static last_sindex = -1;
+  static int last_sindex = -1;
   
   if (sindex != last_sindex)
     last_sindex = gvl_switch(sindex);
@@ -54,7 +60,7 @@ gvl_bridge(const char *f,size_t l,const unsigned char *g, int sindex)
     return NULL;
 
   if ((gbgp = hash_find(bridge_a[sindex], g)))
-    return gbgp->mess;
+    return (const char *)gbgp->mess;
   
   tp = gdlparse_string(mesg_mloc(f,l), (char*)pool_copy(g,bridge_p));
 

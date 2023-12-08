@@ -1,16 +1,14 @@
 #!/bin/bash
-
-#!/bin/bash
-
+shopt -s nullglob
 echo $0 $*
-
+p=`oraccopt`
 dwww=${ORACC_BUILDS}/$p/02www/cbd
 mkdir -p $dwww
 for a in 01bld/www/cbd/* ; do
     d=`basename $a`
     dbld=${ORACC_BUILDS}/$p/01bld/www/cbd/$d
     (cd $dwww ;
-     echo Installing glossaries in `pwd`
+     echo '>>>'Installing glossaries in `pwd`
      if [ -d $d ]; then
 	 mv -v $d x$d ; mv -v $dbld . ; rm -fr x$d
      else
