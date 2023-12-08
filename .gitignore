@@ -19,6 +19,7 @@ bin/wx/wx
 bin/xx/concord
 bin/xx/dbix
 bin/xx/dbx
+bin/xx/osort/osort
 bin/xx/rnv/rnv
 bin/xx/tlitsig
 bin/xx/xmlify
