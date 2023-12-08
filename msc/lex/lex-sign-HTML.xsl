@@ -13,6 +13,8 @@
 
 <xsl:template match="lex:group[@type='sign']">
   <div class="lex-sign" title="{@value}" oid="{@oid}">
+    <h2><a href="javascript:distprof2('{/*/@project}','{*[1]/@lang}','sl.{@oid}.s')"
+	   >Lexical data for sign <xsl:value-of select="@value"/></a></h2>
     <xsl:apply-templates/>
   </div>
 </xsl:template>

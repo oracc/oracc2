@@ -1,2 +1,3 @@
-#!/bin/sh
-exec o2-portal.sh
+##!/bin/dash
+echo $0 $*
+exec o2-portal.sh $*

@@ -2,27 +2,30 @@
 #
 # osh PROJECT build calls this script with the following arguments
 #
-# $1=user $2=project $3=subcommand
+# $1=user $2=project $3=subcommand $4 ...
+#
+# Where $4 ... are any additional arguments supplied to osh--these
+# additional arguments may be ignored depending on the selected
+# subcommand.
 #
 echo $0: $*
-subcommand=$3
-projtype=`oraccopt . type`
-touch .oracc-build ; chmod 0644 .oracc-build
-if [ "$subcommand" = "corpus" ]; then
-    echo $0: calling o2-corpus.sh
-    o2-corpus.sh
-elif [ "$subcommand" = "portal" ]; then
-    echo $0: calling o2-web.sh
-    o2-web.sh
-elif [ "$subcommand" = "lexdata" ]; then
-    odo-lexdata.sh
-else
-    if [ "$projtype" = "signlist" ]; then
-	echo $0: calling odo-signlist.sh
-	odo-signlist.sh
-    else
-	echo $0: calling o2-clean-build.sh
-	o2-clean-build.sh $subcommand 
-	o2-web.sh
-    fi
+
+user=$1 ; shift
+project=$2 ; shift
+subcommand=$3 ; shift
+
+if [ "$subcommand" = "" ]; then
+    projtype=`oraccopt . type`
+    subcommand=$projtype
 fi
+
+touch .oracc-build ; chmod 0644 .oracc-build
+
+case $subcommand in
+    corpus) 	odo-corpus.sh $* ;;
+    gloss) 	odo-gloss.sh $* ;;
+    portal) 	odo-portal.sh $* ;;
+    lexdata)    odo-lexdata.sh $* ;;
+    signlist)	odo-signlist.sh $* ;;
+    *)		odo-build-default.sh $subcommand ;;
+esac
