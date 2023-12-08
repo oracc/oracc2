@@ -29,8 +29,8 @@ typedef struct refs
   const char *value;
   const char *project;
   const char *n;
-  const char *xis;
   const char *clabel;
+  const char *xis;
   Data *d;
   Data *last;
 } Refs;
@@ -310,6 +310,8 @@ lex_process_data(void)
       const char *range_word = NULL;
       const char *last_bit = last_little_bit(r1);
       list_add(lbits, (char*)r1);
+      list_add(lxis, (char*)r.project);
+      list_add(lxis, ":");
       list_add(lxis, (char*)dp->sref);
       for (dp = dp->next; dp; last_dp = dp, dp = dp->next)
 	{
@@ -407,6 +409,8 @@ lex_process_data(void)
 	}
       r.xis = (ccp)list_to_str2(lxis,"");
       r.clabel = (ccp)list_to_str2(lbits,"");
+      list_free(lxis, NULL);
+      list_free(lbits, NULL);
     }
 }
 

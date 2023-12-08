@@ -22,4 +22,5 @@ gdlx -g <01tmp/lex/sortkeys.txt | cat -n | sed 's/^ \+//' | rocox -R '<t c="%1">
 xsltproc $libscripts/lex-sign-ref-codes.xsl 01tmp/lex/lex-sign-refs.xml >01tmp/lex/lex-sign-refs-coded.xml
 xsltproc $libscripts/lex-sign-ref-sort.xsl 01tmp/lex/lex-sign-refs-coded.xml >01tmp/lex/lex-sign-refs-sorted.xml
 lex-collapse-refs 01tmp/lex/lex-sign-refs-sorted.xml >01tmp/lex/lex-sign-refs-collapsed.xml
+xsltproc $libscripts/lex-sign-tis.xsl 01tmp/lex/lex-sign-refs-collapsed.xml >02pub/sign.tis
 xsltproc $libscripts/lex-sign-HTML.xsl 01tmp/lex/lex-sign-refs-collapsed.xml >02pub/lex-sign.xhtml

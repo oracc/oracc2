@@ -82,6 +82,9 @@ msc/oscx/osh.c
 msc/oscx/odo
 oracc_builds.c
 
+# rnc derivatives
+*.rng
+
 # msc/oscx derivatives
 oscx-server-env.sh
 oraxx
