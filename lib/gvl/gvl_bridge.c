@@ -11,7 +11,10 @@ static gvl_g *gbgp;
 const unsigned char *
 gvl_bridge_atf2utf(void)
 {
-  return gbgp->orig;
+  if (gbgp)
+    return gbgp->orig;
+  else
+    return NULL;
 }
 
 unsigned const char *
@@ -23,13 +26,19 @@ gvl_bridge_cuneify(void)
 const char *
 gvl_bridge_oid(void)
 {
-  return gbgp->oid;
+  if (gbgp)
+    return gbgp->oid;
+  else
+    return NULL;
 }
 
 const unsigned char *
 gvl_bridge_signname(void)
 {
-  return gbgp->sign;
+  if (gbgp)
+    return gbgp->sign;
+  else
+    return NULL;
 }
 
 void
