@@ -1,7 +1,9 @@
 #!/bin/bash
 
 echo $0 $*
-project=`oraccopt`
+
+project=$1
+l=$2
 
 function xis {
     if [ -r $ORACC_BUILDS/pub/$project/sortinfo.csi ]; then
@@ -20,24 +22,15 @@ function xis {
 }
 
 function cbd {
-    g2="yes"
-    if [[ $g2 == "yes" ]]; then
-	# it's OK for there to be no glossary in cbd=dynamic
-	if [ -r 01tmp/$l.glo ] ; then
-	    echo '>>>'"creating $ldir/$l.cbd via 01tmp/$l.glo ..."
-	    l2-glomanager.plx -xml 01tmp/$l.glo -out $ldir/$l.cbd
-	elif [ -r 00lib/$l.glo ]; then
-	    echo '>>>'"creating $ldir/$l.cbd via 01tmp/$l.glo ..."
-	    l2-glomanager.plx -xml 00lib/$l.glo -out $ldir/$l.cbd
-	else
-	    echo '>>>'"no glossary found for $l"
-	fi
-    elif [ -r 01bld/$l.glo.norm ]; then
-	echo '>>>'creating $ldir/$l.cbd via 01bld/$l.glo.norm ...
-	l2-glomanager.plx -xml 01bld/$l.glo.norm -out $ldir/$l.cbd
+    # it's OK for there to be no glossary in cbd=dynamic
+    if [ -r 01tmp/$l.glo ] ; then
+	echo '>>>'"creating $ldir/$l.cbd via 01tmp/$l.glo ..."
+	l2-glomanager.plx -xml 01tmp/$l.glo -out $ldir/$l.cbd
     elif [ -r 00lib/$l.glo ]; then
-	echo '>>>'creating $ldir/$l.cbd from 00lib/$l.glo ...
+	echo '>>>'"creating $ldir/$l.cbd via 01tmp/$l.glo ..."
 	l2-glomanager.plx -xml 00lib/$l.glo -out $ldir/$l.cbd
+    else
+	echo '>>>'"no glossary found for $l"
     fi
 }
 
@@ -70,83 +63,37 @@ function g2x {
 }
 
 rm -f 01bld/cancel
-projtype=`oraccopt . type`
-super=`oraccopt . cbd-super`
-#echo '>>>'projtype=$projtype
-if [ "$projtype" == "superglo" ]; then
-    for aa in `oraccopt . cbd-super-list` ; do
-	# new: cbd-super-list could be qpn/sux in which case drop /sux
-	aaa=`/bin/echo -n $aa | perl -p -e 's#/.*$##'`
-	if [ "$aaa" == "qpn" ]; then
-	    aa=`l2p2-langs.plx`
-	fi
-	for l in $aa; do
-	    ldir=01bld/$l
-	    mkdir -p $ldir
-	    cbd $l $ldir
-	    if [ -e 01bld/cancel ]; then
-		echo '>>>'REBUILD CANCELLED
-		exit 1
-	    fi
-	    echo '>>>'l2p2.sh: processing sigs for superglo $a
-	    rm -f $ldir/union.sig
-	    [ -r 01bld/project.sig ] && l2p2-sig-slicer.plx -lang $l
-	    l2-sig-union.plx -super $super -proj $project -lang $l $ldir/$l.sig >$ldir/union.sig
-	    g2x $ldir $l
-	done
-    done
-else
-    for l in `l2p2-langs.plx` ; do
-	ldir=01bld/$l
-	mkdir -p $ldir
-	cbd $l
-    done
-    if [ -e 01bld/cancel ]; then
-	echo '>>>'REBUILD CANCELLED
-	exit 1
-    fi
-    for l in `l2p2-langs.plx` ; do
-	ldir=01bld/$l
-	mkdir -p $ldir
 
-	# Rebuild union.sig
-	rm -f $ldir/union.sig
-	[ -r 01bld/project.sig ] && l2p2-sig-slicer.plx -lang $l
-	[ -r 01bld/from-glos.sig ] && l2p2-sig-slicer.plx -lang $l -name glossary -sigs 01bld/from-glos.sig
-	if [ -r $ldir/from_glo.sig ] && [ -r $ldir/$l.sig ]; then
-	    l2-sig-union.plx $ldir/$l.sig $ldir/from_glo.sig >$ldir/union.sig
-	elif [ -r $ldir/from_glo.sig ]; then
-	    l2-sig-union.plx -lang $l -proj $project $ldir/from_glo.sig >$ldir/union.sig
-	else
-	    l2-sig-union.plx $ldir/$l.sig >$ldir/union.sig
-	fi
+### need to reimplement superglo support--see l2p2.sh
 
-	# Now we can build the XML version of the glossary
-	if [ -s $ldir/union.sig ]; then
-	    g2x $ldir $l
-	else
-	    (cd $ldir; ln -sf $l.cbd $l.g2c; ln -sf $ORACC/lib/data/dummy.xis periods.xis)
-	    l2-glomanager.plx -conf l2p2.xcf -cbdlang $l
-	    l2p2-letters.plx $l
-	fi
-    done
+ldir=01bld/$l
+mkdir -p $ldir
+cbd $l
+if [ -e 01bld/cancel ]; then
+    echo '>>>'REBUILD CANCELLED
+    exit 1
 fi
-#else
-#    l2p2-union.plx
-#    for a in `ls 01bld/*/union.sig` ; do
-#	ldir=`dirname $a`
-#	l=`basename $ldir`
-#	g2x $ldir $l
-#    done
-#fi
+rm -f $ldir/union.sig
+[ -r 01bld/project.sig ] && l2p2-sig-slicer.plx -lang $l
+[ -r 01bld/from-glos.sig ] && l2p2-sig-slicer.plx -lang $l -name glossary -sigs 01bld/from-glos.sig
+if [ -r $ldir/from_glo.sig ] && [ -r $ldir/$l.sig ]; then
+    l2-sig-union.plx $ldir/$l.sig $ldir/from_glo.sig >$ldir/union.sig
+elif [ -r $ldir/from_glo.sig ]; then
+    l2-sig-union.plx -lang $l -proj $project $ldir/from_glo.sig >$ldir/union.sig
+else
+    l2-sig-union.plx $ldir/$l.sig >$ldir/union.sig
+fi
+
+if [ -s $ldir/union.sig ]; then
+    g2x $ldir $l
+else
+    (cd $ldir; ln -sf $l.cbd $l.g2c; ln -sf $ORACC/lib/data/dummy.xis periods.xis)
+    l2-glomanager.plx -conf l2p2.xcf -cbdlang $l
+    l2p2-letters.plx $l
+fi
 
 if [ -r 01bld/pleiades.tab ]; then
     cp 01bld/pleiades.tab 02pub
-fi
-
-if [ -r 01bld/sux/articles.xml ]; then
-    xsltproc $ORACC_BUILDS/lib/scripts/l2p2-oxtab.xsl 01bld/sux/articles.xml \
-	     >01bld/sux/oidxid.tab
 fi
 
 ## This is a temporary hack to do sense and base sorting in

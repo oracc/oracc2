@@ -1,19 +1,45 @@
 #!/bin/dash
 echo $0 $*
 
-user=$1 ; shift
-project=$2 ; shift
-subcommand=$3
-if [ "$subcommand" = "" ]; then
+odo_gloss_sub () {
+    t=$1 ; shift
+    for a in $* ; do
+#	echo odo-gloss-$t.sh $project $a
+	odo-gloss-$t.sh $project $a
+    done
+}
+
+##
+## Set the task
+##
+taskorlang=0
+user=$1
+project=$2
+if [ "$3" = "" ]; then
     subcommand=all
+    shift 2
 else
-    shift
+    for a in xml htm web all ; do
+	if [ "$3" = "$a" ]; then
+	    subcommand=$3
+	    break;
+	fi
+    done
+    if [ "$subcommand" = "" ]; then
+	subcommand="all"
+	taskorlang=1
+	shift 2
+    else
+	shift 3
+    fi
 fi
 
-set glossaries $*
+##
+## Set the languages
+##
 siglangx=`siglangx`
 if [ "$1" = "" ]; then
-    glossaries=$siglangx
+    set $siglangx
 else
     for g; do
 	found=0
@@ -23,21 +49,31 @@ else
 		break
 	    fi
 	done
-	if [ "$found" = "0" ]; then
-	    echo "$0: glossary $g not found in project $project. Stop."
+	if [ $found -eq 0 ]; then
+	    if [ $taskorlang -eq 1 ]; then
+		echo "$0: $g is not a glossary task or a $project language. Stop."
+	    else
+		echo "$0: $g is not a $project language. Stop."
+	    fi
 	    exit 1
 	fi
     done
 fi
 
+##
+## execute the task(s) for each language
+##
+echo "$0: task=$subcommand; glossaries($#)=$*"
+
 case $subcommand in
-    xml) odo-gloss-xml.sh $* ;;
-    htm) odo-gloss-htm.sh $* ;;
-    html) odo-gloss-htm.sh $* ;;
-    web) odo-gloss-web.sh $* ;;
-    *)
-	odo-gloss-xml.sh $* 
-	odo-gloss-htm.sh $* 
-	odo-gloss-web.sh $* 
+    xml) 	odo_gloss_sub xml $* ;;
+    htm|html) 	odo_gloss_sub htm $* ;;
+    web) 	odo_gloss_sub web $* ;;
+    all)
+	odo_gloss_sub xml $* 
+	odo_gloss_sub htm $*
+	odo-gloss-htm-wrapup.sh
+	odo_gloss_sub web $* 
+	odo-gloss-web-wrapup.sh
 	;;
 esac

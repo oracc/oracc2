@@ -1,7 +1,5 @@
 include ../../oracc-am-rules.txt
 
-AM_CPPFLAGS=-I../include
-
 COLLSRCS=unicode.c
 
 noinst_SCRIPTS=seq2c mktablst

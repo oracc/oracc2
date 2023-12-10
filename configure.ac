@@ -7,7 +7,7 @@ AC_PREREQ([2.69])
 AC_INIT([oracc], [2.0], [stinney-at-upenn.edu])
 AC_LANG(C)
 AC_CONFIG_SRCDIR([lib/liboracc2.c])
-AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([-Wall -Wno-portability subdir-objects])
 LT_INIT
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
