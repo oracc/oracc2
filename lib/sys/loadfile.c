@@ -145,3 +145,51 @@ loadstdin(size_t *nbytes)
   return buf;
 }
 
+
+unsigned char *
+loadoneline(FILE *fp, size_t *nbytes)
+{
+  static unsigned char *buf = NULL;
+  static int n_alloced = 0;
+  int ch, n_read = 0;
+
+  if (!fp)
+    {
+      if (buf)
+	{
+	  free(buf);
+	  buf = NULL;
+	  n_alloced = 0;
+	}
+      return NULL;
+    }
+
+  if (feof(fp))
+    return NULL;
+  
+  while (EOF != (ch = fgetc(fp)))
+    {      
+      if (n_read == n_alloced)
+	{
+	  n_alloced += 8192;
+	  buf = realloc(buf,n_alloced);
+	}
+      if ('\n' == ch)
+	{
+	  if (n_read)
+	    {
+	      buf[n_read] = '\0';
+	      *nbytes = n_read;
+	      break;
+	    }
+	  else
+	    {
+	      buf = NULL;
+	      break;
+	    }
+	}
+      else
+	buf[n_read++] = ch;
+    }
+  return buf;  
+}

@@ -23,6 +23,12 @@ typedef uint16_t Unsigned16;
 typedef int32_t Signed32;
 typedef uint32_t Unsigned32;
 
+struct map
+{
+  const char *name;
+  const char *v;
+};
+
 #define _MAX_PATH 1024
 
 #ifndef ccp

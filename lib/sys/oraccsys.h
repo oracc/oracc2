@@ -1,11 +1,18 @@
 #ifndef ORACCSYS_H_
 #define ORACCSYS_H_
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <wchar.h>
 #include <wctype.h>
 #include <sys/types.h>
 #include <c2types.h>
 #include <hash.h>
+#include <keva.h>
+#include <pool.h>
+#include <loadfile.h>
+#include <ctype128.h>
 
 extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsizep);
 
