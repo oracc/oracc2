@@ -182,7 +182,10 @@ gvl_oid_set(gvl_g *gp)
   s = (ccp)gvl_lookup(sll_tmp_key((uccp)gp->oid,"signs"));
   if (s && *s)
     gvl_oid_add(u, s, NULL);
-  
+
+  /* if gp is a SIGN with an OID add that */
+  if ('s' == *gp->type && gp->oid)
+    gvl_oid_add(u,gp->oid, NULL);
   /* if gp is a SIGN then ';forms' will have one or more forms that are alternatives for it */
   s = (ccp)gvl_lookup(sll_tmp_key((uccp)gp->oid,"forms"));
   if (s && *s)
@@ -302,9 +305,11 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	  /* If the q is unknown, report known q for v */
 	  unsigned const char *tmp2 = gvl_lookup(sll_tmp_key(vp->orig, "q"));
 	  if (tmp2)
-	    vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s", qp->orig, vp->orig, sll_snames_of(tmp2), QFIX);
+	    vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s",
+				 qp->orig, vp->orig, sll_snames_of(tmp2), QFIX);
 	  else if (!strchr((ccp)qp->orig,'X'))
-	    vq->mess = gvl_vmess("[vq]: q %s unknown: %s known as %s%s", qp->orig, vp->orig, vp->sign, QFIX);
+	    vq->mess = gvl_vmess("[vq]: q %s unknown: %s known as %s%s",
+				 qp->orig, vp->orig, sll_snames_of(vp->sign), QFIX);
 	}
       else
 	gdl_corrq = 0;

@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 subdirs=ccgi
 
-AM_CPPFLAGS=-I@top_srcdir@/lib/include -I@top_srcdir@/lib/{std,sys,xml} -Wall -pedantic
+## AM_CPPFLAGS=-I@top_srcdir@/lib/include -I@top_srcdir@/lib/{std,sys,xml} -Wall -pedantic
 
 #cgibin_PROGRAMS=oracc-server
 cgibin_PROGRAMS=wx
