@@ -15,7 +15,7 @@ if [ -d "00atf" ]; then
 	    oxx $args -I$a
 	done
     else
-	files=`find 00atf -type f | grep '.\(ods\|.atf\)$' | grep -v ods.atf`
+	files=`find 00atf -maxdepth 1 -type f | grep '.\(ods\|.atf\)$' | grep -v ods.atf`
 	oxx $args $files
     fi
 fi

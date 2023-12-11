@@ -384,7 +384,7 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   else
     gname = "g:g";
 
-  if (!gdl_unicode)
+  if (!gdl_unicode && ('0' != data[0] || '0' != data[1] || (data[2] && '~' != data[2])))
     {
       uccp guni = atf2utf(locp,(uccp)data,0);
       if (strcmp((ccp)guni,(ccp)data))
