@@ -19,6 +19,7 @@ imgdir        = $(prefix)/www/img
 javadir       = $(prefix)/lib/java
 jsdir         = $(prefix)/www/js
 scriptdatadir = $(prefix)/lib/scripts
+skeldatadir    = $(prefix)/lib/skel
 texdatadir    = $(prefix)/lib/tex
 schemadir     = $(prefix)/www/lib/schemas
 webscriptdatadir = $(prefix)/www/lib/scripts
