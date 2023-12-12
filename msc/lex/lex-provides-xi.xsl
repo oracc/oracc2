@@ -1,0 +1,38 @@
+<xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	       xmlns:xi="http://www.w3.org/2001/XInclude"
+	       version="1.0">
+
+<xsl:variable name="pb"
+	      select="document('/home/oracc/www/dcclt/lex-provides-phra-base.xml')"/>
+<xsl:variable name="we"
+	      select="document('/home/oracc/www/dcclt/lex-provides-word-equi.xml')"/>
+<xsl:variable name="wp"
+	      select="document('/home/oracc/www/dcclt/lex-provides-word-phra.xml')"/>
+
+<xsl:template match="LEXDATA">
+  <xsl:variable name="oid" select="ancestor::cbd:entry/@xml:id"/>
+  <xsl:for-each select="$pb">
+    <xsl:if test="count(id($oid))">
+      <xi:include href="concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/pb/',$o,'.html')"/>
+    </xsl:if>
+  </xsl:for-each>
+  <xsl:for-each select="$we">
+    <xsl:if test="count(id($oid))">
+      <xi:include href="concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/we/',$o,'.html')"/>
+    </xsl:if>
+  </xsl:for-each>
+  <xsl:for-each select="$wp">
+    <xsl:if test="count(id($oid))">
+      <xi:include href="concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/wp/',$o,'.html')"/>
+    </xsl:if>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template match="*|text()">
+  <xsl:copy>
+    <xsl:copy-of select="@*"/>
+    <xsl:apply-templates/>
+  </xsl:copy>
+</xsl:template>
+
+</xsl:transform>
