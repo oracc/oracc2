@@ -19,7 +19,7 @@
   </xsl:for-each>
   <xsl:for-each select="$we">
     <xsl:if test="count(id($oid))">
-      <xi:include href="{concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/we/',$oid,'.html')}"/>
+      <xi:include href="{concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/eq/',$oid,'.html')}"/>
     </xsl:if>
   </xsl:for-each>
   <xsl:for-each select="$wp">
