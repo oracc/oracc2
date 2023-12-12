@@ -1,5 +1,6 @@
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	       xmlns:xi="http://www.w3.org/2001/XInclude"
+	       xmlns:cbd="http://oracc.org/ns/1.0/cbd"
 	       version="1.0">
 
 <xsl:variable name="pb"
@@ -13,17 +14,17 @@
   <xsl:variable name="oid" select="ancestor::cbd:entry/@xml:id"/>
   <xsl:for-each select="$pb">
     <xsl:if test="count(id($oid))">
-      <xi:include href="concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/pb/',$o,'.html')"/>
+      <xi:include href="{concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/pb/',$oid,'.html')}"/>
     </xsl:if>
   </xsl:for-each>
   <xsl:for-each select="$we">
     <xsl:if test="count(id($oid))">
-      <xi:include href="concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/we/',$o,'.html')"/>
+      <xi:include href="{concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/we/',$oid,'.html')}"/>
     </xsl:if>
   </xsl:for-each>
   <xsl:for-each select="$wp">
     <xsl:if test="count(id($oid))">
-      <xi:include href="concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/wp/',$o,'.html')"/>
+      <xi:include href="{concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/wp/',$oid,'.html')}"/>
     </xsl:if>
   </xsl:for-each>
 </xsl:template>

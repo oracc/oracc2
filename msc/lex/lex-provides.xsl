@@ -4,7 +4,11 @@
   <xsl:template match="/">
     <provides>
       <xsl:for-each select="*/*[string-length(@o:id)>0]">
-	<oid id="{@o:id}"/>
+	<oid>
+	  <xsl:attribute name="xml:id">
+	    <xsl:value-of select="@o:id"/>
+	  </xsl:attribute>
+	</oid>
       </xsl:for-each>
     </provides>
   </xsl:template>

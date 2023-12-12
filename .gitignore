@@ -79,6 +79,7 @@ xpd.c
 msc/adm/oadm
 msc/adm/oadmsudo
 msc/adm/oadmwrapper
+msc/lex/lex-provides-xi.xsl
 msc/lex/lex-sign-lookup.xsl
 msc/lex/lex-word-data.xsl
 msc/oscx/osh.c
