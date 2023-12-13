@@ -10,6 +10,8 @@
 
 int slgroups = 0;
 
+#include "../../lib/joxer/joxer_rnvxml.h"
+
 extern Mloc *xo_loc;
 static struct rnvval_atts *ratts;
 Hash *xidseen = NULL;
