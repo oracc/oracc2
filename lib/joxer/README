@@ -1,0 +1,7 @@
+JoXer -- JSON or XML-er
+
+This library is an interface for RNV validation, XML output, and JSON
+output.
+
+joxer_init sets the joxer function pointers to do optional validation,
+and make either output or both.
