@@ -1,10 +1,10 @@
 #include <joxer.h>
+#include <jsn.h>
 
-/* ch must already have been put through xmlify to pass validation */
 void
 jox_jsn_ch(const char *ch)
 {
-  fputs(ch,f_jsn);
+  fputs(jsonify(ch),f_jsn);
 }
 
 void
@@ -44,7 +44,6 @@ jox_jsn_ao(void)
 {
   jw_array_o();
 }
-
 void
 jox_jsn_ac(void)
 {

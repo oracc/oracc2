@@ -13,6 +13,8 @@
 #include "../rnv/rnx.h"
 #include "rnvxml.h"
 
+#include "joxer.h"
+
 extern FILE *f_xml;
 extern int rnx_n_exp;
 
@@ -30,7 +32,7 @@ extern int (*er_printf)(char *format,...);
 extern int (*er_vprintf)(char *format,...);
 #endif
 
-void
+static void
 jox_verror_handler(int erno,va_list ap)
 {
 #define xvh_err(msg) mesg_averr(ehmp,(msg),ap);
@@ -65,7 +67,27 @@ jox_verror_handler(int erno,va_list ap)
     }
 }
 
-void
+void (*joxer_ao)(void);
+void (*joxer_ac)(void);
+void (*joxer_ch)(Mloc *mp, const char *ch);
+void (*joxer_ea)(Mloc *mp, const char *pname, Rats *ratts);
+void (*joxer_ee)(Mloc *mp, const char *pname);
+void (*joxer_ec)(Mloc *mp, const char *pname, Rats *ratts);
+void (*joxer_et)(Mloc *mp, const char *pname, Rats *ratts, const char *ch);
+
+static void
+joxer_ao_vxj(void)
+{
+  jox_jsn_ao();
+}
+
+static void
+joxer_ac_vxj(void)
+{
+  jox_jsn_ac();
+}
+
+static void
 joxer_ch_vxj(Mloc *mp, const char *ch)
 {
   joxer_mloc(mp);
@@ -75,7 +97,7 @@ joxer_ch_vxj(Mloc *mp, const char *ch)
   jox_jsn_ch(ch);
 }
 
-void
+static void
 joxer_ea_vxj(Mloc *mp, const char *pname, Rats *ratts)
 {
   joxer_mloc(mp);
@@ -86,7 +108,7 @@ joxer_ea_vxj(Mloc *mp, const char *pname, Rats *ratts)
     rnvval_free_atts(ratts);
 }
 
-void
+static void
 joxer_ee_vxj(Mloc *mp, const char *pname)
 {
   joxer_mloc(mp);
@@ -95,7 +117,7 @@ joxer_ee_vxj(Mloc *mp, const char *pname)
   jox_jsn_ee(pname, ratts);
 }
 
-void
+static void
 joxer_ec_vxj(Mloc *mp, const char *pname, Rats *ratts)
 {
   joxer_ea_vxj(mp, pname, ratts);
@@ -104,19 +126,7 @@ joxer_ec_vxj(Mloc *mp, const char *pname, Rats *ratts)
     rnvval_free_atts(ratts);
 }
 
-void
-joxer_ao_vxj(void)
-{
-  jox_jsn_ao();
-}
-
-void
-joxer_ac_vxj(void)
-{
-  jox_jsn_ac();
-}
-
-void
+static void
 joxer_et_vxj(Mloc *mp, const char *pname, Rats *ratts, const char *ch)
 {
   joxer_ea_vxj(mp, pname, ratts);
@@ -126,7 +136,7 @@ joxer_et_vxj(Mloc *mp, const char *pname, Rats *ratts, const char *ch)
     rnvval_free_atts(ratts);
 }
 
-void
+static void
 joxer_set_vxj(void)
 {
   joxer_ch = joxer_ch_vxj;
@@ -138,37 +148,37 @@ joxer_set_vxj(void)
   joxer_ac = joxer_ac_vxj;
 }
 
-void
+static void
 joxer_set_vx(void)
 {
   fprintf(stderr, "joxer selection not yet implemented. Stop\n");
   exit(1);
 }
-void
+static void
 joxer_set_vj(void)
 {
   fprintf(stderr, "joxer selection not yet implemented. Stop\n");
   exit(1);
 }
-void
+static void
 joxer_set_v(void)
 {
   fprintf(stderr, "joxer selection not yet implemented. Stop\n");
   exit(1);
 }
-void
+static void
 joxer_set_xj(void)
 {
   fprintf(stderr, "joxer selection not yet implemented. Stop\n");
   exit(1);
 }
-void
+static void
 joxer_set_x(void)
 {
   fprintf(stderr, "joxer selection not yet implemented. Stop\n");
   exit(1);
 }
-void
+static void
 joxer_set_j(void)
 {
   fprintf(stderr, "joxer selection not yet implemented. Stop\n");

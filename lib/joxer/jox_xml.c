@@ -1,4 +1,5 @@
 #include <joxer.h>
+#include <stdio.h>
 
 /* ch must already have been put through xmlify to pass validation */
 void
