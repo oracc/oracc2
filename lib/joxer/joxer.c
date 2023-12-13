@@ -190,6 +190,7 @@ void
 joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *jsn)
 {
   rnvval_init_err(jox_verror_handler);
+  rnvif_init();
 
   if (val)
     {
