@@ -1,10 +1,12 @@
 #include <joxer.h>
-#include <jsn.h>
+#include <json.h>
+
+static FILE *f_jsn;
 
 void
 jox_jsn_ch(const char *ch)
 {
-  fputs(jsonify(ch),f_jsn);
+  fputs((ccp)jsonify((ucp)ch),f_jsn);
 }
 
 void
@@ -21,7 +23,7 @@ jox_jsn_ea(const char *pname, Rats *ratts)
 	{
 	  jw_member(jsn_xmlns_atts[i].ns);
 	  jw_string(jsn_xmlns_atts[i].uri);
-	  jsn_xmlns_atts = NULL
+	  jsn_xmlns_atts = NULL;
 	}
     }
 

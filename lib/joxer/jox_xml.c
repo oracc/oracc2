@@ -1,6 +1,8 @@
 #include <joxer.h>
 #include <stdio.h>
 
+static FILE *f_xml;
+
 /* ch must already have been put through xmlify to pass validation */
 void
 jox_xml_ch(const char *ch)

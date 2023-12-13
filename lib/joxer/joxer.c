@@ -12,7 +12,8 @@
 #include "../rnv/rnv.h"
 #include "../rnv/rnx.h"
 #include "rnvxml.h"
-
+#include <oraccsys.h>
+#include <json.h>
 #include "joxer.h"
 
 extern FILE *f_xml;
@@ -22,7 +23,7 @@ static struct pool *xgi_pool;
 static List *xgi_stack;
 static char xgi_flags[5];
 
-static struct xnn_nstab *xmlns_atts;
+struct xnn_nstab *jsn_xmlns_atts, *xml_xmlns_atts;
 
 static Mloc *ehmp;
 #define joxer_mloc(l) ehmp=(l)
@@ -91,7 +92,7 @@ static void
 joxer_ch_vxj(Mloc *mp, const char *ch)
 {
   joxer_mloc(mp);
-  const char *xch = xmlify(ch);
+  const char *xch = (ccp)xmlify((ucp)ch);
   rnvval_ch(xch);
   jox_xml_ch(xch);
   jox_jsn_ch(ch);
@@ -112,9 +113,9 @@ static void
 joxer_ee_vxj(Mloc *mp, const char *pname)
 {
   joxer_mloc(mp);
-  rnvval_ee(pname, ratts);
-  jox_xml_ee(pname, ratts);
-  jox_jsn_ee(pname, ratts);
+  rnvval_ee(pname);
+  jox_xml_ee(pname);
+  jox_jsn_ee(pname);
 }
 
 static void
@@ -207,7 +208,7 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
 
   if (jsn)
     {
-      jsn_xml_xmlns_atts = xdp->nstab;
+      jsn_xmlns_atts = xdp->nstab;
       jw_init(jsn);
     }
 

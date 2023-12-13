@@ -1,7 +1,13 @@
 #ifndef JOXER_
 #define JOXER_
 
-type struct rnvval_atts Rats;
+#include <memo.h>
+#include <xnn.h>
+#include <rnvval.h>
+
+typedef struct rnvval_atts Rats;
+
+extern struct xnn_nstab *jsn_xmlns_atts, *xml_xmlns_atts;
 
 extern void (*joxer_ao)(void);
 extern void (*joxer_ac)(void);
