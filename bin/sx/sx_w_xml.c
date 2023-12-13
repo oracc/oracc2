@@ -83,6 +83,8 @@ sx_w_x_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
       int nn, i;
       const char **n = hash_keys2(sl->listdefs, &nn);
       qsort(n, nn, sizeof(const char *), cmpstringp);
+
+      joxer_ao();
       for (i = 0; i < nn; ++i)
 	{
 	  struct sl_listdef *ldp = hash_find(sl->listdefs, (uccp)n[i]);
@@ -92,9 +94,11 @@ sx_w_x_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 	  sx_w_x_notes(f, sl, &ldp->inst);
 	  rnvxml_ee("sl:listdef");
 	}
+      joxer_ac();
 
       n = hash_keys2(sl->sysdefs, &nn);
       qsort(n, nn, sizeof(const char *), cmpstringp);
+      joxer_ao();
       for (i = 0; i < nn; ++i)
 	{
 	  struct sl_sysdef *sdp = hash_find(sl->sysdefs, (uccp)n[i]);
@@ -105,8 +109,10 @@ sx_w_x_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 	  sx_w_x_notes(f, sl, &sdp->inst);
 	  rnvxml_ee("sl:sysdef");
 	}
+      joxer_ac();
       if (sl->iheaders)
 	{
+	  joxer_ao();
 	  for (i = 0; i < list_len(sl->images); ++i)
 	    {
 	      const char *o = itoa(i);
@@ -119,6 +125,7 @@ sx_w_x_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 				NULL);
 	      rnvxml_ec("sl:iheader", ratts);
 	    }
+	  joxer_ac();
 	}
     }
   else if (p == sx_pos_term)
@@ -135,7 +142,9 @@ sx_w_x_group(struct sx_functions *f, struct sl_signlist *sl, struct sl_group *g,
     {
       static int in_group = 0;
       xo_loc->file = "stdin"; xo_loc->line = 1;
-      if (p == sx_pos_inst)
+      if (p == sx_pos_init)
+	joxer_ao();
+      else if (p == sx_pos_inst)
 	{
 	  if (in_group)
 	    rnvxml_ee("sl:signs");
@@ -149,6 +158,7 @@ sx_w_x_group(struct sx_functions *f, struct sl_signlist *sl, struct sl_group *g,
 	  if (in_group)
 	    rnvxml_ee("sl:signs");
 	  in_group = 0;
+	  joxer_ac();
 	}
     }
 }
@@ -159,7 +169,9 @@ sx_w_x_letter(struct sx_functions *f, struct sl_signlist *sl, struct sl_letter *
   static int in_letter = 0;
   
   xo_loc->file = "stdin"; xo_loc->line = 1;
-  if (p == sx_pos_inst)
+  if (p == sx_pos_init)
+    joxer_ao();
+  else if (p == sx_pos_inst)
     {
       if (in_letter)
 	rnvxml_ee("sl:letter");
@@ -180,6 +192,7 @@ sx_w_x_letter(struct sx_functions *f, struct sl_signlist *sl, struct sl_letter *
       if (in_letter)
 	rnvxml_ee("sl:letter");
       in_letter = 0;
+      joxer_ac();
     }
 }
 
