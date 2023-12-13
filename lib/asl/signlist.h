@@ -32,6 +32,7 @@ struct sx_iheader
   const char *path;
   const char *thumb;
   const char *period;
+  Mloc mloc;
 };
 
 struct sl_signlist
@@ -101,6 +102,7 @@ struct sl_signlist
   Memo *m_links;
   Pool *p;
   Mloc mloc;
+  Mloc eloc;
 };
 
 struct sl_token

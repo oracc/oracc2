@@ -12,7 +12,10 @@
 int slgroups = 0;
 Hash *xidseen = NULL;
 
+#if 0
 static unsigned char *x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s);
+#endif
+
 static struct rnvval_atts *ratts;
 
 static sx_signlist_f sx_w_jx_signlist;
@@ -74,7 +77,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
     if (p == sx_pos_init)
     {
       ratts = rnvval_aa("x", "project", sl->project, "signlist", sl->signlist, NULL);
-      joxer_ea("sl:signlist", ratts);
+      joxer_ea(&sl->mloc, "sl:signlist", ratts);
       xidseen = hash_create(1024);
       
       sx_w_jx_notes(f, sl, sl->notes);
@@ -86,10 +89,10 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	{
 	  struct sl_listdef *ldp = hash_find(sl->listdefs, (uccp)n[i]);
 	  ratts = rnvval_aa("x", "name", n[i], NULL);
-	  joxer_ea("sl:listdef", ratts);
-	  joxer_et("sl:info", NULL, (ccp)xmlify((uccp)ldp->str));
+	  joxer_ea(&ldp->inst.mloc, "sl:listdef", ratts);
+	  joxer_et(&ldp->inst.mloc, "sl:info", NULL, ldp->str);
 	  sx_w_jx_notes(f, sl, &ldp->inst);
-	  joxer_ee("sl:listdef");
+	  joxer_ee(&ldp->inst.mloc, "sl:listdef");
 	}
 
       n = hash_keys2(sl->sysdefs, &nn);
@@ -98,11 +101,11 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	{
 	  struct sl_sysdef *sdp = hash_find(sl->sysdefs, (uccp)n[i]);
 	  ratts = rnvval_aa("x", "name", n[i], NULL);
-	  joxer_ea("sl:sysdef", ratts);
+	  joxer_ea(&sdp->inst.mloc, "sl:sysdef", ratts);
 	  if (sdp->comment)
-	    joxer_et("sl:info", NULL, (ccp)xmlify((uccp)sdp->comment));
+	    joxer_et(&sdp->inst.mloc, "sl:info", NULL, sdp->comment);
 	  sx_w_jx_notes(f, sl, &sdp->inst);
-	  joxer_ee("sl:sysdef");
+	  joxer_ee(&sdp->inst.mloc, "sl:sysdef");
 	}
       if (sl->iheaders)
 	{
@@ -117,13 +120,13 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 				sl->iheaders[i].thumb ? "thumb" : NULL,
 				sl->iheaders[i].thumb ? sl->iheaders[i].thumb : NULL, 
 				NULL);
-	      joxer_ec("sl:iheader", ratts);
+	      joxer_ec(&sl->iheaders[i].mloc, "sl:iheader", ratts);
 	    }
 	}
     }
   else if (p == sx_pos_term)
     {
-      joxer_ee("sl:signlist");
+      joxer_ee(&sl->eloc, "sl:signlist");
       hash_free(xidseen, NULL);
     }
 }
@@ -131,6 +134,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 static void
 sx_w_jx_group(struct sx_functions *f, struct sl_signlist *sl, struct sl_group *g, enum sx_pos_e p)
 {
+#if 0
   if (slgroups)
     {
       static int in_group = 0;
@@ -150,11 +154,13 @@ sx_w_jx_group(struct sx_functions *f, struct sl_signlist *sl, struct sl_group *g
 	  in_group = 0;
 	}
     }
+#endif
 }
 
 static void
 sx_w_jx_letter(struct sx_functions *f, struct sl_signlist *sl, struct sl_letter *l, enum sx_pos_e p)
 {
+#if 0
   static int in_letter = 0;
   
   if (p == sx_pos_inst)
@@ -179,11 +185,13 @@ sx_w_jx_letter(struct sx_functions *f, struct sl_signlist *sl, struct sl_letter 
 	joxer_ee("sl:letter");
       in_letter = 0;
     }
+#endif
 }
 
 static void
 sx_w_jx_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 {
+#if 0
   int skip_tle = 0;
   if (ip->type == 's')
     skip_tle = (ip->u.s->type == sx_tle_componly
@@ -225,8 +233,10 @@ sx_w_jx_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *i
 	    }
 	}
     }
+#endif
 }
 
+#if 0
 static void
 sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
 {
@@ -246,10 +256,12 @@ sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
       joxer_ee("sl:aka");
     }
 }
+#endif
 
 static void
 sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, enum sx_pos_e p)
 {
+#if 0
   static int in_form = 0;
 
   if (p == sx_pos_inst)
@@ -343,12 +355,14 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
       if (in_form)
 	joxer_ee("sl:form");
       in_form = 0;
-    }  
+    }
+#endif
 }
 
 static void
 sx_w_jx_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 {
+#if 0
   if (ip && !ip->inherited && ip->sys)
     {
       struct sl_sys *sp;
@@ -364,11 +378,13 @@ sx_w_jx_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 	  joxer_ee("sl:sys");
 	}
     }
+#endif
 }
 
 static void
 sx_w_jx_ivalue(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, enum sx_pos_e p)
 {
+#if 0
   static int in_value = 0;
   
   if (p == sx_pos_init)
@@ -397,12 +413,14 @@ sx_w_jx_ivalue(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v
 	joxer_ee("sl:iv");
       in_value = 0;
       joxer_ee("sl:inherited");
-    }      
+    }
+#endif
 }
 
 static void
 sx_w_jx_list(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *l, enum sx_pos_e p)
 {
+#if 0
   if (p == sx_pos_inst)
     {
       char scode[32];
@@ -410,11 +428,13 @@ sx_w_jx_list(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *l, 
       ratts = rnvval_aa("x", "n", l->u.l->name, "sort", scode, NULL);
       joxer_ec("sl:list", ratts);
     }
+#endif
 }
 
 static void
 sx_w_jx_notes(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 {
+#if 0
   struct sl_note *np;
   if (ip && ip->notes)
     for (np = list_first(ip->notes); np; np = list_next(ip->notes))
@@ -426,11 +446,13 @@ sx_w_jx_notes(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip
 	  xtag = "sl:lit";
 	joxer_et(xtag, NULL, (ccp)xmlify((uccp)np->txt));
       }
+#endif
 }
 
 static void
 sx_w_jx_qvs(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *vi, enum sx_pos_e p)
 {
+#if 0
   static int in_qs = 0;
   if (p == sx_pos_init)
     {
@@ -472,8 +494,10 @@ sx_w_jx_qvs(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *vi, 
 	joxer_ee("sl:qs");
       in_qs = 0;
     }
+#endif
 }
 
+#if 0
 static const char *
 x_tle_tag(enum sx_tle t)
 {
@@ -492,8 +516,11 @@ x_tle_tag(enum sx_tle t)
     default:
       return NULL;
     }
+  return NULL;
 }
+#endif  
 
+#if 0
 static unsigned char *
 x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s)
 {
@@ -531,14 +558,16 @@ x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s)
 	      s->type == 's' ? s->u.s->name : s->u.f->name);
   return NULL;
 }
+#endif
 
+#if 0
 static struct rnvval_atts *
 x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
 {
+  struct rnvval_atts *ratts = NULL;
   List *a = list_create(LIST_SINGLE);
   const char **atts = NULL;
   static char scode[32];
-  struct rnvval_atts *ratts = NULL;
 
   list_add(a, "n");
   list_add(a, (void*)xmlify(s->u.s->name));
@@ -571,12 +600,14 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
   list_free(a, NULL);
   return ratts;
 }
+#endif
 
 /** Because this is called when walking groups->signs \c sl_inst*s here can be a sign or form inst
  */
 static void
 sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, enum sx_pos_e p)
 {
+#if 0
   static const char *in_sign = 0;
 
   if (p == sx_pos_inst)
@@ -623,11 +654,13 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	  in_sign = NULL;
 	}
     }
+#endif
 }
 
 static void
 sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, enum sx_pos_e p)
 {
+#if 0
   static int in_value = 0;
   
   if (p == sx_pos_inst)
@@ -658,12 +691,14 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
       if (in_value)
 	joxer_ee("sl:v");
       in_value = 0;
-    }      
+    }
+#endif
 }
 
 static void
 sx_w_jx_unicode(struct sx_functions *f, struct sl_signlist *sl, struct sl_unicode *up)
 {
+#if 0
   if (up->uname)
     joxer_et("sl:uname", NULL, up->uname);
   if (up->uhex || up->useq)
@@ -678,4 +713,5 @@ sx_w_jx_unicode(struct sx_functions *f, struct sl_signlist *sl, struct sl_unicod
     }
   if (up->urev)
     joxer_et("sl:uage", NULL, up->urev);
+#endif
 }

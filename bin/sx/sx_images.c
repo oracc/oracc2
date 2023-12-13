@@ -31,6 +31,7 @@ sx_images(struct sl_signlist *sl)
 	  sprintf(buf, "i%d", nm);
 	  sl->iheaders[nm].r = mr;
 	  sl->iheaders[nm].id = (ccp)pool_copy((uccp)buf, sl->p);
+	  sl->iheaders[nm].mloc = *m;
 	  if (mr)
 	    {
 	      int i;
