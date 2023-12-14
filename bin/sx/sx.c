@@ -205,7 +205,9 @@ main(int argc, char * const*argv)
 	{
 	  FILE *jfp = jsn_output ? fopen("sl.jsn", "w") : NULL;
 	  FILE *xfp = xml_output ? fopen("sl.xml", "w") : NULL;
-	  
+
+	  jox_jsn_output(jfp);
+	  jox_xml_output(xfp);
 	  joxer_init(&asl_data, "asl", validate, xfp, jfp);	  
 	  sx_walk(sx_w_jox_init(), sl);
 	}

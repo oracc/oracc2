@@ -3,6 +3,12 @@
 
 static FILE *f_xml;
 
+void
+jox_xml_output(FILE *fp)
+{
+  f_xml = fp;
+}
+
 /* ch must already have been put through xmlify to pass validation */
 void
 jox_xml_ch(const char *ch)

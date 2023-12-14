@@ -29,4 +29,7 @@ extern void jox_xml_ee(const char *pname);
 
 extern void joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *jsn);
 
+extern void jox_jsn_output(FILE *fp);
+extern void jox_xml_output(FILE *fp);
+
 #endif/*JOXER_*/

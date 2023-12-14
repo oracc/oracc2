@@ -4,6 +4,12 @@
 static FILE *f_jsn;
 
 void
+jox_jsn_output(FILE *fp)
+{
+  f_jsn = fp;
+}
+
+void
 jox_jsn_ch(const char *ch)
 {
   fputs((ccp)jsonify((ucp)ch),f_jsn);
@@ -46,6 +52,7 @@ jox_jsn_ao(void)
 {
   jw_array_o();
 }
+
 void
 jox_jsn_ac(void)
 {
