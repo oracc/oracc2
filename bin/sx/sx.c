@@ -210,6 +210,7 @@ main(int argc, char * const*argv)
 	  jox_xml_output(xfp);
 	  joxer_init(&asl_data, "asl", validate, xfp, jfp);	  
 	  sx_walk(sx_w_jox_init(), sl);
+	  joxer_term(xfp,jfp);
 	}
     }
   

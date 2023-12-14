@@ -68,7 +68,7 @@ jox_verror_handler(int erno,va_list ap)
     }
 }
 
-void (*joxer_ao)(void);
+void (*joxer_ao)(const char *name);
 void (*joxer_ac)(void);
 void (*joxer_ch)(Mloc *mp, const char *ch);
 void (*joxer_ea)(Mloc *mp, const char *pname, Rats *ratts);
@@ -77,9 +77,9 @@ void (*joxer_ec)(Mloc *mp, const char *pname, Rats *ratts);
 void (*joxer_et)(Mloc *mp, const char *pname, Rats *ratts, const char *ch);
 
 static void
-joxer_ao_vxj(void)
+joxer_ao_vxj(const char *name)
 {
-  jox_jsn_ao();
+  jox_jsn_ao(name);
 }
 
 static void
@@ -130,9 +130,15 @@ joxer_ec_vxj(Mloc *mp, const char *pname, Rats *ratts)
 static void
 joxer_et_vxj(Mloc *mp, const char *pname, Rats *ratts, const char *ch)
 {
-  joxer_ea_vxj(mp, pname, ratts);
-  joxer_ch_vxj(mp, ch);
-  joxer_ee_vxj(mp, pname);
+  const char *xch = (ccp)xmlify((ucp)ch);
+  joxer_mloc(mp);
+  rnvval_ea(pname, ratts);
+  rnvval_ch(xch);
+  rnvval_ee(pname);
+  jox_xml_ea(pname, ratts);
+  jox_xml_ch(xch);
+  jox_xml_ee(pname);
+  jox_jsn_et(pname, ratts, ch);
   if (ratts)
     rnvval_free_atts(ratts);
 }
@@ -216,6 +222,7 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
     {
       jsn_xmlns_atts = xdp->nstab;
       jw_init(jsn);
+      /*jw_object_o();*/
     }
 
   if (val && xml && jsn)
@@ -234,4 +241,14 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
     joxer_set_j();
   else
     ; /* no validation or output */
+}
+
+void
+joxer_term(FILE *xfp, FILE *jfp)
+{
+  if (jfp)
+    {
+      /*jw_object_c();*/
+      jw_term();
+    }
 }

@@ -69,6 +69,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
     if (p == sx_pos_init)
     {
       ratts = rnvval_aa("x", "project", sl->project, "signlist", sl->signlist, NULL);
+
       joxer_ea(&sl->mloc, "sl:signlist", ratts);
       xidseen = hash_create(1024);
       
@@ -77,6 +78,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
       const char **n = hash_keys2(sl->listdefs, &nn);
       qsort(n, nn, sizeof(const char *), cmpstringp);
 
+      joxer_ao("j:listdefs");
       for (i = 0; i < nn; ++i)
 	{
 	  struct sl_listdef *ldp = hash_find(sl->listdefs, (uccp)n[i]);
@@ -86,9 +88,11 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	  sx_w_jx_notes(f, sl, &ldp->inst);
 	  joxer_ee(&ldp->inst.mloc, "sl:listdef");
 	}
+      joxer_ac();
 
       n = hash_keys2(sl->sysdefs, &nn);
       qsort(n, nn, sizeof(const char *), cmpstringp);
+      joxer_ao("j:sysdefs");
       for (i = 0; i < nn; ++i)
 	{
 	  struct sl_sysdef *sdp = hash_find(sl->sysdefs, (uccp)n[i]);
@@ -99,6 +103,8 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	  sx_w_jx_notes(f, sl, &sdp->inst);
 	  joxer_ee(&sdp->inst.mloc, "sl:sysdef");
 	}
+      joxer_ac();
+      joxer_ao("j:iheaders");
       if (sl->iheaders)
 	{
 	  for (i = 0; i < list_len(sl->images); ++i)
@@ -115,6 +121,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	      joxer_ec(&sl->iheaders[i].mloc, "sl:iheader", ratts);
 	    }
 	}
+      joxer_ac();
     }
   else if (p == sx_pos_term)
     {
