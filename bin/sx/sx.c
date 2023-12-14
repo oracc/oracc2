@@ -7,7 +7,11 @@
 #include <json.h>
 #include <xml.h>
 #include <asl.h>
+#include <ns-asl.h>
 #include <gdl.h>
+#include <joxer.h>
+#include <rnvif.h>
+#include <rnvxml.h>
 #include <oraccsys.h>
 #include <oracclocale.h>
 #include "sx.h"
@@ -37,6 +41,7 @@ int syss_dump = 0;
 int tree_output = 0;
 int unicode_table = 0;
 int xml_output = 0;
+int validate = 1;
 
 extern int asl_raw_tokens; /* ask asl to produce list of @sign/@form/@v tokens */
 extern int ctrace;
@@ -193,14 +198,17 @@ main(int argc, char * const*argv)
       if (asl_output)
 	sx_walk(sx_w_asl_init(stdout, "-"), sl);
 
-      if (jsn_output)
-	sx_walk(sx_w_jsn_init(stdout, "-"), sl);
-	
       if (sll_output)
 	sx_s_sll(sllout, sl);
-      
-      if (xml_output)
-	sx_walk(sx_w_xml_init(stdout, "_"), sl);
+
+      if (validate || xml_output || jsn_output)
+	{
+	  FILE *jfp = jsn_output ? fopen("sl.jsn", "w") : NULL;
+	  FILE *xfp = xml_output ? fopen("sl.xml", "w") : NULL;
+	  
+	  joxer_init(&asl_data, "asl", validate, xfp, jfp);	  
+	  sx_walk(sx_w_jox_init(), sl);
+	}
     }
   
   gdl_term();
@@ -282,6 +290,12 @@ opts(int opt, char *arg)
       break;
     case 'x':
       xml_output = 1;
+      break;
+    case 'v':
+      validate = 1;
+      break;
+    case 'V':
+      validate = 0;
       break;
     case '?':
       help();

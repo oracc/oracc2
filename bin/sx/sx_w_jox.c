@@ -1,8 +1,5 @@
 #include <list.h>
 #include <xml.h>
-#include <ns-asl.h>
-#include <rnvif.h>
-#include <rnvxml.h>
 #include <gdl.h>
 #include <signlist.h>
 #include <oraccsys.h>
@@ -35,13 +32,8 @@ static sx_unicode_f sx_w_jx_unicode;
 struct sx_functions sx_w_jox_fncs;
 
 struct sx_functions *
-sx_w_jox_init(FILE *fp, const char *fname)
+sx_w_jox_init(void)
 {
-  FILE *jfp = fopen("sl.jsn", "w");
-  FILE *xfp = fopen("sl.xml", "w");
-  
-  joxer_init(&asl_data, "asl", 1, xfp, jfp);
-
   sx_w_jox_fncs.sll = sx_w_jx_signlist;
   sx_w_jox_fncs.let = sx_w_jx_letter;
   sx_w_jox_fncs.grp = sx_w_jx_group;
@@ -55,8 +47,8 @@ sx_w_jox_init(FILE *fp, const char *fname)
   sx_w_jox_fncs.img = sx_w_jx_images;
   sx_w_jox_fncs.uni = sx_w_jx_unicode;
   sx_w_jox_fncs.qvs = sx_w_jx_qvs;
-  sx_w_jox_fncs.fp = fp;
-  sx_w_jox_fncs.fname = fname;
+  sx_w_jox_fncs.fp = NULL;
+  sx_w_jox_fncs.fname = NULL;
   return &sx_w_jox_fncs;
 }
 

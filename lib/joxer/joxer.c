@@ -189,17 +189,22 @@ joxer_set_j(void)
 void
 joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *jsn)
 {
-  rnvval_init_err(jox_verror_handler);
-  rnvif_init();
-
+  int rnv_initialized = 0;
+ 
   if (val)
     {
+      rnvif_init();
+      rnv_initialized = 1;
+      rnvval_init_err(jox_verror_handler);
       rnvval_init(xdp, rncbase);
       rnv_validate_start();
     }
   
   if (xml)
     {
+      if (!rnv_initialized++)
+	rnvif_init();
+      rnvxml_init_err();
       f_xml = xml;
       xml_xmlns_atts = xdp->nstab;
       xgi_pool = pool_init();
