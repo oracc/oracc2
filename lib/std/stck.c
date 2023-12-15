@@ -12,6 +12,12 @@ stck_extend(Stck *s)
     s->stack[t] = 0;
 }
 
+int
+stck_len(Stck *s)
+{
+  return s->top;
+}
+
 uintptr_t
 stck_pop(Stck *s)
 {

@@ -402,12 +402,11 @@ sx_w_jx_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 static void
 sx_w_jx_ivalue(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, enum sx_pos_e p)
 {
-#if 0
   static int in_value = 0;
   
   if (p == sx_pos_init)
     {
-      joxer_eaaa(&v->mloc, "sl:inherited", NULL);
+      joxer_eaaa(NULL, "sl:inherited", NULL);
     }
   else if (p == sx_pos_inst)
     {
@@ -428,11 +427,10 @@ sx_w_jx_ivalue(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v
   if (p == sx_pos_term)
     {
       if (in_value)
-	joxer_ee(&v->mloc, "sl:iv");
+	joxer_ee(NULL, "sl:iv");
       in_value = 0;
-      joxer_eeaa(&v->mloc, "sl:inherited");
+      joxer_eeaa(NULL, "sl:inherited");
     }
-#endif
 }
 
 static void
@@ -674,10 +672,11 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 static void
 sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, enum sx_pos_e p)
 {
-#if 0
   static int in_value = 0;
-  
-  if (p == sx_pos_inst)
+
+  if (p == sx_pos_init)
+    joxer_ao("j:values");
+  else if (p == sx_pos_inst)
     {
       if (!v->inherited && !v->u.v->atf)
 	{
@@ -687,26 +686,26 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  tp = hash_find(sl->htoken, v->u.v->name);
 	  
 	  if (in_value)
-	    joxer_ee("sl:v");
+	    joxer_ee(&v->mloc, "sl:v");
 	  else
 	    in_value = 1;
 	  if (v->lang)
 	    ratts = rnvval_aa("x", "n", v->u.v->name, "xml:lang", v->lang, "sort", scode, NULL);
 	  else
 	    ratts = rnvval_aa("x", "n", v->u.v->name, "sort", scode, NULL);
-	  joxer_ea("sl:v", ratts);
-	  joxer_eaa("sl:name", NULL);
+	  joxer_ea(&v->mloc, "sl:v", ratts);
+	  joxer_eaa(&v->mloc, "sl:name", NULL);
 	  grx_xml(tp->gdl, "g:w");
-	  joxer_eea("sl:name");
+	  joxer_eea(&v->mloc, "sl:name");
 	}
     }
-  if (p == sx_pos_term)
+  else
     {
       if (in_value)
-	joxer_ee("sl:v");
+	joxer_ee(&v->mloc, "sl:v");
       in_value = 0;
+      joxer_ac();
     }
-#endif
 }
 
 static void

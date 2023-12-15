@@ -17,5 +17,6 @@ extern uintptr_t stck_pop(Stck *s);
 extern void stck_push(Stck *s, uintptr_t tok);
 extern Stck *stck_init(int nalloc);
 extern void stck_term(Stck *s);
+extern int stck_len(Stck *s);
 
 #endif/*STCK_H*/

@@ -152,6 +152,29 @@ joxer_eea_vxj(Mloc *mp, const char *pname)
 }
 
 static void
+joxer_eaaa_vxj(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  rnvval_ea(pname, rats);
+  jox_xml_ea(pname, rats);
+  jox_jsn_eaaa(pname, rats);
+  if (ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eeaa_vxj(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  rnvval_ee(pname);
+  jox_xml_ee(pname);
+  jox_jsn_eeaa(pname);
+}
+
+static void
 joxer_ec_vxj(Mloc *mp, const char *pname, Rats *rats)
 {
   joxer_ea_vxj(mp, pname, rats);
@@ -208,6 +231,8 @@ joxer_set_vxj(void)
   joxer_ee = joxer_ee_vxj;
   joxer_eaa = joxer_eaa_vxj;
   joxer_eea = joxer_eea_vxj;
+  joxer_eaaa = joxer_eaaa_vxj;
+  joxer_eeaa = joxer_eeaa_vxj;
   joxer_ec = joxer_ec_vxj;
   joxer_et = joxer_et_vxj;
   joxer_eto = joxer_eto_vxj;
