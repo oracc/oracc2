@@ -266,9 +266,9 @@ sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
       if (!msp->user) /* AKA has literal flag stored in user */
 	{
 	  struct sl_token *tp = hash_find(sl->htoken, msp->s);
-	  joxer_eaa(&msp->m, "sl:name", NULL);
-	  grx_xml(tp->gdl, "g:w");
-	  joxer_eea(&msp->m, "sl:name");
+	  joxer_eaaa(&msp->m, "sl:name", NULL);
+	  grx_jox(tp->gdl, "g:w");
+	  joxer_eeaa(&msp->m, "sl:name");
 	}
       joxer_ee(&msp->m, "sl:aka");
     }
@@ -337,9 +337,9 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
 	      list_free(a, NULL);
 	      joxer_ea(&s->mloc, "sl:form", ratts);
-	      joxer_eaa(&s->mloc, "sl:name", NULL);
-	      grx_xml(tp->gdl, "g:w");
-	      joxer_eea(&s->mloc, "sl:name");
+	      joxer_eaaa(&s->mloc, "sl:name", NULL);
+	      grx_jox(tp->gdl, "g:w");
+	      joxer_eeaa(&s->mloc, "sl:name");
 	      joxer_ee(&s->eloc, "sl:form");
 	      /* don't set in_form here */
 	    }
@@ -359,9 +359,9 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 		}
 	      ratts = rnvval_aa("x", "n", s->u.f->name, id_or_ref, s->u.f->oid ? s->u.f->oid : "", "sort", scode, NULL);
 	      joxer_ea(&s->mloc, "sl:form", ratts);
-	      joxer_eaa(&s->mloc, "sl:name", NULL);
-	      grx_xml(tp->gdl, "g:w");
-	      joxer_eea(&s->mloc, "sl:name");
+	      joxer_eaaa(&s->mloc, "sl:name", NULL);
+	      grx_jox(tp->gdl, "g:w");
+	      joxer_eeaa(&s->mloc, "sl:name");
 	      if (s->u.f->aka && list_len(s->u.f->aka))
 		sx_w_jx_aka(f, sl, s->u.f->aka);
 	      in_form = 1;
@@ -642,9 +642,9 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	    }
 	  if (tp && tp->gdl)
 	    {
-	      joxer_eaa(&s->mloc, "sl:name", NULL);
-	      grx_xml(tp->gdl, "g:w");
-	      joxer_eea(&s->mloc, "sl:name");
+	      joxer_eaaa(&s->mloc, "sl:name", NULL);
+	      grx_jox(tp->gdl, "g:w");
+	      joxer_eeaa(&s->mloc, "sl:name");
 	    }
 	  if (s->u.s->aka && list_len(s->u.s->aka))
 	    sx_w_jx_aka(f, sl, s->u.s->aka);
@@ -692,9 +692,9 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  else
 	    ratts = rnvval_aa("x", "n", v->u.v->name, "sort", scode, NULL);
 	  joxer_ea(&v->mloc, "sl:v", ratts);
-	  joxer_eaa(&v->mloc, "sl:name", NULL);
-	  grx_xml(tp->gdl, "g:w");
-	  joxer_eea(&v->mloc, "sl:name");
+	  joxer_eaaa(&v->mloc, "sl:name", NULL);
+	  grx_jox(tp->gdl, "g:w");
+	  joxer_eeaa(&v->mloc, "sl:name");
 	}
     }
   else

@@ -35,6 +35,7 @@ int gdl_c10e_mode = 1;
 int gdl_one_off_mode = 0;
 int gsort_mode = 0;
 int identity_mode = 0;
+int json_mode = 0;
 int ns_output = 0;
 int pedantic = 0;
 const char *project = "ogsl"; /* use the signlist found in this project */
@@ -202,6 +203,8 @@ main(int argc, char **argv)
       rnvxml_init(&asl_data, "gdl");
       gdlxml_rnv_setup();
     }
+  else if (json_mode)
+    gdljsn_setup();
   else
     gdlxml_setup();
   if (!strcmp(project, "pctc"))
@@ -274,6 +277,9 @@ opts(int opt, char *arg)
       break;
     case 'i':
       identity_mode = 1;
+      break;
+    case 'j':
+      json_mode = 1;
       break;
     case 'l':
       gdl_legacy = 1;

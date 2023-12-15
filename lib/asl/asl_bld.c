@@ -373,13 +373,14 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
 	    else
 	      *dest++ = *src++;
 	  *dest = '\0';
-	  letter = group = tmp;
+	  letter = (ucp)tmp;
+	  group = (ucp)tmp;
 	}
 
       char *lname = NULL;
       if (code == -1)
 	{
-	  lname = pool_copy(letter, sl->p);
+	  lname = (char*)pool_copy(letter, sl->p);
 	  *letter = '0';
 	  *group = '0';
 	}
@@ -401,7 +402,7 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
 	    sprintf(id, "ln%04d", ++nth_num_letter);
 	  else
 	    sprintf(id, "l%04d", lp->code);
-	  lp->xmlid = pool_copy(id, sl->p);
+	  lp->xmlid = (ccp)pool_copy((uccp)id, sl->p);
 	  lp->hgroups = hash_create(32);
 	}
       else if (code == -1)
@@ -1020,7 +1021,7 @@ asl_bld_sys(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned co
     mesg_verr(locp, "misplaced @sys: must belong to @sign or @form");
   if (ip)
     {
-      char *xsysname = pool_copy(sysname, sl->p);
+      char *xsysname = (char*)pool_copy((uccp)sysname, sl->p);
       char *subname = strchr(xsysname, ':');
       if (subname)
 	*subname++ = '\0';

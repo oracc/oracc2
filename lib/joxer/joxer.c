@@ -112,7 +112,7 @@ joxer_ea_vxj(Mloc *mp, const char *pname, Rats *rats)
   rnvval_ea(pname, rats);
   jox_xml_ea(pname, rats);
   jox_jsn_ea(pname, rats);
-  if (rats)
+  if (rats && ratts)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -135,7 +135,7 @@ joxer_eaa_vxj(Mloc *mp, const char *pname, Rats *rats)
   rnvval_ea(pname, rats);
   jox_xml_ea(pname, rats);
   jox_jsn_eaa(pname, rats);
-  if (rats)
+  if (rats && ratts)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -158,7 +158,7 @@ joxer_eaaa_vxj(Mloc *mp, const char *pname, Rats *rats)
   rnvval_ea(pname, rats);
   jox_xml_ea(pname, rats);
   jox_jsn_eaaa(pname, rats);
-  if (rats)
+  if (rats && ratts)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -193,7 +193,7 @@ joxer_et_vxj(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   jox_xml_ch(xch);
   jox_xml_ee(pname);
   jox_jsn_et(pname, rats, ch);
-  if (rats)
+  if (rats && ratts)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -212,7 +212,7 @@ joxer_eto_vxj(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   jox_xml_ch(xch);
   jox_xml_ee(pname);
   jox_jsn_eto(pname, rats, ch);
-  if (rats)
+  if (rats && ratts)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
