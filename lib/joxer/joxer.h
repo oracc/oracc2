@@ -14,15 +14,25 @@ extern void (*joxer_ac)(void);
 extern void (*joxer_ch)(Mloc *mp, const char *ch);
 extern void (*joxer_ea)(Mloc *mp, const char *pname, Rats *ratts);
 extern void (*joxer_ee)(Mloc *mp, const char *pname);
+extern void (*joxer_eaa)(Mloc *mp, const char *pname, Rats *ratts);
+extern void (*joxer_eea)(Mloc *mp, const char *pname);
+extern void (*joxer_eaaa)(Mloc *mp, const char *pname, Rats *ratts);
+extern void (*joxer_eeaa)(Mloc *mp, const char *pname);
 extern void (*joxer_ec)(Mloc *mp, const char *pname, Rats *ratts);
 extern void (*joxer_et)(Mloc *mp, const char *pname, Rats *ratts, const char *ch);
+extern void (*joxer_eto)(Mloc *mp, const char *pname, Rats *ratts, const char *ch);
 
 extern void jox_jsn_ch(const char *ch);
 extern void jox_jsn_ea(const char *pname, Rats *ratts);
 extern void jox_jsn_ee(const char *pname);
+extern void jox_jsn_eaa(const char *pname, Rats *ratts);
+extern void jox_jsn_eea(const char *pname);
+extern void jox_jsn_eaaa(const char *pname, Rats *ratts);
+extern void jox_jsn_eeaa(const char *pname);
 extern void jox_jsn_ao(const char *name);
 extern void jox_jsn_ac(void);
 extern void jox_jsn_et(const char *pname, Rats *ratts, const char *ch);
+extern void jox_jsn_eto(const char *pname, Rats *ratts, const char *ch);
 
 extern void jox_xml_ch(const char *ch);
 extern void jox_xml_ea(const char *pname, Rats *ratts);

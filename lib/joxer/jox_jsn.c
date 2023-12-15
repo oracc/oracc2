@@ -50,6 +50,76 @@ jox_jsn_ee(const char *pname)
 }
 
 void
+jox_jsn_eaa(const char *pname, Rats *ratts)
+{
+  int i;
+  jw_member(pname);
+  jw_object_o();
+  if (jsn_xmlns_atts)
+    {
+      int i;
+      for (i = 0; jsn_xmlns_atts[i].ns; ++i)
+	{
+	  jw_member(jsn_xmlns_atts[i].ns);
+	  jw_string(jsn_xmlns_atts[i].uri);
+	}
+      jsn_xmlns_atts = NULL;
+    }
+
+  if (ratts)
+    for (i = 0; ratts->atts[i]; i+=2)
+      {
+	jw_member(ratts->atts[i]);
+	jw_string(ratts->atts[i+1]);
+      }
+}
+
+void
+jox_jsn_eea(const char *pname)
+{
+  jw_object_c();
+}
+
+void
+jox_jsn_eaaa(const char *pname, Rats *ratts)
+{
+  int i;
+  jw_member(pname);
+  jw_array_o();
+  if (jsn_xmlns_atts)
+    {
+      int i;
+      for (i = 0; jsn_xmlns_atts[i].ns; ++i)
+	{
+	  jw_member(jsn_xmlns_atts[i].ns);
+	  jw_string(jsn_xmlns_atts[i].uri);
+	}
+      jsn_xmlns_atts = NULL;
+    }
+
+  if (ratts)
+    for (i = 0; ratts->atts[i]; i+=2)
+      {
+	jw_member(ratts->atts[i]);
+	jw_string(ratts->atts[i+1]);
+      }
+}
+
+void
+jox_jsn_eeaa(const char *pname)
+{
+  jw_array_c();
+}
+
+void
+jox_jsn_eto(const char *pname, Rats *ratts, const char *ch)
+{
+  jw_object_o();
+  jox_jsn_et(pname, ratts, ch);
+  jw_object_c();
+}
+
+void
 jox_jsn_et(const char *pname, Rats *ratts, const char *ch)
 {
   int i;

@@ -190,6 +190,7 @@ struct sl_inst
   List *sys;			/* A list of @sys in a sign or form */
   const char *lang; 	  	/* this is inline in the @v; an x-value could have a lang with one sign but not another */
   Mloc mloc;
+  Mloc eloc;			/* Mloc for @end sign or @@ */
   Boolean valid; /* doesn't have a - after it */
   Boolean inherited;
   Boolean literal;
