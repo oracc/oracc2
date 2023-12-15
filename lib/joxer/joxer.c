@@ -73,15 +73,15 @@ jox_verror_handler(int erno,va_list ap)
 void (*joxer_ao)(const char *name);
 void (*joxer_ac)(void);
 void (*joxer_ch)(Mloc *mp, const char *ch);
-void (*joxer_ea)(Mloc *mp, const char *pname, Rats *ratts);
+void (*joxer_ea)(Mloc *mp, const char *pname, Rats *rats);
 void (*joxer_ee)(Mloc *mp, const char *pname);
-void (*joxer_eaa)(Mloc *mp, const char *pname, Rats *ratts);
+void (*joxer_eaa)(Mloc *mp, const char *pname, Rats *rats);
 void (*joxer_eea)(Mloc *mp, const char *pname);
-void (*joxer_eaaa)(Mloc *mp, const char *pname, Rats *ratts);
+void (*joxer_eaaa)(Mloc *mp, const char *pname, Rats *rats);
 void (*joxer_eeaa)(Mloc *mp, const char *pname);
-void (*joxer_ec)(Mloc *mp, const char *pname, Rats *ratts);
-void (*joxer_et)(Mloc *mp, const char *pname, Rats *ratts, const char *ch);
-void (*joxer_eto)(Mloc *mp, const char *pname, Rats *ratts, const char *ch);
+void (*joxer_ec)(Mloc *mp, const char *pname, Rats *rats);
+void (*joxer_et)(Mloc *mp, const char *pname, Rats *rats, const char *ch);
+void (*joxer_eto)(Mloc *mp, const char *pname, Rats *rats, const char *ch);
 
 static void
 joxer_ao_vxj(const char *name)
@@ -112,7 +112,7 @@ joxer_ea_vxj(Mloc *mp, const char *pname, Rats *rats)
   rnvval_ea(pname, rats);
   jox_xml_ea(pname, rats);
   jox_jsn_ea(pname, rats);
-  if (ratts)
+  if (rats)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -135,7 +135,7 @@ joxer_eaa_vxj(Mloc *mp, const char *pname, Rats *rats)
   rnvval_ea(pname, rats);
   jox_xml_ea(pname, rats);
   jox_jsn_eaa(pname, rats);
-  if (ratts)
+  if (rats)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -158,7 +158,7 @@ joxer_eaaa_vxj(Mloc *mp, const char *pname, Rats *rats)
   rnvval_ea(pname, rats);
   jox_xml_ea(pname, rats);
   jox_jsn_eaaa(pname, rats);
-  if (ratts)
+  if (rats)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -179,11 +179,6 @@ joxer_ec_vxj(Mloc *mp, const char *pname, Rats *rats)
 {
   joxer_ea_vxj(mp, pname, rats);
   joxer_ee_vxj(mp, pname);
-  if (ratts)
-    {
-      rnvval_free_atts(ratts);
-      ratts = NULL;
-    }
 }
 
 static void
@@ -198,7 +193,7 @@ joxer_et_vxj(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   jox_xml_ch(xch);
   jox_xml_ee(pname);
   jox_jsn_et(pname, rats, ch);
-  if (ratts)
+  if (rats)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;
@@ -217,7 +212,7 @@ joxer_eto_vxj(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   jox_xml_ch(xch);
   jox_xml_ee(pname);
   jox_jsn_eto(pname, rats, ch);
-  if (ratts)
+  if (rats)
     {
       rnvval_free_atts(ratts);
       ratts = NULL;

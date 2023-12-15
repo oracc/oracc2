@@ -1,3 +1,4 @@
+
 #include <joxer.h>
 #include <stck.h>
 #include <json.h>
@@ -19,7 +20,7 @@ jox_jsn_ch(const char *ch)
 }
 
 void
-jox_jsn_ea(const char *pname, Rats *ratts)
+jox_jsn_ea(const char *pname, Rats *rats)
 {
   int i;
   jw_object_o();
@@ -36,11 +37,11 @@ jox_jsn_ea(const char *pname, Rats *ratts)
       jsn_xmlns_atts = NULL;
     }
 
-  if (ratts)
-    for (i = 0; ratts->atts[i]; i+=2)
+  if (rats)
+    for (i = 0; rats->atts[i]; i+=2)
       {
-	jw_member(ratts->atts[i]);
-	jw_string(ratts->atts[i+1]);
+	jw_member(rats->atts[i]);
+	jw_string(rats->atts[i+1]);
       }
 }
 
@@ -52,7 +53,7 @@ jox_jsn_ee(const char *pname)
 }
 
 void
-jox_jsn_eaa(const char *pname, Rats *ratts)
+jox_jsn_eaa(const char *pname, Rats *rats)
 {
   int i;
   jw_member(pname);
@@ -68,11 +69,11 @@ jox_jsn_eaa(const char *pname, Rats *ratts)
       jsn_xmlns_atts = NULL;
     }
 
-  if (ratts)
-    for (i = 0; ratts->atts[i]; i+=2)
+  if (rats)
+    for (i = 0; rats->atts[i]; i+=2)
       {
-	jw_member(ratts->atts[i]);
-	jw_string(ratts->atts[i+1]);
+	jw_member(rats->atts[i]);
+	jw_string(rats->atts[i+1]);
       }
 }
 
@@ -83,7 +84,7 @@ jox_jsn_eea(const char *pname)
 }
 
 void
-jox_jsn_eaaa(const char *pname, Rats *ratts)
+jox_jsn_eaaa(const char *pname, Rats *rats)
 {
   int i;
   jw_member(pname);
@@ -99,11 +100,11 @@ jox_jsn_eaaa(const char *pname, Rats *ratts)
       jsn_xmlns_atts = NULL;
     }
 
-  if (ratts)
-    for (i = 0; ratts->atts[i]; i+=2)
+  if (rats)
+    for (i = 0; rats->atts[i]; i+=2)
       {
-	jw_member(ratts->atts[i]);
-	jw_string(ratts->atts[i+1]);
+	jw_member(rats->atts[i]);
+	jw_string(rats->atts[i+1]);
       }
 }
 
@@ -114,23 +115,23 @@ jox_jsn_eeaa(const char *pname)
 }
 
 void
-jox_jsn_eto(const char *pname, Rats *ratts, const char *ch)
+jox_jsn_eto(const char *pname, Rats *rats, const char *ch)
 {
   jw_object_o();
-  jox_jsn_et(pname, ratts, ch);
+  jox_jsn_et(pname, rats, ch);
   jw_object_c();
 }
 
 void
-jox_jsn_et(const char *pname, Rats *ratts, const char *ch)
+jox_jsn_et(const char *pname, Rats *rats, const char *ch)
 {
   int i;
   jw_strmem(pname,ch);
-  if (ratts)
-    for (i = 0; ratts->atts[i]; i+=2)
+  if (rats)
+    for (i = 0; rats->atts[i]; i+=2)
       {
-	jw_member(ratts->atts[i]);
-	jw_string(ratts->atts[i+1]);
+	jw_member(rats->atts[i]);
+	jw_string(rats->atts[i+1]);
       }
 }
 

@@ -472,7 +472,6 @@ sx_w_jx_notes(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip
 static void
 sx_w_jx_qvs(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *vi, enum sx_pos_e p)
 {
-#if 0
   static int in_qs = 0;
   if (p == sx_pos_init)
     {
@@ -500,21 +499,20 @@ sx_w_jx_qvs(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *vi, 
 	ratts = rnvval_aa("x", "qv", qv, "o", o, NULL);
       else if (vi->u.v->qvform && vi->parent_f)
 	ratts = rnvval_aa("x", "qv", qv, "o", o, NULL);
-      if (ratts)
+      if (ratts && ratts->atts[1])
 	{
 	  if (!in_qs++)
-	    joxer_ea("sl:qs", NULL);
+	    joxer_eaaa(&vi->mloc,"sl:qs", NULL);
 
-	  joxer_ec("sl:q", ratts);
+	  joxer_ec(&vi->mloc,"sl:q", ratts);
 	}
     }
   if (p == sx_pos_term)
     {
       if (in_qs)
-	joxer_ee("sl:qs");
+	joxer_eeaa(&vi->mloc,"sl:qs");
       in_qs = 0;
     }
-#endif
 }
 
 static const char *
