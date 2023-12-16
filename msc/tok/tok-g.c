@@ -46,7 +46,8 @@ sH(void *userData, const char *name, const char **atts)
     fprintf(tab, "W\t%s\n", get_xml_id(atts));
   else if (printing && (!strcmp(name, "g:c") || !strcmp(name, "g:q")))
     {
-      fprintf(tab, "g\t%s\t%s\n", findAttr(atts, "oid"), findAttr(atts, "form"));
+      fprintf(tab, "g\t%s\t%s\t%s\t%s\t%s\t%s\n",
+	      findAttr(atts, "oid"), "", "", "", name[2]=='q' ? "q" : "c", findAttr(atts, "form"));
       --printing;
     }
   else if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
@@ -65,7 +66,8 @@ eH(void *userData, const char *name)
     {
       char *g = (char*)charData_retrieve();
       if (g[1] || 'x' != g[0])
-	fprintf(tab, "g\t%s\t%s\n", last_oid, g);
+	fprintf(tab, "g\t%s\t%s\t%s\t%s\t%s\n",
+		last_oid, "", "", name[2]=='v' ? "v" : "s", g);
       *last_oid = '\0';
     }
   else if (!strcmp(name, "g:c") || !strcmp(name, "g:q"))
