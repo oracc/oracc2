@@ -256,7 +256,7 @@ runexpat_term(struct runinfo *rip)
   rip->charData_buflen = 0;
   if (rip->filenames_list)
     {
-      list_free(rip->filenames_list,list_xfree);
+      list_free(rip->filenames_list,NULL);
       rip->filenames_list = NULL;
     }
 }
