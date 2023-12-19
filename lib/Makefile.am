@@ -1,7 +1,7 @@
 include ../oracc-am-rules.txt
 
 SUBDIRS=asl atf cat cbd collate expat frm gdl gvl joxer jsn lng oid	\
-	rnc rnv sll std sys xml xpd
+	rnc rnv sll std sys tis xml xpd
 
 noinst_LTLIBRARIES=liboracc2.la
 

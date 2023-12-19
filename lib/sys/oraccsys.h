@@ -51,6 +51,8 @@ extern wchar_t*wcs_ucase(wchar_t*ws);
 extern wchar_t*wcs_undet(wchar_t*ws);
 extern unsigned char *sexify(int n, const char *aszdisz);
 
+extern int cmpstringp(const void *p1, const void *p2);
+
 extern uint32_t hex2int(char *hex);
 extern unsigned char *uhex2utf8(unsigned const char *uhex);
 
