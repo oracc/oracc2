@@ -195,16 +195,15 @@ sx_s_form(FILE *f, struct sl_form *s)
 	{
 	  for (j = 0; lp->values[j]; ++j)
 	    {
-	      if (lp->values[j]->parent_f)
-		{
-		  fprintf(f, "%s:%s;fvp\t%s\n",
-			  lp->values[j]->parent_f->u.f->oid,
-			  lp->values[j]->u.v->name,
-			  lp->values[j]->parent_s
-			  ? lp->values[j]->parent_s->u.s->oid
-			  : lp->values[j]->parent_f->parent_s->u.s->oid
-			  );
-		}
+	      const char *sp_oid =
+		lp->values[j]->parent_s
+		? lp->values[j]->parent_s->u.s->oid
+		: lp->values[j]->parent_f->parent_s->u.s->oid;
+	      fprintf(f, "%s:%s;fvp\t%s\n",
+		      s->oid,
+		      lp->values[j]->u.v->name,
+		      sp_oid
+		      );
 	    }
 	}
     }

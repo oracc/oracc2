@@ -14,6 +14,9 @@ struct gvl_g {
 				this is the c10e'd-sign+mods, e.g., GAN₂@t */
   unsigned const char *accn; /* grapheme passed through accnum--lazily done */
   const char *oid;  	     /* OID for sign */
+  const char *sp_oid;  	     /* OID for sign-parent ID, the parent of
+				the form in QV context; a(LAK797) has
+				sp_oid o0000087 (A) */
   unsigned const char *sign; /* sign name for OID; for a vq this is the canonical vq;
 			        when there are mods this is the sign+mods, e.g., GAN₂@t*/
   unsigned const char *utf8; /* UTF8 value for OID */

@@ -201,7 +201,7 @@ main(int argc, char * const*argv)
       if (sll_output)
 	sx_s_sll(sllout, sl);
 
-      if (validate || xml_output || jsn_output)
+      if (!sll_output && (validate || xml_output || jsn_output))
 	{
 	  FILE *jfp = jsn_output ? fopen("sl.jsn", "w") : NULL;
 	  FILE *xfp = xml_output ? fopen("sl.xml", "w") : NULL;

@@ -68,6 +68,8 @@ gdlxml_parsed(gvl_g *gp, void *user)
   fprintf(xhp->fp, "<c10e>%s</c10e>", xmlify(gp->c10e));
   fprintf(xhp->fp, "<sign>%s</sign>", xmlify(gp->sign));
   fprintf(xhp->fp, "<oid>%s</oid>", gp->oid);
+  if (gp->sp_oid)
+    fprintf(xhp->fp, "<sp_oid>%s</sp_oid>", gp->sp_oid);
   if (gp->deep)
     {
       fputs("<deep>", xhp->fp);

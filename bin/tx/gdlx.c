@@ -203,8 +203,10 @@ main(int argc, char **argv)
       rnvxml_init(&asl_data, "gdl");
       gdlxml_rnv_setup();
     }
+#if 0
   else if (json_mode)
     gdljsn_setup();
+#endif
   else
     gdlxml_setup();
   if (!strcmp(project, "pctc"))

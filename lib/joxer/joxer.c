@@ -235,40 +235,163 @@ joxer_set_vxj(void)
   joxer_ac = joxer_ac_vxj;
 }
 
+/*** joxer_v ***/
+static void
+joxer_ao_v(const char *name)
+{
+}
+
+static void
+joxer_ac_v(void)
+{
+}
+
+static void
+joxer_ch_v(Mloc *mp, const char *ch)
+{
+  joxer_mloc(mp);
+  const char *xch = (ccp)xmlify((ucp)ch);
+  rnvval_ch(xch);
+}
+
+static void
+joxer_ea_v(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  rnvval_ea(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_ee_v(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  rnvval_ee(pname);
+}
+
+static void
+joxer_eaa_v(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  rnvval_ea(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eea_v(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  rnvval_ee(pname);
+}
+
+static void
+joxer_eaaa_v(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  rnvval_ea(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eeaa_v(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  rnvval_ee(pname);
+}
+
+static void
+joxer_ec_v(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_ea_v(mp, pname, rats);
+  joxer_ee_v(mp, pname);
+}
+
+static void
+joxer_et_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
+{
+  const char *xch = (ccp)xmlify((ucp)ch);
+  joxer_mloc(mp);
+  rnvval_ea(pname, rats);
+  rnvval_ch(xch);
+  rnvval_ee(pname);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eto_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
+{
+  const char *xch = (ccp)xmlify((ucp)ch);
+  joxer_mloc(mp);
+  rnvval_ea(pname, rats);
+  rnvval_ch(xch);
+  rnvval_ee(pname);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
 static void
 joxer_set_vx(void)
 {
-  fprintf(stderr, "joxer selection not yet implemented. Stop\n");
+  fprintf(stderr, "joxer selection 'vx' not yet implemented. Stop\n");
   exit(1);
 }
 static void
 joxer_set_vj(void)
 {
-  fprintf(stderr, "joxer selection not yet implemented. Stop\n");
+  fprintf(stderr, "joxer selection 'vj' not yet implemented. Stop\n");
   exit(1);
 }
 static void
 joxer_set_v(void)
 {
-  fprintf(stderr, "joxer selection not yet implemented. Stop\n");
-  exit(1);
+  joxer_ch = joxer_ch_v;
+  joxer_ea = joxer_ea_v;
+  joxer_ee = joxer_ee_v;
+  joxer_eaa = joxer_eaa_v;
+  joxer_eea = joxer_eea_v;
+  joxer_eaaa = joxer_eaaa_v;
+  joxer_eeaa = joxer_eeaa_v;
+  joxer_ec = joxer_ec_v;
+  joxer_et = joxer_et_v;
+  joxer_eto = joxer_eto_v;
+  joxer_ao = joxer_ao_v;
+  joxer_ac = joxer_ac_v;
 }
 static void
 joxer_set_xj(void)
 {
-  fprintf(stderr, "joxer selection not yet implemented. Stop\n");
+  fprintf(stderr, "joxer selection 'xj' not yet implemented. Stop\n");
   exit(1);
 }
 static void
 joxer_set_x(void)
 {
-  fprintf(stderr, "joxer selection not yet implemented. Stop\n");
+  fprintf(stderr, "joxer selection 'x' not yet implemented. Stop\n");
   exit(1);
 }
 static void
 joxer_set_j(void)
 {
-  fprintf(stderr, "joxer selection not yet implemented. Stop\n");
+  fprintf(stderr, "joxer selection 'j' not yet implemented. Stop\n");
   exit(1);
 }
 
