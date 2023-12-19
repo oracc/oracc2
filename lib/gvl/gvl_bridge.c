@@ -32,6 +32,15 @@ gvl_bridge_oid(void)
     return NULL;
 }
 
+const char *
+gvl_bridge_spoid(void)
+{
+  if (gbgp)
+    return gbgp->sp_oid;
+  else
+    return NULL;
+}
+
 const unsigned char *
 gvl_bridge_signname(void)
 {
