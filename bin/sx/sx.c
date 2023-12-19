@@ -18,6 +18,7 @@
 
 Mloc *xo_loc;
 FILE *f_xml;
+
 const char *file;
 int quiet, verbose;
 int asltrace,rnvtrace;
@@ -53,6 +54,8 @@ extern int asl_flex_debug, gdl_flex_debug, gdl_unicode;
 
 const char *missing_lists = NULL;
 
+const char *jfn = NULL, *xfn = NULL;
+
 int
 main(int argc, char * const*argv)
 {
@@ -66,7 +69,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:ijm:nMoOsStTux?");
+  options(argc, argv, "abcCD:d:ijJ:m:nMoOsStTuxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (boot_mode)
@@ -203,8 +206,12 @@ main(int argc, char * const*argv)
 
       if (!sll_output && (validate || xml_output || jsn_output))
 	{
-	  FILE *jfp = jsn_output ? fopen("sl.jsn", "w") : NULL;
-	  FILE *xfp = xml_output ? fopen("sl.xml", "w") : NULL;
+	  if (!jfn)
+	    jfn = "sl.jsn";
+	  if (!xfn)
+	    xfn = "sl.xml";
+	  FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
+	  FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
 
 	  jox_jsn_output(jfp);
 	  jox_xml_output(xfp);
@@ -256,6 +263,8 @@ opts(int opt, char *arg)
     case 'i':
       asl_output = identity_mode = 1;
       break;
+    case 'J':
+      jfn = arg;
     case 'j':
       jsn_output = 1;
       break;
@@ -291,6 +300,8 @@ opts(int opt, char *arg)
     case 'u':
       unicode_table = 1;
       break;
+    case 'X':
+      xfn = arg;
     case 'x':
       xml_output = 1;
       break;
