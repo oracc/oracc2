@@ -64,7 +64,6 @@ AC_CONFIG_FILES([Makefile
                  lib/frm/Makefile
                  lib/gdl/Makefile
                  lib/gvl/Makefile
-                 lib/joxer/Makefile
                  lib/jsn/Makefile
                  lib/lng/Makefile
                  lib/oid/Makefile
@@ -73,6 +72,7 @@ AC_CONFIG_FILES([Makefile
                  lib/sll/Makefile
                  lib/std/Makefile
                  lib/sys/Makefile
+                 lib/tis/Makefile
                  lib/xml/Makefile
                  lib/xpd/Makefile
 		 bin/Makefile

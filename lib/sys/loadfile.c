@@ -166,7 +166,9 @@ loadoneline(FILE *fp, size_t *nbytes)
 
   if (feof(fp))
     return NULL;
-  
+
+  if (buf)
+    *buf = '\0';
   while (EOF != (ch = fgetc(fp)))
     {      
       if (n_read == n_alloced)
@@ -191,5 +193,8 @@ loadoneline(FILE *fp, size_t *nbytes)
       else
 	buf[n_read++] = ch;
     }
-  return buf;  
+  if (buf && *buf)
+    return buf;
+  else
+    return NULL;
 }

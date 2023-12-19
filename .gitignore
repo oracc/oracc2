@@ -22,6 +22,7 @@ bin/xx/dbix
 bin/xx/dbx
 bin/xx/osort/osort
 bin/xx/rnv/rnv
+bin/xx/tok2tis
 bin/xx/tlitsig
 bin/xx/xmlify
 msc/lex/lex-collapse-refs

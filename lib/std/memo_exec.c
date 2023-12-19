@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <memo.h>
+
 void
 memo_exec(Memo *m, void (*f)(void *))
 {
@@ -38,6 +41,7 @@ memo_len(Memo *m)
 char **
 memo_keys(Memo *m, size_t *nkeys)
 {
+  struct memo_block *b;
   if (m->element_size == sizeof(char**))
     {
       size_t len = memo_len(m);
@@ -51,7 +55,7 @@ memo_keys(Memo *m, size_t *nkeys)
 	      used += m->elements_per_alloc;
 	    }
 	  else
-	    memcpy(k + used, b->mem, (last_element_used * element_size));
+	    memcpy(k + used, b->mem, (m->last_element_used * m->element_size));
 	}
       *nkeys = len;
       return k;

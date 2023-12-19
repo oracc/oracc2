@@ -1,13 +1,6 @@
 #include <string.h>
 #include "memo.h"
 
-struct memo_block
-{
-  void *mem;
-  size_t bytes_in_block;
-  struct memo_block *next;
-};
-
 static Memo *memostr = NULL;
 
 Memo *
