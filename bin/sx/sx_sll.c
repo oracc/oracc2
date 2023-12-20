@@ -154,8 +154,7 @@ sx_s_sign(FILE *f, struct sl_sign *s)
   /* this is for both sign and form_as_sign where the sign wrapper
      carries the homophone data */
   if (s->hcompounds)
-    sx_s_compounds_driver(f, s->name, s->hcompounds);
-  
+    sx_s_compounds_driver(f, s->name, s->hcompounds);  
 }
 
 static void
@@ -183,9 +182,30 @@ sx_s_form(FILE *f, struct sl_form *s)
 	  if (s->owners_sort[i]->oid)
 	    fputs(s->owners_sort[i]->oid, f);
 	  else if (s->owners_sort[i]->smoid)
-	    fputs(s->owners_sort[i]->smoid, f);
+	    fputs(s->owners_sort[i]->smoid, f);	  
 	}
-      fputc('\n', f);
+      fputc('\n', f);      
+    }
+  struct sl_inst *ip;
+  for (ip = list_first(s->insts); ip; ip = list_next(s->insts))
+    {
+      struct sl_lv_data *lp = ip->lv;
+      int j;
+      if (lp->values)
+	{
+	  for (j = 0; lp->values[j]; ++j)
+	    {
+	      const char *sp_oid =
+		lp->values[j]->parent_s
+		? lp->values[j]->parent_s->u.s->oid
+		: lp->values[j]->parent_f->parent_s->u.s->oid;
+	      fprintf(f, "%s:%s;fvp\t%s\n",
+		      s->oid,
+		      lp->values[j]->u.v->name,
+		      sp_oid
+		      );
+	    }
+	}
     }
 }
 
@@ -223,7 +243,9 @@ sx_s_value(FILE *f, struct sl_value *v)
 	  else if (v->parents->forms)
 	    {
 	      if ((ip = list_first(v->parents->forms)))
-		fprintf(f, "%s\t%s\n", v->name, ip->u.f->oid);
+		{
+		  fprintf(f, "%s\t%s\n", v->name, ip->u.f->oid);
+		}
 	    }
 	}
     }

@@ -1,0 +1,2 @@
+#!/bin/dash
+sed 's/{/{\n/g' sl.jsn >sl-nl.jsn

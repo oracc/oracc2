@@ -50,8 +50,10 @@ extern int via_tok_cmp(const void *a, const void *b);
 
 extern int cmpstringp(const void *p1, const void *p2);
 
+#if 0
 extern void sx_xml(struct sl_signlist *sl);
 extern void sx_xml_init(void);
+#endif
 
 extern void sx_akas_dump(FILE *fp, struct sl_signlist *sl);
 extern void sx_syss_dump(FILE *fp, struct sl_signlist *sl);
@@ -78,6 +80,7 @@ extern void sx_walk(struct sx_functions *f, struct sl_signlist *sl);
 extern struct sx_functions *sx_w_asl_init(FILE *fp, const char *fname);
 extern struct sx_functions *sx_w_jsn_init(FILE *fp, const char *fname);
 extern struct sx_functions *sx_w_xml_init(FILE *fp, const char *fname);
+extern struct sx_functions *sx_w_jox_init(void);
 extern struct sx_functions *sx_sll_init(FILE *fp, const char *fname);
 extern void sx_s_sll(FILE *f, struct sl_signlist *sl);
 extern void sx_oid_list(struct sl_signlist *sl);

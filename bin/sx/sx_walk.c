@@ -86,15 +86,20 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 					}
 				      f->not(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]);
 				      f->uni(f, sl, &sl->letters[i].groups[j].signs[k]->u.s->forms[l]->u.f->U);
-				      if (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues)
+				      if (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues
+					  && (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues
+					      != sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nivalues))
 					{
 					  int m;
 					  f->val(f, sl, NULL, sx_pos_init);
 					  for (m = 0; m < sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues; ++m)
 					    {
-					      f->val(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m],
-						     sx_pos_inst);
-					      f->not(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m]);
+					      struct sl_inst *v = sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m];
+					      if (v->inherited && v->u.v->atf)
+						{
+						  f->val(f, sl, v, sx_pos_inst);
+						  f->not(f, sl, v);
+						}
 					      if (QV(sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m]))
 						list_add(qv, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m]);
 					    }

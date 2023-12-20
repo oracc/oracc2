@@ -100,5 +100,6 @@ AC_CONFIG_FILES([Makefile
 		 msc/cmd/update/Makefile
 		 msc/lex/Makefile
 		 msc/sys/Makefile
+		 msc/tok/Makefile
                  ])
 AC_OUTPUT

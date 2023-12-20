@@ -7,13 +7,18 @@
 #include <json.h>
 #include <xml.h>
 #include <asl.h>
+#include <ns-asl.h>
 #include <gdl.h>
+#include <joxer.h>
+#include <rnvif.h>
+#include <rnvxml.h>
 #include <oraccsys.h>
 #include <oracclocale.h>
 #include "sx.h"
 
 Mloc *xo_loc;
 FILE *f_xml;
+
 const char *file;
 int quiet, verbose;
 int asltrace,rnvtrace;
@@ -37,6 +42,7 @@ int syss_dump = 0;
 int tree_output = 0;
 int unicode_table = 0;
 int xml_output = 0;
+int validate = 1;
 
 extern int asl_raw_tokens; /* ask asl to produce list of @sign/@form/@v tokens */
 extern int ctrace;
@@ -47,6 +53,8 @@ int trace_mode = 0;
 extern int asl_flex_debug, gdl_flex_debug, gdl_unicode;
 
 const char *missing_lists = NULL;
+
+const char *jfn = NULL, *xfn = NULL;
 
 int
 main(int argc, char * const*argv)
@@ -61,7 +69,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:ijm:nMoOsStTux?");
+  options(argc, argv, "abcCD:d:ijJ:m:nMoOsStTuxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (boot_mode)
@@ -193,14 +201,24 @@ main(int argc, char * const*argv)
       if (asl_output)
 	sx_walk(sx_w_asl_init(stdout, "-"), sl);
 
-      if (jsn_output)
-	sx_walk(sx_w_jsn_init(stdout, "-"), sl);
-	
       if (sll_output)
 	sx_s_sll(sllout, sl);
-      
-      if (xml_output)
-	sx_walk(sx_w_xml_init(stdout, "_"), sl);
+
+      if (!sll_output && (validate || xml_output || jsn_output))
+	{
+	  if (!jfn)
+	    jfn = "sl.jsn";
+	  if (!xfn)
+	    xfn = "sl.xml";
+	  FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
+	  FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
+
+	  jox_jsn_output(jfp);
+	  jox_xml_output(xfp);
+	  joxer_init(&asl_data, "asl", validate, xfp, jfp);	  
+	  sx_walk(sx_w_jox_init(), sl);
+	  joxer_term(xfp,jfp);
+	}
     }
   
   gdl_term();
@@ -245,6 +263,8 @@ opts(int opt, char *arg)
     case 'i':
       asl_output = identity_mode = 1;
       break;
+    case 'J':
+      jfn = arg;
     case 'j':
       jsn_output = 1;
       break;
@@ -280,8 +300,16 @@ opts(int opt, char *arg)
     case 'u':
       unicode_table = 1;
       break;
+    case 'X':
+      xfn = arg;
     case 'x':
       xml_output = 1;
+      break;
+    case 'v':
+      validate = 1;
+      break;
+    case 'V':
+      validate = 0;
       break;
     case '?':
       help();

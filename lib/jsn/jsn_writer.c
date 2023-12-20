@@ -1,11 +1,17 @@
 #include <json.h>
 #include <stck.h>
 
-enum jstate { jstart , jarray , jobject , jmember , jelement , jstring , jvalue };
-
 static FILE *jwfp;
 static Stck *jstack;
 static enum jstate jstate;
+
+int jw_format = 1;
+
+enum jstate
+jw_state(void)
+{
+  return jstate;
+}
 
 void
 jw_init(FILE *fp)
@@ -58,12 +64,16 @@ jw_object_o(void)
     stck_push(jstack, jelement);
   jstate = jobject;
   fputc('{', jwfp);
+  if (jw_format)
+    fputc('\n',jwfp);
 }
 
 void
 jw_object_c(void)
 {
   jstate = stck_pop(jstack);
+  if (jw_format)
+    fputc('\n',jwfp);
   fputc('}', jwfp);
 }
 

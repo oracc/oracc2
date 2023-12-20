@@ -27,6 +27,7 @@ bin/xx/tlitsig
 bin/xx/xmlify
 msc/lex/lex-collapse-refs
 msc/sys/proj-from-conf.sh
+msc/tok/tok-g
 
 # MacOS convenience link to external library header
 include/pcre2.h

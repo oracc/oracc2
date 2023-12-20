@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+enum jstate { jstart , jarray , jobject , jmember , jelement , jstring , jvalue };
+
 extern const unsigned char *jsonify(const unsigned char *j);
 
+extern enum jstate jw_state(void);
 extern void jw_init(FILE *fp);
 extern void jw_term(void);
 extern void jw_array_o(void);
