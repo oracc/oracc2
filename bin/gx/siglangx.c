@@ -2,8 +2,6 @@
 
 extern struct map *qpnnames(register const char *str, register size_t len);
 
-static int cmpstringp(const void *p1, const void *p2);
-
 int lang_mode = 1, qpn_mode = 1;
 
 int
@@ -112,12 +110,6 @@ main(int argc, char **argv)
   return 0;
  error:
   return 1;
-}
-
-static int
-cmpstringp(const void *p1, const void *p2)
-{
-  return strcmp(* (char * const *) p1, * (char * const *) p2);
 }
 
 void help(void) { }
