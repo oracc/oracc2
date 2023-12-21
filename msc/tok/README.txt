@@ -70,7 +70,7 @@ Signature for sign 'A':
 
 Signature for value 'a' of sign A:
 
-  v.o0000087..:a
+  v.o0000087.:a
 
 Signature for form ZA of sign A:
 
@@ -78,7 +78,7 @@ Signature for form ZA of sign A:
 
 Signature for value a written "ZA:, a(ZA):
 
-  v.o0000087.o0000603.:a
+  v.o0000087.o0000603:a
 
 A token-signature may include a project, but this is optional.  A
 project begins with a '@', as with word-signatures.

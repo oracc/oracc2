@@ -22,6 +22,8 @@ static char lid[128];
 static char llabel[128];
 static char project[1024];
 static char last_oid[16];
+static char last_spoid[16];
+static char last_vs[16];
 
 static void
 sH(void *userData, const char *name, const char **atts)
@@ -46,12 +48,21 @@ sH(void *userData, const char *name, const char **atts)
     fprintf(tab, "W\t%s\n", get_xml_id(atts));
   else if (printing && (!strcmp(name, "g:c") || !strcmp(name, "g:q")))
     {
+#if 1
+      strcpy(last_oid, findAttr(atts, "oid"));
+      strcpy(last_spoid, findAttr(atts, "spoid"));
+#else
       fprintf(tab, "g\t%s\t%s\t%s\t%s\t%s\t%s\n",
 	      findAttr(atts, "oid"), "", "", "", name[2]=='q' ? "q" : "c", findAttr(atts, "form"));
+#endif
+      /* we don't process sub-sign/value of c/q */
       --printing;
     }
   else if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
-    strcpy(last_oid,findAttr(atts, "oid"));
+    {
+      strcpy(last_oid, findAttr(atts, "oid"));
+      strcpy(last_spoid, findAttr(atts, "spoid"));
+    }
   else if (!strcmp(name, "xcl"))
     {
       printing = 0;
@@ -64,14 +75,43 @@ eH(void *userData, const char *name)
 {
   if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
     {
+#if 1
+      char *g = (char*)charData_retrieve();
+      const char *soid = (last_spoid ? last_spoid : last_oid);
+      const char *foid = (last_spoid ? last_oid : "");
+      if (name[2] == 'v')
+	fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, g);
+      else if (*foid)
+	fprintf(tab, "%c.%s.%s", name[2], soid, foid);
+      else
+	fprintf(tab, "%c.%s", name[2], soid);
+#else
       char *g = (char*)charData_retrieve();
       if (g[1] || 'x' != g[0])
 	fprintf(tab, "g\t%s\t%s\t%s\t%s\t%s\n",
 		last_oid, "", "", name[2]=='v' ? "v" : "s", g);
       *last_oid = '\0';
+#endif
     }
+  else if (!strcmp(name, "g:v"))
+    strcpy(last_v, charData_retrieve());
   else if (!strcmp(name, "g:c") || !strcmp(name, "g:q"))
-    ++printing;
+    {
+      const char *soid = (last_spoid ? last_spoid : last_oid);
+      const char *foid = (last_spoid ? last_oid : "");
+      if (name[2] == 'q')
+	{
+	  if (*last_v)
+	    fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
+	  else if (*foid)
+	    fprintf(tab, "%c.%s.%s", name[2], soid, foid);
+	  else
+	    fprintf(tab, "%c.%s.%s", name[2], soid);
+	}
+      else
+	fprintf(tab, "%c.%s.%s", name[2], soid, foid);
+      ++printing;
+    }
   else
     charData_discard();
 }
