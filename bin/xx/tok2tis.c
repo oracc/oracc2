@@ -35,6 +35,9 @@ main(int argc, char **argv)
 	{
 	  if (tl.W)
 	    {
+	      char *tab = strchr((ccp)lp, '\t');
+	      if (tab)
+		*tab = '\0';
 	      tis_add(t, (ccp)pool_copy(lp,p), tl.W);
 	    }
 	  else

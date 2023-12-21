@@ -6,4 +6,5 @@ extern const char *gvl_bridge_spoid(void);
 extern const unsigned char *gvl_bridge_atf2utf(void);
 extern const unsigned char *gvl_bridge_signname(void);
 extern unsigned const char *gvl_bridge_cuneify(void);
+extern unsigned const char *gvl_bridge_oid_name(const char *oid);
 #endif/*GVL_BRIDGE_H_*/

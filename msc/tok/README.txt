@@ -38,60 +38,78 @@ m sense (meaning)
 For sg, fr, and vl types, the language/script '%020' is the default if
 omitted from the signature.
 
-TOKEN-SIGNATURES
-================
+SIGN TOKENS
+===========
 
-The data associated with a signature is concatenated into a string
-with a fixed sequence of initial elements and delimiters.
-
-A token-signature is always typed--the type is always the first
+A sign-token is always typed--the type is always the first
 element of the token-signature and is always a single lowercase
 letter. A period, '.', separates the token type from the following
 elements.
 
-A token-signature always has an OID-signature. If the OID-signature
+A sign-token always has an OID-signature. If the OID-signature
 begins with 'o' or 'x', the OID has been obtained from the the Oracc
 ID management system.  If the OID begins with 'z', it has been
 assigned ad hoc during data processing because the token is not known
 in the Oracc OID system.
 
-An OID-signature is a sequence of one or more OIDs.  For sg and wd
-types, the OID is a singleton.  For fr and sn types, the OID is a
-doubleton where the first item is the parent sg or wd, and the second
-item is the child fr or sn.  For vl types, the OID is a doubleton
-ending with a period in which the second item may be empty.  When the
-second item is empty (indicating that the value belongs to a sign not
-a form), the vl OID-signature ends with a double period.
+An OID-signature is a sequence of one or more OIDs: a sign-token
+deriving from a form has a doubleton OID consisting of the parent sign
+OID and the form OID.
 
+A value sign-token ends with the value, separated from the rest of the
+sign-token with a colon, ':'.
 
-Signature for sign 'A':
+Sign-token for sign 'A':
 
   s.o0000087
 
-Signature for value 'a' of sign A:
+Sign-token for value 'a' of sign A:
 
   v.o0000087.:a
 
-Signature for form ZA of sign A:
+Sign-token for form ZA of sign A:
 
   f.o0000087.o0000603
 
-Signature for value a written "ZA:, a(ZA):
+Sign-token for value a written "ZA", a(LAK797):
 
-  v.o0000087.o0000603:a
+  v.o0000087.o0270203:a
 
-A token-signature may include a project, but this is optional.  A
-project begins with a '@', as with word-signatures.
+SIGN SIGNATURES
+===============
 
-A token-signature may include a language or script element.  A
-language/script begins with a percent sign, e.g., %sux, %020.
+Sign signatures are analogous to word-instance signatures.
 
-A token-signature may include the token, which begins with a colon; if
-the token is empty, the value is by definition the value of its
-OID-signature.  If the token-signature ends with a word-signature, the
-token is the FORM, and the remaining signature items are separated
-from the FORM with an equals-sign, '='.
+A sign signature has the form:
 
+ @PROJECT%LANGUAGE:SIGN-FORM-VALUE=ROLE
+
+The SIGN-FORM-VALUE is always a triple, with empty components as
+necessary. The SIGN-FORM-VALUE for an A-sign is A--.
+
+The signature up to the '=' is the same as a word-instance signature.
+The component after the '=' is the sign role:
+
+ IDE ideogram
+ SYL syllable
+ LOG logogram
+ SEM semantic determinative
+ PRO pronunciation determinative
+ SUR surrogate
+ PUN punctuation
+
+For SF_LOG, the logogram language follows SF_LOG separated by a right
+apostrophe, "'"--this mimics the POS'EPOS syntax of word-instance
+signatures.
+
+ LUGAL ->
+
+ @dcclt%akk:LUGAL--=LOG'sux
+
+ UTU{+ši} ->
+
+ @dcclt%akk:UD--UTU=LOG'sux
+ @dcclt%akk:UD--ši=PRO
 
 Location Types:
 ===============

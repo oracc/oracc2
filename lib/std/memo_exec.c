@@ -45,7 +45,7 @@ memo_keys(Memo *m, size_t *nkeys)
   if (m->element_size == sizeof(char**))
     {
       size_t len = memo_len(m);
-      char **k = malloc(len * sizeof(char*));
+      char **k = malloc((1+len) * sizeof(char*));
       size_t used = 0;
       for (b = m->mem_base; b; b = b->next)
 	{
@@ -58,6 +58,7 @@ memo_keys(Memo *m, size_t *nkeys)
 	    memcpy(k + used, b->mem, (m->last_element_used * m->element_size));
 	}
       *nkeys = len;
+      k[len] = NULL;
       return k;
     }
   else

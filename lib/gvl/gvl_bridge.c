@@ -23,6 +23,12 @@ gvl_bridge_cuneify(void)
   return gvl_cuneify_gv(gbgp);
 }
 
+unsigned const char *
+gvl_bridge_oid_name(const char *oid)
+{
+  return gvl_lookup((uccp)oid);
+}
+
 const char *
 gvl_bridge_oid(void)
 {

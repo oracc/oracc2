@@ -23,7 +23,20 @@ static char llabel[128];
 static char project[1024];
 static char last_oid[16];
 static char last_spoid[16];
-static char last_vs[16];
+static char last_spform[1024];
+static char last_form[1024];
+static char last_v[16];
+static char last_s[1024];
+static char word_lang[16];
+
+static void
+sign_signature(void)
+{
+  const char *s = (*last_spform ? last_spform : (*last_form ? last_form : last_s));
+  const char *f = (*last_spform ? (*last_form ? last_form : last_s) : "");
+  fprintf(tab, "\t@%s%%%s:%s-%s-%s\n", project, word_lang,s,f,last_v);
+  *last_form = *last_spform = '\0';
+}
 
 static void
 sH(void *userData, const char *name, const char **atts)
@@ -45,23 +58,29 @@ sH(void *userData, const char *name, const char **atts)
       printing = 1;
     }
   else if (!strcmp(name, "g:w"))
-    fprintf(tab, "W\t%s\n", get_xml_id(atts));
-  else if (printing && (!strcmp(name, "g:c") || !strcmp(name, "g:q")))
     {
-#if 1
+      strcpy(word_lang, get_xml_lang(atts));
+      fprintf(tab, "W\t%s\n", get_xml_id(atts));
+    }
+  else if (printing && (!strcmp(name, "g:c") || !strcmp(name, "g:q") || !strcmp(name, "g:n")))
+    {
       strcpy(last_oid, findAttr(atts, "oid"));
       strcpy(last_spoid, findAttr(atts, "spoid"));
-#else
-      fprintf(tab, "g\t%s\t%s\t%s\t%s\t%s\t%s\n",
-	      findAttr(atts, "oid"), "", "", "", name[2]=='q' ? "q" : "c", findAttr(atts, "form"));
-#endif
+      strcpy(last_spform, findAttr(atts, "spform"));      
+      if ('c' == name[2])
+	strcpy(last_form, findAttr(atts, "form"));
+      else
+	strcpy(last_form, findAttr(atts, "g:sign"));
+      *last_s = *last_v = '\0';
       /* we don't process sub-sign/value of c/q */
       --printing;
     }
   else if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
     {
       strcpy(last_oid, findAttr(atts, "oid"));
+      strcpy(last_form, findAttr(atts, "g:sign"));
       strcpy(last_spoid, findAttr(atts, "spoid"));
+      strcpy(last_spform, findAttr(atts, "spform"));
     }
   else if (!strcmp(name, "xcl"))
     {
@@ -73,43 +92,54 @@ sH(void *userData, const char *name, const char **atts)
 static void
 eH(void *userData, const char *name)
 {
+  if (!strcmp(name, "g:v"))
+    strcpy(last_v, charData_retrieve());
+  else if (!strcmp(name, "g:s"))
+    strcpy(last_s, charData_retrieve());
   if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
     {
-#if 1
-      char *g = (char*)charData_retrieve();
-      const char *soid = (last_spoid ? last_spoid : last_oid);
-      const char *foid = (last_spoid ? last_oid : "");
-      if (name[2] == 'v')
-	fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, g);
-      else if (*foid)
-	fprintf(tab, "%c.%s.%s", name[2], soid, foid);
-      else
-	fprintf(tab, "%c.%s", name[2], soid);
-#else
-      char *g = (char*)charData_retrieve();
-      if (g[1] || 'x' != g[0])
-	fprintf(tab, "g\t%s\t%s\t%s\t%s\t%s\n",
-		last_oid, "", "", name[2]=='v' ? "v" : "s", g);
-      *last_oid = '\0';
-#endif
-    }
-  else if (!strcmp(name, "g:v"))
-    strcpy(last_v, charData_retrieve());
-  else if (!strcmp(name, "g:c") || !strcmp(name, "g:q"))
-    {
-      const char *soid = (last_spoid ? last_spoid : last_oid);
-      const char *foid = (last_spoid ? last_oid : "");
-      if (name[2] == 'q')
+      if (*last_oid)
 	{
-	  if (*last_v)
-	    fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
+	  if (strcmp(last_v, "x"))
+	    {
+	      const char *soid = (*last_spoid ? last_spoid : last_oid);
+	      const char *foid = (*last_spoid ? last_oid : "");
+	      if (name[2] == 'v')
+		{
+		  if (*foid)
+		    fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
+		  else
+		    fprintf(tab, "%c.%s:%s", name[2], soid, last_v);
+		}
+	      else if (*foid)
+		fprintf(tab, "%c.%s.%s", name[2], soid, foid);
+	      else
+		fprintf(tab, "%c.%s", name[2], soid);
+	      sign_signature();
+	    }
+	}
+    }
+  else if (!strcmp(name, "g:c") || !strcmp(name, "g:q") || !strcmp(name, "g:n"))
+    {
+      if (*last_oid)
+	{
+	  const char *soid = (*last_spoid ? last_spoid : last_oid);
+	  const char *foid = (*last_spoid ? last_oid : "");
+	  if (name[2] == 'q')
+	    {
+	      if (*last_v)
+		fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
+	      else if (*foid)
+		fprintf(tab, "%c.%s.%s", name[2], soid, foid);
+	      else
+		fprintf(tab, "%c.%s", name[2], soid);
+	    }
 	  else if (*foid)
 	    fprintf(tab, "%c.%s.%s", name[2], soid, foid);
 	  else
-	    fprintf(tab, "%c.%s.%s", name[2], soid);
+	    fprintf(tab, "%c.%s", name[2], soid);
+	  sign_signature();
 	}
-      else
-	fprintf(tab, "%c.%s.%s", name[2], soid, foid);
       ++printing;
     }
   else
