@@ -1,6 +1,6 @@
 #include <dx.h>
 
-const char *varoracc = "/home/oracc/tmp/sop";
+const char *varoracc = "/home/oracc/tmp/ipc";
 
 char *
 dx_session(char **sesh_id)
