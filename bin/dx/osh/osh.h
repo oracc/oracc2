@@ -37,6 +37,7 @@ extern int verbose;
 extern char **osh_options(int argc, char **argv, Job *jp);
 extern int osh_dcx(char **optv, Job *jp);
 extern int osh_exec(const char *cmd, const char *arg, Job *jp);
+extern const char *osh_log(Job *jp);
 extern int osh_project(char **optv, Job *jp);
 extern int osh_wait(Job *jp);
 extern int osh_wrapup(Job *jp);

@@ -18,7 +18,7 @@
 #include <ctype.h>
 
 #define DX_SERVER_NAME "/tmp/oracc-daemon-dx"
-#define DX_DOTLOG = ".dxlog"
+#define DX_DOTLOG ".dxlog"
 
 extern const char *progname;
 

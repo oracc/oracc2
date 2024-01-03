@@ -35,7 +35,11 @@ main(int argc, char **argv)
 	      if (oip->type == OSH_BUILTIN)
 		{
 		  if (!strcmp(oip->arg, "$log"))
-		    oip->arg = osh_last_log(&j);
+		    {
+		      if (!(oip->arg = osh_log(&j)))
+			goto error;
+		    }
+		      
 
 		  /* On success osh has been replaced by the builtin;
 		     builtins all echo machine state data using, e.g.,
