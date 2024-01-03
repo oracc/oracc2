@@ -7,6 +7,7 @@ struct osh_info
 ls, 	OSH_BUILTIN, "/usr/bin/ls", "-l"
 lslr, 	OSH_BUILTIN, "/usr/bin/ls", "-lR"
 env, 	OSH_BUILTIN, "/usr/bin/printenv", ""
+log, 	OSH_BUILTIN, "/usr/bin/less", "$log"
 build,  OSH_EXTERNAL, NULL, NULL
 config, OSH_EXTERNAL, NULL, NULL
 check,  OSH_EXTERNAL, NULL, NULL

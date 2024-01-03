@@ -34,6 +34,9 @@ main(int argc, char **argv)
 		fprintf(stderr, "%s: project=%s; initial command=%s\n", progname, j.project, j.cmd1);
 	      if (oip->type == OSH_BUILTIN)
 		{
+		  if (!strcmp(oip->arg, "$log"))
+		    oip->arg = osh_last_log(&j);
+
 		  /* On success osh has been replaced by the builtin;
 		     builtins all echo machine state data using, e.g.,
 		     ls or printenv */

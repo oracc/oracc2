@@ -16,6 +16,6 @@ if [ $? -ne 0 ]; then
 fi
 
 # update lemm
-mcu-lemm.sh $*
+mcu-lemm.sh lemm
 
 exit $?

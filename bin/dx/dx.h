@@ -18,8 +18,10 @@
 #include <ctype.h>
 
 #define DX_SERVER_NAME "/tmp/oracc-daemon-dx"
+#define DX_DOTLOG = ".dxlog"
 
 extern const char *progname;
+
 
 extern char *dx_session(char **sesh_id);
 extern int dx_accept(int listenfd, uid_t * uidptr);

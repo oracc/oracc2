@@ -92,6 +92,7 @@ fi
 
 shift
 echo "$0: tmpdir=$tmpdir; user=$user; project=$project; command=$command"
+
 if [ $command = "init" ]; then
     cd @@ORACC_BUILDS@@
     if [ ! -r $user ]; then
@@ -108,6 +109,7 @@ else
     projdir=@@ORACC_BUILDS@@/$project
     if [ -d $projdir ]; then
 	(cd $projdir
+	 /bin/echo -n "$tmpdir/request.log" >.dxlog
 	 . $bin/odo-environment.sh
 	 $bin/odo-cvs-refresh.sh $user $*
 	 $bin/odo-dir-links.sh $project $V
