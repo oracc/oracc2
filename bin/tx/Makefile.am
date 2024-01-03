@@ -1,5 +1,7 @@
 include ../../oracc-am-rules.txt
 
+SUBDIRS=../../lib
+
 noinst_PROGRAMS=catx expat-identity
 bin_PROGRAMS=gdlx repx rocox
 

@@ -21,29 +21,32 @@ loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **fmem
 {
   size_t i, j, n, l;
   unsigned char *f = NULL;
-  unsigned char **lp;
+  unsigned char **lp = NULL;
 
   if ('-' == *fname && !fname[1])
     f = loadstdin(&n);
   else
     f = loadfile(fname,&n);
 
-  *fmem = f;
-
-  for (i = l = 0; i < n; ++i)
-    if ('\n' == f[i])
-      ++l;
-  lp = malloc((l+1) * sizeof(unsigned char *));
-  for (i = j = 0; i < n; ++i)
+  if (f)
     {
-      lp[j++] = &f[i];
-      while (i < n && f[i] != '\n')
-	++i;
-      f[i] = '\0';
+      *fmem = f;
+      
+      for (i = l = 0; i < n; ++i)
+	if ('\n' == f[i])
+	  ++l;
+      lp = malloc((l+1) * sizeof(unsigned char *));
+      for (i = j = 0; i < n; ++i)
+	{
+	  lp[j++] = &f[i];
+	  while (i < n && f[i] != '\n')
+	    ++i;
+	  f[i] = '\0';
+	}
+      lp[j] = NULL;
+      if (nlines)
+	*nlines = l;
     }
-  lp[j] = NULL;
-  if (nlines)
-    *nlines = l;
   return lp;
 }
 
@@ -127,7 +130,7 @@ loadfile(unsigned const char *fname, size_t *nbytes)
 unsigned char *
 loadstdin(size_t *nbytes)
 {
-  static unsigned char*buf;
+  static unsigned char *buf = NULL;
   static int n_read = 0, n_alloced = 0;
   int ch;
   while (EOF != (ch = getchar()))
@@ -139,9 +142,12 @@ loadstdin(size_t *nbytes)
 	}
       buf[n_read++] = ch;
     }
-  if (nbytes)
-    *nbytes = n_read;
-  buf[n_read] = '\0';
+  if (n_read)
+    {
+      if (nbytes)
+	*nbytes = n_read;
+      buf[n_read] = '\0';
+    }
   return buf;
 }
 

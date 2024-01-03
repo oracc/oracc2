@@ -1,4 +1,7 @@
 #!/bin/sh
+
+echo $0 $*
+
 dir=$1
 asl=$2
 if [ "$dir" == "" ]; then

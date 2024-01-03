@@ -7,6 +7,28 @@ if [ "$project" == "" ]; then
     exit 1
 fi
 
+stats=$*
+
+auto=`oraccopt . asl-auto`
+
+if [ "$auto" == "yes" ]; then
+    asl=01tmp/auto.asl
+    if [ ! -r $asl ]; then
+	echo "$0: no auto.asl signlist in 01tmp. Stop."
+	exit 1
+    else
+	mcu-slix.sh $project $asl
+    fi
+else
+    set 00lib/*.asl
+    if [ "$1" == "00lib/*.asl" ]; then
+	echo "$0: no .asl signlist in 00lib. Stop."
+	exit 1
+    else
+	asl=$1
+    fi
+fi
+
 abbrev=`oraccopt . abbrev`
 hproject=`/bin/echo -n $project | tr / -`
 libdata=$ORACC_BUILDS/lib/data
@@ -18,14 +40,10 @@ function sxinst {
 	      >$2
 }
 
-stats=$*
-
-# Update portal data files in 00etc/00web before making signlist
-#if [ "$project" = "ogsl" ]; then
-    sxmissing.sh
-    sxudata.sh
-    sxportal.sh
-#fi
+ls -l 02xml/sl.xml
+sxmissing.sh 00etc $asl
+sxudata.sh 00etc $asl
+sxportal.sh
 
 rm -fr signlist ; mkdir signlist
 

@@ -19,7 +19,7 @@ osh_log(Job *jp)
     }
   else
     {
-      perror("failed to open session file");
+      perror("failed to open project .dxlog file");
       return NULL;
     }
 }

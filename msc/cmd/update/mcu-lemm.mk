@@ -1,4 +1,7 @@
+.SUFFIXES
+
 MK=${ORACC_BUILDS}/lib/data/mcu-lemm.mk
+
 SUPER=01tmp/superglo-for-lemmdata.glo
 
 check:
@@ -29,9 +32,10 @@ lemmsuper: ${SUPER}
 	@echo ${MK} checking $<
 	cbdpp.plx -sig -nopsus $< || touch .badgloss
 	touch 00lib/.c-$*.glo
-	rm -f lemmstamp
+	rm -f lemmgloss
 
 01tmp/%.glo: 00src/%.glo
 	@echo ${MK} creating ${SUPER} from $<
 	cbdpp.plx -nosigs $< || touch .badgloss
 	cp $< ${SUPER}
+	rm -f lemmsuper
