@@ -2,4 +2,4 @@ include ../../oracc-am-rules.txt
 
 noinst_LTLIBRARIES=libtis.la
 
-libtis_la_SOURCES = tis.c
+libtis_la_SOURCES = tis.c tis_load.c
