@@ -38,7 +38,7 @@ struct runinfo *curr_rip;
 const char *curr_fname = NULL;
 
 /*static int verbose = 0;*/
-extern int verbose;
+/*extern int verbose;*/
 
 #if 0
 static char input_buf[BUFLEN+1];
@@ -77,8 +77,10 @@ findAttr(const char **atts, const char *name)
 {
   while (*atts)
     {
+#if 0
       if (verbose)
 	fprintf(stderr, "findAttr testing attr %s looking for %s\n", *atts, name);
+#endif
       if (!strcmp(*atts,name))
 	return atts[1];
       else
@@ -94,7 +96,7 @@ piHandler(void *userData, const XML_Char*target, const XML_Char*data)
     {
       static char atf_name_buf[1024];
       pi_file = atf_name = strcpy(atf_name_buf,data);
-      list_add(curr_rip->filenames_list,pool_copy(pi_file, curr_rip->pool));
+      list_add(curr_rip->filenames_list,pool_copy((ucp)pi_file, curr_rip->pool));
     }
   else if (!strcmp(target, "atf-line"))
     {
@@ -104,7 +106,7 @@ piHandler(void *userData, const XML_Char*target, const XML_Char*data)
     {
       static char name_buf[1024];
       pi_file = strcpy(name_buf,data);
-      list_add(curr_rip->filenames_list,pool_copy(pi_file, curr_rip->pool));
+      list_add(curr_rip->filenames_list,pool_copy((ucp)pi_file, curr_rip->pool));
     }
   else if (!strcmp(target, "line"))
     {
@@ -199,7 +201,7 @@ runexpatNSuD(enum isource from,
   XML_SetProcessingInstructionHandler(parser, piHandler);
   XML_SetCharacterDataHandler(parser, charHandler);
 
-  if (!runexpat_omit_rp_wrap)
+  if (!runexpat_no_rp_wrap)
     {
       if (!XML_Parse(parser,"<rp-wrap>",9,0))
 	fail(parser, rip);
@@ -217,7 +219,7 @@ runexpatNSuD(enum isource from,
 	}
     }
 
-  if (!runexpat_omit_rp_wrap)
+  if (!runexpat_no_rp_wrap)
     {
       if (!XML_Parse(parser,"</rp-wrap>",10,1))
 	fail(parser, rip);
@@ -321,7 +323,7 @@ set_input(struct runinfo *rip)
     {
       rip->more_sources = 0;
       rip->source = stdin;
-      curr_fname = rip->fname = pool_copy("<stdin>", curr_rip->pool);
+      curr_fname = rip->fname = (char*)pool_copy((ucp)"<stdin>", curr_rip->pool);
     }
   else if (rip->from == i_names)
     {
@@ -335,12 +337,14 @@ set_input(struct runinfo *rip)
 	      fp = fname_buf + strlen(fname_buf);
 	      if ('\n' == fp[-1])
 		fp[-1] = '\0';
-	      if (NULL == (rip->source = fopen(fname_buf,"r")) && verbose)
+	      if (NULL == (rip->source = fopen(fname_buf,"r"))/* && verbose*/)
 		fprintf(stderr,"runexpat: open failed on %s\n",fname_buf);
+#if 0
 	      else if (verbose)
 		fprintf(stderr,"runexpat: inputting %s\n",fname_buf);
+#endif
 	      rip->more_sources = feof(stdin);
-	      curr_fname = rip->fname = pool_copy(fname_buf, curr_rip->pool);
+	      curr_fname = rip->fname = (char *)pool_copy((ucp)fname_buf, curr_rip->pool);
 	    }
 	  else
 	    {
@@ -371,11 +375,15 @@ set_input(struct runinfo *rip)
 	    fprintf(stderr,"runexpat: open failed on %s\n",*rip->todo);
 	  else
 	    {
+#if 0
 	      if (verbose)
 		fprintf(stderr,"runexpat: inputting %s\n",*rip->todo);
+#endif
 	      curr_fname = *rip->todo;
-	      rip->fname = pool_copy(curr_fname, curr_rip->pool);
+	      rip->fname = (char *)pool_copy((ucp)curr_fname, curr_rip->pool);
+#if 0	      
 	      fprintf(stderr,"xmlinput: %s\n",curr_fname);
+#endif
 	    }
 	  rip->more_sources = (NULL != *++rip->todo);
 	  if (!rip->more_sources)

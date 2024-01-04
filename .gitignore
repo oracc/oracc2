@@ -16,12 +16,14 @@ bin/tx/expat-identity
 bin/tx/gdlx
 bin/tx/repx
 bin/tx/rocox
+bin/tx/xmlfilter
 bin/wx/wx
 bin/xx/concord
 bin/xx/dbix
 bin/xx/dbx
 bin/xx/osort/osort
 bin/xx/rnv/rnv
+bin/xx/tisify
 bin/xx/tok2tis
 bin/xx/tlitsig
 bin/xx/xmlify

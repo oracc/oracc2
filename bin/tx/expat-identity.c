@@ -7,6 +7,8 @@ extern int options(int, char**,const char*);
 extern int optind;
 int verbose = 0;
 
+/* This printText implements the same escaping as used by oracc2's
+   xmlify library routine */
 void
 printText(const char *s, FILE *frag_fp)
 {
@@ -14,8 +16,14 @@ printText(const char *s, FILE *frag_fp)
     {
       if (*s == '<')
 	fputs("&lt;",frag_fp);
+      else if (*s == '>')
+	fputs("&gt;",frag_fp);
       else if (*s == '&')
 	fputs("&amp;",frag_fp);
+#if 0
+      else if (*s == '\'')
+	fputs("&apos;",frag_fp);
+#endif
       else if (*s == '"')
 	fputs("&quot;",frag_fp);
       else
@@ -52,15 +60,13 @@ printEnd(FILE *fp, const char *name)
 void
 ei_sH(void *userData, const char *name, const char **atts)
 {
-  /*  if (strcmp(name, "rp-wrap")) */
-    printStart(userData, name, atts);
+  printStart(userData, name, atts);
 }
 
 void
 ei_eH(void *userData, const char *name)
 {
-  /*  if (strcmp(name, "rp-wrap"))*/
-    printEnd(userData, name);
+  printEnd(userData, name);
 }
 
 void

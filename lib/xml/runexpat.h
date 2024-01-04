@@ -22,4 +22,9 @@ extern const char *get_xml_id(const char **atts);
 extern const char *get_xml_lang(const char **atts);
 extern void runexpat_omit_rp_wrap(void);
 
+typedef const char ** (*xf_action_attr)(const char *xmlid, const char *name, const char **attr, FILE *fp);
+typedef void (*xf_action_func)(const char *xmlid, const char *name, const char **attr, FILE *fp);
+extern void xmlfilter(const char *fname, FILE *outfp);
+extern void xmlfilter_actions(xf_action_attr attr, xf_action_func firstChild, xf_action_func lastChild);
+
 #endif /*_RUNEXPAT_H*/
