@@ -36,16 +36,20 @@ tis_add(Tisp tp, const char *key, const char *wid)
   *n = wid;
 }
 
-unsigned char *
-tis_id(unsigned const char *k)
+char *
+tis_id(const char *lang)
 {
   static int idbase = 0;
-  static unsigned char id[32];
+  static char id[32];
   int i = 0;
-  if ('%' == *k)
+  if (lang)
     {
-      strncpy((char*)id, (char*)k+1, 3);
-      id[i=3] = '\0';
+      while (isalpha(lang[i]))
+	{
+	  id[i] = lang[i];
+	  ++i;
+	}
+      id[i] = '\0';
     }
   sprintf((char*)id+i, ".r%05x", ++idbase);
   return id;
@@ -79,10 +83,18 @@ tis_dump(FILE *fp, Tisp tp)
   int i;
   for (i = 0; i < nk; ++i)
     {
+      /* Retrieve the is data first */
+      struct tis_n_is *tnis = hash_find(tp, (uccp)k[i]);
+
+      /* Lang is appended to key as s.o0036652%qpc; remove it in the
+	 .tis output because we are prepending it to the ID */
+      char *lang = strchr(k[i], '%');
+      if (lang)
+	*lang++ = '\0';
+      
       fputs(k[i], fp);
       fputc('\t', fp);
-      fprintf(fp, "%s\t", tis_id((uccp)k[i]));
-      struct tis_n_is *tnis = hash_find(tp, (uccp)k[i]);
+      fprintf(fp, "%s\t", tis_id(lang));
       if (tnis)
 	{
 	  int j;

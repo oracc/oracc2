@@ -7,6 +7,7 @@
 struct tokloc
 {
   const char *P;
+  const char *L;
   const char *W;
 };
 
@@ -18,7 +19,7 @@ static unsigned char *
 langtok(unsigned char *lang, unsigned char *tok)
 {
   unsigned char lt[strlen(lang)+strlen(tok)+2];
-  sprintf(lt, "%s:%s", lang, tok);
+  sprintf(lt, "%s%s", tok, lang);
   return pool_copy(lt, p);
 }
 
@@ -52,7 +53,7 @@ sig_lang(unsigned char *sig)
 }
 
 static void
-tok_m(Tisp tis, Hash *m, const char *w, unsigned const char *tok)
+tok_m(Tisp tis, Hash *m, unsigned const char *tok)
 {
   const char **kk = hash_keys(m);
   if (kk)
@@ -64,8 +65,8 @@ tok_m(Tisp tis, Hash *m, const char *w, unsigned const char *tok)
 	  if (v && *v)
 	    {
 	      char mtok[strlen((ccp)tok)+strlen(kk[i])+strlen(v)+4];
-	      sprintf(mtok, "%s|%s:%s",tok,kk[i],v);
-	      tis_add(tis, (ccp)pool_copy((ucp)mtok,p), w);
+	      sprintf(mtok, "%s|%s:%s%s",tok,kk[i],v,tl.L);
+	      tis_add(tis, (ccp)pool_copy((ucp)mtok,p), pw());
 	    }
 	}
       free(kk);
@@ -135,9 +136,9 @@ main(int argc, char **argv)
 	      if (tab)
 		{
 		  *tab = '\0';
-		  lang = sig_lang(++tab);
-		  tis_add(t, (ccp)pool_copy(langtok(lang,lp),p), pw());
-		  tok_m(t, m, tl.W, lp);
+		  tl.L = sig_lang(++tab);
+		  tis_add(t, (ccp)pool_copy(langtok(tl.L,lp),p), pw());
+		  tok_m(t, m, lp);
 		}
 	      else
 		fprintf(stderr, "tok2tis: no sig in line: %s\n", lp);

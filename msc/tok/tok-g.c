@@ -28,12 +28,26 @@ static char last_v[16];
 static char last_s[1024];
 static char word_lang[16];
 
+static char *
+sl_of(const char *lang)
+{
+  if (lang)
+    {
+      if ('q' == lang[0] && 'p' == lang[1])
+	return 'c' == lang[2] ? "pc" : "pe";
+      else
+	return "sl";
+    }
+  else
+    return "sl";
+}
+
 static void
 sign_signature(void)
 {
   const char *s = (*last_spform ? last_spform : (*last_form ? last_form : last_s));
   const char *f = (*last_spform ? (*last_form ? last_form : last_s) : "");
-  fprintf(tab, "\t@%s%%%s:%s-%s-%s\n", project, word_lang,s,f,last_v);
+  fprintf(tab, "\t@%s%%%s:%s-%s-%s\n", project, sl_of(word_lang),s,f,last_v);
   *last_form = *last_spform = '\0';
 }
 

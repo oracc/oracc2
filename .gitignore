@@ -112,6 +112,8 @@ oracc.sed
 *.dump
 *.log
 configure.scan
+*.tok
+*.tis
 
 # Prerequisites
 *.d
