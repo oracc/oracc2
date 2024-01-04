@@ -120,7 +120,8 @@ tis_dump(FILE *fp, Tisp tp, const char **k)
 	  fprintf(fp, "%ld\t%d\t", tnis->n, tnis->pct);
 	  for (j = 0; tnis->is[j]; ++j)
 	    {
-	      fputc(' ', fp);
+	      if (j)
+		fputc(' ', fp);
 	      fputs(tnis->is[j], fp);
 	    }
 	}

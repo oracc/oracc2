@@ -11,21 +11,27 @@
 #define DBIX_MAX_LINE 8192
 
 const char *dbidir, *dbiname;
+int stdinput = 0;
 
 int
 main(int argc, char **argv)
 {
-  unsigned char *buf[DBIX_MAX_LINE], *k;
+#if 0
+  unsigned char *buf[DBIX_MAX_LINE];
+#endif
+  unsigned char *k;
+  
   const char *tsvfile = NULL;
   Dbi_index *dbi = NULL;
   FILE *infile;
+  size_t nbytes;
 
-  options(argc, argv, "d:n:?");
+  options(argc, argv, "d:n:s?");
   tsvfile = argv[optind];
 
-  if (!tsvfile)
+  if (!tsvfile && !stdinput)
     {
-      fprintf(stderr, "dbix: must give a tabbed data file for indexing\n");
+      fprintf(stderr, "dbix: must give a tabbed data file for indexing or use -s flag\n");
       exit(1);
     }
   else if (!dbidir || !dbiname)
@@ -33,20 +39,29 @@ main(int argc, char **argv)
       fprintf(stderr, "dbix: -d DIR -n NAME required for DBI creation\n");
       exit(1);
     }
-  
-  if (!(infile = fopen(tsvfile, "r")))
+
+  if (stdinput)
+    infile = stdin;
+  else if (!(infile = fopen(tsvfile, "r")))
     {
       fprintf(stderr, "dbix: unable to read key/values from %s\n", tsvfile);
       exit(1);
     }
 
   dbi = dbi_create(dbiname, dbidir, 0, 1, DBI_BALK);
+#if 1
+  while ((k = loadoneline(infile,&nbytes)))
+#else
   while ((k = (unsigned char *)fgets((char*)buf,DBIX_MAX_LINE,infile)))
+#endif
     {
       unsigned char *v = (unsigned char*)strchr((char*)k,'\t');
       if (v)
 	{
 	  *v++ = '\0';
+#if 1
+	  dbi_add(dbi,k,v,strlen((char*)v)+1);
+#else
 	  if (v[strlen((char*)v)-1] == '\n')
 	    {
 	      v[strlen((char*)v)-1] = '\0';
@@ -57,6 +72,7 @@ main(int argc, char **argv)
 	      fprintf(stderr,"dbix: line too long (max=%d).\n", DBIX_MAX_LINE);
 	      exit(1);
 	    }
+#endif
 	}
       else if ('#' != *k)
 	{
@@ -82,6 +98,9 @@ opts(int opt, char *arg)
       break;
     case 'n':
       dbiname = arg;
+      break;
+    case 's':
+      stdinput = 1;
       break;
     case '?':
       help();
