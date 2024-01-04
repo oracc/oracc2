@@ -1,5 +1,7 @@
 include ../../oracc-am-rules.txt
 
+SUBDIRS=../../lib 
+
 bin_PROGRAMS=tok-g
 
 tok_g_SOURCES=tok-g.c

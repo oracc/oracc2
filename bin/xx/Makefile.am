@@ -1,6 +1,6 @@
 include ../../oracc-am-rules.txt
 
-SUBDIRS=osort rnv
+SUBDIRS=../../lib osort rnv
 
 bin_PROGRAMS=concord dbix dbx tlitsig tok2tis xmlify
 

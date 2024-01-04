@@ -1,15 +1,25 @@
 #include <oraccsys.h>
 #include <tis.h>
 
+struct tis_n_is
+{
+  size_t n;
+  char **is;
+};
+
+Memo *m_n_is = NULL;
+
 Tisp
 tis_init(void)
 {
+  m_n_is = memo_init(sizeof(struct tis_n_is), 1024);
   return hash_create(1024);
 }
 
 void
 tis_term(Tisp tp)
 {
+  memo_term(m_n_is);
   hash_free(tp, NULL);
 }
 
@@ -38,7 +48,10 @@ tis_sort(Tisp tp)
       char **tk = memo_keys(mp, &nk);
       qsort(tk, nk, sizeof(const char *), cmpstringp);
       memo_term(mp);
-      hash_add(tp, (uccp)k[i], tk);
+      struct tis_n_is *tnis = memo_new(m_n_is);
+      tnis->n = nk;
+      tnis->is = tk;
+      hash_add(tp, (uccp)k[i], tnis);
     }
 }
 
@@ -53,14 +66,15 @@ tis_dump(FILE *fp, Tisp tp)
     {
       fputs(k[i], fp);
       fputc('\t', fp);
-      char **is = hash_find(tp, (uccp)k[i]);
-      if (is)
+      struct tis_n_is *tnis = hash_find(tp, (uccp)k[i]);
+      if (tnis)
 	{
 	  int j;
-	  for (j = 0; is[j]; ++j)
+	  fprintf(fp, "%ld\t", tnis->n);
+	  for (j = 0; tnis->is[j]; ++j)
 	    {
 	      fputc(' ', fp);
-	      fputs(is[j], fp);
+	      fputs(tnis->is[j], fp);
 	    }
 	}
       else

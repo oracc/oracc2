@@ -2,8 +2,7 @@
 #include <string.h>
 #include <oraccsys.h>
 #include <runexpat.h>
-#include <hash.h>
-#include <pool.h>
+#include <xmd.h>
 
 /* Emulate ox -G output but do it from the XTF not from the ATF */
 
@@ -39,6 +38,21 @@ sign_signature(void)
 }
 
 static void
+tok_mds(const char *project, const char *pqx)
+{
+  xmd_init();
+  Hash *m = xmd_load(project, pqx);
+  if (m)
+    {
+      ccp period = hash_find(m, (ucp)"period");
+      ccp sphase = hash_find(m, (ucp)"sphase");
+      fprintf(tab, "K\tperiod\t%s\n", period ? period : "");
+      fprintf(tab, "K\tsphase\t%s\n", sphase ? sphase : "");
+    }
+  xmd_term();
+}
+
+static void
 sH(void *userData, const char *name, const char **atts)
 {
   if (!strcmp(name, "transliteration") || !strcmp(name, "composite"))
@@ -49,6 +63,7 @@ sH(void *userData, const char *name, const char **atts)
       printing = 1;
       xcl = 0;
       fprintf(tab,"T\t%s\t%s\t%s\n",project,pqx,tlabel);
+      tok_mds(project, pqx);
     }
   else if (!xcl && !strcmp(name, "l"))
     {
