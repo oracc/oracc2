@@ -16,35 +16,35 @@ Pool *p;
 struct tokloc tl;
 
 static unsigned char *
-langtok(unsigned char *lang, unsigned char *tok)
+langtok(const char *lang, unsigned char *tok)
 {
-  unsigned char lt[strlen(lang)+strlen(tok)+2];
+  char lt[strlen(lang)+strlen((ccp)tok)+2];
   sprintf(lt, "%s%s", tok, lang);
-  return pool_copy(lt, p);
+  return pool_copy((ucp)lt, p);
 }
 
-static unsigned char *
+static const char *
 pw()
 {
-  unsigned char PW[strlen(tl.P)+strlen(tl.W)+2];
+  char PW[strlen(tl.P)+strlen(tl.W)+2];
   sprintf(PW, "%s:%s", tl.P, tl.W);
-  return pool_copy(PW,p);
+  return (ccp)pool_copy((ucp)PW,p);
 }
 
-static unsigned char *
+static const char *
 sig_lang(unsigned char *sig)
 {
   unsigned char *pct = NULL;
-  if (sig && (pct = strchr(sig, '%')))
+  if (sig && (pct = (ucp)strchr((ccp)sig, '%')))
     {
-      unsigned char *col = strchr(pct, ':');
+      unsigned char *col = (ucp)strchr((ccp)pct, ':');
       if (col)
 	*col = '\0';
-      unsigned char *hlang = hash_find(langs, pct);
+      char *hlang = hash_find(langs, pct);
       if (!hlang)
 	{
-	  hlang = pool_copy(pct, p);
-	  (void)hash_add(langs, hlang, hlang);
+	  hlang = (char*)pool_copy(pct, p);
+	  (void)hash_add(langs, (ucp)hlang, hlang);
 	}
       return hlang;
     }
@@ -96,14 +96,14 @@ main(int argc, char **argv)
 	    }
 	  else if ('T' == *lp)
 	    {
-	      unsigned char *project = (ucp)strchr((ccp)lp, '\t');
+	      char *project = strchr((ccp)lp, '\t');
 	      if (project)
 		{
-		  unsigned char *tab = strchr(++project, '\t');
+		  char *tab = strchr((ccp)++project, '\t');
 		  if (tab)
 		    *tab = '\0';
 		  if (!tl.P || strcmp(tl.P, project))
-		    tl.P = (ccp)pool_copy(project,p);
+		    tl.P = (ccp)pool_copy((ucp)project,p);
 		}
 	      else
 		fprintf(stderr, "tok2tis: T line with no PROJECT: %s\n", lp);
@@ -132,11 +132,10 @@ main(int argc, char **argv)
 	  if (tl.W)
 	    {
 	      char *tab = strchr((ccp)lp, '\t');
-	      char *lang = NULL;
 	      if (tab)
 		{
 		  *tab = '\0';
-		  tl.L = sig_lang(++tab);
+		  tl.L = sig_lang((ucp)++tab);
 		  tis_add(t, (ccp)pool_copy(langtok(tl.L,lp),p), pw());
 		  tok_m(t, m, lp);
 		}
