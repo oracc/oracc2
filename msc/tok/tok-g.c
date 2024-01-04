@@ -59,9 +59,23 @@ tok_mds(const char *project, const char *pqx)
   if (m)
     {
       ccp period = hash_find(m, (ucp)"period");
+      ccp periodc = hash_find(m, (ucp)xmd_name_c("period"));
       ccp sphase = hash_find(m, (ucp)"sphase");
-      fprintf(tab, "K\tperiod\t%s\n", period ? period : "");
-      fprintf(tab, "K\tsphase\t%s\n", sphase ? sphase : "");
+      ccp sphasec = NULL;
+      if (!period || !*period)
+	{
+	  period = "none";
+	  periodc = "999999";
+	}
+      if (!sphase || !*sphase)
+	{
+	  sphase = period;
+	  sphasec = periodc;
+	}
+      else
+	sphasec = hash_find(m, (ucp)xmd_name_c("sphase"));
+      fprintf(tab, "K\tperiod\t%06d/%s\n", atoi(periodc), period);
+      fprintf(tab, "K\tsphase\t%06d/%s\n", atoi(sphasec), sphase);
     }
   xmd_term();
 }
@@ -135,16 +149,31 @@ eH(void *userData, const char *name)
 	      const char *foid = (*last_spoid ? last_oid : "");
 	      if (name[2] == 'v')
 		{
+#if 1
+		  if (*foid)
+		    fprintf(tab, "%s.%s:%s", soid, foid, last_v);
+		  else
+		    fprintf(tab, "%s:%s", soid, last_v);
+#else
 		  if (*foid)
 		    fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
 		  else
 		    fprintf(tab, "%c.%s:%s", name[2], soid, last_v);
+#endif
 		}
 	      else if (*foid)
+#if 1
+		fprintf(tab, "%s.%s", soid, foid);
+#else
 		fprintf(tab, "%c.%s.%s", name[2], soid, foid);
-	      else
-		fprintf(tab, "%c.%s", name[2], soid);
-	      sign_signature();
+#endif
+		else
+#if 1
+		  fprintf(tab, "%s", soid);
+#else
+	          fprintf(tab, "%c.%s", name[2], soid);
+#endif
+			sign_signature();
 	    }
 	}
     }
@@ -156,18 +185,35 @@ eH(void *userData, const char *name)
 	  const char *foid = (*last_spoid ? last_oid : "");
 	  if (name[2] == 'q')
 	    {
+#if 1
+	      if (*last_v)
+		fprintf(tab, "%s.%s:%s", soid, foid, last_v);
+	      else if (*foid)
+		fprintf(tab, "%s.%s", soid, foid);
+	      else
+		fprintf(tab, "%s", soid);
+#else
 	      if (*last_v)
 		fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
 	      else if (*foid)
 		fprintf(tab, "%c.%s.%s", name[2], soid, foid);
 	      else
 		fprintf(tab, "%c.%s", name[2], soid);
+#endif
 	    }
 	  else if (*foid)
-	    fprintf(tab, "%c.%s.%s", name[2], soid, foid);
-	  else
-	    fprintf(tab, "%c.%s", name[2], soid);
-	  sign_signature();
+#if 1
+	    fprintf(tab, "%s.%s", soid, foid);
+#else
+  	    fprintf(tab, "%c.%s.%s", name[2], soid, foid);
+#endif
+	    else
+#if 1
+	      fprintf(tab, "%s", soid);
+#else
+  	      fprintf(tab, "%c.%s", name[2], soid);
+#endif
+	      sign_signature();
 	}
       ++printing;
     }

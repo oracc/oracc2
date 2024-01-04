@@ -65,7 +65,7 @@ tok_m(Tisp tis, Hash *m, unsigned const char *tok)
 	  if (v && *v)
 	    {
 	      char mtok[strlen((ccp)tok)+strlen(kk[i])+strlen(v)+4];
-	      sprintf(mtok, "%s|%s:%s%s",tok,kk[i],v,tl.L);
+	      sprintf(mtok, "%s|%s=%s%s",tok,kk[i],v,tl.L);
 	      tis_add(tis, (ccp)pool_copy((ucp)mtok,p), pw());
 	    }
 	}
@@ -149,6 +149,5 @@ main(int argc, char **argv)
 	    }	
 	}
     }
-  tis_sort(t);
-  tis_dump(stdout, t);
+  tis_dump(stdout, t, tis_sort(t));
 }

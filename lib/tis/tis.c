@@ -5,6 +5,7 @@ struct tis_n_is
 {
   size_t n;
   char **is;
+  int pct;
 };
 
 Memo *m_n_is = NULL;
@@ -55,33 +56,51 @@ tis_id(const char *lang)
   return id;
 }
 
-void
-tis_sort(Tisp tp)
+static int
+pct(float amount, float total)
 {
-  const char **k = hash_keys(tp);
-  int i;
-  for (i = 0; k[i]; ++i)
-    {
-      Memo *mp = hash_find(tp, (uccp)k[i]);
-      size_t nk;
-      char **tk = memo_keys(mp, &nk);
-      qsort(tk, nk, sizeof(const char *), cmpstringp);
-      memo_term(mp);
-      struct tis_n_is *tnis = memo_new(m_n_is);
-      tnis->n = nk;
-      tnis->is = tk;
-      hash_add(tp, (uccp)k[i], tnis);
-    }
+  float pct = (amount / total) * 100;
+  return (int) (pct+0.5);
 }
 
-void
-tis_dump(FILE *fp, Tisp tp)
+const char **
+tis_sort(Tisp tp)
 {
   int nk;
   const char **k = hash_keys2(tp, &nk);
   qsort(k,nk,sizeof(const char *), cmpstringp);
   int i;
-  for (i = 0; i < nk; ++i)
+  for (i = 0; k[i]; ++i)
+    {
+      Memo *mp = hash_find(tp, (uccp)k[i]);
+      size_t mn;
+      char **mk = memo_keys(mp, &mn);
+      static float last_total = 0.0;
+      
+      qsort(mk, mn, sizeof(const char *), cmpstringp);
+      memo_term(mp);
+      struct tis_n_is *tnis = memo_new(m_n_is);
+      tnis->n = mn;
+      tnis->is = mk;
+      if (strchr(k[i], '|'))
+	{
+	  tnis->pct = pct((float)mn, last_total);
+	}
+      else
+	{
+	  tnis->pct = 100;
+	  last_total = (float)mn;
+	}
+      hash_add(tp, (uccp)k[i], tnis);
+    }
+  return k;
+}
+
+void
+tis_dump(FILE *fp, Tisp tp, const char **k)
+{
+  int i;
+  for (i = 0; k[i]; ++i)
     {
       /* Retrieve the is data first */
       struct tis_n_is *tnis = hash_find(tp, (uccp)k[i]);
@@ -98,7 +117,7 @@ tis_dump(FILE *fp, Tisp tp)
       if (tnis)
 	{
 	  int j;
-	  fprintf(fp, "%ld\t", tnis->n);
+	  fprintf(fp, "%ld\t%d\t", tnis->n, tnis->pct);
 	  for (j = 0; tnis->is[j]; ++j)
 	    {
 	      fputc(' ', fp);

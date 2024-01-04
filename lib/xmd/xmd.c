@@ -7,6 +7,7 @@
 static Hash *xmd_vals = NULL;
 static int in_cat_data;
 static Pool * xmd_pool = NULL;
+const char *curr_c = NULL;
 
 void
 xmd_init(void)
@@ -47,7 +48,17 @@ xmd_sH(void *userData, const char *name, const char **atts)
     }
   else if (!strcmp(name,"images"))
     in_cat_data = 0;
+  else
+    curr_c = findAttr(atts, "c");
   charData_discard();
+}
+
+const char *
+xmd_name_c(const char *name)
+{
+  static char nc[1024];
+  sprintf(nc, "#%s#",name);
+  return nc;
 }
 
 static void
@@ -59,9 +70,14 @@ xmd_eH(void *userData, const char *name)
 	in_cat_data = 0;
       else if (strcmp(name,"subfield")) /*FIXME: should do something
 					  with subfields */
-	hash_add(xmd_vals, 
-		 (unsigned char*)pool_copy((ucp)name, xmd_pool), 
-		 (unsigned char *)pool_copy((ucp)charData_retrieve(), xmd_pool));
+	{
+	  hash_add(xmd_vals, 
+		   (unsigned char*)pool_copy((ucp)name, xmd_pool), 
+		   (unsigned char*)pool_copy((ucp)charData_retrieve(), xmd_pool));
+	  hash_add(xmd_vals, 
+		   (unsigned char*)pool_copy((ucp)xmd_name_c(name), xmd_pool), 
+		   (unsigned char*)pool_copy((ucp)curr_c, xmd_pool));
+	}
     }
   else if (!strcmp(name,"images"))
     in_cat_data = 1;
