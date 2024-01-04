@@ -36,6 +36,21 @@ tis_add(Tisp tp, const char *key, const char *wid)
   *n = wid;
 }
 
+unsigned char *
+tis_id(unsigned const char *k)
+{
+  static int idbase = 0;
+  static unsigned char id[32];
+  int i = 0;
+  if ('%' == *k)
+    {
+      strncpy((char*)id, (char*)k+1, 3);
+      id[i=3] = '\0';
+    }
+  sprintf((char*)id+i, ".r%05x", ++idbase);
+  return id;
+}
+
 void
 tis_sort(Tisp tp)
 {
@@ -66,6 +81,7 @@ tis_dump(FILE *fp, Tisp tp)
     {
       fputs(k[i], fp);
       fputc('\t', fp);
+      fprintf(fp, "%s\t", tis_id((uccp)k[i]));
       struct tis_n_is *tnis = hash_find(tp, (uccp)k[i]);
       if (tnis)
 	{
@@ -78,7 +94,10 @@ tis_dump(FILE *fp, Tisp tp)
 	    }
 	}
       else
-	fprintf(stderr, "no is data found for key %s\n", k[i]);
+	{
+	  fputs("0\t", fp);
+	  fprintf(stderr, "no is data found for key %s\n", k[i]);
+	}
       fputc('\n', fp);
     }
 }

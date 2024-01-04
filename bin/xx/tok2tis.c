@@ -6,11 +6,50 @@
 
 struct tokloc
 {
+  const char *P;
   const char *W;
 };
 
-struct tokloc tl;
+Hash *langs = NULL;
 Pool *p;
+struct tokloc tl;
+
+static unsigned char *
+langtok(unsigned char *lang, unsigned char *tok)
+{
+  unsigned char lt[strlen(lang)+strlen(tok)+2];
+  sprintf(lt, "%s:%s", lang, tok);
+  return pool_copy(lt, p);
+}
+
+static unsigned char *
+pw()
+{
+  unsigned char PW[strlen(tl.P)+strlen(tl.W)+2];
+  sprintf(PW, "%s:%s", tl.P, tl.W);
+  return pool_copy(PW,p);
+}
+
+static unsigned char *
+sig_lang(unsigned char *sig)
+{
+  unsigned char *pct = NULL;
+  if (sig && (pct = strchr(sig, '%')))
+    {
+      unsigned char *col = strchr(pct, ':');
+      if (col)
+	*col = '\0';
+      unsigned char *hlang = hash_find(langs, pct);
+      if (!hlang)
+	{
+	  hlang = pool_copy(pct, p);
+	  (void)hash_add(langs, hlang, hlang);
+	}
+      return hlang;
+    }
+  else
+    return NULL;
+}
 
 static void
 tok_m(Tisp tis, Hash *m, const char *w, unsigned const char *tok)
@@ -39,8 +78,11 @@ main(int argc, char **argv)
   size_t nbytes;
   unsigned char *lp;
   Hash *m = hash_create(10);
-  p = pool_init();
   Tisp t = tis_init();
+  
+  langs = hash_create(10);
+  p = pool_init();
+
   while ((lp = loadoneline(stdin,&nbytes)))
     {
       if (isupper(*lp))
@@ -50,6 +92,20 @@ main(int argc, char **argv)
 	      unsigned char *wid = (ucp)strchr((ccp)lp,'\t');
 	      if (wid)
 		tl.W = (ccp)pool_copy(++wid,p);
+	    }
+	  else if ('T' == *lp)
+	    {
+	      unsigned char *project = (ucp)strchr((ccp)lp, '\t');
+	      if (project)
+		{
+		  unsigned char *tab = strchr(++project, '\t');
+		  if (tab)
+		    *tab = '\0';
+		  if (!tl.P || strcmp(tl.P, project))
+		    tl.P = (ccp)pool_copy(project,p);
+		}
+	      else
+		fprintf(stderr, "tok2tis: T line with no PROJECT: %s\n", lp);
 	    }
 	  else if ('K' == *lp)
 	    {
@@ -75,14 +131,20 @@ main(int argc, char **argv)
 	  if (tl.W)
 	    {
 	      char *tab = strchr((ccp)lp, '\t');
+	      char *lang = NULL;
 	      if (tab)
-		*tab = '\0';
-	      tis_add(t, (ccp)pool_copy(lp,p), tl.W);
-	      tok_m(t, m, tl.W, lp);
+		{
+		  *tab = '\0';
+		  lang = sig_lang(++tab);
+		  tis_add(t, (ccp)pool_copy(langtok(lang,lp),p), pw());
+		  tok_m(t, m, tl.W, lp);
+		}
+	      else
+		fprintf(stderr, "tok2tis: no sig in line: %s\n", lp);
 	    }
 	  else
 	    {
-	      fprintf(stderr, "no W set\n");
+	      fprintf(stderr, "tok2tis: no W set: %s\n", lp);
 	      exit(1);
 	    }	
 	}
