@@ -8,6 +8,7 @@
     xmlns:xh="http://www.w3.org/1999/xhtml"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:esp="http://oracc.org/ns/esp/1.0"
+    xmlns:is="http://oracc.org/ns/is/1.0"
     exclude-result-prefixes="sl dc xh"
     extension-element-prefixes="ex"
     version="1.0">
@@ -525,7 +526,7 @@
 </xsl:template>
 
 <xsl:template mode="rest"
-	      match="sl:aka|sl:v|sl:sort
+	      match="is:land|sl:aka|sl:v|sl:sort
 		     |sl:uphase|sl:utf8|sl:uname|sl:ucun
 		     |sl:list|sl:name|sl:pname|sl:inote|sl:form|sl:unote|sl:note
 		     |sl:qs|sl:inherited|sl:uage|sl:sys|sl:smap|sl:images"/>

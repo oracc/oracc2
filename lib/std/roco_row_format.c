@@ -61,18 +61,18 @@ roco_row_format(FILE*fp, const unsigned char **row)
 		    }
 		  char *e;
 		  colnum = (int)strtol(s, &e, 10);
-		  /* FIXME: initial implementation without
-		     range-checking; r-c requires mods to Roco
-		     structure */
-		  if (zeroes)
+		  if (row[colnum-1])
 		    {
-		      long colval = strtoul((ccp)row[colnum], NULL, 10);
-		      if (colval >= 0)
-			pad(fp, zeroes, colval);
-		      fputs((ccp)xmlify(row[colnum-1]), fp);
+		      if (zeroes)
+			{
+			  long colval = strtoul((ccp)row[colnum-1], NULL, 10);
+			  if (colval >= 0)
+			    pad(fp, zeroes, colval);
+			  fputs((ccp)xmlify(row[colnum-1]), fp);
+			}
+		      else
+			fputs((ccp)xmlify(row[colnum-1]), fp);
 		    }
-		  else
-		    fputs((ccp)xmlify(row[colnum-1]), fp);
 		}
 	      else
 		{
