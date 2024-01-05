@@ -149,71 +149,40 @@ eH(void *userData, const char *name)
 	      const char *foid = (*last_spoid ? last_oid : "");
 	      if (name[2] == 'v')
 		{
-#if 1
 		  if (*foid)
 		    fprintf(tab, "%s.%s:%s", soid, foid, last_v);
 		  else
 		    fprintf(tab, "%s:%s", soid, last_v);
-#else
-		  if (*foid)
-		    fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
-		  else
-		    fprintf(tab, "%c.%s:%s", name[2], soid, last_v);
-#endif
 		}
 	      else if (*foid)
-#if 1
 		fprintf(tab, "%s.%s", soid, foid);
-#else
-		fprintf(tab, "%c.%s.%s", name[2], soid, foid);
-#endif
-		else
-#if 1
-		  fprintf(tab, "%s", soid);
-#else
-	          fprintf(tab, "%c.%s", name[2], soid);
-#endif
-			sign_signature();
+	      else
+		fprintf(tab, "%s", soid);
+	      sign_signature();
+	      *last_v = *last_s = '\0';
 	    }
 	}
     }
   else if (!strcmp(name, "g:c") || !strcmp(name, "g:q") || !strcmp(name, "g:n"))
     {
-      if (*last_oid)
+      if (*last_oid && (*last_v || *last_s))
 	{
 	  const char *soid = (*last_spoid ? last_spoid : last_oid);
 	  const char *foid = (*last_spoid ? last_oid : "");
 	  if (name[2] == 'q')
 	    {
-#if 1
 	      if (*last_v)
 		fprintf(tab, "%s.%s:%s", soid, foid, last_v);
 	      else if (*foid)
 		fprintf(tab, "%s.%s", soid, foid);
 	      else
 		fprintf(tab, "%s", soid);
-#else
-	      if (*last_v)
-		fprintf(tab, "%c.%s.%s:%s", name[2], soid, foid, last_v);
-	      else if (*foid)
-		fprintf(tab, "%c.%s.%s", name[2], soid, foid);
-	      else
-		fprintf(tab, "%c.%s", name[2], soid);
-#endif
 	    }
 	  else if (*foid)
-#if 1
 	    fprintf(tab, "%s.%s", soid, foid);
-#else
-  	    fprintf(tab, "%c.%s.%s", name[2], soid, foid);
-#endif
-	    else
-#if 1
-	      fprintf(tab, "%s", soid);
-#else
-  	      fprintf(tab, "%c.%s", name[2], soid);
-#endif
-	      sign_signature();
+	  else
+	    fprintf(tab, "%s", soid);
+	  sign_signature();
 	}
       ++printing;
     }
