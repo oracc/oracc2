@@ -11,5 +11,6 @@ if [ "$projtype" = "corpus" ]; then
     odo-corpus-signlist.sh
 else
     sxweb.sh
+    tisdbi.sh
     odo-portal.sh
 fi

@@ -36,3 +36,7 @@ if [ "$asl" != "" ]; then
 fi
 
 sxweb.sh
+
+# odo-corpus-signlist is called after glossaries are built so it's
+# time to run tisdbi
+tisdbi.sh

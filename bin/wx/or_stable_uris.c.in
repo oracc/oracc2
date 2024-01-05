@@ -255,8 +255,23 @@ res_is_list(const char *e)
   const char *init = e;
   if (e)
     {
-      while (*e && (isalnum(*e) || '-' == *e || '_' == *e))
-	++e;
+      e += strlen(e);
+      while (e > init && '.' != *--e)
+	;
+#if 1
+      if (!strcmp(e, ".tis"))
+	return 1;
+      else
+	{
+	  char *lst = malloc(strlen("@@ORACC@@") + strlen("/www/lists/") + strlen(project)
+				   + strlen(init) + 2);
+	  int ret;
+	  sprintf(lst, "%s/www/%s/lists/%s", "@@ORACC@@", project, init);
+	  ret = !access(lst, R_OK);
+	  free(lst);
+	  return ret;
+	}
+#else
       if (*e == 0 || !strcmp(e, ".tis"))
 	{
 	  char *lst = malloc(strlen("@@ORACC@@") + strlen("/www/lists/") + strlen(project)
@@ -267,6 +282,7 @@ res_is_list(const char *e)
 	  free(lst);
 	  return ret;
 	}
+#endif
     }
   return 0;
 }

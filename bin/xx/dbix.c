@@ -8,17 +8,12 @@
 #include "help.h"
 #endif
 
-#define DBIX_MAX_LINE 8192
-
 const char *dbidir, *dbiname;
 int stdinput = 0;
 
 int
 main(int argc, char **argv)
 {
-#if 0
-  unsigned char *buf[DBIX_MAX_LINE];
-#endif
   unsigned char *k;
   
   const char *tsvfile = NULL;
@@ -36,7 +31,7 @@ main(int argc, char **argv)
     }
   else if (!dbidir || !dbiname)
     {
-      fprintf(stderr, "dbix: -d DIR -n NAME required for DBI creation\n");
+      fprintf(stderr, "dbix: [-s] -d DIR -n NAME required for DBI creation\n");
       exit(1);
     }
 
@@ -49,30 +44,13 @@ main(int argc, char **argv)
     }
 
   dbi = dbi_create(dbiname, dbidir, 0, 1, DBI_BALK);
-#if 1
   while ((k = loadoneline(infile,&nbytes)))
-#else
-  while ((k = (unsigned char *)fgets((char*)buf,DBIX_MAX_LINE,infile)))
-#endif
     {
       unsigned char *v = (unsigned char*)strchr((char*)k,'\t');
       if (v)
 	{
 	  *v++ = '\0';
-#if 1
 	  dbi_add(dbi,k,v,strlen((char*)v)+1);
-#else
-	  if (v[strlen((char*)v)-1] == '\n')
-	    {
-	      v[strlen((char*)v)-1] = '\0';
-	      dbi_add(dbi,k,v,strlen((char*)v)+1);
-	    }
-	  else
-	    {
-	      fprintf(stderr,"dbix: line too long (max=%d).\n", DBIX_MAX_LINE);
-	      exit(1);
-	    }
-#endif
 	}
       else if ('#' != *k)
 	{

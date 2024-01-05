@@ -45,13 +45,11 @@ tis_id(const char *lang)
   int i = 0;
   if (lang)
     {
-      while (isalpha(lang[i]))
-	{
-	  id[i] = lang[i];
-	  ++i;
-	}
-      id[i] = '\0';
+      strcpy(id, lang);
+      i += strlen(lang);
     }
+  else
+    id[i++] = 'x';
   sprintf((char*)id+i, ".r%05x", ++idbase);
   return id;
 }
