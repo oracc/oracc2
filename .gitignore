@@ -76,6 +76,7 @@ bin/wx/pqx_map.c
 bin/wx/sl.c
 bin/wx/xff.c
 bin/wx/xmlrpc.c
+bin/xx/tisdiv.c
 fname.c
 slix.c
 mktablst

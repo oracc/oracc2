@@ -4,6 +4,7 @@ SUBDIRS=../../lib osort rnv
 
 bin_PROGRAMS=concord dbix dbx tisdiv tisify tlitsig tok2tis xmlify
 bin_SCRIPTS=tisdiv.sh
+data_DATA=tis-[ht].html
 
 concord_SOURCES = concord.c
 concord_LDADD = $(xLDADD)

@@ -1,0 +1,218 @@
+#include <oraccsys.h>
+#include <tis.h>
+
+Tisp tish;
+
+int basecount = 5;
+const char *ext = ".div";
+const char *tisdir = "tisdiv.d";
+const char *field = "period";
+int html_mode = 0;
+const char *project = "pctc";
+int text_mode = 0;
+int threshold = 30;
+
+#define TIS_HTML_H "@@ORACC_BUILDS@@/lib/data/tis-h.html"
+#define TIS_HTML_T "@@ORACC_BUILDS@@/lib/data/tis-t.html"
+
+static void
+tis_html_head(FILE *xp, const char *oid)
+{
+  unsigned char *h = slurp("tisdiv", TIS_HTML_H, NULL);
+  if (h)
+    {
+      unsigned char *o = (ucp)strstr((ccp)h, "@@OID@@");
+      unsigned char *h2 = o + strlen("@@OID@@");
+      *o = '\0';
+      fputs((ccp)h,xp);
+      fputs(project,xp);
+      fputc(' ', xp);
+      fputs(oid,xp);
+      fputs((ccp)h2,xp);
+      free(h);
+    }
+  else
+    exit(1);
+}
+
+static void
+tis_html_tail(FILE *xp)
+{
+  unsigned char *t = slurp("tisdiv", TIS_HTML_T, NULL);
+  if (t)
+    {
+      fputs((ccp)t, xp);
+      free(t);
+    }
+  else
+    exit(1);
+}
+
+static char *
+first_n(int n, char *s)
+{
+  int i = 0;
+  char *start = s;
+  while (*s)
+    {
+      while (*s && ' ' != *s)
+	++s;
+      if (++i == n)
+	break;
+      else if (*s)
+	++s;
+    }
+  if (*s)
+    *s = '\0';
+  return start;
+}
+
+static void
+putn(int n, const char *s)
+{
+  int i = 0;
+  while (*s)
+    {
+      while (*s && ' ' != *s)
+	{
+	  putchar(*s);
+	  ++s;
+	}
+      if (++i == n)
+	break;
+      else if (*s)
+	{
+	  putchar(' ');
+	  ++s;
+	}
+    }
+  putchar('\n');
+}
+
+void
+tis_div(struct tis_data *tip)
+{
+  FILE *xp;
+  char fn[strlen(tip->key) + 12];
+  int icnt = atoi(tip->cnt);
+  int all_mode = icnt <= threshold;
+  const char *tip_s = (icnt == 1 ? "" : "s");
+  struct tis_data *sip;
+  
+  if (text_mode)
+    printf("h1\t%s\t%s\t%s\n", tip->key, tip->ref, tip->cnt);
+  else
+    {
+      sprintf(fn, "%s/%s%s", tisdir, tip->key, ext);
+      if (!(xp = fopen(fn, "w")))
+	{
+	  fprintf(stderr, "tisdiv: can't write %s. Stop.\n", fn);
+	  exit(1);
+	}
+      if (html_mode)
+	tis_html_head(xp, tip->key);
+      fputs("<div class=\"tis\">", xp);
+      if (!all_mode)
+	fprintf(xp, "<h1>%s occurrence%s in total <a href=\"/%s/%s.tis\">See all instances</a></h1>",
+		tip->cnt, tip_s, project, tip->ref);
+    }
+  
+  for (sip = list_first(tip->subs); sip; sip = list_next(tip->subs))
+    {
+      const char *f = strstr(sip->key, field);
+      int sicnt = atoi(sip->cnt);
+      const char *sip_s = (sicnt == 1 ? "" : "s");
+      if (f && '|' == f[-1] && '=' == f[strlen(field)])
+	{
+	  f = strchr(f, '/'); ++f;
+	  if (text_mode)
+	    {
+	      printf("h2\t%s\t%s\t%s\n#", f, sip->ref, sip->cnt);
+	      if (all_mode)
+		puts(sip->iss);
+	      else
+		putn(basecount, sip->iss);
+	    }
+	  else
+	    {
+	      if (all_mode)
+		fprintf(xp, "<h2>%s occurrence%s in %s:</h2>", sip->cnt, sip_s, f);
+	      else
+		fprintf(xp, "<h2>%s occurrence%s in %s: <a href=\"/%s/%s.tis\"> see all %s instances</a></h2>",
+			sip->cnt, sip_s, f, project, sip->ref, f);
+	      char *iss = NULL;
+	      if (all_mode)
+		iss = sip->iss;
+	      else
+		iss = first_n(basecount, sip->iss);
+	      char syscmd[strlen(iss)+strlen(project)+strlen(oracc_builds())+strlen(fn)+32];
+	      sprintf(syscmd, "%s/bin/tisdiv.sh %s %s %s", oracc_builds(), project, fn, iss);
+	      fclose(xp);
+	      system(syscmd);
+	      xp = fopen(fn, "a");
+	    }
+	}
+    }
+
+  if (text_mode)
+    puts("h0");
+  else
+    {
+      fputs("</div>", xp);
+      if (html_mode)
+	tis_html_tail(xp);
+      fclose(xp);
+    }
+}
+
+void
+tis_divs(Tisp t)
+{
+  int nk;
+  const char **tk = hash_keys2(t, &nk);
+  qsort(tk,nk,sizeof(const char *), cmpstringp);
+  for (nk = 0; tk[nk]; ++nk)
+    tis_div(hash_find(t, (ucp)tk[nk]));
+}
+
+int
+main(int argc, char **argv)
+{
+  options(argc, argv, "d:f:hp:t");
+  FILE *tfp = fopen(argv[optind], "r");
+  tis_load_init();
+  tish = tis_load(tfp);
+  tis_divs(tish);
+  tis_load_term(tish);
+}
+
+int
+opts(int argc, char *arg)
+{
+  switch (argc)
+    {
+    case 'd':
+      tisdir = arg;
+      break;
+    case 'f':
+      field = arg;
+      break;
+    case 'h':
+      html_mode = 1;
+      ext = ".html";
+      break;
+    case 'p':
+      project = arg;
+      break;
+    case 't':
+      text_mode = 1;
+      break;
+    default:
+      usage();
+      exit(1);
+      break;
+    }
+  return 0;
+}
+
+void help(void) { }
