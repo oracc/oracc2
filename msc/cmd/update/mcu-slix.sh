@@ -16,7 +16,7 @@ if [ "$asl" = "" ]; then
 	asl=$1
     fi
 fi
-if [ "$asl" != "" ]; then	
+if [ "$asl" != "" ]; then
     echo $0: updating $asl
     # check signlist
     sx -c $asl
@@ -31,5 +31,4 @@ if [ "$asl" != "" ]; then
 	echo "$0: errors in processing $asl. Stop."
 	exit 1
     fi
-    echo $0: `ls -l 02xml/sl.xml`
 fi
