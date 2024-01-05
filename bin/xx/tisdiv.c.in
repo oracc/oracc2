@@ -113,7 +113,7 @@ tis_div(struct tis_data *tip)
 	tis_html_head(xp, tip->key);
       fputs("<div class=\"tis\">", xp);
       if (!all_mode)
-	fprintf(xp, "<h1>%s occurrence%s in total <a href=\"/%s/%s.tis\">See all instances</a></h1>",
+	fprintf(xp, "<h1 class=\"border-top heading\">%s occurrence%s in total <a href=\"/%s/%s.tis\">See all instances</a></h1>",
 		tip->cnt, tip_s, project, tip->ref);
     }
   
@@ -136,9 +136,9 @@ tis_div(struct tis_data *tip)
 	  else
 	    {
 	      if (all_mode)
-		fprintf(xp, "<h2>%s occurrence%s in %s:</h2>", sip->cnt, sip_s, f);
+		fprintf(xp, "<h2 class=\"border-top heading\">%s occurrence%s in %s:</h2>", sip->cnt, sip_s, f);
 	      else
-		fprintf(xp, "<h2>%s occurrence%s in %s: <a href=\"/%s/%s.tis\"> see all %s instances</a></h2>",
+		fprintf(xp, "<h2 class=\"border-top heading\">%s occurrence%s in %s: <a href=\"/%s/%s.tis\"> see all %s instances</a></h2>",
 			sip->cnt, sip_s, f, project, sip->ref, f);
 	      char *iss = NULL;
 	      if (all_mode)
