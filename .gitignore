@@ -23,6 +23,7 @@ bin/xx/dbix
 bin/xx/dbx
 bin/xx/osort/osort
 bin/xx/rnv/rnv
+bin/xx/tisdiv
 bin/xx/tisify
 bin/xx/tok2tis
 bin/xx/tlitsig

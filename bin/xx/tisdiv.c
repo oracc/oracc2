@@ -96,9 +96,11 @@ tis_div(struct tis_data *tip)
 		iss = sip->iss;
 	      else
 		iss = first_n(basecount, sip->iss);
-	      char syscmd[strlen(iss)+strlen(project)+strlen(oracc_builds())+32];
-	      sprintf(syscmd, "%s/bin/tisdiv.sh %s %s >>%s", oracc_builds(), project, iss, fn);
+	      char syscmd[strlen(iss)+strlen(project)+strlen(oracc_builds())+strlen(fn)+32];
+	      sprintf(syscmd, "%s/bin/tisdiv.sh %s %s %s", oracc_builds(), project, fn, iss);
+	      fclose(xp);
 	      system(syscmd);
+	      xp = fopen(fn, "a");
 	    }
 	}
     }
