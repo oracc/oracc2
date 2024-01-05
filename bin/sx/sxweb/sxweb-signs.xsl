@@ -383,7 +383,7 @@
 				<xsl:with-param name="c" select="$c"/>
 			      </xsl:call-template>
 			    </xsl:variable>
-			    <iframe width="100%" height="{$height}" src="/pctc/inst/{$o}.html"/>
+			    <iframe width="100%" height="{$height}" src="/pctc/signlist/inst/{$o}.html"/>
 			  </td>
 			</tr>
 		      </table>

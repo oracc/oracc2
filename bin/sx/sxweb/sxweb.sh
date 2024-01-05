@@ -116,6 +116,12 @@ fi
 
 (cd signlist ; o2-portal.sh)
 
+if [ -d 01tmp/slinst ]; then
+    rm -fr signlist/02www/inst
+    mv 01tmp/slinst signlist/02www/inst
+    chmod -R o+r signlist/02www/inst
+fi
+
 # Adjust home/index so that index.html is the frame that gives
 # searchable signlist and home.html is the browsable ESP portal.
 ## 2023-12-04 esp2 tweaked to write to home.html directly 
