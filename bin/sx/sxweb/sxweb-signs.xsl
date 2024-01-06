@@ -22,7 +22,9 @@
 <xsl:param name="snippets" select="'/Users/stinney/orc/emss/00etc/snippets.xml'"/>
 <xsl:param name="snippetdir" select="'/emss/snippets'"/>
 
-<xsl:include href="xpd.xsl"/>
+<!--xpd.xsl is included by g2-gdl-HTML.xsl-->
+<!--<xsl:include href="xpd.xsl"/>-->
+
 <xsl:include href="lex-sign-lookup.xsl"/>
 <xsl:include href="g2-gdl-HTML.xsl"/>
 <xsl:include href="sxweb-util.xsl"/>
