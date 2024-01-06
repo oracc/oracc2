@@ -15,12 +15,6 @@
 
 <!--<xsl:include href="formdiv.xsl"/>-->
 
-<xsl:include href="lex-sign-lookup.xsl"/>
-<xsl:include href="g2-gdl-HTML.xsl"/>
-<xsl:include href="sxweb-util.xsl"/>
-
-<xsl:output method="xml" indent="yes" encoding="utf-8"/>
-
 <xsl:param name="project"/>
 <xsl:param name="hproject" select="translate($project,'/','-')"/>
 <xsl:param name="with-stats"/>
@@ -28,8 +22,24 @@
 <xsl:param name="snippets" select="'/Users/stinney/orc/emss/00etc/snippets.xml'"/>
 <xsl:param name="snippetdir" select="'/emss/snippets'"/>
 
+<xsl:include href="xpd.xsl"/>
+<xsl:include href="lex-sign-lookup.xsl"/>
+<xsl:include href="g2-gdl-HTML.xsl"/>
+<xsl:include href="sxweb-util.xsl"/>
+
+<xsl:output method="xml" indent="yes" encoding="utf-8"/>
+
+<xsl:variable name="asl-insts">
+  <xsl:call-template name="xpd-option">
+    <xsl:with-param name="option" select="'asl-insts'"/>
+  </xsl:call-template>
+</xsl:variable>
+
 <xsl:template match="sl:signlist">
   <xsl:message>sxweb-signs.xsl processing <xsl:value-of select="count(sl:letter/sl:sign)"/> signs</xsl:message>
+  <xsl:if test="$asl-insts = 'yes'">
+    <xsl:message>&#x9;asl-insts=yes</xsl:message>
+  </xsl:if>
   <xsl:apply-templates select="sl:letter/sl:sign"/>
 </xsl:template>
 

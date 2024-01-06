@@ -82,6 +82,7 @@ slix.c
 mktablst
 seq2c
 xpd.c
+lib/xpd/xpd.xsl
 msc/adm/oadm
 msc/adm/oadmsudo
 msc/adm/oadmwrapper
