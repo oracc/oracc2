@@ -116,31 +116,28 @@
 	  <xsl:call-template name="sws-navbar"/>
 	  <div class="asl-sign">
 	    <div class="asl-sign-sign">
+	      <xsl:call-template name="sws-form-jumps"/>
+	      <!--<xsl:call-template name="sws-sections"/>?-->
 	      <xsl:call-template name="sws-sign-or-form"/>
 	    </div>
 	    <xsl:if test="count(sl:form)>0">
 	      <div class="asl-forms">
 		<xsl:for-each select="sl:form">
-		  <div class="asl-sign-form">
+		  <div class="asl-sign-form"
+		       id="form{count(preceding-sibling::sl:form)}">
 		    <xsl:call-template name="sws-form-h"/>
 		    <xsl:call-template name="sws-sign-or-form"/>
 		  </div>
 		</xsl:for-each>
 	      </div>
 	    </xsl:if>
-	</div>
+	  </div>
+	  <xsl:call-template name="sws-cite-url"/>
       </body>
     </html>
   </esp:page>
   <!--</ex:document>-->
 </xsl:template>
-
-<!--### Controller for sign/form div creation -->
-
-<xsl:template name="sws-sign-or-form">
-</xsl:template>
-
-<!--### Subroutines for each part of sign-or-form page -->
 
 <xsl:template name="sws-esp-header">
   <xsl:variable name="nopipes" select="translate(@n,'|','')"/>
@@ -207,13 +204,252 @@
   </xsl:if>
 </xsl:template>
 
-<xsl:template name="sws-value-h">
-  <h2 class="asl-value-h"><xsl:value-of select="@n"/></h2>
+<xsl:template name="sws-form-jumps">
+  <xsl:if test="count(sl:form) > 0">
+    <div class="asl-bkmk-forms">
+      <p>
+	<xsl:text>Jump to variant form: </xsl:text>
+	<xsl:for-each select="sl:form">
+	  <esp:link bookmark="form{count(preceding-sibling::sl:form)}">
+	    <xsl:value-of select="@n"/>
+	    <xsl:if test="sl:images/sl:i[@loc]">
+	      <xsl:text>&#xa0;=&#xa0;</xsl:text>
+	      <xsl:variable name="base" select="'../../../pctc'"/>
+	      <xsl:for-each select="sl:images/sl:i[@loc][1]">
+		<xsl:variable name="ref" select="@ref"/>
+		<xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
+		<esp:image height="40px" file="{$base}/{$header/@path}/{@loc}"
+			   description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+	      </xsl:for-each>
+	    </xsl:if>
+	  </esp:link>
+	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+	</xsl:for-each>
+      </p>
+    </div>
+  </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-cite-url">
+  <div class="asl-cite-url">
+    <hr/>
+    <p>Sign ID <xsl:value-of select="@xml:id"/>;
+    Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/<xsl:value-of select="@xml:id"/>
+    </p>
+    <hr/>
+  </div>
+</xsl:template>
+
+<!--### Controller for sign/form div creation -->
+
+<xsl:template name="sws-sign-or-form">
+  <div class="asl-sf-body">
+    <!--<xsl:call-template name="sws-stats"/>-->
+    <xsl:call-template name="sws-meta"/>
+    <xsl:call-template name="sws-images"/>
+    <xsl:call-template name="sws-snippets"/>
+    <xsl:call-template name="sws-lexdata"/>
+    <xsl:call-template name="sws-instances"/>
+    <xsl:call-template name="sws-values"/>
+  </div>
+</xsl:template>
+
+<!--### Subroutines for sign-or-form -->
+
+<xsl:template name="sws-meta">
+  <xsl:if test="sl:uage|sl:aka|sl:list|sl:sys|sl:compoundonly">
+    <div class="asl-meta">
+      <xsl:call-template name="sws-unicode"/>
+      <xsl:call-template name="sws-akas"/>
+      <xsl:call-template name="sws-lists"/>
+      <xsl:call-template name="sws-systems"/>
+      <xsl:call-template name="sws-compounds"/>
+    </div>
+  </xsl:if>
+</xsl:template>
 
 <xsl:template name="sws-unicode">
-  <xsl:value-of select=".//sl:uname[1]"/>
+  <p style="font-size: 150%">
+    <xsl:choose>
+      <xsl:when test="sl:ucun">
+	<xsl:value-of select="sl:ucun"/>
+      </xsl:when>
+      <xsl:when test="sl:useq">
+	<xsl:value-of select="sl:useq"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:for-each select=".//sl:name[1]//*">
+	  <xsl:choose>
+	    <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
+	    <xsl:otherwise/>
+	  </xsl:choose>
+	</xsl:for-each>
+      </xsl:otherwise>
+    </xsl:choose>
+  </p>
+</xsl:template>
+
+<xsl:template name="sws-akas">
+  <xsl:if test="sl:aka">
+    <p>
+      <span class="sl-ihead">AKA</span>
+      <span class="sl-ibody">
+	<xsl:for-each select="sl:aka">
+	  <xsl:value-of select="@n"/>
+	  <xsl:if test="not(position()=last())">
+	    <xsl:text>; </xsl:text>
+	  </xsl:if>
+	</xsl:for-each>
+      </span>
+    </p>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-lists">
+  <xsl:if test="sl:list">
+    <p>
+      <span class="sl-ihead">LISTS</span>
+      <span class="sl-ibody">
+	<xsl:for-each select="sl:list">
+	  <xsl:value-of select="@n"/>
+	  <xsl:if test="not(position()=last())">
+	    <xsl:text>; </xsl:text>
+	  </xsl:if>
+	</xsl:for-each>
+      </span>
+    </p>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-systems">
+  <xsl:if test="sl:sys">
+    <p>
+      <span class="sl-ihead">SYS</span>
+      <xsl:for-each select="sl:sys">
+	<span class="sl-sys-name">
+	  <xsl:value-of select="@name"/>
+	  <xsl:if test="@subname">
+	    <span class="sl-sys-subname"><xsl:value-of select="concat(':',@subname)"/></span>
+	  </xsl:if>
+	  <xsl:text>:&#xa0;</xsl:text>
+	</span>
+	<span class="sl-sys-token">
+	  <xsl:value-of select="@token"/>
+	  <xsl:if test="string-length(text())>0">
+	    <xsl:text>&#x2192;</xsl:text>
+	    <xsl:value-of select="text()"/>
+	  </xsl:if>
+	</span>
+	<xsl:if test="not(position()=last())">
+	  <xsl:text>; </xsl:text>
+	</xsl:if>
+      </xsl:for-each>
+    </p>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-compounds">
+  <xsl:if test="@compoundonly='yes'">
+    <xsl:variable name="s">
+      <xsl:if test="contains(@cpd-refs, ' ')">
+	<xsl:text>s</xsl:text>
+      </xsl:if>
+    </xsl:variable>
+    <p>Occurs in the following compound<xsl:value-of select="$s"/>:
+    <xsl:for-each select="id(@cpd-refs)">
+      <xsl:text> </xsl:text>
+      <esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
+	<xsl:apply-templates select=".//sl:name[1]"/>
+	<xsl:if test="sl:images/sl:i[@loc]">
+	  <xsl:text> = </xsl:text>
+	  <xsl:for-each select="sl:images/sl:i[@loc][1]">
+	    <xsl:call-template name="esp-sign-image"/>
+	  </xsl:for-each>
+	</xsl:if>
+      </esp:link>
+    </xsl:for-each>
+    <xsl:text>.</xsl:text>
+    </p>
+  </xsl:if>
+</xsl:template>
+
+<!--### Images and snippets -->
+
+<xsl:template name="sws-images">
+  <xsl:if test="sl:images/sl:i[@loc]">
+    <div class="asl-images">
+      <xsl:for-each select="sl:images/sl:i[@loc]">
+	<xsl:variable name="ref" select="@ref"/>
+	<xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
+	<table class="itable">
+	  <tr><td><span class="im-label"><xsl:value-of select="$header/@label"/>:</span></td></tr>
+	  <tr><td>
+	    <esp:image width="100%" file="{$base}/{$header/@path}/{@loc}"
+		       description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+	  </td></tr>
+	</table>
+      </xsl:for-each>
+    </div>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-snippets">
+  <xsl:if test="asl-snippets='yes'">
+    <xsl:variable name="oid" select="@xml:id"/>
+    <xsl:for-each select="document('/ogsl/downloads/snippets.xml')">
+      <xsl:for-each select="id($oid)">
+	<div class="asl-snippets">
+	  <p>See the <esp:link url="/ogsl/{$oid}.html">snippets page for this sign</esp:link>.</p>
+	</div>
+      </xsl:for-each>
+    </xsl:for-each>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-lexdata">
+</xsl:template>
+
+<xsl:template name="sws-instances">
+
+</xsl:template>
+
+<!-- ### Values -->
+
+<xsl:template name="sws-values">
+  <xsl:if test="count(sl:v)>0">
+    <div class="asl-values">
+      <p>
+	<span class="asl-values-h">Values: </span>
+	<xsl:for-each select="sl:v">
+	  <xsl:choose>
+	    <xsl:when test="@deprecated='yes'">
+	      <span class="v-drop"><xsl:value-of select="@n"/></span>
+	    </xsl:when>
+	    <xsl:when test="@uncertain='yes'">
+	      <span class="v-query"><xsl:value-of select="@n"/></span>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <span class="v-ok"><xsl:value-of select="@n"/></span>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+	</xsl:for-each>
+	<xsl:text>.</xsl:text>
+      </p>
+    </div>
+  </xsl:if>
+</xsl:template>
+
+<!-- Trap unhandled tags -->
+
+<xsl:template mode="rest"
+	      match="is:land|sl:aka|sl:v|sl:sort
+		     |sl:uphase|sl:utf8|sl:uname|sl:ucun
+		     |sl:list|sl:name|sl:pname|sl:inote|sl:form|sl:unote|sl:note
+		     |sl:qs|sl:inherited|sl:uage|sl:sys|sl:smap|sl:images"/>
+
+<xsl:template mode="rest" match="*">
+  <xsl:message>sxweb-signs.xsl: tag <xsl:value-of select="local-name(.)"/> not handled</xsl:message>
 </xsl:template>
 
 </xsl:transform>
