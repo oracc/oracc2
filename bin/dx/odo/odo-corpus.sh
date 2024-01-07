@@ -42,10 +42,11 @@ else
     /bin/echo -n ' qpn' >>01bld/superlangs
 fi
 o2-glo.sh
+# 02www/inst currently holds signlist instances but could hold others in future
+rm -fr 02www/inst
 o2-xtf.sh $*
 o2-web-corpus.sh
 odo-corpus-signlist.sh
-
 o2-weblive.sh
 o2-finish.sh
 ### end of o2-corpus.sh ###

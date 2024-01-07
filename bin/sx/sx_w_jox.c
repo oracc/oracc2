@@ -521,7 +521,7 @@ x_tle_tag(enum sx_tle t)
   switch (t)
     {
     case sx_tle_componly:
-      return "sl:compoundonly";
+      return "sl:sign";
     case sx_tle_formproxy:
       return "sl:formproxy";
     case sx_tle_lref:
@@ -601,6 +601,8 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
 
   if (s->u.s->type == sx_tle_componly)
     {
+      list_add(a, "compoundonly");
+      list_add(a, "yes");
       unsigned char *oids = x_cdp_refs(sl, s);
       if (oids)
 	{

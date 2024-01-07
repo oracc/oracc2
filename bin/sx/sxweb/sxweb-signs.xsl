@@ -17,6 +17,7 @@
 <xsl:param name="project"/>
 <xsl:param name="hproject" select="translate($project,'/','-')"/>
 
+<xsl:include href="lex-sign-lookup.xsl"/>
 <!--xpd.xsl is included by g2-gdl-HTML.xsl-->
 <xsl:include href="g2-gdl-HTML.xsl"/>
 <xsl:include href="sxweb-util.xsl"/>
@@ -76,10 +77,10 @@
   </xsl:call-template>
 </xsl:variable>
 
-<!--words asl-words=link = link to words; asl-words=xinc = xinclude words-->
-<xsl:variable name="asl-words">
+<!--suxword asl-suxword=link = link to words; asl-suxword=xinc = xinclude words-->
+<xsl:variable name="asl-suxword">
   <xsl:call-template name="xpd-option">
-    <xsl:with-param name="option" select="'asl-words'"/>
+    <xsl:with-param name="option" select="'asl-suxword'"/>
     <xsl:with-param name="default" select="'no'"/>
   </xsl:call-template>
 </xsl:variable>
@@ -91,23 +92,19 @@
 &#x9;asl-stats=<xsl:value-of select="$asl-stats"/>
 &#x9;asl-periods=<xsl:value-of select="$asl-periods"/>
 &#x9;asl-insts=<xsl:value-of select="$asl-insts"/>
-&#x9;asl-words=<xsl:value-of select="$asl-words"/>
+&#x9;asl-suxword=<xsl:value-of select="$asl-suxword"/>
 &#x9;asl-snippets=<xsl:value-of select="$asl-snippets"/>
 &#x9;asl-lexdata=<xsl:value-of select="$asl-lexdata"
 /></xsl:message>
-<wrapper>
-  <xsl:apply-templates select="sl:letter/sl:sign[position()&lt;10]"/>
-</wrapper>
+  <xsl:apply-templates select="sl:letter/sl:sign"/>
 </xsl:template>
 
 <!--### Iteration over each sign -->
 
 <xsl:template match="sl:sign">
-  <!--
-    <ex:document href="{concat('signlist/00web/',@xml:id,'.xml')}"
-    method="xml" encoding="utf-8"
-    indent="yes">
-  -->
+  <ex:document href="{concat('signlist/00web/',@xml:id,'.xml')}"
+	       method="xml" encoding="utf-8"
+	       indent="yes">
   <esp:page>
     <xsl:call-template name="sws-esp-header"/>
     <html>
@@ -136,7 +133,7 @@
       </body>
     </html>
   </esp:page>
-  <!--</ex:document>-->
+  </ex:document>
 </xsl:template>
 
 <xsl:template name="sws-esp-header">
@@ -246,18 +243,19 @@
   <div class="asl-sf-body">
     <!--<xsl:call-template name="sws-stats"/>-->
     <xsl:call-template name="sws-meta"/>
+    <xsl:call-template name="sws-values"/>
     <xsl:call-template name="sws-images"/>
     <xsl:call-template name="sws-snippets"/>
-    <xsl:call-template name="sws-lexdata"/>
     <xsl:call-template name="sws-instances"/>
-    <xsl:call-template name="sws-values"/>
+    <xsl:call-template name="sws-lexdata"/>
+    <xsl:call-template name="sws-suxword"/>
   </div>
 </xsl:template>
 
 <!--### Subroutines for sign-or-form -->
 
 <xsl:template name="sws-meta">
-  <xsl:if test="sl:uage|sl:aka|sl:list|sl:sys|sl:compoundonly">
+  <xsl:if test="sl:uage|sl:aka|sl:list|sl:sys|@compoundonly">
     <div class="asl-meta">
       <xsl:call-template name="sws-unicode"/>
       <xsl:call-template name="sws-akas"/>
@@ -349,27 +347,34 @@
 </xsl:template>
 
 <xsl:template name="sws-compounds">
-  <xsl:if test="@compoundonly='yes'">
-    <xsl:variable name="s">
-      <xsl:if test="contains(@cpd-refs, ' ')">
-	<xsl:text>s</xsl:text>
-      </xsl:if>
-    </xsl:variable>
-    <p>Occurs in the following compound<xsl:value-of select="$s"/>:
-    <xsl:for-each select="id(@cpd-refs)">
-      <xsl:text> </xsl:text>
-      <esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
-	<xsl:apply-templates select=".//sl:name[1]"/>
-	<xsl:if test="sl:images/sl:i[@loc]">
-	  <xsl:text> = </xsl:text>
-	  <xsl:for-each select="sl:images/sl:i[@loc][1]">
-	    <xsl:call-template name="esp-sign-image"/>
-	  </xsl:for-each>
-	</xsl:if>
-      </esp:link>
-    </xsl:for-each>
-    <xsl:text>.</xsl:text>
-    </p>
+  <xsl:if test="@compoundonly = 'yes'">
+    <xsl:choose>
+      <xsl:when test="string-length(@cpd-refs)>0">
+	<xsl:variable name="s">
+	  <xsl:if test="contains(@cpd-refs, ' ')">
+	    <xsl:text>s</xsl:text>
+	  </xsl:if>
+	</xsl:variable>
+	<p>Occurs in the following compound<xsl:value-of select="$s"/>:
+	<xsl:for-each select="id(@cpd-refs)">
+	  <xsl:text> </xsl:text>
+	  <esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
+	    <xsl:apply-templates select=".//sl:name[1]"/>
+	    <xsl:if test="sl:images/sl:i[@loc]">
+	      <xsl:text> = </xsl:text>
+	      <xsl:for-each select="sl:images/sl:i[@loc][1]">
+		<xsl:call-template name="esp-sign-image"/>
+	      </xsl:for-each>
+	    </xsl:if>
+	  </esp:link>
+	</xsl:for-each>
+	<xsl:text>.</xsl:text>
+	</p>
+      </xsl:when>
+      <xsl:otherwise>
+	<p>(Only in compounds but no compounds containing this sign were found in this signlist.)</p>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:if>
 </xsl:template>
 
@@ -406,11 +411,28 @@
   </xsl:if>
 </xsl:template>
 
-<xsl:template name="sws-lexdata">
+<xsl:template name="sws-instances">
+  <xsl:if test="$asl-insts = 'yes'">
+    <xsl:variable name="oid" select="@xml:id"/>
+    <xsl:for-each select="document('provides-instances.xml',/)">
+      <xsl:for-each select="id($oid)">
+	<div class="asl-insts">
+	  <p>See the <esp:link url="/{$project}/inst/{$oid}.html">instances page for this sign</esp:link>.</p>
+	</div>
+      </xsl:for-each>
+    </xsl:for-each>     
+  </xsl:if>
 </xsl:template>
 
-<xsl:template name="sws-instances">
+<xsl:template name="sws-lexdata">
+  <xsl:if test="$asl-lexdata = 'yes'">
+    <xsl:call-template name="lex-sign"/>
+  </xsl:if>
+</xsl:template>
 
+<xsl:template name="sws-suxword">
+  <xsl:if test="$asl-suxword = 'yes'">
+  </xsl:if>
 </xsl:template>
 
 <!-- ### Values -->

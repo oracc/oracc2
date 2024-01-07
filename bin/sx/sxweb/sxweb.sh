@@ -98,12 +98,7 @@ if [ "$abbrev" != "ogsl" ]; then
 	| xsltproc $libscripts/sxweb-overview.xsl - >signlist/00web/overview.xml
 fi
 
-if [ "$stats" = "with-stats" ]; then
-    echo with-stats=true
-    xsltproc -stringparam with-stats yes -stringparam project $project $libscripts/sxweb-signs.xsl 02xml/sl.xml
-else 
-    xsltproc -stringparam project $project $libscripts/sxweb-signs.xsl 02xml/sl.xml
-fi
+xsltproc -stringparam project $project $libscripts/sxweb-signs.xsl 02xml/sl.xml
 
 if [ -r 00etc/signlist-periods.tab ]; then
     cat 00etc/signlist-periods.tab | while IFS=$'\t' read index title
@@ -115,12 +110,6 @@ if [ -r 00etc/signlist-periods.tab ]; then
 fi
 
 (cd signlist ; o2-portal.sh)
-
-if [ -d 01tmp/slinst ]; then
-    rm -fr signlist/02www/inst
-    mv 01tmp/slinst signlist/02www/inst
-    chmod -R o+r signlist/02www/inst
-fi
 
 # Adjust home/index so that index.html is the frame that gives
 # searchable signlist and home.html is the browsable ESP portal.

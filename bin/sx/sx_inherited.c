@@ -53,8 +53,8 @@ sx_inherited(struct sl_signlist *sl)
     {
       if (!(ifp = fopen("itrace.log","w")))
 	{
-	  fprintf(stderr, "sx: can't open itrace.log. Stop.\n");
-	  exit(1);
+	  fprintf(stderr, "sx: can't open itrace.log. Switching off itrace.\n");
+	  itrace = 0;
 	}
     }
   for (i = 0; i < sl->nforms; ++i)

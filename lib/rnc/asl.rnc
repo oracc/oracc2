@@ -26,17 +26,7 @@ start =
   }
 
 # Top-level-elements (i.e., top-level below grouping constructs)
-sl.tle     = (sl.compoundonly | sl.formproxy | sl.lref | sl.sign | sl.sref)
-
-sl.compoundonly =
-  element sl:compoundonly {
-    attribute n { text },
-    attribute sort { text }, 
-    attribute xml:id { xsd:NCName }?,
-    attribute cpd-refs { xsd:IDREFS }?,
-    sl.name?,
-    (sl.inote | sl.lit | sl.note)*
-    }
+sl.tle     = (sl.formproxy | sl.lref | sl.sign | sl.sref)
 
 sl.formproxy =
   element sl:formproxy {
@@ -68,9 +58,10 @@ sl.sign    =
   element sl:sign {
     attribute deprecated { xsd:integer }?,
     attribute n { text },
-	  attribute sort { text }, 
+    attribute sort { text }, 
     attribute xml:id { xsd:NCName }?,
-	  sl.smap?,
+    sl.smap?,
+    attribute compoundonly { "yes"|"no" }?,
     attribute cpd-refs { xsd:IDREFS }?,
     sl.name?,
     sl.aka*,
@@ -86,7 +77,20 @@ sl.sign    =
     sl.v*,
     sl.sys*,
     sl.images?,
-    element sl:form {
+    sl.form*,
+    element sl:qs {
+      element sl:q {
+        attribute base { text }?,
+        attribute o { xsd:NCName },
+        attribute p { xsd:NCName }?,
+        attribute qm { text }?,
+        attribute qv { text },
+        attribute type { xsd:NCName }?
+      }+
+    }?
+  }
+
+sl.form	   = element sl:form {
       attribute n { text },
       attribute ref { xsd:NCName }?,
       attribute sort { text }, 
@@ -114,18 +118,7 @@ sl.sign    =
           attribute n { text }
         }+
       }?
-    }*,
-    element sl:qs {
-      element sl:q {
-        attribute base { text }?,
-        attribute o { xsd:NCName },
-        attribute p { xsd:NCName }?,
-        attribute qm { text }?,
-        attribute qv { text },
-        attribute type { xsd:NCName }?
-      }+
-    }?
-  }
+    }
 
 sl.aka	   = element sl:aka { attribute n { text } , sl.name? }
 

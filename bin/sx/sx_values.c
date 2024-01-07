@@ -31,7 +31,10 @@ sx_values_parents(struct sl_signlist *sl)
   FILE *vfp = NULL;
 
   if (vtrace)
-    vfp = fopen("vtrace.log", "w");
+    {
+      if (!(vfp = fopen("vtrace.log", "w")))
+	vtrace = 0;
+    }
   
   /* Gather the valid parents--both value and sign/form need to be marked valid */
   for (i = 0; i < sl->nvalues; ++i)
@@ -75,13 +78,20 @@ sx_values_parents(struct sl_signlist *sl)
     }
   if (vfp)
     fclose(vfp);
+
+  if (vtrace)
+    sx_values_parents_dump(sl);  
 }
 
 void
 sx_values_parents_dump(struct sl_signlist *sl)
 {
   int i;
-  FILE *vfp = fopen("vparents.log", "w");
+  FILE *vfp = NULL;
+
+  if (!(vfp = fopen("vparents.log", "w")))
+    return;
+
   /* Gather the valid parents--both value and sign/form need to be marked valid */
   for (i = 0; i < sl->nvalues; ++i)
     {
@@ -103,6 +113,7 @@ sx_values_parents_dump(struct sl_signlist *sl)
 	    }
 	}
     }
+
   fclose(vfp);
 }
 
