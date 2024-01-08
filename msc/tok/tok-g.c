@@ -109,21 +109,20 @@ sH(void *userData, const char *name, const char **atts)
     {
       strcpy(last_oid, findAttr(atts, "oid"));
       strcpy(last_spoid, findAttr(atts, "spoid"));
-      strcpy(last_spform, findAttr(atts, "spform"));      
+      strcpy(last_spform, findAttr(atts, "spform"));
       if ('c' == name[2])
 	strcpy(last_form, findAttr(atts, "form"));
       else
 	strcpy(last_form, findAttr(atts, "g:sign"));
       *last_s = *last_v = '\0';
-      /* we don't process sub-sign/value of c/q */
-      --printing;
+      /* we don't process sub-sign/value of c */
+      if ('c' == name[2])
+	printing = 0;
     }
   else if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
     {
       strcpy(last_oid, findAttr(atts, "oid"));
       strcpy(last_form, findAttr(atts, "g:sign"));
-      strcpy(last_spoid, findAttr(atts, "spoid"));
-      strcpy(last_spform, findAttr(atts, "spform"));
     }
   else if (!strcmp(name, "xcl"))
     {
@@ -159,8 +158,8 @@ eH(void *userData, const char *name)
 	      else
 		fprintf(tab, "%s", soid);
 	      sign_signature();
-	      *last_v = *last_s = '\0';
 	    }
+	  *last_v = *last_s = '\0';
 	}
     }
   else if (!strcmp(name, "g:c") || !strcmp(name, "g:q") || !strcmp(name, "g:n"))
@@ -184,6 +183,7 @@ eH(void *userData, const char *name)
 	    fprintf(tab, "%s", soid);
 	  sign_signature();
 	}
+      *last_v = *last_s = '\0';
       ++printing;
     }
   else

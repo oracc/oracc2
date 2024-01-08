@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 SUBDIRS=../../lib sxweb
 
-bin_PROGRAMS=sx slix slx
+bin_PROGRAMS=sx slix slx sig2asl
 bin_SCRIPTS=ogsl-update.sh pctc-update.sh \
 	sxcmp.sh sxnorm.sh sxclean.sh \
 	sxmissing.sh sxudata.sh sxportal.sh \
@@ -27,3 +27,8 @@ sx_DEPENDENCIES = $(xLDADD)
 slix_SOURCES=slix.c
 slix_LDADD = $(xLDADD)
 slix_DEPENDENCIES = $(xLDADD)
+
+sig2asl_SOURCES=sig2asl.c
+sig2asl_LDADD = $(xLDADD)
+sig2asl_DEPENDENCIES = $(xLDADD)
+

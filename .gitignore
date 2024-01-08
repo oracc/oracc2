@@ -8,6 +8,7 @@ bin/gx/gx
 bin/gx/siglangx
 bin/jx/jx
 bin/ox/oid
+bin/sx/sig2asl
 bin/sx/slix
 bin/sx/slx
 bin/sx/sx
