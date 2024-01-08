@@ -13,6 +13,8 @@ extern FILE *f_log;
 static FILE *tab = NULL;
 
 int printing = 0;
+int tok_cbd = 0;
+int tok_xtf = 1;
 int xcl = 0;
 
 static const char *projproj = NULL;
@@ -29,6 +31,100 @@ static char last_form[1024];
 static char last_v[16];
 static char last_s[1024];
 static char word_lang[16];
+
+List *wg = NULL;
+int wg_index = 0;
+
+static char role;
+static char roletext[32];
+
+struct wg
+{
+  char type;
+  char role;
+  char text[1024];
+  char oid[16];
+  char sign[1024];
+  char spoid[16];
+  char spsign[1024];
+  char roletext[32];
+  int index;
+  int last;
+};
+
+struct wg *
+wgp_get(int wgx)
+{
+  static struct wg *wgmem = NULL;
+  static int wg_alloced = 0;
+  if (wgx == -1 && wgmem)
+    {
+      memset(wgmem, '\0', wg_alloced * sizeof(struct wg));
+      return NULL;
+    }
+  else
+    {
+      if (wgx == wg_alloced)
+	{
+	  wg_alloced += 16;
+	  wgmem = realloc(wgmem, wg_alloced * sizeof(struct wg));
+	}
+      return &wgmem[wgx];
+    }
+}
+
+void
+wg_add(char type, const char *oid, const char *sign, const char *spoid, const char *spsign)
+{
+  struct wg *wgp = wgp_get(++wg_index);
+  if (oid)
+    strcpy(wgp->oid, oid);
+  if (sign)
+    strcpy(wgp->sign, sign);
+  if (spoid)
+    strcpy(wgp->spoid, spoid);
+  if (spsign)
+    strcpy(wgp->spsign, spsign);
+  if (role)
+    {
+      wgp->role = role;
+      if (*roletext)
+	strcpy(wgp->roletext, roletext);
+    }
+  wgp->index = wg_index;
+  list_add(wg, (void*)(uintptr_t)wg_index);
+}
+
+void
+wgp_last(void)
+{
+  if (wg_index >= 0)
+    {
+      struct wg *wgp = wgp_get(wg_index);
+      wgp->last = 1;
+    }
+}
+
+void
+wgp_text(const char *t)
+{
+  if (wg_index >= 0)
+    {
+      struct wg *wgp = wgp_get(wg_index);
+      strcpy(wgp->text, t);
+    }
+}
+
+void
+wgp_print(void)
+{
+  int i;
+  for (i = 0; i <= wg_index; ++i)
+    {
+      struct wg *wgp = wgp_get(i);
+      fprintf(tab, "%s\t%s\n", wgp->oid, wgp->text);
+    }
+}
 
 static char *
 sl_of(const char *lang)
@@ -82,10 +178,24 @@ tok_mds(const char *project, const char *pqx)
   xmd_term();
 }
 
+typedef void (*loc_func)(void *userData, const char *name, const char **atts);
+loc_func loc;
+
 static void
-sH(void *userData, const char *name, const char **atts)
+loc_cbd(void *userData, const char *name, const char **atts)
 {
-  if (!strcmp(name, "transliteration") || !strcmp(name, "composite"))
+  if (!strcmp(name, "articles"))
+    fprintf(tab, "G\t%s\n", get_xml_lang(atts));
+  else if (!strcmp(name, "summary"))
+    fprintf(tab, "W\t%s\t%s\n", findAttr(atts, "oid"), findAttr(atts, "n"));
+}
+
+static void
+loc_xtf(void *userData, const char *name, const char **atts)
+{
+  if (!strcmp(name, "transliteration")
+      || !strcmp(name, "composite")
+      || !strcmp(name, "score"))
     {
       strcpy(pqx, get_xml_id(atts));
       strcpy(tlabel, findAttr(atts, "n"));
@@ -107,90 +217,63 @@ sH(void *userData, const char *name, const char **atts)
       strcpy(word_lang, get_xml_lang(atts));
       fprintf(tab, "W\t%s\n", get_xml_id(atts));
     }
-  else if (printing && (!strcmp(name, "g:c") || !strcmp(name, "g:q") || !strcmp(name, "g:n")))
-    {
-      strcpy(last_oid, findAttr(atts, "oid"));
-      strcpy(last_spoid, findAttr(atts, "spoid"));
-      strcpy(last_spform, findAttr(atts, "spform"));
-      if ('c' == name[2])
-	strcpy(last_form, findAttr(atts, "form"));
-      else
-	strcpy(last_form, findAttr(atts, "g:sign"));
-      *last_s = *last_v = '\0';
-      /* we don't process sub-sign/value of c */
-      if ('c' == name[2])
-	printing = 0;
-    }
-  else if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
-    {
-      strcpy(last_oid, findAttr(atts, "oid"));
-      if (!*last_form) /* don't overwrite g:q form */
-	strcpy(last_form, findAttr(atts, "g:sign"));
-    }
   else if (!strcmp(name, "xcl"))
+    xcl = 1;
+}
+	    
+static void
+sH(void *userData, const char *name, const char **atts)
+{
+  loc(userData, name, atts);
+  if ('g' == name[0] && ':' == name[1])
     {
-      printing = 0;
-      xcl = 1;
-    }  
+      switch (name[2])
+	{
+	case 'w':
+	  wg = list_create(LIST_SINGLE);
+	  wg_index = -1;
+	  wgp_get(-1);
+	  break;
+	case 'd':
+	  role = 'd';
+	  strcpy(roletext, findAttr(atts, "g:role"));
+	  break;
+	case 'v':
+	  wg_add('v',
+		 findAttr(atts, "oid"),
+		 findAttr(atts, "g:sign"),
+		 NULL, NULL);
+	  break;
+	default:
+	  break;
+	}
+    }
 }
 
 static void
 eH(void *userData, const char *name)
 {
-  if (!strcmp(name, "g:v"))
-    strcpy(last_v, charData_retrieve());
-  else if (!strcmp(name, "g:s"))
-    strcpy(last_s, charData_retrieve());
-  if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
+  if ('g' == name[0] && ':' == name[1])
     {
-      if (*last_oid)
+      switch (name[2])
 	{
-	  if (strcmp(last_v, "x"))
-	    {
-	      const char *soid = (*last_spoid ? last_spoid : last_oid);
-	      const char *foid = (*last_spoid ? last_oid : "");
-	      if (name[2] == 'v')
-		{
-		  if (*foid)
-		    fprintf(tab, "%s.%s:%s", soid, foid, last_v);
-		  else
-		    fprintf(tab, "%s:%s", soid, last_v);
-		}
-	      else if (*foid)
-		fprintf(tab, "%s.%s", soid, foid);
-	      else
-		fprintf(tab, "%s", soid);
-	      sign_signature();
-	    }
-	  *last_v = *last_s = '\0';
+	case 'w':
+	  wgp_last();
+	  wgp_print();
+	  break;
+	case 'd':
+	  role = '\0';
+	  break;
+	case 'v':
+	  wgp_text(charData_retrieve());
+	  break;
+	default:
+	  (void)charData_retrieve();
+	  break;
 	}
-    }
-  else if (!strcmp(name, "g:c") || !strcmp(name, "g:q") || !strcmp(name, "g:n"))
-    {
-      if (*last_oid && (*last_v || *last_s))
-	{
-	  const char *soid = (*last_spoid ? last_spoid : last_oid);
-	  const char *foid = (*last_spoid ? last_oid : "");
-	  if (name[2] == 'q')
-	    {
-	      if (*last_v)
-		fprintf(tab, "%s.%s:%s", soid, foid, last_v);
-	      else if (*foid)
-		fprintf(tab, "%s.%s", soid, foid);
-	      else
-		fprintf(tab, "%s", soid);
-	    }
-	  else if (*foid)
-	    fprintf(tab, "%s.%s", soid, foid);
-	  else
-	    fprintf(tab, "%s", soid);
-	  sign_signature();
-	}
-      *last_v = *last_s = '\0';
-      ++printing;
     }
   else
-    charData_discard();
+    (void)charData_retrieve();
 }
 
 static void
@@ -206,21 +289,48 @@ tok_g_one(char *PQ)
   runexpat(i_list, fname, sH, eH);
 }
 
+static void
+tok_g_cbd(char *summary)
+{
+  char *fname[2];
+  fname[0] = summary;
+  fname[1] = NULL;
+  fprintf(tab, "F\t%s\n", fname[0]);
+  runexpat(i_list, fname, sH, eH);
+}
+
 int
 main(int argc, char **argv)
 {
   char PQ[512];
+
   tab = stdout;
 
-  options(argc, argv, "p:");
+  options(argc, argv, "cp:");
 
   if (projproj)
     fprintf(tab, "P\t%s\n", projproj);
-    
+
+  if (tok_xtf)
+    {
+      fputs("Y\txtf\n", tab);      
+      loc = loc_xtf;
+    }
+  else
+    {
+      fputs("Y\tcbd\n", tab);
+      loc = loc_cbd;
+    }
+
   if (argv[optind])
     {
-      strcpy(PQ, argv[optind]);
-      tok_g_one(PQ);
+      if (tok_xtf)
+	{
+	  strcpy(PQ, argv[optind]);
+	  tok_g_one(PQ);
+	}
+      else
+	tok_g_cbd(argv[optind]);
     }
   else
     {
@@ -241,6 +351,10 @@ int opts(int arg,char*str)
 {
   switch (arg)
     {
+    case 'c':
+      tok_xtf = 0;
+      tok_cbd = 1;
+      break;
     case 'p':
       projproj = str;
       break;

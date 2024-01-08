@@ -10,6 +10,8 @@ main(int argc, char **argv)
   char l[1024], *lp;
   while ((lp = fgets(l, 1024, stdin)))
     {
+      if ('-' == *lp)
+	continue;
       char *s, *f, *v, *r;
       if ('@' == *lp || '\n' == *lp)
 	{
@@ -27,17 +29,20 @@ main(int argc, char **argv)
 	++r;
       *r++ = '\0';
       v = r;
-      Hash *hs, *hf;
-      if (!(hs = hash_find(h, (ucp)s)))
-	hash_add(h, (ucp)s, hs = hash_create(32));
-      if (*f || *v)
+      if (*s && strcmp(s, "X") || (v[1] || ('-' != *v && 'x' != *v)))
 	{
-	  if (!*f)
-	    f = "-";
-	  if (!(hf = hash_find(hs, (ucp)f)))
-	    hash_add(hs, (ucp)f, hf = hash_create(32));
-	  if (*v && !hash_find(hf, (ucp)v))
-	      hash_add(hf, (ucp)v, "");
+	  Hash *hs, *hf;
+	  if (!(hs = hash_find(h, (ucp)s)))
+	    hash_add(h, (ucp)s, hs = hash_create(32));
+	  if (*f || *v)
+	    {
+	      if (!*f)
+		f = "-";
+	      if (!(hf = hash_find(hs, (ucp)f)))
+		hash_add(hs, (ucp)f, hf = hash_create(32));
+	      if (*v && !hash_find(hf, (ucp)v))
+		hash_add(hf, (ucp)v, "");
+	    }
 	}
     }
   int i;
