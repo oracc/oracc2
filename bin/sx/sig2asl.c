@@ -7,11 +7,18 @@ int
 main(int argc, char **argv)
 {
   Hash *h = hash_create(1024);
-  char *l;
-  while ((l = fgets(l, 1024, stdin)))
+  char l[1024], *lp;
+  while ((lp = fgets(l, 1024, stdin)))
     {
       char *s, *f, *v, *r;
-      s = r = l;
+      if ('@' == *lp || '\n' == *lp)
+	{
+	  fputs(lp, stdout);
+	  continue;
+	}
+      if ('\n' == lp[strlen(lp)-1])
+	lp[strlen(lp)-1] = '\0';
+      s = r = strdup(lp);
       while (*r && '-' != *r)
 	++r;
       *r++ = '\0';
@@ -29,8 +36,7 @@ main(int argc, char **argv)
 	    f = "-";
 	  if (!(hf = hash_find(hs, (ucp)f)))
 	    hash_add(hs, (ucp)f, hf = hash_create(32));
-	  if (*v)
-	    if (!hash_find(hf, (ucp)v))
+	  if (*v && !hash_find(hf, (ucp)v))
 	      hash_add(hf, (ucp)v, "");
 	}
     }

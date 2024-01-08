@@ -15,6 +15,8 @@ static FILE *tab = NULL;
 int printing = 0;
 int xcl = 0;
 
+static const char *projproj = NULL;
+
 static char pqx[128];
 static char tlabel[128];
 static char lid[128];
@@ -122,7 +124,8 @@ sH(void *userData, const char *name, const char **atts)
   else if (printing && (!strcmp(name, "g:v") || !strcmp(name, "g:s")))
     {
       strcpy(last_oid, findAttr(atts, "oid"));
-      strcpy(last_form, findAttr(atts, "g:sign"));
+      if (!*last_form) /* don't overwrite g:q form */
+	strcpy(last_form, findAttr(atts, "g:sign"));
     }
   else if (!strcmp(name, "xcl"))
     {
@@ -208,9 +211,15 @@ main(int argc, char **argv)
 {
   char PQ[512];
   tab = stdout;
-  if (argv[1])
+
+  options(argc, argv, "p:");
+
+  if (projproj)
+    fprintf(tab, "P\t%s\n", projproj);
+    
+  if (argv[optind])
     {
-      strcpy(PQ, argv[1]);
+      strcpy(PQ, argv[optind]);
       tok_g_one(PQ);
     }
   else
@@ -228,4 +237,16 @@ const char *prog = "tok-g";
 int major_version = 1, minor_version = 0, verbose = 0;
 const char *usage_string = "labeltable <XTF >TAB";
 void help () { }
-int opts(int arg,char*str){ return 1; }
+int opts(int arg,char*str)
+{
+  switch (arg)
+    {
+    case 'p':
+      projproj = str;
+      break;
+    default:
+      return 1;
+    }
+  return 0;
+}
+
