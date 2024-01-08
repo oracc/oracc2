@@ -13,6 +13,7 @@ extern FILE *f_log;
 static FILE *tab = NULL;
 
 int printing = 0;
+int stdinput = 0;
 int tok_cbd = 0;
 int tok_xtf = 1;
 int xcl = 0;
@@ -24,33 +25,73 @@ static char tlabel[128];
 static char lid[128];
 static char llabel[128];
 static char project[1024];
-static char last_oid[16];
-static char last_spoid[16];
-static char last_spform[1024];
-static char last_form[1024];
-static char last_v[16];
-static char last_s[1024];
 static char word_lang[16];
 
 List *wg = NULL;
 int wg_index = 0;
+int no_d_index = 0;
 
 static char role;
 static char roletext[32];
 
 struct wg
 {
-  char type;
-  char role;
-  char text[1024];
-  char oid[16];
-  char sign[1024];
-  char spoid[16];
-  char spsign[1024];
-  char roletext[32];
-  int index;
-  int last;
+  char gdltype;
+  char role; 		/* d(eterminative) g(loss) p(unctuation) w(ord-constituent) u(ndetermined) */
+  char roletype;	/* role=d: s(emantic) p(honetic) v(ariant) u(ndetermined)
+			   role=g: t(ranslation) v(ariant)
+			   role=p: b(ullet) d(ivider) s(urrogate) u(ndetermined)
+			   role=w|u: i(gnored)
+			 */
+  char type;		/* i(deogram)
+			   m(orpheme) M(ixed-morpho-ideo/syll)
+			   l(ogogram[secondary-language])
+			   s(yllable)
+			   u(ndetermined) */
+  char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
+  char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
+  char asltype[3]; 	/* pc pe sl */
+  char lang[16]; 	/* language for word */
+  char logolang[16];	/* secondary language for logogram */
+  char soid[16];	/* sign-oid */
+  char sname[1024];	/* sign-name */
+  char foid[16];	/* form-oid */
+  char fname[1024];	/* form-name */
+  char value[1024];	/* value when gdltype == 'v' */
+  int index;		/* Index of grapheme in word, counting from 1; 0 = no g:w parent */
+  int last;		/* 1 = final grapheme in word */
+  int no_d_index;	/* Index ignoring initial determinatives */
+  int no_d_last;	/* 1 = final grapheme in word ignoring final determinatives */
 };
+
+static char *
+sl_of(const char *lang)
+{
+  if (lang)
+    {
+      if ('q' == lang[0] && 'p' == lang[1])
+	return 'c' == lang[2] ? "pc" : "pe";
+      else
+	return "sl";
+    }
+  else
+    return "sl";
+}
+
+static void
+g_signature(struct wg *wgp,const char *id_sig_sep)
+{
+  fprintf(tab, "%s.%s.%s%s@%s%%%s:%c/%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d",
+	  wgp->soid, wgp->foid, wgp->value,
+	  id_sig_sep,
+	  project, wgp->asltype, wgp->gdltype ? wgp->gdltype : 'u',
+	  wgp->sname, wgp->fname, wgp->value,
+	  wgp->role ? wgp->role : 'u', wgp->roletype ? wgp->roletype : 'u', wgp->lang,
+	  wgp->type, wgp->logolang,
+	  wgp->position ? wgp->position : 'u', wgp->index,
+	  wgp->no_d_position ? wgp->no_d_position : 'u', wgp->no_d_index
+	  );
+}
 
 struct wg *
 wgp_get(int wgx)
@@ -68,31 +109,102 @@ wgp_get(int wgx)
 	{
 	  wg_alloced += 16;
 	  wgmem = realloc(wgmem, wg_alloced * sizeof(struct wg));
+	  memset((void*)(wgmem + (wg_alloced-16)), '\0', 16 * sizeof(struct wg));
 	}
       return &wgmem[wgx];
     }
 }
 
 void
-wg_add(char type, const char *oid, const char *sign, const char *spoid, const char *spsign)
+wg_add(char type, const char *oid, const char *sign, const char *spoid, const char *spsign, const char *logolang)
 {
   struct wg *wgp = wgp_get(++wg_index);
-  if (oid)
-    strcpy(wgp->oid, oid);
-  if (sign)
-    strcpy(wgp->sign, sign);
+  wgp->gdltype = type;
+  wgp->role = 'w'; 	/* may be reset later */
+  wgp->roletype = 'i'; 	/* ditto */
+  wgp->type = 'u'; 	/* ditto */
   if (spoid)
-    strcpy(wgp->spoid, spoid);
-  if (spsign)
-    strcpy(wgp->spsign, spsign);
+    {
+      strcpy(wgp->soid, spoid);
+      strcpy(wgp->sname, spsign);
+      strcpy(wgp->foid, oid);
+      strcpy(wgp->fname, sign);
+    }
+  else
+    {
+      strcpy(wgp->soid, oid);
+      strcpy(wgp->sname, sign);
+    }
+  if (*word_lang)
+    {
+      strcpy(wgp->lang, word_lang);
+      strcpy(wgp->asltype, sl_of(word_lang));
+    }
   if (role)
     {
       wgp->role = role;
       if (*roletext)
-	strcpy(wgp->roletext, roletext);
+	wgp->roletype = *roletext;
     }
-  wgp->index = wg_index;
+  if (*logolang)
+    {
+      wgp->type = 'l';
+      strcpy(wgp->logolang, logolang);
+    }
+  else
+    wgp->type = 'u';
+  wgp->index = 1 + wg_index;
+  if ('d' != role)
+    wgp->no_d_index = 1 + ++no_d_index;
   list_add(wg, (void*)(uintptr_t)wg_index);
+}
+
+void
+wgp_set_positions(void)
+{
+  int i;
+  for (i = 0; i <= wg_index; ++i)
+    {
+      struct wg *wgp = wgp_get(i);
+      if (wgp->index > 1)
+	{
+	  if (wgp->last)
+	    {
+	      if (wgp->index == 1)
+		wgp->position = 'i';
+	      else
+		wgp->position = 'e';
+	    }
+	  else
+	    wgp->position = 'm';
+	}
+      else
+	{
+	  if (wgp->last)
+	    wgp->position = 'i';
+	  else
+	    wgp->position = 'b';
+	}	  
+      if (wgp->no_d_index > 1)
+	{
+	  if (wgp->no_d_last)
+	    {
+	      if (wgp->no_d_index == 1)
+		wgp->no_d_position = 'i';
+	      else
+		wgp->no_d_position = 'e';
+	    }
+	  else
+	    wgp->no_d_position = 'm';
+	}
+      else
+	{
+	  if (wgp->no_d_last)
+	    wgp->no_d_position = 'i';
+	  else
+	    wgp->no_d_position = 'b';
+	}
+    }
 }
 
 void
@@ -101,17 +213,28 @@ wgp_last(void)
   if (wg_index >= 0)
     {
       struct wg *wgp = wgp_get(wg_index);
-      wgp->last = 1;
+      if (wgp)
+	{
+	  wgp->last = 1;
+	  if (wg_index != no_d_index && no_d_index >= 0)
+	    {
+	      wgp = wgp_get(no_d_index);
+	      wgp->no_d_last = 1;
+	    }
+	  else
+	    wgp->no_d_last = 1;
+	}
+      wgp_set_positions();
     }
 }
 
 void
-wgp_text(const char *t)
+wgp_value(const char *t)
 {
   if (wg_index >= 0)
     {
       struct wg *wgp = wgp_get(wg_index);
-      strcpy(wgp->text, t);
+      strcpy(wgp->value, t);
     }
 }
 
@@ -122,31 +245,9 @@ wgp_print(void)
   for (i = 0; i <= wg_index; ++i)
     {
       struct wg *wgp = wgp_get(i);
-      fprintf(tab, "%s\t%s\n", wgp->oid, wgp->text);
+      g_signature(wgp, "\t");
+      fputc('\n', tab);
     }
-}
-
-static char *
-sl_of(const char *lang)
-{
-  if (lang)
-    {
-      if ('q' == lang[0] && 'p' == lang[1])
-	return 'c' == lang[2] ? "pc" : "pe";
-      else
-	return "sl";
-    }
-  else
-    return "sl";
-}
-
-static void
-sign_signature(void)
-{
-  const char *s = (*last_spform ? last_spform : (*last_form ? last_form : last_s));
-  const char *f = (*last_spform ? (*last_form ? last_form : last_s) : "");
-  fprintf(tab, "\t@%s%%%s:%s-%s-%s\n", project, sl_of(word_lang),s,f,last_v);
-  *last_form = *last_spform = '\0';
 }
 
 static void
@@ -231,18 +332,19 @@ sH(void *userData, const char *name, const char **atts)
 	{
 	case 'w':
 	  wg = list_create(LIST_SINGLE);
-	  wg_index = -1;
-	  wgp_get(-1);
+	  wg_index = no_d_index = -1;
 	  break;
 	case 'd':
 	  role = 'd';
 	  strcpy(roletext, findAttr(atts, "g:role"));
 	  break;
+	case 's':
 	case 'v':
-	  wg_add('v',
+	  wg_add(name[2],
 		 findAttr(atts, "oid"),
 		 findAttr(atts, "g:sign"),
-		 NULL, NULL);
+		 NULL, NULL,
+		 findAttr(atts, "g:logolang"));
 	  break;
 	default:
 	  break;
@@ -260,12 +362,17 @@ eH(void *userData, const char *name)
 	case 'w':
 	  wgp_last();
 	  wgp_print();
+	  wgp_get(-1);
+	  *word_lang = '\0';
 	  break;
 	case 'd':
 	  role = '\0';
 	  break;
 	case 'v':
-	  wgp_text(charData_retrieve());
+	  wgp_value(charData_retrieve());
+	  break;
+	case 's':
+	  /* this is done in the start tag */
 	  break;
 	default:
 	  (void)charData_retrieve();
@@ -290,6 +397,12 @@ tok_g_one(char *PQ)
 }
 
 static void
+tok_g_stdin(void)
+{
+  runexpat(i_stdin, NULL, sH, eH);
+}
+
+static void
 tok_g_cbd(char *summary)
 {
   char *fname[2];
@@ -306,7 +419,7 @@ main(int argc, char **argv)
 
   tab = stdout;
 
-  options(argc, argv, "cp:");
+  options(argc, argv, "cp:s");
 
   if (projproj)
     fprintf(tab, "P\t%s\n", projproj);
@@ -331,6 +444,10 @@ main(int argc, char **argv)
 	}
       else
 	tok_g_cbd(argv[optind]);
+    }
+  else if (stdinput)
+    {
+      tok_g_stdin();
     }
   else
     {
@@ -357,6 +474,9 @@ int opts(int arg,char*str)
       break;
     case 'p':
       projproj = str;
+      break;
+    case 's':
+      stdinput = 1;
       break;
     default:
       return 1;
