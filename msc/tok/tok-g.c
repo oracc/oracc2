@@ -12,6 +12,7 @@ extern FILE *f_log;
 
 static FILE *tab = NULL;
 
+int in_c = 0;
 int printing = 0;
 int stdinput = 0;
 int tok_cbd = 0;
@@ -47,9 +48,12 @@ struct wg
 			   m(orpheme) M(ixed-morpho-ideo/syll)
 			   l(ogogram[secondary-language])
 			   s(yllable)
-			   u(ndetermined) */
+			   u(ndetermined)
+			   c(compound-element)
+			 */
   char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
+  char c_position;   	/* for type=c: position in compound: i(ndependent) b(eginning) m(iddle) e(nd) i(gnored) */
   char asltype[3]; 	/* pc pe sl */
   char lang[16]; 	/* language for word */
   char logolang[16];	/* secondary language for logogram */
@@ -62,7 +66,11 @@ struct wg
   int last;		/* 1 = final grapheme in word */
   int no_d_index;	/* Index ignoring initial determinatives */
   int no_d_last;	/* 1 = final grapheme in word ignoring final determinatives */
+  int c_index;		/* Index of c in word; c-elements move index but not c_index */
+  int ce_index;		/* Index of c-element in compound */
 };
+
+struct wg *curr_c_wgp = NULL;
 
 static char *
 sl_of(const char *lang)
@@ -81,7 +89,7 @@ sl_of(const char *lang)
 static void
 g_signature(struct wg *wgp,const char *id_sig_sep)
 {
-  fprintf(tab, "%s.%s.%s%s@%s%%%s:%c/%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d",
+  fprintf(tab, "%s.%s.%s%s@%s%%%s:%c/%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d#%c%d",
 	  wgp->soid, wgp->foid, wgp->value,
 	  id_sig_sep,
 	  project, wgp->asltype, wgp->gdltype ? wgp->gdltype : 'u',
@@ -89,7 +97,8 @@ g_signature(struct wg *wgp,const char *id_sig_sep)
 	  wgp->role ? wgp->role : 'u', wgp->roletype ? wgp->roletype : 'u', wgp->lang,
 	  wgp->type, wgp->logolang,
 	  wgp->position ? wgp->position : 'u', wgp->index,
-	  wgp->no_d_position ? wgp->no_d_position : 'u', wgp->no_d_index
+	  wgp->no_d_position ? wgp->no_d_position : 'u', wgp->no_d_index,
+	  wgp->c_position ? wgp->c_position : 'u', wgp->ce_index
 	  );
 }
 
@@ -122,7 +131,6 @@ wg_add(char type, const char *oid, const char *sign, const char *spoid, const ch
   wgp->gdltype = type;
   wgp->role = 'w'; 	/* may be reset later */
   wgp->roletype = 'i'; 	/* ditto */
-  wgp->type = 'u'; 	/* ditto */
   if (spoid)
     {
       strcpy(wgp->soid, spoid);
@@ -146,7 +154,21 @@ wg_add(char type, const char *oid, const char *sign, const char *spoid, const ch
       if (*roletext)
 	wgp->roletype = *roletext;
     }
-  if (*logolang)
+  if (in_c && 'c' == type)
+    {
+      curr_c_wgp = wgp;
+      wgp->c_index = 1 + wg_index;
+    }
+  if (in_c && 'c' != type)
+    {
+      wgp->type = 'c';
+      wgp->c_index = curr_c_wgp->c_index;
+      if (1 == in_c++)
+	wgp->c_position = 'b';
+      else
+	wgp->c_position = 'm';
+    }
+  else if (*logolang)
     {
       wgp->type = 'l';
       strcpy(wgp->logolang, logolang);
@@ -166,43 +188,43 @@ wgp_set_positions(void)
   for (i = 0; i <= wg_index; ++i)
     {
       struct wg *wgp = wgp_get(i);
-      if (wgp->index > 1)
+      if ('c' == wgp->type)
 	{
-	  if (wgp->last)
+	  wgp->ce_index = wgp->index - wgp->c_index;
+	  wgp->index = wgp->no_d_index = 0;
+	  wgp->position = wgp->no_d_position = 'u';
+	}
+      else
+	{
+	  int use_index = (wgp->c_index ? wgp->c_index : wgp->index);
+	  if (use_index > 1)
 	    {
-	      if (wgp->index == 1)
+	      if (wgp->last)
+		wgp->position = 'e';
+	      else
+		wgp->position = 'm';
+	    }
+	  else
+	    {
+	      if (wgp->last)
 		wgp->position = 'i';
 	      else
-		wgp->position = 'e';
+		wgp->position = 'b';
+	    }
+	  if (wgp->no_d_index > 1)
+	    {
+	      if (wgp->no_d_last)
+		wgp->no_d_position = 'e';
+	      else
+		wgp->no_d_position = 'm';
 	    }
 	  else
-	    wgp->position = 'm';
-	}
-      else
-	{
-	  if (wgp->last)
-	    wgp->position = 'i';
-	  else
-	    wgp->position = 'b';
-	}	  
-      if (wgp->no_d_index > 1)
-	{
-	  if (wgp->no_d_last)
 	    {
-	      if (wgp->no_d_index == 1)
+	      if (wgp->no_d_last)
 		wgp->no_d_position = 'i';
 	      else
-		wgp->no_d_position = 'e';
+		wgp->no_d_position = 'b';
 	    }
-	  else
-	    wgp->no_d_position = 'm';
-	}
-      else
-	{
-	  if (wgp->no_d_last)
-	    wgp->no_d_position = 'i';
-	  else
-	    wgp->no_d_position = 'b';
 	}
     }
 }
@@ -212,7 +234,13 @@ wgp_last(void)
 {
   if (wg_index >= 0)
     {
-      struct wg *wgp = wgp_get(wg_index);
+      struct wg *wgp;
+      int lastindex = wg_index;
+
+      while ((wgp = wgp_get(lastindex--)))
+	if ('c' != wgp->type)
+	  break;
+      
       if (wgp)
 	{
 	  wgp->last = 1;
@@ -225,6 +253,16 @@ wgp_last(void)
 	    wgp->no_d_last = 1;
 	}
       wgp_set_positions();
+    }
+}
+
+void
+wgp_c_last(void)
+{
+  if (wg_index >= 0)
+    {
+      struct wg *wgp = wgp_get(wg_index);
+      wgp->c_position = 'e';
     }
 }
 
@@ -338,6 +376,8 @@ sH(void *userData, const char *name, const char **atts)
 	  role = 'd';
 	  strcpy(roletext, findAttr(atts, "g:role"));
 	  break;
+	case 'c':
+	  in_c = 1;
 	case 's':
 	case 'v':
 	  wg_add(name[2],
@@ -364,6 +404,11 @@ eH(void *userData, const char *name)
 	  wgp_print();
 	  wgp_get(-1);
 	  *word_lang = '\0';
+	  break;
+	case 'c':
+	  in_c = 0;
+	  wgp_c_last();
+	  curr_c_wgp = NULL;
 	  break;
 	case 'd':
 	  role = '\0';
