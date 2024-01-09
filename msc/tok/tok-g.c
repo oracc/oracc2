@@ -13,6 +13,7 @@ extern FILE *f_log;
 static FILE *tab = NULL;
 
 int in_c = 0;
+int in_q = 0;
 int printing = 0;
 int stdinput = 0;
 int tok_cbd = 0;
@@ -376,15 +377,25 @@ sH(void *userData, const char *name, const char **atts)
 	  role = 'd';
 	  strcpy(roletext, findAttr(atts, "g:role"));
 	  break;
+	case 'q':
+	  wg_add(name[2],
+		 findAttr(atts, "oid"),
+		 findAttr(atts, "g:sign"),
+		 findAttr(atts, "spoid"),
+		 findAttr(atts, "spform"),
+		 findAttr(atts, "g:logolang"));
+	  in_q = 1;
+	  break;
 	case 'c':
 	  in_c = 1;
 	case 's':
 	case 'v':
-	  wg_add(name[2],
-		 findAttr(atts, "oid"),
-		 findAttr(atts, "g:sign"),
-		 NULL, NULL,
-		 findAttr(atts, "g:logolang"));
+	  if (!in_q)
+	    wg_add(name[2],
+		   findAttr(atts, "oid"),
+		   findAttr(atts, "g:sign"),
+		   NULL, NULL,
+		   findAttr(atts, "g:logolang"));
 	  break;
 	default:
 	  break;
@@ -412,6 +423,9 @@ eH(void *userData, const char *name)
 	  break;
 	case 'd':
 	  role = '\0';
+	  break;
+	case 'q':
+	  in_q = 0;
 	  break;
 	case 'v':
 	  wgp_value(charData_retrieve());
