@@ -98,7 +98,7 @@ g_signature(struct wg *wgp,const char *id_sig_sep)
 	  project, wgp->asltype, wgp->gdltype ? wgp->gdltype : 'u',
 	  wgp->sname, wgp->fname, wgp->value,
 	  wgp->role ? wgp->role : 'u', wgp->roletype ? wgp->roletype : 'u', wgp->lang,
-	  wgp->type, wgp->logolang,
+	  wgp->type ? wgp->type : 'u', wgp->logolang,
 	  wgp->position ? wgp->position : 'u', wgp->index,
 	  wgp->no_d_position ? wgp->no_d_position : 'u', wgp->no_d_index,
 	  wgp->c_position ? wgp->c_position : 'u', wgp->ce_index
@@ -165,19 +165,22 @@ wg_add(char type, const char *oid, const char *sign, const char *spoid, const ch
       if (*roletext)
 	wgp->roletype = *roletext;
     }
-  if (in_c && 'c' == type)
+  if (in_c)
     {
-      curr_c_wgp = wgp;
-      wgp->c_index = 1 + wg_index;
-    }
-  if (in_c && 'c' != type)
-    {
-      wgp->type = 'c';
-      wgp->c_index = curr_c_wgp->c_index;
-      if (1 == in_c++)
-	wgp->c_position = 'b';
+      if ('c' == type)
+	{
+	  curr_c_wgp = wgp;
+	  wgp->c_index = 1 + wg_index;
+	}
       else
-	wgp->c_position = 'm';
+	{
+	  wgp->type = 'c';
+	  wgp->c_index = curr_c_wgp->c_index;
+	  if (1 == in_c++)
+	    wgp->c_position = 'b';
+	  else
+	    wgp->c_position = 'm';
+	}
     }
   else if (*logolang)
     {
@@ -387,6 +390,7 @@ loc_xtf(void *userData, const char *name, const char **atts)
 static void
 sH(void *userData, const char *name, const char **atts)
 {
+  (void)charData_retrieve();
   loc(userData, name, atts);
   if ('g' == name[0] && ':' == name[1])
     {
@@ -431,6 +435,12 @@ sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 'c':
 	      in_c = 1;
+	      wg_add(name[2],
+		     findAttr(atts, "oid"),
+		     findAttr(atts, "g:sign"),
+		     NULL, NULL,
+		     findAttr(atts, "g:logolang"));
+	      break;
 	    case 's':
 	    case 'v':
 	      if (!in_n && !in_p && !in_q)
@@ -514,6 +524,8 @@ eH(void *userData, const char *name)
 	      wgp_get(-1);
 	      *word_lang = '\0';
 	    }
+	  else
+	    (void)charData_retrieve();
 	}
     }
   else
