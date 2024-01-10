@@ -1,30 +1,14 @@
 #include <oraccsys.h>
 #include <gsig.h>
 
-const char gsig_err[1024];
+static char gsig_err[1024];
 
-Gsig *
+static Gsig *
 gsig_syntax(const char *err)
 {
   strcpy(gsig_err, "gsig: ");
   strcat(gsig_err, err);
   return NULL;
-}
-
-void
-gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep)
-{
-  fprintf(fp, "%s.%s.%s%s@%s%%%s:%c/%s=%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d#%c%d",
-	  gp->soid, gp->foid, gp->value,
-	  id_sig_sep,
-	  project, gp->asltype, gp->gdltype ? gp->gdltype : 'u',
-	  gp->form, gp->sname, gp->fname, gp->value,
-	  gp->role ? gp->role : 'u', gp->roletype ? gp->roletype : 'u', gp->lang,
-	  gp->type ? gp->type : 'u', gp->logolang,
-	  gp->position ? gp->position : 'u', gp->index,
-	  gp->no_d_position ? gp->no_d_position : 'u', gp->no_d_index,
-	  gp->c_position ? gp->c_position : 'u', gp->ce_index
-	  );
 }
 
 Gsig *
@@ -49,12 +33,12 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
 	  if ('.' != *s)
 	    return gsig_syntax("missing period after form OID");
 	}
-      *s++ '\0';
+      *s++ = '\0';
       if (strncmp(s, id_sig_sep, strlen(id_sig_sep)))
 	{
 	  gp->value = s;
 	  if (!(s = strstr(s, id_sig_sep)))
-	    return gsig_syntax("separator '%s' not found", id_sig_sep);
+	    return gsig_syntax("id/sig separator not found");
 	  *s = '\0';
 	  s += strlen(id_sig_sep);
 	}
@@ -97,7 +81,7 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
 	      || !(gp->roletype = *s++)
 	      || '%' != *s)
 	    return gsig_syntax("malformed ROLE/ROLETYPE/LANG");
-	  gp->lang = *++s;
+	  gp->lang = ++s;
 	  if (!(s = strchr(s, ':')))
 	    return gsig_syntax("malformed LANG after ROLE/ROLETYPE");
 	  *s++ = '\0';
@@ -112,7 +96,7 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
 	  s = end;
 	  if ('#' != *s++)
 	    return gsig_syntax("missing '#' after TYPE/LOGOLANG");
-	  if (!(gp->position = *s++;))
+	  if (!(gp->position = *s++))
 	    return gsig_syntax("missing POSITION");
 	  if (!(isdigit(*s)))
 	    return gsig_syntax("malformed INDEX");
@@ -121,7 +105,7 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
 	    ++s;
 	  if ('#' != *s++)
 	    return gsig_syntax("missing '#' after POSITION/INDEX");
-	  if (!(gp->no_d_position = *s++;))
+	  if (!(gp->no_d_position = *s++))
 	    return gsig_syntax("missing NO_D_POSITION");
 	  if (!(isdigit(*s)))
 	    return gsig_syntax("malformed NO_D_INDEX");
@@ -130,7 +114,7 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
 	    ++s;
 	  if ('#' != *s++)
 	    return gsig_syntax("missing '#' after NO_D_POSITION/NO_D_INDEX");
-	  if (!(gp->c_position = *s++;))
+	  if (!(gp->c_position = *s++))
 	    return gsig_syntax("missing C_POSITION");
 	  if (!(isdigit(*s)))
 	    return gsig_syntax("malformed C_INDEX");

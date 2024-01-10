@@ -20,6 +20,7 @@ typedef struct gsig
   char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char c_position;   	/* for type=c: position in compound: i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
+  char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
   char *asltype; 	/* pc pe sl */
   char *form;		/* g:X form, value, sign, compound etc. */
   char *lang; 		/* language for word */
@@ -37,6 +38,7 @@ typedef struct gsig
   int ce_index;		/* Index of c-element in compound */
 } Gsig;
 
-extern gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
+extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
+extern Gsig* gsig_parse(char *s, Gsig *gp, const char *id_sig_sep);
 
 #endif/*GSIG_H_*/

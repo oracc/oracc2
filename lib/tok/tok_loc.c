@@ -10,8 +10,9 @@ static Hash *tloc_h;
 static Memo *tloc_m;
 static Pool *tloc_p;
 
+#define tloc_strdup(s) (ccp)hpool_copy((ucp)(s),tloc_p)
+
 static Tloc *curr_tloc;
-static const char *tloc_strdup(const char *s);
 
 void
 tloc_init(int many)
@@ -19,7 +20,7 @@ tloc_init(int many)
   if (!curr_tloc)
     {
       tloc_m = memo_init(sizeof(Tloc), many ? 1024 : 4);
-      tloc_p = pool_init();
+      tloc_p = hpool_init();
       tloc_h = hash_create(1024);
       curr_tloc = memo_new(tloc_m);
     }    
@@ -31,22 +32,10 @@ tloc_term(void)
   if (curr_tloc)
     {
       memo_term(tloc_m);
-      pool_term(tloc_p);
+      hpool_term(tloc_p);
       hash_free(tloc_h, NULL);
       curr_tloc = NULL;
     }
-}
-
-static const char *
-tloc_strdup(const char *s)
-{
-  const char *t = hash_find(tloc_h, (ucp)s);
-  if (!t)
-    {
-      t = (ccp)pool_copy((ucp)s, tloc_p);
-      hash_add(tloc_h, (uccp)t, (void*)t);
-    }
-  return t;
 }
 
 void

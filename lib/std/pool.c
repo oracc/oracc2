@@ -106,7 +106,7 @@ pool_alloc(size_t len, struct pool *p)
 }
 
 unsigned char *
-pool_copy(register const unsigned char *s, struct pool *p)
+pool_copy(register const unsigned char *s, Pool *p)
 {
   size_t len;
   
@@ -125,4 +125,36 @@ pool_copy(register const unsigned char *s, struct pool *p)
   p->rover->last_begin = memcpy(p->rover->used, s, len);
   p->rover->used += len;
   return p->rover->last_begin;
+}
+
+unsigned char *
+hpool_copy(register const unsigned char *s, Pool *p)
+{
+  if (s && p && p->h)
+    {      
+      unsigned char *t = hash_find(p->h, (ucp)s);
+      if (!t)
+	{
+	  t = (ucp)pool_copy((ucp)s, p);
+	  hash_add(p->h, (uccp)t, (void*)t);
+	}
+      return t;
+    }
+  return NULL;
+}
+
+Pool *
+hpool_init(void)
+{
+  Pool *p = pool_init();
+  p->h = hash_create(1024);
+  return p;
+}
+
+void
+hpool_term(Pool *p)
+{
+  if (p->h)
+    hash_free(p->h, NULL);
+  pool_term(p);
 }
