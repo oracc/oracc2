@@ -67,6 +67,9 @@ install-exec-local:
 %.c: %.xnn
 	c2-xnn2c.plx $<
 
+%.proto: %.c
+	cproto -e $(AM_CPPFLAGS) $< >$@
+
 xLDADD=../../lib/liboracc2.la
 
 AM_CPPFLAGS=\
