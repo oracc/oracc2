@@ -87,6 +87,7 @@ AM_CPPFLAGS=\
 	-I$(top_srcdir)/lib/sll \
 	-I$(top_srcdir)/lib/oid \
 	-I$(top_srcdir)/lib/tis \
+	-I$(top_srcdir)/lib/tok \
 	-I$(top_srcdir)/lib/xmd \
 	-I$(top_srcdir)/lib/xml \
 	-I$(top_srcdir)/lib/xpd \
