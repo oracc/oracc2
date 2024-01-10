@@ -12,6 +12,7 @@ extern FILE *f_log;
 
 static FILE *tab = NULL;
 
+int form_with_w = 0;
 int in_c = 0;
 int in_n = 0;
 int in_p = 0;
@@ -30,6 +31,7 @@ static char lid[128];
 static char llabel[128];
 static char project[1024];
 static char word_lang[16];
+static char word_form[1024];
 
 List *wg = NULL;
 int wg_index = 0;
@@ -45,7 +47,7 @@ struct wg
   char roletype;	/* role=d: s(emantic) p(honetic) v(ariant) u(ndetermined)
 			   role=g: t(ranslation) v(ariant)
 			   role=p: b(ullet=*) d(ivider-general=:-etc) w(ord-divider) s(urrogate) u(ndetermined)
-			   role=w|u: i(gnored)
+			   role=w|u: n(one)
 			 */
   char type;		/* i(deogram)
 			   m(orpheme) M(ixed-morpho-ideo/syll)
@@ -56,8 +58,9 @@ struct wg
 			 */
   char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char c_position;   	/* for type=c: position in compound: i(ndependent) b(eginning) m(iddle) e(nd) i(gnored) */
+  char c_position;   	/* for type=c: position in compound: i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char asltype[3]; 	/* pc pe sl */
+  char form[1024];	/* g:X form, value, sign, compound etc. */
   char lang[16]; 	/* language for word */
   char logolang[16];	/* secondary language for logogram */
   char soid[16];	/* sign-oid */
@@ -92,11 +95,11 @@ sl_of(const char *lang)
 static void
 g_signature(struct wg *wgp,const char *id_sig_sep)
 {
-  fprintf(tab, "%s.%s.%s%s@%s%%%s:%c/%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d#%c%d",
+  fprintf(tab, "%s.%s.%s%s@%s%%%s:%c/%s=%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d#%c%d",
 	  wgp->soid, wgp->foid, wgp->value,
 	  id_sig_sep,
 	  project, wgp->asltype, wgp->gdltype ? wgp->gdltype : 'u',
-	  wgp->sname, wgp->fname, wgp->value,
+	  wgp->form, wgp->sname, wgp->fname, wgp->value,
 	  wgp->role ? wgp->role : 'u', wgp->roletype ? wgp->roletype : 'u', wgp->lang,
 	  wgp->type ? wgp->type : 'u', wgp->logolang,
 	  wgp->position ? wgp->position : 'u', wgp->index,
@@ -128,7 +131,8 @@ wgp_get(int wgx)
 }
 
 void
-wg_add(char type, const char *oid, const char *sign, const char *spoid, const char *spsign, const char *logolang)
+wg_add(char type, const char *form, const char *oid, const char *sign,
+       const char *spoid, const char *spsign, const char *logolang)
 {
   struct wg *wgp = wgp_get(++wg_index);
   wgp->gdltype = type;
@@ -140,7 +144,7 @@ wg_add(char type, const char *oid, const char *sign, const char *spoid, const ch
   else
     {
       wgp->role = 'w'; 	/* may be reset later */
-      wgp->roletype = 'i'; 	/* ditto */
+      wgp->roletype = 'n'; 	/* ditto */
     }
   if (spoid)
     {
@@ -192,6 +196,8 @@ wg_add(char type, const char *oid, const char *sign, const char *spoid, const ch
   wgp->index = 1 + wg_index;
   if ('d' != role)
     wgp->no_d_index = 1 + ++no_d_index;
+  if (form && *form)
+    strcpy(wgp->form, form);
   list_add(wg, (void*)(uintptr_t)wg_index);
 }
 
@@ -294,12 +300,23 @@ wgp_punct(const char *t)
 }
 
 void
+wgp_sign(const char *t)
+{
+  if (wg_index >= 0)
+    {
+      struct wg *wgp = wgp_get(wg_index);
+      strcpy(wgp->form, t);
+    }
+}
+
+void
 wgp_value(const char *t)
 {
   if (wg_index >= 0)
     {
       struct wg *wgp = wgp_get(wg_index);
       strcpy(wgp->value, t);
+      strcpy(wgp->form, t);
     }
 }
 
@@ -311,6 +328,8 @@ wgp_print(void)
     {
       struct wg *wgp = wgp_get(i);
       g_signature(wgp, "\t");
+      if (form_with_w)
+	fprintf(tab, "\t%s", word_form);
       fputc('\n', tab);
     }
 }
@@ -381,6 +400,7 @@ loc_xtf(void *userData, const char *name, const char **atts)
   else if (!strcmp(name, "g:w") || !strcmp(name, "g:nonw"))
     {
       strcpy(word_lang, get_xml_lang(atts));
+      strcpy(word_form, findAttr(atts, "form"));
       fprintf(tab, "W\t%s\n", get_xml_id(atts));
     }
   else if (!strcmp(name, "xcl"))
@@ -390,6 +410,8 @@ loc_xtf(void *userData, const char *name, const char **atts)
 static void
 sH(void *userData, const char *name, const char **atts)
 {
+  char form[1024];
+  *form = '\0';
   (void)charData_retrieve();
   loc(userData, name, atts);
   if ('g' == name[0] && ':' == name[1])
@@ -409,6 +431,7 @@ sH(void *userData, const char *name, const char **atts)
 	    case 'n':
 	      in_n = 1;
 	      wg_add(name[2],
+		     findAttr(atts, "form"),
 		     findAttr(atts, "oid"),
 		     findAttr(atts, "g:sign"),
 		     NULL, NULL,
@@ -417,6 +440,7 @@ sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 'p':
 	      wg_add(name[2],
+		     findAttr(atts, "g:type"),
 		     findAttr(atts, "oid"),
 		     findAttr(atts, "g:sign"),
 		     NULL, NULL,
@@ -426,6 +450,7 @@ sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 'q':
 	      wg_add(name[2],
+		     findAttr(atts, "form"),
 		     findAttr(atts, "oid"),
 		     findAttr(atts, "g:sign"),
 		     findAttr(atts, "spoid"),
@@ -436,6 +461,7 @@ sH(void *userData, const char *name, const char **atts)
 	    case 'c':
 	      in_c = 1;
 	      wg_add(name[2],
+		     findAttr(atts, "form"),
 		     findAttr(atts, "oid"),
 		     findAttr(atts, "g:sign"),
 		     NULL, NULL,
@@ -445,6 +471,7 @@ sH(void *userData, const char *name, const char **atts)
 	    case 'v':
 	      if (!in_n && !in_p && !in_q)
 		wg_add(name[2],
+		       NULL,
 		       findAttr(atts, "oid"),
 		       findAttr(atts, "g:sign"),
 		       NULL, NULL,
@@ -500,12 +527,13 @@ eH(void *userData, const char *name)
 	    case 'q':
 	      in_q = 0;
 	      break;
-	    case 'v':
-	      if (!in_n)
-		wgp_value(charData_retrieve());
-	      break;
 	    case 's':
-	      /* this is done in the start tag */
+	      if (!in_n && !in_q)
+		wgp_sign(charData_retrieve());
+	      break;
+	    case 'v':
+	      if (!in_n && !in_q)
+		wgp_value(charData_retrieve());
 	      break;
 	    case 'b':
 	    case 'r':
@@ -568,7 +596,8 @@ main(int argc, char **argv)
 
   tab = stdout;
 
-  options(argc, argv, "cp:s");
+  if (options(argc, argv, "cfp:s"))
+    exit(1);
 
   if (projproj)
     fprintf(tab, "P\t%s\n", projproj);
@@ -620,6 +649,9 @@ int opts(int arg,char*str)
     case 'c':
       tok_xtf = 0;
       tok_cbd = 1;
+      break;
+    case 'f':
+      form_with_w = 1;
       break;
     case 'p':
       projproj = str;
