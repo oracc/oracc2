@@ -68,4 +68,6 @@ extern void strrep_f_h(const char *str, FILE *fp, Hash*reps);
 
 extern const char *itoa(int i);
 
+extern char **tab_split(char *l);
+
 #endif/*ORACCSYS_H_*/

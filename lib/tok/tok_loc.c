@@ -49,37 +49,6 @@ tloc_strdup(const char *s)
   return t;
 }
 
-static const char **
-tab_split(char *l)
-{
-  int ncol = 1;
-  char *s = l;
-  while (*s)
-    {
-      if ('\t' == *s)
-	++ncol;
-      ++s;
-    }
-  if ('\n' == s[-1])
-    s[-1] = '\0';
-
-  const char **p = calloc(ncol+1, sizeof(char *));
-  int col;
-  for (col = 0, s = l; *s; ++col)
-    {
-      if ('\t' == *s)
-	p[col] = "";
-      else
-	p[col] = s;
-      while (*s && '\t' != *s)
-	++s;
-      if ('\t' == *s)
-	*s++ = '\0';
-    }
-
-  return p;
-}
-
 void
 tloc_key(const char *k, const char *v)
 {
@@ -99,7 +68,7 @@ tloc_line(char *lp)
 {
   if (lp)
     {
-      const char **f = tab_split(lp);
+      char **f = tab_split(lp);
       switch (*lp)
 	{
 	case 'W':
