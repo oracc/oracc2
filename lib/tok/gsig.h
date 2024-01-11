@@ -10,6 +10,8 @@ struct gsb_input
   int in_c;
   int in_n;
   int in_p;
+  int in_q;
+  Pool *p;
 };
 
 /* This should be allocated for each sH/g:w; for line-oriented
@@ -20,10 +22,15 @@ struct gsb_word
   struct gsb_input *run;
   struct gsig *gpp;
   struct gsig *curr_c_wgp;
+  const char *lang;
   const char *form;
+  char role;			/* transient holders for role/roletext
+				   that go with child graphemes */
+  const char *roletext;
   int gpp_alloced;
   int gpp_used;
   int no_d_index;
+  struct gsb_input *in;
 };
 
 typedef struct gsig
@@ -48,7 +55,7 @@ typedef struct gsig
   char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
   char *asltype; 	/* pc pe sl */
   char *form;		/* g:X form, value, sign, compound etc. */
-  char *lang; 		/* language for word */
+  char *lang;		/* primary language of word */
   char *logolang;	/* secondary language for logogram */
   char *soid;		/* sign-oid */
   char *sname;		/* sign-name */
@@ -61,6 +68,7 @@ typedef struct gsig
   int no_d_last;	/* 1 = final grapheme in word ignoring final determinatives */
   int c_index;		/* Index of c in word; c-elements move index but not c_index */
   int ce_index;		/* Index of c-element in compound */
+  struct gsb_word *w;
 } Gsig;
 
 extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
@@ -75,9 +83,8 @@ extern Gsig *gsb_new(struct gsb_word *gswp);
 extern Gsig *gsb_get(struct gsb_word *gswp);
 extern Gsig *gsb_get_n(struct gsb_word *gswp, int n);
 extern void gsb_add(struct gsb_word *gswp, char type, const char *form, const char *oid,
-		    const char *sign, const char *spoid, const char *spsign,
-		    const char *logolang, const char *wordlang,
-		    const char role, const char *roletext);
+		    const char *sign, const char *spoid, const char *spsign, const char *lang, 
+		    const char *logolang);
 extern void gsb_set_positions(struct gsb_word *gswp);
 extern void gsb_last(struct gsb_word *gswp);
 extern void gsb_c_last(struct gsb_word *gswp);

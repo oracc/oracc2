@@ -9,7 +9,7 @@ gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep)
 	  id_sig_sep,
 	  gp->project, gp->asltype, gp->gdltype ? gp->gdltype : 'u',
 	  gp->form, gp->sname, gp->fname, gp->value,
-	  gp->role ? gp->role : 'u', gp->roletype ? gp->roletype : 'u', gp->lang,
+	  gp->role ? gp->role : 'u', gp->roletype ? gp->roletype : 'u', gp->w->lang,
 	  gp->type ? gp->type : 'u', gp->logolang,
 	  gp->position ? gp->position : 'u', gp->index,
 	  gp->no_d_position ? gp->no_d_position : 'u', gp->no_d_index,

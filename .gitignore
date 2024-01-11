@@ -17,7 +17,6 @@ bin/tx/expat-identity
 bin/tx/gdlx
 bin/tx/repx
 bin/tx/rocox
-bin/tx/tokx
 bin/tx/xmlfilter
 bin/wx/wx
 bin/xx/concord
@@ -25,14 +24,15 @@ bin/xx/dbix
 bin/xx/dbx
 bin/xx/osort/osort
 bin/xx/rnv/rnv
-bin/xx/tisdiv
-bin/xx/tisify
-bin/xx/tok2tis
+bin/xx/tis/tisdiv
+bin/xx/tis/tisify
+bin/xx/tis/tok-g
+bin/xx/tis/tok2tis
+bin/xx/tis/tokx
 bin/xx/tlitsig
 bin/xx/xmlify
 msc/lex/lex-collapse-refs
 msc/sys/proj-from-conf.sh
-msc/tok/tok-g
 
 # MacOS convenience link to external library header
 include/pcre2.h
@@ -78,7 +78,7 @@ bin/wx/pqx_map.c
 bin/wx/sl.c
 bin/wx/xff.c
 bin/wx/xmlrpc.c
-bin/xx/tisdiv.c
+bin/xx/tis/tisdiv.c
 fname.c
 slix.c
 mktablst

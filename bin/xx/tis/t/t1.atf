@@ -1,0 +1,12 @@
+&Q000001 = Gish
+#project: dcclt
+#atf: use unicode
+
+1. a
+2. A %a A
+3. |A.A|
+4. a(LAK797)
+5. 1(ban₂)
+6. *
+7. *(AŠ)
+8. :

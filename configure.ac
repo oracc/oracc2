@@ -95,6 +95,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/xx/Makefile
 		 bin/xx/osort/Makefile
 		 bin/xx/rnv/Makefile
+		 bin/xx/tis/Makefile
 		 msc/Makefile
 		 msc/adm/Makefile
 		 msc/adm/skel/Makefile
@@ -103,6 +104,5 @@ AC_CONFIG_FILES([Makefile
 		 msc/cmd/update/Makefile
 		 msc/lex/Makefile
 		 msc/sys/Makefile
-		 msc/tok/Makefile
                  ])
 AC_OUTPUT

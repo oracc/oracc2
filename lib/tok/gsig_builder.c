@@ -8,12 +8,14 @@ gsb_input_init(void)
   gsip->wpp_alloced = 1;
   gsip->wpp = calloc(gsip->wpp_alloced, sizeof(struct gsb_word));
   gsip->wpp_used = 0;
+  gsip->p = hpool_init();
   return gsip;
 }
 
 void
 gsb_input_term(struct gsb_input *gsip)
 {
+  hpool_term(gsip->p);
   free(gsip->wpp);
   free(gsip);
 }
@@ -72,8 +74,7 @@ gsb_get_n(struct gsb_word *gswp, int n)
 void
 gsb_add(struct gsb_word *gswp,
 	char type, const char *form, const char *oid, const char *sign,
-	const char *spoid, const char *spsign, const char *logolang, const char *wordlang,
-	char role, const char *roletext)
+	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
   Gsig *wgp = gsb_new(gswp);
   wgp->gdltype = type;
@@ -99,19 +100,18 @@ gsb_add(struct gsb_word *gswp,
       strcpy(wgp->soid, oid);
       strcpy(wgp->sname, sign);
     }
-  if (*wordlang)
+  if (lang)
     {
       const char *sl = "sl";
-      if ('q' == wordlang[0] && 'p' == wordlang[1])
-	sl = ('c' == wordlang[2] ? "pc" : "pe");
-      strcpy(wgp->lang, wordlang);
+      if ('q' == lang[0] && 'p' == lang[1])
+	sl = ('c' == lang[2] ? "pc" : "pe");
       strcpy(wgp->asltype, sl);
     }
-  if (role)
+  if (gswp->role)
     {
-      wgp->role = role;
-      if (*roletext)
-	wgp->roletype = *roletext;
+      wgp->role = gswp->role;
+      if (*gswp->roletext)
+	wgp->roletype = *gswp->roletext;
     }
   if (gswp->run->in_c)
     {
@@ -137,7 +137,7 @@ gsb_add(struct gsb_word *gswp,
     }
   else
     wgp->type = 'u';
-  if ('d' != role)
+  if ('d' != wgp->role)
     wgp->no_d_index = 1 + ++gswp->no_d_index;
   if (form && *form)
     strcpy(wgp->form, form);
