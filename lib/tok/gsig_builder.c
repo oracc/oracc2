@@ -34,6 +34,8 @@ gsb_word_init(struct gsb_input *gsip)
 void
 gsb_word_reset(struct gsb_word *gswp)
 {
+  gswp->no_d_index = 0;
+  gswp->lang = "";
   memset(gswp->gpp, '\0', gswp->gpp_alloced * sizeof(Gsig));
   gswp->gpp_used = 0;
 }
@@ -54,6 +56,8 @@ gsb_new(struct gsb_word *gswp)
       gswp->gpp = realloc(gswp->gpp, gswp->gpp_alloced * sizeof(Gsig));
       memset((void*)(gswp->gpp + (gswp->gpp_alloced-16)), '\0', 16 * sizeof(Gsig));
     }
+  gswp->gpp[gswp->gpp_used].w = gswp;
+  gswp->gpp[gswp->gpp_used].index = 1+gswp->gpp_used;
   return &gswp->gpp[gswp->gpp_used++];
 }
 
@@ -78,6 +82,7 @@ gsb_add(struct gsb_word *gswp,
 	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
   Gsig *wgp = gsb_new(gswp);
+  wgp->project = gswp->in->textproj;
   wgp->gdltype = type;
 
 #define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,gswp->in->p)
@@ -117,18 +122,18 @@ gsb_add(struct gsb_word *gswp,
       if (*gswp->roletext)
 	wgp->roletype = *gswp->roletext;
     }
-  if (gswp->run->in_c)
+  if (gswp->in->in_c)
     {
       if ('c' == type)
 	{
 	  gswp->curr_c_wgp = wgp;
-	  wgp->c_index = gswp->gpp_used - 1;
+	  wgp->c_index = wgp->index;
 	}
       else
 	{
 	  wgp->type = 'c';
 	  wgp->c_index = gswp->curr_c_wgp->c_index;
-	  if (1 == gswp->run->in_c++)
+	  if (1 == gswp->in->in_c++)
 	    wgp->c_position = 'b';
 	  else
 	    wgp->c_position = 'm';
@@ -142,7 +147,7 @@ gsb_add(struct gsb_word *gswp,
   else
     wgp->type = 'u';
   if ('d' != wgp->role)
-    wgp->no_d_index = 1 + ++gswp->no_d_index;
+    wgp->no_d_index = ++gswp->no_d_index;
   if (form && *form)
     gsb_strcpy(wgp->form, form);
 }
@@ -151,7 +156,7 @@ void
 gsb_set_positions(struct gsb_word *gswp)
 {
   int i;
-  for (i = 0; i <= gswp->gpp_used; ++i)
+  for (i = 0; i < gswp->gpp_used; ++i)
     {
       Gsig *wgp = gsb_get_n(gswp, i);
       if ('c' == wgp->type)
@@ -200,7 +205,7 @@ gsb_last(struct gsb_word *gswp)
 {
   if (gswp->gpp_used > 0)
     {
-      Gsig *wgp;
+      Gsig *wgp = NULL;
       int lastindex = gswp->gpp_used - 1;
 
       while (lastindex >= 0 && (wgp = gsb_get_n(gswp, lastindex--)))
@@ -212,7 +217,7 @@ gsb_last(struct gsb_word *gswp)
 	  wgp->last = 1;
 	  if ((gswp->gpp_used-1) != gswp->no_d_index && gswp->no_d_index >= 0)
 	    {
-	      wgp = gsb_get_n(gswp, gswp->no_d_index);
+	      wgp = gsb_get_n(gswp, gswp->no_d_index-1);
 	      wgp->no_d_last = 1;
 	    }
 	  else
@@ -251,7 +256,7 @@ gsb_sign(struct gsb_word *gswp, const char *t)
   if (gswp->gpp_used > 0)
     {
       Gsig *wgp = gsb_get(gswp);
-      strcpy(wgp->form, t);
+      gsb_strcpy(wgp->form, t);
     }
 }
 
@@ -261,8 +266,8 @@ gsb_value(struct gsb_word *gswp, const char *t)
   if (gswp->gpp_used > 0)
     {
       Gsig *wgp = gsb_get(gswp);
-      strcpy(wgp->value, t);
-      strcpy(wgp->form, t);
+      gsb_strcpy(wgp->value, t);
+      gsb_strcpy(wgp->form, t);
     }
 }
 

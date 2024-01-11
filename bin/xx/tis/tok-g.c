@@ -7,14 +7,13 @@
 
 /* Emulate ox -G output but do it from the XTF not from the ATF */
 
-#undef strdup
-extern char *strdup(const char *);
 extern FILE *f_log;
 
 static FILE *tab = NULL;
 
 static struct gsb_input *gi = NULL;
 static struct gsb_word *gswp = NULL;
+static const char *projproj;
 
 int form_with_w = 0;
 int printing = 0;
@@ -22,8 +21,6 @@ int stdinput = 0;
 int tok_cbd = 0;
 int tok_xtf = 1;
 int xcl = 0;
-
-static const char *projproj = NULL;
 
 static void
 tok_mds(const char *project, const char *pqx)
@@ -76,6 +73,8 @@ loc_xtf(void *userData, const char *name, const char **atts)
       const char *pqx = get_xml_id(atts);
       const char *tlabel = findAttr(atts, "n");
       const char *project = findAttr(atts, "project");
+      if (!gi->textproj || strcmp(gi->textproj, project))
+	gi->textproj = (ccp)hpool_copy((ucp)project, gi->p);
       printing = 1;
       xcl = 0;
       fprintf(tab,"T\t%s\t%s\t%s\n",project,pqx,tlabel);
@@ -111,15 +110,15 @@ sH(void *userData, const char *name, const char **atts)
 	    {
 	    case 'w':
 	      gswp = gsb_word_init(gi);
-	      gswp->lang = (ccp)hpool_copy((uccp)get_xml_lang(atts), gi->p);
-	      gswp->form = (ccp)hpool_copy((uccp)findAttr(atts, "form"), gi->p);
+	      gswp->lang = (ccp)hpool_copy((uccp)get_xml_lang(atts), gswp->in->p);
+	      gswp->form = (ccp)hpool_copy((uccp)findAttr(atts, "form"), gswp->in->p);
 	      break;
 	    case 'd':
 	      gswp->role = 'd';
-	      gswp->roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), gi->p);
+	      gswp->roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), gswp->in->p);
 	      break;
 	    case 'n':
-	      gi->in_n = 1;
+	      gswp->in->in_n = 1;
 	      gsb_add(gswp,
 		      name[2],
 		      findAttr(atts, "form"),
@@ -140,7 +139,7 @@ sH(void *userData, const char *name, const char **atts)
 		      gswp->lang,
 		      findAttr(atts, "g:logolang"));
 	      gsb_punct(gswp, findAttr(atts, "g:type"));
-	      gi->in_p = 1;
+	      gswp->in->in_p = 1;
 	      break;
 	    case 'q':
 	      gsb_add(gswp,
@@ -152,10 +151,10 @@ sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "spform"),
 		      gswp->lang,
 		      findAttr(atts, "g:logolang"));
-	      gi->in_q = 1;
+	      gswp->in->in_q = 1;
 	      break;
 	    case 'c':
-	      gi->in_c = 1;
+	      gswp->in->in_c = 1;
 	      gsb_add(gswp,
 		      name[2],
 		      findAttr(atts, "form"),
@@ -167,7 +166,7 @@ sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 's':
 	    case 'v':
-	      if (!gi->in_n && !gi->in_p && !gi->in_q)
+	      if (!gswp->in->in_n && !gswp->in->in_p && !gswp->in->in_q)
 		gsb_add(gswp,
 			name[2],
 			NULL,
@@ -206,11 +205,10 @@ eH(void *userData, const char *name)
 	    case 'w':
 	      gsb_last(gswp);
 	      gsb_show(stdout, gswp, form_with_w);
-	      gsb_get_n(gswp, -1);
-	      gswp->lang = "";
+	      gsb_word_reset(gswp);
 	      break;
 	    case 'c':
-	      gi->in_c = 0;
+	      gswp->in->in_c = 0;
 	      gsb_c_last(gswp);
 	      gswp->curr_c_wgp = NULL;
 	      break;
@@ -219,20 +217,20 @@ eH(void *userData, const char *name)
 	      gswp->roletext = "";
 	      break;
 	    case 'n':
-	      gi->in_n = 0;
+	      gswp->in->in_n = 0;
 	      break;
 	    case 'p':
-	      gi->in_p = 0;
+	      gswp->in->in_p = 0;
 	      break;
 	    case 'q':
-	      gi->in_q = 0;
+	      gswp->in->in_q = 0;
 	      break;
 	    case 's':
-	      if (!gi->in_n && !gi->in_q)
+	      if (!gswp->in->in_n && !gswp->in->in_q)
 		gsb_sign(gswp, charData_retrieve());
 	      break;
 	    case 'v':
-	      if (!gi->in_n && !gi->in_q)
+	      if (!gswp->in->in_n && !gswp->in->in_q)
 		gsb_value(gswp, charData_retrieve());
 	      break;
 	    case 'b':
@@ -249,7 +247,7 @@ eH(void *userData, const char *name)
 	    {
 	      gsb_last(gswp);
 	      gsb_show(stdout, gswp, form_with_w);
-	      gsb_get_n(gswp, -1);
+	      gsb_word_reset(gswp);
 	      gswp->lang = "";
 	    }
 	  else
@@ -302,7 +300,10 @@ main(int argc, char **argv)
   gi = gsb_input_init();
   
   if (projproj)
-    fprintf(tab, "P\t%s\n", projproj);
+    {
+      gi->projproj = (ccp)hpool_copy((uccp)projproj, gi->p);
+      fprintf(tab, "P\t%s\n", gi->projproj);
+    }
 
   if (tok_xtf)
     {

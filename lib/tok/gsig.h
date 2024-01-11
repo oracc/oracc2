@@ -5,6 +5,8 @@
 struct gsb_input
 {
   struct gsb_word *wpp;
+  const char *projproj;
+  const char *textproj;
   int wpp_alloced;
   int wpp_used;
   int in_c;
@@ -19,7 +21,6 @@ struct gsb_input
  */
 struct gsb_word
 {
-  struct gsb_input *run;
   struct gsig *gpp;
   struct gsig *curr_c_wgp;
   const char *lang;
@@ -52,7 +53,7 @@ typedef struct gsig
   char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char c_position;   	/* for type=c: position in compound: i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
+  const char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
   char *asltype; 	/* pc pe sl */
   char *form;		/* g:X form, value, sign, compound etc. */
   char *lang;		/* primary language of word */
@@ -92,5 +93,6 @@ extern void gsb_punct(struct gsb_word *gswp, const char *t);
 extern void gsb_sign(struct gsb_word *gswp, const char *t);
 extern void gsb_value(struct gsb_word *gswp, const char *t);
 extern void gsb_show(FILE *tab, struct gsb_word *gswp, int with_form);
+extern void gsb_reset_word(struct gsb_word *gswp);
 
 #endif/*GSIG_H_*/
