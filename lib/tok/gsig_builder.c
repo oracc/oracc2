@@ -7,6 +7,7 @@ gsb_input_init(void)
   struct gsb_input *gsip = malloc(sizeof(struct gsb_input));
   gsip->wpp_alloced = 1;
   gsip->wpp = calloc(gsip->wpp_alloced, sizeof(struct gsb_word));
+  gsip->wpp[0].in = gsip;
   gsip->wpp_used = 0;
   gsip->p = hpool_init();
   return gsip;
@@ -78,6 +79,9 @@ gsb_add(struct gsb_word *gswp,
 {
   Gsig *wgp = gsb_new(gswp);
   wgp->gdltype = type;
+
+#define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,gswp->in->p)
+  
   if ('p' == type)
     {
       wgp->role = 'p';
@@ -90,22 +94,22 @@ gsb_add(struct gsb_word *gswp,
     }
   if (spoid)
     {
-      strcpy(wgp->soid, spoid);
-      strcpy(wgp->sname, spsign);
-      strcpy(wgp->foid, oid);
-      strcpy(wgp->fname, sign);
+      gsb_strcpy(wgp->soid, spoid);
+      gsb_strcpy(wgp->sname, spsign);
+      gsb_strcpy(wgp->foid, oid);
+      gsb_strcpy(wgp->fname, sign);
     }
   else
     {
-      strcpy(wgp->soid, oid);
-      strcpy(wgp->sname, sign);
+      gsb_strcpy(wgp->soid, oid);
+      gsb_strcpy(wgp->sname, sign);
     }
   if (lang)
     {
       const char *sl = "sl";
       if ('q' == lang[0] && 'p' == lang[1])
 	sl = ('c' == lang[2] ? "pc" : "pe");
-      strcpy(wgp->asltype, sl);
+      gsb_strcpy(wgp->asltype, sl);
     }
   if (gswp->role)
     {
@@ -133,14 +137,14 @@ gsb_add(struct gsb_word *gswp,
   else if (*logolang)
     {
       wgp->type = 'l';
-      strcpy(wgp->logolang, logolang);
+      gsb_strcpy(wgp->logolang, logolang);
     }
   else
     wgp->type = 'u';
   if ('d' != wgp->role)
     wgp->no_d_index = 1 + ++gswp->no_d_index;
   if (form && *form)
-    strcpy(wgp->form, form);
+    gsb_strcpy(wgp->form, form);
 }
 
 void
