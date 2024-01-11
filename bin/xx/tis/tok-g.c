@@ -114,8 +114,8 @@ sH(void *userData, const char *name, const char **atts)
 	      gswp->form = (ccp)hpool_copy((uccp)findAttr(atts, "form"), gswp->in->p);
 	      break;
 	    case 'd':
-	      gswp->role = 'd';
-	      gswp->roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), gswp->in->p);
+	      gswp->in->role = 'd';
+	      gswp->in->roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), gswp->in->p);
 	      break;
 	    case 'n':
 	      gswp->in->in_n = 1;
@@ -213,8 +213,8 @@ eH(void *userData, const char *name)
 	      gswp->curr_c_wgp = NULL;
 	      break;
 	    case 'd':
-	      gswp->role = '\0';
-	      gswp->roletext = "";
+	      gswp->in->role = '\0';
+	      gswp->in->roletext = "";
 	      break;
 	    case 'n':
 	      gswp->in->in_n = 0;

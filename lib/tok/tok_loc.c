@@ -1,10 +1,11 @@
 #include <oraccsys.h>
 #include <tok.h>
 
-/* Maintain a single token location status which can be frozen and
-   retrieved by callers if desired.  For most tok uses it won't be
-   necessary to maintain old location state in this way because the
-   focus is on processing the token lines one-by-one. */
+/* Maintain a single token location status from location lines in a
+   .tok file.  The location status can be frozen and retrieved by
+   callers if desired.  For most tok uses it won't be necessary to
+   maintain old location state in this way because the focus is on
+   processing the token lines one-by-one. */
 
 static Hash *tloc_h;
 static Memo *tloc_m;

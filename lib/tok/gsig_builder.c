@@ -35,7 +35,7 @@ void
 gsb_word_reset(struct gsb_word *gswp)
 {
   gswp->no_d_index = 0;
-  gswp->lang = "";
+  gswp->form = gswp->lang = "";
   memset(gswp->gpp, '\0', gswp->gpp_alloced * sizeof(Gsig));
   gswp->gpp_used = 0;
 }
@@ -116,11 +116,11 @@ gsb_add(struct gsb_word *gswp,
 	sl = ('c' == lang[2] ? "pc" : "pe");
       gsb_strcpy(wgp->asltype, sl);
     }
-  if (gswp->role)
+  if (gswp->in->role)
     {
-      wgp->role = gswp->role;
-      if (*gswp->roletext)
-	wgp->roletype = *gswp->roletext;
+      wgp->role = gswp->in->role;
+      if (*gswp->in->roletext)
+	wgp->roletype = *gswp->in->roletext;
     }
   if (gswp->in->in_c)
     {

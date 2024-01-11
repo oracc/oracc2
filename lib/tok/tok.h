@@ -1,31 +1,32 @@
 #ifndef TOK_H_
 #define TOK_H_
 
-typedef struct tloc
-{
-  const char *project;
-  const char *type;
-  const char *file;
-  const char *text_project;  
-  const char *text_id;
-  const char *text_name;
-  const char *line_num;
-  const char *line_id;
-  const char *line_label;
-  const char *word_id;
-  const char *word_form;
-  const char **keys;
-  int nkeys; /* number of keys used */
-  int nkeyp; /* number of pointers allocated to keys */
-} Tloc;
+#include <trun.h>
+#include <loch.h>
+#include <gsig.h>
 
-extern void tloc_init(int many);
-extern void tloc_term(void);
-extern void tloc_key(const char *k, const char *v);
-extern Tloc *tloc_line(char *lp);
-extern Tloc *tloc_dup(void);
-extern Tloc *tloc_dup_arg(Tloc *dup);
-extern Tloc *tloc_get(void);
-extern void tloc_show(char c);
+extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
+extern Gsig* gsig_parse(char *s, Gsig *gp, const char *id_sig_sep);
+
+extern struct gsb_input *gsb_input_init(void);
+extern void gsb_input_term(struct gsb_input *gsip);
+extern struct gsb_word *gsb_word_init(struct gsb_input *gsip);
+extern void gsb_word_reset(struct gsb_word *gswp);
+extern void gsb_word_term(struct gsb_word *gswp);
+extern Gsig *gsb_new(struct gsb_word *gswp);
+extern Gsig *gsb_get(struct gsb_word *gswp);
+extern Gsig *gsb_get_n(struct gsb_word *gswp, int n);
+extern void gsb_add(struct gsb_word *gswp, char type, const char *form, const char *oid,
+		    const char *sign, const char *spoid, const char *spsign, const char *lang, 
+		    const char *logolang);
+extern void gsb_set_positions(struct gsb_word *gswp);
+extern void gsb_last(struct gsb_word *gswp);
+extern void gsb_c_last(struct gsb_word *gswp);
+extern void gsb_punct(struct gsb_word *gswp, const char *t);
+extern void gsb_sign(struct gsb_word *gswp, const char *t);
+extern void gsb_value(struct gsb_word *gswp, const char *t);
+extern void gsb_show(FILE *tab, struct gsb_word *gswp, int with_form);
+extern void gsb_reset_word(struct gsb_word *gswp);
+
 
 #endif/*TOK_H_*/
