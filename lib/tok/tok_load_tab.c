@@ -72,7 +72,7 @@ tloc_line(Trun *r, char *lp)
 	  break;
 	case 'K':
 	  if (f[1] && f[2])
-	    tlb_key(r, f[1], f[2]);
+	    tlb_K(r, f[1], f[2]);
 	  break;
 	case 'F':
 	  tlb_F(r, f[1]);

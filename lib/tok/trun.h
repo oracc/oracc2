@@ -11,6 +11,7 @@ typedef struct trun
   Pool *p;
   struct trun_gdl_state rs;
   struct trun_word rw;
+  int multi;
 } Trun;
 
 /* state variables used during processing GDL input */

@@ -10,7 +10,7 @@ typedef struct loch
   Memo *l_m;
   Memo *w_m;
   struct trun *r; /* This is the run--normally a set of inputs belonging to the same project */
-  struct tloc *t; /* This is the head of the tok-loc list */
+  struct tloc *t; /* This tracks the current T(ext) info */
   struct lloc *l; /* This tracks t->llocs->last */
   struct wloc *w; /* This tracks t->llocs->last->wlocs->last */
   struct gsig *g; /* This tracks t->llocs->last->wlocs->last->gsigs->last */
