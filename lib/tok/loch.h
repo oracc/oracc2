@@ -6,9 +6,6 @@ typedef struct loch
 {
   const char *project;
   const char *type;
-  Memo *t_m;
-  Memo *l_m;
-  Memo *w_m;
   struct trun *r; /* This is the run--normally a set of inputs belonging to the same project */
   struct tloc *t; /* This tracks the current T(ext) info */
   struct lloc *l; /* This tracks t->llocs->last */
@@ -34,20 +31,20 @@ typedef struct tloc
 
 typedef struct lloc
 {
-  const char *line_num;
   const char *line_id;
+  const char *line_num;
   const char *line_label;
-  List *wlocs;
   Tloc *t;
+  List *wlocs;
 } Lloc;
 
 typedef struct wloc
 {
   const char *word_id;
-  const char *word_form;
   const char *word_lang;
-  List *gsigs;
+  const char *word_form;
   Lloc *l;
+  List *gsigs;		/* NULL unless r->multi is in effect */
   struct trun_word *w;
 } Wloc;
 

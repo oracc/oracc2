@@ -1,30 +1,35 @@
 #include <oraccsys.h>
 #include <trun.h>
 
-
 /* Callers should call this first, e.g.,
 
-   Trun *r = trun_init(loch_init(0));
+   Trun *r = trun_init(0)
+   loch_init(r, arg_project, arg_type);
+   
  */
 Trun *
-trun_init(Loch *l)
+trun_init(int multi)
 {
   Trun *r = calloc(1, sizeof(Trun));
-  r->l = l;
-  l->r = r;
+  r->multi = multi;
+  r->t_m = memo_init(sizeof(Tloc), r->multi ? 128 : 1);
+  r->l_m = memo_init(sizeof(Lloc), r->multi ? 1024 : 1);
+  r->w_m = memo_init(sizeof(Wloc), r->multi ? 1024 : 1);
   r->p = hpool_init();
-  r->rw->wpp_alloced = 1;
-  r->rw->wpp = calloc(r->rw->wpp_alloced, sizeof(struct Word));
-  r->rw->wpp[0].r = r;
-  r->rw->wpp_used = 0;
+  r->rw.gpp_alloced = 1;
+  r->rw.gpp = calloc(r->rw.gpp_alloced, sizeof(Gsig));
+  r->rw.gpp_used = 0;
   return r;
 }
 
 void
 trun_term(Trun *r)
 {
+  memo_term(r->t_m);
+  memo_term(r->l_m);
+  memo_term(r->w_m);
   hpool_term(r->p);
-  free(r->rw->wpp);
+  free(r->rw.gpp);
   free(r);
 }
 
@@ -35,7 +40,7 @@ trun_term(Trun *r)
 Word *
 trun_word_init(Trun *r)
 {
-  return &r->rw->wpp[0];
+  return &r->rw;
 }
 
 void
@@ -47,13 +52,13 @@ trun_state_reset(Trun *r)
 void
 trun_word_reset(Trun *r)
 {
-  memset(r->rw->gpp, '\0', r->rw->gpp_alloced * sizeof(Gsig));
-  r->rw->gpp_used = 0;
+  memset(r->rw.gpp, '\0', r->rw.gpp_alloced * sizeof(Gsig));
+  r->rw.gpp_used = 0;
 }
 
 void
 trun_word_term(Trun *r)
 {
-  free(r->rw->gpp);
+  free(r->rw.gpp);
   memset(&r->rw, '\0', sizeof(Word));
 }

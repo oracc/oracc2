@@ -1,22 +1,14 @@
 #ifndef TRUN_H_
 #define TRUN_H_
 
-struct trun_gsl_state;
-struct trun_word;
-
-/* This should be allocated for each input */
-typedef struct trun
-{
-  struct loch *l;
-  Pool *p;
-  struct trun_gdl_state rs;
-  struct trun_word rw;
-  int multi;
-} Trun;
+#include "loch.h"
+#include "gsig.h"
 
 /* state variables used during processing GDL input */
 struct trun_gdl_state
 {
+  const char *file;
+  int andline_num;
   int in_c;
   int in_n;
   int in_p;
@@ -39,5 +31,18 @@ typedef struct trun_word
   int gpp_used;
   Wloc *w;
 } Word;
+
+/* This should be allocated for each input */
+typedef struct trun
+{
+  Memo *t_m;
+  Memo *l_m;
+  Memo *w_m;
+  Pool *p;
+  struct trun_gdl_state rs;
+  struct trun_word rw;
+  int multi;
+  struct loch *l;
+} Trun;
 
 #endif/*TRUN_H_*/

@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <gsig.h>
+#include <trun.h>
 
 Gsig *
 gsb_new(Word *w)
