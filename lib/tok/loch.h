@@ -48,15 +48,7 @@ typedef struct wloc
   const char *word_lang;
   List *gsigs;
   Lloc *l;
+  struct trun_word *w;
 } Wloc;
-
-extern void tloc_init(int many);
-extern void tloc_term(void);
-extern void tloc_key(const char *k, const char *v);
-extern Tloc *tloc_line(char *lp);
-extern Tloc *tloc_dup(void);
-extern Tloc *tloc_dup_arg(Tloc *dup);
-extern Tloc *tloc_get(void);
-extern void tloc_show(char c);
 
 #endif/*TLOC_H_*/

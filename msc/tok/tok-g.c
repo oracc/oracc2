@@ -1,338 +1,13 @@
-#include <unistd.h>
-#include <string.h>
 #include <oraccsys.h>
-#include <runexpat.h>
 #include <xmd.h>
-
-/* Emulate ox -G output but do it from the XTF not from the ATF */
-
-#undef strdup
-extern char *strdup(const char *);
-extern FILE *f_log;
 
 static FILE *tab = NULL;
 
 int form_with_w = 0;
-int in_c = 0;
-int in_n = 0;
-int in_p = 0;
-int in_q = 0;
 int printing = 0;
 int stdinput = 0;
 int tok_cbd = 0;
-int tok_xtf = 1;
-int xcl = 0;
-
-static const char *projproj = NULL;
-
-static char pqx[128];
-static char tlabel[128];
-static char lid[128];
-static char llabel[128];
-static char project[1024];
-static char word_lang[16];
-static char word_form[1024];
-
-List *wg = NULL;
-int wg_index = 0;
-int no_d_index = 0;
-
-static char role;
-static char roletext[32];
-
-struct wg
-{
-  char gdltype;
-  char role; 		/* d(eterminative) g(loss) p(unctuation) w(ord-constituent) u(ndetermined) */
-  char roletype;	/* role=d: s(emantic) p(honetic) v(ariant) u(ndetermined)
-			   role=g: t(ranslation) v(ariant)
-			   role=p: b(ullet=*) d(ivider-general=:-etc) w(ord-divider) s(urrogate) u(ndetermined)
-			   role=w|u: n(one)
-			 */
-  char type;		/* i(deogram)
-			   m(orpheme) M(ixed-morpho-ideo/syll)
-			   l(ogogram[secondary-language])
-			   s(yllable)
-			   u(ndetermined)
-			   c(compound-element)
-			 */
-  char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char c_position;   	/* for type=c: position in compound: i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char asltype[3]; 	/* pc pe sl */
-  char form[1024];	/* g:X form, value, sign, compound etc. */
-  char lang[16]; 	/* language for word */
-  char logolang[16];	/* secondary language for logogram */
-  char soid[16];	/* sign-oid */
-  char sname[1024];	/* sign-name */
-  char foid[16];	/* form-oid */
-  char fname[1024];	/* form-name */
-  char value[1024];	/* value when gdltype == 'v' */
-  int index;		/* Index of grapheme in word, counting from 1; 0 = no g:w parent */
-  int last;		/* 1 = final grapheme in word */
-  int no_d_index;	/* Index ignoring initial determinatives */
-  int no_d_last;	/* 1 = final grapheme in word ignoring final determinatives */
-  int c_index;		/* Index of c in word; c-elements move index but not c_index */
-  int ce_index;		/* Index of c-element in compound */
-};
-
-struct wg *curr_c_wgp = NULL;
-
-static char *
-sl_of(const char *lang)
-{
-  if (lang)
-    {
-      if ('q' == lang[0] && 'p' == lang[1])
-	return 'c' == lang[2] ? "pc" : "pe";
-      else
-	return "sl";
-    }
-  else
-    return "sl";
-}
-
-static void
-g_signature(struct wg *wgp,const char *id_sig_sep)
-{
-  fprintf(tab, "%s.%s.%s%s@%s%%%s:%c/%s=%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d#%c%d",
-	  wgp->soid, wgp->foid, wgp->value,
-	  id_sig_sep,
-	  project, wgp->asltype, wgp->gdltype ? wgp->gdltype : 'u',
-	  wgp->form, wgp->sname, wgp->fname, wgp->value,
-	  wgp->role ? wgp->role : 'u', wgp->roletype ? wgp->roletype : 'u', wgp->lang,
-	  wgp->type ? wgp->type : 'u', wgp->logolang,
-	  wgp->position ? wgp->position : 'u', wgp->index,
-	  wgp->no_d_position ? wgp->no_d_position : 'u', wgp->no_d_index,
-	  wgp->c_position ? wgp->c_position : 'u', wgp->ce_index
-	  );
-}
-
-struct wg *
-wgp_get(int wgx)
-{
-  static struct wg *wgmem = NULL;
-  static int wg_alloced = 0;
-  if (wgx == -1 && wgmem)
-    {
-      memset(wgmem, '\0', wg_alloced * sizeof(struct wg));
-      return NULL;
-    }
-  else
-    {
-      if (wgx == wg_alloced)
-	{
-	  wg_alloced += 16;
-	  wgmem = realloc(wgmem, wg_alloced * sizeof(struct wg));
-	  memset((void*)(wgmem + (wg_alloced-16)), '\0', 16 * sizeof(struct wg));
-	}
-      return &wgmem[wgx];
-    }
-}
-
-void
-wg_add(char type, const char *form, const char *oid, const char *sign,
-       const char *spoid, const char *spsign, const char *logolang)
-{
-  struct wg *wgp = wgp_get(++wg_index);
-  wgp->gdltype = type;
-  if ('p' == type)
-    {
-      wgp->role = 'p';
-      wgp->roletype = 'u';
-    }
-  else
-    {
-      wgp->role = 'w'; 	/* may be reset later */
-      wgp->roletype = 'n'; 	/* ditto */
-    }
-  if (spoid)
-    {
-      strcpy(wgp->soid, spoid);
-      strcpy(wgp->sname, spsign);
-      strcpy(wgp->foid, oid);
-      strcpy(wgp->fname, sign);
-    }
-  else
-    {
-      strcpy(wgp->soid, oid);
-      strcpy(wgp->sname, sign);
-    }
-  if (*word_lang)
-    {
-      strcpy(wgp->lang, word_lang);
-      strcpy(wgp->asltype, sl_of(word_lang));
-    }
-  if (role)
-    {
-      wgp->role = role;
-      if (*roletext)
-	wgp->roletype = *roletext;
-    }
-  if (in_c)
-    {
-      if ('c' == type)
-	{
-	  curr_c_wgp = wgp;
-	  wgp->c_index = 1 + wg_index;
-	}
-      else
-	{
-	  wgp->type = 'c';
-	  wgp->c_index = curr_c_wgp->c_index;
-	  if (1 == in_c++)
-	    wgp->c_position = 'b';
-	  else
-	    wgp->c_position = 'm';
-	}
-    }
-  else if (*logolang)
-    {
-      wgp->type = 'l';
-      strcpy(wgp->logolang, logolang);
-    }
-  else
-    wgp->type = 'u';
-  wgp->index = 1 + wg_index;
-  if ('d' != role)
-    wgp->no_d_index = 1 + ++no_d_index;
-  if (form && *form)
-    strcpy(wgp->form, form);
-  list_add(wg, (void*)(uintptr_t)wg_index);
-}
-
-void
-wgp_set_positions(void)
-{
-  int i;
-  for (i = 0; i <= wg_index; ++i)
-    {
-      struct wg *wgp = wgp_get(i);
-      if ('c' == wgp->type)
-	{
-	  wgp->ce_index = wgp->index - wgp->c_index;
-	  wgp->index = wgp->no_d_index = 0;
-	  wgp->position = wgp->no_d_position = 'u';
-	}
-      else
-	{
-	  int use_index = (wgp->c_index ? wgp->c_index : wgp->index);
-	  if (use_index > 1)
-	    {
-	      if (wgp->last)
-		wgp->position = 'e';
-	      else
-		wgp->position = 'm';
-	    }
-	  else
-	    {
-	      if (wgp->last)
-		wgp->position = 'i';
-	      else
-		wgp->position = 'b';
-	    }
-	  if (wgp->no_d_index > 1)
-	    {
-	      if (wgp->no_d_last)
-		wgp->no_d_position = 'e';
-	      else
-		wgp->no_d_position = 'm';
-	    }
-	  else
-	    {
-	      if (wgp->no_d_last)
-		wgp->no_d_position = 'i';
-	      else
-		wgp->no_d_position = 'b';
-	    }
-	}
-    }
-}
-
-void
-wgp_last(void)
-{
-  if (wg_index >= 0)
-    {
-      struct wg *wgp;
-      int lastindex = wg_index;
-
-      while ((wgp = wgp_get(lastindex--)))
-	if ('c' != wgp->type)
-	  break;
-      
-      if (wgp)
-	{
-	  wgp->last = 1;
-	  if (wg_index != no_d_index && no_d_index >= 0)
-	    {
-	      wgp = wgp_get(no_d_index);
-	      wgp->no_d_last = 1;
-	    }
-	  else
-	    wgp->no_d_last = 1;
-	}
-      wgp_set_positions();
-    }
-}
-
-void
-wgp_c_last(void)
-{
-  if (wg_index >= 0)
-    {
-      struct wg *wgp = wgp_get(wg_index);
-      wgp->c_position = 'e';
-    }
-}
-
-void
-wgp_punct(const char *t)
-{
-  if (wg_index >= 0)
-    {
-      struct wg *wgp = wgp_get(wg_index);
-      if ('*' == *t)
-	wgp->roletype = 'b';
-      else if (':' == *t)
-	wgp->roletype = 'd';    
-    }
-}
-
-void
-wgp_sign(const char *t)
-{
-  if (wg_index >= 0)
-    {
-      struct wg *wgp = wgp_get(wg_index);
-      strcpy(wgp->form, t);
-    }
-}
-
-void
-wgp_value(const char *t)
-{
-  if (wg_index >= 0)
-    {
-      struct wg *wgp = wgp_get(wg_index);
-      strcpy(wgp->value, t);
-      strcpy(wgp->form, t);
-    }
-}
-
-void
-wgp_print(void)
-{
-  int i;
-  for (i = 0; i <= wg_index; ++i)
-    {
-      struct wg *wgp = wgp_get(i);
-      g_signature(wgp, "\t");
-      if (form_with_w)
-	fprintf(tab, "\t%s", word_form);
-      fputc('\n', tab);
-    }
-}
+int tok_gdl = 1;
 
 static void
 tok_mds(const char *project, const char *pqx)
@@ -602,7 +277,7 @@ main(int argc, char **argv)
   if (projproj)
     fprintf(tab, "P\t%s\n", projproj);
 
-  if (tok_xtf)
+  if (tok_gdl)
     {
       fputs("Y\txtf\n", tab);      
       loc = loc_xtf;
@@ -615,7 +290,7 @@ main(int argc, char **argv)
 
   if (argv[optind])
     {
-      if (tok_xtf)
+      if (tok_gdl)
 	{
 	  strcpy(PQ, argv[optind]);
 	  tok_g_one(PQ);
@@ -647,7 +322,7 @@ int opts(int arg,char*str)
   switch (arg)
     {
     case 'c':
-      tok_xtf = 0;
+      tok_gdl = 0;
       tok_cbd = 1;
       break;
     case 'f':

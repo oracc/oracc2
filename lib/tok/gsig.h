@@ -36,7 +36,7 @@ typedef struct gsig
   int no_d_last;	/* 1 = final grapheme in word ignoring final determinatives */
   int c_index;		/* Index of c in word; c-elements move index but not c_index */
   int ce_index;		/* Index of c-element in compound */
-  Wloc *w;
+  struct wloc *w;
 } Gsig;
 
 #endif/*GSIG_H_*/

@@ -1,12 +1,16 @@
 #ifndef TRUN_H_
 #define TRUN_H_
 
+struct trun_gsl_state;
+struct trun_word;
+
 /* This should be allocated for each input */
-struct trun
+typedef struct trun
 {
   struct loch *l;
   Pool *p;
-  struct trun_gdl_state s;
+  struct trun_gdl_state rs;
+  struct trun_word rw;
 } Trun;
 
 /* state variables used during processing GDL input */
@@ -16,6 +20,9 @@ struct trun_gdl_state
   int in_n;
   int in_p;
   int in_q;
+  int in_xcl;
+  int no_d_index;
+  struct gsig *curr_c_wgp;
   char role;
   const char *roletext;
 };
@@ -24,14 +31,12 @@ struct trun_gdl_state
    programs it can be reset rather than reallocated.  gsb_word
    provides a management structure for grapheme signatures.
  */
-struct gsb_word
+typedef struct trun_word
 {
   struct gsig *gpp;
-  struct gsig *curr_c_wgp;
   int gpp_alloced;
   int gpp_used;
-  int no_d_index;
-  struct gsb_input *in;
-};
+  Wloc *w;
+} Word;
 
 #endif/*TRUN_H_*/

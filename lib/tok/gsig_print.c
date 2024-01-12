@@ -13,7 +13,7 @@ gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep)
 	  id_sig_sep,
 	  pp(gp->project), gp->asltype, gp->gdltype ? gp->gdltype : 'u',
 	  gp->form, gp->sname, pp(gp->fname), pp(gp->value),
-	  gp->role ? gp->role : 'u', gp->roletype ? gp->roletype : 'u', pp(gp->w->lang),
+	  gp->role ? gp->role : 'u', gp->roletype ? gp->roletype : 'u', pp(gp->w->word_lang),
 	  gp->type ? gp->type : 'u', pp(gp->logolang),
 	  gp->position ? gp->position : 'u', gp->index,
 	  gp->no_d_position ? gp->no_d_position : 'u', gp->no_d_index,
