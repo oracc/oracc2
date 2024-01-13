@@ -11,7 +11,7 @@ gsb_new(Trun *r)
       w->gpp = realloc(w->gpp, w->gpp_alloced * sizeof(Gsig));
       memset((void*)(w->gpp + (w->gpp_alloced-16)), '\0', 16 * sizeof(Gsig));
     }
-  w->gpp[w->gpp_used].w = r->l->w;
+  w->gpp[w->gpp_used].w = loch_word(r)->w->w;
   w->gpp[w->gpp_used].index = 1+w->gpp_used;
   return &w->gpp[w->gpp_used++];
 }
@@ -37,7 +37,7 @@ gsb_add(Trun *r,
 	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
   Gsig *wgp = gsb_new(r);
-  wgp->project = r->l->t->text_project;
+  wgp->project = loch_text(r)->text_project;
   wgp->gdltype = type;
 
 #define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,r->p)

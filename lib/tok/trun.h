@@ -36,6 +36,7 @@ typedef struct trun_word
 /* This should be allocated for each input */
 typedef struct trun
 {
+  int multi;
   Memo *t_m;
   Memo *l_m;
   Memo *w_m;
@@ -44,7 +45,6 @@ typedef struct trun
   Pool *p;
   struct trun_gdl_state rs;
   struct trun_word rw;
-  int multi;
   struct loch *l;
 } Trun;
 

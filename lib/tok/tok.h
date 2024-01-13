@@ -5,20 +5,11 @@
 #include <loch.h>
 #include <gsig.h>
 
-extern Trun *trun_init(void);
+extern Trun *trun_init(int multi);
 extern void trun_term(Trun *r);
 extern Word *trun_word_init(Trun *r);
 extern void trun_word_reset(Word *w);
 extern void trun_word_term(Word *w);
-
-extern void tloc_init(int many);
-extern void tloc_term(void);
-extern void tloc_key(const char *k, const char *v);
-extern Tloc *tloc_line(char *lp);
-extern Tloc *tloc_dup(void);
-extern Tloc *tloc_dup_arg(Tloc *dup);
-extern Tloc *tloc_get(void);
-extern void tloc_show(char c);
 
 extern Gsig *gsb_get(Word *w);
 extern Gsig *gsb_get_n(Word *w, int n);
@@ -36,5 +27,20 @@ extern void gsb_sign(Trun *r, const char *t);
 extern void gsb_value(Trun *r, const char *t);
 
 extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
+
+extern Loch *tlb_init(Trun *r, const char *project, const char *type);
+extern void tlb_term(Trun *r);
+extern void tlb_T(Trun *r, const char *p, const char *id, const char *n);
+extern void tlb_L(Trun *r, const char *num, const char *id, const char *lab);
+extern void tlb_W(Trun *r, const char *id, const char *lang, const char *form);
+extern void tlb_K(Trun *r, const char *k, const char *v);
+extern void tlb_K_wrapup(Trun *r);
+extern void tlb_F(Trun *r, const char *filename);
+extern void tlb_P(Trun *r, const char *project);
+extern void tlb_Y(Trun *r, const char *rtype);
+extern void tlb_G(Trun *r, const char *glosslang);
+extern void tlb_A(Trun *r, const char *oid, const char *cgp);
+extern void tlb_M(Trun *r, const char *type, const char *wids, const char *oid, const char *name);
+
 
 #endif/*TOK_H_*/

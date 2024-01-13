@@ -2,7 +2,7 @@ include ../../../oracc-am-rules.txt
 
 SUBDIRS=../../../lib 
 
-bin_PROGRAMS=tisdiv tisify tok2tis tok-g tokx
+bin_PROGRAMS=tisdiv tisify tok2tis tokx
 bin_SCRIPTS=tisdbi.sh tisdiv.sh
 data_DATA=tis-[ht].html
 
@@ -17,10 +17,6 @@ tisify_DEPENDENCIES = $(xLDADD)
 tok2tis_SOURCES = tok2tis.c
 tok2tis_LDADD = $(xLDADD)
 tok2tis_DEPENDENCIES = $(xLDADD)
-
-tok_g_SOURCES=tok-g.c
-tok_g_LDADD = $(xLDADD)
-tok_g_DEPENDENCIES = $(xLDADD)
 
 tokx_SOURCES=tokx.c
 tokx_LDADD = $(xLDADD)

@@ -4,7 +4,7 @@
 struct loch_cbd
 {
   struct gloc *c; /* This tracks the current CBD (glossary) info */
-  struct aloc *a; /* This tracks alocs->last
+  struct aloc *a; /* This tracks alocs->last */
   List *alocs;
 };
 
@@ -17,8 +17,8 @@ struct loch_xtf
   union
   {
     struct gsig *g; /* This tracks t->llocs->last->wlocs->last->gsigs->last */
-    struct msig *m; /* As above but for word (leMma) signatures */
-    struct psig *p; /* As above but for phrase signatures */
+    struct lsig *l; /* As above but for lemma signatures */
+    struct msig *m; /* As above but for multi-lemma signatures */
   } u;
 };
 
@@ -74,14 +74,19 @@ typedef struct wloc
   struct trun_word *w;
 } Wloc;
 
-#define loch_glo(r)	((r)->l->u.c->c)
-#define loch_art(r)	((r)->l->u.c->a)
+#define loch_cbd(r)	((r)->l->u.c)
 
-#define loch_text(r)	((r)->l->u.t)
-#define loch_line(r)	((r)->l->u.l)
-#define loch_word(r)	((r)->l->u.w)
+#define loch_glo(r)	((r)->l->u.c.c)
+#define loch_art(r)	((r)->l->u.c.a)
+
+#define loch_xtf(r)	((r)->l->u.x)
+
+#define loch_text(r)	((r)->l->u.x.t)
+#define loch_line(r)	((r)->l->u.x.l)
+#define loch_word(r)	((r)->l->u.x.w)
 
 #define loch_gsig(r)	((r)->l->u.w->u.g)
+#define loch_lsig(r)	((r)->l->u.w->u.l)
 #define loch_msig(r)	((r)->l->u.w->u.m)
 
 #endif/*TLOC_H_*/

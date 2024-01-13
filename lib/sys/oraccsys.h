@@ -14,6 +14,8 @@
 #include <loadfile.h>
 #include <ctype128.h>
 
+#define QUALIFIED_PQX_MAX	512
+
 extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsizep);
 
 #define	default_ext(fn,fext) new_ext(fn, fext, FALSE)

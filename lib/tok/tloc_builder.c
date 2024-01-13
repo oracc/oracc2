@@ -9,7 +9,6 @@
    In multi-unit mode a each text/line/word has its own structures.
  */
 
-#define list_add_r(lp,dp) list_add((lp),(dp)),dp
 #define tlb_dup(s) (ccp)hpool_copy((ucp)(s),r->p)
 #define tlb_error(e) fprintf(stderr,"%s\n",e)
 
@@ -19,18 +18,21 @@ tlb_init(Trun *r, const char *project, const char *type)
   Loch *l = calloc(1, sizeof(Loch));
   l->project = project;
   l->type = type;
-  if ('x' == *type)
-    l->tlocs = list_create(LIST_DOUBLE);
+  if ('c' == *type)
+    loch_cbd(r).alocs = list_create(LIST_DOUBLE);
   else
-    l->x.tlocs = list_create(LIST_DOUBLE);
+    loch_xtf(r).tlocs = list_create(LIST_DOUBLE);
   r->l = l;
   return l;
 }
 
 void
-tlb_term(Loch *l)
+tlb_term(Trun *r)
 {
-  list_free(l->tlocs, NULL);
+  if ('c' == *r->l->type)
+    list_free(loch_cbd(r).alocs, NULL);
+  else
+    list_free(loch_xtf(r).tlocs, NULL);
 }
 
 void
@@ -38,10 +40,10 @@ tlb_T(Trun *r, const char *p, const char *id, const char *n)
 {
   if (r)
     {
-      if (!r->l->t || r->multi)
+      if (!loch_text(r) || r->multi)
 	{
-	  r->l->t = memo_new(r->t_m);
-	  list_add(r->l->tlocs, r->l->t);
+	  loch_text(r) = memo_new(r->t_m);
+	  list_add(loch_xtf(r).tlocs, loch_text(r));
 	}
       loch_text(r)->file = r->rs.file;
       loch_text(r)->andline_num = r->rs.andline_num;
@@ -58,18 +60,18 @@ tlb_L(Trun *r, const char *num, const char *id, const char *lab)
 {
   if (r)
     {
-      if (!r->l->l || r->multi)
+      if (!loch_line(r) || r->multi)
 	{
-	  r->l->l = memo_new(r->l_m);
+	  loch_line(r) = memo_new(r->l_m);
 	  if (loch_text(r)->llocs)
-	    list_add(loch_text(r)->llocs, r->l->l);
+	    list_add(loch_text(r)->llocs, loch_line(r));
 	  else
 	    tlb_error("line found before text is set");
 	}
       loch_line(r)->line_num = tlb_dup(num);
       loch_line(r)->line_id = tlb_dup(id);
       loch_line(r)->line_label = tlb_dup(lab);
-      loch_line(r)->t = r->l->t;
+      loch_line(r)->t = loch_text(r);
       loch_line(r)->wlocs = list_create(LIST_DOUBLE);
     }
 }
@@ -79,15 +81,15 @@ tlb_W(Trun *r, const char *id, const char *lang, const char *form)
 {
   if (r)
     {
-      if (!r->l->w || r->multi)
+      if (!loch_word(r) || r->multi)
 	{
-	  r->l->w = memo_new(r->w_m);
-	  list_add(loch_line(r)->wlocs, r->l->w);
+	  loch_word(r) = memo_new(r->w_m);
+	  list_add(loch_line(r)->wlocs, loch_word(r));
 	}
       loch_word(r)->word_id = tlb_dup(id);
       loch_word(r)->word_lang = tlb_dup(lang);
       loch_word(r)->word_form = tlb_dup(form);
-      loch_word(r)->l = r->l->l;
+      loch_word(r)->l = loch_line(r);
       loch_word(r)->w = &r->rw;
     }
 }
@@ -97,15 +99,15 @@ tlb_K(Trun *r, const char *k, const char *v)
 {
   if (!r->rs.k)
     r->rs.k = list_create(LIST_SINGLE);
-  list_add(r->rs.k, k);
-  list_add(r->rs.k, v);
+  list_add(r->rs.k, (void*)k);
+  list_add(r->rs.k, (void*)v);
 }
 
 void
 tlb_K_wrapup(Trun *r)
 {
-  loch_text(r)->keys = list2array_c(r->k, &loch_text(r)->nkeys);
-  list_free(r->rs.k);
+  loch_text(r)->keys = (const char **)list2array_c(r->rs.k, &loch_text(r)->nkeys);
+  list_free(r->rs.k, NULL);
   r->rs.k = NULL;
 }
 
@@ -124,7 +126,7 @@ tlb_P(Trun *r, const char *project)
 void
 tlb_Y(Trun *r, const char *rtype)
 {
-  r->l->type = tlb_dup(project);
+  r->l->type = tlb_dup(rtype);
 }
 
 void
@@ -142,6 +144,6 @@ tlb_A(Trun *r, const char *oid, const char *cgp)
 /* P(hrase) tokens are for anything that is put in the
    linkbase of an XTF file */
 void
-tlb_P(Trun *r, const char *type, const char *wids, const char *oid, const char *name)
+tlb_M(Trun *r, const char *type, const char *wids, const char *oid, const char *name)
 {
 }
