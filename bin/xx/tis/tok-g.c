@@ -60,7 +60,7 @@ loc_cbd(void *userData, const char *name, const char **atts)
   if (!strcmp(name, "articles"))
     fprintf(tab, "G\t%s\n", get_xml_lang(atts));
   else if (!strcmp(name, "summary"))
-    fprintf(tab, "W\t%s\t%s\n", findAttr(atts, "oid"), findAttr(atts, "n"));
+    fprintf(tab, "A\t%s\t%s\n", findAttr(atts, "oid"), findAttr(atts, "n"));
 }
 
 static void

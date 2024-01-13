@@ -19,7 +19,9 @@ typedef struct gsig
 			 */
   char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
   char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char c_position;   	/* for type=c: position in compound: i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
+  char c_position;   	/* for type=c: position in compound:
+			   i(ndependent) b(eginning) m(iddle) e(nd)
+			   u(ndetermined) */
   const char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
   char *asltype; 	/* pc pe sl */
   char *form;		/* g:X form, value, sign, compound etc. */

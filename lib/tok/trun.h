@@ -18,6 +18,7 @@ struct trun_gdl_state
   struct gsig *curr_c_wgp;
   char role;
   const char *roletext;
+  List *k;
 };
 
 /* This should be allocated for each sH/g:w; for line-oriented
@@ -38,6 +39,8 @@ typedef struct trun
   Memo *t_m;
   Memo *l_m;
   Memo *w_m;
+  Memo *c_m;
+  Memo *a_m;
   Pool *p;
   struct trun_gdl_state rs;
   struct trun_word rw;

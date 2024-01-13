@@ -397,6 +397,12 @@ list_to_str2(List *l, const char *sep)
 const void **
 list2array(List *l)
 {
+  return list2array_c(l, NULL);
+}
+
+const void **
+list2array_c(List *l, int *n)
+{
   const void **c = malloc((1+list_len(l))*sizeof(void*));
   int cindex = 0;
   List_node *lnp;
@@ -407,21 +413,7 @@ list2array(List *l)
   for (lnp = l->first; lnp; lnp = lnp->next)
     c[cindex++] = lnp->data;
   c[cindex] = NULL;
+  if (n)
+    *n = cindex;
   return c;
-}
-
-const char **
-list2chars(List *l)
-{
-  char **c = malloc((1+list_len(l))*sizeof(char*));
-  int cindex = 0;
-  List_node *lnp;
-
-  if (!l || !list_len(l))
-    return NULL;
-
-  for (lnp = l->first; lnp; lnp = lnp->next)
-    c[cindex++] = (char*)lnp->data;
-  c[cindex] = NULL;
-  return (const char **)c;
 }

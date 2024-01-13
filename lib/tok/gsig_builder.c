@@ -1,16 +1,17 @@
 #include <oraccsys.h>
-#include <trun.h>
+#include <tok.h>
 
 Gsig *
-gsb_new(Word *w)
+gsb_new(Trun *r)
 {
+  Word *w = &r->rw;
   if (w->gpp_used == w->gpp_alloced)
     {
       w->gpp_alloced += 16;
       w->gpp = realloc(w->gpp, w->gpp_alloced * sizeof(Gsig));
       memset((void*)(w->gpp + (w->gpp_alloced-16)), '\0', 16 * sizeof(Gsig));
     }
-  w->gpp[w->gpp_used].w = w;
+  w->gpp[w->gpp_used].w = r->l->w;
   w->gpp[w->gpp_used].index = 1+w->gpp_used;
   return &w->gpp[w->gpp_used++];
 }
@@ -31,15 +32,15 @@ gsb_get_n(Word *w, int n)
 }
 
 void
-gsb_add(Word *w,
+gsb_add(Trun *r,
 	char type, const char *form, const char *oid, const char *sign,
 	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
-  Gsig *wgp = gsb_new(w);
-  wgp->project = w->in->textproj;
+  Gsig *wgp = gsb_new(r);
+  wgp->project = r->l->t->text_project;
   wgp->gdltype = type;
 
-#define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,w->in->p)
+#define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,r->p)
   
   if ('p' == type)
     {
@@ -70,24 +71,24 @@ gsb_add(Word *w,
 	sl = ('c' == lang[2] ? "pc" : "pe");
       gsb_strcpy(wgp->asltype, sl);
     }
-  if (w->in->role)
+  if (r->rs.role)
     {
-      wgp->role = w->in->role;
-      if (*w->in->roletext)
-	wgp->roletype = *w->in->roletext;
+      wgp->role = r->rs.role;
+      if (*r->rs.roletext)
+	wgp->roletype = *r->rs.roletext;
     }
-  if (w->in->in_c)
+  if (r->rs.in_c)
     {
       if ('c' == type)
 	{
-	  w->curr_c_wgp = wgp;
+	  r->rs.curr_c_wgp = wgp;
 	  wgp->c_index = wgp->index;
 	}
       else
 	{
 	  wgp->type = 'c';
-	  wgp->c_index = w->curr_c_wgp->c_index;
-	  if (1 == w->in->in_c++)
+	  wgp->c_index = r->rs.curr_c_wgp->c_index;
+	  if (1 == r->rs.in_c++)
 	    wgp->c_position = 'b';
 	  else
 	    wgp->c_position = 'm';
@@ -101,7 +102,7 @@ gsb_add(Word *w,
   else
     wgp->type = 'u';
   if ('d' != wgp->role)
-    wgp->no_d_index = ++w->no_d_index;
+    wgp->no_d_index = ++r->rs.no_d_index;
   if (form && *form)
     gsb_strcpy(wgp->form, form);
 }
@@ -155,8 +156,9 @@ gsb_set_positions(Word *w)
 }
 
 void
-gsb_last(Word *w)
+gsb_last(Trun *r)
 {
+  Word *w = &r->rw;
   if (w->gpp_used > 0)
     {
       Gsig *wgp = NULL;
@@ -169,9 +171,9 @@ gsb_last(Word *w)
       if (wgp)
 	{
 	  wgp->last = 1;
-	  if ((w->gpp_used-1) != w->no_d_index && w->no_d_index >= 0)
+	  if ((w->gpp_used-1) != r->rs.no_d_index && r->rs.no_d_index >= 0)
 	    {
-	      wgp = gsb_get_n(w, w->no_d_index-1);
+	      wgp = gsb_get_n(w, r->rs.no_d_index-1);
 	      wgp->no_d_last = 1;
 	    }
 	  else
@@ -205,8 +207,9 @@ gsb_punct(Word *w, const char *t)
 }
 
 void
-gsb_sign(Word *w, const char *t)
+gsb_sign(Trun *r, const char *t)
 {
+  Word *w = &r->rw;
   if (w->gpp_used > 0)
     {
       Gsig *wgp = gsb_get(w);
@@ -215,8 +218,9 @@ gsb_sign(Word *w, const char *t)
 }
 
 void
-gsb_value(Word *w, const char *t)
+gsb_value(Trun *r, const char *t)
 {
+  Word *w = &r->rw;
   if (w->gpp_used > 0)
     {
       Gsig *wgp = gsb_get(w);
@@ -226,15 +230,16 @@ gsb_value(Word *w, const char *t)
 }
 
 void
-gsb_show(FILE *tab, Word *w, int with_form)
+gsb_show(FILE *tab, Trun *r, int with_form)
 {
+  Word *w = &r->rw;
   int i;
   for (i = 0; i < w->gpp_used; ++i)
     {
       Gsig *wgp = gsb_get_n(w, i);
       gsig_print(tab, wgp, "\t");
       if (with_form)
-	fprintf(tab, "\t%s", w->form);
+	fprintf(tab, "\t%s", wgp->w->word_form);
       fputc('\n', tab);
     }
 }

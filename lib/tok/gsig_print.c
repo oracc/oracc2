@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <gsig.h>
+#include <tok.h>
 
 void
 gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep)
