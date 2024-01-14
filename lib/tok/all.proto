@@ -30,7 +30,7 @@ extern void tlb_G(Trun *r, const char *glosslang);
 extern void tlb_A(Trun *r, const char *oid, const char *cgp);
 extern void tlb_M(Trun *r, const char *type, const char *wids, const char *oid, const char *name);
 /* tloc_cbd.c */
-extern void tloc_cbd(void *userData, const char *name, const char **atts);
+extern void tloc_cbd_sH(void *userData, const char *name, const char **atts);
 /* tloc_writer.c */
 extern void tlw_R(Trun *r);
 extern void tlw_T(Trun *r);
@@ -44,9 +44,11 @@ extern void tloc_xtf_sH(void *userData, const char *name, const char **atts);
 extern void tok_g_sH(void *userData, const char *name, const char **atts);
 extern void tok_g_eH(void *userData, const char *name);
 /* tok_l_xml.c */
-extern void tok_g_sH(void *userData, const char *name, const char **atts);
+extern void tok_l_sH(void *userData, const char *name, const char **atts);
+extern void tok_l_eH(void *userData, const char *name);
 /* tok_m_xml.c */
 extern void tok_m_sH(void *userData, const char *name, const char **atts);
+extern void tok_m_eH(void *userData, const char *name);
 /* tok_writer.c */
 extern void tokw_G(Trun *r);
 /* trun.c */

@@ -6,3 +6,7 @@ void
 tok_m_sH(void *userData, const char *name, const char **atts)
 {
 }
+void
+tok_m_eH(void *userData, const char *name)
+{
+}

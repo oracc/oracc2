@@ -3,7 +3,7 @@
 #include <tok.h>
 
 void
-tloc_cbd(void *userData, const char *name, const char **atts)
+tloc_cbd_sH(void *userData, const char *name, const char **atts)
 {
   Trun *r = userData;
   if (!strcmp(name, "articles"))

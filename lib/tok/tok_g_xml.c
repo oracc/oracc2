@@ -107,8 +107,8 @@ tok_g_eH(void *userData, const char *name)
 	    {
 	    case 'w':
 	      gsb_last(r);
-	      gsb_show(stdout, r);
-	      trun_word_reset(&r->rw);
+	      tokw_G(r);
+	      trun_word_reset(r);
 	      break;
 	    case 'c':
 	      r->rs.in_c = 0;
@@ -149,8 +149,8 @@ tok_g_eH(void *userData, const char *name)
 	  if (!strcmp(name, "g:nonw"))
 	    {
 	      gsb_last(r);
-	      gsb_show(stdout, r);
-	      trun_word_reset(&r->rw);
+	      tokw_G(r);
+	      trun_word_reset(r);
 	      r->rw.w->word_lang = "";
 	    }
 	  else

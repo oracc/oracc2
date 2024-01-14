@@ -9,55 +9,55 @@ int stdinput = 0;
 int tok_input_cbd = 0, tok_input_xtf = 1;
 int tok_data_g = 1, tok_data_l = 0, tok_data_m = 1;
 
-XML_StartElementHandler *toksHs[3];
-XML_EndElementHandler *tokeHs[3];
+XML_StartElementHandler tok_sHs[3], tok_sHp;
+XML_EndElementHandler tok_eHs[3], tok_eHp;
 
 static void
-sH1(void *userData, const char *name, const char **atts)
+sH1(void *userData, const XML_Char *name, const XML_Char **atts)
 {
-  toksHs[0](userData,name,atts);
+  (*tok_sHs[0])(userData,name,atts);
 }
 
 static void
-sH2(void *userData, const char *name, const char **atts)
+sH2(void *userData, const XML_Char *name, const XML_Char **atts)
 {
-  toksHs[0](userData,name,atts);
-  toksHs[1](userData,name,atts);
+  (*tok_sHs[0])(userData,name,atts);
+  (*tok_sHs[1])(userData,name,atts);
 }
 
 static void
-sH3(void *userData, const char *name, const char **atts)
+sH3(void *userData, const XML_Char *name, const XML_Char **atts)
 {
-  toksHs[0](userData,name,atts);
-  toksHs[1](userData,name,atts);
-  toksHs[2](userData,name,atts);
+  (*tok_sHs[0])(userData,name,atts);
+  (*tok_sHs[1])(userData,name,atts);
+  (*tok_sHs[2])(userData,name,atts);
 }
 
 static void
-eH1(void *userData, const char *name)
+eH1(void *userData, const XML_Char *name)
 {
-  tokeHs[0](userData,name,atts);
+  (*tok_eHs[0])(userData,name);
 }
 
 static void
-eH2(void *userData, const char *name)
+eH2(void *userData, const XML_Char *name)
 {
-  tokeHs[0](userData,name,atts);
-  tokeHs[1](userData,name,atts);
+  (*tok_eHs[0])(userData,name);
+  (*tok_eHs[1])(userData,name);
 }
 
 static void
-eH3(void *userData, const char *name)
+eH3(void *userData, const XML_Char *name)
 {
-  tokeHs[0](userData,name,atts);
-  tokeHs[1](userData,name,atts);
-  tokeHs[2](userData,name,atts);
+  (*tok_eHs[0])(userData,name);
+  (*tok_eHs[1])(userData,name);
+  (*tok_eHs[2])(userData,name);
 }
 
-XML_StartElementHandler *toksHps[3] = { sH1 , sH2 , sH3 };
-XML_EndElementHandler *toksHps[3] = { eH1 , eH2 , eH3 };
+XML_StartElementHandler toksHps[3] = { &sH1 , &sH2 , &sH3 };
+XML_EndElementHandler tokeHps[3] = { &eH1 , &eH2 , &eH3 };
 
-XML_StartElementHandler *locfp;
+XML_StartElementHandler locfp;
 
 static void
 locf_init(Trun *r)
@@ -71,7 +71,7 @@ locf_init(Trun *r)
 static void
 tokf_init(Trun *r)
 {
-  int i;
+  int i = 0;
   if (tok_data_g)
     {
       tok_sHs[i++] = tok_g_sH;
@@ -87,21 +87,21 @@ tokf_init(Trun *r)
       tok_sHs[i++] = tok_m_sH;
       tok_eHs[i++] = tok_m_eH;
     }
-  tok_sHp = tok_sHps[i-1];
-  tok_eHp = tok_eHps[i-1];
+  tok_sHp = toksHps[i-1];
+  tok_eHp = tokeHps[i-1];
 }
 
 static void
-tokx_sH(void *userData, const char *name, const char **atts)
+tokx_sH(void *userData, const XML_Char *name, const XML_Char **atts)
 {
   locfp(userData, name, atts);
-  toksHp(userData, name, atts);
+  tok_sHp(userData, name, atts);
 }
 
 static void
-tokx_eH(void *userData, const char *name)
+tokx_eH(void *userData, const XML_Char *name)
 {
-  tokeHp(userdata, name);
+  tok_eHp(userData, name);
 }
 
 static void
@@ -109,11 +109,11 @@ tokx_cbd(Trun *r, const char *summaries)
 {
   const char *fname[2] = { summaries , NULL };
   /*fprintf(tab, "F\t%s\n", fname[0]);*/
-  runexpat(i_list, fname, tokx_sH, tokx_eH, NULL, r);
+  runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
 }
 
 static void
-tokx_one(r, const char *QPQX)
+tokx_one(Trun *r, const char *QPQX)
 {
   char *fname[2];
   char *dot;
@@ -128,7 +128,7 @@ tokx_one(r, const char *QPQX)
 static void
 tokx_stdin(Trun *r)
 {
-  runexpat(i_stdin, NULL, tokx_sH, tokx_eH, NULL, r);
+  runexpatNSuD(i_stdin, NULL, tokx_sH, tokx_eH, NULL, r);
 }
 
 static void
@@ -159,7 +159,7 @@ tokx_input(Trun *r, const char *arginput)
       while (fgets(pqx,QUALIFIED_PQX_MAX,stdin))
 	{
 	  pqx[strlen(pqx)-1] = '\0';
-	  tokx_one(pqx);
+	  tokx_one(r, pqx);
 	}
     }
 }
@@ -192,8 +192,8 @@ main(int argc, char **argv)
   tlb_init(r, projproj, tok_input_xtf ? "xtf" : "cbd");
   tlw_R(r);
 
-  locf_init();
-  tokf_init();
+  locf_init(r);
+  tokf_init(r);
   
   tokx_input(r, argv[optind]);
   
