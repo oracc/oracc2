@@ -67,3 +67,10 @@ trun_word_term(Trun *r)
   free(r->rw.gpp);
   memset(&r->rw, '\0', sizeof(Word));
 }
+
+void
+trun_file(Trun *r, const char *f)
+{
+  r->rs.file = f;
+  r->rs.F_done = 0;
+}

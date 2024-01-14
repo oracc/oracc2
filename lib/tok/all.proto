@@ -58,3 +58,4 @@ extern Word *trun_word_init(Trun *r);
 extern void trun_state_reset(Trun *r);
 extern void trun_word_reset(Trun *r);
 extern void trun_word_term(Trun *r);
+extern void trun_file(Trun *r, const char *f);

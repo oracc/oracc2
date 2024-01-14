@@ -8,6 +8,7 @@
 struct trun_gdl_state
 {
   const char *file;	/* current input file */
+  int F_done;
   int andline_num;
   int in_c;
   int in_n;

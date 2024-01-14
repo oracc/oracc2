@@ -111,7 +111,7 @@ static void
 tokx_cbd(Trun *r, const char *summaries)
 {
   const char *fname[2] = { summaries , NULL };
-  r->rs.file = fname[0];
+  trun_file(r,fname[0]);
   runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
 }
 
@@ -124,14 +124,14 @@ tokx_one(Trun *r, const char *QPQX)
     *dot = '\0';
   fname[0] = expand(NULL, QPQX, "xtf");
   fname[1] = NULL;
-  r->rs.file = fname[0];
+  trun_file(r,fname[0]);
   runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
 }
 
 static void
 tokx_stdin(Trun *r)
 {
-  r->rs.file = "<stdin>";
+  trun_file(r,"<stdin>");
   runexpatNSuD(i_stdin, NULL, tokx_sH, tokx_eH, NULL, r);
 }
 
@@ -188,7 +188,7 @@ main(int argc, char **argv)
 {
   Trun *r = NULL;
   
-  if (options(argc, argv, "cfp:s"))
+  if (options(argc, argv, "cfglmo:p:s"))
     exit(1);
 
   r = trun_init(run_multi);

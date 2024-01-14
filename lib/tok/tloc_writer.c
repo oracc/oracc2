@@ -14,8 +14,9 @@ tlw_R(Trun *r)
 void
 tlw_T(Trun *r)
 {
-  fprintf(r->o, "F\t%s\t%d\t%d\n",
-	  loch_text(r)->file, loch_text(r)->andline_num, loch_text(r)->lastline_num);
+  if (!r->rs.F_done++)
+    fprintf(r->o, "F\t%s\t%d\t%d\n",
+	    loch_text(r)->file, loch_text(r)->andline_num, loch_text(r)->lastline_num);
   fprintf(r->o, "T\t%s\t%s\t%s\n",
 	  loch_text(r)->text_project, loch_text(r)->text_id, loch_text(r)->text_name);
   if (loch_text(r)->keys)
