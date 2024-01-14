@@ -2,32 +2,118 @@
 #include <runexpat.h>
 #include <tok.h>
 
+const char *outfile = NULL;
 const char *projproj = NULL;
 int run_multi = 0;
 int stdinput = 0;
 int tok_input_cbd = 0, tok_input_xtf = 1;
 int tok_data_g = 1, tok_data_l = 0, tok_data_m = 1;
 
+XML_StartElementHandler *toksHs[3];
+XML_EndElementHandler *tokeHs[3];
+
+static void
+sH1(void *userData, const char *name, const char **atts)
+{
+  toksHs[0](userData,name,atts);
+}
+
+static void
+sH2(void *userData, const char *name, const char **atts)
+{
+  toksHs[0](userData,name,atts);
+  toksHs[1](userData,name,atts);
+}
+
+static void
+sH3(void *userData, const char *name, const char **atts)
+{
+  toksHs[0](userData,name,atts);
+  toksHs[1](userData,name,atts);
+  toksHs[2](userData,name,atts);
+}
+
+static void
+eH1(void *userData, const char *name)
+{
+  tokeHs[0](userData,name,atts);
+}
+
+static void
+eH2(void *userData, const char *name)
+{
+  tokeHs[0](userData,name,atts);
+  tokeHs[1](userData,name,atts);
+}
+
+static void
+eH3(void *userData, const char *name)
+{
+  tokeHs[0](userData,name,atts);
+  tokeHs[1](userData,name,atts);
+  tokeHs[2](userData,name,atts);
+}
+
+XML_StartElementHandler *toksHps[3] = { sH1 , sH2 , sH3 };
+XML_EndElementHandler *toksHps[3] = { eH1 , eH2 , eH3 };
+
+XML_StartElementHandler *locfp;
+
+static void
+locf_init(Trun *r)
+{
+  if (tok_input_xtf)
+    locfp = tloc_xtf_sH;
+  else
+    locfp = tloc_cbd_sH;
+}
+
+static void
+tokf_init(Trun *r)
+{
+  int i;
+  if (tok_data_g)
+    {
+      tok_sHs[i++] = tok_g_sH;
+      tok_eHs[i++] = tok_g_eH;
+    }
+  if (tok_data_l)
+    {
+      tok_sHs[i++] = tok_l_sH;
+      tok_eHs[i++] = tok_l_eH;
+    }
+  if (tok_data_m)
+    {
+      tok_sHs[i++] = tok_m_sH;
+      tok_eHs[i++] = tok_m_eH;
+    }
+  tok_sHp = tok_sHps[i-1];
+  tok_eHp = tok_eHps[i-1];
+}
+
 static void
 tokx_sH(void *userData, const char *name, const char **atts)
 {
+  locfp(userData, name, atts);
+  toksHp(userData, name, atts);
 }
 
 static void
 tokx_eH(void *userData, const char *name)
 {
+  tokeHp(userdata, name);
 }
 
 static void
-tokx_cbd(const char *summaries)
+tokx_cbd(Trun *r, const char *summaries)
 {
   const char *fname[2] = { summaries , NULL };
   /*fprintf(tab, "F\t%s\n", fname[0]);*/
-  runexpat(i_list, fname, tokx_sH, tokx_eH);
+  runexpat(i_list, fname, tokx_sH, tokx_eH, NULL, r);
 }
 
 static void
-tokx_one(const char *QPQX)
+tokx_one(r, const char *QPQX)
 {
   char *fname[2];
   char *dot;
@@ -36,17 +122,17 @@ tokx_one(const char *QPQX)
   fname[0] = expand(NULL, QPQX, "xtf");
   fname[1] = NULL;
   /*fprintf(tab, "F\t%s\n", fname[0]);*/
-  runexpat(i_list, fname, tokx_sH, tokx_eH);
+  runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
 }
 
 static void
-tokx_stdin(void)
+tokx_stdin(Trun *r)
 {
-  runexpat(i_stdin, NULL, tokx_sH, tokx_eH);
+  runexpat(i_stdin, NULL, tokx_sH, tokx_eH, NULL, r);
 }
 
-void
-tokx_input(const char *arginput)
+static void
+tokx_input(Trun *r, const char *arginput)
 {
   if (tok_input_cbd && (tok_data_l || tok_data_m))
     {
@@ -56,14 +142,14 @@ tokx_input(const char *arginput)
   if (arginput)
     {
       if (tok_input_xtf)
-	tokx_one(arginput);
+	tokx_one(r, arginput);
       else
-	tokx_cbd(arginput);
+	tokx_cbd(r, arginput);
     }
   else if (stdinput)
     {
       /* This means read the XML data in .xtf format from stdin */
-      tokx_stdin();
+      tokx_stdin(r);
     }
   else
     {
@@ -78,6 +164,21 @@ tokx_input(const char *arginput)
     }
 }
 
+void
+tokx_output(Trun *r, const char *outfile)
+{
+  if (outfile)
+    {
+      if (!(r->o = fopen(outfile, "w")))
+	{
+	  perror(outfile);
+	  exit(1);
+	}
+    }
+  else
+    r->o = stdout;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -87,18 +188,15 @@ main(int argc, char **argv)
     exit(1);
 
   r = trun_init(run_multi);
+
+  tokx_output(r, outfile);
+  
   tlb_init(r, projproj, tok_input_xtf ? "xtf" : "cbd");
 
-  /* tlw_init(r, stdout); */
-
-#if 0
-  if (tok_input_xtf)
-    loc = loc_xtf;
-  else
-    loc = loc_cbd;
-#endif
+  locf_init();
+  tokf_init();
   
-  tokx_input(argv[optind]);
+  tokx_input(r, argv[optind]);
   
   trun_term(r);
   
@@ -130,6 +228,9 @@ int opts(int arg,char*str)
       break;
     case 'm':
       tok_data_m = 1;
+      break;
+    case 'o':
+      outfile = str;
       break;
     case 'p':
       projproj = str;

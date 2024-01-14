@@ -1,7 +1,9 @@
+#include <oraccsys.h>
+#include <runexpat.h>
 #include <tok.h>
 
 void
-g_xtf_sH(void *userData, const char *name, const char **atts)
+tok_g_sH(void *userData, const char *name, const char **atts)
 {
   Trun *r = userData;
   
@@ -12,71 +14,69 @@ g_xtf_sH(void *userData, const char *name, const char **atts)
 	  switch (name[2])
 	    {
 	    case 'w':
-	      gswp = gsb_word_init(gi);
-	      gswp->lang = (ccp)hpool_copy((uccp)get_xml_lang(atts), gswp->in->p);
-	      gswp->form = (ccp)hpool_copy((uccp)findAttr(atts, "form"), gswp->in->p);
+	      (void)trun_word_init(r);
 	      break;
 	    case 'd':
-	      gswp->in->role = 'd';
-	      gswp->in->roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), gswp->in->p);
+	      r->rs.role = 'd';
+	      r->rs.roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), r->p);
 	      break;
 	    case 'n':
-	      gswp->in->in_n = 1;
-	      gsb_add(gswp,
+	      r->rs.in_n = 1;
+	      gsb_add(r,
 		      name[2],
 		      findAttr(atts, "form"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
 		      NULL, NULL,
-		      gswp->lang,
+		      r->rw.w->word_lang,
 		      findAttr(atts, "g:logolang"));
-	      gsb_value(gswp, findAttr(atts, "form"));
+	      gsb_value(r, findAttr(atts, "form"));
 	      break;
 	    case 'p':
-	      gsb_add(gswp,
+	      gsb_add(r,
 		      name[2],
 		      findAttr(atts, "g:type"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
 		      NULL, NULL,
-		      gswp->lang,
+		      r->rw.w->word_lang,
 		      findAttr(atts, "g:logolang"));
-	      gsb_punct(gswp, findAttr(atts, "g:type"));
-	      gswp->in->in_p = 1;
+	      gsb_punct(&r->rw, findAttr(atts, "g:type"));
+	      r->rs.in_p = 1;
 	      break;
 	    case 'q':
-	      gsb_add(gswp,
+	      gsb_add(r,
 		      name[2],
 		      findAttr(atts, "form"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
 		      findAttr(atts, "spoid"),
 		      findAttr(atts, "spform"),
-		      gswp->lang,
+		      r->rw.w->word_lang,
 		      findAttr(atts, "g:logolang"));
-	      gswp->in->in_q = 1;
+	      r->rs.in_q = 1;
 	      break;
 	    case 'c':
-	      gswp->in->in_c = 1;
-	      gsb_add(gswp,
+	      r->rs.in_c = 1;
+	      gsb_add(r,
 		      name[2],
 		      findAttr(atts, "form"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
 		      NULL, NULL,
-		      gswp->lang,
+		      r->rw.w->word_lang,
 		      findAttr(atts, "g:logolang"));
 	      break;
 	    case 's':
 	    case 'v':
-	      if (!gswp->in->in_n && !gswp->in->in_p && !gswp->in->in_q)
-		gsb_add(gswp,
+	      if (!r->rs.in_n && !r->rs.in_p && !r->rs.in_q)
+		gsb_add(r,
 			name[2],
 			NULL,
 			findAttr(atts, "oid"),
 			findAttr(atts, "g:sign"),
 			NULL, NULL,
-			gswp->lang,
+			r->rw.w->word_lang,
 			findAttr(atts, "g:logolang"));
 	      break;
 	    case 'b':
@@ -89,15 +89,13 @@ g_xtf_sH(void *userData, const char *name, const char **atts)
       else
 	{
 	  if (!strcmp(name, "g:nonw"))
-	    {
-	      gswp = gsb_word_init(gi);
-	    }
+	    trun_word_init(r);
 	}
     }
 }
 
 void
-g_xtf_eH(void *userData, const char *name)
+tok_g_eH(void *userData, const char *name)
 {
   Trun *r = userData;
 
@@ -108,35 +106,35 @@ g_xtf_eH(void *userData, const char *name)
 	  switch (name[2])
 	    {
 	    case 'w':
-	      gsb_last(gswp);
-	      gsb_show(stdout, gswp, form_with_w);
-	      gsb_word_reset(gswp);
+	      gsb_last(r);
+	      gsb_show(stdout, r);
+	      trun_word_reset(&r->rw);
 	      break;
 	    case 'c':
-	      gswp->in->in_c = 0;
-	      gsb_c_last(gswp);
-	      gswp->curr_c_wgp = NULL;
+	      r->rs.in_c = 0;
+	      gsb_c_last(&r->rw);
+	      r->rs.curr_c_wgp = NULL;
 	      break;
 	    case 'd':
-	      gswp->in->role = '\0';
-	      gswp->in->roletext = "";
+	      r->rs.role = '\0';
+	      r->rs.roletext = "";
 	      break;
 	    case 'n':
-	      gswp->in->in_n = 0;
+	      r->rs.in_n = 0;
 	      break;
 	    case 'p':
-	      gswp->in->in_p = 0;
+	      r->rs.in_p = 0;
 	      break;
 	    case 'q':
-	      gswp->in->in_q = 0;
+	      r->rs.in_q = 0;
 	      break;
 	    case 's':
-	      if (!gswp->in->in_n && !gswp->in->in_q)
-		gsb_sign(gswp, charData_retrieve());
+	      if (!r->rs.in_n && !r->rs.in_q)
+		gsb_sign(r, charData_retrieve());
 	      break;
 	    case 'v':
-	      if (!gswp->in->in_n && !gswp->in->in_q)
-		gsb_value(gswp, charData_retrieve());
+	      if (!r->rs.in_n && !r->rs.in_q)
+		gsb_value(r, charData_retrieve());
 	      break;
 	    case 'b':
 	    case 'r':
@@ -150,10 +148,10 @@ g_xtf_eH(void *userData, const char *name)
 	{
 	  if (!strcmp(name, "g:nonw"))
 	    {
-	      gsb_last(gswp);
-	      gsb_show(stdout, gswp, form_with_w);
-	      gsb_word_reset(gswp);
-	      gswp->lang = "";
+	      gsb_last(r);
+	      gsb_show(stdout, r);
+	      trun_word_reset(&r->rw);
+	      r->rw.w->word_lang = "";
 	    }
 	  else
 	    (void)charData_retrieve();

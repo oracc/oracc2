@@ -230,7 +230,7 @@ gsb_value(Trun *r, const char *t)
 }
 
 void
-gsb_show(FILE *tab, Trun *r, int with_form)
+gsb_show(FILE *tab, Trun *r)
 {
   Word *w = &r->rw;
   int i;
@@ -238,8 +238,7 @@ gsb_show(FILE *tab, Trun *r, int with_form)
     {
       Gsig *wgp = gsb_get_n(w, i);
       gsig_print(tab, wgp, "\t");
-      if (with_form)
-	fprintf(tab, "\t%s", wgp->w->word_form);
+      fprintf(tab, "\t%s", wgp->w->word_form);
       fputc('\n', tab);
     }
 }

@@ -15,6 +15,7 @@ struct trun_gdl_state
   int in_q;
   int in_xcl;
   int no_d_index;
+  int printing;
   struct gsig *curr_c_wgp;
   char role;
   const char *roletext;
@@ -46,6 +47,7 @@ typedef struct trun
   struct trun_gdl_state rs;
   struct trun_word rw;
   struct loch *l;
+  FILE *o; /* output for run */
 } Trun;
 
 #endif/*TRUN_H_*/

@@ -2,5 +2,8 @@ include ../../oracc-am-rules.txt
 
 noinst_LTLIBRARIES=libtok.la
 
-libtok_la_SOURCES= trun.c tloc_builder.c gsig_builder.c gsig_parse.c gsig_print.c
-
+libtok_la_SOURCES= trun.c \
+	gsig_builder.c gsig_parse.c gsig_print.c \
+	tloc_builder.c tloc_xtf.c tloc_writer.c \
+	tok_g_xml.c tok_l_xml.c tok_m_xml.c \
+	mds_xmd.c 

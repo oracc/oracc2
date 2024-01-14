@@ -49,7 +49,7 @@ typedef struct tloc
 				   Loch's project */
   const char *text_id;
   const char *text_name;
-  const char **keys;	/* [0]=k,[1]=v; NULL-terminated */
+  const char **keys;	/* [0]=key,[1]=value; [2]=sortcode; NULL-terminated */
   int nkeys; 		/* number of char * in keys not counting terminating NULL */
   struct loch *loch;
   List *llocs;
@@ -58,7 +58,7 @@ typedef struct tloc
 typedef struct lloc
 {
   const char *line_id;
-  const char *line_num;
+  int line_num;
   const char *line_label;
   Tloc *t;
   List *wlocs;

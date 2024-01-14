@@ -56,7 +56,7 @@ tlb_T(Trun *r, const char *p, const char *id, const char *n)
 }
 
 void
-tlb_L(Trun *r, const char *num, const char *id, const char *lab)
+tlb_L(Trun *r, int num, const char *id, const char *lab)
 {
   if (r)
     {
@@ -68,7 +68,7 @@ tlb_L(Trun *r, const char *num, const char *id, const char *lab)
 	  else
 	    tlb_error("line found before text is set");
 	}
-      loch_line(r)->line_num = tlb_dup(num);
+      loch_line(r)->line_num = num;
       loch_line(r)->line_id = tlb_dup(id);
       loch_line(r)->line_label = tlb_dup(lab);
       loch_line(r)->t = loch_text(r);
@@ -91,16 +91,18 @@ tlb_W(Trun *r, const char *id, const char *lang, const char *form)
       loch_word(r)->word_form = tlb_dup(form);
       loch_word(r)->l = loch_line(r);
       loch_word(r)->w = &r->rw;
+      r->rw.w = loch_word(r);
     }
 }
 
 void
-tlb_K(Trun *r, const char *k, const char *v)
+tlb_K(Trun *r, const char *k, const char *v, const char *c)
 {
   if (!r->rs.k)
     r->rs.k = list_create(LIST_SINGLE);
   list_add(r->rs.k, (void*)k);
   list_add(r->rs.k, (void*)v);
+  list_add(r->rs.k, (void*)c);
 }
 
 void
