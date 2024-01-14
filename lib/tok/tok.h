@@ -7,4 +7,7 @@
 
 #include "all.proto"
 
+#undef pp
+#define pp(p) ((p)?(p):"")
+
 #endif/*TOK_H_*/

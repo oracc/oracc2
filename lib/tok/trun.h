@@ -7,7 +7,7 @@
 /* state variables used during processing GDL input */
 struct trun_gdl_state
 {
-  const char *file;
+  const char *file;	/* current input file */
   int andline_num;
   int in_c;
   int in_n;
@@ -51,7 +51,7 @@ typedef struct trun
   struct trun_gdl_state rs;
   struct trun_word rw;
   struct loch *l;
-  FILE *o; /* output for run */
+  FILE *o; 		/* output for run */
 } Trun;
 
 #endif/*TRUN_H_*/

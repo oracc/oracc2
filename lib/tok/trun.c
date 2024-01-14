@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <trun.h>
+#include <tok.h>
 
 /* Callers should call this first, e.g.,
 
@@ -40,6 +40,7 @@ trun_term(Trun *r)
 Word *
 trun_word_init(Trun *r)
 {
+  r->rw.w = loch_word(r);
   return &r->rw;
 }
 
@@ -52,8 +53,12 @@ trun_state_reset(Trun *r)
 void
 trun_word_reset(Trun *r)
 {
-  memset(r->rw.gpp, '\0', r->rw.gpp_alloced * sizeof(Gsig));
+#if 1
+  trun_word_term(r);
+#else
+  memset(r->rw.gpp, '\0', r->rw.gpp_alloced * sizeof(Gsig));  
   r->rw.gpp_used = 0;
+#endif
 }
 
 void

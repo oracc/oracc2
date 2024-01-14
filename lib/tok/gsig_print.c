@@ -4,10 +4,6 @@
 void
 gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep)
 {
-
-#undef pp
-#define pp(p) ((p)?(p):"")
-
   fprintf(fp, "%s.%s.%s%s@%s%%%s:%c/%s=%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d#%c%d#%c%d",
 	  gp->soid, pp(gp->foid), pp(gp->value),
 	  id_sig_sep,

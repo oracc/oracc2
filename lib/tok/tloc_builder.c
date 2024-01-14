@@ -16,13 +16,13 @@ Loch *
 tlb_init(Trun *r, const char *project, const char *type)
 {
   Loch *l = calloc(1, sizeof(Loch));
+  r->l = l;
   l->project = project;
   l->type = type;
   if ('c' == *type)
     loch_cbd(r).alocs = list_create(LIST_DOUBLE);
   else
     loch_xtf(r).tlocs = list_create(LIST_DOUBLE);
-  r->l = l;
   return l;
 }
 
@@ -92,6 +92,8 @@ tlb_W(Trun *r, const char *id, const char *lang, const char *form)
       loch_word(r)->l = loch_line(r);
       loch_word(r)->w = &r->rw;
       r->rw.w = loch_word(r);
+      r->rs.in_c = r->rs.in_n = r->rs.in_p = r->rs.in_q = 0;
+      r->rs.no_d_index = 0;
     }
 }
 

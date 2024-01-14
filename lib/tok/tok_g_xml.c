@@ -151,7 +151,6 @@ tok_g_eH(void *userData, const char *name)
 	      gsb_last(r);
 	      tokw_G(r);
 	      trun_word_reset(r);
-	      r->rw.w->word_lang = "";
 	    }
 	  else
 	    (void)charData_retrieve();

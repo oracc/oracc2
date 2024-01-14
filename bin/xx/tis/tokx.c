@@ -74,18 +74,21 @@ tokf_init(Trun *r)
   int i = 0;
   if (tok_data_g)
     {
-      tok_sHs[i++] = tok_g_sH;
-      tok_eHs[i++] = tok_g_eH;
+      tok_sHs[i] = tok_g_sH;
+      tok_eHs[i] = tok_g_eH;
+      ++i;
     }
   if (tok_data_l)
     {
-      tok_sHs[i++] = tok_l_sH;
-      tok_eHs[i++] = tok_l_eH;
+      tok_sHs[i] = tok_l_sH;
+      tok_eHs[i] = tok_l_eH;
+      ++i;
     }
   if (tok_data_m)
     {
-      tok_sHs[i++] = tok_m_sH;
-      tok_eHs[i++] = tok_m_eH;
+      tok_sHs[i] = tok_m_sH;
+      tok_eHs[i] = tok_m_eH;
+      ++i;
     }
   tok_sHp = toksHps[i-1];
   tok_eHp = tokeHps[i-1];
@@ -108,7 +111,7 @@ static void
 tokx_cbd(Trun *r, const char *summaries)
 {
   const char *fname[2] = { summaries , NULL };
-  /*fprintf(tab, "F\t%s\n", fname[0]);*/
+  r->rs.file = fname[0];
   runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
 }
 
@@ -121,13 +124,14 @@ tokx_one(Trun *r, const char *QPQX)
     *dot = '\0';
   fname[0] = expand(NULL, QPQX, "xtf");
   fname[1] = NULL;
-  /*fprintf(tab, "F\t%s\n", fname[0]);*/
+  r->rs.file = fname[0];
   runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
 }
 
 static void
 tokx_stdin(Trun *r)
 {
+  r->rs.file = "<stdin>";
   runexpatNSuD(i_stdin, NULL, tokx_sH, tokx_eH, NULL, r);
 }
 

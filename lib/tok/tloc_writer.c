@@ -7,7 +7,7 @@
 void
 tlw_R(Trun *r)
 {
-  fprintf(r->o, "P\t%s\nY\t%s\n", r->l->project, r->l->type);
+  fprintf(r->o, "P\t%s\nY\t%s\n", pp(r->l->project), r->l->type);
 }
 
 /* Write a T(ext) tloc line and the K's that go with it */
@@ -22,8 +22,8 @@ tlw_T(Trun *r)
     {
       int i;
       for (i = 0; i < loch_text(r)->nkeys; i+=3)
-	fprintf(r->o, "K\t%s\t%s/%s\n",
-		loch_text(r)->keys[i], loch_text(r)->keys[i+2], loch_text(r)->keys[i+1]);
+	fprintf(r->o, "K\t%s\t%06d/%s\n",
+		loch_text(r)->keys[i], atoi(loch_text(r)->keys[i+2]), loch_text(r)->keys[i+1]);
     }
 }
 
