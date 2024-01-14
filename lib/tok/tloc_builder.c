@@ -19,10 +19,7 @@ tlb_init(Trun *r, const char *project, const char *type)
   r->l = l;
   l->project = project;
   l->type = type;
-  if ('c' == *type)
-    loch_cbd(r).alocs = list_create(LIST_DOUBLE);
-  else
-    loch_xtf(r).tlocs = list_create(LIST_DOUBLE);
+  loch_xtf(r).tlocs = list_create(LIST_DOUBLE);
   return l;
 }
 

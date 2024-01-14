@@ -11,7 +11,7 @@ gsb_new(Trun *r)
       w->gpp = realloc(w->gpp, w->gpp_alloced * sizeof(Gsig));
       memset((void*)(w->gpp + (w->gpp_alloced-16)), '\0', 16 * sizeof(Gsig));
     }
-  w->gpp[w->gpp_used].w = loch_word(r)->w->w;
+  w->gpp[w->gpp_used].w = loch_word(r);
   w->gpp[w->gpp_used].index = 1+w->gpp_used;
   return &w->gpp[w->gpp_used++];
 }

@@ -53,5 +53,5 @@ tlw_G(Trun *r, const char *lang)
 void
 tlw_A(Trun *r, const char *oid, const char *n)
 {
-  fprintf(r->o, "a\t%s\t%s\n", oid, n);
+  fprintf(r->o, "A\t%s\t%s\n", oid, n);
 }
