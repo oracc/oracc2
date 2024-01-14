@@ -15,43 +15,43 @@ XML_EndElementHandler tok_eHs[3], tok_eHp;
 static void
 sH1(void *userData, const XML_Char *name, const XML_Char **atts)
 {
-  (*tok_sHs[0])(userData,name,atts);
+  (tok_sHs[0])(userData,name,atts);
 }
 
 static void
 sH2(void *userData, const XML_Char *name, const XML_Char **atts)
 {
-  (*tok_sHs[0])(userData,name,atts);
-  (*tok_sHs[1])(userData,name,atts);
+  (tok_sHs[0])(userData,name,atts);
+  (tok_sHs[1])(userData,name,atts);
 }
 
 static void
 sH3(void *userData, const XML_Char *name, const XML_Char **atts)
 {
-  (*tok_sHs[0])(userData,name,atts);
-  (*tok_sHs[1])(userData,name,atts);
-  (*tok_sHs[2])(userData,name,atts);
+  (tok_sHs[0])(userData,name,atts);
+  (tok_sHs[1])(userData,name,atts);
+  (tok_sHs[2])(userData,name,atts);
 }
 
 static void
 eH1(void *userData, const XML_Char *name)
 {
-  (*tok_eHs[0])(userData,name);
+  (tok_eHs[0])(userData,name);
 }
 
 static void
 eH2(void *userData, const XML_Char *name)
 {
-  (*tok_eHs[0])(userData,name);
-  (*tok_eHs[1])(userData,name);
+  (tok_eHs[0])(userData,name);
+  (tok_eHs[1])(userData,name);
 }
 
 static void
 eH3(void *userData, const XML_Char *name)
 {
-  (*tok_eHs[0])(userData,name);
-  (*tok_eHs[1])(userData,name);
-  (*tok_eHs[2])(userData,name);
+  (tok_eHs[0])(userData,name);
+  (tok_eHs[1])(userData,name);
+  (tok_eHs[2])(userData,name);
 }
 
 XML_StartElementHandler toksHps[3] = { &sH1 , &sH2 , &sH3 };
