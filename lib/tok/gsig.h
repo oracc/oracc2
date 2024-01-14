@@ -22,6 +22,7 @@ typedef struct gsig
   char c_position;   	/* for type=c: position in compound:
 			   i(ndependent) b(eginning) m(iddle) e(nd)
 			   u(ndetermined) */
+  const char *sig;	/* The rendered sig, NULL for XTF data but used when reading .tok data */
   const char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
   char *asltype; 	/* pc pe sl */
   char *form;		/* g:X form, value, sign, compound etc. */
@@ -35,7 +36,7 @@ typedef struct gsig
   int index;		/* Index of grapheme in word, counting from 1; 0 = no g:w parent */
   int last;		/* 1 = final grapheme in word */
   int no_d_index;	/* Index ignoring initial determinatives */
-  int no_d_last;	/* 1 = final grapheme in word ignoring final determinatives */
+  int no_d_last;	/* 1 = final grapheme in word ignoring initial/final determinatives */
   int c_index;		/* Index of c in word; c-elements move index but not c_index */
   int ce_index;		/* Index of c-element in compound */
   struct wloc *w;

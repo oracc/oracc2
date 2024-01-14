@@ -31,6 +31,10 @@ typedef struct trun_word
   struct gsig *gpp;
   int gpp_alloced;
   int gpp_used;
+  struct lsig *lpp; /* A single orthographic word-form can expand to
+		       multiple lemmata with COFs */
+  int lpp_alloced;
+  int lpp_used;
   Wloc *w;
 } Word;
 

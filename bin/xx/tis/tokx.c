@@ -188,10 +188,9 @@ main(int argc, char **argv)
     exit(1);
 
   r = trun_init(run_multi);
-
   tokx_output(r, outfile);
-  
   tlb_init(r, projproj, tok_input_xtf ? "xtf" : "cbd");
+  tlw_R(r);
 
   locf_init();
   tokf_init();

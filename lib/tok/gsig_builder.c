@@ -228,17 +228,3 @@ gsb_value(Trun *r, const char *t)
       gsb_strcpy(wgp->form, t);
     }
 }
-
-void
-gsb_show(FILE *tab, Trun *r)
-{
-  Word *w = &r->rw;
-  int i;
-  for (i = 0; i < w->gpp_used; ++i)
-    {
-      Gsig *wgp = gsb_get_n(w, i);
-      gsig_print(tab, wgp, "\t");
-      fprintf(tab, "\t%s", wgp->w->word_form);
-      fputc('\n', tab);
-    }
-}

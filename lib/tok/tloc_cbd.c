@@ -5,8 +5,9 @@
 void
 tloc_cbd(void *userData, const char *name, const char **atts)
 {
+  Trun *r = userData;
   if (!strcmp(name, "articles"))
-    1; /*fprintf(tab, "G\t%s\n", get_xml_lang(atts));*/
+    tlw_G(r, get_xml_lang(atts));
   else if (!strcmp(name, "summary"))
-    1; /*fprintf(tab, "A\t%s\t%s\n", findAttr(atts, "oid"), findAttr(atts, "n"));*/
+    tlw_A(r, findAttr(atts, "oid"), findAttr(atts, "n"));
 }

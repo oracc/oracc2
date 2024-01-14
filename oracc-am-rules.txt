@@ -70,6 +70,9 @@ install-exec-local:
 %.proto: %.c
 	cproto -e $(AM_CPPFLAGS) $< >$@
 
+all.proto:
+	cproto -e $(AM_CPPFLAGS) *.c >$@
+
 xLDADD=$(top_srcdir)/lib/liboracc2.la
 
 AM_CPPFLAGS=\
