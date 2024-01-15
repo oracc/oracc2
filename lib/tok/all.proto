@@ -10,6 +10,9 @@ extern void gsb_punct(Word *w, const char *t);
 extern void gsb_sign(Trun *r, const char *t);
 extern void gsb_value(Trun *r, const char *t);
 /* gsig_parse.c */
+extern Gsig *gsig_parse_alloc(Gsig *gp);
+extern Gsig *gsig_parse_clone(Gsig *gp);
+extern Gsig *gsig_parse_oid(char *s, Gsig *gp);
 extern Gsig *gsig_parse(char *s, Gsig *gp, const char *id_sig_sep);
 /* gsig_print.c */
 extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);

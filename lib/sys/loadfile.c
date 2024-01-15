@@ -187,7 +187,8 @@ loadoneline(FILE *fp, size_t *nbytes)
 	  if (n_read)
 	    {
 	      buf[n_read] = '\0';
-	      *nbytes = n_read;
+	      if (nbytes)
+		*nbytes = n_read;
 	      break;
 	    }
 	  else
