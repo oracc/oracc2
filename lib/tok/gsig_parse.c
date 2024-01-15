@@ -60,6 +60,31 @@ gsig_parse_oid(char *s, Gsig *gp)
   return gp;
 }
 
+/* Cheaply extract the word lang from a gsig without parsing the whole thing */
+const char *
+gsig_parse_word_lang(const char *s)
+{
+  static char lang[18]; /* max length is akk-x-stdbab:949, i.e., 18 */
+  const char *pct;
+  if (s && (pct = strchr(s, '%')))
+    {
+      if ((pct = strchr(pct, '%')))
+	{
+	  const char *colon;
+	  ++pct;
+	  if ((colon = strchr(pct, ':')))
+	    {
+	      if (colon-pct < 18) /* should error */
+		{
+		  strncpy(lang, pct, colon-pct);
+		  return lang;
+		}
+	    }
+	}
+    }
+  return NULL;
+}
+
 /* Destructively parse the grapheme sig */
 Gsig *
 gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)

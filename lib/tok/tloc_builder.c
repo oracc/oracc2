@@ -30,6 +30,8 @@ tlb_term(Trun *r)
     list_free(loch_cbd(r).alocs, NULL);
   else
     list_free(loch_xtf(r).tlocs, NULL);
+  if (loch_text(r)->keys)
+    free(loch_text(r)->keys);
 }
 
 void
@@ -99,14 +101,16 @@ tlb_K(Trun *r, const char *k, const char *v, const char *c)
 {
   if (!r->rs.k)
     r->rs.k = list_create(LIST_SINGLE);
-  list_add(r->rs.k, (void*)k);
-  list_add(r->rs.k, (void*)v);
-  list_add(r->rs.k, (void*)c);
+  list_add(r->rs.k, (void*)tlb_dup(k));
+  list_add(r->rs.k, (void*)tlb_dup(v));
+  list_add(r->rs.k, (void*)tlb_dup(c));
 }
 
 void
 tlb_K_wrapup(Trun *r)
 {
+  if (loch_text(r)->keys)
+    free(loch_text(r)->keys);
   loch_text(r)->keys = (const char **)list2array_c(r->rs.k, &loch_text(r)->nkeys);
   list_free(r->rs.k, NULL);
   r->rs.k = NULL;

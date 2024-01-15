@@ -13,6 +13,7 @@ extern void gsb_value(Trun *r, const char *t);
 extern Gsig *gsig_parse_alloc(Gsig *gp);
 extern Gsig *gsig_parse_clone(Gsig *gp);
 extern Gsig *gsig_parse_oid(char *s, Gsig *gp);
+extern const char *gsig_parse_word_lang(const char *s);
 extern Gsig *gsig_parse(char *s, Gsig *gp, const char *id_sig_sep);
 /* gsig_print.c */
 extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
@@ -34,6 +35,10 @@ extern void tlb_A(Trun *r, const char *oid, const char *cgp);
 extern void tlb_M(Trun *r, const char *type, const char *wids, const char *oid, const char *name);
 /* tloc_cbd.c */
 extern void tloc_cbd_sH(void *userData, const char *name, const char **atts);
+/* tloc_tok.c */
+extern Trun *tloc_tok_init(void);
+extern void tloc_tok_term(Trun *r);
+extern void tloc_tok_line(Trun *r, unsigned char *lp);
 /* tloc_writer.c */
 extern void tlw_R(Trun *r);
 extern void tlw_T(Trun *r);

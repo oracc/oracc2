@@ -1,13 +1,14 @@
 #include <oraccsys.h>
 #include <tok.h>
+#include <tis.h>
 
 static Pool *p;
 
 static unsigned char *
-langtok(const char *lang, unsigned char *tok)
+langtok(const char *lang, unsigned const char *tok)
 {
   char lt[strlen(lang)+strlen((ccp)tok)+2];
-  sprintf(lt, "%s%s", tok, lang);
+  sprintf(lt, "%%%s:%s", lang, tok);
   return hpool_copy((ucp)lt, p);
 }
 
@@ -23,7 +24,7 @@ pw(const char *pro, const char *wid)
 static char **
 tis_gsig_split(char *s)
 {
-  char *sigs[3] = { NULL , NULL , NULL , NULL };
+  static char *sigs[4] = { NULL , NULL , NULL , NULL };
 
   sigs[0] = strdup(s);
   
@@ -51,7 +52,7 @@ tis_gsig_split(char *s)
 static char **
 tis_lmsig_split(char *s)
 {
-  char *sigs[2];
+  static char *sigs[2];
   sigs[0] = strdup(s);
   sigs[1] = NULL;
   return sigs;
@@ -63,14 +64,13 @@ tis_meta(Tisp tis, Trun *r, unsigned const char *tok, const char *projwid)
   if (loch_text(r)->keys)
     {
       int i;
-      const char *kk = loch_text(r)->keys;
-      for (i = 0; kk[i]; ++i)
+      const char **kk = loch_text(r)->keys;
+      for (i = 0; kk[i]; i += 3)
 	{
-	  char mtok[strlen((ccp)tok)+strlen(kk[i])+strlen(kk[i+1])+strlen(kk[i+2])+4);
-	  sprintf(mtok, "%s|%s=%s%s",tok,kk[i],kk[i+1],kk[i+2]);
+	  char mtok[strlen((ccp)tok)+strlen(kk[i])+strlen(kk[i+1])+strlen(kk[i+2])+4];
+	  sprintf(mtok, "%s|%s=%s/%s",tok,kk[i],kk[i+2],kk[i+1]);
 	  tis_add(tis, (ccp)hpool_copy((ucp)mtok,p), projwid);
 	}
-      free(kk);
     }
 }
 
@@ -80,32 +80,39 @@ tis_sigs(Tisp t, Trun *r, const char **sigs)
   int i;
   for (i = 0; sigs[i]; ++i)
     {
-      unsigned char *ltp = langtok(loch_word(r)->word_lang, sigs[i]);
+      unsigned char *ltp = langtok(loch_word(r)->word_lang, (uccp)sigs[i]);
       const char *pwp = pw(loch_text(r)->text_project, loch_word(r)->word_id);
-      tis_add(t, ltp, pwp);
-      tis_meta(t, r, sigs[i], pwp);
+      tis_add(t, (ccp)hpool_copy((ucp)sigs[i], p), pwp);
+      tis_meta(t, r, (uccp)sigs[i], pwp);
     }
 }
 
 static void
-tis_line(Trun *r, unsigned char *lp)
+tis_line(Tisp t, Trun *r, unsigned char *lp)
 {
   if (loch_word(r)->word_id)
     {
-      char **f = tab_split(lp);
+      char **f = tab_split((char*)lp);
       if (f[1])
 	{
 	  char **sigs = NULL;
 	  if ('g' == *f[0])
-	    sigs = tis_gsig_split(f[1]);
+	    {
+	      sigs = tis_gsig_split(f[1]);
+	      /*loch_word(r)->word_form = hpool_copy(f[3], p);*/ /* Not currently used by tok2tis */
+	      loch_word(r)->word_lang = (ccp)hpool_copy((uccp)gsig_parse_word_lang(f[2]), p);
+	    }
 	  else
 	    sigs = tis_lmsig_split(f[1]);
 	  
-	  tis_sigs(r, sigs);
+	  tis_sigs(t, r, (const char **)sigs);
 
 	  int i;
 	  for (i = 0; sigs[i]; ++i)
-	    free(sigs[i]);
+	    {
+	      free(sigs[i]);
+	      sigs[i] = NULL;
+	    }
 	}
       else
 	fprintf(stderr, "tok2tis: no OID in line: %s\n", lp);
@@ -130,7 +137,7 @@ main(int argc, char **argv)
       if (isupper(*lp))
 	tloc_tok_line(r, lp);
       else
-	tis_line(r, lp);
+	tis_line(t, r, lp);
     }
   tis_dump(stdout, t, tis_sort(t));
   tloc_tok_term(r);
