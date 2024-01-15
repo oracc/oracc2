@@ -62,12 +62,35 @@ gsig_parse_oid(char *s, Gsig *gp)
 
 /* Cheaply extract the word lang from a gsig without parsing the whole thing */
 const char *
-gsig_parse_word_lang(const char *s)
+gsig_parse_sl_lang(const char *s)
 {
-  static char lang[18]; /* max length is akk-x-stdbab:949, i.e., 18 */
+  static char lang[3]; /* this is just sl/pc/pe */
   const char *pct;
   if (s && (pct = strchr(s, '%')))
     {
+      const char *colon;
+      ++pct;
+      if ((colon = strchr(pct, ':')))
+	{
+	  if (colon-pct < 3) /* should error */
+	    {
+	      strncpy(lang, pct, colon-pct);
+	      return lang;
+	    }
+	}
+    }
+  return NULL;
+}
+
+/* Cheaply extract the word lang from a gsig without parsing the whole thing */
+const char *
+gsig_parse_word_lang(const char *s)
+{
+  static char lang[18]; /* max length is akk-x-stdbab-949, i.e., 18 */
+  const char *pct;
+  if (s && (pct = strchr(s, '%')))
+    {
+      ++pct;
       if ((pct = strchr(pct, '%')))
 	{
 	  const char *colon;

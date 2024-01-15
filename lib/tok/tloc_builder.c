@@ -51,6 +51,12 @@ tlb_T(Trun *r, const char *p, const char *id, const char *n)
       loch_text(r)->text_name = tlb_dup(n);
       loch_text(r)->loch = r->l;
       loch_text(r)->llocs = list_create(LIST_DOUBLE);
+      if (loch_text(r)->keys)
+	{
+	  free(loch_text(r)->keys);
+	  loch_text(r)->keys = NULL;
+	}
+      loch_text(r)->nkeys = -1;	
     }
 }
 

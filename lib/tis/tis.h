@@ -15,9 +15,9 @@ struct tis_data
 };
 
 extern Tisp tis_init(void);
-extern const char **tis_sort(Tisp tp);
+extern char **tis_sort(Tisp tp);
 extern void tis_add(Tisp tp, const char *key, const char *wid);
-extern void tis_dump(FILE *fp, Tisp tp, const char **k);
+extern void tis_dump(FILE *fp, Tisp tp, char **k);
 extern void tis_term(Tisp tp);
 extern void tis_load_init(void);
 extern void tis_load_term(Tisp tp);

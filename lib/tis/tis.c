@@ -61,11 +61,13 @@ pct(float amount, float total)
   return (int) (pct+0.5);
 }
 
-const char **
+char **
 tis_sort(Tisp tp)
 {
   int nk;
-  const char **k = hash_keys2(tp, &nk);
+  /* We are going to chop up the key after using it in tis_dump but we
+     don't need the keys after that */
+  char **k = (char **)hash_keys2(tp, &nk);
   qsort(k,nk,sizeof(const char *), cmpstringp);
   int i;
   for (i = 0; k[i]; ++i)
@@ -94,24 +96,60 @@ tis_sort(Tisp tp)
   return k;
 }
 
+const char *
+tis_id_key(size_t n, const char **is)
+{
+  size_t len = 0;
+  size_t i;
+  for (i = 0; i < n; ++i)
+    len += strlen(is[i]);
+  len += n;
+  char *s = malloc(len + n + 1);
+  *s = '\0';
+  for (i = 0; i < n; ++i)
+    {
+      strcat(s, is[i]);
+      strcat(s, " ");
+    }
+  s[len] = '\0';
+  return s;
+}
+
 void
-tis_dump(FILE *fp, Tisp tp, const char **k)
+tis_dump(FILE *fp, Tisp tp, char **kk)
 {
   int i;
-  for (i = 0; k[i]; ++i)
+  Hash *tids = hash_create(1024);
+  for (i = 0; kk[i]; ++i)
     {
-      /* Retrieve the is data first */
-      struct tis_n_is *tnis = hash_find(tp, (uccp)k[i]);
-
-      /* Lang is appended to key as s.o0036652%qpc; remove it in the
-	 .tis output because we are prepending it to the ID */
-      char *lang = strchr(k[i], '%');
-      if (lang)
-	*lang++ = '\0';
+      char *k = kk[i];
+      char *lang = NULL;
       
-      fputs(k[i], fp);
+      /* Retrieve the is data first */
+      struct tis_n_is *tnis = hash_find(tp, (uccp)k);
+
+      /* Lang is prepended to key as %sl:o0036652 or %akk-x-stdbab-949:--remove it in the
+	 .tis output because we are prepending it to the ID */
+      if ('%' == *k)
+	{
+	  lang = ++k;
+	  char *colon = strchr(k, ':');
+	  *colon++ = '\0';
+	  k = colon;
+	}
+      
+      fputs(k, fp);
       fputc('\t', fp);
-      fprintf(fp, "%s\t", tis_id(lang));
+      const char *tk = tis_id_key(tnis->n, (const char **)tnis->is);
+      const char *tid = hash_find(tids, (ucp)tk);
+      if (!tid)
+	{
+	  tid = tis_id(lang);
+	  hash_add(tids, (ucp)tk, (void*)strdup(tid));
+	}
+      else
+	free((void*)tk);
+      fprintf(fp, "%s\t", tid);
       if (tnis)
 	{
 	  int j;
@@ -126,9 +164,10 @@ tis_dump(FILE *fp, Tisp tp, const char **k)
       else
 	{
 	  fputs("0\t", fp);
-	  fprintf(stderr, "no is data found for key %s\n", k[i]);
+	  fprintf(stderr, "no is data found for key %s\n", k);
 	}
       fputc('\n', fp);
     }
+  hash_free2(tids, free, free);
 }
 

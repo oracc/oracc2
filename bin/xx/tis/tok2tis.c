@@ -7,7 +7,7 @@ static Pool *p;
 static unsigned char *
 langtok(const char *lang, unsigned const char *tok)
 {
-  char lt[strlen(lang)+strlen((ccp)tok)+2];
+  char lt[strlen(lang)+strlen((ccp)tok)+3];
   sprintf(lt, "%%%s:%s", lang, tok);
   return hpool_copy((ucp)lt, p);
 }
@@ -82,8 +82,8 @@ tis_sigs(Tisp t, Trun *r, const char **sigs)
     {
       unsigned char *ltp = langtok(loch_word(r)->word_lang, (uccp)sigs[i]);
       const char *pwp = pw(loch_text(r)->text_project, loch_word(r)->word_id);
-      tis_add(t, (ccp)hpool_copy((ucp)sigs[i], p), pwp);
-      tis_meta(t, r, (uccp)sigs[i], pwp);
+      tis_add(t, (ccp)ltp, pwp);
+      tis_meta(t, r, (uccp)ltp, pwp);
     }
 }
 
@@ -100,7 +100,8 @@ tis_line(Tisp t, Trun *r, unsigned char *lp)
 	    {
 	      sigs = tis_gsig_split(f[1]);
 	      /*loch_word(r)->word_form = hpool_copy(f[3], p);*/ /* Not currently used by tok2tis */
-	      loch_word(r)->word_lang = (ccp)hpool_copy((uccp)gsig_parse_word_lang(f[2]), p);
+	      /* This is a hack: word_lang will be pc/pe/sl for signlists which is not a word_lang */
+	      loch_word(r)->word_lang = (ccp)hpool_copy((uccp)gsig_parse_sl_lang(f[2]), p);
 	    }
 	  else
 	    sigs = tis_lmsig_split(f[1]);

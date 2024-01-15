@@ -13,6 +13,7 @@ extern void gsb_value(Trun *r, const char *t);
 extern Gsig *gsig_parse_alloc(Gsig *gp);
 extern Gsig *gsig_parse_clone(Gsig *gp);
 extern Gsig *gsig_parse_oid(char *s, Gsig *gp);
+extern const char *gsig_parse_sl_lang(const char *s);
 extern const char *gsig_parse_word_lang(const char *s);
 extern Gsig *gsig_parse(char *s, Gsig *gp, const char *id_sig_sep);
 /* gsig_print.c */
