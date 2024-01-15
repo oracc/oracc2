@@ -1,8 +1,143 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <oraccsys.h>
-#include <tis.h>
+#include <tok.h>
+
+static Pool *p;
+
+static unsigned char *
+langtok(const char *lang, unsigned char *tok)
+{
+  char lt[strlen(lang)+strlen((ccp)tok)+2];
+  sprintf(lt, "%s%s", tok, lang);
+  return hpool_copy((ucp)lt, p);
+}
+
+static const char *
+pw(const char *pro, const char *wid)
+{
+  char PW[strlen(pro)+strlen(wid)+2];
+  sprintf(PW, "%s:%s", pro, wid);
+  return (ccp)hpool_copy((ucp)PW,p);
+}
+
+/** SIGN.FORM.VALUE */
+static char **
+tis_gsig_split(char *s)
+{
+  char *sigs[3] = { NULL , NULL , NULL , NULL };
+
+  sigs[0] = strdup(s);
+  
+  char *dot = strchr(sigs[0], '.');
+  *dot++ = '\0';
+  if ('.' != *dot)
+    {
+      /* FORM is non-empty, can be SIGN.FORM. or SIGN.FORM.VALUE */
+      sigs[1] = strdup(s);
+      dot = strchr(sigs[1], '.');
+      *dot++ = '\0';
+      if (*dot)
+	sigs[2] = strdup(s);
+    }
+  else
+    {
+      /* FORM is empty, can be SIGN.. or SIGN..VALUE */
+      ++dot;
+      if (*dot)
+	sigs[1] = strdup(s);
+    }
+  return sigs;
+}
+
+static char **
+tis_lmsig_split(char *s)
+{
+  char *sigs[2];
+  sigs[0] = strdup(s);
+  sigs[1] = NULL;
+  return sigs;
+}
+
+static void
+tis_meta(Tisp tis, Trun *r, unsigned const char *tok, const char *projwid)
+{
+  if (loch_text(r)->keys)
+    {
+      int i;
+      const char *kk = loch_text(r)->keys;
+      for (i = 0; kk[i]; ++i)
+	{
+	  char mtok[strlen((ccp)tok)+strlen(kk[i])+strlen(kk[i+1])+strlen(kk[i+2])+4);
+	  sprintf(mtok, "%s|%s=%s%s",tok,kk[i],kk[i+1],kk[i+2]);
+	  tis_add(tis, (ccp)hpool_copy((ucp)mtok,p), projwid);
+	}
+      free(kk);
+    }
+}
+
+static void
+tis_sigs(Tisp t, Trun *r, const char **sigs)
+{
+  int i;
+  for (i = 0; sigs[i]; ++i)
+    {
+      unsigned char *ltp = langtok(loch_word(r)->word_lang, sigs[i]);
+      const char *pwp = pw(loch_text(r)->text_project, loch_word(r)->word_id);
+      tis_add(t, ltp, pwp);
+      tis_meta(t, r, sigs[i], pwp);
+    }
+}
+
+static void
+tis_line(Trun *r, unsigned char *lp)
+{
+  if (loch_word(r)->word_id)
+    {
+      char **f = tab_split(lp);
+      if (f[1])
+	{
+	  char **sigs = NULL;
+	  if ('g' == *f[0])
+	    sigs = tis_gsig_split(f[1]);
+	  else
+	    sigs = tis_lmsig_split(f[1]);
+	  
+	  tis_sigs(r, sigs);
+
+	  int i;
+	  for (i = 0; sigs[i]; ++i)
+	    free(sigs[i]);
+	}
+      else
+	fprintf(stderr, "tok2tis: no OID in line: %s\n", lp);
+    }
+  else
+    {
+      fprintf(stderr, "tok2tis: no W set: %s\n", lp);
+      exit(1);
+    }	
+}
+
+int
+main(int argc, char **argv)
+{
+  size_t nbytes;
+  unsigned char *lp;
+  p = hpool_init();
+  Tisp t = tis_init();
+  Trun *r = tloc_tok_init();
+  while ((lp = loadoneline(stdin,&nbytes)))
+    {
+      if (isupper(*lp))
+	tloc_tok_line(r, lp);
+      else
+	tis_line(r, lp);
+    }
+  tis_dump(stdout, t, tis_sort(t));
+  tloc_tok_term(r);
+}
+
+
+#if 0
 
 struct tokloc
 {
@@ -12,24 +147,7 @@ struct tokloc
 };
 
 Hash *langs = NULL;
-Pool *p;
 struct tokloc tl;
-
-static unsigned char *
-langtok(const char *lang, unsigned char *tok)
-{
-  char lt[strlen(lang)+strlen((ccp)tok)+2];
-  sprintf(lt, "%s%s", tok, lang);
-  return pool_copy((ucp)lt, p);
-}
-
-static const char *
-pw()
-{
-  char PW[strlen(tl.P)+strlen(tl.W)+2];
-  sprintf(PW, "%s:%s", tl.P, tl.W);
-  return (ccp)pool_copy((ucp)PW,p);
-}
 
 static const char *
 sig_lang(unsigned char *sig)
@@ -52,102 +170,4 @@ sig_lang(unsigned char *sig)
     return NULL;
 }
 
-static void
-tok_m(Tisp tis, Hash *m, unsigned const char *tok)
-{
-  const char **kk = hash_keys(m);
-  if (kk)
-    {
-      int i;
-      for (i = 0; kk[i]; ++i)
-	{
-	  const char *v = hash_find(m, (ucp)kk[i]);
-	  if (v && *v)
-	    {
-	      char mtok[strlen((ccp)tok)+strlen(kk[i])+strlen(v)+4];
-	      sprintf(mtok, "%s|%s=%s%s",tok,kk[i],v,tl.L);
-	      tis_add(tis, (ccp)pool_copy((ucp)mtok,p), pw());
-	    }
-	}
-      free(kk);
-    }
-}
-
-int
-main(int argc, char **argv)
-{
-  size_t nbytes;
-  unsigned char *lp;
-  Hash *m = hash_create(10);
-  Tisp t = tis_init();
-  
-  langs = hash_create(10);
-  p = pool_init();
-
-  while ((lp = loadoneline(stdin,&nbytes)))
-    {
-      if (isupper(*lp))
-	{
-	  if ('W' == *lp)
-	    {
-	      unsigned char *wid = (ucp)strchr((ccp)lp,'\t');
-	      if (wid)
-		tl.W = (ccp)pool_copy(++wid,p);
-	    }
-	  else if ('T' == *lp)
-	    {
-	      char *project = strchr((ccp)lp, '\t');
-	      if (project)
-		{
-		  char *tab = strchr((ccp)++project, '\t');
-		  if (tab)
-		    *tab = '\0';
-		  if (!tl.P || strcmp(tl.P, project))
-		    tl.P = (ccp)pool_copy((ucp)project,p);
-		}
-	      else
-		fprintf(stderr, "tok2tis: T line with no PROJECT: %s\n", lp);
-	    }
-	  else if ('K' == *lp)
-	    {
-	      unsigned char *k, *v;
-	      k = (ucp)strchr((ccp)lp,'\t');
-	      if (k)
-		{
-		  *k++ = '\0';
-		  v = (ucp)strchr((ccp)k, '\t');
-		  if (v)
-		    {
-		      *v++ = '\0';
-		      if (hash_find(m, k))
-			hash_add(m, k, pool_copy(v,p));
-		      else
-			hash_add(m, pool_copy(k,p), pool_copy(v,p));
-		    }
-		}
-	    }
-	}
-      else
-	{
-	  if (tl.W)
-	    {
-	      char *tab = strchr((ccp)lp, '\t');
-	      if (tab)
-		{
-		  *tab = '\0';
-		  tl.L = sig_lang((ucp)++tab);
-		  tis_add(t, (ccp)pool_copy(langtok(tl.L,lp),p), pw());
-		  tok_m(t, m, lp);
-		}
-	      else
-		fprintf(stderr, "tok2tis: no sig in line: %s\n", lp);
-	    }
-	  else
-	    {
-	      fprintf(stderr, "tok2tis: no W set: %s\n", lp);
-	      exit(1);
-	    }	
-	}
-    }
-  tis_dump(stdout, t, tis_sort(t));
-}
+#endif
