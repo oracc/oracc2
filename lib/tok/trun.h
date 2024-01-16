@@ -14,6 +14,7 @@ struct trun_gdl_state
   int in_n;
   int in_p;
   int in_q;
+  int in_w;
   int in_xcl;
   int no_d_index;
   int printing;
@@ -50,7 +51,7 @@ typedef struct trun
   Memo *a_m;
   Pool *p;
   struct trun_gdl_state rs;
-  struct trun_word rw;
+  struct trun_word *rw;
   struct loch *l;
   FILE *o; 		/* output for run */
 } Trun;

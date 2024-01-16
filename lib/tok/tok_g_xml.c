@@ -15,6 +15,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	    {
 	    case 'w':
 	      (void)trun_word_init(r);
+	      ++r->rs.in_w;
 	      break;
 	    case 'd':
 	      r->rs.role = 'd';
@@ -28,7 +29,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
 		      NULL, NULL,
-		      r->rw.w->word_lang,
+		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
 	      gsb_value(r, findAttr(atts, "form"));
 	      break;
@@ -39,9 +40,9 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
 		      NULL, NULL,
-		      r->rw.w->word_lang,
+		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
-	      gsb_punct(&r->rw, findAttr(atts, "g:type"));
+	      gsb_punct(r->rw, findAttr(atts, "g:type"));
 	      r->rs.in_p = 1;
 	      break;
 	    case 'q':
@@ -52,7 +53,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "g:sign"),
 		      findAttr(atts, "spoid"),
 		      findAttr(atts, "spform"),
-		      r->rw.w->word_lang,
+		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
 	      r->rs.in_q = 1;
 	      break;
@@ -64,7 +65,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
 		      NULL, NULL,
-		      r->rw.w->word_lang,
+		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
 	      break;
 	    case 's':
@@ -76,7 +77,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 			findAttr(atts, "oid"),
 			findAttr(atts, "g:sign"),
 			NULL, NULL,
-			r->rw.w->word_lang,
+			r->rw->w->word_lang,
 			findAttr(atts, "g:logolang"));
 	      break;
 	    case 'b':
@@ -89,7 +90,10 @@ tok_g_sH(void *userData, const char *name, const char **atts)
       else
 	{
 	  if (!strcmp(name, "g:nonw"))
-	    trun_word_init(r);
+	    {
+	      trun_word_init(r);
+	      ++r->rs.in_w;
+	    }
 	}
     }
 }
@@ -109,10 +113,11 @@ tok_g_eH(void *userData, const char *name)
 	      gsb_last(r);
 	      tokw_G(r);
 	      trun_word_reset(r);
+	      --r->rs.in_w;
 	      break;
 	    case 'c':
 	      r->rs.in_c = 0;
-	      gsb_c_last(&r->rw);
+	      gsb_c_last(r->rw);
 	      r->rs.curr_c_wgp = NULL;
 	      break;
 	    case 'd':
@@ -151,6 +156,7 @@ tok_g_eH(void *userData, const char *name)
 	      gsb_last(r);
 	      tokw_G(r);
 	      trun_word_reset(r);
+	      --r->rs.in_w;
 	    }
 	  else
 	    (void)charData_retrieve();

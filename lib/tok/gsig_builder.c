@@ -4,7 +4,7 @@
 Gsig *
 gsb_new(Trun *r)
 {
-  Word *w = &r->rw;
+  Word *w = r->rw;
   if (w->gpp_used == w->gpp_alloced)
     {
       w->gpp_alloced += 16;
@@ -158,7 +158,7 @@ gsb_set_positions(Word *w)
 void
 gsb_last(Trun *r)
 {
-  Word *w = &r->rw;
+  Word *w = r->rw;
   if (w->gpp_used > 0)
     {
       Gsig *wgp = NULL;
@@ -209,7 +209,7 @@ gsb_punct(Word *w, const char *t)
 void
 gsb_sign(Trun *r, const char *t)
 {
-  Word *w = &r->rw;
+  Word *w = r->rw;
   if (w->gpp_used > 0)
     {
       Gsig *wgp = gsb_get(w);
@@ -220,7 +220,7 @@ gsb_sign(Trun *r, const char *t)
 void
 gsb_value(Trun *r, const char *t)
 {
-  Word *w = &r->rw;
+  Word *w = r->rw;
   if (w->gpp_used > 0)
     {
       Gsig *wgp = gsb_get(w);

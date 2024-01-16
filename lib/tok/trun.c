@@ -16,9 +16,6 @@ trun_init(int multi)
   r->l_m = memo_init(sizeof(Lloc), r->multi ? 1024 : 1);
   r->w_m = memo_init(sizeof(Wloc), r->multi ? 1024 : 1);
   r->p = hpool_init();
-  r->rw.gpp_alloced = 1;
-  r->rw.gpp = calloc(r->rw.gpp_alloced, sizeof(Gsig));
-  r->rw.gpp_used = 0;
   return r;
 }
 
@@ -29,7 +26,7 @@ trun_term(Trun *r)
   memo_term(r->l_m);
   memo_term(r->w_m);
   hpool_term(r->p);
-  free(r->rw.gpp);
+  free(r->rw->gpp);
   free(r);
 }
 
@@ -40,8 +37,19 @@ trun_term(Trun *r)
 Word *
 trun_word_init(Trun *r)
 {
-  r->rw.w = loch_word(r);
-  return &r->rw;
+#define TW_MAX 4	/* max g:w nesting depth; even 2 deep is unusual */
+  static struct trun_word tw[TW_MAX];
+  if (r->rs.in_w >= TW_MAX)
+    {
+      fprintf(stderr, "lib/tok/trun.c: internal limit reached TW_MAX=%d\n", TW_MAX);
+      return NULL;
+    }
+  r->rw = &tw[r->rs.in_w];
+  r->rw->gpp_alloced = 1;
+  r->rw->gpp = calloc(r->rw->gpp_alloced, sizeof(Gsig));
+  r->rw->gpp_used = 0;
+  r->rw->w = loch_word(r);
+  return r->rw;
 }
 
 void
@@ -64,7 +72,7 @@ trun_word_reset(Trun *r)
 void
 trun_word_term(Trun *r)
 {
-  free(r->rw.gpp);
+  free(r->rw->gpp);
   memset(&r->rw, '\0', sizeof(Word));
 }
 

@@ -40,7 +40,7 @@ tloc_cbd_sH(void *userData, const char *name, const char **atts)
 	}
       loch_word(r)->word_lang = get_xml_lang(atts);
       loch_word(r)->word_form = tlb_dup(findAttr(atts,"form"));
-      r->rw.w = loch_word(r);
+      r->rw->w = loch_word(r);
       r->rs.in_c = r->rs.in_n = r->rs.in_p = r->rs.in_q = 0;
       r->rs.no_d_index = 0;
     }

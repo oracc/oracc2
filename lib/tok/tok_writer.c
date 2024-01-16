@@ -4,7 +4,7 @@
 void
 tokw_G(Trun *r)
 {
-  Word *w = &r->rw;
+  Word *w = r->rw;
   int i;
   for (i = 0; i < w->gpp_used; ++i)
     {
