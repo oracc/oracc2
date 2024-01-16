@@ -18,7 +18,11 @@ gsig_parse_alloc(Gsig *gp)
   if (!gp)
     gp = calloc(1, sizeof(Gsig));
   else
-    memset(gp, '\0', sizeof(Gsig));
+    {
+      if (gp->coresig)
+	free(gp->coresig);
+      memset(gp, '\0', sizeof(Gsig));
+    }
   return gp;
 }
 
@@ -149,7 +153,12 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
       *s++ = '\0';
       if (*s)
 	{
-	  gp->sname = s;
+	  char *t;
+	  t = gp->sname = s;
+	  if (!(t = strchr(s, '#')))
+	    return gsig_parse_error("SIGN-FORM-VALUE should end with '#'");
+	  *t = '\0';
+	  gp->coresig = strdup(s);
 	  if (!(s = strchr(s, '-')))
 	    return gsig_parse_error("malformed SIGN-FORM-VALUE");
 	  *s++ = '\0';
@@ -159,9 +168,8 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
 	  *s++ = '\0';
 	  if (!gp->value)
 	    gp->value = s;
-	  if (!(s = strchr(s, '#')))
-	    return gsig_parse_error("SIGN-FORM-VALUE should end with '#'");
 	  *s++ = '\0';
+	  s = t++;
 	  if (!(gp->role = *s++)
 	      || !(gp->roletype = *s++)
 	      || '%' != *s)

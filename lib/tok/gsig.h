@@ -23,6 +23,7 @@ typedef struct gsig
 			   i(ndependent) b(eginning) m(iddle) e(nd)
 			   u(ndetermined) */
   const char *sig;	/* The rendered sig, NULL for XTF data but used when reading .tok data */
+  const char *coresig;  /* Just the SIGN-FORM-VALUE part of ths sig */
   const char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
   char *asltype; 	/* pc pe sl */
   char *form;		/* g:X form, value, sign, compound etc. */
