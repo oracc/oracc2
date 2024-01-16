@@ -26,12 +26,14 @@ tlb_init(Trun *r, const char *project, const char *type)
 void
 tlb_term(Trun *r)
 {
+  if (loch_text(r)->keys)
+    free(loch_text(r)->keys);
+#if 0
   if ('c' == *r->l->type)
     list_free(loch_cbd(r).alocs, NULL);
   else
+#endif
     list_free(loch_xtf(r).tlocs, NULL);
-  if (loch_text(r)->keys)
-    free(loch_text(r)->keys);
 }
 
 void
@@ -95,11 +97,6 @@ tlb_W(Trun *r, const char *id, const char *lang, const char *form)
       loch_word(r)->word_lang = tlb_dup(lang);
       loch_word(r)->word_form = tlb_dup(form);
       loch_word(r)->l = loch_line(r);
-      loch_word(r)->w = r->rw;
-      /*r->rw->w = loch_word(r);*//* don't set this while doing tloc
-	processing, only in gsig building */
-      r->rs.in_c = r->rs.in_n = r->rs.in_p = r->rs.in_q = 0;
-      r->rs.no_d_index = 0;
     }
 }
 

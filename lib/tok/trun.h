@@ -4,23 +4,16 @@
 #include "loch.h"
 #include "gsig.h"
 
-/* state variables used during processing GDL input */
+/* state variables used during processing GDL input; note that
+   per-word state has to be in struct trun_word. */
 struct trun_gdl_state
 {
   const char *file;	/* current input file */
   int F_done;
   int andline_num;
-  int in_c;
-  int in_n;
-  int in_p;
-  int in_q;
   int in_w;
   int in_xcl;
-  int no_d_index;
   int printing;
-  struct gsig *curr_c_wgp;
-  char role;
-  const char *roletext;
   List *k;
 };
 
@@ -37,6 +30,14 @@ typedef struct trun_word
 		       multiple lemmata with COFs */
   int lpp_alloced;
   int lpp_used;
+  int no_d_index;
+  int wgp_c_index;
+  int in_c;
+  int in_n;
+  int in_p;
+  int in_q;
+  char role;
+  const char *roletext;
   Wloc *w;
 } Word;
 

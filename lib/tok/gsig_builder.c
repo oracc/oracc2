@@ -71,24 +71,24 @@ gsb_add(Trun *r,
 	sl = ('c' == lang[2] ? "pc" : "pe");
       gsb_strcpy(wgp->asltype, sl);
     }
-  if (r->rs.role)
+  if (r->rw->role)
     {
-      wgp->role = r->rs.role;
-      if (*r->rs.roletext)
-	wgp->roletype = *r->rs.roletext;
+      wgp->role = r->rw->role;
+      if (*r->rw->roletext)
+	wgp->roletype = *r->rw->roletext;
     }
-  if (r->rs.in_c)
+  if (r->rw->in_c)
     {
       if ('c' == type)
 	{
-	  r->rs.curr_c_wgp = wgp;
+	  r->rw->wgp_c_index = wgp->index;
 	  wgp->c_index = wgp->index;
 	}
       else
 	{
 	  wgp->type = 'c';
-	  wgp->c_index = r->rs.curr_c_wgp->c_index;
-	  if (1 == r->rs.in_c++)
+	  wgp->c_index = r->rw->wgp_c_index;
+	  if (1 == r->rw->in_c++)
 	    wgp->c_position = 'b';
 	  else
 	    wgp->c_position = 'm';
@@ -102,7 +102,7 @@ gsb_add(Trun *r,
   else
     wgp->type = 'u';
   if ('d' != wgp->role)
-    wgp->no_d_index = ++r->rs.no_d_index;
+    wgp->no_d_index = ++r->rw->no_d_index;
   if (form && *form)
     gsb_strcpy(wgp->form, form);
 }
@@ -171,10 +171,15 @@ gsb_last(Trun *r)
       if (wgp)
 	{
 	  wgp->last = 1;
-	  if ((w->gpp_used-1) != r->rs.no_d_index && r->rs.no_d_index >= 0)
+	  if (w->no_d_index > 0 && w->no_d_index < lastindex)
 	    {
-	      wgp = gsb_get_n(w, r->rs.no_d_index-1);
-	      wgp->no_d_last = 1;
+	      wgp = gsb_get_n(w, w->no_d_index-1);
+	      if (wgp)
+		wgp->no_d_last = 1;
+	      else
+		fprintf(stderr,
+			"lib/gsig_builder/gsb_last: no_d_index=%d is out of bounds at %s\n",
+			w->no_d_index, loch_word(r)->word_id);
 	    }
 	  else
 	    wgp->no_d_last = 1;

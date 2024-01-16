@@ -2,6 +2,8 @@
 #include <runexpat.h>
 #include <tok.h>
 
+/* P229326.10.3 */
+
 void
 tok_g_sH(void *userData, const char *name, const char **atts)
 {
@@ -15,14 +17,18 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	    {
 	    case 'w':
 	      (void)trun_word_init(r);
+	      /* By design rs.in_w is incremented/decremented after
+		 calls to trun_word_init/trun_word_term */
 	      ++r->rs.in_w;
+	      /* r->rw->w holds state for words so we need to update
+		 the reciprocal pointers after init */
 	      break;
 	    case 'd':
-	      r->rs.role = 'd';
-	      r->rs.roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), r->p);
+	      r->rw->role = 'd';
+	      r->rw->roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), r->p);
 	      break;
 	    case 'n':
-	      r->rs.in_n = 1;
+	      r->rw->in_n = 1;
 	      gsb_add(r,
 		      name[2],
 		      findAttr(atts, "form"),
@@ -43,7 +49,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
 	      gsb_punct(r->rw, findAttr(atts, "g:type"));
-	      r->rs.in_p = 1;
+	      r->rw->in_p = 1;
 	      break;
 	    case 'q':
 	      gsb_add(r,
@@ -55,10 +61,10 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "spform"),
 		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
-	      r->rs.in_q = 1;
+	      r->rw->in_q = 1;
 	      break;
 	    case 'c':
-	      r->rs.in_c = 1;
+	      r->rw->in_c = 1;
 	      gsb_add(r,
 		      name[2],
 		      findAttr(atts, "form"),
@@ -70,7 +76,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 's':
 	    case 'v':
-	      if (!r->rs.in_n && !r->rs.in_p && !r->rs.in_q)
+	      if (!r->rw->in_n && !r->rw->in_p && !r->rw->in_q)
 		gsb_add(r,
 			name[2],
 			NULL,
@@ -96,6 +102,14 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	    }
 	}
     }
+  else if ('n' == *name)
+    {
+      if (!strcmp(name, "n:w"))
+	{
+	  trun_word_init(r);
+	  ++r->rs.in_w;
+	}
+    }
 }
 
 void
@@ -116,29 +130,29 @@ tok_g_eH(void *userData, const char *name)
 	      --r->rs.in_w;
 	      break;
 	    case 'c':
-	      r->rs.in_c = 0;
+	      r->rw->in_c = 0;
 	      gsb_c_last(r->rw);
-	      r->rs.curr_c_wgp = NULL;
+	      r->rw->wgp_c_index = -1;
 	      break;
 	    case 'd':
-	      r->rs.role = '\0';
-	      r->rs.roletext = "";
+	      r->rw->role = '\0';
+	      r->rw->roletext = "";
 	      break;
 	    case 'n':
-	      r->rs.in_n = 0;
+	      r->rw->in_n = 0;
 	      break;
 	    case 'p':
-	      r->rs.in_p = 0;
+	      r->rw->in_p = 0;
 	      break;
 	    case 'q':
-	      r->rs.in_q = 0;
+	      r->rw->in_q = 0;
 	      break;
 	    case 's':
-	      if (!r->rs.in_n && !r->rs.in_q)
+	      if (!r->rw->in_n && !r->rw->in_q)
 		gsb_sign(r, charData_retrieve());
 	      break;
 	    case 'v':
-	      if (!r->rs.in_n && !r->rs.in_q)
+	      if (!r->rw->in_n && !r->rw->in_q)
 		gsb_value(r, charData_retrieve());
 	      break;
 	    case 'b':
@@ -161,6 +175,16 @@ tok_g_eH(void *userData, const char *name)
 	  else
 	    (void)charData_retrieve();
 	}
+    }
+  else if ('n' == *name)
+    {
+      if (!strcmp(name, "n:w"))
+	{
+	  trun_word_reset(r);
+	  --r->rs.in_w;
+	}
+      else
+	(void)charData_retrieve();
     }
   else
     (void)charData_retrieve();

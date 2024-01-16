@@ -26,7 +26,7 @@ trun_term(Trun *r)
   memo_term(r->l_m);
   memo_term(r->w_m);
   hpool_term(r->p);
-  free(r->rw->gpp);
+  trun_word_term(r);
   free(r);
 }
 
@@ -49,6 +49,7 @@ trun_word_init(Trun *r)
   r->rw->gpp = calloc(r->rw->gpp_alloced, sizeof(Gsig));
   r->rw->gpp_used = 0;
   r->rw->w = loch_word(r);
+  loch_word(r)->w = r->rw;
   return r->rw;
 }
 
@@ -72,8 +73,16 @@ trun_word_reset(Trun *r)
 void
 trun_word_term(Trun *r)
 {
-  free(r->rw->gpp);
-  memset(&r->rw, '\0', sizeof(Word));
+  if (r->rw)
+    {
+      free(r->rw->gpp);
+      memset(r->rw, '\0', sizeof(Word));
+    }
+  /* This routine is called on </g:w> before r->rs.in_w is
+     decremented; we need to anticipate where r->r->rw should be after
+     that decrement. */
+  if (r->rs.in_w > 1)
+    --r->rw;
 }
 
 void
