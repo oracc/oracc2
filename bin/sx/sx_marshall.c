@@ -2,6 +2,7 @@
 #include <list.h>
 #include <collate.h>
 #include <oraccsys.h>
+#include <sll.h>
 #include <oid.h>
 #include <signlist.h>
 #include <sx.h>
@@ -387,13 +388,17 @@ sx_marshall(struct sl_signlist *sl)
 		}
 	      if (!sl->signs[i]->oid)
 		{
-		  /* Signs that use @smap still need an OID for the parent sign */
-		  if (sl->signs[i]->inst->valid && sl->signs[i]->type != sx_tle_lref
-		      && sl->signs[i]->type != sx_tle_sref /*&& !sl->signs[i]->smap*/)
+		  if (!parent_sl
+		      || !(sl->signs[i]->oid = (ccp)hash_find(parent_sl, sl->signs[i]->name)))
 		    {
-		      mesg_verr(&sl->signs[i]->inst->mloc, "OID needed:\nsl\t%s\tsign\t\t",
-				sl->signs[i]->name);
-		      hash_add(oid_warned, sl->signs[i]->name, "");
+		      /* Signs that use @smap still need an OID for the parent sign */
+		      if (sl->signs[i]->inst->valid && sl->signs[i]->type != sx_tle_lref
+			  && sl->signs[i]->type != sx_tle_sref /*&& !sl->signs[i]->smap*/)
+			{
+			  mesg_verr(&sl->signs[i]->inst->mloc, "OID needed:\nsl\t%s\tsign\t\t",
+				    sl->signs[i]->name);
+			  hash_add(oid_warned, sl->signs[i]->name, "");
+			}
 		    }
 		}
 	      else if (sl->signs[i]->U.uhex)
@@ -438,6 +443,10 @@ sx_marshall(struct sl_signlist *sl)
 		if ((sl->forms[i]->oid = hash_find(oids, a->s)))
 		  break;
 	    }
+	  
+	  if (!sl->forms[i]->oid && parent_sl)
+	    sl->forms[i]->oid = (ccp)hash_find(parent_sl, sl->forms[i]->name);
+
 	  if (sl->forms[i]->oid)
 	    {
 	      if (sl->forms[i]->sign->xref)

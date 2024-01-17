@@ -18,6 +18,8 @@
 
 Mloc *xo_loc;
 FILE *f_xml;
+Hash *parent_sl = NULL;
+const char *parent_sl_project = NULL;
 
 const char *file;
 int quiet, verbose;
@@ -69,9 +71,17 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:ijJ:m:nMoOsStTuxX:?");
+  options(argc, argv, "abcCD:d:ijJ:m:nMoOp:sStTuxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
+  if (parent_sl_project)
+    {
+      if (trace_mode)
+	sll_trace = 1;
+      if (!(parent_sl = sll_init_t(parent_sl_project, "sl")))
+	exit(1);
+    }
+  
   if (boot_mode)
     {
       sll_output = 1;
@@ -284,6 +294,9 @@ opts(int opt, char *arg)
       break;
     case 'o':
       ++oid_list;
+      break;
+    case 'p':
+      parent_sl_project = arg;
       break;
     case 'q':
       quiet = 1;

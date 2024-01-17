@@ -40,6 +40,9 @@ struct sx_functions
     const char *fname;
   };
 
+extern Hash *parent_sl;
+extern const char *parent_sl_project;
+
 extern int identity_mode, listdef_check;
 extern int oid_list, oid_tab;
 extern Hash *oids;

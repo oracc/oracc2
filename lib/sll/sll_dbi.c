@@ -25,6 +25,7 @@ sll_init_d(const char *project, const char *name)
   if (!project)
     project = "ogsl";
 
+  /* Not actually used any more because name is always "sl" */
   if (!name)
     name = "sl";
 
