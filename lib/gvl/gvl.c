@@ -470,10 +470,12 @@ gvl_valuqual(Node *vqnp)
 	    {
 	      gvl_g *vp = vqnp->kids->user;
 	      gvl_g *qp = vqnp->kids->next->user;
-	      ucp*v = vp->c10e ? vp->c10e : vp->orig;
+	      uccp v = vp->c10e ? vp->c10e : vp->orig;
 	      char fvp[strlen((ccp)v) + 10];
 	      sprintf(fvp,"%s:%s",qp->oid,v);
 	      ((gvl_g*)(vqnp->user))->sp_oid = (ccp)sll_lookup(sll_tmp_key((ucp)fvp, "fvp"));
+	      if (!*((gvl_g*)vqnp->user)->oid)
+		((gvl_g*)vqnp->user)->oid = qp->oid;
 	    }
 	}
       
