@@ -28,8 +28,12 @@ tloc_xtf_sH(void *userData, const char *name, const char **atts)
     }
   else if (!strcmp(name, "g:w") || !strcmp(name, "g:nonw"))
     {
-      tlb_W(r, get_xml_id(atts), get_xml_lang(atts), findAttr(atts, "form"));
-      tlw_W(r);
+      const char *id = get_xml_id(atts);
+      if (id && *id && strncmp(id, "gdl.", 4))
+	{
+	  tlb_W(r, id, get_xml_lang(atts), findAttr(atts, "form"));
+	  tlw_W(r);
+	}
     }
   else if (!strcmp(name, "xcl"))
     r->rs.in_xcl = 1;

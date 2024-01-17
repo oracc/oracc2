@@ -13,6 +13,7 @@ struct trun_gdl_state
   int andline_num;
   int in_w;
   int in_xcl;
+  int note_skip;
   int printing;
   List *k;
 };

@@ -2,16 +2,42 @@
 #include <runexpat.h>
 #include <tok.h>
 
-/* P229326.10.3 */
+/* P229326.10.3 P229947.32.2.d */
+
+/* For a number form to be a legal value it has to have a lower case
+   vowel: this is a simple check but it is probably adequate, at least
+   for the range of values in OGSL */
+static int
+n_value_ok(const char *form)
+{
+  while (*form)
+    switch (*form)
+      {
+      case 'a':
+      case 'e':
+      case 'i':
+      case 'u':
+	return 1;
+      case '@':
+      case '~':
+	return 0;
+      default:
+	++form;
+      }
+  return 0;
+}
 
 void
 tok_g_sH(void *userData, const char *name, const char **atts)
 {
   Trun *r = userData;
   
+  if (r->rs.note_skip)
+    return;
+  
   if ('g' == name[0] && ':' == name[1])
     {
-      if (!name[3])
+      if (!name[3]) /* P282496.56.2 X110014.5.6 */
 	{
 	  switch (name[2])
 	    {
@@ -29,15 +55,19 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 'n':
 	      r->rw->in_n = 1;
-	      gsb_add(r,
-		      name[2],
-		      findAttr(atts, "form"),
-		      findAttr(atts, "oid"),
-		      findAttr(atts, "g:sign"),
-		      NULL, NULL,
-		      r->rw->w->word_lang,
-		      findAttr(atts, "g:logolang"));
-	      gsb_value(r, findAttr(atts, "form"));
+	      {
+		const char *form = findAttr(atts, "form");
+		gsb_add(r,
+			name[2],
+			form,
+			findAttr(atts, "oid"),
+			findAttr(atts, "g:sign"),
+			NULL, NULL,
+			r->rw->w->word_lang,
+			findAttr(atts, "g:logolang"));
+		if (n_value_ok(form))
+		  gsb_value(r, form);
+	      }
 	      break;
 	    case 'p':
 	      gsb_add(r,
@@ -109,6 +139,8 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	  trun_word_init(r);
 	  ++r->rs.in_w;
 	}
+      else if (!strcmp(name, "note:text"))
+	r->rs.note_skip = 1;
     }
 }
 
@@ -117,6 +149,14 @@ tok_g_eH(void *userData, const char *name)
 {
   Trun *r = userData;
 
+  if (r->rs.note_skip)
+    {
+      if (!strcmp(name, "note:text"))
+	r->rs.note_skip = 0;
+      (void)charData_retrieve();
+      return;
+    }
+  
   if ('g' == name[0] && ':' == name[1])
     {
       if (!name[3])
@@ -150,13 +190,20 @@ tok_g_eH(void *userData, const char *name)
 	    case 's':
 	      if (!r->rw->in_n && !r->rw->in_q)
 		gsb_sign(r, charData_retrieve());
+	      else
+		(void)charData_retrieve();
 	      break;
 	    case 'v':
-	      if (!r->rw->in_n && !r->rw->in_q)
+	      if (!r->rw->in_n/* && !r->rw->in_q*/)
 		gsb_value(r, charData_retrieve());
+	      else
+		(void)charData_retrieve();
 	      break;
 	    case 'b':
+	    case 'm':
 	    case 'r':
+	    case 'x':
+	      (void)charData_retrieve();
 	      break;
 	    default:
 	      (void)charData_retrieve();
@@ -172,8 +219,7 @@ tok_g_eH(void *userData, const char *name)
 	      trun_word_reset(r);
 	      --r->rs.in_w;
 	    }
-	  else
-	    (void)charData_retrieve();
+	  (void)charData_retrieve();
 	}
     }
   else if ('n' == *name)

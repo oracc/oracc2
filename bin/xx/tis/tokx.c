@@ -246,4 +246,3 @@ int opts(int arg,char*str)
     }
   return 0;
 }
-
