@@ -1,4 +1,4 @@
-.SUFFIXES
+.SUFFIXES:
 
 MK=${ORACC_BUILDS}/lib/data/mcu-lemm.mk
 

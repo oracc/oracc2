@@ -75,7 +75,8 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "g:type"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
-		      NULL, NULL,
+		      findAttr(atts, "spoid"),
+		      findAttr(atts, "spform"),
 		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
 	      gsb_punct(r->rw, findAttr(atts, "g:type"));

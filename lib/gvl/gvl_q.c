@@ -317,8 +317,12 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
   else
     {
       unsigned char *tmp2 = malloc(strlen((ccp)vp->orig) + strlen((ccp)qp->sign) + 3);
-      sprintf((char*)tmp2, "%s(%s)", vp->orig, qp->sign);
-	  
+
+      if ('p' == *vp->type && '*' == *vp->orig)
+	sprintf((char*)tmp2, "%s(%s)", "diš", qp->sign);
+      else
+	sprintf((char*)tmp2, "%s(%s)", vp->orig, qp->sign);
+      
       /* tmp2 is now a vq with valid v and q components */
       if (gvl_lookup(sll_tmp_key(tmp2,"qv")))
 	{

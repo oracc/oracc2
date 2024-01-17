@@ -52,7 +52,7 @@ gsb_add(Trun *r,
       wgp->role = 'w'; 	/* may be reset later */
       wgp->roletype = 'n'; 	/* ditto */
     }
-  if (spoid)
+  if (spoid && *spoid)
     {
       gsb_strcpy(wgp->soid, spoid);
       gsb_strcpy(wgp->sname, spsign);
