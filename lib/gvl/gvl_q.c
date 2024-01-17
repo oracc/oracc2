@@ -483,10 +483,17 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 			     qualified then the qualifier takes
 			     precedence.  No error here because it's
 			     allowable for v and q to be different
-			     signs */
+			     signs.
+
+			     Update 2024-01-17: the qualifier on DIŠ
+			     must resolve to an @form of DIŠ in the
+			     same way as a qualifier on :
+			   */
+#if 0
 			  if ('*' != *vp->orig)
-			    vq->mess = gvl_vmess("[vq] %s(%s): mismatched punctuation qualifier",
-						 vp->orig, qp->orig);
+#endif
+			    vq->mess = gvl_vmess("[vq] %s(%s): bad punctuation [add @form %s to @sign %s ?]",
+						 vp->orig, qp->orig, qp->sign, vp->sign);
 			}
 		      else if ('n' == *vp->type)
 			{
