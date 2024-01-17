@@ -43,7 +43,7 @@ struct sx_functions
 extern Hash *parent_sl;
 extern const char *parent_sl_project;
 
-extern int identity_mode, listdef_check;
+extern int extra_needs, identity_mode, listdef_check;
 extern int oid_list, oid_tab;
 extern Hash *oids;
 extern Hash *oid_sort_keys;
@@ -88,5 +88,10 @@ extern struct sx_functions *sx_sll_init(FILE *fp, const char *fname);
 extern void sx_s_sll(FILE *f, struct sl_signlist *sl);
 extern void sx_oid_list(struct sl_signlist *sl);
 extern void sx_oid_tab(struct sl_signlist *sl);
+
+extern void sxx_init(void);
+extern void sxx_compound(unsigned const char *c);
+extern void sxx_sign(unsigned const char *s);
+extern void sxx_output(FILE *fp);
 
 #endif/*SX_H_*/

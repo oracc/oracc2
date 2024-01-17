@@ -18,6 +18,7 @@
 
 Mloc *xo_loc;
 FILE *f_xml;
+
 Hash *parent_sl = NULL;
 const char *parent_sl_project = NULL;
 
@@ -30,6 +31,7 @@ int status = 0; /* for rnc; should be in library there */
 int akas_dump = 0;
 int asl_output = 0;
 int dump_stdout = 0;
+int extra_needs = 0;
 int identity_mode = 0;
 int images_dump = 0;
 int jsn_output = 0;
@@ -71,7 +73,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:ijJ:m:nMoOp:sStTuxX:?");
+  options(argc, argv, "abcCD:d:eijJ:m:nMoOp:sStTuxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -234,6 +236,10 @@ main(int argc, char * const*argv)
   gdl_term();
   asl_term();
   asl_bld_term(sl);
+
+  if (extra_needs)
+    sxx_output(stdout);
+  
   mesg_print(stderr);
   return mesg_status();
 }
@@ -269,6 +275,10 @@ opts(int opt, char *arg)
 	syss_dump = 1;
       if (!akas_dump && !list_dump && !images_dump && !syss_dump)
 	fprintf(stderr, "sx: the -d option must contain any or all of 'aka,list,image,sys'\n");
+      break;
+    case 'e':
+      sxx_init();
+      extra_needs = 1;
       break;
     case 'i':
       asl_output = identity_mode = 1;
