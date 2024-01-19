@@ -38,10 +38,20 @@ gsb_status(Trun *r, const char *pres, const char *edit, const char *flag)
 {
   Gsig *wgp = gsb_get_n(r->rw, r->rw->gpp_used-1);
   struct tokflags *tfp;
-  tfp = tokflags(pres,strlen(pres));
-  wgp->preserved = *tfp->attr;
-  tfp = tokflags(pres,strlen(pres));
-  wgp->editorial = *tfp->attr;
+  if (*pres)
+    {
+      tfp = tokflags(pres,strlen(pres));
+      wgp->preserved = *tfp->attr;
+    }
+  else
+    wgp->preserved = '+';
+  if (*edit)
+    {
+      tfp = tokflags(edit,strlen(edit));
+      wgp->editorial = *tfp->attr;
+    }
+  else
+    wgp->editorial = 'k';
   gsb_strcpy(wgp->flags, flag);
 }
 

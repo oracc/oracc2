@@ -149,6 +149,9 @@ sx_s_sign(FILE *f, struct sl_sign *s)
       
       if (s->aka)
 	sx_s_aka(f, s->oid, s->aka);
+
+      if (s->deep)
+	fprintf(f, "%s;d\t%s\n", curr_oid, s->deep);
     }
 
   /* this is for both sign and form_as_sign where the sign wrapper
@@ -170,6 +173,9 @@ sx_s_form(FILE *f, struct sl_form *s)
 
       if (s->aka)
 	sx_s_aka(f, s->oid, s->aka);
+
+      if (s->deep)
+	fprintf(f, "%s;d\t%s\n", curr_oid, s->deep);
     }
   if (s->nowners)
     {

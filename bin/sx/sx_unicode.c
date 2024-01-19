@@ -7,10 +7,14 @@
 static Hash *ucode;
 static Hash *unames;
 static Hash *uneeds;
+static Hash *uoids;
 static Hash *urem;
 static Hash *useqs;
 static Hash *usigns;
 static Hash *utf8s;
+
+static const char *last_deep;
+static const char *last_uoid;
 
 static const char *sx_unicode_rx_mangle(struct sl_signlist *sl, const char *g, int *multi);
 static const char *sx_unicode_useq(const char *m, Pool *p);
@@ -29,12 +33,12 @@ void
 sx_unicode(struct sl_signlist *sl)
 {
   ucode = hash_create(1024);
-  urem = hash_create(10);
-  uneeds = hash_create(512);
-
-  usigns = hash_create(1024);
   unames = hash_create(1024);
+  uneeds = hash_create(512);
+  uoids = hash_create(1024);
+  urem = hash_create(10);
   useqs = hash_create(512);
+  usigns = hash_create(1024);
   utf8s = hash_create(512);
   
   /* Index the signs that have unames -- those are encoded so we treat
@@ -50,6 +54,7 @@ sx_unicode(struct sl_signlist *sl)
 	      if (Up->uhex)
 		{
 		  hash_add(usigns, sl->signs[i]->name, (ucp)Up->uhex);
+		  hash_add(uoids, (uccp)Up->uhex, (void*)sl->signs[i]->oid);
 		  hash_add(unames, (uccp)Up->uhex, (ucp)Up->uname);
 		  if (hash_find(ucode, (uccp)Up->uhex))
 		    mesg_verr(&sl->signs[i]->inst->mloc, "uhex %s used with more than one sign\n", Up->uhex);
@@ -63,11 +68,14 @@ sx_unicode(struct sl_signlist *sl)
 	  else if (Up->uhex)
 	    {
 	      mesg_verr(&sl->signs[i]->inst->mloc, "sign %s has uhex %s but no uname\n", sl->signs[i]->name, Up->uhex);
-	      hash_add(usigns, sl->signs[i]->name, (ucp)Up->uhex);
 	      if (hash_find(ucode, (uccp)Up->uhex))
 		mesg_verr(&sl->signs[i]->inst->mloc, "uhex %s used with more than one sign\n", Up->uhex);
 	      else
-		hash_add(ucode, (uccp)Up->uhex, (ucp)sl->signs[i]->name);
+		{
+		  hash_add(usigns, sl->signs[i]->name, (ucp)Up->uhex);
+		  hash_add(ucode, (uccp)Up->uhex, (ucp)sl->signs[i]->name);
+		  hash_add(uoids, (uccp)Up->uhex, (void*)sl->signs[i]->oid);
+		}
 	    }
 	  else
 	    hash_add(usigns, sl->signs[i]->name, "X"); /* Add components that aren't in Unicode yet as X */
@@ -136,6 +144,8 @@ sx_unicode(struct sl_signlist *sl)
 	{
 	  unsigned const char *name = ip->type == 's' ? ip->u.s->name : ip->u.f->name;
 	  struct sl_unicode *Up = ip->type == 's' ? &ip->u.s->U : &ip->u.f->U;
+	  last_uoid = NULL;
+	  last_deep = NULL;
 	  if (!Up->uhex)
 	    {
 	      int multi = 0;
@@ -163,6 +173,8 @@ sx_unicode(struct sl_signlist *sl)
 		  if (ml)
 		    {
 		      List *bits = list_create(LIST_SINGLE);
+		      List *bitoids = list_create(LIST_SINGLE);
+
 		      struct pcre2if_m *mp;
 		      int sofar = 0;
 		      if (trace_mangling)
@@ -173,10 +185,12 @@ sx_unicode(struct sl_signlist *sl)
 			  if (mp->off > sofar)
 			    {
 			      list_add(bits, (void*)sx_unicode_useq_r(m, sofar, mp->off, sl->p));
+			      list_add(bitoids, (void*)(last_uoid ? last_uoid : "x"));
 			      sofar = mp->off;
 			    }
 			  /* then add the material belonging to the match */
 			  list_add(bits, (void*)sx_unicode_useq_m(m, mp, sl->p));
+			  list_add(bitoids, (void*)(last_uoid ? last_uoid : "x"));
 			  /* mp->off + mp->len is the character after
 			     the match so we need to back up by 1 so
 			     we include the final sentinel of the
@@ -186,10 +200,14 @@ sx_unicode(struct sl_signlist *sl)
 			}
 		      /* add anything that follows the last match but -1 for the final sentinel */
 		      if (sofar < (strlen(m)-1))
-			list_add(bits, (void*)sx_unicode_useq_r(m, sofar, strlen(m), sl->p));
+			{
+			  list_add(bits, (void*)sx_unicode_useq_r(m, sofar, strlen(m), sl->p));
+			  list_add(bitoids, (void*)(last_uoid ? last_uoid : "x"));
+			}
 		      const char *useq = (ccp)list_join(bits, ".");
+		      last_deep = (ccp)list_join(bitoids, ".");
 		      if (trace_mangling)
-			fprintf(stderr, "sx_unicode: %s => (via bits) %s => useq %s\n", name, m, useq);
+			fprintf(stderr, "sx_unicode: %s => (via bits) %s => useq %s => deep %s\n", name, m, useq, last_deep);
 		      if (Up->useq)
 			{
 			  if (strcmp(Up->useq, useq))
@@ -212,7 +230,7 @@ sx_unicode(struct sl_signlist *sl)
 		    {
 		      const char *useq = sx_unicode_useq(m, sl->p);
 		      if (trace_mangling)
-			fprintf(stderr, "sx_unicode: %s => %s => useq %s\n", name, m, useq);
+			fprintf(stderr, "sx_unicode: %s => %s => useq %s => deep %s\n", name, m, useq, last_deep);
 		      if (Up->useq)
 			{
 			  if (strcmp(Up->useq, useq))
@@ -240,6 +258,13 @@ sx_unicode(struct sl_signlist *sl)
 		    fprintf(stderr, "sx_unicode: %s is a singleton not in Unicode\n", name);
 		  hash_add(uneeds, name, "");
 		}
+	    }
+	  if (last_deep)
+	    {
+	      if (ip->type == 's')
+		ip->u.s->deep = (ccp)pool_copy((uccp)last_deep, sl->p);
+	      else
+		ip->u.f->deep = (ccp)pool_copy((uccp)last_deep, sl->p);
 	    }
 	}
     }
@@ -365,6 +390,7 @@ sx_unicode_useq(const char *m, Pool *p)
   unsigned char *m2 = (ucp)strdup(m), *s;
   unsigned char save = '\0';
   char *u = NULL;
+  List *uoidl = list_create(LIST_SINGLE);
   int nseg = 0;
   for (s = m2; *s; ++s)
     if ('#' == *s)
@@ -398,6 +424,7 @@ sx_unicode_useq(const char *m, Pool *p)
       if (!strcmp((ccp)s, "#X#"))
 	{
 	  x = (uccp)"O";
+	  list_add(uoidl, (void*)x);
 	}
       else
 	{
@@ -406,11 +433,17 @@ sx_unicode_useq(const char *m, Pool *p)
 	    {
 	      fprintf(stderr, "sx_unicode: element %s not found in usigns while processing mangled %s\n", s, m);
 	      x = (uccp)"X";
+	      list_add(uoidl, (void*)x);
 	    }
 	  else
 	    {
 	      if (trace_mangling)
 		fprintf(stderr, "sx_unicode: element %s => %s\n", s, x);
+	      const char *u = hash_find(uoids, x);
+	      if (u)
+		list_add(uoidl, (void*)u);
+	      else
+		list_add(uoidl, "x");
 	    }
 	}
       /* append x to u */
@@ -445,6 +478,8 @@ sx_unicode_useq(const char *m, Pool *p)
       s = &e[-1];
     }
   free(m2);
+  last_deep = (ccp)list_join(uoidl, ".");
+  list_free(uoidl, NULL);
   return u;
 }
 
@@ -478,6 +513,7 @@ sx_unicode_useq_r(const char *m, int from, int to, Pool *p)
   if ((res = hash_find(usigns, (uccp)tmp)) && strcmp(res, "X"))
     {
       /* we have, e.g., U+12301 -- return x12301 */
+      last_uoid = hash_find(uoids, (void*)res);
       res = (char*)pool_copy((uccp)res+1, p);
       *res = 'x';
     }

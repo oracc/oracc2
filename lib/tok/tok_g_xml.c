@@ -48,7 +48,7 @@ gdlflags(const char **atts)
       const char *attr = findAttr(atts, gfp[i]);
       if (*attr)
 	{
-	  struct tokflags *p = tokflags(attr, strlen(gfp[i]));
+	  struct tokflags *p = tokflags(gfp[i], strlen(gfp[i]));
 	  retflags[i] = *p->attr ? *p->attr : *attr;
 	}
       else

@@ -326,6 +326,7 @@ struct sl_sign
 				   use sign->xref->form->owners which
 				   should also be sorted before
 				   output */
+  const char *deep;		/* deep sig generated via unicode_seq */
   Boolean fake;
   enum sx_tle type;
 #if 0
@@ -351,6 +352,7 @@ struct sl_form
   int sort;
   const char *oid;
   struct sl_unicode U;
+  const char *deep;		/* deep sig generated via unicode_seq */
   Boolean compoundonly;
 };
 
