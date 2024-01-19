@@ -2,6 +2,7 @@
 extern Gsig *gsb_new(Trun *r);
 extern Gsig *gsb_get(Word *w);
 extern Gsig *gsb_get_n(Word *w, int n);
+extern void gsb_status(Trun *r, const char *pres, const char *edit, const char *flag);
 extern void gsb_add(Trun *r, char type, const char *form, const char *oid, const char *sign, const char *spoid, const char *spsign, const char *lang, const char *logolang);
 extern void gsb_set_positions(Word *w);
 extern void gsb_last(Trun *r);
@@ -50,6 +51,8 @@ extern void tlw_G(Trun *r, const char *lang);
 extern void tlw_A(Trun *r, const char *oid, const char *n);
 /* tloc_xtf.c */
 extern void tloc_xtf_sH(void *userData, const char *name, const char **atts);
+/* tokflags.c */
+extern struct tokflags *tokflags(register const char *str, register size_t len);
 /* tok_g_xml.c */
 extern void tok_g_sH(void *userData, const char *name, const char **atts);
 extern void tok_g_eH(void *userData, const char *name);

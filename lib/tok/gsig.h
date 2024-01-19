@@ -23,11 +23,11 @@ typedef struct gsig
 			   i(ndependent) b(eginning) m(iddle) e(nd)
 			   u(ndetermined) */
   char preserved;	/* + = whole; . = half-brackets; - = square brackets */
-  char editorial;	/* + = present; e = excised; i = implied; m = maybe (TODO: GDL erased and some) */
-  char flags;		/* + = none; ! * ? = as ATF ; 1 2 3 4 = as user flags */
-  const char *sig;	/* The rendered sig, NULL for XTF data but used when reading .tok data */
-  const char *coresig;  /* Just the SIGN-FORM-VALUE part of ths sig */
-  const char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
+  char editorial;	/* n = normal; e = excised; i = implied; m = maybe; s = supplied; r = erased; v = some */
+  char* flags;		/* + = none; ! * ? = as ATF ; 1 2 3 4 = as user flags */
+  char *sig;	/* The rendered sig, NULL for XTF data but used when reading .tok data */
+  char *coresig;  /* Just the SIGN-FORM-VALUE part of ths sig */
+  char *project; 	/* project that owns the instance; xxx for instances that do no come from a text */
   char *asltype; 	/* pc pe sl */
   char *form;		/* g:X form, value, sign, compound etc. */
   char *lang;		/* primary language of word */

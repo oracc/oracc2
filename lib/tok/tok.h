@@ -10,4 +10,10 @@
 #undef pp
 #define pp(p) ((p)?(p):"")
 
+struct tokflags
+{
+  const char *name;
+  const char *attr;
+};
+
 #endif/*TOK_H_*/

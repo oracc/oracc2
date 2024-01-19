@@ -27,6 +27,47 @@ n_value_ok(const char *form)
   return 0;
 }
 
+static char *
+gdlflags(const char **atts)
+{
+  const char *gfp[] =
+    {
+    "g:queried",
+    "g:remarked",
+    "g:collated",
+    "g:uflag1",
+    "g:uflag2",
+    "g:uflag3",
+    "g:uflag4",
+    NULL
+    };
+  static char retflags[8];
+  int i;
+  for (i = 0; gfp[i]; ++i)
+    {
+      const char *attr = findAttr(atts, gfp[i]);
+      if (*attr)
+	{
+	  struct tokflags *p = tokflags(attr, strlen(gfp[i]));
+	  retflags[i] = *p->attr ? *p->attr : *attr;
+	}
+      else
+	retflags[i] = '-';
+    }
+  retflags[7] = '\0';
+  return retflags;
+}
+
+static void
+tok_status(Trun *r, const char **atts)
+{
+  const char *flags = gdlflags(atts);
+  const char *pres = NULL;
+  if (!(pres = findAttr(atts, "g:break")))
+    pres = "present";
+  gsb_status(r, pres, findAttr(atts, "g:status"), flags);
+}
+
 void
 tok_g_sH(void *userData, const char *name, const char **atts)
 {
@@ -65,6 +106,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 			NULL, NULL,
 			r->rw->w->word_lang,
 			findAttr(atts, "g:logolang"));
+		tok_status(r, atts);
 		if (n_value_ok(form))
 		  gsb_value(r, form);
 	      }
@@ -79,6 +121,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "spform"),
 		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
+	      tok_status(r, atts);
 	      gsb_punct(r->rw, findAttr(atts, "g:type"));
 	      r->rw->in_p = 1;
 	      break;
@@ -92,6 +135,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "spform"),
 		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
+	      tok_status(r, atts);
 	      r->rw->in_q = 1;
 	      break;
 	    case 'c':
@@ -104,6 +148,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      NULL, NULL,
 		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
+	      tok_status(r, atts);
 	      break;
 	    case 's':
 	    case 'v':
@@ -116,6 +161,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 			NULL, NULL,
 			r->rw->w->word_lang,
 			findAttr(atts, "g:logolang"));
+	      tok_status(r, atts);
 	      break;
 	    case 'b':
 	    case 'r':

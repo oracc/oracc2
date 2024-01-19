@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include <tok.h>
 
+#define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,r->p)
+
 Gsig *
 gsb_new(Trun *r)
 {
@@ -32,16 +34,26 @@ gsb_get_n(Word *w, int n)
 }
 
 void
+gsb_status(Trun *r, const char *pres, const char *edit, const char *flag)
+{
+  Gsig *wgp = gsb_get_n(r->rw, r->rw->gpp_used-1);
+  struct tokflags *tfp;
+  tfp = tokflags(pres,strlen(pres));
+  wgp->preserved = *tfp->attr;
+  tfp = tokflags(pres,strlen(pres));
+  wgp->editorial = *tfp->attr;
+  gsb_strcpy(wgp->flags, flag);
+}
+
+void
 gsb_add(Trun *r,
 	char type, const char *form, const char *oid, const char *sign,
 	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
   Gsig *wgp = gsb_new(r);
-  wgp->project = loch_text(r)->text_project;
+  wgp->project = (char*)loch_text(r)->text_project;
   wgp->gdltype = type;
 
-#define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,r->p)
-  
   if ('p' == type)
     {
       wgp->role = 'p';

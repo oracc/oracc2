@@ -7,4 +7,5 @@ libtok_la_SOURCES= trun.c \
 	tloc_builder.c tloc_xtf.c tloc_writer.c \
 	tloc_cbd.c tloc_xtf.c tloc_tok.c \
 	tok_g_xml.c tok_l_xml.c tok_m_xml.c \
-	tok_writer.c mds_xmd.c
+	tok_writer.c mds_xmd.c tokflags.c
+
