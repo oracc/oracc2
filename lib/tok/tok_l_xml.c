@@ -5,6 +5,7 @@
 void
 tok_l_sH(void *userData, const char *name, const char **atts)
 {
+#if 0
   Trun *r = userData;
   
   if (!strcmp(name, "xcl"))
@@ -18,6 +19,7 @@ tok_l_sH(void *userData, const char *name, const char **atts)
 	fprintf(r->o, "l\t%s\t%s\t%s\t%s\n",
 		findAttr(atts, "ref"), sig, findAttr(atts, "exo_proj"), findAttr(atts, "exo_lang"));
     }
+#endif
 }
 
 void

@@ -73,7 +73,7 @@ main(int argc, char **argv)
   if (project)
     fprintf(o, "@project %s\n@signlist corpus\n\n", project);
 
-  while ((lp = fgets(l, 1024, i)))
+  while ((lp = loadoneline(i, NULL)))
     {
       ++lnum;
       lp[strlen(lp)-1] = '\0';

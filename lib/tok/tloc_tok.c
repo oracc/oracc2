@@ -55,6 +55,9 @@ tloc_tok_line(Trun *r, unsigned char *lp)
     case 'W':
       tlb_W(r, f[1], NULL, NULL); /* lang and form are not output on W so reading from .tok can't supply them */
       break;
+    case 'M':
+      tlb_M(r, f[1], f[2]);
+      break;
     default:
       fprintf(stderr, "tloc_tok: unhandled tok line '%s'\n", f[0]);
       break;

@@ -34,7 +34,7 @@ extern void tlb_P(Trun *r, const char *project);
 extern void tlb_Y(Trun *r, const char *rtype);
 extern void tlb_G(Trun *r, const char *glosslang);
 extern void tlb_A(Trun *r, const char *oid, const char *cgp);
-extern void tlb_M(Trun *r, const char *type, const char *wids, const char *oid, const char *name);
+extern void tlb_M(Trun *r, const char *id, const char *ref);
 /* tloc_cbd.c */
 extern void tloc_cbd_sH(void *userData, const char *name, const char **atts);
 /* tloc_tok.c */

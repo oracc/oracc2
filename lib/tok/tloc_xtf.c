@@ -37,5 +37,13 @@ tloc_xtf_sH(void *userData, const char *name, const char **atts)
     }
   else if (!strcmp(name, "xcl"))
     r->rs.in_xcl = 1;
+  else if (r->rs.in_xcl)
+    {
+      if (*name == 'c')
+	;
+      else if (*name == 'd')
+	;
+      else if (*name == 'l')
+	tlb_M(r, get_xml_id(atts), findAttr(atts, "ref"));
+    }
 }
-

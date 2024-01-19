@@ -150,10 +150,9 @@ tlb_A(Trun *r, const char *oid, const char *cgp)
   
 }
 
-/* P(hrase) tokens are for anything that is put in the
-   linkbase of an XTF file */
 void
-tlb_M(Trun *r, const char *type, const char *wids, const char *oid, const char *name)
+tlb_M(Trun *r, const char *id, const char *ref)
 {
+  
 }
 
