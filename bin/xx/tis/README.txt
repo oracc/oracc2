@@ -120,3 +120,55 @@ F	filename
 T	project text-id text-name
 L	line-number line-id line-label
 W	word-id
+
+SECONDARY TOKENS:
+=================
+
+Secondary tokens are expanded from the primary token list in a
+separate phase of processing and have the form:
+
+ PRIMARYTYPE.SECONDARYTYPE SECONDARYOID.KEY XDATA
+
+The primary ID and primary KEY are inherited from the last primary token.
+
+For secondary tokens combined using '-' the data for the secondary
+rolls up into the data for the primary.
+
+For secondary tokens combined using '.' the data for the secondary is
+a subset of the data for the primary.
+
+For grapheme tokens which have a tripartite signature, S.F.V,
+word-related secondary tokens from the GSIG are generated for S, S.F,
+and S.F.V.  Sign-related secondary tokens--compound constituents--are
+generated for either S or F but not both: if F is present, secondary
+token generation is determined only by F's status as a compound.
+
+For a compound sign |A.A| with OID o0000656 there is a token list entry:
+
+ g  	o0000656..	[GSIG]
+
+This has secondary tokens
+
+ g.c	o0000087-o0000656	A	[GSIG]
+ g.c	o0000087-o0000656	A	[GSIG]
+
+The SECONDARYOID is itself compound to provide the context for the secondary token.
+
+LEMMA TOKENS:
+=============
+
+Lemmata signatures have a WORD ID as the primary token
+
+ l	o0012345	LSIG
+
+The SENSE is a secondary token:
+
+ l.s	o0012345.o002342	CGSPE_SIG (CF[GW/SENSE]POS'EPOS)
+
+Secondary tokens from the signature are secondary to the SENSE token not to the WORD:
+
+ l.s.m	o0012345.o002342#m=~;a
+
+The secondary OID and KEY are combined and uniqueness is ensured by
+embedding the type into the string suffix of the OID.
+

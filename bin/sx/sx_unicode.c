@@ -13,8 +13,10 @@ static Hash *useqs;
 static Hash *usigns;
 static Hash *utf8s;
 
+#if 0
 static const char *last_deep;
 static const char *last_uoid;
+#endif
 
 static const char *sx_unicode_rx_mangle(struct sl_signlist *sl, const char *g, int *multi);
 static const char *sx_unicode_useq(const char *m, Pool *p);
@@ -144,8 +146,10 @@ sx_unicode(struct sl_signlist *sl)
 	{
 	  unsigned const char *name = ip->type == 's' ? ip->u.s->name : ip->u.f->name;
 	  struct sl_unicode *Up = ip->type == 's' ? &ip->u.s->U : &ip->u.f->U;
+#if 0
 	  last_uoid = NULL;
 	  last_deep = NULL;
+#endif
 	  if (!Up->uhex)
 	    {
 	      int multi = 0;
@@ -173,7 +177,9 @@ sx_unicode(struct sl_signlist *sl)
 		  if (ml)
 		    {
 		      List *bits = list_create(LIST_SINGLE);
+#if 0
 		      List *bitoids = list_create(LIST_SINGLE);
+#endif
 
 		      struct pcre2if_m *mp;
 		      int sofar = 0;
@@ -185,12 +191,16 @@ sx_unicode(struct sl_signlist *sl)
 			  if (mp->off > sofar)
 			    {
 			      list_add(bits, (void*)sx_unicode_useq_r(m, sofar, mp->off, sl->p));
+#if 0
 			      list_add(bitoids, (void*)(last_uoid ? last_uoid : "x"));
+#endif
 			      sofar = mp->off;
 			    }
 			  /* then add the material belonging to the match */
 			  list_add(bits, (void*)sx_unicode_useq_m(m, mp, sl->p));
+#if 0
 			  list_add(bitoids, (void*)(last_uoid ? last_uoid : "x"));
+#endif
 			  /* mp->off + mp->len is the character after
 			     the match so we need to back up by 1 so
 			     we include the final sentinel of the
@@ -202,12 +212,16 @@ sx_unicode(struct sl_signlist *sl)
 		      if (sofar < (strlen(m)-1))
 			{
 			  list_add(bits, (void*)sx_unicode_useq_r(m, sofar, strlen(m), sl->p));
+#if 0
 			  list_add(bitoids, (void*)(last_uoid ? last_uoid : "x"));
+#endif
 			}
 		      const char *useq = (ccp)list_join(bits, ".");
+#if 0
 		      last_deep = (ccp)list_join(bitoids, ".");
+#endif
 		      if (trace_mangling)
-			fprintf(stderr, "sx_unicode: %s => (via bits) %s => useq %s => deep %s\n", name, m, useq, last_deep);
+			fprintf(stderr, "sx_unicode: %s => (via bits) %s => useq %s\n", name, m, useq);
 		      if (Up->useq)
 			{
 			  if (strcmp(Up->useq, useq))
@@ -230,7 +244,7 @@ sx_unicode(struct sl_signlist *sl)
 		    {
 		      const char *useq = sx_unicode_useq(m, sl->p);
 		      if (trace_mangling)
-			fprintf(stderr, "sx_unicode: %s => %s => useq %s => deep %s\n", name, m, useq, last_deep);
+			fprintf(stderr, "sx_unicode: %s => %s => useq %s\n", name, m, useq);
 		      if (Up->useq)
 			{
 			  if (strcmp(Up->useq, useq))
@@ -259,6 +273,7 @@ sx_unicode(struct sl_signlist *sl)
 		  hash_add(uneeds, name, "");
 		}
 	    }
+#if 0
 	  if (last_deep)
 	    {
 	      if (ip->type == 's')
@@ -266,6 +281,7 @@ sx_unicode(struct sl_signlist *sl)
 	      else
 		ip->u.f->deep = (ccp)pool_copy((uccp)last_deep, sl->p);
 	    }
+#endif
 	}
     }
 
@@ -478,8 +494,10 @@ sx_unicode_useq(const char *m, Pool *p)
       s = &e[-1];
     }
   free(m2);
+#if 0
   last_deep = (ccp)list_join(uoidl, ".");
   list_free(uoidl, NULL);
+#endif
   return u;
 }
 
@@ -513,7 +531,9 @@ sx_unicode_useq_r(const char *m, int from, int to, Pool *p)
   if ((res = hash_find(usigns, (uccp)tmp)) && strcmp(res, "X"))
     {
       /* we have, e.g., U+12301 -- return x12301 */
+#if 0
       last_uoid = hash_find(uoids, (void*)res);
+#endif
       res = (char*)pool_copy((uccp)res+1, p);
       *res = 'x';
     }

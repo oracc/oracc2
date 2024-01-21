@@ -113,6 +113,7 @@ struct sl_token
   const char *gsig;		/* return value from gdlsig run on
 				   parsed GDL; NULL if the token was a
 				   literal l*/
+  const char *deep;		/* deep sig from gdlsig */
   int s;			/* sort code for token */
 };
 
@@ -415,7 +416,7 @@ extern void asl_bld_sign(Mloc *locp, struct sl_signlist *sl, const unsigned char
 extern void asl_bld_signlist(Mloc *locp, const unsigned char *n, int list);
 extern void asl_bld_sys(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
 extern void asl_bld_term(struct sl_signlist *);
-extern void asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal);
+extern struct sl_token* asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal);
 
 extern void asl_bld_uhex(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);
 extern void asl_bld_urev(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);

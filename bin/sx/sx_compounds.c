@@ -109,7 +109,7 @@ sx_compound_new_sign(struct sl_signlist *sl, const char *sgnname, const char *cp
   else
     {
       if (extra_needs)
-	sxx_compound(sgnname);
+	sxx_compound((uccp)sgnname);
       else
 	mesg_verr(&sl->curr_inst->mloc, "compound element %s should have @sign entry\n", sgnname);
     }
