@@ -114,8 +114,8 @@ gdlsig_sep(const char *sep)
       return ".";
       break;
     default:
-      if (*sep > 127)
-	return '*';
+      if ((unsigned char)(*sep) > 127)
+	return "*";
       else
 	return sep;
     }

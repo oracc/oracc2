@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <sll.h>
 #include <tok.h>
 
 /* P010590.13.1 P230105.12.1 */
@@ -76,7 +77,6 @@ main(int argc, char **argv)
   while ((lp = (char*)loadoneline(i, NULL)))
     {
       ++lnum;
-      lp[strlen(lp)-1] = '\0';
       if ('g' == *lp)
 	{
 	  char **ff = tab_split(lp);
@@ -123,12 +123,50 @@ main(int argc, char **argv)
       else if ('P' == *lp && !project)
 	{
 	  char *proj = strchr(lp, '\t');
-	  ++proj;
-	  fprintf(o, "@project %s\n@signlist corpus\n\n", proj);
+	  if (proj && proj[1])
+	    {
+	      ++proj;
+	      fprintf(o, "@project %s\n@signlist corpus\n\n", proj);
+	    }
+	  else
+	    {
+	      fprintf(stderr,
+		      "tok2asl: .tok file has no project in P line; use -p [PROJECT]. Stop.\n");
+		      exit(1);
+	    }
 	}
     }
+
   int i;
   char **sk = (char**)hash_keys(h);
+
+  Hash *conly = hash_create(128);
+  if (!strcmp(sl, "sl"))
+    {
+      (void)sll_init_t("ogsl", "sl");
+      for (i = 0; sk[i]; ++i)
+	{
+	  const char *o = (ccp)sll_lookup((uccp)sk[i]);
+	  if (o)
+	    {
+	      const char *d = (ccp)sll_lookup(sll_tmp_key((uccp)o, "d"));
+	      if (d)
+		{
+		  const char **dd = sll_deep_oids(d);
+		  int j;
+		  for (j = 0; dd[j]; ++j)
+		    {
+		      const char *n = (ccp)sll_lookup((uccp)dd[j]);
+		      if (n)
+			hash_add(conly, (ucp)n, "");
+		    }
+		  free((void*)dd[0]);
+		  free(dd);
+		}
+	    }
+	}
+    }
+
   for (i = 0; sk[i]; ++i)
     {
       fprintf(o, "@sign %s\n", sk[i]);
@@ -159,6 +197,10 @@ main(int argc, char **argv)
 	  }
       fprintf(o, "@end sign\n\n");
     }
+
+  const char **ck = hash_keys(conly);
+  for (i = 0; ck[i]; ++i)
+    fprintf(o, "@compoundonly %s\n", ck[i]);
 }
 
 const char *prog = "sig2asl";

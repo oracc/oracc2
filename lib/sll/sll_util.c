@@ -32,6 +32,24 @@ sll_term(void)
   sll_set_sl(NULL);
 }
 
+const char **
+sll_deep_oids(const char *deepsig)
+{
+  char *oids = strdup(deepsig);
+  const char **oo = malloc((((strlen(oids)+1)/strlen("o1234567."))+1) * sizeof(char *));
+  char *s;
+  int i;
+  for (i = 0, s = oids; *s; )
+    {
+      oo[i] = s++;
+      while (isdigit(*s))
+	++s;
+      if (*s)
+	*s++ = '\0';
+    }
+  return oo;
+}
+
 unsigned const char *
 sll_lookup(unsigned const char *key)
 {

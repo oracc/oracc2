@@ -224,7 +224,7 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
 	  gp->preserved = *s++;
 	  gp->editorial = *s++;
 	  gp->flags = s;
-	  while (!isspace(*s))
+	  while (*s && !isspace(*s))
 	    ++s;
 	  while (isspace(*s))
 	    ++s;

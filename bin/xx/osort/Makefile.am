@@ -5,5 +5,5 @@ osort_SOURCES=sort.c long-options.c xstrtod.c error.c \
 
 #getopt1.c
 
-osort_LDADD=../$(xLDADD)
-osort_DEPENDENCIES=../$(xLDADD)
+osort_LDADD=$(xLDADD)
+osort_DEPENDENCIES=$(xLDADD)

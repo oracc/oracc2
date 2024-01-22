@@ -77,4 +77,7 @@ extern struct sllext *sllext (register const char *str, register size_t len);
 extern unsigned const char *sll_ext_check(unsigned const char *k, enum sll_t t);
 extern List *sll_resolve(unsigned const char *g, const char *e, struct sllext *ep);
 
+extern const char **sll_deep_oids(const char *deepsig);
+
+
 #endif /*SLL_H_*/

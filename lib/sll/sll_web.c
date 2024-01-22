@@ -216,8 +216,10 @@ sll_esp_p(const char *oid, const char *sn, const char *v, const char *p)
 {
   const char *vx = (v ? "&#xa0;=&#xa0;" : "");
   const char *pspan = (p ? "<span class=\"ogsl-punct\">;</span>" : "");
-  char html[1024];  
+  char html[1024];
+#if 0
   const char *letter = (ccp)sll_lookup(sll_tmp_key((uccp)oid,"let"));
+#endif
   if (!v)
     v = "";
   (void)sprintf(html, "/%s/signlist/%s", wproject, oid);
