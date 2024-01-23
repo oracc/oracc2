@@ -35,6 +35,7 @@ struct sx_functions
     sx_notes_f *	not;
     sx_notes_f *	sys;
     sx_notes_f *	img;
+    sx_notes_f *	cpd;
     sx_unicode_f *	uni;
     FILE *fp;
     const char *fname;

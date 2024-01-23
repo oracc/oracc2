@@ -292,9 +292,9 @@ struct sl_sign
   Hash *hcompounds;	/* Compound data: sign S has hash of names of
 			   compounds C with hashvals consisting of
 			   struct sl_compound; two special items are
-			   hashed: '#digest_by_oid' and
-			   '#digest_by_name'; the hashvals for these
-			   are both sl_compound_digest */
+			   hashed: '#digest_by_oid' --and
+			   '#digest_by_name'--#digest_by_name not currently implemented;
+			   the hashvals for special items are struct sl_compound_digest * */
   struct sl_letter *letter;
   unsigned const char *group;
   struct sl_inst **lists;

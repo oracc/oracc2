@@ -25,6 +25,7 @@ static sx_value_f sx_w_jx_value;
 static sx_notes_f sx_w_jx_notes;
 static sx_notes_f sx_w_jx_syss;
 static sx_notes_f sx_w_jx_images;
+static sx_notes_f sx_w_jx_cpds;
 static sx_unicode_f sx_w_jx_unicode;
 
 struct sx_functions sx_w_jox_fncs;
@@ -44,6 +45,7 @@ sx_w_jox_init(void)
   sx_w_jox_fncs.not = sx_w_jx_notes;
   sx_w_jox_fncs.sys = sx_w_jx_syss;
   sx_w_jox_fncs.img = sx_w_jx_images;
+  sx_w_jox_fncs.cpd = sx_w_jx_cpds;
   sx_w_jox_fncs.uni = sx_w_jx_unicode;
   sx_w_jox_fncs.qvs = sx_w_jx_qvs;
   sx_w_jox_fncs.fp = NULL;
@@ -202,6 +204,55 @@ sx_w_jx_letter(struct sx_functions *f, struct sl_signlist *sl, struct sl_letter 
 	  in_letter = 0;
 	}
       joxer_ac();
+    }
+}
+
+static char *
+charstarstar_concat(const char **p)
+{
+  int len, i;
+  char *ret;
+  for (i = len = 0; p[i]; ++i)
+    len += strlen(p[i]) + 1;
+  ret = malloc(len+1);
+  *ret = '\0';
+  for (i = 0; p[i]; ++i)
+    {
+      strcat(ret, p[i]);
+      strcat(ret, " ");
+    }
+  ret[strlen(ret)-1] = '\0';
+  return ret;
+}
+
+static void
+sx_w_jx_cpd_elt(const char *name, const char **oids)
+{
+  if (oids)
+    {
+      char *s = charstarstar_concat(oids);
+      struct rnvval_atts *ratts = NULL;
+      ratts = rnvval_aa("x", "oids", s, NULL);
+      joxer_ec(NULL, name, ratts);
+    }
+}
+
+static void
+sx_w_jx_cpds(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
+{
+  struct sl_compound_digest *cdp = hash_find(ip->u.s->hcompounds, (uccp)"#digest_by_oid");
+  if (cdp)
+    {
+      joxer_ea(NULL, "sl:cpds", NULL);
+      joxer_ao("j:cpds");
+      sx_w_jx_cpd_elt("sl:memb", cdp->memb);
+      sx_w_jx_cpd_elt("sl:init", cdp->initial);
+      sx_w_jx_cpd_elt("sl:medl", cdp->medial);
+      sx_w_jx_cpd_elt("sl:finl", cdp->final);
+      sx_w_jx_cpd_elt("sl:ctnr", cdp->container);
+      sx_w_jx_cpd_elt("sl:ctnd", cdp->contained);
+      joxer_ac();
+      joxer_ee(NULL,"sl:cpds");
     }
 }
 

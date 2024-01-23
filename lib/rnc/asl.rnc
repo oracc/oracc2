@@ -77,6 +77,7 @@ sl.sign    =
     sl.v*,
     sl.sys*,
     sl.images?,
+    sl.cpds?,
     sl.form*,
     element sl:qs {
       element sl:q {
@@ -143,6 +144,17 @@ sl.iheader = element sl:iheader { attribute xml:id { xsd:NCName } ,
 sl.images = element sl:images {
             	    element sl:i { (attribute ref { xsd:NCName } , attribute loc { text })? }*
       	    }
+
+sl.stats = attribute icnt { xsd:decimal } , attribute ipct { xsd:decimal }
+
+sl.cpds = element sl:cpds {
+	  	  element sl:memb { attribute oids { xsd:IDREFS } , sl.stats? }?,
+		  element sl:init { attribute oids { xsd:IDREFS } , sl.stats? }?,
+		  element sl:medl { attribute oids { xsd:IDREFS } , sl.stats? }?,
+		  element sl:finl { attribute oids { xsd:IDREFS } , sl.stats? }?,
+		  element sl:ctnr { attribute oids { xsd:IDREFS } , sl.stats? }?,
+		  element sl:ctnd { attribute oids { xsd:IDREFS } , sl.stats? }?
+	}
 
 sl.smap    = element sl:smap { attribute oid { xsd:NCName } , text }
 
