@@ -25,27 +25,25 @@ static char **
 tis_gsig_split(char *s)
 {
   static char *sigs[4] = { NULL , NULL , NULL , NULL };
-
-  sigs[0] = strdup(s);
   
+  sigs[0] = strdup(s);
   char *dot = strchr(sigs[0], '.');
-  *dot++ = '\0';
-  if ('.' != *dot)
+  /* SIGN.. means we are done */
+  if ('.' != dot[1] || '\0' != dot[2])
     {
-      /* FORM is non-empty, can be SIGN.FORM. or SIGN.FORM.VALUE */
-      sigs[1] = strdup(s);
-      dot = strchr(sigs[1], '.');
-      *dot++ = '\0';
-      if (*dot)
-	sigs[2] = strdup(s);
+      strcpy(dot, ".."); /* set sigs[0] to SIGN.. */
+      sigs[1] = strdup(s); /* must be just SIGN.FORM. */
+      /* Is there a VALUE? */
+      dot = strrchr(sigs[1], '.');
+      if (dot[1]) /* yes */
+	{
+	  dot[1] = '\0'; /* set sigs[1] to SIGN.FORM. */
+	  sigs[2] = strdup(s);
+	}
+      /* else sigs[1] is already SIGN.FORM. */
     }
-  else
-    {
-      /* FORM is empty, can be SIGN.. or SIGN..VALUE */
-      ++dot;
-      if (*dot)
-	sigs[1] = strdup(s);
-    }
+  /* else sigs[0] is already SIGN.. */
+
   return sigs;
 }
 
