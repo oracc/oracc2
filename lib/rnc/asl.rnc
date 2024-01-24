@@ -63,6 +63,7 @@ sl.sign    =
     sl.smap?,
     attribute compoundonly { "yes"|"no" }?,
     attribute cpd-refs { xsd:IDREFS }?,
+    sl.stats?,
     sl.name?,
     sl.aka*,
     (sl.inote
@@ -98,6 +99,7 @@ sl.form	   = element sl:form {
       attribute xml:id { xsd:NCName }?,
       attribute compoundonly { "yes"|"no" }?,
       attribute cpd-refs { xsd:IDREFS }?,
+      sl.stats?,
       sl.name?,
       sl.aka*,
       (sl.proof
@@ -148,6 +150,7 @@ sl.images = element sl:images {
 sl.stats = attribute icnt { xsd:decimal } , attribute ipct { xsd:decimal }
 
 sl.cpds = element sl:cpds {
+	  	  sl.stats?,
 	  	  element sl:memb { attribute oids { xsd:IDREFS } , sl.stats? }?,
 		  element sl:init { attribute oids { xsd:IDREFS } , sl.stats? }?,
 		  element sl:medl { attribute oids { xsd:IDREFS } , sl.stats? }?,
@@ -225,6 +228,7 @@ sl.v =
     attribute type { xsd:NCName }?,
     attribute uncertain { xsd:NCName }?,
     attribute xml:lang { text }?,
+    sl.stats?,
     sl.name?,
     sl.proof?,
     (sl.inote | sl.lit | sl.note)*

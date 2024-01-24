@@ -58,6 +58,7 @@ struct sl_signlist
   Hash *values_by_oid;
   Hash *oidindexes;
   Hash *hletters;
+  Hash *h_idata;	/* Hash used by sx_idata */
   struct sl_token **tokens; /* sorted htoken */
   struct sl_sign  **signs;  /* sorted hsentry */
   int nsigns;
@@ -100,6 +101,7 @@ struct sl_signlist
   Memo *m_memostr;
   Memo *m_syss;
   Memo *m_links;
+  Memo *m_idata;
   Pool *p;
   Mloc mloc;
   Mloc eloc;
