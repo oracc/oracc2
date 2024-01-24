@@ -56,9 +56,6 @@ int check_mode = 0;
 int trace_mode = 0;
 extern int asl_flex_debug, gdl_flex_debug, gdl_unicode;
 
-char *idata_file = NULL;
-char *idata_type = NULL;
-
 const char *missing_lists = NULL;
 
 const char *jfn = NULL, *xfn = NULL;
@@ -76,7 +73,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eiI:jJ:m:nMoOp:sStTuxX:?");
+  options(argc, argv, "abcCD:d:eijJ:m:nMoOp:sStTuxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -132,9 +129,6 @@ main(int argc, char * const*argv)
 	}
 
       sx_marshall(sl);
-
-      if (idata_file)
-	sx_idata_init(sl, idata_file, idata_type);
 
       if (unicode_table)
 	{
@@ -288,17 +282,6 @@ opts(int opt, char *arg)
       break;
     case 'i':
       asl_output = identity_mode = 1;
-      break;
-    case 'I':
-      idata_type = arg;
-      idata_file = strchr(idata_type, ':');
-      if (idata_file && idata_file - idata_type < 3)
-	*idata_file++ = '\0';
-      else
-	{
-	  fprintf(stderr, "sx: the -I option must be TYPE:FILE, e.g., sl:corpus.tis\n");
-	  exit(1);
-	}
       break;
     case 'J':
       jfn = arg;

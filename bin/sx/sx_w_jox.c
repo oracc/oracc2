@@ -5,7 +5,6 @@
 #include <oraccsys.h>
 #include <sx.h>
 #include <joxer.h>
-#include <tis.h>
 
 int slgroups = 0;
 Hash *xidseen = NULL;
@@ -662,18 +661,6 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
 	  list_add(a, oids);
 	}
     }
-
-  struct tis_data *tp;
-  if (sl->h_idata && s->u.s->oid && (tp = hash_find(sl->h_idata, sx_idata_key(s->u.s->oid, "", (uccp)""))))
-    {
-      list_add(a, "icnt");
-      list_add(a, tp->cnt);
-      list_add(a, "ipct");
-      list_add(a, tp->pct);
-      list_add(a, "iref");
-      list_add(a, tp->ref);
-    }
-  
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
   list_free(a, NULL);
