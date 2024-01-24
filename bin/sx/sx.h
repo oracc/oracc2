@@ -49,6 +49,9 @@ extern int oid_list, oid_tab;
 extern Hash *oids;
 extern Hash *oid_sort_keys;
 
+extern char *idata_file;
+extern char *idata_type;
+
 int oid_char_cmp(const void *a, const void *b);
 extern int via_tok_cmp(const void *a, const void *b);
 
@@ -98,5 +101,6 @@ extern void sxx_output(FILE *fp);
 /* sx_idata.c */
 extern void sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_type);
 extern const unsigned char *sx_idata_key(const char *soid, const char *foid, unsigned const char *v);
+extern void sx_idata_ctotals(struct sl_signlist *sl);
 
 #endif/*SX_H_*/

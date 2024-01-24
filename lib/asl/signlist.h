@@ -315,6 +315,8 @@ struct sl_sign
 				   type is Memo_str with literal flag
 				   stored in user ptr */
   int sort;
+  size_t count;
+  size_t ctotal;
   const char *oid;
   const char *smap;	   	/* Must be a @form within this sign */
   const char *smoid;	   	/* OID for @form in @smap */

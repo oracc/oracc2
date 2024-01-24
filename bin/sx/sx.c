@@ -133,9 +133,6 @@ main(int argc, char * const*argv)
 
       sx_marshall(sl);
 
-      if (idata_file)
-	sx_idata_init(sl, idata_file, idata_type);
-
       if (unicode_table)
 	{
 	  FILE *f = stdout; /*fopen("sx-unicode.tab","w");*/

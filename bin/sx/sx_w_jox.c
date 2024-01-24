@@ -244,7 +244,10 @@ sx_w_jx_cpds(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
   struct sl_compound_digest *cdp = hash_find(ip->u.s->hcompounds, (uccp)"#digest_by_oid");
   if (cdp)
     {
-      joxer_ea(NULL, "sl:cpds", NULL);
+      char icnt[12];
+      sprintf(icnt, "%ld", ip->u.s->ctotal);
+      ratts = rnvval_aa("x", "icnt", icnt, NULL);
+      joxer_ea(NULL, "sl:cpds", ratts);
       joxer_ao("j:cpds");
       sx_w_jx_cpd_elt("sl:memb", cdp->memb);
       sx_w_jx_cpd_elt("sl:init", cdp->initial);

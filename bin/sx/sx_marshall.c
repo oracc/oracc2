@@ -307,7 +307,10 @@ sx_marshall(struct sl_signlist *sl)
     oids = hash_create(1);
   oid_sort_keys = hash_create(2048);
   oid_warned = hash_create(64);
-  
+
+  if (idata_file)
+    sx_idata_init(sl, idata_file, idata_type);
+
   /* Register forms that don't exist as signs as if they were signs */
   keys = hash_keys2(sl->hfentry, &nkeys);
   for (i = 0; i < nkeys; ++i)
@@ -767,6 +770,8 @@ sx_marshall(struct sl_signlist *sl)
   sx_unicode(sl);
 
   sx_images(sl);
+
+  sx_idata_ctotals(sl);
   
   /*collate_term();*/
 }
