@@ -125,3 +125,55 @@ sx_idata_ctotals(struct sl_signlist *sl)
 	}
     }
 }
+
+void
+sx_idata_sign(struct sl_signlist *sl, struct sl_sign *sp)
+{
+  if (sl->h_idata && sp->oid)
+    sp->inst->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sp->oid, "", (uccp)""));
+}
+
+void
+sx_idata_form_inst(struct sl_signlist *sl, struct sl_inst *fip)
+{
+  if (sl->h_idata && fip->u.f->oid && fip->parent_s->u.s->oid)
+    {
+      const char *k = (ccp)sx_idata_key(fip->parent_s->u.s->oid,
+					fip->u.f->oid,
+					(uccp)"");
+      fip->tp = hash_find(sl->h_idata, (uccp)k);
+      if (fip->tp)
+	fprintf(stderr, "sx_idata_form_inst: found key %s\n", k);
+    }
+}
+
+void
+sx_idata_value_inst(struct sl_signlist *sl, struct sl_inst *vip)
+{
+  if (sl->h_idata)
+    {
+      struct sl_inst *sip, *fip;
+
+      if (vip->parent_s)
+	sip = vip->parent_s;
+      else if (vip->parent_f)
+	sip = vip->parent_f->parent_s;
+
+      if (vip->parent_f)
+	fip = vip->parent_f;
+      else
+	fip = NULL;
+	
+      if (fip)
+	{
+	  if (sip->u.s->oid && fip->u.f->oid)
+	    vip->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sip->u.s->oid,
+								fip->u.f->oid,
+								(uccp)vip->u.v->name));	  
+	}
+      else
+	vip->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sip->u.s->oid,
+							    "",
+							    (uccp)vip->u.v->name));
+    }
+}

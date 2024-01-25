@@ -102,5 +102,8 @@ extern void sxx_output(FILE *fp);
 extern void sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_type);
 extern const unsigned char *sx_idata_key(const char *soid, const char *foid, unsigned const char *v);
 extern void sx_idata_ctotals(struct sl_signlist *sl);
+extern void sx_idata_sign(struct sl_signlist *sl, struct sl_sign *sp);
+extern void sx_idata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
+extern void sx_idata_value_inst(struct sl_signlist *sl, struct sl_inst *vip);
 
 #endif/*SX_H_*/

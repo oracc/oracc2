@@ -677,6 +677,7 @@ sx_marshall(struct sl_signlist *sl)
   for (i = 0; i < sl->nsigns; ++i)
     {
       struct sl_sign *sp = sl->signs[i];
+      sx_idata_sign(sl, sp);
       if (sp->hlentry)
 	{
 	  int nslsts, j;
@@ -694,7 +695,10 @@ sx_marshall(struct sl_signlist *sl)
 	  sp->values = memo_new_array(sl->m_insts, nsvals);
 	  sp->nvalues = nsvals;
 	  for (j = 0; j < sp->nvalues; ++j)
-	    sp->values[j] = hash_find(sp->hventry, (uccp)svals[j]);
+	    {
+	      sp->values[j] = hash_find(sp->hventry, (uccp)svals[j]);
+	      sx_idata_value_inst(sl, sp->values[j]);
+	    }
 	  qsort(sp->values, sp->nvalues, sizeof(void*), (cmp_fnc_t)values_inst_cmp);
 	}
       if (sp->hfentry)
@@ -707,6 +711,7 @@ sx_marshall(struct sl_signlist *sl)
 	    {
 	      struct sl_inst *fp;
 	      fp = sp->forms[j] = hash_find(sp->hfentry, (uccp)sfrms[j]);
+	      sx_idata_form_inst(sl, fp);
 	      if (fp->lv && fp->lv->hlentry)
 		{
 		  int nslsts, m;
@@ -734,6 +739,8 @@ sx_marshall(struct sl_signlist *sl)
 			      sp->forms[j]->u.f->sign->name, sp->forms[j]->u.f->name);
 		  fp->lv->nvalues = l;
 		  qsort(fp->lv->values, fp->lv->nvalues, sizeof(void*), (cmp_fnc_t)values_inst_cmp);
+		  for (k = 0; fp->lv->values[k]; ++k)
+		    sx_idata_value_inst(sl, fp->lv->values[k]);
 		}
 	    }
 	  qsort(sp->forms, sp->nforms, sizeof(void*), (cmp_fnc_t)forms_inst_cmp);

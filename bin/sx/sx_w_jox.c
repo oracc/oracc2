@@ -331,6 +331,17 @@ sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
 }
 
 static void
+x_tis_atts(List *a, struct tis_data *tp)
+{
+  list_add(a, "icnt");
+  list_add(a, tp->cnt);
+  list_add(a, "ipct");
+  list_add(a, tp->pct);
+  list_add(a, "iref");
+  list_add(a, tp->ref);
+}
+
+static void
 sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, enum sx_pos_e p)
 {
   static int in_form = 0;
@@ -400,6 +411,9 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	    }
 	  else
 	    {
+	      List *a = list_create(LIST_SINGLE);
+	      const char **atts = NULL;
+
 	      if (!s->u.f->sign->xref)
 		id_or_ref = "ref";
 	      else
@@ -412,7 +426,29 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 			hash_add(xidseen, (uccp)s->u.f->oid, "");
 		    }
 		}
+
+	      list_add(a, "n");
+	      list_add(a, (void*)xmlify(s->u.f->name));
+
+	      list_add(a, (void*)id_or_ref);
+	      list_add(a, s->u.f->oid ? (void*)s->u.f->oid : (void*)"");
+
+	      list_add(a, "sort");
+	      list_add(a, scode);
+
+	      if (s->tp)
+		x_tis_atts(a, s->tp);
+	      
+	      atts = list2chars(a);
+	      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
+	      list_free(a, NULL);
+
+#if 0	      
 	      ratts = rnvval_aa("x", "n", s->u.f->name, id_or_ref, s->u.f->oid ? s->u.f->oid : "", "sort", scode, NULL);
+#endif
+
+
+
 	      joxer_ea(&s->mloc, "sl:form", ratts);
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
 	      grx_jox(tp->gdl, "g:w");
@@ -666,16 +702,8 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
 	}
     }
 
-  struct tis_data *tp;
-  if (sl->h_idata && s->u.s->oid && (tp = hash_find(sl->h_idata, sx_idata_key(s->u.s->oid, "", (uccp)""))))
-    {
-      list_add(a, "icnt");
-      list_add(a, tp->cnt);
-      list_add(a, "ipct");
-      list_add(a, tp->pct);
-      list_add(a, "iref");
-      list_add(a, tp->ref);
-    }
+  if (s->tp)
+    x_tis_atts(a, s->tp);
   
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
@@ -751,15 +779,47 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  struct sl_token *tp = NULL;
 	  (void)sprintf(scode, "%d", v->u.v->sort);
 	  tp = hash_find(sl->htoken, v->u.v->name);
+
+	  struct rnvval_atts *ratts = NULL;
+	  List *a = list_create(LIST_SINGLE);
+	  const char **atts = NULL;
+
+	  list_add(a, "n");
+	  list_add(a, (void*)xmlify(v->u.v->name));
+  
+	  if (v->u.v->sort > 0)
+	    (void)sprintf(scode, "%d", v->u.v->sort);
+	  if (*scode)
+	    {
+	      list_add(a, "sort");
+	      list_add(a, scode);
+	    }
+
+	  if (v->lang)
+	    {
+	      list_add(a, "xml:lang");
+	      list_add(a, (void*)v->lang);
+	    }
+
+	  if (v->tp)
+	    x_tis_atts(a, v->tp);
 	  
 	  if (in_value)
 	    joxer_ee(&v->mloc, "sl:v");
 	  else
 	    in_value = 1;
+
+#if 1
+	  atts = list2chars(a);
+	  ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
+	  list_free(a, NULL);
+#else
 	  if (v->lang)
 	    ratts = rnvval_aa("x", "n", v->u.v->name, "xml:lang", v->lang, "sort", scode, NULL);
 	  else
 	    ratts = rnvval_aa("x", "n", v->u.v->name, "sort", scode, NULL);
+#endif
+	  
 	  joxer_ea(&v->mloc, "sl:v", ratts);
 	  joxer_eaaa(&v->mloc, "sl:name", NULL);
 	  grx_jox(tp->gdl, "g:w");
