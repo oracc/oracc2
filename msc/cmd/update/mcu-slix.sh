@@ -6,6 +6,7 @@
 echo $0 $*
 project=$1
 asl=$2
+mkdir -p 02pub/sl
 if [ "$asl" = "" ]; then
     set 00lib/*.asl
     if [ "$1" != "00lib/*.asl" ]; then

@@ -1,13 +1,18 @@
 #!/bin/sh
 
+function sxinst {    
+    sed "s#@@PROJECT@@#$abbrev#g" $libdata/$1 \
+	| sed "s#@@project@@#$project#g" \
+	| sed "s#@@hproject@@#$hproject#g" \
+	      >$2
+}
+
 project=`oraccopt`
 
 if [ "$project" == "" ]; then
     echo "$0: must be called in a project directory. Stop."
     exit 1
 fi
-
-stats=$*
 
 auto=`oraccopt . asl-auto`
 
@@ -16,8 +21,6 @@ if [ "$auto" == "yes" ]; then
     if [ ! -r $asl ]; then
 	echo "$0: no auto.asl signlist in 01tmp. Stop."
 	exit 1
-    else
-	mcu-slix.sh $project $asl
     fi
 else
     set 00lib/*.asl
@@ -31,19 +34,21 @@ fi
 
 abbrev=`oraccopt . abbrev`
 hproject=`/bin/echo -n $project | tr / -`
+
+if [ "$auto" == "yes" ]; then
+    echo sxweb.sh: auto.asl project=$project hproject=$hproject abbrev=$abbrev
+fi
+
 libdata=$ORACC_BUILDS/lib/data
 
-function sxinst {    
-    sed "s/@@PROJECT@@/$abbrev/g" $libdata/$1 \
-	| sed "s/@@project@@/$project/g" \
-	| sed "s/@@hproject@@/$hproject/g" \
-	      >$2
-}
-
 ls -l 02xml/sl.xml
-sxmissing.sh 00etc $asl
-sxudata.sh 00etc $asl
-sxportal.sh
+
+# FIXME: probably need project-config-level control of this
+if [ "$auto" != "yes" ]; then
+    sxmissing.sh 00etc $asl
+    sxudata.sh 00etc $asl
+    sxportal.sh
+fi
 
 rm -fr signlist ; mkdir signlist
 
@@ -68,6 +73,8 @@ rm -fr signlist ; mkdir signlist
 )
 
 sxinst signlist-config.xml signlist/00lib/config.xml
+cp -a signlist/00lib/config.xml signlist/02www
+cp -a signlist/00lib/config.xml signlist/02xml
 sxinst signlist-index.html signlist/00lib/signlist-index.html
 sxinst signlist-parameters.xml signlist/00web/00config/parameters.xml
 sxinst signlist-home.xml signlist/00web/home.xml
@@ -77,8 +84,15 @@ sxinst signlist-sl.css signlist/00res/css/sl.css
 sxinst signlist-projesp.js signlist/00res/js/projesp.js
 sxinst signlist-sl.js signlist/00res/js/sl.js
 
-cp -f 00lib/signlist-x-*.xml signlist/00web
-cp -f 00lib/signlist-x-*.css signlist/00res/css
+set 00lib/signlist-x-*.xml
+if [ "$1" != "00lib/signlist-x-*.xml" ] ; then
+    cp -f 00lib/signlist-x-*.xml signlist/00web
+fi
+
+set 00lib/signlist-x-*.css
+if [ "$1" != "00lib/signlist-x-*.css" ] ; then
+    cp -f 00lib/signlist-x-*.css signlist/00res/css
+fi
 
 libscripts=$ORACC_BUILDS/lib/scripts
 

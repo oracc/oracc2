@@ -10,3 +10,9 @@ if [ "$project" = "" ]; then
 fi
 tok2asl -P $project -S auto $gtoks >01tmp/auto.asl
 sx -e -c 01tmp/auto.asl >>01tmp/auto.asl
+libdata=${ORACC_BUILDS}/lib/data
+for a in signlist-structure-top.xml signlist-structure-bot.xml ; do
+    if [ ! -r 00lib/$a ]; then
+	cp $libdata/$a 00lib
+    fi
+done

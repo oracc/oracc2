@@ -103,7 +103,7 @@ tis_div(struct tis_data *tip)
     printf("h1\t%s\t%s\t%s\n", tip->key, tip->ref, tip->cnt);
   else
     {
-      sprintf(fn, "%s/%s%s", tisdir, tip->key, ext);
+      sprintf(fn, "%s/%s%s", tisdir, tip->ref, ext); /* tis div files are named by tis ID not OID */
       if (!(xp = fopen(fn, "w")))
 	{
 	  fprintf(stderr, "tisdiv: can't write %s. Stop.\n", fn);

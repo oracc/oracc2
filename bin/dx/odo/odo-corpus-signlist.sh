@@ -35,13 +35,15 @@ if [ "$asl" != "" ]; then
 	mv 02xml/sl-tis.xml 02xml/sl.xml
     fi
     if [ "$aslinsts" != "no" ]; then
+	mkdir -p 02www/inst
 	tisdiv -h -d 02www/inst 01tmp/g.tis
 	chmod -R o+r 02www/inst
-	provides=$ORACC_BUILDS/$project/02xml/provides-instances.xml
-	(cd $ORACC_BUILDS/www ; oid-files.sh $project/inst html >$provides)
-	chmod o+r $provides
     fi
 fi
+
+# provides=$ORACC_BUILDS/$project/02xml/provides-instances.xml
+# (cd $ORACC_BUILDS/www ; oid-files.sh $project/inst html >$provides)
+# chmod o+r $provides
 
 sxweb.sh
 
