@@ -8,20 +8,20 @@ aslstats=`oraccopt . asl-stats`
 aslinsts=`oraccopt . asl-insts`
 
 if [ "$aslauto" = "yes" ]; then
-    if [ $aslstats != "no" ]; then
+    if [ "$aslstats" != "no" ]; then
 	aslstats="yes"
     fi
 fi
 
 if [ "$aslstats" = "yes" ]; then
-    tok-g < 01bld/lists/xtfindex.lst >01tmp/g.tok
+    tokx < 01bld/lists/xtfindex.lst >01tmp/g.tok
     tok2tis <01tmp/g.tok >01tmp/g.tis
 fi
 
-if [ "$aslauto" ]; then
+if [ "$aslauto" = "yes" ]; then
     # create signlist in 01tmp/corpus.asl and do the XML and index
-    # mcu-slix.sh $project 01tmp/corpus.asl
-    asl=02xml/sl.xml
+    auto-asl.sh 01tmp/g.tok
+    mcu-slix.sh $project 01tmp/auto.asl
 else
     set 00lib/*.asl
     if [ "$1" != "00lib/*.asl" ]; then

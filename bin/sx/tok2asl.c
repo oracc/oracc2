@@ -12,6 +12,7 @@ Pool *p;
 const char *infile = "<stdin>";
 const char *outfile;
 const char *project;
+const char *signlist;
 const char *sl = "sl"; /* -c for "pc" -e for "pe" -l for "sl" */
 FILE *i, *o;
 int stdinput = 0;
@@ -65,7 +66,7 @@ main(int argc, char **argv)
   p = pool_init();
   size_t lnum = 0;
 
-  if (options(argc, argv, "celo:p:s"))
+  if (options(argc, argv, "celo:P:S:s"))
     exit(1);
 
   asl_input(argv[optind]);
@@ -203,9 +204,9 @@ main(int argc, char **argv)
     fprintf(o, "@compoundonly %s\n", ck[i]);
 }
 
-const char *prog = "sig2asl";
+const char *prog = "tok2asl";
 int major_version = 1, minor_version = 0, verbose = 0;
-const char *usage_string = "sig2asl";
+const char *usage_string = "tok2asl";
 void help () { }
 int opts(int arg,char*str)
 {
@@ -223,8 +224,11 @@ int opts(int arg,char*str)
     case 'o':
       outfile = str;
       break;
-    case 'p':
+    case 'P':
       project = str;
+      break;
+    case 'S':
+      signlist = str;
       break;
     case 's':
       stdinput = 1;
