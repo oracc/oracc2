@@ -15,12 +15,16 @@ if [ "$project" == "" ]; then
 fi
 
 auto=`oraccopt . asl-auto`
+stats=`oraccopt . asl-stats`
 
 if [ "$auto" == "yes" ]; then
     asl=01tmp/auto.asl
     if [ ! -r $asl ]; then
 	echo "$0: no auto.asl signlist in 01tmp. Stop."
 	exit 1
+    fi
+    if [ "$stats" != "no" ]; then
+	stats="yes"
     fi
 else
     set 00lib/*.asl
@@ -92,6 +96,10 @@ fi
 set 00lib/signlist-x-*.css
 if [ "$1" != "00lib/signlist-x-*.css" ] ; then
     cp -f 00lib/signlist-x-*.css signlist/00res/css
+fi
+
+if [ "$stats" == "yes" ]; then
+    sxfreq.sh
 fi
 
 libscripts=$ORACC_BUILDS/lib/scripts

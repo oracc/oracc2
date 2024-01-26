@@ -16,6 +16,7 @@ enum asl_a_type
   asl_a_compoundonly,
   asl_a_contrefs,
   asl_a_cpd_refs,
+  asl_a_ctotal,
   asl_a_deprecated,
   asl_a_dir,
   asl_a_form,

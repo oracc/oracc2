@@ -51,7 +51,7 @@ if [ "$asl" != "" ]; then
 #    fi
     if [ "$aslinsts" != "no" ]; then
 	mkdir -p 02www/inst
-	tisdiv -h -d 02www/inst 01tmp/g.tis
+	tisdiv -o -h -d 02www/inst 01tmp/g.tis
 	chmod -R o+r 02www/inst
     fi
 fi

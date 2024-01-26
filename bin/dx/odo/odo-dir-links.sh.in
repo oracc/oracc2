@@ -34,7 +34,8 @@ cd @@ORACC_BUILDS@@/$1
 for dir in bld pub tmp xml www ; do
     md=@@ORACC_BUILDS@@/$dir/$1
     mkdir $V -p $md
-    chmod 775 $md
+    chown -R oradmin:oradmin $md
+    chmod 2775 $md
 done
 
 mkdir -p 01log

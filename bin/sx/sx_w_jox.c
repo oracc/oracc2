@@ -331,7 +331,7 @@ sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
 }
 
 static void
-x_tis_atts(List *a, struct tis_data *tp)
+x_tis_atts(List *a, struct tis_data *tp, size_t ctotal)
 {
   list_add(a, "icnt");
   list_add(a, tp->cnt);
@@ -339,6 +339,13 @@ x_tis_atts(List *a, struct tis_data *tp)
   list_add(a, tp->pct);
   list_add(a, "iref");
   list_add(a, tp->ref);
+  list_add(a, "ctotal");
+  /* This itoa is OK as long as we are printing the atts before
+     another itoa occurs */
+  if (ctotal)
+    list_add(a, (void*)itoa(atoi(tp->cnt)+ctotal));
+  else
+    list_add(a, tp->cnt);
 }
 
 static void
@@ -437,7 +444,7 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_add(a, scode);
 
 	      if (s->tp)
-		x_tis_atts(a, s->tp);
+		x_tis_atts(a, s->tp, 0);
 	      
 	      atts = list2chars(a);
 	      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
@@ -703,7 +710,7 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
     }
 
   if (s->tp)
-    x_tis_atts(a, s->tp);
+    x_tis_atts(a, s->tp, s->u.s->ctotal);
   
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
@@ -802,7 +809,7 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	    }
 
 	  if (v->tp)
-	    x_tis_atts(a, v->tp);
+	    x_tis_atts(a, v->tp, 0);
 	  
 	  if (in_value)
 	    joxer_ee(&v->mloc, "sl:v");

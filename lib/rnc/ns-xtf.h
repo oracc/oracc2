@@ -19,6 +19,7 @@ enum xtf_a_type
   xtf_a_compoundonly,
   xtf_a_contrefs,
   xtf_a_cpd_refs,
+  xtf_a_ctotal,
   xtf_a_deprecated,
   xtf_a_dir,
   xtf_a_endflag,

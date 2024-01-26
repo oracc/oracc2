@@ -8,6 +8,7 @@ const char *ext = ".div";
 const char *tisdir = "tisdiv.d";
 const char *field = "period";
 int html_mode = 0;
+int oid_mode = 0;
 const char *project = "pctc";
 int text_mode = 0;
 int threshold = 30;
@@ -98,19 +99,39 @@ tis_div(struct tis_data *tip)
   int all_mode = icnt <= threshold;
   const char *tip_s = (icnt == 1 ? "" : "s");
   struct tis_data *sip;
+
+  if (!tip || 'o' != *tip->key)
+    return;
+
+#define tipkey (oid_mode ? oidkey : tip->key)
   
+  char oidkey[strlen(tip->key)+1];
+  
+  if (oid_mode)
+    {
+      strcpy(oidkey, tip->key);
+      char *k = strchr(oidkey, '.');
+
+      while ('.' == *k)
+	*k++ = '\0';
+      
+      /* only process o1234567.. */
+      if (*k)
+	return;
+    }
+
   if (text_mode)
-    printf("h1\t%s\t%s\t%s\n", tip->key, tip->ref, tip->cnt);
+    printf("h1\t%s\t%s\t%s\n", tipkey, tip->ref, tip->cnt);
   else
     {
-      sprintf(fn, "%s/%s%s", tisdir, tip->ref, ext); /* tis div files are named by tis ID not OID */
+      sprintf(fn, "%s/%s%s", tisdir, oid_mode ? oidkey : tip->ref, ext); /* tis div files are named by tis ID not OID except in oid_mode */
       if (!(xp = fopen(fn, "w")))
 	{
 	  fprintf(stderr, "tisdiv: can't write %s. Stop.\n", fn);
 	  exit(1);
 	}
       if (html_mode)
-	tis_html_head(xp, tip->key);
+	tis_html_head(xp, tipkey);
       fputs("<div class=\"tis\">", xp);
       if (!all_mode)
 	fprintf(xp, "<h1 class=\"border-top heading\">%s occurrence%s in total <a href=\"/%s/%s.tis\">See all instances</a></h1>",
@@ -178,7 +199,7 @@ tis_divs(Tisp t)
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "d:f:hp:t");
+  options(argc, argv, "d:f:hogp:t");
   FILE *tfp = fopen(argv[optind], "r");
   tis_load_init();
   tish = tis_load(tfp);
@@ -200,6 +221,9 @@ opts(int argc, char *arg)
     case 'h':
       html_mode = 1;
       ext = ".html";
+      break;
+    case 'o':
+      oid_mode = 1;
       break;
     case 'p':
       project = arg;

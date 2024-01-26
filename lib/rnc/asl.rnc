@@ -147,7 +147,7 @@ sl.images = element sl:images {
             	    element sl:i { (attribute ref { xsd:NCName } , attribute loc { text })? }*
       	    }
 
-sl.stats = (attribute icnt { xsd:decimal } , attribute ipct { xsd:decimal }?)
+sl.stats = (attribute icnt { xsd:decimal } , attribute ipct { xsd:decimal }?, attribute ctotal { xsd:decimal }?)
 
 sl.cpds = element sl:cpds {
 	  	  sl.stats?,

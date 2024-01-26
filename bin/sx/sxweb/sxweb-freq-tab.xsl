@@ -14,7 +14,7 @@
 <xsl:template match="/">
   <sl:freq-tab slbase="{/*/@project}">
     <xsl:apply-templates select=".//sl:sign[@icnt>0]">
-      <xsl:sort select="@icnt+sl:cpds/@icnt" data-type="number" order="descending"/>
+      <xsl:sort select="@ctotal" data-type="number" order="descending"/>
     </xsl:apply-templates>
   </sl:freq-tab>
 </xsl:template>

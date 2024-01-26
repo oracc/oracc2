@@ -16,6 +16,7 @@ enum gdl_a_type
   gdl_a_compoundonly,
   gdl_a_contrefs,
   gdl_a_cpd_refs,
+  gdl_a_ctotal,
   gdl_a_deprecated,
   gdl_a_dir,
   gdl_a_form,
