@@ -43,6 +43,7 @@ struct sx_functions
 
 extern Hash *parent_sl;
 extern const char *parent_sl_project;
+extern int unicode_from_parent;
 
 extern int extra_needs, identity_mode, listdef_check;
 extern int oid_list, oid_tab;
@@ -78,6 +79,7 @@ extern void sx_marshall(struct sl_signlist *sl);
 extern void sx_qualified(struct sl_signlist *sl);
 extern void sx_sortcodes(struct sl_signlist *sl);
 extern void sx_unicode(struct sl_signlist *sl);
+extern void sx_unicode_p(struct sl_signlist *sl);
 extern void sx_values_by_oid(struct sl_signlist *sl);
 extern void sx_values_parents(struct sl_signlist *sl);
 extern void sx_values_parents_dump(struct sl_signlist *sl);

@@ -774,7 +774,10 @@ sx_marshall(struct sl_signlist *sl)
 
   sx_qualified(sl);
 
-  sx_unicode(sl);
+  if (!unicode_from_parent)
+    sx_unicode(sl);
+  else
+    sx_unicode_p(sl);
 
   sx_images(sl);
 

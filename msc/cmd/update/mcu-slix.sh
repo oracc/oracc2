@@ -23,18 +23,25 @@ if [ "$asl" = "" ]; then
 	asl=$1
     fi
 fi
+if [ "$asl" = "01tmp/auto.asl" ]; then
+    if [ "$asldomain" = "sl" ]; then
+	UP=-Upogsl
+    elif [ "$asldomain" = "pc" ]; then
+	UP=-Uppctc
+    fi
+fi
 if [ "$asl" != "" ]; then
     echo $0: updating $asl
     # check signlist
     sx -c $asl
     if [ $? -eq 0 ]; then
-	sx -s $asl >02pub/sl/sl.tsv
+	sx $UP -s $asl >02pub/sl/sl.tsv
 	slix 02pub/sl/sl.tsv
 	if [ -r 01tmp/g.tis ]; then
 	    tis=-I$asldomain:01tmp/g.tis
 	fi
-	echo $0: tis=$tis
-	sx $tis -X 02xml/sl.xml $asl
+	echo "$0: sx $UP $tis -X 02xml/sl.xml $asl"
+	sx $UP $tis -X 02xml/sl.xml $asl  
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
 	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml

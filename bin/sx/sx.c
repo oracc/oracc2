@@ -44,6 +44,7 @@ int sll_output = 0;
 int sortcode_output = 0;
 int syss_dump = 0;
 int tree_output = 0;
+int unicode_from_parent = 0;
 int unicode_table = 0;
 int xml_output = 0;
 int validate = 1;
@@ -76,7 +77,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eiI:jJ:m:nMoOp:sStTuxX:?");
+  options(argc, argv, "abcCD:d:eiI:jJ:m:nMoOp:sStTuUxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -85,6 +86,11 @@ main(int argc, char * const*argv)
 	sll_trace = 1;
       if (!(parent_sl = sll_init_t(parent_sl_project, "sl")))
 	exit(1);
+    }
+  else if (unicode_from_parent)
+    {
+      fprintf(stderr, "sx: -U used without -p\n");
+      exit(1);
     }
   
   if (boot_mode)
@@ -133,7 +139,7 @@ main(int argc, char * const*argv)
 
       sx_marshall(sl);
 
-      if (unicode_table)
+      if (unicode_table && !unicode_from_parent)
 	{
 	  FILE *f = stdout; /*fopen("sx-unicode.tab","w");*/
 	  if (f)
@@ -336,6 +342,9 @@ opts(int opt, char *arg)
       break;
     case 'u':
       unicode_table = 1;
+      break;
+    case 'U':
+      unicode_from_parent = 1;
       break;
     case 'X':
       xfn = arg;

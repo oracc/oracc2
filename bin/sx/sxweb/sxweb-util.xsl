@@ -56,15 +56,20 @@
 	</xsl:when>
 	<xsl:otherwise>
 	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
-	  <xsl:if test="count($img)>0">
-	    <xsl:for-each select="$img">
-	      <p class="sl-td-sign">
-		<xsl:call-template name="esp-sign-thumb">
-		  <xsl:with-param name="height" select="'40px'"/>
-		</xsl:call-template>
-	      </p>
-	    </xsl:for-each>
-	  </xsl:if>
+	  <xsl:choose>
+	    <xsl:when test="count($img)>0">
+	      <xsl:for-each select="$img">
+		<p class="sl-td-sign">
+		  <xsl:call-template name="esp-sign-thumb">
+		    <xsl:with-param name="height" select="'40px'"/>
+		  </xsl:call-template>
+		</p>
+	      </xsl:for-each>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <p class="sl-td-sign"><xsl:value-of select="sl:ucun"/></p>
+	    </xsl:otherwise>
+	  </xsl:choose>
 	</xsl:otherwise>
       </xsl:choose>
     </esp:link>

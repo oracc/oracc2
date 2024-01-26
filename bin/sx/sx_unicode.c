@@ -1,6 +1,7 @@
 #include <ctype128.h>
 #include <oraccsys.h>
 #include <signlist.h>
+#include <sll.h>
 #include <sx.h>
 #include <pcre2if.h>
 
@@ -605,4 +606,33 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
   qsort(u, nu, sizeof(const char *), via_tok_cmp);
   for (i = 0; u[i]; ++i)
     fprintf(f, "need\t%s\n", u[i]);
+}
+
+void
+sx_unicode_p(struct sl_signlist *sl)
+{
+  int i;
+  for (i = 0; i < sl->nsigns; ++i)
+    {
+      if (sl->signs[i]->inst->valid)
+	{
+	  struct sl_unicode *Up = (sl->signs[i]->xref ? &sl->signs[i]->xref->U : &sl->signs[i]->U);
+	  const char *oid = (ccp)(sl->signs[i]->xref ? sl->signs[i]->xref->oid : sl->signs[i]->oid);
+	  if (!Up->utf8)
+	    {
+	      Up->utf8 = hash_find(parent_sl, sll_tmp_key((uccp)oid, "uchar"));
+	      if (Up->utf8)
+		{
+		  const char *ucode = hash_find(parent_sl, sll_tmp_key((uccp)oid, "ucode"));
+		  if (ucode)
+		    {
+		      if ('U' == *ucode)
+			Up->uhex = ucode;
+		      else
+			Up->useq = ucode;
+		    }
+		}
+	    }
+	}
+    }
 }
