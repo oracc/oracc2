@@ -6,6 +6,12 @@
 echo $0 $*
 project=$1
 asl=$2
+
+asldomain=`oraccopt . asl-domain`
+if [ "$asldomain" = "" ]; then
+    asldomain=sl
+fi
+
 mkdir -p 02pub/sl
 if [ "$asl" = "" ]; then
     set 00lib/*.asl
@@ -24,7 +30,11 @@ if [ "$asl" != "" ]; then
     if [ $? -eq 0 ]; then
 	sx -s $asl >02pub/sl/sl.tsv
 	slix 02pub/sl/sl.tsv
-	sx -X 02xml/sl.xml $asl
+	if [ -r 01tmp/g.tis ]; then
+	    tis=-I$asldomain:01tmp/g.tis
+	fi
+	echo $0: tis=$tis
+	sx $tis -X 02xml/sl.xml $asl
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
 	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml

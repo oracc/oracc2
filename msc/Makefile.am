@@ -1,1 +1,4 @@
-SUBDIRS=adm cmd lex sys tok
+SUBDIRS=adm cmd lex sys
+
+#tok
+
