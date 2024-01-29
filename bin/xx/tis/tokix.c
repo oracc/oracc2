@@ -1,29 +1,13 @@
 #include <oraccsys.h>
-
-extern const char *textid;
-extern FILE *f_log;
-FILE *f_mangletab = NULL;
+#include <dbi.h>
+#include <ose.h>
+#include <vid.h>
 
 const char *curr_project = NULL;
-static Dbi_index*dp;
-static FILE *pqidsf;
-static struct location8 l8;
-static int indexing = 0;
-static FILE *fldsf;
-static int cache_size = 16;
+static Dbi_index*dip;
+static int cache_size = 32;
 
 const char *curr_index = "tok";
-
-static void
-process_cdata(Uchar*cdata)
-{
-  dbi_add(dp,(unsigned char*)buf,&l8,1);
-}
-
-indexit()
-{
-  wid2loc8(vid_map_id(vidp,qualified_id),xml_lang(atts),&l8);
-}
 
 int
 main(int argc, char * const*argv)
@@ -33,45 +17,53 @@ main(int argc, char * const*argv)
   if (!curr_project)
     usage();
 
-  setlocale(LC_ALL,ORACC_LOCALE);
+  const char *index_dir = ose_dir(curr_project, curr_index);
 
-  index_dir = se_dir (curr_project, curr_index);
-
-  progress ("indexing %s ...\n", index_dir);
-  indexed_mm = init_mm (sizeof (struct indexed), 256);
-  parallels_mm = init_mm (sizeof (struct parallel), 256);
-  grapheme_mm = init_mm (sizeof (struct grapheme), 256);
-  node_mm = init_mm (sizeof (struct node), 256);
-
-  dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
-		    sizeof(struct location16), DBI_ACCRETE);
-
-  dbi_set_user(dip,d_txt);
-  if (NULL == dip) 
-    error (NULL, "unable to create index for %s", curr_index);
-  if (cache_elements > 0)
-    dbi_set_cache (dip, cache_elements);
-
-  dp = dbi_create("tok",
-		  "tok",
+  struct vid_data *vp = vid_init();
+  
+  dip = dbi_create("tok",
+		  index_dir,
 		  500000,
 		  sizeof(struct location8),
 		  DBI_ACCRETE);
-  dbi_set_cache(dp,cache_size);
-  dbi_set_user(dp,d_cat);
+
+  if (NULL == dip)
+    {
+      fprintf(stderr, "unable to create index for %s:%s", curr_project, curr_index);
+      exit(1);
+    }
+
+  dbi_set_user(dip,d_tok);
+  dbi_set_cache(dip,cache_size);
+  
 
   /* index toks here */
+  char buf[1024], *s;
+  while ((s = fgets(buf, 1024, stdin)))
+    {
+      static struct location8 l8;
+      s = strchr(buf, '\t');
+      if (s)
+	{
+	  ++s;
+	  ose_wid2loc8(vid_map_id(vp,s),NULL,&l8);
+	  dbi_add(dip,(unsigned char*)buf,&l8,1);
+	}
+    }    
 
-  dbi_flush(dp);
-  dbi_free(dp);
+  dbi_flush(dip);
+  dbi_free(dip);
 
-  ce_cfg(curr_project,"tok","tr","txh",ce_byid, proxies);
+  ose_ce_cfg(curr_project, "tok", "tr", "txh", oce_tok, NULL);
+
+  vid_dump_data(vp, ose_file(curr_project, curr_index, "vid.dat"));
+  vid_term(vp);
 
   return 0;
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {
@@ -84,9 +76,9 @@ opts(int argc, char *arg)
   return 0;
 }
 
-const char *prog = "segdfx";
+const char *prog = "tokix";
 int major_version = 6, minor_version = 0, verbose;
-const char *usage_string = "-p [project] [-s]";
+const char *usage_string = "-p [project]";
 void
 help ()
 {

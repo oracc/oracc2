@@ -13,9 +13,9 @@ struct oce_config
   const char **proxies;
 };
 
-extern void ose_oce_cfg(const char *project, const char *index,const char *ce_tag, 
-			const char *ce_ext, enum oce_files ce_type, 
-			const char **proxies);
+extern void ose_ce_cfg(const char *project, const char *index,const char *ce_tag, 
+		       const char *ce_ext, enum oce_files ce_type, 
+		       const char **proxies);
 void ose_wid2loc8(const char *id, const char *lang, struct location8 *l8p);
 const char *ose_dir(const char *project, const char *xname);
 const char *ose_file(const char *project, const char *xname, const char *fname);

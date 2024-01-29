@@ -68,6 +68,9 @@ struct location24
 
 #undef loc8
 
+/* These must be ordered so that earlier items have larger granularity */
+enum datum_type { d_cat , d_cbd , d_tra , d_lem , d_tok , d_txt , d_uni , d_NONE };
+
 enum result_granularity 
   {
     g_text , g_record , g_field , g_word , g_grapheme , 
