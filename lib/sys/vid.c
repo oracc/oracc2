@@ -11,7 +11,7 @@ extern const char *curr_project, *curr_index;
 
 static void vid_hash_data(struct vid_data *vp);
 
-#define VID_DEBUG
+#undef VID_DEBUG
 
 struct vid_data *
 vid_init(void)
@@ -38,7 +38,7 @@ vid_term(struct vid_data *vp)
     }
 }
 
-void
+const char *
 vid_new_id(struct vid_data *vp, const char *xid)
 {
   const char *pd = NULL;
@@ -77,10 +77,11 @@ vid_new_id(struct vid_data *vp, const char *xid)
       vp->ids[vp->ids_used++] = xid_pool;
       if (strlen(basebuf) >= vp->max_len)
 	vp->max_len = strlen(basebuf) + 1;
-    }
 #ifdef VID_DEBUG
   fprintf(stderr,"vid_new_id: mapped %s to %s\n",basebuf,vidp);
 #endif
+    }
+  return vidp;
 }
 
 /* Create a new ID based on the Word ID coming in.  WID has the form:

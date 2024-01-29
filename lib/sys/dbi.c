@@ -423,7 +423,7 @@ static int kid_cmp (const void *k1, const void *k2);
 static int off_cmp (const void *k1, const void *k2);
 static Unsigned16 open_bins (Unsigned16 start);
 static Unsigned16 assign_bins (Unsigned32 dsize);
-static void clash_free (const void *vp);
+static void clash_free (void *vp);
 static void clashes (void);
 static void hash_2_ptrs (void *p);
 static void into_bins (Unsigned32 data_size, Unsigned32 cache_size);
@@ -434,11 +434,19 @@ static void set_hash_vals (void);
 static void sort_and_dump_bin (Dbi_index *dip, Dbi_bin *dbp);
 static void sort_bins (Dbi_index * dp, Unsigned16 start, Unsigned16 to_do);
 static void transfer_bin (Dbi_index*dip, Dbi_bin*dbp);
-static void write_clash_hdr (const void *vp);
-static void write_clash_indexes (const void *vp);
+static void write_clash_hdr (void *vp);
+static void write_clash_indexes (void *vp);
 static void write_hash_table (void);
 static void write_multiple (Dbi_index * dp);
 static void write_single (Dbi_index * dp);
+
+static FILE *dbi_count_fp = NULL;
+
+void
+dbi_set_counts(FILE *cfp)
+{
+  dbi_count_fp = cfp;
+}
 
 void
 dbi_flush (Dbi_index * dp)
@@ -573,7 +581,7 @@ reinitialize ()
 }
 
 static void
-clash_free (const void *vp)
+clash_free (void *vp)
 {
   free (((Clash*)vp)->clashes);
   free ((void*)vp);
@@ -613,8 +621,10 @@ hash_2_ptrs (void *p)
 	    {
 	      /* write directly to the output file if we have everything in the cache */
 #if SHOW_WRITES
-	      fprintf (stderr, "%s written directly\n", pd->key);
+	      fprintf (stderr, "%s * %d written directly\n", pd->key, pd->cache_count);
 #endif
+	      if (dbi_count_fp)
+		fprintf(dbi_count_fp, "%s\t%d\n", pd->key, pd->cache_count);
 	      ++direct_keys;
 	      pd->offset = ftell (tmp_dp->i_fp);
 	      xxfwrite (tmp_dp->i_fname, TRUE, pd->key, 1, strlen((const char *)pd->key) + 1, tmp_dp->i_fp);
@@ -912,8 +922,11 @@ transfer_bin (Dbi_index*dip, Dbi_bin*dbp)
 #endif
 
 #if SHOW_WRITES
-	      fprintf (stderr, "%s transferred\n", np->key);
+  fprintf (stderr, "%s * %d transferred\n", np->key, np->dcount);
 #endif
+
+  if (dbi_count_fp)
+    fprintf(dbi_count_fp, "%s\t%d\n", np->key, np->dcount);
 
   /* remember the offset of key for hash table */
   np->offset = ftell (dip->i_fp);
@@ -1004,8 +1017,11 @@ sort_and_dump_bin (Dbi_index *dip, Dbi_bin *dbp)
 	  register Dbi_tnode *np = node_ptrs[dbp->first_key + i];
 
 #if SHOW_WRITES
-	  fprintf (stderr, "%s sort&dumped\n", np->key);
+	  fprintf (stderr, "%s * %d sort&dumped\n", np->key, np->dcount);
 #endif
+
+	  if (dbi_count_fp)
+	    fprintf(dbi_count_fp, "%s\t%d\n", np->key, np->dcount);
 
 	  /* remember the offset of key for hash table */
 	  np->offset = ftell (dip->i_fp);
@@ -1148,7 +1164,7 @@ clashes ()
 }
 
 void
-set_clash_offset (const void *vp)
+set_clash_offset (void *vp)
 {
   ((Clash *) vp)->h.offset = clash_offset;
   clash_offset += ((Clash *) vp)->h.count;
@@ -1193,13 +1209,13 @@ set_hash_table_info (Dbi_index_hdr * hp)
 }
 
 static void
-write_clash_hdr (const void *vp)
+write_clash_hdr (void *vp)
 {
   xxfwrite (tmp_dp->h_fname, TRUE, &((Clash *) vp)->h, sizeof (Clash_hdr), 1, tmp_dp->h_fp);
 }
 
 static void
-write_clash_indexes (const void *vp)
+write_clash_indexes (void *vp)
 {
 #if VALIDATE_CLASH
   /* validate the clash list */
