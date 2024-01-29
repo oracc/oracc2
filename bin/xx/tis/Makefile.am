@@ -2,7 +2,7 @@ include ../../../oracc-am-rules.txt
 
 SUBDIRS=../../../lib 
 
-bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokex
+bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokex vidx
 bin_SCRIPTS=tisdbi.sh tisdiv.sh
 data_DATA=tis-[ht].html
 
@@ -29,3 +29,7 @@ tokexp_DEPENDENCIES = $(xLDADD)
 tokex_SOURCES=tokex.c
 tokex_LDADD = $(xLDADD)
 tokex_DEPENDENCIES = $(xLDADD)
+
+vidx_SOURCES=vidx.c
+vidx_LDADD = $(xLDADD)
+vidx_DEPENDENCIES = $(xLDADD)

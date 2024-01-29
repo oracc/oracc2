@@ -29,7 +29,7 @@ program_values(const char *name, int major, int minor, const char *usage, const 
 }
 
 int
-options (int argc, char *const *argv, const char *optstr)
+options (int argc, char * const *argv, const char *optstr)
 {
   int c;
 

@@ -208,7 +208,7 @@ const char *prog = "tok2asl";
 int major_version = 1, minor_version = 0, verbose = 0;
 const char *usage_string = "tok2asl";
 void help () { }
-int opts(int arg,char*str)
+int opts(int arg, const char*str)
 {
   switch (arg)
     {

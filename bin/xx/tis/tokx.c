@@ -209,8 +209,8 @@ main(int argc, char **argv)
 const char *prog = "tokx";
 int major_version = 1, minor_version = 0, verbose = 0;
 const char *usage_string = "tokx";
-void help () { }
-int opts(int arg,char*str)
+void help(void) {}
+int opts(int arg, const char*str)
 {
   switch (arg)
     {

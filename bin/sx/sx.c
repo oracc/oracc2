@@ -254,7 +254,7 @@ main(int argc, char * const*argv)
 }
 
 int
-opts(int opt, char *arg)
+opts(int opt, const char *arg)
 {
   switch (opt)
     {
@@ -293,7 +293,7 @@ opts(int opt, char *arg)
       asl_output = identity_mode = 1;
       break;
     case 'I':
-      idata_type = arg;
+      idata_type = (char *)arg;
       idata_file = strchr(idata_type, ':');
       if (idata_file && idata_file - idata_type < 3)
 	*idata_file++ = '\0';

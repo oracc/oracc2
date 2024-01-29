@@ -116,7 +116,7 @@ main(int argc, char **argv)
 extern int verbose;
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {
