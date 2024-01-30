@@ -74,7 +74,7 @@ main(int argc, char * const*argv)
 
   /* ose_ce_cfg(curr_project, "tok", "tr", "txh", oce_tok, NULL); */
 
-  vido_dump_data(vp, "vid.vid"/*ose_file(curr_project, curr_index, "vid.dat")*/);
+  vido_dump_data(vp, "vid.vid"/*ose_file(curr_project, curr_index, "vid.dat")*/, NULL);
   vido_term(vp);
 
   return 0;

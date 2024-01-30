@@ -96,25 +96,42 @@ vido_get_id(Vido *vp, int vid)
 }
 
 void
-vido_dump_data(Vido *vp, const char *fname)
+vido_dump_data(Vido *vp, const char *fname, const char *tsvname)
 {
   char *buf;
-  FILE *dp = fopen(fname,"wb");
+  FILE *dp = NULL;
+  FILE *tp = NULL;
   int i;
-  if (!dp)
+
+  if (fname)
+    dp = fopen(fname,"wb");
+  if (tsvname)
+    tp = fopen(tsvname,"w");
+  
+  if (fname && !dp)
     {
-      fprintf(stderr, "vid: can't open '%s' for write\n",fname);
+      fprintf(stderr, "vido: can't open '%s' to write data\n",fname);
       return;
     }
-  fprintf(dp, "%c%c%d%c%d%c", vp->prefix,0,vp->ids_used,0,vp->max_len,0);
+  if (tsvname && !tp)
+    {
+      fprintf(stderr, "vido: can't open '%s' to write table\n",tsvname);
+      return;
+    }
+  if (dp)
+    fprintf(dp, "%c%c%d%c%d%c", vp->prefix,0,vp->ids_used,0,vp->max_len,0);
   buf = malloc(vp->max_len);
   for (i = 0; i < vp->ids_used; ++i)
     {
       memset(buf,'\0',vp->max_len);
       strcpy(buf,vp->ids[i]);
-      fwrite(buf,1,vp->max_len,dp);
+      if (dp)
+	fwrite(buf,1,vp->max_len,dp);
+      if (tp)
+	fprintf(tp, "%c%06d\t%s\n", vp->prefix, i, buf);
     }
   fclose(dp);
+  fclose(tp);
 }
 
 Vido *

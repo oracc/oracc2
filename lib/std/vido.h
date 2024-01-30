@@ -22,7 +22,7 @@ extern const char *vido_map_id(Vido *vp, const char *xid);
 extern const char *vido_new_id(Vido *vp, const char *xid);
 extern Vido *vido_init(char prefix, int dotstop);
 extern Vido *vido_load_data(const char *fname, int hash_too);
-extern void vido_dump_data(Vido *vp, const char *fname);
+extern void vido_dump_data(Vido *vp, const char *fname, const char *tsvname);
 extern void vido_free(Vido*vp);
 extern void vido_term(Vido *vp);
 

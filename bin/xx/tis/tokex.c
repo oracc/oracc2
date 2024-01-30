@@ -25,11 +25,11 @@ main(int argc, char **argv)
 	  w = strchr(s, '\t');
 	  if (w)
 	    *w++ = '\0';
-	  printf("%s\t%s\n", vido_new_id(vp,t), wdid);
+	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), wdid);
 	  /*printf("%s\t%s\n", s, wdid);*/
 	  /* expand signature and generate sub--tokens */
 	}
     }
-  vido_dump_data(vp, "tid.vid");
+  vido_dump_data(vp, "tid.vid", "tid.tsv");
   vido_term(vp);
 }
