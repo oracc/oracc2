@@ -1,75 +1,98 @@
 #include <oraccsys.h>
 
-static int
-pct(float amount, float total)
+static double
+pct(double amount, double total)
 {
-  float pct = (amount / total) * 100;
-  return (int) (pct+0.5);
+  double pct = (amount / total) * 100;
+  return pct;
 }
 
+/* Tokens are divided into three parts: sem(el), bis and ter.
+ *
+ * For g tokens, sem = sign; bis = form; ter = value.
+ *
+ * For sem the parent count is the total sem in the dataset.
+ *
+ * For bis the parent count is the count of the token's sem.
+ *
+ * For ter the parent count is the count of the token's bis if that is
+ * non-empty, or of sem if bis is empty.
+ */
 int
 main(int argc, char *const *argv)
 {
   char buf[1024], *s;
-  Hash *pri = NULL;
-  Hash *sec = NULL;
+  Hash *sem = NULL;
+  Hash *bis = NULL;
+  Hash *ter = NULL;
   Hash *tid = NULL;
-  List *seq = NULL;
+  /*List *seq = NULL;*/
   Pool *p = NULL;
   size_t total = 0;
 
   p = pool_init();
-  pri = hash_create(1024);
-  sec = hash_create(1024);
+  sem = hash_create(1024);
+  bis = hash_create(1024);
+  ter = hash_create(1024);
   tid = hash_create(1024);
-  seq = list_create(LIST_SINGLE);
+  /*seq = list_create(LIST_SINGLE);*/
 
   while ((s = fgets(buf,1024,stdin)))
     {
       s[strlen(s)-1] = '\0';
       char **f = tab_split(buf);
-      unsigned char *id = pool_copy((ucp)f[0], p);
-      unsigned char *t = pool_copy((ucp)f[1], p);
+      unsigned char *t = pool_copy((ucp)f[0], p), *e;
+      unsigned char *id = pool_copy((ucp)f[1], p);
 
       hash_add(tid,t,id);
-
       int count = atoi(f[2]);
-
-      if ('.' == t[strlen((ccp)t)-1] && '.' == t[strlen((ccp)t)-2])
+      e = t + strlen((ccp)t);
+      if ('.' == e[-1] && '.' == e[-2])
 	{
 	  total += count;
-	  hash_add(pri, t, (void*)(uintptr_t)count);
-	  list_add(seq, t);
+	  hash_add(sem, t, (void*)(uintptr_t)count);
+	  /*list_add(seq, t);*/
+	}
+      else if ('.' == t[strlen((ccp)t)-1])
+	{
+	  hash_add(bis, t, (void*)(uintptr_t)count);
+	  /*list_add(seq, t);*/
 	}
       else
 	{
-	  hash_add(sec, t, (void*)(uintptr_t)count);
-	  list_add(seq, t);
+	  hash_add(ter, t, (void*)(uintptr_t)count);
+	  /*list_add(seq, t);*/
 	}
     }
 
   printf("Total instances of primary tokens: %ld\n", total);
 
-  const char **k = hash_keys(pri);
+  const char **k = hash_keys(sem);
   int i;
   for (i = 0; k[i]; ++i)
     {
-      int count = (uintptr_t)hash_find(pri, (uccp)k[i]);
-      printf("%s\t%s\t%d\t%d\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct(count,total));
+      int count = (uintptr_t)hash_find(sem, (uccp)k[i]);
+      printf("%s\t%s\t%d\t%.03f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
     }
-
-  k = hash_keys(sec);
+  
+  k = hash_keys(ter);
   for (i = 0; k[i]; ++i)
     {
-      int count = (uintptr_t)hash_find(sec, (uccp)k[i]);
-      char *parent = strdup(k[i]), *e;
+      int count = (uintptr_t)hash_find(ter, (uccp)k[i]);
+      char parent[strlen(k[i])+1], *e;
+      strcpy(parent,k[i]);
       /* The parent consists of all but the final segment of a secondary key */
       e = strrchr(parent,'.');
       if (*e)
 	e[1] = '\0';
-      int pcount = (uintptr_t)hash_find(pri, (uccp)parent);
+      int pcount = 0;
+      if ('.' == e[-1])
+	pcount = (uintptr_t)hash_find(sem, (uccp)parent);
+      else
+	pcount = (uintptr_t)hash_find(bis, (uccp)parent);
+      
       if (pcount)
-	printf("%s\t%s\t%d\t%d\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct(count,pcount));
+	printf("%s\t%s\t%d\t%0.3f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct(count,pcount));
       else
 	fprintf(stderr, "token %s should have parent %s but doesn't\n", k[i], parent);
     }
