@@ -1,6 +1,18 @@
 #include <oraccsys.h>
 #include <vido.h>
 
+/**tokex reads and expands the output of tokx, simplifying it to a
+ * stream of triples of the form:
+ *
+ * token token-ID word-ID
+ *
+ * The expansions vary according to token type.
+ *
+ * For 'g' type, graphemes, the expansion includes generating parent
+ * entries for values and various features based on the grapheme
+ * signature.
+ */
+
 int
 main(int argc, char **argv)
 {
@@ -19,6 +31,8 @@ main(int argc, char **argv)
 	  t = strchr(b, '\t');
 	  if (t)		/* token */
 	    *t++ = '\0';
+	  if ('.' == *t)
+	    continue;	  
 	  s = strchr(t, '\t');  /* signature */
 	  if (s)
 	    *s++ = '\0';
@@ -26,8 +40,24 @@ main(int argc, char **argv)
 	  if (w)
 	    *w++ = '\0';
 	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), wdid);
-	  /*printf("%s\t%s\n", s, wdid);*/
-	  /* expand signature and generate sub--tokens */
+	  
+	  /* if the grapheme token has a part-3 (value) determine the
+	   * parent and generate a token entry for it:
+	   *
+	   * if part-2 (form) is non-empty, the parent is part-1.part-2.
+	   * if part-2 is empty, the parent is part-1..
+	   *
+	   * This means we can simply null-out the value and use the
+	   * remainder as the parent.
+	   */
+	  char *v = strrchr(t, '.');
+	  if (v[1])
+	    {
+	      char save = v[1];
+	      v[1] = '\0';
+	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), wdid);
+	      v[1] = save;
+	    }
 	}
     }
   vido_dump_data(vp, "tid.vid", "tid.tsv");

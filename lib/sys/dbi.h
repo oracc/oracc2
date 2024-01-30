@@ -129,6 +129,8 @@ struct Dbi_index
   off_t each_index;		/* the current location in i_fp for dbi_each */
   struct Dbi_index *aliases;	/* aliases for this index */
   struct Dbi_index *signmap;	/* sign map for this index */
+  void (*hook)(const char *,Unsigned32,void *);
+  void *user;
 };
 typedef struct Dbi_index Dbi_index;
 
@@ -150,7 +152,8 @@ extern void	set_clash_offset (void *vp);
 extern void *	dbi_detach_data (Dbi_index *dp, Unsigned32 *count);
 extern void 	dbi_set_cache (Dbi_index *dp, size_t elt_count);
 extern void	dbi_set_counts(FILE *cfp);
-extern void	dbi_set_user (Dbi_index *dp, Unsigned32 udata);
+extern void	dbi_set_user(Dbi_index *dp, Unsigned32 udata);
 extern Uchar *	dbi_each (Dbi_index *dip);
+extern void	dbi_set_hook(Dbi_index *dp, void (*hook)(const char *,Unsigned32,void*), void*user);
 
 #endif /* DBI_H_ */

@@ -128,10 +128,11 @@ vido_dump_data(Vido *vp, const char *fname, const char *tsvname)
       if (dp)
 	fwrite(buf,1,vp->max_len,dp);
       if (tp)
-	fprintf(tp, "%c%06d\t%s\n", vp->prefix, i, buf);
+	fprintf(tp, "%c%06d\t%s\n", vp->prefix, i, buf);      
     }
   fclose(dp);
-  fclose(tp);
+  if (tp)
+    fclose(tp);
 }
 
 Vido *

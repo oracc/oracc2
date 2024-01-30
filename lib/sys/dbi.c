@@ -440,12 +440,15 @@ static void write_hash_table (void);
 static void write_multiple (Dbi_index * dp);
 static void write_single (Dbi_index * dp);
 
+#if 0
 static FILE *dbi_count_fp = NULL;
+#endif
 
 void
-dbi_set_counts(FILE *cfp)
+dbi_set_hook(Dbi_index *dp, void (*hook)(const char *,Unsigned32,void*), void*user)
 {
-  dbi_count_fp = cfp;
+  dp->hook = hook;
+  dp->user = user;
 }
 
 void
@@ -623,8 +626,10 @@ hash_2_ptrs (void *p)
 #if SHOW_WRITES
 	      fprintf (stderr, "%s * %d written directly\n", pd->key, pd->cache_count);
 #endif
-	      if (dbi_count_fp)
-		fprintf(dbi_count_fp, "%s\t%d\n", pd->key, pd->cache_count);
+	      if (tmp_dp->hook)
+		tmp_dp->hook((ccp)pd->key, pd->cache_count, tmp_dp->user);
+	      /*fprintf(dbi_count_fp, "%s\t%d\n", pd->key, pd->cache_count);*/
+
 	      ++direct_keys;
 	      pd->offset = ftell (tmp_dp->i_fp);
 	      xxfwrite (tmp_dp->i_fname, TRUE, pd->key, 1, strlen((const char *)pd->key) + 1, tmp_dp->i_fp);
@@ -925,8 +930,12 @@ transfer_bin (Dbi_index*dip, Dbi_bin*dbp)
   fprintf (stderr, "%s * %d transferred\n", np->key, np->dcount);
 #endif
 
+  if (dip->hook)
+    dip->hook((ccp)np->key, np->dcount, dip->user);
+#if 0
   if (dbi_count_fp)
     fprintf(dbi_count_fp, "%s\t%d\n", np->key, np->dcount);
+#endif
 
   /* remember the offset of key for hash table */
   np->offset = ftell (dip->i_fp);
@@ -1020,9 +1029,12 @@ sort_and_dump_bin (Dbi_index *dip, Dbi_bin *dbp)
 	  fprintf (stderr, "%s * %d sort&dumped\n", np->key, np->dcount);
 #endif
 
+	  if (dip->hook)
+	    dip->hook((ccp)np->key, np->dcount, dip->user);
+#if 0
 	  if (dbi_count_fp)
 	    fprintf(dbi_count_fp, "%s\t%d\n", np->key, np->dcount);
-
+#endif
 	  /* remember the offset of key for hash table */
 	  np->offset = ftell (dip->i_fp);
 	  
