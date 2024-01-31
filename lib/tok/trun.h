@@ -19,7 +19,7 @@ struct trun_gdl_state
 };
 
 /* This should be allocated for each sH/g:w; for line-oriented
-   programs it can be reset rather than reallocated.  gsb_word
+   programs it can be reset rather than reallocated.  trun_word
    provides a management structure for grapheme signatures.
  */
 typedef struct trun_word

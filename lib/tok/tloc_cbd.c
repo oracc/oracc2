@@ -32,14 +32,23 @@ tloc_cbd_sH(void *userData, const char *name, const char **atts)
     }
   else if (!strcmp(name, "g:w"))
     {
-      if (!loch_word(r) || r->multi)
+      if (loch_line(r))
 	{
-	  loch_word(r) = memo_new(r->w_m);
-	  if (loch_line(r)->wlocs)
-	    list_add(loch_line(r)->wlocs, loch_word(r));
+	  if (!loch_word(r) || r->multi)
+	    {
+	      loch_word(r) = memo_new(r->w_m);
+	      if (loch_line(r)->wlocs)
+		list_add(loch_line(r)->wlocs, loch_word(r));
+	    }
+	  loch_word(r)->word_lang = get_xml_lang(atts);
+	  loch_word(r)->word_form = tlb_dup(findAttr(atts,"form"));
+	  (void)trun_word_init(r);
+	  r->rw->w = loch_word(r);
 	}
-      loch_word(r)->word_lang = get_xml_lang(atts);
-      loch_word(r)->word_form = tlb_dup(findAttr(atts,"form"));
-      r->rw->w = loch_word(r);
+      else
+	{
+	  fprintf(stderr, "tloc_cbd_sH: g:w without summary--wrong input format? (need summaries.xml). Stop.\n");
+	  exit(1);
+	}
     }
 }

@@ -30,8 +30,8 @@ trun_term(Trun *r)
   free(r);
 }
 
-/* In the current implementation only a single gsb_word is used but a
-   future implementation may collect an array of gsb_word while
+/* In the current implementation only a single trun_word is used but a
+   future implementation may collect an array of trun_word while
    processing a text.
  */
 Word *

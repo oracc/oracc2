@@ -2,6 +2,13 @@
 #include <runexpat.h>
 #include <tok.h>
 
+/**tokx -- token exactractor
+ *
+ * extract locations and token data from XTF/XCL/XLB/CBD XML formats
+ *
+ * this data is expanded by tokex, the token expander
+ */
+
 const char *outfile = NULL;
 const char *projproj = NULL;
 int run_multi = 0;
