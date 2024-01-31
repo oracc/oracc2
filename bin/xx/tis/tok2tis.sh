@@ -1,4 +1,7 @@
 #!/bin/sh
-./tokex <dcclt.tok | ./tokix -d . >col3.tis
-./tokpct <col3.tis >col4.tis 2>tokpct.log
-
+#
+# pass output of tokx via stdin and write 4-col output to stdout
+#
+# TOKENID TOKEN COUNT PERCENT
+#
+tokex | tokix -p `oraccopt` | tokpct

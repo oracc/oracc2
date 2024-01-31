@@ -96,20 +96,21 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 'n':
 	      r->rw->in_n = 1;
-	      {
-		const char *form = findAttr(atts, "form");
-		gsb_add(r,
-			name[2],
-			form,
-			findAttr(atts, "oid"),
-			findAttr(atts, "g:sign"),
-			NULL, NULL,
-			r->rw->w->word_lang,
-			findAttr(atts, "g:logolang"));
-		tok_status(r, atts);
-		if (n_value_ok(form))
-		  gsb_value(r, form);
-	      }
+	      if (!r->rw->in_c)
+		{
+		  const char *form = findAttr(atts, "form");
+		  gsb_add(r,
+			  name[2],
+			  form,
+			  findAttr(atts, "oid"),
+			  findAttr(atts, "g:sign"),
+			  NULL, NULL,
+			  r->rw->w->word_lang,
+			  findAttr(atts, "g:logolang"));
+		  tok_status(r, atts);
+		  if (n_value_ok(form))
+		    gsb_value(r, form);
+		}
 	      break;
 	    case 'p':
 	      gsb_add(r,
@@ -152,16 +153,18 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	      break;
 	    case 's':
 	    case 'v':
-	      if (!r->rw->in_n && !r->rw->in_p && !r->rw->in_q)
-		gsb_add(r,
-			name[2],
-			NULL,
-			findAttr(atts, "oid"),
-			findAttr(atts, "g:sign"),
-			NULL, NULL,
-			r->rw->w->word_lang,
-			findAttr(atts, "g:logolang"));
-	      tok_status(r, atts);
+	      if (!r->rw->in_c && !r->rw->in_n && !r->rw->in_p && !r->rw->in_q)
+		{
+		  gsb_add(r,
+			  name[2],
+			  NULL,
+			  findAttr(atts, "oid"),
+			  findAttr(atts, "g:sign"),
+			  NULL, NULL,
+			  r->rw->w->word_lang,
+			  findAttr(atts, "g:logolang"));
+		  tok_status(r, atts);
+		}
 	      break;
 	    case 'b':
 	    case 'r':

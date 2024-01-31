@@ -2,12 +2,14 @@
 #include <asl.h>
 #include <tis.h>
 
+#if 0
 static void
 tis_strip_iss(char *lp)
 {
   char *tab = strrchr(lp, '\t');
   *tab = '\0';
 }
+#endif
 
 /* Read the corpus statistics from a .tis file into a hash-by-oid, sl->idata.
  */
@@ -35,7 +37,22 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
       perror(idata_file);
       return;
     }
-  
+
+#if 1
+  char buf[1024];
+  while ((lp = fgets(buf,1024,fp)))
+    {
+      lp[strlen(lp)-1] = '\0';
+      char **f = tab_split((char*)pool_copy((uccp)lp,sl->p));
+      t.key = f[1];
+      t.ref = f[0];
+      t.cnt = f[2];
+      t.pct = f[3];
+      struct tis_data *tp = memo_new(sl->m_idata);
+      *tp = t;
+      hash_add(sl->h_idata, (uccp)t.key, tp);
+    }
+#else
   while ((lp = (char*)loadoneline(fp, NULL)))
     {
       if ('o' == *lp)
@@ -61,6 +78,7 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
 	}
     }
   loadoneline(NULL, NULL);
+#endif
 }
 
 const unsigned char *

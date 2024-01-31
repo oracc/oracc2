@@ -65,14 +65,14 @@ main(int argc, char *const *argv)
 	}
     }
 
-  printf("Total instances of primary tokens: %ld\n", total);
+  printf("t\to\t%ld\t%%\n", total);
 
   const char **k = hash_keys(sem);
   int i;
   for (i = 0; k[i]; ++i)
     {
       int count = (uintptr_t)hash_find(sem, (uccp)k[i]);
-      printf("%s\t%s\t%d\t%.03f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
+      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
     }
   
   k = hash_keys(ter);
@@ -92,7 +92,7 @@ main(int argc, char *const *argv)
 	pcount = (uintptr_t)hash_find(bis, (uccp)parent);
       
       if (pcount)
-	printf("%s\t%s\t%d\t%0.3f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct(count,pcount));
+	printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct(count,pcount));
       else
 	fprintf(stderr, "token %s should have parent %s but doesn't\n", k[i], parent);
     }

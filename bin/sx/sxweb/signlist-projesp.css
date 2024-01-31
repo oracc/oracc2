@@ -51,6 +51,8 @@ table.pretty { background-color: white; }
 
 .sl-unattested { font-size: 80%; }
 
+tr.tithe { border-bottom: solid 2px; }
+
 td.name-sign { width: 10%; }
 td.name-nosign { width: 10%; background-color: lightgray; }
 td.name-sign img { }

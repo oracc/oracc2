@@ -33,8 +33,23 @@
 
 <xsl:template match="sl:sign">
   <tr>
+    <xsl:if test="not(position() mod 10)">
+      <xsl:attribute name="class"><xsl:text>tithe</xsl:text></xsl:attribute>
+    </xsl:if>
+    <td><xsl:value-of select="position()"/><xsl:text>.</xsl:text></td>
+    <td><xsl:value-of select="sl:ucun"/></td>
     <td><esp:link url="/{/*/@slbase}/signlist/{@xml:id}"><xsl:value-of select="@n"/></esp:link></td>
     <td><xsl:value-of select="@tcnt"/></td>
+    <td>
+      <p>
+	<xsl:for-each select="sl:v">
+	  <xsl:value-of select="@n"/>
+	  <xsl:text> (</xsl:text><xsl:value-of select="@icnt"/>
+	  <xsl:text>×)</xsl:text>
+	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+	</xsl:for-each>
+      </p>
+    </td>
   </tr>
 </xsl:template>
 

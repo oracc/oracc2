@@ -25,8 +25,9 @@ echo "$0: asl-auto=$aslauto; asl-stats=$aslstats"
 
 if [ "$aslstats" = "yes" ]; then
     echo "$0: generating $tok and $tis"
+    mkdir -p 02pub/tok
     tokx < 01bld/lists/xtfindex.lst >$tok
-    tok2tis <$tok >$tis
+    tok2tis.sh <$tok >$tis
 fi
 
 if [ "$aslauto" = "yes" ]; then
@@ -44,17 +45,17 @@ else
     fi
 fi
 
-if [ "$asl" != "" ]; then
+#if [ "$asl" != "" ]; then
 #    if [ "$aslstats" = "yes" ]; then
 #	tisify 01tmp/g.tis < 02xml/sl.xml >02xml/sl-tis.xml
 #	mv 02xml/sl-tis.xml 02xml/sl.xml
 #    fi
-    if [ "$aslinsts" != "no" ]; then
-	mkdir -p 02www/inst
-	tisdiv -o -h -d 02www/inst 01tmp/g.tis
-	chmod -R o+r 02www/inst
-    fi
-fi
+# #    if [ "$aslinsts" != "no" ]; then
+# #	mkdir -p 02www/inst
+# #	tisdiv -o -h -d 02www/inst 01tmp/g.tis
+# #	chmod -R o+r 02www/inst
+# #    fi
+#fi
 
 # provides=$ORACC_BUILDS/$project/02xml/provides-instances.xml
 # (cd $ORACC_BUILDS/www ; oid-files.sh $project/inst html >$provides)

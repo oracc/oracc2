@@ -41,14 +41,17 @@ main(int argc, char **argv)
 	    *w++ = '\0';
 	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), wdid);
 	  
-	  /* if the grapheme token has a part-3 (value) determine the
+	  /* if the grapheme token has a ter (value) determine the
 	   * parent and generate a token entry for it:
 	   *
-	   * if part-2 (form) is non-empty, the parent is part-1.part-2.
-	   * if part-2 is empty, the parent is part-1..
+	   * if bis (form) is non-empty, the parent is sem.bis.
+	   * if bis is empty, the parent is sem..
 	   *
 	   * This means we can simply null-out the value and use the
 	   * remainder as the parent.
+	   *
+	   * if the token has no ter we generate a token with 0 for
+	   * ter so we can accurately sum instances.
 	   */
 	  char *v = strrchr(t, '.');
 	  if (v[1])
@@ -58,6 +61,13 @@ main(int argc, char **argv)
 	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), wdid);
 	      v[1] = save;
 	    }
+	  else
+	    {
+	      char t0[strlen(t)+2];
+	      strcpy(t0, t);
+	      strcat(t0, "0");
+	      printf("%s\t%s\t%s\n", t0, vido_new_id(vp,t0), wdid);
+	    }	    
 	}
     }
   vido_dump_data(vp, "tid.vid", "tid.tsv");

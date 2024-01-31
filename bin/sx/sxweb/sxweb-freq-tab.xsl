@@ -31,6 +31,7 @@
 	<xsl:attribute name="tcnt"><xsl:value-of select="@icnt"/></xsl:attribute>
       </xsl:otherwise>
     </xsl:choose>
+    <xsl:copy-of select="sl:ucun"/>
     <xsl:apply-templates select="sl:v[@icnt>0]">
       <xsl:sort select="@icnt" data-type="number" order="descending"/>
     </xsl:apply-templates>
