@@ -3,19 +3,33 @@
 
 #define cdup(s)	(ccp)hpool_copy((uccp)(s),cp->p)
 
-struct cbdex *
+struct cbdex_header *
 cbdex_init(void)
 {
-  struct cbdex *cp = calloc(1, sizeof(struct cbdex));
-  cp->p = hpool_init();
-  return cp;
+  struct cbdex_header *chp = calloc(1, sizeof(struct cbdex_header));
+  chp->p = hpool_init();
+  chp->m = memo_init(sizeof(struct cbdex_header));
+  return chp;
 }
 
 void
-cbdex_term(struct cbdex *cp)
+cbdex_term(struct cbdex_header *chp)
 {
-  hpool_term(cp->p);
-  free(cp);
+  memo_term(chp->m);
+  hpool_term(chp->p);
+  free(chp);
+}
+
+void
+cbdex_new(struct cbdex_header *chp)
+{
+  return memo_new(chp->m);
+}
+
+void
+cbdex_reset(struct cbdex *cp)
+{
+  memset(cp, '\0', sizeof(struct cbdex));
 }
 
 void

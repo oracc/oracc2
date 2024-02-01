@@ -1,6 +1,12 @@
 #ifndef CBDEX_H_
 #define CBDEX_H_
 
+struct cbdex_header
+{
+  Memo *m;
+  Pool *p;
+};
+
 struct cbdex
 {
   const char *tok;
@@ -10,7 +16,6 @@ struct cbdex
   const char *base; /* base as from the @n attribute */
   const char *bcnt; /* count of base occurrences */
   const char *gpos; /* grapheme position (from no_determinative position) */
-  Pool *p;
 };
 
 extern struct cbdex *cbdex_init(void);

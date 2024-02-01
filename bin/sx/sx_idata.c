@@ -98,18 +98,34 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
 
   char buf[1024];
   char *lp;
+  struct cbdex_header *chp = cbdex_init();
   while ((lp = fgets(buf,1024,fp)))
     {
       lp[strlen(lp)-1] = '\0';
+#if 1
+      struct cbdex *cp = cbdex_new(chp);
+      cbdex_parse(lp, cp);
+      List *ll = hash_find(sl->h_ldata, cp->tok);
+#else
       char **f = tab_split((char*)pool_copy((uccp)lp,sl->p));
       List *ll = hash_find(sl->h_ldata, (uccp)f[0]);
+#endif
       if (!ll)
 	{
 	  ll = list_create(LIST_SINGLE);
+#if 1
+	  hash_add(sl->h_ldata, cp->tok, ll);
+#else
 	  hash_add(sl->h_ldata, (uccp)f[0], ll);
+#endif
 	}
+#if 1
+      list_add(ll, cp);
+#else
       list_add(ll, f[1]);
+#endif
     }
+  cbdex_term(chp);
 }
 
 const unsigned char *
