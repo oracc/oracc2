@@ -236,3 +236,21 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
     }
   return gp;
 }
+
+/* Fish the no-determinative position code out of the gsig */
+const char *
+gsig_no_d_pos(const char *gsig)
+{
+  static char pos[2] = { '\0', '\0' };
+  const char *p = gsig + strlen(gsig);
+  int i = 0;
+  while (p > gsig)
+    {
+      if ('#' == p[-1])
+	if (++i == 3)
+	  break;
+      --p;
+    }
+  pos[0] = p[0];
+  return pos;
+}

@@ -44,7 +44,7 @@ tloc_cbd_sH(void *userData, const char *name, const char **atts)
 	      if (loch_line(r)->wlocs)
 		list_add(loch_line(r)->wlocs, loch_word(r));
 	    }
-	  loch_word(r)->word_lang = get_xml_lang(atts);
+	  loch_word(r)->word_lang = tlb_dup(get_xml_lang(atts));
 	  loch_word(r)->word_form = tlb_dup(findAttr(atts,"form"));
 	  (void)trun_word_init(r);
 	  r->rw->w = loch_word(r);

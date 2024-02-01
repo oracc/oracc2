@@ -4,8 +4,8 @@
 typedef struct gsig
 {
   char gdltype;
-  char role; 		/* d(eterminative) g(loss) p(unctuation) w(ord-constituent) u(ndetermined) */
-  char roletype;	/* role=d: s(emantic) p(honetic) v(ariant) u(ndetermined)
+  char role; 		/* d(eterminative-ante)|D(eterminative-post) g(loss) p(unctuation) w(ord-constituent) u(ndetermined) */
+  char roletype;	/* role=d: s(emantic) p(honetic) v(ariant) c(uneiform[i.e.paleographic]) u(ndetermined)
 			   role=g: t(ranslation) v(ariant)
 			   role=p: b(ullet=*) d(ivider-general=:-etc) w(ord-divider) s(urrogate) u(ndetermined)
 			   role=w|u: n(one)
@@ -17,11 +17,16 @@ typedef struct gsig
 			   u(ndetermined)
 			   c(compound-element)
 			 */
-  char position;	/* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char no_d_position;   /* i(ndependent) b(eginning) m(iddle) e(nd) u(ndetermined) */
-  char c_position;   	/* for type=c: position in compound:
-			   i(ndependent) b(eginning) m(iddle) e(nd)
-			   u(ndetermined) */
+  char position;      	/* Position letter codes are contrived to sort in the way signlists list words:
+			   a(absolute)
+			   i(nitial)
+			   m(edial)
+			   t(erminal)
+ 			   u(ndetermined)
+			   - (ignore) -- used for determinatives in no_d_position
+ 			 */
+  char no_d_position;
+  char c_position;
   char preserved;	/* + = whole; . = half-brackets; - = square brackets */
   char editorial;	/* n = normal; e = excised; i = implied; m = maybe; s = supplied; r = erased; v = some */
   char* flags;		/* + = none; ! * ? = as ATF ; 1 2 3 4 = as user flags */

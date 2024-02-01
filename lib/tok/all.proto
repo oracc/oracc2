@@ -1,3 +1,10 @@
+/* cbdex.c */
+extern struct cbdex *cbdex_init(void);
+extern void cbdex_term(struct cbdex *cp);
+extern void cbdex_loc(char *lp, struct cbdex *cp);
+extern void cbdex_g(char *g, struct cbdex *cp);
+extern void cbdex_parse(char *c, struct cbdex *cp);
+extern void cbdex_write(FILE *fp, struct cbdex *cp);
 /* gsig_builder.c */
 extern Gsig *gsb_new(Trun *r);
 extern Gsig *gsb_get(Word *w);
@@ -18,6 +25,7 @@ extern Gsig *gsig_parse_oid(char *s, Gsig *gp);
 extern const char *gsig_parse_sl_lang(const char *s);
 extern const char *gsig_parse_word_lang(const char *s);
 extern Gsig *gsig_parse(char *s, Gsig *gp, const char *id_sig_sep);
+extern const char *gsig_no_d_pos(const char *gsig);
 /* gsig_print.c */
 extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
 /* mds_xmd.c */

@@ -91,7 +91,10 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		 the reciprocal pointers after init */
 	      break;
 	    case 'd':
-	      r->rw->role = 'd';
+	      if (!strcmp(findAttr(atts, "g:pos"), "pre"))
+		r->rw->role = 'd';
+	      else
+		r->rw->role = 'D';
 	      r->rw->roletext = (ccp)hpool_copy((uccp)findAttr(atts, "g:role"), r->p);
 	      break;
 	    case 'n':

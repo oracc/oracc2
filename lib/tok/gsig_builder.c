@@ -148,30 +148,30 @@ gsb_set_positions(Word *w)
 	  if (use_index > 1)
 	    {
 	      if (wgp->last)
-		wgp->position = 'e';
+		wgp->position = 't';
 	      else
 		wgp->position = 'm';
 	    }
 	  else
 	    {
 	      if (wgp->last)
-		wgp->position = 'i';
+		wgp->position = 'a';
 	      else
-		wgp->position = 'b';
+		wgp->position = 'i';
 	    }
 	  if (wgp->no_d_index > 1)
 	    {
 	      if (wgp->no_d_last)
-		wgp->no_d_position = 'e';
+		wgp->no_d_position = 't';
 	      else
 		wgp->no_d_position = 'm';
 	    }
 	  else
 	    {
 	      if (wgp->no_d_last)
-		wgp->no_d_position = 'i';
+		wgp->no_d_position = 'a';
 	      else
-		wgp->no_d_position = 'b';
+		wgp->no_d_position = 'i';
 	    }
 	}
     }
