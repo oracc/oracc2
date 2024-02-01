@@ -48,7 +48,8 @@ extern void tlw_T(Trun *r);
 extern void tlw_L(Trun *r);
 extern void tlw_W(Trun *r);
 extern void tlw_G(Trun *r, const char *lang);
-extern void tlw_A(Trun *r, const char *oid, const char *n);
+extern void tlw_A(Trun *r, const char *oid, const char *n, const char *cnt, const char *pct);
+extern void tlw_B(Trun *r, const char *oid, const char *n, const char *cnt, const char *pct);
 /* tloc_xtf.c */
 extern void tloc_xtf_sH(void *userData, const char *name, const char **atts);
 /* tokflags.c */

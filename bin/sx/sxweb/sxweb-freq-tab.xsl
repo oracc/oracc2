@@ -53,6 +53,7 @@
 <xsl:template match="sl:v">
   <xsl:copy>
     <xsl:copy-of select="@n|@icnt"/>
+    <xsl:copy-of select="sl:lemmas"/>
   </xsl:copy>
 </xsl:template>
 

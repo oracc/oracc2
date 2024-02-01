@@ -28,7 +28,11 @@ tloc_cbd_sH(void *userData, const char *name, const char **atts)
 	  if (loch_text(r)->llocs)
 	    list_add(loch_text(r)->llocs, loch_line(r));
 	}
-      tlw_A(r, findAttr(atts, "oid"), findAttr(atts, "n"));
+      tlw_A(r, findAttr(atts, "oid"), findAttr(atts, "n"), findAttr(atts, "icount"), findAttr(atts, "ipct"));
+    }
+  else if (!strcmp(name, "base"))
+    {
+      tlw_B(r, findAttr(atts, "cbd:id"), findAttr(atts, "n"), findAttr(atts, "icount"), findAttr(atts, "ipct"));      
     }
   else if (!strcmp(name, "g:w"))
     {

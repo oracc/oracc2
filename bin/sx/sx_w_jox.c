@@ -449,13 +449,9 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      atts = list2chars(a);
 	      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
 	      list_free(a, NULL);
-
 #if 0	      
 	      ratts = rnvval_aa("x", "n", s->u.f->name, id_or_ref, s->u.f->oid ? s->u.f->oid : "", "sort", scode, NULL);
 #endif
-
-
-
 	      joxer_ea(&s->mloc, "sl:form", ratts);
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
 	      grx_jox(tp->gdl, "g:w");
@@ -815,7 +811,6 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	    joxer_ee(&v->mloc, "sl:v");
 	  else
 	    in_value = 1;
-
 #if 1
 	  atts = list2chars(a);
 	  ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
@@ -826,11 +821,22 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  else
 	    ratts = rnvval_aa("x", "n", v->u.v->name, "sort", scode, NULL);
 #endif
-	  
 	  joxer_ea(&v->mloc, "sl:v", ratts);
 	  joxer_eaaa(&v->mloc, "sl:name", NULL);
 	  grx_jox(tp->gdl, "g:w");
 	  joxer_eeaa(&v->mloc, "sl:name");
+
+	  if (v->lp)
+	    {
+	      joxer_ea(&v->mloc, "sl:lemmas", NULL);
+	      const char *lm;
+	      for (lm = list_first(v->lp); lm; lm = list_next(v->lp))
+		{
+		  ratts = rnvval_aa("x", "n", lm, NULL);
+		  joxer_ec(&v->mloc, "sl:lemma", ratts);
+		}
+	      joxer_ee(&v->mloc, "sl:lemmas");
+	    }
 	}
     }
   else

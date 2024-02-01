@@ -231,9 +231,15 @@ sl.v =
     sl.stats?,
     sl.name?,
     sl.proof?,
+    sl.lemmas?,
     (sl.inote | sl.lit | sl.note)*
   }
+
+# potentially deprecated
 sl.proof = element sl:proof { text }
+
+sl.lemmas = element sl:lemmas { sl.lemma* }
+sl.lemma  = element sl:lemma  { attribute n { text } }
 
 g.d =
   element g:d {

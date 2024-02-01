@@ -41,14 +41,22 @@
     <td><esp:link url="/{/*/@slbase}/signlist/{@xml:id}"><xsl:value-of select="@n"/></esp:link></td>
     <td><xsl:value-of select="@tcnt"/></td>
     <td>
-      <p>
-	<xsl:for-each select="sl:v">
+      <xsl:for-each select="sl:v">
+	<p>
 	  <xsl:value-of select="@n"/>
 	  <xsl:text> (</xsl:text><xsl:value-of select="@icnt"/>
-	  <xsl:text>×)</xsl:text>
+	  <xsl:text>×</xsl:text>
+	  <xsl:if test="count(sl:lemmas/sl:lemma)>0">
+	    <xsl:text> in </xsl:text>
+	    <xsl:for-each select="sl:lemmas/sl:lemma">
+	      <xsl:value-of select="@n"/>
+	      <xsl:if test="not(position()=last())"><xsl:text>, </xsl:text></xsl:if>
+	    </xsl:for-each>
+	  </xsl:if>
+	  <xsl:text>)</xsl:text>
 	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
-	</xsl:for-each>
-      </p>
+	</p>
+      </xsl:for-each>
     </td>
   </tr>
 </xsl:template>

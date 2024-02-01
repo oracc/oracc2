@@ -52,6 +52,7 @@ extern Hash *oid_sort_keys;
 
 extern char *idata_file;
 extern char *idata_type;
+extern const char *ldata_file;
 
 int oid_char_cmp(const void *a, const void *b);
 extern int via_tok_cmp(const void *a, const void *b);
@@ -107,5 +108,8 @@ extern void sx_idata_ctotals(struct sl_signlist *sl);
 extern void sx_idata_sign(struct sl_signlist *sl, struct sl_sign *sp);
 extern void sx_idata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
 extern void sx_idata_value_inst(struct sl_signlist *sl, struct sl_inst *vip);
+
+extern void sx_ldata_init(struct sl_signlist *sl, const char *ldata_file);
+extern void sx_ldata_value_inst(struct sl_signlist *sl, struct sl_inst *vip);
 
 #endif/*SX_H_*/

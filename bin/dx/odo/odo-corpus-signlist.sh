@@ -26,8 +26,9 @@ echo "$0: asl-auto=$aslauto; asl-stats=$aslstats"
 if [ "$aslstats" = "yes" ]; then
     echo "$0: generating $tok and $tis"
     mkdir -p 02pub/tok
-    tokx < 01bld/lists/xtfindex.lst >$tok
+    tokx <01bld/lists/xtfindex.lst >$tok
     tok2tis.sh <$tok >$tis
+    tokx -s -c <01bld/sux/summaries.xml | cbdex | sort -u >01tmp/cbd.tok
 fi
 
 if [ "$aslauto" = "yes" ]; then

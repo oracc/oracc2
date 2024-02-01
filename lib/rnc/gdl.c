@@ -315,6 +315,8 @@ struct xnn_xname gdl_enames[] =
   { "sl:init", "http://oracc.org/ns/sl/1.0:init" },
   { "sl:inote", "http://oracc.org/ns/sl/1.0:inote" },
   { "sl:iv", "http://oracc.org/ns/sl/1.0:iv" },
+  { "sl:lemma", "http://oracc.org/ns/sl/1.0:lemma" },
+  { "sl:lemmas", "http://oracc.org/ns/sl/1.0:lemmas" },
   { "sl:letter", "http://oracc.org/ns/sl/1.0:letter" },
   { "sl:list", "http://oracc.org/ns/sl/1.0:list" },
   { "sl:listdef", "http://oracc.org/ns/sl/1.0:listdef" },

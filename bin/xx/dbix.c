@@ -67,7 +67,7 @@ int major_version = 1, minor_version = 0, verbose;
 const char *usage_string = "[ -b | -p [PROJECT] ]";
 
 int
-opts(int opt, char *arg)
+opts(int opt, const char *arg)
 {
   switch (opt)
     {

@@ -359,7 +359,7 @@ void help(void)
   fprintf(stderr, "ACTIONS:\n\n");
   fprintf(stderr, "\t(none yet)\n\n");
 }
-int opts(int och,char *oarg)
+int opts(int och, const char *oarg)
 {
   switch (och)
     {

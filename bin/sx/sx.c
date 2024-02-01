@@ -60,6 +60,8 @@ extern int asl_flex_debug, gdl_flex_debug, gdl_unicode;
 char *idata_file = NULL;
 char *idata_type = NULL;
 
+const char *ldata_file = NULL; /* lemma data */
+
 const char *missing_lists = NULL;
 
 const char *jfn = NULL, *xfn = NULL;
@@ -77,7 +79,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eiI:jJ:m:nMoOp:sStTuUxX:?");
+  options(argc, argv, "abcCD:d:eiI:jJ:L:m:nMoOp:sStTuUxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -293,7 +295,7 @@ opts(int opt, const char *arg)
       asl_output = identity_mode = 1;
       break;
     case 'I':
-      idata_type = (char *)arg;
+      idata_type = strdup(arg);
       idata_file = strchr(idata_type, ':');
       if (idata_file && idata_file - idata_type < 3)
 	*idata_file++ = '\0';
@@ -307,6 +309,9 @@ opts(int opt, const char *arg)
       jfn = arg;
     case 'j':
       jsn_output = 1;
+      break;
+    case 'L':
+      ldata_file = arg;
       break;
     case 'n':
       list_names_mode = 1;

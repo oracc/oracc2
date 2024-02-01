@@ -179,6 +179,8 @@ enum gdl_e_type
   gdl_e_sl_init,
   gdl_e_sl_inote,
   gdl_e_sl_iv,
+  gdl_e_sl_lemma,
+  gdl_e_sl_lemmas,
   gdl_e_sl_letter,
   gdl_e_sl_list,
   gdl_e_sl_listdef,

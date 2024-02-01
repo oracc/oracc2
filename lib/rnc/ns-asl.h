@@ -178,6 +178,8 @@ enum asl_e_type
   asl_e_sl_init,
   asl_e_sl_inote,
   asl_e_sl_iv,
+  asl_e_sl_lemma,
+  asl_e_sl_lemmas,
   asl_e_sl_letter,
   asl_e_sl_list,
   asl_e_sl_listdef,

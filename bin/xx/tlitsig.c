@@ -157,7 +157,7 @@ main(int argc, char **argv)
 }
 
 int
-opts(int opt, char *arg)
+opts(int opt, const char *arg)
 {
   switch (opt)
     {

@@ -311,6 +311,9 @@ sx_marshall(struct sl_signlist *sl)
   if (idata_file)
     sx_idata_init(sl, idata_file, idata_type);
 
+  if (ldata_file)
+    sx_ldata_init(sl, ldata_file);
+
   /* Register forms that don't exist as signs as if they were signs */
   keys = hash_keys2(sl->hfentry, &nkeys);
   for (i = 0; i < nkeys; ++i)
@@ -698,6 +701,7 @@ sx_marshall(struct sl_signlist *sl)
 	    {
 	      sp->values[j] = hash_find(sp->hventry, (uccp)svals[j]);
 	      sx_idata_value_inst(sl, sp->values[j]);
+	      sx_ldata_value_inst(sl, sp->values[j]);
 	    }
 	  qsort(sp->values, sp->nvalues, sizeof(void*), (cmp_fnc_t)values_inst_cmp);
 	}
@@ -740,7 +744,10 @@ sx_marshall(struct sl_signlist *sl)
 		  fp->lv->nvalues = l;
 		  qsort(fp->lv->values, fp->lv->nvalues, sizeof(void*), (cmp_fnc_t)values_inst_cmp);
 		  for (k = 0; fp->lv->values[k]; ++k)
-		    sx_idata_value_inst(sl, fp->lv->values[k]);
+		    {
+		      sx_idata_value_inst(sl, fp->lv->values[k]);
+		      sx_ldata_value_inst(sl, fp->lv->values[k]);
+		    }
 		}
 	    }
 	  qsort(sp->forms, sp->nforms, sizeof(void*), (cmp_fnc_t)forms_inst_cmp);

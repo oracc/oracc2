@@ -113,7 +113,7 @@ main(int argc, char **argv)
 }
 
 void help(void) { }
-int opts(int c, char *opt)
+int opts(int c, const char *opt)
 {
   switch (c)
     {

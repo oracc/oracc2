@@ -41,7 +41,7 @@ if [ "$asl" != "" ]; then
 	    tis=-I$asldomain:01tmp/g.tis
 	fi
 	echo "$0: sx $UP $tis -X 02xml/sl.xml $asl"
-	sx $UP $tis -X 02xml/sl.xml $asl  
+	sx $UP $tis -L01tmp/cbd.tok -X 02xml/sl.xml $asl  
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
 	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml

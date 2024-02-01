@@ -81,6 +81,37 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
 #endif
 }
 
+/* Read the corpus statistics from a .tis file into a hash-by-oid, sl->idata.
+ */
+void
+sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
+{
+  FILE *fp = NULL;
+
+  sl->h_ldata = hash_create(1024);
+  
+  if (!(fp = fopen(ldata_file, "r")))
+    {
+      perror(ldata_file);
+      return;
+    }
+
+  char buf[1024];
+  char *lp;
+  while ((lp = fgets(buf,1024,fp)))
+    {
+      lp[strlen(lp)-1] = '\0';
+      char **f = tab_split((char*)pool_copy((uccp)lp,sl->p));
+      List *ll = hash_find(sl->h_ldata, (uccp)f[0]);
+      if (!ll)
+	{
+	  ll = list_create(LIST_SINGLE);
+	  hash_add(sl->h_ldata, (uccp)f[0], ll);
+	}
+      list_add(ll, f[1]);
+    }
+}
+
 const unsigned char *
 sx_idata_key(const char *soid, const char *foid, unsigned const char *v)  
 {
@@ -187,10 +218,41 @@ sx_idata_value_inst(struct sl_signlist *sl, struct sl_inst *vip)
 	  if (sip->u.s->oid && fip->u.f->oid)
 	    vip->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sip->u.s->oid,
 								fip->u.f->oid,
-								(uccp)vip->u.v->name));	  
+								(uccp)vip->u.v->name));
 	}
       else
 	vip->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sip->u.s->oid,
+							    "",
+							    (uccp)vip->u.v->name));
+    }
+}
+
+void
+sx_ldata_value_inst(struct sl_signlist *sl, struct sl_inst *vip)
+{
+  if (sl->h_ldata)
+    {
+      struct sl_inst *sip, *fip;
+
+      if (vip->parent_s)
+	sip = vip->parent_s;
+      else if (vip->parent_f)
+	sip = vip->parent_f->parent_s;
+
+      if (vip->parent_f)
+	fip = vip->parent_f;
+      else
+	fip = NULL;
+	
+      if (fip)
+	{
+	  if (sip->u.s->oid && fip->u.f->oid)
+	    vip->lp = hash_find(sl->h_ldata, (uccp)sx_idata_key(sip->u.s->oid,
+								fip->u.f->oid,
+								(uccp)vip->u.v->name));	  
+	}
+      else
+	vip->lp = hash_find(sl->h_ldata, (uccp)sx_idata_key(sip->u.s->oid,
 							    "",
 							    (uccp)vip->u.v->name));
     }

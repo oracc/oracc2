@@ -52,7 +52,13 @@ tlw_G(Trun *r, const char *lang)
 }
 
 void
-tlw_A(Trun *r, const char *oid, const char *n)
+tlw_A(Trun *r, const char *oid, const char *n, const char *cnt, const char *pct)
 {
-  fprintf(r->o, "A\t%s\t%s\n", oid, n);
+  fprintf(r->o, "A\t%s\t%s\t%s\t%s\n", oid, n, cnt, pct);
+}
+
+void
+tlw_B(Trun *r, const char *oid, const char *n, const char *cnt, const char *pct)
+{
+  fprintf(r->o, "B\t%s\t%s\t%s\t%s\n", oid, n, cnt, pct);
 }

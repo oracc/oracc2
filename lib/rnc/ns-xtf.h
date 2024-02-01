@@ -247,6 +247,8 @@ enum xtf_e_type
   xtf_e_sl_init,
   xtf_e_sl_inote,
   xtf_e_sl_iv,
+  xtf_e_sl_lemma,
+  xtf_e_sl_lemmas,
   xtf_e_sl_letter,
   xtf_e_sl_list,
   xtf_e_sl_listdef,

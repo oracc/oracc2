@@ -182,7 +182,7 @@ main(int argc, char * const*argv)
 }
 
 int
-opts(int opt, char *arg)
+opts(int opt, const char *arg)
 {
   switch (opt)
     {

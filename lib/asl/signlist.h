@@ -59,6 +59,7 @@ struct sl_signlist
   Hash *oidindexes;
   Hash *hletters;
   Hash *h_idata;	/* Hash used by sx_idata */
+  Hash *h_ldata;	/* Hash used by sx_ldata */
   struct sl_token **tokens; /* sorted htoken */
   struct sl_sign  **signs;  /* sorted hsentry */
   int nsigns;
@@ -190,6 +191,7 @@ struct sl_inst
   struct sl_inst *parent_s; 	/* The parent sign for a form or value instance; if NULL use parent_f */
   struct sl_inst *parent_f; 	/* The parent form for a value instance */
   struct tis_data *tp;		/* The statistics for the instance as imported from .tis by sx_idata_init */
+  List *lp;			/* Lemmata written with the sign-value; very preliminary implementation */
   List *notes;			/* A list of struct sl_note * */
   List *sys;			/* A list of @sys in a sign or form */
   const char *lang; 	  	/* this is inline in the @v; an x-value could have a lang with one sign but not another */
