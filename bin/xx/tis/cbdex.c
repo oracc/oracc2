@@ -24,9 +24,13 @@ main(int argc, char **argv)
       if (b[strlen(b)-1] == '\n')
 	b[strlen(b)-1] = '\0';
 
-      if ('A' == *b || 'B' == *b)
+      if ('A' == *b)
 	{
 	  cbdex_reset(cp);
+	  cbdex_loc(b, cp);
+	}
+      else if ('B' == *b)
+	{
 	  cbdex_loc(b, cp);
 	}
       else if ('g' == *b)

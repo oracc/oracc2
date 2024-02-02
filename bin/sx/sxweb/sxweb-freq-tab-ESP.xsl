@@ -46,12 +46,23 @@
 	  <xsl:value-of select="@n"/>
 	  <xsl:text> (</xsl:text><xsl:value-of select="@icnt"/>
 	  <xsl:text>×</xsl:text>
-	  <xsl:if test="count(sl:lemmas/sl:lemma)>0">
+	  <xsl:variable name="alemma" select="sl:lemmas/sl:lemma[@gpos='a']"/>
+	  <xsl:variable name="xlemma" select="sl:lemmas/sl:lemma[not(@gpos='a')]"/>
+	  <xsl:if test="count($alemma)>0">
 	    <xsl:text> in </xsl:text>
-	    <xsl:for-each select="sl:lemmas/sl:lemma">
+	    <xsl:for-each select="$alemma">
 	      <xsl:value-of select="@n"/>
+	      <xsl:if test="not(@lcnt=../../@icnt)">
+		<xsl:text> (</xsl:text>
+		<xsl:value-of select="@lcnt"/>
+		<xsl:text>×)</xsl:text>
+	      </xsl:if>
 	      <xsl:if test="not(position()=last())"><xsl:text>, </xsl:text></xsl:if>
 	    </xsl:for-each>
+	  </xsl:if>
+	  <xsl:if test="count($xlemma)>0">
+	    <xsl:if test="count($alemma)>0"><xsl:text> and another </xsl:text></xsl:if>
+	    <xsl:value-of select="count($xlemma)"/><xsl:text> words</xsl:text>
 	  </xsl:if>
 	  <xsl:text>)</xsl:text>
 	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>

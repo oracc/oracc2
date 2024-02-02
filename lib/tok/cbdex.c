@@ -1,14 +1,14 @@
 #include <oraccsys.h>
 #include <tok.h>
 
-#define cdup(s)	(ccp)hpool_copy((uccp)(s),cp->p)
+#define cdup(s)	(ccp)hpool_copy((uccp)(s), cp->chp->p)
 
 struct cbdex_header *
 cbdex_init(void)
 {
   struct cbdex_header *chp = calloc(1, sizeof(struct cbdex_header));
   chp->p = hpool_init();
-  chp->m = memo_init(sizeof(struct cbdex_header));
+  chp->m = memo_init(sizeof(struct cbdex), 256);
   return chp;
 }
 
@@ -20,16 +20,20 @@ cbdex_term(struct cbdex_header *chp)
   free(chp);
 }
 
-void
+struct cbdex *
 cbdex_new(struct cbdex_header *chp)
 {
-  return memo_new(chp->m);
+  struct cbdex *cp = memo_new(chp->m);
+  cp->chp = chp;
+  return cp;
 }
 
 void
 cbdex_reset(struct cbdex *cp)
 {
+  struct cbdex_header *chp = cp->chp;
   memset(cp, '\0', sizeof(struct cbdex));
+  cp->chp = chp;
 }
 
 void

@@ -8,6 +8,9 @@ void
 tloc_cbd_sH(void *userData, const char *name, const char **atts)
 {
   Trun *r = userData;
+
+  static int in_psu = 0;
+
   if (!strcmp(name, "articles"))
     {
       if (!loch_text(r) || r->multi)
@@ -32,7 +35,9 @@ tloc_cbd_sH(void *userData, const char *name, const char **atts)
     }
   else if (!strcmp(name, "base"))
     {
-      tlw_B(r, findAttr(atts, "cbd:id"), findAttr(atts, "n"), findAttr(atts, "icount"), findAttr(atts, "ipct"));      
+      const char *b = findAttr(atts, "n");
+      in_psu = (strchr(b, ' ') ? 1 : 0);
+      tlw_B(r, findAttr(atts, "cbd:id"), b, findAttr(atts, "icount"), findAttr(atts, "ipct"));
     }
   else if (!strcmp(name, "g:w"))
     {
@@ -48,6 +53,7 @@ tloc_cbd_sH(void *userData, const char *name, const char **atts)
 	  loch_word(r)->word_form = tlb_dup(findAttr(atts,"form"));
 	  (void)trun_word_init(r);
 	  r->rw->w = loch_word(r);
+	  r->rw->psu = in_psu;
 	}
       else
 	{

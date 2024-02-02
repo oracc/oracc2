@@ -5,6 +5,7 @@
 #include <oraccsys.h>
 #include <sx.h>
 #include <joxer.h>
+#include <tok.h>
 #include <tis.h>
 
 int slgroups = 0;
@@ -829,10 +830,17 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  if (v->lp)
 	    {
 	      joxer_ea(&v->mloc, "sl:lemmas", NULL);
-	      const char *lm;
+	      struct cbdex *lm;
 	      for (lm = list_first(v->lp); lm; lm = list_next(v->lp))
 		{
-		  ratts = rnvval_aa("x", "n", lm, NULL);
+		  ratts = rnvval_aa("x",
+				    "n", lm->lem,
+				    "oid", lm->oid,
+				    "lcnt", lm->lcnt,
+				    "base", lm->base,
+				    "bcnt", lm->bcnt,
+				    "gpos", lm->gpos,
+				    NULL);
 		  joxer_ec(&v->mloc, "sl:lemma", ratts);
 		}
 	      joxer_ee(&v->mloc, "sl:lemmas");

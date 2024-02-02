@@ -155,7 +155,7 @@ gsb_set_positions(Word *w)
 	  else
 	    {
 	      if (wgp->last)
-		wgp->position = 'a';
+		wgp->position = (w->psu ? 'A' : 'a');
 	      else
 		wgp->position = 'i';
 	    }
@@ -169,7 +169,7 @@ gsb_set_positions(Word *w)
 	  else
 	    {
 	      if (wgp->no_d_last)
-		wgp->no_d_position = 'a';
+		wgp->no_d_position = (w->psu ? 'A' : 'a');
 	      else
 		wgp->no_d_position = 'i';
 	    }

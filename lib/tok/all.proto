@@ -1,6 +1,8 @@
 /* cbdex.c */
-extern struct cbdex *cbdex_init(void);
-extern void cbdex_term(struct cbdex *cp);
+extern struct cbdex_header *cbdex_init(void);
+extern void cbdex_term(struct cbdex_header *chp);
+extern struct cbdex *cbdex_new(struct cbdex_header *chp);
+extern void cbdex_reset(struct cbdex *cp);
 extern void cbdex_loc(char *lp, struct cbdex *cp);
 extern void cbdex_g(char *g, struct cbdex *cp);
 extern void cbdex_parse(char *c, struct cbdex *cp);

@@ -37,6 +37,7 @@ typedef struct trun_word
   int in_n;
   int in_p;
   int in_q;
+  int psu; /* For CBD is the BASE a PSU, i.e., does it contain a space */
   char role;
   const char *roletext;
   Wloc *w;

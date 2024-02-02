@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <asl.h>
+#include <tok.h>
 #include <tis.h>
 
 #if 0
@@ -38,7 +39,6 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
       return;
     }
 
-#if 1
   char buf[1024];
   while ((lp = fgets(buf,1024,fp)))
     {
@@ -52,33 +52,6 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
       *tp = t;
       hash_add(sl->h_idata, (uccp)t.key, tp);
     }
-#else
-  while ((lp = (char*)loadoneline(fp, NULL)))
-    {
-      if ('o' == *lp)
-	{
-	  tis_strip_iss(lp);
-	  t.key = (char *)pool_copy((uccp)lp, sl->p);
-	  lp = strchr(t.key, '\t');
-	  *lp++ = '\0';
-	  if (!strncmp(lp, type, 3))
-	    {
-	      if (!strchr(t.key, '|')) /* may use meta one day */
-		{
-		  t.ref = lp;
-		  lp = strchr(lp, '\t'); *lp++ = '\0';
-		  t.cnt = lp;
-		  lp = strchr(lp, '\t'); *lp++ = '\0';
-		  t.pct = lp;
-		  struct tis_data *tp = memo_new(sl->m_idata);
-		  *tp = t;
-		  hash_add(sl->h_idata, (uccp)t.key, tp);
-		}
-	    }
-	}
-    }
-  loadoneline(NULL, NULL);
-#endif
 }
 
 /* Read the corpus statistics from a .tis file into a hash-by-oid, sl->idata.
@@ -102,30 +75,17 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
   while ((lp = fgets(buf,1024,fp)))
     {
       lp[strlen(lp)-1] = '\0';
-#if 1
       struct cbdex *cp = cbdex_new(chp);
-      cbdex_parse(lp, cp);
-      List *ll = hash_find(sl->h_ldata, cp->tok);
-#else
-      char **f = tab_split((char*)pool_copy((uccp)lp,sl->p));
-      List *ll = hash_find(sl->h_ldata, (uccp)f[0]);
-#endif
+      cbdex_parse(pool_copy(lp,chp->p), cp);
+      List *ll = hash_find(sl->h_ldata, (uccp)cp->tok);
       if (!ll)
 	{
 	  ll = list_create(LIST_SINGLE);
-#if 1
-	  hash_add(sl->h_ldata, cp->tok, ll);
-#else
-	  hash_add(sl->h_ldata, (uccp)f[0], ll);
-#endif
+	  hash_add(sl->h_ldata, (uccp)cp->tok, ll);
 	}
-#if 1
       list_add(ll, cp);
-#else
-      list_add(ll, f[1]);
-#endif
     }
-  cbdex_term(chp);
+  /*cbdex_term(chp);*/ /* need to do this after cbd info is printed */
 }
 
 const unsigned char *
