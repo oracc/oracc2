@@ -21,3 +21,5 @@ if [ -r 00etc/word-pages.lst ]; then
 fi
 
 oid-index-cbd.sh `oraccopt`
+mkdir -p 02pub/oid
+dbix -d 02pub/oid -n oid 02pub/oid-index.tab

@@ -468,7 +468,8 @@
   <xsl:if test="$asl-suxword = 'yes'">
     <div class="sl-lemmas">
       <xsl:for-each select="sl:v/sl:lemmas/*">
-	<xsl:value-of select="@oid"/>
+	<esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link>
+	<xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
       </xsl:for-each>
     </div>
   </xsl:if>
