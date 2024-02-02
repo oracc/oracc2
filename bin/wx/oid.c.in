@@ -40,8 +40,13 @@ oid(const char *e2)
     {
       const char *v;
       v = dbx_key(dbi, e2);
-      if (v && 'u' == *v && '\t' == v[1])
-	do302(v+2);
+      if (v && '\t' == v[1])
+	{
+	  if ('u' == *v)
+	    do302(v+2);
+	  else if ('h' == *v)
+	    cat_html_file(v+2);
+	}
       else
 	do404();
       dbx_term(dbi);

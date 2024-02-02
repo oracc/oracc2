@@ -464,14 +464,37 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-lemmas-by-pos">
+  <xsl:param name="nodes"/>
+  <xsl:param name="type"/>
+  <xsl:if test="count($nodes)>0">
+    <h3 class="sl-ihead"><xsl:value-of select="$type"/></h3>
+    <xsl:for-each select="$nodes">
+      <esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link>
+      <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+    </xsl:for-each>
+  </xsl:if>
+</xsl:template>
+
 <xsl:template name="sws-suxword">
   <xsl:if test="$asl-suxword = 'yes'">
-    <div class="sl-lemmas">
-      <xsl:for-each select="sl:v/sl:lemmas/*">
-	<esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link>
-	<xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
-      </xsl:for-each>
-    </div>
+    <xsl:if test="count(sl:v/sl:lemmas/sl:lemma)>0">
+      <div class="sl-lemmas">
+	<h2 class="sl-ihead">GLOSSARY ATTESTATIONS</h2>
+	<xsl:call-template name="sws-lemmas-by-pos">
+	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
+	  <xsl:with-param name="type" select="'Independent'"/>
+	</xsl:call-template>
+	<xsl:call-template name="sws-lemmas-by-pos">
+	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[not(@gpos='a') and not(@gpos='A')]"/>
+	  <xsl:with-param name="type" select="'Combined'"/>
+	</xsl:call-template>
+	<xsl:call-template name="sws-lemmas-by-pos">
+	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='A']"/>
+	  <xsl:with-param name="type" select="'Compounds'"/>
+	</xsl:call-template>
+      </div>
+    </xsl:if>
   </xsl:if>
 </xsl:template>
 

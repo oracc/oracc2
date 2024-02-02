@@ -68,6 +68,7 @@ bin/dx/odo/odo-cvs-refresh.sh
 bin/dx/odo/odo-dir-links.sh
 bin/dx/odo/odo-environment.sh
 bin/dx/osh/osh.c
+bin/ox/cbd-oid-tab.xsl
 bin/wx/oai.c
 bin/wx/oid.c
 bin/wx/oracc-server.c
