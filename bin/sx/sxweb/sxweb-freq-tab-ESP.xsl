@@ -61,8 +61,9 @@
 	    </xsl:for-each>
 	  </xsl:if>
 	  <xsl:if test="count($xlemma)>0">
-	    <xsl:if test="count($alemma)>0"><xsl:text> and another </xsl:text></xsl:if>
-	    <xsl:value-of select="count($xlemma)"/><xsl:text> words</xsl:text>
+	    <esp:link url="/{/*/@slbase}/signlist/{ancestor::sl:sign/@xml:id}">
+	      <xsl:text> See more</xsl:text>
+	    </esp:link>
 	  </xsl:if>
 	  <xsl:text>)</xsl:text>
 	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>

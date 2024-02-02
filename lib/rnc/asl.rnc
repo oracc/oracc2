@@ -239,7 +239,14 @@ sl.v =
 sl.proof = element sl:proof { text }
 
 sl.lemmas = element sl:lemmas { sl.lemma* }
-sl.lemma  = element sl:lemma  { attribute n { text } }
+sl.lemma  = element sl:lemma  {
+	  attribute n { text } ,
+	  attribute oid { text } ,
+	  attribute lcnt { text } ,
+	  attribute base { text } ,
+	  attribute bcnt { text } ,
+	  attribute gpos { text } 
+	  }
 
 g.d =
   element g:d {

@@ -26,11 +26,12 @@
 
 <!--### Set all the asl-* config variables from config.xml -->
 
-<!--Inlined data-->
+<xsl:variable name="sl-config-xml" select="concat($oraccbuilds,'/xml/',/*/@project,'/signlist/config.xml')"/>
 
 <!--statistics for occurrences; these are embedded in the headers for each sign/form/value name-->
 <xsl:variable name="asl-stats">
   <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
     <xsl:with-param name="option" select="'asl-stats'"/>
     <xsl:with-param name="default" select="'no'"/>
   </xsl:call-template>
@@ -39,6 +40,7 @@
 <!--period stats default=yes when stats=yes; asl-periods=no can be used to switch periods para off-->
 <xsl:variable name="asl-periods">
   <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
     <xsl:with-param name="option" select="'asl-periods'"/>
     <xsl:with-param name="default" select="$asl-stats"/>
   </xsl:call-template>
@@ -56,6 +58,7 @@
     </xsl:choose>
   </xsl:variable>
   <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
     <xsl:with-param name="option" select="'asl-insts'"/>
     <xsl:with-param name="default" select="$insts-default"/>
   </xsl:call-template>
@@ -64,6 +67,7 @@
 <!--lexdata asl-lexdata=link = link to lexdata; asl-lexdata=xinc = xinclude lexdata-->
 <xsl:variable name="asl-lexdata">
   <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
     <xsl:with-param name="option" select="'asl-lexdata'"/>
     <xsl:with-param name="default" select="'no'"/>
   </xsl:call-template>
@@ -72,6 +76,7 @@
 <!--snippets asl-snippets=link = link to snippets; asl-snippets=xinc = xinclude snippets-->
 <xsl:variable name="asl-snippets">
   <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
     <xsl:with-param name="option" select="'asl-snippets'"/>
     <xsl:with-param name="default" select="'no'"/>
   </xsl:call-template>
@@ -80,6 +85,7 @@
 <!--suxword asl-suxword=link = link to words; asl-suxword=xinc = xinclude words-->
 <xsl:variable name="asl-suxword">
   <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
     <xsl:with-param name="option" select="'asl-suxword'"/>
     <xsl:with-param name="default" select="'no'"/>
   </xsl:call-template>
@@ -88,7 +94,7 @@
 <!--### Iteration over sx.xml -->
 
 <xsl:template match="sl:signlist">
-  <xsl:message>sxweb-signs.xsl processing <xsl:value-of select="count(sl:letter/sl:sign)"/> signs:
+  <xsl:message>sxweb-signs.xsl processing <xsl:value-of select="count(sl:letter/sl:sign)"/> signs in <xsl:value-of select="@project"/>:
 &#x9;asl-stats=<xsl:value-of select="$asl-stats"/>
 &#x9;asl-periods=<xsl:value-of select="$asl-periods"/>
 &#x9;asl-insts=<xsl:value-of select="$asl-insts"/>
@@ -255,7 +261,7 @@
 <!--### Subroutines for sign-or-form -->
 
 <xsl:template name="sws-meta">
-  <xsl:if test="sl:uage|sl:aka|sl:list|sl:sys|@compoundonly">
+  <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds">
     <div class="asl-meta">
       <xsl:call-template name="sws-unicode"/>
       <xsl:call-template name="sws-akas"/>
@@ -347,35 +353,63 @@
 </xsl:template>
 
 <xsl:template name="sws-compounds">
-  <xsl:if test="@compoundonly = 'yes'">
-    <xsl:choose>
-      <xsl:when test="string-length(@cpd-refs)>0">
-	<xsl:variable name="s">
-	  <xsl:if test="contains(@cpd-refs, ' ')">
-	    <xsl:text>s</xsl:text>
-	  </xsl:if>
-	</xsl:variable>
-	<p>Occurs in the following compound<xsl:value-of select="$s"/>:
-	<xsl:for-each select="id(@cpd-refs)">
-	  <xsl:text> </xsl:text>
-	  <esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
-	    <xsl:apply-templates select=".//sl:name[1]"/>
-	    <xsl:if test="sl:images/sl:i[@loc]">
-	      <xsl:text> = </xsl:text>
-	      <xsl:for-each select="sl:images/sl:i[@loc][1]">
-		<xsl:call-template name="esp-sign-image"/>
-	      </xsl:for-each>
+  <xsl:choose>
+    <xsl:when test="@compoundonly = 'yes'">
+      <xsl:choose>
+	<xsl:when test="string-length(@cpd-refs)>0">
+	  <xsl:variable name="s">
+	    <xsl:if test="contains(@cpd-refs, ' ')">
+	      <xsl:text>s</xsl:text>
 	    </xsl:if>
-	  </esp:link>
-	</xsl:for-each>
-	<xsl:text>.</xsl:text>
-	</p>
-      </xsl:when>
-      <xsl:otherwise>
-	<p>(Only in compounds but no compounds containing this sign were found in this signlist.)</p>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:if>
+	  </xsl:variable>
+	  <p>Occurs in the following compound<xsl:value-of select="$s"/>:
+	  <xsl:for-each select="id(@cpd-refs)">
+	    <xsl:text> </xsl:text>
+	    <esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
+	      <xsl:apply-templates select=".//sl:name[1]"/>
+	      <xsl:if test="sl:images/sl:i[@loc]">
+		<xsl:text> = </xsl:text>
+		<xsl:for-each select="sl:images/sl:i[@loc][1]">
+		  <xsl:call-template name="esp-sign-image"/>
+		</xsl:for-each>
+	      </xsl:if>
+	    </esp:link>
+	  </xsl:for-each>
+	  <xsl:text>.</xsl:text>
+	  </p>
+	</xsl:when>
+	<xsl:otherwise>
+	  <p>(Only in compounds but no compounds containing this sign were found in this signlist.)</p>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:if test="sl:cpds/sl:memb">
+	<div class="asl-compounds">
+	  <p>
+	    <xsl:text>See also </xsl:text>
+	    <xsl:for-each select="id(sl:cpds/sl:memb/@oids)">
+	      <esp:link page="{@xml:id}">
+		<xsl:choose>
+		  <xsl:when test="sl:ucun">
+		    <xsl:value-of select="sl:ucun"/>
+		    <xsl:text> (</xsl:text>
+		    <xsl:value-of select="@n"/>
+		    <xsl:text>)</xsl:text>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:value-of select="@n"/>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </esp:link>
+	      <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+	    </xsl:for-each>
+	    <xsl:text>.</xsl:text>
+	  </p>
+	</div>
+      </xsl:if>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!--### Images and snippets -->
