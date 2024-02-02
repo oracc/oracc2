@@ -466,6 +466,11 @@
 
 <xsl:template name="sws-suxword">
   <xsl:if test="$asl-suxword = 'yes'">
+    <div class="sl-lemmas">
+      <xsl:for-each select="sl:v/sl:lemmas/*">
+	<xsl:value-of select="@oid"/>
+      </xsl:for-each>
+    </div>
   </xsl:if>
 </xsl:template>
 
