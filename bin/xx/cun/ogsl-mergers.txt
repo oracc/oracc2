@@ -1,0 +1,57 @@
+OGSL AND MERGERS
+================
+
+Mergers are cases where two or more signs become one, normally in a
+diachronic distribution. Because OGSL lists signs at maximal points of
+distinction, splits are simply reverse mergers--multiple signs at a
+given point in time that shared a common origin.
+
+Mergers get special handling in corpus-based signlists which are
+normally a snapshot in time: OGSL's maximal differentiation is
+potentially unhelpful when, for example, IM and NI2 are written the
+same and should have all the attested values of each original member
+listed together.
+
+Merger data is specified as a script-type, marked by an '@' sign if
+present, a terminal sign, and one or more merged signs. A minus-sign
+('-') may precede the script-type to indicate 'except'--most commonly
+for Sumerian this is used as -ED-Fara, meaning that the merger is
+present everywhere except ED Fara.
+
+Examples:
+
+@-ED-Fara NI₂ IM
+@-ED-FARA KAL GURUŠ
+@NA KU DUR₂ EŠ₂ NAM₂ TUG₂ ZI₃
+
+
+or:
+
+NI₂ IM
+KAL GURUŠ
+
+When a corpus-based signlist is generated the merged entries are included under the merge-head as @merged items:
+
+ @sign IM
+ @v im
+ @end sign
+
+ @sign NI₂
+ @v ni₂
+ @merge IM
+ @end sign
+
+A sign which is given in a @merge is given as a sign in its own right
+in the .asl file.  The derived data structures for a sign to be merged
+include an oid attribute, 'moid', i.e., the OID of the merge-head.
+There is also a list of pointers in the merge-head to all the signs
+that should be merged into it.
+
+For display, cross-references may be provided from merged signs with
+all of the data from the merged sign being included under the
+merge-head.  This includes generating entries in the OID table so that
+a request by OID for the IM sign will redirect organically to NI₂.
+
+For the indexed signlist, merged signs are indexed with the OID of the
+merge-head; values of merged signs are given the merge-head as their
+owner sign.

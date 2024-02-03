@@ -11,8 +11,8 @@
  * cuneify's script model is hierarchical; we use the term
  * 'script-type' to denote a specification of a script. A script-type
  * is only required to have one level but may have up to four
- * levels. Multiple levels, when present, are joined with periods
- * ('.').
+ * levels. Multiple levels, when present, are joined with hyphens
+ * ('-').
  *
  * In ATF a script-type begins with a percent sign, '%'; 
  *
@@ -26,6 +26,7 @@
  * 	3M Third Millennium
  *	ED Early Dynastic
  *	AK Old Akkadian
+ *	GU Gudea
  *	U3 Ur III
  *	OA Old Assyrian
  *	OB Old Babylonian
@@ -58,15 +59,33 @@
  * 
  */
 
-/* METHOD
+/* PROCESSING PHASES
  *
  * cuneify works directly on Unicode-encoded SAC; cuneify input that
  * is in transliteration is first converted to to Unicode SAC using
  * GDL routines.
  *
- * cuneify works two characters at a time, first checking to see if
- * there is an render specified for the pair.  Renders may be
- * characters or images.
+ * The resulting SAC sequence is then processed by the Ideographic
+ * Variation Sequences library which uses metadata from the
+ * environment--catalogue, project configuration, etc.--to add IVS
+ * characters to indicate glyph variations that are
+ * environment-specific.  For example, a common IVS decoration would
+ * be to mark IM as being in the merged glyph form of NI2.
+ *
+ * The result with IVS may then optionally be processed again to
+ * replace the IVS-decorated characters with a character or image that
+ * corresponds to the IVS-selected glyph. The resultant data may no
+ * longer be linguistically valid--the intent is to achieve a desired
+ * display in the absence of suitable font support.
+ *
+ */
+
+/* RENDERING
+ *
+ * cuneify rendering works two characters at a time, first checking to
+ * see if there is an render specified for the pair--a common type of
+ * pairing that has a render would be a character followed by an IVS.
+ * Renders may be characters or images.
  *
  * If a render is an image it is placed on the output immediately.
  *
@@ -80,12 +99,76 @@
  *
  */
 
-/* CONFIGURATION 
+/* Ideographic Variation Sequences 
  *
- * cuneify configuration is carried out by loading one or more config
- * files; if a later config file has data for an script-type/input
- * that is also in an earlier config file, the data from the later file
- * overrides the earlier data.
+ * IVS modifier characters range from e0100 to e01ef.  The proposed collection name is Oracc-SAC.
  *
+ * Oracc-SAC defines IVSs for two reasons:
+ *
+ *    1. To support splits and mergers
+ *    2. To support variant forms
+ *
+ * The following IVS uses are tentatively defined:
+ *
+ *    E0100 MERGER0
+ *    E0101 MERGER1
+ *    E0103 MERGER2
+ *    E0103 MERGER3
+ *    E0104 MERGER4
+ *    E0105 MERGER5
+ *    E0106 MERGER6
+ *    E0107 MERGER7
+ *    E0108 MERGER8
+ *    E0109 MERGER9
+ *
+ *    E0110 SPLIT0
+ *    E0111 SPLIT1
+ *    E0113 SPLIT2
+ *    E0113 SPLIT3
+ *    E0114 SPLIT4
+ *    E0115 SPLIT5
+ *    E0116 SPLIT6
+ *    E0117 SPLIT7
+ *    E0118 SPLIT8
+ *    E0119 SPLIT9
+ *
+ *    E0120 VFORM0
+ *    E0121 VFORM1
+ *    E0123 VFORM2
+ *    E0123 VFORM3
+ *    E0124 VFORM4
+ *    E0125 VFORM5
+ *    E0126 VFORM6
+ *    E0127 VFORM7
+ *    E0128 VFORM8
+ *    E0129 VFORM9
  * 
+ * The Oracc Ideographic Variation Database (OIVD) has the following fields:
+ *
+ * SIGN IVS GLYPH_NAME COMMENT
+ *
+ * The SIGN and IVS entries correspond to the first two fields in the
+ * Unicode Ideographic Variation Database. The GLYPH_NAME is a
+ * symbolic name for the glyph that can be used for the fourth field
+ * of the IVD; the COMMENT explains what the glyph-form is.
+ * 
+ * Examples:
+ * 
+
+1214E E0100 Oracc-SAC IM_as_NI2 IM sign with form of NI2
+1222C E0120 Oracc-SAC MU_KASKAL MU sign with KASKAL-style replacement for normal SHE-style component
+
+ *    
+ */
+
+
+/* RENDER CONFIGURATION 
+ *
+ * cuneify render configuration tells cuneify what to output for a GLYPH_NAME:
+
+IM_as_NI2	1224E
+MU_KASKAL	mu_kaskal.png
+
+ * future versions may support font-switches as part of the output.
+ *
  */

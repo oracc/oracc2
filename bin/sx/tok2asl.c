@@ -10,6 +10,7 @@
 Pool *p;
 
 const char *infile = "<stdin>";
+const char *mergers;
 const char *outfile;
 const char *project;
 const char *signlist;
@@ -66,7 +67,7 @@ main(int argc, char **argv)
   p = pool_init();
   size_t lnum = 0;
 
-  if (options(argc, argv, "celo:P:S:s"))
+  if (options(argc, argv, "celm:o:P:S:s"))
     exit(1);
 
   asl_input(argv[optind]);
@@ -220,6 +221,9 @@ int opts(int arg, const char*str)
       break;
     case 'l':
       sl = "sl";
+      break;
+    case 'm':
+      mergers = str;
       break;
     case 'o':
       outfile = str;
