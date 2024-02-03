@@ -30,7 +30,9 @@ or:
 NI₂ IM
 KAL GURUŠ
 
-When a corpus-based signlist is generated the merged entries are included under the merge-head as @merged items:
+When a corpus-based signlist is generated the merged entries are
+included under the merge-head as @merge items--the @merge may contain
+more than one sign-name:
 
  @sign IM
  @v im
@@ -41,11 +43,11 @@ When a corpus-based signlist is generated the merged entries are included under 
  @merge IM
  @end sign
 
-A sign which is given in a @merge is given as a sign in its own right
-in the .asl file.  The derived data structures for a sign to be merged
-include an oid attribute, 'moid', i.e., the OID of the merge-head.
-There is also a list of pointers in the merge-head to all the signs
-that should be merged into it.
+Each sign in @merge is given as a sign in its own right in the .asl
+file.  The derived data structures for a sign to be merged include an
+oid attribute, 'moid', i.e., the OID of the merge-head.  There is also
+a list of pointers in the merge-head to all the signs that should be
+merged into it.
 
 For display, cross-references may be provided from merged signs with
 all of the data from the merged sign being included under the

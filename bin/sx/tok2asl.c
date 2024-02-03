@@ -18,6 +18,28 @@ const char *sl = "sl"; /* -c for "pc" -e for "pe" -l for "sl" */
 FILE *i, *o;
 int stdinput = 0;
 
+Hash *h_merger;
+
+void
+load_mergers(void)
+{
+  unsigned char *fmem, **lp;
+  size_t nline;
+  h_merger = hash_init(256);
+  lp = loadfile_lines3(mergers, &nline, &fmem);
+  int i;
+  for (i = 0; i < nline; ++i)
+    {
+      unsigned char *v = lp[i];
+      while (*v && !isspace(*v))
+	++v;
+      while (isspace(*v))
+	++v;
+      if (*v)
+	hash_add(mergers, lp[i], v);
+    }
+}
+
 const char *
 gsig_id(void)
 {
@@ -73,6 +95,9 @@ main(int argc, char **argv)
   asl_input(argv[optind]);
   asl_output(outfile);
 
+  if (mergers)
+    load_mergers();
+  
   if (project)
     fprintf(o, "@project %s\n@signlist corpus\n\n", project);
 
@@ -197,6 +222,8 @@ main(int argc, char **argv)
 	      }
 	    fprintf(o, "@@\n");
 	  }
+      if ((m = hash_find(h_mergers, sk[i])))
+	fprintf(o, "@merge %s\n", m);
       fprintf(o, "@end sign\n\n");
     }
 
