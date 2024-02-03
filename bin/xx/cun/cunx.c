@@ -52,16 +52,40 @@
  * 
  * cuneify uses a collection of hashes of metadata, inputs and
  * outputs, one hash for each loaded script-type.  A script-type hash
- * has the input as the key and the output as the value.  The metadata
+ * has the input as the key and the render as the value.  The metadata
  * for a script-type may include font name and selector information as
  * well as keys that will select the script-type.
  * 
+ */
+
+/* METHOD
+ *
+ * cuneify works directly on Unicode-encoded SAC; cuneify input that
+ * is in transliteration is first converted to to Unicode SAC using
+ * GDL routines.
+ *
+ * cuneify works two characters at a time, first checking to see if
+ * there is an render specified for the pair.  Renders may be
+ * characters or images.
+ *
+ * If a render is an image it is placed on the output immediately.
+ *
+ * If a render is one or more characters they are placed at the front
+ * of the input queue and reprocessed.
+ *
+ * When no render is found for the current pair, the first character
+ * is checked; if there is a render for it that is either output, in
+ * the case of an image, or placed at the front of the input queue, in
+ * the case of character(s).
+ *
  */
 
 /* CONFIGURATION 
  *
  * cuneify configuration is carried out by loading one or more config
  * files; if a later config file has data for an script-type/input
- * that is also in an earlier config file, the data from the late file
+ * that is also in an earlier config file, the data from the later file
  * overrides the earlier data.
+ *
+ * 
  */
