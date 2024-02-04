@@ -25,18 +25,22 @@ load_mergers(void)
 {
   unsigned char *fmem, **lp;
   size_t nline;
-  h_merger = hash_init(256);
-  lp = loadfile_lines3(mergers, &nline, &fmem);
+  h_merger = hash_create(256);
+  lp = loadfile_lines3((uccp)mergers, &nline, &fmem);
   int i;
   for (i = 0; i < nline; ++i)
     {
       unsigned char *v = lp[i];
       while (*v && !isspace(*v))
 	++v;
-      while (isspace(*v))
-	++v;
       if (*v)
-	hash_add(mergers, lp[i], v);
+	{
+	  *v++ = '\0';
+	  while (isspace(*v))
+	    ++v;
+	  if (*v)
+	    hash_add(h_merger, lp[i], v);
+	}
     }
 }
 
@@ -222,7 +226,8 @@ main(int argc, char **argv)
 	      }
 	    fprintf(o, "@@\n");
 	  }
-      if ((m = hash_find(h_mergers, sk[i])))
+      const char *m = hash_find(h_merger, (uccp)sk[i]);
+      if (m)
 	fprintf(o, "@merge %s\n", m);
       fprintf(o, "@end sign\n\n");
     }
