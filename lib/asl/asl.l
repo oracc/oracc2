@@ -126,6 +126,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 @sys/[ \t]+			{ Ynext=0; atcmd(SYS,Y); }
 ^@inote/[ \t]+       		{ Tcmd(INOTE,S); }
 ^@lit/[ \t]+	       		{ Tcmd(LIT,S); }
+^@merge/[ \t]+       		{ Tcmd(MERGE,S); }
 ^@note/[ \t]+       		{ Tcmd(NOTE,S); }
 ^@ref/[ \t]+	       		{ Tcmd(REF,S); }
 ^@ucun/[ \t]+			{ Tcmd(UTF8,S); }

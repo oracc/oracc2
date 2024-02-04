@@ -70,6 +70,8 @@ enum gdl_a_type
   gdl_a_lemma,
   gdl_a_lid,
   gdl_a_loc,
+  gdl_a_merge,
+  gdl_a_moid,
   gdl_a_morph,
   gdl_a_n,
   gdl_a_n_num,

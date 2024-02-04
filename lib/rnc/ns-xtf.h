@@ -86,6 +86,8 @@ enum xtf_a_type
   xtf_a_level,
   xtf_a_lid,
   xtf_a_loc,
+  xtf_a_merge,
+  xtf_a_moid,
   xtf_a_morph,
   xtf_a_n,
   xtf_a_n_num,

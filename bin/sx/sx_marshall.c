@@ -266,6 +266,29 @@ sx_oid_indexes(struct sl_signlist *sl)
     hash_add(sl->oidindexes, (uccp)k[i], (void*)(uintptr_t)(i+1));
 }
 
+/* Return a string consisting of the OIDs for each of the NAMES
+   in the arg string */
+unsigned char *
+sx_oids_of(struct sl_signlist *sl, unsigned const char *snames)
+{
+  List *l = list_create(LIST_SINGLE);
+  unsigned char *xsnames = (ucp)pool_copy((uccp)snames,sl->p), *xsname, *x, *ret;
+  x = xsnames;
+  while (*x)
+    {
+      xsname = x;
+      while (*x && ' ' != *x)
+	++x;
+      if (*x)
+	*x++ = '\0';
+      struct sl_sign *s = hash_find(sl->hsentry, xsname);
+      list_add(l,(void*)s->oid);
+    }
+  ret = list_join(l, " ");
+  list_free(l,NULL);
+  return ret;
+}
+
 static List *
 sx_uniq_aka(List *aka)
 {
@@ -675,6 +698,9 @@ sx_marshall(struct sl_signlist *sl)
 
   /* Marshall sign/form values by OID suitable for output in TSV */
   sx_values_by_oid(sl);
+
+  /* Resolve merges to OIDs */
+  sx_merge(sl);
   
   /* Sort the lists, values and forms for each sign */
   for (i = 0; i < sl->nsigns; ++i)

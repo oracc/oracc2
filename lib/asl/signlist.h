@@ -60,6 +60,7 @@ struct sl_signlist
   Hash *hletters;
   Hash *h_idata;	/* Hash used by sx_idata */
   Hash *h_ldata;	/* Hash used by sx_ldata */
+  Hash *h_merge;	/* Tracking hash for @merge signs */
   struct sl_token **tokens; /* sorted htoken */
   struct sl_sign  **signs;  /* sorted hsentry */
   int nsigns;
@@ -323,6 +324,8 @@ struct sl_sign
   const char *oid;
   const char *smap;	   	/* Must be a @form within this sign */
   const char *smoid;	   	/* OID for @form in @smap */
+  const char *moid;		/* OID for destination if this sign is to be merged with another */
+  List *merge;			/* List of sign names to be merged into this sign */
   struct sl_inst *inst;
   struct sl_form *xref;        	/* this sign is a header for the @form
 				   which defines the sign name; sort

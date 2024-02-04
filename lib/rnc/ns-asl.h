@@ -70,6 +70,8 @@ enum asl_a_type
   asl_a_lemma,
   asl_a_lid,
   asl_a_loc,
+  asl_a_merge,
+  asl_a_moid,
   asl_a_morph,
   asl_a_n,
   asl_a_n_num,

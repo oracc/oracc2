@@ -55,6 +55,7 @@ asl_bld_init(void)
   sl->hlentry = hash_create(1024);
   sl->hsignvvalid = hash_create(1024);
   sl->hletters = hash_create(32);
+  sl->h_merge = hash_create(64);
   sl->m_tokens = memo_init(sizeof(struct sl_token), 1024);
   sl->m_letters = memo_init(sizeof(struct sl_letter), 32);
   sl->m_groups = memo_init(sizeof(struct sl_letter), 128);
@@ -1081,6 +1082,39 @@ asl_bld_images(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
     }
   else
     mesg_verr(locp, "@images has no image file name");
+}
+
+void
+asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
+{
+  if (asl_sign_guard(locp, sl, "merge"))
+    {
+      if (n)
+	{
+	  while (isspace(*n))
+	    ++n;
+	  if (sl->curr_sign->merge)
+	    mesg_verr(locp, "multiple @merge commands in the same sign are not allowed");
+	  else
+	    sl->curr_sign->merge = list_from_str((char *)n, NULL, LIST_SINGLE);
+	  unsigned const char *p;
+	  /* curr_sign is the sign receiving merges; the names given
+	     in @merge are the ones being merged */
+	  for (p = list_first(sl->curr_sign->merge); p; p = list_next(sl->curr_sign->merge))
+	    {
+	      if (hash_find(sl->h_merge, p))
+		mesg_verr(locp, "sign %s given in multiple @merge lines", p);
+	      else
+		{
+		  Mloc *m = mloc_mloc(locp);
+		  m->user = sl->curr_sign->name;
+		  hash_add(sl->h_merge, p, m);
+		}
+	    }
+	}
+      else
+	mesg_verr(locp, "@merge has no sign names");
+    }
 }
 
 void

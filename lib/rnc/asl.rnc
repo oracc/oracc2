@@ -63,6 +63,7 @@ sl.sign    =
     sl.smap?,
     attribute compoundonly { "yes"|"no" }?,
     attribute cpd-refs { xsd:IDREFS }?,
+    (sl.moid | sl.merge)?,
     sl.stats?,
     sl.name?,
     sl.aka*,
@@ -124,6 +125,9 @@ sl.form	   = element sl:form {
     }
 
 sl.aka	   = element sl:aka { attribute n { text } , sl.name? }
+
+sl.moid     = attribute moid { xsd:IDREF }
+sl.merge    = attribute merge { xsd:IDREFS }
 
 sl.notes   = (sl.inote | sl.lit | sl.note)*
 

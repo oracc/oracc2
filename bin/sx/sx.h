@@ -112,4 +112,8 @@ extern void sx_idata_value_inst(struct sl_signlist *sl, struct sl_inst *vip);
 extern void sx_ldata_init(struct sl_signlist *sl, const char *ldata_file);
 extern void sx_ldata_value_inst(struct sl_signlist *sl, struct sl_inst *vip);
 
+extern void sx_merge(struct sl_signlist *sl);
+extern unsigned char *sx_oids_of(struct sl_signlist *sl, unsigned const char *snames);
+
+
 #endif/*SX_H_*/

@@ -705,7 +705,20 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
 	  list_add(a, oids);
 	}
     }
-
+  
+  if (s->u.s->moid)
+    {
+      list_add(a, "moid");
+      list_add(a, (void*)s->u.s->moid);
+    }
+  else if (s->u.s->merge)
+    {
+      unsigned char *snames = list_to_str(s->u.s->merge);
+      unsigned char *oids = sx_oids_of(sl, snames);
+      list_add(a, "merge");
+      list_add(a, oids);
+    }
+  
   if (s->tp)
     x_tis_atts(a, s->tp, s->u.s->ctotal);
   
