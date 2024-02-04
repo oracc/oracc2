@@ -76,7 +76,11 @@ rm -fr signlist ; mkdir signlist
     mkdir -p 01bld/www
 )
 
-sxinst signlist-config.xml signlist/00lib/config.xml
+if [ -r 00lib/signlist-config.xml ]; then
+    cp -a signlist-config.xml signlist/00lib/config.xml
+else
+    sxinst signlist-config.xml signlist/00lib/config.xml
+fi
 cp -a signlist/00lib/config.xml signlist/02www
 cp -a signlist/00lib/config.xml signlist/02xml
 sxinst signlist-index.html signlist/00lib/signlist-index.html
@@ -118,6 +122,11 @@ xsltproc $libscripts/sxweb-letters.xsl 02xml/sl.xml
 if [ "$abbrev" != "ogsl" ]; then
     xsltproc $libscripts/sxweb-atoms.xsl 02xml/sl.xml \
 	| xsltproc $libscripts/sxweb-overview.xsl - >signlist/00web/overview.xml
+fi
+
+if [ "$project" = "ogsl" ]; then
+    cp 00etc/Oracc_OGSL.txt 02pub
+    chmod o+r 02pub/Oracc_OGSL.txt
 fi
 
 xsltproc -stringparam project $project $libscripts/sxweb-signs.xsl 02xml/sl.xml

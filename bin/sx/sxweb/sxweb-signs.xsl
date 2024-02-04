@@ -108,38 +108,40 @@
 <!--### Iteration over each sign -->
 
 <xsl:template match="sl:sign">
-  <ex:document href="{concat('signlist/00web/',@xml:id,'.xml')}"
-	       method="xml" encoding="utf-8"
-	       indent="yes">
-  <esp:page>
-    <xsl:call-template name="sws-esp-header"/>
-    <html>
-      <head/>
-      <body>
-	  <xsl:call-template name="sws-navbar"/>
-	  <div class="asl-sign">
-	    <div class="asl-sign-sign">
-	      <xsl:call-template name="sws-form-jumps"/>
-	      <!--<xsl:call-template name="sws-sections"/>?-->
-	      <xsl:call-template name="sws-sign-or-form"/>
-	    </div>
-	    <xsl:if test="count(sl:form)>0">
-	      <div class="asl-forms">
-		<xsl:for-each select="sl:form">
-		  <div class="asl-sign-form"
-		       id="form{count(preceding-sibling::sl:form)}">
-		    <xsl:call-template name="sws-form-h"/>
-		    <xsl:call-template name="sws-sign-or-form"/>
-		  </div>
-		</xsl:for-each>
+  <xsl:if test="not(@moid)">
+    <ex:document href="{concat('signlist/00web/',@xml:id,'.xml')}"
+		 method="xml" encoding="utf-8"
+		 indent="yes">
+      <esp:page>
+	<xsl:call-template name="sws-esp-header"/>
+	<html>
+	  <head/>
+	  <body>
+	    <xsl:call-template name="sws-navbar"/>
+	    <div class="asl-sign">
+	      <div class="asl-sign-sign">
+		<xsl:call-template name="sws-form-jumps"/>
+		<!--<xsl:call-template name="sws-sections"/>?-->
+		<xsl:call-template name="sws-sign-or-form"/>
 	      </div>
-	    </xsl:if>
-	  </div>
-	  <xsl:call-template name="sws-cite-url"/>
-      </body>
-    </html>
-  </esp:page>
-  </ex:document>
+	      <xsl:if test="count(sl:form)>0">
+		<div class="asl-forms">
+		  <xsl:for-each select="sl:form">
+		    <div class="asl-sign-form"
+			 id="form{count(preceding-sibling::sl:form)}">
+		      <xsl:call-template name="sws-form-h"/>
+		      <xsl:call-template name="sws-sign-or-form"/>
+		    </div>
+		  </xsl:for-each>
+		</div>
+	      </xsl:if>
+	    </div>
+	    <xsl:call-template name="sws-cite-url"/>
+	  </body>
+	</html>
+      </esp:page>
+    </ex:document>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template name="sws-esp-header">
@@ -500,27 +502,41 @@
 
 <!-- ### Values -->
 
+<xsl:template name="sws-values-sub">
+  <xsl:for-each select="sl:v">
+    <xsl:choose>
+      <xsl:when test="@deprecated='yes'">
+	<span class="v-drop"><xsl:value-of select="@n"/></span>
+      </xsl:when>
+      <xsl:when test="@uncertain='yes'">
+	<span class="v-query"><xsl:value-of select="@n"/></span>
+      </xsl:when>
+      <xsl:otherwise>
+	<span class="v-ok"><xsl:value-of select="@n"/></span>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+  </xsl:for-each>
+  <xsl:text>.</xsl:text>
+</xsl:template>
+
 <xsl:template name="sws-values">
   <xsl:if test="count(sl:v)>0">
     <div class="asl-values">
       <p>
 	<span class="asl-values-h">Values: </span>
-	<xsl:for-each select="sl:v">
-	  <xsl:choose>
-	    <xsl:when test="@deprecated='yes'">
-	      <span class="v-drop"><xsl:value-of select="@n"/></span>
-	    </xsl:when>
-	    <xsl:when test="@uncertain='yes'">
-	      <span class="v-query"><xsl:value-of select="@n"/></span>
-	    </xsl:when>
-	    <xsl:otherwise>
-	      <span class="v-ok"><xsl:value-of select="@n"/></span>
-	    </xsl:otherwise>
-	  </xsl:choose>
-	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
-	</xsl:for-each>
-	<xsl:text>.</xsl:text>
+	<xsl:call-template name="sws-values-sub"/>
       </p>
+      <xsl:if test="@merge">
+	<xsl:for-each select="id(@merge)">
+	  <xsl:if test="count(sl:v)>0">
+	    <p>
+	      <span class="asl-value-h">Values <span title="via merger of">vmo</span> <xsl:value-of select="@n"/>: </span>
+	      <xsl:call-template name="sws-values-sub"/>
+	    </p>
+	  </xsl:if>
+	</xsl:for-each>
+      </xsl:if>
     </div>
   </xsl:if>
 </xsl:template>
