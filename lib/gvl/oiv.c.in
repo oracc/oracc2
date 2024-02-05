@@ -1,0 +1,52 @@
+#include <oraccsys.h>
+#include <gvl.h>
+
+static Hash *oiv_ogsl(Hash *wants);
+
+const char *
+oiv_style_to_file(const char *style)
+{
+  return "@@ORACC_BUILDS@@/pub/ogsl/gudea.oiv";
+}
+
+/* Load a selections file, a list of OIV identifiers, and extract the
+ * OIV data from the OGSL IVS into a hash. Return the hash so it can
+ * be used by GVL for character rendering.
+ */
+Hash *
+oiv_load(const char *oiv_selections_file)
+{
+  unsigned char **ll = loadfile_lines((uccp)oiv_selections_file, NULL);
+  int i;
+  Hash *wants = hash_create(128);
+  for (i = 0; ll[i]; ++i)
+    hash_add(wants, ll[i], "");
+  return oiv_ogsl(wants);
+}
+
+Hash *
+oiv_ogsl(Hash *wants)
+{
+  const char *ogsl_ivd = "@@ORACC_BUILDS@@/pub/ogsl/Oracc_OGSL.txt";
+  unsigned char **ll = loadfile_lines((uccp)ogsl_ivd, NULL);
+  int i;
+  Hash *ret = hash_create(128);
+  for (i = 0; ll[i]; ++i)
+    {
+      if ('#' != *ll[i])
+	{
+	  char *data = (char*)ll[i];
+	  char *ident = strchr(data, ';');
+	  ++ident; ident = strchr(ident, ';');
+	  ++ident;
+	  char *e = ident;
+	  while (*e && !isspace(*e))
+	    ++e;
+	  if (*e)
+	    *e = '\0';
+	  if (hash_find(wants, (uccp)ident))
+	    hash_add(ret, (uccp)ident, data);
+	}
+    }
+  return ret;
+}

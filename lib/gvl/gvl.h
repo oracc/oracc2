@@ -105,4 +105,8 @@ extern void gvl_valuqual(Node *ynp);
 extern void gvl_set_lookup_ptr(gvl_lookup_ptr p);
 extern gvl_g *gvl_make_gp(unsigned const char *g, unsigned const char *mess);
 
+extern const char *oiv_style_to_file(const char *style);
+extern Hash *oiv_load(const char *oiv_selections_file);
+
+
 #endif/*_GVL_H*/
