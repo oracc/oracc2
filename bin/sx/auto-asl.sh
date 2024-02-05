@@ -8,7 +8,11 @@ project=`head -1 $gtoks | cut -f2`
 if [ "$project" = "" ]; then
     project=`oraccopt`
 fi
-tok2asl -P $project -S auto $gtoks >01tmp/auto.asl
+merge=`oraccopt . asl-merge`
+if [ "$merge" != "" ]; then
+    mopt="-m $merge"
+fi
+tok2asl -P $project $mopt -S auto $gtoks >01tmp/auto.asl
 sx -e -c 01tmp/auto.asl >>01tmp/auto.asl
 libdata=${ORACC_BUILDS}/lib/data
 for a in signlist-structure-top.xml signlist-structure-bot.xml ; do

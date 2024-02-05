@@ -39,7 +39,7 @@ sll_deep_oids(const char *deepsig)
   const char **oo = malloc((((strlen(oids)+1)/strlen("o1234567."))+1) * sizeof(char *));
   char *s;
   int i;
-  for (i = 0, s = oids; *s; )
+  for (i = 0, s = oids; *s; ++i)
     {
       oo[i] = s++;
       while (isdigit(*s))
@@ -47,6 +47,7 @@ sll_deep_oids(const char *deepsig)
       if (*s)
 	*s++ = '\0';
     }
+  oo[i] = NULL;
   return oo;
 }
 

@@ -76,7 +76,7 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
     {
       lp[strlen(lp)-1] = '\0';
       struct cbdex *cp = cbdex_new(chp);
-      cbdex_parse(pool_copy(lp,chp->p), cp);
+      cbdex_parse((char*)pool_copy((uccp)lp,chp->p), cp);
       List *ll = hash_find(sl->h_ldata, (uccp)cp->tok);
       if (!ll)
 	{

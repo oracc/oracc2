@@ -142,7 +142,7 @@ opts(int argc, const char *arg)
       fast_mode = 1;
       break;
     case 'k':
-      key = arg;
+      key = (char*)arg;
       break;
     case 'n':
       name = arg;

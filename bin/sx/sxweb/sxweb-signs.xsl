@@ -521,17 +521,19 @@
 </xsl:template>
 
 <xsl:template name="sws-values">
-  <xsl:if test="count(sl:v)>0">
+  <xsl:if test="count(sl:v|id(@merge)/sl:v)>0">
     <div class="asl-values">
-      <p>
-	<span class="asl-values-h">Values: </span>
-	<xsl:call-template name="sws-values-sub"/>
-      </p>
+      <xsl:if test="count(sl:v)>0">
+	<p>
+	  <span class="asl-values-h">Values: </span>
+	  <xsl:call-template name="sws-values-sub"/>
+	</p>
+      </xsl:if>
       <xsl:if test="@merge">
 	<xsl:for-each select="id(@merge)">
 	  <xsl:if test="count(sl:v)>0">
 	    <p>
-	      <span class="asl-value-h">Values <span title="via merger of">vmo</span> <xsl:value-of select="@n"/>: </span>
+	      <span class="asl-value-h">Values<span title="via merger of"> vmo </span><xsl:value-of select="@n"/>: </span>
 	      <xsl:call-template name="sws-values-sub"/>
 	    </p>
 	  </xsl:if>

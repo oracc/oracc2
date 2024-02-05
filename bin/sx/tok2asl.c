@@ -19,39 +19,8 @@ FILE *i, *o;
 int stdinput = 0;
 
 Hash *h_merger;
-
-void
-load_mergers(void)
-{
-  unsigned char *fmem, **lp;
-  size_t nline;
-  h_merger = hash_create(256);
-  lp = loadfile_lines3((uccp)mergers, &nline, &fmem);
-  int i;
-  for (i = 0; i < nline; ++i)
-    {
-      unsigned char *v = lp[i];
-      while (*v && !isspace(*v))
-	++v;
-      if (*v)
-	{
-	  *v++ = '\0';
-	  while (isspace(*v))
-	    ++v;
-	  if (*v)
-	    hash_add(h_merger, lp[i], v);
-	}
-    }
-}
-
-const char *
-gsig_id(void)
-{
-  static int id = 0;
-  char s[32];
-  sprintf(s, "0x%05x", id++);
-  return (ccp)pool_copy((ucp)s, p);
-}
+Hash *h_merges_cand;
+Hash *h_merges_seen;
 
 void
 asl_input(const char *argfile)
@@ -84,6 +53,105 @@ asl_output(const char *outfile)
     o = stdout;
 }
 
+const char *
+gsig_id(void)
+{
+  static int id = 0;
+  char s[32];
+  sprintf(s, "0x%05x", id++);
+  return (ccp)pool_copy((ucp)s, p);
+}
+
+/**Mergers are specified as:
+ *
+ * NI₂ IM
+ *
+ * h_merger indexes each merge-head to the list of mergers, i.e., NI₂ => IM
+ * h_merges_cand indexes each merged sign to the head, i.e., IM => NI₂
+ * h_merges_seen indexes each merged sign that is seen, e.g., IM => NI₂
+ *
+ */
+void
+load_mergers(void)
+{
+  unsigned char *fmem, **lp;
+  size_t nline;
+  h_merger = hash_create(256);
+  h_merges_cand = hash_create(256);
+  h_merges_seen = hash_create(256);
+  lp = loadfile_lines3((uccp)mergers, &nline, &fmem);
+  int i;
+  for (i = 0; i < nline; ++i)
+    {
+      unsigned char *v = lp[i];
+      while (*v && !isspace(*v))
+	++v;
+      if (*v)
+	{
+	  *v++ = '\0';
+	  while (isspace(*v))
+	    ++v;
+	  if (*v)
+	    {
+	      hash_add(h_merger, lp[i], v);
+	      char *vv = strdup((ccp)v);
+	      char **mm = space_split(vv);
+	      int i;
+	      for (i = 0; mm[i]; ++i)
+		{
+		  /* index each of the merge candidates with the name of the merge-head */
+		  hash_add(h_merges_cand, (uccp)mm[i], lp[i]);
+		}
+	    }
+	}
+    }
+}
+
+void
+merge_marshall(Hash *hsigns)
+{
+  /* go through the signs which need to be merged and keep those which
+     actually occur as well as the merge-heads that occur */
+  Hash *m_seen = hash_create(256);
+  Hash *mheads = hash_create(256);
+  const char **mk = hash_keys(h_merges_cand);
+  int i;
+  for (i = 0; mk[i]; ++i)
+    {
+      if (hash_find(hsigns, (uccp)mk[i]))
+	{
+	  hash_add(m_seen, (uccp)mk[i], "");
+	  hash_add(mheads, hash_find(h_merges_cand, (void*)mk[i]), "");
+	}
+    }
+
+  /* then go through the merge-heads and reduce their lists to the
+     merge cands that occur; if a merge-head isn't already known as a
+     sign, add it */
+  mk = hash_keys(mheads);
+  for (i = 0; mk[i]; ++i)
+    {
+      if (!hash_find(hsigns, (uccp)mk[i]))
+	hash_add(hsigns, (uccp)mk[i], hash_create(1));
+      char *m = hash_find(h_merger,(uccp) mk[i]);
+      if (strchr(m, ' '))
+	{
+	  char **mm = space_split(m);
+	  List *ml = list_create(LIST_SINGLE);
+	  int i;
+	  for (i = 0; mm[i]; ++i)
+	    if (hash_find(hsigns, (uccp)mm[i]))
+	      {
+		list_add(ml, mm[i]);
+		hash_add(h_merges_seen, (uccp)mm[i], "");
+	      }
+	  unsigned char *newm = list_to_str(ml);
+	  if (strcmp(m, (ccp)newm))
+	    hash_add(h_merger, (uccp)mk[i], newm);
+	}
+    }
+}
+
 int
 main(int argc, char **argv)
 {
@@ -100,7 +168,10 @@ main(int argc, char **argv)
   asl_output(outfile);
 
   if (mergers)
-    load_mergers();
+    {
+      load_mergers();
+      h_merges_seen = hash_create(32);
+    }
   
   if (project)
     fprintf(o, "@project %s\n@signlist corpus\n\n", project);
@@ -168,6 +239,8 @@ main(int argc, char **argv)
 	}
     }
 
+  merge_marshall(h);
+  
   int i;
   char **sk = (char**)hash_keys(h);
 
@@ -188,7 +261,7 @@ main(int argc, char **argv)
 		  for (j = 0; dd[j]; ++j)
 		    {
 		      const char *n = (ccp)sll_lookup((uccp)dd[j]);
-		      if (n)
+		      if (n && !hash_find(h, (uccp)n)) /* may need a joint hash of sign and form for this test */
 			hash_add(conly, (ucp)n, "");
 		    }
 		  free((void*)dd[0]);
@@ -231,7 +304,7 @@ main(int argc, char **argv)
 	fprintf(o, "@merge %s\n", m);
       fprintf(o, "@end sign\n\n");
     }
-
+  
   const char **ck = hash_keys(conly);
   for (i = 0; ck[i]; ++i)
     fprintf(o, "@compoundonly %s\n", ck[i]);

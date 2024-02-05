@@ -1107,7 +1107,7 @@ asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
 	      else
 		{
 		  Mloc *m = mloc_mloc(locp);
-		  m->user = sl->curr_sign->name;
+		  m->user = (void*)sl->curr_sign->name;
 		  hash_add(sl->h_merge, p, m);
 		}
 	    }
