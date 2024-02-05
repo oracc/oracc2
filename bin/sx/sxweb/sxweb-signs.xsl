@@ -161,7 +161,7 @@
   <xsl:value-of select="$nopipes"/>
   <xsl:if test="not(sl:smap) and not(sl:uage='0')">
     <xsl:text> </xsl:text>
-    <span class="asl-oid"><xsl:value-of select="concat('[',@xml:id,']')"/></span>
+    <!--<span class="asl-oid"><xsl:value-of select="concat('[',@xml:id,']')"/></span>-->
   </xsl:if>
 </xsl:template>
 
@@ -265,6 +265,9 @@
 <xsl:template name="sws-meta">
   <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds">
     <div class="asl-meta">
+      <xsl:if test="@merge">
+	<p class="sl-merge"><xsl:text>(Includes merging of </xsl:text><xsl:value-of select="id(@merge)/@n"/><xsl:text>)</xsl:text></p>
+      </xsl:if>
       <xsl:call-template name="sws-unicode"/>
       <xsl:call-template name="sws-akas"/>
       <xsl:call-template name="sws-lists"/>
@@ -354,6 +357,25 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-sl-cpds-memb">
+  <xsl:for-each select="id(sl:cpds/sl:memb/@oids)">
+    <esp:link page="{@xml:id}">
+      <xsl:choose>
+	<xsl:when test="sl:ucun">
+	  <xsl:value-of select="sl:ucun"/>
+	  <xsl:text> (</xsl:text>
+	  <xsl:value-of select="@n"/>
+	  <xsl:text>)</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:value-of select="@n"/>
+	</xsl:otherwise>
+      </xsl:choose>
+    </esp:link>
+    <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+  </xsl:for-each>
+</xsl:template>
+
 <xsl:template name="sws-compounds">
   <xsl:choose>
     <xsl:when test="@compoundonly = 'yes'">
@@ -386,25 +408,19 @@
       </xsl:choose>
     </xsl:when>
     <xsl:otherwise>
-      <xsl:if test="sl:cpds/sl:memb">
+      <xsl:if test="sl:cpds/sl:memb|id(@merge)/sl:cpds/sl:memb">
 	<div class="asl-compounds">
 	  <p>
 	    <xsl:text>See also </xsl:text>
-	    <xsl:for-each select="id(sl:cpds/sl:memb/@oids)">
-	      <esp:link page="{@xml:id}">
-		<xsl:choose>
-		  <xsl:when test="sl:ucun">
-		    <xsl:value-of select="sl:ucun"/>
-		    <xsl:text> (</xsl:text>
-		    <xsl:value-of select="@n"/>
-		    <xsl:text>)</xsl:text>
-		  </xsl:when>
-		  <xsl:otherwise>
-		    <xsl:value-of select="@n"/>
-		  </xsl:otherwise>
-		</xsl:choose>
-	      </esp:link>
-	      <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+	    <xsl:call-template name="sws-sl-cpds-memb"/>
+	    <xsl:if test="id(@merge/sl:cpds/sl:memb)">
+	      <xsl:if test="sl:cpds/sl:memb">;; </xsl:if>
+	    </xsl:if>
+	    <xsl:for-each select="id(@merge)">
+	      <xsl:if test="not(position()=1)">
+		<xsl:if test="sl:cpds/sl:memb">;; </xsl:if>
+	      </xsl:if>
+	      <xsl:call-template name="sws-sl-cpds-memb"/>
 	    </xsl:for-each>
 	    <xsl:text>.</xsl:text>
 	  </p>
@@ -469,8 +485,14 @@
 <xsl:template name="sws-lemmas-by-pos">
   <xsl:param name="nodes"/>
   <xsl:param name="type"/>
+  <xsl:param name="group-label" select="''"/>
   <xsl:if test="count($nodes)>0">
-    <h3 class="sl-ihead"><xsl:value-of select="$type"/></h3>
+    <h3 class="sl-ihead">
+      <xsl:value-of select="$type"/>
+      <xsl:if test="string-length($group-label)">
+	<xsl:value-of select="concat(' for sign ',$group-label)"/>
+      </xsl:if>
+    </h3>
     <xsl:for-each select="$nodes">
       <esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link>
       <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
@@ -478,23 +500,56 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-lemmas-via-merge-absolute">
+  <xsl:for-each select="id(@merge)">
+    <xsl:call-template name="sws-lemmas-by-pos">
+      <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
+      <xsl:with-param name="type" select="'Independent'"/>
+      <xsl:with-param name="group-label" select="@n"/>
+    </xsl:call-template>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="sws-lemmas-via-merge-combined">
+  <xsl:for-each select="id(@merge)">
+    <xsl:call-template name="sws-lemmas-by-pos">
+      <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[not(@gpos='a') and not(@gpos='A')]"/>
+      <xsl:with-param name="type" select="'Combined'"/>
+      <xsl:with-param name="group-label" select="@n"/>
+    </xsl:call-template>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="sws-lemmas-via-merge-compound">
+  <xsl:for-each select="id(@merge)">
+    <xsl:call-template name="sws-lemmas-by-pos">
+      <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='A']"/>
+      <xsl:with-param name="type" select="'Compound'"/>
+      <xsl:with-param name="group-label" select="@n"/>
+    </xsl:call-template>
+  </xsl:for-each>
+</xsl:template>
+
 <xsl:template name="sws-suxword">
   <xsl:if test="$asl-suxword = 'yes'">
-    <xsl:if test="count(sl:v/sl:lemmas/sl:lemma)>0">
+    <xsl:if test="count(sl:v/sl:lemmas/sl:lemma|id(@merge)/sl:v/sl:lemmas/sl:lemma)>0">
       <div class="sl-lemmas">
-	<h2 class="sl-ihead">GLOSSARY ATTESTATIONS</h2>
+	<h2 class="sl-ihead">GLOSSARY ATTESTATIONS</h2>	
 	<xsl:call-template name="sws-lemmas-by-pos">
 	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
 	  <xsl:with-param name="type" select="'Independent'"/>
 	</xsl:call-template>
+	<xsl:call-template name="sws-lemmas-via-merge-absolute"/>
 	<xsl:call-template name="sws-lemmas-by-pos">
 	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[not(@gpos='a') and not(@gpos='A')]"/>
 	  <xsl:with-param name="type" select="'Combined'"/>
 	</xsl:call-template>
+	<xsl:call-template name="sws-lemmas-via-merge-combined"/>
 	<xsl:call-template name="sws-lemmas-by-pos">
 	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='A']"/>
 	  <xsl:with-param name="type" select="'Compounds'"/>
 	</xsl:call-template>
+	<xsl:call-template name="sws-lemmas-via-merge-compound"/>
       </div>
     </xsl:if>
   </xsl:if>
@@ -533,7 +588,7 @@
 	<xsl:for-each select="id(@merge)">
 	  <xsl:if test="count(sl:v)>0">
 	    <p>
-	      <span class="asl-value-h">Values<span title="via merger of"> vmo </span><xsl:value-of select="@n"/>: </span>
+	      <span class="asl-value-h">Values<span title="via merger of"> from </span><xsl:value-of select="@n"/>: </span>
 	      <xsl:call-template name="sws-values-sub"/>
 	    </p>
 	  </xsl:if>
