@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 SUBDIRS=../../lib osort rnv tis
 
-bin_PROGRAMS=concord dbix dbx tlitsig xmlify
+bin_PROGRAMS=concord dbix dbx tlitsig xmlify ivd2oiv
 
 concord_SOURCES = concord.c
 concord_LDADD = $(xLDADD)
@@ -23,4 +23,8 @@ tlitsig_DEPENDENCIES = $(xLDADD)
 xmlify_SOURCES = xmlify.c
 xmlify_LDADD = $(xLDADD)
 xmlify_DEPENDENCIES = $(xLDADD)
+
+ivd2oiv_SOURCES = ivd2oiv.c
+ivd2oiv_LDADD = $(xLDADD)
+ivd2oiv_DEPENDENCIES = $(xLDADD)
 
