@@ -66,6 +66,8 @@ const char *missing_lists = NULL;
 
 const char *jfn = NULL, *xfn = NULL;
 
+const char *gvl_script_type = NULL;
+
 int
 main(int argc, char * const*argv)
 {
@@ -79,7 +81,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eiI:jJ:L:m:nMoOp:sStTuUxX:?");
+  options(argc, argv, "abcCD:d:eg:iI:jJ:L:m:nMoOp:sStTuUxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -88,10 +90,17 @@ main(int argc, char * const*argv)
 	sll_trace = 1;
       if (!(parent_sl = sll_init_t(parent_sl_project, "sl")))
 	exit(1);
+      if (gvl_script_type)
+	gvl_set_script(gvl_script_type);
     }
   else if (unicode_from_parent)
     {
-      fprintf(stderr, "sx: -U used without -p\n");
+      fprintf(stderr, "sx: -U used without -p. Stop.\n");
+      exit(1);
+    }
+  else if (gvl_script_type)
+    {
+      fprintf(stderr, "sx: -g GVL_SCRIPT_TYPE only implemented with parent project. Stop.\n");
       exit(1);
     }
   
@@ -290,6 +299,9 @@ opts(int opt, const char *arg)
     case 'e':
       sxx_init();
       extra_needs = 1;
+      break;
+    case 'g':
+      gvl_script_type = arg;
       break;
     case 'i':
       asl_output = identity_mode = 1;

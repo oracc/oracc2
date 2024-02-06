@@ -53,6 +53,7 @@ extern Hash *oid_sort_keys;
 extern char *idata_file;
 extern char *idata_type;
 extern const char *ldata_file;
+extern const char *gvl_script_type;
 
 int oid_char_cmp(const void *a, const void *b);
 extern int via_tok_cmp(const void *a, const void *b);

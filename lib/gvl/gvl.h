@@ -50,6 +50,8 @@ extern int gvl_sans_report;
 extern int gvl_strict;
 extern int gvl_void_messages;
 
+extern Hash *gvl_curr_ivs;
+
 extern gvl_i *curr_sl;
 
 typedef unsigned const char *(*gvl_lookup_ptr)(unsigned const char *key);
@@ -105,8 +107,10 @@ extern void gvl_valuqual(Node *ynp);
 extern void gvl_set_lookup_ptr(gvl_lookup_ptr p);
 extern gvl_g *gvl_make_gp(unsigned const char *g, unsigned const char *mess);
 
+extern void gvl_set_script(const char *scripttype);
 extern const char *oiv_style_to_file(const char *style);
 extern Hash *oiv_load(const char *oiv_selections_file);
-
+extern const char *gvl_cuneify_tree(Tree *tp);
+extern unsigned char *gvl_ivs(const unsigned char*cunutf8);
 
 #endif/*_GVL_H*/

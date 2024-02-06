@@ -1,9 +1,8 @@
 #include <oraccsys.h>
 #include <atf2utf.h>
 
-
 static void
-utf8ify(unsigned char *b, unsigned int c)
+xutf8ify(unsigned char *b, unsigned int c)
 {
   if (c<0x80) *b++=c;
   else if (c<0x800) *b++=192+c/64, *b++=128+c%64;
@@ -41,17 +40,26 @@ main(int argc, char **argv)
 	  unsigned int chr, ivs;
 	  sscanf((char*)lp, "%x %x", &chr, &ivs);
 	  unsigned char uchr[10];
-	  utf8ify(uchr, chr);
+	  xutf8ify(uchr, chr);
 	  unsigned char uivs[10];
-	  utf8ify(uivs, ivs);
+	  xutf8ify(uivs, ivs);
+	  unsigned char *ident = (ucp)strrchr((ccp)lp, ';');
+	  ++ident;
+	  while (isspace(*ident))
+	    ++ident;
+	  unsigned char *e = lp+strlen((ccp)lp);
+	  while (isspace(e[-1]))
+	    --e;
+	  if (*e)
+	    *e = '\0';
 	  /*printf("chr=%d (%x) = %s; ivs=%x = %s\n", chr, chr, uchr, ivs, uivs);*/
 	  if ('x' == render[0])
 	    {
 	      unsigned int rench;
 	      sscanf((char*)render+1, "%x", &rench);
-	      utf8ify(render, rench);
+	      xutf8ify(render, rench);
 	    }
-	  printf("%s\t%s%s\t%s\n", uchr, uchr, uivs, render);
+	  printf("%s\t%s%s\t%s\t%s\n", uchr, uchr, uivs, render, ident);
 	}
     }
 }

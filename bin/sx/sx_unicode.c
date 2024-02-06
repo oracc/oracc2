@@ -621,6 +621,18 @@ sx_unicode_p(struct sl_signlist *sl)
 	  if (!Up->utf8)
 	    {
 	      Up->utf8 = hash_find(parent_sl, sll_tmp_key((uccp)oid, "uchar"));
+	      if (gvl_script_type)
+		{
+		  unsigned const char *ren = NULL;
+		  unsigned const char *ivs = gvl_recuneify(Up->utf8, &ren);
+		  if (strcmp(ivs,Up->utf8))
+		    {
+		      Up->ivs = ivs;
+		      Up->ren = ren;
+		    }
+		  else
+		    Up->ivs = Up->utf8;
+		}
 	      if (Up->utf8)
 		{
 		  const char *ucode = hash_find(parent_sl, sll_tmp_key((uccp)oid, "ucode"));

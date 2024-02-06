@@ -28,12 +28,14 @@ extern int gdl_flex_debug, gdldebug, gdl_orig_mode, gdl_unicode;
 
 int bare_mode = 0;
 int check_mode = 0;
+int cuneify_mode = 0;
 extern int gdlsig_depth_mode;
 int error_stdout = 0;
 const char *fname = NULL;
 int gdl_c10e_mode = 1;
 int gdl_one_off_mode = 0;
 int gsort_mode = 0;
+const char *gvl_script_type = NULL;
 int identity_mode = 0;
 int json_mode = 0;
 int ns_output = 0;
@@ -85,7 +87,17 @@ do_one(char *s)
   ++ml.line;
   mesg_init();
   tp = gdlparse_string(&ml, s);
-  
+
+  if (cuneify_mode)
+    {
+      const unsigned char *ucun = (uccp)gvl_cuneify_tree(tp), *ivs;
+      if (gvl_script_type)
+	ivs = gvl_ivs(ucun);
+      else
+	ivs = (uccp)"not done";
+      printf("ucun %s => %s => ivs %s\n", s, ucun, ivs);
+    }
+
   mp = mesg_retrieve();
   if (mp && list_len(mp))
     {
@@ -168,7 +180,7 @@ main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
   gdl_unicode = 1;
-  options(argc, argv, "1abcdef:gilnop:Prstvw");
+  options(argc, argv, "1abcCdef:gG:ilnop:Prstvw");
 
   gdl_flex_debug = gdldebug = trace_mode;
 
@@ -214,6 +226,9 @@ main(int argc, char **argv)
   else
     gvl_setup(project, project, "020"); /*FIXME*/
   gdlparse_init();
+
+  if (gvl_script_type)
+    gvl_set_script(gvl_script_type);
 
   if (gsort_mode)
     {
@@ -263,6 +278,9 @@ opts(int opt, const char *arg)
     case 'c':
       check_mode = 1;
       break;
+    case 'C':
+      cuneify_mode = 1;
+      break;
     case 'd':
       gdlsig_depth_mode = 1;
       break;
@@ -276,6 +294,9 @@ opts(int opt, const char *arg)
       break;
     case 'g':
       gsort_mode = 1;
+      break;
+    case 'G':
+      gvl_script_type = optarg;
       break;
     case 'i':
       identity_mode = 1;

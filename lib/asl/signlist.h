@@ -151,6 +151,19 @@ struct sl_note
 struct sl_unicode
 {
   const unsigned char *utf8; 	/* the character(s) in UTF-8 */
+  const unsigned char *ivs;	/* the characters with IVS if any;
+				   this normally points to 'utf8'; IVS
+				   sequences are pairs--this version
+				   has the pairs */
+  const unsigned char *ren;	/* the characters with IVS rendering
+				   if any; this normally points to
+				   'utf8'; this version has IVS pairs
+				   replaced with the rendering value
+				   in the .oiv file; in a future
+				   version this may include <img> tags
+				   inlined to indicate that the IVS
+				   rendering is implemented as an
+				   image */
   const char *uhex;		/* the U+HHHHH code for an encoded character */
   const char *useq;		/* for characters not encoded as singletons, a sequence of hex values to render the sign name */
   const char *upua; 		/* for unencoded character(s), the hex code for a PUA codepoint in the form xXXXXX */
@@ -441,6 +454,7 @@ extern void asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned cha
 extern void asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s);
 
 extern void asl_bld_note(Mloc *locp, struct sl_signlist *sl, const char *tag, const char *txt);
+extern void asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 
 extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl);
 extern struct sl_sign *asl_form_as_sign(struct sl_signlist *sl, struct sl_form *f);

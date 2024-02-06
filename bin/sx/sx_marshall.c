@@ -810,7 +810,7 @@ sx_marshall(struct sl_signlist *sl)
   if (!unicode_from_parent)
     sx_unicode(sl);
   else
-    sx_unicode_p(sl);
+    sx_unicode_p(sl);  
 
   sx_images(sl);
 
