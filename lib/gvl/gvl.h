@@ -111,6 +111,6 @@ extern void gvl_set_script(const char *scripttype);
 extern const char *oiv_style_to_file(const char *style);
 extern Hash *oiv_load(const char *oiv_selections_file);
 extern const char *gvl_cuneify_tree(Tree *tp);
-extern unsigned char *gvl_ivs(const unsigned char*cunutf8);
+extern unsigned char *gvl_ivs(const unsigned char*cunutf8, int * nivsp);
 
 #endif/*_GVL_H*/

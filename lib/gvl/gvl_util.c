@@ -86,30 +86,50 @@ gvl_cuneify_gv(gvl_g*gg)
  * substitutions
  */
 unsigned char *
-gvl_ivs(const unsigned char*cunutf8)
+gvl_ivs(const unsigned char*cunutf8, int *nivsp)
 {
   const unsigned char *s = cunutf8;
   unsigned char *ret = malloc(10*strlen((ccp)cunutf8));
+  int nivs = 0;
   *ret = '\0';
   (void)mbtowc(NULL,NULL,0);
+  unsigned char *dst = ret;
   while (*s)
     {
-      size_t mblen;
-      if ((mblen = mbtowc(NULL,(ccp)s,5)) > 0)
+      if (*s < 128)
 	{
-	  static unsigned char buf[6];
-	  memmove(buf, s, mblen);
-	  buf[mblen] = '\0';
-	  unsigned char *ivs = hash_find(gvl_curr_ivs, buf);
-	  if (ivs)
-	    strcat((char*)ret, (ccp)ivs);
-	  else
-	    strncat((char*)ret, (ccp)s, mblen);
-	  s+= mblen;
+	  dst += strlen((ccp)dst);
+	  *dst++ = *s++;
+	  *dst = '\0';
 	}
       else
-	return NULL;
+	{
+	  int mblen;
+	  if ((mblen = mbtowc(NULL,(ccp)s,5)) > 0)
+	    {
+	      unsigned char buf[mblen+1];
+	      memcpy(buf, s, mblen);
+	      buf[mblen] = '\0';
+	      unsigned char *ivs = hash_find(gvl_curr_ivs, buf);
+	      if (ivs)
+		{
+		  strcat((char*)dst, (ccp)ivs);
+		  ++nivs;
+		}
+	      else
+		strncat((char*)dst, (ccp)s, mblen);
+	      s+= mblen;
+	    }
+	  else
+	    {
+	      if (nivsp)
+		*nivsp = -1;
+	      return NULL;
+	    }
+	}
     }
+  if (nivsp)
+    *nivsp = nivs;
   return realloc(ret, strlen((ccp)ret)+1);
 }
 

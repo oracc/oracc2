@@ -24,7 +24,7 @@ oiv_load(const char *oiv_selections_file)
   for (i = 0; ll[i]; ++i)
     {
       unsigned char **f = (ucp*)tab_split((char*)ll[i]);
-      hash_add(hoiv, f[0], f[1]);
+      hash_add(hoiv, f[0], f[1]); /* Base character maps to IVS */
       hash_add(hoiv, f[1], f[3]); /* IVS maps to IDENT for CSS use */
       hash_add(hoiv, f[3], f[2]); /* IDENT maps to render for text substition */
     }

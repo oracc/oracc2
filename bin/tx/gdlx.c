@@ -180,8 +180,11 @@ main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
   gdl_unicode = 1;
-  options(argc, argv, "1abcCdef:gG:ilnop:Prstvw");
 
+  setlocale(LC_ALL, ORACC_LOCALE);
+
+  options(argc, argv, "1abcCdef:gG:ilnop:Prstvw");
+  
   gdl_flex_debug = gdldebug = trace_mode;
 
   if (gdl_one_off_mode)
