@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <oraccsys.h>
+#include <oracclocale.h>
 #include <tree.h>
 #include <xml.h>
 #include <xnn.h>
@@ -92,7 +93,7 @@ do_one(char *s)
     {
       const unsigned char *ucun = (uccp)gvl_cuneify_tree(tp), *ivs;
       if (gvl_script_type)
-	ivs = gvl_ivs(ucun);
+	ivs = gvl_ivs(ucun, NULL);
       else
 	ivs = (uccp)"not done";
       printf("ucun %s => %s => ivs %s\n", s, ucun, ivs);
