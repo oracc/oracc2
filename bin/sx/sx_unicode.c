@@ -1,6 +1,7 @@
 #include <ctype128.h>
 #include <oraccsys.h>
 #include <signlist.h>
+#include <gvl.h>
 #include <sll.h>
 #include <sx.h>
 #include <pcre2if.h>
@@ -621,18 +622,21 @@ sx_unicode_p(struct sl_signlist *sl)
 	  if (!Up->utf8)
 	    {
 	      Up->utf8 = hash_find(parent_sl, sll_tmp_key((uccp)oid, "uchar"));
+#if 0
 	      if (gvl_script_type)
 		{
+		  int nivs = 0;
 		  unsigned const char *ren = NULL;
-		  unsigned const char *ivs = gvl_recuneify(Up->utf8, &ren);
-		  if (strcmp(ivs,Up->utf8))
+		  unsigned const char *ivs = gvl_ivs(Up->utf8, &nivs);
+		  if (nivs)
 		    {
 		      Up->ivs = ivs;
-		      Up->ren = ren;
+		      /* Up->ident = ... ; Up->ren = ... ? */
 		    }
 		  else
 		    Up->ivs = Up->utf8;
 		}
+#endif
 	      if (Up->utf8)
 		{
 		  const char *ucode = hash_find(parent_sl, sll_tmp_key((uccp)oid, "ucode"));

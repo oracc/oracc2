@@ -68,3 +68,6 @@ td.name-sign img { }
 .sl-sys-subname { font-size: 85%; font-weight: normal; }
 
 .sl-sys-token { font-size: 90%; font-weight: normal; }
+
+.ivs-IM_NI2 span { display: none; }
+.ivs-IM_NI2:after { content: '𒉎'; }

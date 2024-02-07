@@ -157,7 +157,7 @@ loadoneline(FILE *fp, size_t *nbytes)
 {
   static unsigned char *buf = NULL;
   static int n_alloced = 0;
-  int ch, n_read = 0;
+  int ch, n_read = 0, found_nl;
 
   if (!fp)
     {
@@ -167,14 +167,21 @@ loadoneline(FILE *fp, size_t *nbytes)
 	  buf = NULL;
 	  n_alloced = 0;
 	}
+      if (nbytes)
+	*nbytes = 0;
+      return NULL;
+    }
+  
+  if (feof(fp))
+    {
+      if (nbytes)
+	*nbytes = 0;
       return NULL;
     }
 
-  if (feof(fp))
-    return NULL;
-
   if (buf)
     *buf = '\0';
+
   while (EOF != (ch = fgetc(fp)))
     {      
       if (n_read == n_alloced)
@@ -184,24 +191,26 @@ loadoneline(FILE *fp, size_t *nbytes)
 	}
       if ('\n' == ch)
 	{
-	  if (n_read)
-	    {
-	      buf[n_read] = '\0';
-	      if (nbytes)
-		*nbytes = n_read;
-	      break;
-	    }
-	  else
-	    {
-	      buf = NULL;
-	      break;
-	    }
+	  buf[n_read] = '\0';
+	  if (nbytes)
+	    *nbytes = n_read;
+	  break;
 	}
       else
 	buf[n_read++] = ch;
     }
-  if (buf && *buf)
-    return buf;
-  else
-    return NULL;
+
+  if (feof(fp))
+    {
+      if (!n_read)
+	return NULL;
+      else
+	{
+	  if (nbytes)
+	    *nbytes = n_read;
+	  buf[n_read] = '\0';
+	}
+    }
+  
+  return buf;
 }

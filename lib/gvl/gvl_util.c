@@ -89,7 +89,7 @@ unsigned char *
 gvl_ivs(const unsigned char*cunutf8, int *nivsp)
 {
   const unsigned char *s = cunutf8;
-  unsigned char *ret = malloc(10*strlen((ccp)cunutf8));
+  unsigned char *ret = calloc(10*strlen((ccp)cunutf8), sizeof(unsigned char));
   int nivs = 0;
   *ret = '\0';
   (void)mbtowc(NULL,NULL,0);
@@ -98,9 +98,8 @@ gvl_ivs(const unsigned char*cunutf8, int *nivsp)
     {
       if (*s < 128)
 	{
-	  dst += strlen((ccp)dst);
-	  *dst++ = *s++;
-	  *dst = '\0';
+	  strncat(dst,s,1);
+	  ++s;
 	}
       else
 	{
@@ -118,7 +117,7 @@ gvl_ivs(const unsigned char*cunutf8, int *nivsp)
 		}
 	      else
 		strncat((char*)dst, (ccp)s, mblen);
-	      s+= mblen;
+	      s += mblen;
 	    }
 	  else
 	    {
