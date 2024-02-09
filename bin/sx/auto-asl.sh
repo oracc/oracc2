@@ -12,7 +12,12 @@ merge=`oraccopt . asl-merge`
 if [ "$merge" != "" ]; then
     mopt="-m $merge"
 fi
-tok2asl -P $project $mopt -S auto $gtoks >01tmp/auto.asl
+
+if [ -r "00lib/auto-asl.txt" ]; then
+    h="-h 00lib/auto-asl.txt"
+fi
+
+tok2asl $h -P $project $mopt -S auto $gtoks >01tmp/auto.asl
 sx -e -c 01tmp/auto.asl >>01tmp/auto.asl
 libdata=${ORACC_BUILDS}/lib/data
 for a in signlist-structure-top.xml signlist-structure-bot.xml ; do

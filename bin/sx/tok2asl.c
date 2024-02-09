@@ -9,6 +9,7 @@
 
 Pool *p;
 
+const char *header = NULL;
 const char *infile = "<stdin>";
 const char *mergers;
 const char *outfile;
@@ -115,39 +116,42 @@ merge_marshall(Hash *hsigns)
   Hash *m_seen = hash_create(256);
   Hash *mheads = hash_create(256);
   const char **mk = hash_keys(h_merges_cand);
-  int i;
-  for (i = 0; mk[i]; ++i)
+  if (mk)
     {
-      if (hash_find(hsigns, (uccp)mk[i]))
+      int i;
+      for (i = 0; mk[i]; ++i)
 	{
-	  hash_add(m_seen, (uccp)mk[i], "");
-	  hash_add(mheads, hash_find(h_merges_cand, (void*)mk[i]), "");
+	  if (hash_find(hsigns, (uccp)mk[i]))
+	    {
+	      hash_add(m_seen, (uccp)mk[i], "");
+	      hash_add(mheads, hash_find(h_merges_cand, (void*)mk[i]), "");
+	    }
 	}
-    }
-
-  /* then go through the merge-heads and reduce their lists to the
-     merge cands that occur; if a merge-head isn't already known as a
-     sign, add it */
-  mk = hash_keys(mheads);
-  for (i = 0; mk[i]; ++i)
-    {
-      if (!hash_find(hsigns, (uccp)mk[i]))
-	hash_add(hsigns, (uccp)mk[i], hash_create(1));
-      char *m = hash_find(h_merger,(uccp) mk[i]);
-      if (strchr(m, ' '))
+      
+      /* then go through the merge-heads and reduce their lists to the
+	 merge cands that occur; if a merge-head isn't already known as a
+	 sign, add it */
+      mk = hash_keys(mheads);
+      for (i = 0; mk[i]; ++i)
 	{
-	  char **mm = space_split(m);
-	  List *ml = list_create(LIST_SINGLE);
-	  int i;
-	  for (i = 0; mm[i]; ++i)
-	    if (hash_find(hsigns, (uccp)mm[i]))
-	      {
-		list_add(ml, mm[i]);
-		hash_add(h_merges_seen, (uccp)mm[i], "");
-	      }
-	  unsigned char *newm = list_to_str(ml);
-	  if (strcmp(m, (ccp)newm))
-	    hash_add(h_merger, (uccp)mk[i], newm);
+	  if (!hash_find(hsigns, (uccp)mk[i]))
+	    hash_add(hsigns, (uccp)mk[i], hash_create(1));
+	  char *m = hash_find(h_merger,(uccp) mk[i]);
+	  if (strchr(m, ' '))
+	    {
+	      char **mm = space_split(m);
+	      List *ml = list_create(LIST_SINGLE);
+	      int i;
+	      for (i = 0; mm[i]; ++i)
+		if (hash_find(hsigns, (uccp)mm[i]))
+		  {
+		    list_add(ml, mm[i]);
+		    hash_add(h_merges_seen, (uccp)mm[i], "");
+		  }
+	      unsigned char *newm = list_to_str(ml);
+	      if (strcmp(m, (ccp)newm))
+		hash_add(h_merger, (uccp)mk[i], newm);
+	    }
 	}
     }
 }
@@ -161,7 +165,7 @@ main(int argc, char **argv)
   p = pool_init();
   size_t lnum = 0;
 
-  if (options(argc, argv, "celm:o:P:S:s"))
+  if (options(argc, argv, "ceh:lm:o:P:S:s"))
     exit(1);
 
   asl_input(argv[optind]);
@@ -172,9 +176,25 @@ main(int argc, char **argv)
       load_mergers();
       h_merges_seen = hash_create(32);
     }
-  
-  if (project)
-    fprintf(o, "@project %s\n@signlist corpus\n\n", project);
+
+  if (header)
+    {
+      FILE *hp = fopen(header, "r");
+      if (!hp)
+	perror(header);
+      else
+	{
+	  int ch;
+	  while ((ch=fgetc(hp))!=EOF)
+	    fputc(ch,o);
+	  fclose(hp);
+	}
+    }
+  else
+    {
+      if (project)
+	fprintf(o, "@project %s\n@signlist corpus\n\n", project);
+    }
 
   while ((lp = (char*)loadoneline(i, NULL)))
     {
@@ -323,6 +343,9 @@ int opts(int arg, const char*str)
       break;
     case 'e':
       sl = "pe";
+      break;
+    case 'h':
+      header = str;
       break;
     case 'l':
       sl = "sl";
