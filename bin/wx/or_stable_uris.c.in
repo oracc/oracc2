@@ -212,7 +212,7 @@ res_is_lang(const char *e)
 	  while (*e && *e >= 'a' && *e <= 'z')
 	    ++e;
 	  if (*e == '\0')
-	    return exists_cbd(init);
+	    return !strcmp(init,"tok") || exists_cbd(init);
 	}
       else if (strlen(e) == 12 && (x = strstr(e, "-x-")))
 	{
