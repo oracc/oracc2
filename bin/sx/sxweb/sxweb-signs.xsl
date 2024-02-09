@@ -174,8 +174,9 @@
 </xsl:template>
 
 <xsl:template name="sws-navbar">
-  <xsl:variable name="prev" select="preceding::sl:sign[1]"/>
-  <xsl:variable name="next" select="following::sl:sign[1]"/>
+  <!--The [not(@moid)] predicate means that merged signs do not appear in the navbar-->
+  <xsl:variable name="prev" select="preceding::sl:sign[not(@moid)][1]"/>
+  <xsl:variable name="next" select="following::sl:sign[not(@moid)][1]"/>
   <xsl:if test="$prev|$next">
     <div class="navbar">
       <xsl:choose>

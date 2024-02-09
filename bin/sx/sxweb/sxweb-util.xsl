@@ -35,7 +35,8 @@
 </xsl:template>
 
 <xsl:template mode="mcol" match="sl:sign">
-  <!--<xsl:message>sl:sign <xsl:value-of select="@n"/></xsl:message>-->
+  <!--<xsl:message>sl:sign <xsl:value-of select="@n"
+      /> moid=<xsl:value-of select="@moid"/></xsl:message>-->
   <xsl:variable name="img" select="(.//sl:images/sl:i[@loc])[1]"/>
   <td>
     <xsl:attribute name="class">
@@ -46,7 +47,18 @@
 	<xsl:otherwise><xsl:text>name-nosign</xsl:text></xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
-    <esp:link page="{@xml:id}">
+    <esp:link>
+      <xsl:attribute name="page">
+	<xsl:choose>
+	  <xsl:when test="@moid">
+	    <xsl:message>sl:sign page link using @moid <xsl:value-of select="@moid"/></xsl:message>
+	    <xsl:value-of select="@moid"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="@xml:id"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:attribute>
       <xsl:choose>
 	<xsl:when test=".//sl:uage='4'">
 	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>

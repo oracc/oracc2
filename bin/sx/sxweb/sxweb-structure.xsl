@@ -23,7 +23,7 @@
     </xsl:if>
     <xsl:for-each select="*/sl:letter[not(@num='1')]">
       <struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page">
-	<xsl:for-each select="sl:sign">
+	<xsl:for-each select="sl:sign[not(@moid)]">
 	  <struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page" hide-menu-link="yes"/>
 	</xsl:for-each>
       </struct:page>
@@ -31,7 +31,7 @@
     <struct:page file="numbers.xml" id="numbers" type="page">
       <xsl:for-each select="*/sl:letter[@num='1']">
 	<struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page" hide-menu-link="yes">
-	  <xsl:for-each select="sl:sign">
+	  <xsl:for-each select="sl:sign[not(@moid)]">
 	    <struct:page file="{@xml:id}.xml" id="{@xml:id}" type="page" hide-menu-link="yes"
 			 />
 <!--			 show-small-print-link="yes" purl="/{/*/@project}/{@xml:id}" -->

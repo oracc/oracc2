@@ -44,12 +44,18 @@ vido_new_id(Vido *vp, const char *xid)
 {
   const char *pd = NULL;
   char *vidp;
-  int len;
+  int len, pdlen;
 
   if (vp->dotstop && ((pd = strchr(xid,'.'))))
-    len = pd-xid;
+    {
+      len = pd-xid;
+      pdlen = strlen(pd);
+    }
   else
-    len = strlen(xid);
+    {
+      len = strlen(xid);
+      pdlen = 0;
+    }	
   
   if (len > (basebuf_alloced-1))
     {
@@ -63,9 +69,10 @@ vido_new_id(Vido *vp, const char *xid)
   fprintf(stderr,"vido_new_id: looking for %s to resolve %s\n",basebuf,xid);
 #endif
 
+  char vido_buf[8 + pdlen];
+
   if (!(vidp = hash_find(vp->vidh,(unsigned char *)basebuf)))
     {
-      char vido_buf[8];
       char *xid_pool = (char *)pool_copy((unsigned char *)basebuf, vp->pool);
       sprintf(vido_buf,"%c%06d",vp->prefix,vp->ids_used);
       hash_add(vp->vidh,
@@ -84,8 +91,19 @@ vido_new_id(Vido *vp, const char *xid)
 #ifdef VIDO_DEBUG
   fprintf(stderr,"vido_new_id: mapped %s to %s\n",basebuf,vidp);
 #endif
-
     }
+  else
+    {
+      if (pd)
+	strcpy(vido_buf, vidp);
+    }
+
+  if (pd)
+    {
+      strcat(vido_buf, pd);
+      return (ccp)pool_copy((uccp)vido_buf, vp->pool);
+    }
+  
   return vidp;
 }
 

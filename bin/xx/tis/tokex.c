@@ -70,6 +70,6 @@ main(int argc, char **argv)
 	    }	    
 	}
     }
-  vido_dump_data(vp, "tid.vid", "tid.tsv");
+  vido_dump_data(vp, "02pub/tok/tid.vid", "02pub/tok/tid.tsv");
   vido_term(vp);
 }
