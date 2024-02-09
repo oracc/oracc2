@@ -51,6 +51,24 @@ oracc_var (void)
   return cached_var;
 }
 
+const char *
+projectify(const char *path, const char **projp)
+{
+  const char *colon = strchr(path, ':');
+  if (colon)
+    {
+      char *ppath = malloc(strlen(oracc_home())+strlen(path)+2);
+      char *pproj = malloc((colon-path)+1);
+      *pproj = '\0';
+      strncat(pproj, path, colon-path);
+      sprintf(ppath, "%s/%s/%s", oracc_home(),pproj,colon+1);
+      *projp = pproj;
+      return ppath;
+    }
+  else
+    return path;
+}
+
 char *
 new_ext (char *fn, const char *fext, int force)
 {

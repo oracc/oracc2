@@ -219,11 +219,10 @@
 	    <xsl:value-of select="@n"/>
 	    <xsl:if test="sl:images/sl:i[@loc]">
 	      <xsl:text>&#xa0;=&#xa0;</xsl:text>
-	      <xsl:variable name="base" select="'../../../pctc'"/>
 	      <xsl:for-each select="sl:images/sl:i[@loc][1]">
 		<xsl:variable name="ref" select="@ref"/>
 		<xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
-		<esp:image height="40px" file="{$base}/{$header/@path}/{@loc}"
+		<esp:image height="40px" url="/{$header/@proj}/{$header/@path}/{@loc}"
 			   description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
 	      </xsl:for-each>
 	    </xsl:if>
@@ -441,7 +440,7 @@
 	<table class="itable">
 	  <tr><td><span class="im-label"><xsl:value-of select="$header/@label"/>:</span></td></tr>
 	  <tr><td>
-	    <esp:image width="100%" file="{$base}/{$header/@path}/{@loc}"
+	    <esp:image width="100%" url="/{$header/@proj}/{$header/@path}/{@loc}"
 		       description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
 	  </td></tr>
 	</table>

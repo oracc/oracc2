@@ -105,6 +105,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	      const char *o = itoa(i);
 	      ratts = rnvval_aa("x",
 				"xml:id", sl->iheaders[i].id,
+				"proj", sl->iheaders[i].proj ? sl->iheaders[i].proj : ".",
 				"path", sl->iheaders[i].path,
 				"order", o,
 				"label", sl->iheaders[i].label,

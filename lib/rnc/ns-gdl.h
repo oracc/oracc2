@@ -86,6 +86,7 @@ enum gdl_a_type
   gdl_a_path,
   gdl_a_period,
   gdl_a_pos,
+  gdl_a_proj,
   gdl_a_project,
   gdl_a_qm,
   gdl_a_qv,

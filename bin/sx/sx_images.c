@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <oraccsys.h>
 #include <signlist.h>
 #include <sx.h>
 
@@ -26,12 +26,18 @@ sx_images(struct sl_signlist *sl)
       r->linkcells = 1;
       for (m = list_first(sl->images), nm=0; m; m = list_next(sl->images), ++nm)
 	{
-	  Roco *mr = roco_load(m->user, 0, NULL, NULL, NULL);
+	  const char *improj = NULL;
+	  const char *imfile = projectify(m->user, &improj);
+	  Roco *mr = roco_load(imfile, 0, NULL, NULL, NULL);
 	  char buf[16];
 	  sprintf(buf, "i%d", nm);
 	  sl->iheaders[nm].r = mr;
 	  sl->iheaders[nm].id = (ccp)pool_copy((uccp)buf, sl->p);
 	  sl->iheaders[nm].mloc = *m;
+	  if (improj)
+	    sl->iheaders[nm].proj = (ccp)pool_copy((uccp)improj, sl->p);
+	  else
+	    sl->iheaders[nm].proj = sl->project;
 	  if (mr)
 	    {
 	      int i;
@@ -79,6 +85,11 @@ sx_images(struct sl_signlist *sl)
 				  mr->file, i, (char*)mr->rows[i][0], (char*)mr->rows[i][1], s);
 		      }
 		    }
+		}
+	      if (improj)
+		{
+		  free(improj);
+		  free(imfile);
 		}
 	    }
 	  if (!sl->iheaders[nm].label || !sl->iheaders[nm].path)

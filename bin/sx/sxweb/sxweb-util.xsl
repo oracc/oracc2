@@ -12,12 +12,10 @@
     extension-element-prefixes="ex"
     version="1.0">
 
-<xsl:param name="base" select="'../../../pctc'"/>
-  
 <xsl:template name="esp-sign-image">
   <xsl:variable name="ref" select="@ref"/>
   <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
-  <esp:image class="middle" height="30px" file="{$base}/{$header/@path}/{@loc}"
+  <esp:image class="middle" height="30px" url="/{$header/@proj}/{$header/@path}/{@loc}"
 	     description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
 </xsl:template>
 
@@ -26,11 +24,11 @@
   <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
   <xsl:choose>
     <xsl:when test="string-length($header/@thumb)>0">
-      <esp:image class="middle" file="{$base}/{$header/@thumb}/{@loc}"
+      <esp:image class="middle" url="/{$header/@proj}/{$header/@thumb}/{@loc}"
 		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
     </xsl:when>
     <xsl:otherwise>
-      <esp:image class="middle" height="30px" file="{$base}/{$header/@path}/{@loc}"
+      <esp:image class="middle" height="30px" url="/{$header/@proj}/{$header/@path}/{@loc}"
 		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
     </xsl:otherwise>
   </xsl:choose>

@@ -109,6 +109,7 @@ enum xtf_a_type
   xtf_a_plid,
   xtf_a_pos,
   xtf_a_primes,
+  xtf_a_proj,
   xtf_a_project,
   xtf_a_qm,
   xtf_a_qv,
