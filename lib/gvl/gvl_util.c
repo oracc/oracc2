@@ -98,7 +98,7 @@ gvl_ivs(const unsigned char*cunutf8, int *nivsp)
     {
       if (*s < 128)
 	{
-	  strncat(dst,s,1);
+	  strncat((char*)dst,(ccp)s,1);
 	  ++s;
 	}
       else

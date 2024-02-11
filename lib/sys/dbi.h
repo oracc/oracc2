@@ -9,6 +9,7 @@
 #define DBI_H_	1
 
 #include <hash.h>
+#include <vido.h>
 
 /**A database index uses two files, the header file, with a .dbh 
  * extension, and the index file, with a .dbi extension.
@@ -35,13 +36,21 @@
 				 * because it's just for humans to know
 				 * what the file contains */
 
+#define DBI_DT_UNDEF	0x0
+#define DBI_DT_CHARP	0x1
+#define DBI_DT_LOC8	0x2
+#define DBI_DT_LOC16	0x4
+#define DBI_DT_LOC24	0x8
 
 /**This is all the information that needs to be written in the header */
 struct Dbi_index_hdr
 {
   Uchar name[DBI_NAME_LEN];	/* name of index, informal (for humans only) */
+  Uchar vids[_MAX_PATH];	/* vid file e.g., tid.vid; can be full path, e.g.,
+				   /home/oracc/pub/ogsl/sl/oid.vid */
   Unsigned32 entry_count;	/* number of keys in it */
   Unsigned32 data_size;		/* size of datum elements */
+  Unsigned32 data_type;		/* data type as DBI_DT_* defs */
   Unsigned32 ht_size;		/* size of hash table */
   Unsigned32 ht_clash_count;	/* number of clashes in hash table */
   Unsigned32 ht_clash_indexes_count;	/* length of clash index array */
@@ -107,7 +116,7 @@ typedef struct Clash Clash;
 struct Dbi_index
 {
   Dbi_index_hdr h;		/* header info */
-  char dir[_MAX_PATH];		/* directory where this dbi's files live */
+  char dir[_MAX_PATH];		/* directory where this dbi's files live; must end in '/' */
   char h_fname[_MAX_PATH];	/* file name of hash.dbi file */
   char i_fname[_MAX_PATH];	/* file name of inst.dbi file */
   char _tmp_fn[L_tmpnam];	/* tmp file for building index */
@@ -130,6 +139,7 @@ struct Dbi_index
   struct Dbi_index *aliases;	/* aliases for this index */
   struct Dbi_index *signmap;	/* sign map for this index */
   void (*hook)(const char *,Unsigned32,void *);
+  Vido *vp;			/* Vido for this dbi; only set at run time */
   void *user;
 };
 typedef struct Dbi_index Dbi_index;
@@ -150,9 +160,12 @@ extern void	dbi_suspend (Dbi_index *dp);
 extern void	hash_term (void);
 extern void	set_clash_offset (void *vp);
 extern void *	dbi_detach_data (Dbi_index *dp, Unsigned32 *count);
+extern void *	dbi_slice (Dbi_index *dp, Unsigned32 s_from, Unsigned32 s_to, Unsigned32 *count);
 extern void 	dbi_set_cache (Dbi_index *dp, size_t elt_count);
 extern void	dbi_set_counts(FILE *cfp);
+extern void 	dbi_set_type(Dbi_index *dp, Unsigned32 type);
 extern void	dbi_set_user(Dbi_index *dp, Unsigned32 udata);
+extern void	dbi_set_vids(Dbi_index *dp, const char *v);
 extern Uchar *	dbi_each (Dbi_index *dip);
 extern void	dbi_set_hook(Dbi_index *dp, void (*hook)(const char *,Unsigned32,void*), void*user);
 

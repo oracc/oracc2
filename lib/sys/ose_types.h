@@ -39,10 +39,10 @@ typedef signed char    One_byte_s;
   Two_bytes  unit_id; \
   Two_bytes  word_id; \
 
-struct location8
+typedef struct location8
 {
   loc8
-};
+} Loc8;
 
 struct location16
 {

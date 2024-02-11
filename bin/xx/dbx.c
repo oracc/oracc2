@@ -1,63 +1,107 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <oraccsys.h>
 #include <oracclocale.h>
+#include <ose.h>
 #include <dbxlib.h>
+
+/* These count from 1 so to get items 0..9 you need -F1 -T10*/
+int dbx_from = 0, dbx_to = 0;
 
 const char *file = NULL;
 int lnum = 0;
 const char *outfile = NULL;
 int test_mode = 0;
 int value_only = 0;
+int word_ids = 0;
+char dbx_sep_char = '\n';
 
 void
-dbx_one(Dbi_index *d, const char *k)
+dbx_wids(Dbi_index *dp, Loc8 *l8p, int n, FILE *o)
 {
-  const char *v = dbx_key(d,k);
+  int i;
+  for (i = 0; i <= n; ++i)
+    {
+      Loc8 *l8 = &l8p[i];
+      fprintf(o,"%s.%d.%d",
+	      vido_get_id(dp->vp,l8->text_id),
+	      l8->unit_id, 
+	      l8->word_id
+	      );
+      if (dbx_sep_char == ' ')
+	{
+	  if ((n-i) > 1)
+	    fputc(' ', o);
+	}
+      else
+	fputc(dbx_sep_char, o);
+    }
+}
+
+void
+dbx_l8s(Dbi_index *dp, Loc8 *l8p, int n, FILE *o)
+{
+  int i;
+  fputc('\n', o);
+  for (i = 0; i < n; ++i)
+    {
+      Loc8 *l8 = &l8p[i];
+      fprintf(o,
+	      "         t=%s;u=%d;w=%d\n",
+	      vido_get_id(dp->vp,l8->text_id),
+	      l8->unit_id, 
+	      l8->word_id
+	      );
+    }
+}
+
+void
+dbx_val(Dbi_index *d, const void *v, size_t n, FILE *o)
+{
+  switch (d->h.data_type)
+    {
+    case DBI_DT_UNDEF:
+    case DBI_DT_CHARP:
+      fprintf(o, "%s%c", (ccp)v, dbx_sep_char);
+      break;
+    case DBI_DT_LOC8:
+      if (word_ids)
+	dbx_wids(d, (Loc8*)v, n, o);
+      else
+	dbx_l8s(d, (Loc8*)v, n, o);
+      break;
+    default:
+      fprintf(stderr, "dbx_val: unknown DBI type code %d\n", d->h.data_type);
+      break;
+    }
+}
+
+void
+dbx_one(Dbi_index *d, const char *k, FILE *o)
+{
+  Unsigned32 n;
+  const void *v = dbx_key(d,k,&n);
+  
+  if (dbx_from)
+    v = dbi_slice(d,dbx_from-1,dbx_to-1,&n);
+  
   if (v)
     {
       if (test_mode)
-	puts("1");
-      else if (outfile)
-	{
-	  FILE *o = fopen(outfile, "w");
-	  if (o)
-	    {
-	      while (*v)
-		{
-		  if (' ' == *v)
-		    fputc('\n', o);
-		  else
-		    fputc(*v, o);
-		  ++v;
-		}
-	      fclose(o);
-	    }	  
-	  else
-	    {
-	      perror(outfile);
-	      exit(1);
-	    }
-	}
-      else if (value_only)
-	puts(v);
+	fputs("1\n", o);
       else
-	printf("%s\t%s\n", k, v);
+	dbx_val(d, v, n, o);
     }
   else
     {
       if (test_mode)
-	puts("0");
+	fputs("0\n", o);
       else if (value_only)
-	puts("");
-      else
-	printf("%s\t\n", k);
+	fputc('\n', o);
     }
 }
 
 /* should reimplement less lazily to support arbitrary length keys */
 void
-dbx_input(Dbi_index *d, FILE *fp)
+dbx_input(Dbi_index *d, FILE *fp, FILE *o)
 {
   char keybuf[256], *k;
   lnum = 0;
@@ -70,7 +114,8 @@ dbx_input(Dbi_index *d, FILE *fp)
 	  if (*k == 0x04) {
 	    break;
 	  } else {
-	    dbx_one(d, k);
+	    fprintf(o, "%s\t\n", k);
+	    dbx_one(d, k, o);
 	  }
 	}
     }
@@ -86,23 +131,38 @@ main(int argc, char **argv)
 
   setlocale(LC_ALL,ORACC_LOCALE);
   
-  options(argc, argv, "d:f:n:o:tv");
+  options(argc, argv, "d:f:F:n:o:stT:vw");
   key = argv[optind];
   d = dbx_init(dbidir, dbiname);
+  dbx_vido(d);
+  FILE *o = stdout;
+  if (outfile)
+    {
+      o = fopen(outfile, "w");
+      if (!o)
+	{
+	  perror(outfile);
+	  exit(1);
+	}
+    }
   if (key)
-    dbx_one(d, key);
+    {
+      if (!word_ids)
+	fprintf(o, "%s\t", key);
+      dbx_one(d, key, o);
+    }
   else if (file)
     {
       FILE *fp = fopen(file, "r");
       if (fp)
-	dbx_input(d, fp);
+	dbx_input(d, fp, o);
       else
 	fprintf(stderr, "dbx: unable to read from keys file %s\n", file);
     }
   else
     {
       file = "<stdin>";
-      dbx_input(d, stdin);
+      dbx_input(d, stdin, o);
     }
   dbx_term(d);
 }
@@ -120,17 +180,29 @@ opts(int argc, const char *arg)
     case 'f':
       file = arg;
       break;
+    case 'F':
+      dbx_from = atoi(arg);
+      break;
     case 'n':
       dbiname = arg;
       break;
     case 'o':
       outfile = arg;
       break;
+    case 's':
+      dbx_sep_char = ' ';
+      break;
     case 't':
       test_mode = 1;
       break;
+    case 'T':
+      dbx_to = atoi(arg);
+      break;
     case 'v':
       value_only = 1;
+      break;
+    case 'w':
+      word_ids = 1;
       break;
     default:
       usage();

@@ -1,6 +1,8 @@
 #ifndef VIDO_H_
 #define VIDO_H_
 
+#include <pool.h>
+
 typedef struct vido
 {
   Hash *vidh;

@@ -57,6 +57,8 @@ main(int argc, char * const*argv)
       exit(1);
     }
 
+  dbi_set_vids(dip,"vid.vid");
+  dbi_set_type(dip,DBI_DT_LOC8);
   dbi_set_user(dip,d_tok);
   dbi_set_cache(dip,cache_size);
 
@@ -108,7 +110,7 @@ main(int argc, char * const*argv)
   
   /* ose_ce_cfg(curr_project, "tok", "tr", "txh", oce_tok, NULL); */
 
-  vido_dump_data(vp, "vid.vid"/*ose_file(curr_project, curr_index, "vid.dat")*/, NULL);
+  vido_dump_data(vp, "02pub/tok/vid.vid", NULL);
   vido_term(vp);
 
   dbi_free(dip);

@@ -161,15 +161,21 @@ vido_load_data(const char *fname, int hash_too)
   char *vpfile = (char*)loadfile((unsigned char *)fname,&fsize);
   if (vpfile)
     {
+      char *v = vpfile;
       vp = calloc(1,sizeof(Vido));
-      char *maxp = vpfile + strlen(vpfile) + 1;
-      vp->prefix = *vpfile;
-      vpfile += 2;
-      vp->ids_used = atoi(vpfile);
-      vp->max_len = atoi(maxp);
-      vp->padded_ids = maxp + strlen(maxp) + 1;
       vp->file = vpfile;
       vp->ids = NULL;
+      vp->prefix = *vpfile;
+      v = vpfile+2;
+      vp->ids_used = atoi(v);
+      while (*v)
+	++v;
+      ++v;
+      vp->max_len = atoi(v);
+      while (*v)
+	++v;
+      ++v;
+      vp->padded_ids = v;
       if (hash_too)
 	{
 	  vp->pool = pool_init();

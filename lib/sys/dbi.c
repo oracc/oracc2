@@ -221,6 +221,26 @@ dbi_detach_data (Dbi_index *dp, Unsigned32 *count)
   return tmp;
 }
 
+void *
+dbi_slice (Dbi_index *dp, Unsigned32 s_from, Unsigned32 s_to, Unsigned32 *count)
+{
+  void *tmp;
+  if (NULL != dp && dp->nfound && s_from < dp->nfound)
+    {
+      if (s_to > dp->nfound)
+	s_to = dp->nfound;
+      *count = 1+(s_to - s_from);
+      tmp = ((char*)dp->data) + (dp->h.data_size * s_from);
+    }
+  else
+    {
+      tmp = NULL;
+      if (NULL != count)
+	*count = 0;
+    }
+  return tmp;
+}
+
 #define KBUFSIZ 256
 static Uchar keybuf[KBUFSIZ];
 
@@ -386,10 +406,10 @@ disk_strcmp (const Uchar *key, FILE *fp, Unsigned32 offset)
 
 #define xxfwrite(_fn,_t,_buf,_siz,_cnt,_fp) \
 			if (fwrite(_buf,_siz,_cnt,_fp)!=_cnt)\
-			  fprintf(stderr,"dbi: write failed on %s (disk full?)",_fn)
+			  fprintf(stderr,"dbi: write failed on %s (disk full?)\n",_fn)
 #define xxfread(_fn,_t,_buf,_siz,_cnt,_fp) \
 			if (fread(_buf,_siz,_cnt,_fp)!=_cnt)\
-			  fprintf(stderr,"dbi: read %ld bytes failed on %s at %s:%d",_cnt*_siz,_fn,__FILE__,__LINE__)
+			  fprintf(stderr,"dbi: read %ld bytes failed on %s at %s:%d\n",_cnt*_siz,_fn,__FILE__,__LINE__)
 
 static List *clash_list;
 static Uint clash_indexes_count;
@@ -1294,6 +1314,7 @@ dbi_open (const char *name, const char *dir)
   if (!name || !dir)
     return NULL;
   tmp = malloc (sizeof (Dbi_index));
+  sprintf(tmp->dir, "%s/", dir);
   sprintf(tmp->h_fname, "%s/%s.dbh", dir, name);
   sprintf(tmp->i_fname, "%s/%s.dbi", dir, name);
   tmp->h_fp = xfopen (tmp->h_fname, "rb");
@@ -1327,11 +1348,27 @@ dbi_set_cache (Dbi_index *dp, size_t elt_count)
 }
 
 void
+dbi_set_type(Dbi_index *dp, Unsigned32 type)
+{
+  if (NULL == dp)
+    abort();
+  dp->h.data_type = type;
+}
+
+void
 dbi_set_user (Dbi_index *dp, Unsigned32 udata)
 {
   if (NULL == dp)
     abort();
   dp->h.ht_user = udata;
+}
+
+void
+dbi_set_vids(Dbi_index *dp, const char *v)
+{
+  if (NULL == dp)
+    abort();
+  strcpy((char*)dp->h.vids, v);
 }
 
 /**Hashing routine optimized for short strings with few distinct
