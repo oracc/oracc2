@@ -18,7 +18,7 @@ void
 dbx_wids(Dbi_index *dp, Loc8 *l8p, int n, FILE *o)
 {
   int i;
-  for (i = 0; i <= n; ++i)
+  for (i = 0; i < n; ++i)
     {
       Loc8 *l8 = &l8p[i];
       fprintf(o,"%s.%d.%d",

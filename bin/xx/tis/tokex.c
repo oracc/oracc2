@@ -16,7 +16,7 @@
 int
 main(int argc, char **argv)
 {
-  char buf[1024], *b, wdid[512];
+  char buf[1024], *b, qid[1024], wdid[32];
   Vido *vp = vido_init('t', 0);
   while ((b = fgets(buf, 1024, stdin)))
     {
@@ -36,10 +36,20 @@ main(int argc, char **argv)
 	  s = strchr(t, '\t');  /* signature */
 	  if (s)
 	    *s++ = '\0';
+	  if ('@' == *s)
+	    {
+	      ++s;
+	      char *t = strchr(s, '%');
+	      *t = '\0';
+	      strcpy(qid, s);
+	      strcat(qid, ":");
+	      strcat(qid, wdid);
+	    }
 	  w = strchr(s, '\t');
 	  if (w)
 	    *w++ = '\0';
-	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), wdid);
+
+	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
 	  
 	  /* if the grapheme token has a ter (value) determine the
 	   * parent and generate a token entry for it:
@@ -58,7 +68,7 @@ main(int argc, char **argv)
 	    {
 	      char save = v[1];
 	      v[1] = '\0';
-	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), wdid);
+	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
 	      v[1] = save;
 	    }
 	  else
@@ -66,7 +76,7 @@ main(int argc, char **argv)
 	      char t0[strlen(t)+2];
 	      strcpy(t0, t);
 	      strcat(t0, "0");
-	      printf("%s\t%s\t%s\n", t0, vido_new_id(vp,t0), wdid);
+	      printf("%s\t%s\t%s\n", t0, vido_new_id(vp,t0), qid);
 	    }	    
 	}
     }
