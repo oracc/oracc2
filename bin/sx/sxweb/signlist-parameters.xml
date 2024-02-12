@@ -17,6 +17,7 @@
     <meta name="DC.format" content="text/html"/>
     <link media="screen,projection" href="/@@project@@/signlist/css/projesp.css" type="text/css" rel="stylesheet"/>
     <script type="text/javascript" src="/@@project@@/signlist/js/projesp.js"> </script>
+    <script type="text/javascript" src="/js/p3.js"> </script>
   </param:common-headers>
   <param:top-content>
   </param:top-content>

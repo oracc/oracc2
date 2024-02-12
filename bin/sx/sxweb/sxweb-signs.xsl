@@ -25,7 +25,7 @@
 <xsl:output method="xml" indent="yes" encoding="utf-8"/>
 
 <!--### Set all the asl-* config variables from config.xml -->
-
+<xsl:variable name="q">'</xsl:variable>
 <xsl:variable name="sl-config-xml" select="concat($oraccbuilds,'/xml/',/*/@project,'/signlist/config.xml')"/>
 
 <!--statistics for occurrences; these are embedded in the headers for each sign/form/value name-->
@@ -249,9 +249,9 @@
 
 <xsl:template name="sws-sign-or-form">
   <div class="asl-sf-body">
-    <!--<xsl:call-template name="sws-stats"/>-->
-    <xsl:call-template name="sws-meta"/>
+    <xsl:call-template name="sws-stats"/>
     <xsl:call-template name="sws-values"/>
+    <xsl:call-template name="sws-meta"/>
     <xsl:call-template name="sws-images"/>
     <xsl:call-template name="sws-snippets"/>
     <xsl:call-template name="sws-instances"/>
@@ -327,6 +327,16 @@
 	</xsl:for-each>
       </span>
     </p>
+  </xsl:if>
+</xsl:template>
+
+
+<xsl:template name="sws-stats">
+  <xsl:if test="@iref">
+    <p><esp:link
+    url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
+    >Occurs <xsl:value-of select="@icnt"/>
+    times.</esp:link></p>
   </xsl:if>
 </xsl:template>
 

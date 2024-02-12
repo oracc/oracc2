@@ -69,15 +69,16 @@ vido_new_id(Vido *vp, const char *xid)
   fprintf(stderr,"vido_new_id: looking for %s to resolve %s\n",basebuf,xid);
 #endif
 
-  char vido_buf[8 + pdlen];
+  char vido_buf[len + pdlen + 1];
+  const char *vidp_ret = NULL;
 
   if (!(vidp = hash_find(vp->vidh,(unsigned char *)basebuf)))
     {
       char *xid_pool = (char *)pool_copy((unsigned char *)basebuf, vp->pool);
       sprintf(vido_buf,"%c%06d",vp->prefix,vp->ids_used);
       hash_add(vp->vidh,
-	       pool_copy((unsigned char *)basebuf, vp->pool),
-	       pool_copy((unsigned char *)vido_buf, vp->pool));
+	       (uccp)xid_pool,
+	       (void*)(vidp_ret = (ccp)pool_copy((unsigned char *)vido_buf, vp->pool)));
       vidp = vido_buf;
       if (vp->ids_used == vp->ids_alloced)
 	{
@@ -85,17 +86,19 @@ vido_new_id(Vido *vp, const char *xid)
 	  vp->ids = realloc(vp->ids,vp->ids_alloced * sizeof(const char *));
 	}
       vp->ids[vp->ids_used++] = xid_pool;
-      if (strlen(basebuf) >= vp->max_len)
-	vp->max_len = strlen(basebuf) + 1;
+      if (strlen(xid_pool) >= vp->max_len)
+	vp->max_len = strlen(xid_pool) + 1;
       
 #ifdef VIDO_DEBUG
-  fprintf(stderr,"vido_new_id: mapped %s to %s\n",basebuf,vidp);
+  fprintf(stderr,"vido_new_id: mapped %s to %s\n",xid_pool,vidp);
 #endif
     }
   else
     {
       if (pd)
 	strcpy(vido_buf, vidp);
+      else
+	vidp_ret = vidp;
     }
 
   if (pd)
@@ -104,7 +107,7 @@ vido_new_id(Vido *vp, const char *xid)
       return (ccp)pool_copy((uccp)vido_buf, vp->pool);
     }
   
-  return vidp;
+  return vidp_ret;
 }
 
 const char *
