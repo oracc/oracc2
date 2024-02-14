@@ -22,7 +22,8 @@ start =
         attribute title { text },
 	sl.tle*
       }*)
-    }*
+    }*,
+    sl.homophones?
   }
 
 # Top-level-elements (i.e., top-level below grouping constructs)
@@ -233,6 +234,7 @@ sl.v =
     attribute type { xsd:NCName }?,
     attribute uncertain { xsd:NCName }?,
     attribute xml:lang { text }?,
+    attribute hid { text }?,
     sl.stats?,
     sl.name?,
     sl.proof?,
@@ -252,6 +254,18 @@ sl.lemma  = element sl:lemma  {
 	  attribute bcnt { text } ,
 	  attribute gpos { text } 
 	  }
+
+sl.homophones = element sl:homophones { sl.base* }
+sl.base = element sl:base {
+    attribute xml:id { xsd:NCName }?,
+    attribute n { text },
+    attribute count { text },
+    sl.h*
+}
+sl.h = element sl:h {
+     attribute oid { text },
+     attribute v { text }
+}
 
 g.d =
   element g:d {

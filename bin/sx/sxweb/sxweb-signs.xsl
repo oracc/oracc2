@@ -103,6 +103,7 @@
 &#x9;asl-lexdata=<xsl:value-of select="$asl-lexdata"
 /></xsl:message>
   <xsl:apply-templates select="sl:letter/sl:sign"/>
+  <xsl:apply-templates select="sl:homophones/sl:base"/>
 </xsl:template>
 
 <!--### Iteration over each sign -->
@@ -399,9 +400,9 @@
 	</xsl:for-each>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:message
+	<!--<xsl:message
 	    ><xsl:value-of select="string-length(sl:cpds/sl:memb/@oids)"
-	    /><xsl:text>&#x09;</xsl:text><xsl:value-of select="sl:cpds/sl:memb/@oids"/></xsl:message>
+	    /><xsl:text>&#x09;</xsl:text><xsl:value-of select="sl:cpds/sl:memb/@oids"/></xsl:message>-->
 	<esp:link url="{concat('/', /*/@project, '/signlist/selpages/', @xml:id, '-cmemb.html')}"
 		  >see list of <xsl:value-of select="ceiling(string-length(sl:cpds/sl:memb/@oids) div 9)"/> compounds</esp:link>
       </xsl:otherwise>
@@ -616,12 +617,23 @@
 	  <span class="sl-ihead">VALUES</span>
 	  <xsl:call-template name="sws-values-sub"/>
 	</p>
+	<xsl:variable name="hnodes" select="id(sl:v/@hid)[@count&gt;1]"/>
+	<xsl:if test="count($hnodes)>0">
+	  <p>
+	    <span class="sl-ihead">HOMOPHONES</span>
+	    <xsl:for-each select="$hnodes">
+	      <esp:link url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link>
+	    </xsl:for-each>
+	  </p>
+	</xsl:if>
+	  
+	<!--<xsl:message>hnodes=<xsl:value-of select="count($hnodes)"/></xsl:message>-->
       </xsl:if>
       <xsl:if test="@merge">
 	<xsl:for-each select="id(@merge)">
 	  <xsl:if test="count(sl:v)>0">
 	    <p>
-	      <span class="asl-value-h">Values<span title="via merger of"> from </span><xsl:value-of select="@n"/>: </span>
+	      <span class="sl-ihead">VALUES<span title="via merger of"> FROM </span><xsl:value-of select="@n"/>: </span>
 	      <xsl:call-template name="sws-values-sub"/>
 	    </p>
 	  </xsl:if>
@@ -632,6 +644,7 @@
 </xsl:template>
 
 <xsl:template name="sws-sel-page">
+  <xsl:param name="file"/>
   <xsl:param name="type"/>
   <xsl:param name="title"/>
   <xsl:param name="nodes"/>
@@ -639,8 +652,14 @@
       <xsl:message>sws-sel-page called with type=<xsl:value-of select="$type"
       />; title=<xsl:value-of select="$title"/>; nodecount=<xsl:value-of select="count($nodes)"/></xsl:message>
   -->
+  <xsl:variable name="basename">
+    <xsl:choose>
+      <xsl:when test="$file"><xsl:value-of select="$file"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="concat(@xml:id,'-',$type)"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   <xsl:if test="count($nodes)>0">
-    <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-',$type,'.html')}"
+    <ex:document href="{concat('signlist/01bld/selpages/',$basename,'.html')}"
 		 method="xml" encoding="utf-8" omit-xml-declaration="yes"
 		 indent="yes" doctype-system="html">
       <html>
@@ -656,8 +675,10 @@
 	      <xsl:when test="$type='h'">
 		<xsl:for-each select="$nodes">
 		  <tr>
-		    <td>@v</td>
-		    <xsl:call-template name="sws-sel-summary"/>
+		    <td><xsl:value-of select="@v"/></td>
+		    <xsl:for-each select="id(@oid)">
+		      <xsl:call-template name="sws-sel-summary"/>
+		    </xsl:for-each>
 		  </tr>
 		</xsl:for-each>
 	      </xsl:when>
@@ -689,6 +710,15 @@
       <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
     </xsl:for-each>
   </td>
+</xsl:template>
+
+<xsl:template match="sl:base">
+  <xsl:call-template name="sws-sel-page">
+    <xsl:with-param name="file" select="@xml:id"/>
+    <xsl:with-param name="type" select="'h'"/>
+    <xsl:with-param name="title" select="concat(@n,  ' homophones')"/>
+    <xsl:with-param name="nodes" select="sl:h"/>
+  </xsl:call-template>
 </xsl:template>
 
 <!-- Trap unhandled tags -->

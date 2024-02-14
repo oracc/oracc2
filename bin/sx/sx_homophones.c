@@ -40,6 +40,7 @@ sx_h_sub(struct sl_signlist *sl, Hash *xh, unsigned const char *vname, int xvalu
   unsigned const char *b = pool_copy(g_base_of(vname), sl->p);
   int index = g_index_of(vname, b);
   struct sl_split_value *spv = memo_new(sl->m_split_v);
+  spv->v = vname;
   spv->b = b;
   spv->i = index;
   spv->oid = oid;

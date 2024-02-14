@@ -135,6 +135,7 @@ struct sl_parents
 
 struct sl_split_value
 {
+  const unsigned char *v;
   const unsigned char *b;
   int i;
   const char *oid;

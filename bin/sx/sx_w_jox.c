@@ -60,11 +60,31 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 {
   const char **keys;
   int nkeys, i;
+  joxer_ea(NULL, "sl:homophones", NULL);
   keys = hash_keys2(sl->homophones, &nkeys);
   for (i = 0; i < nkeys; ++i)
     {
-      fprintf(stderr, "homophone %s has id=%s\n", keys[i], hash_find(sl->homophone_ids, keys[i]));
+      List *lp = hash_find(sl->homophones, (uccp)keys[i]);
+      ratts = rnvval_aa("x",
+			"xml:id", hash_find(sl->homophone_ids, (uccp)keys[i]),
+			"n", keys[i],
+			"count", itoa(list_len(lp)),
+			NULL);
+      joxer_ea(&sl->mloc, "sl:base", ratts);
+      joxer_ao("j:h");
+      struct sl_split_value *spv;
+      for (spv = list_first(lp); spv; spv = list_next(lp))
+	{
+	  ratts = rnvval_aa("x",
+			    "v", spv->v,
+			    "oid", spv->oid,
+			    NULL);
+	  joxer_ec(&sl->mloc, "sl:h", ratts);
+	}
+      joxer_ac();
+      joxer_ee(&sl->mloc, "sl:base");
     }
+  joxer_ee(&sl->mloc, "sl:homophones");
 }
 
 /* This is the entry point for xml output */
@@ -836,6 +856,13 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	      list_add(a, (void*)v->lang);
 	    }
 
+	  const char *hid = hash_find(sl->homophone_ids, v->u.v->base);
+	  if (hid)
+	    {
+	      list_add(a, "hid");
+	      list_add(a, hid);
+	    }
+	  
 	  if (v->tp)
 	    x_tis_atts(a, v->tp, 0);
 	  
