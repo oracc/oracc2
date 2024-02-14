@@ -55,6 +55,7 @@ struct sl_signlist
   Hash *homophones;	/* Hash of value-bases each with list of
 			   sl_split_value* that reduce to that base;
 			   x-values include the 'ₓ' in their base */
+  Hash *homophone_ids;  /* IDs for homophones */
   Hash *hcompoundnew;	/* Signs reported in sx_compound_new_sign to prevent multiple error messages */
   Hash *values_by_oid;
   Hash *oidindexes;

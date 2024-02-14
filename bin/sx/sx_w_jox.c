@@ -55,6 +55,18 @@ sx_w_jox_init(void)
   return &sx_w_jox_fncs;
 }
 
+static void
+sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
+{
+  const char **keys;
+  int nkeys, i;
+  keys = hash_keys2(sl->homophones, &nkeys);
+  for (i = 0; i < nkeys; ++i)
+    {
+      fprintf(stderr, "homophone %s has id=%s\n", keys[i], hash_find(sl->homophone_ids, keys[i]));
+    }
+}
+
 /* This is the entry point for xml output */
 static void
 sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
@@ -119,6 +131,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
     }
   else if (p == sx_pos_term)
     {
+      sx_w_jx_homophones(f, sl);
       joxer_ee(&sl->eloc, "sl:signlist");
       hash_free(xidseen, NULL);
     }
@@ -763,6 +776,10 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	    }
 	  if (s->u.s->aka && list_len(s->u.s->aka))
 	    sx_w_jx_aka(f, sl, s->u.s->aka);
+#if 0
+	  if (s->u.s->nvalues)
+	    sx_w_jx_homophone_links(f, sl, s->u.s);
+#endif
 	}
 #if 0
       else if (s->type == 'f')

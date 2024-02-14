@@ -141,7 +141,16 @@
 	</html>
       </esp:page>
     </ex:document>
+    <xsl:call-template name="sws-selection-pages"/>
   </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-selection-pages">
+  <xsl:call-template name="sws-sel-page">
+    <xsl:with-param name="type" select="'cmemb'"/>
+    <xsl:with-param name="title" select="concat(@n,  ' in compounds')"/>
+    <xsl:with-param name="nodes" select="id(sl:cpds/sl:memb/@oids)"/>
+  </xsl:call-template>
 </xsl:template>
 
 <xsl:template name="sws-esp-header">
@@ -252,7 +261,6 @@
     <xsl:call-template name="sws-stats"/>
     <xsl:call-template name="sws-values"/>
     <xsl:call-template name="sws-meta"/>
-    <xsl:call-template name="sws-images"/>
     <xsl:call-template name="sws-snippets"/>
     <xsl:call-template name="sws-instances"/>
     <xsl:call-template name="sws-lexdata"/>
@@ -269,8 +277,9 @@
 	<p class="sl-merge"><xsl:text>(Includes merging of </xsl:text><xsl:value-of select="id(@merge)/@n"/><xsl:text>)</xsl:text></p>
       </xsl:if>
       <xsl:call-template name="sws-unicode"/>
-      <xsl:call-template name="sws-akas"/>
       <xsl:call-template name="sws-lists"/>
+      <xsl:call-template name="sws-images"/>
+      <xsl:call-template name="sws-akas"/>
       <xsl:call-template name="sws-systems"/>
       <xsl:call-template name="sws-compounds"/>
     </div>
@@ -333,10 +342,10 @@
 
 <xsl:template name="sws-stats">
   <xsl:if test="@iref">
-    <p><esp:link
+    <p><span class="sl-ihead">INSTANCES</span><esp:link
     url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
-    >Occurs <xsl:value-of select="@icnt"/>
-    times.</esp:link></p>
+    notarget="yes">see <xsl:value-of select="@icnt"/>
+    occurrences.</esp:link></p>
   </xsl:if>
 </xsl:template>
 
@@ -368,22 +377,36 @@
 </xsl:template>
 
 <xsl:template name="sws-sl-cpds-memb">
-  <xsl:for-each select="id(sl:cpds/sl:memb/@oids)">
-    <esp:link page="{@xml:id}">
-      <xsl:choose>
-	<xsl:when test="sl:ucun">
-	  <xsl:value-of select="sl:ucun"/>
-	  <xsl:text> (</xsl:text>
-	  <xsl:value-of select="@n"/>
-	  <xsl:text>)</xsl:text>
-	</xsl:when>
-	<xsl:otherwise>
-	  <xsl:value-of select="@n"/>
-	</xsl:otherwise>
-      </xsl:choose>
-    </esp:link>
-    <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
-  </xsl:for-each>
+  <!--<xsl:message>sws-sl-cpds-cmemb oids=<xsl:value-of select="sl:cpds/sl:memb/@oids"/></xsl:message>-->
+  <xsl:if test="string-length(sl:cpds/sl:memb/@oids)>0">
+    <xsl:choose>
+      <xsl:when test="string-length(sl:cpds/sl:memb/@oids) &lt; 100">
+	<xsl:for-each select="id(sl:cpds/sl:memb/@oids)">
+	  <esp:link page="{@xml:id}">
+	    <xsl:choose>
+	      <xsl:when test="sl:ucun">
+		<xsl:value-of select="sl:ucun"/>
+		<xsl:text> (</xsl:text>
+		<xsl:value-of select="@n"/>
+		<xsl:text>)</xsl:text>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:value-of select="@n"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </esp:link>
+	  <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
+	</xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:message
+	    ><xsl:value-of select="string-length(sl:cpds/sl:memb/@oids)"
+	    /><xsl:text>&#x09;</xsl:text><xsl:value-of select="sl:cpds/sl:memb/@oids"/></xsl:message>
+	<esp:link url="{concat('/', /*/@project, '/signlist/selpages/', @xml:id, '-cmemb.html')}"
+		  >see list of <xsl:value-of select="ceiling(string-length(sl:cpds/sl:memb/@oids) div 9)"/> compounds</esp:link>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template name="sws-compounds">
@@ -421,7 +444,7 @@
       <xsl:if test="sl:cpds/sl:memb|id(@merge)/sl:cpds/sl:memb">
 	<div class="asl-compounds">
 	  <p>
-	    <xsl:text>See also </xsl:text>
+	    <span class="sl-ihead">COMPOUNDS</span>
 	    <xsl:call-template name="sws-sl-cpds-memb"/>
 	    <xsl:if test="id(@merge/sl:cpds/sl:memb)">
 	      <xsl:if test="sl:cpds/sl:memb">;; </xsl:if>
@@ -590,7 +613,7 @@
     <div class="asl-values">
       <xsl:if test="count(sl:v)>0">
 	<p>
-	  <span class="asl-values-h">Values: </span>
+	  <span class="sl-ihead">VALUES</span>
 	  <xsl:call-template name="sws-values-sub"/>
 	</p>
       </xsl:if>
@@ -606,6 +629,66 @@
       </xsl:if>
     </div>
   </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-sel-page">
+  <xsl:param name="type"/>
+  <xsl:param name="title"/>
+  <xsl:param name="nodes"/>
+  <!--
+      <xsl:message>sws-sel-page called with type=<xsl:value-of select="$type"
+      />; title=<xsl:value-of select="$title"/>; nodecount=<xsl:value-of select="count($nodes)"/></xsl:message>
+  -->
+  <xsl:if test="count($nodes)>0">
+    <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-',$type,'.html')}"
+		 method="xml" encoding="utf-8" omit-xml-declaration="yes"
+		 indent="yes" doctype-system="html">
+      <html>
+	<head>
+	  <meta charset="UTF-8"/>
+	  <title><xsl:value-of select="$title"/></title>
+	  <link media="screen,projection" href="{concat('/',/*/@project,'/signlist/css/projesp.css')}" type="text/css" rel="stylesheet" />
+	</head>
+	<body class="selpage">
+	  <h1><xsl:value-of select="$title"/></h1>
+	  <table>
+	    <xsl:choose>
+	      <xsl:when test="$type='h'">
+		<xsl:for-each select="$nodes">
+		  <tr>
+		    <td>@v</td>
+		    <xsl:call-template name="sws-sel-summary"/>
+		  </tr>
+		</xsl:for-each>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:for-each select="$nodes">
+		  <tr>
+		    <xsl:call-template name="sws-sel-summary"/>
+		  </tr>
+		</xsl:for-each>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </table>
+	</body>
+      </html>
+    </ex:document>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-sel-summary">
+  <td>
+    <a href="{concat('/',/*/@project,'/signlist/',../@xml:id,'/',@xml:id,'/index.html')}">
+      <xsl:value-of select="ancestor-or-self::sl:sign/@n"/>
+    </a>    
+  </td>
+  <td><xsl:value-of select="sl:ucun"/></td>
+  <td>
+    <xsl:for-each select="ancestor-or-self::sl:sign/sl:v">
+      <xsl:value-of select="@n"/>
+      <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
+    </xsl:for-each>
+  </td>
 </xsl:template>
 
 <!-- Trap unhandled tags -->

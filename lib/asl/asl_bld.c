@@ -1239,7 +1239,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
       (void)asl_sign_guard(locp, sl, "v");
       return;
     }
-  
+
   (void)asl_bld_token(locp, sl, (ucp)n, 0);
   
   if (strlen((ccp)n) > 3)
@@ -1352,6 +1352,8 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
       list_add(v->insts, i);
     }
 
+  v->base = pool_copy(base, sl->p);
+  
   i->u.v = v;
   i->u.v->xvalue = xvalue;
   sl->curr_value = i;

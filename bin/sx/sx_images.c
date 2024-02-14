@@ -88,8 +88,8 @@ sx_images(struct sl_signlist *sl)
 		}
 	      if (improj)
 		{
-		  free(improj);
-		  free(imfile);
+		  free((void*)improj);
+		  free((void*)imfile);
 		}
 	    }
 	  if (!sl->iheaders[nm].label || !sl->iheaders[nm].path)

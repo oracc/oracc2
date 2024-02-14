@@ -140,6 +140,7 @@ if [ -r 00etc/signlist-periods.tab ]; then
     done
 fi
 
+(cd signlist ; rm -fr 02www/selpages ; mv 01bld/selpages 02www ; chmod -R o+r 02www/selpages)
 (cd signlist ; o2-portal.sh)
 
 # Adjust home/index so that index.html is the frame that gives

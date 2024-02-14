@@ -25,6 +25,15 @@ spv_cmp(const void *a, const void *b)
   return 0;
 }
 
+static const char *
+sx_h_id(struct sl_signlist *sl)
+{
+  char buf[10];
+  static int id = 1;
+  sprintf(buf, "h%06d", id++);
+  return (ccp)pool_copy((uccp)buf, sl->p);
+}
+
 static void
 sx_h_sub(struct sl_signlist *sl, Hash *xh, unsigned const char *vname, int xvalue, const char *oid)
 {
@@ -43,7 +52,10 @@ sx_h_sub(struct sl_signlist *sl, Hash *xh, unsigned const char *vname, int xvalu
   else
     {
       if (!(lp = hash_find(sl->homophones, b)))
-	hash_add(sl->homophones, b, (lp = list_create(LIST_SINGLE)));
+	{
+	  hash_add(sl->homophones, b, (lp = list_create(LIST_SINGLE)));
+	  hash_add(sl->homophone_ids, b, (void*)sx_h_id(sl));
+	}
     }
   if (htrace)
     fprintf(stderr, "htrace: adding %s with base %s/index %d and OID %s\n", vname, spv->b, spv->i, oid);
@@ -56,6 +68,7 @@ sx_homophones(struct sl_signlist *sl)
   int i;
   Hash *xhomophones = hash_create(1024);
   sl->homophones = hash_create(1024);
+  sl->homophone_ids = hash_create(1024);
   
   for (i = 0; i < sl->nvalues; ++i)
     {
@@ -106,8 +119,10 @@ sx_homophones(struct sl_signlist *sl)
 	    }
 
 	  if (!(lph = hash_find(sl->homophones, (uccp)keys[i])))
-	    hash_add(sl->homophones, (uccp)keys[i], (lph = list_create(LIST_SINGLE)));
-
+	    {
+	      hash_add(sl->homophones, (uccp)keys[i], (lph = list_create(LIST_SINGLE)));
+	      hash_add(sl->homophone_ids, (uccp)keys[i], (void*)sx_h_id(sl));
+	    }
 	  for (j = 0; j < list_len(lp); ++j)
 	    list_add(lph, spv[j]);
 
@@ -204,7 +219,10 @@ sx_xhomophones(struct sl_signlist *sl)
 	    sl->splitv[i].i = g_index_of(sl->values[i]->name, sl->splitv[i].b);
 
 	  if (!(lp = hash_find(sl->homophones, sl->splitv[i].b)))
-	    hash_add(sl->homophones, sl->splitv[i].b, (lp = list_create(LIST_SINGLE)));
+	    {
+	      hash_add(sl->homophones, sl->splitv[i].b, (lp = list_create(LIST_SINGLE)));
+	      hash_add(sl->homophone_ids, sl->splitv[i].b, (void*)sx_h_id(sl));
+	    }
 	  
 	  list_add(lp, &sl->splitv[i]);
 	}
@@ -237,7 +255,10 @@ sx_xhomophones(struct sl_signlist *sl)
 	    }
 
 	  if (!(lph = hash_find(sl->homophones, xbase)))
-	    hash_add(sl->homophones, xbase, (lph = list_create(LIST_SINGLE)));
+	    {
+	      hash_add(sl->homophones, xbase, (lph = list_create(LIST_SINGLE)));
+	      hash_add(sl->homophone_ids, xbase, (void*)sx_h_id(sl));
+	    }
 
 	  for (j = 0; j < list_len(lp); ++j)
 	    list_add(lph, spv[j]);
