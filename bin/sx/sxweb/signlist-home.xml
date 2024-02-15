@@ -32,6 +32,14 @@
 	<tr><td>'</td><td>ʾ</td></tr>
 	<tr><td>*</td><td>×</td></tr>
       </table>
+
+      <esp:sh>Homophone Lookup Short-cut</esp:sh>
+      
+      <p>The lookup bar provides a shortcut to the homophones pages by
+      looking for a value with a 0 index, e.g., gu0 (or gu₀).  If
+      there is only one value with the base the sign-page is loaded;
+      if there are multiple values with the base the homophone
+      selection page for the base is loaded.</p>
       
     </body>
   </html>

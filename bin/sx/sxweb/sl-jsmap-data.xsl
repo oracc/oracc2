@@ -56,6 +56,23 @@
   <xsl:apply-templates/>
 </xsl:template>
 
+<xsl:template match="sl:homophones/sl:base">
+  <xsl:choose>
+    <xsl:when test="@count='1'">
+      <xsl:variable name="out-n-n" select="concat(@n,'0')"/>
+      <xsl:for-each select="id(*/@oid)">
+	<xsl:message>sl:base/out-n n=<xsl:value-of select="@n"/></xsl:message>
+	<xsl:call-template name="out-n">
+	  <xsl:with-param name="n" select="$out-n-n"/>
+	</xsl:call-template>
+      </xsl:for-each>
+    </xsl:when>
+    <xsl:otherwise>      
+      <xsl:value-of select="concat(@n, '0&#x9;selpages/',@xml:id,'&#xa;')"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <xsl:template match="text()"/>
 
 </xsl:transform>

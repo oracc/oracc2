@@ -49,7 +49,11 @@ function slpage () {
     var oid=x[mkey];
     if (oid) {
 	// alert('oid='+oid);
-	window.location=projpath+oid+'/index.html';
+	if (oid.startsWith("selpages/")) {
+	    window.location=projpath+oid+'.html';
+	} else {
+	    window.location=projpath+oid+'/index.html';
+	}
     } else {
 	if (key !== mkey) {
 	    key += ' (> '+mkey+')';
