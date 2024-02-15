@@ -15,13 +15,16 @@
     <meta name="DC.rights.copyright" content="Copyright The @@PROJECT@@ Project; released under a CC-BY-SA 3.0 license"/>
     <meta name="DC.type" scheme="DCTERMS.DCMIType" content="Text" />
     <meta name="DC.format" content="text/html"/>
+    <script type="text/javascript" src="/@@project@@/signlist/js/slmap.js"> </script>
     <link media="screen,projection" href="/@@project@@/signlist/css/projesp.css" type="text/css" rel="stylesheet"/>
     <script type="text/javascript" src="/@@project@@/signlist/js/projesp.js"> </script>
     <script type="text/javascript" src="/js/p3.js"> </script>
+    <script type="text/javascript" src="/@@project@@/signlist/js/slpage.js"> </script>
   </param:common-headers>
   <param:top-content>
   </param:top-content>
   <param:navbar>yes</param:navbar>
+  <param:slform>yes</param:slform>
   <param:dc-id-prefix>@@hproject@@-signlist-oracc-org/page/</param:dc-id-prefix>
   <param:main-menu-caption>Main menu</param:main-menu-caption>
   <param:footer>@@PROJECT@@ project</param:footer>

@@ -69,5 +69,15 @@ td.name-sign img { }
 
 .sl-sys-token { font-size: 90%; font-weight: normal; }
 
+#HeadTitleForm { text-align-last: center; }
+
+#HeadTitle { display: inline-block; vertical-align: middle; top: 0px; }
+
+#HeadForm { display: inline-block; vertical-align: middle; text-align: right; }
+
+#HeadForm form { vertical-align: middle; text-align-last: left; margin: 1em; display: inline-block; }
+
 .ivs-IM_NI2 span { display: none; }
 .ivs-IM_NI2:after { content: '𒉎'; }
+
+
