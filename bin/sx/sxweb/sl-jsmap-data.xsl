@@ -26,11 +26,25 @@
     </xsl:when>
     <xsl:otherwise>
       <!--<xsl:message><xsl:value-of select="$n"/> => <xsl:value-of select="translate($n,$u,$a)"/></xsl:message>-->
-      <xsl:value-of select="concat(translate($n,$u,$a), '&#x9;',
-			    ancestor-or-self::sl:letter/@xml:id,
-			    '/',
-			    ancestor-or-self::sl:sign/@xml:id,
-			    '&#xa;')"/>
+      <xsl:variable name="lid">
+	<xsl:choose>
+	  <xsl:when test="ancestor-or-self::sl:sign/@moid">
+	    <xsl:for-each select="id(ancestor-or-self::sl:sign/@moid)">
+	      <xsl:value-of select="../@xml:id"/>
+	    </xsl:for-each>
+	  </xsl:when>
+	  <xsl:otherwise><xsl:value-of select="ancestor-or-self::sl:letter/@xml:id"/></xsl:otherwise>
+	</xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="sid">
+	<xsl:choose>
+	  <xsl:when test="ancestor-or-self::sl:sign/@moid">
+	    <xsl:value-of select="ancestor-or-self::sl:sign/@moid"/>
+	  </xsl:when>
+	  <xsl:otherwise><xsl:value-of select="ancestor-or-self::sl:sign/@xml:id"/></xsl:otherwise>
+	</xsl:choose>
+      </xsl:variable>
+      <xsl:value-of select="concat(translate($n,$u,$a), '&#x9;',$lid,'/',$sid,'&#xa;')"/>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
