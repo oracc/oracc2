@@ -22,7 +22,7 @@
 <xsl:include href="g2-gdl-HTML.xsl"/>
 <xsl:include href="sxweb-util.xsl"/>
 
-<xsl:output method="xml" indent="yes" encoding="utf-8"/>
+<xsl:output method="xml" indent="no" encoding="utf-8"/>
 
 <!--### Set all the asl-* config variables from config.xml -->
 <xsl:variable name="q">'</xsl:variable>
@@ -343,10 +343,10 @@
 
 <xsl:template name="sws-stats">
   <xsl:if test="@iref">
-    <p><span class="sl-ihead">INSTANCES</span><esp:link
+    <p><span class="sl-ihead"><xsl:text>INSTANCES</xsl:text></span><esp:link
     url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
-    notarget="yes">see <xsl:value-of select="@icnt"/>
-    occurrences.</esp:link></p>
+    notarget="yes"><xsl:text>see </xsl:text><xsl:value-of select="@icnt"/>
+    <xsl:text> occurrences.</xsl:text></esp:link></p>
   </xsl:if>
 </xsl:template>
 
@@ -521,7 +521,7 @@
   <xsl:param name="type"/>
   <xsl:param name="group-label" select="''"/>
   <xsl:if test="count($nodes)>0">
-    <h3 class="sl-ihead">
+    <h3 class="sl-ihead3">
       <xsl:value-of select="$type"/>
       <xsl:if test="string-length($group-label)">
 	<xsl:value-of select="concat(' for sign ',$group-label)"/>
@@ -568,7 +568,7 @@
   <xsl:if test="$asl-suxword = 'yes'">
     <xsl:if test="count(sl:v/sl:lemmas/sl:lemma|id(@merge)/sl:v/sl:lemmas/sl:lemma)>0">
       <div class="sl-lemmas">
-	<h2 class="sl-ihead">GLOSSARY ATTESTATIONS</h2>	
+	<h2 class="sl-ihead2">SUMERIAN</h2>
 	<xsl:call-template name="sws-lemmas-by-pos">
 	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
 	  <xsl:with-param name="type" select="'Independent'"/>
@@ -619,14 +619,14 @@
 	</p>
 	<xsl:variable name="hnodes" select="id(sl:v/@hid)[@count&gt;1]"/>
 	<xsl:if test="count($hnodes)>0">
-	  <p>
-	    <span class="sl-ihead">HOMOPHONES</span>
-	    <xsl:for-each select="$hnodes">
-	      <esp:link url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link>
-	    </xsl:for-each>
-	  </p>
+	  <p
+	    ><span class="sl-ihead">HOMOPHONES</span
+	    ><xsl:for-each select="$hnodes"
+	    ><esp:link url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link
+	    ><xsl:if test="not(position()=last())"><xsl:text> </xsl:text></xsl:if
+	    ></xsl:for-each
+	  ></p>
 	</xsl:if>
-	  
 	<!--<xsl:message>hnodes=<xsl:value-of select="count($hnodes)"/></xsl:message>-->
       </xsl:if>
       <xsl:if test="@merge">

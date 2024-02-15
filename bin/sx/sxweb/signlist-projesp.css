@@ -59,7 +59,9 @@ td.name-sign img { }
 
 .pcsl-oid { font-weight: normal; font-size: 80%; }
 
-.sl-ihead { font-size: 75%; font-weight: bold; padding-right: 1em; }
+.sl-ihead { font-size: 75%; font-weight: bold; display: inline-block; width: 12em; padding-right: 1em; }
+.sl-ihead2 { font-size: 75%; font-weight: bold; padding-right: 1em; }
+.sl-ihead3 { font-size: 75%; font-weight: bold; padding-right: 1em; }
 
 .sl-ibody { font-size: 90%; font-weight: normal; }
 
