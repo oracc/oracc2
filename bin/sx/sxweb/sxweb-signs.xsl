@@ -251,7 +251,12 @@
   <div class="asl-cite-url">
     <hr/>
     <p>Sign ID <xsl:value-of select="@xml:id"/>;
-    Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/<xsl:value-of select="@xml:id"/>
+    <xsl:if test="not(/*/@project='ogsl') and not(/*/@project='pctc')">
+      <esp:link url="/ogsl/signlist/{ancestor-or-self::sl:sign/@xml:id}">See full OGSL page</esp:link>
+    </xsl:if>
+    <xsl:if test="/*/@project='ogsl' or /*/@project='pctc'">
+      Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/<xsl:value-of select="@xml:id"/>
+    </xsl:if>
     </p>
     <hr/>
   </div>
@@ -552,16 +557,16 @@
   <xsl:param name="type"/>
   <xsl:param name="group-label" select="''"/>
   <xsl:if test="count($nodes)>0">
-    <h3 class="sl-ihead3">
-      <xsl:value-of select="$type"/>
-      <xsl:if test="string-length($group-label)">
-	<xsl:value-of select="concat(' for sign ',$group-label)"/>
-      </xsl:if>
-    </h3>
-    <xsl:for-each select="$nodes">
-      <esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link>
-      <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
-    </xsl:for-each>
+    <p class="sl-hang"
+      ><span class="sl-ihead-h"><xsl:value-of select="$type"/></span
+      ><xsl:if test="string-length($group-label)"
+	><xsl:value-of select="concat(' for sign ',$group-label)"
+	/></xsl:if
+	><xsl:for-each select="$nodes"
+	><esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link
+	><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
+	></xsl:for-each
+    ></p>
   </xsl:if>
 </xsl:template>
 
@@ -599,7 +604,9 @@
   <xsl:if test="$asl-suxword = 'yes'">
     <xsl:if test="count(sl:v/sl:lemmas/sl:lemma|id(@merge)/sl:v/sl:lemmas/sl:lemma)>0">
       <div class="sl-lemmas">
-	<h2 class="sl-ihead2">SUMERIAN</h2>
+	<p>
+	  <span class="sl-ihead">SUMERIAN</span>
+	</p>
 	<xsl:call-template name="sws-lemmas-by-pos">
 	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
 	  <xsl:with-param name="type" select="'Independent'"/>

@@ -144,7 +144,7 @@ fi
 (cd signlist ; rm -fr 02www/selpages ; mv 01bld/selpages 02www ; chmod -R o+r 02www/selpages)
 (cd signlist ; o2-portal.sh)
 
-(cd signlist ; xsltproc $libscripts/sl-map-js.xsl ../02xml/sl.xml >02www/js/slmap.js ; chmod o+r 02www/js/slmap.js)
+(cd signlist ; sl-jsmap.sh ../02xml/sl.xml >02www/js/slmap.js ; chmod o+r 02www/js/slmap.js)
 
 # Adjust home/index so that index.html is the frame that gives
 # searchable signlist and home.html is the browsable ESP portal.
@@ -155,3 +155,4 @@ fi
 #     cp -vaf 00lib/signlist-index.html 02www/index.html ; \
 #     chmod o+r 02www/index.html)
 #fi
+(cd signlist/02www ; mv home.html index.html)

@@ -59,9 +59,10 @@ td.name-sign img { }
 
 .pcsl-oid { font-weight: normal; font-size: 80%; }
 
-.sl-ihead { font-size: 75%; font-weight: bold; display: inline-block; width: 12em; padding-right: 1em; }
-.sl-ihead2 { font-size: 75%; font-weight: bold; padding-right: 1em; }
-.sl-ihead3 { font-size: 75%; font-weight: bold; padding-right: 1em; }
+.sl-ihead { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; padding: 0px; }
+
+/* sl-ihead under sl-hang */
+.sl-ihead-h { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; margin-left: -120px; }
 
 .sl-ibody { font-size: 90%; font-weight: normal; }
 
@@ -71,6 +72,8 @@ td.name-sign img { }
 
 .sl-sys-token { font-size: 90%; font-weight: normal; }
 
+p.sl-hang { padding-left: 120px; }
+
 #HeadTitleForm { text-align-last: center; }
 
 #HeadTitle { display: inline-block; vertical-align: middle; top: 0px; }
@@ -79,7 +82,11 @@ td.name-sign img { }
 
 #HeadForm form { vertical-align: middle; text-align-last: left; margin: 1em; display: inline-block; }
 
-div.asl-cite-url { margin-top: 1em; }
+div.asl-cite-url { margin-top: 3em; }
+
+.asl-cun-img   { margin-bottom: 1em; }
+
+.asl-cite-url p { margin: 0px; }
 
 div.asl-unicode { display: inline-block; vertical-align: top; }
 p.asl-ucun    { font-size: 250%; margin: 0px; }

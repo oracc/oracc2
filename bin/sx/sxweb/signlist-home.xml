@@ -8,9 +8,31 @@
   <html>
     <head/>
     <body>
-      <esp:image file="lak25.png" description=""/>
-      <p>Browsable/searchable version of @@PROJECT@@: click on a
-      letter to begin, or search for a sign or value in the form.</p>
+      <p>This Oracc signlist provides a simple lookup to find the
+      sign-pages; from the sign-pages you can find homophones for
+      values, compounds in which signs occur, and other information
+      depending on the project configuration.</p>
+
+      <esp:sh>The Lookup Bar</esp:sh>
+
+      <p>The lookup bar allows you to find sign-pages by typing simple
+      signs--compound signs are not indexed in the lookup bar table.
+      You can type in upper or lower case, but the lookup table only
+      uses lower case, so you don't need to use upper case at all to
+      find sign-pages.  Signs can be given in unicode transliteration
+      or in a simplified transliteration using the following
+      correspondences:</p>
+
+      <table class="pretty" style="width: 25%; margin: auto;">
+	<tr><td>c</td><td>š</td></tr>
+	<tr><td>f</td><td>ṣ</td></tr>
+	<tr><td>h</td><td>ḫ</td></tr>
+	<tr><td>j</td><td>ŋ</td></tr>
+	<tr><td>v</td><td>ṭ</td></tr>
+	<tr><td>'</td><td>ʾ</td></tr>
+	<tr><td>*</td><td>×</td></tr>
+      </table>
+      
     </body>
   </html>
 </esp:page>
