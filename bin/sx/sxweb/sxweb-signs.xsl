@@ -13,6 +13,8 @@
     extension-element-prefixes="ex"
     version="1.0">
 
+<xsl:strip-space elements="*"/>
+
 <!-- always invoke with -stringparam project PROJECT -->
 <xsl:param name="project"/>
 <xsl:param name="hproject" select="translate($project,'/','-')"/>
@@ -112,7 +114,7 @@
   <xsl:if test="not(@moid)">
     <ex:document href="{concat('signlist/00web/',@xml:id,'.xml')}"
 		 method="xml" encoding="utf-8"
-		 indent="yes">
+		 indent="no">
       <esp:page>
 	<xsl:call-template name="sws-esp-header"/>
 	<html>
@@ -259,6 +261,13 @@
 
 <xsl:template name="sws-sign-or-form">
   <div class="asl-sf-body">
+    <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
+      <div class="asl-cun-img">
+	<span class="sl-ihead">SIGNS</span>
+	<xsl:call-template name="sws-unicode"/>
+	<xsl:call-template name="sws-images"/>
+      </div>
+    </xsl:if>
     <xsl:call-template name="sws-stats"/>
     <xsl:call-template name="sws-values"/>
     <xsl:call-template name="sws-meta"/>
@@ -277,9 +286,9 @@
       <xsl:if test="@merge">
 	<p class="sl-merge"><xsl:text>(Includes merging of </xsl:text><xsl:value-of select="id(@merge)/@n"/><xsl:text>)</xsl:text></p>
       </xsl:if>
-      <xsl:call-template name="sws-unicode"/>
+      <!--<xsl:call-template name="sws-unicode"/>-->
       <xsl:call-template name="sws-lists"/>
-      <xsl:call-template name="sws-images"/>
+      <!--<xsl:call-template name="sws-images"/>-->
       <xsl:call-template name="sws-akas"/>
       <xsl:call-template name="sws-systems"/>
       <xsl:call-template name="sws-compounds"/>
@@ -288,24 +297,35 @@
 </xsl:template>
 
 <xsl:template name="sws-unicode">
-  <p style="font-size: 150%">
-    <xsl:choose>
-      <xsl:when test="sl:ucun">
-	<xsl:value-of select="sl:ucun"/>
-      </xsl:when>
-      <xsl:when test="sl:useq">
-	<xsl:value-of select="sl:useq"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:for-each select=".//sl:name[1]//*">
-	  <xsl:choose>
-	    <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
-	    <xsl:otherwise/>
-	  </xsl:choose>
-	</xsl:for-each>
-      </xsl:otherwise>
-    </xsl:choose>
-  </p>
+  <div class="asl-unicode">
+    <table class="itable">
+      <tr>
+	<td><span class="im-label">Cun Noto</span></td>
+      </tr>
+      <tr>
+	<td>
+	  <p class="asl-ucun">
+	    <xsl:choose>
+	      <xsl:when test="sl:ucun">
+		<xsl:value-of select="sl:ucun"/>
+	      </xsl:when>
+	      <xsl:when test="sl:useq">
+		<xsl:value-of select="sl:useq"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:for-each select=".//sl:name[1]//*">
+		  <xsl:choose>
+		    <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
+		    <xsl:otherwise/>
+		  </xsl:choose>
+		</xsl:for-each>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </p>
+	</td>
+      </tr>
+    </table>
+  </div>
 </xsl:template>
 
 <xsl:template name="sws-akas">
@@ -339,7 +359,6 @@
     </p>
   </xsl:if>
 </xsl:template>
-
 
 <xsl:template name="sws-stats">
   <xsl:if test="@iref">
@@ -473,9 +492,21 @@
 	<xsl:variable name="ref" select="@ref"/>
 	<xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
 	<table class="itable">
-	  <tr><td><span class="im-label"><xsl:value-of select="$header/@label"/>:</span></td></tr>
+	  <tr>
+	    <td><span class="im-label">
+	      <xsl:choose>
+		<xsl:when test="@n">
+		  <xsl:value-of select="@n"/>
+		</xsl:when>
+		<xsl:otherwise>
+		  <xsl:value-of select="$header/@label"/>
+		</xsl:otherwise>
+	      </xsl:choose>
+	      <xsl:text>:</xsl:text></span>
+	    </td>
+	  </tr>
 	  <tr><td>
-	    <esp:image width="100%" url="/{$header/@proj}/{$header/@path}/{@loc}"
+	    <esp:image height="50px" url="/{$header/@proj}/{$header/@path}/{@loc}"
 		       description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
 	  </td></tr>
 	</table>
@@ -612,9 +643,9 @@
 <xsl:template name="sws-values">
   <xsl:if test="count(sl:v|id(@merge)/sl:v)>0">
     <div class="asl-values">
-      <xsl:if test="count(sl:v)>0">
-	<p>
-	  <span class="sl-ihead">VALUES</span>
+      <xsl:if test="count(sl:v)>0"
+	><p>
+	  <span class="sl-ihead"><xsl:text>VALUES</xsl:text></span>
 	  <xsl:call-template name="sws-values-sub"/>
 	</p>
 	<xsl:variable name="hnodes" select="id(sl:v/@hid)[@count&gt;1]"/>
@@ -625,18 +656,19 @@
 	    ><esp:link url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link
 	    ><xsl:if test="not(position()=last())"><xsl:text> </xsl:text></xsl:if
 	    ></xsl:for-each
-	  ></p>
-	</xsl:if>
+	  ></p
+	></xsl:if>
 	<!--<xsl:message>hnodes=<xsl:value-of select="count($hnodes)"/></xsl:message>-->
       </xsl:if>
       <xsl:if test="@merge">
 	<xsl:for-each select="id(@merge)">
-	  <xsl:if test="count(sl:v)>0">
-	    <p>
-	      <span class="sl-ihead">VALUES<span title="via merger of"> FROM </span><xsl:value-of select="@n"/>: </span>
-	      <xsl:call-template name="sws-values-sub"/>
-	    </p>
-	  </xsl:if>
+	  <xsl:if test="count(sl:v)>0"
+	    ><p
+		><span class="sl-ihead"><xsl:text>VALUES FROM </xsl:text
+		><xsl:value-of select="@n"/><xsl:text>: </xsl:text></span
+		><xsl:call-template name="sws-values-sub"
+	    /></p
+	  ></xsl:if>
 	</xsl:for-each>
       </xsl:if>
     </div>
@@ -661,7 +693,7 @@
   <xsl:if test="count($nodes)>0">
     <ex:document href="{concat('signlist/01bld/selpages/',$basename,'.html')}"
 		 method="xml" encoding="utf-8" omit-xml-declaration="yes"
-		 indent="yes" doctype-system="html">
+		 indent="no" doctype-system="html">
       <html>
 	<head>
 	  <meta charset="UTF-8"/>

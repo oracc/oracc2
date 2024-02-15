@@ -150,7 +150,10 @@ sl.iheader = element sl:iheader { attribute xml:id { xsd:NCName } ,
 				  attribute period { text }? }
 
 sl.images = element sl:images {
-            	    element sl:i { (attribute ref { xsd:NCName } , attribute loc { text })? }*
+            	    element sl:i { (attribute ref { xsd:NCName } ,
+		    	    	    attribute loc { text },
+		    	    	    attribute n { text }
+				    )? }*
       	    }
 
 sl.stats = (attribute icnt { xsd:decimal } , attribute ipct { xsd:decimal }?, attribute ctotal { xsd:decimal }?)

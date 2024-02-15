@@ -328,7 +328,14 @@ sx_w_jx_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *i
 			  Link *lp;
 			  for (lp = (Link*)sl->iarray->rows[index][i]; lp; lp = lp->next)
 			    {
-			      ratts = rnvval_aa("x", "ref", sl->iheaders[i-1].id, "loc", lp->data, NULL);
+			      const char *n = ((char**)lp->data)[2];
+			      if (n)
+				ratts = rnvval_aa("x", "ref", sl->iheaders[i-1].id,
+						  "loc", ((char**)lp->data)[1],
+						  "n", n,
+						  NULL);
+			      else
+				ratts = rnvval_aa("x", "ref", sl->iheaders[i-1].id, "loc", ((char**)lp->data)[1], NULL);
 			      joxer_ec(NULL,"sl:i", ratts);
 			    }
 			}
@@ -860,7 +867,7 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  if (hid)
 	    {
 	      list_add(a, "hid");
-	      list_add(a, hid);
+	      list_add(a, (void*)hid);
 	    }
 	  
 	  if (v->tp)

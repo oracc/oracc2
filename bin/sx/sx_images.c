@@ -69,7 +69,7 @@ sx_images(struct sl_signlist *sl)
 				r->rows[s-1][0] = (ucp)lp;
 			      }
 			    lp = memo_new(sl->m_links);
-			    lp->data = mr->rows[i][1];
+			    lp->data = mr->rows[i]/*[1]*/; /* after row[0] the link data is row not cell */
 			    if (r->rows[s-1][nm+1])
 			      {
 				Link *xp = (Link*)r->rows[s-1][nm+1];
