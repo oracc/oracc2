@@ -3,6 +3,13 @@
 
 #define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,r->p)
 
+static const char * gsb_target_lang = "sux";
+void
+gsb_set_target_lang(const char *l)
+{
+  gsb_target_lang = l;
+}
+
 Gsig *
 gsb_new(Trun *r)
 {
@@ -60,6 +67,10 @@ gsb_add(Trun *r,
 	char type, const char *form, const char *oid, const char *sign,
 	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
+  /* If we are only processing sux accept sux, sux-x-emesal, etc., but reject everything else */
+  if (lang && gsb_target_lang && strncmp(lang, gsb_target_lang, strlen(gsb_target_lang)))
+    return;
+  
   Gsig *wgp = gsb_new(r);
   wgp->project = (char*)loch_text(r)->text_project;
   wgp->gdltype = type;

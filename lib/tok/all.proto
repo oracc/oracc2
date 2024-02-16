@@ -8,6 +8,7 @@ extern void cbdex_g(char *g, struct cbdex *cp);
 extern void cbdex_parse(char *c, struct cbdex *cp);
 extern void cbdex_write(FILE *fp, struct cbdex *cp);
 /* gsig_builder.c */
+extern void gsb_set_target_lang(const char *l);
 extern Gsig *gsb_new(Trun *r);
 extern Gsig *gsb_get(Word *w);
 extern Gsig *gsb_get_n(Word *w, int n);

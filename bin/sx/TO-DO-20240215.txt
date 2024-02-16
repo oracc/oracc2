@@ -11,18 +11,22 @@
   -perhaps more
 
 * fix Sumerian lemma formatting;
-  -add bases
+  x-add qpn
+  x-redo formatting of merged items
   -use selpage
-
-* use ePSD lemma for Sumerian in OGSL
-
-* rename selpage dir to sel?
+  -add bases
+  -use ePSD lemma for Sumerian in OGSL
+  -marshall lemmas in signlist; group and sort for easy use in sxweb
+  -this may be different sorts: a combined sort for inline, and one separated by value for selpage
+  -add the value causing lemma selection to sl:lemma
+  -add @sort to sl:lemma
 
 * styling of sel pages
   -put standard SL/ESP header with form on them
   -add some SL colours
   -margin auto
-  make sign-name column 80% size
+  -make sign-name column 80% size
+  -rename selpage dir to sel?
 
 * Sign images
   -set up sign-align middle/top table
@@ -52,4 +56,16 @@
 * More compound listings on sign-page or in sel-page
 
 * Fix GCSL images; some could appear but are broken; ones from compounds never made it in
+
+* implement per-initial-char hashes in slmap.js via mods to jsmapx
+
+* sort homophone graphemes
+  -add @sort to sl:base
+
+* possibly need a submit button on mobile
+
+* skip incorrect members of corrected constructs in tokx
+
+* skip signs with @fake=1 (N, PN, GN, etc.)
+
 

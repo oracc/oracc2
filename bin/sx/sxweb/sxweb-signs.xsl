@@ -266,6 +266,10 @@
 
 <xsl:template name="sws-sign-or-form">
   <div class="asl-sf-body">
+      <xsl:if test="@merge">
+	<p class="sl-merge"><xsl:text>(Includes merging of </xsl:text
+	><xsl:value-of select="id(@merge)/@n"/><xsl:text>)</xsl:text></p>
+      </xsl:if>
     <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
       <div class="asl-cun-img">
 	<span class="sl-ihead">SIGNS</span>
@@ -288,9 +292,6 @@
 <xsl:template name="sws-meta">
   <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds">
     <div class="asl-meta">
-      <xsl:if test="@merge">
-	<p class="sl-merge"><xsl:text>(Includes merging of </xsl:text><xsl:value-of select="id(@merge)/@n"/><xsl:text>)</xsl:text></p>
-      </xsl:if>
       <!--<xsl:call-template name="sws-unicode"/>-->
       <xsl:call-template name="sws-lists"/>
       <!--<xsl:call-template name="sws-images"/>-->
@@ -351,8 +352,8 @@
 
 <xsl:template name="sws-lists">
   <xsl:if test="sl:list">
-    <p>
-      <span class="sl-ihead">LISTS</span>
+    <p class="sl-hang">
+      <span class="sl-ihead-h">LISTS</span>
       <span class="sl-ibody">
 	<xsl:for-each select="sl:list">
 	  <xsl:value-of select="@n"/>
@@ -367,7 +368,7 @@
 
 <xsl:template name="sws-stats">
   <xsl:if test="@iref">
-    <p><span class="sl-ihead"><xsl:text>INSTANCES</xsl:text></span><esp:link
+    <p class="sl-hang"><span class="sl-ihead-h"><xsl:text>INSTANCES</xsl:text></span><esp:link
     url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
     notarget="yes"><xsl:text>see </xsl:text><xsl:value-of select="@icnt"/>
     <xsl:text> occurrences.</xsl:text></esp:link></p>
@@ -468,8 +469,8 @@
     <xsl:otherwise>
       <xsl:if test="sl:cpds/sl:memb|id(@merge)/sl:cpds/sl:memb">
 	<div class="asl-compounds">
-	  <p>
-	    <span class="sl-ihead">COMPOUNDS</span>
+	  <p class="sl-hang">
+	    <span class="sl-ihead-h">COMPOUNDS</span>
 	    <xsl:call-template name="sws-sl-cpds-memb"/>
 	    <xsl:if test="id(@merge/sl:cpds/sl:memb)">
 	      <xsl:if test="sl:cpds/sl:memb">;; </xsl:if>
@@ -557,16 +558,26 @@
   <xsl:param name="type"/>
   <xsl:param name="group-label" select="''"/>
   <xsl:if test="count($nodes)>0">
-    <p class="sl-hang"
-      ><span class="sl-ihead-h"><xsl:value-of select="$type"/></span
-      ><xsl:if test="string-length($group-label)"
-	><xsl:value-of select="concat(' for sign ',$group-label)"
-	/></xsl:if
-	><xsl:for-each select="$nodes"
-	><esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link
-	><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
-	></xsl:for-each
-    ></p>
+    <xsl:choose>
+      <xsl:when test="string-length($group-label) = 0">
+	<p class="sl-hang"
+	   ><span class="sl-ihead-h"><xsl:value-of select="$type"/></span
+	   ><xsl:for-each select="$nodes"
+	   ><esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link
+	   ><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
+	   ></xsl:for-each
+	   ></p>
+      </xsl:when>
+      <xsl:otherwise>
+	<p class="sl-hang"
+	   ><span class="sl-ihead-h-r"><xsl:value-of select="concat('[',$group-label,']&#xa0;&#xa0;')"/></span
+	   ><xsl:for-each select="$nodes"
+	   ><esp:link url="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></esp:link
+	   ><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
+	   ></xsl:for-each
+	   ></p>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:if>
 </xsl:template>
 
@@ -651,33 +662,37 @@
   <xsl:if test="count(sl:v|id(@merge)/sl:v)>0">
     <div class="asl-values">
       <xsl:if test="count(sl:v)>0"
-	><p>
-	  <span class="sl-ihead"><xsl:text>VALUES</xsl:text></span>
+	><p class="sl-hang">
+	  <span class="sl-ihead-h"><xsl:text>VALUES</xsl:text></span>
 	  <xsl:call-template name="sws-values-sub"/>
 	</p>
-	<xsl:variable name="hnodes" select="id(sl:v/@hid)[@count&gt;1]"/>
-	<xsl:if test="count($hnodes)>0">
-	  <p
-	    ><span class="sl-ihead">HOMOPHONES</span
-	    ><xsl:for-each select="$hnodes"
-	    ><esp:link url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link
-	    ><xsl:if test="not(position()=last())"><xsl:text> </xsl:text></xsl:if
-	    ></xsl:for-each
-	  ></p
-	></xsl:if>
-	<!--<xsl:message>hnodes=<xsl:value-of select="count($hnodes)"/></xsl:message>-->
       </xsl:if>
       <xsl:if test="@merge">
 	<xsl:for-each select="id(@merge)">
 	  <xsl:if test="count(sl:v)>0"
-	    ><p
-		><span class="sl-ihead"><xsl:text>VALUES FROM </xsl:text
-		><xsl:value-of select="@n"/><xsl:text>: </xsl:text></span
+	    ><p class="sl-hang"
+		><span class="sl-ihead-h-r"
+		><xsl:value-of select="concat('[',@n,']&#xa0;&#xa0;')"/></span
 		><xsl:call-template name="sws-values-sub"
 	    /></p
 	  ></xsl:if>
 	</xsl:for-each>
       </xsl:if>
+      <!--<xsl:variable name="hnodes" select="id(sl:v/@hid)[@count&gt;1]"/>-->
+      <xsl:variable name="all-v" select="sl:v|id(@merge)/sl:v"/>
+      <xsl:variable name="all-h" select="id($all-v/@hid)"/>		    
+      <xsl:variable name="hnodes" select="$all-h[@count>1]"/>
+      <!--<xsl:message>all-h=<xsl:value-of select="count($all-h)"/>; hnodes=<xsl:value-of select="count($hnodes)"/></xsl:message>-->
+      <xsl:if test="count($hnodes)>0">
+	<p class="sl-hang"
+	    ><span class="sl-ihead-h">HOMOPHONES</span
+	    ><xsl:for-each select="$hnodes"
+	    ><xsl:sort select="@n"/><esp:link
+	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link
+	    ><xsl:if test="not(position()=last())"><xsl:text>&#xa0;&#xa0;&#xa0;</xsl:text></xsl:if
+	    ></xsl:for-each
+	    ></p
+	    ></xsl:if>
     </div>
   </xsl:if>
 </xsl:template>

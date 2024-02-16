@@ -12,6 +12,7 @@ bin/sx/sig2asl
 bin/sx/slix
 bin/sx/slx
 bin/sx/sx
+bin/sx/tok2asl
 bin/tx/catx
 bin/tx/expat-identity
 bin/tx/gdlx
@@ -24,6 +25,7 @@ bin/xx/cunhtmlx
 bin/xx/dbix
 bin/xx/dbx
 bin/xx/ivd2oiv
+bin/xx/jsmapx
 bin/xx/osort/osort
 bin/xx/rnv/rnv
 bin/xx/tis/cbdex

@@ -61,7 +61,7 @@
     <xsl:when test="@count='1'">
       <xsl:variable name="out-n-n" select="concat(@n,'0')"/>
       <xsl:for-each select="id(*/@oid)">
-	<xsl:message>sl:base/out-n n=<xsl:value-of select="@n"/></xsl:message>
+	<!--<xsl:message>sl:base/out-n n=<xsl:value-of select="@n"/></xsl:message>-->
 	<xsl:call-template name="out-n">
 	  <xsl:with-param name="n" select="$out-n-n"/>
 	</xsl:call-template>

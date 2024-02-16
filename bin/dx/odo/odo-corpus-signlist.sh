@@ -28,7 +28,9 @@ if [ "$aslstats" = "yes" ]; then
     mkdir -p 02pub/tok
     tokx <01bld/lists/xtfindex.lst >$tok
     tok2tis.sh <$tok >$tis
-    tokx -s -c <01bld/sux/summaries.xml | cbdex | sort -u >01tmp/cbd.tok
+    tokx -s -c <01bld/sux/summaries.xml | cbdex >01tmp/cbd1.tok
+    tokx -s -c <01bld/qpn/summaries.xml | cbdex >01tmp/cbd2.tok
+    sort -u 01tmp/cbd[12].tok >01tmp/cbd.tok
 fi
 
 if [ "$aslauto" = "yes" ]; then
