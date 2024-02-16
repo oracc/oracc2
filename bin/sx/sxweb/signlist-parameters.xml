@@ -15,11 +15,11 @@
     <meta name="DC.rights.copyright" content="Copyright The @@PROJECT@@ Project; released under a CC-BY-SA 3.0 license"/>
     <meta name="DC.type" scheme="DCTERMS.DCMIType" content="Text" />
     <meta name="DC.format" content="text/html"/>
-    <script type="text/javascript" src="/@@project@@/signlist/js/slmap.js"> </script>
+    <script type="text/javascript" src="/@@project@@/signlist/js/slmap.js">&#xa0;</script>
     <link media="screen,projection" href="/@@project@@/signlist/css/projesp.css" type="text/css" rel="stylesheet"/>
-    <script type="text/javascript" src="/@@project@@/signlist/js/projesp.js"> </script>
-    <script type="text/javascript" src="/js/p3.js"> </script>
-    <script type="text/javascript" src="/@@project@@/signlist/js/slpage.js"> </script>
+    <script type="text/javascript" src="/@@project@@/signlist/js/projesp.js">&#xa0;</script>
+    <script type="text/javascript" src="/js/p3.js">&#xa0;</script>
+    <script type="text/javascript" src="/@@project@@/signlist/js/slpage.js">&#xa0;</script>
   </param:common-headers>
   <param:top-content>
   </param:top-content>

@@ -10,7 +10,7 @@
     xmlns:esp="http://oracc.org/ns/esp/1.0"
     xmlns:is="http://oracc.org/ns/is/1.0"
     xmlns:param="http://oracc.org/ns/esp-param/1.0" 
-    exclude-result-prefixes="sl dc xh esp"
+    exclude-result-prefixes="sl dc xh esp param"
     extension-element-prefixes="ex"
     version="1.0">
 
@@ -26,9 +26,6 @@
 <xsl:include href="g2-gdl-HTML.xsl"/>
 <xsl:include href="sxweb-util.xsl"/>
 <xsl:include href="esp2-head.xsl"/>
-
-<xsl:variable name="parameters"
-	      select="document(concat($projesp, '/00web/00config/parameters.xml'))/param:parameters"/>
 
 <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
@@ -736,6 +733,11 @@
   <xsl:param name="type"/>
   <xsl:param name="title"/>
   <xsl:param name="nodes"/>
+  <xsl:variable name="parameters-xml" select="concat($projesp, '/signlist/00web/00config/parameters.xml')"/>
+  <!--<xsl:message>sws-sel-page: projesp=<xsl:value-of select="$projesp"/>;
+  parameters.xml=<xsl:value-of select="$parameters-xml"/></xsl:message>-->
+  <xsl:variable name="parameters"
+		select="document($parameters-xml)/param:parameters"/>
   <!--
       <xsl:message>sws-sel-page called with type=<xsl:value-of select="$type"
       />; title=<xsl:value-of select="$title"/>; nodecount=<xsl:value-of select="count($nodes)"/></xsl:message>
@@ -753,7 +755,7 @@
       <html>
 	<head>
 	  <xsl:call-template name="esp2-head-content">
-	    <xsl:with-param name="param" select="$parameters"/>
+	    <xsl:with-param name="parameters" select="$parameters"/>
 	    <xsl:with-param name="project" select="$project"/>
 	  </xsl:call-template>
 	  <!--
@@ -764,7 +766,11 @@
 	</head>
 	<body class="selpage">
 	  <xsl:call-template name="esp2-banner-div">
-	  </xsl:call-template>
+	    <xsl:with-param name="parameters" select="$parameters"/>
+	    <xsl:with-param name="project" select="$project"/>
+	    <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
+	    <xsl:with-param name="nomenu" select="true()"/>
+	    </xsl:call-template>
 	  <h1><xsl:value-of select="$title"/></h1>
 	  <table>
 	    <xsl:choose>
