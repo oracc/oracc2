@@ -12,6 +12,7 @@ struct cbdex
   const char *tok;
   const char *lem;
   const char *oid;  /* OID of lemma */
+  const char *sort; /* sort code lemma */
   const char *lcnt; /* count of lemma occurrences */
   const char *base; /* base as from the @n attribute */
   const char *bcnt; /* count of base occurrences */

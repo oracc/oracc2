@@ -252,6 +252,7 @@ sl.lemmas = element sl:lemmas { sl.lemma* }
 sl.lemma  = element sl:lemma  {
 	  attribute n { text } ,
 	  attribute oid { text } ,
+	  attribute sort { text } ,
 	  attribute lcnt { text } ,
 	  attribute base { text } ,
 	  attribute bcnt { text } ,

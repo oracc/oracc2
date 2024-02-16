@@ -39,7 +39,7 @@ int list_dump = 0;
 int list_names_mode = 0;
 int listdef_check = 0;
 int oid_list = 0;
-int oid_tab = 0;
+int use_oid_tab = 0;
 int sll_output = 0;
 int sortcode_output = 0;
 int syss_dump = 0;
@@ -227,7 +227,7 @@ main(int argc, char * const*argv)
       if (oid_list)
 	sx_oid_list(sl);
       
-      if (oid_tab)
+      if (use_oid_tab)
 	sx_oid_tab(sl);
       
       if (asl_output)
@@ -337,7 +337,7 @@ opts(int opt, const char *arg)
       missing_lists = NULL;
       break;
     case 'O':
-      oid_tab = 1;
+      use_oid_tab = 1;
       break;
     case 'o':
       ++oid_list;

@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <asl.h>
+#include <oid.h>
 #include <tok.h>
 #include <tis.h>
 
@@ -69,6 +70,8 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
       return;
     }
 
+  Hash *lsort = oid_load_sort("sux");
+  
   char buf[1024];
   char *lp;
   struct cbdex_header *chp = cbdex_init();
@@ -77,6 +80,9 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
       lp[strlen(lp)-1] = '\0';
       struct cbdex *cp = cbdex_new(chp);
       cbdex_parse((char*)pool_copy((uccp)lp,chp->p), cp);
+      char sortbuf[10];
+      sprintf(sortbuf, "%d", (int)(uintptr_t)hash_find(lsort, (uccp)cp->oid));
+      cp->sort = (ccp)pool_copy((ucp)sortbuf, sl->p);
       List *ll = hash_find(sl->h_ldata, (uccp)cp->tok);
       if (!ll)
 	{

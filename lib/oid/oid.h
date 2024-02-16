@@ -140,5 +140,7 @@ extern struct oid_ok_pair *oid_ok_pair(const char *oid, const char *key);
 extern Hash *oid_domain_hash(Oids *o, const char *tab, const char *domain);
 extern int oid_parse_edits(Oide *e);
 extern void oid_write_edits(FILE *fp, Oide *e);
+extern Hash *oid_load_sort(const char *domain);
+
 
 #endif/*OID_H_*/

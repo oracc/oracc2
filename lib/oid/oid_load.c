@@ -7,21 +7,13 @@
 
 static const char *oidtab = NULL;
 
-#if 0
-static int
-cmpstringp(const void *p1, const void *p2)
-{
-  return strcmp(* (char * const *) p1, * (char * const *) p2);
-}
-#endif
-
 void
 oid_set_oidtab(const char *s)
 {
   oidtab = s;
 }
 
-static const char *
+static char *
 oid_tab_path(const char *base)
 {
   int len = strlen(oracc_home()) + strlen("/oid/.tab") + strlen(base) + 1;
@@ -30,7 +22,7 @@ oid_tab_path(const char *base)
   return tmp;
 }
 
-static const char *
+char *
 oid_tab(void)
 {
   if (oidtab)
@@ -62,4 +54,23 @@ oid_load_keys(const char *file)
   o->file = file;
   o->lines = loadfile_lines3((uccp)o->file, (size_t*)&o->nlines, &o->mem);
   return o;
+}
+
+Hash *
+oid_load_sort(const char *domain)
+{
+  char *p = oid_tab_path("oid");
+  char *b = strrchr(p, '/');
+  b[1] = '\0';
+  char d[strlen(p)+strlen("oid- -sort.txt")+strlen(domain)];
+  sprintf(d, "%soid-%s-sort.txt",p,domain);
+  unsigned char **ll = loadfile_lines((uccp)d, NULL);
+  Hash *s = hash_create(4096);
+  if (ll)
+    {
+      int i;
+      for (i = 0; ll[i]; ++i)
+	hash_add(s, ll[i], (void*)(uintptr_t)i);
+    }
+  return s;
 }
