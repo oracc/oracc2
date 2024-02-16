@@ -103,6 +103,16 @@ div.asl-images  { display: inline-block; vertical-align: top; }
 .asl-lem-base { font-weight: bold; }
 .asl-lem-cnt  { color: grey; }
 
+body.selpage h2	  { text-align: center; }
+.snames  { font-size: 90%; }
+table.selpage , table.lemsel 	  { margin: auto; }
+table.selpage td  { padding-left: 1em; padding-right: 1em; }
+tr.lemsel-h2 { font-weight: bold; }
+tr.lemsel-h3 { font-style: italic; }
+
+/* Needs to be modulated by viewport size */
+table.lemsel td  { padding-left: 1em; padding-right: 1em; }
+
 .ivs-IM_NI2 span { display: none; }
 .ivs-IM_NI2:after { content: '𒉎'; }
 

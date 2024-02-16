@@ -108,7 +108,6 @@
 &#x9;asl-lexdata=<xsl:value-of select="$asl-lexdata"
 /></xsl:message>
   <xsl:apply-templates select="sl:letter/sl:sign"/>
-  <xsl:apply-templates select="sl:homophones/sl:base"/>
 </xsl:template>
 
 <!--### Iteration over each sign -->
@@ -151,13 +150,37 @@
   </xsl:if>
 </xsl:template>
 
+<!--
+    All code that uses the esp2-head and banner must do so via this
+    routine because it sets $parameters.
+    
+    This is called for each sl:sign and on the first sl:sign we emit homophone selpages
+   -->
 <xsl:template name="sws-selection-pages">
+  <xsl:variable name="parameters-xml" select="concat($projesp, '/signlist/00web/00config/parameters.xml')"/>
+  <!--<xsl:message>sws-sel-page: projesp=<xsl:value-of select="$projesp"/>;
+      parameters.xml=<xsl:value-of select="$parameters-xml"/></xsl:message>-->
+  <xsl:variable name="parameters"
+		select="document($parameters-xml)/param:parameters"/>
+  <!--
+      <xsl:message>sws-sel-page called with type=<xsl:value-of select="$type"
+      />; title=<xsl:value-of select="$title"/>; nodecount=<xsl:value-of select="count($nodes)"/></xsl:message>
+  -->
   <xsl:call-template name="sws-sel-page">
+    <xsl:with-param name="parameters" select="$parameters"/>
     <xsl:with-param name="type" select="'cmemb'"/>
     <xsl:with-param name="title" select="concat(@n,  ' in compounds')"/>
     <xsl:with-param name="nodes" select="id(sl:cpds/sl:memb/@oids)"/>
   </xsl:call-template>
-  <xsl:call-template name="sws-lem-page"/>
+  <xsl:call-template name="sws-lem-page">
+    <xsl:with-param name="parameters" select="$parameters"/>
+  </xsl:call-template>
+  <xsl:if test="count(preceding-sibling::sl:sign)=0 and count(../preceding-sibling::sl:letter)=0">
+    <xsl:message>Emitting homophone selpages</xsl:message>
+    <xsl:apply-templates select="/*/sl:homophones/sl:base">
+      <xsl:with-param name="parameters" select="$parameters"/>
+    </xsl:apply-templates>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template name="sws-esp-header">
@@ -733,15 +756,7 @@
   <xsl:param name="type"/>
   <xsl:param name="title"/>
   <xsl:param name="nodes"/>
-  <xsl:variable name="parameters-xml" select="concat($projesp, '/signlist/00web/00config/parameters.xml')"/>
-  <!--<xsl:message>sws-sel-page: projesp=<xsl:value-of select="$projesp"/>;
-  parameters.xml=<xsl:value-of select="$parameters-xml"/></xsl:message>-->
-  <xsl:variable name="parameters"
-		select="document($parameters-xml)/param:parameters"/>
-  <!--
-      <xsl:message>sws-sel-page called with type=<xsl:value-of select="$type"
-      />; title=<xsl:value-of select="$title"/>; nodecount=<xsl:value-of select="count($nodes)"/></xsl:message>
-  -->
+  <xsl:param name="parameters"/>
   <xsl:variable name="basename">
     <xsl:choose>
       <xsl:when test="$file"><xsl:value-of select="$file"/></xsl:when>
@@ -770,9 +785,9 @@
 	    <xsl:with-param name="project" select="$project"/>
 	    <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
 	    <xsl:with-param name="nomenu" select="true()"/>
-	    </xsl:call-template>
-	  <h1><xsl:value-of select="$title"/></h1>
-	  <table>
+	  </xsl:call-template>
+	  <h2><xsl:value-of select="$title"/></h2>
+	  <table class="selpage">
 	    <xsl:choose>
 	      <xsl:when test="$type='h'">
 		<xsl:for-each select="$nodes">
@@ -802,7 +817,7 @@
 <xsl:template name="sws-sel-summary">
   <td>
     <a href="{concat('/',/*/@project,'/signlist/',../@xml:id,'/',@xml:id,'/index.html')}">
-      <xsl:value-of select="ancestor-or-self::sl:sign/@n"/>
+      <span class="snames"><xsl:value-of select="ancestor-or-self::sl:sign/@n"/></span>
     </a>    
   </td>
   <td><xsl:value-of select="sl:ucun"/></td>
@@ -815,7 +830,9 @@
 </xsl:template>
 
 <xsl:template match="sl:base">
+  <xsl:param name="parameters"/>
   <xsl:call-template name="sws-sel-page">
+    <xsl:with-param name="parameters" select="$parameters"/>
     <xsl:with-param name="file" select="@xml:id"/>
     <xsl:with-param name="type" select="'h'"/>
     <xsl:with-param name="title" select="concat(@n,  ' homophones')"/>
@@ -828,58 +845,73 @@
   <xsl:param name="type"/>
   <xsl:param name="group-label" select="''"/>
   <xsl:if test="count($nodes)>0">
-    <h3><xsl:value-of select="$type"></xsl:value-of></h3>
-    <xsl:if test="count($nodes)>0">
-      <table>
-	<xsl:for-each select="$nodes">
-	  <xsl:sort select="@sort" data-type="number"/>
-	  <tr>
-	    <td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
-	    <td class="asl-sel-l-link"><a href="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></a></td>
-	    <td class="asl-sel-l-count"><xsl:value-of select="@bcnt"/><xsl:text>×</xsl:text></td>
-	  </tr>
-	</xsl:for-each>
-      </table>
-    </xsl:if>
+    <tbody>
+      <tr class="lemsel-h3"><td colspan="3"><xsl:value-of select="$type"></xsl:value-of></td></tr>
+      <xsl:for-each select="$nodes">
+	<xsl:sort select="@sort" data-type="number"/>
+	<tr>
+	  <td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
+	  <td class="asl-sel-l-link"><a href="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></a></td>
+	  <td class="asl-sel-l-count"><xsl:value-of select="@bcnt"/><xsl:text>×</xsl:text></td>
+	</tr>
+      </xsl:for-each>
+    </tbody>
   </xsl:if>
 </xsl:template>
 
 <xsl:template name="sws-lem-page">
+  <xsl:param name="parameters"/>  
   <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-sux.html')}"
 	       method="xml" encoding="utf-8" omit-xml-declaration="yes"
 	       indent="yes" doctype-system="html">
     <html>
       <head>
+	<xsl:call-template name="esp2-head-content">
+	  <xsl:with-param name="parameters" select="$parameters"/>
+	  <xsl:with-param name="project" select="$project"/>
+	</xsl:call-template>
+	<!--
 	<meta charset="UTF-8"/>
 	<title>Sumerian Words written with <xsl:value-of select="@n"/></title>
 	<link media="screen,projection" href="{concat('/',/*/@project,'/signlist/css/projesp.css')}"
-	      type="text/css" rel="stylesheet" />
+	type="text/css" rel="stylesheet" />
+	-->
       </head>
       <body class="selpage">
-	<h1>Sumerian Words written with <xsl:value-of select="@n"/></h1>
-	<xsl:variable name="v" select=".//sl:v|id(@merge)//sl:v"/>
-	<xsl:for-each select="$v">
-	  <xsl:sort select="@sort" data-type="number"/>
-	  <xsl:if test="sl:lemmas">
-	    <h2>
-	      <xsl:text>For value </xsl:text>
-	      <xsl:value-of select="@n"/>
-	      <xsl:if test="../@moid|../self::sl:form"><xsl:value-of select="concat(' [',../@n,']')"/></xsl:if>
-	    </h2>
-	    <xsl:call-template name="sws-lem-page-by-pos">
-	      <xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='a']"/>
-	      <xsl:with-param name="type" select="'Independent'"/>
-	    </xsl:call-template>
-	    <xsl:call-template name="sws-lem-page-by-pos">
-	      <xsl:with-param name="nodes" select="sl:lemmas/*[not(@gpos='a') and not(@gpos='A')]"/>
-	      <xsl:with-param name="type" select="'Combined'"/>
-	    </xsl:call-template>
-	    <xsl:call-template name="sws-lem-page-by-pos">
-	      <xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='A']"/>
-	      <xsl:with-param name="type" select="'Compounds'"/>
-	    </xsl:call-template>
-	  </xsl:if>
-	</xsl:for-each>
+	<xsl:call-template name="esp2-banner-div">
+	  <xsl:with-param name="parameters" select="$parameters"/>
+	  <xsl:with-param name="project" select="$project"/>
+	  <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
+	  <xsl:with-param name="nomenu" select="true()"/>
+	</xsl:call-template>
+	<h2>Sumerian Words written with <xsl:value-of select="@n"/></h2>
+	<table class="lemsel">
+	  <xsl:variable name="v" select=".//sl:v|id(@merge)//sl:v"/>
+	  <xsl:for-each select="$v">
+	    <xsl:sort select="@sort" data-type="number"/>
+	    <xsl:if test="sl:lemmas">
+	      <tr class="lemsel-h2">
+		<td colspan="3">
+		  <xsl:text>For value </xsl:text>
+		  <xsl:value-of select="@n"/>
+		  <xsl:if test="../@moid|../self::sl:form"><xsl:value-of select="concat(' [',../@n,']')"/></xsl:if>
+		</td>
+	      </tr>
+	      <xsl:call-template name="sws-lem-page-by-pos">
+		<xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='a']"/>
+		<xsl:with-param name="type" select="'Independent'"/>
+	      </xsl:call-template>
+	      <xsl:call-template name="sws-lem-page-by-pos">
+		<xsl:with-param name="nodes" select="sl:lemmas/*[not(@gpos='a') and not(@gpos='A')]"/>
+		<xsl:with-param name="type" select="'Combined'"/>
+	      </xsl:call-template>
+	      <xsl:call-template name="sws-lem-page-by-pos">
+		<xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='A']"/>
+		<xsl:with-param name="type" select="'Compounds'"/>
+	      </xsl:call-template>
+	    </xsl:if>
+	  </xsl:for-each>
+	</table>
       </body>
     </html>
   </ex:document>

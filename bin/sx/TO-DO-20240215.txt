@@ -4,6 +4,7 @@
   -move breadcrumbs to navbar or implement nobreadcrumbs param
   -use navbar width for <</>> (move navbar outside content div??)
   -get rid of Main Menu underline bar in dd mode
+  -possibly need a submit button on mobile
 
 * support import from OGSL to corpus SL
   -lists
@@ -26,10 +27,10 @@
 
 * styling of sel pages
   x-put standard SL/ESP header on them
-  -put form on them
-  -add some SL colours
-  -margin auto; td spaceing
-  -make sign-name column 80% size
+  x-put form on them
+  x-add some SL colours
+  x-margin auto; td spacing
+  x-make sign-name column 80% size
   -rename selpage dir to sel?
 
 * Sign images
@@ -66,8 +67,11 @@
 * sort homophone graphemes
   -add @sort to sl:base
 
-* possibly need a submit button on mobile
+* tokx
+  -skip incorrect members of corrected constructs in tokx
+  -skip signs with @fake=1 (N, PN, GN, etc.)
 
-* skip incorrect members of corrected constructs in tokx
+* fix oracc.museum ePSD2 OID URL bug
 
-* skip signs with @fake=1 (N, PN, GN, etc.)
+* why do lam/lem₄ not appear in Sumerian writings in gudea/NE?
+
