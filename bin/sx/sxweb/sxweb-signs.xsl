@@ -9,6 +9,7 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:esp="http://oracc.org/ns/esp/1.0"
     xmlns:is="http://oracc.org/ns/is/1.0"
+    xmlns:param="http://oracc.org/ns/esp-param/1.0" 
     exclude-result-prefixes="sl dc xh esp"
     extension-element-prefixes="ex"
     version="1.0">
@@ -18,11 +19,16 @@
 <!-- always invoke with -stringparam project PROJECT -->
 <xsl:param name="project"/>
 <xsl:param name="hproject" select="translate($project,'/','-')"/>
+<xsl:param name="projesp"/>
 
 <xsl:include href="lex-sign-lookup.xsl"/>
 <!--xpd.xsl is included by g2-gdl-HTML.xsl-->
 <xsl:include href="g2-gdl-HTML.xsl"/>
 <xsl:include href="sxweb-util.xsl"/>
+<xsl:include href="esp2-head.xsl"/>
+
+<xsl:variable name="parameters"
+	      select="document(concat($projesp, '/00web/00config/parameters.xml'))/param:parameters"/>
 
 <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
@@ -554,6 +560,28 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-lemmas-by-pos-sub"
+  	      ><xsl:param name="nodes"
+	      /><xsl:for-each
+		   select="$nodes"
+		   ><esp:link notarget="yes" url="/{/*/@project}/{@oid}"
+			      ><span class="asl-lem-base"><xsl:value-of select="@base"/></span><xsl:text> = </xsl:text
+			      ><xsl:value-of select="@n"
+			      /><xsl:text> </xsl:text
+			      ><span class="asl-lem-cnt"><xsl:text>(</xsl:text><xsl:value-of select="@bcnt"/><xsl:text>×)</xsl:text
+			      ></span></esp:link
+			      ><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
+			      ></xsl:for-each></xsl:template>
+
+<!--
+    	   ><xsl:for-each select="$nodes"
+	   ><esp:link notarget="yes" url="/{/*/@project}/{@oid}"
+	   ><xsl:value-of select="@base"/><xsl:text> = </xsl:text
+	   ><xsl:value-of select="@n"/></esp:link
+	   ><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
+	   ></xsl:for-each
+ -->
+
 <xsl:template name="sws-lemmas-by-pos">
   <xsl:param name="nodes"/>
   <xsl:param name="type"/>
@@ -563,24 +591,16 @@
       <xsl:when test="string-length($group-label) = 0">
 	<p class="sl-hang"
 	   ><span class="sl-ihead-h"><xsl:value-of select="$type"/></span
-	   ><xsl:for-each select="$nodes"
-	   ><esp:link notarget="yes" url="/{/*/@project}/{@oid}"
-	   ><xsl:value-of select="@base"/><xsl:text> = </xsl:text
-	   ><xsl:value-of select="@n"/></esp:link
-	   ><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
-	   ></xsl:for-each
-	   ></p>
+	   ><xsl:call-template name="sws-lemmas-by-pos-sub"
+	   ><xsl:with-param name="nodes" select="$nodes"
+	   /></xsl:call-template></p>
       </xsl:when>
       <xsl:otherwise>
 	<p class="sl-hang"
 	   ><span class="sl-ihead-h-r"><xsl:value-of select="concat('[',$group-label,']&#xa0;&#xa0;')"/></span
-	   ><xsl:for-each select="$nodes"
-	   ><esp:link notarget="yes" url="/{/*/@project}/{@oid}"
-	   ><xsl:value-of select="@base"/><xsl:text> = </xsl:text
-	   ><xsl:value-of select="@n"/></esp:link
-	   ><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
-	   ></xsl:for-each
-	   ></p>
+	   ><xsl:call-template name="sws-lemmas-by-pos-sub"
+	   ><xsl:with-param name="nodes" select="$nodes"
+	   /></xsl:call-template></p>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:if>
@@ -620,7 +640,8 @@
 
 <xsl:template name="sws-suxword">
   <xsl:if test="$asl-suxword = 'yes'">
-    <xsl:if test="count(sl:v/sl:lemmas/sl:lemma|id(@merge)/sl:v/sl:lemmas/sl:lemma)>0">
+    <xsl:variable name="lnodes" select="sl:v/sl:lemmas/sl:lemma|id(@merge)/sl:v/sl:lemmas/sl:lemma"/>
+    <xsl:if test="count($lnodes)>0">
       <div class="sl-lemmas">
 	<xsl:call-template name="sws-lemmas-by-pos">
 	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
@@ -638,12 +659,14 @@
 	    <xsl:with-param name="type" select="'Compounds'"/>
 	    </xsl:call-template>
 	    <xsl:call-template name="sws-lemmas-via-merge-compound"/>
-	    -->
-	<p><span class="sl-ihead">&#xa0;</span>
+	-->
+	<xsl:if test="count($lnodes[not(@gpos='a')])>0">
+	  <p><span class="sl-ihead">&#xa0;</span>
 	  <esp:link notarget="yes" url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'-sux.html')}"
 		    >See all information on Sumerian words written with the <xsl:value-of
 		    select="@n"/> sign</esp:link>
-	</p>
+	  </p>
+	</xsl:if>
       </div>
     </xsl:if>
   </xsl:if>
@@ -698,7 +721,7 @@
 	<p class="sl-hang"
 	    ><span class="sl-ihead-h">HOMOPHONES</span
 	    ><xsl:for-each select="$hnodes"
-	    ><xsl:sort select="@n"/><esp:link
+	    ><xsl:sort select="@n"/><esp:link notarget="yes"
 	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link
 	    ><xsl:if test="not(position()=last())"><xsl:text>&#xa0;&#xa0;&#xa0;</xsl:text></xsl:if
 	    ></xsl:for-each
@@ -729,11 +752,19 @@
 		 indent="no" doctype-system="html">
       <html>
 	<head>
-	  <meta charset="UTF-8"/>
-	  <title><xsl:value-of select="$title"/></title>
-	  <link media="screen,projection" href="{concat('/',/*/@project,'/signlist/css/projesp.css')}" type="text/css" rel="stylesheet" />
+	  <xsl:call-template name="esp2-head-content">
+	    <xsl:with-param name="param" select="$parameters"/>
+	    <xsl:with-param name="project" select="$project"/>
+	  </xsl:call-template>
+	  <!--
+	      <meta charset="UTF-8"/>
+	      <title><xsl:value-of select="$title"/></title>
+	      <link media="screen,projection" href="{concat('/',/*/@project,'/signlist/css/projesp.css')}" type="text/css" rel="stylesheet" />
+	  -->
 	</head>
 	<body class="selpage">
+	  <xsl:call-template name="esp2-banner-div">
+	  </xsl:call-template>
 	  <h1><xsl:value-of select="$title"/></h1>
 	  <table>
 	    <xsl:choose>

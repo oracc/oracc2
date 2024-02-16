@@ -100,6 +100,9 @@ div.asl-images  { display: inline-block; vertical-align: top; }
 
 .strut { display: none; height: 12px; }
 
+.asl-lem-base { font-weight: bold; }
+.asl-lem-cnt  { color: grey; }
+
 .ivs-IM_NI2 span { display: none; }
 .ivs-IM_NI2:after { content: '𒉎'; }
 

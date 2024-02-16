@@ -1,7 +1,7 @@
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible
   -add sl-ihead where missing
-  -move breadcrumbs to navbar
+  -move breadcrumbs to navbar or implement nobreadcrumbs param
   -use navbar width for <</>> (move navbar outside content div??)
   -get rid of Main Menu underline bar in dd mode
 
@@ -13,6 +13,7 @@
 * fix Sumerian lemma formatting;
   -remove %sux: from second memb of compound bases
   -use ePSD lemma for Sumerian in OGSL
+  x-possibly optimize SUMERIAN link so if there is only one word it prints base and bcnt and skips selpage
   x-add bases in sign-page
   x-add qpn
   x-redo formatting of merged items
@@ -24,9 +25,10 @@
   x-suppress @target=_blank on selpages
 
 * styling of sel pages
-  -put standard SL/ESP header with form on them
+  x-put standard SL/ESP header on them
+  -put form on them
   -add some SL colours
-  -margin auto
+  -margin auto; td spaceing
   -make sign-name column 80% size
   -rename selpage dir to sel?
 

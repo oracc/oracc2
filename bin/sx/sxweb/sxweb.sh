@@ -130,7 +130,7 @@ if [ "$project" = "ogsl" ]; then
     chmod o+r 02pub/Oracc_OGSL.txt
 fi
 
-xsltproc -stringparam project $project $libscripts/sxweb-signs.xsl 02xml/sl.xml
+xsltproc -stringparam project $project -stringparam projesp "$ORACC_BUILDS/$project" $libscripts/sxweb-signs.xsl 02xml/sl.xml
 
 if [ -r 00etc/signlist-periods.tab ]; then
     cat 00etc/signlist-periods.tab | while IFS=$'\t' read index title
