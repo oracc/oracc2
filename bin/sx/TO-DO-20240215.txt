@@ -1,5 +1,5 @@
 * SL sign-page formatting
-  -make all sl-ihead hang-compatible
+  x-make all sl-ihead hang-compatible
   -add sl-ihead where missing
   -move breadcrumbs to navbar
   -use navbar width for <</>> (move navbar outside content div??)
@@ -11,15 +11,17 @@
   -perhaps more
 
 * fix Sumerian lemma formatting;
+  -remove %sux: from second memb of compound bases
+  -use ePSD lemma for Sumerian in OGSL
+  x-add bases in sign-page
   x-add qpn
   x-redo formatting of merged items
-  -use selpage
-  -add bases
-  -use ePSD lemma for Sumerian in OGSL
-  -marshall lemmas in signlist; group and sort for easy use in sxweb
-  -this may be different sorts: a combined sort for inline, and one separated by value for selpage
-  -add the value causing lemma selection to sl:lemma
-  -add @sort to sl:lemma
+  x-use selpage
+  x-marshall lemmas in signlist; group and sort for easy use in sxweb
+  x-this may be different sorts: a combined sort for inline, and one separated by value for selpage
+  x-add the value causing lemma selection to sl:lemma
+  x-add @sort to sl:lemma
+  x-suppress @target=_blank on selpages
 
 * styling of sel pages
   -put standard SL/ESP header with form on them
@@ -53,7 +55,7 @@
 
 * Include sign/form->signs-where-sign/form-is-used and include in sign-page
 
-* More compound listings on sign-page or in sel-page
+* More subtypes of compound listings on sign-page or in sel-page
 
 * Fix GCSL images; some could appear but are broken; ones from compounds never made it in
 
@@ -67,5 +69,3 @@
 * skip incorrect members of corrected constructs in tokx
 
 * skip signs with @fake=1 (N, PN, GN, etc.)
-
-
