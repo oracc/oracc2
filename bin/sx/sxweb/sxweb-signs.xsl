@@ -629,7 +629,7 @@
 <xsl:template name="sws-lemmas-via-merge-absolute">
   <xsl:for-each select="id(@merge)">
     <xsl:call-template name="sws-lemmas-by-pos">
-      <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
+      <xsl:with-param name="nodes" select=".//sl:lemmas/*[@gpos='a']"/>
       <xsl:with-param name="type" select="''"/>
       <xsl:with-param name="group-label" select="@n"/>
     </xsl:call-template>
@@ -660,11 +660,11 @@
 
 <xsl:template name="sws-suxword">
   <xsl:if test="$asl-suxword = 'yes'">
-    <xsl:variable name="lnodes" select="sl:v/sl:lemmas/sl:lemma|id(@merge)/sl:v/sl:lemmas/sl:lemma"/>
+    <xsl:variable name="lnodes" select=".//sl:lemmas/sl:lemma|id(@merge)//sl:lemmas/sl:lemma"/>
     <xsl:if test="count($lnodes)>0">
       <div class="sl-lemmas">
 	<xsl:call-template name="sws-lemmas-by-pos">
-	  <xsl:with-param name="nodes" select="sl:v/sl:lemmas/*[@gpos='a']"/>
+	  <xsl:with-param name="nodes" select=".//sl:lemmas/*[@gpos='a']"/>
 	  <xsl:with-param name="type" select="'SUMERIAN'"/>
 	</xsl:call-template>
 	<xsl:call-template name="sws-lemmas-via-merge-absolute"/>
@@ -845,17 +845,15 @@
   <xsl:param name="type"/>
   <xsl:param name="group-label" select="''"/>
   <xsl:if test="count($nodes)>0">
-    <tbody>
       <tr class="lemsel-h3"><td colspan="3"><xsl:value-of select="$type"></xsl:value-of></td></tr>
       <xsl:for-each select="$nodes">
 	<xsl:sort select="@sort" data-type="number"/>
-	<tr>
+	<tr class="lemlem">
 	  <td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
 	  <td class="asl-sel-l-link"><a href="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></a></td>
 	  <td class="asl-sel-l-count"><xsl:value-of select="@bcnt"/><xsl:text>×</xsl:text></td>
 	</tr>
       </xsl:for-each>
-    </tbody>
   </xsl:if>
 </xsl:template>
 
@@ -886,29 +884,58 @@
 	</xsl:call-template>
 	<h2>Sumerian Words written with <xsl:value-of select="@n"/></h2>
 	<table class="lemsel">
+	  <xsl:variable name="all-lem" select=".//sl:lemmas|id(@merge)//sl:lemmas"/>
+	  <xsl:variable name="sf-lem" select="$all-lem[not(../self::sl:v)]"/>
+	  <xsl:if test="count($sf-lem)>0">
+	    <tbody>
+	      <xsl:for-each select="$sf-lem">
+		<xsl:variable name="p" select="(ancestor::sl:form|ancestor::sl:sign)[1]"/>
+		<tr class="lemsel-h2">
+		  <td colspan="3">
+		    <xsl:text>For sign </xsl:text>
+		    <span class="snames"><xsl:value-of select="$p/@n"/></span>
+		  </td>
+		</tr>
+		<xsl:call-template name="sws-lem-page-by-pos">
+		  <xsl:with-param name="nodes" select="sl:lemma[@gpos='a']"/>
+		  <xsl:with-param name="type" select="'Independent'"/>
+		</xsl:call-template>
+		<xsl:call-template name="sws-lem-page-by-pos">
+		  <xsl:with-param name="nodes" select="sl:lemma[not(@gpos='a') and not(@gpos='A')]"/>
+		  <xsl:with-param name="type" select="'Combined'"/>
+		</xsl:call-template>
+		<xsl:call-template name="sws-lem-page-by-pos">
+		  <xsl:with-param name="nodes" select="sl:lemma[@gpos='A']"/>
+		  <xsl:with-param name="type" select="'Compounds'"/>
+		</xsl:call-template>
+	      </xsl:for-each>
+	    </tbody>
+	  </xsl:if>
 	  <xsl:variable name="v" select=".//sl:v|id(@merge)//sl:v"/>
 	  <xsl:for-each select="$v">
 	    <xsl:sort select="@sort" data-type="number"/>
 	    <xsl:if test="sl:lemmas">
-	      <tr class="lemsel-h2">
-		<td colspan="3">
-		  <xsl:text>For value </xsl:text>
-		  <xsl:value-of select="@n"/>
-		  <xsl:if test="../@moid|../self::sl:form"><xsl:value-of select="concat(' [',../@n,']')"/></xsl:if>
-		</td>
-	      </tr>
-	      <xsl:call-template name="sws-lem-page-by-pos">
-		<xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='a']"/>
-		<xsl:with-param name="type" select="'Independent'"/>
-	      </xsl:call-template>
-	      <xsl:call-template name="sws-lem-page-by-pos">
-		<xsl:with-param name="nodes" select="sl:lemmas/*[not(@gpos='a') and not(@gpos='A')]"/>
-		<xsl:with-param name="type" select="'Combined'"/>
-	      </xsl:call-template>
-	      <xsl:call-template name="sws-lem-page-by-pos">
-		<xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='A']"/>
-		<xsl:with-param name="type" select="'Compounds'"/>
-	      </xsl:call-template>
+	      <tbody>
+		<tr class="lemsel-h2">
+		  <td colspan="3">
+		    <xsl:text>For value </xsl:text>
+		    <xsl:value-of select="@n"/>
+		    <xsl:if test="../@moid|../self::sl:form"><xsl:value-of select="concat(' [',../@n,']')"/></xsl:if>
+		  </td>
+		</tr>
+		<xsl:call-template name="sws-lem-page-by-pos">
+		  <xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='a']"/>
+		  <xsl:with-param name="type" select="'Independent'"/>
+		</xsl:call-template>
+		<xsl:call-template name="sws-lem-page-by-pos">
+		  <xsl:with-param name="nodes" select="sl:lemmas/*[not(@gpos='a') and not(@gpos='A')]"/>
+		  <xsl:with-param name="type" select="'Combined'"/>
+		</xsl:call-template>
+		<xsl:call-template name="sws-lem-page-by-pos">
+		  <xsl:with-param name="nodes" select="sl:lemmas/*[@gpos='A']"/>
+		  <xsl:with-param name="type" select="'Compounds'"/>
+		</xsl:call-template>
+	      </tbody>
 	    </xsl:if>
 	  </xsl:for-each>
 	</table>

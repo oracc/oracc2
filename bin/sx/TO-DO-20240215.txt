@@ -7,6 +7,7 @@
   -possibly need a submit button on mobile
 
 * support import from OGSL to corpus SL
+  -@fake
   -lists
   -listdefs
   -perhaps more
@@ -69,8 +70,8 @@
 
 * tokx
   -skip incorrect members of corrected constructs in tokx
-  -skip signs with @fake=1 (N, PN, GN, etc.)
   -skip signs in reordering
+  -skip signs with @fake=1 (N, PN, GN, etc.)
   -display indexed lemma that only have sign
   -get lemma that have sign.form.0 into XML and display them
 
@@ -80,4 +81,4 @@
 
 * what's up with ŠAR₂×KASKAL on HI page?
 
-
+* emit @fake attr in XML on PN etc
