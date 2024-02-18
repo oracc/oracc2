@@ -210,6 +210,22 @@ sx_idata_value_inst(struct sl_signlist *sl, struct sl_inst *vip)
 }
 
 void
+sx_ldata_sign_inst(struct sl_signlist *sl, struct sl_inst *sip)
+{
+  sip->lp = hash_find(sl->h_ldata, (uccp)sx_idata_key(sip->u.s->oid,
+						      "",
+						      (uccp)""));
+}
+
+void
+sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip)
+{
+  fip->lp = hash_find(sl->h_ldata, (uccp)sx_idata_key(fip->parent_s->u.s->oid,
+						      fip->u.f->oid,
+						      (uccp)""));
+}
+
+void
 sx_ldata_value_inst(struct sl_signlist *sl, struct sl_inst *vip)
 {
   if (sl->h_ldata)

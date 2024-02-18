@@ -77,6 +77,7 @@ sl.sign    =
      | sl.uage
      | sl.ucun
      | element sl:unote { text })*,
+    sl.lemmas?,
     sl.v*,
     sl.sys*,
     sl.images?,
@@ -114,6 +115,7 @@ sl.form	   = element sl:form {
           | sl.uname
           | sl.uage
           | sl.ucun)*),
+      sl.lemmas?,
       sl.v*,
       sl.sys*,
       sl.images?,

@@ -36,6 +36,7 @@ struct sx_functions
     sx_notes_f *	sys;
     sx_notes_f *	img;
     sx_notes_f *	cpd;
+    sx_notes_f *	lem;
     sx_unicode_f *	uni;
     FILE *fp;
     const char *fname;
@@ -116,5 +117,7 @@ extern void sx_ldata_value_inst(struct sl_signlist *sl, struct sl_inst *vip);
 extern void sx_merge(struct sl_signlist *sl);
 extern unsigned char *sx_oids_of(struct sl_signlist *sl, unsigned const char *snames);
 
+extern void sx_ldata_sign_inst(struct sl_signlist *sl, struct sl_inst *sip);
+extern void sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
 
 #endif/*SX_H_*/

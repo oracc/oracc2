@@ -28,6 +28,7 @@ static sx_notes_f sx_w_jx_notes;
 static sx_notes_f sx_w_jx_syss;
 static sx_notes_f sx_w_jx_images;
 static sx_notes_f sx_w_jx_cpds;
+static sx_notes_f sx_w_jx_lems;
 static sx_unicode_f sx_w_jx_unicode;
 
 struct sx_functions sx_w_jox_fncs;
@@ -48,6 +49,7 @@ sx_w_jox_init(void)
   sx_w_jox_fncs.sys = sx_w_jx_syss;
   sx_w_jox_fncs.img = sx_w_jx_images;
   sx_w_jox_fncs.cpd = sx_w_jx_cpds;
+  sx_w_jox_fncs.lem = sx_w_jx_lems;
   sx_w_jox_fncs.uni = sx_w_jx_unicode;
   sx_w_jox_fncs.qvs = sx_w_jx_qvs;
   sx_w_jox_fncs.fp = NULL;
@@ -85,6 +87,27 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
       joxer_ee(&sl->mloc, "sl:base");
     }
   joxer_ee(&sl->mloc, "sl:homophones");
+}
+
+static void
+sx_w_jx_lems(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst*ip)
+{
+  joxer_ea(&ip->mloc, "sl:lemmas", NULL);
+  struct cbdex *lm;
+  for (lm = list_first(ip->lp); lm; lm = list_next(ip->lp))
+    {
+      ratts = rnvval_aa("x",
+			"n", lm->lem,
+			"oid", lm->oid,
+			"sort", lm->sort,
+			"lcnt", lm->lcnt,
+			"base", lm->base,
+			"bcnt", lm->bcnt,
+			"gpos", lm->gpos,
+			NULL);
+      joxer_ec(&ip->mloc, "sl:lemma", ratts);
+    }
+  joxer_ee(&ip->mloc, "sl:lemmas");
 }
 
 /* This is the entry point for xml output */
@@ -803,6 +826,7 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	    }
 	  if (s->u.s->aka && list_len(s->u.s->aka))
 	    sx_w_jx_aka(f, sl, s->u.s->aka);
+
 #if 0
 	  if (s->u.s->nvalues)
 	    sx_w_jx_homophone_links(f, sl, s->u.s);
@@ -893,24 +917,7 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  joxer_eeaa(&v->mloc, "sl:name");
 
 	  if (v->lp)
-	    {
-	      joxer_ea(&v->mloc, "sl:lemmas", NULL);
-	      struct cbdex *lm;
-	      for (lm = list_first(v->lp); lm; lm = list_next(v->lp))
-		{
-		  ratts = rnvval_aa("x",
-				    "n", lm->lem,
-				    "oid", lm->oid,
-				    "sort", lm->sort,
-				    "lcnt", lm->lcnt,
-				    "base", lm->base,
-				    "bcnt", lm->bcnt,
-				    "gpos", lm->gpos,
-				    NULL);
-		  joxer_ec(&v->mloc, "sl:lemma", ratts);
-		}
-	      joxer_ee(&v->mloc, "sl:lemmas");
-	    }
+	    f->lem(f, sl, v);
 	}
     }
   else

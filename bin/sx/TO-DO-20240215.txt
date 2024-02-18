@@ -70,6 +70,9 @@
 * tokx
   -skip incorrect members of corrected constructs in tokx
   -skip signs with @fake=1 (N, PN, GN, etc.)
+  -skip signs in reordering
+  -display indexed lemma that only have sign
+  -get lemma that have sign.form.0 into XML and display them
 
 * fix oracc.museum ePSD2 OID URL bug
 

@@ -48,6 +48,8 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 				}
 			      f->not(f, sl, sl->letters[i].groups[j].signs[k]);
 			      f->uni(f, sl, &sl->letters[i].groups[j].signs[k]->u.s->U);
+			      if (sl->letters[i].groups[j].signs[k]->lp)
+				f->lem(f,sl,sl->letters[i].groups[j].signs[k]);
 			      if (sl->letters[i].groups[j].signs[k]->u.s->nvalues)
 				{
 				  int l;
