@@ -476,7 +476,7 @@ gvl_valuqual(Node *vqnp)
 	      char fvp[strlen((ccp)v) + 10];
 	      sprintf(fvp,"%s:%s",qp->oid,v);
 	      ((gvl_g*)(vqnp->user))->sp_oid = (ccp)sll_lookup(sll_tmp_key((ucp)fvp, "fvp"));
-	      if (!*((gvl_g*)vqnp->user)->oid)
+	      /*if (!*((gvl_g*)vqnp->user)->oid)*/ /* We always want the vqpn oid to be the qualifier */
 		((gvl_g*)vqnp->user)->oid = qp->oid;
 	    }
 	}

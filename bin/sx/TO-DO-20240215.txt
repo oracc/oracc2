@@ -1,3 +1,5 @@
+* ogsl.asl is not currently sortable
+
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible
   -add sl-ihead where missing
@@ -74,6 +76,7 @@
   -skip signs with @fake=1 (N, PN, GN, etc.)
   -display indexed lemma that only have sign
   -get lemma that have sign.form.0 into XML and display them
+  -reduplicated forms don't count as absolute and also generate superfluous lem entries
 
 * fix oracc.museum ePSD2 OID URL bug
 
@@ -82,3 +85,4 @@
 * what's up with ŠAR₂×KASKAL on HI page?
 
 * emit @fake attr in XML on PN etc
+
