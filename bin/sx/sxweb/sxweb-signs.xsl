@@ -816,9 +816,18 @@
 
 <xsl:template name="sws-sel-summary">
   <td>
-    <a href="{concat('/',/*/@project,'/signlist/',../@xml:id,'/',@xml:id,'/index.html')}">
-      <span class="snames"><xsl:value-of select="ancestor-or-self::sl:sign/@n"/></span>
-    </a>    
+    <xsl:choose>
+      <xsl:when test="self::sl:form">
+	<a href="{concat('/',/*/@project,'/signlist/',../../@xml:id,'/',../@xml:id,'/index.html')}">
+	  <span class="snames"><xsl:value-of select="@n"/></span>
+	</a>
+      </xsl:when>
+      <xsl:otherwise>
+	<a href="{concat('/',/*/@project,'/signlist/',../@xml:id,'/',@xml:id,'/index.html')}">
+	  <span class="snames"><xsl:value-of select="ancestor-or-self::sl:sign/@n"/></span>
+	</a>
+      </xsl:otherwise>
+    </xsl:choose>
   </td>
   <td><xsl:value-of select="sl:ucun"/></td>
   <td>

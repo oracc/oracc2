@@ -116,7 +116,7 @@ sl.form	   = element sl:form {
           | sl.uage
           | sl.ucun)*),
       sl.lemmas?,
-      sl.v*,
+      sl.xv*,
       sl.sys*,
       sl.images?,
       element sl:inherited {
@@ -230,8 +230,8 @@ sl.pname =
   element sl:pname {
     attribute n { text }
   }
-sl.v =
-  element sl:v {
+
+slvattr =
     attribute comment { xsd:NCName }?,
     attribute deprecated { xsd:NCName }?,
     attribute n { text },
@@ -239,7 +239,22 @@ sl.v =
     attribute type { xsd:NCName }?,
     attribute uncertain { xsd:NCName }?,
     attribute xml:lang { text }?,
-    attribute hid { text }?,
+    attribute hid { text }?
+
+sl.v =
+  element sl:v {
+    slvattr,
+    sl.stats?,
+    sl.name?,
+    sl.proof?,
+    sl.lemmas?,
+    (sl.inote | sl.lit | sl.note)*
+  }
+
+sl.xv =
+  element sl:v {
+    slvattr,
+    attribute xv { "1" }, 
     sl.stats?,
     sl.name?,
     sl.proof?,

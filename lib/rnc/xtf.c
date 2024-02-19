@@ -195,6 +195,7 @@ struct xnn_xname xtf_anames[] =
   { "xtr:type", "http://oracc.org/ns/xtr/1.0:type" },
   { "xtr:unit", "http://oracc.org/ns/xtr/1.0:unit" },
   { "xtr:uref", "http://oracc.org/ns/xtr/1.0:uref" },
+  { "xv", "xv" },
   { NULL, NULL },
 };
 struct xnn_attr xtf_abases[] =
@@ -369,6 +370,7 @@ struct xnn_attr xtf_abases[] =
   { { "xtr:type",NULL } , { "http://oracc.org/ns/xtr/1.0:type",NULL } },
   { { "xtr:unit",NULL } , { "http://oracc.org/ns/xtr/1.0:unit",NULL } },
   { { "xtr:uref",NULL } , { "http://oracc.org/ns/xtr/1.0:uref",NULL } },
+  { { "xv",NULL } , { "xv",NULL } },
   { { NULL,NULL } , { NULL,NULL } },
 };
 struct xnn_xname xtf_enames[] =

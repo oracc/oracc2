@@ -51,17 +51,14 @@ main(int argc, char *const *argv)
 	{
 	  total += count;
 	  hash_add(sem, t, (void*)(uintptr_t)count);
-	  /*list_add(seq, t);*/
 	}
       else if ('.' == t[strlen((ccp)t)-1])
 	{
 	  hash_add(bis, t, (void*)(uintptr_t)count);
-	  /*list_add(seq, t);*/
 	}
       else
 	{
 	  hash_add(ter, t, (void*)(uintptr_t)count);
-	  /*list_add(seq, t);*/
 	}
     }
 
@@ -73,6 +70,20 @@ main(int argc, char *const *argv)
     {
       int count = (uintptr_t)hash_find(sem, (uccp)k[i]);
       printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
+    }
+  
+  k = hash_keys(bis);
+  for (i = 0; k[i]; ++i)
+    {
+      int count = (uintptr_t)hash_find(bis, (uccp)k[i]);
+      char parent[strlen(k[i])+1], *e;
+      strcpy(parent,k[i]);
+      /* The parent consists of the first segment */
+      e = strchr(parent,'.');
+      if (*e)
+	strcpy(e,"..");
+      int pcount = (uintptr_t)hash_find(sem, (uccp)parent);
+      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)pcount));
     }
   
   k = hash_keys(ter);

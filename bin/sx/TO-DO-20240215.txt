@@ -77,10 +77,9 @@
   -display indexed lemma that only have sign
   -get lemma that have sign.form.0 into XML and display them
   -reduplicated forms don't count as absolute and also generate superfluous lem entries
+  -why do lam/lem₄ not appear in Sumerian writings in gudea/NE?
 
 * fix oracc.museum ePSD2 OID URL bug
-
-* why do lam/lem₄ not appear in Sumerian writings in gudea/NE?
 
 * what's up with ŠAR₂×KASKAL on HI page?
 

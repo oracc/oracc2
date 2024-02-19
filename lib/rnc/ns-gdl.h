@@ -140,6 +140,7 @@ enum gdl_a_type
   gdl_a_xtr_type,
   gdl_a_xtr_unit,
   gdl_a_xtr_uref,
+  gdl_a_xv,
   gdl_a_enum_top
 };
 

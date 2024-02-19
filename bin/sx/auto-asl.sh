@@ -18,7 +18,7 @@ if [ -r "00lib/auto-asl.txt" ]; then
 fi
 
 tok2asl $h -P $project $mopt -S auto $gtoks >01tmp/auto.asl
-sx -e -c 01tmp/auto.asl >>01tmp/auto.asl
+sx -p ogsl -e -c 01tmp/auto.asl >>01tmp/auto.asl
 libdata=${ORACC_BUILDS}/lib/data
 for a in signlist-structure-top.xml signlist-structure-bot.xml ; do
     if [ ! -r 00lib/$a ]; then

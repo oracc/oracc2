@@ -99,7 +99,12 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 					  for (m = 0; m < sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues; ++m)
 					    {
 					      struct sl_inst *v = sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m];
-					      if (v->inherited && v->u.v->atf)
+					      if (!v->inherited)
+						{
+						  f->val(f, sl, v, sx_pos_inst);
+						  f->not(f, sl, v);
+						}
+					      else if (v->inherited && v->u.v->atf)
 						{
 						  f->val(f, sl, v, sx_pos_inst);
 						  f->not(f, sl, v);

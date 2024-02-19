@@ -872,7 +872,13 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 
 	  list_add(a, "n");
 	  list_add(a, (void*)xmlify(v->u.v->name));
-  
+
+	  if (v->parent_f)
+	    {
+	      list_add(a, "xv");
+	      list_add(a, "1");
+	    }
+	  
 	  if (v->u.v->sort > 0)
 	    (void)sprintf(scode, "%d", v->u.v->sort);
 	  if (*scode)

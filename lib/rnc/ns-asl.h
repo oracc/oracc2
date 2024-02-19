@@ -140,6 +140,7 @@ enum asl_a_type
   asl_a_xtr_type,
   asl_a_xtr_unit,
   asl_a_xtr_uref,
+  asl_a_xv,
   asl_a_enum_top
 };
 

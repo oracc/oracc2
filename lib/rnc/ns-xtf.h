@@ -181,6 +181,7 @@ enum xtf_a_type
   xtf_a_xtr_type,
   xtf_a_xtr_unit,
   xtf_a_xtr_uref,
+  xtf_a_xv,
   xtf_a_enum_top
 };
 

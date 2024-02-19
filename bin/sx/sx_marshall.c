@@ -706,8 +706,10 @@ sx_marshall(struct sl_signlist *sl)
   for (i = 0; i < sl->nsigns; ++i)
     {
       struct sl_sign *sp = sl->signs[i];
-      sx_idata_sign(sl, sp);
-      sx_ldata_sign_inst(sl, sp->inst);
+      if ('s' == sp->inst->type)
+	sx_idata_sign(sl, sp);
+      if ('s' == sp->inst->type)
+	sx_ldata_sign_inst(sl, sp->inst);
       if (sp->hlentry)
 	{
 	  int nslsts, j;

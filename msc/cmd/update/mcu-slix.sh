@@ -33,7 +33,7 @@ fi
 if [ "$asl" != "" ]; then
     echo $0: updating $asl
     # check signlist
-    sx -c $asl
+    sx $UP -c $asl
     if [ $? -eq 0 ]; then
 	sx $UP -s $asl >02pub/sl/sl.tsv
 	slix 02pub/sl/sl.tsv
@@ -42,7 +42,7 @@ if [ "$asl" != "" ]; then
 	fi
 	echo "$0: sx $UP $tis -X 02xml/sl.xml $asl"
 	sx $UP $tis -L01tmp/cbd.tok -X 02xml/sl.xml $asl  
-	sx -S $asl | tee 02pub/sortcodes.tsv | \
+	sx $UP -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
 	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml
     else
