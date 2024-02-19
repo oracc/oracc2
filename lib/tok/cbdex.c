@@ -3,6 +3,27 @@
 
 #define cdup(s)	(ccp)hpool_copy((uccp)(s), cp->chp->p)
 
+static char *
+strip_lang(char *s)
+{
+  char *orig = malloc(strlen(s)+1);
+  char *t = orig;
+  while (*s)
+    {
+      if ('%' == *s)
+	{
+	  while (*s && ':' != *s)
+	    ++s;
+	  if (*s)
+	    ++s;
+	}
+      else
+	*t++ = *s++;
+    }
+  *t = '\0';
+  return orig;
+}
+
 struct cbdex_header *
 cbdex_init(void)
 {
@@ -48,8 +69,10 @@ cbdex_loc(char *lp, struct cbdex *cp)
     }
   else if ('B' == *lp) /* base */
     {
-      cp->base = cdup(f[2]);
+      char *sl = strip_lang(f[2]);
+      cp->base = cdup(sl);
       cp->bcnt = cdup(f[3]);
+      free(sl);
     }
   else
     fprintf(stderr, "cbdex_loc: internal error: unhandled location code '%c'\n", *lp);
