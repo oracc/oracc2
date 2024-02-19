@@ -582,9 +582,10 @@
 
 <xsl:template name="sws-lemmas-by-pos-sub"
   	      ><xsl:param name="nodes"
+  	      /><xsl:param name="sorf"
 	      /><xsl:for-each
-		   select="$nodes"
-		   ><esp:link notarget="yes" url="/{/*/@project}/{@oid}"
+	      select="$nodes[not(ancestor::sl:form) or $sorf='form']"
+	      ><esp:link notarget="yes" url="/{/*/@project}/{@oid}"
 			      ><span class="asl-lem-base"><xsl:value-of select="@base"/></span><xsl:text> = </xsl:text
 			      ><xsl:value-of select="@n"
 			      /><xsl:text> </xsl:text
@@ -605,6 +606,7 @@
 <xsl:template name="sws-lemmas-by-pos">
   <xsl:param name="nodes"/>
   <xsl:param name="type"/>
+  <xsl:param name="sorf"/>
   <xsl:param name="group-label" select="''"/>
   <xsl:if test="count($nodes)>0">
     <xsl:choose>
@@ -613,6 +615,7 @@
 	   ><span class="sl-ihead-h"><xsl:value-of select="$type"/></span
 	   ><xsl:call-template name="sws-lemmas-by-pos-sub"
 	   ><xsl:with-param name="nodes" select="$nodes"
+	   /><xsl:with-param name="sorf" select="$sorf"
 	   /></xsl:call-template></p>
       </xsl:when>
       <xsl:otherwise>
@@ -666,6 +669,7 @@
 	<xsl:call-template name="sws-lemmas-by-pos">
 	  <xsl:with-param name="nodes" select=".//sl:lemmas/*[@gpos='a']"/>
 	  <xsl:with-param name="type" select="'SUMERIAN'"/>
+	  <xsl:with-param name="sorf" select="local-name(.)"/>
 	</xsl:call-template>
 	<xsl:call-template name="sws-lemmas-via-merge-absolute"/>
 	<!--
@@ -682,7 +686,7 @@
 	-->
 	<xsl:if test="count($lnodes[not(@gpos='a')])>0">
 	  <p><span class="sl-ihead">&#xa0;</span>
-	  <esp:link notarget="yes" url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'-sux.html')}"
+	  <esp:link notarget="yes" url="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-sux.html')}"
 		    >See all information on Sumerian words written with the <xsl:value-of
 		    select="@n"/> sign</esp:link>
 	  </p>
