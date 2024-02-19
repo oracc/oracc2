@@ -711,6 +711,9 @@
 	<span class="v-ok"><xsl:value-of select="@n"/></span>
       </xsl:otherwise>
     </xsl:choose>
+    <xsl:if test="@icnt">
+      <span class="asl-lem-cnt">&#xa0;<xsl:text>(</xsl:text><xsl:value-of select="@icnt"/><xsl:text>×)</xsl:text></span>
+    </xsl:if>
     <xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if>
   </xsl:for-each>
   <xsl:text>.</xsl:text>

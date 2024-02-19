@@ -17,7 +17,6 @@
 * emit @fake attr in XML on PN etc
 
 * fix Sumerian lemma formatting;
-  x-remove %sux: from second memb of compound bases
   -use ePSD lemma for Sumerian in OGSL
 
 * Sign images
@@ -58,11 +57,6 @@
   -skip incorrect members of corrected constructs in tokx
   -skip signs in reordering
   -skip signs with @fake=1 (N, PN, GN, etc.)
-  -display indexed lemma that only have sign
-  -get lemma that have sign.form.0 into XML and display them
   -reduplicated forms don't count as absolute and also generate superfluous lem entries
-  -why do lam/lem₄ not appear in Sumerian writings in gudea/NE?
-
-* fix oracc.museum ePSD2 OID URL bug
 
 * what's up with ŠAR₂×KASKAL on HI page?
