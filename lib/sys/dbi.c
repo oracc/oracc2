@@ -1318,25 +1318,33 @@ dbi_open (const char *name, const char *dir)
   sprintf(tmp->h_fname, "%s/%s.dbh", dir, name);
   sprintf(tmp->i_fname, "%s/%s.dbi", dir, name);
   tmp->h_fp = xfopen (tmp->h_fname, "rb");
-  xxfread (tmp->h_fname, TRUE, &tmp->h, sizeof (Dbi_index_hdr), 1, tmp->h_fp);
-  tmp->i_fp = xfopen (tmp->i_fname, "rb");
-  if (tmp->h.ht_clash_count)
+  if (tmp->h_fp)
     {
-      tmp->clash_table = malloc ((size_t)tmp->h.ht_clash_count * sizeof (Clash_hdr));
-      tmp->clash_indexes = malloc ((size_t)tmp->h.ht_clash_indexes_count * sizeof (Unsigned32));
-      xxfread (tmp->h_fname, TRUE, 
-	      tmp->clash_table, sizeof (Clash_hdr), (size_t)tmp->h.ht_clash_count, 
-	      tmp->h_fp);
-      xxfread (tmp->h_fname, TRUE, 
-	      tmp->clash_indexes, sizeof (Unsigned32), (size_t)tmp->h.ht_clash_indexes_count, 
-	      tmp->h_fp);
+      xxfread (tmp->h_fname, TRUE, &tmp->h, sizeof (Dbi_index_hdr), 1, tmp->h_fp);
+      tmp->i_fp = xfopen (tmp->i_fname, "rb");
+      if (tmp->h.ht_clash_count)
+	{
+	  tmp->clash_table = malloc ((size_t)tmp->h.ht_clash_count * sizeof (Clash_hdr));
+	  tmp->clash_indexes = malloc ((size_t)tmp->h.ht_clash_indexes_count * sizeof (Unsigned32));
+	  xxfread (tmp->h_fname, TRUE, 
+		   tmp->clash_table, sizeof (Clash_hdr), (size_t)tmp->h.ht_clash_count, 
+		   tmp->h_fp);
+	  xxfread (tmp->h_fname, TRUE, 
+		   tmp->clash_indexes, sizeof (Unsigned32), (size_t)tmp->h.ht_clash_indexes_count, 
+		   tmp->h_fp);
+	}
+      tmp->suspended = FALSE;
+      tmp->data_buf_len = 0;
+      tmp->data = NULL;
+      tmp->each_index = 0;
+      tmp->aliases = NULL;
+      return tmp;
     }
-  tmp->suspended = FALSE;
-  tmp->data_buf_len = 0;
-  tmp->data = NULL;
-  tmp->each_index = 0;
-  tmp->aliases = NULL;
-  return tmp;
+  else
+    {
+      free(tmp);
+      return NULL;
+    }
 }
 
 void
