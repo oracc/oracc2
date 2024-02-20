@@ -12,8 +12,8 @@
 
 <xsl:output method="text" encoding="utf-8"/>
   
-<xsl:variable name="u" select="'ŋḫšṣṭABCDEFGŊHḪIJKLMNOPQRSŠṢTṬUVWXYZ₀₁₂₃₄₅₆₇₈₉ₓ×|'"/>
-<xsl:variable name="a" select="'jhcfvabcdefgjhhijklmnopqrscftvuvwxyz0123456789x*'"/>
+<xsl:variable name="u" select="'ʾāŋḫšṣṭABCDEFGŊHḪIJKLMNOPQRSŠṢTṬUVWXYZ₀₁₂₃₄₅₆₇₈₉ₓ×|'"/>
+<xsl:variable name="a" select="'yajhcfvabcdefgjhhijklmnopqrscftvuvwxyz0123456789x*'"/>
 
 <xsl:template name="out-n">
   <xsl:param name="n" select="@n"/>

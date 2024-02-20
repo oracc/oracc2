@@ -18,6 +18,8 @@ function cmap (chr) {
 	    return "x";
 	} else if (chr == 'ṣ') {
 	    return 'f';
+	} else if (chr == 'ś') {
+	    return 'ss';
 	} else if (chr == 'ṭ') {
 	    return 'v';
 	} else if (chr == 'ḫ') {
@@ -40,6 +42,37 @@ function kmap (str) {
 }
 
 function slpage () {
+    var form=document.getElementById('sl');
+    // alert('form='+form);                                                                                                         
+    var key=document.getElementById('k').value;
+    // alert('key='+key);                                                                                                           
+    var mkey = kmap(key);
+    // alert(mkey);                                                                                                                 
+    // alert('mkey='+mkey);                                                                                                         
+    var oc = mkey.charCodeAt(0) - "a".charCodeAt(0);
+    if (oc >= 0 && oc <= 26) {
+        var ao = aa[oc];
+        // alert(ao);                                                                                                               
+        var oid=ao[mkey];
+        if (oid) {
+            // alert('oid='+oid);                                                                                                   
+            if (oid.startsWith("selpages/")) {
+                window.location=projpath+oid+'.html';
+            } else {
+                window.location=projpath+oid+'/index.html';
+            }
+        } else {
+            if (key !== mkey) {
+                key += ' (> '+mkey+')';
+            }
+            alert('Nothing found for '+key+': if this is a corpus signlist that value may not be known in this corpus');
+        }
+    } else {
+        alert('Invalid lookup table key "'+key+'": keys must begin with a letter');
+    }
+}
+
+function xslpage () {
     var form=document.getElementById('sl');
     // alert('form='+form);
     var key=document.getElementById('k').value;
