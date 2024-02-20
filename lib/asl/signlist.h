@@ -43,6 +43,10 @@ struct sl_signlist
   struct sl_inst *notes;/* Allow inotes etc., after @signlist */
   Hash *listdefs; 	/* Hash of signlist names; value is struct sl_listdef */
   Hash *sysdefs; 	/* Hash of system names; value is struct sl_sysdef */
+  Hash *hkeys;		/* Hash of SIGN.FORM.VALUE keys point to
+			   sl_inst for sign/form/v; unlike tokens
+			   these use symbolic names, e.g., A.. A..a
+			   A.LAK796.a */
   Hash *htoken; 	/* Every token that is a sign/form/list/value/base
 			   as a struct sl_token * */
   Hash *hsentry; 	/* All the @sign/@sign- entries in the signlist */
@@ -213,6 +217,7 @@ struct sl_inst
   List *notes;			/* A list of struct sl_note * */
   List *sys;			/* A list of @sys in a sign or form */
   const char *lang; 	  	/* this is inline in the @v; an x-value could have a lang with one sign but not another */
+  unsigned const char *key;	/* SIGN.FORM.VALUE key for this inst */
   Mloc mloc;
   Mloc eloc;			/* Mloc for @end sign or @@ */
   Boolean valid; /* doesn't have a - after it */
@@ -462,5 +467,8 @@ extern void asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned cha
 
 extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl);
 extern struct sl_sign *asl_form_as_sign(struct sl_signlist *sl, struct sl_form *f);
+
+extern unsigned const char *asl_make_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *s, struct sl_inst *f, struct sl_inst *v);
+extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval, struct sl_inst *s, struct sl_inst *f, struct sl_inst *v);
 
 #endif/*SIGNLIST_H_*/

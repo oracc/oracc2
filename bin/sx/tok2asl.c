@@ -22,6 +22,7 @@ int stdinput = 0;
 Hash *h_merger;
 Hash *h_merges_cand;
 Hash *h_merges_seen;
+Hash *h_oids;
 
 void
 asl_input(const char *argfile)
@@ -80,6 +81,7 @@ load_mergers(void)
   h_merger = hash_create(256);
   h_merges_cand = hash_create(256);
   h_merges_seen = hash_create(256);
+
   lp = loadfile_lines3((uccp)mergers, &nline, &fmem);
   int i;
   for (i = 0; i < nline; ++i)
@@ -168,6 +170,7 @@ main(int argc, char **argv)
   if (options(argc, argv, "ceh:lm:o:P:S:s"))
     exit(1);
 
+  h_oids = hash_create(1024);
   asl_input(argv[optind]);
   asl_output(outfile);
 
@@ -202,6 +205,17 @@ main(int argc, char **argv)
       if ('g' == *lp)
 	{
 	  char **ff = tab_split(lp);
+	  char *soid = NULL, *foid = NULL;
+	  soid = ff[1];
+	  foid = strchr(ff[1], '.');
+	  *foid++ = '\0';
+	  if ('.' == *foid)
+	    foid = NULL;
+	  else
+	    {
+	      char *e = strchr(foid, '.');
+	      *e = '\0';
+	    }	  
 	  Gsig *gp = gsig_parse_alloc(NULL);
 	  gp = gsig_parse(ff[2], gp, NULL);
 	  if (gp)
@@ -222,14 +236,25 @@ main(int argc, char **argv)
 		      Hash *hs, *hf;
 
 		      if (!(hs = hash_find(h, (ucp)gp->sname)))
-			hash_add(h, pool_copy((ucp)gp->sname,p), hs = hash_create(32));
+			{
+			  uccp sp =  pool_copy((ucp)gp->sname,p);
+			  hash_add(h, sp, hs = hash_create(32));
+			  hash_add(h_oids, sp, pool_copy((uccp)soid,p));
+			}
+
+		      uccp fp = NULL;
+		      if (*gp->fname && !(fp = hash_exists(h_oids, (uccp)gp->fname)))
+			{
+			  fp = pool_copy((uccp)gp->fname, p);
+			  hash_add(h_oids, fp, pool_copy((uccp)foid,p));
+			}
 
 		      if (*gp->fname || *gp->value)
 			{
-			  const char *ffs = (*gp->fname ? gp->fname : "-");
+			  const char *ffs = (*gp->fname ? (ccp)fp : "-");
 
 			  if (!(hf = hash_find(hs, (ucp)ffs)))
-			    hash_add(hs, pool_copy((ucp)ffs,p), hf = hash_create(32));
+			    hash_add(hs, (ucp)ffs, hf = hash_create(32));
 		      
 			  if (*gp->value && !hash_find(hf, (ucp)gp->value))
 			    hash_add(hf, pool_copy((ucp)gp->value, p), "");
@@ -293,7 +318,8 @@ main(int argc, char **argv)
 
   for (i = 0; sk[i]; ++i)
     {
-      fprintf(o, "@sign %s\n", sk[i]);
+      char *soid = hash_find(h_oids, (uccp)sk[i]);
+      fprintf(o, "@sign %s\n@oid %s\n", sk[i], soid);
       Hash *f = hash_find(h, (ucp)sk[i]);
       Hash *v = hash_find(f, (ucp)"-");
       if (v)
@@ -308,7 +334,8 @@ main(int argc, char **argv)
       for (j = 0; fk[j]; ++j)
 	if (strcmp(fk[j], "-"))
 	  {
-	    fprintf(o, "@form %s\n", fk[j]);
+	    char *foid = hash_find(h_oids, (uccp)fk[j]);
+	    fprintf(o, "@form %s\n@oid %s\n", fk[j], foid);
 	    Hash *v = hash_find(f, (ucp)fk[j]);
 	    if (v)
 	      {
@@ -321,7 +348,10 @@ main(int argc, char **argv)
 	  }
       const char *m = hash_find(h_merger, (uccp)sk[i]);
       if (m)
-	fprintf(o, "@merge %s\n", m);
+	{
+	  char *moid = hash_find(h_oids, (uccp)m);
+	  fprintf(o, "@merge %s\n@oid %s\n", m, moid);
+	}
       fprintf(o, "@end sign\n\n");
     }
   

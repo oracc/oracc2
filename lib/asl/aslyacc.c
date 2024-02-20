@@ -5,6 +5,8 @@
 #include "signlist.h"
 #include "asl.tab.h"
 
+extern int asllex_destroy(void);
+
 struct sl_signlist *
 aslyacc(const char *file)
 {
@@ -12,8 +14,11 @@ aslyacc(const char *file)
     curraslfile = aslfile = file;
   else
     curraslfile = aslfile = "<stdin>";
-  /*curr_asl = asl_bld_init();*/ /* This is done via new @signlist command */
+  curr_asl = NULL; /* Must do this to ensure that successive
+		      aslparse() do not read into the same struct
+		      sl_signlist */
   aslparse();
+  asllex_destroy();
   /*asl_bld_term(sl);*/ /* This needs to be called after the signlist is done with */
   return curr_asl;
 }

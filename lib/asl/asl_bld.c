@@ -24,6 +24,34 @@ static unsigned const char *asl_oid_lookup(unsigned const char *key)
   return hash_find(oids, key);
 }
 
+unsigned const char *
+asl_make_key(Mloc *locp, struct sl_signlist *sl, 
+	     struct sl_inst *isp, struct sl_inst *ifp, struct sl_inst *ivp)
+{
+  const char *s = isp ? (ccp)isp->u.s->name : "";
+  const char *f = ifp ? (ccp)ifp->u.f->name : "";
+  const char *v = ivp ? (ccp)ivp->u.v->name : "";
+  if (*s)
+    {
+      char buf[strlen(s)+strlen(f)+strlen(v)+3];
+      sprintf(buf, "%s.%s.%s", s, f, v);
+      if (hash_find(sl->hkeys, (uccp)buf))
+	mesg_verr(locp, "duplicate sign/form/value %s", buf);
+      else
+	return pool_copy((ucp)buf, sl->p);
+    }
+  return NULL;
+}
+
+void
+asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval,
+	    struct sl_inst *s, struct sl_inst *f, struct sl_inst *v)
+{
+  unsigned const char *k = asl_make_key(locp, sl, s, f, v);
+  if (k)
+    hash_add(sl->hkeys, (hval->key = k), hval);
+}
+
 Hash *
 asl_get_oids(void)
 {
@@ -46,6 +74,7 @@ asl_bld_init(void)
 {
   struct sl_signlist *sl = calloc(1, sizeof(struct sl_signlist));
   sl->htoken = hash_create(4192);
+  sl->hkeys = hash_create(4192);
   sl->listdefs = hash_create(7);
   sl->sysdefs = hash_create(3);
   sl->hsentry = hash_create(2048);
@@ -501,6 +530,7 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 	  i->query = (Boolean)query;
 	  i->literal = literal;
 	  i->lv = memo_new(sl->m_lv_data);
+	  asl_add_key(locp, sl, i, sl->curr_sign->inst, i, NULL);
       
 	  if (!sl->curr_sign->hfentry)
 	    sl->curr_sign->hfentry = hash_create(128);
@@ -981,6 +1011,7 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
       sl->curr_inst = i;
       i->u.s = s;
       hash_add(sl->hsentry, s->name, s);
+      asl_add_key(locp, sl, i, i, NULL, NULL);
       asl_register_sign(locp, sl, s);
     }
   s->type = type;
@@ -1271,6 +1302,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   else
     i->parent_s = sl->curr_sign->inst;
   sl->curr_inst = i;
+
   
   /* If we are processing a sign and the v is already in
      signlist's sign-values it's an error for it to occur again */
@@ -1365,6 +1397,11 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   i->u.v = v;
   i->u.v->xvalue = xvalue;
   sl->curr_value = i;
+
+  if (sl->curr_form)
+    asl_add_key(locp, sl, i, sl->curr_sign->inst, i->parent_f, i);
+  else
+    asl_add_key(locp, sl, i, sl->curr_sign->inst, NULL, i);
 }
 
 /* The lexer rules only allow the flags in the order:

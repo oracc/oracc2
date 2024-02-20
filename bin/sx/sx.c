@@ -39,6 +39,7 @@ int list_dump = 0;
 int list_names_mode = 0;
 int listdef_check = 0;
 int oid_list = 0;
+int parent_imports = 0;
 int use_oid_tab = 0;
 int sll_output = 0;
 int sortcode_output = 0;
@@ -51,6 +52,8 @@ int validate = 1;
 
 extern int asl_raw_tokens; /* ask asl to produce list of @sign/@form/@v tokens */
 extern int ctrace;
+
+struct sl_signlist *parent_asl;
 
 int boot_mode = 0;
 int check_mode = 0;
@@ -81,7 +84,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eg:iI:jJ:L:m:nMoOp:sStTuUxX:?");
+  options(argc, argv, "abcCD:d:eg:iI:jJ:L:m:nMoOP:p:sStTuUxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -136,10 +139,22 @@ main(int argc, char * const*argv)
   mesg_init();
   nodeh_register(treexml_o_handlers, NS_SL, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_SL, treexml_c_generic);
+
   gdl_init();
   asl_init();
   sl = aslyacc(file);
 
+  if (parent_imports)
+    {
+      const char *ogslfile = "/home/oracc/ogsl/00lib/ogsl.asl";
+      if (!freopen(ogslfile, "r", stdin))
+	{
+	  fprintf(stderr, "sx: unable to freopen %s to stdin\n", ogslfile);
+	  exit(1);
+	}
+      parent_asl = aslyacc(ogslfile);
+    }
+  
   if (sl)
     {
       if (list_names_mode)
@@ -342,6 +357,8 @@ opts(int opt, const char *arg)
     case 'o':
       ++oid_list;
       break;
+    case 'P':
+      parent_imports = 1;
     case 'p':
       parent_sl_project = arg;
       break;

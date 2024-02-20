@@ -48,9 +48,6 @@
 
 * Fix GCSL images; some could appear but are broken; ones from compounds never made it in
 
-* sort homophone graphemes
-  -add @sort to sl:base
-
 * tokx
   -skip incorrect members of corrected constructs in tokx
   -skip signs in reordering
