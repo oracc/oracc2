@@ -349,8 +349,13 @@ main(int argc, char **argv)
       const char *m = hash_find(h_merger, (uccp)sk[i]);
       if (m)
 	{
+#if 1
+	  fprintf(o, "@merge %s\n", m);
+#else
+	  /* This doesn't work because @merge can be a list of signs like @merge TUŠ DUR₂ EŠ₃ */
 	  char *moid = hash_find(h_oids, (uccp)m);
 	  fprintf(o, "@merge %s\n@oid %s\n", m, moid);
+#endif
 	}
       fprintf(o, "@end sign\n\n");
     }

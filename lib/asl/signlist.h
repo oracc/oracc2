@@ -218,6 +218,7 @@ struct sl_inst
   List *sys;			/* A list of @sys in a sign or form */
   const char *lang; 	  	/* this is inline in the @v; an x-value could have a lang with one sign but not another */
   unsigned const char *key;	/* SIGN.FORM.VALUE key for this inst */
+  const char *atoid;		/* An OID given with @oid */
   Mloc mloc;
   Mloc eloc;			/* Mloc for @end sign or @@ */
   Boolean valid; /* doesn't have a - after it */
@@ -464,6 +465,7 @@ extern void asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign
 
 extern void asl_bld_note(Mloc *locp, struct sl_signlist *sl, const char *tag, const char *txt);
 extern void asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
+extern void asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 
 extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl);
 extern struct sl_sign *asl_form_as_sign(struct sl_signlist *sl, struct sl_form *f);

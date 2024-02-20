@@ -1149,6 +1149,18 @@ asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
 }
 
 void
+asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
+{
+  if (sl->curr_inst)
+    {
+      if ('s' == sl->curr_inst->type || 'f' == sl->curr_inst->type)
+	sl->curr_inst->atoid = (ccp)n;
+      else
+	mesg_verr(locp, "misplaced @oid--only allowed in @sign or @form");
+    }
+}
+
+void
 asl_bld_uhex(Mloc *locp, struct sl_signlist *sl, const unsigned char *t)
 {
   if (asl_sign_guard(locp, sl, "uhex"))

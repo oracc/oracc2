@@ -35,7 +35,7 @@ int minus_flag = 0;
 		UAGE USEQ UTF8 UMAP UNAME UNOTE UPUA
 		SIGNLIST PROJECT LISTDEF LISTNAME LREF SREF
 		SYSDEF SYSNAME SYS SYSGOESTO SYSTEXT
-		SMAP LITERAL IMAGES MERGE
+		SMAP LITERAL IMAGES MERGE OID
 
 %nterm  <text>  anynote atftoken atftokens lang longtext token
 
@@ -75,6 +75,7 @@ atcmd:
 	| atsign
         | atlref
         | atsref
+        | atoid
         | ataka
         | atsmap
         | atcomp
@@ -113,6 +114,10 @@ atimages:
 
 atmerge:
 	  MERGE TEXT 		    	{ asl_bld_merge(&@1, curr_asl, (uccp)$2); }
+	;
+
+atoid:
+	  OID TEXT 		    	{ asl_bld_oid(&@1, curr_asl, (uccp)$2); }
 	;
 
 atsign:

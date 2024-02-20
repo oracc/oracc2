@@ -128,6 +128,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@lit/[ \t]+	       		{ Tcmd(LIT,S); }
 ^@merge/[ \t]+       		{ Tcmd(MERGE,S); }
 ^@note/[ \t]+       		{ Tcmd(NOTE,S); }
+^@oid/[ \t]+       		{ Tcmd(OID,S); }
 ^@ref/[ \t]+	       		{ Tcmd(REF,S); }
 ^@ucun/[ \t]+			{ Tcmd(UTF8,S); }
 ^@umap/[ \t]+			{ Tcmd(UMAP,S); }
