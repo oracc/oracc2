@@ -67,10 +67,14 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
   for (i = 0; i < nkeys; ++i)
     {
       List *lp = hash_find(sl->homophones, (uccp)keys[i]);
+      struct sl_token *tp = hash_find(sl->htoken, (uccp)keys[i]);
+      char ssort[32];
+      sprintf(ssort,"%d",tp->s);
       ratts = rnvval_aa("x",
 			"xml:id", hash_find(sl->homophone_ids, (uccp)keys[i]),
 			"n", keys[i],
 			"count", itoa(list_len(lp)),
+			"sort", ssort,
 			NULL);
       joxer_ea(&sl->mloc, "sl:base", ratts);
       joxer_ao("j:h");

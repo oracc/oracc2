@@ -48,8 +48,6 @@
 
 * Fix GCSL images; some could appear but are broken; ones from compounds never made it in
 
-* implement per-initial-char hashes in slmap.js via mods to jsmapx
-
 * sort homophone graphemes
   -add @sort to sl:base
 

@@ -1199,6 +1199,14 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   check_flags(locp, (char*)n, &query, &literal);
 
   base = g_base_of(n);
+  struct sl_token *tp = hash_find(sl->htoken,base);
+  if (!tp)
+    {
+      base = pool_copy(base, sl->p);
+      (void)asl_bld_token(locp, sl, (ucp)base, 0); /* guarantee that every base has a sort value */
+    }
+  else
+    base = tp->t;
 
   /* if the base of the new value duplicates a base in the current
      form/sign, it's an error; don't proceed with it, just warn and
@@ -1216,7 +1224,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
 	{
 	  if (!sl->curr_form->lv->hvbases)
 	    sl->curr_form->lv->hvbases = hash_create(1);
-	  hash_add(sl->curr_form->lv->hvbases, pool_copy((uccp)base, sl->p), (void*)n);
+	  hash_add(sl->curr_form->lv->hvbases, (uccp)base, (void*)n);
 	}
     }
   else if (sl->curr_sign)
@@ -1231,7 +1239,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
 	{
 	  if (!sl->curr_sign->hvbases)
 	    sl->curr_sign->hvbases = hash_create(1);
-	  hash_add(sl->curr_sign->hvbases, pool_copy((uccp)base, sl->p), (void*)n);
+	  hash_add(sl->curr_sign->hvbases, (uccp)base, (void*)n);
 	}
     }
   else
@@ -1352,7 +1360,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
       list_add(v->insts, i);
     }
 
-  v->base = pool_copy(base, sl->p);
+  v->base = base;
   
   i->u.v = v;
   i->u.v->xvalue = xvalue;

@@ -748,7 +748,7 @@
 	<p class="sl-hang"
 	    ><span class="sl-ihead-h">HOMOPHONES</span
 	    ><xsl:for-each select="$hnodes"
-	    ><xsl:sort select="@n"/><esp:link notarget="yes"
+	    ><xsl:sort select="@sort" data-type="number"/><esp:link notarget="yes"
 	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link
 	    ><xsl:if test="not(position()=last())"><xsl:text>&#xa0;&#xa0;&#xa0;</xsl:text></xsl:if
 	    ></xsl:for-each

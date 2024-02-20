@@ -43,7 +43,7 @@ struct sl_signlist
   struct sl_inst *notes;/* Allow inotes etc., after @signlist */
   Hash *listdefs; 	/* Hash of signlist names; value is struct sl_listdef */
   Hash *sysdefs; 	/* Hash of system names; value is struct sl_sysdef */
-  Hash *htoken; 	/* Every token that is a sign/form/list/value
+  Hash *htoken; 	/* Every token that is a sign/form/list/value/base
 			   as a struct sl_token * */
   Hash *hsentry; 	/* All the @sign/@sign- entries in the signlist */
   Hash *hfentry; 	/* All @form/@form- entries in signlist; host for sl_form* */
@@ -113,7 +113,7 @@ struct sl_signlist
 
 struct sl_token
 {
-  const unsigned char *t;	/* sign/form/value/list name token */
+  const unsigned char *t;	/* sign/form/value/base/list name token */
   Node *gdl;			/* token as GDL */
   GS_head *gsh;			/* GDL gsort data */
   const char *gsig;		/* return value from gdlsig run on
@@ -139,6 +139,7 @@ struct sl_split_value
   const unsigned char *b;
   int i;
   const char *oid;
+  int s;
 };
 
 /* Note information is stored in a single list so that within a note

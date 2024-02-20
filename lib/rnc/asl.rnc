@@ -281,6 +281,7 @@ sl.base = element sl:base {
     attribute xml:id { xsd:NCName }?,
     attribute n { text },
     attribute count { text },
+    attribute sort { text },
     sl.h*
 }
 sl.h = element sl:h {
