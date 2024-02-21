@@ -333,7 +333,7 @@
   <div class="asl-unicode">
     <table class="itable">
       <tr>
-	<td><span class="im-label">Cun Noto</span></td>
+	<td><span class="im-label">&#xa0;</span></td>
       </tr>
       <tr>
 	<td>
@@ -435,7 +435,7 @@
     <xsl:choose>
       <xsl:when test="string-length(sl:cpds/sl:memb/@oids) &lt; 100">
 	<xsl:for-each select="id(sl:cpds/sl:memb/@oids)">
-	  <esp:link page="{@xml:id}">
+	  <esp:link page="{id(@xml:id)/ancestor-or-self::sl:sign/@xml:id}">
 	    <xsl:choose>
 	      <xsl:when test="sl:ucun">
 		<xsl:value-of select="sl:ucun"/>
@@ -749,8 +749,8 @@
 	    ><span class="sl-ihead-h">HOMOPHONES</span
 	    ><xsl:for-each select="$hnodes"
 	    ><xsl:sort select="@sort" data-type="number"/><esp:link notarget="yes"
-	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><xsl:value-of select="@n"/></esp:link
-	    ><xsl:if test="not(position()=last())"><xsl:text>&#xa0;&#xa0;&#xa0;</xsl:text></xsl:if
+	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><span class="homophone-n"><xsl:value-of select="@n"/></span></esp:link
+	    ><xsl:if test="not(position()=last())"><wbr/></xsl:if
 	    ></xsl:for-each
 	    ></p
 	    ></xsl:if>
