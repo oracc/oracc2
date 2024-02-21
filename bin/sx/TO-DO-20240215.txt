@@ -1,5 +1,3 @@
-* ogsl.asl is not currently sortable
-
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible
   -add sl-ihead where missing
@@ -27,7 +25,7 @@
   -leave oversize signs so the renderer can scale them if need be
 
 * Implement font im-tab support
-  -support use of font for overview
+  x-support use of font for overview
   -support use of image-group for overview
   -including limit overview to chars in image-group/font
   

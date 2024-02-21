@@ -26,11 +26,11 @@ static unsigned const char *asl_oid_lookup(unsigned const char *key)
 
 unsigned const char *
 asl_make_key(Mloc *locp, struct sl_signlist *sl, 
-	     struct sl_inst *isp, struct sl_inst *ifp, struct sl_inst *ivp)
+	     const char *isp, const char *ifp, const char *ivp)
 {
-  const char *s = isp ? (ccp)isp->u.s->name : "";
-  const char *f = ifp ? (ccp)ifp->u.f->name : "";
-  const char *v = ivp ? (ccp)ivp->u.v->name : "";
+  const char *s = isp ? (ccp)isp : "";
+  const char *f = ifp ? (ccp)ifp : "";
+  const char *v = ivp ? (ccp)ivp : "";
   if (*s)
     {
       char buf[strlen(s)+strlen(f)+strlen(v)+3];
@@ -45,7 +45,7 @@ asl_make_key(Mloc *locp, struct sl_signlist *sl,
 
 void
 asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval,
-	    struct sl_inst *s, struct sl_inst *f, struct sl_inst *v)
+	    const char *s, const char *f, const char *v)
 {
   unsigned const char *k = asl_make_key(locp, sl, s, f, v);
   if (k)
@@ -530,7 +530,6 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 	  i->query = (Boolean)query;
 	  i->literal = literal;
 	  i->lv = memo_new(sl->m_lv_data);
-	  asl_add_key(locp, sl, i, sl->curr_sign->inst, i, NULL);
       
 	  if (!sl->curr_sign->hfentry)
 	    sl->curr_sign->hfentry = hash_create(128);
@@ -1011,7 +1010,6 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
       sl->curr_inst = i;
       i->u.s = s;
       hash_add(sl->hsentry, s->name, s);
-      asl_add_key(locp, sl, i, i, NULL, NULL);
       asl_register_sign(locp, sl, s);
     }
   s->type = type;
@@ -1154,7 +1152,13 @@ asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
   if (sl->curr_inst)
     {
       if ('s' == sl->curr_inst->type || 'f' == sl->curr_inst->type)
-	sl->curr_inst->atoid = (ccp)n;
+	{
+	  sl->curr_inst->atoid = (ccp)n;
+	  if ('s' == sl->curr_inst->type)
+	    asl_add_key(locp, sl, sl->curr_inst, (ccp)n, NULL, NULL);
+	  else
+	    asl_add_key(locp, sl, sl->curr_inst, sl->curr_sign->inst->atoid, (ccp)n, NULL);
+	}
       else
 	mesg_verr(locp, "misplaced @oid--only allowed in @sign or @form");
     }
@@ -1411,9 +1415,9 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   sl->curr_value = i;
 
   if (sl->curr_form)
-    asl_add_key(locp, sl, i, sl->curr_sign->inst, i->parent_f, i);
+    asl_add_key(locp, sl, i, sl->curr_sign->inst->atoid, i->parent_f->atoid, (ccp)i->u.v->name);
   else
-    asl_add_key(locp, sl, i, sl->curr_sign->inst, NULL, i);
+    asl_add_key(locp, sl, i, sl->curr_sign->inst->atoid, NULL, (ccp)i->u.v->name);
 }
 
 /* The lexer rules only allow the flags in the order:

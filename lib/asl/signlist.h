@@ -470,7 +470,7 @@ extern void asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char 
 extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl);
 extern struct sl_sign *asl_form_as_sign(struct sl_signlist *sl, struct sl_form *f);
 
-extern unsigned const char *asl_make_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *s, struct sl_inst *f, struct sl_inst *v);
-extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval, struct sl_inst *s, struct sl_inst *f, struct sl_inst *v);
+extern unsigned const char *asl_make_key(Mloc *locp, struct sl_signlist *sl, const char *isp, const char *ifp, const char *ivp);
+extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval, const char *s, const char *f, const char *v);
 
 #endif/*SIGNLIST_H_*/
