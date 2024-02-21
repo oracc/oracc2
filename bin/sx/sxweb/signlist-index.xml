@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<esp:page xmlns:esp="http://oracc.org/ns/esp/1.0"
+	  xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:xh="http://www.w3.org/1999/xhtml"
+	  xmlns:xpd="http://oracc.org/ns/xpd/1.0">
+  <esp:name>Home</esp:name>
+  <esp:title>@@PROJECT@@ Signlist</esp:title>
+  <html>
+    <head/>
+    <body>
+      <p>This Oracc signlist provides a simple lookup to find the
+      sign-pages; from the sign-pages you can find homophones for
+      values, compounds in which signs occur, and other information
+      depending on the project configuration.</p>
+
+      <esp:sh>The Lookup Bar</esp:sh>
+
+      <p>The lookup bar allows you to find sign-pages by typing simple
+      signs--compound signs are not indexed in the lookup bar table.
+      You can type in upper or lower case, but the lookup table only
+      uses lower case, so you don't need to use upper case at all to
+      find sign-pages.  Signs can be given in unicode transliteration
+      or in a simplified transliteration using the following
+      correspondences:</p>
+
+      <table class="pretty" style="width: 25%; margin: auto;">
+	<tr><td>c</td><td>š</td></tr>
+	<tr><td>f</td><td>ṣ</td></tr>
+	<tr><td>ss</td><td>ś</td></tr>
+	<tr><td>h</td><td>ḫ</td></tr>
+	<tr><td>j</td><td>ŋ</td></tr>
+	<tr><td>v</td><td>ṭ</td></tr>
+	<tr><td>'</td><td>ʾ</td></tr>
+	<tr><td>*</td><td>×</td></tr>
+      </table>
+
+      <esp:sh>Homophone Lookup Short-cut</esp:sh>
+      
+      <p>The lookup bar provides a shortcut to the homophones pages by
+      looking for a value with a 0 index, e.g., gu0 (or gu₀).  If
+      there is only one value with the base the sign-page is loaded;
+      if there are multiple values with the base the homophone
+      selection page for the base is loaded.</p>
+
+      <p>Punctuation marks (if they occur in this signlist) can be
+      listed with 'p0'.</p>
+      
+    </body>
+  </html>
+</esp:page>
