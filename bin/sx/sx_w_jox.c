@@ -81,9 +81,20 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
       struct sl_split_value *spv;
       for (spv = list_first(lp); spv; spv = list_next(lp))
 	{
+	  struct sl_token *vp = hash_find(sl->htoken, (uccp)spv->v);
+	  char vsort[32];
+	  if (vp)
+	    sprintf(vsort, "%d", vp->s);
+	  else
+	    *vsort = '\0';
+	  char ssort[32];
+	  if (spv->oid)
+	    sprintf(ssort, "%d", (int)(uintptr_t)hash_find(oid_sort_keys, spv->oid));
 	  ratts = rnvval_aa("x",
 			    "v", spv->v,
 			    "oid", spv->oid,
+			    "vsort", vsort,
+			    "ssort", ssort,
 			    NULL);
 	  joxer_ec(&sl->mloc, "sl:h", ratts);
 	}

@@ -233,7 +233,7 @@ main(int argc, char * const*argv)
 	    fprintf(stderr, "sx: unable to dump @sys data; can't write sx-syss.out\n");
 	}
 
-      if (sortcode_output)
+      if (sortcode_output && !oid_list)
 	sx_sortcodes(sl);
       
       if (listdef_check && !list_dump)

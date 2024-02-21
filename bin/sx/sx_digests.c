@@ -132,6 +132,10 @@ static void
 sx_compound_digest_l_to_d(struct cpd_lists *clp, struct sl_compound_digest *dp)
 {
   dp->memb = (const char **)list2array(clp->memb);
+  /*Not clear this is necessary; in XSLT id(memb) returns memb in
+    document order not in attribute order so sorting is necessary in
+    the XSLT anyway */
+  /*qsort(dp->memb, list_len(clp->memb), sizeof(const char*), (cmp_fnc_t)oid_char_cmp);*/
   dp->initial = (const char **)list2array(clp->initial);
   dp->medial = (const char **)list2array(clp->medial);
   dp->final = (const char **)list2array(clp->final);

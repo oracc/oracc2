@@ -300,7 +300,7 @@
     <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
       <div class="asl-cun-img">
 	<span class="sl-ihead">SIGNS</span>
-	<xsl:call-template name="sws-unicode"/>
+	<xsl:call-template name="sws-cuneiform"/>
 	<xsl:call-template name="sws-images"/>
       </div>
     </xsl:if>
@@ -319,7 +319,7 @@
 <xsl:template name="sws-meta">
   <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds">
     <div class="asl-meta">
-      <!--<xsl:call-template name="sws-unicode"/>-->
+      <xsl:call-template name="sws-unicode"/>
       <xsl:call-template name="sws-lists"/>
       <!--<xsl:call-template name="sws-images"/>-->
       <xsl:call-template name="sws-akas"/>
@@ -329,8 +329,8 @@
   </xsl:if>
 </xsl:template>
 
-<xsl:template name="sws-unicode">
-  <div class="asl-unicode">
+<xsl:template name="sws-cuneiform">
+  <div class="asl-cuneiform">
     <table class="itable">
       <tr>
 	<td><span class="im-label">&#xa0;</span></td>
@@ -358,6 +358,29 @@
 	</td>
       </tr>
     </table>
+  </div>
+</xsl:template>
+
+<xsl:template name="sws-unicode">
+  <div class="asl-unicode">
+    <p>
+      <span class="sl-ihead">UNICODE</span>
+      <span class="sl-ibody">
+	<xsl:choose>
+	  <xsl:when test="sl:ucun">
+	    <xsl:value-of select="sl:ucun/@hex"/>
+	    <xsl:if test="sl:uname">
+	      <xsl:text> = </xsl:text><span class="snames"><xsl:value-of select="sl:uname"/><xsl:text>
+	      (</xsl:text><xsl:value-of select="sl:uage"/><xsl:text>)</xsl:text></span>
+	    </xsl:if>
+	  </xsl:when>
+	  <xsl:when test="sl:useq">
+	    <xsl:value-of select="sl:useq"/>
+	  </xsl:when>
+	  <xsl:otherwise/>
+	</xsl:choose>
+      </span>
+    </p>
   </div>
 </xsl:template>
 
@@ -798,6 +821,8 @@
 	    <xsl:choose>
 	      <xsl:when test="$type='h'">
 		<xsl:for-each select="$nodes">
+		  <xsl:sort select="@vsort" data-type="number"/>
+		  <xsl:sort select="@ssort" data-type="number"/>
 		  <tr>
 		    <td><xsl:value-of select="@v"/></td>
 		    <xsl:for-each select="id(@oid)">
@@ -808,6 +833,7 @@
 	      </xsl:when>
 	      <xsl:otherwise>
 		<xsl:for-each select="$nodes">
+		  <xsl:sort select="@sort" data-type="number"/>
 		  <tr>
 		    <xsl:call-template name="sws-sel-summary"/>
 		  </tr>
@@ -821,6 +847,7 @@
   </xsl:if>
 </xsl:template>
 
+<!-- the context node must be sl:sign or sl:form here -->
 <xsl:template name="sws-sel-summary">
   <td>
     <xsl:choose>

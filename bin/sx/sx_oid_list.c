@@ -4,6 +4,7 @@
 void
 sx_oid_list(struct sl_signlist *sl)
 {
+  extern int sortcode_output;
   int i;
   for (i = 0; i < sl->nsigns; ++i)
     {
@@ -12,7 +13,12 @@ sx_oid_list(struct sl_signlist *sl)
 			    && !s->xref
 			    && (!s->U.urev || strcmp(s->U.urev,"0")) && s->inst->valid))
 	if (s->oid)
-	  printf("%s\t%s\n", s->oid, s->name);
+	  {
+	    if (sortcode_output)
+	      printf("%s\t%d\t%s\n", s->oid, (int)(uintptr_t)hash_find(oid_sort_keys, s->oid), s->name);
+	    else
+	      printf("%s\t%s\n", s->oid, s->name);
+	  }
     }
   for (i = 0; i < sl->nforms; ++i)
     {
@@ -24,7 +30,10 @@ sx_oid_list(struct sl_signlist *sl)
 	    {
 	      if (f->oid && ip->valid)
 		{
-		  printf("%s\t%s\n", f->oid, f->name);
+		  if (sortcode_output)
+		    printf("%s\t%d\t%s\n", f->oid, (int)(uintptr_t)hash_find(oid_sort_keys, f->oid), f->name);
+		  else
+		    printf("%s\t%s\n", f->oid, f->name);
 		  break;
 		}
 	    }

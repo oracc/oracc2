@@ -1,7 +1,13 @@
 #!/bin/sh
 
-function sxinst {    
-    sed "s#@@PROJECT@@#$abbrev#g" $libdata/$1 \
+function sxinst {
+    if [ -r 00lib/$1 ]; then
+	input=00lib/$1
+    else
+	input=$libdata/$1
+    fi
+    echo sxinst $input
+    sed "s#@@PROJECT@@#$abbrev#g" $input \
 	| sed "s#@@project@@#$project#g" \
 	| sed "s#@@hproject@@#$hproject#g" \
 	      >$2
@@ -77,21 +83,21 @@ rm -fr signlist ; mkdir signlist
 )
 
 if [ -r 00lib/signlist-config.xml ]; then
-    cp -a signlist-config.xml signlist/00lib/config.xml
+    cp -a 00lib/signlist-config.xml signlist/00lib/config.xml
 else
     sxinst signlist-config.xml signlist/00lib/config.xml
 fi
 cp -a signlist/00lib/config.xml signlist/02www
 cp -a signlist/00lib/config.xml signlist/02xml
-sxinst signlist-index.html signlist/00lib/signlist-index.html
 sxinst signlist-parameters.xml signlist/00web/00config/parameters.xml
-sxinst signlist-home.xml signlist/00web/home.xml
-sxinst signlist-slform.html signlist/00web/slform.html
+sxinst signlist-index.xml signlist/00web/index.xml
 sxinst signlist-projesp.css signlist/00res/css/projesp.css
-sxinst signlist-sl.css signlist/00res/css/sl.css
 sxinst signlist-projesp.js signlist/00res/js/projesp.js
-sxinst signlist-sl.js signlist/00res/js/sl.js
 sxinst signlist-slpage.js signlist/00res/js/slpage.js
+#sxinst signlist-index.html signlist/00lib/signlist-index.html
+#sxinst signlist-slform.html signlist/00web/slform.html
+#sxinst signlist-sl.js signlist/00res/js/sl.js
+#sxinst signlist-sl.css signlist/00res/css/sl.css
 
 set 00lib/signlist-x-*.xml
 if [ "$1" != "00lib/signlist-x-*.xml" ] ; then
@@ -155,4 +161,4 @@ fi
 #     cp -vaf 00lib/signlist-index.html 02www/index.html ; \
 #     chmod o+r 02www/index.html)
 #fi
-(cd signlist/02www ; mv home.html index.html)
+#(cd signlist/02www ; mv home.html index.html)
