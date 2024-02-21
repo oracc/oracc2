@@ -21,7 +21,7 @@ static Mloc ml;
 Mloc xo_loc;
 FILE *f_xml;
 const char *file;
-int verbose;
+int verbose = 1;
 int status;
 int rnvtrace;
 
@@ -181,7 +181,6 @@ main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
   gdl_unicode = 1;
-
   setlocale(LC_ALL, ORACC_LOCALE);
 
   options(argc, argv, "1abcCdef:gG:ilnop:Prstvw");
@@ -258,6 +257,7 @@ main(int argc, char **argv)
       qsort(ghp, n, sizeof(GS_head*), gsort_cmp);
       for (i = 0; i < n; ++i)
 	fprintf(stdout, "%s\n", ghp[i]->s);
+      gsort_term();
     }
 
   gdlparse_term();

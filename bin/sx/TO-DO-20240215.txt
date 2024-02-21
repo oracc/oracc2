@@ -1,3 +1,9 @@
+* OGSL To-DO
+  - Unicode block in listing
+  - get ePSD in as Sumerian?
+  - lexdata review
+  - force Cuneiform NOTO font
+  
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible
   -add sl-ihead where missing
@@ -13,9 +19,6 @@
   -perhaps more
 
 * emit @fake attr in XML on PN etc
-
-* fix Sumerian lemma formatting;
-  -use ePSD lemma for Sumerian in OGSL
 
 * Sign images
   -set up sign-align middle/top table
