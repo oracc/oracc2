@@ -68,7 +68,7 @@
       </xsl:for-each>
     </xsl:when>
     <xsl:otherwise>      
-      <xsl:value-of select="concat(@n, '0&#x9;selpages/',@xml:id,'&#xa;')"/>
+      <xsl:value-of select="concat(translate(@n,$u,$a), '0&#x9;selpages/',@xml:id,'&#xa;')"/>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
