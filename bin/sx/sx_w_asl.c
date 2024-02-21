@@ -153,6 +153,8 @@ sx_w_a_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
       else
 	{
 	  fprintf(f->fp, "@form%s %s%s%s%s%s\n", minus, s->u.f->name, query, literal, refspace, ref);
+	  if (s->u.f->oid)
+	    fprintf(f->fp, "@oid\t%s\n", s->u.f->oid);
 	  if (s->u.f->pname)
 	    fprintf(f->fp, "@pname\t%s\n", s->u.f->pname);
 	}
@@ -299,6 +301,8 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
       else
 	{
 	  fprintf(f->fp, "\n@sign%s %s%s%s\n", minus, s->u.s->name, query, literal);
+	  if (s->u.s->oid)
+	    fprintf(f->fp, "@oid\t%s\n", s->u.s->oid);
 	  if (s->u.s->fake)
 	    fprintf(f->fp, "@fake\t1\n");
 	  if (s->u.s->pname)
