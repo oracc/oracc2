@@ -41,6 +41,9 @@
       there is only one value with the base the sign-page is loaded;
       if there are multiple values with the base the homophone
       selection page for the base is loaded.</p>
+
+      <p>Punctuation marks (if they occur in this signlist) can be
+      listed with 'p0'.</p>
       
     </body>
   </html>

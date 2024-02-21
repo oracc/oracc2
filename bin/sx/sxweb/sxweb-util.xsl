@@ -12,6 +12,8 @@
     extension-element-prefixes="ex"
     version="1.0">
 
+<xsl:param name="overview-images" select="'font'"/>
+  
 <xsl:template name="esp-sign-image">
   <xsl:variable name="ref" select="@ref"/>
   <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
@@ -41,7 +43,7 @@
   <td>
     <xsl:attribute name="class">
       <xsl:choose>
-	<xsl:when test="count($img)>0 or .//sl:uage='4'">
+	<xsl:when test="$overview-images='font' or count($img)>0 or .//sl:uage='4'">
 	  <xsl:text>name-sign</xsl:text>
 	</xsl:when>
 	<xsl:otherwise><xsl:text>name-nosign</xsl:text></xsl:otherwise>
@@ -67,6 +69,9 @@
 	<xsl:otherwise>
 	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
 	  <xsl:choose>
+	    <xsl:when test="$overview-images='font'">
+	      <p class="sl-td-sign"><xsl:value-of select="sl:ucun"/></p>
+	    </xsl:when>
 	    <xsl:when test="count($img)>0">
 	      <xsl:for-each select="$img">
 		<p class="sl-td-sign">
