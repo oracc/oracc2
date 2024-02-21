@@ -85,9 +85,10 @@ g_index_of(const unsigned char *g, const unsigned char *b)
 	  i = ((g[2] - 0x80)) * 10;
 	  g += 3;
 	}
-      i += (g[2] - 0x80);
-      if (i == 19) /* subscript x char 3 = 0x93 - 0x80 = 0x13 = 19 */
+      if (g[2] == 0x93) /* sub x is 0xE2 0x82 0x93 */
 	i = 1000;
+      else
+	i += (g[2] - 0x80);
     }
   else
     i = 1;
