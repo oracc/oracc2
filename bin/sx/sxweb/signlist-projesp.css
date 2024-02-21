@@ -111,6 +111,8 @@ tr.lemsel-h2 { font-weight: bold; }
 tr.lemsel-h3 { font-style: italic; }
 .lemlem td:first-child { text-indent: 1em; }
 
+span.homophone-n { padding-right: 1em; }
+
 /* Needs to be modulated by viewport size */
 table.lemsel td  { padding-left: 1em; padding-right: 1em; }
 
