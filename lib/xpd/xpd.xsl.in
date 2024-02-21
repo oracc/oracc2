@@ -33,7 +33,7 @@
   <xsl:param name="config-xml" select="$xpd-config-xml"/>
   <xsl:param name="option"/>
   <xsl:variable name="opt-node" 
-		select="document($config-xml,'/')/xpd:project|/*/*/xpd:project"/>
+		select="document($config-xml)/xpd:project|/*/*/xpd:project"/>
   <xsl:copy-of select="$opt-node/*[@name=$option]"/>
 </xsl:template>
 
