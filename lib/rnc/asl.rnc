@@ -286,6 +286,8 @@ sl.base = element sl:base {
 }
 sl.h = element sl:h {
      attribute oid { text },
+     attribute ssort { text },
+     attribute vsort { text },
      attribute v { text }
 }
 

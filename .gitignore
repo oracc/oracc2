@@ -109,6 +109,9 @@ oracc_builds.c
 
 # rnc derivatives
 *.rng
+ns-*.h
+lib/rnc/xtf.c
+lib/rnc/*.c
 
 # msc/oscx derivatives
 oscx-server-env.sh
