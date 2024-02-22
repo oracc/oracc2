@@ -21,7 +21,14 @@
 
 <xsl:template match="lex:group[@type='read']">
   <div class="lex-read" title="{@value}">
-    <h2><xsl:value-of select="@value"/></h2>
+    <xsl:choose>
+      <xsl:when test="string-length(@value)>0">
+	<h2><xsl:value-of select="@value"/></h2>
+      </xsl:when>
+      <xsl:otherwise>
+	<h2>(unspecified value)</h2>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:apply-templates/>
   </div>
 </xsl:template>

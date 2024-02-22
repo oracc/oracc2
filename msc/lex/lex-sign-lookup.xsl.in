@@ -3,10 +3,35 @@
 		xmlns="http://www.w3.org/1999/xhtml"
 		xmlns:xh="http://www.w3.org/1999/xhtml"
 		xmlns:lex="http://oracc.org/ns/lex/1.0"
+		xmlns:esp="http://oracc.org/ns/esp/1.0"
 		xmlns:sl="http://oracc.org/ns/sl/1.0"
-		xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+		exclude-result-prefixes="lex">
 
 <xsl:key name="signs" match="xh:div[@class='lex-sign']" use="@title"/>
+
+<xsl:template name="lex-sign-data">
+  <xsl:variable name="n" select="@n"/>
+  <xsl:for-each select="document('@@ORACC_BUILDS@@/dcclt/02pub/lex-sign.xhtml')">
+    <xsl:for-each select="key('signs',$n)">
+      <div class="asl-lexdata">
+	<xsl:copy-of select="@title|@oid"/>
+	<xsl:apply-templates mode="htmlify" select="./*"/>
+      </div>
+    </xsl:for-each>
+  </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="lex-provides-sign">
+  <xsl:variable name="n" select="@n"/>
+  <xsl:for-each select="document('@@ORACC_BUILDS@@/dcclt/02pub/lex-sign.xhtml')">
+    <xsl:variable name="nn" select="key('signs',$n)"/>
+    <xsl:choose>
+      <xsl:when test="count($nn)=0"><xsl:text>n</xsl:text></xsl:when>
+      <xsl:otherwise><xsl:text>y</xsl:text></xsl:otherwise>
+    </xsl:choose>
+  </xsl:for-each>
+</xsl:template>
 
 <xsl:template name="lex-sign">
   <xsl:variable name="test-sign">
@@ -42,6 +67,48 @@
       <xsl:copy-of select="."/>
     </xsl:for-each>
   </xsl:for-each>
+</xsl:template>
+
+<xsl:template mode="htmlify" match="xh:a">
+  <xsl:choose>
+    <xsl:when test="contains(@href,'javascript')"><xsl:apply-templates mode="htmlify"/></xsl:when>
+    <xsl:otherwise><xsl:copy><xsl:copy-of select="@*"/><xsl:apply-templates mode="htmlify"/></xsl:copy></xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template mode="htmlify" match="xh:h2[../@class='lex-read']">
+  <h3>
+    <xsl:copy-of select="@*"/>
+    <xsl:choose>
+      <xsl:when test="string-length(.)=0"><xsl:text>&#xa0;</xsl:text></xsl:when>
+      <xsl:otherwise><xsl:apply-templates mode="htmlify"/></xsl:otherwise>
+    </xsl:choose>
+  </h3>
+</xsl:template>
+
+<xsl:template mode="htmlify" match="xh:h2">
+  <xsl:copy>
+    <xsl:copy-of select="@*"/>
+    <xsl:choose>
+      <xsl:when test="string-length(.)=0"><xsl:text>&#xa0;</xsl:text></xsl:when>
+      <xsl:otherwise><xsl:apply-templates mode="htmlify"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:copy>
+</xsl:template>
+
+<xsl:template mode="htmlify" match="xh:*|text()">
+  <xsl:copy>
+    <xsl:copy-of select="@*"/>
+    <xsl:apply-templates mode="htmlify"/>
+  </xsl:copy>
+</xsl:template>
+
+<xsl:template mode="htmlify" match="esp:link">
+  <a href="{@url}"><xsl:apply-templates mode="htmlify"/></a>
+</xsl:template>
+
+<xsl:template mode="htmlify" match="*">
+  <xsl:message>lex-sign-lookup/htmlify: unhandled tag <xsl:value-of select="local-name(.)"/></xsl:message>
 </xsl:template>
 
 </xsl:stylesheet>

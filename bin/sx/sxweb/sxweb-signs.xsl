@@ -175,6 +175,9 @@
   <xsl:call-template name="sws-lem-page">
     <xsl:with-param name="parameters" select="$parameters"/>
   </xsl:call-template>
+  <xsl:call-template name="sws-lex-page">
+    <xsl:with-param name="parameters" select="$parameters"/>
+  </xsl:call-template>
   <xsl:if test="count(preceding-sibling::sl:sign)=0 and count(../preceding-sibling::sl:letter)=0">
     <xsl:message>Emitting homophone selpages</xsl:message>
     <xsl:apply-templates select="/*/sl:homophones/sl:base">
@@ -599,7 +602,18 @@
 
 <xsl:template name="sws-lexdata">
   <xsl:if test="$asl-lexdata = 'yes'">
-    <xsl:call-template name="lex-sign"/>
+    <xsl:variable name="lex-ok">
+      <xsl:call-template name="lex-provides-sign"/>
+    </xsl:variable>
+    <xsl:if test="$lex-ok='y'">
+	<p class="sl-hang"
+	   ><span class="sl-ihead-h">LEXICAL</span
+	   ><esp:link
+	   notarget="yes"
+	   url="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-lex.html')}"
+	   >See lexical data for values of <xsl:value-of
+	   select="@n"/> sign</esp:link></p>
+      </xsl:if>
   </xsl:if>
 </xsl:template>
 
@@ -911,12 +925,6 @@
 	  <xsl:with-param name="parameters" select="$parameters"/>
 	  <xsl:with-param name="project" select="$project"/>
 	</xsl:call-template>
-	<!--
-	<meta charset="UTF-8"/>
-	<title>Sumerian Words written with <xsl:value-of select="@n"/></title>
-	<link media="screen,projection" href="{concat('/',/*/@project,'/signlist/css/projesp.css')}"
-	type="text/css" rel="stylesheet" />
-	-->
       </head>
       <body class="selpage">
 	<xsl:call-template name="esp2-banner-div">
@@ -985,6 +993,38 @@
       </body>
     </html>
   </ex:document>
+</xsl:template>
+
+<xsl:template name="sws-lex-page">
+  <xsl:param name="parameters"/>
+  <xsl:if test="$asl-lexdata = 'yes'">
+    <xsl:variable name="lex-ok">
+      <xsl:call-template name="lex-provides-sign"/>
+    </xsl:variable>
+    <xsl:if test="$lex-ok='y'">
+      <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-lex.html')}"
+		   method="xml" encoding="utf-8" omit-xml-declaration="yes"
+		   indent="yes" doctype-system="html">
+	<html>
+	  <head>
+	    <xsl:call-template name="esp2-head-content">
+	      <xsl:with-param name="parameters" select="$parameters"/>
+	      <xsl:with-param name="project" select="$project"/>
+	    </xsl:call-template>
+	  </head>
+	  <body class="selpage">
+	    <xsl:call-template name="esp2-banner-div">
+	      <xsl:with-param name="parameters" select="$parameters"/>
+	      <xsl:with-param name="project" select="$project"/>
+	      <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
+	      <xsl:with-param name="nomenu" select="true()"/>
+	    </xsl:call-template>
+	    <xsl:call-template name="lex-sign-data"/>
+	  </body>
+	</html>
+      </ex:document>
+    </xsl:if>
+  </xsl:if>
 </xsl:template>
 
 <!-- Trap unhandled tags -->

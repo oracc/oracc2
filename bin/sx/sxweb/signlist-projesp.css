@@ -90,7 +90,10 @@ div.asl-cite-url { margin-top: 3em; }
 
 .asl-cite-url p { margin: 0px; }
 
+div.asl-cuneiform { display: inline-block; vertical-align: top; }
+
 div.asl-unicode { display: inline-block; vertical-align: top; }
+
 p.asl-ucun    { font-size: 250%; margin: 0px; }
 div.asl-images  { display: inline-block; vertical-align: top; }
 
@@ -116,7 +119,13 @@ span.homophone-n { padding-right: 1em; }
 /* Needs to be modulated by viewport size */
 table.lemsel td  { padding-left: 1em; padding-right: 1em; }
 
-.ivs-IM_NI2 span { display: none; }
-.ivs-IM_NI2:after { content: '𒉎'; }
+.lex-read h3 { text-align: left; font-weight: bold; }
 
+@media screen and (min-width: 625px) {
+    .asl-lexdata { width: 80%; margin: auto; }
+    table.selpage { width: 80%; margin: auto; }
+}
+
+.ivs-IM_NI2 span { font-size: 0; }
+.ivs-IM_NI2:after { content: '𒉎'; }
 
