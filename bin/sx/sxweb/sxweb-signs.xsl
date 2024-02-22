@@ -620,9 +620,12 @@
 <xsl:template name="sws-lemmas-by-pos-sub"
   	      ><xsl:param name="nodes"
   	      /><xsl:param name="sorf"
-	      /><xsl:for-each
+	      /><xsl:variable name="url-base"><xsl:choose
+	      ><xsl:when test="/*/@lemma-http"><xsl:value-of select="/*/@lemma-http"/></xsl:when
+	      ><xsl:otherwise><xsl:value-of select="concat(/*/@project, '/')"/></xsl:otherwise></xsl:choose
+	      ></xsl:variable><xsl:for-each
 	      select="$nodes[not(ancestor::sl:form) or $sorf='form']"
-	      ><esp:link notarget="yes" url="/{/*/@project}/{@oid}"
+	      ><esp:link notarget="yes" url="{$url-base}/{@oid}"
 			      ><span class="asl-lem-base"><xsl:value-of select="@base"/></span><xsl:text> = </xsl:text
 			      ><xsl:value-of select="@n"
 			      /><xsl:text> </xsl:text

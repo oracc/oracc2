@@ -64,6 +64,7 @@ char *idata_file = NULL;
 char *idata_type = NULL;
 
 const char *ldata_file = NULL; /* lemma data */
+const char *ldata_http = NULL; /* http portion of lemma data URL's--if NULL use '/' */
 
 const char *missing_lists = NULL;
 
@@ -84,7 +85,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eg:iI:jJ:L:m:nMoOP:p:sStTuUxX:?");
+  options(argc, argv, "abcCD:d:eg:iI:jJ:l:L:m:nMoOP:p:sStTuUxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -340,6 +341,14 @@ opts(int opt, const char *arg)
     case 'L':
       ldata_file = arg;
       break;
+    case 'l':
+      ldata_http = arg;
+      if ('/' == ldata_http[strlen(ldata_http)-1])
+	{
+	  fprintf(stderr, "-l option argument %s should not end in '/'\n", ldata_http);
+	  exit(1);
+	}
+      break;
     case 'n':
       list_names_mode = 1;
       break;
@@ -365,20 +374,20 @@ opts(int opt, const char *arg)
     case 'q':
       quiet = 1;
       break;
-    case 's':
-      sll_output = 1;
-      break;
     case 'S':
       sortcode_output = 1;
+      break;
+    case 's':
+      sll_output = 1;
       break;
     case 't':
       trace_mode = 1;
       break;
-    case 'u':
-      unicode_table = 1;
-      break;
     case 'U':
       unicode_from_parent = 1;
+      break;
+    case 'u':
+      unicode_table = 1;
       break;
     case 'X':
       xfn = arg;

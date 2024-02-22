@@ -1,8 +1,7 @@
 * OGSL To-DO
-  - Unicode block in listing
   - get ePSD in as Sumerian?
-  - lexdata review
   - force Cuneiform NOTO font
+  - clean up ogsl repo or make new osl one and make ogsl private
   
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible

@@ -94,10 +94,6 @@ sxinst signlist-index.xml signlist/00web/index.xml
 sxinst signlist-projesp.css signlist/00res/css/projesp.css
 sxinst signlist-projesp.js signlist/00res/js/projesp.js
 sxinst signlist-slpage.js signlist/00res/js/slpage.js
-#sxinst signlist-index.html signlist/00lib/signlist-index.html
-#sxinst signlist-slform.html signlist/00web/slform.html
-#sxinst signlist-sl.js signlist/00res/js/sl.js
-#sxinst signlist-sl.css signlist/00res/css/sl.css
 
 set 00lib/signlist-x-*.xml
 if [ "$1" != "00lib/signlist-x-*.xml" ] ; then

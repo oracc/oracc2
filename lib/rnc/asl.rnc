@@ -6,6 +6,7 @@ start =
   element sl:signlist {
     attribute project { text } ,
     attribute signlist { text } ,
+    attribute lemma-http { text }? ,
     sl.notes ,
     sl.listdef* ,
     sl.sysdef* ,

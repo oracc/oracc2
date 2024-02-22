@@ -12,6 +12,16 @@ if [ "$asldomain" = "" ]; then
     asldomain=sl
 fi
 
+aslcbdtok=`oraccopt . asl-cbd-tok`
+echo asl-cbd-tok=$aslcbdtok
+if [ "$aslcbdtok" != "" ]; then
+    aslcbdurl=`oraccopt . asl-cbd-url`
+    Larg="-L$aslcbdtok"
+    Lurl="-l$aslcbdurl"
+elif [ -r 01tmp/cbd.tok ]; then
+    Larg="-L01tmp/cbd.tok"
+fi
+
 mkdir -p 02pub/sl
 if [ "$asl" = "" ]; then
     set 00lib/*.asl
@@ -31,7 +41,7 @@ if [ "$asl" = "01tmp/auto.asl" ]; then
     fi
 fi
 if [ "$asl" != "" ]; then
-    echo $0: updating $asl
+    echo $0: updating $asl in `pwd`
     # check signlist
     sx $UP -c $asl
     if [ $? -eq 0 ]; then
@@ -40,8 +50,9 @@ if [ "$asl" != "" ]; then
 	if [ -r 01tmp/g.tis ]; then
 	    tis=-I$asldomain:01tmp/g.tis
 	fi
-	echo "$0: sx $UP $tis -X 02xml/sl.xml $asl"
-	sx $UP $tis -L01tmp/cbd.tok -X 02xml/sl.xml $asl  
+	echo "$0: sx $UP $tis $Larg $Lurl -X 02xml/sl.xml $asl"
+	sx $UP $tis $Larg $Lurl -X 02xml/sl.xml $asl
+	cp 02xml/sl.xml 02xml/sl-mcu.xml
 	sx $UP -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
 	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml
