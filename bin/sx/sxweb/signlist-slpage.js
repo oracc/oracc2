@@ -34,8 +34,10 @@ function cmap (chr) {
 
 function kmap (str) {
     let lc = str.toLowerCase();
+    let lc1 = lc.replace(/s,/, "f");
+    let lc2 = lc1.replace(/t,/, "v");
     var res = '';
-    for (var c of lc) {
+    for (var c of lc2) {
 	res += cmap(c);
     }
     return res;

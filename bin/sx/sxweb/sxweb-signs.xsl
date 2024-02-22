@@ -904,16 +904,23 @@
   <xsl:param name="nodes"/>
   <xsl:param name="type"/>
   <xsl:param name="group-label" select="''"/>
+  <xsl:variable name="url-base">
+    <xsl:choose>
+      <xsl:when test="/*/@lemma-http">
+      <xsl:value-of select="/*/@lemma-http"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="concat('/', /*/@project, '/')"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   <xsl:if test="count($nodes)>0">
-      <tr class="lemsel-h3"><td colspan="3"><xsl:value-of select="$type"></xsl:value-of></td></tr>
-      <xsl:for-each select="$nodes">
-	<xsl:sort select="@sort" data-type="number"/>
-	<tr class="lemlem">
-	  <td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
-	  <td class="asl-sel-l-link"><a href="/{/*/@project}/{@oid}"><xsl:value-of select="@n"/></a></td>
-	  <td class="asl-sel-l-count"><xsl:value-of select="@bcnt"/><xsl:text>×</xsl:text></td>
-	</tr>
-      </xsl:for-each>
+    <tr class="lemsel-h3"><td colspan="3"><xsl:value-of select="$type"></xsl:value-of></td></tr>
+    <xsl:for-each select="$nodes">
+      <xsl:sort select="@sort" data-type="number"/>
+      <tr class="lemlem">
+	<td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
+	<td class="asl-sel-l-link"><a href="{$url-base}/{@oid}"><xsl:value-of select="@n"/></a></td>
+	<td class="asl-sel-l-count"><xsl:value-of select="@bcnt"/><xsl:text>×</xsl:text></td>
+      </tr>
+    </xsl:for-each>
   </xsl:if>
 </xsl:template>
 
