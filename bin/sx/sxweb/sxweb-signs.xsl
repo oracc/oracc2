@@ -29,6 +29,7 @@
 
 <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
+<xsl:key name="lemabs" match="sl:lemma" use="@n"/>
 <xsl:key name="lemuniq" match="sl:lemma" use="concat(@n,'::',@base)"/>
 
 <!--### Set all the asl-* config variables from config.xml -->
@@ -619,6 +620,14 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-lemmas-by-pos-sub-base">
+  <xsl:param name="bnodes"/>
+  <xsl:for-each select="$bnodes">
+    <xsl:value-of select="."/>
+    <xsl:if test="not(position()=last())"><xsl:text>, </xsl:text></xsl:if>
+  </xsl:for-each>
+</xsl:template>
+
 <xsl:template name="sws-lemmas-by-pos-sub"
   	      ><xsl:param name="nodes"
   	      /><xsl:param name="sorf"
@@ -627,14 +636,16 @@
 	      ><xsl:otherwise><xsl:value-of select="concat('/',/*/@project)"/></xsl:otherwise></xsl:choose
 	      ></xsl:variable><xsl:for-each
 	      select="$nodes[not(ancestor::sl:form) or $sorf='form']"
+	      ><xsl:if test="generate-id(.)=generate-id(key('lemabs',@n))"
+	      ><xsl:if test="not(position()=1)"><xsl:text>; </xsl:text></xsl:if
 	      ><esp:link notarget="yes" url="{$url-base}/{@oid}"
-			      ><span class="asl-lem-base"><xsl:value-of select="@base"/></span><xsl:text> = </xsl:text
+			      ><span class="asl-lem-base"><xsl:call-template name="sws-lemmas-by-pos-sub-base"><xsl:with-param name="bnodes" select="key('lemabs',@n)/@base"/></xsl:call-template></span><xsl:text> = </xsl:text
 			      ><xsl:value-of select="@n"
 			      /><xsl:text> </xsl:text
-			      ><span class="asl-lem-cnt"><xsl:text>(</xsl:text><xsl:value-of select="@bcnt"/><xsl:text>×)</xsl:text
+			      ><span class="asl-lem-cnt"><xsl:text>(</xsl:text><xsl:value-of select="sum(key('lemabs',@n)/@bcnt)"/><xsl:text>×)</xsl:text
 			      ></span></esp:link
-			      ><xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
-			      ></xsl:for-each></xsl:template>
+			      ><!--<xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
+			      >--></xsl:if></xsl:for-each></xsl:template>
 
 <!--
     	   ><xsl:for-each select="$nodes"
@@ -707,9 +718,10 @@
   <xsl:if test="$asl-suxword = 'yes'">
     <xsl:variable name="lnodes" select=".//sl:lemmas/sl:lemma|id(@merge)//sl:lemmas/sl:lemma"/>
     <xsl:if test="count($lnodes)>0">
+      <xsl:variable name="a-nodes" select=".//sl:lemmas/*[@gpos='a']"/>
       <div class="sl-lemmas">
 	<xsl:call-template name="sws-lemmas-by-pos">
-	  <xsl:with-param name="nodes" select=".//sl:lemmas/*[@gpos='a']"/>
+	  <xsl:with-param name="nodes" select="$a-nodes"/>
 	  <xsl:with-param name="type" select="'SUMERIAN'"/>
 	  <xsl:with-param name="sorf" select="local-name(.)"/>
 	</xsl:call-template>
@@ -727,11 +739,15 @@
 	    <xsl:call-template name="sws-lemmas-via-merge-compound"/>
 	-->
 	<xsl:if test="count($lnodes[not(@gpos='a')])>0">
-	  <p><span class="sl-ihead">&#xa0;</span>
-	  <esp:link notarget="yes" url="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-sux.html')}"
+	  <p class="sl-hang"><span class="sl-i-head"><xsl:choose
+	    ><xsl:when test="count($a-nodes)>0"><xsl:text>&#xa0;</xsl:text></xsl:when
+	    ><xsl:otherwise><xsl:text>SUMERIAN</xsl:text></xsl:otherwise
+	  ></xsl:choose></span
+	  ><esp:link notarget="yes"
+		    url="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-sux.html')}"
 		    >See all information on Sumerian words written with the <xsl:value-of
-		    select="@n"/> sign</esp:link>
-	  </p>
+		    select="@n"/> sign</esp:link
+	  ></p>
 	</xsl:if>
       </div>
     </xsl:if>

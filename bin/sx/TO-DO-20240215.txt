@@ -8,11 +8,13 @@
     - should have OID
     - forms that occur under more than one @sign need a sel-page
   - sign-qua-form display, e.g., BU sv girim3--should be abbreviated
+  - when a sign has suxword but no abs no SUMERIAN header is generated
+  - doco page on anatomy of a sign-page; sel-page
+  - sel-page banner should link to signlist/index.html
   
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible
   -add sl-ihead where missing
-  -move breadcrumbs to navbar or implement nobreadcrumbs param
   -use navbar width for <</>> (move navbar outside content div??)
   -get rid of Main Menu underline bar in dd mode
   -possibly need a submit button on mobile
