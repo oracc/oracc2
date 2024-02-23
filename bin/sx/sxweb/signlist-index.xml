@@ -37,11 +37,11 @@
 
       <esp:sh>Looking up Compounds</esp:sh>
 
-      <p>Compound signs simplified when they are turned into lookup
-      table keys.  Compound signs in the lookup bar do not need to be
-      in pipes--you can search for <code>ka*nun</code> rather than
-      <code>|KA×NUN|</code> (though the latter also works, which can
-      be useful if you are cutting and pasting).</p>
+      <p>Compound signs are simplified when they are turned into
+      lookup table keys.  Compound signs in the lookup bar do not need
+      to be in pipes--you can search for <code>ka*nun</code> rather
+      than <code>|KA×NUN|</code> (though the latter also works, which
+      can be useful if you are cutting and pasting).</p>
 
       <p>Three special conventions are defined for looking up compounds:</p>
 

@@ -1080,6 +1080,32 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-form-page">
+  <xsl:param name="parameters"/>
+  <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-lex.html')}"
+	       method="xml" encoding="utf-8" omit-xml-declaration="yes"
+	       indent="yes" doctype-system="html">
+    <html>
+      <head>
+	<xsl:call-template name="esp2-head-content">
+	  <xsl:with-param name="parameters" select="$parameters"/>
+	  <xsl:with-param name="project" select="$project"/>
+	</xsl:call-template>
+      </head>
+      <body class="selpage">
+	<xsl:call-template name="esp2-banner-div">
+	  <xsl:with-param name="parameters" select="$parameters"/>
+	  <xsl:with-param name="project" select="$project"/>
+	  <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
+	  <xsl:with-param name="nomenu" select="true()"/>
+	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
+	</xsl:call-template>
+	<xsl:call-template name="lex-sign-data"/>
+      </body>
+    </html>
+  </ex:document>
+</xsl:template>
+
 <!-- Trap unhandled tags -->
 
 <xsl:template mode="rest"

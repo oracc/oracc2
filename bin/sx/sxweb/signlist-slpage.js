@@ -61,11 +61,11 @@ function slpage () {
 	    ctdr = '-ctd';
 	    key = key.substring(1);
 	}
-	alert('key='+key+'; ctdr='+ctdr);
+	// alert('key='+key+'; ctdr='+ctdr);
     } else if (key.endsWith('*')) {
 	ctdr = '-ctr';
 	key = key.substring(0, key.length - 1);
-	alert('key='+key+'; ctdr='+ctdr);
+	// alert('key='+key+'; ctdr='+ctdr);
     }
     var mkey = kmap(key);
     
@@ -75,12 +75,12 @@ function slpage () {
         // alert(ao);                                                                                                               
         var oid=ao[mkey];
         if (oid) {
-            alert('oid='+oid);                                                                                                   
+            // alert('oid='+oid);                                                                                                   
             if (oid.startsWith("selpages/")) {
                 window.location=projpath+oid+'.html';
 	    } else if (ctdr.length > 0) {
 		oid = oid.replace(/\w+/, "");
-		alert('oid-sans-letter='+oid);
+		// alert('oid-sans-letter='+oid);
 		var oidcheck = oid.substring(1);
 		var ok = 0;
 		var cerr = '';

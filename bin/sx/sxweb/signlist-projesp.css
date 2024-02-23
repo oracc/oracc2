@@ -4,6 +4,8 @@
 
 /* #Content a:hover { background-color: #aaa; } */
 
+/*#Content { font-family: "Ungkam Book Basic", Times; }*/
+
 .@@hproject@@-info h3 { font-style: normal; }
 
 .navbar { border-style: outset; border-width: 2px; border-color: red; margin-bottom: 10px; }
@@ -85,6 +87,8 @@ p.sl-hang { padding-left: 120px; }
 #HeadForm form { vertical-align: middle; text-align-last: left; margin: 1em; display: inline-block; }
 
 div.asl-cite-url { margin-top: 3em; }
+
+.asl-forms { padding-left: 120px; }
 
 .asl-cun-img   { margin-bottom: 1em; }
 
