@@ -29,6 +29,8 @@
 
 <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
+<xsl:key name="lemuniq" match="sl:lemma" use="concat(@n,'::',@base)"/>
+
 <!--### Set all the asl-* config variables from config.xml -->
 <xsl:variable name="q">'</xsl:variable>
 <xsl:variable name="sl-config-xml" select="concat($oraccbuilds,'/xml/',/*/@project,'/signlist/config.xml')"/>
@@ -915,11 +917,14 @@
     <tr class="lemsel-h3"><td colspan="3"><xsl:value-of select="$type"></xsl:value-of></td></tr>
     <xsl:for-each select="$nodes">
       <xsl:sort select="@sort" data-type="number"/>
-      <tr class="lemlem">
-	<td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
-	<td class="asl-sel-l-link"><a href="{$url-base}/{@oid}"><xsl:value-of select="@n"/></a></td>
-	<td class="asl-sel-l-count"><xsl:value-of select="@bcnt"/><xsl:text>×</xsl:text></td>
-      </tr>
+      <xsl:variable name="k" select="concat(@n,'::',@base)"/>
+      <xsl:if test="generate-id(.)=generate-id(key('lemuniq',$k)[1])">
+	<tr class="lemlem">
+	  <td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
+	  <td class="asl-sel-l-link"><a href="{$url-base}/{@oid}"><xsl:value-of select="@n"/></a></td>
+	  <td class="asl-sel-l-count"><xsl:value-of select="@bcnt"/><xsl:text>×</xsl:text></td>
+	</tr>
+      </xsl:if>
     </xsl:for-each>
   </xsl:if>
 </xsl:template>

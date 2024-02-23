@@ -16,9 +16,11 @@ sx_merge(struct sl_signlist *sl)
       if (s)
 	{
 	  struct sl_sign *m_from = hash_find(sl->hsentry, k[i]);
-	  m_from->moid = s->oid;
+	  /* the 'to' may be in a corpus-based signlist without the 'from' being in there */
+	  if (m_from)
+	    m_from->moid = s->oid;
 	}
-      else
+      else if (!strcmp(sl->project, "ogsl")) /* corpus-based signlists may legit not have the to or from components */
 	mesg_verr(m, "@merge %s: merge destination %s does not exist", m->user, m->user);
     }
 }
