@@ -26,6 +26,8 @@ function cmap (chr) {
 	    return 'h';
 	} else if (chr == 'ʾ') {
 	    return "'";
+	} else if (chr == '|') {
+	    return "";
 	} else {
 	    return chr;
 	}

@@ -15,21 +15,25 @@
 
       <esp:sh>The Lookup Bar</esp:sh>
 
-      <p>The lookup bar allows you to find sign-pages by typing simple
-      signs--compound signs are not indexed in the lookup bar table.
-      You can type in upper or lower case, but the lookup table only
-      uses lower case, so you don't need to use upper case at all to
-      find sign-pages.  Signs can be given in unicode transliteration
-      or in a simplified transliteration using the following
+      <p>The lookup bar allows you to find sign-pages by typing values
+      or signnames.  You can type in upper or lower case, but the
+      lookup table only uses lower case, so you don't need to use
+      upper case at all to find sign-pages.  Compound signs do not
+      need to be in pipes--you can search for <code>ka*nun</code>
+      rather than <code>|KA×NUN</code> (though the latter also works,
+      which can be useful if you are cutting and pasting).</p>
+
+      <p>Signs can be given in unicode transliteration or in a
+      simplified transliteration using the following
       correspondences:</p>
 
       <table class="pretty" style="width: 25%; margin: auto;">
 	<tr><td>c</td><td>š</td></tr>
-	<tr><td>f</td><td>ṣ</td></tr>
+	<tr><td>s, or f</td><td>ṣ</td></tr>
 	<tr><td>ss</td><td>ś</td></tr>
 	<tr><td>h</td><td>ḫ</td></tr>
 	<tr><td>j</td><td>ŋ</td></tr>
-	<tr><td>v</td><td>ṭ</td></tr>
+	<tr><td>t, or v</td><td>ṭ</td></tr>
 	<tr><td>'</td><td>ʾ</td></tr>
 	<tr><td>*</td><td>×</td></tr>
       </table>
@@ -42,6 +46,8 @@
       if there are multiple values with the base the homophone
       selection page for the base is loaded.</p>
 
+      <esp:sh>Punctuation Marks</esp:sh>
+      
       <p>Punctuation marks (if they occur in this signlist) can be
       listed with 'p0'.</p>
       

@@ -126,6 +126,14 @@ table.lemsel td  { padding-left: 1em; padding-right: 1em; }
     table.selpage { width: 80%; margin: auto; }
 }
 
+a:link	{ color: blue; }
+a:visited { color: red; }
+a:hover { text-decoration: underline; }
+
+#Content a:link	{ color: blue; }
+#Content a:visited { color: red; }
+#Content a:hover { text-decoration: underline; }
+
 .ivs-IM_NI2 span { font-size: 0; }
 .ivs-IM_NI2:after { content: '𒉎'; }
 

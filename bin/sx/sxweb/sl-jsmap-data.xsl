@@ -50,9 +50,9 @@
 </xsl:template>
 
 <xsl:template match="sl:sign|sl:form|sl:list|sl:v">
-  <xsl:if test="not(starts-with(@n,'|'))">
+  <!--<xsl:if test="not(starts-with(@n,'|'))">-->
     <xsl:call-template name="out-n"/>
-  </xsl:if>
+  <!--</xsl:if>-->
   <xsl:apply-templates/>
 </xsl:template>
 
