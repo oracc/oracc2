@@ -29,8 +29,8 @@
 
 <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
-<xsl:key name="lemabs" match="sl:lemma" use="@n"/>
-<xsl:key name="lemuniq" match="sl:lemma" use="concat(@n,'::',@base)"/>
+<xsl:key name="lemabs" match="sl:lemma" use="concat(ancestor::sl:v/@n,'::',@n)"/>
+<xsl:key name="lemuniq" match="sl:lemma" use="concat(ancestor::sl:v/@n,'::',@n,'::',@base)"/>
 
 <!--### Set all the asl-* config variables from config.xml -->
 <xsl:variable name="q">'</xsl:variable>
@@ -174,6 +174,18 @@
     <xsl:with-param name="type" select="'cmemb'"/>
     <xsl:with-param name="title" select="concat(@n,  ' in compounds')"/>
     <xsl:with-param name="nodes" select="id(sl:cpds/sl:memb/@oids)"/>
+  </xsl:call-template>
+  <xsl:call-template name="sws-sel-page">
+    <xsl:with-param name="parameters" select="$parameters"/>
+    <xsl:with-param name="type" select="'ctr'"/>
+    <xsl:with-param name="title" select="concat(@n,  ' as container')"/>
+    <xsl:with-param name="nodes" select="id(sl:cpds/sl:ctnr/@oids)"/>
+  </xsl:call-template>
+  <xsl:call-template name="sws-sel-page">
+    <xsl:with-param name="parameters" select="$parameters"/>
+    <xsl:with-param name="type" select="'ctd'"/>
+    <xsl:with-param name="title" select="concat(@n,  ' in containers')"/>
+    <xsl:with-param name="nodes" select="id(sl:cpds/sl:ctnd/@oids)"/>
   </xsl:call-template>
   <xsl:call-template name="sws-lem-page">
     <xsl:with-param name="parameters" select="$parameters"/>
@@ -623,7 +635,7 @@
 <xsl:template name="sws-lemmas-by-pos-sub-base">
   <xsl:param name="bnodes"/>
   <xsl:for-each select="$bnodes">
-    <xsl:value-of select="."/>
+    <xsl:value-of select="@base"/>
     <xsl:if test="not(position()=last())"><xsl:text>, </xsl:text></xsl:if>
   </xsl:for-each>
 </xsl:template>
@@ -636,13 +648,16 @@
 	      ><xsl:otherwise><xsl:value-of select="concat('/',/*/@project)"/></xsl:otherwise></xsl:choose
 	      ></xsl:variable><xsl:for-each
 	      select="$nodes[not(ancestor::sl:form) or $sorf='form']"
-	      ><xsl:if test="generate-id(.)=generate-id(key('lemabs',@n))"
+	      ><xsl:variable name="lemabs" select="key('lemabs',concat(ancestor::sl:v/@n,'::',@n))"
+	      /><xsl:if test="generate-id(.)=generate-id($lemabs[1])"
 	      ><xsl:if test="not(position()=1)"><xsl:text>; </xsl:text></xsl:if
+	      ><span class="asl-lem-base"><xsl:call-template
+	      name="sws-lemmas-by-pos-sub-base"
+	      ><xsl:with-param name="bnodes" select="$lemabs[@gpos='a']"/></xsl:call-template></span><xsl:text> = </xsl:text
+	      ><xsl:value-of select="@n"
+	      /><xsl:text> </xsl:text
 	      ><esp:link notarget="yes" url="{$url-base}/{@oid}"
-			      ><span class="asl-lem-base"><xsl:call-template name="sws-lemmas-by-pos-sub-base"><xsl:with-param name="bnodes" select="key('lemabs',@n)/@base"/></xsl:call-template></span><xsl:text> = </xsl:text
-			      ><xsl:value-of select="@n"
-			      /><xsl:text> </xsl:text
-			      ><span class="asl-lem-cnt"><xsl:text>(</xsl:text><xsl:value-of select="sum(key('lemabs',@n)/@bcnt)"/><xsl:text>×)</xsl:text
+	      ><span class="asl-lem-cnt"><xsl:text>(</xsl:text><xsl:value-of select="sum($lemabs/@bcnt)"/><xsl:text>×)</xsl:text
 			      ></span></esp:link
 			      ><!--<xsl:if test="not(position()=last())"><xsl:text>; </xsl:text></xsl:if
 			      >--></xsl:if></xsl:for-each></xsl:template>
@@ -739,7 +754,7 @@
 	    <xsl:call-template name="sws-lemmas-via-merge-compound"/>
 	-->
 	<xsl:if test="count($lnodes[not(@gpos='a')])>0">
-	  <p class="sl-hang"><span class="sl-i-head"><xsl:choose
+	  <p class="sl-hang"><span class="sl-ihead-h"><xsl:choose
 	    ><xsl:when test="count($a-nodes)>0"><xsl:text>&#xa0;</xsl:text></xsl:when
 	    ><xsl:otherwise><xsl:text>SUMERIAN</xsl:text></xsl:otherwise
 	  ></xsl:choose></span
@@ -770,7 +785,10 @@
       </xsl:otherwise>
     </xsl:choose>
     <xsl:if test="@icnt">
-      <span class="asl-lem-cnt">&#xa0;<xsl:text>(</xsl:text><xsl:value-of select="@icnt"/><xsl:text>×)</xsl:text></span>
+      <esp:link
+	  url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
+	  notarget="yes"><span class="asl-lem-cnt">&#xa0;<xsl:text
+	  >(</xsl:text><xsl:value-of select="@icnt"/><xsl:text>×)</xsl:text></span></esp:link>
     </xsl:if>
     <xsl:if test="not(position()=last())"><span class="homophone-n"/><wbr/></xsl:if>
   </xsl:for-each>
@@ -807,7 +825,8 @@
 	    ><span class="sl-ihead-h">HOMOPHONES</span
 	    ><xsl:for-each select="$hnodes"
 	    ><xsl:sort select="@sort" data-type="number"/><esp:link notarget="yes"
-	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"><span class="homophone-n"><xsl:value-of select="@n"/></span></esp:link
+	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"
+	    ><span class="homophone-n"><xsl:value-of select="@n"/></span></esp:link
 	    ><xsl:if test="not(position()=last())"><wbr/></xsl:if
 	    ></xsl:for-each
 	    ></p
@@ -850,6 +869,7 @@
 	    <xsl:with-param name="project" select="$project"/>
 	    <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
 	    <xsl:with-param name="nomenu" select="true()"/>
+	    <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	  </xsl:call-template>
 	  <h2><xsl:value-of select="$title"/></h2>
 	  <table class="selpage">
@@ -933,7 +953,7 @@
     <tr class="lemsel-h3"><td colspan="3"><xsl:value-of select="$type"></xsl:value-of></td></tr>
     <xsl:for-each select="$nodes">
       <xsl:sort select="@sort" data-type="number"/>
-      <xsl:variable name="k" select="concat(@n,'::',@base)"/>
+      <xsl:variable name="k" select="concat(ancestor::sl:v/@n,'::',@n,'::',@base)"/>
       <xsl:if test="generate-id(.)=generate-id(key('lemuniq',$k)[1])">
 	<tr class="lemlem">
 	  <td class="asl-sel-l-base"><xsl:value-of select="@base"/></td>
@@ -963,6 +983,7 @@
 	  <xsl:with-param name="project" select="$project"/>
 	  <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
 	  <xsl:with-param name="nomenu" select="true()"/>
+	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	</xsl:call-template>
 	<h2>Sumerian Words written with <xsl:value-of select="@n"/></h2>
 	<table class="lemsel">
@@ -1049,6 +1070,7 @@
 	      <xsl:with-param name="project" select="$project"/>
 	      <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
 	      <xsl:with-param name="nomenu" select="true()"/>
+	      <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	    </xsl:call-template>
 	    <xsl:call-template name="lex-sign-data"/>
 	  </body>

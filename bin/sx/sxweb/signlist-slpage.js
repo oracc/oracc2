@@ -47,11 +47,21 @@ function kmap (str) {
 
 function slpage () {
     var form=document.getElementById('sl');
-    // alert('form='+form);                                                                                                         
+    // alert('form='+form);
     var key=document.getElementById('k').value;
-    // alert('key='+key);                                                                                                           
+    // alert('key='+key);
+    var ctdr = '';
+    if (key.startsWith('*')) {
+	ctdr = '-ctd';
+	key = key.substring(1);
+	alert('key='+key+'; ctdr='+ctdr);
+    } else if (key.endsWith('*')) {
+	ctdr = '-ctr';
+	key = key.substring(0, key.length - 1);
+	alert('key='+key+'; ctdr='+ctdr);
+    }
     var mkey = kmap(key);
-    // alert(mkey);                                                                                                                 
+    // alert(mkey);
     // alert('mkey='+mkey);
     
     var oc = mkey.charCodeAt(0) - "a".charCodeAt(0);
@@ -60,10 +70,14 @@ function slpage () {
         // alert(ao);                                                                                                               
         var oid=ao[mkey];
         if (oid) {
-            // alert('oid='+oid);                                                                                                   
+            alert('oid='+oid);                                                                                                   
             if (oid.startsWith("selpages/")) {
                 window.location=projpath+oid+'.html';
-            } else {
+	    } else if (ctdr.length > 0) {
+		oid = oid.replace(/\w+/, "");
+		alert('oid-sans-letter='+oid);
+                window.location=projpath+'selpages'+oid+ctdr+'.html';		
+	    } else {
                 window.location=projpath+oid+'/index.html';
             }
         } else {

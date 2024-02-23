@@ -1,8 +1,8 @@
-#Content a { text-decoration: none; }
+/* #Content a { text-decoration: none; } */
 
-#Content a { color: black; }
+/* #Content a { color: black; } */
 
-#Content a:hover { background-color: #aaa; }
+/* #Content a:hover { background-color: #aaa; } */
 
 .@@hproject@@-info h3 { font-style: normal; }
 
@@ -104,7 +104,7 @@ div.asl-images  { display: inline-block; vertical-align: top; }
 .strut { display: none; height: 12px; }
 
 .asl-lem-base { font-weight: bold; }
-.asl-lem-cnt  { color: grey; font-size: 90%; }
+.asl-lem-cnt  { font-size: 90%; }
 
 body.selpage h2	  { text-align: center; }
 .snames  { font-size: 90%; }
@@ -126,13 +126,11 @@ table.lemsel td  { padding-left: 1em; padding-right: 1em; }
     table.selpage { width: 80%; margin: auto; }
 }
 
-a:link	{ color: blue; }
-a:visited { color: red; }
+a:link	{ color: blue; text-decoration: none; }
+a:visited { color: red; text-decoration: none; }
+a:has(span.asl-lem-cnt):link	{ color: cornflowerblue; text-decoration: none; }
+a:has(span.asl-lem-cnt):visited { color: #e35335; text-decoration: none; }
 a:hover { text-decoration: underline; }
-
-#Content a:link	{ color: blue; }
-#Content a:visited { color: red; }
-#Content a:hover { text-decoration: underline; }
 
 .ivs-IM_NI2 span { font-size: 0; }
 .ivs-IM_NI2:after { content: '𒉎'; }

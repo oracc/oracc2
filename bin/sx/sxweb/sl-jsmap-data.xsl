@@ -49,10 +49,37 @@
   </xsl:choose>
 </xsl:template>
 
+<xsl:template name="cpd">
+  <xsl:param name="n"/>
+  <xsl:param name="nodes"/>
+  <xsl:if test="count($nodes)>0">
+    <xsl:value-of select="$n"/><xsl:text>&#x9;</xsl:text>
+    <xsl:for-each select="$nodes">
+      <xsl:if test="not(position()=1)"><xsl:text> </xsl:text></xsl:if>
+      <xsl:value-of select="@xml:id"/>
+    </xsl:for-each>
+    <xsl:text>&#xa;</xsl:text>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template match="/">
+  <xsl:apply-templates/>
+  <xsl:call-template name="cpd">
+    <xsl:with-param name="n" select="'memb*'"/>
+    <xsl:with-param name="nodes" select=".//sl:sign[sl:cpds]"/>
+  </xsl:call-template>
+  <xsl:call-template name="cpd">
+    <xsl:with-param name="n" select="'ctnr*'"/>
+    <xsl:with-param name="nodes" select=".//sl:sign[sl:cpds/sl:ctnr]"/>
+  </xsl:call-template>
+  <xsl:call-template name="cpd">
+    <xsl:with-param name="n" select="'ctnd*'"/>
+    <xsl:with-param name="nodes" select=".//sl:sign[sl:cpds/sl:ctnd]"/>
+  </xsl:call-template>
+</xsl:template>
+
 <xsl:template match="sl:sign|sl:form|sl:list|sl:v">
-  <!--<xsl:if test="not(starts-with(@n,'|'))">-->
-    <xsl:call-template name="out-n"/>
-  <!--</xsl:if>-->
+  <xsl:call-template name="out-n"/>
   <xsl:apply-templates/>
 </xsl:template>
 

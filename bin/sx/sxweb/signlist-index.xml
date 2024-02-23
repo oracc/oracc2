@@ -3,7 +3,7 @@
 	  xmlns="http://www.w3.org/1999/xhtml"
 	  xmlns:xh="http://www.w3.org/1999/xhtml"
 	  xmlns:xpd="http://oracc.org/ns/xpd/1.0">
-  <esp:name>Home</esp:name>
+  <esp:name>Index</esp:name>
   <esp:title>@@PROJECT@@ Signlist</esp:title>
   <html>
     <head/>
@@ -18,10 +18,7 @@
       <p>The lookup bar allows you to find sign-pages by typing values
       or signnames.  You can type in upper or lower case, but the
       lookup table only uses lower case, so you don't need to use
-      upper case at all to find sign-pages.  Compound signs do not
-      need to be in pipes--you can search for <code>ka*nun</code>
-      rather than <code>|KA×NUN|</code> (though the latter also works,
-      which can be useful if you are cutting and pasting).</p>
+      upper case at all to find sign-pages.</p>
 
       <p>Signs can be given in unicode transliteration or in a
       simplified transliteration using the following
@@ -37,6 +34,27 @@
 	<tr><td>'</td><td>ʾ</td></tr>
 	<tr><td>*</td><td>×</td></tr>
       </table>
+
+      <esp:sh>Looking up Compounds</esp:sh>
+
+      <p>Compound signs simplified when they are turned into lookup
+      table keys.  Compound signs in the lookup bar do not need to be
+      in pipes--you can search for <code>ka*nun</code> rather than
+      <code>|KA×NUN|</code> (though the latter also works, which can
+      be useful if you are cutting and pasting).</p>
+
+      <p>Two special conventions are defined for use with compounds:</p>
+
+      <dl>
+	<dt><code>*</code>SIGN</dt><dd>A lookup key starting with an
+	asterisk, e.g., <code>*nun</code>, shows the selection page
+	for signs where the key is contained by another sign (like
+	<code>NUN</code> in <code>|KA×NUN|</code>.</dd>
+	<dt>SIGN<code>*</code></dt><dd>A lookup key ending with an
+	asterisk, e.g., <code>ka*</code>, shows the selection page for
+	signs where the key is container for other signs (like
+	<code>KA</code> in <code>|KA×NUN|</code></dd>
+      </dl>
 
       <esp:sh>Homophone Lookup Short-cut</esp:sh>
       

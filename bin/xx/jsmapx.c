@@ -31,7 +31,9 @@ main(int argc, char **argv)
   Roco *r = roco_load1("-");
   int i;
   int multi = 0;
-  seen = hash_create(1024);
+  unsigned const char *memb = NULL, *ctnr = NULL, *ctnd = NULL;
+
+  seen = hash_create(1024);  
 
   if (argv[1])
     multi = 1;
@@ -41,7 +43,22 @@ main(int argc, char **argv)
       for (i = 0; i < 26; ++i)
 	ll[i] = list_create(LIST_SINGLE);
       for (i = 0; i < r->nlines; ++i)
-	list_add(ll[r->rows[i][0][0]-'a'], (void*)(uintptr_t)i);
+	{
+	  unsigned const char *k = r->rows[i][0];
+	  if ('*' == k[strlen((ccp)k)-1])
+	    {
+	      if (!strcmp((ccp)k, "memb*"))
+		memb = r->rows[i][1];
+	      else if (!strcmp((ccp)k, "ctnr*"))
+		ctnr = r->rows[i][1];
+	      else if (!strcmp((ccp)k, "ctnd*"))
+		ctnd = r->rows[i][1];
+	    }	  
+	  else
+	    {
+	      list_add(ll[k[0]-'a'], (void*)(uintptr_t)i);
+	    }
+	}
       for (i = 0; i < 26; ++i)
 	one_ll(r, i, ll[i]);
       printf("const aa = [");
@@ -52,7 +69,12 @@ main(int argc, char **argv)
 	  printf("%c",i+'a');
 	}
       printf("];\n");
-     
+      if (memb)
+	printf("const memb = \"%s\";\n", memb);
+      if (ctnr)
+	printf("const ctnr = \"%s\";\n", ctnr);
+      if (ctnd)
+	printf("const ctnd = \"%s\";\n", ctnd);
     }
   else
     {

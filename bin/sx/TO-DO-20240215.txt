@@ -11,6 +11,7 @@
   - when a sign has suxword but no abs no SUMERIAN header is generated
   - doco page on anatomy of a sign-page; sel-page
   - sel-page banner should link to signlist/index.html
+  - sel-pages OID-ctr and OID-ctd with lookup short cuts *nun and ka*
   
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible

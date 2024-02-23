@@ -8,7 +8,6 @@
   <param:publisher>The @@PROJECT@@ Project</param:publisher><!-- used in citations -->
   <param:host>http://build-oracc.museum.upenn.edu</param:host>
   <param:root>/@@project@@/signlist</param:root>
-  <param:rootindex>home.html</param:rootindex>
   <param:common-headers>
     <meta name="DC.publisher" content="@@PROJECT@@ Project, Oracc"/>
     <meta name="DC.language" scheme="ISO 639-2/T" content="eng"/>
