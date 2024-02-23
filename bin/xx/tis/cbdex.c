@@ -36,7 +36,9 @@ main(int argc, char **argv)
       else if ('g' == *b)
 	{
 	  cbdex_g(b, cp);
-	  cbdex_write(stdout, cp);
+	  /* Skip graphemes that are in determinatives */
+	  if (cp->gpos)
+	    cbdex_write(stdout, cp);
 	}
     }
   cbdex_term(chp);

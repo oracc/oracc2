@@ -237,7 +237,11 @@ gsig_parse(char *s, Gsig *gp, const char *id_sig_sep)
   return gp;
 }
 
-/* Fish the no-determinative position code out of the gsig */
+/* Fish the no-determinative position code out of the gsig
+ *
+ * By design this routine ignores graphemes in determinatives.
+ *
+ */
 const char *
 gsig_no_d_pos(const char *gsig)
 {
@@ -251,6 +255,11 @@ gsig_no_d_pos(const char *gsig)
 	  break;
       --p;
     }
-  pos[0] = p[0];
-  return pos;
+  if ('0' != p[1])
+    {
+      pos[0] = p[0];
+      return pos;
+    }
+  else
+    return NULL; /* The grapheme is ignored because it's a determinative */
 }

@@ -170,6 +170,8 @@ gsb_set_positions(Word *w)
 	      else
 		wgp->position = 'i';
 	    }
+	  if (wgp->role == 'd' || wgp->role == 'D')
+	    wgp->index = 0;
 	  if (wgp->no_d_index > 1)
 	    {
 	      if (wgp->no_d_last)
@@ -184,6 +186,8 @@ gsb_set_positions(Word *w)
 	      else
 		wgp->no_d_position = 'i';
 	    }
+	  if (wgp->role == 'd' || wgp->role == 'D')
+	    wgp->no_d_index = 0;
 	}
     }
 }
@@ -198,24 +202,20 @@ gsb_last(Trun *r)
       int lastindex = w->gpp_used - 1;
 
       while (lastindex >= 0 && (wgp = gsb_get_n(w, lastindex--)))
-	if ('c' != wgp->type)
+	if ('c' != wgp->type && 'd' != wgp->role && 'D' != wgp->role)
 	  break;
       
       if (wgp)
 	{
-	  wgp->last = 1;
-	  if (w->no_d_index > 0 && w->no_d_index < lastindex)
-	    {
-	      wgp = gsb_get_n(w, w->no_d_index-1);
-	      if (wgp)
-		wgp->no_d_last = 1;
-	      else
-		fprintf(stderr,
-			"lib/gsig_builder/gsb_last: no_d_index=%d is out of bounds at %s\n",
-			w->no_d_index, loch_word(r)->word_id);
-	    }
+	  wgp->no_d_last = 1;
+	  lastindex = w->gpp_used - 1;
+	  wgp = gsb_get_n(w, w->no_d_index-1);
+	  if (wgp)
+	    wgp->last = 1;
 	  else
-	    wgp->no_d_last = 1;
+	    fprintf(stderr,
+		    "lib/gsig_builder/gsb_last: no_d_index=%d is out of bounds at %s\n",
+		    w->no_d_index, loch_word(r)->word_id);
 	}
       gsb_set_positions(w);
     }

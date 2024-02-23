@@ -86,7 +86,11 @@ cbdex_g(char *g, struct cbdex *cp)
     {
       char **f = tab_split(g);
       cp->tok = cdup(f[1]);
-      cp->gpos = cdup(gsig_no_d_pos(f[2]));
+      const char *p = gsig_no_d_pos(f[2]);
+      if (p)
+	cp->gpos = cdup(p);
+      else
+	cp->gpos = NULL;
       free(f);
     }
   else
