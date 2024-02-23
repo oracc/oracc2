@@ -3,7 +3,7 @@
 	  xmlns="http://www.w3.org/1999/xhtml"
 	  xmlns:xh="http://www.w3.org/1999/xhtml"
 	  xmlns:xpd="http://oracc.org/ns/xpd/1.0">
-  <esp:name>Index</esp:name>
+  <esp:name>Home</esp:name>
   <esp:title>@@PROJECT@@ Signlist</esp:title>
   <html>
     <head/>
@@ -43,17 +43,20 @@
       <code>|KA×NUN|</code> (though the latter also works, which can
       be useful if you are cutting and pasting).</p>
 
-      <p>Two special conventions are defined for use with compounds:</p>
+      <p>Three special conventions are defined for looking up compounds:</p>
 
       <dl>
 	<dt><code>*</code>SIGN</dt><dd>A lookup key starting with an
 	asterisk, e.g., <code>*nun</code>, shows the selection page
 	for signs where the key is contained by another sign (like
-	<code>NUN</code> in <code>|KA×NUN|</code>.</dd>
+	<code>NUN</code> in <code>|KA×NUN|</code>).</dd>
 	<dt>SIGN<code>*</code></dt><dd>A lookup key ending with an
 	asterisk, e.g., <code>ka*</code>, shows the selection page for
 	signs where the key is container for other signs (like
-	<code>KA</code> in <code>|KA×NUN|</code></dd>
+	<code>KA</code> in <code>|KA×NUN|</code>).</dd>
+	<dt><code>*</code>SIGN<code>*</code></dt><dd>A lookup key
+	beginning and ending with an asterisk, e.g., <code>*ka*</code>,
+	shows the selection page for any compounds that include the sign.</dd>
       </dl>
 
       <esp:sh>Homophone Lookup Short-cut</esp:sh>
