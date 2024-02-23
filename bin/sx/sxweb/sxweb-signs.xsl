@@ -134,6 +134,7 @@
 	      </div>
 	      <xsl:if test="count(sl:form)>0">
 		<div class="asl-forms">
+		  <esp:h>FORMS</esp:h>
 		  <xsl:for-each select="sl:form">
 		    <div class="asl-sign-form"
 			 id="form{count(preceding-sibling::sl:form)}">
@@ -1082,7 +1083,7 @@
 
 <xsl:template name="sws-form-page">
   <xsl:param name="parameters"/>
-  <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-lex.html')}"
+  <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-forms.html')}"
 	       method="xml" encoding="utf-8" omit-xml-declaration="yes"
 	       indent="yes" doctype-system="html">
     <html>
@@ -1100,7 +1101,15 @@
 	  <xsl:with-param name="nomenu" select="true()"/>
 	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	</xsl:call-template>
-	<xsl:call-template name="lex-sign-data"/>
+	<div class="asl-forms-page">
+	  <xsl:for-each select="sl:form">
+	    <div class="asl-sign-form"
+		 id="form{count(preceding-sibling::sl:form)}">
+	      <xsl:call-template name="sws-form-h"/>
+	      <xsl:call-template name="sws-sign-or-form"/>
+	    </div>
+	  </xsl:for-each>
+	</div>
       </body>
     </html>
   </ex:document>

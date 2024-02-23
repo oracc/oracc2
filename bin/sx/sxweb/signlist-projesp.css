@@ -88,8 +88,6 @@ p.sl-hang { padding-left: 120px; }
 
 div.asl-cite-url { margin-top: 3em; }
 
-.asl-forms { padding-left: 120px; }
-
 .asl-cun-img   { margin-bottom: 1em; }
 
 .asl-cite-url p { margin: 0px; }
@@ -135,6 +133,10 @@ a:visited { color: red; text-decoration: none; }
 a:has(span.asl-lem-cnt):link	{ color: cornflowerblue; text-decoration: none; }
 a:has(span.asl-lem-cnt):visited { color: #e35335; text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+.asl-forms { padding-left: 120px; }
+
+.asl-forms .sl-ihead-h { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; margin-left: -240px; text-align: right; }
 
 .ivs-IM_NI2 span { font-size: 0; }
 .ivs-IM_NI2:after { content: '𒉎'; }
