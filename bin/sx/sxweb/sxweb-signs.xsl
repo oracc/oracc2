@@ -624,7 +624,7 @@
   	      /><xsl:param name="sorf"
 	      /><xsl:variable name="url-base"><xsl:choose
 	      ><xsl:when test="/*/@lemma-http"><xsl:value-of select="/*/@lemma-http"/></xsl:when
-	      ><xsl:otherwise><xsl:value-of select="concat(/*/@project, '/')"/></xsl:otherwise></xsl:choose
+	      ><xsl:otherwise><xsl:value-of select="concat('/',/*/@project)"/></xsl:otherwise></xsl:choose
 	      ></xsl:variable><xsl:for-each
 	      select="$nodes[not(ancestor::sl:form) or $sorf='form']"
 	      ><esp:link notarget="yes" url="{$url-base}/{@oid}"
@@ -910,7 +910,7 @@
     <xsl:choose>
       <xsl:when test="/*/@lemma-http">
       <xsl:value-of select="/*/@lemma-http"/></xsl:when>
-      <xsl:otherwise><xsl:value-of select="concat('/', /*/@project, '/')"/></xsl:otherwise>
+      <xsl:otherwise><xsl:value-of select="concat('/', /*/@project)"/></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
   <xsl:if test="count($nodes)>0">
