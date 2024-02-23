@@ -1,7 +1,10 @@
 * OGSL To-DO
-  - get ePSD in as Sumerian?
   - force Cuneiform NOTO font
   - clean up ogsl repo or make new osl one and make ogsl private
+  - check if @notes are printed
+  - check which @v of @form are printed; suppress @iv if necessary
+  - improve cbdex selection of absolute bases
+  - implement corebase in tokens and use in sign-page
   
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible

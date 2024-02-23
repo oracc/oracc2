@@ -20,7 +20,7 @@
       lookup table only uses lower case, so you don't need to use
       upper case at all to find sign-pages.  Compound signs do not
       need to be in pipes--you can search for <code>ka*nun</code>
-      rather than <code>|KA×NUN</code> (though the latter also works,
+      rather than <code>|KA×NUN|</code> (though the latter also works,
       which can be useful if you are cutting and pasting).</p>
 
       <p>Signs can be given in unicode transliteration or in a

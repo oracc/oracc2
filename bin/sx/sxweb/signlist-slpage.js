@@ -2,7 +2,9 @@ var projpath='/@@project@@/signlist/';
 
 function cmap (chr) {
     var c = chr.charCodeAt(0);
-    if (c < 128) {
+    if (chr == '|') {
+	return "";
+    } else if (c < 128) {
 	return chr;
     } else if (c > 0x2079 && c < 0x208A) {
 	// alert(chr+' code '+c);
@@ -26,8 +28,6 @@ function cmap (chr) {
 	    return 'h';
 	} else if (chr == 'ʾ') {
 	    return "'";
-	} else if (chr == '|') {
-	    return "";
 	} else {
 	    return chr;
 	}
@@ -52,7 +52,8 @@ function slpage () {
     // alert('key='+key);                                                                                                           
     var mkey = kmap(key);
     // alert(mkey);                                                                                                                 
-    // alert('mkey='+mkey);                                                                                                         
+    // alert('mkey='+mkey);
+    
     var oc = mkey.charCodeAt(0) - "a".charCodeAt(0);
     if (oc >= 0 && oc <= 26) {
         var ao = aa[oc];
