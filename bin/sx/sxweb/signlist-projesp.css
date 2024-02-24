@@ -23,9 +23,7 @@
 
 #Forms { }
 
-#FormsInner { padding-left: 120px; }
-
-#Forms .sl-ihead-h { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; margin-left: -240px; text-align: right; }
+#FormsInner { }
 
 .image-insts { margin-top: 1em; }
 
@@ -129,11 +127,14 @@ table.lemsel td  { padding-left: 1em; padding-right: 1em; }
     table.selpage { width: 80%; margin: auto; }
 }
 
+.asl-variant { font-weight: bold; font-size: 90%; }
+
 a:link	{ color: blue; text-decoration: none; }
+a:link:hover { color: black; text-decoration: underline; }
 a:visited { color: red; text-decoration: none; }
+a:visited:hover { color: black; text-decoration: underline; }
 a:has(span.asl-lem-cnt):link	{ color: cornflowerblue; text-decoration: none; }
 a:has(span.asl-lem-cnt):visited { color: #e35335; text-decoration: none; }
-a:hover { text-decoration: underline; }
 
 .ivs-IM_NI2 span { font-size: 0; }
 .ivs-IM_NI2:after { content: '𒉎'; }

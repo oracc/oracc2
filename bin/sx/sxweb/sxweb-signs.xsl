@@ -126,7 +126,7 @@
 	  <head/>
 	  <body>
 	    <xsl:call-template name="sws-navbar"/>
-	    <div id="SignOuter"">
+	    <div id="SignOuter">
 	      <div id="Sign">
 		<xsl:call-template name="sws-form-jumps"/>
 		<!--<xsl:call-template name="sws-sections"/>?-->
@@ -134,7 +134,7 @@
 	      </div>
 	      <xsl:if test="count(sl:form)>0">
 		<div id="Forms">
-		  <esp:h>FORMS</esp:h>
+		  <h1>FORMS</h1>
 		  <div id="FormsInner">
 		    <xsl:for-each select="sl:form">
 		      <div class="asl-form"
@@ -226,11 +226,14 @@
 </xsl:template>
 
 <xsl:template name="sws-form-h">
-  <h2 class="asl-form-h">
-    <xsl:call-template name="sws-sign-or-form-h">
-      <xsl:with-param name="nopipes" select="translate(@n,'|','')"/>
-    </xsl:call-template>
-  </h2>
+  <p class="sl-hang">
+    <span class="sl-ihead-h">VARIANT</span>
+    <span class="asl-variant">
+      <xsl:call-template name="sws-sign-or-form-h">
+	<xsl:with-param name="nopipes" select="translate(@n,'|','')"/>
+      </xsl:call-template>
+    </span>
+  </p>
 </xsl:template>
 
 <xsl:template name="sws-navbar">
