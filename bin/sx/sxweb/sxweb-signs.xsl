@@ -126,22 +126,24 @@
 	  <head/>
 	  <body>
 	    <xsl:call-template name="sws-navbar"/>
-	    <div class="asl-sign">
-	      <div class="asl-sign-sign">
+	    <div id="SignOuter"">
+	      <div id="Sign">
 		<xsl:call-template name="sws-form-jumps"/>
 		<!--<xsl:call-template name="sws-sections"/>?-->
 		<xsl:call-template name="sws-sign-or-form"/>
 	      </div>
 	      <xsl:if test="count(sl:form)>0">
-		<div class="asl-forms">
+		<div id="Forms">
 		  <esp:h>FORMS</esp:h>
-		  <xsl:for-each select="sl:form">
-		    <div class="asl-sign-form"
-			 id="form{count(preceding-sibling::sl:form)}">
-		      <xsl:call-template name="sws-form-h"/>
-		      <xsl:call-template name="sws-sign-or-form"/>
-		    </div>
-		  </xsl:for-each>
+		  <div id="FormsInner">
+		    <xsl:for-each select="sl:form">
+		      <div class="asl-form"
+			   id="form{count(preceding-sibling::sl:form)}">
+			<xsl:call-template name="sws-form-h"/>
+			<xsl:call-template name="sws-sign-or-form"/>
+		      </div>
+		    </xsl:for-each>
+		  </div>
 		</div>
 	      </xsl:if>
 	    </div>
@@ -236,7 +238,7 @@
   <xsl:variable name="prev" select="preceding::sl:sign[not(@moid)][1]"/>
   <xsl:variable name="next" select="following::sl:sign[not(@moid)][1]"/>
   <xsl:if test="$prev|$next">
-    <div class="navbar">
+    <div id="NavBar">
       <xsl:choose>
 	<xsl:when test="$prev and $next">
 	  <p style="text-align-last: justify">
@@ -270,7 +272,7 @@
 
 <xsl:template name="sws-form-jumps">
   <xsl:if test="count(sl:form) > 0">
-    <div class="asl-bkmk-forms">
+    <div id="FormJumps">
       <p>
 	<xsl:text>Jump to variant form: </xsl:text>
 	<xsl:for-each select="sl:form">
@@ -318,7 +320,7 @@
       </xsl:if>
     <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
       <div class="asl-cun-img">
-	<span class="sl-ihead">SIGNS</span>
+	<span class="sl-ihead">CUNEIFORM</span>
 	<xsl:call-template name="sws-cuneiform"/>
 	<xsl:call-template name="sws-images"/>
       </div>

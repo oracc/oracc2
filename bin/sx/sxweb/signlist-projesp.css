@@ -1,18 +1,31 @@
-/* #Content a { text-decoration: none; } */
-
-/* #Content a { color: black; } */
-
-/* #Content a:hover { background-color: #aaa; } */
-
-/*#Content { font-family: "Ungkam Book Basic", Times; }*/
-
 .@@hproject@@-info h3 { font-style: normal; }
 
-.navbar { border-style: outset; border-width: 2px; border-color: red; margin-bottom: 10px; }
+#NavBar { border-style: outset; border-width: 2px; border-color: red; margin-bottom: 10px; }
 
-.navbar p { margin: 0px !important; }
+#NavBar p { margin: 0px !important; }
 
-iframe { margin-width: 10px; border: none; border-left: 2px; }
+#HeadTitleForm { text-align-last: center; }
+
+#HeadTitle { display: inline-block; vertical-align: middle; top: 0px; }
+
+#HeadForm { display: inline-block; vertical-align: middle; text-align: right; }
+
+#HeadForm form { vertical-align: middle; text-align-last: left; margin: 1em; display: inline-block; }
+
+#FormJumps p {
+    text-indent: -2in;
+    margin-left: 2.5in;
+}
+
+#FormJumps img {
+    vertical-align: middle;
+}
+
+#Forms { }
+
+#FormsInner { padding-left: 120px; }
+
+#Forms .sl-ihead-h { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; margin-left: -240px; text-align: right; }
 
 .image-insts { margin-top: 1em; }
 
@@ -29,15 +42,6 @@ iframe { margin-width: 10px; border: none; border-left: 2px; }
 .ii-insts { border-left: inset; padding-left: 10px; vertical-align: top; }
 
 .ce { margin: 0px; }
-
-.formjumps p {
-    text-indent: -2in;
-    margin-left: 2.5in;
-}
-
-.formjumps img {
-    vertical-align: middle;
-}
 
 .middle { vertical-align: middle; }
 
@@ -78,14 +82,6 @@ td.name-sign img { }
 
 p.sl-hang { padding-left: 120px; }
 
-#HeadTitleForm { text-align-last: center; }
-
-#HeadTitle { display: inline-block; vertical-align: middle; top: 0px; }
-
-#HeadForm { display: inline-block; vertical-align: middle; text-align: right; }
-
-#HeadForm form { vertical-align: middle; text-align-last: left; margin: 1em; display: inline-block; }
-
 div.asl-cite-url { margin-top: 3em; }
 
 .asl-cun-img   { margin-bottom: 1em; }
@@ -97,6 +93,7 @@ div.asl-cuneiform { display: inline-block; vertical-align: top; }
 div.asl-unicode { display: inline-block; vertical-align: top; }
 
 p.asl-ucun    { font-size: 250%; margin: 0px; }
+
 div.asl-images  { display: inline-block; vertical-align: top; }
 
 .itable { vertical-align: middle; margin-right: 1em; }
@@ -109,11 +106,15 @@ div.asl-images  { display: inline-block; vertical-align: top; }
 .asl-lem-cnt  { font-size: 90%; }
 
 body.selpage h2	  { text-align: center; }
+
 .snames  { font-size: 90%; }
+
 table.selpage , table.lemsel 	  { margin: auto; }
 table.selpage td  { padding-left: 1em; padding-right: 1em; }
+
 tr.lemsel-h2 { font-weight: bold; }
 tr.lemsel-h3 { font-style: italic; }
+
 .lemlem td:first-child { text-indent: 1em; }
 
 span.homophone-n { padding-right: 1em; }
@@ -133,10 +134,6 @@ a:visited { color: red; text-decoration: none; }
 a:has(span.asl-lem-cnt):link	{ color: cornflowerblue; text-decoration: none; }
 a:has(span.asl-lem-cnt):visited { color: #e35335; text-decoration: none; }
 a:hover { text-decoration: underline; }
-
-.asl-forms { padding-left: 120px; }
-
-.asl-forms .sl-ihead-h { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; margin-left: -240px; text-align: right; }
 
 .ivs-IM_NI2 span { font-size: 0; }
 .ivs-IM_NI2:after { content: '𒉎'; }
