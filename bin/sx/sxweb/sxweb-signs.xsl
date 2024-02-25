@@ -128,22 +128,34 @@
 	    <xsl:call-template name="sws-navbar"/>
 	    <div id="SignOuter">
 	      <div id="Sign">
-		<xsl:call-template name="sws-form-jumps"/>
+		<!--<xsl:call-template name="sws-form-jumps"/>-->
 		<!--<xsl:call-template name="sws-sections"/>?-->
 		<xsl:call-template name="sws-sign-or-form"/>
 	      </div>
 	      <xsl:if test="count(sl:form)>0">
 		<div id="Forms">
-		  <h1>FORMS</h1>
-		  <div id="FormsInner">
-		    <xsl:for-each select="sl:form">
-		      <div class="asl-form"
-			   id="form{count(preceding-sibling::sl:form)}">
-			<xsl:call-template name="sws-form-h"/>
-			<xsl:call-template name="sws-sign-or-form"/>
+		  <!--<h1>FORMS</h1>-->
+		  <xsl:choose>
+		    <xsl:when test="count(sl:form)>3">
+		      <p class="sl-hang"
+			 ><span class="sl-ihead-h">FORMS PAGE</span
+			 ><esp:link
+			 notarget="yes"
+			 url="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-forms.html')}"
+			 >See the <xsl:value-of select="count(sl:form)"/> variant forms of this sign.</esp:link></p>
+		    </xsl:when>
+		    <xsl:otherwise>
+		      <div id="FormsInner">
+			<xsl:for-each select="sl:form">
+			  <div class="asl-form"
+			       id="form{count(preceding-sibling::sl:form)}">
+			    <xsl:call-template name="sws-form-h"/>
+			    <xsl:call-template name="sws-sign-or-form"/>
+			  </div>
+			</xsl:for-each>
 		      </div>
-		    </xsl:for-each>
-		  </div>
+		    </xsl:otherwise>
+		  </xsl:choose>
 		</div>
 	      </xsl:if>
 	    </div>
@@ -196,6 +208,11 @@
   <xsl:call-template name="sws-lex-page">
     <xsl:with-param name="parameters" select="$parameters"/>
   </xsl:call-template>
+  <xsl:if test="count(sl:form)>3">
+    <xsl:call-template name="sws-form-page">
+      <xsl:with-param name="parameters" select="$parameters"/>
+    </xsl:call-template>
+  </xsl:if>
   <xsl:if test="count(preceding-sibling::sl:sign)=0 and count(../preceding-sibling::sl:letter)=0">
     <xsl:message>Emitting homophone selpages</xsl:message>
     <xsl:apply-templates select="/*/sl:homophones/sl:base">
@@ -227,7 +244,7 @@
 
 <xsl:template name="sws-form-h">
   <p class="sl-hang">
-    <span class="sl-ihead-h">VARIANT</span>
+    <span class="sl-ihead-h">FORM</span>
     <span class="asl-variant">
       <xsl:call-template name="sws-sign-or-form-h">
 	<xsl:with-param name="nopipes" select="translate(@n,'|','')"/>
@@ -454,14 +471,14 @@
     <p>
       <span class="sl-ihead">SYS</span>
       <xsl:for-each select="sl:sys">
-	<span class="sl-sys-name">
+	<span class="asl-sys-name">
 	  <xsl:value-of select="@name"/>
 	  <xsl:if test="@subname">
-	    <span class="sl-sys-subname"><xsl:value-of select="concat(':',@subname)"/></span>
+	    <span class="asl-sys-subname"><xsl:value-of select="concat(':',@subname)"/></span>
 	  </xsl:if>
 	  <xsl:text>:&#xa0;</xsl:text>
 	</span>
-	<span class="sl-sys-token">
+	<span class="asl-sys-token">
 	  <xsl:value-of select="@token"/>
 	  <xsl:if test="string-length(text())>0">
 	    <xsl:text>&#x2192;</xsl:text>
@@ -842,6 +859,7 @@
 </xsl:template>
 
 <xsl:template name="sws-sel-page">
+  <xsl:param name="body-id" select="'SelPage'"/>
   <xsl:param name="file"/>
   <xsl:param name="type"/>
   <xsl:param name="title"/>
@@ -869,7 +887,7 @@
 	      <link media="screen,projection" href="{concat('/',/*/@project,'/signlist/css/projesp.css')}" type="text/css" rel="stylesheet" />
 	  -->
 	</head>
-	<body class="selpage">
+	<body id="{$body-id}">
 	  <xsl:call-template name="esp2-banner-div">
 	    <xsl:with-param name="parameters" select="$parameters"/>
 	    <xsl:with-param name="project" select="$project"/>
@@ -983,7 +1001,7 @@
 	  <xsl:with-param name="project" select="$project"/>
 	</xsl:call-template>
       </head>
-      <body class="selpage">
+      <body id="SelPage">
 	<xsl:call-template name="esp2-banner-div">
 	  <xsl:with-param name="parameters" select="$parameters"/>
 	  <xsl:with-param name="project" select="$project"/>
@@ -991,7 +1009,7 @@
 	  <xsl:with-param name="nomenu" select="true()"/>
 	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	</xsl:call-template>
-	<h2>Sumerian Words written with <xsl:value-of select="@n"/></h2>
+	<h2>Sumerian Words written with <xsl:value-of select="translate(@n,'|','')"/></h2>
 	<table class="lemsel">
 	  <xsl:variable name="all-lem" select=".//sl:lemmas|id(@merge)//sl:lemmas"/>
 	  <xsl:variable name="sf-lem" select="$all-lem[not(../self::sl:v)]"/>
@@ -1070,7 +1088,7 @@
 	      <xsl:with-param name="project" select="$project"/>
 	    </xsl:call-template>
 	  </head>
-	  <body class="selpage">
+	  <body id="SelPage">
 	    <xsl:call-template name="esp2-banner-div">
 	      <xsl:with-param name="parameters" select="$parameters"/>
 	      <xsl:with-param name="project" select="$project"/>
@@ -1098,22 +1116,26 @@
 	  <xsl:with-param name="project" select="$project"/>
 	</xsl:call-template>
       </head>
-      <body class="selpage">
+      <body id="FormsPage">
 	<xsl:call-template name="esp2-banner-div">
+	  <xsl:with-param name="body-id" select="'FormPage'"/>
 	  <xsl:with-param name="parameters" select="$parameters"/>
 	  <xsl:with-param name="project" select="$project"/>
 	  <xsl:with-param name="current-page" select="ancestor-or-self::sl:sign"/>
 	  <xsl:with-param name="nomenu" select="true()"/>
 	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	</xsl:call-template>
-	<div class="asl-forms-page">
-	  <xsl:for-each select="sl:form">
-	    <div class="asl-sign-form"
-		 id="form{count(preceding-sibling::sl:form)}">
-	      <xsl:call-template name="sws-form-h"/>
-	      <xsl:call-template name="sws-sign-or-form"/>
-	    </div>
-	  </xsl:for-each>
+	<h1>Variant Forms for <xsl:value-of select="translate(ancestor-or-self::sl:sign/@n,'|','')"/></h1>
+	<div id="Forms">
+	  <div id="FormsInner">
+	    <xsl:for-each select="sl:form">
+	      <div class="asl-sign-form"
+		   id="form{count(preceding-sibling::sl:form)}">
+		<xsl:call-template name="sws-form-h"/>
+		<xsl:call-template name="sws-sign-or-form"/>
+	      </div>
+	    </xsl:for-each>
+	  </div>
 	</div>
       </body>
     </html>

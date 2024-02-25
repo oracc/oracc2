@@ -21,11 +21,107 @@
     vertical-align: middle;
 }
 
+#FormsPage { width: 80%; margin: auto; }
+
 #Forms { }
 
 #FormsInner { }
 
-.image-insts { margin-top: 1em; }
+table.pretty { background-color: white; }
+
+/* Common ASL formatting; the colours here need to be redone to work with project colours */
+
+a:link	{ color: blue; text-decoration: none; }
+a:link:hover { color: black; text-decoration: underline; }
+a:visited { color: red; text-decoration: none; }
+a:visited:hover { color: black; text-decoration: underline; }
+a:has(span.asl-lem-cnt):link	{ color: cornflowerblue; text-decoration: none; }
+a:has(span.asl-lem-cnt):visited { color: #e35335; text-decoration: none; }
+
+/* Common sub-block formatting */
+
+p.sl-hang { padding-left: 120px; }
+
+.sl-ibody { font-size: 90%; font-weight: normal; }
+
+.sl-ihead { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; padding: 0px; }
+
+.sl-ihead-h { font-size: 75%; font-weight: bold; display: inline-block;
+	      width: 120px; margin-left: -120px; }
+
+.sl-ihead-h-r { text-align: right; font-size: 75%; font-weight: bold;
+		display: inline-block; width: 120px; margin-left: -120px; }
+
+#FormsInner .sl-ihead-h { font-size: 100%; }
+
+/* Different sub-block types */
+
+.asl-form { border-top: 3px solid gray; }
+
+.asl-variant { font-weight: bold; font-size: 90%; }
+
+div.asl-cite-url { margin-top: 3em; }
+
+.asl-cun-img   { margin-bottom: 1em; }
+
+.asl-cite-url p { margin: 0px; }
+
+div.asl-cuneiform { display: inline-block; vertical-align: top; }
+
+div.asl-unicode { display: inline-block; vertical-align: top; }
+
+p.asl-ucun    { font-size: 250%; margin: 0px; }
+
+#Forms p.asl-ucun    { font-size: 200%; margin: 0px; }
+
+div.asl-images  { display: inline-block; vertical-align: top; }
+
+.asl-lem-base { font-weight: bold; }
+
+.asl-lem-cnt  { font-size: 90%; }
+
+.snames  { font-size: 90%; }
+
+.asl-sys-name { font-size: 85%; font-weight: bold; }
+
+.asl-sys-subname { font-size: 85%; font-weight: normal; }
+
+.asl-sys-token { font-size: 90%; font-weight: normal; }
+
+.itable { vertical-align: middle; margin-right: 1em; }
+
+.itable .imageinline { margin: 0px; }
+
+/* Selection page formatting */
+
+#SelPage h2	  { text-align: center; }
+
+table.selpage , table.lemsel 	  { margin: auto; }
+
+table.selpage td  { padding-left: 1em; padding-right: 1em; }
+
+tr.lemsel-h2 { font-weight: bold; }
+
+tr.lemsel-h3 { font-style: italic; }
+
+.lemlem td:first-child { text-indent: 1em; }
+
+span.homophone-n { padding-right: 1em; }
+
+/* Needs to be modulated by viewport size */
+table.lemsel td  { padding-left: 1em; padding-right: 1em; }
+
+.lex-read h3 { text-align: left; font-weight: bold; }
+
+@media screen and (min-width: 625px) {
+    .asl-lexdata { width: 80%; margin: auto; }
+    table.selpage { width: 80%; margin: auto; }
+}
+
+.ivs-IM_NI2 span { font-size: 0; }
+.ivs-IM_NI2:after { content: '𒉎'; }
+
+/* CSS that might be needed when PCSL is ported to this subsystem */
 
 .pctc-info { border-bottom: solid; }
 
@@ -43,7 +139,7 @@
 
 .middle { vertical-align: middle; }
 
-table.pretty { background-color: white; }
+.image-insts { margin-top: 1em; }
 
 .sl-td-name { font-size: 80%; font-family: arial,sans-serif; }
 
@@ -55,87 +151,14 @@ table.pretty { background-color: white; }
 
 .sl-unattested { font-size: 80%; }
 
+.pcsl-oid { font-weight: normal; font-size: 80%; }
+
 tr.tithe { border-bottom: solid 2px; }
 
 td.name-sign { width: 10%; }
 td.name-nosign { width: 10%; background-color: lightgray; }
 td.name-sign img { }
 
-.pcsl-oid { font-weight: normal; font-size: 80%; }
-
-.sl-ihead { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; padding: 0px; }
-
-/* sl-ihead under sl-hang */
-.sl-ihead-h { font-size: 75%; font-weight: bold; display: inline-block; width: 120px; margin-left: -120px; }
-
-.sl-ihead-h-r { text-align: right; font-size: 75%; font-weight: bold; display: inline-block; width: 120px; margin-left: -120px; }
-
-.sl-ibody { font-size: 90%; font-weight: normal; }
-
-.sl-sys-name { font-size: 85%; font-weight: bold; }
-
-.sl-sys-subname { font-size: 85%; font-weight: normal; }
-
-.sl-sys-token { font-size: 90%; font-weight: normal; }
-
-p.sl-hang { padding-left: 120px; }
-
-div.asl-cite-url { margin-top: 3em; }
-
-.asl-cun-img   { margin-bottom: 1em; }
-
-.asl-cite-url p { margin: 0px; }
-
-div.asl-cuneiform { display: inline-block; vertical-align: top; }
-
-div.asl-unicode { display: inline-block; vertical-align: top; }
-
-p.asl-ucun    { font-size: 250%; margin: 0px; }
-
-div.asl-images  { display: inline-block; vertical-align: top; }
-
-.itable { vertical-align: middle; margin-right: 1em; }
-
-.itable .imageinline { margin: 0px; }
-
 .strut { display: none; height: 12px; }
 
-.asl-lem-base { font-weight: bold; }
-.asl-lem-cnt  { font-size: 90%; }
-
-body.selpage h2	  { text-align: center; }
-
-.snames  { font-size: 90%; }
-
-table.selpage , table.lemsel 	  { margin: auto; }
-table.selpage td  { padding-left: 1em; padding-right: 1em; }
-
-tr.lemsel-h2 { font-weight: bold; }
-tr.lemsel-h3 { font-style: italic; }
-
-.lemlem td:first-child { text-indent: 1em; }
-
-span.homophone-n { padding-right: 1em; }
-
-/* Needs to be modulated by viewport size */
-table.lemsel td  { padding-left: 1em; padding-right: 1em; }
-
-.lex-read h3 { text-align: left; font-weight: bold; }
-
-@media screen and (min-width: 625px) {
-    .asl-lexdata { width: 80%; margin: auto; }
-    table.selpage { width: 80%; margin: auto; }
-}
-
-.asl-variant { font-weight: bold; font-size: 90%; }
-
-a:link	{ color: blue; text-decoration: none; }
-a:link:hover { color: black; text-decoration: underline; }
-a:visited { color: red; text-decoration: none; }
-a:visited:hover { color: black; text-decoration: underline; }
-a:has(span.asl-lem-cnt):link	{ color: cornflowerblue; text-decoration: none; }
-a:has(span.asl-lem-cnt):visited { color: #e35335; text-decoration: none; }
-
-.ivs-IM_NI2 span { font-size: 0; }
-.ivs-IM_NI2:after { content: '𒉎'; }
 
