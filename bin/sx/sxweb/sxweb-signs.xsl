@@ -1116,7 +1116,7 @@
 	  <xsl:with-param name="project" select="$project"/>
 	</xsl:call-template>
       </head>
-      <body id="FormsPage">
+      <body id="SelPage">
 	<xsl:call-template name="esp2-banner-div">
 	  <xsl:with-param name="body-id" select="'FormPage'"/>
 	  <xsl:with-param name="parameters" select="$parameters"/>
@@ -1125,7 +1125,7 @@
 	  <xsl:with-param name="nomenu" select="true()"/>
 	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	</xsl:call-template>
-	<h1>Variant Forms for <xsl:value-of select="translate(ancestor-or-self::sl:sign/@n,'|','')"/></h1>
+	<h2>Variant Forms for <xsl:value-of select="translate(ancestor-or-self::sl:sign/@n,'|','')"/></h2>
 	<div id="Forms">
 	  <div id="FormsInner">
 	    <xsl:for-each select="sl:form">
