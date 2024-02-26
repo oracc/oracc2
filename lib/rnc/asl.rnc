@@ -10,6 +10,7 @@ start =
     sl.notes ,
     sl.listdef* ,
     sl.sysdef* ,
+    sl.linkdef* ,
     sl.iheader* ,
     element sl:letter {
       attribute name { text },
@@ -137,6 +138,8 @@ sl.notes   = (sl.inote | sl.lit | sl.note)*
 
 sl.listdef = element sl:listdef { attribute name { xsd:NCName | "U+" } , element sl:info { text }? , sl.notes }
 
+sl.linkdef = element sl:linkdef { attribute name { xsd:NCName } , element sl:info { text }? , sl.notes }
+
 sl.sysdef  = element sl:sysdef { attribute name { xsd:NCName } , element sl:info { text }? , sl.notes }
 
 sl.sys 	   = element sl:sys { attribute name { xsd:NCName } ,
@@ -222,6 +225,11 @@ sl.uage = element sl:uage { text }
 sl.uname = element sl:uname { text }
 sl.note = element sl:note { text }
 sl.lit = element sl:lit { text }
+sl.link =
+  element sl:link {
+    attribute n { text } ,
+    attribute url { text } 
+  }
 sl.list =
   element sl:list {
     attribute n { text },

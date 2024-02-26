@@ -703,6 +703,25 @@ asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 }
 
 void
+asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment)
+{
+  if (!hash_find(sl->linkdefs, (uccp)name))
+    {
+      struct sl_linkdef *sdp = calloc(1, sizeof(struct sl_linkdef));
+      sdp->name = pool_copy((uccp)name, sl->p);
+      sdp->comment = (ccp)pool_copy((uccp)comment, sl->p);
+      sdp->inst.type = 'L';
+      sdp->inst.u.L = sdp;
+      sl->curr_inst = &sdp->inst;
+      hash_add(sl->linkdefs, sdp->name, sdp);
+    }
+  else
+    {
+      mesg_verr(locp, "repeated @sysdef %s\n", name);
+    }
+}
+
+void
 asl_bld_sysdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment)
 {
   if (!hash_find(sl->sysdefs, (uccp)name))
@@ -770,6 +789,40 @@ asl_check_sys(Mloc *locp, struct sl_signlist *sl, const char *txt)
   
 }
 #endif
+
+void
+asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv)
+{
+  struct sl_inst *ip = NULL;
+  if (sl->curr_form)
+    ip = sl->curr_form;
+  else if (sl->curr_sign)
+    ip = sl->curr_sign->inst;
+  else
+    mesg_verr(locp, "misplaced @link: must belong to @sign or @form");
+  if (ip)
+    {
+      char *xsysname = (char*)pool_copy((uccp)sysname, sl->p);
+      if (!hash_find(sl->linkdefs, (uccp)xsysname))
+	{
+	  mesg_verr(locp, "undefined link name '%s' in @link", xsysname);
+	  return;
+	}
+      if (!ip->sys)
+	{
+	  ip->sys = list_create(LIST_SINGLE);
+	  if (!sl->syslists)
+	    sl->syslists = list_create(LIST_SINGLE);
+	  list_add(sl->syslists, ip->sys);
+	}
+      struct sl_sys *sp = memo_new(sl->m_syss);
+      sp->name = xsysname;
+      sp->v = v;
+      sp->vv = pool_copy(vv, sl->p);
+      sp->ip = ip;
+      list_add(ip->sys, sp);
+    }
+}
 
 void
 asl_bld_note(Mloc *locp, struct sl_signlist *sl, const char *tag, const char *txt)

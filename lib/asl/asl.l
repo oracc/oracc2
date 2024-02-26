@@ -108,6 +108,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@end/[ \t].*\n        	       	{ atcmd(END,E); }
 ^@signlist/[ \t]+      		{ atcmd(SIGNLIST,S); }
 ^@project/[ \t]+      		{ atcmd(PROJECT,S); }
+^@linkdef/[ \t]+       		{ atcmd(LINKDEF,L); }
 ^@listdef/[ \t]+       		{ atcmd(LISTDEF,L); }
 ^@sysdef/[ \t]+       		{ Ynext=S; atcmd(SYSDEF,Y); }
 ^@images/[ \t]+			{ atcmd(IMAGES,S); }
@@ -123,7 +124,8 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@noform/[ \t]         		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@noform' has been replaced by '@form-'");
 				  /* atcmd(FORM,-1);*/ }
 ^@v-?/[ \t]+	       		{ atcmd(V,0); }
-@sys/[ \t]+			{ Ynext=0; atcmd(SYS,Y); }
+^@link/[ \t]+			{ Ynext=0; atcmd(LINK,Y); }
+^@sys/[ \t]+			{ Ynext=0; atcmd(SYS,Y); }
 ^@inote/[ \t]+       		{ Tcmd(INOTE,S); }
 ^@lit/[ \t]+	       		{ Tcmd(LIT,S); }
 ^@merge/[ \t]+       		{ Tcmd(MERGE,S); }

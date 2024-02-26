@@ -41,6 +41,7 @@ struct sl_signlist
   const char *signlist; /* The signlist name may vary from the host project, e.g., pcsl in pctc */
   const char *project;  /* The project member is the host project for the signlist, e.g., pctc */
   struct sl_inst *notes;/* Allow inotes etc., after @signlist */
+  Hash *linkdefs; 	/* Hash of signlist names; value is struct sl_linkdef */
   Hash *listdefs; 	/* Hash of signlist names; value is struct sl_listdef */
   Hash *sysdefs; 	/* Hash of system names; value is struct sl_sysdef */
   Hash *hkeys;		/* Hash of SIGN.FORM.VALUE keys point to
@@ -200,7 +201,7 @@ struct sl_lv_data
 
 struct sl_inst
 {
-  char type; /* S = signlist; d = listdef; y = sysdef; s = sign; f = form; l = list; v = value */
+  char type; /* S = signlist; d = listdef; y = sysdef; s = sign; f = form; l = list; v = value; L = linkdef */
   union {
     struct sl_signlist *S;
     struct sl_listdef *d;
@@ -208,6 +209,7 @@ struct sl_inst
     struct sl_sign *s;
     struct sl_form *f;
     struct sl_list *l;
+    struct sl_linkdef *L;
     struct sl_value *v; } u;
   struct sl_lv_data *lv; 	/* used by form instances */
   struct sl_inst *parent_s; 	/* The parent sign for a form or value instance; if NULL use parent_f */
@@ -216,6 +218,7 @@ struct sl_inst
   List *lp;			/* Lemmata written with the sign-value; very preliminary implementation */
   List *notes;			/* A list of struct sl_note * */
   List *sys;			/* A list of @sys in a sign or form */
+  List *links;			/* A list of @link in a sign or form */
   const char *lang; 	  	/* this is inline in the @v; an x-value could have a lang with one sign but not another */
   unsigned const char *key;	/* SIGN.FORM.VALUE key for this inst */
   const char *atoid;		/* An OID given with @oid */
@@ -232,6 +235,20 @@ struct sl_inst
   Boolean useq;
   Boolean uname;
   Boolean urev;
+};
+
+struct sl_linkdef
+{
+  unsigned const char *name;
+  const char *comment;
+  struct sl_inst inst;
+};
+
+struct sl_link
+{
+  const char *name;  /* linkdef name, e.g., eBL, Wikidata */
+  const char *label; /* label for URL */
+  const char *url;   /* URL */
 };
 
 struct sl_listdef
@@ -472,5 +489,8 @@ extern struct sl_sign *asl_form_as_sign(struct sl_signlist *sl, struct sl_form *
 
 extern unsigned const char *asl_make_key(Mloc *locp, struct sl_signlist *sl, const char *isp, const char *ifp, const char *ivp);
 extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval, const char *s, const char *f, const char *v);
+
+extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
+
 
 #endif/*SIGNLIST_H_*/

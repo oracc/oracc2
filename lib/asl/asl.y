@@ -36,6 +36,7 @@ int minus_flag = 0;
 		SIGNLIST PROJECT LISTDEF LISTNAME LREF SREF
 		SYSDEF SYSNAME SYS SYSGOESTO SYSTEXT
 		SMAP LITERAL IMAGES MERGE OID
+		LINKDEF LINK
 
 %nterm  <text>  anynote atftoken atftokens lang longtext token
 
@@ -69,6 +70,7 @@ longtext:
 atcmd:
 	  atsignlist
 	| atproject
+	| atlinkdef
 	| atlistdef
 	| atsysdef
 	| atimages
@@ -83,6 +85,7 @@ atcmd:
 	| atfake
 	| atlist
 	| atv
+	| atlink
 	| atsys
 	| atmerge
 	| atform
@@ -97,6 +100,10 @@ atsignlist:
 
 atproject:
 	  PROJECT TEXT 			{ asl_bld_signlist(&@1, (uccp)$2, 1); }
+	;
+
+atlinkdef:
+	  LINKDEF longtext 		{ asl_bld_linkdef(&@1, curr_asl, (ccp)$2, (ccp)longtext(NULL,NULL,NULL)); }
 	;
 
 atlistdef:
@@ -143,6 +150,10 @@ atcomp:
 
 atpname:
 	  PNAME token 	 { asl_bld_pname(&@1, curr_asl, (uccp)$2); }
+	;
+
+atlink:
+	  LINK SYSNAME SYSTEXT	{ asl_bld_sys(&@1, curr_asl, (ccp)$2, (uccp)$3, NULL); }
 	;
 
 atlist:
