@@ -11,6 +11,7 @@ static sx_value_f sx_w_a_ivalue;
 static sx_value_f sx_w_a_qvs;
 static sx_value_f sx_w_a_value;
 static sx_notes_f sx_w_a_notes;
+static sx_notes_f sx_w_a_links;
 static sx_notes_f sx_w_a_syss;
 static sx_unicode_f sx_w_a_unicode;
 
@@ -28,6 +29,7 @@ sx_w_asl_init(FILE *fp, const char *fname)
   sx_w_asl_fncs.val = sx_w_a_value;
   sx_w_asl_fncs.inh = sx_w_a_ivalue;
   sx_w_asl_fncs.not = sx_w_a_notes;
+  sx_w_asl_fncs.lnk = sx_w_a_links;
   sx_w_asl_fncs.sys = sx_w_a_syss;
   sx_w_asl_fncs.uni = sx_w_a_unicode;
   sx_w_asl_fncs.qvs = sx_w_a_qvs;
@@ -84,6 +86,22 @@ sx_w_a_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 	  fprintf(f->fp, "\n@listdef %s %s\n", n[i], ldp->str);
 	  sx_w_a_notes(f, sl, &ldp->inst);
 	}
+
+      n = hash_keys2(sl->linkdefs, &nn);
+      qsort(n, nn, sizeof(const char *), cmpstringp);
+      for (i = 0; i < nn; ++i)
+	{
+	  struct sl_linkdef *sdp = hash_find(sl->linkdefs, (uccp)n[i]);
+	  const char *cspace = "", *ctext = "";
+	  if (sdp->comment)
+	    {
+	      cspace = " ";
+	      ctext = sdp->comment;
+	    }
+	  fprintf(f->fp, "\n@linkdef %s%s%s\n", n[i], cspace, ctext);
+	  sx_w_a_notes(f, sl, &sdp->inst);
+	}
+
       n = hash_keys2(sl->sysdefs, &nn);
       qsort(n, nn, sizeof(const char *), cmpstringp);
       for (i = 0; i < nn; ++i)
@@ -345,6 +363,17 @@ sx_w_a_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 	  else
 	    fputc('\n',f->fp);
 	}
+    }
+}
+
+static void
+sx_w_a_links(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
+{
+  if (ip && !ip->inherited && ip->links)
+    {
+      struct sl_link *sp;
+      for (sp = list_first(ip->sys); sp; sp = list_next(ip->sys))
+	fprintf(f->fp, "@sys\t%s %s %s\n", sp->name, sp->label, sp->url);
     }
 }
 

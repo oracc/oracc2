@@ -65,6 +65,8 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 				}
 			      if (sl->letters[i].groups[j].signs[k]->sys)
 				f->sys(f, sl, sl->letters[i].groups[j].signs[k]);
+			      if (sl->letters[i].groups[j].signs[k]->links)
+				f->lnk(f, sl, sl->letters[i].groups[j].signs[k]);
 			      if (sl->images && f->img)
 				f->img(f, sl, sl->letters[i].groups[j].signs[k]);
 			      if (sl->letters[i].groups[j].signs[k] && f->cpd)

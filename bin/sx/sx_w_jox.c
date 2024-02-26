@@ -25,6 +25,7 @@ static sx_value_f sx_w_jx_ivalue;
 static sx_value_f sx_w_jx_qvs;
 static sx_value_f sx_w_jx_value;
 static sx_notes_f sx_w_jx_notes;
+static sx_notes_f sx_w_jx_links;
 static sx_notes_f sx_w_jx_syss;
 static sx_notes_f sx_w_jx_images;
 static sx_notes_f sx_w_jx_cpds;
@@ -46,6 +47,7 @@ sx_w_jox_init(void)
   sx_w_jox_fncs.val = sx_w_jx_value;
   sx_w_jox_fncs.inh = sx_w_jx_ivalue;
   sx_w_jox_fncs.not = sx_w_jx_notes;
+  sx_w_jox_fncs.lnk = sx_w_jx_links;
   sx_w_jox_fncs.sys = sx_w_jx_syss;
   sx_w_jox_fncs.img = sx_w_jx_images;
   sx_w_jox_fncs.cpd = sx_w_jx_cpds;
@@ -89,7 +91,7 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 	    *vsort = '\0';
 	  char ssort[32];
 	  if (spv->oid)
-	    sprintf(ssort, "%d", (int)(uintptr_t)hash_find(oid_sort_keys, spv->oid));
+	    sprintf(ssort, "%d", (int)(uintptr_t)hash_find(oid_sort_keys, (uccp)spv->oid));
 	  ratts = rnvval_aa("x",
 			    "v", spv->v,
 			    "oid", spv->oid,
@@ -170,6 +172,22 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	  joxer_ee(&sdp->inst.mloc, "sl:sysdef");
 	}
       joxer_ac();
+
+      n = hash_keys2(sl->linkdefs, &nn);
+      qsort(n, nn, sizeof(const char *), cmpstringp);
+      joxer_ao("j:linkdefs");
+      for (i = 0; i < nn; ++i)
+	{
+	  struct sl_linkdef *sdp = hash_find(sl->linkdefs, (uccp)n[i]);
+	  ratts = rnvval_aa("x", "name", n[i], NULL);
+	  joxer_ea(&sdp->inst.mloc, "sl:linkdef", ratts);
+	  if (sdp->comment)
+	    joxer_et(&sdp->inst.mloc, "sl:info", NULL, sdp->comment);
+	  sx_w_jx_notes(f, sl, &sdp->inst);
+	  joxer_ee(&sdp->inst.mloc, "sl:linkdef");
+	}
+      joxer_ac();
+
       joxer_ao("j:iheaders");
       if (sl->iheaders)
 	{
@@ -571,6 +589,31 @@ sx_w_jx_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 	  if (sp->vv)
 	    joxer_ch(&ip->mloc, (ccp)xmlify((uccp)sp->vv));
 	  joxer_ee(&ip->mloc, "sl:sys");
+	}
+      joxer_ac();
+    }
+}
+
+static void
+sx_w_jx_links(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
+{
+  if (ip && !ip->inherited && ip->links)
+    {
+      struct sl_link *sp;
+      joxer_ao("js:links");
+      for (sp = list_first(ip->links); sp; sp = list_next(ip->links))
+	{
+	  List *a = list_create(LIST_SINGLE);
+	  list_add(a, "name");
+	  list_add(a, (void*)sp->name);
+	  list_add(a, "label");
+	  list_add(a, (void*)sp->label);
+	  list_add(a, "url");
+	  list_add(a, (void*)sp->url);
+	  const char **atts = list2chars(a);
+	  ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
+	  joxer_ec(&ip->mloc, "sl:link", ratts);
+	  list_free(a, NULL);
 	}
       joxer_ac();
     }

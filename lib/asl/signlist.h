@@ -85,6 +85,8 @@ struct sl_signlist
   struct sl_inst *curr_value;
   struct sl_inst *curr_inst; /* used to attach meta to correct tag */
   List *compounds;
+  List *linklists; 		/* list of the lists of @link that occur in sign or
+		     		   form, so we can generate link reports easily */
   List *syslists; 		/* list of the lists of @sys that occur in sign or
 		     		   form, so we can generate system tables easily */
   List *images; 		/* list of names of image manifests as char * */
@@ -247,8 +249,9 @@ struct sl_linkdef
 struct sl_link
 {
   const char *name;  /* linkdef name, e.g., eBL, Wikidata */
-  const char *label; /* label for URL */
-  const char *url;   /* URL */
+  unsigned const char *label; /* label for URL */
+  unsigned const char *url;   /* URL */
+  struct sl_inst *ip;
 };
 
 struct sl_listdef
@@ -491,6 +494,7 @@ extern unsigned const char *asl_make_key(Mloc *locp, struct sl_signlist *sl, con
 extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval, const char *s, const char *f, const char *v);
 
 extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
+extern void asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
 
 
 #endif/*SIGNLIST_H_*/

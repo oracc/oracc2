@@ -33,6 +33,7 @@ struct sx_functions
     sx_value_f *	inh;
     sx_value_f *	qvs;
     sx_notes_f *	not;
+    sx_notes_f *	lnk;
     sx_notes_f *	sys;
     sx_notes_f *	img;
     sx_notes_f *	cpd;

@@ -108,9 +108,9 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@end/[ \t].*\n        	       	{ atcmd(END,E); }
 ^@signlist/[ \t]+      		{ atcmd(SIGNLIST,S); }
 ^@project/[ \t]+      		{ atcmd(PROJECT,S); }
-^@linkdef/[ \t]+       		{ atcmd(LINKDEF,L); }
+^@linkdef/[ \t]+       		{ Ynext=L; atcmd(LINKDEF,Y); }
 ^@listdef/[ \t]+       		{ atcmd(LISTDEF,L); }
-^@sysdef/[ \t]+       		{ Ynext=S; atcmd(SYSDEF,Y); }
+^@sysdef/[ \t]+       		{ Ynext=Yt; atcmd(SYSDEF,Y); }
 ^@images/[ \t]+			{ atcmd(IMAGES,S); }
 ^@sign-?/[ \t]       		{ atcmd(SIGN,0); }
 ^@aka/[ \t]       		{ atcmd(AKA,0); }

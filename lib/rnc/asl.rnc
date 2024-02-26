@@ -81,7 +81,7 @@ sl.sign    =
      | element sl:unote { text })*,
     sl.lemmas?,
     sl.v*,
-    sl.sys*,
+    (sl.sys|sl.link)*,
     sl.images?,
     sl.cpds?,
     sl.form*,
@@ -227,7 +227,8 @@ sl.note = element sl:note { text }
 sl.lit = element sl:lit { text }
 sl.link =
   element sl:link {
-    attribute n { text } ,
+    attribute name { text } ,
+    attribute label { text } ,
     attribute url { text } 
   }
 sl.list =

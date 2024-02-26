@@ -75,6 +75,7 @@ asl_bld_init(void)
   struct sl_signlist *sl = calloc(1, sizeof(struct sl_signlist));
   sl->htoken = hash_create(4192);
   sl->hkeys = hash_create(4192);
+  sl->linkdefs = hash_create(3);
   sl->listdefs = hash_create(7);
   sl->sysdefs = hash_create(3);
   sl->hsentry = hash_create(2048);
@@ -808,19 +809,31 @@ asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned c
 	  mesg_verr(locp, "undefined link name '%s' in @link", xsysname);
 	  return;
 	}
-      if (!ip->sys)
+      if (!ip->links)
 	{
-	  ip->sys = list_create(LIST_SINGLE);
-	  if (!sl->syslists)
-	    sl->syslists = list_create(LIST_SINGLE);
-	  list_add(sl->syslists, ip->sys);
+	  ip->links = list_create(LIST_SINGLE);
+	  if (!sl->linklists)
+	    sl->linklists = list_create(LIST_SINGLE);
+	  list_add(sl->linklists, ip->links);
 	}
-      struct sl_sys *sp = memo_new(sl->m_syss);
+      struct sl_link *sp = memo_new(sl->m_syss);
       sp->name = xsysname;
-      sp->v = v;
-      sp->vv = pool_copy(vv, sl->p);
-      sp->ip = ip;
-      list_add(ip->sys, sp);
+      sp->label = v;
+      while (*v && !isspace(*v))
+	++v;
+      if (*v)
+	{
+	  /* This is safe because v actually points to pool_copy space */
+	  char*vv = (char*)v;
+	  *vv++ = '\0';
+	  while (isspace(*vv))
+	    ++vv;
+	  sp->url = (uccp)vv;
+	  sp->ip = ip;
+	  list_add(ip->links, sp);
+	}
+      else
+	mesg_verr(locp, "@link text `%s' should have a label and a url", xsysname);
     }
 }
 

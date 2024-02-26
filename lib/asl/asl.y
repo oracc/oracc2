@@ -103,7 +103,7 @@ atproject:
 	;
 
 atlinkdef:
-	  LINKDEF longtext 		{ asl_bld_linkdef(&@1, curr_asl, (ccp)$2, (ccp)longtext(NULL,NULL,NULL)); }
+	  LINKDEF SYSNAME SYSTEXT     	{ asl_bld_linkdef(&@1, curr_asl, (ccp)$2, (ccp)$3); }
 	;
 
 atlistdef:
@@ -153,7 +153,7 @@ atpname:
 	;
 
 atlink:
-	  LINK SYSNAME SYSTEXT	{ asl_bld_sys(&@1, curr_asl, (ccp)$2, (uccp)$3, NULL); }
+	  LINK SYSNAME SYSTEXT	{ asl_bld_link(&@1, curr_asl, (ccp)$2, (uccp)$3, NULL); }
 	;
 
 atlist:

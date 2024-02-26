@@ -15,7 +15,7 @@ sx_oid_list(struct sl_signlist *sl)
 	if (s->oid)
 	  {
 	    if (sortcode_output)
-	      printf("%s\t%d\t%s\n", s->oid, (int)(uintptr_t)hash_find(oid_sort_keys, s->oid), s->name);
+	      printf("%s\t%d\t%s\n", s->oid, (int)(uintptr_t)hash_find(oid_sort_keys, (uccp)s->oid), s->name);
 	    else
 	      printf("%s\t%s\n", s->oid, s->name);
 	  }
@@ -31,7 +31,7 @@ sx_oid_list(struct sl_signlist *sl)
 	      if (f->oid && ip->valid)
 		{
 		  if (sortcode_output)
-		    printf("%s\t%d\t%s\n", f->oid, (int)(uintptr_t)hash_find(oid_sort_keys, f->oid), f->name);
+		    printf("%s\t%d\t%s\n", f->oid, (int)(uintptr_t)hash_find(oid_sort_keys, (uccp)f->oid), f->name);
 		  else
 		    printf("%s\t%s\n", f->oid, f->name);
 		  break;
