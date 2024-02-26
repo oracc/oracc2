@@ -4,7 +4,7 @@ SUBDIRS=../../lib sxweb
 
 bin_PROGRAMS=sx slix slx tok2asl
 
-bin_SCRIPTS=ogsl-update.sh pctc-update.sh \
+bin_SCRIPTS=osl-update.sh pctc-update.sh \
 	sxcmp.sh sxnorm.sh sxclean.sh \
 	sxmissing.sh sxudata.sh sxportal.sh \
 	sxportal-listdata.sh sxportal-udata.sh sloid.sh sxoid.sh \
