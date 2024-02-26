@@ -319,10 +319,10 @@
   <div class="asl-cite-url">
     <hr/>
     <p>Sign ID <xsl:value-of select="@xml:id"/>;
-    <xsl:if test="not(/*/@project='ogsl') and not(/*/@project='pctc')">
-      <esp:link url="/ogsl/signlist/{ancestor-or-self::sl:sign/@xml:id}">See full OGSL page</esp:link>
+    <xsl:if test="not(/*/@project='osl') and not(/*/@project='pctc')">
+      <esp:link url="/osl/signlist/{ancestor-or-self::sl:sign/@xml:id}">See full OSL page</esp:link>
     </xsl:if>
-    <xsl:if test="/*/@project='ogsl' or /*/@project='pctc'">
+    <xsl:if test="/*/@project='osl' or /*/@project='pctc'">
       Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/<xsl:value-of select="@xml:id"/>
     </xsl:if>
     </p>
@@ -615,10 +615,10 @@
 <xsl:template name="sws-snippets">
   <xsl:if test="asl-snippets='yes'">
     <xsl:variable name="oid" select="@xml:id"/>
-    <xsl:for-each select="document('/ogsl/downloads/snippets.xml')">
+    <xsl:for-each select="document('/osl/downloads/snippets.xml')">
       <xsl:for-each select="id($oid)">
 	<div class="asl-snippets">
-	  <p>See the <esp:link url="/ogsl/{$oid}.html">snippets page for this sign</esp:link>.</p>
+	  <p>See the <esp:link url="/osl/{$oid}.html">snippets page for this sign</esp:link>.</p>
 	</div>
       </xsl:for-each>
     </xsl:for-each>
