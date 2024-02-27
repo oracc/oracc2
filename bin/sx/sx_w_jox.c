@@ -607,9 +607,9 @@ sx_w_jx_links(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip
 	  list_add(a, "name");
 	  list_add(a, (void*)sp->name);
 	  list_add(a, "label");
-	  list_add(a, (void*)sp->label);
+	  list_add(a, (void*)xmlify(sp->label));
 	  list_add(a, "url");
-	  list_add(a, (void*)sp->url);
+	  list_add(a, (void*)xmlify(sp->url));
 	  const char **atts = list2chars(a);
 	  ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
 	  joxer_ec(&ip->mloc, "sl:link", ratts);
