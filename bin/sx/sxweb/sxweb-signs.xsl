@@ -365,6 +365,7 @@
       <!--<xsl:call-template name="sws-images"/>-->
       <xsl:call-template name="sws-akas"/>
       <xsl:call-template name="sws-systems"/>
+      <xsl:call-template name="sws-links"/>
       <xsl:call-template name="sws-compounds"/>
     </div>
   </xsl:if>
@@ -463,6 +464,24 @@
     url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
     notarget="yes"><xsl:text>see </xsl:text><xsl:value-of select="@icnt"/>
     <xsl:text> occurrences.</xsl:text></esp:link></p>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-links">
+  <xsl:if test="sl:link">
+    <p>
+      <span class="sl-ihead">SIGN LINKS</span>
+      <xsl:for-each select="sl:link">
+	<esp:link url="{@url}">
+	  <span class="asl-link-name">
+	    <xsl:value-of select="concat(@name,' ',@label)"/>
+	  </span>
+	</esp:link>
+	<xsl:if test="not(position()=last())">
+	  <xsl:text>; </xsl:text>
+	</xsl:if>
+      </xsl:for-each>
+    </p>
   </xsl:if>
 </xsl:template>
 
