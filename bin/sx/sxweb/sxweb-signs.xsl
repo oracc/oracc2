@@ -560,7 +560,7 @@
 	  <xsl:for-each select="id(@cpd-refs)">
 	    <xsl:text> </xsl:text>
 	    <esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
-	      <xsl:apply-templates select=".//sl:name[1]"/>
+	      <xsl:apply-templates select="@n"/>
 	      <xsl:if test="sl:images/sl:i[@loc]">
 		<xsl:text> = </xsl:text>
 		<xsl:for-each select="sl:images/sl:i[@loc][1]">
@@ -839,37 +839,38 @@
 
 <xsl:template name="sws-values-sub">
   <xsl:for-each select="sl:v">
-    <xsl:choose>
-      <xsl:when test="@deprecated='yes'">
-	<span class="v-drop"><xsl:value-of select="@n"/></span>
-      </xsl:when>
-      <xsl:when test="@uncertain='yes'">
-	<span class="v-query"><xsl:value-of select="@n"/></span>
-      </xsl:when>
-      <xsl:otherwise>
-	<span class="v-ok"><xsl:value-of select="@n"/></span>
-      </xsl:otherwise>
-    </xsl:choose>
-    <xsl:if test="sl:note">
-      <xsl:variable name="notes" select="../sl:v/sl:note"/>
-      <xsl:for-each select="sl:note">
-	<xsl:variable name="this" select="generate-id(.)"/>
-	<xsl:for-each select="$notes">
-	  <xsl:if test="generate-id(.)=$this">
-	    <span class="notemark"><xsl:value-of select="position()"/></span>
-	  </xsl:if>
+    <span class="homophone-n">
+      <xsl:choose>
+	<xsl:when test="@deprecated='yes'">
+	  <span class="v-drop"><xsl:value-of select="@n"/></span>
+	</xsl:when>
+	<xsl:when test="@uncertain='yes'">
+	  <span class="v-query"><xsl:value-of select="@n"/></span>
+	</xsl:when>
+	<xsl:otherwise>
+	  <span class="v-ok"><xsl:value-of select="@n"/></span>
+	</xsl:otherwise>
+      </xsl:choose>
+      <xsl:if test="sl:note">
+	<xsl:variable name="notes" select="../sl:v/sl:note"/>
+	<xsl:for-each select="sl:note">
+	  <xsl:variable name="this" select="generate-id(.)"/>
+	  <xsl:for-each select="$notes">
+	    <xsl:if test="generate-id(.)=$this">
+	      <span class="notemark"><xsl:value-of select="position()"/></span>
+	    </xsl:if>
+	  </xsl:for-each>
 	</xsl:for-each>
-      </xsl:for-each>
-    </xsl:if>
-    <xsl:if test="@icnt">
-      <esp:link
-	  url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
-	  notarget="yes"><span class="asl-lem-cnt">&#xa0;<xsl:text
-	  >(</xsl:text><xsl:value-of select="@icnt"/><xsl:text>×)</xsl:text></span></esp:link>
-    </xsl:if>
-    <xsl:if test="not(position()=last())"><span class="homophone-n"/><wbr/></xsl:if>
+      </xsl:if>
+      <xsl:if test="@icnt">
+	<esp:link
+	    url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
+	    notarget="yes"><span class="asl-lem-cnt">&#xa0;<xsl:text
+	    >(</xsl:text><xsl:value-of select="@icnt"/><xsl:text>×)</xsl:text></span></esp:link>
+      </xsl:if>
+    </span>
+    <xsl:if test="not(position()=last())"><wbr/></xsl:if>
   </xsl:for-each>
-  <xsl:text>.</xsl:text>
 </xsl:template>
 
 <xsl:template name="sws-values">

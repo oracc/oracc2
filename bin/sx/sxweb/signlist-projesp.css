@@ -32,9 +32,9 @@ table.pretty { background-color: white; }
 /* Common ASL formatting; the colours here need to be redone to work with project colours */
 
 a:link	{ color: blue; text-decoration: none; }
-a:link:hover { color: black; text-decoration: underline; }
+a:link:hover { color: black; background-color: lightgrey; text-decoration: underline; }
 a:visited { color: red; text-decoration: none; }
-a:visited:hover { color: black; text-decoration: underline; }
+a:visited:hover { color: black; background-color: lightgrey; text-decoration: underline; }
 a:has(span.asl-lem-cnt):link	{ color: cornflowerblue; text-decoration: none; }
 a:has(span.asl-lem-cnt):visited { color: #e35335; text-decoration: none; }
 
@@ -89,7 +89,7 @@ div.asl-images  { display: inline-block; vertical-align: top; }
 
 .asl-sys-token { font-size: 90%; font-weight: normal; }
 
-.itable { vertical-align: middle; margin-right: 1em; }
+.itable { display: inline-table; vertical-align: middle; margin-right: 1em; }
 
 .itable .imageinline { margin: 0px; }
 
