@@ -244,7 +244,7 @@
 
 <xsl:template name="sws-form-h">
   <p class="sl-hang">
-    <span class="sl-ihead-h">FORM</span>
+    <span class="sl-ihead-h1">FORM</span>
     <span class="asl-variant">
       <xsl:call-template name="sws-sign-or-form-h">
 	<xsl:with-param name="nopipes" select="translate(@n,'|','')"/>
@@ -358,7 +358,7 @@
 <!--### Subroutines for sign-or-form -->
 
 <xsl:template name="sws-meta">
-  <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds">
+  <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds|sl:note">
     <div class="asl-meta">
       <xsl:call-template name="sws-unicode"/>
       <xsl:call-template name="sws-lists"/>
@@ -367,6 +367,7 @@
       <xsl:call-template name="sws-systems"/>
       <xsl:call-template name="sws-links"/>
       <xsl:call-template name="sws-compounds"/>
+      <xsl:call-template name="sws-s-notes"/>
     </div>
   </xsl:if>
 </xsl:template>
@@ -599,6 +600,29 @@
   </xsl:choose>
 </xsl:template>
 
+<!-- sl:note when child of sl:sign or sl:form -->
+<xsl:template name="sws-s-notes">
+  <xsl:if test="sl:note">
+    <div class="asl-notes">
+      <p class="sl-hang">
+	<span class="sl-ihead-h">NOTES</span>
+	<xsl:for-each select="sl:note">
+	  <xsl:apply-templates/>
+	  <xsl:if test="not(position()=last())"><br/></xsl:if>
+	</xsl:for-each>
+      </p>
+    </div>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-v-notes">
+  <xsl:for-each select="sl:v/sl:note">
+    <br/>
+    <span class="notemark"><xsl:value-of select="position()"/></span>
+    <span class="notetext"><xsl:apply-templates/></span>
+  </xsl:for-each>
+</xsl:template>
+
 <!--### Images and snippets -->
 
 <xsl:template name="sws-images">
@@ -826,6 +850,17 @@
 	<span class="v-ok"><xsl:value-of select="@n"/></span>
       </xsl:otherwise>
     </xsl:choose>
+    <xsl:if test="sl:note">
+      <xsl:variable name="notes" select="../sl:v/sl:note"/>
+      <xsl:for-each select="sl:note">
+	<xsl:variable name="this" select="generate-id(.)"/>
+	<xsl:for-each select="$notes">
+	  <xsl:if test="generate-id(.)=$this">
+	    <span class="notemark"><xsl:value-of select="position()"/></span>
+	  </xsl:if>
+	</xsl:for-each>
+      </xsl:for-each>
+    </xsl:if>
     <xsl:if test="@icnt">
       <esp:link
 	  url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
@@ -844,6 +879,7 @@
 	><p class="sl-hang">
 	  <span class="sl-ihead-h"><xsl:text>VALUES</xsl:text></span>
 	  <xsl:call-template name="sws-values-sub"/>
+	  <xsl:call-template name="sws-v-notes"/>
 	</p>
       </xsl:if>
       <xsl:if test="@merge">
@@ -853,7 +889,7 @@
 		><span class="sl-ihead-h-r"
 		><xsl:value-of select="concat('[',@n,']&#xa0;&#xa0;')"/></span
 		><xsl:call-template name="sws-values-sub"
-	    /></p
+	    /><xsl:call-template name="sws-v-notes"/></p
 	  ></xsl:if>
 	</xsl:for-each>
       </xsl:if>
@@ -1166,7 +1202,7 @@
 <xsl:template mode="rest"
 	      match="is:land|sl:aka|sl:v|sl:sort
 		     |sl:uphase|sl:utf8|sl:uname|sl:ucun
-		     |sl:list|sl:name|sl:pname|sl:inote|sl:form|sl:unote|sl:note
+		     |sl:list|sl:name|sl:pname|sl:inote|sl:form|sl:unote
 		     |sl:qs|sl:inherited|sl:uage|sl:sys|sl:smap|sl:images"/>
 
 <xsl:template mode="rest" match="*">

@@ -52,7 +52,8 @@ p.sl-hang { padding-left: 120px; }
 .sl-ihead-h-r { text-align: right; font-size: 75%; font-weight: bold;
 		display: inline-block; width: 120px; margin-left: -120px; }
 
-#FormsInner .sl-ihead-h { font-size: 100%; }
+#FormsInner .sl-ihead-h1 { font-size: 100%; font-weight: bold; display: inline-block;
+	      width: 120px; margin-left: -120px; }
 
 /* Different sub-block types */
 
@@ -113,6 +114,9 @@ table.lemsel td  { padding-left: 1em; padding-right: 1em; }
 
 .lex-read h3 { text-align: left; font-weight: bold; }
 
+.notemark { vertical-align: super; font-size: 60%; }
+.notetext { font-size: 90%; }
+
 @media screen and (min-width: 625px) {
     .asl-lexdata { width: 80%; margin: auto; }
     table.selpage { width: 80%; margin: auto; }
@@ -160,5 +164,4 @@ td.name-nosign { width: 10%; background-color: lightgray; }
 td.name-sign img { }
 
 .strut { display: none; height: 12px; }
-
 

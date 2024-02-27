@@ -1,7 +1,5 @@
 * OGSL To-DO
   - force Cuneiform NOTO font
-  - clean up ogsl repo or make new osl one and make ogsl private
-  - check if @notes are printed
   - check which @v of @form are printed; suppress @iv if necessary
   - implement corebase in tokens and use in sign-page
   - @form CSS and possibly heading/subheading;
@@ -9,8 +7,11 @@
     - forms that occur under more than one @sign need a sel-page
   - sign-qua-form display, e.g., BU sv girim3--should be abbreviated
   - doco page on anatomy of a sign-page; sel-page
-  - sel-page banner should link to signlist/index.html
-  
+  - CC0 license
+  - CSS hover is too dark
+  - all iheads should use the same p/span/class combo
+
+
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible
   -add sl-ihead where missing

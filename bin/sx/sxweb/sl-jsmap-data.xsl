@@ -63,7 +63,8 @@
 </xsl:template>
 
 <xsl:template match="/">
-  <xsl:apply-templates/>
+  <xsl:apply-templates select=".//sl:sign"/>
+  <xsl:apply-templates select=".//sl:form"/>
   <xsl:call-template name="cpd">
     <xsl:with-param name="n" select="'memb*'"/>
     <xsl:with-param name="nodes" select=".//sl:sign[sl:cpds]"/>
@@ -80,7 +81,7 @@
 
 <xsl:template match="sl:sign|sl:form|sl:list|sl:v">
   <xsl:call-template name="out-n"/>
-  <xsl:apply-templates/>
+  <xsl:apply-templates select="sl:list|sl:v"/>
 </xsl:template>
 
 <xsl:template match="sl:homophones/sl:base">
