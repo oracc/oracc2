@@ -53,4 +53,26 @@ ISP operates with the following context parameters:
  
  LANG -- the language for translations accompanying instances
 
- 
+ AAPI -- the A tag API: REST=construct URLs for server resolution;
+      	 FILE=construct PATHS for client-based static file reading
+
+ISP Sequence of Actions
+-----------------------
+
+ISP does its work in the following sequence of steps:
+
+ 1. LA--List acquisition
+ 2. LS--List sorting and grouping
+ 3. ZS--Zoom slicing
+ 4. PE--Page extraction
+ 5. WM--Word mapping
+ 6. CE--Context extraction
+ 7. OG--Output generation
+
+ISP Toolchain
+-------------
+
+ISP is implemented in a collection of library routines with a related
+suite of front-end programs meaning that processing can be done as a
+typical filter or by building the libraries in to client programs.
+
