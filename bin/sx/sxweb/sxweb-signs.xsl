@@ -323,7 +323,7 @@
       <esp:link url="/osl/signlist/{ancestor-or-self::sl:sign/@xml:id}">See full OSL page</esp:link>
     </xsl:if>
     <xsl:if test="/*/@project='osl' or /*/@project='pctc'">
-      Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/<xsl:value-of select="@xml:id"/>
+      Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/signlist/<xsl:value-of select="@xml:id"/>
     </xsl:if>
     </p>
     <hr/>

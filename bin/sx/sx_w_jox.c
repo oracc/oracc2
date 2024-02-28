@@ -64,7 +64,8 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 {
   const char **keys;
   int nkeys, i;
-  joxer_ea(NULL, "sl:homophones", NULL);
+  /*joxer_ao("j:homophones");*/
+  joxer_eaa(NULL, "sl:homophones", NULL);
   keys = hash_keys2(sl->homophones, &nkeys);
   for (i = 0; i < nkeys; ++i)
     {
@@ -78,6 +79,7 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 			"count", itoa(list_len(lp)),
 			"sort", ssort,
 			NULL);
+      joxer_ao("j:bases");
       joxer_ea(&sl->mloc, "sl:base", ratts);
       joxer_ao("j:h");
       struct sl_split_value *spv;
@@ -102,15 +104,18 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 	}
       joxer_ac();
       joxer_ee(&sl->mloc, "sl:base");
+      joxer_ac();
     }
-  joxer_ee(&sl->mloc, "sl:homophones");
+  joxer_eea(&sl->mloc, "sl:homophones");
+  /*joxer_ac();*/
 }
 
 static void
 sx_w_jx_lems(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst*ip)
 {
-  joxer_ea(&ip->mloc, "sl:lemmas", NULL);
+  joxer_eaaa(&ip->mloc, "sl:lemmas", NULL);
   struct cbdex *lm;
+  /*joxer_ao("j:lemma");*/
   for (lm = list_first(ip->lp); lm; lm = list_next(ip->lp))
     {
       ratts = rnvval_aa("x",
@@ -124,7 +129,8 @@ sx_w_jx_lems(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst*ip)
 			NULL);
       joxer_ec(&ip->mloc, "sl:lemma", ratts);
     }
-  joxer_ee(&ip->mloc, "sl:lemmas");
+  /*joxer_ac();*/
+  joxer_eeaa(&ip->mloc, "sl:lemmas");
 }
 
 /* This is the entry point for xml output */
@@ -328,7 +334,8 @@ sx_w_jx_cpd_elt(const char *name, const char **oids)
       char *s = charstarstar_concat(oids);
       struct rnvval_atts *ratts = NULL;
       ratts = rnvval_aa("x", "oids", s, NULL);
-      joxer_ec(NULL, name, ratts);
+      joxer_eaa(NULL, name, ratts);
+      joxer_eea(NULL, name);
     }
 }
 
@@ -341,16 +348,14 @@ sx_w_jx_cpds(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
       char icnt[12];
       sprintf(icnt, "%ld", ip->u.s->ctotal);
       ratts = rnvval_aa("x", "icnt", icnt, NULL);
-      joxer_ea(NULL, "sl:cpds", ratts);
-      joxer_ao("j:cpds");
+      joxer_eaa(NULL, "sl:cpds", ratts);
       sx_w_jx_cpd_elt("sl:memb", cdp->memb);
       sx_w_jx_cpd_elt("sl:init", cdp->initial);
       sx_w_jx_cpd_elt("sl:medl", cdp->medial);
       sx_w_jx_cpd_elt("sl:finl", cdp->final);
       sx_w_jx_cpd_elt("sl:ctnr", cdp->container);
       sx_w_jx_cpd_elt("sl:ctnd", cdp->contained);
-      joxer_ac();
-      joxer_ee(NULL,"sl:cpds");
+      joxer_eea(NULL, "sl:cpds");
     }
 }
 
@@ -578,7 +583,7 @@ sx_w_jx_syss(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
   if (ip && !ip->inherited && ip->sys)
     {
       struct sl_sys *sp;
-      joxer_ao("js:syss");
+      joxer_ao("j:syss");
       for (sp = list_first(ip->sys); sp; sp = list_next(ip->sys))
 	{
 	  if (sp->subname)
@@ -600,7 +605,7 @@ sx_w_jx_links(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip
   if (ip && !ip->inherited && ip->links)
     {
       struct sl_link *sp;
-      joxer_ao("js:links");
+      joxer_ao("j:links");
       for (sp = list_first(ip->links); sp; sp = list_next(ip->links))
 	{
 	  List *a = list_create(LIST_SINGLE);

@@ -90,6 +90,15 @@ fi
 cp -a signlist/00lib/config.xml signlist/02www
 cp -a signlist/00lib/config.xml signlist/02xml
 sxinst signlist-parameters.xml signlist/00web/00config/parameters.xml
+if [ -r 00lib/version.txt ]; then
+    version=`cat 00lib/version.txt`
+fi
+timestamp=`isogmt -f`
+cat >01tmp/verstime.sed <<EOF
+s/@@version@@/$version/
+s/@@timestamp@@/$timestamp/
+EOF
+sed -in -f 01tmp/verstime.sed signlist/00web/00config/parameters.xml
 sxinst signlist-index.xml signlist/00web/index.xml
 sxinst signlist-projesp.css signlist/00res/css/projesp.css
 sxinst signlist-projesp.js signlist/00res/js/projesp.js
@@ -146,3 +155,4 @@ fi
 (cd signlist ; rm -fr 02www/selpages ; mv 01bld/selpages 02www ; chmod -R o+r 02www/selpages)
 (cd signlist ; o2-portal.sh)
 (cd signlist ; sl-jsmap.sh ../02xml/sl.xml >02www/js/slmap.js ; chmod o+r 02www/js/slmap.js)
+(cp 02xml/sl.xml 02pub/sl.json 02www/downloads ; chmod o+r 02www/downloads)

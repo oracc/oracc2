@@ -65,6 +65,7 @@
 <xsl:template match="/">
   <xsl:apply-templates select=".//sl:sign"/>
   <xsl:apply-templates select=".//sl:form"/>
+  <xsl:apply-templates select=".//sl:homophones/sl:base"/>
   <xsl:call-template name="cpd">
     <xsl:with-param name="n" select="'memb*'"/>
     <xsl:with-param name="nodes" select=".//sl:sign[sl:cpds]"/>

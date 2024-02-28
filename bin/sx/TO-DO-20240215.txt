@@ -1,4 +1,5 @@
 * OGSL To-DO
+  - leading ';' in IM Sumerian
   - force Cuneiform NOTO font
   - check which @v of @form are printed; suppress @iv if necessary
   - implement corebase in tokens and use in sign-page
@@ -8,9 +9,7 @@
   - sign-qua-form display, e.g., BU sv girim3--should be abbreviated
   - doco page on anatomy of a sign-page; sel-page
   - CC0 license
-  - CSS hover is too dark
   - all iheads should use the same p/span/class combo
-
 
 * SL sign-page formatting
   x-make all sl-ihead hang-compatible
@@ -60,6 +59,3 @@
   -skip incorrect members of corrected constructs in tokx
   -skip signs in reordering
   -skip signs with @fake=1 (N, PN, GN, etc.)
-  -reduplicated forms don't count as absolute and also generate superfluous lem entries
-
-* what's up with ŠAR₂×KASKAL on HI page?
