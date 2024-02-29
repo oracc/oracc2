@@ -1,6 +1,8 @@
 #ifndef ISP_H_
 #define ISP_H_
 
+#include <pool.h>
+
 #define ISP_STEP_0E	0x0000001
 #define ISP_STEP_1L	0x0000002
 #define ISP_STEP_2S	0x0000004
@@ -15,9 +17,10 @@
 
 struct isp
 {
+  int web;
   int curr_step;
-  int steps[ISP_STEP_80];
-  void *stepdata[ISP_STEP_80];
+  int steps[ISP_STEP_8O];
+  void *stepdata[ISP_STEP_8O];
   const char *oracc;
   const char *project;
   const char *list_name;
@@ -34,13 +37,16 @@ struct isp
   const char *list_path;
   const char *host_path;
   const char *err;
+  int verbose;
   Pool *p;
 };
 
-struct builtinstab
+struct ispargstab
 {
   const char *name;
   int step;
 };
+
+#include "all.proto"
 
 #endif/*ISP_H_*/

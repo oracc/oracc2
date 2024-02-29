@@ -1,10 +1,11 @@
 #include <oraccsys.h>
 #include "isp.h"
 
+static struct isp *opt_ip;
+
 int
-isp_options(struct isp *ip)
+isp_options(int argc, char **argv, struct isp *ip)
 {
-  static struct isp *opt_ip;
   int ret;
   opt_ip = ip;
   ret = options(argc, argv, "ELSZPWCFOj:l:z:p:s:k:h:m:u:c:l:a:");
@@ -41,10 +42,10 @@ opts(int opt, const char *arg)
       opt_ip->steps[ISP_STEP_6C] = 1;
       break;
     case 'F':
-      opt_ip->steps[ISP_STEP_7C] = 1;
+      opt_ip->steps[ISP_STEP_7F] = 1;
       break;
     case 'O':
-      opt_ip->steps[ISP_STEP_8F] = 1;
+      opt_ip->steps[ISP_STEP_8O] = 1;
       break;
     case 'w':
       opt_ip->web = 1;
@@ -56,18 +57,18 @@ opts(int opt, const char *arg)
       opt_ip->list_name = arg;
       break;
     case 'z':
-      opt_ip->zoom = atoi(arg);
+      opt_ip->zoom = arg;
       break;
     case 'p':
-      opt_ip->page = atoi(arg);
+      opt_ip->page = arg;
       break;
     case 's':
-      opt_ip->size = atoi(arg);
+      opt_ip->size = arg;
       break;
     case 'c':
       opt_ip->cemd = arg;
       break;
-    case 'l':
+    case 'n':
       opt_ip->lang = arg;
       break;
     case 'm':
@@ -82,11 +83,11 @@ opts(int opt, const char *arg)
     case 'a':
       opt_ip->aapi = arg;
       break;
-    case 'h':
-      opt_ip->host = arg;
-      break;
     case 'u':
       opt_ip->uimd = arg;
+      break;
+    case 'v':
+      ++opt_ip->verbose;
       break;
     default:
       return 1;

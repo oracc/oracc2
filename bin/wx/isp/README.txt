@@ -124,5 +124,5 @@ Lowercase options set parameters
  -m oxml/html mode
  -u ui mode
  -c context mode
- -l lang
+ -n lang
  -a aapi

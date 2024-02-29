@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <sys/stat.h>
 #include "isp.h"
 
 static int
@@ -14,7 +15,7 @@ isp_valid_arg(const char *p, int step)
 {
   if (p)
     {
-      struct ispargstab *ipt = ispargs(p);
+      struct ispargstab *ipt = ispargs(p, strlen(p));
       if (!ipt || ipt->step != step)
 	return 1;
     }
@@ -46,7 +47,7 @@ isp_valid_host(struct isp *ip)
       return 1;
     }
   else
-    ip->host_path = pool_copy((uccp)hostpath, ip->pool);
+    ip->host_path = (ccp)pool_copy((uccp)hostpath, ip->p);
   return 0;
 }
 
@@ -93,8 +94,8 @@ isp_validate(struct isp *ip)
 
   if (ip->lang)
     {
-      unsigned const char *l = (uccp)ip->lang;
-      while (*l && *l < 128 && isalpha(*l) && l = ip->lang < 4)
+      const char *l = ip->lang;
+      while (*l && *l > 0 && isalpha(*l) && (l - ip->lang) < 4)
 	++l;
       if (*l)
 	{
@@ -109,7 +110,7 @@ isp_validate(struct isp *ip)
       goto error;
     }
 
-  if (!isp_valid_arg(ip->uimd, ISP_STEP_9U))
+  if (!isp_valid_arg(ip->uimd, ISP_PARM_9U))
     {
       ip->err = "argument for -u must be mini|maxi";
       goto error;
@@ -124,7 +125,7 @@ isp_validate(struct isp *ip)
   if (ip->host && !isp_valid_host(ip))
     goto error;
   
-  if (!isp_valid_arg(ip->aapi, ISP_STEP_9A))
+  if (!isp_valid_arg(ip->aapi, ISP_PARM_9A))
     {
       ip->err = "argument for -a must be file|rest";
       goto error;

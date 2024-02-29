@@ -38,8 +38,9 @@ function kmap (str) {
     let lc = str.toLowerCase();
     let lc1 = lc.replace(/s,/, "f");
     let lc2 = lc1.replace(/t,/, "v");
+    let lc3 = lc2.replace(/sz/, "c");
     var res = '';
-    for (var c of lc2) {
+    for (var c of lc3) {
 	res += cmap(c);
     }
     return res;
