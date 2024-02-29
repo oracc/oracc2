@@ -1,6 +1,6 @@
 include ../../oracc-am-rules.txt
 
-subdirs=ccgi
+subdirs=ccgi isp
 
 ## AM_CPPFLAGS=-I@top_srcdir@/lib/include -I@top_srcdir@/lib/{std,sys,xml} -Wall -pedantic
 
