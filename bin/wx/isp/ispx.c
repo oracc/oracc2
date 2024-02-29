@@ -13,15 +13,17 @@ main(int argc, char **argv)
     goto error;
 
   if (ip->verbose)
-    isp_show(ip);
+    isp_show(stderr, ip);
+
+  goto ok;
   
  error:
   fprintf(stderr, "isp: error: %s. Stop.\n", ip->err);
   if (ip->web)
-    {
-      printf("<error>%s</error>", ip->err);
-      fflush(stdout);
-    }
+    printf("<error>%s</error>", ip->err);
+
+ ok:
+  fflush(stdout);
   isp_term(ip);
   return 0;
 }
