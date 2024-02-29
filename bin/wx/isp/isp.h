@@ -3,6 +3,8 @@
 
 #include <pool.h>
 
+#define ISP_TMP_PAT    	"tmp/isp/is.XXXXXX"
+
 #define ISP_STEP_0E	0x0000001
 #define ISP_STEP_1L	0x0000002
 #define ISP_STEP_2S	0x0000004
@@ -15,6 +17,15 @@
 #define ISP_PARM_9A	0x0000200 /* AAPI */
 #define ISP_PARM_9U	0x0000400 /* UI MODE */
 
+struct isp_list_loc
+{
+  const char *type;   /* list type: xis tis tmp www */
+  const char *method; /* how to find the list: tis xis file */
+  const char *dbpath; /* dir of dbx for some tis and xis */
+  const char *dbname; /* name of dbx for some tis and xis */
+  const char *path;   /* path to file */
+};
+
 struct isp
 {
   int web;
@@ -24,6 +35,7 @@ struct isp
   const char *oracc;
   const char *project;
   const char *list_name;
+  struct isp_list_loc lloc;
   const char *zoom;
   const char *page;
   const char *size;
@@ -34,9 +46,9 @@ struct isp
   const char *pack; /* packaging type */
   const char *host; /* host page for pack=esp2 */
   const char *aapi;
-  const char *list_path;
   const char *host_path;
-  const char *err;
+  const char *tmp_dir;
+  const char *err;  
   int verbose;
   Pool *p;
 };

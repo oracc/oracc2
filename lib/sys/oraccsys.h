@@ -17,6 +17,8 @@
 
 #define QUALIFIED_PQX_MAX	512
 
+#define TIS_TEMPLATE "t0123456"
+
 extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsizep);
 
 #define	default_ext(fn,fext) new_ext(fn, fext, FALSE)
