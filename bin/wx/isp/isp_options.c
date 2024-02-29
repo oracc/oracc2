@@ -8,7 +8,7 @@ isp_options(int argc, char **argv, struct isp *ip)
 {
   int ret;
   opt_ip = ip;
-  ret = options(argc, argv, "ELSZPWCFOj:l:z:p:s:k:h:m:u:c:l:a:");
+  ret = options(argc, argv, "ELSZPWCFOj:l:z:p:s:k:h:m:u:c:l:a:vw");
   opt_ip = NULL;
   if (ret)
     ip->err = "processing options";
