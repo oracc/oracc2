@@ -2,7 +2,7 @@
 #include "ispsort.h"
 
 FILE *fpag = NULL;
-Hash_table *seen = NULL;
+Hash *seen = NULL;
 Pool *pg2_pool;
 struct item *items = NULL;
 int items_used = 0;
@@ -11,6 +11,9 @@ struct sortinfo *sip;
 int nheadfields = 0;
 int *headfields = NULL;
 const char *terminal_sort_field = "designation";
+char *tmp;
+
+struct sortinfo *sip;
 
 #if 0
 extern int use_linkmap;
@@ -20,44 +23,7 @@ const char *heading_keys = NULL, *sort_keys = NULL;
 const char *listfile = NULL;
 const char *project = NULL;
 
-static int sk_lookup(const char *k);
-
-static int
-sk_lookup(const char *k)
-{
-  static char field[128];
-  char *f = field;
-  int i;
-  int vbar = 0;
-
- retry:
-  {
-    while (*k && *k != ',' && *k != '|')
-      *f++ = *k++;
-    *f = '\0';
-    vbar = '|' == *k;
-        
-    for (i = 0; i < sip->nmapentries; ++i)
-      if (!strcmp(field,(const char*)sip->fields[i].n))
-	break;
-    
-    if (i == sip->nmapentries)
-      {
-	if (vbar)
-	  {
-	    ++k;
-	    f = field;
-	    goto retry;
-	  }
-	else
-	  {
-	    fprintf(stderr,"pg: field %s not in fields list\n", field);
-	    exit(1);
-	  }
-      }
-    return sip->fields[i].field_index;
-  }
-}
+#include "sk_lookup.c"
 
 static unsigned char *
 adjust_s(unsigned char *stop, unsigned char *s)
@@ -134,6 +100,41 @@ pg_load(int *nitems)
   return items;
 }
 
+int
+o_cmp(const void *a,const void*b)
+{
+  return ((struct outline*)a)->sic->seq - ((struct outline*)b)->sic->seq;
+}
+
+struct outline *
+pg_outline(int *nlevelsp)
+{
+  int i, nlevels = nsortfields - 1, poffset;
+  struct outline *o;
+  u4 *u4s;
+  o = malloc(sic_size * sizeof(struct outline));
+  u4s = malloc(2 * sizeof(u4) * sic_size * nlevels);
+  poffset = sic_size * nlevels;
+  
+  for (i = 0; i < sic_size; ++i)
+    {
+      int index = i * nlevels, j;
+      o[i].count = o[i].page = -1;
+      o[i].icounts = &u4s[index];
+      o[i].poffsets = &u4s[poffset + index];
+      o[i].sic = sicache[i];
+      for (j = 0; j < nlevels; ++j)
+	{
+	  u4*pindex = sip->pindex + (sicache[i]->codes - sip->scodes);
+	  o[i].poffsets[j] = pindex[sortfields[j]];
+	}
+    }
+
+  qsort(o,sic_size,sizeof(struct outline),o_cmp);
+
+  *nlevelsp = nlevels;
+  return o;
+}
 
 static int *
 set_keys(const char *s, int *nfields)
@@ -173,6 +174,7 @@ main(int argc, char **argv)
 {
   struct item *items = NULL, **pitems = NULL;
   struct page *pages = NULL;
+  struct outline *op = NULL;
   int nitems = 0, nlevels = 0, npages = 0;
 
   options(argc,argv,"l:p:s:");
@@ -180,8 +182,6 @@ main(int argc, char **argv)
   seen = hash_create(1024);
   pg2_pool = pool_init();
 
-  if (NULL == fdbg)
-    fdbg = stderr;
   if (!fpag)
     fpag = stdout;
 
@@ -190,8 +190,8 @@ main(int argc, char **argv)
   
   if (!heading_keys)
     {
-      heading_keys = (char *)npool_copy((unsigned char *)sort_keys, pg2_pool);
-      tmp = (char*)heading_keys + strlen(heading_keys) - strlen(p2opts->sort_final);
+      heading_keys = (ccp)pool_copy((uccp)sort_keys, pg2_pool);
+      tmp = (char*)heading_keys + strlen(heading_keys)/* - strlen(p2opts->sort_final)*/;
       *tmp = '\0';
     }
       
@@ -205,7 +205,7 @@ main(int argc, char **argv)
 
   pitems = pg_sort(items, &nitems, sort_keys);
 
-  /*op = pg_outline(&nlevels);*/
+  op = pg_outline(&nlevels);
 
   if (nitems)
     pages = pg_page(pitems, nitems, &npages, op);
@@ -220,7 +220,7 @@ main(int argc, char **argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

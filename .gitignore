@@ -21,7 +21,7 @@ bin/tx/rocox
 bin/tx/xmlfilter
 bin/wx/wx
 bin/wx/isp/ispx
-bin/wx/isp/ispsortx
+bin/wx/ispsort/ispsortx
 bin/xx/concord
 bin/xx/cunhtmlx
 bin/xx/dbix

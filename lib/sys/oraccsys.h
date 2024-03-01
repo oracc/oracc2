@@ -10,6 +10,7 @@
 #include <wctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <c2types.h>
 #include <hash.h>
 #include <keva.h>

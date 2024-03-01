@@ -134,12 +134,6 @@ pg_sort(struct item*items, int *nitems,
   /* presort by P/Q and ID so we can traverse the sortinfo without thrashing */
   qsort(pdata,ndata,sizeof(struct item*),icmp);
 
-  if (csi_debug)
-    {
-      fprintf(stderr,"#post-icmp-sort item list: ID/group/skey\n");
-      dbg_dump_pitems(pdata, *nitems);
-    }
-
   /* this is a good time to uniq unless we want full counts */
   if (!full_count_mode)
     uniq_pdata();
