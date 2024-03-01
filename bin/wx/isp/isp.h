@@ -19,7 +19,8 @@
 
 struct isp_list_loc
 {
-  const char *type;   /* list type: xis tis tmp www */
+  const char *type;   /* list type: xis tis isp www */
+  const char *lang;   /* lang prefix when type = xis */
   const char *method; /* how to find the list: tis xis file */
   const char *dbpath; /* dir of dbx for some tis and xis */
   const char *dbname; /* name of dbx for some tis and xis */
