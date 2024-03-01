@@ -6,25 +6,25 @@ main(int argc, char **argv)
 {
   Isp *ip = isp_init();
 
-  if (isp_cache_sys(ip))
-    goto error;
-  
   if (isp_options(argc, argv, ip))
     goto error;
 
   if (isp_validate(ip))
     goto error;
 
-  if (isp_list_location(ip))
+  if (isp_list_method(ip))
     goto error;
 
+  if (isp_cache_sys(ip))
+    goto error;
+  
   if (isp_cache_sub(ip))
     goto error;
 
-#if 0
   if (isp_cache_list(ip))
     goto error;
 
+#if 0
   if (isp_cache_zoom(p))
     goto error;
 #endif

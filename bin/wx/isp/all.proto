@@ -12,20 +12,23 @@ extern void help(void);
 extern Isp *isp_init(void);
 extern void isp_term(Isp *ip);
 /* isp_list.c */
-extern int isp_tis_list(Isp *ip);
 extern int isp_list_create(Isp *ip);
 extern int isp_list_dbx(Isp *ip);
 extern void isp_list_type(Isp *ip);
-extern int isp_list_location(Isp *ip);
+extern int isp_list_method(Isp *ip);
 /* isp_options.c */
 extern int isp_perm_check(const char *p);
 extern int isp_options(int argc, char **argv, Isp *ip);
 extern int opts(int opt, const char *arg);
 /* isp_show.c */
 extern void isp_show(FILE *fp, Isp *ip);
+/* isp_tis.c */
+extern int isp_tis_list(Isp *ip);
 /* isp_tmp.c */
 extern void isp_tmp_dir(Isp *ip);
 /* isp_validate.c */
 extern int isp_validate(Isp *ip);
 /* ispx.c */
 extern int main(int argc, char **argv);
+/* isp_xis.c */
+extern int isp_xis_list(Isp *ip);

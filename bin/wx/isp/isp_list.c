@@ -2,30 +2,6 @@
 #include "isp.h"
 
 int
-isp_tis_list(Isp *ip)
-{
-  Dbi_index *dp = dbx_init(ip->lloc.dbpath, ip->lloc.dbname);
-  if (dp)
-    {
-      Unsigned32 len;
-      dp->h.sep_char = '\n';
-      const Loc8*l8p = dbx_key(dp, ip->list_name, &len);
-      if (l8p)
-	{
-	  FILE *fp;
-	  if (!(fp = fopen(ip->cache.list, "w")))
-	    ip->err = "isp_list_from_dbx failed to open tis dbi";
-	  else
-	    dbx_wids(dp, l8p, len, fp);
-	}
-      dbx_term(dp);
-    }
-  else
-    ip->err = "failed to open .dbh/.dbi database";
-  return ip->err ? 1 : 0;
-}
-
-int
 isp_list_create(Isp *ip)
 {
   if ('w' == *ip->lloc.type)
@@ -33,7 +9,7 @@ isp_list_create(Isp *ip)
   else if ('t' == *ip->lloc.type)
     return isp_tis_list(ip);
   else
-    return 0/*isp_xis_list(ip)*/;
+    return isp_xis_list(ip);
 }
 
 int
@@ -45,7 +21,7 @@ isp_list_dbx(Isp *ip)
       char dbi[strlen(ip->lloc.dbpath)+strlen(ip->lloc.dbname)+strlen("/.dbi0")];
       sprintf(dbi, "%s/%s.dbi", ip->lloc.dbpath, ip->lloc.dbname);
       if (ip->verbose)
-	fprintf(stderr, "isp_list_dbx: looking for dbi %s\n", dbi);
+	fprintf(stderr, "isp: isp_list_dbx: looking for dbi %s\n", dbi);
       if (!access(dbi, R_OK))
 	return 0;
     }
@@ -72,8 +48,9 @@ isp_list_type(Isp *ip)
     ip->lloc.type = "www";
 }
 
+/* This routine cannot use ip->cache */
 int
-isp_list_location(Isp *ip)
+isp_list_method(Isp *ip)
 {
   isp_list_type(ip);
   

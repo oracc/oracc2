@@ -24,9 +24,9 @@ isp_cache_sys(Isp *ip)
 	}
       struct stat sb;
       if (stat(ip->cache.sys, &sb) || !S_ISDIR(sb.st_mode))
-	ip->err = "cache directory not found";
+	ip->err = "cache.sys directory not found";
       else if (access(ip->cache.sys, W_OK))
-	ip->err = "cache directory not writeable";
+	ip->err = "cache.sys directory not writeable";
     }
   return ip->err ? 1 : 0;
 }
@@ -35,17 +35,69 @@ isp_cache_sys(Isp *ip)
 int
 isp_cache_sub(Isp *ip)
 {
-  char dir[strlen(ip->cache.sys)+strlen(ip->list_name)+2];
-  sprintf(dir, "%s/%s", ip->cache.sys, ip->list_name);
-  ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
+  char dir[strlen(ip->cache.sys)+strlen(ip->project)+strlen(ip->list_name)+3];
+  sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
   struct stat sb;
-  if (stat(ip->cache.sub, &sb) || !S_ISDIR(sb.st_mode))
+  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
     {
-      if (mkdir(ip->cache.sub, 0775))
-	ip->err = "cache directory not found and could not be created";
-  }
-  else if (access(ip->cache.sub, W_OK))
-    ip->err = "cache directory not writeable";
+      if (strchr(ip->project, '/'))
+	{
+	  char proj[strlen(ip->project)+1];
+	  strcpy(proj, ip->project);
+	  if ('/' == proj[strlen(proj)-1])
+	    proj[strlen(proj)-1] = '\0';
+	  char *slash = proj;
+	  while ((slash = strchr(slash,'/')))
+	    {
+	      *slash = '\0';
+	      sprintf(dir, "%s/%s", ip->cache.sys, proj);
+	      if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+		{
+		  if (ip->verbose)
+		    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
+		  if (mkdir(dir, 0775))
+		    {
+		      ip->err = "cache.sub project-component directory could not be created";
+		      break;
+		    }
+		}
+	      *slash++ = '/';
+	    }
+	  if (!ip->err)
+	    {
+	      sprintf(dir, "%s/%s", ip->cache.sys, proj);
+	      if (ip->verbose)
+		fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
+	      if (mkdir(dir, 0775))
+		ip->err = "cache.sub project-component directory could not be created";
+	    }
+	}
+      else
+	{
+	  if (ip->verbose)
+	    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
+	  if (mkdir(dir, 0775))
+	    ip->err = "cache.sub project-level directory could not be created";
+	}
+    }
+
+  if (!ip->err)
+    {
+      strcat(dir, "/");
+      strcat(dir, ip->list_name);
+      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
+      struct stat sb;
+      if (stat(ip->cache.sub, &sb) || !S_ISDIR(sb.st_mode))
+	{
+	  if (ip->verbose)
+	    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", ip->cache.sub);
+	  if (mkdir(ip->cache.sub, 0775))
+	    ip->err = "cache.sub directory could not be created";
+	}
+      else if (access(ip->cache.sub, W_OK))
+	ip->err = "cache.sub directory not writeable";
+    }
+  
   return ip->err ? 1 : 0;
 }
 
@@ -60,11 +112,11 @@ isp_cache_list(Isp *ip)
   if (access(list, R_OK))
     {
       if (!access(list, F_OK))
-	ip->err = "cache list file exists but is not readable";
+	ip->err = "cache.list exists but is not readable";
       else if ('i' == *ip->lloc.type)
-	ip->err = "cache list file does not exist in tmp/isp";
+	ip->err = "cache.list does not exist in tmp/isp";
       else
-	isp_list_create(ip);
+	(void)isp_list_create(ip);
     }
   return ip->err ? 1 : 0;
 }

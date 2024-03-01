@@ -13,45 +13,7 @@ int test_mode = 0;
 int value_only = 0;
 int word_ids = 0;
 char dbx_sep_char = '\n';
-
-void
-dbx_wids(Dbi_index *dp, Loc8 *l8p, int n, FILE *o)
-{
-  int i;
-  for (i = 0; i < n; ++i)
-    {
-      Loc8 *l8 = &l8p[i];
-      fprintf(o,"%s.%d.%d",
-	      vido_get_id(dp->vp,l8->text_id),
-	      l8->unit_id, 
-	      l8->word_id
-	      );
-      if (dbx_sep_char == ' ')
-	{
-	  if ((n-i) > 1)
-	    fputc(' ', o);
-	}
-      else
-	fputc(dbx_sep_char, o);
-    }
-}
-
-void
-dbx_l8s(Dbi_index *dp, Loc8 *l8p, int n, FILE *o)
-{
-  int i;
-  fputc('\n', o);
-  for (i = 0; i < n; ++i)
-    {
-      Loc8 *l8 = &l8p[i];
-      fprintf(o,
-	      "         t=%s;u=%d;w=%d\n",
-	      vido_get_id(dp->vp,l8->text_id),
-	      l8->unit_id, 
-	      l8->word_id
-	      );
-    }
-}
+const char *dbidir, *dbiname;
 
 void
 dbx_val(Dbi_index *d, const void *v, size_t n, FILE *o)
@@ -134,6 +96,7 @@ main(int argc, char **argv)
   options(argc, argv, "d:f:F:n:o:stT:vw");
   key = argv[optind];
   d = dbx_init(dbidir, dbiname);
+  d->h.sep_char = dbx_sep_char;
   FILE *o = stdout;
   if (outfile)
     {

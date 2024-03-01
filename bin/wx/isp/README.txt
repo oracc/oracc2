@@ -24,7 +24,7 @@ of IDs content IDs, or CIDs.
 In the following, we say 'LIST' when we mean a name that identifies a
 list of CIDs--this list could be a temporary list identified by a
 tmpdir such as p3.fzCvhE, an XIS name such as akk.r00001, a TIS name
-such as t2df223, or the name of a project-build or user-specified list
+such as t123456, or the name of a project-build or user-specified list
 such as 'sansatf' or 'emar'.  Collectively we call this suite of IDs
 list IDs, or LSIDs.
 
@@ -37,9 +37,25 @@ ISP operates with the following context parameters:
 
  LIST -- an LSID providing a set of CIDs
 
+ META -- a specification of metadata fields for sorting and section
+         headers; these can be set separately for two pager display
+         modes: default and special.  The default fields are
+         time/place/genre; maximum number of fields is 3. The config
+         file sets the fields for zero or more of the default/special
+         modes.
+ 
+ MODE -- the current default/special pager mode
+
+ PERM -- the permutation of metadata fields set by the outline
+      	 selector for the current mode. The fields for MODE are
+      	 obtained from the config and numbered 1..3 in the order given
+      	 in the config option.  A PERM is a 1 to 3 digit code with
+      	 each digit in the range 1..3 and no digit occurring more than
+      	 once.  Thus, in the default the PERM would be 123; after
+      	 selectiong genre/place/time the PERM would be 321, etc.
+
  ZOOM -- a slice of the LIST selected by sorting and grouping
-      	 according to the project's use of metadata; the default
-      	 metadata fields are time/place/genre
+      	 according to META, MODE and PERM
  
  PAGE -- a page of the current ZOOM slice that is sent for display
 
