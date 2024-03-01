@@ -66,4 +66,6 @@ isp_list_location(struct isp *ip)
       ip->lloc.dbname = "tok";
       ip->lloc.method = "dbx";
     }
+  else
+    ip->err = "bad type in list locator";
 }
