@@ -184,6 +184,9 @@ main(int argc, char **argv)
     fdbg = stderr;
   if (!fpag)
     fpag = stdout;
+
+  if (!sort_keys)
+    sort_keys = "period,genre,provenience";
   
   if (!heading_keys)
     {
