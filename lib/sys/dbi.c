@@ -179,6 +179,7 @@ dbi_create (const char *name, const char *dir, size_t hash_init_size, size_t dat
   tmp->i_fname[strlen (tmp->i_fname) - 1] = 'i';
   tmp->h.data_size = data_size;
   tmp->h.entry_count = 0;
+  tmp->h.sep_char = ' ';
   tmp->type = type;
   tmp->keys = hash_create (hash_init_size);
   /*  tmp->_tmp_fp = xfopen (tmpnam (tmp->_tmp_fn), "wb+");*/

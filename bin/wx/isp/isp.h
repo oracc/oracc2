@@ -27,16 +27,39 @@ struct isp_list_loc
   const char *path;   /* path to file */
 };
 
-struct isp
+struct isp_cache
+{
+  const char *sys;	/* the system cache directory: /home/oracc/tmp/isp
+			   for search results; /home/oracc/www/is.d
+			   for precompiled instance sets */
+  const char *sub;	/* the list's cache directory */
+  const char *list;	/* the list file */
+  const char *sort; 	/* the list sorted by the requested permutation */
+  const char *page;	/* the page in a zoomed slice; z=0 for no zoom */
+};
+
+/* Pointers to project config entries */
+struct isp_sort
+{
+  const char **default_sort;
+  const char *default_select;
+  const char **special_sort;
+  const char *special_select;  
+};
+
+typedef struct isp
 {
   int web;
   int curr_step;
   int steps[ISP_STEP_8O];
   void *stepdata[ISP_STEP_8O];
-  const char *oracc;
+  const char *oracc;	/* the system oracc install, usually /home/oracc */
+  struct isp_cache cache;
   const char *project;
   const char *list_name;
   struct isp_list_loc lloc;
+  const char *mode; /* 0 = default ; 1 = special */
+  const char *perm; /* permutation expressed as 123 132, etc. (see isp_sort.c) */
   const char *zoom;
   const char *page;
   const char *size;
@@ -52,7 +75,7 @@ struct isp
   const char *err;  
   int verbose;
   Pool *p;
-};
+} Isp;
 
 struct ispargstab
 {

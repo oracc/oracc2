@@ -2,10 +2,17 @@
 #include "isp.h"
 
 void
-isp_show(FILE *fp, struct isp *ip)
+isp_show(FILE *fp, Isp *ip)
 {
   fprintf(fp, "ispx status:\n");
-  fprintf(fp, "\tweb=%d; oracc=%s; project=%s; list=%s\n", ip->web, ip->oracc, ip->project, ip->list_name);
-  fprintf(fp, "\tzoom=%s; page=%s; cemd=%s; xhmd=%s\n", ip->zoom, ip->page, ip->cemd, ip->xhmd);
-  fprintf(fp, "\tlist_path=%s; host=%s; host_path=%s\n", ip->lloc.path, ip->host, ip->host_path);
+  fprintf(fp, "\tweb=%d; oracc=%s; project=%s\n", ip->web, ip->oracc, ip->project);
+  fprintf(fp, "\tlist: name=%s; type=%s; lang=%s; method=%s;\n"
+	  "\t\tpath=%s;\n"
+	  "\t\tdbpath=%s; dpname=%s\n",
+	  ip->list_name, ip->lloc.type, ip->lloc.lang, ip->lloc.method,
+	  ip->lloc.path,
+	  ip->lloc.dbpath, ip->lloc.dbname);
+  fprintf(fp, "\tmode=%s; zoom=%s; page=%s; cemd=%s; xhmd=%s\n",
+	  ip->mode, ip->zoom, ip->page, ip->cemd, ip->xhmd);
+  fprintf(fp, "\thost=%s; host_path=%s\n", ip->host, ip->host_path);
 }

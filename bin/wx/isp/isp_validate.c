@@ -1,5 +1,4 @@
 #include <oraccsys.h>
-#include <sys/stat.h>
 #include "isp.h"
 
 static int
@@ -23,7 +22,7 @@ isp_valid_arg(const char *p, int step)
 }
 
 static int
-isp_valid_project(struct isp *ip)
+isp_valid_project(Isp *ip)
 {
   char dir[strlen(ip->oracc)+strlen(ip->project)+2];
   sprintf(dir, "%s/%s", ip->oracc, ip->project);
@@ -37,7 +36,7 @@ isp_valid_project(struct isp *ip)
 }
 
 static int
-isp_valid_host(struct isp *ip)
+isp_valid_host(Isp *ip)
 {
   char hostpath[strlen(ip->oracc)+strlen(ip->project)+strlen("02pub")+strlen(ip->host)+3];
   sprintf(hostpath, "%s/%s/02pub/%s", ip->oracc, ip->project, ip->host);
@@ -52,7 +51,7 @@ isp_valid_host(struct isp *ip)
 }
 
 int
-isp_validate(struct isp *ip)
+isp_validate(Isp *ip)
 {
   if (!ip->oracc)
     {

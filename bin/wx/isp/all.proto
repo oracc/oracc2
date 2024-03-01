@@ -1,21 +1,31 @@
+/* filecopy.c */
+extern int file_copy(const char *from, const char *to);
 /* ispargs.c */
 extern struct ispargstab *ispargs(register const char *str, register size_t len);
+/* isp_cache.c */
+extern int isp_cache_sys(Isp *ip);
+extern int isp_cache_sub(Isp *ip);
+extern int isp_cache_list(Isp *ip);
 /* isp_help.c */
 extern void help(void);
 /* isp_init.c */
-extern struct isp *isp_init(void);
-extern void isp_term(struct isp *ip);
+extern Isp *isp_init(void);
+extern void isp_term(Isp *ip);
 /* isp_list.c */
-extern void isp_list_type(struct isp *ip);
-extern void isp_list_location(struct isp *ip);
+extern int isp_tis_list(Isp *ip);
+extern int isp_list_create(Isp *ip);
+extern int isp_list_dbx(Isp *ip);
+extern void isp_list_type(Isp *ip);
+extern int isp_list_location(Isp *ip);
 /* isp_options.c */
-extern int isp_options(int argc, char **argv, struct isp *ip);
+extern int isp_perm_check(const char *p);
+extern int isp_options(int argc, char **argv, Isp *ip);
 extern int opts(int opt, const char *arg);
 /* isp_show.c */
-extern void isp_show(FILE *fp, struct isp *ip);
+extern void isp_show(FILE *fp, Isp *ip);
 /* isp_tmp.c */
-extern void isp_tmp_dir(struct isp *ip);
+extern void isp_tmp_dir(Isp *ip);
 /* isp_validate.c */
-extern int isp_validate(struct isp *ip);
+extern int isp_validate(Isp *ip);
 /* ispx.c */
 extern int main(int argc, char **argv);

@@ -1,8 +1,59 @@
 #include <oraccsys.h>
 #include "isp.h"
 
+int
+isp_tis_list(Isp *ip)
+{
+  Dbi_index *dp = dbx_init(ip->lloc.dbpath, ip->lloc.dbname);
+  if (dp)
+    {
+      Unsigned32 len;
+      dp->h.sep_char = '\n';
+      const Loc8*l8p = dbx_key(dp, ip->list_name, &len);
+      if (l8p)
+	{
+	  FILE *fp;
+	  if (!(fp = fopen(ip->cache.list, "w")))
+	    ip->err = "isp_list_from_dbx failed to open tis dbi";
+	  else
+	    dbx_wids(dp, l8p, len, fp);
+	}
+      dbx_term(dp);
+    }
+  else
+    ip->err = "failed to open .dbh/.dbi database";
+  return ip->err ? 1 : 0;
+}
+
+int
+isp_list_create(Isp *ip)
+{
+  if ('w' == *ip->lloc.type)
+    return file_copy(ip->lloc.path, ip->cache.list);
+  else if ('t' == *ip->lloc.type)
+    return isp_tis_list(ip);
+  else
+    return 0/*isp_xis_list(ip)*/;
+}
+
+int
+isp_list_dbx(Isp *ip)
+{
+  struct stat sb;
+  if (!stat(ip->lloc.dbpath, &sb) && S_ISDIR(sb.st_mode))
+    {
+      char dbi[strlen(ip->lloc.dbpath)+strlen(ip->lloc.dbname)+strlen("/.dbi0")];
+      sprintf(dbi, "%s/%s.dbi", ip->lloc.dbpath, ip->lloc.dbname);
+      if (ip->verbose)
+	fprintf(stderr, "isp_list_dbx: looking for dbi %s\n", dbi);
+      if (!access(dbi, R_OK))
+	return 0;
+    }
+  return 1;
+}
+
 void
-isp_list_type(struct isp *ip)
+isp_list_type(Isp *ip)
 {
   char *p = NULL;
   
@@ -21,9 +72,11 @@ isp_list_type(struct isp *ip)
     ip->lloc.type = "www";
 }
 
-void
-isp_list_location(struct isp *ip)
+int
+isp_list_location(Isp *ip)
 {
+  isp_list_type(ip);
+  
   if ('w' == *ip->lloc.type) /* www */
     {
       char path[strlen(ip->oracc)+strlen("/www/")
@@ -53,10 +106,13 @@ isp_list_location(struct isp *ip)
     }
   else if ('x' == *ip->lloc.type) /* xis */
     {
-      char p[strlen(ip->oracc)+strlen("/pub/cbd/.tis")+strlen(ip->lloc.lang)+1];
-      sprintf(p, "%s/pub/%s/cbd/%s.tis", ip->oracc, ip->project, ip->lloc.lang);
+      char p[strlen(ip->oracc)+strlen("/pub//cbd/")+strlen(ip->lloc.lang)+1];
+      sprintf(p, "%s/pub/%s/cbd/%s", ip->oracc, ip->project, ip->lloc.lang);
       ip->lloc.dbpath = (ccp)pool_copy((uccp)p, ip->p);
+      ip->lloc.dbname = "tis";
       ip->lloc.method = "xisdb";
+      if (isp_list_dbx(ip))
+	ip->err = "xis database not found";
     }
   else if ('t' == *ip->lloc.type) /* tis */
     {
@@ -65,7 +121,12 @@ isp_list_location(struct isp *ip)
       ip->lloc.dbpath = (ccp)pool_copy((uccp)p, ip->p);
       ip->lloc.dbname = "tok";
       ip->lloc.method = "dbx";
+      if (isp_list_dbx(ip))
+	ip->err = "tok/tis database not found";
     }
   else
-    ip->err = "bad type in list locator";
+    {
+      ip->err = "bad type in list locator";
+    }
+  return ip->err ? 1 : 0;
 }

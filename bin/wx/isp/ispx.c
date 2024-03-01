@@ -4,16 +4,30 @@
 int
 main(int argc, char **argv)
 {
-  struct isp *ip = isp_init();
+  Isp *ip = isp_init();
 
+  if (isp_cache_sys(ip))
+    goto error;
+  
   if (isp_options(argc, argv, ip))
     goto error;
 
   if (isp_validate(ip))
     goto error;
 
-  if (ip->verbose)
-    isp_show(stderr, ip);
+  if (isp_list_location(ip))
+    goto error;
+
+  if (isp_cache_sub(ip))
+    goto error;
+
+#if 0
+  if (isp_cache_list(ip))
+    goto error;
+
+  if (isp_cache_zoom(p))
+    goto error;
+#endif
 
   goto ok;
   
@@ -22,7 +36,11 @@ main(int argc, char **argv)
   if (ip->web)
     printf("<error>%s</error>", ip->err);
 
+  /* falls through to clean up */
+  
  ok:
+  if (ip->verbose)
+    isp_show(stderr, ip);
   fflush(stdout);
   isp_term(ip);
   return 0;

@@ -134,7 +134,6 @@ main(int argc, char **argv)
   options(argc, argv, "d:f:F:n:o:stT:vw");
   key = argv[optind];
   d = dbx_init(dbidir, dbiname);
-  dbx_vido(d);
   FILE *o = stdout;
   if (outfile)
     {

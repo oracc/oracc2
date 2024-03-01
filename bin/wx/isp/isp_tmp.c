@@ -2,7 +2,7 @@
 #include "isp.h"
 
 void
-isp_tmp_dir(struct isp *ip)
+isp_tmp_dir(Isp *ip)
 {
   if (!ip->tmp_dir)
     {

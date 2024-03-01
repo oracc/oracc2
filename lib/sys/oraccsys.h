@@ -1,12 +1,14 @@
 #ifndef ORACCSYS_H_
 #define ORACCSYS_H_
 
+#include <oracclocale.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <wchar.h>
 #include <wctype.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <c2types.h>
 #include <hash.h>
@@ -14,10 +16,12 @@
 #include <pool.h>
 #include <loadfile.h>
 #include <ctype128.h>
+#include <ose.h>
+#include <dbxlib.h>
 
 #define QUALIFIED_PQX_MAX	512
 
-#define TIS_TEMPLATE "t0123456"
+#define TIS_TEMPLATE "t123456"
 
 extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsizep);
 

@@ -1,14 +1,51 @@
 #include <oraccsys.h>
 #include "isp.h"
 
-static struct isp *opt_ip;
+static Isp *opt_ip;
+
+/* This belongs in isp_sort or isp_perm */
+int
+isp_perm_check(const char *p)
+{
+  int one=0, two=0, thre=0;
+  if (p)
+    {
+      if (strlen(p) < 4)
+	{
+	  while (*p)
+	    {
+	      switch (*p)
+		{
+		case '1':
+		  if (one++)
+		    goto error;
+		  break;
+		case '2':
+		  if (two++)
+		    goto error;
+		  break;
+		case '3':
+		  if (thre++)
+		    goto error;
+		  break;
+		default:
+		  goto error;
+		}
+	      ++p;
+	    }
+	}
+    }
+  return 0;
+ error:
+  return 1;
+}
 
 int
-isp_options(int argc, char **argv, struct isp *ip)
+isp_options(int argc, char **argv, Isp *ip)
 {
   int ret;
   opt_ip = ip;
-  ret = options(argc, argv, "ELSZPWCFOj:l:z:p:s:k:h:m:u:c:l:a:vw");
+  ret = options(argc, argv, "ELSZPWCFOj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
   opt_ip = NULL;
   if (ret)
     ip->err = "processing options";
@@ -56,6 +93,24 @@ opts(int opt, const char *arg)
     case 'l':
       opt_ip->list_name = arg;
       break;
+    case 'm':
+      if (strlen(arg) == 1 && ('0'==*arg || '1'==*arg))
+	opt_ip->mode = arg;
+      else
+	{
+	  opt_ip->err = "bad mode argument--must be 0 or 1";
+	  return 1;
+	}
+      break;
+    case 'r':
+      if (isp_perm_check(arg))
+	{
+	  opt_ip->err = "bad perm argument--must be one to three digits '1', '2', or '3', no repeats";
+	  return 1;
+	}	
+      else
+	opt_ip->perm = arg;
+      break;
     case 'z':
       opt_ip->zoom = arg;
       break;
@@ -70,9 +125,6 @@ opts(int opt, const char *arg)
       break;
     case 'n':
       opt_ip->lang = arg;
-      break;
-    case 'm':
-      opt_ip->xhmd = arg;
       break;
     case 'k':
       opt_ip->pack = arg;
@@ -89,7 +141,11 @@ opts(int opt, const char *arg)
     case 'v':
       ++opt_ip->verbose;
       break;
+    case 'x':
+      opt_ip->xhmd = arg;
+      break;
     default:
+      opt_ip->err = "unknown option";
       return 1;
     }
   return 0;

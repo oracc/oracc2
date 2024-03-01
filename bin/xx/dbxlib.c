@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <oraccsys.h>
-#include <oracclocale.h>
 #include <dbxlib.h>
-
-const char *dbidir = NULL, *dbiname = NULL;
 
 Dbi_index *
 dbx_init(const char *dir, const char *name)
@@ -54,4 +49,43 @@ dbx_vido(Dbi_index *dp)
     }
   else
     dp->vp = NULL;
+}
+
+void
+dbx_wids(Dbi_index *dp, Loc8 *l8p, int n, FILE *o)
+{
+  int i;
+  for (i = 0; i < n; ++i)
+    {
+      Loc8 *l8 = &l8p[i];
+      fprintf(o,"%s.%d.%d",
+	      vido_get_id(dp->vp,l8->text_id),
+	      l8->unit_id, 
+	      l8->word_id
+	      );
+      if (dbx_sep_char == ' ')
+	{
+	  if ((n-i) > 1)
+	    fputc(' ', o);
+	}
+      else
+	fputc(dbx_sep_char, o);
+    }
+}
+
+void
+dbx_l8s(Dbi_index *dp, Loc8 *l8p, int n, FILE *o)
+{
+  int i;
+  fputc('\n', o);
+  for (i = 0; i < n; ++i)
+    {
+      Loc8 *l8 = &l8p[i];
+      fprintf(o,
+	      "         t=%s;u=%d;w=%d\n",
+	      vido_get_id(dp->vp,l8->text_id),
+	      l8->unit_id, 
+	      l8->word_id
+	      );
+    }
 }

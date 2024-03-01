@@ -1,22 +1,22 @@
 #include <oraccsys.h>
 #include "isp.h"
 
-struct isp *
+Isp *
 isp_init(void)
 {
-  struct isp defaults = {
+  Isp defaults = {
     .oracc=oracc_builds() , .list_name="_all" ,
     .cemd="line" , .xhmd="html" , .pack="asis" , .aapi="rest" ,
     .zoom="0" , .page="1" , .size="1"
   };
-  struct isp *ip = calloc(1, sizeof(struct isp));
+  Isp *ip = calloc(1, sizeof(Isp));
   *ip = defaults;
   ip->p = pool_init();
   return ip;
 }
 
 void
-isp_term(struct isp *ip)
+isp_term(Isp *ip)
 {
   if (ip)
     {

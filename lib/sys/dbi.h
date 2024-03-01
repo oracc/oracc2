@@ -57,6 +57,7 @@ struct Dbi_index_hdr
   Unsigned32 ht_begin;		/* offset of hash table in .dbh file */
   Unsigned32 ht_user;		/* for communicating data-type from 
 				   indexer to search-engine */
+  char sep_char;
 };
 typedef struct Dbi_index_hdr Dbi_index_hdr;
 
