@@ -27,6 +27,24 @@ const char *project = NULL;
 
 #include "iss_sk_lookup.c"
 
+static char *
+append_designation(Isp *ip, const char *s)
+{
+#if 1
+  char buf[strlen(s)+strlen(",designation0")];
+  strcpy(buf, s);
+  strcat(buf, ",designation");
+  s = (ccp)pool_copy((uccp)buf,ip->p);
+#else
+  /* need do figure out what the sort_final stuff in p2 was; for now we do a dump append */
+  char *tmp2 = malloc(strlen(entry)+strlen(p2opts->sort_final)+2);
+  sprintf(tmp2, "%s,%s", entry, p2opts->sort_final);
+  s = (char*)pool_copy((unsigned char *)tmp2,ip->p);
+  free(tmp2);
+#endif
+  return (char*)s;
+}
+
 static unsigned char *
 adjust_s(unsigned char *stop, unsigned char *s)
 {
@@ -191,7 +209,7 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
       listfile = arg_listfile;
       sort_keys = arg_sortkeys;
     }
-  
+
   if (!project)
     {
       fprintf(stderr, "ispsortx: must give project with -p PROJECT. Stop.\n");
@@ -251,6 +269,7 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   char *s = strdup(sort_keys), *f, *tok;
   int badf = 0;
   tok = s;
+  int designation_ok = 0;
   while ((f = strtok(tok, ",")))
     {
       tok = NULL;
@@ -259,9 +278,15 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
 	  fprintf(stderr, "ispsortx: unknown field %s\n", f);
 	  ++badf;
 	}
+      else if (!strcmp(f, "designation"))
+	designation_ok = 1;
     }
   hash_free(known_fields, NULL);
   free(s);
+
+  if (!designation_ok)
+    sort_keys = append_designation(ip, sort_keys);
+
   if (badf)
     {
       if (ip)
