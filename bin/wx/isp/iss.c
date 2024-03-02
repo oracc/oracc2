@@ -126,6 +126,7 @@ o_cmp(const void *a,const void*b)
   return ((struct outline*)a)->sic->seq - ((struct outline*)b)->sic->seq;
 }
 
+#if 0
 struct outline *
 pg_outline(int *nlevelsp)
 {
@@ -155,6 +156,7 @@ pg_outline(int *nlevelsp)
   *nlevelsp = nlevels;
   return o;
 }
+#endif
 
 static int *
 set_keys(const char *s, int *nfields)
@@ -316,7 +318,7 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   op = pg_outline(&nlevels);
   
   if (nitems)
-    pages = pg_page(pitems, nitems, &npages, op);
+    pages = pg_page(pitems, nitems, &npages);
   
   pg_page_dump_all(fpag,pages,npages);
   

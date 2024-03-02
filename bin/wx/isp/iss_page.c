@@ -29,20 +29,30 @@ fmthdr(short sic_index)
   return s;
 }
 
+static char *
+plussed(unsigned char *qpq)
+{
+  char *colon = strchr(qpq, ':');
+  if (colon)
+    return colon;
+  else
+    return (char*)qpq;
+}
+
+/* The pg2 version of this routine split the pages up; this one
+   creates a single list */
 struct page *
-pg_page(struct item **pitems, int nitems, int *npages, struct outline *outlinep)
+pg_page(struct item **pitems, int nitems, int *npages)
 {
   static int last_i = 0, i;
-
-  /* page the results */
-  npage = (nitems / pagesize) + (nitems % pagesize ? 1 : 0);
+  Unsigned32 last_lkey = 0;
+  
+  npage = 1;
   pages = malloc(npage * sizeof(struct page));
-  for (i = 0; i < npage; ++i)
-    {
-      pages[i].used = 0;
-      pages[i].p = malloc((pagesize*2) * sizeof(char *));
-    }
-  currpage = pages;
+  pages[i].used = 0;
+  pages[i].p = malloc((nitems*2) * sizeof(char *));
+  currpage = &pages[0];
+
   if (nheadfields)
     {
       int x = 0;
@@ -55,9 +65,6 @@ pg_page(struct item **pitems, int nitems, int *npages, struct outline *outlinep)
   else
     currpage->used = 0;
 
-  if (outlinep)
-    outlinep->page = 1;
-  
   for (i = 0; i < nitems; ++i)
     {
       if (pitems[i]->grp < 0)
@@ -65,42 +72,21 @@ pg_page(struct item **pitems, int nitems, int *npages, struct outline *outlinep)
 
       if (i && pitems[i]->grp != pitems[i-1]->grp && pitems[i-1]->grp != -1)
 	{
-	  if (outlinep)
-	    outlinep->count = i - last_i;
 	  last_i = i;
-	  /* 	  if (currpage->used < pagesize) */
-	  if (nheadfields)
-	    currpage->p[currpage->used++] = fmthdr(pitems[i]->grp);
-	  if (outlinep)
-	    {
-	      ++outlinep;
-	      outlinep->page = 1 + currpage - pages;
-	    }
-	}
-      if (currpage_used == pagesize)
-	{
-	  if (*currpage->p[currpage->used-1] == '#') {
-	    --currpage->used;
-	    if (outlinep)
-	      (outlinep-1)->page++;
-	  }
-	  ++currpage;
-	  currpage_used = 0;
 	  if (nheadfields)
 	    {
-	      currpage->p[0] = fmthdr(pitems[i]->grp);
-	      currpage->used = 1;
+	      currpage->p[currpage->used++] = fmthdr(pitems[i]->grp);
+	      last_lkey = 0;
 	    }
-	  else
-	    currpage->used = 0;
 	}
-      currpage->p[currpage->used++] = (char *)pitems[i]->s;
-      ++currpage_used;
+      if (i && !strcmp(pitems[i-1]->qpq, pitems[i]->qpq)
+	  && pitems[i-1]->lkey == pitems[i]->lkey)
+	currpage->p[currpage->used++] = plussed(pitems[i]->s);
+      else
+	currpage->p[currpage->used++] = (char *)pitems[i]->s;
     }
-  if (outlinep)
-    outlinep->count = i - last_i;
 
-  *npages = npage;
+  *npages = 1;
   return pages;
 }
 
@@ -112,11 +98,20 @@ pg_page_dump_all(FILE *fp, struct page *pages, int npages)
     pg_page_dump_one(fp, &pages[i]);
 }
 
+/* The pg2 version of this routine printed page-size groups on a line
+   with headings interspersed among the IDs.
+
+   This version prints each zoom-group on its own line.
+ */
 void
 pg_page_dump_one(FILE *fp, struct page *p)
 {
   int i;
   for (i = 0; i < p->used; ++i)
-    fprintf(fp,"%s ", p->p[i]);
+    {
+      if ('#' == p->p[i])
+	fputc('\n',fp);
+      fprintf(fp,"%s ", p->p[i]);
+    }
   fputc('\n',fp);
 }
