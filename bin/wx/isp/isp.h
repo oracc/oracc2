@@ -41,9 +41,9 @@ struct isp_cache
 /* Pointers to project config entries */
 struct isp_sort
 {
-  const char **default_sort;
+  const char *default_sort;
   const char *default_select;
-  const char **special_sort;
+  const char *special_sort;
   const char *special_select;  
 };
 
@@ -58,6 +58,7 @@ typedef struct isp
   const char *project;
   const char *list_name;
   struct isp_list_loc lloc;
+  struct isp_sort sort;
   const char *mode; /* 0 = default ; 1 = special */
   const char *perm; /* permutation expressed as 123 132, etc. (see isp_sort.c) */
   const char *zoom;

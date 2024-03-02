@@ -119,7 +119,7 @@ uniq_pdata(void)
 }
 
 struct item **
-pg_sort(struct item*items, int *nitems, 
+pg_sort(Isp *ip, struct item*items, int *nitems, 
 	const char *sortkeys)
 {
   int i;
@@ -145,7 +145,13 @@ pg_sort(struct item*items, int *nitems,
       {
 	fprintf(stderr,"pg: sort key %d must be < %d\n",
 		sortfields[i],sip->nfields);
-	exit(1);
+	if (ip)
+	  {
+	    ip->err = "pg sort key out of range";
+	    return NULL;
+	  }
+	else
+	  exit(1);
       }
 
   sicache = make_cache(pdata,ndata,&sic_size);

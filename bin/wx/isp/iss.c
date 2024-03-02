@@ -172,17 +172,26 @@ set_keys(const char *s, int *nfields)
 }
 
 int
-ispsort(const char *arg_project, const char *arg_listfile, const char *arg_sortkeys)
+ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys)
 {
   struct item *items = NULL, **pitems = NULL;
   struct page *pages = NULL;
   struct outline *op = NULL;
   int nitems = 0, nlevels = 0, npages = 0;
 
-  project = arg_project;
-  listfile = arg_listfile;
-  sort_keys = arg_sortkeys;
-
+  if (ip)
+    {
+      project = ip->project;
+      listfile = ip->cache.list;
+      sort_keys = arg_sortkeys;
+    }
+  else
+    {
+      project = arg_project;
+      listfile = arg_listfile;
+      sort_keys = arg_sortkeys;
+    }
+  
   if (!project)
     {
       fprintf(stderr, "ispsortx: must give project with -p PROJECT. Stop.\n");
@@ -191,18 +200,46 @@ ispsort(const char *arg_project, const char *arg_listfile, const char *arg_sortk
 
   if (listfile && access(listfile, R_OK))
     {
-      fprintf(stderr, "ispsortx: list file non-existent or undreadable. Stop.\n");
-      exit(1);
+      fprintf(stderr, "ispsortx: list file non-existent or unreadable. Stop.\n");
+      if (ip)
+	{
+	  ip->err = "list file non-existent or unreadable";
+	  return 1;
+	}
+      else
+	exit(1);
     }
 
   seen = hash_create(1024);
   pg2_pool = pool_init();
 
-  if (!fpag)
-    fpag = stdout;
+  if (ip)
+    {
+      if (ip->cache.sort)
+	{
+	  if (!(fpag = fopen(ip->cache.sort, "w")))
+	    {
+	      ip->err = "unable to open output for sort";
+	      return 1;
+	    }
+	  else if (ip->verbose)
+	    fprintf(stderr, "isp: ispsort writing %s\n", ip->cache.sort);
+	    
+	}
+    }
+  else
+    {
+      if (!fpag)
+	fpag = stdout;
+    }
   
-  if (NULL == (sip = si_load_csi()))
-    exit(1);
+  if (NULL == (sip = si_load_csi(ip)))
+    {
+      if (ip)
+	return 1;
+      else
+	exit(1);
+    }
 
   if (!sort_keys)
     sort_keys = "period,genre,provenience";
@@ -226,7 +263,15 @@ ispsort(const char *arg_project, const char *arg_listfile, const char *arg_sortk
   hash_free(known_fields, NULL);
   free(s);
   if (badf)
-    exit(1);
+    {
+      if (ip)
+	{
+	  ip->err = "bad fields in sort specification";
+	  return 1;
+	}
+      else
+	exit(1);
+    }
   
   if (!heading_keys)
     {
@@ -240,7 +285,8 @@ ispsort(const char *arg_project, const char *arg_listfile, const char *arg_sortk
   
   items = pg_load(&nitems);
   
-  pitems = pg_sort(items, &nitems, sort_keys);
+  if (NULL == (pitems = pg_sort(ip, items, &nitems, sort_keys)))
+    return 1;
   
   op = pg_outline(&nlevels);
   

@@ -24,8 +24,11 @@ main(int argc, char **argv)
   if (isp_cache_list(ip))
     goto error;
 
+  if (isp_cache_sort(ip))
+    goto error;
+
 #if 0
-  if (isp_cache_zoom(p))
+  if (isp_cache_zoom(ip))
     goto error;
 #endif
 

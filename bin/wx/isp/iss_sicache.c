@@ -126,8 +126,6 @@ make_cache(struct item **items, int nitems, int*sic_size)
 	  items[i]->skey = 1000000; /* "unknown" */
 	  items[i]->grp = -1;
 	  j = last_j;
-	  /* fprintf(stderr,"resetting j to %ld from last_j\n", j); */
-	  /* exit(1); */
 	}
     }
 

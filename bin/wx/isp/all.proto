@@ -22,6 +22,8 @@ extern int isp_options(int argc, char **argv, Isp *ip);
 extern int opts(int opt, const char *arg);
 /* isp_show.c */
 extern void isp_show(FILE *fp, Isp *ip);
+/* isp_sort.c */
+extern int isp_cache_sort(Isp *ip);
 /* ispsortx.c */
 extern int main(int argc, char **argv);
 extern int opts(int argc, const char *arg);
@@ -40,7 +42,7 @@ extern int isp_xis_list(Isp *ip);
 extern struct item *pg_load(int *nitems);
 extern int o_cmp(const void *a, const void *b);
 extern struct outline *pg_outline(int *nlevelsp);
-extern int ispsort(const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
+extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
 /* iss_page.c */
 extern char *fmthdr(short sic_index);
 extern struct page *pg_page(struct item **pitems, int nitems, int *npages, struct outline *outlinep);
@@ -65,9 +67,6 @@ extern void pd_sort_cache(void);
 extern struct si_cache **make_cache(struct item **items, int nitems, int *sic_size);
 /* iss_sk_lookup.c */
 /* iss_sort.c */
-extern struct item **pg_sort(struct item *items, int *nitems, const char *sortkeys);
+extern struct item **pg_sort(Isp *ip, struct item *items, int *nitems, const char *sortkeys);
 /* iss_sortinfo.c */
-extern struct sortinfo *si_load_tab(unsigned char *tab, size_t tabsize);
-extern void si_dump_csi(unsigned char *csiname, struct sortinfo *sip);
-extern struct sortinfo *si_load_csi(void);
-extern void si_debug_dump_csi(struct sortinfo *dsi);
+extern struct sortinfo *si_load_csi(Isp *ip);
