@@ -2,7 +2,7 @@ include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=ispsortx
 
-ispsortx_SOURCES=all.proto ispsortx.c sort.c page.c sortinfo.c sicache.c redblack.c
+iss_sources = iss.c iss_page.c iss_sortinfo.c iss_sicache.c iss_redblack.c iss_sort.c
 
-ispsortx_LDADD = $(xLDADD)
-ispsortx_DEPENDENCIES = $(ispsortx_LDADD)
+ispsortx_SOURCES=all.proto ispsortx.c $(iss_sources)
+

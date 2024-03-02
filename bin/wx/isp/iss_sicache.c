@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "ispsort.h"
+#include "iss.h"
 
 extern int csi_debug;
 extern int nsortfields;

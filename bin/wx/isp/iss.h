@@ -1,6 +1,8 @@
 #ifndef ISPSORT_H_
 #define ISPSORT_H_
 
+#include "isp.h"
+
 struct item
 {
   unsigned char   *s;
@@ -35,10 +37,5 @@ extern struct sortinfo *sip;
 extern int nheadfields;
 extern int *headfields;
 extern int nsortfields;
-
-#include "redblack.h"
-#include "sortinfo.h"
-
-#include "all.proto"
 
 #endif/*ISPSORT_H_*/

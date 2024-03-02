@@ -83,6 +83,9 @@ struct ispargstab
   int step;
 };
 
+#include "iss_redblack.h"
+#include "iss_sortinfo.h"
+
 #include "all.proto"
 
 #endif/*ISP_H_*/

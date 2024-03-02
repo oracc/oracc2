@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "ispsort.h"
+#include "iss.h"
 
 static struct item**pdata = NULL;
 struct si_cache **sicache = NULL;
@@ -73,7 +73,7 @@ pg_cmp(const void *a, const void *b)
   return (*((struct item**)a))->lkey - (*((struct item**)b))->lkey;
 }
 
-#include "sk_lookup.c"
+#include "iss_sk_lookup.c"
 
 static void
 set_sortkeys(const char *s)

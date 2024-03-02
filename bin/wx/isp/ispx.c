@@ -45,3 +45,7 @@ main(int argc, char **argv)
   isp_term(ip);
   return 0;
 }
+
+const char *prog = "ispx";
+int major_version = 1, minor_version = 1, verbose = 0;
+const char *usage_string = "[file]";

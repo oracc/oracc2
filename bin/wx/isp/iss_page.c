@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "ispsort.h"
+#include "iss.h"
 
 struct page *pages;
 struct page *currpage;

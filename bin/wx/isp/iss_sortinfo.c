@@ -1,6 +1,6 @@
 #include <oraccsys.h>
 #include <sys/mman.h>
-#include "sortinfo.h"
+#include "iss_sortinfo.h"
 
 #define MAX_PATH 1024
 

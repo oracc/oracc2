@@ -1,16 +1,18 @@
 /* ispsortx.c */
-extern struct item *pg_load(int *nitems);
-extern int o_cmp(const void *a, const void *b);
-extern struct outline *pg_outline(int *nlevelsp);
 extern int main(int argc, char **argv);
 extern int opts(int argc, const char *arg);
 extern void help(void);
-/* page.c */
+/* iss.c */
+extern struct item *pg_load(int *nitems);
+extern int o_cmp(const void *a, const void *b);
+extern struct outline *pg_outline(int *nlevelsp);
+extern int ispsort(const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
+/* iss_page.c */
 extern char *fmthdr(short sic_index);
 extern struct page *pg_page(struct item **pitems, int nitems, int *npages, struct outline *outlinep);
 extern void pg_page_dump_all(FILE *fp, struct page *pages, int npages);
 extern void pg_page_dump_one(FILE *fp, struct page *p);
-/* redblack.c */
+/* iss_redblack.c */
 extern struct rbtree *rbinit(int (*cmp)(const void *, const void *, const void *), const void *config);
 extern void rbdestroy(struct rbtree *rbinfo);
 extern const void *rbsearch(const void *key, struct rbtree *rbinfo);
@@ -21,16 +23,16 @@ extern struct rblists *rbopenlist(const struct rbtree *rbinfo);
 extern const void *rbreadlist(struct rblists *rblistp);
 extern void rbcloselist(struct rblists *rblistp);
 extern const void *rblookup(int mode, const void *key, struct rbtree *rbinfo);
-/* sicache.c */
+/* iss_sicache.c */
 extern int sic_cmp(const void *a, const void *b, const void *c);
 extern int sic_id_cmp(const void *a, const void *b);
 extern int sic_pd_cmp(const void *a, const void *b);
 extern void pd_sort_cache(void);
 extern struct si_cache **make_cache(struct item **items, int nitems, int *sic_size);
-/* sk_lookup.c */
-/* sort.c */
+/* iss_sk_lookup.c */
+/* iss_sort.c */
 extern struct item **pg_sort(struct item *items, int *nitems, const char *sortkeys);
-/* sortinfo.c */
+/* iss_sortinfo.c */
 extern struct sortinfo *si_load_tab(unsigned char *tab, size_t tabsize);
 extern void si_dump_csi(unsigned char *csiname, struct sortinfo *sip);
 extern struct sortinfo *si_load_csi(void);
