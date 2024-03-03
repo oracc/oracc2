@@ -1,5 +1,4 @@
 #include <oraccsys.h>
-
 #include "iss.h"
 
 FILE *fpag = NULL;
@@ -126,7 +125,6 @@ o_cmp(const void *a,const void*b)
   return ((struct outline*)a)->sic->seq - ((struct outline*)b)->sic->seq;
 }
 
-#if 0
 struct outline *
 pg_outline(int *nlevelsp)
 {
@@ -156,7 +154,6 @@ pg_outline(int *nlevelsp)
   *nlevelsp = nlevels;
   return o;
 }
-#endif
 
 static int *
 set_keys(const char *s, int *nfields)
@@ -197,7 +194,7 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   struct item *items = NULL, **pitems = NULL;
   struct page *pages = NULL;
   struct outline *op = NULL;
-  int nitems = 0, nlevels = 0, npages = 0;
+  int nitems = 0, nlevels = 0;
 
   if (ip)
     {
@@ -233,26 +230,6 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   seen = hash_create(1024);
   pg2_pool = pool_init();
 
-  if (ip)
-    {
-      if (ip->cache.sort)
-	{
-	  if (!(fpag = fopen(ip->cache.sort, "w")))
-	    {
-	      ip->err = "unable to open output for sort";
-	      return 1;
-	    }
-	  else if (ip->verbose)
-	    fprintf(stderr, "isp: ispsort writing %s\n", ip->cache.sort);
-	    
-	}
-    }
-  else
-    {
-      if (!fpag)
-	fpag = stdout;
-    }
-  
   if (NULL == (sip = si_load_csi(ip)))
     {
       if (ip)
@@ -318,11 +295,10 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   op = pg_outline(&nlevels);
   
   if (nitems)
-    pages = pg_page(pitems, nitems, &npages);
+    pages = pg_page(pitems, nitems, op);
   
-  pg_page_dump_all(fpag,pages,npages);
+  pg_page_dump(ip, pages);
   
-  fclose(fpag);
   hash_free2(seen, free, NULL);
 
   return 0;

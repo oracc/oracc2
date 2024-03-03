@@ -8,7 +8,10 @@ isp_cache_sort(Isp *ip)
 {
   /* could reasonably have an Isp member 'curr_sort' which is the sort
      to use based on default/special and PERM settings */
-  ip->cache.sort = (ccp)pool_copy((uccp)ip->cache.list, ip->p);
-  strcpy(strrchr(ip->cache.sort,'/')+1, "sort");
+  char buf[strlen(ip->cache.list)+strlen("-1230")];
+  strcpy(buf, ip->cache.sort);
+  strcpy(strrchr(buf,'/')+1, "sort-");
+  strcat(buf, ip->perm);
+  ip->cache.sort = (ccp)pool_copy((uccp)buf, ip->p);
   return ispsort(ip, NULL, NULL, ip->sort.default_sort);
 }

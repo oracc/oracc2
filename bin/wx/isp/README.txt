@@ -54,12 +54,17 @@ ISP operates with the following context parameters:
       	 once.  Thus, in the default the PERM would be 123; after
       	 selectiong genre/place/time the PERM would be 321, etc.
 
- ZOOM -- a slice of the LIST selected by sorting and grouping
-      	 according to META, MODE and PERM
- 
+ ZOOM -- an integer which is the line number of LIST that contains a
+      	 slice of the LIST selected by sorting and grouping according
+      	 to META, MODE and PERM
+
+ ZMAX -- the maximum allowable value of ZOOM
+
  PAGE -- a page of the current ZOOM slice that is sent for display
 
- SIZE -- the number of instances per page
+ PSIZ -- the number of instances per page
+
+ PMAX -- the maximum allowable value of PAGE at the current PSIZ
 
  PACK -- the packaging method; ASIS or ESP2
 

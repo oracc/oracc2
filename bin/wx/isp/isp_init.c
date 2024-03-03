@@ -5,7 +5,7 @@ Isp *
 isp_init(void)
 {
   Isp defaults = {
-    .oracc=oracc_builds() , .list_name="_all" ,
+    .oracc=oracc_builds() , .list_name="_all" , .perm="123" ,
     .cemd="line" , .xhmd="html" , .pack="asis" , .aapi="rest" ,
     .zoom="0" , .page="1" , .size="1"
   };

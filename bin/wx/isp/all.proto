@@ -44,10 +44,11 @@ extern int o_cmp(const void *a, const void *b);
 extern struct outline *pg_outline(int *nlevelsp);
 extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
 /* iss_page.c */
+extern int pg_map_one(Isp *ip, FILE *fp, int count, List *lmap);
+extern int pg_zmaps(Isp *ip, List *zmaps, List *z);
 extern char *fmthdr(short sic_index);
-extern struct page *pg_page(struct item **pitems, int nitems, int *npages, struct outline *outlinep);
-extern void pg_page_dump_all(FILE *fp, struct page *pages, int npages);
-extern void pg_page_dump_one(FILE *fp, struct page *p);
+extern struct page *pg_page(struct item **pitems, int nitems, struct outline *outlinep);
+extern int pg_page_dump(Isp *ip, struct page *p);
 /* iss_redblack.c */
 extern struct rbtree *rbinit(int (*cmp)(const void *, const void *, const void *), const void *config);
 extern void rbdestroy(struct rbtree *rbinfo);
