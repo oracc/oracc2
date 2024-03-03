@@ -34,7 +34,10 @@ plussed(unsigned char *qpq)
 {
   char *colon = strchr(qpq, ':');
   if (colon)
-    return colon;
+    {
+      *colon = '+';
+      return colon;
+    }
   else
     return (char*)qpq;
 }
@@ -109,9 +112,11 @@ pg_page_dump_one(FILE *fp, struct page *p)
   int i;
   for (i = 0; i < p->used; ++i)
     {
-      if ('#' == p->p[i])
+      if ('#' == p->p[i][0])
 	fputc('\n',fp);
-      fprintf(fp,"%s ", p->p[i]);
+      else if ('+' != p->p[i][0])
+	fputc(' ', fp);
+      fputs(p->p[i], fp);
     }
   fputc('\n',fp);
 }
