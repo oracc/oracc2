@@ -8,15 +8,33 @@ int npage = 0;
 int pagesize = 15;
 extern int quick;
 
+struct pgtell
+{
+  long ptell;
+  long htell;
+  int hlen;
+};
+
+struct pgtell *
+pg_tell(Isp *ip, long ht, int hl, FILE *fp)
+{
+  struct pgtell *pt = memo_new(ip->tmem);
+  pt->ptell = ftell(fp);
+  pt->htell = ht;
+  pt->hlen = hl;
+  return pt;
+}
+
 int
 pg_map_one(Isp *ip, FILE *fp, int count, List *lmap)
 {
   int nth = 0;
   List_node *np = lmap->first;
   while (nth < list_len(lmap))
-    {      
-      long start = (nth ? ((uintptr_t)(np->prev->data))+1 : 0L);
-      fprintf(fp, "%d/%ld/%ld\n", count, start, (uintptr_t)(np->data));
+    {
+      struct pgtell *pt = np->data;
+      long start = (nth ? ((struct pgtell*)(np->prev->data))->ptell+1 : 0L);
+      fprintf(fp, "%d/%ld/%d/%ld/%ld\n", count, pt->htell, pt->hlen, start, pt->ptell);
       np = np->next;
       ++nth;
     }
@@ -160,9 +178,11 @@ pg_page_dump(Isp *ip, struct page *p)
   List *pmap = list_create(LIST_DOUBLE);
   List *zmap = list_create(LIST_DOUBLE);
   List *zmaps = list_create(LIST_SINGLE);
+  long htell;
+  int hlen;
 
   FILE *fpag = NULL;
-  
+  ip->tmem = memo_init(sizeof(struct pgtell), 128);
   if (ip->cache.sort)
     {
       if (!(fpag = fopen(ip->cache.sort, "w")))
@@ -183,10 +203,12 @@ pg_page_dump(Isp *ip, struct page *p)
 	  if (i)
 	    {
 	      fputc('\n',fpag);
+	      hlen = ftell(fpag)-htell;
 	      list_add(z, (void*)(uintptr_t)z_count);
-	      list_add(zmap, (void*)(uintptr_t)ftell(fpag));
+	      list_add(zmap, pg_tell(ip,htell, hlen, fpag));
 	      list_add(zmaps,zmap);
 	    }
+	  htell = ftell(fpag);
 	  zmap = list_create(LIST_DOUBLE);
 	  ++z_index;
 	  z_count = 0;
@@ -196,19 +218,19 @@ pg_page_dump(Isp *ip, struct page *p)
 	  fputc(' ', fpag);
 	  ++z_count;
 	  if (!(z_count%25))
-	    list_add(zmap, (void*)(uintptr_t)ftell(fpag));
+	    list_add(zmap, pg_tell(ip,htell, hlen, fpag));
 	  ++p_count;
 	  if (!(p_count%25))
-	    list_add(pmap, (void*)(uintptr_t)ftell(fpag));
+	    list_add(pmap, pg_tell(ip,htell, hlen, fpag));
 	}
       fputs(p->p[i], fpag);
     }
   fputc('\n',fpag);
   list_add(z, (void*)(uintptr_t)z_count);
-  list_add(zmap, (void*)(uintptr_t)ftell(fpag));
+  list_add(zmap, pg_tell(ip,htell, hlen, fpag));
   list_add(zmaps, zmap);
   if (p_count)
-    list_add(pmap, (void*)(uintptr_t)ftell(fpag));
+    list_add(pmap, pg_tell(ip,htell, hlen, fpag));
 
   if (ip)
     {

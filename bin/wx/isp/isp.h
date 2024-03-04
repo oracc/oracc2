@@ -1,6 +1,7 @@
 #ifndef ISP_H_
 #define ISP_H_
 
+#include <memo.h>
 #include <pool.h>
 
 #define ISP_TMP_PAT    	"tmp/isp/is.XXXXXX"
@@ -104,6 +105,7 @@ typedef struct isp
   const char *err;  
   int verbose;
   Pool *p;
+  Memo *tmem;
 } Isp;
 
 struct ispargstab
