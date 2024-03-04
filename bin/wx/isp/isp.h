@@ -104,6 +104,7 @@ typedef struct isp
   const char *zoom;
   const char *page;
   const char *psiz;
+  const char *ceid; /* context engine id handling--xmd/xtf/cbd */
   const char *cemd; /* context engine mode */
   const char *lang; /* context engine lang */
   const char *xhmd; /* xml or html mode */

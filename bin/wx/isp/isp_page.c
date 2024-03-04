@@ -22,25 +22,10 @@ md_parse(char *mline, struct isp_mapdata *mdp)
   mdp->plen = (int)strtoul(next+1, &next, 10);
 }
 
-int
-isp_cache_page(Isp *ip)
+static int
+compute_ranges(Isp *ip)
 {
-  char buf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];
-  sprintf(buf, "%s/%s-z%s-p%s.div", ip->cache.sub, ip->perm, ip->zoom, ip->page);
-  ip->cache.page = (ccp)pool_copy((uccp)buf, ip->p);
-  if (ip->verbose)
-    fprintf(stderr, "isp: isp_cache_page: need %s\n", buf);
-  if (!access(ip->cache.page, F_OK))
-    {
-      if (!access(ip->cache.page, R_OK))
-	return 0;
-      else
-	{
-	  ip->err = "cache page exists but is unreadable";
-	  return 1;
-	}
-    }
-  char mbuf[strlen(ip->cache.sort)+strlen(ip->zoom)+strlen(".pmp0")];
+    char mbuf[strlen(ip->cache.sort)+strlen(ip->zoom)+strlen(".pmp0")];
   if (atoi(ip->zoom))
     sprintf(mbuf, "%s-z%s.pmp", ip->cache.sort, ip->zoom);
   else
@@ -69,7 +54,14 @@ isp_cache_page(Isp *ip)
 	  return 1;
 	}
     }
+  else
+    ip->md2.plen = -1;
+  return 0;
+}
 
+static int
+create_page_input(Isp *ip, char *buf)
+{
   char pagbuf[strlen(buf)+1];
   strcpy(pagbuf, buf);
   char *pd = strrchr(pagbuf, '.');
@@ -84,7 +76,7 @@ isp_cache_page(Isp *ip)
 	{
 	  if (ip->md1.htell < ip->md1.ptell)
 	    file_copy_chunk(sfp, ip->md1.htell, ip->md1.hlen, zfp);
-	  if (mmline)
+	  if (ip->md2.plen >= 0)
 	    file_copy_chunk(sfp, ip->md1.ptell, ip->md2.ptell+ip->md2.plen, zfp);
 	  else
 	    file_copy_chunk(sfp, ip->md1.ptell, ip->md1.plen, zfp);
@@ -99,7 +91,46 @@ isp_cache_page(Isp *ip)
     }
   else
     ip->err = "unable to write to zoom-page-file";
-  
+  return ip->err ? 1 : 0;
+}
+
+int
+create_page_div(Isp *ip)
+{
+  List *args = list_create(LIST_SINGLE);
+  list_add(args, (void*)ip->oracc);
+  list_add(args, "/bin/ispdiv.sh");
+  unsigned char *syscmd = list_concat(args);
+  if (ip->verbose)
+    fprintf(stderr, "isp: create_page_div: %s\n", syscmd);
+  /* system(syscmd); */
   return 0;
 }
 
+int
+isp_cache_page(Isp *ip)
+{
+  char buf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];
+  sprintf(buf, "%s/%s-z%s-p%s.div", ip->cache.sub, ip->perm, ip->zoom, ip->page);
+  ip->cache.page = (ccp)pool_copy((uccp)buf, ip->p);
+  if (ip->verbose)
+    fprintf(stderr, "isp: isp_cache_page: need %s\n", buf);
+  if (!access(ip->cache.page, F_OK))
+    {
+      if (!access(ip->cache.page, R_OK))
+	return 0;
+      else
+	{
+	  ip->err = "cache page exists but is unreadable";
+	  return 1;
+	}
+    }
+
+  if (compute_ranges(ip))
+    return 1;
+
+  if (create_page_input(ip, buf))
+    return 1;
+
+  return create_page_div(ip);
+}
