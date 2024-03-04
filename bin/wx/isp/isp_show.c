@@ -12,7 +12,7 @@ isp_show(FILE *fp, Isp *ip)
 	  ip->list_name, ip->lloc.type, ip->lloc.lang, ip->lloc.method,
 	  ip->lloc.path,
 	  ip->lloc.dbpath, ip->lloc.dbname);
-  fprintf(fp, "\tmode=%s; zoom=%s; page=%s; cemd=%s; xhmd=%s\n",
-	  ip->mode, ip->zoom, ip->page, ip->cemd, ip->xhmd);
+  fprintf(fp, "\tdors=%s; zoom=%s; page=%s; cemd=%s; xhmd=%s\n",
+	  ip->dors, ip->zoom, ip->page, ip->cemd, ip->xhmd);
   fprintf(fp, "\thost=%s; host_path=%s\n", ip->host, ip->host_path);
 }

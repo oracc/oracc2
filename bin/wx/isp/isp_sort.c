@@ -13,5 +13,16 @@ isp_cache_sort(Isp *ip)
   strcpy(strrchr(buf,'/')+1, "sort-");
   strcat(buf, ip->perm);
   ip->cache.sort = (ccp)pool_copy((uccp)buf, ip->p);
-  return ispsort(ip, NULL, NULL, ip->sort.default_sort);
+  if (!access(ip->cache.sort, F_OK))
+    {
+      if (!access(ip->cache.sort, R_OK))
+	return 0;
+      else
+	{
+	  ip->err = "sort file exists but is unreadable";
+	  return 1;
+	}
+    }
+  else
+    return ispsort(ip, NULL, NULL, ip->sort.default_sort);
 }

@@ -32,11 +32,13 @@ main(int argc, char **argv)
   iss_outline_dump(ip, stdout);
 #endif
   
-#if 0
-  if (isp_cache_zoom(ip))
+  if (isp_cache_page(ip))
     goto error;
-#endif
 
+#if 0
+  isp_build_output(isp);
+#endif
+  
   goto ok;
   
  error:

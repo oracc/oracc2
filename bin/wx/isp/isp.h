@@ -87,11 +87,11 @@ typedef struct isp
   struct isp_sort sort;
   struct outline *op;
   int op_nlevels;
-  const char *mode; /* 0 = default ; 1 = special */
+  const char *dors; /* 0 = default ; 1 = special */
   const char *perm; /* permutation expressed as 123 132, etc. (see isp_sort.c) */
   const char *zoom;
   const char *page;
-  const char *size;
+  const char *psiz;
   const char *cemd; /* context engine mode */
   const char *lang; /* context engine lang */
   const char *xhmd; /* xml or html mode */

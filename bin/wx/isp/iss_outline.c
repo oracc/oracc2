@@ -86,8 +86,9 @@ iss_outline_dump(Isp *ip, FILE *fp)
 		}
 	      else
 		{
-		  fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\">%s [%ld]</a></p>", 
+		  fprintf(fp, "<p%s><a href=\"javascript://\" data-zoom=\"%d\" onclick=\"p3zoom(%d)\">%s [%ld]</a></p>", 
 			  zoomstr,
+			  o[i].sic->id + 1,
 			  o[i].sic->id + 1,
 			  (char*)xmlify(&sip->pool[o[i].poffsets[j]]),
 			  (long)o[i].count);

@@ -85,9 +85,9 @@ isp_validate(Isp *ip)
       goto error;
     }
 
-  if (isp_integer((uccp)ip->size))
+  if (strcmp(ip->psiz,"25") && strcmp(ip->psiz,"50") && strcmp(ip->psiz, "100"))
     {
-      ip->err = "size parameter is not a positive integer";
+      ip->err = "psiz must be 25, 50, or 100";
       goto error;
     }
 

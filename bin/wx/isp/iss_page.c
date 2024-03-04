@@ -44,7 +44,7 @@ pg_zmaps(Isp *ip, List *zmaps, List *z)
   while (znth < list_len(z))
     {
       char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
-      sprintf(pfn, "%s-z%04d.pmp", ip->cache.sort, znth+1);
+      sprintf(pfn, "%s-z%d.pmp", ip->cache.sort, znth+1); /* should rewrite to use snprintf */
       FILE *fp = fopen(pfn, "w");
       pg_map_one(ip, fp, zcounts[znth++], np->data);
       fclose(fp);

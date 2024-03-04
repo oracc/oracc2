@@ -95,7 +95,7 @@ opts(int opt, const char *arg)
       break;
     case 'm':
       if (strlen(arg) == 1 && ('0'==*arg || '1'==*arg))
-	opt_ip->mode = arg;
+	opt_ip->dors = arg;
       else
 	{
 	  opt_ip->err = "bad mode argument--must be 0 or 1";
@@ -118,7 +118,7 @@ opts(int opt, const char *arg)
       opt_ip->page = arg;
       break;
     case 's':
-      opt_ip->size = arg;
+      opt_ip->psiz = arg;
       break;
     case 'c':
       opt_ip->cemd = arg;
