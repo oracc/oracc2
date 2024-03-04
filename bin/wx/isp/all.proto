@@ -46,7 +46,7 @@ extern struct item *pg_load(int *nitems);
 extern struct outline *pg_outline(int *nlevelsp);
 extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
 /* iss_outline.c */
-extern void iss_outline_dump(Isp *ip, FILE *fp);
+extern int iss_outline_dump(Isp *ip);
 /* iss_page.c */
 extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, FILE *fp);
 extern int pg_map_one(Isp *ip, FILE *fp, int count, List *lmap);

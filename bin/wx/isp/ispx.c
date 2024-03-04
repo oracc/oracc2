@@ -27,10 +27,8 @@ main(int argc, char **argv)
   if (isp_cache_sort(ip))
     goto error;
 
-#if 0
-  /* This should be called in the output page builder */
-  iss_outline_dump(ip, stdout);
-#endif
+  if (iss_outline_dump(ip))
+    goto error;
   
   if (isp_cache_page(ip))
     goto error;

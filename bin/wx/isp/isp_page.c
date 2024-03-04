@@ -116,7 +116,7 @@ create_page_div(Isp *ip)
   unsigned char *syscmd = list_concat(args);
   if (ip->verbose)
     fprintf(stderr, "isp: create_page_div: %s\n", syscmd);
-  /* system(syscmd); */
+  system((ccp)syscmd);
   return 0;
 }
 

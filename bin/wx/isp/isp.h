@@ -38,6 +38,7 @@ struct isp_cache
   const char *sort; 	/* the list sorted by the requested permutation */
   const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the page in a zoomed slice; z=0 for no zoom */
+  const char *zout;	/* the outline for a zoomed slice; z=0 for no zoom */
 };
 
 /* Pointers to project config entries */
