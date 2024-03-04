@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "iss.h"
+#include "isp.h"
 
 struct page *pages;
 struct page *currpage;
@@ -18,6 +18,7 @@ pg_map_one(Isp *ip, FILE *fp, int count, List *lmap)
       long start = (nth ? ((uintptr_t)(np->prev->data))+1 : 0L);
       fprintf(fp, "%d/%ld/%ld\n", count, start, (uintptr_t)(np->data));
       np = np->next;
+      ++nth;
     }
   return 0;
 }
@@ -30,20 +31,22 @@ pg_zmaps(Isp *ip, List *zmaps, List *z)
   List_node *np = z->first;
   while (znth < list_len(z))
     {
-      zcounts[znth] = (uintptr_t)np->data;
+      zcounts[znth++] = (uintptr_t)np->data;
       np = np->next;
     }
 
+#if 0
   char zfn[strlen(ip->cache.sort)+strlen(".zmp0")];
   sprintf(zfn, "%s.zmp", ip->cache.sort);
+#endif
   znth = 0;
   np = zmaps->first;
   while (znth < list_len(z))
     {
       char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
-      sprintf(pfn, "%s.pmp", ip->cache.sort);
-      FILE *fp = fopen(zfn, "w");
-      pg_map_one(ip, fp, zcounts[znth], np->data);
+      sprintf(pfn, "%s-z%04d.pmp", ip->cache.sort, znth+1);
+      FILE *fp = fopen(pfn, "w");
+      pg_map_one(ip, fp, zcounts[znth++], np->data);
       fclose(fp);
     }
   return 0;
@@ -86,7 +89,7 @@ plussed(unsigned char *qpq)
 /* The pg2 version of this routine split the pages up; this one
    creates a single list */
 struct page *
-pg_page(struct item **pitems, int nitems, struct outline *outlinep)
+pg_page(Isp *ip, struct item **pitems, int nitems)
 {
   static int last_i = 0, i;
 
@@ -108,25 +111,25 @@ pg_page(struct item **pitems, int nitems, struct outline *outlinep)
   else
     currpage->used = 0;
 
- if (outlinep)
-    outlinep->page = 1;
+  if (ip->op)
+    ip->op->page = 1;
 
- for (i = 0; i < nitems; ++i)
+  for (i = 0; i < nitems; ++i)
     {
       if (pitems[i]->grp < 0)
 	continue;
 
       if (i && pitems[i]->grp != pitems[i-1]->grp && pitems[i-1]->grp != -1)
 	{
-         if (outlinep)
-            outlinep->count = i - last_i;
+         if (ip->op)
+            ip->op->count = i - last_i;
 	  last_i = i;
 	  if (nheadfields)
 	    currpage->p[currpage->used++] = fmthdr(pitems[i]->grp);
-          if (outlinep)
+          if (ip->op)
             {
-              ++outlinep;
-              outlinep->page = 1 + currpage - pages;
+              ++ip->op;
+              ip->op->page = 1 + currpage - pages;
             }
 	}
       if (i && !strcmp((ccp)pitems[i-1]->qpq, (ccp)pitems[i]->qpq)
@@ -136,8 +139,8 @@ pg_page(struct item **pitems, int nitems, struct outline *outlinep)
 	currpage->p[currpage->used++] = (char *)pitems[i]->s;
     }
 
- if (outlinep)
-    outlinep->count = i - last_i;
+ if (ip->op)
+    ip->op->count = i - last_i;
 
   return pages;
 }
@@ -177,34 +180,35 @@ pg_page_dump(Isp *ip, struct page *p)
     {
       if ('#' == p->p[i][0])
 	{
-	  fputc('\n',fpag);
-	  if (z_count)
-	    list_add(zmap, (void*)(uintptr_t)ftell(fpag));
-	  list_add(z, (void*)(uintptr_t)z_count);
-	  list_add(zmaps,zmap);
+	  if (i)
+	    {
+	      fputc('\n',fpag);
+	      list_add(z, (void*)(uintptr_t)z_count);
+	      list_add(zmap, (void*)(uintptr_t)ftell(fpag));
+	      list_add(zmaps,zmap);
+	    }
 	  zmap = list_create(LIST_DOUBLE);
 	  ++z_index;
 	  z_count = 0;
 	}
       else if ('+' != p->p[i][0])
-	fputc(' ', fpag);
-      else
 	{
-	  fputs(p->p[i], fpag);
+	  fputc(' ', fpag);
 	  ++z_count;
-	  if (!z_count%25)
+	  if (!(z_count%25))
 	    list_add(zmap, (void*)(uintptr_t)ftell(fpag));
 	  ++p_count;
-	  if (!p_count%25)
+	  if (!(p_count%25))
 	    list_add(pmap, (void*)(uintptr_t)ftell(fpag));
 	}
+      fputs(p->p[i], fpag);
     }
   fputc('\n',fpag);
+  list_add(z, (void*)(uintptr_t)z_count);
+  list_add(zmap, (void*)(uintptr_t)ftell(fpag));
+  list_add(zmaps, zmap);
   if (p_count)
     list_add(pmap, (void*)(uintptr_t)ftell(fpag));
-  if (z_count)
-    list_add(zmap, (void*)(uintptr_t)ftell(fpag));
-  list_add(zmaps, zmap);
 
   if (ip)
     {

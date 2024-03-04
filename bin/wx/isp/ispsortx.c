@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "iss.h"
+#include "isp.h"
 
 extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
 

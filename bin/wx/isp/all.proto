@@ -40,14 +40,15 @@ extern int main(int argc, char **argv);
 extern int isp_xis_list(Isp *ip);
 /* iss.c */
 extern struct item *pg_load(int *nitems);
-extern int o_cmp(const void *a, const void *b);
 extern struct outline *pg_outline(int *nlevelsp);
 extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
+/* iss_outline.c */
+extern void iss_outline_dump(Isp *ip, FILE *fp);
 /* iss_page.c */
 extern int pg_map_one(Isp *ip, FILE *fp, int count, List *lmap);
 extern int pg_zmaps(Isp *ip, List *zmaps, List *z);
 extern char *fmthdr(short sic_index);
-extern struct page *pg_page(struct item **pitems, int nitems, struct outline *outlinep);
+extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
 extern int pg_page_dump(Isp *ip, struct page *p);
 /* iss_redblack.c */
 extern struct rbtree *rbinit(int (*cmp)(const void *, const void *, const void *), const void *config);

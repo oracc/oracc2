@@ -2,7 +2,8 @@ include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=ispx ispsortx
 
-iss_sources = iss.c iss_page.c iss_sortinfo.c iss_sicache.c iss_redblack.c iss_sort.c
+iss_sources = iss.c iss_page.c iss_sortinfo.c iss_sicache.c \
+	iss_redblack.c iss_sort.c iss_outline.c
 
 ispx_SOURCES=all.proto ispx.c isp_init.c isp_options.c isp_validate.c \
 	ispargs.c isp_help.c isp_show.c isp_tmp.c isp_list.c isp_cache.c \

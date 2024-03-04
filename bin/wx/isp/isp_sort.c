@@ -9,7 +9,7 @@ isp_cache_sort(Isp *ip)
   /* could reasonably have an Isp member 'curr_sort' which is the sort
      to use based on default/special and PERM settings */
   char buf[strlen(ip->cache.list)+strlen("-1230")];
-  strcpy(buf, ip->cache.sort);
+  strcpy(buf, ip->cache.list);
   strcpy(strrchr(buf,'/')+1, "sort-");
   strcat(buf, ip->perm);
   ip->cache.sort = (ccp)pool_copy((uccp)buf, ip->p);

@@ -28,6 +28,11 @@ main(int argc, char **argv)
     goto error;
 
 #if 0
+  /* This should be called in the output page builder */
+  iss_outline_dump(ip, stdout);
+#endif
+  
+#if 0
   if (isp_cache_zoom(ip))
     goto error;
 #endif

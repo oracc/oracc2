@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "iss.h"
+#include "isp.h"
 
 FILE *fpag = NULL;
 Hash *seen = NULL;
@@ -100,6 +100,15 @@ pg_load(int *nitems)
 	  items[items_used].pq = (unsigned char*)strdup(colon 
 							? colon
 							: (char*)items[items_used].s);
+	  if (colon)
+	    {
+	      items[items_used].qpq = malloc((colon - (ccp)orig_s)+strlen((ccp)items[items_used].pq)+2);
+	      strncpy((char*)items[items_used].qpq, (ccp)orig_s, 1+(colon-(ccp)orig_s));
+	      strcat((char*)items[items_used].qpq, (ccp)items[items_used].pq);
+	    }
+	  else
+	    items[items_used].qpq = items[items_used].pq;
+								     
 	  if ((dot = strchr((const char *)items[items_used].pq,'.')))
 	    {
 	      *dot++ = '\0';
@@ -119,7 +128,7 @@ pg_load(int *nitems)
   return items;
 }
 
-int
+static int
 o_cmp(const void *a,const void*b)
 {
   return ((struct outline*)a)->sic->seq - ((struct outline*)b)->sic->seq;
@@ -193,8 +202,7 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
 {
   struct item *items = NULL, **pitems = NULL;
   struct page *pages = NULL;
-  struct outline *op = NULL;
-  int nitems = 0, nlevels = 0;
+  int nitems = 0;
 
   if (ip)
     {
@@ -292,10 +300,10 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   if (NULL == (pitems = pg_sort(ip, items, &nitems, sort_keys)))
     return 1;
   
-  op = pg_outline(&nlevels);
+  ip->op = pg_outline(&ip->op_nlevels);
   
   if (nitems)
-    pages = pg_page(pitems, nitems, op);
+    pages = pg_page(ip, pitems, nitems);
   
   pg_page_dump(ip, pages);
   

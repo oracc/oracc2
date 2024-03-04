@@ -47,6 +47,32 @@ struct isp_sort
   const char *special_select;  
 };
 
+struct item
+{
+  unsigned char   *s;
+  unsigned char   *pq;
+  unsigned char   *qpq; /* qualified pq */
+  Unsigned32   skey;
+  Signed32 lkey;
+  Signed32 grp;
+};
+
+struct outline
+{
+  struct si_cache *sic;
+  char *hdr;
+  Unsigned32 *poffsets;
+  Unsigned32 *icounts;
+  Signed32 page;
+  Signed32 count;
+};
+
+struct page
+{
+  Signed32 used;
+  char **p;
+};
+
 typedef struct isp
 {
   int web;
@@ -59,6 +85,8 @@ typedef struct isp
   const char *list_name;
   struct isp_list_loc lloc;
   struct isp_sort sort;
+  struct outline *op;
+  int op_nlevels;
   const char *mode; /* 0 = default ; 1 = special */
   const char *perm; /* permutation expressed as 123 132, etc. (see isp_sort.c) */
   const char *zoom;
@@ -88,5 +116,14 @@ struct ispargstab
 #include "iss_sortinfo.h"
 
 #include "all.proto"
+
+extern int sic_size;
+extern int *sortfields;
+extern struct si_cache **sicache;
+extern struct sortinfo *sip;
+
+extern int nheadfields;
+extern int *headfields;
+extern int nsortfields;
 
 #endif/*ISP_H_*/
