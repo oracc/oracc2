@@ -36,6 +36,7 @@ struct isp_cache
   const char *sub;	/* the list's cache directory */
   const char *list;	/* the list file */
   const char *sort; 	/* the list sorted by the requested permutation */
+  const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the page in a zoomed slice; z=0 for no zoom */
 };
 

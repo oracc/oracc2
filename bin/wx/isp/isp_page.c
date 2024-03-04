@@ -7,6 +7,12 @@ file_copy_chunk(FILE *from, unsigned long start, int len, FILE *to)
   fseek(from,start, SEEK_SET);
   char *buf = malloc(len+1);
   fread(buf, 1, len, from);
+  char *s = buf;
+  while (*s)
+    if (' ' == *s)
+      *s++ = '\n';
+    else
+      ++s;
   fwrite(buf, 1, len, to);
   free(buf);
 }
@@ -66,6 +72,7 @@ create_page_input(Isp *ip, char *buf)
   strcpy(pagbuf, buf);
   char *pd = strrchr(pagbuf, '.');
   strcpy(pd+1, "pag");
+  ip->cache.pgin = (ccp)pool_copy((uccp)pagbuf, ip->p);
   FILE *zfp = fopen(pagbuf, "w");
   if (zfp)
     {
@@ -99,7 +106,13 @@ create_page_div(Isp *ip)
 {
   List *args = list_create(LIST_SINGLE);
   list_add(args, (void*)ip->oracc);
-  list_add(args, "/bin/ispdiv.sh");
+  list_add(args, (void*)"/bin/ispdiv.sh");
+  list_add(args, " ");
+  list_add(args, (void*)ip->project);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.pgin);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.page);
   unsigned char *syscmd = list_concat(args);
   if (ip->verbose)
     fprintf(stderr, "isp: create_page_div: %s\n", syscmd);
