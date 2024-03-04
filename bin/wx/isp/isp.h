@@ -74,6 +74,15 @@ struct page
   char **p;
 };
 
+struct isp_mapdata
+{
+  int count;
+  unsigned long htell;
+  int hlen;
+  unsigned long ptell;
+  int plen;
+};
+
 typedef struct isp
 {
   int web;
@@ -86,6 +95,8 @@ typedef struct isp
   const char *list_name;
   struct isp_list_loc lloc;
   struct isp_sort sort;
+  struct isp_mapdata md1;
+  struct isp_mapdata md2;
   struct outline *op;
   int op_nlevels;
   const char *dors; /* 0 = default ; 1 = special */

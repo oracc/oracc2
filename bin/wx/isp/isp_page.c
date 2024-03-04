@@ -1,23 +1,25 @@
 #include <oraccsys.h>
 #include "isp.h"
 
-static unsigned long
-get_ft_start(const char *s)
+static void
+file_copy_chunk(FILE *from, unsigned long start, int len, FILE *to)
 {
-  const char *ft = strchr(s, '/');
-  ft = strchr(ft+1, '/');
-  ft = strchr(ft+1, '/');
-  return strtoul(ft+1, NULL, 10);
+  fseek(from,start, SEEK_SET);
+  char *buf = malloc(len+1);
+  fread(buf, 1, len, from);
+  fwrite(buf, 1, len, to);
+  free(buf);
 }
 
-static unsigned long
-get_ft_end(const char *s)
+static void
+md_parse(char *mline, struct isp_mapdata *mdp)
 {
-  const char *ft = strchr(s, '/');
-  ft = strchr(ft+1, '/');
-  ft = strchr(ft+1, '/');
-  ft = strchr(ft+1, '/');
-  return strtoul(ft+1, NULL, 10);
+  char *next;
+  mdp->count = strtoul(mline, &next, 10);
+  mdp->htell = strtoul(next+1, &next, 10);
+  mdp->hlen = (int)strtoul(next+1, &next, 10);
+  mdp->ptell = strtoul(next+1, &next, 10);
+  mdp->plen = (int)strtoul(next+1, &next, 10);
 }
 
 int
@@ -43,6 +45,7 @@ isp_cache_page(Isp *ip)
     sprintf(mbuf, "%s-z%s.pmp", ip->cache.sort, ip->zoom);
   else
     sprintf(mbuf, "%s.pmp", ip->cache.sort);
+
   /* compute the start line in the .pmp */
   int multiplier = 1;
   if (!strcmp(ip->psiz, "50"))
@@ -52,28 +55,51 @@ isp_cache_page(Isp *ip)
 
   int pg = atoi(ip->page) * multiplier;  
   char *mline = nth_line(mbuf, pg, multiplier>1);
+  char *mmline = NULL;
+  md_parse(mline, &ip->md1);
 
   if (multiplier > 1)
     {
-      char *mmline = nth_line(NULL, pg+multiplier, 0);
+      mmline = nth_line(NULL, pg+multiplier, 0);
       if (mmline)
-	{
-	  unsigned long ft_start = get_ft_start(mline);
-	  unsigned long ft_end = get_ft_end(mmline);
-	  
-	}
+	md_parse(mmline, &ip->md2);
       else
 	{
 	  ip->err = "page out of range";
 	  return 1;
 	}
     }
-  else
+
+  char pagbuf[strlen(buf)+1];
+  strcpy(pagbuf, buf);
+  char *pd = strrchr(pagbuf, '.');
+  strcpy(pd+1, "pag");
+  FILE *zfp = fopen(pagbuf, "w");
+  if (zfp)
     {
-      unsigned long ft_start = get_ft_start(mline);
-      unsigned long ft_end = get_ft_end(mline);
-      
+      if (ip->verbose)
+	fprintf(stderr, "isp: isp_cache_page: writing %s\n", pagbuf);
+      FILE *sfp = fopen(ip->cache.sort,"r");
+      if (sfp)
+	{
+	  if (ip->md1.htell < ip->md1.ptell)
+	    file_copy_chunk(sfp, ip->md1.htell, ip->md1.hlen, zfp);
+	  if (mmline)
+	    file_copy_chunk(sfp, ip->md1.ptell, ip->md2.ptell+ip->md2.plen, zfp);
+	  else
+	    file_copy_chunk(sfp, ip->md1.ptell, ip->md1.plen, zfp);
+	  fclose(sfp);
+	  fclose(zfp);
+	}
+      else
+	{
+	  fclose(zfp);
+	  ip->err = "unable to read page file when building";
+	}
     }
+  else
+    ip->err = "unable to write to zoom-page-file";
+  
   return 0;
 }
 

@@ -18,7 +18,10 @@ isp_tis_list(Isp *ip)
 	  if (!(fp = fopen(ip->cache.list, "w")))
 	    ip->err = "unable to create cache.list";
 	  else
-	    dbx_wids(dp, l8p, len, fp);
+	    {
+	      dbx_wids(dp, l8p, len, fp);
+	      fclose(fp);
+	    }
 	}
       else
 	ip->err = "key not found in tis db";

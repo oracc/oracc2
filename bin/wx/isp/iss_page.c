@@ -203,12 +203,12 @@ pg_page_dump(Isp *ip, struct page *p)
 	  if (i)
 	    {
 	      fputc('\n',fpag);
-	      hlen = ftell(fpag)-htell;
 	      list_add(z, (void*)(uintptr_t)z_count);
-	      list_add(zmap, pg_tell(ip,htell, hlen, fpag));
+	      list_add(zmap, pg_tell(ip, htell, hlen, fpag));
 	      list_add(zmaps,zmap);
 	    }
 	  htell = ftell(fpag);
+	  hlen = strlen(p->p[i])+1;
 	  zmap = list_create(LIST_DOUBLE);
 	  ++z_index;
 	  z_count = 0;

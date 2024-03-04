@@ -15,7 +15,7 @@ static void
 xis_wids(Isp *ip, const struct xis_info *xip, FILE *fp)
 {
   FILE *xis_fp = NULL;
-  char xis_file[strlen(ip->lloc.dbpath)+strlen(ip->lloc.lang)+3];
+  char xis_file[strlen(ip->lloc.dbpath)+strlen(ip->lloc.lang)+6];
   sprintf(xis_file, "%s/%s.tis", ip->lloc.dbpath, ip->lloc.lang);
   if (ip->verbose)
     fprintf(stderr, "isp: xis_wids: .tis=%s\n", xis_file);
@@ -61,7 +61,10 @@ isp_xis_list(Isp *ip)
 	  if (!(fp = fopen(ip->cache.list, "w")))
 	    ip->err = "unable to create cache.list";
 	  else
-	    xis_wids(ip, xip, fp);
+	    {
+	      xis_wids(ip, xip, fp);
+	      fclose(fp);
+	    }
 	}
       else
 	ip->err = "key not found in xis db";
