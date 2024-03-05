@@ -1,0 +1,44 @@
+<html doctype="html5">
+  <head>
+    <title>IS Pager Test</title>
+    <script>
+      function ispURL() {
+	  let perm=document.getElementById('ispSelector').getAttribute('data-perm');
+	  let zoom=document.getElementById('ispZoom').getAttribute('data-zoom');
+	  alert("ispUrl/"+perm+'/'+zoom);
+      }
+      function ispZoom (z) {
+	  document.getElementById('ispZoom').setAttribute('data-zoom',z);
+	  ispURL();
+      }
+    </script>
+  </head>
+  <body>
+    <div id="ispBody">
+      <div id="ispBanner" data-project="gudea" data-uimd="mini">
+	<p>Project Name etc.</p>
+      </div>
+      <div id="ispNavbar"
+	   data-list="sux.r000007"
+	   >
+	<div id="ispMenu">
+	  <div id="ispSelector" data-perm="123">
+	  </div>
+	  <ul id="ispZoom" data-zoom="0" data-zmax="3"><!--zoom outline-->
+	    <li><a href="javascript://"
+		   onclick="ispZoom(this.getAttribute('data-z'));" data-z="2"
+		   >Lagash II [5]</a></li>
+	  </ul>
+	</div>
+	<div id="ispArrows" data-page="1" data-pmax="3" data-psiz="25">
+	  <p>Prev</p>
+	  <p>Page</p>
+	  <p>Next</p>
+	</div>
+      </div>
+      <div id="ispContent">
+	<p>Instances</p>
+      </div>
+    </div>
+  </body>      
+</html>
