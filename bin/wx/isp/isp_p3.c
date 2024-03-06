@@ -1,5 +1,13 @@
 #include <oraccsys.h>
+#include <xml.h>
+#include <runexpat.h>
 #include "isp.h"
+
+struct ei_user_data
+{
+  Isp *ip;
+  FILE *fp;
+};
 
 void
 isp_p3(Isp *ip, FILE *outfp)
@@ -8,67 +16,92 @@ isp_p3(Isp *ip, FILE *outfp)
   char fn[strlen(ip->oracc)+strlen("/lib/data/p3-template.xml0")];
   fnlist[0] = fn;
   fnlist[1] = NULL;
-  runexpatNSuD(i_list, fnlist, ei_sH, ei_eH, NULL, outfp);
+  struct ei_user_data ud;
+  ud.ip = ip;
+  ud.fp = outfp;
+  runexpatNSuD(i_list, fnlist, ei_sH, ei_eH, NULL, &ud);
 }
 
 void
-ida_p3content(Isp *ip)
+ida_p3content(Isp *ip, struct idactions *idap, FILE *fp)
 {
-  fprintf(stderr, "ida_p3content\n");
+  fprintf(fp, "ida_p3content\n");
+}
+
+static const char *
+ida_atat(Isp *ip, FILE *fp,  const char *at)
+{
+  const char *atend = strstr(at+2, "@@");
+  if (atend)
+    {
+      atend += 2;
+      struct idactions *idap = idactions(at, atend - at);
+      if (idap)
+	{
+	  idap->func(ip, idap, fp);
+	  return atend;
+	}
+      else
+	while (at < atend)
+	  fputs(at++, fp);
+    }
+  else
+    fputs(at++, fp);
+  return at;
 }
 
 /* This printText implements the same escaping as used by oracc2's
    xmlify library routine */
 void
-printText(const char *s, FILE *frag_fp)
+printText(Isp *ip, FILE *fp, const char *s)
 {
   if (s[1] || '@' != s[0]) /* Don't print the @ of <p>@</p> */
     {
       while (*s)
 	{
 	  if (*s == '<')
-	    fputs("&lt;",frag_fp);
+	    fputs("&lt;",fp);
 	  else if (*s == '>')
-	    fputs("&gt;",frag_fp);
+	    fputs("&gt;",fp);
 	  else if (*s == '&')
-	    fputs("&amp;",frag_fp);
+	    fputs("&amp;",fp);
 #if 0
 	  else if (*s == '\'')
-	    fputs("&apos;",frag_fp);
+	    fputs("&apos;",fp);
 #endif
 	  else if (*s == '"')
-	    fputs("&quot;",frag_fp);
+	    fputs("&quot;",fp);
 	  else if (*s == '@' && s[1] == '@')
-	    s = ida_atat(s, frag_fp);
+	    s = ida_atat(ip, fp, s);
 	  else
-	    fputc(*s,frag_fp);
+	    fputc(*s,fp);
 	  ++s;
 	}
     }
 }
 
 void
-printStart(FILE *fp, const char *name, const char **atts)
+printStart(Isp *ip, FILE *fp, const char *name, const char **atts)
 {
   const char **ap = atts;
-  printText((const char*)charData_retrieve(), fp);
+  printText(ip, fp, (const char*)charData_retrieve());
   fprintf(fp, "<%s", name);
   if (atts)
     {
       const char *id = NULL;
       for (ap = atts; ap[0]; )
 	{
-	  if (!strcmp(ap, "id"))
-	    id=ap;
+	  if (!strcmp(ap[0], "id"))
+	    id=ap[0];
 	  fprintf(fp, " %s=\"",*ap++);
-	  printText(*ap++, fp);
+	  printText(ip, fp, *ap++);
 	  fputc('"', fp);
 	}
       if (id)
 	{
-	  struct idaction *iap = idactions(id, strlen(id));
-	  if (iap)
-	    isp->func(isp);
+	  struct idactions *idap = idactions(id, strlen(id));
+	  if (idap)
+	    idap->func(ip, idap, fp);
 	  id = NULL;
 	}
     }  
@@ -76,22 +109,22 @@ printStart(FILE *fp, const char *name, const char **atts)
 }
 
 void
-printEnd(FILE *fp, const char *name)
+printEnd(Isp *ip, FILE *fp, const char *name)
 {
-  printText((const char *)charData_retrieve(), fp);
+  printText(ip, fp, (const char *)charData_retrieve());
   fprintf(fp, "</%s>", name);
 }
 
 void
 ei_sH(void *userData, const char *name, const char **atts)
 {
-  printStart(userData, name, atts);
+  printStart(((struct ei_user_data *)userData)->ip, ((struct ei_user_data *)userData)->fp, name, atts);
 }
 
 void
 ei_eH(void *userData, const char *name)
 {
-  printEnd(userData, name);
+  printEnd(((struct ei_user_data *)userData)->ip, ((struct ei_user_data *)userData)->fp, name);
 }
 
 void
@@ -131,7 +164,7 @@ ida_atatcgivar_glos(Isp *ip, struct idactions *idap, FILE *fp)
   ida_at_identity(idap, fp);
 }
 void
-ida_atatcgivar_glos(Isp *ip, struct idactions *idap, FILE *fp)
+ida_atatcgivar_glos_bis(Isp *ip, struct idactions *idap, FILE *fp)
 {
   ida_at_identity(idap, fp);
 }

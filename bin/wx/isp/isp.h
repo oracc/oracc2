@@ -125,7 +125,7 @@ typedef struct isp
 struct idactions
 {
   const char *name;
-  void (*func)(Isp *ip);
+  void (*func)(Isp *ip, struct idactions *idap, FILE *fp);
 };
 
 struct ispargstab
