@@ -54,6 +54,7 @@ cbdpos.c
 cbdrws.c
 cbdtags.c
 iomethod.c
+idactions.c
 ispargs.c
 lang_atf.c
 lang_core.c

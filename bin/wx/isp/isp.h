@@ -122,6 +122,12 @@ typedef struct isp
   Memo *tmem;
 } Isp;
 
+struct idactions
+{
+  const char *name;
+  void (*func)(Isp *ip);
+};
+
 struct ispargstab
 {
   const char *name;
