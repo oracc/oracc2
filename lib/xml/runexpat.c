@@ -16,6 +16,8 @@ static int runexpat_no_rp_wrap = 0;
 
 List *runinfo_stack = NULL;
 
+XML_CommentHandler runexpatCommentHandler;
+
 struct runinfo 
 {
   void *list;
@@ -200,6 +202,9 @@ runexpatNSuD(enum isource from,
   XML_SetElementHandler(parser, startElement, endElement);
   XML_SetProcessingInstructionHandler(parser, piHandler);
   XML_SetCharacterDataHandler(parser, charHandler);
+
+  if (runexpatCommentHandler)
+    XML_SetCommentHandler(parser, runexpatCommentHandler);
 
   if (!runexpat_no_rp_wrap)
     {

@@ -27,4 +27,6 @@ typedef void (*xf_action_func)(const char *xmlid, const char *name, const char *
 extern void xmlfilter(const char *fname, FILE *outfp);
 extern void xmlfilter_actions(xf_action_attr attr, xf_action_func firstChild, xf_action_func lastChild);
 
+extern XML_CommentHandler runexpatCommentHandler;
+
 #endif /*_RUNEXPAT_H*/

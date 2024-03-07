@@ -9,6 +9,12 @@ struct ei_user_data
   FILE *fp;
 };
 
+void
+ei_commentH(void*userData, const char *cmt)
+{
+  fprintf(((struct ei_user_data*)userData)->fp, "<!--%s-->", cmt);
+}
+
 int
 isp_p3(Isp *ip, FILE *outfp)
 {
@@ -17,6 +23,7 @@ isp_p3(Isp *ip, FILE *outfp)
   sprintf(fn, "%s/lib/data/p3-template.xml", ip->oracc);
   fnlist[0] = fn;
   fnlist[1] = NULL;
+  runexpatCommentHandler = ei_commentH;
   struct ei_user_data ud;
   ud.ip = ip;
   ud.fp = outfp;
@@ -30,6 +37,9 @@ ida_p3content(Isp *ip, struct idactions *idap, FILE *fp)
   fprintf(fp, "ida_p3content\n");
 }
 
+/* This function is called when iterating over text one character at a
+   time; it needs to return a pointer to the last character output
+   because the return pointer is then incremented */
 static const char *
 ida_atat(Isp *ip, FILE *fp,  const char *at)
 {
@@ -42,23 +52,23 @@ ida_atat(Isp *ip, FILE *fp,  const char *at)
       buf[atend-at] = '\0';
       struct idactions *idap = idactions(buf, atend - at);      
       if (idap)
-	{
-	  idap->func(ip, idap, fp);
-	  return atend;
-	}
+	idap->func(ip, idap, fp);
       else
 	while (at < atend)
-	  fputs(at++, fp);
+	  fputs(buf, fp);
+      return atend - 1;
     }
   else
-    fputs(at++, fp);
-  return at;
+    {
+      fputc('@', fp);
+      return at;
+    }
 }
 
 /* This printText implements the same escaping as used by oracc2's
    xmlify library routine */
 void
-printText(Isp *ip, FILE *fp, char *s)
+printText(Isp *ip, FILE *fp, const char *s)
 {
   if (s[1] || '@' != s[0]) /* Don't print the @ of <p>@</p> */
     {
