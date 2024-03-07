@@ -9,17 +9,19 @@ struct ei_user_data
   FILE *fp;
 };
 
-void
+int
 isp_p3(Isp *ip, FILE *outfp)
 {
   char const *fnlist[2];
   char fn[strlen(ip->oracc)+strlen("/lib/data/p3-template.xml0")];
+  sprintf(fn, "%s/lib/data/p3-template.xml", ip->oracc);
   fnlist[0] = fn;
   fnlist[1] = NULL;
   struct ei_user_data ud;
   ud.ip = ip;
   ud.fp = outfp;
   runexpatNSuD(i_list, fnlist, ei_sH, ei_eH, NULL, &ud);
+  return 0;
 }
 
 void
@@ -35,7 +37,10 @@ ida_atat(Isp *ip, FILE *fp,  const char *at)
   if (atend)
     {
       atend += 2;
-      struct idactions *idap = idactions(at, atend - at);
+      char buf[(atend-at)+1];
+      strncpy(buf, at, atend-at);
+      buf[atend-at] = '\0';
+      struct idactions *idap = idactions(buf, atend - at);      
       if (idap)
 	{
 	  idap->func(ip, idap, fp);
@@ -53,7 +58,7 @@ ida_atat(Isp *ip, FILE *fp,  const char *at)
 /* This printText implements the same escaping as used by oracc2's
    xmlify library routine */
 void
-printText(Isp *ip, FILE *fp, const char *s)
+printText(Isp *ip, FILE *fp, char *s)
 {
   if (s[1] || '@' != s[0]) /* Don't print the @ of <p>@</p> */
     {
@@ -84,28 +89,28 @@ void
 printStart(Isp *ip, FILE *fp, const char *name, const char **atts)
 {
   const char **ap = atts;
-  printText(ip, fp, (const char*)charData_retrieve());
+  printText(ip, fp, (ccp)charData_retrieve());
   fprintf(fp, "<%s", name);
+  const char *id = NULL;
   if (atts)
     {
-      const char *id = NULL;
       for (ap = atts; ap[0]; )
 	{
 	  if (!strcmp(ap[0], "id"))
-	    id=ap[0];
+	    id=ap[1];
 	  fprintf(fp, " %s=\"",*ap++);
 	  printText(ip, fp, *ap++);
 	  fputc('"', fp);
 	}
-      if (id)
-	{
-	  struct idactions *idap = idactions(id, strlen(id));
-	  if (idap)
-	    idap->func(ip, idap, fp);
-	  id = NULL;
-	}
     }  
   fputc('>', fp);
+  if (id)
+    {
+      struct idactions *idap = idactions(id, strlen(id));
+      if (idap)
+	idap->func(ip, idap, fp);
+      id = NULL;
+    }
 }
 
 void

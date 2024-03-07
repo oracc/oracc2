@@ -33,9 +33,8 @@ main(int argc, char **argv)
   if (isp_cache_page(ip))
     goto error;
   
-#if 0
-  isp_build_output(isp);
-#endif
+  if (isp_p3(ip, stdout))
+    goto error;
   
   goto ok;
   
