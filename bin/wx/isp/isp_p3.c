@@ -38,7 +38,8 @@ isp_p3(Isp *ip, FILE *outfp)
 void
 ida_p3content(Isp *ip, struct idactions *idap, FILE *fp)
 {
-  fprintf(fp, "ida_p3content\n");
+  file_copy(ip->cache.zout, "-");
+  file_copy(ip->cache.page, "-");
 }
 
 /* This function is called when iterating over text one character at a

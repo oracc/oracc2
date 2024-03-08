@@ -8,13 +8,16 @@ file_copy(const char *from, const char *to)
   if ((fromfp = fopen(from, "r")))
     {
       FILE *tofp = NULL;
-      if ((tofp = fopen(to, "w")))
+      if (!strcmp(to, "-"))
+	tofp = stdout;
+      if (tofp || (tofp = fopen(to, "w")))
 	{
 	  int ch;
 	  while (EOF != (ch = fgetc(fromfp)))
 	    fputc(ch,tofp);
 	  fclose(fromfp);
-	  fclose(tofp);
+	  if (strcmp(to, "-"))
+	    fclose(tofp);
 	  return 0;
 	}
     }

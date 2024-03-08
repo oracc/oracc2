@@ -24,6 +24,14 @@ iss_outline_dump(Isp *ip)
   sprintf(buf, "%s/%s-z%s.otl", ip->cache.sub, ip->perm, ip->zoom);
   ip->cache.zout = (ccp)pool_copy((uccp)buf, ip->p);
 
+  if (!access(ip->cache.zout, W_OK))
+    return 0;
+  else if (!access(ip->cache.zout, F_OK))
+    {
+      ip->err = "is_outline_dump: output file exists but is not writable";
+      return 1;
+    }
+  
   FILE *fp = fopen(ip->cache.zout, "w");
 
   if (!fp)
