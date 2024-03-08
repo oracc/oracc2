@@ -202,6 +202,8 @@ runexpatNSuD(enum isource from,
   XML_SetElementHandler(parser, startElement, endElement);
   XML_SetProcessingInstructionHandler(parser, piHandler);
   XML_SetCharacterDataHandler(parser, charHandler);
+  if (runexpatCommentHandler)
+    XML_SetDefaultHandler(parser, charHandler);
 
   if (runexpatCommentHandler)
     XML_SetCommentHandler(parser, runexpatCommentHandler);

@@ -12,6 +12,9 @@ struct ei_user_data
 void
 ei_commentH(void*userData, const char *cmt)
 {
+  const char *pre = charData_retrieve();
+  if (pre)
+    fputs(pre, ((struct ei_user_data*)userData)->fp);
   fprintf(((struct ei_user_data*)userData)->fp, "<!--%s-->", cmt);
 }
 
@@ -27,6 +30,7 @@ isp_p3(Isp *ip, FILE *outfp)
   struct ei_user_data ud;
   ud.ip = ip;
   ud.fp = outfp;
+  runexpat_omit_rp_wrap();
   runexpatNSuD(i_list, fnlist, ei_sH, ei_eH, NULL, &ud);
   return 0;
 }
