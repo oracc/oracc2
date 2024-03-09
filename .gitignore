@@ -22,6 +22,7 @@ bin/tx/xmlfilter
 bin/wx/wx
 bin/wx/isp/ispx
 bin/wx/isp/ispsortx
+bin/wx/isp/isp-ce-HTML.xsl
 bin/xx/concord
 bin/xx/cunhtmlx
 bin/xx/dbix

@@ -4,6 +4,8 @@ bin_PROGRAMS=ispx ispsortx
 
 bin_SCRIPTS=ispdiv.sh
 
+scriptdata_DATA=isp-ce-HTML.xsl
+
 iss_sources = iss.c iss_page.c iss_sortinfo.c iss_sicache.c \
 	iss_redblack.c iss_sort.c iss_outline.c
 
