@@ -35,7 +35,7 @@ append_designation(Isp *ip, const char *s)
   strcat(buf, ",designation");
   s = (ccp)pool_copy((uccp)buf,ip->p);
 #else
-  /* need do figure out what the sort_final stuff in p2 was; for now we do a dump append */
+  /* need do figure out what the sort_final stuff in p2 was; for now we do a dumb append */
   char *tmp2 = malloc(strlen(entry)+strlen(p2opts->sort_final)+2);
   sprintf(tmp2, "%s,%s", entry, p2opts->sort_final);
   s = (char*)pool_copy((unsigned char *)tmp2,ip->p);
@@ -288,8 +288,9 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   if (!heading_keys)
     {
       heading_keys = (ccp)pool_copy((uccp)sort_keys, pg2_pool);
-      tmp = (char*)heading_keys + strlen(heading_keys)/* - strlen(p2opts->sort_final)*/;
-      *tmp = '\0';
+      char *des = strstr(heading_keys, "designation");
+      if (des && !strchr(des, ',')) /* assumes field1,designation,field3 */
+	*des = '\0';
     }
 
   if (heading_keys)

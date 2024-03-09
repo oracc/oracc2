@@ -43,7 +43,7 @@ iss_outline_dump(Isp *ip)
   if (ip->verbose)
     fprintf(stderr, "isp: iss_outline_dump: writing %s\n", ip->cache.zout);
   
-  fputs("<div class=\"pgotl level0\">",fp);
+  fputs("<div id=\"ispMenu\" class=\"pgotl level0\">",fp);
   struct outline *o = ip->op;
   for (i = 0; i < sic_size; ++i)
     {
