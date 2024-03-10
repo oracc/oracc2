@@ -21,7 +21,8 @@ static void
 md_parse(char *mline, struct isp_mapdata *mdp)
 {
   char *next;
-  mdp->count = strtoul(mline, &next, 10);
+  mdp->zmax = strtoul(mline, &next, 10);
+  mdp->zimx = strtoul(next+1, &next, 10);
   mdp->htell = strtoul(next+1, &next, 10);
   mdp->hlen = (int)strtoul(next+1, &next, 10);
   mdp->ptell = strtoul(next+1, &next, 10);

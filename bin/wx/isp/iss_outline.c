@@ -43,7 +43,7 @@ iss_outline_dump(Isp *ip)
   if (ip->verbose)
     fprintf(stderr, "isp: iss_outline_dump: writing %s\n", ip->cache.zout);
   
-  fputs("<div id=\"ispMenu\" class=\"pgotl level0\">",fp);
+  fprintf(fp, "<div id=\"ispMenu\" class=\"pgotl level0\" data-zmax=\"%d\">", ip->md1.zmax);
   struct outline *o = ip->op;
   for (i = 0; i < sic_size; ++i)
     {
@@ -80,7 +80,7 @@ iss_outline_dump(Isp *ip)
 		}
 	      else
 		{
-		  fprintf(fp, "<p%s><a href=\"javascript://\" data-zoom=\"%d\" onclick=\"p3zoom(%d)\">%s [%ld]</a></p>", 
+		  fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\" data-zoom=\"%d\">%s [%ld]</a></p>", 
 			  zoomstr,
 			  o[i].sic->id + 1,
 			  o[i].sic->id + 1,
@@ -104,8 +104,9 @@ iss_outline_dump(Isp *ip)
 		    }
 		  else
 		    {
-		      fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\">%s [%ld]</a></p>", 
+		      fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\" data-zoom=\"%d\">%s [%ld]</a></p>", 
 			      zoomstr,
+			      o[i].sic->id + 1,
 			      o[i].sic->id + 1,
 			      (char*)xmlify(&sip->pool[o[i].poffsets[j]]),
 			      (long)o[i].count);

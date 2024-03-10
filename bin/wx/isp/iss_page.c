@@ -25,8 +25,10 @@ pg_tell(Isp *ip, long ht, int hl, FILE *fp)
   return pt;
 }
 
+/* zmax is maximum value of zoom for full page; zimx is maximum value
+   of item for zoomed page */
 int
-pg_map_one(Isp *ip, FILE *fp, int count, List *lmap)
+pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap)
 {
   int nth = 0;
   List_node *np = lmap->first;
@@ -34,7 +36,7 @@ pg_map_one(Isp *ip, FILE *fp, int count, List *lmap)
     {
       struct pgtell *pt = np->data;
       long start = (nth ? ((struct pgtell*)(np->prev->data))->ptell+1 : 0L);
-      fprintf(fp, "%d/%ld/%d/%ld/%ld\n", count, pt->htell, pt->hlen, start, pt->ptell);
+      fprintf(fp, "%d/%d/%ld/%d/%ld/%ld\n", zmax, zimx, pt->htell, pt->hlen, start, pt->ptell);
       np = np->next;
       ++nth;
     }
@@ -57,6 +59,7 @@ pg_zmaps(Isp *ip, List *zmaps, List *z)
   char zfn[strlen(ip->cache.sort)+strlen(".zmp0")];
   sprintf(zfn, "%s.zmp", ip->cache.sort);
 #endif
+
   znth = 0;
   np = zmaps->first;
   while (znth < list_len(z))
@@ -64,8 +67,9 @@ pg_zmaps(Isp *ip, List *zmaps, List *z)
       char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
       sprintf(pfn, "%s-z%d.pmp", ip->cache.sort, znth+1); /* should rewrite to use snprintf */
       FILE *fp = fopen(pfn, "w");
-      pg_map_one(ip, fp, zcounts[znth++], np->data);
+      pg_map_one(ip, fp, list_len(z), zcounts[znth], np->data);
       fclose(fp);
+      ++znth;
     }
   return 0;
 }
@@ -232,6 +236,7 @@ pg_page_dump(Isp *ip, struct page *p)
   if (p_count)
     list_add(pmap, pg_tell(ip,htell, hlen, fpag));
 
+  /* This is zoom=0 */
   if (ip)
     {
       fclose(fpag);
@@ -239,7 +244,7 @@ pg_page_dump(Isp *ip, struct page *p)
       char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
       sprintf(pfn, "%s.pmp", ip->cache.sort);
       FILE *fp = fopen(pfn, "w");
-      pg_map_one(ip, fp, p_count, pmap);
+      pg_map_one(ip, fp, list_len(z), p_count, pmap);
       fclose(fp);
     }
   list_free(z, NULL);

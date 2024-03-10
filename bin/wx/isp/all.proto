@@ -107,7 +107,7 @@ extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, c
 extern int iss_outline_dump(Isp *ip);
 /* iss_page.c */
 extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, FILE *fp);
-extern int pg_map_one(Isp *ip, FILE *fp, int count, List *lmap);
+extern int pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap);
 extern int pg_zmaps(Isp *ip, List *zmaps, List *z);
 extern char *fmthdr(short sic_index);
 extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);

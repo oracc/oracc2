@@ -78,7 +78,8 @@ struct page
 
 struct isp_mapdata
 {
-  int count;
+  int zmax; /* max value for zoom */
+  int zimx; /* max value for zoom's item */
   unsigned long htell;
   int hlen;
   unsigned long ptell;

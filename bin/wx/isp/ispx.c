@@ -27,12 +27,13 @@ main(int argc, char **argv)
   if (isp_cache_sort(ip))
     goto error;
 
-  if (iss_outline_dump(ip))
-    goto error;
-  
   if (isp_cache_page(ip))
     goto error;
   
+  /* do this after isp_cache_page to ensure ip->md1 is set */
+  if (iss_outline_dump(ip))
+    goto error;
+
   if (isp_p3(ip, stdout))
     goto error;
   
