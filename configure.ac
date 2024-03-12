@@ -93,7 +93,6 @@ AC_CONFIG_FILES([Makefile
 		 bin/wx/Makefile
 		 bin/wx/ccgi/Makefile
 		 bin/wx/isp/Makefile
-		 bin/wx/ispsort/Makefile
 		 bin/xx/Makefile
 		 bin/xx/osort/Makefile
 		 bin/xx/rnv/Makefile

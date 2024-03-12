@@ -32,6 +32,7 @@ bin/xx/jsmapx
 bin/xx/osort/osort
 bin/xx/rnv/rnv
 bin/xx/tis/cbdex
+bin/xx/tis/cbdikey
 bin/xx/tis/tisdiv
 bin/xx/tis/tisify
 bin/xx/tis/tok2tis
@@ -56,6 +57,7 @@ cbdrws.c
 cbdtags.c
 iomethod.c
 idactions.c
+ikeysub.c
 ispargs.c
 lang_atf.c
 lang_core.c
