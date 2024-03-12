@@ -14,6 +14,7 @@ extern int optind;
 int verbose = 0;
 
 const char *curr_oid;
+const char *curr_norm;
 
 /* This printText implements the same escaping as used by oracc2's
    xmlify library routine */
@@ -54,6 +55,11 @@ printStart(FILE *fp, const char *name, const char **atts)
 	  free((void*)curr_oid);
 	  curr_oid = NULL;
 	}
+      if (curr_norm)
+	{
+	  free((void*)curr_norm);
+	  curr_norm = NULL;
+	}
     }
   
   if (atts)
@@ -61,7 +67,10 @@ printStart(FILE *fp, const char *name, const char **atts)
       for (ap = atts; ap[0]; )
 	{
 	  if (!strcmp(ap[0], "oid"))
-	    curr_oid = strdup(ap[1]);
+	    {
+	      if (!strcmp(name, "entry") || !strcmp(name, "sense"))
+		curr_oid = strdup(ap[1]);
+	    }
 	  else if (!strcmp(ap[0], "xis"))
 	    xis = ap[1];
 	  else if (!strcmp(ap[0], "n"))
@@ -74,23 +83,47 @@ printStart(FILE *fp, const char *name, const char **atts)
 
   if (xis && curr_oid)
     {
-      if (n)
+      struct ikeysubtab *ip = ikeysub(name, strlen(name));
+      if (ip)
 	{
-	  struct ikeysubtab *ip = ikeysub(name, strlen(name));
-	  if (ip)
+	  if ('-' != *ip->sub)
 	    {
-	      if (*ip->sub)
+	      if (n)
 		{
-		  char kbuf[strlen(curr_oid)+strlen(ip->sub)+strlen(n)+strlen("...0")];
-		  sprintf(kbuf, "%s.%s.%s", curr_oid, ip->sub, n);
-		  fprintf(fp, " ikey=\"%s\"", kbuf);
+		  if (!strcmp(name, "f"))
+		    {
+		      if (curr_norm)
+			{
+			  char kbuf[strlen(curr_oid)+strlen(ip->sub)+strlen(curr_norm)+strlen(n)+strlen("...0")];
+			  sprintf(kbuf, "%s.nm.%s.%s.%s", curr_oid, curr_norm, ip->sub, n);
+			  fprintf(fp, " ikey=\"%s\"", kbuf);
+			}
+		      else
+			fprintf(stderr, "cbdikey: found f tag without parent norm\n");
+		    }
+		  else
+		    {
+		      char kbuf[strlen(curr_oid)+strlen(ip->sub)+strlen(n)+strlen("...0")];
+		      sprintf(kbuf, "%s.%s.%s", curr_oid, ip->sub, n);
+		      fprintf(fp, " ikey=\"%s\"", kbuf);
+		      if (!strcmp(name, "norm"))
+			{
+			  if (curr_norm)
+			    {
+			      free((void*)curr_norm);
+			      curr_norm = NULL;
+			    }
+			  curr_norm = strdup(n);
+			}
+		    }
 		}
+	      else
+		fprintf(stderr, "cbdikey: NULL @n when oid=%s name=%s sub=%s xis=%s\n",
+			curr_oid, ip->sub, name, xis);
 	    }
-	  else
-	    fprintf(stderr, "cbdikey: name %s not in ikeysub table\n", name);
 	}
       else
-	fprintf(stderr, "cbdikey: NULL @n when oid=%s name=%s xis=%s\n", curr_oid, name, xis);
+	fprintf(stderr, "cbdikey: name %s not in ikeysub table\n", name);
     }
   
   fputc('>', fp);
