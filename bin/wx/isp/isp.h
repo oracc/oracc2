@@ -117,7 +117,10 @@ typedef struct isp
   const char *aapi;
   const char *host_path;
   const char *tmp_dir;
-  const char *err;  
+  const char *err;
+  int p3;	    /* produce outline and results and then output name of
+		       temp dir for p3-pager.plx to build output
+		       page */
   int verbose;
   Pool *p;
   Memo *tmem;

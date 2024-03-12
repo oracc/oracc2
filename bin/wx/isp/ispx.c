@@ -34,8 +34,16 @@ main(int argc, char **argv)
   if (iss_outline_dump(ip))
     goto error;
 
-  if (isp_p3(ip, stdout))
-    goto error;
+  if (ip->p3)
+    {
+      if (isp_p3(ip, stdout))
+	goto error;
+    }
+  else
+    {
+      if (isp_ui(ip, stdout))
+	goto error;
+    }
   
   goto ok;
   

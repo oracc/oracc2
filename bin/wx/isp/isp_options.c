@@ -45,7 +45,7 @@ isp_options(int argc, char **argv, Isp *ip)
 {
   int ret;
   opt_ip = ip;
-  ret = options(argc, argv, "ELSZPWCFOj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
+  ret = options(argc, argv, "3ELSZPWCFOj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
   opt_ip = NULL;
   if (ret)
     ip->err = "processing options";
@@ -57,6 +57,9 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case '3':
+      opt_ip->p3 = 1;
+      break;
     case 'E':
       opt_ip->steps[ISP_STEP_0E] = 1;
       break;

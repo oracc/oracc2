@@ -23,8 +23,25 @@ extern int isp_perm_check(const char *p);
 extern int isp_options(int argc, char **argv, Isp *ip);
 extern int opts(int opt, const char *arg);
 /* isp_p3.c */
-extern void ei_commentH(void *userData, const char *cmt);
 extern int isp_p3(Isp *ip, FILE *outfp);
+/* isp_page.c */
+extern int create_page_div(Isp *ip);
+extern int isp_cache_page(Isp *ip);
+/* isp_show.c */
+extern void isp_show(FILE *fp, Isp *ip);
+/* isp_sort.c */
+extern int isp_cache_sort(Isp *ip);
+/* ispsortx.c */
+extern int main(int argc, char **argv);
+extern int opts(int argc, const char *arg);
+extern void help(void);
+/* isp_tis.c */
+extern int isp_tis_list(Isp *ip);
+/* isp_tmp.c */
+extern void isp_tmp_dir(Isp *ip);
+/* isp_ui.c */
+extern void ei_commentH(void *userData, const char *cmt);
+extern int isp_ui(Isp *ip, FILE *outfp);
 extern void ida_p3content(Isp *ip, struct idactions *idap, FILE *fp);
 extern void printText(Isp *ip, FILE *fp, const char *s);
 extern void printStart(Isp *ip, FILE *fp, const char *name, const char **atts);
@@ -78,21 +95,6 @@ extern void ida_atatruntime_what(Isp *ip, struct idactions *idap, FILE *fp);
 extern void ida_atatruntime_znext(Isp *ip, struct idactions *idap, FILE *fp);
 extern void ida_atatruntime_zprev(Isp *ip, struct idactions *idap, FILE *fp);
 extern void ida_atattranslations(Isp *ip, struct idactions *idap, FILE *fp);
-/* isp_page.c */
-extern int create_page_div(Isp *ip);
-extern int isp_cache_page(Isp *ip);
-/* isp_show.c */
-extern void isp_show(FILE *fp, Isp *ip);
-/* isp_sort.c */
-extern int isp_cache_sort(Isp *ip);
-/* ispsortx.c */
-extern int main(int argc, char **argv);
-extern int opts(int argc, const char *arg);
-extern void help(void);
-/* isp_tis.c */
-extern int isp_tis_list(Isp *ip);
-/* isp_tmp.c */
-extern void isp_tmp_dir(Isp *ip);
 /* isp_validate.c */
 extern int isp_validate(Isp *ip);
 /* ispx.c */

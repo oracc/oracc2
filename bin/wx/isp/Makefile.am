@@ -12,7 +12,7 @@ iss_sources = iss.c iss_page.c iss_sortinfo.c iss_sicache.c \
 ispx_SOURCES=all.proto ispx.c isp_init.c isp_options.c isp_validate.c \
 	ispargs.c isp_help.c isp_show.c isp_tmp.c isp_list.c isp_cache.c \
 	isp_tis.c isp_xis.c isp_sort.c isp_page.c filecopy.c nth_line.c \
-	isp_p3.c idactions.c \
+	isp_p3.c idactions.c isp_ui.c \
 	$(iss_sources)
 
 ispx_LDADD = $(xLDADD)
@@ -26,7 +26,7 @@ PSOURCES=ispx.c isp_init.c isp_options.c isp_validate.c \
 	ispargs.c isp_help.c isp_show.c isp_tmp.c isp_list.c isp_cache.c \
 	isp_tis.c isp_xis.c isp_sort.c isp_page.c filecopy.c nth_line.c \
 	isp_p3.c idactions.c iss.c iss_page.c iss_sortinfo.c iss_sicache.c \
-	iss_redblack.c iss_sort.c iss_outline.c
+	iss_redblack.c iss_sort.c iss_outline.c isp_ui.c
 
 x.proto: $(PSOURCES)
 	cproto -e $(AM_CPPFLAGS) $(PSOURCES) >$@
