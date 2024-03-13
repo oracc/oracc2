@@ -1,0 +1,12 @@
+<div id="p3Banner" class="banner">
+  <p class="center">
+    <img class="p3icon" src="/img/p3-help.png" alt="Help" title="Help"
+	 id="p3HelpIcon" onclick="p3help()"/>
+    <img class="p3icon spread" src="/img/p3-reset.png" alt="Reset pager" title="Reset pager"
+	 id="p3ResetPager" onclick="window.location='/@@project@@/pager'"/>
+    <img class="p3icon" src="/img/p3-plus.png" alt="More resources" title="More resources"
+	 id="p3MoreIcon" onclick="window.location='/@@project@@/hub.html'"/>
+    <wbr/>
+    <span>@@PROJECT@@</span>
+  </p>
+</div>
