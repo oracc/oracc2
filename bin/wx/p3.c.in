@@ -291,11 +291,16 @@ p3glossary(const char *glos, const char *xis)
   CGI_varlist *vl = NULL;
   const char *srch = NULL;
   extern int ccgi_verbose;
+  extern const char *p3zoom, *p3page;
 
   vl = CGI_get_post(0, NULL);
   vl = CGI_add_var(vl, "glos", glos);
   if (xis)
-    vl = CGI_add_var(vl, "gxis", xis);
+    {
+      vl = CGI_add_var(vl, "gxis", xis);
+      vl = CGI_add_var(vl, "zoom", p3zoom);
+      vl = CGI_add_var(vl, "page", p3page);
+    }
 
   if (!CGI_lookup(vl, "project"))
     vl = CGI_add_var(vl, "project", project);

@@ -25,6 +25,8 @@ const char *ui_names[]        = { "none", "mini" };
 
 char *pqx_with_id = NULL;
 
+const char *p3zoom = NULL, *p3page = NULL;
+
 typedef void(handler)(struct component *);
 
 static void wrd_handler(struct component *);
@@ -144,11 +146,33 @@ lng_handler(struct component *components)
 	  if ((xis = strstr(query_string,"xis=")))
 	    {
 	      char *end;
+	      char *zoom = strstr(query_string,"zoom=");
+	      char *page = strstr(query_string,"page=");
 	      xis += 4;
 	      end = xis;
 	      while (*end && '&' != *end)
 		++end;
 	      *end = '\0';
+	      if (zoom)
+		{
+		  zoom += 5;
+		  end = zoom;
+		  while (*end && '&' != *end)
+		    ++end;
+		  p3zoom = zoom;
+		}
+	      else
+		p3zoom = "0";
+	      if (page)
+		{
+		  page += 5;
+		  end = page;
+		  while (*end && '&' != *end)
+		    ++end;
+		  p3page = page;
+		}
+	      else
+		p3page = "1";
 	      if (strlen(xis))
 		p3glossary(elements[0], xis);
 	    }
