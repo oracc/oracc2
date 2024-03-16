@@ -8,7 +8,7 @@
 #include "ccgi/ccgi.h"
 
 static char *srchindex = NULL;
-static int p3trace = 0;
+static int p3trace = 2;
 
 static void
 p3srch(CGI_varlist *vl)
@@ -208,9 +208,16 @@ p3_exec(CGI_varlist *vl)
   if (p3trace)
     fprintf(stderr, "p3: 4\n");
 
-  execv("/usr/bin/perl", (char *const *)vec);
-
-  fprintf(stderr, "p3: failed to exec p3-pager.plx\n");
+  if (p3trace == 2)
+    {
+      fprintf(stderr, "p3: skip exec p3-pager.plx because p3trace==2\n");
+      exit(0);
+    }
+  else
+    {
+      execv("/usr/bin/perl", (char *const *)vec);
+      fprintf(stderr, "p3: failed to exec p3-pager.plx\n");
+    }
 }
 
 void

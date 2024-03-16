@@ -159,6 +159,8 @@ lng_handler(struct component *components)
 		  end = zoom;
 		  while (*end && '&' != *end)
 		    ++end;
+		  if ('&' == *end)
+		    *end = '\0';
 		  p3zoom = zoom;
 		}
 	      else
@@ -169,6 +171,8 @@ lng_handler(struct component *components)
 		  end = page;
 		  while (*end && '&' != *end)
 		    ++end;
+		  if ('&' == *end)
+		    *end = '\0';
 		  p3page = page;
 		}
 	      else
