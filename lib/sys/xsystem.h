@@ -19,6 +19,8 @@
 #define xsetvbuf setvbuf
 #endif
 
+#define min(a,b) ((a)<(b)?(a):(b))
+
 #define  xfseek(n,s,o,w) { \
 			   if (fseek((s),(o),(w))) \
 			     { \

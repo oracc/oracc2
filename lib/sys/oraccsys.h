@@ -19,6 +19,7 @@
 #include <ctype128.h>
 #include <ose.h>
 #include <dbxlib.h>
+#include <xsystem.h>
 
 #define QUALIFIED_PQX_MAX	512
 
