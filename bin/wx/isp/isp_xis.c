@@ -28,7 +28,8 @@ xis_wids(Isp *ip, const struct xis_info *xip, FILE *fp)
           int ch = fgetc(xis_fp);
           if (ch == EOF)
             {
-              ip->err = "isp: xis_wids: read failure getting xis ids from .tis file";
+              ip->err = "isp: xis_wids: read failure getting ids from .tis file %s";
+	      ip->errx = xis_file;
 	      break;
             }
           else
@@ -42,7 +43,10 @@ xis_wids(Isp *ip, const struct xis_info *xip, FILE *fp)
       fclose(xis_fp);
     }
   else
-    ip->err = "unable to open .tis file for xis ids";
+    {
+      ip->err = "unable to open .tis file %s for xis ids";
+      ip->errx = xis_file;
+    }
 }
 
 int
@@ -67,7 +71,10 @@ isp_xis_list(Isp *ip)
 	    }
 	}
       else
-	ip->err = "key not found in xis db";
+	{
+	  ip->err = ISP_ERROR_START "key %s not found in xis db\n";
+	  ip->errx = ip->list_name;
+	}
       dbx_term(dp);
     }
   else

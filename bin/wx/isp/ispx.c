@@ -48,7 +48,8 @@ main(int argc, char **argv)
   goto ok;
   
  error:
-  fprintf(stderr, "isp: error: %s. Stop.\n", ip->err);
+  fprintf(stderr, ip->errx ? ip->err : ISP_ERROR_START "%s. Stop.\n",
+	  ip->errx ? ip->errx : ip->err);
   if (ip->web)
     printf("<error>%s</error>", ip->err);
 

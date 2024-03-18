@@ -4,6 +4,7 @@
 #include <memo.h>
 #include <pool.h>
 
+#define ISP_ERROR_START "isp: error: "
 #define ISP_TMP_PAT    	"tmp/isp/is.XXXXXX"
 
 #define ISP_STEP_0E	0x0000001
@@ -118,6 +119,7 @@ typedef struct isp
   const char *host_path;
   const char *tmp_dir;
   const char *err;
+  const char *errx;
   int p3;	    /* produce outline and results and then output name of
 		       temp dir for p3-pager.plx to build output
 		       page */

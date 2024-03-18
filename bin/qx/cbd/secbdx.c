@@ -14,6 +14,8 @@ FILE *f_log;
 const char *xatf_name = NULL;
 Hash *signmap = NULL;
 
+Vido *vidp;
+
 int swc_flag = 0;
 
 FILE *f_idlist;
@@ -26,7 +28,6 @@ extern void signmap_init(void);
 extern void signmap_term(Dbi_index *);
 
 struct est *estp;
-struct vid_data *vidp;
 char loc_project_buf[_MAX_PATH];
 
 #undef xmalloc
@@ -76,12 +77,6 @@ const char *static_names[] =
     "c", "g", "p", "b", "m1", "m2", "t", "m", "cg", "n", "nofield" , "not_in_use", "next_uid"
   };
 
-/* This indexer ignores the fact that senses and bases can have their own
-   ids; it treats everything as transliteration, and as a result aliases
-   all languages--this is going to come back to bite us in the ass some day.
-
-   At that point we should at least switch aliasing by language.
- */
 void
 startElement(void *userData, const char *name, const char **atts)
 {
@@ -105,7 +100,7 @@ startElement(void *userData, const char *name, const char **atts)
       if (!name[4] && (!strcmp(name,"base") || !strcmp(name, "form")))
 	{
 	  l8.unit_id = (*name == 'b' ? sn_b : sn_t);
-	  wid2loc8(curr_id,xml_lang(atts),&l8);
+	  wid2loc8(vido_new_id(vidp,curr_id),xml_lang(atts),&l8);
 	  process_cdata((unsigned char*)findAttr(atts,"n"),0,0);
 	  /*process_cdata((unsigned char*)findAttr(atts,"n"),1,1);*/
 	}
@@ -118,14 +113,14 @@ startElement(void *userData, const char *name, const char **atts)
 	}
     case 'n':
       if (!name[1])
-	wid2loc8(curr_id,xml_lang(atts),&l8);
+	wid2loc8(vido_new_id(vidp,curr_id),xml_lang(atts),&l8);
       break;
     default:
       if ((!name[1] && *name == 't')
 	  || (!name[2] && (!strcmp(name,"cf")||!strcmp(name,"gw")))
 	  || (!name[3] && (!strcmp(name,"mng")||!strcmp(name,"pos")))
 	  || (!name[4] && (!strcmp(name,"mean")||!strcmp(name,"term"))))
-	wid2loc8(curr_id,xml_lang(atts),&l8);
+	wid2loc8(vido_new_id(vidp,curr_id),xml_lang(atts),&l8);
       break;
     }
 }
@@ -330,6 +325,8 @@ main(int argc, char **argv)
 
   setlocale(LC_ALL,ORACC_LOCALE);
 
+  vidp = vido_init('v',0);
+
   index_dir = (char*)se_dir(curr_project, curr_index);
   if (lang)
     {
@@ -364,6 +361,9 @@ main(int argc, char **argv)
 		   sizeof(struct location16), DBI_ACCRETE);
   if (NULL == dip) 
     error (NULL, "unable to create index for %s", curr_index);
+
+  dbi_set_vids(dip,"vid.vid");
+
   dbi_set_user(dip,d_cbd);
   if (cache_elements > 0)
     dbi_set_cache(dip, cache_elements);
@@ -412,6 +412,12 @@ main(int argc, char **argv)
   dip = dbi_open("cbd", index_dir);
   est_dump(estp);
   est_term(estp);
+
+  char vidfn[1024];
+  sprintf(vidfn, "%s/vid.vid", index_dir);
+  vido_dump_data(vidp, vidfn, NULL);
+  vido_term(vidp);
+  vidp = NULL;
 
   if (lang)
     sprintf(buf,"cbd/%s",lang);

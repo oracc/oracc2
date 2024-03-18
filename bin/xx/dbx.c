@@ -173,4 +173,9 @@ opts(int argc, const char *arg)
     }
   return 0;
 }
-void help (void){}
+
+void
+help (void)
+{
+  
+}
