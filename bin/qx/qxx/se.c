@@ -5,6 +5,7 @@
 #include "se.h"
 #include "selib.h"
 
+FILE *f_log = NULL;
 int any_index = 0;
 int do_uniq = 1;
 int doing_debug = 0;
@@ -496,8 +497,10 @@ main(int argc, char * const*argv)
     out_f = stdout;
 
   atf2utf_init();
+#if 0
   charsets_init();
   langtag_init();
+#endif
   tokinit();
 
   if (pretrim_file || pretrim_args)

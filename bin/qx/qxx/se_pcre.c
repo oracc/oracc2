@@ -36,7 +36,7 @@ se_pcre_init(const char *project, const char *index)
 
   strcpy(glist_fname, se_file(project, index, "key.lst"));
   xaccess (glist_fname, R_OK, TRUE);
-  glist_buf_len = fsize_t (glist_fname, NULL);
+  glist_buf_len = fsize(glist_fname, NULL);
   glist_buf = malloc(glist_buf_len+3);
   *glist_buf = '\n';
   fp = xfopen (glist_fname, "rb");
@@ -155,7 +155,9 @@ apply_pcre(const char *pattern, const char *subject, size_t sublen)
 	      while (match_begin < next_start)
 		*mp++ = subject[match_begin++];
 	      *mp = '\0';
+#if 0
 	      progress("re: adding match %s\n", match_buf);
+#endif
 	      list_add(match_list, xstrdup(match_buf));
 	    }
 	  else

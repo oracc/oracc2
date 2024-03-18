@@ -157,7 +157,7 @@ loadoneline(FILE *fp, size_t *nbytes)
 {
   static unsigned char *buf = NULL;
   static int n_alloced = 0;
-  int ch, n_read = 0, found_nl;
+  int ch, n_read = 0;
 
   if (!fp)
     {

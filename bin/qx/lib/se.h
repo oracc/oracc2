@@ -1,6 +1,6 @@
 #ifndef SE_H_
 #define SE_H_
-
+#include <c2types.h>
 #include "types.h"
 
 struct lookup
@@ -90,8 +90,8 @@ extern int verbose;
 extern void showtoks(struct token*toks,int ntoks, int phase);
 extern struct token *tokenize(const char **argv, int *ntoks);
 extern void tokinit(void);
-extern struct se_tok_tab *setoks(register const char *str, register unsigned int len);
-extern struct lm_tab *langmask(register const char *str, register unsigned int len);
+extern struct se_tok_tab *setoks(register const char *str, register size_t len);
+extern struct lm_tab *langmask(register const char *str, register size_t len);
 extern struct Datum *merge_data_pair (struct Datum *d1, struct Datum *d2);
 extern void binop_init(void);
 extern void binop24_init(void);

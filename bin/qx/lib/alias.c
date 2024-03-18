@@ -66,7 +66,7 @@ alias_index_aliases (const char *project,const char *index)
 	      if (t - head_grapheme == PADDED_GRAPHEME_LEN)
 		{
 		  *t = '\0';
-		  error (NULL, /*ewfile(alias_fn, line_num), */
+		  error (ewfile(alias_fn, line_num),
 			 "%s...: grapheme too long (max %d chars)",
 			 head_grapheme, PADDED_GRAPHEME_LEN-1);
 		}
@@ -91,7 +91,7 @@ alias_index_aliases (const char *project,const char *index)
 	      if (t - padded_grapheme == PADDED_GRAPHEME_LEN)
 		{
 		  *t = '\0';
-		  error (/*ewfile(alias_fn, line_num)*/NULL, "%s...: grapheme too long (max %d chars)",padded_grapheme,PADDED_GRAPHEME_LEN-1);
+		  error (ewfile(alias_fn, line_num), "%s...: grapheme too long (max %d chars)",padded_grapheme,PADDED_GRAPHEME_LEN-1);
 		}
 	      *t++ = *s++;
 	    }

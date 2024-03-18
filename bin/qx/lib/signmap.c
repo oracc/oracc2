@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <selib.h>
+#include <runexpat.h>
 
 extern char *strdup(const char *);
 

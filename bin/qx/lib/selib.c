@@ -1,20 +1,21 @@
 #include <oraccsys.h>
+#include <xpd.h>
+#include <runexpat.h>
 #include "selib.h"
 
 struct xpd *xp = NULL;
-struct npool *sepool;
-
-int v2;
+Pool *sepool;
 
 extern struct lm_tab *langmask(register const char *str, register unsigned int len);
 
+#if 0
 static void
 se_xpd(const char *proj)
 {
   if (!proj)
     {
       if (sepool)
-	npool_term(sepool);
+	pool_term(sepool);
       if (xp)
 	xpd_term(xp);
       sepool = NULL;
@@ -22,10 +23,11 @@ se_xpd(const char *proj)
       return;
     }
   else if (!sepool)
-    sepool = npool_init();
+    sepool = pool_init();
   if (!xp)
     xp = xpd_init(proj, sepool);
 }
+#endif
 
 const char *
 attr_by_name(const char **atts,const char *name)
@@ -95,79 +97,4 @@ lang2mask(const char *l)
     return tabp->lm;
   else
     return lm_misc;
-}
-
-void
-wid2loc8(const char *id, const char *lang, struct location8 *l8p)
-{
-  if (v2)
-    {
-      l8p->text_id = v2s_add((const unsigned char *)id);
-      if (lang)
-	l8p->text_id |= lang2mask(lang);
-    }
-  else
-    {
-      if (isupper(*id) || 'v' == *id)
-	{
-	  l8p->text_id = atoi(id+1);
-	  if (*id == 'Q')
-	    setQ(l8p->text_id);
-	  else if (*id == 'X')
-	    l8p->text_id = XIFY_ID(l8p->text_id);
-	  id += 8;
-	  l8p->unit_id = atoi(id);
-	  while (*id && '.' != *id)
-	    ++id;
-	  ++id;
-	  l8p->word_id = atoi(id);
-	  if (lang)
-	    l8p->text_id |= lang2mask(lang);
-	}
-      else
-	{
-	  char *x = strchr(id,'.');
-	  if (x)
-	    {
-	      l8p->text_id = atoi(x+2);
-	      x += 2;
-	    }
-	  else
-	    fprintf(stderr,"wid2loc8: %s: malformed ID\n", id);
-	}
-    }
-}
-
-const char *
-se_dir(const char *project, const char *xname)
-{
-  static char _dirbuf[_MAX_PATH];
-  sprintf(_dirbuf,"%s/pub/%s/%s",oracc_var(),project,xname);
-  return _dirbuf;
-}
-
-const char *
-se_file(const char *project, const char *xname, const char *fname)
-{
-  char *fbuf = (char*)se_dir(project,xname);
-  strcat(fbuf,"/");
-  return strcat(fbuf,fname);
-}
-
-void
-ce_cfg(const char *project, const char *index,
-       const char *ce_tag, const char *ce_ext, 
-       enum ce_files ce_type, const char **proxies)
-{
-  const char *cfg_fn = se_file(project,index,"ce.cfg");
-  FILE *cfg_fp = xfopen(cfg_fn,"w");
-  fprintf(cfg_fp,"%d",ce_type);
-  if (ce_ext)
-    fprintf(cfg_fp," %s",ce_ext);
-  fprintf(cfg_fp," %s%c",ce_tag,0);
-  if (proxies)
-    while (*proxies)
-      fprintf(cfg_fp,"%s%c",*proxies++,0);
-  fprintf(cfg_fp,"%c",0);
-  xfclose(cfg_fn,cfg_fp);
 }

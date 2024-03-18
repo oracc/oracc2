@@ -424,10 +424,10 @@ w_id(struct location24*p)
 static struct Datum
 op_driver24 (struct Datum *d1, struct Datum *d2)
 {
-  struct location8 **rt_base, **orig_rt_base, **orig_lft;
+  struct location8 **rt_base, **orig_rt_base/*, **orig_lft*/;
 
   binop24_setup (d1,d2);
-  for (orig_rt_base = rt_base = rt, orig_lft = lft; lft < lft_end; ++lft)
+  for (orig_rt_base = rt_base = rt/*, orig_lft = lft*/; lft < lft_end; ++lft)
     {
       /* found_match = 0; */
       for (rt = rt_base; rt < rt_end; ++rt)
@@ -671,7 +671,8 @@ op_driver24 (struct Datum *d1, struct Datum *d2)
 	      case USE_EXACT:
 	      case USE_RANGE:
 	      case USE_IGNORE:
-		fatal ();
+		fprintf(stderr, "binops24.c:%d: bad case in switch\n", __LINE__);
+		exit(1);
 		break;
 	      }
 	}
@@ -780,7 +781,8 @@ binop24_term ()
 		      adjust (new.r.l16p[new_index]->start_column, START_COLUMN_MAX);
 		      break;
 		    default:
-		      fatal ();
+		      fprintf(stderr, "binops24.c:%d: bad case in switch\n", __LINE__);
+		      exit(1);
 		      break;
 		    }
 		  ++new_index;

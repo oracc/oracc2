@@ -1,9 +1,9 @@
 #include <oraccsys.h>
 #include "p2.h"
-#include "xpd2.h"
+#include "xpd.h"
 
 char *
-p2_maybe_append_designation(const char *s, struct npool *pool, const char *final)
+p2_maybe_append_designation(const char *s, Pool *pool, const char *final)
 {
   int designation_ok = 0;
   const char *entry = NULL;
@@ -34,16 +34,16 @@ p2_maybe_append_designation(const char *s, struct npool *pool, const char *final
     {
       char *tmp2 = malloc(strlen(entry)+strlen(final)+2);
       sprintf(tmp2, "%s,%s", entry, final);
-      s = (char*)npool_copy((unsigned char *)tmp2,pool);
+      s = (char*)pool_copy((unsigned char *)tmp2,pool);
       free(tmp2);
     }
   else
-    s = (char*)npool_copy((unsigned char *)s,pool);
+    s = (char*)pool_copy((unsigned char *)s,pool);
   return (char*)s;
 }
 
 struct p2_options *
-p2_load(const char *project, const char *state, struct npool *pool)
+p2_load(const char *project, const char *state, Pool *pool)
 {
   struct p2_options *ret = calloc(1,sizeof(struct p2_options));
   char *opt = malloc(128);

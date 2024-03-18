@@ -59,6 +59,7 @@ AC_CONFIG_FILES([Makefile
                  lib/atf/Makefile
                  lib/cat/Makefile
                  lib/cbd/Makefile
+                 lib/chr/Makefile
                  lib/collate/Makefile
                  lib/expat/Makefile
                  lib/frm/Makefile
@@ -66,6 +67,7 @@ AC_CONFIG_FILES([Makefile
                  lib/gvl/Makefile
                  lib/joxer/Makefile
                  lib/jsn/Makefile
+                 lib/libstemmer_c/Makefile
                  lib/lng/Makefile
                  lib/oid/Makefile
                  lib/rnc/Makefile

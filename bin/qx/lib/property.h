@@ -29,7 +29,7 @@
 #define has_property(var,attr)	(var&attr)
 #define no_word_props(var) (var&=(PROP_LB|PROP_LE|PROP_WB|PROP_WE))
 
-extern struct prop_tab *propmask(register const char *str,register unsigned int len);
+extern struct prop_tab *propmask(register const char *str,register size_t len);
 
 enum prop_group { pg_properties = 0x1000000, pg_start_column = 0x2000000 };
 

@@ -9,16 +9,14 @@
 extern Vido *vp;
 extern Hash *pretrim;
 
+extern int doing_debug;
+
 #if 0
 char *strdup(const char *);
 char *strndup(const char *,size_t);
 #endif
 
 extern void debug_results(const char *label, struct Datum *dp);
-
-#ifndef HAVE_STRNDUP
-#include "strndup.c"
-#endif
 
 const char *se_curr_project = "cdli";
 const char *curr_index = "txt";
@@ -103,8 +101,10 @@ static int
 set_filter(struct token *t)
 {
   int code = fieldcode(se_curr_project, curr_index, t->data);
+#if 0
   progress("se: %s/%s/%s: code %d\n",
 	   se_curr_project, curr_index, t->data, code);
+#endif
   return code;
 }
 static int
@@ -141,7 +141,9 @@ set_lang(struct token *t)
       tabp = langmask(langbuf,l-langbuf);
       if (tabp)
 	{
+#if 0
 	  progress("se: lang %s is code %08x\n",langbuf, tabp->lm);
+#endif
 	  ret |= tabp->lm;
 	}
       else
@@ -182,8 +184,10 @@ set_prop(struct token *t)
       tabp = propmask(buf,l-buf);
       if (tabp)
 	{
+#if 0
 	  progress("se: prop %s is code %08x in group %08x\n", 
 		   buf, tabp->prop, tabp->group);
+#endif
 	  ret |= tabp->prop;
 	  ret |= tabp->group;
 	}
@@ -516,7 +520,9 @@ expr(struct token *e, int sign_name)
   dbi_find (curr_dip, (const unsigned char *)grapheme);
   if (!curr_dip->nfound)
     {
+#if 0
       progress("se eval: found 0 results for %s\n", grapheme);
+#endif
       d.ldata = d.rdata = NULL;
       d.l.l8p = d.r.l8p = NULL;
       d.count = 0;
@@ -538,9 +544,10 @@ expr(struct token *e, int sign_name)
       else
 	for (i = 0; i < d.count; ++i)
 	  d.l.l24p[i] = &((struct location24*)d.ldata)[i];
-
+#if 0
       progress("se eval: found %d result%s for %s\n", 
-	       d.count, d.count == 1 ? "" : "s", grapheme); 
+	       d.count, d.count == 1 ? "" : "s", grapheme);
+#endif
       d.r.l8p = NULL;
       d.rdata = NULL;
       if (doing_debug)
@@ -605,8 +612,10 @@ rexp(struct token *e)
 	      else
 		for (i = 0; i < dp->count; ++i)
 		  dp->l.l16p[i] = &((struct location16*)dp->ldata)[i];
+#if 0
 	      progress("se eval: found %d result%s for %s\n", 
-		       dp->count, dp->count == 1 ? "" : "s", alias); 
+		       dp->count, dp->count == 1 ? "" : "s", alias);
+#endif
 	      dp->rdata = NULL;
 	      dp->r.l8p = NULL;
 	      dp->stripped = 0;
@@ -615,9 +624,11 @@ rexp(struct token *e)
 	}
     }
   hash_free (graphs_seen, NULL);
+#if 0
   progress("se eval: found %d key%s matching rx %s\n", 
 	   list_len(graph_data), list_len(graph_data) == 1 ? "" : "s", 
 	   e->mangled ? e->mangled : e->data);
+#endif
   if (list_len(graph_data))
     d = merge_data(graph_data);
   else
@@ -626,9 +637,11 @@ rexp(struct token *e)
       d.stripped = d.count = 0;
       d.l.l8p = d.r.l8p = NULL;
     }
+#if 0
   progress("se eval: found %d result%s for rx %s\n", 
 	   d.count, d.count == 1 ? "" : "s", 
 	   e->mangled ? e->mangled : e->data);
+#endif
   return d;
 }
 
@@ -680,7 +693,9 @@ open_index(const char *proj,const char *index)
   ixp->dip = dbi_open(index_name,iname_buf);
   if (ixp->dip)
     {
+#if 0
       progress("se eval: opened index %s\n",iname);
+#endif
       list_add(indexes,ixp);
       ixp->dip->aliases = alias_init(proj,index);
       if (!xaccess(se_file(proj, index, "signmap.dbi"), R_OK, 0))
@@ -748,7 +763,10 @@ merge_data (List *lp)
 	       short2 = end;
 	}
       if (short1 == short2)
-        fatal ();
+        {
+	  fprintf(stderr, "evaluate.c:%d: short1==short2: shouldn't happen\n", __LINE__);
+	  exit(1);
+	}
 
       list_add (lp, merge_data_pair (short1->data, short2->data));
       list_delete (lp, short1, datum_del);
@@ -958,7 +976,9 @@ filter_fields(struct Datum *dp, int fcode)
 	}
     }
   dp->count = lp_ins - dp->l.l8p;
+#if 0
   progress("se eval: %d results after filter_fields\n", dp->count);
+#endif
 }
 
 static void
@@ -976,7 +996,9 @@ filter_langs(struct Datum *dp, int lmask)
 	}
     }
   dp->count = lp_ins - dp->l.l8p;
+#if 0
   progress("se eval: %d results after filter_langs\n", dp->count);
+#endif
 }
 
 static void
@@ -993,7 +1015,9 @@ filter_logo(struct Datum *dp)
 	}
     }
   dp->count = lp_ins - dp->l.l16p;
+#if 0
   progress("se eval: %d results after filter_langs\n", dp->count);
+#endif
 }
 
 static void
@@ -1014,5 +1038,7 @@ filter_props(struct Datum *dp, int fcode)
 	}
     }
   dp->count = lp_ins - dp->l.l16p;
+#if 0
   progress("se eval: %d results after filter_props\n", dp->count);
+#endif
 }

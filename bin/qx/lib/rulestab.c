@@ -1,4 +1,6 @@
 #define NULL (void*)0
+#include <ose.h>
+#include "types.h"
 #include "selib.h"
 
 /* some indexes need different rules for different fields, like the cbd */

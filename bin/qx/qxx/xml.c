@@ -15,13 +15,14 @@ xmldir_toks(const char *xmldir)
   txt[0] = (char*)loadfile((unsigned char *)fname, NULL);
   txt[1] = NULL;
   free(fname);
-  return vec_from_str(txt[0], NULL, NULL);
+  return (const char**)vec_from_str((char*)txt[0], NULL, NULL);
 }
 
 void
 xmldir_results(const char *xmldir, int count)
 {
-  char *fname = malloc(strlen(xmldir)+16), *dirbase;
+  char *fname = malloc(strlen(xmldir)+16);
+  const char *dirbase;
   FILE *ret;
   extern FILE *out_f;
   if (!(dirbase = strrchr(xmldir,'/')))

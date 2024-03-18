@@ -13,6 +13,11 @@ struct oce_config
   const char **proxies;
 };
 
+#define ce_cfg ose_ce_cfg
+#define se_dir ose_dir
+#define se_file ose_file
+#define wid2loc8 ose_wid2loc8
+
 extern void ose_ce_cfg(const char *project, const char *index,const char *ce_tag, 
 		       const char *ce_ext, enum oce_files ce_type, 
 		       const char **proxies);

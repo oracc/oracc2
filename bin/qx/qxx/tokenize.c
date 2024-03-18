@@ -196,8 +196,10 @@ setup_index(struct token*curr_tok)
 	  firstindex = 0;
 	  textresult = rules->granularity == g_record;
 	  res_gran = rules->granularity;
+#if 0
 	  progress("se: result granularity = %s\n",
 		   textresult ? "text" : "field");
+#endif
 	}
       if (rules->se_manglerules&KM_STEM)
 	km_use_stemmer();

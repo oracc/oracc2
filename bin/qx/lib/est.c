@@ -1,12 +1,12 @@
-#include <oracsys.h>
+#include <oraccsys.h>
 #include "selib.h"
 
 int estmangle = KM_REDUCE|KM_HYPHOK|KM_FOLD|KM_2VOWEL; 
 
 struct est
 {
-  Hash_table *h;
-  struct npool *p;
+  Hash *h;
+  Pool *p;
   const char *project;
   const char *index;
   const char *filename;
@@ -19,7 +19,7 @@ void
 est_add(const unsigned char *key, struct est *estp)
 {
   const unsigned char *mangled_key = keymangler(key, estmangle, NULL, 0, NULL,NULL);
-  hash_add(estp->h, npool_copy(mangled_key, estp->p), npool_copy(key, estp->p));
+  hash_add(estp->h, pool_copy(mangled_key, estp->p), pool_copy(key, estp->p));
 }
 
 void
@@ -41,10 +41,10 @@ est_init(const char *project, const char *index)
 {
   struct est *estp = malloc(sizeof(struct est));
   estp->h = hash_create(1000);
-  estp->p = npool_init();
-  estp->project = (const char*)npool_copy((const unsigned char *)project, estp->p);
-  estp->index = (const char*)npool_copy((const unsigned char *)index, estp->p);
-  estp->filename = (const char*)npool_copy((const unsigned char *)
+  estp->p = pool_init();
+  estp->project = (const char*)pool_copy((const unsigned char *)project, estp->p);
+  estp->index = (const char*)pool_copy((const unsigned char *)index, estp->p);
+  estp->filename = (const char*)pool_copy((const unsigned char *)
 					   se_file(project, index, "keys.est"), 
 					   estp->p);
   return estp;
@@ -54,6 +54,6 @@ void
 est_term(struct est *estp)
 {
   hash_free(estp->h, NULL);
-  npool_term(estp->p);
+  pool_term(estp->p);
   free(estp);
 }

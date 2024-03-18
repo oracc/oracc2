@@ -1,8 +1,9 @@
 #ifndef _SELIB_H
 #define _SELIB_H
-
 #include <stdlib.h>
 #include <stdio.h>
+#include <ose.h>
+#include "types.h"
 
 struct est;
 
@@ -27,6 +28,7 @@ extern int v2;
 
 #define error mesg_verr
 #define mwarning mesg_verr
+#define ewfile mesg_mloc
 
 const char *attr_by_name(const char **atts,const char *name);
 extern FILE *create_mangle_tab(const char *project, const char *index);
@@ -36,9 +38,12 @@ extern void km_use_stemmer(void);
 extern void km_end_stemmer(void);
 int lang_mask(const char **atts);
 void loc8(const char *id, int word, int lmask, struct location8 *l8p);
+
+#if 0
 void wid2loc8(const char *id, const char *lang, struct location8 *l8p);
 const char *se_dir(const char *project, const char *xname);
 const char *se_file(const char *project, const char *xname, const char *fname);
+#endif
 
 void est_add(const unsigned char *key, struct est *estp);
 void est_dump(struct est *estp);

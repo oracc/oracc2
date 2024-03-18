@@ -1,6 +1,8 @@
 #include <oraccsys.h>
+#include <atf2utf.h>
 #include <wchar.h>
 #include <wctype.h>
+#include <charsets.h>
 #include "libstemmer.h"
 #include "atf.h"
 #include "selib.h"

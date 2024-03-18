@@ -11,9 +11,9 @@ struct p2_options
   const char *catalog_labels;
 };
 
-#include "npool.h"
+#include "pool.h"
 
-extern struct p2_options*p2_load(const char *project, const char *state, struct npool *pool);
-extern char *p2_maybe_append_designation(const char *s, struct npool *pool, const char *final);
+extern struct p2_options*p2_load(const char *project, const char *state, Pool *pool);
+extern char *p2_maybe_append_designation(const char *s, Pool *pool, const char *final);
 
 #endif/*P2_H_*/

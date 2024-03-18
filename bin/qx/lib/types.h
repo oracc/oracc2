@@ -2,6 +2,7 @@
 #define TYPES_H_ 1
 #include <limits.h>
 #include <stdint.h>
+#include <ose.h>
 
 typedef unsigned char  Char;
 typedef uint32_t       Four_bytes;

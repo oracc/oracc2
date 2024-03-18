@@ -8,6 +8,7 @@ bin/gx/gx
 bin/gx/siglangx
 bin/jx/jx
 bin/ox/oid
+bin/qx/qxx/qx
 bin/sx/sig2asl
 bin/sx/slix
 bin/sx/slx
@@ -62,11 +63,13 @@ ispargs.c
 lang_atf.c
 lang_core.c
 lang_mode.c
+langmask.c
 langrtl.c
 oid_domain.c
 oid_type.c
 osh_commands.c
 pqx_h_tab.c
+propmask.c
 qpnnames.c
 selections.c
 sll_signlist.c
