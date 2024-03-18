@@ -241,7 +241,8 @@ main (int argc, char **argv)
   if (aliases_only)
     exit(0);
 
-  vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 1);
+  vidp = vido_init('v',1);
+  /*vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 1);*/
 
   f_mangletab = create_mangle_tab(curr_project,"txt");
 
@@ -265,6 +266,7 @@ main (int argc, char **argv)
   /*  alias_check_date ("", TRUE); */
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
 		    sizeof(struct location16), DBI_ACCRETE);
+  dbi_set_vids(dip,"vid.vid");
   dbi_set_user(dip,d_txt);
   if (NULL == dip) 
     error (NULL, "unable to create index for %s", curr_index);
@@ -304,7 +306,10 @@ main (int argc, char **argv)
   est_dump(estp);
   est_term(estp);
 
-  vido_free(vidp);
+  char vidfn[1024];
+  sprintf(vidfn, "%s/vid.vid", index_dir);
+  vido_dump_data(vidp, vidfn, NULL);
+  vido_term(vidp);
   vidp = NULL;
 
   index_dir = se_dir (curr_project, curr_index);

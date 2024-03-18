@@ -180,16 +180,19 @@ main(int argc, char * const*argv)
 
   setlocale(LC_ALL,ORACC_LOCALE);
 
-  vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 1);
+  vidp = vido_init('v',1);
+
+  /*vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 1);*/
 
   f_mangletab = create_mangle_tab(curr_project,"cat");
   
   estp = est_init(curr_project, "cat");
-
+  const char *index_dir = NULL;
   dp = dbi_create("cat",
-		  se_dir(curr_project,"cat"),
+		  (index_dir = se_dir(curr_project,"cat")),
 		  500000,
 		  sizeof(struct location8),DBI_ACCRETE);
+  dbi_set_vids(dp,"vid.vid");
   dbi_set_cache(dp,cache_size);
   dbi_set_user(dp,d_cat);
 #if 0
@@ -230,7 +233,10 @@ main(int argc, char * const*argv)
   est_dump(estp);
   est_term(estp);
 
-  vido_free(vidp);
+  char vidfn[1024];
+  sprintf(vidfn, "%s/vid.vid", index_dir);
+  vido_dump_data(vidp, vidfn, NULL);
+  vido_term(vidp);
   vidp = NULL;
 #if 0
   progress("secatx: completed db creation\n");
