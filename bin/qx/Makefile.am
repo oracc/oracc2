@@ -1,3 +1,3 @@
 include ../../oracc-am-rules.txt
 
-SUBDIRS=../../lib lib qxx cat cbd lem tra txt ce wm
+SUBDIRS=../../lib lib qxx txt cat cbd lem tra ce wm

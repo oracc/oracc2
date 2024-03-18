@@ -7,9 +7,8 @@
 #ifndef INDEX_H_
 #define INDEX_H_ 1
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "../se.h"
+#include <oraccsys.h>
+#include "se.h"
 
 struct indexed
 {
@@ -75,10 +74,10 @@ extern Four_bytes curr_line;
 extern Char *curr_text;
 extern Char **filelist;
 
-extern struct any_type *indexed_mm;
-extern struct any_type *parallels_mm;
-extern struct any_type *grapheme_mm;
-extern struct any_type *node_mm;
+extern Memo *indexed_mm;
+extern Memo *parallels_mm;
+extern Memo *grapheme_mm;
+extern Memo *node_mm;
 
 extern void doctype (char *yytext);
 extern void begin_indexed (void);
@@ -102,5 +101,5 @@ extern void label (Char *text);
 extern Char *savestr (Char *text);
 extern void text (Char *text);
 extern void text_add_label (Char *label);
-#include "mm_any.h"
+
 #endif

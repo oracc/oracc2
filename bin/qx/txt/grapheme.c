@@ -1,17 +1,11 @@
-/*
- Copyright(c) Pennsylvania Sumerian Dictionary and Steve Tinney
- 1997 under the GNU General Public License (see /psd/COPYING).
-
- $Id: grapheme.c,v 0.3 1997/09/08 14:50:14 sjt Exp s $
-*/
-#include <psd_base.h>
+#include <oraccsys.h>
 #include "index.h"
 #include "property.h"
-#include "../types.h"
+#include "types.h"
 
 struct grapheme *grapheme_list_base = NULL;
 struct grapheme *grapheme_list = NULL;
-struct any_type *grapheme_mm;
+Memo *grapheme_mm;
 
 extern struct location8 l8;
 extern Two_bytes curr_properties;
@@ -36,12 +30,12 @@ grapheme (const char *text)
   curr_node->l.properties = curr_properties;
   if (grapheme_list)
     {
-      grapheme_list->next = new (grapheme_mm);
+      grapheme_list->next = memo_new (grapheme_mm);
       grapheme_list = grapheme_list->next;
     }
   else
     {
-      grapheme_list = grapheme_list_base = new (grapheme_mm);
+      grapheme_list = grapheme_list_base = memo_new (grapheme_mm);
     }
   grapheme_list->text = (unsigned char *)xstrdup((const char*)text);
   grapheme_list->node = curr_node;

@@ -1,30 +1,19 @@
-#include <unistd.h>
-#include <locale.h>
-#include <atflocale.h>
-#include <psd_base.h>
-#include <ctype128.h>
-#include <dbi.h>
-
+#include <oraccsys.h>
 #include <index.h>
 #include <alias.h>
-#include <options.h>
 #include <runexpat.h>
-#include <list.h>
-#include <fname.h>
-#include "oracclocale.h"
 
 #include "fields.h"
 #include "property.h"
 #include "se.h"
 #include "selib.h"
-#include "vid.h"
 
 #include <sys/unistd.h>
 
 extern int swc_flag;
 extern int l2;
 
-extern struct vid_data *vidp;
+extern Vido *vidp;
 
 #ifndef strdup
 extern char *strdup(const char *);
@@ -147,7 +136,7 @@ gdlStartElement(void *userData, const char *name, const char **atts)
 	pos_props(pos(atts));
 	sprintf(qualified_id, "%s:%s", loc_project_buf, xml_id(atts));
 	if (vidp)
-	  wid2loc8(vid_map_id(vidp,qualified_id),xml_lang(atts),&l8);
+	  wid2loc8(vido_new_id(vidp,qualified_id),xml_lang(atts),&l8);
 	else
 	  wid2loc8(curr_id,xml_lang(atts),&l8);
 	form = attr_by_name(atts,"form");
@@ -212,7 +201,7 @@ gdlStartElement(void *userData, const char *name, const char **atts)
 void
 gdlEndElement(void *userData, const char *name)
 {
-  extern Hash_table *signmap;
+  extern Hash *signmap;
   switch (name[2])
     {
     case 'w':
@@ -246,7 +235,9 @@ gdlEndElement(void *userData, const char *name)
 		  {
 		    if (strcmp((const char *)s,(const char *)g))
 		      {
+#if 0
 			progress("indexing sign value %s as sign %s\n",g, s);
+#endif
 			/* fprintf(stderr, "indexing sign value %s as sign %s\n", g, s); */
 			grapheme_decr_start_column();
 			grapheme((const char *)s);
@@ -272,7 +263,9 @@ gdlEndElement(void *userData, const char *name)
 	    Char *s = hash_find(signmap,g);
 	    if (s)
 	      {
+#if 0
 		progress("indexing value %s as sign %s\n",g, s);
+#endif
 		grapheme_decr_start_column();
 		grapheme((const char *)s);
 		est_add(g, estp);

@@ -1,41 +1,26 @@
-#include <unistd.h>
-#include <locale.h>
-#include <atflocale.h>
-#include <psd_base.h>
-#include <ctype128.h>
-#include <dbi.h>
+#include <oraccsys.h>
 #include <index.h>
 #include <alias.h>
-#include <options.h>
 #include <runexpat.h>
-#include <list.h>
-#include <fname.h>
-#include "oracclocale.h"
 
 #include "fields.h"
 #include "property.h"
 #include "se.h"
 #include "selib.h"
-#include "vid.h"
 
-#include <sys/unistd.h>
+const char *xatf_name = NULL;
 
-Hash_table *signmap = NULL;
+Hash *signmap = NULL;
 
 int swc_flag = 0;
-int l2 = 1;
 
-struct vid_data *vidp;
-
-#ifndef strdup
-extern char *strdup(const char *);
-#endif
+Vido *vidp;
 
 struct est *estp;
 extern void grapheme_decr_start_column(void);
 extern void grapheme_end_column_logo(void);
 extern void grapheme_inherit_preceding_properties(void);
-extern void grapheme_reset_start_column(void);
+extern void grapheme_memo_reset_start_column(void);
 
 extern void trie_init(void);
 extern void trie_term(void);
@@ -145,21 +130,21 @@ startElement(void *userData, const char *name, const char **atts)
     case 't':
       if (!strcmp(name,"transliteration"))
 	{
-	  reset(indexed_mm);
+	  memo_reset(indexed_mm);
 	  loc_project(atts);
 	}
       break;
     case 'c':
       if (!strcmp(name,"composite"))
 	{
-	  reset(indexed_mm);
+	  memo_reset(indexed_mm);
 	  loc_project(atts);
 	}
       break;
     case 's':
       if (!strcmp(name,"score"))
 	{
-	  reset(indexed_mm);
+	  memo_reset(indexed_mm);
 	  loc_project(atts);
 	}
       break;
@@ -193,7 +178,7 @@ startElement(void *userData, const char *name, const char **atts)
 	      pos_props(pos(atts));
 	      sprintf(qualified_id, "%s:%s", loc_project_buf, headref);
 	      /* fprintf(stderr,"setxtx: setting word loc from headref %s\n", headref); */
-	      wid2loc8(vid_map_id(vidp,qualified_id),xml_lang(atts),&l8);
+	      wid2loc8(vido_new_id(vidp,qualified_id),xml_lang(atts),&l8);
 	    }
 	}
     case 'n':
@@ -202,7 +187,7 @@ startElement(void *userData, const char *name, const char **atts)
 	  const unsigned char *n = NULL;
 	  pos_props(pos(atts));
 	  sprintf(qualified_id, "%s:%s", loc_project_buf, xml_id(atts));
-	  wid2loc8(vid_map_id(vidp,qualified_id),xml_lang(atts),&l8);
+	  wid2loc8(vido_new_id(vidp,qualified_id),xml_lang(atts),&l8);
 	  n = (const unsigned char*)attr_by_name(atts,"form");
 	  grapheme((const char *)n);
 	  est_add(n, estp);
@@ -256,8 +241,7 @@ main (int argc, char **argv)
   if (aliases_only)
     exit(0);
 
-  if (l2)
-    vidp = vid_load_data(se_file(curr_project,"cat","vid.dat"));
+  vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 1);
 
   f_mangletab = create_mangle_tab(curr_project,"txt");
 
@@ -270,11 +254,13 @@ main (int argc, char **argv)
   signmap_init();
 
   index_dir = se_dir (curr_project, curr_index);
+#if 0
   progress ("indexing %s ...\n", index_dir);
-  indexed_mm = init_mm (sizeof (struct indexed), 256);
-  parallels_mm = init_mm (sizeof (struct parallel), 256);
-  grapheme_mm = init_mm (sizeof (struct grapheme), 256);
-  node_mm = init_mm (sizeof (struct node), 256);
+#endif
+  indexed_mm = memo_init (sizeof (struct indexed), 256);
+  parallels_mm = memo_init (sizeof (struct parallel), 256);
+  grapheme_mm = memo_init (sizeof (struct grapheme), 256);
+  node_mm = memo_init (sizeof (struct node), 256);
 
   /*  alias_check_date ("", TRUE); */
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
@@ -318,11 +304,8 @@ main (int argc, char **argv)
   est_dump(estp);
   est_term(estp);
 
-  if (l2)
-    {
-      vid_free(vidp);
-      vidp = NULL;
-    }
+  vido_free(vidp);
+  vidp = NULL;
 
   index_dir = se_dir (curr_project, curr_index);
   dip = dbi_open("txt", index_dir);
@@ -346,10 +329,10 @@ main (int argc, char **argv)
   dbi_flush(mapdb);
   /*  dbi_close(mapdb);*/
 
-  ce_cfg(curr_project,"txt","tr","txh",ce_byid, proxies);
-
+  ce_cfg(curr_project,"txt","tr","txh",oce_byid, proxies);
+#if 0
   progress ("index files written to `%s'\n", se_dir(curr_project,curr_index));
-
+#endif
   return 0;
 }
 
@@ -358,7 +341,7 @@ main (int argc, char **argv)
 static void
 fn_expand(void *p)
 {
-  char *x = (char*)l2_expand(NULL, p, "xmd");
+  char *x = (char*)expand(NULL, p, "xmd");
   if (!access(x, R_OK))
     {
       char *e = x + strlen(x);
@@ -428,13 +411,10 @@ help()
 }
 
 int
-opts(int c, char *arg)
+opts(int c, const char *arg)
 {
   switch (c)
     {
-    case '2':
-      l2 = 1;
-      break;
     case 'a':
       aliases_only = 1;
       break;

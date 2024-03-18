@@ -248,3 +248,4 @@ vido_free(Vido*vp)
       free(vp->file);
     }
 }
+

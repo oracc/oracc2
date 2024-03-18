@@ -8,7 +8,9 @@ bin/gx/gx
 bin/gx/siglangx
 bin/jx/jx
 bin/ox/oid
+bin/qx/cat/qcatx
 bin/qx/qxx/qx
+bin/qx/txt/qtxtx
 bin/sx/sig2asl
 bin/sx/slix
 bin/sx/slx
@@ -74,6 +76,8 @@ qpnnames.c
 selections.c
 sll_signlist.c
 sllext.c
+sn_alias.c
+statnames.c
 tokflags.c
 
 # .in derivatives

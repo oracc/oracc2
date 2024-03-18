@@ -1,29 +1,20 @@
-#include <psd_base.h>
-#include <ctype128.h>
-#include <dbi.h>
-#include <index.h>
-#include <alias.h>
-#include <options.h>
+#include <oraccsys.h>
 #include <runexpat.h>
-#include <list.h>
-#include <fname.h>
-#include <locale.h>
-#include "atflocale.h"
-#include "oracclocale.h"
 
+#include "alias.h"
 #include "fields.h"
 #include "property.h"
+#include "ose.h"
 #include "se.h"
 #include "selib.h"
-#include "ce.h"
+#include "../txt/index.h"
 
 #ifndef strdup
 extern char *strdup(const char *);
 #endif
 
-Hash_table *signmap = NULL;
+Hash *signmap = NULL;
 
-int l2 = 1;
 int swc_flag = 0;
 
 FILE *f_idlist;
@@ -99,7 +90,7 @@ startElement(void *userData, const char *name, const char **atts)
     {
     case 'e':
       if (name[5] == 'i' && !strcmp(name,"entries"))
-	reset(indexed_mm);
+	memo_reset(indexed_mm);
       else if (!strcmp(name,"entry"))
 	{
 	  branch_id = 0;
@@ -361,15 +352,13 @@ main(int argc, char **argv)
       exit(1);
     }
   signmap_init();
-
+#if 0
   progress("indexing %s ...\n", index_dir);
-  se_v2(curr_project);
-  if (v2)
-    v2s_init();
-  indexed_mm = init_mm(sizeof (struct indexed), 256);
-  parallels_mm = init_mm(sizeof (struct parallel), 256);
-  grapheme_mm = init_mm(sizeof (struct grapheme), 256);
-  node_mm = init_mm(sizeof (struct node), 256);
+#endif
+  indexed_mm = memo_init(sizeof (struct indexed), 256);
+  parallels_mm = memo_init(sizeof (struct parallel), 256);
+  grapheme_mm = memo_init(sizeof (struct grapheme), 256);
+  node_mm = memo_init(sizeof (struct node), 256);
 
   /*  alias_check_date ("", TRUE); */
   dip = dbi_create(curr_index, index_dir, 10000, /* hash_create will adjust */
@@ -415,7 +404,6 @@ main(int argc, char **argv)
   
   /*  progress (NULL); */
 
-  v2s_save(v2s_file(index_dir));
   xfclose(idlist, f_idlist);
   free(idlist);
   idlist = NULL;
@@ -464,10 +452,10 @@ main(int argc, char **argv)
   
   dbi_flush(mapdb);
   
-  ce_cfg(curr_project, buf, "p", NULL, ce_summary, NULL);
-
+  ce_cfg(curr_project, buf, "p", NULL, oce_summary, NULL);
+#if 0
   progress("index files written to `%s'\n", index_dir);
-
+#endif
   return 0;
 }
 
@@ -485,7 +473,7 @@ help()
 }
 
 int
-opts(int c, char *arg)
+opts(int c, const char *arg)
 {
   switch (c)
     {

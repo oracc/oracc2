@@ -10,13 +10,13 @@
 
 int start_column;
 struct node *curr_node;
-struct any_type *node_mm;
+Memo *node_mm;
 
 struct node *
 new_node ()
 {
   struct node *np;
-  np = new (node_mm);
+  np = memo_new (node_mm);
   np->left = np->right = np->down = np->up = NULL;
   np->parallel_info = NULL;
   np->end_of_branch_flag = np->used_flag = 0;

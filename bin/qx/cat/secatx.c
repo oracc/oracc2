@@ -1,12 +1,15 @@
 #include <oraccsys.h>
 #include <ctype128.h>
 #include <locale.h>
-#include "../selib.h"
-#include "../se.h"
+#include <runexpat.h>
+#include "selib.h"
+#include "se.h"
 #include "fields.h"
 
 #undef C
 #define C(x) #x,
+
+FILE *f_log;
 
 static struct est *estp;
 
@@ -18,8 +21,6 @@ const char *static_names[] =
 #ifndef strdup
 extern char *strdup(const char *);
 #endif
-
-int l2 = 1;
 
 extern FILE *f_log;
 FILE *f_mangletab = NULL;
@@ -38,14 +39,14 @@ static int indexing = 0;
 static FILE *fldsf;
 static int cache_size = 16;
 
-static struct vid_data *vidp;
+static Vido *vidp;
 
 const char *curr_index = "cat";
 
 /*
  * Dynamic field name support
  */
-static Hash_table *dyntab;
+static Hash *dyntab;
 
 struct sn_tab *
 dynanames(const char *fname)
@@ -65,7 +66,9 @@ dn_add_name(const char *fname)
   if (!dyntab)
     dyntab = hash_create(16);
   hash_add(dyntab, (Uchar *)fname, s);
+#if 0
   progress("adding %s with uid %d\n",fname,s->uid);
+#endif
   fprintf(fldsf,"%s\t%d\n",fname,s->uid);
   return s->uid;
 }
@@ -80,19 +83,11 @@ startElement(void *userData, const char *name, const char **atts)
   if (!strcmp(name,"xmd"/*"key"*/))
     {
       curr_text_pq = findAttr(atts, "xml:id");
-      if (l2)
-	{
-	  static char qualified_id[128];
-	  curr_text_proj = findAttr(atts, "project");
-	  sprintf(qualified_id, "%s:%s", curr_text_proj, curr_text_pq);	  
-	  fprintf(pqidsf,"%s\n",qualified_id);
-	  loc8(vid_map_id(vidp,qualified_id), 0, lang_mask(atts), &l8);
-	}
-      else
-	{
-	  fprintf(pqidsf,"%s\n",curr_text_pq);
-	  loc8(curr_text_pq, 0, lang_mask(atts), &l8);
-	}
+      static char qualified_id[128];
+      curr_text_proj = findAttr(atts, "project");
+      sprintf(qualified_id, "%s:%s", curr_text_proj, curr_text_pq);	  
+      fprintf(pqidsf,"%s\n",qualified_id);
+      loc8(vido_new_id(vidp,qualified_id), 0, lang_mask(atts), &l8);
       indexing = 1;
     }
 }
@@ -185,8 +180,7 @@ main(int argc, char * const*argv)
 
   setlocale(LC_ALL,ORACC_LOCALE);
 
-  if (l2)
-    vidp = vid_load_data(se_file(curr_project,"cat","vid.dat"));
+  vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 1);
 
   f_mangletab = create_mangle_tab(curr_project,"cat");
   
@@ -198,8 +192,9 @@ main(int argc, char * const*argv)
 		  sizeof(struct location8),DBI_ACCRETE);
   dbi_set_cache(dp,cache_size);
   dbi_set_user(dp,d_cat);
-
+#if 0
   progress("secatx: creating index %s\n",dp->dir);
+#endif
   pqidsf = xfopen(se_file(curr_project,"cat","pqids.lst"),"w");
   fldsname = strdup(se_file(curr_project,"cat","fieldnames.tab"));
   fldsf = xfopen(fldsname,"w");
@@ -235,13 +230,11 @@ main(int argc, char * const*argv)
   est_dump(estp);
   est_term(estp);
 
-  if (l2)
-    {
-      vid_free(vidp);
-      vidp = NULL;
-    }
-
+  vido_free(vidp);
+  vidp = NULL;
+#if 0
   progress("secatx: completed db creation\n");
+#endif
   dp = dbi_open("cat",se_dir(curr_project,"cat"));
   if (dp && dp->h.entry_count > 0)
     {
@@ -262,7 +255,7 @@ main(int argc, char * const*argv)
   dbi_close(dp);
   xfclose(fldsname,fldsf);
 
-  ce_cfg(curr_project, "cat", "catalog", "xmd", ce_xmd, NULL);
+  ce_cfg(curr_project, "cat", "catalog", "xmd", oce_xmd, NULL);
 
   return 0;
 }
@@ -274,13 +267,10 @@ fn_expand(void *p)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {
-    case '2':
-      l2 = 1;
-      break;
     case 'c':
       cache_size = atoi(arg);
       break;

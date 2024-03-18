@@ -1,15 +1,9 @@
-/*
- Copyright(c) Pennsylvania Sumerian Dictionary and Steve Tinney
- 1997 under the GNU General Public License (see /psd/COPYING).
-
- $Id: parallel.c,v 0.3 1997/09/08 14:50:16 sjt Exp $
-*/
-#include <psd_base.h>
+#include <oraccsys.h>
 #include "index.h"
 
 extern int swc_flag;
 
-struct any_type *parallels_mm;
+Memo *parallels_mm;
 int parallels_depth;
 struct parallel *curr_parallel = NULL;
 static void push_parallel (void);
@@ -22,7 +16,7 @@ begin_parallels ()
   parallels_depth = 0;
   if (curr_parallel)
     {
-      curr_parallel->child = new (parallels_mm);
+      curr_parallel->child = memo_new (parallels_mm);
       curr_parallel->child->parent = curr_parallel;
       curr_parallel = curr_parallel->child;
       curr_parallel->child = NULL;
@@ -30,7 +24,7 @@ begin_parallels ()
     }
   else
     {
-      curr_parallel = new (parallels_mm);
+      curr_parallel = memo_new (parallels_mm);
       curr_parallel->parent = NULL;
     }
   curr_parallel->start_column = start_column;

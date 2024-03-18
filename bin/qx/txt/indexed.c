@@ -8,7 +8,7 @@
 #include "property.h"
 
 struct indexed *curr_indexed;
-struct any_type *indexed_mm;
+Memo *indexed_mm;
 static int indexed_id;
 
 extern int swc_flag;
@@ -18,12 +18,12 @@ begin_indexed ()
 {
   if (curr_indexed)
     {
-      curr_indexed->next = new (indexed_mm);
+      curr_indexed->next = memo_new (indexed_mm);
       curr_indexed = curr_indexed->next;
     }
   else
     {
-      curr_indexed = new (indexed_mm);
+      curr_indexed = memo_new (indexed_mm);
       curr_indexed->next = NULL;
     }
   curr_node = curr_indexed->nodes = new_node ();
@@ -96,8 +96,8 @@ end_indexed ()
   if (index_flag)
     add_graphemes ();
 
-  reset (node_mm);
-  reset (grapheme_mm);
-  reset (parallels_mm);
+  memo_reset (node_mm);
+  memo_reset (grapheme_mm);
+  memo_reset (parallels_mm);
   curr_node = NULL;
 }

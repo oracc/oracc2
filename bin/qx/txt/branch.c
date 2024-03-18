@@ -1,14 +1,8 @@
-/*
- Copyright(c) Pennsylvania Sumerian Dictionary and Steve Tinney
- 1997 under the GNU General Public License (see /psd/COPYING).
-
- $Id: branch.c,v 0.3 1997/09/08 14:50:13 sjt Exp s $
-*/
-#include <psd_base.h>
+#include <oraccsys.h>
 #include "index.h"
 
 int branch_id;
-extern const char *atf_name;
+extern const char *xatf_name;
 extern int atf_line, swc_flag;
 
 void
@@ -18,7 +12,7 @@ begin_branch ()
     {
       if (!curr_node)
 	{
-	  mwarning(NULL, "%s:%d: malformed XTF; NULL curr_node", atf_name, atf_line);
+	  mwarning(NULL, "%s:%d: malformed XTF; NULL curr_node", xatf_name, atf_line);
 	  return;
 	}
       if (curr_node->used_flag)

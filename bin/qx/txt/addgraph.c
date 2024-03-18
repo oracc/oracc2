@@ -1,9 +1,3 @@
-/*
- Copyright(c) Pennsylvania Sumerian Dictionary and Steve Tinney
- 1997 under the GNU General Public License (see /psd/COPYING).
-
- $Id: addgraph.c,v 0.4 1997/09/08 14:50:13 sjt Exp $
-*/
 
 #define inline
 #undef xfwrite
