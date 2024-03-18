@@ -307,7 +307,7 @@ main (int argc, char **argv)
   est_term(estp);
 
   char vidfn[1024];
-  sprintf(vidfn, "%s/vid.vid", index_dir);
+  strcpy(vidfn, se_file(curr_project,"txt","vid.vid"));
   vido_dump_data(vidp, vidfn, NULL);
   vido_term(vidp);
   vidp = NULL;

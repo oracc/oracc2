@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <locale.h>
 #include <atf2utf.h>
+#include <charsets.h>
 #include "types.h"
 #include "se.h"
 #include "selib.h"
@@ -54,6 +55,7 @@ Vido *vp;
 
 extern int gdf_flag;
 
+#if 0
 void
 se_vids_init(const char *index)
 {
@@ -63,6 +65,7 @@ se_vids_init(const char *index)
   else
     vp = NULL;
 }
+#endif
 
 void
 debug_tuw(struct location8 *p8)
@@ -497,10 +500,8 @@ main(int argc, char * const*argv)
     out_f = stdout;
 
   atf2utf_init();
-#if 0
   charsets_init();
   langtag_init();
-#endif
   tokinit();
 
   if (pretrim_file || pretrim_args)

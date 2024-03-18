@@ -81,7 +81,7 @@ void
 set_index(struct token *t)
 {
   const char *slash = NULL;
-  extern int l2;
+  /*extern int l2;*/
   extern const char *return_index;
 
   curr_index = t->data;
@@ -94,8 +94,12 @@ set_index(struct token *t)
   
   if (!(curr_dip = open_index(se_curr_project,curr_index)))
     fprintf(stderr,"se: open failed on %s\n", curr_index);
+#if 1
+  vp = curr_dip->vp;
+#else
   if (l2)
     se_vids_init(curr_index);
+#endif
 }
 static int
 set_filter(struct token *t)
@@ -685,6 +689,7 @@ open_index(const char *proj,const char *index)
 	{
 	  alias_use(ixp->dip->aliases);
 	  signmap = ixp->dip->signmap;
+	  dbx_vido(ixp->dip);
 	  return ixp->dip;
 	}
     }
@@ -702,6 +707,7 @@ open_index(const char *proj,const char *index)
 	signmap = ixp->dip->signmap = dbi_open("signmap",iname_buf);
       else
 	signmap  = ixp->dip->signmap = NULL;
+      dbx_vido(ixp->dip);
     }
   else
     error(NULL,"se eval: failed to open index %s\n",iname);

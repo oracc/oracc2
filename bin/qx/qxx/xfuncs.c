@@ -11,8 +11,10 @@ XidVal(long int id)
 static char
 id_prefix(long int id)
 {
+  return 'v';
+#if 0
   extern const char *return_index;
-  if (l2 && (!return_index || strncmp(return_index,"cbd",3)))
+  if (l2 && (!return_index /* || strncmp(return_index,"cbd",3)*/))
     {
       return 'v';
     }
@@ -28,6 +30,7 @@ id_prefix(long int id)
 	    return ret_type_rules->pos_id_prefix;
 	}
     }
+#endif
 }
 
 static void

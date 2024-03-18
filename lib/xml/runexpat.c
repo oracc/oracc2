@@ -234,7 +234,10 @@ runexpatNSuD(enum isource from,
 
   XML_ParserFree(parser);
   runexpat_term(rip);
+#if 0
+  /* rip->fname is always pool_copy()ed these days */
   free(rip->fname);
+#endif
   free(rip);
 
   if (runinfo_stack)

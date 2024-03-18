@@ -620,8 +620,10 @@ main (int argc, char **argv)
 
   /* signmap_err = fopen("01tmp/signmap.log", "w"); */
 
-  if (l2)
-    vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 0);
+  mesg_init();
+  vidp = vido_init('v',1);
+
+  /*vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 0);*/
 
   f_mangletab = create_mangle_tab(curr_project,"lem");
   
@@ -640,6 +642,7 @@ main (int argc, char **argv)
   /*  alias_check_date ("", TRUE); */
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
 		    sizeof(struct location24), DBI_ACCRETE);
+  dbi_set_vids(dip,"vid.vid");
   dbi_set_user(dip,d_lem);
   if (NULL == dip) 
     error (NULL, "unable to create index for %s", curr_index);
@@ -692,12 +695,12 @@ main (int argc, char **argv)
       exit(1);
     }
   dbi_free (dip);
-
-  if (l2)
-    {
-      vido_free(vidp);
-      vidp = NULL;
-    }
+  
+  char vidfn[1024];
+  strcpy(vidfn, se_file(curr_project,"lem","vid.vid"));
+  vido_dump_data(vidp, vidfn, NULL);
+  vido_term(vidp);
+  vidp = NULL;
 
   est_dump(estp);
   est_term(estp);
@@ -710,7 +713,7 @@ main (int argc, char **argv)
   if (aliases)
     hash_exec2(aliases,(void (*)(const unsigned char *, void *))dumpalias);
   alias_fast_term ();
-
+  
   while (NULL != (key = (dbi_each(dip))))
     fprintf(keysf,"%s\n",key);
   fclose(keysf);
@@ -722,6 +725,8 @@ main (int argc, char **argv)
   dbi_flush(mapdb);
   /*  dbi_close(mapdb);*/
 
+  mesg_print(stderr);
+  
   memo_term(f2_mem);
   pool_term(lempool);
   hash_free(lemindex, NULL);

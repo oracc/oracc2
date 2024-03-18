@@ -80,7 +80,7 @@ startElement(void *userData, const char *name, const char **atts)
   if (!strcmp(name,"o:record"))
     {
       curr_id = findAttr(atts, "xml:id");
-      vido_new_id(vidp, curr_id);
+      /*vido_new_id(vidp, curr_id);*/
       fprintf(pqidsf,"%s\n",curr_id);
       loc8(vido_new_id(vidp,curr_id), 0, lang_mask(atts), &l8);
       indexing = 1;
@@ -183,6 +183,7 @@ main(int argc, char * const*argv)
 		  500000,
 		  sizeof(struct location8),DBI_ACCRETE);
   dbi_set_cache(dp,cache_size);
+  dbi_set_vids(dp,"vid.vid");
   dbi_set_user(dp,d_cat);
 #if 0
   progress("segdfx: creating index %s\n",dp->dir);

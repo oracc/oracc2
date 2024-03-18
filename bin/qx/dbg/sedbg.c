@@ -23,7 +23,7 @@ const char *return_index = NULL;
 extern struct expr_rules rulestab[];
 struct expr_rules *ret_type_rules = rulestab;
 
-static int gdf_flag = 0;
+/*static int gdf_flag = 0;*/
 
 enum What_to_do
 {
@@ -74,7 +74,7 @@ main (int argc, char *const *argv)
   setup_args (argv);
   if (!project || !indexname)
     usage();
-  se_vids_init(indexname);
+  /*se_vids_init(indexname);*/
   switch (what_to_do)
     {
     case WTD_INDEX:
@@ -263,11 +263,15 @@ do_index (List *arglist)
 
   iname = se_dir(project,indexname);
   dip = dbi_open (name ? name : idxbuf,iname);
-
+  dbx_vido(dip);
   ret_type_rules = &rulestab[dip->h.ht_user];
 
+#if 1
+  vp = dip->vp;
+#else
   if (l2)
     se_vids_init(indexname);
+#endif
 
   while (NULL != (key = dbi_each (dip)))
     {
@@ -383,6 +387,7 @@ opts (int c, const char *arg)
   return 0;
 }
 
+#if 0
 void
 se_vids_init(const char *index)
 {
@@ -392,3 +397,5 @@ se_vids_init(const char *index)
   else
     vp = NULL;
 }
+#endif
+

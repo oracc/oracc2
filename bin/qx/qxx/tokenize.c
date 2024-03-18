@@ -174,14 +174,16 @@ scan_name(struct token *tokp, const char *s)
 static void
 setup_index(struct token*curr_tok)
 {
-  extern int l2;
+  /*extern int l2;*/
   set_index(curr_tok);
 
+#if 0
   /*FIXME: if more than translation indexes start to use virtualized
     IDs this will need to be better parameterized */
   if (!l2 && !strcmp(curr_tok->data,"tra"))
     se_vids_init("tra");
-
+#endif
+  
   if (curr_dip->h.ht_user < d_NONE)
     {
       rules = &rulestab[curr_dip->h.ht_user];

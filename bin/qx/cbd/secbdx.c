@@ -45,6 +45,7 @@ enum pending_boundary_types pending_boundary = pb_none;
 
 static int aliases_only = 0;
 
+extern const char *gdlix_id;
 char curr_id[32];
 int one_big_stdin = 0;
 extern int branch_id;
@@ -320,7 +321,8 @@ main(int argc, char **argv)
   Dbi_index *mapdb;
 
   f_log = stderr;
-
+  gdlix_id = curr_id;
+  
   options(argc, argv, "ac:gl:p:s");
 
   setlocale(LC_ALL,ORACC_LOCALE);

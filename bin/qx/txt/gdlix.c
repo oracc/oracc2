@@ -10,6 +10,8 @@
 
 #include <sys/unistd.h>
 
+const char *gdlix_id = NULL; /* caller sets this to disable use of qualified_id */
+
 extern int swc_flag;
 extern int l2;
 
@@ -134,11 +136,18 @@ gdlStartElement(void *userData, const char *name, const char **atts)
 	const char *form;
 	extern char curr_id[];
 	pos_props(pos(atts));
-	sprintf(qualified_id, "%s:%s", loc_project_buf, xml_id(atts));
-	if (vidp)
-	  wid2loc8(vido_new_id(vidp,qualified_id),xml_lang(atts),&l8);
+	if (gdlix_id)
+	  {
+	    wid2loc8(vido_new_id(vidp,gdlix_id),xml_lang(atts),&l8);
+	  }
 	else
-	  wid2loc8(curr_id,xml_lang(atts),&l8);
+	  {
+	    sprintf(qualified_id, "%s:%s", loc_project_buf, xml_id(atts));
+	    if (vidp)
+	      wid2loc8(vido_new_id(vidp,qualified_id),xml_lang(atts),&l8);
+	    else
+	      wid2loc8(curr_id,xml_lang(atts),&l8);
+	  }
 	form = attr_by_name(atts,"form");
 	if (form)
 	  est_add((const unsigned char*)attr_by_name(atts,"form"), estp);

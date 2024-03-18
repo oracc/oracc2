@@ -52,7 +52,7 @@ struct Datum
 		    these locations */
   Unsigned32 data_size;/* size of one data element */
   const Uchar *key;
- int expr_id;
+  int expr_id;
 };
 
 struct token

@@ -304,7 +304,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
   while (*lp && (*lp != '[' || lp[-1] == '\\'))
     ++lp;
 
-  if (bit_set(formp->flags,FORM_FLAGS_CF_QUOTED))
+  if (bit_get(formp->flags,FORM_FLAGS_CF_QUOTED))
     {
       if (lp[-1] == '"')
 	lp[-1] = '\0';
@@ -478,7 +478,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 		  formp->form = lp;
 		  break;
 		case '$':
-		  if (!bit_set(formp->flags, FORM_FLAGS_LEM_BY_NORM))
+		  if (!bit_get(formp->flags, FORM_FLAGS_LEM_BY_NORM))
 		    formp->norm = lp;
 		  /* else ignore normalization because we got it from the "FORM" */
 		  break;
@@ -598,7 +598,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 	formp->norm = formp->cf;
     }
   
-  if (bit_set(formp->flags, FORM_FLAGS_LEM_BY_NORM))
+  if (bit_get(formp->flags, FORM_FLAGS_LEM_BY_NORM))
     {
       if (formp->norm && formp->cf && !strcmp((char*)formp->cf,(char*)formp->norm))
 	{

@@ -187,16 +187,13 @@ trax_endElement(void *userData, const char *name)
 int
 main (int argc, char **argv)
 {
-  const char *index_dir, *keys, *vids;
+  const char *index_dir, *keys; /*, *vids;*/
   const unsigned char *key;
 
   options (argc, argv, "2ac:gp:stx:");
   set_proxies(proxies_arg);
   setlocale(LC_ALL,ORACC_LOCALE);
-  if (l2)
-    vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 0);
-  else
-    vidp = vido_init('v', 0);
+  vidp = vido_init('v', 1);
 
   f_mangletab = create_mangle_tab(curr_project,"tra");
  
@@ -212,6 +209,7 @@ main (int argc, char **argv)
 
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
 		    sizeof(struct location16), DBI_ACCRETE);
+  dbi_set_vids(dip,"vid.vid");
   dbi_set_user(dip,d_tra);
   if (NULL == dip) 
     error (NULL, "unable to create index for %s", curr_index);
@@ -245,18 +243,11 @@ main (int argc, char **argv)
   dbi_flush (dip);
   dbi_free (dip);
 
-  if (l2)
-    {
-      vido_free(vidp);
-      vidp = NULL;
-    }
-  else
-    {
-      vids = se_file (curr_project, curr_index, "vid.dat");
-      vido_dump_data(vidp,vids,NULL);
-      vido_term(vidp);
-      vidp = NULL;
-    }
+  char vidfn[1024];
+  strcpy(vidfn, se_file(curr_project,"tra","vid.vid"));
+  vido_dump_data(vidp, vidfn, NULL);
+  vido_term(vidp);
+  vidp = NULL;
 
   index_dir = se_dir (curr_project, curr_index);
   dip = dbi_open(curr_index, index_dir);
