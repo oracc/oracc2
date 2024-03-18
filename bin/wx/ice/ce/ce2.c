@@ -1,22 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/unistd.h>
-#include <ctype.h>
-#include <psd_base.h>
-#include <messages.h>
-#include <options.h>
-#include <fname.h>
-#include <hash.h>
-#include <list.h>
-#include <xmlutil.h>
+#include <oraccsys.h>
+#include <xmlify.h>
 #include <runexpat.h>
-#include <loadfile.h>
-#include <npool.h>
 #include <xmd.h>
 #include "selib.h"
 #include "gdf.h"
 #include "ce.h"
+
+FILE *f_log;
 
 /*FIXME: the i/o and id processing here needs to use dynamic memory */
 #define CE_BUFSIZ 1024
@@ -35,7 +25,7 @@ int ood_mode = 0;
 int p3 = 1;
 
 const char *id, *ce_index, *lang = NULL, *mode = NULL, *project, *fn_project, *xtr_n = NULL, *state;
-char *gdf_xml;
+const char *gdf_xml;
 const char *idattr = "xml:id";
 int echoing = 0;
 int item_offset;
@@ -46,15 +36,15 @@ int tabbed = 0;
 int verbose = 0;
 int xml_output = 0;
 
-struct npool *ce_pool;
+Pool *ce_pool;
 
 const char *project_en = NULL;
 
 const char *config = "config.xml";
-struct ce_config cfg;
+struct oce_config cfg;
 List *files = NULL, *pqs = NULL;
-Hash_table *ht, *wh, *xtf_headings;
-Hash_table *seen_files;
+Hash *ht, *wh, *xtf_headings;
+Hash *seen_files;
 char langindex[32];
 
 /* FIXME: this needs to be redone using dynamic memory in blocks */
@@ -90,7 +80,7 @@ ce_config()
   const char *cfgfile = (const char *)loadfile((unsigned const char *)fname,&cfgbytes);
   const char *p = cfgfile;
   cfg.f = atoi(p);
-  if (cfg.f != ce_summary)
+  if (cfg.f != oce_summary)
     {
       const char *sp = strchr(p,' ');
       if (sp)
@@ -110,7 +100,7 @@ ce_config()
 	}
     }
   cfg.tag = strchr(p,' ');
-  if (cfg.tag && cfg.f < ce_bad)
+  if (cfg.tag && cfg.f < oce_bad)
     ++cfg.tag;
   else
     {
@@ -220,7 +210,7 @@ ce_file(const char *idp)
 	  /* add this to the hash regardless of found status;
 	     we don't need to look for it repeatedly if it isn't there */
 	  hash_add(seen_files,(unsigned char*)strdup(pqid),(void*)1);
-	  list_add(pqs, npool_copy((unsigned char *)idp_on_entry, ce_pool));
+	  list_add(pqs, pool_copy((unsigned char *)idp_on_entry, ce_pool));
 	}
     }
 }
@@ -309,11 +299,11 @@ process_ce_ids(char *buf)
 	  hash_add(ht,(const unsigned char *)idps[curr_idp++],
 		   &hashvals[curr_hashval]);
 	  hashvals[curr_hashval++] = 1;
-	  if (cfg.f != ce_summary)
+	  if (cfg.f != oce_summary)
 	    ce_file(buf);
 	  if (pending_heading)
 	    {
-	      hash_add(xtf_headings, npool_copy((unsigned char *)colon, ce_pool), pending_heading);
+	      hash_add(xtf_headings, pool_copy((unsigned char *)colon, ce_pool), pending_heading);
 	      pending_heading = NULL;
 	    }
 	}
@@ -356,8 +346,8 @@ ce_ids()
 	{
 	  if ('#' == *buf)
 	    {
-	      if (cfg.f == ce_xmd)
-		list_add(pqs, npool_copy(chomp((unsigned char *)buf), ce_pool));
+	      if (cfg.f == oce_xmd)
+		list_add(pqs, pool_copy(chomp((unsigned char *)buf), ce_pool));
 	      else
 		scan_heading(buf);
 	    }
@@ -469,7 +459,7 @@ sH(void *userData, const char *name, const char **atts)
       if (id && (idcountp = hash_find(ht,(const unsigned char*)id)))
 	{
 	  unsigned char *h = hash_find(xtf_headings, (unsigned char *)id);
-	  if (cfg.f != ce_summary && idps[next_idp] && strcmp(idps[next_idp],id))
+	  if (cfg.f != oce_summary && idps[next_idp] && strcmp(idps[next_idp],id))
 	    {
 	      do
 		fputs("<ce:data/>",stdout);
@@ -538,7 +528,7 @@ list2charstarstar(List *l)
 int
 main(int argc, char * const*argv)
 {
-  exit_on_error = TRUE;
+  /*exit_on_error = TRUE;*/
   options(argc, argv, "23a:c:C:f:g:i:l:m:o:p:S:tvx");
 
   if (!project || !ce_index)
@@ -557,13 +547,14 @@ main(int argc, char * const*argv)
   if (strstr(project, "/ood/"))
     {
       const char *ohome = oracc_home();
-      gdf_xml = malloc(strlen(ohome) + strlen("/pub/") + strlen(project) + strlen("/data.xml") + 1);
-      sprintf(gdf_xml, "%s/pub/%s/data.xml", ohome, project);
+      char *xgdf_xml = malloc(strlen(ohome) + strlen("/pub/") + strlen(project) + strlen("/data.xml") + 1);
+      sprintf(xgdf_xml, "%s/pub/%s/data.xml", ohome, project);
+      gdf_xml = xgdf_xml;
       ood_mode = 1;
       /* TODO: check access for gdf_xml */
     }
 
-  ce_pool = npool_init();
+  ce_pool = pool_init();
   files = list_create(LIST_SINGLE);
   pqs = list_create(LIST_SINGLE);
   ht = hash_create(1024);
@@ -577,7 +568,7 @@ main(int argc, char * const*argv)
     }
   else
     {
-      cfg.f = ce_xmd;
+      cfg.f = oce_xmd;
       ce_index = "gdf";
       cfg.tag = "o:record";
     }
@@ -587,7 +578,7 @@ main(int argc, char * const*argv)
   if (gdf_xml)
     list_add(files, (void*)gdf_xml);
 
-  if (cfg.f == ce_summary)
+  if (cfg.f == oce_summary)
     {
       static char fn[_MAX_PATH];
       if (lang)
@@ -600,7 +591,7 @@ main(int argc, char * const*argv)
       list_add(files,fn);
       idattr = "id";
     }
-  else if (cfg.f == ce_xmd)
+  else if (cfg.f == oce_xmd)
     {
 #if 1
       if (xmdinit2(project))
@@ -621,7 +612,7 @@ main(int argc, char * const*argv)
 #endif
     }
 
-  if (cfg.f == ce_xmd)
+  if (cfg.f == oce_xmd)
     {
       fprintf(stdout, "<ce:ce xmlns:ce=\"http://oracc.org/ns/ce/1.0\" xmlns:xh=\"http://www.w3.org/1999/xhtml\" cetype=\"xmd\" ncols=\"%d\">",xmd_field_count()+1);
       if (ood_mode)
@@ -637,7 +628,7 @@ main(int argc, char * const*argv)
       fputs("</ce:group>", stdout);
       xmd_term();
     }
-  else if (cfg.f == ce_byid)
+  else if (cfg.f == oce_byid)
     {
       fprintf(stdout, "<ce:ce xmlns:ce=\"http://oracc.org/ns/ce/1.0\" xmlns:xh=\"http://www.w3.org/1999/xhtml\" cetype=\"%s\">", ce_index);
       runexpat(i_list, list2charstarstar(files), sH, eH);
@@ -652,7 +643,7 @@ main(int argc, char * const*argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

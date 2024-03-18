@@ -1,19 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include <ctype128.h>
-#include <psdtypes.h>
-#include <hash.h>
-#include <messages.h>
-#include <npool.h>
+#include <oraccsys.h>
+#include <xmlify.h>
 #include <xmd.h>
-#include <fname.h>
-#include <xmlutil.h>
-#include <xpd2.h>
+#include <xpd.h>
 #include "ce.h"
 #include "p2.h"
 
@@ -35,7 +23,7 @@ static const char *default_fields
 static const char *default_widths = "auto,17,17,17,17";
 static const char *default_labels = NULL; /*"Designation,Publication,Content,Period,Provenience";*/
 
-static struct npool *ce_xmd_pool;
+static Pool *ce_xmd_pool;
 
 const char **field_specs;
 const char **width_specs;
@@ -138,7 +126,7 @@ xmdinit2(const char *project)
 {
   struct p2_options *p2opt = NULL;
 
-  ce_xmd_pool = npool_init();
+  ce_xmd_pool = pool_init();
   p2opt = p2_load(project, state, ce_xmd_pool);
 
   if (!xmd_fields)
@@ -219,10 +207,10 @@ xmdprinter2(const char *pq)
     }
   else
     {
-      Hash_table *fields = NULL;
+      Hash *fields = NULL;
       int i;
       const char *designation = NULL;
-      const char *icon = NULL, *icon_alt;
+      /*const char *icon = NULL, *icon_alt;*/
       const char *id = NULL;
       const char *colon = NULL;
 
@@ -243,15 +231,15 @@ xmdprinter2(const char *pq)
       /* pq is a qualified ID, so use the project from that */
       if ((colon = strchr(pq, ':')))
 	{
-	  const char *fn = l2_expand(project,colon+1,"xmd");
+	  const char *fn = expand(project,colon+1,"xmd");
 	  /* only use the qualifying project if there is no local XMD */
 	  if (!xaccess(fn,R_OK,0))
-	    fields = l2_xmd_load(project, colon+1);
+	    fields = xmd_load(project, colon+1);
 	  else 
-	    fields = l2_xmd_load(NULL, pq);
+	    fields = xmd_load(NULL, pq);
 	}
       else
-	fields = l2_xmd_load(project, pq);
+	fields = xmd_load(project, pq);
 
       if (!in_group)
 	{
@@ -265,25 +253,25 @@ xmdprinter2(const char *pq)
 	{
 	  if (*id == 'P')
 	    {
-	      icon = "cdli-icon.png";
+	      /*icon = "cdli-icon.png";*/
 	      /* url_base = "http://oracc.museum.upenn.edu/%s/cat"; */
 	      /* url_base = "http://cdli.ucla.edu"; */
-	      icon_alt = "CDLI catalog";
+	      /*icon_alt = "CDLI catalog";*/
 	    }
 	  else
 	    {
 	      static char projurl[128];
-	      icon = "xnum-icon.png";
+	      /*icon = "xnum-icon.png";*/
 	      sprintf(projurl, "/%s", project);
 	      /* url_base = "http://oracc.museum.upenn.edu/cat"; */
-	      icon_alt = "project catalog";
+	      /*icon_alt = "project catalog";*/
 	    }
 	}
       else if ((id = hash_find(fields, (unsigned char *)"id_composite")))
 	{
-	  icon = "Qcat-icon.png";
+	  /*icon = "Qcat-icon.png";*/
 	  /* url_base = "http://oracc.museum.upenn.edu/cat"; */
-	  icon_alt = "Q catalog";
+	  /*icon_alt = "Q catalog";*/
 	}
 #if 0
       fprintf(stdout, "<td class=\"ce-xmd-icon\"><a href=\"%s/%s\"><img src=\"/img/%s\" alt=\"%s in %s\"/></a></td>", url_base, id, icon, id, icon_alt);

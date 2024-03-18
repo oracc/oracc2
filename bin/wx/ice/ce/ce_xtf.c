@@ -1,21 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/unistd.h>
-#include <unistd.h>
-#include <ctype128.h>
-#include <psd_base.h>
-#include <messages.h>
-#include <options.h>
-#include <fname.h>
-#include <hash.h>
-#include <list.h>
+#include <oraccsys.h>
 #include <runexpat.h>
-#include <loadfile.h>
-#include <xpd2.h>
-#include <npool.h>
+#include <xpd.h>
+#include <xmlify.h>
 #include "selib.h"
-#include "xmlutil.h"
-#include "wm.h"
+#include "../wm/wm.h"
 #include "ce.h"
 
 enum wm_format cetype;
@@ -35,7 +23,7 @@ const char *content_tago = "content";
 const char *content_tagc = "content";
 
 FILE *ce_out_fp = NULL;
-struct npool *xtf_pool;
+Pool *xtf_pool;
 unsigned char *pending_heading = NULL;
 int ce_use_colon_sep = 0;
 int kwic_select_pending = 0;
@@ -76,13 +64,13 @@ const char *xtf_note_name = "http://oracc.org/ns/xtf/1.0|note";
 
 const char *project_en = NULL;
 
-struct ce_config cfg;
+struct oce_config cfg;
 List *files = NULL;
-Hash_table *ht, *wh;
-Hash_table *seen_files;
+Hash *ht, *wh;
+Hash *seen_files;
 char langindex[32];
 
-Hash_table *xtf_lines, *xtf_start, *xtf_end, *xtf_select, *xtf_files, *xtf_headings;
+Hash *xtf_lines, *xtf_start, *xtf_end, *xtf_select, *xtf_files, *xtf_headings;
 
 /* FIXME: this needs to be redone using dynamic memory in blocks */
 const char *idps[1000];
@@ -187,10 +175,10 @@ ce_file(const unsigned char *idp)
 	{
 	  const char *fn = l2_findfile(proj,pqid,(char*)base);
 	  if (fn)
-	    list_add(files,npool_copy((unsigned char *)fn, xtf_pool));
+	    list_add(files,pool_copy((unsigned char *)fn, xtf_pool));
 	  /* In KWIC mode we re-read the file for each entry */
 	  if (cetype != KU_KWIC)
-	    hash_add(seen_files,npool_copy(base, xtf_pool),(void*)1);
+	    hash_add(seen_files,pool_copy(base, xtf_pool),(void*)1);
 	}
     }
   else
@@ -199,10 +187,10 @@ ce_file(const unsigned char *idp)
 	{
 	  const char *fn = l2_findfile(proj,pqid,NULL);
 	  if (fn)
-	    list_add(files,npool_copy((unsigned char *)fn,xtf_pool));
+	    list_add(files,pool_copy((unsigned char *)fn,xtf_pool));
 	  /* add this to the hash regardless of found status;
 	     we don't need to look for it repeatedly if it isn't there */
-	  hash_add(seen_files,npool_copy((unsigned char *)pqid,xtf_pool),(void*)1);
+	  hash_add(seen_files,pool_copy((unsigned char *)pqid,xtf_pool),(void*)1);
 	}
     }
 }
@@ -213,17 +201,17 @@ ce_xtf_save_id(unsigned char *buf, enum rd_state state)
   static int one = 1;
   char *dot = NULL;
   char *start_id = NULL, *colon, *file;
-  buf = npool_copy(buf, xtf_pool);
+  buf = pool_copy(buf, xtf_pool);
 
   if ((colon = strchr((char*)buf, ':')))
     {
       ++colon;
-      start_id = (char*)npool_copy((unsigned char*)colon, xtf_pool);
+      start_id = (char*)pool_copy((unsigned char*)colon, xtf_pool);
     }
   else
     start_id = (char*)buf;
 
-  file = (char*)npool_copy((unsigned char*)buf, xtf_pool);
+  file = (char*)pool_copy((unsigned char*)buf, xtf_pool);
 
   switch (state)
     {
@@ -233,7 +221,7 @@ ce_xtf_save_id(unsigned char *buf, enum rd_state state)
 	*dot = '\0';
       if (!hash_find(xtf_files, (unsigned char *)file))
 	{
-	  hash_add(xtf_files, npool_copy((unsigned char*)file, xtf_pool), &one);
+	  hash_add(xtf_files, pool_copy((unsigned char*)file, xtf_pool), &one);
 	  ce_file((unsigned char *)file);
 	}
       if (dot)
@@ -241,7 +229,7 @@ ce_xtf_save_id(unsigned char *buf, enum rd_state state)
 	  if ((dot = strchr(dot+1, '.')))
 	    {
 	      *dot = '\0';
-	      hash_add(xtf_lines, npool_copy((unsigned char *)start_id, xtf_pool), &one);
+	      hash_add(xtf_lines, pool_copy((unsigned char *)start_id, xtf_pool), &one);
 	      *dot = '.';
 	    }
 	}
@@ -830,7 +818,7 @@ ce_xtf_init(void)
   xtf_select = hash_create(1024);
   xtf_files = hash_create(1024);
   xtf_headings = hash_create(1024);
-  xtf_pool = npool_init();
+  xtf_pool = pool_init();
   files = list_create(LIST_SINGLE);
 }
 
@@ -844,7 +832,7 @@ ce_xtf_term(void)
   hash_free(xtf_select, NULL);
   hash_free(xtf_files, NULL);
   hash_free(xtf_headings, NULL);
-  npool_term(xtf_pool);
+  pool_term(xtf_pool);
   list_free(files, NULL);
 }
 
@@ -852,7 +840,7 @@ int
 main(int argc, char * const*argv)
 {
   /*struct xpd *cfg = NULL;*/
-  exit_on_error = TRUE;
+  /*exit_on_error = TRUE;*/
 
   init_wm_names();
   cetype = KU_LINE;
@@ -919,7 +907,7 @@ main(int argc, char * const*argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

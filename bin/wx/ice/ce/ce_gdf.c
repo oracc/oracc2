@@ -1,19 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include <ctype128.h>
-#include <psdtypes.h>
-#include <hash.h>
-#include <messages.h>
-#include <npool.h>
+#include <oraccsys.h>
 #include <runexpat.h>
 #include <gdf.h>
-#include <xmlutil.h>
-#include <xpd2.h>
+#include <xpd.h>
+#include <xmlify.h>
 #include "selib.h"
 #include "ce.h"
 #include "p2.h"
@@ -35,22 +24,22 @@ extern const char **width_specs;
 extern List **field_lists;
 
 static List *record_hashes;
-static struct npool *record_pool;
-static Hash_table *curr_record_hash = NULL;
+static struct pool *record_pool;
+static Hash *curr_record_hash = NULL;
 
-static void gdfprinter2(Hash_table *fields);
+static void gdfprinter2(Hash *fields);
 
 static char *url_base = NULL;
 
 extern int *idcountp;
-extern Hash_table *ht;
+extern Hash *ht;
 extern int echoing;
 
 void
 gdfinit(void)
 {
   record_hashes = list_create(LIST_SINGLE);
-  record_pool = npool_init();
+  record_pool = pool_init();
 }
 
 static int
@@ -70,7 +59,7 @@ gdf_sH(void *userData, const char *name, const char **atts)
       if (id && (idcountp = hash_find(ht,(const unsigned char*)id)))
 	{
 	  curr_record_hash = hash_create(1);
-	  hash_add(curr_record_hash, (unsigned char *)"o:id", npool_copy((unsigned char *)id, record_pool));
+	  hash_add(curr_record_hash, (unsigned char *)"o:id", pool_copy((unsigned char *)id, record_pool));
 	  echoing = 1;
 	}
     }
@@ -98,8 +87,8 @@ gdf_eH(void *userData, const char *name)
       else if (--echoing == 1)
 	{
 	  hash_add(curr_record_hash, 
-		   npool_copy((unsigned char *)name, record_pool), 
-		   npool_copy((unsigned char *)charData_retrieve(), record_pool));
+		   pool_copy((unsigned char *)name, record_pool), 
+		   pool_copy((unsigned char *)charData_retrieve(), record_pool));
 	}
     }
   else
@@ -113,7 +102,7 @@ gdfprinter(void)
 }
 
 static void
-gdfprinter2(Hash_table *fields)
+gdfprinter2(Hash *fields)
 {
   static int nth = 0;
   int i;
