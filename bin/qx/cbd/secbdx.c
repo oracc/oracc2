@@ -9,10 +9,9 @@
 #include "selib.h"
 #include "../txt/index.h"
 
-#ifndef strdup
-extern char *strdup(const char *);
-#endif
+FILE *f_log;
 
+const char *xatf_name = NULL;
 Hash *signmap = NULL;
 
 int swc_flag = 0;
