@@ -211,7 +211,7 @@ main (int argc, char **argv)
 		    sizeof(struct location16), DBI_ACCRETE);
   dbi_set_vids(dip,"vid.vid");
   dbi_set_user(dip,d_tra);
-  if (NULL == dip) 
+  if (NULL == dip)
     error (NULL, "unable to create index for %s", curr_index);
   if (cache_elements > 0)
     dbi_set_cache (dip, cache_elements);

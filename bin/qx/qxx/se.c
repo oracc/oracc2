@@ -262,9 +262,13 @@ set_tra_suffix(Two_bytes_s branch_id)
   int trcode = get_trcode(branch_id);
   return trcodes[trcode];
 #endif
+
+#if 0
+  /* in o2 the new Vido implementation makes this redundant */
   if (l2)
     return "_project-en";
   else
+#endif
     return "";
 }
 
