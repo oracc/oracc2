@@ -1,10 +1,4 @@
-/*
- Copyright(c) Pennsylvania Sumerian Dictionary and Steve Tinney
- 1997 under the GNU General Public License (see /psd/COPYING).
-
- $Id: property.c,v 0.3 1997/09/08 14:50:17 sjt Exp s $
-*/
-#include <psd_base.h>
+#include <oraccsys.h>
 #include "index.h"
 #include "property.h"
 

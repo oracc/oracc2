@@ -1,9 +1,3 @@
-/*
- Copyright(c) Pennsylvania Sumerian Dictionary and Steve Tinney
- 1997 under the GNU General Public License (see /psd/COPYING).
-
- $Id: option.c,v 0.3 1997/09/08 14:50:16 sjt Exp $
-*/
 #include "index.h"
 
 /* An option is grapheme that may be in the line or not,

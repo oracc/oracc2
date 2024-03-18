@@ -9,7 +9,12 @@ bin/gx/siglangx
 bin/jx/jx
 bin/ox/oid
 bin/qx/cat/qcatx
+bin/qx/cbd/qcbdx
+bin/qx/dbg/qdbgx
+bin/qx/gdf/qgdfx
+bin/qx/lem/qlemx
 bin/qx/qxx/qx
+bin/qx/tra/qtrax
 bin/qx/txt/qtxtx
 bin/sx/sig2asl
 bin/sx/slix

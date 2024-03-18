@@ -1,7 +1,8 @@
 include ../../../oracc-am-rules.txt
+include ../qx-rules.txt
 
 bin_PROGRAMS=qgdfx
 
 qgdfx_SOURCES = segdfx.c
-qgdfx_LDADD = $(xLDADD)
-qgdfx_DEPENDENCIES = $(xLDADD)
+qgdfx_LDADD = $(qxLDADD)
+qgdfx_DEPENDENCIES = $(qxLDADD)

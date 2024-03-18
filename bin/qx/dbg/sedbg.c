@@ -8,15 +8,7 @@
  * Not really intended for the average user ...
  *
  */
-
-#include <unistd.h>
-#include <list.h>
-#include <hash.h>
-#include <vido.h>
-#include <psd_base.h>
-#include <options.h>
-#include <dbi.h>
-#include <messages.h>
+#include <oraccsys.h>
 #include "property.h"
 
 #ifndef strdup
@@ -64,7 +56,7 @@ const char *iname, *indexname, *name, *project, *curr_project, *curr_index;
 static void do_index (List *arglist);
 static void setup_args (char *const*argv);
 
-#include "xfuncs.c"
+#include "../qxx/xfuncs.c"
 
 #if 0
 void
@@ -89,7 +81,8 @@ main (int argc, char *const *argv)
       do_index (arglist);
       break;
     default:
-      fatal ();
+      fprintf(stderr, "sedbg.c: bad case in switch\n");
+      exit(1);
       break;
     }
   return 0;
@@ -358,7 +351,7 @@ help ()
 }
 
 int
-opts (int c, char *arg)
+opts (int c, const char *arg)
 {
   switch (c)
     {

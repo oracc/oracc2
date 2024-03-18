@@ -121,7 +121,6 @@ trie_add (Dbi_tnode *dp)
 static inline void
 addgraph (Dbi_index *dp, unsigned char *key, void *data)
 {
-  Boolean found;
   Hash_element *q, **p;
 
   /* find match or insertion point */
@@ -156,7 +155,6 @@ addgraph (Dbi_index *dp, unsigned char *key, void *data)
 	      last_find->cache = NULL;
 	      last_find->cache_count = 0;
 	    }
-	  found = FALSE;
 	  dp->keys->key_count++;
 	  HASH_EXPAND_TABLE(dp->keys);
 	  if (last_find->key[1] == '\0'
@@ -166,12 +164,11 @@ addgraph (Dbi_index *dp, unsigned char *key, void *data)
 	}
       else
 	{
-	  found = TRUE;
 	  last_find = q->data;
 	}
     }
   else
-    found = TRUE;
+    /*found = TRUE*/;
 
   if (dp->cache_size)
     {

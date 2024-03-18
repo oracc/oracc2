@@ -1,32 +1,23 @@
+#include <oraccsys.h>
+#include <bits.h>
+#include <runexpat.h>
+#include <charsets.h>
 #include <stdarg.h>
-#include <unistd.h>
-#include <psd_base.h>
-#include <ctype128.h>
-#include <dbi.h>
 #include <index.h>
 #include <alias.h>
-#include <options.h>
-#include <runexpat.h>
-#include <list.h>
-#include <fname.h>
-#include <locale.h>
-#include "memblock.h"
-#include "atflocale.h"
-#include "oracclocale.h"
 
 #include "fields.h"
 #include "property.h"
 #include "se.h"
-#include "../types.h"
+#include "types.h"
 #include "selib.h"
-#include "vid.h"
-#include "f2.h"
-#include "sigs.h"
+#include "form.h"
 
-Hash_table *signmap;
+Hash *signmap;
 
 int l2 = 1;
-/* This is unpleasant; declared only because we have to invoke sig_context_init() which pulls in the sigs library */
+/* This is unpleasant; declared only because we have to invoke
+   sig_context_init() which pulls in the sigs library */
 int lem_autolem = 0;
 int lem_dynalem = 0;
 int lem_info = 0;
@@ -41,16 +32,12 @@ const char *norm_ns_uri = "http://oracc.org/ns/norm/1.0";
 const char *xcl_ns_uri = "http://oracc.org/ns/xcl/1.0";
 const char *xtf_ns_uri = "http://oracc.org/ns/xtf/1.0";
 
-static Hash_table *lemindex, *lemparses;
-static struct npool *lempool;
+static Hash *lemindex, *lemparses;
+static Pool *lempool;
+static Vido *vidp;
+static Memo *f2_mem;
 
-static struct vid_data *vidp;
-
-static struct mb *f2_mem;
-
-#ifndef strdup
-extern char *strdup(const char *);
-#endif
+const char *xatf_name = NULL;
 
 extern void grapheme_decr_start_column(void);
 extern void grapheme_end_column_logo(void);
@@ -78,8 +65,6 @@ static size_t findex;
 int one_big_stdin = 0;
 static char loc_project_buf[_MAX_PATH];
 int verbose = 0;
-
-struct sig_context *lem_scp = NULL;
 
 const char *curr_project = "cdli", *curr_index = "lem", *proxies_arg = "";
 const char *project = NULL; /* for now we need this for vid.c */
@@ -207,7 +192,7 @@ lem_index(struct location8 *l8, const char *field, const char *toks, ...)
       const char *tok;
       int saved_start_column = start_column;
 
-      BIT_SET(start_column,snp->uid);
+      bit_set(start_column,snp->uid);
       va_start(ap,toks);
       tok = toks;
       while (1)
@@ -265,7 +250,7 @@ lem_index(struct location8 *l8, const char *field, const char *toks, ...)
 	    break;
 	}
       va_end(ap);
-      BIT_CLR(start_column,snp->uid);
+      bit_off(start_column,snp->uid);
       start_column = saved_start_column;
     }
 }
@@ -301,21 +286,21 @@ startElement_xtf(void *userData, const char *name, const char **atts)
     case 't':
       if (!strcmp(name,"transliteration"))
 	{
-	  reset(indexed_mm);
+	  memo_reset(indexed_mm);
 	  loc_project(atts);
 	}
       break;
     case 'c':
       if (!strcmp(name,"composite"))
 	{
-	  reset(indexed_mm);
+	  memo_reset(indexed_mm);
 	  loc_project(atts);
 	}
       break;
     case 's':
       if (!strcmp(name,"score"))
 	{
-	  reset(indexed_mm);
+	  memo_reset(indexed_mm);
 	  loc_project(atts);
 	}
       break;
@@ -357,7 +342,7 @@ startElement_gdl(void *userData, const char *name, const char **atts)
 	      debug_label = xml_id(atts);
 
 	    sprintf(qualified_id, "%s:%s", loc_project_buf, xml_id(atts));
-	    wid2loc8(vid_map_id(vidp,qualified_id),xml_lang(atts),&l8);
+	    wid2loc8(vido_new_id(vidp,qualified_id),xml_lang(atts),&l8);
 	  }
 	else
 	  {
@@ -368,7 +353,7 @@ startElement_gdl(void *userData, const char *name, const char **atts)
 	/* Index the LEM components */
 	if ((sig = hash_find(lemindex, (unsigned char *)qualified_id)))
 	  {
-	    struct f2 *f2 = NULL;
+	    Form *f2 = NULL;
 	    int len;
 	    lem_info = 1;
 	    (void)sscanf(sig, "%d.%d:%n",&curr_sentence_id, &curr_lemma_id, &len);
@@ -440,7 +425,7 @@ endElement_xtf(void *userData, const char *name)
 static void
 endElement_gdl(void *userData, const char *name)
 {
-  extern Hash_table *signmap;
+  extern Hash *signmap;
   switch (*name)
     {
     case 'w':
@@ -474,7 +459,9 @@ endElement_gdl(void *userData, const char *name)
 		  {
 		    if (strcmp((const char *)s,(const char *)g))
 		      {
+#if 0
 			progress("indexing sign value %s as sign %s\n",g, s);
+#endif
 			/* fprintf(stderr, "indexing sign value %s as sign %s\n", g, s); */
 			grapheme_decr_start_column();
 			grapheme((const char *)s);
@@ -502,7 +489,9 @@ endElement_gdl(void *userData, const char *name)
 	    Char *s = hash_find(signmap,g);
 	    if (s)
 	      {
+#if 0
 		progress("indexing value %s as sign %s\n",g, s);
+#endif
 		grapheme_decr_start_column();
 		grapheme((const char *)s);
 		est_add(g, estp);
@@ -542,29 +531,29 @@ startLemIndex(void *userData, const char *name, const char **atts)
 	{
 	  const char *sig = findAttr(atts, "sig");
 	  if (!sig || !*sig)
-	    sig = findAttr(atts, "newsig");
+	    sig = findAttr(atts, "memo_newsig");
 	  if (sig && *sig)
 	    {
-	      struct f2 *f2 = mb_new(f2_mem);
+	      Form *f2 = memo_new(f2_mem);
 	      static char qualified_id[1208];
 	      char *tmp = malloc(strlen(sig)+16);
 	      ++curr_lemma_id;
 
-	      f2_parse(NULL, 0, npool_copy((unsigned char *)sig,lempool), f2, NULL, lem_scp);
+	      form_parse(NULL, 0, pool_copy((unsigned char *)sig,lempool), f2, NULL);
 	      sprintf(qualified_id, "%s:%s", loc_project_buf, 
 		      (unsigned char *)findAttr(atts, "ref"));
 	      /* add this without the locator prefix */
 	      hash_add(lemparses,
-		       npool_copy((unsigned char*)sig,lempool),
+		       pool_copy((unsigned char*)sig,lempool),
 		       f2);
 
 	      /* add this with the locator prefix */
 	      sprintf(tmp, "%d.%d:%s", curr_sentence_id, curr_lemma_id, sig);
-	      sig = (const char*)npool_copy((unsigned char *)tmp, lempool);
+	      sig = (const char*)pool_copy((unsigned char *)tmp, lempool);
 	      free(tmp);
 	      /* fprintf(stderr,"adding lem %s from word %s\n", sig, qualified_id);*/
 	      hash_add(lemindex,
-		       npool_copy((unsigned char *)qualified_id, lempool),
+		       pool_copy((unsigned char *)qualified_id, lempool),
 		       (void*)sig);
 	    }
 	}
@@ -617,7 +606,7 @@ main (int argc, char **argv)
   Dbi_index *mapdb;
 
   setlocale(LC_ALL,ORACC_LOCALE);
-  f2_mem = mb_init(sizeof(struct f2), 128);
+  f2_mem = memo_init(sizeof(Form), 128);
 
   options (argc, argv, "2ac:gp:qsx:v");
   project = curr_project;
@@ -632,21 +621,21 @@ main (int argc, char **argv)
   /* signmap_err = fopen("01tmp/signmap.log", "w"); */
 
   if (l2)
-    vidp = vid_load_data(se_file(curr_project,"cat","vid.dat"));
+    vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 0);
 
   f_mangletab = create_mangle_tab(curr_project,"lem");
   
   signmap_init();
   charsets_init();
 
-  lem_scp = sig_context_init();
-
   index_dir = se_dir (curr_project, curr_index);
+#if 0
   progress ("indexing %s ...\n", index_dir);
-  indexed_mm = init_mm (sizeof (struct indexed), 256);
-  parallels_mm = init_mm (sizeof (struct parallel), 256);
-  grapheme_mm = init_mm (sizeof (struct grapheme), 256);
-  node_mm = init_mm (sizeof (struct node), 256);
+#endif  
+  indexed_mm = memo_init (sizeof (struct indexed), 256);
+  parallels_mm = memo_init (sizeof (struct parallel), 256);
+  grapheme_mm = memo_init (sizeof (struct grapheme), 256);
+  node_mm = memo_init (sizeof (struct node), 256);
 
   /*  alias_check_date ("", TRUE); */
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
@@ -662,7 +651,7 @@ main (int argc, char **argv)
 
   alias_fast_init (curr_project, curr_index);
 
-  lempool = npool_init();
+  lempool = pool_init();
   lemindex = hash_create(1024);
   lemparses = hash_create(1024);
 
@@ -706,7 +695,7 @@ main (int argc, char **argv)
 
   if (l2)
     {
-      vid_free(vidp);
+      vido_free(vidp);
       vidp = NULL;
     }
 
@@ -733,18 +722,17 @@ main (int argc, char **argv)
   dbi_flush(mapdb);
   /*  dbi_close(mapdb);*/
 
-  mb_free(f2_mem);
-  npool_term(lempool);
+  memo_term(f2_mem);
+  pool_term(lempool);
   hash_free(lemindex, NULL);
   hash_free(lemparses, NULL);
 
-  sig_context_term();
   charsets_term();
 
-  ce_cfg(curr_project,"lem","tr","txh",ce_byid, proxies);
-
+  ce_cfg(curr_project,"lem","tr","txh", oce_byid, proxies);
+#if 0
   progress ("index files written to `%s'\n", se_dir(curr_project,curr_index));
-
+#endif
   if (debug_f)
     fclose(debug_f);
   
@@ -777,7 +765,7 @@ add_graphemes ()
 static void
 fn_expand(void *p)
 {
-  char *x = (char*)l2_expand(NULL, p, "xmd");
+  char *x = (char*)expand(NULL, p, "xmd");
   if (!access(x, R_OK))
     {
       char *e = x + strlen(x);
@@ -847,7 +835,7 @@ help()
 }
 
 int
-opts(int c, char *arg)
+opts(int c, const char *arg)
 {
   switch (c)
     {

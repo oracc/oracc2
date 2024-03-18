@@ -1,33 +1,19 @@
-#include <unistd.h>
-
-#include <psd_base.h>
-#include <locale.h>
-#include <ctype128.h>
-#include <dbi.h>
-#include <index.h>
+#include <oraccsys.h>
 #include <alias.h>
-#include <options.h>
 #include <runexpat.h>
-#include <list.h>
-#include <fname.h>
-#include "atflocale.h"
-#include "oracclocale.h"
 
-#include "fields.h"
+#include "../txt/fields.h"
 #include "property.h"
 #include "se.h"
 #include "selib.h"
-#include "vid.h"
+#include "../txt/index.h"
 
 static struct est *estp;
 
-extern FILE *f_log;
+const char *xatf_name = NULL;
+
+FILE *f_log;
 FILE *f_mangletab = NULL;
-
-
-#ifndef strdup
-extern char *strdup(const char *);
-#endif
 
 #undef xmalloc
 #undef xrealloc
@@ -38,14 +24,16 @@ extern char *strdup(const char *);
 #define xcalloc calloc
 #define xfree free
 
-#include "addgraph.c"
+#if 1
+#include "../txt/addgraph.c"
+#endif
 
 Dbi_index *dip;
 
 int l2 = 1;
 int swc_flag = 0;
 
-static struct vid_data *vidp;
+static Vido *vidp;
 
 static int aliases_only = 0;
 
@@ -103,9 +91,9 @@ trax_startElement(void *userData, const char *name, const char **atts)
     case 't':
       if (!strcmp(name,"translation"))
 	{
-	  reset(indexed_mm);
+	  memo_reset(indexed_mm);
 	  if (!l2)
-	    vid_new_id(vidp, findAttr(atts,"xml:id"));
+	    vido_new_id(vidp, findAttr(atts,"xml:id"));
 	  else
 	    loc_project(atts);
 	}
@@ -123,7 +111,7 @@ trax_startElement(void *userData, const char *name, const char **atts)
     case 's':
       if (!strcmp(name,"span"))
 	{
-	  const char *class=NULL,*form=NULL,*lem=NULL, *xid=NULL, *xlang=NULL;
+	  const char *class=NULL,*form=NULL,*lem=NULL, *xlang=NULL;
 	  int i;
 	  for (i = 0; atts[i]; i+=2)
 	    {
@@ -134,16 +122,16 @@ trax_startElement(void *userData, const char *name, const char **atts)
 	      else if (!strcmp(atts[i],"xtr:lem"))
 		lem = atts[i+1];
 	      else if (!strcmp(atts[i],"xml:id"))
-		xid = atts[i+1];
+		/*xid = atts[i+1]*/;
 	      else if (!strcmp(atts[i],"xml:lang"))
 		xlang = atts[i+1];
 	    }
 	  if (class && !strcmp(class,"w"))
 	    {
-	      static char qualified_id[128];		  
+	      static char qualified_id[1028];		  
 	      charData_discard();
 	      sprintf(qualified_id, "%s:%s", loc_project_buf, xml_id(atts));
-	      wid2loc8(vid_map_id(vidp,qualified_id),xlang,&l8);
+	      wid2loc8(vido_new_id(vidp,qualified_id),xlang,&l8);
 	      
 	      if (lem)
 		{
@@ -206,19 +194,21 @@ main (int argc, char **argv)
   set_proxies(proxies_arg);
   setlocale(LC_ALL,ORACC_LOCALE);
   if (l2)
-    vidp = vid_load_data(se_file(curr_project,"cat","vid.dat"));
+    vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 0);
   else
-    vidp = vid_init();
+    vidp = vido_init('v', 0);
 
   f_mangletab = create_mangle_tab(curr_project,"tra");
  
   km_use_stemmer();
   index_dir = se_dir (curr_project, curr_index);
+#if 0
   progress ("indexing %s ...\n", index_dir);
-  indexed_mm = init_mm (sizeof (struct indexed), 256);
-  parallels_mm = init_mm (sizeof (struct parallel), 256);
-  grapheme_mm = init_mm (sizeof (struct grapheme), 256);
-  node_mm = init_mm (sizeof (struct node), 256);
+#endif
+  indexed_mm = memo_init (sizeof (struct indexed), 256);
+  parallels_mm = memo_init (sizeof (struct parallel), 256);
+  grapheme_mm = memo_init (sizeof (struct grapheme), 256);
+  node_mm = memo_init (sizeof (struct node), 256);
 
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
 		    sizeof(struct location16), DBI_ACCRETE);
@@ -257,14 +247,14 @@ main (int argc, char **argv)
 
   if (l2)
     {
-      vid_free(vidp);
+      vido_free(vidp);
       vidp = NULL;
     }
   else
     {
       vids = se_file (curr_project, curr_index, "vid.dat");
-      vid_dump_data(vidp,vids);
-      vid_term(vidp);
+      vido_dump_data(vidp,vids,NULL);
+      vido_term(vidp);
       vidp = NULL;
     }
 
@@ -285,8 +275,10 @@ main (int argc, char **argv)
 
   fclose(f_mangletab);
 
-  ce_cfg(curr_project,curr_index,"xh:p","xtr",ce_byid,proxies);
+  ce_cfg(curr_project,curr_index,"xh:p","xtr",oce_byid,proxies);
+#if 0
   progress ("index files written to `%s'\n", se_dir(curr_project,curr_index));
+#endif
   return 0;
 }
 
@@ -315,10 +307,10 @@ add_graphemes ()
 static void
 fn_expand(void *p)
 {
-  const char *x = l2_expand(NULL, p, "xmd");
+  const char *x = expand(NULL, p, "xmd");
   if (!access(x, R_OK))
     {
-      x = l2_expand_xtr(NULL, p, "project", "en");
+      x = expand_xtr(NULL, p, "project", "en");
       if (!access(x, R_OK))
 	{
 	  fnlist[findex] = strdup(x);
@@ -395,7 +387,7 @@ help()
 }
 
 int
-opts(int c, char *arg)
+opts(int c, const char *arg)
 {
   switch (c)
     {

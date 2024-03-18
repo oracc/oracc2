@@ -1,18 +1,11 @@
-#include <psd_base.h>
-#include <fname.h>
-#include <list.h>
-#include <dbi.h>
-#include <options.h>
-#include <ctype128.h>
-#include <locale.h>
+#include <oraccsys.h>
 #include <runexpat.h>
-#include "atflocale.h"
-#include "oracclocale.h"
-#include "../types.h"
-#include "../selib.h"
-#include "../se.h"
-#include "../secatx/fields.h"
-#include "../vid.h"
+#include "types.h"
+#include "selib.h"
+#include "se.h"
+#include "../cat/fields.h"
+
+FILE *f_log;
 
 #undef C
 #define C(x) #x,
@@ -45,12 +38,12 @@ static int cache_size = 16;
 
 const char *curr_index = "cat";
 
-static struct vid_data *vidp;
+static Vido *vidp;
 
 /*
  * Dynamic field name support
  */
-static Hash_table *dyntab;
+static Hash *dyntab;
 
 struct sn_tab *
 dynanames(const char *fname)
@@ -70,7 +63,9 @@ dn_add_name(const char *fname)
   if (!dyntab)
     dyntab = hash_create(16);
   hash_add(dyntab, (Uchar *)fname, s);
+#if 0
   progress("adding %s with uid %d\n",fname,s->uid);
+#endif
   fprintf(fldsf,"%s\t%d\n",fname,s->uid);
   return s->uid;
 }
@@ -85,9 +80,9 @@ startElement(void *userData, const char *name, const char **atts)
   if (!strcmp(name,"o:record"))
     {
       curr_id = findAttr(atts, "xml:id");
-      vid_new_id(vidp, curr_id);
+      vido_new_id(vidp, curr_id);
       fprintf(pqidsf,"%s\n",curr_id);
-      loc8(vid_map_id(vidp,curr_id), 0, lang_mask(atts), &l8);
+      loc8(vido_new_id(vidp,curr_id), 0, lang_mask(atts), &l8);
       indexing = 1;
     }
 }
@@ -166,7 +161,6 @@ main(int argc, char * const*argv)
   FILE*keysf;
   const char *keysname, *fldsname, *vids;
   char *gdfpath = NULL;
-  extern int vid_obey_dots;
 
   f_log = stderr;
 
@@ -177,8 +171,7 @@ main(int argc, char * const*argv)
 
   setlocale(LC_ALL,ORACC_LOCALE);
 
-  vid_obey_dots = 0;
-  vidp = vid_init();
+  vidp = vido_init('v', 0);
 
   gdfpath = malloc(strlen(curr_project)+1);
   sprintf(gdfpath, "%s", curr_project);
@@ -191,8 +184,9 @@ main(int argc, char * const*argv)
 		  sizeof(struct location8),DBI_ACCRETE);
   dbi_set_cache(dp,cache_size);
   dbi_set_user(dp,d_cat);
-
+#if 0
   progress("segdfx: creating index %s\n",dp->dir);
+#endif
   pqidsf = xfopen(se_file(gdfpath,"cat","pqids.lst"),"w");
   fldsname = strdup(se_file(gdfpath,"cat","fieldnames.tab"));
   fldsf = xfopen(fldsname,"w");
@@ -206,12 +200,12 @@ main(int argc, char * const*argv)
   est_term(estp);
 
   vids = se_file (gdfpath, curr_index, "vid.dat");
-  vid_dump_data(vidp,vids);
-  vid_term(vidp);
+  vido_dump_data(vidp,vids,NULL);
+  vido_term(vidp);
   vidp = NULL;
-
+#if 0
   progress("segdfx: completed db creation\n");
-
+#endif
   dp = dbi_open("cat",se_dir(gdfpath,"cat"));
   if (dp && dp->h.entry_count > 0)
     {
@@ -228,13 +222,13 @@ main(int argc, char * const*argv)
   dbi_close(dp);
   xfclose(fldsname,fldsf);
 
-  ce_cfg(gdfpath, "cat", "catalog", "xmd", ce_xmd, NULL);
+  ce_cfg(gdfpath, "cat", "catalog", "xmd", oce_xmd, NULL);
 
   return 0;
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

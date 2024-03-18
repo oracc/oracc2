@@ -27,6 +27,6 @@ struct sn_tab
   enum fields uid;
 };
 
-struct sn_tab *statnames (register const char *str, register unsigned int len);
+struct sn_tab *statnames (register const char *str, register size_t len);
 
 #endif /*_FIELDS_H*/
