@@ -2,7 +2,9 @@ include ../../../oracc-am-rules.txt
 
 SUBDIRS=../../../lib 
 
-bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokex tokix vidx tokpct cbdex cbdikey
+bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokex tokix tokpct cbdex cbdikey
+
+#vidx
 
 bin_SCRIPTS=tisdbi.sh tisdiv.sh tok2tis.sh
 data_DATA=tis-[ht].html
