@@ -1,5 +1,6 @@
 include ../../../../oracc-am-rules.txt
 AM_CPPFLAGS+=-I@top_srcdir@/bin/qx/lib
+
 bin_PROGRAMS=wmx wmapx wmdbgx
 
 wmx_SOURCES = wm.c wm_lib.c

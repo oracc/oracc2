@@ -30,6 +30,13 @@ bin/tx/xmlfilter
 bin/wx/wx
 bin/wx/ice/ce/cex
 bin/wx/ice/ce/cextfx
+bin/wx/ice/pg/pdx
+bin/wx/ice/pg/pgcsix
+bin/wx/ice/pg/pgux
+bin/wx/ice/pg/pgx
+bin/wx/ice/pg/ptoqtestx
+bin/wx/ice/pg/showcsix
+bin/wx/ice/pg/xisperiodsx
 bin/wx/ice/wm/wmx
 bin/wx/ice/wm/wmapx
 bin/wx/ice/wm/wmdbgx

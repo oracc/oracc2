@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <ctype128.h>
+#include <oraccsys.h>
 #include <gdbm.h>
-#include <psd_base.h>
-#include <hash.h>
 #include "sortinfo.h"
 #include "pg.h"
 
@@ -40,6 +37,6 @@ main(int argc, char **argv)
 
 const char *prog = "ptoqtest";
 const char *usage_string = "ptoqtest";
-int opts() { return 0; }
+int opts(int argc, const char *arg) { return 0; }
 void help() {}
 int major_version=1,minor_version=0;

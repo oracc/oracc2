@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <unistd.h>
+#include <oraccsys.h>
 #include <gdbm.h>
-#include <psd_base.h>
-#include <hash.h>
 #include "sortinfo.h"
 #include "pg.h"
 
@@ -75,7 +72,7 @@ prune_p_with_q(struct item*items, int *nitems, int with_word_id)
   if (use_linkmap)
     {
       int i;
-      Hash_table*qtab = hash_create(*nitems);
+      Hash*qtab = hash_create(*nitems);
       /* first map the Q-results by line */
       for (i = 0; i < *nitems; ++i)
 	{

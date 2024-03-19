@@ -1,0 +1,1 @@
+SUBDIRS=ce pg wm

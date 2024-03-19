@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype128.h>
-#include "xmlutil.h"
+#include <runexpat.h>
 #include "sortinfo.h"
 #include "pg.h"
 

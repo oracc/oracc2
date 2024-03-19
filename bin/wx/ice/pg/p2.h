@@ -10,11 +10,11 @@ struct p2_options
   const char *catalog_widths;
 };
 
-#include "npool.h"
+#include "pool.h"
 
 extern int quiet;
 
-extern struct p2_options*p2_load(const char *project, const char *state, struct npool *pool);
-extern char *p2_maybe_append_designation(const char *s, struct npool *pool, struct p2_options *p2opts);
+extern struct p2_options*p2_load(const char *project, const char *state, Pool *pool);
+extern char *p2_maybe_append_designation(const char *s, Pool *pool, struct p2_options *p2opts);
 
 #endif/*P2_H_*/

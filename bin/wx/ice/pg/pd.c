@@ -1,16 +1,9 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype128.h>
-#include "psdtypes.h"
-#include "messages.h"
-#include "options.h"
-#include "hash.h"
+#include <oraccsys.h>
 #include "sortinfo.h"
 #include "pg.h"
 
 extern void pd_sort_cache(void);
-Hash_table *seen = NULL;
+Hash *seen = NULL;
 int l2 = 1;
 
 int csi_debug = 0;
@@ -150,7 +143,7 @@ main(int argc, char **argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

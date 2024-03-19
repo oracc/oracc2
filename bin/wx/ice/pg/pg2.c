@@ -1,17 +1,9 @@
 /* Compile the sort info from sortinfo.tab into 
    an optimized form for runtime use */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype128.h>
-#include "psdtypes.h"
-#include "messages.h"
-#include "options.h"
-#include "hash.h"
+#include <oraccsys.h>
 #include "sortinfo.h"
 #include "pg.h"
-#include "npool.h"
-#include "xpd2.h"
+#include "xpd.h"
 #include "p2.h"
 
 int l2 = 1, o2 = 0, p3 = 0;
@@ -24,13 +16,15 @@ int quiet = 0;
 int tis_mode = 0;
 FILE *fdbg = NULL;
 FILE *fpag = NULL;
-Hash_table *seen = NULL;
+Hash *seen = NULL;
+
+char *gcbd, *gxis;
 
 struct item *items = NULL;
 int items_used = 0;
 struct sortinfo *sip;
 
-struct npool *pg2_pool = NULL;
+Pool *pg2_pool = NULL;
 
 int nheadfields = 0;
 int *headfields = NULL;
@@ -125,7 +119,7 @@ main(int argc, char **argv)
     {
       struct p2_options *p2opts = NULL;
       char *tmp;
-      pg2_pool = npool_init();
+      pg2_pool = pool_init();
       p2opts = p2_load(project, state, pg2_pool);
       
       if (!sort_keys)
@@ -137,7 +131,7 @@ main(int argc, char **argv)
 
       if (!heading_keys)
 	{
-	  heading_keys = (char *)npool_copy((unsigned char *)sort_keys, pg2_pool);
+	  heading_keys = (char *)pool_copy((unsigned char *)sort_keys, pg2_pool);
 	  tmp = (char*)heading_keys + strlen(heading_keys) - strlen(p2opts->sort_final);
 	  *tmp = '\0';
 	}
@@ -318,7 +312,7 @@ main(int argc, char **argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {
@@ -346,6 +340,18 @@ opts(int argc, char *arg)
       break;
     case 'f':
       fragment = 1;
+      break;
+
+    case 'g':
+      gcbd = strdup(arg); 
+      gxis = strchr(gcbd, '.');
+      if (gxis)
+	*gxis++ = '\0';
+      else
+	{
+	  fprintf(stderr, "pg2: bad gxis format, should be cbd.rid but got '%s'\n", arg);
+	  exit(1);
+	}
       break;
 #if 0
       /* This option is bogus because heading_keys must always

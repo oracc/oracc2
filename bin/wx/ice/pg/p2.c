@@ -1,13 +1,13 @@
 #include <stdlib.h>
-#include "npool.h"
+#include "pool.h"
 #include "p2.h"
-#include "xpd2.h"
+#include "xpd.h"
 
 extern int csi_debug;
 extern FILE *fdbg;
 
 char *
-p2_maybe_append_designation(const char *s, struct npool *pool, 
+p2_maybe_append_designation(const char *s, Pool *pool, 
 			    struct p2_options *p2opts)
 {
   int designation_ok = 0;
@@ -39,11 +39,11 @@ p2_maybe_append_designation(const char *s, struct npool *pool,
     {
       char *tmp2 = malloc(strlen(entry)+strlen(p2opts->sort_final)+2);
       sprintf(tmp2, "%s,%s", entry, p2opts->sort_final);
-      s = (char*)npool_copy((unsigned char *)tmp2,pool);
+      s = (char*)pool_copy((unsigned char *)tmp2,pool);
       free(tmp2);
     }
   else
-    s = (char*)npool_copy((unsigned char *)s,pool);
+    s = (char*)pool_copy((unsigned char *)s,pool);
   return (char*)s;
 }
 
@@ -61,7 +61,7 @@ dump_pgopts(struct p2_options *o)
 }
 
 struct p2_options *
-p2_load(const char *project, const char *state, struct npool *pool)
+p2_load(const char *project, const char *state, Pool *pool)
 {
   struct p2_options *ret = calloc(1,sizeof(struct p2_options));
   char *opt = malloc(128);

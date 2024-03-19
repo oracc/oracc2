@@ -1,7 +1,7 @@
 #ifndef _PG_H
 #define _PG_H
 
-#include "psdtypes.h"
+#include <c2types.h>
 
 struct item
 {

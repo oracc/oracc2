@@ -53,7 +53,7 @@ make_cache(struct item **items, int nitems, int*sic_size)
   struct si_cache *sicp;
   int i;
   static u4 top;
-  extern Hash_table *seen;
+  extern Hash *seen;
 
   sic_id = 0;
 

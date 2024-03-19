@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype128.h>
-#include "psdtypes.h"
-#include "messages.h"
-#include "list.h"
-#include "hash.h"
-#include "npool.h"
-#include "options.h"
+#include <oraccsys.h>
 #include "runexpat.h"
 #include "sortinfo.h"
 #include "pg.h"
@@ -17,7 +8,7 @@ const char *xis_uri = "http://oracc.org/ns/xis/1.0";
 const char *xisfile = NULL;
 FILE *xisfp = NULL, *subxisfp = NULL;
 
-Hash_table *seen = NULL;
+Hash *seen = NULL;
 
 extern void pd_sort_cache(void);
 
@@ -50,7 +41,7 @@ struct sortinfo *sip;
 struct item *items,**pitems;
 int nitems;
 
-struct npool *r_pool = NULL;
+Pool *r_pool = NULL;
 List *r_list = NULL;
 
 
@@ -261,7 +252,7 @@ sH(void *userData, const char *name, const char **atts)
       curr_ref = get_xml_id(atts);
       percent = atoi(findAttr(atts, "efreq"));
       r_list = list_create(LIST_SINGLE);
-      r_pool = npool_init();
+      r_pool = pool_init();
     }
 }
 
@@ -269,13 +260,13 @@ static void
 eH(void *userData, const char *name)
 {
   if (!strcmp(name, "http://oracc.org/ns/xis/1.0:r"))
-    list_add(r_list, npool_copy((unsigned char*)charData_retrieve(), r_pool));
+    list_add(r_list, pool_copy((unsigned char*)charData_retrieve(), r_pool));
   else if (!strcmp(name, "http://oracc.org/ns/xis/1.0:xis"))
     {
       xis_dump();
       list_free(r_list, NULL);
       r_list = NULL;
-      npool_term(r_pool);
+      pool_term(r_pool);
       r_pool = NULL;
     }
 }
@@ -424,7 +415,7 @@ main(int argc, char **argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

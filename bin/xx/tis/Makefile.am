@@ -37,9 +37,9 @@ tokix_SOURCES=tokix.c
 tokix_LDADD = $(xLDADD)
 tokix_DEPENDENCIES = $(xLDADD)
 
-vidx_SOURCES=vidx.c
-vidx_LDADD = $(xLDADD)
-vidx_DEPENDENCIES = $(xLDADD)
+#vidx_SOURCES=vidx.c
+#vidx_LDADD = $(xLDADD)
+#vidx_DEPENDENCIES = $(xLDADD)
 
 tokpct_SOURCES=tokpct.c
 tokpct_LDADD = $(xLDADD)

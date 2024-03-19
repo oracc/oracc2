@@ -104,7 +104,9 @@ AC_CONFIG_FILES([Makefile
 		 bin/tx/Makefile
 		 bin/wx/Makefile
 		 bin/wx/ccgi/Makefile
+		 bin/wx/ice/Makefile
 		 bin/wx/ice/ce/Makefile
+		 bin/wx/ice/pg/Makefile
 		 bin/wx/ice/wm/Makefile
 		 bin/wx/isp/Makefile
 		 bin/xx/Makefile

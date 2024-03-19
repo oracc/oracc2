@@ -1,11 +1,6 @@
 /* Compile the sort info from sortinfo.tab into 
    an optimized form for runtime use */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "psdtypes.h"
-#include "messages.h"
-#include "options.h"
+#include <oraccsys.h>
 #include "sortinfo.h"
 
 int csi_debug = 0;
@@ -49,7 +44,7 @@ main(int argc, char **argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {
