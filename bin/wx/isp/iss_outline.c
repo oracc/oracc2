@@ -13,7 +13,7 @@ iss_outline_dump(Isp *ip)
 {
   static u4 u4max = 0xffffffff;
   int i, j;
-  u4 *lastlevs = malloc(ip->op_nlevels * sizeof(u4*));
+  u4 *lastlevs = malloc(ip->op_nlevels * sizeof(u4));
   int olevs = 0;
   int nheadings = ip->op_nlevels - 1;
 

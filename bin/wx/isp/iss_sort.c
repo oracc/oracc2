@@ -9,7 +9,7 @@ long ndata = 0;
 int *sortfields;
 int nsortfields;
 
-struct si_cache **make_cache(struct item **items, int nitems, int *sic_size);
+struct si_cache **make_cache(struct item **items, int nitems, int *sicsize);
 
 /* compare only by PQ id because we uniq the pitems array down to one
    entry per text */

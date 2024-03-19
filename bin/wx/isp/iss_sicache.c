@@ -42,7 +42,7 @@ pd_sort_cache(void)
 }
 
 struct si_cache **
-make_cache(struct item **items, int nitems, int*sic_size)
+make_cache(struct item **items, int nitems, int*sicsize)
 {
   struct rbtree *rb;
   RBLIST *rbl;
@@ -145,6 +145,6 @@ make_cache(struct item **items, int nitems, int*sic_size)
      indexing from pdata elements works correctly */
   qsort(siclist, sic_id, sizeof(struct si_cache *), sic_id_cmp);
 
-  *sic_size = sic_id;
+  *sicsize = sic_id;
   return siclist;
 }
