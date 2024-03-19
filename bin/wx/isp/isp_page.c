@@ -129,14 +129,18 @@ isp_cache_page(Isp *ip)
   ip->cache.page = (ccp)pool_copy((uccp)buf, ip->p);
   if (ip->verbose)
     fprintf(stderr, "isp: isp_cache_page: need %s\n", buf);
-  if (!access(ip->cache.page, F_OK))
+
+  if (!ip->force)
     {
-      if (!access(ip->cache.page, R_OK))
-	return 0;
-      else
+      if (!access(ip->cache.page, F_OK))
 	{
-	  ip->err = "cache page exists but is unreadable";
-	  return 1;
+	  if (!access(ip->cache.page, R_OK))
+	    return 0;
+	  else
+	    {
+	      ip->err = "cache page exists but is unreadable";
+	      return 1;
+	    }
 	}
     }
 

@@ -111,14 +111,22 @@ isp_cache_list(Isp *ip)
   char list[strlen(ip->cache.sub)+strlen("/list0")];
   sprintf(list, "%s/list", ip->cache.sub);
   ip->cache.list = (ccp)pool_copy((uccp)list, ip->p);
-  if (access(list, R_OK))
+  if (ip->force)
+    (void)isp_list_create(ip);
+  else
     {
-      if (!access(list, F_OK))
-	ip->err = "cache.list exists but is not readable";
-      else if ('i' == *ip->lloc.type)
-	ip->err = "cache.list does not exist in tmp/isp";
-      else
-	(void)isp_list_create(ip);
+      if (ip->force || access(list, R_OK))
+	{
+	  if (!access(list, F_OK))
+	    {
+	      ip->err = "cache.list %s exists but is not readable";
+	      ip->errx = strdup(list);
+	    }
+	  else if ('i' == *ip->lloc.type)
+	    ip->err = "cache.list does not exist in tmp/isp";
+	  else
+	    (void)isp_list_create(ip);
+	}
     }
   return ip->err ? 1 : 0;
 }

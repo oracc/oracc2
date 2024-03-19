@@ -89,7 +89,6 @@ struct isp_mapdata
 
 typedef struct isp
 {
-  int web;
   int curr_step;
   int steps[ISP_STEP_8O];
   void *stepdata[ISP_STEP_8O];
@@ -120,10 +119,12 @@ typedef struct isp
   const char *tmp_dir;
   const char *err;
   const char *errx;
+  int force;
   int p3;	    /* produce outline and results and then output name of
 		       temp dir for p3-pager.plx to build output
 		       page */
   int verbose;
+  int web;
   Pool *p;
   Memo *tmem;
 } Isp;

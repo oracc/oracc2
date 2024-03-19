@@ -7,7 +7,7 @@ static Isp *opt_ip;
 int
 isp_perm_check(const char *p)
 {
-  int one=0, two=0, thre=0;
+  int one=0, two=0, thr=0;
   if (p)
     {
       if (strlen(p) < 4)
@@ -25,7 +25,7 @@ isp_perm_check(const char *p)
 		    goto error;
 		  break;
 		case '3':
-		  if (thre++)
+		  if (thr++)
 		    goto error;
 		  break;
 		default:
@@ -45,7 +45,7 @@ isp_options(int argc, char **argv, Isp *ip)
 {
   int ret;
   opt_ip = ip;
-  ret = options(argc, argv, "3ELSZPWCFOj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
+  ret = options(argc, argv, "3ELSZPWCFOfj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
   opt_ip = NULL;
   if (ret)
     ip->err = "processing options";
@@ -86,6 +86,9 @@ opts(int opt, const char *arg)
       break;
     case 'O':
       opt_ip->steps[ISP_STEP_8O] = 1;
+      break;
+    case 'f':
+      opt_ip->force = 1;
       break;
     case 'w':
       opt_ip->web = 1;
