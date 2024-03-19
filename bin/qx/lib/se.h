@@ -99,7 +99,7 @@ extern void se_vids_init(const char *index);
 extern void se_v2(const char *proj);
 extern const char ** xmldir_toks(const char *xmldir);
 extern void xmldir_results(const char *xmldir, int count);
-
+extern void set_project_arg(const char *p);
 extern void debug_location8(struct location8 *l8p, struct location8 *r8p);
 extern void debug_location16(struct location16 *l16p, struct location16 *r16p);
 extern void debug_location24(struct location24 *l24p, struct location24 *r24p);

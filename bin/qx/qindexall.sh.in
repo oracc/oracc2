@@ -1,0 +1,6 @@
+#!/bin/sh
+. @@ORACC@@/bin/oraccenv.sh
+for a in `allprojlist.sh` ; do
+    qindex.sh $a
+done
+   

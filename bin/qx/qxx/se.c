@@ -486,6 +486,8 @@ main(int argc, char * const*argv)
   struct token *toks = NULL;
   int ntoks = 0;
 
+  mesg_init();
+  
   f_log = stderr;
 
   if (errfile)
@@ -524,6 +526,8 @@ main(int argc, char * const*argv)
 	{
 	  const char *xindex[] = { "!cat" , "!txt" , "!tra" , "!lem", NULL, "!esp" , NULL };
 	  const char *index[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	  Vido *vps[7];
+	  
 	  struct Datum results[4];
 	  int i, best_findset = -1;
 	  char *hashproj = NULL;
@@ -585,6 +589,7 @@ main(int argc, char * const*argv)
 		{
 		  best_findset = i;
 		  best_res_gran = res_gran;
+		  vps[i] = vp;
 		}
 	    }
 	  if (best_findset >= 0)
@@ -598,6 +603,7 @@ main(int argc, char * const*argv)
 		  if (results[i].count)
 		    fprintf(anyout, "%s %lu\n", index[i], (unsigned long)results[i].count);
 		}
+	      vp = vps[best_findset];
 	      res_gran = best_res_gran;
 	      return_index = &index[best_findset][1];
 	      put_results(&results[best_findset]);
@@ -649,11 +655,21 @@ anytoks(const char *project, const char *index, const char **toks)
 {
   const char **ret_toks = NULL;
   int ntoks = 0;
+  char pbuf[strlen(project)+2];
+  char ibuf[strlen(index)+2];
+  if ('#' == *project)
+    strcpy(pbuf, project);
+  else
+    sprintf(pbuf, "#%s", project);
+  if ('!' == *index)
+    strcpy(ibuf, index);
+  else
+    sprintf(ibuf, "!%s", index);  
   while (toks[ntoks])
     ++ntoks;
   ret_toks = malloc((ntoks+3) * sizeof(const char *));
-  ret_toks[0] = project;
-  ret_toks[1] = index;
+  ret_toks[0] = strdup(pbuf);
+  ret_toks[1] = strdup(ibuf);
   for (ntoks = 0; toks[ntoks]; ++ntoks)
     ret_toks[ntoks+2] = toks[ntoks];
   ret_toks[ntoks+2] = NULL;
@@ -849,7 +865,7 @@ opts(int argc, const char *arg)
       arg_index = arg;
       break;
     case 'j':
-      project = arg;
+      set_project_arg(project = arg);
       break;
     case 'o':
       outfile = arg;

@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Run this script sudo
+#
+project=$1
+if [ "$1" == "" ]; then
+    echo $0: must give project on command line. Stop.
+    exit 1
+fi
+
+if [ "${ORACC_BUILDS}" == "" ]; then
+    echo qindex . @@ORACC@@/bin/oraccenv.sh
+    . @@ORACC@@/bin/oraccenv.sh
+fi
+
+cd @@ORACC@@/$project
+echo qindex `pwd`
+if [ -r 01bld/cdlicat.xmd ]; then
+    echo qindex qcatx $project 01bld/cdlicat.xmd
+    qcatx -p $project -s <01bld/cdlicat.xmd
+fi
+if [ -r 01bld/lists/xtfindex.lst ]; then
+    echo qindex qtxtx $project 01bld/lists/xtfindex.lst
+    qtxtx -p $project <01bld/lists/xtfindex.lst
+    echo qindex qtrax $project 01bld/lists/xtfindex.lst
+    qtrax -p $project <01bld/lists/xtfindex.lst
+fi
+if [ -r 01bld/lists/lemindex.lst ]; then
+    echo qindex qlemx $project 01bld/lists/lemindex.lst
+    qlemx -p $project <01bld/lists/lemindex.lst
+fi
+set 01bld/*/articles.xml
+if [ "$1" != "01bld/*/articles.xml" ]; then
+    for a in $* ; do
+	d=`dirname $a`
+	l=`basename $d`
+	echo qindex qcbdx $project $a
+	qcbdx -p $project -l $l $a
+    done
+fi
+chmod -R o+r 02pub

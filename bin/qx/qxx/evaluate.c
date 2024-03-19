@@ -56,6 +56,12 @@ static int loc24_cmp (struct location24 *l1, struct location24 *l2);
 static int filter_decay;
 
 void
+set_project_arg(const char *p)
+{
+  se_curr_project = p;
+}
+
+void
 set_project(struct token *t)
 {
 #if 0

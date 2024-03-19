@@ -606,6 +606,7 @@ main (int argc, char **argv)
   Dbi_index *mapdb;
 
   setlocale(LC_ALL,ORACC_LOCALE);
+  form_init();
   f2_mem = memo_init(sizeof(Form), 128);
 
   options (argc, argv, "2ac:gp:qsx:v");

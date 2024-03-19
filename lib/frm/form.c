@@ -34,12 +34,14 @@ void
 form_init(void)
 {
   form_pool = pool_init();
+  formsmem = memo_init(sizeof(Form), 128);
 }
 
 void
 form_term(void)
 {
   pool_term(form_pool);
+  memo_term(formsmem);
 }
 
 Uchar *
