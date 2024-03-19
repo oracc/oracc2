@@ -1,15 +1,5 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <psd_base.h>
-#include <options.h>
+#include <oraccsys.h>
 #include <runexpat.h>
-#include <list.h>
-#include <fname.h>
-#include <npool.h>
-#include <memblock.h>
-
 #include "se.h"
 #include "types.h"
 #include "selib.h"
@@ -22,7 +12,7 @@ char last_ref[128];
 int first_ref = 0;
 int verbose = 0;
 
-struct npool *wm_pool = NULL;
+Pool *wm_pool = NULL;
 
 const char *kwic_fn = "02pub/kwic.map";
 const char *ranges_fn = "02pub/unit.map";
@@ -47,7 +37,7 @@ static struct wm_kwic kwic;
 static struct wm_unit unit;
 
 struct wm_range *ur;
-struct mb *mm_unit_ranges;
+Memo *mm_unit_ranges;
 
 const char *input = NULL;
 FILE *input_fp = NULL;
@@ -111,13 +101,15 @@ start_wm(void *userUnit, const char *name, const char **atts)
       else if (!strcmp(name+post_ns,"c") 
 	       && !strcmp(findAttr(atts, "type"), "sentence"))
 	{
-	  const char *xid = NULL /*, *U*/;
+#if 0
+	  const char *xid = NULL, *U;
+#endif
 	  if (ur)
 	    wm_lineword2(&ur->end, last_ref);
 	  
-	  ur = mb_new(mm_unit_ranges);
+	  ur = memo_new(mm_unit_ranges);
 	  first_ref = 1;
-	  xid = xml_id(atts);
+	  /*xid =*/ (void)xml_id(atts);
 #if 0
 	  if ((U = strchr(xid,'U')))
 	    {
@@ -174,8 +166,8 @@ end_wm(void *userUnit, const char *name)
 static void
 fn_expand(void *p)
 {
-  char *fn = (char*)l2_expand(NULL, p, "xtf"); /* let l2_expand figure it out from p */
-  fnlist[findex] = (char*)npool_copy((unsigned char*)fn, wm_pool);
+  char *fn = (char*)expand(NULL, p, "xtf"); /* let l2_expand figure it out from p */
+  fnlist[findex] = (char*)pool_copy((unsigned char*)fn, wm_pool);
   if (!access(fnlist[findex],R_OK))
     {
       if (verbose)
@@ -209,11 +201,11 @@ main (int argc, char **argv)
   else
     input_fp = stdin;
 
-  wm_pool = npool_init();
+  wm_pool = pool_init();
   while (NULL != (fn = fgets(fnbuf,_MAX_PATH,input_fp)))
     {
       fn[strlen(fn)-1] = '\0';
-      list_add(files,npool_copy((unsigned char *)fn, wm_pool));
+      list_add(files,pool_copy((unsigned char *)fn, wm_pool));
     }
   fnlist = malloc((1+files->count) * sizeof(const char *));
   findex = 0;
@@ -223,7 +215,7 @@ main (int argc, char **argv)
   kwic_fp = xfopen(kwic_fn,"wb");
   /*  unit_fp = xfopen(unit_fn,"wb"); */
 
-  mm_unit_ranges = mb_init(sizeof(struct wm_range), 32);
+  mm_unit_ranges = memo_init(sizeof(struct wm_range), 32);
 
   runexpatNS(i_list, fnlist, start_wm, end_wm, "|");
 
@@ -231,19 +223,19 @@ main (int argc, char **argv)
   /*  xfclose(unit_fn,unit_fp); */
 
   ranges_fp = xfopen(ranges_fn, "wb");
-  ranges = mb_merge(mm_unit_ranges, &ranges_bytes);
+  ranges = memo_merge(mm_unit_ranges, &ranges_bytes);
   xfwrite(ranges_fn, TRUE, ranges, 1, ranges_bytes, ranges_fp);
 
-  mb_term(mm_unit_ranges);
+  memo_term(mm_unit_ranges);
   list_free(files, NULL);
   free(fnlist);
-  npool_term(wm_pool);
+  pool_term(wm_pool);
   
   return 0;
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

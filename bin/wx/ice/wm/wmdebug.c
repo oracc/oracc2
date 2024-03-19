@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <psd_base.h>
-#include <options.h>
-#include <loadfile.h>
+#include <oraccsys.h>
 
 #include "se.h"
 #include "types.h"
@@ -58,7 +53,7 @@ main (int argc, char **argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

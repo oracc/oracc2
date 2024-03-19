@@ -1,14 +1,4 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <psd_base.h>
-#include <options.h>
-#include <runexpat.h>
-#include <list.h>
-#include <fname.h>
-#include <npool.h>
-#include <loadfile.h>
-
+#include <oraccsys.h>
 #include "se.h"
 #include "types.h"
 #include "selib.h"
@@ -41,7 +31,7 @@ size_t kwic_len, kwic_num, unit_len, unit_num;
 
 int kwic_radius = 5;
 
-char *id_arg = NULL;
+const char *id_arg = NULL;
 
 static char *
 no_newline(char *s)
@@ -108,7 +98,7 @@ kwic_find(const char *wid)
 }
 
 void
-kwic_controller(char *id)
+kwic_controller(const char *id)
 {
   struct kwic_range *k = NULL;
   if ((k = kwic_find(id)))
@@ -188,7 +178,7 @@ unit_find(const char *wid)
 }
 
 void
-unit_controller(char *id)
+unit_controller(const char *id)
 {
   struct wm_range *u = NULL;
   if ((u = unit_find(id)))
@@ -226,7 +216,7 @@ line_print2(FILE *fp, const char *project, const char*line_id, const char *end_i
 }
 
 void
-line_controller(char *id)
+line_controller(const char *id)
 {
   char *line_id = malloc(strlen(id)+1), *dot, *plus;
   strcpy(line_id, skip_project(id));
@@ -323,7 +313,7 @@ main (int argc, char **argv)
 }
 
 int
-opts(int argc, char *arg)
+opts(int argc, const char *arg)
 {
   switch (argc)
     {

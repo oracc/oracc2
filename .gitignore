@@ -30,6 +30,9 @@ bin/tx/xmlfilter
 bin/wx/wx
 bin/wx/ice/ce/cex
 bin/wx/ice/ce/cextfx
+bin/wx/ice/wm/wmx
+bin/wx/ice/wm/wmapx
+bin/wx/ice/wm/wmdbgx
 bin/wx/isp/ispx
 bin/wx/isp/ispsortx
 bin/wx/isp/isp-ce-HTML.xsl
