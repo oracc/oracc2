@@ -4,6 +4,6 @@
 int
 isp_p3(Isp *ip, FILE *outfp)
 {
-  fprintf(outfp, "%s", ip->cache.sub);
+  fprintf(outfp, "%s:::%s", ip->cache.page, ip->cache.zout);
   return 0;
 }

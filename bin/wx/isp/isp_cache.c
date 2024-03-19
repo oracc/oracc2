@@ -97,7 +97,10 @@ isp_cache_sub(Isp *ip)
 	    ip->err = "cache.sub directory could not be created";
 	}
       else if (access(ip->cache.sub, W_OK))
-	ip->err = "cache.sub directory not writeable";
+	{
+	  ip->err = "cache.sub directory %s not writeable\n";
+	  ip->errx = ip->cache.sub;
+	}
     }
   
   return ip->err ? 1 : 0;
