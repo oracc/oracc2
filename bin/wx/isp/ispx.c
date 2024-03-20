@@ -29,11 +29,13 @@ main(int argc, char **argv)
 
   if (isp_cache_page(ip))
     goto error;
-  
-  /* do this after isp_cache_page to ensure ip->md1 is set */
+
+#if 0
+  /* do this after isp_cache_page to ensure ip->md1 is set; NO: This is done isp_page */
   if (ispo_zoutline(ip))
     goto error;
-
+#endif
+  
   if (ip->p3)
     {
       if (isp_p3(ip, stdout))

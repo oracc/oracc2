@@ -63,7 +63,10 @@ isp_xis_list(Isp *ip)
 	  if (ip->verbose)
 	    fprintf(stderr, "isp: isp_xis_list creating cache.list %s\n", ip->cache.list);
 	  if (!(fp = fopen(ip->cache.list, "w")))
-	    ip->err = "unable to create cache.list";
+	    {
+	      ip->err = ISP_ERROR_START "unable to create cache.list %s\n";
+	      ip->errx = ip->cache.list;
+	    }	  
 	  else
 	    {
 	      xis_wids(ip, xip, fp);

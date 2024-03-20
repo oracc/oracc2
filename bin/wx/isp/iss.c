@@ -249,7 +249,18 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
     }
 
   if (!sort_keys)
-    sort_keys = "period,genre,provenience";
+    {
+      sort_keys = "period,genre,provenience";
+      ip->is.zlev = 3;
+    }
+  else
+    {
+      ip->is.zlev = 1;
+      const char *k = sort_keys;
+      while (*k)
+	if (',' == *k++)
+	  ++ip->is.zlev;
+    }
 
   u4 i;
   Hash *known_fields = hash_create(5);

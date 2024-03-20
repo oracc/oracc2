@@ -14,17 +14,27 @@ ispo_master(Isp *ip)
       char buf[strlen(ip->cache.sort)+strlen(".mol0")];
       sprintf(buf, "%s.mol", ip->cache.sort);
       ip->cache.mol = (ccp)pool_copy((uccp)buf, ip->p);
-      if (access(ip->cache.mol, W_OK))
+      if (!access(ip->cache.mol, F_OK))
 	{
-	  ip->err = ISP_ERROR_START "master outline %s not writeable\n";
+	  if (access(ip->cache.mol, W_OK))
+	    {
+	      ip->err = ISP_ERROR_START "master outline %s not writeable\n";
+	      ip->errx = ip->cache.mol;
+	      return 1;
+	    }
+	}
+
+      FILE *fp;
+      if (!(fp = fopen(ip->cache.mol, "w")))
+	{
+	  ip->err = ISP_ERROR_START "unable to open master outline %s for write\n";
 	  ip->errx = ip->cache.mol;
 	  return 1;
-	}
-      FILE *fp = fopen(ip->cache.mol, "w");
+	}	
 
       ip->is.zlines = loadfile_lines((uccp)ip->cache.sort, &ip->is.zmax);
       
-      fprintf(fp, "#%ld\n", ip->is.zmax);
+      fprintf(fp, "#%ld/%d\n", ip->is.zmax, ip->is.zlev);
       for (i = 0; i < ip->is.zmax; ++i)
 	{
 	  struct ispz iz = { NULL , NULL , NULL , NULL, 0 };
@@ -45,16 +55,16 @@ ispo_master(Isp *ip)
 		fprintf(fp, "%s\n", iz.h1);
 	      if (iz.h2 && *iz.h2)
 		fprintf(fp, "\t%s\n", iz.h2);
-	      fprintf(fp, "\t\t%s\t%d\n", iz.h3, iz.count);
+	      fprintf(fp, "\t\t%s\t#%d\n", iz.h3, iz.count);
 	    }
 	  else if (iz.h2)
 	    {
 	      if (iz.h1 && *iz.h1)
 		fprintf(fp, "%s\n", iz.h1);
-	      fprintf(fp, "\t%s\t%d\n", iz.h2, iz.count);
+	      fprintf(fp, "\t%s\t#%d\n", iz.h2, iz.count);
 	    }
 	  else
-	    fprintf(fp, "%s\t%d\n", iz.h1, iz.count);
+	    fprintf(fp, "%s\t#%d\n", iz.h1, iz.count);
 	}
       fclose(fp);
     }
@@ -97,6 +107,14 @@ ispo_master_page(unsigned char *lp, struct ispz *iop)
 }
 
 static void
+un_uscore(char *s)
+{
+  while (*s)
+    if ('_' == *s++)
+      s[-1] = ' ';
+}
+
+static void
 ispo_zout_parse(unsigned char *lp, struct ispz *iop)
 {
   iop->h1 = lp;
@@ -133,8 +151,11 @@ ispo_zout_parse(unsigned char *lp, struct ispz *iop)
 		    }
 		}
 	    }
-	}	  
+	}
     }
+  if (iop->h1) un_uscore(iop->h1);
+  if (iop->h2) un_uscore(iop->h2);
+  if (iop->h3) un_uscore(iop->h3);
 }
 
 void
@@ -156,13 +177,14 @@ ispo_zoutline(Isp *ip)
   int zmax = atoi((ccp)&ip->is.zlines[0][1]);
   int zlev = atoi(strchr((ccp)ip->is.zlines[0],'/')+1);
   int zoomed = atoi(ip->zoom);
+
   FILE *fp;
   if (!(fp = fopen(ip->cache.zout, "w")))
     {
       ip->err = ISP_ERROR_START "unable to write to zoomed outline file %s\n";
       ip->errx = ip->cache.zout;
     }
-  fprintf(fp, "<div data-zmax=\"%d\">", zmax);
+  fprintf(fp, "<div class=\"pgotl level0\" data-zmax=\"%d\">", zmax);
   int i;
   int h1_open = 0, h2_open = 0;
   int zoom = 0;

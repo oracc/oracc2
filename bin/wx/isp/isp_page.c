@@ -67,10 +67,10 @@ compute_ranges(Isp *ip)
 }
 
 static int
-create_page_input(Isp *ip, char *buf)
+create_page_input(Isp *ip)
 {
-  char pagbuf[strlen(buf)+1];
-  strcpy(pagbuf, buf);
+  char pagbuf[strlen(ip->cache.page)+1];
+  strcpy(pagbuf, ip->cache.page);
   char *pd = strrchr(pagbuf, '.');
   strcpy(pd+1, "pag");
   ip->cache.pgin = (ccp)pool_copy((uccp)pagbuf, ip->p);
@@ -124,31 +124,56 @@ create_page_div(Isp *ip)
 int
 isp_cache_page(Isp *ip)
 {
-  char buf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];
-  sprintf(buf, "%s/%s-z%s-p%s.div", ip->cache.sub, ip->perm, ip->zoom, ip->page);
-  ip->cache.page = (ccp)pool_copy((uccp)buf, ip->p);
+  char pbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];
+  sprintf(pbuf, "%s/%s-z%s-p%s.div", ip->cache.sub, ip->perm, ip->zoom, ip->page);
+  ip->cache.page = (ccp)pool_copy((uccp)pbuf, ip->p);
+
+  char zbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen("-123-z.otl0")];
+  sprintf(zbuf, "%s/%s-z%s.otl", ip->cache.sub, ip->perm, ip->zoom);
+  ip->cache.zout = (ccp)pool_copy((uccp)zbuf, ip->p);
+
   if (ip->verbose)
-    fprintf(stderr, "isp: isp_cache_page: need %s\n", buf);
+    fprintf(stderr, "isp: isp_cache_page: need %s:::%s\n", zbuf, pbuf);
 
   if (!ip->force)
     {
+      int need_zout = 0;
+      if (!access(ip->cache.zout, F_OK))
+	{
+	  if (access(ip->cache.zout, R_OK))
+	    {
+	      ip->err = ISP_ERROR_START "cache zoom %s exists but is unreadable\n";
+	      ip->errx = ip->cache.zout;
+	      return 1;
+	    }
+	}
+
+      if (need_zout)
+	if (ispo_zoutline(ip))
+	  return 1;
+	
       if (!access(ip->cache.page, F_OK))
 	{
 	  if (!access(ip->cache.page, R_OK))
 	    return 0;
 	  else
 	    {
-	      ip->err = "cache page exists but is unreadable";
+	      ip->err = ISP_ERROR_START "cache page %s exists but is unreadable\n";
+	      ip->errx = ip->cache.page;
 	      return 1;
 	    }
 	}
     }
 
+  if (ispo_zoutline(ip))
+    return 1;
+
   if (compute_ranges(ip))
     return 1;
 
-  if (create_page_input(ip, buf))
+  if (create_page_input(ip))
     return 1;
 
+  
   return create_page_div(ip);
 }

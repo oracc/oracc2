@@ -77,6 +77,7 @@ struct ispo
 {
   unsigned char **zlines;
   size_t zmax;
+  int zlev;
   List *l; /* data items are isph w level = 1 */
 };
 
@@ -150,6 +151,8 @@ typedef struct isp
   const char *err;
   const char *errx;
   int force;
+  int olev;	    /* outline levels, i.e., number of headings
+		       without any appended designation */
   int p3;	    /* produce outline and results and then output name of
 		       temp dir for p3-pager.plx to build output
 		       page */
