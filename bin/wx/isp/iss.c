@@ -128,6 +128,7 @@ pg_load(int *nitems)
   return items;
 }
 
+#if 0
 static int
 o_cmp(const void *a,const void*b)
 {
@@ -163,6 +164,7 @@ pg_outline(int *nlevelsp)
   *nlevelsp = nlevels;
   return o;
 }
+#endif
 
 static int *
 set_keys(const char *s, int *nfields)
@@ -300,9 +302,11 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   
   if (NULL == (pitems = pg_sort(ip, items, &nitems, sort_keys)))
     return 1;
-  
+
+#if 0
   ip->op = pg_outline(&ip->op_nlevels);
-  
+#endif
+
   if (nitems)
     pages = pg_page(ip, pitems, nitems);
   

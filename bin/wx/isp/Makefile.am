@@ -7,7 +7,9 @@ bin_SCRIPTS=ispdiv.sh
 scriptdata_DATA=isp-ce-HTML.xsl
 
 iss_sources = iss.c iss_page.c iss_sortinfo.c iss_sicache.c \
-	iss_redblack.c iss_sort.c iss_outline.c
+	iss_redblack.c iss_sort.c isp_outline.c
+
+#iss_outline.c
 
 ispx_SOURCES=all.proto ispx.c isp_init.c isp_options.c isp_validate.c \
 	ispargs.c isp_help.c isp_show.c isp_tmp.c isp_list.c isp_cache.c \
@@ -32,6 +34,6 @@ x.proto: $(PSOURCES)
 	cproto -e $(AM_CPPFLAGS) $(PSOURCES) >$@
 	mv x.proto all.proto
 
-ispox_SOURCES=isp_outline.c
+ispox_SOURCES=ispox.c
 ispox_LDADD = $(xLDADD)
 ispox_DEPENDENCIES = $(xLDADD)

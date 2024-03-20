@@ -31,7 +31,7 @@ main(int argc, char **argv)
     goto error;
   
   /* do this after isp_cache_page to ensure ip->md1 is set */
-  if (iss_outline_dump(ip))
+  if (ispo_zoutline(ip))
     goto error;
 
   if (ip->p3)

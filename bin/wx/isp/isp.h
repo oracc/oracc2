@@ -37,6 +37,7 @@ struct isp_cache
   const char *sub;	/* the list's cache directory */
   const char *list;	/* the list file */
   const char *sort; 	/* the list sorted by the requested permutation */
+  const char *mol; 	/* the master outline for the list in cache.sort */
   const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the page in a zoomed slice; z=0 for no zoom */
   const char *zout;	/* the outline for a zoomed slice; z=0 for no zoom */
@@ -126,6 +127,7 @@ typedef struct isp
   const char *list_name;
   struct isp_list_loc lloc;
   struct isp_sort sort;
+  struct ispo is;
   struct isp_mapdata md1;
   struct isp_mapdata md2;
   struct outline *op;

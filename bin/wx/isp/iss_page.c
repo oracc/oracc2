@@ -248,6 +248,8 @@ pg_page_dump(Isp *ip, struct page *p)
       FILE *fp = fopen(pfn, "w");
       pg_map_one(ip, fp, list_len(z), p_count, pmap);
       fclose(fp);
+      if (ispo_master(ip))
+	return 1;
     }
   list_free(z, NULL);
   list_free(zmap, NULL);
