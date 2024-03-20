@@ -115,8 +115,6 @@ extern int isp_xis_list(Isp *ip);
 /* iss.c */
 extern struct item *pg_load(int *nitems);
 extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
-/* iss_outline.c */
-extern int iss_outline_dump(Isp *ip);
 /* iss_page.c */
 extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, FILE *fp);
 extern int pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap);
