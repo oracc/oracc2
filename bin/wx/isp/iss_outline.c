@@ -58,7 +58,7 @@ iss_outline_dump(Isp *ip)
 
 	  if (o[i].poffsets[j] != lastlevs[j])
 	    {
-	      if (o[i].sic->id == atoi(ip->zoom))
+	      if (/*o[i].sic->id == atoi(ip->zoom)*/ (i+1) == atoi(ip->zoom))
 		{
 		  zoomstr = " class=\"zoomed\"";
 #if 0
@@ -85,8 +85,8 @@ iss_outline_dump(Isp *ip)
 		{
 		  fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\" data-zoom=\"%d\">%s [%ld]</a></p>", 
 			  zoomstr,
-			  o[i].sic->id + 1,
-			  o[i].sic->id + 1,
+			  i + 1,
+			  i + 1,
 			  (char*)xmlify(&sip->pool[o[i].poffsets[j]]),
 			  (long)o[i].count);
 		}
@@ -109,8 +109,8 @@ iss_outline_dump(Isp *ip)
 		    {
 		      fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\" data-zoom=\"%d\">%s [%ld]</a></p>", 
 			      zoomstr,
-			      o[i].sic->id + 1,
-			      o[i].sic->id + 1,
+			      i + 1,
+			      i + 1,
 			      (char*)xmlify(&sip->pool[o[i].poffsets[j]]),
 			      (long)o[i].count);
 		    }

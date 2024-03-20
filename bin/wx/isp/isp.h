@@ -71,6 +71,34 @@ struct outline
   Signed32 count;
 };
 
+/* Top-level structure for the outline */
+struct ispo
+{
+  unsigned char **zlines;
+  size_t zmax;
+  List *l; /* data items are isph w level = 1 */
+};
+
+/* Per-heading structure for a zoom line */
+struct isph
+{
+  int zoom;
+  int level;
+  unsigned char *h;
+  int zimx; /* z-item max */
+  List *l;
+};
+
+/* Zoom line split up into headers and items */
+struct ispz
+{
+  unsigned char *h1;
+  unsigned char *h2;
+  unsigned char *h3;
+  unsigned char *items;
+  int count;
+};
+
 struct page
 {
   Signed32 used;

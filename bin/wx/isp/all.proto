@@ -22,6 +22,13 @@ extern int isp_list_method(Isp *ip);
 extern int isp_perm_check(const char *p);
 extern int isp_options(int argc, char **argv, Isp *ip);
 extern int opts(int opt, const char *arg);
+/* isp_outline.c */
+extern void ispo_parse_page(unsigned char *lp, struct ispz *iop);
+extern void ispo_tabbed(const char *fn, FILE *fp);
+extern void ispo_parse_tabbed(unsigned char *lp, struct ispz *iop);
+extern void ispo_outline_p(FILE *fp, unsigned char *h, int count, int zoom, int zoomed);
+extern void ispo_outline(const char *fn, FILE *fp, int zoomed);
+extern int main(int argc, char **argv);
 /* isp_p3.c */
 extern int isp_p3(Isp *ip, FILE *outfp);
 /* isp_page.c */

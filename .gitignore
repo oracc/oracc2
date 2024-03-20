@@ -41,6 +41,7 @@ bin/wx/ice/wm/wmx
 bin/wx/ice/wm/wmapx
 bin/wx/ice/wm/wmdbgx
 bin/wx/isp/ispx
+bin/wx/isp/ispox
 bin/wx/isp/ispsortx
 bin/wx/isp/isp-ce-HTML.xsl
 bin/xx/concord
@@ -122,6 +123,7 @@ bin/wx/pqx_map.c
 bin/wx/sl.c
 bin/wx/xff.c
 bin/wx/xmlrpc.c
+bin/wx/isp/ispdiv.sh
 bin/xx/tis/tisdiv.c
 lib/gvl/oiv.c
 fname.c

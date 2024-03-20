@@ -1,0 +1,6 @@
+#!/bin/dash
+# $1=project $2=input $3=output
+@@ORACC@@/bin/wmx -p $1 -l -i $2 |
+    @@ORACC@@/bin/cextfx -4 -p $1 -l | \
+	xsltproc -stringparam project $1 @@ORACC@@/lib/scripts/isp-ce-HTML.xsl - \
+		 >$3
