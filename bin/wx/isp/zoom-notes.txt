@@ -81,9 +81,24 @@ This would come from the same counter as the UI already uses.
 THINGS NOT YET DONE
 *******************
 
+1. ALL RESULTS
+--------------
 There is another control, ALL RESULTS, which sets zoom to zero; I
 haven't updated that to the new system yet because it is embedded in
 the page template. I can do that without too much difficulty next week.
+
+2. PAGE PREV/NEXT BROKEN ON INSTANCE PAGES
+------------------------------------------
+
+The first page of the list comes up OK, but subsequent pages give:
+
+ failed to find or create xis cache
+
+I may be able to fix this easily in the existing implementation or I
+may need to reimplement, which I will have to do sooner or later anyway.
+
+3. FULL TEXT CONTEXT BROKEN
+---------------------------
 
 When you get the instance list you should be able to click on the text
 labels to see the text edition in context; this is broken in the new
