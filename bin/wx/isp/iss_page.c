@@ -200,6 +200,7 @@ int
 pg_page_dump(Isp *ip, struct page *p)
 {
   FILE *fpag = NULL;
+  int zmax = 0, imax = 0;
   if (ip->cache.sort)
     {
       if (!(fpag = fopen(ip->cache.sort, "w")))
@@ -217,12 +218,14 @@ pg_page_dump(Isp *ip, struct page *p)
     {
       if ('#' == p->p[i][0])
 	{
+	  ++zmax;
 	  if (i)
 	    fputc('\n',fpag);
 	  fputs(p->p[i], fpag);
 	}
       else if ('+' != p->p[i][0])
 	{
+	  ++imax;
 	  fputc(' ', fpag);
 	  fputs(p->p[i], fpag);
 	}
@@ -232,18 +235,11 @@ pg_page_dump(Isp *ip, struct page *p)
     {
       fclose(fpag);
       unsigned char *f = loadfile((uccp)ip->cache.sort, NULL);
-      ispmp_zooms ...
-      char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
-      sprintf(pfn, "%s.pmp", ip->cache.sort);
-      FILE *fp = fopen(pfn, "w");
-      ispmp_pages(ip, fp, list_len(z), p_count, f);
-      fclose(fp);
+      ispmp_zooms(ip, f, zmax);
+      ispmp_pages(ip, f, imax);
       if (ispo_master(ip))
 	return 1;
     }
-  list_free(z, NULL);
-  list_free(zmap, NULL);
-  list_free(pmap, NULL);
   
   return 0;
 }

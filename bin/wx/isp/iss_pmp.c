@@ -3,6 +3,7 @@
 
 struct pgtell
 {
+  
   long htell;
   int hlen;
   long ptell;
@@ -28,23 +29,37 @@ showbuf(unsigned char *s, long h, int hlen, long p, int plen)
 }
 #endif
 
+int
+ztotal_get(int zcount, const char *s)
+{
+  while (*s)
+    if (' ' == *s++)
+      ++zcount;  
+  return zcount;
+}
+
 void
-ispmp_zooms(unsigned char *f)
+ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 {
   struct pgtell pt = { 0L, 0, 0L, 0 };
-  int zoom = 0;
-  int zcount = 0;
+  int zoom = 0, zcount = 0, ztotal = 0;
   unsigned char *s = f;
+  char zfn[strlen(ip->cache.sort)+strlen("-z012345679.pmp0")];
   while (*s)
     {
       if ('#' == *s)
 	{
-	  ++zoom;
+	  sprintf(zfn, "%s-z%d.pmp", ip->cache.sort, ++zoom);
+	  FILE *zfp = fopen(zfn, "w");
 	  zcount = 0;
+	  ztotal = 0;
 	  pt.htell = s - f;
 	  s = (ucp)strchr((ccp)s, ' ');
 	  pt.hlen = (s - f) - pt.htell;
-	  pt.ptell = (++s - f);
+	  /* we want the tell location after the space but we don't
+	     want to skip the space because we count items by their
+	     preceding space characters */
+	  pt.ptell = (s - f) + 1;
 	  while ('\n' != *s)
 	    {
 	      if (' ' == *s)
@@ -52,9 +67,12 @@ ispmp_zooms(unsigned char *f)
 		  ++zcount;
 		  if (!(zcount%25))
 		    {
+		      if (!ztotal)
+			ztotal = ztotal_get(zcount, (ccp)s);
 		      pt.plen = (s - f) - pt.ptell;
-		      fprintf(stderr, "z%d\t%ld/%d/%ld/%d\n",
-			      zoom, pt.htell, pt.hlen, pt.ptell, pt.plen);
+		      fprintf(zfp, "%d/%d/%ld/%d/%ld/%d\n",
+			      zmax, ztotal, pt.htell, pt.hlen, pt.ptell, pt.plen);
+		      fclose(zfp);
 #if 0
 		      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
@@ -64,23 +82,26 @@ ispmp_zooms(unsigned char *f)
 		}
 	      ++s;
 	    }
-	  if (pt.ptell)
+	  if (zcount)
 	    {
 	      pt.plen = (s - f) - pt.ptell;
-	      fprintf(stderr, "z%d\t%ld/%d/%ld/%d\n",
-		      zoom, pt.htell, pt.hlen, pt.ptell, pt.plen);
+	      sprintf(zfn, "%s-z%d.pmp", ip->cache.sort, zoom);
+	      FILE *zfp = fopen(zfn, "w");
+	      fprintf(zfp, "%d/%d/%ld/%d/%ld/%d\n",
+		      zmax, zcount, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
 	      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
-	      memset(&pt, '\0', sizeof(struct pgtell));
 	    }
+	  fclose(zfp);
+	  memset(&pt, '\0', sizeof(struct pgtell));
 	  ++s;
 	}
     }
 }
 
 void
-ispmp_pages(unsigned char *f)
+ispmp_pages(Isp *ip, unsigned char *f, int imax)
 {
   struct pgtell pt = { -1L, 0, 0L, 0 };
   long lasth_tell = 0L;
@@ -88,6 +109,9 @@ ispmp_pages(unsigned char *f)
   int page = 1;
   int pcount = 0;
   unsigned char *s = f;
+  char pfn[strlen(ip->cache.sort)+strlen(".pmp0")];
+  sprintf(pfn, "%s.pmp", ip->cache.sort);
+  FILE *pfp = fopen(pfn, "w");
   while (*s)
     {
       if ('#' == *s)
@@ -114,8 +138,8 @@ ispmp_pages(unsigned char *f)
 	      if (!(pcount%25))
 		{
 		  pt.plen = (s - f) - pt.ptell;
-		  fprintf(stderr, "p%d\t%ld/%d/%ld/%d\n",
-			  page, pt.htell, pt.hlen, pt.ptell, pt.plen);
+		  fprintf(pfp, "%d/%d/%ld/%d/%ld/%d\n",
+			  page, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
 		  showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
@@ -136,12 +160,13 @@ ispmp_pages(unsigned char *f)
   pt.plen = (--s - f) - pt.ptell;
   if (pt.plen)
     {
-      fprintf(stderr, "p%d\t%ld/%d/%ld/%d\n",
-	      page, pt.htell, pt.hlen, pt.ptell, pt.plen);
+      fprintf(pfp, "%d/%d/%ld/%d/%ld/%d\n",
+	      page, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0      
       showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
     }
+  fclose(pfp);
 }
 #if 0
 int
