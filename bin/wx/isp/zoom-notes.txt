@@ -1,0 +1,45 @@
+Before getting into details, it may be useful to know that the
+structure of a zoomed result is the same as an unzoomed result: the
+zoom reduces the results to a single heading from the metadata, and
+then applies exactly the same page selection as for an unzoomed page.
+This means that the UI code for glossary-article-texts already
+contains much of what we need, and whatever that does with the results
+of calling the oracc server's page maker should be mostly or
+completely the same for zoomed versus unzoomed pages.
+
+The outline pane now has a JS function of the form:
+
+ p3zoomgx(PROJECT,GLOSSARY,XIS,ZOOMINDEX)
+
+You don't need the PROJECT for the current oracc-search-front-end,
+because PROJECT is always NEO.
+
+You should be able to parse this in a manner analagous to
+handleTermClick in
+glossary-article-texts/glossary-article-texts.component.ts
+
+This function looks like it handles a-links of the form:
+
+  <a class="icount" href="javascript:distprof2('gudea','sux','sux.r00002d')">35 instances</a>
+
+and parses out the arguments from the javascript function.
+
+In the outline pane--for reasons I don't understand and which I won't
+fix today--I did things slightly differently and the a-link is:
+
+  <a href="javascript://" onclick="p3zoomgx('gudea','sux','sux.r00002d',1)" data-zoom="1">
+
+But you should be able to use the same parse but add a final
+queryParam for the integer that is the zoom index.
+
+You can then build a URL that is analogous to other XIS URLS; for
+GLOSSARY=sux:
+
+ /neo/sux?xis=XIS&zoom=ZOOMINDEX
+
+You can also include a page in that URL--this is done elsewhere in the
+UI to implement the prev/next arrows to page through the results:
+
+ /neo/sux?xis=XIS&zoom=ZOOMINDEX&page=PAGE
+
+This would come from the same counter as the UI already uses.

@@ -24,15 +24,7 @@ extern int isp_options(int argc, char **argv, Isp *ip);
 extern int opts(int opt, const char *arg);
 /* isp_outline.c */
 extern int ispo_master(Isp *ip);
-extern void ispo_outline_p(FILE *fp, unsigned char *h, int count, int zoom, int zoomed);
 extern int ispo_zoutline(Isp *ip);
-/* ispox.c */
-extern void ispo_parse_page(unsigned char *lp, struct ispz *iop);
-extern void ispo_tabbed(const char *fn, FILE *fp);
-extern void ispo_parse_tabbed(unsigned char *lp, struct ispz *iop);
-extern void ispo_outline_p(FILE *fp, unsigned char *h, int count, int zoom, int zoomed);
-extern void ispo_outline(const char *fn, FILE *fp, int zoomed);
-extern int main(int argc, char **argv);
 /* isp_p3.c */
 extern int isp_p3(Isp *ip, FILE *outfp);
 /* isp_page.c */

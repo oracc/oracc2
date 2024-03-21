@@ -158,16 +158,22 @@ ispo_zout_parse(unsigned char *lp, struct ispz *iop)
   if (iop->h3) un_uscore(iop->h3);
 }
 
-void
-ispo_outline_p(FILE *fp, unsigned char *h, int count, int zoom, int zoomed)
+static void
+ispo_outline_p(Isp *ip, FILE *fp, unsigned char *h, int count, int zoom, int zoomed)
 {
   const char *class;
   if (zoom == zoomed)
     class = " class=\"zoomed\"";
   else
     class = "";
-  fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\" data-zoom=\"%d\">%s [%d]</a></p>",
-	  class, zoom, zoom, h, count);
+  if (!strcmp(ip->lloc.type, "xis"))
+    {
+      fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoomgx('%s','%s','%s',%d)\" data-zoom=\"%d\">%s [%d]</a></p>",
+	      class, ip->project, ip->lloc.lang, ip->list_name, zoom, zoom, h, count);
+    }
+  else
+    fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\" data-zoom=\"%d\">%s [%d]</a></p>",
+	    class, zoom, zoom, h, count);
 }
 
 int
@@ -206,7 +212,7 @@ ispo_zoutline(Isp *ip)
 	    }
 	  if (zlev == 1)
 	    {
-	      ispo_outline_p(fp, iz.h1, iz.count, ++zoom, zoomed);
+	      ispo_outline_p(ip, fp, iz.h1, iz.count, ++zoom, zoomed);
 	    }
 	  else
 	    {
@@ -219,7 +225,7 @@ ispo_zoutline(Isp *ip)
 	{
 	  if (zlev == 2)
 	    {
-	      ispo_outline_p(fp, iz.h2, iz.count, ++zoom, zoomed);
+	      ispo_outline_p(ip, fp, iz.h2, iz.count, ++zoom, zoomed);
 	    }
 	  else
 	    {
@@ -234,7 +240,7 @@ ispo_zoutline(Isp *ip)
 	    }
 	}
       if (iz.h3 && *iz.h3)
-	ispo_outline_p(fp, iz.h3, iz.count, ++zoom, zoomed);
+	ispo_outline_p(ip, fp, iz.h3, iz.count, ++zoom, zoomed);
     }
   if (h2_open)
     {

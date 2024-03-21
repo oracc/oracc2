@@ -13,7 +13,7 @@
 <xsl:include href="g2-gdl-HTML.xsl"/>
 
 <xsl:param name="fragment" select="'yes'"/>
-<xsl:param name="item-offset"/>
+<xsl:param name="item-offset" select="1"/>
 <xsl:param name="item-url"/>
 <xsl:param name="project"/>
 <xsl:param name="divwrap" select="'yes'"/>

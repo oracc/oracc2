@@ -1,7 +1,8 @@
 include ../../../oracc-am-rules.txt
 
-bin_PROGRAMS=ispx ispsortx ispox
+bin_PROGRAMS=ispx ispsortx
 
+#ispox
 #ispmpx
 
 bin_SCRIPTS=ispdiv.sh
@@ -36,9 +37,9 @@ x.proto: $(PSOURCES)
 	cproto -e $(AM_CPPFLAGS) $(PSOURCES) >$@
 	mv x.proto all.proto
 
-ispox_SOURCES=ispox.c
-ispox_LDADD = $(xLDADD)
-ispox_DEPENDENCIES = $(xLDADD)
+# ispox_SOURCES=ispox.c
+# ispox_LDADD = $(xLDADD)
+# ispox_DEPENDENCIES = $(xLDADD)
 
 # ispmpx_SOURCES=isp_pmp.c
 # ispmpx_LDADD = $(xLDADD)
