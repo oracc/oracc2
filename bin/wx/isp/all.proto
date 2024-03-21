@@ -38,6 +38,12 @@ extern int isp_p3(Isp *ip, FILE *outfp);
 /* isp_page.c */
 extern int create_page_div(Isp *ip);
 extern int isp_cache_page(Isp *ip);
+/* isp_pmp.c */
+extern char *chunk(unsigned char *s, long from, int len);
+extern void showbuf(unsigned char *s, long h, int hlen, long p, int plen);
+extern void ispmp_zooms(unsigned char *f);
+extern void ispmp_pages(unsigned char *f);
+extern int main(int argc, char **argv);
 /* isp_show.c */
 extern void isp_show(FILE *fp, Isp *ip);
 /* isp_sort.c */
@@ -116,7 +122,7 @@ extern int isp_xis_list(Isp *ip);
 extern struct item *pg_load(int *nitems);
 extern int ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys);
 /* iss_page.c */
-extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, FILE *fp);
+extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, long pstart, FILE *fp);
 extern int pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap);
 extern int pg_zmaps(Isp *ip, List *zmaps, List *z);
 extern char *fmthdr(short sic_index);

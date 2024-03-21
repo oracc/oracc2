@@ -4,7 +4,7 @@
 static void
 file_copy_chunk(FILE *from, unsigned long start, int len, FILE *to)
 {
-  fseek(from,start, SEEK_SET);
+  fseek(from, start, SEEK_SET);
   char *buf = malloc(len+1);
   fread(buf, 1, len, from);
   char *s = buf;

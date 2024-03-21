@@ -11,17 +11,20 @@ extern int quick;
 struct pgtell
 {
   long ptell;
+  int plen;
   long htell;
   int hlen;
 };
 
 struct pgtell *
-pg_tell(Isp *ip, long ht, int hl, FILE *fp)
+pg_tell(Isp *ip, long ht, int hl, long pstart, FILE *fp)
 {
   struct pgtell *pt = memo_new(ip->tmem);
-  pt->ptell = ftell(fp);
   pt->htell = ht;
   pt->hlen = hl;
+  pt->ptell = pstart;
+  fflush(fp);
+  pt->plen = ftell(fp)-pstart;
   return pt;
 }
 
@@ -30,6 +33,23 @@ pg_tell(Isp *ip, long ht, int hl, FILE *fp)
 int
 pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap)
 {
+#if 1
+  /* Reinitialize before dumping pmp for z0 */
+  if (!ip)
+    {
+      return 0;
+    }
+  struct pgtell *pt;
+  for (pt = list_first(lmap); pt; pt = list_next(lmap))
+    {
+#if 0
+      long start = (ptlast ? ptlast->ptell+1 : 0L);
+      if (start < pt->htell+pt->hlen)
+	start = pt->htell+pt->hlen;
+#endif
+      fprintf(fp, "%d/%d/%ld/%d/%ld/%d\n", zmax, zimx, pt->htell, pt->hlen, pt->ptell, pt->plen);
+    }
+#else  
   int nth = 0;
   List_node *np = lmap->first;
   while (nth < list_len(lmap))
@@ -40,6 +60,7 @@ pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap)
       np = np->next;
       ++nth;
     }
+#endif
   return 0;
 }
 
@@ -61,13 +82,13 @@ pg_zmaps(Isp *ip, List *zmaps, List *z)
 #endif
 
   znth = 0;
-  np = zmaps->first;
-  while (znth < list_len(z))
+  List *lp;
+  for (lp = list_first(zmaps); lp; lp = list_next(zmaps))
     {
       char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
       sprintf(pfn, "%s-z%d.pmp", ip->cache.sort, znth+1); /* should rewrite to use snprintf */
       FILE *fp = fopen(pfn, "w");
-      pg_map_one(ip, fp, list_len(z), zcounts[znth], np->data);
+      pg_map_one(ip, fp, list_len(z), zcounts[znth], lp);
       fclose(fp);
       ++znth;
     }
@@ -184,8 +205,8 @@ pg_page_dump(Isp *ip, struct page *p)
   List *pmap = list_create(LIST_DOUBLE);
   List *zmap = list_create(LIST_DOUBLE);
   List *zmaps = list_create(LIST_SINGLE);
-  long htell;
-  int hlen;
+  long htell = 0L, pstart = 0L, zstart = 0L, phtell = -1L, ppstart = -1L;
+  int hlen, phlen;
 
   FILE *fpag = NULL;
   ip->tmem = memo_init(sizeof(struct pgtell), 128);
@@ -210,11 +231,22 @@ pg_page_dump(Isp *ip, struct page *p)
 	    {
 	      fputc('\n',fpag);
 	      list_add(z, (void*)(uintptr_t)z_count);
-	      list_add(zmap, pg_tell(ip, htell, hlen, fpag));
+	      list_add(zmap, pg_tell(ip, htell, hlen, pstart, fpag));
 	      list_add(zmaps,zmap);
 	    }
+	  fflush(fpag);
 	  htell = ftell(fpag);
-	  hlen = strlen(p->p[i])+1;
+	  hlen = strlen(p->p[i]);
+	  if (phtell < 0L)
+	    {
+	      phtell = htell;
+	      phlen = hlen;
+	    }
+	  fputs(p->p[i], fpag);
+	  fflush(fpag);
+	  pstart = ftell(fpag)+1;
+	  if (ppstart < 0L)
+	    ppstart = pstart;
 	  zmap = list_create(LIST_DOUBLE);
 	  ++z_index;
 	  z_count = 0;
@@ -224,19 +256,28 @@ pg_page_dump(Isp *ip, struct page *p)
 	  fputc(' ', fpag);
 	  ++z_count;
 	  if (!(z_count%25))
-	    list_add(zmap, pg_tell(ip,htell, hlen, fpag));
+	    {
+	      list_add(zmap, pg_tell(ip, htell, hlen, zstart, fpag));
+	      fflush(fpag);
+	      zstart = ftell(fpag);
+	    }
 	  ++p_count;
 	  if (!(p_count%25))
-	    list_add(pmap, pg_tell(ip,htell, hlen, fpag));
+	    {
+	      list_add(pmap, pg_tell(ip, phtell, phlen, ppstart, fpag));
+	      ppstart = phtell = -1L;
+	      fflush(fpag);
+	      pstart = ftell(fpag);
+	    }
+	  fputs(p->p[i], fpag);
 	}
-      fputs(p->p[i], fpag);
     }
   fputc('\n',fpag);
   list_add(z, (void*)(uintptr_t)z_count);
-  list_add(zmap, pg_tell(ip,htell, hlen, fpag));
+  list_add(zmap, pg_tell(ip, htell, hlen, pstart, fpag));
   list_add(zmaps, zmap);
   if (p_count)
-    list_add(pmap, pg_tell(ip,htell, hlen, fpag));
+    list_add(pmap, pg_tell(ip, phtell, phlen, ppstart, fpag));
 
   /* This is zoom=0 */
   if (ip)
@@ -245,6 +286,7 @@ pg_page_dump(Isp *ip, struct page *p)
       pg_zmaps(ip, zmaps, z);
       char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
       sprintf(pfn, "%s.pmp", ip->cache.sort);
+      pg_map_one(NULL, NULL, 0, 0, NULL);
       FILE *fp = fopen(pfn, "w");
       pg_map_one(ip, fp, list_len(z), p_count, pmap);
       fclose(fp);

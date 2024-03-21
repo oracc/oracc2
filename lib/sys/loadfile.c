@@ -60,6 +60,11 @@ loadfile_lines(unsigned const char *fname, size_t *nlines)
   for (i = l = 0; i < n; ++i)
     if ('\n' == f[i])
       ++l;
+  if ('\n' != f[n-1])
+    {
+      fprintf(stderr, "loadfile_lines: no newline at end of file %s; autofixing.\n", fname);
+      ++l;
+    }
   lp = malloc((l+1) * sizeof(unsigned char *));
   for (i = j = 0; i < n; ++i)
     {

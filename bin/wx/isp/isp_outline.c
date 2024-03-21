@@ -107,7 +107,7 @@ ispo_master_page(unsigned char *lp, struct ispz *iop)
 }
 
 static void
-un_uscore(char *s)
+un_uscore(unsigned char *s)
 {
   while (*s)
     if ('_' == *s++)
