@@ -29,7 +29,13 @@ showbuf(unsigned char *s, long h, int hlen, long p, int plen)
 }
 #endif
 
-int
+static void
+md_dump(FILE *fp, int total, long htell, int hlen, long ptell, int plen)
+{
+  fprintf(fp, "%d/%ld/%d/%ld/%d\n", total, htell, hlen, ptell, plen);
+}
+
+static int
 ztotal_get(int zcount, const char *s)
 {
   while (*s)
@@ -78,8 +84,7 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 		      if (!ztotal)
 			ztotal = ztotal_get(zcount, (ccp)s);
 		      pt.plen = (s - f) - pt.ptell;
-		      fprintf(zfp, "%d/%d/%ld/%d/%ld/%d\n",
-			      zmax, ztotal, pt.htell, pt.hlen, pt.ptell, pt.plen);
+		      md_dump(zfp, ztotal, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
 		      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
@@ -93,8 +98,7 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 	  if (zpcount)
 	    {
 	      pt.plen = (s - f) - pt.ptell;
-	      fprintf(zfp, "%d/%d/%ld/%d/%ld/%d\n",
-		      zmax, zcount, pt.htell, pt.hlen, pt.ptell, pt.plen);
+	      md_dump(zfp, zcount, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
 	      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
@@ -144,8 +148,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 	      if (!(pcount%25))
 		{
 		  pt.plen = (s - f) - pt.ptell;
-		  fprintf(pfp, "%d/%d/%ld/%d/%ld/%d\n",
-			  page, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
+		  md_dump(pfp, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
 		  showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
@@ -166,8 +169,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   pt.plen = (--s - f) - pt.ptell;
   if (pt.plen)
     {
-      fprintf(pfp, "%d/%d/%ld/%d/%ld/%d\n",
-	      page, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
+      md_dump(pfp, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0      
       showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif

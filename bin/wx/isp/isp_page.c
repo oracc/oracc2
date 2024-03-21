@@ -21,8 +21,8 @@ static void
 md_parse(char *mline, struct isp_mapdata *mdp)
 {
   char *next;
-  mdp->zmax = strtoul(mline, &next, 10);
-  mdp->zimx = strtoul(next+1, &next, 10);
+  /*mdp->zmax = strtoul(mline, &next, 10);*/
+  mdp->zimx = strtoul(mline, &next, 10);
   mdp->htell = strtoul(next+1, &next, 10);
   mdp->hlen = (int)strtoul(next+1, &next, 10);
   mdp->ptell = strtoul(next+1, &next, 10);
@@ -106,6 +106,19 @@ create_page_input(Isp *ip)
   return ip->err ? 1 : 0;
 }
 
+static void
+set_item_max(Isp *ip)
+{
+  char buf[strlen(ip->cache.sort)+strlen("-z0123456789.pmp0")];
+  int zoom = atoi(ip->zoom);
+  if (zoom)
+    sprintf(buf, "%s-z%d.pmp", ip->cache.sort, zoom);
+  else
+    sprintf(buf, "%s.pmp", ip->cache.sort);
+  unsigned char *f = loadfile((uccp)buf, NULL);
+  ip->md1.zimx = atoi((ccp)f);
+}
+
 int
 create_page_div(Isp *ip)
 {
@@ -159,7 +172,10 @@ isp_cache_page(Isp *ip)
       if (!access(ip->cache.page, F_OK))
 	{
 	  if (!access(ip->cache.page, R_OK))
-	    return 0;
+	    {
+	      set_item_max(ip);
+	      return 0;
+	    }
 	  else
 	    {
 	      ip->err = ISP_ERROR_START "cache page %s exists but is unreadable\n";

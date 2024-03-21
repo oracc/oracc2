@@ -123,7 +123,6 @@ extern char *fmthdr(short sic_index);
 extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
 extern int pg_page_dump(Isp *ip, struct page *p);
 /* iss_pmp.c */
-extern int ztotal_get(int zcount, const char *s);
 extern void ispmp_zooms(Isp *ip, unsigned char *f, int zmax);
 extern void ispmp_pages(Isp *ip, unsigned char *f, int imax);
 /* iss_redblack.c */
