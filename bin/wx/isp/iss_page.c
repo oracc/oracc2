@@ -195,6 +195,59 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
 
    This version prints each zoom-group on its own line.
  */
+#if 1
+int
+pg_page_dump(Isp *ip, struct page *p)
+{
+  FILE *fpag = NULL;
+  if (ip->cache.sort)
+    {
+      if (!(fpag = fopen(ip->cache.sort, "w")))
+	{
+	  ip->err = "unable to open output for sort";
+	  return 1;
+	}
+      else if (ip->verbose)
+	fprintf(stderr, "isp: ispsort writing %s\n", ip->cache.sort);
+    }
+  else
+    fpag = stdout;
+  int i;
+  for (i = 0; i < p->used; ++i)
+    {
+      if ('#' == p->p[i][0])
+	{
+	  if (i)
+	    fputc('\n',fpag);
+	  fputs(p->p[i], fpag);
+	}
+      else if ('+' != p->p[i][0])
+	{
+	  fputc(' ', fpag);
+	  fputs(p->p[i], fpag);
+	}
+    }
+  fputc('\n',fpag);
+  if (ip)
+    {
+      fclose(fpag);
+      unsigned char *f = loadfile((uccp)ip->cache.sort, NULL);
+      ispmp_zooms ...
+      char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
+      sprintf(pfn, "%s.pmp", ip->cache.sort);
+      FILE *fp = fopen(pfn, "w");
+      ispmp_pages(ip, fp, list_len(z), p_count, f);
+      fclose(fp);
+      if (ispo_master(ip))
+	return 1;
+    }
+  list_free(z, NULL);
+  list_free(zmap, NULL);
+  list_free(pmap, NULL);
+  
+  return 0;
+}
+#else
 int
 pg_page_dump(Isp *ip, struct page *p)
 {
@@ -299,3 +352,4 @@ pg_page_dump(Isp *ip, struct page *p)
   
   return 0;
 }
+#endif

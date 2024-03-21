@@ -9,6 +9,7 @@ struct pgtell
   int plen;
 };
 
+#if 0
 char *
 chunk(unsigned char *s, long from, int len)
 {
@@ -25,6 +26,7 @@ showbuf(unsigned char *s, long h, int hlen, long p, int plen)
   printf("p %ld/%d='%s'\n", p, plen, chunk(s, p, plen));
   fflush(stdout);
 }
+#endif
 
 void
 ispmp_zooms(unsigned char *f)
@@ -53,7 +55,9 @@ ispmp_zooms(unsigned char *f)
 		      pt.plen = (s - f) - pt.ptell;
 		      fprintf(stderr, "z%d\t%ld/%d/%ld/%d\n",
 			      zoom, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#if 0
 		      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#endif
 		      pt.ptell = (s - f) + 1;
 		      pt.plen = 0;
 		    }
@@ -65,7 +69,9 @@ ispmp_zooms(unsigned char *f)
 	      pt.plen = (s - f) - pt.ptell;
 	      fprintf(stderr, "z%d\t%ld/%d/%ld/%d\n",
 		      zoom, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#if 0
 	      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#endif
 	      memset(&pt, '\0', sizeof(struct pgtell));
 	    }
 	  ++s;
@@ -110,7 +116,9 @@ ispmp_pages(unsigned char *f)
 		  pt.plen = (s - f) - pt.ptell;
 		  fprintf(stderr, "p%d\t%ld/%d/%ld/%d\n",
 			  page, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#if 0
 		  showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#endif
 		  pt.ptell = (s - f) + 1;
 		  pt.plen = 0;
 		  if (lasth_tell)
@@ -130,13 +138,16 @@ ispmp_pages(unsigned char *f)
     {
       fprintf(stderr, "p%d\t%ld/%d/%ld/%d\n",
 	      page, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#if 0      
       showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
+#endif
     }
 }
-
+#if 0
 int
 main(int argc, char **argv)
 {
   unsigned char *f = loadfile((uccp)"/home/oracc/www/is.d/gudea/sux.r00002d/sort-123", NULL);
   ispmp_pages(f);
 }
+#endif
