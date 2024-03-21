@@ -103,7 +103,9 @@ pg_load(int *nitems)
 	  if (colon)
 	    {
 	      items[items_used].qpq = malloc((colon - (ccp)orig_s)+strlen((ccp)items[items_used].pq)+2);
-	      strncpy((char*)items[items_used].qpq, (ccp)orig_s, 1+(colon-(ccp)orig_s));
+	      int cpylen =  1+(colon-(ccp)orig_s);
+	      strncpy((char*)items[items_used].qpq, (ccp)orig_s,cpylen);
+	      items[items_used].qpq[cpylen] = '\0';
 	      strcat((char*)items[items_used].qpq, (ccp)items[items_used].pq);
 	    }
 	  else

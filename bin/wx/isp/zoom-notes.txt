@@ -1,3 +1,6 @@
+BACKGROUND
+**********
+
 Before getting into details, it may be useful to know that the
 structure of a zoomed result is the same as an unzoomed result: the
 zoom reduces the results to a single heading from the metadata, and
@@ -6,6 +9,32 @@ This means that the UI code for glossary-article-texts already
 contains much of what we need, and whatever that does with the results
 of calling the oracc server's page maker should be mostly or
 completely the same for zoomed versus unzoomed pages.
+
+
+PATH TO THE INSTANCE LIST PAGES
+*******************************
+
+This path is for ePSD2 on oracc.museum because that is known good and
+doesn't use the new implementation.  This means that while we are
+working on the new implementation on build-oracc we still have a
+reasonable reference point for what should be happending.
+
+ 1) go to https://oracc.museum.upenn.edu/sux
+ 2) search 'lugal king'
+ 3) click on 'lugal[king]N'
+ 4) click on '49942 Instances' in top right
+ 5) Now we are at the page where the left pane has zoom links
+
+The analogy in the oracc-search-front-end is:
+
+ 1) search for 'king'
+ 2) sort by Hits
+ 3) click on lugal king, 3rd down
+ 4) click on '1. king (711x/97%)'
+ 
+
+A-LINK JAVASCRIPT FUNCTIONS
+***************************
 
 The outline pane now has a JS function of the form:
 
@@ -32,6 +61,10 @@ fix today--I did things slightly differently and the a-link is:
 But you should be able to use the same parse but add a final
 queryParam for the integer that is the zoom index.
 
+
+URLS TO SEND TO SERVER
+**********************
+
 You can then build a URL that is analogous to other XIS URLS; for
 GLOSSARY=sux:
 
@@ -43,3 +76,18 @@ UI to implement the prev/next arrows to page through the results:
  /neo/sux?xis=XIS&zoom=ZOOMINDEX&page=PAGE
 
 This would come from the same counter as the UI already uses.
+
+
+THINGS NOT YET DONE
+*******************
+
+There is another control, ALL RESULTS, which sets zoom to zero; I
+haven't updated that to the new system yet because it is embedded in
+the page template. I can do that without too much difficulty next week.
+
+When you get the instance list you should be able to click on the text
+labels to see the text edition in context; this is broken in the new
+implementation and will require some work to fix it--I'll start on
+that next week but it probably won't be functional until the end of
+the first week of April.
+
