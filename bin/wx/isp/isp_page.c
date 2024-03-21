@@ -83,11 +83,15 @@ create_page_input(Isp *ip)
       if (sfp)
 	{
 	  if (ip->md1.htell < ip->md1.ptell)
-	    file_copy_chunk(sfp, ip->md1.htell, ip->md1.hlen, zfp);
+	    {
+	      file_copy_chunk(sfp, ip->md1.htell, ip->md1.hlen, zfp);
+	      fputc('\n', zfp);
+	    }
 	  if (ip->md2.plen >= 0)
 	    file_copy_chunk(sfp, ip->md1.ptell, ip->md2.ptell+ip->md2.plen, zfp);
 	  else
 	    file_copy_chunk(sfp, ip->md1.ptell, ip->md1.plen, zfp);
+	  fputc('\n', zfp);
 	  fclose(sfp);
 	  fclose(zfp);
 	}

@@ -33,8 +33,13 @@ int
 ztotal_get(int zcount, const char *s)
 {
   while (*s)
-    if (' ' == *s++)
-      ++zcount;  
+    {
+      if (' ' == *s)
+	++zcount;
+      else if ('\n' == *s)
+	break;
+      ++s;
+    }
   return zcount;
 }
 
@@ -42,7 +47,7 @@ void
 ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 {
   struct pgtell pt = { 0L, 0, 0L, 0 };
-  int zoom = 0, zcount = 0, ztotal = 0;
+  int zoom = 0, zcount = 0, zpcount = 0, ztotal = 0;
   unsigned char *s = f;
   char zfn[strlen(ip->cache.sort)+strlen("-z012345679.pmp0")];
   while (*s)
@@ -51,7 +56,7 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 	{
 	  sprintf(zfn, "%s-z%d.pmp", ip->cache.sort, ++zoom);
 	  FILE *zfp = fopen(zfn, "w");
-	  zcount = 0;
+	  zcount = zpcount = 0;
 	  ztotal = 0;
 	  pt.htell = s - f;
 	  s = (ucp)strchr((ccp)s, ' ');
@@ -64,29 +69,30 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 	    {
 	      if (' ' == *s)
 		{
+		  while (s[1] && !isspace(s[1]))
+		    ++s;
 		  ++zcount;
-		  if (!(zcount%25))
+		  ++zpcount;
+		  if (zpcount==25)
 		    {
 		      if (!ztotal)
 			ztotal = ztotal_get(zcount, (ccp)s);
 		      pt.plen = (s - f) - pt.ptell;
 		      fprintf(zfp, "%d/%d/%ld/%d/%ld/%d\n",
 			      zmax, ztotal, pt.htell, pt.hlen, pt.ptell, pt.plen);
-		      fclose(zfp);
 #if 0
 		      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
 		      pt.ptell = (s - f) + 1;
 		      pt.plen = 0;
+		      zpcount = 0;
 		    }
 		}
 	      ++s;
 	    }
-	  if (zcount)
+	  if (zpcount)
 	    {
 	      pt.plen = (s - f) - pt.ptell;
-	      sprintf(zfn, "%s-z%d.pmp", ip->cache.sort, zoom);
-	      FILE *zfp = fopen(zfn, "w");
 	      fprintf(zfp, "%d/%d/%ld/%d/%ld/%d\n",
 		      zmax, zcount, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
