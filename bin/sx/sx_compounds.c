@@ -351,7 +351,7 @@ sx_compound_node(Node *np, struct sl_signlist *sl, const char *sname, int depth)
 	}
       else if (!strcmp(np->name, "g:c") || !strcmp(np->name, "g:b"))
 	{
-	  if (depth && np->text)
+	  if (depth && np->text && *np->text)
 	    {
 	      last_g = np->text;
 	      sx_compound_register(np, sl, sname);

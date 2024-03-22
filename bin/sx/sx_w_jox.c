@@ -519,8 +519,12 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
 	      grx_jox(tp->gdl, "g:w");
 	      joxer_eeaa(&s->mloc, "sl:name");
+#if 1
+	      in_form = 1;
+#else
 	      joxer_ee(&s->eloc, "sl:form");
 	      /* don't set in_form here */
+#endif
 	    }
 	  else
 	    {

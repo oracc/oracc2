@@ -333,6 +333,7 @@
 <!--### Controller for sign/form div creation -->
 
 <xsl:template name="sws-sign-or-form">
+  <xsl:param name="esp-mode" select="true()"/>
   <div class="asl-sf-body">
       <xsl:if test="@merge">
 	<p class="sl-merge"><xsl:text>(Includes merging of </xsl:text
@@ -342,7 +343,9 @@
       <div class="asl-cun-img">
 	<span class="sl-ihead">CUNEIFORM</span>
 	<xsl:call-template name="sws-cuneiform"/>
-	<xsl:call-template name="sws-images"/>
+	<xsl:call-template name="sws-images">
+	  <xsl:with-param name="esp-mode" select="$esp-mode"/>
+	</xsl:call-template>
       </div>
     </xsl:if>
     <xsl:call-template name="sws-stats"/>
@@ -626,6 +629,7 @@
 <!--### Images and snippets -->
 
 <xsl:template name="sws-images">
+  <xsl:param name="esp-mode"/>
   <xsl:if test="sl:images/sl:i[@loc]">
     <div class="asl-images">
       <xsl:for-each select="sl:images/sl:i[@loc]">
@@ -646,8 +650,16 @@
 	    </td>
 	  </tr>
 	  <tr><td>
-	    <esp:image height="50px" url="/{$header/@proj}/{$header/@path}/{@loc}"
-		       description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+	    <xsl:choose>
+	      <xsl:when test="$esp-mode">
+		<esp:image height="50px" url="/{$header/@proj}/{$header/@path}/{@loc}"
+			   description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<img height="50px" src="/{$header/@proj}/{$header/@path}/{@loc}"
+		     alt="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
 	  </td></tr>
 	</table>
       </xsl:for-each>
@@ -1188,7 +1200,9 @@
 	      <div class="asl-sign-form"
 		   id="form{count(preceding-sibling::sl:form)}">
 		<xsl:call-template name="sws-form-h"/>
-		<xsl:call-template name="sws-sign-or-form"/>
+		<xsl:call-template name="sws-sign-or-form">
+		  <xsl:with-param name="esp-mode" select="false()"/>
+		</xsl:call-template>
 	      </div>
 	    </xsl:for-each>
 	  </div>
