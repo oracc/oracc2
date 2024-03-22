@@ -519,12 +519,7 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
 	      grx_jox(tp->gdl, "g:w");
 	      joxer_eeaa(&s->mloc, "sl:name");
-#if 1
 	      in_form = 1;
-#else
-	      joxer_ee(&s->eloc, "sl:form");
-	      /* don't set in_form here */
-#endif
 	    }
 	  else
 	    {
@@ -559,9 +554,6 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      atts = list2chars(a);
 	      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
 	      list_free(a, NULL);
-#if 0	      
-	      ratts = rnvval_aa("x", "n", s->u.f->name, id_or_ref, s->u.f->oid ? s->u.f->oid : "", "sort", scode, NULL);
-#endif
 	      joxer_ea(&s->mloc, "sl:form", ratts);
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
 	      grx_jox(tp->gdl, "g:w");
