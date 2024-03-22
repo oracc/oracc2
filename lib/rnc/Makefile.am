@@ -8,5 +8,5 @@ librnc_la_SOURCES=asl.c gdl.c xtf.c
 
 #xpd.c
 
-cleanch:
+clean-local:
 	rm -f *.c *.h

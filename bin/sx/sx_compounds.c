@@ -146,9 +146,13 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
   /* Try the sign as-is */
   sp = hash_find(sl->hsentry, (uccp)sgnname);
 
-  /* No? Try aka forms */
+  /* No? Try aka forms; this hash is to instances */
   if (!sp)
-    sp = hash_find(sl->haka, (uccp)sgnname);
+    {
+      struct sl_inst *akai = hash_find(sl->haka, (uccp)sgnname);
+      if (akai && 's' == akai->type)
+	sp = akai->u.s;
+    }
 
   /* No? Is it in |(...)|? If so, try removing the parens */
   if (!sp)

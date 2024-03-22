@@ -97,17 +97,22 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
 const unsigned char *
 sx_idata_key(const char *soid, const char *foid, unsigned const char *v)  
 {
-  static unsigned char *k = NULL;
-  static int k_alloced = 0;
-  int klen = strlen(soid)+strlen(foid)+strlen((ccp)v) + 3;
-  if (klen > k_alloced)
+  if (soid)
     {
-      while (klen > k_alloced)
-	k_alloced += 128;
-      k = realloc(k, klen);
+      static unsigned char *k = NULL;
+      static int k_alloced = 0;
+      int klen = strlen(soid)+strlen(foid)+strlen((ccp)v) + 3;
+      if (klen > k_alloced)
+	{
+	  while (klen > k_alloced)
+	    k_alloced += 128;
+	  k = realloc(k, klen);
+	}
+      sprintf((char*)k, "%s.%s.%s", soid, foid, v);
+      return k;
     }
-  sprintf((char*)k, "%s.%s.%s", soid, foid, v);
-  return k;
+  else
+    return NULL;
 }
 
 void
@@ -137,9 +142,13 @@ sx_idata_ctotals(struct sl_signlist *sl)
 			  int j;
 			  for (j = 0; cdp->memb[j]; ++j)
 			    {
-			      tip = hash_find(sl->h_idata, (uccp)sx_idata_key(cdp->memb[j], "", (uccp)""));
-			      if (tip) /* no guarantee that a given compound will be in a corpus */
-				nc += atoi(tip->cnt);
+			      const unsigned char *k = (uccp)sx_idata_key(cdp->memb[j], "", (uccp)"");
+			      if (k)
+				{
+				  tip = hash_find(sl->h_idata, k);
+				  if (tip) /* no guarantee that a given compound will be in a corpus */
+				    nc += atoi(tip->cnt);
+				}
 			    }
 			}
 		    }
