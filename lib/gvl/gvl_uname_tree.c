@@ -2,6 +2,7 @@
 #include <unidef.h>
 #include <gvl.h>
 
+const char *gvl_uname_curr = NULL;
 const char *gvl_uname_prefix = "CUNEIFORM";
 int gvl_uname_compound = 0;
 int gvl_uname_grouped = 0;
@@ -97,7 +98,7 @@ gvl_uname_node(Node *np, List *lp)
 		d = "TIMES";
 		break;
 	      default:
-		fprintf(stderr, "d text %s not handled\n", np->text);
+		fprintf(stderr, "%s: d text %s not handled\n", gvl_uname_curr, np->text);
 		break;
 	      }
 	    if (d)
@@ -126,6 +127,9 @@ gvl_uname_node(Node *np, List *lp)
 	      case 'n':
 		m = "NUTILLU";
 		break;
+	      case 'r':
+		m = "REFLECTED";
+		break;
 	      case 's':
 		m = "SHESHIG";
 		break;
@@ -133,7 +137,7 @@ gvl_uname_node(Node *np, List *lp)
 		m = "TENU";
 		break;
 	      default:
-		fprintf(stderr, "d text %s not handled\n", np->text);
+		fprintf(stderr, "%s: m text %s not handled\n", gvl_uname_curr, np->text);
 		break;
 	      }
 	    if (m)
@@ -190,6 +194,7 @@ gvl_uname_tree(Tree *tp)
 	list_add(lp, (void*)"NUMBER");
       else
 	list_add(lp, (void*)"SIGN");
+      gvl_uname_curr = tp->root->text;
       for (np = tp->root->kids; np; np = np->next)
 	{
 	  if (!strcmp(np->name, "g:c"))
