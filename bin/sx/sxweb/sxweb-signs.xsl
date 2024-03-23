@@ -350,7 +350,9 @@
     </xsl:if>
     <xsl:call-template name="sws-stats"/>
     <xsl:call-template name="sws-values"/>
-    <xsl:call-template name="sws-meta"/>
+    <xsl:call-template name="sws-meta">
+      <xsl:with-param name="esp-mode" select="$esp-mode"/>
+    </xsl:call-template>
     <xsl:call-template name="sws-snippets"/>
     <xsl:call-template name="sws-instances"/>
     <xsl:call-template name="sws-lexdata"/>
@@ -361,6 +363,8 @@
 <!--### Subroutines for sign-or-form -->
 
 <xsl:template name="sws-meta">
+  <xsl:param name="esp-mode" select="true()"/>
+  <xsl:message>sws-compounds-link: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
   <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds|sl:note">
     <div class="asl-meta">
       <xsl:call-template name="sws-unicode"/>
@@ -369,7 +373,9 @@
       <xsl:call-template name="sws-akas"/>
       <xsl:call-template name="sws-systems"/>
       <xsl:call-template name="sws-links"/>
-      <xsl:call-template name="sws-compounds"/>
+      <xsl:call-template name="sws-compounds">
+	<xsl:with-param name="esp-mode" select="$esp-mode"/>
+      </xsl:call-template>
       <xsl:call-template name="sws-s-notes"/>
     </div>
   </xsl:if>
@@ -549,7 +555,23 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-compounds-link">
+  <xsl:param name="esp-mode"/>
+  <xsl:message>sws-compounds-link: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
+  <xsl:apply-templates select="@n"/>
+  <xsl:if test="sl:images/sl:i[@loc]">
+    <xsl:text> = </xsl:text>
+    <xsl:for-each select="sl:images/sl:i[@loc][1]">
+      <xsl:call-template name="esp-sign-image">
+	<xsl:with-param name="esp-mode" select="$esp-mode"/>
+      </xsl:call-template>
+    </xsl:for-each>
+  </xsl:if>
+</xsl:template>
+
 <xsl:template name="sws-compounds">
+  <xsl:param name="esp-mode" select="true()"/>
+  <xsl:message>sws-compounds: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
   <xsl:choose>
     <xsl:when test="@compoundonly = 'yes'">
       <xsl:choose>
@@ -562,15 +584,22 @@
 	  <p>Occurs in the following compound<xsl:value-of select="$s"/>:
 	  <xsl:for-each select="id(@cpd-refs)">
 	    <xsl:text> </xsl:text>
-	    <esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
-	      <xsl:apply-templates select="@n"/>
-	      <xsl:if test="sl:images/sl:i[@loc]">
-		<xsl:text> = </xsl:text>
-		<xsl:for-each select="sl:images/sl:i[@loc][1]">
-		  <xsl:call-template name="esp-sign-image"/>
-		</xsl:for-each>
-	      </xsl:if>
-	    </esp:link>
+	    <xsl:choose>
+	      <xsl:when test="$esp-mode">
+		<esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
+		  <xsl:call-template name="sws-compounds-link">
+		    <xsl:with-param name="esp-mode" select="$esp-mode"/>
+		  </xsl:call-template>
+		</esp:link>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<a href="/{$project}/signlist/{ancestor-or-self::sl:sign[1]/@xml:id}">
+		  <xsl:call-template name="sws-compounds-link">
+		    <xsl:with-param name="esp-mode" select="$esp-mode"/>
+		  </xsl:call-template>
+		</a>
+	      </xsl:otherwise>
+	    </xsl:choose>
 	  </xsl:for-each>
 	  <xsl:text>.</xsl:text>
 	  </p>
@@ -630,6 +659,7 @@
 
 <xsl:template name="sws-images">
   <xsl:param name="esp-mode"/>
+  <xsl:message>sws-images: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
   <xsl:if test="sl:images/sl:i[@loc]">
     <div class="asl-images">
       <xsl:for-each select="sl:images/sl:i[@loc]">

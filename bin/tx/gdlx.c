@@ -45,6 +45,7 @@ const char *project = "ogsl"; /* use the signlist found in this project */
 int rnv_xml = 0;
 int signatures = 0;
 int trace_mode = 0;
+int uname_mode = 0;
 int validate = 0;
 int wrapper = 0;
 
@@ -98,51 +99,62 @@ do_one(char *s)
 	ivs = (uccp)"not done";
       printf("ucun %s => %s => ivs %s\n", s, ucun, ivs);
     }
-
-  mp = mesg_retrieve();
-  if (mp && list_len(mp))
+  else if (uname_mode)
     {
-      List *tmp = list_create(LIST_SINGLE);
-      unsigned const char *msg = NULL;
-      for (msg = list_first(mp); msg; msg = list_next(mp))
-	if (pedantic || (!strstr((ccp)msg, "qualified") && !strstr((ccp)msg, "unknown")))
-	  list_add(tmp, (void*)msg);
-      if (list_len(tmp))
+      if (!strcmp(project, "pctc"))
+	gvl_uname_prefix = "PROTO-CUNEIFORM";
+      else
+	gvl_uname_prefix = "CUNEIFORM";
+      const unsigned char *uname = (uccp)gvl_uname_tree(tp);
+      printf("%s\t%s\n", s, uname);
+    }
+  else
+    {
+      mp = mesg_retrieve();
+      if (mp && list_len(mp))
 	{
-	  if (error_stdout)
+	  List *tmp = list_create(LIST_SINGLE);
+	  unsigned const char *msg = NULL;
+	  for (msg = list_first(mp); msg; msg = list_next(mp))
+	    if (pedantic || (!strstr((ccp)msg, "qualified") && !strstr((ccp)msg, "unknown")))
+	      list_add(tmp, (void*)msg);
+	  if (list_len(tmp))
 	    {
-	      mesg_print2(stdout, tmp);
+	      if (error_stdout)
+		{
+		  mesg_print2(stdout, tmp);
+		  fflush(stdout);
+		}
+	      else
+		mesg_print2(stderr, tmp);
+	    }
+	}
+
+      if (identity_mode)
+	test_identity(s, tp);
+      else if (gsort_mode)
+	{
+	  GS_head *ghp;
+	  list_add(gslp, (ghp = gsort_prep(tp)));
+	  if (verbose)
+	    gsort_show(ghp);
+	}
+      else if (!check_mode)
+	{
+	  if (signatures)
+	    {
+	      const char *sig = gdlsig(tp);
+	      if (bare_mode)
+		fprintf(stdout, "%s\n", sig);
+	      else
+		fprintf(stdout, "%s\t%s\n", s, sig);
 	      fflush(stdout);
 	    }
+	  else if (ns_output)
+	    tree_xml_rnv(stdout, tp, &gdl_data, "gdl");
 	  else
-	    mesg_print2(stderr, tmp);
+	    tree_xml(stdout, tp);
 	}
-    }
-
-  if (identity_mode)
-    test_identity(s, tp);
-  else if (gsort_mode)
-    {
-      GS_head *ghp;
-      list_add(gslp, (ghp = gsort_prep(tp)));
-      if (verbose)
-	gsort_show(ghp);
-    }
-  else if (!check_mode)
-    {
-      if (signatures)
-	{
-	  const char *sig = gdlsig(tp);
-	  if (bare_mode)
-	    fprintf(stdout, "%s\n", sig);
-	  else
-	    fprintf(stdout, "%s\t%s\n", s, sig);
-	  fflush(stdout);
-	}
-      else if (ns_output)
-	tree_xml_rnv(stdout, tp, &gdl_data, "gdl");
-      else
-	tree_xml(stdout, tp);
     }
   gdlparse_reset();
   gdlsig_depth_mode = saved_deep;
@@ -183,7 +195,7 @@ main(int argc, char **argv)
   gdl_unicode = 1;
   setlocale(LC_ALL, ORACC_LOCALE);
 
-  options(argc, argv, "1abcCdef:gG:ilnop:Prstvw");
+  options(argc, argv, "1abcCdef:gG:ilnop:PrstUvw");
   
   gdl_flex_debug = gdldebug = trace_mode;
 
@@ -334,6 +346,9 @@ opts(int opt, const char *arg)
       break;
     case 'u': /* uptranslate to canonicalized version */
       gdl_c10e_mode = 1;
+      break;
+    case 'U':
+      uname_mode = 1;
       break;
     case 'v':
       validate = 1;

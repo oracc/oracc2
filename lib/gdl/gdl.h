@@ -1,4 +1,3 @@
-
 #ifndef GDL_H_
 #define GDL_H_
 

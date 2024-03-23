@@ -38,9 +38,12 @@ list_join(List *l, const char *j)
   *s = '\0';
   for (n = list_first(l); n; n = list_next(l))
     {
-      strcat((char*)s,(char*)n);
+      strcat((char*)s, (char*)n+('\b'==*n));
       if (list_more(l))
-	strcat((char*)s, j);
+	{
+	  if ('\b' != ((char*)(l->rover->next->data))[0])
+	    strcat((char*)s, j);
+	}
     }
   
   return s;

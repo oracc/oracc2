@@ -79,6 +79,9 @@ extern unsigned const char *gvl_cuneify(unsigned const char *g);
 extern unsigned const char *gvl_cuneify_gv(gvl_g *gp);
 extern unsigned const char *gvl_ucode(gvl_g *gp);
 
+extern const char *gvl_uname_prefix;
+extern const char *gvl_uname_tree(Tree *tp);
+
 extern unsigned const char *gvl_s_c10e(const unsigned char *g);
 
 extern int gvl_v_isupper(unsigned const char *v);
