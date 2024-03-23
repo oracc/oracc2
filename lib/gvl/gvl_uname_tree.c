@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <unidef.h>
 #include <gvl.h>
 
 const char *gvl_uname_prefix = "CUNEIFORM";
@@ -7,6 +8,50 @@ int gvl_uname_grouped = 0;
 
 static void gvl_uname_descend(Node *np, List *lp);
 static void gvl_uname_node(Node *np, List *lp);
+
+static char *
+gvl_uname_ascii(const char *t)
+{
+  char *ret = malloc(strlen(t)+1);
+  wchar_t *w;
+  size_t len;
+  
+  if ((w = utf2wcs((uccp)t, &len)))
+    {
+      int i;
+      char *dest = ret;
+      for (i = 0; w[i]; ++i)
+	{
+	  switch (w[i])
+	    {
+	    case U_SZ:
+	      *dest++ = 'S';
+	      *dest++ = 'H';
+	      break;
+	    case U_s0:
+	    case U_s1:
+	    case U_s2:
+	    case U_s3:
+	    case U_s4:
+	    case U_s5:
+	    case U_s6:
+	    case U_s7:
+	    case U_s8:
+	    case U_s9:
+	      *dest++ = (w[i] - 0x2080) + '0';
+	      break;
+	    case U_s_x:
+	      *dest++ = 'X';
+	      break;
+	    default:
+	      *dest++ = (char)w[i];
+	      break;
+	    }
+	}
+      *dest = '\0';
+    }
+  return ret;
+}
 
 static void
 gvl_uname_node(Node *np, List *lp)
@@ -23,7 +68,7 @@ gvl_uname_node(Node *np, List *lp)
 	case 's':
 	case 'v':
 	  if (!np->kids)
-	    list_add(lp, (void*)np->text);
+	    list_add(lp, gvl_uname_ascii(np->text));
 	  break;
 	case 'd':
 	  {
@@ -61,7 +106,8 @@ gvl_uname_node(Node *np, List *lp)
 	  break;
 	case 'a':
 	  list_add(lp, "\b-");
-	  char *s = malloc(strlen(np->text)+2), *t;
+	  char *s = malloc(strlen(np->text)+2);
+	  const char *t;
 	  s[0] = '\b';
 	  int i;
 	  for (i = 1, t = np->text; *t; ++t)
@@ -76,6 +122,9 @@ gvl_uname_node(Node *np, List *lp)
 	      {
 	      case 'g':
 		m = "GUNU";
+		break;
+	      case 'n':
+		m = "NUTILLU";
 		break;
 	      case 's':
 		m = "SHESHIG";
