@@ -44,6 +44,9 @@ gvl_uname_ascii(const char *t)
 	    case U_s_x:
 	      *dest++ = 'X';
 	      break;
+	    case U_aleph:
+	      /* drop */
+	      break;
 	    default:
 	      *dest++ = (char)w[i];
 	      break;
@@ -106,15 +109,37 @@ gvl_uname_node(Node *np, List *lp)
 	  }
 	  break;
 	case 'a':
-	  list_add(lp, "\b-");
-	  char *s = malloc(strlen(np->text)+2);
-	  const char *t;
-	  s[0] = '\b';
-	  int i;
-	  for (i = 1, t = np->text; *t; ++t)
-	    s[i++] = toupper(*t);
-	  s[i] = '\0';
-	  list_add(lp, s);
+	  {
+	    const char *t;	  
+	    if ('v' != *np->text || !np->text[0])
+	      {
+		list_add(lp, "\b-");
+		char *s = malloc(strlen(np->text)+2);
+		s[0] = '\b';
+		int i;
+#if 1
+		for (i = 1, t = np->text; *t; ++t)
+		  s[i++] = toupper(*t);
+#else
+		for (i = 1, t = np->text; *t; ++t)
+		  if (isdigit(*t) && !t[1])
+		    break;
+		  else
+		    s[i++] = toupper(*t);
+#endif
+		s[i] = '\0';
+		list_add(lp, s);
+	      }
+	    else
+	      {
+		t = np->text + 1;
+	      }
+	    if (*t)
+	      {
+		list_add(lp, "VARIANT");
+		list_add(lp, (void*)t);
+	      }
+	  }
 	  break;
 	case 'm':
 	  {
@@ -128,7 +153,7 @@ gvl_uname_node(Node *np, List *lp)
 		m = "NUTILLU";
 		break;
 	      case 'r':
-		m = "REFLECTED";
+		m = "REVERSED";
 		break;
 	      case 's':
 		m = "SHESHIG";
@@ -145,8 +170,20 @@ gvl_uname_node(Node *np, List *lp)
 	  }
 	  break;
 	case 'n':
-	  break;
-	case 'q':
+	  /* for sign names we can assume this is a well-formed g:r and g:s */
+	  {
+	    char *nn[] = { "ZERO" , "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE" };
+	    Node *r = np->kids;
+	    const char *s = np->kids->next->text;
+	    if ('N' == *s) {
+	      ++s;
+	      if ('0' == *s)
+		++s;
+	    }
+	    char *n = malloc(strlen(s)+strlen("NTHREE-0"));
+	    sprintf(n, "%s-N%s", isdigit(*r->text)?nn[*r->text - '0']:r->text, s);
+	    list_add(lp, n);
+	  }
 	  break;
 	default:
 	  break;
@@ -175,8 +212,11 @@ gvl_uname_descend(Node *np, List *lp)
       else
 	{
 	  gvl_uname_node(npp, lp);
-	  if (npp->kids)
-	    gvl_uname_descend(npp, lp);
+	  if (strcmp(npp->name, "g:n"))
+	    {
+	      if (npp->kids)
+		gvl_uname_descend(npp, lp);
+	    }
 	}
     }
 }
@@ -212,8 +252,11 @@ gvl_uname_tree(Tree *tp)
 	  else
 	    {
 	      gvl_uname_node(np, lp);
-	      if (np->kids)
-		gvl_uname_descend(np, lp);
+	      if (strcmp(np->name, "g:n"))
+		{
+		  if (np->kids)
+		    gvl_uname_descend(np, lp);
+		}
 	    }
 	}
       uname = (const char *)list_join(lp, " ");
