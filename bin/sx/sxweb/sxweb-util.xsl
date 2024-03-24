@@ -15,10 +15,19 @@
 <xsl:param name="overview-images" select="'font'"/>
   
 <xsl:template name="esp-sign-image">
+  <xsl:param name="esp-mode" select="true()"/>
   <xsl:variable name="ref" select="@ref"/>
   <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
-  <esp:image class="middle" height="30px" url="/{$header/@proj}/{$header/@path}/{@loc}"
-	     description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+  <xsl:choose>
+    <xsl:when test="$esp-mode">
+      <esp:image class="middle" height="30px" url="/{$header/@proj}/{$header/@path}/{@loc}"
+		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <img height="30px" src="/{$header/@proj}/{$header/@path}/{@loc}"
+	   alt="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template name="esp-sign-thumb">
