@@ -344,9 +344,11 @@
       <div class="asl-cun-img">
 	<span class="sl-ihead">CUNEIFORM</span>
 	<xsl:call-template name="sws-cuneiform"/>
-	<xsl:if test="$verbose">
-	  <xsl:message>sws-sign-or-form esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
-	</xsl:if>
+	<!--
+	    <xsl:if test="$verbose">
+	    <xsl:message>sws-sign-or-form esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
+	    </xsl:if>
+	-->
 	<xsl:call-template name="sws-images">
 	  <xsl:with-param name="esp-mode" select="$esp-mode"/>
 	</xsl:call-template>
@@ -368,7 +370,7 @@
 
 <xsl:template name="sws-meta">
   <xsl:param name="esp-mode" select="true()"/>
-  <xsl:message>sws-meta: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
+  <!--<xsl:message>sws-meta: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>-->
   <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds|sl:note">
     <div class="asl-meta">
       <xsl:call-template name="sws-unicode"/>
@@ -575,7 +577,7 @@
 
 <xsl:template name="sws-compounds">
   <xsl:param name="esp-mode" select="true()"/>
-  <xsl:message>sws-compounds: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
+  <!--<xsl:message>sws-compounds: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>-->
   <xsl:choose>
     <xsl:when test="@compoundonly = 'yes'">
       <xsl:choose>
