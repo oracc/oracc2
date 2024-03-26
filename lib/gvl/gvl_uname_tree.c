@@ -11,6 +11,17 @@ static void gvl_uname_descend(Node *np, List *lp);
 static void gvl_uname_node(Node *np, List *lp);
 
 static char *
+upify(const char *t)
+{
+  char *s = malloc(strlen(t)+2), *orig;
+  orig = s;
+  while (*t)
+    *s++ = toupper(*t++);
+  *s = '\0';
+  return orig;
+}
+
+static char *
 gvl_uname_ascii(const char *t)
 {
   char *ret = malloc(strlen(t)+1);
@@ -110,34 +121,42 @@ gvl_uname_node(Node *np, List *lp)
 	  break;
 	case 'a':
 	  {
-	    const char *t;	  
-	    if ('v' != *np->text || !np->text[0])
+	    if (np->prev && !strcmp(np->prev->name, "g:gp"))
 	      {
-		list_add(lp, "\b-");
-		char *s = malloc(strlen(np->text)+2);
-		s[0] = '\b';
-		int i;
-#if 1
-		for (i = 1, t = np->text; *t; ++t)
-		  s[i++] = toupper(*t);
-#else
-		for (i = 1, t = np->text; *t; ++t)
-		  if (isdigit(*t) && !t[1])
-		    break;
-		  else
-		    s[i++] = toupper(*t);
-#endif
-		s[i] = '\0';
-		list_add(lp, s);
+		list_add(lp, "FORM");
+		list_add(lp, upify(np->text));
 	      }
 	    else
 	      {
-		t = np->text + 1;
-	      }
-	    if (*t)
-	      {
-		list_add(lp, "VARIANT");
-		list_add(lp, (void*)t);
+		const char *t;	  
+		if ('v' != *np->text || !np->text[0])
+		  {
+		    list_add(lp, "\b-");
+		    char *s = malloc(strlen(np->text)+2);
+		    s[0] = '\b';
+		    int i;
+#if 1
+		    for (i = 1, t = np->text; *t; ++t)
+		      s[i++] = toupper(*t);
+#else
+		    for (i = 1, t = np->text; *t; ++t)
+		      if (isdigit(*t) && !t[1])
+			break;
+		      else
+			s[i++] = toupper(*t);
+#endif
+		    s[i] = '\0';
+		    list_add(lp, s);
+		  }
+		else
+		  {
+		    t = np->text + 1;
+		  }
+		if (*t)
+		  {
+		    list_add(lp, "VARIANT");
+		    list_add(lp, (void*)t);
+		  }
 	      }
 	  }
 	  break;

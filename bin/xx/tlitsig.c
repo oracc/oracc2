@@ -31,6 +31,7 @@ int gdl_c10e_mode = 1;
 int identity_mode = 0;
 int ns_output = 0;
 int pedantic = 0;
+const char *project = NULL;
 int sortsigs = 0;
 int tabbed = 0;
 int validate = 0;
@@ -132,10 +133,13 @@ main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
   
-  options(argc, argv, "bcdf:hinoprstvw");
+  options(argc, argv, "bcdf:hinop:Prstvw");
 
   gdlxml_setup();
-  gvl_setup("ogsl", "ogsl", "020");
+  if (!strcmp(project, "pctc"))
+    gvl_setup(project, project, "900");
+  else
+    gvl_setup(project, project, "020"); /*FIXME*/
   gdlparse_init();
   
   if (argv[optind])
@@ -186,6 +190,9 @@ opts(int opt, const char *arg)
       gdl_orig_mode = 1;
       break;
     case 'p':
+      project = arg;
+      break;
+    case 'P':
       gvl_strict = pedantic = 1;
       break;
     case 'r':
