@@ -56,10 +56,24 @@ static char *
 gvl_uname_ascii(const char *t, int bspace, int nhyphen)
 {
   char *ret = malloc(strlen(t)+1+bspace+nhyphen);
+  char tmp[strlen(t)+1];
   wchar_t *w;
   size_t len;
-  
-  if ((w = utf2wcs((uccp)t, &len)))
+
+  /* for N01 remove '0' in tmp to process as N1 */
+  if (bspace && 'N' == *t)
+    {
+      char *t2 = tmp;
+      *t2++ = 'N';
+      ++t;
+      while ('0' == *t)
+	++t;
+      while (*t)
+	*t2++ = *t++;
+      *t2 = '\0';
+      t = NULL;
+    }
+  if ((w = utf2wcs((uccp)(t?t:tmp), &len)))
     {
       int i;
       char *dest = ret;
@@ -173,8 +187,8 @@ gvl_uname_node(Node *np, List *lp)
 	      }
 	    else
 	      {
-		const char *t;	  
-		if ('v' != *np->text || !np->text[0])
+		const char *t;
+		if ('v' != *np->text || !np->text[1])
 		  {
 		    list_add(lp, "\b-");
 		    char *s = malloc(strlen(np->text)+2);
