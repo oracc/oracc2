@@ -165,6 +165,9 @@ gvl_uname_node(Node *np, List *lp)
 	    const char *m = NULL;
 	    switch (*np->text)
 	      {
+	      case 'f':
+		m = "FLAT";
+		break;
 	      case 'g':
 		m = "GUNU";
 		break;
