@@ -10,6 +10,37 @@ int gvl_uname_grouped = 0;
 static void gvl_uname_descend(Node *np, List *lp);
 static void gvl_uname_node(Node *np, List *lp);
 
+static const char *
+m_string(const char at)
+{
+  const char *m = NULL;
+  switch (at)
+    {
+    case 'f':
+      m = "FLAT";
+      break;
+    case 'g':
+      m = "GUNU";
+      break;
+    case 'n':
+      m = "NUTILLU";
+      break;
+    case 'r':
+      m = "REVERSED";
+      break;
+    case 's':
+      m = "SHESHIG";
+      break;
+    case 't':
+      m = "TENU";
+      break;
+    default:
+      fprintf(stderr, "%s: m text %c not handled\n", gvl_uname_curr, at);
+      break;
+    }
+  return m;
+}
+
 static char *
 upify(const char *t)
 {
@@ -22,9 +53,9 @@ upify(const char *t)
 }
 
 static char *
-gvl_uname_ascii(const char *t)
+gvl_uname_ascii(const char *t, int bspace, int nhyphen)
 {
-  char *ret = malloc(strlen(t)+1);
+  char *ret = malloc(strlen(t)+1+bspace+nhyphen);
   wchar_t *w;
   size_t len;
   
@@ -32,6 +63,10 @@ gvl_uname_ascii(const char *t)
     {
       int i;
       char *dest = ret;
+      if (bspace)
+	*dest++ = '\b';
+      if (nhyphen)
+	*dest++ = '-';
       for (i = 0; w[i]; ++i)
 	{
 	  switch (w[i])
@@ -82,9 +117,19 @@ gvl_uname_node(Node *np, List *lp)
 	case 'p':
 	case 's':
 	case 'v':
-	  if (!np->kids)
-	    list_add(lp, gvl_uname_ascii(np->text));
-	  break;
+	  {
+	    int bspace = 0;
+	    int nhyphen = 0;
+	    if (np->rent && (!strcmp(np->rent->name, "g:n")
+			     || (np->rent->rent && !strcmp(np->rent->rent->name, "g:n"))))
+	      bspace = 1;
+	    if ((np->prev && !strcmp(np->prev->name, "g:r"))
+		|| (!strcmp(np->name, "g:b") && np->rent->prev && !strcmp(np->rent->prev->name, "g:r")))
+	      nhyphen = 1;
+	    if (!np->kids)
+	      list_add(lp, gvl_uname_ascii(np->text, bspace, nhyphen));
+	    break;
+	  }
 	case 'd':
 	  {
 	    const char *d = NULL;
@@ -135,16 +180,8 @@ gvl_uname_node(Node *np, List *lp)
 		    char *s = malloc(strlen(np->text)+2);
 		    s[0] = '\b';
 		    int i;
-#if 1
 		    for (i = 1, t = np->text; *t; ++t)
 		      s[i++] = toupper(*t);
-#else
-		    for (i = 1, t = np->text; *t; ++t)
-		      if (isdigit(*t) && !t[1])
-			break;
-		      else
-			s[i++] = toupper(*t);
-#endif
 		    s[i] = '\0';
 		    list_add(lp, s);
 		  }
@@ -162,49 +199,15 @@ gvl_uname_node(Node *np, List *lp)
 	  break;
 	case 'm':
 	  {
-	    const char *m = NULL;
-	    switch (*np->text)
-	      {
-	      case 'f':
-		m = "FLAT";
-		break;
-	      case 'g':
-		m = "GUNU";
-		break;
-	      case 'n':
-		m = "NUTILLU";
-		break;
-	      case 'r':
-		m = "REVERSED";
-		break;
-	      case 's':
-		m = "SHESHIG";
-		break;
-	      case 't':
-		m = "TENU";
-		break;
-	      default:
-		fprintf(stderr, "%s: m text %s not handled\n", gvl_uname_curr, np->text);
-		break;
-	      }
+	    const char *m = m_string(*np->text);
 	    if (m)
 	      list_add(lp, (void*)m);
 	  }
 	  break;
-	case 'n':
-	  /* for sign names we can assume this is a well-formed g:r and g:s */
+	case 'r':
 	  {
 	    char *nn[] = { "ZERO" , "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE" };
-	    Node *r = np->kids;
-	    const char *s = np->kids->next->text;
-	    if ('N' == *s) {
-	      ++s;
-	      if ('0' == *s)
-		++s;
-	    }
-	    char *n = malloc(strlen(s)+strlen("NTHREE-0"));
-	    sprintf(n, "%s-N%s", isdigit(*r->text)?nn[*r->text - '0']:r->text, s);
-	    list_add(lp, n);
+	    list_add(lp, (void*)(isdigit(*np->text)?nn[*np->text - '0']:np->text));
 	  }
 	  break;
 	default:
@@ -234,11 +237,8 @@ gvl_uname_descend(Node *np, List *lp)
       else
 	{
 	  gvl_uname_node(npp, lp);
-	  if (strcmp(npp->name, "g:n"))
-	    {
-	      if (npp->kids)
-		gvl_uname_descend(npp, lp);
-	    }
+	  if (npp->kids)
+	    gvl_uname_descend(npp, lp);
 	}
     }
 }
@@ -274,11 +274,8 @@ gvl_uname_tree(Tree *tp)
 	  else
 	    {
 	      gvl_uname_node(np, lp);
-	      if (strcmp(np->name, "g:n"))
-		{
-		  if (np->kids)
-		    gvl_uname_descend(np, lp);
-		}
+	      if (np->kids)
+		gvl_uname_descend(np, lp);
 	    }
 	}
       uname = (const char *)list_join(lp, " ");
