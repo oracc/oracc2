@@ -22,6 +22,7 @@ int rnvtrace;
 
 extern int gdl_flex_debug, gdldebug, gdl_orig_mode;
 
+int arg_depth = 0;
 int backward = 0;
 int check_mode = 0;
 extern int gdlsig_depth_mode;
@@ -31,7 +32,7 @@ int gdl_c10e_mode = 1;
 int identity_mode = 0;
 int ns_output = 0;
 int pedantic = 0;
-const char *project = NULL;
+const char *project = "osl";
 int sortsigs = 0;
 int tabbed = 0;
 int validate = 0;
@@ -48,6 +49,8 @@ do_one(char *s)
 
   if (-1 == saved_deep)
     saved_deep = gdlsig_depth_mode;
+
+  gdlsig_depth_mode = arg_depth;
   
   if (s[strlen(s)-1] == '\n')
     s[strlen(s)-1] = '\0';
@@ -55,7 +58,7 @@ do_one(char *s)
     {
       s[strlen(s)-1] = '\0';
       saved_deep = gdlsig_depth_mode;
-      gdlsig_depth_mode = 1;
+      gdlsig_depth_mode = arg_depth;
     }
   ++ml.line;
   mesg_init();
@@ -133,7 +136,7 @@ main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
   
-  options(argc, argv, "bcdf:hinop:Prstvw");
+  options(argc, argv, "abcdf:hinop:Prstvw");
 
   gdlxml_setup();
   if (!strcmp(project, "pctc"))
@@ -165,6 +168,9 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'a':
+      arg_depth = 2;
+      break;
     case 'b':
       backward = 1; /* use ba => o0000113 output format */
       break;
@@ -172,7 +178,7 @@ opts(int opt, const char *arg)
       check_mode = 1;
       break;
     case 'd':
-      gdlsig_depth_mode = 1;
+      arg_depth = 1;
       break;
     case 'f':
       fname = optarg;

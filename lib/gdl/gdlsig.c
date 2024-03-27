@@ -3,7 +3,7 @@
 #include "tree.h"
 #include "gdl.h"
 
-/* 0 = shallow, -1 = mid, 1 = deep
+/* 0 = shallow, -1 = mid, 1 = deep, 2 = atoms
  *
  * shallow means if a unit has no OID return error ("q99")
  *
@@ -12,6 +12,8 @@
  * via the components
  *
  * deep means always descend into compounds
+ *
+ * atoms means extract all minimal compoents, removing '@t' and other modifiers/allograph markers
  *
  */
 int gdlsig_depth_mode = 0;
@@ -70,7 +72,10 @@ gdlsig_oidnode(Node *np)
 	case 'p':
 	case 's':
 	case 'v':
-	  return np;
+	  if (gdlsig_depth_mode == 2 && np->kids && !strcmp(np->kids->name, "g:b"))
+	    return np->kids;
+	  else
+	    return np;
 	  break;
 	case 'n':
 	  if (np->user && ((gvl_g*)np->user)->oid)

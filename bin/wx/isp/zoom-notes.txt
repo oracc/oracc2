@@ -19,7 +19,7 @@ doesn't use the new implementation.  This means that while we are
 working on the new implementation on build-oracc we still have a
 reasonable reference point for what should be happending.
 
- 1) go to https://oracc.museum.upenn.edu/sux
+ 1) go to https://oracc.museum.upenn.edu/epsd2/sux
  2) search 'lugal king'
  3) click on 'lugal[king]N'
  4) click on '49942 Instances' in top right
