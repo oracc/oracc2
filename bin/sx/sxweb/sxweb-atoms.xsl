@@ -9,7 +9,7 @@
   <xsl:copy>
     <xsl:copy-of select="@*"/>
     <xsl:copy-of select="sl:iheader"/>
-    <!--numbers are weeded it because they always have more than one child-->
+    <!--numbers are weeded out because they always have more than one child-->
     <xsl:for-each select="*/sl:sign">
       <xsl:variable name="k" select="sl:name/g:w//*"/>
       <xsl:if test="count($k)=1">
