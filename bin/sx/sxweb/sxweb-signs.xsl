@@ -188,7 +188,7 @@
     <xsl:with-param name="parameters" select="$parameters"/>
     <xsl:with-param name="type" select="'cmemb'"/>
     <xsl:with-param name="title" select="concat(@n,  ' in compounds')"/>
-    <xsl:with-param name="nodes" select="id(sl:cpds/sl:memb/@oids)"/>
+    <xsl:with-param name="nodes" select="id(@cpd-refs)"/>
   </xsl:call-template>
   <xsl:call-template name="sws-sel-page">
     <xsl:with-param name="parameters" select="$parameters"/>
@@ -529,11 +529,11 @@
 </xsl:template>
 
 <xsl:template name="sws-sl-cpds-memb">
-  <!--<xsl:message>sws-sl-cpds-cmemb oids=<xsl:value-of select="sl:cpds/sl:memb/@oids"/></xsl:message>-->
-  <xsl:if test="string-length(sl:cpds/sl:memb/@oids)>0">
+  <xsl:param name="esp-mode" select="true()"/>
+  <xsl:if test="string-length(@cpd-refs)>0">
     <xsl:choose>
-      <xsl:when test="string-length(sl:cpds/sl:memb/@oids) &lt; 100">
-	<xsl:for-each select="id(sl:cpds/sl:memb/@oids)">
+      <xsl:when test="string-length(@cpd-refs) &lt; 100">
+	<xsl:for-each select="id(@cpd-refs)">
 	  <esp:link page="{id(@xml:id)/ancestor-or-self::sl:sign/@xml:id}">
 	    <xsl:choose>
 	      <xsl:when test="sl:ucun">
@@ -551,11 +551,8 @@
 	</xsl:for-each>
       </xsl:when>
       <xsl:otherwise>
-	<!--<xsl:message
-	    ><xsl:value-of select="string-length(sl:cpds/sl:memb/@oids)"
-	    /><xsl:text>&#x09;</xsl:text><xsl:value-of select="sl:cpds/sl:memb/@oids"/></xsl:message>-->
 	<esp:link notarget="yes" url="{concat('/', /*/@project, '/signlist/selpages/', @xml:id, '-cmemb.html')}"
-		  >see list of <xsl:value-of select="ceiling(string-length(sl:cpds/sl:memb/@oids) div 9)"/> compounds</esp:link>
+		  >see list of <xsl:value-of select="ceiling(string-length(@cpd-refs) div 9)"/> compounds</esp:link>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:if>
@@ -613,7 +610,9 @@
     <xsl:when test="@compoundonly = 'yes'">
       <xsl:choose>
 	<xsl:when test="string-length(@cpd-refs)>0">
-	  <xsl:call-template name="sws-cpd-refs"/>
+	  <xsl:call-template name="sws-cpd-refs">
+	    <xsl:with-param name="esp-mode" select="$esp-mode"/>
+	  </xsl:call-template>
 	</xsl:when>
 	<xsl:otherwise>
 	  <p>(Only in compounds but no compounds containing this sign were found in this signlist.)</p>
@@ -621,19 +620,30 @@
       </xsl:choose>
     </xsl:when>
     <xsl:otherwise>
-      <xsl:if test="sl:cpds/sl:memb|id(@merge)/sl:cpds/sl:memb">
+      <xsl:if test="@cpd-refs"> <!--sl:cpds/sl:memb|id(@merge)/sl:cpds/sl:memb">-->
 	<div class="asl-compounds">
 	  <p class="sl-hang">
 	    <span class="sl-ihead-h">COMPOUNDS</span>
-	    <xsl:call-template name="sws-sl-cpds-memb"/>
-	    <xsl:if test="id(@merge/sl:cpds/sl:memb)">
-	      <xsl:if test="sl:cpds/sl:memb">;; </xsl:if>
+	    <xsl:choose>
+	      <xsl:when test="$esp-mode=true()">
+		<xsl:call-template name="sws-sl-cpds-memb"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:call-template name="sws-cpd-refs">
+		  <xsl:with-param name="esp-mode" select="$esp-mode"/>
+		</xsl:call-template>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	    <xsl:if test="id(@merge)/@cpd-refs">
+	      <xsl:if test="@cpd-refs">;; </xsl:if>
 	    </xsl:if>
 	    <xsl:for-each select="id(@merge)">
 	      <xsl:if test="not(position()=1)">
-		<xsl:if test="sl:cpds/sl:memb">;; </xsl:if>
+		<xsl:if test="@cpd-refs">;; </xsl:if>
 	      </xsl:if>
-	      <xsl:call-template name="sws-sl-cpds-memb"/>
+	      <xsl:call-template name="sws-sl-cpds-memb">
+		<xsl:with-param name="esp-mode" select="$esp-mode"/>
+	      </xsl:call-template>
 	    </xsl:for-each>
 	    <xsl:text>.</xsl:text>
 	  </p>
