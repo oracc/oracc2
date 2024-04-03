@@ -548,6 +548,13 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_add(a, "sort");
 	      list_add(a, scode);
 
+	      unsigned char *oids = x_cdp_refs(sl, s);
+	      if (oids)
+		{
+		  list_add(a, "cpd-refs");
+		  list_add(a, oids);
+		}
+
 	      if (s->tp)
 		x_tis_atts(a, s->tp, 0);
 	      
@@ -757,6 +764,17 @@ x_tle_tag(enum sx_tle t)
   return NULL;
 }
 
+static int
+x_cpd_only(struct sl_inst *ip)
+{
+  if (ip->type == 'f' && ip->u.f->compoundonly)
+    return 1;
+  else if (ip->type == 's' && ip->u.s->type == sx_tle_componly)
+    return 1;
+  else
+    return 0;
+}
+
 static unsigned char *
 x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s)
 {
@@ -785,11 +803,11 @@ x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s)
       /*fprintf(stderr, "%s:#digest_by_oid=%s\n", s->u.s->name, oids);*/
       if (oids && *oids)
 	return oids;
-      else
+      else if (x_cpd_only(s))
 	mesg_verr(&s->mloc, "@compoundonly entry %s not found in any compounds",
 		  s->type == 's' ? s->u.s->name : s->u.f->name);
     }
-  else
+  else if (x_cpd_only(s))
     mesg_verr(&s->mloc, "@compoundonly entry %s not found in any compounds (no #digest_by_oid)",
 	      s->type == 's' ? s->u.s->name : s->u.f->name);
   return NULL;
@@ -824,12 +842,13 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
     {
       list_add(a, "compoundonly");
       list_add(a, "yes");
-      unsigned char *oids = x_cdp_refs(sl, s);
-      if (oids)
-	{
-	  list_add(a, "cpd-refs");
-	  list_add(a, oids);
-	}
+    }
+
+  unsigned char *oids = x_cdp_refs(sl, s);
+  if (oids)
+    {
+      list_add(a, "cpd-refs");
+      list_add(a, oids);
     }
   
   if (s->u.s->moid)

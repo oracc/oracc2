@@ -575,6 +575,37 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="sws-cpd-refs">
+  <xsl:param name="esp-mode" select="true()"/>
+  <xsl:variable name="s">
+    <xsl:if test="contains(@cpd-refs, ' ')">
+      <xsl:text>s</xsl:text>
+    </xsl:if>
+  </xsl:variable>
+  <p>Occurs in the following compound<xsl:value-of select="$s"/>:
+  <xsl:for-each select="id(@cpd-refs)">
+    <xsl:text> </xsl:text>
+    <xsl:choose>
+      <xsl:when test="$esp-mode">
+	<esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
+	  <xsl:call-template name="sws-compounds-link">
+	    <xsl:with-param name="esp-mode" select="$esp-mode"/>
+	  </xsl:call-template>
+	</esp:link>
+      </xsl:when>
+      <xsl:otherwise>
+	<a href="/{$project}/signlist/{ancestor-or-self::sl:sign[1]/@xml:id}">
+	  <xsl:call-template name="sws-compounds-link">
+	    <xsl:with-param name="esp-mode" select="$esp-mode"/>
+	  </xsl:call-template>
+	</a>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:for-each>
+  <xsl:text>.</xsl:text>
+  </p>
+</xsl:template>
+
 <xsl:template name="sws-compounds">
   <xsl:param name="esp-mode" select="true()"/>
   <!--<xsl:message>sws-compounds: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>-->
@@ -582,33 +613,7 @@
     <xsl:when test="@compoundonly = 'yes'">
       <xsl:choose>
 	<xsl:when test="string-length(@cpd-refs)>0">
-	  <xsl:variable name="s">
-	    <xsl:if test="contains(@cpd-refs, ' ')">
-	      <xsl:text>s</xsl:text>
-	    </xsl:if>
-	  </xsl:variable>
-	  <p>Occurs in the following compound<xsl:value-of select="$s"/>:
-	  <xsl:for-each select="id(@cpd-refs)">
-	    <xsl:text> </xsl:text>
-	    <xsl:choose>
-	      <xsl:when test="$esp-mode">
-		<esp:link page="{ancestor-or-self::sl:sign[1]/@xml:id}">
-		  <xsl:call-template name="sws-compounds-link">
-		    <xsl:with-param name="esp-mode" select="$esp-mode"/>
-		  </xsl:call-template>
-		</esp:link>
-	      </xsl:when>
-	      <xsl:otherwise>
-		<a href="/{$project}/signlist/{ancestor-or-self::sl:sign[1]/@xml:id}">
-		  <xsl:call-template name="sws-compounds-link">
-		    <xsl:with-param name="esp-mode" select="$esp-mode"/>
-		  </xsl:call-template>
-		</a>
-	      </xsl:otherwise>
-	    </xsl:choose>
-	  </xsl:for-each>
-	  <xsl:text>.</xsl:text>
-	  </p>
+	  <xsl:call-template name="sws-cpd-refs"/>
 	</xsl:when>
 	<xsl:otherwise>
 	  <p>(Only in compounds but no compounds containing this sign were found in this signlist.)</p>
