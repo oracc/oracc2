@@ -6,7 +6,7 @@
 
 /* For a number form to be a legal value it has to have a lower case
    vowel: this is a simple check but it is probably adequate, at least
-   for the range of values in OGSL */
+   for the range of values in OSL */
 static int
 n_value_ok(const char *form)
 {

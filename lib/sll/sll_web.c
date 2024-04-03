@@ -58,7 +58,7 @@ sll_web_handler(const char *wcall, const char *wproj, const char *wgraph, const 
   if (!wcaller)
     wcaller = wcall;
   if (!wproject)
-    wproject = wproj ? wproj : "ogsl";
+    wproject = wproj ? wproj : "osl";
   if (!wgrapheme)
     wgrapheme = wgraph;
   if (!wextension)
@@ -197,7 +197,7 @@ sll_esp_header(const char *v, const char *ext)
   printf("%s\n\n", "Content-type: text/html; charset=utf-8");
   printf("%s\n", "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"sux\" xml:lang=\"sux\">");
   printf("%s\n", "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
-  printf("<title>OGSL Results for %s</title>\n", vcat);
+  printf("<title>OSL Results for %s</title>\n", vcat);
   printf("%s\n", "<link rel=\"shortcut icon\" type=\"image/ico\" href=\"/favicon.ico\" />");
   printf("%s\n", "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p3.css\" />");
   printf("%s\n", "<script src=\"/js/p3.js\" type=\"text/javascript\"><![CDATA[ ]]></script>");

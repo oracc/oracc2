@@ -23,7 +23,7 @@ sll_init_d(const char *project, const char *name)
     
   /* Figure out the db and open it */
   if (!project)
-    project = "ogsl";
+    project = "osl";
 
   /* Not actually used any more because name is always "sl" */
   if (!name)

@@ -111,13 +111,13 @@ main(int argc, char * const*argv)
   if (boot_mode)
     {
       sll_output = 1;
-      file = "00lib/ogsl.asl";
+      file = "00lib/osl.asl";
       if (!freopen(file, "r", stdin))
 	{
 	  fprintf(stderr, "sx: unable to read from %s\n", file);
 	  exit(1);
 	}
-      const char *outfile = "02pub/sl/sl.tsv"; /* FIXME: should be @@ORACC@@/ogsl ... */
+      const char *outfile = "02pub/sl/sl.tsv"; /* FIXME: should be @@ORACC@@/osl ... */
       if (!(sllout = fopen(outfile, "w")))
 	{
 	  fprintf(stderr, "sx: unable to write to %s\n", outfile);
@@ -147,13 +147,13 @@ main(int argc, char * const*argv)
 
   if (parent_imports)
     {
-      const char *ogslfile = "/home/oracc/ogsl/00lib/ogsl.asl";
-      if (!freopen(ogslfile, "r", stdin))
+      const char *oslfile = "/home/oracc/osl/00lib/osl.asl";
+      if (!freopen(oslfile, "r", stdin))
 	{
-	  fprintf(stderr, "sx: unable to freopen %s to stdin\n", ogslfile);
+	  fprintf(stderr, "sx: unable to freopen %s to stdin\n", oslfile);
 	  exit(1);
 	}
-      parent_asl = aslyacc(ogslfile);
+      parent_asl = aslyacc(oslfile);
     }
   
   if (sl)

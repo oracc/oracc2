@@ -38,8 +38,8 @@ struct sx_iheader
 
 struct sl_signlist
 {
-  const char *signlist; /* The signlist name may vary from the host project, e.g., pcsl in pctc */
-  const char *project;  /* The project member is the host project for the signlist, e.g., pctc */
+  const char *signlist; /* The signlist name may vary from the host project, e.g., pcsl in pcsl */
+  const char *project;  /* The project member is the host project for the signlist, e.g., pcsl */
   struct sl_inst *notes;/* Allow inotes etc., after @signlist */
   Hash *linkdefs; 	/* Hash of signlist names; value is struct sl_linkdef */
   Hash *listdefs; 	/* Hash of signlist names; value is struct sl_listdef */

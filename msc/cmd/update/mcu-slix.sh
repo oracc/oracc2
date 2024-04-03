@@ -37,7 +37,7 @@ if [ "$asl" = "01tmp/auto.asl" ]; then
     if [ "$asldomain" = "sl" ]; then
 	UP=-Upogsl
     elif [ "$asldomain" = "pc" ]; then
-	UP=-Uppctc
+	UP=-Uppcsl
     fi
 fi
 if [ "$asl" != "" ]; then

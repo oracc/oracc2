@@ -2,17 +2,17 @@
 #include <gvl.h>
 
 #if 0
-static Hash *oiv_ogsl(Hash *wants);
+static Hash *oiv_osl(Hash *wants);
 #endif
 
 const char *
 oiv_style_to_file(const char *style)
 {
-  return "@@ORACC_BUILDS@@/ogsl/00lib/gudea.oiv";
+  return "@@ORACC_BUILDS@@/osl/00lib/gudea.oiv";
 }
 
 /* Load a selections file, a list of OIV identifiers, and extract the
- * OIV data from the OGSL IVS into a hash. Return the hash so it can
+ * OIV data from the OSL IVS into a hash. Return the hash so it can
  * be used by GVL for character rendering.
  */
 Hash *
@@ -33,10 +33,10 @@ oiv_load(const char *oiv_selections_file)
 
 #if 0
 Hash *
-oiv_ogsl(Hash *wants)
+oiv_osl(Hash *wants)
 {
-  const char *ogsl_ivd = "@@ORACC_BUILDS@@/pub/ogsl/Oracc_OGSL.txt";
-  unsigned char **ll = loadfile_lines((uccp)ogsl_ivd, NULL);
+  const char *osl_ivd = "@@ORACC_BUILDS@@/pub/osl/Oracc_OSL.txt";
+  unsigned char **ll = loadfile_lines((uccp)osl_ivd, NULL);
   int i;
   Hash *ret = hash_create(128);
   for (i = 0; ll[i]; ++i)

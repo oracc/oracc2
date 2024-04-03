@@ -127,9 +127,9 @@ table.lemsel td  { padding-left: 1em; padding-right: 1em; }
 
 /* CSS that might be needed when PCSL is ported to this subsystem */
 
-.pctc-info { border-bottom: solid; }
+.pcsl-info { border-bottom: solid; }
 
-.pctc-info p { margin: 0; }
+.pcsl-info p { margin: 0; }
 
 .ii-signs { margin-right: 10px; padding-right: 10px; padding-left: 0px; margin-left: 0px; }
 

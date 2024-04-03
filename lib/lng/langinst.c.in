@@ -69,13 +69,13 @@ lang_load(struct proj_context *p, struct lang_tag *lt)
   else
     lp->mode = m_alphabetic;
 
-  /* Autoload ogsl for script 020 and pcsl for script 900 */
+  /* Autoload osl for script 020 and pcsl for script 900 */
   if (lp->core->sindex == -1)
     {
       if (!strcmp(lp->core->script, "020"))
-	gvl_setup("ogsl", "ogsl", "020");
+	gvl_setup("osl", "osl", "020");
       else if (!strcmp(lp->core->script, "900"))
-	gvl_setup("pctc", "pctc", "900");
+	gvl_setup("pcsl", "pcsl", "900");
     }
 
   return lp;

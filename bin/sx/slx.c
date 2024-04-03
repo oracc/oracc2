@@ -9,7 +9,7 @@ const char *file = NULL;
 int lnum = 0;
 char *key = NULL;
 const char *name = "sl";
-const char *project = "ogsl";
+const char *project = "osl";
 
 Dbi_index *d = NULL;
 Hash *h = NULL;

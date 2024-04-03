@@ -3,7 +3,8 @@
 %}
 struct oid_domain;
 %%
-sl,  "ogsl"
+sl,  "osl"
+pc,  "pcsl"
 sux, "epsd2"
 xco, "chorasmian"
 akk, "neo"

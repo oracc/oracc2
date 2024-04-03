@@ -319,10 +319,10 @@
   <div class="asl-cite-url">
     <hr/>
     <p>Sign ID <xsl:value-of select="@xml:id"/>;
-    <xsl:if test="not(/*/@project='osl') and not(/*/@project='pctc')">
+    <xsl:if test="not(/*/@project='osl') and not(/*/@project='pcsl')">
       <esp:link url="/osl/signlist/{ancestor-or-self::sl:sign/@xml:id}">See full OSL page</esp:link>
     </xsl:if>
-    <xsl:if test="/*/@project='osl' or /*/@project='pctc'">
+    <xsl:if test="/*/@project='osl' or /*/@project='pcsl'">
       Citation URL http://oracc.org/<xsl:value-of select="/*/@project"/>/signlist/<xsl:value-of select="@xml:id"/>
     </xsl:if>
     </p>

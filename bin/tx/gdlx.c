@@ -101,7 +101,7 @@ do_one(char *s)
     }
   else if (uname_mode)
     {
-      if (!strcmp(project, "pctc"))
+      if (!strcmp(project, "pcsl"))
 	gvl_uname_prefix = "PROTO-CUNEIFORM";
       else
 	gvl_uname_prefix = "CUNEIFORM";
@@ -236,7 +236,7 @@ main(int argc, char **argv)
 #endif
   else
     gdlxml_setup();
-  if (!strcmp(project, "pctc"))
+  if (!strcmp(project, "pcsl"))
     gvl_setup(project, project, "900");
   else
     gvl_setup(project, project, "020"); /*FIXME*/

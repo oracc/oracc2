@@ -292,7 +292,7 @@ main(int argc, char **argv)
   Hash *conly = hash_create(128);
   if (!strcmp(sl, "sl"))
     {
-      (void)sll_init_t("ogsl", "sl");
+      (void)sll_init_t("osl", "sl");
       for (i = 0; sk[i]; ++i)
 	{
 	  const char *o = (ccp)sll_lookup((uccp)sk[i]);

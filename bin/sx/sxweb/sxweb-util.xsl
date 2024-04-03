@@ -62,7 +62,7 @@
       <xsl:attribute name="page">
 	<xsl:choose>
 	  <xsl:when test="@moid">
-	    <xsl:message>sl:sign page link using @moid <xsl:value-of select="@moid"/></xsl:message>
+	    <!--<xsl:message>sl:sign page link using @moid <xsl:value-of select="@moid"/></xsl:message>-->
 	    <xsl:value-of select="@moid"/>
 	  </xsl:when>
 	  <xsl:otherwise>

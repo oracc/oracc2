@@ -305,7 +305,7 @@ gdl_delim(Tree *ytp, const char *data)
 		{
 		  /* If this is a second × sign reset the last list
 		     entry to point to this so in GU×DIM×KUR the
-		     DIM×KUR will be grouped.  Need to check PCSL/OGSL
+		     DIM×KUR will be grouped.  Need to check PCSL/OSL
 		     to see if deeper × nesting needs to be handled */
 		  if (!c_implicit_times_reset)
 		    {

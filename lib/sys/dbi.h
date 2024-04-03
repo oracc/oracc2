@@ -47,7 +47,7 @@ struct Dbi_index_hdr
 {
   Uchar name[DBI_NAME_LEN];	/* name of index, informal (for humans only) */
   Uchar vids[_MAX_PATH];	/* vid file e.g., tid.vid; can be full path, e.g.,
-				   /home/oracc/pub/ogsl/sl/oid.vid */
+				   /home/oracc/pub/osl/sl/oid.vid */
   Unsigned32 entry_count;	/* number of keys in it */
   Unsigned32 data_size;		/* size of datum elements */
   Unsigned32 data_type;		/* data type as DBI_DT_* defs */

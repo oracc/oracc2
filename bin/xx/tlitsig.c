@@ -139,7 +139,7 @@ main(int argc, char **argv)
   options(argc, argv, "abcdf:hinop:Prstvw");
 
   gdlxml_setup();
-  if (!strcmp(project, "pctc"))
+  if (!strcmp(project, "pcsl"))
     gvl_setup(project, project, "900");
   else
     gvl_setup(project, project, "020"); /*FIXME*/

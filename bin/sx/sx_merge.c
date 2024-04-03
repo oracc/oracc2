@@ -20,7 +20,7 @@ sx_merge(struct sl_signlist *sl)
 	  if (m_from)
 	    m_from->moid = s->oid;
 	}
-      else if (!strcmp(sl->project, "ogsl")) /* corpus-based signlists may legit not have the to or from components */
+      else if (!strcmp(sl->project, "osl")) /* corpus-based signlists may legit not have the to or from components */
 	mesg_verr(m, "@merge %s: merge destination %s does not exist", m->user, m->user);
     }
 }

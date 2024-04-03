@@ -9,7 +9,7 @@ const char *tisdir = "tisdiv.d";
 const char *field = "period";
 int html_mode = 0;
 int oid_mode = 0;
-const char *project = "pctc";
+const char *project = "pcsl";
 int text_mode = 0;
 int threshold = 30;
 

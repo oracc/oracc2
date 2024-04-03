@@ -8,7 +8,7 @@
 <xsl:output method="text" encoding="utf-8"/>
   
 <xsl:template match="sl:sign|sl:form">
-  <xsl:if test="not(sl:uage='0')">
+  <xsl:if test="not(sl:uage='0') and sl:sys[@name='AP23'][not(@token='not')]">
     <xsl:if test="starts-with(@n,'|')">
       <xsl:value-of select="@n"/>
       <xsl:text>&#x9;</xsl:text>

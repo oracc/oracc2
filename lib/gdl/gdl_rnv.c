@@ -6,7 +6,7 @@
 /**This module requires rnvif setup to have been done first
  *
  * The implementation here is very preliminary--just enough to support
- * the GDL that occurs in OGSL.
+ * the GDL that occurs in OSL.
  */
 static void
 grx_node(Node *np)

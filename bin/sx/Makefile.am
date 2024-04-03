@@ -4,12 +4,14 @@ SUBDIRS=../../lib sxweb
 
 bin_PROGRAMS=sx slix slx tok2asl
 
-bin_SCRIPTS=osl-update.sh pctc-update.sh \
+bin_SCRIPTS=\
 	sxcmp.sh sxnorm.sh sxclean.sh \
 	sxmissing.sh sxudata.sh sxportal.sh \
 	sxportal-listdata.sh sxportal-udata.sh sloid.sh sxoid.sh \
 	sximages.sh sx-add-oid.sh sxportal-abbrevs.sh auto-asl.sh \
 	sxfreq.sh
+
+# osl-update.sh pcsl-update.sh 
 
 data_DATA=sx-list-*.xml sx-udata-*.xml sx-udata-codes.tsv
 

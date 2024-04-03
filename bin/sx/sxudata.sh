@@ -17,7 +17,7 @@ if [ ! -d $dir ]; then
 fi
 
 if [ "$asl" == "" ]; then
-    asl=00lib/ogsl.asl
+    asl=00lib/osl.asl
 fi
 sxudatacodes=$ORACC_BUILDS/lib/data/sx-udata-codes.tsv
 if [ -r $asl ]; then

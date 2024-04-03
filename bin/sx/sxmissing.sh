@@ -18,7 +18,7 @@ if [ ! -d $dir ]; then
 fi
 
 if [ "$asl" == "" ]; then
-    asl=00lib/ogsl.asl
+    asl=00lib/osl.asl
 fi
 if [ -r $asl ]; then
     sx -n $asl >$dir/listnames.lst

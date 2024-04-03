@@ -60,7 +60,7 @@ void
 gvl_bridge_init(void)
 {
   /* This is just enough to work with oxx because it assumes just
-     ogsl/pcsl as possible sl */
+     osl/pcsl as possible sl */
   bridge_a = malloc(3 * sizeof(Hash*));
   bridge_a[1] = hash_create(1024);
   bridge_a[2] = hash_create(1024);

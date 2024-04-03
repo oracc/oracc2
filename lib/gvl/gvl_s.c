@@ -11,7 +11,7 @@ extern int gvl_strict;
 extern int gvl_trace;
 extern int curr_lang;
 
-static const char *report = "http://oracc.museum.upenn.edu/ogsl/reportingnewvalues/";
+static const char *report = "https://oracc.museum.upenn.edu/osl/reportingnewvalues/";
 
 gvl_g *
 gvl_s(Node *ynp)

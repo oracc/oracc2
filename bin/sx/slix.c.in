@@ -26,8 +26,8 @@ main(int argc, char **argv)
   if (boot)
     {
       strcpy(dbname, "sl");
-      strcpy(dbdir, "@@ORACC@@/pub/ogsl/sl");
-      strcpy(tsvfile, "@@ORACC@@/pub/ogsl/sl/sl.tsv");
+      strcpy(dbdir, "@@ORACC@@/pub/osl/sl");
+      strcpy(tsvfile, "@@ORACC@@/pub/osl/sl/sl.tsv");
       if (!(infile = fopen(tsvfile, "r")))
 	{
 	  fprintf(stderr, "slix: -b (boot) mode requires %s\n", tsvfile);
