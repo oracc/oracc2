@@ -20,11 +20,11 @@
   <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
   <xsl:choose>
     <xsl:when test="$esp-mode">
-      <esp:image class="middle" height="30px" url="/{$header/@proj}/{$header/@path}/{@loc}"
+      <esp:image class="middle" height="50px" url="/{$header/@proj}/{$header/@path}/{@loc}"
 		 description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
     </xsl:when>
     <xsl:otherwise>
-      <img height="30px" src="/{$header/@proj}/{$header/@path}/{@loc}"
+      <img height="50px" align="middle" src="/{$header/@proj}/{$header/@path}/{@loc}"
 	   alt="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
     </xsl:otherwise>
   </xsl:choose>
