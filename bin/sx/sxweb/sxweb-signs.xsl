@@ -425,7 +425,7 @@
       <span class="sl-ihead">UNICODE</span>
       <span class="sl-ibody">
 	<xsl:choose>
-	  <xsl:when test="sl:ucun">
+	  <xsl:when test="sl:ucun|sl:uname">
 	    <xsl:value-of select="sl:ucun/@hex"/>
 	    <xsl:if test="sl:uname">
 	      <xsl:text> = </xsl:text><span class="snames"><xsl:value-of select="sl:uname"/><xsl:text>

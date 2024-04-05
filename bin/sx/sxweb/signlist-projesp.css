@@ -83,6 +83,8 @@ div.asl-images  { display: inline-block; vertical-align: top; }
 
 .snames  { font-size: 90%; }
 
+.asl-sign-form { border-top: solid lightgray 4px; }
+
 .asl-sys-name { font-size: 85%; font-weight: bold; }
 
 .asl-sys-subname { font-size: 85%; font-weight: normal; }
