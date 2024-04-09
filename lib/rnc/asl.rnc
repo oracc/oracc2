@@ -219,6 +219,7 @@ sl.name =
 sl.ucun =
   element sl:ucun {
     attribute hex { text } ,
+    attribute seq { text }? ,
     text
   }
 sl.inote = element sl:inote { text }

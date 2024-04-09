@@ -179,15 +179,22 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
       if (gvl_lookup(c))
 	{
 	  if (gdl_orig_mode)
-	    ynp->rent->text = (ccp)o;
-	  else	    
-	    ynp->rent->text = (ccp)c;
+	    {
+	      ynp->rent->text = (ccp)o;
+	      gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)o);
+	    }
+	  else
+	    {
+	      ynp->rent->text = (ccp)c;
+	      gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)c);
+	    }
 	  ng->c10e = c;
 	}
       else
 	{
 	  ng->mess = gvl_vmess("unknown sign name: %s", ng->orig);
 	  ynp->rent->text = (ccp)o;
+	  gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)o);
 	  ng->c10e = o;
 	}
       ynp->rent->user = ng;

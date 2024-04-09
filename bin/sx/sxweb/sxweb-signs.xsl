@@ -336,10 +336,18 @@
   <xsl:param name="verbose" select="false()"/>
   <xsl:param name="esp-mode" select="true()"/>
   <div class="asl-sf-body">
-      <xsl:if test="@merge">
-	<p class="sl-merge"><xsl:text>(Includes merging of </xsl:text
-	><xsl:value-of select="id(@merge)/@n"/><xsl:text>)</xsl:text></p>
-      </xsl:if>
+    <xsl:if test="@merge">
+      <p class="sl-merge"><xsl:text>(Includes merging of </xsl:text
+      ><xsl:value-of select="id(@merge)/@n"/> = <xsl:value-of select="id(@merge)/@xml:id"/><xsl:text>)</xsl:text></p>
+    </xsl:if>
+
+    <div class="asl-oid">
+      <p>
+	<span class="sl-ihead">Form ID</span>
+	<span class="sl-ibody"><xsl:value-of select="@xml:id"/></span>
+      </p>
+    </div>
+    
     <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
       <div class="asl-cun-img">
 	<span class="sl-ihead">CUNEIFORM</span>

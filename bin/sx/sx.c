@@ -47,6 +47,7 @@ int syss_dump = 0;
 int tree_output = 0;
 int unicode_from_parent = 0;
 int unicode_table = 0;
+int useq_force = 0;
 int xml_output = 0;
 int validate = 1;
 
@@ -85,7 +86,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eg:iI:jJ:l:L:m:nMoOP:p:sStTuUxX:?");
+  options(argc, argv, "abcCD:d:eg:iI:jJ:l:L:m:nMoOP:p:qQsStTuUxX:?");
   asltrace = asl_flex_debug = trace_mode;
 
   if (parent_sl_project)
@@ -373,6 +374,9 @@ opts(int opt, const char *arg)
       break;
     case 'q':
       quiet = 1;
+      break;
+    case 'Q':
+      useq_force = 1;
       break;
     case 'S':
       sortcode_output = 1;

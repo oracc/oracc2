@@ -152,7 +152,7 @@ sx_unicode(struct sl_signlist *sl)
 	  last_uoid = NULL;
 	  last_deep = NULL;
 #endif
-	  if (!Up->uhex)
+	  if ((useq_force || !Up->uhex) && (!Up->urev || strcmp(Up->urev, "0")))
 	    {
 	      int multi = 0;
 	      const char *m = sx_unicode_rx_mangle(sl, (ccp)name, &multi);

@@ -1024,7 +1024,10 @@ sx_w_jx_unicode(struct sx_functions *f, struct sl_signlist *sl, struct sl_unicod
   if (up->uhex || up->useq)
     {
       const char *u;
-      ratts = rnvval_aa("x", "hex", up->uhex ? up->uhex : up->useq, NULL);
+      if (useq_force && up->useq && up->uhex)
+	ratts = rnvval_aa("x", "hex", up->uhex, "seq", up->useq, NULL);
+      else
+	ratts = rnvval_aa("x", "hex", up->uhex ? up->uhex : up->useq, NULL);
       if (up->utf8)
 	u = (ccp)up->utf8;
       else

@@ -45,24 +45,34 @@ prop_add(Memo *propmem, Prop *p, int ptype, int gtype)
   return ret;
 }
 
+/* Silently update value of existing key */
 Prop *
 prop_add_kv(Memo *propmem, Memo *kevamem, Prop *p, int ptype, int gtype, const char *key, const char *value)
 {
-  Prop *newprop = memo_new(propmem);
-  Prop *ret = p;
-  p = prop_last(p);
-  if (p)
+  Prop *known = prop_find_kv(p, key, NULL);
+  if (known)
     {
-      p->next = newprop;
-      p = p->next;
+      known->u.k->v = value;
+      return known;
     }
   else
-    ret = p = newprop;
-  p->p = ptype;
-  p->g = gtype;
-  if (key && value)
-    p->u.k = keva_create(kevamem, key, value);
-  return ret;
+    {
+      Prop *newprop = memo_new(propmem);
+      Prop *ret = p;
+      p = prop_last(p);
+      if (p)
+	{
+	  p->next = newprop;
+	  p = p->next;
+	}
+      else
+	ret = p = newprop;
+      p->p = ptype;
+      p->g = gtype;
+      if (key && value)
+	p->u.k = keva_create(kevamem, key, value);
+      return ret;
+    }
 }
 
 Prop *

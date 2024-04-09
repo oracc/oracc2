@@ -46,6 +46,7 @@ struct sx_functions
 extern Hash *parent_sl;
 extern const char *parent_sl_project;
 extern int unicode_from_parent;
+extern int useq_force;
 
 extern int extra_needs, identity_mode, listdef_check;
 extern int oid_list, oid_tab;
