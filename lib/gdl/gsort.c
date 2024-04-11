@@ -15,6 +15,7 @@ static const char *gsort_show_key(unsigned const char *k);
 
 static Memo *m_headers = NULL;
 static Memo *m_items = NULL;
+static Memo *m_mods = NULL;
 static Pool *gspool = NULL;
 static Hash *hitems = NULL;
 static Hash *hheads = NULL;
@@ -26,6 +27,7 @@ gsort_init()
 {
   m_headers = memo_init(sizeof(GS_head), 1024);
   m_items = memo_init(sizeof(GS_item), 1024);
+  m_mods = memo_init(sizeof(GS_mods), 1024);
   gspool = pool_init();
   hitems = hash_create(1024);
   hheads = hash_create(1024);
@@ -97,13 +99,50 @@ gsort_show(GS_head *gsp)
       for (i = 0; i < gsp->n; ++i)
 	{
 	  GS_item *gip = gsp->i[i];
-	  fprintf(stderr, "{%s; %s; %s; %s; %d; %d}",
-		  gip->g, gip->b, gsort_show_key(gip->k), gip->m, gip->x, gip->r);
+	  fprintf(stderr, "{%s; %s; %s; %s",
+		  gip->g, gip->b, gsort_show_key(gip->k), gip->m);
+	  if (gip->mp)
+	    {
+	      GS_mods *mp;
+	      fputs(" [", stderr);
+	      for (mp = gip->mp; mp; mp = mp->next)
+		{
+		  fprintf(stderr, "%c%s",mp->type,mp->val);
+		  if (mp->next)
+		    fputc(',', stderr);
+		}
+	      fputc(']', stderr);
+	    }
+	  fprintf(stderr, "; %d; %d}", gip->x, gip->r);
 	}
       fputc('\n', stderr);
     }
   else
     fprintf(stderr, "(GS_head argument is NULL)\n");
+}
+
+static int
+gsort_mods_cmp(GS_mods *ap, GS_mods *bp)
+{
+  while (1)
+    {
+      if (ap->type != bp->type)
+	return ('@' == ap->type) ? 1 : -1;
+      int ret = strcmp(ap->val, bp->val);
+      if (ret)
+	return ret;
+      if (ap->next && bp->next)
+	{
+	  ap = ap->next;
+	  bp = bp->next;
+	}
+      else if (ap->next)
+	return -1;
+      else if (bp->next)
+	return 1;
+      else
+	return 0;
+    }
 }
 
 static int
@@ -151,7 +190,12 @@ gsort_cmp_item(GS_item *a, GS_item *b)
     return a->x - b->x;
 
   /* final check is mods */
-  return strcmp((ccp)a->m, (ccp)b->m);
+  if (a->m && b->m)
+    return gsort_mods_cmp(a->mp,b->mp);
+  else if (a->m || b->m)
+    return a->m ? -1 : 1;
+  else
+    return 0;
 }
 
 int
@@ -167,6 +211,33 @@ gsort_cmp(const void *v1, const void *v2)
 
   /* If all the members compared equal, the longer is later in sort order */
   return h1->n - h2->n;
+}
+
+static GS_mods *
+gsort_mods(unsigned char *m)
+{
+  GS_mods *ret = NULL, *curr = NULL;
+  char *s = (char *)m;
+  while (*s)
+    {
+      if ('~' == *s || '@' == *s)
+	{
+	  GS_mods *mp = memo_new(m_mods);
+	  if (!curr)
+	    ret = curr = mp;
+	  else
+	    {
+	      curr->next = mp;
+	      curr = curr->next;
+	    }
+	  mp->type = *s;
+	  *s++ = '\0';
+	  mp->val = s;	  
+	}
+      else
+	++s;
+    }
+  return ret;
 }
 
 static GS_item *
@@ -187,7 +258,8 @@ gsort_item(unsigned const char *n, unsigned const char *g, unsigned const char *
   if ((tmp = (ucp)strpbrk((ccp)gp->b, "~@")))
     {
       *tmp++ = '\0';
-      gp->m = tmp;
+      gp->m = pool_copy(tmp, gspool);
+      gp->mp = gsort_mods(tmp);
     }
   else
     gp->m = (ucp)"";

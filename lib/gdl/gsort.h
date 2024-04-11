@@ -1,12 +1,20 @@
 #ifndef GSORT_H_
 #define GSORT_H_
 
+struct GS_mods
+{
+  char type;
+  char *val;
+  struct GS_mods *next;
+};
+
 struct GS_item
 {
   unsigned const char *g;	/* item grapheme */
   unsigned const char *b;	/* grapheme base */
   unsigned const char *k;	/* grapheme key via lib/collate; this is stripped of mods */
   unsigned const char *m; 	/* mods for grapheme, "" if none */
+  struct GS_mods *mp;
   short x;			/* grapheme index */
   short r;			/* repeater for number graphemes, e.g., 3(diš) */
 };
@@ -20,6 +28,7 @@ struct GS_head
 
 typedef struct GS_head GS_head;
 typedef struct GS_item GS_item;
+typedef struct GS_mods GS_mods;
 
 extern void gsort_init(void);
 extern void gsort_term(void);
