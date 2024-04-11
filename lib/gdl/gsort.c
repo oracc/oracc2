@@ -257,9 +257,9 @@ gsort_item(unsigned const char *n, unsigned const char *g, unsigned const char *
 
   if ((tmp = (ucp)strpbrk((ccp)gp->b, "~@")))
     {
-      *tmp++ = '\0';
       gp->m = pool_copy(tmp, gspool);
       gp->mp = gsort_mods(tmp);
+      *tmp = '\0';
     }
   else
     gp->m = (ucp)"";
