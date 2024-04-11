@@ -122,7 +122,7 @@ gsort_show(GS_head *gsp)
 }
 
 static int
-gsort_mods_cmp(GS_mods *ap, GS_mods *bp)
+gsort_cmp_mods(GS_mods *ap, GS_mods *bp)
 {
   while (1)
     {
@@ -190,8 +190,8 @@ gsort_cmp_item(GS_item *a, GS_item *b)
     return a->x - b->x;
 
   /* final check is mods */
-  if (a->m && b->m)
-    return gsort_mods_cmp(a->mp,b->mp);
+  if (a->mp && b->mp)
+    return gsort_cmp_mods(a->mp,b->mp);
   else if (a->m || b->m)
     return a->m ? -1 : 1;
   else
