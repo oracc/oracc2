@@ -192,8 +192,8 @@ gsort_cmp_item(GS_item *a, GS_item *b)
   /* final check is mods */
   if (a->mp && b->mp)
     return gsort_cmp_mods(a->mp,b->mp);
-  else if (a->m || b->m)
-    return a->m ? -1 : 1;
+  else if (a->mp || b->mp)
+    return a->mp ? -1 : 1;
   else
     return 0;
 }
