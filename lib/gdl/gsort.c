@@ -137,9 +137,9 @@ gsort_cmp_mods(GS_mods *ap, GS_mods *bp)
 	  bp = bp->next;
 	}
       else if (ap->next)
-	return -1;
-      else if (bp->next)
 	return 1;
+      else if (bp->next)
+	return -1;
       else
 	return 0;
     }
