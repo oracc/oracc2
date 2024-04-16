@@ -117,3 +117,44 @@ instances(const char *lang, const char *id)
   exit(1);
 }
 
+void
+instances_isp(const char *lang, const char *id)
+{
+  CGI_varlist *v = NULL;
+  int vcount = -1;
+  const char **va = NULL;
+
+  fprintf(stderr, "instances handler\n");
+
+  if (query_string)
+    setenv("QUERY_STRING", query_string, 1);
+  
+  v = CGI_get_query(v);
+  v = CGI_get_post(v, NULL);
+  dump_vl(v);
+  vcount = countv(v);
+  
+  va = malloc(18*sizeof(char*));
+  va[0] = "@@ORACC_BUILDS@@/bin/ispx";
+  va[1] = "-j";
+  va[2] = strdup(project ? project : "nul");
+  va[3] = "-n";
+  va[4] = strdup(lang);
+  va[5] = "-l";
+  va[6] = strdup(id);
+  va[7] = "-p";
+  va[8] = v ? cgi_val(v, "page", "1") : "1";
+  va[9] = "-s";
+  va[10] = v ? cgi_val(v, "size", "25") : "25";
+  va[11] = "-x";
+  va[12] = v ? cgi_val(v, "mode", "html") : "html";
+  va[13] = "-";
+  va[14] = v ? cgi_val(v, "all", "") : "";
+  va[15] = "-i";
+  va[16] = v ? cgi_val(v, "mode", "item") : "nul";
+  va[17] = NULL;
+  execv("@@ORACC_BUILD@@/bin/ispx", (char*const*)va);
+  fprintf(stderr, "execv /usr/bin/perl failed\n");  
+  exit(1);
+}
+

@@ -41,6 +41,9 @@ struct isp_cache
   const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the page in a zoomed slice; z=0 for no zoom */
   const char *zout;	/* the outline for a zoomed slice; z=0 for no zoom */
+  const char *item;	/* the item being displayed from a page in a
+			   zoomed slice; z=0 for no zoom; this is a
+			   PQX ID or OID not an integer index into a list */
 };
 
 /* Pointers to project config entries */
