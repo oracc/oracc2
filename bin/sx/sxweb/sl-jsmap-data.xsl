@@ -19,9 +19,14 @@
   <xsl:param name="n" select="@n"/>
   <xsl:choose>
     <xsl:when test="contains($n,'(')">
+      <!--
       <xsl:variable name="b" select="substring-after($n,'(')"/>
       <xsl:call-template name="out-n">
 	<xsl:with-param name="n" select="substring-before($b,')')"/>
+      </xsl:call-template>
+      -->
+      <xsl:call-template name="out-n">
+	<xsl:with-param name="n" select="translate($n,'()','')"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:otherwise>

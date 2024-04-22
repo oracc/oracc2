@@ -3,13 +3,26 @@
 #include <list.h>
 
 Hash *seen;
-List *ll[26];
+
+#define AZ09 36
+List *ll[AZ09];
+#define az09(i) i+(i > 25 ? ('0'-26) : 'a');
+
+static void
+print_varname(int i)
+{
+  char c = az09(i);
+  char *uscore = (c >= '0' && c <= '9' ? "_" : "");
+  printf("%s%c",uscore,c);
+}
 
 static void
 one_ll(Roco *r, int i, List *lp)
 {
   int len = list_len(lp);
-  printf("const %c = {\n", i+'a');
+  printf("const ");
+  print_varname(i);
+  printf(" = {\n");
   int j;
   for (j = 0; j < len; ++j)
     {
@@ -40,7 +53,7 @@ main(int argc, char **argv)
 
   if (multi)
     {
-      for (i = 0; i < 26; ++i)
+      for (i = 0; i < AZ09; ++i)
 	ll[i] = list_create(LIST_SINGLE);
       for (i = 0; i < r->nlines; ++i)
 	{
@@ -56,17 +69,18 @@ main(int argc, char **argv)
 	    }	  
 	  else
 	    {
-	      list_add(ll[k[0]-'a'], (void*)(uintptr_t)i);
+	      int az09index = ((k[0] >= '0' && k[0] <= '9') ? k[0]-'0'+26 : k[0]-'a');
+	      list_add(ll[az09index], (void*)(uintptr_t)i);
 	    }
 	}
-      for (i = 0; i < 26; ++i)
+      for (i = 0; i < AZ09; ++i)
 	one_ll(r, i, ll[i]);
       printf("const aa = [");
-      for (i = 0; i < 26; ++i)
+      for (i = 0; i < AZ09; ++i)
 	{
 	  if (i)
 	    printf(",");
-	  printf("%c",i+'a');
+	  print_varname(i);
 	}
       printf("];\n");
       if (memb)
