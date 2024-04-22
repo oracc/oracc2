@@ -120,6 +120,9 @@ opts(int opt, const char *arg)
     case 'z':
       opt_ip->zoom = arg;
       break;
+    case 'i':
+      opt_ip->item = arg;
+      break;
     case 'p':
       opt_ip->page = arg;
       break;
@@ -138,6 +141,7 @@ opts(int opt, const char *arg)
     case 'h':
       opt_ip->host = arg;
       break;
+      /* possibly add 'o' for output selection, XML vs HMTL, or is this sufficiently covered by -x? */
     case 'a':
       opt_ip->aapi = arg;
       break;
