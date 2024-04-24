@@ -110,7 +110,9 @@ main(int argc, char * const*argv)
   
   /* ose_ce_cfg(curr_project, "tok", "tr", "txh", oce_tok, NULL); */
 
-  vido_dump_data(vp, "02pub/tok/vid.vid", NULL);
+  char vidfile[strlen(index_dir)+strlen("vid.vid0")];
+  sprintf(vidfile,"%s/vid.vid",index_dir);
+  vido_dump_data(vp, vidfile, NULL);
   vido_term(vp);
 
   dbi_free(dip);

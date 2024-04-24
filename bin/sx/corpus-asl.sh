@@ -33,6 +33,7 @@ fi
 gtoks=01tmp/corpus.tok
 tokx <$list >$gtoks
 tok2asl $h -P $project $mopt -S auto $gtoks >01tmp/corpus.asl
+cat $gtoks tok2tis >01tmp/corpus.tis
 sx -Up osl -e -c 01tmp/corpus.asl >>01tmp/corpus.asl
 (cd 01tmp ; sx -x corpus.asl)
 xsltproc $libscripts/sxweb-freq-tab.xsl 01tmp/sl.xml >01tmp/freq-tab.xml

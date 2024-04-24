@@ -13,9 +13,12 @@
  * signature.
  */
 
+const char *index_dir = "02pub/tok";
+
 int
 main(int argc, char **argv)
 {
+  options(argc,argv,"d:");
   char buf[1024], *b, qid[1024], wdid[32];
   Vido *vp = vido_init('t', 0);
   while ((b = fgets(buf, 1024, stdin)))
@@ -80,6 +83,33 @@ main(int argc, char **argv)
 	    }	    
 	}
     }
-  vido_dump_data(vp, "02pub/tok/tid.vid", "02pub/tok/tid.tsv");
+  char vidfile[strlen(index_dir)+strlen("tid.vid0")];
+  char tsvfile[strlen(index_dir)+strlen("tid.vid0")];
+  sprintf(vidfile,"%s/tid.vid",index_dir);
+  sprintf(tsvfile,"%s/tid.tsv",index_dir);
+  vido_dump_data(vp, vidfile, tsvfile);
   vido_term(vp);
+}
+
+int
+opts(int argc, const char *arg)
+{
+  switch (argc)
+    {
+    case 'd':
+      index_dir = arg;
+      break;
+    default:
+      return 1;
+    }
+  return 0;
+}
+
+const char *prog = "tokex";
+int major_version = 6, minor_version = 0, verbose;
+const char *usage_string = "-d [index_dir]";
+void
+help ()
+{
+  printf("  -d [index_dir] Gives the name of the index directory; defaults to 02pub/tok\n");
 }
