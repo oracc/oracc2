@@ -860,8 +860,11 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
     {
       unsigned char *snames = list_to_str(s->u.s->merge);
       unsigned char *oids = sx_oids_of(sl, snames);
-      list_add(a, "merge");
-      list_add(a, oids);
+      if (oids && strlen(oids))
+	{
+	  list_add(a, "merge");
+	  list_add(a, oids);
+	}
     }
   
   if (s->tp)

@@ -9,7 +9,7 @@ bin_SCRIPTS=\
 	sxmissing.sh sxudata.sh sxportal.sh \
 	sxportal-listdata.sh sxportal-udata.sh sloid.sh sxoid.sh \
 	sximages.sh sx-add-oid.sh sxportal-abbrevs.sh auto-asl.sh \
-	sxfreq.sh
+	sxfreq.sh corpus-asl.sh
 
 # osl-update.sh pcsl-update.sh 
 

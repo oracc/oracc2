@@ -282,7 +282,8 @@ sx_oids_of(struct sl_signlist *sl, unsigned const char *snames)
       if (*x)
 	*x++ = '\0';
       struct sl_sign *s = hash_find(sl->hsentry, xsname);
-      list_add(l,(void*)s->oid);
+      if (s)
+	list_add(l,(void*)s->oid);
     }
   ret = list_join(l, " ");
   list_free(l,NULL);

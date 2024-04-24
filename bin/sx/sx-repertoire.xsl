@@ -8,12 +8,18 @@
 <xsl:output method="text" encoding="utf-8"/>
 
 <xsl:template match="sl:sign|sl:form">
-  <xsl:value-of select="concat(@xml:id,'&#x9;',@n,'&#x9;',sl:ucun/@hex,'&#x9;')"/>
+  <xsl:variable name="nmoid">
+    <xsl:value-of select="@n"/>
+    <xsl:if test="@moid"><xsl:value-of select="concat('=',@moid)"/></xsl:if>
+  </xsl:variable>
+  <xsl:value-of select="concat(@xml:id,'&#x9;',$nmoid,'&#x9;',sl:ucun/@hex,'&#x9;')"/>
   <xsl:for-each select="sl:v">
     <xsl:value-of select="@n"/>
     <xsl:if test="not(position()=last())"><xsl:text> </xsl:text></xsl:if>
   </xsl:for-each>
   <xsl:if test="@compoundonly='yes'">
+    <xsl:text>&#x9;</xsl:text>
+    <xsl:value-of select="@cpd-refs"/>
     <xsl:text>&#x9;</xsl:text>
     <xsl:for-each select="id(@cpd-refs)">
       <xsl:value-of select="@n"/>
