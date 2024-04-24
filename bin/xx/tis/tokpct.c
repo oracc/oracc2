@@ -1,9 +1,18 @@
 #include <oraccsys.h>
+#include <math.h>
+
+int verbose = 0;
 
 static double
 pct(double amount, double total)
 {
   double pct = (amount / total) * 100;
+  if (pct == INFINITY)
+    {
+      if (verbose)
+	fprintf(stderr, "tokpct: amount %g / total %g * 100 yields INFINITY\n", amount, total);
+      pct = (double)0.0;
+    }
   return pct;
 }
 
