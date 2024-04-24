@@ -37,5 +37,7 @@ cat $gtoks | tokex -d01tmp | tokix -d01tmp -p$project | tokpct >01tmp/corpus.tis
 sx -Up osl -e -c 01tmp/corpus.asl >>01tmp/corpus.asl
 (cd 01tmp ; sx -Isl:corpus.tis -x corpus.asl)
 xsltproc $libscripts/sxweb-freq-tab.xsl 01tmp/sl.xml >01tmp/freq-tab.xml
-(cd 01tmp ; xsltproc ${libscripts}/sx-repertoire.xsl sl.xml >rep.tab)
-ls -l 01tmp/sl.xml 01tmp/rep.tab
+mkdir -p 00etc
+reptab=`basename $list .lst`-rep.tab
+(cd 01tmp ; xsltproc ${libscripts}/sx-repertoire.xsl sl.xml >../00etc/$reptab)
+ls -l 01tmp/sl.xml 00etc/$reptab
