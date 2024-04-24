@@ -238,7 +238,6 @@
   <xsl:value-of select="$nopipes"/>
   <xsl:if test="not(sl:smap) and not(sl:uage='0')">
     <xsl:text> </xsl:text>
-    <!--<span class="asl-oid"><xsl:value-of select="concat('[',@xml:id,']')"/></span>-->
   </xsl:if>
 </xsl:template>
 
@@ -344,7 +343,7 @@
     <div class="asl-oid">
       <p>
 	<span class="sl-ihead">Form ID</span>
-	<span class="sl-ibody"><xsl:value-of select="@xml:id"/></span>
+	<span class="sl-ibody"><xsl:value-of select="@oid"/></span>
       </p>
     </div>
     
@@ -1058,6 +1057,7 @@
   <td>
     <xsl:choose>
       <xsl:when test="self::sl:form">
+	<!--get ancestor sl:letter and sl:sign IDs for pathname-->
 	<a href="{concat('/',/*/@project,'/signlist/',../../@xml:id,'/',../@xml:id,'/index.html')}">
 	  <span class="snames"><xsl:value-of select="@n"/></span>
 	</a>

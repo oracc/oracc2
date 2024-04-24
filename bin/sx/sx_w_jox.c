@@ -463,7 +463,7 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
     joxer_ao("j:forms");
   else if (p == sx_pos_inst)
     {
-      const char *id_or_ref = "xml:id";
+      const char *ref = NULL;
       
       if (in_form)
 	{
@@ -488,16 +488,13 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_add(a, "n");
 	      list_add(a, (void*)xmlify(s->u.f->name));
   
+	      list_add(a, "xml:id");
+	      list_add(a, (void*)s->iid);
+
 	      if (s->u.f->oid)
 		{
-		  list_add(a, "xml:id");
+		  list_add(a, "oid");
 		  list_add(a, (void*)s->u.f->oid);
-		}
-
-	      if (s->iid)
-		{
-		  list_add(a, "iid");
-		  list_add(a, (void*)s->iid);
 		}
 
 	      if (s->u.f->sort > 0)
@@ -533,13 +530,13 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      const char **atts = NULL;
 
 	      if (!s->u.f->sign->xref)
-		id_or_ref = "ref";
+		ref = "ref";
 	      else
 		{
 		  if (s->u.f->oid)
 		    {
 		      if (hash_find(xidseen, (uccp)s->u.f->oid))
-			id_or_ref = "ref";
+			ref = "ref";
 		      else
 			hash_add(xidseen, (uccp)s->u.f->oid, "");
 		    }
@@ -548,13 +545,16 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_add(a, "n");
 	      list_add(a, (void*)xmlify(s->u.f->name));
 
-	      list_add(a, (void*)id_or_ref);
+	      list_add(a, (void*)"xml:id");
+	      list_add(a, (void*)s->iid);
+
+	      list_add(a, "oid");
 	      list_add(a, s->u.f->oid ? (void*)s->u.f->oid : (void*)"");
 
-	      if (s->iid)
+	      if (ref)
 		{
-		  list_add(a, "iid");
-		  list_add(a, (void*)s->iid);
+		  list_add(a, "ref");
+		  list_add(a, s->u.f->oid ? (void*)s->u.f->oid : (void*)"");
 		}
 
 	      list_add(a, "sort");
@@ -852,7 +852,7 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
 	p[i++] = afp->iid;
       p[i] = NULL;
       char *fids = charstarstar_concat(p);
-      list_add(a, "as_form");      
+      list_add(a, "as-form");      
       list_add(a, (as_form = strdup(fids)));
     }
     

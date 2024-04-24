@@ -66,6 +66,7 @@ sl.sign    =
     sl.smap?,
     attribute compoundonly { "yes"|"no" }?,
     attribute cpd-refs { xsd:IDREFS }?,
+    attribute as-form { xsd:IDREFS }?,
     (sl.moid | sl.merge)?,
     sl.stats?,
     sl.name?,
@@ -99,9 +100,10 @@ sl.sign    =
 
 sl.form	   = element sl:form {
       attribute n { text },
-      attribute ref { xsd:NCName }?,
       attribute sort { text }, 
+      attribute ref { xsd:NCName }?,
       attribute xml:id { xsd:NCName }?,
+      attribute oid { xsd:NCName }?,
       attribute compoundonly { "yes"|"no" }?,
       attribute cpd-refs { xsd:IDREFS }?,
       sl.stats?,
