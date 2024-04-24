@@ -362,6 +362,10 @@ sx_marshall(struct sl_signlist *sl)
 	    }
 	}
       f->sign = s;
+      /* Side effect: provide signs which occur as forms a list of instances where they occur */
+      if (!s->as_form)
+	s->as_form = list_create(LIST_SINGLE);
+      list_add_list(s->as_form, f->insts);
     }
 
   /* First compounds phase: gather the data for digesting later */

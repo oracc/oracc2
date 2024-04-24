@@ -53,6 +53,7 @@ extern unsigned char *list_concat(List *l);
 extern unsigned char *list_join(List *l, const char *j);
 extern List * list_create (List_types_e);
 extern void list_add (List *, void *);
+extern List * list_add_list(List*lp1,List*lp2);
 extern List * list_append(List*lp1,List*lp2);
 extern  void *list_detach (List *, List_node *);
 extern  void *list_pop (List *);

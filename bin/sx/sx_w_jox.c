@@ -494,6 +494,12 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 		  list_add(a, (void*)s->u.f->oid);
 		}
 
+	      if (s->iid)
+		{
+		  list_add(a, "iid");
+		  list_add(a, (void*)s->iid);
+		}
+
 	      if (s->u.f->sort > 0)
 		(void)sprintf(scode, "%d", s->u.f->sort);
 	      if (*scode)
@@ -544,6 +550,12 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 
 	      list_add(a, (void*)id_or_ref);
 	      list_add(a, s->u.f->oid ? (void*)s->u.f->oid : (void*)"");
+
+	      if (s->iid)
+		{
+		  list_add(a, "iid");
+		  list_add(a, (void*)s->iid);
+		}
 
 	      list_add(a, "sort");
 	      list_add(a, scode);
@@ -820,6 +832,7 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
   List *a = list_create(LIST_SINGLE);
   const char **atts = NULL;
   static char scode[32];
+  char *as_form = NULL;
 
   list_add(a, "n");
   list_add(a, (void*)xmlify(s->u.s->name));
@@ -830,6 +843,19 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
       list_add(a, (void*)s->u.s->oid);
     }
 
+  if (s->u.s->as_form && list_len(s->u.s->as_form))
+    {
+      const char *p[list_len(s->u.s->as_form)+1];
+      int i = 0;
+      struct sl_inst *afp;
+      for (afp = list_first(s->u.s->as_form); afp; afp = list_next(s->u.s->as_form))
+	p[i++] = afp->iid;
+      p[i] = NULL;
+      char *fids = charstarstar_concat(p);
+      list_add(a, "as_form");      
+      list_add(a, (as_form = strdup(fids)));
+    }
+    
   if (s->u.s->sort > 0)
     (void)sprintf(scode, "%d", s->u.s->sort);
   if (*scode)
@@ -860,7 +886,7 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
     {
       unsigned char *snames = list_to_str(s->u.s->merge);
       unsigned char *oids = sx_oids_of(sl, snames);
-      if (oids && strlen(oids))
+      if (oids && strlen((ccp)oids))
 	{
 	  list_add(a, "merge");
 	  list_add(a, oids);

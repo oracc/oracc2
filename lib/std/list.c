@@ -95,6 +95,15 @@ list_append(List *lp1,List*lp2)
 }
 
 List *
+list_add_list(List *lp1,List*lp2)
+{
+  void *vp;;
+  for (vp = list_first(lp2); vp; vp = list_next(lp2))
+    list_add(lp1, vp);
+  return lp1;
+}
+
+List *
 list_reset(List *lp)
 {
   lp->count = 0;

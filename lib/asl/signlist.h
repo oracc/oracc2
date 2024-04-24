@@ -79,6 +79,7 @@ struct sl_signlist
   int nlists;
   struct sl_letter *letters;
   int nletters;
+  int ninsts;
   struct sl_split_value *splitv;
   struct sl_sign *curr_sign;
   struct sl_inst *curr_form;
@@ -203,6 +204,7 @@ struct sl_lv_data
 
 struct sl_inst
 {
+  const char *iid;		/* ID for this instance */
   char type; /* S = signlist; d = listdef; y = sysdef; s = sign; f = form; l = list; v = value; L = linkdef */
   union {
     struct sl_signlist *S;
@@ -361,6 +363,8 @@ struct sl_sign
 				   to support non-standard names; data
 				   type is Memo_str with literal flag
 				   stored in user ptr */
+  List *as_form;		/* List of instances where this sign
+				   occurs as a form of another sign */
   int sort;
   size_t count;
   size_t ctotal;
