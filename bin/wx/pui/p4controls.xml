@@ -1,0 +1,77 @@
+<x>
+  <div id="p3itemnav" class="p3-items p3-noglo">
+    <p class="p3toccenter bg-dk">
+
+      <span class="p3arrow">
+	<img class="p3icon" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3itemsview" id="p3itemsview"
+	     onclick="p3action('viewstatePages')"/>
+      </span>
+
+      <!--Item-->
+      <span class="p3arrow">
+	<img class="p3icon" src="/img/p3-backward.png" alt="Item back" title="Item back" name="ilarrow" id="ilarrow"
+	     onclick="p3action('itemback')"/>
+      </span>
+      
+      <input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" p3:value="@@cgivar:item@@"/>
+      
+      <span class="p3arrow">
+	<img class="p3icon" src="/img/p3-forward.png" alt="Item forward" title="Item forward" name="irarrow" id="irarrow"
+	     onclick="p3action('itemfwd')"/>
+      </span>
+      
+      <span p3:value="@@runtime:items@@"/> Texts
+      [<span class="resultcount" p3:value="@@runtime:resultcount@@"/> matches]
+
+      @@pui_translations()@@
+      <input type="checkbox" onchange="to_toggle()" name="transonly" id="transonly" value="transonly" p3:value="@@cgivar:transonly@@"/>&#xa0;only
+
+    </p>
+  </div>
+  
+  <div id="p3pagenav" class="p3-pages">
+    <p class="p3toccenter bg-dk">
+
+      <span class="p3arrow" id="p3zoom">
+	<button type="submit" name="unzoom" onclick="p3zoom('0')">All Results</button>
+      </span>
+
+      <span class="p3arrow">
+	<img class="p3icon" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3pagesview" id="p3pagesview"
+	     onclick="p3action('viewstateItems')"/>
+      </span>
+      
+      <span class="p3arrow">
+	<img class="p3icon" src="/img/p3-backward.png" alt="Page back" title="Page back" name="plarrow" id="plarrow"
+	     onclick="p3action('pageback')"/>
+      </span>
+      
+      <!--Page-->
+      <input id="pageset" name="pageset" type="text" onchange="p3action('pageset')" size="2" p3:value="@@cgivar:page@@"/>
+
+      <span class="p3arrow">
+	<img class="p3icon" src="/img/p3-forward.png" alt="Page forward" title="Page forward" name="prarrow" id="prarrow"
+	     onclick="p3action('pagefwd')"/>
+      </span>
+
+      <span p3:value="@@runtime:items@@"/> lines
+      /
+      <span p3:value="@@runtime:pages@@"/> Pages
+
+      [<span class="resultcount" p3:value="@@runtime:resultcount@@"/> matches]
+      
+      <span class="cetype">
+	<select id="p3cetype" name="p3cetype"  onchange="p3action('cestate')">
+	  <option value="line">Line</option>
+	  <option value="unit">Sentence</option>
+	  <option value="kwic">KWIC</option>
+	</select>
+      </span>
+    </p>
+  </div>
+  
+  <p class="p3fullscreen">
+    <img class="p3icon" src="/img/p3-full.png" alt="Toggle full/split screen" onclick="fs_toggle()" name="fullscreen" id="fullscreen"/>
+  </p>  
+</x>
+

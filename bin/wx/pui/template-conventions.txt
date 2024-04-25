@@ -1,0 +1,16 @@
+@@project@@ = project name as in paths, the @n in config.xml
+
+@@PROJECT@@ = project logo text
+
+@@title@@ = project logo text : project name text
+
+---
+
+*.xml = process the xml file
+
+---
+
+name() = execute the function with 'name'; functions that provide pui data should be named pui_xxx()
+
+
+

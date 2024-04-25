@@ -20,7 +20,7 @@ name and some project-related navigation buttons.
 Search
 ------
 
-The search is an HTML div with id p3Banner and contains the search
+The search is an HTML div with id p3Search and contains the search
 form and inputs related to elements of the display.
 
 Display
@@ -36,7 +36,7 @@ Navigation Bar
 --------------
 
 The navigation bar is a div with id p3NavBar and hosts the permutation
-selector for an outline if there is one and the prev/next arrors and
+selector for an outline if there is one and the prev/next arrows and
 page selector controls.
 
 Outline
@@ -84,16 +84,17 @@ Lists
 
 P3 works with two kinds of lists: record lists and instance sets.
 
-A RECORD LIST may be a catalogue list with tabular display of selected
-fields, a list of glossary articles by glossary-summary, or a list of
-signs by sign-summary. An RL is by definition a list of record
+A RECORD LIST (RL) may be a catalogue list with tabular display of
+selected fields, a list of glossary articles by glossary-summary, or a
+list of signs by sign-summary. An RL is by definition a list of record
 IDs--either PQX in the case of catalogues, or OIDs in the case of
 glossaries and signlists. An RL may be created by a search of a
 catalogue, glossary, or signlist, may be precompiled for glossary and
 signlist records, or may be given in a list file originating from a
 project's 00lib/lists directory.
 
-An INSTANCE SET is by definition a list of line, word, or grapheme
-IDs.  An IS may be created by a search of a txt or lem index, may be
-precompiled for glossary and signlist instances, or may be given in a
-list file originating from a project's 00lib/lists directory.
+An INSTANCE SET (IS) is by definition a list of line, word, or
+grapheme IDs.  An IS may be created by a search of a txt or lem index,
+may be precompiled for glossary and signlist instances, or may be
+given in a list file originating from a project's 00lib/lists
+directory.
