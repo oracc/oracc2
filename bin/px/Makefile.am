@@ -4,7 +4,7 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=px
 
-px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c
+px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c cgiopts.c
 
 px_LDADD=isp/libisp.la pui/libpui.la $(xLDADD)
 

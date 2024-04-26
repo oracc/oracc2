@@ -1,6 +1,28 @@
 #include <oraccsys.h>
 #include "isp.h"
 
+void
+isp_list_cemd(Isp *ip)
+{
+  const char *path = ip->lloc.path;
+  int ln = 1;
+  char *lp = nth_line(path, ln, 1);
+  while (lp && '#' == *lp)
+    lp = nth_line(NULL, ++ln, 1);
+  (void)nth_line(NULL,-1,-1);
+  if (lp)
+    {
+      if ('o' == *lp || 'x' == *lp)
+	ip->cemd = "ccbd";
+      else if (strchr(lp, '.'))
+	ip->cemd = "line";
+      else
+	ip->cemd = "ccat";
+    }
+  else
+    ip->err = "unable to set CE type from list contents";
+}
+
 int
 isp_list_create(Isp *ip)
 {
@@ -28,6 +50,28 @@ isp_list_dbx(Isp *ip)
   return 1;
 }
 
+int
+isp_try_web_list(Isp *ip)
+{
+  char path[strlen(ip->oracc)+strlen("/www/")
+	    +strlen(ip->project)+strlen("/lists/")
+	    +strlen(ip->list_name)];
+  sprintf(path, "%s/www/%s/lists/%s", ip->oracc, ip->project, ip->list_name);
+  if (!access(path, R_OK))
+    {
+      ip->lloc.path = (ccp)pool_copy((uccp)path, ip->p);
+      ip->lloc.method = "file";
+      ip->lloc.type = "www";
+      return 0;
+    }
+  return 1;
+}
+
+#if 0
+      if (access(path, R_OK))
+	ip->err = "list file not found in project web lists directory";
+#endif
+
 void
 isp_list_type(Isp *ip)
 {
@@ -37,6 +81,9 @@ isp_list_type(Isp *ip)
     ip->lloc.type = "isp";
   else if ((p = strchr(ip->list_name, '.')))
     {
+      char l[strlen(ip->list_name)+1];
+      strcpy(l,ip->list_name);
+      p = l + (p - ip->list_name);
       ip->lloc.type = "xis";
       *p = '\0';
       ip->lloc.lang = (ccp)pool_copy((uccp)ip->list_name, ip->p);
@@ -52,21 +99,15 @@ isp_list_type(Isp *ip)
 int
 isp_list_method(Isp *ip)
 {
-  isp_list_type(ip);
+  if (isp_try_web_list(ip))
+    isp_list_type(ip);
   
   if ('w' == *ip->lloc.type) /* www */
     {
-      char path[strlen(ip->oracc)+strlen("/www/")
-		+strlen(ip->project)+strlen("/lists/")
-		+strlen(ip->list_name)];
-      sprintf(path, "%s/www/%s/lists/%s", ip->oracc, ip->project, ip->list_name);
-      if (access(path, R_OK))
+      if (!ip->lloc.method && isp_try_web_list(ip))
 	ip->err = "list file not found in project web lists directory";
       else
-	{
-	  ip->lloc.path = (ccp)pool_copy((uccp)path, ip->p);
-	  ip->lloc.method = "file";
-	}
+	isp_list_cemd(ip);
     }
   else if ('i' == *ip->lloc.type) /* isp */
     {

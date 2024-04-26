@@ -6,8 +6,10 @@ extern int isp_cache_list(Isp *ip);
 extern Isp *isp_init(void);
 extern void isp_term(Isp *ip);
 /* isp_list.c */
+extern void isp_list_cemd(Isp *ip);
 extern int isp_list_create(Isp *ip);
 extern int isp_list_dbx(Isp *ip);
+extern int isp_try_web_list(Isp *ip);
 extern void isp_list_type(Isp *ip);
 extern int isp_list_method(Isp *ip);
 /* isp_outline.c */
@@ -18,6 +20,7 @@ extern int create_page_div(Isp *ip);
 extern int isp_cache_page(Isp *ip);
 /* isp_show.c */
 extern void isp_show(FILE *fp, Isp *ip);
+extern void isp_argv(FILE *fp, Isp *ip);
 /* isp_sort.c */
 extern int isp_cache_sort(Isp *ip);
 /* isp_tis.c */

@@ -16,3 +16,15 @@ isp_show(FILE *fp, Isp *ip)
 	  ip->dors, ip->zoom, ip->page, ip->cemd, ip->xhmd);
   fprintf(fp, "\thost=%s; host_path=%s\n", ip->host, ip->host_path);
 }
+
+void
+isp_argv(FILE *fp, Isp *ip)
+{
+  int i;
+  for (i = 0; i < ip->argc; ++i)
+    {
+      if (i)
+	fputc(' ', fp);
+      fputs(ip->argv[i], fp);
+    }
+}

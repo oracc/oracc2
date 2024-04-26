@@ -7,8 +7,38 @@
 #include "resolver.h"
 #include "ccgi/ccgi.h"
 
+const char *px_exe = "@@ORACC_BUILDS@@/bin/px";
+
 extern void dump_vl(CGI_varlist *vl);
 
+/* When this routine is called vl always has at least one member: project */
+static char const**
+px_mkvec(CGI_varlist *vl)
+{
+  const char *name;
+  char const** vec;
+  int i;
+
+  for (i = 0, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl))
+    ++i;
+  
+  vec = malloc((i+3) * sizeof(const char*));
+  
+  vec[0] = px_exe;
+  for (i = 1, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl), ++i)
+    {
+      if (strcmp(name, "srch"))
+	((char const**)vec)[i] = cgi_arg(name,CGI_lookup(vl,name));
+      else
+	--i;
+    }
+
+  ((char **)vec)[i] = NULL;
+    
+  return vec;
+}
+
+#if 0
 static int
 countv(CGI_varlist *v)
 {
@@ -30,25 +60,38 @@ px_cgi_val(CGI_varlist *v, const char *name, const char *deflt)
   else
     return deflt;
 }
+#endif
 
 void
 px(const char *project)
 {
-  const char *exe = "@@ORACC_BUILDS@@/bin/px";
-  const char **va = NULL;
-  va = malloc(18*sizeof(char*));
-  va[0] = exe;
-  va[1] = NULL;
-  execv(exe, (char*const*)va);
-  fprintf(stderr, "execv %s failed\n", exe);
+  if (query_string)
+    setenv("QUERY_STRING", query_string, 1);
+
+  CGI_varlist *v = NULL;  
+  v = CGI_get_query(v);
+  v = CGI_get_post(v, NULL);
+  if (!CGI_lookup(v, "project"))
+    v = CGI_add_var(v, "project", project);
+  v = CGI_add_var(v, "web", "1");
+  
+#if 0
+  dump_vl(v);
+#endif
+
+  const char **va = px_mkvec(v);
+  execv(px_exe, (char*const*)va);
+
+  fprintf(stderr, "execv %s failed\n", px_exe);
   exit(1);
 }
+
+#if 0
 
 void
 pxx(const char *lang, const char *id)
 {
   CGI_varlist *v = NULL;
-  int vcount = -1;
   const char **va = NULL;
 
   fprintf(stderr, "instances handler\n");
@@ -58,11 +101,19 @@ pxx(const char *lang, const char *id)
   
   v = CGI_get_query(v);
   v = CGI_get_post(v, NULL);
+
+#if 0
   dump_vl(v);
   vcount = countv(v);
+#endif
 
   const char *exe = "@@ORACC_BUILD@@/bin/px";
-  
+
+  execv(exe, (char*const*)va);
+  fprintf(stderr, "execv %s failed\n", exe);
+  exit(1);
+
+#if 0
   va = malloc(18*sizeof(char*));
   va[0] = exe;
   va[1] = "-j";
@@ -82,7 +133,7 @@ pxx(const char *lang, const char *id)
   va[15] = "-i";
   va[16] = v ? px_cgi_val(v, "mode", "item") : "nul";
   va[17] = NULL;
-  execv(exe, (char*const*)va);
-  fprintf(stderr, "execv %s failed\n", exe);
-  exit(1);
+#endif
 }
+
+#endif

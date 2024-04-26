@@ -1,6 +1,13 @@
 #include <oraccsys.h>
 #include "px.h"
 
+static void
+print_hdr(void)
+{
+  fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
+  fflush(stdout);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -53,7 +60,10 @@ main(int argc, char **argv)
       if (!strcmp(ip->xhmd, "xml"))
 	printf("<error>%s</error>", ip->err);
       else
-	pui_output(ip, stdout, pui_filetext("p4error.xml"));
+	{
+	  print_hdr();
+	  pui_output(ip, stdout, pui_filetext("p4error.xml"));
+	}
     }
 
   /* falls through to clean up */

@@ -41,13 +41,39 @@ isp_perm_check(const char *p)
 }
 
 int
+cgi_options(int argc, char **argv, Isp *ip)
+{
+  for (argc = 1; argv[argc]; ++argc)
+    {
+      char *opt = (char*)pool_copy((ucp)argv[argc], ip->p);
+      char *equals = strchr(opt, '=');
+      if (equals)
+	*equals++ = '\0';
+      struct cgioptstab *t = cgiopts(opt, strlen(opt));
+      if (!t || opts(t->opt,equals))
+	{
+	  ip->err = PX_ERROR_START "invalid option: %s\n";
+	  ip->errx = argv[argc];
+	  return 1;
+	}
+    }
+  return 0;
+}
+
+int
 px_options(int argc, char **argv, Isp *ip)
 {
   int ret;
+  ip->argc = argc;
+  ip->argv = argv;
   opt_ip = ip;
-  ret = options(argc, argv, "3ELSZPWCFOfj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
+
+  if (argv[1] && '-' != argv[1][0])
+    ret = cgi_options(argc, argv, ip);
+  else
+    ret = options(argc, argv, "3ELSZPWCFOfj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
   opt_ip = NULL;
-  if (ret)
+  if (ret && !ip->err)
     ip->err = "processing options";
   return ret;
 }

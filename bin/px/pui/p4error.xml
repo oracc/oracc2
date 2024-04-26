@@ -10,7 +10,11 @@
 
     <pre id="p4Error">@@pui_error()@@</pre>
 
-    <p>The reported pager status was:</p>
+    <p>The pager was invoked as:</p>
+
+    <pre id="p4Invoked">@@pui_invocation()@@</pre>
+
+    <p>The pager reported:</p>
 
     <pre id="p4Status">@@pui_status()@@</pre>
   </body>

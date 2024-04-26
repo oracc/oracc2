@@ -79,6 +79,7 @@ builtins.c
 cbdpos.c
 cbdrws.c
 cbdtags.c
+cgiopts.c
 iomethod.c
 idactions.c
 ikeysub.c

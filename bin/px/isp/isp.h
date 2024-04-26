@@ -149,6 +149,8 @@ typedef struct isp
 		       page */
   int verbose;
   int web;
+  int argc;
+  const char **argv;
   Pool *p;
   Memo *tmem;
 } Isp;

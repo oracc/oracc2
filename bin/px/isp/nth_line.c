@@ -6,6 +6,16 @@ nth_line(const char *file, int lnum, int more)
 {
   static FILE *fp = NULL;
   static int last_lnum = 0;
+
+  if (more < 0)
+    {
+      if (fp)
+	{
+	  fclose(fp);
+	  fp = NULL;
+	}
+      return NULL;
+    }
   if (file)
     {
       if (!(fp = fopen(file, "r")))

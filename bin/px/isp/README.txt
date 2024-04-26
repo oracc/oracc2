@@ -81,7 +81,7 @@ ISP operates with the following context parameters:
       	 display; MINI is the reduced version utilized in instance
       	 popups
 
- CEMD -- the context engine mode for rendering instances -- UNIT, LINE, KWIC
+ CEMD -- the context engine mode for rendering instances -- CCAT, CCBD; implying CXTF: UNIT, LINE, KWIC
  
  LANG -- the language for translations accompanying instances
 
