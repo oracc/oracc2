@@ -100,8 +100,6 @@ extern void ida_atatruntime_zprev(Isp *ip, struct idactions *idap, FILE *fp);
 extern void ida_atattranslations(Isp *ip, struct idactions *idap, FILE *fp);
 /* isp_validate.c */
 extern int isp_validate(Isp *ip);
-/* ispx.c */
-extern int main(int argc, char **argv);
 /* isp_xis.c */
 extern int isp_xis_list(Isp *ip);
 /* iss.c */

@@ -1,4 +1,4 @@
-const char *p4pager = 
+const char *p4pager =
 "<div id=\"p4Pager\" class=\"@@pui_state()@@\">"
 "  <div id=\"p4Header\">"
 "    <div id=\"p4Menu\">"

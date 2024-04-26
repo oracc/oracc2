@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/p4error.css"/>
+    <title>Oracc Pager Error</title>    
+  </head>
+  <body>
+    <h1>Oracc Pager Error</h1>
+    <p>The pager was unable to process the last request successfully.</p>
+    <p>The reported error was:</p>
+
+    <pre id="p4Error">@@pui_error()@@</pre>
+
+    <p>The reported pager status was:</p>
+
+    <pre id="p4Status">@@pui_status()@@</pre>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "isp.h"
+#include "isp/isp.h"
 
 int
 main(int argc, char **argv)
@@ -31,11 +31,6 @@ main(int argc, char **argv)
     goto error;
 
 #if 0
-  /* do this after isp_cache_page to ensure ip->md1 is set; NO: This is done isp_page */
-  if (ispo_zoutline(ip))
-    goto error;
-#endif
-  
   if (ip->p3)
     {
       if (isp_p3(ip, stdout))
@@ -46,14 +41,20 @@ main(int argc, char **argv)
       if (isp_ui(ip, stdout))
 	goto error;
     }
-  
+#endif
+
   goto ok;
   
  error:
   fprintf(stderr, ip->errx ? ip->err : ISP_ERROR_START "%s. Stop.\n",
 	  ip->errx ? ip->errx : ip->err);
   if (ip->web)
-    printf("<error>%s</error>", ip->err);
+    {
+      if (!strcmp(ip->xhmd, "xml"))
+	printf("<error>%s</error>", ip->err);
+      else
+	pui_output(ip, pui_filetext("p4error.xml"), stdout);
+    }
 
   /* falls through to clean up */
   
@@ -65,6 +66,6 @@ main(int argc, char **argv)
   return 0;
 }
 
-const char *prog = "ispx";
+const char *prog = "px";
 int major_version = 1, minor_version = 1, verbose = 0;
 const char *usage_string = "[file]";

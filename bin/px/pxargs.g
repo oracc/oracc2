@@ -1,6 +1,6 @@
 %{
 #include <string.h>
-#include "isp.h"
+#include "isp/isp.h"
 %}
 struct ispargstab;
 %%

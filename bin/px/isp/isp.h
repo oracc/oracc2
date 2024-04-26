@@ -4,8 +4,8 @@
 #include <memo.h>
 #include <pool.h>
 
-#define ISP_ERROR_START "isp: error: "
-#define ISP_TMP_PAT    	"tmp/isp/is.XXXXXX"
+#define ISP_ERROR_START "px: error: "
+#define ISP_TMP_PAT    	"tmp/px/is.XXXXXX"
 
 #define ISP_STEP_0E	0x0000001
 #define ISP_STEP_1L	0x0000002
@@ -141,6 +141,7 @@ typedef struct isp
   const char *zoom;
   const char *page;
   const char *psiz;
+  const char *item; /* a PQX for item display */
   const char *ceid; /* context engine id handling--xmd/xtf/cbd */
   const char *cemd; /* context engine mode */
   const char *lang; /* context engine lang */

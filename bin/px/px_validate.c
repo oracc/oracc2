@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "isp.h"
+#include "px.h"
 
 static int
 isp_integer(unsigned const char *p)
@@ -14,7 +14,7 @@ isp_valid_arg(const char *p, int step)
 {
   if (p)
     {
-      struct ispargstab *ipt = ispargs(p, strlen(p));
+      struct ispargstab *ipt = pxargs(p, strlen(p));
       if (!ipt || ipt->step != step)
 	return 1;
     }
