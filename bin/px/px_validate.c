@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <xpd.h>
 #include "px.h"
 
 static int
@@ -21,6 +22,7 @@ px_valid_arg(const char *p, int step)
   return 0;
 }
 
+/* This routine loads the project's config.xml as a side-effect */
 static int
 px_valid_project(Isp *ip)
 {
@@ -31,6 +33,17 @@ px_valid_project(Isp *ip)
     {
       ip->err = "unknown project";
       return 1;
+    }
+  else
+    {
+      struct xpd *xp = xpd_init(ip->project, ip->p);
+      if (0 == xp->opts->key_count)
+	{
+	  ip->err = "failed to load project config.xml";
+	  return 1;
+	}
+      else
+	ip->xpd = xp;
     }
   return 0;
 }

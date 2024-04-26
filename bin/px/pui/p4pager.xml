@@ -1,7 +1,7 @@
 <div id="p4Pager" class="@@pui_state()@@">
   <div id="p4Header">
     <div id="p4Menu">
-      @@isp_menu()@@
+      @@pui_menu()@@
     </div>
     <div id="p4Masthead">
       <p id="p4Banner">
@@ -18,10 +18,10 @@
       <div id="p4Controls">
 	@@p4controls.xml@@
       </div>
-    </div>	  
+    </div>
   </div>
   <div id="p4Content">
-    @@isp_content()@@
+    @@pui_content()@@
   </div>
   <div id="p4Footer">
     @@p4footer.xml@@

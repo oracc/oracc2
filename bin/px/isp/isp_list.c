@@ -13,11 +13,20 @@ isp_list_cemd(Isp *ip)
   if (lp)
     {
       if ('o' == *lp || 'x' == *lp)
-	ip->cemd = "ccbd";
+	{
+	  ip->cemd = "ccbd";
+	  ip->ceid = "cbd";
+	}
       else if (strchr(lp, '.'))
-	ip->cemd = "line";
+	{
+	  ip->cemd = "line";
+	  ip->ceid = "xtf";
+	}
       else
-	ip->cemd = "ccat";
+	{
+	  ip->cemd = "ccat";
+	  ip->ceid = "xmd";
+	}
     }
   else
     ip->err = "unable to set CE type from list contents";

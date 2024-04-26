@@ -65,7 +65,7 @@ px_options(int argc, char **argv, Isp *ip)
 {
   int ret;
   ip->argc = argc;
-  ip->argv = argv;
+  ip->argv = (const char **)argv;
   opt_ip = ip;
 
   if (argv[1] && '-' != argv[1][0])

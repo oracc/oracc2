@@ -151,7 +151,8 @@ typedef struct isp
   int web;
   int argc;
   const char **argv;
-  Pool *p;
+  struct xpd *xpd;
+  Pool *p;  
   Memo *tmem;
 } Isp;
 

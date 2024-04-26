@@ -18,11 +18,19 @@ pui_atat(Isp *ip, FILE *fp,  const char *at)
       while (a < atend)
 	*b++ = *a++;
       *b = '\0';
-      struct atactionstab *atap = atactions(buf, strlen(buf));
-      if (atap)
-	atap->func(ip, fp);
+      if (strstr(buf,"()"))
+	{
+	  struct atactionstab *atap = atactions(buf, strlen(buf));
+	  if (atap)
+	    atap->func(ip, fp);
+	  else
+	    fprintf(fp, "@@%s@@", buf);
+	}
       else
-	fputs(buf, fp);
+	{
+	  if (pui_output(ip, fp, pui_filetext(buf)))
+	    fprintf(fp, "@@%s@@", buf);
+	}
       return atend + 1;
     }
   else
@@ -34,10 +42,15 @@ pui_atat(Isp *ip, FILE *fp,  const char *at)
 
 /* This routine does not do XML-escaping--that has to be done in the
    *.xml sources */
-void
+int
 pui_output(Isp *ip, FILE *fp, const char *s)
 {
-  const char *entry = s;
+  const char *errstr = "px: error: ";
+  if (!strncmp(s, errstr, strlen(errstr)))
+    {
+      ip->err = s;
+      return 1;
+    }
   while (*s)
     {
       if (*s == '@' && s[1] == '@')
@@ -46,9 +59,7 @@ pui_output(Isp *ip, FILE *fp, const char *s)
 	fputc(*s,fp);
       ++s;
     }
-  const char *errstr = "px: error: ";
-  if (!strncmp(entry, errstr, strlen(errstr)))
-    free((void*)entry);
+  return 0;
 }
 
 const char *

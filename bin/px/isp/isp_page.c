@@ -139,7 +139,7 @@ create_page_div(Isp *ip)
   if (system((ccp)syscmd))
     {
       ip->err = PX_ERROR_START "create_page_div system call failed. Argument to system() call was:\n\n\t%s\n";
-      ip->errx = syscmd;
+      ip->errx = (ccp)syscmd;
     }
   
   return 0;

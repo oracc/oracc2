@@ -37,7 +37,11 @@ main(int argc, char **argv)
   if (isp_cache_page(ip))
     goto error;
 
-#if 0
+#if 1
+  print_hdr();
+  if (pui_output(ip, stdout, pui_filetext("p4pager.xml")))
+    goto error;
+#else
   if (ip->p3)
     {
       if (isp_p3(ip, stdout))
@@ -62,7 +66,11 @@ main(int argc, char **argv)
       else
 	{
 	  print_hdr();
-	  pui_output(ip, stdout, pui_filetext("p4error.xml"));
+	  if (pui_output(ip, stdout, pui_filetext("p4error.xml")))
+	    {
+	      fprintf(stderr, "px: error in error reporting: %s\n", ip->err);
+	    }
+	    
 	}
     }
 

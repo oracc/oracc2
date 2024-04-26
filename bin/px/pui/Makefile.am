@@ -7,3 +7,5 @@ libpui_la_SOURCES=p4controls.c p4footer.c p4icons.c p4pager.c p4search.c p4error
 
 .xml.c:
 	./xc.plx $<
+
+CLEANFILES=p4*.c

@@ -1,4 +1,4 @@
 const char *p4footer = 
-"<x>"
-"</x>"
+"<x>\n"
+"</x>\n"
 ;
