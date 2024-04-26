@@ -1,0 +1,239 @@
+<!-- 31CP5/77/65-2 0206083-a -->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:p3="http://oracc.org/ns/p3/1.0">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+    <link rel="shortcut icon" type="image/ico" href="favicon.ico"></link>
+    <link rel="stylesheet" type="text/css" href="/css/oraccscreen.css" media="screen"></link>
+    <link rel="stylesheet" type="text/css" href="/css/oraccprint.css" media="print"></link>
+    <link rel="stylesheet" type="text/css" href="/css/p3.css"></link>
+    <link rel="stylesheet" type="text/css" href="/@@project@@/css/p3colours.css"></link>
+    <link rel="stylesheet" type="text/css" href="/@@project@@/css/projcss.css"></link>
+    <link rel="stylesheet" type="text/css" href="/css/transonly_off.css" title="to_off"></link>
+    <link rel="stylesheet" type="text/css" href="/css/transonly_on.css" title="to_on"></link>
+    <link rel="stylesheet" type="text/css" href="/css/transnone.css" title="transnone"></link>
+    <script src="/js/p3.js" type="text/javascript">&lt;![CDATA[ ]]&gt;</script>
+    <script src="/js/p3-transonly.js" type="text/javascript">&lt;![CDATA[ ]]&gt;</script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript">&lt;![CDATA[ ]]&gt;</script>
+@@ga@@
+    <title>@@project@@</title>
+  </head>
+  <body onload="p3_onload(); p3setHeight(); window.onresize=p3setHeight; window.onpageshow=p3_onpageshow">
+    <form id="p3form" action="/@@project@@/pager" target="_top" method="post" accept-charset="utf-8">
+      <div id="p3controls" class="banner bborder-top bborder-bot">
+
+	<div id="p3navLeft" class="banner">
+
+	  <p id="p3topnav" class="center">
+	    <img class="p3icon" src="/img/p3-help.png" alt="Help" title="Help" id="helpIcon" name="helpIcon" onclick="p3help()"></img>
+	    <img class="p3icon spread" src="/img/p3-reset.png" alt="Reset pager" title="Reset pager" id="resetPager" name="resetPager" onclick="window.location='@@referer@@'"></img>
+	    <img class="p3icon" src="/img/p3-plus.png" alt="More resources" title="More resources" id="moreIcon" name="moreIcon" onclick="window.location='/@@project@@/hub.html'"></img>
+	  </p>
+
+	  <p class="center smash p3-pages">
+	    @@outlines@@
+	  </p>
+
+	</div>
+	
+	<div id="p3navRight" class="banner">
+
+	  <div id="p3srch">
+	    <p class="center">
+	      Oracc Search:
+	      <input type="text" id="srch" name="srch" size="" onchange="document.getElementById('p3do').value='qsrch'" p3:value="@@runtime:srchorig/@@"></input>
+
+	      <img class="p3icon" src="/img/p3-search.png" alt="Search" title="Search" id="qsrch" name="qsrch" onclick="p3action('qsrch')"></img>
+
+	      <span id="p3charset">(j=ŋ sz=š s,=ṣ t,=ṭ 0-9=₀-₉; '=alef)</span>
+
+	      <span id="p3searchIn"> in </span>
+	      
+	      <span id="p3CbdLangDisplay" p3:value="@@cgivar:glosDisplay@@">!cbd/</span>
+	      <span id="p3CbdLang" p3:value="@@cgivar:glos@@">!cbd/</span>
+
+	      <select id="p3srchtype" name="p3srchtype" onchange="p3action('qsrch')">
+		<option value="txt">Transliterations</option>
+		<option value="lem">Lemmatization</option>
+		<option value="tra">Translations</option>
+		<option value="cat">Catalogue</option>
+	      </select>
+
+	      <input type="checkbox" id="unicode" name="unicode" p3:value="@@cgivar:unicode@@"></input><span id="p3UnicodeInput"> Unicode input</span>
+
+	    </p>
+	  </div>
+
+	  <div id="p3asearch">
+	    <p class="center">
+	      Oracc Advanced Search Results: 
+	      <button type="submit" class="asrch" name="asSubmit" value="edit">revise search</button> 
+	      <button type="submit" class="asrch" name="asSubmit" value="new">new search</button>
+	    </p>
+	  </div>
+
+	  <div id="p3itemnav" class="p3-items p3-noglo">
+	    <p class="p3toccenter bg-dk">
+
+	      <span class="p3arrow">
+		<img class="p3icon" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3itemsview" id="p3itemsview" onclick="p3action('viewstatePages')"></img>
+	      </span>
+
+	      <span class="p3arrow">
+		<button type="button" name="p3textitems" id="p3textitems" onclick="p3action('itemstateText')">Text</button>
+		<button type="button" name="p3catitems" id="p3catitems" onclick="p3action('itemstateCat')">Cat.</button>
+	      </span>
+ 
+	      <span class="p3arrow">
+		<!--<button type="button" name="ilarrow" onclick="p3action('itemback')">&lt;&lt;</button>-->
+		<img class="p3icon" src="/img/p3-backward.png" alt="Item back" title="Item back" name="ilarrow" id="ilarrow" onclick="p3action('itemback')"></img>
+	      </span>
+	      
+	      <!--Item-->
+	      <input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" p3:value="@@cgivar:item@@"></input>
+	      <!--of <span p3:value="@@runtime:items@@"/>-->
+	      
+	      <span class="p3arrow">
+		<!--<button type="button" name="irarrow" onclick="p3action('itemfwd')">>></button>-->
+		<img class="p3icon" src="/img/p3-forward.png" alt="Item forward" title="Item forward" name="irarrow" id="irarrow" onclick="p3action('itemfwd')"></img>
+	      </span>
+	      
+	      <span p3:value="@@runtime:items@@"></span> Texts
+	      [<span class="resultcount" p3:value="@@runtime:resultcount@@"></span> matches]
+
+@@translations@@
+	      <input type="checkbox" onchange="to_toggle()" name="transonly" id="transonly" value="transonly" p3:value="@@cgivar:transonly@@"></input> only
+
+	    </p>
+	  </div>
+	  
+	  <div id="p3pagenav" class="p3-pages">
+	    <p class="p3toccenter bg-dk">
+
+	      <span class="p3arrow" id="p3zoom">
+		<button type="submit" name="unzoom" onclick="p3zoom('0')">All Results</button>
+	      </span>
+
+	      <!--
+	      <span class="p3arrow">
+		<button type="button" name="p3pagesview" id="p3pagesview" value="page"
+			onclick="p3action('viewstateItems')"
+			>Pages</button>
+	      </span>
+	      -->
+	      <span class="p3arrow">
+		<img class="p3icon" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3pagesview" id="p3pagesview" onclick="p3action('viewstateItems')"></img>
+	      </span>
+	 
+	      <span class="p3arrow">
+
+		<!--<button type="button" name="plarrow" onclick="p3action('pageback')">&lt;&lt;</button>-->
+		<img class="p3icon" src="/img/p3-backward.png" alt="Page back" title="Page back" name="plarrow" id="plarrow" onclick="p3action('pageback')"></img>
+
+	      </span>
+	      
+	      <!--Page-->
+	      <input id="pageset" name="pageset" type="text" onchange="p3action('pageset')" size="2" p3:value="@@cgivar:page@@"></input>
+	      <!--of <span p3:value="@@runtime:pages@@"/>-->
+
+	      <span class="p3arrow">
+		<!--<button type="button" name="prarrow" onclick="p3action('pagefwd')">>></button>-->
+		<img class="p3icon" src="/img/p3-forward.png" alt="Page forward" title="Page forward" name="prarrow" id="prarrow" onclick="p3action('pagefwd')"></img>
+	      </span>
+
+	      <span p3:value="@@runtime:items@@"></span> lines
+	      /
+	      <span p3:value="@@runtime:pages@@"></span> Pages
+
+	      [<span class="resultcount" p3:value="@@runtime:resultcount@@"></span> matches]
+	      
+	      <!--Page-size: <input name="pagesize" type="text" onchange="p3action('pagesize')" size="3" p3:value="@@cgivar:pagesize@@"/>-->
+
+	      <span class="cetype">
+		<select id="p3cetype" name="p3cetype" onchange="p3action('cestate')">
+		  <option value="line">Line</option>
+		  <option value="unit">Sentence</option>
+		  <option value="kwic">KWIC</option>
+		</select>
+	      </span>
+	    </p>
+	  </div>
+
+	  <p class="p3fullscreen">
+	    <img class="p3icon" src="/img/p3-full.png" alt="Toggle full/split screen" onclick="fs_toggle()" name="fullscreen" id="fullscreen"></img>
+	  </p>  
+	</div>
+      </div>
+
+      <div id="p3content"><div id="ispMenu" class="pgotl level0" data-zmax="1"><h2>Lagaš II</h2><div class="pgotl level1"><h3>Literary</h3><div class="pgotl level2"><p class="zoomed"><a href="javascript://" onclick="p3zoom(1)" data-zoom="1">unclear [5]</a></p></div></div></div>
+<div xmlns="http://www.w3.org/1999/xhtml" class="ce" id="ispCEContent">
+  <h2 class="ce-heading h2 border-top heading">Lagaš II/Literary/unclear</h2>
+  <p class="ce-result"><span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w selected  " id=""><span class="sign ">KA</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">an</span>-<span x="3" class="">na</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">im</span>-<span x="3" class="">mi</span>-<span x="3" class="">ib₂</span>-<span x="3" class="">u₃</span>-<span x="3" class="">u₃</span>-<span x="3" class="">dam</span></span> </p>
+  <p class="ce-label">
+    <a href="javascript:p3item3('xtf',NaN,'gudea:Q000377')">(The building of Ninŋirsu's temple (Gudea, cylinders A and B) A xxi 28)</a>
+  </p>
+  <p class="ce-result"><span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span class="sign ">AN</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w selected  " id=""><span class="sux">⸢</span><span class="sign ">KA</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">mar</span><span class="sux">⸣</span>-<span x="3" class="">za</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">e₂</span>-<span x="3" class="">a</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span class="sign ">SA</span>-<span x="3" class="">ni</span></span> </p>
+  <p class="ce-label">
+    <a href="javascript:p3item3('xtf',NaN,'gudea:Q000377')">(The building of Ninŋirsu's temple (Gudea, cylinders A and B) B vi 9)</a>
+  </p>
+  <p class="ce-result"><span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><sup class="sux">anše</sup><span x="3" class="">dur₉</span>-<span x="3" class="">da</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span class="sign ">E₂</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w selected  " id=""><span class="sign ">KA</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">kur</span>-<span x="3" class="">kur</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">kur₉</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">di</span>-<span x="3" class="">da</span></span> </p>
+  <p class="ce-label">
+    <a href="javascript:p3item3('xtf',NaN,'gudea:Q000377')">(The building of Ninŋirsu's temple (Gudea, cylinders A and B) B ix 19)</a>
+  </p>
+  <p class="ce-result"><span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">muš</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w selected  " id=""><span class="sign ">KA</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">sig₇</span>-<span x="3" class="">ga</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">a</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">tu₁₇</span>-<span x="3" class="">a</span>-<span x="3" class="">am₃</span></span> </p>
+  <p class="ce-label">
+    <a href="javascript:p3item3('xtf',NaN,'gudea:Q000377')">(The building of Ninŋirsu's temple (Gudea, cylinders A and B) B xvi 14)</a>
+  </p>
+  <p class="ce-result"><span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span class="r">[...<span class="sux">]</span></span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span class="sign ">X</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w selected  " id=""><span class="sign ">KA</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">ŋuruš</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span class="r">[...<span class="sux">]</span></span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">an</span>-<span x="3" class="">ne₂</span></span> <span xmlns:note="http://oracc.org/ns/note/1.0" x="1" class="w  " id=""><span x="3" class="">zu</span>-<span x="3" class="">me</span></span> </p>
+  <p class="ce-label">
+    <a href="javascript:p3item3('xtf',NaN,'gudea:Q000377')">(The building of Ninŋirsu's temple (Gudea, cylinders A and B) B xxiv 5)</a>
+  </p>
+</div>
+
+	<!-- p3-pager.plx inserts the outline and content divs when it sees the following line -->
+	<p></p>
+      </div>
+
+      <div class="p3hidden">
+	<input type="hidden" name="arg_item" id="arg_item" p3:value="@@cgivar:arg_item@@"></input>
+	<input type="hidden" name="adhoc" p3:value="@@cgivar:adhoc@@"></input>
+	<input type="hidden" name="asrch" id="asrch" p3:value="@@cgivar:asrch@@"></input>
+	<input type="hidden" name="cetype" id="cetype" p3:value="@@runtime:cetype/line@@"></input>
+	<input type="hidden" name="fscheck" id="fscheck" p3:value="@@cgivar:fullscreen/0@@"></input>
+	<input type="hidden" name="glet" id="glet" p3:value="@@cgivar:glet/@@"></input>
+	<input type="hidden" name="glos" id="glos" p3:value="@@cgivar:glos/@@"></input>
+	<input type="hidden" name="gxis" id="gxis" p3:value="@@cgivar:gxis/@@"></input>
+	<input type="hidden" name="items" p3:value="@@runtime:items@@"></input>
+	<input type="hidden" name="itemtype" id="itemtype" p3:value="@@runtime:itemtype/off@@"></input>
+	<input type="hidden" name="list" id="list" p3:value="@@cgivar:list@@"></input>
+	<input type="hidden" name="otlmode" id="otlmode" p3:value="@@runtime:otlmode@@"></input>
+	<input type="hidden" name="p3do" id="p3do" value="default"></input>
+	<input type="hidden" name="p3mode" id="p3mode" p3:value="@@runtime:mode@@"></input>
+	<input type="hidden" name="p3outl" id="p3outl" p3:value="@@runtime:outl/default@@"></input>
+	<input type="hidden" name="p3prod" id="p3prod" p3:value="@@runtime:prod@@"></input>
+	<input type="hidden" name="p3type" id="p3type" p3:value="@@runtime:type@@"></input>
+	<input type="hidden" name="p3what" id="p3what" p3:value="@@runtime:what@@"></input>
+	<input type="hidden" name="page" id="page" p3:value="@@cgivar:page/1@@"></input>
+	<input type="hidden" name="pages" p3:value="@@runtime:pages@@"></input>
+	<input type="hidden" name="pqx_id" id="pqx_id"></input>
+	<input type="hidden" name="project" id="project" value="@@project@@"></input>
+	<input type="hidden" name="sorttype" id="sorttype" p3:value="@@runtime:sorttype@@"></input>
+	<input type="hidden" name="srchtype" id="srchtype" p3:value="@@runtime:srchtype/txt@@"></input>
+	<input type="hidden" name="sorttype" id="tmpdir" p3:value="@@runtime:tmpdir@@"></input>
+	<input type="hidden" name="transcheck" id="transcheck" p3:value="@@cgivar:transonly/0@@"></input>
+	<input type="hidden" name="translation" id="translation" p3:value="@@cgivar:translation/en@@"></input>
+	<input type="hidden" name="uimode" id="uimode" p3:value="@@cgivar:uimode@@"></input>
+	<input type="hidden" name="unicheck" id="unicheck" p3:value="@@cgivar:unicode/0@@"></input>	
+	<input type="hidden" name="uzpage" id="uzpage" p3:value="@@cgivar:uzpage@@"></input>
+	<input type="hidden" name="xipage" id="xipage" p3:value="@@cgivar:xipage@@"></input>
+	<input type="hidden" name="znext" p3:value="@@runtime:znext@@"></input>
+	<input type="hidden" name="zoom" id="zoom" p3:value="@@cgivar:zoom@@"></input>
+	<input type="hidden" name="zprev" p3:value="@@runtime:zprev@@"></input>
+      </div>
+    </form>
+
+    <div id="p3botbanner" class="banner border-top">
+      <h1>@@projectname@@</h1>
+    </div>
+
+  </body>
+</html>

@@ -1,4 +1,4 @@
-<body class="@@pui_state()@@">
+<div id="p4Pager" class="@@pui_state()@@">
   <div id="p4Header">
     <div id="p4Menu">
       @@isp_menu()@@
@@ -9,7 +9,7 @@
 	  @@p4icons.xml@@
 	</span>
 	<span id="p4HeadTitle">
-	  @@title@@
+	  @@pui_title()@@
 	</span>
       </p>
       <div id="p4Search">
@@ -26,4 +26,4 @@
   <div id="p4Footer">
     @@p4footer.xml@@
   </div>
-</body>
+</div>

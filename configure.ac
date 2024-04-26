@@ -89,6 +89,13 @@ AC_CONFIG_FILES([Makefile
 		 bin/gx/Makefile
 		 bin/jx/Makefile
 		 bin/ox/Makefile
+		 bin/px/Makefile
+		 bin/px/ice/Makefile
+		 bin/px/ice/ce/Makefile
+		 bin/px/ice/pg/Makefile
+		 bin/px/ice/wm/Makefile
+		 bin/px/isp/Makefile
+		 bin/px/pui/Makefile
 		 bin/qx/Makefile
 		 bin/qx/cat/Makefile
 		 bin/qx/cbd/Makefile
@@ -104,11 +111,6 @@ AC_CONFIG_FILES([Makefile
 		 bin/tx/Makefile
 		 bin/wx/Makefile
 		 bin/wx/ccgi/Makefile
-		 bin/wx/ice/Makefile
-		 bin/wx/ice/ce/Makefile
-		 bin/wx/ice/pg/Makefile
-		 bin/wx/ice/wm/Makefile
-		 bin/wx/isp/Makefile
 		 bin/xx/Makefile
 		 bin/xx/osort/Makefile
 		 bin/xx/rnv/Makefile

@@ -8,6 +8,7 @@ bin/gx/gx
 bin/gx/siglangx
 bin/jx/jx
 bin/ox/oid
+bin/px/px
 bin/qx/cat/qcatx
 bin/qx/cbd/qcbdx
 bin/qx/dbg/qdbgx
@@ -108,6 +109,10 @@ bin/dx/odo/odo-dir-links.sh
 bin/dx/odo/odo-environment.sh
 bin/dx/osh/osh.c
 bin/ox/cbd-oid-tab.xsl
+bin/px/ice/pg/ptoq.c
+bin/px/ice/pg/pd.c
+bin/px/ice/pg/pg2.c
+bin/px/ice/pg/sortinfo.c
 bin/qx/qindex.sh
 bin/qx/qindexall.sh
 bin/wx/oai.c
