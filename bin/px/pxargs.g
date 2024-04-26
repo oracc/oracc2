@@ -1,17 +1,17 @@
 %{
 #include <string.h>
-#include "isp/isp.h"
+#include "px.h"
 %}
 struct ispargstab;
 %%
-"kwic", ISP_STEP_6C
-"line", ISP_STEP_6C
-"unit", ISP_STEP_6C
-"oxml", ISP_STEP_7F
-"html", ISP_STEP_7F
-"asis", ISP_STEP_8O
-"esp2", ISP_STEP_8O
-"file", ISP_PARM_9A
-"rest", ISP_PARM_9A
-"mini", ISP_PARM_9U
-"maxi", ISP_PARM_9U
+"kwic", PX_STEP_6C
+"line", PX_STEP_6C
+"unit", PX_STEP_6C
+"oxml", PX_STEP_7F
+"html", PX_STEP_7F
+"asis", PX_STEP_8O
+"esp2", PX_STEP_8O
+"file", PX_PARM_9A
+"rest", PX_PARM_9A
+"mini", PX_PARM_9U
+"maxi", PX_PARM_9U

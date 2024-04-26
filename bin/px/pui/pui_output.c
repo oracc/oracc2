@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "../px.h"
+#include "pui.h"
 
 /* This function is called when iterating over text one character at a
    time; it needs to return a pointer to the last character output
@@ -10,17 +11,19 @@ pui_atat(Isp *ip, FILE *fp,  const char *at)
   const char *atend = strstr(at+2, "@@");
   if (atend)
     {
-      atend += 2;
-      char buf[(atend-at)+1];
-      strncpy(buf, at, atend-at);
-      buf[atend-at] = '\0';
-      struct idactions *idap = idactions(buf, atend - at);      
-      if (idap)
-	idap->func(ip, idap, fp);
+      const char *a = at+2;
+      char buf[atend-at], *b;
+      a = at+2;
+      b = buf;
+      while (a < atend)
+	*b++ = *a++;
+      *b = '\0';
+      struct atactionstab *atap = atactions(buf, strlen(buf));
+      if (atap)
+	atap->func(ip, fp);
       else
-	while (at < atend)
-	  fputs(buf, fp);
-      return atend - 1;
+	fputs(buf, fp);
+      return atend + 1;
     }
   else
     {
@@ -29,27 +32,15 @@ pui_atat(Isp *ip, FILE *fp,  const char *at)
     }
 }
 
-/* This routine implements the same escaping as used by oracc2's
-   xmlify library routine */
+/* This routine does not do XML-escaping--that has to be done in the
+   *.xml sources */
 void
 pui_output(Isp *ip, FILE *fp, const char *s)
 {
   const char *entry = s;
   while (*s)
     {
-      if (*s == '<')
-	fputs("&lt;",fp);
-      else if (*s == '>')
-	fputs("&gt;",fp);
-      else if (*s == '&')
-	fputs("&amp;",fp);
-#if 0
-      else if (*s == '\'')
-	fputs("&apos;",fp);
-#endif
-      else if (*s == '"')
-	fputs("&quot;",fp);
-      else if (*s == '@' && s[1] == '@')
+      if (*s == '@' && s[1] == '@')
 	s = pui_atat(ip, fp, s);
       else
 	fputc(*s,fp);

@@ -1,15 +1,7 @@
-/* filecopy.c */
-extern int file_copy(const char *from, const char *to);
-/* idactions.c */
-extern struct idactions *idactions(register const char *str, register size_t len);
-/* ispargs.c */
-extern struct ispargstab *ispargs(register const char *str, register size_t len);
 /* isp_cache.c */
 extern int isp_cache_sys(Isp *ip);
 extern int isp_cache_sub(Isp *ip);
 extern int isp_cache_list(Isp *ip);
-/* isp_help.c */
-extern void help(void);
 /* isp_init.c */
 extern Isp *isp_init(void);
 extern void isp_term(Isp *ip);
@@ -18,15 +10,9 @@ extern int isp_list_create(Isp *ip);
 extern int isp_list_dbx(Isp *ip);
 extern void isp_list_type(Isp *ip);
 extern int isp_list_method(Isp *ip);
-/* isp_options.c */
-extern int isp_perm_check(const char *p);
-extern int isp_options(int argc, char **argv, Isp *ip);
-extern int opts(int opt, const char *arg);
 /* isp_outline.c */
 extern int ispo_master(Isp *ip);
 extern int ispo_zoutline(Isp *ip);
-/* isp_p3.c */
-extern int isp_p3(Isp *ip, FILE *outfp);
 /* isp_page.c */
 extern int create_page_div(Isp *ip);
 extern int isp_cache_page(Isp *ip);
@@ -34,72 +20,10 @@ extern int isp_cache_page(Isp *ip);
 extern void isp_show(FILE *fp, Isp *ip);
 /* isp_sort.c */
 extern int isp_cache_sort(Isp *ip);
-/* ispsortx.c */
-extern int main(int argc, char **argv);
-extern int opts(int argc, const char *arg);
-extern void help(void);
 /* isp_tis.c */
 extern int isp_tis_list(Isp *ip);
 /* isp_tmp.c */
 extern void isp_tmp_dir(Isp *ip);
-/* isp_ui.c */
-extern void ei_commentH(void *userData, const char *cmt);
-extern int isp_ui(Isp *ip, FILE *outfp);
-extern void ida_p3content(Isp *ip, struct idactions *idap, FILE *fp);
-extern void printText(Isp *ip, FILE *fp, const char *s);
-extern void printStart(Isp *ip, FILE *fp, const char *name, const char **atts);
-extern void printEnd(Isp *ip, FILE *fp, const char *name);
-extern void ei_sH(void *userData, const char *name, const char **atts);
-extern void ei_eH(void *userData, const char *name);
-extern void ida_at_identity(struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_adhoc(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_arg_item(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_asrch(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_fullscreen_0(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_glet(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_glos(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_glos_bis(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_glosDisplay(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_gxis(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_item(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_list(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_page_1(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_page(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_pagesize(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_translation_en(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_transonly_0(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_transonly(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_uimode(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_unicode_0(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_unicode(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_uzpage(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_xipage(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatcgivar_zoom(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatga(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatoutlines(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatproject(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatprojectname(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatreferer(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_cetype_line(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_items(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_itemtype_off(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_mode(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_otlmode(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_outl_default(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_pages(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_prod(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_resultcount(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_sorttype(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_srchorig(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_srchtype_txt(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_tmpdir(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_type(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_what(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_znext(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atatruntime_zprev(Isp *ip, struct idactions *idap, FILE *fp);
-extern void ida_atattranslations(Isp *ip, struct idactions *idap, FILE *fp);
-/* isp_validate.c */
-extern int isp_validate(Isp *ip);
 /* isp_xis.c */
 extern int isp_xis_list(Isp *ip);
 /* iss.c */

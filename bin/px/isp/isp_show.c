@@ -4,7 +4,7 @@
 void
 isp_show(FILE *fp, Isp *ip)
 {
-  fprintf(fp, "ispx status:\n");
+  fprintf(fp, "isp status:\n");
   fprintf(fp, "\tweb=%d; oracc=%s; project=%s\n", ip->web, ip->oracc, ip->project);
   fprintf(fp, "\tlist: name=%s; type=%s; lang=%s; method=%s;\n"
 	  "\t\tpath=%s;\n"

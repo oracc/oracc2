@@ -3,6 +3,14 @@
 
 #include "../isp/isp.h"
 
+typedef void (atfunc)(Isp *ip, FILE *fp);
+
+struct atactionstab
+{
+  const char *name;
+  atfunc *func;
+};
+
 struct puifilestab
 {
   const char *name;
@@ -14,6 +22,9 @@ extern const char *p4error;
 
 extern const char *pui_filetext(const char *file);
 extern void pui_output(Isp *ip, FILE *fp, const char *s);
-extern struct puifilestab *puifiles (register const char *str, register size_t len);
+extern struct puifilestab *puifiles(register const char *str, register size_t len);
+extern struct atactionstab *atactions(register const char *str, register size_t len);
+
+extern atfunc pui_at_error, pui_at_status;
 
 #endif/*PUI_H_*/

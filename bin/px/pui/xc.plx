@@ -21,7 +21,7 @@ print "const char *$s = \n";
 while (<X>) {
     chomp;
     s/"/\\"/g;
-    print "\"$_\"\n";
+    print "\"$_\\n\"\n";
 }
 print ";\n";
 

@@ -17,7 +17,7 @@ isp_tis_list(Isp *ip)
 	    fprintf(stderr, "isp: isp_tis_list: creating cache.list %s\n", ip->cache.list);
 	  if (!(fp = fopen(ip->cache.list, "w")))
 	    {
-	      ip->err = ISP_ERROR_START "unable to create cache.list %s\n";
+	      ip->err = PX_ERROR_START "unable to create cache.list %s\n";
 	      ip->errx = ip->cache.list;
 	    }	  
 	  else

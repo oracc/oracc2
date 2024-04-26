@@ -18,7 +18,7 @@ ispo_master(Isp *ip)
 	{
 	  if (access(ip->cache.mol, W_OK))
 	    {
-	      ip->err = ISP_ERROR_START "master outline %s not writeable\n";
+	      ip->err = PX_ERROR_START "master outline %s not writeable\n";
 	      ip->errx = ip->cache.mol;
 	      return 1;
 	    }
@@ -27,7 +27,7 @@ ispo_master(Isp *ip)
       FILE *fp;
       if (!(fp = fopen(ip->cache.mol, "w")))
 	{
-	  ip->err = ISP_ERROR_START "unable to open master outline %s for write\n";
+	  ip->err = PX_ERROR_START "unable to open master outline %s for write\n";
 	  ip->errx = ip->cache.mol;
 	  return 1;
 	}	
@@ -187,7 +187,7 @@ ispo_zoutline(Isp *ip)
   FILE *fp;
   if (!(fp = fopen(ip->cache.zout, "w")))
     {
-      ip->err = ISP_ERROR_START "unable to write to zoomed outline file %s\n";
+      ip->err = PX_ERROR_START "unable to write to zoomed outline file %s\n";
       ip->errx = ip->cache.zout;
     }
   fprintf(fp, "<div class=\"pgotl level0\" data-zmax=\"%d\">", zmax);

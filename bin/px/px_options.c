@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "isp/isp.h"
+#include "px.h"
 
 static Isp *opt_ip;
 
@@ -41,7 +41,7 @@ isp_perm_check(const char *p)
 }
 
 int
-isp_options(int argc, char **argv, Isp *ip)
+px_options(int argc, char **argv, Isp *ip)
 {
   int ret;
   opt_ip = ip;
@@ -61,31 +61,31 @@ opts(int opt, const char *arg)
       opt_ip->p3 = 1;
       break;
     case 'E':
-      opt_ip->steps[ISP_STEP_0E] = 1;
+      opt_ip->steps[PX_STEP_0E] = 1;
       break;
     case 'L':
-      opt_ip->steps[ISP_STEP_1L] = 1;
+      opt_ip->steps[PX_STEP_1L] = 1;
       break;
     case 'S':
-      opt_ip->steps[ISP_STEP_2S] = 1;
+      opt_ip->steps[PX_STEP_2S] = 1;
       break;
     case 'Z':
-      opt_ip->steps[ISP_STEP_3Z] = 1;
+      opt_ip->steps[PX_STEP_3Z] = 1;
       break;
     case 'P':
-      opt_ip->steps[ISP_STEP_4P] = 1;
+      opt_ip->steps[PX_STEP_4P] = 1;
       break;
     case 'W':
-      opt_ip->steps[ISP_STEP_5W] = 1;
+      opt_ip->steps[PX_STEP_5W] = 1;
       break;
     case 'C':
-      opt_ip->steps[ISP_STEP_6C] = 1;
+      opt_ip->steps[PX_STEP_6C] = 1;
       break;
     case 'F':
-      opt_ip->steps[ISP_STEP_7F] = 1;
+      opt_ip->steps[PX_STEP_7F] = 1;
       break;
     case 'O':
-      opt_ip->steps[ISP_STEP_8O] = 1;
+      opt_ip->steps[PX_STEP_8O] = 1;
       break;
     case 'f':
       opt_ip->force = 1;

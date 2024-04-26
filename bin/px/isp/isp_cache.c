@@ -24,9 +24,9 @@ isp_cache_sys(Isp *ip)
 	}
       struct stat sb;
       if (stat(ip->cache.sys, &sb) || !S_ISDIR(sb.st_mode))
-	ip->err = ISP_ERROR_START "cache.sys directory %s not found\n";
+	ip->err = PX_ERROR_START "cache.sys directory %s not found\n";
       else if (access(ip->cache.sys, W_OK))
-	ip->err = ISP_ERROR_START "cache.sys directory %s not writeable\n";
+	ip->err = PX_ERROR_START "cache.sys directory %s not writeable\n";
     }
   if (ip->err)
     ip->errx = ip->cache.sys;

@@ -74,6 +74,7 @@ msc/sys/proj-from-conf.sh
 include/pcre2.h
 
 # Gperf derivatives
+atactions.c
 builtins.c
 cbdpos.c
 cbdrws.c
@@ -125,6 +126,7 @@ bin/wx/or_pqx.c
 bin/wx/or_response.c
 bin/wx/or_stable_uris.c
 bin/wx/p3.c
+bin/wx/px.c
 bin/wx/pqx_map.c
 bin/wx/sl.c
 bin/wx/xff.c

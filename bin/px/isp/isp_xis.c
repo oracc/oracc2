@@ -64,7 +64,7 @@ isp_xis_list(Isp *ip)
 	    fprintf(stderr, "isp: isp_xis_list creating cache.list %s\n", ip->cache.list);
 	  if (!(fp = fopen(ip->cache.list, "w")))
 	    {
-	      ip->err = ISP_ERROR_START "unable to create cache.list %s\n";
+	      ip->err = PX_ERROR_START "unable to create cache.list %s\n";
 	      ip->errx = ip->cache.list;
 	    }	  
 	  else
@@ -75,7 +75,7 @@ isp_xis_list(Isp *ip)
 	}
       else
 	{
-	  ip->err = ISP_ERROR_START "key %s not found in xis db\n";
+	  ip->err = PX_ERROR_START "key %s not found in xis db\n";
 	  ip->errx = ip->list_name;
 	}
       dbx_term(dp);

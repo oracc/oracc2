@@ -223,6 +223,12 @@ p3_exec(CGI_varlist *vl)
 void
 p3(const char *project)
 {
+  if (project && !strcmp(project, "rimanum"))
+    {
+      px(project);
+      return;
+    }
+  
   CGI_varlist *vl = NULL;
   const char *srch;
   extern int ccgi_verbose;

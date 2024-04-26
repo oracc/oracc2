@@ -32,7 +32,7 @@
 #line 1 "pxargs.g"
 
 #include <string.h>
-#include "isp/isp.h"
+#include "px.h"
 
 #define TOTAL_KEYWORDS 11
 #define MIN_WORD_LENGTH 4
@@ -87,33 +87,33 @@ hash (register const char *str, register size_t len)
 static struct ispargstab wordlist[] =
   {
 #line 10 "pxargs.g"
-    {"oxml", ISP_STEP_7F},
+    {"oxml", PX_STEP_7F},
     {""}, {""}, {""},
 #line 12 "pxargs.g"
-    {"asis", ISP_STEP_8O},
+    {"asis", PX_STEP_8O},
 #line 13 "pxargs.g"
-    {"esp2", ISP_STEP_8O},
+    {"esp2", PX_STEP_8O},
     {""}, {""}, {""},
 #line 17 "pxargs.g"
-    {"maxi", ISP_PARM_9U},
+    {"maxi", PX_PARM_9U},
 #line 15 "pxargs.g"
-    {"rest", ISP_PARM_9A},
+    {"rest", PX_PARM_9A},
     {""}, {""}, {""},
 #line 11 "pxargs.g"
-    {"html", ISP_STEP_7F},
+    {"html", PX_STEP_7F},
 #line 9 "pxargs.g"
-    {"unit", ISP_STEP_6C},
+    {"unit", PX_STEP_6C},
     {""}, {""}, {""},
 #line 14 "pxargs.g"
-    {"file", ISP_PARM_9A},
+    {"file", PX_PARM_9A},
 #line 16 "pxargs.g"
-    {"mini", ISP_PARM_9U},
+    {"mini", PX_PARM_9U},
     {""}, {""}, {""}, {""},
 #line 8 "pxargs.g"
-    {"line", ISP_STEP_6C},
+    {"line", PX_STEP_6C},
     {""}, {""}, {""}, {""},
 #line 7 "pxargs.g"
-    {"kwic", ISP_STEP_6C}
+    {"kwic", PX_STEP_6C}
   };
 
 struct ispargstab *

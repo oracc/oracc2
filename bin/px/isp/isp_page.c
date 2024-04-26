@@ -159,7 +159,7 @@ isp_cache_page(Isp *ip)
 	{
 	  if (access(ip->cache.zout, R_OK))
 	    {
-	      ip->err = ISP_ERROR_START "cache zoom %s exists but is unreadable\n";
+	      ip->err = PX_ERROR_START "cache zoom %s exists but is unreadable\n";
 	      ip->errx = ip->cache.zout;
 	      return 1;
 	    }
@@ -178,7 +178,7 @@ isp_cache_page(Isp *ip)
 	    }
 	  else
 	    {
-	      ip->err = ISP_ERROR_START "cache page %s exists but is unreadable\n";
+	      ip->err = PX_ERROR_START "cache page %s exists but is unreadable\n";
 	      ip->errx = ip->cache.page;
 	      return 1;
 	    }

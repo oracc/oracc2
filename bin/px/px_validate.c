@@ -2,7 +2,7 @@
 #include "px.h"
 
 static int
-isp_integer(unsigned const char *p)
+px_integer(unsigned const char *p)
 {
   while (*p && *p < 128 && isdigit(*p))
     ++p;
@@ -10,7 +10,7 @@ isp_integer(unsigned const char *p)
 }
 
 static int
-isp_valid_arg(const char *p, int step)
+px_valid_arg(const char *p, int step)
 {
   if (p)
     {
@@ -22,7 +22,7 @@ isp_valid_arg(const char *p, int step)
 }
 
 static int
-isp_valid_project(Isp *ip)
+px_valid_project(Isp *ip)
 {
   char dir[strlen(ip->oracc)+strlen(ip->project)+2];
   sprintf(dir, "%s/%s", ip->oracc, ip->project);
@@ -36,7 +36,7 @@ isp_valid_project(Isp *ip)
 }
 
 static int
-isp_valid_host(Isp *ip)
+px_valid_host(Isp *ip)
 {
   char hostpath[strlen(ip->oracc)+strlen(ip->project)+strlen("02pub")+strlen(ip->host)+3];
   sprintf(hostpath, "%s/%s/02pub/%s", ip->oracc, ip->project, ip->host);
@@ -51,7 +51,7 @@ isp_valid_host(Isp *ip)
 }
 
 int
-isp_validate(Isp *ip)
+px_validate(Isp *ip)
 {
   if (!ip->oracc)
     {
@@ -64,7 +64,7 @@ isp_validate(Isp *ip)
       ip->err = "PROJECT not set, use -j PROJECT";
       goto error;
     }
-  else if (isp_valid_project(ip))
+  else if (px_valid_project(ip))
     goto error;
 
   if (!ip->list_name)
@@ -73,13 +73,13 @@ isp_validate(Isp *ip)
       goto error;
     }
   
-  if (isp_integer((uccp)ip->zoom))
+  if (px_integer((uccp)ip->zoom))
     {
       ip->err = "zoom parameter is not a positive integer";
       goto error;
     }
 
-  if (isp_integer((uccp)ip->page))
+  if (px_integer((uccp)ip->page))
     {
       ip->err = "page parameter is not a positive integer";
       goto error;
@@ -91,7 +91,7 @@ isp_validate(Isp *ip)
       goto error;
     }
 
-  if (isp_valid_arg(ip->cemd, ISP_STEP_6C))
+  if (px_valid_arg(ip->cemd, PX_STEP_6C))
     {
       ip->err = "argument for -c must be kwic|line|unit";
       goto error;
@@ -109,28 +109,28 @@ isp_validate(Isp *ip)
 	}
     }
 
-  if (isp_valid_arg(ip->xhmd, ISP_STEP_7F))
+  if (px_valid_arg(ip->xhmd, PX_STEP_7F))
     {
       ip->err = "argument for -m must be oxml|html";
       goto error;
     }
 
-  if (isp_valid_arg(ip->uimd, ISP_PARM_9U))
+  if (px_valid_arg(ip->uimd, PX_PARM_9U))
     {
       ip->err = "argument for -u must be mini|maxi";
       goto error;
     }
 
-  if (isp_valid_arg(ip->pack, ISP_STEP_8O))
+  if (px_valid_arg(ip->pack, PX_STEP_8O))
     {
       ip->err = "argument for -k must be asis|esp2";
       goto error;
     }
 
-  if (ip->host && isp_valid_host(ip))
+  if (ip->host && px_valid_host(ip))
     goto error;
   
-  if (isp_valid_arg(ip->aapi, ISP_PARM_9A))
+  if (px_valid_arg(ip->aapi, PX_PARM_9A))
     {
       ip->err = "argument for -a must be file|rest";
       goto error;

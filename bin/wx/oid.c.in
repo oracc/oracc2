@@ -101,7 +101,7 @@ instances(const char *lang, const char *id)
   dump_vl(v);
   vcount = countv(v);
   
-  va = malloc(8*sizeof(char*));
+  va = malloc(18*sizeof(char*));
   va[0] = "/usr/bin/perl";
   va[1] = "@@ORACC_BUILDS@@/bin/xis-resolver.plx";
   va[2] = strdup(project ? project : "nul");

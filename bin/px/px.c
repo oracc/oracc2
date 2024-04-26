@@ -1,15 +1,15 @@
 #include <oraccsys.h>
-#include "isp/isp.h"
+#include "px.h"
 
 int
 main(int argc, char **argv)
 {
   Isp *ip = isp_init();
 
-  if (isp_options(argc, argv, ip))
+  if (px_options(argc, argv, ip))
     goto error;
 
-  if (isp_validate(ip))
+  if (px_validate(ip))
     goto error;
 
   if (isp_list_method(ip))
@@ -46,14 +46,14 @@ main(int argc, char **argv)
   goto ok;
   
  error:
-  fprintf(stderr, ip->errx ? ip->err : ISP_ERROR_START "%s. Stop.\n",
+  fprintf(stderr, ip->errx ? ip->err : PX_ERROR_START "%s. Stop.\n",
 	  ip->errx ? ip->errx : ip->err);
   if (ip->web)
     {
       if (!strcmp(ip->xhmd, "xml"))
 	printf("<error>%s</error>", ip->err);
       else
-	pui_output(ip, pui_filetext("p4error.xml"), stdout);
+	pui_output(ip, stdout, pui_filetext("p4error.xml"));
     }
 
   /* falls through to clean up */

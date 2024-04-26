@@ -89,4 +89,6 @@ extern int fcheckf (const char *fn1, const char *fn2);
 extern int fcheckf_list (char *fn1, char **fn2s);
 extern off_t fsize (const char *fn, FILE *fp);
 
+extern int file_copy(const char *from, const char *to);
+
 #endif/*ORACCSYS_H_*/
