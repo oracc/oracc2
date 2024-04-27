@@ -1,4 +1,4 @@
-<div id="p4Pager" class="@@pui_state()@@">
+<div id="p4Pager" class="bborder-bot">
   <div id="p4Masthead">
     <p id="p4HeadTitle" class="banner bborder-top bborder-bot">
       <a href="/">Oracc:</a> @@pui_title()@@
@@ -13,7 +13,7 @@
       <div id="p4Search">
 	@@p4search.xml@@
       </div>
-      <div id="p4Controls">
+      <div id="p4Controls" class="@@pui_state()@@">
 	@@p4controls.xml@@
       </div>
       @@p4dropdown.xml@@

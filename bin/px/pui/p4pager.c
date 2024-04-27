@@ -1,5 +1,5 @@
 const char *p4pager = 
-"<div id=\"p4Pager\" class=\"@@pui_state()@@\">\n"
+"<div id=\"p4Pager\" class=\"bborder-bot\">\n"
 "  <div id=\"p4Masthead\">\n"
 "    <p id=\"p4HeadTitle\" class=\"banner bborder-top bborder-bot\">\n"
 "      <a href=\"/\">Oracc:</a> @@pui_title()@@\n"
@@ -14,7 +14,7 @@ const char *p4pager =
 "      <div id=\"p4Search\">\n"
 "	@@p4search.xml@@\n"
 "      </div>\n"
-"      <div id=\"p4Controls\">\n"
+"      <div id=\"p4Controls\" class=\"@@pui_state()@@\">\n"
 "	@@p4controls.xml@@\n"
 "      </div>\n"
 "      @@p4dropdown.xml@@\n"

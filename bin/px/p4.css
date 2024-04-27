@@ -11,8 +11,8 @@
 
 #p4Menu.auto:hover { background-color: pink; }
 
-#p4Pager.page .p4items { display: none; }
-#p4Pager.item .p4pages { display: none; }
+#p4Controls.page .p4items { display: none; }
+#p4Controls.item .p4pages { display: none; }
 
 #p4ToggleMeta { text-align: left; }
 
@@ -32,6 +32,8 @@
 
 p	{ margin: 0; padding: 0; }
 
+#p4Icons { width: 15%; text-align: center; display: inline-block; }
+
 .p4icon { background-color: white; 
 	  height: 18px; width: 18px;
 	  border: 2px solid silver; 
@@ -44,4 +46,34 @@ p	{ margin: 0; padding: 0; }
 
 .p4raise { margin-top: -26px; }
 
-body { }
+/* Zoom-menu */
+
+#p4Menu 	{ font-family: arial,sans-serif; padding: 0px; 
+		  padding-left: 5px; padding-top: 5px; padding-bottom: 5px; }
+
+#p4Menu p   	{ padding: 0px; margin-right: .25em; margin-left: 1.5em;
+		  margin-bottom: 1px; margin-top: 1px; font-size: 80%; 
+		  text-indent: -1.25em; }
+
+#p4Menu h1,h2,h3,h4 { padding: 0px; margin: 0px; font-size: 80%; }
+
+#p4Menu .h2	{ padding-top: 2px; padding-bottom: 2px; }
+
+#p4Menu .level0 { margin-left: 0px;
+		  padding-left: 5px; padding-top: 5px; 
+		  padding-bottom: 5px; }
+#p4Menu .level1 { margin-left: 5px; padding: 0px; }
+#p4Menu .level2 { margin-left: 10px; padding: 0px; }
+#p4Menu .level3 { margin-left: 15px; padding: 0px; }
+
+#p4Menu .level1 p { margin-left: 15px; text-indent: -10px; }
+
+/* Metadata table */
+
+table.xmd { border-spacing: 0px; padding: 2px; width: 100%; }
+table.xmd td { padding-top: 3px; padding-bottom: 3px; padding-left: 2px; padding-right: 2px; }
+.oddeven tr:nth-child(odd) { background-color: #ddd; }
+
+body 	{ }
+
+a 	{ text-decoration: none; }
