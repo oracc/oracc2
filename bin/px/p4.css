@@ -4,15 +4,12 @@
 #p4Menu 	{ flex: 1 1 15%; }
 #p4Content 	{ flex: 1 1 85%; }
 
-#p4Header.unem #p4Menu { display: none; }
-
-#p4Header.menu~#p4Content { color: red; margin-left: 15%; }
-#p4Header.unem~#p4Content { color: blue; margin: 0; }
-
-#p4Menu.auto:hover { background-color: pink; }
+#p4Menu.auto { display: none; }
 
 #p4Controls.page .p4items { display: none; }
 #p4Controls.item .p4pages { display: none; }
+
+#p4Controls.page #p4ToggleMeta { display: none; }
 
 #p4ToggleMeta { text-align: left; }
 
@@ -46,7 +43,7 @@ p	{ margin: 0; padding: 0; }
 
 .p4raise { margin-top: -26px; }
 
-/* Zoom-menu */
+/* Zoom-menu CSS */
 
 #p4Menu 	{ font-family: arial,sans-serif; padding: 0px; 
 		  padding-left: 5px; padding-top: 5px; padding-bottom: 5px; }

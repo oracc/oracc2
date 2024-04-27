@@ -2,51 +2,54 @@
   <div id="p4itemNav" class="p4items">
     <p class="bg-dk">
 
-      <img class="p4icon p4spread" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3itemsview" id="p3itemsview"
+      <img id="p3itemsview" class="p4icon p4spread" src="/img/p3-pageitem.png"
+	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
 	   onclick="p3action('viewstatePages')"/>
 
       <!--Item-->
       <img class="p4icon p4spread" src="/img/p3-backward.png" alt="Item back" title="Item back" name="ilarrow" id="ilarrow"
 	   onclick="p3action('itemback')"/>
       
-      <input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" p3:value="@@cgivar:item@@"/>
+      <input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" value="@@cgivar:item@@"/>
       
-      <span class="p3arrow">
-	<img class="p4icon" src="/img/p3-forward.png" alt="Item forward" title="Item forward" name="irarrow" id="irarrow"
-	     onclick="p3action('itemfwd')"/>
-      </span>
+      <img class="p4icon" src="/img/p3-forward.png" alt="Item forward" title="Item forward" name="irarrow" id="irarrow"
+	   onclick="p3action('itemfwd')"/>
       
-      <span p3:value="@@runtime:items@@"/> Texts
-      [<span class="resultcount" p3:value="@@runtime:resultcount@@"/> matches]
+      <span value="@@runtime:items@@"/> Texts
+      [<span class="resultcount" value="@@runtime:resultcount@@"/> matches]
 
       @@pui_translations()@@
-      <input type="checkbox" onchange="to_toggle()" name="transonly" id="transonly" value="transonly" p3:value="@@cgivar:transonly@@"/>&#xa0;only
+      <input type="checkbox" onchange="toggle_to()" id="transonly" value="@@cgivar:transonly@@"/>&#xa0;only
 
     </p>
   </div>
-  
+
   <div id="p4PageNav" class="p4pages">
     <p class="p3toccenter bg-dk">
 
-      <button id="p4Zoom" class="p4spread" type="submit" name="unzoom" onclick="p3zoom('0')">All Results</button>
+      <button id="p4Zoom" class="p4spread" onclick="p4zoom('0')">All Results</button>
 
-      <img class="p4icon p4spread" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3pagesview" id="p3pagesview"
-	     onclick="p3action('viewstateItems')"/>
+      <img id="p3pagesview" class="p4icon p4spread" src="/img/p3-pageitem.png"
+	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
+	   onclick="p3action('viewstateItems')"/>
       
-      <img class="p4icon p4spread" src="/img/p3-backward.png" alt="Page back" title="Page back" name="plarrow" id="plarrow"
+      <img id="plarrow" class="p4icon p4spread" src="/img/p3-backward.png"
+	   alt="Page back" title="Page back"
 	   onclick="p3action('pageback')"/>
       
       <!--Page-->
-      <input id="pageset" name="pageset" type="text" onchange="p3action('pageset')" size="2" p3:value="@@cgivar:page@@"/>
+      <input id="pageset" name="pageset" type="text" onchange="p3action('pageset')" size="2"
+	     value="@@pui_current_page()@@"/>
 
-      <img class="p4icon p4spread" src="/img/p3-forward.png" alt="Page forward" title="Page forward" name="prarrow" id="prarrow"
+      <img id="prarrow" class="p4icon p4spread" src="/img/p3-forward.png"
+	   alt="Page forward" title="Page forward"
 	   onclick="p3action('pagefwd')"/>
 
-      <span p3:value="@@runtime:items@@"/> lines
+      @@pui_active_items()@@ items
       /
-      <span p3:value="@@runtime:pages@@"/> Pages
+      @@pui_active_pages()@@ Pages
 
-      [<span class="resultcount" p3:value="@@runtime:resultcount@@"/> matches]
+      [@@pui_srch_results()@@ matches]
       
       <span class="cetype">
 	<select id="p3cetype" name="p3cetype"  onchange="p3action('cestate')">
@@ -57,10 +60,10 @@
       </span>
     </p>
   </div>
-  
+
   <p id="p4ToggleMeta" class="p4raise">
     <img class="p4icon" src="/img/p3-full.png"
-	 alt="Toggle metadata pane" title="Toggle metadata pane" onclick="toggle_md()""/>
+	 alt="Toggle metadata pane" title="Toggle metadata pane" onclick="toggle_md()"/>
   </p>  
 </x>
 
