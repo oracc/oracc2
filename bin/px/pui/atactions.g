@@ -12,3 +12,9 @@ struct atactionstab;
 "pui_title()", &pui_at_title
 "pui_state()", &pui_at_state
 "pui_project()", &pui_at_project
+"pui_translations()", &pui_at_translations
+"pui_current_page()", &pui_at_current_page
+"pui_active_pages()", &pui_at_active_pages
+"pui_active_items()", &pui_at_active_items
+"pui_srch_results()", &pui_at_srch_results
+"pui_ceid()", &pui_at_ceid

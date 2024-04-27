@@ -1,5 +1,5 @@
 <x>
-  <div id="p4itemNav" class="p4items">
+  <div id="p4itemNav" class="p4items @@pui_ceid()@@">
     <p class="bg-dk">
 
       <img id="p3itemsview" class="p4icon p4spread" src="/img/p3-pageitem.png"
@@ -24,7 +24,7 @@
     </p>
   </div>
 
-  <div id="p4PageNav" class="p4pages">
+  <div id="p4PageNav" class="p4pages @@pui_ceid()@@">
     <p class="p3toccenter bg-dk">
 
       <button id="p4Zoom" class="p4spread" onclick="p4zoom('0')">All Results</button>
@@ -49,9 +49,9 @@
       /
       @@pui_active_pages()@@ Pages
 
-      [@@pui_srch_results()@@ matches]
+      <span id="p4SrchResultCount">[@@pui_srch_results()@@ matches]</span>
       
-      <span class="cetype">
+      <span id="p4CeType" class="cetype">
 	<select id="p3cetype" name="p3cetype"  onchange="p3action('cestate')">
 	  <option value="line">Line</option>
 	  <option value="unit">Sentence</option>

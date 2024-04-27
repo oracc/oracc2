@@ -13,6 +13,10 @@
 
 #p4ToggleMeta { text-align: left; }
 
+#p4PageNav.xmd #p4CeType { display: none; }
+
+#p4SrchResultCount:not(.srch) { display: none; }
+
 /* Formatting CSS */
 
 #p4Banner  { padding-left: 3px; padding-top: 3px; }
@@ -42,6 +46,8 @@ p	{ margin: 0; padding: 0; }
 .p4spread { margin-left: 5px; margin-right: 5px; }
 
 .p4raise { margin-top: -26px; }
+
+#pageset { text-align: right; }
 
 /* Zoom-menu CSS */
 
