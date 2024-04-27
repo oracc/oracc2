@@ -11,3 +11,4 @@ struct atactionstab;
 "pui_content()", &pui_at_content
 "pui_title()", &pui_at_title
 "pui_state()", &pui_at_state
+"pui_project()", &pui_at_project

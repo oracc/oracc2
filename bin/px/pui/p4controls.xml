@@ -1,22 +1,18 @@
 <x>
-  <div id="p3itemnav" class="p3-items p3-noglo">
-    <p class="p3toccenter bg-dk">
+  <div id="p4itemNav" class="p4items">
+    <p class="bg-dk">
 
-      <span class="p3arrow">
-	<img class="p3icon" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3itemsview" id="p3itemsview"
-	     onclick="p3action('viewstatePages')"/>
-      </span>
+      <img class="p4icon p4spread" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3itemsview" id="p3itemsview"
+	   onclick="p3action('viewstatePages')"/>
 
       <!--Item-->
-      <span class="p3arrow">
-	<img class="p3icon" src="/img/p3-backward.png" alt="Item back" title="Item back" name="ilarrow" id="ilarrow"
-	     onclick="p3action('itemback')"/>
-      </span>
+      <img class="p4icon p4spread" src="/img/p3-backward.png" alt="Item back" title="Item back" name="ilarrow" id="ilarrow"
+	   onclick="p3action('itemback')"/>
       
       <input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" p3:value="@@cgivar:item@@"/>
       
       <span class="p3arrow">
-	<img class="p3icon" src="/img/p3-forward.png" alt="Item forward" title="Item forward" name="irarrow" id="irarrow"
+	<img class="p4icon" src="/img/p3-forward.png" alt="Item forward" title="Item forward" name="irarrow" id="irarrow"
 	     onclick="p3action('itemfwd')"/>
       </span>
       
@@ -29,30 +25,22 @@
     </p>
   </div>
   
-  <div id="p3pagenav" class="p3-pages">
+  <div id="p4PageNav" class="p4pages">
     <p class="p3toccenter bg-dk">
 
-      <span class="p3arrow" id="p3zoom">
-	<button type="submit" name="unzoom" onclick="p3zoom('0')">All Results</button>
-      </span>
+      <button id="p4Zoom" class="p4spread" type="submit" name="unzoom" onclick="p3zoom('0')">All Results</button>
 
-      <span class="p3arrow">
-	<img class="p3icon" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3pagesview" id="p3pagesview"
+      <img class="p4icon p4spread" src="/img/p3-pageitem.png" alt="Toggle Page/Item view" title="Toggle Page/Item view" name="p3pagesview" id="p3pagesview"
 	     onclick="p3action('viewstateItems')"/>
-      </span>
       
-      <span class="p3arrow">
-	<img class="p3icon" src="/img/p3-backward.png" alt="Page back" title="Page back" name="plarrow" id="plarrow"
-	     onclick="p3action('pageback')"/>
-      </span>
+      <img class="p4icon p4spread" src="/img/p3-backward.png" alt="Page back" title="Page back" name="plarrow" id="plarrow"
+	   onclick="p3action('pageback')"/>
       
       <!--Page-->
       <input id="pageset" name="pageset" type="text" onchange="p3action('pageset')" size="2" p3:value="@@cgivar:page@@"/>
 
-      <span class="p3arrow">
-	<img class="p3icon" src="/img/p3-forward.png" alt="Page forward" title="Page forward" name="prarrow" id="prarrow"
-	     onclick="p3action('pagefwd')"/>
-      </span>
+      <img class="p4icon p4spread" src="/img/p3-forward.png" alt="Page forward" title="Page forward" name="prarrow" id="prarrow"
+	   onclick="p3action('pagefwd')"/>
 
       <span p3:value="@@runtime:items@@"/> lines
       /
@@ -70,8 +58,9 @@
     </p>
   </div>
   
-  <p class="p3fullscreen">
-    <img class="p3icon" src="/img/p3-full.png" alt="Toggle full/split screen" onclick="fs_toggle()" name="fullscreen" id="fullscreen"/>
+  <p id="p4ToggleMeta" class="p4raise">
+    <img class="p4icon" src="/img/p3-full.png"
+	 alt="Toggle metadata pane" title="Toggle metadata pane" onclick="toggle_md()""/>
   </p>  
 </x>
 

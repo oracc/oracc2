@@ -2,6 +2,8 @@ SUBDIRS=pui ice isp
 
 include ../../oracc-am-rules.txt
 
+img_DATA=icons/*.png
+
 bin_PROGRAMS=px
 
 px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c cgiopts.c

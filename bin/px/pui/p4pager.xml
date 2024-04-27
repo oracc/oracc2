@@ -1,15 +1,13 @@
 <div id="p4Pager" class="@@pui_state()@@">
-  <div id="p4Header">
-    <div id="p4Menu">
-      @@pui_menu()@@
-    </div>
-    <div id="p4Masthead">
+  <div id="p4Masthead">
+    <p id="p4HeadTitle" class="banner bborder-top bborder-bot">
+      <a href="/">Oracc:</a> @@pui_title()@@
+    </p>
+  </div>
+  <div id="p4Header" class="menu banner bborder-bot">
       <p id="p4Banner">
 	<span id="p4Icons">
 	  @@p4icons.xml@@
-	</span>
-	<span id="p4HeadTitle">
-	  @@pui_title()@@
 	</span>
       </p>
       <div id="p4Search">
@@ -18,10 +16,15 @@
       <div id="p4Controls">
 	@@p4controls.xml@@
       </div>
-    </div>
+      @@p4dropdown.xml@@
   </div>
-  <div id="p4Content">
-    @@pui_content()@@
+  <div id="p4Flex">
+    <div id="p4Menu" class="auto" onclick="alert('hovering')">
+      @@pui_menu()@@
+    </div>
+    <div id="p4Content">
+      @@pui_content()@@
+    </div>
   </div>
   <div id="p4Footer">
     @@p4footer.xml@@

@@ -1,1 +1,47 @@
-body { color: red; }
+/* Structural/State-dependent CSS */
+
+#p4Flex 	{ display: flex; }
+#p4Menu 	{ flex: 1 1 15%; }
+#p4Content 	{ flex: 1 1 85%; }
+
+#p4Header.unem #p4Menu { display: none; }
+
+#p4Header.menu~#p4Content { color: red; margin-left: 15%; }
+#p4Header.unem~#p4Content { color: blue; margin: 0; }
+
+#p4Menu.auto:hover { background-color: pink; }
+
+#p4Pager.page .p4items { display: none; }
+#p4Pager.item .p4pages { display: none; }
+
+#p4ToggleMeta { text-align: left; }
+
+/* Formatting CSS */
+
+#p4Banner  { padding-left: 3px; padding-top: 3px; }
+
+#p4Search  { text-align: center; margin-left: 15%; margin-top: -26px; margin-bottom: 26px; }
+
+#p4Controls { text-align: center; margin-left: 15%; padding-bottom: 3px; }
+
+#p4HeadTitle {font-size: 120%; font-family: Verdana, "Trebuchet MS", helvetica, sans-serif; padding: 3px; }
+
+#p4HeadTitle a { color: white; text-decoration: none; }
+
+#p4DropDown { padding-left: 3px; margin-top: -29px; padding-bottom: 3px; }
+
+p	{ margin: 0; padding: 0; }
+
+.p4icon { background-color: white; 
+	  height: 18px; width: 18px;
+	  border: 2px solid silver; 
+	  padding: 2px;
+	  border-radius: 9px;
+	  vertical-align: middle;b
+	}
+
+.p4spread { margin-left: 5px; margin-right: 5px; }
+
+.p4raise { margin-top: -26px; }
+
+body { }

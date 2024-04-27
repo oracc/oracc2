@@ -1,0 +1,5 @@
+<p id="p4DropDown">
+  <img class="p4icon" src="/img/p3-dd.png"
+       alt="Toggle menu drop-down" title="Toggle menu drop-down"
+       onclick="toggle_dd()"/>
+</p>

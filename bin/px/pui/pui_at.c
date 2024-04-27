@@ -29,17 +29,26 @@ pui_at_state(Isp *ip, FILE *fp)
 void
 pui_at_title(Isp *ip, FILE *fp)
 {
-  fprintf(fp, "%s : %s", xpd_option(ip->xpd, "logo"), xpd_option(ip->xpd, "name"));
+  fprintf(fp, "%s &#x2014; %s", xpd_option(ip->xpd, "logo"), xpd_option(ip->xpd, "name"));
+}
+
+void
+pui_at_project(Isp *ip, FILE *fp)
+{
+  fputs(ip->project,fp);
 }
 
 void
 pui_at_menu(Isp *ip, FILE *fp)
 {
-  fputs("MENU",fp);
+  file_copy(ip->cache.zout, "-");
 }
 
 void
 pui_at_content(Isp *ip, FILE *fp)
 {
-  fputs("CONTENT",fp);
+  if (ip->item)
+    (void)pui_output(ip, stdout, pui_filetext("p4item.xml"));
+  else
+    file_copy(ip->cache.page, "-");
 }

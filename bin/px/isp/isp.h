@@ -24,8 +24,9 @@ struct isp_cache
   const char *sort; 	/* the list sorted by the requested permutation */
   const char *mol; 	/* the master outline for the list in cache.sort */
   const char *pgin;	/* the input for a page extracted from the cache.sort */
-  const char *page;	/* the page in a zoomed slice; z=0 for no zoom */
-  const char *zout;	/* the outline for a zoomed slice; z=0 for no zoom */
+  const char *page;	/* the filename of the page-contentn for a zoomed slice; z=0 for no zoom */
+  const char *zout;	/* the filename of the zoom-menu for a zoomed slice; z=0 for no zoom */
+  const char *meta;	/* the filename of the metadataa for the displayed item */
   const char *item;	/* the item being displayed from a page in a
 			   zoomed slice; z=0 for no zoom; this is a
 			   PQX ID or OID not an integer index into a list */

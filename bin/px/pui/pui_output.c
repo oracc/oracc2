@@ -51,7 +51,13 @@ pui_output(Isp *ip, FILE *fp, const char *s)
       ip->err = s;
       return 1;
     }
-  while (*s)
+  const char *end = s + strlen(s);
+  if (!strncmp(s, "<x>", 3))
+    {
+      s += 3;
+      end = strrchr(s, '<');
+    }
+  while (s < end)
     {
       if (*s == '@' && s[1] == '@')
 	s = pui_atat(ip, fp, s);
