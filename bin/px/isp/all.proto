@@ -19,8 +19,9 @@ extern int ispo_zoutline(Isp *ip);
 extern int create_page_div(Isp *ip);
 extern int isp_cache_page(Isp *ip);
 /* isp_show.c */
-extern void isp_show(FILE *fp, Isp *ip);
 extern void isp_argv(FILE *fp, Isp *ip);
+extern void isp_environment(FILE *fp, Isp *ip);
+extern void isp_show(FILE *fp, Isp *ip);
 /* isp_sort.c */
 extern int isp_cache_sort(Isp *ip);
 /* isp_tis.c */

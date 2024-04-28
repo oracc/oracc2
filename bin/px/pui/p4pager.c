@@ -30,5 +30,6 @@ const char *p4pager =
 "  <div id=\"p4Footer\">\n"
 "    @@p4footer.xml@@\n"
 "  </div>\n"
+"  @@p4debug.xml@@\n"
 "</div>\n"
 ;

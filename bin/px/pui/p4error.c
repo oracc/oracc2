@@ -1,4 +1,5 @@
 const char *p4error = 
+"<!DOCTYPE html>\n"
 "<html>\n"
 "  <head>\n"
 "    <link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4error.css\"/>\n"
@@ -11,13 +12,7 @@ const char *p4error =
 "\n"
 "    <pre id=\"p4Error\">@@pui_error()@@</pre>\n"
 "\n"
-"    <p>The pager was invoked as:</p>\n"
-"\n"
-"    <pre id=\"p4Invoked\">@@pui_invocation()@@</pre>\n"
-"\n"
-"    <p>The pager reported:</p>\n"
-"\n"
-"    <pre id=\"p4Status\">@@pui_status()@@</pre>\n"
+"    @@p4debug.xml@@\n"
 "  </body>\n"
 "</html>\n"
 ;

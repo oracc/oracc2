@@ -39,7 +39,7 @@ const char *p4controls =
 "	   onclick=\"p3action('pageback')\"/>\n"
 "      \n"
 "      <!--Page-->\n"
-"      <input id=\"pageset\" name=\"pageset\" type=\"text\" onchange=\"p3action('pageset')\" size=\"2\"\n"
+"      <input id=\"p4Pageset\" type=\"text\" onchange=\"p3action('pageset')\" size=\"3\"\n"
 "	     value=\"@@pui_current_page()@@\"/>\n"
 "\n"
 "      <img id=\"prarrow\" class=\"p4icon p4spread\" src=\"/img/p3-forward.png\"\n"

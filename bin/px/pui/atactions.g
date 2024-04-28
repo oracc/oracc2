@@ -5,6 +5,7 @@
 struct atactionstab;
 %%
 "pui_error()", &pui_at_error
+"pui_environment()", &pui_at_environment
 "pui_invocation()", &pui_at_invocation
 "pui_status()", &pui_at_status
 "pui_menu()", &pui_at_menu

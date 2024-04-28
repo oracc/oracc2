@@ -47,7 +47,9 @@ p	{ margin: 0; padding: 0; }
 
 .p4raise { margin-top: -26px; }
 
-#pageset { text-align: right; }
+#p4Pageset { text-align: center; }
+
+#p4Debug { display: none; }
 
 /* Zoom-menu CSS */
 

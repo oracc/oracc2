@@ -42,6 +42,12 @@ pui_at_srch_results(Isp *ip, FILE *fp)
 }
 
 void
+pui_at_environment(Isp *ip, FILE *fp)
+{
+  isp_environment(fp, ip);  
+}
+
+void
 pui_at_error(Isp *ip, FILE *fp)
 {
   fprintf(fp, ip->errx ? ip->err : PX_ERROR_START "%s", ip->errx ? ip->errx : ip->err);

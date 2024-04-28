@@ -38,7 +38,7 @@
 	   onclick="p3action('pageback')"/>
       
       <!--Page-->
-      <input id="pageset" name="pageset" type="text" onchange="p3action('pageset')" size="2"
+      <input id="p4Pageset" type="text" onchange="p3action('pageset')" size="3"
 	     value="@@pui_current_page()@@"/>
 
       <img id="prarrow" class="p4icon p4spread" src="/img/p3-forward.png"

@@ -1,0 +1,12 @@
+isp: ispsort writing /home/oracc/www/is.d/rimanum/outlined.lst/sort-123
+isp: isp_cache_page: need /home/oracc/www/is.d/rimanum/outlined.lst/123-z0.otl:::/home/oracc/www/is.d/rimanum/outlined.lst/123-z0-p1.div
+isp: isp_cache_page: writing /home/oracc/www/is.d/rimanum/outlined.lst/123-z0-p1.pag
+isp: create_page_div: /home/oracc/bin/ispdiv.sh rimanum /home/oracc/www/is.d/rimanum/outlined.lst/123-z0-p1.pag /home/oracc/www/is.d/rimanum/outlined.lst/123-z0-p1.div ccat
+se/p2_load: sort_fields = period,subgenre,provenience,designation
+isp status:
+	web=0; oracc=/home/oracc; project=rimanum
+	list: name=outlined.lst; type=www; lang=(null); method=file;
+		path=/home/oracc/www/rimanum/lists/outlined.lst;
+		dbpath=(null); dbname=(null)
+	dors=0; zoom=0; page=1; cemd=ccat; xhmd=html
+	host=(null); host_path=(null)
