@@ -11,6 +11,6 @@
 
     <pre id="p4Error">@@pui_error()@@</pre>
 
-    @@p4debug.xml@@
+    @@p4debug-div.xml@@
   </body>
 </html>

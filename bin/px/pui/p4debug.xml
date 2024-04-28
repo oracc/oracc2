@@ -1,21 +1,10 @@
-<div id="p4Debug">
-  <h1>Debugging Information</h1>
-
-  <h2>Environment</h2>
-
-  <p>HTTP environment variables:</p>
-
-  <pre> id="p4Environment">@@pui_environment()@@</pre>
-  
-  <h2>Invocation</h2>
-  
-  <p>The pager was invoked as:</p>
-  
-  <pre id="p4Invoked">@@pui_invocation()@@</pre>
-
-  <h2>Pager Status</h2>
-  
-  <p>The pager reported status as:</p>
-
-  <pre id="p4Status">@@pui_status()@@</pre>
-</div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/p4debug.css"/>
+    <title>Oracc Pager Debug Info</title>    
+  </head>
+  <body>
+    @@p4debug-div.xml@@
+  </body>
+</html>

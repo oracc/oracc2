@@ -4,6 +4,7 @@
 %}
 struct cgioptstab;
 %%
+debug,	'd'
 web, 	'w'
 project, 'j'
 list, 	'l'

@@ -145,9 +145,7 @@ typedef struct isp
   int force;
   int olev;	    /* outline levels, i.e., number of headings
 		       without any appended designation */
-  int p3;	    /* produce outline and results and then output name of
-		       temp dir for p3-pager.plx to build output
-		       page */
+  int debug;
   int verbose;
   int web;
   int argc;
@@ -156,6 +154,13 @@ typedef struct isp
   Pool *p;  
   Memo *tmem;
 } Isp;
+
+#if 0
+/* p3-pager.plx will not be used any more */
+  int p3;	    /* produce outline and results and then output name of
+		       temp dir for p3-pager.plx to build output
+		       page */
+#endif
 
 struct ispargstab
 {

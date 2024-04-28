@@ -71,7 +71,7 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ELSZPWCFOfj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
+    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
   opt_ip = NULL;
   if (ret && !ip->err)
     ip->err = "processing options";
@@ -83,9 +83,11 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+#if 0
     case '3':
       opt_ip->p3 = 1;
       break;
+#endif
     case 'E':
       opt_ip->steps[PX_STEP_0E] = 1;
       break;
@@ -171,14 +173,17 @@ opts(int opt, const char *arg)
     case 'a':
       opt_ip->aapi = arg;
       break;
+    case 'x':
+      opt_ip->xhmd = arg;
+      break;
     case 'u':
       opt_ip->uimd = arg;
       break;
+    case 'd':
+      ++opt_ip->debug;
+      break;
     case 'v':
       ++opt_ip->verbose;
-      break;
-    case 'x':
-      opt_ip->xhmd = arg;
       break;
     default:
       opt_ip->err = "unknown option";

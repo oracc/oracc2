@@ -12,7 +12,7 @@ const char *p4error =
 "\n"
 "    <pre id=\"p4Error\">@@pui_error()@@</pre>\n"
 "\n"
-"    @@p4debug.xml@@\n"
+"    @@p4debug-div.xml@@\n"
 "  </body>\n"
 "</html>\n"
 ;

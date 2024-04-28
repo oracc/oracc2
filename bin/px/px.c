@@ -38,16 +38,24 @@ main(int argc, char **argv)
     goto error;
 
 #if 1
-  if (ip->pack && !strcmp(ip->pack, "div"))
+  if (ip->debug)
     {
-      if (pui_output(ip, stdout, pui_filetext("p4pager.xml")))
+      if (pui_output(ip, stdout, pui_filetext("p4debug.xml")))
 	goto error;
     }
   else
     {
-      print_hdr();  
-      if (pui_output(ip, stdout, pui_filetext("p4html.xml")))
-	goto error;
+      if (ip->pack && !strcmp(ip->pack, "div"))
+	{
+	  if (pui_output(ip, stdout, pui_filetext("p4pager.xml")))
+	    goto error;
+	}
+      else
+	{
+	  print_hdr();  
+	  if (pui_output(ip, stdout, pui_filetext("p4html.xml")))
+	    goto error;
+	}
     }
 #else
   if (ip->p3)

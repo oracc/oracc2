@@ -14,3 +14,4 @@ struct puifilestab;
 "p4head.xml", &p4head
 "p4dropdown.xml", &p4dropdown
 "p4debug.xml", &p4debug
+"p4debugdiv.xml", &p4debugdiv
