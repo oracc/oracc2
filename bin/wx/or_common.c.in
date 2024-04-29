@@ -31,7 +31,8 @@ void
 do404(void)
 {
   print_hdr();
-  execl("/bin/cat", "cat", "@@ORACC@@/www/404.html", NULL);
+  /*execl("/bin/cat", "cat", "@@ORACC@@/www/404.html", NULL);*/
+  printf("404\n");
 }
 
 #if 0

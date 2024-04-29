@@ -159,41 +159,36 @@ isp_cache_page(Isp *ip)
   if (ip->verbose)
     fprintf(stderr, "isp: isp_cache_page: need %s:::%s\n", zbuf, pbuf);
 
-  if (!ip->force)
+  int need_zout = 1;
+  if (!access(ip->cache.zout, F_OK))
     {
-      int need_zout = 0;
-      if (!access(ip->cache.zout, F_OK))
+      if (access(ip->cache.zout, R_OK))
 	{
-	  if (access(ip->cache.zout, R_OK))
-	    {
-	      ip->err = PX_ERROR_START "cache zoom %s exists but is unreadable\n";
-	      ip->errx = ip->cache.zout;
-	      return 1;
-	    }
-	}
-
-      if (need_zout)
-	if (ispo_zoutline(ip))
+	  ip->err = PX_ERROR_START "cache zoom %s exists but is unreadable\n";
+	  ip->errx = ip->cache.zout;
 	  return 1;
-	
-      if (!access(ip->cache.page, F_OK))
-	{
-	  if (!access(ip->cache.page, R_OK))
-	    {
-	      set_item_max(ip);
-	      return 0;
-	    }
-	  else
-	    {
-	      ip->err = PX_ERROR_START "cache page %s exists but is unreadable\n";
-	      ip->errx = ip->cache.page;
-	      return 1;
-	    }
 	}
+      need_zout = 0;
     }
 
-  if (ispo_zoutline(ip))
-    return 1;
+  if (need_zout || ip->force)
+    if (ispo_zoutline(ip))
+      return 1;
+  
+  if (!access(ip->cache.page, F_OK))
+    {
+      if (!access(ip->cache.page, R_OK))
+	{
+	  set_item_max(ip);
+	  return 0;
+	}
+      else
+	{
+	  ip->err = PX_ERROR_START "cache page %s exists but is unreadable\n";
+	  ip->errx = ip->cache.page;
+	  return 1;
+	}
+    }
 
   if (compute_ranges(ip))
     return 1;

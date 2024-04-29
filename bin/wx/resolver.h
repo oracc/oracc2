@@ -93,6 +93,7 @@ extern void cat_zip(const char *zpath, const char *zname);
 extern void corpus(void);
 extern void catentry(const char *item);
 extern void p3(const char *project);
+extern void px(const char *project);
 extern void p3_oas(const char *xml);
 extern void p3_asearch_results(const char *project, const char *tmpdir);
 extern void p3_exec(CGI_varlist *vl);

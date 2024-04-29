@@ -6,7 +6,7 @@ const char *p4debugdiv =
 "\n"
 "  <p>HTTP environment variables:</p>\n"
 "\n"
-"  <pre> id=\"p4Environment\">@@pui_environment()@@</pre>\n"
+"  <pre id=\"p4Environment\">@@pui_environment()@@</pre>\n"
 "  \n"
 "  <h2>Invocation</h2>\n"
 "  \n"

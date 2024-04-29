@@ -5,7 +5,7 @@
 
   <p>HTTP environment variables:</p>
 
-  <pre> id="p4Environment">@@pui_environment()@@</pre>
+  <pre id="p4Environment">@@pui_environment()@@</pre>
   
   <h2>Invocation</h2>
   

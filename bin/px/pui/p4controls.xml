@@ -27,7 +27,7 @@
   <div id="p4PageNav" class="p4pages @@pui_ceid()@@">
     <p class="p3toccenter bg-dk">
 
-      <button id="p4Zoom" class="p4spread" onclick="p4zoom('0')">All Results</button>
+      <button id="p4Zoom" class="p4spread" onclick="act_zoom('0')">All Results</button>
 
       <img id="p3pagesview" class="p4icon p4spread" src="/img/p3-pageitem.png"
 	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
@@ -35,15 +35,15 @@
       
       <img id="plarrow" class="p4icon p4spread" src="/img/p3-backward.png"
 	   alt="Page back" title="Page back"
-	   onclick="p3action('pageback')"/>
+	   onclick="act_prev()"/>
       
       <!--Page-->
-      <input id="p4Pageset" type="text" onchange="p3action('pageset')" size="3"
+      <input id="p4Pageset" type="text" onchange="act_page()" size="3"
 	     value="@@pui_current_page()@@"/>
 
       <img id="prarrow" class="p4icon p4spread" src="/img/p3-forward.png"
 	   alt="Page forward" title="Page forward"
-	   onclick="p3action('pagefwd')"/>
+	   onclick="act_next()"/>
 
       @@pui_active_items()@@ items
       /

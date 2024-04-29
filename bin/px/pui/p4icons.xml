@@ -4,7 +4,8 @@
        onclick="window.location='/doc/help/visitingoracc/gettingstarted/index.html'"/>
   <img id="p4PagerReset" class="p4icon p4spread"
        src="/img/p3-reset.png" alt="Reset pager" title="Reset pager"
-       onclick="window.location='/@@pui_project()@@/pager"/>
-  <img id="p4MoreIcon" class="p4icon" src="/img/p3-plus.png" alt="More resources" title="More resources"
+       onclick="resetPager()"/>
+  <img id="p4MoreIcon" class="p4icon"
+       src="/img/p3-plus.png" alt="More resources" title="More resources"
        onclick="window.location='/@@pui_project()@@/hub.html'"/>
 </x>

@@ -40,6 +40,7 @@ main(int argc, char **argv)
 #if 1
   if (ip->debug)
     {
+      print_hdr();  
       if (pui_output(ip, stdout, pui_filetext("p4debug.xml")))
 	goto error;
     }
@@ -47,6 +48,7 @@ main(int argc, char **argv)
     {
       if (ip->pack && !strcmp(ip->pack, "div"))
 	{
+	  /* option to print hdr here ? */
 	  if (pui_output(ip, stdout, pui_filetext("p4pager.xml")))
 	    goto error;
 	}

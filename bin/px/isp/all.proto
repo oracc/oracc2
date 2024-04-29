@@ -20,6 +20,7 @@ extern int create_page_div(Isp *ip);
 extern int isp_cache_page(Isp *ip);
 /* isp_show.c */
 extern void isp_argv(FILE *fp, Isp *ip);
+extern int cmpstringp(const void *p1, const void *p2);
 extern void isp_environment(FILE *fp, Isp *ip);
 extern void isp_show(FILE *fp, Isp *ip);
 /* isp_sort.c */

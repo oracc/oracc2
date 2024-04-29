@@ -2,6 +2,28 @@
 #include <xpd.h>
 #include "../px.h"
 
+static int
+active_pages(Isp *ip)
+{
+  int psize = atoi(ip->psiz);
+  int npages = ip->md1.zimx / psize;
+  if (ip->md1.zimx % psize)
+    ++npages;
+  return npages;
+}
+
+void
+pui_at_pager_data(Isp *ip, FILE *fp)
+{
+#define pattrs(a,v) fprintf(fp, " %s=\"%s\"", (a), (v))
+#define pattrd(a,v) fprintf(fp, " %s=\"%d\"", (a), (v))
+  pattrs("data-proj", ip->project);
+  pattrs("data-list", ip->list_name);
+  pattrs("data-zoom", ip->zoom);
+  pattrs("data-page", ip->page);
+  pattrd("data-pmax", active_pages(ip));
+}
+
 void
 pui_at_ceid(Isp *ip, FILE *fp)
 {
@@ -22,10 +44,7 @@ pui_at_current_page(Isp *ip, FILE *fp)
 void
 pui_at_active_pages(Isp *ip, FILE *fp)
 {
-  int psize = atoi(ip->psiz);
-  int npages = ip->md1.zimx / psize;
-  if (ip->md1.zimx % psize)
-    ++npages;
+  int npages = active_pages(ip);
   fputs(itoa(npages), fp);  
 }
 

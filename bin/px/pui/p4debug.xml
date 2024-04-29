@@ -5,6 +5,6 @@
     <title>Oracc Pager Debug Info</title>    
   </head>
   <body>
-    @@p4debug-div.xml@@
+    @@p4debugdiv.xml@@
   </body>
 </html>

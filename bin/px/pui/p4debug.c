@@ -6,7 +6,7 @@ const char *p4debug =
 "    <title>Oracc Pager Debug Info</title>    \n"
 "  </head>\n"
 "  <body>\n"
-"    @@p4debug-div.xml@@\n"
+"    @@p4debugdiv.xml@@\n"
 "  </body>\n"
 "</html>\n"
 ;

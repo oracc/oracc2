@@ -83,12 +83,13 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 		    {
 		      if (!ztotal)
 			ztotal = ztotal_get(zcount, (ccp)s);
-		      pt.plen = (s - f) - pt.ptell;
+		      unsigned char *l = s+1;
+		      pt.plen = (l - f) - pt.ptell;
 		      md_dump(zfp, ztotal, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
 		      showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
-		      pt.ptell = (s - f) + 1;
+		      pt.ptell = (s - f) + 2;
 		      pt.plen = 0;
 		      zpcount = 0;
 		    }

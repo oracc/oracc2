@@ -5,8 +5,9 @@ const char *p4icons =
 "       onclick=\"window.location='/doc/help/visitingoracc/gettingstarted/index.html'\"/>\n"
 "  <img id=\"p4PagerReset\" class=\"p4icon p4spread\"\n"
 "       src=\"/img/p3-reset.png\" alt=\"Reset pager\" title=\"Reset pager\"\n"
-"       onclick=\"window.location='/@@pui_project()@@/pager\"/>\n"
-"  <img id=\"p4MoreIcon\" class=\"p4icon\" src=\"/img/p3-plus.png\" alt=\"More resources\" title=\"More resources\"\n"
+"       onclick=\"resetPager()\"/>\n"
+"  <img id=\"p4MoreIcon\" class=\"p4icon\"\n"
+"       src=\"/img/p3-plus.png\" alt=\"More resources\" title=\"More resources\"\n"
 "       onclick=\"window.location='/@@pui_project()@@/hub.html'\"/>\n"
 "</x>\n"
 ;

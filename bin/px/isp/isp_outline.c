@@ -163,17 +163,11 @@ ispo_outline_p(Isp *ip, FILE *fp, unsigned char *h, int count, int zoom, int zoo
 {
   const char *class;
   if (zoom == zoomed)
-    class = " class=\"zoomed\"";
+    class = " class=\"zoomxed\"";
   else
     class = "";
-  if (!strcmp(ip->lloc.type, "xis"))
-    {
-      fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoomgx('%s','%s','%s',%d)\" data-zoom=\"%d\">%s [%d]</a></p>",
-	      class, ip->project, ip->lloc.lang, ip->list_name, zoom, zoom, h, count);
-    }
-  else
-    fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"p3zoom(%d)\" data-zoom=\"%d\">%s [%d]</a></p>",
-	    class, zoom, zoom, h, count);
+  fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"act_zoom(%d)\" data-zoom=\"%d\">%s [%d]</a></p>",
+	  class, zoom, zoom, h, count);
 }
 
 int
@@ -253,5 +247,6 @@ ispo_zoutline(Isp *ip)
       h1_open = 0;
     }
   fputs("</div>", fp);
+  fclose(fp);
   return 0;
 }

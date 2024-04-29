@@ -19,3 +19,4 @@ struct atactionstab;
 "pui_active_items()", &pui_at_active_items
 "pui_srch_results()", &pui_at_srch_results
 "pui_ceid()", &pui_at_ceid
+"pui_pager_data()", &pui_at_pager_data

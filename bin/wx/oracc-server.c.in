@@ -168,12 +168,14 @@ main(int argc, char *argv[])
 	      "oracc-resolver: SCRIPT_URL=%s; project=%s; QUERY_STRING=%s\n",
 	      script_url, project, query_string);
     }
-
+  
   if (nelements == 0)
     {
+      const char *debug = query_string ? strstr(query_string, "debug") : NULL;
+      const char *equals = query_string ? strchr(query_string, '=') : NULL;
       if (project)
 	{
-	  if (query_string)
+	  if (query_string && !debug && !equals)
 	    {
 	      p3_fake_srch(project, "cat", query_string);
 	    }

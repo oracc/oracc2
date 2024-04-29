@@ -19,13 +19,18 @@
 
 /* Formatting CSS */
 
+body	{ margin: 2px; }
+
 #p4Banner  { padding-left: 3px; padding-top: 3px; }
 
 #p4Search  { text-align: center; margin-left: 15%; margin-top: -26px; margin-bottom: 26px; }
 
 #p4Controls { text-align: center; margin-left: 15%; padding-bottom: 3px; }
 
-#p4HeadTitle {font-size: 120%; font-family: Verdana, "Trebuchet MS", helvetica, sans-serif; padding: 3px; }
+#p4HeadTitle {font-size: 120%;
+	      font-family: Verdana, "Trebuchet MS", helvetica, sans-serif;
+	      padding-left: 3px; padding-right: 3px; 
+	      padding-top: 10px; padding-bottom: 10px; }
 
 #p4HeadTitle a { color: white; text-decoration: none; }
 
