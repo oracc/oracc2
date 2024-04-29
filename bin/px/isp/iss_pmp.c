@@ -112,11 +112,16 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 }
 
 static void
-dumpitem(FILE *ifp, unsigned const char *item, int page, int zoomth, int zoomp)
+dumpitem(Isp *ip, const char *item, int page, int zoomth, int zoomp)
 {
-  while (*item && ' ' != *item)
-    fputc(*item++, ifp);
-  fprintf(ifp, "\t%d\t%d\t%d\n", page, zoomth, zoomp);
+  char isub[8]; strncpy(isub, item, 7); isub[7] = '\0';
+  int n = snprintf(NULL, 0, "%s\t%d\t%d\t%d", isub, page, zoomth, zoomp);
+  char *itembit = malloc(n+1);
+  sprintf(itembit, "%s\t%d\t%d\t%d", isub, page, zoomth, zoomp);
+  char *databit = strchr(itembit, '\t');
+  *databit++ = '\0';
+  dbi_add(ip->itemdata.dp, (ucp)itembit, databit, strlen(databit)+1);
+  free(itembit);
 }
 
 void
@@ -129,12 +134,15 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   int pcount = 0;
   int zoomth = 0, zoomp = 1;
   unsigned char *s = f;
+
+  char dbifn[strlen(ip->perm)+strlen("-itm0")];
+  sprintf(dbifn, "%s-itm", ip->perm);
+  ip->itemdata.dp = dbi_create(dbifn, ip->cache.sub, 1024, 1, DBI_BALK);
+
   char pfn[strlen(ip->cache.sort)+strlen(".pmp0")];
   sprintf(pfn, "%s.pmp", ip->cache.sort);
-  char ifn[strlen(ip->cache.sort)+strlen(".itm0")];
-  sprintf(ifn, "%s.itm", ip->cache.sort);
-  FILE *ifp = fopen(ifn, "w");
   FILE *pfp = fopen(pfn, "w");
+
   while (*s)
     {
       if ('#' == *s)
@@ -146,7 +154,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 	      pt.htell = s - f;
 	      s = (ucp)strchr((ccp)s, ' ');
 	      pt.hlen = (s - f) - pt.htell;
-	      pt.ptell = (++s - f);
+	      pt.ptell = ((s+1) - f);
 	    }
 	  else
 	    {
@@ -154,6 +162,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 	      s = (ucp)strchr((ccp)s, ' ');
 	      lasth_len = (s - f) - lasth_tell;
 	    }
+	  --s;
 	}
       else
 	{
@@ -177,8 +186,8 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		    }
 		  ++page;
 		}
-	      if ('#' != s[1])
-		dumpitem(ifp, s+1, page, zoomth, zoomp);
+	      if (s[1] && '#' != s[1] && !isspace(s[1]))
+		dumpitem(ip, strchr((ccp)s, ':')+1, page, zoomth, zoomp);
 	    }
 	}
       ++s;
@@ -192,8 +201,8 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
       showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
     }
-  fclose(ifp);
   fclose(pfp);
+  dbi_flush(ip->itemdata.dp);
 }
 #if 0
 int

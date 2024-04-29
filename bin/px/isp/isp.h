@@ -3,6 +3,7 @@
 
 #include <memo.h>
 #include <pool.h>
+#include <dbi.h>
 
 struct isp_list_loc
 {
@@ -106,6 +107,14 @@ struct isp_mapdata
   int plen;
 };
 
+struct isp_itemdata
+{
+  Dbi_index *dp;
+  const char *page;
+  const char *zoom;
+  const char *zpag;
+};
+
 #include "../pxdefs.h"
 
 typedef struct isp
@@ -122,6 +131,7 @@ typedef struct isp
   struct ispo is;
   struct isp_mapdata md1;
   struct isp_mapdata md2;
+  struct isp_itemdata itemdata;
   struct outline *op;
   int op_nlevels;
   const char *dors; /* 0 = default ; 1 = special */
