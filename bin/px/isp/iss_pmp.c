@@ -111,6 +111,14 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
     }
 }
 
+static void
+dumpitem(FILE *ifp, unsigned const char *item, int page, int zoomth, int zoomp)
+{
+  while (*item && ' ' != *item)
+    fputc(*item++, ifp);
+  fprintf(ifp, "\t%d\t%d\t%d\n", page, zoomth, zoomp);
+}
+
 void
 ispmp_pages(Isp *ip, unsigned char *f, int imax)
 {
@@ -119,14 +127,20 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   int lasth_len = 0;
   int page = 1;
   int pcount = 0;
+  int zoomth = 0, zoomp = 1;
   unsigned char *s = f;
   char pfn[strlen(ip->cache.sort)+strlen(".pmp0")];
   sprintf(pfn, "%s.pmp", ip->cache.sort);
+  char ifn[strlen(ip->cache.sort)+strlen(".itm0")];
+  sprintf(ifn, "%s.itm", ip->cache.sort);
+  FILE *ifp = fopen(ifn, "w");
   FILE *pfp = fopen(pfn, "w");
   while (*s)
     {
       if ('#' == *s)
 	{
+	  ++zoomth;
+	  zoomp = 1;
 	  if (pt.htell < 0)
 	    {
 	      pt.htell = s - f;
@@ -148,6 +162,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 	      ++pcount;
 	      if (!(pcount%25))
 		{
+		  ++zoomp;
 		  pt.plen = (s - f) - pt.ptell;
 		  md_dump(pfp, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
@@ -162,6 +177,8 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		    }
 		  ++page;
 		}
+	      if ('#' != s[1])
+		dumpitem(ifp, s+1, page, zoomth, zoomp);
 	    }
 	}
       ++s;
@@ -175,6 +192,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
       showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
     }
+  fclose(ifp);
   fclose(pfp);
 }
 #if 0
