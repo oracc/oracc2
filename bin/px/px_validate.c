@@ -85,7 +85,7 @@ px_validate(Isp *ip)
       ip->err = "LIST not set, use -l LIST";
       goto error;
     }
-  
+
   if (px_integer((uccp)ip->zoom))
     {
       ip->err = "zoom parameter is not a positive integer";

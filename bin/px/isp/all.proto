@@ -5,6 +5,8 @@ extern int isp_cache_list(Isp *ip);
 /* isp_init.c */
 extern Isp *isp_init(void);
 extern void isp_term(Isp *ip);
+/* isp_item.c */
+extern int isp_item_set(Isp *ip);
 /* isp_list.c */
 extern void isp_list_cemd(Isp *ip);
 extern int isp_list_create(Isp *ip);
