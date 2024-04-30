@@ -10,7 +10,7 @@ isp_item_load(Isp *ip)
   char *k = (char*)dbx_key(dp, ip->item, NULL);
   if (!k)
     {
-      ip->err = "key %s not found in item db\n";
+      ip->err = PX_ERROR_START "key %s not found in item db\n";
       ip->errx = ip->item;
       return 1;
     }
@@ -46,11 +46,15 @@ isp_item_load(Isp *ip)
 int
 isp_item_set(Isp *ip)
 {
-  isp_item_load(ip);
+  if (isp_item_load(ip))
+    return 1;
   
   /* This implementation doesn't support creating an unzoomed pager from an item yet */
   ip->zoom = ip->itemdata.zoom;
   ip->page = ip->itemdata.zpag;
+
+  if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
+    return 1;
 
   return 0;
 }

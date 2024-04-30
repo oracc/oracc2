@@ -115,6 +115,7 @@ struct isp_itemdata
   const char *zpag;
   const char *prev;
   const char *next;
+  const char *xmdxsl;
 };
 
 #include "../pxdefs.h"
