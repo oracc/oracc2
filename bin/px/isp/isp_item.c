@@ -2,7 +2,7 @@
 #include "isp.h"
 
 int
-isp_item_set(Isp *ip)
+isp_item_load(Isp *ip)
 {
   char dbifn[strlen(ip->perm)+strlen("-itm0")];
   sprintf(dbifn, "%s-itm", ip->perm);
@@ -14,17 +14,43 @@ isp_item_set(Isp *ip)
       ip->errx = ip->item;
       return 1;
     }
+
+  ip->itemdata.page = (ccp)pool_copy((ucp)k, ip->p);
+  
+  char *s = strchr(ip->itemdata.page, '\t');
+  *s++ = '\0';
+
+  ip->itemdata.zoom = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+  
+  ip->itemdata.zpag = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+
+  if ('#' == *s)
+    ip->itemdata.prev = NULL;
+  else
+    ip->itemdata.prev = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+
+  if ('#' == *s)
+    ip->itemdata.next = NULL;
+  else
+    ip->itemdata.next = s;
+  
+  return 0;
+}
+
+int
+isp_item_set(Isp *ip)
+{
+  isp_item_load(ip);
+  
   /* This implementation doesn't support creating an unzoomed pager from an item yet */
-  char *s = k;
-  while (*s && !isspace(*s))
-    ++s;
-  while (*s && isspace(*s))
-    ++s;
-  ip->zoom = s;
-  while (*s && !isspace(*s))
-    ++s;
-  while (*s && isspace(*s))
-    ++s;
-  ip->page = k;
+  ip->zoom = ip->itemdata.zoom;
+  ip->page = ip->itemdata.zpag;
+
   return 0;
 }

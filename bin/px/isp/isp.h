@@ -113,6 +113,8 @@ struct isp_itemdata
   const char *page;
   const char *zoom;
   const char *zpag;
+  const char *prev;
+  const char *next;
 };
 
 #include "../pxdefs.h"
