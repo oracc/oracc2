@@ -22,6 +22,14 @@ pui_at_pager_data(Isp *ip, FILE *fp)
   pattrs("data-zoom", ip->zoom);
   pattrs("data-page", ip->page);
   pattrd("data-pmax", active_pages(ip));
+  if (ip->item)
+    {
+      const char *prev = ip->itemdata.prev ? ip->itemdata.prev : "";
+      const char *next = ip->itemdata.next ? ip->itemdata.next : "";
+      pattrs("data-prev", prev);
+      pattrs("data-item", ip->item);
+      pattrs("data-next", next);
+    }
 }
 
 void
@@ -87,7 +95,12 @@ pui_at_status(Isp *ip, FILE *fp)
 void
 pui_at_state(Isp *ip, FILE *fp)
 {
-  fputs("page", fp);
+  if (ip->item)
+    fputs("item", fp);
+  else if (ip->srch)
+    fputs("srch", fp);
+  else
+    fputs("page", fp);
 }
 
 void

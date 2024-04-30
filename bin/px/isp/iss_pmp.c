@@ -118,11 +118,23 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoomth, int zoo
   const char *next = NULL;
 
   if (itemnth > 0)
-    prev = items[itemnth-1];
+    {
+      prev = strchr(items[itemnth-1],':');
+      if (prev)
+	++prev;
+      else
+	prev = items[itemnth-1];
+    }
   else
     prev = "#";
   if (items[itemnth+1])
-    next = items[itemnth+1];
+    {
+      next = strchr(items[itemnth+1],':');
+      if (next)
+	++next;
+      else
+	next = items[itemnth+1];
+    }
   else
     next = "#";
   char key[8];

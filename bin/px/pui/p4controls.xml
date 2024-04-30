@@ -2,24 +2,36 @@
   <div id="p4itemNav" class="p4items @@pui_ceid()@@">
     <p class="bg-dk">
 
-      <img id="p3itemsview" class="p4icon p4spread" src="/img/p3-pageitem.png"
+      <img id="p4PageItem" class="p4icon p4spread" src="/img/p3-pageitem.png"
 	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
-	   onclick="p3action('viewstatePages')"/>
+	   onclick="toggle_pi()"/>
 
       <!--Item-->
-      <img class="p4icon p4spread" src="/img/p3-backward.png" alt="Item back" title="Item back" name="ilarrow" id="ilarrow"
-	   onclick="p3action('itemback')"/>
+      <img id="p4ItemPrev" class="p4icon p4spread" src="/img/p3-backward.png"
+	   alt="Item back" title="Item back"
+	   onclick="act_item_prev()"/>
       
-      <input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" value="@@cgivar:item@@"/>
-      
-      <img class="p4icon" src="/img/p3-forward.png" alt="Item forward" title="Item forward" name="irarrow" id="irarrow"
-	   onclick="p3action('itemfwd')"/>
-      
-      <span value="@@runtime:items@@"/> Texts
-      [<span class="resultcount" value="@@runtime:resultcount@@"/> matches]
+      <!--<input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" value="@@cgivar:item@@"/>-->
 
-      @@pui_translations()@@
-      <input type="checkbox" onchange="toggle_to()" id="transonly" value="@@cgivar:transonly@@"/>&#xa0;only
+      <span id="p4ItemView">ITEM VIEW</span>
+      
+      <img id="p4ItemNext" class="p4icon" src="/img/p3-forward.png"
+	   alt="Item forward" title="Item forward"
+	   onclick="act_item_next()"/>
+
+      <div id="p4ItemXMD">
+	<span>@@pui_imax()@@ Texts</span>
+      </div>
+
+      <div id="p4ItemSRCH">
+	<span>@@pui_imax()@@ Texts</span>
+	[<span class="resultcount">@@pui_results()@@ matches]</span>
+      </div>
+
+      <div id="p4ItemXTF">
+	@@pui_translations()@@
+	<input type="checkbox" onchange="toggle_to()" id="transonly" value="@@pui_transonly()@@"/>&#xa0;only
+      </div>
 
     </p>
   </div>
@@ -33,7 +45,7 @@
 	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
 	   onclick="p3action('viewstateItems')"/>
       
-      <img id="plarrow" class="p4icon p4spread" src="/img/p3-backward.png"
+      <img id="p4PagePrev" class="p4icon p4spread" src="/img/p3-backward.png"
 	   alt="Page back" title="Page back"
 	   onclick="act_prev()"/>
       
@@ -41,7 +53,7 @@
       <input id="p4Pageset" type="text" onchange="act_page()" size="3"
 	     value="@@pui_current_page()@@"/>
 
-      <img id="prarrow" class="p4icon p4spread" src="/img/p3-forward.png"
+      <img id="p4PageNext" class="p4icon p4spread" src="/img/p3-forward.png"
 	   alt="Page forward" title="Page forward"
 	   onclick="act_next()"/>
 

@@ -6,8 +6,9 @@
 
 #p4Menu.auto { display: none; }
 
-#p4Controls.page .p4items { display: none; }
-#p4Controls.item .p4pages { display: none; }
+#p4Controls.item .p4pages,.p4srch { display: none; }
+#p4Controls.page .p4items,.p4srch { display: none; }
+#p4Controls.srch .p4items,.p4pages { display: none; }
 
 #p4Controls.page #p4ToggleMeta { display: none; }
 
@@ -16,6 +17,8 @@
 #p4PageNav.xmd #p4CeType { display: none; }
 
 #p4SrchResultCount:not(.srch) { display: none; }
+
+#p4ItemXMD,#p4ItemXTF,#p4ItemSRCH { display: inline; }
 
 /* Formatting CSS */
 

@@ -158,6 +158,7 @@ typedef struct isp
   int olev;	    /* outline levels, i.e., number of headings
 		       without any appended designation */
   int debug;
+  int srch;
   int verbose;
   int web;
   int argc;

@@ -71,7 +71,7 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:m:z:p:s:k:h:x:u:c:l:a:vw");
+    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:m:z:p:i:s:k:h:x:u:c:l:a:vw");
   opt_ip = NULL;
   if (ret && !ip->err)
     ip->err = "processing options";
