@@ -36,6 +36,7 @@ px_valid_project(Isp *ip)
     }
   else
     {
+      ip->projdir = pool_copy(dir, ip->p);
       struct xpd *xp = xpd_init(ip->project, ip->p);
       if (0 == xp->opts->key_count)
 	{

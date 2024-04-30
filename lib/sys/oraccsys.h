@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include <wchar.h>
 #include <wctype.h>
 #include <sys/stat.h>

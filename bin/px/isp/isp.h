@@ -109,14 +109,19 @@ struct isp_mapdata
 
 struct isp_itemdata
 {
-  Dbi_index *dp;
+  const char **langs;
+  const char *lmem;
+  const char *item;
+  const char *html;
+  const char *dots;
   const char *page;
   const char *zoom;
   const char *zpag;
   const char *prev;
   const char *next;
   const char *xmdxsl;
-  const char *dir;
+  const char *bld;
+  Dbi_index *dp;
 };
 
 #include "../pxdefs.h"
@@ -129,6 +134,7 @@ typedef struct isp
   const char *oracc;	/* the system oracc install, usually /home/oracc */
   struct isp_cache cache;
   const char *project;
+  const char *projdir;
   const char *list_name;
   struct isp_list_loc lloc;
   struct isp_sort sort;
