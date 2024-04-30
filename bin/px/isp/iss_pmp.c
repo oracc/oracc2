@@ -125,14 +125,10 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoomth, int zoo
     next = items[itemnth+1];
   else
     next = "#";
-  char key[strlen(items[itemnth])+1];
+  char key[8];
   char *s = strchr(items[itemnth], ':');
   if (s)
-    {
-      int len = s - items[itemnth];
-      strncpy(key, items[itemnth], len);
-      key[len] = '\0';
-    }
+    strcpy(key, s+1);
   else
     strcpy(key, items[itemnth]);
 	
