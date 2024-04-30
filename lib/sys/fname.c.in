@@ -223,7 +223,7 @@ expand (const char *project, const char *pqid, const char *ext)
   const char*colon;
 
   *buf = '\0';
-  if (!pqid || !ext)
+  if (!pqid)
     return NULL;
   if (!project)
     *projbuf = '\0';
@@ -241,7 +241,10 @@ expand (const char *project, const char *pqid, const char *ext)
   prefix[4] = '\0';
   strncpy(pqid_buf,pqid,7);
   pqid_buf[7] = '\0';
-  sprintf(buf,"%s/bld/%s/%s/%s/%s.%s",oracc,projbuf,prefix,pqid_buf,pqid_buf,ext);
+  if (ext)
+    sprintf(buf,"%s/bld/%s/%s/%s/%s.%s",oracc,projbuf,prefix,pqid_buf,pqid_buf,ext);
+  else
+    sprintf(buf,"%s/bld/%s/%s/%s",oracc,projbuf,prefix,pqid_buf);
   return buf;
 }
 

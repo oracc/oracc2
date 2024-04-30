@@ -56,5 +56,17 @@ isp_item_set(Isp *ip)
   if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
     return 1;
 
+  ip->itemdata.dir = expand(ip->project, ip->item, NULL);
+  struct stat st;
+  stat(ip->itemdata.dir, &st);
+  if (!S_ISDIR(st.st_mode))
+    {
+      ip->err = PX_ERROR_START "item directory %s not found or not readable\n";
+      ip->errx = ip->itemdata.dir ? ip->itemdata.dir : "(null)";
+      return 1;
+    }
+
+  fprintf(stderr, "itemdir=%s\n", ip->itemdata.dir);
+  
   return 0;
 }
