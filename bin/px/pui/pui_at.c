@@ -129,3 +129,14 @@ pui_at_content(Isp *ip, FILE *fp)
   else
     file_copy(ip->cache.page, "-");
 }
+
+void
+pui_at_item_meta(Isp *ip, FILE *fp)
+{
+  file_copy(ip->cache.meta, "-");
+}
+void
+pui_at_item_data(Isp *ip, FILE *fp)
+{
+  file_copy(ip->cache.html, "-");
+}

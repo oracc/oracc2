@@ -20,3 +20,5 @@ struct atactionstab;
 "pui_srch_results()", &pui_at_srch_results
 "pui_ceid()", &pui_at_ceid
 "pui_pager_data()", &pui_at_pager_data
+"pui_item_data()", &pui_at_item_data
+"pui_item_meta()", &pui_at_item_meta

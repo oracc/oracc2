@@ -27,10 +27,9 @@ struct isp_cache
   const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the filename of the page-content for a zoomed slice; z=0 for no zoom */
   const char *zout;	/* the filename of the zoom-menu for a zoomed slice; z=0 for no zoom */
+  const char *item;	/* the cache-dir for item data */
   const char *meta;	/* the filename of the metadata for the displayed item */
-  const char *item;	/* the item being displayed from a page in a
-			   zoomed slice; z=0 for no zoom; this is a
-			   PQX ID or OID not an integer index into a list */
+  const char *html;	/* the filename of the html content of the displayed item */
 };
 
 /* Pointers to project config entries */

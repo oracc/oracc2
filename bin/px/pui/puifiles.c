@@ -34,7 +34,7 @@
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 11
+#define TOTAL_KEYWORDS 12
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 14
 #define MIN_HASH_VALUE 10
@@ -91,7 +91,9 @@ static struct puifilestab wordlist[] =
     {"p4html.xml", &p4html},
 #line 8 "puifiles.g"
     {"p4error.xml", &p4error},
-    {""}, {""},
+    {""},
+#line 18 "puifiles.g"
+    {"p4itemxtf.xml", &p4itemxtf},
 #line 15 "puifiles.g"
     {"p4dropdown.xml", &p4dropdown},
 #line 14 "puifiles.g"

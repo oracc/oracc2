@@ -85,13 +85,13 @@ isp_item_lang(Isp *ip)
 	  if (!strcmp(ip->lang, ip->itemdata.langs[i]))
 	    {
 	      const char *fn = expand_xtr(ip->project, ip->itemdata.item, "project", ip->lang);
-	      if (!access(fn))
+	      if (!access(fn, R_OK))
 		return ip->lang;
 	    }
 	  else if (!first_lang)
 	    {
 	      const char *fn = expand_xtr(ip->project, ip->itemdata.item, "project", ip->itemdata.langs[i]);
-	      if (!access(fn))
+	      if (!access(fn, R_OK))
 		first_lang = ip->itemdata.langs[i];
 	    }
 	}
@@ -107,19 +107,57 @@ isp_item_lang(Isp *ip)
 }
 
 static int
+isp_create_xtf(Isp *ip)
+{
+  List *args = list_create(LIST_SINGLE);
+  list_add(args, (void*)ip->oracc);
+  list_add(args, (void*)"/bin/ispxtf.sh");
+  list_add(args, " ");
+  list_add(args, (void*)ip->project);
+  list_add(args, " ");
+  list_add(args, (void*)ip->itemdata.item);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.item);
+  unsigned char *syscmd = list_concat(args);
+  if (ip->verbose)
+    fprintf(stderr, "isp: isp_create_xtf: %s\n", syscmd);
+
+  if (system((ccp)syscmd))
+    {
+      ip->err = PX_ERROR_START "isp_create_xtf failed system call:\n\n\t%s\n";
+      ip->errx = (ccp)syscmd;
+      return 1;
+    }
+  
+  return 0;
+}
+
+
+static int
 isp_item_xtf(Isp *ip)
 {
   const char *xtflang = isp_item_lang(ip);
   char *html = expand(ip->project, ip->item, "html");
 
-  ip->itemdata.html = pool_alloc(strlen(html)+strlen(xtflang)+2);
-  strcpy(ip->itemdata.html, html);
+  char itemcache[strlen(ip->cache.sub)+strlen(ip->item)+2];
+  sprintf(itemcache, "%s/%s", ip->cache.sub, ip->item);
+  ip->cache.item = (ccp)pool_copy((ucp)itemcache, ip->p);
 
+  ip->cache.meta = (ccp)pool_alloc(strlen(itemcache)+strlen("/meta.xml0"), ip->p);
+  sprintf((char*)ip->cache.meta, "%s/meta.xml", itemcache);
+
+  ip->itemdata.html = (ccp)pool_alloc(strlen(itemcache)+strlen(html)+strlen(xtflang)+3, ip->p);
+  sprintf((char*)ip->itemdata.html, "%s/%s", itemcache, html);
   if (strcmp(xtflang, "en"))
-    sprintf(ip->itemdata.html+strlen(ip->itemdata.html), ".%s", xtflang);
+    sprintf((char*)(ip->itemdata.html+strlen(ip->itemdata.html)), ".%s", xtflang);
+  
+  int need_html = access(ip->itemdata.html, R_OK);
+  int need_meta = access(ip->itemdata.html, R_OK);
 
-  
-  
+  if (need_html || need_meta)
+    if (isp_create_xtf(ip))
+      return 1;
+
   return 0;
 }
 

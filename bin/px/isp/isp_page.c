@@ -134,12 +134,15 @@ create_page_div(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->cemd);
   unsigned char *syscmd = list_concat(args);
+
   if (ip->verbose)
     fprintf(stderr, "isp: create_page_div: %s\n", syscmd);
+
   if (system((ccp)syscmd))
     {
-      ip->err = PX_ERROR_START "create_page_div system call failed. Argument to system() call was:\n\n\t%s\n";
+      ip->err = PX_ERROR_START "create_page_div failed system call:\n\n\t%s\n";
       ip->errx = (ccp)syscmd;
+      return 1;
     }
   
   return 0;
