@@ -1,6 +1,6 @@
 #!/bin/dash
 #
-# $1=project $2=PQX $3=tr-lang $4=item-dir $5=cache-dir $6=xmdoutline.xsl
+# $1=project $2=PQX $3=tr-lang $4=item-dir $5=xmdoutline.xsl
 #
 # New oraccopt will support:
 #
@@ -8,15 +8,62 @@
 #
 # xtlproject=`oraccopt -p $1 -d $1 -a catalog-master-project
 #
-xtl=`pqxpand xtl $xtlproject:$2`
+oraccbin=@@ORACC_BUILDS@@/bin
+project=$1
+PQX=$2
+tr=$3
+cachedir=$4
+xmdout=$5
+errlog=`dirname $cachedir`/err.log
+rm -f $errlog
+exec 2>$errlog
+echo $0 $* >&2
+xtl=`$oraccbin/pqxpand xtl $xtlproject:$PQX`
+if [ ! $? -eq 0 ]; then
+    exit 1
+fi
+projarg="-param project '$project'"
 if [ -r $xtl ]; then
     xtlarg="-stringparam xtl $xtl"
 fi
-xmd=$3/$2.xmd
-xsltproc $projarg $xtlarg $5 $xmd >$4/meta.xml
-if [ $? == 0 ]; then
-    
-else
+xmd=`$oraccbin/pqxpand xmd $project:$PQX`
+if [ ! $? -eq 0 ]; then
     exit 1
 fi
-exit 0
+mkdir -p $cachedir || exit 1
+xsltproc $projarg $xtlarg $xmdout $xmd >$cachedir/meta.xml
+if [ $? -eq 0 ]; then
+    four=`echo $PQX | head -c4`
+    mkdir -p ${ORACC_BUILDS}/www/htm/$1/$four/$PQX || exit 1
+    $oraccbin/xtf2txh -h -i $project:$PQX
+    if [ $? -eq 0 ]; then
+	$oraccbin/xmd2htm -h -i $project:$PQX
+	if [ ! $? -eq 0 ]; then
+	    echo "Failed call invoked as:" >&2
+	    echo "	$oraccbin/xmd2htm -h -i $project:$PQX" >&2
+	    echo $0: xmd2htm failed. Stop. >&2
+	    exit 1
+	fi
+    else
+	echo "Failed call invoked as:" >&2
+	echo "	$oraccbin/xtf2txh -h -i $project:$PQX" >&2
+	echo $0: xtf2txh failed. Stop. >&2
+	exit 1
+    fi
+else
+    echo "Failed call invoked as:" >&2
+    echo "	xsltproc $projarg $xtlarg $xmdout $xmd >$cachedir/meta.xml" >&2
+    echo $0: xsltproc failed. Stop. >&2
+    exit 1
+fi
+#
+# Removing the errlog when exiting 0 is the right thing to do but it
+# means that we have to be careful in the above to test $? as we go
+# and exit 1 appropriately.
+#
+if [ $? -eq 0 ]; then
+    rm -f $errlog
+fi
+
+# exit with last program's status; don't exit 0/1 based on empty
+# errlog because that could contain diagnostics

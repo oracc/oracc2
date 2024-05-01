@@ -1,6 +1,8 @@
 #ifndef ISP_H_
 #define ISP_H_
 
+#include <setjmp.h>
+
 #include <memo.h>
 #include <pool.h>
 #include <dbi.h>
@@ -173,6 +175,7 @@ typedef struct isp
   struct xpd *xpd;
   Pool *p;
   Memo *tmem;
+  jmp_buf errjmp;
 } Isp;
 
 #if 0

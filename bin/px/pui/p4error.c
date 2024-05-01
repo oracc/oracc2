@@ -11,7 +11,7 @@ const char *p4error =
 "    <p>The reported error was:</p>\n"
 "\n"
 "    <pre id=\"p4Error\">@@pui_error()@@</pre>\n"
-"\n"
+"    \n"
 "    @@p4debugdiv.xml@@\n"
 "  </body>\n"
 "</html>\n"

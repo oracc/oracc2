@@ -12,6 +12,8 @@
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
 
+#include <libexslt/exslt.h>
+
 extern int xmlLoadExtDtdDefaultValue;
 
 static const char *wrapper_err = NULL;
@@ -57,17 +59,23 @@ wrapper(const char *sheet, const char **params, const char *xmldoc, const char *
       last_sheet = NULL;
     }
 
+  /* Oracc doesn't use named entities */
+#if 0
   xmlSubstituteEntitiesDefault(1);
   xmlLoadExtDtdDefaultValue = 1;
+#endif
 
+  /* Oracc does use exslt */
+  exsltRegisterAll();
+  
   if (!last_sheet || strcmp(last_sheet, sheet))
     {
       if (cur)
 	xsltFreeStylesheet(cur);
       if (!(cur = xsltParseStylesheetFile((const xmlChar *)sheet)))
 	{
-#define SHEET_ERR "error parsing sheet 0"
-	  char buf[strlen(sheet)+strlen(SHEET_ERR)];
+#define SHEET_ERR "error parsing sheet "
+	  char buf[strlen(sheet)+strlen(SHEET_ERR)+1];
 	  sprintf(buf, "%s%s", SHEET_ERR, sheet);
 	  wrapper_err = strdup(buf);
 	  return 1;
@@ -76,8 +84,8 @@ wrapper(const char *sheet, const char **params, const char *xmldoc, const char *
   
   if (!(doc = xmlParseFile(xmldoc)))
     {
-#define DOC_ERR "error parsing XML document 0"
-      char buf[strlen(xmldoc)+strlen(DOC_ERR)];
+#define DOC_ERR "error parsing XML document "
+      char buf[strlen(xmldoc)+strlen(DOC_ERR)+1];
       sprintf(buf, "%s%s", DOC_ERR, xmldoc);
       wrapper_err = strdup(buf);
       return 1;
@@ -85,15 +93,26 @@ wrapper(const char *sheet, const char **params, const char *xmldoc, const char *
   
   if (!(res = xsltApplyStylesheet(cur, doc, params)))
     {
-#define APPLY_ERR "error applying sheet___to  0"
+#define APPLY_ERR "error applying sheet___to 0"
       char buf[strlen(sheet)+strlen(xmldoc)+strlen(APPLY_ERR)];
       sprintf(buf, "error applying sheet %s to %s", sheet, xmldoc);
       wrapper_err = strdup(buf);
       return 1;
     }
 
+  FILE *outfp;
+  
   if (!output || !strcmp(output, "-"))
-    xsltSaveResultToFile(stdout, res, cur);
+    outfp = stdout;
+  else if (!(outfp = fopen(output, "w")))
+    {
+#define OUT_ERR "error writing XML output "
+      char buf[strlen(output)+strlen(DOC_ERR)+1];
+      sprintf(buf, "%s%s", OUT_ERR, output);
+      wrapper_err = strdup(buf);
+      return 1;
+    }
+  xsltSaveResultToFile(outfp, res, cur);    
 
   xmlFreeDoc(res);
   xmlFreeDoc(doc);
@@ -156,18 +175,20 @@ perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
   strcpy(project, qpqx);
   char *colon = strchr(project, ':');
   *colon = '\0';
+  expand_base(NULL);
   char *in = strdup(expand(NULL, qpqx, proginfo->inext));
-  char *out = NULL;
+  const char *out = NULL;
+  expand_base("/home/oracc/www/htm");
   if (!outfile)
     out = strdup(expand(NULL, qpqx, proginfo->outext));
   else
     out = outfile;
   const char **parms = params(proginfo, project, trans);
-  wrapper(proginfo->sheetpath, parms, in, out);
+  int res = wrapper(proginfo->sheetpath, parms, in, out);
   free(in);
   if (!outfile)
-    free(out);
-  return 0;
+    free((void*)out);
+  return res;
 }
 
 static struct progtab *
@@ -192,6 +213,8 @@ program(const char *progarg)
 
 int
 main(int argc, char **argv) {
+  int status = 0;
+  
   sparms = hash_create(5);
 
   struct progtab *proginfo = program(invoke = argv[0]);
@@ -204,24 +227,49 @@ main(int argc, char **argv) {
   
   options(argc, argv, "hi:l:o:p:t:v");
 
+  if (!project)
+    {
+      if (infile)
+	{
+	  char *xproject = strdup(infile);
+	  char *colon = strchr(xproject, ':');
+	  if (colon)
+	    *colon = '\0';
+	  project = xproject;
+	}
+      else
+	{
+	  fprintf(stderr, "%s: no project set. Stop.\n", argv[0]);
+	  return 1;
+	}
+    }
+  
   if (infile || listfile)
     {
       const char **f = files();
       int i;
       for (i = 0; f[i]; ++i)
-	perfile(proginfo, f[i], translation);
+	if ((status = perfile(proginfo, f[i], translation)))
+	  {
+	    fprintf(stderr, "%s\n", wrapper_last_err());
+	    break;
+	  }
     }
   else
     {
       const char *f;
       while ((f = (ccp)loadoneline(stdin, NULL)))
-	perfile(proginfo, f, translation);
+	if ((status = perfile(proginfo, f, translation)))
+	  {
+	    fprintf(stderr, "%s\n", wrapper_last_err());
+	    break;
+	  }
     }
   
   xsltCleanupGlobals();
   xmlCleanupParser();
 
-  return(0);
+  return(status);
 }
 
 int
@@ -231,7 +279,6 @@ opts(int opt, const char *arg)
     {
     case 'h':
       htmlmode = 1;
-      expand_base("/home/oracc/www/htm");
       break;
     case 'i':
       infile = arg;

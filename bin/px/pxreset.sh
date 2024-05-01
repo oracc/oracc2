@@ -6,7 +6,9 @@ if [ "$project" = "" ]; then
 fi
 
 echo Resetting P4 cache for $project ...
-sudo rm -fr ${ORACC_BUILDS}/www/is.d/$project/*
-sudo chown www-data:oracc ${ORACC_BUILDS}/www/is.d/$project
-sudo chmod +s ${ORACC_BUILDS}/www/is.d/$project
-sudo chmod g+w ${ORACC_BUILDS}/www/is.d/$project
+sudo rm -fr ${ORACC_BUILDS}/www/{htm,is.d}/$project/*
+mkdir -p ${ORACC_BUILDS}/www/{htm,is.d}/$project/*
+sudo chown www-data:oracc ${ORACC_BUILDS}/www/{htm,is.d}/$project
+sudo chmod +s ${ORACC_BUILDS}/www/{htm,is.d}/$project
+sudo chmod g+w ${ORACC_BUILDS}/www/{htm,is.d}/$project
+ls -ld ${ORACC_BUILDS}/www/{htm,is.d}/$project

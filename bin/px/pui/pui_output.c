@@ -49,6 +49,7 @@ pui_output(Isp *ip, FILE *fp, const char *s)
   if (!strncmp(s, errstr, strlen(errstr)))
     {
       ip->err = s;
+      ip->errx = "";
       return 1;
     }
   const char *end = s + strlen(s);
@@ -76,7 +77,7 @@ pui_filetext(const char *file)
     return *p->text;
   else
     {
-      const char *prefix = "px: error: failed to find text for supposed file ";
+      const char *prefix = "px: error: failed to find text for supposed file ";      
       char err[strlen(file)+strlen(prefix)+1];
       sprintf(err, "%s%s", prefix, file);
       return strdup(err);

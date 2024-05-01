@@ -78,6 +78,15 @@ void
 pui_at_error(Isp *ip, FILE *fp)
 {
   fprintf(fp, ip->errx ? ip->err : PX_ERROR_START "%s", ip->errx ? ip->errx : ip->err);
+
+  char errbuf[strlen(ip->cache.sub)+strlen("/err.log0")];
+  sprintf(errbuf, "%s/err.log", ip->cache.sub);
+  if (!access(errbuf, R_OK))
+    {
+      fprintf(fp, "\n\n<h1>Additional information from error log:</h1>\n\n");
+      file_copy(errbuf, "-");
+      fprintf(fp, "\n");
+    }
 }
 
 void
@@ -125,7 +134,10 @@ void
 pui_at_content(Isp *ip, FILE *fp)
 {
   if (ip->item)
-    (void)pui_output(ip, stdout, pui_filetext("p4item.xml"));
+    {
+      if (pui_output(ip, stdout, pui_filetext("p4item.xml")))
+	longjmp(ip->errjmp, 1);
+    }
   else
     file_copy(ip->cache.page, "-");
 }

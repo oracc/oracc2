@@ -117,14 +117,18 @@ isp_create_xtf(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.item);
   list_add(args, " ");
+  list_add(args, (void*)ip->itemdata.langs[0]);
+  list_add(args, " ");
   list_add(args, (void*)ip->cache.item);
+  list_add(args, " ");
+  list_add(args, (void*)ip->itemdata.xmdxsl);
   unsigned char *syscmd = list_concat(args);
   if (ip->verbose)
     fprintf(stderr, "isp: isp_create_xtf: %s\n", syscmd);
 
   if (system((ccp)syscmd))
     {
-      ip->err = PX_ERROR_START "isp_create_xtf failed system call:\n\n\t%s\n";
+      ip->err = PX_ERROR_START "isp_create_xtf failed system call:\n\t%s\n";
       ip->errx = (ccp)syscmd;
       return 1;
     }

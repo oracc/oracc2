@@ -4,8 +4,12 @@
 static void
 print_hdr(void)
 {
-  fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
-  fflush(stdout);
+  static int hdone = 0;
+  if (!hdone++)
+    {
+      fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
+      fflush(stdout);
+    }
 }
 
 int
@@ -43,8 +47,10 @@ main(int argc, char **argv)
 #if 1
   if (ip->debug)
     {
-      print_hdr();  
-      if (pui_output(ip, stdout, pui_filetext("p4debug.xml")))
+      print_hdr();
+      if (setjmp(ip->errjmp))
+	goto error;
+      else if (pui_output(ip, stdout, pui_filetext("p4debug.xml")))
 	goto error;
     }
   else
@@ -52,13 +58,19 @@ main(int argc, char **argv)
       if (ip->pack && !strcmp(ip->pack, "div"))
 	{
 	  /* option to print hdr here ? */
-	  if (pui_output(ip, stdout, pui_filetext("p4pager.xml")))
+	  if (setjmp(ip->errjmp))
+	    goto error;
+	  else if (pui_output(ip, stdout, pui_filetext("p4pager.xml")))
+	    goto error;
+	  else if (ip->err)
 	    goto error;
 	}
       else
 	{
 	  print_hdr();  
-	  if (pui_output(ip, stdout, pui_filetext("p4html.xml")))
+	  if (setjmp(ip->errjmp))
+	    goto error;
+	  else if (pui_output(ip, stdout, pui_filetext("p4html.xml")))
 	    goto error;
 	}
     }

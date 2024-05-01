@@ -15,7 +15,10 @@ const char *expand_basedir = NULL;
 void
 expand_base(const char *d)
 {
-  expand_basedir = d;
+  if (d)
+    expand_basedir = d;
+  else
+    expand_basedir = NULL;
 }
 
 const char *
@@ -226,7 +229,7 @@ char *
 expand (const char *project, const char *pqid, const char *ext)
 {
   static char buf[MAX_PATH_];
-  static const char*oracc;
+  static const char *oracc_bld = NULL;
   char projbuf[1024], prefix[5], pqid_buf[8];
   const char*colon;
 
@@ -243,21 +246,26 @@ expand (const char *project, const char *pqid, const char *ext)
     }
   else if (project)
     strcpy(projbuf,project);
-  if (!oracc)
+  const char *ebase;
+  if (expand_basedir)
+    ebase = expand_basedir;
+  else if (oracc_bld)
+    ebase = oracc_bld;
+  else
     {
-      if (expand_basedir)
-	oracc = expand_basedir;
-      else
-	oracc = oracc_home();
+      strcpy(buf, oracc_home());
+      strcat(buf, "/bld");
+      ebase = oracc_bld = strdup(buf);
+      *buf = '\0';      
     }
   strncpy(prefix,pqid,4);
   prefix[4] = '\0';
   strncpy(pqid_buf,pqid,7);
   pqid_buf[7] = '\0';
   if (ext)
-    sprintf(buf,"%s/bld/%s/%s/%s/%s.%s",oracc,projbuf,prefix,pqid_buf,pqid_buf,ext);
+    sprintf(buf,"%s/%s/%s/%s/%s.%s",ebase,projbuf,prefix,pqid_buf,pqid_buf,ext);
   else
-    sprintf(buf,"%s/bld/%s/%s/%s",oracc,projbuf,prefix,pqid_buf);
+    sprintf(buf,"%s/%s/%s/%s",ebase,projbuf,prefix,pqid_buf);
   return buf;
 }
 
