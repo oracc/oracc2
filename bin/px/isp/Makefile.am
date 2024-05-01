@@ -7,7 +7,7 @@ noinst_LTLIBRARIES=libisp.la
 #ispox
 #ispmpx
 
-bin_SCRIPTS=ispdiv.sh
+bin_SCRIPTS=ispdiv.sh ispxtf.sh
 
 scriptdata_DATA=isp-ce-HTML.xsl
 

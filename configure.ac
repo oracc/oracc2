@@ -115,6 +115,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/xx/osort/Makefile
 		 bin/xx/rnv/Makefile
 		 bin/xx/tis/Makefile
+		 bin/xx/wrapper/Makefile
 		 msc/Makefile
 		 msc/adm/Makefile
 		 msc/adm/skel/Makefile

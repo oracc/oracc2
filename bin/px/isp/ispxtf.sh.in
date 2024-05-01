@@ -1,0 +1,22 @@
+#!/bin/dash
+#
+# $1=project $2=PQX $3=tr-lang $4=item-dir $5=cache-dir $6=xmdoutline.xsl
+#
+# New oraccopt will support:
+#
+#   -p project -d default -a (search ancestor-or-self config) -s (search system config) OPTION
+#
+# xtlproject=`oraccopt -p $1 -d $1 -a catalog-master-project
+#
+xtl=`pqxpand xtl $xtlproject:$2`
+if [ -r $xtl ]; then
+    xtlarg="-stringparam xtl $xtl"
+fi
+xmd=$3/$2.xmd
+xsltproc $projarg $xtlarg $5 $xmd >$4/meta.xml
+if [ $? == 0 ]; then
+    
+else
+    exit 1
+fi
+exit 0

@@ -67,6 +67,7 @@ bin/xx/tis/tokx
 bin/xx/tis/vidx
 bin/xx/tlitsig
 bin/xx/xmlify
+bin/xx/wrapper/xsltx
 msc/lex/lex-collapse-refs
 msc/sys/proj-from-conf.sh
 
@@ -93,6 +94,7 @@ oid_domain.c
 oid_type.c
 osh_commands.c
 pqx_h_tab.c
+progtab.c
 propmask.c
 qpnnames.c
 selections.c
@@ -115,6 +117,7 @@ bin/px/ice/pg/ptoq.c
 bin/px/ice/pg/pd.c
 bin/px/ice/pg/pg2.c
 bin/px/ice/pg/sortinfo.c
+bin/px/isp/ispxtf.sh
 bin/qx/qindex.sh
 bin/qx/qindexall.sh
 bin/wx/oai.c
