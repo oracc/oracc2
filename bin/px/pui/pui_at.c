@@ -135,7 +135,7 @@ pui_at_content(Isp *ip, FILE *fp)
 {
   if (ip->item)
     {
-      if (pui_output(ip, stdout, pui_filetext("p4item.xml")))
+      if (pui_output(ip, stdout, pui_filetext("p4itemxtf.xml")))
 	longjmp(ip->errjmp, 1);
     }
   else
