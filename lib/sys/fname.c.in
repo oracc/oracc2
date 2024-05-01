@@ -10,6 +10,14 @@
 #define MAX_BASENAME_ 1024
 #define MAX_PATH_     2048
 
+const char *expand_basedir = NULL;
+
+void
+expand_base(const char *d)
+{
+  expand_basedir = d;
+}
+
 const char *
 oracc_home (void)
 {
@@ -236,7 +244,12 @@ expand (const char *project, const char *pqid, const char *ext)
   else if (project)
     strcpy(projbuf,project);
   if (!oracc)
-    oracc = oracc_home();
+    {
+      if (expand_basedir)
+	oracc = expand_basedir;
+      else
+	oracc = oracc_home();
+    }
   strncpy(prefix,pqid,4);
   prefix[4] = '\0';
   strncpy(pqid_buf,pqid,7);

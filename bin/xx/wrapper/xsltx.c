@@ -25,6 +25,9 @@ const char *outfile;
 const char *project;
 const char *translation;
 
+int htmlmode = 0;
+int verbose = 0;
+
 const char *
 wrapper_last_err(void)
 {
@@ -38,6 +41,15 @@ wrapper(const char *sheet, const char **params, const char *xmldoc, const char *
   static xsltStylesheetPtr cur = NULL;
   xmlDocPtr doc, res;
 
+  if (verbose)
+    {
+      fprintf(stderr, "%s", sheet);
+      int i;
+      for (i = 0; params[i]; i += 2)
+	fprintf(stderr, " %s=%s", params[i], params[i+1]);
+      fprintf(stderr, " <%s >%s\n", xmldoc, output);
+    }
+  
   if (!sheet)
     {
       xsltFreeStylesheet(cur);
@@ -144,19 +156,28 @@ perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
   strcpy(project, qpqx);
   char *colon = strchr(project, ':');
   *colon = '\0';
-  const char *in = expand(NULL, qpqx, proginfo->inext);
-  const char *out = expand(NULL, qpqx, proginfo->outext);
+  char *in = strdup(expand(NULL, qpqx, proginfo->inext));
+  char *out = NULL;
+  if (!outfile)
+    out = strdup(expand(NULL, qpqx, proginfo->outext));
+  else
+    out = outfile;
   const char **parms = params(proginfo, project, trans);
   wrapper(proginfo->sheetpath, parms, in, out);
+  free(in);
+  if (!outfile)
+    free(out);
   return 0;
 }
 
 static struct progtab *
 program(const char *progarg)
 {
-  const char *slash = strchr(progarg, '/');
+  const char *slash = strrchr(progarg, '/');
   if (!slash)
     slash = progarg;
+  else
+    ++slash;
   struct progtab *p = progtab(slash, strlen(slash));
   if (p)
     {
@@ -181,7 +202,7 @@ main(int argc, char **argv) {
       return 1;
     }
   
-  options(argc, argv, "i:l:o:p:t:");
+  options(argc, argv, "hi:l:o:p:t:v");
 
   if (infile || listfile)
     {
@@ -208,6 +229,10 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'h':
+      htmlmode = 1;
+      expand_base("/home/oracc/www/htm");
+      break;
     case 'i':
       infile = arg;
       break;
@@ -222,6 +247,9 @@ opts(int opt, const char *arg)
       break;
     case 't':
       translation = arg;
+      break;
+    case 'v':
+      verbose = 1;
       break;
     default:
       fprintf(stderr, "%s: unknown option -%c\n", invoke, opt);

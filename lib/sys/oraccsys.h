@@ -33,6 +33,7 @@ extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsiz
 #define	default_path(fn,fpath) new_path(fn, fpath, FALSE)
 #define	force_path(fn,fpath) new_path(fn, fpath, TRUE)
 
+extern void expand_base(const char *d);
 extern  char *expand(const char *project,const char *pqid,const char *ext);
 extern  char *expand_xtr (const char *project, const char *pqid, const char *code, const char *lang);
 extern  char * find_ext(char *fn);
