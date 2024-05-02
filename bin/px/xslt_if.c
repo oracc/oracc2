@@ -9,37 +9,6 @@ xslt_if_lasterr(void)
   return xslt_if_err;
 }
 
-static char *
-sparm(const char *p)
-{
-  char buf[strlen(p)+3];
-  char *ret;
-  sprintf(buf, "'%s'", p);
-  if (!(ret = hash_find(sparms, (ucp)buf)))
-    {
-      ret = strdup(buf);
-      hash_add(sparms, (ucp)ret, "");
-    }
-  return ret;
-}
-
-static const char **
-params(struct progtab *pinfo, const char *project, const char *trans)
-{
-  static char *p[7];
-  int null = 2;
-  p[0] = "project";
-  p[1] = sparm(project);
-  if (trans)
-    {
-      p[2] = "translation";
-      p[3] = sparm(trans);
-      null = 4;
-    }
-  p[null] = NULL;
-  return (const char **)p;
-}
-
 void
 xslt_init(void)
 {
@@ -49,7 +18,7 @@ xslt_init(void)
 void
 xslt_term(Xslt *xp)
 {
-  xsltFreeStylesheet(cur);
+  xsltFreeStylesheet(xp->cur);
   xmlFreeDoc(xp->doc);
   xmlFreeDoc(xp->res);
   xsltCleanupGlobals();
@@ -103,29 +72,36 @@ xslt_output(Xslt *xp)
 {
   FILE *outfp;
   
-  if (!output || !strcmp(output, "-"))
+  if (!xp->out || !strcmp(xp->out, "-"))
     outfp = stdout;
-  else if (!(outfp = fopen(output, "w")))
+  else if (!(outfp = fopen(xp->out, "w")))
     {
-#define OUT_ERR "error writing XML output "
-      char buf[strlen(output)+strlen(DOC_ERR)+1];
-      sprintf(buf, "%s%s", OUT_ERR, output);
-      wrapper_err = strdup(buf);
+#define OUT_ERR "unable to open XML output "
+      char buf[strlen(xp->out)+strlen(OUT_ERR)+1];
+      sprintf(buf, "%s%s", OUT_ERR, xp->out);
+      xslt_if_err = strdup(buf);
       return 1;
     }
-  xsltSaveResultToFile(outfp, res, cur);
+  int wbytes = xsltSaveResultToFile(outfp, xp->res, xp->cur);
   fclose(outfp);
+  if (wbytes < 0)
+    {
+#define WR_ERR "error writing XML output "
+      char buf[strlen(xp->out)+strlen(WR_ERR)+1];
+      sprintf(buf, "%s%s", WR_ERR, xp->out);
+      xslt_if_err = strdup(buf);
+      return 1;
+    }
   return 0;
 }
 
-Xslt
+Xslt *
 xslt_one_off(const char *xml, const char *xsl, const  char *out, const char **params)
 {
-  static xsltStylesheetPtr cur = NULL;
-  xmlDocPtr doc, res;
+  extern int verbose;
 
   Xslt xt = { .xml=xml, .xsl=xsl, .params=params, .out=out };
-
+  
   if (verbose)
     {
       fprintf(stderr, "%s", xt.xsl);
@@ -141,8 +117,10 @@ xslt_one_off(const char *xml, const char *xsl, const  char *out, const char **pa
     return NULL;
   if (xslt_transform(&xt))
     return NULL;
-  if (fp && xslt_output(&xt))
+  if (xt.out && xslt_output(&xt))
     return NULL;
-  
-  return xt;
+
+  Xslt *xp = malloc(sizeof(Xslt));
+  *xp = xt; 
+  return xp;
 }
