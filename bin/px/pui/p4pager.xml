@@ -1,4 +1,4 @@
-<div id="p4Pager" class="bborder-bot@@pui_pager_class()@@"@@pui_pager_data()@@>
+<div id="p4Pager" class="@@pui_pager_class()@@"@@pui_pager_data()@@>
   <div id="p4Masthead">
     <p id="p4HeadTitle" class="banner bbborder-top bborder-bot">
       <a href="/">Oracc:</a> <a href="/@@pui_project()@@">@@pui_title()@@</a>
@@ -20,6 +20,9 @@
   </div>
   <div id="p4Data">
     <div id="p4Menu">
+      <div id="p4MenuSelect">
+	@@pui_select_sort()@@
+      </div>
       @@pui_menu()@@
     </div>
     <div id="p4Content">

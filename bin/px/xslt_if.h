@@ -32,6 +32,7 @@ extern void xslt_init(void);
 extern void xslt_term(Xslt *xp);
 extern int xslt_parse_sheet(Xslt *xp);
 extern int xslt_parse_doc(Xslt *xp);
+extern int xslt_parse_docmem(Xslt *xp);
 extern int xslt_transform(Xslt *xp);
 extern int xslt_output(Xslt *xp);
 extern Xslt *xslt_one_off(const char *xml, const char *xmlstr, const char *xsl, const char *xslstr, const  char *out, const char **params);

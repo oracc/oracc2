@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <xpd.h>
 #include "../px.h"
+#include "../xslt_if.h"
 
 static int
 active_pages(Isp *ip)
@@ -38,6 +39,11 @@ pui_at_pager_class(Isp *ip, FILE *fp)
       strcpy(r+2, ip->data+1);
       fputs(r, fp);
     }
+  fputc(' ', fp);
+  if (ip->dors && '1' == *ip->dors)
+    fputs("special", fp);
+  else
+    fputs("default", fp);
 }
 
 void
@@ -180,4 +186,60 @@ void
 pui_at_item_data(Isp *ip, FILE *fp)
 {
   px_file_copy(ip, ip->itemdata.html, "-");
+}
+
+void
+pui_at_select_ce(Isp *ip, FILE *fp)
+{
+  const char *params[] = { "select", "'line'", NULL };
+  Xslt *xp = xslt_one_off("p4ceselect", p4ceselect, "p4select", p4select, "-", params);
+  if (!xp)
+    {
+      ip->err = xslt_if_lasterr();
+      longjmp(ip->errjmp, 1);
+    }
+  else
+    xslt_term(xp);
+}
+
+void
+pui_at_select_sort(Isp *ip, FILE *fp)
+{
+  const char *params[] = { "select", "'123'", NULL };
+  char osbufd[strlen(ip->oracc)+strlen(ip->project)+strlen("//02xml/p4OSdefault.xml0")];
+  sprintf(osbufd, "%s/%s/02xml/p4OSdefault.xml", ip->oracc, ip->project);
+  Xslt *xp = xslt_one_off(osbufd, NULL, "p4select", p4select, "-", params);
+  if (!xp)
+    {
+      ip->err = xslt_if_lasterr();
+      longjmp(ip->errjmp, 1);
+    }
+  else
+    xslt_term(xp);
+  char osbufs[strlen(ip->oracc)+strlen(ip->project)+strlen("//02xml/p4OSspecial.xml0")];
+  sprintf(osbufs, "%s/%s/02xml/p4OSspecial.xml", ip->oracc, ip->project);
+  xp = xslt_one_off(osbufs, NULL, "p4select", p4select, "-", params);
+  if (!xp)
+    {
+      ip->err = xslt_if_lasterr();
+      longjmp(ip->errjmp, 1);
+    }
+  else
+    xslt_term(xp);
+}
+
+void
+pui_at_select_trans(Isp *ip, FILE *fp)
+{
+  const char *params[] = { "select", "'en'", NULL };
+  char trbuf[strlen(ip->oracc)+strlen(ip->project)+strlen("//02xml/p4-trans-select.xml0")];
+  sprintf(trbuf, "%s/%s/02xml/p4-trans-select.xml", ip->oracc, ip->project);
+  Xslt *xp = xslt_one_off(trbuf, NULL, "p4select", p4select, "-", params);
+  if (!xp)
+    {
+      ip->err = xslt_if_lasterr();
+      longjmp(ip->errjmp, 1);
+    }
+  else
+    xslt_term(xp);
 }

@@ -1,0 +1,5 @@
+<select id="p4CESelect" onchange="act_ce_switch()" value="line">
+  <option value="line" selected="selected">Line</option>
+  <option value="unit">Sentence</option>
+  <option value="kwic">KWIC</option>
+</select>

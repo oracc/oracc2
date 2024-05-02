@@ -32,7 +32,9 @@ xslt_parse_sheet(Xslt *xp)
 {
   if (xp->xslstr)
     {
-      xslt_parse_xslmem(xp);
+      if (xslt_parse_xslmem(xp))
+	return 1;
+      
       if (!(xp->cur = xsltParseStylesheetDoc(xp->xslstrdoc)))
 	{
 #define STRSHEET_ERR "error parsing sheet "
@@ -56,7 +58,11 @@ xslt_parse_sheet(Xslt *xp)
 int
 xslt_parse_doc(Xslt *xp)
 {
-  if (!(xp->doc = xmlParseFile(xp->xml)))
+  if (xp->xmlstr)
+    {
+      return xslt_parse_docmem(xp);
+    }
+  else if (!(xp->doc = xmlParseFile(xp->xml)))
     {
 #define DOC_ERR "error parsing XML document "
       char buf[strlen(xp->xml)+strlen(DOC_ERR)+1];
@@ -68,13 +74,27 @@ xslt_parse_doc(Xslt *xp)
 }
 
 int
+xslt_parse_docmem(Xslt *xp)
+{
+  if (!(xp->doc = xmlParseMemory(xp->xmlstr, strlen(xp->xmlstr))))
+    {
+#define XMLMEMDOC_ERR "error parsing XML string "
+      char buf[strlen(xp->xml)+strlen(XMLMEMDOC_ERR)+1];
+      sprintf(buf, "%s%s", XMLMEMDOC_ERR, xp->xml);
+      xslt_if_err = strdup(buf);
+      return 1;
+    }
+  return 0;
+}
+
+int
 xslt_parse_xslmem(Xslt *xp)
 {
   if (!(xp->xslstrdoc = xmlParseMemory(xp->xslstr, strlen(xp->xslstr))))
     {
-#define MEMDOC_ERR "error parsing XML string "
-      char buf[strlen(xp->xsl)+strlen(DOC_ERR)+1];
-      sprintf(buf, "%s%s", MEMDOC_ERR, xp->xsl);
+#define XSLMEMDOC_ERR "error parsing XML string "
+      char buf[strlen(xp->xsl)+strlen(XSLMEMDOC_ERR)+1];
+      sprintf(buf, "%s%s", XSLMEMDOC_ERR, xp->xsl);
       xslt_if_err = strdup(buf);
       return 1;
     }
@@ -111,7 +131,8 @@ xslt_output(Xslt *xp)
       return 1;
     }
   int wbytes = xsltSaveResultToFile(outfp, xp->res, xp->cur);
-  fclose(outfp);
+  if (strcmp(xp->out, "-"))
+    fclose(outfp);
   if (wbytes < 0)
     {
 #define WR_ERR "error writing XML output "

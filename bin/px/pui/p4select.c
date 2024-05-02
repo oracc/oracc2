@@ -1,7 +1,8 @@
 const char *p4select = 
 "<xsl:transform xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">\n"
 "\n"
-"<xsl:output method=\"xml\" indent=\"yes\" encoding=\"UTF-8\"/>\n"
+"<xsl:output method=\"xml\" indent=\"yes\" encoding=\"UTF-8\" omit-xml-declaration=\"yes\"/>\n"
+"  \n"
 "<xsl:param name=\"select\"/>\n"
 "\n"
 "<xsl:template match=\"select\">\n"

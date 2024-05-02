@@ -22,7 +22,7 @@
       </span>
 
       <span id="p4Translations">
-	@@pui_translations()@@
+	@@pui_select_trans()@@
 	<input id="p4Transonly" type="checkbox" onchange="toggle_to()"
 	       value="@@pui_transonly()@@"/>&#xa0;only
       </span>
@@ -56,14 +56,8 @@
       @@pui_active_pages()@@ Pages
 
       <span id="p4SrchResultpages" class="p4srchresults">[@@pui_srch_results()@@ matches]</span>
-      
-      <span id="p4CeType" class="cetype">
-	<select id="p3cetype" name="p3cetype"  onchange="p3action('cestate')">
-	  <option value="line">Line</option>
-	  <option value="unit">Sentence</option>
-	  <option value="kwic">KWIC</option>
-	</select>
-      </span>
+
+      <span id="p4CeType" class="cetype">@@pui_select_ce()@@</span>
     </p>
   </div>
 

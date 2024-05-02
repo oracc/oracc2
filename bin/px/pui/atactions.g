@@ -24,3 +24,6 @@ struct atactionstab;
 "pui_item_data()", &pui_at_item_data
 "pui_item_meta()", &pui_at_item_meta
 "pui_srchterm()", &pui_at_srchterm
+"pui_select_ce()", &pui_at_select_ce
+"pui_select_sort()", &pui_at_select_sort
+"pui_select_trans()", &pui_at_select_trans

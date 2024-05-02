@@ -4,10 +4,13 @@
   
 <xsl:template match="*|text()">
   <xsl:copy>
-    <xsl:copy-of select="@*[not(name()='onchange')]"/>
+    <xsl:if test="@id">
+      <xsl:attribute name="id"><xsl:text>p4TransSelect</xsl:text></xsl:attribute>
+    </xsl:if>
     <xsl:if test="@onchange">
       <xsl:attribute name="onchange"><xsl:text>act_translation()</xsl:text></xsl:attribute>
     </xsl:if>
+    <xsl:copy-of select="@value|@selected"/>
     <xsl:apply-templates/>
   </xsl:copy>
 </xsl:template>
