@@ -16,10 +16,13 @@
 typedef struct Xslt
 {
   const char *xml;
+  const char *xmlstr;
   const char *xsl;
+  const char *xslstr;
   const char *out;
   xsltStylesheetPtr cur;
   xmlDocPtr doc;
+  xmlDocPtr xslstrdoc;
   xmlDocPtr res;
   const char **params;
 } Xslt;
@@ -31,7 +34,6 @@ extern int xslt_parse_sheet(Xslt *xp);
 extern int xslt_parse_doc(Xslt *xp);
 extern int xslt_transform(Xslt *xp);
 extern int xslt_output(Xslt *xp);
-extern Xslt* xslt_one_off(const char *xml, const char *xsl, const  char *out, const char **params);
+extern Xslt *xslt_one_off(const char *xml, const char *xmlstr, const char *xsl, const char *xslstr, const  char *out, const char **params);
 
 #endif/*XSLT_IF_*/
-

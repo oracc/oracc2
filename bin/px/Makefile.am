@@ -8,6 +8,8 @@ img_DATA=icons/*.png
 
 bin_PROGRAMS=px
 
+noinst_PROGRAMS=select
+
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxp3p4.sh pxsortercodes.sh
 
 scriptdata_DATA=*.xsl
@@ -20,3 +22,8 @@ px_LDADD=isp/libisp.la pui/libpui.la $(xLDADD) -lxml2 -lxslt -lexslt
 css_DATA = p4.css p4error.css p4debug.css
 
 js_DATA = p4.js
+
+select_SOURCES=select.c xslt_if.c
+
+select_LDADD=isp/libisp.la pui/libpui.la $(xLDADD) -lxml2 -lxslt -lexslt
+

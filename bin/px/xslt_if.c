@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include <xslt_if.h>
 
+extern int xslt_parse_xslmem(Xslt *xp);
+
 static const char *xslt_if_err = NULL;
 
 const char *
@@ -28,7 +30,19 @@ xslt_term(Xslt *xp)
 int
 xslt_parse_sheet(Xslt *xp)
 {
-  if (!(xp->cur = xsltParseStylesheetFile((const xmlChar *)xp->xsl)))
+  if (xp->xslstr)
+    {
+      xslt_parse_xslmem(xp);
+      if (!(xp->cur = xsltParseStylesheetDoc(xp->xslstrdoc)))
+	{
+#define STRSHEET_ERR "error parsing sheet "
+	  char buf[strlen(xp->xsl)+strlen(STRSHEET_ERR)+1];
+	  sprintf(buf, "%s%s", STRSHEET_ERR, xp->xsl);
+	  xslt_if_err = strdup(buf);
+	  return 1;
+	}
+    }
+  else if (!(xp->cur = xsltParseStylesheetFile((const xmlChar *)xp->xsl)))
     {
 #define SHEET_ERR "error parsing sheet "
       char buf[strlen(xp->xsl)+strlen(SHEET_ERR)+1];
@@ -47,6 +61,20 @@ xslt_parse_doc(Xslt *xp)
 #define DOC_ERR "error parsing XML document "
       char buf[strlen(xp->xml)+strlen(DOC_ERR)+1];
       sprintf(buf, "%s%s", DOC_ERR, xp->xml);
+      xslt_if_err = strdup(buf);
+      return 1;
+    }
+  return 0;
+}
+
+int
+xslt_parse_xslmem(Xslt *xp)
+{
+  if (!(xp->xslstrdoc = xmlParseMemory(xp->xslstr, strlen(xp->xslstr))))
+    {
+#define MEMDOC_ERR "error parsing XML string "
+      char buf[strlen(xp->xsl)+strlen(DOC_ERR)+1];
+      sprintf(buf, "%s%s", MEMDOC_ERR, xp->xsl);
       xslt_if_err = strdup(buf);
       return 1;
     }
@@ -96,11 +124,18 @@ xslt_output(Xslt *xp)
 }
 
 Xslt *
-xslt_one_off(const char *xml, const char *xsl, const  char *out, const char **params)
+xslt_one_off(const char *xml, const char *xmlstr,
+	     const char *xsl, const char *xslstr,
+	     const  char *out, const char **params)
 {
   extern int verbose;
 
-  Xslt xt = { .xml=xml, .xsl=xsl, .params=params, .out=out };
+  Xslt xt = {
+    .xml=xml, .xmlstr=xmlstr,
+    .xsl=xsl, .xslstr=xslstr,
+    .out=out,
+    .params=params
+  };
   
   if (verbose)
     {
@@ -110,7 +145,7 @@ xslt_one_off(const char *xml, const char *xsl, const  char *out, const char **pa
 	fprintf(stderr, " %s=%s", params[i], params[i+1]);
       fprintf(stderr, " <%s >%s\n", xt.xml, xt.out);
     }
-  
+
   if (xslt_parse_sheet(&xt))
     return NULL;
   if (xslt_parse_doc(&xt))

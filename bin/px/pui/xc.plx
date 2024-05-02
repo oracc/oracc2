@@ -13,8 +13,8 @@ GetOptions(
     );
 
 my $x = shift @ARGV;
-my $c = $x; $c =~ s/xml$/c/;
-my $s = $x; $s =~ s/.xml//;
+my $c = $x; $c =~ s/x[ms]l$/c/;
+my $s = $x; $s =~ s/.x[ms]l//;
 open(X,$x) || die "$0: can't open $x\n";
 open(C,">$c") || die "$0: can't write $c\n"; select C;
 print "const char *$s = \n";
