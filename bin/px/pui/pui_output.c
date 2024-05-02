@@ -61,7 +61,9 @@ pui_output(Isp *ip, FILE *fp, const char *s)
   while (s < end)
     {
       if (*s == '@' && s[1] == '@')
-	s = pui_atat(ip, fp, s);
+	{
+	  s = pui_atat(ip, fp, s);
+	}
       else
 	fputc(*s,fp);
       ++s;

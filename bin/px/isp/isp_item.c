@@ -123,6 +123,7 @@ isp_create_xtf(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.xmdxsl);
   unsigned char *syscmd = list_concat(args);
+
   if (ip->verbose)
     fprintf(stderr, "isp: isp_create_xtf: %s\n", syscmd);
 
@@ -136,12 +137,10 @@ isp_create_xtf(Isp *ip)
   return 0;
 }
 
-
 static int
 isp_item_xtf(Isp *ip)
 {
   const char *xtflang = isp_item_lang(ip);
-  char *html = expand(ip->project, ip->item, "html");
 
   char itemcache[strlen(ip->cache.sub)+strlen(ip->item)+2];
   sprintf(itemcache, "%s/%s", ip->cache.sub, ip->item);
@@ -150,10 +149,17 @@ isp_item_xtf(Isp *ip)
   ip->cache.meta = (ccp)pool_alloc(strlen(itemcache)+strlen("/meta.xml0"), ip->p);
   sprintf((char*)ip->cache.meta, "%s/meta.xml", itemcache);
 
-  ip->itemdata.html = (ccp)pool_alloc(strlen(itemcache)+strlen(html)+strlen(xtflang)+3, ip->p);
-  sprintf((char*)ip->itemdata.html, "%s/%s", itemcache, html);
+  expand_base("/home/oracc/www/htm");
+  char *html = expand(ip->project, ip->item, "html");
+  expand_base(NULL);
+
+  char *xh = (char*)pool_alloc(strlen(html)+4,ip->p);
+  strcpy(xh, html);
+  ip->itemdata.html = xh;
   if (strcmp(xtflang, "en"))
     sprintf((char*)(ip->itemdata.html+strlen(ip->itemdata.html)), ".%s", xtflang);
+
+  fprintf(stderr, "itemdata.html = %s\n", ip->itemdata.html);
   
   int need_html = access(ip->itemdata.html, R_OK);
   int need_meta = access(ip->itemdata.html, R_OK);

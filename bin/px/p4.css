@@ -1,3 +1,5 @@
+@import url(colour_nn.css);
+
 /* Structural/State-dependent CSS */
 
 #p4Flex 	{ display: flex; }
@@ -19,6 +21,13 @@
 #p4SrchResultCount:not(.srch) { display: none; }
 
 #p4ItemXMD,#p4ItemXTF,#p4ItemSRCH { display: inline; }
+
+#p4Item.xtf { display: flex; }
+
+#p4XtfMeta { flex: 1 1 20%; display: inline-block; vertical-align: top; }
+
+#p4XtfData { flex: 1 1 80%; display: inline-block; vertical-align: top; }
+
 
 /* Formatting CSS */
 
@@ -90,3 +99,38 @@ table.xmd td { padding-top: 3px; padding-bottom: 3px; padding-left: 2px; padding
 body 	{ }
 
 a 	{ text-decoration: none; }
+
+span.error { background-color: red; color: white; }
+
+/* From oraccscreen.css, p3.css, p3cbd.css */
+
+div.text { padding: 0px; padding-bottom: 10px; margin: 0px; }
+
+span.lnum { display: none }
+
+span.xlabel { font-family: arial,sans-serif; font-size: 70%; }
+
+span.uncertain { font-style: italic; }
+
+span.foreign { font-style: italic; }
+
+/* Metadata headings */
+.p3h2     { font-size: 100%; padding-top: 0px; margin-top: 0px; margin-left: 1px; }
+
+/* Transliteration styling */
+sub { font-style: normal; }
+.sux { font-style: normal; }
+.akk { font-style: italic; }
+.arc { font-style: italic; }
+.egy { font-style: italic; }
+.hit { font-style: italic; }
+.hit-akk { font-style: normal; }
+.hit-xhu { font-style: normal; }
+
+a         { text-decoration: none; }
+a:link[href]    { color: blue; }
+a:visited { color: #939; }
+a img     { border: 0px; }
+a[href]:hover   { color: white; background-color: red; text-decoration: underline; }
+a[onclick]:hover   { color: white; background-color: red; }
+

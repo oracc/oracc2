@@ -20,5 +20,6 @@ extern int px_options(int argc, char **argv, Isp *ip);
 extern unsigned char *px_loadfile(unsigned const char *fname, size_t *nbytes);
 extern unsigned char **px_loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **fmem);
 extern unsigned char *px_loadfile_error(void);
+extern int px_file_copy(Isp *ip, const char *fn, const char *to);
 
 #endif/*PX_H*/

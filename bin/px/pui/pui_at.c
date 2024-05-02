@@ -127,7 +127,7 @@ pui_at_project(Isp *ip, FILE *fp)
 void
 pui_at_menu(Isp *ip, FILE *fp)
 {
-  file_copy(ip->cache.zout, "-");
+  px_file_copy(ip, ip->cache.zout, "-");
 }
 
 void
@@ -139,16 +139,16 @@ pui_at_content(Isp *ip, FILE *fp)
 	longjmp(ip->errjmp, 1);
     }
   else
-    file_copy(ip->cache.page, "-");
+    px_file_copy(ip, ip->cache.page, "-");
 }
 
 void
 pui_at_item_meta(Isp *ip, FILE *fp)
 {
-  file_copy(ip->cache.meta, "-");
+  px_file_copy(ip, ip->cache.meta, "-");
 }
 void
 pui_at_item_data(Isp *ip, FILE *fp)
 {
-  file_copy(ip->cache.html, "-");
+  px_file_copy(ip, ip->itemdata.html, "-");
 }
