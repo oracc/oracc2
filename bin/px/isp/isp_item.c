@@ -25,9 +25,12 @@ isp_item_load(Isp *ip)
       return 1;
     }
 
-  ip->itemdata.page = (ccp)pool_copy((ucp)k, ip->p);
-  
-  char *s = strchr(ip->itemdata.page, '\t');
+  ip->itemdata.index = (ccp)pool_copy((ucp)k, ip->p);
+  char *s = strchr(ip->itemdata.index, '\t');
+  *s++ = '\0';
+
+  ip->itemdata.page = s;
+  s = strchr(ip->itemdata.page, '\t');
   *s++ = '\0';
 
   ip->itemdata.zoom = s;

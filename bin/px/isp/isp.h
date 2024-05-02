@@ -115,6 +115,7 @@ struct isp_itemdata
   const char *item;
   const char *html;
   const char *dots;
+  const char *index;
   const char *page;
   const char *zoom;
   const char *zpag;
@@ -133,6 +134,9 @@ typedef struct isp
   int steps[PX_STEP_8O];
   void *stepdata[PX_STEP_8O];
   const char *oracc;	/* the system oracc install, usually /home/oracc */
+  const char *from; /* list or srch */
+  const char *data; /* dcat dtxt dtra dglo */
+  const char *show; /* rcat rtxt rtra rglo itxt iart */
   struct isp_cache cache;
   const char *project;
   const char *projdir;

@@ -12,4 +12,5 @@ px_file_copy(Isp *ip, const char *fn, const char *to)
       return 1;
     }
   file_copy(fn, to);
+  return 0;
 }

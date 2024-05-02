@@ -144,9 +144,9 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoomth, int zoo
   else
     strcpy(key, items[itemnth]);
 	
-  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%s\t%s", page, zoomth, zoomp, prev, next);
+  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoomth, zoomp, prev, next);
   char data[n+1];
-  sprintf(data, "%d\t%d\t%d\t%s\t%s", page, zoomth, zoomp, prev, next);
+  sprintf(data, "%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoomth, zoomp, prev, next);
   dbi_add(ip->itemdata.dp, (ucp)key, data, strlen(data)+1);
 }
 

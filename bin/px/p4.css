@@ -2,25 +2,29 @@
 
 /* Structural/State-dependent CSS */
 
-#p4Flex 	{ display: flex; }
+#p4Data 	{ display: flex; }
 #p4Menu 	{ flex: 1 1 15%; }
 #p4Content 	{ flex: 1 1 85%; }
 
-#p4Menu.auto { display: none; }
+#p4Menu.auto 	{ display: none; }
 
-#p4Controls.item .p4pages,.p4srch { display: none; }
-#p4Controls.page .p4items,.p4srch { display: none; }
-#p4Controls.srch .p4items,.p4pages { display: none; }
+#p4ItemXMD { display: inline; }
 
-#p4Controls.page #p4ToggleMeta { display: none; }
+#p4ItemXTF { display: inline; }
+
+#p4ItemSRCH { display: inline; }
+
+.list .p4srchresults { display: none; }
+.srch .p4srchresults { display: inline; }
+
+.item .p4pages { display: none; }
+.page .p4items { display: none; }
+
+.page #p4ToggleMeta { display: none; }
 
 #p4ToggleMeta { text-align: left; }
 
 #p4PageNav.xmd #p4CeType { display: none; }
-
-#p4SrchResultCount:not(.srch) { display: none; }
-
-#p4ItemXMD,#p4ItemXTF,#p4ItemSRCH { display: inline; }
 
 #p4Item.xtf { display: flex; }
 
@@ -28,16 +32,17 @@
 
 #p4XtfData { flex: 1 1 80%; display: inline-block; vertical-align: top; }
 
+#p4Translations { vertical-align: middle; }
 
 /* Formatting CSS */
 
 body	{ margin: 2px; }
 
-#p4Banner  { padding-left: 3px; padding-top: 3px; }
+#p4Banner  { padding-left: 3px; padding-top: 5px; }
 
 #p4Search  { text-align: center; margin-left: 15%; margin-top: -26px; margin-bottom: 26px; }
 
-#p4Controls { text-align: center; margin-left: 15%; padding-bottom: 3px; }
+#p4Controls { text-align: center; margin-left: 15%; padding-bottom: 5px; }
 
 #p4HeadTitle {font-size: 120%;
 	      font-family: Verdana, "Trebuchet MS", helvetica, sans-serif;
@@ -46,7 +51,7 @@ body	{ margin: 2px; }
 
 #p4HeadTitle a { color: white; text-decoration: none; }
 
-#p4DropDown { padding-left: 3px; margin-top: -29px; padding-bottom: 3px; }
+#p4DropDown { padding-left: 3px; margin-top: -31px; padding-bottom: 5px; }
 
 p	{ margin: 0; padding: 0; }
 
@@ -57,7 +62,7 @@ p	{ margin: 0; padding: 0; }
 	  border: 2px solid silver; 
 	  padding: 2px;
 	  border-radius: 9px;
-	  vertical-align: middle;b
+	  vertical-align: middle;
 	}
 
 .p4spread { margin-left: 5px; margin-right: 5px; }
@@ -96,9 +101,14 @@ table.xmd { border-spacing: 0px; padding: 2px; width: 100%; }
 table.xmd td { padding-top: 3px; padding-bottom: 3px; padding-left: 2px; padding-right: 2px; }
 .oddeven tr:nth-child(odd) { background-color: #ddd; }
 
-body 	{ }
+/* General CSS */
 
-a 	{ text-decoration: none; }
+a         { text-decoration: none; }
+a:link[href]    { color: blue; }
+a:visited { color: #939; }
+a img     { border: 0px; }
+a[href]:hover   { color: white; background-color: red; text-decoration: underline; }
+a[onclick]:hover   { color: white; background-color: red; }
 
 span.error { background-color: red; color: white; }
 
@@ -118,6 +128,7 @@ span.foreign { font-style: italic; }
 .p3h2     { font-size: 100%; padding-top: 0px; margin-top: 0px; margin-left: 1px; }
 
 /* Transliteration styling */
+
 sub { font-style: normal; }
 .sux { font-style: normal; }
 .akk { font-style: italic; }
@@ -127,10 +138,11 @@ sub { font-style: normal; }
 .hit-akk { font-style: normal; }
 .hit-xhu { font-style: normal; }
 
-a         { text-decoration: none; }
-a:link[href]    { color: blue; }
-a:visited { color: #939; }
-a img     { border: 0px; }
-a[href]:hover   { color: white; background-color: red; text-decoration: underline; }
-a[onclick]:hover   { color: white; background-color: red; }
+/* Translation styling */
+
+.xtr-h1 { border-left: 2px solid #777; padding-left: .5em; font-weight: bold; padding-top: 6px; }
+.xtr-h2 { border-left: 2px solid #777; padding-left: .5em; font-style: italic; }
+.xtr-h3 { border-left: 2px solid #777; padding-left: .5em; }
+span.xtr-dollar { font-weight: normal; color: gray; vertical-align: super; }
+span.xtr-label { font-weight: normal; font-size: 8pt; color: gray; vertical-align: super; }
 

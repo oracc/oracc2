@@ -212,34 +212,31 @@ xmdprinter2(const char *pq)
       const char *designation = NULL;
       /*const char *icon = NULL, *icon_alt;*/
       const char *id = NULL;
-      const char *colon = NULL;
+      const char *pqx = NULL;
 
       ++nth;
       xmd_init();
 
-      if (!url_base)
-	url_base = malloc(strlen(project) + strlen("javascript:catItemView('xtf',)")+8);
-#if 0
-      sprintf(url_base,"http://oracc.museum.upenn.edu/%s/cat",project);
-#else
-      if (p3)
-	sprintf(url_base, "javascript:p3item('xtf',%d)", item_offset+nth);
-      else
-	sprintf(url_base, "javascript:catItemView(%d)", item_offset+nth);
-#endif
-
       /* pq is a qualified ID, so use the project from that */
-      if ((colon = strchr(pq, ':')))
+      if ((pqx = strchr(pq, ':')))
 	{
-	  const char *fn = expand(project,colon+1,"xmd");
-	  /* only use the qualifying project if there is no local XMD */
+	  ++pqx;
+	  const char *fn = expand(project,pqx,"xmd");
+	  /* only use the qualified project if there is no local XMD */
 	  if (!xaccess(fn,R_OK,0))
-	    fields = xmd_load(project, colon+1);
+	    fields = xmd_load(project, pqx);
 	  else 
 	    fields = xmd_load(NULL, pq);
 	}
       else
-	fields = xmd_load(project, pq);
+	{
+	  fields = xmd_load(project, pq);
+	  pqx = pq;
+	}
+
+      if (!url_base)
+	url_base = malloc(strlen(project) + strlen("javascript:act_item('P123456')0"));
+      sprintf(url_base, "javascript:act_item('%s')", pqx);
 
       if (!in_group)
 	{
@@ -273,12 +270,9 @@ xmdprinter2(const char *pq)
 	  /* url_base = "http://oracc.museum.upenn.edu/cat"; */
 	  /*icon_alt = "Q catalog";*/
 	}
-#if 0
-      fprintf(stdout, "<td class=\"ce-xmd-icon\"><a href=\"%s/%s\"><img src=\"/img/%s\" alt=\"%s in %s\"/></a></td>", url_base, id, icon, id, icon_alt);
-#else
-      /* fprintf(stdout, "<td class=\"ce-xmd-icon\"><a href=\"%s\"><img src=\"/img/%s\" alt=\"%s in %s\"/></a></td>", url_base, icon, id, icon_alt); */
-      fprintf(stdout, "<td class=\"ce-xmd-icon\"><a href=\"%s\"><img src=\"/img/viewtext.png\" alt=\"View text\"/></a></td>", url_base);
-#endif
+      fprintf(stdout,
+	      "<td class=\"ce-xmd-icon\"><a href=\"%s\"><img src=\"/img/viewtext.png\" alt=\"View text\"/></a></td>",
+	      url_base);
       for (i = 0; width_specs[i]; ++i)
 	{
 	  List *tmp = field_lists[i];
@@ -312,20 +306,10 @@ xmdprinter2(const char *pq)
 	      pctbuf[3] = '\0';
 	      pct = pctbuf;
 	    }
-	  if (p3)
-	    {
-	      if (this_is_designation || i < link_fields)
-		fprintf(stdout, "<td style=\"width: %s\"><a href=\"javascript:p3item('xtf',%d)\">%s</a></td>", pct, item_offset+nth, xmlify((unsigned char *)value));
-	      else
-		fprintf(stdout, "<td style=\"width: %s;\">%s</td>", pct, xmlify((unsigned char *)value));
-	    }
+	  if (this_is_designation || i < link_fields)
+	    fprintf(stdout, "<td style=\"width: %s\"><a href=\"%s\">%s</a></td>", pct, url_base, xmlify((unsigned char *)value));
 	  else
-	    {
-	      if (this_is_designation || i < link_fields)
-		fprintf(stdout, "<td style=\"width: %s\"><a href=\"javascript:itemView(%d)\">%s</a></td>", pct, item_offset+nth, xmlify((unsigned char *)value));
-	      else
-		fprintf(stdout, "<td style=\"width: %s;\">%s</td>", pct, xmlify((unsigned char *)value));
-	    }
+	    fprintf(stdout, "<td style=\"width: %s;\">%s</td>", pct, xmlify((unsigned char *)value));
 	}
       fputs("</tr></ce:data>",stdout);
     }

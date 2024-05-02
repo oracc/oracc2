@@ -11,7 +11,6 @@ struct atactionstab;
 "pui_menu()", &pui_at_menu
 "pui_content()", &pui_at_content
 "pui_title()", &pui_at_title
-"pui_state()", &pui_at_state
 "pui_project()", &pui_at_project
 "pui_translations()", &pui_at_translations
 "pui_current_page()", &pui_at_current_page
@@ -19,6 +18,9 @@ struct atactionstab;
 "pui_active_items()", &pui_at_active_items
 "pui_srch_results()", &pui_at_srch_results
 "pui_ceid()", &pui_at_ceid
+"pui_pager_class()", &pui_at_pager_class
 "pui_pager_data()", &pui_at_pager_data
+"pui_item_index()", &pui_at_item_index
 "pui_item_data()", &pui_at_item_data
 "pui_item_meta()", &pui_at_item_meta
+"pui_srchterm()", &pui_at_srchterm

@@ -2,9 +2,15 @@ function updateLocation() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
     let list = pager.getAttribute("data-list");
-    let zoom = pager.getAttribute("data-zoom");
-    let page = pager.getAttribute("data-page");
-    let loc = '/'+proj+'?list='+list+'&zoom='+zoom+'&page='+page;
+    let item = pager.getAttribute("data-item");
+    let loc = '';
+    if (item) {
+        loc = '/'+proj+'?list='+list+'&item='+item;
+    } else {
+	let zoom = pager.getAttribute("data-zoom");
+	let page = pager.getAttribute("data-page");
+        loc = '/'+proj+'?list='+list+'&zoom='+zoom+'&page='+page;
+    }
     alert("loc="+loc);
     window.location=loc;
 }
@@ -20,6 +26,34 @@ function resetPager() {
 
 function getPager() {
     return document.getElementById("p4Pager");
+}
+
+function act_item(item) {
+    let pager = getPager();
+    pager.setAttribute("data-item", item);
+    updateLocation();
+}
+
+function act_item_next() {
+    let pager = getPager();
+    let inext = pager.getAttribute("data-next");
+    if (inext) {
+	pager.setAttribute("data-item", inext);
+	updateLocation();
+    } else {
+	alert('You are already at the last item.');
+    }
+}
+
+function act_item_prev() {
+    let pager = getPager();
+    let iprev = pager.getAttribute("data-prev");
+    if (iprev) {
+	pager.setAttribute("data-item", iprev);
+	updateLocation();
+    } else {
+	alert('You are already at the first item.');
+    }
 }
 
 function act_next() {
@@ -67,6 +101,7 @@ function act_zoom(z) {
     if (currzoom != nextzoom) {
 	pager.setAttribute("data-page", '1');
 	pager.setAttribute("data-zoom", z);
+	pager.removeAttribute("data-item");
 	updateLocation();
     }
 }
@@ -76,4 +111,15 @@ function toggle_dd() {
 }
 function toggle_md() {
     alert('toggle_md=>'+document.getElementById("p4Header").classList.toggle('menu'));
+}
+function toggle_pi() {
+    let pager = getPager();
+    let item = pager.getAttribute("data-item");
+    if (item) {
+	pager.setAttribute("data-bkmk", item);
+	pager.removeAttribute("data-item");
+    } else {
+	pager.setAttribute("data-item", '1');
+    }
+    updateLocation();
 }

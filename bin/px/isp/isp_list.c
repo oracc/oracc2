@@ -14,16 +14,22 @@ isp_list_cemd(Isp *ip)
     {
       if ('o' == *lp || 'x' == *lp)
 	{
+	  ip->data = "dglo";
+	  ip->show = "rglo";
 	  ip->cemd = "ccbd";
 	  ip->ceid = "cbd";
 	}
       else if (strchr(lp, '.'))
 	{
+	  ip->data = "dtxt";
+	  ip->show = "rref";
 	  ip->cemd = "line";
 	  ip->ceid = "xtf";
 	}
       else
 	{
+	  ip->data = "dcat";
+	  ip->show = "rcat";
 	  ip->cemd = "ccat";
 	  ip->ceid = "xmd";
 	}
@@ -108,6 +114,8 @@ isp_list_type(Isp *ip)
 int
 isp_list_method(Isp *ip)
 {
+  ip->from = "list";
+  
   if (isp_try_web_list(ip))
     isp_list_type(ip);
   

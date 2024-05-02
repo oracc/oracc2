@@ -13,6 +13,34 @@ active_pages(Isp *ip)
 }
 
 void
+pui_at_pager_class(Isp *ip, FILE *fp)
+{
+  fputc(' ', fp);
+  fputs(ip->from, fp);
+  fputc(' ', fp);
+  if (ip->item)
+    fputs("item", fp);
+  else
+    fputs("page", fp);
+  fputc(' ', fp);
+  fputs(ip->data, fp);
+  if (ip->item)
+    {
+      if (!strcmp(ip->data, "dglo"))
+	fputs(" iart", fp);
+      else
+	fputs(" itxt", fp);
+    }
+  else
+    {
+      char r[6];
+      r[0] = ' '; r[1] = 'r';
+      strcpy(r+2, ip->data+1);
+      fputs(r, fp);
+    }
+}
+
+void
 pui_at_pager_data(Isp *ip, FILE *fp)
 {
 #define pattrs(a,v) fprintf(fp, " %s=\"%s\"", (a), (v))
@@ -57,6 +85,13 @@ pui_at_active_pages(Isp *ip, FILE *fp)
 }
 
 void
+pui_at_item_index(Isp *ip, FILE *fp)
+{
+  if (ip->itemdata.index)
+    fputs(itoa(atoi(ip->itemdata.index)+1), fp);
+}
+
+void
 pui_at_active_items(Isp *ip, FILE *fp)
 {
   fputs(itoa(ip->md1.zimx), fp);
@@ -65,7 +100,12 @@ pui_at_active_items(Isp *ip, FILE *fp)
 void
 pui_at_srch_results(Isp *ip, FILE *fp)
 {
-  fputs("(no search results)", fp);
+  fputs("0", fp);
+}
+
+void
+pui_at_srchterm(Isp *ip, FILE *fp)
+{
 }
 
 void
@@ -99,17 +139,6 @@ void
 pui_at_status(Isp *ip, FILE *fp)
 {
   isp_show(fp, ip);
-}
-
-void
-pui_at_state(Isp *ip, FILE *fp)
-{
-  if (ip->item)
-    fputs("item", fp);
-  else if (ip->srch)
-    fputs("srch", fp);
-  else
-    fputs("page", fp);
 }
 
 void

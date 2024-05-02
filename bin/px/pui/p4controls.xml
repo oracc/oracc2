@@ -1,5 +1,5 @@
 <x>
-  <div id="p4itemNav" class="p4items @@pui_ceid()@@">
+  <div id="p4itemNav" class="p4items">
     <p class="bg-dk">
 
       <img id="p4PageItem" class="p4icon p4spread" src="/img/p3-pageitem.png"
@@ -11,39 +11,33 @@
 	   alt="Item back" title="Item back"
 	   onclick="act_item_prev()"/>
       
-      <!--<input id="item" name="item" type="text" onchange="p3action('itemset')" size="2" value="@@cgivar:item@@"/>-->
-
-      <span id="p4ItemView">ITEM VIEW</span>
+      <span id="p4ItemView"> [ITEM @@pui_item_index()@@ of @@pui_active_items()@@] </span>
       
-      <img id="p4ItemNext" class="p4icon" src="/img/p3-forward.png"
+      <img id="p4ItemNext" class="p4icon p4spread" src="/img/p3-forward.png"
 	   alt="Item forward" title="Item forward"
 	   onclick="act_item_next()"/>
 
-      <div id="p4ItemXMD">
-	<span>@@pui_imax()@@ Texts</span>
-      </div>
+      <span id="p4SrchResults" class="p4srchresults">
+	@@pui_imax()@@ Texts [@@pui_srch_results()@@ matches]
+      </span>
 
-      <div id="p4ItemSRCH">
-	<span>@@pui_imax()@@ Texts</span>
-	[<span class="resultcount">@@pui_results()@@ matches]</span>
-      </div>
-
-      <div id="p4ItemXTF">
+      <span id="p4Translations">
 	@@pui_translations()@@
-	<input type="checkbox" onchange="toggle_to()" id="transonly" value="@@pui_transonly()@@"/>&#xa0;only
-      </div>
+	<input id="p4Transonly" type="checkbox" onchange="toggle_to()"
+	       value="@@pui_transonly()@@"/>&#xa0;only
+      </span>
 
     </p>
   </div>
 
-  <div id="p4PageNav" class="p4pages @@pui_ceid()@@">
+  <div id="p4PageNav" class="p4pages">
     <p class="p3toccenter bg-dk">
 
       <button id="p4Zoom" class="p4spread" onclick="act_zoom('0')">All Results</button>
 
       <img id="p3pagesview" class="p4icon p4spread" src="/img/p3-pageitem.png"
 	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
-	   onclick="p3action('viewstateItems')"/>
+	   onclick="toggle_pi()"/>
       
       <img id="p4PagePrev" class="p4icon p4spread" src="/img/p3-backward.png"
 	   alt="Page back" title="Page back"
@@ -61,7 +55,7 @@
       /
       @@pui_active_pages()@@ Pages
 
-      <span id="p4SrchResultCount">[@@pui_srch_results()@@ matches]</span>
+      <span id="p4SrchResultpages" class="p4srchresults">[@@pui_srch_results()@@ matches]</span>
       
       <span id="p4CeType" class="cetype">
 	<select id="p3cetype" name="p3cetype"  onchange="p3action('cestate')">
