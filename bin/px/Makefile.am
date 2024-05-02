@@ -6,7 +6,9 @@ img_DATA=icons/*.png
 
 bin_PROGRAMS=px
 
-bin_SCRIPTS=pxlangs.sh pxreset.sh
+bin_SCRIPTS=pxlangs.sh pxreset.sh pxp3p4.sh pxsortercodes.sh
+
+scriptdata_DATA=*.xsl
 
 px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c cgiopts.c \
 	pxloadfile.c px_file_copy.c

@@ -113,6 +113,7 @@ wrapper(const char *sheet, const char **params, const char *xmldoc, const char *
       return 1;
     }
   xsltSaveResultToFile(outfp, res, cur);    
+  fclose(outfp);
 
   xmlFreeDoc(res);
   xmlFreeDoc(doc);
