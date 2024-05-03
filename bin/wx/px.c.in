@@ -64,6 +64,16 @@ px_cgi_val(CGI_varlist *v, const char *name, const char *deflt)
 #endif
 
 void
+pxv(const char **argv)
+{
+  argv[0] = px_exe;
+  argv[1] = cgi_arg("web","1");
+  execv(px_exe, (char*const*)argv);
+  fprintf(stderr, "execv %s failed\n", px_exe);
+  exit(1);
+}
+
+void
 px(const char *project)
 {
   if (query_string)

@@ -167,4 +167,6 @@ extern void oid(const char *oid);
 extern void glossary_article(const char *lng, const char *art);
 extern void glossary_article_xml(const char *lng, const char *art);
 
+extern void p3v(const char **argv);
+
 #endif/*RESOLVER_H_*/

@@ -17,15 +17,16 @@ adhoc(const char *adhoc_texts, const char *line_id, const char *frag_id)
     line_id = "none";
   if (!frag_id)
     frag_id = "none";
-  execl("/usr/bin/perl", "perl", "@@ORACC@@/bin/p3-pager.plx", 
-	cgi_arg("project", project),
-	cgi_arg("adhoc", adhoc_texts),
-	cgi_arg("line-id", line_id),
-	cgi_arg("frag-id", frag_id),
-	cgi_arg("mode", mode),
-	NULL);
-  perror("execl failed");
-  exit(1);
+  const char *argv[] = {
+    NULL, NULL,
+    cgi_arg("project", project),
+    cgi_arg("adhoc", adhoc_texts),
+    cgi_arg("line-id", line_id),
+    cgi_arg("frag-id", frag_id),
+    cgi_arg("mode", mode),
+    NULL
+  };
+  p3v(argv);
 }
 
 void

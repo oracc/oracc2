@@ -221,6 +221,23 @@ p3_exec(CGI_varlist *vl)
 }
 
 void
+p3v(const char **argv)
+{
+  struct p4tab *p4p = p4projects(project, strlen(project));
+  if (p4p)
+    {
+      pxv(argv);
+      return;
+    }
+  else
+    {
+      argv[0] = "perl";
+      argv[1] = "@@ORACC@@/bin/p3-pager.plx";
+      execv("/usr/bin/perl", (char * const*)argv);
+    }
+}
+
+void
 p3(const char *project)
 {
   struct p4tab *p4p = p4projects(project, strlen(project));
