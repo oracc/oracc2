@@ -25,7 +25,8 @@ px_mkvec(CGI_varlist *vl)
   vec = malloc((i+3) * sizeof(const char*));
   
   vec[0] = px_exe;
-  for (i = 1, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl), ++i)
+  vec[1] = cgi_arg("web","1");
+  for (i = 2, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl), ++i)
     {
       if (strcmp(name, "srch"))
 	((char const**)vec)[i] = cgi_arg(name,CGI_lookup(vl,name));
@@ -73,7 +74,6 @@ px(const char *project)
   v = CGI_get_post(v, NULL);
   if (!CGI_lookup(v, "project"))
     v = CGI_add_var(v, "project", project);
-  v = CGI_add_var(v, "web", "1");
   
 #if 0
   dump_vl(v);

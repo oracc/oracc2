@@ -6,8 +6,6 @@
 #p4Menu 	{ flex: 1 1 15%; border-right: solid lightgray 1px; }
 #p4Content 	{ flex: 1 1 85%; }
 
-#p4Menu.auto 	{ display: none; }
-
 #p4ItemXMD { display: inline; }
 
 #p4ItemXTF { display: inline; }
@@ -31,7 +29,12 @@
 
 #p4Item.xtf { display: flex; }
 
-#p4XtfMeta { flex: 1 1 20%; display: inline-block; vertical-align: top;  border-right: solid lightgray 1px; }
+.hide	{ display: none; }
+
+#p4XtfMeta.hide	{ display: none; }
+
+#p4XtfMeta { flex: 1 1 20%; display: inline-block; vertical-align: top;
+	     border-right: solid lightgray 1px; }
 
 #p4XtfData { flex: 1 1 80%; display: inline-block; vertical-align: top; }
 
@@ -150,6 +153,8 @@ sub { font-style: normal; }
 .hit-akk { font-style: normal; }
 .hit-xhu { font-style: normal; }
 
+.textonly .xtr { display: none; }
+
 /* Translation styling */
 
 tr.hforce td.xtr-h1 { padding-left: .5em; font-weight: bold; padding-top: 6px; }
@@ -158,6 +163,12 @@ tr.hforce td.xtr-h1 { padding-left: .5em; font-weight: bold; padding-top: 6px; }
 .xtr-h3 { border-left: 2px solid #777; padding-left: .5em; }
 span.xtr-dollar { font-weight: normal; color: gray; vertical-align: super; }
 span.xtr-label { font-weight: normal; font-size: 8pt; color: gray; vertical-align: super; }
+
+.transonly .lnum,
+.transonly .tlit,
+.transonly .nonlnum,
+.transonly .nonlbody { display: none; }
+.transonly .t1 { border: none; }
 
 /* Legacy transliteration styling from oraccscreen.css */
 

@@ -41,8 +41,16 @@ isp_list_cemd(Isp *ip)
 int
 isp_list_create(Isp *ip)
 {
-  if ('w' == *ip->lloc.type)
-    return file_copy(ip->lloc.path, ip->cache.list);
+  if (ip->lloc.method && !strcmp(ip->lloc.method, "file"))
+    {
+      int ret = file_copy(ip->lloc.path, ip->cache.list);
+      if (ret)
+	{
+	  ip->err = PX_ERROR_START "isp_list_create: failed to copy %s to cache-list";
+	  ip->errx = ip->lloc.path;
+	}
+      return ret;
+    }
   else if ('t' == *ip->lloc.type)
     return isp_tis_list(ip);
   else
@@ -91,23 +99,28 @@ void
 isp_list_type(Isp *ip)
 {
   char *p = NULL;
-  
-  if (!strncmp(ip->list_name, "is.", 3))
-    ip->lloc.type = "isp";
-  else if ((p = strchr(ip->list_name, '.')))
-    {
-      char l[strlen(ip->list_name)+1];
-      strcpy(l,ip->list_name);
-      p = l + (p - ip->list_name);
-      ip->lloc.type = "xis";
-      *p = '\0';
-      ip->lloc.lang = (ccp)pool_copy((uccp)ip->list_name, ip->p);
-      *p = '.';
-    }
-  else if ('t' == *ip->list_name && strlen(TIS_TEMPLATE) == strlen(ip->list_name))
-    ip->lloc.type = "tis";
+
+  if (ip->glos && !ip->glosdata.gxis)
+    ip->lloc.type = "glo";
   else
-    ip->lloc.type = "www";
+    {
+      if (!strncmp(ip->list_name, "is.", 3))
+	ip->lloc.type = "isp";
+      else if ((p = strchr(ip->list_name, '.')))
+	{
+	  char l[strlen(ip->list_name)+1];
+	  strcpy(l,ip->list_name);
+	  p = l + (p - ip->list_name);
+	  ip->lloc.type = "xis";
+	  *p = '\0';
+	  ip->lloc.lang = (ccp)pool_copy((uccp)ip->list_name, ip->p);
+	  *p = '.';
+	}
+      else if ('t' == *ip->list_name && strlen(TIS_TEMPLATE) == strlen(ip->list_name))
+	ip->lloc.type = "tis";
+      else
+	ip->lloc.type = "www";
+    }
 }
 
 /* This routine cannot use ip->cache */
@@ -158,6 +171,14 @@ isp_list_method(Isp *ip)
       ip->lloc.method = "dbx";
       if (isp_list_dbx(ip))
 	ip->err = "tok/tis database not found";
+    }
+  else if ('g' == *ip->lloc.type) /* glossary */
+    {
+      /* ip->glosdata.lbase is set during px validation */
+      char p[strlen(ip->oracc)+strlen("/pub/")+strlen(ip->project)+strlen(ip->glosdata.lbase)+4];
+      sprintf(p, "%s/pub/%s/cbd/%s/%s.lst", ip->oracc, ip->project, ip->glos, ip->glosdata.lbase);
+      ip->lloc.path = ip->glosdata.lpath = (ccp)pool_copy((uccp)p, ip->p);
+      ip->lloc.method = "file";
     }
   else
     {

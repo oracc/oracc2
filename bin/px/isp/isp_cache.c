@@ -133,3 +133,22 @@ isp_cache_list(Isp *ip)
     }
   return ip->err ? 1 : 0;
 }
+
+int
+isp_cache_page(Isp *ip)
+{
+  if (ip->glos && !ip->glosdata.gxis)
+    {
+      if (isp_glos_zoom(ip))
+	return 1;
+      if (isp_glos_data(ip))
+	return 1;
+    }
+  else
+    {
+      if (isp_page_zoom(ip))
+	return 1;
+      if (isp_page_data(ip))
+	return 1;
+    }
+}

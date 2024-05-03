@@ -19,7 +19,7 @@ px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c cgiopts.c \
 
 px_LDADD=isp/libisp.la pui/libpui.la $(xLDADD) -lxml2 -lxslt -lexslt
 
-css_DATA = p4.css p4error.css p4debug.css
+css_DATA = *.css
 
 js_DATA = p4.js
 

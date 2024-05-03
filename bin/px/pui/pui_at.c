@@ -53,6 +53,7 @@ pui_at_pager_data(Isp *ip, FILE *fp)
 #define pattrd(a,v) fprintf(fp, " %s=\"%d\"", (a), (v))
   pattrs("data-proj", ip->project);
   pattrs("data-list", ip->list_name);
+  pattrs("data-sort", ip->perm);
   pattrs("data-zoom", ip->zoom);
   pattrs("data-page", ip->page);
   pattrd("data-pmax", active_pages(ip));
@@ -63,7 +64,11 @@ pui_at_pager_data(Isp *ip, FILE *fp)
       pattrs("data-prev", prev);
       pattrs("data-item", ip->item);
       pattrs("data-next", next);
+      pattrs("data-bkmk", ip->item);
+      pattrs("data-lang", ip->lang);
     }
+  else if (ip->bkmk)
+    pattrs("data-bkmk", ip->bkmk);
 }
 
 void
@@ -125,13 +130,16 @@ pui_at_error(Isp *ip, FILE *fp)
 {
   fprintf(fp, ip->errx ? ip->err : PX_ERROR_START "%s", ip->errx ? ip->errx : ip->err);
 
-  char errbuf[strlen(ip->cache.sub)+strlen("/err.log0")];
-  sprintf(errbuf, "%s/err.log", ip->cache.sub);
-  if (!access(errbuf, R_OK))
+  if (ip->cache.sub)
     {
-      fprintf(fp, "\n\n<h1>Additional information from error log:</h1>\n\n");
-      file_copy(errbuf, "-");
-      fprintf(fp, "\n");
+      char errbuf[strlen(ip->cache.sub)+strlen("/err.log0")];
+      sprintf(errbuf, "%s/err.log", ip->cache.sub);
+      if (!access(errbuf, R_OK))
+	{
+	  fprintf(fp, "\n\n<h1>Additional information from error log:</h1>\n\n");
+	  file_copy(errbuf, "-");
+	  fprintf(fp, "\n");
+	}
     }
 }
 

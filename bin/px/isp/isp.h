@@ -9,7 +9,7 @@
 
 struct isp_list_loc
 {
-  const char *type;   /* list type: xis tis isp www */
+  const char *type;   /* list type: glo xis tis isp www */
   const char *lang;   /* lang prefix when type = xis */
   const char *method; /* how to find the list: tis xis file */
   const char *dbpath; /* dir of dbx for some tis and xis */
@@ -32,6 +32,7 @@ struct isp_cache
   const char *item;	/* the cache-dir for item data */
   const char *meta;	/* the filename of the metadata for the displayed item */
   const char *html;	/* the filename of the html content of the displayed item */
+  const char *ltab;	/* the filename of the letters.tab if cache is a glossary */
 };
 
 /* Pointers to project config entries */
@@ -126,6 +127,16 @@ struct isp_itemdata
   Dbi_index *dp;
 };
 
+struct isp_glosdata
+{
+  const char *dir;  	/* path to pub/cbd/LANG */
+  const char *ltab; 	/* pub/cbd/LANG/letter-ids.tab */
+  const char *glet; 	/* letter to zoom to */
+  const char *gxis; 	/* instance-set--not necessarily XML IS--from -l/list= */
+  const char *lbase;
+  const char *lpath;	/* list-path for letter in LANG */
+};
+
 #include "../pxdefs.h"
 
 typedef struct isp
@@ -147,6 +158,7 @@ typedef struct isp
   struct isp_mapdata md1;
   struct isp_mapdata md2;
   struct isp_itemdata itemdata;
+  struct isp_glosdata glosdata;
   struct outline *op;
   int op_nlevels;
   const char *dors; /* 0 = default ; 1 = special */
@@ -154,10 +166,12 @@ typedef struct isp
   const char *zoom;
   const char *page;
   const char *psiz;
+  const char *glos; /* glossary from URL */
   const char *item; /* a PQX for item display */
+  const char *bkmk; /* a note of the last item visited resuming page mode */
   const char *ceid; /* context engine id handling--xmd/xtf/cbd */
   const char *cemd; /* context engine mode */
-  const char *lang; /* context engine lang */
+  const char *lang; /* item translation lang */
   const char *xhmd; /* xml or html mode */
   const char *uimd; /* uimode */
   const char *pack; /* packaging type */

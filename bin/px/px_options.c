@@ -71,7 +71,7 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:m:z:p:i:s:k:h:x:u:c:l:a:vw");
+    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:m:z:p:g:i:b:s:k:h:x:u:c:l:a:vw");
   opt_ip = NULL;
   if (ret && !ip->err)
     ip->err = "processing options";
@@ -115,8 +115,14 @@ opts(int opt, const char *arg)
     case 'O':
       opt_ip->steps[PX_STEP_8O] = 1;
       break;
+    case 'b':
+      opt_ip->bkmk = arg;
+      break;
     case 'f':
       opt_ip->force = 1;
+      break;
+    case 'g':
+      opt_ip->glos = arg;
       break;
     case 'w':
       opt_ip->web = 1;

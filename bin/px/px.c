@@ -35,8 +35,9 @@ main(int argc, char **argv)
   if (isp_cache_list(ip))
     goto error;
 
-  if (isp_cache_sort(ip))
-    goto error;
+  if (!ip->glos || ip->glosdata.gxis)
+    if (isp_cache_sort(ip))
+      goto error;
 
   if (ip->item && isp_item_set(ip))
     goto error;

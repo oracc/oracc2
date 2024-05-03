@@ -1,6 +1,7 @@
 <x>
-  <link rel="stylesheet" type="text/css" href="/@@pui_project()@@/css/p3colours.css"/>
   <link rel="stylesheet" type="text/css" href="/css/p4.css"/>
+  <link rel="stylesheet" type="text/css" href="/@@pui_project()@@/css/p3colours.css"/>
+  <link rel="stylesheet" type="text/css" href="/@@pui_project()@@/css/projcss.css"/>
   <script type="text/javascript" src="/js/p4.js">&#160;</script>
   <title>Oracc Pager</title>    
 </x>

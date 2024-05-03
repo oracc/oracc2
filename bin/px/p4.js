@@ -2,16 +2,21 @@ function updateLocation() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
     let list = pager.getAttribute("data-list");
+    let perm = pager.getAttribute("data-sort");
     let item = pager.getAttribute("data-item");
     let loc = '';
     if (item) {
-        loc = '/'+proj+'?list='+list+'&item='+item;
+        loc = '/'+proj+'?list='+list+'&sort='+perm+'&item='+item;
     } else {
 	let zoom = pager.getAttribute("data-zoom");
 	let page = pager.getAttribute("data-page");
-        loc = '/'+proj+'?list='+list+'&zoom='+zoom+'&page='+page;
+	let bkmk = pager.getAttribute("data-bkmk");
+        loc = '/'+proj+'?list='+list+'&sort='+perm+'&zoom='+zoom+'&page='+page;
+	if (bkmk) {
+	    loc = loc+'&bkmk='+bkmk;
+	}
     }
-    alert("loc="+loc);
+    alert("updateLocation="+loc);
     window.location=loc;
 }
 
@@ -26,6 +31,24 @@ function resetPager() {
 
 function getPager() {
     return document.getElementById("p4Pager");
+}
+
+function act_sorter(dors) {
+    let perm = document.getElementById(dors).value;
+    let pager = getPager();
+    let currperm = pager.getAttribute('data-sort');
+    if (perm !== currperm) {
+	pager.setAttribute('data-sort', perm);
+	updateLocation();
+    }
+}
+
+function act_sorter_default() {
+    act_sorter('p4OSdefault');
+}
+
+function act_sorter_special() {
+    act_sorter('p4OSspecial');
 }
 
 function act_item(item) {
@@ -106,11 +129,12 @@ function act_zoom(z) {
     }
 }
 
+// toggles implemented with hide attribute or class-dependent display=none
 function toggle_dd() {
-    document.getElementById("p4Menu").classList.toggle('auto');
+    document.getElementById("p4Menu").classList.toggle('hide');
 }
 function toggle_md() {
-    alert('toggle_md=>'+document.getElementById("p4Header").classList.toggle('menu'));
+    document.getElementById("p4XtfMeta").classList.toggle('hide');
 }
 function toggle_pi() {
     let pager = getPager();
@@ -119,7 +143,55 @@ function toggle_pi() {
 	pager.setAttribute("data-bkmk", item);
 	pager.removeAttribute("data-item");
     } else {
-	pager.setAttribute("data-item", '1');
+	pager.setAttribute("data-item", pager.getAttribute("data-bkmk"));
     }
     updateLocation();
+}
+function toggle_to() {
+    document.getElementById("p4XtfData").classList.toggle('transonly');
+}
+
+// translation setting and toggling
+function act_translation() {
+    let trans = document.getElementById("p4TransSelect").value;
+    if (trans == "none") {
+	document.getElementById("p4XtfData").classList.toggle('textonly');
+    } else {
+	if (document.getElementById("p4XtfData").classList.contains('textonly')) {
+	    document.getElementById("p4XtfData").classList.toggle('textonly');
+	}
+	let pager = getPager();
+	let currlang = pager.getAttribute("data-lang");
+	if (currlang !== trans) {
+	    pager.setAttribute("data-lang", trans);
+	    updateLocation();
+	}
+    }
+}
+
+// P3 continuing JS
+
+function popup(url,windowName,height,width,screenX,screenY) {
+  popupWindow = window.open(url,windowName,
+ "dependent=yes,"
+ +"directories=no,"
+ +"height="+height+","
+ +"width="+width+","
+ +"screenX="+screenX+","
+ +"screenY="+screenY+","
+ +"location=yes,menubar=no,resizable=yes,scrollbars=yes,titlebar=no,toolbar=no");
+  popupWindow.focus();
+  return popupWindow;
+}
+
+// In P3 sigfixer added (empty) lang and proj arguments to the pop1sig
+// call but in P4 we have data-proj and are ignoring the old (and by
+// default empty) lang arg for now
+function pop1sig(sig) {
+    var bio = '\u2623'; // force encoding always to be utf8
+    var esig = encodeURIComponent(bio+sig);
+    let pager = getPager();
+    let proj = pager.getAttribute('data-proj');
+    var url = '/'+proj+'/sig?'+esig;
+    popup(url,'cbdarticle',400,600,0,0);
 }

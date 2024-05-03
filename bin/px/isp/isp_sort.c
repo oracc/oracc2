@@ -8,6 +8,7 @@ isp_cache_sort(Isp *ip)
 {
   /* could reasonably have an Isp member 'curr_sort' which is the sort
      to use based on default/special and PERM settings */
+
   char buf[strlen(ip->cache.list)+strlen("-1230.mol")];
   strcpy(buf, ip->cache.list);
   strcpy(strrchr(buf,'/')+1, "sort-");

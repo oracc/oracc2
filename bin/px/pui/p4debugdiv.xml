@@ -1,12 +1,6 @@
 <div id="p4Debug">
   <h1>Debugging Information</h1>
 
-  <h2>Environment</h2>
-
-  <p>HTTP environment variables:</p>
-
-  <pre id="p4Environment">@@pui_environment()@@</pre>
-  
   <h2>Invocation</h2>
   
   <p>The pager was invoked as:</p>
@@ -18,4 +12,11 @@
   <p>The pager reported status as:</p>
 
   <pre id="p4Status">@@pui_status()@@</pre>
+
+  <h2>Environment</h2>
+
+  <p>HTTP environment variables:</p>
+
+  <pre id="p4Environment">@@pui_environment()@@</pre>
+
 </div>

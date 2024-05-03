@@ -50,6 +50,25 @@ px_valid_project(Isp *ip)
 }
 
 static int
+px_valid_glos(Isp *ip)
+{
+  char dir[strlen(ip->projdir)+strlen(ip->glos)+strlen("/02pub/cbd/0")];
+  sprintf(dir, "%s/02pub/cbd/%s", ip->projdir, ip->glos);
+  struct stat sb;
+  if (stat(dir, &sb) != 0 || !S_ISDIR(sb.st_mode))
+    {
+      ip->err = "unknown lang while validating glos";
+      return 1;
+    }
+  else
+    {
+      ip->glosdata.dir = (ccp)pool_copy((ucp)dir, ip->p);
+      ip->glosdata.lbase = "entry_ids";
+    }
+  return 0;  
+}
+
+static int
 px_valid_host(Isp *ip)
 {
   char hostpath[strlen(ip->oracc)+strlen(ip->project)+strlen("02pub")+strlen(ip->host)+3];
@@ -81,19 +100,34 @@ px_validate(Isp *ip)
   else if (px_valid_project(ip))
     goto error;
 
+  if (ip->glos)
+    {
+      if (px_valid_glos(ip))
+	goto error;
+      ip->list_name = NULL; /* undefine the default outlined.lst */
+    }
+  
   if (!ip->list_name)
     {
-      ip->err = "LIST not set, use -l LIST";
-      goto error;
+      if (ip->glos)
+	{
+	  ip->list_name = (ccp)pool_alloc(strlen(ip->glos)+5, ip->p);
+	  sprintf((char*)ip->list_name, "%s.glo", ip->glos);
+	}
+      else
+	{
+	  ip->err = "LIST not set, use -l LIST";
+	  goto error;
+	}
     }
 
-  if (px_integer((uccp)ip->zoom))
+  if (ip->zoom && px_integer((uccp)ip->zoom))
     {
       ip->err = "zoom parameter is not a positive integer";
       goto error;
     }
 
-  if (px_integer((uccp)ip->page))
+  if (ip->page && px_integer((uccp)ip->page))
     {
       ip->err = "page parameter is not a positive integer";
       goto error;

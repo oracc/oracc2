@@ -149,7 +149,7 @@ create_page_div(Isp *ip)
 }
 
 int
-isp_cache_page(Isp *ip)
+isp_page_zoom(Isp *ip)
 {
   char pbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];
   sprintf(pbuf, "%s/%s-z%s-p%s.div", ip->cache.sub, ip->perm, ip->zoom, ip->page);
@@ -177,7 +177,11 @@ isp_cache_page(Isp *ip)
   if (need_zout || ip->force)
     if (ispo_zoutline(ip))
       return 1;
-  
+}
+
+int
+isp_page_data(Isp *ip)
+{
   if (!access(ip->cache.page, F_OK))
     {
       if (!access(ip->cache.page, R_OK))

@@ -8,3 +8,11 @@ ispxtf
 	and fix epsd2 config so catalog-master-project is a single
 	project
 
+
+itemdata needs to have sort code in dbx file name
+
+Document proscribed list names
+
+  * anything matching a valid IS ID
+  * anything.glo if anything is also a glossary in the project
+
