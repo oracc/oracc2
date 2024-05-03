@@ -223,7 +223,8 @@ p3_exec(CGI_varlist *vl)
 void
 p3(const char *project)
 {
-  if (project && !strcmp(project, "rimanum"))
+  struct p4tab *p4p = p4projects(project, strlen(project));
+  if (p4p)
     {
       px(project);
       return;

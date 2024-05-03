@@ -50,6 +50,13 @@ struct builtinstab
 extern struct builtinstab *builtins(register const char *str, register size_t len);
 extern struct builtinstab *legacy (register const char *str, register unsigned int len);
 
+struct p4tab
+{
+  const char *name;
+  int i;
+};
+extern struct p4tab *p4projects (register const char *str, register size_t len);
+
 struct h_pqxtab
 {
   const char *name;
