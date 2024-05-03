@@ -139,16 +139,45 @@ isp_cache_page(Isp *ip)
 {
   if (ip->glos && !ip->glosdata.gxis)
     {
+      ip->cache.zout = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.div0"), ip->p);
+      sprintf((char*)ip->cache.zout, "%s/letters.div", ip->cache.sub);
+
+      char pbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("z-p.div0")];
+      sprintf(pbuf, "%s/z%s-p%s.div", ip->cache.sub, ip->zoom, ip->page);
+      ip->cache.page = (ccp)pool_copy((uccp)pbuf, ip->p);
+
+      ip->cache.pgin = (ccp)pool_copy((uccp)ip->cache.page, ip->p);
+      char *tmp = strrchr(ip->cache.pgin, '.');
+      strcpy(tmp, ".pag");
+
       if (isp_glos_zoom(ip))
 	return 1;
+      
       if (isp_glos_data(ip))
 	return 1;
     }
   else
     {
+      char zbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen("-123-z.otl0")];
+      sprintf(zbuf, "%s/%s-z%s.otl", ip->cache.sub, ip->perm, ip->zoom);
+      ip->cache.zout = (ccp)pool_copy((uccp)zbuf, ip->p);
+
+      char pbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];
+      sprintf(pbuf, "%s/%s-z%s-p%s.div", ip->cache.sub, ip->perm, ip->zoom, ip->page);
+      ip->cache.page = (ccp)pool_copy((uccp)pbuf, ip->p);
+
+      ip->cache.pgin = (ccp)pool_copy((uccp)ip->cache.page, ip->p);
+      char *tmp = strrchr(ip->cache.pgin, '.');
+      strcpy(tmp, ".pag");
+
+      if (ip->verbose)
+	fprintf(stderr, "isp: isp_cache_page: need %s:::%s\n", zbuf, pbuf);
+
       if (isp_page_zoom(ip))
 	return 1;
+
       if (isp_page_data(ip))
 	return 1;
     }
+  return 0;
 }

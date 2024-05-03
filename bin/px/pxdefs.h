@@ -16,4 +16,7 @@
 #define PX_STEP_8O	0x0000100
 #define PX_PARM_9A	0x0000200 /* AAPI */
 #define PX_PARM_9U	0x0000400 /* UI MODE */
+
+extern int file_copy_lines(const char *from, const char *to, int start, int end);
+
 #endif/*PXDEFS_H_*/

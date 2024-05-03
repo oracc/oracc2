@@ -133,8 +133,8 @@ struct isp_glosdata
   const char *ltab; 	/* pub/cbd/LANG/letter-ids.tab */
   const char *glet; 	/* letter to zoom to */
   const char *gxis; 	/* instance-set--not necessarily XML IS--from -l/list= */
-  const char *lbase;
-  const char *lpath;	/* list-path for letter in LANG */
+  const char *lbase;	/* entry_ids or an LXXX id from letter_ids.tab */
+  const char *lpath;	/* list-path dir+lbase */
 };
 
 #include "../pxdefs.h"

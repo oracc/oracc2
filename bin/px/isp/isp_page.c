@@ -69,16 +69,11 @@ compute_ranges(Isp *ip)
 static int
 create_page_input(Isp *ip)
 {
-  char pagbuf[strlen(ip->cache.page)+1];
-  strcpy(pagbuf, ip->cache.page);
-  char *pd = strrchr(pagbuf, '.');
-  strcpy(pd+1, "pag");
-  ip->cache.pgin = (ccp)pool_copy((uccp)pagbuf, ip->p);
-  FILE *zfp = fopen(pagbuf, "w");
+  FILE *zfp = fopen(ip->cache.pgin, "w");
   if (zfp)
     {
       if (ip->verbose)
-	fprintf(stderr, "isp: isp_cache_page: writing %s\n", pagbuf);
+	fprintf(stderr, "isp: isp_cache_page: writing %s\n", ip->cache.pgin);
       FILE *sfp = fopen(ip->cache.sort,"r");
       if (sfp)
 	{
@@ -133,6 +128,13 @@ create_page_div(Isp *ip)
   list_add(args, (void*)ip->cache.page);
   list_add(args, " ");
   list_add(args, (void*)ip->cemd);
+
+  if (ip->glos)
+    {
+      list_add(args, " ");
+      list_add(args, (void*)ip->glos);
+    }
+
   unsigned char *syscmd = list_concat(args);
 
   if (ip->verbose)
@@ -151,17 +153,6 @@ create_page_div(Isp *ip)
 int
 isp_page_zoom(Isp *ip)
 {
-  char pbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];
-  sprintf(pbuf, "%s/%s-z%s-p%s.div", ip->cache.sub, ip->perm, ip->zoom, ip->page);
-  ip->cache.page = (ccp)pool_copy((uccp)pbuf, ip->p);
-
-  char zbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen("-123-z.otl0")];
-  sprintf(zbuf, "%s/%s-z%s.otl", ip->cache.sub, ip->perm, ip->zoom);
-  ip->cache.zout = (ccp)pool_copy((uccp)zbuf, ip->p);
-
-  if (ip->verbose)
-    fprintf(stderr, "isp: isp_cache_page: need %s:::%s\n", zbuf, pbuf);
-
   int need_zout = 1;
   if (!access(ip->cache.zout, F_OK))
     {
@@ -177,6 +168,8 @@ isp_page_zoom(Isp *ip)
   if (need_zout || ip->force)
     if (ispo_zoutline(ip))
       return 1;
+
+  return 0;
 }
 
 int
@@ -202,7 +195,6 @@ isp_page_data(Isp *ip)
 
   if (create_page_input(ip))
     return 1;
-
   
   return create_page_div(ip);
 }

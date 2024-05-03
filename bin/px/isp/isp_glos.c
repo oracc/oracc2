@@ -35,8 +35,6 @@ isp_glos_zoom(Isp *ip)
 {
   ip->cache.ltab = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.tab0"), ip->p);
   sprintf((char*)ip->cache.ltab, "%s/letters.tab", ip->cache.sub);
-  ip->cache.zout = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.div0"), ip->p);
-  sprintf((char*)ip->cache.zout, "%s/letters.div", ip->cache.sub);
   FILE *lfp = fopen(ip->cache.zout, "w");
   if (lfp)
     {
@@ -92,15 +90,75 @@ isp_glos_zoom(Isp *ip)
       ip->err = "isp_glos_zoom: unable to open letters.div";
       return 1;
     }
+  return 0;
 }
 
+int
+isp_glos_glid(Isp *ip)
+{
+  char *t = (char*)slurp("isp_glos_glid", ip->cache.ltab, NULL);
+  if (!t)
+    {
+      ip->err = "isp_glos_glid: failed to load letters.tab";
+      return 1;
+    }
+  int len = strlen(ip->glosdata.glet);
+  char *l = t;
+  while (*l)
+    {
+      if (!strncmp(l, ip->glosdata.glet, len) && '\t' == l[len])
+	{
+	  char *e;
+	  l += len+1;
+	  if ((e = strchr(l,'\t')))
+	    *e = '\0';
+	  ip->glosdata.lbase = (ccp)pool_copy((uccp)l, ip->p);
+	  break;
+	}
+      else
+	{
+	  /* Skip the letter */
+	  while (*l && '\t' != *l)
+	    ++l;
+	  ++l;
+	  /* Skip the ID */
+	  while (*l && '\t' != *l)
+	    ++l;
+	  if ('\t' == *l)
+	    ++l;
+	  /* Now we are teed up at the next letter */
+	}
+    }
+  free(t);
+  if (!ip->glosdata.lbase)
+    {
+      ip->err = "isp_glos_glid: letter not fund in letters.tab";
+      return 1;
+    }
+  return 0;
+}
 
 int
 isp_glos_data(Isp *ip)
 {
   if (ip->glosdata.glet)
     {
-      
+      if (isp_glos_glid(ip))
+	return 1;
     }
-  return 0;
+
+  /* set the item-id file */
+  ip->glosdata.lpath = (ccp)pool_alloc(strlen(ip->glosdata.dir)+strlen(ip->glosdata.lbase)+2, ip->p);
+  sprintf((char*)ip->glosdata.lpath, "%s/%s.lst", ip->glosdata.dir, ip->glosdata.lbase);
+
+  /* compute the ranges */
+  int start = ((atoi(ip->page)-1) * atoi(ip->psiz)) + 1;
+  int end = start + atoi(ip->psiz);
+
+  /* create the page input selection */
+  if (file_copy_lines(ip->glosdata.lpath, ip->cache.pgin, start, end))
+    return 1;
+
+  /* now we can use the main page creator to make the page div */
+  return create_page_div(ip);
 }
