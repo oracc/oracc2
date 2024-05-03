@@ -71,7 +71,7 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:m:z:p:g:i:b:s:k:h:x:u:c:l:a:vw");
+    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:R:m:z:p:g:i:b:s:k:h:x:u:c:l:a:t:vw");
   opt_ip = NULL;
   if (ret && !ip->err)
     ip->err = "processing options";
@@ -87,7 +87,6 @@ opts(int opt, const char *arg)
     case '3':
       opt_ip->p3 = 1;
       break;
-#endif
     case 'E':
       opt_ip->steps[PX_STEP_0E] = 1;
       break;
@@ -115,6 +114,8 @@ opts(int opt, const char *arg)
     case 'O':
       opt_ip->steps[PX_STEP_8O] = 1;
       break;
+#endif
+
     case 'b':
       opt_ip->bkmk = arg;
       break;
@@ -150,6 +151,12 @@ opts(int opt, const char *arg)
 	}	
       else
 	opt_ip->perm = arg;
+      break;
+    case 'R':
+      opt_ip->referer = arg;
+      break;
+    case 't':
+      opt_ip->tmpdir = arg;
       break;
     case 'z':
       opt_ip->zoom = arg;

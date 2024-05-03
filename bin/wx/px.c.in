@@ -64,6 +64,19 @@ px_cgi_val(CGI_varlist *v, const char *name, const char *deflt)
 #endif
 
 void
+pxvl(CGI_varlist *v)
+{
+  if (!CGI_lookup(v, "project"))
+    v = CGI_add_var(v, "project", project);
+  
+  const char **va = px_mkvec(v);
+  execv(px_exe, (char*const*)va);
+
+  fprintf(stderr, "execv %s failed\n", px_exe);
+  exit(1);
+}
+
+void
 pxv(const char **argv)
 {
   argv[0] = px_exe;
@@ -82,18 +95,8 @@ px(const char *project)
   CGI_varlist *v = NULL;  
   v = CGI_get_query(v);
   v = CGI_get_post(v, NULL);
-  if (!CGI_lookup(v, "project"))
-    v = CGI_add_var(v, "project", project);
-  
-#if 0
-  dump_vl(v);
-#endif
 
-  const char **va = px_mkvec(v);
-  execv(px_exe, (char*const*)va);
-
-  fprintf(stderr, "execv %s failed\n", px_exe);
-  exit(1);
+  pxvl(v);
 }
 
 #if 0

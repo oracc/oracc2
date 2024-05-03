@@ -189,6 +189,8 @@ typedef struct isp
   int verbose;
   int web;
   int argc;
+  const char *referer;
+  const char *tmpdir;
   const char **argv;
   struct xpd *xpd;
   Pool *p;

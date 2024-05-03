@@ -200,6 +200,14 @@ dump_vl(CGI_varlist *vl)
 void
 p3_exec(CGI_varlist *vl)
 {
+  
+  struct p4tab *p4p = p4projects(project, strlen(project));
+  if (p4p)
+    {
+      pxvl(vl);
+      return;
+    }
+
   char const**vec = mkvec(vl);
 
   if (p3trace)
