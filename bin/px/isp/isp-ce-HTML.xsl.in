@@ -193,7 +193,7 @@
   <xsl:variable name="item">
     <xsl:call-template name="calc-item"/>
   </xsl:variable>
-  <a href="javascript:p3item('cbd',{$item})">
+  <a href="javascript:p4gloart('{ancestor::p/@id}')">
     <xsl:apply-templates mode="summ"/>
   </a>
 </xsl:template>
@@ -201,6 +201,9 @@
 <xsl:template mode="summ" match="*">
   <xsl:element name="{local-name(.)}">
     <xsl:copy-of select="@class"/>
+    <xsl:if test="string-length(@id)>0">
+      <xsl:attribute name="data-oid"><xsl:value-of select="@id"/></xsl:attribute>
+    </xsl:if>
     <xsl:if test="@href">
       <xsl:copy-of select="@href"/>
     </xsl:if>
