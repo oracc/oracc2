@@ -201,8 +201,7 @@ void
 p3_exec(CGI_varlist *vl)
 {
   
-  struct p4tab *p4p = p4projects(project, strlen(project));
-  if (p4p)
+  if (p4)
     {
       pxvl(vl);
       return;
@@ -231,8 +230,7 @@ p3_exec(CGI_varlist *vl)
 void
 p3v(const char **argv)
 {
-  struct p4tab *p4p = p4projects(project, strlen(project));
-  if (p4p)
+  if (p4)
     {
       pxv(argv);
       return;
@@ -248,8 +246,7 @@ p3v(const char **argv)
 void
 p3(const char *project)
 {
-  struct p4tab *p4p = p4projects(project, strlen(project));
-  if (p4p)
+  if (p4)
     {
       px(project);
       return;

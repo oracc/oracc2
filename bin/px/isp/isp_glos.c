@@ -94,42 +94,49 @@ isp_glos_menu(Isp *ip)
 int
 isp_glos_glid(Isp *ip)
 {
-  int len = strlen(ip->glosdata.glet);
-  char *l = (char*)ip->glosdata.ltab;
-  while (*l)
+  if (ip->glosdata.glet && !strcmp(ip->glosdata.glet, "entry_ids"))
     {
-      if (!strncmp(l, ip->glosdata.glet, len) && '\t' == l[len])
-	{
-	  char *e, save = '\0';
-	  l += len+1;
-	  if ((e = strchr(l,'\t')))
-	    {
-	      save = '\t';
-	      *e = '\0';
-	    }
-	  ip->glosdata.lbase = (ccp)pool_copy((uccp)l, ip->p);
-	  if (save)
-	    *e = '\t';
-	  break;
-	}
-      else
-	{
-	  /* Skip the letter */
-	  while (*l && '\t' != *l)
-	    ++l;
-	  ++l;
-	  /* Skip the ID */
-	  while (*l && '\t' != *l)
-	    ++l;
-	  if ('\t' == *l)
-	    ++l;
-	  /* Now we are teed up at the next letter */
-	}
+      ip->glosdata.lbase = ip->glosdata.glet;
     }
-  if (!ip->glosdata.lbase)
+  else
     {
-      ip->err = "isp_glos_glid: letter not found in letters.tab";
-      return 1;
+      int len = strlen(ip->glosdata.glet);
+      char *l = (char*)ip->glosdata.ltab;
+      while (*l)
+	{
+	  if (!strncmp(l, ip->glosdata.glet, len) && '\t' == l[len])
+	    {
+	      char *e, save = '\0';
+	      l += len+1;
+	      if ((e = strchr(l,'\t')))
+		{
+		  save = '\t';
+		  *e = '\0';
+		}
+	      ip->glosdata.lbase = (ccp)pool_copy((uccp)l, ip->p);
+	      if (save)
+		*e = '\t';
+	      break;
+	    }
+	  else
+	    {
+	      /* Skip the letter */
+	      while (*l && '\t' != *l)
+		++l;
+	      ++l;
+	      /* Skip the ID */
+	      while (*l && '\t' != *l)
+		++l;
+	      if ('\t' == *l)
+		++l;
+	      /* Now we are teed up at the next letter */
+	    }
+	}
+      if (!ip->glosdata.lbase)
+	{
+	  ip->err = "isp_glos_glid: letter not found in letters.tab";
+	  return 1;
+	}
     }
   return 0;
 }

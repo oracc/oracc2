@@ -24,6 +24,8 @@ int elements_used = 0;
 int nelements;
 int debug = 0;
 
+int p4 = 0;
+
 static void decompose_script_url(const char *su);
 static int uri_json(void);
 
@@ -343,6 +345,9 @@ find_project(char *script_url)
       project = script_url+1;
       setenv("ORACC_PROJECT", project, 1);
       fprintf(stderr, "found project: %s\n", project);
+      struct p4tab *p4p = p4projects(project, strlen(project));
+      if (p4p)
+	p4 = 1;
       if (save)
 	++dir_end;
       return dir_end;

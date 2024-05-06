@@ -87,6 +87,20 @@ pxv(const char **argv)
 }
 
 void
+pxglossary(const char *project, const char *glos)
+{
+  if (query_string)
+    setenv("QUERY_STRING", query_string, 1);
+
+  CGI_varlist *v = NULL;  
+  v = CGI_get_query(v);
+  v = CGI_get_post(v, NULL);
+  v = CGI_add_var(v, "glos", glos);
+
+  pxvl(v);
+}
+
+void
 px(const char *project)
 {
   if (query_string)

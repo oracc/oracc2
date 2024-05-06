@@ -42,7 +42,7 @@ function updateLocation() {
 	    }
 	}
     }
-    alert("updateLocation="+loc);
+    // alert("updateLocation="+loc);
     window.location=loc;
 }
 
@@ -158,7 +158,7 @@ function act_zoom(z) {
 function act_letter(thisletter) {
     let pager = getPager();
     let currletter = pager.getAttribute("data-zoom");
-    alert('thisletter='+thisletter+'; currletter='+currletter);
+    // alert('thisletter='+thisletter+'; currletter='+currletter);
     if (thisletter !== currletter) {
 	pager.setAttribute("data-page", '1');
 	pager.setAttribute("data-zoom", thisletter);

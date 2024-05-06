@@ -171,5 +171,8 @@ extern void p3v(const char **argv);
 extern void px(const char *project);
 extern void pxv(const char **argv);
 extern void pxvl(CGI_varlist *v);
+extern void pxglossary(const char *project, const char *glos);
+
+extern int p4;
 
 #endif/*RESOLVER_H_*/
