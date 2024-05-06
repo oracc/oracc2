@@ -27,3 +27,5 @@ struct atactionstab;
 "pui_select_ce()", &pui_at_select_ce
 "pui_select_sort()", &pui_at_select_sort
 "pui_select_trans()", &pui_at_select_trans
+"pui_item_label()", &pui_at_item_label
+"pui_page_label()", &pui_at_page_label

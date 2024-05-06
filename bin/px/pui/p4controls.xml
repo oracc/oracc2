@@ -11,7 +11,7 @@
 	   alt="Item back" title="Item back"
 	   onclick="act_item_prev()"/>
       
-      <span id="p4ItemView"> [ITEM @@pui_item_index()@@ of @@pui_active_items()@@] </span>
+      <span id="p4ItemView"> [@@pui_item_index()@@ of @@pui_active_items()@@] </span>
       
       <img id="p4ItemNext" class="p4icon p4spread" src="/img/p3-forward.png"
 	   alt="Item forward" title="Item forward"
@@ -51,9 +51,9 @@
 	   alt="Page forward" title="Page forward"
 	   onclick="act_next()"/>
 
-      @@pui_active_items()@@ items
+      @@pui_active_items()@@ @@pui_item_label()@@
       /
-      @@pui_active_pages()@@ Pages
+      @@pui_active_pages()@@ @@pui_page_label()@@
 
       <span id="p4SrchResultpages" class="p4srchresults">[@@pui_srch_results()@@ matches]</span>
 

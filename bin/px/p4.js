@@ -77,6 +77,12 @@ function act_sorter_special() {
     act_sorter('p4OSspecial');
 }
 
+function act_article(item) {
+    let pager = getPager();
+    pager.setAttribute("data-item", item);
+    updateLocation();
+}
+
 function act_item(item) {
     let pager = getPager();
     pager.setAttribute("data-item", item);
@@ -145,13 +151,25 @@ function act_prev() {
 
 function act_zoom(z) {
     let pager = getPager();
-    let currzoom = pager.getAttribute("data-zoom")/1;
-    let nextzoom = z/1;
-    if (currzoom != nextzoom) {
-	pager.setAttribute("data-page", '1');
-	pager.setAttribute("data-zoom", z);
-	pager.removeAttribute("data-item");
-	updateLocation();
+    let glos = pager.getAttribute("data-glos");
+    if (glos) {
+	if (z === '0') {
+	    pager.setAttribute("data-page", '1');
+	    pager.setAttribute("data-zoom", "entry_ids");
+	    pager.removeAttribute("data-item");
+	    updateLocation();
+	} else {
+	    act_letter(z);
+	}
+    } else {
+	let currzoom = pager.getAttribute("data-zoom")/1;
+	let nextzoom = z/1;
+	if (currzoom != nextzoom) {
+	    pager.setAttribute("data-page", '1');
+	    pager.setAttribute("data-zoom", z);
+	    pager.removeAttribute("data-item");
+	    updateLocation();
+	}
     }
 }
 	
@@ -185,6 +203,7 @@ function toggle_pi() {
     }
     updateLocation();
 }
+
 function toggle_to() {
     document.getElementById("p4XtfData").classList.toggle('transonly');
 }

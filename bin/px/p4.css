@@ -25,7 +25,8 @@
 
 #p4ToggleMeta { text-align: left; }
 
-#p4PageNav.xmd #p4CeType { display: none; }
+.rglo #p4CeType { display: none; }
+.rcat #p4CeType { display: none; }
 
 #p4Item.xtf { display: flex; }
 
@@ -39,6 +40,12 @@
 #p4XtfData { flex: 1 1 80%; display: inline-block; vertical-align: top; }
 
 #p4Translations { vertical-align: middle; }
+
+.iart #p4Translations { display: none; }
+
+#p4Zoom { display: none; }
+
+.zoom #p4Zoom { display: inline; }
 
 /* Formatting CSS */
 
@@ -145,6 +152,11 @@ span.foreign { font-style: italic; }
     text-align: center;
 }
 
+#p4Letters span {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
 .all-letters { text-decoration: underline; }
 
 p.summary {
@@ -183,6 +195,7 @@ sub { font-style: normal; }
 .hit { font-style: italic; }
 .hit-akk { font-style: normal; }
 .hit-xhu { font-style: normal; }
+span.sign { font-size: 90%; }
 
 .textonly .xtr { display: none; }
 

@@ -193,7 +193,7 @@
   <xsl:variable name="item">
     <xsl:call-template name="calc-item"/>
   </xsl:variable>
-  <a href="javascript:p4gloart('{ancestor::p/@id}')">
+  <a href="javascript:act_article('{ancestor::p/@id}')">
     <xsl:apply-templates mode="summ"/>
   </a>
 </xsl:template>

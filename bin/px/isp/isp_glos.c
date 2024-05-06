@@ -15,6 +15,56 @@ isp_glos_letter_id(Isp *ip)
 }
 
 int
+isp_glos_pmax(Isp *ip)
+{
+#define ENTRYCOUNTS "/entry-counts.tab"
+  ip->glosdata.ecpath = (ccp)pool_alloc(strlen(ip->glosdata.dir)+strlen(ENTRYCOUNTS)+1, ip->p);
+  sprintf((char*)ip->glosdata.ecpath, "%s%s", ip->glosdata.dir, ENTRYCOUNTS);
+  char *ln;
+  FILE *fp;
+  const char *lid = ip->glosdata.lbase;
+  int status = 0;
+  if ((fp = fopen(ip->glosdata.ecpath, "r")))
+    {
+      while ((ln = (char*)loadoneline(fp, NULL)))
+	{
+	  if (!strncmp(ln, lid, strlen(lid)))
+	    break;
+	}
+      fclose(fp);
+      if (ln)
+	{
+	  char *count = strchr(ln, '\t');
+	  if (count)
+	    {
+	      ip->glosdata.emax = (ccp)pool_copy((ucp)++count, ip->p);
+	    }
+	  else
+	    {
+	      ip->err = PX_ERROR_START "isp_glos_pmax: letter ID %s has no count\n";
+	      ip->errx = lid;
+	      status = 1;
+	    }
+	}
+      else
+	{
+	  ip->err = PX_ERROR_START "isp_glos_pmax: letter ID %s not found in entry-counts\n";
+	  ip->errx = lid;
+	  status = 1;
+	}
+    }
+  else
+    {
+      ip->err = PX_ERROR_START "isp_glos_pmax: failed to read %s\n";
+      ip->errx = ip->glosdata.ecpath;
+      status = 1;
+    }
+
+  loadoneline(NULL, NULL);
+  return status;
+}
+
+int
 isp_glos_list(Isp *ip)
 {
   /* ltab is malloc data */
@@ -39,6 +89,9 @@ isp_glos_list(Isp *ip)
   ip->cemd = "cglo";
   ip->data = "dglo";
 
+  if (isp_glos_pmax(ip))
+    return 1;
+  
   return 0;
 }
 
@@ -58,7 +111,7 @@ isp_glos_menu(Isp *ip)
       while (*s)
 	{
 	  char *l = s;
-	  char *let = s, *lid;
+	  char *let = s;
 	      
 	  while (*l && '\t' != *l)
 	    {
@@ -69,14 +122,13 @@ isp_glos_menu(Isp *ip)
 	  if (*l)
 	    *l++ = '\0';
 	      
-	  lid = l;
 	  while (*l && '\t' != *l)
 	    ++l;
 
 	  if (*l)
 	    *l++ = '\0';
 	  if (*let && !isspace(*let))
-	    fprintf(lfp, "<p><a href=\"javascript://\" onclick=\"act_letter('%s')\">%s</a></p>", let, let);
+	    fprintf(lfp, "<p><a href=\"javascript://\" onclick=\"act_letter('%s')\"><span>%s</span></a></p>", let, let);
 
 	  s = l;
 	}
@@ -177,4 +229,62 @@ isp_glos_data(Isp *ip)
 
   /* now we can use the main page creator to make the page div */
   return create_page_div(ip);
+}
+
+int
+isp_glos_item(Isp *ip)
+{
+  if (!ip->glosdata.web)
+    {
+      ip->glosdata.web = (ccp)pool_copy((ucp)ip->glosdata.dir, ip->p);
+      char *pub = strstr((char *)ip->glosdata.web, "02pub");
+      pub[02] = pub[03] = pub[04] = 'w';
+    }
+  ip->glosdata.ipath = (char*)pool_alloc(strlen(ip->glosdata.web)+strlen(ip->item)+strlen("/.html0"), ip->p);
+  sprintf((char*)ip->glosdata.ipath, "%s/%s.html", ip->glosdata.web, ip->item);
+  if (access(ip->glosdata.ipath, R_OK))
+    {
+      ip->err = PX_ERROR_START "isp_glos_item: %s not found\n";
+      ip->errx = ip->glosdata.ipath;
+      return 1;
+    }
+  else
+    ip->itemdata.html = ip->glosdata.ipath;
+
+  char *dbifn = "entry-indexes";
+  Dbi_index *dp = dbx_init(ip->glosdata.dir, dbifn);
+  if (dp)
+    {
+      char ikey[strlen(ip->glosdata.lbase)+strlen(ip->item)+2];
+      sprintf(ikey, "%s:%s", ip->item, ip->glosdata.lbase);
+      char *k = (char*)dbx_key(dp, ikey, NULL);
+      if (!k)
+	{
+	  ip->err = PX_ERROR_START "key %s not found in item db\n";
+	  ip->errx = (ccp)pool_copy((ucp)ikey, ip->p);
+	  return 1;
+	}
+      ip->itemdata.index = (ccp)pool_copy((ucp)k, ip->p);
+      int this = atoi(k);
+      if (this > 1) {
+	sprintf(ikey,"%s:%d",ip->glosdata.lbase, this-1);
+	k = (char*)dbx_key(dp, ikey, NULL);
+	if (k)
+	  ip->itemdata.prev = (ccp)pool_copy((ucp)k, ip->p);
+      }
+      sprintf(ikey,"%s:%d",ip->glosdata.lbase, this+1);
+      k = (char*)dbx_key(dp, ikey, NULL);
+      if (k)
+	ip->itemdata.next = (ccp)pool_copy((ucp)k, ip->p);
+      dbx_term(dp);
+    }
+  else
+    {
+      char buf[strlen(ip->glosdata.dir)+strlen(dbifn)+6];
+      sprintf(buf, "%s/%s.dbh", ip->glosdata.dir, dbifn);
+      ip->errx = (ccp)pool_copy((ucp)buf, ip->p);
+      ip->err = PX_ERROR_START "failed to open %s\n";
+      return 1;
+    }
+  return 0;
 }

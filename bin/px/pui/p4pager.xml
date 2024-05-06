@@ -1,4 +1,4 @@
-<div id="p4Pager" class="@@pui_pager_class()@@"@@pui_pager_data()@@>
+<div id="p4Pager" class="@@pui_pager_class()@@"@@pui_pager_data()@@ translate="no">
   <div id="p4Masthead">
     <p id="p4HeadTitle" class="banner bbborder-top bborder-bot">
       <a href="/">Oracc:</a> <a href="/@@pui_project()@@">@@pui_title()@@</a>

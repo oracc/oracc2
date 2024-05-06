@@ -18,7 +18,7 @@ struct puifilestab
 };
 
 extern const char *p4pager, *p4error, *p4controls, *p4footer, *p4search,
-  *p4icons, *p4html, *p4head, *p4dropdown, *p4debug, *p4debugdiv, *p4itemxtf,
+  *p4icons, *p4html, *p4head, *p4dropdown, *p4debug, *p4debugdiv, *p4itemglo, *p4itemxtf,
   *p4select, *p4ceselect;
 
 extern const char *pui_filetext(const char *file);
@@ -30,8 +30,8 @@ extern atfunc pui_at_error, pui_at_invocation, pui_at_status,
   pui_at_title, pui_at_menu, pui_at_content, pui_at_project,
   pui_at_translations, pui_at_current_page, pui_at_active_pages, pui_at_active_items,
   pui_at_srch_results, pui_at_ceid, pui_at_environment, pui_at_pager_data,
-  pui_at_item_data, pui_at_item_meta, pui_at_srchterm, pui_at_pager_class,
-  pui_at_item_index, pui_at_select_ce, pui_at_select_sort, pui_at_select_trans
+  pui_at_item_data, pui_at_item_meta, pui_at_item_label, pui_at_srchterm, pui_at_pager_class,
+  pui_at_item_index, pui_at_select_ce, pui_at_select_sort, pui_at_select_trans, pui_at_page_label
   ;
 
 #endif/*PUI_H_*/

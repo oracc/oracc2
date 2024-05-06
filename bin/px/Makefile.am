@@ -8,7 +8,8 @@ img_DATA=icons/*.png
 
 bin_PROGRAMS=px
 
-bin_SCRIPTS=pxlangs.sh pxreset.sh pxp3p4.sh pxsortercodes.sh
+bin_SCRIPTS=pxlangs.sh pxreset.sh pxp3p4.sh \
+	pxsortercodes.sh pxentrycounts.sh pxentryindexes.sh
 
 scriptdata_DATA=*.xsl
 

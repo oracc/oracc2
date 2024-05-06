@@ -32,7 +32,7 @@ main(int argc, char **argv)
   if (isp_cache_sub(ip))
     goto error;
 
-  if (isp_glos_list(ip))
+  if (ip->glos && isp_glos_list(ip))
     goto error;
   
   if (isp_cache_list(ip))
@@ -51,7 +51,6 @@ main(int argc, char **argv)
   if (isp_cache_page(ip))
     goto error;
 
-#if 1
   if (ip->debug)
     {
       print_hdr();
@@ -81,18 +80,6 @@ main(int argc, char **argv)
 	    goto error;
 	}
     }
-#else
-  if (ip->p3)
-    {
-      if (isp_p3(ip, stdout))
-	goto error;
-    }
-  else
-    {
-      if (isp_ui(ip, stdout))
-	goto error;
-    }
-#endif
 
   goto ok;
   

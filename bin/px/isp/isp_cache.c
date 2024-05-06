@@ -153,8 +153,16 @@ isp_cache_page(Isp *ip)
       char *tmp = strrchr(ip->cache.pgin, '.');
       strcpy(tmp, ".pag");
 
-      if (isp_glos_data(ip))
-	return 1;
+      if (ip->item)
+	{
+	  if (isp_glos_item(ip))
+	    return 1;
+	}
+      else
+	{
+	  if (isp_glos_data(ip))
+	    return 1;
+	}
     }
   else
     {

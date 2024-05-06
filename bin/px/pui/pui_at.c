@@ -7,8 +7,9 @@ static int
 active_pages(Isp *ip)
 {
   int psize = atoi(ip->psiz);
-  int npages = ip->md1.zimx / psize;
-  if (ip->md1.zimx % psize)
+  int pmax = (ip->glos ? atoi(ip->glosdata.emax) : ip->md1.zimx);
+  int npages =  pmax / psize;
+  if (pmax % psize)
     ++npages;
   return npages;
 }
@@ -39,6 +40,18 @@ pui_at_pager_class(Isp *ip, FILE *fp)
       strcpy(r+2, ip->data+1);
       fputs(r, fp);
     }
+
+  if (ip->glos)
+    {
+      if (ip->zoom && strcmp(ip->zoom, "entry_ids"))
+	fputs(" zoom", fp);
+    }
+  else
+    {
+      if (strcmp(ip->zoom, "0"))
+	fputs(" zoom", fp);	
+    }
+
   fputc(' ', fp);
   if (ip->dors && '1' == *ip->dors)
     fputs("special", fp);
@@ -105,16 +118,46 @@ pui_at_active_pages(Isp *ip, FILE *fp)
 }
 
 void
-pui_at_item_index(Isp *ip, FILE *fp)
+pui_at_page_label(Isp *ip, FILE *fp)
 {
-  if (ip->itemdata.index)
-    fputs(itoa(atoi(ip->itemdata.index)+1), fp);
+  fputs(active_pages(ip) == 1 ? "page" : "pages", fp);
 }
 
 void
 pui_at_active_items(Isp *ip, FILE *fp)
 {
-  fputs(itoa(ip->md1.zimx), fp);
+  if (ip->glos)
+    fputs(ip->glosdata.emax, fp);
+  else
+    fputs(itoa(ip->md1.zimx), fp);
+}
+
+void
+pui_at_item_label(Isp *ip, FILE *fp)
+{
+  char *label = "items";
+  if (ip->glos)
+    {
+      int n = atoi(ip->glosdata.emax);
+      if (n == 1)
+	label = "entry";
+      else
+	label = "entries";
+    }
+  else
+    {
+      if (ip->md1.zimx == 1)
+	label = "item";
+    }
+  fputs(label, fp);
+}
+
+void
+pui_at_item_index(Isp *ip, FILE *fp)
+{
+  fputs(ip->glos ? "ENTRY " : "ITEM ", fp);
+  if (ip->itemdata.index)
+    fputs(itoa(atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
 }
 
 void
@@ -187,10 +230,18 @@ pui_at_menu(Isp *ip, FILE *fp)
 void
 pui_at_content(Isp *ip, FILE *fp)
 {
-  if (ip->item && !ip->glos)
+  if (ip->item)
     {
-      if (pui_output(ip, stdout, pui_filetext("p4itemxtf.xml")))
-	longjmp(ip->errjmp, 1);
+      if (ip->glos)
+	{
+	  if (pui_output(ip, stdout, pui_filetext("p4itemglo.xml")))
+	    longjmp(ip->errjmp, 1);
+	}
+      else
+	{
+	  if (pui_output(ip, stdout, pui_filetext("p4itemxtf.xml")))
+	    longjmp(ip->errjmp, 1);
+	}
     }
   else
     px_file_copy(ip, ip->cache.page, "-");
@@ -201,6 +252,7 @@ pui_at_item_meta(Isp *ip, FILE *fp)
 {
   px_file_copy(ip, ip->cache.meta, "-");
 }
+
 void
 pui_at_item_data(Isp *ip, FILE *fp)
 {
