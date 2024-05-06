@@ -14,80 +14,78 @@ isp_glos_letter_id(Isp *ip)
   return tab;
 }
 
-#if 0
-      const char *s = tab;
-      int len = strlen(ip->glosdata.glet);
-      while (*s)
-	if (!strncmp(s, ip->glosdata.glet, len) && (!s[len+1] || '\t' == s[len+1]))
-	  break;
-      if (*s)
-	{
-	  lid = (char*)pool_alloc(len+1, ip->p);
-	  strncpy(lid, s, len);
-	  ip->glosdata.ltab = tab;
-	}
-      else
-	ip->err = "no such letter in letter-ids.tab";
-#endif
-
 int
-isp_glos_zoom(Isp *ip)
+isp_glos_list(Isp *ip)
 {
-  ip->cache.ltab = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.tab0"), ip->p);
-  sprintf((char*)ip->cache.ltab, "%s/letters.tab", ip->cache.sub);
-  FILE *lfp = fopen(ip->cache.zout, "w");
-  if (lfp)
+  /* ltab is malloc data */
+  if (!isp_glos_letter_id(ip))
+    return 1;
+
+  if (ip->zoom)
     {
-      FILE *tfp = fopen(ip->cache.ltab, "w");
-      if (tfp)
-	{
-	  /* ltab is malloc data */
-	  if (!isp_glos_letter_id(ip))
-	    return 1;
-	  char *s = (char*)ip->glosdata.ltab;
-	  fprintf(lfp, "<div id=\"p4Letters\">");
-	  while (*s)
-	    {
-	      char *l = s;
-	      char *let = s, *lid;
-	      
-	      while (*l && '\t' != *l)
-		{
-		  if ('\'' == *l)
-		    *l = (char)31;
-		  ++l;
-		}
-	      if (*l)
-		*l++ = '\0';
-	      
-	      lid = l;
-	      while (*l && '\t' != *l)
-		++l;
-
-	      if (*l)
-		*l++ = '\0';
-	      if (*let && !isspace(*let))
-		{
-		  fprintf(lfp, "<p><a href=\"javascript://p4letter('%s')\">%s</a></p>", let, let);
-		  fprintf(tfp, "%s\t%s\n", let, lid);
-		}
-
-	      s = l;
-	    }
-	  fprintf(lfp,"</div>");
-	  fclose(lfp);
-	  fclose(tfp);
-	}	      
-      else
-	{
-	  ip->err = "isp_glos_zoom: unable to open letters.tab";
-	  fclose(lfp);
-	  return 1;
-	}
+      ip->glosdata.glet = ip->zoom;
+      if (isp_glos_glid(ip))
+	return 1;
     }
   else
     {
-      ip->err = "isp_glos_zoom: unable to open letters.div";
+      ip->glosdata.lbase = "entry_ids";
+    }
+
+  char p[strlen(ip->oracc)+strlen("/pub/")+strlen(ip->project)+strlen(ip->glosdata.lbase)+4];
+  sprintf(p, "%s/pub/%s/cbd/%s/%s.lst", ip->oracc, ip->project, ip->glos, ip->glosdata.lbase);
+  ip->lloc.path = ip->glosdata.lpath = (ccp)pool_copy((uccp)p, ip->p);
+  ip->lloc.method = "file";
+  ip->cemd = "cglo";
+  ip->data = "dglo";
+
+  return 0;
+}
+
+int
+isp_glos_menu(Isp *ip)
+{
+  FILE *lfp = fopen(ip->cache.zout, "w");
+  if (lfp)
+    {
+      /* We always use pub/cbd/LANG/letters.tab for the letter-id;
+       *
+       * We should only need to create ip->cache.zout once, but right now we recreate it every time
+       */
+      char *s = (char*)ip->glosdata.ltab;
+      fprintf(lfp, "<div id=\"p4Letters\">");
+      fprintf(lfp, "<p class=\"all-letters\"><a href=\"javascript://\" onclick=\"act_letter('entry_ids')\">ALL</a></p>");
+      while (*s)
+	{
+	  char *l = s;
+	  char *let = s, *lid;
+	      
+	  while (*l && '\t' != *l)
+	    {
+	      if ('\'' == *l)
+		*l = (char)31;
+	      ++l;
+	    }
+	  if (*l)
+	    *l++ = '\0';
+	      
+	  lid = l;
+	  while (*l && '\t' != *l)
+	    ++l;
+
+	  if (*l)
+	    *l++ = '\0';
+	  if (*let && !isspace(*let))
+	    fprintf(lfp, "<p><a href=\"javascript://\" onclick=\"act_letter('%s')\">%s</a></p>", let, let);
+
+	  s = l;
+	}
+      fprintf(lfp,"</div>");
+      fclose(lfp);
+    }
+  else
+    {
+      ip->err = "isp_glos_menu: unable to open letters.div";
       return 1;
     }
   return 0;
@@ -96,23 +94,22 @@ isp_glos_zoom(Isp *ip)
 int
 isp_glos_glid(Isp *ip)
 {
-  char *t = (char*)slurp("isp_glos_glid", ip->cache.ltab, NULL);
-  if (!t)
-    {
-      ip->err = "isp_glos_glid: failed to load letters.tab";
-      return 1;
-    }
   int len = strlen(ip->glosdata.glet);
-  char *l = t;
+  char *l = (char*)ip->glosdata.ltab;
   while (*l)
     {
       if (!strncmp(l, ip->glosdata.glet, len) && '\t' == l[len])
 	{
-	  char *e;
+	  char *e, save = '\0';
 	  l += len+1;
 	  if ((e = strchr(l,'\t')))
-	    *e = '\0';
+	    {
+	      save = '\t';
+	      *e = '\0';
+	    }
 	  ip->glosdata.lbase = (ccp)pool_copy((uccp)l, ip->p);
+	  if (save)
+	    *e = '\t';
 	  break;
 	}
       else
@@ -129,10 +126,9 @@ isp_glos_glid(Isp *ip)
 	  /* Now we are teed up at the next letter */
 	}
     }
-  free(t);
   if (!ip->glosdata.lbase)
     {
-      ip->err = "isp_glos_glid: letter not fund in letters.tab";
+      ip->err = "isp_glos_glid: letter not found in letters.tab";
       return 1;
     }
   return 0;
@@ -141,13 +137,7 @@ isp_glos_glid(Isp *ip)
 int
 isp_glos_data(Isp *ip)
 {
-  if (ip->glosdata.glet)
-    {
-      if (isp_glos_glid(ip))
-	return 1;
-    }
-
-  /* set the item-id file */
+  /* set the letter-id file */
   ip->glosdata.lpath = (ccp)pool_alloc(strlen(ip->glosdata.dir)+strlen(ip->glosdata.lbase)+2, ip->p);
   sprintf((char*)ip->glosdata.lpath, "%s/%s.lst", ip->glosdata.dir, ip->glosdata.lbase);
 
@@ -156,8 +146,27 @@ isp_glos_data(Isp *ip)
   int end = start + atoi(ip->psiz);
 
   /* create the page input selection */
-  if (file_copy_lines(ip->glosdata.lpath, ip->cache.pgin, start, end))
-    return 1;
+  int ret;
+  if ((ret = file_copy_lines(ip->glosdata.lpath, ip->cache.pgin, start, end)))
+    {
+      if (ret == 1)
+	{
+	  ip->err = PX_ERROR_START "file_copy_lines: failed to open input %s\n";
+	  ip->errx = ip->glosdata.lpath;
+	  return 1;
+	}
+      else if (ret == 2)
+	{
+	  ip->err = PX_ERROR_START "file_copy_lines: failed to open output %s\n";
+	  ip->errx = ip->cache.pgin;
+	  return 1;
+	}
+      else if (ret == 3)
+	{
+	  ip->err = "file_copy_lines: error copying lines";
+	  return 1;
+	}
+    }
 
   /* now we can use the main page creator to make the page div */
   return create_page_div(ip);

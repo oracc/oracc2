@@ -52,11 +52,17 @@ pui_at_pager_data(Isp *ip, FILE *fp)
 #define pattrs(a,v) fprintf(fp, " %s=\"%s\"", (a), (v))
 #define pattrd(a,v) fprintf(fp, " %s=\"%d\"", (a), (v))
   pattrs("data-proj", ip->project);
-  pattrs("data-list", ip->list_name);
-  pattrs("data-sort", ip->perm);
-  pattrs("data-zoom", ip->zoom);
-  pattrs("data-page", ip->page);
-  pattrd("data-pmax", active_pages(ip));
+  if (ip->glos)
+    {
+      pattrs("data-glos", ip->glos);
+      pattrs("data-zoom", ip->zoom ? ip->zoom : "entry_ids");
+    }
+  else
+    {
+      pattrs("data-list", ip->list_name);
+      pattrs("data-zoom", ip->zoom);
+      pattrs("data-sort", ip->perm);
+    }
   if (ip->item)
     {
       const char *prev = ip->itemdata.prev ? ip->itemdata.prev : "";
@@ -69,6 +75,9 @@ pui_at_pager_data(Isp *ip, FILE *fp)
     }
   else if (ip->bkmk)
     pattrs("data-bkmk", ip->bkmk);
+
+  pattrs("data-page", ip->page);
+  pattrd("data-pmax", active_pages(ip));
 }
 
 void
@@ -170,13 +179,15 @@ pui_at_project(Isp *ip, FILE *fp)
 void
 pui_at_menu(Isp *ip, FILE *fp)
 {
+  if (!ip->glos)
+    pui_at_select_sort(ip, fp);
   px_file_copy(ip, ip->cache.zout, "-");
 }
 
 void
 pui_at_content(Isp *ip, FILE *fp)
 {
-  if (ip->item)
+  if (ip->item && !ip->glos)
     {
       if (pui_output(ip, stdout, pui_filetext("p4itemxtf.xml")))
 	longjmp(ip->errjmp, 1);
@@ -213,6 +224,7 @@ pui_at_select_ce(Isp *ip, FILE *fp)
 void
 pui_at_select_sort(Isp *ip, FILE *fp)
 {
+  fputs("<div id=\"p4MenuSelect\">", fp);
   const char *params[] = { "select", "'123'", NULL };
   char osbufd[strlen(ip->oracc)+strlen(ip->project)+strlen("//02xml/p4OSdefault.xml0")];
   sprintf(osbufd, "%s/%s/02xml/p4OSdefault.xml", ip->oracc, ip->project);
@@ -234,6 +246,7 @@ pui_at_select_sort(Isp *ip, FILE *fp)
     }
   else
     xslt_term(xp);
+  fputs("</div>", fp);
 }
 
 void

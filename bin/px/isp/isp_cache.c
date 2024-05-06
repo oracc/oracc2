@@ -142,17 +142,17 @@ isp_cache_page(Isp *ip)
       ip->cache.zout = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.div0"), ip->p);
       sprintf((char*)ip->cache.zout, "%s/letters.div", ip->cache.sub);
 
-      char pbuf[strlen(ip->cache.sub)+strlen(ip->zoom)+strlen(ip->page)+strlen("z-p.div0")];
-      sprintf(pbuf, "%s/z%s-p%s.div", ip->cache.sub, ip->zoom, ip->page);
+      if (isp_glos_menu(ip))
+	return 1;
+      
+      char pbuf[strlen(ip->cache.sub)+strlen(ip->glosdata.lbase)+strlen(ip->page)+strlen("z-p.div0")];
+      sprintf(pbuf, "%s/z%s-p%s.div", ip->cache.sub, ip->glosdata.lbase, ip->page);
       ip->cache.page = (ccp)pool_copy((uccp)pbuf, ip->p);
 
       ip->cache.pgin = (ccp)pool_copy((uccp)ip->cache.page, ip->p);
       char *tmp = strrchr(ip->cache.pgin, '.');
       strcpy(tmp, ".pag");
 
-      if (isp_glos_zoom(ip))
-	return 1;
-      
       if (isp_glos_data(ip))
 	return 1;
     }

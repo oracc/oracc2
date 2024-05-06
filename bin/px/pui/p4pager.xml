@@ -20,9 +20,6 @@
   </div>
   <div id="p4Data">
     <div id="p4Menu">
-      <div id="p4MenuSelect">
-	@@pui_select_sort()@@
-      </div>
       @@pui_menu()@@
     </div>
     <div id="p4Content">

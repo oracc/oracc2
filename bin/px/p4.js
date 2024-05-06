@@ -1,19 +1,45 @@
 function updateLocation() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
-    let list = pager.getAttribute("data-list");
-    let perm = pager.getAttribute("data-sort");
-    let item = pager.getAttribute("data-item");
+    let glos = pager.getAttribute("data-glos");
     let loc = '';
-    if (item) {
-        loc = '/'+proj+'?list='+list+'&sort='+perm+'&item='+item;
-    } else {
+    if (glos) {
+	let i = 0;
+	let qs = '';
 	let zoom = pager.getAttribute("data-zoom");
-	let page = pager.getAttribute("data-page");
-	let bkmk = pager.getAttribute("data-bkmk");
-        loc = '/'+proj+'?list='+list+'&sort='+perm+'&zoom='+zoom+'&page='+page;
-	if (bkmk) {
-	    loc = loc+'&bkmk='+bkmk;
+	if (zoom) {
+	    qs = 'zoom='+zoom;
+	}
+	let item = pager.getAttribute("data-item");
+	if (item) {
+	    if (qs.length) {
+		qs = qs+'&';
+	    }
+	    qs = qs+'item='+item;
+	} else {
+	    let page = pager.getAttribute("data-page");
+	    if (page) {
+		if (qs.length) {
+		    qs = qs+'&';
+		}
+		qs = qs+'page='+page;
+	    }
+	}
+	loc = '/'+proj+'/'+glos+'?'+qs;
+    } else {
+	let list = pager.getAttribute("data-list");
+	let perm = pager.getAttribute("data-sort");
+	let item = pager.getAttribute("data-item");
+	if (item) {
+            loc = '/'+proj+'?list='+list+'&sort='+perm+'&item='+item;
+	} else {
+	    let zoom = pager.getAttribute("data-zoom");
+	    let page = pager.getAttribute("data-page");
+	    let bkmk = pager.getAttribute("data-bkmk");
+	    loc = '/'+proj+'?list='+list+'&sort='+perm+'&zoom='+zoom+'&page='+page;
+	    if (bkmk) {
+		loc = loc+'&bkmk='+bkmk;
+	    }
 	}
     }
     alert("updateLocation="+loc);
@@ -128,6 +154,18 @@ function act_zoom(z) {
 	updateLocation();
     }
 }
+	
+function act_letter(thisletter) {
+    let pager = getPager();
+    let currletter = pager.getAttribute("data-zoom");
+    alert('thisletter='+thisletter+'; currletter='+currletter);
+    if (thisletter !== currletter) {
+	pager.setAttribute("data-page", '1');
+	pager.setAttribute("data-zoom", thisletter);
+	pager.removeAttribute("data-item");
+	updateLocation();
+    }
+}
 
 // toggles implemented with hide attribute or class-dependent display=none
 function toggle_dd() {
@@ -167,6 +205,14 @@ function act_translation() {
 	    updateLocation();
 	}
     }
+}
+
+// P4 CBD
+
+function gloart(id) {
+    let pager = getPager();
+    pager.setAttribute("data-item", item);
+    updateLocation();    
 }
 
 // P3 continuing JS

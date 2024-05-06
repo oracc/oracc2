@@ -174,13 +174,7 @@ isp_list_method(Isp *ip)
     }
   else if ('g' == *ip->lloc.type) /* glossary */
     {
-      /* ip->glosdata.lbase is set during px validation */
-      char p[strlen(ip->oracc)+strlen("/pub/")+strlen(ip->project)+strlen(ip->glosdata.lbase)+4];
-      sprintf(p, "%s/pub/%s/cbd/%s/%s.lst", ip->oracc, ip->project, ip->glos, ip->glosdata.lbase);
-      ip->lloc.path = ip->glosdata.lpath = (ccp)pool_copy((uccp)p, ip->p);
-      ip->lloc.method = "file";
-      ip->cemd = "cglo";
-      ip->data = "dglo";
+      /* deferred until partial cache setting */
     }
   else
     {

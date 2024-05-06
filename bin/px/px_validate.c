@@ -62,8 +62,9 @@ px_valid_glos(Isp *ip)
     }
   else
     {
+      if (ip->zoom && !strcmp(ip->zoom, "0"))
+	ip->zoom = NULL;
       ip->glosdata.dir = (ccp)pool_copy((ucp)dir, ip->p);
-      ip->glosdata.lbase = "entry_ids";
     }
   return 0;  
 }
@@ -121,7 +122,7 @@ px_validate(Isp *ip)
 	}
     }
 
-  if (ip->zoom && px_integer((uccp)ip->zoom))
+  if (ip->zoom && !ip->glos && px_integer((uccp)ip->zoom))
     {
       ip->err = "zoom parameter is not a positive integer";
       goto error;

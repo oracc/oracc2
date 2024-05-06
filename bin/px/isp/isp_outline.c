@@ -163,7 +163,7 @@ ispo_outline_p(Isp *ip, FILE *fp, unsigned char *h, int count, int zoom, int zoo
 {
   const char *class;
   if (zoom == zoomed)
-    class = " class=\"zoomxed\"";
+    class = " class=\"zoomed\"";
   else
     class = "";
   fprintf(fp, "<p%s><a href=\"javascript://\" onclick=\"act_zoom(%d)\" data-zoom=\"%d\">%s [%d]</a></p>",
