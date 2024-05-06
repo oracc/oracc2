@@ -25,6 +25,10 @@ function updateLocation() {
 		qs = qs+'page='+page;
 	    }
 	}
+	let gxis = pager.getAttribute("data-gxis");
+	if (gxis) {
+	    qs = qs+'&xis='+gxis;
+	}
 	loc = '/'+proj+'/'+glos+'?'+qs;
     } else {
 	let list = pager.getAttribute("data-list");

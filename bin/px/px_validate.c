@@ -65,6 +65,11 @@ px_valid_glos(Isp *ip)
       if (ip->zoom && !strcmp(ip->zoom, "0"))
 	ip->zoom = NULL;
       ip->glosdata.dir = (ccp)pool_copy((ucp)dir, ip->p);
+      if (ip->glosdata.xis)
+	{
+	  if (!ip->zoom || isalpha(*ip->zoom))
+	    ip->zoom = "0";
+	}
     }
   return 0;  
 }

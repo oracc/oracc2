@@ -276,8 +276,10 @@
       </a>
     </xsl:when>
     <xsl:otherwise>
-      <!-- think about how to switch transonly on automatically for ITEM mode inside TRA search -->
-      <a href="javascript:p3item3('xtf',{$item},'{$ce-data/@project}:{$ce-data/@text-id}')">
+      <!-- think about how to switch transonly on automatically for ITEM mode inside TRA search;
+	   with p4 this can be done with the JS
+        -->
+      <a href="javascript:act_item('{$ce-data/@text-id}')">
 	<xsl:call-template name="make-label-text">
 	  <xsl:with-param name="label" select="$label"/>
 	</xsl:call-template>

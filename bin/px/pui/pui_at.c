@@ -7,7 +7,7 @@ static int
 active_pages(Isp *ip)
 {
   int psize = atoi(ip->psiz);
-  int pmax = (ip->glos ? atoi(ip->glosdata.emax) : ip->md1.zimx);
+  int pmax = ((ip->glos&&!ip->glosdata.xis) ? atoi(ip->glosdata.emax) : ip->md1.zimx);
   int npages =  pmax / psize;
   if (pmax % psize)
     ++npages;
@@ -35,10 +35,15 @@ pui_at_pager_class(Isp *ip, FILE *fp)
     }
   else
     {
+#if 1
+      fputc(' ', fp);
+      fputs(ip->show, fp);
+#else
       char r[6];
       r[0] = ' '; r[1] = 'r';
       strcpy(r+2, ip->data+1);
       fputs(r, fp);
+#endif
     }
 
   if (ip->glos)
@@ -68,7 +73,11 @@ pui_at_pager_data(Isp *ip, FILE *fp)
   if (ip->glos)
     {
       pattrs("data-glos", ip->glos);
-      pattrs("data-zoom", ip->zoom ? ip->zoom : "entry_ids");
+      pattrs("data-glet", ip->glosdata.let ? ip->glosdata.let : "entry_ids");
+      if (ip->glosdata.ent)
+	pattrs("data-gent", ip->glosdata.ent);
+      if (ip->glosdata.xis)
+	pattrs("data-gxis", ip->glosdata.xis);
     }
   else
     {
@@ -76,6 +85,8 @@ pui_at_pager_data(Isp *ip, FILE *fp)
       pattrs("data-zoom", ip->zoom);
       pattrs("data-sort", ip->perm);
     }
+  /* There can be both glos and item when item comes from a glossary
+     instance set */
   if (ip->item)
     {
       const char *prev = ip->itemdata.prev ? ip->itemdata.prev : "";
@@ -126,7 +137,7 @@ pui_at_page_label(Isp *ip, FILE *fp)
 void
 pui_at_active_items(Isp *ip, FILE *fp)
 {
-  if (ip->glos)
+  if (ip->glos && !ip->glosdata.xis)
     fputs(ip->glosdata.emax, fp);
   else
     fputs(itoa(ip->md1.zimx), fp);
@@ -136,7 +147,7 @@ void
 pui_at_item_label(Isp *ip, FILE *fp)
 {
   char *label = "items";
-  if (ip->glos)
+  if (ip->glos && !ip->glosdata.xis)
     {
       int n = atoi(ip->glosdata.emax);
       if (n == 1)
@@ -146,8 +157,18 @@ pui_at_item_label(Isp *ip, FILE *fp)
     }
   else
     {
-      if (ip->md1.zimx == 1)
-	label = "item";
+      if (ip->glosdata.xis)
+	{
+	  if (ip->md1.zimx == 1)
+	    label = "ref";
+	  else
+	    label = "refs";
+	}
+      else
+	{
+	  if (ip->md1.zimx == 1)
+	    label = "item";
+	}
     }
   fputs(label, fp);
 }

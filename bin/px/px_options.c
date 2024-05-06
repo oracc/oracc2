@@ -71,7 +71,7 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:R:m:z:p:g:i:b:s:k:h:x:u:c:l:a:t:vw");
+    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:R:m:a:z:p:g:e:i:b:s:k:h:x:u:c:l:a:t:vw");
   opt_ip = NULL;
   if (ret && !ip->err)
     ip->err = "processing options";
@@ -83,39 +83,6 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
-#if 0
-    case '3':
-      opt_ip->p3 = 1;
-      break;
-    case 'E':
-      opt_ip->steps[PX_STEP_0E] = 1;
-      break;
-    case 'L':
-      opt_ip->steps[PX_STEP_1L] = 1;
-      break;
-    case 'S':
-      opt_ip->steps[PX_STEP_2S] = 1;
-      break;
-    case 'Z':
-      opt_ip->steps[PX_STEP_3Z] = 1;
-      break;
-    case 'P':
-      opt_ip->steps[PX_STEP_4P] = 1;
-      break;
-    case 'W':
-      opt_ip->steps[PX_STEP_5W] = 1;
-      break;
-    case 'C':
-      opt_ip->steps[PX_STEP_6C] = 1;
-      break;
-    case 'F':
-      opt_ip->steps[PX_STEP_7F] = 1;
-      break;
-    case 'O':
-      opt_ip->steps[PX_STEP_8O] = 1;
-      break;
-#endif
-
     case 'b':
       opt_ip->bkmk = arg;
       break;
@@ -133,6 +100,9 @@ opts(int opt, const char *arg)
       break;
     case 'l':
       opt_ip->list_name = arg;
+      break;
+    case 'x':
+      opt_ip->glosdata.xis = arg;
       break;
     case 'm':
       if (strlen(arg) == 1 && ('0'==*arg || '1'==*arg))
@@ -158,8 +128,14 @@ opts(int opt, const char *arg)
     case 't':
       opt_ip->tmpdir = arg;
       break;
+    case 'a':
+      opt_ip->glosdata.let = arg;
+      break;
     case 'z':
       opt_ip->zoom = arg;
+      break;
+    case 'e':
+      opt_ip->glosdata.ent = arg;
       break;
     case 'i':
       opt_ip->item = arg;
@@ -183,10 +159,10 @@ opts(int opt, const char *arg)
       opt_ip->host = arg;
       break;
       /* possibly add 'o' for output selection, XML vs HMTL, or is this sufficiently covered by -x? */
-    case 'a':
+    case 'A':
       opt_ip->aapi = arg;
       break;
-    case 'x':
+    case 'X':
       opt_ip->xhmd = arg;
       break;
     case 'u':

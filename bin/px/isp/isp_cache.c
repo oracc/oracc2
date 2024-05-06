@@ -137,7 +137,7 @@ isp_cache_list(Isp *ip)
 int
 isp_cache_page(Isp *ip)
 {
-  if (ip->glos && !ip->glosdata.gxis)
+  if (ip->glos && !ip->glosdata.xis)
     {
       ip->cache.zout = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.div0"), ip->p);
       sprintf((char*)ip->cache.zout, "%s/letters.div", ip->cache.sub);

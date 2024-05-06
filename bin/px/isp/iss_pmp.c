@@ -137,7 +137,7 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoomth, int zoo
     }
   else
     next = "#";
-  char key[8];
+  char key[strlen(items[itemnth])+1];
   char *s = strchr(items[itemnth], ':');
   if (s)
     strcpy(key, s+1);

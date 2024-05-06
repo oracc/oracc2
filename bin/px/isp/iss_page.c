@@ -33,7 +33,6 @@ pg_tell(Isp *ip, long ht, int hl, long pstart, FILE *fp)
 int
 pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap)
 {
-#if 1
   /* Reinitialize before dumping pmp for z0 */
   if (!ip)
     {
@@ -42,25 +41,8 @@ pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap)
   struct pgtell *pt;
   for (pt = list_first(lmap); pt; pt = list_next(lmap))
     {
-#if 0
-      long start = (ptlast ? ptlast->ptell+1 : 0L);
-      if (start < pt->htell+pt->hlen)
-	start = pt->htell+pt->hlen;
-#endif
       fprintf(fp, "%d/%d/%ld/%d/%ld/%d\n", zmax, zimx, pt->htell, pt->hlen, pt->ptell, pt->plen);
     }
-#else  
-  int nth = 0;
-  List_node *np = lmap->first;
-  while (nth < list_len(lmap))
-    {
-      struct pgtell *pt = np->data;
-      long start = (nth ? ((struct pgtell*)(np->prev->data))->ptell+1 : 0L);
-      fprintf(fp, "%d/%d/%ld/%d/%ld/%ld\n", zmax, zimx, pt->htell, pt->hlen, start, pt->ptell);
-      np = np->next;
-      ++nth;
-    }
-#endif
   return 0;
 }
 
@@ -75,11 +57,6 @@ pg_zmaps(Isp *ip, List *zmaps, List *z)
       zcounts[znth++] = (uintptr_t)np->data;
       np = np->next;
     }
-
-#if 0
-  char zfn[strlen(ip->cache.sort)+strlen(".zmp0")];
-  sprintf(zfn, "%s.zmp", ip->cache.sort);
-#endif
 
   znth = 0;
   List *lp;
@@ -195,7 +172,6 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
 
    This version prints each zoom-group on its own line.
  */
-#if 1
 int
 pg_page_dump(Isp *ip, struct page *p)
 {
@@ -243,109 +219,3 @@ pg_page_dump(Isp *ip, struct page *p)
   
   return 0;
 }
-#else
-int
-pg_page_dump(Isp *ip, struct page *p)
-{
-  int p_count = 0; /* count of IDs in the one-big-page */
-  int z_count = 0; /* count of IDs in the current zoom */
-  int z_index = 0; /* index of current zoom into zooms */
-  List *z = list_create(LIST_SINGLE); /* list of number of IDs in each zoom */
-  List *pmap = list_create(LIST_DOUBLE);
-  List *zmap = list_create(LIST_DOUBLE);
-  List *zmaps = list_create(LIST_SINGLE);
-  long htell = 0L, pstart = 0L, zstart = 0L, phtell = -1L, ppstart = -1L;
-  int hlen, phlen;
-
-  FILE *fpag = NULL;
-  ip->tmem = memo_init(sizeof(struct pgtell), 128);
-  if (ip->cache.sort)
-    {
-      if (!(fpag = fopen(ip->cache.sort, "w")))
-	{
-	  ip->err = "unable to open output for sort";
-	  return 1;
-	}
-      else if (ip->verbose)
-	fprintf(stderr, "isp: ispsort writing %s\n", ip->cache.sort);
-    }
-  else
-    fpag = stdout;
-  int i;
-  for (i = 0; i < p->used; ++i)
-    {
-      if ('#' == p->p[i][0])
-	{
-	  if (i)
-	    {
-	      fputc('\n',fpag);
-	      list_add(z, (void*)(uintptr_t)z_count);
-	      list_add(zmap, pg_tell(ip, htell, hlen, pstart, fpag));
-	      list_add(zmaps,zmap);
-	    }
-	  fflush(fpag);
-	  htell = ftell(fpag);
-	  hlen = strlen(p->p[i]);
-	  if (phtell < 0L)
-	    {
-	      phtell = htell;
-	      phlen = hlen;
-	    }
-	  fputs(p->p[i], fpag);
-	  fflush(fpag);
-	  pstart = ftell(fpag)+1;
-	  if (ppstart < 0L)
-	    ppstart = pstart;
-	  zmap = list_create(LIST_DOUBLE);
-	  ++z_index;
-	  z_count = 0;
-	}
-      else if ('+' != p->p[i][0])
-	{
-	  fputc(' ', fpag);
-	  ++z_count;
-	  if (!(z_count%25))
-	    {
-	      list_add(zmap, pg_tell(ip, htell, hlen, zstart, fpag));
-	      fflush(fpag);
-	      zstart = ftell(fpag);
-	    }
-	  ++p_count;
-	  if (!(p_count%25))
-	    {
-	      list_add(pmap, pg_tell(ip, phtell, phlen, ppstart, fpag));
-	      ppstart = phtell = -1L;
-	      fflush(fpag);
-	      pstart = ftell(fpag);
-	    }
-	  fputs(p->p[i], fpag);
-	}
-    }
-  fputc('\n',fpag);
-  list_add(z, (void*)(uintptr_t)z_count);
-  list_add(zmap, pg_tell(ip, htell, hlen, pstart, fpag));
-  list_add(zmaps, zmap);
-  if (p_count)
-    list_add(pmap, pg_tell(ip, phtell, phlen, ppstart, fpag));
-
-  /* This is zoom=0 */
-  if (ip)
-    {
-      fclose(fpag);
-      pg_zmaps(ip, zmaps, z);
-      char pfn[strlen(ip->cache.sort)+strlen("-z12340")];
-      sprintf(pfn, "%s.pmp", ip->cache.sort);
-      pg_map_one(NULL, NULL, 0, 0, NULL);
-      FILE *fp = fopen(pfn, "w");
-      pg_map_one(ip, fp, list_len(z), p_count, pmap);
-      fclose(fp);
-      if (ispo_master(ip))
-	return 1;
-    }
-  list_free(z, NULL);
-  list_free(zmap, NULL);
-  list_free(pmap, NULL);
-  
-  return 0;
-}
-#endif

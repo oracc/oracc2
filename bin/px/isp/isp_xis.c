@@ -45,7 +45,7 @@ xis_wids(Isp *ip, const struct xis_info *xip, FILE *fp)
   else
     {
       ip->err = "unable to open .tis file %s for xis ids";
-      ip->errx = xis_file;
+      ip->errx = (ccp)pool_copy((ucp)xis_file, ip->p);
     }
 }
 

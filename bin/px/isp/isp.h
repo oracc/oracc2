@@ -131,9 +131,10 @@ struct isp_glosdata
 {
   const char *dir;  	/* path to 02pub/cbd/LANG */
   const char *web;  	/* path to 02www/cbd/LANG */
+  const char *let; 	/* letter to zoom to */
+  const char *ent; 	/* entry item to display */
+  const char *xis; 	/* instance-set--not necessarily XML IS--from -l/list= */
   const char *ltab; 	/* pub/cbd/LANG/letter-ids.tab */
-  const char *glet; 	/* letter to zoom to */
-  const char *gxis; 	/* instance-set--not necessarily XML IS--from -l/list= */
   const char *lbase;	/* entry_ids or an LXXX id from letter_ids.tab */
   const char *lpath;	/* list-path dir+lbase */
   const char *ecpath; 	/* path to cbd/[LANG]entry-counts.tab */

@@ -64,6 +64,38 @@ isp_glos_pmax(Isp *ip)
   return status;
 }
 
+/* Reset cache.sub to be the glossary cache + the gxis name
+
+   Then set lloc so it reflects the gxis instead of the glossary entries.
+ */
+int
+isp_glos_gxis(Isp *ip)
+{
+  const char *gxis_base = ip->glosdata.xis;
+  char *xcache = (char*)pool_alloc(strlen(ip->cache.sub)+strlen(gxis_base)+2, ip->p);
+  sprintf(xcache, "%s/%s", ip->cache.sub, gxis_base);
+  struct stat sb;
+  if (stat(xcache, &sb) != 0 || !S_ISDIR(sb.st_mode))
+    {
+      if (mkdir(xcache, 0775))
+	{
+	  ip->err = PX_ERROR_START "cache.sub.gxis %s could not be created\n";
+	  ip->errx = xcache;
+	  return 1;
+	}
+    }
+  ip->cache.sub = xcache;
+  ip->list_name = ip->glosdata.xis;
+  if (isp_list_method(ip))
+    return 1;
+  
+  ip->cemd = "line";
+  ip->show = "rref";
+  ip->ceid = "xtf";
+  
+  return 0;
+}
+
 int
 isp_glos_list(Isp *ip)
 {
@@ -71,9 +103,8 @@ isp_glos_list(Isp *ip)
   if (!isp_glos_letter_id(ip))
     return 1;
 
-  if (ip->zoom)
+  if (ip->glosdata.let)
     {
-      ip->glosdata.glet = ip->zoom;
       if (isp_glos_glid(ip))
 	return 1;
     }
@@ -91,6 +122,10 @@ isp_glos_list(Isp *ip)
 
   if (isp_glos_pmax(ip))
     return 1;
+
+  if (ip->glosdata.xis)
+    if (isp_glos_gxis(ip))
+      return 1;
   
   return 0;
 }
@@ -146,17 +181,17 @@ isp_glos_menu(Isp *ip)
 int
 isp_glos_glid(Isp *ip)
 {
-  if (ip->glosdata.glet && !strcmp(ip->glosdata.glet, "entry_ids"))
+  if (ip->glosdata.let && !strcmp(ip->glosdata.let, "entry_ids"))
     {
-      ip->glosdata.lbase = ip->glosdata.glet;
+      ip->glosdata.lbase = ip->glosdata.let;
     }
   else
     {
-      int len = strlen(ip->glosdata.glet);
+      int len = strlen(ip->glosdata.let);
       char *l = (char*)ip->glosdata.ltab;
       while (*l)
 	{
-	  if (!strncmp(l, ip->glosdata.glet, len) && '\t' == l[len])
+	  if (!strncmp(l, ip->glosdata.let, len) && '\t' == l[len])
 	    {
 	      char *e, save = '\0';
 	      l += len+1;
@@ -186,7 +221,8 @@ isp_glos_glid(Isp *ip)
 	}
       if (!ip->glosdata.lbase)
 	{
-	  ip->err = "isp_glos_glid: letter not found in letters.tab";
+	  ip->err = PX_ERROR_START "isp_glos_glid: letter %s not found in letters.tab\n";
+	  ip->errx = ip->glosdata.let;
 	  return 1;
 	}
     }

@@ -100,7 +100,7 @@ isp_list_type(Isp *ip)
 {
   char *p = NULL;
 
-  if (ip->glos && !ip->glosdata.gxis)
+  if (ip->glos && !ip->glosdata.xis)
     ip->lloc.type = "glo";
   else
     {
@@ -110,10 +110,10 @@ isp_list_type(Isp *ip)
 	{
 	  char l[strlen(ip->list_name)+1];
 	  strcpy(l,ip->list_name);
-	  p = l + (p - ip->list_name);
 	  ip->lloc.type = "xis";
+	  p = l + (p - ip->list_name);
 	  *p = '\0';
-	  ip->lloc.lang = (ccp)pool_copy((uccp)ip->list_name, ip->p);
+	  ip->lloc.lang = (ccp)pool_copy((uccp)l, ip->p);
 	  *p = '.';
 	}
       else if ('t' == *ip->list_name && strlen(TIS_TEMPLATE) == strlen(ip->list_name))
@@ -154,13 +154,16 @@ isp_list_method(Isp *ip)
     }
   else if ('x' == *ip->lloc.type) /* xis */
     {
-      char p[strlen(ip->oracc)+strlen("/pub//cbd/")+strlen(ip->lloc.lang)+1];
-      sprintf(p, "%s/pub/%s/cbd/%s", ip->oracc, ip->project, ip->lloc.lang);
+      char p[strlen(ip->oracc)+strlen("/pub//cbd/")+strlen(ip->glos)+1];
+      sprintf(p, "%s/pub/%s/cbd/%s", ip->oracc, ip->project, ip->glos);
       ip->lloc.dbpath = (ccp)pool_copy((uccp)p, ip->p);
       ip->lloc.dbname = "tis";
       ip->lloc.method = "xisdb";
       if (isp_list_dbx(ip))
-	ip->err = "xis database not found";
+	{
+	  ip->err = PX_ERROR_START "xis database %s/tis.dbh not found\n";
+	  ip->errx = ip->lloc.dbpath;
+	}
     }
   else if ('t' == *ip->lloc.type) /* tis */
     {
@@ -170,7 +173,10 @@ isp_list_method(Isp *ip)
       ip->lloc.dbname = "tok";
       ip->lloc.method = "dbx";
       if (isp_list_dbx(ip))
-	ip->err = "tok/tis database not found";
+	{
+	  ip->err = PX_ERROR_START "tok/tis database %s/tok.dbh not found\n";
+	  ip->errx = ip->lloc.dbpath;
+	}
     }
   else if ('g' == *ip->lloc.type) /* glossary */
     {

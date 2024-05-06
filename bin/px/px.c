@@ -38,11 +38,11 @@ main(int argc, char **argv)
   if (isp_cache_list(ip))
     goto error;
 
-  if (!ip->glos || ip->glosdata.gxis)
+  if (!ip->glos || ip->glosdata.xis)
     if (isp_cache_sort(ip))
       goto error;
 
-  if (ip->item && !ip->glos)
+  if (ip->item && (!ip->glos || ip->glosdata.xis))
     {
       if (isp_item_set(ip))
 	goto error;
