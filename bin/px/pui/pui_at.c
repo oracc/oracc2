@@ -35,15 +35,18 @@ pui_at_pager_class(Isp *ip, FILE *fp)
     }
   else
     {
-#if 1
-      fputc(' ', fp);
-      fputs(ip->show, fp);
-#else
-      char r[6];
-      r[0] = ' '; r[1] = 'r';
-      strcpy(r+2, ip->data+1);
-      fputs(r, fp);
-#endif
+      if (ip->show)
+	{
+	  fputc(' ', fp);
+	  fputs(ip->show, fp);
+	}
+      else
+	{
+	  char r[6];
+	  r[0] = ' '; r[1] = 'r';
+	  strcpy(r+2, ip->data+1);
+	  fputs(r, fp);
+	}
     }
 
   if (ip->glos)

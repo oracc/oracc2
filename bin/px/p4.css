@@ -143,6 +143,17 @@ span.uncertain { font-style: italic; }
 
 span.foreign { font-style: italic; }
 
+/* CE CSS */
+
+.ce-heading { padding: 0px; margin: 0px; margin-left: 2px; font-size: 80%; line-height: 90%; 
+	      font-family: arial, sans-serif; margin-bottom: 2px;
+	    }
+.ce-label  { text-align: right; padding-top: 0px; margin-top: 0px; padding-right: 2px; }
+.ce-result { text-align: left;  padding-bottom: 0px; margin-bottom: 0px;
+	   padding-left: 3px; padding-right: 3px; }
+
+table.kwic { width: 100%; }
+
 /* CBD CSS */
 
 #p4Letters p {

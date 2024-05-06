@@ -278,8 +278,18 @@
     <xsl:otherwise>
       <!-- think about how to switch transonly on automatically for ITEM mode inside TRA search;
 	   with p4 this can be done with the JS
-        -->
-      <a href="javascript:act_item('{$ce-data/@text-id}')">
+      -->
+      <xsl:variable name="actitemarg">
+	<xsl:choose>
+	  <xsl:when test="string-length($ce-data/@line-id)>0">
+	    <xsl:value-of select="$ce-data/@line-id"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:value-of select="$ce-data/@text-id"/>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:variable>
+      <a href="javascript:act_item('{$actitemarg}')">
 	<xsl:call-template name="make-label-text">
 	  <xsl:with-param name="label" select="$label"/>
 	</xsl:call-template>

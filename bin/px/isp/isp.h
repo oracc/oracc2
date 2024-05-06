@@ -33,6 +33,7 @@ struct isp_cache
   const char *meta;	/* the filename of the metadata for the displayed item */
   const char *html;	/* the filename of the html content of the displayed item */
   const char *ltab;	/* the filename of the letters.tab if cache is a glossary */
+  const char *hilite;	/* table of text-id\tword-ids to set the hilite on instance sets */
 };
 
 /* Pointers to project config entries */

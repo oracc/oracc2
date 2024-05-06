@@ -127,6 +127,7 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoomth, int zoo
     }
   else
     prev = "#";
+  /* It shouldn't be necessary to test items[itemnth] here */
   if (items[itemnth+1])
     {
       next = strchr(items[itemnth+1],':');
@@ -177,6 +178,41 @@ item_array(char *s, int imax, char **mem)
   return (const char **)ip;
 }
 
+const char **
+text_array(Isp *ip, const char **items, int imax, char **tmem)
+{
+  char **t = malloc(imax * sizeof(char *));
+  int tcount = 0, i;
+
+  ip->cache.hilite = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/hilite.tab0"), ip->p);
+  sprintf((char*)ip->cache.hilite, "%s/%s", ip->cache.sub, "hilite.tab");
+  FILE *hilitefp = fopen(ip->cache.hilite, "w");
+  
+  for (i = 0; items[i]; ++i)
+    {
+      char id[strlen(items[i])];
+      strcpy(id, items[i]);
+      char *dot = strchr(id, '.');
+      if (dot)
+	*dot = '\0';
+      if (!i || strcmp(id, t[tcount-1]))
+	{
+	  t[tcount++] = (char *)pool_copy((ucp)id, ip->p);
+	  if (i)
+	    fputc('\n', hilitefp);
+	  fprintf(hilitefp, "%s\t%s", id, items[i]);
+	}
+      else
+	{
+	  fprintf(hilitefp, " %s", items[i]);
+	}
+    }
+  fclose(hilitefp);
+  
+  t = realloc(t, tcount * sizeof(char*));
+  return (const char **)t;
+}
+
 void
 ispmp_pages(Isp *ip, unsigned char *f, int imax)
 {
@@ -196,14 +232,20 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   sprintf(pfn, "%s.pmp", ip->cache.sort);
   FILE *pfp = fopen(pfn, "w");
 
-  char *imem = NULL;
+  char *imem = NULL, *tmem = NULL;
   const char **items = item_array((char*)s, imax, &imem);
+  const char **texts = NULL;
   int itemnth = 0;
+  int textth = 0, ztextth = 0;
+
+  if (strchr(items[0], '.'))
+    texts = text_array(ip, items, imax, &tmem);
   
   while (*s)
     {
       if ('#' == *s)
 	{
+	  ztextth = 0;
 	  ++zoomth;
 	  zoomp = 1;
 	  if (pt.htell < 0)
@@ -245,7 +287,15 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		}
 	      if (s[1] && '#' != s[1] && !isspace(s[1]))
 		{
+		  int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
+		  int zpage = (ztextth / 25) + ((textth % 25) ? 1 : 0);
+#if 1
+		  dumpitem(ip, texts, textth, tpage, ztextth, zpage);
+		  ++textth;
+		  ++ztextth;
+#else		  
 		  dumpitem(ip, items, itemnth, page, zoomth, zoomp);
+#endif
 		  ++itemnth;
 		}
 	    }

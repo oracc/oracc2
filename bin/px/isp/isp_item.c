@@ -7,6 +7,7 @@ isp_item_load(Isp *ip)
 {
   char *tmp = (char*)pool_copy((ucp)ip->item, ip->p);
   ip->itemdata.item = tmp;
+
   tmp = strchr(ip->itemdata.item, '.');
   if (tmp)
     {
