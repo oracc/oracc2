@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "../px.h"
 #include "isp.h"
 
 static void
@@ -32,7 +33,7 @@ md_parse(char *mline, struct isp_mapdata *mdp)
 static int
 compute_ranges(Isp *ip)
 {
-  if (!ip->page || !strcmp(ip->page, "0"))
+  if (ip->item || ip->glosdata.ent) /*!ip->page || !strcmp(ip->page, "0"))*/
     return 0;
   
   char mbuf[strlen(ip->cache.sort)+strlen(ip->zoom)+strlen(".pmp0")];
@@ -49,23 +50,28 @@ compute_ranges(Isp *ip)
     multiplier = 4;
 
   int pg = atoi(ip->page) * multiplier;  
-  char *mline = nth_line(mbuf, pg, multiplier>1);
-  char *mmline = NULL;
-  md_parse(mline, &ip->md1);
-
-  if (multiplier > 1)
+  char *mline = nth_line(ip, mbuf, pg, multiplier>1);
+  if (mline)
     {
-      mmline = nth_line(NULL, pg+multiplier, 0);
-      if (mmline)
-	md_parse(mmline, &ip->md2);
-      else
+      char *mmline = NULL;
+      md_parse(mline, &ip->md1);
+      
+      if (multiplier > 1)
 	{
-	  ip->err = "page out of range";
-	  return 1;
+	  mmline = nth_line(ip, NULL, pg+multiplier, 0);
+	  if (mmline)
+	    md_parse(mmline, &ip->md2);
+	  else
+	    {
+	      ip->err = "page out of range";
+	      return 1;
+	    }
 	}
+      else
+	ip->md2.plen = -1;
     }
-  else
-    ip->md2.plen = -1;
+  else if (ip->err)
+    return 1;
   return 0;
 }
 
@@ -113,8 +119,11 @@ set_item_max(Isp *ip)
     sprintf(buf, "%s-z%d.pmp", ip->cache.sort, zoom);
   else
     sprintf(buf, "%s.pmp", ip->cache.sort);
-  unsigned char *f = loadfile((uccp)buf, NULL);
-  ip->md1.zimx = atoi((ccp)f);
+  unsigned char *f = px_loadfile((uccp)buf, NULL);
+  if (f)
+    ip->md1.zimx = atoi((ccp)f);
+  else
+    ip->err = px_loadfile_error();
 }
 
 int

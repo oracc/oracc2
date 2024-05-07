@@ -85,4 +85,4 @@ extern struct item **pg_sort(Isp *ip, struct item *items, int *nitems, const cha
 /* iss_sortinfo.c */
 extern struct sortinfo *si_load_csi(Isp *ip);
 /* nth_line.c */
-extern char *nth_line(const char *file, int lnum, int more);
+extern char *nth_line(Isp *ip, const char *file, int lnum, int more);

@@ -2,9 +2,10 @@
 #include "isp.h"
 
 char *
-nth_line(const char *file, int lnum, int more)
+nth_line(Isp *ip, const char *file, int lnum, int more)
 {
   static FILE *fp = NULL;
+  static int fname = NULL;
   static int last_lnum = 0;
 
   if (more < 0)
@@ -13,13 +14,20 @@ nth_line(const char *file, int lnum, int more)
 	{
 	  fclose(fp);
 	  fp = NULL;
+	  fname = NULL;
 	}
       return NULL;
     }
   if (file)
     {
       if (!(fp = fopen(file, "r")))
-	return NULL;
+	{
+	  ip->err = PX_ERROR_START "nth_line: failed to open %s\n";
+	  ip->errx = (ccp)pool_copy((ucp)file, ip->p);
+	  return NULL;
+	}
+      else
+	fname = (ccp)pool_copy((ucp)file, ip->p);
     }
   else
     {
@@ -33,6 +41,12 @@ nth_line(const char *file, int lnum, int more)
     if (++lncount == lnum)
       break;
 
+  if (!ln)
+    {
+      ip->err = "nth_line: failed to load line from %s\n";
+      ip->errx = fname;
+    }
+  
   if (!more)
     fclose(fp);
   else

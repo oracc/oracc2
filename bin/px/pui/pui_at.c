@@ -29,7 +29,12 @@ pui_at_pager_class(Isp *ip, FILE *fp)
   if (ip->item)
     {
       if (!strcmp(ip->data, "dglo"))
-	fputs(" iart", fp);
+	{
+	  if (ip->glosdata.ent)
+	    fputs(" iart", fp);
+	  else
+	    fputs(" itxt", fp);
+	}
       else
 	fputs(" itxt", fp);
     }
@@ -191,9 +196,23 @@ pui_at_item_label(Isp *ip, FILE *fp)
 void
 pui_at_item_index(Isp *ip, FILE *fp)
 {
-  fputs(ip->glos ? "ENTRY " : "ITEM ", fp);
-  if (ip->itemdata.index)
-    fputs(itoa(atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
+  if (!strcmp(ip->data, "dglo") && !ip->glosdata.ent)
+    {
+      fputs("TEXT ", fp);
+      if (ip->itemdata.index)
+	{
+	  if (ip->itemdata.tmax)
+	    fputs(itoa(1+atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
+	  else
+	    fputs(itoa(atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
+	}
+    }
+  else
+    {
+      fputs(ip->glos ? "ENTRY " : "ITEM ", fp);
+      if (ip->itemdata.index)
+	fputs(itoa(atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
+    }
 }
 
 void

@@ -6,10 +6,12 @@ isp_list_cemd(Isp *ip)
 {
   const char *path = ip->lloc.path;
   int ln = 1;
-  char *lp = nth_line(path, ln, 1);
+  char *lp = nth_line(ip, path, ln, 1);
+  if (!lp)
+    return;
   while (lp && '#' == *lp)
-    lp = nth_line(NULL, ++ln, 1);
-  (void)nth_line(NULL,-1,-1);
+    lp = nth_line(ip, NULL, ++ln, 1);
+  (void)nth_line(ip, NULL,-1,-1);
   if (lp)
     {
       if ('o' == *lp || 'x' == *lp)
