@@ -123,6 +123,7 @@ struct isp_itemdata
   const char *zpag;
   const char *prev;
   const char *next;
+  const char *tmax;
   const char *xmdxsl;
   const char *bld;
   Dbi_index *dp;

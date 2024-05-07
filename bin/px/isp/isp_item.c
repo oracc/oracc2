@@ -18,6 +18,9 @@ isp_item_load(Isp *ip)
   char dbifn[strlen(ip->perm)+strlen("-itm0")];
   sprintf(dbifn, "%s-itm", ip->perm);
   Dbi_index *dp = dbx_init(ip->cache.sub, dbifn);
+  char *tmax = (char*)dbx_key(dp, "tmax", NULL);
+  if (tmax)
+    ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
   char *k = (char*)dbx_key(dp, ip->itemdata.item, NULL);
   if (!k)
     {
@@ -53,6 +56,7 @@ isp_item_load(Isp *ip)
     ip->itemdata.next = NULL;
   else
     ip->itemdata.next = s;
+
   
   return 0;
 }

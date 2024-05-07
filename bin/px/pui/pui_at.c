@@ -142,7 +142,9 @@ pui_at_active_items(Isp *ip, FILE *fp)
 {
   if (ip->glos && !ip->glosdata.xis)
     fputs(ip->glosdata.emax, fp);
-  else
+  else if (ip->itemdata.tmax)
+    fputs(ip->itemdata.tmax, fp);
+  else    
     fputs(itoa(ip->md1.zimx), fp);
 }
 
@@ -162,10 +164,20 @@ pui_at_item_label(Isp *ip, FILE *fp)
     {
       if (ip->glosdata.xis)
 	{
-	  if (ip->md1.zimx == 1)
-	    label = "ref";
+	  if (ip->itemdata.tmax)
+	    {
+	      if (!strcmp(ip->itemdata.tmax, "1"))
+		label = "text";
+	      else
+		label = "texts";
+	    }
 	  else
-	    label = "refs";
+	    {
+	      if (ip->md1.zimx == 1)
+		label = "ref";
+	      else
+		label = "refs";
+	    }
 	}
       else
 	{

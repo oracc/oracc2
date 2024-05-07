@@ -32,7 +32,10 @@ md_parse(char *mline, struct isp_mapdata *mdp)
 static int
 compute_ranges(Isp *ip)
 {
-    char mbuf[strlen(ip->cache.sort)+strlen(ip->zoom)+strlen(".pmp0")];
+  if (!ip->page || !strcmp(ip->page, "0"))
+    return 0;
+  
+  char mbuf[strlen(ip->cache.sort)+strlen(ip->zoom)+strlen(".pmp0")];
   if (atoi(ip->zoom))
     sprintf(mbuf, "%s-z%s.pmp", ip->cache.sort, ip->zoom);
   else

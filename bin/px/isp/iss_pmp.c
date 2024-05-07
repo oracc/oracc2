@@ -179,7 +179,7 @@ item_array(char *s, int imax, char **mem)
 }
 
 const char **
-text_array(Isp *ip, const char **items, int imax, char **tmem)
+text_array(Isp *ip, const char **items, int imax, char **tmem, int *tmax)
 {
   char **t = malloc(imax * sizeof(char *));
   int tcount = 0, i;
@@ -208,7 +208,8 @@ text_array(Isp *ip, const char **items, int imax, char **tmem)
 	}
     }
   fclose(hilitefp);
-  
+  if (tmax)
+    *tmax = tcount;
   t = realloc(t, tcount * sizeof(char*));
   return (const char **)t;
 }
@@ -239,7 +240,12 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   int textth = 0, ztextth = 0;
 
   if (strchr(items[0], '.'))
-    texts = text_array(ip, items, imax, &tmem);
+    {
+      int tmax;
+      texts = text_array(ip, items, imax, &tmem, &tmax);
+      char tm[32]; sprintf(tm, "%d", tmax);
+      dbi_add(ip->itemdata.dp, (ucp)"tmax", tm, strlen(tm)+1);
+    }
   
   while (*s)
     {

@@ -60,7 +60,7 @@ extern int pg_page_dump(Isp *ip, struct page *p);
 /* iss_pmp.c */
 extern void ispmp_zooms(Isp *ip, unsigned char *f, int zmax);
 extern const char **item_array(char *s, int imax, char **mem);
-extern const char **text_array(Isp *ip, const char **items, int imax, char **tmem);
+extern const char **text_array(Isp *ip, const char **items, int imax, char **tmem, int *tmax);
 extern void ispmp_pages(Isp *ip, unsigned char *f, int imax);
 /* iss_redblack.c */
 extern struct rbtree *rbinit(int (*cmp)(const void *, const void *, const void *), const void *config);
