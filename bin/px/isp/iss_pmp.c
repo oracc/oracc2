@@ -293,15 +293,16 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		}
 	      if (s[1] && '#' != s[1] && !isspace(s[1]))
 		{
-		  int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
-		  int zpage = (ztextth / 25) + ((textth % 25) ? 1 : 0);
-#if 1
-		  dumpitem(ip, texts, textth, tpage, ztextth, zpage);
-		  ++textth;
-		  ++ztextth;
-#else		  
-		  dumpitem(ip, items, itemnth, page, zoomth, zoomp);
-#endif
+		  if (texts)
+		    {
+		      int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
+		      int zpage = (ztextth / 25) + ((textth % 25) ? 1 : 0);
+		      dumpitem(ip, texts, textth, tpage, ztextth, zpage);
+		      ++textth;
+		      ++ztextth;
+		    }
+		  else
+		    dumpitem(ip, items, itemnth, page, zoomth, zoomp);
 		  ++itemnth;
 		}
 	    }
