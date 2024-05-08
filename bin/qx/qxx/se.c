@@ -6,11 +6,14 @@
 #include "se.h"
 #include "selib.h"
 
+#include "px.h"
+
 FILE *f_log = NULL;
 int any_index = 0;
 int do_uniq = 1;
 int doing_debug = 0;
 int l2 = 1;
+int p4 = 0;
 int s2 = 1;
 int show_count = 0;
 int show_tokens = 0;
@@ -486,8 +489,6 @@ main(int argc, char * const*argv)
   struct token *toks = NULL;
   int ntoks = 0;
 
-  mesg_init();
-  
   f_log = stderr;
 
   if (errfile)
@@ -500,11 +501,21 @@ main(int argc, char * const*argv)
     }
   else
     f_err = stderr;
+
   setlocale(LC_ALL,ORACC_LOCALE);
-  options(argc, argv, "28acdg:i:j:o:p:P:stuvx:");
+  options(argc, argv, "48acdg:i:j:o:p:P:stuvx:");
+  
   if (!out_f)
     out_f = stdout;
 
+  if (p4)
+    {
+      px(project, xmldir);
+      exit(p4status);
+    }
+  
+  mesg_init();
+  
   atf2utf_init();
   charsets_init();
   langtag_init();
@@ -843,8 +854,8 @@ opts(int argc, const char *arg)
 {
   switch (argc)
     {
-    case '2':
-      l2 = 1;
+    case '4':
+      p4 = 1;
       break;
     case '8':
       use_unicode = 1;

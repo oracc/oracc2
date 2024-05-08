@@ -4,4 +4,4 @@
 #
 proj=$1
 srchtmp=$2
-@@ORACC_BUILDS@@/bin/qx -8 -x $srchtmp -j $proj
+/home/oracc/bin/qx -8 -x $srchtmp -j $proj

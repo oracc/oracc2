@@ -189,24 +189,31 @@ mesg_err(Mloc *locp, const char *s)
 void
 mesg_averr(Mloc *locp, const char *s, va_list ap)
 {
-  char *loc, *e;
+  char *loc = "", *e;
   int need;
+  int m_no_loc = mesg_no_loc;
+  int no_loc;
   va_list ap2;
   va_copy(ap2, ap);
 
-  loc = mesg_loc(locp);
+  if (locp)
+    loc = mesg_loc(locp);
+  else
+    no_loc = 1;
   need = vsnprintf(NULL, 0, s, ap);
   need += strlen(loc) + 3 + 1; /* always allocate space for an extra \n */
   e = malloc(need);
-  if (!mesg_no_loc)
+  if (!no_loc)
     sprintf(e, "%s: ", loc);
   else
     *e = '\0';
-  free(loc);
+  if (loc && *loc)
+    free(loc);
   vsprintf(e+strlen(e), s, ap2);
   va_end(ap2);
   mesg_add((char*)pool_copy((ucp)nl(e), msgpool));
   free(e);
+  mesg_no_loc = m_no_loc;
 }
   
 void

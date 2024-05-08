@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include "wrapper.h"
 
-#include <libxml/xmlmemory.h>
+/*#include <libxml/xmlmemory.h>*/
 #include <libxml/debugXML.h>
 #include <libxml/HTMLtree.h>
 #include <libxml/xmlIO.h>
@@ -114,7 +114,7 @@ wrapper(const char *sheet, const char **params, const char *xmldoc, const char *
     }
   xsltSaveResultToFile(outfp, res, cur);    
 
-  if (strcmp(xp->out, "-"))
+  if (strcmp(output, "-"))
     fclose(outfp);
 
   xmlFreeDoc(res);

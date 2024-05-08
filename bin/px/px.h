@@ -24,4 +24,6 @@ extern unsigned char *px_loadfile_error(void);
 extern int px_file_copy(Isp *ip, const char *fn, const char *to);
 extern char *CGI_decode_url(const char *p);
 
+extern const char *px_mesg(const char *wpq, const char *fmt, ...);
+
 #endif/*PX_H*/

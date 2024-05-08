@@ -4,6 +4,12 @@
 #define PX_TMP_PAT    	"tmp/px/is.XXXXXX"
 
 #define PX_ERROR_START "px: error: "
+#define QX_ERROR_START "qx: error: "
+#define WX_ERROR_START "wx: error: "
+
+#define px_err(...) px_mesg(PX_ERROR_START, __VA_ARGS__)
+#define qx_err(...) px_mesg(QX_ERROR_START, __VA_ARGS__)
+#define wx_err(...) px_mesg(WX_ERROR_START, __VA_ARGS__)
 
 #define PX_STEP_0E	0x0000001
 #define PX_STEP_1L	0x0000002
