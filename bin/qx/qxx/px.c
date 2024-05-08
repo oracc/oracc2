@@ -43,11 +43,25 @@ qx_idx_check(struct sdata *sdp, const char *bar)
 	  sdata.dir = pool_alloc(strlen(sdata.pub)+strlen(sdata.idx, p)+2);
 	  sprintf(sdata.dir, "%s/%s", sdata.pub, sdata.idx);
 	  /* test for dir */
-	  XX
+	  if (stat(sdata.dir, &sb) != 0 || !S_ISDIR(sb.st_mode))
+	    {
+	      err = (ccp)pool_copy((ucp)qx_err("unknown index %s", sdata.dir), p);
+	      goto wrapup;
+	    }
+
 	  if (len > 3 && !strncmp(idx, "cbd/", 4))
 	    sdata.nam = "cbd";
 	  else
 	    sdata.nam = idx;
+
+	  sdata.dbi = pool_alloc(strlen(sdata.dir)+strlen(sdata.nam)+strlen("/.dbi0"));
+	  sprintf(sdata.dbi, "%s/%s/%s.dbi", sdata.dir, sdata.nam);
+	  if (access(sdata.dbi, R_OK))
+	    {
+	      err = (ccp)pool_copy((ucp)qx_err("bad index: %s absent or unreadable", sdata.dbi), p);
+	      goto wrapup;
+	    }
+	  
 	}
       else
 	{
