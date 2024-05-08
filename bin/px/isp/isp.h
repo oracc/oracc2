@@ -17,6 +17,14 @@ struct isp_list_loc
   const char *path;   /* path to file */
 };
 
+struct isp_srchdata
+{
+  const char *tmp;	/* path to search's tmpdir */
+  const char *bar;  	/* path to sub/search.bar = entire search bar text */
+  const char *txt;  	/* path to sub/search.txt = search.bar without lead index */
+  const char *idx;	/* name of lead index, extracted from srch opt */
+};
+
 struct isp_cache
 {
   const char *sys;	/* the system cache directory: /home/oracc/tmp/isp
@@ -166,6 +174,7 @@ typedef struct isp
   struct isp_mapdata md2;
   struct isp_itemdata itemdata;
   struct isp_glosdata glosdata;
+  struct isp_srchdata srchdata;
   struct outline *op;
   int op_nlevels;
   const char *dors; /* 0 = default ; 1 = special */
@@ -173,6 +182,7 @@ typedef struct isp
   const char *zoom;
   const char *page;
   const char *psiz;
+  const char *srch; /* search string from search box */
   const char *glos; /* glossary from URL */
   const char *item; /* a PQX for item display */
   const char *bkmk; /* a note of the last item visited resuming page mode */
@@ -192,7 +202,6 @@ typedef struct isp
   int olev;	    /* outline levels, i.e., number of headings
 		       without any appended designation */
   int debug;
-  int srch;
   int verbose;
   int web;
   int argc;

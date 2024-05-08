@@ -20,6 +20,9 @@ main(int argc, char **argv)
   if (px_options(argc, argv, ip))
     goto error;
 
+  if (ip->srch && px_srch(ip))
+    goto error;    
+  
   if (px_validate(ip))
     goto error;
 
@@ -106,8 +109,8 @@ main(int argc, char **argv)
  ok:
   if (ip->verbose)
     isp_show(stderr, ip);
-  fflush(stdout);
   isp_term(ip);
+  fflush(stdout);
   return 0;
 }
 

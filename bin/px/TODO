@@ -1,3 +1,12 @@
+BUGS
+
+	instance list first item still has line-id attached
+
+	item/page view doesn't jump in to item-view properly
+
+sorter
+	use options from config.xml
+
 ispdiv
 
 	implement all ispdiv options for ccat as in p3-pager.plx

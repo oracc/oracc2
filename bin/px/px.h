@@ -22,5 +22,6 @@ extern unsigned char **px_loadfile_lines3(unsigned const char *fname, size_t *nl
 extern unsigned char *px_loadfile_error(void);
 
 extern int px_file_copy(Isp *ip, const char *fn, const char *to);
+extern char *CGI_decode_url(const char *p);
 
 #endif/*PX_H*/

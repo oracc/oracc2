@@ -1,0 +1,11 @@
+#!/bin/dash
+#
+# Helper program for px search
+#
+proj=$1
+idx=$2
+srchtmp=$3
+if [ "$idx" = "#any" ]; then
+    any="-a"
+fi
+@@ORACC_BUILDS@@/bin/qx -8 -x $srchtmp -j $proj $any

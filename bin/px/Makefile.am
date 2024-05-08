@@ -8,13 +8,13 @@ img_DATA=icons/*.png
 
 bin_PROGRAMS=px
 
-bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh \
+bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxsortercodes.sh pxentrycounts.sh pxentryindexes.sh
 
 scriptdata_DATA=*.xsl
 
 px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c cgiopts.c \
-	pxloadfile.c px_file_copy.c xslt_if.c
+	pxloadfile.c px_file_copy.c xslt_if.c cgi_decode_url.c px_srch.c
 
 px_LDADD=isp/libisp.la pui/libpui.la $(xLDADD) -lxml2 -lxslt -lexslt
 

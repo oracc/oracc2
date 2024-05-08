@@ -83,6 +83,9 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'q':
+      opt_ip->srch = arg; /* The user-input for the query; already whitelisted by wx */
+      break;
     case 'b':
       opt_ip->bkmk = arg;
       break;
