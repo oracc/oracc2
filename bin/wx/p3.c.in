@@ -138,17 +138,6 @@ p3tempdir(void)
   return mkdtemp(d);
 }
 
-#if 0
-static const char *
-cgi_arg(const char *arg, const char *val)
-{
-  char *c = NULL;
-  c = malloc(strlen(arg)+strlen(val)+2);
-  sprintf(c, "%s=%s", arg, val);
-  return c;
-}
-#endif 
-
 /* When this routine is called vl always has at least one member: project */
 static char const**
 mkvec(CGI_varlist *vl)

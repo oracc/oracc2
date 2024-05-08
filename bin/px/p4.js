@@ -264,3 +264,30 @@ function pop1sig(sig) {
     var url = '/'+proj+'/sig?'+esig;
     popup(url,'cbdarticle',400,600,0,0);
 }
+
+// P4 quick search implementation is URL=based
+
+function qs_add(pager, qs, datum) {
+    let val = pager.getAttribute("data-"+datum);
+    if (val && val.length != 0) {
+	let amp = (qs.length ? '&' : '');
+	return qs+amp+datum+'='+val;
+    } else {
+	return qs;
+    }
+}
+
+function act_srch() {
+    let srch=document.getElementById('p4SrchBox').value;
+    if (srch.length == 0) {
+	return;
+    } else {
+	let pager = getPager();
+	let proj = pager.getAttribute('data-proj');
+	let glos = pager.getAttribute('data-glos');
+	if (glos) { glos = '/'+glos; } else { glos = '' }
+	let srch_url='/'+proj+glos+'?srch='+encodeURIComponent(srch);
+	alert('srch_url='+srch_url);
+	window.location = srch_url;
+    }
+}
