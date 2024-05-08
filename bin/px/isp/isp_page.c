@@ -123,7 +123,7 @@ set_item_max(Isp *ip)
   if (f)
     ip->md1.zimx = atoi((ccp)f);
   else
-    ip->err = px_loadfile_error();
+    ip->err = (ccp)px_loadfile_error();
 }
 
 int

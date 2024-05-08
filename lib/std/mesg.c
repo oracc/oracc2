@@ -295,6 +295,12 @@ mesg_retrieve(void)
   return ret;
 }
 
+const char *
+mesg_pop(void)
+{
+  return list_pop(mesg_list);
+}
+
 void
 mesg_prefix(const char *p)
 {

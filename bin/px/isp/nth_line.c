@@ -5,7 +5,7 @@ char *
 nth_line(Isp *ip, const char *file, int lnum, int more)
 {
   static FILE *fp = NULL;
-  static int fname = NULL;
+  static const char *fname = NULL;
   static int last_lnum = 0;
 
   if (more < 0)
