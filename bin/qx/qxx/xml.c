@@ -6,18 +6,6 @@
 
 extern char *return_index;
 
-const char **
-xmldir_toks(const char *xmldir)
-{
-  char *fname = malloc(strlen(xmldir)+16);
-  static const char *txt[2];
-  sprintf(fname,"%s/search.txt",xmldir);
-  txt[0] = (char*)loadfile((unsigned char *)fname, NULL);
-  txt[1] = NULL;
-  free(fname);
-  return (const char**)vec_from_str((char*)txt[0], NULL, NULL);
-}
-
 void
 xmldir_results(const char *xmldir, int count)
 {

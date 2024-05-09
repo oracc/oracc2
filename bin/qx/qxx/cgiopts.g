@@ -1,6 +1,6 @@
 %{
 #include <string.h>
-#include "px.h"
+#include "../../px/px.h"
 %}
 struct cgioptstab;
 %%

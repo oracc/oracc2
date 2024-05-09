@@ -18,6 +18,7 @@
 #include <pool.h>
 #include <loadfile.h>
 #include <ctype128.h>
+#include <vector.h>
 #include <ose.h>
 #include <dbxlib.h>
 #include <xsystem.h>
