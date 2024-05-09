@@ -108,6 +108,9 @@ pui_at_pager_data(Isp *ip, FILE *fp)
   else if (ip->bkmk)
     pattrs("data-bkmk", ip->bkmk);
 
+  if (ip->srch)
+    pattrs("data-qury", ip->srch);
+
   pattrs("data-page", ip->page);
   pattrd("data-pmax", active_pages(ip));
 }
@@ -224,6 +227,8 @@ pui_at_srch_results(Isp *ip, FILE *fp)
 void
 pui_at_srchterm(Isp *ip, FILE *fp)
 {
+  if (ip->srch)
+    fputs(ip->srch, fp);
 }
 
 void

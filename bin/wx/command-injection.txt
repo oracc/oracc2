@@ -22,14 +22,25 @@ Oracc Srch Handling of Command Injection Risk:
       * sanitized in wx
 
       	- Whitelist alphanumeric and characters >= 0x160
-	- Map ' to ʾ, ` to ʿ
-	- Map
+	- Map ASCII transliteration to Unicode
+	  ' to ʾ
+	  ` to ʿ
+	  ',' +s/t to ṣ/Ṣ and ṭ/Ṭ
+	  s' to ś
+	- Map essential search engine characters to Unicode alternates
+
 	  ! to ‼ U+203C
       	  ( to ⸨ U+2E28
       	  ) to ⸩ U+2E29
+	  ~ to ～U+FF5E FULL-WIDTH TILDE
+	  : to ︓ U+FE13
+	  % to ％ U+FF05
+	  
 	- Review search docs and implementation for additional cases
 	- Delete all others and return a brief error page unless the bad
 	  characters are only ATF brackets which can then reasonably be
-      	  included in a cut-paste search.
+      	  included in a cut-paste search
 
       * demapping of ‼/⸨/⸩ done in search engine
+
+* Remove regexp support?

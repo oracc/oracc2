@@ -40,13 +40,13 @@ px_cgi_arg(const char *arg, const char *val)
 int
 px_exec(struct qxdata *qp, struct sdata *sdp)
 {
-  const char *vec[5];
+  const char *vec[6];
   vec[0] = px_exe;
   vec[1] = px_cgi_arg("web","1");
   vec[2] = px_cgi_arg("project",qp->project);
-  vec[2] = px_cgi_arg("glos",qp->glos?qp->glos:"");
-  vec[3] = px_cgi_arg("s.d",sdp->tmp);
-  vec[4] = NULL;
+  vec[3] = px_cgi_arg("glos",qp->glos?qp->glos:"");
+  vec[4] = px_cgi_arg("s.d",sdp->tmp);
+  vec[5] = NULL;
   execv(px_exe, (char*const*)vec);
   fprintf(stderr, "execv %s failed\n", px_exe);
   exit(1);

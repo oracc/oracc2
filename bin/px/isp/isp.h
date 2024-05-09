@@ -28,7 +28,7 @@ struct isp_cache
   const char *sys;	/* the system cache directory: /home/oracc/tmp/isp
 			   for search results; /home/oracc/www/is.d
 			   for precompiled instance sets */
-  const char *sub;	/* the list's cache directory */
+  const char *sub;	/* the project's cache directory */
   const char *list;	/* the list file */
   const char *sort; 	/* the list sorted by the requested permutation */
   const char *mol; 	/* the master outline for the list in cache.sort */

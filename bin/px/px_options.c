@@ -48,7 +48,10 @@ cgi_options(int argc, char **argv, Isp *ip)
       char *opt = (char*)pool_copy((ucp)argv[argc], ip->p);
       char *equals = strchr(opt, '=');
       if (equals)
-	*equals++ = '\0';
+	{
+	  *equals++ = '\0';
+	  equals = (char*)pool_copy((ucp)CGI_decode_url(equals), ip->p);
+	}
       struct cgioptstab *t = cgiopts(opt, strlen(opt));
       if (!t || opts(t->opt,equals))
 	{
@@ -93,7 +96,8 @@ opts(int opt, const char *arg)
       opt_ip->force = 1;
       break;
     case 'g':
-      opt_ip->glos = arg;
+      if (arg && strlen(arg))
+	opt_ip->glos = arg;
       break;
     case 'w':
       opt_ip->web = 1;
@@ -133,7 +137,7 @@ opts(int opt, const char *arg)
 	char *slash = strrchr(arg,'/');
 	if (slash && 's' == slash[1] && '.' == slash[2])
 	  {
-	    opt_ip->srchdata.tmp = arg;
+	    opt_ip->tmp_dir = opt_ip->srchdata.tmp = arg;
 	    opt_ip->cache.sys = (ccp)pool_copy((ucp)arg,opt_ip->p);
 	    char *isd = strstr(opt_ip->cache.sys, "/is.d/");
 	    isd += 5;

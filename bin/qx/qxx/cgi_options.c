@@ -12,7 +12,10 @@ cgi_options(int argc, char **argv, struct qxdata *qp)
       char *opt = (char*)pool_copy((ucp)argv[argc], qp->p);
       char *equals = strchr(opt, '=');
       if (equals)
-	*equals++ = '\0';
+	{
+	  *equals++ = '\0';
+	  equals = (char*)pool_copy((ucp)CGI_decode_url(equals), qp->p);
+	}
       struct cgioptstab *t = cgiopts(opt, strlen(opt));
       if (!t || opts(t->opt,equals))
 	{

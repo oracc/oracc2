@@ -18,5 +18,26 @@ isp_srch(Isp*ip)
       isp_list_cemd(ip);
       ip->cache.list = ip->lloc.path;
     }
-  return 0;
+
+  char *bar = (ccp)pool_alloc(strlen(ip->srchdata.tmp)+strlen("/search.bar0"), ip->p);
+  sprintf((char*)bar, "%s/search.bar", ip->srchdata.tmp);
+  if (access(bar, R_OK))
+    {
+      ip->err = (ccp)pool_copy((ucp)px_err("unknown or inaccessible search.bar %s", bar), ip->p);
+      goto wrapup;
+    }
+
+  char *bartext = (char*)slurp("qx-px", bar, NULL);
+  if (!bartext)
+    {
+      ip->err = (ccp)pool_copy((ucp)px_err("failed to read search.bar %s", bar), ip->p);
+      goto wrapup;
+    }
+  else if ('\n' == bartext[strlen(bartext)-1])
+    bartext[strlen(bartext)-1] = '\0';
+
+  ip->srch = bartext;
+  
+ wrapup:
+  return ip->err ? 1 : 0;
 }
