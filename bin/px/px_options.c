@@ -129,7 +129,10 @@ opts(int opt, const char *arg)
       opt_ip->referer = arg;
       break;
     case 't':
-      opt_ip->tmpdir = arg;
+      if ('s' == arg[0] && '.' == arg[1])
+	opt_ip->srchdata.tmp = arg;
+      else
+	opt_ip->tmpdir = arg;
       break;
     case 'a':
       opt_ip->glosdata.let = arg;

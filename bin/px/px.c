@@ -20,9 +20,6 @@ main(int argc, char **argv)
   if (px_options(argc, argv, ip))
     goto error;
 
-  if (ip->srch && px_srch(ip))
-    goto error;
-  
   if (px_validate(ip))
     goto error;
 

@@ -21,8 +21,6 @@ struct isp_srchdata
 {
   const char *tmp;	/* path to search's tmpdir */
   const char *bar;  	/* path to sub/search.bar = entire search bar text */
-  const char *txt;  	/* path to sub/search.txt = search.bar without lead index */
-  const char *idx;	/* name of lead index, extracted from srch opt */
 };
 
 struct isp_cache
@@ -182,7 +180,7 @@ typedef struct isp
   const char *zoom;
   const char *page;
   const char *psiz;
-  const char *srch; /* search string from search box */
+  const char *srch; /* search string from search.bar */
   const char *glos; /* glossary from URL */
   const char *item; /* a PQX for item display */
   const char *bkmk; /* a note of the last item visited resuming page mode */

@@ -1,8 +1,26 @@
 #include <oraccsys.h>
+#include "../../px/px.h"
 #include "qx.h"
+
+const char *px_exe = "/home/oracc/bin/px";
+
+static const char *
+px_cgi_arg(const char *arg, const char *val)
+{
+  char *c = malloc(strlen(arg)+strlen(val)+2);
+  sprintf(c, "%s=%s", arg, CGI_decode_url(val));
+  return c;
+}
 
 int
 px_exec(struct qxdata *qp, struct sdata *sdp)
 {
-  return 0;
+  const char *vec[4];
+  vec[0] = px_exe;
+  vec[1] = px_cgi_arg("web","1");
+  vec[2] = px_cgi_arg("s.d",sdp->tmp);
+  vec[3] = NULL;
+  execv(px_exe, (char*const*)vec);
+  fprintf(stderr, "execv %s failed\n", px_exe);
+  exit(1);
 }
