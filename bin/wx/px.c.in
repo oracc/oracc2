@@ -8,6 +8,7 @@
 #include "ccgi/ccgi.h"
 
 const char *px_exe = "@@ORACC_BUILDS@@/bin/px";
+const char *qx_exe = "@@ORACC_BUILDS@@/bin/qx";
 
 extern void dump_vl(CGI_varlist *vl);
 
@@ -35,46 +36,11 @@ px_mkvec(CGI_varlist *vl)
   vec[0] = px_exe;
   vec[1] = px_cgi_arg("web","1");
   for (i = 2, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl), ++i)
-    {
-#if 1
-      
-      ((char const**)vec)[i] = px_cgi_arg(name,CGI_lookup(vl,name));
-#else      
-      if (strcmp(name, "srch"))
-	((char const**)vec)[i] = px_cgi_arg(name,CGI_lookup(vl,name));
-      else
-	((char const **)vec)[i] = "srch=1";
-#endif
-    }
-
+    ((char const**)vec)[i] = px_cgi_arg(name,CGI_lookup(vl,name));
   ((char **)vec)[i] = NULL;
     
   return vec;
 }
-
-#if 0
-static int
-countv(CGI_varlist *v)
-{
-  int i = 0;
-  const char *name;
-  for (name = CGI_first_name(v);
-       name != 0;
-       name = CGI_next_name(v))
-    ++i;
-  return i;
-}
-
-const char *
-px_cgi_val(CGI_varlist *v, const char *name, const char *deflt)
-{
-  CGI_value *val = CGI_lookup_all(v, name);
-  if (val)
-    return val[0];
-  else
-    return deflt;
-}
-#endif
 
 void
 pxvl(CGI_varlist *v)
@@ -83,7 +49,11 @@ pxvl(CGI_varlist *v)
     v = CGI_add_var(v, "project", project);
   
   const char **va = px_mkvec(v);
-  execv(px_exe, (char*const*)va);
+  
+  if (CGI_lookup(v, "srch"))
+    execv(qx_exe, (char*const*)va);
+  else
+    execv(px_exe, (char*const*)va);
 
   fprintf(stderr, "execv %s failed\n", px_exe);
   exit(1);
@@ -125,55 +95,3 @@ px(const char *project)
 
   pxvl(v);
 }
-
-#if 0
-
-void
-pxx(const char *lang, const char *id)
-{
-  CGI_varlist *v = NULL;
-  const char **va = NULL;
-
-  fprintf(stderr, "instances handler\n");
-
-  if (query_string)
-    setenv("QUERY_STRING", query_string, 1);
-  
-  v = CGI_get_query(v);
-  v = CGI_get_post(v, NULL);
-
-#if 0
-  dump_vl(v);
-  vcount = countv(v);
-#endif
-
-  const char *exe = "@@ORACC_BUILD@@/bin/px";
-
-  execv(exe, (char*const*)va);
-  fprintf(stderr, "execv %s failed\n", exe);
-  exit(1);
-
-#if 0
-  va = malloc(18*sizeof(char*));
-  va[0] = exe;
-  va[1] = "-j";
-  va[2] = strdup(project ? project : "nul");
-  va[3] = "-n";
-  va[4] = strdup(lang);
-  va[5] = "-l";
-  va[6] = strdup(id);
-  va[7] = "-p";
-  va[8] = v ? px_cgi_val(v, "page", "1") : "1";
-  va[9] = "-s";
-  va[10] = v ? px_cgi_val(v, "size", "25") : "25";
-  va[11] = "-x";
-  va[12] = v ? px_cgi_val(v, "mode", "html") : "html";
-  va[13] = "-";
-  va[14] = v ? px_cgi_val(v, "all", "") : "";
-  va[15] = "-i";
-  va[16] = v ? px_cgi_val(v, "mode", "item") : "nul";
-  va[17] = NULL;
-#endif
-}
-
-#endif

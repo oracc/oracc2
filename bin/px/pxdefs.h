@@ -2,6 +2,7 @@
 #define PXDEFS_H_
 
 #define PX_TMP_PAT    	"tmp/px/is.XXXXXX"
+#define SRCHTMP "s.XXXXXX"
 
 #define PX_ERROR_START "px: error: "
 #define QX_ERROR_START "qx: error: "

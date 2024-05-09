@@ -6,6 +6,7 @@
 #include "se.h"
 #include "selib.h"
 
+#include "qx.h"
 #include "px.h"
 
 FILE *f_log = NULL;
@@ -508,10 +509,18 @@ main(int argc, char * const*argv)
   if (!out_f)
     out_f = stdout;
 
-  if (p4)
+  if (qd.web)
     {
-      px(project, xmldir);
-      exit(p4status);
+      if (qx(&qd))
+	{
+	  qx_error(&qd, &sdata);
+	  exit(0);
+	}
+      if (px_exec(&qd, &sdata))
+	{
+	  qx_error(&qd, &sdata);
+	  exit(0);
+	}
     }
   
   mesg_init();
@@ -868,15 +877,20 @@ opts(int argc, const char *arg)
       break;
     case 'd':
       doing_debug = 1;
+      qd.debug = 1;
       break;
     case 'e':
       errfile = arg;
+      break;
+    case 'g':
+      qd.glos = arg;
       break;
     case 'i':
       arg_index = arg;
       break;
     case 'j':
       set_project_arg(project = arg);
+      qd.project = arg;
       break;
     case 'o':
       outfile = arg;
@@ -889,6 +903,9 @@ opts(int argc, const char *arg)
       if (!pretrim_args)
 	pretrim_args = list_create(LIST_SINGLE);
       list_add(pretrim_args, (void*)arg);
+      break;
+    case 'q':
+      qd.srch = arg;
       break;
     case 's':
       s2 = 1;
@@ -904,6 +921,9 @@ opts(int argc, const char *arg)
       break;
     case 'x':
       xmldir = arg;
+      break;
+    case 'w':
+      qd.web = 1;
       break;
     default:
       return 1;

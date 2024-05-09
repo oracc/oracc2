@@ -277,6 +277,8 @@ function qs_add(pager, qs, datum) {
     }
 }
 
+// act_srch is called when the search box changes or is activated and
+// only passes a URL to wx if the srch is new
 function act_srch() {
     let srch=document.getElementById('p4SrchBox').value;
     if (srch.length == 0) {
@@ -285,9 +287,15 @@ function act_srch() {
 	let pager = getPager();
 	let proj = pager.getAttribute('data-proj');
 	let glos = pager.getAttribute('data-glos');
-	if (glos) { glos = '/'+glos; } else { glos = '' }
-	let srch_url='/'+proj+glos+'?srch='+encodeURIComponent(srch);
-	alert('srch_url='+srch_url);
-	window.location = srch_url;
+	let qury = pager.getAttribute('data-qury'); /* if current page came from srch
+						       the srch terms are stored in data-qury */
+	if (qury !== srch) {
+	    if (glos) { glos = '/'+glos; } else { glos = '' }
+	    let srch_url='/'+proj+glos+'?srch='+encodeURIComponent(srch);
+	    alert('srch_url='+srch_url);
+	    window.location = srch_url;
+	} else {
+	    alert('Srch '+srch+' has not changed');
+	}
     }
 }

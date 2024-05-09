@@ -21,7 +21,7 @@ main(int argc, char **argv)
     goto error;
 
   if (ip->srch && px_srch(ip))
-    goto error;    
+    goto error;
   
   if (px_validate(ip))
     goto error;
