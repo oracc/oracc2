@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "../px.h"
 #include "isp.h"
 
 int
@@ -37,72 +38,84 @@ isp_cache_sys(Isp *ip)
 int
 isp_cache_sub(Isp *ip)
 {
-  char dir[strlen(ip->cache.sys)+strlen(ip->project)+strlen(ip->list_name)+3];
-  sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
-  struct stat sb;
-  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+  if (ip->cache.sub)
     {
-      if (strchr(ip->project, '/'))
-	{
-	  char proj[strlen(ip->project)+1];
-	  strcpy(proj, ip->project);
-	  if ('/' == proj[strlen(proj)-1])
-	    proj[strlen(proj)-1] = '\0';
-	  char *slash = proj;
-	  while ((slash = strchr(slash,'/')))
-	    {
-	      *slash = '\0';
-	      sprintf(dir, "%s/%s", ip->cache.sys, proj);
-	      if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
-		{
-		  if (ip->verbose)
-		    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
-		  if (mkdir(dir, 0775))
-		    {
-		      ip->err = "cache.sub project-component directory could not be created";
-		      break;
-		    }
-		}
-	      *slash++ = '/';
-	    }
-	  if (!ip->err)
-	    {
-	      sprintf(dir, "%s/%s", ip->cache.sys, proj);
-	      if (ip->verbose)
-		fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
-	      if (mkdir(dir, 0775))
-		ip->err = "cache.sub project-component directory could not be created";
-	    }
-	}
-      else
-	{
-	  if (ip->verbose)
-	    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
-	  if (mkdir(dir, 0775))
-	    ip->err = "cache.sub project-level directory could not be created";
-	}
-    }
-
-  if (!ip->err)
-    {
-      strcat(dir, "/");
-      strcat(dir, ip->list_name);
-      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
       struct stat sb;
       if (stat(ip->cache.sub, &sb) || !S_ISDIR(sb.st_mode))
 	{
-	  if (ip->verbose)
-	    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", ip->cache.sub);
-	  if (mkdir(ip->cache.sub, 0775))
-	    ip->err = "cache.sub directory could not be created";
-	}
-      else if (access(ip->cache.sub, W_OK))
-	{
-	  ip->err = "cache.sub directory %s not writeable\n";
-	  ip->errx = ip->cache.sub;
+	  ip->err = (ccp)pool_copy((ucp)px_err("isp_cache_sub: srch sub %s not found",
+					       ip->cache.sub), ip->p);
+	  return 1;
 	}
     }
-  
+  else
+    {
+      char dir[strlen(ip->cache.sys)+strlen(ip->project)+strlen(ip->list_name)+3];
+      sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
+      struct stat sb;
+      if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+	{
+	  if (strchr(ip->project, '/'))
+	    {
+	      char proj[strlen(ip->project)+1];
+	      strcpy(proj, ip->project);
+	      if ('/' == proj[strlen(proj)-1])
+		proj[strlen(proj)-1] = '\0';
+	      char *slash = proj;
+	      while ((slash = strchr(slash,'/')))
+		{
+		  *slash = '\0';
+		  sprintf(dir, "%s/%s", ip->cache.sys, proj);
+		  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+		    {
+		      if (ip->verbose)
+			fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
+		      if (mkdir(dir, 0775))
+			{
+			  ip->err = "cache.sub project-component directory could not be created";
+			  break;
+			}
+		    }
+		  *slash++ = '/';
+		}
+	      if (!ip->err)
+		{
+		  sprintf(dir, "%s/%s", ip->cache.sys, proj);
+		  if (ip->verbose)
+		    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
+		  if (mkdir(dir, 0775))
+		    ip->err = "cache.sub project-component directory could not be created";
+		}
+	    }
+	  else
+	    {
+	      if (ip->verbose)
+		fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
+	      if (mkdir(dir, 0775))
+		ip->err = "cache.sub project-level directory could not be created";
+	    }
+	}
+
+      if (!ip->err)
+	{
+	  strcat(dir, "/");
+	  strcat(dir, ip->list_name);
+	  ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
+	  struct stat sb;
+	  if (stat(ip->cache.sub, &sb) || !S_ISDIR(sb.st_mode))
+	    {
+	      if (ip->verbose)
+		fprintf(stderr, "isp: isp_cache_sub: creating %s\n", ip->cache.sub);
+	      if (mkdir(ip->cache.sub, 0775))
+		ip->err = "cache.sub directory could not be created";
+	    }
+	  else if (access(ip->cache.sub, W_OK))
+	    {
+	      ip->err = "cache.sub directory %s not writeable\n";
+	      ip->errx = ip->cache.sub;
+	    }
+	}
+    }  
   return ip->err ? 1 : 0;
 }
 

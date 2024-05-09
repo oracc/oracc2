@@ -129,10 +129,22 @@ opts(int opt, const char *arg)
       opt_ip->referer = arg;
       break;
     case 't':
-      if ('s' == arg[0] && '.' == arg[1])
-	opt_ip->srchdata.tmp = arg;
-      else
-	opt_ip->tmpdir = arg;
+      {
+	char *slash = strrchr(arg,'/');
+	if (slash && 's' == slash[1] && '.' == slash[2])
+	  {
+	    opt_ip->srchdata.tmp = arg;
+	    opt_ip->cache.sys = (ccp)pool_copy((ucp)arg,opt_ip->p);
+	    char *isd = strstr(opt_ip->cache.sys, "/is.d/");
+	    isd += 5;
+	    *isd = '\0';
+	    opt_ip->cache.sub = (ccp)pool_copy((ucp)arg,opt_ip->p);
+	    slash = strrchr(opt_ip->cache.sub, '/');
+	    *slash = '\0';
+	  }
+	else
+	  opt_ip->tmpdir = arg;
+      }
       break;
     case 'a':
       opt_ip->glosdata.let = arg;

@@ -23,7 +23,12 @@ main(int argc, char **argv)
   if (px_validate(ip))
     goto error;
 
-  if (isp_list_method(ip))
+  if (ip->srchdata.tmp)
+    {
+      if (isp_srch(ip))
+	goto error;
+    }
+  else if (isp_list_method(ip))
     goto error;
 
   if (isp_cache_sys(ip))
@@ -35,7 +40,7 @@ main(int argc, char **argv)
   if (ip->glos && isp_glos_list(ip))
     goto error;
   
-  if (isp_cache_list(ip))
+  if (!strcmp(ip->from, "list") && isp_cache_list(ip))
     goto error;
 
   if (!ip->glos || ip->glosdata.xis)

@@ -295,11 +295,15 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		{
 		  if (texts)
 		    {
-		      int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
-		      int zpage = (ztextth / 25) + ((textth % 25) ? 1 : 0);
-		      dumpitem(ip, texts, textth, tpage, ztextth, zpage);
-		      ++textth;
-		      ++ztextth;
+		      if (itemnth && strncmp(items[itemnth-1], items[itemnth], 7))
+			{
+			  /* Only dump information when it's a new text */
+			  int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
+			  int zpage = (ztextth / 25) + ((textth % 25) ? 1 : 0);
+			  dumpitem(ip, texts, textth, tpage, ztextth, zpage);
+			  ++textth;
+			  ++ztextth;
+			}
 		    }
 		  else
 		    dumpitem(ip, items, itemnth, page, zoomth, zoomp);
