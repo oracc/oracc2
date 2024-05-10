@@ -212,7 +212,8 @@ pg_page_dump(Isp *ip, struct page *p)
       fclose(fpag);
       unsigned char *f = loadfile((uccp)ip->cache.sort, NULL);
       ispmp_zooms(ip, f, zmax);
-      ispmp_pages(ip, f, imax);
+      if (ispmp_pages(ip, f, imax))
+	return 1;
       if (ispo_master(ip))
 	return 1;
     }

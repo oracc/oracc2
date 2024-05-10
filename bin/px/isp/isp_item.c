@@ -17,48 +17,52 @@ isp_item_load(Isp *ip)
   
   char dbifn[strlen(ip->perm)+strlen("-itm0")];
   sprintf(dbifn, "%s-itm", ip->perm);
-  Dbi_index *dp = dbx_init(ip->cache.sub, dbifn);
-  char *tmax = (char*)dbx_key(dp, "tmax", NULL);
-  if (tmax)
-    ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
-  char *k = (char*)dbx_key(dp, ip->itemdata.item, NULL);
-  if (!k)
-    {
-      ip->err = PX_ERROR_START "key %s not found in item db\n";
-      ip->errx = ip->itemdata.item;
-      return 1;
+  Dbi_index *dp;
+  if ((dp = dbx_init(ip->cache.sub, dbifn)))
+    { 
+      char *tmax = (char*)dbx_key(dp, "tmax", NULL);
+      if (tmax)
+	ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
+      char *k = (char*)dbx_key(dp, ip->itemdata.item, NULL);
+      if (!k)
+	{
+	  ip->err = PX_ERROR_START "key %s not found in item db\n";
+	  ip->errx = ip->itemdata.item;
+	  return 1;
+	}
+
+      ip->itemdata.index = (ccp)pool_copy((ucp)k, ip->p);
+      char *s = strchr(ip->itemdata.index, '\t');
+      *s++ = '\0';
+
+      ip->itemdata.page = s;
+      s = strchr(ip->itemdata.page, '\t');
+      *s++ = '\0';
+
+      ip->itemdata.zoom = s;
+      s = strchr(s, '\t');
+      *s++ = '\0';
+  
+      ip->itemdata.zpag = s;
+      s = strchr(s, '\t');
+      *s++ = '\0';
+
+      if ('#' == *s)
+	ip->itemdata.prev = NULL;
+      else
+	ip->itemdata.prev = s;
+      s = strchr(s, '\t');
+      *s++ = '\0';
+
+      if ('#' == *s)
+	ip->itemdata.next = NULL;
+      else
+	ip->itemdata.next = s;
     }
-
-  ip->itemdata.index = (ccp)pool_copy((ucp)k, ip->p);
-  char *s = strchr(ip->itemdata.index, '\t');
-  *s++ = '\0';
-
-  ip->itemdata.page = s;
-  s = strchr(ip->itemdata.page, '\t');
-  *s++ = '\0';
-
-  ip->itemdata.zoom = s;
-  s = strchr(s, '\t');
-  *s++ = '\0';
-  
-  ip->itemdata.zpag = s;
-  s = strchr(s, '\t');
-  *s++ = '\0';
-
-  if ('#' == *s)
-    ip->itemdata.prev = NULL;
   else
-    ip->itemdata.prev = s;
-  s = strchr(s, '\t');
-  *s++ = '\0';
-
-  if ('#' == *s)
-    ip->itemdata.next = NULL;
-  else
-    ip->itemdata.next = s;
-
+    ip->err = (ccp)px_err("failed to open dbi index %s/%s\n", ip->cache.sub, dbifn);
   
-  return 0;
+  return ip->err ? 1 : 0;
 }
 
 static int

@@ -214,7 +214,7 @@ text_array(Isp *ip, const char **items, int imax, char **tmem, int *tmax)
   return (const char **)t;
 }
 
-void
+int
 ispmp_pages(Isp *ip, unsigned char *f, int imax)
 {
   struct pgtell pt = { -1L, 0, 0L, 0 };
@@ -229,6 +229,12 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   sprintf(dbifn, "%s-itm", ip->perm);
   ip->itemdata.dp = dbi_create(dbifn, ip->tmp_dir, 1024, 1, DBI_BALK);
 
+  if (!ip->itemdata.dp)
+    {
+      ip->err = (ccp)px_err("unable to create item data dbi %s/%s\n", ip->tmp_dir, dbifn);
+      return 1;
+    }
+  
   char pfn[strlen(ip->cache.sort)+strlen(".pmp0")];
   sprintf(pfn, "%s.pmp", ip->cache.sort);
   FILE *pfp = fopen(pfn, "w");
@@ -326,12 +332,13 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   dbi_flush(ip->itemdata.dp);
   free(imem);
   free(items);
+  return 0;
 }
 #if 0
 int
 main(int argc, char **argv)
 {
   unsigned char *f = loadfile((uccp)"/home/oracc/www/is.d/gudea/sux.r00002d/sort-123", NULL);
-  ispmp_pages(f);
+  return ispmp_pages(f);
 }
 #endif
