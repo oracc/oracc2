@@ -15,14 +15,19 @@ print_hdr(void)
 int
 main(int argc, char **argv)
 {
-  Isp *ip = isp_init();
-
+  mesg_init();
+  
+  Isp *ip = isp_init();  
+  
   if (px_options(argc, argv, ip))
     goto error;
 
   if (px_validate(ip))
     goto error;
 
+  if (isp_cache_sys(ip))
+    goto error;
+  
   if (ip->srchdata.tmp)
     {
       if (isp_srch(ip))
@@ -31,9 +36,6 @@ main(int argc, char **argv)
   else if (isp_list_method(ip))
     goto error;
 
-  if (isp_cache_sys(ip))
-    goto error;
-  
   if (isp_cache_sub(ip))
     goto error;
 
@@ -89,8 +91,11 @@ main(int argc, char **argv)
   goto ok;
   
  error:
-  fprintf(stderr, ip->errx ? ip->err : PX_ERROR_START "%s. Stop.\n",
-	  ip->errx ? ip->errx : ip->err);
+  if (!strncmp(ip->err, PX_ERROR_START, strlen(PX_ERROR_START)))
+    fprintf(stderr, "%s", ip->err);
+  else
+    fprintf(stderr, ip->errx ? ip->err : PX_ERROR_START "%s. Stop.\n",
+	    ip->errx ? ip->errx : ip->err);
   if (ip->web)
     {
       if (!strcmp(ip->xhmd, "xml"))

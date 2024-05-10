@@ -40,6 +40,7 @@ extern void isp_show(FILE *fp, Isp *ip);
 /* isp_sort.c */
 extern int isp_cache_sort(Isp *ip);
 /* isp_srch.c */
+extern int isp_srch_bar(Isp *ip);
 extern int isp_srch(Isp *ip);
 /* isp_tis.c */
 extern int isp_tis_list(Isp *ip);

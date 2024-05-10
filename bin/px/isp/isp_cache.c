@@ -7,21 +7,12 @@ isp_cache_sys(Isp *ip)
 {
   if (!ip->cache.sys)
     {
-      if ('i' == *ip->lloc.type)
+      ip->cache.sys = getenv("ORACC_ISP_CACHE");
+      if (!ip->cache.sys)
 	{
-	  char dir[strlen(ip->oracc)+strlen("/tmp/isp/0")];
-	  sprintf(dir, "%s/tmp/isp", ip->oracc);
+	  char dir[strlen(ip->oracc)+strlen("/www/is.d0")];
+	  sprintf(dir, "%s/www/is.d", ip->oracc);
 	  ip->cache.sys = (ccp)pool_copy((uccp)dir, ip->p);
-	}
-      else
-	{
-	  ip->cache.sys = getenv("ORACC_ISP_CACHE");
-	  if (!ip->cache.sys)
-	    {
-	      char dir[strlen(ip->oracc)+strlen("/www/is.d0")];
-	      sprintf(dir, "%s/www/is.d", ip->oracc);
-	      ip->cache.sys = (ccp)pool_copy((uccp)dir, ip->p);
-	    }
 	}
       struct stat sb;
       if (stat(ip->cache.sys, &sb) || !S_ISDIR(sb.st_mode))
@@ -128,7 +119,10 @@ isp_cache_list(Isp *ip)
   sprintf(list, "%s/list", ip->cache.sub);
   ip->cache.list = (ccp)pool_copy((uccp)list, ip->p);
   if (ip->force)
-    (void)isp_list_create(ip);
+    {
+      (void)isp_list_create(ip);
+      isp_list_cemd(ip);
+    }
   else
     {
       if (ip->force || access(list, R_OK))
@@ -138,10 +132,13 @@ isp_cache_list(Isp *ip)
 	      ip->err = "cache.list %s exists but is not readable";
 	      ip->errx = strdup(list);
 	    }
-	  else if ('i' == *ip->lloc.type)
+	  else if ('i' == *ip->lloc.type || 's' == *ip->lloc.type)
 	    ip->err = "cache.list does not exist in tmp/isp";
 	  else
-	    (void)isp_list_create(ip);
+	    {
+	      (void)isp_list_create(ip);
+	      isp_list_cemd(ip);
+	    }
 	}
     }
   return ip->err ? 1 : 0;

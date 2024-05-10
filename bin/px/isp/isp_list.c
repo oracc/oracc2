@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "../px.h"
 #include "isp.h"
 
 void
@@ -108,6 +109,10 @@ isp_list_type(Isp *ip)
     {
       if (!strncmp(ip->list_name, "is.", 3))
 	ip->lloc.type = "isp";
+      else if ('s' == ip->list_name[0] && '.' == ip->list_name[1])
+	{
+	  ip->lloc.type = "srch";
+	}
       else if ((p = strchr(ip->list_name, '.')))
 	{
 	  char l[strlen(ip->list_name)+1];
@@ -141,17 +146,18 @@ isp_list_method(Isp *ip)
       else
 	isp_list_cemd(ip);
     }
-  else if ('i' == *ip->lloc.type) /* isp */
+  else if ('i' == *ip->lloc.type || 's' == *ip->lloc.type) /* isp */
     {
       isp_tmp_dir(ip);
       char path[strlen(ip->tmp_dir)+strlen("/list")];
       sprintf(path, "%s/list", ip->tmp_dir);
       if (access(path, R_OK))
-	ip->err = "list not found in tmpdir";
+	ip->err = (ccp)px_err("list %s not found in tmpdir: %s", path, strerror(errno));
       else
 	{
 	  ip->lloc.path = (ccp)pool_copy((uccp)path, ip->p);
 	  ip->lloc.method = "file";
+	  isp_list_cemd(ip);
 	}
     }
   else if ('x' == *ip->lloc.type) /* xis */

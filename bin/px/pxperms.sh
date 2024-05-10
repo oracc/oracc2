@@ -8,5 +8,5 @@ fi
 echo Resetting P4 cache permissions for $project ...
 sudo chown -R www-data:oracc ${ORACC_BUILDS}/www/{htm,is.d}/$project
 sudo chmod -R +s ${ORACC_BUILDS}/www/{htm,is.d}/$project
-sudo chmod -R g+w ${ORACC_BUILDS}/www/{htm,is.d}/$project
+sudo chmod -R g+rwx ${ORACC_BUILDS}/www/{htm,is.d}/$project
 ls -ld ${ORACC_BUILDS}/www/{htm,is.d}/$project
