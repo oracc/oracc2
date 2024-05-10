@@ -15,6 +15,6 @@ chmod o+r 02xml/p4-trans-select.xml
 pxsortercodes.sh $project
 # p3-project-data.plx doesn't do the following bit
 for a in 02pub/cbd/* ; do
-    pxentrycounts.sh $1
-    pxentryindexes.sh $1
+    pxentrycounts.sh $a
+    pxentryindexes.sh $a
 done

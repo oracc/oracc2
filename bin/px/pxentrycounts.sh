@@ -10,6 +10,6 @@ if [ "$1" = "" ] || [ ! -d $1 ]; then
     exit 1
 else
     (cd $1 ; wc -l [eL]*.lst | grep -v total | tr -s ' ' '\t' \
-	 | rocox -C32 | sed 's/.lst//' | sort >entry-counts.tab)
-    chmod o+r entry-counts.tab
+	 | rocox -C32 | sed 's/.lst//' | sort >entry-counts.tab
+     chmod o+r entry-counts.tab)
 fi
