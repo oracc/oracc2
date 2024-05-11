@@ -340,12 +340,14 @@
       ><xsl:value-of select="id(@merge)/@n"/> = <xsl:value-of select="id(@merge)/@xml:id"/><xsl:text>)</xsl:text></p>
     </xsl:if>
 
-    <div class="asl-oid">
-      <p>
-	<span class="sl-ihead">Form ID</span>
-	<span class="sl-ibody"><xsl:value-of select="@oid"/></span>
-      </p>
-    </div>
+    <xsl:if test="self::*[local-name='form']">
+      <div class="asl-oid">
+	<p>
+	  <span class="sl-ihead">Form ID</span>
+	  <span class="sl-ibody"><xsl:value-of select="@xml:id|@ref"/></span>
+	</p>
+      </div>
+    </xsl:if>
     
     <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
       <div class="asl-cun-img">
@@ -1013,7 +1015,7 @@
 	      <link media="screen,projection" href="{concat('/',/*/@project,'/signlist/css/projesp.css')}" type="text/css" rel="stylesheet" />
 	  -->
 	</head>
-	<body id="{$body-id}">
+	<body id="{$body-id}" class="selpage">
 	  <xsl:call-template name="esp2-banner-div">
 	    <xsl:with-param name="parameters" select="$parameters"/>
 	    <xsl:with-param name="project" select="$project"/>
@@ -1021,7 +1023,8 @@
 	    <xsl:with-param name="nomenu" select="true()"/>
 	    <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	  </xsl:call-template>
-	  <h2><xsl:value-of select="$title"/></h2>
+	  <h2><a href="/$project/signlist/{ancestor-or-self::
+		       */[@xml:id]/@xml:id}"><xsl:value-of select="$title"/></a></h2>
 	  <table class="selpage">
 	    <xsl:choose>
 	      <xsl:when test="$type='h'">
