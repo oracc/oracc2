@@ -43,13 +43,17 @@ g_base_of(const unsigned char *v)
 {
   if (v)
     {
-      unsigned char *b = NULL, *sub = NULL, *ret;
-      
+      unsigned char *b = NULL, *ret, *b_end, *mods = NULL;
+     
       b = malloc(strlen((ccp)v)+1);
       strcpy((char*)b, (ccp)v);
-      if (strlen((ccp)v) > 3)
+      if (!(b_end = strpbrk(b, "~@")))
+	b_end = b + strlen(b);
+      else
+	mods = b_end;
+      if (b_end - b > 3)
 	{
-	  sub = b + strlen((ccp)b);
+	  unsigned char *sub = b_end;
 	  while (1)
 	    {
 	      if ('\0' == *sub && sub - 3 > b && sub[-3] == 0xe2 && sub[-2] == 0x82)
@@ -64,7 +68,13 @@ g_base_of(const unsigned char *v)
 		break;
 	    }
 	}
+      if (sub < b_end && mods)
+	{
+	  while (*mods)
+	    *sub++ = *mods++;
+	}
       ret = g_lc(b);
+      free((char*)v);
       free(b);
       return ret;
     }

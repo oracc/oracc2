@@ -73,10 +73,13 @@ sx_w_a_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
     {
       fprintf(f->fp, "@project %s\n", sl->project);
       fprintf(f->fp, "@signlist %s\n", sl->signlist);
+      fprintf(f->fp, "@domain %s\n", sl->domain);
+      
       /* Normally no blank line before notes; @signlist is an exception */
       if (sl->notes && list_len(sl->notes->notes))
 	fputc('\n', f->fp);
       sx_w_a_notes(f, sl, sl->notes);
+
       int nn, i;
       const char **n = hash_keys2(sl->listdefs, &nn);
       qsort(n, nn, sizeof(const char *), cmpstringp);

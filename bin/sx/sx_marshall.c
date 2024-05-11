@@ -7,6 +7,11 @@
 #include <signlist.h>
 #include <sx.h>
 
+/* Tokens whose root node is type g:n are in the sort-index space
+ * NUMBER_OFFSET+sortcode.
+ */
+#define NUMBER_OFFSET 100000
+
 Hash *oids;
 Hash *oid_sort_keys;
 Hash *oid_warned = NULL;
@@ -385,7 +390,12 @@ sx_marshall(struct sl_signlist *sl)
   for (i = 0; i < nkeys; ++i)
     {
       struct sl_token *tp = hash_find(sl->htoken, (ucp)keys[i]);
-      tp->s = i+1;
+      /* tp->gdl is a g:w node that wraps the grapheme; the first
+	 grapheme node is tp->gdl->kids */
+      if (tp->gdl && tp->gdl->kids && !strcmp(tp->gdl->kids->name, "g:n"))
+	tp->s = i+1 + NUMBER_OFFSET;
+      else
+	tp->s = i+1;
       sl->tokens[i] = tp;
       if (sx_show_tokens)
 	{
