@@ -40,6 +40,9 @@ struct sl_signlist
 {
   const char *signlist; /* The signlist name may vary from the host project, e.g., pcsl in pcsl */
   const char *project;  /* The project member is the host project for the signlist, e.g., pcsl */
+  const char *domain; 	/* Default "sl"; for proto-cuneiform "pc";
+			   other future values are possible, e.g.,
+			   "pe" (Proto-Elamite) */
   struct sl_inst *notes;/* Allow inotes etc., after @signlist */
   Hash *linkdefs; 	/* Hash of signlist names; value is struct sl_linkdef */
   Hash *listdefs; 	/* Hash of signlist names; value is struct sl_listdef */

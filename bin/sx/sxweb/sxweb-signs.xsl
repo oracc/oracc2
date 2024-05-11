@@ -1023,8 +1023,8 @@
 	    <xsl:with-param name="nomenu" select="true()"/>
 	    <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	  </xsl:call-template>
-	  <h2><a href="/$project/signlist/{ancestor-or-self::
-		       *[@xml:id]/@xml:id}"><xsl:value-of select="$title"/></a></h2>
+	  <h2><a href="/{$project}/signlist/{ancestor::sl:sign/@xml:id}"
+		 ><xsl:value-of select="$title"/></a></h2>
 	  <table class="selpage">
 	    <xsl:choose>
 	      <xsl:when test="$type='h'">

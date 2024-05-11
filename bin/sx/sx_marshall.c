@@ -323,10 +323,13 @@ sx_marshall(struct sl_signlist *sl)
   int nlets = 0, i;
   collate_init((ucp)"unicode");
 
+  if (!sl->domain)
+    sl->domain = "sl";
+  
   if (!sl->oid2ucode)
     sl->oid2ucode = hash_create(1024);
   
-  oids = oid_domain_hash(NULL, "oid", "sl");
+  oids = oid_domain_hash(NULL, "oid", sl->domain);
   if (!oids)
     oids = hash_create(1);
   oid_sort_keys = hash_create(2048);

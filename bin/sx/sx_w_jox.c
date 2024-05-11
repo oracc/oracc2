@@ -140,9 +140,9 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
     if (p == sx_pos_init)
     {
       if (ldata_http)
-	ratts = rnvval_aa("x", "project", sl->project, "signlist", sl->signlist, "lemma-http", ldata_http, NULL);
+	ratts = rnvval_aa("x", "project", sl->project, "signlist", sl->signlist,  "domain", sl->domain, "lemma-http", ldata_http, NULL);
       else
-	ratts = rnvval_aa("x", "project", sl->project, "signlist", sl->signlist, NULL);
+	ratts = rnvval_aa("x", "project", sl->project, "signlist", sl->signlist,  "domain", sl->domain, NULL);
 
       joxer_ea(&sl->mloc, "sl:signlist", ratts);
       xidseen = hash_create(1024);

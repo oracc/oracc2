@@ -108,6 +108,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@end/[ \t].*\n        	       	{ atcmd(END,E); }
 ^@signlist/[ \t]+      		{ atcmd(SIGNLIST,S); }
 ^@project/[ \t]+      		{ atcmd(PROJECT,S); }
+^@domain/[ \t]+      		{ atcmd(DOMAIN,S); }
 ^@linkdef/[ \t]+       		{ Ynext=L; atcmd(LINKDEF,Y); }
 ^@listdef/[ \t]+       		{ atcmd(LISTDEF,L); }
 ^@sysdef/[ \t]+       		{ Ynext=Yt; atcmd(SYSDEF,Y); }

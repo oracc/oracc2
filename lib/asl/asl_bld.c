@@ -1111,6 +1111,9 @@ asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl)
     mesg_verr(locp, "misplaced @end sign, not in an @sign");    
 }
 
+/* This routine is overloaded to set @domain as well as
+   @project/@signlist project=0 == signlist; project=1 == project;
+   project=2 == domain */
 void
 asl_bld_signlist(Mloc *locp, const unsigned char *n, int project)
 {
@@ -1124,8 +1127,10 @@ asl_bld_signlist(Mloc *locp, const unsigned char *n, int project)
     {
       while (isspace(*n))
 	++n;
-      if (project)
+      if (project == 1)
 	curr_asl->project = (ccp)n;
+      if (project == 2)
+	curr_asl->domain = (ccp)n;
       else
 	curr_asl->signlist = (ccp)n;
     }

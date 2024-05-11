@@ -33,7 +33,7 @@ int minus_flag = 0;
 		GBAD ATF LANG V LIST LISTNUM
 		INOTE LIT NOTE REF TEXT END EBAD EFORM ESIGN
 		UAGE USEQ UTF8 UMAP UNAME UNOTE UPUA
-		SIGNLIST PROJECT LISTDEF LISTNAME LREF SREF
+		SIGNLIST PROJECT DOMAIN LISTDEF LISTNAME LREF SREF
 		SYSDEF SYSNAME SYS SYSGOESTO SYSTEXT
 		SMAP LITERAL IMAGES MERGE OID
 		LINKDEF LINK
@@ -70,6 +70,7 @@ longtext:
 atcmd:
 	  atsignlist
 	| atproject
+	| atdomain
 	| atlinkdef
 	| atlistdef
 	| atsysdef
@@ -100,6 +101,10 @@ atsignlist:
 
 atproject:
 	  PROJECT TEXT 			{ asl_bld_signlist(&@1, (uccp)$2, 1); }
+	;
+
+atdomain:
+	  DOMAIN TEXT 			{ asl_bld_signlist(&@1, (uccp)$2, 2); }
 	;
 
 atlinkdef:
