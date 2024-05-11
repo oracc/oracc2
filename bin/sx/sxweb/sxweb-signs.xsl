@@ -598,7 +598,7 @@
 	    <xsl:with-param name="esp-mode" select="$esp-mode"/>
 	  </xsl:call-template>
 	</esp:link>
-      </xsl:when>
+      </xsl:when>`
       <xsl:otherwise>
 	<a href="/{$project}/signlist/{ancestor-or-self::sl:sign[1]/@xml:id}">
 	  <xsl:call-template name="sws-compounds-link">
@@ -1024,7 +1024,7 @@
 	    <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	  </xsl:call-template>
 	  <h2><a href="/$project/signlist/{ancestor-or-self::
-		       */[@xml:id]/@xml:id}"><xsl:value-of select="$title"/></a></h2>
+		       *[@xml:id]/@xml:id}"><xsl:value-of select="$title"/></a></h2>
 	  <table class="selpage">
 	    <xsl:choose>
 	      <xsl:when test="$type='h'">
