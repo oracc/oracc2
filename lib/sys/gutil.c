@@ -71,7 +71,7 @@ g_index_of(const unsigned char *g, const unsigned char *b)
 	i += (g[2] - 0x80);
     }
   else
-    i = 1;
+    i = 0; /* 20240511: absence of index = index 0 so empty index X sorts before X₁ */
   return i;
 }
 

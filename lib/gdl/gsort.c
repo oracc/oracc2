@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <tree.h>
 #include <memo.h>
 #include <gutil.h>
@@ -9,7 +10,7 @@
 
 int gsort_trace = 0;
 
-static GS_item *gsort_item(unsigned const char *n, unsigned const char *g, unsigned const char *r);
+static GS_item *gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned const char *r);
 static void gsort_node(Node *np, List *lp);
 static const char *gsort_show_key(unsigned const char *k);
 
@@ -20,7 +21,7 @@ static Pool *gspool = NULL;
 static Hash *hitems = NULL;
 static Hash *hheads = NULL;
 
-static GS_item gsort_null_item = { (uccp)"\\0" , (uccp)"", (uccp)"", (uccp)"", 0, -1 };
+static GS_item gsort_null_item = { (uccp)"\\0" , 0, (uccp)"", (uccp)"", (uccp)"", 0, -1 };
 
 void
 gsort_init()
@@ -73,7 +74,7 @@ gsort_prep(Tree *tp)
 	    }
 	  else if (tp->root->text)
 	    {
-	      GS_item *gi = gsort_item((uccp)tp->root->text, (uccp)tp->root->text, NULL);
+	      GS_item *gi = gsort_item(0, (uccp)tp->root->text, (uccp)tp->root->text, NULL);
 	      gs->n = 1;
 	      gs->i = malloc(sizeof(GS_item*));
 	      *gs->i = gi;
@@ -99,8 +100,8 @@ gsort_show(GS_head *gsp)
       for (i = 0; i < gsp->n; ++i)
 	{
 	  GS_item *gip = gsp->i[i];
-	  fprintf(stderr, "{%s; %s; %s; %s",
-		  gip->g, gip->b, gsort_show_key(gip->k), gip->m);
+	  fprintf(stderr, "{%s; %d; %s; %s; %s",
+		  gip->g, gip->t, gip->b, gsort_show_key(gip->k), gip->m);
 	  if (gip->mp)
 	    {
 	      GS_mods *mp;
@@ -150,52 +151,48 @@ gsort_cmp_item(GS_item *a, GS_item *b)
 {
   int ret = 0;
 
-  /* force number graphemes to sort after other signs */
-  if (a->r > 0 || b->r > 0)
-    {
-      if (a->r && b->r)
-	{
-	  /* for two numbers, compare via the grapheme so all AŠ, DIŠ,
-	     etc. sort together */
-	  /* compare grapheme base via the key */
-	  if ((ret = strcmp((ccp)a->k, (ccp)b->k)))
-	    return ret;
-	  /* 1(AŠ) sort before 2(AŠ) */
-	  if (a->r > b->r)
-	    return 1;
-	  else if (b->r > a->r)
-	    return -1;
-	  
-	  /* compare index */
-	  if (a->x - b->x)
-	    return a->x - b->x;
-
-	  return strcmp((ccp)a->m, (ccp)b->m);
-	}
-      else
-	{
-	  if (a->r > b->r)
-	    return 1;
-	  else if (b->r > a->r)
-	    return -1;
-	}
-    }
-
-  /* compare grapheme base via the key */
+  if (a->t != b->t)
+    return a->t - b->t;
+  
   if ((ret = strcmp((ccp)a->k, (ccp)b->k)))
     return ret;
-  
+
+  /* For numbers 1(AŠ) sort before 2(AŠ) */
+  if (a->t == 2)
+    {
+      if (a->r > b->r)
+	return 1;
+      else if (b->r > a->r)
+	return -1;
+    }
+
   /* compare index */
   if (a->x - b->x)
     return a->x - b->x;
-
-  /* final check is mods */
+  
+  /* compare mods */
   if (a->mp && b->mp)
     return gsort_cmp_mods(a->mp,b->mp);
   else if (a->mp || b->mp)
     return a->mp ? 1 : -1;
-  else
-    return 0;
+
+  /* see if this is |3×AN| or like */
+  if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)
+    return (a->r > 0) ? 1 : -1;
+  
+  /* if we are still here return lowercase first if they differ;
+     sll_has_sign_indicator looks for key uppercase letters to detect
+     sign names */
+  if (strcmp((ccp)a->g, (ccp)b->g))
+    {
+      if (sll_has_sign_indicator(a->g))
+	return 1;
+      else
+	return 1;
+    }
+
+  /* graphemes are identical */
+  return 0;
 }
 
 int
@@ -241,7 +238,7 @@ gsort_mods(unsigned char *m)
 }
 
 static GS_item *
-gsort_item(unsigned const char *n, unsigned const char *g, unsigned const char *r)
+gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned const char *r)
 {
   GS_item *gp = NULL;
   unsigned char *tmp;
@@ -250,9 +247,27 @@ gsort_item(unsigned const char *n, unsigned const char *g, unsigned const char *
     return gp;
 
   gp = memo_new(m_items);
+  gp->t = type;
   gp->g = n;
   tmp = pool_copy(g_base_of(g), gspool);
   gp->b = tmp;
+
+  /* Reset Punct/Num types for graphemes that aren't tagged g:p/g:n in
+     GDL */
+  if (!strcmp((ccp)gp->b, "p"))
+    gp->t = 1;
+  else if ('n' == *gp->b)
+    {
+      unsigned const char *b = gp->b + 1;
+      while (*b)
+	if (*b > 128 || !isdigit(*b))
+	  break;
+	else
+	  ++b;
+      if (!*b)
+	gp->t = 2;
+    }
+  
   gp->x = g_index_of(g, gp->b);
 
   if ((tmp = (ucp)strpbrk((ccp)gp->b, "~@")))
@@ -286,6 +301,8 @@ gsort_item(unsigned const char *n, unsigned const char *g, unsigned const char *
 static void
 gsort_node(Node *np, List *lp)
 {
+  static int pending_r = 0;
+  
   /* Ignore determinatives for now; should probably ensure that forms
      with determinative sort in constant order */
   if (!strcmp(np->name, "g:det"))
@@ -293,22 +310,37 @@ gsort_node(Node *np, List *lp)
 
   switch (np->name[2])
     {
+    case 'p':
+      list_add(lp, gsort_item(1, (uccp)np->text, (uccp)np->text, NULL));
+      break;
     case 'l':
-    case 'p':      
     case 's':
     case 'v':
-    case 'd':
-      list_add(lp, gsort_item((uccp)np->text, (uccp)np->text, NULL));
+      list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
+      if (pending_r)
+	{
+	  GS_item *gp = list_pop(lp);
+	  gp->r = pending_r;
+	  list_add(lp, gp);
+	  pending_r = 0;
+	}
       break;
     case 'n':
-      list_add(lp, gsort_item((uccp)np->text,
+      list_add(lp, gsort_item(2, (uccp)np->text,
 			      np->kids ? (uccp)np->kids->next->text : (uccp)np->text,
 			      np->kids ? (uccp)np->kids->text : (uccp)np->text));
+      break;
+    case 'd':
+      /* For d = '3×' store the multiplier and don't add the TIMES */
+      if (*np->text < 128 && isdigit(*np->text))
+	pending_r = atoi(np->text);
+      else
+	list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
       break;
     case 'a':
     case 'm':
       list_add(lp, &gsort_null_item);
-      list_add(lp, gsort_item((uccp)np->text, (uccp)np->text, NULL));
+      list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
       break;
     case 'b':
     case 'c':
@@ -322,7 +354,7 @@ gsort_node(Node *np, List *lp)
     case 'q':
       /* for qualified signs use the value, a NULL delimiter (which
 	 will sort before other delimiters) and the sign */
-      list_add(lp, gsort_item((uccp)np->text, (uccp)np->kids->text, NULL));
+      list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->kids->text, NULL));
       list_add(lp, &gsort_null_item);
       {
 	Node *npp;

@@ -11,6 +11,7 @@ struct GS_mods
 struct GS_item
 {
   unsigned const char *g;	/* item grapheme */
+  int t;			/* grapheme type: 0=regular, 1=punctuation, 2=number */
   unsigned const char *b;	/* grapheme base */
   unsigned const char *k;	/* grapheme key via lib/collate; this is stripped of mods */
   unsigned const char *m; 	/* mods for grapheme, "" if none */
