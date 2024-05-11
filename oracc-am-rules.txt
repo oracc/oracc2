@@ -14,6 +14,7 @@ rncdatadir    = $(prefix)/lib/rnc
 datadir       = $(prefix)/lib/data
 emacsdatadir  = $(prefix)/lib/emacs
 espdatadir    = $(prefix)/lib/esp
+fontdir       = $(prefix)/www/fonts
 htmldir       = $(prefix)/www
 imgdir        = $(prefix)/www/img
 javadir       = $(prefix)/lib/java

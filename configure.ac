@@ -63,6 +63,7 @@ AC_CONFIG_FILES([Makefile
                  lib/collate/Makefile
                  lib/expat/Makefile
                  lib/frm/Makefile
+                 lib/fonts/Makefile
                  lib/gdl/Makefile
                  lib/gvl/Makefile
                  lib/joxer/Makefile

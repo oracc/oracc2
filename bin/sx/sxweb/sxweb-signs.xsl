@@ -189,28 +189,34 @@
     <xsl:with-param name="type" select="'cmemb'"/>
     <xsl:with-param name="title" select="concat(@n,  ' in compounds')"/>
     <xsl:with-param name="nodes" select="id(@cpd-refs)"/>
+    <xsl:with-param name="parent" select="ancestor-or-self::sl:sign"/>
   </xsl:call-template>
   <xsl:call-template name="sws-sel-page">
     <xsl:with-param name="parameters" select="$parameters"/>
     <xsl:with-param name="type" select="'ctr'"/>
     <xsl:with-param name="title" select="concat(@n,  ' as container')"/>
     <xsl:with-param name="nodes" select="id(sl:cpds/sl:ctnr/@oids)"/>
+    <xsl:with-param name="parent" select="ancestor-or-self::sl:sign"/>
   </xsl:call-template>
   <xsl:call-template name="sws-sel-page">
     <xsl:with-param name="parameters" select="$parameters"/>
     <xsl:with-param name="type" select="'ctd'"/>
     <xsl:with-param name="title" select="concat(@n,  ' in containers')"/>
     <xsl:with-param name="nodes" select="id(sl:cpds/sl:ctnd/@oids)"/>
+    <xsl:with-param name="parent" select="ancestor-or-self::sl:sign"/>
   </xsl:call-template>
   <xsl:call-template name="sws-lem-page">
+    <xsl:with-param name="parent" select="ancestor-or-self::sl:sign"/>
     <xsl:with-param name="parameters" select="$parameters"/>
   </xsl:call-template>
   <xsl:call-template name="sws-lex-page">
     <xsl:with-param name="parameters" select="$parameters"/>
+    <xsl:with-param name="parent" select="ancestor-or-self::sl:sign"/>
   </xsl:call-template>
   <xsl:if test="count(sl:form)>3">
     <xsl:call-template name="sws-form-page">
       <xsl:with-param name="parameters" select="$parameters"/>
+      <xsl:with-param name="parent" select="ancestor-or-self::sl:sign"/>
     </xsl:call-template>
   </xsl:if>
   <xsl:if test="count(preceding-sibling::sl:sign)=0 and count(../preceding-sibling::sl:letter)=0">
@@ -353,11 +359,6 @@
       <div class="asl-cun-img">
 	<span class="sl-ihead">CUNEIFORM</span>
 	<xsl:call-template name="sws-cuneiform"/>
-	<!--
-	    <xsl:if test="$verbose">
-	    <xsl:message>sws-sign-or-form esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>
-	    </xsl:if>
-	-->
 	<xsl:call-template name="sws-images">
 	  <xsl:with-param name="esp-mode" select="$esp-mode"/>
 	</xsl:call-template>
@@ -405,22 +406,24 @@
       <tr>
 	<td>
 	  <p class="asl-ucun">
-	    <xsl:choose>
-	      <xsl:when test="sl:ucun">
-		<xsl:value-of select="sl:ucun"/>
-	      </xsl:when>
-	      <xsl:when test="sl:useq">
-		<xsl:value-of select="sl:useq"/>
-	      </xsl:when>
-	      <xsl:otherwise>
-		<xsl:for-each select=".//sl:name[1]//*">
-		  <xsl:choose>
-		    <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
-		    <xsl:otherwise/>
-		  </xsl:choose>
-		</xsl:for-each>
-	      </xsl:otherwise>
-	    </xsl:choose>
+	    <span class="noto">
+	      <xsl:choose>
+		<xsl:when test="sl:ucun">
+		  <xsl:value-of select="sl:ucun"/>
+		</xsl:when>
+		<xsl:when test="sl:useq">
+		  <xsl:value-of select="sl:useq"/>
+		</xsl:when>
+		<xsl:otherwise>
+		  <xsl:for-each select=".//sl:name[1]//*">
+		    <xsl:choose>
+		      <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
+		      <xsl:otherwise/>
+		    </xsl:choose>
+		  </xsl:for-each>
+		</xsl:otherwise>
+	      </xsl:choose>
+	    </span>
 	  </p>
 	</td>
       </tr>
@@ -598,7 +601,7 @@
 	    <xsl:with-param name="esp-mode" select="$esp-mode"/>
 	  </xsl:call-template>
 	</esp:link>
-      </xsl:when>`
+      </xsl:when>
       <xsl:otherwise>
 	<a href="/{$project}/signlist/{ancestor-or-self::sl:sign[1]/@xml:id}">
 	  <xsl:call-template name="sws-compounds-link">
@@ -993,7 +996,9 @@
   <xsl:param name="title"/>
   <xsl:param name="nodes"/>
   <xsl:param name="parameters"/>
-  <xsl:variable name="basename">
+  <xsl:param name="parent"/>
+  <xsl:param name="back" select="false()"/>
+  <xsl:variable name="basename">    
     <xsl:choose>
       <xsl:when test="$file"><xsl:value-of select="$file"/></xsl:when>
       <xsl:otherwise><xsl:value-of select="concat(@xml:id,'-',$type)"/></xsl:otherwise>
@@ -1023,8 +1028,16 @@
 	    <xsl:with-param name="nomenu" select="true()"/>
 	    <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	  </xsl:call-template>
-	  <h2><a href="/{$project}/signlist/{ancestor::sl:sign/@xml:id}"
-		 ><xsl:value-of select="$title"/></a></h2>
+	  <xsl:choose>
+	    <xsl:when test="$back = false()">
+	      <h2><a href="/{$project}/signlist/{$parent/@xml:id}"
+		     ><xsl:value-of select="$title"/></a></h2>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <h2><a href="javascript://" onclick="window.history.back()"
+		     ><xsl:value-of select="$title"/></a></h2>	      
+	    </xsl:otherwise>
+	  </xsl:choose>
 	  <table class="selpage">
 	    <xsl:choose>
 	      <xsl:when test="$type='h'">
@@ -1089,6 +1102,7 @@
     <xsl:with-param name="type" select="'h'"/>
     <xsl:with-param name="title" select="concat(@n,  ' homophones')"/>
     <xsl:with-param name="nodes" select="sl:h"/>
+    <xsl:with-param name="back" select="true()"/>
   </xsl:call-template>
 </xsl:template>
 
@@ -1121,6 +1135,7 @@
 
 <xsl:template name="sws-lem-page">
   <xsl:param name="parameters"/>  
+  <xsl:param name="parent"/>
   <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-sux.html')}"
 	       method="xml" encoding="utf-8" omit-xml-declaration="yes"
 	       indent="yes" doctype-system="html">
@@ -1139,7 +1154,8 @@
 	  <xsl:with-param name="nomenu" select="true()"/>
 	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	</xsl:call-template>
-	<h2>Sumerian Words written with <xsl:value-of select="translate(@n,'|','')"/></h2>
+	<h2><a href="/{$project}/signlist/{$parent/@xml:id}"
+	       >Sumerian Words written with <xsl:value-of select="translate(@n,'|','')"/></a></h2>
 	<table class="lemsel">
 	  <xsl:variable name="all-lem" select=".//sl:lemmas|id(@merge)//sl:lemmas"/>
 	  <xsl:variable name="sf-lem" select="$all-lem[not(../self::sl:v)]"/>
@@ -1203,6 +1219,7 @@
 
 <xsl:template name="sws-lex-page">
   <xsl:param name="parameters"/>
+  <xsl:param name="parent"/>
   <xsl:if test="$asl-lexdata = 'yes'">
     <xsl:variable name="lex-ok">
       <xsl:call-template name="lex-provides-sign"/>
@@ -1236,6 +1253,7 @@
 
 <xsl:template name="sws-form-page">
   <xsl:param name="parameters"/>
+  <xsl:param name="parent"/>
   <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-forms.html')}"
 	       method="xml" encoding="utf-8" omit-xml-declaration="yes"
 	       indent="yes" doctype-system="html">
@@ -1255,7 +1273,8 @@
 	  <xsl:with-param name="nomenu" select="true()"/>
 	  <xsl:with-param name="top-index-link" select="concat('/',$project,'/signlist')"/>
 	</xsl:call-template>
-	<h2>Variant Forms for <xsl:value-of select="translate(ancestor-or-self::sl:sign/@n,'|','')"/></h2>
+	<h2><a href="/{$project}/signlist/{$parent/@xml:id}"
+	       >Variant Forms for <xsl:value-of select="translate(ancestor-or-self::sl:sign/@n,'|','')"/></a></h2>
 	<div id="Forms">
 	  <div id="FormsInner">
 	    <xsl:for-each select="sl:form">

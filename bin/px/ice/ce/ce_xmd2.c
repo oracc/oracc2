@@ -11,7 +11,7 @@
 
 static int nfields = 0, nwidths = 0, nlabels = 0;
 
-extern int p3;
+extern int p3, p4;
 
 extern int item_offset, tabbed;
 extern const char *arg_fields;
@@ -236,7 +236,12 @@ xmdprinter2(const char *pq)
 
       if (!url_base)
 	url_base = malloc(strlen(project) + strlen("javascript:act_item('P123456')0"));
-      sprintf(url_base, "javascript:act_item('%s')", pqx);
+
+
+      if (p4)
+	sprintf(url_base, "javascript:act_item('%s')", pqx);
+      else
+	sprintf(url_base, "javascript:p3item('xtf',%d)", item_offset+nth);
 
       if (!in_group)
 	{

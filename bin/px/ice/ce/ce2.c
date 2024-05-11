@@ -22,7 +22,7 @@ extern FILE *f_log;
 int in_group = 0;
 int ood_mode = 0;
 
-int p3 = 1;
+int p3 = 1, p4 = 0;
 
 const char *id, *ce_index, *lang = NULL, *mode = NULL, *project, *fn_project, *xtr_n = NULL, *state;
 const char *gdf_xml;
@@ -537,6 +537,9 @@ main(int argc, char * const*argv)
       usage();
     }
 
+  if (strstr(argv[0], "/cex"))
+    p4 = 1;
+  
   f_log = stderr;
   
   if (lang)
