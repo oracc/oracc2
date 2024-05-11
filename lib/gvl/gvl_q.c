@@ -273,7 +273,10 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 
   /* Now if we have bad value and qualifier it's too hard to guess */
   if (v_bad && q_bad)
-    vq->mess = gvl_vmess("[vq]: value %s and qualifier %s both unknown%s", vp->orig, qp->orig, QFIX);
+    {
+      if (!gvl_void_messages)
+	vq->mess = gvl_vmess("[vq]: value %s and qualifier %s both unknown%s", vp->orig, qp->orig, QFIX);
+    }
   else if (v_bad)
     {
       /* If the v is unknown, check if the base is known for q under a

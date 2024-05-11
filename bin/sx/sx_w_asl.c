@@ -375,8 +375,8 @@ sx_w_a_links(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
   if (ip && !ip->inherited && ip->links)
     {
       struct sl_link *sp;
-      for (sp = list_first(ip->sys); sp; sp = list_next(ip->sys))
-	fprintf(f->fp, "@sys\t%s %s %s\n", sp->name, sp->label, sp->url);
+      for (sp = list_first(ip->links); sp; sp = list_next(ip->links))
+	fprintf(f->fp, "@link\t%s %s %s\n", sp->name, sp->label, sp->url);
     }
 }
 

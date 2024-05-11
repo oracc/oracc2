@@ -117,12 +117,13 @@ sl.form	   = element sl:form {
           | sl.note
           | sl.pname
 	  | sl.sys
+	  | sl.link
           | sl.uname
           | sl.uage
           | sl.ucun)*),
       sl.lemmas?,
       sl.xv*,
-      sl.sys*,
+      (sl.sys|sl.link)*,
       sl.images?,
       element sl:inherited {
         element sl:iv {

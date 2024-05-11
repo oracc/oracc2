@@ -8,77 +8,47 @@
 /****************************** GRAPHEME MANIPULATION UTILITY ROUTINES **********************************/
 
 unsigned char *
-g_base_of_preserve_case(const unsigned char *v)
+g_strip_subdig(const unsigned char *v)
 {
+  const unsigned char *n = v;
   if (v)
     {
-      unsigned char *b = NULL, *sub = NULL;
-      
-      b = malloc(strlen((ccp)v)+1);
-      strcpy((char*)b, (ccp)v);
-      if (strlen((ccp)v) > 3)
+      n = (uccp)strdup((ccp)v);
+      unsigned char *dest = (ucp)n;
+      while (*v)
 	{
-	  sub = b + strlen((ccp)b);
-	  while (1)
+	  if (0xe2 == *v)
 	    {
-	      if ('\0' == *sub && sub - 3 > b && sub[-3] == 0xe2 && sub[-2] == 0x82)
-		{
-		  if ((sub[-1] >= 0x80 && sub[-1] <= 0x89) || sub[-1] == 0x93)
-		    {
-		      sub -= 3;
-		      *sub = '\0';
-		    }
-		}
+	      if (v[1] == 0x82
+		  && ((v[2] >= 0x80 && v[2] <= 0x89) || v[2] == 0x93))
+		v += 3;
 	      else
-		break;
+		*dest++ = *v++;
 	    }
+	  else
+	    *dest++ = *v++;
 	}
-      return b;
+      *dest = '\0';	
     }
-  return NULL;
+  return (ucp)n;
+}
+
+unsigned char *
+g_base_of_preserve_case(const unsigned char *v)
+{
+  return g_strip_subdig(v);
 }
 
 unsigned char *
 g_base_of(const unsigned char *v)
 {
-  if (v)
+  unsigned char *b = g_strip_subdig(v), *ret = NULL;
+  if (b)
     {
-      unsigned char *b = NULL, *ret, *b_end, *mods = NULL;
-     
-      b = malloc(strlen((ccp)v)+1);
-      strcpy((char*)b, (ccp)v);
-      if (!(b_end = strpbrk(b, "~@")))
-	b_end = b + strlen(b);
-      else
-	mods = b_end;
-      if (b_end - b > 3)
-	{
-	  unsigned char *sub = b_end;
-	  while (1)
-	    {
-	      if ('\0' == *sub && sub - 3 > b && sub[-3] == 0xe2 && sub[-2] == 0x82)
-		{
-		  if ((sub[-1] >= 0x80 && sub[-1] <= 0x89) || sub[-1] == 0x93)
-		    {
-		      sub -= 3;
-		      *sub = '\0';
-		    }
-		}
-	      else
-		break;
-	    }
-	}
-      if (sub < b_end && mods)
-	{
-	  while (*mods)
-	    *sub++ = *mods++;
-	}
-      ret = g_lc(b);
-      free((char*)v);
-      free(b);
-      return ret;
+      ret = (ucp)strdup((ccp)g_lc(b));
+      free((char*)b);
     }
-  return NULL;
+  return ret;
 }
 
 int
