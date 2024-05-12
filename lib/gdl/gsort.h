@@ -16,6 +16,7 @@ struct GS_item
   unsigned const char *k;	/* grapheme key via lib/collate; this is stripped of mods */
   unsigned const char *m; 	/* mods for grapheme, "" if none */
   struct GS_mods *mp;
+  unsigned const char *s;	/* suffix for lists */
   short x;			/* grapheme index */
   short r;			/* repeater for number graphemes, e.g., 3(diš) */
 };

@@ -33,13 +33,14 @@ static int gsort_cmp_mods(GS_mods *ap, GS_mods *bp);
 static const char *gsort_show_key(unsigned const char *k);
 
 static Memo *m_headers = NULL;
-static Memo *m_items = NULL;
+static Memo *m_items = NULL;  /* GS_item   */
+static Memo *m_itemps = NULL; /* GS_item*  */
 static Memo *m_mods = NULL;
 static Pool *gspool = NULL;
 static Hash *hitems = NULL;
 static Hash *hheads = NULL;
 
-static GS_item gsort_null_item = { (uccp)"\\0" , 0, (uccp)"", (uccp)"", (uccp)"", 0, -1 };
+static GS_item gsort_null_item = { (uccp)"\\0" , 0, (uccp)"", (uccp)"", (uccp)"", NULL, (uccp)"", 0, -1 };
 
 /* Initialize storage and structures */
 void
@@ -47,6 +48,7 @@ gsort_init()
 {
   m_headers = memo_init(sizeof(GS_head), 1024);
   m_items = memo_init(sizeof(GS_item), 1024);
+  m_itemps = memo_init(sizeof(GS_item*), 1024);
   m_mods = memo_init(sizeof(GS_mods), 1024);
   gspool = pool_init();
   hitems = hash_create(1024);
@@ -60,6 +62,7 @@ gsort_term()
 {
   memo_term(m_headers);
   memo_term(m_items);
+  memo_term(m_itemps);
   pool_term(gspool);
   hash_free(hheads, NULL);
   hash_free(hitems, NULL);
@@ -104,7 +107,7 @@ gsort_prep(Tree *tp)
 	    {
 	      GS_item *gi = gsort_item(0, (uccp)tp->root->text, (uccp)tp->root->text, NULL);
 	      gs->n = 1;
-	      gs->i = malloc(sizeof(GS_item*));
+	      gs->i = memo_new(m_itemps);
 	      *gs->i = gi;
 	      gs->s = (uccp)tp->root->text;
 	      hash_add(hheads, gs->s, gs);
@@ -234,6 +237,23 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
       if (!*b)
 	gp->t = 2;
     }
+  else if ((tmp = (ucp)strpbrk((ccp)gp->b, "0123456789")))
+    {
+      /* gsort considers a non-N-matching pattern /^(.+)([0-9]+)(.*)$/
+	 as a list--even it it's not a list it gets the list
+	 treatment, which is to set the BASE to \1; the index to \2;
+ 	 and the suffix, if any, to gp->s
+
+	 lists have the same type as regular graphemes but can be
+	 differentiated because INDEX is >=10000.
+       */
+      gp->x = atoi((ccp)tmp) + 10000;
+      *tmp++ = '\0';
+      while (*tmp && *tmp < 128 && isdigit(*tmp))
+	++tmp;
+      if (*tmp)
+	gp->s = tmp;
+    }
   
   gp->k = collate_makekey(pool_copy(gp->b, gspool));
 
@@ -333,6 +353,7 @@ gsort_cmp_item(GS_item *a, GS_item *b)
 {
   int ret = 0;
 
+  /* compare type */
   if (a->t != b->t)
     return a->t - b->t;
 
@@ -343,6 +364,18 @@ gsort_cmp_item(GS_item *a, GS_item *b)
   /* compare index */
   if (a->x - b->x)
     return a->x - b->x;
+
+  /* compare suffix */
+  if (a->s || b->s)
+    {
+      if (a->s && b->s)
+	{
+	  if ((ret = strcmp((ccp)a->s,(ccp)b->s)))
+	    return ret;
+	}
+      else
+	return a->s ? 1 : -1;
+    }
   
   /* compare mods */
   if (a->mp && b->mp)
@@ -406,8 +439,8 @@ gsort_show(GS_head *gsp)
       for (i = 0; i < gsp->n; ++i)
 	{
 	  GS_item *gip = gsp->i[i];
-	  fprintf(stderr, "{%s; %d; %s; %s; %s",
-		  gip->g, gip->t, gip->b, gsort_show_key(gip->k), gip->m);
+	  fprintf(stderr, "{%s; %d; %s; %s; %s; %s",
+		  gip->g, gip->t, gip->b, gsort_show_key(gip->k), gip->s ? gip->s : (uccp)"", gip->m);
 	  if (gip->mp)
 	    {
 	      GS_mods *mp;
