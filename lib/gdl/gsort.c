@@ -8,10 +8,28 @@
 #include "gdl.h"
 #include "gsort.h"
 
-int gsort_trace = 0;
+/**
+ *
+ * gsort--implement the Oracc Graphemic Sort as described in
+ *
+ * 	http://oracc.org/osl/Sorting
+ *
+ */
+
+int gsort_trace = 0; /* if this is non-zero the item structures for
+			each sequence are printed on stderr */
+
+/**
+ *
+ * Logistics management
+ *
+ */
 
 static GS_item *gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned const char *r);
 static void gsort_node(Node *np, List *lp);
+static GS_mods *gsort_mods(unsigned char *m);
+static int gsort_cmp_item(GS_item *a, GS_item *b);
+static int gsort_cmp_mods(GS_mods *ap, GS_mods *bp);
 static const char *gsort_show_key(unsigned const char *k);
 
 static Memo *m_headers = NULL;
@@ -23,6 +41,7 @@ static Hash *hheads = NULL;
 
 static GS_item gsort_null_item = { (uccp)"\\0" , 0, (uccp)"", (uccp)"", (uccp)"", 0, -1 };
 
+/* Initialize storage and structures */
 void
 gsort_init()
 {
@@ -35,6 +54,7 @@ gsort_init()
   collate_init((ucp)"unicode");
 }
 
+/* Terminate storage and structures */
 void
 gsort_term()
 {
@@ -47,6 +67,14 @@ gsort_term()
     gsort_show_key(NULL);
 }
 
+/**
+ *
+ * Preparing sequences for sorting
+ *
+ */
+
+/* Prepare a sequence for sorting by calling gsort_node on each of the
+   GDL nodes to create list of the sort-items in the sequence header */
 GS_head *
 gsort_prep(Tree *tp)
 {
@@ -89,222 +117,8 @@ gsort_prep(Tree *tp)
   return NULL;
 }
 
-void
-gsort_show(GS_head *gsp)
-{
-  if (gsp)
-    {
-      int i;
-      fputs((ccp)gsp->s, stderr);
-      fputc('\t', stderr);
-      for (i = 0; i < gsp->n; ++i)
-	{
-	  GS_item *gip = gsp->i[i];
-	  fprintf(stderr, "{%s; %d; %s; %s; %s",
-		  gip->g, gip->t, gip->b, gsort_show_key(gip->k), gip->m);
-	  if (gip->mp)
-	    {
-	      GS_mods *mp;
-	      fputs(" [", stderr);
-	      for (mp = gip->mp; mp; mp = mp->next)
-		{
-		  fprintf(stderr, "%c%s",mp->type,mp->val);
-		  if (mp->next)
-		    fputc(',', stderr);
-		}
-	      fputc(']', stderr);
-	    }
-	  fprintf(stderr, "; %d; %d}", gip->x, gip->r);
-	}
-      fputc('\n', stderr);
-    }
-  else
-    fprintf(stderr, "(GS_head argument is NULL)\n");
-}
-
-static int
-gsort_cmp_mods(GS_mods *ap, GS_mods *bp)
-{
-  while (1)
-    {
-      if (ap->type != bp->type)
-	return ('@' == ap->type) ? 1 : -1;
-      int ret = strcmp(ap->val, bp->val);
-      if (ret)
-	return ret;
-      if (ap->next && bp->next)
-	{
-	  ap = ap->next;
-	  bp = bp->next;
-	}
-      else if (ap->next)
-	return 1;
-      else if (bp->next)
-	return -1;
-      else
-	return 0;
-    }
-}
-
-static int
-gsort_cmp_item(GS_item *a, GS_item *b)
-{
-  int ret = 0;
-
-  if (a->t != b->t)
-    return a->t - b->t;
-
-  /* compare key */
-  if ((ret = strcmp((ccp)a->k, (ccp)b->k)))
-    return ret;
-
-  /* compare index */
-  if (a->x - b->x)
-    return a->x - b->x;
-  
-  /* compare mods */
-  if (a->mp && b->mp)
-    {
-      if ((ret = gsort_cmp_mods(a->mp,b->mp)))
-	return ret;
-    }
-  else if (a->mp || b->mp)
-    return a->mp ? 1 : -1;
-
-  /* compare repeat */
-  if (a->t == 2)
-    return a->r - b->r;
-  else
-    /* see if this is |3×AN| or like */
-    if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)
-      return (a->r > 0) ? 1 : -1;
-
-  /* items are identical when ignoring case */
-  return 0;
-}
-
-int
-gsort_cmp(const void *v1, const void *v2)
-{
-  GS_head *h1 = *(GS_head**)v1;
-  GS_head *h2 = *(GS_head**)v2;
-  int i, ret;
-  
-  for (i = 0; i < h1->n && i < h2->n; ++i)
-    if ((ret = gsort_cmp_item(h1->i[i], h2->i[i])))
-      return ret;
-
-  if (h1->i[i])
-    return 1;
-  else if (h2->i[i])
-    return -1;
-
-  /* if we are still here the grapheme sequences are identical when ignoring case.
-     
-     sll_has_sign_indicator looks for key uppercase letters to detect
-     sign names so we use that to try to resolve via lower/upper case
-   */
-  if ((ret = strcmp((ccp)h1->s, (ccp)h2->s)))
-    {
-      if (sll_has_sign_indicator(h1->s))
-	return 1;
-      else if (sll_has_sign_indicator(h2->s))
-	return -1;
-      else
-	return ret;
-    }
-
-  return 0;
-}
-
-static GS_mods *
-gsort_mods(unsigned char *m)
-{
-  GS_mods *ret = NULL, *curr = NULL;
-  char *s = (char *)m;
-  while (*s)
-    {
-      if ('~' == *s || '@' == *s)
-	{
-	  GS_mods *mp = memo_new(m_mods);
-	  if (!curr)
-	    ret = curr = mp;
-	  else
-	    {
-	      curr->next = mp;
-	      curr = curr->next;
-	    }
-	  mp->type = *s;
-	  *s++ = '\0';
-	  mp->val = s;	  
-	}
-      else
-	++s;
-    }
-  return ret;
-}
-
-static GS_item *
-gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned const char *r)
-{
-  GS_item *gp = NULL;
-  unsigned char *tmp;
-
-  if ((gp = hash_find(hitems, n)))
-    return gp;
-
-  gp = memo_new(m_items);
-  gp->t = type;
-  gp->g = n;
-  tmp = pool_copy(g_base_of(g), gspool);
-  gp->b = tmp;
-
-  /* Reset Punct/Num types for graphemes that aren't tagged g:p/g:n in
-     GDL */
-  if (!strcmp((ccp)gp->b, "p"))
-    gp->t = 1;
-  else if ('n' == *gp->b)
-    {
-      unsigned const char *b = gp->b + 1;
-      while (*b)
-	if (*b > 128 || !isdigit(*b))
-	  break;
-	else
-	  ++b;
-      if (!*b)
-	gp->t = 2;
-    }
-  
-  gp->x = g_index_of(g, gp->b);
-
-  if ((tmp = (ucp)strpbrk((ccp)gp->b, "~@")))
-    {
-      gp->m = pool_copy(tmp, gspool);
-      gp->mp = gsort_mods(tmp);
-      *tmp = '\0';
-    }
-  else
-    gp->m = (ucp)"";
-
-  gp->k = collate_makekey(pool_copy(gp->b, gspool));
-
-  if (r)
-    {
-      if ('n' == *r)
-	gp->r = 1000;
-      else if ('N' == *r)
-	gp->r = 2000;
-      else
-	gp->r = atoi((ccp)r);
-    }
-  else
-    gp->r = -1;
-
-  hash_add(hitems, n, gp);
-  
-  return gp;
-}
-
+/* Process a single node based on type, calling gsort_item to create
+   the item structure and adding the item to the list of comparands */
 static void
 gsort_node(Node *np, List *lp)
 {
@@ -375,6 +189,241 @@ gsort_node(Node *np, List *lp)
       fprintf(stderr, "[gsort] unhandled name in gsort_node %s\n", np->name);
       break;
     }
+}
+
+/* Fill out an item structure for a grapheme or delimiter; modifiers
+   have special handling in gsort_mods */
+static GS_item *
+gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned const char *r)
+{
+  GS_item *gp = NULL;
+  unsigned char *tmp;
+
+  if ((gp = hash_find(hitems, n)))
+    return gp;
+
+  gp = memo_new(m_items);
+  gp->t = type;
+  gp->g = n;
+  tmp = pool_copy(g_base_of(g), gspool);
+  gp->b = tmp;
+
+  /* Reset Punct/Num types for graphemes that aren't tagged g:p/g:n in
+     GDL; gp->b (BASE) is lowercase by now */
+  if (!strcmp((ccp)gp->b, "p"))
+    gp->t = 1;
+  else if ('n' == *gp->b)
+    {
+      unsigned const char *b = gp->b + 1;
+      while (*b)
+	if (*b > 128 || !isdigit(*b))
+	  break;
+	else
+	  ++b;
+      if (!*b)
+	gp->t = 2;
+    }
+  
+  gp->x = g_index_of(g, gp->b);
+
+  if ((tmp = (ucp)strpbrk((ccp)gp->b, "~@")))
+    {
+      gp->m = pool_copy(tmp, gspool);
+      gp->mp = gsort_mods(tmp);
+      *tmp = '\0';
+    }
+  else
+    gp->m = (ucp)"";
+
+  gp->k = collate_makekey(pool_copy(gp->b, gspool));
+
+  if (r)
+    {
+      if ('n' == *r)
+	gp->r = 1000;
+      else if ('N' == *r)
+	gp->r = 2000;
+      else
+	gp->r = atoi((ccp)r);
+    }
+  else
+    gp->r = -1;
+
+  hash_add(hitems, n, gp);
+  
+  return gp;
+}
+
+static GS_mods *
+gsort_mods(unsigned char *m)
+{
+  GS_mods *ret = NULL, *curr = NULL;
+  char *s = (char *)m;
+  while (*s)
+    {
+      if ('~' == *s || '@' == *s)
+	{
+	  GS_mods *mp = memo_new(m_mods);
+	  if (!curr)
+	    ret = curr = mp;
+	  else
+	    {
+	      curr->next = mp;
+	      curr = curr->next;
+	    }
+	  mp->type = *s;
+	  *s++ = '\0';
+	  mp->val = s;	  
+	}
+      else
+	++s;
+    }
+  return ret;
+}
+
+/**
+ *
+ * Comparing sequences
+ *
+ */
+
+/* This is the controller routine that should be passed to qsort
+ *
+ * Compare the sequences one item at a time using gsort_cmp_item. */
+int
+gsort_cmp(const void *v1, const void *v2)
+{
+  GS_head *h1 = *(GS_head**)v1;
+  GS_head *h2 = *(GS_head**)v2;
+  int i, ret;
+  
+  for (i = 0; i < h1->n && i < h2->n; ++i)
+    if ((ret = gsort_cmp_item(h1->i[i], h2->i[i])))
+      return ret;
+
+  if (h1->i[i])
+    return 1;
+  else if (h2->i[i])
+    return -1;
+
+  /* if we are still here the grapheme sequences are identical when ignoring case.
+     
+     sll_has_sign_indicator looks for key uppercase letters to detect
+     sign names so we use that to try to resolve via lower/upper case
+   */
+  if ((ret = strcmp((ccp)h1->s, (ccp)h2->s)))
+    {
+      if (sll_has_sign_indicator(h1->s))
+	return 1;
+      else if (sll_has_sign_indicator(h2->s))
+	return -1;
+      else
+	return ret;
+    }
+
+  return 0;
+}
+
+/* Compare items according to the Oracc Grapheme Sort algorithm; mods
+ * get special treatment with gsort_cmp_mods */
+static int
+gsort_cmp_item(GS_item *a, GS_item *b)
+{
+  int ret = 0;
+
+  if (a->t != b->t)
+    return a->t - b->t;
+
+  /* compare key */
+  if ((ret = strcmp((ccp)a->k, (ccp)b->k)))
+    return ret;
+
+  /* compare index */
+  if (a->x - b->x)
+    return a->x - b->x;
+  
+  /* compare mods */
+  if (a->mp && b->mp)
+    {
+      if ((ret = gsort_cmp_mods(a->mp,b->mp)))
+	return ret;
+    }
+  else if (a->mp || b->mp)
+    return a->mp ? 1 : -1;
+
+  /* compare repeat */
+  if (a->t == 2)
+    return a->r - b->r;
+  else
+    /* see if this is |3×AN| or like */
+    if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)
+      return (a->r > 0) ? 1 : -1;
+
+  /* items are identical when ignoring case */
+  return 0;
+}
+
+static int
+gsort_cmp_mods(GS_mods *ap, GS_mods *bp)
+{
+  while (1)
+    {
+      if (ap->type != bp->type)
+	return ('@' == ap->type) ? 1 : -1;
+      int ret = strcmp(ap->val, bp->val);
+      if (ret)
+	return ret;
+      if (ap->next && bp->next)
+	{
+	  ap = ap->next;
+	  bp = bp->next;
+	}
+      else if (ap->next)
+	return 1;
+      else if (bp->next)
+	return -1;
+      else
+	return 0;
+    }
+}
+
+/**
+ *
+ * Debugging display routines
+ *
+ */
+
+void
+gsort_show(GS_head *gsp)
+{
+  if (gsp)
+    {
+      int i;
+      fputs((ccp)gsp->s, stderr);
+      fputc('\t', stderr);
+      for (i = 0; i < gsp->n; ++i)
+	{
+	  GS_item *gip = gsp->i[i];
+	  fprintf(stderr, "{%s; %d; %s; %s; %s",
+		  gip->g, gip->t, gip->b, gsort_show_key(gip->k), gip->m);
+	  if (gip->mp)
+	    {
+	      GS_mods *mp;
+	      fputs(" [", stderr);
+	      for (mp = gip->mp; mp; mp = mp->next)
+		{
+		  fprintf(stderr, "%c%s",mp->type,mp->val);
+		  if (mp->next)
+		    fputc(',', stderr);
+		}
+	      fputc(']', stderr);
+	    }
+	  fprintf(stderr, "; %d; %d}", gip->x, gip->r);
+	}
+      fputc('\n', stderr);
+    }
+  else
+    fprintf(stderr, "(GS_head argument is NULL)\n");
 }
 
 static const char *
