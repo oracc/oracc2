@@ -52,26 +52,28 @@ g_base_of(const unsigned char *v)
 }
 
 int
-g_index_of(const unsigned char *g, const unsigned char *b)
+g_index_of(const unsigned char *v, const unsigned char *b)
 {
-  int i = 0;
-  if (!b)
-    b = g_base_of(g);
-  g += strlen((ccp)b);
-  if (g[0])
+  int i = 0, nth = 0;
+  while (*v)
     {
-      if (strlen((ccp)g) == 6)
+      if (v[0] == 0xe2 && v[1] == 0x82
+	  && ((v[2] >= 0x80 && v[2] <= 0x89) || v[2] == 0x93))
 	{
-	  i = ((g[2] - 0x80)) * 10;
-	  g += 3;
+	  if (v[2] == 0x93)
+	    i = 1000;
+	  else
+	    {
+	      if (nth)
+		i *= 10;
+	      i += (v[2] - 0x80);
+	    }
+	  v += 3;
+	  ++nth;
 	}
-      if (g[2] == 0x93) /* sub x is 0xE2 0x82 0x93 */
-	i = 1000;
       else
-	i += (g[2] - 0x80);
+	++v;
     }
-  else
-    i = 0; /* 20240511: absence of index = index 0 so empty index X sorts before X₁ */
   return i;
 }
 

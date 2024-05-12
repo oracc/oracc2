@@ -118,6 +118,8 @@ if [ "$stats" == "yes" ]; then
     sxfreq.sh
 fi
 
+sxsortorder.sh $project
+
 libscripts=$ORACC_BUILDS/lib/scripts
 
 xsltproc $libscripts/sxweb-oid-tab.xsl 02xml/sl.xml >signlist/02pub/oid-index.tab

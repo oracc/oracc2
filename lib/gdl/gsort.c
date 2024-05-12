@@ -208,22 +208,6 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
   tmp = pool_copy(g_base_of(g), gspool);
   gp->b = tmp;
 
-  /* Reset Punct/Num types for graphemes that aren't tagged g:p/g:n in
-     GDL; gp->b (BASE) is lowercase by now */
-  if (!strcmp((ccp)gp->b, "p"))
-    gp->t = 1;
-  else if ('n' == *gp->b)
-    {
-      unsigned const char *b = gp->b + 1;
-      while (*b)
-	if (*b > 128 || !isdigit(*b))
-	  break;
-	else
-	  ++b;
-      if (!*b)
-	gp->t = 2;
-    }
-  
   gp->x = g_index_of(g, gp->b);
 
   if ((tmp = (ucp)strpbrk((ccp)gp->b, "~@")))
@@ -235,6 +219,22 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
   else
     gp->m = (ucp)"";
 
+  /* Reset Punct/Num types for graphemes that aren't tagged g:p/g:n in
+     GDL; gp->b (BASE) is lowercase by now */
+  if (!strcmp((ccp)gp->b, "p"))
+    gp->t = 1;
+  else if ('n' == *gp->b || 'f' == *gp->b) /* F is F(raction) */
+    {
+      unsigned const char *b = gp->b + 1;
+      while (*b)
+	if (*b > 128 || !isdigit(*b))
+	  break;
+	else
+	  ++b;
+      if (!*b)
+	gp->t = 2;
+    }
+  
   gp->k = collate_makekey(pool_copy(gp->b, gspool));
 
   if (r)
@@ -246,6 +246,8 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
       else
 	gp->r = atoi((ccp)r);
     }
+  else if (gp->t == 2)
+    gp->r = 0;
   else
     gp->r = -1;
 
