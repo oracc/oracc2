@@ -33,7 +33,7 @@
 <xsl:template match="c">
   <xsl:variable name="oid" select="substring-before(text(),'_')"/>
   <xsl:variable name="sign" select="substring-after(text(),'_')"/>
-  <td><esp:link url="/{$project}/signlist/$oid"><xsl:value-of select="$sign"/></esp:link></td>
+  <td><esp:link url="/{$project}/signlist/{$oid}"><xsl:value-of select="$sign"/></esp:link></td>
 </xsl:template>
 
 </xsl:transform>

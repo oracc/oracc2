@@ -26,11 +26,12 @@ int gsort_trace = 0; /* if this is non-zero the item structures for
  */
 
 static GS_item *gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned const char *r);
-static void gsort_node(Node *np, List *lp);
 static GS_mods *gsort_mods(unsigned char *m);
+static const char *gsort_show_key(unsigned const char *k);
 static int gsort_cmp_item(GS_item *a, GS_item *b);
 static int gsort_cmp_mods(GS_mods *ap, GS_mods *bp);
-static const char *gsort_show_key(unsigned const char *k);
+static void gsort_node(Node *np, List *lp);
+static void gsort_reset_c_type(GS_head *gs);
 
 static Memo *m_headers = NULL;
 static Memo *m_items = NULL;  /* GS_item   */
@@ -96,11 +97,17 @@ gsort_prep(Tree *tp)
 	      Node *np;
 	      for (np = tp->root->kids; np; np = np->next)
 		gsort_node(np, lp);
+
 	      gs->n = list_len(lp);
 	      gs->i = (GS_item **)list2array(lp);
 	      list_free(lp, NULL);
 	      if (tp->root->kids)
-		gs->s = (uccp)tp->root->text;
+		{
+		  gs->s = (uccp)tp->root->text;
+		  if ('|' == *gs->s && gs->i[0]->t == 2)
+		    gsort_reset_c_type(gs);
+		}
+
 	      hash_add(hheads, gs->s, gs);
 	    }
 	  else if (tp->root->text)
@@ -301,6 +308,25 @@ gsort_mods(unsigned char *m)
 	++s;
     }
   return ret;
+}
+
+/* if the tree text is a compound and the first element
+   is type 2, number, check to see if there are any
+   non-numbers in the compound; if there are, reset the
+   head type to be a regular grapheme--this is so that
+   |1(N57).ŠAH₂| sorts with regular graphemes rather
+   than numbers */
+static void
+gsort_reset_c_type(GS_head *gs)
+{
+  int non_num = 0, i;
+  for (i = 0; i < gs->n; ++i)
+    if (gs->i[i]->t == 0)
+      ++non_num;
+  if (non_num)
+    for (i = 0; i < gs->n; ++i)
+      if (gs->i[i]->t == 2)
+	gs->i[i]->t = 0;
 }
 
 /**
