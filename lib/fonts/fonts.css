@@ -1,0 +1,7 @@
+@font-face {
+   font-family: 'Noto Sans Cuneiform';
+   src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
+}
+.noto {
+   font-family: "Noto Sans Cuneiform";
+}
