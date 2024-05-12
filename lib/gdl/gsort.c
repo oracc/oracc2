@@ -153,18 +153,10 @@ gsort_cmp_item(GS_item *a, GS_item *b)
 
   if (a->t != b->t)
     return a->t - b->t;
-  
+
+  /* compare key */
   if ((ret = strcmp((ccp)a->k, (ccp)b->k)))
     return ret;
-
-  /* For numbers 1(AŠ) sort before 2(AŠ) */
-  if (a->t == 2)
-    {
-      if (a->r > b->r)
-	return 1;
-      else if (b->r > a->r)
-	return -1;
-    }
 
   /* compare index */
   if (a->x - b->x)
@@ -172,26 +164,22 @@ gsort_cmp_item(GS_item *a, GS_item *b)
   
   /* compare mods */
   if (a->mp && b->mp)
-    return gsort_cmp_mods(a->mp,b->mp);
+    {
+      if ((ret = gsort_cmp_mods(a->mp,b->mp)))
+	return ret;
+    }
   else if (a->mp || b->mp)
     return a->mp ? 1 : -1;
 
-  /* see if this is |3×AN| or like */
-  if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)
-    return (a->r > 0) ? 1 : -1;
-  
-  /* if we are still here return lowercase first if they differ;
-     sll_has_sign_indicator looks for key uppercase letters to detect
-     sign names */
-  if (strcmp((ccp)a->g, (ccp)b->g))
-    {
-      if (sll_has_sign_indicator(a->g))
-	return 1;
-      else
-	return 1;
-    }
+  /* compare repeat */
+  if (a->t == 2)
+    return a->r - b->r;
+  else
+    /* see if this is |3×AN| or like */
+    if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)
+      return (a->r > 0) ? 1 : -1;
 
-  /* graphemes are identical */
+  /* items are identical when ignoring case */
   return 0;
 }
 
@@ -206,8 +194,27 @@ gsort_cmp(const void *v1, const void *v2)
     if ((ret = gsort_cmp_item(h1->i[i], h2->i[i])))
       return ret;
 
-  /* If all the members compared equal, the longer is later in sort order */
-  return h1->n - h2->n;
+  if (h1->i[i])
+    return 1;
+  else if (h2->i[i])
+    return -1;
+
+  /* if we are still here the grapheme sequences are identical when ignoring case.
+     
+     sll_has_sign_indicator looks for key uppercase letters to detect
+     sign names so we use that to try to resolve via lower/upper case
+   */
+  if ((ret = strcmp((ccp)h1->s, (ccp)h2->s)))
+    {
+      if (sll_has_sign_indicator(h1->s))
+	return 1;
+      else if (sll_has_sign_indicator(h2->s))
+	return -1;
+      else
+	return ret;
+    }
+
+  return 0;
 }
 
 static GS_mods *
@@ -322,6 +329,8 @@ gsort_node(Node *np, List *lp)
 	  GS_item *gp = list_pop(lp);
 	  gp->r = pending_r;
 	  list_add(lp, gp);
+	  /* add a null delimiter in lieu of TIMES to coax 4×ZA into sorting after ZA */
+	  list_add(lp, &gsort_null_item);
 	  pending_r = 0;
 	}
       break;
