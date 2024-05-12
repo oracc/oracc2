@@ -326,7 +326,13 @@ gsort_reset_c_type(GS_head *gs)
   if (non_num)
     for (i = 0; i < gs->n; ++i)
       if (gs->i[i]->t == 2)
-	gs->i[i]->t = 0;
+	{
+	  /* Clone the item so that 1(N57) isn't contaminated by |1(N57).ŠAH₂| */
+	  GS_item *gip = memo_new(m_items);
+	  *gip = *gs->i[i];
+	  gs->i[i] = gip;
+	  gs->i[i]->t = 0;
+	}
 }
 
 /**
