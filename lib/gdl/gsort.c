@@ -391,8 +391,8 @@ gsort_cmp_item(GS_item *a, GS_item *b)
     return ret;
 
   /* compare index */
-  if (a->x - b->x)
-    return a->x - b->x;
+  if ((ret = a->x - b->x))
+    return ret;
 
   /* compare suffix */
   if (a->s || b->s)
@@ -421,8 +421,15 @@ gsort_cmp_item(GS_item *a, GS_item *b)
   else
     /* see if this is |3×AN| or like */
     if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)
-      return (a->r > 0) ? 1 : -1;
-
+      {
+	if (a->r >= 0 && b->r >= 0)
+	  return a->r - b->r;
+	else if (a->r >= 0)
+	  return 1;
+	else
+	  return -1;
+      }
+  
   /* items are identical when ignoring case */
   return 0;
 }
