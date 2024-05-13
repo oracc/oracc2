@@ -101,13 +101,9 @@ gsort_prep(Tree *tp)
 	      gs->n = list_len(lp);
 	      gs->i = (GS_item **)list2array(lp);
 	      list_free(lp, NULL);
-	      if (tp->root->kids)
-		{
-		  gs->s = (uccp)tp->root->text;
-		  if ('|' == *gs->s && gs->i[0]->t == 2)
-		    gsort_reset_c_type(gs);
-		}
-
+	      gs->s = (uccp)tp->root->text;
+	      if ('|' == *gs->s && gs->i[0]->t == 2)
+		gsort_reset_c_type(gs);
 	      hash_add(hheads, gs->s, gs);
 	    }
 	  else if (tp->root->text)
@@ -320,8 +316,9 @@ static void
 gsort_reset_c_type(GS_head *gs)
 {
   int non_num = 0, i;
+  /* look for non-delimiter that has type 0 */
   for (i = 0; i < gs->n; ++i)
-    if (gs->i[i]->t == 0)
+    if (strpbrk((ccp)gs->i[i]->b, "aeiup") && gs->i[i]->t == 0)
       ++non_num;
   if (non_num)
     for (i = 0; i < gs->n; ++i)
