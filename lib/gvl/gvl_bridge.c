@@ -108,6 +108,13 @@ gvl_bridge(const char *f,size_t l,const unsigned char *g, int sindex)
 		return (ccp)gbgp->mess;
 	    }
 	}
+      else if (!strcmp(tp->root->kids->name, "g:B")
+	       && !strcmp(tp->root->kids->text, "0"))
+	{
+	  /* This is a bug in GVL--unadorned '0' is not sexified
+	     properly; for now we ignore it */
+	  return NULL;
+	}
     }
   
   mesg_verr(mesg_mloc(f,l), "(gvl_bridge) unknown error trying to parse %s", g);
