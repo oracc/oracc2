@@ -25,7 +25,7 @@ static const char *sx_unicode_useq(const char *m, Pool *p);
 static const char *sx_unicode_useq_m(const char *m, struct pcre2if_m *mp, Pool *p);
 static const char *sx_unicode_useq_r(const char *m, int from, int to, Pool *p);
 
-static int trace_mangling = 1;
+static int trace_mangling = 0;
 
 /* Longer strings sort first */
 static int cmp_by_len(const void *a, const void *b)
@@ -130,16 +130,21 @@ sx_unicode(struct sl_signlist *sl)
   
   unsigned const char *pat = list_concat(kl);
 
-  if (trace_mangling)
-    {
-      fputs("sx_unicode mangle pat = \n", stderr);
-      fputs((ccp)pat, stderr);
-      fputc('\n', stderr);
-    }
+  pcre2_code *comp_pat = NULL;
 
-  pcre2_code *comp_pat = pcre2if_set_pattern(pat);
-  if (!comp_pat)
-    return;
+  if (list_len(kl))
+    {
+
+      if (trace_mangling)
+	{
+	  fputs("sx_unicode mangle pat = \n", stderr);
+	  fputs((ccp)pat, stderr);
+	  fputc('\n', stderr);
+	}
+      comp_pat = pcre2if_set_pattern(pat);
+      if (!comp_pat)
+	return;
+    }
   
   /* check the compounds by building ucode sequences for them:
    *   if there is one in the signlist already, check that the newly built ucode is the same
@@ -181,7 +186,7 @@ sx_unicode(struct sl_signlist *sl)
 		      else
 			fprintf(stderr, "sx_unicode: building @useq for %s mangled to %s\n", name, m);
 		    }
-		  List *ml = pcre2if_match(comp_pat, (PCRE2_SPTR)m, 1, sl->p, '#');
+		  List *ml = comp_pat ? pcre2if_match(comp_pat, (PCRE2_SPTR)m, 1, sl->p, '#'): NULL;
 		  if (ml)
 		    {
 		      List *bits = list_create(LIST_SINGLE);
@@ -230,7 +235,7 @@ sx_unicode(struct sl_signlist *sl)
 #endif
 		      if (trace_mangling)
 			fprintf(stderr, "sx_unicode: %s => (via bits) %s => useq %s\n", name, m, useq);
-		      if (Up->useq)
+		      if (Up->useq && *Up->useq)
 			{
 			  if (strcmp(Up->useq, useq))
 			    {
