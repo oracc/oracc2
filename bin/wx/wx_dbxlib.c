@@ -1,20 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <oracclocale.h>
-#include <dbxlib.h>
+#include <wx_dbxlib.h>
 
 const char *dbidir = NULL, *dbiname = NULL;
 
 Dbi_index *
-dbx_proj_oid(const char *project)
+wx_dbx_proj_oid(const char *project)
 {
   char projoiddir[ strlen(oracc_builds()) + strlen(project) + strlen("02pub/oid") + 3];
   sprintf(projoiddir, "%s/%s/02pub/oid", oracc_builds(), project);
-  return dbx_init(projoiddir, "oid");
+  return wx_dbx_init(projoiddir, "oid");
 }
 
 Dbi_index *
-dbx_init(const char *dir, const char *name)
+wx_dbx_init(const char *dir, const char *name)
 {
   Dbi_index *dbi;
   if (!(dbi = dbi_open(name, dir)))
@@ -23,13 +23,13 @@ dbx_init(const char *dir, const char *name)
 }
 
 void
-dbx_term(Dbi_index *dbi)
+wx_dbx_term(Dbi_index *dbi)
 {
   dbi_close(dbi);
 }
 	 
 const char *
-dbx_key(Dbi_index *dbi, const char *key)
+wx_dbx_key(Dbi_index *dbi, const char *key)
 {
   if (dbi && key)
     {

@@ -36,20 +36,23 @@ dbx_key(Dbi_index *dbi, const char *key, Unsigned32 *n)
 void
 dbx_vido(Dbi_index *dp)
 {
-  if (dp && dp->h.vids[0])
+  if (dp)
     {
-      char vido_fn[_MAX_PATH];
-      if ('/' != dp->h.vids[0])
-	strcat(strcpy(vido_fn, dp->dir), (ccp)dp->h.vids);
-      else
-	strcpy(vido_fn, (ccp)dp->h.vids);
-      if (!access(vido_fn, R_OK))
-	dp->vp = vido_load_data(vido_fn, 0);
+      if (dp->h.vids[0])
+	{
+	  char vido_fn[_MAX_PATH];
+	  if ('/' != dp->h.vids[0])
+	    strcat(strcpy(vido_fn, dp->dir), (ccp)dp->h.vids);
+	  else
+	    strcpy(vido_fn, (ccp)dp->h.vids);
+	  if (!access(vido_fn, R_OK))
+	    dp->vp = vido_load_data(vido_fn, 0);
+	  else
+	    dp->vp = NULL;
+	}
       else
 	dp->vp = NULL;
     }
-  else
-    dp->vp = NULL;
 }
 
 void

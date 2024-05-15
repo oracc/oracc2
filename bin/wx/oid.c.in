@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <dbxlib.h>
+#include "wx_dbxlib.h"
 #include "resolver.h"
 #include "ccgi/ccgi.h"
 
@@ -35,11 +35,11 @@ glossary_article(const char *lng, const char *art)
 void
 oid(const char *e2)
 {
-  Dbi_index *dbi = dbx_proj_oid(project);
+  Dbi_index *dbi = wx_dbx_proj_oid(project);
   if (dbi)
     {
       const char *v;
-      v = dbx_key(dbi, e2);
+      v = wx_dbx_key(dbi, e2);
       if (v && '\t' == v[1])
 	{
 	  if ('u' == *v)
@@ -49,7 +49,7 @@ oid(const char *e2)
 	}
       else
 	do404();
-      dbx_term(dbi);
+      wx_dbx_term(dbi);
       exit(0);
     }
   else
@@ -62,6 +62,7 @@ oid(const char *e2)
     }
 }
 
+#if 0
 static int
 countv(CGI_varlist *v)
 {
@@ -73,6 +74,7 @@ countv(CGI_varlist *v)
     ++i;
   return i;
 }
+#endif
 
 const char *
 cgi_val(CGI_varlist *v, const char *name, const char *deflt)
@@ -88,7 +90,7 @@ void
 instances(const char *lang, const char *id)
 {
   CGI_varlist *v = NULL;
-  int vcount = -1;
+  /*int vcount = -1;*/
   const char **va = NULL;
 
   fprintf(stderr, "instances handler\n");
@@ -99,7 +101,7 @@ instances(const char *lang, const char *id)
   v = CGI_get_query(v);
   v = CGI_get_post(v, NULL);
   dump_vl(v);
-  vcount = countv(v);
+  /*vcount = countv(v);*/
   
   va = malloc(18*sizeof(char*));
   va[0] = "/usr/bin/perl";
@@ -121,7 +123,7 @@ void
 instances_isp(const char *lang, const char *id)
 {
   CGI_varlist *v = NULL;
-  int vcount = -1;
+  /*int vcount = -1;*/
   const char **va = NULL;
 
   fprintf(stderr, "instances handler\n");
@@ -132,7 +134,7 @@ instances_isp(const char *lang, const char *id)
   v = CGI_get_query(v);
   v = CGI_get_post(v, NULL);
   dump_vl(v);
-  vcount = countv(v);
+  /*vcount = countv(v);*/
   
   va = malloc(18*sizeof(char*));
   va[0] = "@@ORACC_BUILDS@@/bin/ispx";

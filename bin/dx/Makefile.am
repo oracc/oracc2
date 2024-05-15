@@ -1,5 +1,7 @@
 include ../../oracc-am-rules.txt
 
+default: dx
+
 bin_PROGRAMS=dcx
 sbin_PROGRAMS=dx
 sbin_SCRIPTS=dx-start.sh dx-stop.sh
