@@ -25,7 +25,7 @@ static const char *sx_unicode_useq(const char *m, Pool *p);
 static const char *sx_unicode_useq_m(const char *m, struct pcre2if_m *mp, Pool *p);
 static const char *sx_unicode_useq_r(const char *m, int from, int to, Pool *p);
 
-static int trace_mangling = 0;
+static int trace_mangling = 1;
 
 /* Longer strings sort first */
 static int cmp_by_len(const void *a, const void *b)
@@ -58,6 +58,12 @@ sx_unicode(struct sl_signlist *sl)
 	      if (Up->uhex)
 		{
 		  hash_add(usigns, sl->signs[i]->name, (ucp)Up->uhex);
+		  if (sl->signs[i]->aka)
+		    {
+		      Memo_str *msp;
+		      for (msp = list_first(sl->signs[i]->aka); msp; msp = list_next(sl->signs[i]->aka))
+			hash_add(usigns, msp->s, (ucp)Up->uhex);
+		    }
 		  hash_add(uoids, (uccp)Up->uhex, (void*)sl->signs[i]->oid);
 		  hash_add(unames, (uccp)Up->uhex, (ucp)Up->uname);
 		  if (hash_find(ucode, (uccp)Up->uhex))
