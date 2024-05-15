@@ -62,7 +62,14 @@ sx_unicode(struct sl_signlist *sl)
 		    {
 		      Memo_str *msp;
 		      for (msp = list_first(sl->signs[i]->aka); msp; msp = list_next(sl->signs[i]->aka))
-			hash_add(usigns, msp->s, (ucp)Up->uhex);
+			{
+			  hash_add(usigns, msp->s, (ucp)Up->uhex);
+			  /* Non-aka signs are added in mangled form
+			     later on but it's complicated to add the
+			     aka signs down there so we just force
+			     them into the record here */
+			  (void)sx_unicode_rx_mangle(sl, (ccp)msp->s, NULL);
+			}
 		    }
 		  hash_add(uoids, (uccp)Up->uhex, (void*)sl->signs[i]->oid);
 		  hash_add(unames, (uccp)Up->uhex, (ucp)Up->uname);
@@ -169,7 +176,7 @@ sx_unicode(struct sl_signlist *sl)
 	      const char *m = sx_unicode_rx_mangle(sl, (ccp)name, &multi);
 
 #if 0
-	      const char *test = "|GUD.GIŠ×TAK₄.SI|";
+	      const char *test = "|1(DIŠ).1(BAN₂)|";
 	      if (!strcmp((ccp)name, test))
 		{
 		  fprintf(stderr, "found useq subject %s\n", test);
@@ -406,10 +413,19 @@ sx_unicode_rx_mangle(struct sl_signlist *sl, const char *g, int *multi)
   *dst++ = '#';
   *dst = '\0';
 
-  if (trace_mangling)
-    fprintf(stderr, "%s mangled to %s\n", g-vbar, res);
-
-  hash_add(usigns, (uccp)res, hash_find(usigns, (uccp)(g-vbar)));
+  const char *uhex = hash_find(usigns, (uccp)(g-vbar));
+  if (!hash_find(usigns, (uccp)res))
+    {
+      if (trace_mangling)
+	fprintf(stderr, "%s mangled to %s with hashval %s\n", g-vbar, res, uhex);
+      hash_add(usigns, (uccp)res, (void*)uhex);
+    }
+  else
+    {
+      if (trace_mangling)
+	fprintf(stderr, "refusing to rehash %s previously mangled as %s with hashval %s\n", g-vbar, res, uhex);
+    }
+  
   return res;
 }
 
