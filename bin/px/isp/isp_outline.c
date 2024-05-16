@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "../px.h"
 #include "isp.h"
 
 static void ispo_master_page(unsigned char *lp, struct ispz *iop);
@@ -32,7 +33,11 @@ ispo_master(Isp *ip)
 	  return 1;
 	}	
 
-      ip->is.zlines = loadfile_lines((uccp)ip->cache.sort, &ip->is.zmax);
+      if (!(ip->is.zlines = px_loadfile_lines3((uccp)ip->cache.sort, &ip->is.zmax, NULL)))
+	{
+	  ip->err =(ccp) px_loadfile_error();
+	  return 1;
+	}
       
       fprintf(fp, "#%ld/%d\n", ip->is.zmax, ip->is.zlev);
       for (i = 0; i < ip->is.zmax; ++i)
@@ -173,7 +178,12 @@ ispo_outline_p(Isp *ip, FILE *fp, unsigned char *h, int count, int zoom, int zoo
 int
 ispo_zoutline(Isp *ip)
 {
-  ip->is.zlines = loadfile_lines((uccp)ip->cache.mol, &ip->is.zmax);
+  if (!(ip->is.zlines = px_loadfile_lines3((uccp)ip->cache.mol, &ip->is.zmax, NULL)))
+    {
+      ip->err = (ccp)px_loadfile_error();
+      return 1;
+    }
+  
   int zmax = atoi((ccp)&ip->is.zlines[0][1]);
   int zlev = atoi(strchr((ccp)ip->is.zlines[0],'/')+1);
   int zoomed = atoi(ip->zoom);

@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "../px.h"
 #include "isp.h"
 
 struct pgtell
@@ -224,14 +225,15 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   int pcount = 0;
   int zoomth = 0, zoomp = 1;
   unsigned char *s = f;
+  const char *itemdp_dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
 
   char dbifn[strlen(ip->perm)+strlen("-itm0")];
   sprintf(dbifn, "%s-itm", ip->perm);
-  ip->itemdata.dp = dbi_create(dbifn, ip->tmp_dir, 1024, 1, DBI_BALK);
+  ip->itemdata.dp = dbi_create(dbifn, itemdp_dir, 1024, 1, DBI_BALK);
 
   if (!ip->itemdata.dp)
     {
-      ip->err = (ccp)px_err("unable to create item data dbi %s/%s\n", ip->tmp_dir, dbifn);
+      ip->err = (ccp)px_err("unable to create item data dbi %s/%s\n", itemdp_dir, dbifn);
       return 1;
     }
   
@@ -334,11 +336,4 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   free(items);
   return 0;
 }
-#if 0
-int
-main(int argc, char **argv)
-{
-  unsigned char *f = loadfile((uccp)"/home/oracc/www/is.d/gudea/sux.r00002d/sort-123", NULL);
-  return ispmp_pages(f);
-}
-#endif
+

@@ -55,6 +55,5 @@ isp_srch(Isp*ip)
 
   isp_srch_bar(ip);
   
- wrapup:
   return ip->err ? 1 : 0;
 }

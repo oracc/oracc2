@@ -12,6 +12,7 @@ libscripts=${ORACC_BUILDS}/lib/scripts
 xsltproc $libscripts/p3-trans-p4.xsl 02xml/trans-select.xml \
 	 >02xml/p4-trans-select.xml
 chmod o+r 02xml/p4-trans-select.xml
+pxlangs.sh
 pxsortercodes.sh $project
 # p3-project-data.plx doesn't do the following bit
 for a in 02pub/cbd/* ; do

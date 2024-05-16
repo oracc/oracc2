@@ -73,7 +73,10 @@ pg_load(int *nitems)
   unsigned char *buf = NULL, *s;
   size_t buflen;
   if (listfile)
-    buf = loadfile((unsigned const char *)listfile,&buflen);
+    {
+      if (!(buf = loadfile((unsigned const char *)listfile,&buflen)))
+	return NULL;
+    }
   else
     buf = loadstdin(&buflen);
   s = buf;
@@ -323,7 +326,8 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
   if (nitems)
     pages = pg_page(ip, pitems, nitems);
   
-  pg_page_dump(ip, pages);
+  if (pg_page_dump(ip, pages))
+    return 1;
   
   hash_free2(seen, free, NULL);
 

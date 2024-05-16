@@ -25,6 +25,8 @@ main(int argc, char **argv)
   if (px_validate(ip))
     goto error;
 
+ tryforce:
+  
   if (isp_cache_sys(ip))
     goto error;
   
@@ -91,7 +93,15 @@ main(int argc, char **argv)
   goto ok;
   
  error:
-  if (!strncmp(ip->err, PX_ERROR_START, strlen(PX_ERROR_START)))
+
+  if (!ip->force)
+    {
+      ip->force = 1;
+      ip->err = ip->errx = NULL;
+      goto tryforce;
+    }
+  
+  if (strncmp(ip->err, PX_ERROR_START, strlen(PX_ERROR_START)))
     fprintf(stderr, "%s", ip->err);
   else
     fprintf(stderr, ip->errx ? ip->err : PX_ERROR_START "%s. Stop.\n",

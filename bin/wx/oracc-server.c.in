@@ -83,6 +83,20 @@ main(int argc, char *argv[])
 	    setenv("QUERY_STRING", argv[2], 1);
 	}
     }
+  else
+    {
+      query_string = getenv("QUERY_STRING");
+      if (!query_string || strlen(query_string) == 0)
+	{
+	  char *referer = getenv("HTTP_REFERER");
+	  if (referer && (query_string = strstr(referer, "/?")))
+	    {
+	      query_string = query_string + 2;
+	      setenv("QUERY_STRING", query_string, 1);
+	    }
+	}
+      fprintf(stderr, "query_string on entry=%s\n", query_string);
+    }
       
   if (!(script_url = getenv("SCRIPT_URL")))
     {
@@ -91,6 +105,14 @@ main(int argc, char *argv[])
     }
   else
     {
+      char *new_script_url = strdup(script_url);
+      if ('/' == new_script_url[strlen(new_script_url)-1])
+	{
+	  new_script_url[strlen(new_script_url)-1] = '\0';
+	  script_url = new_script_url;
+	  unsetenv("SCRIPT_URL");
+	  setenv("SCRIPT_URL", script_url, 1);	  
+	}
       const char *env_docroot = NULL;
       setlocale(LC_ALL, ORACC_LOCALE);
       setenv("ORACC", "@@ORACC@@", 1);
@@ -123,7 +145,8 @@ main(int argc, char *argv[])
 
       fprintf(stderr, "oracc-resolver: elements[0] = %s; nelements = %d\n", elements[0], nelements);
 
-      if (elements[0] && nelements == 1 && !strcmp(elements[0], "pager"))
+      if (elements[0] && nelements == 1
+	  && (!strcmp(elements[0], "pager") || !strcmp(elements[0], "corpus")))
 	{
 	  fprintf(stderr, "qs=%s\n", query_string);
 	  if (query_string && !strncmp(query_string, "as=", 3))

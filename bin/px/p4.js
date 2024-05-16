@@ -2,8 +2,8 @@ function updateLocation() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
     let glos = pager.getAttribute("data-glos");
-    let loc = '';
-    if (glos) {
+    let loc = '';    
+    if (glos && glos.length > 0) {
 	let i = 0;
 	let qs = '';
 	let zoom = pager.getAttribute("data-zoom");
@@ -46,7 +46,7 @@ function updateLocation() {
 	    }
 	}
     }
-    // alert("updateLocation="+loc);
+    alert("updateLocation="+loc);
     window.location=loc;
 }
 
