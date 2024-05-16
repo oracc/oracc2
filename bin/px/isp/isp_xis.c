@@ -56,7 +56,7 @@ isp_xis_list(Isp *ip)
   if (dp)
     {
       Unsigned32 len;
-      const struct xis_info *xip = dbx_key(dp, ip->list_name, &len);
+      const struct xis_info *xip = dbx_key(dp, ip->glosdata.xis, &len);
       if (xip)
 	{
 	  FILE *fp;
@@ -75,12 +75,12 @@ isp_xis_list(Isp *ip)
 	}
       else
 	{
-	  ip->err = PX_ERROR_START "key %s not found in xis db\n";
-	  ip->errx = ip->list_name;
+	  ip->err = PX_ERROR_START "fatal: key %s not found in xis db\n";
+	  ip->errx = ip->glosdata.xis;
 	}
       dbx_term(dp);
     }
   else
-    ip->err = "failed to open .dbh/.dbi database";
+    ip->err = "fatal: failed to open .dbh/.dbi database";
   return ip->err ? 1 : 0;
 }

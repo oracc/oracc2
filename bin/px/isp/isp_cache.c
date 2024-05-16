@@ -16,9 +16,9 @@ isp_cache_sys(Isp *ip)
 	}
       struct stat sb;
       if (stat(ip->cache.sys, &sb) || !S_ISDIR(sb.st_mode))
-	ip->err = PX_ERROR_START "cache.sys directory %s not found\n";
+	ip->err = PX_ERROR_START "fatal: cache.sys directory %s not found\n";
       else if (access(ip->cache.sys, W_OK))
-	ip->err = PX_ERROR_START "cache.sys directory %s not writeable\n";
+	ip->err = PX_ERROR_START "fatal: cache.sys directory %s not writeable\n";
     }
   if (ip->err)
     ip->errx = ip->cache.sys;
@@ -63,7 +63,7 @@ isp_cache_sub(Isp *ip)
 			fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
 		      if (mkdir(dir, 0775))
 			{
-			  ip->err = "cache.sub project-component directory could not be created";
+			  ip->err = "fatal: cache.sub project-component directory could not be created";
 			  break;
 			}
 		    }

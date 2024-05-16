@@ -180,13 +180,13 @@ item_array(char *s, int imax, char **mem)
 }
 
 const char **
-text_array(Isp *ip, const char **items, int imax, char **tmem, int *tmax)
+text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tmem, int *tmax)
 {
   char **t = malloc(imax * sizeof(char *));
   int tcount = 0, i;
 
-  ip->cache.hilite = (ccp)pool_alloc(strlen(ip->tmp_dir)+strlen("/hilite.tab0"), ip->p);
-  sprintf((char*)ip->cache.hilite, "%s/%s", ip->tmp_dir, "hilite.tab");
+  ip->cache.hilite = (ccp)pool_alloc(strlen(tmpdir)+strlen("/hilite.tab0"), ip->p);
+  sprintf((char*)ip->cache.hilite, "%s/%s", tmpdir, "hilite.tab");
   FILE *hilitefp = fopen(ip->cache.hilite, "w");
   
   for (i = 0; items[i]; ++i)
@@ -250,7 +250,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   if (strchr(items[0], '.'))
     {
       int tmax;
-      texts = text_array(ip, items, imax, &tmem, &tmax);
+      texts = text_array(ip, itemdp_dir, items, imax, &tmem, &tmax);
       char tm[32]; sprintf(tm, "%d", tmax);
       dbi_add(ip->itemdata.dp, (ucp)"tmax", tm, strlen(tm)+1);
     }

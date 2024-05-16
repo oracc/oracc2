@@ -19,7 +19,7 @@ isp_list_cemd(Isp *ip)
 	{
 	  ip->data = "dglo";
 	  ip->show = "rglo";
-	  ip->cemd = "ccbd";
+	  ip->cemd = "cglo";
 	  ip->ceid = "cbd";
 	}
       else if (strchr(lp, '.'))

@@ -94,9 +94,19 @@ main(int argc, char **argv)
   
  error:
 
-  if (!ip->force)
+  /* Some errors may occur when a URL has dependencies that don't
+   * exist because it is a deep request for something that hasn't had
+   * the logisitical infrastructure created yet.  To catch these
+   * errors we set ip->force and go again which will force the
+   * infrastructure creation.
+   *
+   * Some errors won't be improved by a second pass; they need to
+   * include the keyword 'fatal' in the ip->err string which
+   * suppresses the second pass attempt.
+   */
+  if (!ip->force && !strstr(ip->err, "fatal"))
     {
-      ip->force = 1;
+      ip->force = 2;
       ip->err = ip->errx = NULL;
       goto tryforce;
     }

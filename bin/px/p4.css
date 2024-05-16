@@ -28,7 +28,8 @@
 .rglo #p4CeType { display: none; }
 .rcat #p4CeType { display: none; }
 
-#p4Item.xtf { display: flex; }
+#p4Item		{ height: 100%; }
+#p4Item.xtf 	{ display: flex; }
 
 .hide	{ display: none; }
 
@@ -223,6 +224,7 @@ tr.hforce td.xtr-h1 { padding-left: .5em; font-weight: bold; padding-top: 6px; }
 .xtr-h3 { border-left: 2px solid #777; padding-left: .5em; }
 span.xtr-dollar { font-weight: normal; color: gray; vertical-align: super; }
 span.xtr-label { font-weight: normal; font-size: 8pt; color: gray; vertical-align: super; }
+td.xtf  { vertical-align: top; }
 
 .transonly .lnum,
 .transonly .tlit,

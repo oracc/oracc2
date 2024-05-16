@@ -5,6 +5,10 @@ if [ "$4" = "ccat" ]; then
 	xsltproc -stringparam project $1 @@ORACC@@/lib/scripts/isp-ce-HTML.xsl - \
 		 >$3
 elif [ "$4" = "cglo" ]; then
+    if [ "$5" = "" ]; then
+	echo $0: cemd=cglo but glos-lang is empty. >&2
+	exit 1
+    fi
     cat $2 | @@ORACC@@/bin/cex -p $1 -icbd/$5 | 
 	xsltproc -stringparam fragment yes -stringparam project $1 \
 		 @@ORACC@@/lib/scripts/isp-ce-HTML.xsl - \

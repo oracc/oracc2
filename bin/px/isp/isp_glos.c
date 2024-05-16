@@ -72,23 +72,32 @@ int
 isp_glos_gxis(Isp *ip)
 {
   const char *gxis_base = ip->glosdata.xis;
-  char *xcache = (char*)pool_alloc(strlen(ip->cache.sub)+strlen(gxis_base)+2, ip->p);
-  sprintf(xcache, "%s/%s", ip->cache.sub, gxis_base);
-  struct stat sb;
-  if (stat(xcache, &sb) != 0 || !S_ISDIR(sb.st_mode))
+  if (ip->force < 2)
     {
-      if (mkdir(xcache, 0775))
+      char *xcache = (char*)pool_alloc(strlen(ip->cache.sub)+strlen(gxis_base)+2, ip->p);
+      sprintf(xcache, "%s/%s", ip->cache.sub, gxis_base);
+      struct stat sb;
+      if (stat(xcache, &sb) != 0 || !S_ISDIR(sb.st_mode))
 	{
-	  ip->err = PX_ERROR_START "cache.sub.gxis %s could not be created\n";
-	  ip->errx = xcache;
-	  return 1;
+	  if (mkdir(xcache, 0775))
+	    {
+	      ip->err = PX_ERROR_START "cache.sub.gxis %s could not be created\n";
+	      ip->errx = xcache;
+	      return 1;
+	    }
 	}
+      ip->cache.sub = xcache;
     }
-  ip->cache.sub = xcache;
+
   ip->list_name = ip->glosdata.xis;
+
   if (isp_list_method(ip))
     return 1;
-  
+
+  ip->list_name = "list"; /* reset this so it uses the standard name for the xis extract */
+  ip->lloc.path = (ccp)pool_alloc(strlen(ip->cache.sub)+6, ip->p);
+  sprintf((char*)ip->lloc.path, "%s/list", ip->cache.sub);
+  ip->zoom = "0";
   ip->cemd = "line";
   ip->show = "rref";
   ip->ceid = "xtf";

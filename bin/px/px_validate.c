@@ -68,9 +68,13 @@ px_valid_glos(Isp *ip)
       if (ip->glosdata.xis)
 	{
 	  if (!ip->zoom || isalpha(*ip->zoom))
-	    ip->zoom = "0";
+	    ip->zoom = NULL;;
 	}
     }
+
+  if (!ip->zoom)
+    ip->zoom = "entry_ids";
+  
   return 0;  
 }
 

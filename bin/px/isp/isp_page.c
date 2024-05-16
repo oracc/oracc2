@@ -141,7 +141,7 @@ create_page_div(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->cemd);
 
-  if (ip->glos)
+  if (ip->glos && !ip->glosdata.xis)
     {
       list_add(args, " ");
       list_add(args, (void*)ip->glos);
@@ -154,7 +154,7 @@ create_page_div(Isp *ip)
 
   if (system((ccp)syscmd))
     {
-      ip->err = PX_ERROR_START "create_page_div failed system call:\n\n\t%s\n";
+      ip->err = PX_ERROR_START "fatal: create_page_div failed system call:\n\n\t%s\n";
       ip->errx = (ccp)syscmd;
       return 1;
     }
