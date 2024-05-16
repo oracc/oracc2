@@ -189,6 +189,12 @@ typedef struct isp
   const char *cemd; /* context engine mode */
   const char *lang; /* item translation lang */
   const char *xhmd; /* xml or html mode */
+  const char *form; /* also xml or html mode, in URL/QUERY_STRING; are
+		     * both needed?  with form if it is NULL we
+		     * provide pager output, otherwise the html/xml
+		     * file directly; could also use this for json,
+		     * pdf, tei so maybe retiring xhmd is best.
+		     */
   const char *uimd; /* uimode */
   const char *pack; /* packaging type */
   const char *host; /* host page for pack=esp2 */
@@ -212,13 +218,6 @@ typedef struct isp
   Memo *tmem;
   jmp_buf errjmp;
 } Isp;
-
-#if 0
-/* p3-pager.plx will not be used any more */
-  int p3;	    /* produce outline and results and then output name of
-		       temp dir for p3-pager.plx to build output
-		       page */
-#endif
 
 struct ispargstab
 {

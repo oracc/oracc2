@@ -4,9 +4,9 @@
 %}
 struct cgioptstab;
 %%
-debug,	'd'
-verbose,	'v'
-force,	'f'
+debug,	'D'
+verbose,	'V'
+force,	'F'
 web, 	'w'
 project, 'j'
 proj, 'j'
@@ -30,3 +30,4 @@ tmpdir, 't'
 s.d, 't'
 u_item, 'i',
 u_replace, 'I'
+form, 'f'

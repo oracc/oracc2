@@ -10,6 +10,8 @@
 #include "ccgi/ccgi.h"
 #include "resolver.h"
 
+#include "px.h"
+
 int patterns_debug = 0;
 
 const char *component_names[] = { "none", "resource", "selection", "view", "format", "ui" };
@@ -133,10 +135,17 @@ lng_handler(struct component *components)
     {
       if (elements[1] && is_oid(elements[1]))
 	{
-	  if (elements[2] && !strcmp(elements[2], "xml"))
-	    glossary_article_xml(elements[0], elements[1]);
+	  if (p4)
+	    {
+	      pxglossary_article(project, elements[0], elements[1], elements[2]);
+	    }
 	  else
-	    glossary_article(elements[0], elements[1]);
+	    {
+	      if (elements[2] && !strcmp(elements[2], "xml"))
+		glossary_article_xml(elements[0], elements[1]);
+	      else
+		glossary_article(elements[0], elements[1]);
+	    }
 	}
       else if (elements[1])
 	instances(elements[0], elements[1]);

@@ -99,6 +99,25 @@ pxglossary(const char *project, const char *glos)
   pxvl(v);
 }
 
+/* in P4, /rimanum/sux/x00102342 gets the pager version of the
+   article; add ?form=html for the html or ?form=xml for XML;
+   /rimanum/sux/x00102342/(html|xml) also work */
+void
+pxglossary_article(const char *project, const char *glos, const char *gart, const char *form)
+{
+  if (query_string)
+    setenv("QUERY_STRING", query_string, 1);
+
+  CGI_varlist *v = NULL;  
+  v = CGI_get_query(v);
+  v = CGI_get_post(v, NULL);
+  v = CGI_add_var(v, "glos", glos);
+  v = CGI_add_var(v, "item", gart);
+  if (form)
+    v = CGI_add_var(v, "form", form);
+  pxvl(v);
+}
+
 void
 pxurlitem(const char *item, const char *replace)
 {

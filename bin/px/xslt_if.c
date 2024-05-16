@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <xslt_if.h>
+#include "xslt_if.h"
 
 extern int xslt_parse_xslmem(Xslt *xp);
 

@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "px.h"
+#include "pxdefs.h"
 
 static void
 print_hdr(void)
@@ -25,6 +26,13 @@ main(int argc, char **argv)
   if (px_validate(ip))
     goto error;
 
+  if (ip->form)
+    if (px_return(ip))
+      {
+	ip->err = wpx_last_error();
+	goto error;
+      }
+  
  tryforce:
   
   if (isp_cache_sys(ip))

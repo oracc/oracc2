@@ -60,6 +60,7 @@ cgi_options(int argc, char **argv, Isp *ip)
 	  return 1;
 	}
     }
+  optind = argc;
   return 0;
 }
 
@@ -74,10 +75,15 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ELSZPWCFOdfj:l:r:R:m:a:z:p:g:e:i:b:s:k:h:x:u:c:l:a:t:vw");
+    ret = options(argc, argv, "3ELSZPWCFOdf:j:l:r:R:m:a:z:p:g:e:i:b:s:k:h:x:u:c:l:a:t:vw");
   opt_ip = NULL;
+  if (argv[optind])
+    {
+      ret = 1;
+      ip->err = PX_ERROR_START "fatal: junk after options";
+    }
   if (ret && !ip->err)
-    ip->err = "processing options";
+    ip->err = PX_ERROR_START "fatal: processing options";
   return ret;
 }
 
@@ -92,8 +98,11 @@ opts(int opt, const char *arg)
     case 'b':
       opt_ip->bkmk = arg;
       break;
-    case 'f':
+    case 'F':
       opt_ip->force = 1;
+      break;
+    case 'f':
+      opt_ip->form = arg;
       break;
     case 'g':
       if (arg && strlen(arg))
@@ -181,7 +190,8 @@ opts(int opt, const char *arg)
     case 'h':
       opt_ip->host = arg;
       break;
-      /* possibly add 'o' for output selection, XML vs HMTL, or is this sufficiently covered by -x? */
+      /* possibly add 'o' for output selection, XML vs HMTL, or is
+	 this sufficiently covered by -x? 2024-05-16 -f(orm) for this */
     case 'A':
       opt_ip->aapi = arg;
       break;
@@ -191,10 +201,10 @@ opts(int opt, const char *arg)
     case 'u':
       opt_ip->uimd = arg;
       break;
-    case 'd':
+    case 'D':
       ++opt_ip->debug;
       break;
-    case 'v':
+    case 'V':
       ++opt_ip->verbose;
       break;
     default:

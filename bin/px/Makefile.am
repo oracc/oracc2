@@ -15,7 +15,7 @@ scriptdata_DATA=*.xsl
 
 px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c	\
 	cgiopts.c pxloadfile.c px_file_copy.c xslt_if.c		\
-	cgi_decode_url.c px_mesg.c
+	cgi_decode_url.c px_mesg.c wpx_lib.c px_return.c
 
 px_LDADD=isp/libisp.la pui/libpui.la $(xLDADD) -lxml2 -lxslt -lexslt
 
