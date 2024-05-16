@@ -49,9 +49,12 @@
 
 /* Formatting CSS */
 
+html	{ height: 100%; }
+
 body	{
     font-family: Ungkam, "Times New Roman", serif;
     margin-left: 2px; margin-right: 2px; margin-top: 0px; margin-bottom: 0px;
+    height: 100%;
 }
 
 #p4Banner  { padding-left: 3px; padding-top: 5px; }
@@ -88,6 +91,8 @@ p	{ margin: 0; padding: 0; }
 #p4Pageset { text-align: center; }
 
 #p4Debug { display: none; }
+
+#p4Pager, #p4Data { height: 100%; }
 
 /* Zoom-menu CSS */
 
