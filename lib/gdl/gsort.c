@@ -240,6 +240,12 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
       if (!*b)
 	gp->t = 2;
     }
+  else if ('U' == gp->b[0] && '+' == gp->b[1])
+    {
+      gp->x = (int)strtoul((ccp)gp->b+2, NULL, 16);
+      char *b = (char*)&gp->b[2];
+      *b = '\0';
+    }
   else if ((tmp = (ucp)strpbrk((ccp)gp->b, "0123456789")))
     {
       /* gsort considers a non-N-matching pattern /^(.+)([0-9]+)(.*)$/
@@ -364,7 +370,10 @@ gsort_cmp(const void *v1, const void *v2)
    */
   if ((ret = strcmp((ccp)h1->s, (ccp)h2->s)))
     {
-      if (sll_has_sign_indicator(h1->s))
+      if (sll_has_sign_indicator(h1->s)
+	  && sll_has_sign_indicator(h2->s))
+	return ret;
+      else if (sll_has_sign_indicator(h1->s))
 	return 1;
       else if (sll_has_sign_indicator(h2->s))
 	return -1;
