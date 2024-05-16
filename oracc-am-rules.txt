@@ -63,10 +63,10 @@ install-exec-local:
 	$(ORACCIFY) $<
 
 %.xnn: %.rng
-	c2-rng2xnn.sh $@
+	./c2-rng2xnn.sh $@
 
 %.c: %.xnn
-	c2-xnn2c.plx $<
+	./c2-xnn2c.plx $<
 
 %.proto: %.c
 	cproto -e $(AM_CPPFLAGS) $< >$@
