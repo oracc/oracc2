@@ -183,6 +183,7 @@ typedef struct isp
   const char *srch; /* search string from search.bar */
   const char *glos; /* glossary from URL */
   const char *item; /* a PQX for item display */
+  const char *item_replace; /* a PQX replacement to use for proxy display */
   const char *bkmk; /* a note of the last item visited resuming page mode */
   const char *ceid; /* context engine id handling--xmd/xtf/cbd */
   const char *cemd; /* context engine mode */

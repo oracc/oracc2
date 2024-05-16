@@ -108,6 +108,9 @@ isp_glos_gxis(Isp *ip)
 int
 isp_glos_list(Isp *ip)
 {
+  if (!ip->glosdata.let && ip->zoom && !isdigit(*ip->zoom))
+    ip->glosdata.let = ip->zoom;
+  
   /* ltab is malloc data */
   if (!isp_glos_letter_id(ip))
     return 1;

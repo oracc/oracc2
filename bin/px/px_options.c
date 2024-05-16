@@ -157,6 +157,9 @@ opts(int opt, const char *arg)
     case 'e':
       opt_ip->glosdata.ent = arg;
       break;
+    case 'I':
+      opt_ip->item_replace = arg;
+      break;
     case 'i':
       opt_ip->item = arg;
       break;

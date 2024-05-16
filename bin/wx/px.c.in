@@ -100,6 +100,21 @@ pxglossary(const char *project, const char *glos)
 }
 
 void
+pxurlitem(const char *item, const char *replace)
+{
+  if (query_string)
+    setenv("QUERY_STRING", query_string, 1);
+
+  CGI_varlist *v = NULL;  
+  v = CGI_get_query(v);
+  v = CGI_get_post(v, NULL);
+  v = CGI_add_var(v, "u_item", item); /* fake name so px can catch /ITEM&item=ITEM */
+  v = CGI_add_var(v, "u_replace", replace);
+
+  pxvl(v);
+}
+
+void
 px(const char *project)
 {
   if (query_string)

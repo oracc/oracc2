@@ -28,3 +28,5 @@ xis, 	'x'
 referer, 'R'
 tmpdir, 't'
 s.d, 't'
+u_item, 'i',
+u_replace, 'I'
