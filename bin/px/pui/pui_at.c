@@ -17,6 +17,7 @@ active_pages(Isp *ip)
 void
 pui_at_pager_class(Isp *ip, FILE *fp)
 {
+  fputs("bborder-top", fp);
   fputc(' ', fp);
   fputs(ip->from, fp);
   fputc(' ', fp);

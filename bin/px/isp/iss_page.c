@@ -1,4 +1,6 @@
 #include <oraccsys.h>
+#include "../px.h"
+
 #include "isp.h"
 
 struct page *pages;
@@ -210,7 +212,12 @@ pg_page_dump(Isp *ip, struct page *p)
   if (ip)
     {
       fclose(fpag);
-      unsigned char *f = loadfile((uccp)ip->cache.sort, NULL);
+      unsigned char *f = NULL;
+      if (!(f = px_loadfile((uccp)ip->cache.sort, NULL)))
+	{
+	  ip->err = (ccp)px_loadfile_error();
+	  return 1;
+	}
       ispmp_zooms(ip, f, zmax);
       if (ispmp_pages(ip, f, imax))
 	return 1;

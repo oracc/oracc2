@@ -17,7 +17,8 @@ px_loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **f
 
   if (f)
     {
-      *fmem = f;
+      if (fmem)
+	*fmem = f;
       
       for (i = l = 0; i < n; ++i)
 	if ('\n' == f[i])
@@ -55,30 +56,30 @@ px_loadfile(unsigned const char *fname, size_t *nbytes)
 
   if (fname == NULL)
     {
-      px_error = strdup("loadfile: must give filename argument");
+      px_error = strdup("pxloadfile: must give filename argument");
       goto error;
     }
   if (-1 == stat((const char*)fname,&finfo))
     {
-      int n = snprintf(NULL,0,"loadfile: stat failed on %s",fname);
+      int n = snprintf(NULL,0,"pxloadfile: stat failed on %s",fname);
       px_error = malloc(n+1);
-      sprintf(px_error,"loadfile: stat failed on %s",fname);
+      sprintf(px_error,"pxloadfile: stat failed on %s",fname);
       goto error;
     }
   if (!S_ISREG(finfo.st_mode))
     {
-      int n = snprintf(NULL,0,"loadfile: %s not a regular file\n",fname);
+      int n = snprintf(NULL,0,"pxloadfile: %s not a regular file\n",fname);
       px_error = malloc(n+1);
-      sprintf(px_error,"loadfile: %s not a regular file\n",fname);
+      sprintf(px_error,"pxloadfile: %s not a regular file\n",fname);
       goto error;
     }
   fsize = finfo.st_size;
   if (NULL == (ftext = malloc(fsize+1)))
     {
-      int n = snprintf(NULL,0,"loadfile: %s: couldn't malloc %ld bytes\n",
+      int n = snprintf(NULL,0,"pxloadfile: %s: couldn't malloc %ld bytes\n",
 		       fname,(unsigned long)fsize);
       px_error = malloc(n+1);
-      sprintf(px_error,"loadfile: %s: couldn't malloc %ld bytes\n",
+      sprintf(px_error,"pxloadfile: %s: couldn't malloc %ld bytes\n",
 	      fname,(unsigned long)fsize);
       goto error;
     }
@@ -89,9 +90,9 @@ px_loadfile(unsigned const char *fname, size_t *nbytes)
       close(fdesc);
       if (ret != fsize)
 	{
-	  int n = snprintf(NULL,0,"loadfile: %s: read %ld bytes failed\n", fname, (unsigned long)fsize);
+	  int n = snprintf(NULL,0,"pxloadfile: %s: read %ld bytes failed\n", fname, (unsigned long)fsize);
 	  px_error = malloc(n+1);
-	  sprintf(px_error,"loadfile: %s: read %ld bytes failed\n", fname, (unsigned long)fsize);
+	  sprintf(px_error,"pxloadfile: %s: read %ld bytes failed\n", fname, (unsigned long)fsize);
 	  goto error;
 	}
       if (nbytes)
@@ -100,9 +101,9 @@ px_loadfile(unsigned const char *fname, size_t *nbytes)
     }
   else
     {
-      int n = snprintf(NULL,0,"loadfile: %s: open failed (system error %d: %s)\n", fname, errno, strerror(errno));
+      int n = snprintf(NULL,0,"pxloadfile: %s: open failed (system error %d: %s)\n", fname, errno, strerror(errno));
       px_error = malloc(n+1);
-      sprintf(px_error, "loadfile: %s: open failed (system error %d: %s)\n", fname, errno, strerror(errno));
+      sprintf(px_error, "pxloadfile: %s: open failed (system error %d: %s)\n", fname, errno, strerror(errno));
       goto error;
     }
 
