@@ -88,6 +88,8 @@ main(int argc, char * const*argv)
   
   options(argc, argv, "abcCD:d:eg:iI:jJ:l:L:m:nMoOP:p:qQsStTuUxX:?");
   asltrace = asl_flex_debug = trace_mode;
+  if (sortcode_output > 1)
+    gsort_trace = 1;
 
   if (parent_sl_project)
     {
@@ -379,7 +381,7 @@ opts(int opt, const char *arg)
       useq_force = 1;
       break;
     case 'S':
-      sortcode_output = 1;
+      ++sortcode_output;
       break;
     case 's':
       sll_output = 1;
@@ -438,7 +440,7 @@ help(void)
 	      	     "\t\tWith 'oo' dump all OIDs, with 'o' omit OIDs with uage=0.");
   help_option("O", "oid-index.tab output for use with the OID resolver\n");
   help_option("s", "sll-output: data for the Sign-List-Library, sll, also used by GVL");
-  help_option("S", "Sortcode-output: show a list of OIDs and sort-codes");
+  help_option("S", "Sortcode-output: show a list of OIDs and sort-codes; use -SS to get sort tracing.");
   help_option("x", "xml-output: an XML version of the signlist");
   
   help_heading("List and Coverage Options");

@@ -36,7 +36,9 @@ extern void gsort_init(void);
 extern void gsort_term(void);
 extern GS_head *gsort_prep(Tree *tp);
 extern void gsort_show(GS_head *gsp);
+extern void gsort_show_sub(FILE *fp, GS_head *gsp);
 extern int gsort_cmp(const void *v1, const void *v2);
 
+extern int gsort_trace;
 
 #endif/*GSORT_H_*/

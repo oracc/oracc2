@@ -19,6 +19,8 @@
 int gsort_trace = 0; /* if this is non-zero the item structures for
 			each sequence are printed on stderr */
 
+#define GSORT_CMP_TRACE 0 /* if defined trace every gsort cmp call in gsort.log */
+
 /**
  *
  * Logistics management
@@ -43,6 +45,10 @@ static Hash *hheads = NULL;
 
 static GS_item gsort_null_item = { (uccp)"\\0" , 0, (uccp)"", (uccp)"", (uccp)"", NULL, (uccp)"", 0, -1 };
 
+#ifdef GSORT_CMP_TRACE
+#include "gsort_cmp_trace.c"
+#endif
+
 /* Initialize storage and structures */
 void
 gsort_init()
@@ -55,6 +61,9 @@ gsort_init()
   hitems = hash_create(1024);
   hheads = hash_create(1024);
   collate_init((ucp)"unicode");
+#ifdef GSORT_CMP_TRACE
+  gsort_cmp_trace_init();
+#endif
 }
 
 /* Terminate storage and structures */
@@ -68,7 +77,12 @@ gsort_term()
   hash_free(hheads, NULL);
   hash_free(hitems, NULL);
   if (gsort_trace)
-    gsort_show_key(NULL);
+    {
+      gsort_show_key(NULL);
+#ifdef GSORT_CMP_TRACE
+      gsort_cmp_trace_term();
+#endif
+    }
 }
 
 /**
@@ -110,8 +124,9 @@ gsort_prep(Tree *tp)
 	    {
 	      GS_item *gi = gsort_item(0, (uccp)tp->root->text, (uccp)tp->root->text, NULL);
 	      gs->n = 1;
-	      gs->i = memo_new(m_itemps);
-	      *gs->i = gi;
+	      gs->i = memo_new_array(m_itemps, 2);
+	      gs->i[0] = gi;
+	      gs->i[1] = NULL;
 	      gs->s = (uccp)tp->root->text;
 	      hash_add(hheads, gs->s, gs);
 	    }
@@ -353,15 +368,18 @@ gsort_cmp(const void *v1, const void *v2)
   GS_head *h1 = *(GS_head**)v1;
   GS_head *h2 = *(GS_head**)v2;
   int i, ret;
+
+#ifdef GSORT_CMP_TRACE
+  if (gsort_trace)
+    return gsort_cmp_trace(h1,h2);
+#endif
   
   for (i = 0; i < h1->n && i < h2->n; ++i)
     if ((ret = gsort_cmp_item(h1->i[i], h2->i[i])))
       return ret;
 
-  if (h1->i[i])
-    return 1;
-  else if (h2->i[i])
-    return -1;
+  if (h1->i[i] || h2->i[i])
+    return h1->i[i] ? 1 : -1;
 
   /* if we are still here the grapheme sequences are identical when ignoring case.
      
@@ -474,36 +492,41 @@ gsort_cmp_mods(GS_mods *ap, GS_mods *bp)
  */
 
 void
-gsort_show(GS_head *gsp)
+gsort_show(GS_head*gsp)
+{
+  gsort_show_sub(stderr, gsp);
+}
+void
+gsort_show_sub(FILE *fp, GS_head *gsp)
 {
   if (gsp)
     {
       int i;
-      fputs((ccp)gsp->s, stderr);
-      fputc('\t', stderr);
+      fputs((ccp)gsp->s, fp);
+      fputc('\t', fp);
       for (i = 0; i < gsp->n; ++i)
 	{
 	  GS_item *gip = gsp->i[i];
-	  fprintf(stderr, "{%s; %d; %s; %s; %s; %s",
+	  fprintf(fp, "{%s; %d; %s; %s; %s; %s",
 		  gip->g, gip->t, gip->b, gsort_show_key(gip->k), gip->s ? gip->s : (uccp)"", gip->m);
 	  if (gip->mp)
 	    {
 	      GS_mods *mp;
-	      fputs(" [", stderr);
+	      fputs(" [", fp);
 	      for (mp = gip->mp; mp; mp = mp->next)
 		{
-		  fprintf(stderr, "%c%s",mp->type,mp->val);
+		  fprintf(fp, "%c%s",mp->type,mp->val);
 		  if (mp->next)
-		    fputc(',', stderr);
+		    fputc(',', fp);
 		}
-	      fputc(']', stderr);
+	      fputc(']', fp);
 	    }
-	  fprintf(stderr, "; %d; %d}", gip->x, gip->r);
+	  fprintf(fp, "; %d; %d}", gip->x, gip->r);
 	}
-      fputc('\n', stderr);
+      fputc('\n', fp);
     }
   else
-    fprintf(stderr, "(GS_head argument is NULL)\n");
+    fprintf(fp, "(GS_head argument is NULL)\n");
 }
 
 static const char *
