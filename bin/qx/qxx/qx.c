@@ -12,11 +12,17 @@ struct sdata sdata;
 static const char *
 cache_sub(struct qxdata *qp)
 {
-  int len = strlen(oracc_builds())+strlen("/www/is.d/0")+strlen(qp->project);
+  const char *cache = getenv("ORACC_ISP_CACHE");
+  if (!cache)
+    cache = "";
+  int len = strlen(cache)+strlen(oracc_builds())+strlen("/www/is.d/0")+strlen(qp->project);
   if (qp->glos)
     len += strlen(qp->glos)+strlen("//");
   char *p = (char*)pool_alloc(len, qp->p);
-  sprintf(p, "%s/www/is.d/%s", oracc_builds(), qp->project);
+  if (cache)
+    sprintf(p, "%s/%s", cache, qp->project);
+  else
+    sprintf(p, "%s/www/is.d/%s", oracc_builds(), qp->project);
   if (qp->glos)
     {
       strcat(p, "/");

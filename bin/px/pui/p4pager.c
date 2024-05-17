@@ -1,7 +1,7 @@
 const char *p4pager = 
 "<div id=\"p4Pager\" class=\"@@pui_pager_class()@@\"@@pui_pager_data()@@>\n"
 "  <div id=\"p4Masthead\">\n"
-"    <p id=\"p4HeadTitle\" class=\"banner bbborder-top bborder-bot\">\n"
+"    <p id=\"p4HeadTitle\" class=\"banner bborder-top border-bot\">\n"
 "      <a href=\"/\">Oracc:</a> <a href=\"/@@pui_project()@@\">@@pui_title()@@</a>\n"
 "    </p>\n"
 "  </div>\n"

@@ -21,6 +21,7 @@ struct isp_srchdata
 {
   const char *tmp;	/* path to search's tmpdir */
   const char *bar;  	/* path to sub/search.bar = entire search bar text */
+  int new;		/* 0 when reusing a search list, 1 when the srch was just done */
 };
 
 struct isp_cache

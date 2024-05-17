@@ -19,7 +19,7 @@ qx_options(int argc, char **argv, struct qxdata *qp)
     }
   else
     {
-      if (options(argc, argv, "8acdg:i:j:o:p:P:q:stuvx:w"))
+      if (options(argc, argv, "8acdg:i:j:o:p:P:q:stuvx:Ww"))
 	{
 	  opt_qp = NULL;
 	  return 1;
@@ -90,6 +90,8 @@ opts(int argc, const char *arg)
     case 'x':
       xmldir = arg;
       break;
+    case 'W':
+      opt_qp->noexec = 1;
     case 'w':
       opt_qp->web = 1;
       break;
@@ -99,7 +101,7 @@ opts(int argc, const char *arg)
   return 0;
 }
 
-const char *prog = "se";
+const char *prog = "qx";
 int major_version = 1, minor_version = 0;
 const char *usage_string = " #<PROJ> !<IDX> %<LNG> [search terms]";
 void

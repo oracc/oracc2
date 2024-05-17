@@ -215,6 +215,33 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
   return (const char **)t;
 }
 
+static int
+textcmp(const char *t1, const char *t2)
+{
+  const char *c1 = strchr(t1, ':');
+  const char *c2 = strchr(t2, ':');
+  int len = 7;
+  if (c1 && c2)
+    {
+      if ((c1-t1) != (c2-t2))
+	return 1;
+      else
+	{
+	  const char *d1 = strchr(c1, '.');
+	  len = d1 - t1;
+	  return strncmp(t1, t2, len);
+	}
+    }
+  else
+    {
+      if (!c1 && !c2)
+	return strncmp(t1, t2, len);
+      else
+	return 1;
+    }
+  return 0;
+}
+
 int
 ispmp_pages(Isp *ip, unsigned char *f, int imax)
 {
@@ -303,7 +330,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		{
 		  if (texts)
 		    {
-		      if (itemnth && strncmp(items[itemnth-1], items[itemnth], 7))
+		      if (itemnth && textcmp(items[itemnth-1], items[itemnth]))
 			{
 			  /* Only dump information when it's a new text */
 			  int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);

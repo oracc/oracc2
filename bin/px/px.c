@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "wpx_lib.h"
 #include "px.h"
 #include "pxdefs.h"
 
@@ -42,6 +43,7 @@ main(int argc, char **argv)
     {
       if (isp_srch(ip))
 	goto error;
+      ip->srchdata.new = 1;
     }
   else if (isp_list_method(ip))
     goto error;

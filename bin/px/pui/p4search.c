@@ -1,10 +1,11 @@
 const char *p4search = 
 "<div id=\"p3Search\">\n"
-"  <form>\n"
+"  <form action=\"javascript://\" onsubmit=\"act_srch()\">\n"
 "    <p>\n"
 "      <!--Oracc Search:-->\n"
 "      <input id=\"p4SrchBox\" type=\"text\" size=\"30\"\n"
-"	     value=\"@@pui_srchterm()@@\"/>\n"
+"	     value=\"@@pui_srchterm()@@\"\"/>\n"
+"      <input type=\"submit\" style=\"display: none\"/>\n"
 "      <img id=\"p4SrchGo\" class=\"p4icon\" src=\"/img/p3-search.png\"\n"
 "	   alt=\"Search\" title=\"Search\" onclick=\"act_srch()\"/>\n"
 "    </p>\n"

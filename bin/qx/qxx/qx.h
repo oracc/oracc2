@@ -10,6 +10,7 @@ struct qxdata
   const char **argv;	/* argv is original argv from main() ... */
   int argc;		/* ... but argc is index of first search token in argv */
   int debug;
+  int noexec;
   int web;
   const char *project;
   const char *glos;
