@@ -2,6 +2,22 @@
 #include <xpd.h>
 #include "px.h"
 
+const char *
+fatalize(const char *e)
+{
+  const char *e_orig = e;
+  char *e2 = malloc(strlen(e) + strlen("fatal: 0") + strlen(PX_ERROR_START) + 2);
+  if (!strncmp(e, PX_ERROR_START, strlen(PX_ERROR_START)))
+    {
+      e += strlen(PX_ERROR_START);
+      sprintf(e2, "%sfatal: %s", PX_ERROR_START, e);
+      *e2 = *e_orig;
+    }
+  else
+    sprintf(e2, "fatal: %s", e);
+  return e2;
+}
+
 static int
 px_integer(unsigned const char *p)
 {
@@ -197,5 +213,6 @@ px_validate(Isp *ip)
   return 0;
 
  error:
+  ip->err = fatalize(ip->err);
   return 1;
 }

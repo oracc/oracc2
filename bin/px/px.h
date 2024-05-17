@@ -26,7 +26,8 @@ extern char *CGI_decode_url(const char *p);
 
 extern const char *px_mesg(const char *wpq, const char *fmt, ...);
 
-int px_return_file(const char *form, const char *file);
-int px_return(Isp *ip);
+extern int px_return_file(const char *form, const char *file);
+extern int px_return(Isp *ip);
+extern const char *fatalize(const char *e);
 
 #endif/*PX_H*/

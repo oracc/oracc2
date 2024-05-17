@@ -1,7 +1,20 @@
+function qs_append(q,c) {
+    if (q.length == 0) {
+	q = '?';
+    } else {
+	q = q+'&';
+    }
+    return q+c;
+}
+
+function item_oid(i) {
+    return i.startsWith("o") || i.startsWith("x");
+}
+
 function itemLocation() {
+    let pager = getPager();
     let item = pager.getAttribute("data-item");
     if (item && item.length) {
-	let pager = getPager();
 	let proj = pager.getAttribute("data-proj");
 	let glos = pager.getAttribute("data-glos");
 	let list = pager.getAttribute("data-list");
@@ -51,10 +64,31 @@ function pageLocation() {
 	let zoom = pager.getAttribute("data-zoom");
 	let page = pager.getAttribute("data-page");
 	let bkmk = pager.getAttribute("data-bkmk");
-	loc = '/'+proj+'?list='+list+'&sort='+perm+'&zoom='+zoom+'&page='+page;
-	if (bkmk) {
-	    loc = loc+'&bkmk='+bkmk;
+	let qs = '';
+	if (list && list !== "outlined.lst") {
+	    qs = qs_append(qs, 'list='+list);
 	}
+	if (perm && perm !== "123") {
+	    qs = qs_append(qs, 'perm='+perm);
+	}
+	if (zoom && zoom !== "0") {
+	    qs = qs_append(qs, 'zoom='+zoom);
+	}
+	if (page && page !== "1") {
+	    qs = qs_append(qs, 'page='+page);
+	}
+
+	loc = '/'+proj;
+	if (qs.length == 0) { // test before bkmk on purpose
+	    loc = loc+"/pager";
+	}
+
+	if (bkmk) {
+	    qs = qs_append(qs, 'bkmk='+bkmk);
+	}
+
+	loc = loc+qs;
+	
     }
     alert("pageLocation="+loc);
     window.location=loc;
@@ -63,8 +97,7 @@ function pageLocation() {
 function resetPager() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
-    let list = pager.getAttribute("data-list");
-    let loc = '/'+proj+'?list='+list;
+    let loc = '/'+proj+'/pager';
     alert("loc="+loc);
     window.location=loc;
 }

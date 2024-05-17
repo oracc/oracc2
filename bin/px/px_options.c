@@ -75,15 +75,21 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ELSZPWCFOdf:j:l:r:R:m:a:z:p:g:e:i:b:s:k:h:x:u:c:l:a:t:vw");
+    ret = options(argc, argv, "3ELSZPWCFOdf:j:l:r:R:m:a:z:p:g:e:i:b:s:k:Hh:x:u:c:l:a:t:vw");
   opt_ip = NULL;
-  if (argv[optind])
+
+  if (ip->err)
+    ip->err = fatalize(ip->err);
+  
+  if (!ret && argv[optind])
     {
       ret = 1;
       ip->err = PX_ERROR_START "fatal: junk after options";
     }
+
   if (ret && !ip->err)
     ip->err = PX_ERROR_START "fatal: processing options";
+  
   return ret;
 }
 
@@ -187,8 +193,11 @@ opts(int opt, const char *arg)
     case 'k':
       opt_ip->pack = arg;
       break;
-    case 'h':
+    case 'H':
       opt_ip->host = arg;
+      break;
+    case 'h':
+      opt_ip->hili = arg;
       break;
       /* possibly add 'o' for output selection, XML vs HMTL, or is
 	 this sufficiently covered by -x? 2024-05-16 -f(orm) for this */

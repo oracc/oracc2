@@ -97,6 +97,8 @@ p	{ margin: 0; padding: 0; }
 
 /* Zoom-menu CSS */
 
+#p4MenuSelect	{ text-align: center; }
+
 #p4MenuOutline 	{ font-family: arial,sans-serif; font-size: 80%;
 		  padding-right: 5px; padding-left: 5px;
 		  padding-top: 5px; padding-bottom: 5px; }

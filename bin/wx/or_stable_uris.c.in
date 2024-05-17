@@ -389,9 +389,20 @@ res_is_pqx(char *e, int *count)
 	    }
 	  else if ('.' == *e)
 	    {
+	      /* the URL component is a line/word/grapheme ID; save
+		 the PQX only to the component and append the ID to
+		 query_string as a 'hili' option */
 	      static char *tmp_query_string = NULL;
-	      tmp_query_string = malloc(strlen(entry) + 1);
-	      strcpy(tmp_query_string, (const char *)entry);
+	      if (query_string)
+		{
+		  tmp_query_string = malloc(strlen(query_string) + strlen(entry) + strlen("hili=")+2);
+		  sprintf(tmp_query_string, "%s&hili=%s", query_string, entry);
+		}
+	      else
+		{
+		  tmp_query_string = malloc(strlen(entry) + strlen("hili=")+1);
+		  sprintf(tmp_query_string, "hili=%s", entry);		  
+		}
 	      query_string = (const char *)tmp_query_string;
 	      *e = '\0';
 	      break;
