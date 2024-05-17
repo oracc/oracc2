@@ -1,4 +1,27 @@
-function updateLocation() {
+function itemLocation() {
+    let item = pager.getAttribute("data-item");
+    if (item && item.length) {
+	let pager = getPager();
+	let proj = pager.getAttribute("data-proj");
+	let glos = pager.getAttribute("data-glos");
+	let list = pager.getAttribute("data-list");
+	let loc = "/"+proj+"/";
+	if (glos && glos.length > 0 && item_oid(item)) {
+	    loc = loc+glos+"/"+item;
+	} else {
+	    loc = loc+item;
+	}
+	if (list && list !== "outlined.lst") {
+	    loc = loc+"?list="+list;
+	}
+	alert("itemLocation="+loc);
+	window.location = loc;
+    } else {
+	alert('itemLocation called but item is NULL');
+    }
+}
+
+function pageLocation() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
     let glos = pager.getAttribute("data-glos");
@@ -10,20 +33,12 @@ function updateLocation() {
 	if (zoom) {
 	    qs = 'zoom='+zoom;
 	}
-	let item = pager.getAttribute("data-item");
-	if (item) {
+	let page = pager.getAttribute("data-page");
+	if (page) {
 	    if (qs.length) {
 		qs = qs+'&';
 	    }
-	    qs = qs+'item='+item;
-	} else {
-	    let page = pager.getAttribute("data-page");
-	    if (page) {
-		if (qs.length) {
-		    qs = qs+'&';
-		}
-		qs = qs+'page='+page;
-	    }
+	    qs = qs+'page='+page;
 	}
 	let gxis = pager.getAttribute("data-gxis");
 	if (gxis) {
@@ -33,20 +48,15 @@ function updateLocation() {
     } else {
 	let list = pager.getAttribute("data-list");
 	let perm = pager.getAttribute("data-sort");
-	let item = pager.getAttribute("data-item");
-	if (item) {
-            loc = '/'+proj+'?list='+list+'&sort='+perm+'&item='+item;
-	} else {
-	    let zoom = pager.getAttribute("data-zoom");
-	    let page = pager.getAttribute("data-page");
-	    let bkmk = pager.getAttribute("data-bkmk");
-	    loc = '/'+proj+'?list='+list+'&sort='+perm+'&zoom='+zoom+'&page='+page;
-	    if (bkmk) {
-		loc = loc+'&bkmk='+bkmk;
-	    }
+	let zoom = pager.getAttribute("data-zoom");
+	let page = pager.getAttribute("data-page");
+	let bkmk = pager.getAttribute("data-bkmk");
+	loc = '/'+proj+'?list='+list+'&sort='+perm+'&zoom='+zoom+'&page='+page;
+	if (bkmk) {
+	    loc = loc+'&bkmk='+bkmk;
 	}
     }
-    alert("updateLocation="+loc);
+    alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -69,7 +79,7 @@ function act_sorter(dors) {
     let currperm = pager.getAttribute('data-sort');
     if (perm !== currperm) {
 	pager.setAttribute('data-sort', perm);
-	updateLocation();
+	pageLocation();
     }
 }
 
@@ -84,13 +94,13 @@ function act_sorter_special() {
 function act_article(item) {
     let pager = getPager();
     pager.setAttribute("data-item", item);
-    updateLocation();
+    itemLocation();
 }
 
 function act_item(item) {
     let pager = getPager();
     pager.setAttribute("data-item", item);
-    updateLocation();
+    itemLocation();
 }
 
 function act_item_next() {
@@ -98,7 +108,7 @@ function act_item_next() {
     let inext = pager.getAttribute("data-next");
     if (inext) {
 	pager.setAttribute("data-item", inext);
-	updateLocation();
+	itemLocation();
     } else {
 	alert('You are already at the last item.');
     }
@@ -109,7 +119,7 @@ function act_item_prev() {
     let iprev = pager.getAttribute("data-prev");
     if (iprev) {
 	pager.setAttribute("data-item", iprev);
-	updateLocation();
+	itemLocation();
     } else {
 	alert('You are already at the first item.');
     }
@@ -122,7 +132,7 @@ function act_next() {
     if (page < pmax) {
 	++page;
 	pager.setAttribute("data-page", page);
-	updateLocation();
+	pageLocation();
     } else {
 	alert('You are already at the last page (page='+page+'; pmax='+pmax+')');
     }
@@ -135,7 +145,7 @@ function act_page() {
     let pmax = pager.getAttribute("data-pmax")/1;
     if (newpage > 0 && newpage <= pmax) {
 	pager.setAttribute("data-page", newpage);
-	updateLocation();
+	pageLocation();
     } else {
 	alert('The page value must be greater than zero and no bigger than '+pmax);
     }
@@ -147,7 +157,7 @@ function act_prev() {
     if (page > 1) {
 	--page;
 	pager.setAttribute("data-page", page);
-	updateLocation();
+	pageLocation();
     } else {
 	alert('You are already at the first page');
     }
@@ -161,7 +171,7 @@ function act_zoom(z) {
 	    pager.setAttribute("data-page", '1');
 	    pager.setAttribute("data-zoom", "entry_ids");
 	    pager.removeAttribute("data-item");
-	    updateLocation();
+	    pageLocation();
 	} else {
 	    act_letter(z);
 	}
@@ -172,7 +182,7 @@ function act_zoom(z) {
 	    pager.setAttribute("data-page", '1');
 	    pager.setAttribute("data-zoom", z);
 	    pager.removeAttribute("data-item");
-	    updateLocation();
+	    pageLocation();
 	}
     }
 }
@@ -185,7 +195,7 @@ function act_letter(thisletter) {
 	pager.setAttribute("data-page", '1');
 	pager.setAttribute("data-zoom", thisletter);
 	pager.removeAttribute("data-item");
-	updateLocation();
+	pageLocation();
     }
 }
 
@@ -202,10 +212,11 @@ function toggle_pi() {
     if (item) {
 	pager.setAttribute("data-bkmk", item);
 	pager.removeAttribute("data-item");
+	pageLocation();
     } else {
 	pager.setAttribute("data-item", pager.getAttribute("data-bkmk"));
+	itemLocation();
     }
-    updateLocation();
 }
 
 function toggle_to() {
@@ -225,7 +236,7 @@ function act_translation() {
 	let currlang = pager.getAttribute("data-lang");
 	if (currlang !== trans) {
 	    pager.setAttribute("data-lang", trans);
-	    updateLocation();
+	    itemLocation();
 	}
     }
 }
@@ -235,7 +246,7 @@ function act_translation() {
 function gloart(id) {
     let pager = getPager();
     pager.setAttribute("data-item", item);
-    updateLocation();    
+    itemLocation();    
 }
 
 // P3 continuing JS
@@ -265,7 +276,7 @@ function pop1sig(sig) {
     popup(url,'cbdarticle',400,600,0,0);
 }
 
-// P4 quick search implementation is URL=based
+// P4 quick search implementation is URL-based
 
 function qs_add(pager, qs, datum) {
     let val = pager.getAttribute("data-"+datum);
