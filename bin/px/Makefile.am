@@ -6,7 +6,7 @@ AM_CPPFLAGS+=-I/usr/include/libxml2
 
 img_DATA=icons/*.png
 
-bin_PROGRAMS=px
+bin_PROGRAMS=px selecter
 
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxsortercodes.sh pxentrycounts.sh pxentryindexes.sh
@@ -18,6 +18,10 @@ px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c	\
 	cgi_decode_url.c px_mesg.c wpx_lib.c px_return.c
 
 px_LDADD=isp/libisp.la pui/libpui.la $(xLDADD) -lxml2 -lxslt -lexslt
+
+selecter_SOURCES=selecter.c
+
+selecter_LDADD=$(xLDADD)
 
 css_DATA = *.css
 
