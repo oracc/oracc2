@@ -113,7 +113,7 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 }
 
 static void
-dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoomth, int zoomp)
+dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoom, int zpage, int zindex)
 {
   const char *prev = NULL;
   const char *next = NULL;
@@ -146,9 +146,9 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoomth, int zoo
   else
     strcpy(key, items[itemnth]);
 	
-  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoomth, zoomp, prev, next);
+  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoom, zpage, zindex, prev, next);
   char data[n+1];
-  sprintf(data, "%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoomth, zoomp, prev, next);
+  sprintf(data, "%d\t%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoom, zpage, zindex, prev, next);
   dbi_add(ip->itemdata.dp, (ucp)key, data, strlen(data)+1);
 }
 
@@ -268,6 +268,15 @@ textcmp(const char *t1, const char *t2)
   return 0;
 }
 
+/* Three values are tracked for zoom data:
+ *
+ * izoom/tzoom = item/text zoom number
+ * izpage/tzpage = item/text zoom page
+ * izcount/tzcount = item/text zoom index, i.e., index into
+ * 	total number of entries in zoomed section
+ *
+ */
+
 int
 ispmp_pages(Isp *ip, unsigned char *f, int imax)
 {
@@ -276,7 +285,8 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   int lasth_len = 0;
   int page = 1;
   int pcount = 0;
-  int zoomth = 0, zoomp = 1;
+  int izoom = 0, izcount = 0; /* izpage is computed at item dump */
+  int tzoom = 0, tzcount = 0; /* tzpage is computed at text dump */
   unsigned char *s = f;
   const char *itemdp_dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
 
@@ -298,7 +308,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   const char **items = item_array((char*)s, imax, &imem);
   const char **texts = NULL;
   int itemnth = 0;
-  int textth = 0, ztextth = 0;
+  int textth = 0;
 
   if (strchr(items[0], '.'))
     {
@@ -312,9 +322,8 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
     {
       if ('#' == *s)
 	{
-	  ztextth = 0;
-	  ++zoomth;
-	  zoomp = 1;
+	  izcount = tzcount = 0; /* count of items in this zoom unit so far */
+	  ++izoom;
 	  if (pt.htell < 0)
 	    {
 	      pt.htell = s - f;
@@ -337,7 +346,6 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 	      ++pcount;
 	      if (!(pcount%25))
 		{
-		  ++zoomp;
 		  pt.plen = (s - f) - pt.ptell;
 		  md_dump(pfp, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #if 0
@@ -360,14 +368,17 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 			{
 			  /* Only dump information when it's a new text */
 			  int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
-			  int zpage = (ztextth / 25) + ((textth % 25) ? 1 : 0);
-			  dumpitem(ip, texts, textth, tpage, ztextth, zpage);
+			  int tzpage = (tzcount / 25) + ((tzcount % 25) ? 1 : 0);
+			  dumpitem(ip, texts, textth, tpage, tzoom, tzpage, tzcount);
 			  ++textth;
-			  ++ztextth;
+			  ++tzcount;
 			}
 		    }
 		  else
-		    dumpitem(ip, items, itemnth, page, zoomth, zoomp);
+		    {
+		      int izpage = (izcount / 25) + ((izcount % 25) ? 1 : 0);
+		      dumpitem(ip, items, itemnth, page, izoom, izpage, izcount);
+		    }
 		  ++itemnth;
 		}
 	    }

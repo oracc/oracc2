@@ -153,7 +153,7 @@ pui_at_active_items(Isp *ip, FILE *fp)
     fputs(ip->glosdata.emax, fp);
   else if (ip->itemdata.tmax)
     fputs(ip->itemdata.tmax, fp);
-  else    
+  else
     fputs(itoa(ip->md1.zimx), fp);
 }
 
@@ -215,7 +215,10 @@ pui_at_item_index(Isp *ip, FILE *fp)
     {
       fputs(ip->glos ? "ENTRY " : "ITEM ", fp);
       if (ip->itemdata.index)
-	fputs(itoa(atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
+	{
+	  const char *index = ip->zoom ? ip->itemdata.zindex : ip->itemdata.index;
+	  fputs(itoa(atoi(index)+(ip->glos?0:1)), fp);
+	}
     }
 }
 

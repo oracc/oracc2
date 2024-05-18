@@ -130,6 +130,7 @@ struct isp_itemdata
   const char *page;
   const char *zoom;
   const char *zpag;
+  const char *zindex;
   const char *prev;
   const char *next;
   const char *tmax;

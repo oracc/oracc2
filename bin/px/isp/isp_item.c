@@ -49,6 +49,10 @@ isp_item_load(Isp *ip)
       s = strchr(s, '\t');
       *s++ = '\0';
 
+      ip->itemdata.zindex = s;
+      s = strchr(s, '\t');
+      *s++ = '\0';
+
       if ('#' == *s)
 	ip->itemdata.prev = NULL;
       else
