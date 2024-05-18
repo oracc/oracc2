@@ -51,28 +51,33 @@ main(int argc, char **argv)
   else if (isp_list_method(ip))
     goto error;
 
-  if (isp_cache_sub(ip))
-    goto error;
-
-  if (ip->glos && isp_glos_list(ip))
-    goto error;
-  
-  if (!strcmp(ip->from, "list") && isp_cache_list(ip))
-    goto error;
-
-  if (!ip->glos || ip->glosdata.xis)
-    if (isp_cache_sort(ip))
-      goto error;
-
-  if (ip->item && (!ip->glos || ip->glosdata.xis))
+  if (!ip->srch || ip->srchdata.count)
     {
-      if (isp_item_set(ip))
+      if (isp_cache_sub(ip))
+	goto error;
+
+      if (ip->glos && isp_glos_list(ip))
+	goto error;
+  
+      if (!strcmp(ip->from, "list") && isp_cache_list(ip))
+	goto error;
+
+      if (!ip->glos || ip->glosdata.xis)
+	if (isp_cache_sort(ip))
+	  goto error;
+
+      if (ip->item && (!ip->glos || ip->glosdata.xis))
+	{
+	  if (isp_item_set(ip))
+	    goto error;
+	}
+  
+      if (isp_cache_page(ip))
 	goto error;
     }
-  
-  if (isp_cache_page(ip))
+  else if (isp_srch_fixup(ip))
     goto error;
-
+      
   if (ip->debug)
     {
       print_hdr();

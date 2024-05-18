@@ -8,33 +8,42 @@
 #
 # xtlproject=`oraccopt -p $1 -d $1 -a catalog-master-project
 #
+# Exit
+#	0 on success
+#	1 on error
+#	2 no XMD--text not in project
+#	3 no XTF--transliteration not available
+#
 oraccbin=@@ORACC_BUILDS@@/bin
 project=$1
 PQX=$2
 tr=$3
 metadir=$4
 xmdout=$5
-errlog=`dirname $metadir`/err.log
+cachedir=$6
+
+errlog=$cachedir/err.log
 rm -f $errlog
 exec 2>$errlog
 echo $0 $* >&2
+
 xtl=`$oraccbin/pqxpand xtl $xtlproject:$PQX`
-if [ ! $? -eq 0 ]; then
-    exit 1
-fi
 projarg="-param project '$project'"
 if [ -r $xtl ]; then
     xtlarg="-stringparam xtl $xtl"
 fi
 xmd=`$oraccbin/pqxpand xmd $project:$PQX`
-if [ ! $? -eq 0 ]; then
-    exit 1
-fi
-mkdir -p $metadir || exit 1
+xtf=`$oraccbin/pqxpand xtf $project:$PQX`
+
+# Check that we have the necessary source data
+[ -r $xmd ] || exit 2
+mkdir -v -p $metadir || exit 1
 xsltproc $projarg $xtlarg $xmdout $xmd >$metadir/meta.xml
 if [ $? -eq 0 ]; then
+    [ -r $xtf ] || exit 3
     four=`echo $PQX | head -c4`
-    mkdir -p ${ORACC_BUILDS}/www/htm/$1/$four/$PQX || exit 1
+    d=${ORACC_BUILDS}/www/htm/$1/$four/$PQX
+    mkdir -v -p $d || exit 1
     $oraccbin/xtf2txh -h -i $project:$PQX
     if [ $? -eq 0 ]; then
 	$oraccbin/xmd2htm -h -i $project:$PQX

@@ -20,7 +20,8 @@ struct isp_list_loc
 struct isp_srchdata
 {
   const char *tmp;	/* path to search's tmpdir */
-  const char *bar;  	/* path to sub/search.bar = entire search bar text */
+  const char *bar;  	/* path to tmp/search.bar = entire search bar text */
+  long int count;	/* count of results read from tmp/count */
   int new;		/* 0 when reusing a search list, 1 when the srch was just done */
 };
 
@@ -136,6 +137,7 @@ struct isp_itemdata
   const char *bld;
   Dbi_index *dp;
   Dbi_index *hilitedb;
+  int not; /* 2 = no xmd (i.e., text not in project); 3 = no xtf */
 };
 
 struct isp_glosdata

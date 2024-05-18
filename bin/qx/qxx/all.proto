@@ -76,6 +76,7 @@ extern char id_prefix(long int id);
 extern int XidVal(long int id);
 extern void show_results(struct Datum *dp);
 /* se_run.c */
+extern long result_count(void);
 extern int se_run_qx(struct qxdata *qp, struct sdata *sdp);
 extern int se_run(struct qxdata *qp);
 extern void run_search(struct token *toks);

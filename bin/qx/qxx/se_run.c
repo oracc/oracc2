@@ -16,6 +16,12 @@ static void n_uniq_loc8(struct Datum *dp);
 static void uniq (struct Datum *dp);
 static void pretrim_setup(void);
 
+long
+result_count(void)
+{
+  return result.count;
+}
+
 int
 se_run_qx(struct qxdata *qp, struct sdata *sdp)
 {

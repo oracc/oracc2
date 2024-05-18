@@ -30,7 +30,7 @@ isp_cache_project(Isp *ip)
 {
   char dir[strlen(ip->cache.sys)+strlen(ip->project)+2];
   sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
-  ip->cache.project = pool_copy(dir, ip->p);
+  ip->cache.project = (ccp)pool_copy((ucp)dir, ip->p);
   return 0;
 }
 
@@ -66,7 +66,7 @@ isp_cache_sub(Isp *ip)
 		{
 		  *slash = '\0';
 		  sprintf(dir, "%s/%s", ip->cache.sys, proj);
-		  ip->cache.project = pool_copy(dir, ip->p);
+		  ip->cache.project = (ccp)pool_copy((ucp)dir, ip->p);
 		  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
 		    {
 		      if (ip->verbose)

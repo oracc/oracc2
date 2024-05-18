@@ -17,3 +17,6 @@ struct puifilestab;
 "p4debugdiv.xml", &p4debugdiv
 "p4itemglo.xml", &p4itemglo
 "p4itemxtf.xml", &p4itemxtf
+"p4noxtf.xml", &p4noxtf
+"p4unknown.xml", &p4unknown
+"p4nosrch.xml", &p4nosrch

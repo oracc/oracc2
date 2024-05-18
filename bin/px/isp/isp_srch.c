@@ -2,6 +2,15 @@
 #include "../px.h"
 #include "isp.h"
 
+/* Fix some things up to compensate for not running page builder when
+   srch result count == 0 */
+int
+isp_srch_fixup(Isp *ip)
+{
+  ip->data = "dtxt";
+  return 0;
+}
+
 int
 isp_srch_bar(Isp *ip)
 {
@@ -37,23 +46,62 @@ isp_srch_bar(Isp *ip)
 }
 
 int
-isp_srch(Isp*ip)
+isp_srch_count(Isp *ip)
 {
-  ip->from = "srch";
-  ip->lloc.path = (ccp)pool_alloc(strlen(ip->srchdata.tmp)+strlen("/list0"),ip->p);
-  sprintf((char*)ip->lloc.path, "%s/list", ip->srchdata.tmp);
-  if (access(ip->lloc.path, R_OK))
+  const char *tmp = ip->srchdata.tmp ? ip->srchdata.tmp : ip->tmp_dir;
+  if (tmp)
     {
-      ip->err = (ccp)pool_copy((ucp)px_err("srch list %s not found",ip->lloc.path),ip->p);
-      return 1;
+      char *bar = (char *)pool_alloc(strlen(tmp)+strlen("/count0"), ip->p);
+      sprintf((char*)bar, "%s/count", tmp);
+      if (access(bar, R_OK))
+	{
+	  ip->err = (ccp)pool_copy((ucp)px_err("unknown or inaccessible count %s", bar), ip->p);
+	  goto wrapup;
+	}
+      
+      char *bartext = (char*)slurp("qx-px", bar, NULL);
+      if (!bartext)
+	{
+	  ip->err = (ccp)pool_copy((ucp)px_err("failed to read count %s", bar), ip->p);
+	  goto wrapup;
+	}
+      else
+	{
+	  ip->srchdata.count = strtoul(bartext, NULL, 10);
+	}
     }
   else
     {
-      isp_list_cemd(ip);
-      ip->cache.list = ip->lloc.path;
+      ip->err = "no temp dir to look for count in";
     }
+      
+ wrapup:
+  return ip->err ? 1 : 0;
+}
 
+int
+isp_srch(Isp*ip)
+{
+  ip->from = "srch";
+  
+  isp_srch_count(ip);
   isp_srch_bar(ip);
+
+  if (ip->srchdata.count)
+    {
+      ip->lloc.path = (ccp)pool_alloc(strlen(ip->srchdata.tmp)+strlen("/list0"),ip->p);
+      sprintf((char*)ip->lloc.path, "%s/list", ip->srchdata.tmp);
+      if (access(ip->lloc.path, R_OK))
+	{
+	  ip->err = (ccp)pool_copy((ucp)px_err("srch list %s not found",ip->lloc.path),ip->p);
+	  return 1;
+	}
+      else
+	{
+	  isp_list_cemd(ip);
+	  ip->cache.list = ip->lloc.path;
+	}
+    }
   
   return ip->err ? 1 : 0;
 }

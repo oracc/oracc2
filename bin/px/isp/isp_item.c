@@ -23,7 +23,7 @@ isp_item_load(Isp *ip)
       char *tmax = (char*)dbx_key(dp, "tmax", NULL);
       if (tmax)
 	ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
-      char *k = pool_copy((char*)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
+      char *k = (char*)pool_copy((ucp)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
       dbx_term(dp);
 
       if (!k)
@@ -136,16 +136,28 @@ isp_create_xtf(Isp *ip)
   list_add(args, (void*)ip->cache.item);
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.xmdxsl);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.sub);
   unsigned char *syscmd = list_concat(args);
 
   if (ip->verbose)
     fprintf(stderr, "isp: isp_create_xtf: %s\n", syscmd);
 
-  if (system((ccp)syscmd))
+  int sys;
+  if ((sys = system((ccp)syscmd)))
     {
-      ip->err = PX_ERROR_START "isp_create_xtf failed system call:\n\t%s\n";
-      ip->errx = (ccp)syscmd;
-      return 1;
+      int xstatus = WEXITSTATUS(sys);
+      /*int ifexited = WIFEXITED(sys);*/
+      if (xstatus > 1)
+	{
+	  ip->itemdata.not = xstatus;
+	}
+      else
+	{
+	  ip->err = PX_ERROR_START "isp_create_xtf failed system call:\n\t%s\n";
+	  ip->errx = (ccp)syscmd;
+	  return 1;
+	}
     }
   
   return 0;

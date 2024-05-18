@@ -222,7 +222,7 @@ pui_at_item_index(Isp *ip, FILE *fp)
 void
 pui_at_srch_results(Isp *ip, FILE *fp)
 {
-  fputs("0", fp);
+  fprintf(fp, "%ld", ip->srchdata.count);
 }
 
 void
@@ -283,9 +283,13 @@ pui_at_project(Isp *ip, FILE *fp)
 void
 pui_at_menu(Isp *ip, FILE *fp)
 {
-  if (!ip->glos)
-    pui_at_select_sort(ip, fp);
-  px_file_copy(ip, ip->cache.zout, "-");
+  if (!ip->srch || ip->srchdata.count != 0L)
+    {
+      if (!ip->glos)
+	pui_at_select_sort(ip, fp);
+      px_file_copy(ip, ip->cache.zout, "-");
+    }
+  /* can do better here? maybe return 123/0/1 menu for outlined.lst? */
 }
 
 void
@@ -300,9 +304,17 @@ pui_at_content(Isp *ip, FILE *fp)
 	}
       else
 	{
-	  if (pui_output(ip, stdout, pui_filetext("p4itemxtf.xml")))
+	  const char *itemxtf = "p4itemxtf.xml";
+	  if (ip->itemdata.not)
+	    itemxtf = (ip->itemdata.not == 2 ? "p4unknown.xml" : "p4noxtf.xml");
+	  if (pui_output(ip, stdout, pui_filetext(itemxtf)))
 	    longjmp(ip->errjmp, 1);
 	}
+    }
+  else if (ip->srch && ip->srchdata.count == 0L)
+    {
+      if (pui_output(ip, stdout, pui_filetext("p4nosrch.xml")))
+	longjmp(ip->errjmp, 1);
     }
   else
     px_file_copy(ip, ip->cache.page, "-");

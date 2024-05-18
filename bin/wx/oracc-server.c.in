@@ -368,7 +368,10 @@ find_project(char *script_url)
       project = script_url+1;
       setenv("ORACC_PROJECT", project, 1);
       fprintf(stderr, "found project: %s\n", project);
-      struct p4tab *p4p = p4projects(project, strlen(project));
+      char *pxproj = strdup(project), *slash;
+      if ((slash = strchr(pxproj,'/')))
+	*slash = '\0';
+      struct p4tab *p4p = p4projects(pxproj, strlen(pxproj));
       if (p4p)
 	p4 = 1;
       if (save)

@@ -199,6 +199,25 @@ qx(struct qxdata *qp)
       return 1;
     }
   
+  if (!sdata.err)
+    {
+      const char *countfn = (ccp)pool_alloc(strlen(sdata.tmp)+strlen("/count0"), p);
+      sprintf((char*)countfn, "%s/count", sdata.tmp);
+      FILE *countfp = fopen(countfn, "w");
+      if (countfp)
+	{
+	  extern long result_count(void);
+	  fprintf(countfp, "%ld", result_count());
+	  fclose(countfp);
+	}
+      else
+	{
+	  sdata.err = (ccp)pool_copy((ucp)qx_err("failed to open count file %s: %s\n",
+						 countfn, strerror(errno)), p);
+	  return 1;
+	}
+    }
+
  wrapup:
   mesg_term();
   pool_term(sdata.p);
