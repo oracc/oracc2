@@ -29,5 +29,6 @@ extern const char *px_mesg(const char *wpq, const char *fmt, ...);
 extern int px_return_file(const char *form, const char *file);
 extern int px_return(Isp *ip);
 extern const char *fatalize(const char *e);
+extern int selecter(const char *file, char * const*ids);
 
 #endif/*PX_H*/

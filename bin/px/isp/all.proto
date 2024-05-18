@@ -1,5 +1,6 @@
 /* isp_cache.c */
 extern int isp_cache_sys(Isp *ip);
+extern int isp_cache_project(Isp *ip);
 extern int isp_cache_sub(Isp *ip);
 extern int isp_cache_list(Isp *ip);
 extern int isp_cache_page(Isp *ip);
@@ -12,6 +13,8 @@ extern int isp_glos_menu(Isp *ip);
 extern int isp_glos_glid(Isp *ip);
 extern int isp_glos_data(Isp *ip);
 extern int isp_glos_item(Isp *ip);
+/* isp_hilited.c */
+extern char *const *isp_hilited(Isp *ip);
 /* isp_init.c */
 extern Isp *isp_init(void);
 extern void isp_term(Isp *ip);

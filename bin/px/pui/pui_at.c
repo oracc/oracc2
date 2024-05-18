@@ -317,7 +317,11 @@ pui_at_item_meta(Isp *ip, FILE *fp)
 void
 pui_at_item_data(Isp *ip, FILE *fp)
 {
-  px_file_copy(ip, ip->itemdata.html, "-");
+  char *const *hilitev = isp_hilited(ip);
+  if (hilitev)
+    selecter(ip->itemdata.html, hilitev);
+  else
+    px_file_copy(ip, ip->itemdata.html, "-");
 }
 
 void

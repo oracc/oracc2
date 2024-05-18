@@ -183,12 +183,18 @@ const char **
 text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tmem, int *tmax)
 {
   char **t = malloc(imax * sizeof(char *));
-  int tcount = 0, i;
+  int tcount = 0, i, h_start = 0;
 
+#if 1
+  const char *itemdp_dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
+  char *dbifn = "hilite";
+  ip->itemdata.hilitedb = dbi_create(dbifn, itemdp_dir, 1024, 1, DBI_BALK);
+#else
   ip->cache.hilite = (ccp)pool_alloc(strlen(tmpdir)+strlen("/hilite.tab0"), ip->p);
   sprintf((char*)ip->cache.hilite, "%s/%s", tmpdir, "hilite.tab");
   FILE *hilitefp = fopen(ip->cache.hilite, "w");
-  
+#endif
+
   for (i = 0; items[i]; ++i)
     {
       char id[strlen(items[i])];
@@ -199,16 +205,36 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
       if (!i || strcmp(id, t[tcount-1]))
 	{
 	  t[tcount++] = (char *)pool_copy((ucp)id, ip->p);
+#if 1
+	  if (i - h_start == 1)
+	    dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[h_start],
+		    strlen(items[h_start])+1);
+	  else
+	    {
+	      char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
+	      dbi_add(ip->itemdata.hilitedb, (ucp)id, h_str, strlen(h_str)+1);
+	      free(h_str);
+	    }
+	  h_start = i;
+#else
 	  if (i)
 	    fputc('\n', hilitefp);
 	  fprintf(hilitefp, "%s\t%s", id, items[i]);
+#endif
 	}
       else
 	{
+#if 0
 	  fprintf(hilitefp, " %s", items[i]);
+#endif
 	}
     }
+#if 1
+  dbi_flush(ip->itemdata.hilitedb);
+#else
   fclose(hilitefp);
+#endif
+
   if (tmax)
     *tmax = tcount;
   t = realloc(t, tcount * sizeof(char*));

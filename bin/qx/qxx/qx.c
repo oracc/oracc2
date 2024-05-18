@@ -19,7 +19,7 @@ cache_sub(struct qxdata *qp)
   if (qp->glos)
     len += strlen(qp->glos)+strlen("//");
   char *p = (char*)pool_alloc(len, qp->p);
-  if (cache)
+  if (cache && *cache)
     sprintf(p, "%s/%s", cache, qp->project);
   else
     sprintf(p, "%s/www/is.d/%s", oracc_builds(), qp->project);

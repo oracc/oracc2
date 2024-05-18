@@ -25,6 +25,15 @@ isp_cache_sys(Isp *ip)
   return ip->err ? 1 : 0;
 }
 
+int
+isp_cache_project(Isp *ip)
+{
+  char dir[strlen(ip->cache.sys)+strlen(ip->project)+2];
+  sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
+  ip->cache.project = pool_copy(dir, ip->p);
+  return 0;
+}
+
 /* if there is no directory in the cache for this list create one */
 int
 isp_cache_sub(Isp *ip)
@@ -57,6 +66,7 @@ isp_cache_sub(Isp *ip)
 		{
 		  *slash = '\0';
 		  sprintf(dir, "%s/%s", ip->cache.sys, proj);
+		  ip->cache.project = pool_copy(dir, ip->p);
 		  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
 		    {
 		      if (ip->verbose)

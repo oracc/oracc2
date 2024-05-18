@@ -12,9 +12,9 @@ oraccbin=@@ORACC_BUILDS@@/bin
 project=$1
 PQX=$2
 tr=$3
-cachedir=$4
+metadir=$4
 xmdout=$5
-errlog=`dirname $cachedir`/err.log
+errlog=`dirname $metadir`/err.log
 rm -f $errlog
 exec 2>$errlog
 echo $0 $* >&2
@@ -30,8 +30,8 @@ xmd=`$oraccbin/pqxpand xmd $project:$PQX`
 if [ ! $? -eq 0 ]; then
     exit 1
 fi
-mkdir -p $cachedir || exit 1
-xsltproc $projarg $xtlarg $xmdout $xmd >$cachedir/meta.xml
+mkdir -p $metadir || exit 1
+xsltproc $projarg $xtlarg $xmdout $xmd >$metadir/meta.xml
 if [ $? -eq 0 ]; then
     four=`echo $PQX | head -c4`
     mkdir -p ${ORACC_BUILDS}/www/htm/$1/$four/$PQX || exit 1
@@ -52,7 +52,7 @@ if [ $? -eq 0 ]; then
     fi
 else
     echo "Failed call invoked as:" >&2
-    echo "	xsltproc $projarg $xtlarg $xmdout $xmd >$cachedir/meta.xml" >&2
+    echo "	xsltproc $projarg $xtlarg $xmdout $xmd >$metadir/meta.xml" >&2
     echo $0: xsltproc failed. Stop. >&2
     exit 1
 fi

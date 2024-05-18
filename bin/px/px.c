@@ -38,6 +38,9 @@ main(int argc, char **argv)
   
   if (isp_cache_sys(ip))
     goto error;
+
+  if (isp_cache_project(ip))
+    goto error;
   
   if (ip->srchdata.tmp)
     {

@@ -23,7 +23,9 @@ isp_item_load(Isp *ip)
       char *tmax = (char*)dbx_key(dp, "tmax", NULL);
       if (tmax)
 	ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
-      char *k = (char*)dbx_key(dp, ip->itemdata.item, NULL);
+      char *k = pool_copy((char*)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
+      dbx_term(dp);
+
       if (!k)
 	{
 	  ip->err = PX_ERROR_START "key %s not found in item db\n";
@@ -154,8 +156,8 @@ isp_item_xtf(Isp *ip)
 {
   const char *xtflang = isp_item_lang(ip);
 
-  char itemcache[strlen(ip->cache.sub)+strlen(ip->item)+2];
-  sprintf(itemcache, "%s/%s", ip->cache.sub, ip->item);
+  char itemcache[strlen(ip->cache.project)+strlen(ip->item)+2];
+  sprintf(itemcache, "%s/%s", ip->cache.project, ip->item);
   ip->cache.item = (ccp)pool_copy((ucp)itemcache, ip->p);
 
   ip->cache.meta = (ccp)pool_alloc(strlen(itemcache)+strlen("/meta.xml0"), ip->p);
@@ -174,7 +176,7 @@ isp_item_xtf(Isp *ip)
   fprintf(stderr, "itemdata.html = %s\n", ip->itemdata.html);
   
   int need_html = access(ip->itemdata.html, R_OK);
-  int need_meta = access(ip->itemdata.html, R_OK);
+  int need_meta = access(ip->cache.meta, R_OK);
 
   if (need_html || need_meta)
     if (isp_create_xtf(ip))

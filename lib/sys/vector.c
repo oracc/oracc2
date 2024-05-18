@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <vector.h>
+
 char **
 vec_add (char **vec, char *ptr)
 {

@@ -137,6 +137,8 @@ a img     { border: 0px; }
 a[href]:hover   { color: white; background-color: red; text-decoration: underline; }
 a[onclick]:hover   { color: white; background-color: red; }
 
+.selected { background-color: #eee; }
+
 span.error { background-color: red; color: white; }
 
 /* From oraccscreen.css, p3.css, p3cbd.css */
