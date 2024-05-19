@@ -54,7 +54,7 @@ px_valid_project(Isp *ip)
     {
       ip->projdir = (ccp)pool_copy((ucp)dir, ip->p);
       struct xpd *xp = xpd_init(ip->project, ip->p);
-      if (0 == xp->opts->key_count)
+      if (!xp || 0 == xp->opts->key_count)
 	{
 	  ip->err = "failed to load project config.xml";
 	  return 1;
@@ -153,7 +153,9 @@ px_validate(Isp *ip)
       goto error;
     }
 
-  if (ip->page && px_integer((uccp)ip->page))
+  if (!ip->page || '0' == *ip->page)
+    ip->page = "1";
+  else if (px_integer((uccp)ip->page))
     {
       ip->err = "page parameter is not a positive integer";
       goto error;

@@ -98,7 +98,7 @@ function resetPager() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
     let loc = '/'+proj+'/pager';
-    alert("loc="+loc);
+    // alert("loc="+loc);
     window.location=loc;
 }
 
@@ -199,6 +199,7 @@ function act_prev() {
 function act_zoom(z) {
     let pager = getPager();
     let glos = pager.getAttribute("data-glos");
+    pager.removeAttribute("data-bkmk");
     if (glos) {
 	if (z === '0') {
 	    pager.setAttribute("data-page", '1');

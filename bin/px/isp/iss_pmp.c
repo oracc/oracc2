@@ -378,6 +378,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		    {
 		      int izpage = (izcount / 25) + ((izcount % 25) ? 1 : 0);
 		      dumpitem(ip, items, itemnth, page, izoom, izpage, izcount);
+		      ++izcount;
 		    }
 		  ++itemnth;
 		}

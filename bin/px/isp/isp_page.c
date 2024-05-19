@@ -110,7 +110,7 @@ create_page_input(Isp *ip)
   return ip->err ? 1 : 0;
 }
 
-static void
+static int
 set_item_max(Isp *ip)
 {
   char buf[strlen(ip->cache.sort)+strlen("-z0123456789.pmp0")];
@@ -123,7 +123,11 @@ set_item_max(Isp *ip)
   if (f)
     ip->md1.zimx = atoi((ccp)f);
   else
-    ip->err = (ccp)px_loadfile_error();
+    {
+      ip->err = (ccp)px_loadfile_error();
+      return 1;
+    }
+  return 0;
 }
 
 int
@@ -187,11 +191,12 @@ isp_page_zoom(Isp *ip)
 int
 isp_page_data(Isp *ip)
 {
+  set_item_max(ip);
+
   if (!access(ip->cache.page, F_OK))
     {
       if (!access(ip->cache.page, R_OK))
 	{
-	  set_item_max(ip);
 	  return 0;
 	}
       else

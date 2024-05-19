@@ -41,11 +41,11 @@ isp_item_load(Isp *ip)
       s = strchr(ip->itemdata.page, '\t');
       *s++ = '\0';
 
-      ip->itemdata.zoom = s;
+      ip->zoom = ip->itemdata.zoom = s;
       s = strchr(s, '\t');
       *s++ = '\0';
   
-      ip->itemdata.zpag = s;
+      ip->page = ip->itemdata.zpag = s;
       s = strchr(s, '\t');
       *s++ = '\0';
 
@@ -67,7 +67,7 @@ isp_item_load(Isp *ip)
     }
   else
     ip->err = (ccp)px_err("failed to open dbi index %s/%s\n", ip->cache.sub, dbifn);
-  
+
   return ip->err ? 1 : 0;
 }
 

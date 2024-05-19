@@ -220,7 +220,7 @@ qx(struct qxdata *qp)
 
  wrapup:
   mesg_term();
-  pool_term(sdata.p);
+  /*pool_term(sdata.p);*//*can't do this here*/
 
   if (sdata.err)
     return 1;
