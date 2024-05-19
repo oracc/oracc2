@@ -4,6 +4,6 @@ const char *p4head =
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/@@pui_project()@@/css/p3colours.css\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/@@pui_project()@@/css/projcss.css\"/>\n"
 "  <script type=\"text/javascript\" src=\"/js/p4.js\">&#160;</script>\n"
-"  <title>Oracc Pager</title>    \n"
+"  <title>@@pui_project()@@</title>    \n"
 "</x>\n"
 ;

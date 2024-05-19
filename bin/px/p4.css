@@ -78,14 +78,16 @@ p	{ margin: 0; padding: 0; }
 #p4Icons { width: 15%; text-align: center; display: inline-block; }
 
 .p4icon { background-color: white; 
-	  height: 18px; width: 18px;
+	  height: 15px; width: 15px;
 	  border: 2px solid silver; 
 	  padding: 2px;
 	  border-radius: 9px;
 	  vertical-align: middle;
 	}
 
-.p4spread { margin-left: 5px; margin-right: 5px; }
+.p4icon:not(:first-child) { margin-left: 3px; }
+
+.p4spread { margin-left: 3px; }
 
 .p4raise { margin-top: -26px; }
 
@@ -97,7 +99,7 @@ p	{ margin: 0; padding: 0; }
 
 /* Zoom-menu CSS */
 
-#p4MenuSelect	{ text-align: center; }
+#p4MenuSelect	{ text-align: center; margin-top: -26px; margin-bottom: 5px; }
 
 #p4MenuOutline 	{ font-family: arial,sans-serif; font-size: 80%;
 		  padding-right: 5px; padding-left: 5px;

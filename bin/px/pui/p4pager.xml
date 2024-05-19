@@ -5,18 +5,17 @@
     </p>
   </div>
   <div id="p4Header" class="menu banner bborder-bot">
-      <p id="p4Banner">
-	<span id="p4Icons">
-	  @@p4icons.xml@@
-	</span>
-      </p>
-      <div id="p4Search">
-	@@p4search.xml@@
-      </div>
-      <div id="p4Controls">
-	@@p4controls.xml@@
-      </div>
-      @@p4dropdown.xml@@
+    <p id="p4Banner">
+      <span id="p4Icons">
+	@@p4icons.xml@@
+      </span>
+    </p>
+    <div id="p4Search">
+      @@p4search.xml@@
+    </div>
+    <div id="p4Controls">
+      @@p4controls.xml@@
+    </div>
   </div>
   <div id="p4Data">
     <div id="p4Menu">
