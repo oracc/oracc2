@@ -12,9 +12,9 @@ isp_hilited(Isp *ip)
   const char *dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
   if ((dp = dbx_init(dir, dbifn)))
     {
-      h = (char*)dbx_key(dp, ip->itemdata.item, NULL);
+      h = (ccp)dbx_key(dp, ip->itemdata.item, NULL);
       if (h)
-	h = pool_copy(h, ip->p);
+	h = (ccp)pool_copy((ucp)h, ip->p);
       dbx_term(dp);
     }
   else

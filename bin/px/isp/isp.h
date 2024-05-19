@@ -170,21 +170,9 @@ typedef struct isp
   const char *from; /* list or srch */
   const char *data; /* dcat dtxt dtra dglo */
   const char *show; /* rcat rtxt rtra rglo itxt iart */
-  struct isp_cache cache;
   const char *project;
   const char *projdir;
   const char *list_name;
-  struct isp_list_loc lloc;
-  struct ispo is;
-  struct isp_mapdata md1;
-  struct isp_mapdata md2;
-  struct isp_itemdata itemdata;
-  struct isp_glosdata glosdata;
-  struct isp_srchdata srchdata;
-  struct isp_config default_cfg;
-  struct isp_config special_cfg;
-  struct isp_config *curr_cfg;
-  struct outline *op;
   int op_nlevels;
   const char *dors; /* 0 = default ; 1 = special */
   const char *perm; /* permutation expressed as 123 132, etc. (see isp_sort.c) */
@@ -229,6 +217,18 @@ typedef struct isp
   Pool *p;
   Memo *tmem;
   jmp_buf errjmp;
+  struct isp_cache cache;
+  struct isp_config *curr_cfg;
+  struct isp_config default_cfg;
+  struct isp_config special_cfg;
+  struct isp_glosdata glosdata;
+  struct isp_itemdata itemdata;
+  struct isp_list_loc lloc;
+  struct isp_mapdata md1;
+  struct isp_mapdata md2;
+  struct isp_srchdata srchdata;
+  struct ispo is;
+  struct outline *op;
 } Isp;
 
 struct ispargstab

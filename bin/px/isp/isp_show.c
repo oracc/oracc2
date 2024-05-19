@@ -65,6 +65,9 @@ isp_environment(FILE *fp, Isp *ip)
 void
 isp_show(FILE *fp, Isp *ip)
 {
+#if 1
+  px_print_ip(fp,ip);
+#else
   fprintf(fp, "isp status:\n");
   fprintf(fp, "\tweb=%d; oracc=%s; project=%s\n", ip->web, ip->oracc, ip->project);
   fprintf(fp, "\tlist: name=%s; type=%s; lang=%s; method=%s;\n"
@@ -80,4 +83,5 @@ isp_show(FILE *fp, Isp *ip)
   fprintf(fp, "<h2>Cache and Files</h2>\n");
   fprintf(fp, "\tcache=%s\n\tzoomdiv=%s\n\tmetadiv=%s\n\tcontent=%s\n",
 	  ip->cache.sub, ip->cache.zout, ip->cache.meta, ip->cache.page);
+#endif
 }

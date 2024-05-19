@@ -4,6 +4,28 @@
 
 static void ispo_master_page(unsigned char *lp, struct ispz *iop);
 
+static void
+hcsub(unsigned char *s)
+{
+  u_upper(s, 1);
+  while (*s)
+    if ('_' == *s)
+      *s++ = ' ';
+    else
+      ++s;
+}
+
+static void
+ispo_h_clean(struct ispz *zp)
+{
+  if (zp->h1 && *zp->h1)
+    hcsub(zp->h1);
+  if (zp->h1 && *zp->h2)
+    hcsub(zp->h2);
+  if (zp->h1 && *zp->h3)
+    hcsub(zp->h3);  
+}
+
 int
 ispo_master(Isp *ip)
 {
@@ -54,6 +76,7 @@ ispo_master(Isp *ip)
 	    h2 = iz.h2;
 	  if (!iz.h3)
 	    iz.h3 = (ucp)"";
+	  ispo_h_clean(&iz);
 	  if (iz.h3)
 	    {
 	      if (iz.h1 && *iz.h1)
@@ -112,14 +135,6 @@ ispo_master_page(unsigned char *lp, struct ispz *iop)
 }
 
 static void
-un_uscore(unsigned char *s)
-{
-  while (*s)
-    if ('_' == *s++)
-      s[-1] = ' ';
-}
-
-static void
 ispo_zout_parse(unsigned char *lp, struct ispz *iop)
 {
   iop->h1 = lp;
@@ -158,9 +173,11 @@ ispo_zout_parse(unsigned char *lp, struct ispz *iop)
 	    }
 	}
     }
+#if 0
   if (iop->h1) un_uscore(iop->h1);
   if (iop->h2) un_uscore(iop->h2);
   if (iop->h3) un_uscore(iop->h3);
+#endif
 }
 
 static void

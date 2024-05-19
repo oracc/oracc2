@@ -8,6 +8,31 @@
 #include <errno.h>
 #include "oraccsys.h"
 
+void
+u_upper(unsigned char *s, int n)
+{
+  while (n--)
+    {
+      int n = u_charbytes(s);
+      if (n == 1)
+	{
+	  *s = toupper(*s);
+	  ++s;
+	}
+      else
+	{
+	  size_t len;
+	  wchar_t wc = utf1char(s, &len);
+	  wchar_t lc = towlower(wc);
+	  if (wc != lc)
+	    {
+	      unsigned char *utf8 = utf8ify(lc);
+	      memcpy(s,utf8,strlen((ccp)utf8));
+	    }
+	}
+    }
+}
+
 int
 u_charbytes(const unsigned char *g)
 {

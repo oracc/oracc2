@@ -52,6 +52,8 @@ extern const char *oracc_project_home (void);
 extern const char *oracc_var (void);
 extern const char *projectify(const char *path, const char **projp);
 
+extern void u_upper(unsigned char *s, int n);
+extern int u_charbytes(const unsigned char *g);
 extern const unsigned char *utf_lcase(const unsigned char *s);
 extern const unsigned char *utf_ucase(const unsigned char *s);
 extern wchar_t utf1char(const unsigned char *src,size_t *len);

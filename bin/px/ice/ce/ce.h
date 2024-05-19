@@ -27,6 +27,8 @@ extern void xmd_print_labels(void);
 extern int count_entries(const char *tmp, const char *option);
 extern void set_entries(const char **entries, const char *option);
 
+extern const char *ce_h(const char *h);
+
 extern const char *project, *state;
 
 #if 0

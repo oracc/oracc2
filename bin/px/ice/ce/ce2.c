@@ -467,7 +467,7 @@ sH(void *userData, const char *name, const char **atts)
 	    }
 	  ++next_idp;
 	  if (h)
-	    fprintf(stdout, "<ce:heading>%s</ce:heading>", ++h);
+	    fprintf(stdout, "<ce:heading>%s</ce:heading>", ce_h((ccp)++h));
 	  if (echoing)
 	    ++echoing;
 	  else

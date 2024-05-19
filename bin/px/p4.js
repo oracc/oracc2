@@ -27,7 +27,7 @@ function itemLocation() {
 	if (list && list !== "outlined.lst") {
 	    loc = loc+"?list="+list;
 	}
-	alert("itemLocation="+loc);
+	// alert("itemLocation="+loc);
 	window.location = loc;
     } else {
 	alert('itemLocation called but item is NULL');
@@ -90,7 +90,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    alert("pageLocation="+loc);
+    // alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -173,7 +173,7 @@ function act_next() {
 
 function act_page() {
     let newpage = document.getElementById("p4Pageset").value/1;
-    alert('p4Pageset value='+newpage);
+    // alert('p4Pageset value='+newpage);
     let pager = getPager();
     let pmax = pager.getAttribute("data-pmax")/1;
     if (newpage > 0 && newpage <= pmax) {
@@ -283,33 +283,6 @@ function gloart(id) {
     itemLocation();    
 }
 
-// P3 continuing JS
-
-function popup(url,windowName,height,width,screenX,screenY) {
-  popupWindow = window.open(url,windowName,
- "dependent=yes,"
- +"directories=no,"
- +"height="+height+","
- +"width="+width+","
- +"screenX="+screenX+","
- +"screenY="+screenY+","
- +"location=yes,menubar=no,resizable=yes,scrollbars=yes,titlebar=no,toolbar=no");
-  popupWindow.focus();
-  return popupWindow;
-}
-
-// In P3 sigfixer added (empty) lang and proj arguments to the pop1sig
-// call but in P4 we have data-proj and are ignoring the old (and by
-// default empty) lang arg for now
-function pop1sig(sig) {
-    var bio = '\u2623'; // force encoding always to be utf8
-    var esig = encodeURIComponent(bio+sig);
-    let pager = getPager();
-    let proj = pager.getAttribute('data-proj');
-    var url = '/'+proj+'/sig?'+esig;
-    popup(url,'cbdarticle',400,600,0,0);
-}
-
 // P4 quick search implementation is URL-based
 
 function qs_add(pager, qs, datum) {
@@ -337,10 +310,64 @@ function act_srch() {
 	if (qury !== srch) {
 	    if (glos) { glos = '/'+glos; } else { glos = '' }
 	    let srch_url='/'+proj+glos+'?srch='+encodeURIComponent(srch);
-	    alert('srch_url='+srch_url);
+	    // alert('srch_url='+srch_url);
 	    window.location = srch_url;
 	} else {
 	    alert('Srch '+srch+' has not changed');
 	}
     }
 }
+
+// P3 continuing JS
+
+function popup(url,windowName,height,width,screenX,screenY) {
+  popupWindow = window.open(url,windowName,
+ "dependent=yes,"
+ +"directories=no,"
+ +"height="+height+","
+ +"width="+width+","
+ +"screenX="+screenX+","
+ +"screenY="+screenY+","
+ +"location=yes,menubar=no,resizable=yes,scrollbars=yes,titlebar=no,toolbar=no");
+  popupWindow.focus();
+  return popupWindow;
+}
+
+// In P3 sigfixer added (empty) lang and proj arguments to the pop1sig
+// call but in P4 we have data-proj and are ignoring the old (and by
+// default empty) lang arg for now
+function pop1sig(sig) {
+    var bio = '\u2623'; // force encoding always to be utf8
+    var esig = encodeURIComponent(bio+sig);
+    let pager = getPager();
+    let proj = pager.getAttribute('data-proj');
+    var url = '/'+proj+'/sig?'+esig;
+    popup(url,'cbdarticle',400,600,0,0);
+}
+
+function showblock(project,item,blockid) {
+    popup('/'+project+'/'+item+'/score?'+blockid,400,600,700,50);
+}
+
+function showcdli(PQ) {
+    var url = 'http://cdli.ucla.edu/'+PQ;
+    popup(url,'exemplarWindow',700,800,100,350);
+}
+
+function showexemplar(project,PQ,lineid,fragid) {
+    showexemplar2(project,'',PQ,lineid,fragid);
+}
+
+function showexemplar2(project,lang,PQ,lineid,fragid) {
+    var url = '/'+project+'/'+PQ+'/html';
+    if (lineid.length > 0) {
+	url = url+'?'+lineid;
+	if (fragid.length > 0) {
+	    url = url+','+fragid;
+	}
+    }
+    var win = window;
+    popup(url,'exemplarWindow',500,700,100,350);
+    /* win.focus(); */
+}
+

@@ -204,7 +204,7 @@ xmdprinter2(const char *pq)
       else
 	in_group = 1;
       fputs("<ce:group>", stdout);
-      fprintf(stdout, "<ce:heading>%s</ce:heading>", xmlify((unsigned char *)++pq));
+      fprintf(stdout, "<ce:heading>%s</ce:heading>", ce_h(++pq));
     }
   else
     {
