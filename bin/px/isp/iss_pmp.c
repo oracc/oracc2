@@ -415,6 +415,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
     }
 
   /* the last text can't have been triggered for output */
+  if (texts)
     {
       int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
       int tzpage = (tzcount / 25) + ((tzcount % 25) ? 1 : 0);
