@@ -72,6 +72,8 @@ printStart(FILE *fp, const char *name, const char **atts)
 	    fprintf(fp, "%s ", class);
 	  fputs("selected\"", fp);
 	}
+      else
+	fprintf(fp, " class=\"%s\"", class);
     }
   fputc('>', fp);
 }

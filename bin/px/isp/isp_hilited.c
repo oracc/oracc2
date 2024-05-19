@@ -13,6 +13,8 @@ isp_hilited(Isp *ip)
   if ((dp = dbx_init(dir, dbifn)))
     {
       h = (char*)dbx_key(dp, ip->itemdata.item, NULL);
+      if (h)
+	h = pool_copy(h, ip->p);
       dbx_term(dp);
     }
   else
