@@ -152,6 +152,16 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoom, int zpage
   dbi_add(ip->itemdata.dp, (ucp)key, data, strlen(data)+1);
 }
 
+static const char *
+post_colon(const char *s)
+{
+  const char *c = strchr(s, ':');
+  if (c)
+    return c+1;
+  else
+    return s;
+}
+
 const char **
 item_array(char *s, int imax, char **mem)
 {
@@ -166,7 +176,7 @@ item_array(char *s, int imax, char **mem)
 	s = strchr(s, ' ');
       else if (!isspace(*s))
 	{
-	  ip[i++] = s;
+	  ip[i++] = post_colon(s);
 	  while (*s && !isspace(*s))
 	    ++s;
 	  if (*s)
@@ -195,9 +205,11 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
   FILE *hilitefp = fopen(ip->cache.hilite, "w");
 #endif
 
+#define ITEM_MAX_LEN	64 /* P123456.123456.1234.123 is 23 so 64 should be more than enough */
+  char id[ITEM_MAX_LEN];
+
   for (i = 0; items[i]; ++i)
     {
-      char id[strlen(items[i])];
       strcpy(id, items[i]);
       char *dot = strchr(id, '.');
       if (dot)
@@ -206,14 +218,17 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
 	{
 	  t[tcount++] = (char *)pool_copy((ucp)id, ip->p);
 #if 1
-	  if (i - h_start == 1)
-	    dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[h_start],
-		    strlen(items[h_start])+1);
-	  else
+	  if (i)
 	    {
-	      char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
-	      dbi_add(ip->itemdata.hilitedb, (ucp)id, h_str, strlen(h_str)+1);
-	      free(h_str);
+	      if (i - h_start == 1)
+		dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[h_start],
+			strlen(items[h_start])+1);
+	      else
+		{
+		  char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
+		  dbi_add(ip->itemdata.hilitedb, (ucp)id, h_str, strlen(h_str)+1);
+		  free(h_str);
+		}
 	    }
 	  h_start = i;
 #else
@@ -227,6 +242,18 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
 #if 0
 	  fprintf(hilitefp, " %s", items[i]);
 #endif
+	}
+    }
+  if (i > h_start)
+    {
+      if (i - h_start == 1)
+	dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[h_start],
+		strlen(items[h_start])+1);
+      else
+	{
+	  char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
+	  dbi_add(ip->itemdata.hilitedb, (ucp)id, h_str, strlen(h_str)+1);
+	  free(h_str);
 	}
     }
 #if 1
@@ -386,6 +413,14 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 	}
       ++s;
     }
+
+  /* the last text can't have been triggered for output */
+    {
+      int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
+      int tzpage = (tzcount / 25) + ((tzcount % 25) ? 1 : 0);
+      dumpitem(ip, texts, textth, tpage, tzoom, tzpage, tzcount);
+    }
+
   /* count from decremented s to remove terminal newline */
   pt.plen = (--s - f) - pt.ptell;
   if (pt.plen)

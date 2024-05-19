@@ -12,6 +12,7 @@ isp_tmp_dir(Isp *ip)
 	  sprintf(dir, "%s/%s/%s", ip->cache.sys, ip->project, ip->list_name);
 	  ip->tmp_dir = (ccp)pool_copy((uccp)dir, ip->p);
 	  isp_srch_bar(ip);
+	  isp_srch_count(ip);
 	}
       else if ('i' == *ip->lloc.type)
 	{

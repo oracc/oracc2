@@ -229,6 +229,7 @@ tr.hforce td.xtr-h1 { padding-left: .5em; font-weight: bold; padding-top: 6px; }
 span.xtr-dollar { font-weight: normal; color: gray; vertical-align: super; }
 span.xtr-label { font-weight: normal; font-size: 8pt; color: gray; vertical-align: super; }
 td.xtf  { vertical-align: top; }
+td[rowspan] { vertical-align: top; }
 
 .transonly .lnum,
 .transonly .tlit,
