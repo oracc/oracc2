@@ -22,7 +22,7 @@ extern FILE *f_log;
 int in_group = 0;
 int ood_mode = 0;
 
-int p3 = 1, p4 = 0;
+int p4 = 1;
 
 const char *id, *ce_index, *lang = NULL, *mode = NULL, *project, *fn_project, *xtr_n = NULL, *state;
 const char *gdf_xml;
@@ -537,8 +537,10 @@ main(int argc, char * const*argv)
       usage();
     }
 
+#if 0
   if (strstr(argv[0], "/cex"))
     p4 = 1;
+#endif
   
   f_log = stderr;
   
@@ -650,9 +652,6 @@ opts(int argc, const char *arg)
 {
   switch (argc)
     {
-    case '3':
-      p3 = 1;
-      break;
     case 'a':
       link_fields = atoi(arg);
       break;

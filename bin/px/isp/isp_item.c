@@ -64,6 +64,10 @@ isp_item_load(Isp *ip)
 	ip->itemdata.next = NULL;
       else
 	ip->itemdata.next = s;
+      s = strchr(s, '\t');
+      *s++ = '\0';
+
+      ip->itemdata.proj = s;
     }
   else
     ip->err = (ccp)px_err("failed to open dbi index %s/%s\n", ip->cache.sub, dbifn);
@@ -131,7 +135,7 @@ isp_create_xtf(Isp *ip)
   list_add(args, (void*)ip->oracc);
   list_add(args, (void*)"/bin/ispxtf.sh");
   list_add(args, " ");
-  list_add(args, (void*)ip->project);
+  list_add(args, (void*)(ip->itemdata.proj ? ip->itemdata.proj : ip->project));
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.item);
   list_add(args, " ");
@@ -180,7 +184,7 @@ isp_item_xtf(Isp *ip)
   sprintf((char*)ip->cache.meta, "%s/meta.xml", itemcache);
 
   expand_base("/home/oracc/www/htm");
-  char *html = expand(ip->project, ip->item, "html");
+  char *html = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project, ip->item, "html");
   expand_base(NULL);
 
   char *xh = (char*)pool_alloc(strlen(html)+4,ip->p);

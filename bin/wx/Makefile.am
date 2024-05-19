@@ -7,6 +7,9 @@ subdirs=ccgi
 #cgibin_PROGRAMS=oracc-server
 cgibin_PROGRAMS=wx
 
+noinst_SCRIPTS=wx-pub-p4projects.sh
+bin_SCRIPTS=wx-is-p4-project.sh
+
 # noinst_PROGRAMS=content_test
 # content_test_SOURCES=content_test.c content.c runexpat.c
 # content_test_LDADD=ccgi/libccgi.la -lexpat
@@ -21,6 +24,9 @@ wx_LDADD=ccgi/libccgi.la -lexpat $(xLDADD)
 
 ccgi/libccgi.la:
 	(cd ccgi ; make)
+
+install-exec-hook:
+	./wx-pub-p4projects.sh
 
 oai.c: oai.c.in
 	$(ORACCIFY) oai.c.in

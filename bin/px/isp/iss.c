@@ -205,41 +205,27 @@ set_keys(const char *s, int *nfields)
 }
 
 int
-ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys)
+ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys*/)
 {
   struct item *items = NULL, **pitems = NULL;
   struct page *pages = NULL;
   int nitems = 0;
 
-  if (ip)
+  project = ip->project;
+  listfile = ip->cache.list;
+  sort_keys = ip->curr_cfg->sort_fields;
+  if (!sort_keys)
     {
-      project = ip->project;
-      listfile = ip->cache.list;
-      sort_keys = arg_sortkeys;
+      sort_keys = "period,subgenre,provenience";
+      ip->is.zlev = 3;
     }
   else
     {
-      project = arg_project;
-      listfile = arg_listfile;
-      sort_keys = arg_sortkeys;
-    }
-
-  if (!project)
-    {
-      fprintf(stderr, "ispsortx: must give project with -p PROJECT. Stop.\n");
-      exit(1);
-    }
-
-  if (listfile && access(listfile, R_OK))
-    {
-      fprintf(stderr, "ispsortx: list file non-existent or unreadable. Stop.\n");
-      if (ip)
-	{
-	  ip->err = "list file non-existent or unreadable";
-	  return 1;
-	}
-      else
-	exit(1);
+      ip->is.zlev = 1;
+      const char *k = sort_keys;
+      while (*k)
+	if (',' == *k++)
+	  ++ip->is.zlev;
     }
 
   seen = hash_create(1024);
@@ -253,23 +239,9 @@ ispsort(Isp *ip, const char *arg_project, const char *arg_listfile, const char *
 	exit(1);
     }
 
-  if (!sort_keys)
-    {
-      sort_keys = "period,genre,provenience";
-      ip->is.zlev = 3;
-    }
-  else
-    {
-      ip->is.zlev = 1;
-      const char *k = sort_keys;
-      while (*k)
-	if (',' == *k++)
-	  ++ip->is.zlev;
-    }
-
   u4 i;
   Hash *known_fields = hash_create(5);
-  for (i = 0; i < sip->nfields; ++i)
+  for (i = 0; i < sip->nmapentries; ++i)
     hash_add(known_fields, sip->fields[i].n, "");
   char *s = strdup(sort_keys), *f, *tok;
   int badf = 0;

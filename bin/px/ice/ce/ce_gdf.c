@@ -11,7 +11,7 @@
 #define _MAX_PATH 1024
 #endif
 
-extern int p3;
+extern int p4;
 
 extern int item_offset, tabbed;
 
@@ -120,13 +120,21 @@ gdfprinter2(Hash *fields)
     }
 
   ++nth;
+
+  const char *pqx = hash_find(fields, (ucp)"o:id");
+  
+#if 1
+  if (!url_base)
+    url_base = malloc(strlen(project) + strlen("javascript:act_item_mode('P123456','cat')0"));
+  sprintf(url_base, "javascript:act_item_mode('%s','cat')", pqx);
+#else
   if (!url_base)
     url_base = malloc(strlen(project) + strlen("javascript:p3item('cat',)")+8);
   sprintf(url_base, "javascript:p3item('cat',%d)", item_offset+nth);
+#endif
 
   fputs("<ce:data><tr xmlns=\"http://www.w3.org/1999/xhtml\">",stdout);
-  /*fprintf(stdout, "<td class=\"ce-gdf-icon\"><a href=\"%s\"><img src=\"/img/%s\" alt=\"%s in %s\"/></a></td>", url_base, icon, id, icon_alt);*/
-  fprintf(stdout, "<td class=\"ce-ood-id\"><a href=\"javascript:p3item('ood',%d)\">%s</a></td>", item_offset+nth, (char*)hash_find(fields, (const unsigned char *)"o:id"));
+  fprintf(stdout, "<td class=\"ce-ood-id\"><a href=\"javascript:act_item(%s)\">%s</a></td>", pqx, (char*)hash_find(fields, (const unsigned char *)"o:id"));
   for (i = 0; width_specs[i]; ++i)
     {
       List *tmp = field_lists[i];
@@ -160,20 +168,11 @@ gdfprinter2(Hash *fields)
 	  pctbuf[3] = '\0';
 	  pct = pctbuf;
 	}
-      if (p3)
-	{
-	  if (this_is_designation || i < link_fields)
-	    fprintf(stdout, "<td style=\"width: %s\"><a href=\"javascript:p3item('xtf',%d)\">%s</a></td>", pct, item_offset+nth, xmlify((unsigned char *)value));
-	  else
-	    fprintf(stdout, "<td style=\"width: %s;\">%s</td>", pct, xmlify((unsigned char *)value));
-	}
+
+      if (this_is_designation || i < link_fields)
+	fprintf(stdout, "<td style=\"width: %s\"><a href=\"javascript:act_item_mode(%s,'xtf')\">%s</a></td>", pct, pqx, xmlify((unsigned char *)value));
       else
-	{
-	  if (this_is_designation || i < link_fields)
-	    fprintf(stdout, "<td style=\"width: %s\"><a href=\"javascript:itemView(%d)\">%s</a></td>", pct, item_offset+nth, xmlify((unsigned char *)value));
-	  else
-	    fprintf(stdout, "<td style=\"width: %s;\">%s</td>", pct, xmlify((unsigned char *)value));
-	}
+	fprintf(stdout, "<td style=\"width: %s;\">%s</td>", pct, xmlify((unsigned char *)value));
     }
   fputs("</tr></ce:data>",stdout);
 }

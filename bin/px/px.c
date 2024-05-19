@@ -27,6 +27,9 @@ main(int argc, char **argv)
   if (px_validate(ip))
     goto error;
 
+  if (isp_config(ip))
+    goto error;
+  
   if (ip->form)
     if (px_return(ip))
       {

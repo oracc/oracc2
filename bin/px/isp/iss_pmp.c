@@ -113,7 +113,7 @@ ispmp_zooms(Isp *ip, unsigned char *f, int zmax)
 }
 
 static void
-dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoom, int zpage, int zindex)
+dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoom, int zpage, int zindex, char **proj)
 {
   const char *prev = NULL;
   const char *next = NULL;
@@ -146,27 +146,30 @@ dumpitem(Isp *ip, const char **items, int itemnth, int page, int zoom, int zpage
   else
     strcpy(key, items[itemnth]);
 	
-  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoom, zpage, zindex, prev, next);
+  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s", itemnth, page, zoom, zpage, zindex, prev, next,proj[itemnth]);
   char data[n+1];
-  sprintf(data, "%d\t%d\t%d\t%d\t%d\t%s\t%s", itemnth, page, zoom, zpage, zindex, prev, next);
+  sprintf(data, "%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s", itemnth, page, zoom, zpage, zindex, prev, next, proj[itemnth]);
   dbi_add(ip->itemdata.dp, (ucp)key, data, strlen(data)+1);
 }
 
-static const char *
-post_colon(const char *s)
+#if 0
+static char *
+post_colon(char *s)
 {
-  const char *c = strchr(s, ':');
+  char *c = strchr(s, ':');
   if (c)
     return c+1;
   else
     return s;
 }
+#endif
 
 const char **
-item_array(char *s, int imax, char **mem)
+item_array(char *s, int imax, char **mem, char ***proj)
 {
   char *is = strdup(s);
   char **ip = malloc((imax+1)*sizeof(char *));
+  char **pr = malloc((imax+1)*sizeof(char *));
   int i = 0;
   *mem = is;
   s = is;
@@ -176,7 +179,16 @@ item_array(char *s, int imax, char **mem)
 	s = strchr(s, ' ');
       else if (!isspace(*s))
 	{
-	  ip[i++] = post_colon(s);
+	  char *c = strchr(s, ':');
+	  pr[i] = s;
+	  if (c)
+	    {
+	      *c = '\0';
+	      s = ip[i] = c+1;
+	    }
+	  else
+	    ip[i] = s;
+	  ++i;
 	  while (*s && !isspace(*s))
 	    ++s;
 	  if (*s)
@@ -186,6 +198,8 @@ item_array(char *s, int imax, char **mem)
 	++s;
     }
   ip[i] = NULL;
+  pr[i] = NULL;
+  *proj = pr;
   return (const char **)ip;
 }
 
@@ -210,7 +224,9 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
 
   for (i = 0; items[i]; ++i)
     {
-      strcpy(id, items[i]);
+      strncpy(id, items[i], ITEM_MAX_LEN);
+      id[ITEM_MAX_LEN-1] = '\0'; /* insurance in case ID is overlong */
+	
       char *dot = strchr(id, '.');
       if (dot)
 	*dot = '\0';
@@ -331,8 +347,8 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   sprintf(pfn, "%s.pmp", ip->cache.sort);
   FILE *pfp = fopen(pfn, "w");
 
-  char *imem = NULL, *tmem = NULL;
-  const char **items = item_array((char*)s, imax, &imem);
+  char *imem = NULL, *tmem = NULL, **proj = NULL;
+  const char **items = item_array((char*)s, imax, &imem, &proj);
   const char **texts = NULL;
   int itemnth = 0;
   int textth = 0;
@@ -396,7 +412,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 			  /* Only dump information when it's a new text */
 			  int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
 			  int tzpage = (tzcount / 25) + ((tzcount % 25) ? 1 : 0);
-			  dumpitem(ip, texts, textth, tpage, tzoom, tzpage, tzcount);
+			  dumpitem(ip, texts, textth, tpage, tzoom, tzpage, tzcount, proj);
 			  ++textth;
 			  ++tzcount;
 			}
@@ -404,7 +420,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		  else
 		    {
 		      int izpage = (izcount / 25) + ((izcount % 25) ? 1 : 0);
-		      dumpitem(ip, items, itemnth, page, izoom, izpage, izcount);
+		      dumpitem(ip, items, itemnth, page, izoom, izpage, izcount, proj);
 		      ++izcount;
 		    }
 		  ++itemnth;
@@ -419,7 +435,7 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
     {
       int tpage = (textth / 25) + ((textth % 25) ? 1 : 0);
       int tzpage = (tzcount / 25) + ((tzcount % 25) ? 1 : 0);
-      dumpitem(ip, texts, textth, tpage, tzoom, tzpage, tzcount);
+      dumpitem(ip, texts, textth, tpage, tzoom, tzpage, tzcount, proj);
     }
 
   /* count from decremented s to remove terminal newline */

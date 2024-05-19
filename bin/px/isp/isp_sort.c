@@ -6,10 +6,14 @@
 int
 isp_cache_sort(Isp *ip)
 {
-  /* could reasonably have an Isp member 'curr_sort' which is the sort
-     to use based on default/special and PERM settings */
-
   char buf[strlen(ip->cache.list)+strlen("-1230.mol")];
+
+  /* In P4 'special' outline mode is only used when the list name is outlined.lst */
+  if (ip->list_name && !strcmp(ip->list_name, "outlined.lst") && ip->special_cfg.select)
+    ip->curr_cfg = &ip->special_cfg;
+  else
+    ip->curr_cfg = &ip->default_cfg;
+
   strcpy(buf, ip->cache.list);
   strcpy(strrchr(buf,'/')+1, "sort-");
   strcat(buf, ip->perm);
@@ -17,7 +21,7 @@ isp_cache_sort(Isp *ip)
   strcat(buf, ".mol");
   ip->cache.mol = (ccp)pool_copy((uccp)buf, ip->p);
   if (ip->force)
-    return ispsort(ip, NULL, NULL, ip->sort.default_sort);
+    return ispsort(ip);
   else
     {
       if (!access(ip->cache.sort, F_OK))
@@ -31,6 +35,6 @@ isp_cache_sort(Isp *ip)
 	    }
 	}
       else
-	return ispsort(ip, NULL, NULL, ip->sort.default_sort);
+	return ispsort(ip);
     }
 }

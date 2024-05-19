@@ -45,15 +45,6 @@ struct isp_cache
   const char *hilite;	/* table of text-id\tword-ids to set the hilite on instance sets */
 };
 
-/* Pointers to project config entries */
-struct isp_sort
-{
-  const char *default_sort;
-  const char *default_select;
-  const char *special_sort;
-  const char *special_select;  
-};
-
 struct item
 {
   unsigned char   *s;
@@ -124,6 +115,7 @@ struct isp_itemdata
   const char **langs;
   const char *lmem;
   const char *item;
+  const char *proj; /* the item's project as opposed to the host project, possibly a proxy */
   const char *html;
   const char *dots;
   const char *index;
@@ -156,6 +148,17 @@ struct isp_glosdata
   const char *ipath;	/* item-path: www/PROJECT/cbd/LANG/ITEM.html */
 };
 
+struct isp_config
+{
+  int select;
+  const char *sort_fields;
+  const char *sort_labels;
+  const char *head_template;
+  const char *cat_fields;
+  const char *cat_links;
+  const char *cat_widths;
+};
+
 #include "../pxdefs.h"
 
 typedef struct isp
@@ -172,13 +175,15 @@ typedef struct isp
   const char *projdir;
   const char *list_name;
   struct isp_list_loc lloc;
-  struct isp_sort sort;
   struct ispo is;
   struct isp_mapdata md1;
   struct isp_mapdata md2;
   struct isp_itemdata itemdata;
   struct isp_glosdata glosdata;
   struct isp_srchdata srchdata;
+  struct isp_config default_cfg;
+  struct isp_config special_cfg;
+  struct isp_config *curr_cfg;
   struct outline *op;
   int op_nlevels;
   const char *dors; /* 0 = default ; 1 = special */
