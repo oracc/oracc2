@@ -77,7 +77,7 @@ ispo_master(Isp *ip)
 	  if (!iz.h3)
 	    iz.h3 = (ucp)"";
 	  ispo_h_clean(&iz);
-	  if (iz.h3)
+	  if (iz.h3 && *iz.h3)
 	    {
 	      if (iz.h1 && *iz.h1)
 		fprintf(fp, "%s\n", iz.h1);
@@ -85,7 +85,7 @@ ispo_master(Isp *ip)
 		fprintf(fp, "\t%s\n", iz.h2);
 	      fprintf(fp, "\t\t%s\t#%d\n", iz.h3, iz.count);
 	    }
-	  else if (iz.h2)
+	  else if (iz.h2 && *iz.h2)
 	    {
 	      if (iz.h1 && *iz.h1)
 		fprintf(fp, "%s\n", iz.h1);

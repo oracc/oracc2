@@ -18,16 +18,24 @@ function itemLocation() {
 	let proj = pager.getAttribute("data-proj");
 	let glos = pager.getAttribute("data-glos");
 	let list = pager.getAttribute("data-list");
+	let perm = pager.getAttribute("data-sort");
 	let loc = "/"+proj+"/";
 	if (glos && glos.length > 0 && item_oid(item)) {
 	    loc = loc+glos+"/"+item;
 	} else {
 	    loc = loc+item;
 	}
+	let qs = '';
 	if (list && list !== "outlined.lst") {
-	    loc = loc+"?list="+list;
+	    qs = qs_append(qs, 'list='+list);
 	}
-	// alert("itemLocation="+loc);
+	if (perm && perm !== "123") {
+	    qs = qs_append(qs, 'perm='+perm);
+	}
+
+	loc = loc+qs;
+
+	alert("itemLocation="+loc);
 	window.location = loc;
     } else {
 	alert('itemLocation called but item is NULL');
