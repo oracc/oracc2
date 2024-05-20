@@ -204,11 +204,11 @@ isp_item_xtf(Isp *ip)
 
   expand_base(ip->itemdata.htmd);
   /* always use host project for xmd, never proxy; cache.item is only used for meta.xml */
-  ip->cache.item = pool_copy(expand(ip->project, ip->item, NULL), ip->p);
+  ip->cache.item = (ccp)pool_copy((ucp)expand(ip->project, ip->item, NULL), ip->p);
   ip->cache.meta = (ccp)pool_alloc(strlen(ip->cache.item)+strlen("/meta.xml0"), ip->p);
 
   if (ip->itemdata.proj && strcmp(ip->project, ip->itemdata.proj))
-    ip->cache.prox = pool_copy(expand(ip->itemdata.proj, ip->item, NULL), ip->p);
+    ip->cache.prox = (ccp)pool_copy((ucp)expand(ip->itemdata.proj, ip->item, NULL), ip->p);
   else
     ip->cache.prox = ip->cache.item;
   

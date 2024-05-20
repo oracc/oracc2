@@ -90,7 +90,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    // alert("pageLocation="+loc);
+    alert("pageLocation="+loc);
     window.location=loc;
 }
 

@@ -362,7 +362,8 @@ void
 pui_at_select_sort(Isp *ip, FILE *fp)
 {
   fputs("<div id=\"p4MenuSelect\">", fp);
-  const char *params[] = { "select", "'123'", NULL };
+  char perm[6]; sprintf(perm, "'%s'", ip->perm);
+  const char *params[] = { "select", perm, NULL };
   char osbufd[strlen(ip->oracc)+strlen(ip->project)+strlen("//02xml/p4OSdefault.xml0")];
   sprintf(osbufd, "%s/%s/02xml/p4OSdefault.xml", ip->oracc, ip->project);
   Xslt *xp = xslt_one_off(osbufd, NULL, "p4select", p4select, "-", params);

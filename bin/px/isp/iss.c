@@ -204,6 +204,51 @@ set_keys(const char *s, int *nfields)
   return fields;
 }
 
+const char *
+iss_perm(Isp *ip, const char *sort_keys, int nkeys)
+{
+  if (nkeys < 2 || (nkeys == 2 && !strcmp(ip->perm, "12")) || (nkeys == 3  && !strcmp(ip->perm, "123")))
+    return sort_keys;
+
+  const char *k[nkeys];
+  char *s = (char*)pool_copy((ucp)sort_keys, ip->p);
+  k[0] = s;
+  while (*s && ',' != *s)
+    ++s;
+  if (',')
+    {
+      *s++ = '\0';
+      k[1] = s;
+      while (*s && ',' != *s)
+	++s;
+      if (',')
+	{
+	  *s++ = '\0';
+	  k[2] = s;
+	}
+    }
+  const char *p[nkeys];
+  if (nkeys == 2)
+    {
+      p[0] = k[1];
+      p[1] = k[0];
+      char *ret = malloc(strlen(sort_keys)+2);
+      sprintf(ret, "%s,%s", k[1], k[0]);
+      return ret;
+    }
+  else
+    {
+      int i;
+      const char *perm = ip->perm;
+      for (i = 0; perm[i]; ++i)
+	p[i] = k[perm[i]-'1'];
+      char *ret = malloc(strlen(sort_keys)+3);
+      sprintf(ret, "%s,%s,%s", p[0],  p[1], p[2]);
+      return ret;
+    }
+  return NULL;
+}
+
 int
 ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys*/)
 {
@@ -228,6 +273,8 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
 	  ++ip->is.zlev;
     }
 
+  const char *perm_keys = iss_perm(ip, sort_keys, ip->is.zlev);
+  
   seen = hash_create(1024);
   pg2_pool = pool_init();
 
@@ -243,7 +290,7 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
   Hash *known_fields = hash_create(5);
   for (i = 0; i < sip->nmapentries; ++i)
     hash_add(known_fields, sip->fields[i].n, "");
-  char *s = strdup(sort_keys), *f, *tok;
+  char *s = strdup(perm_keys), *f, *tok;
   int badf = 0;
   tok = s;
   int designation_ok = 0;
@@ -262,7 +309,7 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
   free(s);
 
   if (!designation_ok)
-    sort_keys = append_designation(ip, sort_keys);
+    perm_keys = append_designation(ip, perm_keys);
 
   if (badf)
     {
@@ -277,7 +324,7 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
   
   if (!heading_keys)
     {
-      heading_keys = (ccp)pool_copy((uccp)sort_keys, pg2_pool);
+      heading_keys = (ccp)pool_copy((uccp)perm_keys, pg2_pool);
       char *des = strstr(heading_keys, "designation");
       if (des && !strchr(des, ',')) /* assumes field1,designation,field3 */
 	*des = '\0';
@@ -288,7 +335,7 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
   
   items = pg_load(&nitems);
   
-  if (NULL == (pitems = pg_sort(ip, items, &nitems, sort_keys)))
+  if (NULL == (pitems = pg_sort(ip, items, &nitems, perm_keys)))
     return 1;
 
 #if 0
