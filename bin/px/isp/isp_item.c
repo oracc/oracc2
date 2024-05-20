@@ -135,6 +135,8 @@ isp_create_xtf(Isp *ip)
   list_add(args, (void*)ip->oracc);
   list_add(args, (void*)"/bin/ispxtf.sh");
   list_add(args, " ");
+  list_add(args, (void*)ip->project);
+  list_add(args, " ");
   list_add(args, (void*)(ip->itemdata.proj ? ip->itemdata.proj : ip->project));
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.item);
@@ -142,6 +144,8 @@ isp_create_xtf(Isp *ip)
   list_add(args, (void*)ip->itemdata.langs[0]);
   list_add(args, " ");
   list_add(args, (void*)ip->cache.item);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.prox);
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.xmdxsl);
   list_add(args, " ");
@@ -176,26 +180,39 @@ isp_item_xtf(Isp *ip)
 {
   const char *xtflang = isp_item_lang(ip);
 
+#if 0
   char itemcache[strlen(ip->cache.project)+strlen(ip->item)+2];
   sprintf(itemcache, "%s/%s", ip->cache.project, ip->item);
   ip->cache.item = (ccp)pool_copy((ucp)itemcache, ip->p);
 
   ip->cache.meta = (ccp)pool_alloc(strlen(itemcache)+strlen("/meta.xml0"), ip->p);
   sprintf((char*)ip->cache.meta, "%s/meta.xml", itemcache);
-
+#endif
+  
   if (!ip->itemdata.htmd)
     {
       const char *p4cache = getenv("ORACC_P4_CACHE");
       
       if (p4cache)
 	{
-	  ip->itemdata.htmd = pool_alloc(strlen(p4cache)+5);
-	  sprintf(ip->itemdata.htmd, "%s/htm", p4cache);
+	  ip->itemdata.htmd = (ccp)pool_alloc(strlen(p4cache)+5, ip->p);
+	  sprintf((char*)ip->itemdata.htmd, "%s/htm", p4cache);
 	}
       else
 	ip->itemdata.htmd = "/home/oracc/www/p4.d/htm";
     }
+
   expand_base(ip->itemdata.htmd);
+  /* always use host project for xmd, never proxy; cache.item is only used for meta.xml */
+  ip->cache.item = pool_copy(expand(ip->project, ip->item, NULL), ip->p);
+  ip->cache.meta = (ccp)pool_alloc(strlen(ip->cache.item)+strlen("/meta.xml0"), ip->p);
+
+  if (ip->itemdata.proj && strcmp(ip->project, ip->itemdata.proj))
+    ip->cache.prox = pool_copy(expand(ip->itemdata.proj, ip->item, NULL), ip->p);
+  else
+    ip->cache.prox = ip->cache.item;
+  
+  sprintf((char*)ip->cache.meta, "%s/meta.xml", ip->cache.item);
   char *html = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project, ip->item, "html");
   expand_base(NULL);
 

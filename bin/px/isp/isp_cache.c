@@ -7,11 +7,11 @@ isp_cache_sys(Isp *ip)
 {
   if (!ip->cache.sys)
     {
-      ip->cache.sys = getenv("ORACC_ISP_CACHE");
+      ip->cache.sys = getenv("ORACC_P4_CACHE");
       if (!ip->cache.sys)
 	{
-	  char dir[strlen(ip->oracc)+strlen("/www/is.d0")];
-	  sprintf(dir, "%s/www/is.d", ip->oracc);
+	  char dir[strlen(ip->oracc)+strlen("/www/p4.d0")];
+	  sprintf(dir, "%s/www/p4.d", ip->oracc);
 	  ip->cache.sys = (ccp)pool_copy((uccp)dir, ip->p);
 	}
       struct stat sb;

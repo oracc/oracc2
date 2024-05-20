@@ -2,9 +2,9 @@
 #include <xmlify.h>
 #include "isp/isp.h"
 void
-pr_isp_list_loc(FILE *fp, struct isp_list_loc *pr)
+pr_isp_list_loc(FILE *fp, struct isp_list_loc *pr, const char *name)
 {
-  fputs("<h3>\tisp_list_loc</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isp_list_loc ip->%s</h3>\n", name);
   fprintf(fp,"\t\ttype=%s\n",(char*)xmlify((ucp)pr->type));
   fprintf(fp,"\t\tlang=%s\n",(char*)xmlify((ucp)pr->lang));
   fprintf(fp,"\t\tmethod=%s\n",(char*)xmlify((ucp)pr->method));
@@ -14,9 +14,9 @@ pr_isp_list_loc(FILE *fp, struct isp_list_loc *pr)
 }
 
 void
-pr_isp_srchdata(FILE *fp, struct isp_srchdata *pr)
+pr_isp_srchdata(FILE *fp, struct isp_srchdata *pr, const char *name)
 {
-  fputs("<h3>\tisp_srchdata</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isp_srchdata ip->%s</h3>\n", name);
   fprintf(fp,"\t\ttmp=%s\n",(char*)xmlify((ucp)pr->tmp));
   fprintf(fp,"\t\tbar=%s\n",(char*)xmlify((ucp)pr->bar));
   fprintf(fp,"\t\tcount=%lu\n",(unsigned long)pr->count);
@@ -24,9 +24,9 @@ pr_isp_srchdata(FILE *fp, struct isp_srchdata *pr)
 }
 
 void
-pr_isp_cache(FILE *fp, struct isp_cache *pr)
+pr_isp_cache(FILE *fp, struct isp_cache *pr, const char *name)
 {
-  fputs("<h3>\tisp_cache</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isp_cache ip->%s</h3>\n", name);
   fprintf(fp,"\t\tsys=%s\n",(char*)xmlify((ucp)pr->sys));
   fprintf(fp,"\t\tproject=%s\n",(char*)xmlify((ucp)pr->project));
   fprintf(fp,"\t\tsub=%s\n",(char*)xmlify((ucp)pr->sub));
@@ -37,6 +37,7 @@ pr_isp_cache(FILE *fp, struct isp_cache *pr)
   fprintf(fp,"\t\tpage=%s\n",(char*)xmlify((ucp)pr->page));
   fprintf(fp,"\t\tzout=%s\n",(char*)xmlify((ucp)pr->zout));
   fprintf(fp,"\t\titem=%s\n",(char*)xmlify((ucp)pr->item));
+  fprintf(fp,"\t\tprox=%s\n",(char*)xmlify((ucp)pr->prox));
   fprintf(fp,"\t\tmeta=%s\n",(char*)xmlify((ucp)pr->meta));
   fprintf(fp,"\t\thtml=%s\n",(char*)xmlify((ucp)pr->html));
   fprintf(fp,"\t\tltab=%s\n",(char*)xmlify((ucp)pr->ltab));
@@ -44,9 +45,9 @@ pr_isp_cache(FILE *fp, struct isp_cache *pr)
 }
 
 void
-pr_item(FILE *fp, struct item *pr)
+pr_item(FILE *fp, struct item *pr, const char *name)
 {
-  fputs("<h3>\titem</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct item ip->%s</h3>\n", name);
   fprintf(fp,"\t\ts=%s\n",(char*)xmlify((ucp)pr->s));
   fprintf(fp,"\t\tpq=%s\n",(char*)xmlify((ucp)pr->pq));
   fprintf(fp,"\t\tqpq=%s\n",(char*)xmlify((ucp)pr->qpq));
@@ -56,26 +57,26 @@ pr_item(FILE *fp, struct item *pr)
 }
 
 void
-pr_outline(FILE *fp, struct outline *pr)
+pr_outline(FILE *fp, struct outline *pr, const char *name)
 {
-  fputs("<h3>\toutline</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct outline ip->%s</h3>\n", name);
   fprintf(fp,"\t\thdr=%s\n",(char*)xmlify((ucp)pr->hdr));
   fprintf(fp,"\t\tpage=%d\n",(int)pr->page);
   fprintf(fp,"\t\tcount=%d\n",(int)pr->count);
 }
 
 void
-pr_ispo(FILE *fp, struct ispo *pr)
+pr_ispo(FILE *fp, struct ispo *pr, const char *name)
 {
-  fputs("<h3>\tispo</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct ispo ip->%s</h3>\n", name);
   fprintf(fp,"\t\tzmax=%lu\n",(unsigned long)pr->zmax);
   fprintf(fp,"\t\tzlev=%d\n",(int)pr->zlev);
 }
 
 void
-pr_isph(FILE *fp, struct isph *pr)
+pr_isph(FILE *fp, struct isph *pr, const char *name)
 {
-  fputs("<h3>\tisph</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isph ip->%s</h3>\n", name);
   fprintf(fp,"\t\tzoom=%d\n",(int)pr->zoom);
   fprintf(fp,"\t\tlevel=%d\n",(int)pr->level);
   fprintf(fp,"\t\th=%s\n",(char*)xmlify((ucp)pr->h));
@@ -83,9 +84,9 @@ pr_isph(FILE *fp, struct isph *pr)
 }
 
 void
-pr_ispz(FILE *fp, struct ispz *pr)
+pr_ispz(FILE *fp, struct ispz *pr, const char *name)
 {
-  fputs("<h3>\tispz</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct ispz ip->%s</h3>\n", name);
   fprintf(fp,"\t\th1=%s\n",(char*)xmlify((ucp)pr->h1));
   fprintf(fp,"\t\th2=%s\n",(char*)xmlify((ucp)pr->h2));
   fprintf(fp,"\t\th3=%s\n",(char*)xmlify((ucp)pr->h3));
@@ -94,16 +95,16 @@ pr_ispz(FILE *fp, struct ispz *pr)
 }
 
 void
-pr_page(FILE *fp, struct page *pr)
+pr_page(FILE *fp, struct page *pr, const char *name)
 {
-  fputs("<h3>\tpage</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct page ip->%s</h3>\n", name);
   fprintf(fp,"\t\tused=%d\n",(int)pr->used);
 }
 
 void
-pr_isp_mapdata(FILE *fp, struct isp_mapdata *pr)
+pr_isp_mapdata(FILE *fp, struct isp_mapdata *pr, const char *name)
 {
-  fputs("<h3>\tisp_mapdata</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isp_mapdata ip->%s</h3>\n", name);
   fprintf(fp,"\t\tzmax=%d\n",(int)pr->zmax);
   fprintf(fp,"\t\tzimx=%d\n",(int)pr->zimx);
   fprintf(fp,"\t\thtell=%lu\n",(unsigned long)pr->htell);
@@ -113,12 +114,13 @@ pr_isp_mapdata(FILE *fp, struct isp_mapdata *pr)
 }
 
 void
-pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr)
+pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name)
 {
-  fputs("<h3>\tisp_itemdata</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isp_itemdata ip->%s</h3>\n", name);
   fprintf(fp,"\t\tlmem=%s\n",(char*)xmlify((ucp)pr->lmem));
   fprintf(fp,"\t\titem=%s\n",(char*)xmlify((ucp)pr->item));
   fprintf(fp,"\t\tproj=%s\n",(char*)xmlify((ucp)pr->proj));
+  fprintf(fp,"\t\thtmd=%s\n",(char*)xmlify((ucp)pr->htmd));
   fprintf(fp,"\t\thtml=%s\n",(char*)xmlify((ucp)pr->html));
   fprintf(fp,"\t\tdots=%s\n",(char*)xmlify((ucp)pr->dots));
   fprintf(fp,"\t\tindex=%s\n",(char*)xmlify((ucp)pr->index));
@@ -135,9 +137,9 @@ pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr)
 }
 
 void
-pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr)
+pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr, const char *name)
 {
-  fputs("<h3>\tisp_glosdata</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isp_glosdata ip->%s</h3>\n", name);
   fprintf(fp,"\t\tdir=%s\n",(char*)xmlify((ucp)pr->dir));
   fprintf(fp,"\t\tweb=%s\n",(char*)xmlify((ucp)pr->web));
   fprintf(fp,"\t\tlet=%s\n",(char*)xmlify((ucp)pr->let));
@@ -152,9 +154,9 @@ pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr)
 }
 
 void
-pr_isp_config(FILE *fp, struct isp_config *pr)
+pr_isp_config(FILE *fp, struct isp_config *pr, const char *name)
 {
-  fputs("<h3>\tisp_config</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct isp_config ip->%s</h3>\n", name);
   fprintf(fp,"\t\tselect=%d\n",(int)pr->select);
   fprintf(fp,"\t\tsort_fields=%s\n",(char*)xmlify((ucp)pr->sort_fields));
   fprintf(fp,"\t\tsort_labels=%s\n",(char*)xmlify((ucp)pr->sort_labels));
@@ -209,22 +211,22 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\targc=%d\n",(int)pr->argc);
   fprintf(fp,"\treferer=%s\n",(char*)xmlify((ucp)pr->referer));
   fprintf(fp,"\ttmpdir=%s\n",(char*)xmlify((ucp)pr->tmpdir));
-  pr_isp_cache(fp, &ip->cache);
-  pr_isp_config(fp, &ip->default_cfg);
-  pr_isp_config(fp, &ip->special_cfg);
-  pr_isp_glosdata(fp, &ip->glosdata);
-  pr_isp_itemdata(fp, &ip->itemdata);
-  pr_isp_list_loc(fp, &ip->lloc);
-  pr_isp_mapdata(fp, &ip->md1);
-  pr_isp_mapdata(fp, &ip->md2);
-  pr_isp_srchdata(fp, &ip->srchdata);
-  pr_ispo(fp, &ip->is);
+  pr_isp_cache(fp, &ip->cache, "cache");
+  pr_isp_config(fp, &ip->default_cfg, "default_cfg");
+  pr_isp_config(fp, &ip->special_cfg, "special_cfg");
+  pr_isp_glosdata(fp, &ip->glosdata, "glosdata");
+  pr_isp_itemdata(fp, &ip->itemdata, "itemdata");
+  pr_isp_list_loc(fp, &ip->lloc, "lloc");
+  pr_isp_mapdata(fp, &ip->md1, "md1");
+  pr_isp_mapdata(fp, &ip->md2, "md2");
+  pr_isp_srchdata(fp, &ip->srchdata, "srchdata");
+  pr_ispo(fp, &ip->is, "is");
 }
 
 void
-pr_ispargstab(FILE *fp, struct ispargstab *pr)
+pr_ispargstab(FILE *fp, struct ispargstab *pr, const char *name)
 {
-  fputs("<h3>\tispargstab</h3>\n", fp);
+  fprintf(fp, "<h3>\tstruct ispargstab ip->%s</h3>\n", name);
   fprintf(fp,"\t\tname=%s\n",(char*)xmlify((ucp)pr->name));
   fprintf(fp,"\t\tstep=%d\n",(int)pr->step);
 }

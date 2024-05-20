@@ -31,4 +31,6 @@ extern int px_return(Isp *ip);
 extern const char *fatalize(const char *e);
 extern int selecter(const char *file, char * const*ids);
 
+extern void px_print_ip(FILE *fp, Isp *ip);
+
 #endif/*PX_H*/

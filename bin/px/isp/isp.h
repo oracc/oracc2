@@ -27,9 +27,7 @@ struct isp_srchdata
 
 struct isp_cache
 {
-  const char *sys;	/* the system cache directory: /home/oracc/tmp/isp
-			   for search results; /home/oracc/www/is.d
-			   for precompiled instance sets */
+  const char *sys;	/* the system cache directory, default /home/oracc/www/p4.d */
   const char *project;	/* the project's cache directory */
   const char *sub;	/* the current cache with list */
   const char *list;	/* the list file */
@@ -39,6 +37,7 @@ struct isp_cache
   const char *page;	/* the filename of the page-content for a zoomed slice; z=0 for no zoom */
   const char *zout;	/* the filename of the zoom-menu for a zoomed slice; z=0 for no zoom */
   const char *item;	/* the cache-dir for item data */
+  const char *prox;	/* the cache-dir for proxied item data */
   const char *meta;	/* the filename of the metadata for the displayed item */
   const char *html;	/* the filename of the html content of the displayed item */
   const char *ltab;	/* the filename of the letters.tab if cache is a glossary */

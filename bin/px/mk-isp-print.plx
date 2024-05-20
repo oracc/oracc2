@@ -90,8 +90,8 @@ sub end_isp {
 
 sub begin_struct {
     my $n = shift @_;
-    print "void\npr_$n(FILE *fp, struct $n *pr)\n{\n";
-    print "  fputs(\"<h3>\\t$n</h3>\\n\", fp);\n";
+    print "void\npr_$n(FILE *fp, struct $n *pr, const char *name)\n{\n";
+    print "  fprintf(fp, \"<h3>\\tstruct $n ip->\%s</h3>\\n\", name);\n";
 }
 sub end_struct {
     print "}\n\n";
@@ -119,9 +119,9 @@ sub subref {
     return if $n =~ /curr_cfg/;
     unless (exists $ignore{$t}) {
 	if ($p =~ /\*/) {
-	    print "  pr_$t(fp, ip->$n);\n";
+	    print "  pr_$t(fp, ip->$n, \"$n\");\n";
 	} else {
-	    print "  pr_$t(fp, \&ip->$n);\n";
+	    print "  pr_$t(fp, \&ip->$n, \"$n\");\n";
 	}
     }
 }

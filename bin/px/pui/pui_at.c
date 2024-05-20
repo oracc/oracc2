@@ -242,10 +242,8 @@ pui_at_environment(Isp *ip, FILE *fp)
 }
 
 void
-pui_at_error(Isp *ip, FILE *fp)
+pui_at_error_log(Isp *ip, FILE *fp)
 {
-  fprintf(fp, ip->errx ? ip->err : PX_ERROR_START "%s", ip->errx ? ip->errx : ip->err);
-
   if (ip->cache.sub)
     {
       char errbuf[strlen(ip->cache.sub)+strlen("/err.log0")];
@@ -257,6 +255,13 @@ pui_at_error(Isp *ip, FILE *fp)
 	  fprintf(fp, "\n");
 	}
     }
+}
+
+void
+pui_at_error(Isp *ip, FILE *fp)
+{
+  fprintf(fp, ip->errx ? ip->err : PX_ERROR_START "%s", ip->errx ? ip->errx : ip->err);
+  pui_at_error_log(ip, fp);
 }
 
 void

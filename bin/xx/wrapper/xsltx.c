@@ -24,6 +24,7 @@ const char *invoke;
 const char *infile;
 const char *listfile;
 const char *outfile;
+const char *p4htmld;
 const char *project;
 const char *translation;
 
@@ -181,7 +182,7 @@ perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
   expand_base(NULL);
   char *in = strdup(expand(NULL, qpqx, proginfo->inext));
   const char *out = NULL;
-  expand_base("/home/oracc/www/htm");
+  expand_base(p4htmld);
   if (!outfile)
     out = strdup(expand(NULL, qpqx, proginfo->outext));
   else
@@ -251,6 +252,17 @@ main(int argc, char **argv) {
     {
       const char **f = files();
       int i;
+      if (!p4htmld)
+	{
+	  const char *p4cache = getenv("ORACC_P4_CACHE");
+	  if (p4cache)
+	    {
+	      p4htmld = malloc(strlen(p4cache)+5);
+	      sprintf((char*)p4htmld, "%s/htm", p4cache);
+	    }
+	  else
+	    p4htmld = "/home/oracc/www/p4.d/htm";
+	}
       for (i = 0; f[i]; ++i)
 	if ((status = perfile(proginfo, f[i], translation)))
 	  {

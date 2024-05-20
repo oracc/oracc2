@@ -10,12 +10,15 @@ isp_hilited(Isp *ip)
   Dbi_index *dp;
   const char *h = ip->hili;
   const char *dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
-  if ((dp = dbx_init(dir, dbifn)))
+  if (!dbx_access(dir, dbifn))
     {
-      h = (ccp)dbx_key(dp, ip->itemdata.item, NULL);
-      if (h)
-	h = (ccp)pool_copy((ucp)h, ip->p);
-      dbx_term(dp);
+      if ((dp = dbx_init(dir, dbifn)))
+	{
+	  h = (ccp)dbx_key(dp, ip->itemdata.item, NULL);
+	  if (h)
+	    h = (ccp)pool_copy((ucp)h, ip->p);
+	  dbx_term(dp);
+	}
     }
   else
     {

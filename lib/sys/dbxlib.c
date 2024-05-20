@@ -1,6 +1,14 @@
 #include <oraccsys.h>
 #include <dbxlib.h>
 
+int
+dbx_access(const char *dir, const char *name)
+{
+  char fn[strlen(dir)+strlen(name)+2];
+  sprintf(fn, "%s/%s.dbh", dir, name);
+  return access(fn, R_OK);
+}
+
 Dbi_index *
 dbx_init(const char *dir, const char *name)
 {

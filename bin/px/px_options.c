@@ -155,7 +155,7 @@ opts(int opt, const char *arg)
 	    opt_ip->list_name = (ccp)pool_copy((ucp)slash+1,opt_ip->p);
 	    opt_ip->cache.sub = opt_ip->tmp_dir = opt_ip->srchdata.tmp = arg;
 	    opt_ip->cache.sys = (ccp)pool_copy((ucp)arg,opt_ip->p);
-	    char *isd = strstr(opt_ip->cache.sys, "/is.d/");
+	    char *isd = strstr(opt_ip->cache.sys, "/p4.d/");
 	    isd += 5;
 	    *isd = '\0';
 	  }
