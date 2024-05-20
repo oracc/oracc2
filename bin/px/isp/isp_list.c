@@ -15,6 +15,9 @@ isp_list_cemd(Isp *ip)
   (void)nth_line(ip, NULL,-1,-1);
   if (lp)
     {
+      char *colon = strchr(lp, ':');
+      if (colon)
+	lp = colon+1;
       if ('o' == *lp || 'x' == *lp)
 	{
 	  ip->data = "dglo";

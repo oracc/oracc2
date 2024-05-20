@@ -36,9 +36,11 @@
 #p4XtfMeta.hide	{ display: none; }
 
 #p4XtfMeta { flex: 1 1 20%; display: inline-block; vertical-align: top;
-	     border-right: solid lightgray 1px; }
+	     border-right: solid lightgray 1px;
+	     height: 80%; overflow-y: auto; }
 
-#p4XtfData { flex: 1 1 80%; display: inline-block; vertical-align: top; }
+#p4XtfData { flex: 1 1 80%; display: inline-block; vertical-align: top;
+	     height: 80%; overflow-y: auto; }
 
 #p4Translations { vertical-align: middle; }
 
@@ -103,7 +105,9 @@ p	{ margin: 0; padding: 0; }
 
 #p4MenuOutline 	{ font-family: arial,sans-serif; font-size: 80%;
 		  padding-right: 5px; padding-left: 5px;
-		  padding-top: 5px; padding-bottom: 5px; }
+		  padding-top: 5px; padding-bottom: 5px;
+		  height: 80%; overflow-y: auto;
+		}
 
 #p4MenuOutline .zoomed { background-color: silver; }
 
