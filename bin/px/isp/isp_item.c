@@ -183,7 +183,19 @@ isp_item_xtf(Isp *ip)
   ip->cache.meta = (ccp)pool_alloc(strlen(itemcache)+strlen("/meta.xml0"), ip->p);
   sprintf((char*)ip->cache.meta, "%s/meta.xml", itemcache);
 
-  expand_base("/home/oracc/www/htm");
+  if (!ip->itemdata.htmd)
+    {
+      const char *p4cache = getenv("ORACC_P4_CACHE");
+      
+      if (p4cache)
+	{
+	  ip->itemdata.htmd = pool_alloc(strlen(p4cache)+5);
+	  sprintf(ip->itemdata.htmd, "%s/htm", p4cache);
+	}
+      else
+	ip->itemdata.htmd = "/home/oracc/www/p4.d/htm";
+    }
+  expand_base(ip->itemdata.htmd);
   char *html = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project, ip->item, "html");
   expand_base(NULL);
 
