@@ -35,7 +35,7 @@ function itemLocation() {
 
 	loc = loc+qs;
 
-	alert("itemLocation="+loc);
+	// alert("itemLocation="+loc);
 	window.location = loc;
     } else {
 	alert('itemLocation called but item is NULL');
@@ -98,7 +98,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    alert("pageLocation="+loc);
+    // alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -379,3 +379,94 @@ function showexemplar2(project,lang,PQ,lineid,fragid) {
     /* win.focus(); */
 }
 
+/* Notes implementation from notes.js, not from p3.js which seems never to have been used */
+function
+xshowNote(e,nid) {
+  if (!e)
+    e = event;
+  note=document.getElementById(nid);
+  note.style.left=e.clientX-100;
+  note.style.top=e.clientY;
+  alert(nid+' is at '+e.clientX+' x '+e.clientY);
+  // makes note element visible
+  note.style.visibility='visible';
+  return 1;
+}
+function
+hideNote(e,nid) {
+  if (!e)
+    e = event;
+  note=document.getElementById(nid);
+  // makes note element visible
+  note.style.visibility='hidden';
+  return 1;
+}
+function
+showNote(e,nid,trans) {
+    if (!e) var e = event;
+    var posx = 0;
+    var posy = 0;
+    var safari = 0;
+    var ua = navigator.userAgent.toLowerCase(); 
+    if (ua.indexOf('safari')!=-1){
+	safari = 1;
+    }
+
+    // alert('showNote called with nid='+nid);
+    
+    if (!e) e = event;
+    if (e.clientX || e.clientY) {
+	posx = e.clientX - window.pageXOffset;
+	if (e.clientY > 0) {
+	    posy = e.clientY;
+	}
+    } else if (e.pageX || e.pageY) {
+	posx = e.pageX;
+	posy = e.pageY;
+    }
+    
+    // posx and posy contain the mouse position relative to the document
+    // Do something with this information
+    note=document.getElementById(nid);
+
+
+//    alert('Event is at xy '+posx+'x'+posy);
+    
+    jQsel = "#"+nid;
+    nidh = $(jQsel).height();
+    nidw = $(jQsel).width();
+    // alert('Note '+jQsel+' is '+nidh+'hx'+nidw+'w');
+    
+    p3rh = $("#p4Content").height() - 100;
+    p3rw = $("#p4Content").width();
+    // alert('Container is '+p3rh+'hx'+p3rw+'w');
+
+    if (note.style.visibility != "visible") {
+	if (trans) {
+	    note.style.left = (posx-200)+'px';
+	} else {
+	    note.style.left = posx+'px';
+	}
+
+	spaceup = posy;
+	spacedn = p3rh-posy;
+
+	notehalf = nidh/2;
+
+	if (notehalf <= spaceup && notehalf <= spacedn) {
+//	    alert('middle');
+	    note.style.top = (posy/2)+'px';
+	} else if (notehalf >= spaceup) {
+//	    alert('below');
+	    note.style.top = posy;
+	} else {
+//	    alert('above');
+	    //	    note.style.top = posy+'px';
+	    note.style.top = (posy-nidh)+'px';
+	}
+	
+	note.style.visibility='visible';
+	note.style.zIndex = 3;
+    }
+    return 1;
+}

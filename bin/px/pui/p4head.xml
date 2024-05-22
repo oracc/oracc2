@@ -3,5 +3,6 @@
   <link rel="stylesheet" type="text/css" href="/@@pui_project()@@/css/p3colours.css"/>
   <link rel="stylesheet" type="text/css" href="/@@pui_project()@@/css/projcss.css"/>
   <script type="text/javascript" src="/js/p4.js">&#160;</script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript"><![CDATA[ ]]></script>
   <title>@@pui_project()@@</title>    
 </x>

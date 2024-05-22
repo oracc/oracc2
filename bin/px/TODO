@@ -4,8 +4,7 @@ BUGS
 
 	item/page view doesn't jump in to item-view properly
 
-sorter
-	use options from config.xml
+	glossary item view doesn't autoselect letter-zoom
 
 ispdiv
 
@@ -24,4 +23,10 @@ Document proscribed list names
 
   * anything matching a valid IS ID
   * anything.glo if anything is also a glossary in the project
+
+Adapt JN xmdoutline so it takes colours from p3-colours; make
+JN-xmdoutline selectable via config option and/or make it default and
+make oldstyle selectable via config opt
+
+redo shownote to remove jquery dependency
 
