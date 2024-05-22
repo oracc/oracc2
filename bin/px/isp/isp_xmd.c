@@ -42,13 +42,10 @@ isp_xmd_outline(Isp *ip)
   char *p = strrchr(pbuf,'/');
   if (!p)
     p = pbuf;
-  char xsl[strlen(oraccwww)+strlen(pbuf)+strlen("/lib/scripts/xmdoutline.xsl0")];
+  char xsl[strlen(oracc_builds())+strlen(/www/")+strlen(pbuf)+strlen("/lib/scripts/xmdoutline.xsl0")];
   do
     {
-      strcpy(xsl, oraccwww);
-      strcat(xsl, pbuf);
-      strcat(xsl, "/xmdoutline.xsl");
-      /*sprintf(xsl, "%s/%s/xmdoutline.xsl", oraccwww, pbuf);*/
+      sprintf(xsl, "%s/www/%s/xmdoutline.xsl", oracc_builds(), pbuf);
       if (!access(xsl, R_OK))
 	return (ccp)pool_copy((ucp)xsl, ip->p);
       else
