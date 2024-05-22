@@ -99,6 +99,8 @@ p	{ margin: 0; padding: 0; }
 
 #p4Pager, #p4Data { height: 100%; }
 
+#p4CExmdContent { height: 80%; overflow-y: auto; }
+
 /* Zoom-menu CSS */
 
 #p4MenuSelect	{ text-align: center; margin-top: -26px; margin-bottom: 5px; }

@@ -168,8 +168,8 @@ const char **
 item_array(char *s, int imax, char **mem, char ***proj)
 {
   char *is = strdup(s);
-  char **ip = malloc((imax+1)*sizeof(char *));
-  char **pr = malloc((imax+1)*sizeof(char *));
+  char **ip = calloc((imax+1), sizeof(char *));
+  char **pr = calloc((imax+1), sizeof(char *));
   int i = 0;
   *mem = is;
   s = is;
@@ -206,7 +206,7 @@ item_array(char *s, int imax, char **mem, char ***proj)
 const char **
 text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tmem, int *tmax)
 {
-  char **t = malloc(imax * sizeof(char *));
+  char **t = calloc(imax+1 , sizeof(char *));
   int tcount = 0, i, h_start = 0;
 
 #if 1
@@ -280,7 +280,7 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
 
   if (tmax)
     *tmax = tcount;
-  t = realloc(t, tcount * sizeof(char*));
+  t = realloc(t, (1+tcount) * sizeof(char*));
   return (const char **)t;
 }
 
