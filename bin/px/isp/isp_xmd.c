@@ -36,13 +36,11 @@ const char *
 isp_xmd_outline(Isp *ip)
 {
   char pbuf[strlen(ip->project)+1];
-  char oraccwww[strlen(oracc_builds())+strlen("/www/")];
-  sprintf(oraccwww, "%s/www/", oracc_builds());
   strcpy(pbuf, ip->project);
   char *p = strrchr(pbuf,'/');
   if (!p)
     p = pbuf;
-  char xsl[strlen(oracc_builds())+strlen(/www/")+strlen(pbuf)+strlen("/lib/scripts/xmdoutline.xsl0")];
+  char xsl[strlen(oracc_builds())+strlen("/www/")+strlen(pbuf)+strlen("/lib/scripts/xmdoutline.xsl0")];
   do
     {
       sprintf(xsl, "%s/www/%s/xmdoutline.xsl", oracc_builds(), pbuf);
