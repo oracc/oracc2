@@ -2,6 +2,10 @@
   <div id="p4itemNav" class="p4items">
     <p class="bg-dk">
 
+      
+      <img id="p4ToggleMeta" class="p4icon" src="/img/p3-full.png"
+	   alt="Toggle metadata pane" title="Toggle metadata pane" onclick="toggle_md()"/>
+      
       <img id="p4PageItem" class="p4icon p4spread" src="/img/p3-pageitem.png"
 	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
 	   onclick="toggle_pi()"/>
@@ -61,9 +65,5 @@
     </p>
   </div>
 
-  <p id="p4ToggleMeta" class="p4raise">
-    <img class="p4icon" src="/img/p3-full.png"
-	 alt="Toggle metadata pane" title="Toggle metadata pane" onclick="toggle_md()"/>
-  </p>  
 </x>
 
