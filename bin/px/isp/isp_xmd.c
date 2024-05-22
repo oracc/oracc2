@@ -45,7 +45,10 @@ isp_xmd_outline(Isp *ip)
   char xsl[strlen(oraccwww)+strlen(pbuf)+strlen("/lib/scripts/xmdoutline.xsl0")];
   do
     {
-      sprintf(xsl, "%s/%s/xmdoutline.xsl", oraccwww, pbuf);
+      strcpy(xsl, oraccwww);
+      strcat(xsl, pbuf);
+      strcat(xsl, "/xmdoutline.xsl");
+      /*sprintf(xsl, "%s/%s/xmdoutline.xsl", oraccwww, pbuf);*/
       if (!access(xsl, R_OK))
 	return (ccp)pool_copy((ucp)xsl, ip->p);
       else
