@@ -2,6 +2,13 @@
    font-family: 'Noto Sans Cuneiform';
    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
 }
+@font-face {
+   font-family: 'Noto Sans Cuneiform Gudea';
+   src: url('/fonts/Noto-SansCuneiform-Gudea.ttf');
+}
+.gudea {
+   font-family: "Noto Sans Cuneiform Gudea";
+}
 .noto {
    font-family: "Noto Sans Cuneiform";
 }
