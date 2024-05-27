@@ -18,6 +18,7 @@ si_load_csi(Isp *ip)
   char csiname[MAX_PATH];
 
   sprintf(csiname,"/home/oracc/pub/%s/sortinfo.csi",project);
+  ip->cache.csi = (char*)pool_copy((ucp)csiname, ip->p);
 
   if (stat(csiname,&csistat))
     {

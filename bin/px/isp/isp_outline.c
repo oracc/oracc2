@@ -20,9 +20,9 @@ ispo_h_clean(struct ispz *zp)
 {
   if (zp->h1 && *zp->h1)
     hcsub(zp->h1);
-  if (zp->h1 && *zp->h2)
+  if (zp->h2 && *zp->h2)
     hcsub(zp->h2);
-  if (zp->h1 && *zp->h3)
+  if (zp->h3 && *zp->h3)
     hcsub(zp->h3);  
 }
 

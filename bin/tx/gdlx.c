@@ -93,11 +93,18 @@ do_one(char *s)
   if (cuneify_mode)
     {
       const unsigned char *ucun = (uccp)gvl_cuneify_tree(tp), *ivs;
-      if (gvl_script_type)
-	ivs = gvl_ivs(ucun, NULL);
+      if (bare_mode)
+	{
+	  printf("%s\t%s\n", s, ucun);
+	}
       else
-	ivs = (uccp)"not done";
-      printf("ucun %s => %s => ivs %s\n", s, ucun, ivs);
+	{
+	  if (gvl_script_type)
+	    ivs = gvl_ivs(ucun, NULL);
+	  else
+	    ivs = (uccp)"not done";
+	  printf("ucun %s => %s => ivs %s\n", s, ucun, ivs);
+	}
     }
   else if (uname_mode)
     {

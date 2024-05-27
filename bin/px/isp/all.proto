@@ -58,7 +58,7 @@ extern int isp_xis_list(Isp *ip);
 /* isp_xmd.c */
 extern const char *isp_xmd_outline(Isp *ip);
 /* iss.c */
-extern struct item *pg_load(int *nitems);
+extern struct item *pg_load(Isp *ip, int *nitems);
 extern const char *iss_perm(Isp *ip, const char *sort_keys, int nkeys);
 extern int ispsort(Isp *ip);
 /* iss_page.c */

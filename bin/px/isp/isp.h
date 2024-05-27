@@ -32,6 +32,8 @@ struct isp_cache
   const char *sub;	/* the current cache with list */
   const char *list;	/* the list file */
   const char *sort; 	/* the list sorted by the requested permutation */
+  const char *csi; 	/* the compiled sort info (.csi) file */
+  const char *pmp; 	/* the directory isp->ip->cache.sort/pmp/ for .pmp files */
   const char *mol; 	/* the master outline for the list in cache.sort */
   const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the filename of the page-content for a zoomed slice; z=0 for no zoom */

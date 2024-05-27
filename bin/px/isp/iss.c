@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "../px.h"
 #include "isp.h"
 
 FILE *fpag = NULL;
@@ -21,8 +22,6 @@ extern int use_linkmap;
 #endif
 
 const char *heading_keys = NULL, *sort_keys = NULL;
-const char *listfile = NULL;
-const char *project = NULL;
 
 #include "iss_sk_lookup.c"
 
@@ -68,44 +67,48 @@ is_lang_id(const char *s)
 }
 
 struct item *
-pg_load(int *nitems)
+pg_load(Isp *ip, int *nitems)
 {
-  unsigned char *buf = NULL, *s;
+  char *buf = NULL, *s;
   size_t buflen;
-  if (listfile)
+  if (!(buf = (char*)loadfile((unsigned const char *)ip->cache.list,&buflen)))
     {
-      if (!(buf = loadfile((unsigned const char *)listfile,&buflen)))
-	return NULL;
+      ip->err = px_err("failed to load list file %s", ip->cache.list);
+      return NULL;
     }
-  else
-    buf = loadstdin(&buflen);
   s = buf;
   
   /* we know that each entry takes up at least 8 bytes */
   items = malloc(((buflen / 8) + 1) * sizeof(struct item));
   while (s - buf < buflen)
     {
+      /* set up orig_s so it points to the PQX, which may be
+	 qualified, and so the end of the (Q)QPX is null-terminated;
+	 colon points to the QPX character whether the QPX is
+	 qualified or not */
       char *colon = NULL, *dot;
-      unsigned char *orig_s = s;
+      char *orig_s = s;
       colon = strchr((char*)s,':');
       if (colon)
-	{
-	  orig_s = s;
-	  s = (unsigned char *)++colon;
-	}
+	++colon;
       if (*s == 'P' || *s == 'Q' || *s == 'X' || is_lang_id((char *)s) || *s == 'o')
 	{
-	  items[items_used].s = orig_s;
+	  items[items_used].s = (ucp)orig_s;
 	  while (*s && '\n' != *s)
 	    ++s;
-	  s = adjust_s(buf,s);
+	  s = (char*)adjust_s((ucp)buf,(ucp)s);
 	  *s++ = '\0';
-	  items[items_used].pq = (unsigned char*)strdup(colon 
-							? colon
-							: (char*)items[items_used].s);
+	  items[items_used].qpq = pool_copy((ucp)orig_s, ip->p);
 	  if (colon)
 	    {
-	      items[items_used].qpq = malloc((colon - (ccp)orig_s)+strlen((ccp)items[items_used].pq)+2);
+	      int offset = colon - orig_s;
+	      items[items_used].pq = items[items_used].qpq + offset;
+	    }
+	  else
+	    items[items_used].pq = items[items_used].qpq;
+		
+	  if (colon)
+	    {
 	      int cpylen =  1+(colon-(ccp)orig_s);
 	      strncpy((char*)items[items_used].qpq, (ccp)orig_s,cpylen);
 	      items[items_used].qpq[cpylen] = '\0';
@@ -125,8 +128,10 @@ pg_load(int *nitems)
 	}
       else
 	{
-	  fprintf(stderr,"pg: bad list `%s'\n",listfile);
-	  exit(1);
+	  ip->err = px_err("syntax error line %d in list file %s; expected QPX-number",
+			   items_used,
+			   ip->cache.list);
+	  return NULL;
 	}
     }
   *nitems = items_used;
@@ -250,14 +255,12 @@ iss_perm(Isp *ip, const char *sort_keys, int nkeys)
 }
 
 int
-ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char *arg_sortkeys*/)
+ispsort(Isp *ip)
 {
   struct item *items = NULL, **pitems = NULL;
   struct page *pages = NULL;
   int nitems = 0;
 
-  project = ip->project;
-  listfile = ip->cache.list;
   sort_keys = ip->curr_cfg->sort_fields;
   if (!sort_keys)
     {
@@ -280,10 +283,8 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
 
   if (NULL == (sip = si_load_csi(ip)))
     {
-      if (ip)
-	return 1;
-      else
-	exit(1);
+      ip->err = px_err("failed to load csi file %s", ip->cache.csi);
+      return 1;
     }
 
   u4 i;
@@ -313,13 +314,8 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
 
   if (badf)
     {
-      if (ip)
-	{
-	  ip->err = "bad fields in sort specification";
-	  return 1;
-	}
-      else
-	exit(1);
+      ip->err = "bad fields in sort specification";
+      return 1;
     }
   
   if (!heading_keys)
@@ -333,7 +329,8 @@ ispsort(Isp *ip/*, const char *arg_project, const char *arg_listfile, const char
   if (heading_keys)
     headfields = set_keys(heading_keys, &nheadfields);
   
-  items = pg_load(&nitems);
+  if (!(items = pg_load(ip, &nitems)))
+    return 1;
   
   if (NULL == (pitems = pg_sort(ip, items, &nitems, perm_keys)))
     return 1;
