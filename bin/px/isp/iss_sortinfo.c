@@ -5,7 +5,6 @@
 #define MAX_PATH 1024
 
 extern const char *prog;
-extern const char *project;
 extern int verbose;
 extern struct sortinfo *sip;
 
@@ -17,7 +16,7 @@ si_load_csi(Isp *ip)
   void *csimap;
   char csiname[MAX_PATH];
 
-  sprintf(csiname,"/home/oracc/pub/%s/sortinfo.csi",project);
+  sprintf(csiname,"/home/oracc/pub/%s/sortinfo.csi",ip->project);
   ip->cache.csi = (char*)pool_copy((ucp)csiname, ip->p);
 
   if (stat(csiname,&csistat))

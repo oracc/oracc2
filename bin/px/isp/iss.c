@@ -90,7 +90,7 @@ pg_load(Isp *ip, int *nitems)
       char *orig_s = s;
       colon = strchr((char*)s,':');
       if (colon)
-	++colon;
+	s = ++colon;
       if (*s == 'P' || *s == 'Q' || *s == 'X' || is_lang_id((char *)s) || *s == 'o')
 	{
 	  items[items_used].s = (ucp)orig_s;
@@ -107,16 +107,6 @@ pg_load(Isp *ip, int *nitems)
 	  else
 	    items[items_used].pq = items[items_used].qpq;
 		
-	  if (colon)
-	    {
-	      int cpylen =  1+(colon-(ccp)orig_s);
-	      strncpy((char*)items[items_used].qpq, (ccp)orig_s,cpylen);
-	      items[items_used].qpq[cpylen] = '\0';
-	      strcat((char*)items[items_used].qpq, (ccp)items[items_used].pq);
-	    }
-	  else
-	    items[items_used].qpq = items[items_used].pq;
-								     
 	  if ((dot = strchr((const char *)items[items_used].pq,'.')))
 	    {
 	      *dot++ = '\0';
