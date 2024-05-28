@@ -145,6 +145,11 @@ create_page_div(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->cemd);
 
+  if (ip->dors && '1' == *ip->dors)
+    list_add(args, " special");
+  else
+    list_add(args, " default");
+  
   if (ip->glos && !ip->glosdata.xis)
     {
       list_add(args, " ");

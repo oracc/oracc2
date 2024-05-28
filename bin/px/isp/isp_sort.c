@@ -10,9 +10,15 @@ isp_cache_sort(Isp *ip)
 
   /* In P4 'special' outline mode is only used when the list name is outlined.lst */
   if (ip->list_name && !strcmp(ip->list_name, "outlined.lst") && ip->special_cfg.select)
-    ip->curr_cfg = &ip->special_cfg;
+    {
+      ip->curr_cfg = &ip->special_cfg;
+      ip->dors = "1";
+    }
   else
-    ip->curr_cfg = &ip->default_cfg;
+    {
+      ip->curr_cfg = &ip->default_cfg;
+      ip->dors = "0";
+    }
 
   strcpy(buf, ip->cache.list);
   strcpy(strrchr(buf,'/')+1, "sort-");

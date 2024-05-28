@@ -134,6 +134,17 @@ pxurlitem(const char *item, const char *replace)
 }
 
 void
+pxlist(const char *project, const char *list)
+{
+  CGI_varlist *v = NULL;
+
+  v = CGI_get_query(v);
+  if (!CGI_lookup(v, "list"))
+    v = CGI_add_var(v, "list", list);
+  pxvl(v);
+}
+
+void
 px(const char *project)
 {
   if (query_string)

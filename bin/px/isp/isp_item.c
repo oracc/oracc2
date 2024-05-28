@@ -247,7 +247,8 @@ isp_item_set(Isp *ip)
   if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
     return 1;
 
-  ip->itemdata.bld = expand(ip->project, ip->itemdata.item, NULL);
+  ip->itemdata.bld = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project,
+			    ip->itemdata.item, NULL);
   struct stat st;
   stat(ip->itemdata.bld, &st);
   if (!S_ISDIR(st.st_mode))
