@@ -293,9 +293,16 @@ pui_at_menu(Isp *ip, FILE *fp)
 {
   if (!ip->srch || ip->srchdata.count != 0L)
     {
-      if (!ip->glos)
-	pui_at_select_sort(ip, fp);
-      px_file_copy(ip, ip->cache.zout, "-");
+      if (ip->glos || (ip->curr_cfg && ip->curr_cfg->select))
+	{
+	  fprintf(fp, "<div id=\"p4Menu\">\n");
+	  if (!ip->glos && ip->curr_cfg->select)
+	    pui_at_select_sort(ip, fp);
+	  px_file_copy(ip, ip->cache.zout, "-");
+	  fprintf(fp, "</div>\n");
+	}
+      else
+	fprintf(fp, "<div id=\"p4Menu\" class=\"hide none\"><p>x</p></div>\n");
     }
   /* can do better here? maybe return 123/0/1 menu for outlined.lst? */
 }

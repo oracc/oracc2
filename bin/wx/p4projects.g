@@ -19,3 +19,6 @@ akkec
 tclba
 babcity
 babii
+rinap
+colabur
+caribo

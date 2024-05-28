@@ -89,6 +89,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/dx/odo/Makefile
 		 bin/gx/Makefile
 		 bin/jx/Makefile
+		 bin/lx/Makefile
 		 bin/ox/Makefile
 		 bin/px/Makefile
 		 bin/px/ice/Makefile

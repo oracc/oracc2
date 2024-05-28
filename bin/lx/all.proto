@@ -1,0 +1,17 @@
+/* lx.c */
+extern int main(int argc, char **argv);
+extern int opts(int opt, const char *arg);
+extern void help(void);
+/* lx_check.c */
+extern void lx_check(const char *fn);
+/* lx_item.c */
+extern void lx_item(Lxfile *lxp, int i);
+/* lx_load.c */
+extern Lxfile *lx_load(const char *fn);
+extern void lx_free(Lxfile *lxp);
+/* lx_loadfile.c */
+extern char **lx_loadfile(const char *fname, size_t *nlines, char **fmem);
+/* lx_parse.c */
+extern void lx_parse(Lxfile *lxp);
+/* lx_show.c */
+extern void lx_show(Lxfile *lxp, FILE *fp);

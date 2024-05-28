@@ -311,23 +311,14 @@ void
 mesg_print(FILE *fp)
 {
   mesg_print2(fp, mesg_list);
-  mesg_list = NULL;
 }
 
 void
 mesg_print2(FILE *fp, List *mlist)
 {
-  if (mlist && list_len(mlist))
+  if (mlist)
     {
-      if (0) /* unsorted messages */
-	{
-	  List_node *lp;
-	  for (lp = mlist->first; lp; lp = lp->next)
-	    {
-	      fputs((char*)lp->data, fp);
-	    }
-	}
-      else
+      if (list_len(mlist))
 	{
 	  char **mp = NULL;
 	  int i;

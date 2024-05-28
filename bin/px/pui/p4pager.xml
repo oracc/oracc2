@@ -18,9 +18,7 @@
     </div>
   </div>
   <div id="p4Data">
-    <div id="p4Menu">
-      @@pui_menu()@@
-    </div>
+    @@pui_menu()@@
     <div id="p4Content">
       @@pui_content()@@
     </div>
