@@ -8,8 +8,14 @@
 %}
 struct p4tab;
 %%
+dcclt
 dccmt
 obel
 obta
 rimanum
 tcma
+tcmb
+akkec
+tclba
+babcity
+babii
