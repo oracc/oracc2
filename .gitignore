@@ -1,5 +1,6 @@
 # Executables; be specific so, e.g., sx ignore doesn't make whole subdir ignored
 bin/ax/ax
+bin/ax/atfdatax
 bin/dx/dcx
 bin/dx/dx
 bin/dx/odo/odo
