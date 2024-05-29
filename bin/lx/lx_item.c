@@ -36,7 +36,7 @@ lx_item(Lxfile *lxp, int i)
 	    lpp->p = lp;
 	  lpp->i = li;
 	  if (qualify && !lc)
-	    lpp->c = (char*)project;
+	    lpp->c = lpp->p;
 	  else
 	  lpp->c = lc;
 	}

@@ -188,6 +188,12 @@ item_array(char *s, int imax, char **mem, char ***proj)
 	    }
 	  else
 	    ip[i] = s;
+	  char *at;
+	  if ((at = strchr(s, '@')))
+	    {
+	      *at = '\0';
+	      s = at+1;
+	    }
 	  ++i;
 	  while (*s && !isspace(*s))
 	    ++s;

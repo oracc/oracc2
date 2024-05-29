@@ -219,6 +219,9 @@ xmdprinter2(const char *pq)
       xmd_init();
 
       /* pq is a qualified ID, so use the project from that */
+      char *at;
+      if ((at = strchr(pq, '@')))
+	*at = '\0';
       if ((pqx = strchr(pq, ':')))
 	{
 	  ++pqx;
