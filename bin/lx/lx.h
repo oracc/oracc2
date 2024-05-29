@@ -18,10 +18,16 @@ typedef struct lxfile
   size_t nlines;
   Lx *items;
   size_t nitems;
+  Hash *seen;
 } Lxfile;
 
 extern int check;
-extern int show;
+extern int output;
+extern const char  *project;
+extern int qualify;
+extern int sort;
+extern int uniq;
+extern int verbose;
 
 #include "all.proto"
 

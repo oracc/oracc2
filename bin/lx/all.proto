@@ -11,7 +11,11 @@ extern Lxfile *lx_load(const char *fn);
 extern void lx_free(Lxfile *lxp);
 /* lx_loadfile.c */
 extern char **lx_loadfile(const char *fname, size_t *nlines, char **fmem);
+/* lx_output.c */
+extern void lx_output(Lxfile *lxp, FILE *fp);
 /* lx_parse.c */
 extern void lx_parse(Lxfile *lxp);
 /* lx_show.c */
 extern void lx_show(Lxfile *lxp, FILE *fp);
+/* lx_sort.c */
+extern void lx_sort(Lxfile *lxp);

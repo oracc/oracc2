@@ -2,16 +2,38 @@
 #include "lx.h"
 
 int check;
-int show;
+int output;
+const char *project;
+int qualify;
+int sort;
+int uniq;
+int verbose;
 
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "cs");
-  if (check)
+  if (options(argc, argv, "cop:qsuv"))
+    return 1;
+  if (qualify && !project)
     {
-      while (argv[optind])
-	lx_check(argv[optind++]);
+      fprintf(stderr, "%s: -q specified without -p PROJECT. Stop.\n", argv[0]);
+      return 1;
+    }
+      
+  while (argv[optind])
+    {
+      mesg_init();
+      Lxfile *lxf = lx_load(argv[optind++]);
+      mesg_print(stderr);
+      if (!check)
+	{
+	  if (sort)
+	    lx_sort(lxf);
+	  if (output)
+	    lx_output(lxf, stdout);
+	}
+      lx_free(lxf);
+      mesg_term();
     }
 }
 
@@ -23,8 +45,23 @@ opts(int opt, const char *arg)
     case 'c':
       check = 1;
       break;
+    case 'o':
+      output = 1;
+      break;
+    case 'p':
+      project = arg;
+      break;
+    case 'q':
+      qualify = 1;
+      break;
     case 's':
-      show = 1;
+      sort = 1;
+      break;
+    case 'u':
+      uniq = 1;
+      break;
+    case 'v':
+      verbose = 1;
       break;
     default:
       return 1;  

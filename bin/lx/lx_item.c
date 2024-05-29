@@ -11,19 +11,37 @@ lx_item(Lxfile *lxp, int i)
     {
       char *l = lxp->lines[i];
       char *colon = strchr(l, ':'), *at = strchr(l,'@');
-      Lx *lp = &lxp->items[lxp->nitems++];
+      char *lp = NULL, *li = NULL, *lc = NULL;
+      
       if (colon)
 	{
-	  lp->p = l;
+	  lp = l;
 	  *colon++ = '\0';
-	  lp->i = colon;
+	  li = colon;
 	}
       else
-	lp->i = l;
+	li = l;
       if (at)
 	{
 	  *at++ = '\0';
-	  lp->c = at;
+	  lc = at;
+	}
+      if (!uniq || !hash_find(lxp->seen, (uccp)li))
+	{
+	  Lx *lpp = &lxp->items[lxp->nitems++];
+	  if (qualify && !lp)
+	    lpp->p = (char*)project;
+	  else
+	    lpp->p = lp;
+	  lpp->i = li;
+	  if (qualify && !lc)
+	    lpp->c = (char*)project;
+	  else
+	  lpp->c = lc;
+	}
+      else if (verbose)
+	{
+	  mesg_vwarning(lxp->fn, i, "skipping duplicate item %s", li);
 	}
     }
   else
