@@ -1,6 +1,7 @@
 #!/bin/dash
 #
-# $1=host-project $2=prox-project $3=PQX $4=tr-lang $5=meta-dir $6=html-dir $7=xmdoutline.xsl $8=cachedir
+# $1=host-project $2=prox-project $3=PQX $4=tr-lang ("-" for no tr-lang)
+# $5=meta-dir $6=html-dir $7=xmdoutline.xsl $8=cachedir
 #
 # If this is not a proxy then prox-project is set to host-project so
 # it's safe to use prox-project for all XTF-related paths.

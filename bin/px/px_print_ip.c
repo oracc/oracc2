@@ -119,6 +119,8 @@ void
 pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name)
 {
   fprintf(fp, "<h3>\tstruct isp_itemdata ip->%s</h3>\n", name);
+  fprintf(fp,"\t\tlangs=%s\n",(char*)xmlify((ucp)pr->langs));
+  fprintf(fp,"\t\txtflang=%s\n",(char*)xmlify((ucp)pr->xtflang));
   fprintf(fp,"\t\tlmem=%s\n",(char*)xmlify((ucp)pr->lmem));
   fprintf(fp,"\t\titem=%s\n",(char*)xmlify((ucp)pr->item));
   fprintf(fp,"\t\tproj=%s\n",(char*)xmlify((ucp)pr->proj));
@@ -159,6 +161,7 @@ void
 pr_isp_config(FILE *fp, struct isp_config *pr, const char *name)
 {
   fprintf(fp, "<h3>\tstruct isp_config ip->%s</h3>\n", name);
+  fprintf(fp,"\t\tleftmenu=%d\n",(int)pr->leftmenu);
   fprintf(fp,"\t\tselect=%d\n",(int)pr->select);
   fprintf(fp,"\t\tsort_fields=%s\n",(char*)xmlify((ucp)pr->sort_fields));
   fprintf(fp,"\t\tsort_labels=%s\n",(char*)xmlify((ucp)pr->sort_labels));

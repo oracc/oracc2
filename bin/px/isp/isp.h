@@ -113,7 +113,8 @@ struct isp_mapdata
 
 struct isp_itemdata
 {
-  const char **langs;
+  const char *langs;	/* all the langs this text is available in */
+  const char *xtflang;	/* the lang to use for the next xtf item call */
   const char *lmem;
   const char *item;
   const char *proj; /* the item's project as opposed to the host project, possibly a proxy */
@@ -152,6 +153,7 @@ struct isp_glosdata
 
 struct isp_config
 {
+  int leftmenu;
   int select;
   const char *sort_fields;
   const char *sort_labels;

@@ -14,12 +14,24 @@ isp_config(Isp *ip)
 
   const char *sel = NULL;
 
+  ip->default_cfg.leftmenu = ip->special_cfg.leftmenu = 1;
+  if ((sel = hash_find(ip->xpd->opts, (ucp)"outline-default-leftmenu"))
+      && (!strcmp(sel, "false")|| !strcmp(sel, "no")))
+    ip->default_cfg.leftmenu = 0;
+  if ((sel = hash_find(ip->xpd->opts, (ucp)"outline-special-leftmenu"))
+      && (!strcmp(sel, "false")|| !strcmp(sel, "no")))
+    ip->default_cfg.leftmenu = 0;
+  
   if ((sel = hash_find(ip->xpd->opts, (ucp)"outline-default-select")))
-    if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
-      ip->default_cfg.select = 1;
+    {
+      if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
+	ip->default_cfg.select = 1;
+    }
+  else
+    ip->default_cfg.select = 1;
+  
   d(cat_fields,"outline-default-catalog-fields");
   d(cat_widths,"outline-default-catalog-widths");
-  d(sort_fields,"outline-default-sort-fields");
   d(sort_fields,"outline-default-sort-fields");
   d(sort_labels,"outline-default-sort-labels");
   d(head_template,"outline-default-sort-template");
@@ -29,7 +41,6 @@ isp_config(Isp *ip)
       ip->special_cfg.select = 1;
   s(cat_fields,"outline-special-catalog-fields");
   s(cat_widths,"outline-special-catalog-widths");
-  s(sort_fields,"outline-special-sort-fields");
   s(sort_fields,"outline-special-sort-fields");
   s(sort_labels,"outline-special-sort-labels");
   s(head_template,"outline-special-sort-template");

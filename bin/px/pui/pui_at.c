@@ -293,10 +293,10 @@ pui_at_menu(Isp *ip, FILE *fp)
 {
   if (!ip->srch || ip->srchdata.count != 0L)
     {
-      if (ip->glos || (ip->curr_cfg && ip->curr_cfg->select))
+      if (ip->glos || !ip->curr_cfg || ip->curr_cfg->leftmenu)
 	{
 	  fprintf(fp, "<div id=\"p4Menu\">\n");
-	  if (!ip->glos && ip->curr_cfg->select)
+	  if (!ip->glos && ip->curr_cfg && ip->curr_cfg->select)
 	    pui_at_select_sort(ip, fp);
 	  px_file_copy(ip, ip->cache.zout, "-");
 	  fprintf(fp, "</div>\n");
@@ -397,6 +397,10 @@ pui_at_select_sort(Isp *ip, FILE *fp)
 void
 pui_at_select_trans(Isp *ip, FILE *fp)
 {
+#if 1
+  if (ip->itemdata.langs)
+    fputs(ip->itemdata.langs, fp);
+#else
   const char *params[] = { "select", "'en'", NULL };
   char trbuf[strlen(ip->oracc)+strlen(ip->project)+strlen("//02xml/p4-trans-select.xml0")];
   sprintf(trbuf, "%s/%s/02xml/p4-trans-select.xml", ip->oracc, ip->project);
@@ -408,4 +412,5 @@ pui_at_select_trans(Isp *ip, FILE *fp)
     }
   else
     xslt_term(xp);
+#endif
 }

@@ -49,8 +49,9 @@ vec_to_str (char **vec, size_t count, char *sep)
   *tmp = '\0';
   for (i = 0, len = 0; i < count; ++i)
     {
+      if (i)
+	(void)strcat (tmp, sep);
       (void)strcat (tmp, vec[i]);
-      (void)strcat (tmp, sep);
     }
   return tmp;
 }

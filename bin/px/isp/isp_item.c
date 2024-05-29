@@ -78,54 +78,14 @@ isp_item_load(Isp *ip)
 static int
 isp_item_langs(Isp *ip)
 {
-  size_t n;
-  char langsfile[strlen(ip->projdir)+strlen("/02pub/langs.txt0")];
-  sprintf(langsfile, "%s/02pub/langs.txt", ip->projdir);
-  if (!(ip->itemdata.langs = (const char **)px_loadfile_lines3((ucp)langsfile,
-							       &n, (unsigned char **)&ip->itemdata.lmem)))
-    {
-      ip->err = (ccp)px_loadfile_error();
-      return 1;
-    }
-  return 0;
-}
-
-/* Ensure there is a lang in scope for the current xtf-item; we test
- * for the existence of a .xtr file and if there are any translations
- * at all we return the lang of an existing translation if the
- * requested language is not available.
- */
-static const char *
-isp_item_lang(Isp *ip)
-{
-  const char *first_lang = NULL;
-  if (ip->lang && ip->itemdata.langs && ip->itemdata.langs[0])
-    {
-      int i;
-      for (i = 0; ip->itemdata.langs[i]; ++i)
-	{
-	  if (!strcmp(ip->lang, ip->itemdata.langs[i]))
-	    {
-	      const char *fn = expand_xtr(ip->project, ip->itemdata.item, "project", ip->lang);
-	      if (!access(fn, R_OK))
-		return ip->lang;
-	    }
-	  else if (!first_lang)
-	    {
-	      const char *fn = expand_xtr(ip->project, ip->itemdata.item, "project", ip->itemdata.langs[i]);
-	      if (!access(fn, R_OK))
-		first_lang = ip->itemdata.langs[i];
-	    }
-	}
-      if (first_lang)
-	return first_lang;
-      else
-	return "en";
-    }
-  else if (ip->lang)
-    return "en";
-  else
-    return ip->itemdata.langs[0];
+  ip->itemdata.langs = isp_dbx_one_off(ip, ip->itemdata.proj ? ip->itemdata.proj : ip->project,
+				       "02pub", "trs", ip->itemdata.item, NULL);
+  
+  /* It's not an error to have no trs db--it's only an error if the
+     itemdata isn't in the db we're searching */
+  if (ip->err && strstr(ip->err, "unable to open"))
+    ip->err = NULL;
+   return ip->err ? 1 : 0;
 }
 
 static int
@@ -141,7 +101,7 @@ isp_create_xtf(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.item);
   list_add(args, " ");
-  list_add(args, (void*)ip->itemdata.langs[0]);
+  list_add(args, (void*)(ip->itemdata.langs ? ip->itemdata.langs : "-"));
   list_add(args, " ");
   list_add(args, (void*)ip->cache.item);
   list_add(args, " ");
@@ -175,20 +135,19 @@ isp_create_xtf(Isp *ip)
   return 0;
 }
 
+static const char *
+isp_item_lang(Isp *ip)
+{
+  if (ip->itemdata.langs && strstr(ip->itemdata.langs, "en"))
+    return "en";
+  return NULL;
+}
+
 static int
 isp_item_xtf(Isp *ip)
 {
-  const char *xtflang = isp_item_lang(ip);
+  ip->itemdata.xtflang = isp_item_lang(ip);
 
-#if 0
-  char itemcache[strlen(ip->cache.project)+strlen(ip->item)+2];
-  sprintf(itemcache, "%s/%s", ip->cache.project, ip->item);
-  ip->cache.item = (ccp)pool_copy((ucp)itemcache, ip->p);
-
-  ip->cache.meta = (ccp)pool_alloc(strlen(itemcache)+strlen("/meta.xml0"), ip->p);
-  sprintf((char*)ip->cache.meta, "%s/meta.xml", itemcache);
-#endif
-  
   if (!ip->itemdata.htmd)
     {
       const char *p4cache = getenv("ORACC_P4_CACHE");
@@ -219,8 +178,8 @@ isp_item_xtf(Isp *ip)
   char *xh = (char*)pool_alloc(strlen(html)+4,ip->p);
   strcpy(xh, html);
   ip->itemdata.html = xh;
-  if (strcmp(xtflang, "en"))
-    sprintf((char*)(ip->itemdata.html+strlen(ip->itemdata.html)), ".%s", xtflang);
+  if (ip->itemdata.xtflang && strcmp(ip->itemdata.xtflang, "en"))
+    sprintf((char*)(ip->itemdata.html+strlen(ip->itemdata.html)), ".%s", ip->itemdata.xtflang);
 
   fprintf(stderr, "itemdata.html = %s\n", ip->itemdata.html);
   

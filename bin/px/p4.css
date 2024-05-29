@@ -217,7 +217,7 @@ span.h2 { font-weight: bold; }
 tr.h td { display: none; }
 
 sub { font-style: normal; }
-.sux { font-style: normal; }
+.r,.sux { font-style: normal; }
 .akk { font-style: italic; }
 .arc { font-style: italic; }
 .egy { font-style: italic; }

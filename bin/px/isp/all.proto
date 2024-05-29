@@ -6,6 +6,8 @@ extern int isp_cache_list(Isp *ip);
 extern int isp_cache_page(Isp *ip);
 /* isp_config.c */
 extern int isp_config(Isp *ip);
+/* isp_dbx.c */
+extern const void *isp_dbx_one_off(Isp *ip, const char *proj, const char *dir, const char *name, const char *key, Unsigned32 *n);
 /* isp_glos.c */
 extern const char *isp_glos_letter_id(Isp *ip);
 extern int isp_glos_pmax(Isp *ip);

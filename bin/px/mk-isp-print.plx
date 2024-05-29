@@ -29,32 +29,32 @@ foreach (@isp) {
     if (/\s+steps\[/ || /\*\*/ || /Unsigned32\s+\*/) {
 	# ignore
     } elsif (/^struct\s+(\S+)\s*$/) {
-	warn "<struct $1\n";
+	# warn "<struct $1\n";
 	begin_struct($1);
 	++$subref;
     } elsif (/^typedef struct (\S+)/) {
-	warn "<<typedef struct $1\n";
+	# warn "<<typedef struct $1\n";
 	begin_isp();
     } elsif (/^\s+(char \*)(\S+?);/) {
 	my($t,$n) = ($1,$2);
-	warn ">#$1 =$2\n";
+	# warn ">#$1 =$2\n";
 	member('char',$2);
     } elsif (/^\s+(const char \*)(\S+?);/) {
 	my($t,$n) = ($1,$2);
-	warn ">#$1 =$2\n";
+	# warn ">#$1 =$2\n";
 	member('char',$2);
     } elsif (/^\s+(unsigned char \*)(\S+?);/) {
 	my($t,$n) = ($1,$2);
-	warn ">#$1 =$2\n";
+	# warn ">#$1 =$2\n";
 	member('char',$2);
     } elsif (/^\s+(int|Signed32|Unsigned32)\s+(\S+?);/i) {
-	warn ">#$1 =$2\n";
+	# warn ">#$1 =$2\n";
 	member('int',$2);
     } elsif (/^\s+(long\s+int|size_t|unsigned long)\s+(\S+?);/i) {
-	warn ">#$1 =$2\n";
+	# warn ">#$1 =$2\n";
 	member('long',$2);
     } elsif (/^\s+struct\s+(\S+(?:\s*\*)?)\s*(\S+?);/) {
-	warn ">$1 =$2\n";
+	# warn ">$1 =$2\n";
 	my($t,$n) = ($1,$2);
 	if ($t =~ /\*/) {
 	    subref('structp', $t, $n);
@@ -62,20 +62,20 @@ foreach (@isp) {
 	    subref('struct', $t, $n);
 	}
     } elsif (/^\};/) {
-	warn ">(end block)\n";
+	# warn ">(end block)\n";
 	end_struct();
 	$subref = 0;
     } elsif (/^\}\s+(\S+?);/) {
-	warn ">>\n";
+	# warn ">>\n";
 	end_struct();
 	$subref = 0;
     } elsif (/^\{/) {
-	warn "(start block)";
+	# warn "(start block)";
 	# no action
     } elsif (/^extern/) {
 	# ignore;
     } else {
-	warn "not handled $_\n";
+	#warn "not handled $_\n";
     }
 }
 
