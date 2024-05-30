@@ -10,6 +10,7 @@ struct p4tab;
 %%
 dcclt
 dccmt
+etcsri
 obel
 obta
 rimanum

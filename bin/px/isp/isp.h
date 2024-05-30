@@ -113,8 +113,10 @@ struct isp_mapdata
 
 struct isp_itemdata
 {
-  const char *langs;	/* all the langs this text is available in */
-  const char *xtflang;	/* the lang to use for the next xtf item call */
+  const char *langs;	/* all the langs this item is available in */
+  const char **langp;	/* langs as array */
+  int nlangs;
+  const char *xtflang;	/* the lang to use for the next xtf item call */ 
   const char *lmem;
   const char *item;
   const char *proj; /* the item's project as opposed to the host project, possibly a proxy */

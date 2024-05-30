@@ -114,22 +114,14 @@ function getPager() {
     return document.getElementById("p4Pager");
 }
 
-function act_sorter(dors) {
-    let perm = document.getElementById(dors).value;
+function act_sorter() {
+    let perm = document.getElementById("p4MenuSelect").value;
     let pager = getPager();
     let currperm = pager.getAttribute('data-sort');
     if (perm !== currperm) {
 	pager.setAttribute('data-sort', perm);
 	pageLocation();
     }
-}
-
-function act_sorter_default() {
-    act_sorter('p4OSdefault');
-}
-
-function act_sorter_special() {
-    act_sorter('p4OSspecial');
 }
 
 function act_article(item) {

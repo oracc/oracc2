@@ -266,6 +266,22 @@ ispsort(Isp *ip)
 	  ++ip->is.zlev;
     }
 
+  if (!ip->perm || '#' == *ip->perm)
+    {
+      switch(ip->is.zlev)
+	{
+	case 3:
+	  ip->perm = "123";
+	  break;
+	case 2:
+	  ip->perm = "12";
+	  break;
+	default:
+	  ip->perm = "1";
+	  break;
+	}
+    }
+  
   const char *perm_keys = iss_perm(ip, sort_keys, ip->is.zlev);
   
   seen = hash_create(1024);

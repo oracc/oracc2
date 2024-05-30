@@ -365,9 +365,13 @@ pui_at_select_ce(Isp *ip, FILE *fp)
     xslt_term(xp);
 }
 
+  
 void
 pui_at_select_sort(Isp *ip, FILE *fp)
 {
+#if 1
+  pui_123(ip->perm, ip->curr_cfg->sort_labels, fp);
+#else
   fputs("<div id=\"p4MenuSelect\">", fp);
   char perm[6]; sprintf(perm, "'%s'", ip->perm);
   const char *params[] = { "select", perm, NULL };
@@ -392,6 +396,7 @@ pui_at_select_sort(Isp *ip, FILE *fp)
   else
     xslt_term(xp);
   fputs("</div>", fp);
+#endif
 }
 
 void
@@ -399,7 +404,21 @@ pui_at_select_trans(Isp *ip, FILE *fp)
 {
 #if 1
   if (ip->itemdata.langs)
-    fputs(ip->itemdata.langs, fp);
+    {
+      fputs("<span>\n          <select id=\"p4TransSelect\" onchange=\"act_translation()\">\n", fp);
+      int i;
+      for (i = 0; ip->itemdata.langp[i]; ++i)
+	{
+	  if (ip->lang && !strcmp(ip->lang, ip->itemdata.langp[i]))
+	    fprintf(fp, "            <option value=\"%s\" selected=\"selected\">%s</option>\n",
+		    ip->itemdata.langp[i],ip->itemdata.langp[i]);
+	  else
+	    fprintf(fp, "            <option value=\"%s\">%s</option>\n",
+		    ip->itemdata.langp[i],ip->itemdata.langp[i]);
+	}
+      fprintf(fp, "            <option value=\"none\">(none)</option>\n");
+      fputs("          </select>\n        </span>\n", fp);
+    }
 #else
   const char *params[] = { "select", "'en'", NULL };
   char trbuf[strlen(ip->oracc)+strlen(ip->project)+strlen("//02xml/p4-trans-select.xml0")];

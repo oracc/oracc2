@@ -16,7 +16,7 @@ hal_cmp(const void*a, const void*b)
     return 1;
   else if (((HAL*)a)->weighting > ((HAL*)b)->weighting)
     return -1;
-  return 0;
+  return strcmp(((HAL*)a)->lang, ((HAL*)b)->lang);
 }
 
 const char **

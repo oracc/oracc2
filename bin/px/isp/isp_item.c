@@ -81,10 +81,17 @@ isp_item_langs(Isp *ip)
   ip->itemdata.langs = isp_dbx_one_off(ip, ip->itemdata.proj ? ip->itemdata.proj : ip->project,
 				       "02pub", "trs", ip->itemdata.item, NULL);
   
-  /* It's not an error to have no trs db--it's only an error if the
-     itemdata isn't in the db we're searching */
-  if (ip->err && strstr(ip->err, "unable to open"))
-    ip->err = NULL;
+  if (ip->itemdata.langs)
+    {
+      ip->itemdata.langp = vec_from_str(ip->itemdata.langs, NULL, &ip->itemdata.nlangs);
+    }
+  else
+    {
+      /* It's not an error to have no trs db--it's only an error if the
+	 itemdata isn't in the db we're searching */
+      if (ip->err && strstr(ip->err, "unable to open"))
+	ip->err = NULL;
+    }
    return ip->err ? 1 : 0;
 }
 

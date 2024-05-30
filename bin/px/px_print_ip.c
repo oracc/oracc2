@@ -120,6 +120,7 @@ pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name)
 {
   fprintf(fp, "<h3>\tstruct isp_itemdata ip->%s</h3>\n", name);
   fprintf(fp,"\t\tlangs=%s\n",(char*)xmlify((ucp)pr->langs));
+  fprintf(fp,"\t\tnlangs=%d\n",(int)pr->nlangs);
   fprintf(fp,"\t\txtflang=%s\n",(char*)xmlify((ucp)pr->xtflang));
   fprintf(fp,"\t\tlmem=%s\n",(char*)xmlify((ucp)pr->lmem));
   fprintf(fp,"\t\titem=%s\n",(char*)xmlify((ucp)pr->item));
