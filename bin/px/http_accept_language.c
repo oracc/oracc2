@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "px.h"
 
 typedef struct HAL
 {
@@ -34,7 +35,7 @@ http_accept_language(const char *hal)
   s = orig;
   while (*s)
     {
-      h[n].lang = s;
+      h[n].lang = lang32(s);
       h[n].weighting = 1.0;
       ++n;
       while (*s)
@@ -55,12 +56,19 @@ http_accept_language(const char *hal)
 	    }
 	  else
 	    ++s;
-	}      
+	}
     }
+  /* ensure that all lang codes are 2-letter if there are both 3- and
+     2-letter versions */
+  int i;
+  for (i = 0; i < n; ++i)
+    h[i].lang = lang32(h[i].lang);
+  
   if (n > 1)
     qsort(h, n, sizeof(HAL), hal_cmp);
+
   const char **ret = malloc((1+n)*sizeof(char*));
-  int i, j;
+  int j;
   for (i = j = 0; i < n; ++i)
     if (!j || strcmp(ret[j-1], h[i].lang))
       ret[j++] = h[i].lang;

@@ -1,0 +1,59 @@
+Chrome
+
+Open Chrome settings: Click on the three vertical dots icon at the top right corner of your screen and select “Settings” from the dropdown.
+Scroll to the bottom: Scroll down to the “Advanced” section and click on “Languages”.
+Add languages: Click on “Add languages” to add a new language to your preferred list.
+Select your preferred language: Choose your preferred language from the list of available languages.
+Order the list: Order the languages in your preferred list in descending order of preference.
+Save changes: Once you’ve made your changes, click “OK” to save them.
+This can also be done through your Google account if you use it for Chrome.
+
+ 
+
+Safari
+
+For Mac:
+
+ 
+
+Go to System Preferences on your Mac. You can find it in the Apple menu or in the Dock.
+Click on General then Language & Region.
+Ensure that your preferred language is present and listed as the “Primary” language at the top of the list on the left.
+Add others with the “+” button and drag to reorder.
+Close the System Preferences window.
+Quit Safari and then relaunch it to apply the new language settings.
+ 
+
+For iOS:
+
+ 
+
+Open the Settings app on your iOS device.
+Tap on General then Language and Region.
+Add languages and drag to reorder, the top one is primary preference
+ 
+
+Firefox
+
+Open Firefox and click on the menu icon (the three horizontal bars) in the upper-right corner.
+Select Settings (or Preferences on some systems).
+Scroll down to the Language and Appearance section.
+Click on Language.
+Select Set Alternatives.
+Choose the language you want to add from the list.
+Click Add to add the language to the list.
+You can reorder the languages by clicking the Move Up or Move Down buttons.
+Click OK to save your changes.
+ 
+
+ 
+
+Edge
+
+Open Microsoft Edge and click on the three dots (⋯) at the top right corner of the browser window.
+Click on Settings from the dropdown menu.
+Scroll down to the Languages section.
+Click on Add languages.
+Search for the language you want to add or use the scroll bar to find it.
+Select the language and click Add.
+The language will be added to the list of preferred languages.

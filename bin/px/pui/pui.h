@@ -34,5 +34,7 @@ extern atfunc pui_at_error, pui_at_invocation, pui_at_status,
   pui_at_item_index, pui_at_select_ce, pui_at_select_sort, pui_at_select_trans,
   pui_at_page_label
   ;
+  
+extern int pui_123(Isp *ip, const char *perm, const char *cfg, FILE *fp);
 
 #endif/*PUI_H_*/

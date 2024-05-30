@@ -145,21 +145,31 @@ isp_create_xtf(Isp *ip)
   return 0;
 }
 
-/* return the first char* in b that is in a or NULL if none */
+/* return the first char* in b that is in a or NULL if none
+ *
+ * Note that the codes in a, the translations list, may be 3-letter
+ * and this needs to be preserved so that 'hun' in ETCSRI gets found
+ * properly.  But the codes in b, the http-accept-language codes, have
+ * been forced to 2-letter if possible.  So we need to enforce
+ * 2-letter code comparison but possible 3-letter code return.
+ */
 const char *
 first_lang(const char **a, const char **b)
 {
   int i, j;
   for (i = 0; b[i]; ++i)
     for (j = 0; a[j]; ++j)
-      if (!strcmp(b[i], a[j]))
-	return b[i];
+      if (!strcmp(b[i], lang32(a[j])))
+	return a[j];
   return NULL;
 }
 
 static const char *
 isp_item_lang(Isp *ip)
 {
+  if (ip->lang)
+    return ip->lang;
+  
   if (ip->itemdata.langp)
     {
       if (ip->halp)
