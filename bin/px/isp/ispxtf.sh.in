@@ -22,7 +22,9 @@ oraccbin=@@ORACC_BUILDS@@/bin
 host_project=$1
 prox_project=$2
 PQX=$3
-tr=$4
+if [ "$4" != "-" ]; then
+    tr=$4
+fi
 metadir=$5
 htmldir=$6
 xmdotl=$7

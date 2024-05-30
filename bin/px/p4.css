@@ -31,6 +31,9 @@
 #p4Item		{ height: 100%; }
 #p4Item.xtf 	{ display: flex; }
 
+#p4ItemPrev	{ margin-left: 1em; }
+#p4ItemNext	{ margin-right: 1em; }
+
 .hide	{ display: none; }
 
 #p4XtfMeta.hide	{ display: none; }

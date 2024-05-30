@@ -90,12 +90,10 @@ isp_item_langs(Isp *ip)
     }
   else
     {
-      /* It's not an error to have no trs db--it's only an error if the
-	 itemdata isn't in the db we're searching */
-      if (ip->err && strstr(ip->err, "unable to open"))
-	ip->err = NULL;
+      /* No errors here because we build the trs db off the .atf */
+      ip->err = NULL;
     }
-   return ip->err ? 1 : 0;
+  return 0;
 }
 
 static int

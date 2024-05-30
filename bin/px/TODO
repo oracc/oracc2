@@ -1,9 +1,5 @@
 BUGS
 
-	instance list first item still has line-id attached
-
-	item/page view doesn't jump in to item-view properly
-
 	glossary item view doesn't autoselect letter-zoom
 
 ispdiv
@@ -17,8 +13,6 @@ ispxtf
 	project
 
 
-itemdata needs to have sort code in dbx file name
-
 Document proscribed list names
 
   * anything matching a valid IS ID
@@ -29,4 +23,20 @@ JN-xmdoutline selectable via config option and/or make it default and
 make oldstyle selectable via config opt
 
 redo shownote to remove jquery dependency
+
+Document how to get the single-line colour in banner
+
+Fix Banner so there is a single top-level div
+
+add pmp/ subdir
+
+capitalize first letter of master outline headings
+
+Figure out how back-to-page view can go to single text-item icon--does it have to do with bkmk?
+
+search-box """ value thing
+
+Jacob's bug list
+
+height and scrolling
 

@@ -156,17 +156,19 @@ sparm(const char *p)
 }
 
 static const char **
-params(struct progtab *pinfo, const char *project, const char *trans)
+params(struct progtab *pinfo, const char *project, const char *trans, const char *htmdir)
 {
   static char *p[7];
-  int null = 2;
+  int null = 4;
   p[0] = "project";
   p[1] = sparm(project);
+  p[2] = "txhdir";
+  p[3] = sparm(htmdir);
   if (trans)
     {
-      p[2] = "trans";
-      p[3] = sparm(trans);
-      null = 4;
+      p[4] = "trans";
+      p[5] = sparm(trans);
+      null = 6;
     }
   p[null] = NULL;
   return (const char **)p;
@@ -183,6 +185,7 @@ perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
   char *in = strdup(expand(NULL, qpqx, proginfo->inext));
   const char *out = NULL;
   expand_base(p4htmld);
+  const char *htmdir = strdup(expand(NULL, qpqx, NULL));
   if (!outfile)
     {
       char *ex = expand(NULL, qpqx, proginfo->outext);
@@ -196,7 +199,7 @@ perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
     }
   else
     out = outfile;
-  const char **parms = params(proginfo, project, trans);
+  const char **parms = params(proginfo, project, trans, htmdir);
   int res = wrapper(proginfo->sheetpath, parms, in, out);
   free(in);
   if (!outfile)
