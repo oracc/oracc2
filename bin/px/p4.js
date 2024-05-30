@@ -7,6 +7,12 @@ function qs_append(q,c) {
     return q+c;
 }
 
+function perm_is_default(p) {
+    return p.length == 1
+	|| (p.length == 2 && p === "12")
+	|| (p.length == 3 && p === "123");
+}
+
 function item_oid(i) {
     return i.startsWith("o") || i.startsWith("x");
 }
@@ -29,8 +35,8 @@ function itemLocation() {
 	if (list && list !== "outlined.lst") {
 	    qs = qs_append(qs, 'list='+list);
 	}
-	if (perm && perm !== "123") {
-	    qs = qs_append(qs, 'perm='+perm);
+	if (perm && !perm_is_default(perm)) {
+	    qs = qs_append(qs, 'sort='+perm);
 	}
 
 	loc = loc+qs;
@@ -76,8 +82,8 @@ function pageLocation() {
 	if (list && list !== "outlined.lst") {
 	    qs = qs_append(qs, 'list='+list);
 	}
-	if (perm && perm !== "123") {
-	    qs = qs_append(qs, 'perm='+perm);
+	if (perm && !perm_is_default(perm)) {
+	    qs = qs_append(qs, 'sort='+perm);
 	}
 	if (zoom && zoom !== "0") {
 	    qs = qs_append(qs, 'zoom='+zoom);
@@ -120,6 +126,9 @@ function act_sorter() {
     let currperm = pager.getAttribute('data-sort');
     if (perm !== currperm) {
 	pager.setAttribute('data-sort', perm);
+	pager.setAttribute('data-zoom', '0');
+	pager.setAttribute('data-page', '1');
+	pager.removeAttribute('data-item');
 	pageLocation();
     }
 }

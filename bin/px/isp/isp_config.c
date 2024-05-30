@@ -13,7 +13,17 @@ isp_config(Isp *ip)
 #define s(fld,key) ip->special_cfg.fld=hash_find(ip->xpd->opts,(ucp)(key))
 
   const char *sel = NULL;
+  static struct isp_config defaults =
+    {
+      .cat_fields="designation,primary_publication,subgenre|genre,period,place|provenience",
+      .cat_widths="auto,17,17,17,17",
+      .sort_fields="period,genre,provenience",
+      .sort_labels="Time,Genre,Place",
+      .head_template="1 2 3"
+    };
 
+  ip->default_cfg = ip->special_cfg = defaults;
+  
   ip->default_cfg.leftmenu = ip->special_cfg.leftmenu = 1;
   if ((sel = hash_find(ip->xpd->opts, (ucp)"outline-default-leftmenu"))
       && (!strcmp(sel, "false")|| !strcmp(sel, "no")))
@@ -29,22 +39,29 @@ isp_config(Isp *ip)
     }
   else
     ip->default_cfg.select = 1;
-  
-  d(cat_fields,"outline-default-catalog-fields");
-  d(cat_widths,"outline-default-catalog-widths");
-  d(sort_fields,"outline-default-sort-fields");
-  d(sort_labels,"outline-default-sort-labels");
-  d(head_template,"outline-default-sort-template");
 
+  if (ip->default_cfg.select)
+    {
+      d(cat_fields,"outline-default-catalog-fields");
+      d(cat_widths,"outline-default-catalog-widths");
+      d(sort_fields,"outline-default-sort-fields");
+      d(sort_labels,"outline-default-sort-labels");
+      d(head_template,"outline-default-sort-template");
+    }  
+  
   if ((sel = hash_find(ip->xpd->opts, (ucp)"outline-special-select")))
     if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
       ip->special_cfg.select = 1;
-  s(cat_fields,"outline-special-catalog-fields");
-  s(cat_widths,"outline-special-catalog-widths");
-  s(sort_fields,"outline-special-sort-fields");
-  s(sort_labels,"outline-special-sort-labels");
-  s(head_template,"outline-special-sort-template");
 
+  if (ip->special_cfg.select)
+    {
+      s(cat_fields,"outline-special-catalog-fields");
+      s(cat_widths,"outline-special-catalog-widths");
+      s(sort_fields,"outline-special-sort-fields");
+      s(sort_labels,"outline-special-sort-labels");
+      s(head_template,"outline-special-sort-template");
+    }
+  
   ip->default_cfg.cat_links = hash_find(ip->xpd->opts, (ucp)"catalog-link-fields");
 
 #undef d

@@ -45,6 +45,7 @@ extern int cmpstringp(const void *p1, const void *p2);
 extern void isp_environment(FILE *fp, Isp *ip);
 extern void isp_show(FILE *fp, Isp *ip);
 /* isp_sort.c */
+extern const char *isp_set_perm(const char *str);
 extern int isp_cache_sort(Isp *ip);
 /* isp_srch.c */
 extern int isp_srch_fixup(Isp *ip);

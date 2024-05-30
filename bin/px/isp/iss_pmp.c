@@ -339,6 +339,11 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
   unsigned char *s = f;
   const char *itemdp_dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
 
+  if (!ip->perm || '#' == *ip->perm)
+    {
+      fprintf(stderr, "iss_pmp: ip->perm not set\n");
+    }
+  
   char dbifn[strlen(ip->perm)+strlen("-itm0")];
   sprintf(dbifn, "%s-itm", ip->perm);
   ip->itemdata.dp = dbi_create(dbifn, itemdp_dir, 1024, 1, DBI_BALK);

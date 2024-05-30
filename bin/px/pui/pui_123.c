@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../isp/isp.h"
 
 struct s123sl
 {
@@ -40,10 +41,19 @@ str123(struct s123 *sp, const char *perm, const char *select)
 }
 
 static struct s123 *
-do123(const char *str, const char *select)
+do123(Isp *ip, const char *str, const char *select)
 {
   static struct s123 s;
   int sizes[] = { 0, 2 , 3 , 7 };
+
+  /* ip->perm is initialized to '#'; this ensures that it is reset to
+     the default if it hasn't been reset earlier */
+  if (!str || '#' == *str)
+    {
+      str = isp_set_perm(select);
+      ip->perm = str;
+    }
+  
   s.len = strlen(str)+1;
   s.s = strdup(str);
   char *t = s.s;
@@ -116,9 +126,9 @@ do123(const char *str, const char *select)
 #endif
   
 int
-pui_123(const char *perm, const char *cfg, FILE *fp)
+pui_123(Isp *ip, const char *perm, const char *cfg, FILE *fp)
 {
-  struct s123 *sp = do123(cfg, perm);
+  struct s123 *sp = do123(ip, cfg, perm);
   int i;
   fputs("<div id=\"p4MenuSorter\">\n", fp);
   fprintf(fp, "<select id=\"p4MenuSelect\" onchange=\"act_sorter()\" value=\"%s\">\n", perm);

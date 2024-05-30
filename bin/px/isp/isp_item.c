@@ -78,12 +78,15 @@ isp_item_load(Isp *ip)
 static int
 isp_item_langs(Isp *ip)
 {
-  ip->itemdata.langs = isp_dbx_one_off(ip, ip->itemdata.proj ? ip->itemdata.proj : ip->project,
-				       "02pub", "trs", ip->itemdata.item, NULL);
+  ip->itemdata.langs =
+    isp_dbx_one_off(ip, ip->itemdata.proj ? ip->itemdata.proj : ip->project,
+		    "02pub", "trs", ip->itemdata.item, NULL);
   
   if (ip->itemdata.langs)
     {
-      ip->itemdata.langp = vec_from_str(ip->itemdata.langs, NULL, &ip->itemdata.nlangs);
+      ip->itemdata.langp =
+	(const char **)vec_from_str((char*)pool_copy((ucp)ip->itemdata.langs, ip->p),
+				    NULL, &ip->itemdata.nlangs);
     }
   else
     {

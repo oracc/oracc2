@@ -1,6 +1,27 @@
 #include <oraccsys.h>
 #include "isp.h"
 
+
+const char *
+isp_set_perm(const char *str)
+{
+  int n = 1;
+  const char *comma = strchr(str, ',');
+  if (comma)
+    {
+      ++n;
+      if ((comma = strchr(++comma, ',')))
+	++n;
+    }
+  if (n == 1)
+    str = "1";
+  else if (n == 2)
+    str = "12";
+  else
+    str = "123";
+  return str;
+}
+
 /* This is a wrapper for the pg2/sortinfo subsystem that can also be
    called as a standalone program, ispsortx */
 int
@@ -20,8 +41,11 @@ isp_cache_sort(Isp *ip)
       ip->dors = "0";
     }
 
+  if (!ip->perm || '#' == *ip->perm)
+    ip->perm = isp_set_perm(ip->default_cfg.sort_labels);
+
   strcpy(buf, ip->cache.list);
-  strcpy(strrchr(buf,'/')+1, "sort-");
+  strcpy(strrchr(buf,'/')+1, "sort-");  
   strcat(buf, ip->perm);
   ip->cache.sort = (ccp)pool_copy((uccp)buf, ip->p);
   strcat(buf, ".mol");

@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <xpd.h>
+#include "../isp/isp.h"
 #include "../px.h"
 #include "../xslt_if.h"
 
@@ -370,7 +371,7 @@ void
 pui_at_select_sort(Isp *ip, FILE *fp)
 {
 #if 1
-  pui_123(ip->perm, ip->curr_cfg->sort_labels, fp);
+  pui_123(ip, ip->perm, ip->curr_cfg->sort_labels, fp);
 #else
   fputs("<div id=\"p4MenuSelect\">", fp);
   char perm[6]; sprintf(perm, "'%s'", ip->perm);

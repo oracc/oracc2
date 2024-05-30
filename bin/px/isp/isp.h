@@ -115,7 +115,7 @@ struct isp_itemdata
 {
   const char *langs;	/* all the langs this item is available in */
   const char **langp;	/* langs as array */
-  int nlangs;
+  size_t nlangs;
   const char *xtflang;	/* the lang to use for the next xtf item call */ 
   const char *lmem;
   const char *item;
