@@ -215,7 +215,8 @@ isp_item_xtf(Isp *ip)
   char *html = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project, ip->item, "html");
   expand_base(NULL);
 
-  char *xh = (char*)pool_alloc(strlen(html)+4,ip->p);
+  /* +5 here is lang which can be 2 or 3, '.' before lang and \0 at end */
+  char *xh = (char*)pool_alloc(strlen(html)+5,ip->p);
   strcpy(xh, html);
   ip->itemdata.html = xh;
   if (ip->itemdata.xtflang && strcmp(ip->itemdata.xtflang, "en"))

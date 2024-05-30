@@ -410,7 +410,7 @@ pui_at_select_trans(Isp *ip, FILE *fp)
       int i;
       for (i = 0; ip->itemdata.langp[i]; ++i)
 	{
-	  if (ip->lang && !strcmp(ip->lang, ip->itemdata.langp[i]))
+	  if (ip->itemdata.xtflang && !strcmp(ip->itemdata.xtflang, ip->itemdata.langp[i]))
 	    fprintf(fp, "            <option value=\"%s\" selected=\"selected\">%s</option>\n",
 		    ip->itemdata.langp[i],ip->itemdata.langp[i]);
 	  else

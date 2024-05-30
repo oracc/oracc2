@@ -180,7 +180,7 @@ px_validate(Isp *ip)
 	++l;
       if (*l)
 	{
-	  ip->err = "lang given with -l must be two or three letter language code";
+	  ip->err = "lang given with -L must be two or three letter language code";
 	  goto error;
 	}
     }

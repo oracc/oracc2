@@ -25,7 +25,7 @@ PQX=$3
 tr=$4
 metadir=$5
 htmldir=$6
-xmdout=$7
+xmdotl=$7
 cachedir=$8
 
 errlog=$cachedir/err.log
@@ -57,13 +57,16 @@ if [ "$metadir" != "$htmldir" ]; then
     mkdir -v -p $htmldir || exit 1
 fi
 
-xsltproc $projarg $xtlarg $xmdout $xmd >$metadir/meta.xml
+xsltproc $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml
 if [ $? -eq 0 ]; then
     [ -r $xtf ] || exit 3
     four=`echo $PQX | head -c4`
     $oraccbin/xtf2txh -i $prox_project:$PQX
     if [ $? -eq 0 ]; then
-	$oraccbin/xmd2htm -i $prox_project:$PQX
+	if [ "$tr" != "" ]; then
+	    trarg="-t $tr"
+	fi
+	$oraccbin/xmd2htm $trarg -i $prox_project:$PQX
 	if [ ! $? -eq 0 ]; then
 	    echo "Failed call invoked as:" >&2
 	    echo "	$oraccbin/xmd2htm -i $prox_project:$PQX" >&2
@@ -78,7 +81,7 @@ if [ $? -eq 0 ]; then
     fi
 else
     echo "Failed call invoked as:" >&2
-    echo "	xsltproc $projarg $xtlarg $xmdout $xmd >$metadir/meta.xml" >&2
+    echo "	xsltproc $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml" >&2
     echo $0: xsltproc failed. Stop. >&2
     exit 1
 fi

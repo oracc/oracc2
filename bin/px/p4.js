@@ -25,6 +25,7 @@ function itemLocation() {
 	let glos = pager.getAttribute("data-glos");
 	let list = pager.getAttribute("data-list");
 	let perm = pager.getAttribute("data-sort");
+	let lang = pager.getAttribute("data-lang");
 	let loc = "/"+proj+"/";
 	if (glos && glos.length > 0 && item_oid(item)) {
 	    loc = loc+glos+"/"+item;
@@ -37,6 +38,9 @@ function itemLocation() {
 	}
 	if (perm && !perm_is_default(perm)) {
 	    qs = qs_append(qs, 'sort='+perm);
+	}
+	if (lang && lang.length > 0 && lang !== "(null)") {
+	    qs = qs_append(qs, 'lang='+lang);
 	}
 
 	loc = loc+qs;

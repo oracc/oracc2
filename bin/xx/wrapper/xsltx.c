@@ -164,7 +164,7 @@ params(struct progtab *pinfo, const char *project, const char *trans)
   p[1] = sparm(project);
   if (trans)
     {
-      p[2] = "translation";
+      p[2] = "trans";
       p[3] = sparm(trans);
       null = 4;
     }
@@ -184,7 +184,16 @@ perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
   const char *out = NULL;
   expand_base(p4htmld);
   if (!outfile)
-    out = strdup(expand(NULL, qpqx, proginfo->outext));
+    {
+      char *ex = expand(NULL, qpqx, proginfo->outext);
+      if (trans && strcmp(trans, "en"))
+	{
+	  out = malloc(strlen(ex)+strlen(trans)+2);
+	  sprintf((char*)out, "%s.%s", ex, trans);
+	}
+      else
+	out = strdup(ex);
+    }
   else
     out = outfile;
   const char **parms = params(proginfo, project, trans);
