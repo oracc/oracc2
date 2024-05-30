@@ -4,26 +4,26 @@
 
 static void ispo_master_page(unsigned char *lp, struct ispz *iop);
 
-static void
-hcsub(unsigned char *s)
+static const char *
+hclean(unsigned char *s)
 {
-  u_upper(s, 1);
-  while (*s)
-    if ('_' == *s)
-      *s++ = ' ';
-    else
-      ++s;
-}
+  static char *p = NULL;
+  if (!s && p)
+    {
+      free(p);
+      return NULL;
+    }
 
-static void
-ispo_h_clean(struct ispz *zp)
-{
-  if (zp->h1 && *zp->h1)
-    hcsub(zp->h1);
-  if (zp->h2 && *zp->h2)
-    hcsub(zp->h2);
-  if (zp->h3 && *zp->h3)
-    hcsub(zp->h3);  
+  p = realloc(p, strlen((ccp)s)+1);
+  strcpy(p, (ccp)s);
+  char *t = p;
+  while (*t)
+    if ('_' == *t)
+      *t++ = ' ';
+    else
+      ++t;
+
+  return p;
 }
 
 int
@@ -76,25 +76,26 @@ ispo_master(Isp *ip)
 	    h2 = iz.h2;
 	  if (!iz.h3)
 	    iz.h3 = (ucp)"";
-	  ispo_h_clean(&iz);
+	  /*ispo_h_clean(&iz);*/
 	  if (iz.h3 && *iz.h3)
 	    {
 	      if (iz.h1 && *iz.h1)
-		fprintf(fp, "%s\n", iz.h1);
+		fprintf(fp, "%s\n", hclean(iz.h1));
 	      if (iz.h2 && *iz.h2)
-		fprintf(fp, "\t%s\n", iz.h2);
-	      fprintf(fp, "\t\t%s\t#%d\n", iz.h3, iz.count);
+		fprintf(fp, "\t%s\n", hclean(iz.h2));
+	      fprintf(fp, "\t\t%s\t#%d\n", hclean(iz.h3), iz.count);
 	    }
 	  else if (iz.h2 && *iz.h2)
 	    {
 	      if (iz.h1 && *iz.h1)
-		fprintf(fp, "%s\n", iz.h1);
-	      fprintf(fp, "\t%s\t#%d\n", iz.h2, iz.count);
+		fprintf(fp, "%s\n", hclean(iz.h1));
+	      fprintf(fp, "\t%s\t#%d\n", hclean(iz.h2), iz.count);
 	    }
 	  else
-	    fprintf(fp, "%s\t#%d\n", iz.h1, iz.count);
+	    fprintf(fp, "%s\t#%d\n", hclean(iz.h1), iz.count);
 	}
       fclose(fp);
+      (void)hclean(NULL);
     }
   return 0;
 }
