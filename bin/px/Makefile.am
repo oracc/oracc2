@@ -11,7 +11,8 @@ bin_PROGRAMS=px
 #selecter
 
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
-	pxsortercodes.sh pxentrycounts.sh pxentryindexes.sh p4-mk-cache.sh
+	pxsortercodes.sh pxentrycounts.sh pxentryindexes.sh p4-mk-cache.sh \
+	pxlocalreset.sh
 
 scriptdata_DATA=*.xsl
 

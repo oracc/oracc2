@@ -7,7 +7,7 @@
 	   alt="Toggle metadata pane" title="Toggle metadata pane" onclick="toggle_md()"/>
       
       <img id="p4PageItem" class="p4icon p4spread" src="/img/p3-pageitem.png"
-	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
+	   alt="Toggle Page/Item view" title="Return to Page view"
 	   onclick="toggle_pi()"/>
 
       <!--Item-->
@@ -39,10 +39,6 @@
 
       <button id="p4Zoom" class="p4spread" onclick="act_zoom('0')">All Results</button>
 
-      <img id="p3pagesview" class="p4icon p4spread" src="/img/p3-pageitem.png"
-	   alt="Toggle Page/Item view" title="Toggle Page/Item view"
-	   onclick="toggle_pi()"/>
-      
       <img id="p4PagePrev" class="p4icon p4spread" src="/img/p3-backward.png"
 	   alt="Page back" title="Page back"
 	   onclick="act_prev()"/>

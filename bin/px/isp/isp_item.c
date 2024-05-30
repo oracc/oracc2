@@ -111,7 +111,7 @@ isp_create_xtf(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.item);
   list_add(args, " ");
-  list_add(args, (void*)(ip->itemdata.langs ? ip->itemdata.langs : "-"));
+  list_add(args, (void*)(ip->itemdata.xtflang ? ip->itemdata.xtflang : "-"));
   list_add(args, " ");
   list_add(args, (void*)ip->cache.item);
   list_add(args, " ");

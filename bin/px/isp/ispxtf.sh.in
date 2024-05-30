@@ -30,6 +30,7 @@ cachedir=$8
 
 errlog=$cachedir/err.log
 rm -f $errlog
+>&2 echo $0: args=$*
 echo $0: transferring error logging to $errlog >&2
 exec 2>$errlog
 echo $0 $* >&2

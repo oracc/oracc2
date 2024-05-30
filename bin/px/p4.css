@@ -226,9 +226,13 @@ sub { font-style: normal; }
 .hit-xhu { font-style: normal; }
 span.sign { font-size: 90%; }
 
-.textonly .xtr { display: none; }
+span.div { display: none; } /* WATCHME: this gets rid of 
+			       milestone (obverse) etc. but does it also
+			       get rid of things we should display? */
 
 /* Translation styling */
+
+.textonly .xtr { display: none; }
 
 tr.hforce td.xtr-h1 { padding-left: .5em; font-weight: bold; padding-top: 6px; }
 .xtr-h1 { border-left: 2px solid #777; padding-left: .5em; font-weight: bold; padding-top: 6px; }

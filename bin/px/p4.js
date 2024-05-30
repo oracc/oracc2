@@ -249,6 +249,7 @@ function toggle_dd() {
 function toggle_md() {
     document.getElementById("p4XtfMeta").classList.toggle('hide');
 }
+// This control has changed--it now appears only in item view and it only toggles back to page view
 function toggle_pi() {
     let pager = getPager();
     let item = pager.getAttribute("data-item");
@@ -256,9 +257,9 @@ function toggle_pi() {
 	pager.setAttribute("data-bkmk", item);
 	pager.removeAttribute("data-item");
 	pageLocation();
-    } else {
-	pager.setAttribute("data-item", pager.getAttribute("data-bkmk"));
-	itemLocation();
+//    } else {
+//	pager.setAttribute("data-item", pager.getAttribute("data-bkmk"));
+//	itemLocation();
     }
 }
 
