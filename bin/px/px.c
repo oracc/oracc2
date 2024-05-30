@@ -19,7 +19,11 @@ main(int argc, char **argv)
 {
   mesg_init();
   
-  Isp *ip = isp_init();  
+  Isp *ip = isp_init();
+
+  const char *hal = getenv("HTTP_ACCEPT_LANGUAGE");
+  if (hal)
+    ip->halp = http_accept_language(hal);
   
   if (px_options(argc, argv, ip))
     goto error;

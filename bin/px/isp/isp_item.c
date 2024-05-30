@@ -145,11 +145,31 @@ isp_create_xtf(Isp *ip)
   return 0;
 }
 
+/* return the first char* in b that is in a or NULL if none */
+const char *
+first_lang(const char **a, const char **b)
+{
+  int i, j;
+  for (i = 0; b[i]; ++i)
+    for (j = 0; a[j]; ++j)
+      if (!strcmp(b[i], a[j]))
+	return b[i];
+  return NULL;
+}
+
 static const char *
 isp_item_lang(Isp *ip)
 {
-  if (ip->itemdata.langs && strstr(ip->itemdata.langs, "en"))
-    return "en";
+  if (ip->itemdata.langp)
+    {
+      if (ip->halp)
+	{
+	  const char *fl = first_lang(ip->itemdata.langp, ip->halp);
+	  return fl ? fl : "en";
+	}
+      else
+	return ip->itemdata.langp[0];
+    }
   return NULL;
 }
 

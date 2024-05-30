@@ -19,7 +19,7 @@ scriptdata_DATA=*.xsl
 px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c	\
 	cgiopts.c pxloadfile.c px_file_copy.c xslt_if.c		\
 	cgi_decode_url.c px_mesg.c wpx_lib.c px_return.c selecter.c \
-	px_print_ip.c
+	px_print_ip.c http_accept_language.c
 
 px_print_ip.c: isp/isp.h mk-isp-print.plx
 	./mk-isp-print.plx

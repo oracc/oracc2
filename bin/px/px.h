@@ -33,4 +33,6 @@ extern int selecter(const char *file, char * const*ids);
 
 extern void px_print_ip(FILE *fp, Isp *ip);
 
+extern const char **http_accept_language(const char *hal);
+
 #endif/*PX_H*/

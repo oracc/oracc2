@@ -68,6 +68,7 @@ http_accept_language(const char *hal)
   return ret;
 }
 
+#if 0
 int
 main(int argc, char **argv)
 {
@@ -76,3 +77,4 @@ main(int argc, char **argv)
     printf("%s ", *l++);
   printf("\n");
 }
+#endif
