@@ -8,7 +8,16 @@ static int
 active_pages(Isp *ip)
 {
   int psize = atoi(ip->psiz);
-  int pmax = ((ip->glos&&!ip->glosdata.xis) ? atoi(ip->glosdata.emax) : ip->md1.zimx);
+  int pmax = 0;
+  if (ip->glos && !ip->glosdata.xis)
+    {
+      if (ip->glosdata.let && strcmp(ip->glosdata.let, "entry_ids"))
+	pmax = atoi(ip->glosdata.lmax);
+      else
+	pmax = atoi(ip->glosdata.emax);
+    }
+  else
+    pmax = ip->md1.zimx;
   int npages =  pmax / psize;
   if (pmax % psize)
     ++npages;
@@ -156,7 +165,12 @@ void
 pui_at_active_items(Isp *ip, FILE *fp)
 {
   if (ip->glos && !ip->glosdata.xis)
-    fputs(ip->glosdata.emax, fp);
+    {
+      if (ip->glosdata.let && strcmp(ip->glosdata.let, "entry_ids"))
+	fputs(ip->glosdata.lmax, fp);
+      else
+	fputs(ip->glosdata.emax, fp);
+    }
   else if (ip->itemdata.tmax)
     fputs(ip->itemdata.tmax, fp);
   else
@@ -169,7 +183,11 @@ pui_at_item_label(Isp *ip, FILE *fp)
   char *label = "items";
   if (ip->glos && !ip->glosdata.xis)
     {
-      int n = atoi(ip->glosdata.emax);
+      int n = 0;
+      if (ip->glosdata.emax)
+	n = atoi(ip->glosdata.emax);
+      else if (ip->glosdata.lmax)
+	n = atoi(ip->glosdata.lmax);
       if (n == 1)
 	label = "entry";
       else
@@ -354,11 +372,19 @@ pui_at_item_meta(Isp *ip, FILE *fp)
 void
 pui_at_item_data(Isp *ip, FILE *fp)
 {
-  char *const *hilitev = isp_hilited(ip);
-  if (hilitev)
-    selecter(ip->itemdata.html, hilitev);
+  if (ip->glosdata.ipath) /* check this doesn't interact badly with ip->itemdata.html if there is an entry > instances > item */
+    {
+      fflush(fp);
+      isp_glos_entry(ip);
+    }
   else
-    px_file_copy(ip, ip->itemdata.html, "-");
+    {
+      char *const *hilitev = isp_hilited(ip);
+      if (hilitev)
+	selecter(ip->itemdata.html, hilitev);
+      else
+	px_file_copy(ip, ip->itemdata.html, "-");
+    }
 }
 
 void

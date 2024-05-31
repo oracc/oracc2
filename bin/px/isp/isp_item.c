@@ -2,6 +2,46 @@
 #include "../px.h"
 #include "isp.h"
 
+void
+isp_item_undump(char *k, struct isp_itemdata *idp)
+{
+  idp->index = k;
+  char *s = strchr(idp->index, '\t');
+  *s++ = '\0';
+
+  idp->page = s;
+  s = strchr(idp->page, '\t');
+  *s++ = '\0';
+
+  idp->zoom = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+  
+  idp->zpag = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+
+  idp->zindex = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+
+  if ('#' == *s)
+    idp->prev = NULL;
+  else
+    idp->prev = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+
+  if ('#' == *s)
+    idp->next = NULL;
+  else
+    idp->next = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+
+  idp->proj = s;
+}
+
 int
 isp_item_load(Isp *ip)
 {
@@ -33,41 +73,9 @@ isp_item_load(Isp *ip)
 	  return 1;
 	}
 
-      ip->itemdata.index = (ccp)pool_copy((ucp)k, ip->p);
-      char *s = strchr(ip->itemdata.index, '\t');
-      *s++ = '\0';
-
-      ip->itemdata.page = s;
-      s = strchr(ip->itemdata.page, '\t');
-      *s++ = '\0';
-
-      ip->zoom = ip->itemdata.zoom = s;
-      s = strchr(s, '\t');
-      *s++ = '\0';
-  
-      ip->page = ip->itemdata.zpag = s;
-      s = strchr(s, '\t');
-      *s++ = '\0';
-
-      ip->itemdata.zindex = s;
-      s = strchr(s, '\t');
-      *s++ = '\0';
-
-      if ('#' == *s)
-	ip->itemdata.prev = NULL;
-      else
-	ip->itemdata.prev = s;
-      s = strchr(s, '\t');
-      *s++ = '\0';
-
-      if ('#' == *s)
-	ip->itemdata.next = NULL;
-      else
-	ip->itemdata.next = s;
-      s = strchr(s, '\t');
-      *s++ = '\0';
-
-      ip->itemdata.proj = s;
+      isp_item_undump(k, &ip->itemdata);
+      ip->zoom = ip->itemdata.zoom;
+      ip->page = ip->itemdata.page;
     }
   else
     ip->err = (ccp)px_err("failed to open dbi index %s/%s\n", ip->cache.sub, dbifn);

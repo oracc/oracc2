@@ -6,6 +6,7 @@
 
 int verbose = 0;
 
+Hash *h_lmax = NULL;
 Memo *m_summaries = NULL;
 List *summaries = NULL;
 const char *curr_letter = NULL;
@@ -19,6 +20,7 @@ struct summ
   int zoom;
   int znth;
   int zpage;
+  int zmax;
   const char *prev;
   const char *next;
 };
@@ -51,6 +53,8 @@ ei_sH(void *userData, const char *name, const char **atts)
 {
   if (!strcmp(name, "letter"))
     {
+      if (list_len(summaries))
+	hash_add(h_lmax, (ucp)curr_letter, (void*)(uintptr_t)znth);
       curr_letter = strdup(findAttr(atts, "dc:title"));
       ++nletter;
       znth = 0;
@@ -77,10 +81,13 @@ int
 main(int argc, char **argv)
 {
   options(argc, argv, "");
+  h_lmax = hash_create(32);
   m_summaries = memo_init(sizeof(struct summ), 1024);
   summaries = list_create(LIST_DOUBLE);
   runexpat_omit_rp_wrap();
   expat_identity(argv[optind], NULL, stdout);
+  if (list_len(summaries))
+    hash_add(h_lmax, (ucp)curr_letter, (void*)(uintptr_t)znth);
   List_node *lp;
   for (lp = summaries->first; lp; lp = lp->next)
     {
@@ -89,10 +96,10 @@ main(int argc, char **argv)
 	sp->next = ((struct summ*)lp->next->data)->entry;
       else
 	sp->next = "#";
-      printf("%s\t%d\t%d\t%d/%s\t%d\t%d\t%s\t%s\t\n",
+      printf("%s\t%d\t%d\t%d/%s\t%d\t%d\t%s\t%s\t%lu\n",
 	     sp->entry, sp->nth, sp->page,
 	     sp->zoom, sp->letter, sp->zpage, sp->znth,
-	     sp->prev, sp->next);
+	     sp->prev, sp->next, (uintptr_t)hash_find(h_lmax, (ucp)sp->letter));
     }
 }
 

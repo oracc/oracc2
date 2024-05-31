@@ -1,3 +1,3 @@
 <div id="p4Item" class="glo">
-  <div id="p4GloData">@@pui_item_data()@@</div>
+  @@pui_item_data()@@
 </div>

@@ -1,4 +1,4 @@
-SUBDIRS=pui ice isp
+SUBDIRS=isp pui ice
 
 include ../../oracc-am-rules.txt
 
@@ -34,4 +34,4 @@ cbditem_LDADD=$(xLDADD)
 
 css_DATA = *.css
 
-js_DATA = p4.js
+js_DATA = *.js

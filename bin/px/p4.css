@@ -1,4 +1,5 @@
 @import url(colour_nn.css);
+@import url(p4cbd.css);
 
 /* Structural/State-dependent CSS */
 
@@ -118,7 +119,7 @@ p	{ margin: 0; padding: 0; }
 		  height: 85%; overflow-y: auto;
 		}
 
-#p4MenuOutline .zoomed { background-color: silver; }
+.zoomed { background-color: silver; }
 
 #p4Menu p   	{ padding: 0px; margin-right: .25em; margin-left: 1.5em;
 		  margin-bottom: 1px; margin-top: 1px;
@@ -167,6 +168,8 @@ span.xlabel { font-family: arial,sans-serif; font-size: 70%; }
 span.uncertain { font-style: italic; }
 
 span.foreign { font-style: italic; }
+
+
 
 /* CE CSS */
 

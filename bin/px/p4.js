@@ -60,7 +60,7 @@ function pageLocation() {
     if (glos && glos.length > 0) {
 	let i = 0;
 	let qs = '';
-	let zoom = pager.getAttribute("data-zoom");
+	let zoom = pager.getAttribute("data-glet");
 	if (zoom) {
 	    qs = 'zoom='+zoom;
 	}
@@ -91,6 +91,8 @@ function pageLocation() {
 	}
 	if (zoom && zoom !== "0") {
 	    qs = qs_append(qs, 'zoom='+zoom);
+	} else if (glet) {
+	    qs = qs_append(qs, 'zoom='+glet);
 	}
 	if (page && page !== "1") {
 	    qs = qs_append(qs, 'page='+page);
@@ -216,7 +218,8 @@ function act_zoom(z) {
     if (glos) {
 	if (z === '0') {
 	    pager.setAttribute("data-page", '1');
-	    pager.setAttribute("data-zoom", "entry_ids");
+	    pager.setAttribute("data-glet", "entry_ids");
+	    pager.removeAttribute("data-zoom");
 	    pager.removeAttribute("data-item");
 	    pageLocation();
 	} else {
@@ -240,7 +243,8 @@ function act_letter(thisletter) {
     // alert('thisletter='+thisletter+'; currletter='+currletter);
     if (thisletter !== currletter) {
 	pager.setAttribute("data-page", '1');
-	pager.setAttribute("data-zoom", thisletter);
+	pager.setAttribute("data-glet", thisletter);
+	pager.removeAttribute("data-zoom");
 	pager.removeAttribute("data-item");
 	pageLocation();
     }

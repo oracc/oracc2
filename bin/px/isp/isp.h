@@ -143,6 +143,7 @@ struct isp_glosdata
   const char *dir;  	/* path to 02pub/cbd/LANG */
   const char *web;  	/* path to 02www/cbd/LANG */
   const char *let; 	/* letter to zoom to */
+  const char *lmax; 	/* max entries in curr 'let' */
   const char *ent; 	/* entry item to display */
   const char *xis; 	/* instance-set--not necessarily XML IS--from -l/list= */
   const char *ltab; 	/* pub/cbd/LANG/letter-ids.tab */

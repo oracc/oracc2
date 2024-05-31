@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "isp.h"
+#include "../px.h"
 
 const char *
 isp_glos_letter_id(Isp *ip)
@@ -37,7 +38,10 @@ isp_glos_pmax(Isp *ip)
 	  char *count = strchr(ln, '\t');
 	  if (count)
 	    {
-	      ip->glosdata.emax = (ccp)pool_copy((ucp)++count, ip->p);
+	      if (!strcmp(lid, "entry_ids"))
+		ip->glosdata.emax = (ccp)pool_copy((ucp)++count, ip->p);
+	      else
+		ip->glosdata.lmax = (ccp)pool_copy((ucp)++count, ip->p);
 	    }
 	  else
 	    {
@@ -150,7 +154,8 @@ isp_glos_menu(Isp *ip)
     {
       /* We always use pub/cbd/LANG/letters.tab for the letter-id;
        *
-       * We should only need to create ip->cache.zout once, but right now we recreate it every time
+       * We should only need to create ip->cache.zout once, but right now we recreate it every time;
+       * if we go to a single create we will need to reread each time to add zoomed class
        */
       char *s = (char*)ip->glosdata.ltab;
       fprintf(lfp, "<div id=\"p4Letters\">");
@@ -175,7 +180,12 @@ isp_glos_menu(Isp *ip)
 	  if (*l)
 	    *l++ = '\0';
 	  if (*let && !isspace(*let))
-	    fprintf(lfp, "<p><a href=\"javascript://\" onclick=\"act_letter('%s')\"><span>%s</span></a></p>", let, let);
+	    {
+	      const char *zoomed = "";
+	      if (ip->glosdata.let && !strcmp(let, ip->glosdata.let))
+		zoomed = "class=\"zoomed\" ";
+	      fprintf(lfp, "<p><a href=\"javascript://\" %sonclick=\"act_letter('%s')\"><span>%s</span></a></p>", zoomed, let, let);
+	    }
 
 	  s = l;
 	}
@@ -279,6 +289,57 @@ isp_glos_data(Isp *ip)
   return create_page_div(ip);
 }
 
+const char *
+isp_glos_etm(Isp *ip)
+{
+  Dbi_index *dp = dbx_init(ip->glosdata.dir, "etm");
+  const void *ret = NULL;
+  if (dp)
+    {
+      if (!(ret = dbx_key(dp, ip->item, NULL)))
+	ip->err = px_err("key %s not in dbi %s/%s", ip->item, pool_copy((uccp)ip->glosdata.dir,ip->p), "etm");
+      ret = dbi_detach_data(dp, NULL);
+      dbx_term(dp);
+    }
+  else
+    ip->err = px_err("unable to open dbi %s/%s", pool_copy((uccp)ip->glosdata.dir,ip->p), "etm");
+  return ret;
+}
+
+int
+isp_glos_entry(Isp *ip)
+{
+  List *args = list_create(LIST_SINGLE);
+  list_add(args, (void*)ip->oracc);
+  list_add(args, (void*)"/bin/ispent.sh");
+  list_add(args, " ");
+  list_add(args, (void*)ip->glosdata.ipath);
+  unsigned char *syscmd = list_concat(args);
+
+  if (ip->verbose)
+    fprintf(stderr, "isp: isp_glos_entry: %s\n", syscmd);
+  
+  int sys;
+  if ((sys = system((ccp)syscmd)))
+    {
+      int xstatus = WEXITSTATUS(sys);
+      /*int ifexited = WIFEXITED(sys);*/
+      if (xstatus > 1)
+        {
+          ip->itemdata.not = xstatus;
+        }
+      else
+        {
+          ip->err = PX_ERROR_START "isp_glos_entry failed system call:\n\t%s\n";
+          ip->errx = (ccp)syscmd;
+          return 1;
+        }
+    }
+  
+  return 0;
+}
+
+
 int
 isp_glos_item(Isp *ip)
 {
@@ -288,6 +349,7 @@ isp_glos_item(Isp *ip)
       char *pub = strstr((char *)ip->glosdata.web, "02pub");
       pub[02] = pub[03] = pub[04] = 'w';
     }
+  ip->glosdata.ent = ip->item;
   ip->glosdata.ipath = (char*)pool_alloc(strlen(ip->glosdata.web)+strlen(ip->item)+strlen("/.html0"), ip->p);
   sprintf((char*)ip->glosdata.ipath, "%s/%s.html", ip->glosdata.web, ip->item);
   if (access(ip->glosdata.ipath, R_OK))
@@ -299,6 +361,7 @@ isp_glos_item(Isp *ip)
   else
     ip->itemdata.html = ip->glosdata.ipath;
 
+#if 0
   char *dbifn = "entry-indexes";
   Dbi_index *dp = dbx_init(ip->glosdata.dir, dbifn);
   if (dp)
@@ -334,5 +397,6 @@ isp_glos_item(Isp *ip)
       ip->err = PX_ERROR_START "failed to open %s\n";
       return 1;
     }
+#endif
   return 0;
 }

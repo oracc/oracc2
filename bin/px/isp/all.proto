@@ -16,6 +16,8 @@ extern int isp_glos_list(Isp *ip);
 extern int isp_glos_menu(Isp *ip);
 extern int isp_glos_glid(Isp *ip);
 extern int isp_glos_data(Isp *ip);
+extern const char *isp_glos_etm(Isp *ip);
+extern int isp_glos_entry(Isp *ip);
 extern int isp_glos_item(Isp *ip);
 /* isp_hilited.c */
 extern char *const *isp_hilited(Isp *ip);
@@ -23,6 +25,7 @@ extern char *const *isp_hilited(Isp *ip);
 extern Isp *isp_init(void);
 extern void isp_term(Isp *ip);
 /* isp_item.c */
+extern void isp_item_undump(char *k, struct isp_itemdata *idp);
 extern int isp_item_load(Isp *ip);
 extern const char *first_lang(const char **a, const char **b);
 extern int isp_item_set(Isp *ip);

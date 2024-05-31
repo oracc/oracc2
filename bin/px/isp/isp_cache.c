@@ -162,6 +162,25 @@ isp_cache_page(Isp *ip)
       ip->cache.zout = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.div0"), ip->p);
       sprintf((char*)ip->cache.zout, "%s/letters.div", ip->cache.sub);
 
+      if (ip->item)
+	{
+	  const char *etm = isp_glos_etm(ip);
+	  if (etm)
+	    {
+	      fprintf(stderr, "%s => %s\n", ip->item, etm);
+	      isp_item_undump((char*)pool_copy((ucp)etm, ip->p), &ip->itemdata);
+	      ip->zoom = ip->itemdata.zoom;
+	      char *slash = strchr(ip->itemdata.zoom,'/');
+	      *slash++ = '\0';
+	      ip->glosdata.let = slash;
+	      ip->glosdata.lmax = ip->itemdata.proj;
+	      ip->itemdata.proj = NULL;
+	      ip->page = ip->itemdata.zpag;
+	    }
+	  else
+	    fprintf(stderr, "oops\n");
+	}
+      
       if (isp_glos_menu(ip))
 	return 1;
       

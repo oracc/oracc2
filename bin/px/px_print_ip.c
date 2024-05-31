@@ -148,6 +148,7 @@ pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr, const char *name)
   fprintf(fp,"\t\tdir=%s\n",(char*)xmlify((ucp)pr->dir));
   fprintf(fp,"\t\tweb=%s\n",(char*)xmlify((ucp)pr->web));
   fprintf(fp,"\t\tlet=%s\n",(char*)xmlify((ucp)pr->let));
+  fprintf(fp,"\t\tlmax=%s\n",(char*)xmlify((ucp)pr->lmax));
   fprintf(fp,"\t\tent=%s\n",(char*)xmlify((ucp)pr->ent));
   fprintf(fp,"\t\txis=%s\n",(char*)xmlify((ucp)pr->xis));
   fprintf(fp,"\t\tltab=%s\n",(char*)xmlify((ucp)pr->ltab));
