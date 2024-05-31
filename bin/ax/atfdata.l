@@ -34,9 +34,9 @@ TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 
 <DROP>.*/\n		{ BEGIN(0); }
 
-<ITR>.*/:		{ BEGIN(DROP); tr(); }
+<ITR>[-a-z0-9]+/:	{ BEGIN(DROP); tr(); }
 
-^{BOM3}"&"     		{ BEGIN(AMP); }
+^{BOM3}"&"		{ BEGIN(AMP); }
 
 ^{BOM2}"&"      	{ BEGIN(AMP); }
 
@@ -45,6 +45,8 @@ TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 ^{TRA}			{ BEGIN(ATR); }
 
 ^"#tr."  		{ BEGIN(ITR); }
+
+^"#tr:"  		{ atfdtext="en"; tr(); }
 
 ^"#lem:"  		{ BEGIN(DROP); lem(); }
 

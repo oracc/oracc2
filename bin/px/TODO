@@ -23,6 +23,8 @@ make oldstyle selectable via config opt
 
 redo shownote to remove jquery dependency
 
+Notes in tr not working--see obel/P227377
+
 Document how to get the single-line colour in banner
 
 Fix Banner so there is a single top-level div
