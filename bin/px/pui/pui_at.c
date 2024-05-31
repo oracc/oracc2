@@ -109,7 +109,8 @@ pui_at_pager_data(Isp *ip, FILE *fp)
       pattrs("data-item", ip->item);
       pattrs("data-next", next);
       pattrs("data-bkmk", ip->item);
-      pattrs("data-lang", ip->lang);
+      if (ip->lang)
+	pattrs("data-lang", ip->lang);
     }
   else if (ip->bkmk)
     pattrs("data-bkmk", ip->bkmk);
