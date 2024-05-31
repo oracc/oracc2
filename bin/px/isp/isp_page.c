@@ -198,6 +198,12 @@ isp_page_data(Isp *ip)
 {
   set_item_max(ip);
 
+  /* In item display the item knows its own page/zoom/index but we
+     don't precompute the page div because we haven't done
+     compute_ranges */
+  if (ip->item)
+    return 0;
+  
   if (!access(ip->cache.page, F_OK))
     {
       if (!access(ip->cache.page, R_OK))

@@ -213,7 +213,7 @@ opts(int opt, const char *arg)
     case 'D':
       ++opt_ip->debug;
       break;
-    case 'V':
+    case 'v':
       ++opt_ip->verbose;
       break;
     default:

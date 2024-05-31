@@ -3,7 +3,7 @@
     <p>
       <!--Oracc Search:-->
       <input id="p4SrchBox" type="text" size="30"
-	     value="@@pui_srchterm()@@""/>
+	     value="@@pui_srchterm()@@"/>
       <input type="submit" style="display: none"/>
       <img id="p4SrchGo" class="p4icon" src="/img/p3-search.png"
 	   alt="Search" title="Search" onclick="act_srch()"/>

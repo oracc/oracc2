@@ -12,7 +12,6 @@ ispxtf
 	and fix epsd2 config so catalog-master-project is a single
 	project
 
-
 Document proscribed list names
 
   * anything matching a valid IS ID
@@ -31,10 +30,6 @@ Fix Banner so there is a single top-level div
 add pmp/ subdir
 
 capitalize first letter of master outline headings
-
-Figure out how back-to-page view can go to single text-item icon--does it have to do with bkmk?
-
-search-box """ value thing
 
 Jacob's bug list
 

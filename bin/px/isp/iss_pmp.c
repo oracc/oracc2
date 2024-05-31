@@ -400,19 +400,33 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 	      ++pcount;
 	      if (!(pcount%25))
 		{
-		  pt.plen = (s - f) - pt.ptell;
+		  if (izcount)
+		    pt.plen = (s - f) - pt.ptell;
+		  else
+		    pt.plen = (lasth_tell-1) - pt.ptell;
+		  
 		  md_dump(pfp, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
+		  ++page;
+
 #if 0
 		  showbuf(f, pt.htell, pt.hlen, pt.ptell, pt.plen);
 #endif
-		  pt.ptell = (s - f) + 1;
-		  pt.plen = 0;
-		  if (lasth_tell)
+		  if (s[1] && '#' == s[1])
 		    {
-		      pt.htell = lasth_tell;
-		      pt.hlen = lasth_len;
+		      /* The first item on the page is a new header so
+			 use that instead of lasth */
+		      pt.htell = -1L;
 		    }
-		  ++page;
+		  else
+		    {
+		      pt.ptell = (s - f) + 1;
+		      pt.plen = 0;
+		      if (lasth_tell)
+			{
+			  pt.htell = lasth_tell;
+			  pt.hlen = lasth_len;
+			}
+		    }
 		}
 	      if (s[1] && '#' != s[1] && !isspace(s[1]))
 		{
@@ -430,9 +444,9 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		    }
 		  else
 		    {
+		      ++izcount;
 		      int izpage = (izcount / 25) + ((izcount % 25) ? 1 : 0);
 		      dumpitem(ip, items, itemnth, page, izoom, izpage, izcount, proj);
-		      ++izcount;
 		    }
 		  ++itemnth;
 		}
