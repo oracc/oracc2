@@ -21,6 +21,10 @@
 .item .p4pages { display: none; }
 .page .p4items { display: none; }
 
+
+.via		{ display: none; }
+.prox .via	{ display: inline; padding-left: 1em; font-weight: normal; color: gray; }
+
 .page #p4ToggleMeta { display: none; }
 
 #p4ToggleMeta { text-align: left; }

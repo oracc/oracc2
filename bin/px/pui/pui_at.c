@@ -72,6 +72,10 @@ pui_at_pager_class(Isp *ip, FILE *fp)
     fputs("special", fp);
   else
     fputs("default", fp);
+
+  if (ip->itemdata.proj && strcmp(ip->itemdata.proj, ip->project))
+    fputs(" prox", fp);
+  
 }
 
 void
@@ -218,7 +222,11 @@ pui_at_item_index(Isp *ip, FILE *fp)
       if (ip->itemdata.index)
 	{
 	  const char *index = ip->zoom ? ip->itemdata.zindex : ip->itemdata.index;
+#if 1
+	  fputs(index, fp);
+#else
 	  fputs(itoa(atoi(index)+(ip->glos?0:1)), fp);
+#endif
 	}
     }
 }

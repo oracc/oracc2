@@ -2,6 +2,8 @@ include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=xsltx
 
+scriptdata_DATA=p4-htmlview.xsl p4-corpusview-lib.xsl
+
 noinst_SCRIPTS=wrapper-links.sh
 
 AM_CPPFLAGS+=-I/usr/include/libxml2
