@@ -10,7 +10,7 @@ fi
 if [ -r 00lib/umbrella.lst ]; then
        lx-umbrella.sh umbrella `oraccopt`
 elif [ -r 00lib/search.lst ]; then
-    lx-umbrella.sh search `oraccopt`
+    lx-umbrella.sh search
 elif [ -r 00lib/proxy.lst ]; then
     grep -v @ 00lib/proxy.lst >01bld/lists/proxy-atf.lst
     grep @ 00lib/proxy.lst >00lib/proxy-cat.lst
