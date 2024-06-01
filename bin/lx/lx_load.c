@@ -7,8 +7,18 @@ lx_load(const char *fn)
   Lxfile *lxp = malloc(sizeof(Lxfile));
   lxp->fn = fn;
   lxp->lines = lx_loadfile((ccp)fn, &lxp->nlines, (char**)&lxp->fmem);
-  lxp->seen = hash_create(1024);
-  lx_parse(lxp);
+  if (lxp->nlines)
+    {
+      lxp->seen = hash_create(1024);
+      lx_parse(lxp);
+    }
+  else
+    {
+      free(lxp->fmem);
+      free(lxp->lines);
+      free(lxp);
+      lxp = NULL;
+    }
   return lxp;
 }
 

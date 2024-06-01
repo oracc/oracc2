@@ -12,17 +12,28 @@ else
     mkdir -p $lxd
 fi
 
-# 00cat list
+project=`oraccopt`
+if [ "$project" = "" ]; then
+    echo $0: unable to set project--probably not working in a project directory. Stop.
+    exit 1
+fi
 
-xmd-ids.plx | lx -cu -o $lxd/00cat.lst 01tmp/xmdids.lst
+# 00cat list
+xmd-ids.plx | lx -cuqs -p $project -o $lxd/00cat.lst -
 
 # 00atf list
-cat 00atf/*.atf | atfdatax >02pub/atf-data.tab
-cut -f1 02pub/atf-data.tab | lx -cu -o $lxd/00atf.lst -
+set 00atf/*.atf
+if [ "$1" != "00atf/*.atf" ]; then
+    cat 00atf/*.atf | atfdatax >02pub/atf-data.tab
+    cut -f1 02pub/atf-data.tab | lx -cuqs -p $project -o $lxd/00atf.lst -
+fi
 
 # 00lib lists
 for a in approved.lst not-outlined.lst outlined.lst proxy.lst rejected.lst ; do
-    lx -cu -o $lxd/$a 00lib/$a
+    if [ -r 00lib/$a ]; then
+	echo $0: marshalling 00lib/$a
+	lx -cuqs -p $project -o $lxd/$a 00lib/$a
+    fi
 done
 
 # umbrella and search lists
@@ -31,12 +42,16 @@ done
 # search.lst members are full project paths
 #
 if [ -r 00lib/umbrella.lst ]; then
+    rm -f 01tmp/00umbrella.lst
+    >&2 echo $0: marshalling 00lib/umbrella.lst
     exec >>01tmp/00umbrella.lst
-    lx-umbrella.sh 00lib/umbrella.lst `oraccopt`
-    lx -cu -o $lxd/00umbrella.lst 01tmp/00umbrella.lst
+    lx-umbrella.sh umbrella $project
+    lx -cuq -p $project -o $lxd/00umbrella.lst 01tmp/00umbrella.lst
 elif [ -r 00lib/search.lst ]; then
-    exec >>$01tmp/00search.lst
-    lx-umbrella.sh 00lib/search.lst    
-    lx -cu -o $lxd/00search.lst 01tmp/00search.lst
+    rm -f 01tmp/00search.lst
+    >&2 echo $0: marshalling 00lib/search.lst
+    exec >>01tmp/00search.lst
+    lx-umbrella.sh search
+    lx -cuq -p $project -o $lxd/00search.lst 01tmp/00search.lst
 fi
 

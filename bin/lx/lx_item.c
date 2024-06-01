@@ -10,6 +10,16 @@ lx_item(Lxfile *lxp, int i)
   if (i < lxp->nlines)
     {
       char *l = lxp->lines[i];
+
+      /* trim leading spaces */
+      while (isspace(*l))
+	++l;
+
+      /* trim trailing spaces */
+      char *end = l+strlen(l);      
+      while (isspace(end[-1]))
+	*--end = '\0';
+
       char *colon = strchr(l, ':'), *at = strchr(l,'@');
       char *lp = NULL, *li = NULL, *lc = NULL;
       
@@ -40,9 +50,9 @@ lx_item(Lxfile *lxp, int i)
 	  else
 	  lpp->c = lc;
 	}
-      else if (verbose)
+      else if (check)
 	{
-	  mesg_vwarning(lxp->fn, i, "skipping duplicate item %s", li);
+	  mesg_vwarning(lxp->fn, i, "dropping duplicate item %s", li);
 	}
     }
   else

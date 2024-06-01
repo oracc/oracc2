@@ -2,17 +2,17 @@
 #include "lx.h"
 
 int check;
-int output;
+const char *output;
 const char *project;
 int qualify;
 int sort;
-int uniq;
+int uniq;	/* uniq does not require sort in lx */
 int verbose;
 
 int
 main(int argc, char **argv)
 {
-  if (options(argc, argv, "cop:qsuv"))
+  if (options(argc, argv, "co:p:qsuv"))
     return 1;
   if (qualify && !project)
     {
@@ -24,16 +24,30 @@ main(int argc, char **argv)
     {
       mesg_init();
       Lxfile *lxf = lx_load(argv[optind++]);
+      /* mesg_print frees the mesg list */
       mesg_print(stderr);
-      if (!check)
+      if (lxf)
 	{
-	  if (sort)
-	    lx_sort(lxf);
-	  if (output)
-	    lx_output(lxf, stdout);
+	  if (!check || output)
+	    {
+	      if (sort)
+		lx_sort(lxf);
+	      if (output)
+		{
+		  FILE *outfp = stdout;
+		  if (output && strcmp(output, "-"))
+		    {
+		      if (!(outfp = fopen(output, "w")))
+			{
+			  fprintf(stderr, "failed to open output %s: %s\n", output, strerror(errno));
+			  exit(1);
+			}
+		    }
+		  lx_output(lxf, outfp);
+		}
+	    }
+	  lx_free(lxf);
 	}
-      lx_free(lxf);
-      mesg_term();
     }
 }
 
@@ -46,7 +60,7 @@ opts(int opt, const char *arg)
       check = 1;
       break;
     case 'o':
-      output = 1;
+      output = arg;
       break;
     case 'p':
       project = arg;

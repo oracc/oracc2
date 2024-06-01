@@ -22,8 +22,8 @@ typedef struct lxfile
 } Lxfile;
 
 extern int check;
-extern int output;
-extern const char  *project;
+extern const char *output;
+extern const char *project;
 extern int qualify;
 extern int sort;
 extern int uniq;
