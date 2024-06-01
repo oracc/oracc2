@@ -10,8 +10,10 @@ int uniq;	/* uniq does not require sort in lx */
 int verbose;
 
 int
-main(int argc, char **argv)
+main(int argc, char * const*argv)
 {
+  loadfile_prog(argv[0]);
+  
   if (options(argc, argv, "co:p:qsuv"))
     return 1;
   if (qualify && !project)
@@ -19,35 +21,37 @@ main(int argc, char **argv)
       fprintf(stderr, "%s: -q specified without -p PROJECT. Stop.\n", argv[0]);
       return 1;
     }
-      
-  while (argv[optind])
+
+  if (argv[optind])
     {
+      Lxfile *lxf = NULL;
+
       mesg_init();
-      Lxfile *lxf = lx_load(argv[optind++]);
-      /* mesg_print frees the mesg list */
+      List *todo = lx_mathargs(argv);
+
+      /* We output the errors detected during load-time first; if any
+	 were unrecoverable todo will be NULL otherwise we will go
+	 ahead and process the todo list anyway
+
+	 mesg_print frees the mesg list */
       mesg_print(stderr);
-      if (lxf)
+
+      if (todo)
+	if ((lxf = lx_process(todo)))
+	  lx_finish(lxf);
+      
+      if (lxf && (!check || output))
 	{
-	  if (!check || output)
-	    {
-	      if (sort)
-		lx_sort(lxf);
-	      if (output)
-		{
-		  FILE *outfp = stdout;
-		  if (output && strcmp(output, "-"))
-		    {
-		      if (!(outfp = fopen(output, "w")))
-			{
-			  fprintf(stderr, "failed to open output %s: %s\n", output, strerror(errno));
-			  exit(1);
-			}
-		    }
-		  lx_output(lxf, outfp);
-		}
-	    }
+	  lx_output(lxf, output);
 	  lx_free(lxf);
 	}
+      else
+	fprintf(stderr, "%s: lx processing failed. Stop.\n", argv[0]);
+    }
+  else
+    {
+      fprintf(stderr, "%s: nothing to do. Stop.\n", argv[0]);
+      exit(1);
     }
 }
 

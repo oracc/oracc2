@@ -52,6 +52,5 @@ elif [ -r 00lib/search.lst ]; then
     >&2 echo $0: marshalling 00lib/search.lst
     exec >>01tmp/00search.lst
     lx-umbrella.sh search
-    lx -cuq -p $project -o $lxd/00search.lst 01tmp/00search.lst
+    lx -cuqs -p $project -o $lxd/00search.lst 01tmp/00search.lst
 fi
-

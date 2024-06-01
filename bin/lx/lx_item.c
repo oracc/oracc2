@@ -36,10 +36,11 @@ lx_item(Lxfile *lxp, int i)
 	  *at++ = '\0';
 	  lc = at;
 	}
+
       if (!uniq || !hash_find(lxp->seen, (uccp)li))
 	{
-	  hash_add(lxp->seen, (uccp)li, "");
 	  Lx *lpp = &lxp->items[lxp->nitems++];
+	  hash_add(lxp->seen, (uccp)li, lpp);
 	  if (qualify && !lp)
 	    lpp->p = (char*)project;
 	  else

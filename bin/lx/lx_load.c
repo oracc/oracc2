@@ -4,7 +4,7 @@
 Lxfile *
 lx_load(const char *fn)
 {
-  Lxfile *lxp = malloc(sizeof(Lxfile));
+  Lxfile *lxp = calloc(1, sizeof(Lxfile));
   lxp->fn = fn;
   lxp->lines = lx_loadfile((ccp)fn, &lxp->nlines, (char**)&lxp->fmem);
   if (lxp->nlines)
