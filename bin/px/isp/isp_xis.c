@@ -16,7 +16,7 @@ xis_wids(Isp *ip, const struct xis_info *xip, FILE *fp)
 {
   FILE *xis_fp = NULL;
   char xis_file[strlen(ip->lloc.dbpath)+strlen(ip->lloc.lang)+6];
-  sprintf(xis_file, "%s/%s.tis", ip->lloc.dbpath, ip->lloc.lang);
+  sprintf(xis_file, "%s/%s.tis", ip->lloc.dbpath, ip->glos);
   if (ip->verbose)
     fprintf(stderr, "isp: xis_wids: .tis=%s\n", xis_file);
   if ((xis_fp = fopen(xis_file, "r")))
@@ -28,7 +28,7 @@ xis_wids(Isp *ip, const struct xis_info *xip, FILE *fp)
           int ch = fgetc(xis_fp);
           if (ch == EOF)
             {
-              ip->err = "isp: xis_wids: read failure getting ids from .tis file %s";
+              ip->err = PX_ERROR_START "isp: xis_wids: read failure getting ids from .tis file %s\n";
 	      ip->errx = xis_file;
 	      break;
             }
@@ -44,7 +44,7 @@ xis_wids(Isp *ip, const struct xis_info *xip, FILE *fp)
     }
   else
     {
-      ip->err = "unable to open .tis file %s for xis ids";
+      ip->err = PX_ERROR_START "fatal: unable to open .tis file %s for xis ids\n";
       ip->errx = (ccp)pool_copy((ucp)xis_file, ip->p);
     }
 }

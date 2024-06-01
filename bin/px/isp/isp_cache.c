@@ -146,8 +146,8 @@ isp_cache_list(Isp *ip)
 	    ip->err = "cache.list does not exist in tmp/isp";
 	  else
 	    {
-	      (void)isp_list_create(ip);
-	      isp_list_cemd(ip);
+	      if (!isp_list_create(ip))
+		isp_list_cemd(ip);
 	    }
 	}
     }
