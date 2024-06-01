@@ -29,12 +29,30 @@ if [ "$1" != "00atf/*.atf" ]; then
 fi
 
 # 00lib lists
-for a in approved.lst not-outlined.lst outlined.lst proxy.lst rejected.lst ; do
+for a in approved.lst add-approved.lst not-approved.lst
+	 outlined.lst add-outlined.lst not-outlined.lst
+	 rejected.lst ; do
     if [ -r 00lib/$a ]; then
 	echo $0: marshalling 00lib/$a
 	lx -cuqs -p $project -o $lxd/$a 00lib/$a
     fi
 done
+
+# lx -x arg uses proxy mode where missing cat field is qualified with
+# project member of item rather than arg project:
+#
+# In project poel:
+#
+#	blms:P123456 => blms:P123456@blms
+#
+#	P123456@blms => poel:P123456@blms
+#
+# In proxy mode it makes no sense for an item to have neither project
+# nor catalog field; that's an error.
+#
+if [ -r 00lib/proxy.lst ]; then    
+    lx -cuqsx -p project -o $lxd/proxy.lst 00lib/proxy.lst
+fi
 
 # umbrella and search lists
 #

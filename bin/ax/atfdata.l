@@ -6,6 +6,8 @@
 #include <mesg.h>
 #include <pool.h>
 
+extern const char *project;
+
 static void lem(void);
 static void pqx(void);
 static void tr(void);
@@ -84,7 +86,7 @@ static void
 pqx_term(void)
 {
   const char *trs;
-  printf("%s\t%s\t%s\n", curr_pqx, curr_lem ? "#lem" : "", (trs = pqx_trs()));
+  printf("%s:%s@%s\t%s\t%s\n", project, project, curr_pqx, curr_lem ? "#lem" : "", (trs = pqx_trs()));
   hash_free(hdata, NULL);
   pool_term(p);
   if (*trs)

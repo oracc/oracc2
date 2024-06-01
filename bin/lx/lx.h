@@ -7,6 +7,7 @@ typedef struct lx
   char *p;	/*project  */
   char *i;	/*item, PQX*/
   char *c;	/*catalogue*/
+  char *x;	/*extra data; ignored but passed through */
   int l;       	/*line num*/
 } Lx;
 
@@ -24,6 +25,7 @@ typedef struct lxfile
 extern int check;
 extern const char *output;
 extern const char *project;
+extern int proxy;
 extern int qualify;
 extern int sort;
 extern int uniq;

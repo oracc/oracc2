@@ -15,6 +15,12 @@ lx_item(Lxfile *lxp, int i)
       while (isspace(*l))
 	++l;
 
+      /* work on only the first column; additional columns are echoed
+	 through */
+      char *tab = strchr(lxp->lines[i], '\t');
+      if (tab)
+	*++tab = '\0';
+
       /* trim trailing spaces */
       char *end = l+strlen(l);      
       while (isspace(end[-1]))
@@ -46,10 +52,16 @@ lx_item(Lxfile *lxp, int i)
 	  else
 	    lpp->p = lp;
 	  lpp->i = li;
-	  if (qualify && !lc)
-	    lpp->c = lpp->p;
+	  if (!lc)
+	    {
+	      if (proxy)
+		lpp->c = lpp->p;
+	      else if (qualify)
+		lpp->c = (char*)project;
+	    }
 	  else
-	  lpp->c = lc;
+	    lpp->c = lc;
+	  lpp->x = tab;
 	}
       else if (check)
 	{

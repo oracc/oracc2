@@ -4,6 +4,7 @@
 int check;
 const char *output;
 const char *project;
+int proxy;
 int qualify;
 int sort;
 int uniq;	/* uniq does not require sort in lx */
@@ -80,6 +81,9 @@ opts(int opt, const char *arg)
       break;
     case 'v':
       verbose = 1;
+      break;
+    case 'x':
+      proxy = 1;
       break;
     default:
       return 1;  

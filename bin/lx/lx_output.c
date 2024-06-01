@@ -27,6 +27,8 @@ lx_output(Lxfile *lxp, const char *outfn)
 	  fputc('@', outfp);
 	  fputs(lxp->items[i].c, outfp);
 	}
+      if (lxp->items[i].x)
+	fprintf(outfp, "\t%s", lxp->items[i].x);
       fputc('\n', outfp);
     }	
 }

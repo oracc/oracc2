@@ -1,7 +1,7 @@
 include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=lx
-bin_SCRIPTS=lx-lists.sh lx-umbrella.sh lx-atf.sh lx-inputs.sh
+bin_SCRIPTS=lx-lists.sh lx-umbrella.sh lx-atf.sh lx-inputs.sh lx-atfsources.sh
 
 scriptdata_DATA=
 
