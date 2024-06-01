@@ -5,7 +5,7 @@
    guaranteed to have be at list one list followed by a sequence of
    alternating operator-filename pairs*/
 List *
-lx_mathargs(char * const*argv)
+lx_set_args(char * const*argv)
 {
   List *todo = list_create(LIST_SINGLE);
   int state = 0; /* 0 = expecting list file; 1 = expecting list math operator */

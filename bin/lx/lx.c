@@ -27,7 +27,7 @@ main(int argc, char * const*argv)
       Lxfile *lxf = NULL;
 
       mesg_init();
-      List *todo = lx_mathargs(argv);
+      List *todo = lx_set_args(argv);
 
       /* We output the errors detected during load-time first; if any
 	 were unrecoverable todo will be NULL otherwise we will go
@@ -37,10 +37,10 @@ main(int argc, char * const*argv)
       mesg_print(stderr);
 
       if (todo)
-	if ((lxf = lx_process(todo)))
+	if ((lxf = lx_set_ops(todo)))
 	  lx_finish(lxf);
       
-      if (lxf && (!check || output))
+      if (lxf && !check)
 	{
 	  lx_output(lxf, output);
 	  lx_free(lxf);

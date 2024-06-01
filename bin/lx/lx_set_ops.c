@@ -36,7 +36,7 @@ lx_union(Hash *r, Hash *l)
 }
 
 Lxfile *
-lx_process(List *todo)
+lx_set_ops(List *todo)
 {
   if (list_len(todo) == 1)
     return list_first(todo);
@@ -67,7 +67,8 @@ lx_process(List *todo)
     }
 
   /* Now set up the running list's items array */
-  r->items = malloc(r->seen->key_count * sizeof(Lx));
+  r->nitems = r->seen->key_count;
+  r->items = malloc(r->nitems * sizeof(Lx));
   const char **keys = hash_keys(r->seen);
   int i;
   for (i = 0; keys[i]; ++i)

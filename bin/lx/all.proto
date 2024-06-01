@@ -18,9 +18,9 @@ extern void lx_output(Lxfile *lxp, const char *outfn);
 /* lx_parse.c */
 extern void lx_parse(Lxfile *lxp);
 /* lx_set_args.c */
-extern List *lx_mathargs(char *const *argv);
+extern List *lx_set_args(char *const *argv);
 /* lx_set_ops.c */
-extern Lxfile *lx_process(List *todo);
+extern Lxfile *lx_set_ops(List *todo);
 /* lx_show.c */
 extern void lx_show(Lxfile *lxp, FILE *fp);
 /* lx_sort.c */
