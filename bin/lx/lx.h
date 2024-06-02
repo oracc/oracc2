@@ -8,6 +8,7 @@ typedef struct lx
   char *i;	/*item, PQX*/
   char *c;	/*catalogue*/
   char *x;	/*extra data; ignored but passed through */
+  int proxy;	/* item came from a proxy */
   int l;       	/*line num*/
 } Lx;
 
@@ -23,6 +24,7 @@ typedef struct lxfile
 } Lxfile;
 
 extern int check;
+extern char *metaforce;
 extern const char *output;
 extern const char *prog;
 extern const char *project;
@@ -31,6 +33,7 @@ extern int qualify;
 extern int sort;
 extern int uniq;
 extern int verbose;
+extern int ximport;
 
 #include "all.proto"
 

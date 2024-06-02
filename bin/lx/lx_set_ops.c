@@ -29,10 +29,31 @@ lx_minus(Hash *r, Hash *l)
   return new_r;
 }
 
-static void
+static Hash *
 lx_union(Hash *r, Hash *l)
 {
-  hash_merge(r, l);
+  const char **keys = hash_keys(r);
+  int i;
+  Hash *new_r = hash_create(r->key_count);
+  for (i = 0; keys[i]; ++i)
+    {
+      Lx *lpp = hash_find(l, (uccp)keys[i]);
+      if (!lpp)
+	hash_add(new_r, (uccp)keys[i], hash_find(r, (uccp)keys[i]));
+      else
+	{
+	  /* We need to take care if adding a proxy list into another
+	     list; we don't change the ATF source--if that is in both
+	     regular list and proxy the regular list wins.  But if the
+	     CAT source is different in the proxy it must be because
+	     it was explicitly given in the proxy file, so we override
+	     the host CAT field. */
+	  Lx *npp = hash_find(r, (uccp)keys[i]);
+	  if (npp->proxy && strcmp(lpp->c, npp->c))
+	    lpp->c = npp->c;
+	}
+    }
+  return new_r;  
 }
 
 Lxfile *

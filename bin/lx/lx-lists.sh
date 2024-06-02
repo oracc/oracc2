@@ -2,6 +2,7 @@
 #
 # create base lists from cat, atf, lib and umbrella/search in
 # 01bld/lxinputs
+#
 lx-inputs.sh
 
 listdir=01bld/lxlists
@@ -23,11 +24,7 @@ if [ -r 02pub/atf-data.tab ]; then
 
 fi
 
-if [ -r 00lib/umbrella.lst ]; then
-    
-fi
-
-if [ -r 01bld/lists/proxy.lst ]; then
-    lx -qous -p `oraccopt` 01bld/lists/proxy.lst >01bld/lists/outlined.lst
-    (cd 01bld/lists ; cp outlined.lst proxy-atf.lst ; cp outlined.lst proxy-cat.lst)
-fi
+#if [ -r 01bld/lists/proxy.lst ]; then
+#    lx -qous -p `oraccopt` 01bld/lists/proxy.lst >01bld/lists/outlined.lst
+#    (cd 01bld/lists ; cp outlined.lst proxy-atf.lst ; cp outlined.lst proxy-cat.lst)
+#fi

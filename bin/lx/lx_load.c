@@ -7,6 +7,7 @@ lx_load(const char *fn)
   Lxfile *lxp = calloc(1, sizeof(Lxfile));
   lxp->fn = fn;
   lxp->lines = lx_loadfile((ccp)fn, &lxp->nlines, (char**)&lxp->fmem);
+  proxy = (strstr(fn,"proxy") ? 1 : 0);
   if (lxp->nlines)
     {
       lxp->seen = hash_create(1024);

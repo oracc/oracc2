@@ -1,17 +1,6 @@
 #include <oraccsys.h>
 #include "lx.h"
 
-static char *
-atfdatatab(const char *u, const char *p)
-{
-  char *s = malloc(strlen(p)+strlen(u)+2);
-  sprintf(s, "%s%s%s", p, *p ? "/" : "", u);
-  char *a = malloc(strlen(oracc_builds())+strlen(s)+strlen("//02pub/atf-data.tab0"));
-  sprintf(a, "%s/%s/02pub/atf-data.tab", oracc_builds(), s);
-  free(s);
-  return a;
-}
-
 char *const *
 lx_projfile(const char *fn)
 {
@@ -41,9 +30,9 @@ lx_projfile(const char *fn)
 	  for (t = list_first(l); t; t = list_next(l))
 	    {
 	      if (umbrella)
-		c[i++] = atfdatatab(t, project);
+		c[i++] = lx_atf_data(t, project);
 	      else
-		c[i++] = atfdatatab(t, "");;
+		c[i++] = lx_atf_data(t, "");
 	      c[i++] = "+";
 	    }
 	  c[i-1] = NULL;

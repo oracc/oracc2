@@ -1,3 +1,5 @@
+/* lx_atf_data.c */
+extern char *lx_atf_data(const char *u, const char *p);
 /* lx.c */
 extern int main(int argc, char *const *argv);
 extern int opts(int opt, const char *arg);
@@ -13,6 +15,8 @@ extern Lxfile *lx_load(const char *fn);
 extern void lx_free(Lxfile *lxp);
 /* lx_loadfile.c */
 extern char **lx_loadfile(const char *fname, size_t *nlines, char **fmem);
+/* lx_metaforce.c */
+extern void lx_metaforce(Lxfile *lxf);
 /* lx_output.c */
 extern void lx_output(Lxfile *lxp, const char *outfn);
 /* lx_parse.c */

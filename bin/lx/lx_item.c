@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include "lx.h"
 
+/**Load one file into an items array, dropping duplicate items
+ */
 void
 lx_item(Lxfile *lxp, int i)
 {
@@ -46,19 +48,28 @@ lx_item(Lxfile *lxp, int i)
       if (!uniq || !hash_find(lxp->seen, (uccp)li))
 	{
 	  Lx *lpp = &lxp->items[lxp->nitems++];
+	  lpp->proxy = proxy;
 	  hash_add(lxp->seen, (uccp)li, lpp);
-	  if (qualify && !lp)
+#if 1
+	  if (!lp)
+#else
+          if (qualify && !lp)
+#endif
 	    lpp->p = (char*)project;
 	  else
 	    lpp->p = lp;
 	  lpp->i = li;
 	  if (!lc)
+#if 1
+	    lpp->c = (char*)project;
+#else
 	    {
 	      if (proxy)
 		lpp->c = lpp->p;
 	      else if (qualify)
 		lpp->c = (char*)project;
 	    }
+#endif
 	  else
 	    lpp->c = lc;
 	  lpp->x = tab;

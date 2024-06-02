@@ -3,6 +3,15 @@
 
 int check;
 int inplace;
+/* The -m PROJECT option forces the CAT field of all items to the
+   named project before output. If a project needs to set arbitrary
+   catalogue fields for each item that can be done by creating
+   00lib/proxy-cat.lst which gives just item and cat, e.g.,
+   P123456@blms. If this file exists it is added as the last thing
+   lx-inputs does and has the effect of forcing the catalogue field
+   for all items in proxy-cat.lst
+ */
+char *metaforce;
 const char *output;
 const char *prog;
 const char *project;
@@ -12,13 +21,14 @@ int qualify;
 int sort;
 int uniq;	/* uniq does not require sort in lx */
 int verbose;
+int ximport;	/* import x-field from proxies */
 
 int
 main(int argc, char * const*argv)
 {
   loadfile_prog((prog = argv[0]));
   
-  if (options(argc, argv, "a:cio:p:qsuvx"))
+  if (options(argc, argv, "a:cio:p:qsuv"))
     return 1;
 
   if (qualify && !project)
@@ -83,6 +93,9 @@ opts(int opt, const char *arg)
     case 'i':
       inplace = 1;
       break;
+    case 'm':
+      metaforce = arg;
+      break;
     case 'o':
       output = arg;
       break;
@@ -102,7 +115,7 @@ opts(int opt, const char *arg)
       verbose = 1;
       break;
     case 'x':
-      proxy = 1;
+      ximport = 1;
       break;
     default:
       return 1;  

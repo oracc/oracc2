@@ -19,9 +19,9 @@ else
     exit 1
 fi
 
-if [ -r 00lib/proxy.lst ]; then
-    lx -cuxq -p $project -o 01tmp/proxy.lst 00lib/proxy.lst
-    lx -cui 02pub/atf-data.tab + 01tmp/proxy.lst
+if [ -r 00lib/proxy.lst ] || [ -r 00lib/proxy-cat.lst ]; then
+    lx -cu -p $project -o 01tmp/proxy.lst 00lib/proxy.lst
+    lx -cui 02pub/atf-data.tab +? 01tmp/proxy.lst +? 01tmp/proxy-cat.lst
 fi
 
 chmod o+r 02pub/atf-data.tab

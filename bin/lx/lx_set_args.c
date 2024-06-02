@@ -12,20 +12,29 @@ lx_set_args(char * const*argv, int start)
   
   List *todo = list_create(LIST_SINGLE);
   int state = 0; /* 0 = expecting list file; 1 = expecting list math operator */
-  int status = 0; /* 0 = OK to proceed after args; 1 = exit after args */  
+  int status = 0; /* 0 = OK to proceed after args; 1 = exit after args */
+  int optional = 0; /* set to 1 if an operator has a ? after it */
+  int index = 0; /* number of args processed */
+  const char *pending_op = 0;
   while (argv[start])
     {
       if (state)
 	{
-	  if (strlen(argv[start]) == 1 && strchr("-+/", *argv[start]))
+	  if (strlen(argv[start]) > 1 && '?' == argv[start][1])
+	    optional = 1;
+	  if ((strlen(argv[start]) == 1
+	       || (optional && strlen(argv[start]) == 2))
+	      && strchr("-+/", *argv[start]))
 	    {
 	      if (!status)
-		list_add(todo, (void*)argv[start]);
+		pending_op = argv[start];
+	      /*list_add(todo, (void*)argv[start]);*/
 	    }
 	  else
 	    {
 	      fprintf(stderr, "%s: %s: bad operator in list math (expected + - /).\n",
 		      argv[0], argv[start]);
+	      pending_op = NULL;
 	      ++status;
 	    }
 	  ++start;
@@ -37,14 +46,22 @@ lx_set_args(char * const*argv, int start)
 	  if (lxf)
 	    {
 	      if (!status)
-		list_add(todo, lxf);
+		{
+		  if (index)
+		    list_add(todo, (void*)pending_op);
+		  list_add(todo, lxf);
+		}
 	    }
 	  else
 	    {
-	      fprintf(stderr, "%s: %s: list failed to load.\n", argv[0], argv[start]);
-	      ++status;
+	      if (!optional)
+		{
+		  fprintf(stderr, "%s: %s: list failed to load.\n", argv[0], argv[start]);
+		  ++status;
+		}
 	    }
 	  ++start;
+	  ++index;
 	  state = 1;
 	}
     }
