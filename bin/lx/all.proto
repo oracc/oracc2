@@ -17,8 +17,10 @@ extern char **lx_loadfile(const char *fname, size_t *nlines, char **fmem);
 extern void lx_output(Lxfile *lxp, const char *outfn);
 /* lx_parse.c */
 extern void lx_parse(Lxfile *lxp);
+/* lx_projfile.c */
+extern char *const *lx_projfile(const char *fn);
 /* lx_set_args.c */
-extern List *lx_set_args(char *const *argv);
+extern List *lx_set_args(char *const *argv, int start);
 /* lx_set_ops.c */
 extern Lxfile *lx_set_ops(List *todo);
 /* lx_show.c */

@@ -24,6 +24,7 @@ typedef struct lxfile
 
 extern int check;
 extern const char *output;
+extern const char *prog;
 extern const char *project;
 extern int proxy;
 extern int qualify;

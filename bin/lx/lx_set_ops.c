@@ -51,7 +51,7 @@ lx_set_ops(List *todo)
     {
       char op = ((const char *)lnp->data)[0];
       Lxfile *lxp = (Lxfile *)lnp->next->data;
-      printf("running_list %c %s\n", op, lxp->fn);
+      fprintf(stderr, "running_list %c %s\n", op, lxp->fn);
       switch (op)
 	{
 	case '+':

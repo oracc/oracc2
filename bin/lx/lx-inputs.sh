@@ -21,12 +21,9 @@ fi
 # 00cat list
 xmd-ids.plx | lx -cuqs -p $project -o $lxd/00cat.lst -
 
-# 00atf list
-set 00atf/*.atf
-if [ "$1" != "00atf/*.atf" ]; then
-    cat 00atf/*.atf | atfdatax >02pub/atf-data.tab
-    cut -f1 02pub/atf-data.tab | lx -cuqs -p $project -o $lxd/00atf.lst -
-fi
+# 00atf data
+lx-aftdata.sh
+cut -f1 02pub/atf-data.tab | lx -cuqs -p $project -o $lxd/00atf.lst -
 
 # 00lib lists
 for a in approved.lst add-approved.lst not-approved.lst

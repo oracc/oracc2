@@ -5,31 +5,35 @@
    guaranteed to have be at list one list followed by a sequence of
    alternating operator-filename pairs*/
 List *
-lx_set_args(char * const*argv)
+lx_set_args(char * const*argv, int start)
 {
+  if (!argv)
+    return NULL;
+  
   List *todo = list_create(LIST_SINGLE);
   int state = 0; /* 0 = expecting list file; 1 = expecting list math operator */
-  int status = 0; /* 0 = OK to proceed after args; 1 = exit after args */
-  while (argv[optind])
+  int status = 0; /* 0 = OK to proceed after args; 1 = exit after args */  
+  while (argv[start])
     {
       if (state)
 	{
-	  if (strlen(argv[optind]) == 1 && strchr("-+/", *argv[optind]))
+	  if (strlen(argv[start]) == 1 && strchr("-+/", *argv[start]))
 	    {
 	      if (!status)
-		list_add(todo, (void*)argv[optind++]);
+		list_add(todo, (void*)argv[start]);
 	    }
 	  else
 	    {
 	      fprintf(stderr, "%s: %s: bad operator in list math (expected + - /).\n",
-		      argv[0], argv[optind++]);
+		      argv[0], argv[start]);
 	      ++status;
 	    }
+	  ++start;
 	  state = 0;
 	}
       else
 	{
-	  Lxfile *lxf = lx_load(argv[optind++]);
+	  Lxfile *lxf = lx_load(argv[start]);
 	  if (lxf)
 	    {
 	      if (!status)
@@ -37,9 +41,10 @@ lx_set_args(char * const*argv)
 	    }
 	  else
 	    {
-	      fprintf(stderr, "%s: %s: list failed to load.\n", argv[0], argv[optind]);
+	      fprintf(stderr, "%s: %s: list failed to load.\n", argv[0], argv[start]);
 	      ++status;
 	    }
+	  ++start;
 	  state = 1;
 	}
     }

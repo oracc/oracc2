@@ -19,7 +19,7 @@ lx_item(Lxfile *lxp, int i)
 	 through */
       char *tab = strchr(lxp->lines[i], '\t');
       if (tab)
-	*++tab = '\0';
+	*tab++ = '\0';
 
       /* trim trailing spaces */
       char *end = l+strlen(l);      
