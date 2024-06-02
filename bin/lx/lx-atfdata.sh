@@ -1,5 +1,6 @@
 #!/bin/dash
 
+lxd=01bld/lxinputs
 project=`oraccopt`
 
 if [ "$project" = "" ]; then
@@ -18,10 +19,10 @@ else
     >&2 echo $0: no atf files found in project $project. Stop.
     exit 1
 fi
-
-if [ -r 00lib/proxy.lst ] || [ -r 00lib/proxy-cat.lst ]; then
-    lx -cu -p $project -o 01tmp/proxy.lst 00lib/proxy.lst
-    lx -cui 02pub/atf-data.tab +? 01tmp/proxy.lst +? 01tmp/proxy-cat.lst
+>&2 ls -l $lxd/proxy*.lst
+if [ -r $lxd/proxy.lst ] || [ -r $lxd/proxy-cat.lst ]; then
+    >&2 echo $0: processing $lxd/proxy*.lst
+    lx -i 02pub/atf-data.tab +? $lxd/proxy.lst +? $lxd/proxy-cat.lst
 fi
 
 chmod o+r 02pub/atf-data.tab

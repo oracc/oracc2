@@ -31,3 +31,5 @@ extern Lxfile *lx_set_ops(List *todo);
 extern void lx_show(Lxfile *lxp, FILE *fp);
 /* lx_sort.c */
 extern void lx_sort(Lxfile *lxp);
+/* lx_ximport.c */
+extern void lx_ximport(Lxfile *lxf);

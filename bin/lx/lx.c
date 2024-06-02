@@ -28,7 +28,7 @@ main(int argc, char * const*argv)
 {
   loadfile_prog((prog = argv[0]));
   
-  if (options(argc, argv, "a:cio:p:qsuv"))
+  if (options(argc, argv, "a:cio:p:qsuvx"))
     return 1;
 
   if (qualify && !project)
@@ -94,7 +94,7 @@ opts(int opt, const char *arg)
       inplace = 1;
       break;
     case 'm':
-      metaforce = arg;
+      metaforce = (char*)arg;
       break;
     case 'o':
       output = arg;

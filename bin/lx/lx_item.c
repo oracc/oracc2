@@ -72,7 +72,25 @@ lx_item(Lxfile *lxp, int i)
 #endif
 	  else
 	    lpp->c = lc;
-	  lpp->x = tab;
+	  if (proxy)
+	    {
+	      if (tab)
+	        {
+		  if ('p' != *tab)
+		    {
+		      char *p = malloc(strlen(tab)+2);
+		      strcpy(p, "p");
+		      strcat(p, tab);
+		      lpp->x = p;
+		    }
+		  else
+		    lpp->x = tab;
+		}
+	      else
+		lpp->x = "p";
+	    }
+	  else
+	    lpp->x = tab;
 	}
       else if (check)
 	{

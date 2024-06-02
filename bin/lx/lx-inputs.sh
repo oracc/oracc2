@@ -21,13 +21,9 @@ fi
 # 00cat list
 xmd-ids.plx | lx -cus -p $project -o $lxd/00cat.lst -
 
-# 00atf data
-lx-aftdata.sh
-cut -f1 02pub/atf-data.tab | lx -cus -p $project -o $lxd/00atf.lst -
-
 # 00lib lists
-for a in approved.lst add-approved.lst not-approved.lst
-	 outlined.lst add-outlined.lst not-outlined.lst
+for a in approved.lst add-approved.lst not-approved.lst \
+	 outlined.lst add-outlined.lst not-outlined.lst \
 	 rejected.lst ; do
     if [ -r 00lib/$a ]; then
 	echo $0: marshalling 00lib/$a
@@ -38,6 +34,10 @@ done
 if [ -r 00lib/proxy.lst ]; then    
     lx -cus -p project -o $lxd/proxy.lst 00lib/proxy.lst
 fi
+
+# 00atf data; do this after 00lib because then it can use $lxd/proxy.lst
+lx-atfdata.sh
+cut -f1 02pub/atf-data.tab | lx -cus -p $project -o $lxd/00atf.lst -
 
 # umbrella and search lists
 #

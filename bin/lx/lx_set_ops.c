@@ -51,7 +51,15 @@ lx_union(Hash *r, Hash *l)
 	  Lx *npp = hash_find(r, (uccp)keys[i]);
 	  if (npp->proxy && strcmp(lpp->c, npp->c))
 	    lpp->c = npp->c;
+	  hash_add(new_r, (uccp)keys[i], npp);
 	}
+    }
+  free(keys);
+  keys = hash_keys(l);
+  for (i = 0; keys[i]; ++i)
+    {
+      if (!hash_find(r, (uccp)keys[i]))
+	hash_add(new_r, (uccp)keys[i], hash_find(l, (uccp)keys[i]));      
     }
   return new_r;  
 }
@@ -76,7 +84,7 @@ lx_set_ops(List *todo)
       switch (op)
 	{
 	case '+':
-	  lx_union(r->seen, lxp->seen); 		/* set union is directly into r->seen */
+	  r->seen = lx_union(r->seen, lxp->seen); 	/* set union */
 	  break;
 	case '-':
 	  r->seen = lx_minus(r->seen, lxp->seen); 	/* set difference */

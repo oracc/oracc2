@@ -9,4 +9,7 @@ lx_finish(Lxfile *lxf)
 
   if (metaforce)
     lx_metaforce(lxf);
+
+  if (ximport)
+    lx_ximport(lxf);
 }
