@@ -1,8 +1,11 @@
-#!/bin/dash
+#!/bin/sh
 #
 # create base lists from cat, atf, lib and umbrella/search in
 # 01bld/lxinputs
 #
+
+#set -x
+
 lx-inputs.sh
 
 listdir=01bld/lxlists
@@ -14,13 +17,13 @@ lx-atfsources.sh
 if [ -r 02pub/atf-data.tab ]; then
 
    cut -f1 02pub/atf-data.tab | \
-       lx -q -p `oraccopt` >$listdir/have-atf.lst
+       lx -q -p `oraccopt` - >$listdir/have-atf.lst
 
    grep '#lem' 02pub/atf-data.tab | cut -f1 | \
-       lx -q -p `oraccopt` >$listdir/have-lem.lst
+       lx -qz -p `oraccopt` - >$listdir/have-lem.lst
 
    grep -v '#lem' 02pub/atf-data.tab | cut -f1 | \
-       lx -q -p `oraccopt` >$listdir/sans-lem.lst
+       lx -qz -p `oraccopt` - >$listdir/sans-lem.lst
 
 fi
 

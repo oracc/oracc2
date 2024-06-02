@@ -31,9 +31,11 @@ extern const char *project;
 extern int proxy;
 extern int qualify;
 extern int sort;
+extern int status;
 extern int uniq;
 extern int verbose;
 extern int ximport;
+extern int zfirstoptional;
 
 #include "all.proto"
 

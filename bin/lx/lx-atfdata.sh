@@ -19,10 +19,14 @@ else
     >&2 echo $0: no atf files found in project $project. Stop.
     exit 1
 fi
->&2 ls -l $lxd/proxy*.lst
-if [ -r $lxd/proxy.lst ] || [ -r $lxd/proxy-cat.lst ]; then
-    >&2 echo $0: processing $lxd/proxy*.lst
-    lx -i 02pub/atf-data.tab +? $lxd/proxy.lst +? $lxd/proxy-cat.lst
+
+set $lxd/proxy*.lst
+if [ "$1" != "$lxd/proxy*.lst" ]; then
+    >&2 ls -l $lxd/proxy*.lst
+    if [ -r $lxd/proxy.lst ] || [ -r $lxd/proxy-cat.lst ]; then
+	>&2   echo $0: processing $lxd/proxy*.lst
+	lx -ui 02pub/atf-data.tab +? $lxd/proxy.lst +? $lxd/proxy-cat.lst
+    fi
 fi
 
 chmod o+r 02pub/atf-data.tab

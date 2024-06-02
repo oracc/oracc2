@@ -1,10 +1,13 @@
-#!/bin/dash
+#!/bin/sh
 #
 # Marshall the list inputs and clean/validate them, putting the
 # validated versions in 01bld/lxinputs.
 #
 # We assume that 01bld, 01tmp, and 02pub all exist
 #
+
+#set -x
+
 lxd=01bld/lxinputs
 if [ -d $lxd ]; then
     rm -f $lxd/*
@@ -27,7 +30,7 @@ for a in approved.lst add-approved.lst not-approved.lst \
 	 rejected.lst ; do
     if [ -r 00lib/$a ]; then
 	echo $0: marshalling 00lib/$a
-	lx -cus -p $project -o $lxd/$a 00lib/$a
+	lx -cusz -p $project -o $lxd/$a 00lib/$a
     fi
 done
 

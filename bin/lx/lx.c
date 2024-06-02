@@ -19,16 +19,18 @@ const char *projfile;
 int proxy;
 int qualify;
 int sort;
+int status = 0; /* 0 = OK to proceed after args; 1 = exit after args */
 int uniq;	/* uniq does not require sort in lx */
 int verbose;
 int ximport;	/* import x-field from proxies */
+int zfirstoptional;
 
 int
 main(int argc, char * const*argv)
 {
   loadfile_prog((prog = argv[0]));
   
-  if (options(argc, argv, "a:cio:p:qsuvx"))
+  if (options(argc, argv, "a:cio:p:qsuvxz"))
     return 1;
 
   if (qualify && !project)
@@ -65,9 +67,11 @@ main(int argc, char * const*argv)
   mesg_print(stderr);
   
   Lxfile *lxf = NULL;
-  if (todo)
+  if (todo && list_len(todo))
     if ((lxf = lx_set_ops(todo)))
       lx_finish(lxf);
+    else
+      ++status;
   
   if (lxf)
     {
@@ -75,7 +79,7 @@ main(int argc, char * const*argv)
 	lx_output(lxf, output);
       lx_free(lxf);
     }
-  else
+  else if (status)
     fprintf(stderr, "%s: lx processing failed. Stop.\n", argv[0]);
 }
 
@@ -116,6 +120,9 @@ opts(int opt, const char *arg)
       break;
     case 'x':
       ximport = 1;
+      break;
+    case 'z':
+      zfirstoptional = 1;
       break;
     default:
       return 1;  

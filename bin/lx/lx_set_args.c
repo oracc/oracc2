@@ -12,18 +12,23 @@ lx_set_args(char * const*argv, int start)
   
   List *todo = list_create(LIST_SINGLE);
   int state = 0; /* 0 = expecting list file; 1 = expecting list math operator */
-  int status = 0; /* 0 = OK to proceed after args; 1 = exit after args */
-  int optional = 0; /* set to 1 if an operator has a ? after it */
+  int nextoptional = 0; /* set to 1 if an operator has a ? after it */
   int index = 0; /* number of args processed */
   const char *pending_op = 0;
+
+  /* the -z arg means the first file is optional */
+  nextoptional = zfirstoptional;
+
   while (argv[start])
     {
       if (state)
 	{
 	  if (strlen(argv[start]) > 1 && '?' == argv[start][1])
-	    optional = 1;
+	    nextoptional = 1;
+	  else
+	    nextoptional = 0;
 	  if ((strlen(argv[start]) == 1
-	       || (optional && strlen(argv[start]) == 2))
+	       || (nextoptional && strlen(argv[start]) == 2))
 	      && strchr("-+/", *argv[start]))
 	    {
 	      if (!status)
@@ -42,24 +47,65 @@ lx_set_args(char * const*argv, int start)
 	}
       else
 	{
-	  Lxfile *lxf = lx_load(argv[start]);
-	  if (lxf)
+	  if (!strcmp(argv[start], "-"))
 	    {
-	      if (!status)
+	      Lxfile *lxf = lx_load(argv[start]);
+	      if (!lxf || !lxf->nitems)
 		{
-		  if (index)
-		    list_add(todo, (void*)pending_op);
-		  list_add(todo, lxf);
+		  if (!nextoptional)
+		    {
+		      fprintf(stderr, "%s: stdin is empty and is not optional.\n", argv[0]);
+		      ++status;
+		    }
 		}
+	      else
+		list_add(todo, lxf);
 	    }
 	  else
 	    {
-	      if (!optional)
+	      struct stat st;	  
+	      if (!stat(argv[start], &st))
 		{
-		  fprintf(stderr, "%s: %s: list failed to load.\n", argv[0], argv[start]);
-		  ++status;
+		  if (st.st_size)
+		    {
+		      Lxfile *lxf = lx_load(argv[start]);
+		      if (lxf)
+			{
+			  if (!status)
+			    {
+			      if (index)
+				list_add(todo, (void*)pending_op);
+			      list_add(todo, lxf);
+			    }
+			}
+		      else
+			{
+			  if (!nextoptional)
+			    {
+			      fprintf(stderr, "%s: %s: list failed to load and is not optional.\n", argv[0], argv[start]);
+			      ++status;
+			    }
+			}
+		    }
+		  else
+		    {
+		      if (!nextoptional)
+			{
+			  fprintf(stderr, "%s: %s: list is empty and is not optional.\n", argv[0], argv[start]);
+			  ++status;
+			}
+		    }
+		}
+	      else
+		{
+		  if (!nextoptional)
+		    {
+		      fprintf(stderr, "%s: %s: list does not exist and is not optional.\n", argv[0], argv[start]);
+		      ++status;
+		    }
 		}
 	    }
+		
 	  ++start;
 	  ++index;
 	  state = 1;
