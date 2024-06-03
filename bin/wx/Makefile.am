@@ -10,7 +10,13 @@ cgibin_PROGRAMS=wx
 noinst_SCRIPTS=wx-pub-p4projects.sh
 bin_SCRIPTS=wx-is-p4-project.sh
 
-# noinst_PROGRAMS=content_test
+noinst_PROGRAMS=p4url
+
+
+p4url_SOURCES=mp4url.c p4url.c
+p4url_LDADD=$(xLDADD)
+
+# content_test
 # content_test_SOURCES=content_test.c content.c runexpat.c
 # content_test_LDADD=ccgi/libccgi.la -lexpat
 
