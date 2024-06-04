@@ -1,0 +1,56 @@
+/* cgi_decode_url.c */
+extern char *CGI_decode_url(const char *p);
+/* cgiopts.c */
+extern struct cgioptstab *cgiopts(register const char *str, register size_t len);
+/* pxargs.c */
+extern struct ispargstab *pxargs(register const char *str, register size_t len);
+/* px.c */
+extern int main(int argc, char **argv);
+/* px_file_copy.c */
+extern int px_file_copy(Isp *ip, const char *fn, const char *to);
+extern int file_copy_lines(const char *from, const char *to, int start, int end);
+/* px_help.c */
+extern void help(void);
+/* pxloadfile.c */
+extern unsigned char **px_loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **fmem);
+extern unsigned char *px_loadfile_error(void);
+extern unsigned char *px_loadfile(unsigned const char *fname, size_t *nbytes);
+/* px_mesg.c */
+extern const char *px_mesg(const char *wpq, const char *fmt, ...);
+/* px_options.c */
+extern int isp_perm_check(const char *p);
+extern int cgi_options(int argc, char **argv, Isp *ip);
+extern int px_options(int argc, char **argv, Isp *ip);
+extern int opts(int opt, const char *arg);
+/* px_return.c */
+extern int px_return_file(const char *form, const char *file);
+extern int px_return(Isp *ip);
+/* px_validate.c */
+extern int px_validate(Isp *ip);
+/* wpx_lib.c */
+extern const char *cgi_arg(const char *arg, const char *val);
+extern void do302(const char *loc);
+extern void do400(const char *msg400);
+extern void do404(void);
+extern char *wpx_find_www_file(const char *project, const char *dir, const char *basename, const char *ext);
+extern char *wpx_find_art_file(const char *glos, const char *oid, const char *form);
+extern char *wpx_find_glo_file(const char *glos, const char *form);
+extern char *wpx_find_pqx_file(const char *project, const char *pqid, const char *ext);
+extern char *wpx_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang);
+extern void wpx_print_hdr(void);
+extern void wpx_print_hdr_text(void);
+extern void wpx_print_hdr_xml(void);
+extern void wpx_print_hdr_json(void);
+extern void wpx_print_hdr_pdf(const char *pname);
+extern void wpx_print_hdr_zip(const char *zname);
+/* xslt_if.c */
+extern const char *xslt_if_lasterr(void);
+extern void xslt_init(void);
+extern void xslt_term(Xslt *xp);
+extern int xslt_parse_sheet(Xslt *xp);
+extern int xslt_parse_doc(Xslt *xp);
+extern int xslt_parse_docmem(Xslt *xp);
+extern int xslt_parse_xslmem(Xslt *xp);
+extern int xslt_transform(Xslt *xp);
+extern int xslt_output(Xslt *xp);
+extern Xslt *xslt_one_off(const char *xml, const char *xmlstr, const char *xsl, const char *xslstr, const char *out, const char **params);

@@ -34,7 +34,7 @@ main(int argc, char **argv)
   if (isp_config(ip))
     goto error;
   
-  if (ip->form)
+  if (ip->part && strcmp(ip->part,"page"))
     if (px_return(ip))
       {
 	ip->err = wpx_last_error();

@@ -25,5 +25,6 @@
 #define PX_PARM_9U	0x0000400 /* UI MODE */
 
 extern int file_copy_lines(const char *from, const char *to, int start, int end);
+extern const char *px_mesg(const char *wpq, const char *fmt, ...);
 
 #endif/*PXDEFS_H_*/

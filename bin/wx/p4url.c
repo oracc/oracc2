@@ -22,7 +22,7 @@ static int p4url_u(P4url *p, const char *u);
  *
  *	  PROJECT
  * 	| PROJECT ('/' PQXID)?
- *	| PROJECT '/' LANGUAGE ('/' OXID)?
+ *	| PROJECT ('/' LANGUAGE)? ('/' OXID)?
  *
  *
  * q is:

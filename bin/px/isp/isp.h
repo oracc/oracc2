@@ -197,6 +197,7 @@ typedef struct isp
   const char *lang; /* item translation lang */
   const char **halp;/* http_accept_language langs as array */
   const char *xhmd; /* xml or html mode */
+  const char *part; /* page=pager; full=meta+tlit+xlat; plus=tlit+xlat */
   const char *form; /* also xml or html mode, in URL/QUERY_STRING; are
 		     * both needed?  with form if it is NULL we
 		     * provide pager output, otherwise the html/xml

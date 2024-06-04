@@ -1,13 +1,16 @@
 #include <oraccsys.h>
-#include "px.h"
-#include "wpx_lib.h"
+#include "../px.h"
+#include "../wpx_lib.h"
+#include "pxr.h"
 
+#if 0
 void
 px_cat_file(const char *file)
 {
   execl("/bin/cat", "cat", file, NULL);
   perror("execl failed");
 }
+#endif
 
 int
 px_return_file(const char *form, const char *file)
@@ -15,7 +18,7 @@ px_return_file(const char *form, const char *file)
   /* the file-finder routines must set wpx_err appropriately */
   if (!file)
     return 1;
-  wpx_cat_file(form, file);
+  wpx_cat_xml(form, file);
   return 1;
 }
 
