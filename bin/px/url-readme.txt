@@ -13,7 +13,9 @@ Query:
 	what=text [score sources]
 	lang=LANG
 
-part: page = pager; full = meta+tlit+xlat; plus=tlit+xlat; tlit/xlat/meta=just one of those
+part: page* = pager; full* = meta+tlit+xlat; plus* = tlit+xlat; tlit/xlat/meta=just one of those
+
+part values with asterisk are only available as html
 
 Default is pager display,
 

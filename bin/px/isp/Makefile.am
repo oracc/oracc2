@@ -1,5 +1,7 @@
 include ../../../oracc-am-rules.txt
 
+AM_CPPFLAGS+=-I/usr/include/libxml2
+
 noinst_LTLIBRARIES=libisp.la
 
 # bin_PROGRAMS=ispx ispsortx

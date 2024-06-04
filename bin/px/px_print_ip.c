@@ -203,6 +203,7 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\txhmd=%s\n",(char*)xmlify((ucp)pr->xhmd));
   fprintf(fp,"\tpart=%s\n",(char*)xmlify((ucp)pr->part));
   fprintf(fp,"\tform=%s\n",(char*)xmlify((ucp)pr->form));
+  fprintf(fp,"\twhat=%s\n",(char*)xmlify((ucp)pr->what));
   fprintf(fp,"\tuimd=%s\n",(char*)xmlify((ucp)pr->uimd));
   fprintf(fp,"\tpack=%s\n",(char*)xmlify((ucp)pr->pack));
   fprintf(fp,"\thost=%s\n",(char*)xmlify((ucp)pr->host));

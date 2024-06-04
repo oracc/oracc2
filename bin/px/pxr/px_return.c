@@ -37,6 +37,37 @@ px_return(Isp *ip)
     }
   else if (ip->item)
     {
+#if 1
+      /* Phase 1: default setting */
+      if (ip->part)
+	{
+	  if (strstr("page/full/plus", ip->part))
+	    {
+	      if (ip->form && strcmp(ip->form, "html"))
+		{
+		  /* unsupported; shall we throw an error or force html? */
+		  ip->form = "html";
+		}
+	    }
+	}
+      else
+	{
+	  if (ip->form)
+	    {
+	      if (!strcmp(ip->form, "html") && (!ip->what || !strcmp(ip->what, "text")))
+		ip->part = "full";
+	    }
+	  else if (ip->what)
+	    {
+	      if (!strcmp(ip->what, "text"))
+		ip->form = "html";
+	      /* else futured */
+	    }
+	}
+      /* Phase 2: determine support and required inputs */
+      /* Phase 3: generate inputs if necessary */
+      /* Phase 4: return outputs */
+#else
       const char *dtype = NULL, *dlang = NULL;
       if (!ip->data)
 	dtype = "xtf";
@@ -49,6 +80,7 @@ px_return(Isp *ip)
 	}
       else if (strcmp(ip->data, "meta"))
 	dtype = "xmd";
+#endif
     }
   return 0;
 }

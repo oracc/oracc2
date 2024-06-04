@@ -204,6 +204,7 @@ typedef struct isp
 		     * file directly; could also use this for json,
 		     * pdf, tei so maybe retiring xhmd is best.
 		     */
+  const char *what; /* text score block sources */
   const char *uimd; /* uimode */
   const char *pack; /* packaging type */
   const char *host; /* host page for pack=esp2 */

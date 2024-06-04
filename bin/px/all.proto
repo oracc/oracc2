@@ -1,7 +1,19 @@
+/* cbditem.c */
+extern void summary(const char *ref);
+extern void ei_sH(void *userData, const char *name, const char **atts);
+extern void ei_eH(void *userData, const char *name);
+extern void expat_identity(const char *fname, const char *xml_id, FILE *outfp);
+extern int main(int argc, char **argv);
+extern int opts(int argc, const char *arg);
+extern void help(void);
 /* cgi_decode_url.c */
 extern char *CGI_decode_url(const char *p);
 /* cgiopts.c */
 extern struct cgioptstab *cgiopts(register const char *str, register size_t len);
+/* http_accept_language.c */
+extern const char **http_accept_language(const char *hal);
+/* lang-3-2.c */
+extern const char *lang32(const char *l);
 /* pxargs.c */
 extern struct ispargstab *pxargs(register const char *str, register size_t len);
 /* px.c */
@@ -22,21 +34,34 @@ extern int isp_perm_check(const char *p);
 extern int cgi_options(int argc, char **argv, Isp *ip);
 extern int px_options(int argc, char **argv, Isp *ip);
 extern int opts(int opt, const char *arg);
-/* px_return.c */
-extern int px_return_file(const char *form, const char *file);
-extern int px_return(Isp *ip);
+/* px_print_ip.c */
+extern void pr_isp_list_loc(FILE *fp, struct isp_list_loc *pr, const char *name);
+extern void pr_isp_srchdata(FILE *fp, struct isp_srchdata *pr, const char *name);
+extern void pr_isp_cache(FILE *fp, struct isp_cache *pr, const char *name);
+extern void pr_item(FILE *fp, struct item *pr, const char *name);
+extern void pr_outline(FILE *fp, struct outline *pr, const char *name);
+extern void pr_ispo(FILE *fp, struct ispo *pr, const char *name);
+extern void pr_isph(FILE *fp, struct isph *pr, const char *name);
+extern void pr_ispz(FILE *fp, struct ispz *pr, const char *name);
+extern void pr_page(FILE *fp, struct page *pr, const char *name);
+extern void pr_isp_mapdata(FILE *fp, struct isp_mapdata *pr, const char *name);
+extern void pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name);
+extern void pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr, const char *name);
+extern void pr_isp_config(FILE *fp, struct isp_config *pr, const char *name);
+extern void px_print_ip(FILE *fp, Isp *ip);
+extern void pr_ispargstab(FILE *fp, struct ispargstab *pr, const char *name);
 /* px_validate.c */
+extern const char *fatalize(const char *e);
 extern int px_validate(Isp *ip);
+/* selecter.c */
+extern int selecter(const char *file, char *const *ids);
 /* wpx_lib.c */
-extern const char *cgi_arg(const char *arg, const char *val);
+extern void wpx_cat_html(const char *form, const char *file);
+extern void wpx_cat_xml(const char *form, const char *file);
+extern const char *wpx_last_error(void);
 extern void do302(const char *loc);
 extern void do400(const char *msg400);
 extern void do404(void);
-extern char *wpx_find_www_file(const char *project, const char *dir, const char *basename, const char *ext);
-extern char *wpx_find_art_file(const char *glos, const char *oid, const char *form);
-extern char *wpx_find_glo_file(const char *glos, const char *form);
-extern char *wpx_find_pqx_file(const char *project, const char *pqid, const char *ext);
-extern char *wpx_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang);
 extern void wpx_print_hdr(void);
 extern void wpx_print_hdr_text(void);
 extern void wpx_print_hdr_xml(void);

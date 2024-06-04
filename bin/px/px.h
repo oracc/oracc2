@@ -4,6 +4,7 @@
 #include "pxdefs.h"
 
 #include <stdlib.h>
+#include "xslt_if.h"
 #include "isp/isp.h"
 #include "pui/pui.h"
 
@@ -13,6 +14,10 @@ struct cgioptstab
   int opt;
 };
 
+#if 1
+#include "all.proto"
+extern int px_return(Isp *ip);
+#else
 extern struct cgioptstab *cgiopts(register const char *str, register size_t len);
 extern struct ispargstab *pxargs (register const char *str, register size_t len);
 extern int px_validate(Isp *ip);
@@ -35,4 +40,5 @@ extern void px_print_ip(FILE *fp, Isp *ip);
 
 extern const char **http_accept_language(const char *hal);
 extern const char *lang32(const char *l);
+#endif
 #endif/*PX_H*/
