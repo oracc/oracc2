@@ -13,8 +13,9 @@ typedef struct p4url
   char *q;	/* copy of QUERY_STRING to chop up */
   const char *project;
   const char *glossary;
-  const char *id;
+  const char *item;
   P4arg *args;
+  int nargs;
   const char *err;
   int status;
 } P4url;
@@ -34,6 +35,7 @@ struct urlkeytab
 extern const char *docroot;
 
 extern int p4url(P4url *p, const char *u, const char *q);
+extern char const**p4url_vec(P4url *p);
 extern struct urlkeytab *urlkeys (register const char *str, register size_t len);
 extern struct qsoptionstab *qsoption (register const char *str, register size_t len);
 

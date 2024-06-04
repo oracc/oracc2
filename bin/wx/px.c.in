@@ -25,8 +25,9 @@ dump_vec(const char *porq, const char **vec)
 const char *
 px_cgi_arg(const char *arg, const char *val)
 {
-  char *c = malloc(strlen(arg)+strlen(val)+2);
-  sprintf(c, "%s=%s", arg, CGI_encode_url(val, NULL));
+  char *e = CGI_encode_url(val, NULL);
+  char *c = malloc(strlen(arg)+strlen(e)+2);
+  sprintf(c, "%s=%s", arg, e);
   return c;
 }
 

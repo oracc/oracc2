@@ -63,7 +63,7 @@ p4url_u(P4url *p, const char *u)
 	      if (p4url_is_glossaryid(bits.two))
 		{
 		  p->glossary = bits.one;
-		  p->id = bits.two;
+		  p->item = bits.two;
 		}
 	      else
 		{
@@ -81,7 +81,7 @@ p4url_u(P4url *p, const char *u)
 	{
 	  if (p4url_is_textid(bits.one))
 	    {
-	      p->id = bits.one;
+	      p->item = bits.one;
 	    }
 	  else if (p4url_is_glossary(bits.one))
 	    {
@@ -161,6 +161,7 @@ p4url_q(P4url *p, const char *q)
 	    qs = NULL;
 	  ++i;
 	}
+      p->nargs = i;
     }
   
   return p->status;
@@ -304,4 +305,3 @@ p4url_is_project(char *p, P4bits *b)
     }
   return 0;
 }
-

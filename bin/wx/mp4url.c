@@ -1,12 +1,15 @@
 #include <oraccsys.h>
+#include "px.h"
 #include "p4url.h"
 
 const char *docroot = "/home/oracc/www";
+const char *project = NULL;
+const char *query_string = NULL;
 
 static void
 print_p(P4url *p)
 {
-  fprintf(stderr, "p=%s; g=%s; id=%s", p->project, p->glossary, p->id);
+  fprintf(stderr, "proj=%s; glos=%s; item=%s", p->project, p->glossary, p->item);
 }
 
 static void
@@ -53,6 +56,9 @@ main(int argc, char **argv)
 
       fputc('\n', stderr);
 
+      const char **v = p4url_vec(&p);
+      dump_vec("px", v);
+      
       return 0;
     }
   else

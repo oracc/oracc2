@@ -13,8 +13,8 @@ bin_SCRIPTS=wx-is-p4-project.sh
 noinst_PROGRAMS=p4url
 
 
-p4url_SOURCES=mp4url.c p4url.c qsoption.c urlkeys.c
-p4url_LDADD=$(xLDADD)
+p4url_SOURCES=mp4url.c p4url.c qsoption.c urlkeys.c p4url_vec.c px.c
+p4url_LDADD=ccgi/libccgi.la $(xLDADD)
 
 # content_test
 # content_test_SOURCES=content_test.c content.c runexpat.c
