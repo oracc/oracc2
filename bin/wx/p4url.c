@@ -1,26 +1,17 @@
 #include <oraccsys.h>
 #include "p4url.h"
 
-Typedef struct p4arg
-{
-  const char *option;
-  const char *value;
-} P4arg;
+typedef struct p4bits { const char *project; const char *one; const char *two; } P4bits;
 
-Typedef struct p4url
-{
-  char *u;	/* copy of URL to chop up */
-  char *q;	/* copy of QUERY_STRING to chop up */
-  const char *project;
-  const char *glossary;
-  const char *id;
-  P4arg *args;
-  const char *err;
-  int status;
-} P4url;
+static int p4url_is_glossary(const char *l);
+static int p4url_is_glossaryid(const char *i);
+static int p4url_is_project(char *p, P4bits *b);
+static int p4url_is_textid(const char *i);
+static int p4url_q(P4url *p, const char *q);
+static int p4url_u(P4url *p, const char *u);
 
-static void p4url_u(P4url *p, const char *u);
-static void p4url_q(P4url *p, const char *q);
+#undef uc
+#define uc unsigned char
 
 /**p4url--validate a new P4 url
  *
@@ -56,25 +47,23 @@ p4url(P4url *p, const char *u, const char *q)
   return 0;
 }
 
-typedef struct p4bits { const char *one; const char *two; } P4bits;
-
-static void
+static int
 p4url_u(P4url *p, const char *u)
 {
-  static P4bits bits = { NULL , NULL };
+  P4bits bits = { NULL , NULL , NULL };
   p->u = strdup(u);
-  p4url_project(u, &p4bits);
-  if (p4bits.project)
+  p4url_is_project(p->u, &bits);
+  if (bits.project)
     {
-      p->p = p4bits.project;
-      if (p4bits.two)
+      p->project = bits.project;
+      if (bits.two)
 	{
-	  if (p4url_is_glossary(p4bits.one))
+	  if (p4url_is_glossary(bits.one))
       	    {
-	      if (p4url_is_glossary_id(p4bits.two))
+	      if (p4url_is_glossaryid(bits.two))
 		{
-		  p->glossary = p4bits.one;
-		  p->id = p4bits.two;
+		  p->glossary = bits.one;
+		  p->id = bits.two;
 		}
 	      else
 		{
@@ -88,13 +77,16 @@ p4url_u(P4url *p, const char *u)
 	      p->err = "found good PROJECT but bad TEXTID";
 	    }
 	}
-      else if (p4bits.one)
+      else if (bits.one)
 	{
-	  if (p4url_is_text_id(p4bits.one))
+	  if (p4url_is_textid(bits.one))
 	    {
-	      p->id = p4bits.one;
+	      p->id = bits.one;
 	    }
-	  else if (p4url_is_glossary(p4bits.one))
+	  else if (p4url_is_glossary(bits.one))
+	    {
+	      p->glossary = bits.one;
+	    }
 	  else
 	    {
 	      p->status = 1;
@@ -107,78 +99,83 @@ p4url_u(P4url *p, const char *u)
       p->status = 1;
       p->err = "no PROJECT found";
     }
-}
-
-static void
-p4url_q(P4url *p, const char *q)
-{
-  
+  return p->status;
 }
 
 static int
-p4url_is_id(const char *i)
+p4url_q(P4url *p, const char *q)
 {
-  if (i)
+  return 0;
+}
+
+static int
+p4url_is_glossaryid(const char *i)
+{
+  if (i && ('o' == i[0] || 'x' == i[0]))
     {
-      if ('P' == i[0] || 'Q' == i[0] || 'X' == i[0])
+      ++i;
+      while (*i && isdigit((uc)*i))
+	++i;
+      if (!*i)
+	return 1;
+    }
+  return 0;
+}
+
+static int
+p4url_is_textid(const char *i)
+{
+  static char pqx[256] = { ['P']=1, ['Q']=1, ['X']=1 };
+  if (pqx[(uc)*i])
+    {
+      ++i;
+      char *dot = strchr(i, '.');
+      if (dot)
 	{
-	  ++i;
-	  char *dot = strchr(i, '.');
-	  if (dot)
+	  if (dot - i == 6)
 	    {
-	      if (dot - i == 6)
+	      while (1)
 		{
-		  while (1)
-		    {
-		      while (*i && i >= '0' && i <= '9')
-			++i;
-		      if (!*i)
-			return 1;
-		      else if ('.' == *i)
-			++i;
-		      else
-			break;
-		    }
-		}
-	    }
-	  else
-	    {
-	      if (strlen(i) == 6)
-		{
-		  while (*i && i >= '0' && i <= '9')
+		  while (isdigit((uc)*i))
 		    ++i;
 		  if (!*i)
 		    return 1;
+		  else if ('.' == *i)
+		    ++i;
+		  else
+		    break;
 		}
 	    }
 	}
-      else if ('o' == i[0] || 'x' == i[0])
+      else
 	{
-	  ++i;
-	  while (*i && i >= '0' && i <= '9')
-	    ++i;
-	  if (!*i)
-	    return 1;
+	  if (strlen(i) == 6)
+	    {
+	      while (isdigit((uc)*i))
+		++i;
+	      if (!*i)
+		return 1;
+	    }
 	}
     }
   return 0;
 }
 
 static int
-p4url_is_lang(const char *l)
+p4url_is_glossary(const char *l)
 {
   if (l)
     {
-      char *sentinel = l + 3;
-      while (*l && l < sentinel && *l >= 'a' && *l <= 'z')
+      const char *sentinel = l + 3;
+      while (l < sentinel && islower((uc)*l))
 	++l;
       if (*l)
 	{
-	  if ('-' == l[0] && 'x' == l[1] && 'x' == l[2])
+	  if ('-' == l[0] && 'x' == l[1] && '-' == l[2])
 	    {
 	      l += 3;
 	      sentinel = l + 6;
-	      while (*l && l < sentinel && *l >= 'a' && *l <= 'z')
+	      while (l < sentinel && islower((uc)*l))
 		++l;
 	      if (*l)
 		{
@@ -186,7 +183,7 @@ p4url_is_lang(const char *l)
 		    {
 		      ++l;
 		      sentinel = l + 3;
-		      while (*l && l < sentinel && *l >= '0' && *l <= '9')
+		      while (l < sentinel && isdigit((uc)*l))
 			++l;
 		      if (!*l)
 			return 1;
@@ -205,7 +202,7 @@ p4url_is_lang(const char *l)
 /* Return a pointer to the end of string or the character after the
  * '/' that ends the project portion of the SCRIPT_URL belong to the
  */
-static char *
+static int
 p4url_is_project(char *p, P4bits *b)
 {
   struct stat st_buf;
@@ -214,25 +211,33 @@ p4url_is_project(char *p, P4bits *b)
   sprintf(buf, "%s/%s", docroot, p);
 
   if (!stat(buf, &st_buf) && S_ISDIR(st_buf.st_mode))
-    return 1;
-
-  /* We recognize at most PROJECT + GLOSSARY + ID */
-  char *slash1 = strrchr(buf, '/');
-
-  if (slash)
     {
-      *slash1 = '\0';      
+      b->project = p;
+      return 1;
+    }
+
+  /* We recognize at most PROJECT + GLOSSARY + ID; the strchr in this
+     function must be on the arg p not on buf */
+  char *slash1 = strrchr(p, '/');
+
+  if (slash1)
+    {
+      *slash1 = '\0'; 
+      sprintf(buf, "%s/%s", docroot, p);
       if (!stat(buf, &st_buf) && S_ISDIR(st_buf.st_mode))
 	{
+	  b->project = p;
 	  b->one = slash1+1;
 	  return 1;
 	}
-      char *slash2 = strrchr(slash1-1, '/');
+      char *slash2 = strrchr(p, '/');
       if (slash2)
 	{
 	  *slash2 = '\0';
+	  sprintf(buf, "%s/%s", docroot, p);
 	  if (!stat(buf, &st_buf) && S_ISDIR(st_buf.st_mode))
 	    {
+	      b->project = p;
 	      b->one = slash2+1;
 	      b->two = slash1+1;
 	      return 1;
