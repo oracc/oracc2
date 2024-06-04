@@ -102,10 +102,68 @@ p4url_u(P4url *p, const char *u)
   return p->status;
 }
 
+static const char *
+p4url_arg_tok(char *t)
+{
+  static char *x = NULL;
+  char *ret = NULL;
+  if (t)
+    x = t;
+  if (*x)
+    {
+      /* a token ends with \0 , '&', or '=' */
+      char *y = x;
+      while (*y && '&' != *y && '=' != *y)
+	++y;
+      *y++ = '\0';
+      ret = x;
+      x = y;      
+    }
+  return ret;
+}
+
 static int
 p4url_q(P4url *p, const char *q)
 {
-  return 0;
+  if (q)
+    {
+      extern int qs_total_keywords(void);
+      int optmax = qs_total_keywords();
+      p->q = strdup(q);
+      p->args = calloc(1+optmax, sizeof(P4arg));
+      int i = 0;
+      char *qs = p->q;
+      const char *tok;
+      while ((tok = p4url_arg_tok(qs)))
+	{
+	  struct urlkeytab *ukey = urlkeys(tok, strlen(tok));
+	  if (ukey)
+	    {
+	      p->args[i].option = ukey->option;
+	      p->args[i].value = tok;
+	    }
+	  else
+	    {
+	      struct qsoptionstab *qopt = qsoption(tok, strlen(tok));
+	      if (qopt)
+		{
+		  p->args[i].option = tok;
+		  p->args[i].value = p4url_arg_tok(NULL);
+		}
+	      else
+		{
+		  p->status = 1;
+		  p->err = "invalid option in QUERY_STRING";
+		  break;
+		}
+	    }
+	  if (qs)
+	    qs = NULL;
+	  ++i;
+	}
+    }
+  
+  return p->status;
 }
 
 static int

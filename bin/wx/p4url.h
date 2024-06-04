@@ -19,8 +19,22 @@ typedef struct p4url
   int status;
 } P4url;
 
+struct qsoptionstab
+{
+  const char *name;
+  char *value;
+};
+
+struct urlkeytab
+{
+  const char *name;
+  char *option;
+};
+
 extern const char *docroot;
 
 extern int p4url(P4url *p, const char *u, const char *q);
+extern struct urlkeytab *urlkeys (register const char *str, register size_t len);
+extern struct qsoptionstab *qsoption (register const char *str, register size_t len);
 
 #endif/*P4URL_H_*/

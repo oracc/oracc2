@@ -1,11 +1,11 @@
 %{
 #include <string.h>
-#include "resolver.h"
+#include "p4url.h"
 /*
  * This gives the names of options that can occur in the QUERY_STRING and a key for the allowed values.
  */
 %}
-struct qsoptiontab;
+struct qsoptionstab;
 %%
 what, "text|score|sources|block"
 part, "page|full|tlit|meta|xlat"
@@ -17,3 +17,8 @@ zoom, "#NUM|#LET|entry_ids"
 refs, "#REFS"
 sort, "#PERM"
 q, 	  "#STRING"
+%%
+int qs_total_keywords(void)
+{
+    return TOTAL_KEYWORDS;
+}

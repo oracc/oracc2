@@ -3,6 +3,27 @@
 
 const char *docroot = "/home/oracc/www";
 
+static void
+print_p(P4url *p)
+{
+  fprintf(stderr, "p=%s; g=%s; id=%s", p->project, p->glossary, p->id);
+}
+
+static void
+print_args(P4url *p)
+{
+  int i = 0;
+  while (p->args[i].option)
+    {
+      if (i)
+	fputs("; ", stderr);
+      else
+	fputc(' ', stderr);
+      fprintf(stderr, "%s=%s", p->args[i].option, p->args[i].value);
+      ++i;
+    }
+}
+
 int
 main(int argc, char **argv)
 {
@@ -21,9 +42,17 @@ main(int argc, char **argv)
   if (!res)
     {
       if (argv[2])
-	fprintf(stderr, "%s?%s => \n", argv[1], argv[2]);
+	fprintf(stderr, "%s?%s => ", argv[1], argv[2]);
       else
-	fprintf(stderr, "%s => p=%s; g=%s; id=%s\n", argv[1], p.project, p.glossary, p.id);
+	fprintf(stderr, "%s => ", argv[1]);
+
+      print_p(&p);
+
+      if (p.args[0].option)
+	print_args(&p);
+
+      fputc('\n', stderr);
+
       return 0;
     }
   else

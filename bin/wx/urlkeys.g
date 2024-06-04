@@ -1,6 +1,6 @@
 %{
 #include <string.h>
-#include "resolver.h"
+#include "p4url.h"
 /*
  * This list is the keywords that can occur on their own in a
  * QUERY_STRING together with the option they imply
