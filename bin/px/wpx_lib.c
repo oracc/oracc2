@@ -4,6 +4,14 @@
 static const char *wpx_err;
 
 void
+wpx_cat_html(const char *form, const char *file)
+{
+  wpx_print_hdr();
+  execl("/bin/cat", "cat", file, NULL);
+  wpx_err = strerror(errno);
+}
+
+void
 wpx_cat_xml(const char *form, const char *file)
 {
   wpx_print_hdr_xml();

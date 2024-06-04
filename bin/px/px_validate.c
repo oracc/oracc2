@@ -84,7 +84,7 @@ px_valid_glos(Isp *ip)
       if (ip->glosdata.xis)
 	{
 	  if (!ip->zoom || isalpha(*ip->zoom))
-	    ip->zoom = NULL;;
+	    ip->zoom = NULL;
 	}
     }
 
@@ -109,6 +109,19 @@ px_valid_host(Isp *ip)
   return 0;
 }
 
+static int
+px_valid_oxid(Isp *ip)
+{
+  const char *g = isp_dbx_one_off(ip, ip->project, "02pub/cbd", "oxid", ip->glosdata.ent, NULL);
+  if (g)
+    {
+      if (!ip->glos)
+	ip->glos = g; 			/* need more validation here */
+      ip->item = ip->glosdata.ent; 	/* simplify downstream processing */
+    }
+  return ip->err ? 1 : 0;
+}
+
 int
 px_validate(Isp *ip)
 {
@@ -126,6 +139,10 @@ px_validate(Isp *ip)
   else if (px_valid_project(ip))
     goto error;
 
+  if (ip->glosdata.ent && !ip->glos)
+    if (px_valid_oxid(ip))
+      goto error;
+  
   if (ip->glos)
     {
       if (px_valid_glos(ip))

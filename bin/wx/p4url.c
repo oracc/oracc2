@@ -63,7 +63,7 @@ p4url_u(P4url *p, const char *u)
 	      if (p4url_is_glossaryid(bits.two))
 		{
 		  p->glossary = bits.one;
-		  p->item = bits.two;
+		  p->oxid = bits.two;
 		}
 	      else
 		{
@@ -81,7 +81,11 @@ p4url_u(P4url *p, const char *u)
 	{
 	  if (p4url_is_textid(bits.one))
 	    {
-	      p->item = bits.one;
+	      p->pxid = bits.one;
+	    }
+	  else if (p4url_is_glossaryid(bits.one))
+	    {
+	      p->oxid = bits.one;
 	    }
 	  else if (p4url_is_glossary(bits.one))
 	    {

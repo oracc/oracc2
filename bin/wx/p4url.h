@@ -13,7 +13,8 @@ typedef struct p4url
   char *q;	/* copy of QUERY_STRING to chop up */
   const char *project;
   const char *glossary;
-  const char *item;
+  const char *oxid;
+  const char *pxid;
   P4arg *args;
   int nargs;
   const char *err;

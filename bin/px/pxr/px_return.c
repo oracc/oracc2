@@ -18,7 +18,10 @@ px_return_file(const char *form, const char *file)
   /* the file-finder routines must set wpx_err appropriately */
   if (!file)
     return 1;
-  wpx_cat_xml(form, file);
+  if (form && strcmp(form, "html"))
+    wpx_cat_xml(form, file);
+  else
+    wpx_cat_html(form, file);
   return 1;
 }
 
@@ -28,9 +31,9 @@ px_return(Isp *ip)
   if (ip->glos)
     {
       if (ip->item)
-	return px_return_file(ip->form, wpx_find_art_file(ip->project, ip->glos, ip->item, ip->form));
+	return px_return_file(ip->form, pxr_find_gent(ip->project, ip->glos, ip->item, ip->form));
       else
-	return px_return_file(ip->form, wpx_find_glo_file(ip->project, ip->glos, ip->form));
+	return px_return_file(ip->form, pxr_find_glos(ip->project, ip->glos, ip->form));
     }
   else if (ip->item)
     {

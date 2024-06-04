@@ -6,7 +6,7 @@
 static const char *pxr_err;
 
 char *
-wpx_find_www_file(const char *project, const char *dir, const char *basename, const char *ext)
+pxr_find_www_file(const char *project, const char *dir, const char *basename, const char *ext)
 {
   static const char *docroot = "/home/oracc/www"; /* need to @@ this */
   char *bufp = NULL;
@@ -27,12 +27,12 @@ wpx_find_www_file(const char *project, const char *dir, const char *basename, co
 }
 
 char *
-wpx_find_art_file(const char *project, const char *glos, const char *oid, const char *form)
+pxr_find_gent(const char *project, const char *glos, const char *oid, const char *form)
 {
   char *f = NULL;
   if (!strcmp(form, "html"))
     {
-      char *cbd = wpx_find_www_file(project, "cbd", glos, NULL);
+      char *cbd = pxr_find_www_file(project, "cbd", glos, NULL);
       char a[strlen(cbd)+strlen(oid)+strlen("/.html0")];
       sprintf(a, "%s/%s.html", cbd, oid);
       f = strdup(a);
@@ -46,14 +46,14 @@ wpx_find_art_file(const char *project, const char *glos, const char *oid, const 
 }
 
 char *
-wpx_find_glo_file(const char *project, const char *glos, const char *form)
+pxr_find_glos(const char *project, const char *glos, const char *form)
 {
   char *f = NULL;
   return f;
 }
 
 char *
-wpx_find_pqx_file(const char *project, const char *pqid, const char *ext)
+pxr_find_pqx_file(const char *project, const char *pqid, const char *ext)
 {
   char prefix[5], *bufp, pqx[8], *colon, *xproject = NULL;
   if (!project || !pqid || !ext)
@@ -90,7 +90,7 @@ wpx_find_pqx_file(const char *project, const char *pqid, const char *ext)
 }
 
 char *
-wpx_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang)
+pxr_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang)
 {
   char prefix[5], *bufp, pqx[8], *colon, *xproject = NULL;
   if (!project || !pqid || !code || !lang)

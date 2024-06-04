@@ -2,8 +2,8 @@
 extern int px_return_file(const char *form, const char *file);
 extern int px_return(Isp *ip);
 /* pxr_find.c */
-extern char *wpx_find_www_file(const char *project, const char *dir, const char *basename, const char *ext);
-extern char *wpx_find_art_file(const char *project, const char *glos, const char *oid, const char *form);
-extern char *wpx_find_glo_file(const char *project, const char *glos, const char *form);
-extern char *wpx_find_pqx_file(const char *project, const char *pqid, const char *ext);
-extern char *wpx_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang);
+extern char *pxr_find_www_file(const char *project, const char *dir, const char *basename, const char *ext);
+extern char *pxr_find_gent(const char *project, const char *glos, const char *oid, const char *form);
+extern char *pxr_find_glos(const char *project, const char *glos, const char *form);
+extern char *pxr_find_pqx_file(const char *project, const char *pqid, const char *ext);
+extern char *pxr_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang);

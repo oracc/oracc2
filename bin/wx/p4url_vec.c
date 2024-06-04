@@ -17,8 +17,11 @@ p4url_vec(P4url *p)
   vec[dst++] = px_cgi_arg("proj", p->project);
   if (p->glossary)
     vec[dst++] = px_cgi_arg("glos", p->glossary);
-  if (p->item)
-    vec[dst++] = px_cgi_arg("item", p->item);
+
+  if (p->oxid)
+    vec[dst++] = px_cgi_arg("oxid", p->oxid);
+  else if (p->pxid)
+    vec[dst++] = px_cgi_arg("pxid", p->pxid);
   
   int src;
 
