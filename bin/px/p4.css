@@ -217,6 +217,8 @@ span.wr {
 
 /* Transliteration styling */
 
+td { vertical-align: top; }
+
 table.transliteration { border-spacing: 0px; width: 99%; }
 table.composite { border-spacing: 0px; }
 
