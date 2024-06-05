@@ -35,6 +35,7 @@ struct urlkeytab
 
 extern const char *docroot;
 
+extern int p4url_eval(const char *u, const char *q);
 extern int p4url(P4url *p, const char *u, const char *q);
 extern char const**p4url_vec(P4url *p);
 extern struct urlkeytab *urlkeys (register const char *str, register size_t len);

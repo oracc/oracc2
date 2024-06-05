@@ -25,8 +25,9 @@ p4url_vec(P4url *p)
   
   int src;
 
-  for (src = 0; p->args[src].option; ++src)
-    ((char const**)vec)[dst++] = px_cgi_arg(p->args[src].option, p->args[src].value);
+  if (p->args)
+    for (src = 0; p->args[src].option; ++src)
+      ((char const**)vec)[dst++] = px_cgi_arg(p->args[src].option, p->args[src].value);
 
   ((char **)vec)[dst] = NULL;
     
