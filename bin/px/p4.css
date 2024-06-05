@@ -125,7 +125,7 @@ p	{ margin: 0; padding: 0; }
 		  margin-bottom: 1px; margin-top: 1px;
 		  text-indent: -1.25em; }
 
-#p4Menu h1,h2,h3,h4 { padding: 0px; margin: 0px; font-size: 90%; }
+#p4Menu h1, #p4Menu h2, #p4Menu h3, #p4Menu h4 { padding: 0px; margin: 0px; font-size: 90%; }
 
 #p4Menu .h2	{ padding-top: 2px; padding-bottom: 2px; }
 

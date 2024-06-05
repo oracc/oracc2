@@ -30,6 +30,7 @@ px_return(Isp *ip)
 {
   if (ip->glos)
     {
+      ip->data = "dglo";
       if (ip->item)
 	return px_return_file(ip->form, pxr_find_gent(ip->project, ip->glos, ip->item, ip->form));
       else
@@ -48,14 +49,14 @@ px_return(Isp *ip)
       const char *dtype = NULL, *dlang = NULL;
       if (!ip->data)
 	dtype = "xtf";
-      else if (!strcmp(ip->data, "score"))
+      else if (!strcmp(ip->daxta, "score"))
 	dtype = "sxh";
-      else if (!strcmp(ip->data, "trans"))
+      else if (!strcmp(ip->daxta, "trans"))
 	{
 	  dtype = "xtr";
 	  dlang = ip->lang;
 	}
-      else if (strcmp(ip->data, "meta"))
+      else if (strcmp(ip->daxta, "meta"))
 	dtype = "xmd";
 #endif
     }

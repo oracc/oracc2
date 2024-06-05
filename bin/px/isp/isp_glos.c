@@ -349,7 +349,10 @@ isp_glos_item(Isp *ip)
       char *pub = strstr((char *)ip->glosdata.web, "02pub");
       pub[02] = pub[03] = pub[04] = 'w';
     }
-  ip->glosdata.ent = ip->item;
+  if (ip->item && !ip->glosdata.ent)
+    ip->glosdata.ent = ip->item;
+  else if (ip->glosdata.ent)
+    ip->item = ip->glosdata.ent;
   ip->glosdata.ipath = (char*)pool_alloc(strlen(ip->glosdata.web)+strlen(ip->item)+strlen("/.html0"), ip->p);
   sprintf((char*)ip->glosdata.ipath, "%s/%s.html", ip->glosdata.web, ip->item);
   if (access(ip->glosdata.ipath, R_OK))

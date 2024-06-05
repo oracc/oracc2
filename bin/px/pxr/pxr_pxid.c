@@ -45,9 +45,18 @@ int
 pxr_item_pathneeds(Isp *ip)
 {
   if (!strcmp(ip->what, "text") && !strcmp(ip->form, "html"))
-    isp_item_xtf(ip); /* there's no list context so isp_item_set is not right */
+    {
+      ip->data = "dtxt";
+      isp_item_xtf(ip); /* there's no list context so isp_item_set is not right */
+    }
   else
-    pxr_pqx(ip);
+    {
+      if (!strcmp(ip->what, "meta"))
+	ip->data = "dcat";
+      else
+	ip->data = "dtxt";
+      pxr_pqx(ip);
+    }
   return ip->err ? 1 : 0;
 }
 

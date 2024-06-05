@@ -60,6 +60,7 @@ p4url_eval(const char *u, const char *q)
       dump_vec("px", v);
     }
 
+  dump_vec("p4url/px", v);
   execv(px_exe, (char*const*)v);
 
   /* exec failed */

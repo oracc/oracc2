@@ -5,7 +5,7 @@
 extern struct cgioptstab *cgiopts (register const char *str, register size_t len);
 
 int
-cgi_options(int argc, char **argv, struct qxdata *qp)
+qx_cgi_options(int argc, char **argv, struct qxdata *qp)
 {
   for (argc = 1; argv[argc]; ++argc)
     {

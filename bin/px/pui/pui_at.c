@@ -104,9 +104,12 @@ pui_at_pager_data(Isp *ip, FILE *fp)
     }
   else
     {
-      pattrs("data-list", ip->list_name);
-      pattrs("data-zoom", ip->zoom);
-      pattrs("data-sort", ip->perm);
+      if (ip->list_name) /* null for p4url */
+	{
+	  pattrs("data-list", ip->list_name);
+	  pattrs("data-zoom", ip->zoom);
+	  pattrs("data-sort", ip->perm);
+	}
     }
   /* There can be both glos and item when item comes from a glossary
      instance set */
@@ -127,8 +130,11 @@ pui_at_pager_data(Isp *ip, FILE *fp)
   if (ip->srch)
     pattrs("data-qury", ip->srch);
 
-  pattrs("data-page", ip->page);
-  pattrd("data-pmax", active_pages(ip));
+  if (ip->page) /* null for p4url */
+    {
+      pattrs("data-page", ip->page);
+      pattrd("data-pmax", active_pages(ip));
+    }
 }
 
 void

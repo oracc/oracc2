@@ -270,6 +270,9 @@ p4url_is_project(char *p, P4bits *b)
 {
   struct stat st_buf;
 
+  if ('/' == *p)
+    ++p;
+  
   char buf[strlen(docroot)+strlen(p)+2];
   sprintf(buf, "%s/%s", docroot, p);
 

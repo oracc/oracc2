@@ -34,8 +34,8 @@ Dbi_index *signmap = NULL;
 extern void se_pcre_init(const char *project, const char *index);
 extern List *se_pcre(const char *rx);
 
-extern struct Datum binop24(enum se_toks bool, struct near *scope, struct Datum d1, struct Datum d2);
-extern struct Datum binop(enum se_toks bool, struct near *scope, struct Datum d1, struct Datum d2);
+extern struct Datum binop24(enum se_toks boo, struct near *scope, struct Datum d1, struct Datum d2);
+extern struct Datum binop(enum se_toks boo, struct near *scope, struct Datum d1, struct Datum d2);
 extern int fieldcode(const char *proj,const char *index,const char *fldname);
 static void close_indexes(void);
 static struct Datum eval_expr_seq(struct token *toks, int lmask, struct token **lastp);

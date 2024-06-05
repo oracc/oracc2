@@ -92,13 +92,13 @@ binop_init()
 }
 
 struct Datum
-binop(enum se_toks bool, struct near *range, struct Datum d1, struct Datum d2)
+binop(enum se_toks boo, struct near *range, struct Datum d1, struct Datum d2)
 {
   op_init(range);
 #if 0
   progress("se binop: %s %s %s\n", 
 	   datum_type_names[d1.type],
-	   se_toks_names[bool],
+	   se_toks_names[boo],
 	   datum_type_names[d2.type]);
 #endif
   if (doing_debug) /*(MSG_ISSET(MSG_DEBUG))*/
@@ -106,7 +106,7 @@ binop(enum se_toks bool, struct near *range, struct Datum d1, struct Datum d2)
       debug_results("d1 before binop", &d1);
       debug_results("d2 before binop", &d2);
     }
-  switch (bool)
+  switch (boo)
     {
     case se_sans:
     case se_not:
@@ -119,7 +119,7 @@ binop(enum se_toks bool, struct near *range, struct Datum d1, struct Datum d2)
 	return dtype_tab[min(d1.type,d2.type)](&d1,&d2);
       break;
     default:
-      return (binop_tab[bool])(&d1, &d2);
+      return (binop_tab[boo])(&d1, &d2);
       break;
     }
 }

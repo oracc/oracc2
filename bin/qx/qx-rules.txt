@@ -1,2 +1,2 @@
-AM_CPPFLAGS+=-I../lib -I@top_srcdir@/lib/chr
+AM_CPPFLAGS+=-I../lib -I@top_srcdir@/lib/chr -I/usr/include/libxml2
 qxLDADD=../lib/libqx.la $(xLDADD)

@@ -33,10 +33,13 @@ main(int argc, char **argv)
 
   if (isp_config(ip))
     goto error;
-  
+
+  /* adhoc lists need to create tmp list and reset ip->part to "page' */
   if ((ip->part && strcmp(ip->part,"page"))
       || (ip->form && !ip->part))
     {
+      ip->from = "url";
+      
       if (px_return(ip))
 	goto error;
       else

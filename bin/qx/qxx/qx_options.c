@@ -10,7 +10,7 @@ qx_options(int argc, char **argv, struct qxdata *qp)
   qp->argv = (const char **)argv;
   if (argv[1] && '-' != argv[1][0])
     {
-      if (cgi_options(argc, argv, &qd))
+      if (qx_cgi_options(argc, argv, &qd))
 	{
 	  opt_qp = NULL;
 	  return 1;

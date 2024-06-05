@@ -45,7 +45,7 @@ function itemLocation() {
 
 	loc = loc+qs;
 
-	// alert("itemLocation="+loc);
+	//alert("itemLocation="+loc);
 	window.location = loc;
     } else {
 	alert('itemLocation called but item is NULL');

@@ -2,6 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>@@p4head.xml@@</head>
   <body>
-    @@p4itemxtf.xml@@
+    <div id="p4Pager" class="@@pui_pager_class()@@"@@pui_pager_data()@@>
+      @@p4itemxtf.xml@@
+    </div>
   </body>
 </html>
