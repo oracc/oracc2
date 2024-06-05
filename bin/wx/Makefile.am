@@ -13,7 +13,8 @@ bin_SCRIPTS=wx-is-p4-project.sh
 noinst_PROGRAMS=p4url
 
 
-p4url_SOURCES=mp4url.c p4url.c qsoption.c urlkeys.c p4url_vec.c px.c
+p4url_LIB=p4url.c qsoption.c urlkeys.c p4url_vec.c p4url_eval.c
+p4url_SOURCES=mp4url.c px.c $(p4url_LIB)
 p4url_LDADD=ccgi/libccgi.la $(xLDADD)
 
 # content_test
@@ -24,7 +25,7 @@ wx_SOURCES=oracc-server.c or_builtins.c or_stable_uris.c \
 	selections.c builtins.c or_response.c or_common.c xmlrpc.c \
 	or_gdf.c or_pqx.c pqx_map.c pqx_h_tab.c ncname.c p3.c listdir.c \
 	sl.c content.c runexpat.c glob.c xff.c oid.c oai.c wx_dbxlib.c px.c \
-	p4projects.c
+	p4projects.c $(p4url_LIB)
 
 wx_LDADD=ccgi/libccgi.la -lexpat $(xLDADD)
 

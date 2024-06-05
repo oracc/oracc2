@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include "resolver.h"
 #include "oracclocale.h"
+#include "p4url.h"
 
 const char *docroot = "@@ORACC@@/www";
 const char *project = NULL;
@@ -23,6 +24,8 @@ const char **elements;
 int elements_used = 0;
 int nelements;
 int debug = 0;
+
+int verbose = 0;
 
 int p4 = 0;
 
@@ -139,8 +142,12 @@ main(int argc, char *argv[])
 	}
 #endif
 
-      decompose_script_url(script_url);
       query_string = getenv("QUERY_STRING");
+
+      /* If this is successful it exec px and we are done */
+      p4url_eval(script_url, query_string);
+      
+      decompose_script_url(script_url);
       unsetenv("SCRIPT_URL");
 
       fprintf(stderr, "oracc-resolver: elements[0] = %s; nelements = %d\n", elements[0], nelements);
