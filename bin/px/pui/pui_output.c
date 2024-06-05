@@ -48,7 +48,7 @@ pui_output(Isp *ip, FILE *fp, const char *s)
   const char *errstr = "px: error: ";
   if (!strncmp(s, errstr, strlen(errstr)))
     {
-      ip->err = s;
+      ip->err = fatalize(s);
       ip->errx = "";
       return 1;
     }
@@ -80,8 +80,8 @@ pui_filetext(const char *file)
   else
     {
       const char *prefix = "px: error: failed to find text for supposed file ";      
-      char err[strlen(file)+strlen(prefix)+1];
-      sprintf(err, "%s%s", prefix, file);
+      char err[strlen(file)+strlen(prefix)+2];
+      sprintf(err, "%s%s\n", prefix, file);
       return strdup(err);
     }
 }

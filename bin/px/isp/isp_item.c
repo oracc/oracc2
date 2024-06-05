@@ -189,7 +189,7 @@ isp_item_lang(Isp *ip)
   return NULL;
 }
 
-static int
+int
 isp_item_xtf(Isp *ip)
 {
   ip->itemdata.xtflang = isp_item_lang(ip);

@@ -8,14 +8,16 @@ Base: PROJECT/TEXTID
 
 Query:
 
-	part=page [full plus tlit meta xlat]
+	part=page [full plus tlit meta xlat self]
 	form=html [xml tei json pdf cuneify proof]
-	what=text [score sources]
+	what=text [score block sources]
 	lang=LANG
 
 part: page* = pager; full* = meta+tlit+xlat; plus* = tlit+xlat; tlit/xlat/meta=just one of those
 
 part values with asterisk are only available as html
+
+self is used internally for setting a default when what != text
 
 Default is pager display,
 

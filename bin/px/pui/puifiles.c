@@ -1,5 +1,5 @@
 /* ANSI-C code produced by gperf version 3.1 */
-/* Command-line: gperf -G -N puifiles -tT puifiles.g  */
+/* Command-line: gperf -G -W puifiles_wl -N puifiles -tT puifiles.g  */
 /* Computed positions: -k'5,7' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -34,7 +34,7 @@
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 16
+#define TOTAL_KEYWORDS 18
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 14
 #define MIN_HASH_VALUE 10
@@ -63,8 +63,8 @@ hash (register const char *str, register size_t len)
       32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
       32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
       32, 32, 32, 32, 32, 32, 32,  5,  5,  0,
-       5,  0, 20,  5, 32, 32, 32, 10, 32,  0,
-       0,  0, 32, 32,  0, 15, 32, 32, 32, 32,
+       5,  0, 20,  5, 32, 32, 32, 10, 15, 10,
+       0,  0, 32, 32,  0, 15, 32,  0, 32, 32,
        0, 32, 32, 32, 32, 32, 32, 32, 32, 32,
       32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
       32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
@@ -83,12 +83,12 @@ hash (register const char *str, register size_t len)
   return len + asso_values[(unsigned char)str[6]] + asso_values[(unsigned char)str[4]];
 }
 
-static struct puifilestab wordlist[] =
+static struct puifilestab puifiles_wl[] =
   {
     {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
     {""},
-#line 13 "puifiles.g"
-    {"p4html.xml", &p4html},
+#line 24 "puifiles.g"
+    {"p4plus.xml", &p4plus},
 #line 8 "puifiles.g"
     {"p4error.xml", &p4error},
 #line 10 "puifiles.g"
@@ -107,7 +107,8 @@ static struct puifilestab wordlist[] =
     {"p4itemglo.xml", &p4itemglo},
 #line 15 "puifiles.g"
     {"p4dropdown.xml", &p4dropdown},
-    {""},
+#line 13 "puifiles.g"
+    {"p4html.xml", &p4html},
 #line 16 "puifiles.g"
     {"p4debug.xml", &p4debug},
     {""},
@@ -115,7 +116,8 @@ static struct puifilestab wordlist[] =
     {"p4unknown.xml", &p4unknown},
 #line 17 "puifiles.g"
     {"p4debugdiv.xml", &p4debugdiv},
-    {""},
+#line 23 "puifiles.g"
+    {"p4full.xml", &p4full},
 #line 11 "puifiles.g"
     {"p4icons.xml", &p4icons},
 #line 22 "puifiles.g"
@@ -134,10 +136,10 @@ puifiles (register const char *str, register size_t len)
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = puifiles_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &puifiles_wl[key];
         }
     }
   return 0;

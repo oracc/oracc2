@@ -36,11 +36,12 @@ main(int argc, char **argv)
   
   if ((ip->part && strcmp(ip->part,"page"))
       || (ip->form && !ip->part))
-    if (px_return(ip))
-      {
-	ip->err = wpx_last_error();
+    {
+      if (px_return(ip))
 	goto error;
-      }
+      else
+	goto ok;
+    }
   
  tryforce:
   
