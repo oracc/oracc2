@@ -121,7 +121,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    alert("pageLocation="+loc);
+    // alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -228,7 +228,7 @@ function act_zoom(z) {
     let pager = getPager();
     let glos = pager.getAttribute("data-glos");
     let gxis = pager.getAttribute("data-gxis");
-    alert('act_zoom glos='+glos+'; gxis='+gxis);
+    // alert('act_zoom glos='+glos+'; gxis='+gxis);
     if (glos && !gxis) {
 	if (z === '0') {
 	    pager.setAttribute("data-page", '1');
@@ -412,7 +412,7 @@ xshowNote(e,nid) {
   note=document.getElementById(nid);
   note.style.left=e.clientX-100;
   note.style.top=e.clientY;
-  alert(nid+' is at '+e.clientX+' x '+e.clientY);
+  // alert(nid+' is at '+e.clientX+' x '+e.clientY);
   // makes note element visible
   note.style.visibility='visible';
   return 1;

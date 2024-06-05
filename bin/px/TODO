@@ -1,6 +1,6 @@
 BUGS
 
-	glossary item view doesn't autoselect letter-zoom
+	glossary-article -> instances -> item loses xis context and uses outlined.lst instead
 
 ispdiv
 
