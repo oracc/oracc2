@@ -403,7 +403,9 @@ ispmp_pages(Isp *ip, unsigned char *f, int imax)
 		  if (izcount)
 		    pt.plen = (s - f) - pt.ptell;
 		  else
-		    pt.plen = (lasth_tell-1) - pt.ptell;
+		    pt.plen = (s - f) - pt.ptell; /* was last_htell - pt.ptell which gave negative
+						     lengths; why did I think izcount and !izcount need
+						     different handling? */
 		  
 		  md_dump(pfp, imax, pt.htell, pt.hlen, pt.ptell, pt.plen);
 		  ++page;
