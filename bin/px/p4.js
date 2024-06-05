@@ -79,7 +79,7 @@ function pageLocation() {
 	}
 	loc = '/'+proj+'/'+glos+'?'+qs;
     } else {
-	// alert('pageLocation non-glos');
+	// alert('pageLocation non-glos/gxis');
 	let list = pager.getAttribute("data-list");
 	let perm = pager.getAttribute("data-sort");
 	let zoom = pager.getAttribute("data-zoom");
@@ -221,7 +221,8 @@ function act_zoom(z) {
     let pager = getPager();
     let glos = pager.getAttribute("data-glos");
     pager.removeAttribute("data-bkmk");
-    if (glos) {
+    let gxis = pager.getAttribute("data-gxis");
+    if (glos && !gxis) {
 	if (z === '0') {
 	    pager.setAttribute("data-page", '1');
 	    pager.setAttribute("data-glet", "entry_ids");
