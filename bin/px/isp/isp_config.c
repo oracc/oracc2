@@ -4,6 +4,9 @@
 #include "../pxdefs.h"
 #include "isp.h"
 
+#define SORT_LABELS "Time,Genre,Place"
+#define SORT_FIELDS "period,genre,provenience"
+
 int
 isp_config(Isp *ip)
 {
@@ -11,16 +14,16 @@ isp_config(Isp *ip)
 #undef s
 #define d(fld,key) if ((tmp=hash_find(ip->xpd->opts,(ucp)(key)))) ip->default_cfg.fld = tmp
 #define s(fld,key) if ((tmp=hash_find(ip->xpd->opts,(ucp)(key)))) ip->special_cfg.fld = tmp
-
   const char *tmp;
   
   const char *sel = NULL;
+
   static struct isp_config defaults =
     {
       .cat_fields="designation,primary_publication,subgenre|genre,period,place|provenience",
       .cat_widths="auto,17,17,17,17",
-      .sort_fields="period,genre,provenience",
-      .sort_labels="Time,Genre,Place",
+      .sort_fields=NULL,
+      .sort_labels=NULL,
       .head_template="1 2 3"
     };
 
@@ -48,7 +51,16 @@ isp_config(Isp *ip)
   d(cat_widths,"outline-default-catalog-widths");
   d(sort_fields,"outline-default-sort-fields");
   d(sort_labels,"outline-default-sort-labels");
-  d(head_template,"outline-default-sort-template");
+  d(head_template,"outline-default-sort-template");  
+
+  if (!ip->default_cfg.sort_fields)
+    {
+      ip->default_cfg.sort_fields = SORT_FIELDS;
+      if (!ip->default_cfg.sort_labels)
+	ip->default_cfg.sort_labels = SORT_LABELS;
+    }
+  else if (!ip->default_cfg.sort_labels)
+    ip->default_cfg.sort_labels = ip->default_cfg.sort_fields;
   
   if ((sel = hash_find(ip->xpd->opts, (ucp)"outline-special-select")))
     if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
@@ -59,7 +71,17 @@ isp_config(Isp *ip)
   s(sort_fields,"outline-special-sort-fields");
   s(sort_labels,"outline-special-sort-labels");
   s(head_template,"outline-special-sort-template");
+
+  if (!ip->special_cfg.sort_fields)
+    {
+      ip->special_cfg.sort_fields = SORT_FIELDS;
+      if (!ip->special_cfg.sort_labels)
+	ip->special_cfg.sort_labels = SORT_LABELS;
+    }
+  else if (!ip->special_cfg.sort_labels)
+    ip->special_cfg.sort_labels = ip->special_cfg.sort_fields;
   
+
   ip->default_cfg.cat_links = hash_find(ip->xpd->opts, (ucp)"catalog-link-fields");
 
 #undef d

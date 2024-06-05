@@ -56,8 +56,10 @@ function pageLocation() {
     let pager = getPager();
     let proj = pager.getAttribute("data-proj");
     let glos = pager.getAttribute("data-glos");
+    let gxis = pager.getAttribute("data-gxis");
     let loc = '';    
-    if (glos && glos.length > 0) {
+    // alert('pageLocation; glos='+glos);
+    if (glos && !gxis) {
 	let i = 0;
 	let qs = '';
 	let zoom = pager.getAttribute("data-glet");
@@ -77,11 +79,13 @@ function pageLocation() {
 	}
 	loc = '/'+proj+'/'+glos+'?'+qs;
     } else {
+	// alert('pageLocation non-glos');
 	let list = pager.getAttribute("data-list");
 	let perm = pager.getAttribute("data-sort");
 	let zoom = pager.getAttribute("data-zoom");
 	let page = pager.getAttribute("data-page");
 	let bkmk = pager.getAttribute("data-bkmk");
+	let glet = pager.getAttribute("data-glet");
 	let qs = '';
 	if (list && list !== "outlined.lst") {
 	    qs = qs_append(qs, 'list='+list);
@@ -91,8 +95,8 @@ function pageLocation() {
 	}
 	if (zoom && zoom !== "0") {
 	    qs = qs_append(qs, 'zoom='+zoom);
-	} else if (glet) {
-	    qs = qs_append(qs, 'zoom='+glet);
+//	} else if (glet) {			// this should be irrelevant if glos is not set
+//	    qs = qs_append(qs, 'zoom='+glet);
 	}
 	if (page && page !== "1") {
 	    qs = qs_append(qs, 'page='+page);
@@ -130,7 +134,9 @@ function act_sorter() {
     let perm = document.getElementById("p4MenuSelect").value;
     let pager = getPager();
     let currperm = pager.getAttribute('data-sort');
-    if (perm !== currperm) {
+    // alert('sort='+perm+'; currsort='+currperm);
+    if (perm != currperm) {
+	// alert('changing sort order');
 	pager.setAttribute('data-sort', perm);
 	pager.setAttribute('data-zoom', '0');
 	pager.setAttribute('data-page', '1');
