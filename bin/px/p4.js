@@ -87,9 +87,16 @@ function pageLocation() {
 	let bkmk = pager.getAttribute("data-bkmk");
 	let glet = pager.getAttribute("data-glet");
 	let qs = '';
+
 	if (list && list !== "outlined.lst") {
 	    qs = qs_append(qs, 'list='+list);
+	} else {
+	    if (gxis) {
+		qs = qs_append(qs, 'glos='+glos);
+		qs = qs_append(qs, 'xis='+gxis);
+	    }
 	}
+
 	if (perm && !perm_is_default(perm)) {
 	    qs = qs_append(qs, 'sort='+perm);
 	}
@@ -114,7 +121,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    // alert("pageLocation="+loc);
+    alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -220,8 +227,8 @@ function act_prev() {
 function act_zoom(z) {
     let pager = getPager();
     let glos = pager.getAttribute("data-glos");
-    pager.removeAttribute("data-bkmk");
     let gxis = pager.getAttribute("data-gxis");
+    alert('act_zoom glos='+glos+'; gxis='+gxis);
     if (glos && !gxis) {
 	if (z === '0') {
 	    pager.setAttribute("data-page", '1');
@@ -239,6 +246,7 @@ function act_zoom(z) {
 	    pager.setAttribute("data-page", '1');
 	    pager.setAttribute("data-zoom", z);
 	    pager.removeAttribute("data-item");
+	    pager.removeAttribute("data-bkmk");
 	    pageLocation();
 	}
     }
