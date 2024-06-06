@@ -35,91 +35,42 @@ builtin *builtins_handlers[] =
   itemmain, itemside, outline, results, NULL, NULL, NULL, NULL
 };
 
+static void or_builtins_sub(struct builtinstab *builtinsp);
+
 void
-or_builtins(void)
+p4_or_builtins(const char *script_url)
 {
-  fprintf(stderr, "OR_BUILTINS entered\n");
-  if (elements[0] && !strcmp(elements[0], "or"))
+  fprintf(stderr, "P4_OR_BUILTINS entered with script_url=%s\n", script_url);
+
+  char b[strlen(script_url)+1];
+  if (!strncmp(script_url, "/cgi-bin/", strlen("/cgi-bin/")))
+    script_url += strlen("/cgi-bin/");
+  else if (!strncmp(script_url, "/or/", strlen("/or/")))
+    script_url += strlen("/or/");
+  else if ('/' == *script_url)
+    ++script_url;
+
+  const char *slash = strchr(script_url, '/');
+
+  if (slash)
     {
-      struct builtinstab *builtinsp = NULL;
-      if (elements[1] && (builtinsp = builtins(elements[1], strlen(elements[1]))))
-	{
-	  switch (builtinsp->type)
-	    {
-	    case B_DOC:
-	      if (elements[2] && !strcmp(elements[2], "find"))
-		find("doc", query_string);
-	      else
-		do404();
-	      break;
-	    case B_FIND:
-	      find(project, query_string);
-	      break;
-	    case B_XFORMS:
-	      xforms_handler();
-	      break;
-	    case B_OAS:
-	      p3_oas(NULL);
-	      break;
-	    case B_AS:
-	      do404(); /* as_handler(elements[2]); */
-	      break;
-	    case B_ATF:
-	      atf();
-	      break;
-	    case B_ATFTMP:
-	      atftemplate();
-	      break;
-	    case B_VOLTMP:
-	      voltemplate();
-	      break;
-	    case B_RPC:
-	      rpc();
-	      break;
-	    case B_RUNTIME:
-	      runtime();
-	      break;
-	    case B_DATESTAMP:
-	      datestamp();
-	      break;
-	    case B_SIG:
-	      sig(elements[2]);
-	      break;
-	    case B_SL:
-	      sl((char*)elements[2]); /*, elements[3]); */
-	      break;
-	    case B_XIS:
-	      xis(elements[2], elements[3]);
-	      break;
-	    case B_XFF:
-	      fprintf(stderr, "B_XFF REACHED elements[1]=%s; elements[2]=%s\n", elements[1], elements[2]);
-	      xff(elements[2]);
-	      break;
-	    case B_ITEMMAIN:
-	    case B_ITEMSIDE:
-	    case B_OUTLINE:
-	    case B_RESULTS:
-	      builtins_handlers[builtinsp->type](elements[2], elements[3]);
-	      break;
-	    case B_SEARCHBAR:
-	      searchbar();
-	      break;
-	    case B_SRV:
-	      serve_status();
-	      break;
-	    case B_JSON:
-	      json_zip(project);
-	      break;
-	    case B_OAI:
-	      oai();
-	      break;
-	    case B_NONE:
-	      break;
-	    }
-	}
-      fprintf(stderr, "OR_BUILTINS reached 404\n");
-      do404();
+      int len = slash - script_url;
+      strncpy(b, script_url, len);
+      b[len] = '\0';
     }
+  else
+    strcpy(b, script_url);
+
+  if (*b)
+    {
+      struct builtinstab *builtinsp = builtins(b, strlen(b));
+      if (builtinsp)
+	or_builtins_sub(builtinsp);
+    }
+}
+
+#if 0
+}
   else if (!strcmp(elements[0], "cgi-bin") 
 	   && elements[1])
     {
@@ -137,6 +88,99 @@ or_builtins(void)
 	}
     }
   return;
+}
+#endif
+
+void
+or_builtins(void)
+{
+  fprintf(stderr, "OR_BUILTINS entered\n");
+  if (elements[0] && !strcmp(elements[0], "or"))
+    {
+      struct builtinstab *builtinsp = NULL;
+      if (elements[1] && (builtinsp = builtins(elements[1], strlen(elements[1]))))
+	or_builtins_sub(builtinsp);
+    }
+}
+
+static void
+or_builtins_sub(struct builtinstab *builtinsp)
+{
+	  
+  switch (builtinsp->type)
+    {
+    case B_DOC:
+      if (elements[2] && !strcmp(elements[2], "find"))
+	find("doc", query_string);
+      else
+	do404();
+      break;
+    case B_FIND:
+      find(project, query_string);
+      break;
+    case B_XFORMS:
+      xforms_handler();
+      break;
+    case B_OAS:
+      p3_oas(NULL);
+      break;
+    case B_AS:
+      do404(); /* as_handler(elements[2]); */
+      break;
+    case B_ATF:
+      atf();
+      break;
+    case B_ATFTMP:
+      atftemplate();
+      break;
+    case B_VOLTMP:
+      voltemplate();
+      break;
+    case B_RPC:
+      rpc();
+      break;
+    case B_RUNTIME:
+      runtime();
+      break;
+    case B_DATESTAMP:
+      datestamp();
+      break;
+    case B_SIG:
+      sig(elements[2]);
+      break;
+    case B_SL:
+      sl((char*)elements[2]); /*, elements[3]); */
+      break;
+    case B_XIS:
+      xis(elements[2], elements[3]);
+      break;
+    case B_XFF:
+      fprintf(stderr, "B_XFF REACHED elements[1]=%s; elements[2]=%s\n", elements[1], elements[2]);
+      xff(elements[2]);
+      break;
+    case B_ITEMMAIN:
+    case B_ITEMSIDE:
+    case B_OUTLINE:
+    case B_RESULTS:
+      builtins_handlers[builtinsp->type](elements[2], elements[3]);
+      break;
+    case B_SEARCHBAR:
+      searchbar();
+      break;
+    case B_SRV:
+      serve_status();
+      break;
+    case B_JSON:
+      json_zip(project);
+      break;
+    case B_OAI:
+      oai();
+      break;
+    case B_NONE:
+      break;
+    }
+  fprintf(stderr, "OR_BUILTINS reached 404\n");
+  do404();
 }
 
 #if 0

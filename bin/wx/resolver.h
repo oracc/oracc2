@@ -65,6 +65,7 @@ struct h_pqxtab
 extern struct h_pqxtab *pqx_h_tab(register const char *str, register size_t len);
 
 extern void or_builtins(void);
+extern void p4_or_builtins(const char *script_url);
 extern void or_gdf(void);
 extern void uri_patterns(void);
 

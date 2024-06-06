@@ -9,7 +9,7 @@ extern Vido *vp;
 int
 se_any(struct qxdata *qp)
 {
-  const char *xindex[] = { "!cat" , "!txt" , "!tra" , "!lem", NULL, "!esp" , NULL };
+  const char *xindex[] = { "!cat" , "!txt" , "!tra" , NULL, "!lem", "!esp" , NULL };
   const char *index[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
   Vido *vps[7];
 	  

@@ -125,7 +125,8 @@ main(int argc, char *argv[])
       setenv("ORACC_MODE", "@@ORACC_MODE@@", 1);
       setenv("ORACC_USER", "@@ORACC_USER@@", 1);
 
-#if 1
+      p4_or_builtins(script_url);
+      
       if (!strncmp(script_url,"/p/",3))
 	{
 	  script_url += 3;
@@ -134,13 +135,6 @@ main(int argc, char *argv[])
 	  else
 	    do404();
 	}
-#else
-      if (!strncmp(script_url,"/d/",3))
-	{
-	  script_url += 2;
-	  debug = 1;
-	}
-#endif
 
       query_string = getenv("QUERY_STRING");
 
