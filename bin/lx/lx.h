@@ -35,6 +35,7 @@ extern int status;
 extern int uniq;
 extern int verbose;
 extern int ximport;
+extern int all_optional;
 extern int zfirstoptional;
 
 #include "all.proto"

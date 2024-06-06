@@ -24,6 +24,7 @@ int uniq;	/* uniq does not require sort in lx */
 int verbose;
 int ximport;	/* import x-field from proxies */
 int zfirstoptional;
+int all_optional = 0;
 
 int
 main(int argc, char * const*argv)
@@ -51,7 +52,7 @@ main(int argc, char * const*argv)
     }
   else if (projfile)
     {
-      todo = lx_set_args(lx_projfile(projfile), 0);
+      todo = lx_set_args(lx_projfile(projfile), 1);
     }
   else
     {
@@ -68,10 +69,12 @@ main(int argc, char * const*argv)
   
   Lxfile *lxf = NULL;
   if (todo && list_len(todo))
-    if ((lxf = lx_set_ops(todo)))
-      lx_finish(lxf);
-    else
-      ++status;
+    {
+      if ((lxf = lx_set_ops(todo)))
+	lx_finish(lxf);
+      else
+	++status;
+    }
   
   if (lxf)
     {
@@ -90,6 +93,7 @@ opts(int opt, const char *arg)
     {
     case 'a':
       projfile = arg;
+      all_optional = 1;
       break;
     case 'c':
       check = 1;

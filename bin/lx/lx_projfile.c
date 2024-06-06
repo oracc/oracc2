@@ -25,8 +25,9 @@ lx_projfile(const char *fn)
 	      if (t)
 		t = NULL;
 	    }
-	  char **c = calloc(2*list_len(l), sizeof(char*));
-	  int i = 0;
+	  char **c = calloc(2*(1+list_len(l)), sizeof(char*));
+	  c[0] = (char *)prog;
+	  int i = 1;
 	  for (t = list_first(l); t; t = list_next(l))
 	    {
 	      if (umbrella)

@@ -47,6 +47,7 @@ pxr_item_pathneeds(Isp *ip)
   if (!strcmp(ip->what, "text") && !strcmp(ip->form, "html"))
     {
       ip->data = "dtxt";
+      ip->itemdata.item = ip->item;
       isp_item_xtf(ip); /* there's no list context so isp_item_set is not right */
     }
   else

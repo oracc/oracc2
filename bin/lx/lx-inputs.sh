@@ -35,7 +35,7 @@ for a in approved.lst add-approved.lst not-approved.lst \
 done
 
 if [ -r 00lib/proxy.lst ]; then    
-    lx -cus -p project -o $lxd/proxy.lst 00lib/proxy.lst
+    lx -cus -p $project -o $lxd/proxy.lst 00lib/proxy.lst
 fi
 
 # 00atf data; do this after 00lib because then it can use $lxd/proxy.lst

@@ -17,7 +17,7 @@ lx_set_args(char * const*argv, int start)
   const char *pending_op = 0;
 
   /* the -z arg means the first file is optional */
-  nextoptional = zfirstoptional;
+  nextoptional = zfirstoptional || all_optional;
 
   while (argv[start])
     {
@@ -26,7 +26,7 @@ lx_set_args(char * const*argv, int start)
 	  if (strlen(argv[start]) > 1 && '?' == argv[start][1])
 	    nextoptional = 1;
 	  else
-	    nextoptional = 0;
+	    nextoptional = all_optional;
 	  if ((strlen(argv[start]) == 1
 	       || (nextoptional && strlen(argv[start]) == 2))
 	      && strchr("-+/", *argv[start]))

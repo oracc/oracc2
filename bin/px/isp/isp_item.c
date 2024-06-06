@@ -192,6 +192,22 @@ isp_item_lang(Isp *ip)
 int
 isp_item_xtf(Isp *ip)
 {
+  if (!ip->itemdata.proj)
+    {
+      if (ip->item_replace)
+	{
+	  ip->itemdata.proj = pool_copy(ip->item_replace, ip->p);
+	  char *colon = strchr(ip->itemdata.proj, ':');
+	  if (colon)
+	    *colon = '\0';
+	  else
+	    ip->itemdata.proj = NULL;
+	}
+      if (!ip->itemdata.proj)
+	ip->itemdata.proj =
+	  isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
+    }
+  
   ip->itemdata.xtflang = isp_item_lang(ip);
 
   if (!ip->itemdata.htmd)
