@@ -30,7 +30,7 @@ bin/tx/gdlx
 bin/tx/repx
 bin/tx/rocox
 bin/tx/xmlfilter
-bin/wx/wx
+bin/px/cbditem
 bin/px/ice/ce/cex
 bin/px/ice/ce/cextfx
 bin/px/ice/pg/pdx
@@ -48,6 +48,8 @@ bin/px/isp/ispmpx
 bin/px/isp/ispox
 bin/px/isp/ispsortx
 bin/px/isp/isp-ce-HTML.xsl
+bin/wx/wx
+bin/wx/p4url
 bin/xx/concord
 bin/xx/cunhtmlx
 bin/xx/dbix
@@ -68,6 +70,7 @@ bin/xx/tis/tokpct
 bin/xx/tis/tokx
 bin/xx/tis/vidx
 bin/xx/tlitsig
+bin/xx/xisdb
 bin/xx/xmlify
 bin/xx/wrapper/xsltx
 msc/lex/lex-collapse-refs
