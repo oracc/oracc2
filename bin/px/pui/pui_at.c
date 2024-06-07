@@ -130,11 +130,6 @@ pui_at_pager_data(Isp *ip, FILE *fp)
   if (ip->srch)
     pattrs("data-qury", ip->srch);
 
-  if (ip->page) /* null for p4url */
-    {
-      pattrs("data-page", ip->page);
-      pattrd("data-pmax", active_pages(ip));
-    }
 }
 
 void
@@ -227,13 +222,18 @@ pui_at_item_label(Isp *ip, FILE *fp)
   fputs(label, fp);
 }
 
-void
-pui_at_item_index(Isp *ip, FILE *fp)
+static void
+pui_at_item_index_sub(Isp *ip, FILE *fp, int typ, int nth)
 {
   if (!strcmp(ip->data, "dglo") && !ip->glosdata.ent)
     {
-      fputs("TEXT ", fp);
-      if (ip->itemdata.index)
+      if (typ)
+	{
+	  fputs("TEXT", fp);
+	  if (nth)
+	    fputc(' ', fp);
+	}
+      if (nth && ip->itemdata.index)
 	{
 	  if (ip->itemdata.tmax)
 	    fputs(itoa(1+atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
@@ -243,17 +243,37 @@ pui_at_item_index(Isp *ip, FILE *fp)
     }
   else
     {
-      fputs(ip->glos ? "ENTRY " : "ITEM ", fp);
-      if (ip->itemdata.index)
+      if (typ)
+	{
+	  fputs(ip->glos ? "ENTRY" : "ITEM", fp);
+	  if (nth)
+	    fputc(' ', fp);
+	}
+      
+      if (nth && ip->itemdata.index)
 	{
 	  const char *index = ip->zoom ? ip->itemdata.zindex : ip->itemdata.index;
-#if 1
 	  fputs(index, fp);
-#else
-	  fputs(itoa(atoi(index)+(ip->glos?0:1)), fp);
-#endif
 	}
     }
+}
+
+void
+pui_at_item_index(Isp *ip, FILE *fp)
+{
+  pui_at_item_index_sub(ip, fp, 1, 1);
+}
+
+void
+pui_at_item_index_nth(Isp *ip, FILE *fp)
+{
+  pui_at_item_index_sub(ip, fp, 0, 1);
+}
+
+void
+pui_at_item_index_typ(Isp *ip, FILE *fp)
+{
+  pui_at_item_index_sub(ip, fp, 1, 0);
 }
 
 void

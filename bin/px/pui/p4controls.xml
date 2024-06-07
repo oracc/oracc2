@@ -1,5 +1,5 @@
 <x>
-  <div id="p4itemNav" class="p4items">
+  <div id="p4itemNav" class="p4items" data-ityp="@@pui_item_index_typ()@@" data-inth="@@pui_item_index_nth()@@" data-imax="@@pui_active_items()@@">
     <p class="bg-dk">
 
       
@@ -21,7 +21,7 @@
 	   alt="Item forward" title="Item forward"
 	   onclick="act_item_next()"/>
 
-      <span id="p4SrchResults" class="p4srchresults">
+      <span id="p4SrchResults" class="p4srchresults" data-tmax="@@pui_imax()@@" data-rmax="@@pui_srch_results()@@">
 	@@pui_imax()@@ Texts [@@pui_srch_results()@@ matches]
       </span>
 
@@ -34,7 +34,7 @@
     </p>
   </div>
 
-  <div id="p4PageNav" class="p4pages">
+  <div id="p4PageNav" class="p4pages" data-page="@@pui_current_page()@@" data-pmax="@@pui_active_pages()@@" data-imax="@@pui_active_items()@@">
     <p class="p3toccenter bg-dk">
 
       <button id="p4Zoom" class="p4spread" onclick="act_zoom('0')">All Results</button>
@@ -44,8 +44,7 @@
 	   onclick="act_prev()"/>
       
       <!--Page-->
-      <input id="p4Pageset" type="text" onchange="act_page()" size="3"
-	     value="@@pui_current_page()@@"/>
+      <input id="p4Pageset" type="text" onchange="act_page()" size="3" value="@@pui_current_page()@@"/>
 
       <img id="p4PageNext" class="p4icon p4spread" src="/img/p3-forward.png"
 	   alt="Page forward" title="Page forward"

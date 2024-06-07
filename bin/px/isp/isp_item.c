@@ -196,7 +196,7 @@ isp_item_xtf(Isp *ip)
     {
       if (ip->item_replace)
 	{
-	  ip->itemdata.proj = pool_copy(ip->item_replace, ip->p);
+	  ip->itemdata.proj = (ccp)pool_copy((ucp)ip->item_replace, ip->p);
 	  char *colon = strchr(ip->itemdata.proj, ':');
 	  if (colon)
 	    *colon = '\0';

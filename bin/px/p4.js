@@ -1,3 +1,19 @@
+function getPager() {
+    return document.getElementById("p4Pager");
+}
+
+function getCurrentPage() {
+    return document.getElementById("p4PageNav").getAttribute("data-page");
+}
+
+function setCurrentPage(p) {
+    document.getElementById("p4PageNav").setAttribute('data-page', p);
+}
+
+function getCurrentPmax() {
+    return document.getElementById("p4PageNav").getAttribute("data-pmax");
+}
+
 function qs_append(q,c) {
     if (q.length == 0) {
 	q = '?';
@@ -57,6 +73,7 @@ function pageLocation() {
     let proj = pager.getAttribute("data-proj");
     let glos = pager.getAttribute("data-glos");
     let gxis = pager.getAttribute("data-gxis");
+    let page = getCurrentPage();
     let loc = '';    
     // alert('pageLocation; glos='+glos);
     if (glos && !gxis) {
@@ -66,7 +83,6 @@ function pageLocation() {
 	if (zoom) {
 	    qs = 'zoom='+zoom;
 	}
-	let page = pager.getAttribute("data-page");
 	if (page) {
 	    if (qs.length) {
 		qs = qs+'&';
@@ -83,7 +99,6 @@ function pageLocation() {
 	let list = pager.getAttribute("data-list");
 	let perm = pager.getAttribute("data-sort");
 	let zoom = pager.getAttribute("data-zoom");
-	let page = pager.getAttribute("data-page");
 	let bkmk = pager.getAttribute("data-bkmk");
 	let glet = pager.getAttribute("data-glet");
 	let qs = '';
@@ -133,10 +148,6 @@ function resetPager() {
     window.location=loc;
 }
 
-function getPager() {
-    return document.getElementById("p4Pager");
-}
-
 function act_sorter() {
     let perm = document.getElementById("p4MenuSelect").value;
     let pager = getPager();
@@ -144,9 +155,9 @@ function act_sorter() {
     // alert('sort='+perm+'; currsort='+currperm);
     if (perm != currperm) {
 	// alert('changing sort order');
+	setCurrentPage('1');
 	pager.setAttribute('data-sort', perm);
 	pager.setAttribute('data-zoom', '0');
-	pager.setAttribute('data-page', '1');
 	pager.removeAttribute('data-item');
 	pageLocation();
     }
@@ -188,11 +199,11 @@ function act_item_prev() {
 
 function act_next() {
     let pager = getPager();
-    let page = pager.getAttribute("data-page")/1;
-    let pmax = pager.getAttribute("data-pmax")/1;
+    let page = getCurrentPage()/1;
+    let pmax = getCurrentPmax()/1;
     if (page < pmax) {
 	++page;
-	pager.setAttribute("data-page", page);
+	setCurrentPage(page);
 	pageLocation();
     } else {
 	alert('You are already at the last page (page='+page+'; pmax='+pmax+')');
@@ -203,9 +214,9 @@ function act_page() {
     let newpage = document.getElementById("p4Pageset").value/1;
     // alert('p4Pageset value='+newpage);
     let pager = getPager();
-    let pmax = pager.getAttribute("data-pmax")/1;
+    let pmax = getCurrentPmax()/1;
     if (newpage > 0 && newpage <= pmax) {
-	pager.setAttribute("data-page", newpage);
+	setCurrentPage(newpage);
 	pageLocation();
     } else {
 	alert('The page value must be greater than zero and no bigger than '+pmax);
@@ -214,10 +225,10 @@ function act_page() {
 
 function act_prev() {
     let pager = getPager();
-    let page = pager.getAttribute("data-page")/1;
+    let page = getCurrentPage()/1;
     if (page > 1) {
 	--page;
-	pager.setAttribute("data-page", page);
+	setCurrentPage(page);
 	pageLocation();
     } else {
 	alert('You are already at the first page');
@@ -231,7 +242,7 @@ function act_zoom(z) {
     // alert('act_zoom glos='+glos+'; gxis='+gxis);
     if (glos && !gxis) {
 	if (z === '0') {
-	    pager.setAttribute("data-page", '1');
+	    setCurrentPage('1');
 	    pager.setAttribute("data-glet", "entry_ids");
 	    pager.removeAttribute("data-zoom");
 	    pager.removeAttribute("data-item");
@@ -243,7 +254,7 @@ function act_zoom(z) {
 	let currzoom = pager.getAttribute("data-zoom")/1;
 	let nextzoom = z/1;
 	if (currzoom != nextzoom) {
-	    pager.setAttribute("data-page", '1');
+	    setCurrentPage('1');
 	    pager.setAttribute("data-zoom", z);
 	    pager.removeAttribute("data-item");
 	    pager.removeAttribute("data-bkmk");
@@ -257,7 +268,7 @@ function act_letter(thisletter) {
     let currletter = pager.getAttribute("data-zoom");
     // alert('thisletter='+thisletter+'; currletter='+currletter);
     if (thisletter !== currletter) {
-	pager.setAttribute("data-page", '1');
+	setCurrentPage('1');
 	pager.setAttribute("data-glet", thisletter);
 	pager.removeAttribute("data-zoom");
 	pager.removeAttribute("data-item");

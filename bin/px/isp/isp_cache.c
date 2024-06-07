@@ -161,7 +161,8 @@ isp_cache_page(Isp *ip)
     {
       ip->cache.zout = (ccp)pool_alloc(strlen(ip->cache.sub)+strlen("/letters.div0"), ip->p);
       sprintf((char*)ip->cache.zout, "%s/letters.div", ip->cache.sub);
-
+      if (!ip->item && ip->glosdata.ent)
+	ip->item = ip->glosdata.ent;
       if (ip->item)
 	{
 	  const char *etm = isp_glos_etm(ip);

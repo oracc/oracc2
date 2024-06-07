@@ -71,7 +71,7 @@ ispo_master(Isp *ip)
 	  else
 	    {
 	      h1 = iz.h1;
-	      h2 = "";
+	      h2 = (ucp)"";
 	    }
 	  if (h2 && iz.h2 && !strcmp((ccp)iz.h2, (ccp)h2))
 	    iz.h2 = (ucp)"";

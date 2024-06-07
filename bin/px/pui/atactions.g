@@ -21,6 +21,8 @@ struct atactionstab;
 "pui_pager_class()", &pui_at_pager_class
 "pui_pager_data()", &pui_at_pager_data
 "pui_item_index()", &pui_at_item_index
+"pui_item_index_nth()", &pui_at_item_index_nth
+"pui_item_index_typ()", &pui_at_item_index_typ
 "pui_item_data()", &pui_at_item_data
 "pui_item_meta()", &pui_at_item_meta
 "pui_srchterm()", &pui_at_srchterm
