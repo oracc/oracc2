@@ -192,20 +192,21 @@ isp_item_lang(Isp *ip)
 int
 isp_item_xtf(Isp *ip)
 {
-  if (!ip->itemdata.proj)
+  if (ip->item_replace)
     {
-      if (ip->item_replace)
-	{
-	  ip->itemdata.proj = (ccp)pool_copy((ucp)ip->item_replace, ip->p);
-	  char *colon = strchr(ip->itemdata.proj, ':');
-	  if (colon)
-	    *colon = '\0';
-	  else
-	    ip->itemdata.proj = NULL;
-	}
-      if (!ip->itemdata.proj)
-	ip->itemdata.proj =
-	  isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
+      ip->itemdata.proj = (ccp)pool_copy((ucp)ip->item_replace, ip->p);
+      char *colon = strchr(ip->itemdata.proj, ':');
+      if (colon)
+	*colon = '\0';
+      else
+	ip->itemdata.proj = NULL;
+    }
+  else
+    {
+      /* prx db is created from atf-data.tab and contains entries for
+	 all texts, not only proxied ones */
+      ip->itemdata.proj =
+	isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
     }
   
   ip->itemdata.xtflang = isp_item_lang(ip);
