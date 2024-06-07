@@ -6,6 +6,8 @@ BUGS
 
 	outline-config needs to error when special-select=true but no values set for special-xxx
 
+	lx-atfdata.sh needs to work when files have no final \n (pcregrep -LM '\n\Z')
+
 ispdiv
 
 	implement all ispdiv options for ccat as in p3-pager.plx
