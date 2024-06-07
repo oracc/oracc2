@@ -1,4 +1,4 @@
-#include <../dx.h>
+#include <../lib/dx.h>
 #include <osh.h>
 
 const char *progname = NULL;

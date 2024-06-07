@@ -1,8 +1,8 @@
 # Executables; be specific so, e.g., sx ignore doesn't make whole subdir ignored
 bin/ax/ax
 bin/ax/atfdatax
-bin/dx/dcx
-bin/dx/dx
+bin/dx/dxx/dcx
+bin/dx/dxx/dx
 bin/dx/odo/odo
 bin/dx/osh/osh
 bin/gx/gx
@@ -95,19 +95,22 @@ langrtl.c
 oid_domain.c
 oid_type.c
 osh_commands.c
+p4projects.c
 pqx_h_tab.c
 progtab.c
 propmask.c
 qpnnames.c
+qsoption.c
 selections.c
 sll_signlist.c
 sllext.c
 sn_alias.c
 statnames.c
 tokflags.c
+urlkeys.c
 
 # .in derivatives
-bin/dx/dx-install.sh
+bin/dx/dxx/dx-install.sh
 bin/dx/odo/odo-build.sh
 bin/dx/odo/odo-cvs-checkout.sh
 bin/dx/odo/odo-cvs-refresh.sh

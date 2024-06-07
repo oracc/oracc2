@@ -1,6 +1,6 @@
 #include <ctype.h>
 #include <oraccsys.h>
-#include <../dx.h>
+#include <dx.h>
 #include <osh.h>
 
 static int badchar(char *s);

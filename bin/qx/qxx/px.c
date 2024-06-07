@@ -47,18 +47,7 @@ px_exec(struct qxdata *qp, struct sdata *sdp)
   vec[3] = px_cgi_arg("glos",qp->glos?qp->glos:"");
   vec[4] = px_cgi_arg("s.d",sdp->tmp);
   vec[5] = NULL;
-  if (qp->noexec)
-    {
-      int i;
-      for (i = 0; vec[i]; ++i)
-	printf("%s ", vec[i]);
-      putchar('\n');
-      exit(0);
-    }
-  else
-    {
-      execv(px_exe, (char*const*)vec);
-      fprintf(stderr, "execv %s failed\n", px_exe);
-      exit(1);
-    }
+  execv(px_exe, (char*const*)vec);
+  fprintf(stderr, "execv %s failed\n", px_exe);
+  exit(1);
 }

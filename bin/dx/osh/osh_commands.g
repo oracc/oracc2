@@ -1,5 +1,5 @@
 %{
-#include <../dx.h>
+#include <dx.h>
 #include <osh.h>
 %}
 struct osh_info

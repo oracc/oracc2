@@ -1,4 +1,4 @@
-#include <dx.h>
+#include <../lib/dx.h>
 
 #define DATA "Testing Oracc dx server"
 

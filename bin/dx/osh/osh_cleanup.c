@@ -1,4 +1,4 @@
-#include <../dx.h>
+#include <dx.h>
 #include <osh.h>
 
 #define osh_maybe_free(p) if (jp->p) free(jp->p)

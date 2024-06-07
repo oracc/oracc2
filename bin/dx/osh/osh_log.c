@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "../dx.h"
+#include "dx.h"
 #include <osh.h>
 
 #define DXLOG_MAX 512

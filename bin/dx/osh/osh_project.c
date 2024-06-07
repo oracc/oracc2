@@ -1,4 +1,4 @@
-#include <../dx.h>
+#include <../lib/dx.h>
 #include <pwd.h>
 #include <grp.h>
 #include <osh.h>

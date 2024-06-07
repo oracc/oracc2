@@ -1,4 +1,4 @@
-#include "dx.h"
+#include "../lib/dx.h"
 
 const char *progname = NULL;
 int verbose = 1;
