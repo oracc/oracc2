@@ -169,6 +169,39 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
   return pages;
 }
 
+/*
+  Reimplementation:
+
+   two frames
+
+   char *pframe[51];
+   char *zframe[27];
+
+   Iterate once over struct page *p:
+
+   add heading to pframe; add text to pframe; if n_pframe_texts == 25,
+   	dump page and reset; at end, dump any page stub
+
+   each heading dumps and resets zframe; add heading to zframe; add
+   	text to zframe; if n_zframe_texts == 25 dump zoom and reset;
+   	and end, dump any zoom stub
+
+   NOTE: +-IDs must be ignored in this iteration as they are in
+   	pg_page_dump because they have already been concatenated above
+   	via 'plussed()'.
+
+   dumping a page or zoom means either outputting to a tmp file which
+   	will be turned into a dbh later or printing into a buffer and
+   	passing it to dbi_add directly.
+
+   Dump format is page-id\tpage-content
+
+   	page-id is z%dp%d, e.g., z0p1; z4p3 etc
+
+	page-content is (HEADING TEXTS+)+
+
+ */
+
 /* The pg2 version of this routine printed page-size groups on a line
    with headings interspersed among the IDs.
 
