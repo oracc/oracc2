@@ -12,6 +12,8 @@ extern char *CGI_decode_url(const char *p);
 extern struct cgioptstab *cgiopts(register const char *str, register size_t len);
 /* http_accept_language.c */
 extern const char **http_accept_language(const char *hal);
+/* issx.c */
+extern int main(int argc, char **argv);
 /* lang-3-2.c */
 extern const char *lang32(const char *l);
 /* pxargs.c */

@@ -8,18 +8,20 @@ img_DATA=icons/*.png
 
 bin_PROGRAMS=px cbditem issx
 
-issx_SOURCES=issx.c
-issx_LDADD = $(xLDADD) -l
+pxlib=pxargs.c px_options.c px_validate.c cgiopts.c pxloadfile.c \
+	px_print_ip.c px_file_copy.c cgi_decode_url.c px_mesg.c \
+	lang-3-2.c px_help.c
+
+issx_SOURCES=issx.c $(pxlib)
+issx_LDADD = isp/libisp.la iss/libiss.la iso/libiso.la $(xLDADD)
 issx_DEPENDENCIES = $(issx_LDADD)
 
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxentrycounts.sh pxentryindexes.sh p4-mk-cache.sh \
 	pxlocalreset.sh cbd-items.sh
 
-px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c	\
-	cgiopts.c pxloadfile.c px_file_copy.c xslt_if.c		\
-	cgi_decode_url.c px_mesg.c wpx_lib.c selecter.c \
-	px_print_ip.c http_accept_language.c lang-3-2.c
+px_SOURCES=px.c px_help.c xslt_if.c wpx_lib.c selecter.c \
+	http_accept_language.c $(pxlib)
 
 px_print_ip.c: isp/isp.h mk-isp-print.plx
 	./mk-isp-print.plx
