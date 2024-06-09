@@ -1,0 +1,7 @@
+/* iso_master.c */
+extern int iso_master(Isp *ip);
+/* iso_pagezoom.c */
+extern int iso_page_zoom(Isp *ip);
+/* iso_zoutline.c */
+extern int iso_zoutline(Isp *ip);
+/* isp_outline.c */

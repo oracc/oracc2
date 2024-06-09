@@ -37,12 +37,8 @@ extern int isp_list_dbx(Isp *ip);
 extern int isp_try_web_list(Isp *ip);
 extern void isp_list_type(Isp *ip);
 extern int isp_list_method(Isp *ip);
-/* isp_outline.c */
-extern int ispo_master(Isp *ip);
-extern int ispo_zoutline(Isp *ip);
 /* isp_page.c */
 extern int create_page_div(Isp *ip);
-extern int isp_page_zoom(Isp *ip);
 extern int isp_page_data(Isp *ip);
 /* isp_show.c */
 extern void isp_argv(FILE *fp, Isp *ip);
@@ -65,43 +61,5 @@ extern void isp_tmp_dir(Isp *ip);
 extern int isp_xis_list(Isp *ip);
 /* isp_xmd.c */
 extern const char *isp_xmd_outline(Isp *ip);
-/* iss.c */
-extern struct item *pg_load(Isp *ip, int *nitems);
-extern const char *iss_perm(Isp *ip, const char *sort_keys, int nkeys);
-extern int ispsort(Isp *ip);
-/* iss_page.c */
-extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, long pstart, FILE *fp);
-extern int pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap);
-extern int pg_zmaps(Isp *ip, List *zmaps, List *z);
-extern char *fmthdr(short sic_index);
-extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
-extern int pg_page_dump(Isp *ip, struct page *p);
-/* iss_pmp.c */
-extern void ispmp_zooms(Isp *ip, unsigned char *f, int zmax);
-extern const char **item_array(char *s, int imax, char **mem, char ***proj);
-extern const char **text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tmem, int *tmax);
-extern int ispmp_pages(Isp *ip, unsigned char *f, int imax);
-/* iss_redblack.c */
-extern struct rbtree *rbinit(int (*cmp)(const void *, const void *, const void *), const void *config);
-extern void rbdestroy(struct rbtree *rbinfo);
-extern const void *rbsearch(const void *key, struct rbtree *rbinfo);
-extern const void *rbfind(const void *key, struct rbtree *rbinfo);
-extern const void *rbdelete(const void *key, struct rbtree *rbinfo);
-extern void rbwalk(const struct rbtree *rbinfo, void (*action)(const void *, const VISIT, const int, void *), void *arg);
-extern struct rblists *rbopenlist(const struct rbtree *rbinfo);
-extern const void *rbreadlist(struct rblists *rblistp);
-extern void rbcloselist(struct rblists *rblistp);
-extern const void *rblookup(int mode, const void *key, struct rbtree *rbinfo);
-/* iss_sicache.c */
-extern int sic_cmp(const void *a, const void *b, const void *c);
-extern int sic_id_cmp(const void *a, const void *b);
-extern int sic_pd_cmp(const void *a, const void *b);
-extern void pd_sort_cache(void);
-extern struct si_cache **make_cache(struct item **items, int nitems, int *sicsize);
-/* iss_sk_lookup.c */
-/* iss_sort.c */
-extern struct item **pg_sort(Isp *ip, struct item *items, int *nitems, const char *sortkeys);
-/* iss_sortinfo.c */
-extern struct sortinfo *si_load_csi(Isp *ip);
 /* nth_line.c */
 extern char *nth_line(Isp *ip, const char *file, int lnum, int more);

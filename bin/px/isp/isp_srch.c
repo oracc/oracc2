@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "../px.h"
+#include "../pxdefs.h"
 #include "isp.h"
 
 /* Fix some things up to compensate for not running page builder when

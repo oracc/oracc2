@@ -23,10 +23,12 @@ open(C,">px_print_ip.c") || die;
 select C;
 print "#include <oraccsys.h>\n";
 print "#include <xmlify.h>\n";
+print "#include \"iso/iso.h\"\n";
 print "#include \"isp/isp.h\"\n";
+print "#include \"iss/iss.h\"\n";
 
 foreach (@isp) {
-    if (/\s+steps\[/ || /\*\*/ || /Unsigned32\s+\*/) {
+    if (/\s+steps\[/ || /\*\*/ || /Unsigned32\s+\*/ || /^struct\s+\S+;\s*$/) {
 	# ignore
     } elsif (/^struct\s+(\S+)\s*$/) {
 	# warn "<struct $1\n";

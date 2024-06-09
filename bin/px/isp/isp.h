@@ -56,51 +56,6 @@ struct item
   Signed32 grp;
 };
 
-struct outline
-{
-  struct si_cache *sic;
-  char *hdr;
-  Unsigned32 *poffsets;
-  Unsigned32 *icounts;
-  Signed32 page;
-  Signed32 count;
-};
-
-/* Top-level structure for the outline */
-struct ispo
-{
-  unsigned char **zlines;
-  size_t zmax;
-  int zlev;
-  List *l; /* data items are isph w level = 1 */
-};
-
-/* Per-heading structure for a zoom line */
-struct isph
-{
-  int zoom;
-  int level;
-  unsigned char *h;
-  int zimx; /* z-item max */
-  List *l;
-};
-
-/* Zoom line split up into headers and items */
-struct ispz
-{
-  unsigned char *h1;
-  unsigned char *h2;
-  unsigned char *h3;
-  unsigned char *items;
-  int count;
-};
-
-struct page
-{
-  Signed32 used;
-  char **p;
-};
-
 struct isp_mapdata
 {
   int zmax; /* max value for zoom */
@@ -168,6 +123,8 @@ struct isp_config
 
 #include "../pxdefs.h"
 
+struct outline;
+
 typedef struct isp
 {
   int curr_step;
@@ -219,6 +176,7 @@ typedef struct isp
   int debug;
   int verbose;
   int web;
+  int zlev; 	/* not sure this is necessary with refactor */
   int argc;
   const char *referer;
   const char *tmpdir;
@@ -237,28 +195,22 @@ typedef struct isp
   struct isp_mapdata md1;
   struct isp_mapdata md2;
   struct isp_srchdata srchdata;
-  struct ispo is;
   struct outline *op;
 } Isp;
 
+/*
+  struct ispo is;
+ */
 struct ispargstab
 {
   const char *name;
   int step;
 };
 
-#include "iss_redblack.h"
-#include "iss_sortinfo.h"
+extern int iso_master(Isp *ip);
+extern int iso_zoutline(Isp *ip);
+extern int iss_sort(Isp *ip);
 
 #include "all.proto"
-
-extern int sic_size;
-extern int *sortfields;
-extern struct si_cache **sicache;
-extern struct sortinfo *sip;
-
-extern int nheadfields;
-extern int *headfields;
-extern int nsortfields;
 
 #endif/*ISP_H_*/

@@ -25,6 +25,14 @@
 #define PX_PARM_9U	0x0000400 /* UI MODE */
 
 extern int file_copy_lines(const char *from, const char *to, int start, int end);
+extern const char *lang32(const char *l);
 extern const char *px_mesg(const char *wpq, const char *fmt, ...);
+extern unsigned char **px_loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **fmem);
+extern unsigned char *px_loadfile_error(void);
+extern unsigned char *px_loadfile(unsigned const char *fname, size_t *nbytes);
+
+#include <stdio.h>
+struct isp;
+extern void px_print_ip(FILE *fp, struct isp *ip);
 
 #endif/*PXDEFS_H_*/

@@ -39,11 +39,6 @@ extern void pr_isp_list_loc(FILE *fp, struct isp_list_loc *pr, const char *name)
 extern void pr_isp_srchdata(FILE *fp, struct isp_srchdata *pr, const char *name);
 extern void pr_isp_cache(FILE *fp, struct isp_cache *pr, const char *name);
 extern void pr_item(FILE *fp, struct item *pr, const char *name);
-extern void pr_outline(FILE *fp, struct outline *pr, const char *name);
-extern void pr_ispo(FILE *fp, struct ispo *pr, const char *name);
-extern void pr_isph(FILE *fp, struct isph *pr, const char *name);
-extern void pr_ispz(FILE *fp, struct ispz *pr, const char *name);
-extern void pr_page(FILE *fp, struct page *pr, const char *name);
 extern void pr_isp_mapdata(FILE *fp, struct isp_mapdata *pr, const char *name);
 extern void pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name);
 extern void pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr, const char *name);

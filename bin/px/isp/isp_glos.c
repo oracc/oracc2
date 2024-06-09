@@ -1,6 +1,6 @@
 #include <oraccsys.h>
+#include "../pxdefs.h"
 #include "isp.h"
-#include "../px.h"
 
 const char *
 isp_glos_letter_id(Isp *ip)

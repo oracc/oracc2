@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "../px.h"
+#include "../pxdefs.h"
 #include "isp.h"
 
 int
@@ -221,7 +221,7 @@ isp_cache_page(Isp *ip)
       if (ip->verbose)
 	fprintf(stderr, "isp: isp_cache_page: need %s:::%s\n", zbuf, pbuf);
 
-      if (isp_page_zoom(ip))
+      if (iso_page_zoom(ip))
 	return 1;
 
       if (isp_page_data(ip))

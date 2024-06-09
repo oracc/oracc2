@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include <xmlify.h>
+#include "iso/iso.h"
 #include "isp/isp.h"
+#include "iss/iss.h"
 void
 pr_isp_list_loc(FILE *fp, struct isp_list_loc *pr, const char *name)
 {
@@ -56,51 +58,6 @@ pr_item(FILE *fp, struct item *pr, const char *name)
   fprintf(fp,"\t\tskey=%d\n",(int)pr->skey);
   fprintf(fp,"\t\tlkey=%d\n",(int)pr->lkey);
   fprintf(fp,"\t\tgrp=%d\n",(int)pr->grp);
-}
-
-void
-pr_outline(FILE *fp, struct outline *pr, const char *name)
-{
-  fprintf(fp, "<h3>\tstruct outline ip->%s</h3>\n", name);
-  fprintf(fp,"\t\thdr=%s\n",(char*)xmlify((ucp)pr->hdr));
-  fprintf(fp,"\t\tpage=%d\n",(int)pr->page);
-  fprintf(fp,"\t\tcount=%d\n",(int)pr->count);
-}
-
-void
-pr_ispo(FILE *fp, struct ispo *pr, const char *name)
-{
-  fprintf(fp, "<h3>\tstruct ispo ip->%s</h3>\n", name);
-  fprintf(fp,"\t\tzmax=%lu\n",(unsigned long)pr->zmax);
-  fprintf(fp,"\t\tzlev=%d\n",(int)pr->zlev);
-}
-
-void
-pr_isph(FILE *fp, struct isph *pr, const char *name)
-{
-  fprintf(fp, "<h3>\tstruct isph ip->%s</h3>\n", name);
-  fprintf(fp,"\t\tzoom=%d\n",(int)pr->zoom);
-  fprintf(fp,"\t\tlevel=%d\n",(int)pr->level);
-  fprintf(fp,"\t\th=%s\n",(char*)xmlify((ucp)pr->h));
-  fprintf(fp,"\t\tzimx=%d\n",(int)pr->zimx);
-}
-
-void
-pr_ispz(FILE *fp, struct ispz *pr, const char *name)
-{
-  fprintf(fp, "<h3>\tstruct ispz ip->%s</h3>\n", name);
-  fprintf(fp,"\t\th1=%s\n",(char*)xmlify((ucp)pr->h1));
-  fprintf(fp,"\t\th2=%s\n",(char*)xmlify((ucp)pr->h2));
-  fprintf(fp,"\t\th3=%s\n",(char*)xmlify((ucp)pr->h3));
-  fprintf(fp,"\t\titems=%s\n",(char*)xmlify((ucp)pr->items));
-  fprintf(fp,"\t\tcount=%d\n",(int)pr->count);
-}
-
-void
-pr_page(FILE *fp, struct page *pr, const char *name)
-{
-  fprintf(fp, "<h3>\tstruct page ip->%s</h3>\n", name);
-  fprintf(fp,"\t\tused=%d\n",(int)pr->used);
 }
 
 void
@@ -217,6 +174,7 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\tdebug=%d\n",(int)pr->debug);
   fprintf(fp,"\tverbose=%d\n",(int)pr->verbose);
   fprintf(fp,"\tweb=%d\n",(int)pr->web);
+  fprintf(fp,"\tzlev=%d\n",(int)pr->zlev);
   fprintf(fp,"\targc=%d\n",(int)pr->argc);
   fprintf(fp,"\treferer=%s\n",(char*)xmlify((ucp)pr->referer));
   fprintf(fp,"\ttmpdir=%s\n",(char*)xmlify((ucp)pr->tmpdir));
@@ -229,7 +187,6 @@ px_print_ip(FILE *fp, Isp *ip)
   pr_isp_mapdata(fp, &ip->md1, "md1");
   pr_isp_mapdata(fp, &ip->md2, "md2");
   pr_isp_srchdata(fp, &ip->srchdata, "srchdata");
-  pr_ispo(fp, &ip->is, "is");
 }
 
 void

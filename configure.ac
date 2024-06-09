@@ -98,7 +98,9 @@ AC_CONFIG_FILES([Makefile
 		 bin/px/ice/ce/Makefile
 		 bin/px/ice/pg/Makefile
 		 bin/px/ice/wm/Makefile
+		 bin/px/iso/Makefile
 		 bin/px/isp/Makefile
+		 bin/px/iss/Makefile
 		 bin/px/pui/Makefile
 		 bin/px/pxr/Makefile
 		 bin/qx/Makefile

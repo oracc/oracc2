@@ -1,4 +1,4 @@
-SUBDIRS=isp pui ice pxr
+SUBDIRS=iso isp iss pui ice pxr
 
 include ../../oracc-am-rules.txt
 
@@ -6,9 +6,11 @@ AM_CPPFLAGS+=-I/usr/include/libxml2
 
 img_DATA=icons/*.png
 
-bin_PROGRAMS=px cbditem
+bin_PROGRAMS=px cbditem issx
 
-#selecter
+issx_SOURCES=issx.c
+issx_LDADD = $(xLDADD) -l
+issx_DEPENDENCIES = $(issx_LDADD)
 
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxentrycounts.sh pxentryindexes.sh p4-mk-cache.sh \
@@ -22,7 +24,7 @@ px_SOURCES=px.c pxargs.c px_help.c px_options.c px_validate.c	\
 px_print_ip.c: isp/isp.h mk-isp-print.plx
 	./mk-isp-print.plx
 
-px_LDADD=isp/libisp.la pui/libpui.la isp/libisp.la pxr/libpxr.la $(xLDADD) -lxml2 -lxslt -lexslt
+px_LDADD=pui/libpui.la isp/libisp.la pxr/libpxr.la iss/libiss.la iso/libiso.la $(xLDADD) -lxml2 -lxslt -lexslt
 
 cbditem_SOURCES=cbditem.c
 cbditem_LDADD=$(xLDADD)
