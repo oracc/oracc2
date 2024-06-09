@@ -50,6 +50,10 @@ isp_cache_sort(Isp *ip)
   ip->cache.sort = (ccp)pool_copy((uccp)buf, ip->p);
   strcat(buf, ".mol");
   ip->cache.mol = (ccp)pool_copy((uccp)buf, ip->p);
+#if 0
+  if (iso_master(ip))
+    goto error;
+#endif
   if (ip->force)
     return iss_sort(ip);
   else

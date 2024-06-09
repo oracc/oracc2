@@ -2,6 +2,7 @@
 #include "wpx_lib.h"
 #include "px.h"
 #include "pxdefs.h"
+#include "isp/isp.h"
 
 int
 main(int argc, char **argv)
@@ -9,6 +10,7 @@ main(int argc, char **argv)
   mesg_init();
   
   Isp *ip = isp_init();
+  ip->from = "list";
 
   if (px_options(argc, argv, ip))
     goto error;
@@ -25,10 +27,16 @@ main(int argc, char **argv)
   if (isp_cache_project(ip))
     goto error;
 
-  if (iss_sort(ip))
+  if (isp_list_method(ip))
     goto error;
 
-  if (iso_master(ip))
+  if (isp_cache_sub(ip))
+    goto error;
+
+  if (isp_cache_list(ip))
+    goto error;
+
+  if (isp_cache_sort(ip))
     goto error;
 
   goto ok;
