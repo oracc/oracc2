@@ -33,7 +33,6 @@ struct isp_cache
   const char *list;	/* the list file */
   const char *sort; 	/* the list sorted by the requested permutation */
   const char *csi; 	/* the compiled sort info (.csi) file */
-  const char *pmp; 	/* the directory isp->ip->cache.sort/pmp/ for .pmp files */
   const char *mol; 	/* the master outline for the list in cache.sort */
   const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the filename of the page-content for a zoomed slice; z=0 for no zoom */
@@ -44,6 +43,7 @@ struct isp_cache
   const char *html;	/* the filename of the html content of the displayed item */
   const char *ltab;	/* the filename of the letters.tab if cache is a glossary */
   const char *hilite;	/* table of text-id\tword-ids to set the hilite on instance sets */
+  const char *pub; 	/* set to "02pub/p4.d" to create project with p4.d in project/02pub */
 };
 
 struct item

@@ -20,8 +20,25 @@ iss_data(Isp *ip, struct page *p)
   int pfirst = -1;/* p->p[index] of first text in current z0 page */
   int zfirst = -1;/* p->p[index] first text in current zN page */
 
-  Dbi_index *idp = dbi_create("itm", ".", 1024, 1, DBI_BALK);
-  FILE *pfp = fopen("pag.tsv", "w");
+  char dir[strlen(ip->cache.project) + strlen(ip->list_name) + strlen(ip->perm) + 3];
+  sprintf(dir, "%s/%s/%s", ip->cache.project, ip->list_name, ip->perm);
+  struct stat sb;
+  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+    {
+      if (ip->verbose)
+	fprintf(stderr, "iss_data: creating %s\n", dir);
+      if (mkdir(dir, 0775))
+	{
+	  ip->err = PX_ERROR_START "fatal: iss_data sort directory %s could not be created";
+	  ip->errx = pool_copy(dir, ip->p);
+	}
+    }
+  
+  char tsvfn[strlen(dir)+strlen("/pag.tsv0")];
+  sprintf(tsvfn, "%s/pag.tsv", dir);
+  
+  Dbi_index *idp = dbi_create("itm", dir, 1024, 1, DBI_BALK);
+  FILE *pfp = fopen(tsvfn, "w");
   
   Unsigned32 i;
   for (i = 0; i < p->used; ++i)

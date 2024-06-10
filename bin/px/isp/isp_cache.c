@@ -28,8 +28,13 @@ isp_cache_sys(Isp *ip)
 int
 isp_cache_project(Isp *ip)
 {
-  char dir[strlen(ip->cache.sys)+strlen(ip->project)+2];
+  int len = strlen(ip->cache.sys)+strlen(ip->project)+2;
+  if (ip->cache.pub)
+    len += strlen("/02pub/p4.d");
+  char dir[len];
   sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
+  if (ip->cache.pub)
+    strcat(dir, "/02pub/p4.d");
   ip->cache.project = (ccp)pool_copy((ucp)dir, ip->p);
   return 0;
 }
@@ -50,30 +55,29 @@ isp_cache_sub(Isp *ip)
     }
   else
     {
-      char dir[strlen(ip->cache.sys)+strlen(ip->project)+strlen(ip->list_name)+3];
-      sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
+      char dir[strlen(ip->cache.project)+strlen(ip->list_name)+2];
+      sprintf(dir, "%s/%s", ip->cache.project, ip->list_name);
       struct stat sb;
       if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
 	{
-	  if (strchr(ip->project, '/'))
+	  if (strchr(ip->cache.project, '/'))
 	    {
-	      char proj[strlen(ip->project)+1];
-	      strcpy(proj, ip->project);
-	      if ('/' == proj[strlen(proj)-1])
-		proj[strlen(proj)-1] = '\0';
-	      char *slash = proj;
+	      char xdir[strlen(ip->cache.project)+1];
+	      strcpy(xdir, ip->cache.project);
+	      if ('/' == xdir[strlen(xdir)-1])
+		xdir[strlen(xdir)-1] = '\0';
+	      char *slash = xdir+1;
 	      while ((slash = strchr(slash,'/')))
 		{
 		  *slash = '\0';
-		  sprintf(dir, "%s/%s", ip->cache.sys, proj);
-		  ip->cache.project = (ccp)pool_copy((ucp)dir, ip->p);
-		  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+		  if (stat(xdir, &sb) || !S_ISDIR(sb.st_mode))
 		    {
 		      if (ip->verbose)
-			fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
-		      if (mkdir(dir, 0775))
+			fprintf(stderr, "isp: isp_cache_sub: creating %s\n", xdir);
+		      if (mkdir(xdir, 0775))
 			{
-			  ip->err = "fatal: cache.sub project-component directory could not be created";
+			  ip->err = PX_ERROR_START "fatal: cache.sub[1] project-component directory %s could not be created";
+			  ip->errx = pool_copy(xdir, ip->p);
 			  break;
 			}
 		    }
@@ -81,11 +85,13 @@ isp_cache_sub(Isp *ip)
 		}
 	      if (!ip->err)
 		{
-		  sprintf(dir, "%s/%s", ip->cache.sys, proj);
 		  if (ip->verbose)
-		    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
-		  if (mkdir(dir, 0775))
-		    ip->err = "cache.sub project-component directory could not be created";
+		    fprintf(stderr, "isp: isp_cache_sub: creating %s\n", xdir);
+		  if (mkdir(xdir, 0775))
+			{
+			  ip->err = PX_ERROR_START "fatal: cache.sub[2] project-component directory %s could not be created";
+			  ip->errx = pool_copy(xdir, ip->p);
+			}
 		}
 	    }
 	  else
@@ -93,14 +99,15 @@ isp_cache_sub(Isp *ip)
 	      if (ip->verbose)
 		fprintf(stderr, "isp: isp_cache_sub: creating %s\n", dir);
 	      if (mkdir(dir, 0775))
-		ip->err = "cache.sub project-level directory could not be created";
+		{
+		  ip->err = PX_ERROR_START "fatal: cache.sub[3] project-level directory %s could not be created";
+		  ip->errx = pool_copy(dir, ip->p);
+		}
 	    }
 	}
 
       if (!ip->err)
 	{
-	  strcat(dir, "/");
-	  strcat(dir, ip->list_name);
 	  ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	  struct stat sb;
 	  if (stat(ip->cache.sub, &sb) || !S_ISDIR(sb.st_mode))

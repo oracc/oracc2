@@ -75,7 +75,7 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ESZPWCFOdf:j:l:r:R:m:a:z:p:g:e:i:b:s:k:Hh:x:u:c:L:a:t:vw");
+    ret = options(argc, argv, "3ESZPWC:FOdf:j:l:r:R:m:a:z:p:g:e:i:b:s:k:Hh:x:u:c:L:a:t:vw");
   opt_ip = NULL;
 
   if (ip->err)
@@ -103,6 +103,12 @@ opts(int opt, const char *arg)
       break;
     case 'b':
       opt_ip->bkmk = arg;
+      break;
+    case 'C':
+      opt_ip->cache.sys = arg;
+      break;
+    case 'P':
+      opt_ip->cache.pub = "02pub";
       break;
     case 'F':
       opt_ip->force = 1;
