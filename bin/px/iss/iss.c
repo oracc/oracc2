@@ -347,9 +347,13 @@ iss_sort(Isp *ip)
 
   if (nitems)
     pages = pg_page(ip, pitems, nitems);
-  
+#if 1
+  if (iss_data(ip, pages))
+    return 1;
+#else
   if (pg_page_dump(ip, pages))
     return 1;
+#endif
   
   hash_free2(seen, free, NULL);
 

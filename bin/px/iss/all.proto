@@ -2,13 +2,14 @@
 extern struct item *pg_load(Isp *ip, int *nitems);
 extern const char *iss_perm(Isp *ip, const char *sort_keys, int nkeys);
 extern int iss_sort(Isp *ip);
+/* iss_data.c */
+extern int iss_data(Isp *ip, struct page *p);
 /* iss_page.c */
 extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, long pstart, FILE *fp);
 extern int pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap);
 extern int pg_zmaps(Isp *ip, List *zmaps, List *z);
 extern char *fmthdr(short sic_index);
 extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
-extern int pg_page_dump(Isp *ip, struct page *p);
 /* iss_pmp.c */
 extern void ispmp_zooms(Isp *ip, unsigned char *f, int zmax);
 extern const char **item_array(char *s, int imax, char **mem, char ***proj);
