@@ -78,6 +78,7 @@ AC_CONFIG_FILES([Makefile
                  lib/sys/Makefile
                  lib/tis/Makefile
                  lib/tok/Makefile
+                 lib/tsv/Makefile
                  lib/xmd/Makefile
                  lib/xml/Makefile
                  lib/xpd/Makefile
@@ -123,6 +124,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/xx/rnv/Makefile
 		 bin/xx/tis/Makefile
 		 bin/xx/wrapper/Makefile
+		 bin/zx/Makefile
 		 msc/Makefile
 		 msc/adm/Makefile
 		 msc/adm/skel/Makefile
