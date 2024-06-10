@@ -26,6 +26,7 @@ iso_zoutline(Isp *ip)
     {
       ip->err = PX_ERROR_START "unable to write to zoomed outline file %s\n";
       ip->errx = ip->cache.zout;
+      return 1;
     }
   fprintf(fp, "<div id=\"p4MenuOutline\" class=\"pgotl level0\" data-zmax=\"%d\">", zmax);
   int i;

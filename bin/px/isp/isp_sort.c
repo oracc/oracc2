@@ -56,17 +56,37 @@ isp_sort_sub(Isp *ip)
   char dir[strlen(ip->cache.use) + strlen(ip->list_name) + strlen(ip->perm) + 3];
   sprintf(dir, "%s/%s", ip->cache.use, ip->perm);
   ip->cache.sort = (ccp)pool_copy((ucp)dir, ip->p);
+
   if (!ip->pub_output)
-    ip->cache.out = ip->cache.sort;
+    {
+      char outd[strlen(ip->cache.project)+strlen(ip->list_name)+strlen(ip->perm)+3];
+      sprintf(outd, "%s/%s/%s", ip->cache.project, ip->list_name, ip->perm);
+      ip->cache.out = pool_copy(outd, ip->p);
+    }
+
   struct stat sb;
-  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+  if (stat(ip->cache.sort, &sb) || !S_ISDIR(sb.st_mode))
     {
       if (ip->verbose)
-	fprintf(stderr, "iss_data: creating %s\n", dir);
+	fprintf(stderr, "iss_data: creating %s\n", ip->cache.sort);
       if (mkdir(dir, 0775))
 	{
 	  ip->err = PX_ERROR_START "fatal: iss_data sort directory %s could not be created";
-	  ip->errx = (ccp)pool_copy((ucp)dir, ip->p);
+	  ip->errx = (ccp)pool_copy((ucp)ip->cache.sort, ip->p);
+	}
+    }
+
+  if (ip->cache.out && strcmp(ip->cache.sort, ip->cache.out))
+    {
+      if (stat(ip->cache.out, &sb) || !S_ISDIR(sb.st_mode))
+	{
+	  if (ip->verbose)
+	    fprintf(stderr, "iss_data: creating %s\n", ip->cache.out);
+	  if (mkdir(ip->cache.out, 0775))
+	    {
+	      ip->err = PX_ERROR_START "fatal: iss_data sort directory %s could not be created";
+	      ip->errx = (ccp)pool_copy((ucp)dir, ip->p);
+	    }
 	}
     }
 

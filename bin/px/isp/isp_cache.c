@@ -30,12 +30,14 @@ int
 isp_cache_project(Isp *ip)
 {
   int len = strlen(ip->cache.sys)+strlen(ip->project)+2;
-  len += strlen("/02pub/p4.d");
   char dir[len];
   sprintf(dir, "%s/%s", ip->cache.sys, ip->project);
   ip->cache.project = (ccp)pool_copy((ucp)dir, ip->p);
-  strcat(dir, "/02pub/p4.d");
-  ip->cache.pub = (ccp)pool_copy((ucp)dir, ip->p);
+
+  int len2 = strlen(ip->oracc)+strlen(ip->project)+strlen("//02pub/p4.d0");
+  char pub[len2];
+  sprintf(pub, "%s/%s/02pub/p4.d", ip->oracc, ip->project);
+  ip->cache.pub = (ccp)pool_copy((ucp)pub, ip->p);
   return 0;
 }
 

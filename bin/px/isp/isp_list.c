@@ -49,16 +49,23 @@ isp_list_create(Isp *ip)
 {
   if (ip->lloc.method && !strcmp(ip->lloc.method, "file"))
     {
-      /* defensive programming: */
-      if (strcmp(ip->lloc.path, ip->cache.list))
+      if (strcmp(ip->list_name, "outlined.lst"))
 	{
-	  int ret = file_copy(ip->lloc.path, ip->cache.list);
-	  if (ret)
+	  /* defensive programming: */
+	  if (strcmp(ip->lloc.path, ip->cache.list))
 	    {
-	      ip->err = PX_ERROR_START "isp_list_create: failed to copy %s to cache-list";
-	      ip->errx = ip->lloc.path;
+	      int ret = file_copy(ip->lloc.path, ip->cache.list);
+	      if (ret)
+		{
+#if 1
+		  ip->err = px_err("isp_list_create: failed to copy %s to %s\n", ip->lloc.path, ip->cache.list);
+#else
+		  ip->err = PX_ERROR_START "isp_list_create: failed to copy %s to cache-list";
+		  ip->errx = ip->lloc.path;
+#endif
+		}
+	      return ret;
 	    }
-	  return ret;
 	}
     }
   else if ('t' == *ip->lloc.type)

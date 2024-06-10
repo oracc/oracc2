@@ -24,7 +24,8 @@ else
 		     >$4
 fi
 # remove the output if it's empty
-if [ ! -s $3 ]; then
-    rm -f $3
+if [ ! -s $4 ]; then
+    rm -f $4
     exit 1
 fi
+
