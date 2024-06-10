@@ -132,11 +132,12 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
   else
     currpage->used = 0;
 
+#if 0
   struct outline *ipop = ip->op;
-  
   if (ipop)
     ipop->page = 1;
-
+#endif
+  
   for (i = 0; i < nitems; ++i)
     {
       if (pitems[i]->grp < 0)
@@ -144,16 +145,20 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
 
       if (i && pitems[i]->grp != pitems[i-1]->grp && pitems[i-1]->grp != -1)
 	{
-         if (ipop)
+#if 0
+	  if (ipop)
             ipop->count = i - last_i;
+#endif
 	  last_i = i;
 	  if (nheadfields)
 	    currpage->p[currpage->used++] = fmthdr(pitems[i]->grp);
+#if 0
           if (ipop)
             {
               ++ipop;
               ipop->page = 1 + currpage - pages;
             }
+#endif
 	}
       if (i && !strcmp((ccp)pitems[i-1]->qpq, (ccp)pitems[i]->qpq)
 	  && pitems[i-1]->lkey == pitems[i]->lkey)
@@ -162,9 +167,11 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
 	currpage->p[currpage->used++] = (char *)pitems[i]->s;
     }
 
+#if 0
  if (ipop)
     ipop->count = i - last_i;
-
+#endif
+ 
   return pages;
 }
 

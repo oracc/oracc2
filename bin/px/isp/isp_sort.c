@@ -27,8 +27,6 @@ isp_set_perm(const char *str)
 int
 isp_cache_sort(Isp *ip)
 {
-  char buf[strlen(ip->cache.list)+strlen("-1230.mol")];
-
   /* In P4 'special' outline mode is only used when the list name is outlined.lst */
   if (ip->list_name && !strcmp(ip->list_name, "outlined.lst") && ip->special_cfg.select)
     {
@@ -44,31 +42,46 @@ isp_cache_sort(Isp *ip)
   if (!ip->perm || '#' == *ip->perm)
     ip->perm = isp_set_perm(ip->default_cfg.sort_labels);
 
-  strcpy(buf, ip->cache.list);
-  strcpy(strrchr(buf,'/')+1, "sort-");  
-  strcat(buf, ip->perm);
-  ip->cache.sort = (ccp)pool_copy((uccp)buf, ip->p);
-  strcat(buf, ".mol");
-  ip->cache.mol = (ccp)pool_copy((uccp)buf, ip->p);
-#if 0
-  if (iso_master(ip))
-    goto error;
-#endif
+  char dir[strlen(ip->cache.project) + strlen(ip->list_name) + strlen(ip->perm) + 3];
+  sprintf(dir, "%s/%s/%s", ip->cache.project, ip->list_name, ip->perm);
+  ip->cache.sort = pool_copy(dir, ip->p);
+  struct stat sb;
+  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
+    {
+      if (ip->verbose)
+	fprintf(stderr, "iss_data: creating %s\n", dir);
+      if (mkdir(dir, 0775))
+	{
+	  ip->err = PX_ERROR_START "fatal: iss_data sort directory %s could not be created";
+	  ip->errx = (ccp)pool_copy((ucp)dir, ip->p);
+	}
+    }
+
+  char tsvfn[strlen(ip->cache.sort)+strlen("/pag.tsv0")];
+  sprintf(tsvfn, "%s/pag.tsv", ip->cache.sort);
+  ip->cache.tsv = pool_copy(tsvfn, ip->p);
+  
   if (ip->force)
     return iss_sort(ip);
   else
     {
-      if (!access(ip->cache.sort, F_OK))
+      if (!access(ip->cache.tsv, F_OK))
 	{
-	  if (!access(ip->cache.sort, R_OK))
+	  if (!access(ip->cache.tsv, R_OK))
 	    return 0;
 	  else
 	    {
-	      ip->err = "sort file exists but is unreadable";
+	      ip->err = "sort tsv file exists but is unreadable";
 	      return 1;
 	    }
 	}
-      else
-	return iss_sort(ip);
+      else if (iss_sort(ip))
+	{
+	  ip->err = "sort failed";
+	  return 1;
+	}
     }
+
+  if (iso_master(ip))
+    return 1;
 }

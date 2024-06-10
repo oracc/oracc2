@@ -14,7 +14,7 @@ GetOptions(
 
 my $subref = 0;
 
-my %ignore = (); my @ignore = qw/curr_cfg curr_step outline si_cache steps xpd/;
+my %ignore = (); my @ignore = qw/curr_cfg curr_step si_cache steps xpd isoz/;
 @ignore{@ignore} = (); ++$ignore{'curr_cfg *'};
 
 my @isp = `grep -v '^#' isp/isp.h | cpp | grep -v '^#' | tr -s '\n'`; chomp @isp;

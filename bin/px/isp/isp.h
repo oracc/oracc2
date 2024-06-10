@@ -33,6 +33,7 @@ struct isp_cache
   const char *list;	/* the list file */
   const char *sort; 	/* the list sorted by the requested permutation */
   const char *csi; 	/* the compiled sort info (.csi) file */
+  const char *tsv; 	/* the computed pages tsv list in cache.sort */
   const char *mol; 	/* the master outline for the list in cache.sort */
   const char *pgin;	/* the input for a page extracted from the cache.sort */
   const char *page;	/* the filename of the page-content for a zoomed slice; z=0 for no zoom */
@@ -123,7 +124,7 @@ struct isp_config
 
 #include "../pxdefs.h"
 
-struct outline;
+struct isoz;
 
 typedef struct isp
 {
@@ -184,6 +185,7 @@ typedef struct isp
   struct xpd *xpd;
   Pool *p;
   Memo *tmem;
+  Memo *isozmem;
   jmp_buf errjmp;
   struct isp_cache cache;
   struct isp_config *curr_cfg;
@@ -195,7 +197,8 @@ typedef struct isp
   struct isp_mapdata md1;
   struct isp_mapdata md2;
   struct isp_srchdata srchdata;
-  struct outline *op;
+  struct isoz *iop;
+  int zmax;
 } Isp;
 
 /*

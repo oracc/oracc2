@@ -1,9 +1,11 @@
 #include <oraccsys.h>
+#include <tsv.h>
 #include "../pxdefs.h"
 #include "iss.h"
+#include "../iso/iso.h"
 
 static int iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, int pitem, int zoom, int zpage, int zitem);
-static int iss_p_dump(FILE *pfp,Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti);
+static int iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti);
 
 int
 iss_data(Isp *ip, struct page *p)
@@ -13,32 +15,18 @@ iss_data(Isp *ip, struct page *p)
   int z0th = 1;  /* current page in zoom 0 */
   int zpth = 1;  /* current page in current zoom */
   int nlist = 0; /* current text index in total list */
+  int nzoom = 0; /* current text index in zoom; used for zoom-max */
   int nz0th = 0; /* current text index in z0th */
   int nzpth = 0; /* current text index in zpth */
   int z0firsth = -1; /* p->p[index] of first header on current z0 page */
   int znfirsth = -1; /* p->p[index] of current zoom header */
   int pfirst = -1;/* p->p[index] of first text in current z0 page */
   int zfirst = -1;/* p->p[index] first text in current zN page */
+  Tsv *tp;
 
-  char dir[strlen(ip->cache.project) + strlen(ip->list_name) + strlen(ip->perm) + 3];
-  sprintf(dir, "%s/%s/%s", ip->cache.project, ip->list_name, ip->perm);
-  struct stat sb;
-  if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
-    {
-      if (ip->verbose)
-	fprintf(stderr, "iss_data: creating %s\n", dir);
-      if (mkdir(dir, 0775))
-	{
-	  ip->err = PX_ERROR_START "fatal: iss_data sort directory %s could not be created";
-	  ip->errx = pool_copy(dir, ip->p);
-	}
-    }
-  
-  char tsvfn[strlen(dir)+strlen("/pag.tsv0")];
-  sprintf(tsvfn, "%s/pag.tsv", dir);
-  
-  Dbi_index *idp = dbi_create("itm", dir, 1024, 1, DBI_BALK);
-  FILE *pfp = fopen(tsvfn, "w");
+  tp = tsv_init(ip->cache.tsv, NULL, NULL);
+  FILE *pfp = fopen(ip->cache.tsv, "w");
+  Dbi_index *idp = dbi_create("itm", ip->cache.sort, 1024, 1, DBI_BALK);
   
   Unsigned32 i;
   for (i = 0; i < p->used; ++i)
@@ -53,8 +41,12 @@ iss_data(Isp *ip, struct page *p)
 	      int iprev = i - 1;
 	      while (iprev > 0 && (p->p[iprev][0] == '#' || p->p[iprev][0] == '+'))
 		--iprev;	  
-	      iss_p_dump(pfp, ip, p, zoom, zpth, i, zfirst, iprev);
+	      iss_p_dump(pfp, tp, ip, p, zoom, zpth, i, zfirst, iprev);
 	    }
+
+	  if (ip->iop)
+	    iso_master_n(ip, nzoom);
+	  iso_master_h(ip, p->p[i]);
 
 	  znfirsth= i;
 	  /* This test means that the header is the first thing on a new page */
@@ -62,13 +54,14 @@ iss_data(Isp *ip, struct page *p)
 	    z0firsth = i;
 	  ++zoom;
 	  zpth = 1;
-	  nzpth = 0;
+	  nzoom = nzpth = 0;
 	  zfirst = -1;
 	}
       else
 	{
 	  /* increment index counters */
 	  ++nlist;
+	  ++nzoom;
 	  ++nz0th;
 	  ++nzpth;
 
@@ -78,7 +71,7 @@ iss_data(Isp *ip, struct page *p)
 	  /* dump z0 page if !nz0th%25; reset z0 page */
 	  if (pfirst != -1 && nz0th%25==0)
 	    {
-	      iss_p_dump(pfp, ip, p, 0, z0th, z0firsth, pfirst, i);
+	      iss_p_dump(pfp, tp, ip, p, 0, z0th, z0firsth, pfirst, i);
 	      pfirst = -1;
 	      nz0th = 0;
 	      ++z0th;
@@ -87,7 +80,7 @@ iss_data(Isp *ip, struct page *p)
 	  /* dump zN page if !nzpth%25; reset zN page */
 	  if (zfirst != -1 && nzpth%25==0)
 	    {
-	      iss_p_dump(pfp, ip, p, zoom, zpth, znfirsth, zfirst, i);
+	      iss_p_dump(pfp, tp, ip, p, zoom, zpth, znfirsth, zfirst, i);
 	      zfirst = -1;
 	      nzpth = 0;
 	      ++zpth;
@@ -101,11 +94,15 @@ iss_data(Isp *ip, struct page *p)
     }
 
   /* i = p->used and we output up to and including i so it needs decrementing here */
-  iss_p_dump(pfp, ip, p, 0, z0th, z0firsth, zfirst, i-1);
-  iss_p_dump(pfp, ip, p, zoom, zpth, znfirsth, zfirst, i-1);
+  iss_p_dump(pfp, tp, ip, p, 0, z0th, z0firsth, zfirst, i-1);
+  iss_p_dump(pfp, tp, ip, p, zoom, zpth, znfirsth, zfirst, i-1);
 
+  /* add the last zoom count to the master outline data */
+  iso_master_n(ip, nzoom);
+	    
   dbi_flush(idp);
   fclose(pfp);
+  tsv_term(tp);
   
   return 0;
 }
@@ -163,13 +160,16 @@ iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, in
 }
 
 static int
-iss_p_dump(FILE *pfp, Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti)
+iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti)
 {
   int n = snprintf(NULL, 0, "z%dp%d", zoom, page);
   char key[n+1];
   sprintf(key, "z%dp%d", zoom, page);
   int j;
-  fprintf(pfp, "%s\t%s %s", key, p->p[firsth], p->p[firsti]);
+  fprintf(pfp, "%s\t", key);
+  fflush(pfp);
+  long tell = ftell(pfp);
+  fprintf(pfp, "%s %s", p->p[firsth], p->p[firsti]);
   for (j = firsti+1; j <= lasti; ++j)
     {
       if ('+' == p->p[j][0])
@@ -181,6 +181,8 @@ iss_p_dump(FILE *pfp, Isp *ip, struct page *p, int zoom, int page, int firsth, i
     }
   fputc('\n', pfp);
   fflush(pfp);
+  long len = ftell(pfp) - tell;
+  tdb_add(tp, key, tell, (int)len, -1);
   return 0;
 }
 

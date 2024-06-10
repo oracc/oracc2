@@ -35,6 +35,7 @@ pr_isp_cache(FILE *fp, struct isp_cache *pr, const char *name)
   fprintf(fp,"\t\tlist=%s\n",(char*)xmlify((ucp)pr->list));
   fprintf(fp,"\t\tsort=%s\n",(char*)xmlify((ucp)pr->sort));
   fprintf(fp,"\t\tcsi=%s\n",(char*)xmlify((ucp)pr->csi));
+  fprintf(fp,"\t\ttsv=%s\n",(char*)xmlify((ucp)pr->tsv));
   fprintf(fp,"\t\tmol=%s\n",(char*)xmlify((ucp)pr->mol));
   fprintf(fp,"\t\tpgin=%s\n",(char*)xmlify((ucp)pr->pgin));
   fprintf(fp,"\t\tpage=%s\n",(char*)xmlify((ucp)pr->page));
@@ -187,6 +188,7 @@ px_print_ip(FILE *fp, Isp *ip)
   pr_isp_mapdata(fp, &ip->md1, "md1");
   pr_isp_mapdata(fp, &ip->md2, "md2");
   pr_isp_srchdata(fp, &ip->srchdata, "srchdata");
+  fprintf(fp,"\tzmax=%d\n",(int)pr->zmax);
 }
 
 void

@@ -16,8 +16,12 @@ struct isoz
   unsigned char *h1;
   unsigned char *h2;
   unsigned char *h3;
+#if 0
   unsigned char *items;
+#endif
   int count;
+  struct isoz *last;
+  struct isoz *next;
 };
 
 #include "../isp/isp.h"

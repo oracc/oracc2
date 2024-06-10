@@ -15,6 +15,9 @@ extern Tsv *tsv_create(void);
 extern void tsv_destroy(Tsv *tp);
 /* tsv_index.c */
 extern int tsv_index(const char *tsv_file, const char *dir, const char *name);
+/* tsv_init.c */
+extern Tsv *tsv_init(const char *tsv_file, const char *dir, const char *name);
+extern void tsv_term(Tsv *tp);
 /* tsv_one_off.c */
 extern int tsv_one_off(const char *tsv_fn, const char *dir, const char *name, const char *key);
 /* tsv_output.c */

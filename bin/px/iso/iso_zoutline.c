@@ -33,7 +33,7 @@ iso_zoutline(Isp *ip)
   int zoom = 0;
   for (i = 1; i < isos.zmax; ++i)
     {
-      struct isoz iz = { NULL , NULL , NULL , NULL, 0 };
+      struct isoz iz = { NULL , NULL , NULL , 0 };
       iso_zout_parse(isos.zlines[i], &iz);
       if (iz.h1 && *iz.h1)
 	{
