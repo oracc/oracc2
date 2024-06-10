@@ -90,7 +90,7 @@ isp_glos_gxis(Isp *ip)
 	      return 1;
 	    }
 	}
-      ip->cache.sub = xcache;
+      ip->cache.use = ip->cache.out = ip->cache.sub = xcache;
     }
 
   ip->list_name = ip->glosdata.xis;

@@ -5,9 +5,6 @@ extern int iss_sort(Isp *ip);
 /* iss_data.c */
 extern int iss_data(Isp *ip, struct page *p);
 /* iss_page.c */
-extern struct pgtell *pg_tell(Isp *ip, long ht, int hl, long pstart, FILE *fp);
-extern int pg_map_one(Isp *ip, FILE *fp, int zmax, int zimx, List *lmap);
-extern int pg_zmaps(Isp *ip, List *zmaps, List *z);
 extern char *fmthdr(short sic_index);
 extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
 /* iss_pmp.c */

@@ -54,8 +54,10 @@ static int
 isp_sort_sub(Isp *ip)
 {
   char dir[strlen(ip->cache.use) + strlen(ip->list_name) + strlen(ip->perm) + 3];
-  sprintf(dir, "%s/%s/%s", ip->cache.use, ip->list_name, ip->perm);
+  sprintf(dir, "%s/%s", ip->cache.use, ip->perm);
   ip->cache.sort = (ccp)pool_copy((ucp)dir, ip->p);
+  if (!ip->pub_output)
+    ip->cache.out = ip->cache.sort;
   struct stat sb;
   if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
     {
@@ -71,6 +73,10 @@ isp_sort_sub(Isp *ip)
   char tsvfn[strlen(ip->cache.sort)+strlen("/pag.tsv0")];
   sprintf(tsvfn, "%s/pag.tsv", ip->cache.sort);
   ip->cache.tsv = (ccp)pool_copy((ucp)tsvfn, ip->p);
+
+  char mold[strlen(ip->cache.use)+strlen(ip->list_name)+strlen("//zoom.mol0")];
+  sprintf(mold, "%s/zoom.mol", ip->cache.sort);
+  ip->cache.mol = (ccp)pool_copy((uccp)mold, ip->p);
   
   if (ip->force)
     return iss_sort(ip);

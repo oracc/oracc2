@@ -109,6 +109,7 @@ opts(int opt, const char *arg)
       break;
     case 'P':
       opt_ip->cache.pub = "02pub";
+      opt_ip->pub_output = 1;
       break;
     case 'F':
       opt_ip->force = 1;

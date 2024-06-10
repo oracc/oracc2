@@ -123,7 +123,7 @@ isp_cache_sub(Isp *ip)
 	  sprintf(outd, "%s/%s", ip->cache.project, ip->list_name);
 	  ip->cache.out = (ccp)pool_copy((uccp)outd, ip->p);
 	  if (xmkdirs(ip, ip->cache.out))
-	    return 1;	  
+	    return 1;
 	}
       else
 	{
@@ -137,10 +137,7 @@ isp_cache_sub(Isp *ip)
 	    return 1;
 	}
     }  
-  char mold[strlen(ip->cache.use)+strlen(ip->list_name)+strlen("//zoom.mol0")];
-  sprintf(mold, "%s/%s/zoom.mol", ip->cache.use, ip->list_name);
-  ip->cache.mol = (ccp)pool_copy((uccp)mold, ip->p);
-	  
+
   return ip->err ? 1 : 0;
 }
 

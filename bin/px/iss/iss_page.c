@@ -9,6 +9,8 @@ int npage = 0;
 int pagesize = 15;
 extern int quick;
 
+#if 0
+
 struct pgtell
 {
   long ptell;
@@ -72,6 +74,8 @@ pg_zmaps(Isp *ip, List *zmaps, List *z)
     }
   return 0;
 }
+
+#endif
 
 char *
 fmthdr(short sic_index)
