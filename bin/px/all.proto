@@ -50,6 +50,7 @@ extern void pr_ispargstab(FILE *fp, struct ispargstab *pr, const char *name);
 /* px_validate.c */
 extern const char *fatalize(const char *e);
 extern int px_validate(Isp *ip);
+/* s123.c */
 /* selecter.c */
 extern int selecter(const char *file, char *const *ids);
 /* wpx_lib.c */

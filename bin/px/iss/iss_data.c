@@ -169,7 +169,7 @@ iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int 
   fprintf(pfp, "%s\t", key);
   fflush(pfp);
   long tell = ftell(pfp);
-  fprintf(pfp, "%s %s", p->p[firsth], p->p[firsti]);
+  fprintf(pfp, "%s\v%s", p->p[firsth], p->p[firsti]);
   for (j = firsti+1; j <= lasti; ++j)
     {
       if ('+' == p->p[j][0])

@@ -29,13 +29,16 @@ struct isp_cache
 {
   const char *sys;	/* the system cache directory, default /home/oracc/www/p4.d */
   const char *project;	/* the project's cache directory */
-  const char *sub;	/* the current cache with list */
+  const char *sub;	/* the current cache with list used for inputs; may include 02pub/p4.d */
+  const char *out;	/* the current cache with list used for outputs; does not include 02pub/p4.d */
   const char *list;	/* the list file */
-  const char *sort; 	/* the list sorted by the requested permutation */
+  const char *sort; 	/* the list sorted by the requested permutation;
+			   may be in PROJECT/p4.d/LIST or SYSTEM/p4.d/PROJECT/LIST */
   const char *csi; 	/* the compiled sort info (.csi) file */
   const char *tsv; 	/* the computed pages tsv list in cache.sort */
   const char *mol; 	/* the master outline for the list in cache.sort */
-  const char *pgin;	/* the input for a page extracted from the cache.sort */
+  const char *pkey;	/* the page key, e.g., z0p3 */
+  const char *pgin;	/* the page input, only used for glos */
   const char *page;	/* the filename of the page-content for a zoomed slice; z=0 for no zoom */
   const char *zout;	/* the filename of the zoom-menu for a zoomed slice; z=0 for no zoom */
   const char *item;	/* the cache-dir for item data */
@@ -44,7 +47,11 @@ struct isp_cache
   const char *html;	/* the filename of the html content of the displayed item */
   const char *ltab;	/* the filename of the letters.tab if cache is a glossary */
   const char *hilite;	/* table of text-id\tword-ids to set the hilite on instance sets */
-  const char *pub; 	/* set to "02pub/p4.d" to create project with p4.d in project/02pub */
+  const char *pub; 	/* set to "02pub/p4.d" to create project with p4.d in project/02pub;
+			   gets reset to full p4d path */
+  const char *use;	/* convenience pointer to either cache.project
+			   or cache.pub depending on whether page tsv
+			   is precomputed or not */
 };
 
 struct item

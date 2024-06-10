@@ -4,10 +4,14 @@
 #include "pxdefs.h"
 #include "isp/isp.h"
 
+int precomputing;
+
 int
 main(int argc, char **argv)
 {
   mesg_init();
+
+  precomputing = 1;
   
   Isp *ip = isp_init();
   ip->from = "list";

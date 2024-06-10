@@ -3,6 +3,8 @@
 #include <string.h>
 #include "../isp/isp.h"
 
+extern const char *s123[];
+
 struct s123sl
 {
   const char *sort;
@@ -102,7 +104,6 @@ do123(Isp *ip, const char *str, const char *select)
     }
   else
     {
-      static char *s123[] = { "123" , "132" , "213" , "231" , "312" , "321" , NULL };
       int i;
       for (i = 0; s123[i]; ++i)
 	{

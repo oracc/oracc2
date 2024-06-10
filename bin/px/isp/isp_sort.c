@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include "isp.h"
+#include "../pxdefs.h"
 
+static int isp_sort_sub(Isp *ip);
 
 const char *
 isp_set_perm(const char *str)
@@ -42,9 +44,18 @@ isp_cache_sort(Isp *ip)
   if (!ip->perm || '#' == *ip->perm)
     ip->perm = isp_set_perm(ip->default_cfg.sort_labels);
 
-  char dir[strlen(ip->cache.project) + strlen(ip->list_name) + strlen(ip->perm) + 3];
-  sprintf(dir, "%s/%s/%s", ip->cache.project, ip->list_name, ip->perm);
-  ip->cache.sort = pool_copy(dir, ip->p);
+  if (isp_sort_sub(ip))
+    return 1;
+
+  return 0;  
+}
+
+static int
+isp_sort_sub(Isp *ip)
+{
+  char dir[strlen(ip->cache.use) + strlen(ip->list_name) + strlen(ip->perm) + 3];
+  sprintf(dir, "%s/%s/%s", ip->cache.use, ip->list_name, ip->perm);
+  ip->cache.sort = (ccp)pool_copy((ucp)dir, ip->p);
   struct stat sb;
   if (stat(dir, &sb) || !S_ISDIR(sb.st_mode))
     {
@@ -59,7 +70,7 @@ isp_cache_sort(Isp *ip)
 
   char tsvfn[strlen(ip->cache.sort)+strlen("/pag.tsv0")];
   sprintf(tsvfn, "%s/pag.tsv", ip->cache.sort);
-  ip->cache.tsv = pool_copy(tsvfn, ip->p);
+  ip->cache.tsv = (ccp)pool_copy((ucp)tsvfn, ip->p);
   
   if (ip->force)
     return iss_sort(ip);
@@ -84,4 +95,6 @@ isp_cache_sort(Isp *ip)
 
   if (iso_master(ip))
     return 1;
+
+  return 0;
 }

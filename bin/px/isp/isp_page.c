@@ -2,6 +2,7 @@
 #include "../pxdefs.h"
 #include "isp.h"
 
+#if 0
 static void
 file_copy_chunk(FILE *from, unsigned long start, int len, FILE *to)
 {
@@ -129,6 +130,7 @@ set_item_max(Isp *ip)
     }
   return 0;
 }
+#endif
 
 int
 create_page_div(Isp *ip)
@@ -139,7 +141,15 @@ create_page_div(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->project);
   list_add(args, " ");
-  list_add(args, (void*)ip->cache.pgin);
+  if (ip->cache.tsv)
+    list_add(args, (void*)ip->cache.tsv);
+  else
+    list_add(args, (void*)ip->cache.pgin);
+  list_add(args, " ");
+  if (ip->cache.pkey)
+    list_add(args, (void*)ip->cache.pkey);
+  else
+    list_add(args, "-");
   list_add(args, " ");
   list_add(args, (void*)ip->cache.page);
   list_add(args, " ");
@@ -174,14 +184,17 @@ create_page_div(Isp *ip)
 int
 isp_page_data(Isp *ip)
 {
+#if 0
   set_item_max(ip);
-
+#endif
+  
   /* In item display the item knows its own page/zoom/index but we
      don't precompute the page div because we haven't done
      compute_ranges */
   if (ip->item)
     return 0;
-  
+
+#if 0
   if (!access(ip->cache.page, F_OK))
     {
       if (!access(ip->cache.page, R_OK))
@@ -198,9 +211,12 @@ isp_page_data(Isp *ip)
 
   if (compute_ranges(ip))
     return 1;
-
   if (create_page_input(ip))
     return 1;
-  
+#endif
+
+  int len = snprintf(NULL, 0, "z%sp%s", ip->zoom, ip->page);
+  ip->cache.pkey = (ccp)pool_alloc(len+1, ip->p);
+  sprintf((char*)ip->cache.pkey,  "z%sp%s", ip->zoom, ip->page);
   return create_page_div(ip);
 }

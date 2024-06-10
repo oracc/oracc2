@@ -9,11 +9,13 @@ const char *usage_string = " [-t tsv] [-d dir] [-n name] [-k key]";
   
 const char *arg_dir, *arg_key, *arg_name, *arg_tsv;
 
+int space_newlines;
+
 int
 main(int argc, char **argv)
 {
   program_values(prog, major_version, minor_version, usage_string, NULL);
-  options(argc, argv, "d:k:n:t:");
+  options(argc, argv, "d:k:n:st:");
 
   if (arg_key)
     {
@@ -53,6 +55,9 @@ opts(int argc, const char *arg)
       break;
     case 'n':
       arg_name = arg;
+      break;
+    case 's':
+      space_newlines = 1;
       break;
     case 't':
       arg_tsv = arg;

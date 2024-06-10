@@ -8,7 +8,7 @@ tsv_output(Tsv *tp)
     {
       int n = 0;
       fseek(tp->tsv_fp, tp->data.seek, 0);
-      while (n++ <= tp->data.len)
+      while (n++ < tp->data.len)
 	{
 	  int ch = fgetc(tp->tsv_fp);
 	  if (ch == EOF)
@@ -19,11 +19,9 @@ tsv_output(Tsv *tp)
 	    }
 	  else
 	    {
-#if 0
-	      if (ch == ' ')
+	      if (ch == 0x0B || (' ' == ch && space_newlines))
 		fputc('\n', tp->out_fp);
 	      else
-#endif
 		fputc(ch, tp->out_fp);
 	    }
 	}

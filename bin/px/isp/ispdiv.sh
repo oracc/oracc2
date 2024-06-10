@@ -1,19 +1,21 @@
 #!/bin/dash
-# $1=project $2=input $3=output $4=cemd $5=state $6=glos-lang
-if [ "$4" = "ccat" ]; then
-    S=-S$5
-    cat $2 | /home/oracc/bin/cex $S -p $1 -icat |
+#OLD# $1=project $2=input $3=output $4=cemd $5=state $6=glos-lang
+#NEW# $1=project $2=tsv $3=key $4=output $5=cemd $6=state $7=glos-lang
+>&2 echo $0 $*
+if [ "$5" = "ccat" ]; then
+    S=-S$6
+    tx -s -t $2 -k $3 | /home/oracc/bin/cex $S -p $1 -icat |
 	xsltproc -stringparam project $1 /home/oracc/lib/scripts/isp-ce-HTML.xsl - \
-		 >$3
-elif [ "$4" = "cglo" ]; then
-    if [ "$6" = "" ]; then
+		 >$4
+elif [ "$5" = "cglo" ]; then
+    if [ "$7" = "" ]; then
 	echo $0: cemd=cglo but glos-lang is empty. >&2
 	exit 1
     fi
-    cat $2 | /home/oracc/bin/cex -p $1 -icbd/$6 | 
+    cat $2 | /home/oracc/bin/cex -p $1 -icbd/$7 | 
 	xsltproc -stringparam fragment yes -stringparam project $1 \
 		 /home/oracc/lib/scripts/isp-ce-HTML.xsl - \
-		 >$3
+		 >$4
 else    
     /home/oracc/bin/wmx -p $1 -l -i $2 |
 	/home/oracc/bin/cextfx -4 -p $1 -l | \

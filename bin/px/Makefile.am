@@ -10,7 +10,7 @@ bin_PROGRAMS=px cbditem issx
 
 pxlib=pxargs.c px_options.c px_validate.c cgiopts.c pxloadfile.c \
 	px_print_ip.c px_file_copy.c cgi_decode_url.c px_mesg.c \
-	lang-3-2.c px_help.c
+	lang-3-2.c px_help.c s123.c
 
 issx_SOURCES=issx.c $(pxlib)
 issx_LDADD = isp/libisp.la iss/libiss.la iso/libiso.la $(xLDADD)
@@ -18,7 +18,7 @@ issx_DEPENDENCIES = $(issx_LDADD)
 
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxentrycounts.sh pxentryindexes.sh p4-mk-cache.sh \
-	pxlocalreset.sh cbd-items.sh
+	pxlocalreset.sh cbd-items.sh pxprecompute.sh
 
 px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c $(pxlib)
 

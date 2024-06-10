@@ -24,6 +24,8 @@ typedef struct tsv
   Tsv_data data;
 } Tsv;
 
+extern int space_newlines;
+
 #include "all.proto"
 
 #endif/*TSV_H_*/

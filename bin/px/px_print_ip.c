@@ -32,11 +32,13 @@ pr_isp_cache(FILE *fp, struct isp_cache *pr, const char *name)
   fprintf(fp,"\t\tsys=%s\n",(char*)xmlify((ucp)pr->sys));
   fprintf(fp,"\t\tproject=%s\n",(char*)xmlify((ucp)pr->project));
   fprintf(fp,"\t\tsub=%s\n",(char*)xmlify((ucp)pr->sub));
+  fprintf(fp,"\t\tout=%s\n",(char*)xmlify((ucp)pr->out));
   fprintf(fp,"\t\tlist=%s\n",(char*)xmlify((ucp)pr->list));
   fprintf(fp,"\t\tsort=%s\n",(char*)xmlify((ucp)pr->sort));
   fprintf(fp,"\t\tcsi=%s\n",(char*)xmlify((ucp)pr->csi));
   fprintf(fp,"\t\ttsv=%s\n",(char*)xmlify((ucp)pr->tsv));
   fprintf(fp,"\t\tmol=%s\n",(char*)xmlify((ucp)pr->mol));
+  fprintf(fp,"\t\tpkey=%s\n",(char*)xmlify((ucp)pr->pkey));
   fprintf(fp,"\t\tpgin=%s\n",(char*)xmlify((ucp)pr->pgin));
   fprintf(fp,"\t\tpage=%s\n",(char*)xmlify((ucp)pr->page));
   fprintf(fp,"\t\tzout=%s\n",(char*)xmlify((ucp)pr->zout));
@@ -47,6 +49,7 @@ pr_isp_cache(FILE *fp, struct isp_cache *pr, const char *name)
   fprintf(fp,"\t\tltab=%s\n",(char*)xmlify((ucp)pr->ltab));
   fprintf(fp,"\t\thilite=%s\n",(char*)xmlify((ucp)pr->hilite));
   fprintf(fp,"\t\tpub=%s\n",(char*)xmlify((ucp)pr->pub));
+  fprintf(fp,"\t\tuse=%s\n",(char*)xmlify((ucp)pr->use));
 }
 
 void

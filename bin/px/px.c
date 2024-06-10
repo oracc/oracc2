@@ -3,6 +3,8 @@
 #include "px.h"
 #include "pxdefs.h"
 
+int precomputing = 0;
+
 static void
 print_hdr(void)
 {

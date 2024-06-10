@@ -31,6 +31,9 @@ extern unsigned char **px_loadfile_lines3(unsigned const char *fname, size_t *nl
 extern unsigned char *px_loadfile_error(void);
 extern unsigned char *px_loadfile(unsigned const char *fname, size_t *nbytes);
 
+extern const char *s123[], *s12[], *s1[];
+extern int precomputing;
+
 #include <stdio.h>
 struct isp;
 extern void px_print_ip(FILE *fp, struct isp *ip);

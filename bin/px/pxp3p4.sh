@@ -25,6 +25,5 @@ done
 cut -f1,3 02pub/atf-data.tab | sed 's/@[/a-z0-9]\+//' | grep '	' | sed 's/^.*://' | dbix -d 02pub -n trs -s
 cut -d@ -f1 <02pub/atf-data.tab | tr : '	' | rocox -C21 | dbix -d 02pub -n prx -s
 rm -fr 02pub/p4.d
-echo issx -v -C ${ORACC_BUILDS} -P -j $project
-issx -v -C ${ORACC_BUILDS} -P -j $project
+pxprecompute.sh
 chmod -R o+r 02pub
