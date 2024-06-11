@@ -26,6 +26,15 @@ iss_data(Isp *ip, struct page *p)
   int zfirst = -1;/* p->p[index] first text in current zN page */
   Tsv *tp;
 
+  
+  if (strchr(items[0], '.'))
+    {
+      int tmax;
+      texts = text_array(ip, itemdp_dir, items, imax, &tmem, &tmax);
+      char tm[32]; sprintf(tm, "%d", tmax);
+      dbi_add(ip->itemdata.dp, (ucp)"tmax", tm, strlen(tm)+1);
+    }
+  
   tp = tsv_init(ip->cache.tsv, NULL, NULL);
   FILE *pfp = fopen(ip->cache.tsv, "w");
   FILE *mfp = fopen(ip->cache.max, "w");
