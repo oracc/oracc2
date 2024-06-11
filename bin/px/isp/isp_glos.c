@@ -322,7 +322,7 @@ etm_db_one_off(Isp *ip, const char *key)
     {
       if (!(ret = dbx_key(dp, key, NULL)))
 	ip->err = px_err("key %s not in dbi %s/%s", key, pool_copy(ip->glosdata.dir, ip->p), "etm");
-  /* ret is now memory malloc'ed in dbi lib */
+      /* ret is now memory malloc'ed in dbi lib */
       ret = dbi_detach_data(dp, NULL);
       dbx_term(dp);
     }
