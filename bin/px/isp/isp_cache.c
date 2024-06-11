@@ -194,9 +194,8 @@ isp_cache_page(Isp *ip)
 	      fprintf(stderr, "%s => %s\n", ip->item, etm);
 	      isp_item_undump((char*)pool_copy((ucp)etm, ip->p), &ip->itemdata);
 	      ip->zoom = ip->itemdata.zoom;
-	      char *slash = strchr(ip->itemdata.zoom,'/');
-	      *slash++ = '\0';
-	      ip->glosdata.let = slash;
+	      ip->glosdata.let = ip->itemdata.pindex;
+	      ip->itemdata.pindex = NULL;
 	      ip->glosdata.lmax = ip->itemdata.proj;
 	      ip->itemdata.proj = NULL;
 	      ip->page = ip->itemdata.zpag;

@@ -29,6 +29,7 @@ int nletter;
 int nth;
 int znth;
 int zpage;
+int emax = 0;
 
 void
 summary(const char *ref)
@@ -54,7 +55,11 @@ ei_sH(void *userData, const char *name, const char **atts)
   if (!strcmp(name, "letter"))
     {
       if (list_len(summaries))
-	hash_add(h_lmax, (ucp)curr_letter, (void*)(uintptr_t)znth);
+	{
+	  hash_add(h_lmax, (ucp)curr_letter, (void*)(uintptr_t)znth);
+	  printf("%s\t%d\n", curr_letter, znth);
+	  emax += znth;
+	}
       curr_letter = strdup(findAttr(atts, "dc:title"));
       ++nletter;
       znth = 0;
@@ -87,8 +92,13 @@ main(int argc, char **argv)
   runexpat_omit_rp_wrap();
   expat_identity(argv[optind], NULL, stdout);
   if (list_len(summaries))
-    hash_add(h_lmax, (ucp)curr_letter, (void*)(uintptr_t)znth);
+    {
+      hash_add(h_lmax, (ucp)curr_letter, (void*)(uintptr_t)znth);
+      printf("%s\t%d\n", curr_letter, znth);
+      emax += znth;
+    }
   List_node *lp;
+  printf("entry_ids\t%d\n", emax);
   for (lp = summaries->first; lp; lp = lp->next)
     {
       struct summ *sp = lp->data;
@@ -96,10 +106,14 @@ main(int argc, char **argv)
 	sp->next = ((struct summ*)lp->next->data)->entry;
       else
 	sp->next = "#";
-      printf("%s\t%d\t%d\t%d/%s\t%d\t%d\t%s\t%s\t%lu\n",
-	     sp->entry, sp->nth, sp->page,
-	     sp->zoom, sp->letter, sp->zpage, sp->znth,
-	     sp->prev, sp->next, (uintptr_t)hash_find(h_lmax, (ucp)sp->letter));
+      printf("%s\t%d\t%d\t%s\t%d\t%d\t%d\t%s\t%s\t%lu\n",
+	     sp->entry,
+	     sp->nth, sp->page,
+	     sp->letter,
+	     sp->zoom,
+	     sp->zpage, sp->znth,
+	     sp->prev, sp->next,
+	     (uintptr_t)hash_find(h_lmax, (ucp)sp->letter));
     }
 }
 

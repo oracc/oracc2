@@ -89,6 +89,7 @@ struct isp_itemdata
   const char *dots;
   const char *index;
   const char *page;
+  const char *pindex;
   const char *zoom;
   const char *zpag;
   const char *zindex;

@@ -2,6 +2,8 @@
 #include "../pxdefs.h"
 #include "isp.h"
 
+static const char *etm_db_one_off(Isp *ip, const char *key);
+
 const char *
 isp_glos_letter_id(Isp *ip)
 {
@@ -18,6 +20,19 @@ isp_glos_letter_id(Isp *ip)
 int
 isp_glos_pmax(Isp *ip)
 {
+#if 1
+  
+  if (ip->glosdata.let)
+    {
+      const char *max = etm_db_one_off(ip, ip->glosdata.let);
+      if (!strcmp(ip->glosdata.let, "entry_ids"))
+	ip->glosdata.emax = max;
+      else
+	ip->glosdata.lmax = max;
+    }
+  return ip->err ? 1 : 0;
+
+#else
 #define ENTRYCOUNTS "/entry-counts.tab"
   ip->glosdata.ecpath = (ccp)pool_alloc(strlen(ip->glosdata.dir)+strlen(ENTRYCOUNTS)+1, ip->p);
   sprintf((char*)ip->glosdata.ecpath, "%s%s", ip->glosdata.dir, ENTRYCOUNTS);
@@ -66,6 +81,8 @@ isp_glos_pmax(Isp *ip)
 
   loadoneline(NULL, NULL);
   return status;
+
+#endif  
 }
 
 /* Reset cache.sub to be the glossary cache + the gxis name
@@ -293,12 +310,19 @@ isp_glos_data(Isp *ip)
 const char *
 isp_glos_etm(Isp *ip)
 {
+  return etm_db_one_off(ip, ip->item);
+}
+
+static const char *
+etm_db_one_off(Isp *ip, const char *key)
+{
   Dbi_index *dp = dbx_init(ip->glosdata.dir, "etm");
   const void *ret = NULL;
   if (dp)
     {
-      if (!(ret = dbx_key(dp, ip->item, NULL)))
-	ip->err = px_err("key %s not in dbi %s/%s", ip->item, pool_copy((uccp)ip->glosdata.dir,ip->p), "etm");
+      if (!(ret = dbx_key(dp, key, NULL)))
+	ip->err = px_err("key %s not in dbi %s/%s", key, pool_copy(ip->glosdata.dir, ip->p), "etm");
+  /* ret is now memory malloc'ed in dbi lib */
       ret = dbi_detach_data(dp, NULL);
       dbx_term(dp);
     }
