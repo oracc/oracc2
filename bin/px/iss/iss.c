@@ -341,19 +341,14 @@ iss_sort(Isp *ip)
   if (NULL == (pitems = pg_sort(ip, items, &nitems, perm_keys)))
     return 1;
 
-#if 0
-  ip->op = pg_outline(&ip->op_nlevels);
-#endif
-
   if (nitems)
     pages = pg_page(ip, pitems, nitems);
-#if 1
+
   if (iss_data(ip, pages))
     return 1;
-#else
-  if (pg_page_dump(ip, pages))
+
+  if (iss_texts(ip, pages))
     return 1;
-#endif
   
   hash_free2(seen, free, NULL);
 

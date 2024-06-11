@@ -1,12 +1,39 @@
 #include <oraccsys.h>
 #include "../pxdefs.h"
 #include "iss.h"
+#include "../iso/iso.h"
 
-const char **
-text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tmem, int *tmax)
+static struct page *text_page(Isp *ip, struct page *p);
+
+int
+iss_texts(Isp *ip, struct page *p)
 {
-  char **t = calloc(imax+1 , sizeof(char *));
+  int i;
+  while (p->p[i] && ('#' == p->p[i][0] || '+' == p->p[i][0]))
+    ++i;
+  if (!strchr(p->p[i], '.'))
+    return 0;
+  struct page *tp = text_page(ip, p);
+
+  /* save existing tsv/max/sort; add /t to sort and rebuild tsv/max */
+  ip->cache.t_sort = (ccp)pool_alloc(strlen(ip->cache.sort)+3, ip->p);
+  sprintf((char*)ip->cache.t_sort, "%s/t", ip->cache.sort);
+  ip->cache.t_tsv = (ccp)pool_alloc(strlen(ip->cache.tsv)+3, ip->p);
+  sprintf((char*)ip->cache.t_tsv, "%s/t", ip->cache.tsv);
+  ip->cache.t_max = (ccp)pool_alloc(strlen(ip->cache.max)+3, ip->p);
+  sprintf((char*)ip->cache.t_max, "%s/t", ip->cache.max);
+  
+  return iss_data_sub(ip, tp, ip->cache.t_sort, ip->cache.t_tsv, ip->cache.t_max);
+
+  /* restore previous tsv/max/sort */
+}
+
+static struct page *
+text_page(Isp *ip, struct page *p)
+{
+  char **t = calloc(p->used+1 , sizeof(char *));
   int tcount = 0, i, h_start = 0;
+  char **items = p->p;
 
   const char *itemdp_dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
   char *dbifn = "hilite";
@@ -15,16 +42,26 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
 #define ITEM_MAX_LEN	64 /* P123456.123456.1234.123 is 23 so 64 should be more than enough */
   char id[ITEM_MAX_LEN];
 
-  for (i = 0; items[i]; ++i)
+  int last_t = -1;
+  
+  for (i = 0; p->p[i]; ++i)
     {
-      strncpy(id, items[i], ITEM_MAX_LEN);
+      if ('#' == p->p[i][0])
+	{
+	  t[tcount++] = p->p[i];
+	  last_t = -1;
+	  continue;
+	}
+      strncpy(id, p->p[i], ITEM_MAX_LEN);
       id[ITEM_MAX_LEN-1] = '\0'; /* insurance in case ID is overlong */
 	
       char *dot = strchr(id, '.');
       if (dot)
 	*dot = '\0';
-      if (!i || strcmp(id, t[tcount-1]))
+      if (last_t < 0 || strcmp(id, t[last_t]))
 	{
+	  last_t = tcount;
+
 	  t[tcount++] = (char *)pool_copy((ucp)id, ip->p);
 
 	  if (i)
@@ -56,36 +93,15 @@ text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tme
     }
   dbi_flush(ip->itemdata.hilitedb);
 
+#if 0
   if (tmax)
     *tmax = tcount;
+#endif
+
+  t[tcount] = NULL;
+  struct page *p2 = calloc(1, sizeof(struct page));
+  p2->used = tcount;
   t = realloc(t, (1+tcount) * sizeof(char*));
-  return (const char **)t;
+  p2->p = t;
+  return p2;
 }
-
-static int
-textcmp(const char *t1, const char *t2)
-{
-  const char *c1 = strchr(t1, ':');
-  const char *c2 = strchr(t2, ':');
-  int len = 7;
-  if (c1 && c2)
-    {
-      if ((c1-t1) != (c2-t2))
-	return 1;
-      else
-	{
-	  const char *d1 = strchr(c1, '.');
-	  len = d1 - t1;
-	  return strncmp(t1, t2, len);
-	}
-    }
-  else
-    {
-      if (!c1 && !c2)
-	return strncmp(t1, t2, len);
-      else
-	return 1;
-    }
-  return 0;
-}
-

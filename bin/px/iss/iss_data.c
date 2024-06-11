@@ -6,11 +6,20 @@
 
 static int iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, int pitem, int zoom, int zpage, int zitem);
 static int iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti);
-static const char *zimx(Isp *ip, int z);
 static void iss_max(FILE *mfp, Dbi_index *mdp, int zoom, int max);
+
+#if 0
+static const char *zimx(Isp *ip, int z);
+#endif
 
 int
 iss_data(Isp *ip, struct page *p)
+{
+  return iss_data_sub(ip, p, ip->cache.sort, ip->cache.tsv, ip->cache.max);
+}
+
+int
+iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max)
 {
   /*char *pframe[51], *zframe[27];*/
   int zoom = 0;  /* current zoom-N */
@@ -25,21 +34,12 @@ iss_data(Isp *ip, struct page *p)
   int pfirst = -1;/* p->p[index] of first text in current z0 page */
   int zfirst = -1;/* p->p[index] first text in current zN page */
   Tsv *tp;
-
-  
-  if (strchr(items[0], '.'))
-    {
-      int tmax;
-      texts = text_array(ip, itemdp_dir, items, imax, &tmem, &tmax);
-      char tm[32]; sprintf(tm, "%d", tmax);
-      dbi_add(ip->itemdata.dp, (ucp)"tmax", tm, strlen(tm)+1);
-    }
   
   tp = tsv_init(ip->cache.tsv, NULL, NULL);
-  FILE *pfp = fopen(ip->cache.tsv, "w");
-  FILE *mfp = fopen(ip->cache.max, "w");
-  Dbi_index *mdp = dbi_create("max", ip->cache.sort, 1024, 1, DBI_BALK);
-  Dbi_index *idp = dbi_create("itm", ip->cache.sort, 1024, 1, DBI_BALK);
+  FILE *pfp = fopen(tsv, "w");
+  FILE *mfp = fopen(max, "w");
+  Dbi_index *mdp = dbi_create("max", sort, 1024, 1, DBI_BALK);
+  Dbi_index *idp = dbi_create("itm", sort, 1024, 1, DBI_BALK);
   
   Unsigned32 i;
   for (i = 0; i < p->used; ++i)
@@ -141,6 +141,7 @@ iss_max(FILE *mfp, Dbi_index*mdp, int zoom, int max)
   fprintf(mfp, "%s\t%s\n", zbuf, mbuf);
 }
 
+#if 0
 static const char *
 zimx(Isp *ip, int z)
 {
@@ -148,6 +149,7 @@ zimx(Isp *ip, int z)
   sprintf(buf, "#zimx.%d", z);
   return pool_copy((ucp)buf, ip->p);
 }
+#endif
 
 static int
 iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, int pitem, int zoom, int zpage, int zitem)

@@ -4,14 +4,10 @@ extern const char *iss_perm(Isp *ip, const char *sort_keys, int nkeys);
 extern int iss_sort(Isp *ip);
 /* iss_data.c */
 extern int iss_data(Isp *ip, struct page *p);
+extern int iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max);
 /* iss_page.c */
 extern char *fmthdr(short sic_index);
 extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
-/* iss_pmp.c */
-extern void ispmp_zooms(Isp *ip, unsigned char *f, int zmax);
-extern const char **item_array(char *s, int imax, char **mem, char ***proj);
-extern const char **text_array(Isp *ip, const char *tmpdir, const char **items, int imax, char **tmem, int *tmax);
-extern int ispmp_pages(Isp *ip, unsigned char *f, int imax);
 /* iss_redblack.c */
 extern struct rbtree *rbinit(int (*cmp)(const void *, const void *, const void *), const void *config);
 extern void rbdestroy(struct rbtree *rbinfo);
@@ -34,3 +30,5 @@ extern struct si_cache **make_cache(struct item **items, int nitems, int *sicsiz
 extern struct item **pg_sort(Isp *ip, struct item *items, int *nitems, const char *sortkeys);
 /* iss_sortinfo.c */
 extern struct sortinfo *si_load_csi(Isp *ip);
+/* iss_texts.c */
+extern int iss_texts(Isp *ip, struct page *p);
