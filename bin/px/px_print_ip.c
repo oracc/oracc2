@@ -190,8 +190,6 @@ px_print_ip(FILE *fp, Isp *ip)
   pr_isp_glosdata(fp, &ip->glosdata, "glosdata");
   pr_isp_itemdata(fp, &ip->itemdata, "itemdata");
   pr_isp_list_loc(fp, &ip->lloc, "lloc");
-  pr_isp_mapdata(fp, &ip->md1, "md1");
-  pr_isp_mapdata(fp, &ip->md2, "md2");
   pr_isp_srchdata(fp, &ip->srchdata, "srchdata");
   fprintf(fp,"\tzmax=%d\n",(int)pr->zmax);
 }

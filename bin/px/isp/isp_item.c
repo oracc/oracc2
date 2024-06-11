@@ -13,6 +13,10 @@ isp_item_undump(char *k, struct isp_itemdata *idp)
   s = strchr(idp->page, '\t');
   *s++ = '\0';
 
+  idp->index = s;
+  s = strchr(s, '\t');
+  *s++ = '\0';
+  
   idp->zoom = s;
   s = strchr(s, '\t');
   *s++ = '\0';
@@ -55,11 +59,9 @@ isp_item_load(Isp *ip)
       ip->itemdata.dots = tmp;
     }
   
-  char dbifn[strlen(ip->perm)+strlen("-itm0")];
-  sprintf(dbifn, "%s-itm", ip->perm);
   Dbi_index *dp;
-  if ((dp = dbx_init(ip->cache.sub, dbifn)))
-    { 
+  if ((dp = dbx_init(ip->cache.sort, "itm")))
+    {
       char *tmax = (char*)dbx_key(dp, "tmax", NULL);
       if (tmax)
 	ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
@@ -76,9 +78,11 @@ isp_item_load(Isp *ip)
       isp_item_undump(k, &ip->itemdata);
       ip->zoom = ip->itemdata.zoom;
       ip->page = ip->itemdata.page;
+      if (set_item_max(ip))
+	ip->err = "set_item_max failed";
     }
   else
-    ip->err = (ccp)px_err("failed to open dbi index %s/%s\n", ip->cache.sub, dbifn);
+    ip->err = (ccp)px_err("failed to open dbi index %s::%s\n", ip->cache.sort, "itm");
 
   return ip->err ? 1 : 0;
 }
@@ -125,7 +129,7 @@ isp_create_xtf(Isp *ip)
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.xmdxsl);
   list_add(args, " ");
-  list_add(args, (void*)ip->cache.sub);
+  list_add(args, (void*)ip->cache.out);
   unsigned char *syscmd = list_concat(args);
 
   if (ip->verbose)

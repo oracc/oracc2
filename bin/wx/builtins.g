@@ -13,6 +13,7 @@ doc, 	   B_DOC
 find,	   B_FIND
 as,        B_OAS
 rpc,       B_RPC
+rpc.plx,       B_RPC
 runtime,   B_RUNTIME
 sig, 	   B_SIG
 sl, 	   B_SL

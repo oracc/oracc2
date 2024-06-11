@@ -203,8 +203,10 @@ typedef struct isp
   struct isp_glosdata glosdata;
   struct isp_itemdata itemdata;
   struct isp_list_loc lloc;
+#if 0
   struct isp_mapdata md1;
   struct isp_mapdata md2;
+#endif
   struct isp_srchdata srchdata;
   struct isoz *iop;
   int zmax;

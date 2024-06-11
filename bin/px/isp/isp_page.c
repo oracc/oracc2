@@ -132,7 +132,7 @@ set_item_max(Isp *ip)
 }
 #endif
 
-static int
+int
 set_item_max(Isp *ip)
 {
   char m[strlen(ip->cache.sort)+1];
@@ -140,7 +140,6 @@ set_item_max(Isp *ip)
   Dbi_index *dp = dbx_init(m, "max");
   ip->zmax = atoi(dbx_key(dp, ip->zoom, NULL));
   dbx_term(dp);
-  fprintf(stderr, "max=%s\n", ip->zmax);
   return 0;
 }
 
