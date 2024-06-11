@@ -17,7 +17,7 @@ active_pages(Isp *ip)
 	pmax = atoi(ip->glosdata.emax);
     }
   else
-    pmax = ip->md1.zimx;
+    pmax = ip->zmax;
   int npages =  pmax / psize;
   if (pmax % psize)
     ++npages;
@@ -175,7 +175,7 @@ pui_at_active_items(Isp *ip, FILE *fp)
   else if (ip->itemdata.tmax)
     fputs(ip->itemdata.tmax, fp);
   else
-    fputs(itoa(ip->md1.zimx), fp);
+    fputs(itoa(ip->zmax), fp);
 }
 
 void
@@ -207,7 +207,7 @@ pui_at_item_label(Isp *ip, FILE *fp)
 	    }
 	  else
 	    {
-	      if (ip->md1.zimx == 1)
+	      if (ip->zmax == 1)
 		label = "ref";
 	      else
 		label = "refs";
@@ -215,7 +215,7 @@ pui_at_item_label(Isp *ip, FILE *fp)
 	}
       else
 	{
-	  if (ip->md1.zimx == 1)
+	  if (ip->zmax == 1)
 	    label = "item";
 	}
     }

@@ -132,6 +132,18 @@ set_item_max(Isp *ip)
 }
 #endif
 
+static int
+set_item_max(Isp *ip)
+{
+  char m[strlen(ip->cache.sort)+1];
+  strcpy(m, ip->cache.sort);
+  Dbi_index *dp = dbx_init(m, "max");
+  ip->zmax = atoi(dbx_key(dp, ip->zoom, NULL));
+  dbx_term(dp);
+  fprintf(stderr, "max=%s\n", ip->zmax);
+  return 0;
+}
+
 int
 create_page_div(Isp *ip)
 {
@@ -214,6 +226,8 @@ isp_page_data(Isp *ip)
   if (create_page_input(ip))
     return 1;
 #endif
+
+  set_item_max(ip);
 
   int len = snprintf(NULL, 0, "z%sp%s", ip->zoom, ip->page);
   ip->cache.pkey = (ccp)pool_alloc(len+1, ip->p);

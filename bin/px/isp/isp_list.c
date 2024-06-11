@@ -67,6 +67,11 @@ isp_list_create(Isp *ip)
 	      return ret;
 	    }
 	}
+      else
+	{
+	  if (ip->pub_output)
+	    file_copy(ip->lloc.path, ip->cache.list);
+	}
     }
   else if ('t' == *ip->lloc.type)
     return isp_tis_list(ip);
