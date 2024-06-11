@@ -18,6 +18,8 @@ else
     sorts="1"
 fi
 p=`oraccopt`
+rm -fr 02pub/p4.d
+mkdir -p 02pub/p4.d
 for a in $sorts ; do
     echo $0: issx -C${ORACC_BUILDS} -P -r $a -j $p
     issx -C${ORACC_BUILDS} -P -r $a -j $p

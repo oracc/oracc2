@@ -36,6 +36,7 @@ struct isp_cache
 			   may be in PROJECT/p4.d/LIST or SYSTEM/p4.d/PROJECT/LIST */
   const char *csi; 	/* the compiled sort info (.csi) file */
   const char *tsv; 	/* the computed pages tsv list in cache.sort */
+  const char *max; 	/* maximum zoom items tsv list in cache.sort */
   const char *mol; 	/* the master outline for the list in cache.sort */
   const char *pkey;	/* the page key, e.g., z0p3 */
   const char *pgin;	/* the page input, only used for glos */

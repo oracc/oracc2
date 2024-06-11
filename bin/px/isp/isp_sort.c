@@ -54,7 +54,7 @@ static int
 isp_sort_sub(Isp *ip)
 {
   char dir[strlen(ip->cache.use) + strlen(ip->list_name) + strlen(ip->perm) + 3];
-  sprintf(dir, "%s/%s", ip->cache.use, ip->perm);
+  sprintf(dir, "%s/%s/%s", ip->cache.use, ip->list_name, ip->perm);
   ip->cache.sort = (ccp)pool_copy((ucp)dir, ip->p);
 
   if (!ip->pub_output)
@@ -93,6 +93,9 @@ isp_sort_sub(Isp *ip)
   char tsvfn[strlen(ip->cache.sort)+strlen("/pag.tsv0")];
   sprintf(tsvfn, "%s/pag.tsv", ip->cache.sort);
   ip->cache.tsv = (ccp)pool_copy((ucp)tsvfn, ip->p);
+
+  sprintf(tsvfn, "%s/max.tsv", ip->cache.sort);
+  ip->cache.max = (ccp)pool_copy((ucp)tsvfn, ip->p);
 
   char mold[strlen(ip->cache.use)+strlen(ip->list_name)+strlen("//zoom.mol0")];
   sprintf(mold, "%s/zoom.mol", ip->cache.sort);

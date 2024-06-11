@@ -116,7 +116,7 @@ plussed(unsigned char *qpq)
 struct page *
 pg_page(Isp *ip, struct item **pitems, int nitems)
 {
-  static int last_i = 0, i;
+  static int /*last_i = 0,*/ i;
 
   npage = 1;
   pages = malloc(npage * sizeof(struct page));
@@ -152,8 +152,8 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
 #if 0
 	  if (ipop)
             ipop->count = i - last_i;
-#endif
 	  last_i = i;
+#endif
 	  if (nheadfields)
 	    currpage->p[currpage->used++] = fmthdr(pitems[i]->grp);
 #if 0

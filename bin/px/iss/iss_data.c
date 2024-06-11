@@ -6,6 +6,8 @@
 
 static int iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, int pitem, int zoom, int zpage, int zitem);
 static int iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti);
+static const char *zimx(Isp *ip, int z);
+static void iss_max(FILE *mfp, Dbi_index *mdp, int zoom, int max);
 
 int
 iss_data(Isp *ip, struct page *p)
@@ -26,6 +28,8 @@ iss_data(Isp *ip, struct page *p)
 
   tp = tsv_init(ip->cache.tsv, NULL, NULL);
   FILE *pfp = fopen(ip->cache.tsv, "w");
+  FILE *mfp = fopen(ip->cache.max, "w");
+  Dbi_index *mdp = dbi_create("max", ip->cache.sort, 1024, 1, DBI_BALK);
   Dbi_index *idp = dbi_create("itm", ip->cache.sort, 1024, 1, DBI_BALK);
   
   Unsigned32 i;
@@ -42,11 +46,12 @@ iss_data(Isp *ip, struct page *p)
 	      while (iprev > 0 && (p->p[iprev][0] == '#' || p->p[iprev][0] == '+'))
 		--iprev;	  
 	      iss_p_dump(pfp, tp, ip, p, zoom, zpth, i, zfirst, iprev);
+	      iss_max(mfp, mdp, zoom, nzoom);
 	    }
 
 	  if (ip->iop)
 	    iso_master_n(ip, nzoom);
-	  iso_master_h(ip, p->p[i]);
+	  iso_master_h(ip, (ucp)p->p[i]);
 
 	  znfirsth= i;
 	  /* This test means that the header is the first thing on a new page */
@@ -97,14 +102,42 @@ iss_data(Isp *ip, struct page *p)
   iss_p_dump(pfp, tp, ip, p, 0, z0th, z0firsth, zfirst, i-1);
   iss_p_dump(pfp, tp, ip, p, zoom, zpth, znfirsth, zfirst, i-1);
 
+  iss_max(mfp, mdp, 0, nlist);
+  iss_max(mfp, mdp, -1, zoom);
+  
   /* add the last zoom count to the master outline data */
   iso_master_n(ip, nzoom);
+  iss_max(mfp, mdp, zoom, nzoom);
 	    
   dbi_flush(idp);
+  dbi_flush(mdp);
   fclose(pfp);
+  fclose(mfp);
   tsv_term(tp);
   
   return 0;
+}
+
+static void
+iss_max(FILE *mfp, Dbi_index*mdp, int zoom, int max)
+{
+  char mbuf[16];
+  char zbuf[16];
+  sprintf(mbuf, "%d", max);
+  if (zoom == -1)
+    strcpy(zbuf, "z");
+  else
+    sprintf(zbuf, "%d", zoom);
+  dbi_add(mdp, (ucp)zbuf, mbuf, strlen(mbuf)+1);
+  fprintf(mfp, "%s\t%s\n", zbuf, mbuf);
+}
+
+static const char *
+zimx(Isp *ip, int z)
+{
+  char buf[32];
+  sprintf(buf, "#zimx.%d", z);
+  return pool_copy((ucp)buf, ip->p);
 }
 
 static int
