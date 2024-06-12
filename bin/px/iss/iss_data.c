@@ -15,11 +15,11 @@ static const char *zimx(Isp *ip, int z);
 int
 iss_data(Isp *ip, struct page *p)
 {
-  return iss_data_sub(ip, p, ip->cache.sort, ip->cache.tsv, ip->cache.max);
+  return iss_data_sub(ip, p, ip->cache.sort, ip->cache.tsv, ip->cache.max, ip->cache.mol);
 }
 
 int
-iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max)
+iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max, const char *mol)
 {
   /*char *pframe[51], *zframe[27];*/
   int zoom = 0;  /* current zoom-N */
@@ -35,9 +35,20 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
   int zfirst = -1;/* p->p[index] first text in current zN page */
   Tsv *tp;
   
-  tp = tsv_init(ip->cache.tsv, NULL, NULL);
+  tp = tsv_init(tsv, NULL, NULL);
   FILE *pfp = fopen(tsv, "w");
+  if (!pfp)
+    {
+      ip->err = px_err("failed to open %s\n", tsv);
+      return 1;
+    }
   FILE *mfp = fopen(max, "w");
+  if (!mfp)
+    {
+      ip->err = px_err("failed to open %s\n", max);
+      return 1;
+    }
+  
   Dbi_index *mdp = dbi_create("max", sort, 1024, 1, DBI_BALK);
   Dbi_index *idp = dbi_create("itm", sort, 1024, 1, DBI_BALK);
   
@@ -123,7 +134,10 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
   fclose(pfp);
   fclose(mfp);
   tsv_term(tp);
-  
+
+  if (iso_master(ip, mol))
+    return 1;
+
   return 0;
 }
 

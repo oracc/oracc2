@@ -75,7 +75,7 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "3ESZPWC:FOdf:j:l:r:R:m:a:z:p:g:e:i:b:s:k:Hh:x:u:c:L:a:t:vw");
+    ret = options(argc, argv, "3ESZPWC:FOdf:j:l:r:R:m:a:z:p:q:g:e:i:b:s:k:Hh:x:u:c:L:a:t:vw");
   opt_ip = NULL;
 
   if (ip->err)
@@ -157,14 +157,19 @@ opts(int opt, const char *arg)
     case 't':
       {
 	char *slash = strrchr(arg,'/');
-	if (slash && 's' == slash[1] && '.' == slash[2])
+	if ((slash && 's' == slash[1] && '.' == slash[2]))	  
 	  {
-	    opt_ip->list_name = (ccp)pool_copy((ucp)slash+1,opt_ip->p);
 	    opt_ip->cache.sub = opt_ip->tmp_dir = opt_ip->srchdata.tmp = arg;
 	    opt_ip->cache.sys = (ccp)pool_copy((ucp)arg,opt_ip->p);
 	    char *isd = strstr(opt_ip->cache.sys, "/p4.d/");
 	    isd += 5;
 	    *isd = '\0';
+	    opt_ip->list_name = "list";
+	  }
+	else if ('s' == arg[0] && '.' == arg[1])
+	  {
+	    opt_ip->srchdata.tmp = arg;
+	    opt_ip->list_name = "list";
 	  }
 	else
 	  opt_ip->tmpdir = arg;

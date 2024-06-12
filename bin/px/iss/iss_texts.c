@@ -8,8 +8,8 @@ static struct page *text_page(Isp *ip, struct page *p);
 int
 iss_texts(Isp *ip, struct page *p)
 {
-  int i;
-  while (p->p[i] && ('#' == p->p[i][0] || '+' == p->p[i][0]))
+  int i = 0;
+  while (i < p->used && ('#' == p->p[i][0] || '+' == p->p[i][0]))
     ++i;
   if (!strchr(p->p[i], '.'))
     return 0;
@@ -18,12 +18,26 @@ iss_texts(Isp *ip, struct page *p)
   /* save existing tsv/max/sort; add /t to sort and rebuild tsv/max */
   ip->cache.t_sort = (ccp)pool_alloc(strlen(ip->cache.sort)+3, ip->p);
   sprintf((char*)ip->cache.t_sort, "%s/t", ip->cache.sort);
-  ip->cache.t_tsv = (ccp)pool_alloc(strlen(ip->cache.tsv)+3, ip->p);
-  sprintf((char*)ip->cache.t_tsv, "%s/t", ip->cache.tsv);
-  ip->cache.t_max = (ccp)pool_alloc(strlen(ip->cache.max)+3, ip->p);
-  sprintf((char*)ip->cache.t_max, "%s/t", ip->cache.max);
-  
-  return iss_data_sub(ip, tp, ip->cache.t_sort, ip->cache.t_tsv, ip->cache.t_max);
+  ip->cache.t_tsv = (ccp)pool_alloc(strlen(ip->cache.sort)+11, ip->p);
+  sprintf((char*)ip->cache.t_tsv, "%s/t/pag.tsv", ip->cache.sort);
+  ip->cache.t_max = (ccp)pool_alloc(strlen(ip->cache.sort)+11, ip->p);
+  sprintf((char*)ip->cache.t_max, "%s/t/max.tsv", ip->cache.sort);
+  ip->cache.t_mol = (ccp)pool_alloc(strlen(ip->cache.sort)+12, ip->p);
+  sprintf((char*)ip->cache.t_mol, "%s/t/zoom.mol", ip->cache.sort);
+
+  struct stat sb;
+  if (stat(ip->cache.t_sort, &sb) || !S_ISDIR(sb.st_mode))
+    {
+      if (ip->verbose)
+	fprintf(stderr, "iss_data: creating %s\n", ip->cache.t_sort);
+      if (mkdir(ip->cache.t_sort, 0775))
+	{
+	  ip->err = PX_ERROR_START "fatal: iss_data text-sort directory %s could not be created";
+	  ip->errx = (ccp)pool_copy((ucp)ip->cache.t_sort, ip->p);
+	}
+    }
+
+  return iss_data_sub(ip, tp, ip->cache.t_sort, ip->cache.t_tsv, ip->cache.t_max, ip->cache.t_mol);
 
   /* restore previous tsv/max/sort */
 }
@@ -44,7 +58,7 @@ text_page(Isp *ip, struct page *p)
 
   int last_t = -1;
   
-  for (i = 0; p->p[i]; ++i)
+  for (i = 0; i < p->used; ++i)
     {
       if ('#' == p->p[i][0])
 	{

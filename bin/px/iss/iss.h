@@ -31,7 +31,7 @@ extern int nheadfields;
 extern int *headfields;
 extern int nsortfields;
 
-extern int iso_master(Isp *ip);
+extern int iso_master(Isp *ip, const char *mol);
 extern int iso_zoutline(Isp *ip);
 
 #include "all.proto"

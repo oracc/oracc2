@@ -1,5 +1,5 @@
 /* iso_master.c */
-extern int iso_master(Isp *ip);
+extern int iso_master(Isp *ip, const char *mol);
 extern void iso_master_h(Isp *ip, unsigned char *h);
 extern void iso_master_n(Isp *ip, int n);
 /* iso_pagezoom.c */

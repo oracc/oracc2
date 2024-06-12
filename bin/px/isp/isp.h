@@ -54,9 +54,9 @@ struct isp_cache
 			   or cache.pub depending on whether page tsv
 			   is precomputed or not */
   const char *t_sort; 	/* the item list sorted by the requested permutation reduced to texts in /t */
-  const char *t_csi; 	/* the compiled sort info (.csi) file in /t */
   const char *t_tsv; 	/* the computed pages tsv list in cache.sort/t */
   const char *t_max; 	/* maximum zoom items tsv list in cache.sort/t */
+  const char *t_mol; 	/* master outline for text list in cache.sort/t */
 };
 
 struct item
@@ -226,7 +226,7 @@ struct ispargstab
   int step;
 };
 
-extern int iso_master(Isp *ip);
+extern int iso_master(Isp *ip, const char *mol);
 extern int iso_zoutline(Isp *ip);
 extern int iss_sort(Isp *ip);
 

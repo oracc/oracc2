@@ -132,8 +132,5 @@ isp_sort_sub(Isp *ip)
 	}
     }
 
-  if (iso_master(ip))
-    return 1;
-
   return 0;
 }

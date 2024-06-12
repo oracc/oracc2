@@ -2,136 +2,6 @@
 #include "../pxdefs.h"
 #include "isp.h"
 
-#if 0
-static void
-file_copy_chunk(FILE *from, unsigned long start, int len, FILE *to)
-{
-  fseek(from, start, SEEK_SET);
-  char *buf = malloc(len+1); *buf = '\0';
-  fread(buf, 1, len, from);
-  char *s = buf;
-  while (*s)
-    if (' ' == *s)
-      *s++ = '\n';
-    else
-      ++s;
-  fwrite(buf, 1, len, to);
-  free(buf);
-}
-
-static void
-md_parse(char *mline, struct isp_mapdata *mdp)
-{
-  char *next;
-  /*mdp->zmax = strtoul(mline, &next, 10);*/
-  mdp->zimx = strtoul(mline, &next, 10);
-  mdp->htell = strtoul(next+1, &next, 10);
-  mdp->hlen = (int)strtoul(next+1, &next, 10);
-  mdp->ptell = strtoul(next+1, &next, 10);
-  mdp->plen = (int)strtoul(next+1, &next, 10);
-}
-
-static int
-compute_ranges(Isp *ip)
-{
-  if (ip->item || ip->glosdata.ent) /*!ip->page || !strcmp(ip->page, "0"))*/
-    return 0;
-  
-  char mbuf[strlen(ip->cache.sort)+strlen(ip->zoom)+strlen(".pmp0")];
-  if (atoi(ip->zoom))
-    sprintf(mbuf, "%s-z%s.pmp", ip->cache.sort, ip->zoom);
-  else
-    sprintf(mbuf, "%s.pmp", ip->cache.sort);
-
-  /* compute the start line in the .pmp */
-  int multiplier = 1;
-  if (!strcmp(ip->psiz, "50"))
-    multiplier = 2;
-  else if (!strcmp(ip->psiz,"100"))
-    multiplier = 4;
-
-  int pg = atoi(ip->page) * multiplier;  
-  char *mline = nth_line(ip, mbuf, pg, multiplier>1);
-  if (mline)
-    {
-      char *mmline = NULL;
-      md_parse(mline, &ip->md1);
-      
-      if (multiplier > 1)
-	{
-	  mmline = nth_line(ip, NULL, pg+multiplier, 0);
-	  if (mmline)
-	    md_parse(mmline, &ip->md2);
-	  else
-	    {
-	      ip->err = "page out of range";
-	      return 1;
-	    }
-	}
-      else
-	ip->md2.plen = -1;
-    }
-  else if (ip->err)
-    return 1;
-  return 0;
-}
-
-static int
-create_page_input(Isp *ip)
-{
-  FILE *zfp = fopen(ip->cache.pgin, "w");
-  if (zfp)
-    {
-      if (ip->verbose)
-	fprintf(stderr, "isp: isp_cache_page: writing %s\n", ip->cache.pgin);
-      FILE *sfp = fopen(ip->cache.sort,"r");
-      if (sfp)
-	{
-	  if (ip->md1.htell < ip->md1.ptell)
-	    {
-	      file_copy_chunk(sfp, ip->md1.htell, ip->md1.hlen, zfp);
-	      fputc('\n', zfp);
-	    }
-	  if (ip->md2.plen >= 0)
-	    file_copy_chunk(sfp, ip->md1.ptell, ip->md2.ptell+ip->md2.plen, zfp);
-	  else
-	    file_copy_chunk(sfp, ip->md1.ptell, ip->md1.plen, zfp);
-	  fputc('\n', zfp);
-	  fclose(sfp);
-	  fclose(zfp);
-	}
-      else
-	{
-	  fclose(zfp);
-	  ip->err = "unable to read page file when building";
-	}
-    }
-  else
-    ip->err = "unable to write to zoom-page-file";
-  return ip->err ? 1 : 0;
-}
-
-static int
-set_item_max(Isp *ip)
-{
-  char buf[strlen(ip->cache.sort)+strlen("-z0123456789.pmp0")];
-  int zoom = atoi(ip->zoom);
-  if (zoom)
-    sprintf(buf, "%s-z%d.pmp", ip->cache.sort, zoom);
-  else
-    sprintf(buf, "%s.pmp", ip->cache.sort);
-  unsigned char *f = px_loadfile((uccp)buf, NULL);
-  if (f)
-    ip->md1.zimx = atoi((ccp)f);
-  else
-    {
-      ip->err = (ccp)px_loadfile_error();
-      return 1;
-    }
-  return 0;
-}
-#endif
-
 int
 set_item_max(Isp *ip)
 {
@@ -195,36 +65,11 @@ create_page_div(Isp *ip)
 int
 isp_page_data(Isp *ip)
 {
-#if 0
-  set_item_max(ip);
-#endif
-  
   /* In item display the item knows its own page/zoom/index but we
      don't precompute the page div because we haven't done
      compute_ranges */
   if (ip->item)
     return 0;
-
-#if 0
-  if (!access(ip->cache.page, F_OK))
-    {
-      if (!access(ip->cache.page, R_OK))
-	{
-	  return 0;
-	}
-      else
-	{
-	  ip->err = PX_ERROR_START "cache page %s exists but is unreadable\n";
-	  ip->errx = ip->cache.page;
-	  return 1;
-	}
-    }
-
-  if (compute_ranges(ip))
-    return 1;
-  if (create_page_input(ip))
-    return 1;
-#endif
 
   set_item_max(ip);
 

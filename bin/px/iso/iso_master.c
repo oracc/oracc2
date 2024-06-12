@@ -4,35 +4,31 @@
 static const char *hclean(unsigned char *s);
 
 int
-iso_master(Isp *ip)
+iso_master(Isp *ip, const char *mol)
 {
   static struct iso isos;
 
   memset(&isos, '\0', sizeof(struct iso));
   
-  if (ip->cache.sort)
+  if (mol)
     {
       unsigned char *h1 = NULL, *h2 = NULL;
 
-      char buf[strlen(ip->cache.sort)+strlen("/zoom.mol0")];
-      sprintf(buf, "%s/zoom.mol", ip->cache.sort);
-      ip->cache.mol = (ccp)pool_copy((uccp)buf, ip->p);
-
-      if (!access(ip->cache.mol, F_OK))
+      if (!access(mol, F_OK))
 	{
-	  if (access(ip->cache.mol, W_OK))
+	  if (access(mol, W_OK))
 	    {
 	      ip->err = PX_ERROR_START "master outline %s not writeable\n";
-	      ip->errx = ip->cache.mol;
+	      ip->errx = mol;
 	      return 1;
 	    }
 	}
 
       FILE *fp;
-      if (!(fp = fopen(ip->cache.mol, "w")))
+      if (!(fp = fopen(mol, "w")))
 	{
 	  ip->err = PX_ERROR_START "unable to open master outline %s for write\n";
-	  ip->errx = ip->cache.mol;
+	  ip->errx = mol;
 	  return 1;
 	}	
 
@@ -83,6 +79,9 @@ iso_master(Isp *ip)
       fclose(fp);
       (void)hclean(NULL);
     }
+
+  ip->isozmem = NULL;
+  ip->iop = NULL;
   return 0;
 }
 
@@ -93,6 +92,7 @@ hclean(unsigned char *s)
   if (!s && p)
     {
       free(p);
+      p = NULL;
       return NULL;
     }
 
