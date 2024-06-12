@@ -115,17 +115,6 @@ do123(Isp *ip, const char *str, const char *select)
   return &s;
 }
 
-#if 0
-<select id="p4OSdefault" onchange="act_sorter_default()" value="123">
-  <option value="312">Place/Time/Genre</option>
-  <option value="321">Place/Genre/Time</option>
-  <option value="132">Time/Place/Genre</option>
-  <option value="123" selected="selected">Time/Genre/Place</option>
-  <option value="231">Genre/Place/Time</option>
-  <option value="213">Genre/Time/Place</option>
-</select>
-#endif
-  
 int
 pui_123(Isp *ip, const char *perm, const char *cfg, FILE *fp)
 {
@@ -143,26 +132,3 @@ pui_123(Isp *ip, const char *perm, const char *cfg, FILE *fp)
   fputs("</select>\n</div>\n", fp);
   return 0;
 }
-
-#if 0
-const char *single = "alpha";
-const char *doublet = "semel,bis";
-const char *triple = "one,two,three";
-
-int
-main(int argc, char **argv)
-{
-#if 1
-  isp_123("231", triple, stdout);
-#else
-  sp = do123(doublet, "21");
-  for (i = 0; sp->sl[i].sort; ++i)
-    printf("%s -> %s\n", sp->sl[i].sort, sp->sl[i].label);
-  putchar('\n');
-  sp = do123(single, NULL);
-  for (i = 0; sp->sl[i].sort; ++i)
-    printf("%s -> %s\n", sp->sl[i].sort, sp->sl[i].label);
-#endif
-}
-
-#endif

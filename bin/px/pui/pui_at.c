@@ -104,9 +104,12 @@ pui_at_pager_data(Isp *ip, FILE *fp)
     }
   else
     {
-      if (ip->list_name) /* null for p4url */
+      if (ip->list_name) /* null for p4url; "list" when there's a srchdata.list */
 	{
-	  pattrs("data-list", ip->list_name);
+	  if (ip->srchdata.list)
+	    pattrs("data-srch", ip->srchdata.list);
+	  else
+	    pattrs("data-list", ip->list_name);
 	  pattrs("data-zoom", ip->zoom);
 	  pattrs("data-sort", ip->perm);
 	}

@@ -61,7 +61,7 @@ pxvl(CGI_varlist *v)
   
   const char **va = px_mkvec(v);
   
-  if (CGI_lookup(v, "srch"))
+  if (CGI_lookup(v, "qury"))
     {
       dump_vec(qx_exe, va);
       execv(qx_exe, (char*const*)va);

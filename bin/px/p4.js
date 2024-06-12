@@ -40,6 +40,8 @@ function itemLocation() {
 	let proj = pager.getAttribute("data-proj");
 	let glos = pager.getAttribute("data-glos");
 	let list = pager.getAttribute("data-list");
+	let gxis = pager.getAttribute("data-gxis");
+	let srch = pager.getAttribute("data-srch");
 	let perm = pager.getAttribute("data-sort");
 	let lang = pager.getAttribute("data-lang");
 	let loc = "/"+proj+"/";
@@ -49,8 +51,14 @@ function itemLocation() {
 	    loc = loc+item;
 	}
 	let qs = '';
-	if (list && list !== "outlined.lst") {
-	    qs = qs_append(qs, 'list='+list);
+	if (gxis) {
+	    qs = qs_append(qs, 'xis='+gxis);
+	} else if (srch) {
+	    qs = qs_append(qs, 'srch='+srch);
+	} else {
+	    if (list && list !== "outlined.lst") {
+		qs = qs_append(qs, 'list='+list);
+	    }
 	}
 	if (perm && !perm_is_default(perm)) {
 	    qs = qs_append(qs, 'sort='+perm);
@@ -353,7 +361,7 @@ function act_srch() {
 						       the srch terms are stored in data-qury */
 	if (qury !== srch) {
 	    if (glos) { glos = '/'+glos; } else { glos = '' }
-	    let srch_url='/'+proj+glos+'?srch='+encodeURIComponent(srch);
+	    let srch_url='/'+proj+glos+'?qury='+encodeURIComponent(srch);
 	    // alert('srch_url='+srch_url);
 	    window.location = srch_url;
 	} else {

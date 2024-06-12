@@ -128,44 +128,6 @@ pg_load(Isp *ip, int *nitems)
   return items;
 }
 
-#if 0
-static int
-o_cmp(const void *a,const void*b)
-{
-  return ((struct outline*)a)->sic->seq - ((struct outline*)b)->sic->seq;
-}
-
-struct outline *
-pg_outline(int *nlevelsp)
-{
-  int i, nlevels = nsortfields - 1, poffset;
-  struct outline *o;
-  u4 *u4s;
-  o = malloc(sic_size * sizeof(struct outline));
-  u4s = malloc(2 * sizeof(u4) * sic_size * nlevels);
-  poffset = sic_size * nlevels;
-  
-  for (i = 0; i < sic_size; ++i)
-    {
-      int index = i * nlevels, j;
-      o[i].count = o[i].page = -1;
-      o[i].icounts = &u4s[index];
-      o[i].poffsets = &u4s[poffset + index];
-      o[i].sic = sicache[i];
-      for (j = 0; j < nlevels; ++j)
-	{
-	  u4*pindex = sip->pindex + (sicache[i]->codes - sip->scodes);
-	  o[i].poffsets[j] = pindex[sortfields[j]];
-	}
-    }
-
-  qsort(o,sic_size,sizeof(struct outline),o_cmp);
-
-  *nlevelsp = nlevels;
-  return o;
-}
-#endif
-
 static int *
 set_keys(const char *s, int *nfields)
 {

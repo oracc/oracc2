@@ -8,10 +8,6 @@ static int iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, i
 static int iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti);
 static void iss_max(FILE *mfp, Dbi_index *mdp, int zoom, int max);
 
-#if 0
-static const char *zimx(Isp *ip, int z);
-#endif
-
 int
 iss_data(Isp *ip, struct page *p)
 {
@@ -154,16 +150,6 @@ iss_max(FILE *mfp, Dbi_index*mdp, int zoom, int max)
   dbi_add(mdp, (ucp)zbuf, mbuf, strlen(mbuf)+1);
   fprintf(mfp, "%s\t%s\n", zbuf, mbuf);
 }
-
-#if 0
-static const char *
-zimx(Isp *ip, int z)
-{
-  char buf[32];
-  sprintf(buf, "#zimx.%d", z);
-  return pool_copy((ucp)buf, ip->p);
-}
-#endif
 
 static int
 iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, int pitem, int zoom, int zpage, int zitem)

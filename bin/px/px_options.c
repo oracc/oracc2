@@ -159,6 +159,7 @@ opts(int opt, const char *arg)
 	char *slash = strrchr(arg,'/');
 	if ((slash && 's' == slash[1] && '.' == slash[2]))	  
 	  {
+	    opt_ip->srchdata.list = slash+1;
 	    opt_ip->cache.sub = opt_ip->tmp_dir = opt_ip->srchdata.tmp = arg;
 	    opt_ip->cache.sys = (ccp)pool_copy((ucp)arg,opt_ip->p);
 	    char *isd = strstr(opt_ip->cache.sys, "/p4.d/");

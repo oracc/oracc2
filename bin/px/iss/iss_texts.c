@@ -107,11 +107,6 @@ text_page(Isp *ip, struct page *p)
     }
   dbi_flush(ip->itemdata.hilitedb);
 
-#if 0
-  if (tmax)
-    *tmax = tcount;
-#endif
-
   t[tcount] = NULL;
   struct page *p2 = calloc(1, sizeof(struct page));
   p2->used = tcount;

@@ -86,6 +86,7 @@ isp_srch(Isp*ip)
 
   if (!strchr(ip->srchdata.tmp,'/'))
     {
+      ip->srchdata.list = ip->srchdata.tmp;
       if (ip->glos)
 	{
 	  char buf[strlen(ip->cache.project)+strlen(ip->glos)+strlen(ip->srchdata.tmp)+3];

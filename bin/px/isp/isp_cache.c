@@ -236,12 +236,6 @@ isp_cache_page(Isp *ip)
       sprintf(pbuf, "%s/%s-z%s-p%s.div", ip->cache.out, ip->perm, ip->zoom, ip->page);
       ip->cache.page = (ccp)pool_copy((uccp)pbuf, ip->p);
 
-#if 0
-      ip->cache.pgin = (ccp)pool_copy((uccp)ip->cache.page, ip->p);
-      char *tmp = strrchr(ip->cache.pgin, '.');
-      strcpy(tmp, ".pag");
-#endif
-
       if (ip->verbose)
 	fprintf(stderr, "isp: isp_cache_page: need %s:::%s\n", zbuf, pbuf);
 

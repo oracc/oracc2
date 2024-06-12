@@ -20,8 +20,6 @@ isp_glos_letter_id(Isp *ip)
 int
 isp_glos_pmax(Isp *ip)
 {
-#if 1
-  
   if (ip->glosdata.let)
     {
       const char *max = etm_db_one_off(ip, ip->glosdata.let);
@@ -31,58 +29,6 @@ isp_glos_pmax(Isp *ip)
 	ip->glosdata.lmax = max;
     }
   return ip->err ? 1 : 0;
-
-#else
-#define ENTRYCOUNTS "/entry-counts.tab"
-  ip->glosdata.ecpath = (ccp)pool_alloc(strlen(ip->glosdata.dir)+strlen(ENTRYCOUNTS)+1, ip->p);
-  sprintf((char*)ip->glosdata.ecpath, "%s%s", ip->glosdata.dir, ENTRYCOUNTS);
-  char *ln;
-  FILE *fp;
-  const char *lid = ip->glosdata.lbase;
-  int status = 0;
-  if ((fp = fopen(ip->glosdata.ecpath, "r")))
-    {
-      while ((ln = (char*)loadoneline(fp, NULL)))
-	{
-	  if (!strncmp(ln, lid, strlen(lid)))
-	    break;
-	}
-      fclose(fp);
-      if (ln)
-	{
-	  char *count = strchr(ln, '\t');
-	  if (count)
-	    {
-	      if (!strcmp(lid, "entry_ids"))
-		ip->glosdata.emax = (ccp)pool_copy((ucp)++count, ip->p);
-	      else
-		ip->glosdata.lmax = (ccp)pool_copy((ucp)++count, ip->p);
-	    }
-	  else
-	    {
-	      ip->err = PX_ERROR_START "isp_glos_pmax: letter ID %s has no count\n";
-	      ip->errx = lid;
-	      status = 1;
-	    }
-	}
-      else
-	{
-	  ip->err = PX_ERROR_START "isp_glos_pmax: letter ID %s not found in entry-counts\n";
-	  ip->errx = lid;
-	  status = 1;
-	}
-    }
-  else
-    {
-      ip->err = PX_ERROR_START "isp_glos_pmax: failed to read %s\n";
-      ip->errx = ip->glosdata.ecpath;
-      status = 1;
-    }
-
-  loadoneline(NULL, NULL);
-  return status;
-
-#endif  
 }
 
 /* Reset cache.sub to be the glossary cache + the gxis name
@@ -389,42 +335,5 @@ isp_glos_item(Isp *ip)
   else
     ip->itemdata.html = ip->glosdata.ipath;
 
-#if 0
-  char *dbifn = "entry-indexes";
-  Dbi_index *dp = dbx_init(ip->glosdata.dir, dbifn);
-  if (dp)
-    {
-      char ikey[strlen(ip->glosdata.lbase)+strlen(ip->item)+2];
-      sprintf(ikey, "%s:%s", ip->item, ip->glosdata.lbase);
-      char *k = (char*)dbx_key(dp, ikey, NULL);
-      if (!k)
-	{
-	  ip->err = PX_ERROR_START "key %s not found in item db\n";
-	  ip->errx = (ccp)pool_copy((ucp)ikey, ip->p);
-	  return 1;
-	}
-      ip->itemdata.index = (ccp)pool_copy((ucp)k, ip->p);
-      int this = atoi(k);
-      if (this > 1) {
-	sprintf(ikey,"%s:%d",ip->glosdata.lbase, this-1);
-	k = (char*)dbx_key(dp, ikey, NULL);
-	if (k)
-	  ip->itemdata.prev = (ccp)pool_copy((ucp)k, ip->p);
-      }
-      sprintf(ikey,"%s:%d",ip->glosdata.lbase, this+1);
-      k = (char*)dbx_key(dp, ikey, NULL);
-      if (k)
-	ip->itemdata.next = (ccp)pool_copy((ucp)k, ip->p);
-      dbx_term(dp);
-    }
-  else
-    {
-      char buf[strlen(ip->glosdata.dir)+strlen(dbifn)+6];
-      sprintf(buf, "%s/%s.dbh", ip->glosdata.dir, dbifn);
-      ip->errx = (ccp)pool_copy((ucp)buf, ip->p);
-      ip->err = PX_ERROR_START "failed to open %s\n";
-      return 1;
-    }
-#endif
   return 0;
 }
