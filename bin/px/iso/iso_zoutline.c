@@ -11,6 +11,10 @@ iso_zoutline(Isp *ip)
   
   memset(&isos, '\0', sizeof(struct iso));
 
+  const char *mol = ip->cache.mol;
+  if (ip->srchdata.tmp || ip->glosdata.xis)
+    mol = ip_cache.t_mol;
+
   if (!(isos.zlines = px_loadfile_lines3((uccp)ip->cache.mol, &isos.zmax, NULL)))
     {
       ip->err = (ccp)px_loadfile_error();

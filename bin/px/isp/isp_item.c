@@ -58,9 +58,13 @@ isp_item_load(Isp *ip)
       *tmp++ = '\0';
       ip->itemdata.dots = tmp;
     }
+
+  const char *sort = ip->cache.sort
+  if (ip->srchdata.tmp || ip->glosdata.xis)
+    sort = ip_cache.t_sort;
   
   Dbi_index *dp;
-  if ((dp = dbx_init(ip->cache.sort, "itm")))
+  if ((dp = dbx_init(sort, "itm")))
     {
       char *tmax = (char*)dbx_key(dp, "tmax", NULL);
       if (tmax)
