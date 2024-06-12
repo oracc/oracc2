@@ -7,7 +7,7 @@
 int
 isp_srch_fixup(Isp *ip)
 {
-  ip->data = "dtxt";
+  ip->data = "dtxt"; /* This needs to vary with srch result type */
   return 0;
 }
 
@@ -121,6 +121,9 @@ isp_srch(Isp*ip)
 	{
 	  isp_list_cemd(ip);
 	  ip->cache.list = ip->lloc.path;
+	  ip->cache.hilite = pool_alloc(strlen(ip->srchdata.tmp)+strlen("/hilite.dbh0"), ip->p);
+	  sprintf(ip->cache.hilite, "%s/hilite.dbh", ip->srchdata.tmp);
+	  ip->srchdata.new = access(ip->cache.hilite, R_OK);
 	}
     }
   

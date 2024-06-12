@@ -24,11 +24,10 @@ isp_set_perm(const char *str)
   return str;
 }
 
-/* This is a wrapper for the pg2/sortinfo subsystem that can also be
-   called as a standalone program, ispsortx */
 int
 isp_cache_sort(Isp *ip)
 {
+#if 0
   /* In P4 'special' outline mode is only used when the list name is outlined.lst */
   if (ip->list_name && !strcmp(ip->list_name, "outlined.lst") && ip->special_cfg.select)
     {
@@ -43,6 +42,7 @@ isp_cache_sort(Isp *ip)
 
   if (!ip->perm || '#' == *ip->perm)
     ip->perm = isp_set_perm(ip->default_cfg.sort_labels);
+#endif
 
   if (isp_sort_sub(ip))
     return 1;

@@ -60,12 +60,11 @@ main(int argc, char **argv)
     {
       if (isp_srch(ip))
 	goto error;
-      ip->srchdata.new = 1;
     }
   else if (isp_list_method(ip))
     goto error;
 
-  if (!ip->srch || ip->srchdata.count)
+  if (!ip->srch || ip->srchdata.new)
     {
       if (isp_cache_sub(ip))
 	goto error;

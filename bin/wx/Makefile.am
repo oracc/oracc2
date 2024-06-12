@@ -29,6 +29,9 @@ wx_SOURCES=oracc-server.c or_builtins.c or_stable_uris.c \
 
 wx_LDADD=ccgi/libccgi.la -lexpat $(xLDADD)
 
+px.h: px.h.in
+	$(ORACCIFY) px.h.in
+
 ccgi/libccgi.la:
 	(cd ccgi ; make)
 

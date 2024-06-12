@@ -1,7 +1,8 @@
 #ifndef WX_PX_H
 #define WX_PX_H
 
-extern const char *px_exe;
+#define PX_EXE "/home/oracc/bin/px"
+#define QX_EXE "/home/oracc/bin/qx"
 
 extern void dump_vec(const char *porq, const char **vec);
 extern const char *px_cgi_arg(const char *arg, const char *val);

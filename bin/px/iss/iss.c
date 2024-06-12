@@ -21,8 +21,6 @@ struct sortinfo *sip;
 extern int use_linkmap;
 #endif
 
-const char *heading_keys = NULL, *sort_keys = NULL;
-
 #include "iss_sk_lookup.c"
 
 static char *
@@ -213,38 +211,7 @@ iss_sort(Isp *ip)
   struct page *pages = NULL;
   int nitems = 0;
 
-  sort_keys = ip->curr_cfg->sort_fields;
-  if (!sort_keys)
-    {
-      sort_keys = "period,subgenre,provenience";
-      ip->zlev = 3;
-    }
-  else
-    {
-      ip->zlev = 1;
-      const char *k = sort_keys;
-      while (*k)
-	if (',' == *k++)
-	  ++ip->zlev;
-    }
-
-  if (!ip->perm || '#' == *ip->perm)
-    {
-      switch(ip->zlev)
-	{
-	case 3:
-	  ip->perm = "123";
-	  break;
-	case 2:
-	  ip->perm = "12";
-	  break;
-	default:
-	  ip->perm = "1";
-	  break;
-	}
-    }
-  
-  const char *perm_keys = iss_perm(ip, sort_keys, ip->zlev);
+  const char *perm_keys = iss_perm(ip, ip->curr_cfg->sort_fields, ip->zlev);
   
   seen = hash_create(1024);
   pg2_pool = pool_init();
@@ -286,16 +253,11 @@ iss_sort(Isp *ip)
       return 1;
     }
   
-  if (!heading_keys)
-    {
-      heading_keys = (ccp)pool_copy((uccp)perm_keys, pg2_pool);
-      char *des = strstr(heading_keys, "designation");
-      if (des && !strchr(des, ',')) /* assumes field1,designation,field3 */
-	*des = '\0';
-    }
-
-  if (heading_keys)
-    headfields = set_keys(heading_keys, &nheadfields);
+  const char *heading_keys = (ccp)pool_copy((uccp)perm_keys, pg2_pool);
+  char *des = strstr(heading_keys, "designation");
+  if (des && !strchr(des, ',')) /* assumes field1,designation,field3 */
+    *des = '\0';
+  headfields = set_keys(heading_keys, &nheadfields);
   
   if (!(items = pg_load(ip, &nitems)))
     return 1;

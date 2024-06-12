@@ -19,6 +19,7 @@ typedef struct p4url
   int nargs;
   const char *err;
   int status;
+  const char *exe; /* p = px; q = qx */
 } P4url;
 
 struct qsoptionstab

@@ -86,5 +86,57 @@ isp_config(Isp *ip)
 #undef d
 #undef s
 
+  /* In P4 'special' outline mode is only used when the list name is outlined.lst */
+  if (ip->list_name && !strcmp(ip->list_name, "outlined.lst") && ip->special_cfg.select)
+    {
+      ip->curr_cfg = &ip->special_cfg;
+      ip->dors = "1";
+    }
+  else
+    {
+      ip->curr_cfg = &ip->default_cfg;
+      ip->dors = "0";
+    }
+
+  isp_config_perm(ip);
+  
+  return 0;
+}
+
+int
+isp_config_perm(Isp *ip)
+{
+  const char *sort_keys = ip->curr_cfg->sort_fields;
+
+  if (!sort_keys)
+    {
+      sort_keys = "period,subgenre,provenience";
+      ip->zlev = 3;
+    }
+  else
+    {
+      ip->zlev = 1;
+      const char *k = sort_keys;
+      while (*k)
+	if (',' == *k++)
+	  ++ip->zlev;
+    }
+
+  if (!ip->perm || '#' == *ip->perm)
+    {
+      switch(ip->zlev)
+	{
+	case 3:
+	  ip->perm = "123";
+	  break;
+	case 2:
+	  ip->perm = "12";
+	  break;
+	default:
+	  ip->perm = "1";
+	  break;
+	}
+    }
+
   return 0;
 }

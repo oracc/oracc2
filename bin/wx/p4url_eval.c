@@ -44,7 +44,7 @@ int
 p4url_eval(const char *u, const char *q)
 {
   extern int verbose;
-  static P4url p;
+  static P4url p = { .exe=PX_EXE };
   int res = 0;
 
   /* there should be a way of knowing if the syntax is OK but the
@@ -60,11 +60,11 @@ p4url_eval(const char *u, const char *q)
       dump_vec("px", v);
     }
 
-  dump_vec("p4url/px", v);
-  execv(px_exe, (char*const*)v);
+  dump_vec(p.exe, v);
+  execv(p.exe, (char*const*)v);
 
   /* exec failed */
   fprintf(stderr, "p4url_eval: exec failed:\n\t");
-  dump_vec("px", v);
+  dump_vec(PX_EXE, v);
   return 1;
 }

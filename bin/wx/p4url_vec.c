@@ -11,7 +11,7 @@ p4url_vec(P4url *p)
   int dst = 0;
   vec = malloc((p->nargs+6) * sizeof(const char*));
   
-  vec[dst++] = px_exe;
+  vec[dst++] = p->exe;
   vec[dst++] = px_cgi_arg("web","1");
 
   vec[dst++] = px_cgi_arg("proj", p->project);

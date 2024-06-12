@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "px.h"
 #include "p4url.h"
 
 typedef struct p4bits { const char *project; const char *one; const char *two; } P4bits;
@@ -153,6 +154,8 @@ p4url_q(P4url *p, const char *q)
 		{
 		  p->args[i].option = tok;
 		  p->args[i].value = p4url_arg_tok(NULL);
+		  if (!strcmp(tok, "q"))
+		    p->exe = QX_EXE;
 		}
 	      else
 		{
