@@ -132,6 +132,7 @@ opts(int opt, const char *arg)
       break;
     case 'x':
       opt_ip->glosdata.xis = arg;
+      opt_ip->list_name = "list";
       break;
     case 'm':
       if (strlen(arg) == 1 && ('0'==*arg || '1'==*arg))
@@ -169,7 +170,7 @@ opts(int opt, const char *arg)
 	  }
 	else if ('s' == arg[0] && '.' == arg[1])
 	  {
-	    opt_ip->srchdata.tmp = arg;
+	    opt_ip->tmp_dir = opt_ip->srchdata.tmp = arg;
 	    opt_ip->list_name = "list";
 	  }
 	else

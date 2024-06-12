@@ -13,9 +13,9 @@ iso_zoutline(Isp *ip)
 
   const char *mol = ip->cache.mol;
   if (ip->srchdata.tmp || ip->glosdata.xis)
-    mol = ip_cache.t_mol;
+    mol = ip->cache.t_mol;
 
-  if (!(isos.zlines = px_loadfile_lines3((uccp)ip->cache.mol, &isos.zmax, NULL)))
+  if (!(isos.zlines = px_loadfile_lines3((uccp)mol, &isos.zmax, NULL)))
     {
       ip->err = (ccp)px_loadfile_error();
       return 1;

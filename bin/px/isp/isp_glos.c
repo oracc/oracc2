@@ -62,6 +62,7 @@ isp_glos_gxis(Isp *ip)
     return 1;
 
   ip->list_name = "list"; /* reset this so it uses the standard name for the xis extract */
+  
   ip->lloc.path = (ccp)pool_alloc(strlen(ip->cache.sub)+6, ip->p);
   sprintf((char*)ip->lloc.path, "%s/list", ip->cache.sub);
   if (!ip->zoom || !isdigit(*ip->zoom))

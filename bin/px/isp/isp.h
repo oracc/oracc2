@@ -54,7 +54,7 @@ struct isp_cache
   const char *use;	/* convenience pointer to either cache.project
 			   or cache.pub depending on whether page tsv
 			   is precomputed or not */
-  const char *t_sort; 	/* the item list sorted by the requested permutation reduced to texts in /t */
+  const char *t_sort; 	/* the dir ending in /t that the text data list lives in */
   const char *t_tsv; 	/* the computed pages tsv list in cache.sort/t */
   const char *t_max; 	/* maximum zoom items tsv list in cache.sort/t */
   const char *t_mol; 	/* master outline for text list in cache.sort/t */

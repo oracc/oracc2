@@ -112,6 +112,8 @@ isp_cache_sub(Isp *ip)
     }
   else
     {
+      /* If args set xis or tmp_dir they also need to reset
+	 opt_ip->list_name to "list" */
       if (!strcmp(ip->list_name, "outlined.lst"))
 	{
 	  ip->cache.use = ip->cache.pub;
@@ -130,9 +132,24 @@ isp_cache_sub(Isp *ip)
       else
 	{
 	  ip->cache.use = ip->cache.project;
-	  char dir[strlen(ip->cache.use)+strlen(ip->list_name)+2];
-	  sprintf(dir, "%s/%s", ip->cache.use, ip->list_name);
-	  ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
+	  if (ip->glosdata.xis)
+	    {
+	      char dir[strlen(ip->cache.use)+strlen(ip->glos)+strlen(ip->glosdata.xis)+2];
+	      sprintf(dir, "%s/%s/%s", ip->cache.use, ip->glos, ip->glosdata.xis);
+	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
+	    }
+	  else if (ip->srchdata.tmp)
+	    {
+	      char dir[strlen(ip->cache.use)+strlen(ip->srchdata.tmp)+2];
+	      sprintf(dir, "%s/%s", ip->cache.use, ip->srchdata.tmp);
+	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
+	    }
+	  else
+	    {
+	      char dir[strlen(ip->cache.use)+strlen(ip->list_name)+2];
+	      sprintf(dir, "%s/%s", ip->cache.use, ip->list_name);
+	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
+	    }
 
 	  ip->cache.out = ip->cache.sub;
 	  if (xmkdirs(ip, ip->cache.sub))
@@ -228,8 +245,9 @@ isp_cache_page(Isp *ip)
     }
   else
     {
-      char zbuf[strlen(ip->cache.out)+strlen(ip->zoom)+strlen("-123-z.otl0")];
-      sprintf(zbuf, "%s/%s-z%s.otl", ip->cache.out, ip->perm, ip->zoom);
+      const char *zout = (ip->cache.t_sort ? ip->cache.t_sort : ip->cache.out);
+      char zbuf[strlen(zout)+strlen(ip->zoom)+strlen("-123-z.otl0")];
+      sprintf(zbuf, "%s/%s-z%s.otl", zout, ip->perm, ip->zoom);
       ip->cache.zout = (ccp)pool_copy((uccp)zbuf, ip->p);
 
       char pbuf[strlen(ip->cache.out)+strlen(ip->zoom)+strlen(ip->page)+strlen("-123-z-p.div0")];

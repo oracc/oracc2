@@ -56,41 +56,36 @@ main(int argc, char **argv)
   if (isp_cache_project(ip))
     goto error;
   
+  if (isp_cache_sub(ip))
+    goto error;
+
   if (ip->srchdata.tmp)
     {
-      if (isp_srch(ip))
+      if (isp_srchdata(ip))
 	goto error;
     }
   else if (isp_list_method(ip))
     goto error;
 
-  if (!ip->srch || ip->srchdata.new)
+  if (ip->glos && isp_glos_list(ip))
+    goto error;
+  
+  if (!strcmp(ip->from, "list") && isp_cache_list(ip))
+    goto error;
+
+  if (!ip->glos || ip->glosdata.xis)
+    if (isp_cache_sort(ip))
+      goto error;
+
+  if (ip->item && (!ip->glos || ip->glosdata.xis))
     {
-      if (isp_cache_sub(ip))
-	goto error;
-
-      if (ip->glos && isp_glos_list(ip))
-	goto error;
-  
-      if (!strcmp(ip->from, "list") && isp_cache_list(ip))
-	goto error;
-
-      if (!ip->glos || ip->glosdata.xis)
-	if (isp_cache_sort(ip))
-	  goto error;
-
-      if (ip->item && (!ip->glos || ip->glosdata.xis))
-	{
-	  if (isp_item_set(ip))
-	    goto error;
-	}
-  
-      if (isp_cache_page(ip))
+      if (isp_item_set(ip))
 	goto error;
     }
-  else if (isp_srch_fixup(ip))
+  
+  if (isp_cache_page(ip))
     goto error;
-      
+  
   if (ip->debug)
     {
       print_hdr();

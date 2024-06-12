@@ -53,18 +53,23 @@ isp_cache_sort(Isp *ip)
 static int
 isp_sort_sub(Isp *ip)
 {
-  if (ip->tmp_dir || ip->glosdata.xis)
+  if (ip->tmp_dir || ip->glosdata.xis) /* This should also check for a www/list/LIST that has dotted IDs */
     {
       /* out should already have the xis or the search temp at the end */
       char dir[strlen(ip->cache.out) + strlen(ip->perm) + 3];
       sprintf(dir, "%s/%s", ip->cache.out, ip->perm);
       ip->cache.out = ip->cache.sort = (ccp)pool_copy((ucp)dir, ip->p);
+      ip->cache.t_sort = pool_alloc(strlen(ip->cache.sort)+3, ip->p);
+      sprintf(ip->cache.t_sort, "%s/t", ip->cache.sort);
+      ip->cache.t_mol = (ccp)pool_alloc(strlen(ip->cache.t_sort)+10, ip->p);
+      sprintf((char*)ip->cache.t_mol, "%s/zoom.mol", ip->cache.t_sort);
     }
   else
     {
       char dir[strlen(ip->cache.use) + strlen(ip->list_name) + strlen(ip->perm) + 3];
       sprintf(dir, "%s/%s/%s", ip->cache.use, ip->list_name, ip->perm);
       ip->cache.sort = (ccp)pool_copy((ucp)dir, ip->p);
+      /* leave ip->cache.t_sort NULL */
 
       if (!ip->pub_output)
 	{

@@ -129,16 +129,16 @@ isp_list_type(Isp *ip)
     {
       if (!strncmp(ip->list_name, "is.", 3))
 	ip->lloc.type = "isp";
-      else if ('s' == ip->list_name[0] && '.' == ip->list_name[1])
+      else if (ip->srchdata.tmp)
 	{
 	  ip->lloc.type = "srch";
 	}
-      else if ((p = strchr(ip->list_name, '.')))
+      else if (ip->glosdata.xis)
 	{
-	  char l[strlen(ip->list_name)+1];
-	  strcpy(l,ip->list_name);
+	  char l[strlen(ip->glosdata.xis)+1];
+	  strcpy(l,ip->glosdata.xis);
 	  ip->lloc.type = "xis";
-	  p = l + (p - ip->list_name);
+	  p = strchr(l, '.');
 	  *p = '\0';
 	  ip->lloc.lang = (ccp)pool_copy((uccp)l, ip->p);
 	  *p = '.';
@@ -155,7 +155,8 @@ int
 isp_list_method(Isp *ip)
 {
   ip->from = "list";
-  
+
+  /* Only call isp_list_type if the list doesn't exist in www/lists */
   if (isp_try_web_list(ip))
     isp_list_type(ip);
   

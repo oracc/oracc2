@@ -81,6 +81,7 @@ function pageLocation() {
     let proj = pager.getAttribute("data-proj");
     let glos = pager.getAttribute("data-glos");
     let gxis = pager.getAttribute("data-gxis");
+    let srch = pager.getAttribute("data-srch");
     let page = getCurrentPage();
     let loc = '';    
     // alert('pageLocation; glos='+glos);
@@ -117,6 +118,8 @@ function pageLocation() {
 	    if (gxis) {
 		qs = qs_append(qs, 'glos='+glos);
 		qs = qs_append(qs, 'xis='+gxis);
+	    } else if (srch) {
+		qs = qs_append(qs, 'srch='+srch);
 	    }
 	}
 

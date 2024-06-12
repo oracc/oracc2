@@ -22,8 +22,6 @@ iss_texts(Isp *ip, struct page *p)
   sprintf((char*)ip->cache.t_tsv, "%s/t/pag.tsv", ip->cache.sort);
   ip->cache.t_max = (ccp)pool_alloc(strlen(ip->cache.sort)+11, ip->p);
   sprintf((char*)ip->cache.t_max, "%s/t/max.tsv", ip->cache.sort);
-  ip->cache.t_mol = (ccp)pool_alloc(strlen(ip->cache.sort)+12, ip->p);
-  sprintf((char*)ip->cache.t_mol, "%s/t/zoom.mol", ip->cache.sort);
 
   struct stat sb;
   if (stat(ip->cache.t_sort, &sb) || !S_ISDIR(sb.st_mode))

@@ -59,9 +59,9 @@ isp_item_load(Isp *ip)
       ip->itemdata.dots = tmp;
     }
 
-  const char *sort = ip->cache.sort
+  const char *sort = ip->cache.sort;
   if (ip->srchdata.tmp || ip->glosdata.xis)
-    sort = ip_cache.t_sort;
+    sort = ip->cache.t_sort;
   
   Dbi_index *dp;
   if ((dp = dbx_init(sort, "itm")))

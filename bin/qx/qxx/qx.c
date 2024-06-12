@@ -209,6 +209,9 @@ qx(struct qxdata *qp)
 	  extern long result_count(void);
 	  fprintf(countfp, "%ld", result_count());
 	  fclose(countfp);
+	  sprintf(countfn, "%s/qx.new", sdata.tmp);
+	  countfp = fopen(countfn, "w");
+	  fclose(countfp);
 	}
       else
 	{

@@ -80,7 +80,7 @@ isp_srch_count(Isp *ip)
 }
 
 int
-isp_srch(Isp*ip)
+isp_srchdata(Isp*ip)
 {
   ip->from = "srch";
 
@@ -121,9 +121,19 @@ isp_srch(Isp*ip)
 	{
 	  isp_list_cemd(ip);
 	  ip->cache.list = ip->lloc.path;
+#if 1
+	  char qxnew[strlen(ip->srchdata.tmp)+7];
+	  sprintf(qxnew, "%s/qx.new", ip->srchdata.tmp);
+	  if (!access(qxnew, R_OK))
+	    {
+	      ip->srchdata.new = 1;
+	      unlink(qxnew);
+	    }
+#else
 	  ip->cache.hilite = pool_alloc(strlen(ip->srchdata.tmp)+strlen("/hilite.dbh0"), ip->p);
 	  sprintf(ip->cache.hilite, "%s/hilite.dbh", ip->srchdata.tmp);
 	  ip->srchdata.new = access(ip->cache.hilite, R_OK);
+#endif
 	}
     }
   
