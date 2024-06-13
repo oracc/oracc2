@@ -74,7 +74,7 @@ function itemLocation() {
 	let srch = pager.getAttribute("data-srch");
 	let perm = pager.getAttribute("data-sort");
 	let lang = pager.getAttribute("data-lang");
-	let loc = "/"+proj+"/";
+	let loc = "/"+proj;
 	loc = loc_append(loc,item);
 
 	let qs = '';
