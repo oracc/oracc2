@@ -115,7 +115,7 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
     }
 
   /* i = p->used and we output up to and including i so it needs decrementing here */
-  iss_p_dump(pfp, tp, ip, p, 0, z0th, z0firsth, zfirst, i-1);
+  iss_p_dump(pfp, tp, ip, p, 0, z0th, z0firsth, pfirst, i-1);
   iss_p_dump(pfp, tp, ip, p, zoom, zpth, znfirsth, zfirst, i-1);
 
   /* set zoom-0 to the total number of items in the list */
