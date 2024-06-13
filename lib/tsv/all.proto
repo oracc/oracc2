@@ -24,3 +24,5 @@ extern int tsv_one_off(const char *tsv_fn, const char *dir, const char *name, co
 extern int tsv_output(Tsv *tp);
 /* tsv_paths.c */
 extern void tsv_paths(Tsv *tp, const char *tsvfn, const char *name, const char *dir);
+/* tsv_undbi.c */
+extern int tsv_undbi(const char *tsv_file, const char *dir, const char *name);

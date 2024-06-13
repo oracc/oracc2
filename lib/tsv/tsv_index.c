@@ -7,7 +7,7 @@ int
 tsv_index(const char *tsv_file, const char *dir, const char *name)
 {
   Tsv *tp = tsv_create();
-  tsv_paths(tp, tsv_file, dir, name);
+  tsv_paths(tp, tsv_file, name, dir);
   if ((tp->tsv_fp = fopen(tp->tsv_fn, "r")))
     {
       if ((tp->dp = dbi_create (tp->tdb_name, tp->tdb_dir, 1024, sizeof(Tsv_data), DBI_BALK)))

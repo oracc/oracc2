@@ -9,18 +9,23 @@ const char *usage_string = " [-t tsv] [-d dir] [-n name] [-k key]";
   
 const char *arg_dir, *arg_key, *arg_name, *arg_tsv;
 
-int space_newlines;
+int space_newlines, undbi;
 
 int
 main(int argc, char **argv)
 {
   program_values(prog, major_version, minor_version, usage_string, NULL);
-  options(argc, argv, "d:k:n:st:");
+  options(argc, argv, "d:k:n:st:u");
 
   if (arg_key)
     {
       /* look up key and dump results */
       int res = tsv_one_off(arg_tsv, arg_dir, arg_name, arg_key);
+      exit(res);
+    }
+  else if (undbi)
+    {
+      int res = tsv_undbi(arg_tsv, arg_dir, arg_name);
       exit(res);
     }
   else if (arg_tsv)
@@ -61,6 +66,9 @@ opts(int argc, const char *arg)
       break;
     case 't':
       arg_tsv = arg;
+      break;
+    case 'u':
+      undbi = 1;
       break;
     default:
       fprintf(stderr, "tx: bad option '%c'\n", argc);
