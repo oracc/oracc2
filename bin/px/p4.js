@@ -14,6 +14,13 @@ function getCurrentPmax() {
     return document.getElementById("p4PageNav").getAttribute("data-pmax");
 }
 
+function loc_append(l,c) {
+    if (l.length != 0) {
+	l = l+'/';
+    }
+    return l+c;
+}
+
 function qs_append(q,c) {
     if (q.length == 0) {
 	q = '?';
@@ -35,25 +42,43 @@ function item_oid(i) {
 
 function itemLocation() {
     let pager = getPager();
+    let proj = pager.getAttribute("data-proj");
+    let gent = pager.getAttribute("data-gent");
     let item = pager.getAttribute("data-item");
-    if (item && item.length) {
-	let proj = pager.getAttribute("data-proj");
-	let glos = pager.getAttribute("data-glos");
-	let list = pager.getAttribute("data-list");
-	let gxis = pager.getAttribute("data-gxis");
-	let srch = pager.getAttribute("data-srch");
-	let perm = pager.getAttribute("data-sort");
-	let lang = pager.getAttribute("data-lang");
-	let loc = "/"+proj+"/";
-	if (glos && glos.length > 0 && item_oid(item)) {
-	    loc = loc+glos+"/"+item;
-	} else {
-	    loc = loc+item;
+    let gxis = pager.getAttribute("data-gxis");
+    let loc = "/"+proj;
+    if (gent || gxis) {
+	loc = loc_append(loc, pager.getAttribute("data-glos"));
+	if (gent) {
+	    loc = loc_append(loc, gent);
 	}
 	let qs = '';
 	if (gxis) {
 	    qs = qs_append(qs, 'xis='+gxis);
-	} else if (srch) {
+	    let perm = pager.getAttribute("data-sort");
+	    if (perm && !perm_is_default(perm)) {
+		qs = qs_append(qs, 'sort='+perm);
+	    }
+	    if (item) {
+		qs = qs_append(qs, 'ref='+item);
+	    }
+	}
+
+	loc = loc+qs;
+
+	// alert("gent:itemLocation="+loc);
+	window.location = loc;
+
+    } else if (item) {
+	let list = pager.getAttribute("data-list");
+	let srch = pager.getAttribute("data-srch");
+	let perm = pager.getAttribute("data-sort");
+	let lang = pager.getAttribute("data-lang");
+	let loc = "/"+proj+"/";
+	loc = loc_append(loc,item);
+
+	let qs = '';
+	if (srch) {
 	    qs = qs_append(qs, 'srch='+srch);
 	} else {
 	    if (list && list !== "outlined.lst") {
@@ -69,7 +94,7 @@ function itemLocation() {
 
 	loc = loc+qs;
 
-	//alert("itemLocation="+loc);
+	// alert("item:itemLocation="+loc);
 	window.location = loc;
     } else {
 	alert('itemLocation called but item is NULL');
@@ -176,7 +201,7 @@ function act_sorter() {
 
 function act_article(item) {
     let pager = getPager();
-    pager.setAttribute("data-item", item);
+    pager.setAttribute("data-gent", item);
     itemLocation();
 }
 

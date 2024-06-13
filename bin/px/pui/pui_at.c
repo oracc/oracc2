@@ -228,7 +228,7 @@ pui_at_item_label(Isp *ip, FILE *fp)
 static void
 pui_at_item_index_sub(Isp *ip, FILE *fp, int typ, int nth)
 {
-  if (!strcmp(ip->data, "dglo") && !ip->glosdata.ent)
+  if (!strcmp(ip->data, "dtxt") || (!strcmp(ip->data, "dglo") && !ip->glosdata.ent))
     {
       if (typ)
 	{
@@ -239,9 +239,9 @@ pui_at_item_index_sub(Isp *ip, FILE *fp, int typ, int nth)
       if (nth && ip->itemdata.index)
 	{
 	  if (ip->itemdata.tmax)
-	    fputs(itoa(1+atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
+	    fputs(ip->itemdata.index, fp);
 	  else
-	    fputs(itoa(atoi(ip->itemdata.index)+(ip->glos?0:1)), fp);
+	    fputs(ip->itemdata.index, fp);
 	}
     }
   else

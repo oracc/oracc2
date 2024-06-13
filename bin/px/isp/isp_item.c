@@ -13,7 +13,7 @@ isp_item_undump(char *k, struct isp_itemdata *idp)
   s = strchr(idp->page, '\t');
   *s++ = '\0';
 
-  idp->index = s;
+  idp->pindex = s;
   s = strchr(s, '\t');
   *s++ = '\0';
   
