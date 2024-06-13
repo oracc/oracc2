@@ -10,7 +10,10 @@ fi
 
 set 00atf/*.atf
 if [ "$1" != "00atf/*.atf" ]; then
-    cat 00atf/*.atf | atfdatax $project >02pub/atf-data.tab
+    rm -f 02pub/atf-data.tab
+    for a in 00atf/*.atf; do
+	cat $a | atfdatax $project >>02pub/atf-data.tab
+    done
 elif [ -r 00lib/umbrella.lst ]; then
     lx -a 00lib/umbrella.lst -p $project >02pub/atf-data.tab
 elif [ -r 00lib/search.lst ]; then
