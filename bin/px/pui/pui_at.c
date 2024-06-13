@@ -36,7 +36,8 @@ pui_at_pager_class(Isp *ip, FILE *fp)
   else
     fputs("page", fp);
   fputc(' ', fp);
-  fputs(ip->data, fp);
+  if (ip->data)
+    fputs(ip->data, fp);
   if (ip->item)
     {
       if (!strcmp(ip->data, "dglo"))
@@ -56,7 +57,7 @@ pui_at_pager_class(Isp *ip, FILE *fp)
 	  fputc(' ', fp);
 	  fputs(ip->show, fp);
 	}
-      else
+      else if (ip->data)
 	{
 	  char r[6];
 	  r[0] = ' '; r[1] = 'r';
@@ -228,7 +229,8 @@ pui_at_item_label(Isp *ip, FILE *fp)
 static void
 pui_at_item_index_sub(Isp *ip, FILE *fp, int typ, int nth)
 {
-  if (!strcmp(ip->data, "dtxt") || (!strcmp(ip->data, "dglo") && !ip->glosdata.ent))
+  if (ip->data &&
+      (!strcmp(ip->data, "dtxt") || (!strcmp(ip->data, "dglo") && !ip->glosdata.ent)))
     {
       if (typ)
 	{

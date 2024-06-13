@@ -43,8 +43,28 @@ isp_item_undump(char *k, struct isp_itemdata *idp)
   s = strchr(s, '\t');
   *s++ = '\0';
 
-  idp->proj = s;
+  idp->proj = s; 
 }
+
+#if 0
+static const char *
+max_db_one_off(Isp *ip, const char *key)
+{
+  Dbi_index *dp = dbx_init(ip->, "max");
+  const void *ret = NULL;
+  if (dp)
+    {
+      if (!(ret = dbx_key(dp, key, NULL)))
+	ip->err = px_err("key %s not in dbi %s/%s", key, pool_copy(ip->glosdata.dir, ip->p), "etm");
+      /* ret is now memory malloc'ed in dbi lib */
+      ret = dbi_detach_data(dp, NULL);
+      dbx_term(dp);
+    }
+  else
+    ip->err = px_err("unable to open dbi %s/%s", pool_copy((uccp)ip->glosdata.dir,ip->p), "etm");
+  return ret;
+}
+#endif
 
 int
 isp_item_load(Isp *ip)

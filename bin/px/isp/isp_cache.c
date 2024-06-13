@@ -245,7 +245,7 @@ isp_cache_page(Isp *ip)
     }
   else
     {
-      const char *zout = (ip->cache.t_sort ? ip->cache.t_sort : ip->cache.out);
+      const char *zout = ((ip->item && ip->cache.t_sort) ? ip->cache.t_sort : ip->cache.out);
       char zbuf[strlen(zout)+strlen(ip->zoom)+strlen("-123-z.otl0")];
       sprintf(zbuf, "%s/%s-z%s.otl", zout, ip->perm, ip->zoom);
       ip->cache.zout = (ccp)pool_copy((uccp)zbuf, ip->p);

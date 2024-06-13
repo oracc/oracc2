@@ -108,6 +108,7 @@ text_page(Isp *ip, struct page *p)
   t[tcount] = NULL;
   struct page *p2 = calloc(1, sizeof(struct page));
   p2->used = tcount;
+  p2->texts = 1;
   t = realloc(t, (1+tcount) * sizeof(char*));
   p2->p = t;
   return p2;

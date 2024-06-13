@@ -73,7 +73,7 @@ opts(int argc, const char *arg)
       list_add(pretrim_args, (void*)arg);
       break;
     case 'q':
-      opt_qp->srch = arg;
+      opt_qp->srch = CGI_decode_url(arg);
       break;
     case 's':
       s2 = 1;

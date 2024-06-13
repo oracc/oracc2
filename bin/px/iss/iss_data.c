@@ -118,13 +118,24 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
   iss_p_dump(pfp, tp, ip, p, 0, z0th, z0firsth, zfirst, i-1);
   iss_p_dump(pfp, tp, ip, p, zoom, zpth, znfirsth, zfirst, i-1);
 
+  /* set zoom-0 to the total number of items in the list */
   iss_max(mfp, mdp, 0, nlist);
+
+  /* set z to the max zoom index */
   iss_max(mfp, mdp, -1, zoom);
+  
+  /* also set tmax if we are making a text list */
+  if (p->texts)
+    {
+      char tmax[16];
+      sprintf(tmax, "%d", nlist);
+      dbi_add(idp, "tmax", tmax, strlen(tmax)+1);
+    }
   
   /* add the last zoom count to the master outline data */
   iso_master_n(ip, nzoom);
   iss_max(mfp, mdp, zoom, nzoom);
-	    
+
   dbi_flush(idp);
   dbi_flush(mdp);
   fclose(pfp);

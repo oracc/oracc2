@@ -63,28 +63,40 @@ main(int argc, char **argv)
     {
       if (isp_srchdata(ip))
 	goto error;
+#if 0      
+      if (ip->srchdata.count == 0)
+	{
+	  print_hdr();
+	  if (pui_output(ip, stdout, pui_filetext("p4noresults.xml")))
+	    goto error;
+	  goto ok;
+	}
+#endif
     }
   else if (isp_list_method(ip))
     goto error;
 
   if (ip->glos && isp_glos_list(ip))
     goto error;
-  
-  if (!strcmp(ip->from, "list") && isp_cache_list(ip))
-    goto error;
 
-  if (!ip->glos || ip->glosdata.xis)
-    if (isp_cache_sort(ip))
-      goto error;
-
-  if (ip->item && (!ip->glos || ip->glosdata.xis))
+  if (!ip->srch || ip->srchdata.count)
     {
-      if (isp_item_set(ip))
+      if (!strcmp(ip->from, "list") && isp_cache_list(ip))
+	goto error;
+
+      if (!ip->glos || ip->glosdata.xis)
+	if (isp_cache_sort(ip))
+	  goto error;
+
+      if (ip->item && (!ip->glos || ip->glosdata.xis))
+	{
+	  if (isp_item_set(ip))
+	    goto error;
+	}
+  
+      if (isp_cache_page(ip))
 	goto error;
     }
-  
-  if (isp_cache_page(ip))
-    goto error;
   
   if (ip->debug)
     {
@@ -108,7 +120,7 @@ main(int argc, char **argv)
 	}
       else
 	{
-	  print_hdr();  
+	  print_hdr();
 	  if (setjmp(ip->errjmp))
 	    goto error;
 	  else if (pui_output(ip, stdout, pui_filetext("p4html.xml")))
@@ -122,7 +134,7 @@ main(int argc, char **argv)
 
   /* Some errors may occur when a URL has dependencies that don't
    * exist because it is a deep request for something that hasn't had
-   * the logisitical infrastructure created yet.  To catch these
+   * the logistical infrastructure created yet.  To catch these
    * errors we set ip->force and go again which will force the
    * infrastructure creation.
    *

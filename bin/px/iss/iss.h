@@ -20,6 +20,7 @@ struct page
 {
   Signed32 used;
   char **p;
+  int texts; /* 0 for items, 1 for texts */
 };
 
 extern int sic_size;
