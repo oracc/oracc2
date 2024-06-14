@@ -235,6 +235,9 @@ isp_item_xtf(Isp *ip)
 	 all texts, not only proxied ones */
       ip->itemdata.proj =
 	isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
+      /* This can error but we keep going anyway because if there's no
+	 ATF but the text is in the catalogue we want to go ahead and
+	 create meta.xml */
     }
   
   ip->itemdata.xtflang = isp_item_lang(ip);
@@ -279,8 +282,12 @@ isp_item_xtf(Isp *ip)
   int need_meta = access(ip->cache.meta, R_OK);
 
   if (need_html || need_meta)
-    if (isp_create_xtf(ip))
-      return 1;
+    {
+      if (isp_create_xtf(ip))
+	return 1;
+      else if (ip->err) /* ispxtf succeeded so clear any prx db error */
+	ip->err = ip->errx = NULL;
+    }
 
   return 0;
 }

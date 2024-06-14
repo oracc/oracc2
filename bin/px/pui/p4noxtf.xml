@@ -1,4 +1,4 @@
 <div id="p4Item" class="xtf">
   <div id="p4XtfMeta">@@pui_item_meta()@@</div>
-  <div id="p4XtfData">(No transliteration is available for this text.)</div>
+  <div id="p4XtfData"><p class="search0">(No transliteration is available for this text.)</p></div>
 </div>

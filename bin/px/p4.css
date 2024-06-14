@@ -157,6 +157,8 @@ a[onclick]:hover   { color: white; background-color: red; }
 
 span.error { background-color: red; color: white; }
 
+p.search0 { margin: 3em; }
+
 /* From oraccscreen.css, p3.css, p3cbd.css */
 
 div.text { padding: 0px; padding-bottom: 10px; margin: 0px; }
