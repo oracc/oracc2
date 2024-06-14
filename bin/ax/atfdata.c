@@ -8,6 +8,7 @@ int
 main(int argc, char **argv)
 {
   project = argv[1];
+
   if (!project)
     {
       fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);

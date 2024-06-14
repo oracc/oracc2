@@ -67,7 +67,7 @@ main(int argc, char **argv)
   atfflextrace = atftrace = cattrace = gdlflextrace = gdltrace = gdldebug = trace_mode;
 
   gdlxml_setup();
-  gvl_setup("ogsl", "ogsl","020");
+  gvl_setup("osl", "osl","020");
   nodeh_register(treexml_o_handlers, NS_XTF, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_XTF, treexml_c_generic);
 

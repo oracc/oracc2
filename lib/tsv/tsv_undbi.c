@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include "tsv.h"
 
-#define tsv_undbi_str(f) while(EOF!=(ch=fgetc(f))){fputc(ch,tp->out_fp);if (!ch)break;}
+#define tsv_undbi_str(f) while(EOF!=(ch=fgetc(f))){if (!ch)break;fputc(ch,tp->out_fp);}
 #define tsv_undbi_skip4(f) for(i=0;i<4;++i){(void)fgetc(f);}
 
 int

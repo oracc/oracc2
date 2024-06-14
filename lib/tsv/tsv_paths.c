@@ -19,11 +19,10 @@
 void
 tsv_paths(Tsv *tp, const char *tsvfn, const char *name, const char *dir)
 {
-  char *tmp;
   tp->tsv_fn = tsvfn;
   if (name && dir)
     {
-      tp->tdb_name = name;
+      tp->base = tp->tdb_name = name;
       tp->tdb_dir = dir;
       tp->free_dir = 0;
     }
@@ -31,22 +30,28 @@ tsv_paths(Tsv *tp, const char *tsvfn, const char *name, const char *dir)
     {
       tp->tdb_dir = malloc(strlen(tsvfn)+1);
       strcpy((char*)tp->tdb_dir, tsvfn);
+      char *tmp;
       if ((tmp = strrchr(tp->tdb_dir, '/')))
 	{
 	  *tmp++ = '\0';
 	  tp->tdb_name = tmp;
 	  tp->free_dir = 1;
+	  
 	}
       else
 	{
 	  tp->tdb_name = tp->tdb_dir;
 	  tp->free_name = 1;
 	  tp->free_dir = 0;
-	  if (dir)
+	  if (dir && *dir)
 	    tp->tdb_dir = dir;
 	  else
 	    tp->tdb_dir = ".";
 	}
+      tp->base = strdup(tp->tdb_name);
+      char *dot = strrchr(tp->base, '.');
+      *dot = '\0';
     }
+  
 }
 

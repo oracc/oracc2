@@ -12,6 +12,7 @@ typedef struct tsv_data
 
 typedef struct tsv
 {
+  const char *base;
   const char *tsv_fn;
   FILE *tsv_fp;
   FILE *out_fp;

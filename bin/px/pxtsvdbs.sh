@@ -21,8 +21,6 @@ p=`oraccopt`
 rm -fr 02pub/p4.d
 mkdir -p 02pub/p4.d
 for a in $sorts ; do
-    echo $0: issx -C${ORACC_BUILDS} -P -r $a -j $p
-    issx -C${ORACC_BUILDS} -P -r $a -j $p
-    ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ; tx -u -d . -n itm >itm.tsv )
+    ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ; tx -d . -n itm)
 done
 

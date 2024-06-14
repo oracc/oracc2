@@ -19,6 +19,10 @@ if [ -r 01bld/cdlicat.xmd ]; then
     mkdir -p 02pub/cat
     echo qindex qcatx $project 01bld/cdlicat.xmd
     qcatx -p $project -s <01bld/cdlicat.xmd
+elif [ -s 01bld/cdlicat.xmd.gz ]; then
+    mkdir -p 02pub/cat
+    echo qindex qcatx $project 01bld/cdlicat.xmd.gz
+    zcat 01bld/cdlicat.xmd.gz | qcatx -p $project -s
 fi
 
 #if [ -r 01bld/lists/xtfindex.lst ]; then
