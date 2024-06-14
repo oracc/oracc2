@@ -27,7 +27,7 @@ int debug = 0;
 
 int verbose = 0;
 
-int p4 = 0;
+int p4 = 1;
 
 static void decompose_script_url(const char *su);
 static int uri_json(void);
@@ -372,9 +372,11 @@ find_project(char *script_url)
       char *pxproj = strdup(project), *slash;
       if ((slash = strchr(pxproj,'/')))
 	*slash = '\0';
+#if 0
       struct p4tab *p4p = p4projects(pxproj, strlen(pxproj));
       if (p4p)
 	p4 = 1;
+#endif
       if (save)
 	++dir_end;
       return dir_end;
