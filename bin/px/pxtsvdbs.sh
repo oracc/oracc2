@@ -21,6 +21,10 @@ p=`oraccopt`
 rm -fr 02pub/p4.d
 mkdir -p 02pub/p4.d
 for a in $sorts ; do
-    ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ; tx -d . -n itm)
+    ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ;
+      for t in itm max pag ; do
+	  tx -t $t.tsv
+      done
+    )
 done
 

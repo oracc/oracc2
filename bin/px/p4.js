@@ -389,6 +389,7 @@ function act_srch() {
 						       the srch terms are stored in data-qury */
 	if (qury !== srch) {
 	    if (glos) { glos = '/'+glos; } else { glos = '' }
+	    pager.removeAttribute('data-item');
 	    let srch_url='/'+proj+glos+'?q='+encodeURIComponent(srch);
 	    // alert('srch_url='+srch_url);
 	    window.location = srch_url;

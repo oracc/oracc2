@@ -4,7 +4,7 @@
 void
 tdb_open(Tsv *tp)
 {
-  tp->dp = dbi_open(tp->tdb_name, tp->tdb_dir);
+  tp->dp = dbi_open(tp->base, tp->tdb_dir);
 }
 
 int

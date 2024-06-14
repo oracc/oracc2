@@ -129,7 +129,7 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
     {
       char tmax[16];
       sprintf(tmax, "%d", nlist);
-      dbi_add(idp, "tmax", tmax, strlen(tmax)+1);
+      dbi_add(idp, (ucp)"tmax", tmax, strlen(tmax)+1);
     }
   
   /* add the last zoom count to the master outline data */

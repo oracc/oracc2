@@ -2,6 +2,7 @@
 echo $0 $*
 ### o2-corpus.sh ###
 o2-lst.sh
+lx-lists.sh
 o2-cat.sh
 o2-atf.sh
 if [ -r 01bld/destfiles.lst ]; then
