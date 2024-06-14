@@ -18,8 +18,6 @@ else
     sorts="1"
 fi
 p=`oraccopt`
-rm -fr 02pub/p4.d
-mkdir -p 02pub/p4.d
 for a in $sorts ; do
     ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ;
       for t in itm max pag ; do
@@ -27,4 +25,11 @@ for a in $sorts ; do
       done
     )
 done
-
+( cd ${ORACC_BUILDS}/$p/02pub ;
+  for t in prx trs ; do
+      if [ -r $t.tsv ]; then
+	  tx -t $t.tsv
+      fi
+  done
+)
+chmod -R o+r ${ORACC_BUILDS}/$p/02pub

@@ -8,29 +8,33 @@ tsv_index(const char *tsv_file, const char *dir, const char *name)
 {
   Tsv *tp = tsv_create();
   tsv_paths(tp, tsv_file, name, dir);
-  if ((tp->tsv_fp = fopen(tp->tsv_fn, "r")))
+  if (!strcmp(tp->tsv_fn, "-"))
+    tp->tsv_fp = stdin;
+  else
     {
-      if ((tp->dp = dbi_create (tp->base, tp->tdb_dir, 1024, sizeof(Tsv_data), DBI_BALK)))
+      if (!(tp->tsv_fp = fopen(tp->tsv_fn, "r")))
 	{
-	  do
-	    tdb_line(tp);
-	  while (!feof(tp->tsv_fp));
-	  dbi_flush(tp->dp);
-	}
-      else
-	{
-	  fclose (tp->tsv_fp);
-	  /*fprintf(stderr, "xisdb: failed to create %s/%s.dbh\n", dir, name);*/
+	  /*fprintf(stderr, "xisdb: failed to open %s\n", tis_file);*/
 	  tsv_destroy(tp);
-	  return 1;
+	  return 2;
 	}
+    }
+	  
+  if ((tp->dp = dbi_create (tp->base, tp->tdb_dir, 1024, sizeof(Tsv_data), DBI_BALK)))
+    {
+      do
+	tdb_line(tp);
+      while (!feof(tp->tsv_fp));
+      dbi_flush(tp->dp);
     }
   else
     {
-      /*fprintf(stderr, "xisdb: failed to open %s\n", tis_file);*/
+      fclose (tp->tsv_fp);
+      /*fprintf(stderr, "xisdb: failed to create %s/%s.dbh\n", dir, name);*/
       tsv_destroy(tp);
-      return 2;
+      return 1;
     }
+
   tsv_destroy(tp);
   return 0;
 }

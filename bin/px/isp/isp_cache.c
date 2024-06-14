@@ -122,12 +122,16 @@ isp_cache_sub(Isp *ip)
 	  ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	  if (xmkdirs(ip, ip->cache.sub))
 	    return 1;
-	  
-	  char outd[strlen(ip->cache.project)+strlen(ip->list_name)+2];
-	  sprintf(outd, "%s/%s", ip->cache.project, ip->list_name);
-	  ip->cache.out = (ccp)pool_copy((uccp)outd, ip->p);
-	  if (xmkdirs(ip, ip->cache.out))
-	    return 1;
+
+	  /* issx doesn't use this output so don't create it */
+	  if (!ip->pub_output)
+	    {
+	      char outd[strlen(ip->cache.project)+strlen(ip->list_name)+2];
+	      sprintf(outd, "%s/%s", ip->cache.project, ip->list_name);
+	      ip->cache.out = (ccp)pool_copy((uccp)outd, ip->p);
+	      if (xmkdirs(ip, ip->cache.out))
+		return 1;
+	    }
 	}
       else
 	{
