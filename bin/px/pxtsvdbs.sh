@@ -20,7 +20,10 @@ fi
 p=`oraccopt`
 for a in $sorts ; do
     ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ;
-      for t in itm max pag ; do
+      for t in itm max ; do
+	  cat $t.tsv | dbix -s -d . -n $t
+      done
+      for t in pag ; do
 	  tx -t $t.tsv
       done
     )
@@ -28,7 +31,7 @@ done
 ( cd ${ORACC_BUILDS}/$p/02pub ;
   for t in prx trs ; do
       if [ -r $t.tsv ]; then
-	  tx -t $t.tsv
+	  cat $t.tsv | dbix -s -d . -n $t
       fi
   done
 )
