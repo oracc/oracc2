@@ -8,11 +8,6 @@ if [ "$project" = "" ]; then
     echo $0: must give project argument. Stop.
     exit 1;
 fi
-#set 00atf/*.atf
-#if [ "$1" != "00atf/*.atf" ]; then
-#    cat 00atf/*.atf | atfdatax >02pub/atf-data.tab
-#    cut -f1,3 <02pub/atf-data.tab | dbix -d 02pub -n trs -s
-#fi
 libscripts=${ORACC_BUILDS}/lib/scripts
 # p3-project-data.plx doesn't do the following bit
 cbd-items.sh
@@ -23,9 +18,9 @@ for a in 02pub/cbd/* ; do
     fi
 done
 cut -f1,3 02pub/atf-data.tab | sed 's/@[/a-z0-9]\+//' | grep '	' | sed 's/^.*://' | \
-    tee 02pub/trs.tsv | tx -t - -d 02pub -n trs
+    tee 02pub/trs.tsv | dbix -s -d 02pub -n trs
 cut -d@ -f1 <02pub/atf-data.tab | tr : '	' | rocox -C21 | \
-    tee 02pub/prx.tsv | tx -t - -d 02pub -n prx
+    tee 02pub/prx.tsv | dbix -s -d 02pub -n prx
 rm -fr 02pub/p4.d
 pxprecompute.sh
 chmod -R o+r 02pub

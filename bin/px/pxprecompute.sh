@@ -21,10 +21,7 @@ p=`oraccopt`
 rm -fr 02pub/p4.d
 mkdir -p 02pub/p4.d
 for a in $sorts ; do
-    ls -ld outlined.lst
     echo $0: issx -C${ORACC_BUILDS} -P -r $a -j $p
     issx -C${ORACC_BUILDS} -P -r $a -j $p
-    ls -ld outlined.lst
     ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ; tx -u -d . -n itm >itm.tsv )
 done
-ls -ld outlined.lst
