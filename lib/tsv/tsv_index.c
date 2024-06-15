@@ -73,7 +73,10 @@ tdb_line(Tsv *tp)
   while (EOF != (ch = fgetc(tp->tsv_fp)))
     {  
       if ('\n' == ch)
-	break;
+	{
+	  ++l;
+	  break;
+	}
       else if ('\t' == ch && key)
 	{
 	  if (len >= 0)
