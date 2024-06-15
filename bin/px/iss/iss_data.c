@@ -27,7 +27,7 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
   int nzpth = 0; /* current text index in zpth */
   int z0firsth = -1; /* p->p[index] of first header on current z0 page */
   int znfirsth = -1; /* p->p[index] of current zoom header */
-  int pfirst = -1;/* p->p[index] of first text in current z0 page */
+  int pfirst = -1;/* p->p[index] of first text in current z0 page; -1 is a signal value*/
   int zfirst = -1;/* p->p[index] first text in current zN page */
   Tsv *tp;
   
@@ -72,7 +72,10 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
 	  znfirsth= i;
 	  /* This test means that the header is the first thing on a new page */
 	  if (pfirst == -1)
-	    z0firsth = i;
+	    {
+	      z0firsth = i;
+	      pfirst = i+1;
+	    }
 	  ++zoom;
 	  zpth = 1;
 	  nzoom = nzpth = 0;
@@ -107,8 +110,6 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
 	      ++zpth;
 	    }
 
-	  if (nz0th == 1)
-	    pfirst = i;
 	  if (nzpth == 1)
 	    zfirst = i;
 	}
@@ -224,6 +225,8 @@ iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int 
   fprintf(pfp, "%s\t", key);
   fflush(pfp);
   long tell = ftell(pfp);
+  if (firsti < 0)
+    firsti = firsth+1;
   fprintf(pfp, "%s\v%s", p->p[firsth], p->p[firsti]);
   for (j = firsti+1; j <= lasti; ++j)
     {
