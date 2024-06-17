@@ -28,13 +28,13 @@ xmd-ids.plx | lx -cus -p $project -o $lxd/00cat.lst -
 for a in approved.lst add-approved.lst not-approved.lst \
 	 outlined.lst add-outlined.lst not-outlined.lst \
 	 rejected.lst ; do
-    if [ -r 00lib/$a ]; then
+    if [ -s 00lib/$a ]; then
 	echo $0: marshalling 00lib/$a
 	lx -cusz -p $project -o $lxd/$a 00lib/$a
     fi
 done
 
-if [ -r 00lib/proxy.lst ]; then    
+if [ -s 00lib/proxy.lst ]; then
     lx -cus -p $project -o $lxd/proxy.lst 00lib/proxy.lst
 fi
 
