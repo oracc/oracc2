@@ -19,7 +19,7 @@ char *strndup(const char *,size_t);
 extern void debug_results(const char *label, struct Datum *dp);
 
 const char *se_curr_project = "cdli";
-const char *curr_index = "txt";
+const char *curr_index = "lem";
 const char *curr_filter = NULL;
 
 const char *cbd_lang;
