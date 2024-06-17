@@ -187,7 +187,7 @@ opts(int opt, const char *arg)
       opt_ip->glosdata.ent = arg;
       break;
     case 'I':
-      opt_ip->item_replace = arg;
+      /*opt_ip->item_replace = arg;*/ /* ignore because this is handled differently in P4 */
       break;
     case 'i':
       opt_ip->item = arg;
