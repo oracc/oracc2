@@ -177,6 +177,7 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\thost=%s\n",(char*)xmlify((ucp)pr->host));
   fprintf(fp,"\taapi=%s\n",(char*)xmlify((ucp)pr->aapi));
   fprintf(fp,"\thost_path=%s\n",(char*)xmlify((ucp)pr->host_path));
+  fprintf(fp,"\tsig=%s\n",(char*)xmlify((ucp)pr->sig));
   fprintf(fp,"\ttmp_dir=%s\n",(char*)xmlify((ucp)pr->tmp_dir));
   fprintf(fp,"\terr=%s\n",(char*)xmlify((ucp)pr->err));
   fprintf(fp,"\terrx=%s\n",(char*)xmlify((ucp)pr->errx));

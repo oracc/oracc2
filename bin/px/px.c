@@ -30,6 +30,10 @@ main(int argc, char **argv)
   if (px_options(argc, argv, ip))
     goto error;
 
+  /* Ignore any other options and preempt validation; sig() execs on success */
+  if (ip->sig && sig(ip))
+      goto error;
+
   if (px_validate(ip))
     goto error;
 

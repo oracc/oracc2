@@ -289,7 +289,7 @@
 	  </xsl:otherwise>
 	</xsl:choose>
       </xsl:variable>
-      <a href="javascript:act_item('{$actitemarg}')">
+      <a href="javascript://" onclick="act_iref(event)" data-iref="{$actitemarg}">
 	<xsl:call-template name="make-label-text">
 	  <xsl:with-param name="label" select="$label"/>
 	</xsl:call-template>

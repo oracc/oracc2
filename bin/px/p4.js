@@ -14,6 +14,19 @@ function getCurrentPmax() {
     return document.getElementById("p4PageNav").getAttribute("data-pmax");
 }
 
+function p4Popup(url,windowName,height,width,screenX,screenY,focus) {
+  var p4PopupWindow = window.open(url,windowName,
+ "dependent,height="+height+","
+ +"width="+width+","
+ +"screenX="+screenX+","
+ +"screenY="+screenY+","
+ +"resizable,scrollbars");
+  if (focus) {
+      p4PopupWindow.focus();
+  }
+  p4PopupWindow;
+}
+
 function loc_append(l,c) {
     if (l.length != 0) {
 	l = l+'/';
@@ -66,7 +79,7 @@ function itemLocation() {
 
 	loc = loc+qs;
 
-	// alert("gent:itemLocation="+loc);
+	alert("gent:itemLocation="+loc);
 	window.location = loc;
 
     } else if (item) {
@@ -94,7 +107,7 @@ function itemLocation() {
 
 	loc = loc+qs;
 
-	// alert("item:itemLocation="+loc);
+	alert("item:itemLocation="+loc);
 	window.location = loc;
     } else {
 	alert('itemLocation called but item is NULL');
@@ -125,7 +138,7 @@ function pageLocation() {
 	    loc = loc+qs;
 	}
     } else {
-	// alert('pageLocation non-glos/gxis');
+	// alert('pageLocation non-glos/+gxis');
 	let list = pager.getAttribute("data-list");
 	let perm = pager.getAttribute("data-sort");
 	let zoom = pager.getAttribute("data-zoom");
@@ -165,14 +178,14 @@ function pageLocation() {
 	    }
 	}
 
-	if (bkmk) {
+	if (bkmk && !gxis && !srch) {
 	    qs = qs_append(qs, 'bkmk='+bkmk);
 	}
 
 	loc = loc+qs;
 	
     }
-    // alert("pageLocation="+loc);
+    alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -205,6 +218,13 @@ function act_article(item) {
     itemLocation();
 }
 
+function act_isid(evt) {
+    let pager = getPager();
+    pager.setAttribute("data-glos", evt.target.getAttribute("data-lang"));
+    pager.setAttribute("data-gxis", evt.target.getAttribute("data-isid"));
+    pageLocation();    
+}
+
 function act_item(item) {
     let pager = getPager();
     pager.setAttribute("data-item", item);
@@ -213,8 +233,22 @@ function act_item(item) {
 
 function act_iref(evt) {
     let pager = getPager();
-    pager.setAttribute("data-item", evt.target.getAttribute('data-iref');
+    pager.setAttribute("data-item", evt.target.getAttribute('data-iref'));
     itemLocation();
+}
+
+function act_wsig(evt) {
+    // alert('act_wsig evt='+evt+'; evt.target='+evt.target+'; evt.currentTarget='+evt.currentTarget);
+    let pager = getPager();
+    let wsig = evt.target.getAttribute('data-wsig');
+    if (!wsig) {
+	wsig = evt.target.parentElement.getAttribute('data-wsig');
+    }
+    // alert('wsig='+wsig);
+    var esig = encodeURIComponent(wsig);
+    // alert('esig='+esig);
+    var url = '/'+pager.getAttribute('data-proj')+'?sig='+esig;
+    popup(url,'p4article',400,600,0,0);
 }
 
 function act_item_next() {

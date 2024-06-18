@@ -53,6 +53,8 @@ extern int px_validate(Isp *ip);
 /* s123.c */
 /* selecter.c */
 extern int selecter(const char *file, char *const *ids);
+/* sig.c */
+extern int sig(Isp *ip);
 /* wpx_lib.c */
 extern void wpx_cat_html(const char *form, const char *file);
 extern void wpx_cat_xml(const char *form, const char *file);
@@ -66,6 +68,10 @@ extern void wpx_print_hdr_xml(void);
 extern void wpx_print_hdr_json(void);
 extern void wpx_print_hdr_pdf(const char *pname);
 extern void wpx_print_hdr_zip(const char *zname);
+/* wsigx.c */
+extern char *CGI_decode_url(const char *p);
+extern int main(int argc, char **argv);
+extern void help(void);
 /* xslt_if.c */
 extern const char *xslt_if_lasterr(void);
 extern void xslt_init(void);

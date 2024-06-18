@@ -182,6 +182,7 @@ typedef struct isp
   const char *host; /* host page for pack=esp2 */
   const char *aapi;
   const char *host_path;
+  const char *sig;
   const char *tmp_dir;
   const char *err;
   const char *errx;
