@@ -148,19 +148,33 @@ files(void)
   return (const char **)f;
 }
 
+static char *
+sparm(const char *p)
+{
+  char buf[strlen(p)+3];
+  char *ret;
+  sprintf(buf, "'%s'", p);
+  if (!(ret = hash_find(sparms, (ucp)buf)))
+    {
+      ret = strdup(buf);
+      hash_add(sparms, (ucp)ret, ret);
+    }
+  return ret;
+}
+
 static const char **
 params(struct progtab *pinfo, const char *project, const char *trans, const char *htmdir)
 {
   static const char *p[7];
   int null = 4;
   p[0] = "project";
-  p[1] = project;
+  p[1] = sparm(project);
   p[2] = "txhdir";
-  p[3] = htmdir;
+  p[3] = sparm(htmdir);
   if (trans)
     {
       p[4] = "trans";
-      p[5] = trans;
+      p[5] = sparm(trans);
       null = 6;
     }
   p[null] = NULL;
