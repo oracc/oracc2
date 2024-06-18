@@ -28,7 +28,12 @@ const char *p4htmld;
 const char *project;
 const char *translation;
 
-int htmlmode = 0;
+/* The default is to generate outputs into the P4 cache; if -b is
+   specified outputs are generated into the PQX-dir where the xtf
+   lives */
+   
+int buildmode = 0;
+int no_output = 0;
 int verbose = 0;
 
 const char *
@@ -51,6 +56,8 @@ wrapper(const char *sheet, const char **params, const char *xmldoc, const char *
       for (i = 0; params[i]; i += 2)
 	fprintf(stderr, " %s=%s", params[i], params[i+1]);
       fprintf(stderr, " <%s >%s\n", xmldoc, output);
+      if (no_output)
+	return 0;
     }
   
   if (!sheet)
@@ -141,33 +148,19 @@ files(void)
   return (const char **)f;
 }
 
-static char *
-sparm(const char *p)
-{
-  char buf[strlen(p)+3];
-  char *ret;
-  sprintf(buf, "'%s'", p);
-  if (!(ret = hash_find(sparms, (ucp)buf)))
-    {
-      ret = strdup(buf);
-      hash_add(sparms, (ucp)ret, "");
-    }
-  return ret;
-}
-
 static const char **
 params(struct progtab *pinfo, const char *project, const char *trans, const char *htmdir)
 {
-  static char *p[7];
+  static const char *p[7];
   int null = 4;
   p[0] = "project";
-  p[1] = sparm(project);
+  p[1] = project;
   p[2] = "txhdir";
-  p[3] = sparm(htmdir);
+  p[3] = htmdir;
   if (trans)
     {
       p[4] = "trans";
-      p[5] = sparm(trans);
+      p[5] = trans;
       null = 6;
     }
   p[null] = NULL;
@@ -177,14 +170,27 @@ params(struct progtab *pinfo, const char *project, const char *trans, const char
 static int
 perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
 {
-  char project[strlen(qpqx)+1];
-  strcpy(project, qpqx);
-  char *colon = strchr(project, ':');
-  *colon = '\0';
+  char proj[strlen(qpqx)+1];
+  strcpy(proj, qpqx);
+  char *colon = strchr(proj, ':');
+  if (colon)
+    {
+      project = proj;
+      *colon = '\0';
+    }
+  else if (!project)
+    {
+      fprintf(stderr, "%s: no project set. Stop.\n", invoke);
+      return 1;
+    }
+  
   expand_base(NULL);
   char *in = strdup(expand(NULL, qpqx, proginfo->inext));
   const char *out = NULL;
-  expand_base(p4htmld);
+  if (buildmode)
+    expand_base(NULL);
+  else
+    expand_base(p4htmld);
   const char *htmdir = strdup(expand(NULL, qpqx, NULL));
   if (!outfile)
     {
@@ -241,24 +247,18 @@ main(int argc, char **argv) {
       return 1;
     }
   
-  options(argc, argv, "hi:l:o:p:t:v");
+  options(argc, argv, "bi:l:no:p:st:v");
 
-  if (!project)
+#if 0
+  if (infile)
     {
-      if (infile)
-	{
-	  char *xproject = strdup(infile);
-	  char *colon = strchr(xproject, ':');
-	  if (colon)
-	    *colon = '\0';
-	  project = xproject;
-	}
-      else
-	{
-	  fprintf(stderr, "%s: no project set. Stop.\n", argv[0]);
-	  return 1;
-	}
+      char *xproject = strdup(infile);
+      char *colon = strchr(xproject, ':');
+      if (colon)
+	*colon = '\0';
+      project = xproject;
     }
+#endif
   
   if (infile || listfile)
     {
@@ -304,14 +304,17 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
-    case 'h':
-      htmlmode = 1;
+    case 'b':
+      buildmode = 1;
       break;
     case 'i':
       infile = arg;
       break;
     case 'l':
       listfile = arg;
+      break;
+    case 'n':
+      verbose = no_output = 1;
       break;
     case 'o':
       outfile = arg;
