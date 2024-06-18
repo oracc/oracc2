@@ -41,6 +41,10 @@ isp_glos_gxis(Isp *ip)
   const char *gxis_base = ip->glosdata.xis;
   if (ip->force < 2)
     {
+#if 1
+      /* cache.sub already has gxis and has been xmkdir'd */
+      ip->cache.use = ip->cache.sub;
+#else
       char *xcache = (char*)pool_alloc(strlen(ip->cache.sub)+strlen(gxis_base)+2, ip->p);
       sprintf(xcache, "%s/%s", ip->cache.sub, gxis_base);
       struct stat sb;
@@ -54,6 +58,7 @@ isp_glos_gxis(Isp *ip)
 	    }
 	}
       ip->cache.use = ip->cache.out = ip->cache.sub = xcache;
+#endif
     }
 
   ip->list_name = ip->glosdata.xis;

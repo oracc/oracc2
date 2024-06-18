@@ -222,6 +222,7 @@ static int
 iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int firsth, int firsti, int lasti)
 {
   int n = snprintf(NULL, 0, "z%dp%d", zoom, page);
+  int suppress_space = 0;
   char key[n+1];
   sprintf(key, "z%dp%d", zoom, page);
   int j;
@@ -236,8 +237,16 @@ iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int 
       if ('+' == p->p[j][0])
 	continue;
       else if ('#' == p->p[j][0])
-	fprintf(pfp, " %s\v", p->p[j]);
-      else
+	{
+	  fprintf(pfp, " %s\v", p->p[j]);
+	  suppress_space = 1;
+	}
+      else if (suppress_space)
+	{
+	  fputs(p->p[j], pfp);
+	  suppress_space = 0;
+	}
+      else	
 	fprintf(pfp, " %s", p->p[j]);
     }
   fputc('\n', pfp);

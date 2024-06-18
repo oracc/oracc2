@@ -172,7 +172,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    alert("pageLocation="+loc);
+    // alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -208,6 +208,12 @@ function act_article(item) {
 function act_item(item) {
     let pager = getPager();
     pager.setAttribute("data-item", item);
+    itemLocation();
+}
+
+function act_iref(evt) {
+    let pager = getPager();
+    pager.setAttribute("data-item", evt.target.getAttribute('data-iref');
     itemLocation();
 }
 
