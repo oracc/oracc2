@@ -63,7 +63,19 @@ xsltproc $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml
 if [ $? -eq 0 ]; then
     [ -r $xtf ] || exit 3
     four=`echo $PQX | head -c4`
-    $oraccbin/xtf2txh -i $prox_project:$PQX
+    htxh=$metadir/$PQX.txh
+    if [ ! -r $htxh ]; then
+	txh=`$oraccbin/pqxpand txh $prox_project:$PQX`
+	if [ -r $txh ]; then
+	    >&2 echo $0: linking $txh to $htxh
+	    ln -sf $txh $htxh
+	else
+	    >&2 echo $0: creating $htxh
+	    $oraccbin/xtf2txh -i $prox_project:$PQX
+	fi
+    else
+	>&2 echo $0: $htxh already exists
+    fi
     if [ $? -eq 0 ]; then
 	if [ "$tr" != "" ]; then
 	    trarg="-t $tr"
@@ -92,9 +104,9 @@ fi
 # means that we have to be careful in the above to test $? as we go
 # and exit 1 appropriately.
 #
-if [ $? -eq 0 ]; then
-    rm -f $errlog
-fi
+##if [ $? -eq 0 ]; then
+##    rm -f $errlog
+##fi
 
 # exit with last program's status; don't exit 0/1 based on empty
 # errlog because that could contain diagnostics
