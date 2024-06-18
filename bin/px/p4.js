@@ -115,19 +115,15 @@ function pageLocation() {
 	let qs = '';
 	let zoom = pager.getAttribute("data-glet");
 	if (zoom) {
-	    qs = 'zoom='+zoom;
+	    qs = qs_append(qs, 'zoom='+zoom);
 	}
 	if (page) {
-	    if (qs.length) {
-		qs = qs+'&';
-	    }
-	    qs = qs+'page='+page;
+	    qs = qs_append(qs, 'page='+page);
+	}	
+	loc = '/'+proj+'/'+glos;
+	if (qs.length > 0) {
+	    loc = loc+qs;
 	}
-	let gxis = pager.getAttribute("data-gxis");
-	if (gxis) {
-	    qs = qs+'&xis='+gxis;
-	}
-	loc = '/'+proj+'/'+glos+'?'+qs;
     } else {
 	// alert('pageLocation non-glos/gxis');
 	let list = pager.getAttribute("data-list");
@@ -141,7 +137,6 @@ function pageLocation() {
 	    qs = qs_append(qs, 'list='+list);
 	} else {
 	    if (gxis) {
-		qs = qs_append(qs, 'glos='+glos);
 		qs = qs_append(qs, 'xis='+gxis);
 	    } else if (srch) {
 		qs = qs_append(qs, 'srch='+srch);
@@ -161,8 +156,13 @@ function pageLocation() {
 	}
 
 	loc = '/'+proj;
-	if (qs.length == 0) { // test before bkmk on purpose
-	    loc = loc+"/pager";
+	
+	if (glos) {
+	    loc = '/'+proj+'/'+glos;
+	} else {
+	    if (qs.length == 0) { // test before bkmk on purpose
+		loc = loc+"/pager";
+	    }
 	}
 
 	if (bkmk) {
@@ -172,7 +172,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    // alert("pageLocation="+loc);
+    alert("pageLocation="+loc);
     window.location=loc;
 }
 

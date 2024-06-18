@@ -89,11 +89,14 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
 	  ++nz0th;
 	  ++nzpth;
 
+	  if (pfirst == -1)
+	    pfirst = i;
+	  
 	  /* unconditionally output item data */
 	  iss_i_dump(idp, ip, p, i, nlist, z0th, nz0th, zoom, zpth, nzpth);
 	  
 	  /* dump z0 page if !nz0th%25; reset z0 page */
-	  if (pfirst != -1 && nz0th%25==0)
+	  if (pfirst != -1 && (nz0th%25)==0)
 	    {
 	      iss_p_dump(pfp, tp, ip, p, 0, z0th, z0firsth, pfirst, i);
 	      pfirst = -1;
@@ -233,7 +236,7 @@ iss_p_dump(FILE *pfp, Tsv *tp, Isp *ip, struct page *p, int zoom, int page, int 
       if ('+' == p->p[j][0])
 	continue;
       else if ('#' == p->p[j][0])
-	fprintf(pfp, " %s", p->p[j]);
+	fprintf(pfp, " %s\v", p->p[j]);
       else
 	fprintf(pfp, " %s", p->p[j]);
     }

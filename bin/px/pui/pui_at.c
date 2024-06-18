@@ -101,7 +101,11 @@ pui_at_pager_data(Isp *ip, FILE *fp)
       if (ip->glosdata.ent)
 	pattrs("data-gent", ip->glosdata.ent);
       if (ip->glosdata.xis)
-	pattrs("data-gxis", ip->glosdata.xis);
+	{
+	  pattrs("data-gxis", ip->glosdata.xis);
+	  pattrs("data-zoom", ip->zoom);
+	  pattrs("data-sort", ip->perm);
+	}
     }
   else
     {
