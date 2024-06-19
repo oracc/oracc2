@@ -192,17 +192,7 @@ h_pqx_html_pager(const char *project, struct component *components)
   else
     mode = "full";
 #if 1
-  if (p4)
-    pxurlitem(components[0].text, components[0].replace);
-  else
-    execl("/usr/bin/perl", "perl", "@@ORACC@@/bin/p3-pager.plx",
-	  cgi_arg("project", project),
-	  cgi_arg("adhoc", 
-		  components[0].replace ? components[0].replace : components[0].text),
-	  cgi_arg("line-id", line_id),
-	  cgi_arg("frag-id", frag_id),
-	  cgi_arg("mode", mode),
-	  NULL);
+  pxurlitem(components[0].text, components[0].replace);
 #else
   execl("/usr/bin/perl", "perl", "@@ORACC@@/bin/p3-pager.plx",
 	"-p", cgi_arg("project", project),

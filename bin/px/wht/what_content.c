@@ -282,7 +282,7 @@ printStart(struct what_frag *frag, const char *name, const char **atts, const ch
 	  if (frag->cop->sigs && *ap[0] == 'h' && !strcmp(ap[0], "href"))
 	    {
 	      const char *pop1sig = NULL;
-	      fprintf(stderr, "content:printStart: found href\n");
+	      /*fprintf(stderr, "content:printStart: found href\n");*/
 	      if ((pop1sig = strstr(ap[1], "pop1sig(")))
 		{
 		  const char *p;

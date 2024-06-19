@@ -2,14 +2,15 @@
 #include "px.h"
 #include "p4url.h"
 
-typedef struct p4bits { const char *project; const char *one; const char *two; } P4bits;
+typedef struct p4bits { const char *project; const char *one; const char *two; const char *bad; } P4bits;
 
 static int p4url_is_glossary(const char *l);
 static int p4url_is_glossaryid(const char *i);
 static int p4url_is_project(char *p, P4bits *b);
 static int p4url_is_textid(const char *i);
-static int p4url_q(P4url *p, const char *q);
-static int p4url_u(P4url *p, const char *u);
+static int p4url_q(P4url *p);
+static int p4url_u(P4url *p);
+static int p4url_move_to_qs(P4bits *bp, P4url *p);
 
 #undef uc
 #define uc unsigned char
@@ -40,19 +41,23 @@ int
 p4url(P4url *p, const char *u, const char *q)
 {
   if (u)
-    if (p4url_u(p,u))
-      return 1;
-  if (q)
-    if (p4url_q(p,q))
+    {
+      p->u = strdup(u);
+      if (q)
+	p->q = strdup(q);
+      if (p4url_u(p))
+	return 1;
+    }
+  if (p->q)
+    if (p4url_q(p))
       return 1;
   return 0;
 }
 
 static int
-p4url_u(P4url *p, const char *u)
+p4url_u(P4url *p)
 {
-  P4bits bits = { NULL , NULL , NULL };
-  p->u = strdup(u);
+  P4bits bits = { NULL , NULL , NULL , NULL };
   p4url_is_project(p->u, &bits);
   if (bits.project)
     {
@@ -71,6 +76,13 @@ p4url_u(P4url *p, const char *u)
 		  p->status = 1;
 		  p->err = "found good PROJECT and GLOSSARY but bad GLOSSARYID";
 		}
+	    }
+	  else if (p4url_is_textid(bits.one))
+	    {
+	      bits.bad = bits.two;
+	      p->pxid = bits.one;
+	      bits.two = NULL;
+	      p4url_move_to_qs(&bits, p);
 	    }
 	  else
 	    {
@@ -107,6 +119,32 @@ p4url_u(P4url *p, const char *u)
   return p->status;
 }
 
+static int
+p4url_move_to_qs(P4bits *bp, P4url *p)
+{
+  if (bp->bad)
+    {
+      char *tmp = strdup(bp->bad);
+      char *s = tmp;
+      while (*s)
+	if ('/' == *s)
+	  *s++ = '&';
+	else
+	  ++s;
+      if (p->q)
+	{
+	  char buf[strlen(tmp)+strlen(p->q)+2];
+	  sprintf(buf, "%s&%s", tmp, p->q);
+	  free(tmp);
+	  free(p->q);
+	  p->q = strdup(buf);
+	}
+      else
+	p->q = tmp;
+    }
+  return 0;
+}
+
 static const char *
 p4url_arg_tok(char *t)
 {
@@ -128,13 +166,12 @@ p4url_arg_tok(char *t)
 }
 
 static int
-p4url_q(P4url *p, const char *q)
+p4url_q(P4url *p)
 {
-  if (q)
+  if (p->q)
     {
       extern int qs_total_keywords(void);
       int optmax = qs_total_keywords();
-      p->q = strdup(q);
       p->args = calloc(1+optmax, sizeof(P4arg));
       int i = 0;
       char *qs = p->q;
@@ -266,7 +303,7 @@ p4url_is_glossary(const char *l)
 }
 
 /* Return a pointer to the end of string or the character after the
- * '/' that ends the project portion of the SCRIPT_URL belong to the
+ * '/' that ends the project portion of the SCRIPT_URL
  */
 static int
 p4url_is_project(char *p, P4bits *b)

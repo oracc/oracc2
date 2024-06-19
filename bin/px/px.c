@@ -30,7 +30,7 @@ main(int argc, char **argv)
   if (px_options(argc, argv, ip))
     goto error;
 
-  if (strcmp(ip->what, "text"))
+  if (strcmp(ip->what, "text")) /* may need || ip->form for text as html */
     {
       int res = what(ip);
       if (res == 2)
