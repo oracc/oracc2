@@ -458,6 +458,16 @@ function act_srch() {
     }
 }
 
+function act_score(event) {
+    let url = getPager().getAttribute('data-item')+'?score';
+    popup(url,'Score',500,600,100,100);
+}
+
+function act_sources(event) {
+    let url = getPager().getAttribute('data-item')+'?sources';
+    window.location = url;
+}
+
 // P3 continuing JS
 
 function popup(url,windowName,height,width,screenX,screenY) {

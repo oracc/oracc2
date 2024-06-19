@@ -55,7 +55,7 @@ isp_xmd_outline(Isp *ip)
 	p = pbuf;
     }
   while (p != pbuf);
-  sprintf(xsl, "%s/lib/scripts/p3-xmd-div.xsl", oracc_builds());
+  sprintf(xsl, "%s/lib/scripts/p4-xmd-div.xsl", oracc_builds());
   if (!access(xsl, R_OK))
     return (ccp)pool_copy((ucp)xsl, ip->p);
   else
