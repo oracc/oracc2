@@ -337,7 +337,7 @@ phase1(const char **tokptrs)
 	      if (firstindex)
 		{
 		  curr_tok = add_token(se_index);
-		  (void)scan_name(curr_tok,"txt");
+		  (void)scan_name(curr_tok,"lem");
 		  setup_index(curr_tok);
 		}
 

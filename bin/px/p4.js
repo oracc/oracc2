@@ -251,6 +251,17 @@ function act_wsig(evt) {
     popup(url,'p4article',400,600,0,0);
 }
 
+function act_block(evt) {
+    let pager = getPager();
+    let project = pager.getAttribute('data-proj');
+    let item = pager.getAttribute('data-item');
+    let block = evt.target.getAttribute('data-bloc')
+	|| evt.target.parentElement.getAttribute('data-bloc');
+    let url = '/'+project+'/'+item+'?block='+block;
+    alert('act_block url='+url);
+    popup(url,400,600,700,50);
+}
+
 function act_item_next() {
     let pager = getPager();
     let inext = pager.getAttribute("data-next");

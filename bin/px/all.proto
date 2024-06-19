@@ -47,6 +47,8 @@ extern void pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr, const char *name)
 extern void pr_isp_config(FILE *fp, struct isp_config *pr, const char *name);
 extern void px_print_ip(FILE *fp, Isp *ip);
 extern void pr_ispargstab(FILE *fp, struct ispargstab *pr, const char *name);
+/* px_score.c */
+extern int px_score(Isp *ip);
 /* px_validate.c */
 extern const char *fatalize(const char *e);
 extern int px_validate(Isp *ip);
@@ -71,6 +73,16 @@ extern void wpx_print_hdr_zip(const char *zname);
 /* wsigx.c */
 extern char *CGI_decode_url(const char *p);
 extern int main(int argc, char **argv);
+extern void help(void);
+/* xfragx.c */
+extern void printText(const char *s, FILE *frag_fp);
+extern void printStart(struct frag *frag, const char *name, const char **atts);
+extern void printEnd(struct frag *frag, const char *name);
+extern void gdf_sH(void *userData, const char *name, const char **atts);
+extern void gdf_eH(void *userData, const char *name);
+extern void gdf_frag_from_file(const char *fname, const char *xml_id, FILE *outfp);
+extern int main(int argc, char **argv);
+extern int opts(int argc, const char *arg);
 extern void help(void);
 /* xslt_if.c */
 extern const char *xslt_if_lasterr(void);

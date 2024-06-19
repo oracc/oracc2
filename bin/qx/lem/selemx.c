@@ -68,7 +68,7 @@ int verbose = 0;
 
 /* 2024-06-06 we are retiring qtxtx and always using qlemx but putting
    output in txtx */
-const char *curr_project = "cdli", *curr_index = "txt", *proxies_arg = "";
+const char *curr_project = "cdli", *curr_index = "lem", *proxies_arg = "";
 const char *project = NULL; /* for now we need this for vid.c */
 Four_bytes curr_line;
 int debug_flag = 0, index_flag = 1;
@@ -227,7 +227,7 @@ lem_index(struct location8 *l8, const char *field, const char *toks, ...)
 		    fprintf(debug_f, "%s %s\n", debug_label, t);
 		  
 		  mangled = strdup((char*)keymangler((unsigned char*)t,KM_FOLD|KM_2VOWEL,
-						     manglebuf,128, estp, "txt"));
+						     manglebuf,128, estp, "lem"));
 		  grapheme(t);
 		  if (strcmp(t,mangled))
 		    grapheme(mangled);
@@ -628,7 +628,7 @@ main (int argc, char **argv)
 
   /*vidp = vido_load_data(se_file(curr_project,"cat","vid.dat"), 0);*/
 
-  f_mangletab = create_mangle_tab(curr_project,"txt");
+  f_mangletab = create_mangle_tab(curr_project,"lem");
   
   signmap_init();
   charsets_init();
@@ -653,7 +653,7 @@ main (int argc, char **argv)
    dbi_set_cache (dip, cache_elements);
   trie_init ();
 
-  estp = est_init(curr_project, "txt");
+  estp = est_init(curr_project, "lem");
 
   alias_fast_init (curr_project, curr_index);
 
@@ -700,7 +700,7 @@ main (int argc, char **argv)
   dbi_free (dip);
   
   char vidfn[1024];
-  strcpy(vidfn, se_file(curr_project,"txt","vid.vid"));
+  strcpy(vidfn, se_file(curr_project,"lem","vid.vid"));
   vido_dump_data(vidp, vidfn, NULL);
   vido_term(vidp);
   vidp = NULL;
@@ -709,8 +709,8 @@ main (int argc, char **argv)
   est_term(estp);
 
   index_dir = se_dir (curr_project, curr_index);
-  dip = dbi_open("txt", index_dir);
-  keys = se_file (curr_project, "txt", "key.lst");
+  dip = dbi_open("lem", index_dir);
+  keys = se_file (curr_project, "lem", "key.lst");
   keysf = fopen(keys,"w");
 
   if (aliases)
@@ -737,7 +737,7 @@ main (int argc, char **argv)
 
   charsets_term();
 
-  ce_cfg(curr_project,"txt","tr","txh", oce_byid, proxies);
+  ce_cfg(curr_project,"lem","tr","txh", oce_byid, proxies);
 #if 0
   progress ("index files written to `%s'\n", se_dir(curr_project,curr_index));
 #endif

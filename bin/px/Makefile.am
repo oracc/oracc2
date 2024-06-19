@@ -6,7 +6,7 @@ AM_CPPFLAGS+=-I/usr/include/libxml2
 
 img_DATA=icons/*.png
 
-bin_PROGRAMS=px cbditem issx wsigx
+bin_PROGRAMS=px cbditem issx wsigx xfragx
 
 pxlib=pxargs.c px_options.c px_validate.c cgiopts.c pxloadfile.c \
 	px_print_ip.c px_file_copy.c cgi_decode_url.c px_mesg.c \
@@ -20,12 +20,16 @@ wsigx_SOURCES=wsigx.c
 wsigx_LDADD = $(xLDADD)
 wsigx_DEPENDENCIES = $(xLDADD)
 
+xfragx_SOURCES=xfragx.c
+xfragx_LDADD = $(xLDADD)
+xfragx_DEPENDENCIES = $(xLDADD)
+
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxentrycounts.sh pxentryindexes.sh p4-mk-cache.sh \
 	pxlocalreset.sh cbd-items.sh pxprecompute.sh pxtsvdbs.sh \
 	outline0.sh
 
-px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c sig.c $(pxlib)
+px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c sig.c px_score.c $(pxlib)
 
 px_print_ip.c: isp/isp.h mk-isp-print.plx
 	./mk-isp-print.plx

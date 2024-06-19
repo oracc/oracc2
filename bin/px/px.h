@@ -14,6 +14,13 @@ struct cgioptstab
   int opt;
 };
 
+struct frag
+{
+  int nesting;
+  const char *xid;
+  FILE *fp;
+};
+
 #if 1
 #include "all.proto"
 extern int px_return(Isp *ip);

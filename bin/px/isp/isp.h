@@ -88,6 +88,7 @@ struct isp_itemdata
   const char *xtflang;	/* the lang to use for the next xtf item call */ 
   const char *lmem;
   const char *item;
+  const char *block;
   const char *proj; /* the item's project as opposed to the host project, possibly a proxy */
   const char *htmd; /* the path to and including /htm */
   const char *html;

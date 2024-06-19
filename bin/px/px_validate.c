@@ -229,6 +229,33 @@ px_validate(Isp *ip)
       goto error;
     }
 
+  if (ip->itemdata.block)
+    {
+      int block_id_ok = 0;
+      const char *q = ip->itemdata.block;
+      if (q[0] == 's' && q[1] == 'b' && q[2] == '.')
+	{
+	  q += 3;
+	  if (!strncmp(q, ip->item, 7))
+	    {
+	      q += 7;
+	      if (q[0] == '.')
+		{
+		  ++q;
+		  while (isdigit(*q))
+		    ++q;
+		  if (!*q)
+		    block_id_ok = 1;
+		}
+	    }
+	}
+      if (!block_id_ok)
+	{
+	  ip->err = "bad score block ID";
+	  goto error;
+	}
+    }
+  
   return 0;
 
  error:

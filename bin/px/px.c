@@ -34,6 +34,9 @@ main(int argc, char **argv)
   if (ip->sig && sig(ip))
       goto error;
 
+  if (!strcmp(ip->what, "score") && px_score(ip))
+    goto error;
+  
   if (px_validate(ip))
     goto error;
 
