@@ -244,8 +244,8 @@ pui_at_item_index_sub(Isp *ip, FILE *fp, int typ, int nth)
 	}
       if (nth && ip->itemdata.index)
 	{
-	  if (ip->itemdata.tmax)
-	    fputs(ip->itemdata.index, fp);
+	  if (ip->zoom && strcmp(ip->zoom, "0"))
+	    fputs(ip->itemdata.zindex, fp);
 	  else
 	    fputs(ip->itemdata.index, fp);
 	}

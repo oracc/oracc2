@@ -5,7 +5,10 @@
 int
 set_item_max(Isp *ip)
 {
-  const char *maxdir = (ip->cache.txtindex ? ip->cache.txtindex : ip->cache.sort);
+  const char *sdir = ((ip->item && ip->cache.t_sort) ? ip->cache.t_sort : ip->cache.out);
+  /* Watch me: can cache.txtindex ever be set when we are actually in a search/glos, etc? */
+  const char *maxdir = (ip->cache.txtindex ? ip->cache.txtindex : sdir);
+
   Dbi_index *dp = dbx_init(maxdir, "max");
   if (dp)
     {
