@@ -191,7 +191,15 @@ isp_cache_list(Isp *ip)
 	  else
 	    {
 	      if (!isp_list_create(ip))
-		isp_list_cemd(ip);
+		{
+		  if (!ip->data)
+		    {
+		      const char *p = ip->lloc.path;
+		      ip->lloc.path = ip->cache.list;
+		      isp_list_cemd(ip);
+		      ip->lloc.path = p;
+		    }
+		}
 	    }
 	}
       else
