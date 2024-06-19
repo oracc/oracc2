@@ -87,7 +87,7 @@ function itemLocation() {
 
 	loc = loc+qs;
 
-	alert("gent:itemLocation="+loc);
+	// alert("gent:itemLocation="+loc);
 	window.location = loc;
 
     } else if (item) {
@@ -115,7 +115,7 @@ function itemLocation() {
 
 	loc = loc+qs;
 
-	alert("item:itemLocation="+loc);
+	// alert("item:itemLocation="+loc);
 	window.location = loc;
     } else {
 	alert('itemLocation called but item is NULL');
@@ -193,7 +193,7 @@ function pageLocation() {
 	loc = loc+qs;
 	
     }
-    alert("pageLocation="+loc);
+    // alert("pageLocation="+loc);
     window.location=loc;
 }
 
@@ -241,7 +241,7 @@ function act_item(item) {
 
 function act_iref(evt) {
     getPager().setAttribute("data-item", getData(evt).getAttribute('data-iref'));
-    alert('data-item='+getPager().getAttribute("data-item")+' < '+getData(evt).getAttribute('data-iref'));
+    // alert('data-item='+getPager().getAttribute("data-item")+' < '+getData(evt).getAttribute('data-iref'));
     itemLocation();
 }
 
@@ -266,7 +266,7 @@ function act_block(evt) {
     let block = evt.target.getAttribute('data-bloc')
 	|| evt.target.parentElement.getAttribute('data-bloc');
     let url = '/'+project+'/'+item+'?block='+block;
-    alert('act_block url='+url);
+    // alert('act_block url='+url);
     popup(url,400,600,700,50);
 }
 
