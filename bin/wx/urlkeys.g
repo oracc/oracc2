@@ -10,7 +10,6 @@ struct urlkeytab;
 %%
 text, "what"
 score, "what"
-block, "what"
 sources, "what"
 page, "part"
 full, "part"

@@ -24,6 +24,7 @@ static void printEnd(struct what_frag *frag, const char *name);
 static void printHTMLStart(struct what_frag *frag);
 static void printStart(struct what_frag *frag, const char *name, const char **atts, const char *xid);
 static void printText(const char *s, FILE *frag_fp);
+static char *set_p4pager(Isp *ip);
 
 int
 what_content(Isp *ip, struct content_opts *cop, const char *input)
@@ -48,7 +49,7 @@ what_content(Isp *ip, struct content_opts *cop, const char *input)
   /* Setting fragdata.nesting here means that the normal end processing cannot
      occur in printEnd so after running expat we have to finish the wrapper
      manually later in this routine */
-  if ((cop->echo || cop->wrap) && !cop->chunk_id)
+  if (!cop->html && ((cop->echo || cop->wrap) && !cop->chunk_id))
     {
       printHTMLStart(&fragdata);
       fragdata.nesting = 1;
@@ -56,10 +57,20 @@ what_content(Isp *ip, struct content_opts *cop, const char *input)
 
   runexpatNSuD(i_list, fnlist, content_sH, content_eH, NULL, &fragdata);
 
-  if ((cop->echo || cop->wrap) && !cop->chunk_id)
+  if (cop->html)
+    fputs("</html>", fragdata.fp);
+  else if ((cop->echo || cop->wrap) && !cop->chunk_id)
     fputs("</body></html>", fragdata.fp);
 
   exit(0);
+}
+
+static char *
+set_p4pager(Isp *ip)
+{
+  char p4pager[strlen("id=.p4Pager..data-proj=...data-item=..0")+strlen(ip->itemdata.proj)+strlen(ip->itemdata.item)];
+  sprintf(p4pager, "id=\"p4Pager\" data-proj=\"%s\" data-item=\"%s\"", ip->itemdata.proj, ip->itemdata.item);
+  return strdup(p4pager);
 }
 
 static const char *
@@ -139,25 +150,26 @@ static void
 content_sH(void *userData, const char *name, const char **atts)
 {
   const char *xid = get_xml_id(atts);
+  struct what_frag *frag = userData;
 
   if (*name == 'r' && !strcmp(name, "rp-wrap"))
     return;
 
-  if (((struct what_frag*)userData)->nesting)
+  if (frag->nesting)
     printStart(userData, name, atts, xid);
-  else if (xid && *xid && ((struct what_frag*)userData)->xid && !strcmp(((struct what_frag*)userData)->xid, xid))
+  else if (xid && *xid && frag->xid && !strcmp(frag->xid, xid))
     {
       charData_discard();
-      if (((struct what_frag*)userData)->cop->wrap)
+      if (frag->cop->wrap)
 	printHTMLStart(userData);
       printStart(userData, name, atts, xid);
     }
-  else if (((struct what_frag*)userData)->cop->unwrap)
+  else if (frag->cop->unwrap)
     {
       if (cued_printStart)
 	{
 	  cued_printStart = 0;
-	  if (((struct what_frag*)userData)->cop->wrap)
+	  if (frag->cop->wrap)
 	    printHTMLStart(userData);
 	  printStart(userData, name, atts, xid);
 	}
@@ -166,7 +178,7 @@ content_sH(void *userData, const char *name, const char **atts)
 	  charData_discard();
 	  cued_printStart = 1;
 	}
-      else if (((struct what_frag*)userData)->nesting)
+      else if (frag->nesting)
 	printStart(userData, name, atts, xid);
       else
 	charData_discard();
@@ -175,13 +187,23 @@ content_sH(void *userData, const char *name, const char **atts)
     {
       printStart(userData, "gdf:dataset", atts, xid);
       need_gdf_closer = 1;
-      ((struct what_frag*)userData)->nesting = 0;
+      frag->nesting = 0;
     }
-  else if (((struct what_frag*)userData)->cop->html && !strcmp(name, "head"))
+  else if (frag->cop->html)
     {
-      fputs("<html xmlns=\"http://www.w3.org/1999/xhtml\">", 
-	    ((struct what_frag*)userData)->fp);
-      printStart(userData, name, atts, xid);
+      if (!strcmp(name, "head"))
+	{
+	  fputs("<!DOCTYPE html>\n<html>",
+		frag->fp);
+	  printStart(userData, name, atts, xid);
+	}
+      else if (!strcmp(name, "body"))
+	{
+	  char *p4pager = set_p4pager(frag->ip);
+	  fprintf(frag->fp, "<body %s>", p4pager);
+	  free(p4pager);
+	  ++frag->nesting;
+	}
     }
   else
     charData_discard();
@@ -214,9 +236,17 @@ printEnd(struct what_frag *frag, const char *name)
       if (frag->cop->html)
 	{
 	  if (!strcmp(name, "head"))
-	    fputs("<body>", frag->fp);
+	    {
+	      /*
+		char *p4pager = set_p4pager(frag->ip);
+		fprintf(frag->fp, "<body %s>", p4pager);
+		free(p4pager);
+	       */
+	    }
+#if 0
 	  else
 	    fputs("</body></html>", frag->fp);
+#endif
 	}
       else
 	{
@@ -261,10 +291,12 @@ printHTMLStart(struct what_frag *frag)
 	      "</script>\n"
 	      );
     }
+  char *p4pager = set_p4pager(frag->ip);
   if (frag->cop->frag_id)
-    fprintf(frag->fp, "</head>\n<body class=\"printHTMLStart\" onload=\"location.hash='%s'\">\n", frag->cop->frag_id);
+    fprintf(frag->fp, "</head>\n<body %s class=\"printHTMLStart\" onload=\"location.hash='%s'\">\n", p4pager, frag->cop->frag_id);
   else
-    fputs("</head>\n<body>\n", frag->fp);
+    fprintf(frag->fp, "</head>\n<body %s>\n", p4pager);
+  free(p4pager);
 }
 
 static void

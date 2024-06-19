@@ -9,7 +9,11 @@ what_html(Isp *ip)
   const char *ext = (!strcmp(ip->what, "score") ? "sxh" : "html");
   char *div = expand(ip->itemdata.proj, ip->item, ext);
   const char *line = NULL, *frag = NULL;
-  struct content_opts *cop = NULL;
+  struct content_opts *cop = content_new_options();
+  cop->echo = 1;
+  cop->hilite_id = line;
+  cop->frag_id = frag;
+  cop->sigs = 1;
 
   if (strcmp(ip->what,"score") && strcmp(ip->lang,"en"))
     {
@@ -19,6 +23,11 @@ what_html(Isp *ip)
       free(div);
       div = tmp;
     }
+  else if (!strcmp(ip->what, "score"))
+    {
+      cop->html = 1;
+    }
+  
 #if 0
   if (query_string && *query_string)
     {
@@ -40,10 +49,5 @@ what_html(Isp *ip)
 #endif
 
   wpx_print_hdr();
-  cop = content_new_options();
-  cop->echo = 1;
-  cop->hilite_id = line;
-  cop->frag_id = frag;
-  cop->sigs = 1;
   return what_content(ip, cop, div);
 }
