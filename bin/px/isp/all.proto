@@ -64,5 +64,8 @@ extern void isp_tmp_dir(Isp *ip);
 extern int isp_xis_list(Isp *ip);
 /* isp_xmd.c */
 extern const char *isp_xmd_outline(Isp *ip);
+/* isp_xtl_list.c */
+extern int isp_xtl_list(Isp *ip);
+extern int isp_is_xtl(Isp *ip);
 /* nth_line.c */
 extern char *nth_line(Isp *ip, const char *file, int lnum, int more);

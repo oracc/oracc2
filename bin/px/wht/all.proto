@@ -13,3 +13,4 @@ extern int what_score(Isp *ip);
 extern int what_sig(Isp *ip);
 /* what_sources.c */
 extern int what_sources(Isp *ip);
+extern void what_sources_setup(Isp *ip);

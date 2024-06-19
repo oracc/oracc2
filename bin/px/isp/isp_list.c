@@ -75,6 +75,8 @@ isp_list_create(Isp *ip)
     }
   else if ('t' == *ip->lloc.type)
     return isp_tis_list(ip);
+  else if (!strcmp(ip->lloc.type, "xtl"))
+    return isp_xtl_list(ip);
   else
     return isp_xis_list(ip);
   return 0;
@@ -163,6 +165,9 @@ int
 isp_list_method(Isp *ip)
 {
   ip->from = "list";
+
+  if (isp_is_xtl(ip))
+    return ip->err ? 1 : 0;
 
   /* Only call isp_list_type if the list doesn't exist in www/lists or
      bld/lists (the latter for precomputation during build process) */

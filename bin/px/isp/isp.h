@@ -9,12 +9,16 @@
 
 struct isp_list_loc
 {
-  const char *type;   /* list type: glo xis tis isp www */
+  const char *type;   /* list type: glo xis tis isp www xtl */
   const char *lang;   /* lang prefix when type = xis */
-  const char *method; /* how to find the list: tis xis file */
+  const char *method; /* how to find the list: tis xis file xtl */
   const char *dbpath; /* dir of dbx for some tis and xis */
   const char *dbname; /* name of dbx for some tis and xis */
-  const char *path;   /* path to file */
+  const char *path;   /* path to file; this should be a list--it is
+			 sometimes a source list which is copied to
+			 the cache and sometimes a list generated into
+			 the cache (including search outputs and xtl
+			 lists) */
 };
 
 struct isp_srchdata
@@ -188,6 +192,7 @@ typedef struct isp
   const char *tmp_dir;
   const char *err;
   const char *errx;
+  int nowhat;
   int force;
   int olev;	    /* outline levels, i.e., number of headings
 		       without any appended designation */

@@ -87,7 +87,7 @@ isp_page_data(Isp *ip)
   /* In item display the item knows its own page/zoom/index but we
      don't precompute the page div because we haven't done
      compute_ranges */
-  if (ip->item)
+  if (ip->item && !strcmp(ip->what, "text"))
     return 0;
 
   set_item_max(ip);

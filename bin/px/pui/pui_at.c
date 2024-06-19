@@ -180,7 +180,7 @@ pui_at_active_items(Isp *ip, FILE *fp)
       else
 	fputs(ip->glosdata.emax, fp);
     }
-  else if (ip->itemdata.tmax)
+  else if (ip->itemdata.tmax && !strcmp(ip->zoom, "0"))
     fputs(ip->itemdata.tmax, fp);
   else
     fputs(itoa(ip->zmax), fp);
@@ -292,6 +292,33 @@ pui_at_srch_results(Isp *ip, FILE *fp)
 }
 
 void
+pui_at_srch_results_matches(Isp *ip, FILE *fp)
+{
+  pui_at_srch_results(ip, fp);
+  if (ip->srchdata.count == 1)
+    fputs(" match", fp);
+  else
+    fputs(" matches", fp);
+}
+
+void
+pui_at_tmax(Isp *ip, FILE *fp)
+{
+  if (ip->itemdata.tmax)
+    fputs(ip->itemdata.tmax, fp);
+}
+
+void
+pui_at_tmax_texts(Isp *ip, FILE *fp)
+{
+  pui_at_tmax(ip, fp);
+  if (ip->itemdata.tmax && !strcmp(ip->itemdata.tmax, "1"))
+    fputs(" Text", fp);
+  else
+    fputs(" Texts", fp);
+}
+
+void
 pui_at_srchterm(Isp *ip, FILE *fp)
 {
   if (ip->srch)
@@ -352,6 +379,12 @@ pui_at_project(Isp *ip, FILE *fp)
 }
 
 void
+pui_at_item_qpqx(Isp *ip, FILE *fp)
+{
+  fprintf(fp, "%s:%s", ip->itemdata.proj, ip->itemdata.item);
+}
+
+void
 pui_at_menu(Isp *ip, FILE *fp)
 {
   if (!ip->srch || ip->srchdata.count != 0L)
@@ -373,11 +406,16 @@ pui_at_menu(Isp *ip, FILE *fp)
 void
 pui_at_content(Isp *ip, FILE *fp)
 {
-  if (ip->item)
+  if (ip->item && !strcmp(ip->what, "text"))
     {
       if (ip->glos)
 	{
 	  if (pui_output(ip, stdout, pui_filetext("p4itemglo.xml")))
+	    longjmp(ip->errjmp, 1);
+	}
+      else if (ip->nowhat)
+	{
+	  if (pui_output(ip, stdout, pui_filetext("p4nowhat.xml")))
 	    longjmp(ip->errjmp, 1);
 	}
       else
@@ -503,4 +541,22 @@ pui_at_select_trans(Isp *ip, FILE *fp)
   else
     xslt_term(xp);
 #endif
+}
+
+void
+pui_at_what_not(Isp *ip, FILE *fp)
+{
+  if (ip->what)
+    {
+      const char *w = ip->what;
+      if (!strcmp(ip->what, "block"))
+	w = "score block";
+      else if (!strcmp(ip->what, "sources"))
+	w = "sources table";
+      fputs(w, fp);
+    }
+  else
+    {
+      fputs("[unknown requested data type]", fp);
+    }
 }

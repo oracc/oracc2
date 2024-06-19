@@ -17,6 +17,7 @@ struct atactionstab;
 "pui_active_pages()", &pui_at_active_pages
 "pui_active_items()", &pui_at_active_items
 "pui_srch_results()", &pui_at_srch_results
+"pui_srch_results_matches()", &pui_at_srch_results_matches
 "pui_ceid()", &pui_at_ceid
 "pui_pager_class()", &pui_at_pager_class
 "pui_pager_data()", &pui_at_pager_data
@@ -31,3 +32,6 @@ struct atactionstab;
 "pui_select_trans()", &pui_at_select_trans
 "pui_item_label()", &pui_at_item_label
 "pui_page_label()", &pui_at_page_label
+"pui_item_qpqx()", &pui_at_item_qpqx
+"pui_tmax()", &pui_at_tmax
+"pui_tmax_texts()", &pui_at_tmax_texts

@@ -83,7 +83,7 @@ main(int argc, char **argv)
 	}
 #endif
     }
-  else if (isp_list_method(ip))
+  else if (!ip->lloc.method && isp_list_method(ip))
     goto error;
 
   if (ip->glos && isp_glos_list(ip))
@@ -98,7 +98,7 @@ main(int argc, char **argv)
 	if (isp_cache_sort(ip))
 	  goto error;
 
-      if (ip->item && (!ip->glos || ip->glosdata.xis))
+      if (ip->item && !strcmp(ip->what, "text") && (!ip->glos || ip->glosdata.xis))
 	{
 	  if (isp_item_set(ip))
 	    goto error;

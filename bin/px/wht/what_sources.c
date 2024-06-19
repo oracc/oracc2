@@ -10,5 +10,34 @@
 int
 what_sources(Isp *ip)
 {
-  return 1;
+  /* 
+   * isp->list_name to the .xtl file
+   * isp->lloc.path to the path to the xtl file
+   * isp->lloc.method to xtl -- this short circuits the isp_list_method call in main
+   */
+  what_sources_setup(ip);
+  ip->from = "list";
+  ip->list_name = pool_alloc(strlen(ip->itemdata.item)+5, ip->p);
+  sprintf(ip->list_name, "%s.xtl", ip->itemdata.item);
+  if (!access(ip->lloc.path, R_OK))
+    {
+      return 0;
+    }
+  else
+    {
+      /* Don't error here; let the process produce the p4pager and
+	 report the issue in the content */
+      ip->nowhat = 1;
+      return 0;
+    }
+  return 1;  
+}
+
+void
+what_sources_setup(Isp *ip)
+{
+  char *xtl = expand(ip->itemdata.proj, ip->itemdata.item, "xtl");
+  ip->lloc.path = pool_copy(xtl, ip->p);
+  ip->lloc.type = "xtl";
+  ip->lloc.method = "xtl";
 }

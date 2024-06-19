@@ -179,7 +179,7 @@ isp_cache_list(Isp *ip)
     }
   else
     {
-      if (ip->force || access(list, R_OK))
+      if (access(list, R_OK))
 	{
 	  if (!access(list, F_OK))
 	    {
@@ -192,6 +192,16 @@ isp_cache_list(Isp *ip)
 	    {
 	      if (!isp_list_create(ip))
 		isp_list_cemd(ip);
+	    }
+	}
+      else
+	{
+	  if (!ip->data)
+	    {
+	      const char *p = ip->lloc.path;
+	      ip->lloc.path = ip->cache.list;
+	      isp_list_cemd(ip);
+	      ip->lloc.path = p;
 	    }
 	}
     }

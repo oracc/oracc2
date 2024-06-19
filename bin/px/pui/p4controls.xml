@@ -21,8 +21,8 @@
 	   alt="Item forward" title="Item forward"
 	   onclick="act_item_next()"/>
 
-      <span id="p4SrchResults" class="p4srchresults" data-tmax="@@pui_active_items()@@" data-rmax="@@pui_srch_results()@@">
-	@@pui_active_items()@@ Texts [@@pui_srch_results()@@ matches]
+      <span id="p4SrchResults" class="p4srchresults" data-tmax="@@pui_tmax()@@" data-rmax="@@pui_srch_results()@@">
+	@@pui_tmax_texts()@@ [@@pui_srch_results_matches()@@]
       </span>
 
       <span id="p4Translations">
