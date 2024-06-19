@@ -10,16 +10,17 @@ set_item_max(Isp *ip)
   if (dp)
     {
       const char *k = dbx_key(dp, ip->zoom, NULL);
-      dbx_term(dp);
       if (k)
 	{
 	  ip->zmax = atoi(k);
+	  dbx_term(dp);
 	  return 0;
 	}
       else
 	{
 	  ip->err = "fatal: item %s not in max db";
 	  ip->errx = ip->zoom;
+	  dbx_term(dp);
 	  return 1;
 	}
     }

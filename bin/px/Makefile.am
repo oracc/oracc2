@@ -1,4 +1,4 @@
-SUBDIRS=iso isp iss pui ice pxr
+SUBDIRS=iso isp iss pui ice pxr wht
 
 include ../../oracc-am-rules.txt
 
@@ -29,12 +29,12 @@ bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxlocalreset.sh cbd-items.sh pxprecompute.sh pxtsvdbs.sh \
 	outline0.sh
 
-px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c sig.c px_score.c $(pxlib)
+px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c $(pxlib)
 
 px_print_ip.c: isp/isp.h mk-isp-print.plx
 	./mk-isp-print.plx
 
-px_LDADD=pui/libpui.la isp/libisp.la pxr/libpxr.la iss/libiss.la iso/libiso.la $(xLDADD) -lxml2 -lxslt -lexslt
+px_LDADD=wht/libwht.la pui/libpui.la isp/libisp.la pxr/libpxr.la iss/libiss.la iso/libiso.la $(xLDADD) -lxml2 -lxslt -lexslt
 
 cbditem_SOURCES=cbditem.c
 cbditem_LDADD=$(xLDADD)

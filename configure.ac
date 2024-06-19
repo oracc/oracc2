@@ -104,6 +104,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/px/iss/Makefile
 		 bin/px/pui/Makefile
 		 bin/px/pxr/Makefile
+		 bin/px/wht/Makefile
 		 bin/qx/Makefile
 		 bin/qx/cat/Makefile
 		 bin/qx/cbd/Makefile

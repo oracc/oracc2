@@ -1,0 +1,9 @@
+include ../../../oracc-am-rules.txt
+
+AM_CPPFLAGS+=-I/usr/include/libxml2
+
+noinst_LTLIBRARIES=libwht.la
+
+libwht_la_SOURCES=all.proto \
+	what.c what_not.c what_sig.c what_score.c	\
+	what_sources.c what_html.c what_content.c

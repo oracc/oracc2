@@ -47,8 +47,6 @@ extern void pr_isp_glosdata(FILE *fp, struct isp_glosdata *pr, const char *name)
 extern void pr_isp_config(FILE *fp, struct isp_config *pr, const char *name);
 extern void px_print_ip(FILE *fp, Isp *ip);
 extern void pr_ispargstab(FILE *fp, struct ispargstab *pr, const char *name);
-/* px_score.c */
-extern int px_score(Isp *ip);
 /* px_validate.c */
 extern const char *fatalize(const char *e);
 extern int px_validate(Isp *ip);

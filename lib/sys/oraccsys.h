@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <glob.h>
 #include <c2types.h>
 #include <hash.h>
 #include <keva.h>
@@ -95,5 +96,7 @@ extern int fcheckf_list (char *fn1, char **fn2s);
 extern off_t fsize (const char *fn, FILE *fp);
 
 extern int file_copy(const char *from, const char *to);
+
+extern int glob_pattern(const char *pat, glob_t *gres);
 
 #endif/*ORACCSYS_H_*/

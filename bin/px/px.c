@@ -30,12 +30,15 @@ main(int argc, char **argv)
   if (px_options(argc, argv, ip))
     goto error;
 
-  /* Ignore any other options and preempt validation; sig() execs on success */
-  if (ip->sig && sig(ip))
-      goto error;
-
-  if (!strcmp(ip->what, "score") && px_score(ip))
-    goto error;
+  if (strcmp(ip->what, "text"))
+    {
+      int res = what(ip);
+      if (res == 2)
+	goto ok;
+      else if (res == 1)
+	goto error;
+      /* else let list processing go ahead */
+    }
   
   if (px_validate(ip))
     goto error;

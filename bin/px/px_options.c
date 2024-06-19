@@ -204,6 +204,7 @@ opts(int opt, const char *arg)
       break;
     case 'S':
       opt_ip->sig = arg;
+      opt_ip->what = "sig";
       break;
     case 'c':
       opt_ip->cemd = arg;

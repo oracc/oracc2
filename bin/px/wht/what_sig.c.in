@@ -1,8 +1,9 @@
 #include <oraccsys.h>
-#include "px.h"
+#include "../px.h"
+#include "what.h"
 
 int
-sig(Isp *ip)
+what_sig(Isp *ip)
 {
   fprintf(stderr, "px: project=`%s'; literal sig=`%s'\n", ip->project, ip->sig);
   execl("@@ORACC@@/bin/wsigx", "wsigx", ip->project, ip->sig, NULL);
