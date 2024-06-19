@@ -114,7 +114,7 @@ isp_cache_sub(Isp *ip)
     {
       /* If args set xis or tmp_dir they also need to reset
 	 opt_ip->list_name to "list" */
-      if (!strcmp(ip->list_name, "outlined.lst"))
+      if (!strcmp(ip->list_name, "outlined.lst") || !strcmp(ip->list_name, "txtindex.lst"))
 	{
 	  ip->cache.use = ip->cache.pub;
 	  char dir[strlen(ip->cache.use)+strlen(ip->list_name)+2];

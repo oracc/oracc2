@@ -5,12 +5,30 @@
 int
 set_item_max(Isp *ip)
 {
-  char m[strlen(ip->cache.sort)+1];
-  strcpy(m, ip->cache.sort);
-  Dbi_index *dp = dbx_init(m, "max");
-  ip->zmax = atoi(dbx_key(dp, ip->zoom, NULL));
-  dbx_term(dp);
-  return 0;
+  const char *maxdir = (ip->cache.txtindex ? ip->cache.txtindex : ip->cache.sort);
+  Dbi_index *dp = dbx_init(maxdir, "max");
+  if (dp)
+    {
+      const char *k = dbx_key(dp, ip->zoom, NULL);
+      dbx_term(dp);
+      if (k)
+	{
+	  ip->zmax = atoi(k);
+	  return 0;
+	}
+      else
+	{
+	  ip->err = "fatal: item %s not in max db";
+	  ip->errx = ip->zoom;
+	  return 1;
+	}
+    }
+  else
+    {
+      ip->err = "fatal: no max db found in %s";
+      ip->errx = maxdir;
+      return 1;
+    }
 }
 
 int

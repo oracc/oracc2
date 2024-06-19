@@ -35,7 +35,8 @@ extern int isp_item_set(Isp *ip);
 extern void isp_list_cemd(Isp *ip);
 extern int isp_list_create(Isp *ip);
 extern int isp_list_dbx(Isp *ip);
-extern int isp_try_web_list(Isp *ip);
+extern int isp_try_bld_list(Isp *ip);
+extern int isp_try_www_list(Isp *ip);
 extern void isp_list_type(Isp *ip);
 extern int isp_list_method(Isp *ip);
 /* isp_page.c */

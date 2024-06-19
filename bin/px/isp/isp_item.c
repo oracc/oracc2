@@ -94,16 +94,38 @@ isp_item_load(Isp *ip)
 
       if (!k)
 	{
+	  /* If current list is outlined.lst and there is also a cache
+	     dir txtindex.lst try that before giving up.  This ensures
+	     that exemplars in projects that have only composites in
+	     outlined.lst will be found when they are accessed via
+	     score blocks */
+	  if (!strcmp(ip->list_name, "outlined.lst"))
+	    {
+	      char t[strlen(ip->cache.sub)+strlen("/1230")];
+	      strcpy(t, ip->cache.sub);
+	      char *slash = strrchr(t, '/');
+	      sprintf(slash+1, "txtindex.lst/123");
+	      if ((dp = dbx_init(t, "itm")))
+		{
+		  k = (char*)pool_copy((ucp)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
+		  dbx_term(dp);
+		  if (k)
+		    {
+		      ip->cache.txtindex = pool_copy(t, ip->p);
+		      goto ok;
+		    }
+		}
+	    }
 	  ip->err = PX_ERROR_START "key %s not found in item db\n";
 	  ip->errx = ip->itemdata.item;
 	  return 1;
 	}
-
+    ok:
       isp_item_undump(k, &ip->itemdata);
       ip->zoom = ip->itemdata.zoom;
       ip->page = ip->itemdata.page;
       if (set_item_max(ip))
-	ip->err = "set_item_max failed";
+	return 1;
     }
   else
     ip->err = (ccp)px_err("failed to open dbi index %s::%s\n", ip->cache.sort, "itm");

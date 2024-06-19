@@ -2,6 +2,14 @@ function getPager() {
     return document.getElementById("p4Pager");
 }
 
+function getData(evt) {
+    if (evt.target.hasAttribute('onclick')) {
+	return evt.target;
+    } else {
+	evt.target.parentElement;
+    }
+}    
+
 function getCurrentPage() {
     return document.getElementById("p4PageNav").getAttribute("data-page");
 }
@@ -232,8 +240,8 @@ function act_item(item) {
 }
 
 function act_iref(evt) {
-    let pager = getPager();
-    pager.setAttribute("data-item", evt.target.getAttribute('data-iref'));
+    getPager().setAttribute("data-item", getData(evt).getAttribute('data-iref'));
+    alert('data-item='+getPager().getAttribute("data-item")+' < '+getData(evt).getAttribute('data-iref'));
     itemLocation();
 }
 

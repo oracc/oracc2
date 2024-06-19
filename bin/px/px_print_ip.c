@@ -52,6 +52,7 @@ pr_isp_cache(FILE *fp, struct isp_cache *pr, const char *name)
   fprintf(fp,"\t\thilite=%s\n",(char*)xmlify((ucp)pr->hilite));
   fprintf(fp,"\t\tpub=%s\n",(char*)xmlify((ucp)pr->pub));
   fprintf(fp,"\t\tuse=%s\n",(char*)xmlify((ucp)pr->use));
+  fprintf(fp,"\t\ttxtindex=%s\n",(char*)xmlify((ucp)pr->txtindex));
   fprintf(fp,"\t\tt_sort=%s\n",(char*)xmlify((ucp)pr->t_sort));
   fprintf(fp,"\t\tt_tsv=%s\n",(char*)xmlify((ucp)pr->t_tsv));
   fprintf(fp,"\t\tt_max=%s\n",(char*)xmlify((ucp)pr->t_max));

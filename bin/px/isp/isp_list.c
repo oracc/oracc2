@@ -96,13 +96,14 @@ isp_list_dbx(Isp *ip)
   return 1;
 }
 
-int
-isp_try_web_list(Isp *ip)
+static int
+isp_try_list(Isp *ip, const char *dir)
 {
-  char path[strlen(ip->oracc)+strlen("/www/")
+  char path[strlen(ip->oracc)+strlen(dir)+2+
 	    +strlen(ip->project)+strlen("/lists/")
 	    +strlen(ip->list_name)];
-  sprintf(path, "%s/www/%s/lists/%s", ip->oracc, ip->project, ip->list_name);
+  sprintf(path, "%s/%s/%s/lists/%s", ip->oracc, dir, ip->project, ip->list_name);
+
   if (!access(path, R_OK))
     {
       ip->lloc.path = (ccp)pool_copy((uccp)path, ip->p);
@@ -113,10 +114,17 @@ isp_try_web_list(Isp *ip)
   return 1;
 }
 
-#if 0
-      if (access(path, R_OK))
-	ip->err = "list file not found in project web lists directory";
-#endif
+int
+isp_try_bld_list(Isp *ip)
+{
+  return isp_try_list(ip, "bld");
+}
+
+int
+isp_try_www_list(Isp *ip)
+{
+  return isp_try_list(ip, "www");
+}
 
 void
 isp_list_type(Isp *ip)
@@ -156,14 +164,15 @@ isp_list_method(Isp *ip)
 {
   ip->from = "list";
 
-  /* Only call isp_list_type if the list doesn't exist in www/lists */
-  if (isp_try_web_list(ip))
+  /* Only call isp_list_type if the list doesn't exist in www/lists or
+     bld/lists (the latter for precomputation during build process) */
+  if (isp_try_www_list(ip) || isp_try_bld_list(ip))
     isp_list_type(ip);
   
   if ('w' == *ip->lloc.type) /* www */
     {
-      if (!ip->lloc.method && isp_try_web_list(ip))
-	ip->err = "list file not found in project web lists directory";
+      if (!ip->lloc.method && isp_try_www_list(ip) && isp_try_bld_list(ip))
+	ip->err = "list file not found in project www or bld lists directories";
       else
 	isp_list_cemd(ip);
     }
