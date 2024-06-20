@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <dbxlib.h>
 #include <xmlify.h>
 #include <runexpat.h>
 #include <xmd.h>
@@ -15,6 +16,7 @@ FILE *f_log;
 extern char *strdup(const char *);
 #endif
 
+extern Dbi_index *prxdp;
 extern const char *xmd_fields, *xmd_widths, *xmd_labels;
 
 extern FILE *f_log;
@@ -630,14 +632,13 @@ main(int argc, char * const*argv)
 	}
       else
 	{
-	  extern Dbi_index *prxdb;
 	  char dbdir[strlen(oracc_builds())+strlen(project)+strlen("/pub/0")];
 	  sprintf(dbdir, "%s/pub/%s", oracc_builds(), project);
 	  if (!dbx_access(dbdir, "prx-cat"))
-	    prxdb = dbx_open(dbdir, "prx-cat");
+	    prxdp = dbx_init(dbdir, "prx-cat");
 	  list_exec(pqs, (void(*)(void*))xmdprinter2);
-	  if (prxdb)
-	    dbi_close(prxdb);
+	  if (prxdp)
+	    dbx_term(prxdp);
 	}
       fputs("</ce:group>", stdout);
       xmd_term();

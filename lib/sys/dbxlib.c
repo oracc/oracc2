@@ -4,7 +4,7 @@
 int
 dbx_access(const char *dir, const char *name)
 {
-  char fn[strlen(dir)+strlen(name)+2];
+  char fn[strlen(dir)+strlen(name)+6];
   sprintf(fn, "%s/%s.dbh", dir, name);
   return access(fn, R_OK);
 }

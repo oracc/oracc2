@@ -21,4 +21,6 @@ struct puifilestab;
 "p4unknown.xml", &p4unknown
 "p4nosrch.xml", &p4nosrch
 "p4full.xml", &p4full
-"p4plus.xml", &p4plus
+"p4back.xml", &p4back
+"p4nowhat.xml", &p4nowhat
+"p4whatnot.xml", &p4whatnot

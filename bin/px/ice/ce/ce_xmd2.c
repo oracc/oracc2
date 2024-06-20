@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <dbxlib.h>
 #include <xmlify.h>
 #include <xmd.h>
 #include <xpd.h>
@@ -31,8 +32,6 @@ const char **field_specs;
 const char **width_specs;
 const char **label_specs;
 List **field_lists;
-
-char *url_base = NULL;
 
 int
 xmd_field_count(void)
@@ -214,8 +213,6 @@ xmdprinter2(const char *pq)
       int i;
       const char *designation = NULL;
       /*const char *icon = NULL, *icon_alt;*/
-      const char *id = NULL;
-      const char *pqx = NULL;
 
       ++nth;
       xmd_init();
@@ -224,8 +221,8 @@ xmdprinter2(const char *pq)
       const char *catproj = NULL;
       const char *textid = NULL;
       const char *textcat = NULL;
-      char xpqx[strlen(prx)+1];      
-      strcpy(xpqx, pqx);
+      char xpqx[strlen(pq)+1];      
+      strcpy(xpqx, pq);
       char *colon = strchr(xpqx, ':');
       if (colon)
 	{
@@ -239,7 +236,7 @@ xmdprinter2(const char *pq)
       if (at)
 	*at++ = '\0';     
       if (prxdp)
-	catproj = dbx_key(prxdp, xpqx, NULL);
+	catproj = dbx_key(prxdp, textid, NULL);
       if (!catproj)
 	{
 	  if (at)
@@ -271,10 +268,9 @@ xmdprinter2(const char *pq)
 	  pqx = pq;
 	}
 #endif
-      if (!url_base)
-	url_base = malloc(strlen(project) + strlen("javascript:act_item('P123456')0"));
-      sprintf(url_base, "javascript:act_item('%s')", pqx);
-
+      char anchor[strlen("<a href=.javascript://..onclick=.act_iref(event)..data-iref=.P123456.0")];
+      sprintf(anchor, "<a href=\"javascript://\" onclick=\"act_iref(event)\" data-iref=\"%s\">", textid);
+      
       if (!in_group)
 	{
 	  in_group = 1;
@@ -283,33 +279,9 @@ xmdprinter2(const char *pq)
 
       fputs("<ce:data><tr xmlns=\"http://www.w3.org/1999/xhtml\">",stdout);
 
-      if ((id = hash_find(fields, (unsigned char *)"id_text")))
-	{
-	  if (*id == 'P')
-	    {
-	      /*icon = "cdli-icon.png";*/
-	      /* url_base = "http://oracc.museum.upenn.edu/%s/cat"; */
-	      /* url_base = "http://cdli.ucla.edu"; */
-	      /*icon_alt = "CDLI catalog";*/
-	    }
-	  else
-	    {
-	      static char projurl[128];
-	      /*icon = "xnum-icon.png";*/
-	      sprintf(projurl, "/%s", project);
-	      /* url_base = "http://oracc.museum.upenn.edu/cat"; */
-	      /*icon_alt = "project catalog";*/
-	    }
-	}
-      else if ((id = hash_find(fields, (unsigned char *)"id_composite")))
-	{
-	  /*icon = "Qcat-icon.png";*/
-	  /* url_base = "http://oracc.museum.upenn.edu/cat"; */
-	  /*icon_alt = "Q catalog";*/
-	}
       fprintf(stdout,
-	      "<td class=\"ce-xmd-icon\"><a href=\"%s\"><img src=\"/img/viewtext.png\" alt=\"View text\"/></a></td>",
-	      url_base);
+	      "<td class=\"ce-xmd-icon\">%s<img src=\"/img/viewtext.png\" alt=\"View text\"/></a></td>",
+	      anchor);
       for (i = 0; width_specs[i]; ++i)
 	{
 	  List *tmp = field_lists[i];
@@ -344,7 +316,7 @@ xmdprinter2(const char *pq)
 	      pct = pctbuf;
 	    }
 	  if (this_is_designation || i < link_fields)
-	    fprintf(stdout, "<td style=\"width: %s\"><a href=\"%s\">%s</a></td>", pct, url_base, xmlify((unsigned char *)value));
+	    fprintf(stdout, "<td style=\"width: %s\">%s%s</a></td>", pct, anchor, xmlify((unsigned char *)value));
 	  else
 	    fprintf(stdout, "<td style=\"width: %s;\">%s</td>", pct, xmlify((unsigned char *)value));
 	}

@@ -228,8 +228,8 @@ function act_article(item) {
 
 function act_isid(evt) {
     let pager = getPager();
-    pager.setAttribute("data-glos", evt.target.getAttribute("data-lang"));
-    pager.setAttribute("data-gxis", evt.target.getAttribute("data-isid"));
+    pager.setAttribute("data-glos", getData(evt).getAttribute("data-lang"));
+    pager.setAttribute("data-gxis", getData(evt).getAttribute("data-isid"));
     pageLocation();    
 }
 
@@ -246,11 +246,11 @@ function act_iref(evt) {
 }
 
 function act_wsig(evt) {
-    // alert('act_wsig evt='+evt+'; evt.target='+evt.target+'; evt.currentTarget='+evt.currentTarget);
+    // alert('act_wsig evt='+evt+'; getData(evt)='+getData(evt)+'; evt.currentTarget='+evt.currentTarget);
     let pager = getPager();
-    let wsig = evt.target.getAttribute('data-wsig');
+    let wsig = getData(evt).getAttribute('data-wsig');
     if (!wsig) {
-	wsig = evt.target.parentElement.getAttribute('data-wsig');
+	wsig = getData(evt).parentElement.getAttribute('data-wsig');
     }
     // alert('wsig='+wsig);
     var esig = encodeURIComponent(wsig);
@@ -263,8 +263,7 @@ function act_block(evt) {
     let pager = getPager();
     let project = pager.getAttribute('data-proj');
     let item = pager.getAttribute('data-item');
-    let block = evt.target.getAttribute('data-bloc')
-	|| evt.target.parentElement.getAttribute('data-bloc');
+    let block = getData(evt).getAttribute('data-bloc');
     let url = '/'+project+'/'+item+'?block='+block;
     // alert('act_block url='+url);
     popup(url,400,600,700,50);

@@ -18,8 +18,9 @@ struct puifilestab
 };
 
 extern const char *p4pager, *p4error, *p4controls, *p4footer, *p4search,
-  *p4icons, *p4html, *p4head, *p4dropdown, *p4debug, *p4debugdiv, *p4itemglo, *p4itemxtf,
-  *p4select, *p4ceselect, *p4unknown, *p4noxtf, *p4nosrch, *p4full, *p4plus, *p4nowhat, *p4whatnot;
+  *p4icons, *p4html, *p4head, *p4dropdown, *p4debug, *p4debugdiv, *p4itemglo,
+  *p4itemxtf, *p4select, *p4ceselect, *p4unknown, *p4noxtf, *p4nosrch,
+  *p4full, *p4plus, *p4nowhat, *p4whatnot, *p4back;
 
 extern const char *pui_filetext(const char *file);
 extern int pui_output(Isp *ip, FILE *fp, const char *s);
