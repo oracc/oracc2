@@ -435,7 +435,7 @@ function qs_add(pager, qs, datum) {
 
 // act_srch is called when the search box changes or is activated and
 // only passes a URL to wx if the srch is new
-function act_srch() {
+function act_srch_sub(toploc) {
     let srch=document.getElementById('p4SrchBox').value;
     if (srch.length == 0) {
 	return;
@@ -450,11 +450,21 @@ function act_srch() {
 	    pager.removeAttribute('data-item');
 	    let srch_url='/'+proj+glos+'?q='+encodeURIComponent(srch);
 	    // alert('srch_url='+srch_url);
-	    window.location = srch_url;
+	    if (toploc) {
+		top.window.location = srch_url;
+	    } else {
+		window.location = srch_url;
+	    }
 	} else {
 	    alert('Srch '+srch+' has not changed');
 	}
     }
+}
+function act_srch() {
+    act_srch_sub(0);
+}
+function act_srchbar() {
+    act_srch_sub(1);
 }
 
 function act_score(event) {
