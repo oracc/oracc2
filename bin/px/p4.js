@@ -612,3 +612,8 @@ showNote(e,nid,trans) {
     }
     return 1;
 }
+
+function viewsBuyBook(buyUrl) {
+    popup(buyUrl,'buyBook',800,900,20,20);
+}
+
