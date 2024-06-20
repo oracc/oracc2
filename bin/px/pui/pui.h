@@ -17,7 +17,7 @@ struct puifilestab
   const char **text;
 };
 
-extern const char *p4pager, *p4error, *p4controls, *p4footer, *p4search,
+extern const char *p4pager, *p4error, *p4controls, *p4footer, *p4search, *p4searchbar,
   *p4icons, *p4html, *p4head, *p4dropdown, *p4debug, *p4debugdiv, *p4itemglo,
   *p4itemxtf, *p4select, *p4ceselect, *p4unknown, *p4noxtf, *p4nosrch,
   *p4full, *p4plus, *p4nowhat, *p4whatnot, *p4back;

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>@@p4head.xml@@</head>
+  <body id="p4Pager" class="@@pui_pager_class()@@"@@pui_pager_data()@@>
+    <div id="p4Header" class="menu banner bborder-bot">
+      <div id="p4SearchBar">
+	<form action="javascript://" onsubmit="act_srchbar()">
+	  <p>
+	    <input id="p4SrchBox" type="text" size="30" value=""/>
+	    <input type="submit" style="display: none"/>
+	    <img id="p4SrchGo" class="p4icon" src="/img/p3-search.png"
+		 alt="Search" title="Search" onclick="act_srchbar()"/>
+	  </p>
+	  <p id="p4SrchChars">(j=ŋ&#xa0;sz=š&#xa0;s,=ṣ&#xa0;t,=ṭ&#xa0;0-9=₀-₉; &apos;=alef)</p>
+	</form>
+      </div>
+    </div>
+  </body>
+</html>

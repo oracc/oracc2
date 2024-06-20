@@ -10,6 +10,7 @@ struct puifilestab;
 "p4footer.xml", &p4footer
 "p4icons.xml", &p4icons
 "p4search.xml", &p4search
+"p4searchbar.xml", &p4searchbar
 "p4html.xml", &p4html
 "p4head.xml", &p4head
 "p4dropdown.xml", &p4dropdown
