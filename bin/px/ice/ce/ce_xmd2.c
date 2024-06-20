@@ -11,6 +11,8 @@
 
 static int nfields = 0, nwidths = 0, nlabels = 0;
 
+Dbi_index *prxdp;
+
 extern int p4;
 
 extern int item_offset, tabbed;
@@ -218,6 +220,37 @@ xmdprinter2(const char *pq)
       ++nth;
       xmd_init();
 
+#if 1
+      const char *catproj = NULL;
+      const char *textid = NULL;
+      const char *textcat = NULL;
+      char xpqx[strlen(prx)+1];      
+      strcpy(xpqx, pqx);
+      char *colon = strchr(xpqx, ':');
+      if (colon)
+	{
+	  textcat = xpqx;
+	  *colon = '\0';
+	  textid = colon+1;
+	}
+      else
+	textid = xpqx;
+      char *at = strchr(xpqx, '@');
+      if (at)
+	*at++ = '\0';     
+      if (prxdp)
+	catproj = dbx_key(prxdp, xpqx, NULL);
+      if (!catproj)
+	{
+	  if (at)
+	    catproj = at;
+	  else if (textcat)
+	    catproj = textcat;
+	  else
+	    catproj = project;
+	}
+      fields = xmd_load(catproj, textid);
+#else
       /* pq is a qualified ID, so use the project from that */
       char *at;
       if ((at = strchr(pq, '@')))
@@ -237,7 +270,7 @@ xmdprinter2(const char *pq)
 	  fields = xmd_load(project, pq);
 	  pqx = pq;
 	}
-
+#endif
       if (!url_base)
 	url_base = malloc(strlen(project) + strlen("javascript:act_item('P123456')0"));
       sprintf(url_base, "javascript:act_item('%s')", pqx);

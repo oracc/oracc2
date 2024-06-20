@@ -629,7 +629,16 @@ main(int argc, char * const*argv)
 	  gdfprinter();
 	}
       else
-	list_exec(pqs, (void(*)(void*))xmdprinter2);
+	{
+	  extern Dbi_index *prxdb;
+	  char dbdir[strlen(oracc_builds())+strlen(project)+strlen("/pub/0")];
+	  sprintf(dbdir, "%s/pub/%s", oracc_builds(), project);
+	  if (!dbx_access(dbdir, "prx-cat"))
+	    prxdb = dbx_open(dbdir, "prx-cat");
+	  list_exec(pqs, (void(*)(void*))xmdprinter2);
+	  if (prxdb)
+	    dbi_close(prxdb);
+	}
       fputs("</ce:group>", stdout);
       xmd_term();
     }

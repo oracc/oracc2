@@ -21,6 +21,10 @@ cut -f1,3 02pub/atf-data.tab | sed 's/@[/a-z0-9]\+//' | grep '	' | sed 's/^.*://
     tee 02pub/trs.tsv | dbix -s -d 02pub -n trs
 cut -d@ -f1 <02pub/atf-data.tab | tr : '	' | rocox -C21 | \
     tee 02pub/prx.tsv | dbix -s -d 02pub -n prx
+prxcatlst=01bld/lists/proxy-cat.lst
+if [ -s $prxcatlst ]; then
+    cut -d: -f2 <$prxcatlst | tr '@' '	' | tee 02pub/prx-cat.tsv | dbix -s -d 02pub -n prx-cat
+fi
 rm -fr 02pub/p4.d
 pxprecompute.sh
 chmod -R o+r 02pub
