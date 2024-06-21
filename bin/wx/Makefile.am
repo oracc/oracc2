@@ -4,7 +4,6 @@ subdirs=ccgi
 
 ## AM_CPPFLAGS=-I@top_srcdir@/lib/include -I@top_srcdir@/lib/{std,sys,xml} -Wall -pedantic
 
-#cgibin_PROGRAMS=oracc-server
 cgibin_PROGRAMS=wx
 
 noinst_SCRIPTS=wx-pub-p4projects.sh
@@ -21,13 +20,13 @@ p4url_LDADD=ccgi/libccgi.la $(xLDADD)
 # content_test_SOURCES=content_test.c content.c runexpat.c
 # content_test_LDADD=ccgi/libccgi.la -lexpat
 
-wx_SOURCES=oracc-server.c or_builtins.c or_stable_uris.c \
+wx_SOURCES=wx.c wx_log.c or_builtins.c or_stable_uris.c \
 	selections.c builtins.c or_response.c or_common.c xmlrpc.c \
 	or_gdf.c or_pqx.c pqx_map.c pqx_h_tab.c ncname.c p3.c listdir.c \
 	sl.c content.c runexpat.c glob.c xff.c oid.c oai.c wx_dbxlib.c px.c \
 	p4projects.c $(p4url_LIB)
 
-wx_LDADD=ccgi/libccgi.la -lexpat $(xLDADD)
+wx_LDADD=ccgi/libccgi.la $(xLDADD)
 
 px.h: px.h.in
 	$(ORACCIFY) px.h.in
@@ -56,8 +55,8 @@ or_gdf.c: or_gdf.c.in
 or_pqx.c: or_pqx.c.in
 	$(ORACCIFY) or_pqx.c.in
 
-oracc-server.c: oracc-server.c.in ccgi/libccgi.la
-	$(ORACCIFY) oracc-server.c.in
+wx.c: wx.c.in ccgi/libccgi.la
+	$(ORACCIFY) wx.c.in
 
 or_response.c: or_response.c.in
 	$(ORACCIFY) or_response.c.in

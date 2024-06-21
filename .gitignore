@@ -34,6 +34,7 @@ bin/px/cbditem
 bin/px/issx
 bin/px/px
 bin/px/wsigx
+bin/px/xfragx
 bin/px/ice/ce/cex
 bin/px/ice/ce/cextfx
 bin/px/ice/pg/pdx
@@ -124,6 +125,7 @@ bin/dx/odo/odo-dir-links.sh
 bin/dx/odo/odo-environment.sh
 bin/dx/osh/osh.c
 bin/ox/cbd-oid-tab.xsl
+bin/px/p4-xmd-div.xsl
 bin/px/sig.c
 bin/px/wsigx.c
 bin/px/ice/pg/ptoq.c
@@ -131,6 +133,8 @@ bin/px/ice/pg/pd.c
 bin/px/ice/pg/pg2.c
 bin/px/ice/pg/sortinfo.c
 bin/px/isp/ispxtf.sh
+bin/px/isp/ispxtl.sh
+bin/px/isp/ispdiv.sh
 bin/qx/qindex.sh
 bin/qx/qindexall.sh
 bin/wx/oai.c
@@ -147,8 +151,9 @@ bin/wx/px.c
 bin/wx/pqx_map.c
 bin/wx/sl.c
 bin/wx/xff.c
+bin/wx/wx.c
+bin/wx/wx_log.c
 bin/wx/xmlrpc.c
-bin/wx/isp/ispdiv.sh
 bin/xx/tis/tisdiv.c
 lib/gvl/oiv.c
 fname.c
@@ -189,6 +194,7 @@ oraxx
 oracc.sed
 
 # temp, junk, and backup files
+01tmp
 *~
 *.bak
 *.dump
@@ -196,6 +202,9 @@ oracc.sed
 configure.scan
 *.tok
 *.tis
+*.dbi
+*.dbh
+*.csi
 
 # Prerequisites
 *.d
