@@ -53,6 +53,8 @@ extern int px_validate(Isp *ip);
 /* s123.c */
 /* selecter.c */
 extern int selecter(const char *file, char *const *ids);
+/* sig.c */
+extern int sig(Isp *ip);
 /* wpx_lib.c */
 extern void wpx_cat_html(const char *form, const char *file);
 extern void wpx_cat_xml(const char *form, const char *file);

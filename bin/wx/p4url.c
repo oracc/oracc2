@@ -11,6 +11,7 @@ static int p4url_is_textid(const char *i);
 static int p4url_q(P4url *p);
 static int p4url_u(P4url *p);
 static int p4url_move_to_qs(P4bits *bp, P4url *p);
+static int p4url_is_urlkey(const char *k);
 
 #undef uc
 #define uc unsigned char
@@ -100,9 +101,16 @@ p4url_u(P4url *p)
 	    {
 	      p->oxid = bits.one;
 	    }
+	  else if (p4url_is_urlkey(bits.one))
+	    {
+	      /* /rimanum/sig is not a glossary; check if bits.one is a urlkey */
+	      bits.bad = bits.one;
+	      bits.one = NULL;
+	      p4url_move_to_qs(&bits, p);
+	    }
 	  else if (p4url_is_glossary(bits.one))
 	    {
-	      p->glossary = bits.one;
+		p->glossary = bits.one;
 	    }
 	  else
 	    {
@@ -117,6 +125,12 @@ p4url_u(P4url *p)
       p->err = "no PROJECT found";
     }
   return p->status;
+}
+
+static int
+p4url_is_urlkey(const char *k)
+{
+  return NULL != urlkeys(k, strlen(k));
 }
 
 static int
@@ -158,7 +172,8 @@ p4url_arg_tok(char *t)
       char *y = x;
       while (*y && '&' != *y && '=' != *y)
 	++y;
-      *y++ = '\0';
+      if (*y)
+	*y++ = '\0';
       ret = x;
       x = y;      
     }
@@ -193,6 +208,11 @@ p4url_q(P4url *p)
 		  p->args[i].value = p4url_arg_tok(NULL);
 		  if (!strcmp(tok, "q"))
 		    p->exe = QX_EXE;
+		}
+	      else if (i && !strcmp(p->args[i-1].option, "what"))
+		{
+		  p->args[i].option = p->args[i-1].value;
+		  p->args[i].value = tok;
 		}
 	      else
 		{

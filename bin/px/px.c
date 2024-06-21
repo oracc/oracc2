@@ -5,6 +5,8 @@
 
 int precomputing = 0;
 
+extern int what(Isp *ip);
+
 static void
 print_hdr(void)
 {

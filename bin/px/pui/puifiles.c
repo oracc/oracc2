@@ -34,9 +34,9 @@
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 20
+#define TOTAL_KEYWORDS 21
 #define MIN_WORD_LENGTH 10
-#define MAX_WORD_LENGTH 14
+#define MAX_WORD_LENGTH 15
 #define MIN_HASH_VALUE 10
 #define MAX_HASH_VALUE 31
 /* maximum key range = 22, duplicates = 0 */
@@ -63,7 +63,7 @@ hash (register const char *str, register size_t len)
       32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
       32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
       32, 32, 32, 32, 32, 32, 32,  0,  5,  5,
-       5,  0, 15, 10, 32, 32, 32, 15, 15, 10,
+       5,  0, 15, 10, 32, 32, 32, 15, 20, 15,
        0,  0, 32, 32,  0,  5, 32, 32, 32, 15,
        5, 32, 32, 32, 32, 32, 32, 32, 32, 32,
       32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
@@ -87,47 +87,48 @@ static struct puifilestab puifiles_wl[] =
   {
     {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
     {""},
-#line 14 "puifiles.g"
+#line 15 "puifiles.g"
     {"p4head.xml", &p4head},
 #line 8 "puifiles.g"
     {"p4error.xml", &p4error},
 #line 10 "puifiles.g"
     {"p4footer.xml", &p4footer},
-#line 26 "puifiles.g"
+#line 27 "puifiles.g"
     {"p4whatnot.xml", &p4whatnot},
 #line 9 "puifiles.g"
     {"p4controls.xml", &p4controls},
-#line 24 "puifiles.g"
+#line 25 "puifiles.g"
     {"p4back.xml", &p4back},
 #line 11 "puifiles.g"
     {"p4icons.xml", &p4icons},
 #line 12 "puifiles.g"
     {"p4search.xml", &p4search},
-#line 19 "puifiles.g"
+#line 20 "puifiles.g"
     {"p4itemxtf.xml", &p4itemxtf},
-#line 15 "puifiles.g"
+#line 16 "puifiles.g"
     {"p4dropdown.xml", &p4dropdown},
 #line 13 "puifiles.g"
-    {"p4html.xml", &p4html},
+    {"p4searchbar.xml", &p4searchbar},
 #line 7 "puifiles.g"
     {"p4pager.xml", &p4pager},
-#line 22 "puifiles.g"
+#line 23 "puifiles.g"
     {"p4nosrch.xml", &p4nosrch},
-#line 18 "puifiles.g"
+#line 19 "puifiles.g"
     {"p4itemglo.xml", &p4itemglo},
     {""},
-#line 23 "puifiles.g"
-    {"p4full.xml", &p4full},
-#line 16 "puifiles.g"
-    {"p4debug.xml", &p4debug},
-#line 25 "puifiles.g"
-    {"p4nowhat.xml", &p4nowhat},
-#line 21 "puifiles.g"
-    {"p4unknown.xml", &p4unknown},
+#line 14 "puifiles.g"
+    {"p4html.xml", &p4html},
 #line 17 "puifiles.g"
+    {"p4debug.xml", &p4debug},
+#line 26 "puifiles.g"
+    {"p4nowhat.xml", &p4nowhat},
+#line 22 "puifiles.g"
+    {"p4unknown.xml", &p4unknown},
+#line 18 "puifiles.g"
     {"p4debugdiv.xml", &p4debugdiv},
-    {""},
-#line 20 "puifiles.g"
+#line 24 "puifiles.g"
+    {"p4full.xml", &p4full},
+#line 21 "puifiles.g"
     {"p4noxtf.xml", &p4noxtf}
   };
 

@@ -99,6 +99,8 @@ main(int argc, char *argv[])
 
       fprintf(stderr, "oracc-resolver: elements[0] = %s; nelements = %d\n", elements[0], nelements);
 
+#if 0
+      /* pager/corpus is moving up to p4url_eval as 'what'; xmlrpc is no longer used */
       if (elements[0] && nelements == 1
 	  && (!strcmp(elements[0], "pager") || !strcmp(elements[0], "corpus")))
 	{
@@ -115,7 +117,12 @@ main(int argc, char *argv[])
 	}
       
       fprintf(stderr, "oracc-resolver: passed pager and xmlrpc\n");
+#endif
 
+#if 0
+      /* This block prepends /or/ to SCRIPT_URI for or_builtins;
+	 p4_or_builtins is now up above and doesn't use this
+	 approach */
       if (elements[0] && builtins(elements[0], strlen(elements[0])))
 	{
 	  char *tmp = malloc(strlen("/or")+strlen(script_url)+2);
@@ -138,6 +145,8 @@ main(int argc, char *argv[])
 	  elements = NULL;
 	  decompose_script_url(script_url);
 	}
+#endif
+
       query_string = getenv("QUERY_STRING");
       unsetenv("SCRIPT_URL");
       unsetenv("QUERY_STRING");
@@ -170,6 +179,8 @@ main(int argc, char *argv[])
 	cat_index_html("/");
     }
 
+#if 0
+  /* This is handled by p4url_eval which passes them as oxid= */
   if ((*elements[0] == 'o' || *elements[0] == 'x')
       && isdigit(elements[0][1]))
     {
@@ -180,9 +191,13 @@ main(int argc, char *argv[])
       if (!elements[0][d])
 	oid(elements[0]);
     }
-  
+#endif
+
+#if 0
+  /* This is handled by p4_or_builtins() above */
   if (!project || !strcmp(elements[0], "or"))
     or_builtins();
+#endif
 
   if (project && strstr(project, "/data/"))
     or_gdf();

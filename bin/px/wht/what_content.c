@@ -141,7 +141,7 @@ content_eH(void *userData, const char *name)
 }
 
 struct content_opts *
-content_new_options(void)
+what_content_init(void)
 {
   return calloc(1, sizeof(struct content_opts));
 }

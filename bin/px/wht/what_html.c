@@ -1,7 +1,8 @@
 #include <oraccsys.h>
 #include "../isp/isp.h"
 #include "../pxdefs.h"
-#include "what_content.h"
+#include "../wpx_lib.h"
+#include "what.h"
 
 int
 what_html(Isp *ip)
@@ -9,7 +10,7 @@ what_html(Isp *ip)
   const char *ext = (!strcmp(ip->what, "score") ? "sxh" : "html");
   char *div = expand(ip->itemdata.proj, ip->item, ext);
   const char *line = NULL, *frag = NULL;
-  struct content_opts *cop = content_new_options();
+  struct content_opts *cop = what_content_init();
   cop->echo = 1;
   cop->hilite_id = line;
   cop->frag_id = frag;

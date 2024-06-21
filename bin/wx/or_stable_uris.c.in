@@ -136,16 +136,7 @@ lng_handler(struct component *components)
       if (elements[1] && is_oid(elements[1]))
 	{
 	  if (p4)
-	    {
-	      pxglossary_article(project, elements[0], elements[1], elements[2]);
-	    }
-	  else
-	    {
-	      if (elements[2] && !strcmp(elements[2], "xml"))
-		glossary_article_xml(elements[0], elements[1]);
-	      else
-		glossary_article(elements[0], elements[1]);
-	    }
+	    pxglossary_article(project, elements[0], elements[1], elements[2]);
 	}
       else if (elements[1])
 	instances(elements[0], elements[1]);
@@ -157,54 +148,7 @@ lng_handler(struct component *components)
 	      pxglossary(project, elements[0]);
 	      return;
 	    }
-	  
-	  char *xis;
-	  if ((xis = strstr(query_string,"xis=")))
-	    {
-	      char *end;
-	      char *zoom = strstr(query_string,"zoom=");
-	      char *page = strstr(query_string,"page=");
-	      xis += 4;
-	      end = xis;
-	      while (*end && '&' != *end)
-		++end;
-	      *end = '\0';
-	      if (zoom)
-		{
-		  zoom += 5;
-		  end = zoom;
-		  while (*end && '&' != *end)
-		    ++end;
-		  if ('&' == *end)
-		    *end = '\0';
-		  p3zoom = zoom;
-		}
-	      else
-		p3zoom = "0";
-	      if (page)
-		{
-		  page += 5;
-		  end = page;
-		  while (*end && '&' != *end)
-		    ++end;
-		  if ('&' == *end)
-		    *end = '\0';
-		  p3page = page;
-		}
-	      else
-		p3page = "1";
-	      if (strlen(xis))
-		p3glossary(elements[0], xis);
-	    }
-	  else
-	    {
-	      char *idx = malloc(strlen(elements[0]) + 5);
-	      sprintf(idx, "cbd/%s", elements[0]);
-	      p3_fake_srch(project, idx, query_string);
-	    }
 	}
-      else
-	p3glossary(elements[0], NULL);
     }
   else
     find(NULL, make_find_phrase("gls", elements[0], 1));
@@ -302,7 +246,6 @@ res_is_list(const char *e)
       e += strlen(e);
       while (e > init && '.' != *--e)
 	;
-#if 1
       if (!strcmp(e, ".tis"))
 	return 1;
       else
@@ -315,18 +258,6 @@ res_is_list(const char *e)
 	  free(lst);
 	  return ret;
 	}
-#else
-      if (*e == 0 || !strcmp(e, ".tis"))
-	{
-	  char *lst = malloc(strlen("@@ORACC@@") + strlen("/www/lists/") + strlen(project)
-				   + strlen(init) + 2);
-	  int ret;
-	  sprintf(lst, "%s/www/%s/lists/%s", "@@ORACC@@", project, init);
-	  ret = !access(lst, R_OK);
-	  free(lst);
-	  return ret;
-	}
-#endif
     }
   return 0;
 }

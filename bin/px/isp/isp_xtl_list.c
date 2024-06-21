@@ -37,8 +37,11 @@ isp_is_xtl(Isp *ip)
   const char *ext;
   if (ip->list_name && (ext = strstr(ip->list_name, ".xtl")) && '\0' == ext[4])
     {
+#if 0
+      /* this should be redundant because it is called in what_sources */
       extern void what_sources_setup(Isp *ip);
       what_sources_setup(ip);
+#endif
       return 1;
     }
   return 0;

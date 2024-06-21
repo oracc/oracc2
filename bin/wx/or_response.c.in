@@ -233,18 +233,7 @@ redirect(char *r)
 void
 list(const char *list)
 {
-#if 1
   pxlist(project, list);
-#else
-  execl("/usr/bin/perl", "perl", "@@ORACC@@/bin/p3-pager.plx", 
-	cgi_arg("project", project),
-	cgi_arg("list", list),
-	cgi_arg("from-uri", "yes"),
-	cgi_arg("mode", mode),
-	NULL);
-  perror("execl failed");
-  exit(1);
-#endif
 }
 
 void

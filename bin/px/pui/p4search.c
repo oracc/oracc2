@@ -1,5 +1,5 @@
 const char *p4search = 
-"<div id=\"p3Search\">\n"
+"<div id=\"p4Search\">\n"
 "  <form action=\"javascript://\" onsubmit=\"act_srch()\">\n"
 "    <p>\n"
 "      <!--Oracc Search:-->\n"
