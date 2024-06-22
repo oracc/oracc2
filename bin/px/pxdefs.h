@@ -24,6 +24,8 @@
 #define PX_PARM_9A	0x0000200 /* AAPI */
 #define PX_PARM_9U	0x0000400 /* UI MODE */
 
+enum px_ret { PX_DONE, PX_CONTINUE, PX_ERROR };
+
 extern int file_copy_lines(const char *from, const char *to, int start, int end);
 extern const char *lang32(const char *l);
 extern const char *px_mesg(const char *wpq, const char *fmt, ...);

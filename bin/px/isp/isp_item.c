@@ -111,7 +111,7 @@ isp_item_load(Isp *ip)
 		  dbx_term(dp);
 		  if (k)
 		    {
-		      ip->cache.txtindex = pool_copy(t, ip->p);
+		      ip->cache.txtindex = (char*)pool_copy((ucp)t, ip->p);
 		      goto ok;
 		    }
 		}

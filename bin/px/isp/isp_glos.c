@@ -38,13 +38,13 @@ isp_glos_pmax(Isp *ip)
 int
 isp_glos_gxis(Isp *ip)
 {
-  const char *gxis_base = ip->glosdata.xis;
   if (ip->force < 2)
     {
 #if 1
       /* cache.sub already has gxis and has been xmkdir'd */
       ip->cache.use = ip->cache.sub;
 #else
+      const char *gxis_base = ip->glosdata.xis;
       char *xcache = (char*)pool_alloc(strlen(ip->cache.sub)+strlen(gxis_base)+2, ip->p);
       sprintf(xcache, "%s/%s", ip->cache.sub, gxis_base);
       struct stat sb;
@@ -273,7 +273,7 @@ etm_db_one_off(Isp *ip, const char *key)
   if (dp)
     {
       if (!(ret = dbx_key(dp, key, NULL)))
-	ip->err = px_err("key %s not in dbi %s/%s", key, pool_copy(ip->glosdata.dir, ip->p), "etm");
+	ip->err = px_err("key %s not in dbi %s/%s", key, pool_copy((ucp)ip->glosdata.dir, ip->p), "etm");
       /* ret is now memory malloc'ed in dbi lib */
       ret = dbi_detach_data(dp, NULL);
       dbx_term(dp);

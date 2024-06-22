@@ -59,8 +59,8 @@ isp_sort_sub(Isp *ip)
       char dir[strlen(ip->cache.out) + strlen(ip->perm) + 3];
       sprintf(dir, "%s/%s", ip->cache.out, ip->perm);
       ip->cache.out = ip->cache.sort = (ccp)pool_copy((ucp)dir, ip->p);
-      ip->cache.t_sort = pool_alloc(strlen(ip->cache.sort)+3, ip->p);
-      sprintf(ip->cache.t_sort, "%s/t", ip->cache.sort);
+      ip->cache.t_sort = (ccp)pool_alloc(strlen(ip->cache.sort)+3, ip->p);
+      sprintf((char*)ip->cache.t_sort, "%s/t", ip->cache.sort);
       ip->cache.t_mol = (ccp)pool_alloc(strlen(ip->cache.t_sort)+10, ip->p);
       sprintf((char*)ip->cache.t_mol, "%s/zoom.mol", ip->cache.t_sort);
     }
@@ -75,7 +75,7 @@ isp_sort_sub(Isp *ip)
 	{
 	  char outd[strlen(ip->cache.project)+strlen(ip->list_name)+strlen(ip->perm)+3];
 	  sprintf(outd, "%s/%s/%s", ip->cache.project, ip->list_name, ip->perm);
-	  ip->cache.out = (ccp)pool_copy(outd, ip->p);
+	  ip->cache.out = (ccp)pool_copy((ucp)outd, ip->p);
 	}
     }
   

@@ -34,10 +34,10 @@ main(int argc, char **argv)
 
   if (strcmp(ip->what, "text")) /* may need || ip->form for text as html */
     {
-      int res = what(ip);
-      if (res == 2)
+      enum px_ret res = what(ip);
+      if (res == PX_DONE)
 	goto ok;
-      else if (res == 1)
+      else if (res == PX_ERROR)
 	goto error;
       /* else let list processing go ahead */
     }

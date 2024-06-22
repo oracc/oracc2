@@ -25,11 +25,12 @@ struct whatfuncstab
   whatfunc *func;
 };
 
-extern whatfunc what_html, what_score, what_sig, what_sources;
+extern whatfunc what_html, what_score, what_sig, what_sources, what_statistics;
 
 extern int what(Isp *ip);
 extern int what_content(Isp *ip, struct content_opts *cop, const char *input);
 extern int what_not(Isp *ip, const char *no);
-struct content_opts *what_content_init(void);
+extern struct content_opts *what_content_init(void);
+extern struct whatfuncstab *whatfuncs (register const char *str, register size_t len);
 
 #endif/*WHAT_H_*/

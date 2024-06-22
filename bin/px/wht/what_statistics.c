@@ -1,9 +1,10 @@
 #include <oraccsys.h>
-#include "../px.h"
+#include "../pxdefs.h"
 #include "what.h"
 
 int
 what_statistics(Isp *ip)
 {
-  return 0;
+  fprintf(stderr, "what statistics\n");
+  return PX_DONE;
 }
