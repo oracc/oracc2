@@ -18,12 +18,18 @@ what_score(Isp *ip)
 		tmp, ip->itemdata.block, NULL);
 	}
       else
-	what_not(ip, "score block");
+	{
+	  what_not(ip, "score block");
+	  return PX_DONE;
+	}      
     }
   else
     {
-      what_html(ip);
+      if (what_html(ip))
+	return PX_ERROR;
+      else
+	return PX_DONE;
     }
-  return 1;
+  return PX_DONE;
 }
 

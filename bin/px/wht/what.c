@@ -7,6 +7,12 @@ what(Isp *ip)
 {
   int ret = 0;
 #if 1
+  if (ip->item || ip->itemdata.item)
+    {
+      if (!ip->itemdata.item)
+	ip->itemdata.item = ip->item;
+      ip->itemdata.proj = isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
+    }
   struct whatfuncstab *w = whatfuncs(ip->what, strlen(ip->what));
   if (w)
     return w->func(ip);
@@ -19,9 +25,6 @@ what(Isp *ip)
   if (!strcmp(ip->what, "sig"))
     ret = what_sig(ip);
   {
-    if (!ip->itemdata.item)
-      ip->itemdata.item = ip->item;
-    ip->itemdata.proj = isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
 
     if (!strcmp(ip->what, "score"))
       ret = what_score(ip);

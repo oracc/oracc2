@@ -23,19 +23,19 @@ what_sources(Isp *ip)
   sprintf((char*)ip->list_name, "%s.xtl", ip->itemdata.item);
   if (!access(ip->lloc.path, R_OK))
     {
-      return 0;
+      return PX_CONTINUE;
     }
   else
     {
       /* Don't error here; let the process produce the p4pager and
 	 report the issue in the content */
       ip->nowhat = 1;
-      return 0;
+      return PX_CONTINUE;
     }
-  return 1;  
+  return PX_ERROR;  
 }
 
-void
+static void
 what_sources_setup(Isp *ip)
 {
   char *xtl = expand(ip->itemdata.proj, ip->itemdata.item, "xtl");
