@@ -4,6 +4,7 @@
 %}
 struct whatfuncstab;
 %%
+cuneify, &what_cuneify
 score, &what_score
 searchbar, &what_searchbar
 sig, &what_sig

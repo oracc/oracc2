@@ -29,7 +29,7 @@ for a in $sorts ; do
     )
 done
 ( cd ${ORACC_BUILDS}/$p/02pub ;
-  for t in prx trs ; do
+  for t in prx prx-cat trs ; do
       if [ -r $t.tsv ]; then
 	  cat $t.tsv | dbix -s -d . -n $t
       fi

@@ -1,0 +1,11 @@
+#include <oraccsys.h>
+#include "../px.h"
+#include "what.h"
+
+int
+what_cuneify(Isp *ip)
+{
+  execl("/bin/sh", "sh", "@@ORACC@@/bin/p4cuneify.sh", ip->itemdata.proj, ip->itemdata.item, NULL);
+  ip->err = "failed to exec p4cuneify.sh";
+  return 1;
+}

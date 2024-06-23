@@ -8,7 +8,7 @@ img_DATA=icons/*.png
 
 bin_PROGRAMS=px cbditem issx wsigx xfragx
 
-scriptdata_DATA=p4-xmd-div.xsl p4-stats-HTML.xsl
+scriptdata_DATA=p4-xmd-div.xsl p4-stats-HTML.xsl p4-cuneify.xsl
 
 pxlib=pxargs.c px_options.c px_validate.c cgiopts.c pxloadfile.c \
 	px_print_ip.c px_file_copy.c cgi_decode_url.c px_mesg.c \
