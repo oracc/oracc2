@@ -18,7 +18,7 @@
     <head>
       <title>Cuneified <xsl:value-of select="/*/@n"/></title>
       <link rel="stylesheet" type="text/css" href="/css/cuneify.css" />
-      <link rel="stylesheet" type="text/css" href="/css/cuneify-{$period}.css" />
+      <link rel="stylesheet" type="text/css" href="/css/fonts.css" />
     </head>
     <body>
       <xsl:apply-templates select="xtf:transliteration|xtf:composite
@@ -75,7 +75,9 @@
 		  <span class="roman">x</span>
 		</xsl:when>
 		<xsl:otherwise>
-		  <xsl:value-of select="@gdl:utf8"/>
+		  <span class="{ancestor-or-self::*[@c][1]/@c}">
+		    <xsl:value-of select="@gdl:utf8"/>
+		  </span>
 		</xsl:otherwise>
 	      </xsl:choose>
 	    </span>
@@ -83,7 +85,7 @@
 	</xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:value-of select="@gdl:utf8"/>
+	<span class="{ancestor-or-self::*[@c][1]/@c}"><xsl:value-of select="@gdl:utf8"/></span>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:if test="contains(@gdl:c,']')"><span class="csquare"><![CDATA[]]></span></xsl:if>
@@ -98,7 +100,9 @@
 
 <xsl:template match="gdl:nonw">
   <xsl:for-each select=".//*[@gdl:utf8]">
-    <xsl:value-of select="@gdl:utf8"/>
+    <span class="{ancestor-or-self::*[@c][1]/@c}">
+      <xsl:value-of select="@gdl:utf8"/>
+    </span>
   </xsl:for-each>
   <xsl:text> </xsl:text>
 </xsl:template>

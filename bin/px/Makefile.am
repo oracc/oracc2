@@ -29,7 +29,7 @@ xfragx_DEPENDENCIES = $(xLDADD)
 bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxentrycounts.sh pxentryindexes.sh p4-mk-cache.sh \
 	pxlocalreset.sh cbd-items.sh pxprecompute.sh pxtsvdbs.sh \
-	outline0.sh
+	outline0.sh p4cuneify.sh
 
 px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c $(pxlib)
 

@@ -1,6 +1,0 @@
-#!/bin/sh
-proj=$1
-item=$2
-font=$3
-path=`pqxpand xtf $proj:$item`
-xsltproc -stringparam font $font @@ORACC@@/lib/scripts/p4-cuneify.xsl $path
