@@ -144,8 +144,8 @@ isp_cache_sub(Isp *ip)
 	    }
 	  else if (ip->srchdata.tmp)
 	    {
-	      char dir[strlen(ip->cache.use)+strlen(ip->srchdata.tmp)+2];
-	      sprintf(dir, "%s/%s", ip->cache.use, ip->srchdata.tmp);
+	      char dir[strlen(ip->cache.use)+strlen(ip->srchdata.list)+2];
+	      sprintf(dir, "%s/%s", ip->cache.use, ip->srchdata.list);
 	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	    }
 	  else

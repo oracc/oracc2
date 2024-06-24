@@ -179,8 +179,8 @@ iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, in
   if (iprev > 0)
     {
       prev = p->p[iprev];
-      colon = strchr(prev, ':');
-      prev = ++colon;
+      if ((colon = strchr(prev, ':')))
+	prev = ++colon;
     }
 
   int inext = i + 1;
@@ -190,8 +190,8 @@ iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, in
   if (inext < p->used)
     {
       next = p->p[inext];
-      colon = strchr(next, ':');
-      next = ++colon;
+      if ((colon = strchr(next, ':')))
+	next = ++colon;
     }
   
   char projbuf[strlen(p->p[i])];

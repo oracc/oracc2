@@ -23,7 +23,7 @@ isp_adhoc(Isp*ip)
 	  ip->srchdata.tmp = (ccp)pool_copy((ucp)buf, ip->p);
 	}
     }
-  ip->cache.use = ip->cache.out = ip->srchdata.tmp;
+  ip->tmp_dir = ip->cache.use = ip->cache.out = ip->srchdata.tmp;
 
   ip->lloc.path = (ccp)pool_alloc(strlen(ip->srchdata.tmp)+strlen("/list0"),ip->p);
   sprintf((char*)ip->lloc.path, "%s/list", ip->srchdata.tmp);

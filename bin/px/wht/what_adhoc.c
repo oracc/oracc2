@@ -3,12 +3,15 @@
 #include "what.h"
 
 int
-what_adhoc(Isp *ip, const char *items)
+what_adhoc(Isp *ip)
 {
+  const char *items = ip->item;
   ip->from = "list";
+  ip->item = NULL;
 
   char *d = (char*)pool_alloc(strlen(ip->cache.project)+strlen(ADHOCTMP)+2, ip->p);
   sprintf(d, "%s/%s", ip->cache.project, ADHOCTMP);
+  char *slash = strrchr(d, '/');
 
   if (!(ip->srchdata.tmp = mkdtemp(d)))
     {
@@ -17,13 +20,8 @@ what_adhoc(Isp *ip, const char *items)
     }
   else
     {
-      ip->cache.sub = ip->tmp_dir = ip->srchdata.tmp;
-      ip->cache.sys = (ccp)pool_copy((ucp)ip->srchdata.tmp, ip->p);
-      char *isd = strstr(ip->cache.sys, "/p4.d/");
-      isd += 5;
-      *isd = '\0';
-      char *slash = strrchr(d,'/');
       ip->srchdata.list = slash+1;
+      ip->srchdata.adhoc = 1;
       ip->list_name = "list";
       ip->lloc.path = (ccp)pool_alloc(strlen(ip->srchdata.tmp)+strlen("/list0"),ip->p);
       sprintf((char*)ip->lloc.path, "%s/list", ip->srchdata.tmp);
@@ -43,6 +41,7 @@ what_adhoc(Isp *ip, const char *items)
 		fputc(*s, fp);
 	      ++s;
 	    }
+	  fputc('\n', fp);
 	  fclose(fp);
 	}
       else

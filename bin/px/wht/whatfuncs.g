@@ -4,6 +4,7 @@
 %}
 struct whatfuncstab;
 %%
+adhoc, &what_adhoc
 cuneify, &what_cuneify
 pdf, &what_pdf
 proofing, &what_proofing

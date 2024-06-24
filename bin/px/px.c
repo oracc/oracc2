@@ -32,6 +32,18 @@ main(int argc, char **argv)
   if (px_options(argc, argv, ip))
     goto error;
 
+  if (px_validate(ip))
+    goto error;
+
+  if (isp_config(ip))
+    goto error;
+
+  if (isp_cache_sys(ip))
+    goto error;
+  
+  if (isp_cache_project(ip))
+    goto error;
+  
   /* what=pager is the default, set in initialization; alternatives
      can be set in the URL */     
   if (strcmp(ip->what, "pager"))
@@ -44,12 +56,6 @@ main(int argc, char **argv)
       /* else let list processing go ahead */
     }
   
-  if (px_validate(ip))
-    goto error;
-
-  if (isp_config(ip))
-    goto error;
-
   /* adhoc lists need to create tmp list and reset ip->part to "page' */
   if ((ip->part && strcmp(ip->part,"page"))
       || (ip->form && !ip->part))
@@ -64,28 +70,21 @@ main(int argc, char **argv)
   
  tryforce:
   
-  if (isp_cache_sys(ip))
-    goto error;
-
-  if (isp_cache_project(ip))
-    goto error;
-  
   if (isp_cache_sub(ip))
     goto error;
 
   if (ip->srchdata.tmp)
     {
-      if (isp_srchdata(ip))
-	goto error;
-#if 0      
-      if (ip->srchdata.count == 0)
+      if (ip->srchdata.adhoc)
 	{
-	  print_hdr();
-	  if (pui_output(ip, stdout, pui_filetext("p4noresults.xml")))
+	  if (isp_adhoc(ip))
 	    goto error;
-	  goto ok;
 	}
-#endif
+      else
+	{
+	  if (isp_srchdata(ip))
+	    goto error;
+	}
     }
   else if (!ip->lloc.method && isp_list_method(ip))
     goto error;

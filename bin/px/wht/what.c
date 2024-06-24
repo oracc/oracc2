@@ -19,7 +19,7 @@ what(Isp *ip)
     return w->func(ip);
   else
     {
-      ip->err = px_err("fatal: unknown 'what' request '%s'\n", ip->what);
+      ip->err = px_err("fatal: unknown 'what' request '%s'", ip->what);
       return PX_ERROR;
     }
 }

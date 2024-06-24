@@ -49,6 +49,8 @@ p4url(P4url *p, const char *u, const char *q)
       if (p4url_u(p))
 	return 1;
     }
+  if (p->adhoc && !p->q)
+    p->q = "adhoc";
   if (p->q)
     if (p4url_q(p))
       return 1;
@@ -196,7 +198,7 @@ p4url_q(P4url *p)
       int i = 0;
       char *qs = p->q;
       const char *tok;
-      int what_index = 0;
+      int what_index = -1;
       while ((tok = p4url_arg_tok(qs)))
 	{
 	  struct urlkeytab *ukey = urlkeys(tok, strlen(tok));
@@ -217,7 +219,9 @@ p4url_q(P4url *p)
 		      p->args[i].value = wkey->option;
 		      what_index = i;
 		    }
-		}		
+		}
+	      else if (!strcmp(ukey->option, "what"))
+		what_index = i;
 	    }
 	  else
 	    {
@@ -248,7 +252,7 @@ p4url_q(P4url *p)
 	}
       if (p->adhoc)
 	{
-	  if (what_index)
+	  if (what_index >= 0)
 	    p->args[what_index].value = "adhoc";
 	  else
 	    {
@@ -302,6 +306,20 @@ p4url_is_textid(const char *i)
 		  else
 		    break;
 		}
+	    }
+	}
+      else if ((dot = strchr(i, ',')))
+	{
+	  while (1)
+	    {
+	      while (isdigit((uc)*i))
+		++i;
+	      if (!*i)
+		return 1;
+	      else if (',' == *i)
+		return 2;
+	      else
+		break;
 	    }
 	}
       else

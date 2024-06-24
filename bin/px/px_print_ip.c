@@ -24,6 +24,7 @@ pr_isp_srchdata(FILE *fp, struct isp_srchdata *pr, const char *name)
   fprintf(fp,"\t\tcount=%lu\n",(unsigned long)pr->count);
   fprintf(fp,"\t\tlist=%s\n",(char*)xmlify((ucp)pr->list));
   fprintf(fp,"\t\tnew=%d\n",(int)pr->new);
+  fprintf(fp,"\t\tadhoc=%d\n",(int)pr->adhoc);
 }
 
 void
