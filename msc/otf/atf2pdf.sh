@@ -12,20 +12,19 @@ if [ "$project" == "" ] || [ "$pqx" == "" ] || [ "$workdir" == "" ]; then
 fi
 
 if [ ! -d $workdir ]; then
-    echo atf2pdf.sh: working directory $workdir needs creating
-    exit 1
+    >&2 echo atf2pdf.sh: working directory $workdir needs creating
+    mkdir -p $workdir || exit 1    
 fi
 
 atffile=`/home/oracc/bin/pqxpand atf $project:$pqx`
 
 if [ ! -r $atffile ]; then
-    echo atf2pdf.sh: ATF file $atffile non-existent or unreadable
+    >&2 echo atf2pdf.sh: ATF file $atffile non-existent or unreadable
     exit 1
 fi
 
-projhyph=`/bin/echo -n $project | tr / -`
-pdfbase="${projhyph}_$pqx.pdf"
-pdffile="$workdir/${projhyph}_$pqx.pdf"
+pdfbase="$pqx.pdf"
+pdffile="$workdir/$pdfbase"
 
 if [ -r $pdffile ]; then
     >&2 echo $0: testing $atffile -nt $pdffile
@@ -45,8 +44,8 @@ wdpid="$workdir/$$"
 mkdir -p $wdpid
 
 if [ ! -d $wdpid ]; then
-    echo atf2pdf.sh: working directory $wdpid needs creating
-    exit 1
+    >&2 echo atf2pdf.sh: working directory $wdpid needs creating
+    mkdir -p $wdpid || exit 1
 fi
 
 PATH=$PATH:/home/oracc/bin ; export PATH

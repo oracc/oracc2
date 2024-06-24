@@ -264,19 +264,8 @@ isp_item_xtf(Isp *ip)
   
   ip->itemdata.xtflang = isp_item_lang(ip);
 
-  if (!ip->itemdata.htmd)
-    {
-      const char *p4cache = getenv("ORACC_P4_CACHE");
-      
-      if (p4cache)
-	{
-	  ip->itemdata.htmd = (ccp)pool_alloc(strlen(p4cache)+5, ip->p);
-	  sprintf((char*)ip->itemdata.htmd, "%s/htm", p4cache);
-	}
-      else
-	ip->itemdata.htmd = "/home/oracc/www/p4.d/htm";
-    }
-
+  isp_htmd(ip);
+	   
   expand_base(ip->itemdata.htmd);
   /* always use host project for xmd, never proxy; cache.item is only used for meta.xml */
   ip->cache.item = (ccp)pool_copy((ucp)expand(ip->project, ip->item, NULL), ip->p);

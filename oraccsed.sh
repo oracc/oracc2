@@ -12,7 +12,11 @@ check_env_or_die ORACC_HOST $ORACC_HOST
 check_env_or_die ORACC_MODE $ORACC_MODE
 check_env_or_die ORACC_USER $ORACC_USER
 
-xetex=`locate xetex | grep xetex$ | grep /bin/`
+if [ "$XETEX" = "" ]; then
+    xetex=`locate xetex | grep xetex$ | grep /bin/`
+else
+    xetex=$XETEX
+fi
 if [ "$xetex" == "" ]; then
     echo "$0: xetex not yet installed"
     TeXLive=missing-texlive
@@ -31,4 +35,5 @@ fi
 
 export ORADMIN TeXLive
 
-. ./oraccenv.sh ; printenv | grep 'ORACC\|ORADMIN\|TeXLive' | sed 's/=/@@#/' | sed 's/^/s#@@/' | sed 's/$/#/' >oracc.sed
+#. ./oraccenv.sh ;
+printenv | grep 'ORACC\|ORADMIN\|TeXLive' | sed 's/=/@@#/' | sed 's/^/s#@@/' | sed 's/$/#/' >oracc.sed

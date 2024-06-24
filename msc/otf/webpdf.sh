@@ -1,9 +1,11 @@
 #!/bin/sh
-pdfdir=/home/oracc/www/pdf
+proj=$1
+item=$2
+htmd=$3
+pdfdir=$htmd
 >&2 echo webpdf.sh building $1 $2 in $pdfdir
 pdf=`/home/oracc/bin/atf2pdf.sh $1 $2 $pdfdir`
 >&2 echo webpdf.sh got PDF file name $pdf
-
 if [ -r $pdf ]; then
     pdfpath=`dirname $pdf`
     pdfbase=`basename $pdf`

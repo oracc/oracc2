@@ -9,9 +9,8 @@ if [ "$project" == "" ] || [ "$pqx" == "" ] || [ "$atffile" == "" ] || [ "$workd
     exit 1
 fi
 
-projhyph=`/bin/echo -n $project | tr / -`
 otfname="$pqx.otf"
-pdfname="${projhyph}_$pqx.pdf"
+pdfname="$pqx.pdf"
 pdfwork="$workdir/$pdfname"
 
 >&2 echo $0: pdf name $pdfwork
