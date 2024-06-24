@@ -198,6 +198,19 @@ p4url_q(P4url *p)
 	    {
 	      p->args[i].option = ukey->option;
 	      p->args[i].value = tok;
+	      if (!strcmp(ukey->option, "form"))
+		{
+		  char Wopt[strlen(tok)+2];
+		  strcpy(Wopt, "W");
+		  strcat(Wopt, tok);
+		  struct urlkeytab *wkey = urlkeys(Wopt, strlen(Wopt));
+		  if (wkey)
+		    {
+		      ++i;
+		      p->args[i].option = "what";
+		      p->args[i].value = wkey->option;
+		    }
+		}		
 	    }
 	  else
 	    {

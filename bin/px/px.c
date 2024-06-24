@@ -32,7 +32,9 @@ main(int argc, char **argv)
   if (px_options(argc, argv, ip))
     goto error;
 
-  if (strcmp(ip->what, "text")) /* may need || ip->form for text as html */
+  /* what=pager is the default, set in initialization; alternatives
+     can be set in the URL */     
+  if (strcmp(ip->what, "pager"))
     {
       enum px_ret res = what(ip);
       if (res == PX_DONE)

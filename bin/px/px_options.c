@@ -107,6 +107,7 @@ opts(int opt, const char *arg)
     case 'B':
       opt_ip->itemdata.block = arg;
       opt_ip->what = "score";
+      opt_ip->form = "block";
       break;
     case 'C':
       opt_ip->cache.sys = arg;
