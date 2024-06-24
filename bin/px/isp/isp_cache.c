@@ -105,7 +105,7 @@ isp_cache_sub(Isp *ip)
       struct stat sb;
       if (stat(ip->cache.sub, &sb) || !S_ISDIR(sb.st_mode))
 	{
-	  ip->err = (ccp)pool_copy((ucp)px_err("isp_cache_sub: srch sub %s not found",
+	  ip->err = (ccp)pool_copy((ucp)px_err("isp_cache_sub: cache sub %s not found",
 					       ip->cache.sub), ip->p);
 	  return 1;
 	}

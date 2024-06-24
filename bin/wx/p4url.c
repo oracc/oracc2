@@ -59,9 +59,10 @@ static int
 p4url_u(P4url *p)
 {
   P4bits bits = { NULL , NULL , NULL , NULL };
-  p4url_is_project(p->u, &bits);
+  p4url_is_project(p->u, &bits);  
   if (bits.project)
     {
+      int ret = 0;
       p->project = bits.project;
       if (bits.two)
 	{
@@ -78,8 +79,10 @@ p4url_u(P4url *p)
 		  p->err = "found good PROJECT and GLOSSARY but bad GLOSSARYID";
 		}
 	    }
-	  else if (p4url_is_textid(bits.one))
+	  else if ((ret = p4url_is_textid(bits.one)))
 	    {
+	      if (2 == ret)
+		p->adhoc = 1;
 	      bits.bad = bits.two;
 	      p->pxid = bits.one;
 	      bits.two = NULL;
@@ -93,8 +96,10 @@ p4url_u(P4url *p)
 	}
       else if (bits.one)
 	{
-	  if (p4url_is_textid(bits.one))
+	  if ((ret = p4url_is_textid(bits.one)))
 	    {
+	      if (2 == ret)
+		p->adhoc = 1;
 	      p->pxid = bits.one;
 	    }
 	  else if (p4url_is_glossaryid(bits.one))
@@ -191,6 +196,7 @@ p4url_q(P4url *p)
       int i = 0;
       char *qs = p->q;
       const char *tok;
+      int what_index = 0;
       while ((tok = p4url_arg_tok(qs)))
 	{
 	  struct urlkeytab *ukey = urlkeys(tok, strlen(tok));
@@ -209,6 +215,7 @@ p4url_q(P4url *p)
 		      ++i;
 		      p->args[i].option = "what";
 		      p->args[i].value = wkey->option;
+		      what_index = i;
 		    }
 		}		
 	    }
@@ -226,6 +233,7 @@ p4url_q(P4url *p)
 		{
 		  p->args[i].option = p->args[i-1].value;
 		  p->args[i].value = tok;
+		  what_index = i;
 		}
 	      else
 		{
@@ -237,6 +245,17 @@ p4url_q(P4url *p)
 	  if (qs)
 	    qs = NULL;
 	  ++i;
+	}
+      if (p->adhoc)
+	{
+	  if (what_index)
+	    p->args[what_index].value = "adhoc";
+	  else
+	    {
+	      p->args[i].option = "what";
+	      p->args[i].value = "adhoc";
+	      ++i;
+	    }
 	}
       p->nargs = i;
     }
@@ -278,6 +297,8 @@ p4url_is_textid(const char *i)
 		    return 1;
 		  else if ('.' == *i)
 		    ++i;
+		  else if (',' == *i)
+		    return 2;
 		  else
 		    break;
 		}

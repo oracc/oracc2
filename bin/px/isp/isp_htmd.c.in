@@ -15,6 +15,6 @@ isp_htmd(Isp *ip)
 	  sprintf((char*)ip->itemdata.htmd, "%s/htm", p4cache);
 	}
       else
-	ip->itemdata.htmd = "/home/oracc/www/p4.d/htm";
+	ip->itemdata.htmd = "@@ORACC@@/www/p4.d/htm";
     }
 }

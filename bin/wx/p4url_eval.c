@@ -5,8 +5,8 @@
 static void
 print_p(P4url *p)
 {
-  fprintf(stderr, "proj=%s; glos=%s; oxid=%s; pxid=%s",
-	  p->project, p->glossary, p->oxid, p->pxid);
+  fprintf(stderr, "proj=%s; glos=%s; oxid=%s; pxid=%s; adhoc=%d",
+	  p->project, p->glossary, p->oxid, p->pxid, p->adhoc);
 }
 
 static void

@@ -1,3 +1,5 @@
+/* isp_adhoc.c */
+extern int isp_adhoc(Isp *ip);
 /* isp_cache.c */
 extern int isp_cache_sys(Isp *ip);
 extern int isp_cache_project(Isp *ip);

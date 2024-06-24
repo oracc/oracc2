@@ -28,6 +28,7 @@ struct isp_srchdata
   long int count;	/* count of results read from tmp/count */
   const char *list;	/* the final tmpdir element which is used for data-list */
   int new;		/* 0 when reusing a search list, 1 when the srch was just done */
+  int adhoc;
 };
 
 struct isp_cache
