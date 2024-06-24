@@ -1,4 +1,3 @@
-SUBDIRS=adm cmd lex sys
+SUBDIRS=adm cmd lex otf sys
 
 #tok
-

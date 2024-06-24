@@ -133,6 +133,7 @@ AC_CONFIG_FILES([Makefile
 		 msc/cmd/config/Makefile
 		 msc/cmd/update/Makefile
 		 msc/lex/Makefile
+		 msc/otf/Makefile
 		 msc/sys/Makefile
                  ])
 AC_OUTPUT

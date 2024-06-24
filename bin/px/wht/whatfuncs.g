@@ -5,6 +5,7 @@
 struct whatfuncstab;
 %%
 cuneify, &what_cuneify
+pdf, &what_pdf
 proofing, &what_proofing
 score, &what_score
 searchbar, &what_searchbar
