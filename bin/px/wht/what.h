@@ -25,7 +25,8 @@ struct whatfuncstab
   whatfunc *func;
 };
 
-extern whatfunc what_cuneify, what_html, what_score, what_searchbar, what_sig, what_statistics, what_text;
+extern whatfunc what_cuneify, what_html, what_proofing, what_score, what_searchbar,
+  what_sig, what_statistics, what_tei, what_text, what_wrapper;
 
 extern int what(Isp *ip);
 extern int what_content(Isp *ip, struct content_opts *cop, const char *input);

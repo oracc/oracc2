@@ -62,7 +62,6 @@ fi
 xsltproc $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml
 if [ $? -eq 0 ]; then
     [ -r $xtf ] || exit 3
-    four=`echo $PQX | head -c4`
     htxh=$metadir/$PQX.txh
     if [ ! -r $htxh ]; then
 	txh=`$oraccbin/pqxpand txh $prox_project:$PQX`

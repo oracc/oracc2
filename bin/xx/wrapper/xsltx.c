@@ -33,8 +33,10 @@ const char *translation;
    lives */
    
 int buildmode = 0;
+int force = 0; /* default is not to remake if the output already exists */
 int no_output = 0;
 int verbose = 0;
+int weboutput = 0;
 
 const char *
 wrapper_last_err(void)
@@ -219,9 +221,28 @@ perfile(struct progtab *proginfo, const char *qpqx, const char *trans)
     }
   else
     out = outfile;
-  const char **parms = params(proginfo, project, trans, htmdir);
-  int res = wrapper(proginfo->sheetpath, parms, in, out);
-  free(in);
+  int res = 0;
+  if (access(out, W_OK) || force)
+    {
+      const char **parms = params(proginfo, project, trans, htmdir);
+      res = wrapper(proginfo->sheetpath, parms, in, out);
+      free(in);
+    }
+  if (weboutput)
+    {
+      fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
+      fflush(stdout);
+      if (!res)
+	execl("/bin/cat", "cat", out, NULL);
+      else
+	fprintf(stdout,
+		"<html><head><title>Wrapper Failure</title></head>"
+		"<body><p>%s failed to turn %s into %s using %s</p></body></html>",
+		proginfo->name, in, out, proginfo->sheetpath);
+      fflush(stdout);
+      perror("execl failed");
+      exit(0);
+    }
   if (!outfile)
     free((void*)out);
   return res;
@@ -261,8 +282,11 @@ main(int argc, char **argv) {
       return 1;
     }
   
-  options(argc, argv, "bi:l:no:p:st:v");
+  options(argc, argv, "bfi:l:no:p:st:vw");
 
+  if (!infile && argv[optind])
+    infile = argv[optind++];
+  
 #if 0
   if (infile)
     {
@@ -321,6 +345,9 @@ opts(int opt, const char *arg)
     case 'b':
       buildmode = 1;
       break;
+    case 'f':
+      force = 1;
+      break;
     case 'i':
       infile = arg;
       break;
@@ -341,6 +368,9 @@ opts(int opt, const char *arg)
       break;
     case 'v':
       verbose = 1;
+      break;
+    case 'w':
+      weboutput = 1;
       break;
     default:
       fprintf(stderr, "%s: unknown option -%c\n", invoke, opt);

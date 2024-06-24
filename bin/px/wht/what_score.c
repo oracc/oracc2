@@ -27,6 +27,7 @@ what_score(Isp *ip)
 		"-p", ip->itemdata.proj,
 		"-i", ip->itemdata.item,
 		tmp, ip->itemdata.block, NULL);
+	  return PX_ERROR;
 	}
       else
 	{

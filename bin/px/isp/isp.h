@@ -183,6 +183,7 @@ typedef struct isp
 		     * pdf, tei so maybe retiring xhmd is best.
 		     */
   const char *what; /* text score block sources */
+  const char *wrap; /* the wrapper program for making form from text, as in progtab.g name field */
   const char *uimd; /* uimode */
   const char *pack; /* packaging type */
   const char *host; /* host page for pack=esp2 */
