@@ -34,9 +34,6 @@ px.h: px.h.in
 ccgi/libccgi.la:
 	(cd ccgi ; make)
 
-install-exec-hook:
-	./wx-pub-p4projects.sh
-
 oai.c: oai.c.in
 	$(ORACCIFY) oai.c.in
 
