@@ -1,4 +1,5 @@
 #include <dx.h>
+#include <string.h>
 
 static char **buf2keys(char *buf, int *n);
 static int dx_status_file(const char *tmpdir);

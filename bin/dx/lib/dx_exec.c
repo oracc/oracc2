@@ -1,4 +1,5 @@
 #include <dx.h>
+#include <string.h>
 
 int wait_seconds = 1;
 

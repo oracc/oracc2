@@ -784,7 +784,8 @@ findlines (struct buffer *buf, struct lines *lines)
 static int
 fraccompare (register const char *a, register const char *b)
 {
-  register tmpa = UCHAR (*a), tmpb = UCHAR (*b);
+  register unsigned char tmpa = UCHAR (*a);
+  register unsigned char tmpb = UCHAR (*b);
 
   if (tmpa == '.' && tmpb == '.')
     {

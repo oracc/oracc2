@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "resolver.h"
+#include "px.h"
 
 const char *mode = "full";
 const char *perlprog = NULL;

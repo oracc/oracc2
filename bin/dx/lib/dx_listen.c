@@ -1,4 +1,5 @@
 #include <dx.h>
+#include <string.h>
 
 #define QLEN 10
 

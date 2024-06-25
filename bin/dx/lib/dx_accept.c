@@ -1,4 +1,5 @@
 #include <dx.h>
+#include <string.h>
 
 #define STALE 30		/* client’s name can’t be older than this (sec) */
 

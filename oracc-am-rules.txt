@@ -75,6 +75,7 @@ all.proto: *.c
 xLDADD=$(top_srcdir)/lib/liboracc2.la
 
 AM_CPPFLAGS=\
+	-I/usr/local/include \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/lib/asl \
 	-I$(top_srcdir)/lib/atf \

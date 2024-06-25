@@ -24,7 +24,8 @@
 #include "rnvxml.h"
 #endif
 
-extern int cbd_flex_debug, cbddebug;
+extern int cbd_flex_debug;
+int cbddebug;
 
 static const char *default_input_method = "tg1";
 

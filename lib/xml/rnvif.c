@@ -91,7 +91,7 @@ rnv_xmsg(void)
     }
   }
   ret = (char*)list_concat(x);
-  list_free(xm,(void(*)(const void*))free);
+  list_free(xm,(void(*)(void*))free);
   return ret;
 }
 
