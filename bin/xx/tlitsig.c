@@ -58,7 +58,7 @@ do_one(char *s)
     {
       s[strlen(s)-1] = '\0';
       saved_deep = gdlsig_depth_mode;
-      gdlsig_depth_mode = arg_depth;
+      gdlsig_depth_mode = 1;
     }
   ++ml.line;
   mesg_init();

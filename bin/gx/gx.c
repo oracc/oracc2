@@ -25,7 +25,12 @@
 #endif
 
 extern int cbd_flex_debug;
+
+#ifdef __APPLE__
 int cbddebug;
+#else
+extern int cbddebug;
+#endif
 
 static const char *default_input_method = "tg1";
 
