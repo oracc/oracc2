@@ -6,7 +6,7 @@ function getData(evt) {
     if (evt.target.hasAttribute('onclick')) {
 	return evt.target;
     } else {
-	evt.target.parentElement;
+	return evt.target.parentElement;
     }
 }    
 

@@ -406,7 +406,7 @@ pui_at_menu(Isp *ip, FILE *fp)
 void
 pui_at_content(Isp *ip, FILE *fp)
 {
-  if (ip->item && !strcmp(ip->what, "text"))
+  if (ip->item/* && !strcmp(ip->what, "text")*/)
     {
       if (ip->glos)
 	{

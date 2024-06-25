@@ -16,6 +16,8 @@ extern const char **http_accept_language(const char *hal);
 extern int main(int argc, char **argv);
 /* lang-3-2.c */
 extern const char *lang32(const char *l);
+/* pxargs.c */
+extern struct ispargstab *pxargs(register const char *str, register size_t len);
 /* px.c */
 extern int main(int argc, char **argv);
 /* px_file_copy.c */
@@ -23,6 +25,10 @@ extern int px_file_copy(Isp *ip, const char *fn, const char *to);
 extern int file_copy_lines(const char *from, const char *to, int start, int end);
 /* px_help.c */
 extern void help(void);
+/* pxloadfile.c */
+extern unsigned char **px_loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **fmem);
+extern unsigned char *px_loadfile_error(void);
+extern unsigned char *px_loadfile(unsigned const char *fname, size_t *nbytes);
 /* px_mesg.c */
 extern const char *px_mesg(const char *wpq, const char *fmt, ...);
 /* px_options.c */
@@ -44,15 +50,11 @@ extern void pr_ispargstab(FILE *fp, struct ispargstab *pr, const char *name);
 /* px_validate.c */
 extern const char *fatalize(const char *e);
 extern int px_validate(Isp *ip);
-/* pxargs.c */
-extern struct ispargstab *pxargs(register const char *str, register size_t len);
-/* pxloadfile.c */
-extern unsigned char **px_loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **fmem);
-extern unsigned char *px_loadfile_error(void);
-extern unsigned char *px_loadfile(unsigned const char *fname, size_t *nbytes);
 /* s123.c */
 /* selecter.c */
 extern int selecter(const char *file, char *const *ids);
+/* sig.c */
+extern int sig(Isp *ip);
 /* wpx_lib.c */
 extern void wpx_cat_html(const char *form, const char *file);
 extern void wpx_cat_xml(const char *form, const char *file);
@@ -67,6 +69,7 @@ extern void wpx_print_hdr_json(void);
 extern void wpx_print_hdr_pdf(const char *pname);
 extern void wpx_print_hdr_zip(const char *zname);
 /* wsigx.c */
+extern char *CGI_decode_url(const char *p);
 extern int main(int argc, char **argv);
 extern void help(void);
 /* xfragx.c */

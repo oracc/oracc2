@@ -13,6 +13,8 @@ static int p4url_u(P4url *p);
 static int p4url_move_to_qs(P4bits *bp, P4url *p);
 static int p4url_is_urlkey(const char *k);
 
+static int p4url_arg_equals = 0;
+
 #undef uc
 #define uc unsigned char
 
@@ -171,6 +173,7 @@ p4url_arg_tok(char *t)
 {
   static char *x = NULL;
   char *ret = NULL;
+  p4url_arg_equals = 0;
   if (t)
     x = t;
   if (*x)
@@ -180,7 +183,11 @@ p4url_arg_tok(char *t)
       while (*y && '&' != *y && '=' != *y)
 	++y;
       if (*y)
-	*y++ = '\0';
+	{
+	  if ('=' == *y)
+	    p4url_arg_equals = 1;
+	  *y++ = '\0';
+	}
       ret = x;
       x = y;      
     }
@@ -206,6 +213,7 @@ p4url_q(P4url *p)
 	    {
 	      p->args[i].option = ukey->option;
 	      p->args[i].value = tok;
+	      
 	      if (!strcmp(ukey->option, "form"))
 		{
 		  char Wopt[strlen(tok)+2];
@@ -222,6 +230,13 @@ p4url_q(P4url *p)
 		}
 	      else if (!strcmp(ukey->option, "what"))
 		what_index = i;
+
+	      if (p4url_arg_equals)
+		{
+		  ++i;
+		  p->args[i].option = ukey->name;
+		  p->args[i].value = p4url_arg_tok(NULL);
+		}
 	    }
 	  else
 	    {

@@ -101,7 +101,7 @@ main(int argc, char **argv)
 	if (isp_cache_sort(ip))
 	  goto error;
 
-      if (ip->item && !strcmp(ip->what, "text") && (!ip->glos || ip->glosdata.xis))
+      if (ip->item /*&& !strcmp(ip->what, "text")*/ && (!ip->glos || ip->glosdata.xis))
 	{
 	  if (isp_item_set(ip))
 	    goto error;
