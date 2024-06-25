@@ -58,7 +58,7 @@ main(int argc, char **argv)
   
   /* adhoc lists need to create tmp list and reset ip->part to "page' */
   if ((ip->part && strcmp(ip->part,"page"))
-      || (ip->form && !ip->part))
+      || (!strcmp(ip->what, "text") && ip->form && !ip->part))
     {
       ip->from = "url";
       
@@ -101,7 +101,7 @@ main(int argc, char **argv)
 	if (isp_cache_sort(ip))
 	  goto error;
 
-      if (ip->item /*&& !strcmp(ip->what, "text")*/ && (!ip->glos || ip->glosdata.xis))
+      if (ip->item /*&& strcmp(ip->what, "pager")*/ && (!ip->glos || ip->glosdata.xis))
 	{
 	  if (isp_item_set(ip))
 	    goto error;

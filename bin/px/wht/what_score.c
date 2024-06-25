@@ -49,7 +49,9 @@ static int
 what_sources(Isp *ip)
 {
   what_sources_setup(ip);
+  ip->what = "pager";
   ip->from = "list";
+  ip->item = NULL;
   ip->list_name = (ccp)pool_alloc(strlen(ip->itemdata.item)+5, ip->p);
   sprintf((char*)ip->list_name, "%s.xtl", ip->itemdata.item);
   if (!access(ip->lloc.path, R_OK))

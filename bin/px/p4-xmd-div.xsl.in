@@ -150,9 +150,9 @@
 
   <xsl:if test="/*/md:cat/md:has-score[.='1']">
     <li><a href="javascript://" onclick="act_score(event)">Score</a></li>
-  </xsl:if>
-  <xsl:if test="/*/md:cat/md:has-sources[.='1']">
-    <li><a href="javascript://" onclick="act_sources(event)">Sources table</a></li>
+    <xsl:if test="/*/md:cat/md:has-sources[.='1']">
+      <li><a href="javascript://" onclick="act_sources(event)">Sources table</a></li>
+    </xsl:if>
   </xsl:if>
 
   <xsl:if test="$views-cuneify='true'">

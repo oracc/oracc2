@@ -5,6 +5,17 @@
 int
 what(Isp *ip)
 {
+  /* If the score block is a ref out from a witness to the score,
+     reset ip->item to be the score not the witness before we get
+     itemdata */
+  if (ip->form && !strcmp(ip->form, "block") && ip->item && !strstr(ip->item, ip->itemdata.block))
+    {
+      char *b = (char*)pool_copy((ucp)ip->itemdata.block+3, ip->p);
+      ip->item = b;
+      b = strchr(b, '.');
+      *b = '\0';
+    }
+  
   if (ip->item || ip->itemdata.item)
     {
       if (!ip->itemdata.item)

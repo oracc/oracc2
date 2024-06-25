@@ -10,9 +10,7 @@
 	@@p4icons.xml@@
       </span>
     </p>
-    <div id="p4Search">
-      @@p4search.xml@@
-    </div>
+    @@p4search.xml@@
     <div id="p4Controls">
       @@p4controls.xml@@
     </div>
