@@ -53,6 +53,8 @@ extern int px_validate(Isp *ip);
 /* s123.c */
 /* selecter.c */
 extern int selecter(const char *file, char *const *ids);
+/* sig.c */
+extern int sig(Isp *ip);
 /* sigmap.c */
 extern int sigmap_item(Isp *ip);
 /* wpx_lib.c */

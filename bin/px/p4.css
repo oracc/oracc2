@@ -148,6 +148,8 @@ table.xmd td { padding-top: 3px; padding-bottom: 3px; padding-left: 2px; padding
 
 /* General CSS */
 
+h1 { font-size: 100%; }
+
 a         { text-decoration: none; }
 a:link[href]    { color: blue; }
 a:visited { color: #939; }
@@ -172,7 +174,6 @@ span.xlabel { font-family: arial,sans-serif; font-size: 70%; }
 span.uncertain { font-style: italic; }
 
 span.foreign { font-style: italic; }
-
 
 
 /* CE CSS */
@@ -201,6 +202,11 @@ table.kwic { width: 100%; }
 }
 
 .all-letters { text-decoration: underline; }
+p.toc-entry { margin: 0px; padding: 0px; padding-bottom: 4px; text-align: center; }
+.all-letters { text-decoration: underline; line-height: 120%; }
+.summaries div { width: 700px; margin: auto; }
+.summaries .toc { text-align: center; }
+.summaries h1 { text-align: left; }
 
 p.summary {
     margin-left: 1.1em;
