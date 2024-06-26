@@ -35,3 +35,4 @@ struct atactionstab;
 "pui_item_qpqx()", &pui_at_item_qpqx
 "pui_tmax()", &pui_at_tmax
 "pui_tmax_texts()", &pui_at_tmax_texts
+"pui_article()", &pui_at_article

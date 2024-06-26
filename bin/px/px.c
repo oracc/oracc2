@@ -21,8 +21,12 @@ print_hdr(void)
 int
 main(int argc, char **argv)
 {
-  mesg_init();
+  char *locale = NULL;
+  if (!(locale = setlocale(LC_ALL, ORACC_LOCALE)))
+    fprintf(stderr, "setlocale(LC_ALL, \"en_GB\") failed\n");
   
+  mesg_init();
+
   Isp *ip = isp_init();
 
   const char *hal = getenv("HTTP_ACCEPT_LANGUAGE");
@@ -67,6 +71,9 @@ main(int argc, char **argv)
       else
 	goto ok;
     }
+
+  if (ip->srchdata.tmp)
+    (void)isp_srch_tmp(ip);
   
  tryforce:
   

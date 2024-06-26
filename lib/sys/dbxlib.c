@@ -24,7 +24,7 @@ dbx_term(Dbi_index *dbi)
 {
   dbi_close(dbi);
 }
-	 
+
 const void *
 dbx_key(Dbi_index *dbi, const char *key, Unsigned32 *n)
 {
@@ -39,6 +39,23 @@ dbx_key(Dbi_index *dbi, const char *key, Unsigned32 *n)
 	}
     }
   return NULL;
+}
+
+const void *
+dbx_one_off(const char *dir, const char *name, const char *key, Unsigned32 *n)
+{
+  Dbi_index *dp = dbx_init(dir, name);
+  const void *ret = NULL;
+  if (dp)
+    {
+      if (!(ret = dbx_key(dp, key, n)))
+	fprintf(stderr, "dbx: key %s not in %s/%s\n", key, dir, name);
+      ret = dbi_detach_data(dp, NULL);
+      dbx_term(dp);
+    }
+  else
+    fprintf(stderr, "dbx: failed to open %s/%s\n", dir, name);
+  return ret;
 }
 
 void

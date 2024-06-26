@@ -232,7 +232,7 @@ px_validate(Isp *ip)
   if (ip->itemdata.block)
     {
       int block_id_ok = 0;
-      const unsigned char *q = ip->itemdata.block;
+      const unsigned char *q = (ucp)ip->itemdata.block;
       if (q[0] == 's' && q[1] == 'b' && q[2] == '.')
 	{
 	  q += 3;

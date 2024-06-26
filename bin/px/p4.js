@@ -3,19 +3,31 @@ function getPager() {
 }
 
 function getData(evt) {
-    if (evt.target.hasAttribute('onclick')) {
-	return evt.target;
-    } else {
-	return evt.target.parentElement;
+    let n = evt.target;
+    while (!n.hasAttribute('onclick')) {
+	n = n.parentElement;
     }
-}    
+    return n;
+}
+
+function getPageNav() {
+    return document.getElementById("p4PageNav");
+}
 
 function getCurrentPage() {
-    return document.getElementById("p4PageNav").getAttribute("data-page");
+    let nav = getPageNav();
+    if (nav) {
+	return nav.getAttribute("data-page");
+    }  else {
+	return "1";
+    }
 }
 
 function setCurrentPage(p) {
-    document.getElementById("p4PageNav").setAttribute('data-page', p);
+    let nav = getPageNav();
+    if (nav) {
+	nav.setAttribute('data-page', p);
+    }
 }
 
 function getCurrentPmax() {
@@ -230,7 +242,7 @@ function act_isid(evt) {
     let pager = getPager();
     pager.setAttribute("data-glos", getData(evt).getAttribute("data-lang"));
     pager.setAttribute("data-gxis", getData(evt).getAttribute("data-isid"));
-    pageLocation();    
+    pageLocation();
 }
 
 function act_item(item) {

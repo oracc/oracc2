@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include "px.h"
 #include "p4url.h"
+#include "ccgi/ccgi.h"
 
 typedef struct p4bits { const char *project; const char *one; const char *two; const char *bad; } P4bits;
 
@@ -191,7 +192,7 @@ p4url_arg_tok(char *t)
       ret = x;
       x = y;      
     }
-  return ret;
+  return CGI_decode_url(ret);
 }
 
 static int

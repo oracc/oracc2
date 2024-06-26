@@ -12,7 +12,7 @@ scriptdata_DATA=p4-xmd-div.xsl p4-stats-HTML.xsl p4-cuneify.xsl p4-proofing.xsl
 
 pxlib=pxargs.c px_options.c px_validate.c cgiopts.c pxloadfile.c \
 	px_print_ip.c px_file_copy.c cgi_decode_url.c px_mesg.c \
-	lang-3-2.c px_help.c s123.c
+	lang-3-2.c px_help.c s123.c sigmap.c
 
 issx_SOURCES=issx.c $(pxlib)
 issx_LDADD = isp/libisp.la wht/libwht.la iss/libiss.la iso/libiso.la $(xLDADD)

@@ -2,6 +2,7 @@
 #include "px.h"
 
 static Isp *opt_ip;
+static const char *skip_bio(const char *);
 
 /* This belongs in isp_sort or isp_perm */
 int
@@ -207,7 +208,7 @@ opts(int opt, const char *arg)
       opt_ip->psiz = arg;
       break;
     case 'S':
-      opt_ip->sig = arg;
+      opt_ip->sig = skip_bio(arg);
       opt_ip->what = "sig";
       break;
     case 'c':
@@ -247,4 +248,16 @@ opts(int opt, const char *arg)
       return 1;
     }
   return 0;
+}
+
+static const char *
+skip_bio(const char *s)
+{
+  const unsigned char *u = (uccp)s;
+  unsigned int bio[] = { 0xE2 , 0x98 , 0xA3 };
+  
+  if (bio[0] == u[0] && bio[1] == u[1] && bio[2] == u[2])
+    return s + 3;
+  else
+    return s;
 }

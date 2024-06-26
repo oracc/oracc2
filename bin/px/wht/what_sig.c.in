@@ -2,6 +2,23 @@
 #include "../px.h"
 #include "what.h"
 
+#if 1
+int
+what_sig(Isp *ip)
+{
+  if (!sigmap_item(ip))
+    {
+      ip->data = "dglo";
+      ip->from = "sig";
+      ip->item = ip->glosdata.ent;
+      wpx_print_hdr();
+      pui_output(ip, stdout, pui_filetext("p4article.xml"));
+      return PX_DONE;
+    }
+  else
+    return PX_ERROR;
+}
+#else
 int
 what_sig(Isp *ip)
 {
@@ -10,3 +27,4 @@ what_sig(Isp *ip)
   ip->err = "failed to exec wsigx";
   return 1;
 }
+#endif

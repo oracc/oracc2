@@ -4,16 +4,21 @@ if [ "$1" != "01bld/*/summaries.xml" ]; then
     for a in $* ; do
 	d=`dirname $a`
 	g=`basename $d`
-	cbditem $a | tee 01tmp/$g.etm | dbix -d 02pub/cbd/$g -n etm -s
+	cbditem $a | tee 02pub/cbd/$g/etm.tsv | dbix -d 02pub/cbd/$g -n etm -s
+	cp -a 02www/cbd/$g/$g.map 02pub/cbd/$g/map.tsv
+	dbix -d 02pub/cbd/$g -n map 02pub/cbd/$g/map.tsv
+	chmod -R o+r 02pub/cbd/$g
     done
-    rm -f 01tmp/qpn-x-*.etm
-    rm -f 01tmp/oxid.tab
-    set 01tmp/*.etm
-    if [ "$1" != "01tmp/*.etm" ]; then
-	for a in 01tmp/*.etm ; do
+    rm -f 02pub/cbd//qpn-x-*/etm.tab
+    oxidtab=02pub/cbd/oxid.tsv
+    rm -f $oxidtab
+    set 02pub/cbd/*/etm.tsv
+    if [ "$1" != "02pub/cbd/*/etm.tab" ]; then
+	for a in $* ; do
 	    g=`basename $a .etm`
-	    cut -f1 $a | sed "s/$/	$g/" >>01tmp/oxid.tab
+	    cut -f1 $a | sed "s/$/	$g/" >>$oxidtab
 	done
-	dbix -d 02pub/cbd -n oxid 01tmp/oxid.tab
+	dbix -d 02pub/cbd -n oxid $oxidtab
+	chmod o+r 02pub/cbd/*
     fi
 fi

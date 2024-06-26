@@ -461,6 +461,13 @@ pui_at_item_data(Isp *ip, FILE *fp)
 }
 
 void
+pui_at_article(Isp *ip, FILE *fp)
+{
+  fflush(fp);
+  isp_glos_entry(ip);
+}
+
+void
 pui_at_select_ce(Isp *ip, FILE *fp)
 {
   const char *params[] = { "select", "'line'", NULL };

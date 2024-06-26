@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html>
+  <head>@@p4head.xml@@</head>
+  <body id="p4Pager" class="@@pui_pager_class()@@"@@pui_pager_data()@@>
+    @@pui_article()@@
+  </body>
+</html>
