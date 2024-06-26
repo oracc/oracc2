@@ -213,7 +213,10 @@ p4url_q(P4url *p)
 	  if (ukey)
 	    {
 	      p->args[i].option = ukey->option;
-	      p->args[i].value = tok;
+	      if (!strcmp(tok, "corpus"))
+		p->args[i].value = "pager";
+	      else
+		p->args[i].value = tok;
 	      
 	      if (!strcmp(ukey->option, "form"))
 		{
