@@ -12,7 +12,11 @@ isp_srch_tmp(Isp *ip)
       if (ip->glos)
 	{
 	  char buf[strlen(ip->cache.project)+strlen(ip->glos)+strlen(ip->srchdata.tmp)+3];
+#if 1
+	  sprintf(buf, "%s/%s", ip->cache.project, ip->srchdata.tmp);
+#else
 	  sprintf(buf, "%s/%s/%s", ip->cache.project, ip->glos, ip->srchdata.tmp);
+#endif
 	  ip->srchdata.tmp = (ccp)pool_copy((ucp)buf, ip->p);
 	}
       else

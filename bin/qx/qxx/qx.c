@@ -16,18 +16,22 @@ cache_sub(struct qxdata *qp)
   if (!cache)
     cache = "";
   int len = strlen(cache)+strlen(oracc_builds())+strlen("/www/p4.d/0")+strlen(qp->project);
+#if 0
   if (qp->glos)
     len += strlen(qp->glos)+strlen("//");
+#endif
   char *p = (char*)pool_alloc(len, qp->p);
   if (cache && *cache)
     sprintf(p, "%s/%s", cache, qp->project);
   else
     sprintf(p, "%s/www/p4.d/%s", oracc_builds(), qp->project);
+#if 0
   if (qp->glos)
     {
       strcat(p, "/");
       strcat(p, qp->glos);
     }
+#endif
   return p;
 }	  
 
