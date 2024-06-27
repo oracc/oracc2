@@ -21,18 +21,36 @@ p=`oraccopt`
 for a in $sorts ; do
     ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ;
       for t in itm max ; do
-	  cat $t.tsv | dbix -s -d . -n $t
+	  dbix -s -d . -n $t <$t.tsv
       done
       for t in pag ; do
 	  tx -t $t.tsv
       done
     )
 done
+
 ( cd ${ORACC_BUILDS}/$p/02pub ;
   for t in prx prx-cat trs ; do
       if [ -r $t.tsv ]; then
-	  cat $t.tsv | dbix -s -d . -n $t
+	  dbix -s -d . -n $t <$t.tsv
       fi
   done
 )
+
+( cd ${ORACC_BUILDS}/$p/02pub/cbd ;
+  if [ -r oxid.tsv ]; then
+      dbix -s -d . -n oxid <oxid.tsv
+  fi
+  for elst in */entry_ids.lst ; do
+      l=`dirname $elst`
+      (cd $l ;
+       for t in etm map ; do
+	   if [ -r $t.tsv ]; then
+	       dbix -s -d . -n $t <$t.tsv
+	   fi
+       done
+       )
+  done
+)
+      
 chmod -R o+r ${ORACC_BUILDS}/$p/02pub
