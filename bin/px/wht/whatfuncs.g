@@ -6,6 +6,7 @@ struct whatfuncstab;
 %%
 adhoc, &what_adhoc
 cuneify, &what_cuneify
+html, &what_html
 pdf, &what_pdf
 proofing, &what_proofing
 score, &what_score
