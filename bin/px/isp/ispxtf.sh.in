@@ -18,6 +18,9 @@
 #	2 no XMD--text not in project
 #	3 no XTF--transliteration not available
 #
+
+>&2 echo $0 $*
+
 oraccbin=@@ORACC_BUILDS@@/bin
 host_project=$1
 prox_project=$2
@@ -30,12 +33,14 @@ htmldir=$6
 xmdotl=$7
 cachedir=$8
 
-errlog=$cachedir/err.log
-rm -f $errlog
->&2 echo $0: args=$*
-echo $0: transferring error logging to $errlog >&2
-exec 2>$errlog
-echo $0 $* >&2
+if [ "$cachedir" != "" ]; then
+    errlog=$cachedir/err.log
+    rm -f $errlog
+    >&2 echo $0: args=$*
+    echo $0: transferring error logging to $errlog >&2
+    exec 2>$errlog
+    echo $0 $* >&2
+fi
 
 xtl=`$oraccbin/pqxpand xtl $xtlproject:$PQX`
 projarg="-param project '$prox_project'"

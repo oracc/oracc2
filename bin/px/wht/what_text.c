@@ -7,7 +7,7 @@ what_text(Isp *ip)
 {
   if (!ip->form)
     ip->form = "html";
-  
+
   struct whatfuncstab *w = whatfuncs(ip->form, strlen(ip->form));
   if (w)
     return w->func(ip);

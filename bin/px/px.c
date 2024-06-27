@@ -57,9 +57,10 @@ main(int argc, char **argv)
 	goto ok;
       else if (res == PX_ERROR)
 	goto error;
-      /* else let list processing go ahead */
+      /* else PX_CONTINUE return means let list processing go ahead */
     }
-  
+
+#if 0
   /* adhoc lists need to create tmp list and reset ip->part to "page' */
   if ((ip->part && strcmp(ip->part,"page"))
       || (!strcmp(ip->what, "text") && ip->form && !ip->part))
@@ -71,6 +72,7 @@ main(int argc, char **argv)
       else
 	goto ok;
     }
+#endif
 
   if (ip->srchdata.tmp)
     (void)isp_srch_tmp(ip);

@@ -242,6 +242,7 @@ isp_item_lang(Isp *ip)
 int
 isp_item_xtf(Isp *ip)
 {
+#if 0
   if (ip->item_replace)
     {
       ip->itemdata.proj = (ccp)pool_copy((ucp)ip->item_replace, ip->p);
@@ -253,6 +254,23 @@ isp_item_xtf(Isp *ip)
     }
   else
     {
+#else
+      if (!ip->itemdata.xmdxsl)
+	if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
+	  return 1;
+
+      ip->itemdata.bld = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project,
+				ip->itemdata.item, NULL);
+      struct stat st;
+      stat(ip->itemdata.bld, &st);
+      if (!S_ISDIR(st.st_mode))
+	{
+	  ip->err = PX_ERROR_START "item bld directory %s not found or not readable\n";
+	  ip->errx = ip->itemdata.bld ? ip->itemdata.bld : "(null)";
+	  return 1;
+	}
+      
+
       /* prx db is created from atf-data.tab and contains entries for
 	 all texts, not only proxied ones */
       ip->itemdata.proj =
@@ -260,7 +278,8 @@ isp_item_xtf(Isp *ip)
       /* This can error but we keep going anyway because if there's no
 	 ATF but the text is in the catalogue we want to go ahead and
 	 create meta.xml */
-    }
+#endif
+      /*}*/
   
   ip->itemdata.xtflang = isp_item_lang(ip);
 
@@ -312,20 +331,6 @@ isp_item_set(Isp *ip)
   /* This implementation doesn't support creating an unzoomed pager from an item yet */
   ip->zoom = ip->itemdata.zoom;
   ip->page = ip->itemdata.zpag;
-
-  if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
-    return 1;
-
-  ip->itemdata.bld = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project,
-			    ip->itemdata.item, NULL);
-  struct stat st;
-  stat(ip->itemdata.bld, &st);
-  if (!S_ISDIR(st.st_mode))
-    {
-      ip->err = PX_ERROR_START "item bld directory %s not found or not readable\n";
-      ip->errx = ip->itemdata.bld ? ip->itemdata.bld : "(null)";
-      return 1;
-    }
 
   if (isp_item_langs(ip))
     return 1;

@@ -5,6 +5,20 @@
 int
 what(Isp *ip)
 {
+  if (!ip->from)
+    ip->from = "url";
+  
+  if (!ip->form)
+    ip->form = "html";
+
+  if (!ip->part)
+    {
+      if (!strcmp(ip->what, "text"))
+	ip->part = "full";
+      else
+	ip->part = "self";
+    }
+
   /* If the score block is a ref out from a witness to the score,
      reset ip->item to be the score not the witness before we get
      itemdata */

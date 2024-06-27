@@ -2,6 +2,7 @@
 #include <runexpat.h>
 #include <glob.h>
 #include "../isp/isp.h"
+#include "../pui/pui.h"
 #include "../pxdefs.h"
 #include "what.h"
 
@@ -17,7 +18,6 @@ struct what_frag
 static int cued_printStart = 0, need_gdf_closer = 0;
 
 extern int glob_pattern(const char *pat, glob_t *gres);
-static const char *html_wild(const char *input);
 static void content_eH(void *userData, const char *name);
 static void content_sH(void *userData, const char *name, const char **atts);
 static void printEnd(struct what_frag *frag, const char *name);
@@ -26,17 +26,41 @@ static void printStart(struct what_frag *frag, const char *name, const char **at
 static void printText(const char *s, FILE *frag_fp);
 static char *set_p4pager(Isp *ip);
 
+static int cop_output(Isp *ip, struct content_opts *cop, const char *input);
+static int pxr_output(Isp *ip);
+
+#if 0
+static const char *html_wild(const char *input);
+#endif
+
 int
 what_content(Isp *ip, struct content_opts *cop, const char *input)
 {
+  if (input)
+    cop_output(ip, cop, input);
+  else
+    pxr_output(ip);
+
+  exit(0);
+}
+
+static int
+pxr_output(Isp *ip)
+{
+  if (!strcmp(ip->part, "full"))
+    return pui_output(ip, stdout, pui_filetext("p4full.xml"));
+  else if (!strcmp(ip->part, "plus"))
+    return pui_output(ip, stdout, pui_filetext("p4plus.xml"));
+  else
+    ; /* futured */
+  return 0;
+}
+
+static int
+cop_output(Isp *ip, struct content_opts *cop, const char *input)
+{
   char const *fnlist[2];
   static struct what_frag fragdata;
-
-  if (access(input, R_OK))
-    {
-      if (!(input = html_wild(input)))
-	return what_not(ip, "html");
-    }
 
   fragdata.ip = ip;
   fragdata.cop = cop;
@@ -62,7 +86,7 @@ what_content(Isp *ip, struct content_opts *cop, const char *input)
   else if ((cop->echo || cop->wrap) && !cop->chunk_id)
     fputs("</body></html>", fragdata.fp);
 
-  exit(0);
+  return 0;
 }
 
 static char *
@@ -73,6 +97,7 @@ set_p4pager(Isp *ip)
   return strdup(p4pager);
 }
 
+#if 0
 static const char *
 html_wild(const char *input)
 {
@@ -85,6 +110,7 @@ html_wild(const char *input)
   globfree(&gres);
   return res;
 }
+#endif
 
 static const char **
 addClassSelect(const char **atts)
