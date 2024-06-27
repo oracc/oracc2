@@ -54,13 +54,22 @@ qx_tmpdir(struct qxdata *qp)
     {
       FILE *fp = NULL;
 
-      fprintf(stderr, "qx: saving search '%s' to %s/search.bar\n", s, d);
+      char cbdidx[1024];
+      if (qp->glos)
+	sprintf(cbdidx, "!cbd/%s ", qp->glos);
+      else
+	*cbdidx = '\0';
+	   
+      if (*cbdidx)
+	fprintf(stderr, "qx: saving search '%s%s' to %s/search.bar\n", cbdidx, s, d);
+      else
+	fprintf(stderr, "qx: saving search '%s' to %s/search.bar\n", s, d);
       sdp->bar = (ccp)pool_alloc(strlen(d) + strlen("/search.bar") + 1, sdp->p);
       sprintf((char*)sdp->bar, "%s/search.bar", d);
   
       if ((fp = fopen(sdp->bar, "w")))
 	{
-	  fputs(s,fp);
+	  fprintf(fp, "%s%s", cbdidx, s);
 	  fclose(fp);
 	}
       else
@@ -184,6 +193,12 @@ qx(struct qxdata *qp)
       sdata.err = (ccp)pool_copy((ucp)qx_err("failed to read search.bar %s", sdata.bar), p);
       goto wrapup;
     }
+  else
+    {
+      qp->bar = (ccp)pool_copy((ucp)bar, qp->p);
+      if (bar[strlen(bar)-1] == '\n')
+	bar[strlen(bar)-1] = '\0';
+    }
 
   if ((sdata.err = qx_idx_check(&sdata, bar)))
     goto wrapup;
@@ -205,7 +220,7 @@ qx(struct qxdata *qp)
   
   if (!sdata.err)
     {
-      const char *countfn = (ccp)pool_alloc(strlen(sdata.tmp)+strlen("/count0"), p);
+      const char *countfn = (ccp)pool_alloc(strlen(sdata.tmp)+strlen("/count00"), p);
       sprintf((char*)countfn, "%s/count", sdata.tmp);
       FILE *countfp = fopen(countfn, "w");
       if (countfp)
@@ -213,7 +228,7 @@ qx(struct qxdata *qp)
 	  extern long result_count(void);
 	  fprintf(countfp, "%ld", result_count());
 	  fclose(countfp);
-	  sprintf(countfn, "%s/qx.new", sdata.tmp);
+	  sprintf((char*)countfn, "%s/qx.new", sdata.tmp);
 	  countfp = fopen(countfn, "w");
 	  fclose(countfp);
 	}

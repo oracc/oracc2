@@ -99,15 +99,24 @@ isp_glos_list(Isp *ip)
       ip->glosdata.lbase = "entry_ids";
     }
 
-  char p[strlen(ip->oracc)+strlen("/pub/")+strlen(ip->project)+strlen(ip->glosdata.lbase)+4];
-  sprintf(p, "%s/pub/%s/cbd/%s/%s.lst", ip->oracc, ip->project, ip->glos, ip->glosdata.lbase);
-  ip->lloc.path = ip->glosdata.lpath = (ccp)pool_copy((uccp)p, ip->p);
+  if (ip->srch)
+    {
+      ip->glosdata.emax = pool_copy(itoa(ip->srchdata.count), ip->p);
+      ip->glosdata.lmax = NULL;
+    }
+  else
+    {
+      char p[strlen(ip->oracc)+strlen("/pub/")+strlen(ip->project)+strlen(ip->glosdata.lbase)+4];
+      sprintf(p, "%s/pub/%s/cbd/%s/%s.lst", ip->oracc, ip->project, ip->glos, ip->glosdata.lbase);
+      ip->lloc.path = ip->glosdata.lpath = (ccp)pool_copy((uccp)p, ip->p);
+
+      if (isp_glos_pmax(ip))
+	return 1;
+    }
+  
   ip->lloc.method = "file";
   ip->cemd = "cglo";
   ip->data = "dglo";
-
-  if (isp_glos_pmax(ip))
-    return 1;
 
   if (ip->glosdata.xis)
     if (isp_glos_gxis(ip))
@@ -224,13 +233,35 @@ isp_glos_glid(Isp *ip)
 int
 isp_glos_data(Isp *ip)
 {
-  /* set the letter-id file */
-  ip->glosdata.lpath = (ccp)pool_alloc(strlen(ip->glosdata.dir)+strlen(ip->glosdata.lbase)+2, ip->p);
-  sprintf((char*)ip->glosdata.lpath, "%s/%s.lst", ip->glosdata.dir, ip->glosdata.lbase);
-
-  /* compute the ranges */
-  int start = ((atoi(ip->page)-1) * atoi(ip->psiz)) + 1;
-  int end = start + atoi(ip->psiz);
+  int start, end;
+  
+  /* for a srch, use the result list; for a page from a glossary ID
+   * list, set the letter-id file
+   */
+  if (ip->srch)
+    {
+      ip->glosdata.lpath = ip->cache.list;
+      start = ((atoi(ip->page)-1) * atoi(ip->psiz)) + 1;
+      if (start > ip->srchdata.count)
+	{
+	  start = ip->srchdata.count / atoi(ip->psiz);
+	  end = ip->srchdata.count;
+	}
+      else
+	{
+	  end = start + atoi(ip->psiz);
+	  if (end > ip->srchdata.count)
+	    end = ip->srchdata.count;
+	}
+    }
+  else
+    {
+      ip->glosdata.lpath = (ccp)pool_alloc(strlen(ip->glosdata.dir)+strlen(ip->glosdata.lbase)+2, ip->p);
+      sprintf((char*)ip->glosdata.lpath, "%s/%s.lst", ip->glosdata.dir, ip->glosdata.lbase);
+      /* compute the ranges */
+      start = ((atoi(ip->page)-1) * atoi(ip->psiz)) + 1;
+      end = start + atoi(ip->psiz);
+    }
 
   /* create the page input selection */
   int ret;

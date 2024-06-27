@@ -25,7 +25,7 @@ result_count(void)
 int
 se_run_qx(struct qxdata *qp, struct sdata *sdp)
 {
-  qp->srchv = (const char**)vec_from_str((char*)pool_copy((ucp)qp->srch,qp->p), NULL, NULL);
+  qp->srchv = (const char**)vec_from_str((char*)pool_copy((ucp)qp->bar,qp->p), NULL, NULL);
   return se_run(qp);
 }
 
