@@ -408,7 +408,7 @@ pui_at_content(Isp *ip, FILE *fp)
 {
   if (ip->item/* && !strcmp(ip->what, "text")*/)
     {
-      if (ip->glos)
+      if (ip->glos && !ip->glosdata.xis)
 	{
 	  if (pui_output(ip, stdout, pui_filetext("p4itemglo.xml")))
 	    longjmp(ip->errjmp, 1);
