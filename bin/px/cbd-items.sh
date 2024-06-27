@@ -1,6 +1,7 @@
 #!/bin/sh
 set 01bld/*/summaries.xml
 if [ "$1" != "01bld/*/summaries.xml" ]; then
+    echo $0: indexing $*
     for a in $* ; do
 	d=`dirname $a`
 	g=`basename $d`
