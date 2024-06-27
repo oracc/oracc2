@@ -101,7 +101,7 @@ isp_glos_list(Isp *ip)
 
   if (ip->srch)
     {
-      ip->glosdata.emax = pool_copy(itoa(ip->srchdata.count), ip->p);
+      ip->glosdata.emax = (ccp)pool_copy((ucp)itoa(ip->srchdata.count), ip->p);
       ip->glosdata.lmax = NULL;
     }
   else
