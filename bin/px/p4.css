@@ -204,6 +204,23 @@ table.kwic { width: 100%; }
 .all-letters { text-decoration: underline; }
 p.toc-entry { margin: 0px; padding: 0px; padding-bottom: 4px; text-align: center; }
 .all-letters { text-decoration: underline; line-height: 120%; }
+.toc-banner p { text-align: center; }
+
+.obf h1.obf-letter { border: none; }
+.obf h1.entry { border: none; }
+span.obf-letter { border: none; }
+.obf span.toc-banner-entry { padding: 0px; margin: 0px; padding-left: 5px; }
+.obf span.toc-banner-sep { margin: 0px; padding: 0px; }
+
+.obf .heading { background-color: #fff; }
+
+.obf .p3icon { background-color: white; 
+	  height: 18px; width: 18px;
+	  border: 2px solid silver; 
+	  padding: 2px;
+	  border-radius: 9px;
+	}
+
 .summaries div { width: 700px; margin: auto; }
 .summaries .toc { text-align: center; }
 .summaries h1 { text-align: left; }

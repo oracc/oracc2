@@ -4,6 +4,8 @@
 #include "../wpx_lib.h"
 #include "what.h"
 
+static int html_xtf_xmd(Isp *ip);
+
 int
 what_html(Isp *ip)
 {
@@ -43,7 +45,7 @@ what_html(Isp *ip)
   return what_content(ip, cop, div);
 }
 
-int
+static int
 html_xtf_xmd(Isp *ip)
 {
   if (!strcmp(ip->what, "text") && !strcmp(ip->form, "html"))
