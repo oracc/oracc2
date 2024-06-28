@@ -39,9 +39,13 @@ fi
      lx -u lemindex.lst > txtindex.lst
  fi
  )
-     
+
+# As of June 2024 the index 'txt' is discontinued and only 'lem' is used
+if [ -d 02pub/txt ]; then
+    rm -fr 02pub/txt
+fi
 if [ -r 01bld/lists/txtindex.lst ]; then
-    mkdir -p 02pub/txt
+    mkdir -p 02pub/lem
     mkdir -p 02pub/tra
     echo qindex qlemx $project 01bld/lists/txtindex.lst
     qlemx -p $project <01bld/lists/txtindex.lst

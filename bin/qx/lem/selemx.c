@@ -66,8 +66,7 @@ int one_big_stdin = 0;
 static char loc_project_buf[_MAX_PATH];
 int verbose = 0;
 
-/* 2024-06-06 we are retiring qtxtx and always using qlemx but putting
-   output in txtx */
+/* 2024-06-06 we are retiring qtxtx and always using qlemx */
 const char *curr_project = "cdli", *curr_index = "lem", *proxies_arg = "";
 const char *project = NULL; /* for now we need this for vid.c */
 Four_bytes curr_line;

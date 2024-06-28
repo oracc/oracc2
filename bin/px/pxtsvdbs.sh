@@ -47,8 +47,11 @@ done
        for t in etm map ; do
 	   if [ -r $t.tsv ]; then
 	       dbix -s -d . -n $t <$t.tsv
-	   fi
+	   fi	   
        done
+       if [ -r $l.tis ]; then
+	   xisdb ./$l.tis
+       fi
        )
   done
 )
