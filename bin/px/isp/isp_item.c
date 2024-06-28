@@ -80,8 +80,10 @@ isp_item_load(Isp *ip)
     }
 
   const char *sort = ip->cache.sort;
-  if (ip->srchdata.tmp || ip->glosdata.xis)
+  if (ip->itemdata.dots && ip->srchdata.tmp || ip->glosdata.xis)
     sort = ip->cache.t_sort;
+  else
+    ip->cache.t_sort = NULL; /* we are working with texts at item level already */
   
   Dbi_index *dp;
   if ((dp = dbx_init(sort, "itm")))
