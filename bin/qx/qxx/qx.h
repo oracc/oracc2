@@ -9,6 +9,7 @@ struct qxdata
 {
   const char **argv;	/* argv is original argv from main() ... */
   int argc;		/* ... but argc is index of first search token in argv */
+  int any_index;
   int debug;
   int noexec;
   int web;
@@ -37,6 +38,7 @@ struct sdata
   const char *nam; /* idx nam */
   const char *dbi;
   const char *err;
+  int count;
   Pool *p;
 };
 

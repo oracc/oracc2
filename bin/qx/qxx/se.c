@@ -76,7 +76,7 @@ main(int argc, char **argv)
 	}
     }
   else
-    se_run(&qd);
+    se_run(&qd, &sdata);
   
   return 0;
 }

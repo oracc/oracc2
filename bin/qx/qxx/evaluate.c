@@ -221,7 +221,7 @@ evaluate(struct token *toks, int fcode, int lmask, struct token **lastused)
   int field_code = fcode;
   int lang_mask = lmask;
 
-  ret.count = 0;
+  memset(&ret, '\0', sizeof(struct Datum));
 
   filter_decay = 0;
   while (toks->type != se_top)

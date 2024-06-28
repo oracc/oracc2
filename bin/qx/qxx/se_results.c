@@ -27,6 +27,9 @@ put_results(struct qxdata *qp, struct Datum *res)
     }
   else if (xmldir)
     xmldir_results(xmldir,res->count);
+
+  if (out_f != stdout)
+    fclose(out_f);
 }
 
 char

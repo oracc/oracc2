@@ -7,7 +7,7 @@ extern struct Datum result;
 extern Vido *vp;
 
 int
-se_any(struct qxdata *qp)
+se_any(struct qxdata *qp, struct sdata *sdp)
 {
   const char *xindex[] = { "!cat" , "!lem" , "!tra" , NULL, "!txt", "!esp" , NULL };
   const char *index[7] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -16,7 +16,12 @@ se_any(struct qxdata *qp)
   struct Datum results[4];
   int i, best_findset = -1;
   char *hashproj = NULL;
+  
+#if 0  
   FILE *anyout = stdout;
+  int anyout_closable = 0;
+#endif
+  
   const char **toklist = NULL;
   int usable = 0;
 
@@ -28,13 +33,16 @@ se_any(struct qxdata *qp)
       exit(1);
     }
 
+#if 0
   if (xmldir)
     {
       char *anyfile = malloc(strlen(xmldir)+5);
       sprintf(anyfile,"%s/any",xmldir);
       anyout = xfopen(anyfile,"w");
+      anyout_closable = 1;
     }
-
+#endif
+  
   hashproj = malloc(strlen(project) + 2);
   sprintf(hashproj, "#%s",project);
 
@@ -80,23 +88,31 @@ se_any(struct qxdata *qp)
     }
   if (best_findset >= 0)
     {
+#if 0
       fprintf(anyout, "%s %lu\n", index[best_findset], 
 	      (unsigned long)results[best_findset].count);
+#endif
       for (i = 0; index[i]; ++i)
 	{
 	  if (i == best_findset)
 	    continue;
 	  if (results[i].count)
-	    fprintf(anyout, "%s %lu\n", index[i], (unsigned long)results[i].count);
+	    fprintf(stderr, "se_any: %s %lu\n", index[i], (unsigned long)results[i].count);
 	}
       vp = vps[best_findset];
       res_gran = best_res_gran;
       return_index = &index[best_findset][1];
       put_results(qp, &results[best_findset]);
+      sdp->count = (int)results[best_findset].count;
+      qx_count_file(sdp);
     }
   /* else */
-	    
-  fclose(anyout);
+
+#if 0
+  if (anyout_closable)
+    fclose(anyout);
+#endif
+  
   return 0;
 }
 

@@ -38,7 +38,7 @@ opts(int argc, const char *arg)
       use_unicode = 1;
       break;
     case 'a':
-      any_index = 1;
+      any_index = opt_qp->any_index = 1;
       break;
     case 'c':
       show_count = 1;

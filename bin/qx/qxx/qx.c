@@ -83,7 +83,7 @@ qx_tmpdir(struct qxdata *qp)
 }
 
 static const char *
-qx_idx_check(struct sdata *sdp, const char *bar)
+qx_idx_check(struct qxdata *qp, struct sdata *sdp, const char *bar)
 {
   unsigned char u203c[] = { 0xE2 , 0x80 , 0xBC };
   const char *idx = NULL;
@@ -138,6 +138,8 @@ qx_idx_check(struct sdata *sdp, const char *bar)
 	  goto wrapup;
 	}
     }
+  else
+    any_index = qp->any_index = 1;
  wrapup:
   return sdata.err;
 }
@@ -200,7 +202,7 @@ qx(struct qxdata *qp)
 	bar[strlen(bar)-1] = '\0';
     }
 
-  if ((sdata.err = qx_idx_check(&sdata, bar)))
+  if ((sdata.err = qx_idx_check(qp, &sdata, bar)))
     goto wrapup;
 
   sdata.lst = (ccp)pool_alloc(strlen(sdata.tmp)+strlen("/list0"), p);
@@ -220,24 +222,7 @@ qx(struct qxdata *qp)
   
   if (!sdata.err)
     {
-      const char *countfn = (ccp)pool_alloc(strlen(sdata.tmp)+strlen("/count00"), p);
-      sprintf((char*)countfn, "%s/count", sdata.tmp);
-      FILE *countfp = fopen(countfn, "w");
-      if (countfp)
-	{
-	  extern long result_count(void);
-	  fprintf(countfp, "%ld", result_count());
-	  fclose(countfp);
-	  sprintf((char*)countfn, "%s/qx.new", sdata.tmp);
-	  countfp = fopen(countfn, "w");
-	  fclose(countfp);
-	}
-      else
-	{
-	  sdata.err = (ccp)pool_copy((ucp)qx_err("failed to open count file %s: %s\n",
-						 countfn, strerror(errno)), p);
-	  return 1;
-	}
+      sdata.count = (int)result_count();
     }
 
  wrapup:
@@ -253,4 +238,27 @@ qx(struct qxdata *qp)
       return 1;
     }
   return 0;
+}
+
+int
+qx_count_file(struct sdata *sdp)
+{
+  const char *countfn = (ccp)pool_alloc(strlen(sdp->tmp)+strlen("/count00"), sdp->p);
+  sprintf((char*)countfn, "%s/count", sdp->tmp);
+  FILE *countfp = fopen(countfn, "w");
+  if (countfp)
+    {
+      fprintf(countfp, "%d", sdp->count);
+      fclose(countfp);
+      sprintf((char*)countfn, "%s/qx.new", sdp->tmp);
+      countfp = fopen(countfn, "w");
+      fclose(countfp);
+      return 0;
+    }
+  else
+    {
+      sdp->err = (ccp)pool_copy((ucp)qx_err("failed to open count file %s: %s\n",
+					     countfn, strerror(errno)), sdp->p);
+      return 1;
+    }
 }

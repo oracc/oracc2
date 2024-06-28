@@ -26,11 +26,11 @@ int
 se_run_qx(struct qxdata *qp, struct sdata *sdp)
 {
   qp->srchv = (const char**)vec_from_str((char*)pool_copy((ucp)qp->bar,qp->p), NULL, NULL);
-  return se_run(qp);
+  return se_run(qp, sdp);
 }
 
 int
-se_run(struct qxdata *qp)
+se_run(struct qxdata *qp, struct sdata *sdp)
 {
   int ntoks = 0;
 
@@ -50,9 +50,9 @@ se_run(struct qxdata *qp)
     }
   else
     {
-      if (any_index)
+      if (qp->any_index)
 	{
-	  return se_any(qp);
+	  return se_any(qp, sdp);
 	}
       else if (project && arg_index)
 	{
@@ -69,6 +69,7 @@ se_run(struct qxdata *qp)
 	  run_search(toks);
 	  put_results(qp, &result);
 	  fclose(out_f);
+	  qx_count_file(&sdata);
 	}
     }
 
