@@ -320,6 +320,12 @@ res_is_pqx(char *e, int *count)
 	    }
 	  else if ('.' == *e)
 	    {
+#if 1
+	      /* px handles the hili etc now; allow any number of dotted ID segments */
+	      while (isdigit(*e) || '.' == *e)
+		++e;	   
+	      break;
+#else
 	      /* the URL component is a line/word/grapheme ID; save
 		 the PQX only to the component and append the ID to
 		 query_string as a 'hili' option */
@@ -337,6 +343,7 @@ res_is_pqx(char *e, int *count)
 	      query_string = (const char *)tmp_query_string;
 	      *e = '\0';
 	      break;
+#endif
 	    }
 	  else
 	    break;

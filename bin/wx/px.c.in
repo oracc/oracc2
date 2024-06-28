@@ -128,8 +128,11 @@ pxurlitem(const char *item, const char *replace)
   v = CGI_get_query(v);
   v = CGI_get_post(v, NULL);
   v = CGI_add_var(v, "u_item", item); /* fake name so px can catch /ITEM&item=ITEM */
+#if 0
+  /* px handles proxy now */
   v = CGI_add_var(v, "u_replace", replace);
-
+#endif
+  
   pxvl(v);
 }
 
