@@ -26,6 +26,7 @@ struct isp_srchdata
   const char *tmp;	/* path to search's tmpdir */
   const char *bar;  	/* path to tmp/search.bar = entire search bar text */
   long int count;	/* count of results read from tmp/count */
+  const char *gran;	/* granularity as t(ext) r(ecord) f(ield) w(word) g(rapheme) */
   const char *list;	/* the final tmpdir element which is used for data-list */
   int new;		/* 0 when reusing a search list, 1 when the srch was just done */
   int adhoc;

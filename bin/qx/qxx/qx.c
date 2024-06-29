@@ -4,7 +4,7 @@
 #include "qx.h"
 
 /* search engine interface for when it's called from wx */
-
+extern enum result_granularity res_gran;
 struct qxdata qd;
 int p4status = 0;
 struct sdata sdata;
@@ -248,7 +248,8 @@ qx_count_file(struct sdata *sdp)
   FILE *countfp = fopen(countfn, "w");
   if (countfp)
     {
-      fprintf(countfp, "%d", sdp->count);
+      const char *gran = "trfwg";
+      fprintf(countfp, "%d%c", sdp->count, gran[res_gran]);
       fclose(countfp);
       sprintf((char*)countfn, "%s/qx.new", sdp->tmp);
       countfp = fopen(countfn, "w");

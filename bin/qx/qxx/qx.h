@@ -39,6 +39,7 @@ struct sdata
   const char *dbi;
   const char *err;
   int count;
+  const char *gran;
   Pool *p;
 };
 
