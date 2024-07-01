@@ -34,12 +34,12 @@
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 22
+#define TOTAL_KEYWORDS 23
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 15
 #define MIN_HASH_VALUE 10
-#define MAX_HASH_VALUE 33
-/* maximum key range = 24, duplicates = 0 */
+#define MAX_HASH_VALUE 35
+/* maximum key range = 26, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -53,32 +53,32 @@ hash (register const char *str, register size_t len)
 {
   static unsigned char asso_values[] =
     {
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34,  0, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34,  0,  5,  5,
-       5,  0, 15, 10, 34, 34, 34, 20, 20, 15,
-       0,  0, 34, 34,  0,  5, 10, 34, 34, 15,
-       5, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34, 34, 34, 34, 34,
-      34, 34, 34, 34, 34, 34
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36,  0, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36,  0,  5,  5,
+       5,  0, 15, 10, 36, 36, 36, 20, 25, 20,
+       0,  0, 36, 36,  0,  5, 10, 15, 36, 15,
+       5, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
+      36, 36, 36, 36, 36, 36
     };
   return len + asso_values[(unsigned char)str[6]] + asso_values[(unsigned char)str[4]];
 }
@@ -93,11 +93,11 @@ static struct puifilestab puifiles_wl[] =
     {"p4error.xml", &p4error},
 #line 10 "puifiles.g"
     {"p4footer.xml", &p4footer},
-#line 27 "puifiles.g"
+#line 28 "puifiles.g"
     {"p4whatnot.xml", &p4whatnot},
 #line 9 "puifiles.g"
     {"p4controls.xml", &p4controls},
-#line 25 "puifiles.g"
+#line 26 "puifiles.g"
     {"p4back.xml", &p4back},
 #line 11 "puifiles.g"
     {"p4icons.xml", &p4icons},
@@ -116,23 +116,26 @@ static struct puifilestab puifiles_wl[] =
 #line 19 "puifiles.g"
     {"p4itemglo.xml", &p4itemglo},
     {""},
-#line 14 "puifiles.g"
-    {"p4html.xml", &p4html},
+#line 25 "puifiles.g"
+    {"p4plus.xml", &p4plus},
 #line 17 "puifiles.g"
     {"p4debug.xml", &p4debug},
-#line 26 "puifiles.g"
+#line 27 "puifiles.g"
     {"p4nowhat.xml", &p4nowhat},
-#line 28 "puifiles.g"
+#line 29 "puifiles.g"
     {"p4article.xml", &p4article},
 #line 18 "puifiles.g"
     {"p4debugdiv.xml", &p4debugdiv},
-#line 24 "puifiles.g"
-    {"p4full.xml", &p4full},
+#line 14 "puifiles.g"
+    {"p4html.xml", &p4html},
 #line 21 "puifiles.g"
     {"p4noxtf.xml", &p4noxtf},
     {""},
 #line 22 "puifiles.g"
-    {"p4unknown.xml", &p4unknown}
+    {"p4unknown.xml", &p4unknown},
+    {""},
+#line 24 "puifiles.g"
+    {"p4full.xml", &p4full}
   };
 
 struct puifilestab *
