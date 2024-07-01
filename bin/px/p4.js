@@ -638,3 +638,7 @@ function viewsBuyBook(buyUrl) {
     popup(buyUrl,'buyBook',800,900,20,20);
 }
 
+function viewsProofing(project,PQ) {
+    var url = '/'+project+'/'+PQ+'?proofing';
+    popup(url,'exemplarWindow',800,900,10,10);
+}
