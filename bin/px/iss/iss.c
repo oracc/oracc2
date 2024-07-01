@@ -271,8 +271,11 @@ iss_sort(Isp *ip)
   if (iss_data(ip, pages))
     return 1;
 
-  if (iss_texts(ip, pages))
-    return 1;
+  if (!strcmp(ip->show, "rref"))
+    {
+      if (iss_texts(ip, pages))
+	return 1;
+    }
   
   hash_free2(seen, free, NULL);
 

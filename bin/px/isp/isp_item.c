@@ -76,14 +76,19 @@ isp_item_load(Isp *ip)
   if (tmp)
     {
       *tmp++ = '\0';
-      ip->itemdata.dots = tmp;
+      ip->itemdata.dots = ++tmp;
     }
 
   const char *sort = ip->cache.sort;
+#if 1
+  if (!strcmp(ip->show, "rref"))
+    sort = ip->cache.t_sort;
+#else
   if (ip->itemdata.dots && (ip->srchdata.tmp || ip->glosdata.xis))
     sort = ip->cache.t_sort;
   else
     ip->cache.t_sort = NULL; /* we are working with texts at item level already */
+#endif
   
   Dbi_index *dp;
   if ((dp = dbx_init(sort, "itm")))

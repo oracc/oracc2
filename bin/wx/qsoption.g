@@ -17,6 +17,7 @@ zoom, "#NUM|#LET|entry_ids"
 refs, "#REFS"
 sort, "#PERM"
 q, 	  "#STRING"
+srch, "#LIST"
 %%
 int qs_total_keywords(void)
 {

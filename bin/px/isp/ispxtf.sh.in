@@ -40,6 +40,8 @@ if [ "$cachedir" != "" ]; then
     echo $0: transferring error logging to $errlog >&2
     exec 2>$errlog
     echo $0 $* >&2
+else
+    exec 2>/dev/null
 fi
 
 xtl=`$oraccbin/pqxpand xtl $xtlproject:$PQX`
