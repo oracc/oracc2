@@ -266,6 +266,14 @@ isp_item_xtf(Isp *ip)
 	if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
 	  return 1;
 
+      /* prx db is created from atf-data.tab and contains entries for
+	 all texts, not only proxied ones */
+      ip->itemdata.proj =
+	isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
+      /* This can error but we keep going anyway because if there's no
+	 ATF but the text is in the catalogue we want to go ahead and
+	 create meta.xml */
+
       ip->itemdata.bld = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project,
 				ip->itemdata.item, NULL);
       struct stat st;
@@ -276,15 +284,7 @@ isp_item_xtf(Isp *ip)
 	  ip->errx = ip->itemdata.bld ? ip->itemdata.bld : "(null)";
 	  return 1;
 	}
-      
 
-      /* prx db is created from atf-data.tab and contains entries for
-	 all texts, not only proxied ones */
-      ip->itemdata.proj =
-	isp_dbx_one_off(ip, ip->project, "02pub", "prx", ip->itemdata.item, NULL);
-      /* This can error but we keep going anyway because if there's no
-	 ATF but the text is in the catalogue we want to go ahead and
-	 create meta.xml */
 #endif
       /*}*/
   

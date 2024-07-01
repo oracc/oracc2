@@ -106,7 +106,15 @@ se_any(struct qxdata *qp, struct sdata *sdp)
       sdp->count = (int)results[best_findset].count;
       qx_count_file(sdp);
     }
-  /* else */
+  else
+    {
+      vp = vps[0];
+      res_gran = best_res_gran;
+      return_index = &index[0][1];
+      put_results(qp, &results[0]);
+      sdp->count = (int)results[0].count;
+      qx_count_file(sdp);
+    }
 
 #if 0
   if (anyout_closable)
