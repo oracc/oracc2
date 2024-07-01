@@ -14,7 +14,7 @@ what(Isp *ip)
   if (!ip->part)
     {
       if (!strcmp(ip->what, "text"))
-	ip->part = "full";
+	ip->part = "plus";
       else
 	ip->part = "self";
     }
