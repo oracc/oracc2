@@ -61,14 +61,25 @@ se_run(struct qxdata *qp, struct sdata *sdp)
 	  toks = tokenize(toklist,&ntoks);
 	  run_search(toks);
 	  put_results(qp, &result);
-	  fclose(out_f);	  
+	  if (out_f && out_f != stdout)
+	    {
+	      fclose(out_f);
+	      out_f = NULL;
+	    }
+	  sdata.count = (int)result.count;
+	  qx_count_file(&sdata);
 	}
       else
 	{
 	  toks = tokenize(tokv,&ntoks);
 	  run_search(toks);
 	  put_results(qp, &result);
-	  fclose(out_f);
+	  if (out_f && out_f != stdout)
+	    {
+	      fclose(out_f);
+	      out_f = NULL;
+	    }
+	  sdata.count = (int)result.count;
 	  qx_count_file(&sdata);
 	}
     }

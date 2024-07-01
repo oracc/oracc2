@@ -248,8 +248,12 @@ qx_count_file(struct sdata *sdp)
   FILE *countfp = fopen(countfn, "w");
   if (countfp)
     {
+#if 1
+      fprintf(countfp, "%d", sdp->count);
+#else
       const char *gran = "trfwg";
       fprintf(countfp, "%d%c", sdp->count, gran[res_gran]);
+#endif
       fclose(countfp);
       sprintf((char*)countfn, "%s/qx.new", sdp->tmp);
       countfp = fopen(countfn, "w");
