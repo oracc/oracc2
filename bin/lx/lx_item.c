@@ -61,7 +61,10 @@ lx_item(Lxfile *lxp, int i)
 	  lpp->i = li;
 	  if (!lc)
 #if 1
-	    lpp->c = (char*)project;
+	    if (metaforce)
+	      lpp->c = (char*)metaforce;
+	    else
+	      lpp->c = lpp->p;
 #else
 	    {
 	      if (proxy)
