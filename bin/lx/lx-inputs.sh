@@ -60,6 +60,6 @@ elif [ -r 00lib/search.lst ]; then
     lx-umbrella.sh search
     lx -cus -p $project -o $lxd/00search.lst 01tmp/00search.lst
     if [ ! -s 01bld/lists/outlined.lst ]; then
-	cp $lxd/00search.lst 01bld/lists/outlined.lst
+	cut -d'@' -f1 $lxd/00search.lst 01bld/lists/outlined.lst
     fi
 fi
