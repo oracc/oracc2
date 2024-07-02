@@ -28,7 +28,16 @@ if [ "$1" != "$lxd/proxy*.lst" ]; then
     >&2 ls -l $lxd/proxy*.lst
     if [ -r $lxd/proxy.lst ] || [ -r $lxd/proxy-cat.lst ]; then
 	>&2   echo $0: processing $lxd/proxy*.lst
-	lx -ui 02pub/atf-data.tab +? $lxd/proxy.lst +? $lxd/proxy-cat.lst
+	if [ -s 02pub/atf-data.tab ]; then
+	    lx -ui 02pub/atf-data.tab +? $lxd/proxy.lst +? $lxd/proxy-cat.lst
+	elif [ -s $lxd/proxy.lst ]; then
+	    lx -u $lxd/proxy.lst +? $lxd/proxy-cat.lst
+	elif [ -s $lxd/proxy-cat.lst ]; then
+	    lx -u $lxd/proxy-cat.lst -o 02pub/atf-data.tab
+	else
+	    >&2 echo $0: project $project contains unknown proxy list in $*. Stop.
+	    exit 1
+	fi
     fi
 fi
 
