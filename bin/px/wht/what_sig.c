@@ -16,7 +16,10 @@ what_sig(Isp *ip)
       return PX_DONE;
     }
   else
-    return PX_ERROR;
+    {
+      ip->err = fatalize(ip->err);
+      return PX_ERROR;
+    }
 }
 #else
 int

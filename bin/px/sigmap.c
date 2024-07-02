@@ -5,6 +5,7 @@
 static const char *find_pos(const char *sig);
 static char *find_lang(const char *sig, char **endp);
 static const char *unweb_sig(const char *sig);
+static void sigmap_ent(Isp *ip, const char *ent, const char *lng, const char *cbd);
 
 #if 0
 static char *find_proj(const char *sig);
@@ -31,19 +32,25 @@ sigmap_item(Isp *ip)
       const char *ent = dbx_one_off(cbd, "map", ip->sig, NULL);
       if (ent)
 	{
-	  ip->glos = (ccp)pool_copy((ucp)lng, ip->p);
-	  ip->glosdata.dir = (ccp)pool_copy((ucp)cbd, ip->p);
-	  ip->glosdata.web = (ccp)pool_copy((ucp)cbd, ip->p);
-	  char *p = strstr(ip->glosdata.web, "/pub/");
-	  p[1] = p[2] = p[3] = 'w';
-	  ip->glosdata.ent = ent;
-	  ip->glosdata.ipath = (ccp)pool_alloc(strlen(ip->glosdata.web)+strlen(ip->glosdata.ent)+strlen("//.html0"), ip->p);
-	  sprintf((char*)ip->glosdata.ipath, "%s/%s.html", ip->glosdata.web, ip->glosdata.ent);
+	  sigmap_ent(ip, ent, lng, cbd);
 	  return 0;
 	}
       else
 	{
-	  ip->err = px_err("signmap_item found no sig in db %s:smap", ip->glosdata.dir);
+	  char localsig[strlen(ip->project)+strlen(ip->sig)];
+	  sprintf(localsig, "@%s", ip->project);
+	  const char *pct = strchr(ip->sig, '%');
+	  if (pct)
+	    {
+	      strcat(localsig, pct);
+	      const char *ent = dbx_one_off(cbd, "map", localsig, NULL);
+	      if (ent)
+		{
+		  sigmap_ent(ip, ent, lng, cbd);
+		  return 0;
+		}
+	    }
+	  ip->err = px_err("signmap_item found no sig in db %s:map", cbd);
 	}
     }
   else
@@ -51,6 +58,19 @@ sigmap_item(Isp *ip)
       ip->err = px_err("signmap_item found no lang in sig");
     }
   return 1;
+}
+
+static void
+sigmap_ent(Isp *ip, const char *ent, const char *lng, const char *cbd)
+{
+  ip->glos = (ccp)pool_copy((ucp)lng, ip->p);
+  ip->glosdata.dir = (ccp)pool_copy((ucp)cbd, ip->p);
+  ip->glosdata.web = (ccp)pool_copy((ucp)cbd, ip->p);
+  char *p = strstr(ip->glosdata.web, "/pub/");
+  p[1] = p[2] = p[3] = 'w';
+  ip->glosdata.ent = ent;
+  ip->glosdata.ipath = (ccp)pool_alloc(strlen(ip->glosdata.web)+strlen(ip->glosdata.ent)+strlen("//.html0"), ip->p);
+  sprintf((char*)ip->glosdata.ipath, "%s/%s.html", ip->glosdata.web, ip->glosdata.ent);
 }
 
 static const char *
