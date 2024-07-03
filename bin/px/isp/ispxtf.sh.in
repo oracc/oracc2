@@ -73,8 +73,8 @@ if [ $? -eq 0 ]; then
     if [ ! -r $htxh ]; then
 	txh=`$oraccbin/pqxpand txh $prox_project:$PQX`
 	if [ -r $txh ]; then
-	    >&2 echo $0: linking $txh to $htxh
-	    ln -sf $txh $htxh
+	    >&2 echo $0: linking $txh to $htmldir
+	    ln -sf $txh $htmldir
 	else
 	    >&2 echo $0: creating $htxh
 	    $oraccbin/xtf2txh -i $prox_project:$PQX
