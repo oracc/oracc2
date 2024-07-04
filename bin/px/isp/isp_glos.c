@@ -72,7 +72,8 @@ isp_glos_gxis(Isp *ip)
   sprintf((char*)ip->lloc.path, "%s/list", ip->cache.sub);
   if (!ip->zoom || !isdigit(*ip->zoom))
     ip->zoom = "0";
-  ip->cemd = "line";
+  if (!ip->cemd)
+    ip->cemd = "line";
   ip->show = "rref";
   ip->ceid = "xtf";
   

@@ -18,6 +18,7 @@ refs, "#REFS"
 sort, "#PERM"
 q, 	  "#STRING"
 srch, "#LIST"
+cemd, "kwic|line|unit"
 %%
 int qs_total_keywords(void)
 {

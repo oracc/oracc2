@@ -16,6 +16,7 @@ struct qxdata
   const char *project;
   const char *glos;
   const char *srch;
+  const char *cemd; /* passed through to px */
   const char *bar; /* the search bar is written possibly adding cbd/lang index and stored here */
   const char **srchv;
   const char *err;

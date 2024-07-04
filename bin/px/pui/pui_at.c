@@ -131,6 +131,8 @@ pui_at_pager_data(Isp *ip, FILE *fp)
       pattrs("data-bkmk", ip->item);
       if (ip->lang)
 	pattrs("data-lang", ip->lang);
+      if (ip->cemd && (!strcmp(ip->cemd, "kwic") || !strcmp(ip->cemd, "unit")))
+	pattrs("data-cemd", ip->cemd);
     }
   else if (ip->bkmk)
     pattrs("data-bkmk", ip->bkmk);
@@ -471,6 +473,13 @@ void
 pui_at_select_ce(Isp *ip, FILE *fp)
 {
   const char *params[] = { "select", "'line'", NULL };
+  if (ip->cemd)
+    {
+      if (!strcmp(ip->cemd, "kwic"))
+	params[1] = "'kwic'";
+      else if (!strcmp(ip->cemd, "unit"))
+	params[1] = "'unit'";
+    }
   Xslt *xp = xslt_one_off("p4ceselect", p4ceselect, "p4select", p4select, "-", params);
   if (!xp)
     {

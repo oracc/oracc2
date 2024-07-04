@@ -164,6 +164,7 @@ function pageLocation() {
 	let zoom = pager.getAttribute("data-zoom");
 	let bkmk = pager.getAttribute("data-bkmk");
 	let glet = pager.getAttribute("data-glet");
+	let cemd = pager.getAttribute("data-cemd");
 	let qs = '';
 
 	if (list && list !== "outlined.lst") {
@@ -186,6 +187,9 @@ function pageLocation() {
 	}
 	if (page && page !== "1") {
 	    qs = qs_append(qs, 'page='+page);
+	}
+	if (cemd && (cemd === "kwic" || cemd === "unit")) {
+	    qs = qs_append(qs, 'cemd='+cemd);
 	}
 
 	loc = '/'+proj;
@@ -215,6 +219,20 @@ function resetPager() {
     let loc = '/'+proj+'/pager';
     // alert("loc="+loc);
     window.location=loc;
+}
+
+function act_ce_switch(evt) {
+    alert('act_ce_switch evt.target.value='+evt.target.value);
+    let pager = getPager();
+    let data_cemd = pager.getAttribute("data-cemd");
+    let cemd_value = evt.target.value;
+    if (data_cemd && data_cemd === cemd_value) {
+	alert('Context-Engine selector value unchanged from '+data_cemd);
+    } else {
+	alert('Changing Context-Engine selector value from '+data_cemd+' to '+cemd_value);
+	pager.setAttribute('data-cemd', cemd_value);
+	pageLocation();
+    }
 }
 
 function act_sorter() {

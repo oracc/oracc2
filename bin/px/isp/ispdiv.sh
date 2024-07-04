@@ -1,7 +1,7 @@
 #!/bin/dash
 #OLD# $1=project $2=input $3=output $4=cemd $5=state $6=glos-lang
 #NEW# $1=project $2=tsv $3=key $4=output $5=cemd $6=state $7=glos-lang
->&2 echo $0 $*
+>&2 echo px: called $0 $*
 bin=/home/oracc/bin
 lib=/home/oracc/lib
 if [ "$5" = "ccat" ]; then

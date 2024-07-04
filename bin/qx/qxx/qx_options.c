@@ -19,7 +19,7 @@ qx_options(int argc, char **argv, struct qxdata *qp)
     }
   else
     {
-      if (options(argc, argv, "8acdg:i:j:o:p:P:q:stuvx:Ww"))
+      if (options(argc, argv, "8acC:dg:i:j:o:p:P:q:stuvx:Ww"))
 	{
 	  opt_qp = NULL;
 	  return 1;
@@ -42,6 +42,9 @@ opts(int argc, const char *arg)
       break;
     case 'c':
       show_count = 1;
+      break;
+    case 'C':
+      opt_qp->cemd = arg;
       break;
     case 'd':
       doing_debug = 1;

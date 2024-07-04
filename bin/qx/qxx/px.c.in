@@ -25,14 +25,17 @@ px_cgi_arg(const char *arg, const char *val)
 int
 px_exec(struct qxdata *qp, struct sdata *sdp)
 {
-  const char *vec[6];
+  const char *vec[8];
   vec[0] = px_exe;
   vec[1] = px_cgi_arg("web","1");
   vec[2] = px_cgi_arg("project",qp->project);
 
   int i = 3;
-  if (qp->glos)
-    vec[i++] = px_cgi_arg("glos",qp->glos?qp->glos:"");
+  if (qp->glos && *qp->glos)
+    vec[i++] = px_cgi_arg("glos",qp->glos);
+
+  if (qp->cemd && (!strcmp(qp->cemd, "kwic") || !strcmp(qp->cemd, "unit")))
+    vec[i++] = px_cgi_arg("cemd",qp->cemd);
 
   vec[i++] = px_cgi_arg("s.d",sdp->tmp);
   vec[i] = NULL;

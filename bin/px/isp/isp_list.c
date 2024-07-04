@@ -29,7 +29,8 @@ isp_list_cemd(Isp *ip)
 	{
 	  ip->data = "dtxt";
 	  ip->show = "rref";
-	  ip->cemd = "line";
+	  if (!ip->cemd)
+	    ip->cemd = "line";
 	  ip->ceid = "xtf";
 	}
       else
