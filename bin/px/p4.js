@@ -182,8 +182,6 @@ function pageLocation() {
 	}
 	if (zoom && zoom !== "0") {
 	    qs = qs_append(qs, 'zoom='+zoom);
-//	} else if (glet) {			// this should be irrelevant if glos is not set
-//	    qs = qs_append(qs, 'zoom='+glet);
 	}
 	if (page && page !== "1") {
 	    qs = qs_append(qs, 'page='+page);

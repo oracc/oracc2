@@ -19,7 +19,12 @@ elif [ "$5" = "cglo" ]; then
 		 $lib/scripts/isp-ce-HTML.xsl - \
 		 >$4
 else
-    $bin/tx -s -t $2 -k $3 | $bin/wmx -p $1 -l | $bin/cextfx -4 -p $1 -l | \
+    if [ "$5" = "unit" ]; then
+	cemd=-u
+    else
+	cemd=-l
+    fi
+    $bin/tx -s -t $2 -k $3 | $bin/wmx -p $1 -l | $bin/cextfx -4 -p $1 $cemd | \
 	xsltproc -stringparam project $1 $lib/scripts/isp-ce-HTML.xsl - \
 		     >$4
 fi
