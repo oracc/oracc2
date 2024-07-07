@@ -36,7 +36,7 @@ what(Isp *ip)
 	ip->itemdata.item = ip->item;
       ip->itemdata.proj = isp_dbx_one_off(ip, ip->project,
 					  "02pub", "prx",
-					  ip->itemdata.item, NULL);
+					  dotless(ip->itemdata.item), NULL);
       isp_htmd(ip);
     }
   struct whatfuncstab *w = whatfuncs(ip->what, strlen(ip->what));

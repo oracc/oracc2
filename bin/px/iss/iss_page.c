@@ -58,11 +58,20 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
   if (nheadfields)
     {
       int x = 0;
-      while (pitems[x]->grp < 0)
+      while (x < nitems && pitems[x]->grp < 0)
 	++x;
-
-      currpage->p[0] = fmthdr(pitems[x]->grp);
-      currpage->used = 1;
+      if (x < nitems)
+	{
+	  currpage->p[0] = fmthdr(pitems[x]->grp);
+	  currpage->used = 1;
+	}
+      else if (nitems && pitems[0]->grp >= 0)
+	{
+	  currpage->p[0] = fmthdr(pitems[0]->grp);
+	  currpage->used = 1;
+	}
+      else
+	currpage->used = 0;
     }
   else
     currpage->used = 0;

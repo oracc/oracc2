@@ -1,3 +1,5 @@
+/* dotless.c */
+extern const char *dotless(const char *i);
 /* isp_adhoc.c */
 extern int isp_adhoc(Isp *ip);
 /* isp_cache.c */

@@ -38,7 +38,10 @@ what_score(Isp *ip)
   else if (!strcmp(ip->form, "sources"))
     return what_sources(ip);
   else
-    return what_html(ip);
+    {
+      ip->item = ip->itemdata.item = dotless(ip->itemdata.item);
+      return what_html(ip);
+    }
 }
 
 /* We just check that there is an appropriate XTL file and that it has entries.
@@ -53,7 +56,7 @@ what_sources(Isp *ip)
   ip->from = "list";
   ip->item = NULL;
   ip->list_name = (ccp)pool_alloc(strlen(ip->itemdata.item)+5, ip->p);
-  sprintf((char*)ip->list_name, "%s.xtl", ip->itemdata.item);
+  sprintf((char*)ip->list_name, "%s.xtl", dotless(ip->itemdata.item));
   if (!access(ip->lloc.path, R_OK))
     {
       return PX_CONTINUE;

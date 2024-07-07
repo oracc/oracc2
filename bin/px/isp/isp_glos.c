@@ -116,7 +116,13 @@ isp_glos_list(Isp *ip)
     }
   
   ip->lloc.method = "file";
-  ip->cemd = "cglo";
+  if (ip->glosdata.xis)
+    {
+      if (!ip->cemd || (strcmp(ip->cemd, "line") && strcmp(ip->cemd, "kwic")))
+	ip->cemd = "line";
+    }
+  else
+    ip->cemd = "cglo";
   ip->data = "dglo";
 
   if (ip->glosdata.xis)
