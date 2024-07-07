@@ -1,6 +1,7 @@
 #ifndef ORACCSYS_H_
 #define ORACCSYS_H_
 
+#include <locale.h>
 #include <oracclocale.h>
 #include <stdlib.h>
 #include <stdio.h>
