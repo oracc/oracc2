@@ -63,7 +63,7 @@ create_page_div(Isp *ip)
   else
     list_add(args, " default");
   
-  if (ip->glos && !ip->glosdata.xis)
+  if (ip->glos)
     {
       list_add(args, " ");
       list_add(args, (void*)ip->glos);
