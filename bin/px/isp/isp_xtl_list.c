@@ -10,7 +10,9 @@ isp_xtl_list(Isp *ip)
       list_add(args, (void*)ip->oracc);
       list_add(args, (void*)"/bin/ispxtl.sh");
       list_add(args, " ");
-      list_add(args, (void*)ip->project);
+      /* *.xtl lives in the same item directory as a composite, so use
+	 *the itemdata project info to handle proxies correctly */
+      list_add(args, (void*)ip->itemdata.proj);
       list_add(args, " ");
       list_add(args, (void*)ip->lloc.path);
       list_add(args, " ");
