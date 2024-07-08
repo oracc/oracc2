@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <stdio.h>
+#include <locale.h>
 #define NDEBUG 1
 #include <assert.h>
 #include "system.h"

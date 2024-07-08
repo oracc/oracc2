@@ -1,3 +1,4 @@
+#include <locale.h>
 #include <oracclocale.h>
 
 int
