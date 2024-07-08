@@ -62,8 +62,9 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
 	      while (iprev > 0 && (p->p[iprev][0] == '#' || p->p[iprev][0] == '+'))
 		--iprev;	  
 	      iss_p_dump(pfp, tp, ip, p, zoom, zpth, i, zfirst, iprev);
-	      iss_max(mfp, mdp, zoom, nzoom);
 	    }
+
+	  iss_max(mfp, mdp, zoom, nzoom);
 
 	  if (ip->iop)
 	    iso_master_n(ip, nzoom);
