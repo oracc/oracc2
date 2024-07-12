@@ -42,28 +42,28 @@ create_page_div(Isp *ip)
   list_add(args, (void*)ip->oracc);
   list_add(args, (void*)"/bin/ispdiv.sh");
   list_add(args, " ");
-  list_add(args, (void*)ip->project);
+  list_add(args, (void*)ip->project); 		/* $1 */
   list_add(args, " ");
-  if (ip->cache.tsv)
+  if (ip->cache.tsv) 				/* $2 */
     list_add(args, (void*)ip->cache.tsv);
   else
     list_add(args, (void*)ip->cache.pgin);
   list_add(args, " ");
-  if (ip->cache.pkey)
+  if (ip->cache.pkey) 				/* $3 */
     list_add(args, (void*)ip->cache.pkey);
   else
     list_add(args, "-");
   list_add(args, " ");
-  list_add(args, (void*)ip->cache.page);
+  list_add(args, (void*)ip->cache.page);       	/* $4 */
   list_add(args, " ");
-  list_add(args, (void*)ip->cemd);
+  list_add(args, (void*)ip->cemd); 		/* $5 */
 
-  if (ip->dors && '1' == *ip->dors)
+  if (ip->dors && '1' == *ip->dors) 		/* $6 */
     list_add(args, " special");
   else
     list_add(args, " default");
   
-  if (ip->glos)
+  if (ip->glos) 				/* $7 */
     {
       list_add(args, " ");
       list_add(args, (void*)ip->glos);

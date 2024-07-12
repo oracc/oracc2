@@ -25,6 +25,13 @@ isp_list_cemd(Isp *ip)
 	  ip->cemd = "cglo";
 	  ip->ceid = "cbd";
 	}
+      else if (strchr(lp, '_'))
+	{
+	  ip->data = "dtra";
+	  ip->show = "rref";
+	  ip->cemd = "ctra";
+	  ip->ceid = "tra";
+	}
       else if (strchr(lp, '.'))
 	{
 	  ip->data = "dtxt";

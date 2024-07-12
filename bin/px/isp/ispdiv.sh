@@ -9,6 +9,11 @@ if [ "$5" = "ccat" ]; then
     $bin/tx -s -t $2 -k $3 | $bin/cex $S -p $1 -icat |
 	xsltproc -stringparam project $1 $lib/scripts/isp-ce-HTML.xsl - \
 		 >$4
+elif [ "$5" = "ctra" ]; then
+    S=-S$6
+    $bin/tx -s -t $2 -k $3 | $bin/cex $S -p $1 -itra |
+	xsltproc -stringparam project $1 $lib/scripts/isp-ce-HTML.xsl - \
+		 >$4
 elif [ "$5" = "cglo" ]; then
     if [ "$7" = "" ]; then
 	echo $0: cemd=cglo but glos-lang is empty. >&2
