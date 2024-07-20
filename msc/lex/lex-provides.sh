@@ -1,5 +1,6 @@
 #!/bin/sh
-if [ -d 01bld/www/cbd/sux/articles.html ]; then
+art=01bld/www/cbd/sux/articles.html
+if [ -s $art ]; then
     lpxi=${ORACC_BUILDS}/lib/scripts/lex-provides-xi.xsl
     if [ -r $lpxi ]; then
 	echo $0 running xsltproc $lpxi articles.html
@@ -9,4 +10,6 @@ if [ -d 01bld/www/cbd/sux/articles.html ]; then
     else
 	echo $0 no $lxpi. Stop.
     fi
+else
+    echo $0 no $art. Stop.
 fi
