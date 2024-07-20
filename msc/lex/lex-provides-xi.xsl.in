@@ -1,6 +1,6 @@
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	       xmlns:xi="http://www.w3.org/2001/XInclude"
-	       xmlns:cbd="http://oracc.org/ns/1.0/cbd"
+	       xmlns:xh="http://www.w3.org/1999/xhtml"
 	       version="1.0">
 
 <xsl:variable name="pb"
@@ -11,7 +11,7 @@
 	      select="document('/home/oracc/www/dcclt/lex-provides-word-phra.xml')"/>
 
 <xsl:template match="LEXDATA">
-  <xsl:variable name="oid" select="ancestor::cbd:entry/@xml:id"/>
+  <xsl:variable name="oid" select="ancestor::xh:div[@class='body']/@xml:id"/>
   <xsl:for-each select="$pb">
     <xsl:if test="count(id($oid))">
       <xi:include href="{concat('@@ORACC_BUILDS@@/www/dcclt/cbd/sux/pb/',$oid,'.html')}"/>

@@ -11,6 +11,8 @@ fi
 if [ "${ORACC_BUILDS}" == "" ]; then
     echo qindex . @@ORACC@@/bin/oraccenv.sh
     . @@ORACC@@/bin/oraccenv.sh
+else
+    echo $0 begin indexing
 fi
 
 cd @@ORACC@@/$project
@@ -64,3 +66,4 @@ if [ "$1" != "01bld/*/articles.xml" ]; then
     done
 fi
 chmod -R o+r 02pub
+echo $0 end indexing

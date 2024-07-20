@@ -16,8 +16,8 @@ if [ "$1" != "01bld/*/summaries.xml" ]; then
     set 02pub/cbd/*/etm.tsv
     if [ "$1" != "02pub/cbd/*/etm.tab" ]; then
 	for a in $* ; do
-	    g=`basename $a .etm`
-	    cut -f1 $a | sed "s/$/	$g/" >>$oxidtab
+	    g=`/bin/echo -n $a | cut -d/ -f3`
+	    grep ^[ox] $a | cut -f1 | sed "s/$/	$g/" >>$oxidtab
 	done
 	dbix -d 02pub/cbd -n oxid $oxidtab
 	chmod o+r 02pub/cbd/*
