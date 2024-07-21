@@ -373,3 +373,12 @@ span.noncl { color: gray; }
   box-shadow: 4px 4px 2px #8f8f8f;
   line-height: 1.1rem;
 }
+
+
+/* Legacy hub page CSS */
+.p3hub h1 { font-size: 25pt; margin-left: 3px; }
+.p3hub h2 { font-size: 14pt; margin-left: 1em; }
+.p3hub p  { margin-left: 2em; }
+
+table.hubglo { margin-left: 1em; width: auto; }
+.hubglo td { padding-left: 1em; }
