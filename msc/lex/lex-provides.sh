@@ -1,12 +1,12 @@
 #!/bin/sh
-art=01bld/www/cbd/sux/articles.html
+dir=01bld/www/cbd/sux
+htm=articles.html
+art=$dir/$htm
 if [ -s $art ]; then
     lpxi=${ORACC_BUILDS}/lib/scripts/lex-provides-xi.xsl
     if [ -r $lpxi ]; then
-	echo $0 running xsltproc $lpxi articles.html
-	(cd 01bld/www/cbd/sux ; 
-	 xsltproc ${ORACC_BUILDS}/lib/scripts/lex-provides-xi.xsl articles.html >xarticles.html ;
-	 mv xarticles.html articles.html)
+	echo $0 running "cd $dir ; xsltproc -o $htm $lpxi $htm"
+	(cd $dir ; xsltproc -o $htm $lpxi $htm)
     else
 	echo $0 no $lxpi. Stop.
     fi
