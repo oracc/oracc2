@@ -63,6 +63,8 @@ if [ "$1" != "01bld/*/articles.xml" ]; then
 	mkdir -p 02pub/cbd/$l
 	echo qindex qcbdx $project $a
 	qcbdx -p $project -l $l $a
+	echo qindex xisdb ./$l.tis
+	(cd 02pub/cbd/$l ; xisdb ./$l.tis)
     done
 fi
 chmod -R o+r 02pub
