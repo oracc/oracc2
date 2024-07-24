@@ -21,7 +21,7 @@
 
 >&2 echo $0 $*
 
-oraccbin=@@ORACC_BUILDS@@/bin
+oraccbin=${ORACC}/bin
 host_project=$1
 prox_project=$2
 PQX=$3

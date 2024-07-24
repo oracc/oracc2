@@ -36,7 +36,7 @@ try_map(char *sig,char *map_file,const char*projlang)
 	  char html[1024];
 	  ++tab;
 	  tab[strlen(tab)-1] = '\0';
-	  sprintf(html,"@@ORACC@@/www/%s/cbd/%s/%s.html",map_proj,lang,tab);
+	  sprintf(html,"%s/www/%s/cbd/%s/%s.html",oracc(),map_proj,lang,tab);
 
 	  if (!access(html,R_OK))
 	    {

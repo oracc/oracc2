@@ -7,8 +7,9 @@ int precomputing = 0;
 
 extern int what(Isp *ip);
 
+#if 0
 static void
-print_hdr(void)
+print_hdr(ipvoid)
 {
   static int hdone = 0;
   if (!hdone++)
@@ -17,6 +18,7 @@ print_hdr(void)
       fflush(stdout);
     }
 }
+#endif
 
 int
 main(int argc, char **argv)
@@ -122,7 +124,7 @@ main(int argc, char **argv)
   
   if (ip->debug)
     {
-      print_hdr();
+      wpx_print_hdr(ip);
       if (setjmp(ip->errjmp))
 	goto error;
       else if (pui_output(ip, stdout, pui_filetext("p4debug.xml")))
@@ -142,7 +144,7 @@ main(int argc, char **argv)
 	}
       else
 	{
-	  print_hdr();
+	  wpx_print_hdr(ip);
 	  if (setjmp(ip->errjmp))
 	    goto error;
 	  else if (pui_output(ip, stdout, pui_filetext("p4html.xml")))
@@ -193,7 +195,7 @@ main(int argc, char **argv)
 	printf("<error>%s</error>", ip->err);
       else
 	{
-	  print_hdr();
+	  wpx_print_hdr(ip);
 	  if (pui_output(ip, stdout, pui_filetext("p4error.xml")))
 	    {
 	      fprintf(stderr, "px: error in error reporting: %s\n", ip->err);

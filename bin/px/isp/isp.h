@@ -200,6 +200,7 @@ typedef struct isp
   int olev;	    /* outline levels, i.e., number of headings
 		       without any appended designation */
   int debug;
+  int noheader;
   int pub_output;
   int verbose;
   int web;

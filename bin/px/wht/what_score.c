@@ -21,8 +21,10 @@ what_score(Isp *ip)
       char *tmp = expand(ip->itemdata.proj,ip->item,"sxh");
       if (!access(tmp, R_OK))
 	{
-	  wpx_print_hdr();
-	  execl("/home/oracc/bin/xfragx", "xfragx", 
+	  char xfragx[_MAX_PATH];
+	  sprintf(xfragx, "%s/bin/xfragx", oracc());
+	  wpx_print_hdr(ip);
+	  execl(xfragx, "xfragx", 
 		"-hs4",
 		"-p", ip->itemdata.proj,
 		"-i", ip->itemdata.item,

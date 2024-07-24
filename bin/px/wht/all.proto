@@ -1,22 +1,33 @@
-/* what_adhoc.c */
-extern int what_adhoc(Isp *ip);
 /* what.c */
 extern int what(Isp *ip);
+/* what_adhoc.c */
+extern int what_adhoc(Isp *ip);
 /* what_content.c */
 extern int what_content(Isp *ip, struct content_opts *cop, const char *input);
 extern struct content_opts *what_content_init(void);
+/* what_cuneify.c */
+extern int what_cuneify(Isp *ip);
 /* what_html.c */
 extern int what_html(Isp *ip);
 /* what_not.c */
 extern int what_not(Isp *ip, const char *no);
+/* what_pdf.c */
+extern int what_pdf(Isp *ip);
+/* what_proofing.c */
+extern int what_proofing(Isp *ip);
 /* what_score.c */
 extern int what_score(Isp *ip);
 /* what_searchbar.c */
 extern int what_searchbar(Isp *ip);
 /* what_sig.c */
 extern int what_sig(Isp *ip);
-/* what_sources.c */
-extern int what_sources(Isp *ip);
-extern void what_sources_setup(Isp *ip);
 /* what_statistics.c */
 extern int what_statistics(Isp *ip);
+/* what_tei.c */
+extern int what_tei(Isp *ip);
+/* what_text.c */
+extern int what_text(Isp *ip);
+/* what_wrapper.c */
+extern int what_wrapper(Isp *ip);
+/* whatfuncs.c */
+extern struct whatfuncstab *whatfuncs(register const char *str, register size_t len);

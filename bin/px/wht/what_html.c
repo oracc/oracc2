@@ -41,7 +41,7 @@ what_html(Isp *ip)
       cop->html = 1;
     }
 
-  wpx_print_hdr();
+  wpx_print_hdr(ip);
   return what_content(ip, cop, div);
 }
 

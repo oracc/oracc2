@@ -8,7 +8,7 @@ int
 what_searchbar(Isp *ip)
 {
   ip->from = "sbar";
-  wpx_print_hdr();
+  wpx_print_hdr(ip);
   if (pui_output(ip, stdout, pui_filetext("p4searchbar.xml")))
     return PX_ERROR;
   else

@@ -2,7 +2,6 @@
 #include "../px.h"
 #include "what.h"
 
-#if 1
 int
 what_sig(Isp *ip)
 {
@@ -11,23 +10,10 @@ what_sig(Isp *ip)
       ip->data = "dglo";
       ip->from = "sig";
       ip->item = ip->glosdata.ent;
-      wpx_print_hdr();
+      wpx_print_hdr(ip);
       pui_output(ip, stdout, pui_filetext("p4article.xml"));
       return PX_DONE;
     }
   else
-    {
-      ip->err = fatalize(ip->err);
-      return PX_ERROR;
-    }
+    return PX_ERROR;
 }
-#else
-int
-what_sig(Isp *ip)
-{
-  fprintf(stderr, "px: project=`%s'; literal sig=`%s'\n", ip->project, ip->sig);
-  execl("/home/oracc/bin/wsigx", "wsigx", ip->project, ip->sig, NULL);
-  ip->err = "failed to exec wsigx";
-  return 1;
-}
-#endif

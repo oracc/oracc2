@@ -65,9 +65,6 @@ void
 pr_item(FILE *fp, struct item *pr, const char *name)
 {
   fprintf(fp, "<h3>\tstruct item ip->%s</h3>\n", name);
-  fprintf(fp,"\t\ts=%s\n",(char*)xmlify((ucp)pr->s));
-  fprintf(fp,"\t\tpq=%s\n",(char*)xmlify((ucp)pr->pq));
-  fprintf(fp,"\t\tqpq=%s\n",(char*)xmlify((ucp)pr->qpq));
   fprintf(fp,"\t\tskey=%d\n",(int)pr->skey);
   fprintf(fp,"\t\tlkey=%d\n",(int)pr->lkey);
   fprintf(fp,"\t\tgrp=%d\n",(int)pr->grp);
@@ -190,6 +187,7 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\tforce=%d\n",(int)pr->force);
   fprintf(fp,"\tolev=%d\n",(int)pr->olev);
   fprintf(fp,"\tdebug=%d\n",(int)pr->debug);
+  fprintf(fp,"\tnoheader=%d\n",(int)pr->noheader);
   fprintf(fp,"\tpub_output=%d\n",(int)pr->pub_output);
   fprintf(fp,"\tverbose=%d\n",(int)pr->verbose);
   fprintf(fp,"\tweb=%d\n",(int)pr->web);

@@ -4,17 +4,17 @@
 static const char *wpx_err;
 
 void
-wpx_cat_html(const char *form, const char *file)
+wpx_cat_html(Isp *ip, const char *form, const char *file)
 {
-  wpx_print_hdr();
+  wpx_print_hdr(ip);
   execl("/bin/cat", "cat", file, NULL);
   wpx_err = strerror(errno);
 }
 
 void
-wpx_cat_xml(const char *form, const char *file)
+wpx_cat_xml(Isp *ip, const char *form, const char *file)
 {
-  wpx_print_hdr_xml();
+  wpx_print_hdr_xml(ip);
   execl("/bin/cat", "cat", file, NULL);
   wpx_err = strerror(errno);
 }
@@ -43,50 +43,67 @@ do400(const char *msg400)
 void
 do404(void)
 {
-  wpx_print_hdr();
+  fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
+  fflush(stdout);
   /*execl("/bin/cat", "cat", "@@ORACC@@/www/404.html", NULL);*/
   printf("404\n");
 }
 
 void
-wpx_print_hdr(void)
+wpx_print_hdr(Isp*ip)
 {
-  fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
-  fflush(stdout);
+  static int hdone = 0;
+  if (ip->noheader)
+    return;
+  if (!hdone++)
+    {
+      fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
+      fflush(stdout);
+    }
 }
 
 void
-wpx_print_hdr_text(void)
+wpx_print_hdr_text(Isp*ip)
 {
+  if (ip->noheader)
+    return;
   fputs("Content-type: text/plain; charset=utf-8\n\n", stdout);
   fflush(stdout);
 }
 
 void
-wpx_print_hdr_xml(void)
+wpx_print_hdr_xml(Isp*ip)
 {
+  if (ip->noheader)
+    return;
   fputs("Content-type: text/xml; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
   fflush(stdout);
 }
 
 void
-wpx_print_hdr_json()
+wpx_print_hdr_json(Isp*ip)
 {
+  if (ip->noheader)
+    return;
   fputs("Content-type: application/json\n\n", stdout);
   fflush(stdout);
 }
 
 void
-wpx_print_hdr_pdf(const char *pname)
+wpx_print_hdr_pdf(Isp*ip, const char *pname)
 {
+  if (ip->noheader)
+    return;
   fprintf(stdout,
 	  "Content-type: application/pdf\nContent-disposition: attachment; filename=\"%s\"\n\n", pname);
   fflush(stdout);
 }
 
 void
-wpx_print_hdr_zip(const char *zname)
+wpx_print_hdr_zip(Isp*ip, const char *zname)
 {
+  if (ip->noheader)
+    return;
   fprintf(stdout,
 	  "Content-type: application/zip\nContent-disposition: attachment; filename=\"%s\"\n\n", zname);
   fflush(stdout);

@@ -8,7 +8,8 @@ static const char *pxr_err;
 char *
 pxr_find_www_file(const char *project, const char *dir, const char *basename, const char *ext)
 {
-  static const char *docroot = "/home/oracc/www"; /* need to @@ this */
+  static const char docroot[_MAX_PATH];
+  sprintf(docroot, "%s", oracc());
   char *bufp = NULL;
   if (!project || !basename)
     return NULL;
@@ -75,9 +76,8 @@ pxr_find_pqx_file(const char *project, const char *pqid, const char *ext)
 
   if (!strcmp(ext, "tei"))
     {
-      const char *xmlroot = "/home/oracc/xml"; /* need to @@ this */
       bufp = malloc((3 * strlen(pqx)) + strlen(xproject) + 6);
-      sprintf(bufp,"%s/%s/00tei/%s.xml",xmlroot,xproject,pqx);
+      sprintf(bufp,"%s/xml/%s/00tei/%s.xml",oracc(),xmlroot,xproject,pqx);
     }
   else
     {

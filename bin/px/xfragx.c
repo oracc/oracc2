@@ -2,6 +2,8 @@
 #include <runexpat.h>
 #include "px.h"
 
+extern void help(void);
+
 /* FIXME: parameterize/compute location of xsltproc at 
    install time or run time */
 const char *xsltproc = "/usr/bin/xsltproc";
@@ -248,4 +250,4 @@ opts(int argc, const char *arg)
     }
   return 0;
 }
-void help() {}
+void help(void) {}
