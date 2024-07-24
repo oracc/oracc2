@@ -1,0 +1,15 @@
+#!/bin/dash
+if [ ! -d bin ]; then
+    echo $0 must be run from [oracc2]/bin/px/t. Stop.
+    exit 1
+fi
+o=`pwd`/orc
+p=`pwd`/bin
+ORACC_BUILDS=$o
+ORACC_HOME=$o
+ORACC=$o
+ORACC_P4_CACHE=`pwd`/p4.d
+PATH=$p:$PATH
+export ORACC ORACC_BUILDS ORACC_P4_CACHE PATH
+echo t calling $1
+$1

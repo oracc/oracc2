@@ -1,0 +1,15 @@
+#!/bin/dash
+rm -fr ${ORACC_P4_CACHE}
+mkdir -p ${ORACC_P4_CACHE}
+rm -fr orc
+mkdir -p orc
+(cd orc ;
+ for a in ../srv/*.xz ; do
+     p1=`/bin/echo -n $a | sed 's#../srv/##' | sed 's#.tar.xz##' | tr - /`
+     srv-untar $p1 $a ;
+ done
+ for a in ../srv/*.xz ; do
+     p2=`/bin/echo -n $a | sed 's#../srv/##' | sed 's#.tar.xz##' | tr - /`
+     srv-index $p2
+ done
+)

@@ -1,3 +1,7 @@
+# px test suite
+bin/px/t/orc
+bin/px/t/srv
+bin/px/t/xsrv
 # Executables; be specific so, e.g., sx ignore doesn't make whole subdir ignored
 bin/ax/ax
 bin/ax/atfdatax
