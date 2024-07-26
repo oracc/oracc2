@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 SUBDIRS=../../lib osort rnv tis wrapper
 
-bin_PROGRAMS=concord dbix dbx xisdb tlitsig xmlify ivd2oiv cunhtmlx jsmapx oraccopt
+bin_PROGRAMS=concord dbix dbx xisdb tlitsig xmlify ivd2oiv cunhtmlx jsmapx oraccopt pqxpand
 
 concord_SOURCES = concord.c
 concord_LDADD = $(xLDADD)
@@ -43,3 +43,7 @@ jsmapx_DEPENDENCIES = $(xLDADD)
 oraccopt_SOURCES = oraccopt.c
 oraccopt_LDADD = $(xLDADD)
 oraccopt_DEPENDENCIES = $(xLDADD)
+
+pqxpand_SOURCES = pqxpand.c
+pqxpand_LDADD = $(xLDADD)
+pqxpand_DEPENDENCIES = $(xLDADD)

@@ -3,7 +3,7 @@ rm -fr t.d ; mkdir -p t.d
 cat etc/order | while read group ; do
     echo $0 running tests from tst/$group
     mkdir t.d/$group
-    cat tst/$group | while IFS=$'\t' read id args exp ; do
+    cat tst/$group | while IFS=$'\t' read id args exp chk ; do
 	if [ "$args" == "-" ]; then
 	    args=""
 	fi
@@ -13,9 +13,17 @@ cat etc/order | while read group ; do
 	 px noh web=1 $args >out 2>err
 	 gen=`generator out`
 	 if [ "$gen" == $exp ]; then
-	     echo $group/$id ok
+	     echo $group/$id px $args generator ok
+	     if [ "$chk" != "-" ]; then
+		 xsltproc ../../../chk/$chk.xsl out >chk
+		 if [ -s chk ]; then
+		     echo $group/$id px $args check ok
+		 else
+		     echo $group/$id px $args check failed
+		 fi
+	     fi
 	 else
-	     echo "$group/$id failed [got $gen not $exp]"
+	     echo "$group/$id px $args failed [got $gen not $exp]"
 	 fi
 	)
     done

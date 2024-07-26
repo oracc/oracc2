@@ -14,7 +14,7 @@
 
 #include <libexslt/exslt.h>
 
-extern int xmlLoadExtDtdDefaultValue;
+/*extern int xmlLoadExtDtdDefaultValue;*/
 
 static const char *wrapper_err = NULL;
 
@@ -167,17 +167,19 @@ sparm(const char *p)
 static const char **
 params(struct progtab *pinfo, const char *project, const char *trans, const char *htmdir)
 {
-  static const char *p[7];
-  int null = 4;
-  p[0] = "project";
-  p[1] = sparm(project);
-  p[2] = "txhdir";
-  p[3] = sparm(htmdir);
+  static const char *p[9];
+  int null = 6;
+  p[0] = "oracc";
+  p[1] = sparm(oracc());
+  p[2] = "project";
+  p[3] = sparm(project);
+  p[4] = "txhdir";
+  p[5] = sparm(htmdir);
   if (trans)
     {
-      p[4] = "trans";
-      p[5] = sparm(trans);
-      null = 6;
+      p[6] = "trans";
+      p[7] = sparm(trans);
+      null = 8;
     }
   p[null] = NULL;
   return (const char **)p;

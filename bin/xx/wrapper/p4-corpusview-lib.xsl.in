@@ -31,10 +31,12 @@
 <xsl:param name="trans" select="'en'"/>
 <xsl:param name="transonly" select="'false'"/>
 
+<xsl:param name="oracc" select="'@@ORACC@@'"/>
+
 <xsl:variable name="outer-id" select="/*/@xml:id"/>
 
 <xsl:variable name="config-xml-file" 
-	      select="concat('@@ORACC@@/xml/',$project,'/','config.xml')"/>
+	      select="concat($oracc,'/xml/',$project,'/','config.xml')"/>
 
 <xsl:param name="external-url-host">
   <xsl:call-template name="xpd-option">
@@ -51,7 +53,7 @@
   
   <xsl:variable 
       name="basedir" 
-      select="concat('@@ORACC@@/bld/',$project,'/',substring($pqid,1,4),'/',$pqid,'/')"/>
+      select="concat($oracc,'/bld/',$project,'/',substring($pqid,1,4),'/',$pqid,'/')"/>
 
   <xsl:variable name="basename" select="concat($basedir,$pqid)"/>
 

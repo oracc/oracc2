@@ -34,7 +34,7 @@ error "gperf generated tables don't work with this execution character set. Plea
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 23
+#define TOTAL_KEYWORDS 24
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 15
 #define MIN_HASH_VALUE 10
@@ -65,7 +65,7 @@ hash (str, len)
       41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
       41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
       41, 41, 41, 41, 41, 41, 41,  0,  5,  5,
-       5,  0, 15, 10, 41, 41, 41, 15, 30, 25,
+       5,  0, 15, 10, 41, 20, 41, 15, 30, 25,
        0,  0, 15, 41,  0,  5, 41, 15, 41, 15,
        5, 41, 41, 41, 41, 41, 41, 41, 41, 41,
       41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
@@ -132,7 +132,9 @@ static struct puifilestab puifiles_wl[] =
     {"p4noproject.xml", &p4noproject},
 #line 21 "puifiles.g"
     {"p4noxtf.xml", &p4noxtf},
-    {""}, {""}, {""},
+#line 30 "puifiles.g"
+    {"p4noitem.xml", &p4noitem},
+    {""}, {""},
 #line 14 "puifiles.g"
     {"p4html.xml", &p4html},
     {""}, {""}, {""}, {""},

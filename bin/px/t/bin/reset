@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -fr p4.d
+mkdir -p p4.d/htm

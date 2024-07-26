@@ -157,7 +157,10 @@ main(int argc, char **argv)
  error:
 
   if (ip->web && !px_error_page(ip))
-    goto ok;
+    {
+      fflush(stdout);
+      goto ok;
+    }
 
   /* Some errors may occur when a URL has dependencies that don't
    * exist because it is a deep request for something that hasn't had

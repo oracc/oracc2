@@ -5,7 +5,7 @@
 struct cgioptstab;
 %%
 debug,	'D'
-verbose,	'V'
+verbose,	'v'
 force,	'F'
 web, 	'w'
 project, 'j'

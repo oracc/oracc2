@@ -2,7 +2,7 @@ include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=xsltx
 
-scriptdata_DATA=p4-htmlview.xsl p4-corpusview-lib.xsl
+scriptdata_DATA=p4-htmlview.xsl p4-corpusview-lib.xsl p4-g2-xtf-HTML.xsl
 
 noinst_SCRIPTS=wrapper-links.sh
 

@@ -44,8 +44,9 @@ else
     exec 2>/dev/null
 fi
 
-xtl=`$oraccbin/pqxpand xtl $xtlproject:$PQX`
+oraccarg="-param oracc '$ORACC'"
 projarg="-param project '$prox_project'"
+xtl=`$oraccbin/pqxpand xtl $xtlproject:$PQX`
 if [ -r $xtl ]; then
     xtlarg="-stringparam xtl $xtl"
 fi
@@ -58,16 +59,18 @@ xtf=`$oraccbin/pqxpand xtf $prox_project:$PQX`
 
 # Check we have or can make the metadir--this ends with
 # p4/htm/P123/P123456 so it prepares for HTML generation as well
-mkdir -v -p $metadir || exit 1
+>&2 mkdir -v -p $metadir || exit 1
 
 # Check we have or can make the htmldir if it differs from metadir
 # (which it will for proxies)
 if [ "$metadir" != "$htmldir" ]; then
-    mkdir -v -p $htmldir || exit 1
+    >&2 mkdir -v -p $htmldir || exit 1
 fi
 
-xsltproc $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml
+>&2 echo $0 xsltproc $oraccarg $projarg $xtlarg $xmdotl $xmd '>'$metadir/meta.xml
+xsltproc $oraccarg $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml
 if [ $? -eq 0 ]; then
+    >&2 echo $0 continuing on to item html generation
     [ -r $xtf ] || exit 3
     htxh=$metadir/$PQX.txh
     if [ ! -r $htxh ]; then
@@ -77,7 +80,7 @@ if [ $? -eq 0 ]; then
 	    ln -sf $txh $htmldir
 	else
 	    >&2 echo $0: creating $htxh
-	    $oraccbin/xtf2txh -i $prox_project:$PQX
+	    $oraccbin/xtf2txh -v -i $prox_project:$PQX
 	fi
     else
 	>&2 echo $0: $htxh already exists

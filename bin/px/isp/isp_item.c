@@ -112,14 +112,18 @@ isp_item_load(Isp *ip)
 	      strcpy(t, ip->cache.sub);
 	      char *slash = strrchr(t, '/');
 	      sprintf(slash+1, "txtindex.lst/123");
-	      if ((dp = dbx_init(t, "itm")))
+	      struct stat sb;
+	      if (stat(t, &sb) == 0 && S_ISDIR(sb.st_mode))
 		{
-		  k = (char*)pool_copy((ucp)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
-		  dbx_term(dp);
-		  if (k)
+		  if ((dp = dbx_init(t, "itm")))
 		    {
-		      ip->cache.txtindex = (char*)pool_copy((ucp)t, ip->p);
-		      goto ok;
+		      k = (char*)pool_copy((ucp)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
+		      dbx_term(dp);
+		      if (k)
+			{
+			  ip->cache.txtindex = (char*)pool_copy((ucp)t, ip->p);
+			  goto ok;
+			}
 		    }
 		}
 	    }

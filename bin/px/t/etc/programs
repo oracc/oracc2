@@ -1,6 +1,10 @@
 px/isp/ispdiv.sh
+px/isp/ispxtf.sh
+px/isp/ispxtl.sh
 px/ice/ce/cex
-px/ice/ce/cextf
+px/ice/ce/cextfx
 px/ice/wm/wmx
 px/px
 tx/tx
+xx/oraccopt
+xx/pqxpand

@@ -29,12 +29,6 @@ bin/sx/slx
 bin/sx/sx
 bin/sx/tok2asl
 bin/tx/tx
-bin/zx/catx
-bin/zx/expat-identity
-bin/zx/gdlx
-bin/zx/repx
-bin/zx/rocox
-bin/zx/xmlfilter
 bin/px/cbditem
 bin/px/issx
 bin/px/px
@@ -65,7 +59,9 @@ bin/xx/dbix
 bin/xx/dbx
 bin/xx/ivd2oiv
 bin/xx/jsmapx
+bin/xx/oraccopt
 bin/xx/osort/osort
+bin/xx/pqxpand
 bin/xx/rnv/rnv
 bin/xx/tis/cbdex
 bin/xx/tis/cbdikey
@@ -81,7 +77,18 @@ bin/xx/tis/vidx
 bin/xx/tlitsig
 bin/xx/xisdb
 bin/xx/xmlify
+bin/xx/wrapper/xmd2htm
+bin/xx/wrapper/xtf2cun
+bin/xx/wrapper/xtf2prf
+bin/xx/wrapper/xtf2tei
+bin/xx/wrapper/xtf2txh
 bin/xx/wrapper/xsltx
+bin/zx/catx
+bin/zx/expat-identity
+bin/zx/gdlx
+bin/zx/repx
+bin/zx/rocox
+bin/zx/xmlfilter
 msc/lex/lex-collapse-refs
 msc/sys/proj-from-conf.sh
 
@@ -157,6 +164,7 @@ bin/wx/wx.c
 bin/wx/wx_log.c
 bin/wx/xmlrpc.c
 bin/xx/tis/tisdiv.c
+bin/xx/wrapper/wrapper-links.sh
 lib/gvl/oiv.c
 fname.c
 slix.c

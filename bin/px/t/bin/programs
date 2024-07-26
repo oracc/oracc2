@@ -1,3 +1,5 @@
 #!/bin/sh
 mkdir -p orc/bin
 cat etc/programs | sed 's#^#ln -sf ${ORACC_SRC}/bin/#' | sed 's#$# orc/bin#' | /bin/sh -s
+cat etc/xprograms | sed 's#^#ln -sf ${XORACC}/bin/#' | sed 's#$# orc/bin#' | /bin/sh -s
+chmod +x orc/bin/*
