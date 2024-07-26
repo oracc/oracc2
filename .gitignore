@@ -127,6 +127,7 @@ sn_alias.c
 statnames.c
 tokflags.c
 urlkeys.c
+whatfuncs.c
 
 # .in derivatives
 bin/dx/dxx/dx-install.sh
