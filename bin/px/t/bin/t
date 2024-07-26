@@ -6,13 +6,14 @@ fi
 o=`pwd`/orc
 p=`pwd`/bin
 pxt=`pwd -P`
+XORACC=${ORACC_BUILDS}
 ORACC_SRC=`/bin/echo -n $pxt | sed 's#/bin/px/t##'`
 ORACC_BUILDS=$o
 ORACC_HOME=$o
 ORACC=$o
 ORACC_P4_CACHE=`pwd`/p4.d
 PATH=$p:$o/bin:$PATH
-export ORACC ORACC_BUILDS ORACC_P4_CACHE ORACC_SRC PATH
+export ORACC ORACC_BUILDS ORACC_P4_CACHE ORACC_SRC PATH XORACC
 if [ "$1" == "" ]; then
     x=/bin/sh
 else

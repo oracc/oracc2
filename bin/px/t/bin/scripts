@@ -1,0 +1,4 @@
+#!/bin/sh
+mkdir -p orc/lib/scripts
+cat etc/scripts | sed 's#^#ln -sf ${ORACC_SRC}/bin/#' | sed 's#$# orc/lib/scripts#' | /bin/sh -s
+cat etc/xscripts | sed 's#^#ln -sf ${XORACC}/lib/scripts/#' | sed 's#$# orc/lib/scripts#' | /bin/sh -s
