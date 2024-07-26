@@ -52,7 +52,7 @@ if [ -r 01bld/lists/txtindex.lst ]; then
     echo qindex qlemx $project 01bld/lists/txtindex.lst
     qlemx -p $project <01bld/lists/txtindex.lst
     echo qindex qtrax $project 01bld/lists/txtindex.lst
-    qtrax -p $project <01bld/lists/txtindex.lst
+    cut -d@ -f1 01bld/lists/txtindex.lst | qtrax -p $project
 fi
 
 set 01bld/*/articles.xml
