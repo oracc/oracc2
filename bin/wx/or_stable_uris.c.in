@@ -248,7 +248,7 @@ res_is_list(const char *e)
 	;
       if (!strcmp(e, ".tis"))
 	return 1;
-      else
+      else if (project)
 	{
 	  char *lst = malloc(strlen("@@ORACC@@") + strlen("/www/lists/") + strlen(project)
 				   + strlen(init) + 2);
