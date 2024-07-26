@@ -9,7 +9,7 @@
 
 extern int sll_trace;
 extern Dbi_index *sll_db;
-extern const char *oracc;
+extern const char *oraccd;
 extern Pool *sllpool;
 
 Dbi_index *
@@ -29,9 +29,9 @@ sll_init_d(const char *project, const char *name)
   if (!name)
     name = "sl";
 
-  oracc = oracc_home();
-  db = (char*)pool_alloc(strlen(oracc)+strlen("/pub/sl/") + strlen(project) + 1, sllpool);
-  sprintf(db, "%s/pub/%s/sl", oracc, project);
+  oraccd = oracc_home();
+  db = (char*)pool_alloc(strlen(oraccd)+strlen("/pub/sl/") + strlen(project) + 1, sllpool);
+  sprintf(db, "%s/pub/%s/sl", oraccd, project);
 
   if (!(dbi = dbi_open(name, db)))
     fprintf(stderr, "sllib: failed to open %s (project=%s; name=%s)\n", db, project, name);

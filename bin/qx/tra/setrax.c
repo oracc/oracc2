@@ -190,7 +190,7 @@ main (int argc, char **argv)
   const char *index_dir, *keys; /*, *vids;*/
   const unsigned char *key;
 
-  options (argc, argv, "2ac:gp:stx:");
+  options (argc, argv, "2ac:gp:stvx:");
   set_proxies(proxies_arg);
   setlocale(LC_ALL,ORACC_LOCALE);
   vidp = vido_init('v', 1);
@@ -276,7 +276,7 @@ main (int argc, char **argv)
 /********************************************************************/
 
 void
-add_graphemes ()
+add_graphemes (void)
 {
   struct grapheme *gnp;
   for (gnp = grapheme_list_base; gnp; gnp = gnp->next)
@@ -294,7 +294,6 @@ add_graphemes ()
     }
 }
 
-#if 1
 static void
 fn_expand(void *p)
 {
@@ -315,31 +314,6 @@ fn_expand(void *p)
   else
     fprintf(stderr,"setrax: %s not found; skipping XTR file\n", x);
 }
-#else
-static void
-fn_expand(void *p)
-{
-  const char **projects = proxies;
-  int found = 0;
-  while (*projects)
-    {
-      fnlist[findex] = strdup(l2 
-			      ? l2_expand_xtr(*projects, p, "project", "en")
-			      : expand_xtr(*projects, p, "project", "en"));
-      if (!access(fnlist[findex],R_OK))
-	{
-	  if (!quiet)
-	    fprintf(stderr,"found %s\n",fnlist[findex]);
-	  ++findex;
-	  found = 1;
-	  break;
-	}
-      ++projects;
-    }
-  if (!found && !quiet)
-    fprintf(stderr,"no input file for %s\n",(char*)p);
-}
-#endif
 
 static void
 set_proxies(const char *pxpath)
@@ -369,10 +343,10 @@ set_proxies(const char *pxpath)
 
 const char *prog = "setrax";
 int major_version = 5, minor_version = 0, verbose;
-const char *usage_string = "[-{acgpsx}] <input>";
+const char *usage_string = "[-{acgpsvx}] <input>";
 
 void
-help()
+help(void)
 {
   ;
 }
@@ -402,6 +376,9 @@ opts(int c, const char *arg)
       break;
     case 'x':
       proxies_arg = arg;
+      break;
+    case 'v':
+      verbose = 1;
       break;
     default:
       return 1;

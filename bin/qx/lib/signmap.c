@@ -46,13 +46,13 @@ sm_endElement(void *userData, const char *name)
 }
 
 void
-signmap_init()
+signmap_init(void)
 {
-  const char *mapfile[2] = 
-    { 
-      "/home/oracc/xml/ogsl/sl.xml", 
-      NULL 
-    };
+  const char *mapfile[2];
+  char osl[strlen(oracc())+strlen("//xml/osl/sl.xml")];
+  sprintf(osl, "%s/xml/osl/sl.xml", oracc());
+  mapfile[0] = osl;
+  mapfile[1] = NULL;
   signmap = hash_create(8000);
   runexpat(i_list,mapfile,sm_startElement,sm_endElement);
 }

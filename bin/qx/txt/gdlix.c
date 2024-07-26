@@ -68,7 +68,7 @@ extern void signmap_init(void);
 extern void signmap_term(Dbi_index *);
 
 static void
-do_boundary()
+do_boundary(void)
 {
   switch (pending_boundary)
     {
@@ -295,7 +295,7 @@ gdlEndElement(void *userData, const char *name)
 }
 
 void
-add_graphemes ()
+add_graphemes (void)
 {
   struct grapheme *gnp;
   for (gnp = grapheme_list_base; gnp; gnp = gnp->next)

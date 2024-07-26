@@ -12,10 +12,11 @@ static int signindicator[256];
 
 int sll_raw_output = 0;
 int sll_trace = 0;
-const char *oracc = NULL;
 Pool *sllpool = NULL;
 Hash *sll_sl = NULL;
 Dbi_index *sll_db = NULL;
+
+const char *oraccd;
 
 const char *correctedg = NULL;
 

@@ -29,7 +29,7 @@ struct sllext
 
 extern int sll_trace;
 extern Hash *sll_sl;
-extern const char *oracc;
+extern const char *oraccd;
 extern Pool *sllpool;
 extern int sll_raw_output;
 extern int sll_trace;

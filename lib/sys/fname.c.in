@@ -22,7 +22,19 @@ expand_base(const char *d)
 }
 
 const char *
+oracc_builds (void)
+{
+  return oracc();
+}
+
+const char *
 oracc_home (void)
+{
+  return oracc();
+}
+
+const char *
+oracc(void)
 {
   static char *cached_home = NULL;
   if (NULL == cached_home)

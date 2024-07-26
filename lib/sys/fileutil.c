@@ -119,8 +119,7 @@ BUGS
 #endif /* DIR_SEPARATOR_2 */
 
 char *
-basename (name)
-     const char *name;
+basename (const char *name)
 {
   const char *base;
 

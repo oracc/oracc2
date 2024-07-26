@@ -10,7 +10,7 @@
 
 extern int sll_trace;
 extern Hash *sll_sl;
-extern const char *oracc;
+extern const char *oraccd;
 extern Pool *sllpool;
 static Hash *h = NULL;
 
@@ -32,9 +32,9 @@ sll_init_t(const char *project, const char *name)
   if (!name)
     name = "sl";
 
-  oracc = oracc_home();
-  tsv_file = (char *)pool_alloc(strlen(oracc)+strlen("/pub/sl/") + strlen(project) + strlen("/sl.tsv") + 1, sllpool);
-  sprintf(tsv_file, "%s/pub/%s/sl/sl.tsv", oracc, project);
+  oraccd = oracc_home();
+  tsv_file = (char *)pool_alloc(strlen(oraccd)+strlen("/pub/sl/") + strlen(project) + strlen("/sl.tsv") + 1, sllpool);
+  sprintf(tsv_file, "%s/pub/%s/sl/sl.tsv", oraccd, project);
 
   tsv_data = slurp("sll", tsv_file, &fsiz);
   if (tsv_data)

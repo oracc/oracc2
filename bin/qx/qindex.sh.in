@@ -8,14 +8,14 @@ if [ "$1" == "" ]; then
     exit 1
 fi
 
-if [ "${ORACC_BUILDS}" == "" ]; then
+if [ "${ORACC}" == "" ]; then
     echo qindex . @@ORACC@@/bin/oraccenv.sh
     . @@ORACC@@/bin/oraccenv.sh
 else
     echo $0 begin indexing
 fi
 
-cd @@ORACC@@/$project
+cd ${ORACC}/$project
 echo qindex `pwd`
 if [ -r 01bld/cdlicat.xmd ]; then
     mkdir -p 02pub/cat

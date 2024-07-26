@@ -106,7 +106,7 @@ vec_sep_push (const char *new_sep)
 }
 
 void
-vec_sep_pop ()
+vec_sep_pop (void)
 {
   if (stack_len)
     {
