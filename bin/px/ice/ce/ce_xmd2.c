@@ -268,7 +268,7 @@ xmdprinter2(const char *pq)
 	  pqx = pq;
 	}
 #endif
-      char anchor[strlen("<a href=.javascript://..onclick=.act_iref(event)..data-iref=.P123456.0")];
+      char anchor[strlen("<a href=.javascript://. onclick=.act_iref(event). data-iref=.P123456.0>")];
       sprintf(anchor, "<a href=\"javascript://\" onclick=\"act_iref(event)\" data-iref=\"%s\">", textid);
       
       if (!in_group)
