@@ -145,6 +145,7 @@ bin/px/ice/pg/ptoq.c
 bin/px/ice/pg/pd.c
 bin/px/ice/pg/pg2.c
 bin/px/ice/pg/sortinfo.c
+bin/px/isp/isp_htmd.c
 bin/qx/qindex.sh
 bin/qx/qindexall.sh
 bin/wx/oai.c
