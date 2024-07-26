@@ -23,8 +23,6 @@ print_hdr(ipvoid)
 int
 main(int argc, char **argv)
 {
-  int status = 0;
-  
   char *locale = NULL;
   if (!(locale = setlocale(LC_ALL, ORACC_LOCALE)))
     fprintf(stderr, "setlocale(LC_ALL, \"en_GB\") failed\n");
@@ -160,9 +158,7 @@ main(int argc, char **argv)
 
   if (ip->web && !px_error_page(ip))
     goto ok;
-  
-  status = 1;
-  
+
   /* Some errors may occur when a URL has dependencies that don't
    * exist because it is a deep request for something that hasn't had
    * the logistical infrastructure created yet.  To catch these
@@ -218,7 +214,8 @@ main(int argc, char **argv)
     isp_show(stderr, ip);
   isp_term(ip);
   fflush(stdout);
-  return status;
+
+  return 0;
 }
 
 const char *prog = "px";
