@@ -57,6 +57,10 @@ pui_output(Isp *ip, FILE *fp, const char *s)
   else if (!ip->pui)
     ip->pui = p->name;
   const char *end = s + strlen(s);
+
+  if (!ip->hdr_done)
+    wpx_print_hdr(ip);
+
   if (!strncmp(s, "<x>", 3))
     {
       s += 3;

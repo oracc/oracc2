@@ -188,6 +188,7 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\tforce=%d\n",(int)pr->force);
   fprintf(fp,"\tolev=%d\n",(int)pr->olev);
   fprintf(fp,"\tdebug=%d\n",(int)pr->debug);
+  fprintf(fp,"\thdr_done=%d\n",(int)pr->hdr_done);
   fprintf(fp,"\tnoheader=%d\n",(int)pr->noheader);
   fprintf(fp,"\tpub_output=%d\n",(int)pr->pub_output);
   fprintf(fp,"\tverbose=%d\n",(int)pr->verbose);

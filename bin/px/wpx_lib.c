@@ -55,7 +55,7 @@ wpx_print_hdr(Isp*ip)
   static int hdone = 0;
   if (ip->noheader)
     return;
-  if (!hdone++)
+  if (!ip->hdr_done++)
     {
       fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
       fflush(stdout);
@@ -69,6 +69,7 @@ wpx_print_hdr_text(Isp*ip)
     return;
   fputs("Content-type: text/plain; charset=utf-8\n\n", stdout);
   fflush(stdout);
+  ++ip->hdr_done;
 }
 
 void
@@ -78,6 +79,7 @@ wpx_print_hdr_xml(Isp*ip)
     return;
   fputs("Content-type: text/xml; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
   fflush(stdout);
+  ++ip->hdr_done;
 }
 
 void
@@ -87,6 +89,7 @@ wpx_print_hdr_json(Isp*ip)
     return;
   fputs("Content-type: application/json\n\n", stdout);
   fflush(stdout);
+  ++ip->hdr_done;
 }
 
 void
@@ -97,6 +100,7 @@ wpx_print_hdr_pdf(Isp*ip, const char *pname)
   fprintf(stdout,
 	  "Content-type: application/pdf\nContent-disposition: attachment; filename=\"%s\"\n\n", pname);
   fflush(stdout);
+  ++ip->hdr_done;
 }
 
 void
@@ -107,4 +111,5 @@ wpx_print_hdr_zip(Isp*ip, const char *zname)
   fprintf(stdout,
 	  "Content-type: application/zip\nContent-disposition: attachment; filename=\"%s\"\n\n", zname);
   fflush(stdout);
+  ++ip->hdr_done;
 }
