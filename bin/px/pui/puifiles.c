@@ -1,5 +1,5 @@
-/* ANSI-C code produced by gperf version 3.1 */
-/* Command-line: gperf -G -W puifiles_wl -N puifiles -tT puifiles.g  */
+/* C code produced by gperf version 3.0.3 */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W puifiles_wl -N puifiles -tT puifiles.g  */
 /* Computed positions: -k'5,7' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -26,7 +26,7 @@
       && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \
       && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))
 /* The character set is not based on ISO-646.  */
-#error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gperf@gnu.org>."
+error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
 #line 1 "puifiles.g"
@@ -38,8 +38,8 @@
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 15
 #define MIN_HASH_VALUE 10
-#define MAX_HASH_VALUE 35
-/* maximum key range = 26, duplicates = 0 */
+#define MAX_HASH_VALUE 40
+/* maximum key range = 31, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -49,36 +49,38 @@ inline
 #endif
 #endif
 static unsigned int
-hash (register const char *str, register size_t len)
+hash (str, len)
+     register const char *str;
+     register size_t len;
 {
   static unsigned char asso_values[] =
     {
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36,  0, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36,  0,  5,  5,
-       5,  0, 15, 10, 36, 36, 36, 20, 25, 20,
-       0,  0, 36, 36,  0,  5, 10, 15, 36, 15,
-       5, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41,  0, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41,  0,  5,  5,
+       5,  0, 15, 10, 41, 41, 41, 15, 30, 25,
+       0,  0, 15, 41,  0,  5, 41, 15, 41, 15,
+       5, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
+      41, 41, 41, 41, 41, 41
     };
   return len + asso_values[(unsigned char)str[6]] + asso_values[(unsigned char)str[4]];
 }
@@ -122,28 +124,30 @@ static struct puifilestab puifiles_wl[] =
     {"p4debug.xml", &p4debug},
 #line 27 "puifiles.g"
     {"p4nowhat.xml", &p4nowhat},
-#line 29 "puifiles.g"
-    {"p4article.xml", &p4article},
-#line 18 "puifiles.g"
-    {"p4debugdiv.xml", &p4debugdiv},
-#line 14 "puifiles.g"
-    {"p4html.xml", &p4html},
-#line 21 "puifiles.g"
-    {"p4noxtf.xml", &p4noxtf},
-    {""},
 #line 22 "puifiles.g"
     {"p4unknown.xml", &p4unknown},
-    {""},
+#line 18 "puifiles.g"
+    {"p4debugdiv.xml", &p4debugdiv},
+#line 29 "puifiles.g"
+    {"p4noproject.xml", &p4noproject},
+#line 21 "puifiles.g"
+    {"p4noxtf.xml", &p4noxtf},
+    {""}, {""}, {""},
+#line 14 "puifiles.g"
+    {"p4html.xml", &p4html},
+    {""}, {""}, {""}, {""},
 #line 24 "puifiles.g"
     {"p4full.xml", &p4full}
   };
 
 struct puifilestab *
-puifiles (register const char *str, register size_t len)
+puifiles (str, len)
+     register const char *str;
+     register size_t len;
 {
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register unsigned int key = hash (str, len);
+      unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {

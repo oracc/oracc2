@@ -183,6 +183,7 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\ttmp_dir=%s\n",(char*)xmlify((ucp)pr->tmp_dir));
   fprintf(fp,"\terr=%s\n",(char*)xmlify((ucp)pr->err));
   fprintf(fp,"\terrx=%s\n",(char*)xmlify((ucp)pr->errx));
+  fprintf(fp,"\tpui=%s\n",(char*)xmlify((ucp)pr->pui));
   fprintf(fp,"\tnowhat=%d\n",(int)pr->nowhat);
   fprintf(fp,"\tforce=%d\n",(int)pr->force);
   fprintf(fp,"\tolev=%d\n",(int)pr->olev);

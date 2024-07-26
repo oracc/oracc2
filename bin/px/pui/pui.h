@@ -20,7 +20,7 @@ struct puifilestab
 extern const char *p4pager, *p4error, *p4controls, *p4footer, *p4search, *p4searchbar,
   *p4icons, *p4html, *p4head, *p4dropdown, *p4debug, *p4debugdiv, *p4itemglo,
   *p4itemxtf, *p4select, *p4ceselect, *p4unknown, *p4noxtf, *p4nosrch,
-  *p4full, *p4plus, *p4nowhat, *p4whatnot, *p4back, *p4article;
+  *p4full, *p4plus, *p4nowhat, *p4whatnot, *p4back, *p4article, *p4noproject;
 
 extern const char *pui_filetext(const char *file);
 extern int pui_output(Isp *ip, FILE *fp, const char *s);
@@ -34,8 +34,8 @@ extern atfunc pui_at_error, pui_at_invocation, pui_at_status,
   pui_at_item_data, pui_at_item_meta, pui_at_item_label, pui_at_srchterm, pui_at_pager_class,
   pui_at_item_index, pui_at_item_index_nth, pui_at_item_index_typ, pui_at_select_ce,
   pui_at_select_sort, pui_at_select_trans, pui_at_page_label, pui_at_item_qpqx, pui_what_not,
-  pui_at_tmax, pui_at_tmax_texts, pui_at_article;
-  
+  pui_at_tmax, pui_at_tmax_texts, pui_at_article, pui_at_generator;
+
 extern int pui_123(Isp *ip, const char *perm, const char *cfg, FILE *fp);
 
 #endif/*PUI_H_*/

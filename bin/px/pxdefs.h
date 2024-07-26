@@ -27,6 +27,8 @@
 
 enum px_ret { PX_DONE=0, PX_ERROR=1, PX_CONTINUE=2};
 
+enum px_err { PX_ER_NO_ERROR , PX_ER_BAD_PROJECT };
+
 extern int file_copy_lines(const char *from, const char *to, int start, int end);
 extern const char *lang32(const char *l);
 extern const char *px_mesg(const char *wpq, const char *fmt, ...);

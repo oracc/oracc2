@@ -13,3 +13,5 @@ mkdir -p orc
      srv-index $p2
  done
 )
+programs
+

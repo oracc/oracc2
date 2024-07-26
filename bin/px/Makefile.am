@@ -33,7 +33,7 @@ bin_SCRIPTS=pxlangs.sh pxreset.sh pxperms.sh pxp3p4.sh pxsrch.sh \
 	pxlocalreset.sh cbd-items.sh pxprecompute.sh pxtsvdbs.sh \
 	outline0.sh
 
-px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c $(pxlib)
+px_SOURCES=px.c xslt_if.c wpx_lib.c selecter.c http_accept_language.c px_error_page.c $(pxlib)
 
 px_print_ip.c: isp/isp.h mk-isp-print.plx
 	./mk-isp-print.plx

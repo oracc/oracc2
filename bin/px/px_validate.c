@@ -48,6 +48,7 @@ px_valid_project(Isp *ip)
   if (stat(dir, &sb) != 0 || !S_ISDIR(sb.st_mode))
     {
       ip->err = "unknown project";
+      ip->pxerr = PX_ER_BAD_PROJECT;
       return 1;
     }
   else
@@ -57,6 +58,7 @@ px_valid_project(Isp *ip)
       if (!xp || 0 == xp->opts->key_count)
 	{
 	  ip->err = "failed to load project config.xml";
+	  ip->pxerr = PX_ER_BAD_PROJECT;
 	  return 1;
 	}
       else
@@ -133,7 +135,7 @@ px_validate(Isp *ip)
 
   if (!ip->project)
     {
-      ip->err = "PROJECT not set, use -j PROJECT";
+      ip->err = "PROJECT not set, use -j PROJECT";      
       goto error;
     }
   else if (px_valid_project(ip))

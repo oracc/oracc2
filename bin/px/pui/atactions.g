@@ -36,3 +36,4 @@ struct atactionstab;
 "pui_tmax()", &pui_at_tmax
 "pui_tmax_texts()", &pui_at_tmax_texts
 "pui_article()", &pui_at_article
+"pui_generator()", &pui_at_generator

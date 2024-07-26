@@ -10,7 +10,8 @@ libpui_la_SOURCES=all.proto \
 	p4debugdiv.c p4itemglo.c p4itemxtf.c p4select.xsl p4ceselect.xml \
 	p4unknown.c p4noxtf.c p4nosrch.c p4full.c p4plus.c \
 	atactions.c puifiles.c pui_at.c pui_output.c pui_123.c \
-	p4back.c p4nowhat.c p4whatnot.c p4searchbar.c p4article.c
+	p4back.c p4nowhat.c p4whatnot.c p4searchbar.c p4article.c \
+	p4noproject.c
 
 .xml.c:
 	./xc.plx $<

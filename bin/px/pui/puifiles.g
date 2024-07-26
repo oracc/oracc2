@@ -26,4 +26,4 @@ struct puifilestab;
 "p4back.xml", &p4back
 "p4nowhat.xml", &p4nowhat
 "p4whatnot.xml", &p4whatnot
-"p4article.xml", &p4article
+"p4noproject.xml", &p4noproject

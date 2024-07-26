@@ -18,6 +18,8 @@ extern int main(int argc, char **argv);
 extern const char *lang32(const char *l);
 /* px.c */
 extern int main(int argc, char **argv);
+/* px_error_page.c */
+extern int px_error_page(Isp *ip);
 /* px_file_copy.c */
 extern int px_file_copy(Isp *ip, const char *fn, const char *to);
 extern int file_copy_lines(const char *from, const char *to, int start, int end);

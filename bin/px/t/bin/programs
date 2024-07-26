@@ -1,0 +1,3 @@
+#!/bin/sh
+mkdir -p orc/bin
+cat etc/programs | sed 's#^#ln -sf ${ORACC_SRC}/bin/#' | sed 's#$# orc/bin#' | /bin/sh -s

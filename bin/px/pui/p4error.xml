@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta name="generator" content="@@pui_generator()@@"/>
     <link rel="stylesheet" type="text/css" href="/css/p4error.css"/>
     <title>Oracc Pager Error</title>    
   </head>

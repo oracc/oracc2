@@ -1,7 +1,8 @@
 const char *p4error = 
 "<!DOCTYPE html>\n"
-"<html>\n"
+"<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
 "  <head>\n"
+"    <meta name=\"generator\" content=\"@@pui_generator()@@\"/>\n"
 "    <link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4error.css\"/>\n"
 "    <title>Oracc Pager Error</title>    \n"
 "  </head>\n"

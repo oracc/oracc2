@@ -1,5 +1,6 @@
 const char *p4head = 
 "<x>\n"
+"  <meta name=\"generator\" content=\"@@pui_generator()@@\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4.css\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/@@pui_project()@@/css/p3colours.css\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/@@pui_project()@@/css/projcss.css\"/>\n"

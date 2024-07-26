@@ -195,6 +195,7 @@ typedef struct isp
   const char *tmp_dir;
   const char *err;
   const char *errx;
+  const char *pui;
   int nowhat;
   int force;
   int olev;	    /* outline levels, i.e., number of headings
@@ -206,6 +207,7 @@ typedef struct isp
   int web;
   int zlev; 	/* not sure this is necessary with refactor */
   int argc;
+  enum px_err pxerr;
   const char *referer;
   const char *tmpdir;
   const char **argv;

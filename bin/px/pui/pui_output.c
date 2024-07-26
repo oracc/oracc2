@@ -2,6 +2,8 @@
 #include "../px.h"
 #include "pui.h"
 
+static struct puifilestab *p;
+
 /* This function is called when iterating over text one character at a
    time; it needs to return a pointer to the last character output
    because the return pointer is then incremented */
@@ -52,6 +54,8 @@ pui_output(Isp *ip, FILE *fp, const char *s)
       ip->errx = "";
       return 1;
     }
+  else if (!ip->pui)
+    ip->pui = p->name;
   const char *end = s + strlen(s);
   if (!strncmp(s, "<x>", 3))
     {
@@ -74,7 +78,7 @@ pui_output(Isp *ip, FILE *fp, const char *s)
 const char *
 pui_filetext(const char *file)
 {
-  struct puifilestab *p = puifiles(file, strlen(file));
+  p = puifiles(file, strlen(file));
   if (p)
     return *p->text;
   else

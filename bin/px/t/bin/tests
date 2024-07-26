@@ -1,0 +1,22 @@
+#!/bin/sh
+rm -fr t.d ; mkdir -p t.d
+cat etc/order | while read group ; do
+    echo $0 running tests from tst/$group
+    mkdir t.d/$group
+    cat tst/$group | while IFS=$'\t' read id args exp ; do
+	if [ "$args" == "-" ]; then
+	    args=""
+	fi
+	# echo $0 $group $id px noh web=1 $args expecting $exp
+	d=t.d/$group/$id ; mkdir -p $d
+	(cd $d
+	 px noh web=1 $args >out 2>err
+	 gen=`generator out`
+	 if [ "$gen" == $exp ]; then
+	     echo $group/$id ok
+	 else
+	     echo "$group/$id failed [got $gen not $exp]"
+	 fi
+	)
+    done
+done

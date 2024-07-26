@@ -378,7 +378,19 @@ pui_at_title(Isp *ip, FILE *fp)
 void
 pui_at_project(Isp *ip, FILE *fp)
 {
-  fputs(ip->project,fp);
+  if (ip->project)
+    fputs(ip->project,fp);
+  else
+    fputs("[no project]",fp);
+}
+
+void
+pui_at_generator(Isp *ip, FILE *fp)
+{
+  if (ip->pui)
+    fprintf(fp, "oracc/px %s ", ip->pui);
+  else
+    fputs("oracc/px unknown", fp);
 }
 
 void

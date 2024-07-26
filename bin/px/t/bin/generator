@@ -1,0 +1,4 @@
+#!/bin/sh
+if [ -s $1 ]; then
+    xl $1 | grep '<meta name="generator"' | tr -s ' ' | cut -d' ' -f5
+fi

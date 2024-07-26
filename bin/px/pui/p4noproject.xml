@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>@@p4head.xml@@</head>
+  <body>
+    <p class="search0">The request does not contain a known project
+    (is there a typo in the URL?).</p>
+
+    <p class="search0">For a list of projects see <a
+    href="/projectlist.html">the Oracc project list</a>.</p>
+  </body>
+</html>
