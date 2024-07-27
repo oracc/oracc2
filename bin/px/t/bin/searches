@@ -1,0 +1,6 @@
+#!/bin/sh
+mkdir -p t.d/s.cat t.d/s.lem t.d/s.glo t.d/s.tra
+qx -wW -T t.d/s.cat -j rimanum -i cat -q bagm
+qx -wW -T t.d/s.lem -j rimanum -i lem -q lugal
+qx -wW -T t.d/s.tra -j rimanum -q '!tra king'
+qx -wW -T t.d/s.glo -j rimanum -q '!cbd/sux king'

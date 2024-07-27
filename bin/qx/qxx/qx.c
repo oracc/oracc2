@@ -44,41 +44,61 @@ qx_tmpdir(struct qxdata *qp)
   sdp->sub = cache_sub(qp);
   
   char *d = (char*)pool_alloc(strlen(sdp->sub)+strlen(SRCHTMP)+2, sdp->p);
-  sprintf(d, "%s/%s", sdp->sub, SRCHTMP);
 
-  if (!(sdp->tmp = mkdtemp(d)))
+  if (qp->argtmp)
     {
-      sdp->err = (ccp)pool_copy((ucp)qx_err("failed to make search tmpdir %s: %s", d, strerror(errno)), sdp->p);
+      struct stat sb;
+      if (stat(qp->argtmp, &sb) != 0 || !S_ISDIR(sb.st_mode))
+	{
+	  sdp->err = (ccp)pool_copy((ucp)qx_err("argument tmpdir %s does not exist or is not a directory",
+						qp->argtmp), sdp->p);
+	  return 1;
+
+	}
+      else
+	{
+	  sdp->tmp = qp->argtmp;
+	  sprintf(d, "%s", sdp->tmp);
+	}
     }
   else
     {
-      FILE *fp = NULL;
-
-      char cbdidx[1024];
-      if (qp->glos)
-	sprintf(cbdidx, "!cbd/%s ", qp->glos);
-      else
-	*cbdidx = '\0';
-	   
-      if (*cbdidx)
-	fprintf(stderr, "qx: saving search '%s%s' to %s/search.bar\n", cbdidx, s, d);
-      else
-	fprintf(stderr, "qx: saving search '%s' to %s/search.bar\n", s, d);
-      sdp->bar = (ccp)pool_alloc(strlen(d) + strlen("/search.bar") + 1, sdp->p);
-      sprintf((char*)sdp->bar, "%s/search.bar", d);
-  
-      if ((fp = fopen(sdp->bar, "w")))
+      sprintf(d, "%s/%s", sdp->sub, SRCHTMP);
+      if (!(sdp->tmp = mkdtemp(d)))
 	{
-	  fprintf(fp, "%s%s", cbdidx, s);
-	  fclose(fp);
-	}
-      else
-	{
-	  fprintf(stderr, "qx: failed to open %s to write srch bar command\n", sdp->bar);
-	  sdp->err = (ccp)pool_copy((ucp)qx_err("failed to write search.bar"), sdp->p);
+	  sdp->err = (ccp)pool_copy((ucp)qx_err("failed to make search tmpdir %s: %s",
+						d, strerror(errno)), sdp->p);
+	  return 1;
 	}
     }
+
+  FILE *fp = NULL;
+
+  char cbdidx[1024];
+  if (qp->glos)
+    sprintf(cbdidx, "!cbd/%s ", qp->glos);
+  else
+    *cbdidx = '\0';
+	   
+  if (*cbdidx)
+    fprintf(stderr, "qx: saving search '%s%s' to %s/search.bar\n", cbdidx, s, d);
+  else
+    fprintf(stderr, "qx: saving search '%s' to %s/search.bar\n", s, d);
+  sdp->bar = (ccp)pool_alloc(strlen(d) + strlen("/search.bar") + 1, sdp->p);
+  sprintf((char*)sdp->bar, "%s/search.bar", d);
+  
+  if ((fp = fopen(sdp->bar, "w")))
+    {
+      fprintf(fp, "%s%s", cbdidx, s);
+      fclose(fp);
+    }
+  else
+    {
+      fprintf(stderr, "qx: failed to open %s to write srch bar command\n", sdp->bar);
+      sdp->err = (ccp)pool_copy((ucp)qx_err("failed to write search.bar"), sdp->p);
+    }
   free(s);
+
   return sdp->err ? 1 : 0;
 }
 
@@ -232,7 +252,7 @@ qx(struct qxdata *qp)
   if (sdata.err)
     return 1;
 
-  if (px_exec(qp, &sdata))
+  if (!qp->noexec && px_exec(qp, &sdata))
     {
       sdata.err = "qx: error: failed to exec px\n";
       return 1;

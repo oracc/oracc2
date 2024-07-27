@@ -20,6 +20,7 @@ struct qxdata
   const char *bar; /* the search bar is written possibly adding cbd/lang index and stored here */
   const char **srchv;
   const char *err;
+  const char *argtmp; /* tmpdir provided with -T option */
   FILE *listfp;
   Pool *p;
 };

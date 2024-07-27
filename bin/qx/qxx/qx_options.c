@@ -19,7 +19,7 @@ qx_options(int argc, char **argv, struct qxdata *qp)
     }
   else
     {
-      if (options(argc, argv, "8acC:dg:i:j:o:p:P:q:stuvx:Ww"))
+      if (options(argc, argv, "8acC:dg:i:j:o:p:P:q:stT:uvx:Ww"))
 	{
 	  opt_qp = NULL;
 	  return 1;
@@ -84,6 +84,9 @@ opts(int argc, const char *arg)
     case 't':
       show_tokens = 1;
       break;
+    case 'T':
+      opt_qp->argtmp = arg;
+      break;
     case 'u':
       do_uniq = 0;
       break;
@@ -95,6 +98,7 @@ opts(int argc, const char *arg)
       break;
     case 'W':
       opt_qp->noexec = 1;
+      break;
     case 'w':
       opt_qp->web = 1;
       break;
