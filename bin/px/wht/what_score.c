@@ -5,6 +5,8 @@
 static int what_sources(Isp *ip);
 static void what_sources_setup(Isp *ip);
 
+#define GENERATOR "px block "
+
 int
 what_score(Isp *ip)
 {
@@ -24,11 +26,15 @@ what_score(Isp *ip)
 	  char xfragx[_MAX_PATH];
 	  sprintf(xfragx, "%s/bin/xfragx", oracc());
 	  wpx_print_hdr(ip);
+	  fprintf(stderr, "%s -hs4 -p %s -i %s -g %s %s %s\n",
+		  xfragx, ip->itemdata.proj, ip->itemdata.item, GENERATOR, tmp, ip->itemdata.block);
 	  execl(xfragx, "xfragx", 
 		"-hs4",
 		"-p", ip->itemdata.proj,
 		"-i", ip->itemdata.item,
+		"-g", GENERATOR,
 		tmp, ip->itemdata.block, NULL);
+	  ip->err = "fatal: xfragx call failed";
 	  return PX_ERROR;
 	}
       else

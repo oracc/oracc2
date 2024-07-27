@@ -1,0 +1,4 @@
+0000	proj=edlex	p4html.xml	cat
+0001	proj=edlex pxid=Q000012	p4html.xml	sco
+0002	proj=edlex pxid=Q000012 what=score form=block block=sb.Q000012.1	block	block
+0003	proj=edlex pxid=Q000012 what=score	cop	sxh

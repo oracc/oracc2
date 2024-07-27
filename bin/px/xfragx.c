@@ -11,7 +11,7 @@ const char *xsltproc = "/usr/bin/xsltproc";
 static int cbd_namespaces = 0, html_mode = 0, sig_fixer = 0, unwrap_html = 0, htmlid = 0;
 static int cued_printStart = 0, need_gdf_closer = 0;
 
-static const char *project = NULL, *xsl = NULL, *item = NULL;
+static const char *project = NULL, *xsl = NULL, *item = NULL, *generator = NULL;
 int p4Pager = 0;
 
 static char *
@@ -80,6 +80,8 @@ printStart(struct frag *frag, const char *name, const char **atts)
       cbd_namespaces = 0;
     }
   fputc('>', frag->fp);
+  if (html_mode && !strcmp(name, "head") && generator)
+    fprintf(frag->fp, "<meta name=\"generator\" content=\"%s\"/>", generator);
   ++frag->nesting;
 }
 
@@ -207,7 +209,7 @@ main(int argc, char **argv)
 {
   FILE *outfp = stdout;
 
-  options(argc, argv, "4chHi:p:sux:");
+  options(argc, argv, "4chHg:i:p:sux:");
   
   if (xsl)
     {
@@ -241,6 +243,7 @@ opts(int argc, const char *arg)
     case 'c': cbd_namespaces = 1; break;
     case 'h': html_mode = 1; break;
     case 'H': htmlid = 1; break;
+    case 'g': generator = arg; break;
     case 'i': item = arg; break;
     case 'p': project = arg; break;
     case 's': sig_fixer = 1; break;

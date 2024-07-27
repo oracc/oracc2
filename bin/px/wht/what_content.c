@@ -219,9 +219,10 @@ content_sH(void *userData, const char *name, const char **atts)
     {
       if (!strcmp(name, "head"))
 	{
-	  fputs("<!DOCTYPE html>\n<html>",
+	  fputs("<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\">",
 		frag->fp);
 	  printStart(userData, name, atts, xid);
+	  fputs("<meta name=\"generator\" content=\"px cop \"/>", frag->fp);
 	}
       else if (!strcmp(name, "body"))
 	{
