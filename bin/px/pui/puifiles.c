@@ -34,7 +34,7 @@ error "gperf generated tables don't work with this execution character set. Plea
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 24
+#define TOTAL_KEYWORDS 25
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 15
 #define MIN_HASH_VALUE 10
@@ -65,8 +65,8 @@ hash (str, len)
       41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
       41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
       41, 41, 41, 41, 41, 41, 41,  0,  5,  5,
-       5,  0, 15, 10, 41, 20, 41, 15, 30, 25,
-       0,  0, 15, 41,  0,  5, 41, 15, 41, 15,
+       5,  0, 15, 10, 41, 25, 41, 15, 15, 30,
+       0,  0, 20, 41,  0,  5, 41, 20, 41, 20,
        5, 41, 41, 41, 41, 41, 41, 41, 41, 41,
       41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
       41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
@@ -118,28 +118,31 @@ static struct puifilestab puifiles_wl[] =
 #line 19 "puifiles.g"
     {"p4itemglo.xml", &p4itemglo},
     {""},
-#line 25 "puifiles.g"
-    {"p4plus.xml", &p4plus},
+#line 24 "puifiles.g"
+    {"p4full.xml", &p4full},
 #line 17 "puifiles.g"
     {"p4debug.xml", &p4debug},
-#line 27 "puifiles.g"
-    {"p4nowhat.xml", &p4nowhat},
+#line 31 "puifiles.g"
+    {"p4nolang.xml", &p4nolang},
 #line 22 "puifiles.g"
     {"p4unknown.xml", &p4unknown},
 #line 18 "puifiles.g"
     {"p4debugdiv.xml", &p4debugdiv},
-#line 29 "puifiles.g"
-    {"p4noproject.xml", &p4noproject},
+#line 25 "puifiles.g"
+    {"p4plus.xml", &p4plus},
 #line 21 "puifiles.g"
     {"p4noxtf.xml", &p4noxtf},
+#line 27 "puifiles.g"
+    {"p4nowhat.xml", &p4nowhat},
+    {""}, {""},
+#line 29 "puifiles.g"
+    {"p4noproject.xml", &p4noproject},
+    {""},
 #line 30 "puifiles.g"
     {"p4noitem.xml", &p4noitem},
     {""}, {""},
 #line 14 "puifiles.g"
-    {"p4html.xml", &p4html},
-    {""}, {""}, {""}, {""},
-#line 24 "puifiles.g"
-    {"p4full.xml", &p4full}
+    {"p4html.xml", &p4html}
   };
 
 struct puifilestab *

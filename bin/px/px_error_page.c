@@ -11,8 +11,11 @@ px_error_page(Isp*ip)
   if (!ip->project || ip->pxerr == PX_ER_BAD_PROJECT)
     return pui_output(ip, stdout, pui_filetext("p4noproject.xml"));
 
-  if (ip->project && ip->item)
+  if (ip->item)
     return pui_output(ip, stdout, pui_filetext("p4noitem.xml"));
+
+  if (ip->pxerr == PX_ER_BAD_LANG)
+    return pui_output(ip, stdout, pui_filetext("p4nolang.xml"));
 
   return 1;
 }

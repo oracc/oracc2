@@ -75,7 +75,7 @@ scan_heading(char *buf)
 }
 
 static void
-ce_config()
+ce_config(void)
 {
   const char *fname = se_file(project,langindex,"ce.cfg");
   size_t cfgbytes;
@@ -324,7 +324,7 @@ process_ce_ids(char *buf)
 }
 
 static void
-ce_ids()
+ce_ids(void)
 {
   char buf[CE_BUFSIZ];
 
@@ -590,11 +590,11 @@ main(int argc, char * const*argv)
       static char fn[_MAX_PATH];
       if (lang)
 	{
-	  sprintf(fn,"/home/oracc/www/%s/%s/%s/summaries.html",
-		  project,ce_index,lang);
+	  sprintf(fn,"%s/www/%s/%s/%s/summaries.html",
+		  oracc(),project,ce_index,lang);
 	}
       else
-	sprintf(fn,"/home/oracc/www/%s/%s/summaries.html",project,ce_index);
+	sprintf(fn,"%s/www/%s/%s/summaries.html",oracc(),project,ce_index);
       list_add(files,fn);
       idattr = "id";
     }
@@ -720,7 +720,7 @@ const char *prog = "ce";
 int major_version = 1, minor_version = 0, verbose;
 const char *usage_string = " [-c ID] -p <PROJECT> -i <INDEX> [-x]";
 void
-help ()
+help (void)
 {
   printf("  -c = read an ID from arg (default is stdin)\n");
   printf("  -g = specify gdf basename\n");

@@ -76,6 +76,7 @@ px_valid_glos(Isp *ip)
   if (stat(dir, &sb) != 0 || !S_ISDIR(sb.st_mode))
     {
       ip->err = "unknown lang while validating glos";
+      ip->pxerr = PX_ER_BAD_LANG;
       return 1;
     }
   else
