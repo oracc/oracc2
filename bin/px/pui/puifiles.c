@@ -34,7 +34,7 @@ error "gperf generated tables don't work with this execution character set. Plea
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 26
+#define TOTAL_KEYWORDS 27
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 15
 #define MIN_HASH_VALUE 10
@@ -65,8 +65,8 @@ hash (str, len)
       44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
       44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
       44, 44, 44, 44, 44, 44, 44,  0,  5,  5,
-       0, 15, 25, 15, 44, 10, 44,  0, 15, 30,
-       0,  5, 15, 44,  0,  5, 44, 20, 44,  0,
+       0, 15, 25, 15, 44, 10, 44,  5, 15, 30,
+       0,  5, 15, 44,  0,  5,  0, 20, 44,  0,
        0, 44, 44, 44, 44, 44, 44, 44, 44, 44,
       44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
       44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
@@ -105,8 +105,8 @@ static struct puifilestab puifiles_wl[] =
     {"p4oracc.xml", &p4oracc},
 #line 12 "puifiles.g"
     {"p4search.xml", &p4search},
-#line 22 "puifiles.g"
-    {"p4unknown.xml", &p4unknown},
+#line 33 "puifiles.g"
+    {"p4article.xml", &p4article},
 #line 16 "puifiles.g"
     {"p4dropdown.xml", &p4dropdown},
 #line 13 "puifiles.g"
@@ -115,7 +115,9 @@ static struct puifilestab puifiles_wl[] =
     {"p4icons.xml", &p4icons},
 #line 23 "puifiles.g"
     {"p4nosrch.xml", &p4nosrch},
-    {""}, {""},
+#line 22 "puifiles.g"
+    {"p4unknown.xml", &p4unknown},
+    {""},
 #line 24 "puifiles.g"
     {"p4full.xml", &p4full},
 #line 7 "puifiles.g"
