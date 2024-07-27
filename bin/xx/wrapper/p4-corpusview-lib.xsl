@@ -31,7 +31,7 @@
 <xsl:param name="trans" select="'en'"/>
 <xsl:param name="transonly" select="'false'"/>
 
-<xsl:param name="oracc" select="'/Users/stinney/orc'"/>
+<xsl:param name="oracc" select="'/home/oracc'"/>
 
 <xsl:variable name="outer-id" select="/*/@xml:id"/>
 
