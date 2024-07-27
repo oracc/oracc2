@@ -1,18 +1,35 @@
-/* binops.c */
-extern void binop_init(void);
-extern struct Datum binop(enum se_toks boo, struct near *range, struct Datum d1, struct Datum d2);
-extern struct Datum variant(struct Datum *d1, struct Datum *d2);
-extern struct Datum source(struct Datum *d1, struct Datum *d2);
-extern int same_word(struct location16 *l, struct location16 *r);
-extern int same_but_prop(struct location16 *l, struct location16 *r);
 /* binops24.c */
 extern int xmask_sc(int x);
 extern int xmask_logo(int x);
 extern void binop24_init(void);
 extern struct Datum binop24(enum se_toks boo, struct near *range, struct Datum d1, struct Datum d2);
+extern struct Datum merge24(struct Datum *d1, struct Datum *d2);
 extern void datum_free24(struct Datum *dp);
+extern struct Datum space24(struct Datum *d1, struct Datum *d2);
+extern struct Datum any24(struct Datum *d1, struct Datum *d2);
 extern struct Datum variant24(struct Datum *d1, struct Datum *d2);
+extern struct Datum hyphen24(struct Datum *d1, struct Datum *d2);
+extern struct Datum sign24(struct Datum *d1, struct Datum *d2);
+extern struct Datum word24(struct Datum *d1, struct Datum *d2);
 extern struct Datum source24(struct Datum *d1, struct Datum *d2);
+extern struct Datum field24(struct Datum *d1, struct Datum *d2);
+extern struct Datum record24(struct Datum *d1, struct Datum *d2);
+/* binops.c */
+extern void binop_init(void);
+extern struct Datum binop(enum se_toks boo, struct near *range, struct Datum d1, struct Datum d2);
+extern struct Datum space(struct Datum *d1, struct Datum *d2);
+extern struct Datum any(struct Datum *d1, struct Datum *d2);
+extern struct Datum variant(struct Datum *d1, struct Datum *d2);
+extern struct Datum hyphen(struct Datum *d1, struct Datum *d2);
+extern struct Datum sign(struct Datum *d1, struct Datum *d2);
+extern struct Datum word(struct Datum *d1, struct Datum *d2);
+extern struct Datum source(struct Datum *d1, struct Datum *d2);
+extern struct Datum field(struct Datum *d1, struct Datum *d2);
+extern struct Datum record(struct Datum *d1, struct Datum *d2);
+extern struct Datum merge(struct Datum *d1, struct Datum *d2);
+extern void datum_free(struct Datum *dp);
+extern int same_word(struct location16 *l, struct location16 *r);
+extern int same_but_prop(struct location16 *l, struct location16 *r);
 /* cgi_decode_url.c */
 extern char *CGI_decode_url(const char *p);
 /* cgi_options.c */
@@ -25,6 +42,7 @@ extern void set_project(struct token *t);
 extern void set_index(struct token *t);
 extern struct Datum evaluate(struct token *toks, int fcode, int lmask, struct token **lastused);
 extern struct Datum *merge_data_pair(struct Datum *d1, struct Datum *d2);
+extern void datum_del(void *vp);
 /* px.c */
 extern int px_exec(struct qxdata *qp, struct sdata *sdp);
 /* qx.c */
@@ -37,11 +55,11 @@ extern int qx_error(struct qxdata *qp, struct sdata *sdp);
 extern int qx_options(int argc, char **argv, struct qxdata *qp);
 extern int opts(int argc, const char *arg);
 extern void help(void);
-/* se.c */
-extern int main(int argc, char **argv);
 /* se_any.c */
 extern int se_any(struct qxdata *qp, struct sdata *sdp);
 extern const char **anytoks(const char *project, const char *index, const char **toks);
+/* se.c */
+extern int main(int argc, char **argv);
 /* se_debug.c */
 extern void debug_tuw(struct location8 *p8);
 extern void debug_location8(struct location8 *l8p, struct location8 *r8p);

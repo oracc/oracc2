@@ -177,12 +177,17 @@ lst_handler(struct component *components)
 static int
 exists_cbd(const char *lng)
 {
-  char *cbd = malloc(strlen("@@ORACC@@") + strlen(project) + strlen(lng) + 25);
-  int ret;
-  sprintf(cbd, "%s/pub/%s/cbd/%s/entry_ids.lst", "@@ORACC@@", project, lng);
-  ret = !access(cbd, R_OK);
-  free(cbd);
-  return ret;
+  if (project)
+    {
+      char *cbd = malloc(strlen("@@ORACC@@") + strlen(project) + strlen(lng) + 25);
+      int ret;
+      sprintf(cbd, "%s/pub/%s/cbd/%s/entry_ids.lst", "@@ORACC@@", project, lng);
+      ret = !access(cbd, R_OK);
+      free(cbd);
+      return ret;
+    }
+  else
+    return 0;
 }
 
 static int
