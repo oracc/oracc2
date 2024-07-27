@@ -1,0 +1,5 @@
+0000	proj=rimanum s.d=../../../p4.d/rimanum/s.not	p4html.xml	nosrch
+0001	proj=rimanum s.d=../../../p4.d/rimanum/s.cat	p4html.xml	cat
+0002	proj=rimanum s.d=../../../p4.d/rimanum/s.lem	p4html.xml	ref
+0003	proj=rimanum s.d=../../../p4.d/rimanum/s.tra	p4html.xml	tra
+0004	proj=rimanum glos=sux s.d=../../../p4.d/rimanum/s.glo	p4html.xml	glo
