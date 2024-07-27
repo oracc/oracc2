@@ -30,3 +30,4 @@ struct puifilestab;
 "p4noitem.xml", &p4noitem
 "p4nolang.xml", &p4nolang
 "p4oracc.xml", &p4oracc
+"p4article.xml", &p4article
