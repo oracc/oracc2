@@ -28,7 +28,7 @@
   extension-element-prefixes="exsl">
 
 <xsl:import href="xtf1-HTML.xsl"/>
-<xsl:import href="g2-gdl-HTML.xsl"/>
+<xsl:import href="p4-g2-gdl-HTML.xsl"/>
 
 <xsl:include href="html-standard.xsl"/>
 

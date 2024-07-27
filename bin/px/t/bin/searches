@@ -1,4 +1,5 @@
 #!/bin/sh
+mkdir -p p4.d/rimanum
 cd p4.d/rimanum
 mkdir -p s.not s.cat s.lem s.glo s.tra
 qx -wW -T s.not -j rimanum -i cat -q nippur
