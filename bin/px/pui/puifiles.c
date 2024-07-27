@@ -34,12 +34,12 @@ error "gperf generated tables don't work with this execution character set. Plea
 #include <string.h>
 #include "pui.h"
 
-#define TOTAL_KEYWORDS 25
+#define TOTAL_KEYWORDS 26
 #define MIN_WORD_LENGTH 10
 #define MAX_WORD_LENGTH 15
 #define MIN_HASH_VALUE 10
-#define MAX_HASH_VALUE 40
-/* maximum key range = 31, duplicates = 0 */
+#define MAX_HASH_VALUE 43
+/* maximum key range = 34, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -55,32 +55,32 @@ hash (str, len)
 {
   static unsigned char asso_values[] =
     {
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41,  0, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41,  0,  5,  5,
-       5,  0, 15, 10, 41, 25, 41, 15, 15, 30,
-       0,  0, 20, 41,  0,  5, 41, 20, 41, 20,
-       5, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41, 41, 41, 41, 41,
-      41, 41, 41, 41, 41, 41
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44,  0, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44,  0,  5,  5,
+       0, 15, 25, 15, 44, 10, 44,  0, 15, 30,
+       0,  5, 15, 44,  0,  5, 44, 20, 44,  0,
+       0, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44, 44, 44, 44, 44,
+      44, 44, 44, 44, 44, 44
     };
   return len + asso_values[(unsigned char)str[6]] + asso_values[(unsigned char)str[4]];
 }
@@ -93,56 +93,59 @@ static struct puifilestab puifiles_wl[] =
     {"p4head.xml", &p4head},
 #line 8 "puifiles.g"
     {"p4error.xml", &p4error},
-#line 10 "puifiles.g"
-    {"p4footer.xml", &p4footer},
+#line 27 "puifiles.g"
+    {"p4nowhat.xml", &p4nowhat},
 #line 28 "puifiles.g"
     {"p4whatnot.xml", &p4whatnot},
 #line 9 "puifiles.g"
     {"p4controls.xml", &p4controls},
 #line 26 "puifiles.g"
     {"p4back.xml", &p4back},
-#line 11 "puifiles.g"
-    {"p4icons.xml", &p4icons},
+#line 32 "puifiles.g"
+    {"p4oracc.xml", &p4oracc},
 #line 12 "puifiles.g"
     {"p4search.xml", &p4search},
-#line 20 "puifiles.g"
-    {"p4itemxtf.xml", &p4itemxtf},
+#line 22 "puifiles.g"
+    {"p4unknown.xml", &p4unknown},
 #line 16 "puifiles.g"
     {"p4dropdown.xml", &p4dropdown},
 #line 13 "puifiles.g"
     {"p4searchbar.xml", &p4searchbar},
-#line 7 "puifiles.g"
-    {"p4pager.xml", &p4pager},
+#line 11 "puifiles.g"
+    {"p4icons.xml", &p4icons},
 #line 23 "puifiles.g"
     {"p4nosrch.xml", &p4nosrch},
-#line 19 "puifiles.g"
-    {"p4itemglo.xml", &p4itemglo},
-    {""},
+    {""}, {""},
 #line 24 "puifiles.g"
     {"p4full.xml", &p4full},
-#line 17 "puifiles.g"
-    {"p4debug.xml", &p4debug},
+#line 7 "puifiles.g"
+    {"p4pager.xml", &p4pager},
 #line 31 "puifiles.g"
     {"p4nolang.xml", &p4nolang},
-#line 22 "puifiles.g"
-    {"p4unknown.xml", &p4unknown},
-#line 18 "puifiles.g"
-    {"p4debugdiv.xml", &p4debugdiv},
+#line 20 "puifiles.g"
+    {"p4itemxtf.xml", &p4itemxtf},
+    {""},
 #line 25 "puifiles.g"
     {"p4plus.xml", &p4plus},
-#line 21 "puifiles.g"
-    {"p4noxtf.xml", &p4noxtf},
-#line 27 "puifiles.g"
-    {"p4nowhat.xml", &p4nowhat},
-    {""}, {""},
+#line 17 "puifiles.g"
+    {"p4debug.xml", &p4debug},
+#line 10 "puifiles.g"
+    {"p4footer.xml", &p4footer},
+    {""},
+#line 18 "puifiles.g"
+    {"p4debugdiv.xml", &p4debugdiv},
 #line 29 "puifiles.g"
     {"p4noproject.xml", &p4noproject},
-    {""},
+#line 21 "puifiles.g"
+    {"p4noxtf.xml", &p4noxtf},
 #line 30 "puifiles.g"
     {"p4noitem.xml", &p4noitem},
     {""}, {""},
 #line 14 "puifiles.g"
-    {"p4html.xml", &p4html}
+    {"p4html.xml", &p4html},
+    {""}, {""},
+#line 19 "puifiles.g"
+    {"p4itemglo.xml", &p4itemglo}
   };
 
 struct puifilestab *
