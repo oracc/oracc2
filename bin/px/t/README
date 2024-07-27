@@ -1,0 +1,15 @@
+Tests File Format
+
+Tests files live in tests/ and are tabbed files which have several
+fields:
+
+	ID	PX-ARGS		EXP	CHK
+
+ID is a four digit number giving the ID of the command within the group.
+
+PX-ARGS are the invocation arguments for PX; 'noh web=1' is always preprended.
+
+EXP is the generator page name which is expected for the command.
+
+CHK is a key for an XSLT script used to check the output structure
+
