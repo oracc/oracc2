@@ -16,7 +16,7 @@
 <xsl:param name="item-offset" select="1"/>
 <xsl:param name="item-url"/>
 
-<xsl:param name="oracc" select="'/Users/stinney/orc'"/>
+<xsl:param name="oracc" select="'/home/oracc'"/>
 
 <xsl:param name="project"/>
 <xsl:param name="divwrap" select="'yes'"/>
