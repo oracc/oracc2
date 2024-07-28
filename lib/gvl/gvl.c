@@ -342,6 +342,9 @@ gvl_compound(Node *ynp)
 	    hash_add(curr_sl->h, cp->c10e, cp);
 #endif
 	}
+      else if (!cp->c10e)
+	cp->c10e = cp->orig;
+
       ynp->user = cp;
       if (gdl_orig_mode)
 	{
