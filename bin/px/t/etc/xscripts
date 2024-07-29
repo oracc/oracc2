@@ -1,12 +1,7 @@
-p4-g2-gdl-HTML.xsl
-p4-g2-xtf-HTML.xsl
 gdl-render-g.xsl
 html-standard.xsl
 html-util.xsl
 p3-xtl-div.xsl
-p4-corpusview-lib.xsl
-p4-htmlview.xsl
-p4-xmd-div.xsl
 xmdoutline.xsl
 xpd.xsl
 xst-HTML.xsl

@@ -1,2 +1,7 @@
+px/p4-xmd-div.xsl
 px/isp/isp-ce-HTML.xsl
 px/isp/isp-xtl2lst.xsl
+xx/wrapper/p4-corpusview-lib.xsl
+xx/wrapper/p4-g2-gdl-HTML.xsl
+xx/wrapper/p4-g2-xtf-HTML.xsl
+xx/wrapper/p4-htmlview.xsl
