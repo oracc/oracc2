@@ -86,7 +86,7 @@ p.model =
     g.meta , 
     (v|q|s|n|c)?
 
-implicit = attribute implicit { "1" }
+# implicit = attribute implicit { "1" }
 
 # This is a new addition for printing the text value of GDL literals
 t = element g:t { text }
