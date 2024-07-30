@@ -326,6 +326,12 @@ p4url_is_textid(const char *i)
 		    break;
 		}
 	    }
+	  else
+	    {
+	      char *uscore = strchr(i, '_');
+	      if (uscore)
+		return 1;
+	    }
 	}
       else if ((dot = strchr(i, ',')))
 	{
