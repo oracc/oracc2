@@ -46,37 +46,26 @@ isp_item_undump(char *k, struct isp_itemdata *idp)
   idp->proj = s; 
 }
 
-#if 0
-static const char *
-max_db_one_off(Isp *ip, const char *key)
-{
-  Dbi_index *dp = dbx_init(ip->, "max");
-  const void *ret = NULL;
-  if (dp)
-    {
-      if (!(ret = dbx_key(dp, key, NULL)))
-	ip->err = px_err("key %s not in dbi %s/%s", key, pool_copy(ip->glosdata.dir, ip->p), "etm");
-      /* ret is now memory malloc'ed in dbi lib */
-      ret = dbi_detach_data(dp, NULL);
-      dbx_term(dp);
-    }
-  else
-    ip->err = px_err("unable to open dbi %s/%s", pool_copy((uccp)ip->glosdata.dir,ip->p), "etm");
-  return ret;
-}
-#endif
-
 int
 isp_item_load(Isp *ip)
 {
   char *tmp = (char*)pool_copy((ucp)ip->item, ip->p);
   ip->itemdata.item = tmp;
 
-  tmp = strchr(ip->itemdata.item, '.');
+  tmp = strchr(ip->itemdata.item, '_');
   if (tmp)
     {
-      *tmp++ = '\0';
-      ip->itemdata.dots = ++tmp;
+      ip->itemdata.fullitem = pool_copy(ip->itemdata.item, ip->p);
+      *tmp = '\0';
+    }
+  else
+    {
+      tmp = strchr(ip->itemdata.item, '.');
+      if (tmp)
+	{
+	  *tmp++ = '\0';
+	  ip->itemdata.dots = ++tmp;
+	}
     }
 
   const char *sort = ip->cache.sort;
