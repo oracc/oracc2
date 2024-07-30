@@ -66,10 +66,18 @@ text_page(Isp *ip, struct page *p)
 	}
       strncpy(id, p->p[i], ITEM_MAX_LEN);
       id[ITEM_MAX_LEN-1] = '\0'; /* insurance in case ID is overlong */
-	
-      char *dot = strchr(id, '.');
-      if (dot)
-	*dot = '\0';
+
+      char *uscore = strchr(id, '_');
+      if (uscore)
+	{
+	  *uscore = '\0'; /* strip translation info */
+	}
+      else
+	{
+	  char *dot = strchr(id, '.');
+	  if (dot)
+	    *dot = '\0';
+	}
       if (last_t < 0 || strcmp(id, t[last_t]))
 	{
 	  last_t = tcount;

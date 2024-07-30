@@ -3,3 +3,4 @@
 0002	proj=rimanum s.d=../../../p4.d/rimanum/s.lem	p4html.xml	ref
 0003	proj=rimanum s.d=../../../p4.d/rimanum/s.tra	p4html.xml	tra
 0004	proj=rimanum glos=sux s.d=../../../p4.d/rimanum/s.glo	p4html.xml	glo
+0005	proj=rimanum pxid=P405345_project-en.0 s.d=../../../p4.d/rimanum/s.tra	p4html.xml	xtf

@@ -3,5 +3,5 @@
 0002	proj=rimanum item=P401520	p4noitem.xml	-
 0003	proj=rimanum item=P405120	p4html.xml	xtf
 0004	proj=rimanum item=P405120.1	p4html.xml	xtf
-0005	proj=rimanum item=P405345_project-en.0 srch=../../../p4.d/rimanum/s.tra	p4html.xml	xtf
+0005	proj=rimanum item=P405345_project-en.0	p4html.xml	xtf
 0006	proj=rimanum what=sig sig=%E2%98%A3%40rimanum%25akk%2Dx%2Doldbab%3AARAD%3Dwardu%5Bslave%2F%2Fservant%5DN%C2%B4N%24warad	p4article.xml	ent
