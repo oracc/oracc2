@@ -71,6 +71,11 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
     {
       List *lp = hash_find(sl->homophones, (uccp)keys[i]);
       struct sl_token *tp = hash_find(sl->htoken, (uccp)keys[i]);
+
+      /* Some values, e.g., 1/3(|NINDA₂×(ŠE.AŠ)|), do not have a lowercased base */
+      if (!tp)
+	continue;
+
       char ssort[32];
       sprintf(ssort,"%d",tp->s);
       ratts = rnvval_aa("x",

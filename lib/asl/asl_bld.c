@@ -1326,7 +1326,15 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
 
   check_flags(locp, (char*)n, &query, &literal);
 
-  base = g_base_of(n);
+  /* special case 1/3(|NINDA₂×(ŠE.AŠ)|) and  2/3(|NINDA₂×(ŠE.AŠ.AŠ)|) */
+  if ('/' == n[1]
+      && (!strcmp(n, "1/3(|NINDA₂×(ŠE.AŠ)|)") || !strcmp(n, "2/3(|NINDA₂×(ŠE.AŠ.AŠ)|)")
+	  || !strcmp(n, "1/3(|NINDA₂×(ŠE.1(AŠ))|)") || !strcmp(n, "2/3(|NINDA₂×(ŠE.2(AŠ))|)")
+	  ))
+    base = n;
+  else
+    base = g_base_of(n);
+
   struct sl_token *tp = hash_find(sl->htoken,base);
   if (!tp)
     {

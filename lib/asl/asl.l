@@ -150,6 +150,11 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 
 {ZERO}      			{ aslsave; return GNAME; }
 
+"1/3(|NINDA₂×(ŠE.AŠ)|)"		{ aslsave; return GVALUE; }
+"1/3(|NINDA₂×(ŠE.1(AŠ))|)"  	{ aslsave; return GVALUE; }
+"2/3(|NINDA₂×(ŠE.AŠ.AŠ)|)"    	{ aslsave; return GVALUE; }
+"2/3(|NINDA₂×(ŠE.2(AŠ))|)"  	{ aslsave; return GVALUE; }
+
 {NUMGRAPH}			{ aslsave; return asl_grapheme(asllval.text); }
 
 {FRACTION}			{ aslsave; mesg_vwarning(curraslfile, asllineno,
