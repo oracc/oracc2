@@ -44,15 +44,14 @@ static struct page *
 text_page(Isp *ip, struct page *p)
 {
   char **t = calloc(p->used+1 , sizeof(char *));
-  int tcount = 0, i, h_start = 0;
+  int tcount = 0, i, h_start = -1; /* h_start is the first hilite ID that belongs to a text */
   char **items = p->p;
 
   const char *itemdp_dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
   char *dbifn = "hilite";
   ip->itemdata.hilitedb = dbi_create(dbifn, itemdp_dir, 1024, 1, DBI_BALK);
 
-#define ITEM_MAX_LEN	64 /* P123456.123456.1234.123 is 23 so 64 should be more than enough */
-  char id[ITEM_MAX_LEN];
+  char id[128]; /* length of project prefix + PQX ID */
 
   int last_t = -1;
   
@@ -62,54 +61,63 @@ text_page(Isp *ip, struct page *p)
 	{
 	  t[tcount++] = p->p[i];
 	  last_t = -1;
-	  h_start = i;
+	  h_start = -1;
 	  continue;
 	}
-      strncpy(id, p->p[i], ITEM_MAX_LEN);
-      id[ITEM_MAX_LEN-1] = '\0'; /* insurance in case ID is overlong */
 
-      char *uscore = strchr(id, '_');
+      int idlen = strlen(p->p[i]);
+      char *uscore = strchr(p->p[i], '_');
       if (uscore)
 	{
+#if 1
+	  idlen = uscore - p->p[i];
+#else
 	  *uscore = '\0'; /* strip translation info */
+#endif
 	}
       else
 	{
-	  char *dot = strchr(id, '.');
+	  char *dot = strchr(p->p[i], '.');	  
 	  if (dot)
+#if 1
+	    idlen = dot - p->p[i];
+#else	  
 	    *dot = '\0';
+#endif
 	}
 
+      strncpy(id, p->p[i], idlen);
+      id[idlen] = '\0';
+      
       if (last_t < 0 || strcmp(id, t[last_t]))
 	{
-	  last_t = tcount;
-
-	  t[tcount++] = (char *)pool_copy((ucp)id, ip->p);
-
-	  if (i)
+	  if (h_start >= 0)
 	    {
 	      if (i - h_start == 1)
-		dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[i],
-			strlen(items[i])+1);
+		dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], (void*)items[h_start],
+			strlen(items[h_start])+1);
 	      else
 		{
 		  char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
-		  dbi_add(ip->itemdata.hilitedb, (ucp)id, h_str, strlen(h_str)+1);
+		  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], h_str, strlen(h_str)+1);
 		  free(h_str);
 		}
 	    }
 	  h_start = i;
+	  last_t = tcount;
+	  t[tcount++] = (char *)pool_copy((ucp)id, ip->p);
+
 	}
     }
   if (i > h_start)
     {
       if (i - h_start == 1)
-	dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[h_start],
+	dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], (void*)items[h_start],
 		strlen(items[h_start])+1);
       else
 	{
 	  char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
-	  dbi_add(ip->itemdata.hilitedb, (ucp)id, h_str, strlen(h_str)+1);
+	  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], h_str, strlen(h_str)+1);
 	  free(h_str);
 	}
     }
