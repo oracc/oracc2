@@ -40,6 +40,31 @@ iss_texts(Isp *ip, struct page *p)
   /* restore previous tsv/max/sort */
 }
 
+static char *
+hilite_id(char *id)
+{
+  char *colon = strchr(id, ':');
+  return (colon ? (colon+1) : id);
+}
+
+static char *
+hilite_to_str(char **wids, int n)
+{
+  int i;
+  char s[n * 64]; *s = '\0';
+  for (i = 0; i < n; ++i)
+    {
+      char *colon = strchr(wids[i], ':');
+      if (colon)
+	++colon;
+      else
+	colon = wids[i];
+      strcat(s, colon);
+      strcat(s, " ");
+    }
+  return strdup(s);
+}
+
 static struct page *
 text_page(Isp *ip, struct page *p)
 {
@@ -65,12 +90,20 @@ text_page(Isp *ip, struct page *p)
 	  continue;
 	}
 
-      int idlen = strlen(p->p[i]);
+      /* skip the project: prefix for hilite IDs because each text can only occur once */
+      char *colon = strchr(p->p[i], ':');
+      if (colon)
+	++colon;
+      else
+	colon = p->p[i];
+
+      int idlen = strlen(colon);
+
       char *uscore = strchr(p->p[i], '_');
       if (uscore)
 	{
 #if 1
-	  idlen = uscore - p->p[i];
+	  idlen = uscore - colon;
 #else
 	  *uscore = '\0'; /* strip translation info */
 #endif
@@ -80,13 +113,13 @@ text_page(Isp *ip, struct page *p)
 	  char *dot = strchr(p->p[i], '.');	  
 	  if (dot)
 #if 1
-	    idlen = dot - p->p[i];
+	    idlen = dot - colon;
 #else	  
 	    *dot = '\0';
 #endif
 	}
 
-      strncpy(id, p->p[i], idlen);
+      strncpy(id, colon, idlen);
       id[idlen] = '\0';
       
       if (last_t < 0 || strcmp(id, t[last_t]))
@@ -94,11 +127,13 @@ text_page(Isp *ip, struct page *p)
 	  if (h_start >= 0)
 	    {
 	      if (i - h_start == 1)
-		dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], (void*)items[h_start],
-			strlen(items[h_start])+1);
+		{
+		  char *h_str = hilite_id(items[h_start]);
+		  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], (void*)h_str, strlen(h_str)+1);
+		}
 	      else
 		{
-		  char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
+		  char *h_str = hilite_to_str((char**)(items + h_start), i - h_start);
 		  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], h_str, strlen(h_str)+1);
 		  free(h_str);
 		}
@@ -106,17 +141,18 @@ text_page(Isp *ip, struct page *p)
 	  h_start = i;
 	  last_t = tcount;
 	  t[tcount++] = (char *)pool_copy((ucp)id, ip->p);
-
 	}
     }
   if (i > h_start)
     {
       if (i - h_start == 1)
-	dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], (void*)items[h_start],
-		strlen(items[h_start])+1);
+	{
+	  char *h_str = hilite_id(items[h_start]);
+	  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], (void*)h_str, strlen(h_str)+1);
+	}
       else
 	{
-	  char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
+	  char *h_str = hilite_to_str((char**)(items + h_start), i - h_start);
 	  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], h_str, strlen(h_str)+1);
 	  free(h_str);
 	}

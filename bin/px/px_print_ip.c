@@ -111,6 +111,7 @@ pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name)
   fprintf(fp,"\t\ttmax=%s\n",(char*)xmlify((ucp)pr->tmax));
   fprintf(fp,"\t\txmdxsl=%s\n",(char*)xmlify((ucp)pr->xmdxsl));
   fprintf(fp,"\t\tbld=%s\n",(char*)xmlify((ucp)pr->bld));
+  fprintf(fp,"\t\thili=%s\n",(char*)xmlify((ucp)pr->hili));
   fprintf(fp,"\t\tnot=%d\n",(int)pr->not);
 }
 
@@ -167,7 +168,6 @@ px_print_ip(FILE *fp, Isp *ip)
   fprintf(fp,"\tsrch=%s\n",(char*)xmlify((ucp)pr->srch));
   fprintf(fp,"\tglos=%s\n",(char*)xmlify((ucp)pr->glos));
   fprintf(fp,"\titem=%s\n",(char*)xmlify((ucp)pr->item));
-  fprintf(fp,"\thili=%s\n",(char*)xmlify((ucp)pr->hili));
   fprintf(fp,"\titem_replace=%s\n",(char*)xmlify((ucp)pr->item_replace));
   fprintf(fp,"\tbkmk=%s\n",(char*)xmlify((ucp)pr->bkmk));
   fprintf(fp,"\tceid=%s\n",(char*)xmlify((ucp)pr->ceid));

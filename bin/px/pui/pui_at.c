@@ -141,6 +141,18 @@ pui_at_pager_data(Isp *ip, FILE *fp)
   if (ip->cemd && (!strcmp(ip->cemd, "kwic") || !strcmp(ip->cemd, "unit")))
     pattrs("data-cemd", ip->cemd);
 
+  if (ip->itemdata.hili)
+    pattrs("data-hili", ip->itemdata.hili);
+}
+
+
+void
+pui_at_hili(Isp *ip, FILE *fp)
+{
+  if (ip->itemdata.hili)
+    {
+      fputs(" onload=\"onloadScroll()\"", fp);
+    }
 }
 
 void
@@ -467,9 +479,11 @@ pui_at_item_data(Isp *ip, FILE *fp)
     }
   else
     {
-      char *const *hilitev = isp_hilited(ip);
-      if (hilitev)
-	selecter(ip->itemdata.html, hilitev);
+      if (ip->itemdata.hili)
+	{
+	  char *const *hvec = (char *const *)vec_from_str((char*)ip->itemdata.hili, NULL, NULL);
+	  selecter(ip->itemdata.html, hvec);
+	}	  
       else
 	px_file_copy(ip, ip->itemdata.html, "-");
     }

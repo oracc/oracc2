@@ -10,6 +10,43 @@ function getData(evt) {
     return n;
 }
 
+function getTR(elt) {
+    while (elt.nodeName !== 'TR') {
+	// alert('getTR nodename='+elt.nodeName);
+	elt = elt.parentElement;
+    }
+    // alert('getTR nodename='+elt.nodeName);
+    return elt;
+}
+
+function onloadScroll()
+{
+    pager = getPager();
+    let hili = pager.getAttribute("data-hili");
+    let scrollid = hili;
+    if (hili.includes(" ")) {
+	scrollid = hili.substring(0, hili.indexOf(' '));
+    }
+    // alert('hili='+hili+'; scrollid='+scrollid);
+    let e = document.getElementById(scrollid);
+    if (e) {
+	e = getTR(e);
+	let i = 5;
+	while (i) {	    
+	    if (e.previousSibling) {
+		e = e.previousSibling;
+	    } else {
+		break;
+	    }
+	    --i;
+	}
+	// alert('e offsetTop='+e.offsetTop+'; id='+e.getAttribute('id'));
+	let p4xtfdata = document.getElementById('p4XtfData');
+	p4xtfdata.scrollTop = e.offsetTop;
+    }
+}
+
+
 function getPageNav() {
     return document.getElementById("p4PageNav");
 }
@@ -129,6 +166,7 @@ function itemLocation() {
 
 	// alert("item:itemLocation="+loc);
 	window.location = loc;
+
     } else {
 	alert('itemLocation called but item is NULL');
     }

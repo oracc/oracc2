@@ -52,7 +52,6 @@ do404(void)
 void
 wpx_print_hdr(Isp*ip)
 {
-  static int hdone = 0;
   if (ip->noheader)
     return;
   if (!ip->hdr_done++)

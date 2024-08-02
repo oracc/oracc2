@@ -227,7 +227,7 @@ opts(int opt, const char *arg)
       opt_ip->host = arg;
       break;
     case 'h':
-      opt_ip->hili = arg;
+      opt_ip->itemdata.hili = arg;
       break;
       /* possibly add 'o' for output selection, XML vs HMTL, or is
 	 this sufficiently covered by -x? 2024-05-16 -f(orm) for this */

@@ -55,7 +55,7 @@ isp_item_load(Isp *ip)
   tmp = strchr(ip->itemdata.item, '_');
   if (tmp)
     {
-      ip->itemdata.fullitem = pool_copy(ip->itemdata.item, ip->p);
+      ip->itemdata.fullitem = (ccp)pool_copy((ucp)ip->itemdata.item, ip->p);
       *tmp = '\0';
     }
   else
@@ -71,7 +71,10 @@ isp_item_load(Isp *ip)
   const char *sort = ip->cache.sort;
 #if 1
   if (!strcmp(ip->show, "rref"))
-    sort = ip->cache.t_sort;
+    {
+      sort = ip->cache.t_sort;
+      ip->itemdata.hili = (ccp)isp_hilited(ip);
+    }
 #else
   if (ip->itemdata.dots && (ip->srchdata.tmp || ip->glosdata.xis))
     sort = ip->cache.t_sort;

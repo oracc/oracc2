@@ -112,6 +112,7 @@ struct isp_itemdata
   const char *tmax;
   const char *xmdxsl;
   const char *bld;
+  const char *hili; /* itemdata.item's data from hilite.db */
   Dbi_index *dp;
   Dbi_index *hilitedb;
   int not; /* 2 = no xmd (i.e., text not in project); 3 = no xtf */
@@ -170,7 +171,6 @@ typedef struct isp
   const char *srch; /* search string from search.bar */
   const char *glos; /* glossary from URL */
   const char *item; /* a PQX for item display */
-  const char *hili; /* a PQX line/word/grapheme ID to hilite */
   const char *item_replace; /* a PQX replacement to use for proxy display */
   const char *bkmk; /* a note of the last item visited resuming page mode */
   const char *ceid; /* context engine id handling--xmd/xtf/cbd */

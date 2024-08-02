@@ -2,15 +2,15 @@
 #include "../pxdefs.h"
 #include "isp.h"
 
-char * const *
+const char *
 isp_hilited(Isp *ip)
 {
   char *dbifn = "hilite";
   Dbi_index *dp;
-  const char *h = ip->hili;
   const char *dir = ip->tmp_dir ? ip->tmp_dir : ip->cache.sub;
   if (dir)
     {
+      const char *h = NULL;
       if (!dbx_access(dir, dbifn))
 	{
 	  if ((dp = dbx_init(dir, dbifn)))
@@ -31,7 +31,7 @@ isp_hilited(Isp *ip)
 #endif
 	}
       if (h)
-	return (char *const *)vec_from_str((char*)h, NULL, NULL);
+	return (ccp)h;
       else
 	return NULL;
     }
