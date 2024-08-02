@@ -192,7 +192,7 @@ mesg_averr(Mloc *locp, const char *s, va_list ap)
   char *loc = "", *e;
   int need;
   int m_no_loc = mesg_no_loc;
-  int no_loc;
+  int no_loc = 0;
   va_list ap2;
   va_copy(ap2, ap);
 
