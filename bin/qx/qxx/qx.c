@@ -252,10 +252,13 @@ qx(struct qxdata *qp)
   if (sdata.err)
     return 1;
 
-  if (!qp->noexec && px_exec(qp, &sdata))
+  if (px_exec(qp, &sdata))
     {
-      sdata.err = "qx: error: failed to exec px\n";
-      return 1;
+      if (!qp->noexec)
+	{
+	  sdata.err = "qx: error: failed to exec px\n";
+	  return 1;
+	}
     }
   return 0;
 }

@@ -40,7 +40,15 @@ px_exec(struct qxdata *qp, struct sdata *sdp)
   vec[i++] = px_cgi_arg("s.d",sdp->tmp);
   vec[i] = NULL;
   px_dump_vec(vec);
-  execv(px_exe, (char*const*)vec);
-  fprintf(stderr, "execv %s failed\n", px_exe);
-  exit(1);
+  if (!qp->noexec)
+    {
+      execv(px_exe, (char*const*)vec);
+      fprintf(stderr, "execv %s failed\n", px_exe);
+      return 1;
+    }
+  else
+    {
+      fprintf(stderr, "execv not performed because qp->noexec == 1\n");
+      return 0;
+    }
 }

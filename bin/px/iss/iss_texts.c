@@ -62,6 +62,7 @@ text_page(Isp *ip, struct page *p)
 	{
 	  t[tcount++] = p->p[i];
 	  last_t = -1;
+	  h_start = i;
 	  continue;
 	}
       strncpy(id, p->p[i], ITEM_MAX_LEN);
@@ -70,6 +71,10 @@ text_page(Isp *ip, struct page *p)
       char *dot = strchr(id, '.');
       if (dot)
 	*dot = '\0';
+
+      if (strchr(id, 'X'))
+	fprintf(stderr, "found id=%s\n", id);
+      
       if (last_t < 0 || strcmp(id, t[last_t]))
 	{
 	  last_t = tcount;
@@ -79,8 +84,8 @@ text_page(Isp *ip, struct page *p)
 	  if (i)
 	    {
 	      if (i - h_start == 1)
-		dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[h_start],
-			strlen(items[h_start])+1);
+		dbi_add(ip->itemdata.hilitedb, (ucp)id, (void*)items[i],
+			strlen(items[i])+1);
 	      else
 		{
 		  char *h_str = vec_to_str((char**)(items + h_start), i - h_start, " ");
