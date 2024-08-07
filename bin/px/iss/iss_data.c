@@ -95,7 +95,7 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
 	    pfirst = i;
 	  
 	  /* unconditionally output item data */
-	  iss_i_dump(idp, ip, p, i, nlist, z0th, nz0th, zoom, zpth, nzpth);
+	  iss_i_dump(idp, ip, p, i, nlist, z0th, nz0th, zoom, zpth, nzoom);
 	  
 	  /* dump z0 page if !nz0th%25; reset z0 page */
 	  if (pfirst != -1 && (nz0th%25)==0)
