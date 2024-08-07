@@ -6,6 +6,8 @@
 
 #set -x
 
+echo $0 $*
+
 lx-inputs.sh
 
 listdir=01bld/lxlists

@@ -1,4 +1,5 @@
 #!/bin/dash
+echo $0 $*
 l=$1
 p=$2
 if [ "$p" != "" ]; then

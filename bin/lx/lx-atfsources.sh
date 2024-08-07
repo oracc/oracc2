@@ -1,4 +1,6 @@
 #!/bin/dash
+echo $0 $*
+
 mkdir -p 01bld/lxlists
 if [ -d 01bld/lxlists ]; then
     set 00atf/*.ods

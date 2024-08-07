@@ -7,6 +7,7 @@
 #
 
 #set -x
+echo $0 $*
 
 lxd=01bld/lxinputs
 if [ -d $lxd ]; then
@@ -22,7 +23,10 @@ if [ "$project" = "" ]; then
 fi
 
 # 00cat list
-xmd-ids.plx | lx -cus -p $project -o $lxd/00cat.lst -
+xmd-ids.plx >01tmp/xmdids.lst
+if [ -s 01tmp/xmdids.lst ]; then
+    lx -cus -p $project -o $lxd/00cat.lst 01tmp/xmdids.lst
+fi
 
 # 00lib lists
 for a in approved.lst add-approved.lst not-approved.lst \
@@ -35,6 +39,7 @@ for a in approved.lst add-approved.lst not-approved.lst \
 done
 
 if [ -s 00lib/proxy.lst ]; then
+    echo $0: marshalling 00lib/proxy.lst
     lx -cus -p $project -o $lxd/proxy.lst 00lib/proxy.lst
 fi
 

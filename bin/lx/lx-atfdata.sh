@@ -1,5 +1,9 @@
 #!/bin/dash
 
+#set -x
+
+echo $0 $*
+
 lxd=01bld/lxinputs
 project=`oraccopt`
 
@@ -8,9 +12,10 @@ if [ "$project" = "" ]; then
     exit 1
 fi
 
+rm -f 02pub/atf-data.tab
+
 set 00atf/*.atf
 if [ "$1" != "00atf/*.atf" ]; then
-    rm -f 02pub/atf-data.tab
     cut -b 1- 00atf/*.atf | atfdatax $project >>02pub/atf-data.tab
 elif [ -r 00lib/umbrella.lst ]; then
     lx -a 00lib/umbrella.lst -p $project >02pub/atf-data.tab

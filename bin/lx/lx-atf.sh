@@ -1,4 +1,6 @@
 #!/bin/dash
+echo $0 $*
+
 b=${ORACC_BUILDS}/$1/01bld/lists
 >&2 echo $0: working in $b
 if [ -r $b/have-atf.lst ]; then
