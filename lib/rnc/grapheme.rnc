@@ -31,7 +31,7 @@ s        = element g:s { form? , g.meta , (s.model | (sb , mods+)) }
 q        = element g:q { form? , g.meta , (v|s|c) , (s|c|n) }
 
 # Numbers
-n.model  = r , (v|s|c|q)?
+n.model  = r , (v|s|c|q|g)?
 
 r        = element g:r {
              xsd:string {
@@ -57,7 +57,9 @@ c.b	 = element g:b { c.model }
 
 c        = element g:c { form? , g.meta , (c.b | c.model) , mods* }
 
-g        = element g:g { implicit? , g.meta , c.model , mods* }
+g        = element g:g { gimplicit? , g.meta , c.model , mods* , g.type? }
+
+g.type = attribute g:type { "c" }
 
 compound = single | unary | binary
 
@@ -86,7 +88,7 @@ p.model =
     g.meta , 
     (v|q|s|n|c)?
 
-# implicit = attribute implicit { "1" }
+gimplicit = attribute implicit { "1" }
 
 # This is a new addition for printing the text value of GDL literals
 t = element g:t { text }

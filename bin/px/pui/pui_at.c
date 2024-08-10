@@ -106,6 +106,8 @@ pui_at_pager_data(Isp *ip, FILE *fp)
 	  pattrs("data-zoom", ip->zoom);
 	  pattrs("data-sort", ip->perm);
 	}
+      else if (ip->srchdata.list)
+	pattrs("data-srch", ip->srchdata.list);
     }
   else
     {

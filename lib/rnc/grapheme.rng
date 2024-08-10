@@ -137,6 +137,7 @@
         <ref name="s"/>
         <ref name="c"/>
         <ref name="q"/>
+        <ref name="g"/>
       </choice>
     </optional>
   </define>

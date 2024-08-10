@@ -184,13 +184,17 @@ function pageLocation() {
     if (glos && !gxis) {
 	let i = 0;
 	let qs = '';
-	let zoom = pager.getAttribute("data-glet");
-	if (zoom) {
-	    qs = qs_append(qs, 'zoom='+zoom);
+	if (srch) {
+	    qs = qs_append(qs, 'srch='+srch);
+	} else {
+	    let zoom = pager.getAttribute("data-glet");
+	    if (zoom) {
+		qs = qs_append(qs, 'zoom='+zoom);
+	    }
 	}
 	if (page) {
 	    qs = qs_append(qs, 'page='+page);
-	}	
+	}
 	loc = '/'+proj+'/'+glos;
 	if (qs.length > 0) {
 	    loc = loc+qs;
