@@ -137,9 +137,9 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
-  <xsl:variable name="proj" select="lex:data[1]/@project"/>
+  <xsl:variable name="proj" select="@project"/>
   <a href="http://oracc.org/{$proj}/{$text}.{$line}" title="{$proj} on Oracc">
-    <xsl:value-of select="lex:data[1]/@n"/>
+    <xsl:value-of select="@n"/>
     <xsl:text> </xsl:text>
     <xsl:for-each select="lex:data/@label">
       <xsl:value-of select="."/>

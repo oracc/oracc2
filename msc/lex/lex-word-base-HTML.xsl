@@ -50,9 +50,9 @@
       </xsl:if>
     </xsl:for-each>
   </xsl:variable>
-  <xsl:variable name="proj" select="lex:data[1]/@project"/>
+  <xsl:variable name="proj" select="@project"/>
   <a href="http://oracc.org/{$proj}/{$srefs}" title="{$proj} on Oracc">
-    <xsl:value-of select="lex:data[1]/@n"/>
+    <xsl:value-of select="@n"/>
     <xsl:text> </xsl:text>
     <xsl:for-each select="lex:data/@label">
       <xsl:value-of select="."/>
