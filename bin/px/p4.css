@@ -144,7 +144,7 @@ p	{ margin: 0; padding: 0; }
 
 table.xmd { border-spacing: 0px; padding: 2px; width: 100%; }
 table.xmd td { padding-top: 3px; padding-bottom: 3px; padding-left: 2px; padding-right: 2px; }
-.oddeven tr:nth-child(odd) { background-color: #ddd; }
+.oddeven tr:nth-child(odd) { background-color: #eee; }
 
 /* General CSS */
 
@@ -184,6 +184,9 @@ span.foreign { font-style: italic; }
 .ce-label  { text-align: right; padding-top: 0px; margin-top: 0px; padding-right: 2px; }
 .ce-result { text-align: left;  padding-bottom: 0px; margin-bottom: 0px;
 	   padding-left: 3px; padding-right: 3px; }
+
+.ce-result:nth-child(even of .ce-result) { background-color: #eee; }
+.ce-label:nth-child(even of .ce-label) { background-color: #eee; }
 
 table.kwic { width: 100%; }
 
