@@ -387,8 +387,20 @@ startElement_gdl(void *userData, const char *name, const char **atts)
       charData_discard();
       break;
     case 's':
-      if (!strcmp(findAttr(atts,"g:role"),"logo"))
-	role_logo = 1;
+#if 0
+      fprintf(stderr, "selemx: indexing s-node\n");
+      int i = 0;
+      while (atts[i])
+	{
+	  fprintf(stderr, "\t%s=%s\n", atts[i], atts[i+1]);
+	  i += 2;
+	}
+#endif
+      if (!strcmp(findAttr(atts,"http://oracc.org/ns/gdl/1.0|role"),"logo"))
+	{
+	  /* fprintf(stderr, "role_logo = 1\n"); */
+	  role_logo = 1;
+	}
       do_boundary();
       charData_discard();
       break;

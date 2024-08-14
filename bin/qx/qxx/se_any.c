@@ -138,7 +138,7 @@ anytoks(const char *project, const char *index, const char **toks)
   if ('!' == *index)
     strcpy(ibuf, index);
   else
-    sprintf(ibuf, "!%s", index);  
+    sprintf(ibuf, "!%s", index);
   while (toks[ntoks])
     ++ntoks;
   ret_toks = malloc((ntoks+3) * sizeof(const char *));

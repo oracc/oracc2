@@ -386,7 +386,7 @@ eval_expr_seq(struct token *toks, int lang_mask, struct token **lastp)
 	     if appropriate; language; field type */
 	  if (role_logo)
 	    {
-	      if (curr_dip->h.data_size == sizeof(struct location16))
+	      if (curr_dip->h.data_size == sizeof(struct location24))
 		{
 		  filter_logo(&current);
 		}
@@ -1016,8 +1016,8 @@ filter_langs(struct Datum *dp, int lmask)
 static void
 filter_logo(struct Datum *dp)
 {
-  struct location16 **lp, **lp_ins;
-  for (lp = lp_ins = dp->l.l16p; lp - dp->l.l16p < dp->count; ++lp)
+  struct location24 **lp, **lp_ins;
+  for (lp = lp_ins = dp->l.l24p; lp - dp->l.l24p < dp->count; ++lp)
     {
       if (*lp && is_logo((*lp)->end_column))
 	{
@@ -1026,7 +1026,7 @@ filter_logo(struct Datum *dp)
 	  ++lp_ins;
 	}
     }
-  dp->count = lp_ins - dp->l.l16p;
+  dp->count = lp_ins - dp->l.l24p;
 #if 0
   progress("se eval: %d results after filter_langs\n", dp->count);
 #endif

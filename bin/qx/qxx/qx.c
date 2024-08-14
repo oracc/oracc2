@@ -266,6 +266,9 @@ qx(struct qxdata *qp)
 int
 qx_count_file(struct sdata *sdp)
 {
+  if (!sdp->tmp)
+    return 0;
+  
   const char *countfn = (ccp)pool_alloc(strlen(sdp->tmp)+strlen("/count00"), sdp->p);
   sprintf((char*)countfn, "%s/count", sdp->tmp);
   FILE *countfp = fopen(countfn, "w");
