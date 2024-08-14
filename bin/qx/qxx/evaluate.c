@@ -375,8 +375,7 @@ eval_expr_seq(struct token *toks, int lang_mask, struct token **lastp)
 	case se_rexp:
 	  if (toks->type == se_expr)
 	    {
-	      current = expr(toks, role_logo ? 2 : sign_name);	      
-	      /* sign_name = 0; */
+	      current = expr(toks, role_logo ? 2 : sign_name);
 	    }
 	  else
 	    current = rexp(toks);
@@ -424,6 +423,7 @@ eval_expr_seq(struct token *toks, int lang_mask, struct token **lastp)
 	  break;
 	case se_logo:
 	  role_logo = 1;
+	  sign_name = 2;
 	  ++toks;
 	  break;
 	case se_sign:
