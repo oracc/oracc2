@@ -18,6 +18,7 @@
     <h2>
       <a href="javascript://" onclick="act_isid(event)">
 	<xsl:call-template name="lex-act-isid">	<!-- '{*[1]/@lang}','sl.{@oid}.s' -->
+	  <xsl:with-param name="caller" select="'lex-sign/group=sign'"/>
 	  <xsl:with-param name="isid" select="concat('sl.',@oid,'.s')"/>
 	</xsl:call-template>
 	<xsl:text>Lexical data for sign </xsl:text>

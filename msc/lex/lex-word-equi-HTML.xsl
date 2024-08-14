@@ -32,7 +32,10 @@
     <div class="lex-phra" title="{@value}">
       <h2 class="lex-phra">
 	<a href="javascript://" onclick="act_isid(event)"> <!-- '{@lang}','{@xis}' -->
-	  <xsl:call-template name="lex-act-isid"/>
+	  <xsl:call-template name="lex-act-isid">
+	    <xsl:with-param name="caller" select="'lex-word-equi/group=equi'"/>
+	    <xsl:with-param name="isid" select="@xis"/>
+	  </xsl:call-template>
 	  <xsl:value-of select="concat(@value, ' (// ', ../@value, ')')"/>
 	</a>
       </h2>

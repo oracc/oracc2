@@ -26,7 +26,9 @@
     <!-- href="/{descendant::lex:data/@project}/{@lang}?xis={../@xis}" -->
     <h2 class="lex-base">
       <a href="javascript://" onclick="act_isid(event)">
-	<xsl:call-template name="lex-act-isid"/> <!-- '{@lang}','{../@xis}' -->
+	<xsl:call-template name="lex-act-isid"> <!-- '{@lang}','{../@xis}' -->
+	  <xsl:with-param name="caller" select="'lex-phra-base/group=base'"/>
+	</xsl:call-template>
 	<xsl:value-of select="@value"/>
       </a>
     </h2>
