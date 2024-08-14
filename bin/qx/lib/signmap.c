@@ -11,9 +11,9 @@ static Dbi_index *dp;
 static void
 sm_startElement(void *userData, const char *name, const char **atts)
 {
-  if (!strcmp(name,"sign"))
+  if (!strcmp(name,"sl:sign"))
     curr_name = strdup(attr_by_name(atts,"n"));
-  else if (!strcmp(name,"v"))
+  else if (!strcmp(name,"sl:v"))
     {
       XML_Char *v = strdup(attr_by_name(atts,"n"));
       if (!strstr(v,"\xe2\x82\x93")) /* good enough as a test for sub-x */
