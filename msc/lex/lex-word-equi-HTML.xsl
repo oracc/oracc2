@@ -10,6 +10,7 @@
 
 <xsl:param name="project" select="'dcclt'"/>
 <xsl:include href="g2-gdl-HTML.xsl"/>
+<xsl:include href="lex-act-isid.xsl"/>
 
 <xsl:template match="lex:word-phra-data">
   <body>
@@ -29,8 +30,12 @@
 <xsl:template match="lex:group[@type='equi']">
   <xsl:if test="not(@value='#none')">
     <div class="lex-phra" title="{@value}">
-      <h2 class="lex-phra"><a href="javascript:distprof2('{/*/@project}','{@lang}','{@xis}')"
-			      ><xsl:value-of select="concat(@value, ' (// ', ../@value, ')')"/></a></h2>
+      <h2 class="lex-phra">
+	<a href="javascript://" onclick="act_isid(event)"> <!-- '{@lang}','{@xis}' -->
+	  <xsl:call-template name="lex-act-isid"/>
+	  <xsl:value-of select="concat(@value, ' (// ', ../@value, ')')"/>
+	</a>
+      </h2>
       <xsl:for-each select="*"> <!-- line groups -->
 	<p class="lex-line">
 	  <xsl:call-template name="emit-line"/>

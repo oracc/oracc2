@@ -10,6 +10,7 @@
 
 <xsl:param name="project" select="'dcclt'"/>
 <xsl:include href="g2-gdl-HTML.xsl"/>
+<xsl:include href="lex-act-isid.xsl"/>
 
 <xsl:template match="lex:word-phra-data">
   <body>
@@ -19,15 +20,24 @@
 
 <xsl:template match="lex:group[@type='word']">
   <div class="lex-word" title="{@value}" o:id="{@oid}" id="lexphrases">
-    <h3 class="lex refs"><a href="javascript:distprof2('{/*/@project}','{*[1]/@lang}','{@xis}')"><span class="lex-button">References for all phrases</span></a></h3>
+    <h3 class="lex refs">
+      <a href="javascript://" onclick="act_isid(event)"> <!--'{*[1]/@lang}','{@xis}'-->
+	<xsl:call-template name="lex-act-isid"/>
+	<span class="lex-button"><xsl:text>References for all phrases</xsl:text></span>
+      </a>
+    </h3>
     <xsl:apply-templates/>
   </div>
 </xsl:template>
 
 <xsl:template match="lex:group[@type='phra']">
   <div class="lex-phra" title="{@value}">
-    <h2 class="lex-phra"><a href="javascript:distprof2('{/*/@project}','{@lang}','{@xis}')"
-			    ><xsl:value-of select="@value"/></a></h2>
+    <h2 class="lex-phra">
+      <a href="javascript://" onclick="act_isid(event)"> <!-- '{@lang}','{@xis}' -->
+	<xsl:call-template name="lex-act-isid"/>
+	<xsl:value-of select="@value"/>
+      </a>
+    </h2>
     <xsl:for-each select="*"> <!-- equi groups -->
       <!-- <p class="lex-equi"> --> <!-- a para for each equiv and its refs -->
 	<!--

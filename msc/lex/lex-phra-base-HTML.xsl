@@ -6,6 +6,8 @@
 		xmlns:o="http://oracc.org/ns/oracc/1.0"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+<xsl:include href="lex-act-isid.xsl"/>
+
 <xsl:template match="lex:phra-base-data">
   <body>
     <xsl:apply-templates/>
@@ -22,8 +24,12 @@
 <xsl:template match="lex:group[@type='base']">
   <div class="lex-base" title="{@value}">
     <!-- href="/{descendant::lex:data/@project}/{@lang}?xis={../@xis}" -->
-    <h2 class="lex-base"><a href="javascript:distprof2('{/*/@project}','{@lang}','{../@xis}')"
-			    ><xsl:value-of select="@value"/></a></h2>
+    <h2 class="lex-base">
+      <a href="javascript://" onclick="act_isid(event)">
+	<xsl:call-template name="lex-act-isid"/> <!-- '{@lang}','{../@xis}' -->
+	<xsl:value-of select="@value"/>
+      </a>
+    </h2>
     <xsl:for-each select="*"> <!-- spel groups -->
       <p class="lex-line">
 	<xsl:call-template name="emit-line"/>

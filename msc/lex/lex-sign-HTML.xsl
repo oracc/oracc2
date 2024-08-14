@@ -5,6 +5,8 @@
 		xmlns:lex="http://oracc.org/ns/lex/1.0"
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+<xsl:include href="lex-act-isid.xsl"/>
+
 <xsl:template match="lex:sign-data">
   <body>
     <xsl:apply-templates/>
@@ -13,8 +15,15 @@
 
 <xsl:template match="lex:group[@type='sign']">
   <div class="lex-sign" title="{@value}" oid="{@oid}">
-    <h2><a href="javascript:distprof2('{/*/@project}','{*[1]/@lang}','sl.{@oid}.s')"
-	   >Lexical data for sign <xsl:value-of select="@value"/></a></h2>
+    <h2>
+      <a href="javascript://" onclick="act_isid(event)">
+	<xsl:call-template name="lex-act-isid">	<!-- '{*[1]/@lang}','sl.{@oid}.s' -->
+	  <xsl:with-param name="isid" select="concat('sl.',@oid,'.s')"/>
+	</xsl:call-template>
+	<xsl:text>Lexical data for sign </xsl:text>
+	<xsl:value-of select="@value"/>
+      </a>
+    </h2>
     <xsl:apply-templates/>
   </div>
 </xsl:template>
