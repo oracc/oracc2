@@ -174,7 +174,8 @@ function itemLocation() {
 
 function pageLocation() {
     let pager = getPager();
-    let proj = pager.getAttribute("data-proj");
+    let xprj = pager.getAttribute("data-xprj");
+    let proj = xprj ? xprj : pager.getAttribute("data-proj");
     let glos = pager.getAttribute("data-glos");
     let gxis = pager.getAttribute("data-gxis");
     let srch = pager.getAttribute("data-srch");
@@ -298,6 +299,10 @@ function act_article(item) {
 
 function act_isid(evt) {
     let pager = getPager();
+    let xproj = getData(evt).getAttribute("data-proj");
+    if (xproj) {
+	pager.setAttribute("data-xprj", xproj);
+    }
     pager.setAttribute("data-glos", getData(evt).getAttribute("data-lang"));
     pager.setAttribute("data-gxis", getData(evt).getAttribute("data-isid"));
     pageLocation();

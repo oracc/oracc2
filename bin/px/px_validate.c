@@ -148,9 +148,19 @@ px_validate(Isp *ip)
   
   if (ip->glos)
     {
-      if (px_valid_glos(ip))
-	goto error;
-      ip->list_name = NULL; /* undefine the default outlined.lst */
+      if (!strcmp(ip->glos, "tok"))
+	{
+	  ip->lloc.type = "tis";
+	  ip->from = ip->list_name = "list";
+	  ip->lloc.key = ip->glosdata.xis;
+	  ip->glos = ip->glosdata.xis = NULL;
+	}
+      else
+	{
+	  if (px_valid_glos(ip))
+	    goto error;
+	  ip->list_name = NULL; /* undefine the default outlined.lst */
+	}
     }
   
   if (!ip->list_name)

@@ -10,7 +10,7 @@ libscripts=$ORACC_BUILDS/lib/scripts
 xsltproc $libscripts/lex-refs-group.xsl 01tmp/lex/phra-base-grouped.xml \
     | xsltproc $libscripts/lex-data-xis.xsl - >01tmp/lex/phra-base-refs.xml
 
-xsltproc --stringparam idbase base $libscripts/lex-data-xis-ids.xsl 01tmp/lex/phra-base-refs.xml >01tmp/lex/base.xis
+xsltproc --stringparam idbase bs $libscripts/lex-data-xis-ids.xsl 01tmp/lex/phra-base-refs.xml >01tmp/lex/base.xis
 
 xsltproc $libscripts/xis2tis.xsl 01tmp/lex/base.xis | tis-sort.plx >02pub/base.tis
 

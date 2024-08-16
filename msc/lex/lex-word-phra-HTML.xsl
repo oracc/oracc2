@@ -21,7 +21,7 @@
 <xsl:template match="lex:group[@type='word']">
   <div class="lex-word" title="{@value}" o:id="{@oid}" id="lexphrases">
     <h3 class="lex refs">
-      <a href="/dcclt/sux&amp;xis={@xis}"> <!--javascript://" onclick="act_isid(event)"> --> <!--'{*[1]/@lang}','{@xis}'-->
+      <a> <!--javascript://" onclick="act_isid(event)"> --> <!--'{*[1]/@lang}','{@xis}'-->
 	<xsl:call-template name="lex-act-isid">
 	  <xsl:with-param name="caller" select="'lex-word-phra/group=word'"/>
 	  <xsl:with-param name="isid" select="@xis"/>

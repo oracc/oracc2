@@ -11,5 +11,6 @@ if [ -s $art ]; then
 	echo $0 no $lxpi. Stop.
     fi
 else
-    echo $0 no $art. Stop.
+    #    echo $0 no $art. Stop.
+    exit 0
 fi

@@ -7,7 +7,7 @@
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		exclude-result-prefixes="lex xi">
 
-<xsl:param name="idbase" select="'word'"/>
+<xsl:param name="idbase" select="'wd'"/>
   
 <xsl:key name="xisses" match="lex:group" use="@xis"/>
 
@@ -16,7 +16,7 @@
     <xsl:for-each select=".//lex:group[generate-id(.)=generate-id(key('xisses',@xis))]">
       <xis>
 	<xsl:attribute name="xml:id">
-	  <xsl:value-of select="concat($idbase,'.xis.',position())"/>
+	  <xsl:value-of select="concat('lx.',$idbase,'.',position())"/>
 	</xsl:attribute>
 	<xsl:attribute name="efreq">
 	  <xsl:value-of select="count(.//lex:data)"/>

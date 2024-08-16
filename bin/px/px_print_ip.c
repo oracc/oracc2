@@ -10,6 +10,7 @@ pr_isp_list_loc(FILE *fp, struct isp_list_loc *pr, const char *name)
   fprintf(fp,"\t\ttype=%s\n",(char*)xmlify((ucp)pr->type));
   fprintf(fp,"\t\tlang=%s\n",(char*)xmlify((ucp)pr->lang));
   fprintf(fp,"\t\tmethod=%s\n",(char*)xmlify((ucp)pr->method));
+  fprintf(fp,"\t\tkey=%s\n",(char*)xmlify((ucp)pr->key));
   fprintf(fp,"\t\tdbpath=%s\n",(char*)xmlify((ucp)pr->dbpath));
   fprintf(fp,"\t\tdbname=%s\n",(char*)xmlify((ucp)pr->dbname));
   fprintf(fp,"\t\tpath=%s\n",(char*)xmlify((ucp)pr->path));

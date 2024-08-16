@@ -179,7 +179,7 @@ isp_list_method(Isp *ip)
 
   /* Only call isp_list_type if the list doesn't exist in www/lists or
      bld/lists (the latter for precomputation during build process) */
-  if (isp_try_www_list(ip) || isp_try_bld_list(ip))
+  if (!ip->lloc.type && (isp_try_www_list(ip) || isp_try_bld_list(ip)))
     isp_list_type(ip);
   
   if ('w' == *ip->lloc.type) /* www */
