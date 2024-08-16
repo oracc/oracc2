@@ -141,24 +141,27 @@ isp_cache_sub(Isp *ip)
 	    {
 	      char dir[strlen(ip->cache.use)+strlen(ip->glos)+strlen(ip->glosdata.xis)+2];
 	      sprintf(dir, "%s/%s/%s", ip->cache.use, ip->glos, ip->glosdata.xis);
+	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	    }
 	  else if (ip->srchdata.tmp)
 	    {
 	      char dir[strlen(ip->cache.use)+strlen(ip->srchdata.list)+2];
 	      sprintf(dir, "%s/%s", ip->cache.use, ip->srchdata.list);
+	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	    }
 	  else if (ip->lloc.key)
 	    {
 	      char dir[strlen(ip->cache.use)+strlen(ip->lloc.key)+2];
 	      sprintf(dir, "%s/%s", ip->cache.use, ip->lloc.key);
+	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	    }
 	  else
 	    {
 	      char dir[strlen(ip->cache.use)+strlen(ip->list_name)+2];
 	      sprintf(dir, "%s/%s", ip->cache.use, ip->list_name);
+	      ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	    }
 
-	  ip->cache.sub = (ccp)pool_copy((uccp)dir, ip->p);
 	  ip->cache.out = ip->cache.sub;
 	  if (xmkdirs(ip, ip->cache.sub))
 	    return 1;
