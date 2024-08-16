@@ -84,6 +84,20 @@ text_page(Isp *ip, struct page *p)
     {
       if ('#' == p->p[i][0])
 	{
+	  if (h_start >= 0)
+	    {
+	      if (i - h_start == 1)
+		{
+		  char *h_str = hilite_id(items[h_start]);
+		  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], (void*)h_str, strlen(h_str)+1);
+		}
+	      else
+		{
+		  char *h_str = hilite_to_str((char**)(items + h_start), i - h_start);
+		  dbi_add(ip->itemdata.hilitedb, (ucp)t[last_t], h_str, strlen(h_str)+1);
+		  free(h_str);
+		}
+	    }
 	  t[tcount++] = p->p[i];
 	  last_t = -1;
 	  h_start = -1;
@@ -101,22 +115,12 @@ text_page(Isp *ip, struct page *p)
 
       char *uscore = strchr(p->p[i], '_');
       if (uscore)
-	{
-#if 1
-	  idlen = uscore - colon;
-#else
-	  *uscore = '\0'; /* strip translation info */
-#endif
-	}
+	idlen = uscore - colon;
       else
 	{
 	  char *dot = strchr(p->p[i], '.');	  
 	  if (dot)
-#if 1
 	    idlen = dot - colon;
-#else	  
-	    *dot = '\0';
-#endif
 	}
 
       strncpy(id, colon, idlen);
