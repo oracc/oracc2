@@ -195,7 +195,8 @@ iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, in
       if ((colon = strchr(next, ':')))
 	next = ++colon;
     }
-  
+
+  /* proj/pqx is a copy so we can null out whatever we want */
   char projbuf[strlen(p->p[i])];
   char *proj = projbuf, *pqx = NULL;
   strcpy(proj, p->p[i]);
@@ -209,7 +210,10 @@ iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, in
     {
       pqx = proj;
       proj = (char*)ip->project;
-    }  
+    }
+  /* suppress cat part P010570@dcclt */
+  if ((colon=strchr(pqx,'@')))
+    *colon = '\0';
 
   int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%d\t%d%s\t%s\t%s", item, page, pitem, zoom, zpage, zitem, prev, next, proj);
   char data[n+1];

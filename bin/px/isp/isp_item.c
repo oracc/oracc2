@@ -85,14 +85,17 @@ isp_item_load(Isp *ip)
   Dbi_index *dp;
   if ((dp = dbx_init(sort, "itm")))
     {
-      char *tmax = (char*)dbx_key(dp, "tmax", NULL);
-      if (tmax)
-	ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
+      char *tmax = NULL;
       char *k = (char*)pool_copy((ucp)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
-      dbx_term(dp);
-
-      if (!k)
+      if (k)
 	{
+	  if ((tmax = (char*)dbx_key(dp, "tmax", NULL)))
+	    ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
+	  dbx_term(dp);
+	}
+      else
+	{
+	  dbx_term(dp);
 	  /* If current list is outlined.lst and there is also a cache
 	     dir txtindex.lst try that before giving up.  This ensures
 	     that exemplars in projects that have only composites in
@@ -110,12 +113,14 @@ isp_item_load(Isp *ip)
 		  if ((dp = dbx_init(t, "itm")))
 		    {
 		      k = (char*)pool_copy((ucp)dbx_key(dp, ip->itemdata.item, NULL), ip->p);
-		      dbx_term(dp);
 		      if (k)
 			{
 			  ip->cache.txtindex = (char*)pool_copy((ucp)t, ip->p);
+			  if ((tmax = (char*)dbx_key(dp, "tmax", NULL)))
+			    ip->itemdata.tmax = (ccp)pool_copy((ucp)tmax, ip->p);
 			  goto ok;
 			}
+		      dbx_term(dp);
 		    }
 		}
 	    }
