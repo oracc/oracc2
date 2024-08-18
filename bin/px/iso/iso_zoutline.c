@@ -12,7 +12,7 @@ iso_zoutline(Isp *ip)
   memset(&isos, '\0', sizeof(struct iso));
 
   const char *mol = ip->cache.mol;
-  if (ip->item && ip->itemdata.dots && (ip->srchdata.tmp || ip->glosdata.xis))
+  if (ip->item && ip->itemdata.dotted && (ip->srchdata.tmp || ip->glosdata.xis))
     mol = ip->cache.t_mol;
 
   if (!(isos.zlines = px_loadfile_lines3((uccp)mol, &isos.zmax, NULL)))

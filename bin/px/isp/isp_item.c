@@ -63,24 +63,20 @@ isp_item_load(Isp *ip)
       tmp = strchr(ip->itemdata.item, '.');
       if (tmp)
 	{
-	  *tmp++ = '\0';
-	  ip->itemdata.dots = ++tmp;
+	  ip->itemdata.dotted = (ccp)pool_copy((ucp)ip->itemdata.item, ip->p);
+	  *tmp = '\0';
 	}
     }
 
   const char *sort = ip->cache.sort;
-#if 1
+
   if (!strcmp(ip->show, "rref"))
     {
       sort = ip->cache.t_sort;
       ip->itemdata.hili = (ccp)isp_hilited(ip);
     }
-#else
-  if (ip->itemdata.dots && (ip->srchdata.tmp || ip->glosdata.xis))
-    sort = ip->cache.t_sort;
-  else
-    ip->cache.t_sort = NULL; /* we are working with texts at item level already */
-#endif
+  else if (ip->itemdata.dotted)
+    ip->itemdata.hili = ip->itemdata.dotted;
   
   Dbi_index *dp;
   if ((dp = dbx_init(sort, "itm")))

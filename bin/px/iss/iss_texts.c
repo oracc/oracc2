@@ -111,6 +111,11 @@ text_page(Isp *ip, struct page *p)
       else
 	colon = p->p[i];
 
+      /* suppress cat part P010570@dcclt */
+      char *at = strchr(colon, '@');
+      if (at)
+	*at = '\0';
+
       int idlen = strlen(colon);
 
       char *uscore = strchr(p->p[i], '_');

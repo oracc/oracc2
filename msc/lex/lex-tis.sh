@@ -6,4 +6,4 @@ for a in sign base word tail ; do
 	echo lex-tis.sh added $a.tis to 02pub/cbd/sux/sux.tis and renamed it to $a.tis.done
     fi
 done
-(cd 02pub/cbd/sux ; xisdb sux.tis)
+(cd 02pub/cbd/sux ; xisdb ./sux.tis)
