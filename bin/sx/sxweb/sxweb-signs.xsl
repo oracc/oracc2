@@ -54,6 +54,14 @@
   </xsl:call-template>
 </xsl:variable>
 
+<xsl:variable name="asl-font">
+  <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
+    <xsl:with-param name="option" select="'asl-font'"/>
+    <xsl:with-param name="default" select="'noto'"/>
+  </xsl:call-template>
+</xsl:variable>
+
 <!--Linked or xincluded pages-->
 
 <!--instances asl-insts=link = link to instances; asl-insts=xinc =
@@ -406,7 +414,7 @@
       <tr>
 	<td>
 	  <p class="asl-ucun">
-	    <span class="noto">
+	    <span class="{$asl-font}">
 	      <xsl:choose>
 		<xsl:when test="sl:ucun">
 		  <xsl:value-of select="sl:ucun"/>

@@ -29,6 +29,5 @@
   <param:main-menu-caption>Main menu</param:main-menu-caption>
   <param:footer>@@PROJECT@@ project</param:footer>
   <param:cuneify default="false" switcher="no"/>
-  <param:p4pager>yes</param:p4pager>
   <param:breadcrumbs>no</param:breadcrumbs>
 </param:parameters>

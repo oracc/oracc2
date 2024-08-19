@@ -6,8 +6,15 @@
    font-family: 'Noto Sans Cuneiform Gudea';
    src: url('/fonts/Noto-SansCuneiform-Gudea.ttf');
 }
+@font-face {
+   font-family: 'Noto Sans Cuneiform OBLit';
+   src: url('/fonts/Noto-SansCuneiform-OBLit.ttf');
+}
 .gudea {
    font-family: "Noto Sans Cuneiform Gudea";
+}
+.oblit {
+   font-family: "Noto Sans Cuneiform OBLit";
 }
 .noto {
    font-family: "Noto Sans Cuneiform";
