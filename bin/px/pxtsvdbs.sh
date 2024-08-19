@@ -21,6 +21,7 @@ else
 fi
 p=`oraccopt`
 for a in $sorts ; do
+#     echo $0 processing 02pub/p4.d/outlined.lst/$a
     ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/outlined.lst/$a ;
       for t in itm max ; do
 	  dbix -s -d . -n $t <$t.tsv
@@ -48,6 +49,7 @@ if [ "$spec" = "1" ]; then
     fi
     for a in $sorts ; do
     ( cd ${ORACC_BUILDS}/$p/02pub/p4.d/txtindex.lst/$a ;
+#      echo $0 processing 02pub/p4.d/txtindex.lst/$a
       for t in itm max ; do
 	  dbix -s -d . -n $t <$t.tsv
       done
