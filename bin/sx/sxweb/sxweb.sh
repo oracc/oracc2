@@ -122,9 +122,7 @@ sxsortorder.sh $project
 
 libscripts=$ORACC_BUILDS/lib/scripts
 
-xsltproc $libscripts/sxweb-oid-tab.xsl 02xml/sl.xml | \
-    sort | sed 's/u[12]/u/' >signlist/02pub/oid.tsv
-(cd signlist/02pub ; dbix -d . -n oid oid.tsv ; chmod -R o+r *)
+sxweb-oid.sh
 
 xmllint --xinclude - < $libscripts/sxweb-structure.xsl >01tmp/sxweb-structure-xi.xsl
 
@@ -132,12 +130,12 @@ xsltproc 01tmp/sxweb-structure-xi.xsl 02xml/sl.xml >signlist/00web/00config/stru
 
 xsltproc $libscripts/sxweb-letters.xsl 02xml/sl.xml
 
-if [ "$abbrev" != "ogsl" ]; then
+if [ "$abbrev" != "osl" ]; then
     xsltproc $libscripts/sxweb-atoms.xsl 02xml/sl.xml \
 	| xsltproc $libscripts/sxweb-overview.xsl - >signlist/00web/overview.xml
 fi
 
-if [ "$project" = "ogsl" ]; then
+if [ "$project" = "osl" ]; then
     cp 00etc/Oracc_OGSL.txt 02pub
     chmod o+r 02pub/Oracc_OGSL.txt
 fi
