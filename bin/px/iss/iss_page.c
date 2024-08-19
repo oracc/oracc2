@@ -86,11 +86,19 @@ pg_page(Isp *ip, struct item **pitems, int nitems)
 	  if (nheadfields)
 	    currpage->p[currpage->used++] = fmthdr(pitems[i]->grp);
 	}
+      char *pgitem = (char*)pitems[i]->s;
+      char *at = strchr(pgitem,'@');
+      if (at)
+	{
+	  *at = '\0';
+	  pgitem = (char*)pool_copy(pitems[i]->s, ip->p);
+	  *at = '@';
+	}
       if (i && !strcmp((ccp)pitems[i-1]->qpq, (ccp)pitems[i]->qpq)
 	  && pitems[i-1]->lkey == pitems[i]->lkey)
-	currpage->p[currpage->used++] = plussed(pitems[i]->s);
+	currpage->p[currpage->used++] = plussed((ucp)pgitem);
       else
-	currpage->p[currpage->used++] = (char *)pitems[i]->s;
+	currpage->p[currpage->used++] = (char *)pgitem;
     }
  
   return pages;
