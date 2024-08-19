@@ -2,6 +2,12 @@
 #
 # Generate P4 project data in addition to what p3-project-data does
 #
+if [ ! -s 02pub/atf-data.tab ]; then
+    chmod -R o+r 02pub
+    echo $0: exiting because no 02pub/atf-data.tab
+    exit 0
+fi
+
 echo $0 $*
 project=$1
 if [ "$project" = "" ]; then

@@ -124,7 +124,7 @@
 	<xsl:call-template name="sws-esp-header"/>
 	<html>
 	  <head/>
-	  <body>
+	  <body id="p4Pager" data-proj="{$project}">
 	    <xsl:call-template name="sws-navbar"/>
 	    <div id="SignOuter">
 	      <div id="Sign">

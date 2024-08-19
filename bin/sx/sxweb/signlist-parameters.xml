@@ -16,7 +16,7 @@
     <meta name="DC.format" content="text/html"/>
     <link media="screen,projection" href="/@@project@@/signlist/css/projesp.css" type="text/css" rel="stylesheet"/>
     <script type="text/javascript" src="/@@project@@/signlist/js/projesp.js">&#xa0;</script>
-    <script type="text/javascript" src="/js/p3.js">&#xa0;</script>
+    <script type="text/javascript" src="/js/p4.js">&#xa0;</script>
     <script type="text/javascript" src="/@@project@@/signlist/js/slmap.js">&#xa0;</script>
     <script type="text/javascript" src="/@@project@@/signlist/js/slpage.js">&#xa0;</script>
     <link href="/css/fonts.css" type="text/css" rel="stylesheet" />
@@ -29,5 +29,6 @@
   <param:main-menu-caption>Main menu</param:main-menu-caption>
   <param:footer>@@PROJECT@@ project</param:footer>
   <param:cuneify default="false" switcher="no"/>
+  <param:p4pager>yes</param:p4pager>
   <param:breadcrumbs>no</param:breadcrumbs>
 </param:parameters>
