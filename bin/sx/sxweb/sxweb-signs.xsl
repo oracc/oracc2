@@ -488,8 +488,9 @@
 
 <xsl:template name="sws-stats">
   <xsl:if test="@iref">
+    <!-- url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})" -->    
     <p class="sl-hang"><span class="sl-ihead-h"><xsl:text>INSTANCES</xsl:text></span><esp:link
-    url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
+    url="javascript://" onclick="act_isid(event)" data-lang="tok" data-isid="{@iref}"
     notarget="yes"><xsl:text>see </xsl:text><xsl:value-of select="@icnt"/>
     <xsl:text> occurrences.</xsl:text></esp:link></p>
   </xsl:if>
@@ -938,8 +939,9 @@
 	</xsl:for-each>
       </xsl:if>
       <xsl:if test="@icnt">
+	<!--url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"-->
 	<esp:link
-	    url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})"
+	    url="javascript://" onclick="act_isid(event)" data-lang="tok" data-isid="{@iref}"
 	    notarget="yes"><span class="asl-lem-cnt">&#xa0;<xsl:text
 	    >(</xsl:text><xsl:value-of select="@icnt"/><xsl:text>×)</xsl:text></span></esp:link>
       </xsl:if>
