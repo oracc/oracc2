@@ -1,7 +1,7 @@
 include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=oid
-bin_SCRIPTS=oid2xml.sh oid-files.sh
+bin_SCRIPTS=oid2xml.sh oid-files.sh oid-pub.sh
 
 scriptdata_DATA=cbd-oid-tab.xsl
 

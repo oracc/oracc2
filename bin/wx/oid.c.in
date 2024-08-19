@@ -6,8 +6,70 @@
 #include "wx_dbxlib.h"
 #include "resolver.h"
 #include "ccgi/ccgi.h"
+#include "p4url.h"
 
 extern void dump_vl(CGI_varlist *vl);
+
+void
+p4oid(P4url *p)
+{
+  if (p->project && p->glossary)
+    {
+      char o[strlen(oracc())+strlen(p->project)+strlen(p->glossary)+strlen(p->oxid)+strlen("/////.html0")];
+      sprintf(o, "%s/www/%s/cbd/%s/%s.html", oracc(), p->project, p->glossary, p->oxid);
+      if (!access(o,R_OK))
+	cat_html_file(o);
+    }
+  else if (p->project)
+    {
+      project = p->project;
+      oid(p->oxid);
+    }
+  else
+    ; /* can do pan-Oracc OID resolution here */
+}
+
+void
+oid(const char *e2)
+{
+  Dbi_index *dbi = wx_dbx_proj_oid(project);
+  if (dbi)
+    {
+      const char *v;
+      v = wx_dbx_key(dbi, e2);
+      if (v && '\t' == v[1])
+	{
+	  if ('u' == *v)
+	    do302(v+2);
+	  else if ('h' == *v)
+	    cat_html_file(v+2);
+	}
+#if 1
+
+      /* 2024-08-19 fall through to return to main handler; this means
+	 wx handles OIDs that only resolve to one page directly and
+	 passes OIDs that are bad or resolve to multiple pages to px
+	 for handling. */	 
+#else
+      else
+	do404();
+#endif
+      wx_dbx_term(dbi);
+#if 0
+      exit(0);
+#endif
+    }
+  else
+    {
+      print_hdr();
+      execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
+	    project,
+	    e2,
+	    NULL);
+    }
+}
+
+#if 0
 
 void
 glossary_article_xml(const char *lng, const char *art)
@@ -32,37 +94,6 @@ glossary_article(const char *lng, const char *art)
 	NULL);
 }
 
-void
-oid(const char *e2)
-{
-  Dbi_index *dbi = wx_dbx_proj_oid(project);
-  if (dbi)
-    {
-      const char *v;
-      v = wx_dbx_key(dbi, e2);
-      if (v && '\t' == v[1])
-	{
-	  if ('u' == *v)
-	    do302(v+2);
-	  else if ('h' == *v)
-	    cat_html_file(v+2);
-	}
-      else
-	do404();
-      wx_dbx_term(dbi);
-      exit(0);
-    }
-  else
-    {
-      print_hdr();
-      execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
-	    project,
-	    e2,
-	    NULL);
-    }
-}
-
-#if 0
 static int
 countv(CGI_varlist *v)
 {
@@ -74,7 +105,6 @@ countv(CGI_varlist *v)
     ++i;
   return i;
 }
-#endif
 
 const char *
 cgi_val(CGI_varlist *v, const char *name, const char *deflt)
@@ -160,3 +190,4 @@ instances_isp(const char *lang, const char *id)
   exit(1);
 }
 
+#endif

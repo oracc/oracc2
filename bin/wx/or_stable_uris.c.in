@@ -126,8 +126,10 @@ ent_handler(struct component *components)
 static void 
 lng_handler(struct component *components)
 {
+#if 0
   extern void instances(const char *lang, const char *id);
-
+#endif
+  
   fprintf(stderr, "lng_handler\n");
   if (patterns_debug)
     show_components(components);
@@ -138,8 +140,10 @@ lng_handler(struct component *components)
 	  if (p4)
 	    pxglossary_article(project, elements[0], elements[1], elements[2]);
 	}
+#if 0
       else if (elements[1])
 	instances(elements[0], elements[1]);
+#endif
       else if (query_string && strlen(query_string))
 	{
 	  if (p4)
@@ -311,7 +315,6 @@ static int
 res_is_pqx(char *e, int *count)
 {
   int c = 1;
-  char *entry = e;
   while (*e)
     {
       if (('P' == *e || 'Q' == *e || 'X' == *e)
@@ -325,30 +328,10 @@ res_is_pqx(char *e, int *count)
 	    }
 	  else if ('.' == *e)
 	    {
-#if 1
 	      /* px handles the hili etc now; allow any number of dotted ID segments */
 	      while (isdigit(*e) || '.' == *e)
 		++e;	   
 	      break;
-#else
-	      /* the URL component is a line/word/grapheme ID; save
-		 the PQX only to the component and append the ID to
-		 query_string as a 'hili' option */
-	      static char *tmp_query_string = NULL;
-	      if (query_string)
-		{
-		  tmp_query_string = malloc(strlen(query_string) + strlen(entry) + strlen("hili=")+2);
-		  sprintf(tmp_query_string, "%s&hili=%s", query_string, entry);
-		}
-	      else
-		{
-		  tmp_query_string = malloc(strlen(entry) + strlen("hili=")+1);
-		  sprintf(tmp_query_string, "hili=%s", entry);		  
-		}
-	      query_string = (const char *)tmp_query_string;
-	      *e = '\0';
-	      break;
-#endif
 	    }
 	  else
 	    break;

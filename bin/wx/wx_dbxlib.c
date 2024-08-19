@@ -8,8 +8,8 @@ const char *dbidir = NULL, *dbiname = NULL;
 Dbi_index *
 wx_dbx_proj_oid(const char *project)
 {
-  char projoiddir[ strlen(oracc_builds()) + strlen(project) + strlen("02pub/oid") + 3];
-  sprintf(projoiddir, "%s/%s/02pub/oid", oracc_builds(), project);
+  char projoiddir[ strlen(oracc_builds()) + strlen(project) + strlen("02pub") + 3];
+  sprintf(projoiddir, "%s/%s/02pub", oracc_builds(), project);
   return wx_dbx_init(projoiddir, "oid");
 }
 

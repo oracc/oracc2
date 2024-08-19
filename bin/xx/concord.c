@@ -793,6 +793,7 @@ getargs (argc, argv)		/* get arguments */
 		break;
 	      case 't':
 		sepchar = '\t';
+		do_line_breaks = 0;
 		break;
 	      case 'x':
 		xml_output = 1;
@@ -928,6 +929,8 @@ helpscreen (val)
   printf
     ("     CONCORDANCE PROGRAM (1986) by Walter Mebane and Bernard Tiffany\n");
   printf
+    ("     Modified for Oracc 2010-2024 by Steve Tinney\n\n");
+  printf
     (" concord [-fnucwol?] infile[+inf2] outfile [-iFILE[+FILE]] [-xFILE[+FILE]]\n");
   printf
     ("                  outfile omitted:  write output to standard output.\n");
@@ -970,7 +973,8 @@ helpscreen (val)
     ("\n -b       Don't generate line breaks in lists of occurrences.\n");
   printf (" -g       Grapheme-based sort.\n");
   printf (" -s       Silent running.\n");
-  printf (" -t       Do TeX output.\n");
+  printf (" -T       Do TeX output.\n");
+  printf (" -t       Use tab for separator after first column (implies -b).\n");
 #endif
 
   closefiles ();

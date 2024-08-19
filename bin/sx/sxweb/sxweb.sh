@@ -122,10 +122,9 @@ sxsortorder.sh $project
 
 libscripts=$ORACC_BUILDS/lib/scripts
 
-xsltproc $libscripts/sxweb-oid-tab.xsl 02xml/sl.xml >signlist/02pub/oid-index.tab
-mkdir -p signlist/02pub/oid
-dbix -d signlist/02pub/oid -n oid signlist/02pub/oid-index.tab
-chmod -R o+r signlist/02pub
+xsltproc $libscripts/sxweb-oid-tab.xsl 02xml/sl.xml | \
+    sort | sed 's/u[12]/u/' >signlist/02pub/oid.tsv
+(cd signlist/02pub ; dbix -d . -n oid oid.tsv ; chmod -R o+r *)
 
 xmllint --xinclude - < $libscripts/sxweb-structure.xsl >01tmp/sxweb-structure-xi.xsl
 

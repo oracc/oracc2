@@ -44,17 +44,19 @@ main(int argc, char **argv)
     }
 
   dbi = dbi_create(dbiname, dbidir, 0, 1, DBI_BALK);
+  int lnum = 0;
   while ((k = loadoneline(infile,&nbytes)))
     {
+      ++lnum;
       unsigned char *v = (unsigned char*)strchr((char*)k,'\t');
       if (v)
 	{
 	  *v++ = '\0';
-	  dbi_add(dbi,k,v,strlen((char*)v)+1);
+	  (void)dbi_add(dbi,k,v,strlen((char*)v)+1); /* ignore DBI_BALK errors */
 	}
       else if ('#' != *k)
 	{
-	  fprintf(stderr, "dbix: no tab in line `%s'\n", k);
+	  fprintf(stderr, "%s:%d: dbix: no tab in line `%s'\n", tsvfile, lnum, k);
 	  exit(1);
 	}
     }

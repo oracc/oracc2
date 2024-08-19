@@ -9,7 +9,7 @@ isp_tis_list(Isp *ip)
     {
       Unsigned32 len;
       dp->h.sep_char = '\n';
-      const Loc8*l8p = dbx_key(dp, ip->list_name, &len);
+      const Loc8*l8p = dbx_key(dp, ip->lloc.key, &len);
       if (l8p)
 	{
 	  FILE *fp;
@@ -27,10 +27,10 @@ isp_tis_list(Isp *ip)
 	    }
 	}
       else
-	ip->err = "key not found in tis db";
+	ip->err = "fatal: key not found in tis db";
       dbx_term(dp);
     }
   else
-    ip->err = "failed to open .dbh/.dbi database";
+    ip->err = "fatal: failed to open .dbh/.dbi database";
   return ip->err ? 1 : 0;
 }

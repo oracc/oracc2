@@ -151,8 +151,8 @@ px_validate(Isp *ip)
       if (!strcmp(ip->glos, "tok"))
 	{
 	  ip->lloc.type = "tis";
-	  ip->from = ip->list_name = "list";
-	  ip->lloc.key = ip->glosdata.xis;
+	  ip->from = "list";
+	  ip->list_name = ip->lloc.key = ip->glosdata.xis;
 	  ip->glos = ip->glosdata.xis = NULL;
 	}
       else

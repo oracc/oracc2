@@ -18,7 +18,7 @@
   </xsl:for-each>
   <xsl:for-each select="*/sl:letter[@num='1']">
     <xsl:call-template name="oids">
-      <xsl:with-param name="n" select="'/numbers'"/>
+      <xsl:with-param name="n" select="'/Numbers'"/>
     </xsl:call-template>
   </xsl:for-each>
 </xsl:template>
@@ -27,18 +27,20 @@
   <xsl:param name="n" select="''"/>
   <xsl:for-each select=".//sl:sign">
     <xsl:value-of select="concat(
-			  @xml:id, '&#x9;u&#x9;',
+			  @xml:id, '&#x9;u1&#x9;',
 			  '/',/*/@project, '/signlist',$n,
 			  '/',ancestor::sl:letter/@xml:id,
 			  '/',@xml:id,
 			  '&#xa;')"/>
     <xsl:for-each select=".//sl:form">
-      <xsl:value-of select="concat(
-			    @xml:id, '&#x9;u&#x9;',
-			    '/',/*/@project, '/signlist',$n,
-			    '/',ancestor::sl:letter/@xml:id,
-			    '/',ancestor::sl:sign/@xml:id,
-			    '&#xa;')"/>
+      <xsl:if test="starts-with(@oid,'o')">
+	<xsl:value-of select="concat(
+			      @oid, '&#x9;u2&#x9;',
+			      '/',/*/@project, '/signlist',$n,
+			      '/',ancestor::sl:letter/@xml:id,
+			      '/',ancestor::sl:sign/@xml:id,
+			      '&#xa;')"/>
+      </xsl:if>
     </xsl:for-each>
   </xsl:for-each>
 </xsl:template>

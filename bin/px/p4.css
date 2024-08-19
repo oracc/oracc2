@@ -185,9 +185,11 @@ span.foreign { font-style: italic; }
 .ce-result { text-align: left;  padding-bottom: 0px; margin-bottom: 0px;
 	   padding-left: 3px; padding-right: 3px; }
 
-.ce-result:nth-child(even of .ce-result) { background-color: #eee; }
-.ce-label:nth-child(even of .ce-label) { background-color: #eee; }
+p.ce-result:nth-child(even of .ce-result) { background-color: #eee; }
+p.ce-label:nth-child(even of .ce-label) { background-color: #eee; }
 
+p.ce-result:nth-child(even of .ce-result) .selected { background-color: silver; }
+		     
 table.kwic { width: 100%; }
 
 /* CBD CSS */

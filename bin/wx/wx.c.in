@@ -182,7 +182,7 @@ main(int argc, char *argv[])
 #if 0
   /* This is handled by p4url_eval which passes them as oxid= */
   if ((*elements[0] == 'o' || *elements[0] == 'x')
-      && isdigit(elements[0][1]))
+      && isdigit(elements[0][1]) && (!query_string || !strlen(query_string)))
     {
       extern void oid(const char*);
       int d = 2;

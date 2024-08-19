@@ -51,6 +51,9 @@ p4url_eval(const char *u, const char *q)
      values are wrong or if the syntax doesn't match p4url */
   if ((res = p4url(&p, u, q)))
     return 0;
+
+  if (p.oxid)
+    p4oid(&p);
   
   const char **v = p4url_vec(&p);
 

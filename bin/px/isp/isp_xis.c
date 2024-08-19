@@ -71,6 +71,7 @@ isp_xis_list(Isp *ip)
 	    {
 	      xis_wids(ip, xip, fp);
 	      fclose(fp);
+	      ip->lloc.path = ip->cache.list;
 	    }
 	}
       else

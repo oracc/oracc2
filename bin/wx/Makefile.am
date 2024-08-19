@@ -6,15 +6,14 @@ subdirs=ccgi
 
 cgibin_PROGRAMS=wx
 
-noinst_SCRIPTS=wx-pub-p4projects.sh
-bin_SCRIPTS=wx-is-p4-project.sh
-
-noinst_PROGRAMS=p4url
-
+#noinst_SCRIPTS=wx-pub-p4projects.sh
+#bin_SCRIPTS=wx-is-p4-project.sh
 
 p4url_LIB=p4url.c qsoption.c urlkeys.c p4url_vec.c p4url_eval.c
-p4url_SOURCES=mp4url.c px.c $(p4url_LIB)
-p4url_LDADD=ccgi/libccgi.la $(xLDADD)
+
+#noinst_PROGRAMS=p4url
+#p4url_SOURCES=mp4url.c px.c $(p4url_LIB)
+#p4url_LDADD=ccgi/libccgi.la $(xLDADD)
 
 # content_test
 # content_test_SOURCES=content_test.c content.c runexpat.c
