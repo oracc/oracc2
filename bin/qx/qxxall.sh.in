@@ -1,0 +1,22 @@
+#!/bin/sh
+qx=$1
+if [ "$qx" == "" ]; then
+    echo "$0: must give an indexer as argument (e.g., qxxall.sh qlemx). Stop."
+    exit 1
+fi
+bin=@@ORACC@@/bin
+txt=01bld/lists/txtindex.lst
+if [ -x $bin/$qx ]; then
+    . $bin/oraccenv.sh
+    cd @@ORACC@@
+    for a in `allprojlist.sh` ; do
+	if [ -s $a/$txt ]; then
+	    echo $qx $a
+	    ( cd $a ; $bin/$qx -p $a <$txt )
+	fi
+    done
+else
+    echo $0: no indexer $bin/$qx. Stop.
+    exit 1
+fi
+   
