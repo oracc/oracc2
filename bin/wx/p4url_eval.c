@@ -52,8 +52,10 @@ p4url_eval(const char *u, const char *q)
   if ((res = p4url(&p, u, q)))
     return 0;
 
+#if 0
   if (p.oxid)
     p4oid(&p);
+#endif
   
   const char **v = p4url_vec(&p);
 
