@@ -1,6 +1,7 @@
 nx -- number tool
 
-nx is a tool to support the Oracc Numbers project, num (http://oracc.org/num)
+nx is a tool to support the Oracc Numbers project, num
+(http://oracc.org/num)
 
 num covers both numbers and counting systems and measures and
 measuring systems
@@ -99,13 +100,15 @@ more constraints. There are several types of constraint:
 
      p -- project, i.e., an Oracc project name
 
-     t -- text, i.e., a P/Q/X ID; a project/text pair may be given in the common PROJECT:PQXID notation
+     t -- text, i.e., a P/Q/X ID; a project/text pair may be given in
+       	  the common PROJECT:PQXID notation
      
      m -- metadata such as time (mt), place (mp), genre (mg), language (ml)
      
-     s -- system such as system name (s) unit (su); area (sa); dry capacity (sd); liquid capacity (sl) weight
-       	  (sw). For some systems cuneiform metrology uses special
-       	  signs to qualify the system explicitly, e.g., gur and gan₂
+     s -- system such as system name (s) unit (su); area (sa); dry
+       	  capacity (sd); liquid capacity (sl) weight (sw). For some
+       	  systems cuneiform metrology uses special signs to qualify
+       	  the system explicitly, e.g., gur and gan₂
 
      c -- commodities, i.e., the head noun of the description of what
           is being counted or measured
