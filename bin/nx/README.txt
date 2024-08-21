@@ -10,7 +10,13 @@ num consists of several parts
 
  ns -- number systems
 
- nu -- number units:
+ nu -- number units
+
+ ni -- number instance
+
+ nf -- number form
+
+ no -- number other
 
  ne -- number environments
  
@@ -22,21 +28,25 @@ num consists of several parts
 
  nr -- number rendering
 
+ nz -- number stoppers
 
 
 ns -- number system
 
-A number system consists of a name, optional ne constraints, and a nu.
+A number system consists of a name,an optional base unit and
+conversion ratio, optional ne constraints, and a nu specification.
 
 The syntax of an ns is:
 
- '@' NAME BASE? CONV? ne* nu '.'
+ '@' NAME BASE? CONV? ne* nu ni* '.'
 
 Whitespace is obligatory after any of NAME, BASE, CONV, ne.
 
+Whitespace is obligatory between nu and ni sequences.
+
 Whitespace is not allowed between '@' and NAME.
 
-Whitespace is optional after nu.
+Whitespace is optional after nu or the last ni.
 
 NAME is a segmented string with each segment separated by a hyphen
 ('-').  By convention, the first segment is a count or measure type
@@ -65,8 +75,14 @@ of the following metric unit abbreviations:
 nu -- number units
 
 An nu is a sequence of one or more steps in a system. A step is a unit
-and. Steps are connected by multipliers (mult). A mult is the number
-of units on the right-hand step (rhs) that make up the unit on the
+and by definition a step-name is either a grapheme that can occur
+within parentheses in an ATF number grapheme or a word for a unit.
+Unit-words are always written with the CF (Citation-Form) in nu, e.g.,
+sila is written sila rather than sila₃.  A GW (Guide-Word) may be
+added for disambiguation if necessary, e.g., gun[weight].
+
+Steps are connected by multipliers (mult). A mult is the number of
+units on the right-hand step (rhs) that make up the unit on the
 left-hand step (lhs). Steps in an nu progress from smallest on the
 right to largest on the left, mimicking the sequence of graphemes on
 the tablet.
@@ -90,6 +106,39 @@ multiplier is unbounded from the point of view of validation.
 
 Whitespace is insignificant, so the above example could also be
 written as n*geš₂=6*u=10*diš.
+
+
+
+ni -- number instances
+
+An ni is count-unit pair, where the unit represents a step.  For
+number graphemes such as 1(aš), the ni consists of 1 and aš.  For unit
+sequences such as 1(u) 1(diš) sila₃, the ni consists of 11 and
+sila--note that the number has been normalized to decimal and the
+grapheme form of sila₃ has been normalized to the CF sila.
+
+Within an ns, a grapheme ni is defined with the following syntax:
+
+ GRAPHEME=COUNT*STEP
+
+This form can be used to normalize variant graphemic forms to valid ni:
+
+ 1(aš)=1*aš
+ 9(diš)~v=9*diš
+
+A unit-word ni is defined with the following syntax:
+
+ AŠ|DIŠ+GRAPHEME|WORD=STEP
+
+This data is used bidirectionally by nx: if a sequence could be either
+an AŠ-number or a DIŠ-number and is followed by a unit-word that
+occurs in an ni definition the number-system is disambiguated
+accordingly.  Type-example:
+
+ AŠ+gur=gur
+
+A generic set of ni is predefined in nx.  These are overridden by ni
+that occur in an ns if that ns is in effect in the parsing context.
 
 
 
@@ -136,10 +185,12 @@ Environmental constraints have several types:
        	  without any intervening commodities as happens with
        	  area::seed ratios
 
+     r -- recipient, i.e., DN, PN, TN in offering or ration lists
+
 An ne may be included in number definition or prefixed to a
 token list. The syntax of an ne is:
 
-      '$' "c|f|j|l|m|mt|mp|mg|ml|n|p|s|t" '=' VALUE
+      '$' "c|f|j|l|m|mt|mp|mg|ml|n|p|r|s|t" '=' VALUE
     | '$' "su|sa|sd|sl|sw"
 
 
@@ -149,20 +200,48 @@ np -- number parsing
 Parsing is carried out with nx which loads the nd data and uses it to
 parse token lists.
 
-A token list consists of zero or more ne followed by one or more
-grapheme or word signatures.  The signatures may be partial,
-consisting of just a grapheme, or they may contain select additional
-information such as a CF[GW]POS lemmatization, or they may be the
-complete signatures produced by ATF parsing.
+A token list consists of zero or more ne followed by one or more nf, no or
+nz tokens.
+
+Both nf and no tokens take the form of Oracc signatures.
+
+The signatures may be partial, consisting of just a grapheme, or they
+may contain select additional information such as a CF[GW]POS
+lemmatization, or they may be the complete signatures produced by ATF
+parsing.
 
 A signature may also have a word ID appended to it with the special
 joiner '~~'.
 
-A token list is parsed to identify any subsequences of
-graphemes that conform to nd data.  A successful parse of a
-subsequence results in a nq, a number quantity. A token list can
-contain more than one nq because nx can be used to process discrete
-numbers or entire texts.
+A token list is parsed to identify any subsequences of graphemes that
+conform to nd data.  A successful parse of a subsequence results in a
+nq, a number quantity. A token list can contain more than one nq
+because nx can be used to process anything from discrete numbers on a
+command line to entire texts.
+
+
+
+nf -- number form
+
+An nf is a token that can be part of an nu sequence--most of these are
+numeric graphemes such as 1(aš), but unit-words like sila₃ and system
+indicators like gan₂ are also ni.
+
+
+
+no -- number other
+
+An no is a token that can not be part of an nu sequence.
+
+
+
+nz -- number stopper
+
+An nz is a token that unambiguously concludes the end of a number
+sequence and consists of the comma character (',').  When parsing ATF
+the comma (field-delimiter) causes an nz to be inserted into the token
+stream.  Where juxtaposed sequences are difficult to parse with
+precision this can be used to ensure that nx finds the proper boundary.
 
 
 
