@@ -52,6 +52,9 @@ NAME is a segmented string with each segment separated by a hyphen
 ('-').  By convention, the first segment is a count or measure type
 and the remaining segments are qualifiers time/place/genre/extension.
 
+The first NAME segment may have one or more GDL modifiers, e.g.,
+@c or @f, to associate the system with the relevant number styles.
+
 If a NAME has more than one segment, at least four segments must be
 given--empty segments are indicated with '*', e.g.:
 
@@ -65,8 +68,9 @@ version of the num data.
 BASE is a single token which must occur as a STEP in the nu.
 
 CONV is a modern metric unit which is the equivalent of 1*BASE. The
-syntax of CONV is an integer or floating point number followed by one
-of the following metric unit abbreviations:
+syntax of CONV is an integer or floating point number followed by
+either 'u' to indicate a numeric equivalent or one of the following
+metric unit abbreviations:
 
    cm ha g kg l m mm
 
@@ -89,7 +93,7 @@ the tablet.
 
 The syntax of an nu is:
 
-    STEP := NUMBER_GRAPHEME
+    STEP := STEP_NAME
 
     MULT := [0-9]+ | 'n'
 
