@@ -93,16 +93,35 @@ written as n*geš₂=6*u=10*diš.
 
 
 
-ne -- number system environments
+ne -- number environments
 
 num processing occurs in an environment which may consist of zero or
-more constraints. There are several types of constraint:
+more contexts and constraints.
+
+Environment context may include any or all of the following:
 
      p -- project, i.e., an Oracc project name
 
      t -- text, i.e., a P/Q/X ID; a project/text pair may be given in
        	  the common PROJECT:PQXID notation
-     
+
+     n -- name, i.e., the display name for a PQXID
+
+     l -- label, i.e., the value of the computed label for a line with
+       	  whitespace sequences each replaced by a single underscore
+       	  character, e.g., 'o i 1' in the form $l=o_i_1. No provision
+       	  is made to pass the line or word ID as part of the context
+       	  because they can be attached to the signatures in a token
+       	  list.
+
+     f -- ATF file locator in the form file:line (e.g., $f=sale.atf:1)
+          or line (e.g., $f=2); if the filename begins with '/' or
+          './' it is a full path to the file; otherwise the path must
+          be constructed from the project and is assumed to be in
+          '00atf'.
+
+Environmental constraints have several types:
+
      m -- metadata such as time (mt), place (mp), genre (mg), language (ml)
      
      s -- system such as system name (s) unit (su); area (sa); dry
@@ -113,15 +132,15 @@ more constraints. There are several types of constraint:
      c -- commodities, i.e., the head noun of the description of what
           is being counted or measured
 
-     l -- layouts, i.e., two or more ns which may be juxtaposed
+     j -- juxtapositions, i.e., two or more ns which may be juxtaposed
        	  without any intervening commodities as happens with
        	  area::seed ratios
 
 An ne may be included in number definition or prefixed to a
 token list. The syntax of an ne is:
 
-      '!' "m|mt|mp|mg|ml|c|l|p|s|t" '=' VALUE
-    | '!' "su|sa|sd|sl|sw"
+      '$' "c|f|j|l|m|mt|mp|mg|ml|n|p|s|t" '=' VALUE
+    | '$' "su|sa|sd|sl|sw"
 
 
 
@@ -150,9 +169,11 @@ numbers or entire texts.
 nq -- number quantity
 
 An nq consists of a parsed number and the set of ne which was matched
-during the parse.  Any ne which were not matched are omitted from the
-nq. If the token list contained a commodity that will be included in
-the nq.
+during the parse.  All environment context ne that are present are
+assumed matched, i.e., they are automatically included in the nq.
+
+Any ne which were not matched are omitted from the nq. If the token
+list contained a commodity that will be included in the nq.
 
 An nq may be serialized as an nq token signature or in the xlink form used
 for the linkbases which are part of lemmatized text in Oracc.
