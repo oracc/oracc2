@@ -1,6 +1,8 @@
 #ifndef NS_H_
 #define NS_H_
 
+typedef unsigned char uchar;
+
 struct nx_step;
 struct nx_inst;
 

@@ -123,7 +123,7 @@ grapheme form of sila₃ has been normalized to the CF sila.
 
 Within an ns, a grapheme ni is defined with the following syntax:
 
- GRAPHEME=COUNT*STEP
+ GRAPHEME>COUNT*STEP
 
 This form can be used to normalize variant graphemic forms to valid ni:
 
@@ -132,7 +132,7 @@ This form can be used to normalize variant graphemic forms to valid ni:
 
 A unit-word ni is defined with the following syntax:
 
- AŠ|DIŠ+GRAPHEME|WORD=STEP
+ AŠ|DIŠ+WORD>STEP
 
 This data is used bidirectionally by nx: if a sequence could be either
 an AŠ-number or a DIŠ-number and is followed by a unit-word that
@@ -194,8 +194,8 @@ Environmental constraints have several types:
 An ne may be included in number definition or prefixed to a
 token list. The syntax of an ne is:
 
-      '$' "c|f|j|l|m|mt|mp|mg|ml|n|p|r|s|t" '=' VALUE
-    | '$' "su|sa|sd|sl|sw"
+      '$' (c|f|j|l|m|mt|mp|mg|ml|n|p|r|s|t) '=' "STRING"
+    | '$' (su|sa|sd|sl|sw)
 
 
 
