@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <mesg.h>
 #include "ns.h"
-#include "gdlstate.h"
+
 extern int nslex(void);
 extern void yyerror(const char *);
 extern const char *nstext, *currnsfile;
@@ -21,9 +21,9 @@ NSLTYPE nsylloc;
 
 %}
 
-%union { char *text; int i; }
+%union { unsigned char *text; int i; }
 
-%token <i> 	NS_NAME NS_BASE NS_CONV NS_STOP
+%token <text> 	NS_NAME NS_BASE NS_CONV NS_STOP
 		NE_BOO NE_KEY NE_VAL
 		NI_AXIS
        		NU_GVAL NU_NUM NU_UNIT
@@ -37,9 +37,13 @@ ns: 	  ns_sys
 	| ns ns_sys
 	;
 
-ns_sys:	ns_name ns_equiv ns_nes ns_nu ns_nis ns_stop
+ns_sys:	  ns_name ns_equiv ns_nu ns_stop
+	| ns_name ns_equiv ns_nes ns_nu ns_stop
+	| ns_name ns_equiv ns_nu ns_nis ns_stop
+	| ns_name ns_equiv ns_nes ns_nu ns_nis ns_stop
+	;
 
-ns_name: NS_NAME
+ns_name: NS_NAME			{ ns_sys_init($1); }
 	;
 
 ns_equiv: ns_base ns_conv

@@ -4,7 +4,7 @@ bin_PROGRAMS=nx
 bin_SCRIPTS=
 scriptdata_DATA=
 
-nx_SOURCES=ns.tab.c ns.lex.c nx.c
+nx_SOURCES=nx.c ns.tab.c ns.lex.c ns_build.c
 
 nx_LDADD = $(xLDADD)
 nx_DEPENDENCIES = $(nx_LDADD)

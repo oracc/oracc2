@@ -44,6 +44,10 @@ typedef struct nx_inst
   char a_or_d;			/* 'a' or 'd' for aš or diš */
 } nx_inst;
 
+extern int nsflextrace;
+extern int nslex(void);
+extern int nsparse(void);
 
+extern void ns_sys_init(uchar *t);
 
 #endif /*NS_H_ */
