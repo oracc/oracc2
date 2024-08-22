@@ -1,10 +1,24 @@
 #ifndef NS_H_
 #define NS_H_
 
+#include <memo.h>
+#include <pool.h>
+
 typedef unsigned char uchar;
 
+struct nx_sys;
 struct nx_step;
 struct nx_inst;
+
+typedef struct nx
+{
+  Memo *m_sys;
+  Memo *m_step;
+  Memo *m_inst;
+  Pool *p;
+  struct nx_sys *sys;
+  int nsys;
+} nx;
 
 typedef struct nx_num
 {
@@ -15,13 +29,13 @@ typedef struct nx_num
 				   smallest fraction, 10800; if this is -1 the mult was 'n' */
 } nx_num;
 
-typedef struct nx_ns
+typedef struct nx_sys
 {
   uchar *name;
   uchar *base;
   uchar *conv;
   struct nx_step *steps;
-} nx_ns;
+} nx_sys;
 
 typedef struct nx_step
 {
@@ -44,10 +58,12 @@ typedef struct nx_inst
   char a_or_d;			/* 'a' or 'd' for aš or diš */
 } nx_inst;
 
-extern int nsflextrace;
+extern nx *nxp;
+
+extern int nsflextrace, ns_flex_debug;
 extern int nslex(void);
 extern int nsparse(void);
 
-extern void ns_sys_init(uchar *t);
+extern void nsb_sys(uchar *t);
 
 #endif /*NS_H_ */

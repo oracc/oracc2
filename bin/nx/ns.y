@@ -43,7 +43,7 @@ ns_sys:	  ns_name ns_equiv ns_nu ns_stop
 	| ns_name ns_equiv ns_nes ns_nu ns_nis ns_stop
 	;
 
-ns_name: NS_NAME			{ ns_sys_init($1); }
+ns_name: NS_NAME			{ nsb_sys($1); }
 	;
 
 ns_equiv: ns_base ns_conv
