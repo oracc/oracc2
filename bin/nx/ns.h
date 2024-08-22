@@ -46,16 +46,17 @@ typedef struct nx_step
   struct nx_step *prev;
   struct nx_sys *sys;
   struct nx_inst *insts;
+  struct nx_inst *last;
 } nx_step;
 
 typedef struct nx_inst
 {
-  uchar *text;			/* the grapheme or word in the instance */
-  uchar *name;			/* the name of the corresponding step */
-  nx_num count;			/* the count for the step; can be integer or fraction */
   struct nx_step *step;		/* pointer to the step structure in the nx_ns */
   struct nx_inst *next;
   struct nx_inst *prev;
+  uchar *text;			/* the grapheme or word in the instance */
+  uchar *unit;			/* the name of the corresponding step */
+  nx_num count;			/* the count for the step; can be integer or fraction */
   char a_or_d;			/* 'a' or 'd' for aš or diš */
 } nx_inst;
 
@@ -68,5 +69,7 @@ extern int nsparse(void);
 extern void nsb_sys(uchar *t);
 extern void nsb_equiv(uchar *b, uchar *c);
 extern void nsb_step(uchar *b, uchar *c);
+extern void nsb_inst_g(uchar *g, uchar *n, uchar *u);
+extern void nsb_inst_u(uchar *x, uchar *g, uchar *u);
 
 #endif /*NS_H_ */

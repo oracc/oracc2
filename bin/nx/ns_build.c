@@ -55,3 +55,40 @@ nsb_step(uchar *m, uchar *u)
   else
     nxp->sys->last = nxp->sys->steps = s;  
 }
+
+static void
+nsb_inst_add(nx_inst *i)
+{
+  if (nxp->sys->last->insts)
+    {
+      nxp->sys->last->last->next = i;
+      i->prev = nxp->sys->last->last;
+      nxp->sys->last->last = i;
+    }
+  else
+    nxp->sys->last->last = nxp->sys->last->insts = i;
+}
+
+void
+nsb_inst_g(uchar *g, uchar *n, uchar *u)
+{
+  nx_inst *i = memo_new(nxp->m_inst);
+  i->text = g;
+  i->unit = u;
+  nsb_mult(&i->count, n);
+  nsb_inst_add(i);
+  if (build_trace)
+    printf("nsb_inst_g: inst has text %s => count %llu/%d and unit %s\n", i->text, i->count.n, i->count.d, i->unit);
+}
+
+void
+nsb_inst_u(uchar *x, uchar *g, uchar *u)
+{
+  nx_inst *i = memo_new(nxp->m_inst);
+  i->text = g;
+  i->unit = u;
+  i->a_or_d = tolower(*x);
+  nsb_inst_add(i);
+  if (build_trace)
+    printf("nsb_inst_u: inst has text %s with system %s=>%c and unit %s\n", i->text, x, i->a_or_d, i->unit);  
+}

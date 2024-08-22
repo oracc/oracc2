@@ -33,6 +33,8 @@ FRAC		[0-9n]\/[0-9]
 
 [0-9.]+(cm|ha|kg|mm|m2|g|l|m|u)		{ nsave; return NS_CONV; }
 
+({NUM}|{FRAC})\({G}{M}*\)		{ nsave; return NU_GVAL; }
+
 "$"(su|sa|sd|sl|sw)			{ nsave; return NE_BOO; }
 
 "$"(mt|mp|mg|ml|c|f|j|l|m|n|p|r|s|t)	{ nsave; return NE_KEY; }
@@ -44,8 +46,6 @@ FRAC		[0-9n]\/[0-9]
 "AŠ"|"DIŠ"				{ nsave; return NI_AXIS; }
 
 {G}{M}*("."{G}{M}*)*	       		{ nsave; return NU_UNIT; }
-
-{NUM}|{FRAC}"("{G}{M}*")"		{ nsave; return NU_GVAL; }
 
 ["=*>.]					{ return *nstext; }
 
