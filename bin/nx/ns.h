@@ -35,16 +35,17 @@ typedef struct nx_sys
   uchar *base;
   uchar *conv;
   struct nx_step *steps;
+  struct nx_step *last;
 } nx_sys;
 
 typedef struct nx_step
 {
   nx_num mult;
-  uchar *name;
-  struct nx_inst *insts;
+  uchar *unit;
   struct nx_step *next;
   struct nx_step *prev;
-  struct nx_ns *ns;
+  struct nx_sys *sys;
+  struct nx_inst *insts;
 } nx_step;
 
 typedef struct nx_inst
@@ -65,5 +66,7 @@ extern int nslex(void);
 extern int nsparse(void);
 
 extern void nsb_sys(uchar *t);
+extern void nsb_equiv(uchar *b, uchar *c);
+extern void nsb_step(uchar *b, uchar *c);
 
 #endif /*NS_H_ */

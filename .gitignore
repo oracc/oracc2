@@ -14,6 +14,8 @@ bin/gx/gx
 bin/gx/siglangx
 bin/jx/jx
 bin/lx/lx
+bin/mx/mx
+bin/nx/nx
 bin/ox/oid
 bin/qx/cat/qcatx
 bin/qx/cbd/qcbdx

@@ -29,6 +29,8 @@ NSLTYPE nsylloc;
        		NU_GVAL NU_NUM NU_UNIT
 		END
 
+%nterm <text> 	ns_base ns_conv
+
 %start ns
 
 %%
@@ -46,7 +48,7 @@ ns_sys:	  ns_name ns_equiv ns_nu ns_stop
 ns_name: NS_NAME			{ nsb_sys($1); }
 	;
 
-ns_equiv: ns_base ns_conv
+ns_equiv: ns_base ns_conv		{ nsb_equiv($1,$2); }
 	| /* empty */
 	;
 
@@ -69,7 +71,7 @@ ns_nu:    nu_multunit
 	| ns_nu '=' nu_multunit
 	;
 
-nu_multunit: NU_NUM '*' NU_UNIT
+nu_multunit: NU_NUM '*' NU_UNIT		{ nsb_step($1,$3); }
 	;
 
 ns_nis:   ns_ni
