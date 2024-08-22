@@ -39,7 +39,7 @@ FRAC		[0-9n]\/[0-9]
 
 "$"(mt|mp|mg|ml|c|f|j|l|m|n|p|r|s|t)	{ nsave; return NE_KEY; }
 
-\"[^\"\n\t]\"				{ nsave; return NE_VAL; }
+\"[^\"\n\t]*\"				{ nsave; return NE_VAL; }
 
 {NUM}|{FRAC}				{ nsave; return NU_NUM; }
 

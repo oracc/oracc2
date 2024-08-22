@@ -1,6 +1,7 @@
 #ifndef NS_H_
 #define NS_H_
 
+#include <hash.h>
 #include <memo.h>
 #include <pool.h>
 
@@ -15,6 +16,8 @@ typedef struct nx
   Memo *m_sys;
   Memo *m_step;
   Memo *m_inst;
+  Hash *e; /* global environment */
+  List *elist;
   Pool *p;
   struct nx_sys *sys;
   int nsys;
@@ -34,6 +37,8 @@ typedef struct nx_sys
   uchar *name;
   uchar *base;
   uchar *conv;
+  Hash *e; /* system environment */
+  List *elist;
   struct nx_step *steps;
   struct nx_step *last;
 } nx_sys;
@@ -68,6 +73,7 @@ extern int nsparse(void);
 
 extern void nsb_sys(uchar *t);
 extern void nsb_equiv(uchar *b, uchar *c);
+extern void nsb_env(uchar *b, uchar *c);
 extern void nsb_step(uchar *b, uchar *c);
 extern void nsb_inst_g(uchar *g, uchar *n, uchar *u);
 extern void nsb_inst_u(uchar *x, uchar *g, uchar *u);

@@ -8,6 +8,8 @@ nsb_sys(uchar *t)
 {
   nxp->sys = memo_new(nxp->m_sys);
   nxp->sys->name = t;
+  nxp->sys->e = hash_create(7);
+  nxp->sys->elist = list_create(LIST_SINGLE);
   ++nxp->nsys;
   if (build_trace)
     printf("nsb_sys: sys %s is sys %d\n", nxp->sys->name, nxp->nsys);
@@ -20,6 +22,20 @@ nsb_equiv(uchar *b, uchar *c)
   nxp->sys->conv = c;
   if (build_trace)
     printf("nsb_equiv: sys %s has base %s and conv %s\n", nxp->sys->name, nxp->sys->base, nxp->sys->conv);
+}
+
+void
+nsb_env(uchar *e, uchar *v)
+{
+  ++e; /* skip $ */
+  v[strlen((char*)v)-1] = '\0'; /* remove trailing " */
+  memmove(v,v+1,strlen((char*)v)+1);
+  char s[strlen((const char *)e)+strlen((const char *)v)+5];
+    sprintf(s, "$%s=\"%s\"", e, v);
+  list_add(nxp->sys->elist, pool_copy((uchar*)s, nxp->p));
+  hash_add(nxp->sys->e, e, v);
+  if (build_trace)
+    printf("nsb_env: env %s has key %s and value '%s'\n", s, e, v);
 }
 
 void

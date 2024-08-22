@@ -19,6 +19,8 @@ extern int nslineno, nstrace;
 #define yylineno nslineno
 NSLTYPE nsylloc;
 
+uchar one[2] = {'1','\0'};
+ 
 %}
 
 %union { unsigned char *text; int i; }
@@ -45,10 +47,10 @@ ns_sys:	  ns_name ns_equiv ns_nu ns_stop
 	| ns_name ns_equiv ns_nes ns_nu ns_nis ns_stop
 	;
 
-ns_name: NS_NAME			{ nsb_sys($1); }
+ns_name: NS_NAME				{ nsb_sys($1); }
 	;
 
-ns_equiv: ns_base ns_conv		{ nsb_equiv($1,$2); }
+ns_equiv: ns_base ns_conv			{ nsb_equiv($1,$2); }
 	| /* empty */
 	;
 
@@ -62,8 +64,8 @@ ns_nes:	  ns_ne
 	| ns_nes ns_ne
 	;
 
-ns_ne: 	  NE_BOO
-	| NE_KEY '=' NE_VAL
+ns_ne: 	  NE_BOO				{ nsb_env($1, one); }
+	| NE_KEY '=' NE_VAL			{ nsb_env($1, $3); }
 	;
 
 
@@ -71,7 +73,7 @@ ns_nu:    nu_multunit
 	| ns_nu '=' nu_multunit
 	;
 
-nu_multunit: NU_NUM '*' NU_UNIT		{ nsb_step($1,$3); }
+nu_multunit: NU_NUM '*' NU_UNIT			{ nsb_step($1,$3); }
 	;
 
 ns_nis:   ns_ni
