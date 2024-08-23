@@ -31,10 +31,8 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	  /* if this is the first token initialize the candidate systems
 	     and add an nx_step to each candidate for the token */
 	  if (!(cand = nxp_candidates(nptoks[from], toks[from], d)))
-	    {
-	      nxp_badnum(r, nptoks[from], toks[from], d);
-	      ++from;
-	    }
+	    nxp_badnum(r, nptoks[from], toks[from], d);
+	  ++from;
 	}
       else
 	{
@@ -50,20 +48,13 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	    }
 	  else
 	    {
-	      /* we are at the end of a number; stash it in the result
-		 and then continue if there are more tokens; if there
-		 is no valid cand we could add a badnum and then try
-		 again but that isn't implemented here; we would need
-		 to store the from-state at the start of this number
-		 to do that */
 	      nxp_stash_result(r, cand);
-	      ++from;
 	      free(cand);
 	      cand = NULL;
+	      /*++from;*/
 	    }
 	}
-    }
-  
+    } 
 }
 
 static int
@@ -96,7 +87,7 @@ nxp_add_step(nx_step **cand, nx_numtok type, const uchar *tok, const void *data)
 	  if (cand[i]->type > 0)
 	    {
 	      ns_inst *jp;
-	      for (jp = ip; jp; jp = jp->next)
+	      for (jp = ip; jp; jp = jp->ir_next)
 		{
 		  if (nx_sys_step_ok(cand[i]->last->tok.inst, jp))
 		    {
@@ -111,6 +102,8 @@ nxp_add_step(nx_step **cand, nx_numtok type, const uchar *tok, const void *data)
 		 tested. Invalidate it. */
 	      if (!jp)
 		cand[i]->type *= -1;
+	      else
+		ok = 1;
 	    }
 	}
       return ok ? cand : NULL;
@@ -200,5 +193,12 @@ nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
 static void
 nxp_stash_result(nx_result *r, nx_step **cand)
 {
-  ;
+  nx_number *n = memo_new(nxp->m_nx_number);
+  n->steps = cand[0];
+  int i;
+  for (i = 1; cand[i]; ++i)
+    {
+      n->next = memo_new(nxp->m_nx_number);
+      n->next->steps = cand[i];
+    }
 }

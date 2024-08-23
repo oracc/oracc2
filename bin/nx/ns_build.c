@@ -91,6 +91,10 @@ nsb_inst_register(ns_inst *i)
 static void
 nsb_inst_add(ns_inst *i, ns_inst_method meth)
 {
+  /* keep a list of all the insts that can belong to this step of this
+     sys; if some insts for this unit were given in the system
+     definition data but others weren't the insts may not be in the
+     correct sort order */
   i->step = nxp->sys->last;
   if (nxp->sys->last->insts)
     {
@@ -100,13 +104,11 @@ nsb_inst_add(ns_inst *i, ns_inst_method meth)
     }
   else
     nxp->sys->last->last = nxp->sys->last->insts = i;
-  if (meth == NS_INST_DATA)
-    {
-      Hash *h = i->step->sys->i;
-      if (!h)
-	h = i->step->sys->i = hash_create(100);
-      hash_add(h, i->text, i);
-    }
+  
+  Hash *h = i->step->sys->i;
+  if (!h)
+    h = i->step->sys->i = hash_create(100);
+  hash_add(h, i->text, i);
   nsb_inst_register(i);
 }
 
@@ -117,7 +119,9 @@ nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
   i->text = g;
   i->unit = u;
   nsb_mult(&i->count, n);
+
   nsb_inst_add(i, meth);
+  
   if (build_trace)
     printf("nsb_inst_g: inst has text %s => count %llu/%d and unit %s\n", i->text, i->count.n, i->count.d, i->unit);
 }
@@ -137,7 +141,7 @@ nsb_inst_u(uchar *x, uchar *g, uchar *u, ns_inst_method meth)
 static char *fixed_n[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 static int n_fixed = sizeof(fixed_n)/sizeof(const char *);
 static void
-nsb_auto_inst_g(ns_sys *sp, int m, uchar *u)
+nsb_auto_inst_g(ns_sys *sp, int m, const uchar *u)
 {
   if (m < n_fixed)
     {
@@ -148,6 +152,7 @@ nsb_auto_inst_g(ns_sys *sp, int m, uchar *u)
 	{
 	  if (build_trace)
 	    printf("nsb_auto_inst: adding %s\n", g);
+	  
 	  nsb_inst_g(pool_copy((uchar*)g, nxp->p), (const uchar *)n, u, NS_INST_AUTO);
 	}
     }
@@ -174,6 +179,7 @@ nsb_wrapup(void)
 	    {
 	      int i = (int)stp->mult.n;
 	      int m;
+	      nxp->sys->last = stp;
 	      for (m = 1; m < i; ++m)
 		nsb_auto_inst_g(nxp->sys, m, stp->unit);
 	    }

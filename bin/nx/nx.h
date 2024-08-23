@@ -29,7 +29,6 @@ typedef struct nx_number
   const uchar *me_unit; /* modern unit */
   const uchar *me_str; 	/* modern equivalency as formatted string */
   struct nx_step *steps;/* the parsed steps */
-  struct nx_step *last;	/* the last parsed step to which subsequent steps are added */
   struct nx_number *next; /* ambiguity is handled by making a list of possible nx_number results */
 } nx_number;
 
