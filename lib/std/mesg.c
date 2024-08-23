@@ -311,6 +311,7 @@ void
 mesg_print(FILE *fp)
 {
   mesg_print2(fp, mesg_list);
+  mesg_list = NULL;
 }
 
 void

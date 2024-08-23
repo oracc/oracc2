@@ -59,6 +59,7 @@ nx_parse(const uchar **toks, const void **data, int ntoks)
 	{
 	  if (start < ntoks)
 	    nxp_nonnums(r, toks, data, start, ntoks);
+	  start = ntoks;
 	}
     }
   
@@ -69,7 +70,7 @@ static int
 nxp_count_toks(const uchar **t)
 {
   int n = 0;
-  while (*t)
+  while (*t++)
     ++n;
   return n;
 }
@@ -145,11 +146,13 @@ nxp_parse_nums(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**
 static void
 nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
 {
-  printf("nxp_show_start_toks:\ntoks:");
+  int f = from;
+  printf("nxp:\ntoks:");
   while (from <= to)
-    printf("\t%s", toks[from]);
+    printf("\t%s", toks[from++]);
   printf("\ntypes:");
+  from = f;
   while (from <= to)
-    printf("\t%s", nxt_str[nptoks[from]]);
-  printf("\n");
+    printf("\t%s", nxt_str[nptoks[from++]]);
+  printf("\n\n");
 }

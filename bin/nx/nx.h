@@ -77,4 +77,6 @@ typedef struct nx_result
 struct nxt_tab { const char *name; nx_numtok tok; };
 extern struct nxt_tab *nxt (register const char *str, register size_t len);
 
+extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
+
 #endif/*NX_H_*/
