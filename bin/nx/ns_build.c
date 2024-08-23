@@ -54,7 +54,7 @@ nsb_mult(nx_num*n, const uchar *m)
 void
 nsb_step(uchar *m, uchar *u)
 {
-  nx_step *s = memo_new(nxp->m_step);
+  ns_step *s = memo_new(nxp->m_step);
 
   if (build_trace)
     printf("nsb_step: step has mult %s and unit %s\n", m, u);
@@ -73,9 +73,9 @@ nsb_step(uchar *m, uchar *u)
 }
 
 static void
-nsb_inst_register(nx_inst *i)
+nsb_inst_register(ns_inst *i)
 {
-  nx_inst *r = hash_find(nxp->ir, i->text);
+  ns_inst *r = hash_find(nxp->ir, i->text);
   if (r)
     {
       r->ir_last->ir_next = i;
@@ -89,7 +89,7 @@ nsb_inst_register(nx_inst *i)
 }
 
 static void
-nsb_inst_add(nx_inst *i, ns_inst_method meth)
+nsb_inst_add(ns_inst *i, ns_inst_method meth)
 {
   i->step = nxp->sys->last;
   if (nxp->sys->last->insts)
@@ -113,7 +113,7 @@ nsb_inst_add(nx_inst *i, ns_inst_method meth)
 void
 nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
 {
-  nx_inst *i = memo_new(nxp->m_inst);
+  ns_inst *i = memo_new(nxp->m_inst);
   i->text = g;
   i->unit = u;
   nsb_mult(&i->count, n);
@@ -125,7 +125,7 @@ nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
 void
 nsb_inst_u(uchar *x, uchar *g, uchar *u, ns_inst_method meth)
 {
-  nx_inst *i = memo_new(nxp->m_inst);
+  ns_inst *i = memo_new(nxp->m_inst);
   i->text = g;
   i->unit = u;
   i->a_or_d = tolower(*x);
@@ -137,7 +137,7 @@ nsb_inst_u(uchar *x, uchar *g, uchar *u, ns_inst_method meth)
 static char *fixed_n[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 static int n_fixed = sizeof(fixed_n)/sizeof(const char *);
 static void
-nsb_auto_inst_g(nx_sys *sp, int m, uchar *u)
+nsb_auto_inst_g(ns_sys *sp, int m, uchar *u)
 {
   if (m < n_fixed)
     {
@@ -161,7 +161,7 @@ nsb_auto_inst_g(nx_sys *sp, int m, uchar *u)
 void
 nsb_wrapup(void)
 {
-  nx_step *stp;
+  ns_step *stp;
   for (stp = nxp->sys->steps; stp; stp = stp->next)
     {
       if (stp->a_or_d)

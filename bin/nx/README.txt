@@ -14,7 +14,13 @@ num consists of several parts
 
  ni -- number instance
 
- nf -- number form
+ ng -- number grapheme
+
+ nw -- number words
+
+ nd -- number determiners
+
+ nc -- number commodities
 
  no -- number other
 
@@ -24,7 +30,7 @@ num consists of several parts
 
  nq -- number quantity
 
- nc -- number conversion
+ nx -- number conversion
 
  nr -- number rendering
 
@@ -117,6 +123,10 @@ onto the multiplier ('B' is experimental and may be withdrawn):
 
 Whitespace is insignificant, so the above example could also be
 written as n*geš₂=6*u=10*diš.
+
+A future implementation may support alternates in steps, e.g.,
+
+ 1(ŋešmin) = 2(ŋeš₂) | 12(u)
 
 
 
@@ -232,11 +242,31 @@ command line to entire texts.
 
 
 
-nf -- number form
+ng -- number grapheme
 
-An nf is a token that can be part of an nu sequence--most of these are
-numeric graphemes such as 1(aš), but unit-words like sila₃ and system
-indicators like gan₂ are also ni.
+An ng is one of the tokens that can be part of an nu sequence and consists of
+numeric graphemes such as 1(aš).
+
+
+
+nw -- number words
+
+An nw is a number word, another token that can be part of an nu sequence.
+
+
+
+nd -- number determiners
+
+Number determiners, nd, are tokens that indicate a metrological system
+but are not part of the unit sequence. Examples include gan₂ and gur.
+
+
+
+nc -- number commodities
+
+Commodities are both number stoppers and part of the number
+environment.  They normally come after a number, but may come before a
+number determiner as in 1(aš) še gur.
 
 
 
@@ -249,7 +279,7 @@ An no is a token that can not be part of an nu sequence.
 nz -- number stopper
 
 An nz is a token that unambiguously concludes the end of a number
-sequence and consists of the comma character (',').  When parsing ATF
+sequence and consists of the period character ('.').  When parsing ATF
 the comma (field-delimiter) causes an nz to be inserted into the token
 stream.  Where juxtaposed sequences are difficult to parse with
 precision this can be used to ensure that nx finds the proper boundary.
@@ -270,7 +300,7 @@ for the linkbases which are part of lemmatized text in Oracc.
 
 
 
-nc -- number conversion
+nx -- number conversion
 
 If BASE and CONV are both set in the ns, nx performs conversion of
 ancient to modern values and included the result in the serialized
@@ -280,7 +310,8 @@ output.
 
 nr -- number rendering
 
-nx aspires to support automated generation of step diagrams from nd
-data, probably by generating SVG.
+nx will produce simple step diagrams in xhtml and other formats; cases
+where multiple options exist for a step will be handled in a future
+version, possibly using SVG.
 
 

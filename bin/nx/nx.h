@@ -1,6 +1,7 @@
 #ifndef NX_H_
 #define NX_H_
 
+#include "nxcommon.h"
 #include "ns.h"
 
 struct nx_step;
@@ -10,6 +11,8 @@ typedef struct nx_nonnum
   const uchar *tok;
   const void *data;
 } nx_nonnum;
+
+typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nd , nxt_nz } nx_numtok;
 
 typedef struct nx_number
 {
@@ -40,20 +43,28 @@ typedef struct nx_step_tok
 typedef struct nx_step
 {
   int type; /* nx_step_tok or nx_number */
-  union { nx_step_tok *tok; nx_number *num };
-  struct nx_step next;
+  union
+  {
+    nx_step_tok *tok;
+    nx_number *num;
+  };
+  struct nx_step *next;
 } nx_step;
 
-typedef enum nx_restok_t { NX_NO , NX_NU };
+typedef enum nx_restok_t { NX_NO , NX_NU } nx_restok_t;
 
 typedef struct nx_restok
 {
   int type;
-  union { nx_nonnum *no; nx_number *nu; }
+  union
+  {
+    nx_nonnum no;
+    nx_number *nu;
+  };
 } nx_restok;
 
 /* nx_parse reads a token list and produces an nx_restok array; the
- * array is a union Tokens that do not belong to a number are added as
+ * array is a union. Tokens that do not belong to a number are added as
  * nx_nonnum; tokens that belong to a number are rolled up under a
  * single nx_number.
  */
@@ -62,5 +73,8 @@ typedef struct nx_result
   nx_restok *r;
   int nr;
 } nx_result;
+
+struct nxt_tab { const char *name; nx_numtok tok; };
+extern struct nxt_tab *nxt (register const char *str, register size_t len);
 
 #endif/*NX_H_*/

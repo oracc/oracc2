@@ -13,9 +13,9 @@ nx_init(void)
 {
   nxp = calloc(1, sizeof(nx));
   nspool = nxp->p = pool_init();
-  nxp->m_sys = memo_init(sizeof(nx_sys), 10);
-  nxp->m_step = memo_init(sizeof(nx_step), 100);
-  nxp->m_inst = memo_init(sizeof(nx_inst), 1000);
+  nxp->m_sys = memo_init(sizeof(ns_sys), 10);
+  nxp->m_step = memo_init(sizeof(ns_step), 100);
+  nxp->m_inst = memo_init(sizeof(ns_inst), 1000);
   nxp->ir = hash_create(1024);
   mesg_init();
 }

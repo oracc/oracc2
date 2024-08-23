@@ -33,19 +33,14 @@ clean-local:
 install-exec-local:
 	$(top_srcdir)/maybe-install-cgi-bin.sh
 
-# No Perl installed in oracc2
-#	$(top_srcdir)/oracc-pm.sh $(DESTDIR)$(prefix) $(top_srcdir)
-
-#SUFFIXES=.c.in .g .c .l .lex.c .y .tab.c .o .xnn .rnc .rng
-#
-#.c.in.c:
-#	$(ORACCIFY) $<
-
 %.c: %.c.in
 	$(ORACCIFY) $<
 
 %.c: %.g
 	$(top_srcdir)/gperf-size_t.sh `basename $*` $< $@
+
+%.c: %.gl
+	$(top_srcdir)/gperfl-size_t.sh `basename $*` $< $@
 
 %.lex.c: %.l
 	flex -d -B -DYY_NO_INPUT -o $@ $<
