@@ -12,7 +12,7 @@ typedef struct nx_nonnum
   const void *data;
 } nx_nonnum;
 
-typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nd , nxt_nz } nx_numtok;
+typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nd , nxt_nc , nxt_nz } nx_numtok;
 
 typedef struct nx_number
 {
@@ -26,11 +26,13 @@ typedef struct nx_number
   struct nx_number *next; /* ambiguity is handled by making a list of possible nx_number results */
 } nx_number;
 
+typedef enum nx_step_type { NX_STEP_NUM , NX_STEP_TOK } nx_step_type;
+
 typedef struct nx_step_tok
 {
   const uchar *tok;
   const void *data;
-  ns_step *step;
+  ns_inst *inst;
 } nx_step_tok;
 
 /* This is a result step which comes from parsed input not from the
@@ -42,7 +44,7 @@ typedef struct nx_step_tok
  */
 typedef struct nx_step
 {
-  int type; /* nx_step_tok or nx_number */
+  enum nx_step_type type; /* nx_step_tok or nx_number */
   union
   {
     nx_step_tok *tok;
@@ -78,5 +80,6 @@ struct nxt_tab { const char *name; nx_numtok tok; };
 extern struct nxt_tab *nxt (register const char *str, register size_t len);
 
 extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
+extern void nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
 
 #endif/*NX_H_*/

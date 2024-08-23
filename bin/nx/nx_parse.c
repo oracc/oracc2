@@ -1,18 +1,12 @@
 #include <oraccsys.h>
 #include "nx.h"
 
-int parse_trace = 1;
-
-static const char *nxt_str[] = { "no" , "ng" , "nw" , "nd" , "nz" , NULL };
-
 static int nxp_count_toks(const uchar **t);
 static int nxp_last_num(const uchar **t, nx_numtok *n, int from);
 static nx_result *nxp_new_result(int ntoks);
 static int nxp_next_num(const uchar **t, nx_numtok *n, int from);
 static void nxp_nonnums(nx_result *r, const uchar **toks, const void**data, int from, int to);
 static nx_numtok nxp_tok_type(const uchar *t);
-static void nxp_parse_nums(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
-static void nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to);
 
 /*nx_parse works on a list of tokens which must be simple graphemes or
   unit-words.  Any other input must be preprocessed to meet this
@@ -45,7 +39,7 @@ nx_parse(const uchar **toks, const void **data, int ntoks)
 	  int last = nxp_last_num(toks, nptoks, next);
 
 	  /* process the numbers */
-	  nxp_parse_nums(r, nptoks, toks, data, next, last);
+	  nxp_numbers(r, nptoks, toks, data, next, last);
 
 	  /* if there are more toks we have already tested
 	     toks[last+1] and registered it as nxt_no in n; otherwise
@@ -81,7 +75,7 @@ int nxp_last_num(const uchar **t, nx_numtok *n, int from)
   while (t[from])
     {
       n[from] = nxp_tok_type(t[from]);
-      if (n[from] == nxt_no)
+      if (n[from] == nxt_no || n[from] == nxt_nz || n[from] == nxt_nc)
 	return from-1;
       ++from;
     }
@@ -134,25 +128,4 @@ nxp_tok_type(const uchar *t)
     return ntp->tok;
   else
     return nxt_no;
-}
-
-static void
-nxp_parse_nums(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to)
-{
-  if (parse_trace)
-    nxp_show_start_toks(toks, nptoks, from, to);
-}
-
-static void
-nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
-{
-  int f = from;
-  printf("nxp:\ntoks:");
-  while (from <= to)
-    printf("\t%s", toks[from++]);
-  printf("\ntypes:");
-  from = f;
-  while (from <= to)
-    printf("\t%s", nxt_str[nptoks[from++]]);
-  printf("\n\n");
 }

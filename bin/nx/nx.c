@@ -15,7 +15,10 @@ nx_init(void)
   nspool = nxp->p = pool_init();
   nxp->m_sys = memo_init(sizeof(ns_sys), 10);
   nxp->m_step = memo_init(sizeof(ns_step), 100);
+  nxp->m_nx_step = memo_init(sizeof(nx_step), 100);
+  nxp->m_nx_step_tok = memo_init(sizeof(nx_step_tok), 100);
   nxp->m_inst = memo_init(sizeof(ns_inst), 1000);
+  nxp->m_nx_num = memo_init(sizeof(nx_number), 100);
   nxp->ir = hash_create(1024);
 }
 
