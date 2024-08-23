@@ -20,8 +20,7 @@ typedef struct nx
   Memo *m_step;
   Memo *m_inst;
   Memo *m_nx_step;
-  Memo *m_nx_steptok;
-  Memo *m_nx_numtok;
+  Memo *m_nx_number;
   Hash *e;			/* global environment */
   List *elist;
   Pool *p;

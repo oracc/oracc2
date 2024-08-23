@@ -6,13 +6,20 @@
 
 struct nx_step;
 
+typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nd , nxt_nc , nxt_nz } nx_numtok;
+
 typedef struct nx_nonnum
 {
   const uchar *tok;
   const void *data;
 } nx_nonnum;
 
-typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nd , nxt_nc , nxt_nz } nx_numtok;
+typedef struct nx_badnum
+{
+  nx_numtok type;
+  const uchar *tok;
+  const void *data;
+} nx_badnum;
 
 typedef struct nx_number
 {
@@ -26,7 +33,7 @@ typedef struct nx_number
   struct nx_number *next; /* ambiguity is handled by making a list of possible nx_number results */
 } nx_number;
 
-typedef enum nx_step_type { NX_STEP_NUM , NX_STEP_TOK } nx_step_type;
+typedef enum nx_step_type { NX_STEP_NUM = 1, NX_STEP_TOK = 2, NX_BAD_NUM = -1 , NX_BAD_TOK = -2 } nx_step_type;
 
 typedef struct nx_step_tok
 {
@@ -47,19 +54,21 @@ typedef struct nx_step
   enum nx_step_type type; /* nx_step_tok or nx_number */
   union
   {
-    nx_step_tok *tok;
+    nx_step_tok tok;
     nx_number *num;
   };
   struct nx_step *next;
+  struct nx_step *last;
 } nx_step;
 
-typedef enum nx_restok_t { NX_NO , NX_NU } nx_restok_t;
+typedef enum nx_restok_t { NX_NO , NX_NU , NX_NA } nx_restok_t;
 
 typedef struct nx_restok
 {
   int type;
   union
   {
+    nx_badnum nb;
     nx_nonnum no;
     nx_number *nu;
   };

@@ -16,13 +16,13 @@ nx_init(void)
   nxp->m_sys = memo_init(sizeof(ns_sys), 10);
   nxp->m_step = memo_init(sizeof(ns_step), 100);
   nxp->m_nx_step = memo_init(sizeof(nx_step), 100);
-  nxp->m_nx_step_tok = memo_init(sizeof(nx_step_tok), 100);
   nxp->m_inst = memo_init(sizeof(ns_inst), 1000);
-  nxp->m_nx_num = memo_init(sizeof(nx_number), 100);
+  nxp->m_nx_number = memo_init(sizeof(nx_number), 100);
   nxp->ir = hash_create(1024);
 }
 
-const char *test[] = { "1(u)" , "ba" , "1(u)" ,  "gur" , "bu" , NULL };
+const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
+
 int
 main(int argc, char **argv)
 {

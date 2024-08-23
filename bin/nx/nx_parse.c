@@ -112,6 +112,7 @@ nxp_nonnums(nx_result *r, const uchar **toks, const void**data, int from, int to
 {
   while (from < to)
     {
+      r->r[r->nr].type = NX_NO;
       r->r[r->nr].no.tok = toks[from];
       if (data)
 	r->r[r->nr].no.data = data[from];
