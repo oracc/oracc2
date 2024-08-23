@@ -80,11 +80,11 @@ ns_nis:   ns_ni
 	| ns_nis ns_ni
 	;
 
-ns_ni:    NU_GVAL '>' NU_NUM '*' NU_UNIT	{ nsb_inst_g($1,$3,$5); }
-     	| NI_AXIS '+' NU_UNIT '>' NU_UNIT	{ nsb_inst_u($1,$3,$5); }
+ns_ni:    NU_GVAL '>' NU_NUM '*' NU_UNIT	{ nsb_inst_g($1,$3,$5, NS_INST_DATA); }
+     	| NI_AXIS '+' NU_UNIT '>' NU_UNIT	{ nsb_inst_u($1,$3,$5, NS_INST_DATA); }
 	;
 
-ns_stop: '.'
+ns_stop: '.'					{ nsb_wrapup(); }
 	;
 
 %%

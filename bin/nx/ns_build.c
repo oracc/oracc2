@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include "ns.h"
 
-int build_trace = 1;
+int build_trace = 0;
 
 void
 nsb_sys(uchar *t)
@@ -39,7 +39,7 @@ nsb_env(uchar *e, uchar *v)
 }
 
 void
-nsb_mult(nx_num*n, uchar *m)
+nsb_mult(nx_num*n, const uchar *m)
 {
   n->n = atoi((char*)m);
   char *slash = strchr((char*)m, '/');
@@ -73,8 +73,25 @@ nsb_step(uchar *m, uchar *u)
 }
 
 static void
-nsb_inst_add(nx_inst *i)
+nsb_inst_register(nx_inst *i)
 {
+  nx_inst *r = hash_find(nxp->ir, i->text);
+  if (r)
+    {
+      r->ir_last->ir_next = i;
+      r->ir_last = i;
+    }
+  else
+    {
+      i->ir_last = i;
+      hash_add(nxp->ir, i->text, i);
+    }
+}
+
+static void
+nsb_inst_add(nx_inst *i, ns_inst_method meth)
+{
+  i->step = nxp->sys->last;
   if (nxp->sys->last->insts)
     {
       nxp->sys->last->last->next = i;
@@ -83,28 +100,83 @@ nsb_inst_add(nx_inst *i)
     }
   else
     nxp->sys->last->last = nxp->sys->last->insts = i;
+  if (meth == NS_INST_DATA)
+    {
+      Hash *h = i->step->sys->i;
+      if (!h)
+	h = i->step->sys->i = hash_create(100);
+      hash_add(h, i->text, i);
+    }
+  nsb_inst_register(i);
 }
 
 void
-nsb_inst_g(uchar *g, uchar *n, uchar *u)
+nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
 {
   nx_inst *i = memo_new(nxp->m_inst);
   i->text = g;
   i->unit = u;
   nsb_mult(&i->count, n);
-  nsb_inst_add(i);
+  nsb_inst_add(i, meth);
   if (build_trace)
     printf("nsb_inst_g: inst has text %s => count %llu/%d and unit %s\n", i->text, i->count.n, i->count.d, i->unit);
 }
 
 void
-nsb_inst_u(uchar *x, uchar *g, uchar *u)
+nsb_inst_u(uchar *x, uchar *g, uchar *u, ns_inst_method meth)
 {
   nx_inst *i = memo_new(nxp->m_inst);
   i->text = g;
   i->unit = u;
   i->a_or_d = tolower(*x);
-  nsb_inst_add(i);
+  nsb_inst_add(i, meth);
   if (build_trace)
     printf("nsb_inst_u: inst has text %s with system %s=>%c and unit %s\n", i->text, x, i->a_or_d, i->unit);  
+}
+
+static char *fixed_n[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
+static int n_fixed = sizeof(fixed_n)/sizeof(const char *);
+static void
+nsb_auto_inst_g(nx_sys *sp, int m, uchar *u)
+{
+  if (m < n_fixed)
+    {
+      const char *n = fixed_n[m];
+      char g[strlen(n)+strlen((char*)u)+3];
+      sprintf(g, "%s(%s)", n, u);
+      if (!hash_find(sp->i, (uchar*)g))
+	{
+	  if (build_trace)
+	    printf("nsb_auto_inst: adding %s\n", g);
+	  nsb_inst_g(pool_copy((uchar*)g, nxp->p), (const uchar *)n, u, NS_INST_AUTO);
+	}
+    }
+  else
+    {
+      fprintf(stderr, "nx: fatal error: m=%d >= n_fixed=%d\n", m, n_fixed);
+      exit(1);
+    }
+}
+
+void
+nsb_wrapup(void)
+{
+  nx_step *stp;
+  for (stp = nxp->sys->steps; stp; stp = stp->next)
+    {
+      if (stp->a_or_d)
+	{
+	  nsb_inst_u((uchar*)(stp->a_or_d=='a' ? "a" : "d"), stp->unit, stp->unit, NS_INST_AUTO);
+	}
+      else
+	{
+	  if (stp->mult.d == 1)
+	    {
+	      int i = (int)stp->mult.n;
+	      int m;
+	      for (m = 1; m < i; ++m)
+		nsb_auto_inst_g(nxp->sys, m, stp->unit);
+	    }
+	}
+    }
 }
