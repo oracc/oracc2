@@ -7,7 +7,7 @@ static void nxr_print_nu(nx_restok *rtp, FILE *fp);
 static void nxr_print_nu_sub(nx_number *np, FILE *fp);
 
 void
-nxr_print(nx_result *r, FILE *fp)
+nxr_print(nx_result *r, FILE *fp, int nonewline)
 {
   int i;
   for (i = 0; i < r->nr; ++i)
@@ -19,7 +19,8 @@ nxr_print(nx_result *r, FILE *fp)
       else
 	nxr_print_na(&r->r[i], fp);
     }
-  fprintf(fp, "\n");
+  if (!nonewline)
+    fprintf(fp, "\n");
 }
 
 static void

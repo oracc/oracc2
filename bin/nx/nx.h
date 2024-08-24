@@ -41,6 +41,7 @@ typedef enum nx_step_type { NX_STEP_NUM = 1, NX_STEP_TOK = 2 } nx_step_type;
 typedef struct nx_step_tok
 {
   const uchar *tok;
+  enum nx_numtok type;
   const void *data;
   ns_inst *inst;
 } nx_step_tok;
@@ -98,6 +99,7 @@ extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
 extern void nxd_show_inst(const uchar *tok, ns_inst *ip);
 extern void nxd_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to);
 extern void nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
-extern void nxr_print(nx_result *r, FILE *fp);
+extern void nxr_print(nx_result *r, FILE *fp, int nonewline);
+extern void nxr_testdata(FILE *fp, nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
 
 #endif/*NX_H_*/
