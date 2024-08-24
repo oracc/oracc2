@@ -5,7 +5,7 @@ int parse_trace = 1;
 
 const char *nxt_str[] = { "no" , "ng" , "nw" , "nd" , "nc" , "nz" , NULL };
 
-static nx_number **nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);
+static int nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);
 static void nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
 static nx_number **nxp_candidates(nx_numtok type, const uchar *tok, const void *data);
 static void nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
@@ -45,18 +45,18 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	     if so, add an nx_step for the token to the list
 	     if not, invalidate the candidate
 	  */
-	  nx_number **good = nxp_add_step(cand, nptoks[from], toks[from], d);
+	  int good = nxp_add_step(cand, nptoks[from], toks[from], d);
 	  if (good)
 	    {
-	      cand = good;
 	      ++from;
 	    }
 	  else
 	    {
 	      nxp_stash_result(r, cand);
-	      /* free(cand); *//* need a different way of freeing cand because they are stashed */
 	      cand = NULL;
-	      /*++from;*/
+	      /* free(cand); *//* need a different way of freeing cand because they are stashed */
+	      /* Don't increment from; we have stashed everything so
+		 far and now we reread the current token */
 	    }
 	}
     }
@@ -91,7 +91,7 @@ nx_sys_step_ok(ns_inst *left, ns_inst *next)
   return 0;
 }
 
-static nx_number **
+static int
 nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data)
 {
   ns_inst *ip = hash_find(nxp->ir, tok);
@@ -103,7 +103,7 @@ nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *dat
       int ok = 0, i;
       for (i = 0; cand[i]; ++i)
 	{
-	  if (cand[i]->sys)
+	  if (!cand[i]->invalid)
 	    {
 	      ns_inst *jp;
 	      for (jp = ip; jp; jp = jp->ir_next)
@@ -120,15 +120,15 @@ nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *dat
 		 have one that can belong to the cand currently being
 		 tested. Invalidate it. */
 	      if (!jp)
-		cand[i]->sys = NULL;
+		cand[i]->invalid = 1;
 	      else
-		ok = 1;
+		++ok;
 	    }
 	}
-      return ok ? cand : NULL;
+      return ok;
     }
   else
-    return cand;
+    return 0;
 }
 
 static void

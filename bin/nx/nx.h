@@ -23,6 +23,7 @@ typedef struct nx_badnum
 
 typedef struct nx_number
 {
+  int invalid;		/* used during parse to track whether a candidate is still valid or not */
   ns_sys *sys;		/* the result system for this parse */
   nx_num aev; 		/* ancient equivalency value */
   double mev; 		/* modern equivalency value */
