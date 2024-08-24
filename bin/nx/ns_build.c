@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include "ns.h"
+#include "nx.h"
 
 int build_trace = 0;
 
@@ -78,24 +78,53 @@ nsb_inst_register(ns_inst *i)
   ns_inst *r = hash_find(nxp->ir, i->text);
   if (r)
     {
+      if (build_trace)
+	{
+	  printf("inst_register: found %s in hash\n", i->text);
+	  printf("inst_register: appending ");
+	  nxd_show_inst(NULL, i);
+	}
       r->ir_last->ir_next = i;
       r->ir_last = i;
     }
   else
     {
+      if (build_trace)
+	{
+	  printf("inst_register: adding %s ", i->text);
+	  nxd_show_inst(NULL, i);
+	}
       i->ir_last = i;
       hash_add(nxp->ir, i->text, i);
     }
 }
 
 static void
+nsb_inst_step(ns_inst *i)
+{
+  ns_step *sp;
+  for (sp = nxp->sys->steps; sp; sp = sp->next)
+    if (!strcmp((ccp)i->unit, (ccp)sp->unit))
+      {
+	i->step = sp;
+	break;
+      }
+  if (!i->step)
+    fprintf(stderr, "nsb_inst_step: inst unit %s not found in sys %s\n", i->unit, nxp->sys->name);
+}
+
+static void
 nsb_inst_add(ns_inst *i, ns_inst_method meth)
 {
+  if (meth == NS_INST_AUTO)
+    i->step = nxp->sys->last;
+  else
+    nsb_inst_step(i);
+    
   /* keep a list of all the insts that can belong to this step of this
      sys; if some insts for this unit were given in the system
      definition data but others weren't the insts may not be in the
-     correct sort order */
-  i->step = nxp->sys->last;
+     correct sort order */  
   if (nxp->sys->last->insts)
     {
       nxp->sys->last->last->next = i;

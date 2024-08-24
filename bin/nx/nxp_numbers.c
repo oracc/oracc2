@@ -10,7 +10,6 @@ static void nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const voi
 static nx_number **nxp_candidates(nx_numtok type, const uchar *tok, const void *data);
 static void nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
 static nx_step *nxp_nx_step(ns_inst *ip, nx_step_type type, const uchar *tok, const void *data, nx_number *num);
-static void nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to);
 static void nxp_stash_result(nx_result *r, nx_number **cand);
 static int nx_sys_step_ok(ns_inst *left, ns_inst *next);
 
@@ -18,7 +17,7 @@ void
 nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to)
 {
   if (parse_trace)
-    nxp_show_start_toks(toks, nptoks, from, to);
+    nxd_show_start_toks(toks, nptoks, from, to);
 
   /* the candidate systems for the current */
   nx_number **cand = NULL;
@@ -71,6 +70,12 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 static int
 nx_sys_step_ok(ns_inst *left, ns_inst *next)
 {
+  if (parse_trace)
+    {
+      printf("sys_step: left="); nxd_show_inst(NULL, left);
+      printf("sys_step: next="); nxd_show_inst(NULL, next);
+      printf("sys_step: left name %s vs next name %s\n", left->step->sys->name, next->step->sys->name);
+    }
   if (!strcmp((ccp)left->step->sys->name, (ccp)next->step->sys->name))
     {
       ns_step *s;
@@ -92,6 +97,9 @@ nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *dat
   ns_inst *ip = hash_find(nxp->ir, tok);
   if (ip)
     {
+      if (parse_trace)
+	nxd_show_inst(tok, ip);
+
       int ok = 0, i;
       for (i = 0; cand[i]; ++i)
 	{
@@ -146,6 +154,9 @@ nxp_candidates(nx_numtok type, const uchar *tok, const void *data)
   ns_inst *ip = hash_find(nxp->ir, tok);
   if (ip)
     {
+      if (parse_trace)
+	nxd_show_inst(tok, ip);
+
       int i;
       ns_inst *jp;
       for (i = 0, jp=ip; jp; jp = jp->ir_next)
@@ -203,20 +214,6 @@ nxp_nx_step(ns_inst *ip, nx_step_type type, const uchar *tok, const void *data, 
       sp->num = num;
     }
   return sp;
-}
-
-static void
-nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
-{
-  int f = from;
-  printf("nxp:\ntoks:");
-  while (from <= to)
-    printf("\t%s", toks[from++]);
-  printf("\ntypes:");
-  from = f;
-  while (from <= to)
-    printf("\t%s", nxt_str[nptoks[from++]]);
-  printf("\n\n");
 }
 
 static void

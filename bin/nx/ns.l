@@ -17,8 +17,6 @@ const char *nsfile = "<stdin>";
 const char *currnsfile = NULL;
 int nsflextrace = 0;
 
-#define gsave  nslval.text=nssave(nstext)
-
 %}
 
 S		\xe2\xb8[^\xa2-\xa5]
@@ -29,7 +27,7 @@ FRAC		[0-9n]\/[0-9]
 
 %%
 
-@[^ \t]+				{ nsave; return NS_NAME; }
+%[^ \t]+				{ nsave; return NS_NAME; }
 
 [0-9.]+(cm|ha|kg|mm|m2|g|l|m|u)		{ nsave; return NS_CONV; }
 
