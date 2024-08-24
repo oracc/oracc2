@@ -8,7 +8,7 @@ const char *nxt_str[] = { "no" , "ng" , "nw" , "nd" , "nc" , "nz" , NULL };
 static int nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);
 static void nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
 static nx_number **nxp_candidates(nx_numtok type, const uchar *tok, const void *data, int *ncand);
-static nx_number **nxp_merge_unit(nx_result *r, ns_inst *ip, const void *data);
+static nx_number **nxp_merge_unit(nx_result *r, ns_inst *ip, const void *data, int *ncand);
 static nx_step *nxp_nx_step(ns_inst *ip, nx_step_type type, const uchar *tok, const void *data, nx_number *num);
 static nx_number **nxp_remove_invalid(nx_number **c, int *ncand);
 static void nxp_stash_result(nx_result *r, nx_number **cand);
@@ -38,10 +38,11 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 		{
 		  if (parse_trace)
 		    nxd_show_inst(toks[from], ip);
-
+		  nx_number **m;
 		  /* if the last result was a number that can qualify this, merge the two */
-		  if (ip->step->a_or_d && nxp_merge_unit(r, ip, data[from]))
+		  if (ip->step->a_or_d && (m = nxp_merge_unit(r, ip, d, &ncand)))
 		    {
+		      cand = m;
 		      printf("nxp: unit %s merged with num\n", toks[from]);
 		    }
 		  else
@@ -79,8 +80,11 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	    }
 	  else
 	    {
-	      /* only retain the first invalid parse */
-	      cand[1] = NULL;
+	      /* unset the invalid flag because remain cand are valid
+		 up to this point */
+	      int i;
+	      for (i = 0; cand[i]; ++i)
+		cand[i]->invalid = 0;
 	      nxp_stash_result(r, cand);
 	      cand = NULL;
 	      /* free(cand); *//* need a different way of freeing cand because they are stashed */
@@ -139,33 +143,32 @@ nxp_sys_step_ok(ns_inst *left, ns_inst *next)
   return 0;
 }
 
+/* We remove invalid cand as we go along so anything that is passed to
+   nxp_add_inst is a valid cand up to here */
 static int
 nxp_add_inst(nx_number **cand, ns_inst *ip, const void *data)
 {
   int ok = 0, i;
   for (i = 0; cand[i]; ++i)
     {
-      if (!cand[i]->invalid)
+      ns_inst *jp;
+      for (jp = ip; jp; jp = jp->ir_next)
 	{
-	  ns_inst *jp;
-	  for (jp = ip; jp; jp = jp->ir_next)
+	  if (nxp_sys_step_ok(cand[i]->last->tok.inst, jp))
 	    {
-	      if (nxp_sys_step_ok(cand[i]->last->tok.inst, jp))
-		{
-		  nx_step *n = nxp_nx_step(jp, NX_STEP_TOK, jp->text, data, NULL);
-		  cand[i]->last->next = n;
-		  cand[i]->last = n;
-		  break;
-		}
+	      nx_step *n = nxp_nx_step(jp, NX_STEP_TOK, jp->text, data, NULL);
+	      cand[i]->last->next = n;
+	      cand[i]->last = n;
+	      break;
 	    }
-	  /* if we exhausted jp then the new set of insts doesn't
-	     have one that can belong to the cand currently being
-	     tested. Invalidate it. */
-	  if (!jp)
-	    cand[i]->invalid = 1;
-	  else
-	    ++ok;
 	}
+      /* if we exhausted jp then the new set of insts doesn't
+	 have one that can belong to the cand currently being
+	 tested. Invalidate it. */
+      if (!jp)
+	cand[i]->invalid = 1;
+      else
+	++ok;
     }
   return ok;
 }
@@ -289,7 +292,7 @@ nxp_stash_result(nx_result *r, nx_number **cand)
  * new candidate set.
  */
 static nx_number **
-nxp_merge_unit(nx_result *r, ns_inst *ip, const void *data)
+nxp_merge_unit(nx_result *r, ns_inst *ip, const void *data, int *ncand)
 {
   if (r->nr > 0)
     {
@@ -300,7 +303,7 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, const void *data)
 	  char A_OR_D = toupper(ip->step->a_or_d);
 	  for (i = 0; nu[i]; ++i)
 	    {
-	      if (*(nu[i]->sys->name) == A_OR_D)
+	      if (nu[i]->sys->name[1] == A_OR_D)
 		{
 		  /* set the matching sys-number to be the only one in the array */
 		  if (i > 0)
@@ -313,13 +316,26 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, const void *data)
 		  /* can the ip's unit belong to a penultimate number ? */
 		  if (r->nr > 1 && r->r[r->nr-2].type == NX_NU)
 		    {
-		      int ret = nxp_add_inst(nu, ip, data);
+		      nx_number **ret_nu = r->r[r->nr-2].nu;
+		      int ret = nxp_add_inst(ret_nu, ip, data);
 		      if (ret)
 			{
+			  ret_nu = nxp_remove_invalid(ret_nu, ncand);
+			  nu[0]->unit = ret_nu[0]->last;
 			  r->nr -= 2; /* remove the number and the system from the list */
-			  nu[0]->unit = nu[0]->last;
-			  nu[0]->last = nxp_nx_step(ip, NX_STEP_NUM, ip->text, data, nu[0]);
-			  return nu;
+			  nx_step *nnum = nxp_nx_step(ip, NX_STEP_NUM, ip->text, data, nu[0]);
+			  int i;
+			  /* Now overwrite all the last steps in the
+			     remaining cand with the num step */
+			  for (i = 0; ret_nu[i]; ++i)
+			    {
+			      /* if num->last were an ns_step** we wouldn't have to do this ... */
+			      nx_step*np = ret_nu[i]->steps;
+			      while (np->next && np->next->next)
+				np = np->next;
+			      np->next = ret_nu[i]->last = nnum;
+			    }
+			  return ret_nu;
 			}
 		    }
 		  /* if we reach this the num+unit can't belong to
@@ -332,6 +348,6 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, const void *data)
 	    }
 	}
     }
-  return 0;
+  return NULL;
 }
 

@@ -206,6 +206,7 @@ nsb_wrapup(void)
   ns_step *stp;
   for (stp = nxp->sys->steps; stp; stp = stp->next)
     {
+      nxp->sys->last = stp;
       if (stp->a_or_d)
 	{
 	  nsb_inst_u((uchar*)(stp->a_or_d=='a' ? "a" : "d"), stp->unit, stp->unit, NS_INST_AUTO);
@@ -216,7 +217,6 @@ nsb_wrapup(void)
 	    {
 	      int i = (int)stp->mult.n;
 	      int m;
-	      nxp->sys->last = stp;
 	      for (m = 1; m < i; ++m)
 		nsb_auto_inst_g(nxp->sys, m, stp->unit);
 	    }

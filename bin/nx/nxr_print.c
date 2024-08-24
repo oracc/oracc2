@@ -4,6 +4,7 @@
 static void nxr_print_na(nx_restok *rtp, FILE *fp);
 static void nxr_print_no(nx_restok *rtp, FILE *fp);
 static void nxr_print_nu(nx_restok *rtp, FILE *fp);
+static void nxr_print_nu_sub(nx_number *np, FILE *fp);
 
 void
 nxr_print(nx_result *r, FILE *fp)
@@ -38,20 +39,29 @@ nxr_print_nu(nx_restok *rtp, FILE *fp)
 {
   int i;
   for (i = 0; rtp->nu[i]; ++i)
+    nxr_print_nu_sub(rtp->nu[i], fp);
+}
+
+static void
+nxr_print_nu_sub(nx_number *np, FILE *fp)
+{
+  if (np->sys)
     {
-      if (rtp->nu[i]->sys)
+      fprintf(fp, "%s[", np->sys->name);
+      nx_step *sp;
+      int i = 0;
+      for (sp = np->steps; sp; sp = sp->next)
 	{
-	  fprintf(fp, " %s[", rtp->nu[i]->sys->name);
-	  nx_step *sp;
-	  int i = 0;
-	  for (sp = rtp->nu[i]->steps; sp; sp = sp->next)
-	    {
-	      if (i++)
-		fprintf(fp, ".");
-	      if (sp->type == NX_STEP_TOK)
-		fprintf(fp, "%s", sp->tok.tok);
-	    }
-	  fprintf(fp, "]");
+	  if (i++)
+	    fprintf(fp, ".");
+	  if (sp->type == NX_STEP_TOK)
+	    fprintf(fp, "%s", sp->tok.tok);
+	  else
+	    nxr_print_nu_sub(sp->num, fp);
 	}
+      fprintf(fp, "]");
+      if (np->unit)
+	fprintf(fp, ".%s", np->unit->tok.tok);
     }
 }
+
