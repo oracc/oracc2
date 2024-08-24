@@ -86,6 +86,7 @@ typedef struct nx_result
   int nr;
 } nx_result;
 
+extern const char *currnsfile;
 extern const char *nxt_str[];
 
 struct nxt_tab { const char *name; nx_numtok tok; };

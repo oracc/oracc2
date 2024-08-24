@@ -28,10 +28,10 @@ uchar one[2] = {'1','\0'};
 %token <text> 	NS_NAME NS_BASE NS_CONV NS_STOP
 		NE_BOO NE_KEY NE_VAL
 		NI_AXIS
-       		NU_GVAL NU_NUM NU_UNIT
+		NU_FRAC NU_GVAL NU_NUM NU_UNIT
 		END
 
-%nterm <text> 	ns_base ns_conv
+%nterm <text> 	ns_base ns_conv nu_xunit nu_gval
 
 %start ns
 
@@ -73,14 +73,20 @@ ns_nu:    nu_multunit
 	| ns_nu '=' nu_multunit
 	;
 
-nu_multunit: NU_NUM '*' NU_UNIT			{ nsb_step($1,$3); }
+nu_gval:  NU_FRAC | NU_GVAL ;
+
+nu_xunit: '*' NU_FRAC				{ $$ = $2; }
+	| '*' NU_UNIT		       		{ $$ = $2; }
+	;
+
+nu_multunit: NU_NUM nu_xunit			{ nsb_step($1,$2); }
 	;
 
 ns_nis:   ns_ni
 	| ns_nis ns_ni
 	;
 
-ns_ni:    NU_GVAL '>' NU_NUM '*' NU_UNIT	{ nsb_inst_g($1,$3,$5, NS_INST_DATA); }
+ns_ni:    nu_gval '>' NU_NUM nu_xunit		{ nsb_inst_g($1,$3,$4, NS_INST_DATA); }
      	| NI_AXIS '+' NU_UNIT '>' NU_UNIT	{ nsb_inst_u($1,$3,$5, NS_INST_DATA); }
 	;
 
@@ -92,5 +98,5 @@ ns_stop: '.'					{ nsb_wrapup(); }
 void
 nserror(const char *e)
 {
-  mesg_vwarning(currnsfile, nslineno, "nx: %s\n", e);
+  mesg_vwarning(currnsfile, nslineno, "%s: %s\n", nstext, e);
 }

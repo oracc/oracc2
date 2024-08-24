@@ -6,7 +6,12 @@ nx_data(void)
 {
   mesg_init();
   FILE *fp = fopen("ns.dat", "r");
+  currnsfile = "ns.dat";
   nsrestart(fp);
   nsparse();
-  mesg_print(stderr);
+  if (mesg_status())
+    {
+      mesg_print(stderr);
+      exit(1);
+    }
 }
