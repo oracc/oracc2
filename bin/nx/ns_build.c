@@ -16,6 +16,12 @@ nsb_sys(uchar *t)
 }
 
 void
+nsb_det(uchar *d)
+{
+  nxp->sys->det = d;
+}
+
+void
 nsb_equiv(uchar *b, uchar *c)
 {
   nxp->sys->base = b;

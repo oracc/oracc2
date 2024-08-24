@@ -1,5 +1,4 @@
 %A aš 1u
-    $p="Ur III"
     n * šargal = 6 * šarʾu = 10 * šar₂ = 6 * ŋešʾu = 10 * ŋeš₂ = 6 * u = 10 * aš = 2 * 1/2(aš)
 	1/2(aš)>1/2*aš
 	1(aš)>1*aš
@@ -7,4 +6,13 @@
 	1(u)>1*u
 .
 
-%Ac aš@c 1u n*ŋeš₂@c=6*u@c=10*aš@c.
+%Ac aš@c 1u
+    n * šargal@c = 6 * šarʾu@c = 10 * šar₂@c = 6 * ŋešʾu@c = 10 * ŋeš₂@c = 6 * u@c = 10 * aš@c = 2 * 1/2(aš@c)
+.
+
+%D diš 1u
+    n * šargal = 6 * šarʾu = 10 * šar₂ = 6 * ŋešʾu = 10 * ŋeš₂ = 6 * u = 10 * diš = 2 * 1/2(diš)
+.
+
+%C sila₃ 1l
+   A * (gur) = 5 * bariga = 6 * ban₂ = 10 * sila₃ = 60 * giŋ₄ {gur}

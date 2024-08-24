@@ -18,6 +18,7 @@ typedef struct ns_sys
   List *elist;
   struct ns_step *steps;
   struct ns_step *last;
+  uchar *det;
   Hash *i;			/* inst text pointing to sys copy of inst */
 } ns_sys;
 
@@ -59,6 +60,7 @@ extern int nslex (void);
 extern int nsparse (void);
 
 extern void nsb_sys (uchar * t);
+extern void nsb_det (uchar * t);
 extern void nsb_equiv (uchar * b, uchar * c);
 extern void nsb_env (uchar * b, uchar * c);
 extern void nsb_step (uchar * b, uchar * c);

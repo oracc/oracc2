@@ -28,7 +28,7 @@ uchar one[2] = {'1','\0'};
 %token <text> 	NS_NAME NS_BASE NS_CONV NS_STOP
 		NE_BOO NE_KEY NE_VAL
 		NI_AXIS
-		NU_FRAC NU_GVAL NU_NUM NU_UNIT
+		NU_FRAC NU_GVAL NU_NUM NU_UNIT NU_DET
 		END
 
 %nterm <text> 	ns_base ns_conv nu_xunit nu_gval
@@ -41,10 +41,10 @@ ns: 	  ns_sys
 	| ns ns_sys
 	;
 
-ns_sys:	  ns_name ns_equiv ns_nu ns_stop
-	| ns_name ns_equiv ns_nes ns_nu ns_stop
-	| ns_name ns_equiv ns_nu ns_nis ns_stop
-	| ns_name ns_equiv ns_nes ns_nu ns_nis ns_stop
+ns_sys:	  ns_name ns_equiv ns_nu ns_det ns_stop
+	| ns_name ns_equiv ns_nes ns_nu ns_det ns_stop
+	| ns_name ns_equiv ns_nu ns_det ns_nis ns_stop
+	| ns_name ns_equiv ns_nes ns_nu ns_det ns_nis ns_stop
 	;
 
 ns_name: NS_NAME				{ nsb_sys($1); }
@@ -68,7 +68,6 @@ ns_ne: 	  NE_BOO				{ nsb_env($1, one); }
 	| NE_KEY '=' NE_VAL			{ nsb_env($1, $3); }
 	;
 
-
 ns_nu:    nu_multunit
 	| ns_nu '=' nu_multunit
 	;
@@ -80,6 +79,10 @@ nu_xunit: '*' NU_FRAC				{ $$ = $2; }
 	;
 
 nu_multunit: NU_NUM nu_xunit			{ nsb_step($1,$2); }
+	;
+
+ns_det:    NU_DET				{ nsb_det($1); }
+	| /* empty */
 	;
 
 ns_nis:   ns_ni
