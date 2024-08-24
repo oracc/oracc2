@@ -1,5 +1,4 @@
 #include <oraccsys.h>
-
 #include "nx.h"
 
 Pool *nspool;
@@ -21,7 +20,7 @@ nx_init(void)
   nxp->ir = hash_create(1024);
 }
 
-const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
+const char *test[] = { "gur" , "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 
 int
 main(int argc, char **argv)
@@ -34,6 +33,7 @@ main(int argc, char **argv)
   mesg_print(stderr);
 
   mesg_init();
-  /*nx_result *r = */ (void)nx_parse((const uchar **)test, NULL, -1);
+  nx_result *r = nx_parse((const uchar **)test, NULL, -1);
+  nxr_print(r, stdout);
   mesg_print(stderr);
 }

@@ -29,10 +29,12 @@ typedef struct nx_number
   const uchar *me_unit; /* modern unit */
   const uchar *me_str; 	/* modern equivalency as formatted string */
   struct nx_step *steps;/* the parsed steps */
-  struct nx_number *next; /* ambiguity is handled by making a list of possible nx_number results */
+  struct nx_step *last; /* the last parsed step so far where additional steps are added */
+  struct nx_step *det;  /* the system determiner, if there is one */
+  struct nx_step *com;  /* the commodity, if there is one */
 } nx_number;
 
-typedef enum nx_step_type { NX_STEP_NUM = 1, NX_STEP_TOK = 2, NX_BAD_NUM = -1 , NX_BAD_TOK = -2 } nx_step_type;
+typedef enum nx_step_type { NX_STEP_NUM = 1, NX_STEP_TOK = 2 } nx_step_type;
 
 typedef struct nx_step_tok
 {
@@ -57,19 +59,18 @@ typedef struct nx_step
     nx_number *num;
   };
   struct nx_step *next;
-  struct nx_step *last;
 } nx_step;
 
 typedef enum nx_restok_t { NX_NO , NX_NU , NX_NA } nx_restok_t;
 
 typedef struct nx_restok
 {
-  int type;
+  enum nx_restok_t type;
   union
   {
     nx_badnum nb;
     nx_nonnum no;
-    nx_number *nu;
+    nx_number **nu;
   };
 } nx_restok;
 
@@ -84,10 +85,13 @@ typedef struct nx_result
   int nr;
 } nx_result;
 
+extern const char *nxt_str[];
+
 struct nxt_tab { const char *name; nx_numtok tok; };
 extern struct nxt_tab *nxt (register const char *str, register size_t len);
 
 extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
 extern void nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
+extern void nxr_print(nx_result *r, FILE *fp);
 
 #endif/*NX_H_*/

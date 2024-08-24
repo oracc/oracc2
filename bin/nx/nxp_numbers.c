@@ -3,14 +3,15 @@
 
 int parse_trace = 1;
 
-static const char *nxt_str[] = { "no" , "ng" , "nw" , "nd" , "nc" , "nz" , NULL };
+const char *nxt_str[] = { "no" , "ng" , "nw" , "nd" , "nc" , "nz" , NULL };
 
-static nx_step **nxp_add_step(nx_step **cand, nx_numtok type, const uchar *tok, const void *data);
+static nx_number **nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);
 static void nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
-static nx_step **nxp_candidates(nx_numtok type, const uchar *tok, const void *data);
+static nx_number **nxp_candidates(nx_numtok type, const uchar *tok, const void *data);
+static void nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
 static nx_step *nxp_nx_step(ns_inst *ip, nx_step_type type, const uchar *tok, const void *data, nx_number *num);
 static void nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to);
-static void nxp_stash_result(nx_result *r, nx_step **cand);
+static void nxp_stash_result(nx_result *r, nx_number **cand);
 static int nx_sys_step_ok(ns_inst *left, ns_inst *next);
 
 void
@@ -20,7 +21,7 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
     nxp_show_start_toks(toks, nptoks, from, to);
 
   /* the candidate systems for the current */
-  nx_step **cand = NULL;
+  nx_number **cand = NULL;
   
   while (from <= to)
     {
@@ -31,7 +32,12 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	  /* if this is the first token initialize the candidate systems
 	     and add an nx_step to each candidate for the token */
 	  if (!(cand = nxp_candidates(nptoks[from], toks[from], d)))
-	    nxp_badnum(r, nptoks[from], toks[from], d);
+	    {
+	      if (nptoks[from] == nxt_ng)
+		nxp_badnum(r, nptoks[from], toks[from], d);
+	      else
+		nxp_unxnum(r, nptoks[from], toks[from], d);
+	    }
 	  ++from;
 	}
       else
@@ -40,7 +46,7 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	     if so, add an nx_step for the token to the list
 	     if not, invalidate the candidate
 	  */
-	  nx_step **good = nxp_add_step(cand, nptoks[from], toks[from], d);
+	  nx_number **good = nxp_add_step(cand, nptoks[from], toks[from], d);
 	  if (good)
 	    {
 	      cand = good;
@@ -49,12 +55,17 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	  else
 	    {
 	      nxp_stash_result(r, cand);
-	      free(cand);
+	      /* free(cand); *//* need a different way of freeing cand because they are stashed */
 	      cand = NULL;
 	      /*++from;*/
 	    }
 	}
-    } 
+    }
+  if (cand)
+    {
+      nxp_stash_result(r, cand);
+      /* free(cand); */
+    }
 }
 
 static int
@@ -75,8 +86,8 @@ nx_sys_step_ok(ns_inst *left, ns_inst *next)
   return 0;
 }
 
-static nx_step **
-nxp_add_step(nx_step **cand, nx_numtok type, const uchar *tok, const void *data)
+static nx_number **
+nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data)
 {
   ns_inst *ip = hash_find(nxp->ir, tok);
   if (ip)
@@ -84,7 +95,7 @@ nxp_add_step(nx_step **cand, nx_numtok type, const uchar *tok, const void *data)
       int ok = 0, i;
       for (i = 0; cand[i]; ++i)
 	{
-	  if (cand[i]->type > 0)
+	  if (cand[i]->sys)
 	    {
 	      ns_inst *jp;
 	      for (jp = ip; jp; jp = jp->ir_next)
@@ -101,7 +112,7 @@ nxp_add_step(nx_step **cand, nx_numtok type, const uchar *tok, const void *data)
 		 have one that can belong to the cand currently being
 		 tested. Invalidate it. */
 	      if (!jp)
-		cand[i]->type *= -1;
+		cand[i]->sys = NULL;
 	      else
 		ok = 1;
 	    }
@@ -118,6 +129,8 @@ nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data)
   if (parse_trace)
     printf("nxp_badnum: tok %s typed as %s but not found in num registry\n", tok, nxt_str[type]);
 
+  /* Should produce a diagnostic here */
+  
   r->r[r->nr].type = NX_NA;
   r->r[r->nr].nb.type = type;
   r->r[r->nr].nb.tok = tok;
@@ -126,10 +139,10 @@ nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data)
   ++r->nr;
 }
 
-static nx_step **
+static nx_number **
 nxp_candidates(nx_numtok type, const uchar *tok, const void *data)
 {
-  nx_step **spp = NULL;
+  nx_number **spp = NULL;
   ns_inst *ip = hash_find(nxp->ir, tok);
   if (ip)
     {
@@ -137,11 +150,13 @@ nxp_candidates(nx_numtok type, const uchar *tok, const void *data)
       ns_inst *jp;
       for (i = 0, jp=ip; jp; jp = jp->ir_next)
 	++i;
-      spp = calloc(i+1, sizeof(nx_step*));
+      spp = calloc(i+1, sizeof(nx_number**));
       for (i = 0, jp=ip; jp; jp = jp->ir_next, ++i)
 	{
-	  spp[i] = nxp_nx_step(jp, NX_STEP_TOK, tok, data, NULL);
-	  spp[i]->last = spp[i];
+	  spp[i] = memo_new(nxp->m_nx_number);
+	  spp[i]->steps = nxp_nx_step(jp, NX_STEP_TOK, tok, data, NULL);
+	  spp[i]->last = spp[i]->steps;
+	  spp[i]->sys = spp[i]->steps->tok.inst->step->sys;
 	}
       spp[i] = NULL;
 
@@ -150,11 +165,25 @@ nxp_candidates(nx_numtok type, const uchar *tok, const void *data)
 	  printf("ns_sys cand for %s:", tok);
 	  int j;
 	  for (j = 0; j < i; ++j)
-	    printf(" %s", spp[j]->tok.inst->step->sys->name);
+	    printf(" %s", spp[j]->sys->name);
 	  printf("\n\n");
 	}
     }
   return spp;
+}
+
+static void
+nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data)
+{
+  if (parse_trace)
+    printf("nxp_nonnum: unexpected to find tok %s typed as %s outside num\n", tok, nxt_str[type]);
+
+  r->r[r->nr].type = NX_NA;
+  r->r[r->nr].nb.type = type;
+  r->r[r->nr].nb.tok = tok;
+  if (data)
+    r->r[r->nr].nb.data = data;
+  ++r->nr;
 }
 
 static nx_step *
@@ -191,14 +220,9 @@ nxp_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
 }
 
 static void
-nxp_stash_result(nx_result *r, nx_step **cand)
+nxp_stash_result(nx_result *r, nx_number **cand)
 {
-  nx_number *n = memo_new(nxp->m_nx_number);
-  n->steps = cand[0];
-  int i;
-  for (i = 1; cand[i]; ++i)
-    {
-      n->next = memo_new(nxp->m_nx_number);
-      n->next->steps = cand[i];
-    }
+  nx_restok *res = &r->r[r->nr++];
+  res->type = NX_NU;
+  res->nu = cand;
 }

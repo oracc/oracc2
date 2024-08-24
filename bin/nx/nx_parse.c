@@ -41,13 +41,7 @@ nx_parse(const uchar **toks, const void **data, int ntoks)
 	  /* process the numbers */
 	  nxp_numbers(r, nptoks, toks, data, next, last);
 
-	  /* if there are more toks we have already tested
-	     toks[last+1] and registered it as nxt_no in n; otherwise
-	     set start to last so the loop exits */
-	  if (toks[last+1])
-	    start = last + 2;
-	  else
-	    start = last;
+	  start = last+1;
 	}
       else
 	{
@@ -79,7 +73,7 @@ int nxp_last_num(const uchar **t, nx_numtok *n, int from)
 	return from-1;
       ++from;
     }
-  return from;
+  return from-1;
 }
 
 static nx_result *
@@ -104,7 +98,7 @@ nxp_next_num(const uchar **t, nx_numtok *n, int from)
       else
 	++from;
     }
-  return from;
+  return -1;
 }
 
 static void
