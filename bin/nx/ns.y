@@ -27,8 +27,7 @@ uchar one[2] = {'1','\0'};
 
 %token <text> 	NS_NAME NS_BASE NS_CONV NS_STOP
 		NE_BOO NE_KEY NE_VAL
-		NI_AXIS
-		NU_FRAC NU_GVAL NU_NUM NU_UNIT NU_DET
+		NU_AXIS NU_FRAC NU_GVAL NU_NUM NU_UNIT NU_DET
 		END
 
 %nterm <text> 	ns_base ns_conv nu_xunit nu_gval
@@ -78,7 +77,9 @@ nu_xunit: '*' NU_FRAC				{ $$ = $2; }
 	| '*' NU_UNIT		       		{ $$ = $2; }
 	;
 
-nu_multunit: NU_NUM nu_xunit			{ nsb_step($1,$2); }
+nu_multunit:
+	  NU_NUM nu_xunit			{ nsb_step(NULL,$1,$2); }
+	| NU_AXIS NU_NUM nu_xunit      		{ nsb_step($1,$2,$3); }
 	;
 
 ns_det:    NU_DET				{ nsb_det($1); }
@@ -90,7 +91,7 @@ ns_nis:   ns_ni
 	;
 
 ns_ni:    nu_gval '>' NU_NUM nu_xunit		{ nsb_inst_g($1,$3,$4, NS_INST_DATA); }
-     	| NI_AXIS '+' NU_UNIT '>' NU_UNIT	{ nsb_inst_u($1,$3,$5, NS_INST_DATA); }
+	/*| NI_AXIS '+' NU_UNIT '>' NU_UNIT	{ nsb_inst_u($1,$3,$5, NS_INST_DATA); }*/
 	;
 
 ns_stop: '.'					{ nsb_wrapup(); }

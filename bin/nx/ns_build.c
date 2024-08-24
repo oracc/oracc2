@@ -58,7 +58,7 @@ nsb_mult(nx_num*n, const uchar *m)
 }
 
 void
-nsb_step(uchar *m, uchar *u)
+nsb_step(uchar *a, uchar *m, uchar *u)
 {
   ns_step *s = memo_new(nxp->m_step);
 
@@ -66,6 +66,8 @@ nsb_step(uchar *m, uchar *u)
     printf("nsb_step: step has mult %s and unit %s\n", m, u);
   
   nsb_mult(&s->mult, m);
+  if (a)
+    s->a_or_d = tolower(*a);
   s->unit = u;
   s->sys = nxp->sys;
   if (nxp->sys->steps)

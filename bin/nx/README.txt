@@ -109,20 +109,20 @@ The syntax of an nu is:
 
 A simple example would be this subsequence of sexagesimal numbers:
 
-   0 * ŋeš₂ = 6 * u = 10 * diš
+   n * ŋeš₂ = 6 * u = 10 * diš
 
-The left-terminal multiplier is '0' meaning that the numeric
+The left-terminal multiplier is 'n' meaning that the numeric
 multiplier is unbounded from the point of view of validation.
 
 For unit-words that are preceded by an independent number sequence the
 sequence is indicated by one of the uppercase codes 'A' (AŠ-system),
-'B' (bisexagesimal system), or 'D' (DIŠ-system) concatenated directly
-onto the multiplier ('B' is experimental and may be withdrawn):
+'B' (bisexagesimal system), or 'D' (DIŠ-system) before the multiplier
+('B' is experimental and may be withdrawn):
 
-  0A gur = 5 * bariga = 6 * ban₂ = 10D * sila₃ = 60D * giŋ₄
+  0A gur = 5 * bariga = 6 * ban₂ = D10 * sila₃ = D60 * giŋ₄
 
 Whitespace is insignificant, so the above example could also be
-written as n*geš₂=6*u=10*diš.
+written as n*geš₂=6*u=D10*diš.
 
 A future implementation may support alternates in steps, e.g.,
 

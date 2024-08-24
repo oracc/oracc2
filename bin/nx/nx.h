@@ -31,6 +31,7 @@ typedef struct nx_number
   const uchar *me_str; 	/* modern equivalency as formatted string */
   struct nx_step *steps;/* the parsed steps */
   struct nx_step *last; /* the last parsed step so far where additional steps are added */
+  struct nx_step *unit; /* for 1(diš) sila₃ this is a D number that has the unit set to the sila nx_step */
   struct nx_step *det;  /* the system determiner, if there is one */
   struct nx_step *com;  /* the commodity, if there is one */
 } nx_number;

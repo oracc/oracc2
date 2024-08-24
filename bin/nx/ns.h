@@ -63,7 +63,7 @@ extern void nsb_sys (uchar * t);
 extern void nsb_det (uchar * t);
 extern void nsb_equiv (uchar * b, uchar * c);
 extern void nsb_env (uchar * b, uchar * c);
-extern void nsb_step (uchar * b, uchar * c);
+extern void nsb_step (uchar * a, uchar * b, uchar * c);
 extern void nsb_inst_g (const uchar * g, const uchar * n, const uchar * u, ns_inst_method meth);
 extern void nsb_inst_u (uchar * x, uchar * g, uchar * u, ns_inst_method meth);
 extern void nsb_wrapup (void);

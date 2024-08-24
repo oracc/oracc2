@@ -22,7 +22,7 @@ int nsflextrace = 0;
 S		\xe2\xb8[^\xa2-\xa5]
 G		([a-zA-Z\x80-\xc2\xc4-\xe1\xe3-\xff]|{S}|\xc3[^\x97]|\xe2[^\xb8])+
 M		([@~\\]([a-wyz]+[0-9]*|90|180|270))
-NUM		([0-9]+|n|A|D|S)
+NUM		([0-9]+|n)
 FRAC		[0-9n]\/[0-9]
 
 %%
@@ -41,9 +41,9 @@ FRAC		[0-9n]\/[0-9]
 
 \"[^\"\n\t]*\"				{ nsave; return NE_VAL; }
 
-{NUM}|{FRAC}				{ nsave; return NU_NUM; }
+{NUM}|{FRAC}	       			{ nsave; return NU_NUM; }
 
-"AŠ"|"DIŠ"				{ nsave; return NI_AXIS; }
+A|D/n?					{ nsave; return NU_AXIS; }
 
 \(?{G}{M}*("."{G}{M}*)*\)?  		{ nsave; return NU_UNIT; }
 
