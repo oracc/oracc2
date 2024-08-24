@@ -90,6 +90,7 @@ extern const char *nxt_str[];
 struct nxt_tab { const char *name; nx_numtok tok; };
 extern struct nxt_tab *nxt (register const char *str, register size_t len);
 
+extern void nx_data(void);
 extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
 extern void nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
 extern void nxr_print(nx_result *r, FILE *fp);

@@ -3,6 +3,8 @@
 
 Pool *nspool;
 
+static const uchar **nx_toks(uchar *t, int *ntoks);
+
 /* The data manager object for the run; probably need to reset this
    after each text to handle large runs */
 nx *nxp;
@@ -20,7 +22,9 @@ nx_init(void)
   nxp->ir = hash_create(1024);
 }
 
-const char *test[] = { "gur" , "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
+
+const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
+
 
 int
 main(int argc, char **argv)
@@ -28,12 +32,50 @@ main(int argc, char **argv)
   ns_flex_debug = nsflextrace = 0;
   nx_init();
 
-  mesg_init();
-  nsparse();
-  mesg_print(stderr);
+  nx_data();
 
-  mesg_init();
-  nx_result *r = nx_parse((const uchar **)test, NULL, -1);
-  nxr_print(r, stdout);
-  mesg_print(stderr);
+  uchar *lp;
+  size_t lplen;
+  while ((lp = loadoneline(stdin, &lplen)))
+    {
+      int ntoks;
+      const uchar **toks = nx_toks(lp, &ntoks);
+      mesg_init();
+      nx_result *r = nx_parse(toks, NULL, -1);
+      nxr_print(r, stdout);
+      mesg_print(stderr);
+    }
+}
+
+static const uchar **
+nx_toks(uchar *t, int *ntoks)
+{
+  int n = 0;
+  while (isspace(*t))
+    ++t;
+  uchar *s = t;
+  while (*s)
+    {
+      ++n;
+      while (*s && !isspace(*s))
+	++s;
+      while (isspace(*s))
+	++s;
+    }
+  const uchar **toks = malloc((n+1)*sizeof(const uchar *));
+  s = t;
+  int i = 0;
+  while (*s)
+    {
+      toks[i++] = s;
+      while (*s && !isspace(*s))
+	++s;
+      if (isspace(*s))
+	*s++ = '\0';
+      while (isspace(*s))
+	++s;
+    }
+  toks[i] = NULL;
+  *ntoks = n;
+  return toks;
 }
