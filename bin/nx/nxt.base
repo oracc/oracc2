@@ -6,6 +6,7 @@ struct nxt_tab;
 %%
 {gan₂}, nxt_nd
 {gur},  nxt_nd
+(gur), 	nxt_nv
 ".",  nxt_nz
 sila₃, nxt_nw
 giŋ₄, nxt_nw

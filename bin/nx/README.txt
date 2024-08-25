@@ -18,6 +18,8 @@ num consists of several parts
 
  nw -- number words
 
+ nv -- number virtual
+
  nd -- number determiners
 
  nc -- number commodities
@@ -252,6 +254,14 @@ numeric graphemes such as 1(aš).
 nw -- number words
 
 An nw is a number word, another token that can be part of an nu sequence.
+
+
+
+nv -- number virtual
+
+An nv is a virtual number word.  This is used for gur when it is
+implied by an AŠ-number; in nx this is written '(gur)' (as opposed to
+nd gur as a determiner, which is written '{gur}').
 
 
 

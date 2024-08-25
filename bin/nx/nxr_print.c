@@ -12,6 +12,8 @@ nxr_print(nx_result *r, FILE *fp, int nonewline)
   int i;
   for (i = 0; i < r->nr; ++i)
     {
+      if (i)
+	fprintf(fp, " :: ");
       if (r->r[i].type == NX_NU)
 	nxr_print_nu(&r->r[i], fp);
       else if (r->r[i].type == NX_NO)
@@ -52,7 +54,15 @@ nxr_print_nu_sub(nx_number *np, FILE *fp)
 {
   if (np->sys)
     {
-      fprintf(fp, "%s[", np->sys->name);
+      int n = np->sys->name[1];
+      char o = '[';
+      char c = ']';
+      if (strchr("ADSB", n))
+	{
+	  o = '<';
+	  c = '>';
+	}
+      fprintf(fp, "%s%c", np->sys->name, o);
       nx_step *sp;
       int i = 0;
       for (sp = np->steps; sp; sp = sp->next)
@@ -64,9 +74,9 @@ nxr_print_nu_sub(nx_number *np, FILE *fp)
 	  else
 	    nxr_print_nu_sub(sp->num, fp);
 	}
-      fprintf(fp, "]");
+      fprintf(fp, "%c", c);
       if (np->unit)
-	fprintf(fp, ".%s", np->unit->tok.tok);
+	fprintf(fp, "+%s", np->unit->tok.tok);
     }
 }
 

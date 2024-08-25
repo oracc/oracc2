@@ -6,13 +6,19 @@ int test_data = 1;
 
 const char *nxt_str[] = { "no" , "ng" , "nw" , "nd" , "nc" , "nz" , NULL };
 
+static int nxp_add_inst(nx_number **cand, ns_inst *ip, nx_numtok type, const void *data);
 static int nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);
 static void nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
-static nx_number **nxp_candidates(nx_numtok type, const uchar *tok, const void *data, int *ncand);
+/*static nx_number **nxp_candidates(nx_numtok type, const uchar *tok, const void *data, int *ncand);*/
+static nx_number **nxp_candidates_inst(ns_inst *ip, nx_numtok type, const void *data, int *ncand);
+static int nxp_ends_with_guru7(nx_result *r);
+static nx_number ** nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int *ncand);
+static int nxp_last_has_A(nx_result *r);
 static nx_number **nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int *ncand);
 static nx_step *nxp_nx_step(ns_inst *ip, nx_step_type type, const uchar *tok, nx_numtok toktype, const void *data, nx_number *num);
 static nx_number **nxp_remove_invalid(nx_number **c, int *ncand);
 static void nxp_stash_result(nx_result *r, nx_number **cand);
+static int nxp_system_C(ns_inst *ip);
 static int nxp_sys_step_ok(ns_inst *left, ns_inst *next);
 static void nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
 static int nxp_add_det(nx_number **cand, const uchar *tok, const void *data);
@@ -37,8 +43,20 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	    {
 	      /* if this is the first token initialize the candidate systems
 		 and add an nx_step to each candidate for the token */
-	      if (!(cand = nxp_candidates(nptoks[from], toks[from], d, &ncand)))
+	      ns_inst *ip = hash_find(nxp->ir, toks[from]);
+	      if (ip)
+		{
+		  if (parse_trace)
+		    nxd_show_inst(ip->text, ip);
+		  
+		  if (nxp_system_C(ip) && nxp_last_has_A(r))
+		    cand = nxp_implicit_gur(r, ip, nptoks[from], d, &ncand);
+		  else
+		    cand = nxp_candidates_inst(ip, nptoks[from], d, &ncand);
+		}
+	      else
 		nxp_badnum(r, nptoks[from], toks[from], d);
+	      /*if (!(cand = nxp_candidates(nptoks[from], toks[from], d, &ncand)))*/
 	      ++from;
 	    }
 	  else if (nptoks[from] == nxt_nw)
@@ -129,6 +147,105 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
     }
 }
 
+static nx_number **
+nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int *ncand)
+{
+  nx_number **m = NULL;
+  
+  printf("nxp_implicit_gur\n");
+  
+  /* remove all the non-A steps from the preceding number */
+  nx_number **nu = r->r[r->nr-1].nu;
+  --r->nr; /* remove the A from the results */
+  
+  int i;
+  for (i = 0; nu[i]; ++i)
+    {
+      if (nu[i]->sys->name[1] != 'A')
+	nu[i]->invalid = 1;
+    }
+  nu = nxp_remove_invalid(nu, ncand);
+    
+  /* get a virtual gur step and merge it with the preceding number */
+  ns_inst *gp = hash_find(nxp->ir, (ucp)"(gur)");
+
+  /* create a cand list from (gur) */
+  m = nxp_candidates_inst(gp, type, data, ncand);
+
+  /* set the unit for all the A-cand to (gur) nx_step */
+  for (i = 0; nu[i]; ++i)
+    nu[i]->unit = m[i]->last;
+
+  /* now create a NUM nx_step for the number and make it the first step in all the cand
+     we got from (gur) */
+  nx_step *nnum = nxp_nx_step(ip, NX_STEP_NUM, ip->text, type, data, nu[0]);
+
+  for (i = 0; m[i]; ++i)
+    m[i]->steps = m[i]->last = nnum;
+
+  /* now m is a cand array based on 'A (gur)': 
+     if the preceding result is a guru₇, merge the result into that */
+
+  if (nxp_ends_with_guru7(r))
+    {
+      printf("found guru7");
+    }
+  
+  /* Now we have re-headed cand to start with the guru₇ or (gur); add
+     the C-step that started this off */
+  int good = nxp_add_inst(m, ip, type, data);
+  if (good)
+    m = nxp_remove_invalid(m, ncand);
+  /* should probably be more careful--it's unlikely that this could
+     fail but is it possible? */
+  
+  /* return for further parsing */
+  return m;
+}
+
+static int
+nxp_ends_with_guru7(nx_result *r)
+{
+  if (r->nr > 0 && r->r[r->nr-1].type == NX_NU)
+    {
+      nx_number **nu = r->r[r->nr-1].nu;
+      int i;
+      for (i = 0; nu[i]; ++i)
+	{
+	  if (nu[i]->sys->name[1] == 'A' && nu[i]->unit
+	      && !strcmp((ccp)nu[i]->unit->tok.tok, "guru₇"))
+	    return 1;
+	}
+    }
+  return 0;
+}
+  
+static int
+nxp_last_has_A(nx_result *r)
+{
+  if (r->nr > 0 && r->r[r->nr-1].type == NX_NU)
+    {
+      nx_number **nu = r->r[r->nr-1].nu;
+      int i;
+      for (i = 0; nu[i]; ++i)
+	{
+	  if (nu[i]->sys->name[1] == 'A')
+	    return 1;
+	}
+    }
+  return 0;
+}
+  
+static int
+nxp_system_C(ns_inst *ip)
+{
+  ns_inst *jp;
+  for (jp = ip; jp; jp = jp->next)
+    if ('C' == jp->step->sys->name[1])
+      return 1;
+  return 0;
+}
+
 /* overwrite invalid entries with valid ones */
 static nx_number **
 nxp_remove_invalid(nx_number **c, int *ncand)
@@ -183,7 +300,11 @@ nxp_add_inst(nx_number **cand, ns_inst *ip, nx_numtok type, const void *data)
       ns_inst *jp;
       for (jp = ip; jp; jp = jp->ir_next)
 	{
-	  if (nxp_sys_step_ok(cand[i]->last->tok.inst, jp))
+	  ns_inst *left = (cand[i]->last->type==NX_STEP_TOK
+			   ? cand[i]->last->tok.inst
+			   : cand[i]->last->num->unit->tok.inst
+			   );
+	  if (nxp_sys_step_ok(left, jp))
 	    {
 	      nx_step *n = nxp_nx_step(jp, NX_STEP_TOK, jp->text, type, data, NULL);
 	      cand[i]->last->next = n;
@@ -282,6 +403,7 @@ nxp_candidates_inst(ns_inst *ip, nx_numtok type, const void *data, int *ncand)
   return spp;
 }
 
+#if 0
 static nx_number **
 nxp_candidates(nx_numtok type, const uchar *tok, const void *data, int *ncand)
 {
@@ -294,6 +416,7 @@ nxp_candidates(nx_numtok type, const uchar *tok, const void *data, int *ncand)
     }
   return NULL;
 }
+#endif
 
 static void
 nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data)
@@ -343,7 +466,7 @@ nxp_stash_result(nx_result *r, nx_number **cand)
  * new candidate set.
  */
 static nx_number **
-nxp_merge_unit(nx_result *r, ns_inst *ip, enum nx_numtok type, const void *data, int *ncand)
+nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int *ncand)
 {
   if (r->nr > 0)
     {
@@ -394,11 +517,10 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, enum nx_numtok type, const void *data,
 		   * unit, reset all the cand last steps to be
 		   * num+unit and return it for further parsing
 		   */
-		  
+		  return nxp_candidates_inst(ip, type, data, ncand);		  
 		}
 	    }
 	}
     }
   return NULL;
 }
-

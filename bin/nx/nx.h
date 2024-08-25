@@ -6,7 +6,7 @@
 
 struct nx_step;
 
-typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nd , nxt_nc , nxt_nz } nx_numtok;
+typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_nz } nx_numtok;
 
 typedef struct nx_nonnum
 {
