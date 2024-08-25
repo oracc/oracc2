@@ -124,12 +124,8 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 
   if (test_data)
     {
-      FILE *t = fopen("test.tsv", "w");
-      if (t)
-	nxr_testdata(t, r, nptoks, toks, data, orig_from, to);
-      else
-	fprintf(stderr, "nx: unable to write test.tsv\n");
-      fclose(t);
+      if (nxp->testfp)
+	nxr_testdata(nxp->testfp, r, nptoks, toks, data, orig_from, to);
     }
 }
 

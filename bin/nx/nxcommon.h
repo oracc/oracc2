@@ -28,6 +28,7 @@ typedef struct nx
   int nsys;
   Hash *ir;			/* global inst registry which indexes inst text to sys
 				   that it can be part of */
+  FILE *testfp;
 } nx;
 
 extern nx *nxp;

@@ -36,6 +36,9 @@ main(int argc, char **argv)
 
   uchar *lp;
   size_t lplen;
+  nxp->testfp = fopen("test.tsv", "w");
+  if (!nxp->testfp)
+    fprintf(stderr, "nx: unable to open test.tsv; no testdata will be written\n");
   while ((lp = loadoneline(stdin, &lplen)))
     {
       int ntoks;
@@ -45,6 +48,8 @@ main(int argc, char **argv)
       nxr_print(r, stdout, 0);
       mesg_print(stderr);
     }
+  if (nxp->testfp)
+    fclose(nxp->testfp);
 }
 
 static const uchar **

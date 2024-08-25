@@ -40,7 +40,11 @@ nxr_print_nu(nx_restok *rtp, FILE *fp)
 {
   int i;
   for (i = 0; rtp->nu[i]; ++i)
-    nxr_print_nu_sub(rtp->nu[i], fp);
+    {
+      if (i)
+	fputc(';', fp);
+      nxr_print_nu_sub(rtp->nu[i], fp);
+    }
 }
 
 static void
