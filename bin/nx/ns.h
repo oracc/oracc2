@@ -29,8 +29,9 @@ typedef struct ns_step
   struct ns_sys *sys;
   struct ns_step *next;
   struct ns_step *prev;
+  struct ns_step *alt;
   struct ns_inst *insts;
-  struct ns_inst *last;
+  struct ns_inst *last;  
   char a_or_d;
 } ns_step;
 

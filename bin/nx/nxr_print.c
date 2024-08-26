@@ -28,7 +28,7 @@ nxr_print(nx_result *r, FILE *fp, int nonewline)
 static void
 nxr_print_na(nx_restok *rtp, FILE *fp)
 {
-  fprintf(fp, " ![%s=%s]", rtp->nb.tok, nxt_str[rtp->type]);
+  fprintf(fp, " ![%s=%s]", rtp->nb.tok, nxt_str[rtp->nb.type]);
 }
 
 static void

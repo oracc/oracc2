@@ -3,6 +3,8 @@
 
 int build_trace = 0;
 
+int nsb_altflag;
+
 void
 nsb_sys(uchar *t)
 {
@@ -11,6 +13,7 @@ nsb_sys(uchar *t)
   nxp->sys->e = hash_create(7);
   nxp->sys->elist = list_create(LIST_SINGLE);
   ++nxp->nsys;
+  nsb_altflag = 0;
   if (build_trace)
     printf("nsb_sys: sys %s is sys %d\n", nxp->sys->name, nxp->nsys);
 }
@@ -63,21 +66,36 @@ nsb_step(uchar *a, uchar *m, uchar *u)
   ns_step *s = memo_new(nxp->m_step);
 
   if (build_trace)
-    printf("nsb_step: step has mult %s and unit %s\n", m, u);
+    printf("nsb_step: step has mult %s and unit %s; altflag=%d\n", m, u, nsb_altflag);
   
   nsb_mult(&s->mult, m);
   if (a)
     s->a_or_d = tolower(*a);
   s->unit = u;
   s->sys = nxp->sys;
-  if (nxp->sys->steps)
+  if (nsb_altflag)
     {
-      nxp->sys->last->next = s;
-      s->prev = nxp->sys->last;
-      nxp->sys->last = s;
+      nsb_altflag = 0;
+      if (nxp->sys->last->alt)
+	{
+	  ns_step *a;
+	  for (a = nxp->sys->last->alt; a->next; a = a->next)
+	    ;
+	  a->next = a;
+	  s->prev = a;
+	}
     }
   else
-    nxp->sys->last = nxp->sys->steps = s;  
+    {
+      if (nxp->sys->steps)
+	{
+	  nxp->sys->last->next = s;
+	  s->prev = nxp->sys->last;
+	  nxp->sys->last = s;
+	}
+      else
+	nxp->sys->last = nxp->sys->steps = s;  
+    }
 }
 
 static void

@@ -6,7 +6,15 @@ nx is a tool to support the Oracc Numbers project, num
 num covers both numbers and counting systems and measures and
 measuring systems
 
-num consists of several parts
+num consists of several processes:
+
+ np -- number parsing
+
+ nx -- number conversion
+
+ nr -- number rendering
+
+num data consists of a variety of types and tokens:
 
  ns -- number systems
 
@@ -24,17 +32,13 @@ num consists of several parts
 
  nc -- number commodities
 
+ na -- number associations
+
  no -- number other
 
  ne -- number environments
  
- np -- number parsing
-
  nq -- number quantity
-
- nx -- number conversion
-
- nr -- number rendering
 
  nz -- number stoppers
 
@@ -101,13 +105,15 @@ the tablet.
 
 The syntax of an nu is:
 
-    STEP := STEP_NAME
-
-    MULT := [0-9]+ | 'A' | 'B' | 'D'
-
-    multstep := MULT '*' STEP
-
     nu := multstep ('=' multstep)*
+
+    multstep := MULT '*' STEP altstep*
+
+    altstep := '|' multstep
+
+    MULT := ('A' | 'B' | 'D')? ([0-9]+ | n)
+
+    STEP := STEP_NAME
 
 A simple example would be this subsequence of sexagesimal numbers:
 
@@ -278,6 +284,11 @@ Commodities are both number stoppers and part of the number
 environment.  They normally come after a number, but may come before a
 number determiner as in 1(aš) še gur.
 
+
+na -- number associations
+
+Associations are keywords that relate to the number such as a PN that
+is the recipient of a ration quantity.
 
 
 no -- number other

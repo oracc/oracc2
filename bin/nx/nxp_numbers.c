@@ -4,7 +4,7 @@
 int parse_trace = 1;
 int test_data = 1;
 
-const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "nz" , NULL };
+const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , NULL };
 
 static int nxp_add_inst(nx_number **cand, ns_inst *ip, nx_numtok type, const void *data);
 static int nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);
@@ -80,6 +80,8 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 		nxp_unxnum(r, nptoks[from], toks[from], d);
 	      ++from;
 	    }
+	  else if (nptoks[from] == nxt_nz)
+	    ++from;
 	  else
 	    {
 	      nxp_unxnum(r, nptoks[from], toks[from], d);
@@ -105,6 +107,15 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 		  cand = NULL;
 		  /* don't increment from */
 		}
+	    }
+	  else if (nptoks[from] == nxt_nz)
+	    {
+	      if (cand)
+		{
+		  nxp_stash_result(r, cand);
+		  cand = NULL;
+		}
+	      ++from;
 	    }
 	  else
 	    {

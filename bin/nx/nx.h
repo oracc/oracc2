@@ -6,7 +6,7 @@
 
 struct nx_step;
 
-typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_nz } nx_numtok;
+typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_na , nxt_nz } nx_numtok;
 
 typedef struct nx_nonnum
 {
@@ -88,6 +88,7 @@ typedef struct nx_result
   int nr;
 } nx_result;
 
+extern int nsb_altflag;
 extern const char *currnsfile;
 extern const char *nxt_str[];
 

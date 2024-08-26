@@ -12,7 +12,7 @@
 extern int nslex(void);
 extern void yyerror(const char *);
 extern const char *nstext, *currnsfile;
-extern int nslineno, nstrace;
+extern int nslineno, nstrace, nsb_altflag;
 
 #define NSLTYPE_IS_DECLARED 1
 #define NSLTYPE Mloc
@@ -69,17 +69,18 @@ ns_ne: 	  NE_BOO				{ nsb_env($1, one); }
 
 ns_nu:    nu_multunit
 	| ns_nu '=' nu_multunit
+	| ns_nu '|' { nsb_altflag=1; } nu_multunit
+	;
+
+nu_multunit: NU_NUM nu_xunit   			{ nsb_step(NULL,$1,$2); }
+	| NU_AXIS NU_NUM nu_xunit   		{ nsb_step($1,$2,$3); }
 	;
 
 nu_gval:  NU_FRAC | NU_GVAL ;
 
 nu_xunit: '*' NU_FRAC				{ $$ = $2; }
 	| '*' NU_UNIT		       		{ $$ = $2; }
-	;
-
-nu_multunit:
-	  NU_NUM nu_xunit			{ nsb_step(NULL,$1,$2); }
-	| NU_AXIS NU_NUM nu_xunit      		{ nsb_step($1,$2,$3); }
+	| '*' NU_GVAL		       		{ $$ = $2; }
 	;
 
 ns_det:    NU_DET				{ nsb_det($1); }

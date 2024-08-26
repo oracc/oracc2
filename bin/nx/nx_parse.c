@@ -70,7 +70,12 @@ int nxp_last_num(const uchar **t, nx_numtok *n, int from)
     {
       n[from] = nxp_tok_type(t[from]);
       if (n[from] == nxt_no || n[from] == nxt_nz || n[from] == nxt_nc)
-	return from-1;
+	{
+	  if (from)
+	    return from-1;
+	  else
+	    return 0;
+	}
       ++from;
     }
   return from-1;
