@@ -155,7 +155,7 @@
   </xsl:if>
 
   <xsl:if test="$views-cuneify='true'">
-    <li><a href="javascript:cuneifyPopup('{$project}','{$text}')">Cuneified</a></li>
+    <li><a target="_blank" href="/{$project}/{$text}/cuneify">Cuneified</a></li>
   </xsl:if>
   <xsl:if test="$views-proofing='true'">
     <li><a href="javascript:viewsProofing('{$project}','{$text}')">Proofing</a></li>

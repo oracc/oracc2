@@ -20,10 +20,13 @@ typedef struct ns_sys
   struct ns_step *last;
   uchar *det;
   Hash *i;			/* inst text pointing to sys copy of inst */
+  int aev_done;
 } ns_sys;
 
 typedef struct ns_step
 {
+  nx_num aev;	/* ancient equivalence value, i.e., this step
+		   expressed in terms of the system base */
   nx_num mult;
   uchar *unit;
   struct ns_sys *sys;

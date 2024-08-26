@@ -14,7 +14,7 @@ num consists of several processes:
 
  nr -- number rendering
 
-num data consists of a variety of types and tokens:
+num definitions consists of a variety of types and tokens:
 
  ns -- number systems
 
@@ -22,11 +22,17 @@ num data consists of a variety of types and tokens:
 
  ni -- number instance
 
+num input consists of tokens of the following possibly types
+
+ ns -- number system
+
  ng -- number grapheme
 
  nw -- number words
 
  nv -- number virtual
+
+ nh -- number hint
 
  nd -- number determiners
 
@@ -45,12 +51,17 @@ num data consists of a variety of types and tokens:
 
 ns -- number system
 
+Number systems are the core of nx data definitions and may also occur
+in the input to nx parsing.
+
+=Data Definitions=
+
 A number system consists of a name,an optional base unit and
 conversion ratio, optional ne constraints, and a nu specification.
 
 The syntax of an ns is:
 
- '@' NAME BASE? CONV? ne* nu ni* '.'
+ '%' NAME BASE? CONV? ne* nu ni* '.'
 
 Whitespace is obligatory after any of NAME, BASE, CONV, ne.
 
@@ -84,8 +95,15 @@ syntax of CONV is an integer or floating point number followed by
 either 'u' to indicate a numeric equivalent or one of the following
 metric unit abbreviations:
 
-   cm ha g kg l m mm
+   cm ha g kg l m mm m2
 
+=INPUT TOKENS=
+
+An ns in input tokens is indicated using its name, e.g., %C.  This
+terminates the current number parsing, if any, in the same way as a
+stopper ('.') and defines the system to select for the following
+parse.  It is an error if the result of the following parse does not
+contain an analysis that matches the named system.
 
 
 nu -- number units
@@ -123,18 +141,15 @@ The left-terminal multiplier is 'n' meaning that the numeric
 multiplier is unbounded from the point of view of validation.
 
 For unit-words that are preceded by an independent number sequence the
-sequence is indicated by one of the uppercase codes 'A' (AŠ-system),
-'B' (bisexagesimal system), or 'D' (DIŠ-system) before the multiplier
-('B' is experimental and may be withdrawn):
+sequence is indicated by one of the special uppercase codes 'A'
+(AŠ-system), 'B' (bisexagesimal system), or 'D' (DIŠ-system) before
+the multiplier ('B' is experimental and may be withdrawn; 'A' and 'D'
+are special forms for systems 'Sa' and 'Sb'):
 
-  0A gur = 5 * bariga = 6 * ban₂ = D10 * sila₃ = D60 * giŋ₄
+  An gur = 5 * bariga = 6 * ban₂ = D10 * sila₃ = D60 * giŋ₄
 
 Whitespace is insignificant, so the above example could also be
 written as n*geš₂=6*u=D10*diš.
-
-A future implementation may support alternates in steps, e.g.,
-
- 1(ŋešmin) = 2(ŋeš₂) | 12(u)
 
 
 
@@ -283,6 +298,7 @@ nc -- number commodities
 Commodities are both number stoppers and part of the number
 environment.  They normally come after a number, but may come before a
 number determiner as in 1(aš) še gur.
+
 
 
 na -- number associations

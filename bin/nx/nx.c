@@ -45,6 +45,7 @@ main(int argc, char **argv)
       const uchar **toks = nx_toks(lp, &ntoks);
       mesg_init();
       nx_result *r = nx_parse(toks, NULL, -1);
+      nx_values(r);
       nxr_print(r, stdout, 0);
       mesg_print(stderr);
     }

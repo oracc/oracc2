@@ -57,7 +57,7 @@ nxr_print_nu_sub(nx_number *np, FILE *fp)
       int n = np->sys->name[1];
       char o = '[';
       char c = ']';
-      if (strchr("ADSB", n))
+      if (strchr("SB", n))
 	{
 	  o = '<';
 	  c = '>';

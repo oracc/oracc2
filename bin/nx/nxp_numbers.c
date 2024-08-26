@@ -13,7 +13,7 @@ static void nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const voi
 static nx_number **nxp_candidates_inst(ns_inst *ip, nx_numtok type, const void *data, int *ncand);
 static int nxp_ends_with_guru7(nx_result *r);
 static nx_number ** nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int *ncand);
-static int nxp_last_has_A(nx_result *r);
+static int nxp_last_has_Sa(nx_result *r);
 static nx_number **nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int *ncand);
 static nx_step *nxp_nx_step(ns_inst *ip, nx_step_type type, const uchar *tok, nx_numtok toktype, const void *data, nx_number *num);
 static nx_number **nxp_remove_invalid(nx_number **c, int *ncand);
@@ -49,7 +49,7 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 		  if (parse_trace)
 		    nxd_show_inst(ip->text, ip);
 		  
-		  if (nxp_system_C(ip) && nxp_last_has_A(r))
+		  if (nxp_system_C(ip) && nxp_last_has_Sa(r))
 		    cand = nxp_implicit_gur(r, ip, nptoks[from], d, &ncand);
 		  else
 		    cand = nxp_candidates_inst(ip, nptoks[from], d, &ncand);
@@ -165,14 +165,14 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   
   printf("nxp_implicit_gur\n");
   
-  /* remove all the non-A steps from the preceding number */
+  /* remove all the non-Sa steps from the preceding number */
   nx_number **nu = r->r[r->nr-1].nu;
-  --r->nr; /* remove the A from the results */
+  --r->nr; /* remove the Sa from the results */
   
   int i;
   for (i = 0; nu[i]; ++i)
     {
-      if (nu[i]->sys->name[1] != 'A')
+      if (nu[i]->sys->name[1] != 'S' || nu[i]->sys->name[2] != 'a')
 	nu[i]->invalid = 1;
     }
   nu = nxp_remove_invalid(nu, ncand);
@@ -186,7 +186,7 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   /* now create a NUM nx_step for the number with (gur) */
   nx_step *nnum = nxp_nx_step(ip, NX_STEP_NUM, ip->text, type, data, nu[0]);
 
-  /* set the unit for all the A-cand to (gur) nx_step */
+  /* set the unit for all the Sa-cand to (gur) nx_step */
   for (i = 0; nu[i]; ++i)
     nu[i]->unit = m[0]->last;
 
@@ -205,7 +205,7 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
     }
   else
     {
-      /* set the steps and last for all the cand to the A+(gur) nx_step */
+      /* set the steps and last for all the cand to the Sa+(gur) nx_step */
       for (i = 0; m[i]; ++i)
 	m[i]->steps = m[i]->last = nnum;
     }
@@ -240,7 +240,7 @@ nxp_ends_with_guru7(nx_result *r)
 }
   
 static int
-nxp_last_has_A(nx_result *r)
+nxp_last_has_Sa(nx_result *r)
 {
   if (r->nr > 0 && r->r[r->nr-1].type == NX_NU)
     {
@@ -248,7 +248,7 @@ nxp_last_has_A(nx_result *r)
       int i;
       for (i = 0; nu[i]; ++i)
 	{
-	  if (nu[i]->sys->name[1] == 'A')
+	  if (nu[i]->sys->name[1] == 'S' && nu[i]->sys->name[1] == 'a')
 	    return 1;
 	}
     }
@@ -493,10 +493,10 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 	{
 	  nx_number **nu = r->r[r->nr-1].nu;
 	  int i;
-	  char A_OR_D = toupper(ip->step->a_or_d);
+	  char A_OR_D = tolower(ip->step->a_or_d);
 	  for (i = 0; nu[i]; ++i)
 	    {
-	      if (nu[i]->sys->name[1] == A_OR_D)
+	      if (nu[i]->sys->name[1] == 'S' && nu[i]->sys->name[2] == A_OR_D)
 		{
 		  /* set the matching sys-number to be the only one in the array */
 		  if (i > 0)

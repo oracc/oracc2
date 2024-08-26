@@ -7,13 +7,21 @@
 
 <xsl:param name="period" select="'na'"/>
 
-<xsl:param name="font" select="noto"/>
+<xsl:param name="dfont" select="'noto'"/>
+
+<xsl:variable name="font">
+  <xsl:choose>
+    <xsl:when test="/*/@c"><xsl:message>Setting font from @c</xsl:message><xsl:value-of select="/*/@c"/></xsl:when>
+    <xsl:otherwise><xsl:value-of select="$dfont"/></xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
 
 <xsl:variable name="apos">
   <xsl:text>'</xsl:text>
 </xsl:variable>
 
 <xsl:template match="/">
+  <xsl:message>p4cuneify.xsl using font=<xsl:value-of select="$font"/></xsl:message>
   <html>
     <head>
       <title>Cuneified <xsl:value-of select="/*/@n"/></title>
@@ -58,6 +66,9 @@
     </td>
   </tr>
 </xsl:template>
+
+<!-- drop sub-line variants -->
+<xsl:template match="xtf:v"/>
 
 <xsl:template match="gdl:w">
   <xsl:for-each select=".//*[@gdl:utf8]">
