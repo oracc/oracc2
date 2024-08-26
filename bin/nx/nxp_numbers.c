@@ -172,23 +172,31 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   /* create a cand list from (gur) */
   m = nxp_candidates_inst(gp, type, data, ncand);
 
-  /* set the unit for all the A-cand to (gur) nx_step */
-  for (i = 0; nu[i]; ++i)
-    nu[i]->unit = m[i]->last;
-
-  /* now create a NUM nx_step for the number and make it the first step in all the cand
-     we got from (gur) */
+  /* now create a NUM nx_step for the number with (gur) */
   nx_step *nnum = nxp_nx_step(ip, NX_STEP_NUM, ip->text, type, data, nu[0]);
 
-  for (i = 0; m[i]; ++i)
-    m[i]->steps = m[i]->last = nnum;
+  /* set the unit for all the A-cand to (gur) nx_step */
+  for (i = 0; nu[i]; ++i)
+    nu[i]->unit = m[0]->last;
 
-  /* now m is a cand array based on 'A (gur)': 
-     if the preceding result is a guru₇, merge the result into that */
-
+  /* if there is a previous guru₇ attach nnum to that */
   if (nxp_ends_with_guru7(r))
     {
-      printf("found guru7");
+      /* discard the cand we made for (gur) */
+      free(m);
+      /* printf("found guru7\n"); */
+      /* pull the cand off result to be the new cand */
+      m = r->r[r->nr-1].nu;
+      --r->nr;
+      /* for each ncand attach the nnum as the last step and reset last ptr */
+      for (i = 0; m[i]; ++i)
+	m[i]->steps->next = m[i]->last = nnum;
+    }
+  else
+    {
+      /* set the steps and last for all the cand to the A+(gur) nx_step */
+      for (i = 0; m[i]; ++i)
+	m[i]->steps = m[i]->last = nnum;
     }
   
   /* Now we have re-headed cand to start with the guru₇ or (gur); add
@@ -212,8 +220,8 @@ nxp_ends_with_guru7(nx_result *r)
       int i;
       for (i = 0; nu[i]; ++i)
 	{
-	  if (nu[i]->sys->name[1] == 'A' && nu[i]->unit
-	      && !strcmp((ccp)nu[i]->unit->tok.tok, "guru₇"))
+	  if (nu[i]->sys->name[1] == 'C'
+	      && !strcmp((ccp)nu[i]->last->num->unit->tok.tok, "guru₇"))
 	    return 1;
 	}
     }
@@ -517,7 +525,24 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 		   * unit, reset all the cand last steps to be
 		   * num+unit and return it for further parsing
 		   */
-		  return nxp_candidates_inst(ip, type, data, ncand);		  
+		  --r->nr; /* remove the number from the results */
+
+		  /* create a cand list from the unit-word */
+		  nx_number **m = nxp_candidates_inst(ip, type, data, ncand);
+
+		  /* set the unit for all the NUM-cand to (gur) nx_step */
+		  for (i = 0; nu[i]; ++i)
+		    nu[i]->unit = m[i]->last;
+
+		  /* now create a NUM nx_step for the number and make
+		     it the first step in all the cand we got from the
+		     unit-word */
+		  nx_step *nnum = nxp_nx_step(ip, NX_STEP_NUM, ip->text, type, data, nu[0]);
+
+		  for (i = 0; m[i]; ++i)
+		    m[i]->steps = m[i]->last = nnum;
+
+		  return m;
 		}
 	    }
 	}

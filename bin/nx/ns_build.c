@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include "nx.h"
 
-int build_trace = 1;
+int build_trace = 0;
 
 void
 nsb_sys(uchar *t)
