@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include "nx.h"
 
+static int nx_gcd(long n, long m);
+
 /* Add n2 into n1 */
 void
 nx_add_frac(struct nx_num *n1, struct nx_num *n2)
@@ -31,4 +33,27 @@ nx_mul_frac(struct nx_num *n1, struct nx_num *n2)
 {
   n1->n *= n2->n;
   n1->d *= n2->d;
+}
+
+static int
+nx_gcd(long n, long m)
+{
+  int remainder;
+  while (n != 0)
+    {
+      remainder = m % n;
+      m = n;
+      n = remainder;
+    }
+  return m;
+}
+
+void
+nx_simplify(struct nx_num *np)
+{
+  int gcd = nx_gcd(np->n, np->d);
+  printf("nx_simplify: n = %llu/%d has gcd = %d\n", np->n, np->d, gcd);
+  np->n /= gcd;
+  np->d /= gcd;
+  printf("nx_simplify: result n = %llu/%d\n", np->n, np->d);
 }

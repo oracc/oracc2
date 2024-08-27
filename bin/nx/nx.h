@@ -63,6 +63,7 @@ typedef struct nx_step
     nx_number *num;
   };
   struct nx_step *next;
+  nx_num *aev; /* convenience pointer to the computed aev for the tok/num/num-unit combo */
 } nx_step;
 
 typedef enum nx_restok_t { NX_NO , NX_NU , NX_NA } nx_restok_t;
