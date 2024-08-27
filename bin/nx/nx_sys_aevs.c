@@ -1,13 +1,13 @@
 #include <oraccsys.h>
 #include "nx.h"
 
-static void nx_set_aev_l(ns_step *s);
-static void nx_set_aev_r(ns_step *s);
+static void nx_set_aev_r(ns_step *s, int d);
 
-void
+ns_step *
 nx_sys_aevs(ns_sys *sys)
 {
   sys->aev_done = 1;
+  ns_step *base_step = NULL;
   if (sys->base)
     {
       /* find the base */
@@ -17,49 +17,43 @@ nx_sys_aevs(ns_sys *sys)
 	  break;
 
       /* error if base not found */
-      
-      /* traverse down to the smallest fraction, i.e., the largest
-	 denominator we need */
-      ns_step *f; /* fraction */
-      for (f = s->next; f; f = f->next)
+      if (s)
+	base_step = s;
+
+      /* compute common denominator of right-steps after base */
+      ns_step *r;
+      int d = 1;
+      for (r = s; r->next; r = r->next)
 	{
-	  nx_set_aev_l(f);
-	  if (!f->next)
+	  d *= (int)r->next->mult.n;
+	  if (!r->next)
 	    break;
 	}
+
+      r->aev.n = 1;
+      r->aev.d = d;
+
+      printf("nx_sys_aevs: common denominator = %d\n", d);
       
-      /* traverse up setting all the n/d to have the same
+      /* traverse up setting all the aev to have the same
 	 denominator */
       ns_step *b; /* bigger */
-      for (b = f->prev; b; b = b->prev)
-	nx_set_aev_r(b);
+      for (b = r; b; b = b->prev)
+	nx_set_aev_r(b, d);
     }
-}
-
-/* Set the aev field of the step based on the step to the left.  The
- * mult field gives the number of the current step that make up the
- * left step.
- *
- * 1 * x = 60 * y = 3 * z => 1/1 = 1/60 = 1/3*1/60 = 1/180
- */
-static void
-nx_set_aev_l(ns_step *s)
-{
-  ns_step *l = s->prev;
-  unsigned long long n = s->mult.n * l->mult.n;
-  int d = s->mult.d * l->mult.d;
-  s->aev.n = n;
-  s->aev.d = d;
-  printf("%llu/%d %s in %llu/%d %s\n", n, d, s->unit, l->mult.n, l->mult.d, l->unit);
+  return base_step;
 }
 
 static void
-nx_set_aev_r(ns_step *s)
+nx_set_aev_r(ns_step *s, int d)
 {
-  ns_step *l = s->next;
-  unsigned long long n = s->mult.n * l->mult.n;
-  int d = s->mult.d * l->mult.d;
+  ns_step *r = s->next;
+  unsigned long long n;
+  if (r)
+    n = r->aev.n * r->mult.n;
+  else
+    n = 1;
   s->aev.n = n;
   s->aev.d = d;
-  printf("%llu/%d %s in %llu/%d %s\n", n, d, s->unit, l->mult.n, l->mult.d, l->unit);
+  printf("R: setting %s aev to %llu/%d\n", s->unit, n, d);
 }

@@ -248,7 +248,7 @@ nxp_last_has_Sa(nx_result *r)
       int i;
       for (i = 0; nu[i]; ++i)
 	{
-	  if (nu[i]->sys->name[1] == 'S' && nu[i]->sys->name[1] == 'a')
+	  if (nu[i]->sys->name[1] == 'S' && nu[i]->sys->name[2] == 'a')
 	    return 1;
 	}
     }

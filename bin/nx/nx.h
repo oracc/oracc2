@@ -102,7 +102,7 @@ extern void nxd_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from,
 extern void nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
 extern void nxr_print(nx_result *r, FILE *fp, int nonewline);
 extern void nxr_testdata(FILE *fp, nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
-extern void nx_sys_aevs(ns_sys *sys);
+extern ns_step* nx_sys_aevs(ns_sys *sys);
 extern void nx_values(nx_result *r);
 
 #endif/*NX_H_*/
