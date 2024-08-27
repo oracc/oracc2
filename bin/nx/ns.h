@@ -26,7 +26,9 @@ typedef struct ns_sys
 typedef struct ns_step
 {
   nx_num aev;	/* ancient equivalence value, i.e., this step
-		   expressed in terms of the system base */
+		   expressed in terms of the system base--this is for
+		   1x the unit; nx_step->aev has the multiplied
+		   version for the instance */
   nx_num mult;
   uchar *unit;
   struct ns_sys *sys;
@@ -53,6 +55,7 @@ typedef struct ns_inst
 				   without traversing the list to the end all the time */
   const uchar *text;		/* the grapheme or word in the instance */
   const uchar *unit;		/* the name of the corresponding step */
+  nx_num aev;			/* the aev for the count * the ns_step->aev */
   nx_num count;			/* the count for the step; can be integer or fraction */
   char a_or_d;			/* 'a' or 'd' for aš or diš */
 } ns_inst;

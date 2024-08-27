@@ -1,30 +1,10 @@
 #include <oraccsys.h>
 #include "nx.h"
 
-static int
-nx_aev_d(nx_step *nxs)
-{
-  if (nxs->type == NX_STEP_TOK)
-    return nxs->tok.inst->step->aev.d;
-  else
-    return nxs->num->unit->tok.inst->step->aev.d;
-}
-
-static unsigned long long
-nx_aev_n(nx_step *nxs)
-{
-  if (nxs->type == NX_STEP_TOK)
-    {
-      if (nxs->tok.inst)
-	return nxs->tok.inst->step->aev.n;
-      else
-	return 0;
-    }
-  else
-    return nxs->num->unit->tok.inst->step->aev.n;
-}
-
+static int nx_aev_d(nx_step *nxs);
+static unsigned long long nx_aev_n(nx_step *nxs);
 static nx_num nx_div_num(nx_num divide, nx_num by);
+static nx_num nx_sum_aevs(nx_num np);
 
 /* traverse the results performing conversion to modern values
  *
@@ -50,22 +30,91 @@ nx_values(nx_result *r)
 	  if (!np->sys->aev_done)
 	    base_step = nx_sys_aevs(np->sys);
 
-	  /* Sum the numerators for the steps */
-	  nx_step *s;
-	  nx_num sum;
-	  sum.d = nx_aev_d(np->steps);
-	  for (s = np->steps; s; s = s->next)
-	    sum.n += nx_aev_n(s);
-
-	  /* Divide the sum by the base fraction */
-	  nx_num res = nx_div_num(sum, base_step->aev);
+	  /* Compute the aev for each step-inst in the number */
+	  nx_inst_aevs(np);
 	  
-	  printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n", sum.n, sum.d, base_step->aev.n, base_step->aev.d, res.n, res.d);
+
+	  nx_num sum = nx_sum_aevs(np);
+	  
+	  /* Divide the sum by the base fraction */
+	  np->aev = nx_div_num(sum, base_step->aev);
+	  
+	  printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n",
+		 sum.n, sum.d,
+		 base_step->aev.n, base_step->aev.d,
+		 np->aev.n, np->aev.d);
 	  
 	  /* Render result as mev */
 	  
 	}
     }  
+}
+
+static nx_num
+nx_sum_aevs(nx_num np)
+{
+  /* Sum the numerators for the steps */
+  nx_step *s;
+  nx_num sum;
+  sum.d = nx_aev_d(np->steps);
+  for (s = np->steps; s; s = s->next)
+    sum.n += nx_aev_n(s);
+  return sum;
+}
+
+static void
+nx_set_inst_aev(ns_inst *ni)
+{
+  nx_num *saev = &ni->step->aev;
+  nx_num tmp;
+
+  /* ensure common denominator */
+  tmp.d = saev->d * ni->count->d;
+  tmp.n = saev->n * ni->count->d;
+
+  /* multiply inst numerator by count numerator */
+  tmp.n *= ni->count->n;
+
+  /* This ni->aev may not have the same denominator as the sys base */
+  ni->aev = tmp;
+}
+
+static void
+nx_set_num_aev(nx_num np)
+{
+  nx_set_inst_aevs(np);
+  nx_num sum = nx_sum_aevs(np);
+  
+  /* this could be a plain S or it could be S nw -- if the latter,
+     multiply by the nw */
+  if (np->unit)
+    {
+      nx_num *saev = &nxs->tok.inst->step->aev;
+      if (sum.d != saev->d)
+	{
+	  int d = sum.d * saev->d;
+	  unsigned long long n = sum.n * saev->d;
+	  sum.d = d;
+	  sum.n = n * saev->n;
+	}
+      else
+	sum.n *= saev->n;
+    }
+
+  np->aev = sum;
+}
+
+static void
+nx_inst_aevs(nx_num *np)
+{
+  nx_step *nxs;
+  for (ns = np->steps; ns; ns = ns->next)
+    {
+      if (nxs->type == NX_STEP_TOK)
+	nx_set_inst_aev(nxs->tok.inst);
+      else
+	nx_set_num_aev(nxs->num);
+    }
 }
 
 static nx_num
@@ -78,4 +127,36 @@ nx_div_num(nx_num divide, nx_num by)
   res.n = divide.n * by.n;
   res.d = divide.d * by.d;
   return res;
+}
+
+static nx_num *
+nx_step_aev(nx_step *nxs)
+{
+  if (nxs->type == NX_STEP_TOK)
+    return &nxs->tok.inst->step->aev;
+  else
+    return &nxs->num->unit->tok.inst->step->aev;
+}
+
+static int
+nx_aev_d(nx_step *nxs)
+{
+  if (nxs->type == NX_STEP_TOK)
+    return nxs->tok.inst->step->aev.d;
+  else
+    return nxs->num->unit->tok.inst->step->aev.d;
+}
+
+static unsigned long long
+nx_aev_n(nx_step *nxs)
+{
+  if (nxs->type == NX_STEP_TOK)
+    {
+      if (nxs->tok.inst)
+	return nxs->tok.inst->step->aev.n;
+      else
+	return 0;
+    }
+  else
+    return nxs->num->unit->tok.inst->step->aev.n;
 }

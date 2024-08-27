@@ -44,6 +44,7 @@ typedef struct nx_step_tok
   enum nx_numtok type;
   const void *data;
   ns_inst *inst;
+  nx_num aev;
 } nx_step_tok;
 
 /* This is a result step which comes from parsed input not from the
