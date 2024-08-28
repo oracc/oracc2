@@ -305,6 +305,8 @@ function act_isid(evt) {
     }
     pager.setAttribute("data-glos", getData(evt).getAttribute("data-lang"));
     pager.setAttribute("data-gxis", getData(evt).getAttribute("data-isid"));
+    pager.setAttribute("data-zoom", "0");
+    setCurrentPage("1");
     pageLocation();
 }
 
