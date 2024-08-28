@@ -1,6 +1,7 @@
 #include <string.h>
 #include "nx.h"
 
+static char *nx_decimal(nx_num *c);
 static char *render_litres(double val);
 static char *render_grams(double val);
 static char *render_mm(double val);
@@ -8,9 +9,34 @@ static char *render_msq(double val);
 static char *render_raw(double val, const char *meu);
 
 char *
+nx_modern(struct nx_num *mev, const char *meu)
+{
+  if (!strcmp(meu, "u"))
+    return nx_decimal(mev);
+  else
+    {
+      double val = ((double)mev->n) / mev->d;
+      if (!strcmp(meu,"l"))
+	return render_litres(val);
+      else if (!strcmp(meu,"g"))
+	return render_grams(val);
+      else if (!strcmp(meu,"mm"))
+	return render_mm(val);
+      else if (!strcmp(meu,"m2"))
+	return render_msq(val);
+      else
+	{
+	  fprintf(stderr,"nx: modern unit %s not handled\n",meu);
+	  return render_raw(val,meu);
+	}
+    }
+}
+
+static char *
 nx_decimal(nx_num *c)
 {
   char buf[64];
+  nx_simplify(c);
   if (c->d > 1)
     {
       if (c->n > c->d)
@@ -21,25 +47,6 @@ nx_decimal(nx_num *c)
   else
     sprintf(buf, "%lld",c->n);
   return strdup(buf);
-}
-
-char *
-nx_modern(struct nx_num *mev, const char *meu)
-{
-  double val = ((double)mev->n) / mev->d;
-  if (!strcmp(meu,"l"))
-    return render_litres(val);
-  else if (!strcmp(meu,"g"))
-    return render_grams(val);
-  else if (!strcmp(meu,"mm"))
-    return render_mm(val);
-  else if (!strcmp(meu,"m2"))
-    return render_msq(val);
-  else
-    {
-      fprintf(stderr,"nx: modern unit %s not handled\n",meu);
-      return render_raw(val,meu);
-    }
 }
 
 static char *

@@ -7,7 +7,9 @@ static int nx_gcd(long n, long m);
 void
 nx_add_frac(struct nx_num *n1, struct nx_num *n2)
 {
-  if (n1->d == n2->d)
+  if (n1->d == 0)
+    *n1 = *n2;
+  else if (n1->d == n2->d)
     n1->n += n2->n;
   else if (n2->d > n1->d && (n2->d%n1->d) == 0)
     {

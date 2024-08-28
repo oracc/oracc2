@@ -1,6 +1,70 @@
 #include <oraccsys.h>
 #include "nx.h"
 
+void nxd_show_aevs(nx_number *np);
+void nxd_show_step(nx_step *ns);
+
+void
+nxd_show_num(nx_num *nump)
+{
+  printf("%llu/%d",nump->n, nump->d);
+}
+
+void
+nxd_show_sum(nx_num *sump)
+{
+  printf("==>> ");
+  nxd_show_num(sump);
+  printf("\n");
+}
+
+void
+nxd_show_aevs(nx_number *np)
+{
+  nx_step *nxs;
+  printf("%s => ", np->sys->name);
+  for (nxs = np->steps; nxs; nxs = nxs->next)
+    {
+      nxd_show_step(nxs);
+      printf("=");
+      nxd_show_num(nxs->aev);
+      printf(" ");
+    }
+  printf("\n");
+}
+
+void
+nxd_show_Snum(nx_number *np)
+{
+  printf("<%s:", np->sys->name);
+  nx_step *nxs;
+  int i = 0;
+  for (nxs = np->steps; nxs; nxs = nxs->next)
+    {
+      if (i++)
+	printf(".");
+      printf("%s", nxs->tok.tok);
+    }
+  printf(">");
+}
+
+void
+nxd_show_step(nx_step *nxs)
+{
+  if (nxs->type == NX_STEP_TOK)
+    {
+      printf("[");
+      nxd_show_num(&nxs->tok.inst->count);
+      printf("*%s]",nxs->tok.inst->step->unit);
+    }
+  else
+    {
+      printf("[");
+      nxd_show_Snum(nxs->num);
+      printf("*%s]", nxs->num->unit->tok.inst->step->unit);
+    }
+}
+
 void
 nxd_show_inst(const uchar *tok, ns_inst *ip)
 {
