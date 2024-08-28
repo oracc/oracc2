@@ -3,7 +3,7 @@
 
 static void nx_set_aev_r(ns_step *s, int d);
 
-ns_step *
+void
 nx_sys_aevs(ns_sys *sys)
 {
   sys->aev_done = 1;
@@ -41,7 +41,7 @@ nx_sys_aevs(ns_sys *sys)
       for (b = r; b; b = b->prev)
 	nx_set_aev_r(b, d);
     }
-  return base_step;
+  sys->base_step = base_step;
 }
 
 static void

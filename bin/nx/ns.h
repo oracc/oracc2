@@ -18,6 +18,7 @@ typedef struct ns_sys
   List *elist;
   struct ns_step *steps;
   struct ns_step *last;
+  struct ns_step *base_step;
   uchar *det;
   Hash *i;			/* inst text pointing to sys copy of inst */
   int aev_done;

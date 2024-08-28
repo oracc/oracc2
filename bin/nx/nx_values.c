@@ -34,9 +34,6 @@ nx_values(nx_result *r)
 	  /* soon: check for ambiguity */
 	  /* we only use the first match for computing the value */
 	  nx_number *np = r->r[i].nu[0];
-	  ns_step *base_step = NULL;
-	  if (!np->sys->aev_done)
-	    base_step = nx_sys_aevs(np->sys);
 
 	  /* Compute the aev for each step-inst in the number */
 	  nx_inst_aevs(np);
@@ -48,11 +45,11 @@ nx_values(nx_result *r)
 	  nxd_show_sum(&sum);
 	  
 	  /* Divide the sum by the base fraction */
-	  np->aev = nx_div_num(sum, base_step->aev);
+	  np->aev = nx_div_num(sum, np->sys->base_step->aev);
 
 	  printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n",
 		 sum.n, sum.d,
-		 base_step->aev.n, base_step->aev.d,
+		 np->sys->base_step->aev.n, np->sys->base_step->aev.d,
 		 np->aev.n, np->aev.d);
 
 	  /* calculate the mev from the conv value */
@@ -83,6 +80,8 @@ static void
 nx_inst_aevs(nx_number *np)
 {
   nx_step *ns;
+  if (!np->sys->aev_done)
+    nx_sys_aevs(np->sys);
   for (ns = np->steps; ns; ns = ns->next)
     {
       if (ns->type == NX_STEP_TOK)
@@ -126,7 +125,11 @@ nx_set_num_aev(nx_number *np)
 {
   nx_inst_aevs(np);
   nx_num sum = nx_sum_aevs(np);
-  
+
+  /* This is the total of the Snum */
+  nx_simplify(&sum);
+  np->aev = sum;
+
   /* this could be a plain S or it could be S nw -- if the latter,
      multiply by the nw */
   if (np->unit)
@@ -141,10 +144,13 @@ nx_set_num_aev(nx_number *np)
 	}
       else
 	sum.n *= saev->n;
+      /* Now sum contains the value for the nx_step that has the aev
+	 ptr to the product of the Snum and the unit if any */
     }
-
-  np->aev = sum;
-  return &np->aev;
+  /* this is a memory leak--fix it */
+  nx_num *sump = malloc(sizeof(nx_num));
+  *sump = sum;
+  return sump;
 }
 
 static nx_num

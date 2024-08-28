@@ -7,7 +7,10 @@ void nxd_show_step(nx_step *ns);
 void
 nxd_show_num(nx_num *nump)
 {
-  printf("%llu/%d",nump->n, nump->d);
+  if (nump->d == 1)
+    printf("%llu",nump->n, nump->d);
+  else
+    printf("%llu/%d",nump->n, nump->d);
 }
 
 void
@@ -61,6 +64,8 @@ nxd_show_step(nx_step *nxs)
     {
       printf("[");
       nxd_show_Snum(nxs->num);
+      printf("=");
+      nxd_show_num(&nxs->num->aev);
       printf("*%s]", nxs->num->unit->tok.inst->step->unit);
     }
 }

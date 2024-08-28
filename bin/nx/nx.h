@@ -107,7 +107,7 @@ extern void nxd_show_sum(nx_num *sump);
 extern void nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
 extern void nxr_print(nx_result *r, FILE *fp, int nonewline);
 extern void nxr_testdata(FILE *fp, nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
-extern ns_step* nx_sys_aevs(ns_sys *sys);
+extern void nx_sys_aevs(ns_sys *sys);
 extern void nx_values(nx_result *r);
 extern void nx_add_frac(struct nx_num *n1, struct nx_num *n2);
 extern char *nx_modern(struct nx_num *mev, const char *meu);
