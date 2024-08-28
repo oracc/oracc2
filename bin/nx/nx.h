@@ -26,7 +26,7 @@ typedef struct nx_number
   int invalid;		/* used during parse to track whether a candidate is still valid or not */
   ns_sys *sys;		/* the result system for this parse */
   nx_num aev; 		/* ancient equivalency value */
-  double mev; 		/* modern equivalency value */
+  nx_num mev; 		/* modern equivalency value as an nx frac */
   const uchar *me_unit; /* modern unit */
   const uchar *me_str; 	/* modern equivalency as formatted string */
   struct nx_step *steps;/* the parsed steps */
@@ -110,7 +110,9 @@ extern void nxr_testdata(FILE *fp, nx_result *r, nx_numtok *nptoks, const uchar 
 extern void nx_sys_aevs(ns_sys *sys);
 extern void nx_values(nx_result *r);
 extern void nx_add_frac(struct nx_num *n1, struct nx_num *n2);
+extern void nx_mul_frac(struct nx_num *n1, struct nx_num *n2);
 extern char *nx_modern(struct nx_num *mev, const char *meu);
 extern void nx_simplify(struct nx_num *np);
+extern nx_num nx_div_num(nx_num divide, nx_num by);
 
 #endif/*NX_H_*/

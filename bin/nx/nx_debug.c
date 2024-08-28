@@ -8,7 +8,7 @@ void
 nxd_show_num(nx_num *nump)
 {
   if (nump->d == 1)
-    printf("%llu",nump->n, nump->d);
+    printf("%llu", nump->n);
   else
     printf("%llu/%d",nump->n, nump->d);
 }

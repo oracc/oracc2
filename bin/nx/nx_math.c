@@ -37,6 +37,19 @@ nx_mul_frac(struct nx_num *n1, struct nx_num *n2)
   n1->d *= n2->d;
 }
 
+nx_num
+nx_div_num(nx_num divide, nx_num by)
+{
+  nx_num res;
+  int d = by.d;
+  by.d = (int)by.n;
+  by.n = d;
+  res.n = divide.n * by.n;
+  res.d = divide.d * by.d;
+  nx_simplify(&res);
+  return res;
+}
+
 static int
 nx_gcd(long n, long m)
 {

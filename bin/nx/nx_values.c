@@ -6,13 +6,12 @@ static int nx_aev_d(nx_step *nxs);
 static unsigned long long nx_aev_n(nx_step *nxs);
 #endif
 
-static nx_num nx_div_num(nx_num divide, nx_num by);
 static nx_num nx_sum_aevs(nx_number *np);
 static void nx_inst_aevs(nx_number *np);
 static void nx_inst_aevs(nx_number *np);
 static nx_num *nx_set_inst_aev(ns_inst *ni);
 static nx_num *nx_set_num_aev(nx_number *np);
-static nx_num nx_calculate_mev(nx_num *aev, ns_sys *sys, const char **meup);
+static void nx_calculate_mev(nx_number *np, const char **meup);
 
 /* traverse the results performing conversion to modern values
  *
@@ -41,10 +40,12 @@ nx_values(nx_result *r)
 	  nxd_show_aevs(np);
 
 	  nx_num sum = nx_sum_aevs(np);
-
+	  nx_simplify(&sum);
 	  nxd_show_sum(&sum);
 	  
-	  /* Divide the sum by the base fraction */
+	  /* Divide the sum by the base fraction; the mev is expressed
+	     in terms of the base, so this step ensures that np->aev
+	     is ready for conversion to mev */
 	  np->aev = nx_div_num(sum, np->sys->base_step->aev);
 
 	  printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n",
@@ -52,27 +53,40 @@ nx_values(nx_result *r)
 		 np->sys->base_step->aev.n, np->sys->base_step->aev.d,
 		 np->aev.n, np->aev.d);
 
-	  /* calculate the mev from the conv value */
+	  /* calculate the mev from the conv value; result in np->mev */
 	  const char *meu = NULL;
-	  nx_num mev = nx_calculate_mev(&np->aev, np->sys, &meu);
+	  nx_calculate_mev(np, &meu);
 	  
 	  /* render mev result */
-	  printf("mev = %s\n", nx_modern(&mev, meu));
+	  printf("mev = %s\n", nx_modern(&np->mev, meu));
 	}
     }
 }
 
-static nx_num
-nx_calculate_mev(nx_num *aev, ns_sys *sys, const char **meup)
+static void
+nx_calculate_mev(nx_number *np, const char **meup)
 {
-  if (!strcmp((ccp)sys->conv, "1u"))
+  if (!strcmp((ccp)np->sys->conv, "1u"))
     {
-      *meup = (const char *)sys->conv+1;
-      return *aev;
+      *meup = (const char *)np->sys->conv+1;
+      np->mev.n = 1;
+      np->mev.d = 1;
+      nx_mul_frac(&np->mev, &np->aev);
     }
   else
     {
-      return *aev;
+      const char *m = (ccp)np->sys->conv;
+      while (*m && !isalpha(*m))
+	++m;
+      *meup = m;
+      if (strchr((ccp)np->sys->conv, '.'))
+	fprintf(stderr, "nx_values.c: please don't use '.' in mev\n");
+      else
+	{
+	  np->mev.n = strtoll((ccp)np->sys->conv, NULL, 10);
+	  np->mev.d = 1;
+	  nx_mul_frac(&np->mev, &np->aev);
+	}
     }
 }
 
@@ -135,15 +149,7 @@ nx_set_num_aev(nx_number *np)
   if (np->unit)
     {
       nx_num *saev = &np->unit->tok.inst->step->aev;
-      if (sum.d != saev->d)
-	{
-	  int d = sum.d * saev->d;
-	  unsigned long long n = sum.n * saev->d;
-	  sum.d = d;
-	  sum.n = n * saev->n;
-	}
-      else
-	sum.n *= saev->n;
+      nx_mul_frac(&sum, saev);
       /* Now sum contains the value for the nx_step that has the aev
 	 ptr to the product of the Snum and the unit if any */
     }
@@ -151,18 +157,6 @@ nx_set_num_aev(nx_number *np)
   nx_num *sump = malloc(sizeof(nx_num));
   *sump = sum;
   return sump;
-}
-
-static nx_num
-nx_div_num(nx_num divide, nx_num by)
-{
-  nx_num res;
-  int d = by.d;
-  by.d = (int)by.n;
-  by.n = d;
-  res.n = divide.n * by.n;
-  res.d = divide.d * by.d;
-  return res;
 }
 
 #if 0
