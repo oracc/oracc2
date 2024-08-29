@@ -157,7 +157,7 @@ a img     { border: 0px; }
 a[href]:hover   { color: white; background-color: red; text-decoration: underline; }
 a[onclick]:hover   { color: white; background-color: red; }
 
-.selected { background-color: #eee; }
+.selected { background-color: silver; }
 
 span.error { background-color: red; color: white; }
 
@@ -188,8 +188,6 @@ span.foreign { font-style: italic; }
 p.ce-result:nth-child(even of .ce-result) { background-color: #eee; }
 p.ce-label:nth-child(even of .ce-label) { background-color: #eee; }
 
-p.ce-result:nth-child(even of .ce-result) .selected { background-color: silver; }
-		     
 table.kwic { width: 100%; }
 
 /* CBD CSS */

@@ -10,7 +10,6 @@ span.cf { font-size: 100%; }
 span.gw { font-size: 80%; }
 span.pos { font-size: 90%; }
 span.phon { font-size: 90%; font-family: serif; padding-left: 2em }
-span.selected { background-color: #eee; }
 
 div.summary { width: 90%; margin: auto; margin-bottom: 5px; padding-bottom: 10px;
 	    border-bottom: 6px solid #cfc; }

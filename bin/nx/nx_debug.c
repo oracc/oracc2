@@ -29,8 +29,11 @@ nxd_show_aevs(nx_number *np)
   for (nxs = np->steps; nxs; nxs = nxs->next)
     {
       nxd_show_step(nxs);
-      printf("=");
-      nxd_show_num(nxs->aev);
+      if (nxs->aev)
+	{
+	  printf("=");
+	  nxd_show_num(nxs->aev);
+	}
       printf(" ");
     }
   printf("\n");
@@ -56,9 +59,14 @@ nxd_show_step(nx_step *nxs)
 {
   if (nxs->type == NX_STEP_TOK)
     {
-      printf("[");
-      nxd_show_num(&nxs->tok.inst->count);
-      printf("*%s]",nxs->tok.inst->step->unit);
+      if (nxs->tok.inst)
+	{
+	  printf("[");
+	  nxd_show_num(&nxs->tok.inst->count);
+	  printf("*%s]",nxs->tok.inst->step->unit);
+	}
+      else
+	printf("%s", nxs->tok.tok);
     }
   else
     {

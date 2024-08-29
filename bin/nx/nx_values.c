@@ -112,13 +112,17 @@ nx_sum_aevs(nx_number *np)
   nx_step *nxs;
   nx_num sum = { 0, 0 };
   for (nxs = np->steps; nxs; nxs = nxs->next)
-    nx_add_frac(&sum, nxs->aev);
+    if (nxs->aev)
+      nx_add_frac(&sum, nxs->aev);
   return sum;
 }
 
 static nx_num *
 nx_set_inst_aev(ns_inst *ni)
 {
+  if (!ni)
+    return NULL;
+  
   nx_num *saev = &ni->step->aev;
   nx_num tmp;
 
