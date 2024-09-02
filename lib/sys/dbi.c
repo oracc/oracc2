@@ -156,7 +156,7 @@ dbi_close (Dbi_index *dp)
 }
 
 Dbi_index *
-dbi_create (const char *name, const char *dir, size_t hash_init_size, size_t data_size, Dbi_type_e type)
+dbi_create (const char *name, const char *dir, Unsigned32 hash_init_size, Unsigned32 data_size, Dbi_type_e type)
 {
   Dbi_index *tmp;
 
@@ -319,13 +319,13 @@ dbi_find (Dbi_index *dp, const Uchar *key)
       Clash_hdr *cp;
       if (dp->h.ht_clash_count
           && NULL != (cp = bsearch (&hashval, dp->clash_table, 
-				    (size_t)dp->h.ht_clash_count, sizeof (Clash_hdr), 
+				    (Unsigned32)dp->h.ht_clash_count, sizeof (Clash_hdr), 
 				    clash_hdr_cmp)))
 	{
 	  Unsigned32 *ret;
   	  tmp_dp = dp;
 	  ret = bsearch (key, &dp->clash_indexes[cp->offset], 
-			 (size_t)cp->count, sizeof (Unsigned32), clash_index_cmp);
+			 (Unsigned32)cp->count, sizeof (Unsigned32), clash_index_cmp);
 	  if (NULL != ret)
 	    offset = *ret;
 	  else
@@ -410,7 +410,7 @@ disk_strcmp (const Uchar *key, FILE *fp, Unsigned32 offset)
 			  fprintf(stderr,"dbi: write failed on %s (disk full?)\n",_fn)
 #define xxfread(_fn,_t,_buf,_siz,_cnt,_fp) \
 			if (fread(_buf,_siz,_cnt,_fp)!=_cnt)\
-			  fprintf(stderr,"dbi: read %ld bytes failed on %s at %s:%d\n",_cnt*_siz,_fn,__FILE__,__LINE__)
+			  fprintf(stderr,"dbi: read %u*%u bytes failed on %s at %s:%d\n",_cnt,(Unsigned32)_siz,_fn,__FILE__,__LINE__)
 
 static List *clash_list;
 static Uint clash_indexes_count;
@@ -423,7 +423,7 @@ struct Dbi_bin
     char fn[L_tmpnam];
     FILE *fp;
     Unsigned32 nkeys;
-    size_t size;
+    Unsigned32 size;
     Unsigned32 first_key;
     Unsigned32 last_key;
   };
@@ -436,7 +436,7 @@ static Dbi_bin *bins;
 static Int bins_count;
 static Dbi_index *tmp_dp;	/* used to give list_exec function args
 				 * access to the .dbh file we're writing */
-static size_t direct_keys;
+static Unsigned32 direct_keys;
 
 /** prototypes */
 static int hash_cmp (const void *k1, const void *k2);
@@ -669,7 +669,7 @@ write_multiple (Dbi_index * dp)
 {
   int bins_to_do, bins_opened, first_bin = 0;
 
-  qsort (node_ptrs, (size_t)dp->h.entry_count, sizeof (Dbi_tnode *), kid_cmp);
+  qsort (node_ptrs, (Unsigned32)dp->h.entry_count, sizeof (Dbi_tnode *), kid_cmp);
   bins_to_do = assign_bins (dp->h.data_size);
 #if FLUSH_DEBUG
   fprintf (stderr, "splitting into %d bins\n", bins_to_do);
@@ -926,8 +926,8 @@ sort_bins (Dbi_index * dp, Unsigned16 start, Unsigned16 to_do)
  * to dump the id, count and data onto the permanent data file.
  *
  * The tmp file has the structure 
- *	kid (size_t)
- *	count (size_t)
+ *	kid (Unsigned32)
+ *	count (Unsigned32)
  *	data (dip->h.data_size*count)
  */
 static void
@@ -937,7 +937,7 @@ transfer_bin (Dbi_index*dip, Dbi_bin*dbp)
   Unsigned32 buf_len = 0;
   Dbi_tnode *np;
   void *buf = NULL;
-  size_t new;
+  Unsigned32 new = 0;
 
   /* set node pointer */
   np = node_ptrs[dbp->first_key];
@@ -972,7 +972,7 @@ transfer_bin (Dbi_index*dip, Dbi_bin*dbp)
   for (i = 0; i < np->kcount; ++i)
     {
       fseek (dbp->fp, sizeof (Unsigned32), SEEK_CUR);	/* skip the kid */
-      xxfread (dbp->fn, TRUE, &new, sizeof (Unsigned32), 1, dbp->fp);
+      xxfread (dbp->fn, TRUE, &new, (int)sizeof (Unsigned32), 1, dbp->fp);
       if (new > buf_len)
 	{
 	  buf_len = new;
@@ -1006,7 +1006,7 @@ sort_and_dump_bin (Dbi_index *dip, Dbi_bin *dbp)
 #endif
 
   /* read in file */
-  buf = malloc ((size_t)dbp->size);
+  buf = malloc ((Unsigned32)dbp->size);
   xxfread (dbp->fn, TRUE, buf, 1, dbp->size, dbp->fp);
 
   /* allocate array of pointers to D_info structures, one per kid in bin */
@@ -1086,12 +1086,12 @@ write_single (Dbi_index * dp)
   void *buf;
   Uint buf_len = 8, i;
 
-  buf = malloc ((size_t)(buf_len * dp->h.data_size));
-  qsort (node_ptrs, (size_t)dp->h.entry_count, sizeof (Dbi_tnode *), off_cmp);
+  buf = malloc ((Unsigned32)(buf_len * dp->h.data_size));
+  qsort (node_ptrs, (Unsigned32)dp->h.entry_count, sizeof (Dbi_tnode *), off_cmp);
   rewind (dp->_tmp_fp);
   for (i = 0; i < dp->h.entry_count; ++i)
     {
-      size_t count;
+      Unsigned32 count;
       register Dbi_tnode *np = node_ptrs[i];
 
       fseek (dp->_tmp_fp, node_ptrs[i]->offset, SEEK_SET);
@@ -1102,7 +1102,7 @@ write_single (Dbi_index * dp)
 	{
 	  buf_len *= 2;
 	  free (buf);
-	  buf = malloc ((size_t)buf_len * sizeof (dp->h.data_size));
+	  buf = malloc ((Unsigned32)buf_len * sizeof (dp->h.data_size));
 	}
       /* read data proper */
       xxfread (dp->_tmp_fn, TRUE, buf, dp->h.data_size, count, dp->_tmp_fp);
@@ -1325,13 +1325,13 @@ dbi_open (const char *name, const char *dir)
       tmp->i_fp = xfopen (tmp->i_fname, "rb");
       if (tmp->h.ht_clash_count)
 	{
-	  tmp->clash_table = malloc ((size_t)tmp->h.ht_clash_count * sizeof (Clash_hdr));
-	  tmp->clash_indexes = malloc ((size_t)tmp->h.ht_clash_indexes_count * sizeof (Unsigned32));
+	  tmp->clash_table = malloc ((Unsigned32)tmp->h.ht_clash_count * sizeof (Clash_hdr));
+	  tmp->clash_indexes = malloc ((Unsigned32)tmp->h.ht_clash_indexes_count * sizeof (Unsigned32));
 	  xxfread (tmp->h_fname, TRUE, 
-		   tmp->clash_table, sizeof (Clash_hdr), (size_t)tmp->h.ht_clash_count, 
+		   tmp->clash_table, sizeof (Clash_hdr), (Unsigned32)tmp->h.ht_clash_count, 
 		   tmp->h_fp);
 	  xxfread (tmp->h_fname, TRUE, 
-		   tmp->clash_indexes, sizeof (Unsigned32), (size_t)tmp->h.ht_clash_indexes_count, 
+		   tmp->clash_indexes, sizeof (Unsigned32), (Unsigned32)tmp->h.ht_clash_indexes_count, 
 		   tmp->h_fp);
 	}
       tmp->suspended = FALSE;
@@ -1349,7 +1349,7 @@ dbi_open (const char *name, const char *dir)
 }
 
 void
-dbi_set_cache (Dbi_index *dp, size_t elt_count)
+dbi_set_cache (Dbi_index *dp, Unsigned32 elt_count)
 {
   if (NULL == dp || dp->cache_size)
     abort();
@@ -1418,7 +1418,7 @@ static Unsigned32
 next_prime (Unsigned32 n)
 {
   Unsigned32 i;
-  size_t entry = n;
+  Unsigned32 entry = n;
   Boolean flag;
 
   while (++n != 0)
@@ -1438,6 +1438,6 @@ next_prime (Unsigned32 n)
         break;
     }
   if (n == 0)
-    fprintf(stderr, "dbi: Couldn't find a prime greater than %lu", entry);
+    fprintf(stderr, "dbi: Couldn't find a prime greater than %u", entry);
   return n;
 }

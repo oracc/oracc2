@@ -146,7 +146,7 @@ struct Dbi_index
 typedef struct Dbi_index Dbi_index;
 
 /**prototypes */
-extern Dbi_index *	dbi_create (const char *name, const char *fname, size_t hash_init_size, size_t data_size, Dbi_type_e type);
+extern Dbi_index *	dbi_create (const char *name, const char *fname, Unsigned32 hash_init_size, Unsigned32 data_size, Dbi_type_e type);
 extern Dbi_index *	dbi_open (const char *project,const char *index);
 extern Dbi_type_e	dbi_add (Dbi_index *dp, Uchar *key, void *data, Unsigned32 count);
 extern Unsigned32	hash_init (Unsigned32 n);
@@ -162,7 +162,7 @@ extern void	hash_term (void);
 extern void	set_clash_offset (void *vp);
 extern void *	dbi_detach_data (Dbi_index *dp, Unsigned32 *count);
 extern void *	dbi_slice (Dbi_index *dp, Unsigned32 s_from, Unsigned32 s_to, Unsigned32 *count);
-extern void 	dbi_set_cache (Dbi_index *dp, size_t elt_count);
+extern void 	dbi_set_cache (Dbi_index *dp, Unsigned32 elt_count);
 extern void	dbi_set_counts(FILE *cfp);
 extern void 	dbi_set_type(Dbi_index *dp, Unsigned32 type);
 extern void	dbi_set_user(Dbi_index *dp, Unsigned32 udata);

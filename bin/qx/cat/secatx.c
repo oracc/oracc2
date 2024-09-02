@@ -65,7 +65,7 @@ dn_add_name(const char *fname)
   s->uid = ++dn_next_uid;
   if (!dyntab)
     dyntab = hash_create(16);
-  hash_add(dyntab, (Uchar *)fname, s);
+  hash_add(dyntab, (ucp)s->name, s);
 #if 0
   progress("adding %s with uid %d\n",fname,s->uid);
 #endif
