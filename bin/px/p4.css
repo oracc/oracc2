@@ -402,3 +402,8 @@ div.oracc { border-top: 2px solid #ff2400;
 .oracc-d { color: #800020; font-size: 90%; }
 .oracc p { margin-block-start: 1em;
 	   margin-block-end: 1em; }
+
+/* XTC Outline Styling */
+a.haveimg   { padding-right: 3px; background-color: #9cf; }
+p.withimg   { text-indent: -5px; margin-left: 5px; }
+p.sansimg   { text-indent: -5px; margin-left: 5px; }

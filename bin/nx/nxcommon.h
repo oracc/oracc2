@@ -35,6 +35,7 @@ typedef struct nx
   Hash *ir;			/* global inst registry which indexes inst text to sys
 				   that it can be part of */
   List *hashes;			/* instance hashes are easier to free with this list */
+  List *lists;			/* sys->elists are easier to free with this list */
   FILE *testfp;
   FILE *input;
 } nx;

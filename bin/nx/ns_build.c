@@ -13,6 +13,7 @@ nsb_sys(uchar *t)
   nxp->sys->e = hash_create(7);
   list_add(nxp->hashes, nxp->sys->e);
   nxp->sys->elist = list_create(LIST_SINGLE);
+  list_add(nxp->lists, nxp->sys->elist);
   ++nxp->nsys;
   nsb_altflag = 0;
   if (build_trace)

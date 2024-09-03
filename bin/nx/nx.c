@@ -25,6 +25,7 @@ nx_init(void)
   nxp->m_nx_number = memo_init(sizeof(nx_number), 100);
   nxp->ir = hash_create(1024);
   nxp->hashes = list_create(LIST_SINGLE);
+  nxp->lists = list_create(LIST_SINGLE);
 }
 
 void
@@ -70,6 +71,13 @@ nx_term(void)
       for (h = list_first(nxp->hashes); h; h = list_next(nxp->hashes))
 	hash_free(h, NULL);
       list_free(nxp->hashes, NULL);
+    }
+  if (nxp->lists)
+    {
+      List *l;
+      for (l = list_first(nxp->lists); l; l = list_next(nxp->lists))
+	list_free(l, NULL);
+      list_free(nxp->lists, NULL);
     }
   free(nxp);
   nxp = NULL;

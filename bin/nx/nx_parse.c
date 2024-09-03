@@ -21,7 +21,7 @@ nx_parse(const uchar **toks, const void **data, int ntoks)
     ntoks = nxp_count_toks(toks);
 
   nx_result *r = nxp_new_result(ntoks);
-  nx_numtok *nptoks = calloc(ntoks, sizeof(nx_numtok));
+  r->nptoks = calloc(ntoks, sizeof(nx_numtok));
   
   /* This loop iterates over the entire toks list */
   int start = 0;
@@ -29,17 +29,17 @@ nx_parse(const uchar **toks, const void **data, int ntoks)
     {
       /* The inner loop finds the next num tok and the last num tok
 	 regardless of system; parsing comes later */
-      int next = nxp_next_num(toks, nptoks, start);
+      int next = nxp_next_num(toks, r->nptoks, start);
       if (next >= 0)
 	{
 	  if (start < next)
 	    nxp_nonnums(r, toks, data, start, next);
 
 	  /* last is the last token which is a number */
-	  int last = nxp_last_num(toks, nptoks, next);
+	  int last = nxp_last_num(toks, r->nptoks, next);
 
 	  /* process the numbers */
-	  nxp_numbers(r, nptoks, toks, data, next, last);
+	  nxp_numbers(r, r->nptoks, toks, data, next, last);
 
 	  start = last+1;
 	}

@@ -89,6 +89,7 @@ typedef struct nx_result
 {
   nx_restok *r;
   int nr;
+  nx_numtok *nptoks;
 } nx_result;
 
 extern int nsb_altflag;
