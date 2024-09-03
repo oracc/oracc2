@@ -15,25 +15,52 @@ void
 nx_init(void)
 {
   nxp = calloc(1, sizeof(nx));
-  nspool = nxp->p = pool_init();
-  nxp->m_sys = memo_init(sizeof(ns_sys), 10);
-  nxp->m_step = memo_init(sizeof(ns_step), 100);
+  nspool = nxp->b = pool_init();
+  nxp->p = pool_init();
+  nxp->m_ns_sys = memo_init(sizeof(ns_sys), 10);
+  nxp->m_ns_step = memo_init(sizeof(ns_step), 100);
+  nxp->m_ns_inst = memo_init(sizeof(ns_inst), 1000);
   nxp->m_nx_step = memo_init(sizeof(nx_step), 100);
-  nxp->m_inst = memo_init(sizeof(ns_inst), 1000);
+  nxp->m_nx_inst = memo_init(sizeof(ns_inst), 1000);
   nxp->m_nx_number = memo_init(sizeof(nx_number), 100);
   nxp->ir = hash_create(1024);
+}
+
+void
+nx_reset(void)
+{
+  pool_reset(nxp->p);
+#if 0
+  memo_reset(nxp->m_ns_sys);
+  memo_reset(nxp->m_ns_step);
+  memo_reset(nxp->m_ns_inst);
+#endif
+  if (nxp->toks)
+    free(nxp->toks);
+  if (nxp->data)
+    free(nxp->data);
+  nxp->toks = nxp->data = NULL;
+  memo_reset(nxp->m_nx_step);
+  memo_reset(nxp->m_nx_inst);
+  memo_reset(nxp->m_nx_number);
 }
 
 void
 nx_term(void)
 {
   pool_term(nxp->p);
-  memo_term(nxp->m_sys);
-  memo_term(nxp->m_step);
+  memo_term(nxp->m_ns_sys);
+  memo_term(nxp->m_ns_step);
+  memo_term(nxp->m_ns_inst);
   memo_term(nxp->m_nx_step);
-  memo_term(nxp->m_inst);
+  memo_term(nxp->m_nx_inst);
   memo_term(nxp->m_nx_number);
   hash_free(nxp->ir, NULL);
+  if (nxp->toks)
+    free(nxp->toks);
+  if (nxp->data)
+    free(nxp->data);
+  nxp->toks = nxp->data = NULL;
   free(nxp);
   nxp = NULL;
   nspool = NULL;
@@ -60,6 +87,8 @@ main(int argc, char **argv)
   
   nx_input();
   
-  if (nxp && nxp->testfp)
+  if (nxp->testfp)
     fclose(nxp->testfp);
+
+  nx_term();
 }

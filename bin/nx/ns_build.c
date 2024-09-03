@@ -8,7 +8,7 @@ int nsb_altflag;
 void
 nsb_sys(uchar *t)
 {
-  nxp->sys = memo_new(nxp->m_sys);
+  nxp->sys = memo_new(nxp->m_ns_sys);
   nxp->sys->name = t;
   nxp->sys->e = hash_create(7);
   nxp->sys->elist = list_create(LIST_SINGLE);
@@ -41,7 +41,7 @@ nsb_env(uchar *e, uchar *v)
   memmove(v,v+1,strlen((char*)v)+1);
   char s[strlen((const char *)e)+strlen((const char *)v)+5];
     sprintf(s, "$%s=\"%s\"", e, v);
-  list_add(nxp->sys->elist, pool_copy((uchar*)s, nxp->p));
+  list_add(nxp->sys->elist, pool_copy((uchar*)s, nspool));
   hash_add(nxp->sys->e, e, v);
   if (build_trace)
     printf("nsb_env: env %s has key %s and value '%s'\n", s, e, v);
@@ -63,7 +63,7 @@ nsb_mult(nx_num*n, const uchar *m)
 void
 nsb_step(uchar *a, uchar *m, uchar *u)
 {
-  ns_step *s = memo_new(nxp->m_step);
+  ns_step *s = memo_new(nxp->m_ns_step);
 
   if (build_trace)
     printf("nsb_step: step has mult %s and unit %s; altflag=%d\n", m, u, nsb_altflag);
@@ -170,7 +170,7 @@ nsb_inst_add(ns_inst *i, ns_inst_method meth)
 void
 nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
 {
-  ns_inst *i = memo_new(nxp->m_inst);
+  ns_inst *i = memo_new(nxp->m_ns_inst);
   i->text = g;
   i->unit = u;
   nsb_mult(&i->count, n);
@@ -184,7 +184,7 @@ nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
 void
 nsb_inst_u(uchar *x, uchar *g, uchar *u, ns_inst_method meth)
 {
-  ns_inst *i = memo_new(nxp->m_inst);
+  ns_inst *i = memo_new(nxp->m_ns_inst);
   i->text = g;
   i->unit = u;
   i->a_or_d = tolower(*x);
@@ -208,7 +208,7 @@ nsb_auto_inst_g(ns_sys *sp, int m, const uchar *u)
 	  if (build_trace)
 	    printf("nsb_auto_inst: adding %s\n", g);
 	  
-	  nsb_inst_g(pool_copy((uchar*)g, nxp->p), (const uchar *)n, u, NS_INST_AUTO);
+	  nsb_inst_g(pool_copy((uchar*)g, nspool), (const uchar *)n, u, NS_INST_AUTO);
 	}
     }
   else

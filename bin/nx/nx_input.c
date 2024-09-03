@@ -34,6 +34,7 @@ nx_input_unset(void)
   tlist = dlist = curr = NULL;
   mode = NXM_NONE;
   (void)nx_input_tok(NULL);
+  nx_reset();
 }
 
 static const uchar *
@@ -102,11 +103,13 @@ nx_input(void)
 	      if (tlist && list_len(tlist))
 		{
 		  nx_exec_lists(tlist, dlist);
-		  nx_term();
 		  nx_input_unset();
+		  nx_input_setup();
 		}
-	      nx_init();
-	      nx_input_setup();
+	      else if (mode == NXM_NONE)
+		{
+		  nx_input_setup();
+		}
 	    }
 	  else if (!strcmp((ccp)t, "%%d"))
 	    {
@@ -116,15 +119,11 @@ nx_input(void)
 	  else if (!strcmp((ccp)t, "%%."))
 	    {
 	      nx_exec_lists(tlist, dlist);
-	      nx_term();
 	      nx_input_unset();
 	      const uchar *u = nx_input_tok(nxp->input);
 	      if (u && strcmp((ccp)u, "%%n"))
-		{
-		  nx_init();
-		  nx_input_setup();
-		  nx_input_untok(u);
-		}
+		nx_input_setup();
+	      nx_input_untok(u);
 	    }
 	  else
 	    {
@@ -140,42 +139,6 @@ nx_input(void)
   if (tlist && list_len(tlist))
     {
       nx_exec_lists(tlist, dlist);
-      nx_term();
       nx_input_unset();
     }
 }
-
-#if 0
-static const uchar **
-nx_toks(uchar *t, int *ntoks)
-{
-  int n = 0;
-  while (isspace(*t))
-    ++t;
-  uchar *s = t;
-  while (*s)
-    {
-      ++n;
-      while (*s && !isspace(*s))
-	++s;
-      while (isspace(*s))
-	++s;
-    }
-  const uchar **toks = malloc((n+1)*sizeof(const uchar *));
-  s = t;
-  int i = 0;
-  while (*s)
-    {
-      toks[i++] = s;
-      while (*s && !isspace(*s))
-	++s;
-      if (isspace(*s))
-	*s++ = '\0';
-      while (isspace(*s))
-	++s;
-    }
-  toks[i] = NULL;
-  *ntoks = n;
-  return toks;
-}
-#endif

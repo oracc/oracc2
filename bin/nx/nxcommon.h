@@ -18,15 +18,17 @@ typedef struct nx_num
 
 typedef struct nx
 {
-  Memo *m_sys;
-  Memo *m_step;
-  Memo *m_inst;
+  Memo *m_ns_sys;
+  Memo *m_ns_step;
+  Memo *m_ns_inst;
+  Memo *m_nx_inst;
   Memo *m_nx_step;
   Memo *m_nx_number;
   const uchar **toks;
   const uchar **data;
   Hash *e;			/* global environment */
   List *elist;
+  Pool *b;			/* build pool; not reset during input */
   Pool *p;
   struct ns_sys *sys;
   int nsys;

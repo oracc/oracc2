@@ -117,6 +117,7 @@ extern void nx_simplify(struct nx_num *np);
 extern nx_num nx_div_num(nx_num divide, nx_num by);
 
 extern void nx_init(void);
+extern void nx_reset(void);
 extern void nx_term(void);
 extern void nx_input(void);
 extern void nx_exec(const uchar **toks, const uchar **data, int ntoks);

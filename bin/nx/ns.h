@@ -61,6 +61,7 @@ typedef struct ns_inst
 
 typedef enum ns_inst_method { NS_INST_AUTO , NS_INST_DATA } ns_inst_method;
 
+extern Pool *nspool;
 extern int nsflextrace, ns_flex_debug;
 extern int nslex (void);
 extern int nsparse (void);
