@@ -20,4 +20,6 @@ nx_exec(const uchar **toks, const uchar **data, int ntoks)
   nx_values(r);
   nxr_print(r, stdout, 0);
   mesg_print(stderr);
+  free(r->r);
+  free(r);
 }

@@ -4,6 +4,7 @@
 /* This is a simple driver to read the step-diagram data */
 
 extern int nsrestart(FILE *);
+extern int nslex_destroy(void);
 
 void
 ns_data(void)
@@ -13,6 +14,8 @@ ns_data(void)
   currnsfile = "ns.dat";
   nsrestart(fp);
   nsparse();
+  (void)nslex_destroy();
+  fclose(fp);
   if (mesg_status())
     {
       mesg_print(stderr);

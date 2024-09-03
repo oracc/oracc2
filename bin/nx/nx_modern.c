@@ -46,7 +46,7 @@ nx_decimal(nx_num *c)
     }
   else
     sprintf(buf, "%lld",c->n);
-  return strdup(buf);
+  return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
 static char *
