@@ -1,17 +1,26 @@
 #include <oraccsys.h>
 #include "nx.h"
-extern int nsrestart(FILE *);
+
+/* These are the routines used to store data during input */
+
 void
-nx_data(void)
+nx_data_init(void)
 {
-  mesg_init();
-  FILE *fp = fopen("ns.dat", "r");
-  currnsfile = "ns.dat";
-  nsrestart(fp);
-  nsparse();
-  if (mesg_status())
-    {
-      mesg_print(stderr);
-      exit(1);
-    }
+  
 }
+
+void
+nx_data_reset(void)
+{
+}
+
+void
+nx_data_str(void)
+{
+}
+
+void
+nx_data_term(void)
+{
+}
+

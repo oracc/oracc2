@@ -3,7 +3,9 @@
 
 Pool *nspool;
 
+#if 0
 static const uchar **nx_toks(uchar *t, int *ntoks);
+#endif
 
 /* The data manager object for the run; probably need to reset this
    after each text to handle large runs */
@@ -22,66 +24,42 @@ nx_init(void)
   nxp->ir = hash_create(1024);
 }
 
+void
+nx_term(void)
+{
+  pool_term(nxp->p);
+  memo_term(nxp->m_sys);
+  memo_term(nxp->m_step);
+  memo_term(nxp->m_nx_step);
+  memo_term(nxp->m_inst);
+  memo_term(nxp->m_nx_number);
+  hash_free(nxp->ir, NULL);
+  free(nxp);
+  nxp = NULL;
+  nspool = NULL;
+}
 
+#if 0
 const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
-
+#endif
 
 int
 main(int argc, char **argv)
 {
   ns_flex_debug = nsflextrace = 0;
+
   nx_init();
 
-  nx_data();
+  ns_data();
 
-  uchar *lp;
-  size_t lplen;
   nxp->testfp = fopen("test.tsv", "w");
   if (!nxp->testfp)
     fprintf(stderr, "nx: unable to open test.tsv; no testdata will be written\n");
-  while ((lp = loadoneline(stdin, &lplen)))
-    {
-      int ntoks;
-      const uchar **toks = nx_toks(lp, &ntoks);
-      mesg_init();
-      nx_result *r = nx_parse(toks, NULL, -1);
-      nx_values(r);
-      nxr_print(r, stdout, 0);
-      mesg_print(stderr);
-    }
-  if (nxp->testfp)
-    fclose(nxp->testfp);
-}
 
-static const uchar **
-nx_toks(uchar *t, int *ntoks)
-{
-  int n = 0;
-  while (isspace(*t))
-    ++t;
-  uchar *s = t;
-  while (*s)
-    {
-      ++n;
-      while (*s && !isspace(*s))
-	++s;
-      while (isspace(*s))
-	++s;
-    }
-  const uchar **toks = malloc((n+1)*sizeof(const uchar *));
-  s = t;
-  int i = 0;
-  while (*s)
-    {
-      toks[i++] = s;
-      while (*s && !isspace(*s))
-	++s;
-      if (isspace(*s))
-	*s++ = '\0';
-      while (isspace(*s))
-	++s;
-    }
-  toks[i] = NULL;
-  *ntoks = n;
-  return toks;
+  nxp->input = stdin; /* set this in opts to read from file/toks/etc */
+  
+  nx_input();
+  
+  if (nxp && nxp->testfp)
+    fclose(nxp->testfp);
 }

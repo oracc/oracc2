@@ -30,6 +30,7 @@ typedef struct nx_number
   const uchar *me_unit; /* modern unit */
   const uchar *me_str; 	/* modern equivalency as formatted string */
   struct nx_step *steps;/* the parsed steps */
+  struct nx_step *datas;/* a pointer to traverse 'steps' while reading data introduced by %%d */
   struct nx_step *last; /* the last parsed step so far where additional steps are added */
   struct nx_step *unit; /* for 1(diš) sila₃ this is a D number that has the unit set to the sila nx_step */
   struct nx_step *det;  /* the system determiner, if there is one */
@@ -97,7 +98,7 @@ extern const char *nxt_str[];
 struct nxt_tab { const char *name; nx_numtok tok; };
 extern struct nxt_tab *nxt (register const char *str, register size_t len);
 
-extern void nx_data(void);
+extern void ns_data(void);
 extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
 extern void nxd_show_aevs(nx_number *np);
 extern void nxd_show_inst(const uchar *tok, ns_inst *ip);
@@ -114,5 +115,11 @@ extern void nx_mul_frac(struct nx_num *n1, struct nx_num *n2);
 extern char *nx_modern(struct nx_num *mev, const char *meu);
 extern void nx_simplify(struct nx_num *np);
 extern nx_num nx_div_num(nx_num divide, nx_num by);
+
+extern void nx_init(void);
+extern void nx_term(void);
+extern void nx_input(void);
+extern void nx_exec(const uchar **toks, const uchar **data, int ntoks);
+extern void nx_exec_lists(List *t, List *d);
 
 #endif/*NX_H_*/

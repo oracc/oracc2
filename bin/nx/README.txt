@@ -24,6 +24,8 @@ num definitions consists of a variety of types and tokens:
 
 num input consists of tokens of the following possibly types
 
+ nm -- number mode
+
  ns -- number system
 
  ng -- number grapheme
@@ -47,6 +49,17 @@ num input consists of tokens of the following possibly types
  nq -- number quantity
 
  nz -- number stoppers
+
+
+
+nm -- number modes
+
+Number reading happens in one of two modes: number-tokens or
+data-tokens.  Mode-switching is done with percent followed by either
+'n' for number or 'd' for data followed by percent: '%n%' or '%d%'.
+The sequence '%.%' terminates the current parse, flushes any stored
+data and resets nx's memory.
+
 
 
 ns -- number system
@@ -104,6 +117,7 @@ terminates the current number parsing, if any, in the same way as a
 stopper ('.') and defines the system to select for the following
 parse.  It is an error if the result of the following parse does not
 contain an analysis that matches the named system.
+
 
 
 nu -- number units

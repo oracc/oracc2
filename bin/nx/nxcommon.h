@@ -5,6 +5,8 @@
 #include <memo.h>
 #include <pool.h>
 
+typedef unsigned char uchar;
+
 typedef struct nx_num
 {
   unsigned long long n;		/* numerator, can be huge when multiplying up ancient
@@ -21,6 +23,8 @@ typedef struct nx
   Memo *m_inst;
   Memo *m_nx_step;
   Memo *m_nx_number;
+  const uchar **toks;
+  const uchar **data;
   Hash *e;			/* global environment */
   List *elist;
   Pool *p;
@@ -29,6 +33,7 @@ typedef struct nx
   Hash *ir;			/* global inst registry which indexes inst text to sys
 				   that it can be part of */
   FILE *testfp;
+  FILE *input;
 } nx;
 
 extern nx *nxp;

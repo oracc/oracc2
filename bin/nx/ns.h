@@ -3,8 +3,6 @@
 
 #include "nxcommon.h"
 
-typedef unsigned char uchar;
-
 struct ns_sys;
 struct ns_step;
 struct ns_inst;
