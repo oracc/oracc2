@@ -11,6 +11,7 @@ nsb_sys(uchar *t)
   nxp->sys = memo_new(nxp->m_ns_sys);
   nxp->sys->name = t;
   nxp->sys->e = hash_create(7);
+  list_add(nxp->hashes, nxp->sys->e);
   nxp->sys->elist = list_create(LIST_SINGLE);
   ++nxp->nsys;
   nsb_altflag = 0;
@@ -162,7 +163,11 @@ nsb_inst_add(ns_inst *i, ns_inst_method meth)
   
   Hash *h = i->step->sys->i;
   if (!h)
-    h = i->step->sys->i = hash_create(100);
+    {
+      h = hash_create(100);
+      list_add(nxp->hashes, h);
+      h = i->step->sys->i = h;
+    }
   hash_add(h, i->text, i);
   nsb_inst_register(i);
 }

@@ -24,6 +24,7 @@ nx_init(void)
   nxp->m_nx_inst = memo_init(sizeof(ns_inst), 1000);
   nxp->m_nx_number = memo_init(sizeof(nx_number), 100);
   nxp->ir = hash_create(1024);
+  nxp->hashes = list_create(LIST_SINGLE);
 }
 
 void
@@ -48,6 +49,8 @@ nx_reset(void)
 void
 nx_term(void)
 {
+  mesg_term();
+  pool_term(nxp->b);
   pool_term(nxp->p);
   memo_term(nxp->m_ns_sys);
   memo_term(nxp->m_ns_step);
@@ -61,6 +64,13 @@ nx_term(void)
   if (nxp->data)
     free(nxp->data);
   nxp->toks = nxp->data = NULL;
+  if (nxp->hashes)
+    {
+      Hash *h;
+      for (h = list_first(nxp->hashes); h; h = list_next(nxp->hashes))
+	hash_free(h, NULL);
+      list_free(nxp->hashes, NULL);
+    }
   free(nxp);
   nxp = NULL;
   nspool = NULL;
