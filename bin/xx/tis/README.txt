@@ -93,6 +93,7 @@ The component after the '=' is the sign role:
  IDE ideogram
  SYL syllable
  LOG logogram
+ NUM number
  SEM semantic determinative
  PRO pronunciation determinative
  SUR surrogate
@@ -120,6 +121,19 @@ F	filename
 T	project text-id text-name
 L	line-number line-id line-label
 W	word-id
+
+
+Document Types:
+===============
+
+Type   Data
+-------------------------------------
+D.sof	start-of-field; arg is name of field or #none for anonymous fields
+D.eof	end-of-field; arg is name of field or #none for anonymous fields
+D.sol	start-of-line
+D.eol	end-of-line
+D.brk	break in text; arg derived from XCL info from nong or nonw--some graphemes, some lines, etc.
+
 
 SECONDARY TOKENS:
 =================
