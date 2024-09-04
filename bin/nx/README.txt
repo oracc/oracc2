@@ -34,11 +34,11 @@ num input consists of tokens of the following possibly types
 
  nv -- number virtual
 
- nh -- number hint
-
  nd -- number determiners
 
  nc -- number commodities
+
+ nh -- number head
 
  na -- number associations
 
@@ -309,11 +309,14 @@ but are not part of the unit sequence. Examples include gan₂ and gur.
 
 
 
-nc -- number commodities
+nc -- number commodities; nh -- number heads
 
 Commodities are both number stoppers and part of the number
 environment.  They normally come after a number, but may come before a
 number determiner as in 1(aš) še gur.
+
+The head of a commodity is always a single term; a commodity may
+include multiple terms for phrasal commodities.
 
 
 
