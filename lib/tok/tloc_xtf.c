@@ -11,6 +11,7 @@ tloc_xtf_sH(void *userData, const char *name, const char **atts)
       || !strcmp(name, "composite")
       || !strcmp(name, "score"))
     {
+      /*fprintf(stderr, "found pi_file=%s\n", pi_file);*/
       tlb_T(r, findAttr(atts, "project"), get_xml_id(atts), findAttr(atts, "n"));
 
       r->rs.printing = 1;

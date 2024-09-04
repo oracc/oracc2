@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include <tok.h>
 
+extern const char *pi_file;
+
 /* tloc_builder can work in single-unit mode or in multi-unit mode.
    
    In single-unit mode a single set of structures is continuously
@@ -46,7 +48,7 @@ tlb_T(Trun *r, const char *p, const char *id, const char *n)
 	  loch_text(r) = memo_new(r->t_m);
 	  list_add(loch_xtf(r).tlocs, loch_text(r));
 	}
-      loch_text(r)->file = r->rs.file;
+      loch_text(r)->file = pi_file ? pi_file : r->rs.file;
       loch_text(r)->andline_num = r->rs.andline_num;
       loch_text(r)->text_project = tlb_dup(p);
       loch_text(r)->text_id = tlb_dup(id);

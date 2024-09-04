@@ -36,7 +36,7 @@ tok_l_sH(void *userData, const char *name, const char **atts)
       else if (!strcmp(name, "d"))
 	{
 	  const char *type = findAttr(atts, "type");
-	  unsigned char *subtype = findAttr(atts, "subtype");
+	  const char *subtype = findAttr(atts, "subtype");
 	  if (!subtype || !*subtype)
 	    subtype = "#none";
 	  if (!strcmp(type, "field-begin"))
@@ -55,7 +55,7 @@ tok_l_eH(void *userData, const char *name)
     {
       if (!strcmp(name, "l"))
 	{
-	  free(curr_ref);
+	  free((void*)curr_ref);
 	  curr_ref = NULL;
 	}
       else if (!strcmp(name, "xcl"))
