@@ -9,6 +9,8 @@ static nxmode mode = NXM_NONE;
 static const uchar *untok = NULL;
 
 static const uchar *nx_input_tok(FILE *fp);
+static void nx_input_ne(const uchar *t);
+static const uchar *nx_input_until_quote(const uchar *start, FILE *fp);
 
 static void
 nx_input_untok(const uchar *u)
@@ -65,8 +67,13 @@ nx_input_tok(FILE *fp)
     {
       if (isspace(ch))
 	{
-	  buf[len] = '\0';
-	  return pool_copy(buf, nxp->p);
+	  if (len)
+	    {
+	      buf[len] = '\0';
+	      return pool_copy(buf, nxp->p);
+	    }
+	  else
+	    continue; /* skip leading whitespace before tokens */
 	}
       if (siz <= len)
 	{
@@ -130,6 +137,10 @@ nx_input(void)
 	      list_add(curr, (void*)t);
 	    }
 	}
+      else if ('$' == *t)
+	{
+	  nx_input_ne(t);
+	}
       else
 	{
 	  list_add(curr, (void*)t);
@@ -141,4 +152,79 @@ nx_input(void)
       nx_exec_lists(tlist, dlist);
       nx_input_unset();
     }
+}
+
+static void
+nx_input_ne(const uchar *t)
+{
+  if (t[2] == '=' || t[3] == '=')
+    {
+      char e[3];
+      e[0] = t[1];
+      if (t[2] != '=')
+	{
+	  e[1] = t[2];
+	  e[2] = '\0';
+	  t = t+4;
+	}
+      else
+	{
+	  e[1] = '\0';
+	  t = t+3;
+	}
+      struct nxt_tab *net = ne(e, strlen(e));
+      if (net)
+	{
+	  if ('"' == *t)
+	    {
+	      if (!(t = nx_input_until_quote(++t, nxp->input)))
+		fprintf(stderr, "runaway ne definition for %s; env setting ignored\n", e);
+	      else
+		hash_add(nxp->env, (ucp)net->name, hpool_copy(t, nxp->e));
+	      /*fprintf(stderr, "env added %s \"=\" %s\n", e, t);*/
+	    }
+	  else
+	    {
+	      hash_add(nxp->env, (ucp)net->name, hpool_copy(t, nxp->e));
+	      /*fprintf(stderr, "env added %s = %s\n", e, t);*/
+	    }
+	}
+      else
+	fprintf(stderr, "nx_input: ignoring unknown ne %s\n", e);
+    }
+  else
+    fprintf(stderr, "nx_input: ignoring malformed ne %s\n", t);
+}
+
+static const uchar *
+nx_input_until_quote(const uchar *start, FILE *fp)
+{
+  uchar *buf = NULL;
+  int siz, len;
+
+  len = strlen((ccp)start) + 1;
+  siz = 3*len;
+  buf = malloc(siz);
+  strcpy((char*)buf, (ccp)start);
+  strcat((char*)buf, " ");
+  
+  int ch;
+  while ((EOF != (ch = fgetc(fp))))
+    {
+      if ('"' == ch)
+	{
+	  buf[len] = '\0';
+	  uchar *ret = pool_copy(buf, nxp->p);
+	  free(buf);
+	  return ret;
+	}
+      if (siz <= len)
+	{
+	  siz *= 2;
+	  buf = realloc(buf, siz);	  
+	}
+      buf[len++] = ch;
+    }
+  free(buf);
+  return NULL;
 }

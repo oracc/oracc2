@@ -221,8 +221,8 @@ Environment context may include any or all of the following:
        	  because they can be attached to the signatures in a token
        	  list.
 
-     f -- ATF file locator in the form file:line (e.g., $f=sale.atf:1)
-          or line (e.g., $f=2); if the filename begins with '/' or
+     f -- ATF file locator in the form file:line (e.g., $f="sale.atf:1")
+          or line (e.g., $f="2"); if the filename begins with '/' or
           './' it is a full path to the file; otherwise the path must
           be constructed from the project and is assumed to be in
           '00atf'.
@@ -248,9 +248,11 @@ Environmental constraints have several types:
 An ne may be included in number definition or prefixed to a
 token list. The syntax of an ne is:
 
-      '$' (c|f|j|l|m|mt|mp|mg|ml|n|p|r|s|t) '=' "STRING"
+      '$' (c|f|j|l|m|mt|mp|mg|ml|n|p|r|s|t) '=' NOSPACESTRING | '"' STRING '"'
     | '$' (su|sa|sd|sl|sw)
 
+[[Perhaps consider allowing a subset of ne in token input prefix
+(p|t|n|l|f|m|s|j) and a different subset after the token input (c|r)]]
 
 
 np -- number parsing

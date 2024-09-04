@@ -4,7 +4,7 @@
 int parse_trace = 1;
 int test_data = 1;
 
-const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , NULL };
+const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , "ne" , NULL };
 
 static int nxp_add_inst(nx_number **cand, ns_inst *ip, nx_numtok type, const void *data);
 static int nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);

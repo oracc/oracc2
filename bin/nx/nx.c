@@ -24,6 +24,8 @@ nx_init(void)
   nxp->m_nx_inst = memo_init(sizeof(ns_inst), 1000);
   nxp->m_nx_number = memo_init(sizeof(nx_number), 100);
   nxp->ir = hash_create(1024);
+  nxp->env = hash_create(7);
+  nxp->e = hpool_init();
   nxp->hashes = list_create(LIST_SINGLE);
   nxp->lists = list_create(LIST_SINGLE);
 }
@@ -79,6 +81,8 @@ nx_term(void)
 	list_free(l, NULL);
       list_free(nxp->lists, NULL);
     }
+  hpool_term(nxp->e);
+  hash_free(nxp->env, NULL);
   free(nxp);
   nxp = NULL;
   nspool = NULL;

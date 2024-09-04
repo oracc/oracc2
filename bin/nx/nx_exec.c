@@ -22,7 +22,10 @@ nx_exec(const uchar **toks, const uchar **data, int ntoks)
   mesg_print(stderr);
   int i;
   for (i = 0; i < r->nr; ++i)
-    free(r->r[0].nu);
+    {
+      if (r->r[0].type == NX_NU)
+	free(r->r[0].nu);
+    }
   free(r->r);
   free(r->nptoks);
   free(r);

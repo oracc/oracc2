@@ -24,16 +24,19 @@ typedef struct nx
   Memo *m_nx_inst;
   Memo *m_nx_step;
   Memo *m_nx_number;
-  const uchar **toks;
-  const uchar **data;
-  Hash *e;			/* global environment */
-  List *elist;
   Pool *b;			/* build pool; not reset during input */
-  Pool *p;
   struct ns_sys *sys;
   int nsys;
   Hash *ir;			/* global inst registry which indexes inst text to sys
 				   that it can be part of */
+  Pool *p;
+  const uchar **toks;
+  const uchar **data;
+  Hash *env;			/* token list environment; initialized
+				   in nx_init; freed in nx_term;
+				   values overwritten by each
+				   assignment; pool_copy must use build pool 'b' */
+  Pool *e;			/* hash pool for environment values */
   List *hashes;			/* instance hashes are easier to free with this list */
   List *lists;			/* sys->elists are easier to free with this list */
   FILE *testfp;

@@ -10,6 +10,8 @@ void
 nxr_print(nx_result *r, FILE *fp, int nonewline)
 {
   int i;
+  if (nxp->env && nxp->env->key_count)
+    nxd_show_env(nxp->env);
   for (i = 0; i < r->nr; ++i)
     {
       if (i)

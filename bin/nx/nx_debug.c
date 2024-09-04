@@ -106,3 +106,34 @@ nxd_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
   printf("\n\n");
 }
 
+static int
+ne_cmp(const void *a, const void *b)
+{
+  const char *cc1 = (*(char**)a);
+  const char *cc2 = (*(char**)b);
+  struct nxt_tab *ne_a = ne(cc1, strlen(cc1));
+  struct nxt_tab *ne_b = ne(cc2, strlen(cc2));
+  if (ne_a->tok < ne_b->tok)
+    return -1;
+  else if (ne_a->tok > ne_b->tok)
+    return 1;
+  else
+    return 0;    
+}
+
+void
+nxd_show_env(Hash *e)
+{
+  int nkey;
+  const char **k = hash_keys2(e, &nkey);
+  qsort(k, nkey, sizeof(const char *), ne_cmp);
+  int i;
+  for (i = 0; k[i]; ++i)
+    {
+      const char *v = hash_find(e, (ucp)k[i]);
+      if (strpbrk(v, " \t\n"))
+	printf("$%s=\"%s\"\n", k[i], v);
+      else
+	printf("$%s=%s\n", k[i], v);
+    }
+}

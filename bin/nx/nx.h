@@ -6,7 +6,10 @@
 
 struct nx_step;
 
-typedef enum nx_numtok { nxt_no , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_na , nxt_nz } nx_numtok;
+typedef enum nx_numtok
+  {
+    nxt_no , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_na , nxt_nz , nxt_ne
+  } nx_numtok;
 
 typedef struct nx_nonnum
 {
@@ -96,15 +99,16 @@ extern int nsb_altflag;
 extern const char *currnsfile;
 extern const char *nxt_str[];
 
-struct nxt_tab { const char *name; nx_numtok tok; };
+struct nxt_tab { const char *name; int tok; }; /* nx_numtok or integer sort index in ne.g */
 extern struct nxt_tab *nxt (register const char *str, register size_t len);
-
+extern struct nxt_tab *ne (register const char *str, register size_t len);
 extern void ns_data(void);
 extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
 extern void nxd_show_aevs(nx_number *np);
 extern void nxd_show_inst(const uchar *tok, ns_inst *ip);
 extern void nxd_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to);
 extern void nxd_show_sum(nx_num *sump);
+extern void nxd_show_env(Hash *e);
 
 extern void nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to);
 extern void nxr_print(nx_result *r, FILE *fp, int nonewline);

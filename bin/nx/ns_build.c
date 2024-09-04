@@ -12,8 +12,6 @@ nsb_sys(uchar *t)
   nxp->sys->name = t;
   nxp->sys->e = hash_create(7);
   list_add(nxp->hashes, nxp->sys->e);
-  nxp->sys->elist = list_create(LIST_SINGLE);
-  list_add(nxp->lists, nxp->sys->elist);
   ++nxp->nsys;
   nsb_altflag = 0;
   if (build_trace)
@@ -41,12 +39,13 @@ nsb_env(uchar *e, uchar *v)
   ++e; /* skip $ */
   v[strlen((char*)v)-1] = '\0'; /* remove trailing " */
   memmove(v,v+1,strlen((char*)v)+1);
-  char s[strlen((const char *)e)+strlen((const char *)v)+5];
-    sprintf(s, "$%s=\"%s\"", e, v);
-  list_add(nxp->sys->elist, pool_copy((uchar*)s, nspool));
   hash_add(nxp->sys->e, e, v);
   if (build_trace)
-    printf("nsb_env: env %s has key %s and value '%s'\n", s, e, v);
+    {
+      char s[strlen((const char *)e)+strlen((const char *)v)+5];
+      sprintf(s, "$%s=\"%s\"", e, v);
+      printf("nsb_env: env %s has key %s and value '%s'\n", s, e, v);
+    }
 }
 
 void
