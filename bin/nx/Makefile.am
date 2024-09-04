@@ -6,7 +6,7 @@ scriptdata_DATA=
 
 nx_SOURCES=nx.c ns.tab.c ns.lex.c ns_data.c ns_build.c nxt.c nx_parse.c nxp_numbers.c \
 	nxr_print.c nx_debug.c nxr_testdata.c nx_modern.c nx_math.c \
-	nx_values.c nx_sys_aevs.c nx_input.c nx_exec.c ne.c
+	nx_values.c nx_sys_aevs.c nx_input.c nx_exec.c ne.c gc.c
 
 nx_LDADD = $(xLDADD)
 nx_DEPENDENCIES = $(nx_LDADD)
@@ -17,3 +17,6 @@ ns.lex.c: ns.l ns.tab.h
 
 nxt.g: nxt.base nxt.sh
 	./nxt.sh
+
+gc.g: gur-ngm.tsv gc.sh
+	./gc.sh
