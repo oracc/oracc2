@@ -102,7 +102,9 @@ extern const char *currnsfile;
 extern const char *nxt_str[];
 
 struct nxt_tab { const char *name; int tok; }; /* nx_numtok or integer sort index in ne.g */
+struct nw_map { const char *name; const char *mapped; };
 extern struct nxt_tab *nxt(register const char *str, register size_t len);
+extern struct nw_map *nwmap(register const char *str, register size_t len);
 extern struct nxt_tab *gc(register const char *str, register size_t len);
 extern struct nxt_tab *na(register const char *str, register size_t len);
 extern struct nxt_tab *nc(register const char *str, register size_t len);

@@ -11,7 +11,7 @@ nx_SOURCES=nx.c ns.tab.c ns.lex.c ns_data.c ns_build.c nxt.c nx_parse.c nxp_numb
 nx_LDADD = $(xLDADD)
 nx_DEPENDENCIES = $(nx_LDADD)
 
-nxtokx_SOURCES=nxtokx.c
+nxtokx_SOURCES=nxtokx.c nwmap.c
 nxtokx_LDADD = $(xLDADD)
 nxtokx_DEPENDENCIES = $(nx_LDADD)
 

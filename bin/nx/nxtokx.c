@@ -36,7 +36,11 @@ tokcgp(const uchar *t, int *nflag)
 	{
 	  uchar tmp[strlen((ccp)f.cf)+strlen((ccp)f.gw)+3];
 	  sprintf((char*)tmp,"%s[%s]", f.cf, f.gw);
-	  return (uccp)strdup((ccp)tmp);
+	  struct nw_map *nmp = nwmap((ccp)tmp, strlen((ccp)tmp));
+	  if (nmp)
+	    return (uccp)nmp->mapped;
+	  else
+	    return (uccp)strdup((ccp)tmp);
 	}
       else if (f.pos && !strcmp((ccp)f.pos, "n"))
 	{
