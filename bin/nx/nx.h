@@ -39,6 +39,7 @@ typedef struct nx_number
   struct nx_step *unit; /* for 1(diš) sila₃ this is a D number that has the unit set to the sila nx_step */
   struct nx_step *det;  /* the system determiner, if there is one */
   struct nx_step *com;  /* the commodity, if there is one */
+  struct nx_step *ass;  /* the association, if there is one */
 } nx_number;
 
 typedef enum nx_step_type { NX_STEP_NUM = 1, NX_STEP_TOK = 2 } nx_step_type;
@@ -101,8 +102,11 @@ extern const char *currnsfile;
 extern const char *nxt_str[];
 
 struct nxt_tab { const char *name; int tok; }; /* nx_numtok or integer sort index in ne.g */
-extern struct nxt_tab *nxt (register const char *str, register size_t len);
-extern struct nxt_tab *ne (register const char *str, register size_t len);
+extern struct nxt_tab *nxt(register const char *str, register size_t len);
+extern struct nxt_tab *gc(register const char *str, register size_t len);
+extern struct nxt_tab *na(register const char *str, register size_t len);
+extern struct nxt_tab *nc(register const char *str, register size_t len);
+extern struct nxt_tab *ne(register const char *str, register size_t len);
 extern void ns_data(void);
 extern nx_result *nx_parse(const uchar **toks, const void **data, int ntoks);
 extern void nxd_show_aevs(nx_number *np);

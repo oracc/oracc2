@@ -120,6 +120,8 @@ nxt.c
 nxt.g
 gc.g
 gc.c
+na.c
+nc.c
 oid_domain.c
 oid_type.c
 osh_commands.c

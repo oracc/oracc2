@@ -69,7 +69,7 @@ int nxp_last_num(const uchar **t, nx_numtok *n, int from)
   while (t[from])
     {
       n[from] = nxp_tok_type(t[from]);
-      if (n[from] == nxt_no || n[from] == nxt_nz || n[from] == nxt_nc)
+      if (n[from] == nxt_no || n[from] == nxt_nz /* || n[from] == nxt_nc */)
 	{
 	  if (from)
 	    return from-1;
@@ -123,9 +123,12 @@ nxp_nonnums(nx_result *r, const uchar **toks, const void**data, int from, int to
 static nx_numtok
 nxp_tok_type(const uchar *t)
 {
-  struct nxt_tab *ntp = nxt((const char *)t,strlen((const char*)t));
-  if (ntp)
-    return ntp->tok;
-  else
-    return nxt_no;
+  int len = strlen((ccp)t);
+  struct nxt_tab *ntp = NULL;
+  if (!(ntp = nxt((ccp)t,len)))
+    if (!(ntp = gc((ccp)t,len)))
+      if (!(ntp = nc((ccp)t,len)))
+	if (!(ntp = na((ccp)t,len)))
+	  return nxt_no;
+  return ntp->tok;
 }
