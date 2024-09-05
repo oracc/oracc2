@@ -65,13 +65,16 @@ nxr_step_data_via_list(nx_step *sp, FILE *fp)
   if (sp)
     {
       List *nx_data = nxr_get_data(sp, list_create(LIST_SINGLE));
-      uchar *d;
-      int i = 0;
-      for (d = list_first(nx_data); d; d = list_next(nx_data))
+      if (list_len(nx_data))
 	{
-	  if (i++)
-	    fputc('+', fp);
-	  fputs((ccp)d, fp);
+	  uchar *d;
+	  int i = 0;
+	  for (d = list_first(nx_data); d; d = list_next(nx_data))
+	    {
+	      if (i++)
+		fputc('+', fp);
+	      fputs((ccp)d, fp);
+	    }
 	}
       list_free(nx_data, NULL);
     }
@@ -93,6 +96,8 @@ nxr_step_toks(nx_step *sp, FILE *fp)
 static void
 nxr_step_data(nx_step *sp, FILE *fp)
 {
+  if (!sp || !sp->tok.data)
+    return;
   int i = 0;
   while (sp)
     {

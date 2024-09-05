@@ -83,7 +83,8 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 	}
       else
 	{
-	  if (nptoks[from] == nxt_nd)
+	  if (nptoks[from] == nxt_nd
+	      || (nptoks[from] == nxt_nw && !strcmp((ccp)toks[from], "gur")))
 	    {
 	      int good = nxp_add_det(cand, toks[from], d);
 	      if (good)
@@ -395,14 +396,19 @@ nxp_add_det(nx_number **cand, const uchar *tok, const void *data)
 {
   int i, ok = 0;
   nx_step *n = NULL;
+  const char *xtok = (ccp)tok;
+  if ('{' != *tok)
+    {
+      xtok = pool_alloc(strlen((ccp)tok)+3, nxp->p);
+      sprintf(xtok, "{%s}", tok);
+    }
   for (i = 0; cand[i]; ++i)
     {
-      if (cand[i]->sys->det && !strcmp((ccp)cand[i]->sys->det, (ccp)tok))
+      if (cand[i]->sys->det && !strcmp((ccp)cand[i]->sys->det, xtok))
 	{
 	  if (!n)
-	    n = nxp_nx_step(NULL, NX_STEP_TOK, tok, nxt_nd, data, NULL);
-	  cand[i]->last->next = n;
-	  cand[i]->last = n;
+	    n = nxp_nx_step(NULL, NX_STEP_TOK, xtok, nxt_nd, data, NULL);
+	  cand[i]->det = n;
 	  ++ok;
 	}
       else

@@ -260,10 +260,10 @@ np -- number parsing
 Parsing is carried out with nx which loads the nd data and uses it to
 parse token lists.
 
-A token list consists of zero or more ne followed by one or more nf, no or
+A token list consists of zero or more ne followed by one or more no or
 nz tokens.
 
-Both nf and no tokens take the form of Oracc signatures.
+The no tokens take the form of Oracc signatures.
 
 The signatures may be partial, consisting of just a grapheme, or they
 may contain select additional information such as a CF[GW]POS
