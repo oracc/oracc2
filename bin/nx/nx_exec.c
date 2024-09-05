@@ -24,7 +24,13 @@ nx_exec(const uchar **toks, const uchar **data, int ntoks)
   for (i = 0; i < r->nr; ++i)
     {
       if (r->r[0].type == NX_NU)
-	free(r->r[0].nu);
+	{
+	  if (r->r[0].nu)
+	    {
+	      free(r->r[0].nu);
+	      r->r[0].nu = NULL;
+	    }
+	}
     }
   free(r->r);
   free(r->nptoks);

@@ -69,6 +69,11 @@ nx_input_tok(FILE *fp)
 	{
 	  if (len)
 	    {
+	      if (siz <= len)
+		{
+		  siz *= 2;
+		  buf = realloc(buf, siz);	  
+		}
 	      buf[len] = '\0';
 	      return pool_copy(buf, nxp->p);
 	    }
@@ -77,10 +82,13 @@ nx_input_tok(FILE *fp)
 	}
       if (siz <= len)
 	{
-	  if (siz < 0)
-	    siz = 4;
-	  else
-	    siz *= 2;
+	  while (siz <= len)
+	    {
+	      if (siz < 0)
+		siz = 4;
+	      else
+		siz *= 2;
+	    }
 	  buf = realloc(buf, siz);	  
 	}
       buf[len++] = ch;

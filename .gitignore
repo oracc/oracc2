@@ -16,6 +16,7 @@ bin/jx/jx
 bin/lx/lx
 bin/mx/mx
 bin/nx/nx
+bin/nx/nxtokx
 bin/ox/oid
 bin/qx/cat/qcatx
 bin/qx/cbd/qcbdx
@@ -115,8 +116,10 @@ langmask.c
 langrtl.c
 ne.c
 nxt.c
-# in bin/nx nxt.g is generated from nxt.base by nxt.sh
+# in bin/nx nxt.g is generated from nxt.base by nxt.sh; gc.g by gc.sh
 nxt.g
+gc.g
+gc.c
 oid_domain.c
 oid_type.c
 osh_commands.c

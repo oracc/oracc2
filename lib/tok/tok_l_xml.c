@@ -10,7 +10,10 @@ tok_l_sH(void *userData, const char *name, const char **atts)
   Trun *r = userData;
   
   if (!strcmp(name, "xcl"))
-    r->rs.in_xcl = 1;
+    {
+      fprintf(r->o, "Y\txcl\n");
+      r->rs.in_xcl = 1;
+    }
   else if (r->rs.in_xcl)
     {
       if (!strcmp(name, "l"))
@@ -24,12 +27,12 @@ tok_l_sH(void *userData, const char *name, const char **atts)
 	  else
 	    curr_ref = strdup(findAttr(atts, "ref"));
 	}
-      else if (!strcmp(name, "xff:f"))
+      else if (!strcmp(name, "xff:f") && curr_ref) /* curr_ref only set if parent xcl:l had no sig */
 	{
 	  const char *pos = findAttr(atts, "pos");
-	  if (!strcmp(pos, "n"))
+	  if (pos && *pos)
 	    {
-	      fprintf(r->o, "l\t%s\t%s=%s\t\n",
+	      fprintf(r->o, "l\t%s\t:%s=%s\t\n",
 		      curr_ref, findAttr(atts, "form"), pos);
 	    }
 	}
@@ -43,6 +46,8 @@ tok_l_sH(void *userData, const char *name, const char **atts)
 	    fprintf(r->o, "D.sof\t%s\n", subtype);
 	  else if (!strcmp(type, "field-end"))
 	    fprintf(r->o, "D.eof\t%s\n", subtype);
+	  else if (!strcmp(type, "line-start"))
+	    fprintf(r->o, "L\t%s\n", findAttr(atts, "ref"));
 	}
     }
 }
