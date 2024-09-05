@@ -5,7 +5,6 @@ static void nxr_print_na(nx_restok *rtp, FILE *fp);
 static void nxr_print_no(nx_restok *rtp, FILE *fp);
 static void nxr_print_nu(nx_restok *rtp, FILE *fp);
 static void nxr_print_nu_sig(nx_number *np, FILE *fp);
-static List *nxr_nu_data(nx_number *np, List *lp);
 
 #if 0
 static void nxr_print_nu_sub(nx_number *np, FILE *fp);
@@ -44,54 +43,103 @@ nxr_print_no(nx_restok *rtp, FILE *fp)
   fprintf(fp, " !%s", rtp->no.tok);
 }
 
+static List *
+nxr_get_data(nx_step *sp, List *lp)
+{
+  for ( ; sp; sp = sp->next)
+    {
+      if (sp->type == NX_STEP_TOK)
+	{
+	  if (sp->tok.data)
+	    list_add(lp, (void*)sp->tok.data);
+	}
+      else
+	(void)nxr_get_data(sp->num->steps, lp);
+    }
+  return lp;
+}
+
+static void
+nxr_step_data_via_list(nx_step *sp, FILE *fp)
+{
+  if (sp)
+    {
+      List *nx_data = nxr_get_data(sp, list_create(LIST_SINGLE));
+      uchar *d;
+      int i = 0;
+      for (d = list_first(nx_data); d; d = list_next(nx_data))
+	{
+	  if (i++)
+	    fputc('+', fp);
+	  fputs((ccp)d, fp);
+	}
+      list_free(nx_data, NULL);
+    }
+}
+
+static void
+nxr_step_toks(nx_step *sp, FILE *fp)
+{
+  int i = 0;
+  while (sp)
+    {
+      if (i++)
+	fputc(' ', fp);
+      fputs((ccp)sp->tok.tok, fp);
+      sp = sp->next;
+    }
+}
+
+static void
+nxr_step_data(nx_step *sp, FILE *fp)
+{
+  int i = 0;
+  while (sp)
+    {
+      if (i++)
+	fputc('+', fp);
+      fputs(sp->tok.data, fp);
+      sp = sp->next;
+    }
+}
+
 static void
 nxr_print_nu(nx_restok *rtp, FILE *fp)
 {
   int i;
   for (i = 0; rtp->nu[i]; ++i)
     {
-      if (i)
-	fputc(';', fp);
-#if 0
-      nxr_print_nu_sub(rtp->nu[i], fp);
-      fputs("==", fp);
-#endif
+      /* Col 0: index in this cand set */
+      fprintf(fp, "%d\t", i);
+      /* Col 1,2,3: SYS\tSIG\tMEV */
       nxr_print_nu_sig(rtp->nu[i], fp);
-    }
-  if (nxp->data_is_char)
-    {
-      List *nu_data = nxr_nu_data(rtp->nu[0], list_create(LIST_SINGLE));
-      uchar *d;
-      fputc('\t', fp);
-      int i = 0;
-      for (d = list_first(nu_data); d; d = list_next(nu_data))
-	{
-	  if (i++)
-	    fputc('+', fp);
-	  fputs((ccp)d, fp);
-	}
-      list_free(nu_data, NULL);
-    }
-}
 
-static List *
-nxr_nu_data(nx_number *np, List *lp)
-{
-  if (np->sys)
-    {
-      nx_step *sp;
-      for (sp = np->steps; sp; sp = sp->next)
-	{
-	  if (sp->type == NX_STEP_TOK)
-	    {
-	      if (sp->tok.data)
-		list_add(lp, (void*)sp->tok.data);
-	    }
-	  else
-	    (void)nxr_nu_data(sp->num, lp);
-	}
+      /* Col 4: WID if data_is_char; else empty */
+      fputc('\t', fp);
+      if (nxp->data_is_char)
+	nxr_step_data_via_list(rtp->nu[i]->steps, fp);
+
+      /* Col 5,6: DET\tWID */
+      fputc('\t', fp);
+      nxr_step_toks(rtp->nu[i]->det, fp);
+      fputc('\t', fp);
+      if (nxp->data_is_char)
+	nxr_step_data(rtp->nu[i]->det, fp);
+
+      /* Col 7,8: COM\tWID */
+      fputc('\t', fp);
+      nxr_step_toks(rtp->nu[i]->com, fp);
+      fputc('\t', fp);
+      if (nxp->data_is_char)
+	nxr_step_data(rtp->nu[i]->com, fp);
+
+      /* Col 9,10: ASS\tWID */
+      fputc('\t', fp);
+      nxr_step_toks(rtp->nu[i]->ass, fp);
+      fputc('\t', fp);
+      if (nxp->data_is_char)
+	nxr_step_data(rtp->nu[i]->ass, fp);
     }
-  return lp;
 }
 
 #if 0

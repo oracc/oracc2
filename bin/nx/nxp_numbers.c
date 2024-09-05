@@ -1,10 +1,12 @@
 #include <oraccsys.h>
 #include "nx.h"
 
+typedef enum nx_xstep { NX_ASS , NX_COM , NX_DET } nx_xstep;
+
 int parse_trace = 0;
 int test_data = 0;
 
-const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , "ne" , "gc" , NULL };
+const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , "ne" , "gc" , "gw" , NULL };
 
 static int nxp_add_inst(nx_number **cand, ns_inst *ip, nx_numtok type, const void *data);
 static int nxp_add_step(nx_number **cand, nx_numtok type, const uchar *tok, const void *data);
@@ -22,6 +24,7 @@ static int nxp_system_C(ns_inst *ip);
 static int nxp_sys_step_ok(ns_inst *left, ns_inst *next);
 static void nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
 static int nxp_add_det(nx_number **cand, const uchar *tok, const void *data);
+static void nxp_append_step(nx_number **cand, nx_xstep where, const uchar *text, nx_numtok type, const void *data);
 
 void
 nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to)
@@ -56,8 +59,6 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 		}
 	      else
 		nxp_badnum(r, nptoks[from], toks[from], d);
-	      /*if (!(cand = nxp_candidates(nptoks[from], toks[from], d, &ncand)))*/
-	      ++from;
 	    }
 	  else if (nptoks[from] == nxt_nw)
 	    {
@@ -69,24 +70,16 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 		  nx_number **m;
 		  /* if the last result was a number that can qualify this, merge the two */
 		  if (ip->step->a_or_d && (m = nxp_merge_unit(r, ip, nptoks[from], d, &ncand)))
-		    {
-		      cand = m;
-		      /*printf("nxp: unit %s merged with num\n", toks[from]);*/
-		    }
+		    cand = m;
 		  else
 		    nxp_unxnum(r, nptoks[from], toks[from], d);
 		}
 	      else
 		nxp_unxnum(r, nptoks[from], toks[from], d);
-	      ++from;
 	    }
-	  else if (nptoks[from] == nxt_nz)
-	    ++from;
-	  else
-	    {
-	      nxp_unxnum(r, nptoks[from], toks[from], d);
-	      ++from;
-	    }
+	  else if (nptoks[from] != nxt_nz)
+	    nxp_unxnum(r, nptoks[from], toks[from], d);
+	  ++from;
 	}
       else
 	{
@@ -107,6 +100,21 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
 		  cand = NULL;
 		  /* don't increment from */
 		}
+	    }
+	  else if (nptoks[from] == nxt_nc || nptoks[from] == nxt_gc)
+	    {
+	      nxp_append_step(cand, NX_COM, toks[from], nptoks[from], data[from]);
+	      ++from;
+	    }
+	  else if (nptoks[from] == nxt_na)
+	    {
+	      nxp_append_step(cand, NX_ASS, toks[from], nptoks[from], data[from]);
+	      ++from;
+	    }
+	  else if (nptoks[from] == nxt_gw) /* gur-words */
+	    {
+	      nxp_append_step(cand, NX_DET, toks[from], nptoks[from], data[from]);
+	      ++from;
 	    }
 	  else if (nptoks[from] == nxt_nz)
 	    {
@@ -306,6 +314,32 @@ nxp_sys_step_ok(ns_inst *left, ns_inst *next)
 	}
     }
   return 0;
+}
+
+static void
+nx_append_sub(nx_step **top, nx_step *new)
+{
+  if (*top)
+    {
+      nx_step *t = *top;
+      while (t->next)
+	t = t->next;
+      t->next = new;
+    }
+  else
+    *top = new;
+}
+
+static void
+nxp_append_step(nx_number **cand, nx_xstep where, const uchar *text, nx_numtok type, const void *data)
+{
+  int i;
+  for (i = 0; cand[i]; ++i)
+    {
+      nx_step *n = nxp_nx_step(NULL, NX_STEP_TOK, text, type, data, NULL);
+      nx_step **s = (where == NX_DET ? &cand[i]->det : (where == NX_COM ? &cand[i]->com : &cand[i]->ass));
+      nx_append_sub(s, n);
+    }
 }
 
 /* We remove invalid cand as we go along so anything that is passed to
