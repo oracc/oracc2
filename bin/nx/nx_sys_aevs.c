@@ -3,6 +3,8 @@
 
 static void nx_set_aev_r(ns_step *s, int d);
 
+int trace_aev = 0;
+
 void
 nx_sys_aevs(ns_sys *sys)
 {
@@ -33,7 +35,8 @@ nx_sys_aevs(ns_sys *sys)
       r->aev.n = 1;
       r->aev.d = d;
 
-      printf("nx_sys_aevs: common denominator = %d\n", d);
+      if (trace_aev)
+	printf("nx_sys_aevs: common denominator = %d\n", d);
       
       /* traverse up setting all the aev to have the same
 	 denominator */
@@ -55,5 +58,6 @@ nx_set_aev_r(ns_step *s, int d)
     n = 1;
   s->aev.n = n;
   s->aev.d = d;
-  printf("R: setting %s aev to %llu/%d\n", s->unit, n, d);
+  if (trace_aev)
+    printf("R: setting %s aev to %llu/%d\n", s->unit, n, d);
 }

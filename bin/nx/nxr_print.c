@@ -4,7 +4,12 @@
 static void nxr_print_na(nx_restok *rtp, FILE *fp);
 static void nxr_print_no(nx_restok *rtp, FILE *fp);
 static void nxr_print_nu(nx_restok *rtp, FILE *fp);
+static void nxr_print_nu_sig(nx_number *np, FILE *fp);
+static List *nxr_nu_data(nx_number *np, List *lp);
+
+#if 0
 static void nxr_print_nu_sub(nx_number *np, FILE *fp);
+#endif
 
 void
 nxr_print(nx_result *r, FILE *fp, int nonewline)
@@ -47,10 +52,49 @@ nxr_print_nu(nx_restok *rtp, FILE *fp)
     {
       if (i)
 	fputc(';', fp);
+#if 0
       nxr_print_nu_sub(rtp->nu[i], fp);
+      fputs("==", fp);
+#endif
+      nxr_print_nu_sig(rtp->nu[i], fp);
+    }
+  if (nxp->data_is_char)
+    {
+      List *nu_data = nxr_nu_data(rtp->nu[0], list_create(LIST_SINGLE));
+      uchar *d;
+      fputc('\t', fp);
+      int i = 0;
+      for (d = list_first(nu_data); d; d = list_next(nu_data))
+	{
+	  if (i++)
+	    fputc('+', fp);
+	  fputs((ccp)d, fp);
+	}
+      list_free(nu_data, NULL);
     }
 }
 
+static List *
+nxr_nu_data(nx_number *np, List *lp)
+{
+  if (np->sys)
+    {
+      nx_step *sp;
+      for (sp = np->steps; sp; sp = sp->next)
+	{
+	  if (sp->type == NX_STEP_TOK)
+	    {
+	      if (sp->tok.data)
+		list_add(lp, (void*)sp->tok.data);
+	    }
+	  else
+	    (void)nxr_nu_data(sp->num, lp);
+	}
+    }
+  return lp;
+}
+
+#if 0
 static void
 nxr_print_nu_sub(nx_number *np, FILE *fp)
 {
@@ -79,6 +123,62 @@ nxr_print_nu_sub(nx_number *np, FILE *fp)
       fprintf(fp, "%c", c);
       if (np->unit)
 	fprintf(fp, "+%s", np->unit->tok.tok);
+      if (np->me_str)
+	fprintf(fp, "==%s", np->me_str);
+    }
+}
+#endif
+
+static void
+nxr_print_nu_sig(nx_number *np, FILE *fp)
+{
+  if (np->sys)
+    {
+      char o = '\t';
+      char c = '\t';
+#if 0
+      int n = np->sys->name[1];
+      if (strchr("SB", n))
+	{
+	  o = '<';
+	  c = '>';
+	}
+#endif
+      fprintf(fp, "%s%c", np->sys->name, o);
+      nx_step *sp;
+      int i = 0;
+      for (sp = np->steps; sp; sp = sp->next)
+	{
+	  if (sp->type == NX_STEP_TOK)
+	    {
+	      if ('{' != *sp->tok.tok)
+		{
+		  if (i++)
+		    fprintf(fp, "+");
+		  fprintf(fp, "%s", sp->tok.tok);
+		}
+	    }
+	  else
+	    {
+	      if (i++)
+		fprintf(fp, "+");
+	      if (!sp->num->me_str)
+		nx_values_np(sp->num);
+	      if (sp->num->me_str)
+		fprintf(fp, "%s", sp->num->me_str);
+	      else
+		fprintf(fp, "N");
+	      if (sp->num->unit)
+		fprintf(fp, "*%s", sp->num->unit->tok.tok);
+	      
+	      /*nxr_print_nu_sig(sp->num, fp);*/
+	    }
+	}
+      fprintf(fp, "%c", c);
+      if (np->unit)
+	fprintf(fp, "+%s", np->unit->tok.tok);
+      if (np->me_str)
+	fprintf(fp, "%s", np->me_str);
     }
 }
 

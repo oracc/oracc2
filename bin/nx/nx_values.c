@@ -1,10 +1,7 @@
 #include <oraccsys.h>
 #include "nx.h"
 
-#if 0
-static int nx_aev_d(nx_step *nxs);
-static unsigned long long nx_aev_n(nx_step *nxs);
-#endif
+int trace_values = 0;
 
 static nx_num nx_sum_aevs(nx_number *np);
 static void nx_inst_aevs(nx_number *np);
@@ -32,35 +29,40 @@ nx_values(nx_result *r)
 	{
 	  /* soon: check for ambiguity */
 	  /* we only use the first match for computing the value */
-	  nx_number *np = r->r[i].nu[0];
-
-	  /* Compute the aev for each step-inst in the number */
-	  nx_inst_aevs(np);
-
-	  nxd_show_aevs(np);
-
-	  nx_num sum = nx_sum_aevs(np);
-	  nx_simplify(&sum);
-	  nxd_show_sum(&sum);
-	  
-	  /* Divide the sum by the base fraction; the mev is expressed
-	     in terms of the base, so this step ensures that np->aev
-	     is ready for conversion to mev */
-	  np->aev = nx_div_num(sum, np->sys->base_step->aev);
-
-	  printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n",
-		 sum.n, sum.d,
-		 np->sys->base_step->aev.n, np->sys->base_step->aev.d,
-		 np->aev.n, np->aev.d);
-
-	  /* calculate the mev from the conv value; result in np->mev */
-	  const char *meu = NULL;
-	  nx_calculate_mev(np, &meu);
-	  
-	  /* render mev result */
-	  printf("mev = %s\n", nx_modern(&np->mev, meu));
+	  nx_values_np(r->r[i].nu[0]);
 	}
     }
+}
+
+void
+nx_values_np(nx_number *np)
+{
+  /* Compute the aev for each step-inst in the number */
+  nx_inst_aevs(np);
+
+  nxd_show_aevs(np);
+
+  nx_num sum = nx_sum_aevs(np);
+  nx_simplify(&sum);
+  nxd_show_sum(&sum);
+	  
+  /* Divide the sum by the base fraction; the mev is expressed
+     in terms of the base, so this step ensures that np->aev
+     is ready for conversion to mev */
+  np->aev = nx_div_num(sum, np->sys->base_step->aev);
+
+  if (trace_values)
+    printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n",
+	   sum.n, sum.d,
+	   np->sys->base_step->aev.n, np->sys->base_step->aev.d,
+	   np->aev.n, np->aev.d);
+
+  /* calculate the mev from the conv value; result in np->mev */
+  const char *meu = NULL;
+  nx_calculate_mev(np, &meu);
+	  
+  /* render mev result */
+  np->me_str = (uccp)nx_modern(&np->mev, meu);
 }
 
 static void

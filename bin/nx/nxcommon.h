@@ -32,6 +32,7 @@ typedef struct nx
   Pool *p;
   const uchar **toks;
   const uchar **data;
+  int data_is_char;
   Hash *env;			/* token list environment; initialized
 				   in nx_init; freed in nx_term;
 				   values overwritten by each

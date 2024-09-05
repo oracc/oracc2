@@ -1,8 +1,8 @@
 #include <oraccsys.h>
 #include "nx.h"
 
-int parse_trace = 1;
-int test_data = 1;
+int parse_trace = 0;
+int test_data = 0;
 
 const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , "ne" , "gc" , NULL };
 
@@ -162,8 +162,8 @@ static nx_number **
 nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int *ncand)
 {
   nx_number **m = NULL;
-  
-  printf("nxp_implicit_gur\n");
+
+  /*printf("nxp_implicit_gur\n");*/
   
   /* remove all the non-Sa steps from the preceding number */
   nx_number **nu = r->r[r->nr-1].nu;

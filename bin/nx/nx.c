@@ -28,6 +28,7 @@ nx_init(void)
   nxp->e = hpool_init();
   nxp->hashes = list_create(LIST_SINGLE);
   nxp->lists = list_create(LIST_SINGLE);
+  nxp->data_is_char = 1;
 }
 
 void

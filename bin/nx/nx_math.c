@@ -2,6 +2,7 @@
 #include "nx.h"
 
 static int nx_gcd(long n, long m);
+int trace_math = 0;
 
 /* Add n2 into n1 */
 void
@@ -67,8 +68,10 @@ void
 nx_simplify(struct nx_num *np)
 {
   int gcd = nx_gcd(np->n, np->d);
-  printf("nx_simplify: n = %llu/%d has gcd = %d\n", np->n, np->d, gcd);
+  if (trace_math)
+    printf("nx_simplify: n = %llu/%d has gcd = %d\n", np->n, np->d, gcd);
   np->n /= gcd;
   np->d /= gcd;
-  printf("nx_simplify: result n = %llu/%d\n", np->n, np->d);
+  if (trace_math)
+    printf("nx_simplify: result n = %llu/%d\n", np->n, np->d);
 }

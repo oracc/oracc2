@@ -1,6 +1,8 @@
 #include <string.h>
 #include "nx.h"
 
+int trace_modern = 0;
+
 static char *nx_decimal(nx_num *c);
 static char *render_litres(double val);
 static char *render_grams(double val);
@@ -32,6 +34,28 @@ nx_modern(struct nx_num *mev, const char *meu)
     }
 }
 
+static void
+trim00(char*buf)
+{
+  if (buf)
+    {
+      char *z00 = strstr(buf,".00");
+      if (z00)
+	{
+	  if (z00[3])
+	    {
+	      char *dest = z00;
+	      z00 += 3;
+	      while (*z00)
+		*dest++ = *z00++;
+	      *dest = '\0';
+	    }
+	  else
+	    *z00 = '\0';
+	}
+    }
+}
+
 static char *
 nx_decimal(nx_num *c)
 {
@@ -46,6 +70,7 @@ nx_decimal(nx_num *c)
     }
   else
     sprintf(buf, "%lld",c->n);
+  trim00(buf);
   return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
@@ -59,7 +84,8 @@ render_litres(double val)
     sprintf(buf,"%.03f%s",val,meu);
   else
     sprintf(buf,"%.02f%s",val,meu);
-  return strdup(buf);
+  trim00(buf);
+  return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
 static char *
@@ -78,7 +104,8 @@ render_grams(double val)
       meu = "g";
       sprintf(buf,"%.f%s",val,meu);
     }
-  return strdup(buf);
+  trim00(buf);
+  return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
 static char *
@@ -109,7 +136,8 @@ render_mm(double val)
       meu = "mm";
       sprintf(buf,"%.f%s",val,meu);
     }
-  return strdup(buf);
+  trim00(buf);
+  return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
 static char *
@@ -128,7 +156,8 @@ render_msq(double val)
       meu = "m^2";
       sprintf(buf,"%.2f%s",val,meu);
     }
-  return strdup(buf);
+  trim00(buf);
+  return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
 static char *
@@ -136,5 +165,6 @@ render_raw(double val,const char *meu)
 {
   static char buf[64];
   sprintf(buf,"%.2f%s",val,meu);
-  return strdup(buf);
+  trim00(buf);
+  return (char*)pool_copy((ucp)buf, nxp->p);
 }
