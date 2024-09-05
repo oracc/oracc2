@@ -120,6 +120,7 @@ nxt.c
 nxt.g
 gc.g
 gc.c
+gw.c
 na.c
 nc.c
 nwmap.c
