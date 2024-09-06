@@ -187,12 +187,12 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   nu = nxp_remove_invalid(nu, ncand);
 
   ns_inst *gp = NULL;
-  /* If there is a {gur} det because the text was OB style 1(aš) gur 3 sila₃,
+  /* If there is a {gur} det because the text was OB style 1(aš) gur 3(diš) sila₃,
      remove it and create an explicit gur step */
   if (nu[0]->det && !strcmp((ccp)nu[0]->det->tok.tok, "{gur}"))
     gp = hash_find(nxp->ir, (ucp)"gur");
   else
-    /* get a virtual gur step and merge it with the preceding number */
+    /* Else get a virtual gur step and merge it with the preceding number */
     gp = hash_find(nxp->ir, (ucp)"(gur)");
 
   /* create a cand list from gur/(gur) */
