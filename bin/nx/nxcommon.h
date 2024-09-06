@@ -33,6 +33,7 @@ typedef struct nx
   const uchar **toks;
   const uchar **data;
   int data_is_char;
+  int printed_header;		/* only print the columns header row once per run */
   Hash *env;			/* token list environment; initialized
 				   in nx_init; freed in nx_term;
 				   values overwritten by each

@@ -30,6 +30,7 @@ typedef struct nx_number
   int invalid;		/* used during parse to track whether a candidate is still valid or not */
   ns_sys *sys;		/* the result system for this parse */
   nx_num aev; 		/* ancient equivalency value */
+  const uchar *ae_str;  /* aev formatted with base unit if any */
   nx_num mev; 		/* modern equivalency value as an nx frac */
   const uchar *me_unit; /* modern unit */
   const uchar *me_str; 	/* modern equivalency as formatted string */

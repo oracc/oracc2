@@ -5,10 +5,14 @@ static void nxr_print_na(nx_restok *rtp, FILE *fp);
 static void nxr_print_no(nx_restok *rtp, FILE *fp);
 static void nxr_print_nu(nx_restok *rtp, FILE *fp);
 static void nxr_print_nu_sig(nx_number *np, FILE *fp);
+static void nxr_header(FILE *fp);
+void nxr_print_num(ns_sys *ns, nx_num *nump, FILE *fp);
 
-#if 0
-static void nxr_print_nu_sub(nx_number *np, FILE *fp);
-#endif
+static const char *fields[] =
+  {
+   "res", "sys", "sig", "wid", "aev", "mev", "det", "dwid", "com", "cwid", "ass", "awid",
+   NULL,
+};
 
 void
 nxr_print(nx_result *r, FILE *fp, int nonewline)
@@ -16,6 +20,10 @@ nxr_print(nx_result *r, FILE *fp, int nonewline)
   int i;
   if (nxp->env && nxp->env->key_count)
     nxd_show_env(nxp->env);
+
+  if (!nxp->printed_header)
+    nxr_header(fp);
+  
   for (i = 0; i < r->nr; ++i)
     {
       if (i)
@@ -29,6 +37,20 @@ nxr_print(nx_result *r, FILE *fp, int nonewline)
     }
   if (!nonewline)
     fprintf(fp, "\n");
+}
+
+static void
+nxr_header(FILE *fp)
+{
+  ++nxp->printed_header;
+  int i = 0;
+  while (fields[i])
+    {
+      if (i)
+	fputc('\t', fp);
+      fputs(fields[i++], fp);
+    }
+  fputc('\n', fp);
 }
 
 static void
@@ -116,29 +138,29 @@ nxr_print_nu(nx_restok *rtp, FILE *fp)
     {
       /* Col 0: index in this cand set */
       fprintf(fp, "%d\t", i);
-      /* Col 1,2,3: SYS\tSIG\tMEV */
+      /* Col 1..4: SYS\tSIG\tAEV\tMEV */
       nxr_print_nu_sig(rtp->nu[i], fp);
 
-      /* Col 4: WID if data_is_char; else empty */
+      /* Col 5: WID if data_is_char; else empty */
       fputc('\t', fp);
       if (nxp->data_is_char)
 	nxr_step_data_via_list(rtp->nu[i]->steps, fp);
 
-      /* Col 5,6: DET\tWID */
+      /* Col 6,7: DET\tWID */
       fputc('\t', fp);
       nxr_step_toks(rtp->nu[i]->det, fp);
       fputc('\t', fp);
       if (nxp->data_is_char)
 	nxr_step_data(rtp->nu[i]->det, fp);
 
-      /* Col 7,8: COM\tWID */
+      /* Col 8,9: COM\tWID */
       fputc('\t', fp);
       nxr_step_toks(rtp->nu[i]->com, fp);
       fputc('\t', fp);
       if (nxp->data_is_char)
 	nxr_step_data(rtp->nu[i]->com, fp);
 
-      /* Col 9,10: ASS\tWID */
+      /* Col 10,11: ASS\tWID */
       fputc('\t', fp);
       nxr_step_toks(rtp->nu[i]->ass, fp);
       fputc('\t', fp);
@@ -147,59 +169,15 @@ nxr_print_nu(nx_restok *rtp, FILE *fp)
     }
 }
 
-#if 0
-static void
-nxr_print_nu_sub(nx_number *np, FILE *fp)
-{
-  if (np->sys)
-    {
-      int n = np->sys->name[1];
-      char o = '[';
-      char c = ']';
-      if (strchr("SB", n))
-	{
-	  o = '<';
-	  c = '>';
-	}
-      fprintf(fp, "%s%c", np->sys->name, o);
-      nx_step *sp;
-      int i = 0;
-      for (sp = np->steps; sp; sp = sp->next)
-	{
-	  if (i++)
-	    fprintf(fp, ".");
-	  if (sp->type == NX_STEP_TOK)
-	    fprintf(fp, "%s", sp->tok.tok);
-	  else
-	    nxr_print_nu_sub(sp->num, fp);
-	}
-      fprintf(fp, "%c", c);
-      if (np->unit)
-	fprintf(fp, "+%s", np->unit->tok.tok);
-      if (np->me_str)
-	fprintf(fp, "==%s", np->me_str);
-    }
-}
-#endif
-
 static void
 nxr_print_nu_sig(nx_number *np, FILE *fp)
 {
   if (np->sys)
     {
-      char o = '\t';
-      char c = '\t';
-#if 0
-      int n = np->sys->name[1];
-      if (strchr("SB", n))
-	{
-	  o = '<';
-	  c = '>';
-	}
-#endif
-      fprintf(fp, "%s%c", np->sys->name, o);
+      fprintf(fp, "%s\t", np->sys->name+1);
       nx_step *sp;
       int i = 0;
+
       for (sp = np->steps; sp; sp = sp->next)
 	{
 	  if (sp->type == NX_STEP_TOK)
@@ -227,11 +205,42 @@ nxr_print_nu_sig(nx_number *np, FILE *fp)
 	      /*nxr_print_nu_sig(sp->num, fp);*/
 	    }
 	}
-      fprintf(fp, "%c", c);
-      if (np->unit)
-	fprintf(fp, "+%s", np->unit->tok.tok);
+
+      fputc('\t', fp);
+      if (np->ae_str)
+	fputs((ccp)np->ae_str, fp);
+
+      fputc('\t', fp);
       if (np->me_str)
-	fprintf(fp, "%s", np->me_str);
+	fputs((ccp)np->me_str, fp);
     }
 }
 
+uchar *
+nxr_format_aev(ns_sys *ns, nx_num *nump, FILE *fp)
+{
+  char *base = NULL;
+  if (ns)
+    {
+      if (ns->conv[strlen((ccp)ns->conv)-1] != 'u')
+	base = (char*)ns->base;
+    }
+  char unit[base ? (strlen(base)+2) : 1];
+  if (base)
+    sprintf(unit, " %s", base);
+  else
+    base[0] = '\0';
+
+  char buf[1024];
+  int len = 0;
+  
+  if (nump->d == 1)
+    len = snprintf(buf, 1024, "%llu%s", nump->n, unit);
+  else
+    len = snprintf(buf, 1024, "%llu/%d%s", nump->n, nump->d, unit);
+
+  if (len == 1024)
+    fprintf(stderr, "nxr_format_aev: buffer overflow in %s\n", buf);
+  
+  return pool_copy((ucp)buf, nxp->p);
+}
