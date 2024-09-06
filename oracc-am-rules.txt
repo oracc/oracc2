@@ -82,6 +82,18 @@ AM_CPPFLAGS=\
 	-I$(top_srcdir)/lib/frm \
 	-I$(top_srcdir)/lib/joxer \
 	-I$(top_srcdir)/lib/jsn \
+	-I$(top_srcdir)/lib/l3/bigrams \
+	-I$(top_srcdir)/lib/l3/dsa \
+	-I$(top_srcdir)/lib/l3/ilem \
+	-I$(top_srcdir)/lib/l3/link \
+	-I$(top_srcdir)/lib/l3/ngram \
+	-I$(top_srcdir)/lib/l3/prop \
+	-I$(top_srcdir)/lib/l3/psa \
+	-I$(top_srcdir)/lib/l3/psus \
+	-I$(top_srcdir)/lib/l3/sigs \
+	-I$(top_srcdir)/lib/l3/word \
+	-I$(top_srcdir)/lib/l3/xcl2 \
+	-I$(top_srcdir)/lib/l3/xli \
 	-I$(top_srcdir)/lib/lng \
 	-I$(top_srcdir)/lib/gdl \
 	-I$(top_srcdir)/lib/gvl \

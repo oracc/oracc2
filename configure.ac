@@ -68,6 +68,19 @@ AC_CONFIG_FILES([Makefile
                  lib/gvl/Makefile
                  lib/joxer/Makefile
                  lib/jsn/Makefile
+		 lib/l3/Makefile
+		 lib/l3/bigrams/Makefile
+		 lib/l3/dsa/Makefile
+		 lib/l3/ilem/Makefile
+		 lib/l3/link/Makefile
+		 lib/l3/ngram/Makefile
+		 lib/l3/prop/Makefile
+		 lib/l3/psa/Makefile
+		 lib/l3/psus/Makefile
+		 lib/l3/sigs/Makefile
+		 lib/l3/word/Makefile
+		 lib/l3/xcl2/Makefile
+		 lib/l3/xli/Makefile
                  lib/libstemmer_c/Makefile
                  lib/lng/Makefile
                  lib/oid/Makefile
@@ -134,6 +147,7 @@ AC_CONFIG_FILES([Makefile
 		 msc/cmd/Makefile
 		 msc/cmd/config/Makefile
 		 msc/cmd/update/Makefile
+		 msc/ela/Makefile
 		 msc/lex/Makefile
 		 msc/otf/Makefile
 		 msc/sys/Makefile

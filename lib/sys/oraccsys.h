@@ -29,12 +29,15 @@
 
 #define TIS_TEMPLATE "t123456"
 
-extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsizep);
+/* Defines for porting L2 and other old code */
+#define xaccess(buf,mode,quit) access(buf,mode)
 
 #define	default_ext(fn,fext) new_ext(fn, fext, FALSE)
 #define	force_ext(fn,fext) new_ext(fn, fext, TRUE)
 #define	default_path(fn,fpath) new_path(fn, fpath, FALSE)
 #define	force_path(fn,fpath) new_path(fn, fpath, TRUE)
+
+extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsizep);
 
 extern void expand_base(const char *d);
 extern  char *expand(const char *project,const char *pqid,const char *ext);
