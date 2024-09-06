@@ -129,6 +129,7 @@ extern void nx_mul_frac(struct nx_num *n1, struct nx_num *n2);
 extern char *nx_modern(struct nx_num *mev, const char *meu);
 extern void nx_simplify(struct nx_num *np);
 extern nx_num nx_div_num(nx_num divide, nx_num by);
+extern uchar *nxr_format_aev(ns_sys *ns, nx_num *nump);
 
 extern void nx_init(void);
 extern void nx_reset(void);

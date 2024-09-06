@@ -50,7 +50,9 @@ nx_values_np(nx_number *np)
      in terms of the base, so this step ensures that np->aev
      is ready for conversion to mev */
   np->aev = nx_div_num(sum, np->sys->base_step->aev);
-  
+
+  /* render aev result */
+  np->ae_str = nxr_format_aev(np->sys, &np->aev);
 
   if (trace_values)
     printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n",

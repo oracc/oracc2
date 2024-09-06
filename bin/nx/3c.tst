@@ -1,1 +1,1 @@
-1(u) 1(diš) sila₃
+1(aš) gur 1(ban₂)

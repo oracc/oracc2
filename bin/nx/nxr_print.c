@@ -10,7 +10,7 @@ void nxr_print_num(ns_sys *ns, nx_num *nump, FILE *fp);
 
 static const char *fields[] =
   {
-   "res", "sys", "sig", "wid", "aev", "mev", "det", "dwid", "com", "cwid", "ass", "awid",
+   "res", "sys", "sig", "aev", "mev", "wid", "det", "dwid", "com", "cwid", "ass", "awid",
    NULL,
 };
 
@@ -27,7 +27,12 @@ nxr_print(nx_result *r, FILE *fp, int nonewline)
   for (i = 0; i < r->nr; ++i)
     {
       if (i)
-	fprintf(fp, " :: ");
+	{
+	  if (r->nr-i > 1)
+	    fputs(" :: ", fp);
+	  else
+	    fputc('\n', fp);
+	}
       if (r->r[i].type == NX_NU)
 	nxr_print_nu(&r->r[i], fp);
       else if (r->r[i].type == NX_NO)
@@ -98,8 +103,12 @@ nxr_step_data_via_list(nx_step *sp, FILE *fp)
 	      fputs((ccp)d, fp);
 	    }
 	}
+      else
+	fputc('-',fp);
       list_free(nx_data, NULL);
     }
+  else
+    fputc('-',fp);
 }
 
 static void
@@ -113,13 +122,18 @@ nxr_step_toks(nx_step *sp, FILE *fp)
       fputs((ccp)sp->tok.tok, fp);
       sp = sp->next;
     }
+  if (!i)
+    fputc('-', fp);
 }
 
 static void
 nxr_step_data(nx_step *sp, FILE *fp)
 {
   if (!sp || !sp->tok.data)
-    return;
+    {
+      fputc('-',fp);
+      return;
+    }
   int i = 0;
   while (sp)
     {
@@ -136,8 +150,13 @@ nxr_print_nu(nx_restok *rtp, FILE *fp)
   int i;
   for (i = 0; rtp->nu[i]; ++i)
     {
+      /* newline between possible answers */
+      if (i)
+	fputc('\n', fp);
+
       /* Col 0: index in this cand set */
       fprintf(fp, "%d\t", i);
+      
       /* Col 1..4: SYS\tSIG\tAEV\tMEV */
       nxr_print_nu_sig(rtp->nu[i], fp);
 
@@ -217,7 +236,7 @@ nxr_print_nu_sig(nx_number *np, FILE *fp)
 }
 
 uchar *
-nxr_format_aev(ns_sys *ns, nx_num *nump, FILE *fp)
+nxr_format_aev(ns_sys *ns, nx_num *nump)
 {
   char *base = NULL;
   if (ns)
@@ -229,7 +248,7 @@ nxr_format_aev(ns_sys *ns, nx_num *nump, FILE *fp)
   if (base)
     sprintf(unit, " %s", base);
   else
-    base[0] = '\0';
+    unit[0] = '\0';
 
   char buf[1024];
   int len = 0;

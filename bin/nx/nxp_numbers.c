@@ -185,17 +185,23 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
 	nu[i]->invalid = 1;
     }
   nu = nxp_remove_invalid(nu, ncand);
-    
-  /* get a virtual gur step and merge it with the preceding number */
-  ns_inst *gp = hash_find(nxp->ir, (ucp)"(gur)");
 
-  /* create a cand list from (gur) */
+  ns_inst *gp = NULL;
+  /* If there is a {gur} det because the text was OB style 1(aš) gur 3 sila₃,
+     remove it and create an explicit gur step */
+  if (nu[0]->det && !strcmp((ccp)nu[0]->det->tok.tok, "{gur}"))
+    gp = hash_find(nxp->ir, (ucp)"gur");
+  else
+    /* get a virtual gur step and merge it with the preceding number */
+    gp = hash_find(nxp->ir, (ucp)"(gur)");
+
+  /* create a cand list from gur/(gur) */
   m = nxp_candidates_inst(gp, type, data, ncand);
 
-  /* now create a NUM nx_step for the number with (gur) */
+  /* now create a NUM nx_step for the number with gur/(gur) */
   nx_step *nnum = nxp_nx_step(ip, NX_STEP_NUM, ip->text, type, data, nu[0]);
 
-  /* set the unit for all the Sa-cand to (gur) nx_step */
+  /* set the unit for all the Sa-cand to gur/(gur) nx_step */
   for (i = 0; nu[i]; ++i)
     nu[i]->unit = m[0]->last;
 
