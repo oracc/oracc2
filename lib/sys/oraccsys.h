@@ -31,7 +31,8 @@
 
 /* Defines for porting L2 and other old code */
 #define xaccess(buf,mode,quit) access(buf,mode)
-
+#define vwarning2 mesg_vwarning
+#define vwarning2 mesg_vwarning
 #define	default_ext(fn,fext) new_ext(fn, fext, FALSE)
 #define	force_ext(fn,fext) new_ext(fn, fext, TRUE)
 #define	default_path(fn,fpath) new_path(fn, fpath, FALSE)

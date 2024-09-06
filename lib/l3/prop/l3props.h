@@ -59,7 +59,7 @@ struct prop_ref_cache
   struct xcl_l *nexts[3];
 };
 
-struct prop
+struct l3prop
 {
   const unsigned char *group;
   const unsigned char *name;
@@ -69,7 +69,7 @@ struct prop
   const char *p;
   const char *xml_id;   /* set for props by cbd2xff */
   int freq;		/* frequency of prop in corpus */
-  struct prop *next;
+  struct l3prop *next;
 };
 
 enum pd_type { pd_type_flag , pd_type_ref , pd_type_string , pd_type_token };
@@ -102,16 +102,16 @@ extern int props_add_prop(struct ilem_form *f, const unsigned char *group,
 			  const char *ref, const char *xml_id, const char *pref,
 			  int ngram_id);
 extern void props_dump_props(struct ilem_form *f, FILE *fp);
-extern struct prop*props_find_prop(struct ilem_form *f, const unsigned char *name, const unsigned char *value);
-extern struct prop*props_find_prop_group(struct ilem_form *f, const unsigned char *group);
+extern struct l3prop*props_find_prop(struct ilem_form *f, const unsigned char *name, const unsigned char *value);
+extern struct l3prop*props_find_prop_group(struct ilem_form *f, const unsigned char *group);
 
-extern struct prop*props_add_prop_sub(struct prop *p, const unsigned char *group,
+extern struct l3prop*props_add_prop_sub(struct l3prop*p, const unsigned char *group,
 			  const unsigned char *name, const unsigned char *value, 
 			  const char *ref, const char *xml_id, const char *pref,
 			  int ngram_id);
-extern void props_dump_props_sub(struct prop *p, FILE *fp);
-extern struct prop*props_find_prop_sub(struct prop *p, const unsigned char *name, const unsigned char *value);
-extern struct prop*props_find_prop_group_sub(struct prop *p, const unsigned char *group);
+extern void props_dump_props_sub(struct l3prop*p, FILE *fp);
+extern struct l3prop*props_find_prop_sub(struct l3prop*p, const unsigned char *name, const unsigned char *value);
+extern struct l3prop*props_find_prop_group_sub(struct l3prop*p, const unsigned char *group);
 
 void props_auto_init(void);
 void props_auto_term(void);

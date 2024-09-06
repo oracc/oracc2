@@ -2,7 +2,7 @@
 #define _XLI_H
 
 #include "lang.h"
-#include "f2.h"
+#include "form.h"
 #include "xcl.h"
 
 struct xli;

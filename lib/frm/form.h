@@ -47,6 +47,8 @@
  */
 #define FORM_FIELD_ENDS_STR	"$#/+*\\< \t"
 
+struct ilem_form;
+
 struct form
 {
   /* Administrative fields */
@@ -54,6 +56,11 @@ struct form
   int lnum;
   Unsigned32 flags;
   
+  /* If this f2 is a structure within an ilem this pointer is to the enclosing ilem.
+     Note that many f2s are not within ilems, so this pointer will often be null.
+   */
+  struct ilem_form *owner;
+
   /* needs thinking; record instance-explicit in form of ilem_form; 
      record matches in form from sigset; reset sigset form match
      before calling cfnorm_ok ? What are the persistency issues? */

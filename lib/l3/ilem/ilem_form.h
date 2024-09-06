@@ -150,7 +150,7 @@ struct ilem_form
   const char *type;
   struct form_MD*meta;
   struct dict_ID*dict;
-  struct prop *props;
+  struct l3prop *props;
   struct lang_context *lang;
 };
 

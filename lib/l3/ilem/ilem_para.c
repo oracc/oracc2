@@ -1,13 +1,11 @@
-#include <string.h>
-#include <ctype128.h>
-#include "mesg.h"
-#include "keva.h"
+#include <oraccsys.h>
 #include "xcl.h"
 #include "ilem_para.h"
 #include "ilem_props.h"
 #include "ilem_form.h"
-#include "pool.h"
 #include "xmlify.h"
+
+extern const char *file;
 
 static int bracketing_level = 0;
 
@@ -17,7 +15,7 @@ static const char *const LPC_names[] = { LPC };
 static const char *const LPT_names[] = { LPT };
 
 unsigned char *longprop_val = NULL;
-unsigned char *kpval = NULL;
+const unsigned char *kpval = NULL;
 int prop_from_key = 0;
 
 const unsigned char *
@@ -198,7 +196,7 @@ ilem_para_parse(struct xcl_context *xc, unsigned const char *s, unsigned char **
 		  {
 		    longprop_val = longprop(c);
 		    if (!longprop_val)
-		      kpval = kp->v;
+		      kpval = (ucp)kp->v;
 		  }
 		if (longprop_val)
 		  add_lp(&lp, LPC_property, LPT_long_prop, (unsigned char*)kp->k, bracketing_level);

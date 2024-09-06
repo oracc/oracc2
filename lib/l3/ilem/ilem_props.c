@@ -31,14 +31,7 @@
  *
  */
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <ctype.h>
-#include "fname.h"
-#include "hash.h"
-#include "npool.h"
-#include "loadfile.h"
-#include "warning.h"
+#include <oraccsys.h>
 #include "ilem_props.h"
 
 int ilem_props_equals_flag = 0;
@@ -57,8 +50,8 @@ static int pline = 1;
 
 static int v_ok = 1;
 
-static Hash_table *h;
-static struct npool *p;
+static Hash *h;
+static Pool *p;
 static unsigned char *prop = NULL;
 
 static unsigned char *
@@ -76,12 +69,12 @@ ilem_props_prop(unsigned char *s)
       *t = '\0';
     }
 
-  prop = npool_copy(s, p);
+  prop = pool_copy(s, p);
   tmp = malloc(strlen((const char*)prop)+3);
   sprintf((char*)tmp,"%s==",prop);
   if (ilem_props_verbose)
     fprintf(stdout, "adding p %s\n", tmp);
-  hash_add(h,npool_copy(tmp, p), &v_ok);
+  hash_add(h,pool_copy(tmp, p), &v_ok);
   free(tmp);
 
   if (save)
@@ -96,7 +89,7 @@ ilem_props_npool(unsigned char *v)
   unsigned char *pv = NULL;
   unsigned char *tmp = malloc(strlen((char*)prop)+strlen((char*)v)+2);
   sprintf((char*)tmp,"%s=%s",prop,v);
-  pv = npool_copy(tmp,p);
+  pv = pool_copy(tmp,p);
   free(tmp);
   return pv;
 }
@@ -127,7 +120,7 @@ ilem_props_save(unsigned char *v)
 	  else
 	    {
 #if 0
-	      struct keypair *kp = malloc(sizeof(struct keypair));
+	      Keva *kp = malloc(sizeof(Keva));
 	      kp.key = prop;
 	      kp.val = v;
 	      hash_add(h,pv,&kp);
@@ -145,7 +138,7 @@ ilem_props_save(unsigned char *v)
 		  unsigned char *ambig_val = NULL, *tmp;
 		  tmp = malloc(strlen((char*)found) + strlen((char*)pv) + 2);
 		  sprintf((char*)tmp, "%s %s", found, pv);
-		  ambig_val = npool_copy(tmp,p);
+		  ambig_val = pool_copy(tmp,p);
 		  free(tmp);
 		  hash_add(h,v,ambig_val);
 		  if (!ilem_props_equals_flag)
@@ -201,7 +194,9 @@ ilem_props_val(unsigned char *v)
 	}
       else
 	{
+#if 0
 	  unsigned char *pv = NULL;
+#endif
 	  if (*v == '=')
 	    {
 	      ilem_props_equals_flag = 1;
@@ -209,9 +204,9 @@ ilem_props_val(unsigned char *v)
 	    }
 	  else
 	    ilem_props_equals_flag = 0;
-	  v = npool_copy(v,p);
+	  v = pool_copy(v,p);
 #if 1
-	  pv = ilem_props_save(v);
+	  (void)ilem_props_save(v);
 #else
 	  pv = ilem_props_save(v);
 	  fprintf(stderr, "%s:%d: pv: %s\n", plist, pline, pv);
@@ -302,7 +297,7 @@ ilem_props_load(void)
     }
   else
     {
-      vwarning("can't open property file %s", plist);
+      vwarning2(NULL,0,"can't open property file %s", plist);
     }
 }
 
@@ -310,7 +305,7 @@ void
 ilem_props_init(void)
 {
   h = hash_create(1);
-  p = npool_init();
+  p = pool_init();
   ilem_props_load();
 }
 
@@ -318,7 +313,7 @@ void
 ilem_props_term(void)
 {
   hash_free(h,NULL);
-  npool_term(p);
+  pool_term(p);
   (void)ilem_props_look(NULL);
 }
 
@@ -348,23 +343,23 @@ ilem_props_special(const unsigned char *kv, char special)
 }
 
 static void
-ilem_props_kp_from_kv(const unsigned char *kv, struct keypair *kp)
+ilem_props_kp_from_kv(const unsigned char *kv, Keva *kp)
 {
   static unsigned char *tmp = NULL, *s = NULL;
   if (kv)
     {
-      s = tmp = npool_copy(kv,p);
-      kp->key = (char*)tmp;
+      s = tmp = pool_copy(kv,p);
+      kp->k = (char*)tmp;
       while (*s && *s != '=')
 	++s;
       if (*s == '=')
 	{
 	  *s = '\0';
-	  kp->val = (char*)(s+1);
+	  kp->v = (char*)(s+1);
 	}
       else
 	{
-	  kp->val = "";
+	  kp->v = "";
 	}
     }
 }
@@ -373,12 +368,12 @@ ilem_props_kp_from_kv(const unsigned char *kv, struct keypair *kp)
  * return a structure containing pointers to key and value;
  * validate KEY/VALUE against our hash.
  */
-struct keypair *
+Keva *
 ilem_props_look(const unsigned char *kv)
 {
-  static struct keypair kp;
+  static Keva kp;
   static unsigned char *tmp = NULL;
-  kp.key = kp.val = NULL;
+  kp.k = kp.v = NULL;
 
   if (!h)
     return &kp;
@@ -395,18 +390,18 @@ ilem_props_look(const unsigned char *kv)
 	      if (strstr((const char *)kv,"=@"))
 		ilem_props_kp_from_kv(kv, &kp);
 	      else
-		vwarning("PROP in $%s requires @ref (has VAL='@' in lemprops spec)", kv);
+		vwarning2(NULL,0,"PROP in $%s requires @ref (has VAL='@' in lemprops spec)", kv);
 	    }
 	  else
 	    {
 	      if (ilem_props_special(kv,'*'))
 		ilem_props_kp_from_kv(kv, &kp);
 	      else if (ilem_props_special(kv,'-'))
-		vwarning("PROP in $%s is boolean (has VAL='-' in lemprops spec), no VAL allowed", kv);
+		vwarning2(NULL,0,"PROP in $%s is boolean (has VAL='-' in lemprops spec), no VAL allowed", kv);
 	      else if (ilem_props_special(kv,'='))
-		vwarning("PROP in $%s has unknown VAL", kv);
+		vwarning2(NULL,0,"PROP in $%s has unknown VAL", kv);
 	      else
-		vwarning("unknown PROP in $%s", kv);
+		vwarning2(NULL,0,"unknown PROP in $%s", kv);
 	    }
 	}
       else
@@ -415,7 +410,7 @@ ilem_props_look(const unsigned char *kv)
 	  if (found)
 	    {
 	      if (strchr((char*)found, ' '))
-		vwarning("ambiguous value %s needs $PROP=VAL from: %s", kv, found);
+		vwarning2(NULL,0,"ambiguous value %s needs $PROP=VAL from: %s", kv, found);
 	      else
 		ilem_props_kp_from_kv(found,&kp);
 	    }
@@ -424,24 +419,24 @@ ilem_props_look(const unsigned char *kv)
 	      if (!ilem_props_special(kv,'-'))
 		{
 		  if (ilem_props_special(kv,'='))
-		    vwarning("property $%s requires =VALUE",kv);
+		    vwarning2(NULL,0,"property $%s requires =VALUE",kv);
 		  else
-		    vwarning("$%s not found in lemprops", kv);
+		    vwarning2(NULL,0,"$%s not found in lemprops", kv);
 		}
 	      else
 		{
-		  kp.key = (char*)kv;
-		  kp.val = "";
+		  kp.k = (char*)kv;
+		  kp.v = "";
 		}
 	    }
 	}
 
-      if (kp.val && *kp.val == '@')
+      if (kp.v && *kp.v == '@')
 	{
 	  if (!ilem_props_special(kv, '@'))
 	    {
-	      vwarning("@ref not allowed in $%s", kv);
-	      kp.key = kp.val = NULL;
+	      vwarning2(NULL,0,"@ref not allowed in $%s", kv);
+	      kp.k = kp.v = NULL;
 	    }
 	}
     }

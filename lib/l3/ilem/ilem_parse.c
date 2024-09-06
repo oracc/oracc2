@@ -1,20 +1,24 @@
-#include <stdlib.h>
-#include <string.h>
-#include <ctype128.h>
-#include <psd_base.h>
-#include "npool.h"
-#include "memblock.h"
+#include <oraccsys.h>
+#include <bits.h>
 #include "atf.h"
-#include "charsets.h"
 #include "xcl.h"
-#include "lemline.h"
-#include "warning.h"
-#include "f2.h"
+/*#include "lemline.h"*/
 #include "ilem_form.h"
 #include "ilem_para.h"
-#include "props.h"
+#include "l3props.h"
 #include <lng.h>
 #include <atf2utf.h>
+#include "sigs.h"
+
+extern const char *file;
+extern int lnum;
+
+/* This from ox's lemline.h */
+struct xcl_ilem
+{
+  struct xcl_l *x;
+  struct ilem_form *i;
+};
 
 extern int bootstrap_mode;
 extern int ngram_obey_lines;
@@ -47,16 +51,13 @@ ilem_conv(struct xcl_l *l, const unsigned char *str)
   const unsigned char *x = NULL;
   if (str)
     {
+      extern int chartrie_suppress_errors;
       int entry_chartrie_er = chartrie_suppress_errors;
       curr_lang_ctxt = l->f->lang;
       chartrie_suppress_errors = 1;
-#if 1
       x = atf2utf(mloc_file_line(l->xc->file,l->lnum), str,0);
-#else
-      x = natf2utf((char*)str,(char*)str+strlen((char*)str),0,l->xc->file,l->lnum);
-#endif
       if (strcmp((char*)x,(char*)str))
-	str = npool_copy(x,l->xc->pool);
+	str = pool_copy(x,l->xc->pool);
       chartrie_suppress_errors = entry_chartrie_er;
     }
   return str;
@@ -69,7 +70,7 @@ make_inst(struct xcl_context *xc, struct ilem_form *ifp)
   sprintf(buf,"%%%s:%s=",ifp->f2.lang,ifp->f2.form);
   if (ifp->sublem)
     strcat(buf,ifp->sublem);
-  return (char*)npool_copy((unsigned char*)buf,xc->pool);
+  return (char*)pool_copy((unsigned char*)buf,xc->pool);
 }
 
 static int
@@ -116,7 +117,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 
   if (!xc)
     {
-      vwarning("internal error: ilem_parse called with NULL args");
+      vwarning2(NULL,0,"internal error: ilem_parse called with NULL args");
       return;
     }
 
@@ -134,7 +135,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 
   if (master_formp->literal)
     {
-      lemma = npool_copy((unsigned char *)master_formp->literal, xc->pool);
+      lemma = pool_copy((unsigned char *)master_formp->literal, xc->pool);
     }
   else
     {
@@ -182,7 +183,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	  phase = NULL;	  
 	  return;
 	}
-      master_formp->f2.lang = npool_copy((unsigned char *)langbuf,xc->pool);
+      master_formp->f2.lang = pool_copy((unsigned char *)langbuf,xc->pool);
       master_formp->f2.core = langcore_of(langbuf);
     }
   else if ('%' == *lemma && '%' != lemma[1])
@@ -243,7 +244,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	{
 	  struct ilem_form *mrover = NULL;
 	  /*lp->f = NULL;*/ /* NEW ILEM_FORM  form_allocator();*/
-	  lp->f = mb_new(xc->sigs->mb_ilem_forms);
+	  lp->f = memo_new(xc->sigs->mb_ilem_forms);
 	  lp->f->f2.owner = lp->f;
 	  lp->f->newflag = newflag;
 	  lp->f->f2.lang = master_formp->f2.lang;
@@ -300,15 +301,15 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 		case '+':
 		  ++lem;
 		  /*newflag = !ignore_plus; */
-		  BIT_SET(iflags, F2_FLAGS_LEM_NEW);
+		  BIT_SET(iflags, FORM_FLAGS_LEM_NEW);
 		  break;
 		case '!':
 		  ++lem;
-		  BIT_SET(iflags, F2_FLAGS_PSU_STOP);
+		  BIT_SET(iflags, FORM_FLAGS_PSU_STOP);
 		  break;
 		case '-':
 		  ++lem;
-		  BIT_SET(iflags, F2_FLAGS_PSU_SKIP);
+		  BIT_SET(iflags, FORM_FLAGS_PSU_SKIP);
 		  break;
 		case '`':
 		  lem = (unsigned char *)"X";
@@ -317,16 +318,16 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	    }
 
 	  if (first_word && lem_dynalem)
-	    BIT_SET(iflags, F2_FLAGS_PSU_STOP);
+	    BIT_SET(iflags, FORM_FLAGS_PSU_STOP);
 	  
-	  if (bootstrap_mode && !BIT_ISSET(iflags, F2_FLAGS_LEM_NEW))
-	    BIT_SET(iflags, F2_FLAGS_LEM_NEW);
+	  if (bootstrap_mode && !BIT_ISSET(iflags, FORM_FLAGS_LEM_NEW))
+	    BIT_SET(iflags, FORM_FLAGS_LEM_NEW);
 
-	  if (BIT_ISSET(iflags,F2_FLAGS_LEM_NEW))
+	  if (BIT_ISSET(iflags,FORM_FLAGS_LEM_NEW))
 	    {
 	      char *tmp = malloc(strlen((const char *)lem) + 2);
 	      sprintf(tmp, "+%s", lem);
-	      lem = npool_copy((unsigned char *)tmp, xc->pool);
+	      lem = pool_copy((unsigned char *)tmp, xc->pool);
 	      free(tmp);
 	    }
 
@@ -337,7 +338,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 		break;
 
 	      /*f->f2 = NULL form_allocator();*/
-	      f = mb_new(xc->sigs->mb_ilem_forms);
+	      f = memo_new(xc->sigs->mb_ilem_forms);
 	      f->f2.owner = f;
 	      /* f->newflag = newflag; */
 	      lp->f->ref = master_formp->ref;
@@ -345,16 +346,16 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	      f->f2.lang = master_formp->f2.lang;
 	      f->f2.core = master_formp->f2.core;
 	      f->f2.form = master_formp->f2.form;
-	      if (BIT_ISSET(iflags, F2_FLAGS_LEM_NEW))
+	      if (BIT_ISSET(iflags, FORM_FLAGS_LEM_NEW))
 		{
-		  BIT_SET(f->f2.flags, F2_FLAGS_LEM_NEW);
+		  BIT_SET(f->f2.flags, FORM_FLAGS_LEM_NEW);
 		  if ('+' == *lem) /* should always be true */
 		    ++lem;
 		}
 	      f->lnum = master_formp->lnum;
 	      f->file = master_formp->file;
 	      f->instance_flags = iflags;
-	      f->sublem = (char*)npool_copy(lem,xc->pool);
+	      f->sublem = (char*)pool_copy(lem,xc->pool);
 
 	      /* link this into the master_formp */
 	      for (last_alt = master_formp; 
@@ -365,12 +366,12 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	    }
 	  else
 	    {
-	      lp->f->sublem = (char*)npool_copy(lem,xc->pool);
+	      lp->f->sublem = (char*)pool_copy(lem,xc->pool);
 	      lp->f->instance_flags = iflags;
 	      curr_f = lp->f;
-	      if (BIT_ISSET(iflags, F2_FLAGS_LEM_NEW))
+	      if (BIT_ISSET(iflags, FORM_FLAGS_LEM_NEW))
 		{
-		  BIT_SET(curr_f->f2.flags, F2_FLAGS_LEM_NEW);
+		  BIT_SET(curr_f->f2.flags, FORM_FLAGS_LEM_NEW);
 		  if ('+' == *lem) /* should always be true */
 		    ++lem;
 		}
@@ -379,16 +380,16 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	  /* Instance parsing cannot result in a form with && being
 	     processed using f2_parse_cof, so we can just pass a NULL
 	     final argument */
-	  f2_parse((Uchar*)lp->f->file, lp->f->lnum, lem, &curr_f->f2, 
-		   (Uchar**)&curr_f->psu_sense, NULL);
+	  form_parse((Uchar*)lp->f->file, lp->f->lnum, lem, &curr_f->f2, 
+		     (Uchar**)&curr_f->psu_sense/*, NULL*/);
 
 	  if (check_cf((char*)lp->f->file, lp->f->lnum, (char*)curr_f->f2.cf))
-	    BIT_SET(curr_f->f2.flags, F2_FLAGS_INVALID);
+	    BIT_SET(curr_f->f2.flags, FORM_FLAGS_INVALID);
 
 	  if (use_ilem_conv && curr_f->lang)
 	    {
 	      curr_lang_ctxt = curr_f->lang;
-	      if (!BIT_ISSET(curr_f->f2.flags,F2_FLAGS_CF_QUOTED))
+	      if (!BIT_ISSET(curr_f->f2.flags,FORM_FLAGS_CF_QUOTED))
 		curr_f->f2.cf = ilem_conv(lp,curr_f->f2.cf);
 	      curr_f->f2.norm = ilem_conv(lp,curr_f->f2.norm);
 	      curr_f->f2.base = ilem_conv(lp,curr_f->f2.base);
@@ -442,7 +443,7 @@ lem_next(struct xcl_context *xc)
 	  ++lem_next_lem;
       if (*lem_next_lem == '\0')
 	lem_next_lem = NULL;
-      return npool_copy(this_lem, xc->pool);
+      return pool_copy(this_lem, xc->pool);
     }
   else
     return this_lem;
@@ -486,7 +487,7 @@ alt_next(struct xcl_context *xc)
 	  ++lem_next_alt;
       if (*lem_next_alt == '\0')
 	lem_next_alt = NULL;
-      return npool_copy(this_lem, xc->pool);
+      return pool_copy(this_lem, xc->pool);
     }
   else
     return NULL;

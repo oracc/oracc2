@@ -1,7 +1,6 @@
-#include <stdio.h>
-#include "pool.h"
+#include <oraccsys.h>
 #include "ilem_form.h"
-#include "props.h"
+#include "l3props.h"
 
 #define xstrcmp(a,b) strcmp((const char *)a,(const char *)b)
 static int prop_id = 0;
@@ -35,11 +34,11 @@ props_run_term(void)
     }
 }
 
-static struct prop *
+static struct l3prop *
 prop_alloc(void)
 {
-  struct prop *p = NULL;
-  if (!(p = calloc(1,sizeof(struct prop))))
+  struct l3prop *p = NULL;
+  if (!(p = calloc(1,sizeof(struct l3prop))))
     {
       fputs("out of core\n",stderr);
       exit(2);
@@ -68,7 +67,7 @@ props_add_prop(struct ilem_form *f, const unsigned char *group,
 	       const char *ref, const char *xml_id, const char *pref,
 	       int ngram_id)
 {
-  struct prop *p;
+  struct l3prop *p;
 
   if (!f)
     return -1;
@@ -115,7 +114,7 @@ props_dump_props(struct ilem_form *f, FILE *fp)
 {
   if (f->props)
     {
-      struct prop *p;
+      struct l3prop *p;
       fputs("<props>",fp);
       for (p = f->props; p; p = p->next)
 	{
@@ -139,13 +138,13 @@ props_dump_props(struct ilem_form *f, FILE *fp)
     }
 }
 
-struct prop*
+struct l3prop*
 props_find_prop(struct ilem_form *f, const unsigned char *name, const unsigned char *value)
 {
 #if 1
   return props_find_prop_sub(f->props, name, value);
 #else
-  struct prop *p = NULL;
+  struct l3prop *p = NULL;
   for (p = f->props; p; p = p->next)
     if (!xstrcmp(p->name,name) 
 	&& (!value || !p->value || (!value || !xstrcmp(p->value,value))))
@@ -154,10 +153,10 @@ props_find_prop(struct ilem_form *f, const unsigned char *name, const unsigned c
 #endif
 }
 
-struct prop*
+struct l3prop*
 props_find_prop_group(struct ilem_form *f, const unsigned char *group)
 {
-  struct prop *p = NULL;
+  struct l3prop *p = NULL;
   for (p = f->props; p; p = p->next)
     if (p->group && !xstrcmp(p->group,group))
       return p;
@@ -165,13 +164,13 @@ props_find_prop_group(struct ilem_form *f, const unsigned char *group)
 }
 
 /* Add the prop at the front of the list */
-struct prop*
-props_add_prop_sub(struct prop *props, const unsigned char *group,
+struct l3prop*
+props_add_prop_sub(struct l3prop *props, const unsigned char *group,
 		   const unsigned char *name, const unsigned char *value, 
 		   const char *ref, const char *xml_id, const char *pref,
 		   int ngram_id)
 {
-  struct prop *p;
+  struct l3prop *p;
 
   /* Should probably revise this to add multiple instances of same
      prop now that they come with an ngram_id */
@@ -210,11 +209,11 @@ props_add_prop_sub(struct prop *props, const unsigned char *group,
 }
 
 void
-props_dump_props_sub(struct prop *props, FILE *fp)
+props_dump_props_sub(struct l3prop *props, FILE *fp)
 {
   if (props)
     {
-      struct prop *p;
+      struct l3prop *p;
       fputs("<props>",fp);
       for (p = props; p; p = p->next)
 	{
@@ -238,8 +237,8 @@ props_dump_props_sub(struct prop *props, FILE *fp)
     }
 }
 
-struct prop*
-props_find_prop_sub(struct prop * p, const unsigned char *name, const unsigned char *value)
+struct l3prop*
+props_find_prop_sub(struct l3prop * p, const unsigned char *name, const unsigned char *value)
 {
   if (!p || !name)
     return NULL;
@@ -250,8 +249,8 @@ props_find_prop_sub(struct prop * p, const unsigned char *name, const unsigned c
   return NULL;
 }
 
-struct prop*
-props_find_prop_group_sub(struct prop *p, const unsigned char *group)
+struct l3prop*
+props_find_prop_group_sub(struct l3prop *p, const unsigned char *group)
 {
   for (; p; p = p->next)
     if (group && p->group && !xstrcmp(p->group,group))

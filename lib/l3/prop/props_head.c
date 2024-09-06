@@ -1,12 +1,8 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype128.h>
-#include <string.h>
-#include <f2.h>
+#include <oraccsys.h>
+#include <form.h>
 #include <ilem_form.h>
 #include "xcl.h"
-#include "npool.h"
-#include "props.h"
+#include "l3props.h"
 #include "ngram.h"
 
 void
@@ -67,9 +63,9 @@ props_head_sub(struct props_head *php)
 	      if (ref)
 		{
 		  sprintf(buf,"#%s",ref->xml_id);
-		  idref = npool_copy((unsigned char *)buf, php->xc->pool);
+		  idref = pool_copy((unsigned char *)buf, php->xc->pool);
 		  sprintf(buf,"%s[%s]",ref->f->f2.cf,ref->f->f2.gw);
-		  value = npool_copy((unsigned char *)buf, php->xc->pool);
+		  value = pool_copy((unsigned char *)buf, php->xc->pool);
 		}
 	    }
 	  else
@@ -84,9 +80,9 @@ props_head_sub(struct props_head *php)
 	  /* get value from head node */
 	  ref = hp;
 	  sprintf(buf,"#%s",ref->xml_id);
-	  idref = npool_copy((unsigned char *)buf, php->xc->pool);
+	  idref = pool_copy((unsigned char *)buf, php->xc->pool);
 	  sprintf(buf,"%s[%s]",ref->f->f2.cf,ref->f->f2.gw);
-	  value = npool_copy((unsigned char *)buf, php->xc->pool);
+	  value = pool_copy((unsigned char *)buf, php->xc->pool);
 	}
       if (target && target->f && (value || idref))
 	props_add_prop(target->f,php->pp->group,php->pp->name,

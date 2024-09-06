@@ -1,10 +1,9 @@
-#include <ctype128.h>
-#include "pool.h"
+#include <oraccsys.h>
+#include <bits.h>
 #include "xcl.h"
-#include "props.h"
+#include "l3props.h"
 #include "sigs.h"
 #include "ilem.h"
-#include "warning.h"
 #include "xli.h"
 
 extern int lem_autolem, lem_dynalem;
@@ -15,8 +14,8 @@ int lem_extended = 1;
 extern int verbose;
 extern int bootstrap_mode;
 
-static int md_match(const char *value, const char *key, Hash_table *mdsets, const char *mdrefs);
-static struct ilem_form **md_selector(Hash_table *xcl_context_meta, Hash_table *mdsets, struct ilem_form **fp, int *nfinds);
+static int md_match(const char *value, const char *key, Hash *mdsets, const char *mdrefs);
+static struct ilem_form **md_selector(Hash *xcl_context_meta, Hash *mdsets, struct ilem_form **fp, int *nfinds);
 static void md_select(struct xcl_l *lp, struct ilem_form *fp);
 static void rank_disambig(struct xcl_context *xcp, struct xcl_l *lp);
 static void wrapup_props(struct xcl_l *lp, struct ilem_form *fp);
@@ -142,9 +141,9 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
 
   if (!fp->finds)
     {
-      if (!fp->f2.cf && BIT_ISSET(fp->f2.flags, F2_FLAGS_NORM_IS_CF))
+      if (!fp->f2.cf && BIT_ISSET(fp->f2.flags, FORM_FLAGS_NORM_IS_CF))
 	fp->f2.cf = fp->f2.norm;
-      if (BIT_ISSET(fp->f2.flags,F2_FLAGS_LEM_NEW) && !lem_autolem)
+      if (BIT_ISSET(fp->f2.flags,FORM_FLAGS_LEM_NEW) && !lem_autolem)
 	/*(void)sigs_new_sig(xcp,fp)*/; /* not needed any more now that +-forms always go to cache and get checked on their way */
       else
 	sigs_warn(xcp, lp, fp->look, fp);
@@ -154,7 +153,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
   /* This must have been to make +-ed forms show up as wrong, but
      the real solution is to remove the + signs after merge */
   else if (fp->look && fp->look->type == sig_look_check)
-    BIT_CLEAR(fp->f2.flags,F2_FLAGS_LEM_NEW);
+    BIT_CLEAR(fp->f2.flags,FORM_FLAGS_LEM_NEW);
 #endif
 
   if (fp->fcount > 1)
@@ -312,7 +311,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
 
   if (fp->fcount == 1 
       || (fp->fcount > 1 
-	  && (lem_autolem || lem_dynalem || BIT_ISSET(fp->f2.flags, F2_FLAGS_LEM_NEW))))
+	  && (lem_autolem || lem_dynalem || BIT_ISSET(fp->f2.flags, FORM_FLAGS_LEM_NEW))))
     {
       /* must do this before inherit so that ->multi inheriting works */
       if (fp->finds[0]->f2.parts)
@@ -321,7 +320,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
       if (!fp->finds[0]->f2.project
 	  || strcmp(xcp->project, (char*)fp->finds[0]->f2.project))
 	{
-	  BIT_SET(fp->f2.flags, F2_FLAGS_NEW_BY_PROJ);
+	  BIT_SET(fp->f2.flags, FORM_FLAGS_NEW_BY_PROJ);
 	  fp->finds[0]->f2.exo_project = fp->finds[0]->f2.project; /* save external source of sig */
 	  fp->finds[0]->f2.exo_lang = fp->finds[0]->f2.lang; /* save lang of external sig */
 	}
@@ -332,7 +331,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
 
       ilem_inherit(fp, fp->finds[0]); /* not lp->f because of ambig */
 
-      fp->f2.sig = f2_sig(xcp, fp, &fp->f2);
+      fp->f2.sig = form_sig(&fp->f2);
       
       /* check this after inherit to get fields set correctly */
       if (!bootstrap_mode && strcmp((char*)fp->f2.lang, (char*)fp->finds[0]->f2.lang))
@@ -343,7 +342,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
 		    "%s is new for lang %s",
 		    errsig, fp->f2.lang);
 #endif
-	  BIT_SET(fp->f2.flags, F2_FLAGS_NEW_BY_LANG);
+	  BIT_SET(fp->f2.flags, FORM_FLAGS_NEW_BY_LANG);
 	}
 
       fp->dict = fp->finds[0]->dict;
@@ -358,8 +357,8 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
        *  - failed matches don't get a sig as it pollutes the glossary
        *  - COF tails don't get a sig either
        */
-      if (!fp->f2.sig && !BIT_ISSET(fp->f2.flags, F2_FLAGS_COF_TAIL))
-	fp->f2.sig = (unsigned char *)f2_sig(xcp,fp,&fp->f2);
+      if (!fp->f2.sig && !BIT_ISSET(fp->f2.flags, FORM_FLAGS_COF_TAIL))
+	fp->f2.sig = (unsigned char *)form_sig(&fp->f2);
 
       if (fp->multi && lp->f->mcount > 0)
 	{
@@ -370,8 +369,8 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
 	      fp->multi->f2.tail_sig = fp->f2.parts[i]->tail_sig;
 	}
     }
-  else if (!BIT_ISSET(fp->f2.flags, F2_FLAGS_FROM_CACHE))
-    BIT_SET(fp->f2.flags, F2_FLAGS_INVALID);
+  else if (!BIT_ISSET(fp->f2.flags, FORM_FLAGS_FROM_CACHE))
+    BIT_SET(fp->f2.flags, FORM_FLAGS_INVALID);
 
 #if 0
   if (lp->ante_para || lp->post_para)
@@ -386,7 +385,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
 }
 
 static int
-md_match(const char *value, const char *key, Hash_table *mdsets, const char *mdrefs)
+md_match(const char *value, const char *key, Hash *mdsets, const char *mdrefs)
 {
   char idbuf[32];
   const char *mdp = mdrefs;
@@ -394,7 +393,7 @@ md_match(const char *value, const char *key, Hash_table *mdsets, const char *mdr
   while (mdp && *mdp)
     {
       char *idp = idbuf;
-      Hash_table *mdhash;
+      Hash *mdhash;
       while (*mdp && !isspace(*mdp))
 	*idp++ = *mdp++;
       *idp = '\0';
@@ -419,14 +418,14 @@ md_match(const char *value, const char *key, Hash_table *mdsets, const char *mdr
 }
 
 static struct ilem_form **
-md_selector(Hash_table *xcl_context_meta, Hash_table *mdsets, struct ilem_form **fp, 
+md_selector(Hash *xcl_context_meta, Hash *mdsets, struct ilem_form **fp, 
 	    int *nfinds)
 {
   const char * const keys[] = { "subgenre", "genre", "time", "place", NULL };
   struct ilem_form **res = malloc((1+*nfinds) * sizeof(struct ilem_form*));
   struct ilem_form **matches = fp;
   int i, nres;
-  Hash_table *mdhashes;
+  Hash *mdhashes;
   
   mdhashes = hash_find(mdsets, (unsigned char *)"#mdsets");
 
@@ -477,7 +476,7 @@ md_select(struct xcl_l *lp, struct ilem_form *fp)
 {
   struct ilem_form **mdfinds = fp->finds;
   int nselected = fp->fcount;
-  Hash_table *use_mds = NULL;
+  Hash *use_mds = NULL;
   if (fp->sp->mdsets_hash)
     use_mds = fp->sp->mdsets_hash;
 #if 0
@@ -514,30 +513,30 @@ md_select(struct xcl_l *lp, struct ilem_form *fp)
 static void
 wrapup_props(struct xcl_l *lp, struct ilem_form *fp)
 {
-  struct prop *xfp;
-  struct prop *more = NULL;
+  struct l3prop *xfp;
+  struct l3prop *more = NULL;
   for (xfp = fp->finds[0]->props; xfp; xfp = xfp->next)
     {
-      struct prop *xfp2;
+      struct l3prop *xfp2;
       if ((xfp2 = props_find_prop(lp->f,xfp->name,xfp->value)))
 	{
 	  xfp2->p = xfp->p;
 	}
       else
 	{
-	  struct prop *last = more;
+	  struct l3prop *last = more;
 	  if (last)
 	    {
 	      while (last->next)
 		last = last->next;
-	      last->next = malloc(sizeof(struct prop));
+	      last->next = malloc(sizeof(struct l3prop));
 	      *last->next = *xfp;
 	      last->next->xml_id = NULL;
 	      last->next->next = NULL;
 	    }
 	  else
 	    {
-	      more = malloc(sizeof(struct prop));
+	      more = malloc(sizeof(struct l3prop));
 	      *more = *xfp;
 	      more->xml_id = NULL;
 	      more->next = NULL;
@@ -546,7 +545,7 @@ wrapup_props(struct xcl_l *lp, struct ilem_form *fp)
     }
   if (more)
     {
-      struct prop *last;
+      struct l3prop *last;
       for (last = fp->props; last && last->next; last = last->next)
 	;
       if (last)

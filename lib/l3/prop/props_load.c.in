@@ -1,25 +1,10 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/unistd.h>
-#include <ctype128.h>
-#include "npool.h"
-#include "hash.h"
+#include <oraccsys.h>
 #include "runexpat.h"
-#include "memblock.h"
 #include "xcl.h"
 #include "ngram.h"
-#include "props.h"
+#include "l3props.h"
 #include "lang.h"
 
-#if 0
-struct props_user
-{
-  struct props_context *props;
-  struct props_lang_data *curr_lang;
-  struct props_term *curr_term;
-  enum langcode l;
-};
-#else
 struct props_user
 {
   struct props_context *context;
@@ -28,9 +13,8 @@ struct props_user
   struct props_lang_data *curr_lang;
   struct props_term *curr_term;
   struct props_prop *curr_prop;
-  struct npool *pool;
+  Pool *pool;
 };
-#endif
 
 extern const char *project;
 extern int verbose;

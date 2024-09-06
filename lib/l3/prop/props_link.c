@@ -1,5 +1,5 @@
 #include "xcl.h"
-#include "props.h"
+#include "l3props.h"
 
 static void
 props_one_link_c(struct linkset *lsp,int link_index,struct xcl_c *cp)
