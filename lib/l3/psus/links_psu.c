@@ -75,7 +75,7 @@ links_psu(struct xcl_context *xc, struct ML *mlp)
       lsp->form.file = (unsigned char*)xc->file;
       lsp->form.lnum = mlp->matches[0].lp->lnum;
 
-      lsp->form.sig = form_psu_sig(mlp->matches[0].psu_form);
+      lsp->form.sig = form_psu_sig(xc, mlp->matches[0].psu_form);
 
 #if 1
       tmp = (ucp)psu_inst((char*)lsp->form.sig);

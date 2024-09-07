@@ -239,7 +239,6 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 	    {
 	      char *tab = strchr(sig,'\t');
 	      const char *colon;
-	      extern int nwarning;
 	      if (tab)
 		*tab = '\0';
 	      colon = strchr(sig, ':');
@@ -249,7 +248,7 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 	      else
 		colon = (char*)sig;
 	      vwarning2(fp->file,fp->lnum,"\t%s",colon);
-	      --nwarning;
+	      mesg_status_ignore_one();
 	      if (tab)
 		*tab = '\t';
 	    }

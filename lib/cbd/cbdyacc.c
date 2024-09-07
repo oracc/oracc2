@@ -101,7 +101,7 @@ struct cbd *
 cbd_bld_cbd(void)
 {
   struct cbd *c = NULL;
-  extern char *file; /*FIXME*/
+  extern const char *file; /*FIXME*/
   c = malloc(sizeof(struct cbd));
   c->aliasmem = memo_init(sizeof(struct alias), 1024);
   c->allowmem = memo_init(sizeof(struct allow), 1024);

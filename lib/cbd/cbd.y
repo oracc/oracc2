@@ -472,7 +472,7 @@ void
 yyerror(const char *s)
 {
   YYLTYPE loc;
-  extern char *file;
+  extern const char *file;
   extern int yylineno;
   loc.file = (char *)file;
   loc.line = yylineno;

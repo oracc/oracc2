@@ -139,6 +139,9 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
   struct ilem_form **fretp;
   int fcount;
 
+  if (!fp->f2.owner)
+    fp->f2.owner = fp;
+  
   if (!fp->finds)
     {
       if (!fp->f2.cf && BIT_ISSET(fp->f2.flags, FORM_FLAGS_NORM_IS_CF))
@@ -331,7 +334,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
 
       ilem_inherit(fp, fp->finds[0]); /* not lp->f because of ambig */
 
-      fp->f2.sig = form_sig(&fp->f2);
+      fp->f2.sig = form_sig(xcp, &fp->f2);
       
       /* check this after inherit to get fields set correctly */
       if (!bootstrap_mode && strcmp((char*)fp->f2.lang, (char*)fp->finds[0]->f2.lang))
@@ -358,7 +361,7 @@ ilem_wrapup_sub(struct xcl_context *xcp, struct xcl_l *lp, struct ilem_form *fp)
        *  - COF tails don't get a sig either
        */
       if (!fp->f2.sig && !BIT_ISSET(fp->f2.flags, FORM_FLAGS_COF_TAIL))
-	fp->f2.sig = (unsigned char *)form_sig(&fp->f2);
+	fp->f2.sig = (unsigned char *)form_sig(xcp, &fp->f2);
 
       if (fp->multi && lp->f->mcount > 0)
 	{

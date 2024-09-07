@@ -463,7 +463,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 		      if (already_tried_aliasing((const char *)ifp->f2.form, &ifp->finds[i]->f2))
 			continue;
 #endif
-		      if (form_alias(&ifp->f2, &ifp->finds[i]->f2))
+		      if (form_alias(sp->owner, &ifp->f2, &ifp->finds[i]->f2))
 			{
 			  struct sig const * const *alias_sigs_found = NULL;
 			  BIT_CLR(ifp->f2.flags,FORM_FLAGS_NO_FORM);
@@ -495,7 +495,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 		}
 	      else
 		{
-		  if (form_alias(&ifp->f2, NULL))
+		  if (form_alias(sp->owner, &ifp->f2, NULL))
 		    {
 		      struct sig const * const *alias_sigs_found = NULL;
 		      static int alias_nfinds;
@@ -536,7 +536,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	      /* can't free sigs_found here */
 	      for (alias_nfinds = i = 0; ifp->finds[i]; ++i)
 		{
-		  if (form_extreme_alias(&ifp->f2, &ifp->finds[i]->f2))
+		  if (form_extreme_alias(sp->owner, &ifp->f2, &ifp->finds[i]->f2))
 		    {
 		      struct sig const * const *alias_sigs_found = NULL;
 		      BIT_CLR(ifp->f2.flags,FORM_FLAGS_NO_FORM);

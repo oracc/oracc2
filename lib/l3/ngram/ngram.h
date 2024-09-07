@@ -98,7 +98,7 @@ struct NLE
   int nle_count;
   int implicit_tts;
   const char *psu;
-  Form *psu_form;
+  struct form *psu_form;
   const char *file;
   int lnum;
   void *user;
@@ -138,7 +138,7 @@ struct CF
   int wild;
   int clear;
   const char *cf;
-  Form *f2;
+  struct form *f2;
   struct PRED **preds;
   struct l3prop *props;
   struct NLE *owner;
@@ -199,13 +199,13 @@ struct ML
 struct match
 {
   struct xcl_l*lp;
-  Form **matching_f2s;
+  struct form **matching_f2s;
   int nmatches;
   int wild;
   struct CF *tt;
   /*int ntts;*/
   const char  *psu;
-  Form *psu_form;
+  struct form *psu_form;
   const unsigned char **psu_finds;
   int psu_nfinds;
   void *user;

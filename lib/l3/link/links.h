@@ -23,7 +23,7 @@ struct linkset
   struct link *links;
   int used;
   int alloced;
-  Form form;
+  struct form form;
   struct linkset *next;
   void *user;
   user_dump_func *user_dump_function;

@@ -76,6 +76,7 @@ AM_CPPFLAGS=\
 	-I$(top_srcdir)/lib/atf \
 	-I$(top_srcdir)/lib/cat \
 	-I$(top_srcdir)/lib/cbd \
+	-I$(top_srcdir)/lib/chr \
 	-I$(top_srcdir)/lib/collate \
 	-I$(top_srcdir)/lib/rnc \
 	-I$(top_srcdir)/lib/std \

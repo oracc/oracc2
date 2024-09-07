@@ -112,19 +112,23 @@ struct form
 
 typedef struct form Form;
 
-extern int form_parse(const Uchar *file, size_t line, Uchar *lp, Form *formp, Uchar **psu_sense);
-extern unsigned char *form_sig(Form *fp);
-extern unsigned char *form_psu_sig(Form *fp);
-extern int form_alias(Form *fp, Form *ref_fp);
+#include "sigs.h"
+struct sig_context; /* need this because of interweave of form.h/sigs.h includes */
 
 extern void form_init(void);
 extern void form_term(void);
 
-extern int form_form_signs(const unsigned char *f1, const unsigned char *form);
-extern int form_extreme_alias(Form *fp, Form *ref_fp);
+extern int form_parse(const Uchar *file, size_t line, Uchar *lp, Form *formp, Uchar **psu_sense);
+
+extern unsigned char *form_sig(struct xcl_context *xcp, Form *fp);
+extern unsigned char *form_psu_sig(struct xcl_context *xcp, Form *fp);
+
+extern int form_alias(struct sig_context *scp, Form *fp, Form *ref_fp);
+extern int form_extreme_alias(struct sig_context *scp, Form *fp, Form *ref_fp);
 
 extern void form_inherit(Form *inheritor_form, Form *from_form);
 extern void form_clear(Form*f);
+
 extern void form_serialize_form(FILE *f_f2, Form *f);
 extern void form_serialize_form_2(FILE *f_f2, struct ilem_form *f);
 

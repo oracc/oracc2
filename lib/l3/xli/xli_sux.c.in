@@ -42,7 +42,7 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 		}
 	      /* We do pre-emptive aliasing so that if we get a successful
 		 parse we can use the proper form in the sig */
-	      form_alias(&f->f2, 
+	      form_alias(xcp->sigs, &f->f2, 
 			 (f->finds && f->finds[0]) ? (&f->finds[0]->f2) : NULL);
 	      buf = malloc(2*(strlen((char*)f2p->form) 
 			      + strlen((char*)f2p->cf) 
