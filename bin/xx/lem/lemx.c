@@ -4,6 +4,7 @@
 #include "ilem.h"
 #include "sigs.h"
 #include "xcl.h"
+#include "l3props.h"
 
 #include "globals.c"
 
@@ -118,6 +119,7 @@ main(int argc, char **argv)
 
   nl_init();
   ngramify_init();
+  props_run_init();
 
   if (textmode)
     {
