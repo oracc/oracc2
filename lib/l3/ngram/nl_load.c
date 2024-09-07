@@ -1,26 +1,19 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype128.h>
-#include "warning.h"
-#include "memblock.h"
-#include "hash.h"
-#include "list.h"
-#include "pool.h"
+#include <oraccsys.h>
+#include <lng.h>
 #include "atf.h"
-#include "charsets.h"
+/*#include "charsets.h"*/
 #include "ngram.h"
-#include "loadfile.h"
+#include "sigs.h"
 
 #define CF_BLOCK_SIZE    16
 #define PRED_BLOCK_SIZE  16
 
-struct mb *nl_context_mem;
-struct mb *nl_mem;
-struct mb *nle_mem;
-struct mb *ngram_lines_mem;
-struct mb *cf_mem;
-struct mb *pred_mem;
+Memo *nl_context_mem;
+Memo *nl_mem;
+Memo *nle_mem;
+Memo *ngram_lines_mem;
+Memo *cf_mem;
+Memo *pred_mem;
 
 extern int use_unicode;
 
@@ -28,7 +21,7 @@ const char *nl_file;
 int nl_lnum;
 
 static unsigned char *
-add_str(char *dest, const char *src, struct npool *pool)
+add_str(char *dest, const char *src, Pool *pool)
 {
   if (!src || !strlen(src))
     return (unsigned char *)dest;
@@ -38,24 +31,24 @@ add_str(char *dest, const char *src, struct npool *pool)
       int len = strlen(dest) + strlen(src) + 2;
       char *n = malloc(len);
       sprintf(n,"%s %s",dest, src);
-      dest = (char*)npool_copy((unsigned char *)n, pool);
+      dest = (char*)pool_copy((unsigned char *)n, pool);
       free(n);
     }
   else
     {
-      dest = (char*)npool_copy((unsigned char *)src, pool);
+      dest = (char*)pool_copy((unsigned char *)src, pool);
     }
   return (unsigned char *)dest;
 }
 
 static unsigned char *
-fin_str(const char *str, struct npool *pool)
+fin_str(const char *str, Pool *pool)
 {
   return (unsigned char *)str;
 #if 0  
   if (str)
     {
-      unsigned char *tmp = npool_copy((unsigned char *)str,pool);
+      unsigned char *tmp = pool_copy((unsigned char *)str,pool);
       free((char*)str);
       return tmp;
     }
@@ -64,31 +57,30 @@ fin_str(const char *str, struct npool *pool)
 #endif
 }
 
-static struct f2 *
+static Form *
 parse_psu(struct NLE *nlep, List *components, unsigned char *ngm)
 {
   unsigned char *sig;
   int i = 0;
 
-  nlep->psu_form = mb_new(nlep->owner->owner->owner->owner->mb_f2s);
+  nlep->psu_form = memo_new(nlep->owner->owner->owner->owner->mb_f2s);
   /* PSU's don't use the && notation for COFs, so we can pass a NULL
      final arg here safely */
-  f2_parse((unsigned char*)nlep->owner->file,
-	   nlep->lnum,
-	   npool_copy((unsigned char *)nlep->psu,nlep->owner->owner->pool),
-	   nlep->psu_form, NULL,
-	   NULL);
+  form_parse((unsigned char*)nlep->owner->file,
+	     nlep->lnum,
+	     pool_copy((unsigned char *)nlep->psu,nlep->owner->owner->pool),
+	     nlep->psu_form, NULL);
   nlep->psu_form->file = (unsigned char *)nlep->owner->file;
   nlep->psu_form->lnum = nlep->lnum;
   nlep->psu_form->lang = (unsigned char *)nlep->owner->owner->lang;
   nlep->psu_form->core = langcore_of((const char*)nlep->psu_form->lang);
   for (i = 0, sig = list_first(components); sig; sig = list_next(components), ++i)
     {
-      struct f2 *f = mb_new(nlep->owner->owner->owner->owner->mb_f2s);
-      f2_parse((unsigned char*)nlep->owner->file,
+      Form *f = memo_new(nlep->owner->owner->owner->owner->mb_f2s);
+      form_parse((unsigned char*)nlep->owner->file,
 	       nlep->lnum,
-	       npool_copy(sig,nlep->owner->owner->pool),
-	       f, NULL, NULL);
+	       pool_copy(sig,nlep->owner->owner->pool),
+	       f, NULL);
 
       /* Not necessary any more but need to add f->pos to psu form string */
       /* nlep->cfs[i]->f2->form = f->form; */
@@ -110,7 +102,7 @@ parse_psu(struct NLE *nlep, List *components, unsigned char *ngm)
       components->rover->data = f;
     }
   nlep->psu_form->psu_ngram = ngm;
-  nlep->psu_form->parts = (struct f2 **)list2array(components);
+  nlep->psu_form->parts = (Form **)list2array(components);
   list_free(components,NULL);
   nlep->psu_form->form = fin_str((char*)nlep->psu_form->form,nlep->owner->owner->pool);
   nlep->psu_form->norm = fin_str((char*)nlep->psu_form->norm,nlep->owner->owner->pool);
@@ -148,19 +140,19 @@ nleps_free(struct NLE_set *p)
 struct CF *
 new_cf(List *lp)
 {
-  list_add(lp, mb_new(cf_mem));
+  list_add(lp, memo_new(cf_mem));
   return list_last(lp);
 }
 
 struct PRED *
 new_pred(List *lp)
 {
-  list_add(lp, mb_new(pred_mem));
+  list_add(lp, memo_new(pred_mem));
   return list_last(lp);
 }
 
 static void
-nleps_add(Hash_table *hash, struct NLE*nlep)
+nleps_add(Hash *hash, struct NLE*nlep)
 {
   struct NLE_set *nleps;
   /* set key here to ->cf or ->pos */
@@ -178,14 +170,14 @@ nleps_add(Hash_table *hash, struct NLE*nlep)
   nleps->pp[nleps->pp_used++] = nlep;
 }
 
-struct f2 *
+Form *
 parse_ngram_line(struct NL*nlp, const char *line, int ngram_index, 
 		 struct NL_context*nlcp, List *components, void *user)
 {
-  struct NLE *nlep = mb_new(nle_mem);
+  struct NLE *nlep = memo_new(nle_mem);
   char *end_cts, *tts, *psu = NULL;
   int implicit_tts = 0;
-  struct f2 *psu_form = NULL;
+  Form *psu_form = NULL;
   /*char *cts_save = NULL;*/
   /*int cts_len = 0;*/
 
@@ -200,8 +192,8 @@ parse_ngram_line(struct NL*nlp, const char *line, int ngram_index,
   nlep->lnum = nl_lnum;
   nlep->owner = nlp;
   nlep->user = user;
-  nlep->line = (char*)npool_copy((unsigned char *)line, nlcp->pool);
-  nlep->chop = (char*)npool_copy((unsigned char *)line, nlcp->pool);
+  nlep->line = (char*)pool_copy((unsigned char *)line, nlcp->pool);
+  nlep->chop = (char*)pool_copy((unsigned char *)line, nlcp->pool);
   nlep->priority = nlcp->nngrams++;
 
   if (!(tts = strstr(nlep->chop,"=>")))
@@ -236,7 +228,7 @@ parse_ngram_line(struct NL*nlp, const char *line, int ngram_index,
       while (isspace(*psu))
 	++psu;
       nlep->psu = psu;
-      psu_form = parse_psu(nlep, components, npool_copy((unsigned char*)line, nlcp->pool));
+      psu_form = parse_psu(nlep, components, pool_copy((unsigned char*)line, nlcp->pool));
     }
 
   nleps_add(nlcp->active_hash,nlep);
@@ -257,9 +249,9 @@ struct NL_context *
 nl_new_context(struct sigset *sp, enum nlcp_actions act, const char *lang)
 {
   struct NL_context *nlcp = NULL;
-  nlcp = mb_new(nl_context_mem);
+  nlcp = memo_new(nl_context_mem);
   nlcp->owner = sp;
-  nlcp->pool = npool_init();
+  nlcp->pool = pool_init();
   nlcp->posNgrams = hash_create(1024);
   nlcp->psuNgrams = hash_create(1024);
   if (act == nlcp_action_rewrite)
@@ -295,7 +287,7 @@ nl_free_context(struct NL_context *nlcp)
     }
   if (nlcp->pool)
     {
-      npool_term(nlcp->pool);
+      pool_term(nlcp->pool);
       nlcp->pool = NULL;
     }
 }
@@ -308,7 +300,7 @@ nl_new_nl(struct NL_context *nlcp)
   if (!nlcp)
     return NULL;
 
-  nlp = mb_new(nl_mem);
+  nlp = memo_new(nl_mem);
   if (nlcp->nlp)
     {
       for (tmp = nlcp->nlp; tmp->next; tmp = tmp->next)
@@ -319,16 +311,16 @@ nl_new_nl(struct NL_context *nlcp)
     nlcp->nlp = nlp;
 
   nlp->owner = nlcp;
-  nlp->file = (char*)npool_copy((unsigned char*)nl_file, nlcp->pool);
+  nlp->file = (char*)pool_copy((unsigned char*)nl_file, nlcp->pool);
   nlp->initial_line = nlcp->nngrams;
 
   return nlp;
 }
 
-struct f2 *
+Form *
 nl_process_one_line(struct NL *nlp, const char *lp, List *components)
 {
-  struct f2 *psu_form = NULL;
+  Form *psu_form = NULL;
   if (!isspace(*lp) && '#' != *lp)
     {
       if (verbose > 2)
@@ -411,12 +403,12 @@ nl_init(void)
 {
   if (!nl_context_mem)
     {
-      nl_context_mem = mb_init(sizeof(struct NL_context),1);
-      nl_mem = mb_init(sizeof(struct NL),1);
-      nle_mem = mb_init(sizeof(struct NLE),16);
-      ngram_lines_mem = mb_init(sizeof(char *),16);
-      cf_mem = mb_init(sizeof(struct CF),32);
-      pred_mem = mb_init(sizeof(struct PRED),32);
+      nl_context_mem = memo_init(sizeof(struct NL_context),1);
+      nl_mem = memo_init(sizeof(struct NL),1);
+      nle_mem = memo_init(sizeof(struct NLE),16);
+      ngram_lines_mem = memo_init(sizeof(char *),16);
+      cf_mem = memo_init(sizeof(struct CF),32);
+      pred_mem = memo_init(sizeof(struct PRED),32);
     }
 }
 
@@ -425,19 +417,19 @@ nl_term(void)
 {
   if (nl_context_mem)
     {
-      mb_free(nl_context_mem);
-      mb_free(nl_mem);
-      mb_free(nle_mem);
-      mb_free(ngram_lines_mem);
-      mb_free(cf_mem);
-      mb_free(pred_mem);
+      memo_term(nl_context_mem);
+      memo_term(nl_mem);
+      memo_term(nle_mem);
+      memo_term(ngram_lines_mem);
+      memo_term(cf_mem);
+      memo_term(pred_mem);
     }
 }
 
 struct NL *
 nl_setup(struct NL_context**xnlcp, enum nlcp_actions act, const char *lang)
 {
-  struct NL *nlp = mb_new(nl_mem);
+  struct NL *nlp = memo_new(nl_mem);
   struct NL_context *nlcp;
   if (!xnlcp || !*xnlcp)
     {

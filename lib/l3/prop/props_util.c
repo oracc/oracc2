@@ -1,9 +1,9 @@
 #include <stdlib.h>
-#include "npool.h"
+#include "pool.h"
 #include "ngram.h"
 #include "ilem_form.h"
-#include "f2.h"
-#include "props.h"
+#include "form.h"
+#include "l3props.h"
 #include "xcl.h"
 
 struct prop_ref_cache prop_cache;
@@ -293,9 +293,9 @@ anno_target(struct xcl_l *target, struct xcl_context *xc,
 	    {
 	      char buf[128];
 	      sprintf(buf,"#%s",ref->xml_id);
-	      idref = npool_copy((unsigned char *)buf,xc->pool);
+	      idref = pool_copy((unsigned char *)buf,xc->pool);
 	      sprintf(buf,"%s[%s]",ref->f->f2.cf,ref->f->f2.gw);
-	      value = npool_copy((unsigned char *)buf,xc->pool);
+	      value = pool_copy((unsigned char *)buf,xc->pool);
 	    }
 	}
       else

@@ -1,9 +1,5 @@
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <oraccsys.h>
+#include <bits.h>
 #include "ilem_form.h"
 #include "lang.h"
 #include "xli.h"
@@ -121,15 +117,15 @@ xli_send(struct xli*xlip, unsigned char *s)
 }
 
 void
-xli_ilem(struct xcl_context *xcp, struct ilem_form *f, struct f2 *fp)
+xli_ilem(struct xcl_context *xcp, struct ilem_form *f, Form *fp)
 {
   enum langcode c = c_none;
 
-  if (!BIT_ISSET(fp->flags /*f->instance_flags*/, F2_FLAGS_LEM_NEW))
+  if (!BIT_ISSET(fp->flags /*f->instance_flags*/, FORM_FLAGS_LEM_NEW))
     return;
 
   /* FIXME: this code doesn't handle f2->parts separately because it just looks at the first entry in finds[] */
-  if (!BIT_ISSET(fp->flags, F2_FLAGS_NO_FORM)
+  if (!BIT_ISSET(fp->flags, FORM_FLAGS_NO_FORM)
       && f->fcount > 0 
       && f->finds[0]->f2.base && f->finds[0]->f2.morph)
     return;

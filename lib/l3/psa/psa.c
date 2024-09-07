@@ -3,7 +3,7 @@
 #include "ilem_form.h"
 #include "xcl.h"
 #include "psa.h"
-#include "props.h"
+#include "l3props.h"
 
 /*
   Annotate an XCL tree for person-name info.  We work in three
@@ -76,7 +76,7 @@ psa_analyzer(struct xcl_context *xc, struct props_context *pcp)
 {
   if (pcp)
     {
-      Hash_table *titles = NULL;
+      Hash *titles = NULL;
       xc->props = pcp;
       if (!xc->linkbase)
 	xc->linkbase = new_linkbase();
@@ -112,21 +112,21 @@ has_marker(struct ilem_form *f)
 static int
 has_h_relator(struct ilem_form *f)
 {
-  struct prop *p = props_find_prop(f,(unsigned char *)"relator",NULL);
+  struct l3prop *p = props_find_prop(f,(unsigned char *)"relator",NULL);
   return (p && p->value) ? (!strcmp((char *)p->value,"h")) : 0;
 }
 
 static int
 has_v_relator(struct ilem_form *f)
 {
-  struct prop *p = props_find_prop(f,(unsigned char *)"relator",NULL);
+  struct l3prop *p = props_find_prop(f,(unsigned char *)"relator",NULL);
   return (p && p->value) ? (!strcmp((char *)p->value,"v")) : 0;
 }
 
 static const char *
 has_V_qualifier_ref(struct ilem_form *f)
 {
-  struct prop *p = NULL;
+  struct l3prop *p = NULL;
 
   if (!p)
     p = props_find_prop(f,(unsigned char *)"father-is",NULL);
@@ -145,7 +145,7 @@ has_V_qualifier_ref(struct ilem_form *f)
 static const char *
 has_H_qualifier_ref(struct ilem_form *f)
 {
-  struct prop *p = props_find_prop(f,(unsigned char *)"husband-is",NULL);
+  struct l3prop *p = props_find_prop(f,(unsigned char *)"husband-is",NULL);
   if (!p)
     p = props_find_prop(f,(unsigned char *)"wife-is",NULL);
   if (!p)
@@ -158,9 +158,9 @@ has_H_qualifier_ref(struct ilem_form *f)
 #endif
 
 static void
-great_check(struct prop *child_is, struct xcl_l *lp)
+great_check(struct l3prop *child_is, struct xcl_l *lp)
 {
-  struct prop *parent_is = NULL;
+  struct l3prop *parent_is = NULL;
   if ((parent_is = props_find_prop(lp->f, (unsigned char *)"father-is", NULL)))
     {
       struct xcl_c *tmp;
@@ -239,7 +239,7 @@ nentify_1(struct xcl_context *xc,struct xcl_c *cp)
 	      if (lref)
 		{
 		  int new_nent_end;
-		  struct prop *child_is = NULL;
+		  struct l3prop *child_is = NULL;
 
 		  new_nent_end = find_ref_node(lref, cp, i+1);
 		  if (new_nent_end == i)

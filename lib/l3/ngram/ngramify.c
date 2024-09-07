@@ -1,13 +1,13 @@
-#include <stddef.h>
-#include <stdlib.h>
-#include "warning.h"
+#include <oraccsys.h>
+#include <stdarg.h>
+#include <bits.h>
 #include "ilem_form.h"
 #include "xcl.h"
 #include "ngram.h"
 #include "links.h"
 #include "lang.h"
 #include "sigs.h"
-#include "props.h"
+#include "l3props.h"
 
 int ng_debug = 0;
 static int ng_match_logging = 1;
@@ -25,12 +25,12 @@ static int ngram_id = -1;
 static struct ML *match_list = NULL;
 static int wild_reset;
 
-static void add_match(struct xcl_l *matches, struct f2 **fmatches, 
-		      struct CF*tt, const char *psu, struct f2 *psu_form,
+static void add_match(struct xcl_l *matches, Form **fmatches, 
+		      struct CF*tt, const char *psu, Form *psu_form,
 		      void *user, int nmatches);
 static void add_wild_match(struct xcl_l *lp);
-static int check_predicates(struct f2 *p, struct CF *cfp);
-static struct f2 **match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct prop *p);
+static int check_predicates(Form *p, struct CF *cfp);
+static Form **match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct l3prop *p);
 static int match_nle(struct NLE *nle, union xcl_u *cl, int cl_index, int cl_max);
 static struct match *next_match(void);
 static struct NLE **nle_heads(struct NL*nlp, struct ilem_form *fp, int *n_nodes);
@@ -38,9 +38,9 @@ static int nle_cmp(struct NLE **a, struct NLE **b);
 static int try_match(int match_index, 
 		     struct CF**steps, int max_steps, int step_index,
 		     union xcl_u*cls, int cl_index, int cl_max,
-		     struct CF **tts, const char *psu, struct f2 *psu_form,
-		     struct prop *props);
-static struct f2 **lnodes_of(struct ilem_form *ifp, int *nparsesp);
+		     struct CF **tts, const char *psu, Form *psu_form,
+		     struct l3prop *props);
+static Form **lnodes_of(struct ilem_form *ifp, int *nparsesp);
 static int psu_cofs_ok(void);
 
 int
@@ -241,13 +241,13 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 	    {
 	      if (clnodes[i].l->f->psu_sense)
 		{
-		  psu_sense = clnodes[i].l->f->psu_sense;
+		  psu_sense = (ucp)clnodes[i].l->f->psu_sense;
 		  psu_lnum = clnodes[i].l->f->lnum;
 		  if (verbose)
 		    fprintf(stderr, "psu_sense = %s\n", psu_sense);
 		}
 	    }
-	  if (psu_sense && nle[i_nle]->psu && !strstr(nle[i_nle]->psu, psu_sense))
+	  if (psu_sense && nle[i_nle]->psu && !strstr(nle[i_nle]->psu, (ccp)psu_sense))
 	    {
 	      ngdebug("[ngramify] skipping PSU %s because it doesn't contain '%s'",
 		      nle[i_nle]->line, psu_sense);
@@ -293,7 +293,7 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 		      match_list->matches->user = nle[i_nle]->user;
 		      if (match_list->matches->psu_form)
 			if (clnodes[first_non_d].l->f->newflag)
-			  BIT_SET(match_list->matches->psu_form->flags, F2_FLAGS_LEM_NEW);
+			  BIT_SET(match_list->matches->psu_form->flags, FORM_FLAGS_LEM_NEW);
 		      nlcp->func(xcp,match_list);
 		    }
 		}
@@ -349,7 +349,7 @@ match_nle(struct NLE *nle, union xcl_u *cl, int cl_index, int cl_max)
  */
 
 /* For any lp that is in the PSU match, if it is a COF head,
-   check that all of its COF tails have F2_FLAGS_NGRAM_MATCH
+   check that all of its COF tails have FORM_FLAGS_NGRAM_MATCH
    set */
 static int
 psu_cofs_ok(void)
@@ -370,7 +370,7 @@ psu_cofs_ok(void)
       if (mp->lp->cof_tails)
 	{
 	  int j;
-	  struct f2 **new_f2s = malloc((1+mp->nmatches) * sizeof(struct f2*));
+	  Form **new_f2s = malloc((1+mp->nmatches) * sizeof(Form*));
 	  int n_new_f2s = 0;
 	  /* matching_f2s = maru/maru/maru/maru */
 	  for (j = 0; mp->matching_f2s[j] && mp->matching_f2s[j]->parts; ++j)
@@ -379,14 +379,14 @@ psu_cofs_ok(void)
 	      /* parts = shipru */
 	      for (k = 0; mp->matching_f2s[j]->parts[k]; ++k)
 		{
-		  if (!BIT_ISSET(mp->matching_f2s[j]->parts[k]->flags, F2_FLAGS_NGRAM_MATCH))
+		  if (!BIT_ISSET(mp->matching_f2s[j]->parts[k]->flags, FORM_FLAGS_NGRAM_MATCH))
 		    {
 		      keeper_f2 = 0;
 		      break;
 		    }
 		  else
 		    {
-		      BIT_SET(mp->matching_f2s[j]->parts[k]->flags, F2_FLAGS_NGRAM_KEEP);
+		      BIT_SET(mp->matching_f2s[j]->parts[k]->flags, FORM_FLAGS_NGRAM_KEEP);
 		    }
 		}
 	      if (keeper_f2)
@@ -401,7 +401,7 @@ psu_cofs_ok(void)
 	  if (n_new_f2s)
 	    {
 	      int k;
-	      memcpy(mp->matching_f2s, new_f2s, n_new_f2s * sizeof(struct f2 *));
+	      memcpy(mp->matching_f2s, new_f2s, n_new_f2s * sizeof(Form *));
 	      mp->matching_f2s[n_new_f2s] = NULL;
 	      mp->nmatches = n_new_f2s;
 	      free(new_f2s);
@@ -411,14 +411,14 @@ psu_cofs_ok(void)
 	      for (k = i+1; k < match_list->matches_used; ++k)
 		{
 		  struct match *mp = &match_list->matches[k];
-		  struct f2 **f2_keepers = malloc((1+mp->nmatches) * sizeof(struct f2 *));
+		  Form **f2_keepers = malloc((1+mp->nmatches) * sizeof(Form *));
 		  int n_keepers = 0;
 		  for (j = 0; mp->matching_f2s[j]; ++j)
 		    {
-		      if (BIT_ISSET(mp->matching_f2s[j]->flags, F2_FLAGS_NGRAM_KEEP))
+		      if (BIT_ISSET(mp->matching_f2s[j]->flags, FORM_FLAGS_NGRAM_KEEP))
 			f2_keepers[n_keepers++] = mp->matching_f2s[j];
 		    }
-		  memcpy(mp->matching_f2s, f2_keepers, n_keepers * sizeof(struct f2*));
+		  memcpy(mp->matching_f2s, f2_keepers, n_keepers * sizeof(Form*));
 		  mp->matching_f2s[n_keepers] = NULL;
 		  mp->nmatches = n_keepers;
 		  free(f2_keepers);
@@ -447,7 +447,7 @@ is_ignorable(union xcl_u *u)
     }
   if (u->c->node_type == xcl_node_l)
     {
-      if (u->l->f && BIT_ISSET(u->l->f->instance_flags,F2_FLAGS_PSU_SKIP))
+      if (u->l->f && BIT_ISSET(u->l->f->instance_flags,FORM_FLAGS_PSU_SKIP))
 	{
 	  return 1;
 	}
@@ -459,8 +459,8 @@ static int
 try_match(int match_index, 
 	  struct CF**steps, int max_steps, int step_index,
 	  union xcl_u *cls, int cl_index, int cl_max,
-	  struct CF **tts, const char* psu, struct f2 *psu_form,
-	  struct prop *p)
+	  struct CF **tts, const char* psu, Form *psu_form,
+	  struct l3prop *p)
 {
   int wild_tries = 0;
 
@@ -468,7 +468,7 @@ try_match(int match_index,
     return 1;
  wild:
   {
-    struct f2 **matches = NULL;
+    Form **matches = NULL;
     int nmatches = 0;
     struct xcl_l *curr_l;
 
@@ -485,7 +485,7 @@ try_match(int match_index,
       curr_l = cls[cl_index+wild_tries].l;
 
     /* Don't use PSU_STOP for the first item in an NLE */
-    if (curr_l->f && step_index && BIT_ISSET(curr_l->f->instance_flags,F2_FLAGS_PSU_STOP))
+    if (curr_l->f && step_index && BIT_ISSET(curr_l->f->instance_flags,FORM_FLAGS_PSU_STOP))
       return 0;
 
     matches = match(steps[step_index],curr_l,&nmatches,p);
@@ -531,8 +531,8 @@ next_match(void)
 }
 
 static void
-add_match(struct xcl_l *lp, struct f2 **matches, struct CF*tt, 
-	  const char *psu, struct f2 *psu_form, void *user, int nmatches)
+add_match(struct xcl_l *lp, Form **matches, struct CF*tt, 
+	  const char *psu, Form *psu_form, void *user, int nmatches)
 {
   struct match *mp = next_match();
   mp->lp = lp;
@@ -560,7 +560,7 @@ add_wild_match(struct xcl_l *lp)
 }
 
 static int
-match_props(struct prop *ilemp, struct prop *ngrmp)
+match_props(struct l3prop *ilemp, struct l3prop *ngrmp)
 {
   if (NULL == ilemp)
     return 0;
@@ -578,12 +578,12 @@ match_props(struct prop *ilemp, struct prop *ngrmp)
   return 1;
 }
 
-static struct f2 **
-match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct prop *props)
+static Form **
+match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct l3prop *props)
 {
-  static struct f2 *matches[128]; /*FIXME: dynamic please*/
+  static Form *matches[128]; /*FIXME: dynamic please*/
   int nmatches = 0, i, nparses;
-  struct f2 **parses;
+  Form **parses;
 
 #define add_lp_match(pform) matches[nmatches++]=pform /* just until we do it dynamically */
   
@@ -594,7 +594,7 @@ match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct prop *props)
   ngdebug("[match] testing %d parses for match to %s",nparses,step->cf);
   for (i = 0; i < nparses; ++i)
     {
-      struct f2 *p = NULL;
+      Form *p = NULL;
 
       if (props)
 	if (parses[i]->owner == NULL || !match_props(parses[i]->owner->props, props))
@@ -615,7 +615,7 @@ match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct prop *props)
 	      if (!step->neg)
 		{
 		  add_lp_match(p);
-		  BIT_SET(p->flags,F2_FLAGS_NGRAM_MATCH);
+		  BIT_SET(p->flags,FORM_FLAGS_NGRAM_MATCH);
 		}
 	    }
 	  else
@@ -623,7 +623,7 @@ match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct prop *props)
 	      if (step->neg)
 		{
 		  add_lp_match(p);
-		  BIT_SET(p->flags,F2_FLAGS_NGRAM_MATCH);
+		  BIT_SET(p->flags,FORM_FLAGS_NGRAM_MATCH);
 		}
 	    }
 	  if (step->wild && wild_reset == -1)
@@ -641,7 +641,7 @@ match(struct CF *step, struct xcl_l *lp, int *nmatchesp, struct prop *props)
 }
 
 static int
-check_predicates(struct f2 *p, struct CF *cfp)
+check_predicates(Form *p, struct CF *cfp)
 {
   const char *pform = (char*)p->form;
   int i = 0;
@@ -654,7 +654,7 @@ check_predicates(struct f2 *p, struct CF *cfp)
   
   if (cfp->f2->form && *cfp->f2->form)
     if (pform && !*pform && p->cof_id)
-      pform = (char*)((struct f2*)((void*)(uintptr_t)p->cof_id))->form;
+      pform = (char*)((Form*)((void*)(uintptr_t)p->cof_id))->form;
 
   if (pform && cfp->f2->form && *cfp->f2->form
       && strcmp((char*)pform, (char*)cfp->f2->form))
@@ -719,10 +719,10 @@ check_predicates(struct f2 *p, struct CF *cfp)
   the forms referenced by lp's form member which are candidates for
   matching.
  */
-static struct f2 **
+static Form **
 lnodes_of(struct ilem_form *fp, int *nparsesp)
 {
-  struct f2 **parses = NULL;
+  Form **parses = NULL;
 
   if (fp->ambig)
     {
@@ -738,7 +738,7 @@ lnodes_of(struct ilem_form *fp, int *nparsesp)
 	    ++n;
 	}
       /* make parses an array containing all the finds of all the ambigs */
-      parses = malloc(n * sizeof(struct f2 *));
+      parses = malloc(n * sizeof(Form *));
       for (i = 0, tmp = fp; tmp; tmp = tmp->ambig)
 	{
 	  if (tmp->finds)
@@ -762,7 +762,7 @@ lnodes_of(struct ilem_form *fp, int *nparsesp)
   else if (fp->finds)
     {
       int i;
-      parses = malloc((*nparsesp = fp->fcount) * sizeof(struct f2 *));
+      parses = malloc((*nparsesp = fp->fcount) * sizeof(Form *));
       for (i = 0; i < fp->fcount; ++i)
 	parses[i] = &fp->finds[i]->f2;
       *nparsesp = fp->fcount;
@@ -771,7 +771,7 @@ lnodes_of(struct ilem_form *fp, int *nparsesp)
   else if (fp->f2.cf
 	   || (fp->f2.pos /* && !strcmp((char*)fp->f2.pos,"n") */)) /* need to match GN etc. */
     {
-      parses = malloc(sizeof(struct f2*));
+      parses = malloc(sizeof(Form*));
       parses[0] = &fp->f2;
       *nparsesp = 1;
     }
@@ -803,11 +803,11 @@ static struct NLE **
 nle_heads(struct NL*nlp, struct ilem_form *fp, int *n_nodes)
 {
   struct NLE **retp;
-  struct f2 **p;
+  Form **p;
   struct NLE_set**nles_p;
   struct NLE_set *nles;
   int nparses, i, n_nles, total_nles, one = 1;
-  Hash_table *seen_cfs = NULL;
+  Hash *seen_cfs = NULL;
   int try_pos = 0, try_pos_bis = 0;
   const unsigned char *cf_or_pos = NULL;
 

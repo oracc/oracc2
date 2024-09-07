@@ -4,15 +4,15 @@
 #include "runexpat.h"
 #include "hash.h"
 #include "list.h"
-#include "npool.h"
-#include "props.h"
+#include "pool.h"
+#include "l3props.h"
 
 /* This needs to be refactored as part of an XVL library */
 
 struct prop_context
 {
-  Hash_table *names;
-  struct npool *pool;
+  Hash *names;
+  Pool *pool;
 };
 
 static struct prop_context *pc = NULL;
@@ -29,8 +29,8 @@ ap_sH(void *userData, const char *name, const char **atts)
 	    {
 	      struct propdef *pd = calloc(1,sizeof(struct propdef));
 	      const char *type = findAttr(atts,"type");
-	      pd->name = (unsigned char*)npool_copy((unsigned char*)name,pc->pool);
-	      pd->group = npool_copy((unsigned char*)findAttr(atts,"group"),pc->pool);
+	      pd->name = (unsigned char*)pool_copy((unsigned char*)name,pc->pool);
+	      pd->group = pool_copy((unsigned char*)findAttr(atts,"group"),pc->pool);
 	      if (*(findAttr(atts,"multi")))
 		pd->multi = 1;
 	      if (!strcmp(type,"flag"))
@@ -69,7 +69,7 @@ props_auto_init(void)
 
   pc = malloc(sizeof(struct prop_context));
   pc->names = hash_create(10);
-  pc->pool = npool_init();
+  pc->pool = pool_init();
   
   if (!access(prop_data, R_OK))
     {
@@ -96,7 +96,7 @@ props_auto_term(void)
   if (pc)
     {
       hash_free(pc->names, (hash_free_func*)names_free);
-      npool_term(pc->pool);
+      pool_term(pc->pool);
       free(pc);
       pc = NULL;
     }

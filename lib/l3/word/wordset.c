@@ -1,12 +1,8 @@
+#include <oraccsys.h>
 #include <stdlib.h>
 #include <string.h>
 #include <setjmp.h>
-#include "hash.h"
-#include "list.h"
-#include "npool.h"
-#include "memblock.h"
 #include "words.h"
-#include "misc.h"
 
 int wordset_debug = 0;
 
@@ -20,9 +16,9 @@ static const char *keysep_chars = " .,;:/[](){}"; /* - */
 
 static Uchar *getkey_next;
 
-static struct mb *mb_w2_sets = NULL;
-static struct mb *mb_w2_keys = NULL;
-static struct npool *w2_pool = NULL;
+static Memo *mb_w2_sets = NULL;
+static Memo *mb_w2_keys = NULL;
+static Pool *w2_pool = NULL;
 
 static void getkey_init(void);
 static const Uchar *getkey(const Uchar *str);
@@ -43,9 +39,9 @@ w2_init(void)
 {
   if (!mb_w2_sets)
     {
-      mb_w2_sets = mb_init(sizeof(struct w2_set), 32);
-      mb_w2_keys = mb_init(sizeof(Uchar *), 4);
-      w2_pool = npool_init();
+      mb_w2_sets = memo_init(sizeof(struct w2_set), 32);
+      mb_w2_keys = memo_init(sizeof(Uchar *), 4);
+      w2_pool = pool_init();
       getkey_init();
     }
 }
@@ -55,11 +51,11 @@ w2_term(void)
 {
   if (mb_w2_sets)
     {
-      mb_free(mb_w2_sets);
+      memo_term(mb_w2_sets);
       mb_w2_sets = NULL;
-      mb_free(mb_w2_keys);
+      memo_term(mb_w2_keys);
       mb_w2_keys = NULL;
-      npool_term(w2_pool);
+      pool_term(w2_pool);
       w2_pool = NULL;
     }
 }
@@ -72,7 +68,7 @@ compare_sequences(struct w2_set *set1, int start1, int top1,
   int i;
   int seg_nkeys = 0;
 
-  if (!strcmp(set1->literal, set2->literal))
+  if (!strcmp((ccp)set1->literal, (ccp)set2->literal))
     {
       set1->pct = set2->pct = 101;
       return W2_FULL;
@@ -131,8 +127,8 @@ w2_create_set(const Uchar *word_set)
   if (!word_set)
     return NULL;
 
-  set = mb_new(mb_w2_sets);
-  set->literal = npool_copy(word_set, w2_pool);
+  set = memo_new(mb_w2_sets);
+  set->literal = pool_copy(word_set, w2_pool);
   
   if (!strncmp((const char *)word_set, "(to be) ", strlen("(to be) ")))
     word_set += strlen("(to be) ");
@@ -145,14 +141,14 @@ w2_create_set(const Uchar *word_set)
     ++set->nkeys;
   getkey(NULL);
 
-  set->keys = mb_new_array(mb_w2_keys,set->nkeys);
+  set->keys = memo_new_array(mb_w2_keys,set->nkeys);
 
   while ((k = getkey(word_set)))
     {
       if (!*k)
 	set->keys[index++] = NULL;
       else
-	set->keys[index++] = npool_copy(k, w2_pool);
+	set->keys[index++] = pool_copy(k, w2_pool);
     }
   getkey(NULL);
   if (wordset_debug)

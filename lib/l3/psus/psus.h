@@ -6,7 +6,7 @@ struct lang_context;
 extern struct NL_context *psus2_init(struct sigset *sp);
 extern void psus2(struct xcl_context *xc);
 extern void psus2_term(void);
-extern struct f2* psu2_register(const char *file, size_t lnum, 
+extern Form* psu2_register(const char *file, size_t lnum, 
 				struct sigset *sp, const char *lang,
 				const unsigned char *ngram_line,
 				List *component_sigs);

@@ -104,5 +104,6 @@ extern off_t fsize (const char *fn, FILE *fp);
 extern int file_copy(const char *from, const char *to);
 
 extern int glob_pattern(const char *pat, glob_t *gres);
+extern int pct(int amount, int total);
 
 #endif/*ORACCSYS_H_*/

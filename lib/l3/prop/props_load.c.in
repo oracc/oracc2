@@ -4,6 +4,7 @@
 #include "ngram.h"
 #include "l3props.h"
 #include "lang.h"
+#include "sigs.h"
 
 struct props_user
 {
@@ -18,7 +19,7 @@ struct props_user
 
 extern const char *project;
 extern int verbose;
-static Hash_table *props_loaded = NULL;
+static Hash *props_loaded = NULL;
 
 static void props_warning(const char *mess, const char *cause);
 static struct props_context *props_load(const char *fname, const char *name, struct xcl_context *xc);
@@ -155,9 +156,9 @@ new_prop(struct props_user *udata, const char **atts)
   if (!udata->curr_term)
     return NULL;
 
-  udata->curr_prop = curr_prop = mb_new(udata->context->mb_props_props);
-  curr_prop->name = npool_copy((unsigned char *)findAttr(atts,"name"), udata->pool);
-  curr_prop->group = npool_copy((unsigned char *)findAttr(atts,"group"), udata->pool);
+  udata->curr_prop = curr_prop = memo_new(udata->context->mb_props_props);
+  curr_prop->name = pool_copy((unsigned char *)findAttr(atts,"name"), udata->pool);
+  curr_prop->group = pool_copy((unsigned char *)findAttr(atts,"group"), udata->pool);
   if (!curr_prop->group || !*curr_prop->group)
     {
       struct propdef *p = props_auto_name(curr_prop->name);
@@ -166,7 +167,7 @@ new_prop(struct props_user *udata, const char **atts)
       else
 	fprintf(stderr,"props: no group for property `%s'\n", curr_prop->name);
     }
-  curr_prop->value = npool_copy((unsigned char *)findAttr(atts,"value"), udata->pool);
+  curr_prop->value = pool_copy((unsigned char *)findAttr(atts,"value"), udata->pool);
   curr_prop->maxlem = atoi(findAttr(atts,"maxlem"));
   if (curr_prop->maxlem < 0)
     curr_prop->maxlem *= -1;
@@ -181,7 +182,7 @@ new_prop(struct props_user *udata, const char **atts)
       int nth = ref_nth((const char *)curr_prop->value);
       char buf[32];
       sprintf(buf,"#%d",nth);
-      curr_prop->value = npool_copy((unsigned char *)buf, udata->pool);
+      curr_prop->value = pool_copy((unsigned char *)buf, udata->pool);
     }
   curr_prop->where = ref_nth((const char *)findAttr(atts,"on"));
   return curr_prop;
@@ -201,7 +202,7 @@ new_term(struct props_user *udata)
   udata->curr_term = &udata->curr_lang->term[udata->curr_lang->terms_used++];
   memset(udata->curr_term,'\0',sizeof(struct props_term));
 #else
-  udata->curr_term = mb_new(udata->context->mb_props_terms);
+  udata->curr_term = memo_new(udata->context->mb_props_terms);
   return udata->curr_term;
 #endif
 }
@@ -230,7 +231,7 @@ props_sH(void *userData, const char *name, const char **atts)
 #else
 		   udata->curr_lang 
 		   = udata->context->langs[lp->code]
-		   = mb_new(udata->context->mb_props_lang_datas);
+		   = memo_new(udata->context->mb_props_lang_datas);
 		   udata->context->langs[lp->code]->lang = lp;
 #endif
 		}
@@ -275,7 +276,7 @@ props_eH(void *userData, const char *name)
 	{
 	  ++lname;
 	  if (!strcmp(lname,"ngram") && udata->curr_term)
-	    udata->curr_term->ngram = npool_copy((unsigned char *)charData_retrieve(),
+	    udata->curr_term->ngram = pool_copy((unsigned char *)charData_retrieve(),
 						 udata->pool);
 	  else if (!strcmp(lname,"term") && udata->curr_term)
 	    {
@@ -307,9 +308,9 @@ props_load(const char *fname, const char *name, struct xcl_context *xc)
   props->name = name;
   props->nlcps = calloc(c_count, sizeof(struct NL_context*));
   props->langs = calloc(c_count, sizeof(struct props_lang_data*));
-  props->mb_props_terms = mb_init(sizeof(struct props_term),32);
-  props->mb_props_props = mb_init(sizeof(struct props_prop),32);
-  props->mb_props_lang_datas = mb_init(sizeof(struct props_lang_data),1);
+  props->mb_props_terms = memo_init(sizeof(struct props_term),32);
+  props->mb_props_props = memo_init(sizeof(struct props_prop),32);
+  props->mb_props_lang_datas = memo_init(sizeof(struct props_lang_data),1);
   props_user->context = props;
 #if 0
   props_user->l = c_none;

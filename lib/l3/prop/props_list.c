@@ -6,6 +6,7 @@
 static int prop_id = 0;
 
 static List *prop_mem = NULL;
+static Pool *prop_pool;
 
 void
 xcl_props_init(void)
@@ -21,7 +22,10 @@ void
 props_run_init(void)
 {
   if (!prop_mem)
-    prop_mem = list_create(LIST_SINGLE);
+    {
+      prop_mem = list_create(LIST_SINGLE);
+      prop_pool = pool_init();
+    }
 }
 
 void
@@ -31,6 +35,8 @@ props_run_term(void)
     {
       list_free(prop_mem,free);
       prop_mem = NULL;
+      pool_term(prop_pool);
+      prop_pool = NULL;
     }
 }
 
@@ -54,7 +60,7 @@ next_prop_id(void)
 {
   char buf[12];
   sprintf(buf,"p%08x",prop_id++);
-  return (const char *)pool_copy((unsigned char *)buf);
+  return (const char *)pool_copy((unsigned char *)buf, prop_pool);
 }
 
 /* return 0 if the prop is added; 1 if it was skipped because it was duplicate 

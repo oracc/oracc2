@@ -66,7 +66,7 @@ struct sig
   const Uchar *sig;
   const Uchar *literal; /* used by cache */
   struct sigset *set;
-  struct f2 *f2p;
+  Form *f2p;
   struct ilem_form *ifp;
   /*struct w2_set *w2p;*/
   Unsigned32 rank;
@@ -123,12 +123,12 @@ extern struct sig const * const *sigs_cache_find(struct sigset *sp, struct ilem_
 extern void setup_ilem_form(struct sig_context *scp, struct xcl_l *l, unsigned char*pinst);
 
 extern int field_ok(const Uchar *s1, const Uchar *s2);
-extern int cfnorm_ok(struct f2 *f1, struct f2 *f2);
-extern int posepos_ok(struct f2 *f1, struct f2 *f2);
-extern int xsense_ok(struct f2 *f1, struct f2 *f2, int gw_wild, const char *FILE, size_t LINE);
+extern int cfnorm_ok(Form *f1, Form *f2);
+extern int posepos_ok(Form *f1, Form *f2);
+extern int xsense_ok(Form *f1, Form *f2, int gw_wild, const char *FILE, size_t LINE);
 #define sense_ok(a1,a2,a3) xsense_ok((a1),(a2),(a3),__FILE__,__LINE__)
-extern int f2_test(struct f2 *f1, struct f2 *f2);
-extern int f2_test_no_sense(struct f2 *f, struct f2 *f2);
+extern int f2_test(Form *f1, Form *f2);
+extern int f2_test_no_sense(Form *f, Form *f2);
 extern void sigs_cof_finds(struct xcl_l *l);
 extern void sigs_cof_init(void);
 extern void sigs_cof_term(void);

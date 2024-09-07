@@ -57,7 +57,7 @@ links_chunks(struct linkbase *lbp, int with_chunkified)
 
 struct xcl_chunk_spec *
 links_chunks_part(struct linkbase *lbp,
-		  Hash_table *titles, Hash_table *roles, Hash_table *lnodes,
+		  Hash *titles, Hash *roles, Hash *lnodes,
 		  int with_chunkified)
 {
   struct xcl_chunk_spec *cp = NULL;

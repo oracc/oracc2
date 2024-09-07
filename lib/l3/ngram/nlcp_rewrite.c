@@ -1,10 +1,10 @@
-#define NULL (void*)0
-#include "warning.h"
+#include <oraccsys.h>
+#include <bits.h>
 #include "ngram.h"
 #include "ilem_form.h"
 
 static void
-replace_finds(struct ilem_form *ilemp, struct f2**f2s, int nf2s)
+replace_finds(struct ilem_form *ilemp, Form**f2s, int nf2s)
 {
   int i;
   extern int lem_dynalem;
@@ -39,13 +39,13 @@ nlcp_rewrite(struct xcl_context *xcp, struct ML *mlp)
 	  int i;
 	  for (i = 0; mp->matching_f2s[i]; ++i)
 	    {
-	      if (!BIT_ISSET(mp->matching_f2s[i]->flags,F2_FLAGS_READ_ONLY))
+	      if (!BIT_ISSET(mp->matching_f2s[i]->flags,FORM_FLAGS_READ_ONLY))
 		{
 		  if (mp->tt && mp->tt->f2)
 		    {
 		      if (mp->tt->clear)
-			f2_clear(mp->matching_f2s[i]);
-		      f2_inherit(mp->matching_f2s[i], mp->tt->f2);
+			form_clear(mp->matching_f2s[i]);
+		      form_inherit(mp->matching_f2s[i], mp->tt->f2);
 #if 0
 		      if (mp->matching_f2s[i]->owner)
 			mp->matching_f2s[i]->owner->literal = NULL;
@@ -53,7 +53,7 @@ nlcp_rewrite(struct xcl_context *xcp, struct ML *mlp)
 			mp->matching_f2s[i]->owner->literal = NULL;
 #endif
 		    }
-		  BIT_SET(mp->matching_f2s[i]->flags, F2_FLAGS_READ_ONLY);
+		  BIT_SET(mp->matching_f2s[i]->flags, FORM_FLAGS_READ_ONLY);
 		}
 	    }
 	  if (mp->lp->f->ambig)
@@ -102,7 +102,7 @@ nlcp_rewrite(struct xcl_context *xcp, struct ML *mlp)
 
 #if 0
 static void
-apply_tts(struct f2 *fp, struct CF *tt)
+apply_tts(Form *fp, struct CF *tt)
 {
   int i;
   if (tt && tt->preds)
@@ -149,11 +149,11 @@ xnlcp_rewrite(struct xcl_context *xcp, struct ML *mlp)
 	  for (i = 0; mp->matching_f2s[i]; ++i)
 	    {
 	      if (!BIT_ISSET(mp->matching_f2s[i]->flags /*mp->lp->f->finds[i]->f2.flags*/,
-			     F2_FLAGS_READ_ONLY))
+			     FORM_FLAGS_READ_ONLY))
 		{
-		  f2_inherit(mp->matching_f2s[i], mp->tt->f2);
+		  form_inherit(mp->matching_f2s[i], mp->tt->f2);
 		  BIT_SET(mp->matching_f2s[i]->flags /*mp->lp->f->finds[i]->f2.flags*/,
-			  F2_FLAGS_READ_ONLY);
+			  FORM_FLAGS_READ_ONLY);
 #if 0
 		  apply_tts(mp->matching_f2s[i], mp->tt);
 		  if (mp->tt && mp->tt->f2)

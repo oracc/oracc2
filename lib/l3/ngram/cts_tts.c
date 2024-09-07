@@ -1,10 +1,7 @@
-#include <string.h>
-#include <ctype128.h>
-#include "list.h"
-#include "memblock.h"
+#include <oraccsys.h>
 #include "ngram.h"
-#include "props.h"
-#include "warning.h"
+#include "l3props.h"
+#include "sigs.h"
 
 static char *
 parse_angled_preds(struct CF *cfp, int tts_mode, char *s)
@@ -109,7 +106,7 @@ parse_cts_f2(struct CF *cfp, int tts_mode, char *s)
   int found_square = 0;
   char *tmp = s;
   
-  cfp->f2 = mb_new(cfp->owner->owner->owner->owner->owner->mb_f2s);
+  cfp->f2 = memo_new(cfp->owner->owner->owner->owner->owner->mb_f2s);
 
   while (*tmp)
     {
@@ -126,9 +123,8 @@ parse_cts_f2(struct CF *cfp, int tts_mode, char *s)
   
   if (found_square || !is_a_pos((unsigned char *)s, (unsigned char *)tmp))
     {
-      len = f2_parse((unsigned char *)cfp->owner->owner->file, cfp->owner->lnum, 
-		     (unsigned char *)s, cfp->f2, NULL, 
-		     cfp->owner->owner->owner->owner->owner);
+      len = form_parse((unsigned char *)cfp->owner->owner->file, cfp->owner->lnum, 
+		       (unsigned char *)s, cfp->f2, NULL);
     }
   else
     {
@@ -136,9 +132,8 @@ parse_cts_f2(struct CF *cfp, int tts_mode, char *s)
       /*cfp->f2->pos = (unsigned char*)strndup(s, len);*/
       char save = *tmp;
       *tmp = '\0';
-      len = f2_parse((unsigned char *)cfp->owner->owner->file, cfp->owner->lnum, 
-		     (unsigned char *)s, cfp->f2, NULL, 
-		     cfp->owner->owner->owner->owner->owner);
+      len = form_parse((unsigned char *)cfp->owner->owner->file, cfp->owner->lnum, 
+		     (unsigned char *)s, cfp->f2, NULL);
       cfp->f2->pos = (const Uchar *)xstrdup((const char*)cfp->f2->pos);
       *tmp = save;
     }
@@ -151,7 +146,7 @@ parse_cts_f2(struct CF *cfp, int tts_mode, char *s)
 }
 
 static char *
-cts_props(struct prop **p, char *s)
+cts_props(struct l3prop **p, char *s)
 {
   char *tmp = s;
   char *buf = NULL, save = '\0';

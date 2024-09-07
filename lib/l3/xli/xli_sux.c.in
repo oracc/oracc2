@@ -1,14 +1,13 @@
-#include <ctype128.h>
-#include "warning.h"
-#include "f2.h"
-#include "npool.h"
+#include <oraccsys.h>
+#include <bits.h>
+#include "form.h"
 #include "sigs.h"
 #include "xli.h"
 #include "xcl.h"
 
 extern int bootstrap_mode;
 
-static void sux_norm0(struct f2 *f, struct npool *pool);
+static void sux_norm0(Form *f, Pool *pool);
 
 const char *xli_sux_argp[] = 
 { 
@@ -16,7 +15,7 @@ const char *xli_sux_argp[] =
 };
 
 void
-xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, struct f2 *f2p)
+xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, Form *f2p)
 {
   const char *ophase = phase;
   phase = "sma";
@@ -43,8 +42,8 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 		}
 	      /* We do pre-emptive aliasing so that if we get a successful
 		 parse we can use the proper form in the sig */
-	      f2_alias(xcp->sigs, &f->f2, 
-		       (f->finds && f->finds[0]) ? (&f->finds[0]->f2) : NULL);
+	      form_alias(&f->f2, 
+			 (f->finds && f->finds[0]) ? (&f->finds[0]->f2) : NULL);
 	      buf = malloc(2*(strlen((char*)f2p->form) 
 			      + strlen((char*)f2p->cf) 
 			      + strlen(pos) + strlen(pos)
@@ -66,11 +65,11 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 		    {
 		      vwarning2((char*)f->file,f->lnum,"no parse for FORM %s>%s=%s[%s]%s", oform,
 				f2p->form, f2p->cf, gw, pos);
-		      BIT_SET(f2p->flags,F2_FLAGS_INVALID);
+		      BIT_SET(f2p->flags,FORM_FLAGS_INVALID);
 		    }
 		  else if ((no_parse_base = strstr((char*)res, "no parse found for ")))
 		    {
-		      f2p->base = npool_copy((unsigned char *)(no_parse_base + strlen("no parse found for ")),xcp->pool);
+		      f2p->base = pool_copy((unsigned char *)(no_parse_base + strlen("no parse found for ")),xcp->pool);
 		      f2p->cont = f2p->morph = (unsigned char *)"X";
 		      /* in bootstrap_mode we play this fast and
 			 loose, and let the base pass for now and then
@@ -79,15 +78,15 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 		      if (bootstrap_mode)
 			{
 			  phase = "sig";
-			  vnotice2((char*)f->file,f->lnum,"\t@%s%%%s:%s=%s[%s//%s]%s'%s/%s+%s#%s", 
-				   f2p->project,f2p->lang,
-				   f2p->form,f2p->cf, f2p->gw, f2p->sense, f2p->pos, f2p->epos, f2p->base, f2p->cont, f2p->morph);
+			  mesg_vnotice((char*)f->file,f->lnum,"\t@%s%%%s:%s=%s[%s//%s]%s'%s/%s+%s#%s", 
+				       f2p->project,f2p->lang,
+				       f2p->form,f2p->cf, f2p->gw, f2p->sense, f2p->pos, f2p->epos, f2p->base, f2p->cont, f2p->morph);
 			  phase = "sma";
 			}
 		      else
 			{
 			  vwarning2((char*)f->file,f->lnum,"%s",res);
-			  BIT_SET(f2p->flags,F2_FLAGS_INVALID);
+			  BIT_SET(f2p->flags,FORM_FLAGS_INVALID);
 			}
 		    }
 		  else if ((no_parse_base = strstr((char*)res, "no bases found in form")))
@@ -101,22 +100,22 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 		      if (bootstrap_mode)
 			{
 			  phase = "sig";
-			  vnotice2((char*)f->file,f->lnum,"\t@%s%%%s:%s=%s[%s//%s]%s'%s/%s+%s#%s", 
-				   f2p->project,f2p->lang,
-				   f2p->form,f2p->cf, f2p->gw, f2p->sense, f2p->pos, f2p->epos, f2p->base, f2p->cont, f2p->morph);
+			  mesg_vnotice((char*)f->file,f->lnum,"\t@%s%%%s:%s=%s[%s//%s]%s'%s/%s+%s#%s", 
+				       f2p->project,f2p->lang,
+				       f2p->form,f2p->cf, f2p->gw, f2p->sense, f2p->pos, f2p->epos, f2p->base, f2p->cont, f2p->morph);
 			  phase = "sma";
 			}
 		      else
 			{
 			  vwarning2((char*)f->file,f->lnum,"%s",res);
-			  BIT_SET(f2p->flags,F2_FLAGS_INVALID);
+			  BIT_SET(f2p->flags,FORM_FLAGS_INVALID);
 			}
 		    }
 		  else
 		    {
 		      vwarning2((char*)f->file,f->lnum,"%s",res);
 		      f2p->base = f2p->cont = f2p->morph = (unsigned char*)"X";
-		      BIT_SET(f2p->flags,F2_FLAGS_INVALID);
+		      BIT_SET(f2p->flags,FORM_FLAGS_INVALID);
 		    }
 		}
 	      else
@@ -139,15 +138,15 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 			}
 		    }
 		  if (!f2p->base || !*f2p->base)
-		    f2p->base = npool_copy(base,xcp->pool);
+		    f2p->base = pool_copy(base,xcp->pool);
 		  if (!f2p->cont)
-		    f2p->cont = npool_copy(cont,xcp->pool);
+		    f2p->cont = pool_copy(cont,xcp->pool);
 		  if (!f2p->morph)
-		    f2p->morph = npool_copy(morph,xcp->pool);
+		    f2p->morph = pool_copy(morph,xcp->pool);
 		  if (!f2p->stem)
 		    {
 		      if (stem && *stem)
-			f2p->stem = npool_copy(stem,xcp->pool);
+			f2p->stem = pool_copy(stem,xcp->pool);
 		      else
 			f2p->stem = f2p->cf;
 		    }
@@ -160,9 +159,9 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 		  else
 		    f2p->epos = f2p->pos;
 		  sux_norm0(f2p,xcp->pool);
-		  BIT_CLR(f2p->flags,F2_FLAGS_NO_FORM);
-		  BIT_CLR(f2p->flags,F2_FLAGS_INVALID);
-		  BIT_SET(f2p->flags,F2_FLAGS_EXTENDED_OK);
+		  BIT_CLR(f2p->flags,FORM_FLAGS_NO_FORM);
+		  BIT_CLR(f2p->flags,FORM_FLAGS_INVALID);
+		  BIT_SET(f2p->flags,FORM_FLAGS_EXTENDED_OK);
 		  if (f->fcount > 1)
 		    {
 		      f->finds[1] = NULL;
@@ -173,14 +172,14 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 		  if (bootstrap_mode)
 		    {
 		      phase = "sig";
-		      vnotice2((char*)f->file,f->lnum,"\t@%s%%%s:%s=%s[%s//%s]%s'%s/%s+%s#%s", 
-			       f2p->project,f2p->lang,
-			       f2p->form,f2p->cf, f2p->gw, f2p->sense, f2p->pos, f2p->epos, base, cont, morph);
+		      mesg_vnotice((char*)f->file,f->lnum,"\t@%s%%%s:%s=%s[%s//%s]%s'%s/%s+%s#%s", 
+				   f2p->project,f2p->lang,
+				   f2p->form,f2p->cf, f2p->gw, f2p->sense, f2p->pos, f2p->epos, base, cont, morph);
 		      phase = "sma";
 		    }
 		  else
-		    vnotice2((char*)f->file,f->lnum,"%s=%s[%s]%s parsed as ^@form %s /%s +%s #%s", oform,
-			     f2p->cf, f2p->gw, f2p->pos, f2p->form, base, cont, morph);
+		    mesg_vnotice((char*)f->file,f->lnum,"%s=%s[%s]%s parsed as ^@form %s /%s +%s #%s", oform,
+				 f2p->cf, f2p->gw, f2p->pos, f2p->form, base, cont, morph);
 
 		  /*f->result |= (NEW_BASE|NEW_CONT|NEW_MORPH);*/
 		}
@@ -191,7 +190,7 @@ xli_sux_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *f, 
 }
 
 static void
-sux_norm0(struct f2 *f, struct npool *pool)
+sux_norm0(Form *f, Pool *pool)
 {
   if (!f->norm && f->morph)
     {
@@ -209,6 +208,6 @@ sux_norm0(struct f2 *f, struct npool *pool)
 	    }
 	}
       *b = '\0';
-      f->norm = npool_copy(buf,pool);
+      f->norm = pool_copy(buf,pool);
     }
 }

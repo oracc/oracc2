@@ -1,13 +1,11 @@
-#include "pool.h"
-#include "hash.h"
+#include <oraccsys.h>
+#include <bits.h>
 #include "ilem_form.h"
 #include "links.h"
 #include "ngram.h"
-#include "warning.h"
-#include "memblock.h"
 #include "ilem_form.h"
 #include "sigs.h"
-#include <xmlutil.h>
+#include <xml.h>
 
 int psus_sig_check = 0; /* 1 */
 
@@ -47,17 +45,17 @@ links_psu(struct xcl_context *xc, struct ML *mlp)
     {
       extern struct sig_context *global_scp;
       struct xcl_l*lp = calloc(1,sizeof(struct xcl_l));
-      struct f2 *parsed_psu = mb_new(xc->sigs->mb_f2s);
+      Form *parsed_psu = memo_new(xc->sigs->mb_f2s);
       unsigned char *tmp = NULL;
       
       set_instance_fields(xc,mlp);
       /* PSU's don't use the && COF notation, so NULL final arg
 	 is safe here */
-      f2_parse((unsigned char*)mlp->matches[0].lp->xc->file,
+      form_parse((unsigned char*)mlp->matches[0].lp->xc->file,
 	       mlp->matches[0].lp->f->lnum,
-	       npool_copy((unsigned char*)mlp->matches[0].psu,xc->pool), 
+	       pool_copy((unsigned char*)mlp->matches[0].psu,xc->pool), 
 	       parsed_psu,
-	       NULL, NULL);
+	       NULL);
       
       mlp->matches[0].psu_form->file = (unsigned char *)mlp->matches[0].lp->xc->file;
       mlp->matches[0].psu_form->lnum = mlp->matches[0].lp->f->lnum;
@@ -77,16 +75,16 @@ links_psu(struct xcl_context *xc, struct ML *mlp)
       lsp->form.file = (unsigned char*)xc->file;
       lsp->form.lnum = mlp->matches[0].lp->lnum;
 
-      lsp->form.sig = f2_psu_sig(xc, mlp->matches[0].psu_form);
+      lsp->form.sig = form_psu_sig(mlp->matches[0].psu_form);
 
 #if 1
-      tmp = psu_inst((char*)lsp->form.sig);
+      tmp = (ucp)psu_inst((char*)lsp->form.sig);
       if (tmp)
 	{
-	  lp->inst = npool_copy(tmp,global_scp->pool);
+	  lp->inst = (ccp)pool_copy(tmp,global_scp->pool);
 	  free(tmp);
 	}
-      lp->f = mb_new(global_scp->mb_ilem_forms);
+      lp->f = memo_new(global_scp->mb_ilem_forms);
 #else
       lp->inst = psu_inst((char*)lsp->form.sig);
       lp->f = calloc(1,sizeof(struct ilem_form));
@@ -120,14 +118,14 @@ links_psu(struct xcl_context *xc, struct ML *mlp)
 	{
 	  if (!mlp->matches[0].psu_nfinds)  /*NB: NO AMBIGUITY YET*/
 	    {
-	      struct f2 *e = mlp->matches[0].psu_form;
+	      Form *e = mlp->matches[0].psu_form;
 	      vwarning2((const char *)e->file, e->lnum, 
 			"psu: %s[%s]%s: compound FORM %s not found",
 			e->cf,e->gw,e->pos,e->form);
 	    }
 	  else if (verbose)
 	    {
-	      struct f2 *e = mlp->matches[0].psu_form;
+	      Form *e = mlp->matches[0].psu_form;
 	      vwarning2((const char *)e->file, e->lnum, 
 			"psu: %s[%s]%s found OK",
 			e->cf,e->gw,e->pos);
@@ -159,7 +157,7 @@ links_psu(struct xcl_context *xc, struct ML *mlp)
       /* Delete finds which are not PSU matches */
       if (mlp->matches[i].nmatches < mlp->matches[i].lp->f->fcount)
 	{
-	  memcpy(mlp->matches[i].lp->f->finds, mlp->matches[i].matching_f2s, mlp->matches[i].nmatches * sizeof(struct f2*));
+	  memcpy(mlp->matches[i].lp->f->finds, mlp->matches[i].matching_f2s, mlp->matches[i].nmatches * sizeof(Form*));
 	  mlp->matches[i].lp->f->finds[mlp->matches[i].nmatches] = NULL;
 	  mlp->matches[i].lp->f->fcount = mlp->matches[i].nmatches;
 	}
@@ -192,8 +190,8 @@ set_instance_fields(struct xcl_context *xc, struct ML *mlp)
     {
       /* Should we be discriminating about which match
 	 of matches[i].matches[] we are using for this? */
-      struct f2 *lform = mlp->matches[i].matching_f2s[0];
-      struct f2 *clone = mb_new(xc->sigs->mb_f2s);
+      Form *lform = mlp->matches[i].matching_f2s[0];
+      Form *clone = memo_new(xc->sigs->mb_f2s);
       /* This is a shallow clone; we only need it so we can
 	 set the flags locally */
       *clone = *lform;
@@ -205,7 +203,7 @@ set_instance_fields(struct xcl_context *xc, struct ML *mlp)
 	  strcat(formbuf,(char*)lform->form);
 	}
       else
-	BIT_SET(lform->flags,F2_FLAGS_SAME_REF);
+	BIT_SET(lform->flags,FORM_FLAGS_SAME_REF);
       lastw = mlp->matches[i].lp->ref;
       if (lform->norm)
 	{
@@ -218,6 +216,6 @@ set_instance_fields(struct xcl_context *xc, struct ML *mlp)
   mlp->matches[0].psu_form->norm = (unsigned char*)normbuf;
   mlp->matches[0].psu_form->file = (unsigned char*)mlp->matches[0].lp->f->file;
   mlp->matches[0].psu_form->lnum = mlp->matches[0].lp->f->lnum;
-  mlp->matches[0].psu_form->parts = (struct f2**)list2array(parts);
+  mlp->matches[0].psu_form->parts = (Form**)list2array(parts);
   list_free(parts, NULL);
 }

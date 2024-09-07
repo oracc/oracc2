@@ -1,7 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <xmlutil.h>
-#include "f2.h"
+#include <oraccsys.h>
+#include <xml.h>
+#include "form.h"
 #include "ilem_form.h"
 #include "links.h"
 #include "xcl.h"
@@ -21,21 +20,21 @@ linkset_dump(FILE*fp,struct linkset *lsp)
 {
   int i;
   fprintf(fp,"<linkset xl:title=\"%s\" xml:id=\"%s\" xl:type=\"extended\" xl:role=\"%s\"",
-	  xmlify(lsp->title),lsp->xml_id,lsp->role);
+	  xmlify((uccp)lsp->title),lsp->xml_id,lsp->role);
   if (/* lsp->form && */ lsp->form.sig)
     fprintf(fp, " sig=\"%s\"", xmlify(lsp->form.sig));
   fputc('>',fp);
   for (i = 0; i < lsp->used; ++i)
     {
       fprintf(fp,"<link xl:title=\"%s\" xl:type=\"locator\" xl:href=\"#%s\" xl:role=\"%s\"",
-	      xmlify(lsp->links[i].title),
+	      xmlify((uccp)lsp->links[i].title),
 	      lsp->links[i].lref,
 	      lsp->links[i].role
 	      );
       if (links_standalone)
 	{
 	  fprintf(fp, " wordref=\"%s\">", lsp->links[i].lp->ref);
-	  f2_serialize_form(fp, &lsp->links[i].lp->f->f2);
+	  form_serialize_form(fp, &lsp->links[i].lp->f->f2);
 	}
       else
 	{

@@ -1,11 +1,8 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include "memblock.h"
+#include <oraccsys.h>
 #include "lang.h"
 #include "xcl.h"
 #include "sigs.h"
-#include "npool.h"
-#include "f2.h"
+#include "form.h"
 #include "ngram.h"
 
 extern const char *project;
@@ -42,7 +39,7 @@ psus2(struct xcl_context *xc)
  * headed by a NN the context language should be used: 
  * the %qpn will be inferred from the POS of the head.
  */
-struct f2 *
+Form *
 psu2_register(const char *file, size_t lnum, 
 	      struct sigset *sp, const char *lang,
 	      const unsigned char *ngram_line,

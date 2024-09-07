@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include <oraccsys.h>
 #include "links.h"
 
 struct linkbase *

@@ -14,7 +14,7 @@ extern unsigned char *xli_recv(struct xli *xlip);
 
 typedef void xli_init(struct xli *xlip);
 typedef void xli_term(struct xli *xlip);
-typedef void xli_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *fp, struct f2 *f2p);
+typedef void xli_handler(struct xcl_context *xcp, struct xli *xlip, struct ilem_form *fp, Form *f2p);
 
 struct xli 
 {
@@ -30,6 +30,6 @@ struct xli
 extern struct xli *xlem[c_count];
 extern int xlem_tried[c_count];
 extern int lem_extended;
-extern void xli_ilem(struct xcl_context *xcp, struct ilem_form *f, struct f2 *fp);
+extern void xli_ilem(struct xcl_context *xcp, struct ilem_form *f, Form *fp);
 extern void xli_mapper(struct xcl_context *xcp, struct xcl_l *lp);
 #endif/*_XLI_H*/

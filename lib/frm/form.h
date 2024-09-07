@@ -122,5 +122,7 @@ extern int form_extreme_alias(Form *fp, Form *ref_fp);
 
 extern void form_inherit(Form *inheritor_form, Form *from_form);
 extern void form_clear(Form*f);
+extern void form_serialize_form(FILE *f_f2, Form *f);
+extern void form_serialize_form_2(FILE *f_f2, struct ilem_form *f);
 
 #endif/*FORM_H_*/

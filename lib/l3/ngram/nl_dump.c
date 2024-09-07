@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include "f2.h"
+#include <oraccsys.h>
+#include "form.h"
 #include "ngram.h"
-#include "props.h"
+#include "l3props.h"
 
 static FILE *dump_fp;
 
@@ -12,7 +12,7 @@ dump_cf_tts(struct CF *cfp)
   fprintf(dump_fp,"<cf bad=\"%d\" neg=\"%d\" wild=\"%d\">%s</cf>",
 	  cfp->bad, cfp->neg, cfp->wild,cfp->cf);
   if (cfp->f2)
-    f2_serialize_form(dump_fp, cfp->f2);
+    form_serialize_form(dump_fp, cfp->f2);
   if (cfp->preds)
     for (i = 0; cfp->preds[i]; ++i)
       fprintf(dump_fp,"<pred neg=\"%d\" attr=\"%s\" value=\"%s\"/>",
