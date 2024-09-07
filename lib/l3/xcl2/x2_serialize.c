@@ -1,14 +1,13 @@
-#include <stdio.h>
-#include "hash.h"
-#include "list.h"
-#include "xmlutil.h"
+#include <oraccsys.h>
+#include <xmlify.h>
 #include "xcl.h"
 #include "links.h"
-#include "f2.h"
-#include "warning.h"
-#include "../prop/props.h"
+#include "form.h"
+#include "../prop/l3props.h"
 #include "../ilem/ilem_form.h"
 #include "../ilem/ilem_para.h"
+
+extern FILE *f_log;
 
 #define XML_DECL "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
 
@@ -37,7 +36,7 @@ const char *xcl_d_type_str[] =
 
 /*
  * NOTE: NO F2 SERIALIZATION CODE SHOULD BE USED HERE EXCEPT f2_serialize
- * ON struct f2.
+ * ON Form.
  */
 
 void
@@ -88,9 +87,9 @@ serialize_one_l_sub(FILE *f_xcl, struct xcl_l*lp, struct ilem_form *fp)
   if (fp)
     {
       x2_attr(f_xcl,"inst",fp->sublem);
-      if (BIT_ISSET(fp->f2.flags,F2_FLAGS_INVALID)
-	  || BIT_ISSET(fp->f2.flags,F2_FLAGS_PARTIAL)
-	  || BIT_ISSET(fp->f2.flags,F2_FLAGS_NO_FORM))
+      if (BIT_ISSET(fp->f2.flags,FORM_FLAGS_INVALID)
+	  || BIT_ISSET(fp->f2.flags,FORM_FLAGS_PARTIAL)
+	  || BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM))
 	x2_attr(f_xcl, "bad", "yes");
       else
 	{
@@ -103,9 +102,9 @@ serialize_one_l_sub(FILE *f_xcl, struct xcl_l*lp, struct ilem_form *fp)
       x2_attr(f_xcl,"inst",lp->inst);
       if (lp->f)
 	{
-	  if (BIT_ISSET(lp->f->f2.flags,F2_FLAGS_INVALID))
+	  if (BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_INVALID))
 	    x2_attr(f_xcl, "bad", "yes");
-	  else if (BIT_ISSET(lp->f->f2.flags, F2_FLAGS_NOT_IN_SIGS))
+	  else if (BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NOT_IN_SIGS))
 	    {
 	      extern const char *phase;
 	      extern int cbd_lem_sigs;
@@ -115,7 +114,7 @@ serialize_one_l_sub(FILE *f_xcl, struct xcl_l*lp, struct ilem_form *fp)
 		{
 		  x2_attr(f_xcl,"newsig",(char *)lp->f->f2.sig);
 		  if (cbd_lem_sigs)
-		    vnotice2((char*)lp->f->file,lp->f->lnum,"\t%s", lp->f->f2.sig);
+		    mesg_vnotice((char*)lp->f->file,lp->f->lnum,"\t%s", lp->f->f2.sig);
 		}
 	      else if (lp->f->f2.tail_sig)
 		{
@@ -124,18 +123,18 @@ serialize_one_l_sub(FILE *f_xcl, struct xcl_l*lp, struct ilem_form *fp)
 		     COF new so that harvest creates the right members */
 		  x2_attr(f_xcl,"newsig",(char *)lp->f->f2.tail_sig);
 		  if (cbd_lem_sigs)
-		    vnotice2((char*)lp->f->file,lp->f->lnum,"\t%s", lp->f->f2.tail_sig);
+		    mesg_vnotice((char*)lp->f->file,lp->f->lnum,"\t%s", lp->f->f2.tail_sig);
 #endif
 		}
 	      phase = ophase;
 	    }
-	  else if (BIT_ISSET(lp->f->f2.flags,F2_FLAGS_PARTIAL)
-	      || BIT_ISSET(lp->f->f2.flags,F2_FLAGS_NO_FORM))
+	  else if (BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_PARTIAL)
+	      || BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_NO_FORM))
 	    x2_attr(f_xcl, "bad", "yes");
 	  else
 	    {
-	      if (BIT_ISSET(lp->f->f2.flags, F2_FLAGS_NEW_BY_PROJ)
-		       || BIT_ISSET(lp->f->f2.flags, F2_FLAGS_NEW_BY_LANG))
+	      if (BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NEW_BY_PROJ)
+		       || BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NEW_BY_LANG))
 		{
 		  x2_attr(f_xcl,"exosig",(char *)lp->f->f2.sig);
 		  x2_attr(f_xcl,"exoprj",(char *)lp->f->f2.exo_project);
@@ -152,7 +151,7 @@ serialize_one_l_sub(FILE *f_xcl, struct xcl_l*lp, struct ilem_form *fp)
 
   if (lp->f)
     {
-      f2_serialize_form(f_xcl, &lp->f->f2);
+      form_serialize_form(f_xcl, &lp->f->f2);
       if (lp->f->props)
 	props_dump_props(lp->f,f_xcl);
     }
@@ -193,7 +192,7 @@ static void
 serialize_m(const unsigned char *key,void*val)
 {
   if ('#' != *key)
-    fprintf(static_f_xcl,"<m k=\"%s\">%s</m>",key,xmlify((char*)val));
+    fprintf(static_f_xcl,"<m k=\"%s\">%s</m>",key,xmlify(val));
 }
 
 static int
@@ -423,7 +422,7 @@ serialize_psu_list(char *key,List *lp)
 }
 
 static void
-serialize_psus(FILE *f_xcl,Hash_table*psus)
+serialize_psus(FILE *f_xcl,Hash*psus)
 {
   static_f_xcl = f_xcl;
   fputs("<psus>",f_xcl);

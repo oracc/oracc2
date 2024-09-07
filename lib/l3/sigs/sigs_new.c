@@ -1,11 +1,10 @@
-#include "warning.h"
-#include "lang.h"
+#include <oraccsys.h>
+#include <lng.h>
 #include "sigs.h"
 #include "ilem.h"
-#include "f2.h"
+#include "form.h"
 #include "xcl.h"
 #include "list.h"
-#include "memblock.h"
 
 extern int bootstrap_mode, lem_extended;
 
@@ -49,9 +48,9 @@ sigs_l_new(struct xcl_context *xcp, struct xcl_l *l)
   if (!l->f)
     {
       if (l->sig)
-	setup_ilem_form(xcp->sigs,l,npool_copy((Uchar *)l->sig,xcp->pool));
+	setup_ilem_form(xcp->sigs,l,pool_copy((Uchar *)l->sig,xcp->pool));
       else
-	setup_ilem_form(xcp->sigs,l,npool_copy((Uchar *)l->inst,xcp->pool));
+	setup_ilem_form(xcp->sigs,l,pool_copy((Uchar *)l->inst,xcp->pool));
     }
 
   if (!l->f->f2.cf || !*l->f->f2.cf)
@@ -64,7 +63,7 @@ sigs_l_new(struct xcl_context *xcp, struct xcl_l *l)
     }
   else
     {
-      if (!BIT_ISSET(l->f->f2.flags, F2_FLAGS_LEM_NEW))
+      if (!BIT_ISSET(l->f->f2.flags, FORM_FLAGS_LEM_NEW))
 	sigs_l_check(xcp, l);
       else
 	{
@@ -87,9 +86,9 @@ sigs_form_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 {
   struct sig *candidates = NULL, *c, **res = NULL;
   int ncand = 0;
-  struct f2 *f = &ifp->f2;
+  Form *f = &ifp->f2;
 
-  if (BIT_ISSET(f->flags,F2_FLAGS_LEM_BY_NORM))
+  if (BIT_ISSET(f->flags,FORM_FLAGS_LEM_BY_NORM))
     candidates = hash_find(sp->norms, f->norm);
   else
     candidates = hash_find(sp->forms, f->form);
@@ -108,9 +107,9 @@ sigs_form_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 	{
 	  if (!c->f2p)
 	    {
-	      f2_parse(c->set->file,c->lnum,npool_copy(c->sig,xcp->pool),
-		       c->f2p = mb_new(xcp->sigs->mb_f2s),
-		       NULL, xcp->sigs);
+	      form_parse(c->set->file,c->lnum,pool_copy(c->sig,xcp->pool),
+		       c->f2p = memo_new(xcp->sigs->mb_f2s),
+		       NULL);
 	      c->f2p->rank = c->rank;
 	    }
 	  res[ncand++] = c;
@@ -232,7 +231,7 @@ sigs_new_sig(struct xcl_context *xcp, struct ilem_form *fp)
     }
 
   if (status)
-    BIT_SET(fp->f2.flags, F2_FLAGS_PARTIAL);
+    BIT_SET(fp->f2.flags, FORM_FLAGS_PARTIAL);
 
   fp->f2.project = (unsigned char*)xcp->project;
   if (fp->mcount > 0) /* COF HEAD */
@@ -243,7 +242,7 @@ sigs_new_sig(struct xcl_context *xcp, struct ilem_form *fp)
       *cofsig = '\0';
       while (1)
 	{
-	  unsigned char *sig = f2_sig(xcp, tmpfp, &tmpfp->f2);
+	  unsigned char *sig = form_sig(&tmpfp->f2);
 	  if (strlen((const char *)cofsig) + strlen((const char *)sig) + 3 > cofsig_len)
 	    cofsig = realloc(cofsig, cofsig_len += cofsig_len);
 	  if (*cofsig)
@@ -255,12 +254,12 @@ sigs_new_sig(struct xcl_context *xcp, struct ilem_form *fp)
 	  else
 	    break;
 	}
-      fp->f2.sig = npool_copy(cofsig, xcp->pool);
+      fp->f2.sig = pool_copy(cofsig, xcp->pool);
       free(cofsig);
     }
   else
     {
-      fp->f2.sig = f2_sig(xcp,fp,&fp->f2);
+      fp->f2.sig = form_sig(&fp->f2);
     }
 
   if (bootstrap_mode)
@@ -301,7 +300,7 @@ sigs_early_sig(struct xcl_context *xcp, struct ilem_form *fp)
   if (status)
     return NULL;
 
-  ret[0] = mb_new(xcp->sigs->mb_sigs);
+  ret[0] = memo_new(xcp->sigs->mb_sigs);
   ret[0]->sig = fp->f2.sig;
   ret[0]->literal = (unsigned char*)fp->literal;
   sigs_for_lang = sig_context_register(xcp->sigs, xcp->project, (const char*)fp->f2.lang, 1);

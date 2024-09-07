@@ -1,26 +1,17 @@
-#include <unistd.h>
-#include <ctype128.h>
-#include <psd_base.h>
-#include <runexpat.h>
-#include <memblock.h>
-#include <fname.h>
-#include <string.h>
-#include <hash.h>
-#include <npool.h>
-/*#include "xff.h"*/
+#include <oraccsys.h>
+#include "xml.h"
+#include "runexpat.h"
 #include "xcl.h"
 #include "ngram.h"
-
-#include "hash.h"
-#include "pool.h"
 #include "ilem_form.h"
-#include "props.h"
+#include "l3props.h"
+#include "sigs.h"
 
 #define EXPAT_NS_CHAR '|'
 
 #define cc(x) ((char *)(x))
-#define xpool_copy(x,p) (char*)npool_copy((unsigned char*)x,p)
-#define uxpool_copy(x,p) (const unsigned char *)npool_copy((unsigned char *)(x),p)
+#define xpool_copy(x,p) (char*)pool_copy((unsigned char*)x,p)
+#define uxpool_copy(x,p) (const unsigned char *)pool_copy((unsigned char *)(x),p)
 extern char *strdup(const char*);
 
 /*static const char *xl_role = "http://www.w3.org/1999/xlink:role";*/
@@ -40,8 +31,8 @@ const char *system_project = NULL;
 extern int lem_autolem;
 extern void lem_clear_cache(void);
 
-Hash_table *known_langs;
-Hash_table *curr_meta;
+Hash *known_langs;
+Hash *curr_meta;
 static struct ilem_form *curr_form;
 const char *next_k = NULL;
 
@@ -66,7 +57,7 @@ xcl_sH(void *userData, const char *name, const char **atts)
 	      if (*curr_ref)
 		curr_ref = xpool_copy(curr_ref,xcp->pool);
 	      curr_sig = xpool_copy(findAttr(atts,"sig"),xcp->pool);
-	      curr_form = mb_new(xcp->sigs->mb_ilem_forms);
+	      curr_form = memo_new(xcp->sigs->mb_ilem_forms);
 	    }
 	  else if (vbar[1] == 'l' && !vbar[2])
 	    {
@@ -112,7 +103,7 @@ xcl_sH(void *userData, const char *name, const char **atts)
 	    fprintf(stderr,"unknown xcl discontinuity token type '%s'\n",strtok);
 	}
       else if (!strcmp(vbar,"mds"))
-	curr_meta = xcl_create_meta(xcp,(const char*)npool_copy((unsigned char *)get_xml_id(atts),
+	curr_meta = xcl_create_meta(xcp,(const char*)pool_copy((unsigned char *)get_xml_id(atts),
 								xcp->pool));
       else if (!strcmp(vbar,"m"))
 	next_k = findAttr(atts,"k");
@@ -157,8 +148,8 @@ xcl_eH(void *userData, const char *name)
       if (next_k && !strcmp(vbar,"m"))
 	{
 	  hash_add(curr_meta,
-		   npool_copy((unsigned char *)next_k,xcp->pool),
-		   npool_copy((unsigned char *)charData_retrieve(),xcp->pool));
+		   pool_copy((unsigned char *)next_k,xcp->pool),
+		   pool_copy((unsigned char *)charData_retrieve(),xcp->pool));
 	  next_k = NULL;
 	}
       else if (!strcmp(vbar,"c"))
@@ -173,17 +164,17 @@ xcl_eH(void *userData, const char *name)
 					   curr_form,
 					   NULL, ll_type);
 	      lp->inst = curr_inst;
-	      lp->sig = (const char *)npool_copy((const unsigned char*)curr_sig,xcp->pool);
+	      lp->sig = (const char *)pool_copy((const unsigned char*)curr_sig,xcp->pool);
 	      lp->lnum = curr_lnum;
 	      lp->f->f2.owner = lp->f;
-	      lp->f->ref = (char*)npool_copy((unsigned char *)curr_ref, xcp->pool);
+	      lp->f->ref = (char*)pool_copy((unsigned char *)curr_ref, xcp->pool);
 	      /* FIXME: this is not good enough for COF and PSU */
 	      if (curr_sig || curr_pos)
 		{
 		  lp->f->f2.sig = (unsigned char *)lp->sig; /* FIXME: drops const */
-		  f2_parse((unsigned char *)xcp->file, lp->lnum,
-			   npool_copy((unsigned char*)((curr_sig&&*curr_sig) ? curr_sig : curr_pos),xcp->pool),
-			   &lp->f->f2, NULL, xcp->sigs);	      
+		  form_parse((unsigned char *)xcp->file, lp->lnum,
+			   pool_copy((unsigned char*)((curr_sig&&*curr_sig) ? curr_sig : curr_pos),xcp->pool),
+			   &lp->f->f2, NULL);
 		}
 	    }
 #if 0
@@ -191,9 +182,9 @@ xcl_eH(void *userData, const char *name)
       form->f2.lang = (unsigned char*)lang;
       form->f2.core = langcore_of(lang);
       if (strstr(lang,"949"))
-	  BIT_SET(form->f2.flags,F2_FLAGS_LEM_BY_NORM);
+	  BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
     }
-  if (BIT_ISSET(form->f2.flags,F2_FLAGS_LEM_BY_NORM))
+  if (BIT_ISSET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM))
     {
       form->f2.norm = (unsigned char *)formstr;
       form->f2.form = (const unsigned char *)"*";
@@ -223,9 +214,9 @@ xcl_eH(void *userData, const char *name)
 	  if (!(lp = hash_find(xcp->psus,(unsigned char*)psu_lang)))
 	    {
 	      lp = list_create(LIST_SINGLE);
-	      hash_add(xcp->psus,npool_copy((unsigned char*)psu_lang,xcp->pool),lp);
+	      hash_add(xcp->psus,pool_copy((unsigned char*)psu_lang,xcp->pool),lp);
 	    }
-	  list_add(lp,npool_copy(tmp,xcp->pool));
+	  list_add(lp,pool_copy(tmp,xcp->pool));
 	}
     }
   else

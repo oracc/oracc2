@@ -30,8 +30,8 @@ keygen_norm_sense(struct ilem_form *fp)
 
 struct uniq_setup
 {
-  Hash_table *hash;
-  struct npool *pool;
+  Hash *hash;
+  Pool *pool;
 };
 
 static void *
@@ -39,7 +39,7 @@ uniq_init(void*user)
 {
   static struct uniq_setup u;
   u.hash = hash_create(1);
-  u.pool = npool_init();
+  u.pool = pool_init();
   return &u;
 }
 
@@ -47,7 +47,7 @@ static void
 uniq_term(void *user, void *setup)
 {
   hash_free(((struct uniq_setup*)setup)->hash,NULL);
-  npool_term(((struct uniq_setup*)setup)->pool);
+  pool_term(((struct uniq_setup*)setup)->pool);
 }
 
 static void
@@ -75,7 +75,7 @@ uniq_test(struct ilem_form *fp, void *user, void *setup)
     sprintf((char*)keybuf+strlen((char*)keybuf),"'%s",fp->f2.epos);
 
   if (!(ret = (uintptr_t)hash_find(u->hash,keybuf)))
-    hash_add(u->hash,npool_copy(keybuf,u->pool),(void*)1);
+    hash_add(u->hash,pool_copy(keybuf,u->pool),(void*)1);
 
   return ret;
 }

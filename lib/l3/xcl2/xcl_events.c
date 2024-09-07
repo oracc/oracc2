@@ -2,16 +2,19 @@
 #include <stdio.h>
 #include <ctype128.h>
 #include <string.h>
-#include <f2.h>
+#include <form.h>
 #include <ilem_form.h>
 #include "xcl.h"
-#include "npool.h"
-#include "props.h"
+#include "pool.h"
+#include "l3props.h"
 #include "../ilem/ilem_props.h"
 
 #ifndef strdup
 char *strdup(const char *);
 #endif
+
+extern const char *file;
+extern int lnum;
 
 #define add_child xcl_add_child
 
@@ -29,7 +32,7 @@ struct mm
   int lastnode;
 };
 
-static struct npool *xcl_pool;
+static Pool *xcl_pool;
 
 static char *curr_subtype = NULL;
 
@@ -86,7 +89,7 @@ xcl_create()
       u_mm_info.blocks = calloc(BLOCK_SIZE, sizeof(union xcl_u));
     }
   if (!xcl_pool)
-    xcl_pool = npool_init();
+    xcl_pool = pool_init();
   xc->pool = xcl_pool;
   xc->langs = xc->project = xc->textid = NULL;
   xc->psus = hash_create(1);
@@ -153,7 +156,7 @@ xcl_final_term(void)
 {
   if (xcl_pool)
     {
-      npool_term(xcl_pool);
+      pool_term(xcl_pool);
       xcl_pool = NULL;
     }
 }
@@ -170,7 +173,7 @@ xcl_destroy(struct xcl_context **xc)
       mm_free(&l_mm_info);
       mm_free(&u_mm_info);
 #if 0
-      npool_term((*xc)->pool);
+      pool_term((*xc)->pool);
 #endif
       hash_free((*xc)->psus,(hash_free_func*)list_free);
       hash_free((*xc)->lpt_anchors,(hash_free_func*)NULL);
@@ -225,7 +228,7 @@ xcl_chunk_id(const char *idbase, enum xcl_c_types t, struct xcl_context *xc)
     {
       static char buf[32];
       sprintf(buf,"%s.U%d",base,uid++);
-      return (const char*)npool_copy((unsigned char *)buf,xc->pool);
+      return (const char*)pool_copy((unsigned char *)buf,xc->pool);
     }
 }
 
@@ -233,11 +236,11 @@ void
 xcl_chunk(struct xcl_context *xc, const char *xml_id, enum xcl_c_types t)
 {
   struct xcl_c *c = new_node(&c_mm_info);
-  extern Hash_table *curr_meta;
+  extern Hash *curr_meta;
   c->node_type = xcl_node_c;
   c->type = t;
   if (xml_id)
-    c->id = (const char *)npool_copy((unsigned char *)xml_id,xc->pool);
+    c->id = (const char *)pool_copy((unsigned char *)xml_id,xc->pool);
   else
     c->id = xcl_chunk_id(NULL, t, xc);
   c->parent = xc->curr;
@@ -278,7 +281,7 @@ xcl_chunk_insert(struct xcl_c *curr_c, const char *xml_id, const char *ref,
   c->type = t;
   c->subtype = subtype;
   if (xml_id)
-    c->id = (const char *)npool_copy((unsigned char *)xml_id,curr_c->xc->pool);
+    c->id = (const char *)pool_copy((unsigned char *)xml_id,curr_c->xc->pool);
   else
     c->id = xcl_chunk_id(NULL, t,curr_c->xc);
   c->ref = ref;
@@ -298,31 +301,31 @@ xcl_chunk_insert(struct xcl_c *curr_c, const char *xml_id, const char *ref,
     curr_c->nchildren -= (ncopy-1);
 }
 
-Hash_table *
+Hash *
 xcl_create_meta(struct xcl_context *xc, const char *xml_id)
 {
   xc->curr->meta = hash_create(1);
   hash_add(xc->curr->meta,
-	   npool_copy((unsigned char *)"#xml:id",xc->pool),
-	   npool_copy((unsigned char *)xml_id,xc->pool));
+	   pool_copy((unsigned char *)"#xml:id",xc->pool),
+	   pool_copy((unsigned char *)xml_id,xc->pool));
   return xc->curr->meta;
 }
 
-Hash_table *
+Hash *
 xcl_hash_lemm_meta(const char *const*lmeta, const char *xml_id,
 		   struct xcl_context *xc)
 {
-  Hash_table *tmp = hash_create(1);
+  Hash *tmp = hash_create(1);
   const char *const*freeable_lmeta = lmeta;
   hash_add(tmp,
-	   npool_copy((unsigned char *)"#xml:id", xc->pool),
-	   npool_copy((unsigned char *)xml_id,xc->pool));
+	   pool_copy((unsigned char *)"#xml:id", xc->pool),
+	   pool_copy((unsigned char *)xml_id,xc->pool));
 
   while (*lmeta)
     {
       hash_add(tmp,
-	       npool_copy((unsigned char *)*lmeta,xc->pool),
-	       lmeta[1] ? npool_copy((unsigned char *)lmeta[1],xc->pool) : (unsigned char *)"");
+	       pool_copy((unsigned char *)*lmeta,xc->pool),
+	       lmeta[1] ? pool_copy((unsigned char *)lmeta[1],xc->pool) : (unsigned char *)"");
       lmeta += 2;
     }
   free((char*)freeable_lmeta);
@@ -335,7 +338,8 @@ xcl_discontinuity(struct xcl_context *xc, const char *ref, enum xcl_d_types t, c
   struct xcl_d *c = new_node(&d_mm_info);
   c->node_type = xcl_node_d;
   c->type = t;
-  curr_subtype = c->subtype = st;
+  curr_subtype = (char*)st;
+  c->subtype = st;
   c->xc = xc;
   c->ref = ref;
   add_child(xc->curr, c, c->node_type);
@@ -352,7 +356,7 @@ xcl_discontinuity2(struct xcl_context *xc, const char *xid, const char *ref, enu
   c->node_type = xcl_node_d;
   c->type = t;
   c->xc = xc;
-  c->xml_id = (char*)npool_copy(xid,xc->pool);
+  c->xml_id = (char*)pool_copy((ucp)xid,xc->pool);
   c->ref = ref;
   add_child(xc->curr, c, c->node_type);
   if (t == xcl_d_field_start)
@@ -405,7 +409,7 @@ xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref,
       if (xml_id)
 	c->xml_id = xml_id;
       else
-	c->xml_id = (char*)npool_copy((unsigned char*)lemm_id(xc),xc->pool);
+	c->xml_id = (char*)pool_copy((unsigned char*)lemm_id(xc),xc->pool);
       c->ref = ref;
       c->f = fp;
       c->user = user;
@@ -413,10 +417,10 @@ xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref,
       c->nth = xc->curr->nchildren;
       c->xc = xc;
       if (curr_subtype && strlen(curr_subtype))
-	c->subtype = (char*)npool_copy(curr_subtype,xc->pool);
+	c->subtype = (char*)pool_copy((ucp)curr_subtype,xc->pool);
       add_child(xc->curr,c,c->node_type);
-      props_add_prop(fp,"env","discourse",curr_xcl_discourse,ref,NULL,NULL,-1);
-      props_add_prop(fp,"env","field",curr_xcl_field,ref,NULL,NULL,-1);
+      props_add_prop(fp,(ucp)"env",(ucp)"discourse",(uccp)curr_xcl_discourse,ref,NULL,NULL,-1);
+      props_add_prop(fp,(ucp)"env",(ucp)"field",(uccp)curr_xcl_field,ref,NULL,NULL,-1);
       return c;
     }
 }

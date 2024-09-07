@@ -1,10 +1,8 @@
-#include <stdio.h>
-#include "hash.h"
-#include "list.h"
-#include "xmlutil.h"
+#include <oraccsys.h>
+#include "xml.h"
 #include "xcl.h"
 #include "links.h"
-#include "f2.h"
+#include "form.h"
 #include "../ilem/ilem_form.h"
 #include "../ilem/ilem_para.h"
 
@@ -47,8 +45,8 @@ x2d_serialize_one_l_sub(FILE *f_dbg, struct xcl_l*lp, struct ilem_form *fp)
 
   if (fp)
     {
-      if (BIT_ISSET(fp->f2.flags,F2_FLAGS_PARTIAL)
-	  || BIT_ISSET(fp->f2.flags,F2_FLAGS_NO_FORM))
+      if (BIT_ISSET(fp->f2.flags,FORM_FLAGS_PARTIAL)
+	  || BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM))
 	x2_attr(f_dbg, "bad", "yes");
 
       x2_attr(f_dbg,"inst",fp->sublem);
@@ -60,15 +58,15 @@ x2d_serialize_one_l_sub(FILE *f_dbg, struct xcl_l*lp, struct ilem_form *fp)
       x2_attr(f_dbg,"inst",lp->inst);
       if (lp->f)
 	{
-	  if (BIT_ISSET(lp->f->f2.flags, F2_FLAGS_NOT_IN_SIGS))
+	  if (BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NOT_IN_SIGS))
 	    x2_attr(f_dbg,"newsig",(char *)lp->f->f2.sig);
-	  else if (BIT_ISSET(lp->f->f2.flags, F2_FLAGS_NEW_BY_PROJ))
+	  else if (BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NEW_BY_PROJ))
 	    x2_attr(f_dbg,"exosig",(char *)lp->f->f2.sig);
 	  else
 	    x2_attr(f_dbg,"sig",(char *)lp->f->f2.sig);
 	  x2_attr(f_dbg,"tail-sig",((const char*)lp->f->f2.tail_sig));
-	  if (BIT_ISSET(lp->f->f2.flags,F2_FLAGS_PARTIAL)
-	      || BIT_ISSET(lp->f->f2.flags,F2_FLAGS_NO_FORM))
+	  if (BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_PARTIAL)
+	      || BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_NO_FORM))
 	    x2_attr(f_dbg, "bad", "yes");
 	}
     }

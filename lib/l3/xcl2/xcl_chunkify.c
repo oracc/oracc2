@@ -107,7 +107,7 @@ xcl_chunkify(struct xcl_context *xc)
 
 void
 xcl_chunkify_part(struct xcl_context *xc, 
-		  Hash_table *titles, Hash_table *roles, Hash_table *lnodes)
+		  Hash *titles, Hash *roles, Hash *lnodes)
 {
   struct xcl_chunk_spec *cs;
   int cindex = 0;
@@ -119,7 +119,7 @@ xcl_chunkify_part(struct xcl_context *xc,
     }
 }
 
-Hash_table *
+Hash *
 xcl_lnodes_hash(struct xcl_c *c)
 {
   return NULL;

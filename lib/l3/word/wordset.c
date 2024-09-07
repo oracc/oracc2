@@ -23,17 +23,6 @@ static Pool *w2_pool = NULL;
 static void getkey_init(void);
 static const Uchar *getkey(const Uchar *str);
 
-#if 0
-static int
-pct(int amount, int total)
-{
-  float i = amount;
-  i /= total;
-  i *= 100;
-  return (int)(i+.5);
-}
-#endif
-
 void
 w2_init(void)
 {
@@ -107,7 +96,7 @@ compare_sequences(struct w2_set *set1, int start1, int top1,
     }
   else if (hits)
     {
-      set1->pct = set2->pct = pct(hits,seg_nkeys /*set1->nkeys*/);
+      set1->pct = set2->pct = pctint(hits,seg_nkeys /*set1->nkeys*/);
       return W2_PARTIAL;
     }
   else

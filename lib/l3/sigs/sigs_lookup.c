@@ -1,16 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "globals.h"
-#include "warning.h"
-#include "hash.h"
-#include "npool.h"
-#include "memblock.h"
-#include "lang.h"
+#include <oraccsys.h>
+#include <lng.h>
 #include "sigs.h"
 #include "ilem.h"
 #include "ilem_form.h"
 #include "xcl.h"
-#include "lang.h"
+#include "words.h"
 
 extern int fuzzy_aliasing;
 
@@ -19,7 +13,7 @@ static int multi_sub = 0;
 #if 0
 static void already_tried_aliasing_init(void);
 static void already_tried_aliasing_term(void);
-static int already_tried_aliasing(const char *form, struct f2 *f2);
+static int already_tried_aliasing(const char *form, Form *f2);
 #endif
 
 static int
@@ -223,8 +217,8 @@ sigs_state_save(struct sigset *sp, struct ilem_form *fp,
   s->finds = fp->finds;
   s->sigs_found = sigs_found;
   s->nfinds = nfinds;
-  s->no_form = (BIT_ISSET(fp->f2.flags, F2_FLAGS_NO_FORM) ? F2_FLAGS_NO_FORM : 0);
-  s->partial = (BIT_ISSET(fp->f2.flags, F2_FLAGS_PARTIAL) ? F2_FLAGS_PARTIAL : s->no_form);
+  s->no_form = (BIT_ISSET(fp->f2.flags, FORM_FLAGS_NO_FORM) ? FORM_FLAGS_NO_FORM : 0);
+  s->partial = (BIT_ISSET(fp->f2.flags, FORM_FLAGS_PARTIAL) ? FORM_FLAGS_PARTIAL : s->no_form);
   s->best = 0;
   list_add(sig_state, s);
 }
@@ -232,7 +226,7 @@ sigs_state_save(struct sigset *sp, struct ilem_form *fp,
 void
 setup_ilem_form(struct sig_context *scp, struct xcl_l *l, unsigned char*pinst)
 {
-  l->f = mb_new(scp->mb_ilem_forms);
+  l->f = memo_new(scp->mb_ilem_forms);
   l->f->f2.owner = l->f;
   l->f->f2.lang = ++pinst;
   while (*pinst && ':' != *pinst)
@@ -244,7 +238,7 @@ setup_ilem_form(struct sig_context *scp, struct xcl_l *l, unsigned char*pinst)
   *pinst++ = '\0';
   if (!l->f->sublem)
     l->f->sublem = (char*)pinst;
-  f2_parse((unsigned char*)l->parent->xc->file,l->lnum,pinst,&l->f->f2,NULL,scp);
+  form_parse((unsigned char*)l->parent->xc->file,l->lnum,pinst,&l->f->f2,NULL);
 }
 
 static void
@@ -266,13 +260,13 @@ setup_ilem_finds(struct sig_context *scp, struct ilem_form *ip,
       ip->finds = malloc((1+count) * sizeof(struct ilem_form*));
       for (i = 0; i < count; ++i)
 	{
-	  ip->finds[i] = mb_new(scp->mb_ilem_forms);
+	  ip->finds[i] = memo_new(scp->mb_ilem_forms);
 	  ip->finds[i]->props = ip->props;
 	  ip->finds[i]->f2.owner = ip->finds[i];
-	  f2_parse(sigs[i]->set ? sigs[i]->set->file : (const unsigned char *)"cache", 
+	  form_parse(sigs[i]->set ? sigs[i]->set->file : (const unsigned char *)"cache", 
 		   sigs[i]->lnum, 
-		   npool_copy(sigs[i]->sig,scp->pool),
-		   &ip->finds[i]->f2,NULL,scp);
+		   pool_copy(sigs[i]->sig,scp->pool),
+		   &ip->finds[i]->f2,NULL);
 	  ip->finds[i]->f2.sig = (Uchar*)sigs[i]->sig;
 	  ip->finds[i]->literal = (char*)sigs[i]->literal;
 	  ip->finds[i]->f2.rank = sigs[i]->rank;
@@ -368,10 +362,10 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	   */
 	  sp_parent = sp;
 	  sp = sp->cache;
-	  /* F2_FLAGS_NO_FORM is left set on +-ed forms, but if we've retrieved it
+	  /* FORM_FLAGS_NO_FORM is left set on +-ed forms, but if we've retrieved it
 	     from the cache by definition there must be a form */
-	  BIT_SET(l->f->f2.flags, F2_FLAGS_FROM_CACHE);
-	  BIT_CLEAR(l->f->f2.flags, F2_FLAGS_NO_FORM);
+	  BIT_SET(l->f->f2.flags, FORM_FLAGS_FROM_CACHE);
+	  BIT_CLEAR(l->f->f2.flags, FORM_FLAGS_NO_FORM);
 	  if (sigs_found && (lem_autolem || lem_dynalem) && !ifp->f2.cf)
 	    {
 	      setup_ilem_finds(xcp->sigs, ifp, sigs_found, nfinds);
@@ -380,8 +374,8 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	      return;
 	    }
 	  first_sp = sp;
-	  if (BIT_ISSET(sigs_found[0]->f2p->flags, F2_FLAGS_NOT_IN_SIGS))
-	    BIT_SET(l->f->f2.flags, F2_FLAGS_NOT_IN_SIGS);
+	  if (BIT_ISSET(sigs_found[0]->f2p->flags, FORM_FLAGS_NOT_IN_SIGS))
+	    BIT_SET(l->f->f2.flags, FORM_FLAGS_NOT_IN_SIGS);
 	}
 
       if (verbose)
@@ -398,8 +392,8 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
     retry_after_cache:
       if (!sigs_found)
 	{
-	  BIT_CLEAR(ifp->f2.flags, F2_FLAGS_NO_FORM);
-	  BIT_CLEAR(ifp->f2.flags, F2_FLAGS_PARTIAL);
+	  BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_NO_FORM);
+	  BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_PARTIAL);
 
 	  if (look_pass2)
 	    {
@@ -446,17 +440,17 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 
 	  /* For Sum see if we can match on an alias */
 	  if (/* sigs_found 
-		 && BIT_ISSET(ifp->f2.flags,F2_FLAGS_NO_FORM)
+		 && BIT_ISSET(ifp->f2.flags,FORM_FLAGS_NO_FORM)
 		 && */
 	      !strncmp((char*)ifp->f2.lang,"sux",3)
 	      && (!sigs_found
-		  || BIT_ISSET(ifp->f2.flags, F2_FLAGS_NO_FORM)))
+		  || BIT_ISSET(ifp->f2.flags, FORM_FLAGS_NO_FORM)))
 	    {
 	      if (nfinds)
 		{
 		  int i;
 		  static int alias_nfinds;
-		  int no_form = BIT_ISSET(ifp->f2.flags,F2_FLAGS_NO_FORM);
+		  int no_form = BIT_ISSET(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 #if 0
 		  already_tried_aliasing_init();
 #endif
@@ -469,10 +463,10 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 		      if (already_tried_aliasing((const char *)ifp->f2.form, &ifp->finds[i]->f2))
 			continue;
 #endif
-		      if (f2_alias(xcp->sigs, &ifp->f2, &ifp->finds[i]->f2))
+		      if (form_alias(&ifp->f2, &ifp->finds[i]->f2))
 			{
 			  struct sig const * const *alias_sigs_found = NULL;
-			  BIT_CLR(ifp->f2.flags,F2_FLAGS_NO_FORM);
+			  BIT_CLR(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 			  alias_sigs_found = look->test(xcp,ifp,sp,&alias_nfinds);
 			  if (alias_nfinds)
 			    {
@@ -493,7 +487,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 		  already_tried_aliasing_term();
 #endif
 		  if (no_form)
-		    BIT_SET(ifp->f2.flags,F2_FLAGS_NO_FORM);
+		    BIT_SET(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 		  /* This just frees the temp setup we did for aliasing */
 		  free(ifp->finds);
 		  ifp->finds = NULL;
@@ -501,12 +495,12 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 		}
 	      else
 		{
-		  if (f2_alias(xcp->sigs, &ifp->f2, NULL))
+		  if (form_alias(&ifp->f2, NULL))
 		    {
 		      struct sig const * const *alias_sigs_found = NULL;
 		      static int alias_nfinds;
-		      int no_form = BIT_ISSET(ifp->f2.flags,F2_FLAGS_NO_FORM);
-		      BIT_CLR(ifp->f2.flags,F2_FLAGS_NO_FORM);
+		      int no_form = BIT_ISSET(ifp->f2.flags,FORM_FLAGS_NO_FORM);
+		      BIT_CLR(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 		      alias_nfinds = 0;
 		      alias_sigs_found = look->test(xcp,ifp,sp,&alias_nfinds);
 		      if (alias_nfinds)
@@ -525,27 +519,27 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 			  if (alias_sigs_found)
 			    free((void*)alias_sigs_found);
 			  if (no_form)
-			    BIT_SET(ifp->f2.flags,F2_FLAGS_NO_FORM);
+			    BIT_SET(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 			}
 		    }
 		}
 	    }
 
 	  if (sigs_found 
-	      && BIT_ISSET(ifp->f2.flags,F2_FLAGS_NO_FORM)
+	      && BIT_ISSET(ifp->f2.flags,FORM_FLAGS_NO_FORM)
 	      && fuzzy_aliasing)
 	    {
 	      int i;
 	      static int alias_nfinds;
-	      int no_form = BIT_ISSET(ifp->f2.flags,F2_FLAGS_NO_FORM);
+	      int no_form = BIT_ISSET(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 	      setup_ilem_finds(xcp->sigs, ifp, sigs_found, nfinds);
 	      /* can't free sigs_found here */
 	      for (alias_nfinds = i = 0; ifp->finds[i]; ++i)
 		{
-		  if (f2_extreme_alias(xcp->sigs, &ifp->f2, &ifp->finds[i]->f2))
+		  if (form_extreme_alias(&ifp->f2, &ifp->finds[i]->f2))
 		    {
 		      struct sig const * const *alias_sigs_found = NULL;
-		      BIT_CLR(ifp->f2.flags,F2_FLAGS_NO_FORM);
+		      BIT_CLR(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 		      alias_sigs_found = look->test(xcp,ifp,sp,&alias_nfinds);
 		      if (alias_nfinds)
 			{
@@ -563,7 +557,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 		    }
 		}
 	      if (no_form)
-		BIT_SET(ifp->f2.flags,F2_FLAGS_NO_FORM);
+		BIT_SET(ifp->f2.flags,FORM_FLAGS_NO_FORM);
 	      /* This just frees the temp setup we did for aliasing */
 	      free(ifp->finds);
 	      ifp->finds = NULL;
@@ -659,7 +653,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	    }
 	}
 
-      if (BIT_ISSET(ifp->f2.flags,F2_FLAGS_PARTIAL) || (nfinds > 1 && !ifp->f2.sense))
+      if (BIT_ISSET(ifp->f2.flags,FORM_FLAGS_PARTIAL) || (nfinds > 1 && !ifp->f2.sense))
 	{
 	  int tmp_nfinds = 0;
 	  struct ilem_form **fpp;
@@ -695,7 +689,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 		    }
 		  free((void*)sigs_found);
 		  sigs_found = NULL;
-		  BIT_CLEAR(ifp->f2.flags,F2_FLAGS_PARTIAL);
+		  BIT_CLEAR(ifp->f2.flags,FORM_FLAGS_PARTIAL);
 		  if (look_pass2 == 0)
 		    {
 		      look_pass2 = 1;
@@ -709,7 +703,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	      int i;
 	      for (i = 0; i < tmp_nfinds; ++i)
 		if (f2_test_no_sense(&ifp->f2, &fpp[i]->f2))
-		  BIT_CLEAR(fpp[i]->f2.flags, F2_FLAGS_PARTIAL);
+		  BIT_CLEAR(fpp[i]->f2.flags, FORM_FLAGS_PARTIAL);
 	      memcpy(ifp->finds,fpp,(1+tmp_nfinds)*sizeof(struct ilem_form *));
 	      ifp->fcount = nfinds = tmp_nfinds;
 	    }
@@ -756,7 +750,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	}
 #endif
 
-      if (nfinds > 1 && BIT_ISSET(ifp->f2.flags, F2_FLAGS_LEM_BY_NORM))
+      if (nfinds > 1 && BIT_ISSET(ifp->f2.flags, FORM_FLAGS_LEM_BY_NORM))
 	{
 	  int i;
 	  const char *disambig = NULL;
@@ -808,8 +802,8 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 
 #if 1
       if (nfinds == 1  
-	  && !BIT_ISSET(ifp->f2.flags, F2_FLAGS_PARTIAL)
-	  && !BIT_ISSET(ifp->f2.flags, F2_FLAGS_NO_FORM)
+	  && !BIT_ISSET(ifp->f2.flags, FORM_FLAGS_PARTIAL)
+	  && !BIT_ISSET(ifp->f2.flags, FORM_FLAGS_NO_FORM)
 	  )
 	{
 	  if (verbose)
@@ -823,7 +817,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	    free((void*)sigs_found);
 	  sigs_found = NULL;
 	  nfinds = 0;	  
-	  BIT_CLR(l->f->f2.flags, F2_FLAGS_FROM_CACHE);
+	  BIT_CLR(l->f->f2.flags, FORM_FLAGS_FROM_CACHE);
 	  goto retry_after_cache;
 	}
       else
@@ -831,12 +825,12 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	  if (verbose)
 	    {
 	      fprintf(stderr, "PARTIAL = %d; NO_FORM=%d\n",
-		      BIT_ISSET(ifp->f2.flags, F2_FLAGS_PARTIAL),
-		      BIT_ISSET(ifp->f2.flags, F2_FLAGS_NO_FORM));
+		      BIT_ISSET(ifp->f2.flags, FORM_FLAGS_PARTIAL),
+		      BIT_ISSET(ifp->f2.flags, FORM_FLAGS_NO_FORM));
 	    }
 	}
 #else
-      if (nfinds == 1  || !BIT_ISSET(ifp->f2.flags, F2_FLAGS_NO_FORM))
+      if (nfinds == 1  || !BIT_ISSET(ifp->f2.flags, FORM_FLAGS_NO_FORM))
 	break;
 #endif
     }
@@ -878,12 +872,12 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
       ifp->finds = malloc(ifp->fcount * sizeof(struct ilem_form *));
       memcpy(ifp->finds, sigs_found[0]->ifp->finds, ifp->fcount * sizeof(struct ilem_form *));
       sp = sigs_found[0]->set;
-      BIT_CLEAR(ifp->f2.flags, F2_FLAGS_NO_FORM);
-      BIT_CLEAR(ifp->f2.flags, F2_FLAGS_PARTIAL);
-      if (BIT_ISSET(sigs_found[0]->ifp->f2.flags, F2_FLAGS_NOT_IN_SIGS))
-	BIT_SET(ifp->f2.flags, F2_FLAGS_NOT_IN_SIGS);
-      if (BIT_ISSET(sigs_found[0]->ifp->f2.flags, F2_FLAGS_LEM_NEW))
-	BIT_SET(ifp->f2.flags, F2_FLAGS_LEM_NEW);
+      BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_NO_FORM);
+      BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_PARTIAL);
+      if (BIT_ISSET(sigs_found[0]->ifp->f2.flags, FORM_FLAGS_NOT_IN_SIGS))
+	BIT_SET(ifp->f2.flags, FORM_FLAGS_NOT_IN_SIGS);
+      if (BIT_ISSET(sigs_found[0]->ifp->f2.flags, FORM_FLAGS_LEM_NEW))
+	BIT_SET(ifp->f2.flags, FORM_FLAGS_LEM_NEW);
     }
   else
     {
@@ -914,29 +908,29 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	     stay set because it is used by the extended lemming, and
 	     just be sure to test in x2_serialize that we are outputting
 	     a +-ed lem as newsig and not bad */
-	  if (BIT_ISSET(ifp->f2.flags, F2_FLAGS_LEM_NEW) && best->no_form)
+	  if (BIT_ISSET(ifp->f2.flags, FORM_FLAGS_LEM_NEW) && best->no_form)
 	    {
-	      BIT_SET(ifp->f2.flags, F2_FLAGS_NOT_IN_SIGS);
-	      /*BIT_CLEAR(ifp->f2.flags, F2_FLAGS_NO_FORM);*/
+	      BIT_SET(ifp->f2.flags, FORM_FLAGS_NOT_IN_SIGS);
+	      /*BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_NO_FORM);*/
 	    }
 	  else if (best->no_form)
-	    BIT_SET(ifp->f2.flags, F2_FLAGS_NO_FORM);
+	    BIT_SET(ifp->f2.flags, FORM_FLAGS_NO_FORM);
 	  else
-	    BIT_CLEAR(ifp->f2.flags, F2_FLAGS_NO_FORM);
+	    BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_NO_FORM);
 	  
-	  if (BIT_ISSET(ifp->f2.flags, F2_FLAGS_LEM_NEW) && best->partial)
+	  if (BIT_ISSET(ifp->f2.flags, FORM_FLAGS_LEM_NEW) && best->partial)
 	    {
-	      BIT_SET(ifp->f2.flags, F2_FLAGS_NOT_IN_SIGS);
-	      BIT_CLEAR(ifp->f2.flags, F2_FLAGS_PARTIAL);
+	      BIT_SET(ifp->f2.flags, FORM_FLAGS_NOT_IN_SIGS);
+	      BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_PARTIAL);
 	    }
-	  else if (best->partial == F2_FLAGS_PARTIAL)  /* best->partial can == F2_FLAGS_NO_FORM */
-	    BIT_SET(ifp->f2.flags, F2_FLAGS_PARTIAL);
+	  else if (best->partial == FORM_FLAGS_PARTIAL)  /* best->partial can == FORM_FLAGS_NO_FORM */
+	    BIT_SET(ifp->f2.flags, FORM_FLAGS_PARTIAL);
 	  else
-	    BIT_CLEAR(ifp->f2.flags, F2_FLAGS_PARTIAL);
+	    BIT_CLEAR(ifp->f2.flags, FORM_FLAGS_PARTIAL);
 
 #if 0 /* can't happen any more */
 	  if (!strcmp(sp->file, "cache"))
-	    BIT_SET(l->f->f2.flags, F2_FLAGS_FROM_CACHE);
+	    BIT_SET(l->f->f2.flags, FORM_FLAGS_FROM_CACHE);
 #endif
 	}
       else
@@ -957,14 +951,14 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
       l->f->sp = sp;
       l->f->look = look;
 
-      if ((lem_autolem || BIT_ISSET(ifp->f2.flags, F2_FLAGS_LEM_NEW)) && !cache_find) /* lem_dynalem not needed */
+      if ((lem_autolem || BIT_ISSET(ifp->f2.flags, FORM_FLAGS_LEM_NEW)) && !cache_find) /* lem_dynalem not needed */
 	{
 	  if (!ifp->sp)
 	    {
 	      List *autosigs = sig_autoload_sets(xcp->sigs,xcp->project,(const char*)lem_lang);
 	      ifp->sp = list_first(autosigs);
 	    }
-	  BIT_SET(ifp->f2.flags, F2_FLAGS_NOT_IN_SIGS);
+	  BIT_SET(ifp->f2.flags, FORM_FLAGS_NOT_IN_SIGS);
 	}
     }
   if (free_flag)
@@ -980,7 +974,7 @@ sigs_lookup_sub(struct xcl_context *xcp, struct xcl_l *l, struct siglook *look, 
       struct ilem_form *mp;
 #if 0
       if (!ifp->f2.parts)
-	ifp->f2.parts = malloc(ifp->mcount * sizeof(struct f2*));
+	ifp->f2.parts = malloc(ifp->mcount * sizeof(Form*));
 #endif
       multi_sub = 1;
       for (mp = ifp->multi; mp; mp = mp->multi)
@@ -988,8 +982,8 @@ sigs_lookup_sub(struct xcl_context *xcp, struct xcl_l *l, struct siglook *look, 
 	  sigs_lookup_sub_sub(xcp, l, look, mp);
 	  if (mp->fcount == 0)
 	    {
-	      BIT_SET(mp->f2.flags, F2_FLAGS_COF_INVALID);
-	      BIT_SET(ifp->f2.flags, F2_FLAGS_COF_INVALID);
+	      BIT_SET(mp->f2.flags, FORM_FLAGS_COF_INVALID);
+	      BIT_SET(ifp->f2.flags, FORM_FLAGS_COF_INVALID);
 	    }
 	}
     }
@@ -1005,7 +999,7 @@ sigs_lookup(struct xcl_context *xcp, struct xcl_l *l, struct siglook *look)
     return;
 
   if (!l->f)
-    setup_ilem_form(xcp->sigs,l,npool_copy((Uchar *)l->inst,xcp->pool));
+    setup_ilem_form(xcp->sigs,l,pool_copy((Uchar *)l->inst,xcp->pool));
 
   if (l->f->ambig)
     {
@@ -1019,25 +1013,25 @@ sigs_lookup(struct xcl_context *xcp, struct xcl_l *l, struct siglook *look)
     }
   else
     {
-      if (!BIT_ISSET(l->f->f2.flags, F2_FLAGS_COF_TAIL))
+      if (!BIT_ISSET(l->f->f2.flags, FORM_FLAGS_COF_TAIL))
 	sigs_lookup_sub(xcp, l, look, l->f);
     }
 }
 
 #if 0
-static struct npool *already_aliased_pool = NULL;
-static Hash_table *already_aliased = NULL;
+static Pool *already_aliased_pool = NULL;
+static Hash *already_aliased = NULL;
 
 static void
 already_tried_aliasing_init(void)
 {
   already_tried_aliasing_term();
   already_aliased = hash_create(1023);
-  already_aliased_pool = npool_init();
+  already_aliased_pool = pool_init();
 }
 
 static int
-already_tried_aliasing(const char *form, struct f2 *f2)
+already_tried_aliasing(const char *form, Form *f2)
 {
   unsigned char buf[1024];
   int ret = 0;
@@ -1048,7 +1042,7 @@ already_tried_aliasing(const char *form, struct f2 *f2)
   sprintf((char *)buf, "%s=%s[%s]%s", form, f2->cf, f2->gw, f2->pos);
 
   if (!(ret = (uintptr_t)hash_find(already_aliased, buf)))
-    hash_add(already_aliased, npool_copy(buf, already_aliased_pool), "1");
+    hash_add(already_aliased, pool_copy(buf, already_aliased_pool), "1");
 
   return ret;
 }
@@ -1063,7 +1057,7 @@ already_tried_aliasing_term(void)
     }
   if (already_aliased_pool)
     {
-      npool_term(already_aliased_pool);
+      pool_term(already_aliased_pool);
       already_aliased_pool = NULL;
     }
 }

@@ -15,7 +15,7 @@ bigrams_init(struct sigset *sp)
 {
   static char buf[128];
   sprintf(buf,"@@ORACC_BUILDS@@/pub/%s/bgrm-%s.ngm", sp->project, sp->lang);
-  if (!xaccess(buf,R_OK,0))
+  if (!access(buf,R_OK))
     {
       bigrams_nlcp = nl_load_file(sp, bigrams_nlcp, buf, nlcp_action_rewrite, (const char *)sp->lang);
       if (verbose)

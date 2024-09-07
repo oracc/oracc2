@@ -1,17 +1,5 @@
-#include <stdio.h>
-#include <string.h>
-#include <sys/unistd.h>
-#include <psdtypes.h>
-#include <fname.h>
-#include <npool.h>
-#include <memblock.h>
-#include <loadfile.h>
-#include <ctype128.h>
-#include "warning.h"
-#include "globals.h"
-#include "xpd2.h"
-#include "lang.h"
-#include "f2.h"
+#include <oraccsys.h>
+#include <xpd.h>
 #include "ilem.h"
 #include "ilem_form.h"
 #include "psus.h"
@@ -23,6 +11,9 @@
 
 extern int lem_extended;
 extern int lem_autolem;
+extern int lem_dynalem;
+extern int fuzzy_aliasing;
+
 int sigs_allow_project_lem = -1;
 int sigs_debug = 0;
 int sigsets_debug = 0;
@@ -65,7 +56,7 @@ sig_context_register(struct sig_context *scp,
 
   if (!lang)
     {
-      char *pproj = (char*)npool_copy((const Uchar *)lproject,scp->pool);
+      char *pproj = (char*)pool_copy((const Uchar *)lproject,scp->pool);
       if ((colon = strchr(pproj, ':')))
 	{
 	  sigsproj = pproj;
@@ -79,7 +70,7 @@ sig_context_register(struct sig_context *scp,
       /* allow checking ancestor glossaries:
 	 <option name="%akk-x-ltebab" value=". .:akk"/>
        */
-      char *pproj = (char*)npool_copy((const Uchar *)lproject,scp->pool);
+      char *pproj = (char*)pool_copy((const Uchar *)lproject,scp->pool);
       sigsproj = pproj;
       pproj = pproj + (colon - lproject);
       *pproj++ = '\0';
@@ -108,7 +99,7 @@ sig_context_register(struct sig_context *scp,
 	{
 	  char buf[1024];
 	  sprintf(buf,"%s/pub/epsd2/alias-smart.txt",oracc_home());
-	  scp->aliases_file = (char*)npool_copy((unsigned char *)buf,scp->pool);
+	  scp->aliases_file = (char*)pool_copy((unsigned char *)buf,scp->pool);
 	  if (!xaccess(buf,R_OK,0))
 	    {
 	      scp->aliases = sas_asa_load(buf);
@@ -144,7 +135,7 @@ sig_context_register(struct sig_context *scp,
   if (!(sigs_for_lang = hash_find(scp->langs, (Uchar*)projlang)))
     {
       sigs_for_lang = list_create(LIST_SINGLE);
-      hash_add(scp->langs, npool_copy((Uchar*)projlang,scp->pool), sigs_for_lang);
+      hash_add(scp->langs, pool_copy((Uchar*)projlang,scp->pool), sigs_for_lang);
       /* Check that the file is accessible and warn if it is not unless auto
 	 is non-zero */
       if (!xaccess((char*)fname, R_OK, 0))
@@ -170,15 +161,15 @@ sig_context_register(struct sig_context *scp,
 
   if (!list_find(sigs_for_lang, fname, (list_find_func*)lang_sigs_cmp))
     {
-      struct sigset *sp = mb_new(scp->mb_sigsets);
+      struct sigset *sp = memo_new(scp->mb_sigsets);
       sp->owner = scp;
-      sp->project = npool_copy((Uchar*)sigsproj,scp->pool);
-      sp->lang = npool_copy((Uchar *)sigslang,scp->pool);
+      sp->project = pool_copy((Uchar*)sigsproj,scp->pool);
+      sp->lang = pool_copy((Uchar *)sigslang,scp->pool);
       sp->core = langcore_of((const char *)sp->lang);
       if (no_sigfile)
 	sp->file = NULL;
       else
-	sp->file = npool_copy(fname,scp->pool);
+	sp->file = pool_copy(fname,scp->pool);
       list_add(sigs_for_lang, sp);
       /* Note that we do not actually load the sigs here--that is done lazily
 	 when we try to do some lemmer operation in the language */
@@ -189,7 +180,7 @@ sig_context_register(struct sig_context *scp,
 	{
 	  if (verbose)
 	    fprintf(stderr,"sig_context: ignoring duplicate data source `%s'\n", fname);
-	  hash_add(scp->known_bad,npool_copy(fname,scp->pool),&bad);
+	  hash_add(scp->known_bad,pool_copy(fname,scp->pool),&bad);
 	}
     }
 
@@ -200,7 +191,7 @@ sig_context_register(struct sig_context *scp,
 struct sigset *
 sig_new_context_free_sigset(void)
 {
-  struct sigset *sp = mb_new(global_scp->mb_sigsets);
+  struct sigset *sp = memo_new(global_scp->mb_sigsets);
   sp->owner = global_scp;
   return sp;
 }
@@ -211,14 +202,14 @@ sig_context_init()
   if (!global_scp)
     {
       global_scp = calloc(1, sizeof(struct sig_context));
-      global_scp->pool = npool_init();
+      global_scp->pool = pool_init();
       global_scp->known_bad = hash_create(1);
       global_scp->langs = hash_create(1);
-      global_scp->mb_f2s = mb_init(sizeof(struct f2),256);
-      global_scp->mb_f2ps = mb_init(sizeof(struct f2),32);
-      global_scp->mb_ilem_forms = mb_init(sizeof(struct ilem_form),64);
-      global_scp->mb_sigs = mb_init(sizeof(struct sig),256);
-      global_scp->mb_sigsets = mb_init(sizeof(struct sigset),1);
+      global_scp->mb_f2s = memo_init(sizeof(Form),256);
+      global_scp->mb_f2ps = memo_init(sizeof(Form),32);
+      global_scp->mb_ilem_forms = memo_init(sizeof(struct ilem_form),64);
+      global_scp->mb_sigs = memo_init(sizeof(struct sig),256);
+      global_scp->mb_sigsets = memo_init(sizeof(struct sigset),1);
       w2_init();
       sigs_cof_init();
     }
@@ -235,12 +226,12 @@ sig_context_term(void)
       ilem_select_clear();
       hash_free(global_scp->known_bad, NULL);
       hash_free(global_scp->langs, (hash_free_func*)sig_lang_free);
-      npool_term(global_scp->pool);
-      mb_free(global_scp->mb_f2s);
-      mb_free(global_scp->mb_f2ps);
-      mb_free(global_scp->mb_ilem_forms);
-      mb_free(global_scp->mb_sigs);
-      mb_free(global_scp->mb_sigsets);
+      pool_term(global_scp->pool);
+      memo_term(global_scp->mb_f2s);
+      memo_term(global_scp->mb_f2ps);
+      memo_term(global_scp->mb_ilem_forms);
+      memo_term(global_scp->mb_sigs);
+      memo_term(global_scp->mb_sigsets);
       w2_term();
       sigs_cof_term();
       free(global_scp);
@@ -411,7 +402,7 @@ sigs_load_one_sig(struct sig_context*scp, struct sigset *sp, const unsigned char
   if (!sp || !form || !*form)
     return;
 
-  s = mb_new(scp->mb_sigs);
+  s = memo_new(scp->mb_sigs);
   /*sprintf(pbuf,"%p",(void*)s);*/
   cf_or_norm = find_cf_or_norm(sig);
   s->lnum = lnum;
@@ -448,14 +439,14 @@ sigs_load_one_sig(struct sig_context*scp, struct sigset *sp, const unsigned char
 
   if ('{' == *s->sig)
     {
-      Uchar *lp = npool_copy(s->sig, scp->pool), *endp;
+      Uchar *lp = pool_copy(s->sig, scp->pool), *endp;
       ++lp;
       endp = (Uchar *)strstr((char*)lp,"}::");
       if (endp)
 	{
 	  List *components = list_create(LIST_SINGLE);
 	  Uchar *psu = lp, *psutmp;
-	  struct f2 *psu_form = NULL;
+	  Form *psu_form = NULL;
 	  *endp = '\0';
 
 	  if ((psutmp = (Uchar*)strstr((const char*)psu, " = ")))
@@ -507,14 +498,14 @@ sigs_load_one_sig(struct sig_context*scp, struct sigset *sp, const unsigned char
   else
     {
       s->count = 1;
-      hash_add(sp->forms, npool_copy(form, scp->pool), s);
+      hash_add(sp->forms, pool_copy(form, scp->pool), s);
       if (sigsets_debug)
 	fprintf(stderr, "sigs_load_sigs: registering form %s\n", form);
     }
 
   /* FIXME: should rewrite this so that the parsed form in s and s2
      can be shared between the two */
-  s2 = mb_new(scp->mb_sigs);
+  s2 = memo_new(scp->mb_sigs);
   *s2 = *s;
   s2->next = NULL;
   if (sp && sp->norms && (try = hash_find(sp->norms, cf_or_norm)))
@@ -533,7 +524,7 @@ sigs_load_one_sig(struct sig_context*scp, struct sigset *sp, const unsigned char
   else
     {
       s2->count = 1;
-      hash_add(sp->norms, npool_copy(cf_or_norm, scp->pool), s2);
+      hash_add(sp->norms, pool_copy(cf_or_norm, scp->pool), s2);
       if (sigsets_debug)
 	fprintf(stderr, "sigs_load_sigs: registering cf_or_norm %s\n", cf_or_norm);
     }

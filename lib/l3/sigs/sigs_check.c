@@ -1,10 +1,8 @@
-#include <ctype128.h>
-#include "warning.h"
-#include "memblock.h"
-#include "npool.h"
-#include "lang.h"
+#include <oraccsys.h>
+#include <bits.h>
+#include <lng.h>
 #include "sigs.h"
-#include "f2.h"
+#include "form.h"
 #include "ilem_form.h"
 #include "xcl.h"
 #include "words.h"
@@ -37,8 +35,8 @@ sigs_l_check(struct xcl_context *xcp, struct xcl_l *l)
   /* Don't check COF_TAILS */
   if (l->f 
       && (l->f->f2.cf || l->f->f2.norm)
-      && !BIT_ISSET(l->f->f2.flags, F2_FLAGS_INVALID)
-      && (!BIT_ISSET(l->f->f2.flags,F2_FLAGS_COF_TAIL) 
+      && !BIT_ISSET(l->f->f2.flags, FORM_FLAGS_INVALID)
+      && (!BIT_ISSET(l->f->f2.flags,FORM_FLAGS_COF_TAIL) 
 	  && l->inst && l->inst[strlen(l->inst)-1] != '='))
     {
       sigs_lookup(xcp, l, &look_check);
@@ -47,14 +45,14 @@ sigs_l_check(struct xcl_context *xcp, struct xcl_l *l)
 	sigs_cof_finds(l);
 
 #if 1
-      if (BIT_ISSET(l->f->f2.flags, F2_FLAGS_LEM_NEW))
+      if (BIT_ISSET(l->f->f2.flags, FORM_FLAGS_LEM_NEW))
 	{
 	  /* 1) now we silently ignore missing .sig files we need to ignore that sp->file can be
 	        NULL also 
 	     2) sp->file == "cache" is no longer used, so that's out as well
  	   */
 	  if (l->f->sp /* && l->f->sp->file && strcmp((const char *)l->f->sp->file, "cache") */
-	      && !BIT_ISSET(l->f->f2.flags, F2_FLAGS_FROM_CACHE))
+	      && !BIT_ISSET(l->f->f2.flags, FORM_FLAGS_FROM_CACHE))
 	    {
 	      (void)sigs_early_sig(xcp, l->f);
 	      /*
@@ -71,7 +69,7 @@ sigs_l_check(struct xcl_context *xcp, struct xcl_l *l)
 /* FIX ME: record what fails to match in flags somehow */
 
 static void
-setup_set(struct f2 *f)
+setup_set(Form *f)
 {
   if (!f->words)
     {
@@ -95,7 +93,7 @@ field_ok(const Uchar *s1, const Uchar *s2)
 }
 
 int
-cfnorm_ok(struct f2 *f1, struct f2 *f2)
+cfnorm_ok(Form *f1, Form *f2)
 {
   if (f1->cf && f1->norm)
     {
@@ -112,7 +110,7 @@ cfnorm_ok(struct f2 *f1, struct f2 *f2)
 	     give a norm; otherwise the notation 
 	     a[thing]N$ would result in norm=a */
 	  if (f2->norm && BIT_ISSET(f2->core->features, LF_NORM))
-	    /* if (f2->norm && BIT_ISSET(f2->flags, F2_FLAGS_LEM_BY_NORM)) */
+	    /* if (f2->norm && BIT_ISSET(f2->flags, FORM_FLAGS_LEM_BY_NORM)) */
 	    {
 	      ok = field_ok(f1->cf, f2->norm);
 #if 0
@@ -140,7 +138,7 @@ cfnorm_ok(struct f2 *f1, struct f2 *f2)
 }
 
 int
-posepos_ok(struct f2 *f1, struct f2 *f2)
+posepos_ok(Form *f1, Form *f2)
 {
   if (f1->pos && f1->epos)
     {
@@ -173,7 +171,7 @@ posepos_ok(struct f2 *f1, struct f2 *f2)
 
 /* f1 is the instance lemmatization; f2 is a candidate from the lemm-xxx.sig file */
 int
-xsense_ok(struct f2 *f1, struct f2 *f2, int gw_wild, const char *FILE, size_t LINE)
+xsense_ok(Form *f1, Form *f2, int gw_wild, const char *FILE, size_t LINE)
 {
   int sub = 0;
   
@@ -285,7 +283,7 @@ script_ok(const Uchar *l1, const Uchar *l2)
 }
 
 int
-f2_test(struct f2 *f, struct f2 *f2)
+f2_test(Form *f, Form *f2)
 {
   return sense_ok(f,f2,1)
     && f2_test_no_sense(f, f2)
@@ -293,7 +291,7 @@ f2_test(struct f2 *f, struct f2 *f2)
 }
 
 int
-f2_test_no_sense(struct f2 *f, struct f2 *f2)
+f2_test_no_sense(Form *f, Form *f2)
 {
   return posepos_ok(f,f2)
     && field_ok(f->base,f2->base)
@@ -305,17 +303,17 @@ f2_test_no_sense(struct f2 *f, struct f2 *f2)
 }
 
 static int
-psu_bit_ok(struct f2 *f1, struct f2 *f2)
+psu_bit_ok(Form *f1, Form *f2)
 {
-  return BIT_ISSET(f1->flags, F2_FLAGS_IS_PSU)
-    == BIT_ISSET(f2->flags, F2_FLAGS_IS_PSU);
+  return BIT_ISSET(f1->flags, FORM_FLAGS_IS_PSU)
+    == BIT_ISSET(f2->flags, FORM_FLAGS_IS_PSU);
 }
 
 /* We check COFs by first obeying only SENSE; if the calling 
    loop doesn't find any matches, cof_ok gets called again
    with force_sense = 0 to do a fuzzier search */
 static int
-cof_ok(struct ilem_form *ifp, struct f2 *f2p, int force_sense)
+cof_ok(struct ilem_form *ifp, Form *f2p, int force_sense)
 {
   int i, sense_null = 0;
   struct ilem_form *m;
@@ -335,10 +333,10 @@ cof_ok(struct ilem_form *ifp, struct f2 *f2p, int force_sense)
 	  || !f2_test(&m->f2, f2p->parts[i]))
 	{
 	  if (verbose)
-	    vnotice2(ifp->file, ifp->lnum, "cof_ok: no match to %s", ifp->literal);
+	    mesg_vnotice(ifp->file, ifp->lnum, "cof_ok: no match to %s", ifp->literal);
 	  if (sense_null)
 	    m->f2.sense = NULL;
-	  BIT_SET(m->f2.flags, F2_FLAGS_COF_INVALID);
+	  BIT_SET(m->f2.flags, FORM_FLAGS_COF_INVALID);
 	  return 0;
 	}
 
@@ -349,12 +347,12 @@ cof_ok(struct ilem_form *ifp, struct f2 *f2p, int force_sense)
   /* On success only, flag all the tails */
   for (m = ifp->multi; m; m = m->multi)
     {
-      BIT_SET(m->f2.flags,F2_FLAGS_COF_TAIL);
-      BIT_CLEAR(m->f2.flags,F2_FLAGS_COF_INVALID);
+      BIT_SET(m->f2.flags,FORM_FLAGS_COF_TAIL);
+      BIT_CLEAR(m->f2.flags,FORM_FLAGS_COF_INVALID);
     }
 
   if (verbose)
-    vnotice2(ifp->file, ifp->lnum, "cof_ok: found match to %s", ifp->literal);
+    mesg_vnotice(ifp->file, ifp->lnum, "cof_ok: found match to %s", ifp->literal);
   return 1;
 }
 
@@ -377,7 +375,7 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
   struct sig *candidates = NULL, *c = NULL, **res, **part;
   int ncand = 0, pct_top = 0;
   int pass1 = 1, partial_ok = 0, pass_1_found_forms = 0, cof_pass_1 = 1;
-  struct f2 *f = &ifp->f2;
+  Form *f = &ifp->f2;
   int sp_is_cache = (sp && sp->file && !strcmp((const char *)sp->file, "cache"));
 
   /* We don't check cof-tails directly, but from the head */
@@ -397,7 +395,7 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
   if (pass1)
 #if 1
     {
-      if (BIT_ISSET(f->flags,F2_FLAGS_LEM_BY_NORM))
+      if (BIT_ISSET(f->flags,FORM_FLAGS_LEM_BY_NORM))
 	candidates = hash_find(sp->norms, f->norm);
       else
 	candidates = hash_find(sp->forms, f->form);
@@ -408,14 +406,14 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 
 #if 0
   else
-    BIT_SET(f->flags,F2_FLAGS_NO_FORM);
+    BIT_SET(f->flags,FORM_FLAGS_NO_FORM);
 #endif
 
   if (!candidates)
     {
       if (f->cf)
 	{
-	  if (BIT_ISSET(f->flags, F2_FLAGS_LEM_BY_NORM))
+	  if (BIT_ISSET(f->flags, FORM_FLAGS_LEM_BY_NORM))
 	    candidates = hash_find(sp->norms, f->norm);
 	  else
 	    {
@@ -434,8 +432,8 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 		  if (c2 && c2->count < candidates->count)
 		    candidates = c2;
 		}
-	      if (!pass_1_found_forms) /*  && !BIT_ISSET(f->flags, F2_FLAGS_LEM_NEW)) */
-		BIT_SET(f->flags,F2_FLAGS_NO_FORM);
+	      if (!pass_1_found_forms) /*  && !BIT_ISSET(f->flags, FORM_FLAGS_LEM_NEW)) */
+		BIT_SET(f->flags,FORM_FLAGS_NO_FORM);
 	    }
 	}
     }
@@ -457,13 +455,13 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
   partial_ok = 0;
   for (c = candidates; c; c = c->next)
     {
-      struct f2 *f2 = NULL;
+      Form *f2 = NULL;
 
       if (!c->f2p)
 	{
-	  f2_parse(c->set->file,c->lnum,npool_copy(c->sig,xcp->pool),
-		   c->f2p = mb_new(xcp->sigs->mb_f2s),
-		   NULL, sp->owner);
+	  form_parse(c->set->file,c->lnum,pool_copy(c->sig,xcp->pool),
+		   c->f2p = memo_new(xcp->sigs->mb_f2s),
+		   NULL);
 	}
 
 #if 0
@@ -486,11 +484,11 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 		      partial_ok = 0;
 		      /* set COF_INVALID on the HEAD to indicate that the HEAD
 			 is OK but one of the TAILs failed */
-		      BIT_SET(f->flags, F2_FLAGS_COF_INVALID);
+		      BIT_SET(f->flags, FORM_FLAGS_COF_INVALID);
 		      continue;
 		    }
 		  else
-		    BIT_CLEAR(f->flags, F2_FLAGS_COF_INVALID);
+		    BIT_CLEAR(f->flags, FORM_FLAGS_COF_INVALID);
 		}
 	      res[ncand] = c;
 	      if (f->words)
@@ -520,7 +518,7 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 	}
     }
 
-  if (pct_top >= 100 && !BIT_ISSET(f->flags,F2_FLAGS_PARTIAL) && !BIT_ISSET(f->flags,F2_FLAGS_NO_FORM))
+  if (pct_top >= 100 && !BIT_ISSET(f->flags,FORM_FLAGS_PARTIAL) && !BIT_ISSET(f->flags,FORM_FLAGS_NO_FORM))
     {
       int dest, i;
       for (i = dest = 0; i < ncand; ++i)
@@ -560,7 +558,7 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 	  free(res);
 	  res = part;
 	  ncand = partial_ok;
-	  BIT_SET(f->flags,F2_FLAGS_PARTIAL);
+	  BIT_SET(f->flags,FORM_FLAGS_PARTIAL);
 	}
       else
 	{

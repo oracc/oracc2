@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "warning.h"
-#include "hash.h"
-#include "npool.h"
-#include "memblock.h"
+#include <oraccsys.h>
 #include "sigs.h"
 #include "ilem.h"
 #include "ilem_form.h"
@@ -143,7 +138,7 @@ trysig(struct ilem_form *fp)
 }
 
 static char *
-make_cfgw(struct f2 *f2p)
+make_cfgw(Form *f2p)
 {
   char *c = NULL;
   if (f2p->cf && f2p->gw && f2p->pos)
@@ -177,8 +172,8 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
     return;
 
   if (nfinds > 1 || verbose 
-      || BIT_ISSET(fp->f2.flags,F2_FLAGS_NO_FORM) 
-      || BIT_ISSET(fp->f2.flags,F2_FLAGS_PARTIAL))
+      || BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM) 
+      || BIT_ISSET(fp->f2.flags,FORM_FLAGS_PARTIAL))
     {
       if (look->type == sig_look_new)
 	{
@@ -191,11 +186,11 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 			fp->freq, fp->pct);
 	    }
 	}
-      else if (nfinds && !BIT_ISSET(fp->f2.flags, F2_FLAGS_LEM_NEW))
+      else if (nfinds && !BIT_ISSET(fp->f2.flags, FORM_FLAGS_LEM_NEW))
 	{
 	  const char *tsig = trysig(fp);
 	  const char *tinst = tryinst(l,fp);
-	  if (BIT_ISSET(fp->f2.flags,F2_FLAGS_NO_FORM))
+	  if (BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM))
 	    {
 	      char *cfgw = make_cfgw(&fp->finds[0]->f2);
 	      vwarning2(fp->file,fp->lnum,
@@ -208,7 +203,7 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 	    vwarning2(fp->file,fp->lnum,
 		      "found %d %smatch%s for %s=%s in %s:%s",
 		      nfinds, 
-		      (BIT_ISSET(fp->f2.flags,F2_FLAGS_PARTIAL))?"partial ":"",
+		      (BIT_ISSET(fp->f2.flags,FORM_FLAGS_PARTIAL))?"partial ":"",
 		      (nfinds>1)?"es":"", 
 		      strcmp((char*)fp->f2.form, "*") ? fp->f2.form : fp->f2.norm,
 		      tsig, sp->project, sp->lang);
@@ -217,10 +212,10 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 	}
     }
 
-  if (!BIT_ISSET(fp->f2.flags, F2_FLAGS_LEM_NEW)
-      && (BIT_ISSET(fp->f2.flags,F2_FLAGS_PARTIAL)
+  if (!BIT_ISSET(fp->f2.flags, FORM_FLAGS_LEM_NEW)
+      && (BIT_ISSET(fp->f2.flags,FORM_FLAGS_PARTIAL)
 	  || (nfinds > 1 
-	      && !BIT_ISSET(fp->f2.flags,F2_FLAGS_NO_FORM)
+	      && !BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM)
 	      && !(look->type == sig_look_new))
 	  || verbose > 1
 	  || (verbose && look->type == sig_look_new)
@@ -265,9 +260,9 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
     }
  else
    {
-     if ((fp->fcount == 0 && (!BIT_ISSET(fp->f2.flags,F2_FLAGS_LEM_NEW)) && fp->f2.cf)
+     if ((fp->fcount == 0 && (!BIT_ISSET(fp->f2.flags,FORM_FLAGS_LEM_NEW)) && fp->f2.cf)
 	 )
-       /*	 || BIT_ISSET(fp->f2.flags,F2_FLAGS_COF_INVALID)) */
+       /*	 || BIT_ISSET(fp->f2.flags,FORM_FLAGS_COF_INVALID)) */
        {
 	 const char *tsig = trysig(fp);
 	 const char *tinst = tryinst(l,fp);
@@ -278,16 +273,16 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 
 #if 0
 	     /* THIS NEEDS MORE WORK */
-	     if (BIT_ISSET(fp->f2.flags, F2_FLAGS_COF_INVALID))
+	     if (BIT_ISSET(fp->f2.flags, FORM_FLAGS_COF_INVALID))
 	       {
 		 /* This means that a COF has matched on the HEAD
 		    but failed on one of the TAILs */
 		 int i;
 		 for (i = 0; i < fp->mcount-1; ++i)
 		   {
-		     if (BIT_ISSET(fp->multi[i].f2.flags, F2_FLAGS_COF_INVALID))
+		     if (BIT_ISSET(fp->multi[i].f2.flags, FORM_FLAGS_COF_INVALID))
 		       {
-			 if (!BIT_ISSET(fp->multi[i].f2.flags, F2_FLAGS_LEM_NEW))
+			 if (!BIT_ISSET(fp->multi[i].f2.flags, FORM_FLAGS_LEM_NEW))
 			   {
 			     char *sublem = strchr(fp->multi[i].sublem, ':');
 			     char *esig = NULL, *cform = NULL;
@@ -317,7 +312,7 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 	       }
 	     else 
 #endif
-	     if (BIT_ISSET(fp->f2.flags,F2_FLAGS_NO_FORM))
+	     if (BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM))
 	       vwarning2(fp->file,fp->lnum,
 			 "no FORM `%s' and no matches for %s in glossary %s:%s",
 			 fp->f2.form,
@@ -340,7 +335,7 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 	   }
 	 else
 	   {
-	     if (!BIT_ISSET(fp->f2.flags, F2_FLAGS_INVALID))
+	     if (!BIT_ISSET(fp->f2.flags, FORM_FLAGS_INVALID))
 	       vwarning2(fp->file,fp->lnum,
 			 "no matches for %s=%s because there's no glossary",
 			 fp->f2.form, tsig);

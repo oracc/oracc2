@@ -94,6 +94,9 @@ struct form
   const Uchar *restrictor;
   const Uchar *rws;
   
+  /* Data structure for use by wordset lookup */
+  struct w2_set *words;
+
   /* Array of components for COFs & PSUs; N.B.: use flags to 
    * determine if COF or PSU.
    */

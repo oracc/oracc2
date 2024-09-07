@@ -1,12 +1,10 @@
-#include <stdio.h>
+#include <oraccsys.h>
 #include "sigs.h"
 #include "ilem_form.h"
-#include "memblock.h"
-#include "npool.h"
 
 /* N.B. IF YOU START USING THE CACHE AGAIN YOU NEED TO ZERO WORDSET PCT */
 
-struct npool *sigs_cache_pool = NULL;
+Pool *sigs_cache_pool = NULL;
 int sigs_cache_pool_refs = 0;
 
 static struct sig const * const *sigs_cache_lookup(struct xcl_context *xcp, 
@@ -30,11 +28,11 @@ sigs_cache_init(struct sigset *sp)
 #endif
   if (!sigs_cache_pool)
     {
-      sigs_cache_pool = npool_init();
+      sigs_cache_pool = pool_init();
       sigs_cache_pool_refs = 0;
     }
   ++sigs_cache_pool_refs;
-  sp->cache = mb_new(sp->owner->mb_sigsets);
+  sp->cache = memo_new(sp->owner->mb_sigsets);
   sp->cache->project = sp->project;
   sp->cache->lang = sp->lang;
   sp->cache->core = sp->core;
@@ -62,7 +60,7 @@ sigs_cache_term(struct sigset *sp)
     {
       if (sigs_cache_pool)
 	{
-	  npool_term(sigs_cache_pool);
+	  pool_term(sigs_cache_pool);
 	  sigs_cache_pool = NULL;
 	}
     }
@@ -79,7 +77,7 @@ sigs_cache_add(struct ilem_form *ifp, struct sig const *const *sigs)
   return;
 
 #if 0
-  if (!ifp || !ifp->sp || BIT_ISSET(ifp->f2.flags, F2_FLAGS_FROM_CACHE))
+  if (!ifp || !ifp->sp || BIT_ISSET(ifp->f2.flags, FORM_FLAGS_FROM_CACHE))
     return;
 
   if (!ifp->sp->cache)
@@ -92,13 +90,13 @@ sigs_cache_add(struct ilem_form *ifp, struct sig const *const *sigs)
 #endif
 
 #if 0
-  if (BIT_ISSET(fp->f2.flags, F2_FLAGS_LEM_BY_NORM))
+  if (BIT_ISSET(fp->f2.flags, FORM_FLAGS_LEM_BY_NORM))
     hash_add(fp->sp->cache,
-	     npool_copy(ifp->f2.norm, sigs_cache_pool),
+	     pool_copy(ifp->f2.norm, sigs_cache_pool),
 	     (void*)sigs);
   else
     hash_add(fp->sp->cache,
-	     npool_copy(ifp->f2.form, sigs_cache_pool),
+	     pool_copy(ifp->f2.form, sigs_cache_pool),
 	     (void*)sigs);
 #endif
 }
@@ -115,7 +113,7 @@ sigs_cache_find(struct sigset *sp, struct ilem_form *fp)
 
   if (sp && sp->cache)
     {
-      if ((BIT_ISSET(fp->f2.flags, F2_FLAGS_LEM_BY_NORM) && fp->f2.norm && (ret = hash_find(sp->cache->norms,fp->f2.norm)))
+      if ((BIT_ISSET(fp->f2.flags, FORM_FLAGS_LEM_BY_NORM) && fp->f2.norm && (ret = hash_find(sp->cache->norms,fp->f2.norm)))
 	  || (fp->f2.form && (ret = hash_find(sp->cache->forms,fp->f2.form))))
 	{
 	  if (verbose)

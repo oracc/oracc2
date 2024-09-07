@@ -1,11 +1,11 @@
-#include "warning.h"
-#include "lang.h"
+#include <oraccsys.h>
+#include <lng.h>
 #include "sigs.h"
 #include "ilem.h"
-#include "f2.h"
+#include "form.h"
 #include "xcl.h"
-#include "list.h"
-#include "memblock.h"
+
+extern const char *textid;
 
 static void sigs_d_show_insts(struct xcl_context *xcp, struct xcl_d *d);
 static void sigs_l_show_insts(struct xcl_context *xcp, struct xcl_l *l);
