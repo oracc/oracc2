@@ -16,7 +16,11 @@ rm -f 02pub/atf-data.tab
 
 set 00atf/*.atf
 if [ "$1" != "00atf/*.atf" ]; then
-    cut -b 1- 00atf/*.atf | atfdatax $project >>02pub/atf-data.tab
+    catmode=`oraccopt . catalog-build-policy`
+    if [ "$catmode" != "" ]; then
+	catarg="-c $catmode"
+    fi
+    cut -b 1- 00atf/*.atf | atfdatax $catarg -p $project >>02pub/atf-data.tab
 elif [ -r 00lib/umbrella.lst ]; then
     lx -a 00lib/umbrella.lst -p $project >02pub/atf-data.tab
 elif [ -r 00lib/search.lst ]; then

@@ -23,7 +23,7 @@ main(int argc, char **argv)
       int ret = scanf("%i",&iid);
       if (ret)
 	{
-	  printf("P%06d\t%d\t", iid, iid);
+	  printf("P%06d\t%d", iid, iid);
 	  while (EOF != (ch=getchar()))
 	    {
 	      putchar(ch);
