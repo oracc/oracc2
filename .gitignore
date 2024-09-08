@@ -62,6 +62,9 @@ bin/xx/dbix
 bin/xx/dbx
 bin/xx/ivd2oiv
 bin/xx/jsmapx
+bin/xx/lem/bgmx
+bin/xx/lem/lemx
+bin/xx/lem/ngmx
 bin/xx/oraccopt
 bin/xx/osort/osort
 bin/xx/pqxpand
