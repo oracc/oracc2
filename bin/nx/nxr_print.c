@@ -193,7 +193,7 @@ nxr_print_nu_sig(nx_number *np, FILE *fp)
 {
   if (np->sys)
     {
-      fprintf(fp, "%s\t", np->sys->name+1);
+      fprintf(fp, "%s\t", np->sys->name);
       nx_step *sp;
       int i = 0;
 

@@ -23,6 +23,7 @@ nx_init(void)
   nxp->m_nx_step = memo_init(sizeof(nx_step), 100);
   nxp->m_nx_inst = memo_init(sizeof(ns_inst), 1000);
   nxp->m_nx_number = memo_init(sizeof(nx_number), 100);
+  nxp->hsys = hash_create(10);
   nxp->ir = hash_create(1024);
   nxp->env = hash_create(7);
   nxp->e = hpool_init();
@@ -62,6 +63,7 @@ nx_term(void)
   memo_term(nxp->m_nx_step);
   memo_term(nxp->m_nx_inst);
   memo_term(nxp->m_nx_number);
+  hash_free(nxp->hsys, NULL);
   hash_free(nxp->ir, NULL);
   if (nxp->toks)
     free(nxp->toks);

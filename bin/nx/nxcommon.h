@@ -27,6 +27,7 @@ typedef struct nx
   Pool *b;			/* build pool; not reset during input */
   struct ns_sys *sys;
   int nsys;
+  Hash *hsys;			/* global hash from sys-name to sys */
   Hash *ir;			/* global inst registry which indexes inst text to sys
 				   that it can be part of */
   Pool *p;

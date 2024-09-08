@@ -13,7 +13,7 @@ typedef struct ns_sys
   uchar *base;
   uchar *conv;
   Hash *e;			/* system environment */
-  /*List *elist;*/
+  List *ilist;			/* List of all inst registered for this sys */
   struct ns_step *steps;
   struct ns_step *last;
   struct ns_step *base_step;

@@ -8,6 +8,9 @@ int trace_math = 0;
 void
 nx_add_frac(struct nx_num *n1, struct nx_num *n2)
 {
+  if (!n1 || !n2 || !n1->n || !n1->d || !n2->n || !n2->d)
+    return;
+  
   if (n1->d == 0)
     *n1 = *n2;
   else if (n1->d == n2->d)
@@ -67,6 +70,9 @@ nx_gcd(long n, long m)
 void
 nx_simplify(struct nx_num *np)
 {
+  if (!np || !np->n || !np->d)
+    return;
+
   int gcd = nx_gcd(np->n, np->d);
   if (trace_math)
     printf("nx_simplify: n = %llu/%d has gcd = %d\n", np->n, np->d, gcd);
