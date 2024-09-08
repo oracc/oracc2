@@ -3,6 +3,7 @@ include ../../oracc-am-rules.txt
 bin_PROGRAMS=nx nxtokx
 bin_SCRIPTS=
 scriptdata_DATA=
+data_DATA=ns.dat
 
 nx_SOURCES=nx.c ns.tab.c ns.lex.c ns_data.c ns_build.c nxt.c nx_parse.c nxp_numbers.c \
 	nxr_print.c nx_debug.c nxr_testdata.c nx_modern.c nx_math.c \

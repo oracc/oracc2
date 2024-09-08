@@ -10,8 +10,13 @@ void
 ns_data(void)
 {
   mesg_init();
-  FILE *fp = fopen("ns.dat", "r");
-  currnsfile = "ns.dat";
+  char dat[strlen(oracc())+strlen("/lib/data/ns.dat0")];
+  if (!access("ns.dat", R_OK))
+    strcpy(dat, "ns.dat");
+  else
+    sprintf(dat, "%s/lib/data/ns.dat", oracc());
+  FILE *fp = fopen(dat, "r");
+  currnsfile = dat;
   nsrestart(fp);
   nsparse();
   (void)nslex_destroy();

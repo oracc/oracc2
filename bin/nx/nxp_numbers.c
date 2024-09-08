@@ -3,7 +3,7 @@
 
 typedef enum nx_xstep { NX_ASS , NX_COM , NX_DET } nx_xstep;
 
-int parse_trace = 0;
+int parse_trace = 1;
 int test_data = 0;
 
 const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , "ne" , "gc" , "gw" , NULL };

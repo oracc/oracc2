@@ -45,7 +45,11 @@ tokcgp(const uchar *t, int *nflag)
       else if (f.pos && !strcmp((ccp)f.pos, "n"))
 	{
 	  *nflag = 1;
-	  return f.form;
+	  struct nw_map *nmp = nwmap((ccp)f.form, strlen((ccp)f.form));
+	  if (nmp)
+	    return (uccp)nmp->mapped;
+	  else
+	    return f.form;
 	}
       else if (f.pos)
 	return f.pos;

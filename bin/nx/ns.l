@@ -43,7 +43,7 @@ FRAC		[0-9n]\/[0-9]
 
 {NUM}|{FRAC}	       			{ nsave; return NU_NUM; }
 
-A|D/n?					{ nsave; return NU_AXIS; }
+(A|D)(\@[ctv])*/[n0-9]*               	{ nsave; return NU_AXIS; }
 
 \(?{G}{M}*("."{G}{M}*)*\)?  		{ nsave; return NU_UNIT; }
 

@@ -37,11 +37,12 @@ typedef struct ns_step
   struct ns_inst *insts;
   struct ns_inst *last;  
   char a_or_d;
+  const char *axis;
 } ns_step;
 
 typedef struct ns_inst
 {
-  struct ns_step *step;		/* pointer to the step structure in the ns_ns */
+  struct ns_step *step;		/* pointer to the step structure in the ns_sys */
   struct ns_inst *next;
   struct ns_inst *prev;
   struct ns_inst *ir_next;	/* inst are registered in nx->ir; ns_inst->text is the
@@ -57,6 +58,7 @@ typedef struct ns_inst
   nx_num aev;			/* the aev for the count * the ns_step->aev */
   nx_num count;			/* the count for the step; can be integer or fraction */
   char a_or_d;			/* 'a' or 'd' for aš or diš */
+  const char *axis;	       	/* axis--full meta-system e.g. A@c */
 } ns_inst;
 
 typedef enum ns_inst_method { NS_INST_AUTO , NS_INST_DATA } ns_inst_method;
@@ -72,7 +74,7 @@ extern void nsb_equiv (uchar * b, uchar * c);
 extern void nsb_env (uchar * b, uchar * c);
 extern void nsb_step (uchar * a, uchar * b, uchar * c);
 extern void nsb_inst_g (const uchar * g, const uchar * n, const uchar * u, ns_inst_method meth);
-extern void nsb_inst_u (uchar * x, uchar * g, uchar * u, ns_inst_method meth);
+extern ns_inst *nsb_inst_u (const uchar * x, uchar * g, uchar * u, ns_inst_method meth);
 extern void nsb_wrapup (void);
 
 #endif /* NS_H_ */

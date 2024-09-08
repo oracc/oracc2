@@ -71,7 +71,10 @@ nsb_step(uchar *a, uchar *m, uchar *u)
   
   nsb_mult(&s->mult, m);
   if (a)
-    s->a_or_d = tolower(*a);
+    {
+      s->a_or_d = tolower(*a);
+      s->axis = (ccp)a;
+    }
   s->unit = u;
   s->sys = nxp->sys;
   if (nsb_altflag)
@@ -151,7 +154,7 @@ nsb_inst_add(ns_inst *i, ns_inst_method meth)
   /* keep a list of all the insts that can belong to this step of this
      sys; if some insts for this unit were given in the system
      definition data but others weren't the insts may not be in the
-     correct sort order */  
+     correct sort order */
   if (nxp->sys->last->insts)
     {
       nxp->sys->last->last->next = i;
@@ -186,16 +189,17 @@ nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
     printf("nsb_inst_g: inst has text %s => count %llu/%d and unit %s\n", i->text, i->count.n, i->count.d, i->unit);
 }
 
-void
-nsb_inst_u(uchar *x, uchar *g, uchar *u, ns_inst_method meth)
+ns_inst *
+nsb_inst_u(const uchar *x, uchar *g, uchar *u, ns_inst_method meth)
 {
   ns_inst *i = memo_new(nxp->m_ns_inst);
   i->text = g;
   i->unit = u;
-  i->a_or_d = tolower(*x);
+  i->axis = (ccp)x;
   nsb_inst_add(i, meth);
   if (build_trace)
-    printf("nsb_inst_u: inst has text %s with system %s=>%c and unit %s\n", i->text, x, i->a_or_d, i->unit);  
+    printf("nsb_inst_u: inst has text %s with system %s=>%s and unit %s\n", i->text, x, i->axis, i->unit);
+  return i;
 }
 
 static char *fixed_n[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
@@ -232,7 +236,8 @@ nsb_wrapup(void)
       nxp->sys->last = stp;
       if (stp->a_or_d)
 	{
-	  nsb_inst_u((uchar*)(stp->a_or_d=='a' ? "a" : "d"), stp->unit, stp->unit, NS_INST_AUTO);
+	  ns_inst *uinst = nsb_inst_u((ccp)stp->axis, stp->unit, stp->unit, NS_INST_AUTO);
+	  /* nsb_auto_inst_a_d(stp->axis, uinst); */ /* register this sys as a cand for all numbers in the axis */
 	}
       else
 	{
