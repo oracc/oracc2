@@ -318,6 +318,13 @@ p4url_is_textid(const char *i)
 		    ++i;
 		  if (!*i)
 		    return 1;
+		  else
+		    {
+		      while ('l' == *i) /* add other possible ID suffix characters here */
+			++i;		      
+		    }
+		  if (!*i)
+		    return 1;
 		  else if ('.' == *i)
 		    ++i;
 		  else if (',' == *i)

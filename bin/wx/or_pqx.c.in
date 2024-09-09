@@ -289,6 +289,8 @@ h_pqx_score_html(const char *project, struct component *components)
 		      ++q;
 		      while (isdigit(*q))
 			++q;
+		      if ('l' == *q)
+			++q;
 		      if (!*q)
 			{
 			  /* OK, we have a valid score block ID */

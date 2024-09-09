@@ -264,6 +264,8 @@ px_validate(Isp *ip)
 		      while (isdigit(*q))
 			++q;
 		    }
+		  if ('l' == *q)
+		    ++q;
 		  if (!*q)
 		    block_id_ok = 1;
 		}
