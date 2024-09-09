@@ -606,7 +606,6 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 
 		  /* trim cand list to matching axis entries */
 		  int i;
-		  nx_number **ndest = nu;
 		  nx_number **mdest = m;
 		  for (i = 0; m[i]; ++i)
 		    {
@@ -621,15 +620,13 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 			    }
 			}
 		      if (ok)
-			{
-			  *ndest++ = nu[j];
-			  *mdest++ = m[i];
-			}
+			*mdest++ = m[i];
 		    }
 		  *mdest = NULL;
-		  *ndest = NULL;
 
-		  /* set the unit for all the NUM-cand to the unit's nx_step */
+		  /* set the unit for all the NUM-cand to the unit's
+		     nx_step; this includes NU that aren't referenced
+		     by m but that's ok */
 		  for (i = 0; nu[i]; ++i)
 		    nu[i]->unit = m[i]->last;
 
