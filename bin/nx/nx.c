@@ -3,6 +3,8 @@
 
 Pool *nspool;
 
+int opt_trace;
+
 #if 0
 static const uchar **nx_toks(uchar *t, int *ntoks);
 #endif
@@ -98,6 +100,11 @@ const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 int
 main(int argc, char **argv)
 {
+  options(argc, argv, "t");
+
+  extern int parse_trace;
+  parse_trace = opt_trace;
+  
   ns_flex_debug = nsflextrace = 0;
 
   nx_init();
@@ -116,4 +123,23 @@ main(int argc, char **argv)
     fclose(nxp->testfp);
 
   nx_term();
+}
+
+int
+opts(int c, const char *v)
+{
+  switch (c)
+    {
+    case 't':
+      opt_trace = 1;
+      break;
+    default:
+      return 1;
+    }
+  return 0;
+}
+
+void
+help(void)
+{
 }

@@ -206,6 +206,7 @@ nsb_inst_u(const uchar *x, uchar *g, uchar *u, ns_inst_method meth)
   i->text = g;
   i->unit = u;
   i->axis = (ccp)x;
+  i->a_or_d = tolower(*x);
   nsb_inst_add(i, meth);
   if (build_trace)
     printf("nsb_inst_u: inst has text %s with system %s=>%s and unit %s\n", i->text, x, i->axis, i->unit);
@@ -237,6 +238,7 @@ nsb_auto_inst_g(ns_sys *sp, int m, const uchar *u)
     }
 }
 
+#if 0
 static void
 nsb_auto_inst_axis(const uchar *axis, ns_inst *ui)
 {
@@ -274,6 +276,7 @@ nsb_auto_inst_axis(const uchar *axis, ns_inst *ui)
       fprintf(stderr, "nsb_auto_inst_axis: request to use undefined sys %s in ns data\n", S);
     }
 }
+#endif
 
 void
 nsb_wrapup(void)
@@ -284,8 +287,10 @@ nsb_wrapup(void)
       nxp->sys->last = stp;
       if (stp->a_or_d)
 	{
-	  ns_inst *uinst = nsb_inst_u((uccp)stp->axis, stp->unit, stp->unit, NS_INST_AUTO);
+	  /*ns_inst *uinst = */ (void)nsb_inst_u((uccp)stp->axis, stp->unit, stp->unit, NS_INST_AUTO);
+#if 0
 	  nsb_auto_inst_axis((uccp)stp->axis, uinst); /* register this sys as a cand for all numbers in the axis */
+#endif
 	}
       else
 	{

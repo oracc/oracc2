@@ -3,7 +3,7 @@
 
 typedef enum nx_xstep { NX_ASS , NX_COM , NX_DET } nx_xstep;
 
-int parse_trace = 1;
+int parse_trace = 0;
 int test_data = 0;
 
 const char *nxt_str[] = { "no" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , "ne" , "gc" , "gw" , NULL };
@@ -181,7 +181,7 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   int i;
   for (i = 0; nu[i]; ++i)
     {
-      if (nu[i]->sys->name[1] != 'S' || nu[i]->sys->name[2] != 'a')
+      if (nu[i]->sys->name[0] != 'S' || nu[i]->sys->name[1] != 'a')
 	nu[i]->invalid = 1;
     }
   nu = nxp_remove_invalid(nu, ncand);
@@ -210,7 +210,7 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
     {
       /* discard the cand we made for (gur) */
       free(m);
-      /* printf("found guru7\n"); */
+      /* fprintf(stderr, "found guru7\n"); */
       /* pull the cand off result to be the new cand */
       m = r->r[r->nr-1].nu;
       --r->nr;
@@ -246,7 +246,7 @@ nxp_ends_with_guru7(nx_result *r)
       int i;
       for (i = 0; nu[i]; ++i)
 	{
-	  if (nu[i]->sys->name[1] == 'C'
+	  if (nu[i]->sys->name[0] == 'C'
 	      && !strcmp((ccp)nu[i]->last->num->unit->tok.tok, "guru₇"))
 	    return 1;
 	}
@@ -263,7 +263,7 @@ nxp_last_has_Sa(nx_result *r)
       int i;
       for (i = 0; nu[i]; ++i)
 	{
-	  if (nu[i]->sys->name[1] == 'S' && nu[i]->sys->name[2] == 'a')
+	  if (nu[i]->sys->name[0] == 'S' && nu[i]->sys->name[1] == 'a')
 	    return 1;
 	}
     }
@@ -275,7 +275,7 @@ nxp_system_C(ns_inst *ip)
 {
   ns_inst *jp;
   for (jp = ip; jp; jp = jp->next)
-    if ('C' == jp->step->sys->name[1])
+    if ('C' == jp->step->sys->name[0])
       return 1;
   return 0;
 }
@@ -304,9 +304,9 @@ nxp_sys_step_ok(ns_inst *left, ns_inst *next)
 {
   if (parse_trace)
     {
-      printf("sys_step: left="); nxd_show_inst(NULL, left);
-      printf("sys_step: next="); nxd_show_inst(NULL, next);
-      printf("sys_step: left name %s vs next name %s\n", left->step->sys->name, next->step->sys->name);
+      fprintf(stderr, "sys_step: left="); nxd_show_inst(NULL, left);
+      fprintf(stderr, "sys_step: next="); nxd_show_inst(NULL, next);
+      fprintf(stderr, "sys_step: left name %s vs next name %s\n", left->step->sys->name, next->step->sys->name);
     }
   if (!strcmp((ccp)left->step->sys->name, (ccp)next->step->sys->name))
     {
@@ -316,10 +316,14 @@ nxp_sys_step_ok(ns_inst *left, ns_inst *next)
 	  if (!strcmp((ccp)s->unit, (ccp)next->step->unit))
 	    {
 	      /* could/should also test s->mult >= next->step->mult */
+	      if (parse_trace)
+		fprintf(stderr, "sys_step: match found\n");
 	      return 1;
 	    }
 	}
     }
+  if (parse_trace)
+    fprintf(stderr, "sys_step: no match\n");
   return 0;
 }
 
@@ -427,7 +431,7 @@ static void
 nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data)
 {
   if (parse_trace)
-    printf("nxp_badnum: tok %s typed as %s but not found in num registry\n", tok, nxt_str[type]);
+    fprintf(stderr, "nxp_badnum: tok %s typed as %s but not found in num registry\n", tok, nxt_str[type]);
 
   /* Should produce a diagnostic here */
   
@@ -459,11 +463,11 @@ nxp_candidates_inst(ns_inst *ip, nx_numtok type, const void *data, int *ncand)
   *ncand = i;
   if (parse_trace)
     {
-      printf("ns_sys cand for %s:", ip->text);
+      fprintf(stderr, "ns_sys cand for %s:", ip->text);
       int j;
       for (j = 0; j < i; ++j)
-	printf(" %s", spp[j]->sys->name);
-      printf("\n\n");
+	fprintf(stderr," %s", spp[j]->sys->name);
+      fprintf(stderr, "\n\n");
     }
   return spp;
 }
@@ -487,7 +491,7 @@ static void
 nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data)
 {
   if (parse_trace)
-    printf("nxp_nonnum: unexpected to find tok %s typed as %s outside num\n", tok, nxt_str[type]);
+    fprintf(stderr, "nxp_nonnum: unexpected to find tok %s typed as %s outside num\n", tok, nxt_str[type]);
 
   r->r[r->nr].type = NX_NA;
   r->r[r->nr].nb.type = type;
@@ -520,7 +524,18 @@ nxp_nx_step(ns_inst *ip, nx_step_type type, const uchar *tok, nx_numtok toktype,
 static void
 nxp_stash_result(nx_result *r, nx_number **cand)
 {
+  if (parse_trace)
+    fprintf(stderr, "nxp_stash_result\n---\n");
   nx_restok *res = &r->r[r->nr++];
+  int i;
+  for (i = 0; cand[i]; ++i)
+    {
+      if (cand[i]->steps->type == NX_STEP_TOK)
+	{
+	  cand[i]->axis = cand[i]->steps->tok.inst->step->sys->name;
+	  cand[i]->a_or_d = cand[i]->axis[1];
+	}
+    }
   res->type = NX_NU;
   res->nu = cand;
 }
@@ -542,9 +557,11 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 	  char A_OR_D = tolower(ip->step->a_or_d);
 	  for (i = 0; nu[i]; ++i)
 	    {
-	      if (nu[i]->sys->name[1] == 'S' && nu[i]->sys->name[2] == A_OR_D)
+	      if (nu[i]->sys->name[0] == 'S' && nu[i]->sys->name[1] == A_OR_D)
 		{
 		  /* set the matching sys-number to be the only one in the array */
+		  if (parse_trace)
+		    fprintf(stderr, "merge_unit: found match\n");
 		  if (i > 0)
 		    nu[1] = NULL;
 		  else
@@ -587,7 +604,32 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 		  /* create a cand list from the unit-word */
 		  nx_number **m = nxp_candidates_inst(ip, type, data, ncand);
 
-		  /* set the unit for all the NUM-cand to (gur) nx_step */
+		  /* trim cand list to matching axis entries */
+		  int i;
+		  nx_number **ndest = nu;
+		  nx_number **mdest = m;
+		  for (i = 0; m[i]; ++i)
+		    {
+		      int j;
+		      int ok = 0;
+		      for (j = 0; nu[j]; ++j)
+			{
+			  if (nu[j]->a_or_d == m[i]->steps->tok.inst->a_or_d)
+			    {
+			      ok = 1;
+			      break;
+			    }
+			}
+		      if (ok)
+			{
+			  *ndest++ = nu[j];
+			  *mdest++ = m[i];
+			}
+		    }
+		  *mdest = NULL;
+		  *ndest = NULL;
+
+		  /* set the unit for all the NUM-cand to the unit's nx_step */
 		  for (i = 0; nu[i]; ++i)
 		    nu[i]->unit = m[i]->last;
 
@@ -604,5 +646,7 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 	    }
 	}
     }
+  if (parse_trace)
+    fprintf(stderr, "merge_unit: no match\n");
   return NULL;
 }

@@ -41,6 +41,8 @@ typedef struct nx_number
   struct nx_step *det;  /* the system determiner, if there is one */
   struct nx_step *com;  /* the commodity, if there is one */
   struct nx_step *ass;  /* the association, if there is one */
+  const uchar *axis;
+  char a_or_d;
 } nx_number;
 
 typedef enum nx_step_type { NX_STEP_NUM = 1, NX_STEP_TOK = 2 } nx_step_type;
@@ -99,6 +101,7 @@ typedef struct nx_result
 } nx_result;
 
 extern int nsb_altflag;
+extern int opt_trace;
 extern const char *currnsfile;
 extern const char *nxt_str[];
 

@@ -8,7 +8,13 @@ int trace_math = 0;
 void
 nx_add_frac(struct nx_num *n1, struct nx_num *n2)
 {
-  if (!n1 || !n2 || !n1->n || !n1->d || !n2->n || !n2->d)
+  if (!n1->n && !n1->d)
+    {
+      *n1 = *n2;
+      return;
+    }
+
+  if (!n2 || !n2->n || !n2->d)
     return;
   
   if (n1->d == 0)

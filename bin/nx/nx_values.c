@@ -157,6 +157,8 @@ nx_set_num_aev(nx_number *np)
      multiply by the nw */
   if (np->unit)
     {
+      if (!np->unit->tok.inst->step->sys->aev_done)
+	nx_sys_aevs(np->unit->tok.inst->step->sys);
       nx_num *saev = &np->unit->tok.inst->step->aev;
       nx_mul_frac(&sum, saev);
       /* Now sum contains the value for the nx_step that has the aev
