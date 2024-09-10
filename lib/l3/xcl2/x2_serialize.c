@@ -459,3 +459,10 @@ x2_serialize(struct xcl_context *xc, FILE *f_xcl, int with_xml_decl)
     links_dump(f_xcl, xc->linkbase);
   fputs("</xcl>",f_xcl);
 }
+
+void
+x2_serialize_links_only(struct xcl_context *xc,FILE *f_xcl)
+{
+  if (xc->linkbase)
+    links_dump(f_xcl, xc->linkbase);
+}

@@ -1,5 +1,7 @@
 include ../../../oracc-am-rules.txt
 
+SUBDIRS=../../../lib
+
 bin_PROGRAMS=bgmx ngmx lemx
 
 bgmx_SOURCES=bgmx.c

@@ -12,6 +12,7 @@ extern void dsa_exec(struct xcl_context *xc);
 extern void psa_exec(struct xcl_context *xc);
 
 int lem_props_strict;
+int links_only = 0;
 const char *config_file;
 const char *out_file;
 const char *project;
@@ -55,7 +56,7 @@ main(int argc, char **argv)
 
   scp = sig_context_init();
 
-  while (-1 != (optch = getopt(argc, argv, "c:DdiNno::Pps:tvx:")))
+  while (-1 != (optch = getopt(argc, argv, "c:DdilNno::Pprs:tvx:")))
     {
       switch (optch)
 	{
@@ -70,6 +71,9 @@ main(int argc, char **argv)
 	  break;
 	case 'i':
 	  inplace = 1;
+	  break;
+	case 'l':
+	  links_only = 1;
 	  break;
 	case 'N':
 	  do_NSA = 1;
@@ -96,6 +100,9 @@ main(int argc, char **argv)
 	  break;
 	case 'p':
 	  psu = 1;
+	  break;
+	case 'r':
+	  link_refs = 1;
 	  break;
 	case 's':
 	  sigs_opt = optarg;
@@ -174,7 +181,10 @@ main(int argc, char **argv)
 
       if (outfp)
 	{
-	  x2_serialize(xcp,outfp,1);
+	  if (links_only)
+	    x2_serialize_links_only(xcp, outfp);
+	  else
+	    x2_serialize(xcp,outfp,1);
 	  fclose(outfp);
 	}
       /*xcl_destroy(&xcp);*/
