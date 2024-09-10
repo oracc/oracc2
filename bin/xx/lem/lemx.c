@@ -177,7 +177,7 @@ main(int argc, char **argv)
 	  x2_serialize(xcp,outfp,1);
 	  fclose(outfp);
 	}
-      xcl_destroy(&xcp);
+      /*xcl_destroy(&xcp);*/
     }
 
   sig_context_term();
