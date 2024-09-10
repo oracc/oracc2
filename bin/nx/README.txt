@@ -42,7 +42,7 @@ num input consists of tokens of the following possibly types
 
  na -- number associations
 
- no -- number other
+ nn -- number not
 
  ne -- number environments
  
@@ -294,6 +294,13 @@ An nw is a number word, another token that can be part of an nu sequence.
 
 
 
+no -- number operators
+
+Two tokens are in this category: la₂, "less, minus" and igi,
+"fraction".  The fraction expression, igi n ŋal₂ is handled by
+treating igi as the operative term and ŋal₂ as an optional appendage.
+
+
 nv -- number virtual
 
 An nv is a virtual number word.  This is used for gur when it is
@@ -326,9 +333,9 @@ Associations are keywords that relate to the number such as a PN that
 is the recipient of a ration quantity.
 
 
-no -- number other
+nn -- number not
 
-An no is a token that can not be part of an nu sequence.
+An nn is a token that can not be part of an nu sequence.
 
 
 

@@ -9,7 +9,7 @@ struct nx_step;
 /* nxt_gc = gur-commodity token */
 typedef enum nx_numtok
   {
-    nxt_no , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_na , nxt_nz , nxt_ne , nxt_gc , nxt_gw
+   nxt_nn , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_na , nxt_nz , nxt_ne , nxt_gc , nxt_gw , nxt_no
   } nx_numtok;
 
 typedef struct nx_nonnum

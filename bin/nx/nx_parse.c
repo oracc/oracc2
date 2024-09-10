@@ -69,7 +69,7 @@ int nxp_last_num(const uchar **t, nx_numtok *n, int from)
   while (t[from])
     {
       n[from] = nxp_tok_type(t[from]);
-      if (n[from] == nxt_no || n[from] == nxt_nz /* || n[from] == nxt_nc */)
+      if (n[from] == nxt_nn || n[from] == nxt_nz /* || n[from] == nxt_nc */)
 	{
 	  if (from)
 	    return from-1;
@@ -98,7 +98,7 @@ nxp_next_num(const uchar **t, nx_numtok *n, int from)
   while (t[from])
     {
       n[from] = nxp_tok_type(t[from]);
-      if (n[from] != nxt_no)
+      if (n[from] != nxt_nn)
 	return from;
       else
 	++from;
@@ -129,6 +129,6 @@ nxp_tok_type(const uchar *t)
     if (!(ntp = gc((ccp)t,len)))
       if (!(ntp = nc((ccp)t,len)))
 	if (!(ntp = na((ccp)t,len)))
-	  return nxt_no;
+	  return nxt_nn;
   return ntp->tok;
 }
