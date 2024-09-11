@@ -160,6 +160,7 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 	{
 	  if (clnodes[i].l->f)
 	    {
+	      const char *lang = NULL;
 	      /* need to allow no defsig when in xcl_load_mode */
 	      if (!xcl_load_mode)
 		{
@@ -167,11 +168,16 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 		      && (!clnodes[i].l->f || !clnodes[i].l->f->lang
 			  || !(clnodes[i].l->f->sp = clnodes[i].l->f->lang->defsigs)))
 		    continue; /* silently ignore l nodes whose lang can't be associated with a sigset */
+		  else
+		    lang = clnodes[i].l->f->lang;
 		}
 	      else
 		{
 		  if (!clnodes[i].l->f->f2.lang)
 		    continue;
+		  else
+		    lang = clnodes[i].l->f->f2.lang;
+		      
 		}
 	      
 	      
@@ -195,29 +201,13 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 		      enum langcode c = c_none;
 		      /*const char *lang = NULL;*/
 		      if (clnodes[i].l->f->lang)
-			{
-			  c = clnodes[i].l->f->lang->core->code;
-			  /*lang = clnodes[i].l->f->lang->core->name;*/
-			}
-		      else
-			{
-			  char base[4], *b = base;
-			  const char *tmp;
-			  if ((tmp = (const char*)clnodes[i].l->f->f2.lang))
-			    {
-			      struct langcore *lcp = NULL;
-			      /*lang = (const char*)clnodes[i].l->f->f2.lang;*/
-			      while (*tmp && '-' != *tmp)
-				*b++ = *tmp++;
-			      *b = '\0';
-			      if ((lcp = lang_core(base,3)))
-				c = lcp->code;
-			    }
-			}
+			c = clnodes[i].l->f->lang->core->code;
+		      else if (clnodes[i].l->f->f2.lang)
+			c = clnodes[i].l->f->f2.core->code;
 		      if (c != c_none)
 			{
 			  nlcp = ((struct NL_context **)xcp->user)[c];
-			  ngdebug("context=psus for lang %s", clnodes[i].l->f->lang);
+			  ngdebug("context=psus for lang %s", lang);
 			  user_name = "psus";
 			}
 		      else
@@ -906,5 +896,7 @@ nle_heads(struct NL*nlp, struct ilem_form *fp, int *n_nodes)
     qsort(retp,total_nles,sizeof(struct NLE*),
 	  (int(*)(const void *,const void*))nle_cmp);
 
+  ngdebug("[nle_heads] returning %d match%s", total_nles, total_nles == 1 ? "" : "es");
+  
   return retp;
 }
