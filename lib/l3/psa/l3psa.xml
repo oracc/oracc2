@@ -112,5 +112,10 @@
       <prop on="next" name="spouse-is" value="#prev-ref"/>
       <prop on="this" name="relator" value="h"/>
     </term>
+    <term>
+      <ngram>lugididak[musician]</ngram>
+      <prop on="this" name="post" value="musician"/>
+      <prop on="head" name="has-job" value="1"/>
+    </term>
   </lang>
 </config>

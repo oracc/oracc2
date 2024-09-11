@@ -4,10 +4,12 @@
 #include "ilem.h"
 #include "sigs.h"
 #include "xcl.h"
+#include "lng.h"
 #include "l3props.h"
 
 #include "globals.c"
 
+extern int links_standalone;
 extern void dsa_exec(struct xcl_context *xc);
 extern void psa_exec(struct xcl_context *xc);
 
@@ -30,6 +32,7 @@ int do_DSA = 0, do_NSA = 0, do_PSA = 0;
 int fuzzy_aliasing = 0;
 int inplace = 0;
 int lem_autolem = 0;
+int lem_check = 0;
 int lem_dynalem = 0;
 int new_lem = 0;
 int pretty = 0;
@@ -48,20 +51,26 @@ main(int argc, char **argv)
   struct xcl_context *xcp = NULL;
   const char *sigs_opt = NULL;
 
+  links_standalone = 1;
+  
   f_log = stderr;
   lem_do_wrapup = 1;
 
   if (verbose)
     ng_debug = 1;
 
+  lng_init();
   scp = sig_context_init();
 
-  while (-1 != (optch = getopt(argc, argv, "c:DdilNno::Pprs:tvx:")))
+  while (-1 != (optch = getopt(argc, argv, "c:CDdilNno::Pprs:tvx:")))
     {
       switch (optch)
 	{
 	case 'c':
 	  config_file = optarg;
+	  break;
+	case 'C':
+	  lem_check = 1;
 	  break;
 	case 'D':
 	  do_DSA = 1;
@@ -73,10 +82,10 @@ main(int argc, char **argv)
 	  inplace = 1;
 	  break;
 	case 'l':
-	  links_only = 1;
+	  links_standalone = links_only = 1;
 	  break;
 	case 'N':
-	  do_NSA = 1;
+	  /*do_NSA = 1;*/ ng_debug = 1;
 	  break;
 	case 'n':
 	  new_lem = 1;
@@ -147,6 +156,7 @@ main(int argc, char **argv)
   else if (xcl_file)
     {
       xcp = xcl_load(xcl_file, XCL_LOAD_SANS_SIGSETS);
+      xcl_chunk_id(xcp->textid, 0, NULL);
       xcp->sigs = scp;
       scp->xcp = xcp;
       textid = xcp->textid;
@@ -159,9 +169,11 @@ main(int argc, char **argv)
 
       if (new_lem)
 	sig_new(xcp);
-      else
+      else if (lem_check)
 	sig_check(xcp);
 
+      /* run the ngrammer to annotate the l-nodes with psa props ? */
+      
       if (psu || do_DSA || do_NSA || do_PSA)
 	{
 	  xcp->linkbase = new_linkbase();
@@ -192,6 +204,7 @@ main(int argc, char **argv)
 
   sig_context_term();
   xcl_final_term();
+  lng_term();
 
   return 0;
 }

@@ -221,7 +221,7 @@ xcl_chunk_id(const char *idbase, enum xcl_c_types t, struct xcl_context *xc)
   if (idbase)
     {
       base = idbase;
-      uid = 0;
+      uid = xcl_uid_max;
       return NULL;
     }
   else /* if (t == xcl_c_sentence) */
@@ -419,8 +419,13 @@ xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref,
       if (curr_subtype && strlen(curr_subtype))
 	c->subtype = (char*)pool_copy((ucp)curr_subtype,xc->pool);
       add_child(xc->curr,c,c->node_type);
-      props_add_prop(fp,(ucp)"env",(ucp)"discourse",(uccp)curr_xcl_discourse,ref,NULL,NULL,-1);
-      props_add_prop(fp,(ucp)"env",(ucp)"field",(uccp)curr_xcl_field,ref,NULL,NULL,-1);
+
+      if (!xcl_load_mode)
+	{
+	  props_add_prop(fp,(ucp)"env",(ucp)"discourse",(uccp)curr_xcl_discourse,ref,NULL,NULL,-1);
+	  props_add_prop(fp,(ucp)"env",(ucp)"field",(uccp)curr_xcl_field,ref,NULL,NULL,-1);
+	}
+      
       return c;
     }
 }

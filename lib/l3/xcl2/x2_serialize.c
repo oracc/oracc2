@@ -16,6 +16,8 @@ static int xcl_debug = 0;
 
 static FILE *static_f_xcl;
 
+int mds_printed = 0;
+
 extern int pretty;
 
 static const char *psu_list_lang = NULL;
@@ -349,7 +351,7 @@ serialize_one_node(FILE*f_xcl,void *vp)
 	  x2_attr_i(f_xcl,"level",cp->level);
 	  fprintf(f_xcl," bracketing_level=\"%d\"",cp->bracketing_level);
 	  fprintf(f_xcl,">");
-	  if (cp->meta)
+	  if (cp->meta && !mds_printed++)
 	    {
 	      fprintf(f_xcl,"<mds xml:id=\"%s\">",(char*)hash_find(cp->meta,
 								   (unsigned char *)"#xml:id"));
@@ -437,6 +439,8 @@ x2_serialize(struct xcl_context *xc, FILE *f_xcl, int with_xml_decl)
   if (!xc || !xc->root)
     return;
 
+  mds_printed = 0;
+  
   if (with_xml_decl)
     fprintf(f_xcl,"%s\n",XML_DECL);
   fputs("<xcl xmlns=\"http://oracc.org/ns/xcl/1.0\" xmlns:xff=\"http://oracc.org/ns/xff/1.0\"",

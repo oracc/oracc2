@@ -160,10 +160,20 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 	{
 	  if (clnodes[i].l->f)
 	    {
-	      if (!clnodes[i].l->f->sp /*&& (clnodes[i].l->f->sp || clnodes[i].l->f->f2.pos))*/
-		  && (!clnodes[i].l->f || !clnodes[i].l->f->lang
-		      || !(clnodes[i].l->f->sp = clnodes[i].l->f->lang->defsigs)))
-		continue; /* silently ignore l nodes whose lang can't be associated with a sigset */
+	      /* need to allow no defsig when in xcl_load_mode */
+	      if (!xcl_load_mode)
+		{
+		  if (!clnodes[i].l->f->sp /*&& (clnodes[i].l->f->sp || clnodes[i].l->f->f2.pos))*/
+		      && (!clnodes[i].l->f || !clnodes[i].l->f->lang
+			  || !(clnodes[i].l->f->sp = clnodes[i].l->f->lang->defsigs)))
+		    continue; /* silently ignore l nodes whose lang can't be associated with a sigset */
+		}
+	      else
+		{
+		  if (!clnodes[i].l->f->f2.lang)
+		    continue;
+		}
+	      
 	      
 	      /* This should switch for bigrams as well */
 	      if (xcp->user)

@@ -8,7 +8,8 @@ props_one_link_c(struct linkset *lsp,int link_index,struct xcl_c *cp)
 {
   struct link *l;
   l = &lsp->links[link_index];
-  l->lref = link_refs ? cp->ref : cp->id;
+  /*l->lref = link_refs ? cp->ref : cp->id;*/
+  l->lref = cp->id;
   l->cp = cp;
   l->lp = NULL;
   l->role = "name";
@@ -20,7 +21,8 @@ props_one_link_l(struct linkset *lsp,int link_index,struct xcl_l *lemp)
 {
   struct link *l;
   l = &lsp->links[link_index];
-  l->lref = link_refs ? lemp->ref : lemp->xml_id;
+  /*l->lref = link_refs ? lemp->ref : lemp->xml_id;*/
+  l->lref = lemp->xml_id;
   l->lp = lemp;
   l->cp = NULL;
   l->role = "name";

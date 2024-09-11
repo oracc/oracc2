@@ -108,7 +108,7 @@ props_load_lang(struct props_lang_data *props_lang)
   size_t i;
   nlcp->nlp = nlp;
   nlcp->owner = sig_new_context_free_sigset();
-  nlp->file = nl_file = "psa.xml";
+  nlp->file = nl_file = "l3psa.xml";
   /* nlp->parsed_ngrams = calloc(props_lang->terms_used, sizeof(struct NLE)); */
   for (i = 0; i < props_lang->terms_used; ++i)
     {

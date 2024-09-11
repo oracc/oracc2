@@ -17,6 +17,8 @@ extern char *strdup(const char*);
 /*static const char *xl_role = "http://www.w3.org/1999/xlink:role";*/
 
 int curr_lnum = 0;
+int xcl_load_mode = 0;
+int xcl_uid_max = 0;
 static int in_ll = 0;
 static enum ll_types ll_type;
 const char *curr_xml_id = NULL;
@@ -36,6 +38,20 @@ Hash *curr_meta;
 static struct ilem_form *curr_form;
 const char *next_k = NULL;
 
+static const char *
+findSig(const char **atts)
+{
+  int i = 0;
+  while (atts[i])
+    {
+      if (!strcmp(atts[i], "sig") || !strcmp(atts[i], "exosig"))
+	return atts[i+1];
+      else
+	i += 2;
+    }
+  return NULL;
+}
+
 static void
 xcl_sH(void *userData, const char *name, const char **atts)
 {
@@ -51,12 +67,12 @@ xcl_sH(void *userData, const char *name, const char **atts)
 	{
 	  if (!vbar[1])
 	    {
-	      curr_xml_id = xpool_copy(findAttr(atts,"xml:id"),xcp->pool);
+	      curr_xml_id = xpool_copy(get_xml_id(atts),xcp->pool);
 	      curr_inst = xpool_copy(findAttr(atts,"inst"),xcp->pool);
 	      curr_ref = findAttr(atts,"ref");
 	      if (*curr_ref)
 		curr_ref = xpool_copy(curr_ref,xcp->pool);
-	      curr_sig = xpool_copy(findAttr(atts,"sig"),xcp->pool);
+	      curr_sig = xpool_copy(findSig(atts),xcp->pool);
 	      curr_form = memo_new(xcp->sigs->mb_ilem_forms);
 	    }
 	  else if (vbar[1] == 'l' && !vbar[2])
@@ -81,8 +97,16 @@ xcl_sH(void *userData, const char *name, const char **atts)
 	{
 	  const char *strtok = findAttr(atts, "type");
 	  struct xcl_tok_tab *ttp = xcltok(strtok,strlen(strtok));
+	  const char *xid = get_xml_id(atts);
+	  const char *U = strchr(xid, 'U');
+	  if (U)
+	    {
+	      int uid = atoi(U+1);
+	      if (uid > xcl_uid_max)
+		xcl_uid_max = uid;
+	    }
 	  if (ttp && ttp->node_type == xcl_node_c)
-	    xcl_chunk(xcp, findAttr(atts, "xml:id"), ttp->subtype);
+	    xcl_chunk(xcp, xid, ttp->subtype);
 	  else
 	    fprintf(stderr,"unknown xcl chunk token type '%s'\n",strtok);
 	}
@@ -120,7 +144,7 @@ xcl_sH(void *userData, const char *name, const char **atts)
 			     uxpool_copy(findAttr(atts,"name"),xcp->pool),
 			     uxpool_copy(findAttr(atts,"value"),xcp->pool),
 			     xpool_copy(findAttr(atts,"ref"),xcp->pool),
-			     xpool_copy(findAttr(atts,"xml:id"),xcp->pool),
+			     xpool_copy(get_xml_id(atts),xcp->pool),
 			     xpool_copy(findAttr(atts,"p"),xcp->pool),
 			     atoi(findAttr(atts,"ngram")));
 	    }
@@ -235,10 +259,12 @@ xcl_load(const char *xcl_fn, int setup_formsets)
   ns_char[0] = EXPAT_NS_CHAR; ns_char[1] = '\0';
   fname[0] = xcl_fn;
   fname[1] = NULL;
-  curr_meta = NULL;
+  xcl_load_mode = 1;
   if (!access(fname[0],R_OK))
     runexpatNSuD(i_list, fname, xcl_sH, xcl_eH, ns_char, xcp);
   else
     fprintf(stderr,"xcl_load: can't open XCL input %s\n", fname[0]);
+  if (xcl_uid_max)
+    ++xcl_uid_max;
   return xcp;
 }

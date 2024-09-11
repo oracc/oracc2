@@ -145,7 +145,7 @@ typedef void xcl_c_fnc(struct xcl_context *,struct xcl_c*);
 typedef void xcl_d_fnc(struct xcl_context *,struct xcl_d*);
 typedef void xcl_l_fnc(struct xcl_context *,struct xcl_l*);
 
-extern int sparse_lem, sparse_skipping;
+extern int sparse_lem, sparse_skipping, xcl_load_mode, xcl_uid_max;
 extern int xcl_is_sparse_field(const char *f);
 extern void xcl_set_sparse_fields(const char *f);
 extern void xcl_set_sparse_skipping(const char *f);
