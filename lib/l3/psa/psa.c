@@ -69,7 +69,7 @@ void
 psa_exec(struct xcl_context *xc)
 {
   props_auto_init();
-  props_exec(xc,"psa",psa_analyzer);
+  props_exec(xc,"l3psa",psa_analyzer);
   /*props_auto_term();*/
 }
 

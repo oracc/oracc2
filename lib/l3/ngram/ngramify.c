@@ -64,6 +64,20 @@ ngdebug(const char *mess,...)
 }
 
 void
+ngdebug_hash(Hash *h)
+{
+  if (ng_debug)
+    {
+      const char **k = hash_keys(h);
+      fputs("[ng active_hash dump follows]\n", f_log);
+      int i;
+      for (i = 0; k[i]; ++i)
+	fprintf(f_log, "%s\n", k[i]);
+      fputs("[ng hash dump ends]\n", f_log);
+    }
+}
+
+void
 ngramify_init()
 {
   if (ng_match_logging && !ng_match_log)
@@ -169,14 +183,14 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 			  || !(clnodes[i].l->f->sp = clnodes[i].l->f->lang->defsigs)))
 		    continue; /* silently ignore l nodes whose lang can't be associated with a sigset */
 		  else
-		    lang = clnodes[i].l->f->lang;
+		    lang = clnodes[i].l->f->lang->tag->lang;
 		}
 	      else
 		{
 		  if (!clnodes[i].l->f->f2.lang)
 		    continue;
 		  else
-		    lang = clnodes[i].l->f->f2.lang;
+		    lang = (ccp)clnodes[i].l->f->f2.lang;
 		      
 		}
 	      
@@ -229,6 +243,11 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 	    continue;
 	}
 
+      if (nlcp && nlcp->nlp && nlcp->nlp->owner && nlcp->nlp->owner->active_hash)
+	ngdebug_hash(nlcp->nlp->owner->active_hash);
+      else
+	ngdebug("[ng: no nlcp/nlcp->nlp/nlcp->nlp->owner->active_hash");
+      
       if (!nlcp || !(nle = nle_heads(nlcp->nlp,clnodes[i].l->f,&n_nle)))
 	continue;
 

@@ -113,9 +113,9 @@
       <prop on="this" name="relator" value="h"/>
     </term>
     <term>
-      <ngram>lugididak[musician]</ngram>
+      <ngram>lugididak[musician]N</ngram>
       <prop on="this" name="post" value="musician"/>
-      <prop on="head" name="has-job" value="1"/>
+<!--      <prop on="head" name="has-job" value="1"/> -->
     </term>
   </lang>
 </config>
