@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "runexpat.h"
+#include "lemmer.h"
 
 /* postntokx : pick up all the tokens that follow an 'n' and
    concatenate them into a phrase; count the occurrences of the phrase
@@ -24,7 +25,7 @@ List *phr = NULL;/* gather phrase here */
 Pool *hp = NULL; /* hash-pool because many times same small strings */
 Hash *ht = NULL; /* phrase hash with count-ptr value */
 Memo *mi = NULL; /* mem for ints */
-int postn = 0;   /* state variable: 1 = adding to phr */
+int waiting_for_gur = 0;
 
 static void
 phrase(void)
@@ -48,13 +49,11 @@ phrase(void)
 	}
       list_free(phr, NULL);
       phr = NULL;
+      waiting_for_gur = 0;
     }
   
   if (!phr)
-    {
-      phr = list_create(LIST_SINGLE);
-      postn = 0;
-    }
+    phr = list_create(LIST_SINGLE);
 }
 
 static const uchar *
@@ -92,10 +91,26 @@ cgp(const unsigned char *sig)
 }
 
 static void
+process_f(const char **atts)
+{
+  const char *pos = NULL, *form = NULL;
+  const char *sig = NULL;
+  while (*atts)
+    {
+      if (!strcmp(atts[0],"form"))
+	form = (char*)atts[1];
+      if (!strcmp(atts[0],"pos"))
+	pos = (char*)atts[1];
+      atts += 2;
+    }
+  if (form && *form && pos && *pos && !strcmp(pos, "n"))
+    list_add(phr, hpool_copy(form, hp));
+}
+
+static void
 process_l(const char **atts)
 {
-  const char *square = NULL, *inst = NULL;;
-  const char *sig = NULL;
+  const char *square = NULL, *sig = NULL;
   while (*atts)
     {
       if (!strcmp(atts[0],"sig"))
@@ -104,34 +119,32 @@ process_l(const char **atts)
 	sig = (char*)atts[1];
       else if (!strcmp(atts[0],"newsig"))
 	sig = (char*)atts[1];
-      else if (!strcmp(atts[0],"inst"))
-	inst = (char*)atts[1];
       atts += 2;
     }
 
-  if ('{' == *sig)
-    sig = strchr(sig, '}');
   if (sig && *sig)
     {
-      square = strchr(sig,']');
-      if (square)
+      if ('{' == *sig)
+	sig = strchr(sig, '}');
+      if (sig)
 	{
-	  ++square;
-	  if (square[1] == 'N'/* && square[2] == '\''*/) /* at present we don't need to test for NN because we ignore CNJ anyway */
-	    {
-	      phrase();
-	    }
-	  else if (postn)
+	  square = strchr(sig,']');
+	  if (square)
 	    {
 	      const uchar *s = cgp((uccp)sig);
-	      if (s)
-		list_add(phr, (void*)s);
-	      else /* non-signature is a stopper */
+	      struct numtab *nw = numword(s, strlen(s));
+	      if (nw)
+		{
+		  list_add(phr, (void*)s);
+		  if (nw->gur)
+		    waiting_for_gur = 1;
+		}
+	      else if (!waiting_for_gur)
 		phrase();
 	    }
+	  else
+	    phrase(); /* non-sig is stop */
 	}
-      else
-	phrase(); /* non-sig is stop */
     }
 }
 
@@ -140,6 +153,8 @@ startHandler(void *userData, const char *name, const char **atts)
 {
   if (!strcmp(name,"http://oracc.org/ns/xcl/1.0|l"))
     process_l(atts);
+  else if (!strcmp(name,"http://oracc.org/ns/xff/1.0|f"))
+    process_f(atts);
   else if (!strcmp(name,"http://oracc.org/ns/xcl/1.0|d"))
     phrase();
   /* can ignore open 'c' because we wrap on close 'c' */

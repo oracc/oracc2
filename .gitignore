@@ -65,6 +65,8 @@ bin/xx/jsmapx
 bin/xx/lem/bgmx
 bin/xx/lem/lemx
 bin/xx/lem/ngmx
+bin/xx/lem/numtokx
+bin/xx/lem/postntokx
 bin/xx/oraccopt
 bin/xx/osort/osort
 bin/xx/pqxpand
@@ -127,6 +129,7 @@ gw.c
 na.c
 nc.c
 nwmap.c
+numword.c
 oid_domain.c
 oid_type.c
 osh_commands.c

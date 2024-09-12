@@ -1,0 +1,45 @@
+%{
+#include <string.h>
+#include "lemmer.h"
+%}
+struct numtab;
+%%
+aslum[unit]N, 0
+ban[unit]N, 1
+bariga[unit]N, 1
+bur[unit]N, 0
+burʾu[unit]N, 0
+dana[unit]N, 0
+DUN₃[unit]N, 0
+emedub[unit]N, 0
+eše[unit]N, 0
+EŠ₂.ba.an[unit]N, 0
+ga[unit]N, 0
+giŋ[unit]N, 0
+giŋtur[unit]N, 0
+gur[unit]N, 1
+gurgiggi[unit]N, 1
+gurlugal[unit]N, 1
+gurmah[unit]N, 1
+gurmi[unit]N, 0
+igiŋal[unit]N, 0
+iku[unit]N, 0
+kuli[unit]N, 0
+kur[unit]N, 0
+kuš[unit]N, 0
+mana[unit]N, 0
+manatur[unit]N, 0
+niŋbanda[unit]N, 0
+PI[unit]N, 0
+sar[garden]N, 0
+sila[unit]N, 1
+šudamin[unit]N, 0
+šudua[unit]N, 0
+U.GUD[unit]N, 0
+ul[unit]N, 0
+umbin[unit]N, 0
+upu[unit]N, 0
+uš[unit]N, 0
+uzaglal[unit]N, 0
+U@g[unit]N, 0
+zipah[unit]N, 0
