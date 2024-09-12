@@ -1,11 +1,10 @@
 #ifndef NXCOMMON_H_
 #define NXCOMMON_H_
 
+#include <c2types.h>
 #include <hash.h>
 #include <memo.h>
 #include <pool.h>
-
-typedef unsigned char uchar;
 
 typedef struct nx_num
 {

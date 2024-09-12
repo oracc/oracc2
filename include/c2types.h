@@ -12,6 +12,7 @@ typedef char Boolean;
 #define FALSE           (Boolean)0
 #define TRUE            (Boolean)1
 
+typedef unsigned char uchar;
 typedef unsigned char Uchar;	/* for 255 char text */
 typedef char Signed8;		/* for small signed numbers */
 typedef unsigned char Unsigned8;/* for small unsigned numbers */
