@@ -27,12 +27,7 @@ nxr_print(nx_result *r, FILE *fp, int nonewline)
   for (i = 0; i < r->nr; ++i)
     {
       if (i)
-	{
-	  if (r->nr-i > 1)
-	    fputs(" :: ", fp);
-	  else
-	    fputc('\n', fp);
-	}
+	fputc('\n', fp);
       if (r->r[i].type == NX_NU)
 	nxr_print_nu(&r->r[i], fp);
       else if (r->r[i].type == NX_NO)
@@ -61,13 +56,13 @@ nxr_header(FILE *fp)
 static void
 nxr_print_na(nx_restok *rtp, FILE *fp)
 {
-  fprintf(fp, " ![%s=%s]", rtp->nb.tok, nxt_str[rtp->nb.type]);
+  fprintf(fp, "#:: ![%s=%s]", rtp->nb.tok, nxt_str[rtp->nb.type]);
 }
 
 static void
 nxr_print_no(nx_restok *rtp, FILE *fp)
 {
-  fprintf(fp, " !%s", rtp->no.tok);
+  fprintf(fp, "#:: !%s", rtp->no.tok);
 }
 
 static List *

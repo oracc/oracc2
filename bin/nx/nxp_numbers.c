@@ -25,6 +25,7 @@ static int nxp_sys_step_ok(ns_inst *left, ns_inst *next);
 static void nxp_unxnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data);
 static int nxp_add_det(nx_number **cand, const uchar *tok, const void *data);
 static void nxp_append_step(nx_number **cand, nx_xstep where, const uchar *text, nx_numtok type, const void *data);
+static int nxp_curve_match(nx_number *n, const uchar *sys);
 
 void
 nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to)
@@ -177,7 +178,8 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   /* remove all the non-Sa steps from the preceding number */
   nx_number **nu = r->r[r->nr-1].nu;
   --r->nr; /* remove the Sa from the results */
-  
+
+  /* Only allow 'a' axis */
   int i;
   for (i = 0; nu[i]; ++i)
     {
@@ -187,6 +189,7 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   nu = nxp_remove_invalid(nu, ncand);
 
   ns_inst *gp = NULL;
+
   /* If there is a {gur} det because the text was OB style 1(aš) gur 3(diš) sila₃,
      remove it and create an explicit gur step */
   if (nu[0]->det && !strcmp((ccp)nu[0]->det->tok.tok, "{gur}"))
@@ -196,8 +199,27 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
     gp = hash_find(nxp->ir, (ucp)"(gur)");
 
   /* create a cand list from gur/(gur) */
-  m = nxp_candidates_inst(gp, type, data, ncand);
+  int mcand;
+  m = nxp_candidates_inst(gp, type, data, &mcand);
 
+  /* trim the gur cand list by curved/cuneiform aš-num */
+  for (i = 0; nu[i]; ++i)
+    {
+      int j;
+      int ok = 0;
+      for (j = 0; m[j]; ++j)
+	{	  
+	  if (nxp_curve_match(nu[i],m[j]->sys->name))
+	    {
+	      ok = 1;
+	      break;
+	    }
+	}
+      if (!ok)
+	m[j]->invalid = 1;
+    }
+  m = nxp_remove_invalid(m, &mcand);
+  
   /* now create a NUM nx_step for the number with gur/(gur) */
   nx_step *nnum = nxp_nx_step(ip, NX_STEP_NUM, ip->text, type, data, nu[0]);
 
@@ -540,6 +562,21 @@ nxp_stash_result(nx_result *r, nx_number **cand)
   res->nu = cand;
 }
 
+static int
+nxp_curve_match(nx_number *n, const uchar *sys)
+{
+  if (sys && n->axis)
+    {
+      int sysc = (strstr(sys,"@c") ? 1 : 0);
+      int axisc = (strstr(n->axis, "@c") ? 1 : 0);
+      return sysc == axisc;
+    }
+  else if (sys || n->axis)
+    return 1;
+  else
+    return 0;
+}
+
 /* This routine returns NULL if there is no merge.
  *
  * If there is a merge it returns an array of nx_numbers which is the
@@ -615,7 +652,7 @@ nxp_merge_unit(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, int 
 			{
 			  if (nu[j]->a_or_d == m[i]->steps->tok.inst->a_or_d)
 			    {
-			      ok = 1;
+			      ok = nxp_curve_match(nu[j],m[i]->sys->name);
 			      break;
 			    }
 			}

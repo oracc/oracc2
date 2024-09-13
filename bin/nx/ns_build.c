@@ -186,6 +186,37 @@ nsb_inst_add(ns_inst *i, ns_inst_method meth)
 }
 
 void
+nsb_inst_frac(const char *f, ns_inst_method meth)
+{
+  char buf[strlen(f)+1];
+  strcpy(buf,f);
+  char *slash, *paren;
+  slash = strchr(buf, '/');
+  if (slash)
+    {
+      ++slash;
+      int n = atoi(buf);
+      int d = atoi(slash);
+      const char *u = NULL;
+      paren = strchr(slash,'(');
+      if (paren)
+	{
+	  u = ++paren;
+	  paren = strchr(paren,')');
+	  *paren = '\0';
+	  if (build_trace)
+	    printf("nsb_inst_frac: f=%s; n=%d; d=%d; u=%s\n", f, n, d, u);
+	  ns_inst *i = memo_new(nxp->m_ns_inst);
+	  i->text = (uccp)f;
+	  i->unit = (uccp)u;
+	  i->count.n = n;
+	  i->count.d = d;
+	  nsb_inst_add(i, meth);
+	}
+    }
+}
+
+void
 nsb_inst_g(const uchar *g, const uchar *n, const uchar *u, ns_inst_method meth)
 {
   ns_inst *i = memo_new(nxp->m_ns_inst);
@@ -296,10 +327,17 @@ nsb_wrapup(void)
 	{
 	  if (stp->mult.d == 1)
 	    {
-	      int i = (int)stp->mult.n;
-	      int m;
-	      for (m = 1; m < i; ++m)
-		nsb_auto_inst_g(nxp->sys, m, stp->unit);
+	      if (strchr((ccp)stp->unit, '/'))
+		{
+		  nsb_inst_frac((const uchar *)stp->unit, NS_INST_AUTO);
+		}
+	      else
+		{
+		  int i = (int)stp->mult.n;
+		  int m;
+		  for (m = 1; m < i; ++m)
+		    nsb_auto_inst_g(nxp->sys, m, stp->unit);
+		}
 	    }
 	}
     }
