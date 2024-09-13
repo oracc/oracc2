@@ -10,9 +10,9 @@ void
 nxd_show_num(nx_num *nump)
 {
   if (nump->d == 1)
-    printf("%llu", nump->n);
+    fprintf(stderr,"%llu", nump->n);
   else
-    printf("%llu/%d",nump->n, nump->d);
+    fprintf(stderr,"%llu/%d",nump->n, nump->d);
 }
 
 void
@@ -20,9 +20,9 @@ nxd_show_sum(nx_num *sump)
 {
   if (!debug)
     return;
-  printf("==>> ");
+  fprintf(stderr,"==>> ");
   nxd_show_num(sump);
-  printf("\n");
+  fprintf(stderr,"\n");
 }
 
 void
@@ -31,33 +31,33 @@ nxd_show_aevs(nx_number *np)
   if (!debug)
     return;
   nx_step *nxs;
-  printf("%s => ", np->sys->name);
+  fprintf(stderr,"%s => ", np->sys->name);
   for (nxs = np->steps; nxs; nxs = nxs->next)
     {
       nxd_show_step(nxs);
       if (nxs->aev)
 	{
-	  printf("=");
+	  fprintf(stderr,"=");
 	  nxd_show_num(nxs->aev);
 	}
-      printf(" ");
+      fprintf(stderr," ");
     }
-  printf("\n");
+  fprintf(stderr,"\n");
 }
 
 void
 nxd_show_Snum(nx_number *np)
 {
-  printf("<%s:", np->sys->name);
+  fprintf(stderr,"<%s:", np->sys->name);
   nx_step *nxs;
   int i = 0;
   for (nxs = np->steps; nxs; nxs = nxs->next)
     {
       if (i++)
 	printf(".");
-      printf("%s", nxs->tok.tok);
+      fprintf(stderr,"%s", nxs->tok.tok);
     }
-  printf(">");
+  fprintf(stderr,">");
 }
 
 void
@@ -67,20 +67,20 @@ nxd_show_step(nx_step *nxs)
     {
       if (nxs->tok.inst)
 	{
-	  printf("[");
+	  fprintf(stderr,"[");
 	  nxd_show_num(&nxs->tok.inst->count);
-	  printf("*%s]",nxs->tok.inst->step->unit);
+	  fprintf(stderr,"*%s]",nxs->tok.inst->step->unit);
 	}
       else
 	printf("%s", nxs->tok.tok);
     }
   else
     {
-      printf("[");
+      fprintf(stderr,"[");
       nxd_show_Snum(nxs->num);
-      printf("=");
+      fprintf(stderr,"=");
       nxd_show_num(&nxs->num->aev);
-      printf("*%s]", nxs->num->unit->tok.inst->step->unit);
+      fprintf(stderr,"*%s]", nxs->num->unit->tok.inst->step->unit);
     }
 }
 
@@ -91,14 +91,14 @@ nxd_show_inst(const uchar *tok, ns_inst *ip)
     return;
     
   if (tok)
-    printf("tok %s from hash gives inst: ", tok);
-  printf("%s => %llu/%d %s ", ip->text, ip->count.n, ip->count.d, ip->unit);
+    fprintf(stderr,"tok %s from hash gives inst: ", tok);
+  fprintf(stderr,"%s => %llu/%d %s ", ip->text, ip->count.n, ip->count.d, ip->unit);
   if (ip->a_or_d)
-    printf("%c", ip->a_or_d);
+    fprintf(stderr,"%c", ip->a_or_d);
   if (ip->step)
-    printf("; step: %s = %llu/%d %s", ip->step->sys->name,
+    fprintf(stderr,"; step: %s = %llu/%d %s", ip->step->sys->name,
 	   ip->step->mult.n, ip->step->mult.d, ip->step->unit);
-  printf("\n");
+  fprintf(stderr,"\n");
 }
 
 void
@@ -108,14 +108,14 @@ nxd_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
     return;
   
   int f = from;
-  printf("nxp:\ntoks:");
+  fprintf(stderr,"nxp:\ntoks:");
   while (from <= to)
-    printf("\t%s", toks[from++]);
-  printf("\ntypes:");
+    fprintf(stderr,"\t%s", toks[from++]);
+  fprintf(stderr,"\ntypes:");
   from = f;
   while (from <= to)
-    printf("\t%s", nxt_str[nptoks[from++]]);
-  printf("\n\n");
+    fprintf(stderr,"\t%s", nxt_str[nptoks[from++]]);
+  fprintf(stderr,"\n\n");
 }
 
 static int

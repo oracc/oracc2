@@ -102,25 +102,29 @@ main(int argc, char **argv)
 {
   options(argc, argv, "t");
 
-  extern int parse_trace;
-  parse_trace = opt_trace;
-  
+  extern int parse_trace, debug;
+
+  if ((parse_trace = opt_trace))
+    debug = 1;
+
   ns_flex_debug = nsflextrace = 0;
 
   nx_init();
 
   ns_data();
 
-  nxp->testfp = fopen("test.tsv", "w");
+  /*nxp->testfp = fopen("test.tsv", "w");*/
   if (!nxp->testfp)
     fprintf(stderr, "nx: unable to open test.tsv; no testdata will be written\n");
 
   nxp->input = stdin; /* set this in opts to read from file/toks/etc */
   
   nx_input();
-  
+
+#if 0
   if (nxp->testfp)
     fclose(nxp->testfp);
+#endif
 
   nx_term();
 }
