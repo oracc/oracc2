@@ -27,6 +27,7 @@ iku[unit]N, 0
 kuli[unit]N, 0
 kur[unit]N, 0
 kuš[unit]N, 0
+lal[small]V/i, 0
 mana[unit]N, 0
 manatur[unit]N, 0
 niŋbanda[unit]N, 0

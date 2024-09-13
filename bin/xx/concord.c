@@ -171,7 +171,7 @@ int _STAKMEM = 512;		/* MIN STACK IN SBRK BEFORE REFUSING ALLOC */
 #define ALLOCSIZE 125
 #define LINESIZE 79
 #define NUMSIZE 12		/* reasonable, since numbers are longs */
-#define SNUMSIZE 63
+#define SNUMSIZE 127		/* Oracc refs like P123456.10.10+P123456.10.11+... can be long */
 #define IEFOFF 0
 #define IEFINCBUILD 1
 #define IEFINCSKIP (-1)

@@ -149,6 +149,7 @@ urlkeys.c
 whatfuncs.c
 
 # .in derivatives
+oraccenv.sh
 bin/dx/dxx/dx-install.sh
 bin/dx/odo/odo-build.sh
 bin/dx/odo/odo-cvs-checkout.sh
@@ -189,6 +190,11 @@ bin/xx/wrapper/wrapper-links.sh
 bin/xx/wrapper/p4-g2-gdl-HTML.xsl
 bin/xx/wrapper/p4-g2-xtf-HTML.xsl
 lib/gvl/oiv.c
+lib/l3/bigrams/bigrams.c
+lib/l3/bigrams/collos.c
+lib/l3/prop/props_auto.c
+lib/l3/prop/props_load.c
+lib/l3/xli/xli_sux.c
 fname.c
 slix.c
 mktablst
