@@ -26,6 +26,21 @@ nxd_show_sum(nx_num *sump)
 }
 
 void
+nxd_show_nxnu(nx_number *np)
+{
+  if (!debug)
+    return;
+  nx_step *nxs;
+  fprintf(stderr,"%s => ", np->sys->name);
+  for (nxs = np->steps; nxs; nxs = nxs->next)
+    {
+      nxd_show_step(nxs);
+      fprintf(stderr," ");
+    }
+  fprintf(stderr,"\n");
+}
+
+void
 nxd_show_aevs(nx_number *np)
 {
   if (!debug)

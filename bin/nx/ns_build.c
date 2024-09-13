@@ -90,6 +90,10 @@ nsb_step(uchar *a, uchar *m, uchar *u)
 	  a->next = a;
 	  s->prev = a;
 	}
+      else
+	{
+	  nxp->sys->last->alt = s;
+	}
     }
   else
     {
@@ -309,6 +313,32 @@ nsb_auto_inst_axis(const uchar *axis, ns_inst *ui)
 }
 #endif
 
+static void
+nsb_wrapup_step(ns_step *stp)
+{
+  if (stp->a_or_d)
+    {
+      (void)nsb_inst_u((uccp)stp->axis, stp->unit, stp->unit, NS_INST_AUTO);
+    }
+  else
+    {
+      if (stp->mult.d == 1)
+	{
+	  if (strchr((ccp)stp->unit, '/'))
+	    {
+	      nsb_inst_frac((ccp)stp->unit, NS_INST_AUTO);
+	    }
+	  else
+	    {
+	      int i = (int)stp->mult.n;
+	      int m;
+	      for (m = 1; m < i; ++m)
+		nsb_auto_inst_g(nxp->sys, m, stp->unit);
+	    }
+	}
+    }
+}
+
 void
 nsb_wrapup(void)
 {
@@ -316,29 +346,9 @@ nsb_wrapup(void)
   for (stp = nxp->sys->steps; stp; stp = stp->next)
     {
       nxp->sys->last = stp;
-      if (stp->a_or_d)
-	{
-	  /*ns_inst *uinst = */ (void)nsb_inst_u((uccp)stp->axis, stp->unit, stp->unit, NS_INST_AUTO);
-#if 0
-	  nsb_auto_inst_axis((uccp)stp->axis, uinst); /* register this sys as a cand for all numbers in the axis */
-#endif
-	}
-      else
-	{
-	  if (stp->mult.d == 1)
-	    {
-	      if (strchr((ccp)stp->unit, '/'))
-		{
-		  nsb_inst_frac((const uchar *)stp->unit, NS_INST_AUTO);
-		}
-	      else
-		{
-		  int i = (int)stp->mult.n;
-		  int m;
-		  for (m = 1; m < i; ++m)
-		    nsb_auto_inst_g(nxp->sys, m, stp->unit);
-		}
-	    }
-	}
+      nsb_wrapup_step(stp);
+      ns_step *alt;
+      for (alt = stp->alt; alt; alt = alt->next)
+	nsb_wrapup_step(alt);
     }
 }

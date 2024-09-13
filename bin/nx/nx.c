@@ -113,10 +113,12 @@ main(int argc, char **argv)
 
   ns_data();
 
-  /*nxp->testfp = fopen("test.tsv", "w");*/
+#if 0
+  nxp->testfp = fopen("test.tsv", "w");
   if (!nxp->testfp)
     fprintf(stderr, "nx: unable to open test.tsv; no testdata will be written\n");
-
+#endif
+  
   nxp->input = stdin; /* set this in opts to read from file/toks/etc */
   
   nx_input();

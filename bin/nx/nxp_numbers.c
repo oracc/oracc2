@@ -173,12 +173,16 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
 {
   nx_number **m = NULL;
 
-  /*printf("nxp_implicit_gur\n");*/
-  
   /* remove all the non-Sa steps from the preceding number */
   nx_number **nu = r->r[r->nr-1].nu;
   --r->nr; /* remove the Sa from the results */
 
+  if (parse_trace)
+    {
+      fprintf(stderr, "\nnxp_implicit_gur entered\n");
+      nxd_show_nxnu(nu[0]);
+    }
+  
   /* Only allow 'a' axis */
   int i;
   for (i = 0; nu[i]; ++i)
@@ -249,11 +253,18 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
   
   /* Now we have re-headed cand to start with the guru₇ or (gur); add
      the C-step that started this off */
+
   int good = nxp_add_inst(m, ip, type, data);
   if (good)
     m = nxp_remove_invalid(m, ncand);
   /* should probably be more careful--it's unlikely that this could
      fail but is it possible? */
+  
+  if (parse_trace)
+    {
+      nxd_show_nxnu(m[0]);
+      fprintf(stderr, "\nnxp_implicit_gur exited\n");
+    }
   
   /* return for further parsing */
   return m;

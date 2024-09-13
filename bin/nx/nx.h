@@ -141,4 +141,6 @@ extern void nx_input(void);
 extern void nx_exec(const uchar **toks, const uchar **data, int ntoks);
 extern void nx_exec_lists(List *t, List *d);
 
+extern void nxd_show_nxnu(nx_number *np);
+
 #endif/*NX_H_*/
