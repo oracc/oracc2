@@ -2,7 +2,7 @@
 #include "nx.h"
 
 /* This is a simple driver to read the step-diagram data */
-
+extern const char *arg_dat; /* .dat file given with -d on command line */
 extern int nsrestart(FILE *);
 extern int nslex_destroy(void);
 
@@ -11,8 +11,16 @@ ns_data(void)
 {
   mesg_init();
   char dat[strlen(oracc())+strlen("/lib/data/ns.dat0")];
-  if (!access("ns.dat", R_OK))
-    strcpy(dat, "ns.dat");
+
+  const char *use_dat = arg_dat ? arg_dat : "ns.dat";  
+  
+  if (!access(use_dat, R_OK))
+    strcpy(dat, use_dat);
+  else if (arg_dat)
+    {
+      fprintf(stderr, "nx: data file given with -d %s could not be opened. Stop.\n", arg_dat);
+      exit(1);
+    }
   else
     sprintf(dat, "%s/lib/data/ns.dat", oracc());
   FILE *fp = fopen(dat, "r");

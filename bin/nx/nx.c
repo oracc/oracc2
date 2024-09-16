@@ -3,6 +3,7 @@
 
 Pool *nspool;
 
+const char *arg_dat = NULL;
 int opt_trace;
 
 #if 0
@@ -100,7 +101,7 @@ const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "t");
+  options(argc, argv, "d:t");
 
   extern int parse_trace, debug;
 
@@ -136,6 +137,9 @@ opts(int c, const char *v)
 {
   switch (c)
     {
+    case 'd':
+      arg_dat = v;
+      break;
     case 't':
       opt_trace = 1;
       break;
