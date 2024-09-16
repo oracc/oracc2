@@ -212,7 +212,7 @@ nxp_implicit_gur(nx_result *r, ns_inst *ip, nx_numtok type, const void *data, in
       int j;
       int ok = 0;
       for (j = 0; m[j]; ++j)
-	{	  
+	{
 	  if (nxp_curve_match(nu[i],m[j]->sys->name))
 	    {
 	      ok = 1;
@@ -401,7 +401,7 @@ nxp_add_inst(nx_number **cand, ns_inst *ip, nx_numtok type, const void *data)
 			   ? cand[i]->last->tok.inst
 			   : cand[i]->last->num->unit->tok.inst
 			   );
-	  if (nxp_sys_step_ok(left, jp))
+	  if (!strcmp(cand[i]->sys->name,jp->step->sys->name)  && nxp_sys_step_ok(left, jp))
 	    {
 	      nx_step *n = nxp_nx_step(jp, NX_STEP_TOK, jp->text, type, data, NULL);
 	      cand[i]->last->next = n;
