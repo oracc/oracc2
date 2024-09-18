@@ -475,6 +475,8 @@ extern void asl_bld_comp(Mloc *locp, struct sl_signlist *sl, const unsigned char
 
 extern void asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *m, enum sx_tle type);
 extern void asl_bld_sign(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
+extern void asl_bld_pcun(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
+extern void asl_bld_xsux(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
 extern void asl_bld_signlist(Mloc *locp, const unsigned char *n, int list);
 extern void asl_bld_sys(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
 extern void asl_bld_term(struct sl_signlist *);
@@ -497,6 +499,8 @@ extern void asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned cha
 extern void asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 
 extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle type);
+extern void asl_bld_end_pcun(Mloc *locp, struct sl_signlist *sl, enum sx_tle type);
+extern void asl_bld_end_xsux(Mloc *locp, struct sl_signlist *sl, enum sx_tle type);
 extern struct sl_sign *asl_form_as_sign(struct sl_signlist *sl, struct sl_form *f);
 
 extern unsigned const char *asl_make_key(Mloc *locp, struct sl_signlist *sl, const char *isp, const char *ifp, const char *ivp);

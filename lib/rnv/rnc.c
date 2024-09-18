@@ -739,7 +739,9 @@ static int decl(struct rnc_source *sp) {
   switch(CUR(sp).sym) {
   case SYM_NAMESPACE:
     getsym(sp);
-    if(chkwd(sp)) pfx=rn_newString(CUR(sp).s); getsym(sp);
+    if(chkwd(sp))
+      pfx=rn_newString(CUR(sp).s);
+    getsym(sp);
     chk_get(sp,SYM_ASGN);
     uri=nsuri(sp);
     if(uri!=-1&&pfx!=-1) addns(sp,pfx,uri);
@@ -754,9 +756,13 @@ static int decl(struct rnc_source *sp) {
     return 1;
   case SYM_DATATYPES:
     getsym(sp);
-    if(chkwd(sp)) pfx=rn_newString(CUR(sp).s); getsym(sp);
+    if(chkwd(sp))
+      pfx=rn_newString(CUR(sp).s);
+    getsym(sp);
     chk_get(sp,SYM_ASGN);
-    if(chksym(sp,SYM_LITERAL)) uri=rn_newString(CUR(sp).s); getsym(sp);
+    if(chksym(sp,SYM_LITERAL))
+      uri=rn_newString(CUR(sp).s);
+    getsym(sp);
     if(pfx!=-1&&uri!=-1) adddt(sp,pfx,uri);
     return 1;
   default: return 0;

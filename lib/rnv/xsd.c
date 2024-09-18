@@ -386,7 +386,10 @@ static int deccmp(char *s1,int n1,char *s2,int n2) {
     ++c1; ++c2;
   }
   if(cmp!=0) return p1?cmp:-cmp;
-  if(c1!=e1) ++c1; if(c2!=e2) ++c2;
+  if(c1!=e1)
+    ++c1;
+  if(c2!=e2)
+    ++c2;
   for(;;) {
     if(c1==e1) {cmp=-(c2!=e2); break;}
     if(c2==e2) {cmp=1; break;}

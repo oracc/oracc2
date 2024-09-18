@@ -244,14 +244,22 @@
   <define name="g">
     <element name="g:g">
       <optional>
-        <ref name="implicit"/>
+        <ref name="gimplicit"/>
       </optional>
       <ref name="g.meta"/>
       <ref name="c.model"/>
       <zeroOrMore>
         <ref name="mods"/>
       </zeroOrMore>
+      <optional>
+        <ref name="g.type"/>
+      </optional>
     </element>
+  </define>
+  <define name="g.type">
+    <attribute name="g:type">
+      <value>c</value>
+    </attribute>
   </define>
   <define name="compound">
     <choice>
@@ -348,7 +356,11 @@
       </choice>
     </optional>
   </define>
-  <!-- implicit = attribute implicit { "1" } -->
+  <define name="gimplicit">
+    <attribute name="implicit">
+      <value>1</value>
+    </attribute>
+  </define>
   <!-- This is a new addition for printing the text value of GDL literals -->
   <define name="t">
     <element name="g:t">

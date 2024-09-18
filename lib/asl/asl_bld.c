@@ -1111,11 +1111,11 @@ asl_bld_xsux(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 }
 
 void
-asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle_type t)
+asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle t)
 {
   if (sl->curr_sign)
     {
-      if (sl->type == t)
+      if (sl->curr_sign->type == t)
 	{
 	  sl->curr_sign = NULL;
 	  sl->curr_form = NULL;
@@ -1345,8 +1345,8 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
 
   /* special case 1/3(|NINDA₂×(ŠE.AŠ)|) and  2/3(|NINDA₂×(ŠE.AŠ.AŠ)|) */
   if ('/' == n[1]
-      && (!strcmp(n, "1/3(|NINDA₂×(ŠE.AŠ)|)") || !strcmp(n, "2/3(|NINDA₂×(ŠE.AŠ.AŠ)|)")
-	  || !strcmp(n, "1/3(|NINDA₂×(ŠE.1(AŠ))|)") || !strcmp(n, "2/3(|NINDA₂×(ŠE.2(AŠ))|)")
+      && (!strcmp((ccp)n, "1/3(|NINDA₂×(ŠE.AŠ)|)") || !strcmp((ccp)n, "2/3(|NINDA₂×(ŠE.AŠ.AŠ)|)")
+	  || !strcmp((ccp)n, "1/3(|NINDA₂×(ŠE.1(AŠ))|)") || !strcmp((ccp)n, "2/3(|NINDA₂×(ŠE.2(AŠ))|)")
 	  ))
     base = n;
   else

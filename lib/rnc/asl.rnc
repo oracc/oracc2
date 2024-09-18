@@ -30,7 +30,7 @@ start =
   }
 
 # Top-level-elements (i.e., top-level below grouping constructs)
-sl.tle     = (sl.formproxy | sl.lref | sl.sign | sl.pcun | sl.xcun | sl.sref)
+sl.tle     = (sl.formproxy | sl.lref | sl.sign | sl.pcun | sl.xsux | sl.sref)
 
 sl.formproxy =
   element sl:formproxy {

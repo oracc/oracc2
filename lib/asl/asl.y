@@ -221,9 +221,9 @@ token:
 
 /* Possibly add EGROUP ELETTER ESECTION here; note: EFORM no longer used; on ESIGN we should NULL out sl->curr_sign/form/inst */
 atend:
-	| END ESIGN	    	{ asl_bld_end_sign(&@1, curr_asl, sx_tle_sign); }
-	| END EPCUN	    	{ asl_bld_end_pcun(&@1, curr_asl, sx_tle_pcun); }
-	| END EXSUX	    	{ asl_bld_end_xsux(&@1, curr_asl, sx_tle_xsux); }
+	  END ESIGN	    	{ asl_bld_end_sign(&@1, curr_asl, sx_tle_sign); }
+	| END EPCUN	    	{ asl_bld_end_sign(&@1, curr_asl, sx_tle_pcun); }
+	| END EXSUX	    	{ asl_bld_end_sign(&@1, curr_asl, sx_tle_xsux); }
 	| END EBAD
 	;
 
