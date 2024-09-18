@@ -1,5 +1,6 @@
-#include <stddef.h>
+#include <oraccsys.h>
 #include <gutil.h>
+#include <gvl.h>
 #include <signlist.h>
 #include <sx.h>
 
@@ -16,11 +17,13 @@ static int nums_cmp(const void *a, const void *b)
 }
 
 static void
-sx_num_data(struct sl_number *np, struct sl_token *tp)
+sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 {
   np->t = tp;
   np->rep = (uccp)tp->gdl->kids->kids->text;
   np->set = (uccp)tp->gdl->kids->kids->next->text;
+  if (!gvl_looks_like_sname(np->set))
+    np->set = pool_copy(utf_ucase(np->set), sl->p);
 }
 
 void
@@ -30,9 +33,18 @@ sx_numbers(struct sl_signlist *sl)
   struct sl_token *t;
   int i;
   for (i=0,t = list_first(sl->nums); t; t = list_next(sl->nums),++i)
-    sx_num_data(&sl->numbers[i], t);
+    sx_num_data(sl, &sl->numbers[i], t);
   qsort(sl->numbers, i, sizeof(struct sl_number), nums_cmp);
   int j;
   for (j = 0; j < i; ++j)
-    fprintf(stderr, "%s %s %s\n", sl->numbers[j].t->gsig, sl->numbers[j].set, sl->numbers[j].rep);
+    {
+      const char *oid = sl->numbers[j].t->gsig;
+      if ('q' == *oid)
+	{
+	  struct sl_value *v = hash_find(sl->hventry, sl->numbers[j].t->t);
+	  if (v)
+	    oid = v->sowner->oid;
+	}
+      fprintf(stderr, "%s %s %s\n", oid, sl->numbers[j].set, sl->numbers[j].rep);
+    }
 }

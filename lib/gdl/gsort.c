@@ -449,7 +449,14 @@ gsort_cmp_item(GS_item *a, GS_item *b)
 
   /* compare repeat */
   if (a->t == 2)
-    return a->r - b->r;
+    {
+      if (a->r > b->r)
+	return 1;
+      else if (a->r < b->r)
+	return -1;
+      else
+	return 0;
+    }
   else
     /* see if this is |3×AN| or like */
     if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)

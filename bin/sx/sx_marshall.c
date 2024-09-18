@@ -12,7 +12,7 @@ Hash *oid_sort_keys;
 Hash *oid_warned = NULL;
 static struct sl_signlist *cmpsl = NULL;
 
-int sx_show_tokens = 0;
+int sx_show_tokens = 1;
 
 int oid_char_cmp(const void *a, const void *b)
 {
