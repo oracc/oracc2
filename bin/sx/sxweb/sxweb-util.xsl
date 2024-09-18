@@ -79,7 +79,7 @@
 	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
 	  <xsl:choose>
 	    <xsl:when test="$overview-images='font'">
-	      <p class="sl-td-sign"><xsl:value-of select="sl:ucun"/></p>
+	      <p class="sl-td-sign noto"><xsl:value-of select="sl:ucun"/></p>
 	    </xsl:when>
 	    <xsl:when test="count($img)>0">
 	      <xsl:for-each select="$img">
@@ -91,7 +91,7 @@
 	      </xsl:for-each>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <p class="sl-td-sign"><xsl:value-of select="sl:ucun"/></p>
+	      <p class="sl-td-sign noto"><xsl:value-of select="sl:ucun"/></p>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:otherwise>
