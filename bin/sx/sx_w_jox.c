@@ -773,6 +773,10 @@ x_tle_tag(enum sx_tle t)
       return "sl:lref";
     case sx_tle_sign:
       return "sl:sign";
+    case sx_tle_pcun:
+      return "sl:pcun";
+    case sx_tle_xsux:
+      return "sl:xsux";
     case sx_tle_sref:
       return "sl:sref";
     default:

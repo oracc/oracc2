@@ -20,6 +20,8 @@ enum sx_tle
     sx_tle_formproxy ,
     sx_tle_lref ,
     sx_tle_sign ,
+    sx_tle_pcun ,
+    sx_tle_xsux ,
     sx_tle_sref
   };
 
@@ -494,7 +496,7 @@ extern void asl_bld_note(Mloc *locp, struct sl_signlist *sl, const char *tag, co
 extern void asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 extern void asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 
-extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl);
+extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle type);
 extern struct sl_sign *asl_form_as_sign(struct sl_signlist *sl, struct sl_form *f);
 
 extern unsigned const char *asl_make_key(Mloc *locp, struct sl_signlist *sl, const char *isp, const char *ifp, const char *ivp);

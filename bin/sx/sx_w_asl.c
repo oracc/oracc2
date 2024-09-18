@@ -321,7 +321,12 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	}
       else
 	{
-	  fprintf(f->fp, "\n@sign%s %s%s%s\n", minus, s->u.s->name, query, literal);
+	  const char *tag = "sign";
+	  if (s->u.s->type == sx_tle_pcun)
+	    tag = "pcun";
+	  else if (s->u.s->type == sx_tle_xsux)
+	    tag = "xsux";
+	  fprintf(f->fp, "\n@%s%s %s%s%s\n", tag, minus, s->u.s->name, query, literal);
 	  if (s->u.s->oid)
 	    fprintf(f->fp, "@oid\t%s\n", s->u.s->oid);
 	  if (s->u.s->fake)
@@ -337,9 +342,15 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
     }
   else if (sx_pos_term == p)
     {
-      if (in_sign && s && s->u.s->type == sx_tle_sign)
+      if (in_sign && s &&
+	  (s->u.s->type == sx_tle_sign || s->u.s->type == sx_tle_pcun || s->u.s->type == sx_tle_xsux))
 	{
-	  fprintf(f->fp, "@end sign\n");
+	  const char *tag = "sign";
+	  if (s->u.s->type == sx_tle_pcun)
+	    tag = "pcun";
+	  else if (s->u.s->type == sx_tle_xsux)
+	    tag = "xsux";
+	  fprintf(f->fp, "@end %s\n", tag);
 	  in_sign = 0;
 	}
     }

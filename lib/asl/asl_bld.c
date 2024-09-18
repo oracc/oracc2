@@ -1099,13 +1099,30 @@ asl_bld_sign(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 }
 
 void
-asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl)
+asl_bld_pcun(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag)
+{
+  asl_bld_sign_sub(locp, sl, n, minus_flag, sx_tle_pcun);
+}
+
+void
+asl_bld_xsux(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag)
+{
+  asl_bld_sign_sub(locp, sl, n, minus_flag, sx_tle_xsux);
+}
+
+void
+asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle_type t)
 {
   if (sl->curr_sign)
     {
-      sl->curr_sign = NULL;
-      sl->curr_form = NULL;
-      sl->curr_inst = NULL;
+      if (sl->type == t)
+	{
+	  sl->curr_sign = NULL;
+	  sl->curr_form = NULL;
+	  sl->curr_inst = NULL;
+	}
+      else
+	mesg_verr(locp, "mismatched @end");
     }
   else
     mesg_verr(locp, "misplaced @end sign, not in an @sign");    

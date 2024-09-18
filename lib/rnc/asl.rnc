@@ -30,7 +30,7 @@ start =
   }
 
 # Top-level-elements (i.e., top-level below grouping constructs)
-sl.tle     = (sl.formproxy | sl.lref | sl.sign | sl.sref)
+sl.tle     = (sl.formproxy | sl.lref | sl.sign | sl.pcun | sl.xcun | sl.sref)
 
 sl.formproxy =
   element sl:formproxy {
@@ -59,7 +59,15 @@ sl.sref =
   }
 
 sl.sign    =
-  element sl:sign {
+  element sl:sign { sl.sign.model }
+
+sl.pcun    =
+  element sl:pcun { sl.sign.model }
+
+sl.xsux    =
+  element sl:xsux { sl.sign.model }
+
+sl.sign.model =
     attribute deprecated { xsd:integer }?,
     attribute n { text },
     attribute sort { text }, 
@@ -97,7 +105,6 @@ sl.sign    =
         attribute type { xsd:NCName }?
       }+
     }?
-  }
 
 sl.form	   = element sl:form {
       attribute n { text },

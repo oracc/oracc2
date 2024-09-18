@@ -78,6 +78,10 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 
 <E>"sign"			{ fake_flag = 0; atcmd(ESIGN,0); }
 
+<E>"pcun"			{ fake_flag = 0; atcmd(EPCUN,0); }
+
+<E>"xsux"			{ fake_flag = 0; atcmd(EXSUX,0); }
+
 <E>"form"			{ fake_flag = 0; atcmd(EFORM,0); }
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
@@ -114,6 +118,8 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@sysdef/[ \t]+       		{ Ynext=Yt; atcmd(SYSDEF,Y); }
 ^@images/[ \t]+			{ atcmd(IMAGES,S); }
 ^@sign-?/[ \t]       		{ atcmd(SIGN,0); }
+^@pcun-?/[ \t]       		{ atcmd(PCUN,0); }
+^@xsux-?/[ \t]       		{ atcmd(XSUX,0); }
 ^@aka/[ \t]       		{ atcmd(AKA,0); }
 ^@smap/[ \t]+			{ atcmd(SMAP,0); }
 ^@compoundonly/[ \t]           	{ atcmd(COMP,0); }
