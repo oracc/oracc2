@@ -69,6 +69,8 @@ extern gvl_i *gvl_i_find(const char *name);
 
 extern gvl_g *gvl_validate(unsigned const char *g);
 
+extern uchar *gvl_ucase(uchar *s);
+
 extern int gvl_is_sname(unsigned const char *g);
 extern int gvl_is_value(unsigned const char *g);
 extern unsigned const char *gvl_get_id(unsigned const char *g);

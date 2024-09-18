@@ -86,6 +86,9 @@ struct sl_signlist
   int nletters;
   int ninsts;
   struct sl_number *numbers; /* sorted number tokens */
+  int nnumbers;
+  struct sl_numset *numsets; /* numbers grouped by set name */
+  int nnumsets;
   struct sl_split_value *splitv;
   struct sl_sign *curr_sign;
   struct sl_inst *curr_form;
@@ -341,12 +344,19 @@ struct sl_compound_digest
 struct sl_number
 {
   const unsigned char *set;
-  struct sl_token *t;
   const unsigned char *rep;
+  const unsigned char *oid;
+  struct sl_token *t;
 #if 0  
   double val;
   int sort;
 #endif
+};
+
+struct sl_numset
+{
+  int from; /* first number in set group */
+  int last; /* last number in set group */
 };
 
 struct sl_sign

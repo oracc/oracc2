@@ -4,6 +4,29 @@
 #include <oraccsys.h>
 #include "gvl.h"
 
+uchar *
+gvl_ucase(uchar *s)
+{
+  size_t len;
+  wchar_t *ws = utf2wcs(s,&len);
+  if (ws)
+    {
+      wchar_t *ws_orig = ws;
+      while (*ws)
+	{
+	  if (iswlower(*ws))
+	    *ws = towupper(*ws);
+	  else if ('@' == *ws)
+	    break;
+	  else
+	    ++ws;
+	}
+      return wcs2utf(ws_orig,len);
+    }
+  else
+    return NULL;
+}
+
 int
 gvl_v_isupper(unsigned const char *v)
 {
