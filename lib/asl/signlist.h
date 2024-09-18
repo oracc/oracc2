@@ -85,6 +85,7 @@ struct sl_signlist
   struct sl_letter *letters;
   int nletters;
   int ninsts;
+  struct sl_number *numbers; /* sorted number tokens */
   struct sl_split_value *splitv;
   struct sl_sign *curr_sign;
   struct sl_inst *curr_form;
@@ -96,6 +97,7 @@ struct sl_signlist
   List *syslists; 		/* list of the lists of @sys that occur in sign or
 		     		   form, so we can generate system tables easily */
   List *images; 		/* list of names of image manifests as char * */
+  List *nums;			/* list of token pointers where gdl is g:n */
   struct sx_iheader *iheaders;	/* array of header data read from @cmds in image manifests */
   Roco *iarray;			/* images data read into a Roco array */  
   Hash *oid2ucode;
@@ -334,6 +336,17 @@ struct sl_compound_digest
   const char **final;
   const char **container;
   const char **contained;
+};
+
+struct sl_number
+{
+  const unsigned char *set;
+  struct sl_token *t;
+  const unsigned char *rep;
+#if 0  
+  double val;
+  int sort;
+#endif
 };
 
 struct sl_sign

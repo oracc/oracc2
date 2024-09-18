@@ -18,7 +18,7 @@ struct GS_item
   struct GS_mods *mp;
   unsigned const char *s;	/* suffix for lists */
   short x;			/* grapheme index */
-  short r;			/* repeater for number graphemes, e.g., 3(diš) */
+  double r;			/* repeater for number graphemes, e.g., 3(diš); may be fraction, e.g., 1/2(diš) r=0.5 */
 };
 
 struct GS_head

@@ -81,6 +81,7 @@ extern void sx_listdefs_sort(struct sl_listdef *ldp);
 extern void sx_list_dump(FILE *f, struct sl_signlist *sl);
 extern void sx_unicode_table(FILE *f, struct sl_signlist *sl);
 extern void sx_marshall(struct sl_signlist *sl);
+extern void sx_numbers(struct sl_signlist *sl);
 extern void sx_qualified(struct sl_signlist *sl);
 extern void sx_sortcodes(struct sl_signlist *sl);
 extern void sx_unicode(struct sl_signlist *sl);

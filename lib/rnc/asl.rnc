@@ -26,7 +26,9 @@ start =
 	sl.tle*
       }*)
     }*,
-    sl.homophones?
+    sl.homophones?,
+    sl.numbers?,
+    sl.metrology?
   }
 
 # Top-level-elements (i.e., top-level below grouping constructs)
@@ -67,19 +69,16 @@ sl.pcun    =
 sl.xsux    =
   element sl:xsux { sl.sign.model }
 
-sl.sign.model =
+sl.signform.attr =
     attribute deprecated { xsd:integer }?,
     attribute n { text },
     attribute sort { text }, 
     attribute xml:id { xsd:NCName }?,
-    sl.smap?,
     attribute compoundonly { "yes"|"no" }?,
     attribute cpd-refs { xsd:IDREFS }?,
-    attribute as-form { xsd:IDREFS }?,
-    (sl.moid | sl.merge)?,
-    sl.stats?,
-    sl.name?,
-    sl.aka*,
+    attribute num { "1" }?
+
+sl.signform.note =
     (sl.inote
      | sl.list
      | sl.lit
@@ -88,7 +87,18 @@ sl.sign.model =
      | sl.uname
      | sl.uage
      | sl.ucun
-     | element sl:unote { text })*,
+     | sl.proof
+     | element sl:unote { text })*
+     	  
+sl.sign.model =
+    sl.signform.attr,
+    sl.smap?,
+    attribute as-form { xsd:IDREFS }?,
+    (sl.moid | sl.merge)?,
+    sl.stats?,
+    sl.name?,
+    sl.aka*,
+    sl.signform.note,
     sl.lemmas?,
     sl.v*,
     (sl.sys|sl.link)*,
@@ -107,27 +117,13 @@ sl.sign.model =
     }?
 
 sl.form	   = element sl:form {
-      attribute n { text },
-      attribute sort { text }, 
+      sl.signform.attr,
       attribute ref { xsd:NCName }?,
-      attribute xml:id { xsd:NCName }?,
       attribute oid { xsd:NCName }?,
-      attribute compoundonly { "yes"|"no" }?,
-      attribute cpd-refs { xsd:IDREFS }?,
       sl.stats?,
       sl.name?,
       sl.aka*,
-      (sl.proof
-       | (sl.inote
-          | sl.list
-          | sl.lit
-          | sl.note
-          | sl.pname
-	  | sl.sys
-	  | sl.link
-          | sl.uname
-          | sl.uage
-          | sl.ucun)*),
+      sl.signform.note,
       sl.lemmas?,
       sl.xv*,
       (sl.sys|sl.link)*,
@@ -262,6 +258,7 @@ slvattr =
     attribute type { xsd:NCName }?,
     attribute uncertain { xsd:NCName }?,
     attribute xml:lang { text }?,
+    attribute num { "1" }?,
     attribute hid { text }?
 
 sl.v =
@@ -313,6 +310,25 @@ sl.h = element sl:h {
      attribute vsort { text },
      attribute v { text }
 }
+
+sl.numbers = element sl:numbers { sl.numset* }
+sl.numset = element sl:numset {
+     attribute xml:id { xsd:NCName },
+     attribute n { text },
+     attribute noid { text },
+     attribute sort { text },
+     sl.num*
+}
+sl.num = element sl:num {
+     attribute n { text },
+     attribute ref { text },
+     attribute oid { text },
+     attribute rep { text },
+     attribute set { text },
+     attribute sort { text }
+}
+
+sl.metrology = element sl:metrology { empty }
 
 g.d =
   element g:d {

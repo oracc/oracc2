@@ -117,6 +117,7 @@ asl_bld_init(void)
   sl->m_links = memo_init(sizeof(Link), 512);
   sl->p = pool_init();
   sl->compounds = list_create(LIST_SINGLE);
+  sl->nums = list_create(LIST_SINGLE);
 
   sl->notes = new_inst(sl);
   sl->notes->type = 'S';
@@ -241,6 +242,8 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 		}
 	    }		
 	}
+      if (tp->root && tp->root->kids && !strcmp(tp->root->kids->name, "g:n"))
+	list_add(sl->nums, tokp);
       tokp->gdl = tp->root;
       tokp->gdl->name = "g:w";
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);

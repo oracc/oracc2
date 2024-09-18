@@ -281,12 +281,17 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
   
   gp->k = collate_makekey(pool_copy(gp->b, gspool));
 
+  const char *d;
   if (r)
     {
       if ('n' == *r)
 	gp->r = 1000;
       else if ('N' == *r)
 	gp->r = 2000;
+      else if ((d = strchr((ccp)r, '/')))
+	{
+	  gp->r = ((double)atoi((ccp)r)) / ((double)atoi(++d));
+	}
       else
 	gp->r = atoi((ccp)r);
     }
@@ -521,7 +526,7 @@ gsort_show_sub(FILE *fp, GS_head *gsp)
 		}
 	      fputc(']', fp);
 	    }
-	  fprintf(fp, "; %d; %d}", gip->x, gip->r);
+	  fprintf(fp, "; %d; %0.2f}", gip->x, gip->r);
 	}
       fputc('\n', fp);
     }

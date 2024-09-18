@@ -60,6 +60,17 @@ sx_w_jox_init(void)
 }
 
 static void
+sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
+{
+  sx_numbers(sl);
+#if 0
+  struct sl_token *tokp;
+  for (tokp = list_first(sl->nums); tokp; tokp = list_next(sl->nums))
+    fprintf(stderr, "tokp-num = %s\n", tokp->t);
+#endif
+}
+
+static void
 sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 {
   const char **keys;
@@ -222,6 +233,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
   else if (p == sx_pos_term)
     {
       sx_w_jx_homophones(f, sl);
+      sx_w_jx_numbers(f, sl);
       joxer_ee(&sl->eloc, "sl:signlist");
       hash_free(xidseen, NULL);
     }
