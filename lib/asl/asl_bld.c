@@ -201,7 +201,7 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
   return tp;
 }
 
-static void
+int
 asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority)
 {
   struct sl_token *htp = hash_find(sl->hnums, n);
@@ -212,15 +212,17 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
       tokp->priority = priority;
       if (tokp->gdl && tokp->gdl->kids && !strcmp(tokp->gdl->kids->name, "g:n"))
 	{
-	  if ( tokp->gdl->kids &&  tokp->gdl->kids->kids && tokp->gdl->kids->kids->next)
+	  if (tokp->gdl->kids &&  tokp->gdl->kids->kids && tokp->gdl->kids->kids->next)
 	    {
 	      hash_add(sl->hnums, n, tokp);
 	      const uchar *txt = (uccp)tokp->gdl->kids->kids->next->text;
-	      /* ensure that future set names are token */
+	      /* ensure that future set names are tokens */
 	      (void)asl_bld_token(locp, sl, pool_copy(g_uc(txt), sl->p), 0);
+	      return 1;
 	    }
 	}
     }
+  return 0;
 }
 
 /* All of the list entries in @listdef are processed here as literals;

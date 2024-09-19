@@ -96,7 +96,13 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 		    np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
 		}
 	      else
-		fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+		{
+		  s = hash_find(sl->hsentry, g_uc(tp->t));
+		  if (s)
+		    np->oid = (uccp)s->oid;
+		  else
+		    fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+		}
 	    }
 	}
     }
@@ -146,10 +152,19 @@ reset_num_tok(struct sl_signlist *sl, struct numvmap_tab *np, struct sl_token *t
   while (*t)
     *b++ = *t++;
   *b = '\0';
-  struct sl_token *tokp = asl_bld_token(NULL, sl, pool_copy((uccp)buf, sl->p), 0);
-  tokp->s = tp->s;
-  tokp->priority = tp->priority;
-  return tokp;
+  uchar *n =  pool_copy((uccp)buf, sl->p);
+  struct sl_token *tokp = asl_bld_token(NULL, sl, n, 0);
+  if (asl_bld_num(NULL, sl, n, tokp, 3))
+    {
+      /* This is strange but true; we re-reset the text of the reset
+	 tokp to be the original value. We do this so the value maps
+	 to an OID in sx_num_data */
+      tokp->t = tp->t;
+      tokp->s = tp->s;
+      return tokp;
+    }
+  else
+    return NULL;
 }
 
 void
@@ -172,15 +187,18 @@ sx_numbers(struct sl_signlist *sl)
 	  struct numvmap_tab *np = numvmap((ccp)set, strlen((ccp)set));
 	  if (np)
 	    t = reset_num_tok(sl, np, t);
-	  sx_num_data(sl, &sl->numbers[j], t);
-	  if (sl->numbers[j].oid)
+	  if (t)
 	    {
-	      char key[strlen((ccp)sl->numbers[j].oid)+strlen((ccp)sl->numbers[j].set)+2];
-	      sprintf(key, "%s:%s", sl->numbers[j].oid, sl->numbers[j].set);
-	      if (!hash_find(seen, (uccp)key))
+	      sx_num_data(sl, &sl->numbers[j], t);
+	      if (sl->numbers[j].oid)
 		{
-		  hash_add(seen, pool_copy((uccp)key, sl->p), "");
-		  ++j;
+		  char key[strlen((ccp)sl->numbers[j].oid)+strlen((ccp)sl->numbers[j].set)+2];
+		  sprintf(key, "%s:%s", sl->numbers[j].oid, sl->numbers[j].set);
+		  if (!hash_find(seen, (uccp)key))
+		    {
+		      hash_add(seen, pool_copy((uccp)key, sl->p), "");
+		      ++j;
+		    }
 		}
 	    }
 	}

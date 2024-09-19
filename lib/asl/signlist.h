@@ -494,6 +494,7 @@ extern void asl_bld_sysdef(Mloc *locp, struct sl_signlist *sl, const char *name,
 extern void asl_bld_images(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 extern void asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
 extern void asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag);
+extern int asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority);
 extern void asl_bld_aka(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);
 extern void asl_bld_smap(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);
 extern void asl_bld_pname(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);
