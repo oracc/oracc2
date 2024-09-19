@@ -319,7 +319,8 @@ gdl_mod_wrap_q(Node *np)
 	      sprintf((char*)c, "%s%s", ((gvl_g*)np->user)->orig, res);
 	    }
 
-	  if (c && gvl_lookup(c))
+	  const char *oid = NULL;
+	  if (c && (oid = (ccp)gvl_lookup(c)))
 	    {
 	      if (gdl_orig_mode)
 		np->text = (ccp)o;
@@ -327,6 +328,7 @@ gdl_mod_wrap_q(Node *np)
 		np->text = (ccp)c;
 	      ng->c10e = c;
 	      ng->orig = o;
+	      ng->oid = oid;
 	      np->user = ng;
 #if 0	      
 	      ((gvl_g*)np->user)->c10e = c;
