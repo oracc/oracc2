@@ -202,15 +202,20 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
 }
 
 static void
-asl_bld_num(struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority)
+asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority)
 {
-  /* check seen; if found; check priority and replace if incoming priority is lower */
   struct sl_token *htp = hash_find(sl->hnums, n);
   if (!htp || htp->priority > priority)
     {
       tokp->priority = priority;
       if (tokp->gdl && tokp->gdl->kids && !strcmp(tokp->gdl->kids->name, "g:n"))
-	hash_add(sl->hnums, n, tokp);
+	{
+	  if ( tokp->gdl->kids &&  tokp->gdl->kids->kids &&  tokp->gdl->kids->kids->next)
+	    {
+	      hash_add(sl->hnums, n, tokp);
+	      (void)asl_bld_token(locp, sl, (uchar*)tokp->gdl->kids->kids->next->text, 0);
+	    }
+	}
     }
 }
 
@@ -522,7 +527,7 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
       check_flags(locp, (char*)n, &query, &literal);
 
       struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
-      asl_bld_num(sl, (ucp)n, tp, 2);
+      asl_bld_num(locp, sl, (ucp)n, tp, 2);
 
       if (sl->curr_sign->hfentry && hash_find(sl->curr_sign->hfentry, n))
 	{
@@ -1079,7 +1084,7 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
 
   if (type == sx_tle_sign) /* might need to allow compoundonly also */
-    asl_bld_num(sl, (ucp)n, tp, 1);
+    asl_bld_num(locp, sl, (ucp)n, tp, 1);
 
   sl->curr_form = NULL;
   sl->curr_value = NULL;
@@ -1424,7 +1429,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
     }
 
   tp = asl_bld_token(locp, sl, (ucp)n, 0);
-  asl_bld_num(sl, (ucp)n, tp, 3);
+  asl_bld_num(locp, sl, (ucp)n, tp, 3);
   
   if (strlen((ccp)n) > 3)
     {

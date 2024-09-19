@@ -49,7 +49,10 @@ gdlparse_deep(Node *np, void *mptr)
 	  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
 	  gdl_setup_buffer((char*)pool_copy((ucp)gp->sign, gdlpool));
 	  gdl_set_tree(tp);
-	  gdl_lex_init(m->file, m->line);
+	  if (m)
+	    gdl_lex_init(m->file, m->line);
+	  else
+	    gdl_lex_init("<string>", 1);
 	  gdlparse();
 	  gdl_wrapup_buffer();
 	  gp->deep = tp->root->kids;
@@ -72,7 +75,10 @@ gdlparse_string(Mloc *m, char *s)
   
   gdl_setup_buffer(s2);
   gdl_set_tree(tp);
-  gdl_lex_init(m->file, m->line);
+  if (m)
+    gdl_lex_init(m->file, m->line);
+  else
+    gdl_lex_init("<string>", 1);    
   gdlparse();
   gdl_wrapup_buffer();
   free(s2);

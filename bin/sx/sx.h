@@ -43,6 +43,12 @@ struct sx_functions
     const char *fname;
   };
 
+struct numvmap_tab
+{
+  const char *name;
+  const char *asif;
+};
+
 extern Hash *parent_sl;
 extern const char *parent_sl_project;
 extern int unicode_from_parent;
@@ -122,5 +128,7 @@ extern unsigned char *sx_oids_of(struct sl_signlist *sl, unsigned const char *sn
 
 extern void sx_ldata_sign_inst(struct sl_signlist *sl, struct sl_inst *sip);
 extern void sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
+
+extern struct numvmap_tab *numvmap (register const char *str, register size_t len);
 
 #endif/*SX_H_*/

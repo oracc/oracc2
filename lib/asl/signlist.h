@@ -348,6 +348,8 @@ struct sl_number
   const unsigned char *rep;
   const unsigned char *oid;
   struct sl_token *t;
+  int setsort; /* sl_token t->s is sort code for entire grapheme;
+		  setsort is sort code for bare 'set' member */
 #if 0  
   double val;
   int sort;

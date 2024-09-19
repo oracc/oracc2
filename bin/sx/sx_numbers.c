@@ -5,6 +5,7 @@
 #include <sx.h>
 
 static Hash *numsets;
+static uchar eng[4];
 
 static int nums_cmp(const void *a, const void *b)
 {
@@ -24,6 +25,21 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   np->t = tp;
   np->rep = (uccp)tp->gdl->kids->kids->text;
   np->set = (uccp)tp->gdl->kids->kids->next->text;
+
+  struct sl_token *set_tok = hash_find(sl->htoken, np->set);
+  if (set_tok)
+    np->setsort = set_tok->s;
+  else
+    fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);
+  
+  if (strchr((ccp)np->set, '~'))
+    {
+      uchar buf[strlen((ccp)np->set)+1];
+      strcpy((char*)buf, (ccp)np->set);
+      uchar *tilde = (uchar*)strchr((ccp)buf, '~');
+      *tilde = '\0';
+      np->set = pool_copy(buf, sl->p);
+    }
   if (!gvl_looks_like_sname(np->set))
     np->set = pool_copy(gvl_ucase((uchar*)np->set), sl->p);
   if (!hash_find(numsets, np->set))
@@ -31,23 +47,27 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   np->oid = (uccp)tp->gsig;
   if ('q' == *np->oid)
     {
-      struct sl_form *f = hash_find(sl->hfentry, tp->t);
-      if (f)
-	{
-	  np->oid = (uccp)f->oid;
-	}
+      struct sl_sign *s = hash_find(sl->hsentry, tp->t);
+      if (s)
+	np->oid = (uccp)s->oid;
       else
 	{
-	  struct sl_value *v = hash_find(sl->hventry, tp->t);
-	  if (v)
-	    {
-	      if (v->sowner)
-		np->oid = (uccp)v->sowner->oid;
-	      else if (v->fowners)
-		np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
-	    }
+	  struct sl_form *f = hash_find(sl->hfentry, tp->t);
+	  if (f)
+	    np->oid = (uccp)f->oid;
 	  else
-	    fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+	    {
+	      struct sl_value *v = hash_find(sl->hventry, tp->t);
+	      if (v)
+		{
+		  if (v->sowner)
+		    np->oid = (uccp)v->sowner->oid;
+		  else if (v->fowners)
+		    np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
+		}
+	      else
+		fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+	    }
 	}
     }
 }
@@ -66,7 +86,13 @@ sx_numsets(struct sl_signlist *sl)
 	{
 	  if (strcmp((ccp)sl->numbers[j-1].set, (ccp)sl->numbers[j].set))
 	    {
-	      ++i;
+	      if (++i == sl->nnumsets)
+		{
+		  fprintf(stderr,
+			  "sx_numsets: numset overflow (have %d but trying to use #%d)\n",
+			  sl->nnumsets, i);
+		  return;
+		}
 	      sl->numsets[i].last = sl->numsets[i].from = j;
 	    }
 	  else
@@ -75,9 +101,33 @@ sx_numsets(struct sl_signlist *sl)
     }
 }
 
+static struct sl_token *
+reset_num_tok(struct sl_signlist *sl, struct numvmap_tab *np, struct sl_token *tp)
+{
+  char buf[strlen((ccp)np->asif)+strlen(tp->gdl->text)];
+  char *t = (char*)tp->gdl->text, *b = buf;
+  while ('(' != *t)
+    *b++ = *t++;
+  *b++ = *t++;
+  strcpy(b, (ccp)np->asif);
+  b += strlen(b);
+  while (')' != *t)
+    ++t;
+  while (*t)
+    *b++ = *t++;
+  *b = '\0';
+  struct sl_token *tokp = asl_bld_token(NULL, sl, pool_copy((uccp)buf, sl->p), 0);
+  tokp->s = tp->s;
+  tokp->priority = tp->priority;
+  return tokp;
+}
+
 void
 sx_numbers(struct sl_signlist *sl)
 {
+  memset(eng, '\0', 4);
+  wctomb((char*)eng, 0x014b);
+  
   const uchar **k = (const uchar **)hash_keys2(sl->hnums, &sl->nnumbers);
   sl->numbers = calloc(sl->nnumbers, sizeof(struct sl_number));
   numsets = hash_create(100);
@@ -86,16 +136,20 @@ sx_numbers(struct sl_signlist *sl)
   for (i=j=0; k[i]; ++i)
     {
       struct sl_token *t = hash_find(sl->hnums, k[i]);
-      if (t && t->gdl && t->gdl->kids && t->gdl->kids->kids)
+      if (t && t->gdl && t->gdl->kids && t->gdl->kids->kids &&  t->gdl->kids->kids->next)
 	{
+	  const uchar *set = (uccp)t->gdl->kids->kids->next->text;
+	  struct numvmap_tab *np = numvmap((ccp)set, strlen((ccp)set));
+	  if (np)
+	    t = reset_num_tok(sl, np, t);
 	  sx_num_data(sl, &sl->numbers[j], t);
 	  if (sl->numbers[j].oid)
 	    {
-	      char key[strlen(sl->numbers[j].oid)+strlen(sl->numbers[j].set)+2];
+	      char key[strlen((ccp)sl->numbers[j].oid)+strlen((ccp)sl->numbers[j].set)+2];
 	      sprintf(key, "%s:%s", sl->numbers[j].oid, sl->numbers[j].set);
-	      if (!hash_find(seen, key))
+	      if (!hash_find(seen, (uccp)key))
 		{
-		  hash_add(seen, pool_copy(key, sl->p), "");
+		  hash_add(seen, pool_copy((uccp)key, sl->p), "");
 		  ++j;
 		}
 	    }
