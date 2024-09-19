@@ -71,7 +71,7 @@ sx_numsets(struct sl_signlist *sl)
 	    }
 	  else
 	    sl->numsets[i].last = j;
-	}	  
+	}
     }
 }
 
@@ -82,13 +82,27 @@ sx_numbers(struct sl_signlist *sl)
   sl->numbers = calloc(sl->nnumbers, sizeof(struct sl_number));
   numsets = hash_create(100);
   int i, j;
+  Hash *seen = hash_create(sl->nnumbers/10);
   for (i=j=0; k[i]; ++i)
     {
       struct sl_token *t = hash_find(sl->hnums, k[i]);
       if (t && t->gdl && t->gdl->kids && t->gdl->kids->kids)
-	sx_num_data(sl, &sl->numbers[j++], t);
+	{
+	  sx_num_data(sl, &sl->numbers[j], t);
+	  if (sl->numbers[j].oid)
+	    {
+	      char key[strlen(sl->numbers[j].oid)+strlen(sl->numbers[j].set)+2];
+	      sprintf(key, "%s:%s", sl->numbers[j].oid, sl->numbers[j].set);
+	      if (!hash_find(seen, key))
+		{
+		  hash_add(seen, pool_copy(key, sl->p), "");
+		  ++j;
+		}
+	    }
+	}
     }
   sl->nnumbers = j;
+  
   qsort(sl->numbers, sl->nnumbers, sizeof(struct sl_number), nums_cmp);
   sx_numsets(sl);
   for (i = 0; i < sl->nnumsets; ++i)
@@ -96,6 +110,7 @@ sx_numbers(struct sl_signlist *sl)
       fprintf(stderr, "set %d = %s\n", i, sl->numbers[sl->numsets[i].from].set);
       int j;  
       for (j = sl->numsets[i].from; j <= sl->numsets[i].last; ++j)
-	fprintf(stderr, "\t%s %s %s\n", sl->numbers[j].oid, sl->numbers[j].set, sl->numbers[j].rep);
+	fprintf(stderr, "\t%s %s %s < %s\n", sl->numbers[j].oid,
+		sl->numbers[j].set, sl->numbers[j].rep, sl->numbers[j].t->t);
     }
 }
