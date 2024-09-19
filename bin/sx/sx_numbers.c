@@ -7,16 +7,44 @@
 static Hash *numsets;
 static uchar eng[4];
 
-static int nums_cmp(const void *a, const void *b)
+static int
+nums_frac_cmp(const uchar *n1, const uchar *d1, const uchar *n2, const uchar *d2)
 {
-  struct sl_token *t1 = ((struct sl_number*)a)->t;
-  struct sl_token *t2 = ((struct sl_number*)b)->t;
-  if (t1->s > t2->s)
+  double dbl1 = strtod((ccp)n1,NULL) / strtod((ccp)d1,NULL), dbl2 = strtod((ccp)n2,NULL) / strtod((ccp)d2,NULL);
+  if (dbl1 > dbl2)
     return 1;
-  else if (t1->s < t2->s)
+  else if (dbl1 < dbl2)
     return -1;
+  return 0;
+}
+
+static int
+nums_rep_cmp(const uchar *r1, const uchar *r2)
+{
+  const uchar *s1 = (uccp)strchr((ccp)r1,'/'), *s2 = (uccp)strchr((ccp)r2,'/');
+  if (s1 && s2)
+    return nums_frac_cmp(r1, s1+1, r2, s2+1);
+  else if (s2)
+    return 1; /* integer must be > frac */
+  else if (s1)
+    return -11; /* frac must be < integer */
   else
-    return 0;
+    return atoi((ccp)r1) - atoi((ccp)r2);
+}
+
+static int
+nums_cmp(const void *a, const void *b)
+{
+  const struct sl_number *n1 = a;
+  const struct sl_number *n2 = b;
+
+  if (n1->setsort != n2->setsort)
+    return n1->setsort - n2->setsort;
+
+  if (strcmp((ccp)n1->rep, (ccp)n2->rep))
+    return nums_rep_cmp(n1->rep, n2->rep);
+  
+  return n1->t->s - n2->t->s;
 }
 
 static void
@@ -26,12 +54,6 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   np->rep = (uccp)tp->gdl->kids->kids->text;
   np->set = (uccp)tp->gdl->kids->kids->next->text;
 
-  struct sl_token *set_tok = hash_find(sl->htoken, np->set);
-  if (set_tok)
-    np->setsort = set_tok->s;
-  else
-    fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);
-  
   if (strchr((ccp)np->set, '~'))
     {
       uchar buf[strlen((ccp)np->set)+1];
@@ -40,8 +62,16 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
       *tilde = '\0';
       np->set = pool_copy(buf, sl->p);
     }
+
   if (!gvl_looks_like_sname(np->set))
-    np->set = pool_copy(gvl_ucase((uchar*)np->set), sl->p);
+    np->set = pool_copy(g_uc((uchar*)np->set), sl->p);
+  
+  struct sl_token *set_tok = hash_find(sl->htoken, np->set);
+  if (set_tok)
+    np->setsort = set_tok->s;
+  else
+    fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);  
+
   if (!hash_find(numsets, np->set))
     hash_add(numsets, np->set, "");
   np->oid = (uccp)tp->gsig;

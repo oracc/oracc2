@@ -205,6 +205,8 @@ static void
 asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority)
 {
   struct sl_token *htp = hash_find(sl->hnums, n);
+  if (!htp && !gvl_looks_like_sname(n))
+    htp = hash_find(sl->hnums, g_uc(n));
   if (!htp || htp->priority > priority)
     {
       tokp->priority = priority;
