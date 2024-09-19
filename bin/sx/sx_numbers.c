@@ -43,7 +43,7 @@ nums_cmp(const void *a, const void *b)
 
   if (strcmp((ccp)n1->rep, (ccp)n2->rep))
     return nums_rep_cmp(n1->rep, n2->rep);
-  
+
   return n1->t->s - n2->t->s;
 }
 

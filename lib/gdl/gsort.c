@@ -168,11 +168,22 @@ gsort_node(Node *np, List *lp)
 	  list_add(lp, &gsort_null_item);
 	  pending_r = 0;
 	}
+      {
+	Node *npp;
+	for (npp = np->kids; npp; npp = npp->next)
+	  gsort_node(npp, lp);
+      }
       break;
     case 'n':
       list_add(lp, gsort_item(2, (uccp)np->text,
 			      np->kids ? (uccp)np->kids->next->text : (uccp)np->text,
 			      np->kids ? (uccp)np->kids->text : (uccp)np->text));
+      {
+	Node *npp;
+	if (np->kids && np->kids->next && np->kids->next->next)
+	  for (npp = np->kids->next->next; npp; npp = npp->next)
+	    gsort_node(npp, lp);
+      }
       break;
     case 'd':
       /* For d = '3×' store the multiplier and don't add the TIMES */
