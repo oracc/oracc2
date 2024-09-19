@@ -117,7 +117,7 @@ asl_bld_init(void)
   sl->m_links = memo_init(sizeof(Link), 512);
   sl->p = pool_init();
   sl->compounds = list_create(LIST_SINGLE);
-  sl->nums = list_create(LIST_SINGLE);
+  sl->hnums = hash_create(1000);
 
   sl->notes = new_inst(sl);
   sl->notes->type = 'S';
@@ -201,6 +201,19 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
   return tp;
 }
 
+static void
+asl_bld_num(struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority)
+{
+  /* check seen; if found; check priority and replace if incoming priority is lower */
+  struct sl_token *htp = hash_find(sl->hnums, n);
+  if (!htp || htp->priority > priority)
+    {
+      tokp->priority = priority;
+      if (tokp->gdl && tokp->gdl->kids && !strcmp(tokp->gdl->kids->name, "g:n"))
+	hash_add(sl->hnums, n, tokp);
+    }
+}
+
 /* All of the list entries in @listdef are processed here as literals;
  * this means that when outputting <sl:name> we need to use
  * tokp->gdl->text if tokp->gdl->kids is NULL.
@@ -208,6 +221,9 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
  * We could reparse literals if they occur in another context, but it
  * should be safe to use the literal because listdef entries have a
  * limited syntax.
+ *
+ * 2024-09-18: overload 'literal': if it is -1 it means we are adding
+ * a homophone base, can't be a number.
  *
  */
 struct sl_token *
@@ -222,7 +238,7 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
       extern int asl_literal_flag;
       tokp = memo_new(sl->m_tokens);
       tokp->t = t;
-      if (literal || asl_literal_flag)
+      if (literal > 0 || asl_literal_flag)
 	tp = gdl_literal(locp, (char*)t);
       else
 	{
@@ -242,8 +258,7 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 		}
 	    }		
 	}
-      if (tp->root && tp->root->kids && !strcmp(tp->root->kids->name, "g:n"))
-	list_add(sl->nums, tokp);
+      tokp->priority = 100;
       tokp->gdl = tp->root;
       tokp->gdl->name = "g:w";
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);
@@ -507,6 +522,7 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
       check_flags(locp, (char*)n, &query, &literal);
 
       struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
+      asl_bld_num(sl, (ucp)n, tp, 2);
 
       if (sl->curr_sign->hfentry && hash_find(sl->curr_sign->hfentry, n))
 	{
@@ -1062,6 +1078,9 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   check_flags(locp, (char*)n, &query, &literal);
   struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
 
+  if (type == sx_tle_sign) /* might need to allow compoundonly also */
+    asl_bld_num(sl, (ucp)n, tp, 1);
+
   sl->curr_form = NULL;
   sl->curr_value = NULL;
 
@@ -1359,7 +1378,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   if (!tp)
     {
       base = pool_copy(base, sl->p);
-      (void)asl_bld_token(locp, sl, (ucp)base, 0); /* guarantee that every base has a sort value */
+      (void)asl_bld_token(locp, sl, (ucp)base, -1); /* guarantee that every base has a sort value */
     }
   else
     base = tp->t;
@@ -1404,7 +1423,8 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
       return;
     }
 
-  (void)asl_bld_token(locp, sl, (ucp)n, 0);
+  tp = asl_bld_token(locp, sl, (ucp)n, 0);
+  asl_bld_num(sl, (ucp)n, tp, 3);
   
   if (strlen((ccp)n) > 3)
     {

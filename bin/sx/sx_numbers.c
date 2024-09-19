@@ -25,22 +25,30 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   np->rep = (uccp)tp->gdl->kids->kids->text;
   np->set = (uccp)tp->gdl->kids->kids->next->text;
   if (!gvl_looks_like_sname(np->set))
-    np->set = pool_copy(gvl_ucase(np->set), sl->p);
+    np->set = pool_copy(gvl_ucase((uchar*)np->set), sl->p);
   if (!hash_find(numsets, np->set))
     hash_add(numsets, np->set, "");
-  np->oid = (ccp)tp->gsig;
+  np->oid = (uccp)tp->gsig;
   if ('q' == *np->oid)
     {
-      struct sl_value *v = hash_find(sl->hventry, tp->t);
-      if (v)
+      struct sl_form *f = hash_find(sl->hfentry, tp->t);
+      if (f)
 	{
-	  if (v->sowner)
-	    np->oid = (ccp)v->sowner->oid;
-	  else if (v->fowners)
-	    np->oid = ((struct sl_inst *)list_first(v->fowners))->u.f->oid;
+	  np->oid = (uccp)f->oid;
 	}
       else
-	fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+	{
+	  struct sl_value *v = hash_find(sl->hventry, tp->t);
+	  if (v)
+	    {
+	      if (v->sowner)
+		np->oid = (uccp)v->sowner->oid;
+	      else if (v->fowners)
+		np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
+	    }
+	  else
+	    fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+	}
     }
 }
 
@@ -56,8 +64,11 @@ sx_numsets(struct sl_signlist *sl)
     {
       if (j)
 	{
-	  if (strcmp(sl->numbers[j-1].set, sl->numbers[j].set))
-	    sl->numsets[++i].from = j;
+	  if (strcmp((ccp)sl->numbers[j-1].set, (ccp)sl->numbers[j].set))
+	    {
+	      ++i;
+	      sl->numsets[i].last = sl->numsets[i].from = j;
+	    }
 	  else
 	    sl->numsets[i].last = j;
 	}	  
@@ -67,18 +78,17 @@ sx_numsets(struct sl_signlist *sl)
 void
 sx_numbers(struct sl_signlist *sl)
 {
-  sl->numbers = calloc(list_len(sl->nums), sizeof(struct sl_number));
+  const uchar **k = (const uchar **)hash_keys2(sl->hnums, &sl->nnumbers);
+  sl->numbers = calloc(sl->nnumbers, sizeof(struct sl_number));
   numsets = hash_create(100);
-  struct sl_token *t;
-  int i;
-  for (i=0,t = list_first(sl->nums); t; t = list_next(sl->nums),++i)
+  int i, j;
+  for (i=j=0; k[i]; ++i)
     {
+      struct sl_token *t = hash_find(sl->hnums, k[i]);
       if (t && t->gdl && t->gdl->kids && t->gdl->kids->kids)
-	sx_num_data(sl, &sl->numbers[i], t);
-      else
-	--i;
+	sx_num_data(sl, &sl->numbers[j++], t);
     }
-  sl->nnumbers = i;
+  sl->nnumbers = j;
   qsort(sl->numbers, sl->nnumbers, sizeof(struct sl_number), nums_cmp);
   sx_numsets(sl);
   for (i = 0; i < sl->nnumsets; ++i)

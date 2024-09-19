@@ -100,7 +100,7 @@ struct sl_signlist
   List *syslists; 		/* list of the lists of @sys that occur in sign or
 		     		   form, so we can generate system tables easily */
   List *images; 		/* list of names of image manifests as char * */
-  List *nums;			/* list of token pointers where gdl is g:n */
+  Hash *hnums;			/* Hash of token pointers where gdl is g:n */
   struct sx_iheader *iheaders;	/* array of header data read from @cmds in image manifests */
   Roco *iarray;			/* images data read into a Roco array */  
   Hash *oid2ucode;
@@ -139,6 +139,7 @@ struct sl_token
 				   literal l*/
   const char *deep;		/* deep sig from gdlsig */
   int s;			/* sort code for token */
+  int priority;			/* for registering nums */
 };
 
 /* Parents of values */

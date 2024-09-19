@@ -41,7 +41,7 @@ static struct sl_inst *clone_inherited(struct sl_signlist *sl, struct sl_inst *i
      @v aₓ
      @form A
 
-   Value aₓ will not be inherit because it will be blocked by @sign A @v a.
+   Value @form A @v a₆ will not be inherited because it will be blocked by @sign A @v a.
  */ 
 
 void
