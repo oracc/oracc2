@@ -212,10 +212,12 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
       tokp->priority = priority;
       if (tokp->gdl && tokp->gdl->kids && !strcmp(tokp->gdl->kids->name, "g:n"))
 	{
-	  if ( tokp->gdl->kids &&  tokp->gdl->kids->kids &&  tokp->gdl->kids->kids->next)
+	  if ( tokp->gdl->kids &&  tokp->gdl->kids->kids && tokp->gdl->kids->kids->next)
 	    {
 	      hash_add(sl->hnums, n, tokp);
-	      (void)asl_bld_token(locp, sl, (uchar*)tokp->gdl->kids->kids->next->text, 0);
+	      const uchar *txt = (uccp)tokp->gdl->kids->kids->next->text;
+	      /* ensure that future set names are token */
+	      (void)asl_bld_token(locp, sl, pool_copy(g_uc(txt), sl->p), 0);
 	    }
 	}
     }
