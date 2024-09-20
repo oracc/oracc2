@@ -322,9 +322,7 @@ sl.numset = element sl:numset {
 sl.num = element sl:num {
      attribute n { text },
      attribute ref { text },
-     attribute oid { text },
      attribute rep { text },
-     attribute set { text },
      attribute sort { text }
 }
 

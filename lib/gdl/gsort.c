@@ -19,7 +19,7 @@
 int gsort_trace = 0; /* if this is non-zero the item structures for
 			each sequence are printed on stderr */
 
-#define GSORT_CMP_TRACE 0 /* if defined trace every gsort cmp call in gsort.log */
+#undef GSORT_CMP_TRACE /* if defined trace every gsort cmp call in gsort.log */
 
 /**
  *

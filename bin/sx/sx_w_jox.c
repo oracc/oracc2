@@ -63,11 +63,45 @@ static void
 sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 {
   sx_numbers(sl);
-#if 0
-  struct sl_token *tokp;
-  for (tokp = list_first(sl->nums); tokp; tokp = list_next(sl->nums))
-    fprintf(stderr, "tokp-num = %s\n", tokp->t);
-#endif
+  joxer_eaa(&sl->mloc, "sl:numbers", NULL);
+  int i;
+#define nsfrom_num(ns) sl->numbers[sl->numsets[ns].from]
+#define nslast_num(ns) sl->numbers[sl->numsets[ns].last]
+  for (i = 0; i < sl->nnumsets; ++i)
+    {
+      char nsid[64];
+      sprintf(nsid, "%s.ns%d",nsfrom_num(i).oid, i);
+      char setsort[10];
+      sprintf(setsort, "%d", nsfrom_num(i).setsort);
+      ratts = rnvval_aa("x", 
+			"xml:id", nsid,
+			"n", nsfrom_num(i).set,
+			"noid", nsfrom_num(i).oid,
+			"sort", setsort,
+			NULL);
+      joxer_ao("j:numsets");
+      joxer_ea(&sl->mloc, "sl:numset", ratts);
+      joxer_ao("j:nums");
+      int j;
+      for (j = sl->numsets[i].from; j <= sl->numsets[i].last; ++j)
+	{
+	  struct sl_number *np = &sl->numbers[j];
+	  char sort[10];
+	  sprintf(sort, "%d", np->t->s);
+	  ratts = rnvval_aa("x",
+			    "n", np->t->t,
+			    "ref", np->oid,
+			    "rep", np->rep,
+			    "sort", sort,
+			    NULL
+			    );
+	  joxer_ec(&sl->mloc, "sl:num", ratts);
+	}
+      joxer_ac();/*close j:numsets*/
+      joxer_ee(&sl->mloc, "sl:numset");
+      joxer_ac();/*close j:numsets*/
+    }
+  joxer_eea(&sl->mloc, "sl:numbers");  
 }
 
 static void

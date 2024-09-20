@@ -10,7 +10,8 @@ static uchar eng[4];
 static int
 nums_frac_cmp(const uchar *n1, const uchar *d1, const uchar *n2, const uchar *d2)
 {
-  double dbl1 = strtod((ccp)n1,NULL) / strtod((ccp)d1,NULL), dbl2 = strtod((ccp)n2,NULL) / strtod((ccp)d2,NULL);
+  double dbl1 = strtod((ccp)n1,NULL) / strtod((ccp)d1,NULL),
+    dbl2 = strtod((ccp)n2,NULL) / strtod((ccp)d2,NULL);
   if (dbl1 > dbl2)
     return 1;
   else if (dbl1 < dbl2)
