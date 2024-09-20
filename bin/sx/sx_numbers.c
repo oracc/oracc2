@@ -76,42 +76,62 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   if (set_tok)
     np->setsort = set_tok->s;
   else
-    fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);  
+    fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);
 
   if (!hash_find(numsets, np->set))
     hash_add(numsets, np->set, "");
-  np->oid = (uccp)tp->gsig;
+  /*np->oid = (uccp)tp->gsig;*/
+#if 0
   if ('q' == *np->oid)
     {
+#endif
       struct sl_sign *s = hash_find(sl->hsentry, tp->t);
       if (s)
-	np->oid = (uccp)s->oid;
+	{
+	  np->oid = (uccp)s->oid;
+	  if (s->xref)
+	    np->ref = (uccp)((struct sl_inst *)list_first(s->xref->insts))->iid;
+	  else
+	    np->ref = (uccp)s->oid;
+	}
       else
 	{
-	  struct sl_form *f = hash_find(sl->hfentry, tp->t);
-	  if (f)
-	    np->oid = (uccp)f->oid;
-	  else
+	  struct sl_value *v = hash_find(sl->hventry, tp->t);
+	  if (v)
 	    {
-	      struct sl_value *v = hash_find(sl->hventry, tp->t);
-	      if (v)
+	      if (v->sowner)
 		{
-		  if (v->sowner)
-		    np->oid = (uccp)v->sowner->oid;
-		  else if (v->fowners)
-		    np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
-		}
-	      else
-		{
-		  s = hash_find(sl->hsentry, g_uc(tp->t));
-		  if (s)
-		    np->oid = (uccp)s->oid;
+		  np->oid = (uccp)v->sowner->oid;
+		  if (v->sowner->xref)
+		    np->ref = (uccp)((struct sl_inst *)list_first(v->sowner->xref->insts))->iid;
 		  else
-		    fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+		    np->ref = (uccp)v->sowner->oid;
+		}
+	      else if (v->fowners)
+		{
+		  np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
+		  np->ref = (uccp)((struct sl_inst *)list_first(v->fowners))->iid;
 		}
 	    }
+	  else
+	    {
+	      s = hash_find(sl->hsentry, g_uc(tp->t));
+	      if (s)
+		{
+		  np->oid = (uccp)s->oid;
+		  if (s->xref)
+		    np->ref = (uccp)((struct sl_inst *)list_first(s->xref->insts))->iid;
+		  else
+		    np->ref = (uccp)s->oid;
+		}
+	      else
+		fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+	    }
 	}
+#if 0
     }
+#endif
+  assert(np->ref != NULL);
 }
 
 static void

@@ -59,6 +59,16 @@ sx_w_jox_init(void)
   return &sx_w_jox_fncs;
 }
 
+static const uchar *
+numset_unit(struct sl_signlist *sl, struct sl_numset *nsp)
+{
+  int k;
+  for (k = nsp->from; k <= nsp->last; ++k)
+    if (!strcmp((ccp)sl->numbers[k].rep, "1"))
+      return sl->numbers[k].oid;
+  return sl->numbers[nsp->from].oid;
+}
+
 static void
 sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 {
@@ -73,10 +83,11 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
       sprintf(nsid, "%s.ns%d",nsfrom_num(i).oid, i);
       char setsort[10];
       sprintf(setsort, "%d", nsfrom_num(i).setsort);
+      const uchar *unit_oid = numset_unit(sl, &sl->numsets[i]);
       ratts = rnvval_aa("x", 
 			"xml:id", nsid,
 			"n", nsfrom_num(i).set,
-			"noid", nsfrom_num(i).oid,
+			"noid", unit_oid,
 			"sort", setsort,
 			NULL);
       joxer_ao("j:numsets");
@@ -90,7 +101,8 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 	  sprintf(sort, "%d", np->t->s);
 	  ratts = rnvval_aa("x",
 			    "n", np->t->t,
-			    "ref", np->oid,
+			    "ref", np->ref,
+			    "oid", np->oid,
 			    "rep", np->rep,
 			    "sort", sort,
 			    NULL

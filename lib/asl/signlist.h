@@ -346,14 +346,11 @@ struct sl_number
 {
   const unsigned char *set;
   const unsigned char *rep;
-  const unsigned char *oid;
+  const unsigned char *ref; /* the eventual xml:id of a sign or form */
+  const unsigned char *oid; /* the oid regardless of whether this is a sign or form */
   struct sl_token *t;
   int setsort; /* sl_token t->s is sort code for entire grapheme;
 		  setsort is sort code for bare 'set' member */
-#if 0  
-  double val;
-  int sort;
-#endif
 };
 
 struct sl_numset

@@ -18,7 +18,11 @@
 <xsl:output method="xml" indent="yes" encoding="utf-8"/>
 
 <xsl:template match="sl:signlist">
-  <xsl:apply-templates select="sl:letter"/> <!--[not(@num='1')]-->
+  <xsl:apply-templates select="sl:letter[not(@num='1')]"/>
+  <xsl:apply-templates select="sl:numbers"/>
+</xsl:template>
+
+<xsl:template match="sl:numbers">
   <ex:document href="{'signlist/00web/numbers.xml'}">
     <esp:page
 	xmlns="http://www.w3.org/1999/xhtml"
@@ -28,30 +32,27 @@
       <html>
 	<head/>
 	<body>
-	  <xsl:choose>
-	    <xsl:when test="/*/@signlist='ogsl'">
-	      <!--
-	      <xsl:call-template name="form-div">
-		<xsl:with-param name="caller" select="'esp'"/>
-		</xsl:call-template>
-		-->
-	      <xsl:for-each select="sl:letter[@num='1']/sl:sign">
-		<xsl:call-template name="sl-letter-sign"/>
-	      </xsl:for-each>
-	    </xsl:when>
-	    <xsl:otherwise>
-	      <xsl:call-template name="mcol">
-		<xsl:with-param name="columns" select="'4'"/>
-		<xsl:with-param name="nodes" select="sl:letter[@num='1']"/>
-		<xsl:with-param name="class" select="'pretty'"/>
-		<xsl:with-param name="tag" select="'letter'"/>
-	      </xsl:call-template>
-	    </xsl:otherwise>
-	  </xsl:choose>
+	  <xsl:call-template name="mcol">
+	    <xsl:with-param name="columns" select="'4'"/>
+	    <xsl:with-param name="nodes" select="sl:numset"/>
+	    <xsl:with-param name="class" select="'pretty'"/>
+	    <xsl:with-param name="tag" select="'numset'"/>
+	  </xsl:call-template>
 	</body>
       </html>
     </esp:page>
   </ex:document>
+</xsl:template>
+
+<xsl:template mode="mcol" match="sl:numset">
+  <td>
+    <p class="sl-numset-name"><xsl:value-of select="@n"/></p>
+    <p class="sl-numset-char noto">
+      <xsl:for-each select="id(@noid)">
+	<xsl:value-of select="sl:ucun"/>
+      </xsl:for-each>
+    </p>
+  </td>
 </xsl:template>
 
 <xsl:template match="sl:letter"> <!-- [not(@num='1')] -->
@@ -116,7 +117,6 @@
 </xsl:template>
 
 <xsl:template match="text()"/>
-
 
 <xsl:template name="sl-letter-sign">
   <p>
