@@ -215,9 +215,20 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
 	  if (tokp->gdl->kids &&  tokp->gdl->kids->kids && tokp->gdl->kids->kids->next)
 	    {
 	      hash_add(sl->hnums, n, tokp);
-	      const uchar *txt = (uccp)tokp->gdl->kids->kids->next->text;
 	      /* ensure that future set names are tokens */
-	      (void)asl_bld_token(locp, sl, pool_copy(g_uc(txt), sl->p), 0);
+	      const uchar *set_n;
+	      struct node *setnode = tokp->gdl->kids->kids->next;
+	      if (!strcmp(setnode->name, "g:c"))
+		{
+		  set_n = (uccp)setnode->kids->text;
+		  struct sl_token *stp = asl_bld_token(locp, sl, pool_copy(g_uc(set_n), sl->p), 0);
+		  tokp->gsig = stp->gsig; /* rewrite the num tok so the gsig is the compound head oid */
+		}
+	      else
+		{
+		  set_n = (uccp)setnode->text;
+		  (void)asl_bld_token(locp, sl, pool_copy(g_uc(set_n), sl->p), 0);
+		}
 	      return 1;
 	    }
 	}

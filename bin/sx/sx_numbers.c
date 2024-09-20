@@ -53,7 +53,12 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 {
   np->t = tp;
   np->rep = (uccp)tp->gdl->kids->kids->text;
-  np->set = (uccp)tp->gdl->kids->kids->next->text;
+
+  struct node *setnode = tp->gdl->kids->kids->next;
+  if (!strcmp(setnode->name, "g:c"))
+    np->set = (uccp)setnode->kids->text;
+  else
+    np->set = (uccp)setnode->text;
 
   if (strchr((ccp)np->set, '~'))
     {
@@ -208,6 +213,8 @@ sx_numbers(struct sl_signlist *sl)
   
   qsort(sl->numbers, sl->nnumbers, sizeof(struct sl_number), nums_cmp);
   sx_numsets(sl);
+#if 0
+  /* This could be refactored as a debug dump */
   for (i = 0; i < sl->nnumsets; ++i)
     {
       fprintf(stderr, "set %d = %s\n", i, sl->numbers[sl->numsets[i].from].set);
@@ -216,4 +223,5 @@ sx_numbers(struct sl_signlist *sl)
 	fprintf(stderr, "\t%s %s %s < %s\n", sl->numbers[j].oid,
 		sl->numbers[j].set, sl->numbers[j].rep, sl->numbers[j].t->t);
     }
+#endif
 }
