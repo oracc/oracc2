@@ -66,7 +66,7 @@ numset_unit(struct sl_signlist *sl, struct sl_numset *nsp)
   for (k = nsp->from; k <= nsp->last; ++k)
     if (!strcmp((ccp)sl->numbers[k].rep, "1"))
       return sl->numbers[k].oid;
-  return sl->numbers[nsp->from].oid;
+  return sl->numbers[nsp->from].ref;
 }
 
 static void
