@@ -539,12 +539,20 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
   
   if (asl_sign_guard(locp, sl, "form"))
     {
-  
+
+      if (minus_flag)
+	{
+	  if (!sl->curr_invalid)
+	    sl->curr_invalid = 2;
+	}
+      else if (sl->curr_invalid == 2)
+	sl->curr_invalid = 0;
+
       sl->curr_value = NULL;
       check_flags(locp, (char*)n, &query, &literal);
 
       struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
-      if (!minus_flag)
+      if (!sl->curr_invalid)
 	asl_bld_num(locp, sl, (ucp)n, tp, 2);
 
       if (sl->curr_sign->hfentry && hash_find(sl->curr_sign->hfentry, n))
@@ -1165,6 +1173,7 @@ asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle t)
 	  sl->curr_sign = NULL;
 	  sl->curr_form = NULL;
 	  sl->curr_inst = NULL;
+	  sl->curr_invalid = 0;
 	}
       else
 	mesg_verr(locp, "mismatched @end");
@@ -1388,6 +1397,14 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
 
   check_flags(locp, (char*)n, &query, &literal);
 
+  if (minus_flag)
+    {
+      if (!sl->curr_invalid)
+	sl->curr_invalid = 3;
+    }
+  else if (sl->curr_invalid == 3)
+    sl->curr_invalid = 0;
+
   /* special case 1/3(|NINDA₂×(ŠE.AŠ)|) and  2/3(|NINDA₂×(ŠE.AŠ.AŠ)|) */
   if ('/' == n[1]
       && (!strcmp((ccp)n, "1/3(|NINDA₂×(ŠE.AŠ)|)") || !strcmp((ccp)n, "2/3(|NINDA₂×(ŠE.AŠ.AŠ)|)")
@@ -1447,7 +1464,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
     }
 
   tp = asl_bld_token(locp, sl, (ucp)n, 0);
-  if (!minus_flag)
+  if (!sl->curr_invalid)
     asl_bld_num(locp, sl, (ucp)n, tp, 3);
   
   if (strlen((ccp)n) > 3)
