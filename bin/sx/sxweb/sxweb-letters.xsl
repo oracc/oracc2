@@ -46,9 +46,15 @@
 
 <xsl:template mode="mcol" match="sl:numset">
   <td>
-    <p class="sl-numset-name"><xsl:value-of select="@n"/></p>
+    <p class="sl-numset-name"
+       ><esp:link
+	    notarget="yes"
+	    url="{concat('/',/*/@project,'/signlist/selpages/',@xml:id,'.html')}"
+			 >
+      <xsl:value-of select="@n"/></esp:link
+      ></p>
     <p class="sl-numset-char noto">
-      <xsl:for-each select="id(@ref)">
+      <xsl:for-each select="id(@noid)">
 	<xsl:value-of select="sl:ucun"/>
       </xsl:for-each>
     </p>
