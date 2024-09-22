@@ -544,7 +544,8 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
       check_flags(locp, (char*)n, &query, &literal);
 
       struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
-      asl_bld_num(locp, sl, (ucp)n, tp, 2);
+      if (!minus_flag)
+	asl_bld_num(locp, sl, (ucp)n, tp, 2);
 
       if (sl->curr_sign->hfentry && hash_find(sl->curr_sign->hfentry, n))
 	{
@@ -1100,7 +1101,7 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   check_flags(locp, (char*)n, &query, &literal);
   struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
 
-  if (type == sx_tle_sign) /* might need to allow compoundonly also */
+  if (type == sx_tle_sign && !minus_flag) /* might need to allow compoundonly also */
     asl_bld_num(locp, sl, (ucp)n, tp, 1);
 
   sl->curr_form = NULL;
@@ -1446,7 +1447,8 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
     }
 
   tp = asl_bld_token(locp, sl, (ucp)n, 0);
-  asl_bld_num(locp, sl, (ucp)n, tp, 3);
+  if (!minus_flag)
+    asl_bld_num(locp, sl, (ucp)n, tp, 3);
   
   if (strlen((ccp)n) > 3)
     {

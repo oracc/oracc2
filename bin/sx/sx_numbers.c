@@ -55,7 +55,9 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   np->rep = (uccp)tp->gdl->kids->kids->text;
 
   struct node *setnode = tp->gdl->kids->kids->next;
-  if (!strcmp(setnode->name, "g:c"))
+
+  /* there are few compound numbers so for now we special case them */
+  if (!strcmp(setnode->name, "g:c") && strstr(setnode->kids->text, "NINDA")) /* group NINDA₂×X items */
     np->set = (uccp)setnode->kids->text;
   else
     np->set = (uccp)setnode->text;
@@ -90,7 +92,11 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 	{
 	  np->oid = (uccp)s->oid;
 	  if (s->xref)
-	    np->ref = (uccp)((struct sl_inst *)list_first(s->xref->insts))->iid;
+	    {
+	      struct sl_inst *ip = list_first(s->xref->insts);
+	      np->ref = (uccp)ip->iid;
+	      np->oid = (uccp)ip->u.f->oid;
+	    }
 	  else
 	    np->ref = (uccp)s->oid;
 	}
@@ -120,7 +126,11 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 		{
 		  np->oid = (uccp)s->oid;
 		  if (s->xref)
-		    np->ref = (uccp)((struct sl_inst *)list_first(s->xref->insts))->iid;
+		    {
+		      struct sl_inst *ip = list_first(s->xref->insts);
+		      np->ref = (uccp)ip->iid;
+		      np->oid = (uccp)ip->u.f->oid;
+		    }
 		  else
 		    np->ref = (uccp)s->oid;
 		}
@@ -200,6 +210,11 @@ sx_numbers(struct sl_signlist *sl)
   wctomb((char*)eng, 0x014b);
   
   const uchar **k = (const uchar **)hash_keys2(sl->hnums, &sl->nnumbers);
+#if 0
+  int x;
+  for (x = 0; k[x]; ++x)
+    fprintf(stderr, "k has %s\n", k[x]);
+#endif
   sl->numbers = calloc(sl->nnumbers, sizeof(struct sl_number));
   numsets = hash_create(100);
   int i, j;

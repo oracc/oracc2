@@ -109,7 +109,7 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 			    );
 	  joxer_ec(&sl->mloc, "sl:num", ratts);
 	}
-      joxer_ac();/*close j:numsets*/
+      joxer_ac();/*close j:nums*/
       joxer_ee(&sl->mloc, "sl:numset");
       joxer_ac();/*close j:numsets*/
     }

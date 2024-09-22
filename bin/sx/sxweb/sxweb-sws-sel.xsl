@@ -84,7 +84,7 @@
 		  <tr>
 		    <td><xsl:value-of select="@n"/></td>
 		    <xsl:for-each select="id(@ref)">
-		      <xsl:call-template name="sws-sel-summary"/>
+		      <xsl:call-template name="sws-sel-summary-num"/>
 		    </xsl:for-each>
 		  </tr>
 		</xsl:for-each>
@@ -107,11 +107,51 @@
 
 <!-- the context node must be sl:sign or sl:form here -->
 <xsl:template name="sws-sel-summary">
-  <!--<xsl:message>name=<xsl:value-of select="local-name()"/></xsl:message>-->
-  <td>
+  <xsl:call-template name="sws-sel-link-td"/>
+  <xsl:call-template name="sws-sel-ucun-td"/>
+  <td class="sws-sel-vals-td">
+    <xsl:choose>
+      <xsl:when test="ancestor-or-self::sl:form">
+	<xsl:for-each select="ancestor-or-self::sl:form/sl:v">
+	  <xsl:value-of select="@n"/>
+	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
+	</xsl:for-each>	
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:for-each select="ancestor-or-self::sl:sign/sl:v">
+	  <xsl:value-of select="@n"/>
+	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
+	</xsl:for-each>	
+      </xsl:otherwise>
+    </xsl:choose>
+  </td>
+</xsl:template>
+
+<xsl:template name="sws-sel-summary-num">
+  <xsl:call-template name="sws-sel-link-td"/>
+  <xsl:call-template name="sws-sel-ucun-td"/>
+  <td class="sws-sel-vals-td">
+    <xsl:choose>
+      <xsl:when test="ancestor-or-self::sl:form">
+	<xsl:for-each select="ancestor-or-self::sl:form/sl:v[contains(@n, '(')]">
+	  <xsl:value-of select="@n"/>
+	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
+	</xsl:for-each>	
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:for-each select="ancestor-or-self::sl:sign/sl:v[contains(@n, '(')]">
+	  <xsl:value-of select="@n"/>
+	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
+	</xsl:for-each>	
+      </xsl:otherwise>
+    </xsl:choose>
+  </td>
+</xsl:template>
+
+<xsl:template name="sws-sel-link-td">
+  <td class="sws-sel-link">
     <xsl:choose>
       <xsl:when test="self::sl:form">
-	<!--get ancestor sl:letter and sl:sign IDs for pathname-->
 	<a href="{concat('/',/*/@project,'/signlist/',../../@xml:id,'/',../@xml:id,'/index.html')}">
 	  <span class="snames"><xsl:value-of select="@n"/></span>
 	</a>
@@ -123,13 +163,10 @@
       </xsl:otherwise>
     </xsl:choose>
   </td>
-  <td class="noto"><xsl:value-of select="sl:ucun"/></td>
-  <td>
-    <xsl:for-each select="ancestor-or-self::sl:sign/sl:v">
-      <xsl:value-of select="@n"/>
-      <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
-    </xsl:for-each>
-  </td>
+</xsl:template>
+
+<xsl:template name="sws-sel-ucun-td">
+  <td class="sws-sel-ucun noto"><xsl:value-of select="sl:ucun"/></td>
 </xsl:template>
 
 <xsl:template match="text()"/>

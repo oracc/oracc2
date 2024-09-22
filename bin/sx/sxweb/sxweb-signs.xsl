@@ -237,6 +237,7 @@
     <xsl:apply-templates select="/*/sl:numbers/sl:numset">
       <xsl:with-param name="parameters" select="$parameters"/>
     </xsl:apply-templates>    
+    <xsl:message>done</xsl:message>
   </xsl:if>
 </xsl:template>
 
@@ -1058,7 +1059,7 @@
 <xsl:template name="sws-lem-page">
   <xsl:param name="parameters"/>  
   <xsl:param name="parent"/>
-  <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-sux.html')}"
+  <ex:document href="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-sux.html')}"
 	       method="xml" encoding="utf-8" omit-xml-declaration="yes"
 	       indent="yes" doctype-system="html">
     <html>
@@ -1147,7 +1148,7 @@
       <xsl:call-template name="lex-provides-sign"/>
     </xsl:variable>
     <xsl:if test="$lex-ok='y'">
-      <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-lex.html')}"
+      <ex:document href="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-lex.html')}"
 		   method="xml" encoding="utf-8" omit-xml-declaration="yes"
 		   indent="yes" doctype-system="html">
 	<html>
@@ -1176,7 +1177,7 @@
 <xsl:template name="sws-form-page">
   <xsl:param name="parameters"/>
   <xsl:param name="parent"/>
-  <ex:document href="{concat('signlist/01bld/selpages/',@xml:id,'-forms.html')}"
+  <ex:document href="{concat('/',/*/@project,'/signlist/selpages/',ancestor-or-self::sl:sign/@xml:id,'-forms.html')}"
 	       method="xml" encoding="utf-8" omit-xml-declaration="yes"
 	       indent="yes" doctype-system="html">
     <html>
