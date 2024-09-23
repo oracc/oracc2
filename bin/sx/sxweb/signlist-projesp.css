@@ -113,6 +113,8 @@ tr.lemsel-h3 { font-style: italic; }
 
 span.homophone-n { padding-right: 1em; }
 
+
+
 /* Needs to be modulated by viewport size */
 table.lemsel td  { padding-left: 1em; padding-right: 1em; }
 

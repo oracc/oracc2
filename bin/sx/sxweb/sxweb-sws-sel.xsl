@@ -112,13 +112,13 @@
   <td class="sws-sel-vals-td">
     <xsl:choose>
       <xsl:when test="ancestor-or-self::sl:form">
-	<xsl:for-each select="ancestor-or-self::sl:form/sl:v">
+	<xsl:for-each select="ancestor-or-self::sl:form/sl:v[not(@deprecated='1')]">
 	  <xsl:value-of select="@n"/>
 	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
 	</xsl:for-each>	
       </xsl:when>
       <xsl:otherwise>
-	<xsl:for-each select="ancestor-or-self::sl:sign/sl:v">
+	<xsl:for-each select="ancestor-or-self::sl:sign/sl:v[not(@deprecated='1')]">
 	  <xsl:value-of select="@n"/>
 	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
 	</xsl:for-each>	
@@ -133,13 +133,13 @@
   <td class="sws-sel-vals-td">
     <xsl:choose>
       <xsl:when test="ancestor-or-self::sl:form">
-	<xsl:for-each select="ancestor-or-self::sl:form/sl:v[contains(@n, '(')]">
+	<xsl:for-each select="ancestor-or-self::sl:form/sl:v[contains(@n, '(')][not(@deprecated='1')]">
 	  <xsl:value-of select="@n"/>
 	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
 	</xsl:for-each>	
       </xsl:when>
       <xsl:otherwise>
-	<xsl:for-each select="ancestor-or-self::sl:sign/sl:v[contains(@n, '(')]">
+	<xsl:for-each select="ancestor-or-self::sl:sign/sl:v[contains(@n, '(')][not(@deprecated='1')]">
 	  <xsl:value-of select="@n"/>
 	  <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
 	</xsl:for-each>	

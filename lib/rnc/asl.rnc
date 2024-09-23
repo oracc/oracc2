@@ -252,14 +252,16 @@ sl.pname =
 
 slvattr =
     attribute comment { xsd:NCName }?,
-    attribute deprecated { xsd:NCName }?,
+    attribute deprecated { "1" }?,
     attribute n { text },
     attribute sort { text }, 
     attribute type { xsd:NCName }?,
     attribute uncertain { xsd:NCName }?,
     attribute xml:lang { text }?,
     attribute num { "1" }?,
-    attribute hid { text }?
+    attribute hid { text }?,
+    attribute iid { xsd:NCName }?,
+    attribute key { text }?
 
 sl.v =
   element sl:v {

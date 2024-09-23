@@ -542,7 +542,7 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 
       if (minus_flag)
 	{
-	  if (!sl->curr_invalid)
+	  if (!sl->curr_invalid || sl->curr_invalid == 3)
 	    sl->curr_invalid = 2;
 	}
       else if (sl->curr_invalid == 2)
