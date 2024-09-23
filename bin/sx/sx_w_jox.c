@@ -84,11 +84,18 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
       char setsort[10];
       sprintf(setsort, "%d", nsfrom_num(i).setsort);
       const uchar *unit_oid = numset_unit(sl, &sl->numsets[i]);
+      struct noset_tab *nosetp = noset(nsfrom_num(i).set, strlen(nsfrom_num(i).set));
+      const char *noseta = NULL;
+      if (nosetp)
+	noseta = "1";
+      else
+	noseta = "0";
       ratts = rnvval_aa("x", 
 			"xml:id", nsid,
 			"n", nsfrom_num(i).set,
 			"noid", unit_oid,
 			"sort", setsort,
+			"noset", noseta,
 			NULL);
       joxer_ao("j:numsets");
       joxer_ea(&sl->mloc, "sl:numset", ratts);

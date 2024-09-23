@@ -1100,6 +1100,9 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   int literal = 0, query = 0;
   struct sl_sign *s;
 
+  if (minus_flag)
+    sl->curr_invalid = 1;
+  
   if (!sl)
     {
       fprintf(stderr, "asl: signlist must begin with @signlist [PROJECTNAME]\n");

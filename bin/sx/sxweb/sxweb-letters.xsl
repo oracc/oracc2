@@ -34,7 +34,7 @@
 	<body>
 	  <xsl:call-template name="mcol">
 	    <xsl:with-param name="columns" select="'4'"/>
-	    <xsl:with-param name="nodes" select="sl:numset"/>
+	    <xsl:with-param name="nodes" select="sl:numset[not(noset='1')]"/>
 	    <xsl:with-param name="class" select="'pretty'"/>
 	    <xsl:with-param name="tag" select="'numset'"/>
 	  </xsl:call-template>
