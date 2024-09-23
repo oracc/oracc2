@@ -53,10 +53,35 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 {
   np->t = tp;
   np->rep = (uccp)tp->gdl->kids->kids->text;
-
   struct node *setnode = tp->gdl->kids->kids->next;
 
-  /* there are few compound numbers so for now we special case them */
+  /* As originally implement this code only needs to detect values
+     with NINDA₂ in their parent compound, so the implementatino is
+     not robust */
+  struct sl_value *v = hash_find(sl->hventry, tp->t);
+  if (v)
+    {
+      const uchar *vname = NULL;
+      if (v->sowner)
+	vname = v->sowner->name;
+      else
+	{
+	  if (v->fowners)
+	    {
+	      struct sl_inst *vi = list_first(v->fowners);
+	      vname = (vi->type == 's' ? vi->u.s->name : vi->u.f->name);
+	    }
+	}
+      struct sl_token *vtp = hash_find(sl->htoken, vname);
+      if (vtp && vtp->gdl && vtp->gdl->kids)
+	{
+	  /* gdl is g:w; we want its first child to see if it's g:c */
+	  struct node *vset = vtp->gdl->kids;
+	  if (!strcmp(vset->name, "g:c") && strstr(vset->text, "NINDA"))
+	    setnode = vset;
+	}
+    }
+
   if (!strcmp(setnode->name, "g:c") && strstr(setnode->kids->text, "NINDA")) /* group NINDA₂×X items */
     np->set = (uccp)setnode->kids->text;
   else

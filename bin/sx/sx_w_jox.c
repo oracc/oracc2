@@ -1071,7 +1071,7 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	    }
 
 	  list_add(a, "iid");
-	  list_add(a, v->iid);
+	  list_add(a, (void*)v->iid);
 
 	  list_add(a, "key");
 	  list_add(a, (void*)xmlify(v->key));
