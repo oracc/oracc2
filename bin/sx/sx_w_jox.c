@@ -86,38 +86,36 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
       const uchar *unit_oid = numset_unit(sl, &sl->numsets[i]);
       struct noset_tab *nosetp = noset(nsfrom_num(i).set, strlen(nsfrom_num(i).set));
       const char *noseta = NULL;
-      if (nosetp)
-	noseta = "1";
-      else
-	noseta = "0";
-      ratts = rnvval_aa("x", 
-			"xml:id", nsid,
-			"n", nsfrom_num(i).set,
-			"noid", unit_oid,
-			"sort", setsort,
-			"noset", noseta,
-			NULL);
-      joxer_ao("j:numsets");
-      joxer_ea(&sl->mloc, "sl:numset", ratts);
-      joxer_ao("j:nums");
-      int j;
-      for (j = sl->numsets[i].from; j <= sl->numsets[i].last; ++j)
+      if (!nosetp)
 	{
-	  struct sl_number *np = &sl->numbers[j];
-	  char sort[10];
-	  sprintf(sort, "%d", np->t->s);
-	  ratts = rnvval_aa("x",
-			    "n", np->t->t,
-			    "ref", np->ref,
-			    "oid", np->oid,
-			    "rep", np->rep,
-			    "sort", sort,
-			    NULL
-			    );
-	  joxer_ec(&sl->mloc, "sl:num", ratts);
+	  ratts = rnvval_aa("x", 
+			    "xml:id", nsid,
+			    "n", nsfrom_num(i).set,
+			    "noid", unit_oid,
+			    "sort", setsort,
+			    NULL);
+	  joxer_ao("j:numsets");
+	  joxer_ea(&sl->mloc, "sl:numset", ratts);
+	  joxer_ao("j:nums");
+	  int j;
+	  for (j = sl->numsets[i].from; j <= sl->numsets[i].last; ++j)
+	    {
+	      struct sl_number *np = &sl->numbers[j];
+	      char sort[10];
+	      sprintf(sort, "%d", np->t->s);
+	      ratts = rnvval_aa("x",
+				"n", np->t->t,
+				"ref", np->ref,
+				"oid", np->oid,
+				"rep", np->rep,
+				"sort", sort,
+				NULL
+				);
+	      joxer_ec(&sl->mloc, "sl:num", ratts);
+	    }
+	  joxer_ac();/*close j:nums*/
+	  joxer_ee(&sl->mloc, "sl:numset");
 	}
-      joxer_ac();/*close j:nums*/
-      joxer_ee(&sl->mloc, "sl:numset");
       joxer_ac();/*close j:numsets*/
     }
   joxer_eea(&sl->mloc, "sl:numbers");  

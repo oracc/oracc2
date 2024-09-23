@@ -319,7 +319,6 @@ sl.numset = element sl:numset {
      attribute n { text },
      attribute noid { text },
      attribute sort { text },
-     attribute noset { "0" | "1" },
      sl.num*
 }
 sl.num = element sl:num {
