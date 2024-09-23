@@ -1023,7 +1023,7 @@
     <xsl:with-param name="parameters" select="$parameters"/>
     <xsl:with-param name="file" select="@xml:id"/>
     <xsl:with-param name="type" select="'numset'"/>
-    <xsl:with-param name="title" select="concat(@n,  ' number set')"/>
+    <xsl:with-param name="title" select="concat(@n,  ' numbers')"/>
     <xsl:with-param name="nodes" select="sl:num"/>
     <xsl:with-param name="back" select="true()"/>
   </xsl:call-template>

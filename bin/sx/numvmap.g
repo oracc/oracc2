@@ -15,3 +15,5 @@ barig, "bariga"
 barig@c, "bariga@c"
 šarʾu, "šaru"
 šarʾu@c, "šaru@c"
+ŋeš₂@c@90, geš₂@c@90
+iku@c@v, iku@c~a
