@@ -113,6 +113,9 @@ tr.lemsel-h3 { font-style: italic; }
 
 span.homophone-n { padding-right: 1em; }
 
+.sl-numset-name { }
+
+.sl-numset-char { text-align: center; font-size: 150%; }
 
 
 /* Needs to be modulated by viewport size */
