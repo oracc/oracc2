@@ -1112,7 +1112,7 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   check_flags(locp, (char*)n, &query, &literal);
   struct sl_token *tp = asl_bld_token(locp, sl, (ucp)n, 0);
 
-  if (type == sx_tle_sign && !minus_flag) /* might need to allow compoundonly also */
+  if ((type == sx_tle_sign || type == sx_tle_pcun) && !minus_flag) /* might need to allow compoundonly also */
     asl_bld_num(locp, sl, (ucp)n, tp, 1);
 
   sl->curr_form = NULL;
