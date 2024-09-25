@@ -3,6 +3,10 @@
    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
 }
 @font-face {
+   font-family: 'Noto Sans Cuneiform Egg';
+   src: url('/fonts/NotoSansCuneiform-egg.ttf');
+}
+@font-face {
    font-family: 'Noto Sans Cuneiform Gudea';
    src: url('/fonts/Noto-SansCuneiform-Gudea.ttf');
 }
@@ -18,4 +22,7 @@
 }
 .noto {
    font-family: "Noto Sans Cuneiform";
+}
+.noto-egg {
+   font-family: "Noto Sans Cuneiform Egg";
 }
