@@ -36,6 +36,8 @@ slx_handler()
 	  printf("%s\n", v);
 	  done = 1;
 	}
+      else
+	printf("\n");
     }
   if (!done)
     {

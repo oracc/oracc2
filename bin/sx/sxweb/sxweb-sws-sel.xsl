@@ -166,7 +166,7 @@
 </xsl:template>
 
 <xsl:template name="sws-sel-ucun-td">
-  <td class="sws-sel-ucun noto"><xsl:value-of select="sl:ucun"/></td>
+  <td class="sws-sel-ucun noto-egg"><xsl:value-of select="sl:ucun"/></td>
 </xsl:template>
 
 <xsl:template match="text()"/>
