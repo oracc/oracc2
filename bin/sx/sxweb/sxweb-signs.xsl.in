@@ -21,7 +21,7 @@
 <xsl:param name="hproject" select="translate($project,'/','-')"/>
 <xsl:param name="projesp"/>
 
-<xsl:param name="oracc" select="'/home/oracc'"/>
+<xsl:param name="oracc" select="'@@ORACC@@'"/>
 
 <xsl:include href="lex-sign-lookup.xsl"/>
 <!--xpd.xsl is included by g2-gdl-HTML.xsl-->
