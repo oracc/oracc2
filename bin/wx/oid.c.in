@@ -26,7 +26,7 @@ p4oid(P4url *p)
       oid(p->oxid);
     }
   else
-    ; /* can do pan-Oracc OID resolution here */
+    ; /* could do pan-Oracc OID resolution here */
 }
 
 void
@@ -41,153 +41,14 @@ oid(const char *e2)
 	{
 	  if ('u' == *v)
 	    do302(v+2);
+#if 0
+	  /* 2024-09-26 previous removal of 'u' processing was too
+	     harsh; but still pass 'h' types through to p4 */
 	  else if ('h' == *v)
 	    cat_html_file(v+2);
+#endif
 	}
-#if 1
-
-      /* 2024-08-19 fall through to return to main handler; this means
-	 wx handles OIDs that only resolve to one page directly and
-	 passes OIDs that are bad or resolve to multiple pages to px
-	 for handling. */	 
-#else
-      else
-	do404();
-#endif
       wx_dbx_term(dbi);
-#if 0
-      exit(0);
-#endif
     }
-  else
-    {
-      print_hdr();
-      execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
-	    project,
-	    e2,
-	    NULL);
-    }
+  /* return to p4 processing if no 02pub/oid.dbi */
 }
-
-#if 0
-
-void
-glossary_article_xml(const char *lng, const char *art)
-{
-  print_hdr_xml();
-  execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
-	project,
-	art,
-	lng,
-	"xml",
-	NULL);
-}
-
-void
-glossary_article(const char *lng, const char *art)
-{
-  print_hdr();
-  execl("/usr/bin/perl", "perl", "@@ORACC_BUILDS@@/bin/oid-resolver.plx",
-	project,
-	art,
-	lng,
-	NULL);
-}
-
-static int
-countv(CGI_varlist *v)
-{
-  int i = 0;
-  const char *name;
-  for (name = CGI_first_name(v);
-       name != 0;
-       name = CGI_next_name(v))
-    ++i;
-  return i;
-}
-
-const char *
-cgi_val(CGI_varlist *v, const char *name, const char *deflt)
-{
-  CGI_value *val = CGI_lookup_all(v, name);
-  if (val)
-    return val[0];
-  else
-    return deflt;
-}
-
-void
-instances(const char *lang, const char *id)
-{
-  CGI_varlist *v = NULL;
-  /*int vcount = -1;*/
-  const char **va = NULL;
-
-  fprintf(stderr, "instances handler\n");
-
-  if (query_string)
-    setenv("QUERY_STRING", query_string, 1);
-  
-  v = CGI_get_query(v);
-  v = CGI_get_post(v, NULL);
-  dump_vl(v);
-  /*vcount = countv(v);*/
-  
-  va = malloc(18*sizeof(char*));
-  va[0] = "/usr/bin/perl";
-  va[1] = "@@ORACC_BUILDS@@/bin/xis-resolver.plx";
-  va[2] = strdup(project ? project : "nul");
-  va[3] = strdup(lang);
-  va[4] = strdup(id);
-  va[5] = v ? cgi_val(v, "page", "1") : "1";
-  va[6] = v ? cgi_val(v, "size", "25") : "25";
-  va[7] = v ? cgi_val(v, "mode", "html") : "html";
-  va[8] = v ? cgi_val(v, "all", "") : "";
-  va[9] = NULL;
-  execv("/usr/bin/perl", (char*const*)va);
-  fprintf(stderr, "execv /usr/bin/perl failed\n");  
-  exit(1);
-}
-
-void
-instances_isp(const char *lang, const char *id)
-{
-  CGI_varlist *v = NULL;
-  /*int vcount = -1;*/
-  const char **va = NULL;
-
-  fprintf(stderr, "instances handler\n");
-
-  if (query_string)
-    setenv("QUERY_STRING", query_string, 1);
-  
-  v = CGI_get_query(v);
-  v = CGI_get_post(v, NULL);
-  dump_vl(v);
-  /*vcount = countv(v);*/
-  
-  va = malloc(18*sizeof(char*));
-  va[0] = "@@ORACC_BUILDS@@/bin/ispx";
-  va[1] = "-j";
-  va[2] = strdup(project ? project : "nul");
-  va[3] = "-n";
-  va[4] = strdup(lang);
-  va[5] = "-l";
-  va[6] = strdup(id);
-  va[7] = "-p";
-  va[8] = v ? cgi_val(v, "page", "1") : "1";
-  va[9] = "-s";
-  va[10] = v ? cgi_val(v, "size", "25") : "25";
-  va[11] = "-x";
-  va[12] = v ? cgi_val(v, "mode", "html") : "html";
-  va[13] = "-";
-  va[14] = v ? cgi_val(v, "all", "") : "";
-  va[15] = "-i";
-  va[16] = v ? cgi_val(v, "mode", "item") : "nul";
-  va[17] = NULL;
-  execv("@@ORACC_BUILD@@/bin/ispx", (char*const*)va);
-  fprintf(stderr, "execv /usr/bin/perl failed\n");  
-  exit(1);
-}
-
-#endif
