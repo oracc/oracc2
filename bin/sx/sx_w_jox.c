@@ -1134,13 +1134,18 @@ sx_w_jx_unicode(struct sx_functions *f, struct sl_signlist *sl, struct sl_unicod
 {
   if (up->uname)
     joxer_et(NULL, "sl:uname", NULL, up->uname);
-  if (up->uhex || up->useq)
+  if (up->uhex || up->useq || up->upua)
     {
       const char *u;
       if (useq_force && up->useq && up->uhex)
 	ratts = rnvval_aa("x", "hex", up->uhex, "seq", up->useq, NULL);
       else
-	ratts = rnvval_aa("x", "hex", up->uhex ? up->uhex : up->useq, NULL);
+	{
+	  const char *h = up->uhex;
+	  if (!h)
+	    h = (up->upua ? up->upua : up->useq);
+	  ratts = rnvval_aa("x", "hex", h, NULL);
+	}
       if (up->utf8)
 	u = (ccp)up->utf8;
       else
