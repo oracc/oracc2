@@ -61,7 +61,7 @@ if [ "$spec" = "1" ]; then
 fi
 
 ( cd ${ORACC_BUILDS}/$p/02pub ;
-  for t in prx prx-cat trs ; do
+  for t in oid prx prx-cat trs ; do
       if [ -r $t.tsv ]; then
 	  dbix -s -d . -n $t <$t.tsv
       fi
