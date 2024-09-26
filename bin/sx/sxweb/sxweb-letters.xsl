@@ -18,7 +18,7 @@
 <xsl:output method="xml" indent="yes" encoding="utf-8"/>
 
 <xsl:template match="sl:signlist">
-  <xsl:apply-templates select="sl:letter[not(@num='1')]"/>
+  <xsl:apply-templates select="sl:letter"/> <!-- [not(@num='1')] -->
   <xsl:apply-templates select="sl:numbers"/>
 </xsl:template>
 

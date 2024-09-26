@@ -149,15 +149,25 @@
 </xsl:template>
 
 <xsl:template name="sws-sel-link-td">
+  <xsl:variable name="letterdir">
+    <xsl:choose>
+      <xsl:when test="../@num='1'">
+	<xsl:value-of select="concat('Numbers/', ../@xml:id)"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="../@xml:id"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   <td class="sws-sel-link">
     <xsl:choose>
       <xsl:when test="self::sl:form">
-	<a href="{concat('/',/*/@project,'/signlist/',../../@xml:id,'/',../@xml:id,'/index.html')}">
+	<a href="{concat('/',/*/@project,'/signlist/',$letterdir,'/',../@xml:id,'/index.html')}">
 	  <span class="snames"><xsl:value-of select="@n"/></span>
 	</a>
       </xsl:when>
       <xsl:otherwise>
-	<a href="{concat('/',/*/@project,'/signlist/',../@xml:id,'/',@xml:id,'/index.html')}">
+	<a href="{concat('/',/*/@project,'/signlist/',$letterdir,'/',@xml:id,'/index.html')}">
 	  <span class="snames"><xsl:value-of select="ancestor-or-self::sl:sign/@n"/></span>
 	</a>
       </xsl:otherwise>
