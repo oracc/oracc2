@@ -176,7 +176,19 @@
 </xsl:template>
 
 <xsl:template name="sws-sel-ucun-td">
-  <td class="sws-sel-ucun noto-egg"><xsl:value-of select="sl:ucun"/></td>
+  <td class="sws-sel-ucun noto-egg">
+    <xsl:choose>
+      <xsl:when test="sl:ucun">
+	<xsl:value-of select="sl:ucun"/>
+      </xsl:when>
+      <xsl:when test="@oid">
+	<xsl:for-each select="id(@oid)">
+	  <xsl:value-of select="sl:ucun"/>
+	</xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise/><!-- nothing to display for Cuneiform -->
+    </xsl:choose>
+  </td>
 </xsl:template>
 
 <xsl:template match="text()"/>

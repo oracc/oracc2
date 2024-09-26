@@ -92,7 +92,7 @@ sx_homophones(struct sl_signlist *sl)
 		   ip = list_next(sl->values[i]->parents->forms))
 		{
 		  sx_h_sub(sl, xhomophones, sl->values[i]->name,
-			   sl->values[i]->xvalue, ip->u.f->oid);
+			   sl->values[i]->xvalue, /*ip->u.f->oid*/ ip->iid);
 		}
 	    }
 	}
@@ -132,6 +132,7 @@ sx_homophones(struct sl_signlist *sl)
     }
 }
 
+#if 0
 /* No need to store split_value data in value because for
  * sl->values[i] the split_value is in sl->splitv[i]
  */
@@ -268,3 +269,4 @@ sx_xhomophones(struct sl_signlist *sl)
 	}
     }
 }
+#endif
