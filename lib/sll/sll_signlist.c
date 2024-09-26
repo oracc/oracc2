@@ -1,5 +1,5 @@
 /* ANSI-C code produced by gperf version 3.1 */
-/* Command-line: gperf -N sll_signlist -tT sll_signlist.g  */
+/* Command-line: gperf -G -N sll_signlist -tT sll_signlist.g  */
 /* Computed positions: -k'1-2' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -83,44 +83,44 @@ hash (register const char *str, register size_t len)
   return len + asso_values[(unsigned char)str[1]] + asso_values[(unsigned char)str[0]];
 }
 
+static struct sll_signlist wordlist[] =
+  {
+    {""}, {""},
+#line 17 "sll_signlist.g"
+    {"U+"},
+#line 15 "sll_signlist.g"
+    {"RSP"},
+    {""},
+#line 16 "sll_signlist.g"
+    {"SLLHA"},
+    {""},
+#line 12 "sll_signlist.g"
+    {"MZL"},
+#line 14 "sll_signlist.g"
+    {"REC"},
+    {""},
+#line 8 "sll_signlist.g"
+    {"ELLES"},
+    {""},
+#line 9 "sll_signlist.g"
+    {"HZL"},
+#line 11 "sll_signlist.g"
+    {"LAK"},
+#line 18 "sll_signlist.g"
+    {"ZATU"},
+    {""}, {""}, {""},
+#line 7 "sll_signlist.g"
+    {"BAU"},
+#line 13 "sll_signlist.g"
+    {"ABZL"},
+    {""}, {""}, {""},
+#line 10 "sll_signlist.g"
+    {"KWU"}
+  };
+
 struct sll_signlist *
 sll_signlist (register const char *str, register size_t len)
 {
-  static struct sll_signlist wordlist[] =
-    {
-      {""}, {""},
-#line 17 "sll_signlist.g"
-      {"U+"},
-#line 15 "sll_signlist.g"
-      {"RSP"},
-      {""},
-#line 16 "sll_signlist.g"
-      {"SLLHA"},
-      {""},
-#line 12 "sll_signlist.g"
-      {"MZL"},
-#line 14 "sll_signlist.g"
-      {"REC"},
-      {""},
-#line 8 "sll_signlist.g"
-      {"ELLES"},
-      {""},
-#line 9 "sll_signlist.g"
-      {"HZL"},
-#line 11 "sll_signlist.g"
-      {"LAK"},
-#line 18 "sll_signlist.g"
-      {"ZATU"},
-      {""}, {""}, {""},
-#line 7 "sll_signlist.g"
-      {"BAU"},
-#line 13 "sll_signlist.g"
-      {"ABZL"},
-      {""}, {""}, {""},
-#line 10 "sll_signlist.g"
-      {"KWU"}
-    };
-
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
       register unsigned int key = hash (str, len);
