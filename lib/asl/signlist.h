@@ -159,6 +159,7 @@ struct sl_split_value
   const unsigned char *b;
   int i;
   const char *oid;
+  const char *ref;
   int s;
 };
 

@@ -35,7 +35,7 @@ sx_h_id(struct sl_signlist *sl)
 }
 
 static void
-sx_h_sub(struct sl_signlist *sl, Hash *xh, unsigned const char *vname, int xvalue, const char *oid)
+sx_h_sub(struct sl_signlist *sl, Hash *xh, unsigned const char *vname, int xvalue, const char *oid, const char *ref)
 {
   unsigned const char *b = pool_copy(g_base_of(vname), sl->p);
   int index = g_index_of(vname, b);
@@ -44,6 +44,7 @@ sx_h_sub(struct sl_signlist *sl, Hash *xh, unsigned const char *vname, int xvalu
   spv->b = b;
   spv->i = index;
   spv->oid = oid;
+  spv->ref = (ref ? ref : oid);
   List *lp;
   if (xvalue)
     {
@@ -82,7 +83,7 @@ sx_homophones(struct sl_signlist *sl)
 		   ip;
 		   ip = list_next(sl->values[i]->parents->signs))
 		sx_h_sub(sl, xhomophones, sl->values[i]->name,
-			 sl->values[i]->xvalue, ip->u.s->oid);
+			 sl->values[i]->xvalue, ip->u.s->oid, NULL);
 	    }
 	  if (sl->values[i]->parents->forms)
 	    {
@@ -92,7 +93,7 @@ sx_homophones(struct sl_signlist *sl)
 		   ip = list_next(sl->values[i]->parents->forms))
 		{
 		  sx_h_sub(sl, xhomophones, sl->values[i]->name,
-			   sl->values[i]->xvalue, /*ip->u.f->oid*/ ip->iid);
+			   sl->values[i]->xvalue, ip->u.f->oid, ip->iid);
 		}
 	    }
 	}
