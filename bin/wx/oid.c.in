@@ -15,10 +15,13 @@ p4oid(P4url *p)
 {
   if (p->project && p->glossary)
     {
+#if 0
+      /* Can't use this because it sends HTML back with no p4Pager node which means P4 JS fails */
       char o[strlen(oracc())+strlen(p->project)+strlen(p->glossary)+strlen(p->oxid)+strlen("/////.html0")];
       sprintf(o, "%s/www/%s/cbd/%s/%s.html", oracc(), p->project, p->glossary, p->oxid);
       if (!access(o,R_OK))
 	cat_html_file(o);
+#endif
     }
   else if (p->project)
     {
@@ -26,7 +29,7 @@ p4oid(P4url *p)
       oid(p->oxid);
     }
   else
-    ; /* could do pan-Oracc OID resolution here */
+    ; /* could do pan-Oracc OID resolution here: NO: not with P4--could do pan-Oracc ESP2 res tho */
 }
 
 void
