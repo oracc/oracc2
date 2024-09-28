@@ -53,6 +53,10 @@ sx_unicode(struct sl_signlist *sl)
       if (sl->signs[i]->inst->valid)
 	{
 	  struct sl_unicode *Up = (sl->signs[i]->xref ? &sl->signs[i]->xref->U : &sl->signs[i]->U);
+	  if (Up->upua)
+	    Up->uhex = Up->upua; /* Treat PUA and main encoding as the
+				    same from here on; this could
+				    actually be done at parse time */
 	  if (Up->uname)
 	    {
 	      if (Up->uhex)
@@ -84,7 +88,8 @@ sx_unicode(struct sl_signlist *sl)
 	    }
 	  else if (Up->uhex)
 	    {
-	      mesg_verr(&sl->signs[i]->inst->mloc, "sign %s has uhex %s but no uname\n", sl->signs[i]->name, Up->uhex);
+	      if (!Up->upua) /* PUA doesn't require a Uni name */
+		mesg_verr(&sl->signs[i]->inst->mloc, "sign %s has uhex %s but no uname\n", sl->signs[i]->name, Up->uhex);
 	      if (hash_find(ucode, (uccp)Up->uhex))
 		mesg_verr(&sl->signs[i]->inst->mloc, "uhex %s used with more than one sign\n", Up->uhex);
 	      else

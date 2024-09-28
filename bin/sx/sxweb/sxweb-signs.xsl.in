@@ -239,8 +239,8 @@
     <xsl:apply-templates select="/*/sl:numbers/sl:numset">
       <xsl:with-param name="parameters" select="$parameters"/>
     </xsl:apply-templates>    
+    <xsl:message>Done with one-off selpages.</xsl:message>
   </xsl:if>
-  <xsl:message>Done with selpages.</xsl:message>
 </xsl:template>
 
 <xsl:template name="sws-esp-header">

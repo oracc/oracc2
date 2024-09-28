@@ -1078,8 +1078,13 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  list_add(a, "iid");
 	  list_add(a, (void*)v->iid);
 
-	  list_add(a, "key");
-	  list_add(a, (void*)xmlify(v->key));
+	  if (v->key)
+	    {
+	      list_add(a, "key");
+	      list_add(a, (void*)xmlify(v->key));
+	    }
+	  else
+	    mesg_verr(&v->mloc, "value %s has no key", v->u.v->name);
 
 	  if (!v->valid)
 	    {
