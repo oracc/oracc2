@@ -1,6 +1,6 @@
 include ../../../oracc-am-rules.txt
 
-bin_SCRIPTS=sxweb.sh sl-jsmap.sh sxweb-oid.sh sxweb-signs.sh
+bin_SCRIPTS=sxweb.sh sl-jsmap.sh sxweb-oid.sh sxweb-signs.sh sxweb-pos.sh
 
 scriptdata_DATA=sxweb-*.xsl sl-jsmap-data.xsl
 
