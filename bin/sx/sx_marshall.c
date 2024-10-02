@@ -372,12 +372,12 @@ sx_marshall(struct sl_signlist *sl)
       list_add_list(s->as_form, f->insts);
 
       /* If this form has Unicode info register it as the defining instance */
-      if (f->U.useq || f->U.uname)
+      if (f->sign->xref && (f->U.useq || f->U.uname))
 	{
 	  struct sl_inst *ip;
-	  for (ip = list_first(f->insts); ip; ip = list-next(f->insts))
+	  for (ip = list_first(f->insts); ip; ip = list_next(f->insts))
 	    {
-	      if (ip->upua || ip->ucun  || ip->uname)
+	      if (ip->upua || ip->utf8  || ip->uname)
 		{
 		  f->sign->formdef = ip;
 		  break;
@@ -386,11 +386,11 @@ sx_marshall(struct sl_signlist *sl)
 	}
     }
 
-  /* Force all forms to have a defining instance */
+  /* Force all forms that are not also signs to have a defining instance */
   for (i = 0; i < nkeys; ++i)
     {
       struct sl_form *f = hash_find(sl->hfentry, (uccp)keys[i]);
-      if (!f->sign->formdef)
+      if (f->sign->xref && !f->sign->formdef)
 	f->sign->formdef = list_first(f->insts);
     }
 

@@ -6,5 +6,6 @@ for a in 00etc/*.pos ; do
     elif [ -x ${ORACC}/bin/$b.sh ]; then
 	$b.sh
     fi
-    xsltproc sxweb-page-o-signs.xsl $a >00lib/$b.xml
+    xmllint --encode UTF-8 --xinclude --noxincludenode $a | \
+	xsltproc ${ORACC}/lib/scripts/sxweb-page-o-signs.xsl - >00lib/$b.xml
 done

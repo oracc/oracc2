@@ -84,8 +84,7 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
       char setsort[10];
       sprintf(setsort, "%d", nsfrom_num(i).setsort);
       const uchar *unit_oid = numset_unit(sl, &sl->numsets[i]);
-      struct noset_tab *nosetp = noset(nsfrom_num(i).set, strlen(nsfrom_num(i).set));
-      const char *noseta = NULL;
+      struct noset_tab *nosetp = noset((ccp)nsfrom_num(i).set, strlen((ccp)nsfrom_num(i).set));
       if (!nosetp)
 	{
 	  ratts = rnvval_aa("x", 
@@ -613,11 +612,20 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_add(a, "n");
 	      list_add(a, (void*)xmlify(s->u.f->name));
 
-	      list_add(a, (void*)"xml:id");
-	      list_add(a, (void*)s->iid);
-
-	      list_add(a, "oid");
-	      list_add(a, s->u.f->oid ? (void*)s->u.f->oid : (void*)"");
+	      /* One form is the defining instance--it has xml:id==oid */
+	      if (s->u.f->sign->xref && s->u.f->sign->formdef == s)
+		{
+		  list_add(a, (void*)"xml:id");
+		  list_add(a, (void*)s->u.f->oid);
+		}
+	      else
+		{
+		  list_add(a, (void*)"xml:id");
+		  list_add(a, (void*)s->iid);
+		  
+		  list_add(a, "oid");
+		  list_add(a, s->u.f->oid ? (void*)s->u.f->oid : (void*)"");
+		}
 
 	      if (ref)
 		{
