@@ -365,10 +365,33 @@ sx_marshall(struct sl_signlist *sl)
 	    }
 	}
       f->sign = s;
+
       /* Side effect: provide signs which occur as forms a list of instances where they occur */
       if (!s->as_form)
 	s->as_form = list_create(LIST_SINGLE);
       list_add_list(s->as_form, f->insts);
+
+      /* If this form has Unicode info register it as the defining instance */
+      if (f->U.useq || f->U.uname)
+	{
+	  struct sl_inst *ip;
+	  for (ip = list_first(f->insts); ip; ip = list-next(f->insts))
+	    {
+	      if (ip->upua || ip->ucun  || ip->uname)
+		{
+		  f->sign->formdef = ip;
+		  break;
+		}
+	    }
+	}
+    }
+
+  /* Force all forms to have a defining instance */
+  for (i = 0; i < nkeys; ++i)
+    {
+      struct sl_form *f = hash_find(sl->hfentry, (uccp)keys[i]);
+      if (!f->sign->formdef)
+	f->sign->formdef = list_first(f->insts);
     }
 
   /* First compounds phase: gather the data for digesting later */

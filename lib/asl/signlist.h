@@ -395,6 +395,7 @@ struct sl_sign
 				   stored in user ptr */
   List *as_form;		/* List of instances where this sign
 				   occurs as a form of another sign */
+  struct sl_inst *formdef;	/* The defining instance of a form */
   int sort;
   size_t count;
   size_t ctotal;
