@@ -6,6 +6,7 @@ struct noset_tab;
 %%
 AŠ@v, "1"
 BAN₂@v, "1"
+BARIG@v, "1"
 BURU@v, "1"
 BUR₃@v, "1"
 DIŠ@t, "1"

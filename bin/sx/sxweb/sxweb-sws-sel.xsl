@@ -83,7 +83,7 @@
 		<xsl:for-each select="$nodes">
 		  <tr>
 		    <td><xsl:value-of select="@n"/></td>
-		    <xsl:for-each select="id(@ref)">
+		    <xsl:for-each select="id(@oid)">
 		      <xsl:call-template name="sws-sel-summary-num"/>
 		    </xsl:for-each>
 		  </tr>
