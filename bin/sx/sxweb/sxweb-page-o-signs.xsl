@@ -2,6 +2,7 @@
 	       xmlns:sxw="http://oracc.org/ns/sxweb/1.0"
 	       xmlns:sl="http://oracc.org/ns/sl/1.0"
 	       xmlns="http://www.w3.org/1999/xhtml"
+	       xmlns:esp="http://oracc.org/ns/esp/1.0"
 	       version="1.0"
 	       exclude-result-prefixes="sl">
   
@@ -9,7 +10,7 @@
     <xsl:variable name="codes" select="@codepoints"/>
     <xsl:variable name="ids" select="text()"/>
     <xsl:for-each select="document('/home/oracc/osl/02xml/sl.xml')">
-      <table class="page-o-signs">
+      <table class="page-o-signs pretty">
 	<xsl:for-each select="id($ids)">
 	  <xsl:sort data-type="number" select="@sort"/>
 	  <tr>
@@ -61,14 +62,14 @@
     <td class="sxw-pos-link">
       <xsl:choose>
 	<xsl:when test="self::sl:form">
-	  <a href="{concat('/',/*/@project,'/signlist/', ../@xml:id)}">
+	  <esp:link url="{concat('/',/*/@project,'/signlist/', ../@xml:id)}">
 	    <span class="snames"><xsl:value-of select="@n"/></span>
-	  </a>
+	  </esp:link>
 	</xsl:when>
 	<xsl:otherwise>
-	  <a href="{concat('/',/*/@project,'/signlist/', @xml:id)}">
+	  <esp:link url="{concat('/',/*/@project,'/signlist/', @xml:id)}">
 	    <span class="snames"><xsl:value-of select="ancestor-or-self::sl:sign/@n"/></span>
-	  </a>
+	  </esp:link>
 	</xsl:otherwise>
       </xsl:choose>
     </td>

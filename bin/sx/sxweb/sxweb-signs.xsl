@@ -689,7 +689,7 @@
       <p class="sl-hang">
 	<span class="sl-ihead-h">NOTES</span>
 	<xsl:for-each select="sl:note">
-	  <xsl:apply-templates/>
+	  <xsl:value-of select="text()"/><!--<xsl:apply-templates/>--><!--bad use of text() here; fix-->
 	  <xsl:if test="not(position()=last())"><br/></xsl:if>
 	</xsl:for-each>
       </p>
@@ -706,8 +706,9 @@
 </xsl:template>
 
 <xsl:template mode="printvnote" match="sl:note">
-  <xsl:message>printvnote local-name=<xsl:value-of select="local-name(.)"/>; text=<xsl:value-of select="text()"/></xsl:message>
-  <xsl:apply-templates select="*|text()"/>
+  <!--<xsl:message>printvnote local-name=<xsl:value-of select="local-name(.)"/>; text=<xsl:value-of select="text()"/></xsl:message>-->
+  <xsl:value-of select="text()"/> <!-- not happy with this; need to allow inline xhtml -->
+  <!--<xsl:apply-templates select="*|text()"/>-->
 </xsl:template>
 
 <!--### Images and snippets -->
