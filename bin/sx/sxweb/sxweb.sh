@@ -60,6 +60,8 @@ if [ "$auto" != "yes" ]; then
     sxportal.sh
 fi
 
+sxweb-pos.sh
+
 rm -fr signlist ; mkdir signlist
 
 (cd $ORACC_BUILDS ;

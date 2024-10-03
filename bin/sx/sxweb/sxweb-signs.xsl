@@ -701,8 +701,13 @@
   <xsl:for-each select="sl:v/sl:note">
     <br/>
     <span class="notemark"><xsl:value-of select="position()"/></span>
-    <span class="notetext"><xsl:apply-templates/></span>
+    <span class="notetext"><xsl:apply-templates mode="printvnote" select="."/></span>
   </xsl:for-each>
+</xsl:template>
+
+<xsl:template mode="printvnote" match="sl:note">
+  <xsl:message>printvnote local-name=<xsl:value-of select="local-name(.)"/>; text=<xsl:value-of select="text()"/></xsl:message>
+  <xsl:apply-templates select="*|text()"/>
 </xsl:template>
 
 <!--### Images and snippets -->
