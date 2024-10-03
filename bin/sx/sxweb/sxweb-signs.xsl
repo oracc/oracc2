@@ -362,24 +362,47 @@
       ><xsl:value-of select="id(@merge)/@n"/> = <xsl:value-of select="id(@merge)/@xml:id"/><xsl:text>)</xsl:text></p>
     </xsl:if>
 
-    <xsl:if test="self::*[local-name='form']">
+    <xsl:if test="self::*[local-name()='form']">
       <div class="asl-oid">
 	<p>
 	  <span class="sl-ihead">Form ID</span>
-	  <span class="sl-ibody"><xsl:value-of select="@xml:id|@ref"/></span>
+	  <span class="sl-ibody">
+	    <xsl:choose>
+	      <xsl:when test="@oid"><xsl:value-of select="@oid"/></xsl:when>
+	      <xsl:when test="@ref"><xsl:value-of select="@ref"/></xsl:when>
+	      <xsl:otherwise><xsl:value-of select="@ref|@xml:id"/></xsl:otherwise>
+	    </xsl:choose>
+	  </span>
 	</p>
       </div>
     </xsl:if>
-    
-    <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
-      <div class="asl-cun-img">
-	<span class="sl-ihead">CUNEIFORM</span>
-	<xsl:call-template name="sws-cuneiform"/>
-	<xsl:call-template name="sws-images">
-	  <xsl:with-param name="esp-mode" select="$esp-mode"/>
-	</xsl:call-template>
-      </div>
-    </xsl:if>
+
+    <xsl:choose>
+      <xsl:when test="@oid">
+	<xsl:for-each select="id(@oid)">
+	  <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
+	    <div class="asl-cun-img">
+	      <span class="sl-ihead">CUNEIFORM</span>
+	      <xsl:call-template name="sws-cuneiform"/>
+	      <xsl:call-template name="sws-images">
+		<xsl:with-param name="esp-mode" select="$esp-mode"/>
+	      </xsl:call-template>
+	    </div>
+	  </xsl:if>
+	</xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
+	  <div class="asl-cun-img">
+	    <span class="sl-ihead">CUNEIFORM</span>
+	    <xsl:call-template name="sws-cuneiform"/>
+	    <xsl:call-template name="sws-images">
+	      <xsl:with-param name="esp-mode" select="$esp-mode"/>
+	    </xsl:call-template>
+	  </div>
+	</xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:call-template name="sws-stats"/>
     <xsl:call-template name="sws-values"/>
     <xsl:call-template name="sws-meta">
@@ -399,7 +422,16 @@
   <!--<xsl:message>sws-meta: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>-->
   <xsl:if test="sl:uage|sl:ucun|sl:aka|sl:list|sl:sys|@compoundonly|sl:cpds|sl:note">
     <div class="asl-meta">
-      <xsl:call-template name="sws-unicode"/>
+      <xsl:choose>
+	<xsl:when test="@oid">
+	  <xsl:for-each select="id(@oid)">
+	    <xsl:call-template name="sws-unicode"/>
+	  </xsl:for-each>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:call-template name="sws-unicode"/>
+	</xsl:otherwise>	
+      </xsl:choose>
       <xsl:call-template name="sws-lists"/>
       <!--<xsl:call-template name="sws-images"/>-->
       <xsl:call-template name="sws-akas"/>
