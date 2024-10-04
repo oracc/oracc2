@@ -209,14 +209,20 @@ gsb_last(Trun *r)
 	{
 	  wgp->no_d_last = 1;
 	  lastindex = w->gpp_used - 1;
+#if 0	  
 	  fprintf(stderr, "w->no_d_index-1 == %d; w->gpp_used=%d\n", w->no_d_index-1, w->gpp_used);
-	  wgp = gsb_get_n(w, w->no_d_index-1);
-	  if (wgp)
-	    wgp->last = 1;
-	  else
-	    fprintf(stderr,
-		    "lib/gsig_builder/gsb_last: no_d_index=%d is out of bounds at %s\n",
-		    w->no_d_index, loch_word(r)->word_id);
+#endif
+	  /* Should w->no_d_index ever be < 1 at this point? */
+	  if (w->no_d_index > 0)
+	    {
+	      wgp = gsb_get_n(w, w->no_d_index-1);
+	      if (wgp)
+		wgp->last = 1;
+	      else
+		fprintf(stderr,
+			"lib/gsig_builder/gsb_last: no_d_index=%d is out of bounds at %s\n",
+			w->no_d_index, loch_word(r)->word_id);
+	    }
 	}
       gsb_set_positions(w);
     }

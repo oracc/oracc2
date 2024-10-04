@@ -45,7 +45,7 @@ trun_word_init(Trun *r)
       return NULL;
     }
   r->rw = &tw[r->rs.in_w];
-  r->rw->gpp_alloced = 1;
+  r->rw->gpp_alloced = 128;
   r->rw->gpp = calloc(r->rw->gpp_alloced, sizeof(Gsig));
   r->rw->gpp_used = 0;
   r->rw->w = loch_word(r);

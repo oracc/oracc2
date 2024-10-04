@@ -147,7 +147,7 @@ Pool *
 hpool_init(void)
 {
   Pool *p = pool_init();
-  p->h = hash_create(1024);
+  p->h = hash_create(2048);
   return p;
 }
 
