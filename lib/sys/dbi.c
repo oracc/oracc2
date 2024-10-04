@@ -580,7 +580,7 @@ dbi_flush (Dbi_index * dp)
 }
 
 static void
-reinitialize ()
+reinitialize (void)
 {
   Uint i;
   if (node_ptrs)
@@ -1141,7 +1141,7 @@ off_cmp (const void *k1, const void *k2)
 
 static Unsigned32 hash_prime;
 static void
-set_hash_vals ()
+set_hash_vals (void)
 {
   Uint i;
 
@@ -1169,7 +1169,7 @@ hash_cmp (const void *k1, const void *k2)
 
 static Unsigned32 clash_offset;
 static void
-clashes ()
+clashes (void)
 {
   Unsigned32 i = 0;
 
@@ -1268,7 +1268,7 @@ write_clash_indexes (void *vp)
  * and simply writing n 0-bytes in one go.
  */
 static void
-write_hash_table ()
+write_hash_table (void)
 {
   Uint i = 0, j, next_hash_value = 0, empty = 0;
 
@@ -1394,7 +1394,7 @@ hash_init (Unsigned32 n)
 }
 
 void
-hash_term ()
+hash_term (void)
 {
 }
 

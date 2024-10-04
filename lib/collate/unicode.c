@@ -369,7 +369,7 @@ const unsigned char *unicode_i_tiles[256] =
 
 struct Collate_info unicode_collate_info =
 {
-  "unicode",
+  (uccp)"unicode",
   unicode_delims,
   unicode_digits,
   unicode_tiles,

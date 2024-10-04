@@ -24,7 +24,6 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
   size_t len;
   int i;
   int suppress_case_check = 0;
-  static int err;
 
   if ((w = utf2wcs(g, &len)))
     {
@@ -152,7 +151,7 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 	      /* This block may be unnecessary with GVL */
 	      x[xlen++] = w[i];
 	      if ('(' != w[i+1])
-		err |= G_C10E_FINAL_SUBX;
+		; /*err |= G_C10E_FINAL_SUBX;*/
 	      break;
 	    default:
 	      if (iswalpha(w[i]) && !suppress_case_check)
@@ -174,7 +173,7 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
       if (found_l && found_u && !suppress_case_check)
 	{
 	  /* size_t i; */
-	  err |= G_C10E_MIXED_CASE;
+	  /*err |= G_C10E_MIXED_CASE;*/
 #if 0
 	  /* this may not be worth the problems it causes */
 	  if (found_l > found_u)

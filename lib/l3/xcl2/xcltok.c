@@ -1,5 +1,5 @@
 /* C code produced by gperf version 3.0.3 */
-/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -N xcltok -tT xcltok.g  */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W xcltok_wl -N xcltok -tT xcltok.g  */
 /* Computed positions: -k'1-2' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -50,9 +50,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (str, len)
-     register const char *str;
-     register unsigned int len;
+hash (register const char *str, size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -86,75 +84,73 @@ hash (str, len)
   return len + asso_values[(unsigned char)str[1]] + asso_values[(unsigned char)str[0]];
 }
 
-struct xcl_tok_tab *
-xcltok (str, len)
-     register const char *str;
-     register unsigned int len;
-{
-  static struct xcl_tok_tab wordlist[] =
-    {
-      {""}, {""}, {""}, {""},
+static struct xcl_tok_tab xcltok_wl[] =
+  {
+    {""}, {""}, {""}, {""},
 #line 13 "xcltok.g"
-      {"text",	   xcl_node_c, xcl_c_text},
+    {"text",	   xcl_node_c, xcl_c_text},
 #line 27 "xcltok.g"
-      {"punct",	   xcl_node_d, xcl_d_punct},
-      {""}, {""},
+    {"punct",	   xcl_node_d, xcl_d_punct},
+    {""}, {""},
 #line 19 "xcltok.g"
-      {"line-var",  xcl_node_c, xcl_c_line_var},
+    {"line-var",  xcl_node_c, xcl_c_line_var},
 #line 14 "xcltok.g"
-      {"discourse", xcl_node_c, xcl_c_discourse},
+    {"discourse", xcl_node_c, xcl_c_discourse},
 #line 21 "xcltok.g"
-      {"line-start",xcl_node_d, xcl_d_line_start},
+    {"line-start",xcl_node_d, xcl_d_line_start},
 #line 17 "xcltok.g"
-      {"clause",	   xcl_node_c, xcl_c_clause},
-      {""},
+    {"clause",	   xcl_node_c, xcl_c_clause},
+    {""},
 #line 23 "xcltok.g"
-      {"cell-end",  xcl_node_d, xcl_d_cell_end},
-      {""},
+    {"cell-end",  xcl_node_d, xcl_d_cell_end},
+    {""},
 #line 22 "xcltok.g"
-      {"cell-start",xcl_node_d, xcl_d_cell_start},
+    {"cell-start",xcl_node_d, xcl_d_cell_start},
 #line 18 "xcltok.g"
-      {"phrase",	   xcl_node_c, xcl_c_phrase},
+    {"phrase",	   xcl_node_c, xcl_c_phrase},
 #line 29 "xcltok.g"
-      {"surface",   xcl_node_d, xcl_d_surface},
+    {"surface",   xcl_node_d, xcl_d_surface},
 #line 16 "xcltok.g"
-      {"sentence",  xcl_node_c, xcl_c_sentence},
+    {"sentence",  xcl_node_c, xcl_c_sentence},
 #line 25 "xcltok.g"
-      {"gloss-end", xcl_node_d, xcl_d_gloss_end},
+    {"gloss-end", xcl_node_d, xcl_d_gloss_end},
 #line 15 "xcltok.g"
-      {"chunk",	   xcl_node_c, xcl_c_chunk},
+    {"chunk",	   xcl_node_c, xcl_c_chunk},
 #line 24 "xcltok.g"
-      {"gloss-start",xcl_node_d, xcl_d_gloss_start},
-      {""}, {""},
+    {"gloss-start",xcl_node_d, xcl_d_gloss_start},
+    {""}, {""},
 #line 33 "xcltok.g"
-      {"field-end",  xcl_node_d, xcl_d_field_end},
+    {"field-end",  xcl_node_d, xcl_d_field_end},
 #line 26 "xcltok.g"
-      {"break",	   xcl_node_d, xcl_d_break},
+    {"break",	   xcl_node_d, xcl_d_break},
 #line 32 "xcltok.g"
-      {"field-start",xcl_node_d, xcl_d_field_start},
-      {""},
+    {"field-start",xcl_node_d, xcl_d_field_start},
+    {""},
 #line 20 "xcltok.g"
-      {"word-var",  xcl_node_c, xcl_c_text},
+    {"word-var",  xcl_node_c, xcl_c_text},
 #line 30 "xcltok.g"
-      {"nonx", 	   xcl_node_d, xcl_d_nonx},
-      {""},
+    {"nonx", 	   xcl_node_d, xcl_d_nonx},
+    {""},
 #line 31 "xcltok.g"
-      {"column",    xcl_node_d, xcl_d_column},
-      {""}, {""}, {""}, {""},
+    {"column",    xcl_node_d, xcl_d_column},
+    {""}, {""}, {""}, {""},
 #line 28 "xcltok.g"
-      {"object",    xcl_node_d, xcl_d_object}
-    };
+    {"object",    xcl_node_d, xcl_d_object}
+  };
 
+struct xcl_tok_tab *
+xcltok (register const char *str, size_t len)
+{
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
       unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = xcltok_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &xcltok_wl[key];
         }
     }
   return 0;

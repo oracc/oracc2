@@ -1,5 +1,5 @@
-/* ANSI-C code produced by gperf version 3.1 */
-/* Command-line: gperf -N sllext -tT sllext.g  */
+/* C code produced by gperf version 3.0.3 */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W sllext_wl -N sllext -tT sllext.g  */
 /* Computed positions: -k'2' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -26,7 +26,7 @@
       && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \
       && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))
 /* The character set is not based on ISO-646.  */
-#error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gperf@gnu.org>."
+error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
 #line 1 "sllext.g"
@@ -49,7 +49,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (register const char *str, register size_t len)
+hash (register const char *str, size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -93,49 +93,49 @@ hash (register const char *str, register size_t len)
   return hval;
 }
 
-struct sllext *
-sllext (register const char *str, register size_t len)
-{
-  static struct sllext wordlist[] =
-    {
-      {""},
+static struct sllext sllext_wl[] =
+  {
+    {""},
 #line 13 "sllext.g"
-      {"h", ""," Homophones", SLL_V, sll_get_h},
-      {""},
+    {"h", ""," Homophones", SLL_V, sll_get_h},
+    {""},
 #line 16 "sllext.g"
-      {"let","","",SLL_ANY, sll_get_one_let},
+    {"let","","",SLL_ANY, sll_get_one_let},
 #line 14 "sllext.g"
-      {"name", "", "", SLL_ANY, sll_get_one_n},
+    {"name", "", "", SLL_ANY, sll_get_one_n},
 #line 12 "sllext.g"
-      {"forms", "", " Forms", SLL_ID, sll_get_forms},
-      {""}, {""},
+    {"forms", "", " Forms", SLL_ID, sll_get_forms},
+    {""}, {""},
 #line 10 "sllext.g"
-      {"contains", "", "Container", SLL_SN, sll_get_cpd},
+    {"contains", "", "Container", SLL_SN, sll_get_cpd},
 #line 11 "sllext.g"
-      {"contained", "", "", SLL_SN, sll_get_cpd},
+    {"contained", "", "", SLL_SN, sll_get_cpd},
 #line 7 "sllext.g"
-      {"cmemb", ""," Compounds", SLL_SN, sll_get_cpd},
-      {""}, {""},
+    {"cmemb", ""," Compounds", SLL_SN, sll_get_cpd},
+    {""}, {""},
 #line 15 "sllext.g"
-      {"oid", "", "", SLL_ANY, sll_get_one_o},
-      {""},
+    {"oid", "", "", SLL_ANY, sll_get_one_o},
+    {""},
 #line 8 "sllext.g"
-      {"cinit", "Initial ", "", SLL_SN, sll_get_cpd},
-      {""}, {""}, {""}, {""},
+    {"cinit", "Initial ", "", SLL_SN, sll_get_cpd},
+    {""}, {""}, {""}, {""},
 #line 9 "sllext.g"
-      {"clast", "Final ", "", SLL_SN, sll_get_cpd}
-    };
+    {"clast", "Final ", "", SLL_SN, sll_get_cpd}
+  };
 
+struct sllext *
+sllext (register const char *str, size_t len)
+{
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register unsigned int key = hash (str, len);
+      unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = sllext_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &sllext_wl[key];
         }
     }
   return 0;

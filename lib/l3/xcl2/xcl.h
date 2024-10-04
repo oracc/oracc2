@@ -173,7 +173,7 @@ extern struct xcl_l* xcl_lemma(struct xcl_context *xc, const char *xml_id,
 			       enum ll_types t);
 extern struct xcl_context *xcl_load(const char *xcl_fn, int setup_formsets);
 extern void xcl_map(struct xcl_context *, xcl_c_fnc, xcl_c_fnc, xcl_d_fnc, xcl_l_fnc);
-extern struct xcl_tok_tab *xcltok(register const char *str,register unsigned int len);
+extern struct xcl_tok_tab *xcltok(register const char *str,register size_t len);
 
 /*extern void xcl_serialize(struct xcl_context *xc, FILE *fp);*/
 extern void x2_serialize(struct xcl_context *xc, FILE *f_xcl, int with_xcl_decl);

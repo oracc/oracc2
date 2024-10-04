@@ -63,8 +63,6 @@ extern void tlw_A(Trun *r, const char *oid, const char *n, const char *cnt, cons
 extern void tlw_B(Trun *r, const char *oid, const char *n, const char *cnt, const char *pct);
 /* tloc_xtf.c */
 extern void tloc_xtf_sH(void *userData, const char *name, const char **atts);
-/* tokflags.c */
-extern struct tokflags *tokflags(register const char *str, register size_t len);
 /* tok_g_xml.c */
 extern void tok_g_sH(void *userData, const char *name, const char **atts);
 extern void tok_g_eH(void *userData, const char *name);
@@ -76,6 +74,8 @@ extern void tok_m_sH(void *userData, const char *name, const char **atts);
 extern void tok_m_eH(void *userData, const char *name);
 /* tok_writer.c */
 extern void tokw_G(Trun *r);
+/* tokflags.c */
+extern struct tokflags *tokflags(register const char *str, size_t len);
 /* trun.c */
 extern Trun *trun_init(int multi);
 extern void trun_term(Trun *r);

@@ -1,5 +1,5 @@
 /* C code produced by gperf version 3.0.3 */
-/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -N cbdtags -tT cbdtags.g  */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W cbdtags_wl -N cbdtags -tT cbdtags.g  */
 /* Computed positions: -k'3,$' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -51,9 +51,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (str, len)
-     register const char *str;
-     register size_t len;
+hash (register const char *str, size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -87,112 +85,110 @@ hash (str, len)
   return len + asso_values[(unsigned char)str[2]] + asso_values[(unsigned char)str[len - 1]];
 }
 
-struct cbdtag *
-cbdtags (str, len)
-     register const char *str;
-     register size_t len;
-{
-  static struct cbdtag wordlist[] =
-    {
-      {""}, {""}, {""},
+static struct cbdtag cbdtags_wl[] =
+  {
+    {""}, {""}, {""},
 #line 40 "cbdtags.g"
-      {"gwl",   GWL, 0, s_text},
-      {""},
+    {"gwl",   GWL, 0, s_text},
+    {""},
 #line 27 "cbdtags.g"
-      {"collo", COLLO, 0, 0},
-      {""}, {""}, {""},
+    {"collo", COLLO, 0, 0},
+    {""}, {""}, {""},
 #line 37 "cbdtags.g"
-      {"file",  FILESPEC, 0, s_word},
+    {"file",  FILESPEC, 0, s_word},
 #line 18 "cbdtags.g"
-      {"inote", INOTE, 0, s_text},
-      {""}, {""},
+    {"inote", INOTE, 0, s_text},
+    {""}, {""},
 #line 26 "cbdtags.g"
-      {"oid",   OID, 0, s_word},
+    {"oid",   OID, 0, s_word},
 #line 29 "cbdtags.g"
-      {"root",  ROOT, 0, 0},
+    {"root",  ROOT, 0, 0},
 #line 42 "cbdtags.g"
-      {"notel", NOTEL, 0, },
-      {""},
+    {"notel", NOTEL, 0, },
+    {""},
 #line 9 "cbdtags.g"
-      {"project", PROJECT, 0, s_word},
+    {"project", PROJECT, 0, s_word},
 #line 32 "cbdtags.g"
-      {"proplist", PROPS, 0, s_word},
+    {"proplist", PROPS, 0, s_word},
 #line 23 "cbdtags.g"
-      {"note",  NOTE, 0, s_text},
+    {"note",  NOTE, 0, s_text},
 #line 39 "cbdtags.g"
-      {"discl", EDISCL, 0, s_text},
-      {""}, {""},
+    {"discl", EDISCL, 0, s_text},
+    {""}, {""},
 #line 20 "cbdtags.g"
-      {"bff",   BFF, 0, 0},
+    {"bff",   BFF, 0, 0},
 #line 28 "cbdtags.g"
-      {"phon",  PHON, 0, 0},
+    {"phon",  PHON, 0, 0},
 #line 30 "cbdtags.g"
-      {"stems", STEMS, 0, 0},
+    {"stems", STEMS, 0, 0},
 #line 16 "cbdtags.g"
-      {"sensel", SENSEL, 0, s_s},
-      {""}, {""},
+    {"sensel", SENSEL, 0, s_s},
+    {""}, {""},
 #line 11 "cbdtags.g"
-      {"name", NAME, 0, s_text},
+    {"name", NAME, 0, s_text},
 #line 15 "cbdtags.g"
-      {"sense", SENSE, 0, s_s},
-      {""}, {""},
+    {"sense", SENSE, 0, s_s},
+    {""}, {""},
 #line 24 "cbdtags.g"
-      {"bib",   BIB, 0, s_text},
+    {"bib",   BIB, 0, s_text},
 #line 31 "cbdtags.g"
-      {"prop",  PROP, 0, 0},
+    {"prop",  PROP, 0, 0},
 #line 13 "cbdtags.g"
-      {"bases", BASES, 0, s_b},
-      {""}, {""}, {""},
+    {"bases", BASES, 0, s_b},
+    {""}, {""}, {""},
 #line 10 "cbdtags.g"
-      {"lang", LANG, 0, s_word},
+    {"lang", LANG, 0, s_word},
 #line 12 "cbdtags.g"
-      {"entry", ENTRY, 0, s_cf},
+    {"entry", ENTRY, 0, s_cf},
 #line 43 "cbdtags.g"
-      {"senses", SENSES, 0, 0},
-      {""}, {""},
+    {"senses", SENSES, 0, 0},
+    {""}, {""},
 #line 36 "cbdtags.g"
-      {"disc",  EDISC, 0, s_text},
+    {"disc",  EDISC, 0, s_text},
 #line 34 "cbdtags.g"
-      {"pl_id",    PL_ID, 0, 0},
+    {"pl_id",    PL_ID, 0, 0},
 #line 35 "cbdtags.g"
-      {"pl_uid",   PL_UID, 0, 0},
-      {""},
+    {"pl_uid",   PL_UID, 0, 0},
+    {""},
 #line 33 "cbdtags.g"
-      {"pl_coord", PL_COORD, 0, 0},
+    {"pl_coord", PL_COORD, 0, 0},
 #line 38 "cbdtags.g"
-      {"translang", TRANSLANG, 0, s_word},
+    {"translang", TRANSLANG, 0, s_word},
 #line 17 "cbdtags.g"
-      {"isslp", ISSLP, 0, s_text},
-      {""}, {""},
+    {"isslp", ISSLP, 0, s_text},
+    {""}, {""},
 #line 44 "cbdtags.g"
-      {"why",   WHY, 0, s_text},
+    {"why",   WHY, 0, s_text},
 #line 41 "cbdtags.g"
-      {"i18n",  I18N, 0, 0},
+    {"i18n",  I18N, 0, 0},
 #line 19 "cbdtags.g"
-      {"parts", PARTS, 0, s_cf},
-      {""}, {""}, {""},
+    {"parts", PARTS, 0, s_cf},
+    {""}, {""}, {""},
 #line 14 "cbdtags.g"
-      {"form",  FORM, 0, s_f},
+    {"form",  FORM, 0, s_f},
 #line 22 "cbdtags.g"
-      {"allow", ALLOW, 0, s_allow},
-      {""}, {""}, {""}, {""},
+    {"allow", ALLOW, 0, s_allow},
+    {""}, {""}, {""}, {""},
 #line 25 "cbdtags.g"
-      {"equiv", EQUIV, 0, s_text},
-      {""}, {""}, {""}, {""},
+    {"equiv", EQUIV, 0, s_text},
+    {""}, {""}, {""}, {""},
 #line 21 "cbdtags.g"
-      {"alias", ALIAS, 0, s_cf}
-    };
+    {"alias", ALIAS, 0, s_cf}
+  };
 
+struct cbdtag *
+cbdtags (register const char *str, size_t len)
+{
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
       unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = cbdtags_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &cbdtags_wl[key];
         }
     }
   return 0;

@@ -21,7 +21,7 @@ collate_init (const unsigned char *name)
 {
   struct Collate_info_list_node *cp;
   for (cp = collate_infos; cp->name; ++cp)
-    if (!strcmp (name, cp->name))
+    if (!strcmp ((ccp)name, (ccp)cp->name))
       break;
   if (NULL == cp->name)
     {
@@ -33,7 +33,7 @@ collate_init (const unsigned char *name)
 }
 
 void
-collate_term ()
+collate_term (void)
 {
   curr_collate = NULL;
 }
@@ -69,7 +69,7 @@ collate_makekey (Uchar *s)
   while (*s)
     {
       int inc = *s < 0x80 ? 1 : ((!(*s & 0x20)) ? 2 : 3);
-      if (*dst = keyval (UTF2Unicode(s)))
+      if ((*dst = keyval (UTF2Unicode(s))))
 	++dst;
       s += inc;
     }
@@ -88,7 +88,7 @@ collate_makekey_i (Uchar *s)
   while (*s)
     {
       int inc = *s < 0x80 ? 1 : ((!(*s & 0x20)) ? 2 : 3);
-      if (*dst = keyval (UTF2Unicode(s)))
+      if ((*dst = keyval (UTF2Unicode(s))))
 	++dst;
       s += inc;
     }
@@ -153,13 +153,13 @@ numeric (const Uchar *s)
 }
 
 void
-collate_set_tiles ()
+collate_set_tiles (void)
 {
   curr_tiles = curr_collate->tiles;
 }
 
 void
-collate_set_tiles_i ()
+collate_set_tiles_i (void)
 {
   curr_tiles = curr_collate->tiles_i;
 }
@@ -194,8 +194,8 @@ int
 collate_cmp_graphemes (const Uchar *k1, const Uchar *k2)
 {
   const Uchar *k1c, *k2c;
-  k1c = *(const char **)k1;
-  k2c = *(const char **)k2;
+  k1c = *(const uchar **)k1;
+  k2c = *(const uchar **)k2;
   return collate_cmp_graphemes_cc(k1c, k2c);
 }
  
@@ -210,16 +210,16 @@ START:
 
   if (first_pass)
     {
-      strcpy(k1buf,k1c);
-      strcpy(k2buf,k2c);
+      strcpy((char*)k1buf,(ccp)k1c);
+      strcpy((char*)k2buf,(ccp)k2c);
       kk1 = collate_makekey_i(k1buf);
       kk2 = collate_makekey_i(k2buf);
       while (curr_collate->delims[*kk1])
 	++kk1;
       while (curr_collate->delims[*kk2])
 	++kk2;
-      max_e1 = kk1 + strlen (kk1);
-      max_e2 = kk2 + strlen (kk2);
+      max_e1 = kk1 + strlen ((ccp)kk1);
+      max_e2 = kk2 + strlen ((ccp)kk2);
       while (curr_collate->delims[max_e1[-1]])
 	--max_e1;
       while (curr_collate->delims[max_e2[-1]])
@@ -227,12 +227,12 @@ START:
     }
   else
     {
-      strcpy(k1buf,k1c);
-      strcpy(k2buf,k2c);
+      strcpy((char*)k1buf,(ccp)k1c);
+      strcpy((char*)k2buf,(ccp)k2c);
       kk1 = collate_makekey(k1buf); 
       kk2 = collate_makekey(k2buf);
-      max_e1 = kk1 + strlen (kk1);
-      max_e2 = kk2 + strlen (kk2);
+      max_e1 = kk1 + strlen ((ccp)kk1);
+      max_e2 = kk2 + strlen ((ccp)kk2);
     }
 
   for (b1 = kk1, b2 = kk2; 

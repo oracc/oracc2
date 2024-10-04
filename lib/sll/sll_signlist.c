@@ -1,5 +1,5 @@
-/* ANSI-C code produced by gperf version 3.1 */
-/* Command-line: gperf -G -N sll_signlist -tT sll_signlist.g  */
+/* C code produced by gperf version 3.0.3 */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W sll_signlist_wl -N sll_signlist -tT sll_signlist.g  */
 /* Computed positions: -k'1-2' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -26,7 +26,7 @@
       && ('w' == 119) && ('x' == 120) && ('y' == 121) && ('z' == 122) \
       && ('{' == 123) && ('|' == 124) && ('}' == 125) && ('~' == 126))
 /* The character set is not based on ISO-646.  */
-#error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gperf@gnu.org>."
+error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
 #endif
 
 #line 1 "sll_signlist.g"
@@ -49,7 +49,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (register const char *str, register size_t len)
+hash (register const char *str, size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -83,7 +83,7 @@ hash (register const char *str, register size_t len)
   return len + asso_values[(unsigned char)str[1]] + asso_values[(unsigned char)str[0]];
 }
 
-static struct sll_signlist wordlist[] =
+static struct sll_signlist sll_signlist_wl[] =
   {
     {""}, {""},
 #line 17 "sll_signlist.g"
@@ -119,18 +119,18 @@ static struct sll_signlist wordlist[] =
   };
 
 struct sll_signlist *
-sll_signlist (register const char *str, register size_t len)
+sll_signlist (register const char *str, size_t len)
 {
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
-      register unsigned int key = hash (str, len);
+      unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = sll_signlist_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &sll_signlist_wl[key];
         }
     }
   return 0;

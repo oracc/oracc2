@@ -1,5 +1,5 @@
 /* C code produced by gperf version 3.0.3 */
-/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -N cbdpos -tT cbdpos.g  */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W cbdpos_wl -N cbdpos -tT cbdpos.g  */
 /* Computed positions: -k'1-3' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -49,9 +49,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (str, len)
-     register const char *str;
-     register size_t len;
+hash (register const char *str, size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -99,163 +97,161 @@ hash (str, len)
   return hval;
 }
 
-struct cbdpos *
-cbdpos (str, len)
-     register const char *str;
-     register size_t len;
-{
-  static struct cbdpos wordlist[] =
-    {
-      {""},
+static struct cbdpos cbdpos_wl[] =
+  {
+    {""},
 #line 28 "cbdpos.g"
-      {"M"},
+    {"M"},
 #line 45 "cbdpos.g"
-      {"MN"},
+    {"MN"},
 #line 41 "cbdpos.g"
-      {"IN"},
+    {"IN"},
 #line 34 "cbdpos.g"
-      {"BN"},
+    {"BN"},
 #line 40 "cbdpos.g"
-      {"HN"},
+    {"HN"},
 #line 17 "cbdpos.g"
-      {"O"},
+    {"O"},
 #line 47 "cbdpos.g"
-      {"ON"},
+    {"ON"},
 #line 12 "cbdpos.g"
-      {"IP"},
+    {"IP"},
 #line 37 "cbdpos.g"
-      {"EN"},
+    {"EN"},
 #line 39 "cbdpos.g"
-      {"GN"},
+    {"GN"},
 #line 9 "cbdpos.g"
-      {"N"},
+    {"N"},
 #line 46 "cbdpos.g"
-      {"NN"},
+    {"NN"},
 #line 33 "cbdpos.g"
-      {"AN"},
+    {"AN"},
 #line 7 "cbdpos.g"
-      {"AJ"},
+    {"AJ"},
 #line 38 "cbdpos.g"
-      {"FN"},
-      {""},
+    {"FN"},
+    {""},
 #line 27 "cbdpos.g"
-      {"NP"},
+    {"NP"},
 #line 58 "cbdpos.g"
-      {"X"},
+    {"X"},
 #line 59 "cbdpos.g"
-      {"XN"},
+    {"XN"},
 #line 16 "cbdpos.g"
-      {"MA"},
-      {""},
+    {"MA"},
+    {""},
 #line 48 "cbdpos.g"
-      {"PN"},
+    {"PN"},
 #line 35 "cbdpos.g"
-      {"CN"},
+    {"CN"},
 #line 31 "cbdpos.g"
-      {"XP"},
+    {"XP"},
 #line 14 "cbdpos.g"
-      {"CNJ"},
-      {""},
+    {"CNJ"},
+    {""},
 #line 13 "cbdpos.g"
-      {"PP"},
+    {"PP"},
 #line 54 "cbdpos.g"
-      {"U"},
+    {"U"},
 #line 55 "cbdpos.g"
-      {"UN"},
+    {"UN"},
 #line 50 "cbdpos.g"
-      {"PNF"},
-      {""},
+    {"PNF"},
+    {""},
 #line 51 "cbdpos.g"
-      {"RN"},
+    {"RN"},
 #line 53 "cbdpos.g"
-      {"TN"},
+    {"TN"},
 #line 29 "cbdpos.g"
-      {"MOD"},
-      {""}, {""},
+    {"MOD"},
+    {""}, {""},
 #line 19 "cbdpos.g"
-      {"RP"},
+    {"RP"},
 #line 10 "cbdpos.g"
-      {"V"},
+    {"V"},
 #line 56 "cbdpos.g"
-      {"VN"},
+    {"VN"},
 #line 8 "cbdpos.g"
-      {"AV"},
-      {""},
+    {"AV"},
+    {""},
 #line 49 "cbdpos.g"
-      {"QN"},
+    {"QN"},
 #line 32 "cbdpos.g"
-      {"NU"},
+    {"NU"},
 #line 61 "cbdpos.g"
-      {"ZN"},
+    {"ZN"},
 #line 63 "cbdpos.g"
-      {"V/t"},
-      {""},
+    {"V/t"},
+    {""},
 #line 18 "cbdpos.g"
-      {"QP"},
+    {"QP"},
 #line 43 "cbdpos.g"
-      {"KN"},
+    {"KN"},
 #line 60 "cbdpos.g"
-      {"YN"},
+    {"YN"},
 #line 62 "cbdpos.g"
-      {"V/i"},
-      {""},
+    {"V/i"},
+    {""},
 #line 36 "cbdpos.g"
-      {"DN"},
+    {"DN"},
 #line 15 "cbdpos.g"
-      {"J"},
+    {"J"},
 #line 42 "cbdpos.g"
-      {"JN"},
-      {""}, {""},
+    {"JN"},
+    {""}, {""},
 #line 11 "cbdpos.g"
-      {"DP"},
+    {"DP"},
 #line 24 "cbdpos.g"
-      {"PSP"},
+    {"PSP"},
 #line 57 "cbdpos.g"
-      {"WN"},
-      {""}, {""},
+    {"WN"},
+    {""}, {""},
 #line 52 "cbdpos.g"
-      {"SN"},
+    {"SN"},
 #line 22 "cbdpos.g"
-      {"POS"},
+    {"POS"},
 #line 44 "cbdpos.g"
-      {"LN"},
-      {""}, {""}, {""},
+    {"LN"},
+    {""}, {""}, {""},
 #line 21 "cbdpos.g"
-      {"PRP"},
-      {""}, {""}, {""}, {""}, {""}, {""},
+    {"PRP"},
+    {""}, {""}, {""}, {""}, {""}, {""},
 #line 26 "cbdpos.g"
-      {"SBJ"},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {"SBJ"},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
 #line 25 "cbdpos.g"
-      {"PTC"},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""},
+    {"PTC"},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {""},
 #line 23 "cbdpos.g"
-      {"PRT"},
-      {""}, {""}, {""}, {""}, {""},
+    {"PRT"},
+    {""}, {""}, {""}, {""}, {""},
 #line 30 "cbdpos.g"
-      {"REL"},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
-      {""}, {""}, {""}, {""}, {""}, {""},
+    {"REL"},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""}, {""},
+    {""}, {""}, {""}, {""}, {""}, {""},
 #line 20 "cbdpos.g"
-      {"DET"}
-    };
+    {"DET"}
+  };
 
+struct cbdpos *
+cbdpos (register const char *str, size_t len)
+{
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
       unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = cbdpos_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &cbdpos_wl[key];
         }
     }
   return 0;

@@ -1,5 +1,5 @@
 /* C code produced by gperf version 3.0.3 */
-/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -N iomethod -tT iomethod.g  */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W iomethod_wl -N iomethod -tT iomethod.g  */
 /* Computed positions: -k'2-3' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -51,9 +51,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (str, len)
-     register const char *str;
-     register size_t len;
+hash (register const char *str, size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -87,44 +85,42 @@ hash (str, len)
   return len + asso_values[(unsigned char)str[2]+1] + asso_values[(unsigned char)str[1]];
 }
 
-struct iome *
-iomethod (str, len)
-     register const char *str;
-     register size_t len;
-{
-  static struct iome wordlist[] =
-    {
-      {""}, {""}, {""},
+static struct iome iomethod_wl[] =
+  {
+    {""}, {""}, {""},
 #line 9 "iomethod.g"
-      {"cbd", iome_cbd, "http://oracc.org/ns/cbd/1.0", "cbd 2.0 text .glo file", NULL, NULL},
-      {""},
+    {"cbd", iome_cbd, "http://oracc.org/ns/cbd/1.0", "cbd 2.0 text .glo file", NULL, NULL},
+    {""},
 #line 11 "iomethod.g"
-      {"xc2", iome_xc2, "http://oracc.org/ns/cbd/2.0/g2", "cbd 2.0 .xml form of .glo", NULL, NULL},
-      {""},
+    {"xc2", iome_xc2, "http://oracc.org/ns/cbd/2.0/g2", "cbd 2.0 .xml form of .glo", NULL, NULL},
+    {""},
 #line 13 "iomethod.g"
-      {"x12", iome_x12, "http://oracc.org/ns/cbd/2.0/c2", "cbd 2.0 .cbd file (xml phase1)", NULL, NULL},
+    {"x12", iome_x12, "http://oracc.org/ns/cbd/2.0/c2", "cbd 2.0 .cbd file (xml phase1)", NULL, NULL},
 #line 15 "iomethod.g"
-      {"x22", iome_x22, "http://oracc.org/ns/cbd/2.0/x2", "cbd 2.0 .g2x file (xml phase2)", NULL, NULL},
-      {""},
+    {"x22", iome_x22, "http://oracc.org/ns/cbd/2.0/x2", "cbd 2.0 .g2x file (xml phase2)", NULL, NULL},
+    {""},
 #line 10 "iomethod.g"
-      {"xc1", iome_xc1, "http://oracc.org/ns/cbd/2.0/g1", "cbd 1.0 .xml form of .glo", NULL, NULL},
-      {""},
+    {"xc1", iome_xc1, "http://oracc.org/ns/cbd/2.0/g1", "cbd 1.0 .xml form of .glo", NULL, NULL},
+    {""},
 #line 12 "iomethod.g"
-      {"x11", iome_x11, "http://oracc.org/ns/cbd/2.0/c1", "cbd 1.0 .cbd file (xml phase1)", NULL, NULL},
+    {"x11", iome_x11, "http://oracc.org/ns/cbd/2.0/c1", "cbd 1.0 .cbd file (xml phase1)", NULL, NULL},
 #line 14 "iomethod.g"
-      {"x21", iome_x21, "http://oracc.org/ns/cbd/2.0/x1", "cbd 1.0 .g2x file (xml phase2)", NULL, NULL}
-    };
+    {"x21", iome_x21, "http://oracc.org/ns/cbd/2.0/x1", "cbd 1.0 .g2x file (xml phase2)", NULL, NULL}
+  };
 
+struct iome *
+iomethod (register const char *str, size_t len)
+{
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
       unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = iomethod_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &iomethod_wl[key];
         }
     }
   return 0;

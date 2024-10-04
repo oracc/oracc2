@@ -1,5 +1,5 @@
 /* C code produced by gperf version 3.0.3 */
-/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -N cbdrws -tT cbdrws.g  */
+/* Command-line: /Library/Developer/CommandLineTools/usr/bin/gperf -G -W cbdrws_wl -N cbdrws -tT cbdrws.g  */
 /* Computed positions: -k'1-2' */
 
 #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
@@ -49,9 +49,7 @@ inline
 #endif
 #endif
 static unsigned int
-hash (str, len)
-     register const char *str;
-     register size_t len;
+hash (register const char *str, size_t len)
 {
   static unsigned char asso_values[] =
     {
@@ -85,62 +83,60 @@ hash (str, len)
   return len + asso_values[(unsigned char)str[1]] + asso_values[(unsigned char)str[0]];
 }
 
-struct cbdrws *
-cbdrws (str, len)
-     register const char *str;
-     register size_t len;
-{
-  static struct cbdrws wordlist[] =
-    {
-      {""}, {""},
+static struct cbdrws cbdrws_wl[] =
+  {
+    {""}, {""},
 #line 16 "cbdrws.g"
-      {"OB", "akk-x-oldbab"},
+    {"OB", "akk-x-oldbab"},
 #line 10 "cbdrws.g"
-      {"UGN","sux-x-udganu"},
-      {""},
+    {"UGN","sux-x-udganu"},
+    {""},
 #line 7 "cbdrws.g"
-      {"EG", "sux"},
+    {"EG", "sux"},
 #line 18 "cbdrws.g"
-      {"MB", "akk-x-midbab"},
+    {"MB", "akk-x-midbab"},
 #line 15 "cbdrws.g"
-      {"OA", "akk-x-oldass"},
-      {""}, {""},
+    {"OA", "akk-x-oldass"},
+    {""}, {""},
 #line 9 "cbdrws.g"
-      {"ED", "sux-x-eardyn"},
+    {"ED", "sux-x-eardyn"},
 #line 17 "cbdrws.g"
-      {"MA", "akk-x-midass"},
+    {"MA", "akk-x-midass"},
 #line 20 "cbdrws.g"
-      {"NB", "akk-x-neobab"},
+    {"NB", "akk-x-neobab"},
 #line 12 "cbdrws.g"
-      {"UNO","sux-x-unorth"},
-      {""}, {""},
+    {"UNO","sux-x-unorth"},
+    {""}, {""},
 #line 21 "cbdrws.g"
-      {"SB", "akk-x-stdbab"},
+    {"SB", "akk-x-stdbab"},
 #line 19 "cbdrws.g"
-      {"NA", "akk-x-neoass"},
-      {""},
+    {"NA", "akk-x-neoass"},
+    {""},
 #line 8 "cbdrws.g"
-      {"ES", "sux-x-emesal"},
-      {""},
+    {"ES", "sux-x-emesal"},
+    {""},
 #line 14 "cbdrws.g"
-      {"CA", "akk-x-conakk"},
+    {"CA", "akk-x-conakk"},
 #line 11 "cbdrws.g"
-      {"SYL","sux-x-syllab"},
-      {""}, {""}, {""},
+    {"SYL","sux-x-syllab"},
+    {""}, {""}, {""},
 #line 13 "cbdrws.g"
-      {"CF", "akk"}
-    };
+    {"CF", "akk"}
+  };
 
+struct cbdrws *
+cbdrws (register const char *str, size_t len)
+{
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
     {
       unsigned int key = hash (str, len);
 
       if (key <= MAX_HASH_VALUE)
         {
-          register const char *s = wordlist[key].name;
+          register const char *s = cbdrws_wl[key].name;
 
           if (*str == *s && !strcmp (str + 1, s + 1))
-            return &wordlist[key];
+            return &cbdrws_wl[key];
         }
     }
   return 0;

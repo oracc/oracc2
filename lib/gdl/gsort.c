@@ -51,7 +51,7 @@ static GS_item gsort_null_item = { (uccp)"\\0" , 0, (uccp)"", (uccp)"", (uccp)""
 
 /* Initialize storage and structures */
 void
-gsort_init()
+gsort_init(void)
 {
   m_headers = memo_init(sizeof(GS_head), 1024);
   m_items = memo_init(sizeof(GS_item), 1024);
@@ -68,7 +68,7 @@ gsort_init()
 
 /* Terminate storage and structures */
 void
-gsort_term()
+gsort_term(void)
 {
   memo_term(m_headers);
   memo_term(m_items);
@@ -187,7 +187,7 @@ gsort_node(Node *np, List *lp)
       break;
     case 'd':
       /* For d = '3×' store the multiplier and don't add the TIMES */
-      if (*np->text < 128 && isdigit(*np->text))
+      if (*(uccp)np->text < 128 && isdigit(*np->text))
 	pending_r = atoi(np->text);
       else
 	list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
