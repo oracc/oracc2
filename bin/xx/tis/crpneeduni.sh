@@ -6,4 +6,4 @@ if [ "$p" == "" ]; then
 fi
 h=`/bin/echo -n $p | tr / -`
 crpsigns.sh $p >need
-needuni.sh | grep - need >$h.need
+needuni.sh | grep -f - need >$h.need
