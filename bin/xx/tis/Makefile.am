@@ -6,7 +6,7 @@ bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokex tokix tokpct cbdex cbdikey
 
 #vidx
 
-bin_SCRIPTS=tisdbi.sh tisdiv.sh tok2tis.sh cbdsigns.sh
+bin_SCRIPTS=tisdbi.sh tisdiv.sh tok2tis.sh cbdsigns.sh crpsigns.sh needuni.sh
 
 data_DATA=tis-[ht].html
 

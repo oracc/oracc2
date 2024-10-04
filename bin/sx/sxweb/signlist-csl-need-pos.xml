@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<esp:page
+    xmlns:esp="http://oracc.org/ns/esp/1.0"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:xh="http://www.w3.org/1999/xhtml"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:sxw="http://oracc.org/ns/sxweb/1.0"
+    >
+  <esp:name>Corpus Signs not in Unicode</esp:name>
+  <esp:title>Corpus Signs not in Unicode</esp:title>
+  <html>
+    <head/>
+    <body>
+      <p>There are @@NEEDED@@ sign@@s@@ in this corpus that are not yet in Unicode.</p>
+      
+      <!-- or "grid" -->
+      <sxw:page-o-signs
+	  format="list"
+	  instances="yes"
+	  ><xi:include href="csl-need.txt" parse="text"
+	  /></sxw:page-o-signs>
+
+    </body>
+  </html>
+</esp:page>
