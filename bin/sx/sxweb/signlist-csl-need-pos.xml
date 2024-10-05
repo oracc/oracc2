@@ -16,8 +16,8 @@
       <!-- or "grid" -->
       <sxw:page-o-signs
 	  format="list"
-	  instances="yes"
-	  ><xi:include href="csl-need.txt" parse="text"
+	  stats="yes"
+	  ><xi:include href="csl-need.xml"
 	  /></sxw:page-o-signs>
 
     </body>

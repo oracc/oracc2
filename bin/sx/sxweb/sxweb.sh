@@ -60,6 +60,9 @@ if [ "$auto" != "yes" ]; then
     sxportal.sh
 fi
 
+if [ "$stats" == "yes" ]; then
+    csl-need.sh
+fi
 sxweb-pos.sh
 
 rm -fr signlist ; mkdir signlist

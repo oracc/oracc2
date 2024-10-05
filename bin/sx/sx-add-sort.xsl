@@ -7,13 +7,15 @@
 
 <xsl:output method="xml" indent="yes" encoding="utf-8"/>
 
+<xsl:param name="slxml" select="'sl.xml'"/>
+
 <xsl:template match="*">
   <xsl:copy>
     <xsl:copy-of select="@*"/>
     <xsl:if test="not(@sort)">
       <xsl:if test="@xml:id">
 	<xsl:variable name="xid" select="@xml:id"/>
-	<xsl:for-each select="document('sl.xml',/)">
+	<xsl:for-each select="document($slxml)">
 	  <xsl:variable name="n" select="id($xid)"/>
 	  <xsl:if test="$n">
 	    <xsl:copy-of select="$n/@sort"/>

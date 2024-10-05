@@ -12,4 +12,4 @@ if [ ! -r $s ]; then
 fi
 h=`/bin/echo -n $p | tr / -`
 crpsigns.sh $p >need
-needuni.sh | grep -f - need >$h-$l.need
+needuni.sh | grep -f - need
