@@ -1,4 +1,5 @@
 #include <signlist.h>
+#include <tis.h>
 #include <sx.h>
 
 static sx_signlist_f sx_w_a_signlist;
@@ -152,6 +153,17 @@ sx_w_a_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
   static int in_form = 0;
   if (sx_pos_inst == p)
     {
+      struct tis_data *tip;
+      if (sl->h_idata && (!(tip = hash_find(sl->h_idata,s->key))))
+	return;
+
+      /* When a .tis is read the signs and forms which occur in the
+	 keys are checked to see if they have dependeencies; if so,
+	 those dependencies are added to sl->h_idata with a flag value
+	 of -1 in tip->cnt */
+      if (tip && tip->cnt == (const char *)(uintptr_t)-1)
+	s->u.f->compoundonly = 1;
+
       const char *minus = "", *query = "", *ref = "", *refspace = "", *literal = "";
       if (!s->valid)
 	minus = "-";
@@ -272,6 +284,17 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	    }
 	}
 
+      struct tis_data *tip;
+      if (sl->h_idata && (!(tip = hash_find(sl->h_idata,s->key))))
+	return;
+
+      /* When a .tis is read the signs and forms which occur in the
+	 keys are checked to see if they have dependeencies; if so,
+	 those dependencies are added to sl->h_idata with a flag value
+	 of -1 in tip->cnt */
+      if (tip && tip->cnt == (const char *)(uintptr_t)-1)
+	s->u.f->compoundonly = 1;
+      
       if ('f' == s->type)
 	{
 	  struct sl_sign *fs = s->u.f->sign;
@@ -396,6 +419,8 @@ sx_w_a_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, 
 {
   if (sx_pos_inst == p && !v->inherited)
     {
+      if (sl->h_idata && (!hash_find(sl->h_idata,v->key)))
+	return;
       const char *minus = "", *query = "", *langpct = "", *lang = "", *langspace = "";
       if (!v->valid)
 	minus = "-";
