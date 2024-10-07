@@ -161,7 +161,7 @@ sx_w_a_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	 keys are checked to see if they have dependeencies; if so,
 	 those dependencies are added to sl->h_idata with a flag value
 	 of -1 in tip->cnt */
-      if (tip && tip->cnt == (const char *)(uintptr_t)-1)
+      if (tip && tip->cnt ==  SX_IDATA_COMPONLY)
 	s->u.f->compoundonly = 1;
 
       const char *minus = "", *query = "", *ref = "", *refspace = "", *literal = "";

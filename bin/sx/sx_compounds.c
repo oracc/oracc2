@@ -56,7 +56,7 @@ sx_compound_init(struct sl_signlist *sl, Hash *h, const char *c)
 }
 
 /* An earlier version of sx_compounds registered signs that were not
-   themselves in OGSL but this caused problems so now we require any
+   themselves in OSL but this caused problems so now we require any
    compound element to be registered as a @sign or @compoundonly and also
    require the use of @aka with sign-names that have non-standard name
    components. */
@@ -108,7 +108,9 @@ sx_compound_new_sign(struct sl_signlist *sl, const char *sgnname, const char *cp
     }
   else
     {
-      if (extra_needs)
+      if (sl->h_idata)
+	sx_idata_componly(sl, (uccp)sgnname);
+      else if (extra_needs)
 	sxx_compound((uccp)sgnname);
       else
 	mesg_verr(&sl->curr_inst->mloc, "compound element %s should have @sign entry\n", sgnname);

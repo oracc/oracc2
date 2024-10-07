@@ -3,6 +3,7 @@
 #include <oid.h>
 #include <tok.h>
 #include <tis.h>
+#include "sx.h"
 
 #if 0
 static void
@@ -92,6 +93,17 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
       list_add(ll, cp);
     }
   /*cbdex_term(chp);*/ /* need to do this after cbd info is printed */
+}
+
+void
+sx_idata_componly(struct sl_signlist *sl, unsigned const char *s)
+{
+  static struct tis_data *tip = NULL;
+  if (!tip)
+    tip = memo_new(sl->m_idata);
+  tip->key = (char*)s;
+  tip->cnt = SX_IDATA_COMPONLY;
+  hash_add(sl->h_idata, (uccp)tip->key, tip);
 }
 
 const unsigned char *

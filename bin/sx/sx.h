@@ -55,6 +55,9 @@ struct numvmap_tab
   const char *asif;
 };
 
+
+#define SX_IDATA_COMPONLY (char *)(uintptr_t)-1
+
 extern Hash *parent_sl;
 extern const char *parent_sl_project;
 extern int unicode_from_parent;
@@ -132,6 +135,7 @@ extern void sx_ldata_value_inst(struct sl_signlist *sl, struct sl_inst *vip);
 extern void sx_merge(struct sl_signlist *sl);
 extern unsigned char *sx_oids_of(struct sl_signlist *sl, unsigned const char *snames);
 
+extern void sx_idata_componly(struct sl_signlist *sl, const unsigned char *s);
 extern void sx_ldata_sign_inst(struct sl_signlist *sl, struct sl_inst *sip);
 extern void sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
 
