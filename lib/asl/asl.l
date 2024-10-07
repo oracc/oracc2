@@ -108,7 +108,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 <Yt>[^\n]+/\n			{ aslsave_w; BEGIN(0); return SYSTEXT; }
 <Y,Yt>[ \t]+   			{ }
 
-^@@				{ /* no-op */ }
+^@@				{ return EFORM; }
 ^@end/[ \t].*\n        	       	{ atcmd(END,E); }
 ^@signlist/[ \t]+      		{ atcmd(SIGNLIST,S); }
 ^@project/[ \t]+      		{ atcmd(PROJECT,S); }

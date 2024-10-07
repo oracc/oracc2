@@ -370,7 +370,7 @@ sx_marshall(struct sl_signlist *sl)
       if (!s->as_form)
 	s->as_form = list_create(LIST_SINGLE);
       list_add_list(s->as_form, f->insts);
-
+      
       /* If this form has Unicode info register it as the defining instance */
       if (f->sign->xref && (f->U.useq || f->U.uname))
 	{
@@ -556,6 +556,12 @@ sx_marshall(struct sl_signlist *sl)
 	sl->forms[i]->U.uchar = pool_copy(uhex2utf8((uccp)sl->forms[i]->U.ucode), sl->p);
 #endif
 
+#if 0
+      /* set the key for all form insts */
+      struct sl_inst *ip;
+      for (ip = list_first(sl->forms[i]->insts); ip; ip = list_next(sl->forms[i]->insts))
+	asl_add_key(&ip->mloc, sl, ip, ip->parent_s->atoid, ip->u.f->oid, NULL);
+#endif
     }
   /* Sort the forms */
   qsort(sl->forms, sl->nforms, sizeof(struct sl_form*), (cmp_fnc_t)forms_cmp);

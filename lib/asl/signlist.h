@@ -525,6 +525,7 @@ extern void asl_bld_note(Mloc *locp, struct sl_signlist *sl, const char *tag, co
 extern void asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 extern void asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 
+extern void asl_bld_end_form(Mloc *locp, struct sl_signlist *sl);
 extern void asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle type);
 extern void asl_bld_end_pcun(Mloc *locp, struct sl_signlist *sl, enum sx_tle type);
 extern void asl_bld_end_xsux(Mloc *locp, struct sl_signlist *sl, enum sx_tle type);

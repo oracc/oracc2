@@ -31,8 +31,8 @@ int minus_flag = 0;
 		SIGN PCUN XSUX FAKE AKA COMP PNAME FORM NOFORM
 		GNAME GVALUE GVALUEX GOESTO
 		GBAD ATF LANG V LIST LISTNUM
-		INOTE LIT NOTE REF TEXT END EBAD EFORM
-		ESIGN EPCUN EXSUX
+		INOTE LIT NOTE REF TEXT END EBAD
+		ESIGN EPCUN EXSUX EFORM
 		UAGE USEQ UTF8 UMAP UNAME UNOTE UPUA
 		SIGNLIST PROJECT DOMAIN LISTDEF LISTNAME LREF SREF
 		SYSDEF SYSNAME SYS SYSGOESTO SYSTEXT
@@ -219,11 +219,12 @@ token:
 	| LITERAL		{ asl_literal_flag = 1; }
 	;
 
-/* Possibly add EGROUP ELETTER ESECTION here; note: EFORM no longer used; on ESIGN we should NULL out sl->curr_sign/form/inst */
+/* Possibly add EGROUP ELETTER ESECTION here; on ESIGN we should NULL out sl->curr_sign/form/inst */
 atend:
 	  END ESIGN	    	{ asl_bld_end_sign(&@1, curr_asl, sx_tle_sign); }
 	| END EPCUN	    	{ asl_bld_end_sign(&@1, curr_asl, sx_tle_pcun); }
 	| END EXSUX	    	{ asl_bld_end_sign(&@1, curr_asl, sx_tle_xsux); }
+	| EFORM			{ asl_bld_end_form(&@1, curr_asl); }
 	| END EBAD
 	;
 

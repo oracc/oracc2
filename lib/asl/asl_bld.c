@@ -600,6 +600,16 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
     }
 }
 
+void
+asl_bld_end_form(Mloc *locp, struct sl_signlist *sl)
+{
+  if (asl_sign_guard(locp, sl, "form"))
+    {
+      if (!sl->curr_form)
+	mesg_verr(locp, "misplaced @@\n");
+    }
+}
+
 static void
 asl_register_list_item(Mloc *locp, struct sl_signlist *sl, struct sl_list *l)
 {

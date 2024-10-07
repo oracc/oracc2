@@ -609,6 +609,12 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 		    }
 		}
 
+	      if (s->key)
+		{
+		  list_add(a, "key");
+		  list_add(a, (void*)xmlify(s->key));
+		}
+
 	      list_add(a, "n");
 	      list_add(a, (void*)xmlify(s->u.f->name));
 
@@ -921,6 +927,12 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
     {
       list_add(a, "xml:id");
       list_add(a, (void*)s->u.s->oid);
+    }
+
+  if (s->key)
+    {
+      list_add(a, "key");
+      list_add(a, (void*)xmlify(s->key));
     }
 
   if (s->u.s->as_form && list_len(s->u.s->as_form))
