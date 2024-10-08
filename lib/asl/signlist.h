@@ -70,8 +70,9 @@ struct sl_signlist
   Hash *values_by_oid;
   Hash *oidindexes;
   Hash *hletters;
-  Hash *h_idata;	/* Hash used by sx_idata */
-  Hash *h_ldata;	/* Hash used by sx_ldata */
+  Hash *h_idata;	/* Hash used by sx_idata; adding graphemic data */
+  Hash *h_ldata;	/* Hash used by sx_ldata; adding lemma data */
+  Hash *h_kdata;	/* Hash used by sx_kdata; subsetting by key */
   Hash *h_merge;	/* Tracking hash for @merge signs */
   struct sl_token **tokens; /* sorted htoken */
   struct sl_sign  **signs;  /* sorted hsentry */

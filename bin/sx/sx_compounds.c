@@ -189,8 +189,8 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
     }
   else
     {
-      if (sl->h_idata)
-	sx_idata_componly(sl, sp);
+      if (sl->h_kdata)
+	sx_kdata_componly(sl, sp);
 
       if (!sp->hcompounds)
 	{

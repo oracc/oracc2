@@ -66,7 +66,7 @@ sx_kdata_init(struct sl_signlist *sl, const char *kdata_file, const char *idata_
 {
   char *lp;
   FILE *fp = NULL;
-  sl->h_idata = hash_create(1024);
+  sl->h_kdata = hash_create(1024);
   sl->m_idata = memo_init(sizeof(struct tis_data), 256);
   
   if (!(fp = fopen(kdata_file, "r")))
@@ -81,7 +81,7 @@ sx_kdata_init(struct sl_signlist *sl, const char *kdata_file, const char *idata_
       lp[strlen(lp)-1] = '\0';
       struct tis_data *tp = memo_new(sl->m_idata);
       tp->key = (char*)pool_copy((ucp)lp, sl->p);
-      hash_add(sl->h_idata, (uccp)tp->key, tp);
+      hash_add(sl->h_kdata, (uccp)tp->key, tp);
     }
 }
 
@@ -125,16 +125,16 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
 }
 
 void
-sx_idata_componly(struct sl_signlist *sl, struct sl_sign *sp)
+sx_kdata_componly(struct sl_signlist *sl, struct sl_sign *sp)
 {
   char buf[strlen((ccp)sp->name)+3];
   sprintf(buf, "%s..", sp->name);
-  if (!hash_find(sl->h_idata, (uccp)buf))
+  if (!hash_find(sl->h_kdata, (uccp)buf))
     {
       struct tis_data *tip = memo_new(sl->m_idata);
       tip->key = (char*)pool_copy((uccp)buf, sl->p);
       tip->cnt = SX_IDATA_COMPONLY;
-      hash_add(sl->h_idata, (uccp)tip->key, tip);
+      hash_add(sl->h_kdata, (uccp)tip->key, tip);
     }
 }
 

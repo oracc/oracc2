@@ -154,7 +154,7 @@ sx_w_a_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
   if (sx_pos_inst == p)
     {
       struct tis_data *tip;
-      if (sl->h_idata && (!(tip = hash_find(sl->h_idata,s->key))))
+      if (sl->h_kdata && (!(tip = hash_find(sl->h_kdata,s->key))))
 	return;
 
       /* When a .tis is read the signs and forms which occur in the
@@ -285,12 +285,12 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	}
 
       struct tis_data *tip;
-      if (sl->h_idata && s->key && (!(tip = hash_find(sl->h_idata,s->key))))
+      if (sl->h_kdata && s->key && (!(tip = hash_find(sl->h_kdata,s->key))))
 	return;
-
+      
       /* When a .tis is read the signs and forms which occur in the
 	 keys are checked to see if they have dependeencies; if so,
-	 those dependencies are added to sl->h_idata with a flag value
+	 those dependencies are added to sl->h_kdata with a flag value
 	 of -1 in tip->cnt */
       if (tip && tip->cnt == (const char *)(uintptr_t)-1 && 's' == s->type)
 	s->u.s->type = sx_tle_componly;
@@ -419,7 +419,7 @@ sx_w_a_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, 
 {
   if (sx_pos_inst == p && !v->inherited)
     {
-      if (sl->h_idata && (!hash_find(sl->h_idata,v->key)))
+      if (sl->h_kdata && (!hash_find(sl->h_kdata,v->key)))
 	return;
       const char *minus = "", *query = "", *langpct = "", *lang = "", *langspace = "";
       if (!v->valid)

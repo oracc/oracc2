@@ -29,10 +29,10 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 		      int k;
 		      for (k = 0; k < sl->letters[i].groups[j].nsigns; ++k)
 			{
-			  if (sl->h_idata
-			      && sl->letters[i].groups[j].signs[k]->key
-			      && (!hash_find(sl->h_idata,
-					     sl->letters[i].groups[j].signs[k]->key)))
+			  if (sl->h_kdata
+			      && (!sl->letters[i].groups[j].signs[k]->key
+				  || (!hash_find(sl->h_kdata,
+						 sl->letters[i].groups[j].signs[k]->key))))
 			    continue;
 			  
 #define QV(vp) ((vp)->u.v->qvsign || (vp)->u.v->qvform || (vp)->u.v->qvmust)
@@ -83,6 +83,12 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 				  f->frm(f, sl, NULL, sx_pos_init);
 				  for (l = 0; l < sl->letters[i].groups[j].signs[k]->u.s->nforms; ++l)
 				    {
+				      if (sl->h_kdata
+					  && (!sl->letters[i].groups[j].signs[k]->u.s->forms[l]->key
+					      || (!hash_find(sl->h_kdata,
+							     sl->letters[i].groups[j].signs[k]->u.s->forms[l]->key))))
+					continue;
+
 				      f->frm(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l], sx_pos_inst);
 				      if (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nlists)
 					{
