@@ -14,7 +14,7 @@ tis_strip_iss(char *lp)
 }
 #endif
 
-/* Read the corpus statistics from a .tis file into a hash-by-oid, sl->idata.
+/* Read the corpus statistics from a .tis file into a hash-by-key, sl->h_idata.
  */
 void
 sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_type)
@@ -53,6 +53,35 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
       struct tis_data *tp = memo_new(sl->m_idata);
       *tp = t;
       hash_add(sl->h_idata, (uccp)t.key, tp);
+    }
+}
+
+/* Read the signlist keys from a .key file into a hash-by-key, sl->h_idata.
+ *
+ * Subsetting via keys uses most of the same data structures as
+ * subsetting by idata/adding idata, but the statistics are all NULL.
+ */
+void
+sx_kdata_init(struct sl_signlist *sl, const char *kdata_file, const char *idata_type)
+{
+  char *lp;
+  FILE *fp = NULL;
+  sl->h_idata = hash_create(1024);
+  sl->m_idata = memo_init(sizeof(struct tis_data), 256);
+  
+  if (!(fp = fopen(kdata_file, "r")))
+    {
+      perror(kdata_file);
+      return;
+    }
+
+  char buf[1024];
+  while ((lp = fgets(buf,1024,fp)))
+    {
+      lp[strlen(lp)-1] = '\0';
+      struct tis_data *tp = memo_new(sl->m_idata);
+      tp->key = (char*)pool_copy((ucp)lp, sl->p);
+      hash_add(sl->h_idata, (uccp)tp->key, tp);
     }
 }
 
@@ -96,14 +125,17 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
 }
 
 void
-sx_idata_componly(struct sl_signlist *sl, unsigned const char *s)
+sx_idata_componly(struct sl_signlist *sl, struct sl_sign *sp)
 {
-  static struct tis_data *tip = NULL;
-  if (!tip)
-    tip = memo_new(sl->m_idata);
-  tip->key = (char*)s;
-  tip->cnt = SX_IDATA_COMPONLY;
-  hash_add(sl->h_idata, (uccp)tip->key, tip);
+  char buf[strlen((ccp)sp->name)+3];
+  sprintf(buf, "%s..", sp->name);
+  if (!hash_find(sl->h_idata, (uccp)buf))
+    {
+      struct tis_data *tip = memo_new(sl->m_idata);
+      tip->key = (char*)pool_copy((uccp)buf, sl->p);
+      tip->cnt = SX_IDATA_COMPONLY;
+      hash_add(sl->h_idata, (uccp)tip->key, tip);
+    }
 }
 
 const unsigned char *
@@ -139,7 +171,7 @@ sx_idata_ctotals(struct sl_signlist *sl)
 	    {
 	      size_t ns = 0, nc = 0;
 	      struct tis_data *tip = hash_find(sl->h_idata, (uccp)sx_idata_key(sl->signs[i]->oid, "", (uccp)""));
-	      if (tip)
+	      if (tip && tip->cnt && tip->cnt != SX_IDATA_COMPONLY)
 		{
 		  ns = atoi(tip->cnt);
 		  /* Get the compound data for the current sign */

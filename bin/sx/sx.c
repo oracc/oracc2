@@ -61,7 +61,7 @@ int check_mode = 0;
 int trace_mode = 0;
 extern int asl_flex_debug, gdl_flex_debug, gdl_unicode;
 
-char *idata_file = NULL;
+char *idata_file = NULL, *kdata_file = NULL;
 char *idata_type = NULL;
 
 const char *ldata_file = NULL; /* lemma data */
@@ -86,7 +86,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eg:iI:jJ:l:L:m:nMoOP:p:qQsStTuUxX:?");
+  options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nMoOP:p:qQsStTuUxX:?");
   asltrace = asl_flex_debug = gdl_flex_debug = trace_mode;
   if (sortcode_output > 1)
     gsort_trace = 1;
@@ -340,6 +340,18 @@ opts(int opt, const char *arg)
       jfn = arg;
     case 'j':
       jsn_output = 1;
+      break;
+    case 'K':
+      asl_output = identity_mode = 1;
+      idata_type = strdup(arg);
+      kdata_file = strchr(idata_type, ':');
+      if (kdata_file && kdata_file - idata_type < 3)
+	*kdata_file++ = '\0';
+      else
+	{
+	  fprintf(stderr, "sx: the -K option must be TYPE:FILE, e.g., sl:corpus.key\n");
+	  exit(1);
+	}
       break;
     case 'L':
       ldata_file = arg;

@@ -117,6 +117,7 @@ asl_bld_init(void)
   sl->m_links = memo_init(sizeof(Link), 512);
   sl->p = pool_init();
   sl->compounds = list_create(LIST_SINGLE);
+  sl->componly = list_create(LIST_SINGLE);
   sl->hnums = hash_create(1000);
 
   sl->notes = new_inst(sl);
@@ -607,6 +608,9 @@ asl_bld_end_form(Mloc *locp, struct sl_signlist *sl)
     {
       if (!sl->curr_form)
 	mesg_verr(locp, "misplaced @@\n");
+      else if (!sl->curr_form->key)
+	mesg_verr(locp, "no key set for form %s", sl->curr_form->u.f->name);
+      sl->curr_form = sl->curr_inst = NULL;
     }
 }
 
@@ -1074,6 +1078,7 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
       f->sign = asl_form_as_sign(sl, f);
       f->sign->type = sx_tle_formproxy;
       f->compoundonly = 1;
+      list_add(sl->componly, sl->curr_inst);
     }
   else
     {
@@ -1081,6 +1086,8 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
       sl->curr_sign->type = type;
       sl->curr_sign->pname = pool_copy(m, sl->p);
       sl->curr_inst = sl->curr_sign->inst;
+      if (type == sx_tle_componly)
+	list_add(sl->componly, sl->curr_inst);
 
       /* At this point sl->curr_sign is still set, e.g., to the @lref;
 	 this means we can use the sign's inst for the list inst */
@@ -1183,6 +1190,8 @@ asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle t)
     {
       if (sl->curr_sign->type == t)
 	{
+	  if (!sl->curr_sign->inst->key)
+	    mesg_verr(locp, "no key set for sign %s", sl->curr_sign->name);
 	  sl->curr_sign = NULL;
 	  sl->curr_form = NULL;
 	  sl->curr_inst = NULL;

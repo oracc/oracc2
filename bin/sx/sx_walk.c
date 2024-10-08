@@ -29,6 +29,12 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 		      int k;
 		      for (k = 0; k < sl->letters[i].groups[j].nsigns; ++k)
 			{
+			  if (sl->h_idata
+			      && sl->letters[i].groups[j].signs[k]->key
+			      && (!hash_find(sl->h_idata,
+					     sl->letters[i].groups[j].signs[k]->key)))
+			    continue;
+			  
 #define QV(vp) ((vp)->u.v->qvsign || (vp)->u.v->qvform || (vp)->u.v->qvmust)
 			  List *qv = list_create(LIST_SINGLE);
 			  f->sgn(f, sl, sl->letters[i].groups[j].signs[k], sx_pos_init);

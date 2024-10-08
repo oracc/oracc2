@@ -14,6 +14,17 @@ static struct sl_signlist *cmpsl = NULL;
 
 int sx_show_tokens = 0;
 
+static void
+add_componly_key(struct sl_signlist *sl, struct sl_inst *ip)
+{
+  char buf[20];
+  if (ip->type == 'f')
+    sprintf(buf, "%s.%s.", ip->parent_s->u.s->oid, ip->u.f->oid);
+  else
+    sprintf(buf, "%s..", ip->u.s->oid);
+  ip->key = pool_copy((uccp)buf, sl->p);
+}
+
 int oid_char_cmp(const void *a, const void *b)
 {
   const char *cc1 = (*(char**)a);
@@ -337,6 +348,8 @@ sx_marshall(struct sl_signlist *sl)
 
   if (idata_file)
     sx_idata_init(sl, idata_file, idata_type);
+  else if (kdata_file)
+    sx_kdata_init(sl, kdata_file, idata_type);
 
   if (ldata_file)
     sx_ldata_init(sl, ldata_file);
@@ -743,6 +756,11 @@ sx_marshall(struct sl_signlist *sl)
 
   /* Resolve merges to OIDs */
   sx_merge(sl);
+
+  /* Provide keys for @compoundonly entries */
+  struct sl_inst *ip;
+  for (ip = list_first(sl->componly); ip; ip = list_next(sl->componly))
+    add_componly_key(sl, ip);
   
   /* Sort the lists, values and forms for each sign */
   for (i = 0; i < sl->nsigns; ++i)

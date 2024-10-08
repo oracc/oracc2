@@ -108,9 +108,7 @@ sx_compound_new_sign(struct sl_signlist *sl, const char *sgnname, const char *cp
     }
   else
     {
-      if (sl->h_idata)
-	sx_idata_componly(sl, (uccp)sgnname);
-      else if (extra_needs)
+      if (extra_needs)
 	sxx_compound((uccp)sgnname);
       else
 	mesg_verr(&sl->curr_inst->mloc, "compound element %s should have @sign entry\n", sgnname);
@@ -191,6 +189,9 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
     }
   else
     {
+      if (sl->h_idata)
+	sx_idata_componly(sl, sp);
+
       if (!sp->hcompounds)
 	{
 	  sp->hcompounds = hash_create(32);

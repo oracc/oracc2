@@ -96,6 +96,7 @@ struct sl_signlist
   struct sl_inst *curr_inst; /* used to attach meta to correct tag */
   int curr_invalid; 		/* 1=@sign- 2=@form- 3=@v- */
   List *compounds;
+  List *componly;		/* @compoundonly sl_inst *; can be sign-level or form-level */
   List *linklists; 		/* list of the lists of @link that occur in sign or
 		     		   form, so we can generate link reports easily */
   List *syslists; 		/* list of the lists of @sys that occur in sign or

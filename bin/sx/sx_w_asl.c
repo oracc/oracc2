@@ -285,15 +285,15 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	}
 
       struct tis_data *tip;
-      if (sl->h_idata && (!(tip = hash_find(sl->h_idata,s->key))))
+      if (sl->h_idata && s->key && (!(tip = hash_find(sl->h_idata,s->key))))
 	return;
 
       /* When a .tis is read the signs and forms which occur in the
 	 keys are checked to see if they have dependeencies; if so,
 	 those dependencies are added to sl->h_idata with a flag value
 	 of -1 in tip->cnt */
-      if (tip && tip->cnt == (const char *)(uintptr_t)-1)
-	s->u.f->compoundonly = 1;
+      if (tip && tip->cnt == (const char *)(uintptr_t)-1 && 's' == s->type)
+	s->u.s->type = sx_tle_componly;
       
       if ('f' == s->type)
 	{
