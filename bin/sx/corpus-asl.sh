@@ -1,6 +1,11 @@
 #!/bin/sh
 #
-# This script is analagous to auto.asl but the sign list is based on a
+# TODO:
+#	unify auto-asl.sh and corpus-asl.sh--just use different lists
+#	modify odo-corpus-signlist.sh to use unified corpus-asl.sh
+# 	move all sl.xml work to mcu-slix.sh
+#
+# This script is analagous to auto-asl.sh but the sign list is based on a
 # list of sources rather than a project.  The outputs are 01tmp/sl.xml
 # and a repertoire table, 01tmp/rep.tab.
 #
@@ -40,8 +45,10 @@ cat $gtoks | tokex -d01tmp | tokix -d01tmp -p$project | tokpct >01tmp/corpus.kis
 #sx -Up osl -e -c 01tmp/corpus.asl >>01tmp/corpus.asl
 # New approach: subsetting of osl is built in to sx via -K01tmp/corpus.key
 (cd 01tmp ; cut -f2 <corpus.kis | tail -n +2 >corpus.key ; sx -Ksl:corpus.key >corpus.asl)
-# Old approach: still used--subset now gets augmented with instance data
-(cd 01tmp ; sx -Isl:corpus.kis -x corpus.asl)
+# Old approach: move to mcu-slix.sh
+#(cd 01tmp ; sx -Isl:corpus.kis -x corpus.asl)
+#
+# Old approach: need to unify build outputs and move them post mcu-slix.sh
 xsltproc $libscripts/sxweb-freq-tab.xsl 01tmp/sl.xml >01tmp/freq-tab.xml
 mkdir -p 00etc
 reptab=`basename $list .lst`-rep.tab
