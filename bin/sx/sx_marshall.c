@@ -365,7 +365,12 @@ sx_marshall(struct sl_signlist *sl)
 	f->aka = sx_uniq_aka(f->aka);
       
       if (!(s = hash_find(sl->hsentry, (uccp)keys[i])))
-	s = asl_form_as_sign(sl, hash_find(sl->hfentry, (uccp)keys[i]));
+	{
+	  struct sl_form *fp = hash_find(sl->hfentry, (uccp)keys[i]);
+	  int n = (fp->insts ? list_len(fp->insts) : 0);
+	  fprintf(stderr, "FORM %s is not also a SIGN with %d insts\n", keys[i], n);
+	  s = asl_form_as_sign(sl, fp);
+	}
       else
 	{	  
 	  if (f->aka)

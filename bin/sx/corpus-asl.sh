@@ -32,10 +32,16 @@ if [ -r "$oproject/00lib/auto-asl.txt" ]; then
 fi
 gtoks=01tmp/corpus.tok
 tokx <$list >$gtoks
-tok2asl $h -P $project $mopt -S auto $gtoks >01tmp/corpus.asl
-cat $gtoks | tokex -d01tmp | tokix -d01tmp -p$project | tokpct >01tmp/corpus.tis
-sx -Up osl -e -c 01tmp/corpus.asl >>01tmp/corpus.asl
-(cd 01tmp ; sx -Isl:corpus.tis -x corpus.asl)
+# Old approach: deprecated.
+#tok2asl $h -P $project $mopt -S auto $gtoks >01tmp/corpus.asl
+# New approach: uses .kis suffix because .tis files have different data format
+cat $gtoks | tokex -d01tmp | tokix -d01tmp -p$project | tokpct >01tmp/corpus.kis
+# Old approach: deprecated.
+#sx -Up osl -e -c 01tmp/corpus.asl >>01tmp/corpus.asl
+# New approach: subsetting of osl is built in to sx via -K01tmp/corpus.key
+(cd 01tmp ; cut -f2 <corpus.kis | tail -n +2 >corpus.key ; sx -Ksl:corpus.key >corpus.asl)
+# Old approach: still used--subset now gets augmented with instance data
+(cd 01tmp ; sx -Isl:corpus.kis -x corpus.asl)
 xsltproc $libscripts/sxweb-freq-tab.xsl 01tmp/sl.xml >01tmp/freq-tab.xml
 mkdir -p 00etc
 reptab=`basename $list .lst`-rep.tab
