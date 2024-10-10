@@ -16,6 +16,16 @@
 # The current directory must be writeable because the script uses
 # 01tmp to do its work, creating the directory if necessary.
 #
+
+project=`oraccopt`
+aslauto=`oraccopt . asl-auto`
+aslstats=`oraccopt . asl-stats`
+aslinsts=`oraccopt . asl-insts`
+asldomain=`oraccopt . asl-domain`
+
+tok=01tmp/g.tok
+tis=01tmp/g.tis
+
 project=$1
 list=$2
 
@@ -23,20 +33,35 @@ if [ "$project" == "" ] || [ "$list" == "" ] ; then
     echo $0: must give project and list on command line. Stop.
     exit 1
 fi
+
 libscripts="${ORACC_BUILDS}/lib/scripts"
 oproject="${ORACC_BUILDS}/$project"
 mkdir -p 01tmp
+
+
+
+if [ "$aslstats" = "yes" ]; then
+    echo "$0: generating $tok and $tis"
+    mkdir -p 02pub/tok
+    tokx <01bld/lists/xtfindex.lst >$tok
+    tok2tis.sh <$tok >$tis
+    tokx -s -c <01bld/sux/summaries.xml | cbdex >01tmp/cbd1.tok
+    tokx -s -c <01bld/qpn/summaries.xml | cbdex >01tmp/cbd2.tok
+    sort -u 01tmp/cbd[12].tok >01tmp/cbd.tok
+fi
 
 merge=`oraccopt $project asl-merge`
 if [ "$merge" != "" ]; then
     mopt="-m $merge"
 fi
 
-if [ -r "$oproject/00lib/auto-asl.txt" ]; then
-    h="-h $oproject/00lib/auto-asl.txt"
+if [ -r "$oproject/00lib/corpus-asl.txt" ]; then
+    h="-h $oproject/00lib/corpus-asl.txt"
 fi
+
 gtoks=01tmp/corpus.tok
 tokx <$list >$gtoks
+
 # Old approach: deprecated.
 #tok2asl $h -P $project $mopt -S auto $gtoks >01tmp/corpus.asl
 # New approach: uses .kis suffix because .tis files have different data format
