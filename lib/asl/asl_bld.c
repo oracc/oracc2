@@ -628,6 +628,8 @@ asl_register_list_item(Mloc *locp, struct sl_signlist *sl, struct sl_list *l)
 	{
 	  struct sl_listdef *ldp = NULL;
 	  *end = '\0';
+	  if ('U' == name[0] && '+' == name[1])
+	    name[2] = '\0';
 	  if ((ldp = hash_find(sl->listdefs, (uccp)name)))
 	    {
 	      if (!(hash_find(ldp->known, l->name)))

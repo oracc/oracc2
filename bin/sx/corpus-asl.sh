@@ -23,6 +23,15 @@ aslstats=`oraccopt . asl-stats`
 aslinsts=`oraccopt . asl-insts`
 asldomain=`oraccopt . asl-domain`
 
+if [ "$aslauto" == "yes" ]; then
+    aslstats="yes"
+    aslinsts="yes"
+fi
+
+if [ "$asldomain" == "" ]; then
+    asldomain="sl"
+fi
+
 tok=01tmp/g.tok
 tis=01tmp/g.tis
 
@@ -38,8 +47,6 @@ libscripts="${ORACC_BUILDS}/lib/scripts"
 oproject="${ORACC_BUILDS}/$project"
 mkdir -p 01tmp
 
-
-
 if [ "$aslstats" = "yes" ]; then
     echo "$0: generating $tok and $tis"
     mkdir -p 02pub/tok
@@ -52,24 +59,15 @@ fi
 
 merge=`oraccopt $project asl-merge`
 if [ "$merge" != "" ]; then
-    mopt="-m $merge"
+    mopt="-R $merge"
 fi
 
 if [ -r "$oproject/00lib/corpus-asl.txt" ]; then
     h="-h $oproject/00lib/corpus-asl.txt"
 fi
 
-gtoks=01tmp/corpus.tok
-tokx <$list >$gtoks
+(cd 01tmp ; cut -f2 <csl.kis | tail -n +2 >csl.key ; sx -Ksl:csl.key $mopt >corpus.asl)
 
-# Old approach: deprecated.
-#tok2asl $h -P $project $mopt -S auto $gtoks >01tmp/corpus.asl
-# New approach: uses .kis suffix because .tis files have different data format
-cat $gtoks | tokex -d01tmp | tokix -d01tmp -p$project | tokpct >01tmp/corpus.kis
-# Old approach: deprecated.
-#sx -Up osl -e -c 01tmp/corpus.asl >>01tmp/corpus.asl
-# New approach: subsetting of osl is built in to sx via -K01tmp/corpus.key
-(cd 01tmp ; cut -f2 <corpus.kis | tail -n +2 >corpus.key ; sx -Ksl:corpus.key >corpus.asl)
 # Old approach: move to mcu-slix.sh
 #(cd 01tmp ; sx -Isl:corpus.kis -x corpus.asl)
 #

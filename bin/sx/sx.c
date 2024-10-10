@@ -21,6 +21,7 @@ FILE *f_xml;
 
 Hash *parent_sl = NULL;
 const char *parent_sl_project = NULL;
+const char *project_config = NULL;
 
 const char *file;
 int quiet, verbose;
@@ -100,17 +101,25 @@ main(int argc, char * const*argv)
       if (gvl_script_type)
 	gvl_set_script(gvl_script_type);
     }
+
+#if 0
+  /* deprecated */
   else if (unicode_from_parent)
     {
       fprintf(stderr, "sx: -U used without -p. Stop.\n");
       exit(1);
     }
+#endif
+
   else if (gvl_script_type)
     {
       fprintf(stderr, "sx: -g GVL_SCRIPT_TYPE only implemented with parent project. Stop.\n");
       exit(1);
     }
-  
+
+  if (project_config)
+    sx_config(project_config);
+
   if (boot_mode)
     {
       sll_output = 1;
@@ -138,6 +147,20 @@ main(int argc, char * const*argv)
 	      exit(1);
 	    }
 	}
+      else if (sxconfig.domain)
+	{
+	  char fbuf[strlen(oracc_builds())+strlen("/00lib/pcsl/pcsl.asl0")];
+	  if (!strcmp(sxconfig.domain, "sl"))
+	    sprintf(fbuf, "%s/osl/00lib/osl.asl", oracc_builds());
+	  else
+	    sprintf(fbuf, "%s/pcsl/00lib/pcsl.asl", oracc_builds());
+	  if (!freopen(fbuf, "r", stdin))
+	    {
+	      fprintf(stderr, "sx: unable to read from %s\n", fbuf);
+	      exit(1);
+	    }
+	  file = strdup(fbuf);
+	}
     }
   
   mesg_init();
@@ -148,6 +171,8 @@ main(int argc, char * const*argv)
   asl_init();
   sl = aslyacc(file);
 
+#if 0
+  /* Probably deprecate; unnecessary with new subsetting implementation */
   if (parent_imports)
     {
       const char *oslfile = "/home/oracc/osl/00lib/osl.asl";
@@ -158,6 +183,7 @@ main(int argc, char * const*argv)
 	}
       parent_asl = aslyacc(oslfile);
     }
+#endif
   
   if (sl)
     {
@@ -343,6 +369,9 @@ opts(int opt, const char *arg)
       break;
     case 'K':
       asl_output = identity_mode = 1;
+#if 1
+      kdata_file = arg;
+#else
       idata_type = strdup(arg);
       kdata_file = strchr(idata_type, ':');
       if (kdata_file && kdata_file - idata_type < 3)
@@ -352,6 +381,7 @@ opts(int opt, const char *arg)
 	  fprintf(stderr, "sx: the -K option must be TYPE:FILE, e.g., sl:corpus.key\n");
 	  exit(1);
 	}
+#endif
       break;
     case 'L':
       ldata_file = arg;
@@ -382,7 +412,8 @@ opts(int opt, const char *arg)
       ++oid_list;
       break;
     case 'P':
-      parent_imports = 1;
+      project_config = arg;
+      break;
     case 'p':
       parent_sl_project = arg;
       break;
@@ -391,9 +422,6 @@ opts(int opt, const char *arg)
       break;
     case 'Q':
       useq_force = 1;
-      break;
-    case 'R':
-      mergers = arg;
       break;
     case 'S':
       ++sortcode_output;

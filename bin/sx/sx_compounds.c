@@ -5,6 +5,8 @@
 
 int ctrace = 0;
 
+static int in_subsl;
+
 const char *last_g;
 
 enum sxc_type { sxc_initial, sxc_medial, sxc_final, sxc_container, sxc_contained };
@@ -14,8 +16,11 @@ enum sxc_type { sxc_initial, sxc_medial, sxc_final, sxc_container, sxc_contained
    (...) */
 int sxc_container_active = 0;
 static int sxc_nth = 0;
+#if 0
 static void sx_compound(struct sl_signlist *sl, Node *gdl, const char *oid);
+#endif
 static void sx_compound_node(Node *np, struct sl_signlist *sl, const char *oid, int depth);
+static void sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdname, enum sxc_type t);
 
 /* The list of compounds has been made while reading the input.
    Compounds are always registered under an sl_sign*: signs which only
@@ -43,7 +48,33 @@ sx_compounds(struct sl_signlist *sl)
       sxc_nth = 0;
       sl->curr_inst = ip;
       tokp = hash_find(sl->htoken, s->name);
+
+#if 0
       sx_compound(sl, tokp->gdl, (ccp)s->name);
+#else
+      if (tokp->gdl && !strcmp(tokp->gdl->kids->name, "g:c"))
+	{      
+	  if (ctrace)
+	    fprintf(stderr, "ctrace: start %s\n", tokp->gdl->kids->text);
+	  
+	  last_g = NULL;
+
+	  if (sl->h_kdata)
+	    {
+	      char buf[12];
+	      sprintf(buf, "%s..", s->inst->atoid);
+	      if (hash_find(sl->h_kdata, (uccp)buf))
+		in_subsl = 1;
+	    }
+	    
+	  sx_compound_node(tokp->gdl->kids, sl, (ccp)s->name, 0);
+	  
+	  if (last_g)
+	    sx_compound_data(sl, last_g, (ccp)s->name, sxc_final);
+
+	  in_subsl = 0;
+	}
+#endif
     }
 }
 
@@ -143,6 +174,11 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
   struct sl_compound *cdp = NULL;
   int new_sign = 0;
 
+#if 0
+  if (strstr(sgnname, "SUR&SUR"))
+    fprintf(stderr, "sgnname %s has SUR&SUR\n", sgnname);
+#endif
+  
   /* Try the sign as-is */
   sp = hash_find(sl->hsentry, (uccp)sgnname);
 
@@ -189,7 +225,7 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
     }
   else
     {
-      if (sl->h_kdata)
+      if (in_subsl)
 	sx_kdata_componly(sl, sp);
 
       if (!sp->hcompounds)
@@ -275,6 +311,7 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
     }
 }
 
+#if 0
 static void
 sx_compound(struct sl_signlist *sl, Node *gdl, const char *sname)
 {
@@ -291,6 +328,7 @@ sx_compound(struct sl_signlist *sl, Node *gdl, const char *sname)
 	sx_compound_data(sl, last_g, sname, sxc_final);
     }
 }
+#endif
 
 static void
 sx_compound_register(Node *np, struct sl_signlist *sl, const char *sname)

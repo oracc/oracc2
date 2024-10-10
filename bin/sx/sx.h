@@ -22,26 +22,26 @@ typedef void (sx_List_f)(struct sx_functions*,struct sl_signlist*,List *,enum sx
 #include <stdio.h>
 
 struct sx_functions
-  {
-    sx_signlist_f *	sll;
-    sx_letter_f *	let;
-    sx_group_f *	grp;
-    sx_sign_f *		sgn;
-    sx_form_f *		frm;
-    sx_list_f *		lst;
-    sx_value_f *	val;
-    sx_value_f *	inh;
-    sx_value_f *	qvs;
-    sx_notes_f *	not;
-    sx_notes_f *	lnk;
-    sx_notes_f *	sys;
-    sx_notes_f *	img;
-    sx_notes_f *	cpd;
-    sx_notes_f *	lem;
-    sx_unicode_f *	uni;
-    FILE *fp;
-    const char *fname;
-  };
+{
+  sx_signlist_f *	sll;
+  sx_letter_f *	let;
+  sx_group_f *	grp;
+  sx_sign_f *		sgn;
+  sx_form_f *		frm;
+  sx_list_f *		lst;
+  sx_value_f *	val;
+  sx_value_f *	inh;
+  sx_value_f *	qvs;
+  sx_notes_f *	not;
+  sx_notes_f *	lnk;
+  sx_notes_f *	sys;
+  sx_notes_f *	img;
+  sx_notes_f *	cpd;
+  sx_notes_f *	lem;
+  sx_unicode_f *	uni;
+  FILE *fp;
+  const char *fname;
+};
 
 struct noset_tab
 {
@@ -55,6 +55,14 @@ struct numvmap_tab
   const char *asif;
 };
 
+struct sx_config
+{
+  const char *domain; 	/* default: sl */
+  const char *font;	/* default: noto */
+  const char *merge;	/* default: 00lib/csl.mrg */
+};
+
+extern struct sx_config sxconfig;
 
 #define SX_IDATA_COMPONLY (char *)(uintptr_t)-1
 
@@ -73,7 +81,7 @@ extern char *idata_type;
 extern const char *ldata_file, *ldata_http;
 extern const char *gvl_script_type;
 
-const char *mergers;
+extern const char *mergers;
 
 int oid_char_cmp(const void *a, const void *b);
 extern int via_tok_cmp(const void *a, const void *b);
@@ -123,6 +131,7 @@ extern void sxx_compound(unsigned const char *c);
 extern void sxx_sign(unsigned const char *s);
 extern void sxx_output(FILE *fp);
 
+extern void sx_config(const char *project);
 extern void sx_merge_subsl(struct sl_signlist *sl);
 
 /* sx_idata.c */

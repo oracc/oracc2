@@ -368,7 +368,9 @@ sx_marshall(struct sl_signlist *sl)
 	{
 	  struct sl_form *fp = hash_find(sl->hfentry, (uccp)keys[i]);
 	  int n = (fp->insts ? list_len(fp->insts) : 0);
+#if 0
 	  fprintf(stderr, "FORM %s is not also a SIGN with %d insts\n", keys[i], n);
+#endif
 	  s = asl_form_as_sign(sl, fp);
 	}
       else
@@ -888,7 +890,7 @@ sx_marshall(struct sl_signlist *sl)
 #endif
 
   /* This is the merge processing that is done when creating a subsl */
-  if (mergers)
+  if (sxconfig.merge)
     sx_merge_subsl(sl);
   
   sx_images(sl);

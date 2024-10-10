@@ -6,8 +6,6 @@
 static void sx_merge_load(struct sl_signlist *sl);
 static void sx_merge_marshall(struct sl_signlist *sl);
 
-const char *mergers;
-
 void
 sx_merge(struct sl_signlist *sl)
 {
@@ -34,8 +32,11 @@ sx_merge(struct sl_signlist *sl)
 void
 sx_merge_subsl(struct sl_signlist *sl)
 {
-  sx_merge_load(sl);
-  sx_merge_marshall(sl);
+  if (sxconfig.merge)
+    {
+      sx_merge_load(sl);
+      sx_merge_marshall(sl);
+    }
 }
 
 /**Mergers are specified as:
@@ -56,7 +57,7 @@ sx_merge_load(struct sl_signlist *sl)
   sl->h_merges_cand = hash_create(256);
   sl->h_merges_seen = hash_create(256);
 
-  lp = loadfile_lines3((uccp)mergers, &nline, &fmem);
+  lp = loadfile_lines3((uccp)sxconfig.merge, &nline, &fmem);
   int i;
   for (i = 0; i < nline; ++i)
     {

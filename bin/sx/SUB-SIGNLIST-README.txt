@@ -55,8 +55,32 @@ The subsl is generated from column two of the .kis file, i.e., the
 gkey; sx uses the key list to select which signs/forms/values are
 output.
 
+Mergers are handled in the subsl-generation phase by reading a merge
+table, e.g., 00lib/gudea.mrg:
+
+	AŠ₂ ZIZ₂
+	BAD TIL
+	DUR₂ KU
+	...
+
+The left entry is the head of the mergers--remaining signs are
+considered 'mergers with' the head.
+
+During this phase @merge entries are inserted in the subsl.  The
+@merge entries are subsequently reprocessed when the subsl is later
+subjected to the normal signlist processing.
+
+A typical sx invocation to create a subsl looks like this:
+
+	sx -K01tmp/csl.key -Pgudea
+
+The -P (project-config) argument tells sx to load configuration
+options from the gudea project config.xml; this enables subsl
+generation options such as domain, merge tables, and fonts, in the
+project config.
+
 Once the subsl has been created, it is processed in the same manner as
 the system sign lists: stats and lemmata can be added, and various
 derivative lists may be created.
 
-***TODO: MERGE SUPPORT***
+***TODO: HOW ARE MERGED INSTANCE SETS HANDLED?***

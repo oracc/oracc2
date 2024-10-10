@@ -127,14 +127,27 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
 void
 sx_kdata_componly(struct sl_signlist *sl, struct sl_sign *sp)
 {
-  char buf[strlen((ccp)sp->name)+3];
-  sprintf(buf, "%s..", sp->name);
-  if (!hash_find(sl->h_kdata, (uccp)buf))
+  const char *oid = sp->inst->atoid;
+  if (!oid)
+    oid = hash_find(oids, sp->name);
+  if (oid)
     {
-      struct tis_data *tip = memo_new(sl->m_idata);
-      tip->key = (char*)pool_copy((uccp)buf, sl->p);
-      tip->cnt = SX_IDATA_COMPONLY;
-      hash_add(sl->h_kdata, (uccp)tip->key, tip);
+      char buf[strlen((ccp)oid)+3];
+      sprintf(buf, "%s..", oid);
+#if 0
+      fprintf(stderr, "sx_kdata_componly: checking sign %s with key %s\n", sp->name, buf);
+#endif
+      if (!hash_find(sl->h_kdata, (uccp)buf))
+	{
+#if 0
+	  if (strstr(buf, "o0037926"))
+	    fprintf(stderr, "found SUR&SUR\n");
+#endif
+	  struct tis_data *tip = memo_new(sl->m_idata);
+	  tip->key = (char*)pool_copy((uccp)buf, sl->p);
+	  tip->cnt = SX_IDATA_COMPONLY;
+	  hash_add(sl->h_kdata, (uccp)tip->key, tip);
+	}
     }
 }
 

@@ -13,7 +13,7 @@ bin_SCRIPTS=\
 
 # osl-update.sh pcsl-update.sh 
 
-data_DATA=sx-list-*.xml sx-udata-*.xml sx-udata-codes.tsv
+data_DATA=sx-list-*.xml sx-udata-*.xml sx-udata-codes.tsv Makefile.csl
 
 scriptdata_DATA=*.xsl
 
@@ -25,7 +25,7 @@ slx_DEPENDENCIES = $(xLDADD)
 
 sx_SOURCES=sx.c sx_marshall.c sx_homophones.c sx_compounds.c sx_digests.c \
 	sx_inherited.c sx_listdefs.c sx_values.c sx_qualified.c sx_unicode.c \
-	sx_walk.c sx_sll.c sx_w_asl.c sx_oid_list.c \
+	sx_walk.c sx_sll.c sx_w_asl.c sx_oid_list.c sx_config.c \
 	sx_images.c sx_syss_dump.c sx_akas_dump.c sx_sortcodes.c sx_w_jox.c \
 	sx_extras.c sx_idata.c sx_merge.c sx_numbers.c numvmap.c noset.c
 sx_LDADD = $(xLDADD) -lpcre2-8
