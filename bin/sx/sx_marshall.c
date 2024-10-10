@@ -338,7 +338,7 @@ sx_marshall(struct sl_signlist *sl)
     sl->domain = "sl";
   
   if (!sl->oid2ucode)
-    sl->oid2ucode = hash_create(1024);
+    sl->oid2ucode = hash_create(2048);
   
   oids = oid_domain_hash(NULL, "oid", sl->domain);
   if (!oids)
@@ -367,8 +367,8 @@ sx_marshall(struct sl_signlist *sl)
       if (!(s = hash_find(sl->hsentry, (uccp)keys[i])))
 	{
 	  struct sl_form *fp = hash_find(sl->hfentry, (uccp)keys[i]);
-	  int n = (fp->insts ? list_len(fp->insts) : 0);
 #if 0
+	  int n = (fp->insts ? list_len(fp->insts) : 0);
 	  fprintf(stderr, "FORM %s is not also a SIGN with %d insts\n", keys[i], n);
 #endif
 	  s = asl_form_as_sign(sl, fp);
@@ -888,6 +888,8 @@ sx_marshall(struct sl_signlist *sl)
   else
     sx_unicode_p(sl);  
 #endif
+
+  sx_kdata_useq(sl);  
 
   /* This is the merge processing that is done when creating a subsl */
   if (sxconfig.merge)

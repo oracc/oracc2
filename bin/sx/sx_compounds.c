@@ -64,7 +64,10 @@ sx_compounds(struct sl_signlist *sl)
 	      char buf[12];
 	      sprintf(buf, "%s..", s->inst->atoid);
 	      if (hash_find(sl->h_kdata, (uccp)buf))
-		in_subsl = 1;
+		{
+		  in_subsl = 1;
+		  list_add(sl->kdata_cpds, (void*)tokp->gdl->kids->text);		  
+		}
 	    }
 	    
 	  sx_compound_node(tokp->gdl->kids, sl, (ccp)s->name, 0);
@@ -226,8 +229,8 @@ sx_compound_data(struct sl_signlist *sl, const char *sgnname, const char *cpdnam
   else
     {
       if (in_subsl)
-	sx_kdata_componly(sl, sp);
-
+	sx_kdata_componly(sl, (uccp)sgnname);
+      
       if (!sp->hcompounds)
 	{
 	  sp->hcompounds = hash_create(32);

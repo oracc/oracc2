@@ -73,6 +73,7 @@ struct sl_signlist
   Hash *h_idata;	/* Hash used by sx_idata; adding graphemic data */
   Hash *h_ldata;	/* Hash used by sx_ldata; adding lemma data */
   Hash *h_kdata;	/* Hash used by sx_kdata; subsetting by key */
+  List *kdata_cpds;	/* List of compounds referenced in subset */
   Hash *h_merge;	/* Tracking hash for @merge contents when processing the results of subsetting */
   Hash *h_merges;	/* Hashes for managing the merge data while creating a subsl */
   Hash *h_merges_cand;

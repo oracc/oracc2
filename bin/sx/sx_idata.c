@@ -68,6 +68,7 @@ sx_kdata_init(struct sl_signlist *sl, const char *kdata_file, const char *idata_
   FILE *fp = NULL;
   sl->h_kdata = hash_create(1024);
   sl->m_idata = memo_init(sizeof(struct tis_data), 256);
+  sl->kdata_cpds = list_create(LIST_SINGLE);
   
   if (!(fp = fopen(kdata_file, "r")))
     {
@@ -125,8 +126,28 @@ sx_ldata_init(struct sl_signlist *sl, const char *ldata_file)
 }
 
 void
-sx_kdata_componly(struct sl_signlist *sl, struct sl_sign *sp)
+sx_kdata_componly(struct sl_signlist *sl, const uchar *sname)
 {
+  struct sl_sign *sp = hash_find(sl->hsentry, sname);
+  if (!sp)
+    {
+      if ('|' == sname[0] && '(' == sname[1])
+	{
+	  int len = strlen((ccp)sname);
+	  char buf[len];
+	  *buf = '|';
+	  strncpy((char*)&buf[1], (ccp)&sname[2], len-4);
+	  buf[len-3] = '|';
+	  buf[len-2] = '\0';
+	  sp = hash_find(sl->hsentry, (uccp)buf);
+	}
+      if (!sp)
+	{
+	  fprintf(stderr, "sx_kdata_componly: no sl_sign* for %s\n", sname);
+	  return;
+	}
+    }
+
   const char *oid = sp->inst->atoid;
   if (!oid)
     oid = hash_find(oids, sp->name);
@@ -148,6 +169,67 @@ sx_kdata_componly(struct sl_signlist *sl, struct sl_sign *sp)
 	  tip->cnt = SX_IDATA_COMPONLY;
 	  hash_add(sl->h_kdata, (uccp)tip->key, tip);
 	}
+    }
+  else
+    fprintf(stderr, "sx_kdata_componly: no OID for sign %s\n", sp->name);
+}
+
+static void
+useq_check(struct sl_signlist *sl, const char *useq)
+{
+  char u[strlen(useq)+2];
+  *u = 'U';
+  strcpy(&u[1], useq);
+  char *uu = u;
+  while (*uu++) /* first increment is past leading 'U' */
+    {
+      if ('x' == *uu)
+	*uu = '+';
+    }
+  uu = u;
+  while (1)
+    {
+      char *dot = strchr(uu, '.');
+      int more = 0;
+      if (dot)
+	{
+	  more = 1;
+	  *dot = '\0';
+	}
+      const char *oid = hash_find(sl->oid2ucode, (uccp)uu);
+      if (oid)
+	{
+	  char buf[12];
+	  sprintf(buf, "%s..", oid);
+	  if (!hash_find(sl->h_kdata, (uccp)buf))
+	    {
+	      struct tis_data *tip = memo_new(sl->m_idata);
+	      tip->key = (char*)pool_copy((uccp)buf, sl->p);
+	      hash_add(sl->h_kdata, (uccp)tip->key, tip);
+	      fprintf(stderr, "useq_check adding %s as %s\n", (uccp)uu, tip->key);
+	    }
+	}
+      else
+	fprintf(stderr, "useq_check no OID for %s\n", uu);
+      if (more)
+	{
+	  *dot = 'U';
+	  uu = dot;
+	}
+      else
+	break;
+    }
+}
+
+void
+sx_kdata_useq(struct sl_signlist *sl)
+{
+  const uchar *k;
+  for (k = list_first(sl->kdata_cpds); k; k = list_next(sl->kdata_cpds))
+    {
+      struct sl_sign *sp = hash_find(sl->hsentry, k);
+      if (sp->U.useq)
+	useq_check(sl, (ccp)sp->U.useq);
     }
 }
 

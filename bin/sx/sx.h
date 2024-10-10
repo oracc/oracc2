@@ -149,7 +149,8 @@ extern void sx_merge(struct sl_signlist *sl);
 extern unsigned char *sx_oids_of(struct sl_signlist *sl, unsigned const char *snames);
 
 extern void sx_kdata_init(struct sl_signlist *sl, const char *kdata_file, const char *idata_type);
-extern void sx_kdata_componly(struct sl_signlist *sl, struct sl_sign *sp);
+extern void sx_kdata_componly(struct sl_signlist *sl, const uchar *sname);
+extern void sx_kdata_useq(struct sl_signlist *sl);
 
 extern void sx_ldata_sign_inst(struct sl_signlist *sl, struct sl_inst *sip);
 extern void sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
