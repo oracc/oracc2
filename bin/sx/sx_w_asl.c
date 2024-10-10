@@ -362,6 +362,9 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	    sx_w_a_aka_list(f->fp, s->u.s->aka);
 	  if (s->u.s->smap)
 	    fprintf(f->fp, "@smap\t%s\n", s->u.s->smap);
+	  const uchar *m = hash_find(sl->h_merges, s->u.s->name);
+	  if (m)
+	    fprintf(f->fp, "@merge\t%s\n", m);
 	  in_sign = 1;
 	}
     }
