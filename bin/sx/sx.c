@@ -392,6 +392,9 @@ opts(int opt, const char *arg)
     case 'Q':
       useq_force = 1;
       break;
+    case 'R':
+      mergers = arg;
+      break;
     case 'S':
       ++sortcode_output;
       break;

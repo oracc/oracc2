@@ -73,6 +73,8 @@ extern char *idata_type;
 extern const char *ldata_file, *ldata_http;
 extern const char *gvl_script_type;
 
+const char *mergers;
+
 int oid_char_cmp(const void *a, const void *b);
 extern int via_tok_cmp(const void *a, const void *b);
 
@@ -120,6 +122,8 @@ extern void sxx_init(void);
 extern void sxx_compound(unsigned const char *c);
 extern void sxx_sign(unsigned const char *s);
 extern void sxx_output(FILE *fp);
+
+extern void sx_merge_subsl(struct sl_signlist *sl);
 
 /* sx_idata.c */
 extern void sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_type);

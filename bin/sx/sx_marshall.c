@@ -759,7 +759,8 @@ sx_marshall(struct sl_signlist *sl)
   /* Marshall sign/form values by OID suitable for output in TSV */
   sx_values_by_oid(sl);
 
-  /* Resolve merges to OIDs */
+  /* Resolve merges to OIDs; this is the merge processing that is
+     executed on the output of a subsetted sl */
   sx_merge(sl);
 
   /* Provide keys for @compoundonly entries */
@@ -875,11 +876,21 @@ sx_marshall(struct sl_signlist *sl)
 
   sx_qualified(sl);
 
+#if 1
+  sx_unicode(sl);
+#else
+  /* deprecated because unicode_from_parent was a hack to work around
+     deficiencies in the old tok2asl subsetting */
   if (!unicode_from_parent)
     sx_unicode(sl);
   else
     sx_unicode_p(sl);  
+#endif
 
+  /* This is the merge processing that is done when creating a subsl */
+  if (mergers)
+    sx_merge_subsl(sl);
+  
   sx_images(sl);
 
   sx_idata_ctotals(sl);

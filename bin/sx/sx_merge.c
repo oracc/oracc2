@@ -1,6 +1,12 @@
 #include <oraccsys.h>
 #include <signlist.h>
 #include <sx.h>
+#include <tis.h>
+
+static void sx_merge_load(struct sl_signlist *sl);
+static void sx_merge_marshall(struct sl_signlist *sl);
+
+const char *mergers;
 
 void
 sx_merge(struct sl_signlist *sl)
@@ -22,5 +28,123 @@ sx_merge(struct sl_signlist *sl)
 	}
       else if (!strcmp(sl->project, "osl")) /* corpus-based signlists may legit not have the to or from components */
 	mesg_verr(m, "@merge %s: merge destination %s does not exist", m->user, m->user);
+    }
+}
+
+void
+sx_merge_subsl(struct sl_signlist *sl)
+{
+  sx_merge_load(sl);
+  sx_merge_marshall(sl);
+}
+
+/**Mergers are specified as:
+ *
+ * NI₂ IM
+ *
+ * h_merges indexes each merge-head to the list of mergers, i.e., NI₂ => IM
+ * h_merges_cand indexes each merged sign to the head, i.e., IM => NI₂
+ * h_merges_seen indexes each merged sign that is seen, e.g., IM => NI₂
+ *
+ */
+static void
+sx_merge_load(struct sl_signlist *sl)
+{
+  unsigned char *fmem, **lp;
+  size_t nline;
+  sl->h_merges = hash_create(256);
+  sl->h_merges_cand = hash_create(256);
+  sl->h_merges_seen = hash_create(256);
+
+  lp = loadfile_lines3((uccp)mergers, &nline, &fmem);
+  int i;
+  for (i = 0; i < nline; ++i)
+    {
+      unsigned char *v = lp[i];
+      while (*v && !isspace(*v))
+	++v;
+      if (*v)
+	{
+	  *v++ = '\0';
+	  while (isspace(*v))
+	    ++v;
+	  if (*v)
+	    {
+	      hash_add(sl->h_merges, lp[i], v);
+	      char *vv = strdup((ccp)v);
+	      char **mm = space_split(vv);
+	      int i;
+	      for (i = 0; mm[i]; ++i)
+		{
+		  /* index each of the merge candidates with the name of the merge-head */
+		  hash_add(sl->h_merges_cand, (uccp)mm[i], lp[i]);
+		}
+	    }
+	}
+    }
+}
+
+static void
+sx_merge_marshall(struct sl_signlist *sl)
+{
+  /* go through the signs which need to be merged and keep those which
+     actually occur as well as the merge-heads that occur */
+  Hash *m_seen = hash_create(256);
+  Hash *mheads = hash_create(256);
+  const char **mk = hash_keys(sl->h_merges_cand);
+  if (mk)
+    {
+      int i;
+      for (i = 0; mk[i]; ++i)
+	{
+	  if (hash_find(sl->hsentry, (uccp)mk[i]))
+	    {
+	      hash_add(m_seen, (uccp)mk[i], "");
+	      hash_add(mheads, hash_find(sl->h_merges_cand, (void*)mk[i]), "");
+	    }
+	  /* Error condition: signs must be in signlist */
+	}
+      
+      /* then go through the merge-heads and reduce their lists to the
+	 merge cands that occur; if a merge-head isn't already known
+	 in a subset, add it */
+      mk = hash_keys(mheads);
+      for (i = 0; mk[i]; ++i)
+	{
+#if 0
+	  /* in sx-embedded version signs must exist; but if subsetting we need to add them */
+	  if (!hash_find(hsigns, (uccp)mk[i]))
+	    hash_add(hsigns, (uccp)mk[i], hash_create(1));
+#else
+	  if (sl->h_kdata)
+	    {
+	      struct sl_sign *sp = hash_find(sl->hsentry, (uccp)mk[i]);
+	      char key[12];
+	      sprintf(key, "%s..", sp->oid);
+	      if (!hash_find(sl->h_kdata, (uccp)key))
+		{
+		  struct tis_data *tp = memo_new(sl->m_idata);
+		  tp->key = (char*)pool_copy((ucp)key, sl->p);
+		  hash_add(sl->h_kdata, (uccp)tp->key, tp);
+		}
+	    }
+#endif
+	  char *m = hash_find(sl->h_merges,(uccp) mk[i]);
+	  if (strchr(m, ' '))
+	    {
+	      char **mm = space_split(m);
+	      List *ml = list_create(LIST_SINGLE);
+	      int i;
+	      for (i = 0; mm[i]; ++i)
+		if (hash_find(sl->hsentry, (uccp)mm[i]))
+		  {
+		    list_add(ml, mm[i]);
+		    hash_add(sl->h_merges_seen, (uccp)mm[i], "");
+		  }
+	      unsigned char *newm = list_to_str(ml);
+	      if (strcmp(m, (ccp)newm))
+		hash_add(sl->h_merges, (uccp)mk[i], newm);
+	    }
+	}
     }
 }
