@@ -11,7 +11,7 @@ bin_SCRIPTS=\
 	sxmissing.sh sxudata.sh sxportal.sh \
 	sxportal-listdata.sh sxportal-udata.sh sloid.sh sxoid.sh \
 	sximages.sh sx-add-oid.sh sxportal-abbrevs.sh sx-csl.sh \
-	sxfreq.sh sxsortorder.sh
+	sxfreq.sh sxsortorder.sh sx-slix.sh
 
 # osl-update.sh pcsl-update.sh 
 
