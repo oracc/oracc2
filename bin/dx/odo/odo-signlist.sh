@@ -11,6 +11,7 @@ o2=$1
 projtype=`oraccopt . type`
 asl=""
 if [ "$projtype" = "corpus" ]; then
+    aslauto=`oraccopt . asl-auto`
     if [ "$aslauto" = "yes" ]; then
 	sx-csl.sh $tok
 	sx-slix.sh $project 01tmp/csl.asl
