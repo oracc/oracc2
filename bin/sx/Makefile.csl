@@ -10,19 +10,27 @@ key: 01tmp/csl.key
 cbd: 01tmp/cbd.tok
 csl: 01tmp/csl.asl
 
+# Don't rm 01tmp/cbd.tok because that is not part of the csl.asl
+# dependency chain
+clean:
+	rm -f 01tmp/csl.*
+
 01tmp/csl.tok: 01bld/lists/xtfindex.lst
-	tokx <01bld/lists/xtfindex.lst >$@
+	tokx <$< >$@
 
 01tmp/csl.kis: 01tmp/csl.tok
 	tok2tis.sh <$< >$@
 
 01tmp/csl.key: 01tmp/csl.kis
-	cut -f2 <01tmp/csl.kis | tail -n +2 >01tmp/csl.key
+	cut -f2 <$< | tail -n +2 >$@
 
 01tmp/cbd.tok: 01bld/sux/summaries.xml 01bld/qpn/summaries.xml
 	tokx -s -c <01bld/sux/summaries.xml | cbdex >01tmp/cbd1.tok
 	tokx -s -c <01bld/qpn/summaries.xml | cbdex >01tmp/cbd2.tok
-	sort -u 01tmp/cbd[12].tok >01tmp/cbd.tok
+	sort -u 01tmp/cbd[12].tok >$@
 
-01tmp/csl.asl:
-	sx -K01tmp/csl.key -P`oraccopt` >$@ 2>sx.err
+01tmp/csl.asl: 01tmp/csl.key
+	sx -K$< -P`oraccopt` >$@ 2>sx.err
+
+need: 01tmp/csl.tok
+	grep ^g $< | cut -d. -f1 | cut -f2 | concord -nst | sort -k2nr >$@

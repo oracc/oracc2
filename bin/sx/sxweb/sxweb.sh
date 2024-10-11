@@ -24,9 +24,9 @@ auto=`oraccopt . asl-auto`
 stats=`oraccopt . asl-stats`
 
 if [ "$auto" == "yes" ]; then
-    asl=01tmp/auto.asl
+    asl=01tmp/csl.asl
     if [ ! -r $asl ]; then
-	echo "$0: no auto.asl signlist in 01tmp. Stop."
+	echo "$0: no csl.asl signlist in 01tmp. Stop."
 	exit 1
     fi
     if [ "$stats" != "no" ]; then
