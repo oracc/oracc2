@@ -2,8 +2,14 @@
 project=`oraccopt`
 set 00lib/*.asl
 if [ "$1" != "00lib/*.asl" ]; then
-    sx -So $1 | sort -k2 -n -u | cut -f1,3 | tr '	' _ | rocox -x x |
+    asl=$1
+else
+    if [ -r 01tmp/csl.asl ]; then
+	asl=01tmp/csl.asl
+    fi
+fi
+if [ "$asl" != "" ]; then
+    sx -So $asl | sort -k2 -n -u | cut -f1,3 | tr '	' _ | rocox -x x |
 	xsltproc -stringparam project $project ${ORACC_BUILDS}/lib/scripts/sxweb-sortorder.xsl - \
 		 >signlist/00web/signlist-x-sortorder.xml
 fi
-# | pr -s'	' -t -2 -l 1000
