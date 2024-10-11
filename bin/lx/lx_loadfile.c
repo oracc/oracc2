@@ -34,10 +34,14 @@ lx_loadfile(const char *fname, size_t *nlines, char **fmem)
 	      while (i < n && f[i] && f[i] != '\r' && f[i] != '\n')
 		++i;
 	      if (f[i])
-		f[i] = '\0';
+		{
+		  f[i] = '\0';
+		  if (f[i+1] == '\n') /* \r\n */
+		    f[++i] = '\0';
+		}
 	    }
 	  lp[j] = NULL;
-	  *nlines = l;
+	  *nlines = j;
 	}
     }
   return lp;
