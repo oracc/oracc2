@@ -76,6 +76,7 @@ sl.signform.attr =
     attribute xml:id { xsd:NCName }?,
     attribute compoundonly { "yes"|"no" }?,
     attribute cpd-refs { xsd:IDREFS }?,
+    attribute fake { "1" }?,
     attribute num { "1" }?,
     attribute key { text }?
 

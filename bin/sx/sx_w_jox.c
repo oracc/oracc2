@@ -935,6 +935,13 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
       list_add(a, (void*)xmlify(s->key));
     }
 
+  if (s->u.s->fake)
+    {
+      list_add(a, "fake");
+      list_add(a, (void*)"1");
+    }
+    
+
   if (s->u.s->as_form && list_len(s->u.s->as_form))
     {
       const char *p[list_len(s->u.s->as_form)+1];
