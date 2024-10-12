@@ -6,6 +6,7 @@
 
 struct sx_config sxconfig = 
 {
+  .signlist="csl",
   .domain="sl",
   .font="noto"
 };
@@ -21,6 +22,7 @@ sx_config(const char *project)
       xpdpool = pool_init();
       xpdp = xpd_init(project, xpdpool);
       const char *val;
+      sxconfig.project = project;
       if ((val = xpd_option(xpdp, "asl-domain")))
 	sxconfig.domain = val;
       if ((val = xpd_option(xpdp, "asl-font")))

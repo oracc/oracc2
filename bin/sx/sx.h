@@ -57,6 +57,8 @@ struct numvmap_tab
 
 struct sx_config
 {
+  const char *project;  /* set from -P[PROJECT] */
+  const char *signlist; /* default: csl */
   const char *domain; 	/* default: sl */
   const char *font;	/* default: noto */
   const char *merge;	/* default: 00lib/csl.mrg */
@@ -76,8 +78,9 @@ extern int oid_list, oid_tab;
 extern Hash *oids;
 extern Hash *oid_sort_keys;
 
-extern char *idata_file, *kdata_file;
+extern char *idata_file;
 extern char *idata_type;
+extern const char *kdata_file;
 extern const char *ldata_file, *ldata_http;
 extern const char *gvl_script_type;
 

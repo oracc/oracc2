@@ -62,7 +62,7 @@ sx_unicode(struct sl_signlist *sl)
 	      if (Up->uhex)
 		{
 		  hash_add(usigns, sl->signs[i]->name, (ucp)Up->uhex);
-		  hash_add(sl->oid2ucode, Up->uhex, (void*)sl->signs[i]->oid);
+		  hash_add(sl->oid2ucode, (uccp)Up->uhex, (void*)sl->signs[i]->oid);
 		  if (sl->signs[i]->aka)
 		    {
 		      Memo_str *msp;

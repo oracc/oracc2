@@ -122,6 +122,8 @@ lang_mode.c
 langmask.c
 langrtl.c
 ne.c
+noset.c
+numvmap.c
 nxt.c
 # in bin/nx nxt.g is generated from nxt.base by nxt.sh; gc.g by gc.sh
 nxt.g

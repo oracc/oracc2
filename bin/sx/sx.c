@@ -62,8 +62,10 @@ int check_mode = 0;
 int trace_mode = 0;
 extern int asl_flex_debug, gdl_flex_debug, gdl_unicode;
 
-char *idata_file = NULL, *kdata_file = NULL;
+char *idata_file = NULL;
 char *idata_type = NULL;
+
+const char *kdata_file = NULL;
 
 const char *ldata_file = NULL; /* lemma data */
 const char *ldata_http = NULL; /* http portion of lemma data URL's--if NULL use '/' */
@@ -119,6 +121,11 @@ main(int argc, char * const*argv)
 
   if (project_config)
     sx_config(project_config);
+  else if (kdata_file)
+    {
+      fprintf(stderr, "sx: must give -P[PROJECT] when using -K option. Stop.\n");
+      exit(1);
+    }
 
   if (boot_mode)
     {
@@ -170,7 +177,7 @@ main(int argc, char * const*argv)
   gdl_init();
   asl_init();
   sl = aslyacc(file);
-
+  
 #if 0
   /* Probably deprecate; unnecessary with new subsetting implementation */
   if (parent_imports)
@@ -187,6 +194,13 @@ main(int argc, char * const*argv)
   
   if (sl)
     {
+      if (project_config)
+	{
+	  sl->project = sxconfig.project;
+	  sl->signlist = sxconfig.signlist;
+	  sl->domain = sxconfig.domain;
+	}
+      
       if (list_names_mode)
 	{
 	  sx_list_dump(stdout, sl);
@@ -369,19 +383,7 @@ opts(int opt, const char *arg)
       break;
     case 'K':
       asl_output = identity_mode = 1;
-#if 1
       kdata_file = arg;
-#else
-      idata_type = strdup(arg);
-      kdata_file = strchr(idata_type, ':');
-      if (kdata_file && kdata_file - idata_type < 3)
-	*kdata_file++ = '\0';
-      else
-	{
-	  fprintf(stderr, "sx: the -K option must be TYPE:FILE, e.g., sl:corpus.key\n");
-	  exit(1);
-	}
-#endif
       break;
     case 'L':
       ldata_file = arg;
