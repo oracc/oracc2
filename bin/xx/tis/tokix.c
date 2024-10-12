@@ -10,6 +10,7 @@ static int cache_size = 32;
 const char *curr_index = "tok";
 const char *index_dir = NULL;
 const char *outfile = NULL;
+int no_triple_output = 0;
 
 struct tokix_data
 {
@@ -32,7 +33,7 @@ tokix_hook(const char *key, Unsigned32 n, struct tokix_data *tp)
 int
 main(int argc, char * const*argv)
 {
-  options(argc,argv,"d:o:p:");
+  options(argc,argv,"d:no:p:");
 
   if (!curr_project && !index_dir)
     {
@@ -100,14 +101,16 @@ main(int argc, char * const*argv)
 
   dbi_flush(dip);
 
-  const char **k = hash_keys(td.htokens);
-  int i;
-  for (i = 0; k[i]; ++i)
-    fprintf(td.fp, "%s\t%s\t%lu\n",
-	    (char*)hash_find(td.htokens, (uccp)k[i]),
-	    k[i],
-	    (uintptr_t)hash_find(td.hcounts, (uccp)k[i]));
-  
+  if (!no_triple_output)
+    {
+      const char **k = hash_keys(td.htokens);
+      int i;
+      for (i = 0; k[i]; ++i)
+	fprintf(td.fp, "%s\t%s\t%lu\n",
+		(char*)hash_find(td.htokens, (uccp)k[i]),
+		k[i],
+		(uintptr_t)hash_find(td.hcounts, (uccp)k[i]));
+    }
   /* ose_ce_cfg(curr_project, "tok", "tr", "txh", oce_tok, NULL); */
 
   char vidfile[strlen(index_dir)+strlen("vid.vid0")];
@@ -131,6 +134,9 @@ opts(int argc, const char *arg)
     case 'd':
       index_dir = arg;
       break;
+    case 'n':
+      no_triple_output = 1;
+      break;
     case 'o':
       outfile = arg;
       break;
@@ -145,9 +151,12 @@ opts(int argc, const char *arg)
 
 const char *prog = "tokix";
 int major_version = 6, minor_version = 0, verbose;
-const char *usage_string = "-p [project]";
+const char *usage_string = "-p [project] [-d [dir] -o [outfile] ]";
 void
 help ()
 {
   printf("  -p [project] Gives the name of the project; required\n");
+  printf("  -d directory for index; default 'tok'\n");
+  printf("  -n no output of triples\n");
+  printf("  -o output file for ID:KEY:COUNT triple output\n");
 }

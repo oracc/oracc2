@@ -54,6 +54,8 @@ bin/px/isp/ispmpx
 bin/px/isp/ispox
 bin/px/isp/ispsortx
 bin/px/isp/isp-ce-HTML.xsl
+bin/tx/tidtextx
+bin/tx/tunquotex
 bin/wx/wx
 bin/wx/p4url
 bin/xx/concord
@@ -144,6 +146,7 @@ propmask.c
 qpnnames.c
 qsoption.c
 selections.c
+setoks.c
 sll_signlist.c
 sllext.c
 sn_alias.c

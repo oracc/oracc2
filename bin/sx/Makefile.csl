@@ -4,7 +4,7 @@
 # Make implementation of corpus-asl.sh functionality
 #
 
-tok: 01tmp/csl.tok
+tok: 02pub/csl.tok
 kis: 01tmp/csl.kis
 key: 01tmp/csl.key
 cbd: 01tmp/cbd.tok
@@ -15,10 +15,10 @@ csl: 01tmp/csl.asl
 clean:
 	rm -f 01tmp/csl.*
 
-01tmp/csl.tok: 01bld/lists/xtfindex.lst
+02pub/csl.tok: 01bld/lists/xtfindex.lst
 	tokx <$< >$@
 
-01tmp/csl.kis: 01tmp/csl.tok
+01tmp/csl.kis: 02pub/csl.tok
 	tok2tis.sh <$< >$@
 
 01tmp/csl.key: 01tmp/csl.kis
