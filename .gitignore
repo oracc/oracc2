@@ -99,6 +99,7 @@ bin/zx/rocox
 bin/zx/xmlfilter
 msc/lex/lex-collapse-refs
 msc/prj/cdli/cdliperiodx
+msc/prj/cdli/cdlixtfx
 msc/sys/proj-from-conf.sh
 
 # MacOS convenience link to external library header
