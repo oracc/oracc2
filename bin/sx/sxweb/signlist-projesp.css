@@ -157,7 +157,7 @@ table.lemsel td  { padding-left: 1em; padding-right: 1em; }
 
 .sl-td-name { font-size: 80%; font-family: arial,sans-serif; }
 
-.sl-td-sign { text-align: center; }
+.sl-td-sign { font-size: 200%; text-align: center; }
 
 .sl-td-seq  { width: 100%; text-align: center; }
 

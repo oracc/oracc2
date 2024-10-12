@@ -1,6 +1,7 @@
 #!/bin/sh
 #
 # Create list of needed signs
+echo $0 $*
 p=`oraccopt`
 crpneeduni.sh $p | \
     rocox -R '<oid xml:id="%1" freq="%2"/>' -x oids | \

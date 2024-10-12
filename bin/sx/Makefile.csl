@@ -32,5 +32,5 @@ clean:
 01tmp/csl.asl: 01tmp/csl.key
 	sx -K$< -P`oraccopt` >$@ 2>sx.err
 
-need: 01tmp/csl.tok
-	grep ^g $< | cut -d. -f1 | cut -f2 | concord -nst | sort -k2nr >$@
+need: 02pub/csl.tok
+	-grep ^g $< | cut -d. -f1 | cut -f2 | concord -nst | sort -k2nr >$@

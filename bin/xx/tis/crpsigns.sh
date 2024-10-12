@@ -12,6 +12,4 @@ if [ ! -r $s ]; then
     echo $0: no such file $s. Stop.
     exit 1
 fi
-#cat $s | tokx | grep ^g | cut -d. -f1 | cut -f2 | concord -nst | sort -k2nr
-make -f $ORACC/lib/data/Makefile.csl need
-
+make -s -f $ORACC/lib/data/Makefile.csl need

@@ -11,5 +11,5 @@ if [ ! -r $s ]; then
     exit 1
 fi
 h=`/bin/echo -n $p | tr / -`
-crpsigns.sh $p >need
+crpsigns.sh $p
 needuni.sh | grep -f - need
