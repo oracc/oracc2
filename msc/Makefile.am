@@ -1,3 +1,1 @@
-SUBDIRS=adm cmd lex otf sys ela
-
-#tok
+SUBDIRS=adm cmd lex otf prj sys ela

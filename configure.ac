@@ -152,6 +152,8 @@ AC_CONFIG_FILES([Makefile
 		 msc/ela/Makefile
 		 msc/lex/Makefile
 		 msc/otf/Makefile
+		 msc/prj/Makefile
+		 msc/prj/cdli/Makefile
 		 msc/sys/Makefile
                  ])
 AC_OUTPUT
