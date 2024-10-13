@@ -205,7 +205,8 @@ sx_s_form(FILE *f, struct sl_form *s)
 		lp->values[j]->parent_s
 		? lp->values[j]->parent_s->u.s->oid
 		: lp->values[j]->parent_f->parent_s->u.s->oid;
-	      fprintf(f, "%s:%s;fvp\t%s\n",
+	      /* Use '.' rather than ':' because then key=sp_oid.fvp */
+	      fprintf(f, "%s.%s;fvp\t%s\n",
 		      s->oid,
 		      lp->values[j]->u.v->name,
 		      sp_oid

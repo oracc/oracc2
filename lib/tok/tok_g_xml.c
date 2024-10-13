@@ -158,12 +158,17 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 	    case 'v':
 	      if (!r->rw->in_c && !r->rw->in_n && !r->rw->in_p && !r->rw->in_q)
 		{
+		  const char *spoid = findAttr(atts, "spoid"), *spform = NULL;
+		  if (*spoid)
+		    spform = findAttr(atts, "spform");
+		  else
+		    spoid = NULL;
 		  gsb_add(r,
 			  name[2],
 			  NULL,
 			  findAttr(atts, "oid"),
 			  findAttr(atts, "g:sign"),
-			  NULL, NULL,
+			  spoid, spform,
 			  r->rw->w->word_lang,
 			  findAttr(atts, "g:logolang"));
 		  tok_status(r, atts);

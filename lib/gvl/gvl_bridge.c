@@ -24,6 +24,33 @@ gvl_bridge_cuneify(void)
 }
 
 unsigned const char *
+gvl_bridge_key()
+{
+  if (gbgp && gbgp->oid)
+    {
+      char buf[strlen((ccp)gbgp->orig)+14];
+      sprintf(buf, "%s.%s;fvp", gbgp->oid, gbgp->orig);
+      const unsigned char *fvp = gvl_lookup((uccp)buf);
+      if (fvp)
+	{
+	  char key[strlen((ccp)buf)+10];
+	  sprintf(key, "%s.%s", fvp, buf);
+	  char *s = strchr(key, ';');
+	  *s = '\0';
+	  return pool_copy((uccp)key, bridge_p);
+	}
+      else
+	{
+	  char key[strlen((ccp)gbgp->orig)+14];
+	  sprintf(key, "%s..%s", gbgp->oid, gbgp->orig);
+	  return pool_copy((uccp)key, bridge_p);
+	}
+    }
+  else
+    return NULL;
+}
+
+unsigned const char *
 gvl_bridge_oid_name(const char *oid)
 {
   return gvl_lookup((uccp)oid);
@@ -42,7 +69,7 @@ const char *
 gvl_bridge_spoid(void)
 {
   if (gbgp)
-    return gbgp->sp_oid;
+    return (ccp)pool_copy(gbgp->sp_oid, bridge_p);
   else
     return NULL;
 }

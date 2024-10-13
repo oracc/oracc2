@@ -162,7 +162,7 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 	    sprintf(ssort, "%d", (int)(uintptr_t)hash_find(oid_sort_keys, (uccp)spv->oid));
 	  ratts = rnvval_aa("x",
 			    "v", spv->v,
-			    "oid", spv->ref,
+			    "oid", spv->oid,
 			    "vsort", vsort,
 			    "ssort", ssort,
 			    NULL);

@@ -62,6 +62,7 @@ fi
 
 if [ "$stats" == "yes" ]; then
     csl-need.sh
+    csl-miss-need.sh miss
 fi
 sxweb-pos.sh
 

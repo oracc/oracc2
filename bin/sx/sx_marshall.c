@@ -490,7 +490,15 @@ sx_marshall(struct sl_signlist *sl)
 		hash_add(sl->oid2ucode, (uccp)sl->signs[i]->oid, (ucp)sl->signs[i]->U.uhex);
 	    }
 	  if (sl->signs[i]->oid)
-	    hash_add(oid_sort_keys, (uccp)sl->signs[i]->oid, (void*)(uintptr_t)sl->signs[i]->sort);
+	    {
+	      hash_add(oid_sort_keys, (uccp)sl->signs[i]->oid, (void*)(uintptr_t)sl->signs[i]->sort);
+	      if (sl->signs[i]->inst->atoid && strcmp(sl->signs[i]->oid, sl->signs[i]->inst->atoid))
+		mesg_verr(&sl->signs[i]->inst->mloc,
+			  "@oid %s for sign %s does not match OID tab's %s\n",
+			  sl->signs[i]->inst->atoid,
+			  sl->signs[i]->name,
+			  sl->signs[i]->oid);
+	    }
 	}
 
 #if 0
