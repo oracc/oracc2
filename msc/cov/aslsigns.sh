@@ -10,4 +10,4 @@ if [[ "$p" == "" ]]; then
 	exit 1
     fi
 fi
-grep ^o ${ORACC_BUILDS}/$p/02pub/sl/sl.tsv | cut -f1 | grep -v ';' | sort -u
+grep ^o ${ORACC_BUILDS}/$p/02pub/sl/sl.tsv | cut -f1 | grep -v ';' | sort -u | nofakes.sh
