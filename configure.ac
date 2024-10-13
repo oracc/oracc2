@@ -149,6 +149,7 @@ AC_CONFIG_FILES([Makefile
 		 msc/cmd/Makefile
 		 msc/cmd/config/Makefile
 		 msc/cmd/update/Makefile
+		 msc/cov/Makefile
 		 msc/ela/Makefile
 		 msc/lex/Makefile
 		 msc/otf/Makefile

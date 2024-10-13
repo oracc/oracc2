@@ -10,6 +10,5 @@ if [ ! -r $s ]; then
     echo $0: no such file $s. Stop.
     exit 1
 fi
-h=`/bin/echo -n $p | tr / -`
 crpsigns.sh $p
 needuni.sh | grep -f - need
