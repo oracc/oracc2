@@ -8,17 +8,18 @@
  *
  * The expansions vary according to token type.
  *
- * For 'g' type, graphemes, the expansion includes generating parent
- * entries for values and various features based on the grapheme
- * signature.
+ * For 'g' type, graphemes, the expansion includes generating SIGN and
+ * FORM parent entries for values and various features based on the
+ * grapheme signature.
  */
 
 const char *index_dir = "02pub/tok";
+int no_output = 0;
 
 int
 main(int argc, char **argv)
 {
-  options(argc,argv,"d:");
+  options(argc,argv,"d:n");
   char buf[1024], *b, qid[1024], wdid[32];
   Vido *vp = vido_init('t', 0);
   while ((b = fgets(buf, 1024, stdin)))
@@ -52,43 +53,34 @@ main(int argc, char **argv)
 	  if (w)
 	    *w++ = '\0';
 
+	  /* Always save the entire S.F.V */
 	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
-	  
-	  /* if the grapheme token has a ter (value) determine the
-	   * parent and generate a token entry for it:
-	   *
-	   * if bis (form) is non-empty, the parent is sem.bis.
-	   * if bis is empty, the parent is sem..
-	   *
-	   * This means we can simply null-out the value and use the
-	   * remainder as the parent.
-	   *
-	   * if the token has no ter we generate a token with 0 for
-	   * ter so we can accurately sum instances.
-	   */
-	  char *v = strrchr(t, '.');
-	  if (v[1])
+
+	  /* if the key contains .. the SFV is o0..v so just zero dot[2] and save the sign key */
+	  char *dot = strchr(t, '.');
+	  if ('.' == dot[1])
 	    {
-	      char save = v[1];
-	      v[1] = '\0';
+	      dot[2] = '\0';
 	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
-	      v[1] = save;
 	    }
 	  else
 	    {
-	      char t0[strlen(t)+2];
-	      strcpy(t0, t);
-	      strcat(t0, "0");
-	      printf("%s\t%s\t%s\n", t0, vido_new_id(vp,t0), qid);
-	    }	    
+	      /* we have to save S.F. */
+	      dot = strrchr(t, '.');
+	      dot[1] = '\0';
+	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+	    }
 	}
     }
-  char vidfile[strlen(index_dir)+strlen("tid.vid0")];
-  char tsvfile[strlen(index_dir)+strlen("tid.vid0")];
-  sprintf(vidfile,"%s/tid.vid",index_dir);
-  sprintf(tsvfile,"%s/tid.tsv",index_dir);
-  vido_dump_data(vp, vidfile, tsvfile);
-  vido_term(vp);
+  if (!no_output)
+    {
+      char vidfile[strlen(index_dir)+strlen("tid.vid0")];
+      char tsvfile[strlen(index_dir)+strlen("tid.vid0")];
+      sprintf(vidfile,"%s/tid.vid",index_dir);
+      sprintf(tsvfile,"%s/tid.tsv",index_dir);
+      vido_dump_data(vp, vidfile, tsvfile);
+      vido_term(vp);
+    }
 }
 
 int
@@ -99,6 +91,9 @@ opts(int argc, const char *arg)
     case 'd':
       index_dir = arg;
       break;
+    case 'n':
+      no_output = 1;
+      break;
     default:
       return 1;
     }
@@ -107,9 +102,10 @@ opts(int argc, const char *arg)
 
 const char *prog = "tokex";
 int major_version = 6, minor_version = 0, verbose;
-const char *usage_string = "-d [index_dir]";
+const char *usage_string = "-d [index_dir] [-n]";
 void
 help ()
 {
   printf("  -d [index_dir] Gives the name of the index directory; defaults to 02pub/tok\n");
+  printf("  -n no output; suppress vid dump\n");
 }

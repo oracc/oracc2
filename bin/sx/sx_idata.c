@@ -79,10 +79,28 @@ sx_kdata_init(struct sl_signlist *sl, const char *kdata_file, const char *idata_
   char buf[1024];
   while ((lp = fgets(buf,1024,fp)))
     {
-      lp[strlen(lp)-1] = '\0';
+      int len = strlen(lp);
+      lp[--len] = '\0';
       struct tis_data *tp = memo_new(sl->m_idata);
       tp->key = (char*)pool_copy((ucp)lp, sl->p);
       hash_add(sl->h_kdata, (uccp)tp->key, tp);
+      /* tokex takes care of creating parent keys but if a key is
+	 S.F.V it only creates the S.F. key because the form is
+	 attested not the sign; we need to add the S.. key to make
+	 sure the S.F. is output later */
+      if ('.' == lp[len-1] && '.' != lp[len-2]) /* we have o0.o0. not o0.. */
+	{
+	  /* this trashes lp but we are done with it */
+	  char *dot = strchr(lp, '.');
+	  dot[1] = '.';
+	  dot[2] = '\0';
+	  if (!hash_find(sl->h_kdata, (uccp)lp))
+	    {
+	      tp = memo_new(sl->m_idata);
+	      tp->key = (char*)pool_copy((ucp)lp, sl->p);
+	      hash_add(sl->h_kdata, (uccp)tp->key, tp);
+	    }
+	}
     }
 }
 

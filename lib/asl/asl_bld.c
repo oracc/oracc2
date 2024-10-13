@@ -543,8 +543,11 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 
       if (minus_flag)
 	{
-	  if (!sl->curr_invalid || sl->curr_invalid == 3)
-	    sl->curr_invalid = 2;
+	  if (minus_flag > 0)
+	    {
+	      if (!sl->curr_invalid || sl->curr_invalid == 3)
+		sl->curr_invalid = 2;
+	    }
 	}
       else if (sl->curr_invalid == 2)
 	sl->curr_invalid = 0;
@@ -588,7 +591,8 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
 	  i->type = 'f';
 	  i->u.f = f;
 	  i->mloc = *locp;
-	  i->valid = (Boolean)!minus_flag;
+	  i->valid = (Boolean)(minus_flag > 0 ? 0 : 1);
+	  i->deflt = (Boolean)(minus_flag < 0 ? 1 : 0);
 	  i->query = (Boolean)query;
 	  i->literal = literal;
 	  i->lv = memo_new(sl->m_lv_data);

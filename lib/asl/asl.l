@@ -127,7 +127,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@nosign/[ \t]     		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@nosign' has been replaced by '@sign-'");
 				  /*atcmd(SIGN,-1);*/ }
 ^@list-?/[ \t]       		{ atcmd(LIST,0); }
-^@form-?/[ \t]	       		{ atcmd(FORM,0); }
+^@form[-+]?/[ \t]              	{ atcmd(FORM,0); }
 ^@noform/[ \t]         		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@noform' has been replaced by '@form-'");
 				  /* atcmd(FORM,-1);*/ }
 ^@v-?/[ \t]+	       		{ atcmd(V,0); }
@@ -239,15 +239,27 @@ check_minus(char *t)
 {
   char *m = strrchr(t,'-');
   extern int minus_flag;
-  if (m && !m[1])
+  if (m && (!m[1] || !strcmp(m, "-+")))
     {
-      if (strcmp(t, "@sign-") && strcmp(t, "@form-") && strcmp(t, "@list-") && strcmp(t, "@v-"))
+      if ('+' == m[1])
+	mesg_vwarning(curraslfile, asllineno, "[asl] '-' not allowed with '+')", *asltext);
+      else if (strcmp(t, "@sign-") && strcmp(t, "@form-") && strcmp(t, "@list-") && strcmp(t, "@v-"))
 	mesg_vwarning(curraslfile, asllineno, "[asl] '-' not allowed on %s (only on @sign/@form/@list/@v)", *asltext);
       else
         minus_flag = 1;
     }
   else
     minus_flag = 0;
+  m = strchr(t,'+');
+  if (m && (!m[1] || !strcmp(m, "+-")))
+    {
+      if ('-' == m[1])
+	mesg_vwarning(curraslfile, asllineno, "[asl] '-' not allowed with '+')", *asltext);
+      else if (strcmp(t, "@form+"))
+	mesg_vwarning(curraslfile, asllineno, "[asl] '+' not allowed on %s (only on @form)", *asltext);
+      else
+        minus_flag = -1;
+    }
 }
 
 static char *

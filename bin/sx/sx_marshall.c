@@ -323,6 +323,24 @@ sx_uniq_aka(List *aka)
     return aka;
 }
 
+static int
+sx_form_default(List *lip)
+{
+  int n = 0;
+  struct sl_inst *ip, *default_ip = NULL;
+  for (ip = list_first(lip); ip; ip = list_next(lip))
+    if (ip->deflt)
+      {
+	if (!default_ip)
+	  default_ip = ip;
+	++n;
+      }
+  if (n > 1)
+    mesg_verr(&default_ip->mloc, "FORM %s has %d defaults\n", default_ip->u.f->name, n);
+
+  return n;
+}
+
 void
 sx_marshall(struct sl_signlist *sl)
 {
@@ -367,9 +385,23 @@ sx_marshall(struct sl_signlist *sl)
       if (!(s = hash_find(sl->hsentry, (uccp)keys[i])))
 	{
 	  struct sl_form *fp = hash_find(sl->hfentry, (uccp)keys[i]);
-#if 0
 	  int n = (fp->insts ? list_len(fp->insts) : 0);
+#if 0
 	  fprintf(stderr, "FORM %s is not also a SIGN with %d insts\n", keys[i], n);
+#else
+	  if (n > 1 && !sx_form_default(fp->insts))
+	    {
+	      struct sl_inst *ip = list_first(fp->insts);
+	      mesg_verr(&ip->mloc, "non-sign FORM %s has %d insts: use @sign or @form+\n", keys[i], n);
+	    }
+#if 0
+	  /* This is not practical; over 1000 @form are not also @sign; implement default with @form+ instead */
+	  else
+	    {
+	      mesg_verr(&ip->mloc, "FORM %s is not also a SIGN; this will soon be an error\n", keys[i]);
+	      mesg_status_ignore_one();
+	    }
+#endif
 #endif
 	  s = asl_form_as_sign(sl, fp);
 	}

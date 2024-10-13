@@ -250,6 +250,7 @@ struct sl_inst
   Boolean valid; /* doesn't have a - after it */
   Boolean inherited;
   Boolean literal;
+  Boolean deflt; /* @form+ */
   Boolean query;
   Boolean upua;
   Boolean utf8;
