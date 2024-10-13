@@ -126,6 +126,9 @@ sx_s_sign(FILE *f, struct sl_sign *s)
       fprintf(f, "%s\t%s\n", s->name, curr_oid);
       fprintf(f, "%s\t%s\n", curr_oid, s->name);
 
+      if (s->fake)
+	fprintf(f, "%s;fake\t1\n", curr_oid);	
+
       sx_s_unicode(f, &s->U);
 
       if (s->nforms)
