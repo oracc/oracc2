@@ -1327,6 +1327,134 @@ asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
 }
 
 void
+asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
+{
+  if (n)
+    {
+      while (isspace(*n))
+	++n;
+      /* parse and store @scriptdef data */
+      char *sname = n;
+      while (*n && !isspace(*n))
+	++n;
+      if (*n)
+	{
+	  char *sarg = n;
+	  while (*n && !isspace(*n))
+	    ++n;
+	  if (isspace(*n))
+	    *n = '\0';
+
+	  if (!*n)
+	    {
+	      struct sl_scriptdef *sp = memo_new(sl->m_scriptdata);
+	      sp->name = n;
+	      sp->sset = sarg;
+	      sp->codes = list_create(LIST_SINGLE);
+	      hash_add(sl->h_scripts, sp->name, sp);
+	    }
+	  else
+	    mesg_verr(locp, "@scriptdef has bad argument to script %s", n);
+	}
+      else
+	mesg_verr(locp, "@scriptdef has no script name", n);
+    }
+}
+
+static char *
+asl_script_elt(Mloc *locp, char *n, char **argp, char **endp)
+{
+  if (n && *n)
+    {
+      while (isspace(*n))
+	++n;
+      char *e = n;
+      while (*e && !isspace(*e))
+	++e;
+      if (*e)
+	{
+	  *e++ = '\0';
+	  while (isspace(*e))
+	    ++e;
+	  if (*e)
+	    {
+	      *argp = e;
+	      while (*e && ';' != *e && '.' != *e)
+		++e;
+	      if (*e)
+		{
+		  *e++ = '\0';
+		  *endp = e;
+		  return n;
+		}
+	      else
+		mesg_verr(locp, "@script directive %s %s is should end with ';' or '.'", n, *argp);
+	    }
+	  else
+	    mesg_verr(locp, "@script directive %s has no argument", n);
+	}
+      else
+	mesg_verr(locp, "no space after directive name in @script");
+    }
+  return NULL;
+}
+
+void
+asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
+{
+  if (asl_sign_guard(locp, sl, "script"))
+    {
+      if (n)
+	{
+	  while (isspace(*n))
+	    ++n;
+	  /* parse and store @script data */
+	  struct sl_scriptdata *sp = memo_new(sl->m_scriptdata);
+	  if (!sl->curr_sign->script)
+	    sl->curr_sign->script = list_create(LIST_SINGLE);
+	  char *end;
+	  if ((end = strchr(n, ':')))
+	    {
+	      *end++ = '\0';
+	      struct sl_scriptdef *defp = hash_find(sl->h_scripts, n);
+	      if (defp)
+		{
+		  int status = mesg_status();
+		  char *arg = NULL;
+		  while (isspace(*end))
+		    ++end;
+		  while ((n = asl_script_elt(end, &arg, &end)))
+		    {
+		      if (!strncmp(n, "ivs", strlen(ivs)))
+			sp->oivs = arg;
+		      else if (!strncmp(n, "salt", strlen(salt)))
+			sp->salt = arg;
+		      else if (!strncmp(n, "merge", strlen(merge)))
+			sp->merge = arg;
+		      else
+			{
+			  mesg_verr(locp, "unknown script element %s", n);
+			  break;
+			}
+		    }
+		  if (mesg_status() == status)
+		    {
+		      list_add(defp->codes, sp);
+		      list_add(sl->curr_sign->script, sp);
+		    }
+		}
+	      else
+		mesg_verr(locp, "@script %s has not been defined with @scriptdef", n);
+	    }
+	  else
+	    mesg_verr(locp, "missing ':' in @script");
+	}
+      else
+	mesg_verr(locp, "@script is empty");
+    }
+}
+
+void
 asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
 {
   if (sl->curr_inst)

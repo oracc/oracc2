@@ -116,6 +116,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@linkdef/[ \t]+       		{ Ynext=L; atcmd(LINKDEF,Y); }
 ^@listdef/[ \t]+       		{ atcmd(LISTDEF,L); }
 ^@sysdef/[ \t]+       		{ Ynext=Yt; atcmd(SYSDEF,Y); }
+^@scriptdef/[ \t]+             	{ Tcmd(SCRIPTDEF,S); }
 ^@images/[ \t]+			{ atcmd(IMAGES,S); }
 ^@sign-?/[ \t]       		{ atcmd(SIGN,0); }
 ^@pcun-?/[ \t]       		{ atcmd(PCUN,0); }
@@ -135,6 +136,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@sys/[ \t]+			{ Ynext=0; atcmd(SYS,Y); }
 ^@inote/[ \t]+       		{ Tcmd(INOTE,S); }
 ^@lit/[ \t]+	       		{ Tcmd(LIT,S); }
+^@script/[ \t]+             	{ Tcmd(SCRIPT,S); }
 ^@merge/[ \t]+       		{ Tcmd(MERGE,S); }
 ^@note/[ \t]+       		{ Tcmd(NOTE,S); }
 ^@oid/[ \t]+       		{ Tcmd(OID,S); }

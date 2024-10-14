@@ -14,6 +14,18 @@ oiv_style_to_file(const char *style)
 /* Load a selections file, a list of OIV identifiers, and extract the
  * OIV data from the OSL IVS into a hash. Return the hash so it can
  * be used by GVL for character rendering.
+ *
+ * 2024-10-14: new implementation uses OpenType ligatures for ivs
+ * support and CSS font-feature-select for web display.
+ *
+ * File format is now a tabbed file:
+ *
+ * 	CODE	SALT	OIVS
+ *
+ * CODE is U+ Unicode codepoint for character being rendered, e.g., U+12324 [DE₂]
+ * SALT is CSS tag to select SALT#, e.g., salt1
+ * OIVS is UTF-8 encoded CODE+IVS sequence for use in non-web contexts
+ * 
  */
 Hash *
 oiv_load(const char *oiv_selections_file)
@@ -24,9 +36,10 @@ oiv_load(const char *oiv_selections_file)
   for (i = 0; ll[i]; ++i)
     {
       unsigned char **f = (ucp*)tab_split((char*)ll[i]);
-      hash_add(hoiv, f[0], f[1]); /* Base character maps to IVS */
-      hash_add(hoiv, f[1], f[3]); /* IVS maps to IDENT for CSS use */
-      hash_add(hoiv, f[3], f[2]); /* IDENT maps to render for text substition */
+      hash_add(hoiv, f[0], f[1]); 		/* CODE maps to SALT */
+      char buf[strlen((ccp)f[0])+2];
+      sprintf(buf, "%s+", f[0]);
+      hash_add(hoiv, (uccp)strdup(buf), f[2]); 	/* CODE+ maps to OIVS */
     }
   return hoiv;
 }

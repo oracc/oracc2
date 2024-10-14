@@ -38,6 +38,7 @@ int minus_flag = 0;
 		SYSDEF SYSNAME SYS SYSGOESTO SYSTEXT
 		SMAP LITERAL IMAGES MERGE OID
 		LINKDEF LINK
+		SCRIPTDEF SCRIPT
 
 %nterm  <text>  anynote atftoken atftokens lang longtext token
 
@@ -74,6 +75,7 @@ atcmd:
 	| atdomain
 	| atlinkdef
 	| atlistdef
+	| atscriptdef
 	| atsysdef
 	| atimages
 	| atsign
@@ -89,6 +91,7 @@ atcmd:
 	| atv
 	| atlink
 	| atsys
+	| atscript
 	| atmerge
 	| atform
 	| atmeta
@@ -121,12 +124,20 @@ atsysdef:
 	| SYSDEF SYSNAME SYSTEXT    	{ asl_bld_sysdef(&@1, curr_asl, (ccp)$2, (ccp)$3); }
 	;
 
+atscriptdef:
+	  SCRIPTDEF TEXT		{ asl_bld_scriptdef(&@1, curr_asl, (uccp)$2); }
+	;
+
 atimages:
 	  IMAGES TEXT 		    	{ asl_bld_images(&@1, curr_asl, (uccp)$2); }
 	;
 
 atmerge:
 	  MERGE TEXT 		    	{ asl_bld_merge(&@1, curr_asl, (uccp)$2); }
+	;
+
+atscript:
+	  SCRIPT TEXT			{ asl_bld_script(&@1, curr_asl, (char*)$2); }
 	;
 
 atoid:

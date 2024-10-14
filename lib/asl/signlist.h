@@ -78,6 +78,7 @@ struct sl_signlist
   Hash *h_merges;	/* Hashes for managing the merge data while creating a subsl */
   Hash *h_merges_cand;
   Hash *h_merges_seen;
+  Hash *h_scripts;	/* Hash for @scriptdef; value is an sl_script* */
   struct sl_token **tokens; /* sorted htoken */
   struct sl_sign  **signs;  /* sorted hsentry */
   int nsigns;
@@ -131,6 +132,8 @@ struct sl_signlist
   Memo *m_syss;
   Memo *m_links;
   Memo *m_idata;
+  Memo *m_scriptdefs;
+  Memo *m_scriptdata;
   Pool *p;
   Mloc mloc;
   Mloc eloc;
@@ -411,6 +414,7 @@ struct sl_sign
   const char *smoid;	   	/* OID for @form in @smap */
   const char *moid;		/* OID for destination if this sign is to be merged with another */
   List *merge;			/* List of sign names to be merged into this sign */
+  List *script;			/* List of @script entries turned into sl_scriptdata structs */
   struct sl_inst *inst;
   struct sl_form *xref;        	/* this sign is a header for the @form
 				   which defines the sign name; sort
@@ -495,8 +499,24 @@ struct sl_value
   unsigned char index; 	  /* 1 for no index; integer value of index for numeric indices; 255 for sub x */
 };
 
+struct sl_scriptdef
+{
+  const char *name; 	/* Oracc script-style name */
+  const char *sset; 	/* OpenType stylistic set as base */
+  List *codes; 		/* List of sl_scriptdata* */
+};
+
+struct sl_scriptdata
+{
+  const char *code;	/* U+ codepoint */
+  const char *salt;	/* salt integer */
+  const char *merge; 	/* sign this code merges with */
+  const char *oivs;	/* Oracc IVS as simple hex, e.g., E0100 */
+};
+
 extern struct sl_signlist *asl_bld_init(void);
 extern void asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *in);
+extern void asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, const unsigned char *text);
 extern void asl_bld_sysdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_images(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 extern void asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
@@ -530,6 +550,7 @@ extern void asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign
 
 extern void asl_bld_note(Mloc *locp, struct sl_signlist *sl, const char *tag, const char *txt);
 extern void asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
+extern void asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *txt);
 extern void asl_bld_oid(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 
 extern void asl_bld_end_form(Mloc *locp, struct sl_signlist *sl);
