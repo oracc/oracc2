@@ -4,7 +4,7 @@ bin_PROGRAMS=
 
 bin_SCRIPTS= \
 	cbdneeduni.sh crpneeduni.sh cslneedsign.sh \
-	needasl.sh needuni.sh \
+	needasl.sh needuni.sh nofakes.sh \
 	aslsigns.sh cbdsigns.sh crpsigns.sh
 
 scriptdata_DATA=

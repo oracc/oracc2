@@ -12,7 +12,7 @@
     extension-element-prefixes="ex"
     version="1.0">
 
-<xsl:include href="mcol.xsl"/>
+<xsl:include href="sxweb-mcol.xsl"/>
 <xsl:include href="sxweb-util.xsl"/>
 
 <xsl:output method="xml" indent="yes" encoding="utf-8"/>

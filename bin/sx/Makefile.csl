@@ -34,3 +34,6 @@ clean:
 
 need: 02pub/csl.tok
 	-grep ^g $< | cut -d. -f1 | cut -f2 | concord -nst | sort -k2nr >$@
+
+fakes: 02pub/sl/sl.tsv
+	grep ';fake' $< | cut -d';' -f1 | sort -u >$@

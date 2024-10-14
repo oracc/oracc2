@@ -5,6 +5,6 @@
 # To compare against a master sign list give that project as the arg
 # to aslsigns.sh, i.e., aslsigns.sh osl >have
 aslsigns.sh >have
-cut -f1 need | sort -u >need.1
-cut -f1 have | sort -u >have.1
+cut -f1 need | sort -u | nofakes.sh >need.1
+cut -f1 have | sort -u | nofakes.sh >have.1
 comm -23 need.1 have.1

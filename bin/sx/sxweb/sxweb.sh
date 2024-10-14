@@ -61,8 +61,9 @@ if [ "$auto" != "yes" ]; then
 fi
 
 if [ "$stats" == "yes" ]; then
-    csl-need.sh
+#    csl-need.sh
     csl-miss-need.sh miss
+    csl-miss-need.sh need
 fi
 sxweb-pos.sh
 
