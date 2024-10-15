@@ -120,6 +120,16 @@ sx_w_a_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p)
 	  fprintf(f->fp, "\n@sysdef %s%s%s\n", n[i], cspace, ctext);
 	  sx_w_a_notes(f, sl, &sdp->inst);
 	}
+
+      n = hash_keys2(sl->h_scripts, &nn);
+      qsort(n, nn, sizeof(const char *), cmpstringp);
+      for (i = 0; i < nn; ++i)
+	{
+	  struct sl_scriptdef *sdp = hash_find(sl->h_scripts, (uccp)n[i]);
+	  fprintf(f->fp, "\n@scriptdef %s %s\n", n[i], sdp->sset);
+	  /*sx_w_a_notes(f, sl, &sdp->inst);*/
+	}      
+      
       if (sl->images)
 	{
 	  Mloc *m;
@@ -365,6 +375,29 @@ sx_w_a_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	  const uchar *m = hash_find(sl->h_merges, s->u.s->name);
 	  if (m)
 	    fprintf(f->fp, "@merge\t%s\n", m);
+	  if (s->u.s->script)
+	    {
+	      struct sl_scriptdata *sdp;
+	      for (sdp = list_first(s->u.s->script); sdp; sdp = list_next(s->u.s->script))
+		{
+		  fprintf(f->fp, "@script %s: ", sdp->name);
+		  if (sdp->merge)
+		    {
+		      fprintf(f->fp, "merge %s", sdp->merge);
+		      if (sdp->salt || sdp->oivs)
+			fputs("; ", f->fp);
+		    }
+		  if (sdp->salt)
+		    {
+		      fprintf(f->fp, "salt %s", sdp->salt);
+		      if (sdp->oivs)
+			fputs("; ", f->fp);
+		    }
+		  if (sdp->oivs)
+		    fprintf(f->fp, "ivs %s", sdp->oivs);
+		  fputs(".\n", f->fp);
+		}
+	    }
 	  in_sign = 1;
 	}
     }

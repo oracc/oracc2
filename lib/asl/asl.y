@@ -125,7 +125,7 @@ atsysdef:
 	;
 
 atscriptdef:
-	  SCRIPTDEF TEXT		{ asl_bld_scriptdef(&@1, curr_asl, (uccp)$2); }
+	  SCRIPTDEF TEXT		{ asl_bld_scriptdef(&@1, curr_asl, (char*)$2); }
 	;
 
 atimages:

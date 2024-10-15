@@ -35,6 +35,7 @@ struct sx_functions
   sx_notes_f *	not;
   sx_notes_f *	lnk;
   sx_notes_f *	sys;
+  sx_List_f *	scr;
   sx_notes_f *	img;
   sx_notes_f *	cpd;
   sx_notes_f *	lem;

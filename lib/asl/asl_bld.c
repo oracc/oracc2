@@ -96,6 +96,7 @@ asl_bld_init(void)
   sl->hsignvvalid = hash_create(1024);
   sl->hletters = hash_create(32);
   sl->h_merge = hash_create(64);
+  sl->h_scripts = hash_create(4);
   sl->m_tokens = memo_init(sizeof(struct sl_token), 1024);
   sl->m_letters = memo_init(sizeof(struct sl_letter), 32);
   sl->m_groups = memo_init(sizeof(struct sl_letter), 128);
@@ -114,6 +115,8 @@ asl_bld_init(void)
   sl->m_notes = memo_init(sizeof(struct sl_note), 512);
   sl->m_memostr = memo_init(sizeof(Memo_str), 512);
   sl->m_syss = memo_init(sizeof(struct sl_sys), 512);
+  sl->m_scriptdefs = memo_init(sizeof(struct sl_scriptdef), 8);
+  sl->m_scriptdata = memo_init(sizeof(struct sl_scriptdata), 128);
   sl->m_links = memo_init(sizeof(Link), 512);
   sl->p = pool_init();
   sl->compounds = list_create(LIST_SINGLE);
@@ -1196,6 +1199,18 @@ asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle t)
     {
       if (sl->curr_sign->type == t)
 	{
+	  if (sl->curr_sign->script)
+	    {
+	      struct sl_scriptdata *dp;
+	      const char *code = sl->curr_sign->U.uhex;
+	      if (!code)
+		code = sl->curr_sign->U.useq;
+	      if (code)
+		for (dp = list_first(sl->curr_sign->script); dp; dp = list_next(sl->curr_sign->script))
+		  dp->code = code;
+	      else
+		mesg_verr(locp, "%s uses @script but has no unicode info", sl->curr_sign->name);
+	    }
 	  if (!sl->curr_sign->inst->key)
 	    mesg_verr(locp, "no key set for sign %s", sl->curr_sign->name);
 	  sl->curr_sign = NULL;
@@ -1327,7 +1342,7 @@ asl_bld_merge(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
 }
 
 void
-asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
+asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, char *n)
 {
   if (n)
     {
@@ -1339,19 +1354,19 @@ asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, const unsigned char *n)
 	++n;
       if (*n)
 	{
+	  *n++ = '\0';
 	  char *sarg = n;
 	  while (*n && !isspace(*n))
 	    ++n;
 	  if (isspace(*n))
 	    *n = '\0';
-
 	  if (!*n)
 	    {
 	      struct sl_scriptdef *sp = memo_new(sl->m_scriptdata);
-	      sp->name = n;
+	      sp->name = sname;
 	      sp->sset = sarg;
 	      sp->codes = list_create(LIST_SINGLE);
-	      hash_add(sl->h_scripts, sp->name, sp);
+	      hash_add(sl->h_scripts, (uccp)sp->name, sp);
 	    }
 	  else
 	    mesg_verr(locp, "@scriptdef has bad argument to script %s", n);
@@ -1416,20 +1431,21 @@ asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
 	  if ((end = strchr(n, ':')))
 	    {
 	      *end++ = '\0';
-	      struct sl_scriptdef *defp = hash_find(sl->h_scripts, n);
+	      struct sl_scriptdef *defp = hash_find(sl->h_scripts, (uccp)n);
 	      if (defp)
 		{
+		  sp->name = n;
 		  int status = mesg_status();
 		  char *arg = NULL;
 		  while (isspace(*end))
 		    ++end;
-		  while ((n = asl_script_elt(end, &arg, &end)))
+		  while ((n = asl_script_elt(locp, end, &arg, &end)))
 		    {
-		      if (!strncmp(n, "ivs", strlen(ivs)))
+		      if (!strncmp(n, "ivs", strlen("ivs")))
 			sp->oivs = arg;
-		      else if (!strncmp(n, "salt", strlen(salt)))
+		      else if (!strncmp(n, "salt", strlen("salt")))
 			sp->salt = arg;
-		      else if (!strncmp(n, "merge", strlen(merge)))
+		      else if (!strncmp(n, "merge", strlen("merge")))
 			sp->merge = arg;
 		      else
 			{

@@ -185,6 +185,19 @@ struct sl_note
 struct sl_unicode
 {
   const unsigned char *utf8; 	/* the character(s) in UTF-8 */
+  const char *uhex;		/* the U+HHHHH code for an encoded character */
+  const char *useq;		/* for characters not encoded as singletons,
+				   a sequence of hex values to render the sign name */
+  const char *upua; 		/* for unencoded character(s), the hex code for a PUA
+				   codepoint in the form xXXXXX */
+  const char *umap; 		/* map of current @sign or @form to another @sign
+				   or @form for obtaining Unicode info */
+  const char *urev; 		/* the Unicode revision */
+  const char *uname;		/* the Unicode name */
+  List *unotes;			/* Unicode-related notes on the character and possibly related characters */
+};
+
+#if 0
   const unsigned char *ivs;	/* the characters with IVS if any;
 				   this normally points to 'utf8'; IVS
 				   sequences are pairs--this version
@@ -198,14 +211,7 @@ struct sl_unicode
 				   inlined to indicate that the IVS
 				   rendering is implemented as an
 				   image */
-  const char *uhex;		/* the U+HHHHH code for an encoded character */
-  const char *useq;		/* for characters not encoded as singletons, a sequence of hex values to render the sign name */
-  const char *upua; 		/* for unencoded character(s), the hex code for a PUA codepoint in the form xXXXXX */
-  const char *umap; 		/* map of current @sign or @form to another @sign or @form for obtaining Unicode info */
-  const char *urev; 		/* the Unicode revision */
-  const char *uname;		/* the Unicode name */
-  List *unotes;			/* Unicode-related notes on the character and possibly related characters */
-};
+#endif
 
 /* List and value data for @form insts */
 struct sl_lv_data
@@ -508,6 +514,7 @@ struct sl_scriptdef
 
 struct sl_scriptdata
 {
+  const char *name;	/* script-style name */
   const char *code;	/* U+ codepoint */
   const char *salt;	/* salt integer */
   const char *merge; 	/* sign this code merges with */
@@ -516,7 +523,7 @@ struct sl_scriptdata
 
 extern struct sl_signlist *asl_bld_init(void);
 extern void asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *in);
-extern void asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, const unsigned char *text);
+extern void asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, char *text);
 extern void asl_bld_sysdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_images(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 extern void asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);

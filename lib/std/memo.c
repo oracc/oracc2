@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <string.h>
 #include "memo.h"
 
@@ -19,6 +20,7 @@ memo_init (int element_size, int elements_per_alloc)
 void *
 memo_new (Memo *any)
 {
+  assert(any!=NULL);
   /* > can occur when an array alloc uses more elements than
      elements_per_alloc */
   if (any->last_element_used >= any->elements_per_alloc)
