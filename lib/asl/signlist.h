@@ -514,7 +514,9 @@ struct sl_scriptdef
 
 struct sl_scriptdata
 {
+  struct sl_sign *sign; /* sign where @script occurred; if within @form this is the form-sign */
   const char *name;	/* script-style name */
+  const char *sset;	/* explicitly requested ss00 code; defaults to code of script-style */
   const char *code;	/* U+ codepoint */
   const char *salt;	/* salt integer */
   const char *merge; 	/* sign this code merges with */

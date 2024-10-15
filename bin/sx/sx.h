@@ -162,4 +162,6 @@ extern void sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
 extern struct noset_tab *noset (register const char *str, register size_t len);
 extern struct numvmap_tab *numvmap (register const char *str, register size_t len);
 
+extern void sx_script(struct sl_signlist *sl, int stdo);
+
 #endif/*SX_H_*/

@@ -44,6 +44,7 @@ int parent_imports = 0;
 int use_oid_tab = 0;
 int sll_output = 0;
 int sortcode_output = 0;
+int scripts_dump = 0;
 int syss_dump = 0;
 int tree_output = 0;
 int unicode_from_parent = 0;
@@ -277,6 +278,9 @@ main(int argc, char * const*argv)
 	    fprintf(stderr, "sx: unable to dump @sys data; can't write sx-syss.out\n");
 	}
 
+      if (scripts_dump)
+	sx_script(sl, 0);
+
       if (sortcode_output && !oid_list)
 	sx_sortcodes(sl);
       
@@ -350,10 +354,12 @@ opts(int opt, const char *arg)
 	images_dump = 1;
       if (strstr(arg, "list"))
 	list_dump = 1;
+      if (strstr(arg, "scripts"))
+	scripts_dump = 1;
       if (strstr(arg, "sys"))
 	syss_dump = 1;
-      if (!akas_dump && !list_dump && !images_dump && !syss_dump)
-	fprintf(stderr, "sx: the -d option must contain any or all of 'aka,list,image,sys'\n");
+      if (!akas_dump && !list_dump && !images_dump && !scripts_dump && !syss_dump)
+	fprintf(stderr, "sx: the -d option must contain any or all of 'aka,list,image,scripts,sys'\n");
       break;
     case 'e':
       sxx_init();

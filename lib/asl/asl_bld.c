@@ -1445,6 +1445,8 @@ asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
 			sp->oivs = arg;
 		      else if (!strncmp(n, "salt", strlen("salt")))
 			sp->salt = arg;
+		      else if (!strncmp(n, "sset", strlen("sset")))
+			sp->sset = arg;
 		      else if (!strncmp(n, "merge", strlen("merge")))
 			sp->merge = arg;
 		      else
@@ -1455,6 +1457,10 @@ asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
 		    }
 		  if (mesg_status() == status)
 		    {
+		      if (sl->curr_form)
+			sp->sign = sl->curr_form->u.f->sign;
+		      else
+			sp->sign = sl->curr_sign;
 		      list_add(defp->codes, sp);
 		      list_add(sl->curr_sign->script, sp);
 		    }
