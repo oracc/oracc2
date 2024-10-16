@@ -1364,9 +1364,25 @@ asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, char *n)
 	    {
 	      struct sl_scriptdef *sp = memo_new(sl->m_scriptdata);
 	      sp->name = sname;
-	      sp->sset = sarg;
-	      sp->codes = list_create(LIST_SINGLE);
-	      hash_add(sl->h_scripts, (uccp)sp->name, sp);
+	      if ('=' == *sarg)
+		{
+		  ++sarg;
+		  struct sl_scriptdef *sp2 = hash_find(sl->h_scripts, (uccp)sarg);
+		  if (sp2)
+		    {
+		      sp->sset = sarg;
+		      sp->codes = sp2->codes;
+		      hash_add(sl->h_scripts, (uccp)sp->name, sp);
+		    }
+		  else
+		    mesg_verr(locp, "@scriptdef %s has bad =%s (@scriptdef %s needed before =%s)", sp->name, sarg, sarg, sarg);
+		}
+	      else
+		{
+		  sp->sset = sarg;
+		  sp->codes = list_create(LIST_SINGLE);
+		  hash_add(sl->h_scripts, (uccp)sp->name, sp);
+		}
 	    }
 	  else
 	    mesg_verr(locp, "@scriptdef has bad argument to script %s", n);
@@ -1431,42 +1447,51 @@ asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
 	  if ((end = strchr(n, ':')))
 	    {
 	      *end++ = '\0';
-	      struct sl_scriptdef *defp = hash_find(sl->h_scripts, (uccp)n);
-	      if (defp)
+	      sp->name = n;
+	      int status = mesg_status();
+	      char *arg = NULL;
+	      while (isspace(*end))
+		++end;
+	      while ((n = asl_script_elt(locp, end, &arg, &end)))
 		{
-		  sp->name = n;
-		  int status = mesg_status();
-		  char *arg = NULL;
-		  while (isspace(*end))
-		    ++end;
-		  while ((n = asl_script_elt(locp, end, &arg, &end)))
+		  if (!strncmp(n, "ivs", strlen("ivs")))
+		    sp->oivs = arg;
+		  else if (!strncmp(n, "salt", strlen("salt")))
+		    sp->salt = arg;
+		  else if (!strncmp(n, "sset", strlen("sset")))
+		    sp->sset = arg;
+		  else if (!strncmp(n, "merge", strlen("merge")))
+		    sp->merge = arg;
+		  else
 		    {
-		      if (!strncmp(n, "ivs", strlen("ivs")))
-			sp->oivs = arg;
-		      else if (!strncmp(n, "salt", strlen("salt")))
-			sp->salt = arg;
-		      else if (!strncmp(n, "sset", strlen("sset")))
-			sp->sset = arg;
-		      else if (!strncmp(n, "merge", strlen("merge")))
-			sp->merge = arg;
-		      else
-			{
-			  mesg_verr(locp, "unknown script element %s", n);
-			  break;
-			}
-		    }
-		  if (mesg_status() == status)
-		    {
-		      if (sl->curr_form)
-			sp->sign = sl->curr_form->u.f->sign;
-		      else
-			sp->sign = sl->curr_sign;
-		      list_add(defp->codes, sp);
-		      list_add(sl->curr_sign->script, sp);
+		      mesg_verr(locp, "unknown script element %s", n);
+		      break;
 		    }
 		}
-	      else
-		mesg_verr(locp, "@script %s has not been defined with @scriptdef", n);
+	      if (mesg_status() == status)
+		{
+		  if (sl->curr_form)
+		    sp->sign = sl->curr_form->u.f->sign;
+		  else
+		    sp->sign = sl->curr_sign;
+		  /* if n is a comma list that is what goes into curr_sign script list */
+		  list_add(sl->curr_sign->script, sp);
+		  /* if n is a comma list the sp gets added to all the script lists */
+		  vec_sep_push(",");
+		  char **names = vec_from_str(n, NULL, NULL);
+		  vec_sep_pop();
+		  int i;
+		  for (i = 0; names[i]; ++i)
+		    {
+		      struct sl_scriptdef *defp = hash_find(sl->h_scripts, (uccp)names[i]);
+		      if (defp)
+			list_add(defp->codes, sp);
+		      else
+			mesg_verr(locp, "@script %s has not been defined with @scriptdef", names[i]);
+		      free(names[i]);
+		    }
+		  free(names);
+		}
 	    }
 	  else
 	    mesg_verr(locp, "missing ':' in @script");

@@ -25,7 +25,7 @@
   <xsl:param name="parameters"/>
   <xsl:param name="parent"/>
   <xsl:param name="back" select="false()"/>
-  <xsl:variable name="basename">    
+  <xsl:variable name="basename">
     <xsl:choose>
       <xsl:when test="$file"><xsl:value-of select="$file"/></xsl:when>
       <xsl:otherwise><xsl:value-of select="concat(@xml:id,'-',$type)"/></xsl:otherwise>
