@@ -7,15 +7,12 @@
    src: url('/fonts/NotoSansCuneiform-egg.ttf');
 }
 @font-face {
-   font-family: 'Noto Sans Cuneiform Gudea';
-   src: url('/fonts/Noto-SansCuneiform-Gudea.ttf');
-}
-@font-face {
    font-family: 'Noto Sans Cuneiform OBLit';
    src: url('/fonts/Noto-SansCuneiform-OBLit.ttf');
 }
 .gudea {
-   font-family: "Noto Sans Cuneiform Gudea";
+    font-family: "Noto Sans Cuneiform";
+    font-feature-settings: "ss01", "ss02";
 }
 .oblit {
    font-family: "Noto Sans Cuneiform OBLit";

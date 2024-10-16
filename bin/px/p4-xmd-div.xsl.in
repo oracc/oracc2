@@ -112,6 +112,7 @@
     <xsl:call-template name="xpd-option">
       <xsl:with-param name="config-xml" select="$config-xml-file"/>
       <xsl:with-param name="option" select="'views-cuneify'"/>
+      <xsl:with-param name="default" select="'true'"/>
     </xsl:call-template>
   </xsl:variable>
 

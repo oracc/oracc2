@@ -1452,15 +1452,16 @@ asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
 	      char *arg = NULL;
 	      while (isspace(*end))
 		++end;
-	      while ((n = asl_script_elt(locp, end, &arg, &end)))
+	      char *elt;
+	      while ((elt = asl_script_elt(locp, end, &arg, &end)))
 		{
-		  if (!strncmp(n, "ivs", strlen("ivs")))
+		  if (!strncmp(elt, "ivs", strlen("ivs")))
 		    sp->oivs = arg;
-		  else if (!strncmp(n, "salt", strlen("salt")))
+		  else if (!strncmp(elt, "salt", strlen("salt")))
 		    sp->salt = arg;
-		  else if (!strncmp(n, "sset", strlen("sset")))
+		  else if (!strncmp(elt, "sset", strlen("sset")))
 		    sp->sset = arg;
-		  else if (!strncmp(n, "merge", strlen("merge")))
+		  else if (!strncmp(elt, "merge", strlen("merge")))
 		    sp->merge = arg;
 		  else
 		    {
