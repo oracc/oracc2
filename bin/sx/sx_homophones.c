@@ -87,14 +87,15 @@ sx_homophones(struct sl_signlist *sl)
 	    }
 	  if (sl->values[i]->parents->forms)
 	    {
-	      struct sl_inst *ip;
+	      struct sl_inst *ip, *vip;
 	      for (ip = list_first(sl->values[i]->parents->forms);
 		   ip;
 		   ip = list_next(sl->values[i]->parents->forms))
-		{
+		if (ip->lv && ip->lv->hventry
+		    && (vip = hash_find(ip->lv->hventry,sl->values[i]->name))
+		    && !vip->inherited)
 		  sx_h_sub(sl, xhomophones, sl->values[i]->name,
 			   sl->values[i]->xvalue, ip->u.f->oid, ip->iid);
-		}
 	    }
 	}
     }
@@ -132,142 +133,3 @@ sx_homophones(struct sl_signlist *sl)
 	}
     }
 }
-
-#if 0
-/* No need to store split_value data in value because for
- * sl->values[i] the split_value is in sl->splitv[i]
- */
-void
-sx_xhomophones(struct sl_signlist *sl)
-{
-  int i;
-  Hash *xhomophones = hash_create(1024);
-  
-  sl->homophones = hash_create(1024);
-  sl->splitv = memo_new_array(sl->m_split_v, sl->nvalues);
-  for (i = 0; i < sl->nvalues; ++i)
-    {
-      List *lp = NULL;
-
-      if (sl->values[i]->atf)
-	continue;
-
-      if (sl->values[i]->xvalue)
-	{
-	  struct sl_inst *ip = NULL;
-
-	  sl->splitv[i].b = sl->values[i]->name;
-	  sl->splitv[i].i = 0; /* 1 = no index (i.e., index 1); 0 = ₓ-index */
-
-#if 0
-	  for (ip = list_first(sl->values[i]->fowners); ip; ip = list_next(sl->values[i]->fowners))
-#else
-	  for (ip = list_first(sl->values[i]->insts); ip; ip = list_next(sl->values[i]->insts))
-#endif	    
-	    {
-	      /* ignore @v- */
-	      if (!ip->valid)
-		continue;
-	      
-	      struct sl_split_value *sp = memo_new(sl->m_split_v);
-	      const char *oid = NULL;
-	      *sp = sl->splitv[i];
-#if 0
-	      if ('s' == ip->type)
-		oid = ip->u.s->oid;
-	      else if ('f' == ip->type)
-		oid = ip->u.f->oid;
-	      else
-		mesg_verr(&ip->mloc, "unexpected type in homophone (expected 's' or 'f'; found '%c'", ip->type);
-#else
-	      if (ip->parent_f)
-		oid = ip->parent_f->u.f->oid;
-	      else if (ip->parent_s)
-		oid = ip->parent_s->u.f->oid;
-	      else
-		mesg_verr(&ip->mloc, "unexpected type in homophone (expected 's' or 'f'; found '%c'", ip->type);
-#endif
-	      if (oid)
-		{
-		  sp->oid = oid;
-		  if (!(lp = hash_find(xhomophones, (uccp)sl->splitv[i].b)))
-		    hash_add(xhomophones, (uccp)sl->splitv[i].b, (lp = list_create(LIST_SINGLE)));
-		  list_add(lp, sp);
-		}
-	    }
-	}
-      else
-	{
-	  const char *oid = NULL;
-	  struct sl_inst *ip = NULL;
-	  if (sl->values[i]->sowner)
-	    ip = sl->values[i]->sowner->inst;
-	  else
-	    ip = list_first(sl->values[i]->fowners);
-	  if ('s' == ip->type)
-	    oid = ip->u.s->oid;
-	  else if ('f' == ip->type)
-	    oid = ip->u.f->oid;
-	  else
-	    mesg_verr(&ip->mloc, "unexpected type in homophone (expected 's' or 'f'; found '%c'", ip->type);
-
-	  if (oid)
-	    sl->splitv[i].oid = oid;
-
-	  sl->splitv[i].b = pool_copy(g_base_of(sl->values[i]->name), sl->p);
-
-	  if (strlen((ccp)sl->splitv[i].b) == strlen((ccp)sl->values[i]->name))
-	    sl->splitv[i].i = 1;
-	  else
-	    sl->splitv[i].i = g_index_of(sl->values[i]->name, sl->splitv[i].b);
-
-	  if (!(lp = hash_find(sl->homophones, sl->splitv[i].b)))
-	    {
-	      hash_add(sl->homophones, sl->splitv[i].b, (lp = list_create(LIST_SINGLE)));
-	      hash_add(sl->homophone_ids, sl->splitv[i].b, (void*)sx_h_id(sl));
-	    }
-	  
-	  list_add(lp, &sl->splitv[i]);
-	}
-    }
-
-  /* Now we have the main homophones hash and a separate one for the
-     x-values; we need to append the x-values to the main homophones,
-     sorting them by sign-/form-name first */
-  if (xhomophones->key_count)
-    {
-      const char **keys;
-      int nkeys, i, j;
-      keys = hash_keys2(xhomophones, &nkeys);
-      for (i = 0; i < nkeys; ++i)
-	{
-	  List *lp = hash_find(xhomophones, (uccp)keys[i]);
-	  List *lph = NULL;
-	  struct sl_split_value **spv = NULL;
-	  unsigned const char *xbase = pool_copy(g_base_of((uccp)keys[i]), sl->p); /* get the base without 'ₓ' */
-
-	  if (list_len(lp) > 1)
-	    {
-	      spv = (struct sl_split_value**)list2array(lp);
-	      qsort(spv, list_len(lp), sizeof(struct sl_split_value *), (cmp_fnc_t)spv_cmp);
-	    }
-	  else
-	    {
-	      spv = malloc(sizeof(struct sl_split_value*));
-	      spv[0] = list_first(lp);
-	    }
-
-	  if (!(lph = hash_find(sl->homophones, xbase)))
-	    {
-	      hash_add(sl->homophones, xbase, (lph = list_create(LIST_SINGLE)));
-	      hash_add(sl->homophone_ids, xbase, (void*)sx_h_id(sl));
-	    }
-
-	  for (j = 0; j < list_len(lp); ++j)
-	    list_add(lph, spv[j]);
-
-	  free(spv);
-	}
-    }
-}
-#endif
