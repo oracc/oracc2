@@ -8,7 +8,7 @@ static Hash *oiv_osl(Hash *wants);
 const char *
 oiv_style_to_file(const char *style)
 {
-  return "@@ORACC_BUILDS@@/osl/00lib/gudea.oiv";
+  return "@@ORACC_BUILDS@@/osl/00lib/gudea.oss";
 }
 
 /* Load a selections file, a list of OIV identifiers, and extract the
@@ -22,7 +22,7 @@ oiv_style_to_file(const char *style)
  *
  * 	CODE	SALT	OIVS
  *
- * CODE is U+ Unicode codepoint for character being rendered, e.g., U+12324 [DE₂]
+ * CODE is U+ Unicode codepoint for character being rendered, e.g., U+12324 [DE₂] or an OSL@useq-style sequence, e.g., x12000.x12000
  * SALT is CSS tag to select SALT#, e.g., salt1
  * OIVS is UTF-8 encoded CODE+IVS sequence for use in non-web contexts
  * 
