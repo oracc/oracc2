@@ -1,5 +1,5 @@
 # oracc2
-New version of oracc codebase; not for use at present.
+New version of oracc codebase; now default for many tools and gvl lib which is also used by oxx in oracc1
 
 * Install hints
 
