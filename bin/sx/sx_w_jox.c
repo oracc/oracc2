@@ -83,16 +83,26 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
       sprintf(nsid, "%s.ns%d",nsfrom_num(i).oid, i);
       char setsort[10];
       sprintf(setsort, "%d", nsfrom_num(i).setsort);
+      const char *sset = nsfrom_num(i).sset;
       const uchar *unit_oid = numset_unit(sl, &sl->numsets[i]);
       struct noset_tab *nosetp = noset((ccp)nsfrom_num(i).set, strlen((ccp)nsfrom_num(i).set));
       if (!nosetp)
 	{
-	  ratts = rnvval_aa("x", 
-			    "xml:id", nsid,
-			    "n", nsfrom_num(i).set,
-			    "noid", unit_oid,
-			    "sort", setsort,
-			    NULL);
+	  if (sset)
+	    ratts = rnvval_aa("x", 
+			      "xml:id", nsid,
+			      "n", nsfrom_num(i).set,
+			      "noid", unit_oid,
+			      "sort", setsort,
+			      "sset", sset,
+			      NULL);
+	  else
+	    ratts = rnvval_aa("x", 
+			      "xml:id", nsid,
+			      "n", nsfrom_num(i).set,
+			      "noid", unit_oid,
+			      "sort", setsort,
+			      NULL);	    
 	  joxer_ao("j:numsets");
 	  joxer_ea(&sl->mloc, "sl:numset", ratts);
 	  joxer_ao("j:nums");
@@ -102,14 +112,25 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 	      struct sl_number *np = &sl->numbers[j];
 	      char sort[10];
 	      sprintf(sort, "%d", np->t->s);
-	      ratts = rnvval_aa("x",
-				"n", np->t->t,
-				"ref", np->ref,
-				"oid", np->oid,
-				"rep", np->rep,
-				"sort", sort,
-				NULL
-				);
+	      if (np->sset)
+		ratts = rnvval_aa("x",
+				  "n", np->t->t,
+				  "ref", np->ref,
+				  "oid", np->oid,
+				  "rep", np->rep,
+				  "sort", sort,
+				  "sset", np->sset,
+				  NULL
+				  );
+	      else
+		ratts = rnvval_aa("x",
+				  "n", np->t->t,
+				  "ref", np->ref,
+				  "oid", np->oid,
+				  "rep", np->rep,
+				  "sort", sort,
+				  NULL
+				  );
 	      joxer_ec(&sl->mloc, "sl:num", ratts);
 	    }
 	  joxer_ac();/*close j:nums*/

@@ -83,8 +83,11 @@
 		<xsl:for-each select="$nodes">
 		  <tr>
 		    <td><xsl:value-of select="@n"/></td>
+		    <xsl:variable name="sset" select="@sset"/>
 		    <xsl:for-each select="id(@oid)">
-		      <xsl:call-template name="sws-sel-summary-num"/>
+		      <xsl:call-template name="sws-sel-summary-num">
+			<xsl:with-param name="sset" select="$sset"/>
+		      </xsl:call-template>
 		    </xsl:for-each>
 		  </tr>
 		</xsl:for-each>
@@ -128,8 +131,11 @@
 </xsl:template>
 
 <xsl:template name="sws-sel-summary-num">
+  <xsl:param name="sset"/>
   <xsl:call-template name="sws-sel-link-td"/>
-  <xsl:call-template name="sws-sel-ucun-td"/>
+  <xsl:call-template name="sws-sel-ucun-td">
+    <xsl:with-param name="sset" select="$sset"/>
+  </xsl:call-template>
   <td class="sws-sel-vals-td">
     <xsl:choose>
       <xsl:when test="ancestor-or-self::sl:form">
@@ -166,7 +172,8 @@
 </xsl:template>
 
 <xsl:template name="sws-sel-ucun-td">
-  <td class="sws-sel-ucun noto-egg">
+  <xsl:param name="sset"/>
+  <td class="sws-sel-ucun noto {$sset}">
     <xsl:choose>
       <xsl:when test="sl:ucun">
 	<xsl:value-of select="sl:ucun"/>

@@ -130,6 +130,10 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 	  struct sl_value *v = hash_find(sl->hventry, tp->t);
 	  if (v)
 	    {
+	      /* Special case adjustment of black-circle form of šar₂
+		 to cuneiform version */
+	      if (!strcmp((ccp)v->name, "1(šar₂)") || !strcmp((ccp)v->name, "1(šargal)"))
+		np->sset = "ss02";
 	      if (v->sowner)
 		{
 		  np->oid = (uccp)v->sowner->oid;

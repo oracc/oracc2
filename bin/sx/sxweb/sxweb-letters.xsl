@@ -53,12 +53,12 @@
 			 >
       <xsl:value-of select="@n"/></esp:link
       ></p>
-      
-    <p class="sl-numset-char noto">
-      <xsl:for-each select="id(@noid)">
-	<xsl:value-of select="sl:ucun"/>
-      </xsl:for-each>
-    </p>
+
+      <p class="sl-numset-char noto {@sset}">
+	<xsl:for-each select="id(@noid)">
+	  <xsl:value-of select="sl:ucun"/>
+	</xsl:for-each>
+      </p>
   </td>
 </xsl:template>
 

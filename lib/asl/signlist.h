@@ -369,6 +369,7 @@ struct sl_number
   struct sl_token *t;
   int setsort; /* sl_token t->s is sort code for entire grapheme;
 		  setsort is sort code for bare 'set' member */
+  const char *sset;	    /* stylistic set to apply to number when displaying with CSS */
 };
 
 struct sl_numset
