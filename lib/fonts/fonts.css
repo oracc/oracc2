@@ -2,24 +2,41 @@
    font-family: 'Noto Sans Cuneiform';
    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
 }
+
 @font-face {
    font-family: 'Noto Sans Cuneiform Egg';
    src: url('/fonts/NotoSansCuneiform-egg.ttf');
 }
-@font-face {
-   font-family: 'Noto Sans Cuneiform OBLit';
-   src: url('/fonts/Noto-SansCuneiform-OBLit.ttf');
+
+.osl {
+   font-family: "Noto Sans Cuneiform";
 }
+
+.ss01 {
+    font-feature-settings: "ss01";
+}
+
+.ss02 {
+    font-feature-settings: "ss02";
+}
+
+.ss012 {
+    font-feature-settings: "ss01", "ss02";
+}
+
+.salt1 {
+    font-feature-settings: "salt";
+}
+
 .gudea {
     font-family: "Noto Sans Cuneiform";
     font-feature-settings: "ss01", "ss02";
 }
-.oblit {
-   font-family: "Noto Sans Cuneiform OBLit";
-}
+
 .noto {
    font-family: "Noto Sans Cuneiform";
 }
+
 .noto-egg {
    font-family: "Noto Sans Cuneiform Egg";
 }
