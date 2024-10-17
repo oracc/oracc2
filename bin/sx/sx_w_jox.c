@@ -59,6 +59,62 @@ sx_w_jox_init(void)
   return &sx_w_jox_fncs;
 }
 
+static void
+sx_w_jx_scripts(struct sx_functions *f, struct sl_signlist *sl)
+{
+  if (!sl->h_scripts->key_count)
+    return;
+
+  const char **k = hash_keys(sl->h_scripts);
+  
+  joxer_eaa(&sl->mloc, "sl:scripts", NULL);
+  joxer_ao("j:scripts");
+  int i;
+  for (i = 0; k[i]; ++i)
+    {
+      struct sl_scriptdef *defp = hash_find(sl->h_scripts, (uccp)k[i]);
+      ratts = rnvval_aa("x", 
+			"n", defp->name,
+			"sset", defp->sset,
+			NULL);
+      joxer_ea(&sl->mloc, "sl:script", ratts);
+      joxer_ao("j:codes");
+      struct sl_scriptdata *sdp;
+      for (sdp = list_first(defp->codes); sdp; sdp = list_next(defp->codes))
+	{
+	  List *a = list_create(LIST_SINGLE);
+	  if (sdp->code)
+	    {
+	      list_add(a, "code");
+	      list_add(a, (void*)sdp->code);
+	    }
+	  if (sdp->salt)
+	    {
+	      list_add(a, "salt");
+	      list_add(a, (void*)sdp->salt);
+	    }
+	  if (sdp->oivs)
+	    {
+	      list_add(a, "oivs");
+	      list_add(a, (void*)sdp->oivs);
+	    }
+	  if (sdp->sset)
+	    {
+	      list_add(a, "sset");
+	      list_add(a, (void*)sdp->sset);
+	    }
+	  const char **atts = list2chars(a);
+	  ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
+	  joxer_ec(&sl->mloc, "sl:code", ratts);
+	}
+      joxer_ac();/*close j:codes"*/
+      joxer_ac();/*close j:script*/
+      joxer_ee(&sl->mloc, "sl:script");
+    }
+  joxer_ac();/*close j:scripts*/
+  joxer_eea(&sl->mloc, "sl:scripts");  
+}
+
 static const uchar *
 numset_unit(struct sl_signlist *sl, struct sl_numset *nsp)
 {
@@ -77,6 +133,7 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
   int i;
 #define nsfrom_num(ns) sl->numbers[sl->numsets[ns].from]
 #define nslast_num(ns) sl->numbers[sl->numsets[ns].last]
+  joxer_ao("j:numsets");
   for (i = 0; i < sl->nnumsets; ++i)
     {
       char nsid[64];
@@ -103,7 +160,6 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 			      "noid", unit_oid,
 			      "sort", setsort,
 			      NULL);	    
-	  joxer_ao("j:numsets");
 	  joxer_ea(&sl->mloc, "sl:numset", ratts);
 	  joxer_ao("j:nums");
 	  int j;
@@ -136,8 +192,8 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 	  joxer_ac();/*close j:nums*/
 	  joxer_ee(&sl->mloc, "sl:numset");
 	}
-      joxer_ac();/*close j:numsets*/
     }
+  joxer_ac();/*close j:numsets*/
   joxer_eea(&sl->mloc, "sl:numbers");  
 }
 
@@ -305,6 +361,7 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
     {
       sx_w_jx_homophones(f, sl);
       sx_w_jx_numbers(f, sl);
+      sx_w_jx_scripts(f, sl);
       joxer_ee(&sl->eloc, "sl:signlist");
       hash_free(xidseen, NULL);
     }

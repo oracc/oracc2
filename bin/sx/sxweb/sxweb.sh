@@ -135,11 +135,11 @@ xmllint --xinclude - < $libscripts/sxweb-structure.xsl >01tmp/sxweb-structure-xi
 
 xsltproc 01tmp/sxweb-structure-xi.xsl 02xml/sl.xml >signlist/00web/00config/structure.xml
 
-xsltproc $libscripts/sxweb-letters.xsl 02xml/sl.xml
+xsltproc -stringparam project $project $libscripts/sxweb-letters.xsl 02xml/sl.xml
 
 if [ "$abbrev" != "osl" ]; then
     xsltproc $libscripts/sxweb-atoms.xsl 02xml/sl.xml \
-	| xsltproc $libscripts/sxweb-overview.xsl - >signlist/00web/overview.xml
+	| xsltproc -stringparam project $project $libscripts/sxweb-overview.xsl - >signlist/00web/overview.xml
 fi
 
 if [ "$project" = "osl" ]; then

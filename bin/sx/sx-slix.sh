@@ -43,13 +43,13 @@ if [ "$asl" != "" ]; then
     # check signlist
     sx -c $asl
     if [ $? -eq 0 ]; then
-	sx -d scripts -s $asl >02pub/sl/sl.tsv
+	sx -dscripts -s $asl >02pub/sl/sl.tsv
 	slix 02pub/sl/sl.tsv
 	if [ -r 01tmp/csl.kis ]; then
 	    tis=-I$asldomain:01tmp/csl.kis
 	fi
-	echo "$0: sx $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl"
-	sx $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl
+	echo "$0: sx -dscripts $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl"
+	sx -dscripts $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl
 	# cp 02xml/sl.xml 02xml/sl-mcu.xml
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml

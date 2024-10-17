@@ -11,6 +11,9 @@
     exclude-result-prefixes="dc xh"
     version="1.0">
 
+<xsl:param name="project"/>
+<xsl:include href="sxweb-util.xsl"/>
+
 <xsl:output method="xml" indent="no" encoding="utf-8"/>
 
 <xsl:template match="/">
@@ -37,7 +40,7 @@
       <xsl:attribute name="class"><xsl:text>tithe</xsl:text></xsl:attribute>
     </xsl:if>
     <td><xsl:value-of select="position()"/><xsl:text>.</xsl:text></td>
-    <td><xsl:value-of select="sl:ucun"/></td>
+    <td><xsl:call-template name="sxweb-ucun"/></td>
     <td><esp:link url="/{/*/@slbase}/signlist/{@xml:id}"><xsl:value-of select="@n"/></esp:link></td>
     <td><xsl:value-of select="@tcnt"/></td>
     <td>

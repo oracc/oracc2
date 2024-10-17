@@ -7,7 +7,8 @@
 	       exclude-result-prefixes="sl">
 
   <xsl:param name="project" select="'osl'"/>
-  
+  <xsl:include href="sxweb-util.xsl"/>
+
   <xsl:template match="sxw:page-o-signs">
     <xsl:variable name="codes" select="@codepoints"/>
     <xsl:variable name="stats" select="@stats"/>
@@ -125,11 +126,11 @@
     <td class="sxw-pos-ucun noto">
       <xsl:choose>
 	<xsl:when test="sl:ucun">
-	  <xsl:value-of select="sl:ucun"/>
+	  <xsl:call-template name="sxweb-ucun"/>
 	</xsl:when>
 	<xsl:when test="@oid">
 	  <xsl:for-each select="id(@oid)">
-	    <xsl:value-of select="sl:ucun"/>
+	    <xsl:call-template name="sxweb-ucun"/>
 	  </xsl:for-each>
 	</xsl:when>
 	<xsl:otherwise/><!-- nothing to display for Cuneiform -->

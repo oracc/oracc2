@@ -25,6 +25,7 @@
   <xsl:param name="parameters"/>
   <xsl:param name="parent"/>
   <xsl:param name="back" select="false()"/>
+  <!--<xsl:message>asl-script=<xsl:value-of select="$asl-script"/></xsl:message>-->
   <xsl:variable name="basename">
     <xsl:choose>
       <xsl:when test="$file"><xsl:value-of select="$file"/></xsl:when>
@@ -173,15 +174,11 @@
 
 <xsl:template name="sws-sel-ucun-td">
   <xsl:param name="sset"/>
-  <td class="sws-sel-ucun noto {$sset}">
+  <td class="sws-sel-ucun {$font} {$sset}">
     <xsl:choose>
-      <xsl:when test="sl:ucun">
-	<xsl:value-of select="sl:ucun"/>
-      </xsl:when>
+      <xsl:when test="sl:ucun"><xsl:call-template name="sxweb-ucun"/></xsl:when>
       <xsl:when test="@oid">
-	<xsl:for-each select="id(@oid)">
-	  <xsl:value-of select="sl:ucun"/>
-	</xsl:for-each>
+	<xsl:for-each select="id(@oid)"><xsl:call-template name="sxweb-ucun"/></xsl:for-each>
       </xsl:when>
       <xsl:otherwise/><!-- nothing to display for Cuneiform -->
     </xsl:choose>

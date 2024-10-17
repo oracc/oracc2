@@ -54,9 +54,9 @@
       <xsl:value-of select="@n"/></esp:link
       ></p>
 
-      <p class="sl-numset-char noto {@sset}">
+      <p class="sl-numset-char {$font} {@sset}">
 	<xsl:for-each select="id(@noid)">
-	  <xsl:value-of select="sl:ucun"/>
+	  <xsl:call-template name="sxweb-ucun"/>
 	</xsl:for-each>
       </p>
   </td>

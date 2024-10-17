@@ -25,7 +25,7 @@
 
 <xsl:include href="lex-sign-lookup.xsl"/>
 <!--xpd.xsl is included by g2-gdl-HTML.xsl-->
-<xsl:include href="g2-gdl-HTML.xsl"/>
+<!--<xsl:include href="g2-gdl-HTML.xsl"/>-->
 <xsl:include href="sxweb-util.xsl"/>
 <xsl:include href="sxweb-sws-sel.xsl"/>
 <xsl:include href="esp2-head.xsl"/>
@@ -35,80 +35,7 @@
 <xsl:key name="lemabs" match="sl:lemma" use="concat(ancestor::sl:v/@n,'::',@n)"/>
 <xsl:key name="lemuniq" match="sl:lemma" use="concat(ancestor::sl:v/@n,'::',@n,'::',@base)"/>
 
-<!--### Set all the asl-* config variables from config.xml -->
-<xsl:variable name="q">'</xsl:variable>
-<xsl:variable name="sl-config-xml" select="concat($oraccbuilds,'/xml/',/*/@project,'/signlist/config.xml')"/>
-
-<!--statistics for occurrences; these are embedded in the headers for each sign/form/value name-->
-<xsl:variable name="asl-stats">
-  <xsl:call-template name="xpd-option">
-    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
-    <xsl:with-param name="option" select="'asl-stats'"/>
-    <xsl:with-param name="default" select="'no'"/>
-  </xsl:call-template>
-</xsl:variable>
-
-<!--period stats default=yes when stats=yes; asl-periods=no can be used to switch periods para off-->
-<xsl:variable name="asl-periods">
-  <xsl:call-template name="xpd-option">
-    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
-    <xsl:with-param name="option" select="'asl-periods'"/>
-    <xsl:with-param name="default" select="$asl-stats"/>
-  </xsl:call-template>
-</xsl:variable>
-
-<xsl:variable name="asl-font">
-  <xsl:call-template name="xpd-option">
-    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
-    <xsl:with-param name="option" select="'asl-font'"/>
-    <xsl:with-param name="default" select="'noto'"/>
-  </xsl:call-template>
-</xsl:variable>
-
 <!--Linked or xincluded pages-->
-
-<!--instances asl-insts=link = link to instances; asl-insts=xinc =
-     xinclude instances. Instances default to xinc when stats is yes.-->
-<xsl:variable name="asl-insts">
-  <xsl:variable name="insts-default">
-    <xsl:choose>
-      <xsl:when test="$asl-stats='yes'">xinc</xsl:when>
-      <xsl:otherwise>no</xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-  <xsl:call-template name="xpd-option">
-    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
-    <xsl:with-param name="option" select="'asl-insts'"/>
-    <xsl:with-param name="default" select="$insts-default"/>
-  </xsl:call-template>
-</xsl:variable>
-
-<!--lexdata asl-lexdata=link = link to lexdata; asl-lexdata=xinc = xinclude lexdata-->
-<xsl:variable name="asl-lexdata">
-  <xsl:call-template name="xpd-option">
-    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
-    <xsl:with-param name="option" select="'asl-lexdata'"/>
-    <xsl:with-param name="default" select="'no'"/>
-  </xsl:call-template>
-</xsl:variable>
-
-<!--snippets asl-snippets=link = link to snippets; asl-snippets=xinc = xinclude snippets-->
-<xsl:variable name="asl-snippets">
-  <xsl:call-template name="xpd-option">
-    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
-    <xsl:with-param name="option" select="'asl-snippets'"/>
-    <xsl:with-param name="default" select="'no'"/>
-  </xsl:call-template>
-</xsl:variable>
-
-<!--suxword asl-suxword=link = link to words; asl-suxword=xinc = xinclude words-->
-<xsl:variable name="asl-suxword">
-  <xsl:call-template name="xpd-option">
-    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
-    <xsl:with-param name="option" select="'asl-suxword'"/>
-    <xsl:with-param name="default" select="'no'"/>
-  </xsl:call-template>
-</xsl:variable>
 
 <!--### Iteration over sx.xml -->
 
@@ -454,10 +381,10 @@
       <tr>
 	<td>
 	  <p class="asl-ucun">
-	    <span class="{$asl-font}">
+	    <span class="{$asl-script}">
 	      <xsl:choose>
 		<xsl:when test="sl:ucun">
-		  <xsl:value-of select="sl:ucun"/>
+		  <xsl:call-template name="sxweb-ucun"/>
 		</xsl:when>
 		<xsl:when test="sl:useq">
 		  <xsl:value-of select="sl:useq"/>
@@ -598,7 +525,7 @@
 	  <esp:link page="{id(@xml:id)/ancestor-or-self::sl:sign/@xml:id}">
 	    <xsl:choose>
 	      <xsl:when test="sl:ucun">
-		<xsl:value-of select="sl:ucun"/>
+		<xsl:call-template name="sxweb-ucun"/>
 		<xsl:text> (</xsl:text>
 		<xsl:value-of select="@n"/>
 		<xsl:text>)</xsl:text>

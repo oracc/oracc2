@@ -25,6 +25,7 @@
 
 .gudea {
     font-family: "Noto Sans Cuneiform";
+    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
     font-feature-settings: "ss01", "ss02";
 }
 

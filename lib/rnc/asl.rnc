@@ -28,6 +28,7 @@ start =
     }*,
     sl.homophones?,
     sl.numbers?,
+    sl.scripts?,
     sl.metrology?
   }
 
@@ -321,6 +322,7 @@ sl.numset = element sl:numset {
      attribute n { text },
      attribute noid { text },
      attribute sort { text },
+     attribute sset { text }?,
      sl.num*
 }
 sl.num = element sl:num {
@@ -328,7 +330,21 @@ sl.num = element sl:num {
      attribute ref { text },
      attribute oid { text },
      attribute rep { text },
+     attribute sset { text }?,
      attribute sort { text }
+}
+
+sl.scripts = element sl:scripts { sl.script* }
+sl.script = element sl:script {
+    attribute n { text },
+    attribute sset { text },
+    sl.scriptcode*
+}
+sl.scriptcode = element sl:code {
+     attribute code { text }?, 
+     attribute salt { text }?, 
+     attribute oivs { text }?, 
+     attribute sset { text }?
 }
 
 sl.metrology = element sl:metrology { empty }
