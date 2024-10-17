@@ -91,6 +91,19 @@ gvl_bridge_signname(void)
     return NULL;
 }
 
+unsigned const char *
+gvl_bridge_ucode(void)
+{
+  if (gbgp && gbgp->oid)
+    {
+      char buf[strlen((ccp)gbgp->oid)+7];
+      sprintf(buf, "%s;ucode", gbgp->oid);
+      return gvl_lookup((uccp)buf);
+    }
+  else
+    return NULL;
+}
+
 void
 gvl_bridge_init(void)
 {

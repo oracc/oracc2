@@ -5,10 +5,28 @@
 static Hash *oiv_osl(Hash *wants);
 #endif
 
+static Memo *oivmem = NULL;
+
+void
+oiv_init(void)
+{
+  if (!oivmem)
+    oivmem = memo_init(sizeof(struct oiv_data), 32);
+}
+void
+oiv_term(void)
+{
+  if (oivmem)
+    {
+      memo_term(oivmem);
+      oivmem = NULL;
+    }
+}
+
 const char *
 oiv_style_to_file(const char *style)
 {
-  return "@@ORACC_BUILDS@@/osl/00lib/gudea.oss";
+  return "@@ORACC_BUILDS@@/osl/02pub/gudea.oss";
 }
 
 /* Load a selections file, a list of OIV identifiers, and extract the
@@ -22,24 +40,34 @@ oiv_style_to_file(const char *style)
  *
  * 	CODE	SALT	OIVS
  *
- * CODE is U+ Unicode codepoint for character being rendered, e.g., U+12324 [DE₂] or an OSL@useq-style sequence, e.g., x12000.x12000
+ * CODE is U+ Unicode codepoint for character being rendered, e.g.,
+ * U+12324 [DE₂] or an OSL @useq-style sequence, e.g., x12000.x12000
+ *
  * SALT is CSS tag to select SALT#, e.g., salt1
+ *
  * OIVS is UTF-8 encoded CODE+IVS sequence for use in non-web contexts
  * 
  */
 Hash *
 oiv_load(const char *oiv_selections_file)
 {
+  oiv_init();
+  
   unsigned char **ll = loadfile_lines((uccp)oiv_selections_file, NULL);
   int i;
   Hash *hoiv = hash_create(128);
   for (i = 0; ll[i]; ++i)
     {
-      unsigned char **f = (ucp*)tab_split((char*)ll[i]);
-      hash_add(hoiv, f[0], f[1]); 		/* CODE maps to SALT */
-      char buf[strlen((ccp)f[0])+2];
-      sprintf(buf, "%s+", f[0]);
-      hash_add(hoiv, (uccp)strdup(buf), f[2]); 	/* CODE+ maps to OIVS */
+      char **f = tab_split((char*)ll[i]);
+      struct oiv_data *oivm = memo_new(oivmem);
+      oivm->code = f[0];
+      if (f[1] && *f[1])
+	oivm->sset = f[1];
+      if (f[2] && *f[2])
+	oivm->salt = f[2];
+      if (f[3] && *f[3])
+	oivm->oivs = f[3];
+      hash_add(hoiv, (uccp)oivm->code, oivm);
     }
   return hoiv;
 }

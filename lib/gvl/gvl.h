@@ -44,6 +44,14 @@ struct gvl_i {
 
 typedef struct gvl_i gvl_i;
 
+struct oiv_data
+{
+  const char *code;
+  const char *sset;
+  const char *salt;
+  const char *oivs;
+};
+
 #define QFIX (q_fixed ? (ccp)q_fixed : "")
 
 extern int gvl_sans_report;
@@ -112,6 +120,7 @@ extern void gvl_valuqual(Node *ynp);
 extern void gvl_set_lookup_ptr(gvl_lookup_ptr p);
 extern gvl_g *gvl_make_gp(unsigned const char *g, unsigned const char *mess);
 
+extern struct oiv_data *gvl_get_script(const char *ucode);
 extern void gvl_set_script(const char *scripttype);
 extern const char *oiv_style_to_file(const char *style);
 extern Hash *oiv_load(const char *oiv_selections_file);

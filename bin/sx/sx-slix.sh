@@ -43,7 +43,7 @@ if [ "$asl" != "" ]; then
     # check signlist
     sx -c $asl
     if [ $? -eq 0 ]; then
-	sx -s $asl >02pub/sl/sl.tsv
+	sx -d scripts -s $asl >02pub/sl/sl.tsv
 	slix 02pub/sl/sl.tsv
 	if [ -r 01tmp/csl.kis ]; then
 	    tis=-I$asldomain:01tmp/csl.kis

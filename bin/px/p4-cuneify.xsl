@@ -87,7 +87,14 @@
 		</xsl:when>
 		<xsl:otherwise>
 		  <span class="{ancestor-or-self::*[@c][1]/@c}">
-		    <xsl:value-of select="@gdl:utf8"/>
+		    <xsl:choose>
+		      <xsl:when test="@gdl:salt">
+			<span class="salt{@gdl:salt}"><xsl:value-of select="@gdl:utf8"/></span>
+		      </xsl:when>
+		      <xsl:otherwise>
+			<xsl:value-of select="@gdl:utf8"/>
+		      </xsl:otherwise>
+		    </xsl:choose>
 		  </span>
 		</xsl:otherwise>
 	      </xsl:choose>
@@ -96,7 +103,16 @@
 	</xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-	<span class="{ancestor-or-self::*[@c][1]/@c}"><xsl:value-of select="@gdl:utf8"/></span>
+	<span class="{ancestor-or-self::*[@c][1]/@c}">
+	  <xsl:choose>
+	    <xsl:when test="@gdl:salt">
+	      <span class="salt{@gdl:salt}"><xsl:value-of select="@gdl:utf8"/></span>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:value-of select="@gdl:utf8"/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</span>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:if test="contains(@gdl:c,']')"><span class="csquare"><![CDATA[]]></span></xsl:if>

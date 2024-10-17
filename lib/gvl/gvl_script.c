@@ -5,6 +5,12 @@ Hash *gvl_curr_ivs;
 static Hash *gvl_known_scripts;
 static Hash *gvl_tried_scripts;
 
+struct oiv_data *
+gvl_get_script(const char *ucode)
+{
+  return hash_find(gvl_curr_ivs, (uccp)ucode);
+}
+
 void
 gvl_set_script(const char *scripttype)
 {
