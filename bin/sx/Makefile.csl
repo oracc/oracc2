@@ -19,6 +19,7 @@ clean:
 	tokx <$< >$@
 
 01tmp/csl.kis: 02pub/csl.tok
+	-mkdir -p 02pub/tok
 	tok2tis.sh <$< >$@
 
 01tmp/csl.key: 01tmp/csl.kis
