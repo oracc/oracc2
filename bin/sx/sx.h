@@ -50,12 +50,6 @@ struct noset_tab
   const char *one;
 };
 
-struct numvmap_tab
-{
-  const char *name;
-  const char *asif;
-};
-
 struct sx_config
 {
   const char *project;  /* set from -P[PROJECT] */
@@ -160,7 +154,6 @@ extern void sx_ldata_sign_inst(struct sl_signlist *sl, struct sl_inst *sip);
 extern void sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
 
 extern struct noset_tab *noset (register const char *str, register size_t len);
-extern struct numvmap_tab *numvmap (register const char *str, register size_t len);
 
 extern void sx_script(struct sl_signlist *sl, int stdo);
 

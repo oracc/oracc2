@@ -148,6 +148,7 @@ struct sl_token
 				   parsed GDL; NULL if the token was a
 				   literal l*/
   const char *deep;		/* deep sig from gdlsig */
+  struct sl_inst *oid_ip;	/* instance to use for retrieving OID */
   int s;			/* sort code for token */
   int priority;			/* for registering nums */
 };
@@ -523,6 +524,13 @@ struct sl_scriptdata
   const char *merge; 	/* sign this code merges with */
   const char *oivs;	/* Oracc IVS as simple hex, e.g., E0100 */
 };
+
+struct numvmap_tab
+{
+  const char *name;
+  const char *asif;
+};
+extern struct numvmap_tab *numvmap (register const char *str, register size_t len);
 
 extern struct sl_signlist *asl_bld_init(void);
 extern void asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *in);
