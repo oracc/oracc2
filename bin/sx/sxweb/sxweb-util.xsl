@@ -18,7 +18,7 @@
 
 <!--### Set all the asl-* config variables from config.xml -->
 <xsl:variable name="q">'</xsl:variable>
-<xsl:variable name="sl-config-xml" select="concat($oraccbuilds,'/xml/',/*/@project,'/signlist/config.xml')"/>
+<xsl:variable name="sl-config-xml" select="concat($oraccbuilds,'/xml/',$project,'/signlist/config.xml')"/>
 
 <!--instances asl-insts=link = link to instances; asl-insts=xinc =
      xinclude instances. Instances default to xinc when stats is yes.-->

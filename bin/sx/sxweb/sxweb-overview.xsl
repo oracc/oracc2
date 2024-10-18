@@ -11,6 +11,8 @@
     extension-element-prefixes="ex"
     version="1.0">
 
+<xsl:param name="project"/>
+
 <xsl:include href="sxweb-mcol.xsl"/>
 <xsl:include href="sxweb-util.xsl"/>
 
@@ -34,5 +36,7 @@
     </html>
   </esp:page>
 </xsl:template>
+
+<xsl:template match="sl:scripts"/>
 
 </xsl:transform>
