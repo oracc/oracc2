@@ -19,6 +19,8 @@ p=`oraccopt`
 
 echo $0 working in mode=$mode in project $p using script $missneedsh
 
+mkdir -p 00etc
+
 $missneedsh $p | \
     rocox -R '<oid xml:id="%1" freq="%2"/>' -x oids | \
     xsltproc -stringparam slxml \

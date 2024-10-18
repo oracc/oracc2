@@ -348,8 +348,10 @@ sx_idata_form_inst(struct sl_signlist *sl, struct sl_inst *fip)
 					fip->u.f->oid,
 					(uccp)"");
       fip->tp = hash_find(sl->h_idata, (uccp)k);
+#if 0
       if (fip->tp)
 	fprintf(stderr, "sx_idata_form_inst: found key %s\n", k);
+#endif
     }
 }
 
