@@ -7,10 +7,13 @@ function sxinst {
 	input=$libdata/$1
     fi
     echo sxinst $input
-    sed "s#@@PROJECT@@#$abbrev#g" $input \
-	| sed "s#@@project@@#$project#g" \
-	| sed "s#@@hproject@@#$hproject#g" \
-	      >$2
+    cat >01tmp/slconfig.sed <<EOF
+s#@@PROJECT@@#$abbrev#g
+s#@@project@@#$project#g
+s#@@hproject@@#$hproject#g
+s#@@ASLSCRIPT@@#$aslscript#g
+EOF
+    sed -f 01tmp/slconfig.sed $input >$2
 }
 
 project=`oraccopt`
@@ -92,6 +95,10 @@ rm -fr signlist ; mkdir signlist
 if [ -r 00lib/signlist-config.xml ]; then
     cp -a 00lib/signlist-config.xml signlist/00lib/config.xml
 else
+    aslscript=`oraccopt . asl-script`
+    if [ "$aslscript" == "" ]; then
+	aslscript="default"
+    fi
     sxinst signlist-config.xml signlist/00lib/config.xml
 fi
 cp -a signlist/00lib/config.xml signlist/02www
