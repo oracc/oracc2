@@ -195,8 +195,10 @@ sx_s_form(FILE *f, struct sl_form *s)
 	}
       fputc('\n', f);      
     }
+#if 0
   if (!strcmp(s->name, "|MUŠ×PA|"))
     fprintf(stderr, "found MUŠ×PA\n");
+#endif
   struct sl_inst *ip;
   for (ip = list_first(s->insts); ip; ip = list_next(s->insts))
     {

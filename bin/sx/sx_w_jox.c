@@ -88,6 +88,16 @@ sx_w_jx_scripts(struct sx_functions *f, struct sl_signlist *sl)
 	      list_add(a, "code");
 	      list_add(a, (void*)sdp->code);
 	    }
+	  if (sdp->sset)
+	    {
+	      list_add(a, "sset");
+	      list_add(a, (void*)sdp->sset);
+	    }
+	  if (sdp->cvnn)
+	    {
+	      list_add(a, "cvnn");
+	      list_add(a, (void*)sdp->cvnn);
+	    }
 	  if (sdp->salt)
 	    {
 	      list_add(a, "salt");
@@ -98,10 +108,10 @@ sx_w_jx_scripts(struct sx_functions *f, struct sl_signlist *sl)
 	      list_add(a, "oivs");
 	      list_add(a, (void*)sdp->oivs);
 	    }
-	  if (sdp->sset)
+	  if (sdp->merge)
 	    {
-	      list_add(a, "sset");
-	      list_add(a, (void*)sdp->sset);
+	      list_add(a, "merge");
+	      list_add(a, (void*)sdp->merge);
 	    }
 	  const char **atts = list2chars(a);
 	  ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);

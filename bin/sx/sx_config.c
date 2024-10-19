@@ -25,10 +25,12 @@ sx_config(const char *project)
       sxconfig.project = project;
       if ((val = xpd_option(xpdp, "asl-domain")))
 	sxconfig.domain = val;
-      if ((val = xpd_option(xpdp, "asl-font")))
-	sxconfig.font = val;
+      if ((val = xpd_option(xpdp, "asl-script")))
+	sxconfig.script = sxconfig.font = val;
       if ((val = xpd_option(xpdp, "asl-merge")))
 	sxconfig.merge = val;
+      else if (sxconfig.script)
+	sxconfig.merge = sxconfig.script;
     }
   else if (xpdp)
     {

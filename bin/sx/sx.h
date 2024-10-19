@@ -56,6 +56,10 @@ struct sx_config
   const char *signlist; /* default: csl */
   const char *domain; 	/* default: sl */
   const char *font;	/* default: noto */
+  const char *script;	/* default: empty; this is preferred over font
+			   because it is used by various sxweb and
+			   cuneify routines to display characters with
+			   the script-appropriate glyph */
   const char *merge;	/* default: 00lib/csl.mrg */
 };
 
@@ -156,5 +160,6 @@ extern void sx_ldata_form_inst(struct sl_signlist *sl, struct sl_inst *fip);
 extern struct noset_tab *noset (register const char *str, register size_t len);
 
 extern void sx_script(struct sl_signlist *sl, int stdo);
+extern char *sx_script_merge_file_fn(struct sl_signlist *sl, const char *script);
 
 #endif/*SX_H_*/

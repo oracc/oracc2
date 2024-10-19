@@ -57,7 +57,7 @@ sx_merge_load(struct sl_signlist *sl)
   size_t nline;
   sl->h_merges = hash_create(256);
 
-  lp = loadfile_lines3((uccp)sxconfig.merge, &nline, &fmem);
+  lp = loadfile_lines3((uccp)sx_script_merge_fn(sl, sxconfig.merge), &nline, &fmem);
   int i;
   for (i = 0; i < nline; ++i)
     {

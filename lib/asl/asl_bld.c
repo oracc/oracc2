@@ -1515,6 +1515,8 @@ asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
 		    sp->salt = arg;
 		  else if (!strncmp(elt, "sset", strlen("sset")))
 		    sp->sset = arg;
+		  else if (!strncmp(elt, "cvnn", strlen("cvnn")))
+		    sp->sset = arg;
 		  else if (!strncmp(elt, "merge", strlen("merge")))
 		    sp->merge = arg;
 		  else
