@@ -51,4 +51,7 @@ typedef struct gsig
   struct wloc *w;
 } Gsig;
 
+
+extern char *gsig_index(const char *gs);
+
 #endif/*GSIG_H_*/

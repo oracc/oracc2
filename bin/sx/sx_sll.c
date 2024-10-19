@@ -200,7 +200,7 @@ sx_s_form(FILE *f, struct sl_form *s)
   struct sl_inst *ip;
   for (ip = list_first(s->insts); ip; ip = list_next(s->insts))
     {
-      if (ip->deflt || list_len(s->insts) == 1)
+      if (ip->deflt || (s->sign->xref && list_len(s->insts) == 1))
 	fprintf(f, "%s;default\t%s\n", s->oid, ip->parent_s->u.s->oid);
       struct sl_lv_data *lp = ip->lv;
       int j;

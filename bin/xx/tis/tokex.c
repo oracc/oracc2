@@ -56,19 +56,25 @@ main(int argc, char **argv)
 	  /* Always save the entire S.F.V */
 	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
 
-	  /* if the key contains .. the SFV is o0..v so just zero dot[2] and save the sign key */
+	  /* if the key contains ..[^\000] the SFV is o0..v so just zero dot[2] and save the sign key */
 	  char *dot = strchr(t, '.');
 	  if ('.' == dot[1])
 	    {
-	      dot[2] = '\0';
-	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+	      if (dot[2])
+		{
+		  dot[2] = '\0';
+		  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+		}
 	    }
 	  else
 	    {
 	      /* we have to save S.F. */
 	      dot = strrchr(t, '.');
-	      dot[1] = '\0';
-	      printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+	      if (dot[2])
+		{
+		  dot[1] = '\0';
+		  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+		}
 	    }
 	}
     }
