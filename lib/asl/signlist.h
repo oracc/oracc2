@@ -139,6 +139,19 @@ struct sl_signlist
   Mloc eloc;
 };
 
+struct sl_config
+{
+  const char *project;  /* set from -P[PROJECT] */
+  const char *signlist; /* default: csl */
+  const char *domain; 	/* default: sl */
+  const char *font;	/* default: noto */
+  const char *script;	/* default: empty; this is preferred over font
+			   because it is used by various sxweb and
+			   cuneify routines to display characters with
+			   the script-appropriate glyph */
+  const char *merge;	/* default: 00lib/csl.mrg */
+};
+
 struct sl_token
 {
   const unsigned char *t;	/* sign/form/value/base/list name token */

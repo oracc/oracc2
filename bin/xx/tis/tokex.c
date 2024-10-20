@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <vido.h>
+#include <asl.h>
 
 /**tokex reads and expands the output of tokx, simplifying it to a
  * stream of triples of the form:
@@ -13,15 +14,80 @@
  * grapheme signature.
  */
 
+extern struct sl_config aslconfig;
+
 const char *index_dir = "02pub/tok";
+const char *project = NULL;
 int no_output = 0;
+
+Pool *mpool;
+Hash *mhash;
+
+char *
+merge_fn(const char *script)
+{
+  char buf[strlen(oracc())+strlen("/osl/")+strlen(script)+strlen("/02pub/.mrg0")];
+  sprintf(buf, "%s/osl/02pub/%s.mrg", oracc(), script);
+  return (char*)pool_copy((uchar *)buf, mpool);
+}
+
+static void
+merge_load(void)
+{
+
+  lp = loadfile_lines3((uccp)merge_fn(sl, aslconfig.merge), &nline, &fmem);
+  int i;
+  for (i = 0; i < nline; ++i)
+    {
+      if ('o' == lp[i][0]) /* ignore o0000237++ o0000237 o0002827 lines */
+	continue;
+      unsigned char *v = lp[i];
+      while (*v && !isspace(*v))
+	++v;
+      if (*v)
+	{
+	  *v++ = '\0';
+	  while (isspace(*v))
+	    ++v;
+	  if (*v)
+	    {
+	      /* Now v points to the mkey, e.g., o0000237++ */
+	      /*hash_add(sl->h_merges, lp[i], v);*/
+	      char *vv = strdup((ccp)v);
+	      char **mm = space_split(vv);
+	      /* Now mm are all the OIDs that contribute to the mkey, both head and mergees */
+	      int j;
+	      for (j = 0; mm[j]; ++j)
+		hash_add(mhash, v, mm[j]);
+	    }
+	}
+    }
+}
+
+void
+merge_entry(char *t, Vido *vp, char *qid)
+{
+  char *dot = strchr(t, '.');
+  if (dot)
+    *dot = '\0';
+  const char *key = hash_find(mhash, t);
+  if (key)
+    printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);
+}
 
 int
 main(int argc, char **argv)
 {
-  options(argc,argv,"d:n");
+  options(argc,argv,"d:np:");
   char buf[1024], *b, qid[1024], wdid[32];
   Vido *vp = vido_init('t', 0);
+  if (project)
+    {
+      mpool = pool_create();
+      mhash = hash_init(100);
+      asl_config(project);
+      merge_load();
+    }
   while ((b = fgets(buf, 1024, stdin)))
     {
       if (b[strlen(b)-1] == '\n')
@@ -65,6 +131,8 @@ main(int argc, char **argv)
 		  dot[2] = '\0';
 		  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
 		}
+	      /* This handles o0000087.. and o0000087..a */
+	      merge_entry(t,vp,qid);
 	    }
 	  else
 	    {
@@ -75,6 +143,7 @@ main(int argc, char **argv)
 		  dot[1] = '\0';
 		  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
 		}
+	      merge_entry(t,vp,qid);
 	    }
 	}
     }
@@ -100,6 +169,9 @@ opts(int argc, const char *arg)
     case 'n':
       no_output = 1;
       break;
+    case 'p':
+      project = arg;
+      break;
     default:
       return 1;
     }
@@ -114,4 +186,5 @@ help ()
 {
   printf("  -d [index_dir] Gives the name of the index directory; defaults to 02pub/tok\n");
   printf("  -n no output; suppress vid dump\n");
+  printf("  -p project; required if merge data is used by project\n");
 }

@@ -525,7 +525,9 @@
 	  <esp:link page="{id(@xml:id)/ancestor-or-self::sl:sign/@xml:id}">
 	    <xsl:choose>
 	      <xsl:when test="sl:ucun">
-		<xsl:call-template name="sxweb-ucun"/>
+		<span class="{$asl-script}">
+		  <xsl:call-template name="sxweb-ucun"/>
+		</span>
 		<xsl:text> (</xsl:text>
 		<xsl:value-of select="@n"/>
 		<xsl:text>)</xsl:text>
