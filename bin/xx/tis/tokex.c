@@ -34,12 +34,13 @@ merge_fn(const char *script)
 static void
 merge_load(void)
 {
-
-  lp = loadfile_lines3((uccp)merge_fn(sl, aslconfig.merge), &nline, &fmem);
+  size_t nline;
+  unsigned char *fmem;
+  unsigned char **lp = loadfile_lines3((uccp)merge_fn(aslconfig.merge), &nline, &fmem);
   int i;
   for (i = 0; i < nline; ++i)
     {
-      if ('o' == lp[i][0]) /* ignore o0000237++ o0000237 o0002827 lines */
+      if ('o' != lp[i][0]) /* ignore non- o0000237+m o0000237 o0002827 lines */
 	continue;
       unsigned char *v = lp[i];
       while (*v && !isspace(*v))
@@ -51,7 +52,7 @@ merge_load(void)
 	    ++v;
 	  if (*v)
 	    {
-	      /* Now v points to the mkey, e.g., o0000237++ */
+	      /* Now v points to the mkey, e.g., o0000237+m */
 	      /*hash_add(sl->h_merges, lp[i], v);*/
 	      char *vv = strdup((ccp)v);
 	      char **mm = space_split(vv);
@@ -70,9 +71,9 @@ merge_entry(char *t, Vido *vp, char *qid)
   char *dot = strchr(t, '.');
   if (dot)
     *dot = '\0';
-  const char *key = hash_find(mhash, t);
+  const char *key = hash_find(mhash, (uccp)t);
   if (key)
-    printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);
+    printf("%s+m\t%s\t%s\n", key, vido_new_id(vp,key), qid);
 }
 
 int
@@ -83,8 +84,8 @@ main(int argc, char **argv)
   Vido *vp = vido_init('t', 0);
   if (project)
     {
-      mpool = pool_create();
-      mhash = hash_init(100);
+      mpool = pool_init();
+      mhash = hash_create(100);
       asl_config(project);
       merge_load();
     }

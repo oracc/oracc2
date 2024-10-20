@@ -546,6 +546,7 @@ struct numvmap_tab
 };
 extern struct numvmap_tab *numvmap (register const char *str, register size_t len);
 
+extern void asl_config(const char *project);
 extern struct sl_signlist *asl_bld_init(void);
 extern void asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *in);
 extern void asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, char *text);
