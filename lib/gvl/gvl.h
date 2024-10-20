@@ -48,6 +48,7 @@ struct oiv_data
 {
   const char *code;
   const char *sset;
+  const char *cvnn;
   const char *salt;
   const char *oivs;
 };

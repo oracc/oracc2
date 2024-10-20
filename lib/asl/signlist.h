@@ -139,6 +139,19 @@ struct sl_signlist
   Mloc eloc;
 };
 
+struct sl_config
+{
+  const char *project;  /* set from -P[PROJECT] */
+  const char *signlist; /* default: csl */
+  const char *domain; 	/* default: sl */
+  const char *font;	/* default: noto */
+  const char *script;	/* default: empty; this is preferred over font
+			   because it is used by various sxweb and
+			   cuneify routines to display characters with
+			   the script-appropriate glyph */
+  const char *merge;	/* default: 00lib/csl.mrg */
+};
+
 struct sl_token
 {
   const unsigned char *t;	/* sign/form/value/base/list name token */
@@ -148,6 +161,7 @@ struct sl_token
 				   parsed GDL; NULL if the token was a
 				   literal l*/
   const char *deep;		/* deep sig from gdlsig */
+  struct sl_inst *oid_ip;	/* instance to use for retrieving OID */
   int s;			/* sort code for token */
   int priority;			/* for registering nums */
 };
@@ -518,12 +532,21 @@ struct sl_scriptdata
   struct sl_sign *sign; /* sign where @script occurred; if within @form this is the form-sign */
   const char *name;	/* script-style name */
   const char *sset;	/* explicitly requested ss00 code; defaults to code of script-style */
+  const char *cvnn;	/* cvnn code for this sign in this script-style */
   const char *code;	/* U+ codepoint */
-  const char *salt;	/* salt integer */
+  const char *salt;	/* salt integer as string */
   const char *merge; 	/* sign this code merges with */
   const char *oivs;	/* Oracc IVS as simple hex, e.g., E0100 */
 };
 
+struct numvmap_tab
+{
+  const char *name;
+  const char *asif;
+};
+extern struct numvmap_tab *numvmap (register const char *str, register size_t len);
+
+extern void asl_config(const char *project);
 extern struct sl_signlist *asl_bld_init(void);
 extern void asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *in);
 extern void asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, char *text);

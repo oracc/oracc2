@@ -7,6 +7,7 @@
   <type>signlist</type>
   <logo type="text">@@PROJECT@@/signlist</logo>
   <image>lak25.png</image>
+  <option name="asl-script" value="@@ASLSCRIPT@@"/>
   <option name="asl-stats" value="yes"/>
   <option name="asl-suxword" value="yes"/>
   <blurb>Browsable/searchable version of @@PROJECT@@</blurb>

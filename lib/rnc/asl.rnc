@@ -342,9 +342,11 @@ sl.script = element sl:script {
 }
 sl.scriptcode = element sl:code {
      attribute code { text }?, 
+     attribute sset { text }?,
+     attribute svnn { text }?,
      attribute salt { text }?, 
      attribute oivs { text }?, 
-     attribute sset { text }?
+     attribute merge { text }?
 }
 
 sl.metrology = element sl:metrology { empty }

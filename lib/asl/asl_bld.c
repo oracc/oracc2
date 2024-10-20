@@ -205,6 +205,38 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
   return tp;
 }
 
+static uccp
+reset_num_n(struct sl_signlist *sl, const unsigned char *n, const unsigned char *asif)
+{
+  unsigned char buf[strlen((ccp)n)+strlen((ccp)asif)];
+  const unsigned char *t = n;
+  unsigned char *b = buf;
+  while ('(' != *t)
+    *b++ = *t++;
+  *b++ = *t++;
+  strcpy((char*)b, (ccp)asif);
+  b += strlen((ccp)b);
+  t = (uccp)strrchr((ccp)n, ')');
+  while (*t)
+    *b++ = *t++;
+  *b = '\0';
+  return pool_copy((uccp)buf, sl->p);
+#if 0
+  struct sl_token *tokp = asl_bld_token(NULL, sl, n, 0);
+  if (asl_bld_num(NULL, sl, n, tokp, 3))
+    {
+      /* This is strange but true; we re-reset the text of the reset
+	 tokp to be the original value. We do this so the value maps
+	 to an OID in sx_num_data */
+      tokp->t = tp->t;
+      tokp->s = tp->s;
+      return tokp;
+    }
+  else
+    return NULL;
+#endif
+}
+
 int
 asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority)
 {
@@ -218,19 +250,40 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
 	{
 	  if (tokp->gdl->kids &&  tokp->gdl->kids->kids && tokp->gdl->kids->kids->next)
 	    {
-	      hash_add(sl->hnums, n, tokp);
-	      /* ensure that future set names are tokens */
 	      const uchar *set_n;
 	      struct node *setnode = tokp->gdl->kids->kids->next;
 	      if (!strcmp(setnode->name, "g:c"))
+		set_n = (uccp)setnode->kids->text;
+	      else
+		set_n = (uccp)setnode->text;
+	      
+	      /* if a set is in the numvmap ensure that the mapped
+		 name is a token and register the mapped version in
+		 hnums not the original version */	      
+	      struct numvmap_tab *np = numvmap((ccp)set_n, strlen((ccp)set_n));
+	      if (np)
 		{
-		  set_n = (uccp)setnode->kids->text;
+		  /* rewrite the incoming name */
+		  n = reset_num_n(sl, n, (uccp)np->asif);
+		  tokp = asl_bld_token(locp, sl, (ucp)n, 0);
+		  tokp->priority = priority;
+		  setnode = tokp->gdl->kids->kids->next;
+		  if (!strcmp(setnode->name, "g:c"))
+		    set_n = (uccp)setnode->kids->text;
+		  else
+		    set_n = (uccp)setnode->text;
+		}
+
+	      hash_add(sl->hnums, n, tokp);
+	      
+	      /* ensure that future set names are tokens */
+	      if (!strcmp(setnode->name, "g:c"))
+		{
 		  struct sl_token *stp = asl_bld_token(locp, sl, pool_copy(g_uc(set_n), sl->p), 0);
 		  tokp->gsig = stp->gsig; /* rewrite the num tok so the gsig is the compound head oid */
 		}
 	      else
 		{
-		  set_n = (uccp)setnode->text;
 		  (void)asl_bld_token(locp, sl, pool_copy(g_uc(set_n), sl->p), 0);
 		}
 	      return 1;
@@ -292,6 +345,7 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
       tokp->gsh = gsort_prep(tp);
       tokp->gsig = gsig;
       tokp->deep = deep;
+      tokp->oid_ip = sl->curr_inst;
       hash_add(sl->htoken, t, tokp);
     }
   asl_literal_flag = 0;
@@ -1460,6 +1514,8 @@ asl_bld_script(Mloc *locp, struct sl_signlist *sl, char *n)
 		  else if (!strncmp(elt, "salt", strlen("salt")))
 		    sp->salt = arg;
 		  else if (!strncmp(elt, "sset", strlen("sset")))
+		    sp->sset = arg;
+		  else if (!strncmp(elt, "cvnn", strlen("cvnn")))
 		    sp->sset = arg;
 		  else if (!strncmp(elt, "merge", strlen("merge")))
 		    sp->merge = arg;

@@ -21,6 +21,7 @@ extern void gsb_punct(Word *w, const char *t);
 extern void gsb_sign(Trun *r, const char *t);
 extern void gsb_value(Trun *r, const char *t);
 /* gsig_parse.c */
+extern char *gsig_index(const char *gs);
 extern char *gsig_parse_last_error(void);
 extern Gsig *gsig_parse_alloc(Gsig *gp);
 extern Gsig *gsig_parse_clone(Gsig *gp);

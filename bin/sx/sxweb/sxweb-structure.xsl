@@ -15,7 +15,9 @@
 <xsl:template match="/">
   <struct:page file="index.xml" id="home" type="page" target="_top">
     <xi:include xml:base="." href="00lib/signlist-structure-top.xml" xpointer="xpointer(/*/*)">
-      <xi:fallback/>
+      <xi:include href="/home/oracc/lib/data/signlist-structure-top.xml" xpointer="xpointer(/*/*)">
+	<xi:fallback/>
+      </xi:include>
     </xi:include>
     <hr/>
     <xsl:if test="not(/*/@signlist='ogsl')">
@@ -41,7 +43,11 @@
     </struct:page>
     <hr/>
     <xi:include xml:base="." href="00lib/signlist-structure-bot.xml" xpointer="xpointer(/*/*)">
-      <xi:fallback/>
+      <xi:fallback>
+	<xi:include href="/home/oracc/lib/data/signlist-structure-bot.xml" xpointer="xpointer(/*/*)">
+	  <xi:fallback/>
+	</xi:include>
+      </xi:fallback>
     </xi:include>
   </struct:page>
 </xsl:template>

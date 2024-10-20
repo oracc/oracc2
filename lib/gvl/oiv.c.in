@@ -38,11 +38,16 @@ oiv_style_to_file(const char *style)
  *
  * File format is now a tabbed file:
  *
- * 	CODE	SALT	OIVS
+ * 	CODE	SSET	CVNN	SALT	OIVS
  *
  * CODE is U+ Unicode codepoint for character being rendered, e.g.,
  * U+12324 [DE₂] or an OSL @useq-style sequence, e.g., x12000.x12000
  *
+ * SSET is a stylistic set which overrides the default sset for the
+ * script-style
+ *
+ * CVNN is a CSS tag to select CVNN, e.g., cv01, cv02
+ * 
  * SALT is CSS tag to select SALT#, e.g., salt1
  *
  * OIVS is UTF-8 encoded CODE+IVS sequence for use in non-web contexts
@@ -64,9 +69,11 @@ oiv_load(const char *oiv_selections_file)
       if (f[1] && *f[1])
 	oivm->sset = f[1];
       if (f[2] && *f[2])
-	oivm->salt = f[2];
+	oivm->cvnn = f[2];
       if (f[3] && *f[3])
-	oivm->oivs = f[3];
+	oivm->salt = f[3];
+      if (f[4] && *f[4])
+	oivm->oivs = f[4];
       hash_add(hoiv, (uccp)oivm->code, oivm);
     }
   return hoiv;

@@ -12,6 +12,36 @@
 
 static char gsig_err[1024];
 
+/* untested because it turned out not to be needed where I thought I needed it */
+char *
+gsig_index(const char *gs)
+{
+  if (gs)
+    {
+      const char *hash = gs;
+      int nhash = 0;
+      while (*hash && nhash < 3)
+	{
+	  if ('#' == *hash)
+	    ++nhash;
+	  ++hash;
+	}
+      while (*hash && !isdigit(*hash))
+	++hash;
+      if (*hash)
+	{
+	  static char index[8]; /* word with more than 7-digit grapheme count would be absurd */
+	  char *i = index;
+	  do
+	    *i++ = *hash++;
+	  while (isdigit(*hash));
+	  *i = '\0';
+	  return index;
+	}
+    }
+  return NULL;
+}
+
 char *
 gsig_parse_last_error(void)
 {

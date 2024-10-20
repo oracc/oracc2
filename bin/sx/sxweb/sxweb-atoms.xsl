@@ -16,6 +16,7 @@
 	<xsl:copy-of select="."/>
       </xsl:if>
     </xsl:for-each>
+    <xsl:copy-of select="sl:scripts"/>
   </xsl:copy>
 </xsl:template>
 

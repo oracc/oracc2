@@ -147,6 +147,14 @@ void
 sx_kdata_componly(struct sl_signlist *sl, const uchar *sname)
 {
   struct sl_sign *sp = hash_find(sl->hsentry, sname);
+  struct sl_inst *ip = NULL;
+  if (!sp && (ip = hash_find(sl->haka, sname)))
+    {
+      if (ip->type == 's')
+	sp = ip->u.s;
+      else
+	sp = ip->u.f->sign;
+    }
   if (!sp)
     {
       if ('|' == sname[0] && '(' == sname[1])
@@ -227,8 +235,9 @@ useq_check(struct sl_signlist *sl, const char *useq)
 	      fprintf(stderr, "useq_check adding %s as %s\n", (uccp)uu, tip->key);
 	    }
 	}
-      else
-	fprintf(stderr, "useq_check no OID for %s\n", uu);
+      else if (strcmp(uu, "UX"))
+	fprintf(stderr, "useq_check no OID for %s component of %s\n", uu, useq);
+
       if (more)
 	{
 	  *dot = 'U';
@@ -339,8 +348,10 @@ sx_idata_form_inst(struct sl_signlist *sl, struct sl_inst *fip)
 					fip->u.f->oid,
 					(uccp)"");
       fip->tp = hash_find(sl->h_idata, (uccp)k);
+#if 0
       if (fip->tp)
 	fprintf(stderr, "sx_idata_form_inst: found key %s\n", k);
+#endif
     }
 }
 

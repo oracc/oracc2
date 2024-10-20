@@ -55,7 +55,7 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   np->rep = (uccp)tp->gdl->kids->kids->text;
   struct node *setnode = tp->gdl->kids->kids->next;
 
-  /* As originally implement this code only needs to detect values
+  /* As originally implemented this code only needs to detect values
      with NINDA₂ in their parent compound, so the implementatino is
      not robust */
   struct sl_value *v = hash_find(sl->hventry, tp->t);
@@ -151,6 +151,15 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 	  else
 	    {
 	      s = hash_find(sl->hsentry, g_uc(tp->t));
+	      if (!s)
+		{
+		  if (tp->oid_ip->type == 'v')
+		    s = (tp->oid_ip->parent_s ? tp->oid_ip->parent_s->u.s : tp->oid_ip->parent_f->u.f->sign);
+		  else if (tp->oid_ip->type == 'f')
+		    s = tp->oid_ip->u.f->sign;
+		  else
+		    s = tp->oid_ip->u.s;
+		}
 	      if (s)
 		{
 		  np->oid = (uccp)s->oid;
@@ -202,6 +211,7 @@ sx_numsets(struct sl_signlist *sl)
     }
 }
 
+#if 0
 static struct sl_token *
 reset_num_tok(struct sl_signlist *sl, struct numvmap_tab *np, struct sl_token *tp)
 {
@@ -231,6 +241,7 @@ reset_num_tok(struct sl_signlist *sl, struct numvmap_tab *np, struct sl_token *t
   else
     return NULL;
 }
+#endif
 
 void
 sx_numbers(struct sl_signlist *sl)
@@ -253,10 +264,12 @@ sx_numbers(struct sl_signlist *sl)
       struct sl_token *t = hash_find(sl->hnums, k[i]);
       if (t && t->gdl && t->gdl->kids && t->gdl->kids->kids &&  t->gdl->kids->kids->next)
 	{
+#if 0
 	  const uchar *set = (uccp)t->gdl->kids->kids->next->text;
 	  struct numvmap_tab *np = numvmap((ccp)set, strlen((ccp)set));
 	  if (np)
 	    t = reset_num_tok(sl, np, t);
+#endif
 	  if (t)
 	    {
 	      sx_num_data(sl, &sl->numbers[j], t);

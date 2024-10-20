@@ -40,7 +40,7 @@
       <xsl:attribute name="class"><xsl:text>tithe</xsl:text></xsl:attribute>
     </xsl:if>
     <td><xsl:value-of select="position()"/><xsl:text>.</xsl:text></td>
-    <td><xsl:call-template name="sxweb-ucun"/></td>
+    <td><p class="{$font}"><xsl:call-template name="sxweb-ucun"/></p></td>
     <td><esp:link url="/{/*/@slbase}/signlist/{@xml:id}"><xsl:value-of select="@n"/></esp:link></td>
     <td><xsl:value-of select="@tcnt"/></td>
     <td>
@@ -90,5 +90,7 @@
     <xsl:copy-of select="@n|@icnt"/>
   </xsl:copy>
 </xsl:template>
+
+<xsl:template match="sl:scripts"/>
 
 </xsl:transform>

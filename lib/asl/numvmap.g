@@ -1,6 +1,6 @@
 %{
 #include <string.h>
-#include "sx.h"
+#include "signlist.h"
 %}
 struct numvmap_tab;
 %%
