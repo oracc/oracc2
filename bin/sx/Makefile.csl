@@ -13,7 +13,7 @@ csl: 01tmp/csl.asl
 # Don't rm 01tmp/cbd.tok because that is not part of the csl.asl
 # dependency chain
 clean:
-	rm -f 01tmp/csl.*
+	rm -f 01tmp/csl.* 02pub/csl.*
 
 02pub/csl.tok: 01bld/lists/xtfindex.lst
 	tokx <$< >$@
