@@ -99,6 +99,7 @@ bin/zx/gdlx
 bin/zx/repx
 bin/zx/rocox
 bin/zx/xmlfilter
+lib/fonts/showttfx
 msc/lex/lex-collapse-refs
 msc/prj/cdli/cdliperiodx
 msc/prj/cdli/cdlixtfx
