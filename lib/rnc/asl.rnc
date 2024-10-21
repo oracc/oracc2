@@ -173,7 +173,10 @@ sl.images = element sl:images {
 			 	  }*
       	    }
 
-sl.stats = (attribute icnt { xsd:decimal } , attribute ipct { text }?, attribute ctotal { xsd:decimal }?)
+sl.stats = (attribute icnt { xsd:decimal } , attribute ipct { text }?,
+	   	      attribute iref { text }?, attribute ctotal { xsd:decimal }?, 
+	    attribute micnt { xsd:decimal }? , attribute mipct { text }?,
+	    	      attribute miref { text }?, attribute mctotal { xsd:decimal }?)
 
 sl.cpds = element sl:cpds {
 	  	  sl.stats?,

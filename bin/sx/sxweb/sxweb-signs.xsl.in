@@ -286,7 +286,7 @@
   <div class="asl-sf-body">
     <xsl:if test="@merge">
       <p class="sl-merge"><xsl:text>(Includes merging of </xsl:text
-      ><xsl:value-of select="id(@merge)/@n"/> = <xsl:value-of select="id(@merge)/@xml:id"/><xsl:text>)</xsl:text></p>
+      ><xsl:value-of select="id(@merge)/@n"/> = <xsl:value-of select="id(@merge)/sl:ucun"/> = <xsl:value-of select="id(@merge)/@xml:id"/><xsl:text>)</xsl:text></p>
     </xsl:if>
 
     <xsl:if test="self::*[local-name()='form']">
@@ -467,7 +467,10 @@
     <p class="sl-hang"><span class="sl-ihead-h"><xsl:text>INSTANCES</xsl:text></span><esp:link
     url="javascript://" onclick="act_isid(event)" data-lang="tok" data-isid="{@iref}"
     notarget="yes"><xsl:text>see </xsl:text><xsl:value-of select="@icnt"/>
-    <xsl:text> occurrences.</xsl:text></esp:link></p>
+    <xsl:text> occurrences.</xsl:text></esp:link
+    ><xsl:if test="@miref"><xsl:text> (or see </xsl:text><esp:link
+    url="javascript://" onclick="act_isid(event)" data-lang="tok" data-isid="{@miref}"
+    notarget="yes"><xsl:value-of select="@micnt"/><xsl:text> occurrences of all merged signs)</xsl:text></esp:link></xsl:if></p>
   </xsl:if>
 </xsl:template>
 
@@ -773,7 +776,9 @@
 	      ><xsl:otherwise><xsl:value-of select="concat('/',/*/@project)"/></xsl:otherwise></xsl:choose
 	      ></xsl:variable><xsl:for-each
 	      select="$nodes[not(ancestor::sl:form) or $sorf='form']"
-	      ><xsl:variable name="lemabs" select="key('lemabs',concat(ancestor::sl:v/@n,'::',@n))"
+	      ><xsl:sort select="@lcnt" data-type="number" order="descending"
+	      /><xsl:sort select="@sort" data-type="number" order="ascending"
+	      /><xsl:variable name="lemabs" select="key('lemabs',concat(ancestor::sl:v/@n,'::',@n))"
 	      /><xsl:if test="generate-id(.)=generate-id($lemabs[1])"
 	      ><xsl:if test="not(position()=1)"><xsl:text>; </xsl:text></xsl:if
 	      ><span class="asl-lem-base"><xsl:call-template

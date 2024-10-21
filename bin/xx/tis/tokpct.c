@@ -34,6 +34,7 @@ main(int argc, char *const *argv)
   Hash *sem = NULL;
   Hash *bis = NULL;
   Hash *ter = NULL;
+  Hash *mrg = NULL;
   Hash *tid = NULL;
   /*List *seq = NULL;*/
   Pool *p = NULL;
@@ -43,6 +44,7 @@ main(int argc, char *const *argv)
   sem = hash_create(1024);
   bis = hash_create(1024);
   ter = hash_create(1024);
+  mrg = hash_create(1024);
   tid = hash_create(1024);
   /*seq = list_create(LIST_SINGLE);*/
 
@@ -56,7 +58,11 @@ main(int argc, char *const *argv)
       hash_add(tid,t,id);
       int count = atoi(f[2]);
       e = t + strlen((ccp)t);
-      if ('.' == e[-1] && '.' == e[-2])
+      if ('+' == e[-1])
+	{
+	  hash_add(mrg, t, (void*)(uintptr_t)count);
+	}
+      else if ('.' == e[-1] && '.' == e[-2])
 	{
 	  total += count;
 	  hash_add(sem, t, (void*)(uintptr_t)count);
@@ -116,4 +122,12 @@ main(int argc, char *const *argv)
       else
 	fprintf(stderr, "token %s should have parent %s but doesn't\n", k[i], parent);
     }
+
+  k = hash_keys(mrg);
+  for (i = 0; k[i]; ++i)
+    {
+      int count = (uintptr_t)hash_find(mrg, (uccp)k[i]);
+      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
+    }
+
 }

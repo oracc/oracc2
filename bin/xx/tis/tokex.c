@@ -52,14 +52,13 @@ merge_load(void)
 	    ++v;
 	  if (*v)
 	    {
-	      /* Now v points to the mkey, e.g., o0000237+m */
-	      /*hash_add(sl->h_merges, lp[i], v);*/
+	      /* Now lp[i] points to the mkey, e.g., o0000237++ */
 	      char *vv = strdup((ccp)v);
 	      char **mm = space_split(vv);
 	      /* Now mm are all the OIDs that contribute to the mkey, both head and mergees */
 	      int j;
 	      for (j = 0; mm[j]; ++j)
-		hash_add(mhash, v, mm[j]);
+		hash_add(mhash, (uccp)mm[j], lp[i]);
 	    }
 	}
     }
@@ -73,7 +72,7 @@ merge_entry(char *t, Vido *vp, char *qid)
     *dot = '\0';
   const char *key = hash_find(mhash, (uccp)t);
   if (key)
-    printf("%s+m\t%s\t%s\n", key, vido_new_id(vp,key), qid);
+    printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);
 }
 
 int

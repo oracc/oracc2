@@ -4,4 +4,5 @@
 #
 # TOKENID TOKEN COUNT PERCENT
 #
-tokex | tee 02pub/csl.tkx | tokix -p `oraccopt` | tokpct
+p=`oraccopt`
+tokex -p$p | tee 02pub/csl.tkx | tokix -p$p | tokpct

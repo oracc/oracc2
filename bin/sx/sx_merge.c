@@ -22,9 +22,17 @@ sx_merge(struct sl_signlist *sl)
       if (s)
 	{
 	  struct sl_sign *m_from = hash_find(sl->hsentry, k[i]);
-	  /* the 'to' may be in a corpus-based signlist without the 'from' being in there */
+	  /* the 'to' may be in a corpus-based signlist without the
+	   * 'from' being in there
+	   *
+	   * 202410119: is this still true? with the new subsl both
+	   * from and to should be guaranteed to be in the CSL
+	   */
 	  if (m_from)
-	    m_from->moid = s->oid;
+	    {
+	      m_from->moid = s->oid;
+	      m_from->msign = s;
+	    }
 	}
       else if (!strcmp(sl->project, "osl")) /* corpus-based signlists may legit not have the to or from components */
 	mesg_verr(m, "@merge %s: merge destination %s does not exist", m->user, m->user);

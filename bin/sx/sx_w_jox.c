@@ -610,6 +610,24 @@ x_tis_atts(List *a, struct tis_data *tp, size_t ctotal)
 }
 
 static void
+x_mtis_atts(List *a, struct tis_data *tp, size_t mctotal)
+{
+  list_add(a, "micnt");
+  list_add(a, tp->cnt);
+  list_add(a, "mipct");
+  list_add(a, tp->pct);
+  list_add(a, "miref");
+  list_add(a, tp->ref);
+  list_add(a, "mctotal");
+  /* This itoa is OK as long as we are printing the atts before
+     another itoa occurs */
+  if (mctotal)
+    list_add(a, (void*)itoa(atoi(tp->cnt)+mctotal));
+  else
+    list_add(a, tp->cnt);
+}
+
+static void
 sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, enum sx_pos_e p)
 {
   static int in_form = 0;
@@ -1083,6 +1101,9 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
   if (s->tp)
     x_tis_atts(a, s->tp, s->u.s->ctotal);
   
+  if (s->mtp)
+    x_mtis_atts(a, s->mtp, s->u.s->mctotal);
+	      
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
   list_free(a, NULL);

@@ -5,15 +5,6 @@
 #include <tis.h>
 #include "sx.h"
 
-#if 0
-static void
-tis_strip_iss(char *lp)
-{
-  char *tab = strrchr(lp, '\t');
-  *tab = '\0';
-}
-#endif
-
 /* Read the corpus statistics from a .tis file into a hash-by-key, sl->h_idata.
  */
 void
@@ -28,6 +19,7 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
   t.subs = NULL;
 
   sl->h_idata = hash_create(1024);
+  sl->h_mdata = hash_create(100);
   sl->m_idata = memo_init(sizeof(struct tis_data), 256);
   
   if (idata_type && strlen(idata_type) < 3)
@@ -52,7 +44,18 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
       t.pct = f[3];
       struct tis_data *tp = memo_new(sl->m_idata);
       *tp = t;
-      hash_add(sl->h_idata, (uccp)t.key, tp);
+      if (strstr(t.key, "++"))
+	{
+	  int len = strlen(t.key) - 2;
+	  char buf[len+1];
+	  strncpy(buf, t.key, len);
+	  buf[len] = '\0';
+	  hash_add(sl->h_mdata, pool_copy(buf, sl->p), tp);
+	}
+      else
+	{
+	  hash_add(sl->h_idata, (uccp)t.key, tp);
+	}
     }
 }
 
@@ -319,8 +322,21 @@ sx_idata_ctotals(struct sl_signlist *sl)
 			}
 		    }
 #if 1
-		  sl->signs[i]->count = ns;
-		  sl->signs[i]->ctotal = nc;
+		  if (sl->signs[i]->msign)
+		    {
+		      sl->signs[i]->msign->mcount += ns;
+		      sl->signs[i]->msign->mctotal += nc;
+		    }
+		  else
+		    {
+		      sl->signs[i]->count = ns;
+		      sl->signs[i]->ctotal = nc;
+		      if (sl->signs[i]->merge)
+			{
+			  sl->signs[i]->mcount += ns;
+			  sl->signs[i]->mctotal += nc;
+			}
+		    }
 #else
 		  fprintf(stderr,
 			  "sx_idata_ctotals: sign %s occurs %ld times; %ld times including compounds\n",
@@ -336,7 +352,11 @@ void
 sx_idata_sign(struct sl_signlist *sl, struct sl_sign *sp)
 {
   if (sl->h_idata && sp->oid)
-    sp->inst->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sp->oid, "", (uccp)""));
+    {
+      sp->inst->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sp->oid, "", (uccp)""));
+      if (sl->h_mdata)
+	sp->inst->mtp = hash_find(sl->h_mdata, sp->oid);
+    }	
 }
 
 void
