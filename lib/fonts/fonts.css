@@ -35,6 +35,12 @@
     font-feature-settings: "ss01", "ss02";
 }
 
+.middle {
+    font-family: "Noto Sans Cuneiform";
+    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
+    font-feature-settings: "ss01", "ss02";
+}
+
 .noto {
    font-family: "Noto Sans Cuneiform";
 }

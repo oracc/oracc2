@@ -71,7 +71,7 @@
 <xsl:template match="xtf:v"/>
 
 <xsl:template match="gdl:w">
-  <xsl:for-each select=".//*[@gdl:utf8]">
+  <xsl:for-each select=".//*[@gdl:utf8 or @gdl:type='ellipsis']">
     <xsl:if test="contains(@gdl:o,'[')"><span class="osquare"><![CDATA[]]></span></xsl:if>
     <xsl:choose>
       <xsl:when test="@gdl:break='missing'">
@@ -82,6 +82,9 @@
 	  <xsl:otherwise>
 	    <span class="broken">
 	      <xsl:choose>
+		<xsl:when test="@gdl:type='ellipsis'"> <!-- gdl:x -->
+		  <span class="ellipsis">.&#xa0;.&#xa0;.</span>
+		</xsl:when>
 		<xsl:when test="@gdl:utf8='x'">
 		  <span class="roman">x</span>
 		</xsl:when>
@@ -107,6 +110,9 @@
 	  <xsl:choose>
 	    <xsl:when test="@gdl:salt">
 	      <span class="salt{@gdl:salt}"><xsl:value-of select="@gdl:utf8"/></span>
+	    </xsl:when>
+	    <xsl:when test="@gdl:type='ellipsis'"> <!-- gdl:x -->
+	      <span class="ellipsis">.&#xa0;.&#xa0;.</span>
 	    </xsl:when>
 	    <xsl:otherwise>
 	      <xsl:value-of select="@gdl:utf8"/>
