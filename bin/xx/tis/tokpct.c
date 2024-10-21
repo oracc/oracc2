@@ -35,6 +35,7 @@ main(int argc, char *const *argv)
   Hash *bis = NULL;
   Hash *ter = NULL;
   Hash *mrg = NULL;
+  Hash *frm = NULL;
   Hash *tid = NULL;
   /*List *seq = NULL;*/
   Pool *p = NULL;
@@ -45,6 +46,7 @@ main(int argc, char *const *argv)
   bis = hash_create(1024);
   ter = hash_create(1024);
   mrg = hash_create(1024);
+  frm = hash_create(1024);
   tid = hash_create(1024);
   /*seq = list_create(LIST_SINGLE);*/
 
@@ -61,6 +63,10 @@ main(int argc, char *const *argv)
       if ('+' == e[-1])
 	{
 	  hash_add(mrg, t, (void*)(uintptr_t)count);
+	}
+      else if ('f' == e[-1])
+	{
+	  hash_add(frm, t, (void*)(uintptr_t)count);
 	}
       else if ('.' == e[-1] && '.' == e[-2])
 	{
@@ -127,6 +133,13 @@ main(int argc, char *const *argv)
   for (i = 0; k[i]; ++i)
     {
       int count = (uintptr_t)hash_find(mrg, (uccp)k[i]);
+      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
+    }
+
+  k = hash_keys(frm);
+  for (i = 0; k[i]; ++i)
+    {
+      int count = (uintptr_t)hash_find(frm, (uccp)k[i]);
       printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
     }
 

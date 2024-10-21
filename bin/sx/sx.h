@@ -161,5 +161,6 @@ extern struct noset_tab *noset (register const char *str, register size_t len);
 
 extern void sx_script(struct sl_signlist *sl, int stdo);
 extern char *sx_script_merge_fn(struct sl_signlist *sl, const char *script);
+extern void sx_forms(struct sl_signlist *sl);
 
 #endif/*SX_H_*/

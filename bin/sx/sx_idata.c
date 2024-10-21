@@ -19,6 +19,7 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
   t.subs = NULL;
 
   sl->h_idata = hash_create(1024);
+  sl->h_fdata = hash_create(100);
   sl->h_mdata = hash_create(100);
   sl->m_idata = memo_init(sizeof(struct tis_data), 256);
   
@@ -44,13 +45,18 @@ sx_idata_init(struct sl_signlist *sl, const char *idata_file, const char *idata_
       t.pct = f[3];
       struct tis_data *tp = memo_new(sl->m_idata);
       *tp = t;
-      if (strstr(t.key, "++"))
+      char *plus = strchr(t.key, '+');
+      if (plus)
 	{
+	  char p1 = plus[1];
 	  int len = strlen(t.key) - 2;
 	  char buf[len+1];
 	  strncpy(buf, t.key, len);
 	  buf[len] = '\0';
-	  hash_add(sl->h_mdata, pool_copy(buf, sl->p), tp);
+	  if (p1 == '+')
+	    hash_add(sl->h_mdata, pool_copy((uccp)buf, sl->p), tp);
+	  else
+	    hash_add(sl->h_fdata, pool_copy((uccp)buf, sl->p), tp);
 	}
       else
 	{
@@ -355,7 +361,9 @@ sx_idata_sign(struct sl_signlist *sl, struct sl_sign *sp)
     {
       sp->inst->tp = hash_find(sl->h_idata, (uccp)sx_idata_key(sp->oid, "", (uccp)""));
       if (sl->h_mdata)
-	sp->inst->mtp = hash_find(sl->h_mdata, sp->oid);
+	sp->inst->mtp = hash_find(sl->h_mdata, (uccp)sp->oid);
+      if (sl->h_fdata)
+	sp->inst->ftp = hash_find(sl->h_fdata, (uccp)sp->oid);
     }	
 }
 

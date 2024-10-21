@@ -610,6 +610,17 @@ x_tis_atts(List *a, struct tis_data *tp, size_t ctotal)
 }
 
 static void
+x_ftis_atts(List *a, struct tis_data *tp)
+{
+  list_add(a, "ficnt");
+  list_add(a, tp->cnt);
+  list_add(a, "fipct");
+  list_add(a, tp->pct);
+  list_add(a, "firef");
+  list_add(a, tp->ref);
+}
+
+static void
 x_mtis_atts(List *a, struct tis_data *tp, size_t mctotal)
 {
   list_add(a, "micnt");
@@ -1101,6 +1112,9 @@ x_tle_atts(struct sl_signlist *sl, struct sl_inst *s)
   if (s->tp)
     x_tis_atts(a, s->tp, s->u.s->ctotal);
   
+  if (s->ftp)
+    x_ftis_atts(a, s->ftp);
+	      
   if (s->mtp)
     x_mtis_atts(a, s->mtp, s->u.s->mctotal);
 	      
@@ -1162,7 +1176,7 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
     {
       if (in_sign)
 	{
-	  joxer_ee(&s->eloc, in_sign);
+	  joxer_ee(&s->mloc, in_sign); /* errors are pegged to @sign */
 	  in_sign = NULL;
 	}
     }

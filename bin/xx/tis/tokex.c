@@ -23,6 +23,45 @@ int no_output = 0;
 Pool *mpool;
 Hash *mhash;
 
+Pool *fpool;
+Hash *fhash;
+
+static char *
+forms_fn(const char *project)
+{
+  char buf[strlen(project)+strlen("/02pub/.frm0")];
+  sprintf(buf, "02pub/%s.frm", project);
+  return (char*)pool_copy((uchar *)buf, fpool);  
+}
+
+static void
+forms_load(void)
+{
+  size_t nline;
+  fhash = hash_create(1024);
+  fpool = pool_init();
+  unsigned char *fmem;
+  unsigned char **lp = loadfile_lines3((uccp)forms_fn(project), &nline, &fmem);
+  int i;
+  for (i = 0; i < nline; ++i)
+    {
+      char buf[strlen((ccp)lp[i])+3];
+      sprintf(buf, "%s+f", lp[i]);
+      hash_add(fhash, (uccp)pool_copy((uccp)lp[i], fpool), pool_copy((uccp)buf, fpool));
+    }
+}
+
+void
+forms_entry(char *t, Vido *vp, char *qid)
+{
+  char *dot = strchr(t, '.');
+  if (dot)
+    *dot = '\0';
+  const char *key = hash_find(fhash, (uccp)t);
+  if (key)
+    printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);
+}
+
 char *
 merge_fn(const char *script)
 {
@@ -81,6 +120,7 @@ main(int argc, char **argv)
   options(argc,argv,"d:np:");
   char buf[1024], *b, qid[1024], wdid[32];
   Vido *vp = vido_init('t', 0);
+  forms_load();
   if (project)
     {
       mpool = pool_init();
@@ -138,13 +178,14 @@ main(int argc, char **argv)
 	    {
 	      /* we have to save S.F. */
 	      dot = strrchr(t, '.');
-	      if (dot[2])
+	      if (dot[1]) /* . is the . before value; if dot[1] is not \0 there is a value */
 		{
 		  dot[1] = '\0';
 		  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
 		}
 	      merge_entry(t,vp,qid);
 	    }
+	  forms_entry(t,vp,qid);
 	}
     }
   if (!no_output)

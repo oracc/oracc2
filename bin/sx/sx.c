@@ -278,6 +278,9 @@ main(int argc, char * const*argv)
 	    fprintf(stderr, "sx: unable to dump @sys data; can't write sx-syss.out\n");
 	}
 
+      if (!kdata_file)
+	sx_forms(sl); /* dump forms file unless subsetting */
+      
       if (scripts_dump)
 	sx_script(sl, 0);
 

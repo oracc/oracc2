@@ -450,7 +450,7 @@
     <p class="sl-hang">
       <span class="sl-ihead-h">LISTS</span>
       <span class="sl-ibody">
-	<xsl:for-each select="sl:list">
+	<xsl:for-each select="sl:list[not(starts-with(@n,'U+'))]">
 	  <xsl:value-of select="@n"/>
 	  <xsl:if test="not(position()=last())">
 	    <xsl:text>; </xsl:text>
@@ -461,16 +461,30 @@
   </xsl:if>
 </xsl:template>
 
+<xsl:template name="count-s">
+  <xsl:param name="c"/>
+  <xsl:if test="not($c='1')"><xsl:text>s</xsl:text></xsl:if>
+</xsl:template>
+
 <xsl:template name="sws-stats">
   <xsl:if test="@iref">
     <!-- url="javascript:distprof2({concat($q,$project,$q,',',$q,'tok',$q,',',$q,@iref,$q)})" -->    
     <p class="sl-hang"><span class="sl-ihead-h"><xsl:text>INSTANCES</xsl:text></span><esp:link
     url="javascript://" onclick="act_isid(event)" data-lang="tok" data-isid="{@iref}"
     notarget="yes"><xsl:text>see </xsl:text><xsl:value-of select="@icnt"/>
-    <xsl:text> occurrences.</xsl:text></esp:link
-    ><xsl:if test="@miref"><xsl:text> (or see </xsl:text><esp:link
+    <xsl:text> occurrence</xsl:text
+    ><xsl:call-template name="count-s"><xsl:with-param name="c" select="@icnt"/></xsl:call-template
+    ><xsl:text>.</xsl:text></esp:link
+    ><xsl:if test="@firef"><xsl:text> (see </xsl:text><esp:link
+    url="javascript://" onclick="act_isid(event)" data-lang="tok" data-isid="{@firef}"
+    notarget="yes"><xsl:value-of select="@ficnt"/><xsl:text> occurrence</xsl:text
+    ><xsl:call-template name="count-s"><xsl:with-param name="c" select="@ficnt"/></xsl:call-template
+    ><xsl:text> of sign+form)</xsl:text></esp:link></xsl:if
+    ><xsl:if test="@miref"><xsl:text> (see </xsl:text><esp:link
     url="javascript://" onclick="act_isid(event)" data-lang="tok" data-isid="{@miref}"
-    notarget="yes"><xsl:value-of select="@micnt"/><xsl:text> occurrences of all merged signs)</xsl:text></esp:link></xsl:if></p>
+    notarget="yes"><xsl:value-of select="@micnt"/><xsl:text> occurrence</xsl:text
+    ><xsl:call-template name="count-s"><xsl:with-param name="c" select="@micnt"/></xsl:call-template
+    ><xsl:text> of all merged signs)</xsl:text></esp:link></xsl:if></p>
   </xsl:if>
 </xsl:template>
 

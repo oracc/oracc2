@@ -72,6 +72,7 @@ struct sl_signlist
   Hash *hletters;
   Hash *h_idata;	/* Hash used by sx_idata; adding graphemic data */
   Hash *h_mdata;	/* Hash used by sx_idata; adding graphemic data for mergers under the merge head */
+  Hash *h_fdata;	/* Hash used by sx_idata; adding graphemic data for sign+forms */
   Hash *h_ldata;	/* Hash used by sx_ldata; adding lemma data */
   Hash *h_kdata;	/* Hash used by sx_kdata; subsetting by key */
   List *kdata_cpds;	/* List of compounds referenced in subset */
@@ -262,6 +263,7 @@ struct sl_inst
   struct sl_inst *parent_s; 	/* The parent sign for a form or value instance; if NULL use parent_f */
   struct sl_inst *parent_f; 	/* The parent form for a value instance */
   struct tis_data *tp;		/* The statistics for the instance as imported from .tis by sx_idata_init */
+  struct tis_data *ftp;		/* The statistics for a sign and its forms */
   struct tis_data *mtp;		/* The statistics for a sign which is a merge head */
   List *lp;			/* Lemmata written with the sign-value; very preliminary implementation */
   List *notes;			/* A list of struct sl_note * */
