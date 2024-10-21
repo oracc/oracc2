@@ -917,6 +917,8 @@
 
 <xsl:template name="sws-values-sub">
   <xsl:for-each select="sl:v">
+    <xsl:sort select="@icnt" data-type="number" order="descending"/>
+    <xsl:sort select="@sort" data-type="number" order="ascending"/>
     <span class="homophone-n">
       <xsl:choose>
 	<xsl:when test="@deprecated='yes'">
