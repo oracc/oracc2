@@ -1259,6 +1259,8 @@ asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle t)
 	      const char *code = sl->curr_sign->U.uhex;
 	      if (!code)
 		code = sl->curr_sign->U.useq;
+	      if (!code)
+		code = sl->curr_sign->U.upua;
 	      if (code)
 		for (dp = list_first(sl->curr_sign->script); dp; dp = list_next(sl->curr_sign->script))
 		  dp->code = code;

@@ -26,11 +26,15 @@ Hash *mhash;
 Pool *fpool;
 Hash *fhash;
 
+const char *signlist = "osl";
+
+/* tokex operates on corpus token output so it has to use the corpus
+   forms table; this needs parameterization by pcsl/osl/pesl */
 static char *
 forms_fn(const char *project)
 {
-  char buf[strlen(project)+strlen("/02pub/.frm0")];
-  sprintf(buf, "02pub/%s.frm", project);
+  char buf[strlen(oracc())+strlen("//")+(2*strlen(signlist))+strlen("/02pub/.frm0")];
+  sprintf(buf, "%s/%s/02pub/%s.frm", oracc(), signlist, signlist);
   return (char*)pool_copy((uchar *)buf, fpool);  
 }
 

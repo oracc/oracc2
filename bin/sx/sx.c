@@ -281,7 +281,7 @@ main(int argc, char * const*argv)
       if (!kdata_file)
 	sx_forms(sl); /* dump forms file unless subsetting */
       
-      if (scripts_dump)
+      if (!kdata_file && scripts_dump)
 	sx_script(sl, 0);
 
       if (sortcode_output && !oid_list)
