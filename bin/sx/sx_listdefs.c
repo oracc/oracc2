@@ -124,6 +124,7 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 		{
 		  struct sl_inst *ip;
 		  unsigned const char *name = (uccp)"", *note = (uccp)"";
+		  const char *code = "";
 		  if (lp->insts)
 		    {
 		      for (ip = list_first(lp->insts); ip; ip = list_next(lp->insts))
@@ -134,9 +135,29 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 			    mesg_verr(&lp->inst->mloc, "strange: @lref has instances more than just its own (this can't happen)");
 			  else
 			    mesg_verr(&ip->mloc, "untyped @list or @lref");
-			  fprintf(f, "%s\t%s\t%s\t%s\n", ldp->names[j],
+
+			  struct sl_unicode *u = (ip->type == 's' ? &ip->u.s->U : &ip->u.f->sign->U);
+			  if (u->uhex)
+			    code = u->uhex;
+			  else if (u->upua)
+			    code = u->upua;
+			  else if (u->useq)
+			    code = u->useq;
+
+			  if (!code && ip->type == 'f')
+			    {
+			      u = &ip->u.f->U;
+			      if (u->uhex)
+				code = u->uhex;
+			      else if (u->upua)
+				code = u->upua;
+			      else if (u->useq)
+				code = u->useq;
+			    }
+			  
+			  fprintf(f, "%s\t%s\t%s\t%s\t%s\n", ldp->names[j],
 				  ip->type == 's' ? ip->u.s->oid : ip->u.f->oid,
-				  name , note);
+				  name , code, note);
 			}
 		    }
 		  else if (lp->inst)
