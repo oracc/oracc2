@@ -23,6 +23,10 @@
     font-feature-settings: "salt";
 }
 
+.cv01 {
+    font-feature-settings: "cv01";
+}
+
 .early {
     font-family: "Noto Sans Cuneiform";
     src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
