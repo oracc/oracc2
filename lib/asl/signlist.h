@@ -211,6 +211,7 @@ struct sl_unicode
   const char *urev; 		/* the Unicode revision */
   const char *uname;		/* the Unicode name */
   List *unotes;			/* Unicode-related notes on the character and possibly related characters */
+  int printed;			/* used if Unicode info should only be output once in a format */
 };
 
 #if 0

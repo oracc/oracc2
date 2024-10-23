@@ -33,6 +33,62 @@ static int cmp_by_len(const void *a, const void *b)
   return strlen(*(char**)b) - strlen(*(char**)a);
 }
 
+#define cppstr(s) #s
+#define set_check_U(field) \
+    if (fup->field) \
+    { \
+      if (sp->U.field) \
+	{ \
+	  if (strcmp(sp->U.field, fup->field)) \
+	    mesg_verr(&fip->mloc, "discrepant field: %s vs %s\n", fup->field, sp->U.field); \
+	  else if (set_check_verbose) \
+	    fprintf(stderr, "sp->U.%s %s == fp->U.%s %s\n", cppstr(field), sp->U.field, cppstr(field), fup->field); \
+	} \
+      else \
+	{ \
+          if (set_check_verbose) \
+	    fprintf(stderr, "updating sp->U.%s to fp->U.%s %s\n", cppstr(field), cppstr(field), fup->field); \
+	  sp->U.field = fup->field; \
+	} \
+    }
+
+static void
+set_and_check_U_data(struct sl_sign *sp, struct sl_inst *fip)
+{
+  struct sl_unicode *fup = &fip->u.f->U;
+  int set_check_verbose = 0;
+  set_check_U(uhex);
+  set_check_U(useq);
+  set_check_U(upua);
+  set_check_U(umap);
+  set_check_U(urev);
+  set_check_U(uname);
+  if (sp->U.unotes && fup->unotes)
+    mesg_verr(&fip->mloc, "@unote on multiple @form entries; remove duplicates\n");
+  else
+    sp->U.unotes = fup->unotes;
+}
+
+void
+sx_unicode_U_data(struct sl_signlist *sl)
+{
+  int i;
+  for (i = 0; i < sl->nsigns; ++i)
+    {
+      struct sl_sign *sp = sl->signs[i];
+      List *lip = NULL;
+      if (sp->xref)
+	lip = sp->formdef->u.f->insts;
+      else
+	lip = sp->as_form;
+      /* Now lip is a list of sl_inst * which is all the form-insts
+	 that have sp as their form->sign */
+      struct sl_inst *ip;
+      for (ip = list_first(lip); ip; ip = list_next(lip))
+	set_and_check_U_data(sp, ip);
+    }
+}
+
 void
 sx_unicode(struct sl_signlist *sl)
 {

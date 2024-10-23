@@ -103,7 +103,7 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 					  f->lst(f, sl, NULL, sx_pos_term);
 					}
 				      f->not(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]);
-				      f->uni(f, sl, &sl->letters[i].groups[j].signs[k]->u.s->forms[l]->u.f->U);
+				      f->uni(f, sl, &sl->letters[i].groups[j].signs[k]->u.s->forms[l]->u.f->sign->U);
 				      if (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues
 					  && (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues
 					      != sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nivalues))

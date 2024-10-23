@@ -422,7 +422,11 @@ sx_marshall(struct sl_signlist *sl)
       if (!s->as_form)
 	s->as_form = list_create(LIST_SINGLE);
       list_add_list(s->as_form, f->insts);
-      
+
+#if 0
+      /* Unicode normalization is now done in sx_unicode_U_data and
+	 it's better to ensure that the formdef is always the first
+	 instance */
       /* If this form has Unicode info register it as the defining instance */
       if (f->sign->xref && (f->U.useq || f->U.uname))
 	{
@@ -436,6 +440,7 @@ sx_marshall(struct sl_signlist *sl)
 		}
 	    }
 	}
+#endif      
     }
 
   /* Force all forms that are not also signs to have a defining instance */
@@ -548,6 +553,11 @@ sx_marshall(struct sl_signlist *sl)
     }
   /* Sort the signs */
   qsort(sl->signs, sl->nsigns, sizeof(struct sl_sign*), (cmp_fnc_t)signs_cmp);
+
+  /* Ensure that every sign has full Unicode data and cross-check
+     duplicating data in multiple form instances (done here so
+     sl->signs/nsigns are set */
+  sx_unicode_U_data(sl);
 
   /* Provide forms with sort codes based on token sort sequence */
   keys = hash_keys2(sl->hfentry, &nkeys);  
