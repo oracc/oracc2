@@ -4,5 +4,6 @@
 int
 main(int argc, char **argv)
 {
-  ofp_load("-");
+  Ofp *ofp = ofp_load("-");
+  ofp_xml(ofp, stdout);
 }
