@@ -59,9 +59,12 @@ ofp_load(const char *fontname)
   Ofp *ofp = NULL;
   
   char buf[strlen(oracc())+strlen("/lib/data/.ofp0")+strlen(fontname)];
-  sprintf(buf, "%s/lib/data/%s.ofp", oracc(), fontname);
+  if (strcmp(fontname, "-"))
+    sprintf(buf, "%s/lib/data/%s.ofp", oracc(), fontname);
+  else
+    strcpy(buf, "-");
 
-  if (!access(buf, R_OK))
+  if (!access(buf, R_OK) || !strcmp(buf, "-"))
     {
       unsigned char *fmem, **lp;
       size_t nline;
