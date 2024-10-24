@@ -2,10 +2,10 @@
 #include "ofp.h"
 
 static enum ofp_type ofp_ext_type(const char *ext);
-static void ofp_set_salt(Ofp *ofp, const char *n, const char *name);
-static void ofp_set_sset(Ofp *ofp, const char *n, const char *name);
-static void ofp_set_cvnn(Ofp *ofp, const char *n, const char *name);
-static void ofp_set_oiv(Ofp *ofp, const char *n, const char *name);
+static void ofp_set_salt(Ofp *ofp, ofp_has *h, const char *name);
+static void ofp_set_sset(Ofp *ofp, ofp_has *h, const char *name);
+static void ofp_set_cvnn(Ofp *ofp, ofp_has *h, const char *name);
+static void ofp_set_oiv(Ofp *ofp,  ofp_has *h, const char *name);
 
 /* int is the bit-index; void* is user data */
 typedef void (bv_each_fnc)(int,void*);
@@ -13,7 +13,12 @@ typedef void (bv_each_fnc)(int,void*);
 static void
 bv_set(unsigned char *bv, int nth)
 {
-  bit_set(bv[nth/8], nth%8);
+  int i = nth/8;
+  int b = nth%8;
+  if (b)
+    bv[i] |= 1<<(b-1);
+  else
+    bv[i-1] |= 1<<7;
 }
 
 static void
@@ -25,8 +30,8 @@ bv_each(unsigned char *bv, int len, bv_each_fnc f, void *user)
       {
 	int j;
 	for (j = 0; j < 8; ++j)
-	  if (bit_get(bv[i], j))
-	    f((i*8)+j, user);
+	  if (bit_get(bv[i], (1<<j)))
+	    f((i*8)+j+1, user);
       }
 }
 
@@ -54,6 +59,7 @@ bv_each(unsigned char *bv, int len, bv_each_fnc f, void *user)
    PAD3.liga <- u12146_u12292 
 
  */
+
 static const char *
 un_u(const char *u)
 {
@@ -62,10 +68,29 @@ un_u(const char *u)
       const char *h = u+1;
       while (isxdigit(*h))
 	++h;
-      if (!h)
+      if ('\0' == *h || '.' == *h)
 	return u+1;
     }
   return u;
+}
+
+static const char *
+ucode_from_name(Ofp *o, const char *name)
+{
+  const char *code = un_u(name);
+  if (code != name)
+    {
+      char buf[strlen(name)];
+      strcpy(buf, code);
+      char *dot = strchr(buf, '.');
+      if (dot)
+	*dot = '\0';
+      if ((code = (ccp)hash_exists(o->has, (uccp)buf)))
+	return code;
+      else
+	return (ccp)pool_copy((uccp)buf, o->p);
+    }
+  return NULL;
 }
 
 Ofp *
@@ -91,6 +116,7 @@ ofp_load(const char *fontname)
       int i;
       for (i = 0; i < nline; ++i)
 	{
+	  ofp_has *has = NULL;
 	  char *liga = strstr((ccp)lp[i], "<-");
 	  if (liga)
 	    {
@@ -114,8 +140,8 @@ ofp_load(const char *fontname)
 		  hash_add(lhash, (uccp)liga, lp);
 		}
 	      char *ivs = strstr(liga, "_uE01");
-	      if (ivs)
-		ofp_set_oiv(ofp, un_u((ccp)hash_exists(ofp->lig, (uccp)lig)), ivs+2);
+	      if (ivs && (has = hash_find(ofp->has,(uccp)lig)))
+		ofp_set_oiv(ofp, has, ivs+2);
 	    }
 	  else
 	    {
@@ -124,30 +150,40 @@ ofp_load(const char *fontname)
 		{
 		  char *name = (char*)lp[i];
 		  *ucode++ = '\0';
-		  if (strcmp(ucode, "U+0000"))
+		  ucode += 2;
+		  if (strcmp(ucode, "0000") || (ucode = (char*)ucode_from_name(ofp, name)))
 		    {
-		      ucode += 2;
-		      ofp_has *has = hash_find(ofp->has, (uccp)ucode);
+		      has = hash_find(ofp->has, (uccp)ucode);
 		      if (!has)
 			{
 			  hash_add(ofp->has, (uccp)ucode, (has = memo_new(ofp->m_has)));
 			  has->name = name;
+			  has->key = un_u(name);
 			}
-		      hash_add(ofp->has, (uccp)ucode, name);
+		    }
+		  else
+		    {
+		      if (!(has = hash_find(ofp->zero, (uccp)un_u(name))))
+			{
+			  hash_add(ofp->zero, (uccp)un_u(name), (has = memo_new(ofp->m_has)));
+			  has->name = name;
+			  has->key = un_u(name);
+			}
 		    }
 		  char *dot = strchr(name, '.');
 		  if (dot)
 		    {
-		      switch (ofp_ext_type(++dot))
+		      *dot++ = '\0';
+		      switch (ofp_ext_type(dot))
 			{
 			case OFP_SALT:
-			  ofp_set_salt(ofp, un_u(name), dot);
+			  ofp_set_salt(ofp, has, dot);
 			  break;
 			case OFP_SSET:
-			  ofp_set_sset(ofp, un_u(name), dot);
+			  ofp_set_sset(ofp, has, dot);
 			  break;
 			case OFP_CVNN:
-			  ofp_set_cvnn(ofp, un_u(name), dot);
+			  ofp_set_cvnn(ofp, has, dot);
 			  break;
 			default:
 			  /* ignore extensions that don't have known semantics */
@@ -172,6 +208,7 @@ ofp_init(void)
 {
   Ofp *ofp = calloc(1, sizeof(Ofp));
   ofp->has = hash_create(2048);
+  ofp->zero = hash_create(128);
   ofp->sst = hash_create(128);
   ofp->cvt = hash_create(128);
   ofp->slt = hash_create(128);
@@ -194,89 +231,112 @@ ofp_ext_type(const char *ext)
 	return OFP_SALT;
     }
 
-  if ('c' == ext[0] && 'c' == ext[1] && isdigit(ext[2]) && isdigit(ext[3]) && !ext[4])
-    return OFP_SSET;
+  if ('c' == ext[0] && 'v' == ext[1] && isdigit(ext[2]) && isdigit(ext[3]) && !ext[4])
+    return OFP_CVNN;
 
   if ('s' == ext[0] && 's' == ext[1] && isdigit(ext[2]) && isdigit(ext[3]) && !ext[4])
-    return OFP_CVNN;
+    return OFP_SSET;
 
   return OFP_NONE;
 }
 
 static void
-ofp_set_salt(Ofp *ofp, const char *n, const char *name)
+ofp_set_salt(Ofp *ofp, ofp_has *h, const char *ext)
 {
-  ofp_salts *o = hash_find(ofp->slt, (uccp)name);
+  ofp_salts *o = hash_find(ofp->slt, (uccp)h->key);
   if (!o)
-    hash_add(ofp->slt, (uccp)name, (o = calloc(1, sizeof(ofp_salts))));
-  bv_set(o->bv, atoi(n));
+    hash_add(ofp->slt, (uccp)h->key, (o = calloc(1, sizeof(ofp_salts))));
+  bv_set(o->bv, atoi(ext));
+  bit_set(h->features[0], OFP_HAS_SALT);
 }
 
 static void
-ofp_set_sset(Ofp *ofp, const char *n, const char *name)
+ofp_set_sset(Ofp *ofp, ofp_has *h, const char *ext)
 {
-  ofp_ssets *o = hash_find(ofp->sst, (uccp)name);
+  ofp_ssets *o = hash_find(ofp->sst, (uccp)h->key);
   if (!o)
-    hash_add(ofp->sst, (uccp)name, (o = calloc(1, sizeof(ofp_ssets))));
-  bv_set(o->bv, atoi(n));
+    hash_add(ofp->sst, (uccp)h->key, (o = calloc(1, sizeof(ofp_ssets))));
+  bv_set(o->bv, atoi(ext+2));
+  bit_set(h->features[0], OFP_HAS_SSET);
 }
 
 static void
-ofp_set_cvnn(Ofp *ofp, const char *n, const char *name)
+ofp_set_cvnn(Ofp *ofp, ofp_has *h, const char *ext)
 {
-  ofp_cvnns *o = hash_find(ofp->cvt, (uccp)name);
+  ofp_cvnns *o = hash_find(ofp->cvt, (uccp)h->key);
   if (!o)
-    hash_add(ofp->cvt, (uccp)name, (o = calloc(1, sizeof(ofp_cvnns))));
-  bv_set(o->bv, atoi(n));
+    hash_add(ofp->cvt, (uccp)h->key, (o = calloc(1, sizeof(ofp_cvnns))));
+  bv_set(o->bv, atoi(ext+2));
+  bit_set(h->features[0], OFP_HAS_CVNN);
 }
 
 static void
-ofp_set_oiv(Ofp *ofp, const char *n, const char *name)
+ofp_set_oiv(Ofp *ofp, ofp_has *h, const char *ext)
 {
-  ofp_oivs *o = hash_find(ofp->oiv, (uccp)name);
+  ofp_oivs *o = hash_find(ofp->oiv, (uccp)h->key);
   if (!o)
-    hash_add(ofp->oiv, (uccp)name, (o = calloc(1, sizeof(ofp_oivs))));
-  bv_set(o->bv, atoi(n));
+    hash_add(ofp->oiv, (uccp)h->key, (o = calloc(1, sizeof(ofp_oivs))));
+  bv_set(o->bv, strtol(ext, NULL, 16));
+  bit_set(h->features[0], OFP_HAS_OIVS);
 }
 
 static void
 ofp_xml_sset(int f, void *arg)
 {
+  fprintf(((ofp_bv_arg*)arg)->fp, "<ss>ss%02d</ss>", f);
 }
 
 static void
 ofp_xml_cvnn(int f, void *arg)
 {
+  fprintf(((ofp_bv_arg*)arg)->fp, "<cv>cv%02d</cv>", f);
 }
 
 static void
 ofp_xml_salt(int f, void *arg)
 {
+  fprintf(((ofp_bv_arg*)arg)->fp, "<s>%d</s>", f);
 }
 
 void
 ofp_xml_feature(int f, void *arg)
 {
-#define bv(hash) 
-
-  switch (f)
+  /* The feature bv is going to be switched by an enum which is keyed
+     to the bit index value, not the bit index itself so we have to
+     recalculate from the index to the value */
+  switch (1<<(f-1))
     {
     case OFP_HAS_SSET:
       {
 	ofp_ssets *s = hash_find(((ofp_bv_arg*)arg)->o->sst, (uccp)((ofp_bv_arg*)arg)->code);
-	bv_each(s->bv, sizeof(s), ofp_xml_sset, arg);
+	if (s)
+	  {
+	    fprintf(((ofp_bv_arg*)arg)->fp, "<ssets>");
+	    bv_each(s->bv, sizeof(s), ofp_xml_sset, arg);
+	    fprintf(((ofp_bv_arg*)arg)->fp, "</ssets>");
+	  }
       }
       break;
     case OFP_HAS_CVNN:
       {
 	ofp_cvnns *s = hash_find(((ofp_bv_arg*)arg)->o->cvt, (uccp)((ofp_bv_arg*)arg)->code);
-	bv_each(s->bv, sizeof(s), ofp_xml_cvnn, arg);
+	if (s)
+	  {
+	    fprintf(((ofp_bv_arg*)arg)->fp, "<cvnns>");
+	    bv_each(s->bv, sizeof(s), ofp_xml_cvnn, arg);
+	    fprintf(((ofp_bv_arg*)arg)->fp, "</cvnns>");
+	  }
       }
       break;
     case OFP_HAS_SALT:
       {
 	ofp_salts *s = hash_find(((ofp_bv_arg*)arg)->o->slt, (uccp)((ofp_bv_arg*)arg)->code);
-	bv_each(s->bv, sizeof(s), ofp_xml_salt, arg);
+	if (s)
+	  {
+	    fprintf(((ofp_bv_arg*)arg)->fp, "<salts>");
+	    bv_each(s->bv, sizeof(s), ofp_xml_salt, arg);
+	    fprintf(((ofp_bv_arg*)arg)->fp, "</salts>");
+	  }
       }
       break;
 #if 0
@@ -292,7 +352,7 @@ ofp_xml_feature(int f, void *arg)
 void
 ofp_xml(Ofp *ofp, FILE *fp)
 {
-  ofp_bv_arg o = { ofp , NULL };
+  ofp_bv_arg o = { ofp , NULL, fp };
   fprintf(fp, "<ofp n=\"%s\" f=\"%s\">", ofp->name, ofp->file);
   const char **k = hash_keys(ofp->has);
   int i;
