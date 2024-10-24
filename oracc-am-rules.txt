@@ -63,6 +63,9 @@ install-exec-local:
 %.c: %.xnn
 	./c2-xnn2c.plx $<
 
+%.ofp: %.ttf
+	./ttf2ofp.sh $*
+
 all.proto: *.c
 	cproto -e $(AM_CPPFLAGS) *.c >x.proto
 	mv x.proto all.proto
