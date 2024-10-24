@@ -15,3 +15,7 @@ font_DATA=Oracc-Noto-SansCuneiform.ttf Oracc-gudea.ttf	\
 showttfx_SOURCES = showttf.c
 showttfx_LDADD = $(xLDADD)
 showttfx_DEPENDENCIES = $(xLDADD)
+
+noinst_LTLIBRARIES=libofp.la
+
+libofp_la_SOURCES=ofp.c
