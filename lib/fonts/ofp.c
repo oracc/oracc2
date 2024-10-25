@@ -1,10 +1,11 @@
 #include <oraccsys.h>
 #include "ofp.h"
 
-static enum Ofp_feature ofp_ext_type(const char *ext);
-static const char *un_u(const char *u);
-static void ofp_ingest(Ofp *ofp);
 static int fnum(const char *n);
+static const char *un_u(const char *u);
+static enum Ofp_feature ofp_ext_type(const char *ext);
+static void ofp_ingest(Ofp *ofp);
+static void ofp_marshall(Ofp *ofp);
 
 static const char *ofp_feat_str[OFPF_NONE];
 
@@ -47,6 +48,12 @@ ofp_set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fco
 #define gp(i) (&o->glyphs[i])
   gp(i)->index = i;
   gp(i)->key = un_u(ligl?ligl:name);
+  if (!hash_find(o->h_sign, (uccp)gp(i)->key))
+    {
+      struct Ofp_sign *sp = memo_new(o->m_sign);
+      sp->key = gp(i)->key;
+      hash_add(o->h_sign, (uccp)gp(i)->key, sp);
+    }
   gp(i)->name = name;
   gp(i)->code = code;
   gp(i)->fcode = fcode;
@@ -110,18 +117,28 @@ ofp_glyph_cmp(const void *a, const void *b)
 #define bp ((Ofp_glyph*)b)
 
   int ret;
-  
-  ret = strcmp(ap->key, bp->key);
-  if (ret)
-    return ret;
 
-  if ((ret = (int)ap->f - (int)bp->f))
-    return ret;
-
-  if ((ret = ap->f_int - bp->f_int))
-    return ret;
-
-  return strcmp(ap->name, bp->name);
+  if (ap->key && bp->key)
+    {
+      ret = strcmp(ap->key, bp->key);
+      if (ret)
+	return ret;
+      
+      if ((ret = (int)ap->f - (int)bp->f))
+	return ret;
+      
+      if ((ret = ap->f_int - bp->f_int))
+	return ret;
+      
+      return strcmp(ap->name, bp->name);
+    }
+  else
+    {
+      if (ap->key)
+	return -1;
+      else
+	return 1;
+    }
 }
 
 Ofp *
@@ -142,10 +159,96 @@ ofp_load(const char *fontname)
       ofp->file = (ccp)pool_copy((uccp)buf, ofp->p);
       ofp_ingest(ofp);
       qsort(ofp->glyphs, ofp->nglyphs, sizeof(Ofp_glyph), ofp_glyph_cmp);
+      ofp_marshall(ofp);
    }
   else
     fprintf(stderr, "ofp_load: unable to read %s: %s\n", buf, strerror(errno));
   return ofp;
+}
+
+/* Collect all the glyphs that belong to each sign */
+static void
+ofp_marshall(Ofp *ofp)
+{
+#define gp(x) (&ofp->glyphs[x])
+  int i;
+  Ofp_sign *curr_sp = hash_find(ofp->h_sign, (uccp)gp(0)->key);
+  for (i = 0; i < ofp->nglyphs; ++i)
+    {
+      if (strcmp(curr_sp->key, gp(i)->key))
+	curr_sp = hash_find(ofp->h_sign, (uccp)gp(i)->key);
+      if (gp(i)->ligl)
+	{
+	  Ofp_liga *lp = memo_new(ofp->m_liga);
+	  lp->sign = curr_sp;
+	  switch (gp(i)->f)
+	    {
+	    case OFPF_CVNN:
+	      if (!lp->cvnns)
+		lp->cvnns = list_create(LIST_SINGLE);
+	      list_add(lp->cvnns, gp(i));
+	      break;
+	    case OFPF_SALT:
+	      if (!lp->salts)
+		lp->salts = list_create(LIST_SINGLE);
+	      list_add(lp->salts, gp(i));
+	      break;
+	    case OFPF_SSET:
+	      if (!lp->ssets)
+		lp->ssets = list_create(LIST_SINGLE);
+	      list_add(lp->ssets, gp(i));
+	      break;
+	    default:
+	      /* nowt */
+	      break;
+	    }
+	  if (gp(i)->ivs)
+	    {
+	      if (!lp->oivs)
+		lp->oivs = list_create(LIST_SINGLE);
+	      list_add(lp->oivs, gp(i));
+	    }
+	}
+      else
+	{
+	  switch (gp(i)->f)
+	    {
+	    case OFPF_CVNN:
+	      if (!curr_sp->cvnns)
+		curr_sp->cvnns = list_create(LIST_SINGLE);
+	      list_add(curr_sp->cvnns, gp(i));
+	      break;
+	    case OFPF_SALT:
+	      if (!curr_sp->salts)
+		curr_sp->salts = list_create(LIST_SINGLE);
+	      list_add(curr_sp->salts, gp(i));
+	      break;
+	    case OFPF_SSET:
+	      if (!curr_sp->ssets)
+		curr_sp->ssets = list_create(LIST_SINGLE);
+	      list_add(curr_sp->ssets, gp(i));
+	      break;
+	    default:
+	      /* nowt */
+	      break;
+	    }
+	  if (gp(i)->ivs)
+	    {
+	      if (!curr_sp->oivs)
+		curr_sp->oivs = list_create(LIST_SINGLE);
+	      list_add(curr_sp->oivs, gp(i));
+	    }
+	}
+    }
+#undef gp
+}
+
+static int
+unicode_value(const char *u)
+{
+  while (isxdigit(*u))
+    ++u;
+  return *u == '\0';
 }
 
 static void
@@ -174,17 +277,18 @@ ofp_ingest(Ofp *ofp)
 	  char *e = liga;
 	  while (isspace(e[-1]))
 	    --e;
-	  e[-1] = '\0';
+	  *e = '\0';
 	  liga += 2;
 	  while (isspace(*liga))
 	    ++liga;
+	  hash_add(ofp->h_liga, (uccp)name, &ofp->glyphs[i]);
 	  char lig[strlen(liga)], *l;
 	  strcpy(lig, liga);
 	  l = strchr(lig, '_');
 	  *l = '\0';
 	  ligl = (char*)pool_copy((uccp)lig, ofp->p);
 
-	  /* Now lp is the name glyph name (may have double
+	  /* Now lp is the glyph name (may have double
 	     extension, e.g., AGRIG.liga.ss01); lig is the lead
 	     ligature element; liga is the ligature sequence */
 	  char *dot = strrchr((ccp)lp, '.');
@@ -206,20 +310,54 @@ ofp_ingest(Ofp *ofp)
 	      *ucode++ = '\0';
 	      ucode += 2;
 	      fcode = ucode;
+	      /* ignore entries that have ucode=0 unless they are .liga + features */
 	      if (!strcmp(ucode, "0000"))
-		ucode = (char*)ucode_from_name(ofp, name);
-	      char *dot = strchr(name, '.');
-	      if (dot)
 		{
-		  *dot++ = '\0';
-		  ext = dot;
-		  f = ofp_ext_type(dot);
+		  if (strstr(name, ".liga"))
+		    {
+		      /* handle AGRIG.liga.ss01 */
+		      char *dot = strrchr(name, '.');
+		      if (strcmp(dot+1, "liga"))
+			{
+			  *dot++ = '\0';
+			  Ofp_glyph *gp = hash_find(ofp->h_liga, (uccp)name);
+			  if (gp)
+			    {
+			      ligl = (char*)gp->ligl;
+			      liga = (char*)gp->liga;
+			      ucode = (char*)gp->code;
+			      ext = dot;
+			      f = ofp_ext_type(dot);
+			    }
+			}
+		      else
+			name = "-";
+		    }
+		  else
+		    {
+		      ucode = (char*)ucode_from_name(ofp, name);
+		      if (!unicode_value(ucode))
+			{
+			  name = "-";
+			  ucode = "0000";
+			}
+		    }
+		}
+	      if (!ligl)
+		{
+		  char *dot = strchr(name, '.');
+		  if (dot)
+		    {
+		      *dot++ = '\0';
+		      ext = dot;
+		      f = ofp_ext_type(dot);
+		    }
 		}
 	    }
 	  else
 	    {
 	      fprintf(stderr, "%s:%d: malformed name\tucode line\n", ofp->file, i+1);
-	      continue;
+	      exit(1);
 	    }
 	}
       ofp_set_glyph(ofp, i, name, ucode, fcode, f, ext, ligl, liga, ivs);
@@ -234,14 +372,15 @@ ofp_dump(Ofp *o, FILE *fp)
   int i;
   for (i = 0; i < o->nglyphs; ++i)
     {
-      fprintf(fp,
-	      "%s\t%s\t%s\t%s\t"
-	      "%s\t%s\t%d\t"
-	      "%s\t%s\t%s\n",
-	      gp(i)->key, gp(i)->name, nonull(gp(i)->code), nonull(gp(i)->fcode),
-	      ofp_feat_str[gp(i)->f], nonull(gp(i)->f_chr), gp(i)->f_int,
-	      nonull(gp(i)->ligl), nonull(gp(i)->liga), nonull(gp(i)->ivs)
-	      );
+      if ('-' != *gp(i)->key)
+	fprintf(fp,
+		"%s\t%s\t%s\t%s\t"
+		"%s\t%s\t%d\t"
+		"%s\t%s\t%s\n",
+		gp(i)->key, gp(i)->name, nonull(gp(i)->code), nonull(gp(i)->fcode),
+		ofp_feat_str[gp(i)->f], nonull(gp(i)->f_chr), gp(i)->f_int,
+		nonull(gp(i)->ligl), nonull(gp(i)->liga), nonull(gp(i)->ivs)
+		);
     }
 #undef gp
 }
@@ -250,6 +389,10 @@ Ofp *
 ofp_init(void)
 {
   Ofp *ofp = calloc(1, sizeof(Ofp));
+  ofp->m_sign = memo_init(sizeof(Ofp_sign), 256);
+  ofp->m_liga = memo_init(sizeof(Ofp_liga), 128);
+  ofp->h_sign = hash_create(2048);
+  ofp->h_liga = hash_create(128);
   ofp->p = pool_init();
   ofp_feat_str[OFPF_BASE] = "";
   ofp_feat_str[OFPF_LIGA] = "liga";

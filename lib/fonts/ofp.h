@@ -9,6 +9,12 @@ typedef struct Ofp
   const char *file;
   int nglyphs;
   struct Ofp_glyph *glyphs;
+  Hash *h_sign;
+  Hash *h_liga;
+  int nsigns;
+  struct Ofp_sign *signs;
+  Memo *m_sign;
+  Memo *m_liga;
   Pool *p;
 } Ofp;
 
@@ -31,6 +37,25 @@ typedef struct Ofp_glyph
   const char *liga;
   const char *ivs;
 } Ofp_glyph;
+
+typedef struct Ofp_sign
+{
+  const char *key;
+  List *salts;
+  List *cvnns;
+  List *ssets;
+  List *oivs;
+  List *ligas;
+} Ofp_sign;
+
+typedef struct Ofp_liga
+{
+  Ofp_sign *sign;
+  List *salts;
+  List *cvnns;
+  List *ssets;  
+  List *oivs;
+} Ofp_liga;
 
 #if 0
 enum ofp_features { OFP_HAS_SSET=0x01, OFP_HAS_CVNN=0x02, OFP_HAS_SALT=0x04, OFP_HAS_OIVS=0x08 };
