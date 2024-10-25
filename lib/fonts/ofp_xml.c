@@ -6,11 +6,14 @@ static void xml_list(Ofp *ofp, List *lp, const char *gtag, const char *itag, FIL
 static void xml_sign(Ofp *ofp, const char *sn, FILE *fp);
 static const char *xutf8_liga_literal(Ofp *o, Ofp_glyph *gp);
 
+const char *ofp_ns = "http://oracc.org/ns/ofp/1.0";
+
 void
 ofp_xml(Ofp *ofp, FILE *fp)
 {
   ofp_debug(ofp, "xml_1.dbg");
-  fprintf(fp, "<ofp n=\"%s\" f=\"%s\">", ofp->name, ofp->file);
+  fprintf(fp, "<ofp xmlns=\"%s\" xmlns:ofp=\"%s\" n=\"%s\" f=\"%s\">",
+	  ofp_ns, ofp_ns, ofp->name, ofp->file);
   int nsign;
   const char **k = hash_keys2(ofp->h_sign, &nsign);
   qsort(k, nsign, sizeof(char*), cmpstringp);
