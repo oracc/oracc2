@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=showttfx
 
-bin_SCRIPTS=ttf2ofp.sh
+bin_SCRIPTS=ttf2ofp.sh ttf2ofp-in.sh
 
 css_DATA=fonts.css
 

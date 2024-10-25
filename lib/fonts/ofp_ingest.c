@@ -66,6 +66,8 @@ ofp_ingest(Ofp *ofp)
 	  if (ucode)
 	    {
 	      *ucode++ = '\0';
+	      while (isspace(*ucode))
+		++ucode;
 	      ucode += 2;
 	      fcode = ucode;
 	      /* ignore entries that have ucode=0 unless they are .liga + features */
