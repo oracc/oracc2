@@ -4,7 +4,7 @@
 void
 ofp_dump(Ofp *o, FILE *fp)
 {
-#define nonull(s) (s ? s : "")
+#define nonull(s) (s ? (ccp)s : "")
 #define gp(i) (&o->glyphs[i])
   int i;
   for (i = 0; i < o->nglyphs; ++i)
@@ -13,10 +13,14 @@ ofp_dump(Ofp *o, FILE *fp)
 	fprintf(fp,
 		"%s\t%s\t%s\t%s\t"
 		"%s\t%s\t%s\t"
+		"%s\t%s\t%s\t"
 		"%s\t%s\t%s\n",
 		gp(i)->key, gp(i)->name, nonull(gp(i)->code), nonull(gp(i)->fcode),
 		ofp_feat_str[gp(i)->f], nonull(gp(i)->f_chr), gp(i)->f_chr ? itoa(gp(i)->f_int) : "",
-		nonull(gp(i)->ligl), nonull(gp(i)->liga), nonull(gp(i)->ivs)
+		nonull(gp(i)->ligl), nonull(gp(i)->liga), nonull(gp(i)->ivs),
+		gp(i)->osl ? nonull(gp(i)->osl->u) : "", 
+		gp(i)->osl ? nonull(gp(i)->osl->o) : "", 
+		gp(i)->osl ? nonull(gp(i)->osl->n) : ""
 		);
     }
 #undef gp

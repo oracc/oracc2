@@ -8,11 +8,17 @@ ofp_marshall(Ofp *ofp)
   Ofp_liga *curr_lig = NULL;
 #define gp(x) (&ofp->glyphs[x])
   int i;
-  Ofp_sign *curr_sp = hash_find(ofp->h_sign, (uccp)gp(0)->key);
+  struct Ofp_sign *curr_sp = memo_new(ofp->m_sign);
+  curr_sp->glyph = gp(0);
+  hash_add(ofp->h_sign, (uccp)gp(0)->key, curr_sp);
   for (i = 0; i < ofp->nglyphs; ++i)
     {
       if (strcmp(curr_sp->glyph->key, gp(i)->key))
-	curr_sp = hash_find(ofp->h_sign, (uccp)gp(i)->key);
+	{
+	  curr_sp = memo_new(ofp->m_sign);
+	  curr_sp->glyph = gp(i);
+	  hash_add(ofp->h_sign, (uccp)gp(i)->key, curr_sp);
+	}
       if (gp(i)->ligl)
 	{
 	  if (!curr_lig || strcmp(gp(i)->liga, curr_lig->glyph->liga))

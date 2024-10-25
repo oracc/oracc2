@@ -18,5 +18,7 @@ fi
 grep Ligature $f-ttf.txt | grep '<-' | sed 's/^[ \t]\+Ligature glyph//' | sed 's/ [0-9]\+//g' | \
     sed 's/) (/_/g' | tr -d '()' | sed 's/^ //' >$f.lig
 # process ligatures first because they may be needed for non-lig feature entries
-sort $f.lig | cat - $f.namuni >$f.ofp
-#rm -f *.{names,ucode,namuni,lig} *-ttf.txt
+sort $f.lig | cat - $f.namuni >$f-ofp.in
+ofpx -t <$f-ofp.in >$f.ofp
+ofpx -x <$f-ofp.in >$f.ofpx
+rm -f *.{names,ucode,namuni,lig} *-ttf.txt *-ofp.in

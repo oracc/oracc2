@@ -39,6 +39,7 @@ typedef struct Ofp_glyph
   const char *f_chr;
   const char *ligl;
   const char *liga;
+  const char *useq; /* liga as useq i.e., u12345_u12345 => x12345.x12345 */
   const char *ivs;
   Osl_uentry *osl;
 } Ofp_glyph;
@@ -81,6 +82,8 @@ extern Ofp *ofp_load(const char *font);
 extern void ofp_dump(Ofp *ofp, FILE *fp);
 extern void ofp_ingest(Ofp *ofp);
 extern void ofp_marshall(Ofp *ofp);
-void ofp_xml(Ofp *ofp, FILE *fp);
+extern void ofp_xml(Ofp *ofp, FILE *fp);
+extern void ofp_debug(Ofp *ofp, const char *fname);
+extern char *liga2useq(Ofp *ofp, const char *liga);
 
 #endif/*OFP_H_*/
