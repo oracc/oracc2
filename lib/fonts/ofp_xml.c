@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <xmlify.h>
 #include "ofp.h"
 
 static void xml_list(Ofp *ofp, List *lp, const char *gtag, const char *itag, FILE *fp);
@@ -56,8 +57,12 @@ xml_list(Ofp *ofp, List *lp, const char *gtag, const char *itag, FILE *fp)
 static void
 xml_sign(Ofp *ofp, const char *sn, FILE *fp)
 {
-  fprintf(fp, "<sign xml:id=\"x%s\" utf8=\"%s\">", sn, utf8ify(strtoul(sn,NULL,16)));
+  fprintf(fp, "<sign xml:id=\"x%s\" utf8=\"%s\"", sn, utf8ify(strtoul(sn,NULL,16)));
   Ofp_sign *osp = hash_find(ofp->h_sign, (uccp)sn);
+  if (osp->glyph->osl)
+    fprintf(fp, " oid=\"%s\" n=\"%s\">", osp->glyph->osl->o, xmlify(osp->glyph->osl->n));
+  else
+    fputc('>', fp);
   if (osp->ssets)
     xml_list(ofp, osp->ssets, "ssets", "sset", fp);
   if (osp->cvnns)

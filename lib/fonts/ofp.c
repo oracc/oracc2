@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "osl_unicode.h"
 #include "ofp.h"
 
 const char *ofp_feat_str[OFPF_NONE];
@@ -68,6 +69,7 @@ ofp_init(void)
   ofp->h_sign = hash_create(2048);
   ofp->h_liga = hash_create(128);
   ofp->p = pool_init();
+  ofp->osl = osl_unicode();
   ofp_feat_str[OFPF_BASE] = "";
   ofp_feat_str[OFPF_LIGA] = "liga";
   ofp_feat_str[OFPF_SSET] = "ss";

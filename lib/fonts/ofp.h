@@ -1,6 +1,8 @@
 #ifndef OFP_H_
 #define OFP_H_
 
+#include "osl_unicode.h"
+
 /* When indexing by U+ or u123AF names we use the 5-hex-digit portion
    only for all hash keys */
 typedef struct Ofp
@@ -16,6 +18,7 @@ typedef struct Ofp
   Memo *m_sign;
   Memo *m_liga;
   Pool *p;
+  Osl_unicode *osl;
 } Ofp;
 
 typedef enum Ofp_feature
@@ -37,11 +40,12 @@ typedef struct Ofp_glyph
   const char *ligl;
   const char *liga;
   const char *ivs;
+  Osl_uentry *osl;
 } Ofp_glyph;
 
 typedef struct Ofp_sign
 {
-  const char *key;
+  Ofp_glyph *glyph;
   List *salts;
   List *cvnns;
   List *ssets;

@@ -154,6 +154,47 @@ fnum(const char *n)
     return 0;
 }
 
+static Osl_uentry*
+get_osl(Ofp *o, Ofp_glyph *gp)
+{
+  Osl_uentry *e = NULL;
+  const char *up = NULL;
+  if (gp->liga)
+    {
+      char u[strlen(gp->liga)*2], *dest;
+      const char *src;
+      src = gp->liga;
+      dest = u;
+      *dest++ = 'x';
+      ++src; /* skip u */
+      while (*src)
+	{
+	  if ('_' == *src)
+	    {
+	      *dest++ = '.';
+	      *dest++ = 'x';
+	      src += 2; /* skip _u */
+	    }
+	  else
+	    *dest++ = *src++;
+	}
+      *dest = '\0';
+      e = hash_find(o->osl->h, (uccp)u);
+      up = u;
+    }
+  else
+    {
+      const char *c = (gp->code ? gp->code : gp->fcode);
+      char u[strlen(c)+3];
+      sprintf(u, "U+%s", c);
+      e = hash_find(o->osl->h, (uccp)u);      
+      up = u;
+    }
+  if (!e && !strstr(up, "U+0000") && !strstr(up, ".xE01"))
+    fprintf(stderr, "no osl for %s\n", up);
+  return e;
+}
+
 static void
 set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
 	  Ofp_feature f, const char *ext, const char *ligl, const char *liga, const char *ivs)
@@ -164,7 +205,7 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
   if (!hash_find(o->h_sign, (uccp)gp(i)->key))
     {
       struct Ofp_sign *sp = memo_new(o->m_sign);
-      sp->key = gp(i)->key;
+      sp->glyph = gp(i);
       hash_add(o->h_sign, (uccp)gp(i)->key, sp);
     }
   gp(i)->name = name;
@@ -179,6 +220,8 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
   gp(i)->ligl = ligl;
   gp(i)->liga = liga;
   gp(i)->ivs = ivs;
+  if ('-' != *gp(i)->key)
+    gp(i)->osl = get_osl(o, gp(i));
 #undef gp
 }
 

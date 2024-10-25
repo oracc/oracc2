@@ -645,7 +645,18 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
   u = hash_keys2(ucode, &nu);
   qsort(u, nu, sizeof(const char *), cmpstringp);
   for (i = 0; u[i]; ++i)
-    fprintf(f, "code\t%s\t%s\t%s\n", u[i], (char*)hash_find(ucode, (uccp)u[i]), (char*)hash_find(unames, (uccp)u[i]));
+    {
+      uccp sn = hash_find(ucode, (uccp)u[i]);
+      struct sl_sign *sp = hash_find(sl->hsentry, sn);
+      if (!sp->oid)
+	{
+	  if (sp->xref)
+	    sp->oid = sp->xref->oid;
+	  if (!sp->oid)
+	    fprintf(stderr, "no code oid\n");
+	}
+      fprintf(f, "code\t%s\t%s\t%s\t%s\n", u[i], sn, sp->oid, (char*)hash_find(unames, (uccp)u[i]));
+    }
 
   u = hash_keys2(urem, &nu);
   qsort(u, nu, sizeof(const char *), cmpstringp);
@@ -684,7 +695,17 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
       if (strchr(x, 'X'))
 	list_add(xseq, (void*)u[i]);
       else
-	fprintf(f, "useq\t%s\t%s\n", u[i], x);
+	{
+	  struct sl_sign *sp = hash_find(sl->hsentry, (uccp)u[i]);
+	  if (!sp->oid)
+	    {
+	      if (sp->xref)
+		sp->oid = sp->xref->oid;
+	      if (!sp->oid)
+		fprintf(stderr, "no useq oid\n");
+	    }
+	  fprintf(f, "useq\t%s\t%s\t%s\t\n", x, u[i], sp->oid);
+	}
     }
 
   for (x = list_first(xseq); x; x = list_next(xseq))

@@ -11,7 +11,7 @@ ofp_marshall(Ofp *ofp)
   Ofp_sign *curr_sp = hash_find(ofp->h_sign, (uccp)gp(0)->key);
   for (i = 0; i < ofp->nglyphs; ++i)
     {
-      if (strcmp(curr_sp->key, gp(i)->key))
+      if (strcmp(curr_sp->glyph->key, gp(i)->key))
 	curr_sp = hash_find(ofp->h_sign, (uccp)gp(i)->key);
       if (gp(i)->ligl)
 	{
