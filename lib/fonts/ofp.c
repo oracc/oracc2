@@ -1,39 +1,19 @@
 #include <oraccsys.h>
 #include "ofp.h"
 
-static enum ofp_type ofp_ext_type(const char *ext);
+static enum Ofp_feature ofp_ext_type(const char *ext);
+static const char *un_u(const char *u);
+static void ofp_ingest(Ofp *ofp);
+static int fnum(const char *n);
+
+static const char *ofp_feat_str[OFPF_NONE];
+
+#if 0
 static void ofp_set_salt(Ofp *ofp, ofp_has *h, const char *name);
 static void ofp_set_sset(Ofp *ofp, ofp_has *h, const char *name);
 static void ofp_set_cvnn(Ofp *ofp, ofp_has *h, const char *name);
 static void ofp_set_oiv(Ofp *ofp,  ofp_has *h, const char *name);
-
-/* int is the bit-index; void* is user data */
-typedef void (bv_each_fnc)(int,void*);
-
-static void
-bv_set(unsigned char *bv, int nth)
-{
-  int i = nth/8;
-  int b = nth%8;
-  if (b)
-    bv[i] |= 1<<(b-1);
-  else
-    bv[i-1] |= 1<<7;
-}
-
-static void
-bv_each(unsigned char *bv, int len, bv_each_fnc f, void *user)
-{
-  int i;
-  for (i = 0; i < len; ++i)
-    if (bv[i])
-      {
-	int j;
-	for (j = 0; j < 8; ++j)
-	  if (bit_get(bv[i], (1<<j)))
-	    f((i*8)+j+1, user);
-      }
-}
+#endif
 
 /* The OFP file format is very simple and consists of two different kinds of lines:
 
@@ -60,6 +40,39 @@ bv_each(unsigned char *bv, int len, bv_each_fnc f, void *user)
 
  */
 
+static void
+ofp_set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
+	      Ofp_feature f, const char *ext, const char *ligl, const char *liga, const char *ivs)
+{
+#define gp(i) (&o->glyphs[i])
+  gp(i)->index = i;
+  gp(i)->key = un_u(ligl?ligl:name);
+  gp(i)->name = name;
+  gp(i)->code = code;
+  gp(i)->fcode = fcode;
+  gp(i)->f = f;
+  if (ext)
+    {
+      gp(i)->f_int = (f == OFPF_OIVS ? (int)strtol(ext,NULL,16) : fnum(ext));
+      gp(i)->f_chr = ext;
+    }
+  gp(i)->ligl = ligl;
+  gp(i)->liga = liga;
+  gp(i)->ivs = ivs;
+#undef gp
+}
+
+static int
+fnum(const char *n)
+{
+  while (*n && !isdigit(*n))
+    ++n;
+  if (n)
+    return atoi(n);
+  else
+    return 0;
+}
+
 static const char *
 un_u(const char *u)
 {
@@ -85,12 +98,30 @@ ucode_from_name(Ofp *o, const char *name)
       char *dot = strchr(buf, '.');
       if (dot)
 	*dot = '\0';
-      if ((code = (ccp)hash_exists(o->has, (uccp)buf)))
-	return code;
-      else
-	return (ccp)pool_copy((uccp)buf, o->p);
+      return (ccp)pool_copy((uccp)buf, o->p);
     }
   return NULL;
+}
+
+static int
+ofp_glyph_cmp(const void *a, const void *b)
+{
+#define ap ((Ofp_glyph*)a)
+#define bp ((Ofp_glyph*)b)
+
+  int ret;
+  
+  ret = strcmp(ap->key, bp->key);
+  if (ret)
+    return ret;
+
+  if ((ret = (int)ap->f - (int)bp->f))
+    return ret;
+
+  if ((ret = ap->f_int - bp->f_int))
+    return ret;
+
+  return strcmp(ap->name, bp->name);
 }
 
 Ofp *
@@ -106,120 +137,130 @@ ofp_load(const char *fontname)
 
   if (!access(buf, R_OK) || !strcmp(buf, "-"))
     {
-      unsigned char *fmem, **lp;
-      size_t nline;
-
       ofp = ofp_init();
       ofp->name = fontname;
       ofp->file = (ccp)pool_copy((uccp)buf, ofp->p);
-      lp = loadfile_lines3((uccp)buf, &nline, &fmem);
-      int i;
-      for (i = 0; i < nline; ++i)
-	{
-	  ofp_has *has = NULL;
-	  char *liga = strstr((ccp)lp[i], "<-");
-	  if (liga)
-	    {
-	      char *e = liga;
-	      while (isspace(e[-1]))
-		--e;
-	      e[-1] = '\0';
-	      liga += 2;
-	      while (isspace(*liga))
-		++liga;
-	      char lig[strlen(liga)], *l;
-	      strcpy(lig, liga);
-	      l = strchr(lig, '_');
-	      *l = '\0';
-	      Hash *lhash = hash_find(ofp->lig, (uccp)lig);
-	      if (lhash)
-		hash_add(ofp->lig, (uccp)liga, lp);
-	      else
-		{
-		  hash_add(ofp->lig, pool_copy((uccp)lig, ofp->p), (lhash = hash_create(20)));
-		  hash_add(lhash, (uccp)liga, lp);
-		}
-	      char *ivs = strstr(liga, "_uE01");
-	      if (ivs && (has = hash_find(ofp->has,(uccp)lig)))
-		ofp_set_oiv(ofp, has, ivs+2);
-	    }
-	  else
-	    {
-	      char *ucode = strchr((ccp)lp[i], '\t');
-	      if (ucode)
-		{
-		  char *name = (char*)lp[i];
-		  *ucode++ = '\0';
-		  ucode += 2;
-		  if (strcmp(ucode, "0000") || (ucode = (char*)ucode_from_name(ofp, name)))
-		    {
-		      has = hash_find(ofp->has, (uccp)ucode);
-		      if (!has)
-			{
-			  hash_add(ofp->has, (uccp)ucode, (has = memo_new(ofp->m_has)));
-			  has->name = name;
-			  has->key = un_u(name);
-			}
-		    }
-		  else
-		    {
-		      if (!(has = hash_find(ofp->zero, (uccp)un_u(name))))
-			{
-			  hash_add(ofp->zero, (uccp)un_u(name), (has = memo_new(ofp->m_has)));
-			  has->name = name;
-			  has->key = un_u(name);
-			}
-		    }
-		  char *dot = strchr(name, '.');
-		  if (dot)
-		    {
-		      *dot++ = '\0';
-		      switch (ofp_ext_type(dot))
-			{
-			case OFP_SALT:
-			  ofp_set_salt(ofp, has, dot);
-			  break;
-			case OFP_SSET:
-			  ofp_set_sset(ofp, has, dot);
-			  break;
-			case OFP_CVNN:
-			  ofp_set_cvnn(ofp, has, dot);
-			  break;
-			default:
-			  /* ignore extensions that don't have known semantics */
-			  break;
-			}
-		    }
-		}
-	      else
-		{
-		  fprintf(stderr, "%s:%d: malformed name\tucode line\n", buf, i+1);
-		}
-	    }
-	}
-    }
+      ofp_ingest(ofp);
+      qsort(ofp->glyphs, ofp->nglyphs, sizeof(Ofp_glyph), ofp_glyph_cmp);
+   }
   else
     fprintf(stderr, "ofp_load: unable to read %s: %s\n", buf, strerror(errno));
   return ofp;
+}
+
+static void
+ofp_ingest(Ofp *ofp)
+{
+  unsigned char *fmem, **lp;
+  size_t nline;
+
+  lp = loadfile_lines3((uccp)ofp->file, &nline, &fmem);
+
+  ofp->nglyphs = nline;
+  ofp->glyphs = calloc(ofp->nglyphs, sizeof(Ofp_glyph));
+  
+  int i;
+  for (i = 0; i < nline; ++i)
+    {
+      char *name = (char*)lp[i];
+      Ofp_feature f = OFPF_BASE;
+      const char *ext = NULL;
+      char *liga = strstr((ccp)lp[i], "<-");
+      char *ligl = NULL;
+      const char *fcode = NULL, *ucode = NULL;
+      const char *ivs = NULL;
+      if (liga)
+	{
+	  char *e = liga;
+	  while (isspace(e[-1]))
+	    --e;
+	  e[-1] = '\0';
+	  liga += 2;
+	  while (isspace(*liga))
+	    ++liga;
+	  char lig[strlen(liga)], *l;
+	  strcpy(lig, liga);
+	  l = strchr(lig, '_');
+	  *l = '\0';
+	  ligl = (char*)pool_copy((uccp)lig, ofp->p);
+
+	  /* Now lp is the name glyph name (may have double
+	     extension, e.g., AGRIG.liga.ss01); lig is the lead
+	     ligature element; liga is the ligature sequence */
+	  char *dot = strrchr((ccp)lp, '.');
+	  if (dot && strcmp(dot, ".liga")) /* .liga is left as part of the name */
+	    {
+	      *dot++ = '\0';
+	      ext = dot;
+	      f = ofp_ext_type(dot);
+	    }
+
+	  if ((ivs = strstr(liga, "_uE01")))
+	    ivs += 2;
+	}
+      else
+	{
+	  char *ucode = strchr((ccp)lp[i], '\t');
+	  if (ucode)
+	    {
+	      *ucode++ = '\0';
+	      ucode += 2;
+	      fcode = ucode;
+	      if (!strcmp(ucode, "0000"))
+		ucode = (char*)ucode_from_name(ofp, name);
+	      char *dot = strchr(name, '.');
+	      if (dot)
+		{
+		  *dot++ = '\0';
+		  ext = dot;
+		  f = ofp_ext_type(dot);
+		}
+	    }
+	  else
+	    {
+	      fprintf(stderr, "%s:%d: malformed name\tucode line\n", ofp->file, i+1);
+	      continue;
+	    }
+	}
+      ofp_set_glyph(ofp, i, name, ucode, fcode, f, ext, ligl, liga, ivs);
+    }
+}
+
+void
+ofp_dump(Ofp *o, FILE *fp)
+{
+#define nonull(s) (s ? s : "")
+#define gp(i) (&o->glyphs[i])
+  int i;
+  for (i = 0; i < o->nglyphs; ++i)
+    {
+      fprintf(fp,
+	      "%s\t%s\t%s\t%s\t"
+	      "%s\t%s\t%d\t"
+	      "%s\t%s\t%s\n",
+	      gp(i)->key, gp(i)->name, nonull(gp(i)->code), nonull(gp(i)->fcode),
+	      ofp_feat_str[gp(i)->f], nonull(gp(i)->f_chr), gp(i)->f_int,
+	      nonull(gp(i)->ligl), nonull(gp(i)->liga), nonull(gp(i)->ivs)
+	      );
+    }
+#undef gp
 }
 
 Ofp *
 ofp_init(void)
 {
   Ofp *ofp = calloc(1, sizeof(Ofp));
-  ofp->has = hash_create(2048);
-  ofp->zero = hash_create(128);
-  ofp->sst = hash_create(128);
-  ofp->cvt = hash_create(128);
-  ofp->slt = hash_create(128);
-  ofp->lig = hash_create(128);
-  ofp->oiv = hash_create(128);
   ofp->p = pool_init();
-  ofp->m_has = memo_init(sizeof(ofp_has), 256);
+  ofp_feat_str[OFPF_BASE] = "";
+  ofp_feat_str[OFPF_LIGA] = "liga";
+  ofp_feat_str[OFPF_SSET] = "ss";
+  ofp_feat_str[OFPF_CVNN] = "cv";
+  ofp_feat_str[OFPF_SALT] = "salt";
+  ofp_feat_str[OFPF_NONE] = "?";
   return ofp;
 }
 
-enum ofp_type
+enum Ofp_feature
 ofp_ext_type(const char *ext)
 {
   if (isdigit(*ext))
@@ -228,58 +269,19 @@ ofp_ext_type(const char *ext)
 	++ext;
       while (isdigit(*ext));
       if (!*ext)
-	return OFP_SALT;
+	return OFPF_SALT;
     }
 
   if ('c' == ext[0] && 'v' == ext[1] && isdigit(ext[2]) && isdigit(ext[3]) && !ext[4])
-    return OFP_CVNN;
+    return OFPF_CVNN;
 
   if ('s' == ext[0] && 's' == ext[1] && isdigit(ext[2]) && isdigit(ext[3]) && !ext[4])
-    return OFP_SSET;
+    return OFPF_SSET;
 
-  return OFP_NONE;
+  return OFPF_NONE;
 }
 
-static void
-ofp_set_salt(Ofp *ofp, ofp_has *h, const char *ext)
-{
-  ofp_salts *o = hash_find(ofp->slt, (uccp)h->key);
-  if (!o)
-    hash_add(ofp->slt, (uccp)h->key, (o = calloc(1, sizeof(ofp_salts))));
-  bv_set(o->bv, atoi(ext));
-  bit_set(h->features[0], OFP_HAS_SALT);
-}
-
-static void
-ofp_set_sset(Ofp *ofp, ofp_has *h, const char *ext)
-{
-  ofp_ssets *o = hash_find(ofp->sst, (uccp)h->key);
-  if (!o)
-    hash_add(ofp->sst, (uccp)h->key, (o = calloc(1, sizeof(ofp_ssets))));
-  bv_set(o->bv, atoi(ext+2));
-  bit_set(h->features[0], OFP_HAS_SSET);
-}
-
-static void
-ofp_set_cvnn(Ofp *ofp, ofp_has *h, const char *ext)
-{
-  ofp_cvnns *o = hash_find(ofp->cvt, (uccp)h->key);
-  if (!o)
-    hash_add(ofp->cvt, (uccp)h->key, (o = calloc(1, sizeof(ofp_cvnns))));
-  bv_set(o->bv, atoi(ext+2));
-  bit_set(h->features[0], OFP_HAS_CVNN);
-}
-
-static void
-ofp_set_oiv(Ofp *ofp, ofp_has *h, const char *ext)
-{
-  ofp_oivs *o = hash_find(ofp->oiv, (uccp)h->key);
-  if (!o)
-    hash_add(ofp->oiv, (uccp)h->key, (o = calloc(1, sizeof(ofp_oivs))));
-  bv_set(o->bv, strtol(ext, NULL, 16));
-  bit_set(h->features[0], OFP_HAS_OIVS);
-}
-
+#if 0
 static void
 ofp_xml_sset(int f, void *arg)
 {
@@ -301,52 +303,6 @@ ofp_xml_salt(int f, void *arg)
 void
 ofp_xml_feature(int f, void *arg)
 {
-  /* The feature bv is going to be switched by an enum which is keyed
-     to the bit index value, not the bit index itself so we have to
-     recalculate from the index to the value */
-  switch (1<<(f-1))
-    {
-    case OFP_HAS_SSET:
-      {
-	ofp_ssets *s = hash_find(((ofp_bv_arg*)arg)->o->sst, (uccp)((ofp_bv_arg*)arg)->code);
-	if (s)
-	  {
-	    fprintf(((ofp_bv_arg*)arg)->fp, "<ssets>");
-	    bv_each(s->bv, sizeof(s), ofp_xml_sset, arg);
-	    fprintf(((ofp_bv_arg*)arg)->fp, "</ssets>");
-	  }
-      }
-      break;
-    case OFP_HAS_CVNN:
-      {
-	ofp_cvnns *s = hash_find(((ofp_bv_arg*)arg)->o->cvt, (uccp)((ofp_bv_arg*)arg)->code);
-	if (s)
-	  {
-	    fprintf(((ofp_bv_arg*)arg)->fp, "<cvnns>");
-	    bv_each(s->bv, sizeof(s), ofp_xml_cvnn, arg);
-	    fprintf(((ofp_bv_arg*)arg)->fp, "</cvnns>");
-	  }
-      }
-      break;
-    case OFP_HAS_SALT:
-      {
-	ofp_salts *s = hash_find(((ofp_bv_arg*)arg)->o->slt, (uccp)((ofp_bv_arg*)arg)->code);
-	if (s)
-	  {
-	    fprintf(((ofp_bv_arg*)arg)->fp, "<salts>");
-	    bv_each(s->bv, sizeof(s), ofp_xml_salt, arg);
-	    fprintf(((ofp_bv_arg*)arg)->fp, "</salts>");
-	  }
-      }
-      break;
-#if 0
-    case OFP_HAS_OIVS:
-      bv_each(bv, ofp_xml_oivs, arg);
-      break;
-#endif
-    default:
-      break;
-    }
 }
 
 void
@@ -369,3 +325,4 @@ ofp_xml(Ofp *ofp, FILE *fp)
     }
   fprintf(fp, "</ofp>");
 }
+#endif
