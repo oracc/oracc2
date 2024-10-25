@@ -22,6 +22,7 @@ typedef enum Ofp_feature
   {
     OFPF_BASE , OFPF_LIGA , OFPF_SSET , OFPF_CVNN , OFPF_OIVS , OFPF_SALT , OFPF_NONE
   } Ofp_feature;
+extern const char *ofp_feat_str[OFPF_NONE];
 
 typedef struct Ofp_glyph
 {
@@ -50,10 +51,11 @@ typedef struct Ofp_sign
 
 typedef struct Ofp_liga
 {
-  Ofp_sign *sign;
+  List *ligas;
+  Ofp_glyph *glyph;
   List *salts;
   List *cvnns;
-  List *ssets;  
+  List *ssets;
   List *oivs;
 } Ofp_liga;
 
@@ -73,5 +75,8 @@ extern Ofp *ofp_init(void);
 extern void ofp_term(Ofp *ofp);
 extern Ofp *ofp_load(const char *font);
 extern void ofp_dump(Ofp *ofp, FILE *fp);
+extern void ofp_ingest(Ofp *ofp);
+extern void ofp_marshall(Ofp *ofp);
+void ofp_xml(Ofp *ofp, FILE *fp);
 
 #endif/*OFP_H_*/
