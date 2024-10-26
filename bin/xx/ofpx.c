@@ -3,11 +3,13 @@
 
 int tsv_dump = 0;
 int xml_dump = 0;
+const char *tsv_file = "-";
+const char *xml_file = "-";
 
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "tx");
+  options(argc, argv, "t::x::");
 
   if (!tsv_dump && !xml_dump)
     tsv_dump = 1;
@@ -15,10 +17,32 @@ main(int argc, char **argv)
   Ofp *ofp = ofp_load("-");
 
   if (xml_dump)
-    ofp_xml(ofp, stdout);
+    {
+      FILE *fp = stdout;
+      if ('-' != *xml_file)
+	if (!(fp = fopen(xml_file, "w")))
+	  fprintf(stderr, "ofpx: can't write %s: %s\n", xml_file, strerror(errno));
+      if (fp)
+	{
+	  ofp_xml(ofp, fp);
+	  if ('-' != *xml_file)
+	    fclose(fp);
+	}
+    }
 
   if (tsv_dump)
-    ofp_dump(ofp, stdout);
+    {
+      FILE *fp = stdout;
+      if ('-' != *tsv_file)
+	if (!(fp = fopen(tsv_file, "w")))
+	  fprintf(stderr, "ofpx: can't write %s: %s\n", tsv_file, strerror(errno));
+      if (fp)
+	{
+	  ofp_dump(ofp, fp);
+	  if ('-' != *tsv_file)
+	    fclose(fp);
+	}
+    }
 }
 
 int
@@ -28,9 +52,13 @@ opts(int argc, const char *arg)
     {
     case 't':
       tsv_dump = 1;
+      if (arg)
+	tsv_file = arg;
       break;
     case 'x':
       xml_dump = 1;
+      if (arg)
+	xml_file = arg;
       break;
     }
   return 0;

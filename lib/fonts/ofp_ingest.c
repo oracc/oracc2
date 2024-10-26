@@ -28,7 +28,8 @@ ofp_ingest(Ofp *ofp)
       const char *ext = NULL;
       char *liga = strstr((ccp)lp[i], "<-");
       char *ligl = NULL;
-      const char *fcode = NULL, *ucode = NULL;
+      const char *fcode = NULL;
+      char *ucode = NULL;
       const char *ivs = NULL;
       if (liga)
 	{
@@ -62,7 +63,7 @@ ofp_ingest(Ofp *ofp)
 	}
       else
 	{
-	  char *ucode = strchr((ccp)lp[i], '\t');
+	  ucode = strchr((ccp)lp[i], '\t');
 	  if (ucode)
 	    {
 	      *ucode++ = '\0';
@@ -176,12 +177,12 @@ liga2useq(Ofp *ofp, const char *liga)
       else
 	*dest++ = *src++;
     }
-  dest[-1] = '\0';
+  *dest = '\0';
   return (char*)pool_copy((uccp)u, ofp->p);
 }
 
 static Osl_uentry*
-get_osl(Ofp *o, Ofp_glyph *gp)
+get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
 {
   Osl_uentry *e = NULL;
   char *up = NULL;
@@ -203,6 +204,15 @@ get_osl(Ofp *o, Ofp_glyph *gp)
 	      e = hash_find(o->osl->h, (uccp)up);
 	    }
 	}
+      if (!e) /* the ligature sequence is not a sign */
+	{
+	  free(up);
+	  char buf[strlen(gp->ligl)+2];
+	  strcpy(buf+1, gp->ligl);
+	  buf[0] = 'U'; buf[1] = '+';
+	  up = strdup(buf);
+	  e = hash_find(o->osl->h, (uccp)up);
+	}
     }
   else
     {
@@ -212,11 +222,15 @@ get_osl(Ofp *o, Ofp_glyph *gp)
       up = strdup(u);
       e = hash_find(o->osl->h, (uccp)u);
     }
-  if (!e && !strstr(up, "U+0000") && !strstr(up, ".xE01"))
+  if (!e && !strstr(up, "U+0000") && !strstr(up, ".xE01")
+      && (strlen(up)==7 || strstr(up, "U+E")))
     fprintf(stderr, "no osl for %s\n", up);
   else if (e)
     /*fprintf(stderr, "lookup of %s found %s\n", up, e->u)*/;
-  free(up);
+  /* A) Don't free this because caller wants it; B) Make sure it is
+     freeable; don't return a pool_copy */
+  /*free(up);*/
+  *found_as = up;
   return e;
 }
 
@@ -226,7 +240,6 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
 {
 #define gp(i) (&o->glyphs[i])
   gp(i)->index = i;
-  gp(i)->key = un_u(ligl?ligl:name);
   gp(i)->name = name;
   gp(i)->code = code;
   gp(i)->fcode = fcode;
@@ -239,8 +252,44 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
   gp(i)->ligl = ligl;
   gp(i)->liga = liga;
   gp(i)->ivs = ivs;
-  if ('-' != *gp(i)->key)
-    gp(i)->osl = get_osl(o, gp(i));
+  /*
+   * If the liga or name is known in the sign list use liga or name as
+   * key.
+   *
+   * If not, use ligl, the lead ligature sign, or the name as the
+   * key.
+   *
+   * this will mean that ligatures that are not defined as
+   * sequences in the sign list will be registered under their lead
+   * sign.
+   *
+   */
+  if ('-' != *gp(i)->name)
+    {
+      char *found_as = NULL;
+      Osl_uentry *ou = get_osl(o, gp(i), &found_as);
+      if (ou)
+	{
+	  int offset = 0;
+	  if ('U' == found_as[0] && '+' == found_as[1])
+	    offset = 2;
+	  else if ('u' == found_as[0])
+	    offset = 1;
+	  gp(i)->osl = ou;
+	  gp(i)->key = (ccp)pool_copy((uccp)found_as+offset, o->p);
+	}
+      else
+	{
+	  gp(i)->osl = NULL;
+	  if (gp(i)->code)
+	    gp(i)->key = gp(i)->code;
+	  else
+	    gp(i)->key = gp(i)->name;
+	}
+      free(found_as);
+    }
+  else
+    gp(i)->key = gp(i)->name; /* "-" for key and name */
 #undef gp
 }
 

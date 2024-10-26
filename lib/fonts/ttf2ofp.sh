@@ -5,9 +5,8 @@ if [ "$ff" == "" ]; then
     exit 1;
 fi
 f=`basename $ff .ttf`
-ttf2ofp-in.sh $f
-if [ -s $f-ofp.in ]; then
-    ofpx -t <$f-ofp.in >$f.ofp
-    ofpx -x <$f-ofp.in >$f.ofpx
+ttf2oin.sh $f
+if [ -s $f.oin ]; then
+    ofpx -t$f.ofp -x$f.ofpx <$f.oin
     rm -f *.{names,ucode,namuni,lig} *-ttf.txt *-ofp.in
 fi
