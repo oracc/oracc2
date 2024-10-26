@@ -1,3 +1,5 @@
 #!/bin/sh
 cut -f2 Oracc-Assyrian.data | sed 's/^ \+//' | paste mzl.lst - oracc-assyrian-utf8.lst >font.tab
-rocox -R '<tr><td>%1</td><td>%2</td><td>%3</td></tr>' <font.tab
+cat oa-head.html >oa.html
+rocox -n -R '<tr><td>%1</td><td>%2</td><td class="oa">%3</td></tr>' <font.tab >>oa.html
+cat oa-tail.html >>oa.html
