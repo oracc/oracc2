@@ -249,10 +249,18 @@
 	    <xsl:if test="sl:images/sl:i[@loc]">
 	      <xsl:text>&#xa0;=&#xa0;</xsl:text>
 	      <xsl:for-each select="sl:images/sl:i[@loc][1]">
-		<xsl:variable name="ref" select="@ref"/>
-		<xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
-		<esp:image height="40px" url="/{$header/@proj}/{$header/@path}/{@loc}"
-			   description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+ 		<xsl:variable name="ref" select="@ref"/>
+		<xsl:variable name="css" select="/*/sl:iheader[@xml:id=$ref]/@css"/>
+		<xsl:choose>
+		  <xsl:when test="string-length($css)>0">
+		    <span class="{$css}"><xsl:value-of select="../preceding-sibling::sl:ucun"/></span>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
+		    <esp:image height="40px" url="/{$header/@proj}/{$header/@path}/{@loc}"
+			       description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>
+		  </xsl:otherwise>
+		</xsl:choose>
 	      </xsl:for-each>
 	    </xsl:if>
 	  </esp:link>

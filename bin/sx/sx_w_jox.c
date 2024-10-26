@@ -353,15 +353,30 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	  for (i = 0; i < list_len(sl->images); ++i)
 	    {
 	      const char *o = itoa(i);
-	      ratts = rnvval_aa("x",
-				"xml:id", sl->iheaders[i].id,
-				"proj", sl->iheaders[i].proj ? sl->iheaders[i].proj : ".",
-				"path", sl->iheaders[i].path,
-				"order", o,
-				"label", sl->iheaders[i].label,
-				sl->iheaders[i].thumb ? "thumb" : NULL,
-				sl->iheaders[i].thumb ? sl->iheaders[i].thumb : NULL, 
-				NULL);
+	      const char *fontpath = (sl->iheaders[i].type == IMH_FONT ? "font" : "path");
+	      List *a = list_create(LIST_SINGLE);
+	      list_add(a, (void*)"xml:id");
+	      list_add(a, (void*)sl->iheaders[i].id);
+	      list_add(a, (void*)"proj");
+	      list_add(a, (void*)(sl->iheaders[i].proj ? sl->iheaders[i].proj : "."));
+	      list_add(a, (void*)fontpath);
+	      list_add(a, (void*)sl->iheaders[i].path);
+	      list_add(a, (void*)"order");
+	      list_add(a, (void*)o);
+	      list_add(a, (void*)"label");
+	      list_add(a, (void*)sl->iheaders[i].label);
+	      if (sl->iheaders[i].thumb)
+		{
+		  list_add(a, (void*)"thumb");
+		  list_add(a, (void*)sl->iheaders[i].thumb);
+		}
+	      if (sl->iheaders[i].css)
+		{
+		  list_add(a, (void*)"css");
+		  list_add(a, (void*)sl->iheaders[i].css);
+		}
+	      const char **atts = list2chars(a);
+	      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
 	      joxer_ec(&sl->iheaders[i].mloc, "sl:iheader", ratts);
 	    }
 	}

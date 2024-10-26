@@ -63,7 +63,13 @@ install-exec-local:
 %.c: %.xnn
 	./c2-xnn2c.plx $<
 
-%.ofp: %.ttf
+%.def: %.def.in
+	$(ORACCIFY) $<
+
+%.oin: %.ttf ttf2oin.sh
+	./ttf2oin.sh $*
+
+%.ofp: %.oin %.def ttf2ofp.sh ofp2im.sh ${bindir}/ofpx
 	./ttf2ofp.sh $*
 
 all.proto: *.c
@@ -83,6 +89,7 @@ AM_CPPFLAGS=\
 	-I$(top_srcdir)/lib/collate \
 	-I$(top_srcdir)/lib/rnc \
 	-I$(top_srcdir)/lib/std \
+	-I$(top_srcdir)/lib/fonts \
 	-I$(top_srcdir)/lib/frm \
 	-I$(top_srcdir)/lib/joxer \
 	-I$(top_srcdir)/lib/jsn \

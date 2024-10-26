@@ -1,10 +1,41 @@
 @font-face {
-   font-family: 'Noto Sans Cuneiform';
-   src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
+   font-family: 'Oracc Noto SansCuneiform';
+   src: url('/fonts/Oracc-Noto-SansCuneiform.ttf');
+}
+
+@font-face {
+   font-family: 'Oracc OBFreie Regular';
+   src: url('/fonts/Oracc-OBF-Regular.ttf');
+}
+
+@font-face {
+   font-family: 'Oracc Gudea';
+   src: url('/fonts/Oracc-gudea.ttf');
+}
+
+@font-face {
+   font-family: 'Cuneiform Classic';
+   src: url('/fonts/CuneiformClassic-final.ttf');
 }
 
 .osl {
-   font-family: "Noto Sans Cuneiform";
+   font-family: "Oracc Noto SansCuneiform";
+}
+
+.ofs-cc {
+   font-family: "Cuneiform Classic";
+}
+
+.ofs-gudea {
+   font-family: "Oracc Gudea";
+}
+
+.ofs-noto {
+   font-family: "Oracc Noto SansCuneiform";
+}
+
+.ofs-oobf {
+   font-family: "Oracc OBFreie Regular";
 }
 
 .ss01 {
@@ -28,23 +59,17 @@
 }
 
 .early {
-    font-family: "Noto Sans Cuneiform";
-    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
     font-feature-settings: "ss01";
 }
 
 .gudea {
-    font-family: "Noto Sans Cuneiform";
-    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
     font-feature-settings: "ss01", "ss02";
 }
 
 .middle {
-    font-family: "Noto Sans Cuneiform";
-    src: url('/fonts/Noto-SansCuneiform-OSL.ttf');
     font-feature-settings: "ss01", "ss02";
 }
 
-.noto {
-   font-family: "Noto Sans Cuneiform";
+.late {
+    font-feature-settings: "ss01", "ss02", "ss03";
 }

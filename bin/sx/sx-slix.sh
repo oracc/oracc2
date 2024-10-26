@@ -54,6 +54,7 @@ if [ "$asl" != "" ]; then
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
 	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml
+	sx -u $asl | cut -f 2-4 | grep 'o[0-9]\+$' >02pub/unicode.tsv
     else
 	echo "$0: errors in processing $asl. Stop."
 	exit 1
