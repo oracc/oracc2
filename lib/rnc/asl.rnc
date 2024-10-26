@@ -161,14 +161,17 @@ sl.iheader = element sl:iheader { attribute xml:id { xsd:NCName } ,
 	     	     		  attribute label { text } ,
 	     	     		  attribute order { xsd:string { pattern="[0-9]+" } } ,
 	     	     		  attribute proj { text } ,
-	     	     		  attribute path { text } ,
+	     	     		  (attribute path { text } | attribute font { text}),
+	     	     		  attribute css { text }? ,
+	     	     		  attribute mag { text }? ,
 	     	     		  attribute thumb { text }? ,
 				  attribute period { text }? }
 
 sl.images = element sl:images {
 	    	    # sl:i can be empty so the entire attribute group is optional
             	    element sl:i { (attribute ref { xsd:NCName } ,
-		    	    	    attribute loc { text },
+		    	    	    attribute loc { text }?,
+		    	    	    attribute chr { text }?,
 		    	    	    attribute n { text }?)?
 			 	  }*
       	    }

@@ -2,6 +2,8 @@
 #include <signlist.h>
 #include <sx.h>
 
+
+
 /**sx_images -- load the image manifests into a Roco
  *
  * -the number of columns is the number of image manifests;
@@ -27,13 +29,32 @@ sx_images(struct sl_signlist *sl)
       for (m = list_first(sl->images), nm=0; m; m = list_next(sl->images), ++nm)
 	{
 	  const char *improj = NULL;
-	  const char *imfile = projectify(m->user, &improj);
+	  const char *imfile = m->user;
+	  int sparse_flag = 0; /* means ignore OIDs that aren't found in glossary */
+	  if ('-' == *imfile)
+	    {
+	      sparse_flag = 1;
+	      ++imfile;
+	    }
+	  if (access(imfile, R_OK))
+	    {
+	      char buf[strlen(oracc())+strlen("/lib/data/0")+strlen(imfile)];
+	      sprintf(buf, "%s/lib/data/%s", oracc(), imfile);
+	      if (access(buf, R_OK))
+		{
+		  fprintf(stderr, "sx: @img file %s or %s not readable; ignoring entry\n", imfile, buf);
+		  continue;
+		}
+	      imfile = pool_copy(buf, sl->p);
+	      improj = "@@oracc@@";
+	    }
 	  Roco *mr = roco_load(imfile, 0, NULL, NULL, NULL);
 	  char buf[16];
 	  sprintf(buf, "i%d", nm);
 	  sl->iheaders[nm].r = mr;
 	  sl->iheaders[nm].id = (ccp)pool_copy((uccp)buf, sl->p);
 	  sl->iheaders[nm].mloc = *m;
+	  sl->iheaders[nm].sparse = sparse_flag;
 	  if (improj)
 	    sl->iheaders[nm].proj = (ccp)pool_copy((uccp)improj, sl->p);
 	  else
@@ -52,8 +73,17 @@ sx_images(struct sl_signlist *sl)
 			sl->iheaders[nm].path = (ccp)mr->rows[i][1];
 		      else if (!strcmp((ccp)mr->rows[i][0], "@thumb"))
 			sl->iheaders[nm].thumb = (ccp)mr->rows[i][1];
+		      else if (!strcmp((ccp)mr->rows[i][0], "@font"))
+			{
+			  sl->iheaders[nm].path = (ccp)mr->rows[i][1];
+			  sl->iheaders[nm].type = IMH_FONT;
+			}
+		      else if (!strcmp((ccp)mr->rows[i][0], "@css"))
+			sl->iheaders[nm].css = (ccp)mr->rows[i][1];
+		      else if (!strcmp((ccp)mr->rows[i][0], "@mag"))
+			sl->iheaders[nm].mag = (ccp)mr->rows[i][1];
 		      else
-			fprintf(stderr, "%s:%d: unknown @-command in image map\n", (char*)m->user, i);
+			fprintf(stderr, "%s:%d: %s: unknown @-command in image map\n", imfile, i+1, mr->rows[i][0]);
 		      break;
 		    case '#':
 		      break;
@@ -80,16 +110,11 @@ sx_images(struct sl_signlist *sl)
 			    else
 			      r->rows[s-1][nm+1] = (ucp)lp;
 			  }
-			else
+			else if (!sl->iheaders[nm].sparse)
 			  fprintf(stderr, "%s:%d: no OID found for %s or %s; s=%d\n",
 				  mr->file, i, (char*)mr->rows[i][0], (char*)mr->rows[i][1], s);
 		      }
 		    }
-		}
-	      if (improj)
-		{
-		  free((void*)improj);
-		  free((void*)imfile);
 		}
 	    }
 	  if (!sl->iheaders[nm].label || !sl->iheaders[nm].path)

@@ -64,16 +64,6 @@ typedef struct Ofp_liga
   List *oivs;
 } Ofp_liga;
 
-#if 0
-enum ofp_features { OFP_HAS_SSET=0x01, OFP_HAS_CVNN=0x02, OFP_HAS_SALT=0x04, OFP_HAS_OIVS=0x08 };
-typedef struct ofp_has   { const char *name; const char *key; unsigned char features[1]; } ofp_has;
-typedef struct ofp_ssets { unsigned char bv[4] ; } ofp_ssets; /* max 20 per OpenType design */
-typedef struct ofp_cvnns { unsigned char bv[13]; } ofp_cvnns; /* max 99 per OpenType design */
-typedef struct ofp_salts { unsigned char bv[32]; } ofp_salts; /* not sure what limit is yet; this allows 256 */
-typedef struct ofp_oivs  { unsigned char bv[32]; } ofp_oivs;  /* max 239 based on Unicode IVS E01EF - E0100 */ 
-enum ofp_type { OFP_NONE , OFP_SALT , OFP_SSET , OFP_CVNN };
-#endif
-
 typedef struct ofp_bv_arg { Ofp *o; const char *code; FILE *fp; } ofp_bv_arg;
 
 extern Ofp *ofp_init(void);

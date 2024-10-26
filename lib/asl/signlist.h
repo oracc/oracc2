@@ -23,8 +23,10 @@ enum sx_tle
     sx_tle_pcun ,
     sx_tle_xsux ,
     sx_tle_sref
-  };
+ };
 
+#define IMH_FILE 0
+#define IMH_FONT 1
 struct sx_iheader
 {
   Roco *r;
@@ -35,6 +37,10 @@ struct sx_iheader
   const char *path;
   const char *thumb;
   const char *period;
+  int type; /* 0 = file; 1 = FONT */
+  const char *css;
+  const char *mag;
+  int sparse;
   Mloc mloc;
 };
 

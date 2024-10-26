@@ -63,7 +63,13 @@ install-exec-local:
 %.c: %.xnn
 	./c2-xnn2c.plx $<
 
-%.ofp: %.ttf
+%.def: %.def.in
+	$(ORACCIFY) $<
+
+%.oin: %.ttf ttf2oin.sh
+	./ttf2oin.sh $*
+
+%.ofp: %.oin %.def ttf2ofp.sh ofp2im.sh ${bindir}/ofpx
 	./ttf2ofp.sh $*
 
 all.proto: *.c

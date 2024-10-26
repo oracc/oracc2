@@ -9,4 +9,5 @@ ttf2oin.sh $f
 if [ -s $f.oin ]; then
     ofpx -t$f.ofp -x$f.ofpx <$f.oin
     rm -f *.{names,ucode,namuni,lig} *-ttf.txt *-ofp.in
+    ./ofp2im.sh $f
 fi
