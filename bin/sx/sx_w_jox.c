@@ -365,6 +365,16 @@ sx_w_jx_signlist(struct sx_functions *f, struct sl_signlist *sl, enum sx_pos_e p
 	      list_add(a, (void*)o);
 	      list_add(a, (void*)"label");
 	      list_add(a, (void*)sl->iheaders[i].label);
+	      if (sl->iheaders[i].title)
+		{
+		  list_add(a, (void*)"title");
+		  list_add(a, (void*)sl->iheaders[i].title);
+		}
+	      if (sl->iheaders[i].page)
+		{
+		  list_add(a, (void*)"page");
+		  list_add(a, (void*)sl->iheaders[i].page);
+		}
 	      if (sl->iheaders[i].thumb)
 		{
 		  list_add(a, (void*)"thumb");

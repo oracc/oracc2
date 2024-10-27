@@ -699,6 +699,23 @@
 
 <!--### Images and snippets -->
 
+<xsl:template name="sws-image-label">
+  <xsl:param name="header"/>
+  <span class="im-label">
+    <xsl:if test="string-length($header/@title)">
+      <xsl:attribute name="title"><xsl:value-of select="$header/@title"/></xsl:attribute>
+    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="@n">
+	<xsl:value-of select="@n"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="$header/@label"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  <xsl:text>:</xsl:text></span>
+</xsl:template>
+
 <xsl:template name="sws-images">
   <xsl:param name="esp-mode"/>
   <!--<xsl:message>sws-images: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>-->
@@ -707,22 +724,35 @@
       <xsl:for-each select="sl:images/sl:i[@loc]">
 	<xsl:variable name="ref" select="@ref"/>
 	<xsl:variable name="header" select="/*/sl:iheader[@xml:id=$ref]"/>
+	<xsl:variable name="css" select="$header/@css"/>
 	<table class="itable">
 	  <tr>
-	    <td><span class="im-label">
+	    <td>
 	      <xsl:choose>
-		<xsl:when test="@n">
-		  <xsl:value-of select="@n"/>
+		<xsl:when test="string-length($header/@page)>0">
+		  <esp:link url="{$header/@page}" >
+		    <xsl:call-template name="sws-image-label">
+		      <xsl:with-param name="header" select="$header"/>
+		    </xsl:call-template>
+		  </esp:link>
 		</xsl:when>
 		<xsl:otherwise>
-		  <xsl:value-of select="$header/@label"/>
+		  <xsl:call-template name="sws-image-label">
+		    <xsl:with-param name="header" select="$header"/>
+		  </xsl:call-template>
 		</xsl:otherwise>
 	      </xsl:choose>
-	      <xsl:text>:</xsl:text></span>
 	    </td>
 	  </tr>
 	  <tr><td>
 	    <xsl:choose>
+	      <xsl:when test="string-length($css)>0">
+		<p class="asl-ucun">
+		  <span class="{$css}">
+		    <xsl:value-of select="../preceding-sibling::sl:ucun"/>
+		  </span>
+		</p>
+	      </xsl:when>
 	      <xsl:when test="$esp-mode">
 		<esp:image height="50px" url="/{$header/@proj}/{$header/@path}/{@loc}"
 			   description="{$header/@label} image of {ancestor::*[sl:name]/sl:name[1]}"/>

@@ -69,6 +69,10 @@ sx_images(struct sl_signlist *sl)
 		    case '@':
 		      if (!strcmp((ccp)mr->rows[i][0], "@label"))
 			sl->iheaders[nm].label = (ccp)mr->rows[i][1];
+		      else if (!strcmp((ccp)mr->rows[i][0], "@title"))
+			sl->iheaders[nm].title = (ccp)mr->rows[i][1];
+		      else if (!strcmp((ccp)mr->rows[i][0], "@page"))
+			sl->iheaders[nm].page = (ccp)mr->rows[i][1];
 		      else if (!strcmp((ccp)mr->rows[i][0], "@path"))
 			sl->iheaders[nm].path = (ccp)mr->rows[i][1];
 		      else if (!strcmp((ccp)mr->rows[i][0], "@thumb"))

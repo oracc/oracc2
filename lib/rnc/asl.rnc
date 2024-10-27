@@ -159,6 +159,8 @@ sl.sys 	   = element sl:sys { attribute name { xsd:NCName } ,
 
 sl.iheader = element sl:iheader { attribute xml:id { xsd:NCName } ,
 	     	     		  attribute label { text } ,
+	     	     		  attribute title { text }? ,
+	     	     		  attribute page { text }? ,
 	     	     		  attribute order { xsd:string { pattern="[0-9]+" } } ,
 	     	     		  attribute proj { text } ,
 	     	     		  (attribute path { text } | attribute font { text}),

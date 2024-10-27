@@ -33,6 +33,8 @@ struct sx_iheader
   int order;
   const char *id;
   const char *label;
+  const char *title;
+  const char *page;
   const char *proj;
   const char *path;
   const char *thumb;
