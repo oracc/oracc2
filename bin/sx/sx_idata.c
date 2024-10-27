@@ -281,13 +281,13 @@ sx_idata_key(const char *soid, const char *foid, unsigned const char *v)
 	{
 	  while (klen > k_alloced)
 	    k_alloced += 128;
-	  k = realloc(k, klen);
+	  k = realloc(k, k_alloced);
 	}
       sprintf((char*)k, "%s.%s.%s", soid, foid, v);
       return k;
     }
   else
-    return NULL;
+    return (uccp)"";
 }
 
 void

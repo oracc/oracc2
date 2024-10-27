@@ -135,14 +135,21 @@ static int fowners_cmp(const void *a, const void *b)
 {
   struct sl_inst *ai = (*(struct sl_inst**)a);
   struct sl_inst *bi = (*(struct sl_inst**)b);
-  int a1 = ('f'==ai->type) ? ai->u.f->sort : ai->u.s->sort;
-  int b1 = ('f'==ai->type) ? bi->u.f->sort : bi->u.s->sort;
-  if (a1 < b1)
-    return -1;
-  else if (a1 > b1)
-    return 1;
+  if (ai && bi)
+    {
+      int a1 = ('f'==ai->type) ? ai->u.f->sort : ai->u.s->sort;
+      int b1 = ('f'==bi->type) ? bi->u.f->sort : bi->u.s->sort;
+      if (a1 < b1)
+	return -1;
+      else if (a1 > b1)
+	return 1;
+      else
+	return 0;
+    }
+  else if (ai)
+    return bi ? 0 : -1;
   else
-    return 0;
+    return 1;
 }
 
 /* form->owners is a list of sl_sign* */

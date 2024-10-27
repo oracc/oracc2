@@ -108,9 +108,15 @@ vec_sep_push (const char *new_sep)
 void
 vec_sep_pop (void)
 {
-  if (stack_len)
+  if (stack_len && stack)
     {
       vec_sep_str = stack[--stack_len];
-      stack = realloc (stack, stack_len * sizeof (char *));
+      if (stack_len)
+	stack = realloc (stack, stack_len * sizeof (char *));
+      else
+	{
+	  free(stack);
+	  stack = NULL;
+	}
     }
 }
