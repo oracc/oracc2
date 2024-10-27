@@ -5,3 +5,14 @@
 
 .oa { font-family: "Oracc Assyrian"; }
 
+table { width: 90%; margin: auto; border-collapse: collapse; }
+
+tr {
+    border-bottom: 1px solid gray;
+}
+
+tr:nth-of-type(10n) {
+    border-bottom: 3px solid red;
+}
+
+td { width: 30%; }
