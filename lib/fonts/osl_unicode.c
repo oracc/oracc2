@@ -19,6 +19,7 @@ osl_unicode(void)
 	  o->e[i].u = (ccp)o->r->rows[i][0];
 	  o->e[i].n = o->r->rows[i][1];
 	  o->e[i].o = (ccp)o->r->rows[i][2];
+	  o->e[i].s = atoi((ccp)o->r->rows[i][3]);
 	  hash_add(o->h, (uccp)o->e[i].u, &o->e[i]);
 	  hash_add(o->h, o->e[i].n, &o->e[i]);
 	  hash_add(o->h, (uccp)o->e[i].o, &o->e[i]);

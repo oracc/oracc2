@@ -123,7 +123,7 @@
   </xsl:template>
 
   <xsl:template name="sxw-pos-ucun-td">
-    <td class="sxw-pos-ucun noto">
+    <td class="sxw-pos-ucun ofs-noto">
       <xsl:choose>
 	<xsl:when test="sl:ucun">
 	  <xsl:call-template name="sxweb-ucun"/>

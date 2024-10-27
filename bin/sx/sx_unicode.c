@@ -655,7 +655,8 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
 	  if (!sp->oid)
 	    fprintf(stderr, "no code oid\n");
 	}
-      fprintf(f, "code\t%s\t%s\t%s\t%s\n", u[i], sn, sp->oid, (char*)hash_find(unames, (uccp)u[i]));
+      fprintf(f, "code\t%s\t%s\t%s\t%s\t%d\n", u[i], sn,
+	      sp->oid, (char*)hash_find(unames, (uccp)u[i]), sp->sort);
     }
 
   u = hash_keys2(urem, &nu);
@@ -663,7 +664,7 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
   for (i = 0; u[i]; ++i)
     {
       if (!hash_find(ucode, (uccp)u[i]))
-	fprintf(f, "depr\t%s\t%s\t%s\n", u[i], (char*)hash_find(urem, (uccp)u[i]), (char*)hash_find(unames, (uccp)u[i]));
+	fprintf(f, "depr\t%s\t%s\t%s\t\n", u[i], (char*)hash_find(urem, (uccp)u[i]), (char*)hash_find(unames, (uccp)u[i]));
       else
 	{
 	  struct sl_sign *sp = hash_find(sl->hsentry, hash_find(urem, (uccp)u[i]));
@@ -680,7 +681,7 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
       int i;
       for (i = 0; i < ldp->nnames; ++i)
 	if (!hash_find(ldp->seen, (uccp)ldp->names[i]))
-	  fprintf(stdout,"miss\t%s\t\t\n", ldp->names[i]);
+	  fprintf(stdout,"miss\t%s\t\t\t\n", ldp->names[i]);
     }
   else
     mesg_verr(&sl->mloc, "can't find U+ list while making unicode data table");
@@ -704,12 +705,12 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
 	      if (!sp->oid)
 		fprintf(stderr, "no useq oid\n");
 	    }
-	  fprintf(f, "useq\t%s\t%s\t%s\t\n", x, u[i], sp->oid);
+	  fprintf(f, "useq\t%s\t%s\t%s\t\t%d\n", x, u[i], sp->oid, sp->sort);
 	}
     }
 
   for (x = list_first(xseq); x; x = list_next(xseq))
-    fprintf(f, "xseq\t%s\t%s\n", x, (char*)hash_find(useqs, (uccp)x));
+    fprintf(f, "xseq\t%s\t%s\t\n", x, (char*)hash_find(useqs, (uccp)x));
 
   list_free(xseq, NULL);
   

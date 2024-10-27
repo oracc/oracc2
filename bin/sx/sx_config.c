@@ -8,7 +8,7 @@ struct sx_config sxconfig =
 {
   .signlist="csl",
   .domain="sl",
-  .font="noto"
+  .font="ofs-noto"
 };
 
 static Pool *xpdpool;

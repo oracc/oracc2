@@ -86,7 +86,7 @@
   <xsl:call-template name="xpd-option">
     <xsl:with-param name="config-xml" select="$sl-config-xml"/>
     <xsl:with-param name="option" select="'asl-script'"/>
-    <xsl:with-param name="default" select="'noto'"/>
+    <xsl:with-param name="default" select="'ofs-noto'"/>
   </xsl:call-template>
 </xsl:variable>
 

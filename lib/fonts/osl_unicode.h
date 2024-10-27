@@ -15,6 +15,7 @@ typedef struct Osl_uentry
   const char *u;
   const char *o;
   unsigned const char *n;
+  int s;
 } Osl_uentry;
 
 extern Osl_unicode *osl_unicode(void);
