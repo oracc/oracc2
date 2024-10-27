@@ -18,6 +18,8 @@
    src: url('/fonts/CuneiformClassic-final.ttf');
 }
 
+.ofs-f150 { font-size: 150%; }
+
 .osl {
    font-family: "Oracc Noto SansCuneiform";
 }
