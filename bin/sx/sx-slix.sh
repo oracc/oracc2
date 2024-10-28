@@ -48,8 +48,9 @@ if [ "$asl" != "" ]; then
 	if [ -r 01tmp/csl.kis ]; then
 	    tis=-I$asldomain:01tmp/csl.kis
 	fi
-	echo "$0: sx -dscripts $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl"
-	sx -dscripts $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl
+	echo "$0: sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl"
+	sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl
+	mv sx-lists.out 02pub/sx-lists.tsv ; chmod o+r 02pub/sx-lists.tsv
 	# cp 02xml/sl.xml 02xml/sl-mcu.xml
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml

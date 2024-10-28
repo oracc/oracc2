@@ -19,6 +19,8 @@ typedef struct Ofp
   Memo *m_liga;
   Pool *p;
   Osl_unicode *osl;
+  struct Ofp_list *list;
+  Hash *h_list;
 } Ofp;
 
 typedef enum Ofp_feature
@@ -64,10 +66,18 @@ typedef struct Ofp_liga
   List *oivs;
 } Ofp_liga;
 
+typedef struct Ofp_list
+{
+  const char *l; /* list */
+  const char *o; /* oid */
+  int s; /* sort code */
+} Ofp_list;
+
 typedef struct ofp_bv_arg { Ofp *o; const char *code; FILE *fp; } ofp_bv_arg;
 
 extern Ofp *ofp_init(void);
 extern void ofp_term(Ofp *ofp);
+extern void ofp_list(Ofp *ofp, const char *larg);
 extern Ofp *ofp_load(const char *font);
 extern void ofp_dump(Ofp *ofp, FILE *fp);
 extern void ofp_ingest(Ofp *ofp);

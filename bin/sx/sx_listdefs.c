@@ -100,7 +100,7 @@ sx_listdefs(struct sl_signlist *sl, const char *listnames)
 void
 sx_list_dump(FILE *f, struct sl_signlist *sl)  
 {
-  extern int list_names_mode;
+  extern int list_names_mode, list_warnings;
   const char **n = NULL;
   int nn;
   n = hash_keys2(sl->listdefs, &nn);
@@ -155,9 +155,10 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 				code = u->useq;
 			    }
 			  
-			  fprintf(f, "%s\t%s\t%s\t%s\t%s\n", ldp->names[j],
+			  fprintf(f, "%s\t%s\t%d\t%s\t%s\t%s\n", ldp->names[j],
 				  ip->type == 's' ? ip->u.s->oid : ip->u.f->oid,
-				  name , code, note);
+				  ip->type == 's' ? ip->u.s->sort : ip->u.f->sort,
+				  name, code, note);
 			}
 		    }
 		  else if (lp->inst)
@@ -187,7 +188,8 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 		}
 	      else
 		{
-		  mesg_verr(&sl->mloc, "list entry %s missing (no @list or @lref)", ldp->names[j]);
+		  if (list_warnings)
+		    mesg_verr(&sl->mloc, "list entry %s missing (no @list or @lref)", ldp->names[j]);
 		  fprintf(f, "%s\t\t\t\n", ldp->names[j]);
 		}
 	    }

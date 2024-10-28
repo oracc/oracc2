@@ -149,16 +149,24 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
       Ofp_liga *gp = list_first(osp->ligas);
       liga_n = gp->glyph->liga;
       liga_utf8 = xutf8_liga_literal(ofp, gp->glyph);
-      liga_zwnj = xutf8_of(ofp, gp->glyph);      
+      liga_zwnj = xutf8_of(ofp, gp->glyph);
+      osp->ssets = gp->ssets;
     }
   
   fprintf(fp, "<sign xml:id=\"%s\" utf8=\"%s\"", xid,
 	  liga_utf8 ? liga_utf8 : xutf8_of(ofp, osp->glyph));
+    
   if (osp->ligas)
     fprintf(fp, " l=\"%s\" zwnj=\"%s\"", liga_n, liga_zwnj);
   if (osp->glyph->osl)
-    fprintf(fp, " oid=\"%s\" n=\"%s\" sort=\"%d\">",
-	    osp->glyph->osl->o, xmlify(osp->glyph->osl->n), osp->glyph->osl->s);
+    {
+      Ofp_list *olp = NULL;
+      fprintf(fp, " oid=\"%s\" n=\"%s\" sort=\"%d\"",
+	      osp->glyph->osl->o, xmlify(osp->glyph->osl->n), osp->glyph->osl->s);
+      if (ofp->list && (olp = hash_find(ofp->h_list, (uccp)osp->glyph->osl->o)))
+	fprintf(fp, " list=\"%s\" lsort=\"%d\"", olp->l, olp->s);
+      fputc('>', fp);
+    }
   else
     fputc('>', fp);
   if (osp->ssets)

@@ -37,6 +37,7 @@ int identity_mode = 0;
 int images_dump = 0;
 int jsn_output = 0;
 int list_dump = 0;
+int list_warnings = 1;
 int list_names_mode = 0;
 int listdef_check = 0;
 int oid_list = 0;
@@ -355,7 +356,7 @@ opts(int opt, const char *arg)
 	akas_dump = 1;
       if (strstr(arg, "image"))
 	images_dump = 1;
-      if (strstr(arg, "list"))
+      if (strstr(arg, "list") || strstr(arg, "LIST"))
 	list_dump = 1;
       if (strstr(arg, "scripts"))
 	scripts_dump = 1;
@@ -363,6 +364,8 @@ opts(int opt, const char *arg)
 	syss_dump = 1;
       if (!akas_dump && !list_dump && !images_dump && !scripts_dump && !syss_dump)
 	fprintf(stderr, "sx: the -d option must contain any or all of 'aka,list,image,scripts,sys'\n");
+      if (strstr(arg, "LIST"))
+	list_warnings = 0;
       break;
     case 'e':
       sxx_init();

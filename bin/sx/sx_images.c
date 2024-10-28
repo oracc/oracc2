@@ -77,6 +77,8 @@ sx_images(struct sl_signlist *sl)
 			sl->iheaders[nm].path = (ccp)mr->rows[i][1];
 		      else if (!strcmp((ccp)mr->rows[i][0], "@thumb"))
 			sl->iheaders[nm].thumb = (ccp)mr->rows[i][1];
+		      else if (!strcmp((ccp)mr->rows[i][0], "@list"))
+			sl->iheaders[nm].list = (ccp)mr->rows[i][1];
 		      else if (!strcmp((ccp)mr->rows[i][0], "@font"))
 			{
 			  sl->iheaders[nm].path = (ccp)mr->rows[i][1];

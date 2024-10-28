@@ -3,18 +3,23 @@
 
 int tsv_dump = 0;
 int xml_dump = 0;
+
+const char *list_arg = NULL;
 const char *tsv_file = "-";
 const char *xml_file = "-";
 
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "t::x::");
+  options(argc, argv, "l:t::x::");
 
   if (!tsv_dump && !xml_dump)
     tsv_dump = 1;
   
   Ofp *ofp = ofp_load("-");
+
+  if (list_arg)
+    ofp_list(ofp, list_arg);
 
   if (xml_dump)
     {
@@ -50,6 +55,9 @@ opts(int argc, const char *arg)
 {
   switch (argc)
     {
+    case 'l':
+      list_arg = arg;
+      break;
     case 't':
       tsv_dump = 1;
       if (arg)

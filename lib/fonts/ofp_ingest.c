@@ -173,6 +173,8 @@ liga2useq(Ofp *ofp, const char *liga)
 	  *dest++ = '.';
 	  *dest++ = 'x';
 	  src += 2; /* skip _u */
+	  if ('n' == src[0] && 'i' == src[1])
+	    src += 2; /* skip uni as well as just u */
 	}
       else
 	*dest++ = *src++;

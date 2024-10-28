@@ -39,7 +39,7 @@ static int cmp_by_len(const void *a, const void *b)
     { \
       if (sp->U.field) \
 	{ \
-	  if (strcmp(sp->U.field, fup->field)) \
+	  if (strcmp((ccp)sp->U.field, (ccp)fup->field))		\
 	    mesg_verr(&fip->mloc, "discrepant field: %s vs %s\n", fup->field, sp->U.field); \
 	  else if (set_check_verbose) \
 	    fprintf(stderr, "sp->U.%s %s == fp->U.%s %s\n", cppstr(field), sp->U.field, cppstr(field), fup->field); \
@@ -60,6 +60,7 @@ set_and_check_U_data(struct sl_sign *sp, struct sl_inst *fip)
   set_check_U(uhex);
   set_check_U(useq);
   set_check_U(upua);
+  set_check_U(utf8);
   set_check_U(umap);
   set_check_U(urev);
   set_check_U(uname);

@@ -36,6 +36,7 @@ struct sx_iheader
   const char *title;
   const char *page;
   const char *proj;
+  const char *list;
   const char *path;
   const char *thumb;
   const char *period;

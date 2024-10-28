@@ -7,7 +7,12 @@ fi
 f=`basename $ff .ttf`
 ttf2oin.sh $f
 if [ -s $f.oin ]; then
-    ofpx -t$f.ofp -x$f.ofpx <$f.oin
+    list=`grep @list $f.def | cut -f2`
+    if [ "$list" != "" ]; then
+	larg="-l$list"
+	grep ^$list /home/oracc/osl/02pub/sx-lists.tsv | cut -f1-2 >$list.tsv
+    fi
+    ofpx $larg -t$f.ofp -x$f.ofpx <$f.oin
     rm -f *.{names,ucode,namuni,lig} *-ttf.txt *-ofp.in
     ./ofp2im.sh $f
 fi
