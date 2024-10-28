@@ -62,6 +62,7 @@ bin/xx/concord
 bin/xx/cunhtmlx
 bin/xx/dbix
 bin/xx/dbx
+bin/xx/fonts/showttfx
 bin/xx/ivd2oiv
 bin/xx/jsmapx
 bin/xx/lem/bgmx
@@ -99,7 +100,6 @@ bin/zx/gdlx
 bin/zx/repx
 bin/zx/rocox
 bin/zx/xmlfilter
-lib/fonts/showttfx
 msc/lex/lex-collapse-refs
 msc/prj/cdli/cdliperiodx
 msc/prj/cdli/cdlixtfx

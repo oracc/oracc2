@@ -8,20 +8,6 @@
 #include <signlist.h>
 
 static int
-npad(int e)
-{
-  if (e >= 10000)
-    return 4;
-  else if (e >= 1000)
-    return 3;
-  else if (e >= 100)
-    return 2;
-  else if (e >= 10)
-    return 1;
-  return 0;
-}
-
-static int
 numrange(const char *s)
 {
   while (*s && !isspace(*s))
@@ -73,31 +59,11 @@ asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char
 		re = strtol(str, &end, 10);
 	      if (end)
 		{
-		  int x, pow10 = 10;
-		  int zeroes = npad(re);
-		  char pad[zeroes+1];
-		  for (x = 0; x < zeroes; ++x)
-		    pad[x] = '0';
-		  pad[x] = '\0';
+		  int x;
 		  for (x = rb; x <= re; ++x)
 		    {
 		      char *l = NULL;
 		      int n;
-		      if (x > pow10)
-			{
-			  /* for a range MZL 333-334 reset the padding
-			     to account for the start value */
-			  while (x > pow10)
-			    {
-			      pow10 *= 10;
-			      pad[strlen(pad)-1] = '\0';
-			    }
-			}
-		      else if (x == pow10)
-			{
-			  pow10 *= 10;
-			  pad[strlen(pad)-1] = '\0';
-			}
 		      if (hexflag)
 			{
 			  n = snprintf(l, 0, "%s%X", name, x);
@@ -106,9 +72,9 @@ asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char
 			}
 		      else
 			{
-			  n = snprintf(l, 0, "%s%s%d", name, pad, x);
+			  n = snprintf(l, 0, "%s%03d", name, x);
 			  l = (char*)pool_alloc(n+1, sl->p);
-			  snprintf(l, n+1, "%s%s%d", name, pad, x);
+			  snprintf(l, n+1, "%s%03d", name, x);
 			}
 		      asl_bld_token(locp, sl, (ucp)l, 1);
 		      list_add(nlist, l);

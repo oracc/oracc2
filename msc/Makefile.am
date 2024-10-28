@@ -1,1 +1,1 @@
-SUBDIRS=adm cmd cov lex otf prj sys ela
+SUBDIRS=adm cmd cov fonts lex otf prj sys ela

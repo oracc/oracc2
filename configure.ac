@@ -63,7 +63,6 @@ AC_CONFIG_FILES([Makefile
                  lib/collate/Makefile
                  lib/expat/Makefile
                  lib/frm/Makefile
-                 lib/fonts/Makefile
                  lib/gdl/Makefile
                  lib/gvl/Makefile
                  lib/joxer/Makefile
@@ -83,6 +82,7 @@ AC_CONFIG_FILES([Makefile
 		 lib/l3/xli/Makefile
                  lib/libstemmer_c/Makefile
                  lib/lng/Makefile
+                 lib/ofp/Makefile
                  lib/oid/Makefile
                  lib/rnc/Makefile
                  lib/rnv/Makefile
@@ -137,6 +137,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/wx/Makefile
 		 bin/wx/ccgi/Makefile
 		 bin/xx/Makefile
+		 bin/xx/fonts/Makefile
 		 bin/xx/lem/Makefile
 		 bin/xx/osort/Makefile
 		 bin/xx/rnv/Makefile
@@ -151,6 +152,7 @@ AC_CONFIG_FILES([Makefile
 		 msc/cmd/update/Makefile
 		 msc/cov/Makefile
 		 msc/ela/Makefile
+		 msc/fonts/Makefile
 		 msc/lex/Makefile
 		 msc/otf/Makefile
 		 msc/prj/Makefile

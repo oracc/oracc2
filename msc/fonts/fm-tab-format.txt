@@ -1,0 +1,11 @@
+OID	SSET	CVNN	SALT	OIVS	LIGA1	LIGA2	...
+
+For SSET/CVNN/SALT/OIVS the column is a list of space-separated values
+
+For OIVS the values are lowercase hex, e.g., e0100 ff.
+
+LIGA is a repeating column. Each column contains:
+
+     The liga as UTF-8
+     The liga as UTF-8 but with a u200C between each element
+
