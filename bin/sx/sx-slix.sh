@@ -50,12 +50,12 @@ if [ "$asl" != "" ]; then
 	fi
 	echo "$0: sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl"
 	sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl
-	mv sx-lists.out 02pub/sx-lists.tsv ; chmod o+r 02pub/sx-lists.tsv
+	mv -f sx-lists.out 02pub/lists.tsv
 	# cp 02xml/sl.xml 02xml/sl-mcu.xml
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
-	chmod -R o+r 02pub/sl 02pub/sortcodes.* 02xml/sl.xml
 	sx -u $asl | cut -f 2-4,6 | grep '	o[0-9]\+	' >02pub/unicode.tsv
+	chmod -R o+r 02pub/sl 02pub/lists.tsv 02pub/sortcodes.* 02pub/unicode.tsv 02xml/sl.xml 02pub/*.oss 02pub/*.mrg
     else
 	echo "$0: errors in processing $asl. Stop."
 	exit 1
