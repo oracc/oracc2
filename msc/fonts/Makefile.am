@@ -1,15 +1,5 @@
 include ../../oracc-am-rules.txt
 
-fonts:
-	@./osl-font-update.sh
-	(cd ../../lib/ofp ; make)
-	(cd ../../lib ; make)
-	(cd ../../bin/xx/fonts ; make)
-	(cd ../../bin/xx/fonts ; sudo make install)
-	make all
-	sudo make install
-	@./osl-page-update.sh
-
 css_DATA=fonts.css
 
 data_DATA=Oracc-Noto-SansCuneiform.ofp Oracc-gudea.ofp	\
