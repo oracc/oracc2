@@ -3,9 +3,9 @@ include ../../oracc-am-rules.txt
 bin_PROGRAMS=
 
 bin_SCRIPTS= \
-	cbdneeduni.sh crpneeduni.sh cslneedsign.sh \
-	needasl.sh needuni.sh nofakes.sh \
-	aslsigns.sh cbdsigns.sh crpsigns.sh
+	cbdneeduni.sh crpneedfnt.sh crpneeduni.sh cslneedsign.sh \
+	needasl.sh needfnt.sh needuni.sh nofakes.sh \
+	aslsigns.sh cbdsigns.sh crpsigns.sh fntsigns.sh
 
 scriptdata_DATA=
 

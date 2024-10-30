@@ -213,11 +213,17 @@ main(int argc, char * const*argv)
 
       if (unicode_table && !unicode_from_parent)
 	{
-	  FILE *f = stdout; /*fopen("sx-unicode.tab","w");*/
+	  FILE *f = fopen("unicode.tsv", "w");
 	  if (f)
 	    {
 	      sx_unicode_table(f, sl);
 	      fclose(f);
+	      f = fopen("compoids.tsv", "w");
+	      if (f)
+		{
+		  sx_deep_oids(f, sl);
+		  fclose(f);
+		}
 	    }
 	  else
 	    fprintf(stderr, "sx: unable to dump @list data; can't write sx-listdata.out\n");

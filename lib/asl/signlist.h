@@ -90,6 +90,7 @@ struct sl_signlist
   Hash *h_merges_cand;
   Hash *h_merges_seen;
   Hash *h_scripts;	/* Hash for @scriptdef; value is an sl_script* */
+  Hash *h_compoids;	/* in sx_unicode we track expansion of sipad to PA.LU as oid sequences */
   struct sl_token **tokens; /* sorted htoken */
   struct sl_sign  **signs;  /* sorted hsentry */
   int nsigns;
