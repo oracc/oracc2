@@ -67,10 +67,12 @@ install-exec-local:
 	$(ORACCIFY) $<
 
 %.oin: %.ttf ttf2oin.sh
-	./ttf2oin.sh $*
+	ttf2oin.sh $*
 
-%.ofp: %.oin %.def ttf2ofp.sh ofp2im.sh ${bindir}/ofpx ${prefix}/osl/02pub/sx-lists.tsv
-	./ttf2ofp.sh $*
+%.ofp: %.oin %.def
+	ttf2ofp.sh $*
+
+%.ofpx: %.ofp
 
 all.proto: *.c
 	cproto -e $(AM_CPPFLAGS) *.c >x.proto

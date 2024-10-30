@@ -12,3 +12,6 @@ data_DATA=Oracc-Noto-SansCuneiform.ofp Oracc-gudea.ofp	\
 
 font_DATA=Oracc-Noto-SansCuneiform.ttf Oracc-gudea.ttf	\
 	Oracc-OBF-Regular.ttf CuneiformClassic-final.ttf
+
+*.ofp: ${bindir}/ttf2ofp.sh ${bindir}/ofp2im.sh ${bindir}/ofpx \
+	${prefix}/osl/02pub/lists.tsv ${prefix}/osl/02pub/unicode.tsv

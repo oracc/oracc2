@@ -10,9 +10,9 @@ if [ -s $f.oin ]; then
     list=`grep @list $f.def | cut -f2`
     if [ "$list" != "" ]; then
 	larg="-l$list"
-	grep ^$list /home/oracc/osl/02pub/sx-lists.tsv | cut -f1-2 >$list.tsv
+	grep ^$list /home/oracc/osl/02pub/lists.tsv | cut -f1-2 >$list.tsv
     fi
     ofpx $larg -t$f.ofp -x$f.ofpx <$f.oin
     rm -f *.{names,ucode,namuni,lig} *-ttf.txt *-ofp.in
-    ./ofp2im.sh $f
+    ofp2im.sh $f
 fi
