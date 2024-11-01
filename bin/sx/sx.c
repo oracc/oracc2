@@ -218,12 +218,15 @@ main(int argc, char * const*argv)
 	    {
 	      sx_unicode_table(f, sl);
 	      fclose(f);
+#if 0
+	      /* use UNAME column for compoid when type=useq instead of having another file */
 	      f = fopen("compoids.tsv", "w");
 	      if (f)
 		{
-		  sx_deep_oids(f, sl);
+		  sx_unicode_compoids(f, sl);
 		  fclose(f);
 		}
+#endif
 	    }
 	  else
 	    fprintf(stderr, "sx: unable to dump @list data; can't write sx-listdata.out\n");

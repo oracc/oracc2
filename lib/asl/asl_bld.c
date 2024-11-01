@@ -97,6 +97,7 @@ asl_bld_init(void)
   sl->hletters = hash_create(32);
   sl->h_merge = hash_create(64);
   sl->h_scripts = hash_create(4);
+  sl->h_compoids = hash_create(1024);
   sl->m_tokens = memo_init(sizeof(struct sl_token), 1024);
   sl->m_letters = memo_init(sizeof(struct sl_letter), 32);
   sl->m_groups = memo_init(sizeof(struct sl_letter), 128);
@@ -1591,9 +1592,29 @@ void
 asl_bld_upua(Mloc *locp, struct sl_signlist *sl, const unsigned char *t)
 {
   if (asl_sign_guard(locp, sl, "upua"))
-    asl_bld_singleton_string(locp, t, "upua",
-			     sl->curr_form ? (uccp*)&sl->curr_form->u.f->U.upua : (uccp*)&sl->curr_sign->U.upua,
-			     sl->curr_form ? &sl->curr_form->upua : &sl->curr_sign->inst->upua);
+    {
+      asl_bld_singleton_string(locp, t, "upua",
+			       sl->curr_form ? (uccp*)&sl->curr_form->u.f->U.upua : (uccp*)&sl->curr_sign->U.upua,
+			       sl->curr_form ? &sl->curr_form->upua : &sl->curr_sign->inst->upua);
+      /* Check/register @upua U+F0000 as if it were @list U+F0000 */
+      struct sl_listdef *ldp = NULL;
+      if ((ldp = hash_find(sl->listdefs, (uccp)"U+")))
+	{
+	  if (!(hash_find(ldp->known, t)))
+	    {
+	      mesg_verr(locp, "%s is not in @listdef %s", t+strlen("U+"), "U+");
+	    }
+	  else
+	    {
+	      /* Add it to the seen Unicode values as a flag value
+		 pointer; the @upua is not added to the signlist's
+		 list of lists, so this should not ever need to be
+		 dereferenced ... */
+	      if (!(hash_find(ldp->seen, t)))
+		hash_add(ldp->seen, t, (void*)(uintptr_t)-1);
+	    }
+	}
+    }
 }
 
 void

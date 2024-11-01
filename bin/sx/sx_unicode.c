@@ -345,7 +345,7 @@ sx_unicode(struct sl_signlist *sl)
 		}
 	    }
 #if 1
-	  hash_add(sl->h_compoids, (ip->type=='s'?ip->u.s->oid:ip->u.f->oid), last_deep);
+	  hash_add(sl->h_compoids, (uccp)(ip->type=='s'?ip->u.s->oid:ip->u.f->oid), (void*)last_deep);
 #else
 	  if (last_deep)
 	    {
@@ -576,10 +576,10 @@ sx_unicode_useq(const char *m, Pool *p)
       s = &e[-1];
     }
   free(m2);
-#if 0
-  last_deep = (ccp)list_join(uoidl, ".");
+
+  last_deep = (ccp)pool_copy(list_join(uoidl, "."), p);
   list_free(uoidl, NULL);
-#endif
+
   return u;
 }
 
@@ -626,16 +626,25 @@ sx_unicode_useq_r(const char *m, int from, int to, Pool *p)
   return res;
 }
 
+#if 0
 void
 sx_unicode_compoids(FILE *f, struct sl_signlist *sl)
 {
-  const char *k = NULL;
+  const char **k = NULL;
   int nkeys = 0;
   k = hash_keys2(sl->h_compoids, &nkeys);
   qsort(k, nkeys, sizeof(char*), cmpstringp);
   int i;
   for (i = 0; i < nkeys; ++i)
-    fprintf(f, "%s\t%s\n", keys[i], hash_find(sl->compoids, keys[i]));
+    {
+      const char *v = hash_find(sl->h_compoids, (uccp)k[i]);
+      if (v)
+	fprintf(f, "%s\t%s\n", k[i], v);
+    }
+}
+#endif
+
+void
 sx_unicode_table(FILE *f, struct sl_signlist *sl)
 {
   const char **u, *x;
@@ -680,8 +689,8 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
 	sx_listdefs_sort(ldp);
       int i;
       for (i = 0; i < ldp->nnames; ++i)
-	if (!hash_find(ldp->seen, (uccp)ldp->names[i]))
-	  fprintf(stdout,"miss\t%s\t\t\t\n", ldp->names[i]);
+	if (!hash_find(ldp->seen, (uccp)ldp->names[i]) && ldp->names[i][2]) /* ignore U+ */
+	  fprintf(f,"miss\t%s\t\t\t\n", ldp->names[i]);
     }
   else
     mesg_verr(&sl->mloc, "can't find U+ list while making unicode data table");
@@ -705,7 +714,11 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
 	      if (!sp->oid)
 		fprintf(stderr, "no useq oid\n");
 	    }
-	  fprintf(f, "useq\t%s\t%s\t%s\t\t%d\n", x, u[i], sp->oid, sp->sort);
+	  const char *coid = "";
+	  if (sp->oid)
+	    coid = hash_find(sl->h_compoids, (uccp)sp->oid);
+
+	  fprintf(f, "useq\t%s\t%s\t%s\t%s\t%d\n", x, u[i], sp->oid, coid, sp->sort);
 	}
     }
 

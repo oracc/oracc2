@@ -163,5 +163,6 @@ extern void sx_script(struct sl_signlist *sl, int stdo);
 extern char *sx_script_merge_fn(struct sl_signlist *sl, const char *script);
 extern void sx_forms(struct sl_signlist *sl);
 extern void sx_unicode_U_data(struct sl_signlist *sl);
+extern void sx_unicode_compoids(FILE *f, struct sl_signlist *sl);
 
 #endif/*SX_H_*/
