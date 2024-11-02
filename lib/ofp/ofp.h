@@ -43,6 +43,8 @@ typedef struct Ofp_glyph
   const char *liga;
   const char *useq; /* liga as useq i.e., u12345_u12345 => x12345.x12345 */
   const char *ivs;
+  List *ligas;		/* liga entries which are not sign entries, grouped under their ligl */
+  int is_liga; /* 1 if this entry is a ligature which is listed under another sign */
   Osl_uentry *osl;
 } Ofp_glyph;
 
@@ -58,7 +60,6 @@ typedef struct Ofp_sign
 
 typedef struct Ofp_liga
 {
-  List *ligas;
   Ofp_glyph *glyph;
   List *salts;
   List *cvnns;

@@ -13,13 +13,16 @@ ofp_marshall(Ofp *ofp)
   hash_add(ofp->h_sign, (uccp)gp(0)->key, curr_sp);
   for (i = 0; i < ofp->nglyphs; ++i)
     {
+      /* ligas that are signs use liga as key so they change curr_sp;
+	 ligas that are not signs use ligl as key so they get added
+	 under curr_sp */
       if (strcmp(curr_sp->glyph->key, gp(i)->key))
 	{
 	  curr_sp = memo_new(ofp->m_sign);
 	  curr_sp->glyph = gp(i);
 	  hash_add(ofp->h_sign, (uccp)gp(i)->key, curr_sp);
 	}
-      if (gp(i)->ligl)
+      if (gp(i)->ligl && strlen(gp(i)->key) < strlen(gp(i)->liga))
 	{
 	  if (!curr_lig || strcmp(gp(i)->liga, curr_lig->glyph->liga))
 	    {

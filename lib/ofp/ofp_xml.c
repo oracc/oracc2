@@ -26,7 +26,6 @@ ofp_xml(Ofp *ofp, FILE *fp)
   fprintf(fp, "</ofp>");
 }
 
-#if 0
 static void
 xml_liga(Ofp *ofp, List *lp, FILE *fp)
 {
@@ -48,7 +47,6 @@ xml_liga(Ofp *ofp, List *lp, FILE *fp)
     }
   fputs("</ligas>", fp);
 }
-#endif
 
 static void
 xml_list(Ofp *ofp, List *lp, const char *gtag, const char *itag, FILE *fp)
@@ -140,10 +138,14 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
     return;
   
   const char *xid = xid_of(ofp, osp->glyph);
-  const char *liga_n = NULL;
+
+#if 1
   const char *liga_utf8 = NULL;
+  if (osp->glyph->liga)
+    liga_utf8 = xutf8_liga_literal(ofp, osp->glyph);
+#else
+  const char *liga_n = NULL;
   const char *liga_zwnj = NULL;
-  
   if (osp->ligas)
     {
       Ofp_liga *gp = list_first(osp->ligas);
@@ -152,12 +154,14 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
       liga_zwnj = xutf8_of(ofp, gp->glyph);
       osp->ssets = gp->ssets;
     }
+#endif
   
   fprintf(fp, "<sign xml:id=\"%s\" utf8=\"%s\"", xid,
 	  liga_utf8 ? liga_utf8 : xutf8_of(ofp, osp->glyph));
-    
-  if (osp->ligas)
-    fprintf(fp, " l=\"%s\" zwnj=\"%s\"", liga_n, liga_zwnj);
+  
+  if (osp->glyph->liga)
+    fprintf(fp, " l=\"%s\" zwnj=\"%s\"", osp->glyph->liga, xutf8_of(ofp, osp->glyph));
+
   if (osp->glyph->osl)
     {
       Ofp_list *olp = NULL;
@@ -176,10 +180,8 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
   if (osp->salts)
     xml_list(ofp, osp->salts, "salts", "salt", fp);
 
-#if 0
   if (osp->ligas)
     xml_liga(ofp, osp->ligas, fp);
-#endif
   
   fputs("</sign>", fp);
 }

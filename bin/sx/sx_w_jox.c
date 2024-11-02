@@ -761,7 +761,7 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_add(a, (void*)xmlify(s->u.f->name));
 
 	      /* One form is the defining instance--it has xml:id==oid */
-	      if (s->u.f->sign->xref && s->u.f->sign->formdef == s)
+	      if (s->u.f->sign->xref && s->u.f->sign->formdef == s && s->u.f->oid)
 		{
 		  list_add(a, (void*)"xml:id");
 		  list_add(a, (void*)s->u.f->oid);

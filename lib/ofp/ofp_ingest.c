@@ -279,6 +279,14 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
 	    offset = 1;
 	  gp(i)->osl = ou;
 	  gp(i)->key = (ccp)pool_copy((uccp)found_as+offset, o->p);
+#if 0
+	  if (gp(i)->liga && strlen(found_as) != strlen(gp(i)->liga))
+	    {
+	      fprintf(stderr, "liga %s is not a sign\n", gp(i)->liga);
+	      Ofp_liga *lp = memo_new(o);
+	      lp->glyph = gp(i);
+	    }
+#endif
 	}
       else
 	{

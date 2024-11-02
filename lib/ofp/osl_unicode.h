@@ -16,8 +16,10 @@ typedef struct Osl_uentry
   const char *o;
   unsigned const char *n;
   int s;
+  int seq; /* 0 = codepoint; 1 = sequence */
 } Osl_uentry;
 
 extern Osl_unicode *osl_unicode(void);
+extern Osl_uentry **osl_sequence(const char *seq);
 
 #endif/*OSL_UNICODE_H_*/
