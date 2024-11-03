@@ -33,9 +33,10 @@ xml_liga(Ofp *ofp, List *lp, FILE *fp)
   Ofp_liga *gp;
   for (gp = list_first(lp); gp; gp = list_next(lp))
     {
-      fprintf(fp, "<liga n=\"%s\" utf8=\"%s\" zwnj=\"%s\">",
-	      gp->glyph->liga,
+      fprintf(fp, "<liga n=\"%s\" utf8=\"%s\" l=\"%s\" zwnj=\"%s\">",
+	      osl_seq_name(ofp->osl, gp->glyph->liga, ofp->p),
 	      xutf8_liga_literal(ofp, gp->glyph),
+	      gp->glyph->liga,
 	      xutf8_of(ofp, gp->glyph));
       if (gp->ssets)
 	xml_list(ofp, gp->ssets, "ssets", "sset", fp);

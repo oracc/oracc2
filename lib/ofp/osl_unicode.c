@@ -2,7 +2,6 @@
 #include "roco.h"
 #include "osl_unicode.h"
 
-static Osl_unicode *ucode;
 static Osl_uentry entryX = { .u="U+0000" , .n=(uccp)"X"    , .o=NULL , .s=-1 };
 static Osl_uentry u200C =  { .u="U+200C" , .n=(uccp)"ZWNJ" , .o=NULL , .s=-1 };
 static Osl_uentry u200D =  { .u="U+200D" , .n=(uccp)"ZWJ"  , .o=NULL , .s=-1 };
@@ -43,36 +42,76 @@ osl_unicode(void)
  * (u12345_u12345) and return a NULL-terminated array of Osl_unicode structs
  */
 Osl_uentry **
-osl_sequence(const char *seq, int *nseq)
+osl_sequence(Osl_unicode *op, const char *seq, int *nseq)
 {
-  if (!ucode || !seq)
+  if (!op || !seq)
     return NULL;
   
   char sep = (*seq == 'u' ? '_' : '.');
-  const char *next = NULL;
+  const char *next = seq;
   int n = 1;
-  while ((next = strchr(seq, sep)))
+  while ((next = strchr(next, sep)))
     {
       ++n;
       ++next;
     }
-  Osl_uentry **oo = calloc(n, sizeof(Osl_unicode*));
+  Osl_uentry **oo = calloc(n, sizeof(Osl_uentry*));
   int i;
-  for (i = 0, next = seq; i < n; ++i)
+  for (i = 0, next = seq+1; i < n; ++i)
     {
       char buf[6];
-      strncpy(buf,seq+1,5);
-      buf[5] = '\0';
-      Osl_uentry *e = hash_find(ucode->h, (uccp)buf);
+      char *nxtsep = strchr(next, sep);
+      if (nxtsep)
+	{
+	  strncpy(buf,next,nxtsep-next);
+	  buf[nxtsep-next] = '\0';
+	}
+      else
+	strcpy(buf, next);
+      /*fprintf(stderr, "osl_sequence looking for '%s'\n", buf);*/
+      Osl_uentry *e = hash_find(op->h, (uccp)buf);
       if (e)
 	oo[i] = e;
       else
 	oo[i] = &entryX;
-      next = strchr(next+1, sep);
+      if (nxtsep)
+	next = nxtsep + 2;
     }
   if (nseq)
     *nseq = i;
   return oo;
+}
+
+unsigned char *
+osl_seq_name(Osl_unicode *op, const char *seq, Pool *p)
+{
+  Osl_uentry**oup;
+  int noup;
+  oup = osl_sequence(op, seq, &noup);
+  unsigned char *ret = osl_ou_seq_name(oup, noup, p);
+  free(oup);
+  return ret;
+}
+
+unsigned char *
+osl_ou_seq_name(Osl_uentry **oup, int noup, Pool *p)
+{
+  int len = 0;
+  int i;
+  for (i = 0; i < noup; ++i)
+    len += strlen((ccp)oup[i]->n);
+  len += noup + 1;
+  char buf[len]; *buf = '\0';
+  for (i = 0; i < noup; ++i)
+    {
+      if (i)
+	strcat(buf,"-");
+      strcat(buf, (ccp)oup[i]->n);
+    }
+  if (p)
+    return pool_copy((uccp)buf, p);
+  else
+    return (ucp)strdup(buf);      
 }
 
 #if 0

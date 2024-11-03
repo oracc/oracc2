@@ -20,6 +20,8 @@ typedef struct Osl_uentry
 } Osl_uentry;
 
 extern Osl_unicode *osl_unicode(void);
-extern Osl_uentry **osl_sequence(const char *seq);
+extern unsigned char *osl_ou_seq_name(Osl_uentry **oup, int noup, Pool *p);
+extern Osl_uentry **osl_sequence(Osl_unicode *op, const char *seq, int *noup);
+extern unsigned char *osl_seq_name(Osl_unicode *op, const char *seq, Pool *p);
 
 #endif/*OSL_UNICODE_H_*/
