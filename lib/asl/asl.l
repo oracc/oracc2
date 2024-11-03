@@ -60,13 +60,19 @@ GRAPHEME 	((({G}|{N}){M})|"15"){Q}{L}
 ZERO		"00"(~[a-d])?
 PHONGRAPH	"/"{G}"/"
 LISTNAME	(U\+|[A-Z]+)
-LISTNUM		(U\+[A-F0-9]+|[A-Z]+[0-9]+[()A-Z0-9a-z_'"+*/]*{M}{Q}{L})
+LISTNUM		(U\+[A-F0-9]+|[A-Z]+[0-9]+[()A-Z0-9a-z_'"+*/^]*{M}{Q}{L})
 NUMGRAPH	[0-9XnN]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})\){M}{Q}{L}
 FRACTION	[0-9]\/[0-9]
 PUNCT		("*"|:['".:]?|"/"){Q}{L}
 SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 
+LIGATURE       	({GRAPHEME}|{COMPOUND})([-\+]({GRAPHEME}|{COMPOUND}))+
+LIGAFONT	(u[0-9A-F]+)(_u[0-9A-F]+)+
+UTF8SEQ		([\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xec][\x80-\xbf][\x80-\xbf]|\xed[\x80-\x9f][\x80-\xbf]|[\xee\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf])
+LIGAUCUN	{UTF8SEQ}+
+
 %s E
+%x G
 %s L
 %s S
 %s T
@@ -85,6 +91,12 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 <E>"form"			{ fake_flag = 0; atcmd(EFORM,0); }
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
+
+<G>{LIGATURE}/[ \t]+         	{ aslsave; return LIGATURE; }
+<G>{LIGAFONT}/[ \t]+		{ aslsave; return LIGAFONT; }
+<G>{LIGAUCUN}/[ \t\n]	       	{ aslsave; BEGIN 0 ;return LIGAUCUN; }
+<G>[ \t]			{ }
+<G>\n		       		{ BEGIN(0); }
 
 <L>{LISTNAME}/[ \t]+         	{ aslsave; BEGIN(S); return LISTNAME; }
 
@@ -127,6 +139,7 @@ SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
 ^@pname/[ \t]       		{ atcmd(PNAME,0); }
 ^@nosign/[ \t]     		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@nosign' has been replaced by '@sign-'");
 				  /*atcmd(SIGN,-1);*/ }
+^@liga-?/[ \t]       		{ atcmd(LIGA,G); }
 ^@list-?/[ \t]       		{ atcmd(LIST,0); }
 ^@form[-+]?/[ \t]              	{ atcmd(FORM,0); }
 ^@noform/[ \t]         		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@noform' has been replaced by '@form-'");

@@ -38,6 +38,7 @@ int minus_flag = 0;
 		SYSDEF SYSNAME SYS SYSGOESTO SYSTEXT
 		SMAP LITERAL IMAGES MERGE OID
 		LINKDEF LINK
+		LIGA LIGATURE LIGAFONT LIGAUCUN
 		SCRIPTDEF SCRIPT
 
 %nterm  <text>  anynote atftoken atftokens lang longtext token
@@ -89,6 +90,7 @@ atcmd:
 	| atfake
 	| atlist
 	| atv
+	| atliga
 	| atlink
 	| atsys
 	| atscript
@@ -177,6 +179,10 @@ atlink:
 
 atlist:
           LIST LISTNUM	 { asl_bld_list(&@1, curr_asl, (uccp)$2, minus_flag); }
+	;
+
+atliga:
+          LIGA 	LIGATURE LIGAFONT LIGAUCUN { asl_bld_liga(&@1, curr_asl, (uccp)$2, (uccp)$3, (uccp)$4); }
 	;
 
 atlref:

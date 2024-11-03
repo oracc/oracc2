@@ -45,7 +45,7 @@ sx_images(struct sl_signlist *sl)
 		  fprintf(stderr, "sx: @img file %s or %s not readable; ignoring entry\n", imfile, buf);
 		  continue;
 		}
-	      imfile = pool_copy(buf, sl->p);
+	      imfile = (ccp)pool_copy((uccp)buf, sl->p);
 	      improj = "@@oracc@@";
 	    }
 	  Roco *mr = roco_load(imfile, 0, NULL, NULL, NULL);

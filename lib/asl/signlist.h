@@ -143,6 +143,7 @@ struct sl_signlist
   Memo *m_memostr;
   Memo *m_syss;
   Memo *m_links;
+  Memo *m_ligas;
   Memo *m_idata;
   Memo *m_scriptdefs;
   Memo *m_scriptdata;
@@ -176,6 +177,13 @@ struct sl_token
   struct sl_inst *oid_ip;	/* instance to use for retrieving OID */
   int s;			/* sort code for token */
   int priority;			/* for registering nums */
+};
+
+struct sl_liga
+{
+  unsigned const char *n; /* name for ligature, e.g., AN+EN */
+  unsigned const char *f; /* font sequence, e.g., u1202D_u200D_u12097 */
+  unsigned const char *u; /* cuneiform in UTF-8 */
 };
 
 /* Parents of values */
@@ -422,6 +430,7 @@ struct sl_sign
 			   hashed: '#digest_by_oid' --and
 			   '#digest_by_name'--#digest_by_name not currently implemented;
 			   the hashvals for special items are struct sl_compound_digest * */
+  Hash *h_ligas;	/* Hash for @liga by name token */
   struct sl_letter *letter;
   unsigned const char *group;
   struct sl_inst **lists;
@@ -481,6 +490,7 @@ struct sl_form
 			   corresponds to the form; if the form
 			   doesn't occur as an @sign entry, the
 			   back-reference form->sign->xref is set */
+  Hash *h_ligas;	/* Hash for @liga by name token */
   List *owners; 	/* this is a list of sl_sign* the form is associated with */
   struct sl_sign **owners_sort; /* owners as sorted array */
   int nowners;
@@ -616,5 +626,6 @@ extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval
 extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
 
+extern void asl_bld_liga(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *fseq, const unsigned char *u);
 
 #endif/*SIGNLIST_H_*/

@@ -119,6 +119,7 @@ asl_bld_init(void)
   sl->m_scriptdefs = memo_init(sizeof(struct sl_scriptdef), 8);
   sl->m_scriptdata = memo_init(sizeof(struct sl_scriptdata), 128);
   sl->m_links = memo_init(sizeof(Link), 512);
+  sl->m_ligas = memo_init(sizeof(Link), 8);
   sl->p = pool_init();
   sl->compounds = list_create(LIST_SINGLE);
   sl->componly = list_create(LIST_SINGLE);
@@ -1233,6 +1234,30 @@ void
 asl_bld_sign(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag)
 {
   asl_bld_sign_sub(locp, sl, n, minus_flag, sx_tle_sign);
+}
+
+void
+asl_bld_liga(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *f, const unsigned char *u)
+{
+  if (asl_sign_guard(locp, sl, "liga"))
+    {
+      struct sl_liga *lp = memo_new(sl->m_ligas);
+      lp->n = n;
+      lp->f = f;
+      lp->u = u;
+      if (sl->curr_form)
+	{
+	  if (!sl->curr_form->u.f->h_ligas)
+	    sl->curr_form->u.f->h_ligas = hash_create(3);
+	  hash_add(sl->curr_form->u.f->h_ligas, lp->n, lp);
+	}
+      else
+	{
+	  if (!sl->curr_sign->h_ligas)
+	    sl->curr_sign->h_ligas = hash_create(3);
+	  hash_add(sl->curr_sign->h_ligas, lp->n, lp);
+	}
+    }
 }
 
 void
