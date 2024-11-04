@@ -14,6 +14,11 @@
 }
 
 @font-face {
+   font-family: 'Oracc LAK';
+   src: url('/fonts/Oracc-LAK.ttf');
+}
+
+@font-face {
    font-family: 'Cuneiform Classic';
    src: url('/fonts/CuneiformClassic-final.ttf');
 }
@@ -33,6 +38,10 @@
 
 .ofs-gudea {
    font-family: "Oracc Gudea";
+}
+
+.ofs-lak {
+   font-family: "Oracc LAK";
 }
 
 .ofs-noto {
@@ -56,7 +65,19 @@
 }
 
 .salt1 {
-    font-feature-settings: "salt";
+    font-feature-settings: "salt" 1;
+}
+
+.salt2 {
+    font-feature-settings: "salt" 2;
+}
+
+.salt3 {
+    font-feature-settings: "salt" 3;
+}
+
+.salt4 {
+    font-feature-settings: "salt" 4;
 }
 
 .cv01 {

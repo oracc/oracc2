@@ -54,7 +54,9 @@ if [ "$asl" != "" ]; then
 	# cp 02xml/sl.xml 02xml/sl-mcu.xml
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml
-	sx -u $asl | cut -f 2-4,6 | grep '	o[0-9]\+	' >02pub/unicode.tsv
+	sx -u $asl
+	cut -f 2-4,6 unicode.tsv | grep '	o[0-9]\+	' >02pub/unicode.tsv
+	rm -f unicode.tsv
 	chmod -R o+r 02pub/sl 02pub/lists.tsv 02pub/sortcodes.* 02pub/unicode.tsv 02xml/sl.xml 02pub/*.oss 02pub/*.mrg
     else
 	echo "$0: errors in processing $asl. Stop."

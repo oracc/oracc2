@@ -66,10 +66,10 @@ install-exec-local:
 %.def: %.def.in
 	$(ORACCIFY) $<
 
-%.oin: %.ttf ttf2oin.sh
+%.oin: %.ttf ${bindir}/ttf2oin.sh
 	ttf2oin.sh $*
 
-%.ofp: %.oin %.def
+%.ofp: %.oin %.def ${bindir}/ofpx ${bindir}/ttf2ofp.sh
 	ttf2ofp.sh $*
 
 %.ofpx: %.ofp
