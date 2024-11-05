@@ -23,6 +23,11 @@
    src: url('/fonts/CuneiformClassic-final.ttf');
 }
 
+@font-face {
+   font-family: 'Oracc NA Outline';
+   src: url('/fonts/Oracc-NA-Outline.ttf');
+}
+
 .ofs-150 { font-size: 150%; }
 .ofs-200 { font-size: 200%; }
 
@@ -42,6 +47,10 @@
 
 .ofs-lak {
    font-family: "Oracc LAK";
+}
+
+.ofs-nao {
+   font-family: "Oracc NA Outline";
 }
 
 .ofs-noto {

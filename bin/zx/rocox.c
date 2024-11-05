@@ -54,6 +54,7 @@ opts(int opt, const char *arg)
     case 'h':
       roco_html_ns = 1;
       xmltag = "table";
+      xml_output = 1;
       break;
     case 'n':      
       roco_newline = 1;
