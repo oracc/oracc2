@@ -6,6 +6,8 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
   background-repeat: repeat;
 }
 
+.gray { color: gray; }
+
 span.osquare:before { content: "["; }
 span.csquare:before { content: "]"; }
 

@@ -7,12 +7,28 @@
 
 <xsl:param name="period" select="'na'"/>
 
-<xsl:param name="dfont" select="'noto'"/>
+<xsl:param name="dfont" select="'ofs-noto'"/>
+<xsl:param name="dmag" select="'ofs-100'"/>
+<xsl:param name="dscript" select="'middle'"/>
 
 <xsl:variable name="font">
   <xsl:choose>
-    <xsl:when test="/*/@c"><xsl:message>Setting font from @c</xsl:message><xsl:value-of select="/*/@c"/></xsl:when>
+    <xsl:when test="/*/@fnt"><xsl:message>Setting font from @fnt=</xsl:message><xsl:value-of select="/*/@fnt"/></xsl:when>
     <xsl:otherwise><xsl:value-of select="$dfont"/></xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="mag">
+  <xsl:choose>
+    <xsl:when test="/*/@mag"><xsl:value-of select="/*/@mag"/></xsl:when>
+    <xsl:otherwise><xsl:value-of select="$dmag"/></xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="script">
+  <xsl:choose>
+    <xsl:when test="/*/@script"><xsl:value-of select="/*/@scr"/></xsl:when>
+    <xsl:otherwise><xsl:value-of select="$dscript"/></xsl:otherwise>
   </xsl:choose>
 </xsl:variable>
 
@@ -25,7 +41,7 @@
   <html>
     <head>
       <title>Cuneified <xsl:value-of select="/*/@n"/></title>
-      <link rel="stylesheet" type="text/css" href="/css/cuneify.css" />
+      <link rel="stylesheet" type="text/css" href="/css/p4-cuneify.css" />
       <link rel="stylesheet" type="text/css" href="/css/fonts.css" />
     </head>
     <body>
@@ -38,7 +54,7 @@
 <xsl:template match="xtf:transliteration|xtf:composite">
   <h1>Cuneified <xsl:value-of select="@n"/></h1>
   <p class="disclaimer">[This cuneiform text was computer-generated
-  from a transliteration. <a href="/cuneify-trouble.html">See this page for trouble-shooting tips.</a>]</p>
+  from a transliteration.<!--<a href="/cuneify-trouble.html">See this page for trouble-shooting tips.</a>-->]</p>
   <table class="cuneify-text">
     <xsl:apply-templates/>
   </table>
@@ -60,7 +76,7 @@
       </xsl:choose>
     </td>
     <td>
-      <p class="cuneify-content {$font}">
+      <p class="cuneify-content {$font} {$script} {$mag}">
 	<xsl:apply-templates/>
       </p>
     </td>
@@ -83,13 +99,16 @@
 	    <span class="broken">
 	      <xsl:choose>
 		<xsl:when test="@gdl:type='ellipsis'"> <!-- gdl:x -->
-		  <span class="ellipsis">.&#xa0;.&#xa0;.</span>
+		  <span class="ellipsis">
+		    <xsl:text>.&#xa0;.&#xa0;.</xsl:text>
+		    <xsl:if test="../following-sibling::*[1]/gdl:x[@gdl:type='ellipsis']">&#xa0;</xsl:if>
+		  </span>
 		</xsl:when>
-		<xsl:when test="@gdl:utf8='x'">
-		  <span class="roman">x</span>
+		<xsl:when test="translate(@gdl:utf8,'X','x')='x'">
+		  <span class="roman">&#xd7;</span>
 		</xsl:when>
 		<xsl:otherwise>
-		  <span class="{ancestor-or-self::*[@c][1]/@c}">
+		  <span class="{ancestor-or-self::*[@fnt][1]/@fnt}">
 		    <xsl:choose>
 		      <xsl:when test="@gdl:salt">
 			<span class="salt{@gdl:salt}"><xsl:value-of select="@gdl:utf8"/></span>
@@ -106,13 +125,19 @@
 	</xsl:choose>
       </xsl:when>
       <xsl:otherwise>
-	<span class="{ancestor-or-self::*[@c][1]/@c}">
+	<span class="{ancestor-or-self::*[@fnt][1]/@fnt}">
 	  <xsl:choose>
 	    <xsl:when test="@gdl:salt">
 	      <span class="salt{@gdl:salt}"><xsl:value-of select="@gdl:utf8"/></span>
 	    </xsl:when>
 	    <xsl:when test="@gdl:type='ellipsis'"> <!-- gdl:x -->
-	      <span class="ellipsis">.&#xa0;.&#xa0;.</span>
+	      <span class="ellipsis">
+		<xsl:text>.&#xa0;.&#xa0;.</xsl:text>
+		<xsl:if test="../following-sibling::*[1]/gdl:x[@gdl:type='ellipsis']">&#xa0;</xsl:if>
+	      </span>
+	    </xsl:when>
+	    <xsl:when test="translate(@gdl:utf8,'X','x')='x'">
+	      <span class="roman broken gray">&#xd7;</span>
 	    </xsl:when>
 	    <xsl:otherwise>
 	      <xsl:value-of select="@gdl:utf8"/>
@@ -133,7 +158,7 @@
 
 <xsl:template match="gdl:nonw">
   <xsl:for-each select=".//*[@gdl:utf8]">
-    <span class="{ancestor-or-self::*[@c][1]/@c}">
+    <span class="{ancestor-or-self::*[@fnt][1]/@fnt}">
       <xsl:value-of select="@gdl:utf8"/>
     </span>
   </xsl:for-each>
