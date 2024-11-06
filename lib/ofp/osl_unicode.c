@@ -38,6 +38,32 @@ osl_unicode(void)
   return o;
 }
 
+Osl_uentry *
+osl_autocreate(const char *u)
+{
+  Osl_uentry *up = calloc(1, sizeof(Osl_uentry));
+  const char *h = u;
+  if (('0' == h[0] && 'x' == h[1])
+      || ('_' == h[0] && 'u' == h[1])
+      || ('U' == h[0] && '+' == h[1]))
+    h += 2;
+  char name[3+strlen(h)];
+  sprintf(name, "U+%s", h);
+#if 0
+  char *hu = name;
+  while (*hu)
+    {
+      if (islower(*hu))
+	  *hu = toupper(*hu);
+      ++hu;
+    }
+#endif
+  up->n = (uccp)strdup(name);
+  up->o = "";
+  up->s = strtoul(h, NULL, 16);
+  return up;
+}
+
 /* Take a sequence in OSL (x12345.x12345) or font format
  * (u12345_u12345) and return a NULL-terminated array of Osl_unicode structs
  */
@@ -75,7 +101,12 @@ osl_sequence(Osl_unicode *op, const char *seq, int *nseq)
       else
 	oo[i] = &entryX;
       if (nxtsep)
-	next = nxtsep + 2;
+	{
+	  if (!strncmp(nxtsep, "_uni", 4))
+	    next = nxtsep + 4;
+	  else
+	    next = nxtsep + 2;
+	}
     }
   if (nseq)
     *nseq = i;

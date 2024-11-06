@@ -5,7 +5,6 @@ if [ "$ff" == "" ]; then
     exit 1;
 fi
 f=`basename $ff .ttf`
-ttf2oin.sh $f
 if [ -s $f.oin ]; then
     list=`grep @list $f.def | cut -f2`
     if [ "$list" != "" ]; then

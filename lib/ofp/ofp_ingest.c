@@ -63,67 +63,73 @@ ofp_ingest(Ofp *ofp)
 	}
       else
 	{
-	  ucode = strchr((ccp)lp[i], '\t');
-	  if (ucode)
+	  char *tab = strchr((ccp)lp[i], '\t');
+	  if (tab)
 	    {
-	      *ucode++ = '\0';
-	      while (isspace(*ucode))
-		++ucode;
-	      ucode += 2;
-	      fcode = ucode;
-	      /* ignore entries that have ucode=0 unless they are .liga + features */
-	      if (!strcmp(ucode, "0000"))
+	      ucode = (char*)lp[i]+2; /* new format is 0x12345 */
+	      char *uup = ucode;
+	      while (*uup)
 		{
-		  if (strstr(name, ".liga"))
-		    {
-		      /* handle AGRIG.liga.ss01 */
-		      char *dot = strrchr(name, '.');
-		      if (strcmp(dot+1, "liga"))
-			{
-			  *dot++ = '\0';
-			  Ofp_glyph *gp = hash_find(ofp->h_liga, (uccp)name);
-			  if (gp)
-			    {
-			      ligl = (char*)gp->ligl;
-			      liga = (char*)gp->liga;
-			      ucode = (char*)gp->code;
-			      ext = dot;
-			      f = ext_type(dot);
-			    }
-			}
-		      else
-			name = "-";
-		    }
-		  else
-		    {
-		      ucode = (char*)ucode_from_name(ofp, name);
-		      if (!ucode || !unicode_value(ucode))
-			{
-			  name = "-";
-			  ucode = "0000";
-			}
-		    }
+		  *uup = toupper(*uup);
+		  ++uup;
 		}
-	      if (!ligl)
-		{
-		  char *dot = strchr(name, '.');
-		  if (dot)
-		    {
-		      *dot++ = '\0';
-		      ext = dot;
-		      f = ext_type(dot);
-		    }
-		}
+	      name = tab+1;
+	      *tab = '\0';
 	    }
 	  else
 	    {
-	      fprintf(stderr, "%s:%d: malformed name\tucode line\n", ofp->file, i+1);
-	      exit(1);
+	      /* UCODE.FEAT e.g., u12345.ss01, etc. */
+	      ucode = (char*)ucode_from_name(ofp, name);
+	      if (!ucode || !unicode_value(ucode))
+		{
+		  name = "-";
+		  ucode = "0000";
+		}
+	      char *dot = strchr(name, '.');
+	      if (dot)
+		{
+		  *dot++ = '\0';
+		  ext = dot;
+		  f = ext_type(dot);
+		}
 	    }
 	}
       set_glyph(ofp, i, name, ucode, fcode, f, ext, ligl, liga, ivs);
+      /*set_liga_glyphs(ofp);*/
     }
 }
+
+#if 0
+void
+set_liga_glyphs(Ofp *ofp)
+{
+  int nliga;
+  const char **lnames = hash_keys2(ofp->h_liga, &nliga);
+
+  int i;
+  for (i = 0; i < nliga; ++i)
+    {
+      /* handle AGRIG.liga.ss01 */
+      char *dot = strrchr(name, '.');
+      if (strcmp(dot+1, "liga"))
+	{
+	  *dot++ = '\0';
+	  Ofp_glyph *gp = hash_find(ofp->h_liga, (uccp)name);
+	  if (gp)
+	    {
+	      ligl = (char*)gp->ligl;
+	      liga = (char*)gp->liga;
+	      ucode = (char*)gp->code;
+	      ext = dot;
+	      f = ext_type(dot);
+	    }
+	}
+      else
+	name = "-";
+      set_glyph(ofp, i, name, ucode, fcode, f, ext, ligl, liga, ivs);
+    }
+}
+#endif
 
 static enum Ofp_feature
 ext_type(const char *ext)
@@ -224,9 +230,12 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
       up = strdup(u);
       e = hash_find(o->osl->h, (uccp)u);
     }
-  if (!e && !strstr(up, "U+0000") && !strstr(up, ".xE01")
-      && (strlen(up)==7 || strstr(up, "U+E")))
-    fprintf(stderr, "no osl for %s\n", up);
+  if (!e && !strstr(up, "U+0000") && !strstr(up, ".xE01") && !strstr(up, "U+E"))
+    {
+      /*fprintf(stderr, "autocreating osl for %s\n", up);*/
+      if ('U' == *up && '+' == *up)
+	e = osl_autocreate(up);
+    }
   else if (e)
     /*fprintf(stderr, "lookup of %s found %s\n", up, e->u)*/;
   /* A) Don't free this because caller wants it; B) Make sure it is
@@ -244,7 +253,7 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
   gp(i)->index = i;
   gp(i)->name = name;
   gp(i)->code = code;
-  gp(i)->fcode = fcode;
+  gp(i)->fcode = code /*fcode*/; /* can probably discontinue this */
   gp(i)->f = f;
   if (ext)
     {

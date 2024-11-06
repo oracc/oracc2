@@ -86,5 +86,6 @@ extern void ofp_marshall(Ofp *ofp);
 extern void ofp_xml(Ofp *ofp, FILE *fp);
 extern void ofp_debug(Ofp *ofp, const char *fname);
 extern char *liga2useq(Ofp *ofp, const char *liga);
+extern Osl_uentry *osl_autocreate(const char *u);
 
 #endif/*OFP_H_*/
