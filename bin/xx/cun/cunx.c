@@ -12,7 +12,9 @@ extern int optind;
 int verbose = 0;
 
 int in_break = 0;
+int in_l = 0;
 int last_was_ellipsis = 0;
+int word_count = 0;
 
 typedef struct Cun_class
 {
@@ -55,7 +57,7 @@ cun_head(FILE *fp, const char *n)
 {
   fprintf(fp,
 	  "<html >"
-	  "<head>"
+	  "<head><meta charset=\"utf-8\"/>"
 	  "<title>Cuneified %s</title>"
 	  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
 	  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
@@ -99,57 +101,68 @@ ei_sH(void *userData, const char *name, const char **atts)
     }
   else
     {
-      const char *utf8 = findAttr(atts, "g:utf8");
-      const char *gtype = findAttr(atts, "g:type");
-      const char *o = findAttr(atts, "g:o");
-      const char *c = findAttr(atts, "g:c");
-      const char *b = findAttr(atts, "g:break");
+      if (in_l)
+	{
+	  const char *utf8 = findAttr(atts, "g:utf8");
+	  const char *gtype = findAttr(atts, "g:type");
+	  const char *o = findAttr(atts, "g:o");
+	  const char *c = findAttr(atts, "g:c");
+	  const char *b = findAttr(atts, "g:break");
 
-      if (!in_break)
-	{
-	  if (!strcmp(b, "missing") || 'x' == *utf8 || 'X' == *utf8)
+	  if (!in_break)
 	    {
-	      fprintf(outfp, "<span class=\"broken\">");
-	      in_break = 1;
-	    }
-	}
-      else
-	{
-	  if (strcmp(b, "missing") && *utf8 && 'x' != *utf8 && 'X' != *utf8)
-	    {
-	      fprintf(outfp, "</span>");
-	      in_break = 0;
-	    }
-	}
-      
-      if (*utf8 ||  !strcmp(gtype, "ellipsis"))
-	{
-	  if (strchr(o, '['))
-	    fprintf(outfp, "<span class=\"roman\">[</span>");
-      
-	  if ('x' == *utf8 || 'X' == *utf8)
-	    {
-	      fprintf(outfp, "<span class=\"roman gray\">×</span>");
-	    }
-	  else if (!*utf8)
-	    {
-	      fprintf(outfp, "<span class=\"roman\">%s. . .</span>", last_was_ellipsis ? " " : "");
-	      last_was_ellipsis = 1;
+	      if (!strcmp(b, "missing") || 'x' == *utf8 || 'X' == *utf8)
+		{
+		  fprintf(outfp, "<span class=\"broken\">");
+		  in_break = 1;
+		}
 	    }
 	  else
 	    {
-	      fprintf(outfp, "<span class=\"%s %s %s\">%s</span>", cp->fnt, cp->mag, cp->scr, utf8);
+	      if (strcmp(b, "missing") && *utf8 && 'x' != *utf8 && 'X' != *utf8)
+		{
+		  fprintf(outfp, "</span>");
+		  in_break = 0;
+		}
 	    }
+      
+	  if (*utf8 || !strcmp(gtype, "ellipsis"))
+	    {
+	      if (strchr(o, '['))
+		fprintf(outfp, "<span class=\"roman\">[</span>");
+      
+	      if ('x' == *utf8 || 'X' == *utf8)
+		{
+		  fprintf(outfp, "<span class=\"roman gray\">×</span>");
+		  last_was_ellipsis = 0;
+		}
+	      else if (!*utf8)
+		{
+		  fprintf(outfp, "<span class=\"roman\">%s. . .</span>", last_was_ellipsis ? " " : "");
+		  last_was_ellipsis = 1;
+		}
+	      else
+		{
+		  fprintf(outfp, "<span class=\"%s %s %s\">%s</span>", cp->fnt, cp->mag, cp->scr, utf8);
+		  last_was_ellipsis = 0;
+		}
 	  
-	  if (strchr(c, ']'))
-	    fprintf(outfp, "<span class=\"roman\">]</span>");
+	      if (strchr(c, ']'))
+		fprintf(outfp, "<span class=\"roman\">]</span>");
+	    }
+	  else if (!strcmp(name, "g:w"))
+	    {
+	      if (++word_count && !last_was_ellipsis)
+		fprintf(outfp, "<span> </span>");
+	    }
 	}
       else
 	{
 	  if (!strcmp(name, "l"))
 	    {
-	      fprintf(outfp, "<tr><td>%s</td><td>", findAttr(atts, "label"));
-	      last_was_ellipsis = 0;
+	      fprintf(outfp, "<tr><td class=\"cuneify-label\">%s</td><td>", findAttr(atts, "label"));
+	      last_was_ellipsis = word_count = 0;
+	      in_l = 1;
 	    }
 	}
     }
@@ -166,8 +179,14 @@ ei_eH(void *userData, const char *name)
 	  in_break = 0;
 	}
       fprintf(outfp, "</td></tr>");
-      last_was_ellipsis = 0;
+      in_l = last_was_ellipsis = 0;
     }
+#if 0
+  else if (!strcmp(name, "g:w"))
+    {
+      ;
+    }
+#endif
 }
 
 void
