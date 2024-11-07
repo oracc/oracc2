@@ -23,7 +23,7 @@ typedef struct Cun_class
   const char *scr;
 } Cun_class;
 
-Cun_class cun_defaults = { .fnt="ofs-noto" , .mag="ofs-100", .scr="middle" };
+Cun_class cun_defaults = { .fnt="noto" , .mag="100", .scr="middle" };
 Cun_class *curr_cp = &cun_defaults;
 
 /* This printText implements the same escaping as used by oracc2's
@@ -51,19 +51,31 @@ printText(const char *s, FILE *frag_fp)
     }
 }
 
+const char *
+cc_skip_prefix(const char *c)
+{
+  const char *ofs = "ofs-";
+  if ('-' == c[0] && '-' == c[1])
+    c += 2;
+  if (!strncmp(c, ofs, strlen(ofs)))
+    c += strlen(ofs);
+  return c;
+}
 
 void
-cun_head(FILE *fp, const char *n)
+cun_head(FILE *fp, const char *n, Cun_class *cp)
 {
   fprintf(fp,
 	  "<html >"
 	  "<head><meta charset=\"utf-8\"/>"
 	  "<title>Cuneified %s</title>"
-	  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
 	  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
-	  "</head><body><table>",
-	  n);
-  fprintf(outfp, "<h1>%s</h1>", n);
+	  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
+	  "<script type=\"text/javascript\" src=\"/js/p4-cuneify.js\">&#160;</script>"
+	  "</head><body onload=\"cuneify()\" id=\"p4Cuneify\" "
+	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\">",
+	  n, cp->fnt, cp->mag, cp->scr);
+  fprintf(outfp, "<h1>%s</h1><p><span onclick=\"cuneify_reset('noto')\">NOTO</span><span onclick=\"cuneify_reset('oobf')\">OOBF</span></p><table class=\"cfy-table\">", n);
 }
 
 void
@@ -79,6 +91,14 @@ cun_class(const char **atts, Cun_class *curr_cp)
   const char *fnt = findAttr(atts, "fnt");
   const char *mag = findAttr(atts, "mag");
   const char *scr = findAttr(atts, "scr");
+
+  if (*fnt)
+    fnt = cc_skip_prefix(fnt);
+  if (*mag)
+    mag = cc_skip_prefix(mag);
+  if (*scr)
+    scr = cc_skip_prefix(scr);
+  
   cp.fnt = *fnt ? fnt : curr_cp->fnt;
   cp.mag = *mag ? mag : curr_cp->mag;
   cp.scr = *scr ? scr : curr_cp->scr;
@@ -88,16 +108,15 @@ cun_class(const char **atts, Cun_class *curr_cp)
 void
 ei_sH(void *userData, const char *name, const char **atts)
 {
-  Cun_class *cp = cun_class(atts, curr_cp);
-
   if (!strcmp(name, "xcl"))
     longjmp(done, 0);
 
   if (!strcmp(name, "transliteration") || !strcmp(name, "composite"))
     {
       const char *xn = (ccp)xmlify((uccp)findAttr(atts, "n"));
+      Cun_class *cp = cun_class(atts, curr_cp);
       *curr_cp = *cp;
-      cun_head(outfp, xn);
+      cun_head(outfp, xn, cp);
     }
   else
     {
@@ -143,7 +162,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 		}
 	      else
 		{
-		  fprintf(outfp, "<span class=\"%s %s %s\">%s</span>", cp->fnt, cp->mag, cp->scr, utf8);
+		  fprintf(outfp, "<span class=\"cfy-cun\">%s</span>", utf8);
 		  last_was_ellipsis = 0;
 		}
 	  
@@ -153,7 +172,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	  else if (!strcmp(name, "g:w"))
 	    {
 	      if (++word_count && !last_was_ellipsis)
-		fprintf(outfp, "<span> </span>");
+		fprintf(outfp, "<span class=\"cfy-ws\"> </span>");
 	    }
 	}
       else
