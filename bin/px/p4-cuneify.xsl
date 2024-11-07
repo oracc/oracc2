@@ -13,7 +13,7 @@
 
 <xsl:variable name="font">
   <xsl:choose>
-    <xsl:when test="/*/@fnt"><xsl:message>Setting font from @fnt=</xsl:message><xsl:value-of select="/*/@fnt"/></xsl:when>
+    <xsl:when test="/*/@fnt"><xsl:value-of select="/*/@fnt"/></xsl:when>
     <xsl:otherwise><xsl:value-of select="$dfont"/></xsl:otherwise>
   </xsl:choose>
 </xsl:variable>
@@ -88,7 +88,7 @@
 
 <xsl:template match="gdl:w">
   <xsl:for-each select=".//*[@gdl:utf8 or @gdl:type='ellipsis']">
-    <xsl:if test="contains(@gdl:o,'[')"><span class="osquare"><![CDATA[]]></span></xsl:if>
+    <xsl:if test="contains(@gdl:o,'[')"><span class="osquare">&#x200D;</span></xsl:if>
     <xsl:choose>
       <xsl:when test="@gdl:break='missing'">
 	<xsl:choose>
@@ -99,10 +99,10 @@
 	    <span class="broken">
 	      <xsl:choose>
 		<xsl:when test="@gdl:type='ellipsis'"> <!-- gdl:x -->
-		  <span class="ellipsis">
-		    <xsl:text>.&#xa0;.&#xa0;.</xsl:text>
-		    <xsl:if test="../following-sibling::*[1]/gdl:x[@gdl:type='ellipsis']">&#xa0;</xsl:if>
-		  </span>
+		  <span class="ellipsis"
+			>.&#xa0;.&#xa0;.<xsl:if
+			test="../following-sibling::*[1]/gdl:x[@gdl:type='ellipsis']">&#xa0;</xsl:if
+			></span>
 		</xsl:when>
 		<xsl:when test="translate(@gdl:utf8,'X','x')='x'">
 		  <span class="roman">&#xd7;</span>
@@ -131,10 +131,9 @@
 	      <span class="salt{@gdl:salt}"><xsl:value-of select="@gdl:utf8"/></span>
 	    </xsl:when>
 	    <xsl:when test="@gdl:type='ellipsis'"> <!-- gdl:x -->
-	      <span class="ellipsis">
-		<xsl:text>.&#xa0;.&#xa0;.</xsl:text>
-		<xsl:if test="../following-sibling::*[1]/gdl:x[@gdl:type='ellipsis']">&#xa0;</xsl:if>
-	      </span>
+	      <span class="ellipsis">.&#xa0;.&#xa0;.<xsl:if
+	      test="../following-sibling::*[1]/gdl:x[@gdl:type='ellipsis']">&#xa0;</xsl:if
+	      ></span>
 	    </xsl:when>
 	    <xsl:when test="translate(@gdl:utf8,'X','x')='x'">
 	      <span class="roman broken gray">&#xd7;</span>
@@ -146,7 +145,7 @@
 	</span>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:if test="contains(@gdl:c,']')"><span class="csquare"><![CDATA[]]></span></xsl:if>
+    <xsl:if test="contains(@gdl:c,']')"><span class="csquare">&#x200D;</span></xsl:if>
   </xsl:for-each>
   <xsl:if test="not(@form='x') and not(@form='(xx)')
 		and not('x'=substring(@form,string-length(@form)))

@@ -137,6 +137,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/wx/Makefile
 		 bin/wx/ccgi/Makefile
 		 bin/xx/Makefile
+		 bin/xx/cun/Makefile
 		 bin/xx/fonts/Makefile
 		 bin/xx/lem/Makefile
 		 bin/xx/osort/Makefile
