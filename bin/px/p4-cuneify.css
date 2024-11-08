@@ -6,10 +6,12 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
   background-repeat: repeat;
 }
 
+.gray { color: gray; }
+
 span.osquare:before { content: "["; }
 span.csquare:before { content: "]"; }
 
-.cuneify-label { font-size: 70%; color: gray; }
+.cuneify-label { font-size: 70%; color: gray; margin-bottom: 5px; }
 
 .cuneify-text { width: 99%; 
 	      }
@@ -21,3 +23,29 @@ span.csquare:before { content: "]"; }
 		width: 100%;
 	      	text-align: justify;
 		}
+
+:root {
+    --ofs-noto: "Oracc Noto SansCuneiform";
+    --ofs-oobf: "Oracc OBFreie Regular";
+    --ofs-early:  "ss01";
+    --ofs-middle: "ss01", "ss02";
+    --ofs-late:   "ss01", "ss02", "ss03";
+    --ofs-font: var(--ofs-noto);
+    --ofs-mag: 100%;
+    --ofs-script: var(--ofs-middle);
+}
+
+.cfy-cun {
+    font-family: var(--ofs-font);
+    font-size: var(--ofs-mag);
+    font-feature-settings: var(--ofs-script);
+}
+
+.cfy-ws {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.cfy-table { }
+
+.cfy-table tr>td { padding-bottom: .5em; }

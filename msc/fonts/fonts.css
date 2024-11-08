@@ -28,7 +28,12 @@
    src: url('/fonts/Oracc-NA-Outline.ttf');
 }
 
+.ofs-100 { font-size: 100%; }
+
+.ofs-120 { font-size: 120%; }
+
 .ofs-150 { font-size: 150%; }
+
 .ofs-200 { font-size: 200%; }
 
 .ofs-feat-r { text-align: right; padding-right: 1em; }
