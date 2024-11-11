@@ -193,6 +193,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
    */
   if ('@' == *lp)
     {
+      /*fprintf(stderr, "parse_form: %s\n", err_lp);*/
       formp->project = lp+1;
       lp = (Uchar*)strchr((char*)lp,'%');
       if (lp)
@@ -205,8 +206,13 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 	    {
 	      *lp++ = '\0';
 	      formp->form = lp;
-	      lp = (Uchar*)strchr((char*)lp,'=');
-	      *lp++ = '\0';
+	      if ((lp = (Uchar*)strchr((char*)lp,'=')))
+		*lp++ = '\0';
+	      else
+		{
+		  mesg_vwarning((char*)file,line,"%s: no '=' found after FORM", err_lp);
+		  return -1;
+		}
 	    }
 	  else
 	    {

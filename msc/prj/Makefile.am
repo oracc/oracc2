@@ -1,1 +1,1 @@
-SUBDIRS=cdli osl
+SUBDIRS=cdli neo osl
