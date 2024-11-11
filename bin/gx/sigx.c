@@ -38,7 +38,7 @@ main(int argc, char **argv)
     {
       const char *orig_lp = strdup(lp);
       memset(&f, '\0', sizeof(Form));
-      if (form_parse((uccp)"<stdin>", ++ln, lp, &f, NULL) >= 0)
+      if (!form_parse((uccp)"<stdin>", ++ln, lp, &f, NULL))
 	{
 	  if (oid_mode)
 	    {

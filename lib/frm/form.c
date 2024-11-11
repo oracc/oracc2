@@ -161,6 +161,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 
   if (!lp)
     return 1;
+
   /* err_lp = pool_copy(lp, scp->pool); */
   err_lp = (Uchar*)strdup((char*)lp);
 
