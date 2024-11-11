@@ -49,3 +49,19 @@ span.csquare:before { content: "]"; }
 .cfy-table { }
 
 .cfy-table tr>td { padding-bottom: .5em; }
+
+.button{
+    padding: 10px;
+    display: inline;
+    border-radius: 2px;
+    font-family: "Arial";
+    border: 0;
+    margin: 0 10px;
+    background: silver;
+    font-size: 15px;    
+    line-height: 15px;
+    color: white;
+    width: auto;
+    height: auto;
+    box-sizing: content-box;
+}

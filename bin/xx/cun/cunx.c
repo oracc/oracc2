@@ -3,13 +3,35 @@
 #include <setjmp.h>
 #include "runexpat.h"
 
+extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
+		     const char *outext, const char *trans,
+		     char **inp, char **outp, char **hdir);
+
+/* The default is to generate outputs into the P4 cache; if -b is
+   specified outputs are generated into the PQX-dir where the xtf
+   lives */
+int buildmode = 0;
+int force = 0; /* default is not to remake if the output already exists */
+int no_output = 0;
+int verbose = 0;
+int weboutput = 0;
+
+const char *invoke;
+const char *infile;
+const char *listfile;
+const char *outfile;
+const char *p4htmld;
+const char *project;
+const char *translation;
+
+char *inpath, *outpath, *htmlpath;
+
 FILE *outfp = NULL;
 
 jmp_buf done;
 
 extern int options(int, char*const*,const char*);
 extern int optind;
-int verbose = 0;
 
 int in_break = 0;
 int in_l = 0;
@@ -75,7 +97,7 @@ cun_head(FILE *fp, const char *n, Cun_class *cp)
 	  "</head><body onload=\"cuneify()\" id=\"p4Cuneify\" "
 	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\">",
 	  n, cp->fnt, cp->mag, cp->scr);
-  fprintf(outfp, "<h1>%s</h1><p><span onclick=\"cuneify_reset('noto')\">NOTO</span><span onclick=\"cuneify_reset('oobf')\">OOBF</span></p><table class=\"cfy-table\">", n);
+  fprintf(outfp, "<h1>%s</h1><p><span class=\"button\" onclick=\"cuneify_reset('noto')\">NOTO</span><span class=\"button\" onclick=\"cuneify_reset('oobf')\">OOBF</span></p><table class=\"cfy-table\">", n);
 }
 
 void
@@ -217,24 +239,96 @@ expat_identity(const char *fname, const char *xml_id, FILE *outfp)
   runexpat(i_list, fnlist, ei_sH, ei_eH);
 }
 
+static void
+show_vars(void)
+{
+  fprintf(stderr, "cunx variables:\n");
+  fprintf(stderr, "input-arg: %s\n", infile);
+}
+
 int
 main(int argc, char **argv)
 {
   outfp = stdout;
-  options(argc, argv, "");
-  runexpat_omit_rp_wrap();
-  if (!setjmp(done))
-    expat_identity(argv[optind], NULL, NULL);
-  cun_foot(outfp);
+  options(argc, argv, "bfi:l:no:p:st:vw");
+
+  if (!infile && argv[optind])
+    infile = argv[optind++];
+  
+  if (infile)
+    {
+      const char **f = malloc(2*sizeof(char*));
+      f[0] = (char*)infile;
+      f[1] = NULL;
+      if (weboutput)
+	{
+	  if (!p4htmld)
+	    {
+	      const char *p4cache = getenv("ORACC_P4_CACHE");
+	      if (p4cache)
+		{
+		  p4htmld = malloc(strlen(p4cache)+5);
+		  sprintf((char*)p4htmld, "%s/htm", p4cache);
+		}
+	      else
+		p4htmld = "/home/oracc/www/p4.d/htm";
+	    }
+	}
+      file_args(p4htmld, infile, "xtf", "cun", NULL, &inpath, &outpath, &htmlpath);
+    }
+  
+  if (verbose)
+    show_vars();
+
+  if (!no_output)
+    {
+      runexpat_omit_rp_wrap();
+      if (!setjmp(done))
+	expat_identity(argv[optind], NULL, NULL);
+      cun_foot(outfp);
+    }
 }
 
 int
-opts(int argc, const char *arg)
+opts(int opt, const char *arg)
 {
-  switch (argc)
+  switch (opt)
     {
-    default: return 1;
+    case 'b':
+      buildmode = 1;
+      break;
+    case 'f':
+      force = 1;
+      break;
+    case 'i':
+      infile = arg;
+      break;
+    case 'l':
+      listfile = arg;
+      break;
+    case 'n':
+      verbose = no_output = 1;
+      break;
+    case 'o':
+      outfile = arg;
+      break;
+    case 'p':
+      project = arg;
+      break;
+    case 't':
+      translation = arg;
+      break;
+    case 'v':
+      verbose = 1;
+      break;
+    case 'w':
+      weboutput = 1;
+      break;
+    default:
+      fprintf(stderr, "%s: unknown option -%c\n", invoke, opt);
+      return 1;
     }
   return 0;
 }
-void help() {}
+
+void help(void) { }

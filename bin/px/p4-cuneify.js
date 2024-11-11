@@ -9,7 +9,7 @@ function cuneify() {
     let m = c.getAttribute("data-cfy-mag")+'%';
     let s = '--ofs-'+c.getAttribute("data-cfy-scr");
 
-    alert('f='+f+'; m='+m+'; s='+s);
+    // alert('f='+f+'; m='+m+'; s='+s);
     
     var r = document.querySelector(':root');
     r.style.setProperty('--ofs-font', 'var('+f+')');

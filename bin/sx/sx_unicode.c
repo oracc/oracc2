@@ -345,7 +345,12 @@ sx_unicode(struct sl_signlist *sl)
 		}
 	    }
 #if 1
-	  hash_add(sl->h_compoids, (uccp)(ip->type=='s'?ip->u.s->oid:ip->u.f->oid), (void*)last_deep);
+	  const char *sf_oid = ip->type=='s'?ip->u.s->oid:ip->u.f->oid;
+	  if (sf_oid)
+	    hash_add(sl->h_compoids, (uccp)sf_oid, (void*)last_deep);
+	  else
+	    mesg_verr(&ip->mloc, "unregistered compound %s has no OID\n",
+		      ip->type=='s'?ip->u.s->name:ip->u.f->name);
 #else
 	  if (last_deep)
 	    {
