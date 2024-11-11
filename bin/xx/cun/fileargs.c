@@ -12,20 +12,19 @@
 
 int
 file_args(const char *htmldir, const char *qpqx, const char *inext,
-	  const char *outext, const char *trans,
+	  const char *outfile, const char *outext, const char *trans,
 	  char **inp, char **outp, char **hdir)
 {
   expand_base(NULL);
   *inp = strdup(expand(NULL, qpqx, inext));
 
-  if (htmldir)
+  if (!outfile)
     {
-      expand_base(htmldir);
-      *hdir = strdup(expand(NULL, qpqx, NULL));
-    }
-
-  if (outext)
-    {
+      if (htmldir)
+	{
+	  expand_base(htmldir);
+	  *hdir = strdup(expand(NULL, qpqx, NULL));
+	}
       char *ex = expand(NULL, qpqx, outext);
       if (trans && strcmp(trans, "en"))
 	{
@@ -36,5 +35,8 @@ file_args(const char *htmldir, const char *qpqx, const char *inext,
       else
 	*outp = strdup(ex);
     }
+  else
+    *outp = strdup(outfile);
+
   return 0;
 }

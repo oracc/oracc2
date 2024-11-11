@@ -4,7 +4,7 @@
 #include "runexpat.h"
 
 extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
-		     const char *outext, const char *trans,
+		     const char *outdir, const char *outext, const char *trans,
 		     char **inp, char **outp, char **hdir);
 
 /* The default is to generate outputs into the P4 cache; if -b is
@@ -12,16 +12,16 @@ extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
    lives */
 int buildmode = 0;
 int force = 0; /* default is not to remake if the output already exists */
-int no_output = 0;
+int no_output = 1;
 int verbose = 0;
 int weboutput = 0;
 
 const char *invoke;
 const char *infile;
-const char *listfile;
 const char *outfile;
 const char *p4htmld;
 const char *project;
+const char *qfile;
 const char *translation;
 
 char *inpath, *outpath, *htmlpath;
@@ -243,23 +243,23 @@ static void
 show_vars(void)
 {
   fprintf(stderr, "cunx variables:\n");
-  fprintf(stderr, "input-arg: %s\n", infile);
+  fprintf(stderr, "\tinput-arg: %s\n", qfile ? qfile : infile);
+  fprintf(stderr, "\tinput-path: %s\n", inpath);
+  fprintf(stderr, "\toutput-path: %s\n", outpath);
 }
 
 int
 main(int argc, char **argv)
 {
   outfp = stdout;
-  options(argc, argv, "bfi:l:no:p:st:vw");
+  options(argc, argv, "bfi:l:no:p:q:st:vw");
 
   if (!infile && argv[optind])
     infile = argv[optind++];
   
-  if (infile)
+  if (infile || qfile)
     {
-      const char **f = malloc(2*sizeof(char*));
-      f[0] = (char*)infile;
-      f[1] = NULL;
+      const char **f = calloc(2, sizeof(char*));
       if (weboutput)
 	{
 	  if (!p4htmld)
@@ -274,7 +274,18 @@ main(int argc, char **argv)
 		p4htmld = "/home/oracc/www/p4.d/htm";
 	    }
 	}
-      file_args(p4htmld, infile, "xtf", "cun", NULL, &inpath, &outpath, &htmlpath);
+      if (qfile)
+	{
+	  file_args(p4htmld, qfile, "xtf", outfile, "cun", NULL, &inpath, &outpath, &htmlpath);
+	  f[0] = inpath;
+	}
+      else if (infile)
+	{
+	  inpath = strdup(infile);
+	  f[0] = inpath;
+	  if (outfile)
+	    outpath = strdup(outfile);
+	}
     }
   
   if (verbose)
@@ -282,6 +293,14 @@ main(int argc, char **argv)
 
   if (!no_output)
     {
+      if (outpath && strcmp(outpath, "-"))
+	{
+	  if (!(outfp = fopen(outpath, "w")))
+	    {
+	      fprintf(stderr, "cunx: unable to write to outpath %s: %s\n", outpath, strerror(errno));
+	      exit(1);
+	    }
+	}
       runexpat_omit_rp_wrap();
       if (!setjmp(done))
 	expat_identity(argv[optind], NULL, NULL);
@@ -303,9 +322,6 @@ opts(int opt, const char *arg)
     case 'i':
       infile = arg;
       break;
-    case 'l':
-      listfile = arg;
-      break;
     case 'n':
       verbose = no_output = 1;
       break;
@@ -314,6 +330,9 @@ opts(int opt, const char *arg)
       break;
     case 'p':
       project = arg;
+      break;
+    case 'q':
+      qfile = arg;
       break;
     case 't':
       translation = arg;
