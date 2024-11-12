@@ -9,7 +9,8 @@
 #include "lng.h"
 #include "form.h"
 
-static Memo *formsmem = NULL;
+Memo *formsmem = NULL;
+Memo *formspmem = NULL;
 
 #define Uchar unsigned char
 
@@ -35,6 +36,7 @@ form_init(void)
 {
   form_pool = pool_init();
   formsmem = memo_init(sizeof(Form), 128);
+  formspmem = memo_init(sizeof(Form*), 128);
 }
 
 void
@@ -162,10 +164,14 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
   if (!lp)
     return 1;
 
+  phase = "form";
+
+  /* 2024-11-11: new PSU parsing for sigx */
+  if ('{' == *lp)
+    return form_parse_psu(file, line, lp, formp);
+  
   /* err_lp = pool_copy(lp, scp->pool); */
   err_lp = (Uchar*)strdup((char*)lp);
-
-  phase = "form";
     
   /* skip the old shadow lem codes */
   if (*lp == '`')
@@ -235,26 +241,6 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
       *lp++ = '\0';
     }
 
-  /* pass over the new PSU form and remember where it is; we don't do
-     anything with it here for now but that should probably change
-   */
-  if ('{' == *lp)
-    {
-      char * tmp = strstr((char *)lp, " += ");
-      if (tmp) {
-	char *tmp2;
-	*tmp = '\0';
-	tmp2 = strstr((char *)lp, " = ");
-	if (tmp2)
-	  {
-	    /*psu_form = &lp[1];*/
-	    *tmp2 = '\0';
-	    lp = (Uchar *)(tmp2 + 3);
-	    *tmp = ' ';
-	  }
-      }      
-    }
-  
   /* Get numbers early */
   if ('n' == *lp && !strchr((const char *)lp,'['))
     {

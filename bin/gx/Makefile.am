@@ -11,6 +11,6 @@ siglangx_SOURCES=siglangx.c qpnnames.c
 siglangx_LDADD = $(xLDADD)
 siglangx_DEPENDENCIES = $(siglangx_LDADD)
 
-sigx_SOURCES=sigx.c
+sigx_SOURCES=sigx.c ../../lib/liboracc2.la
 sigx_LDADD = $(xLDADD)
 sigx_DEPENDENCIES = $(sigx_LDADD)

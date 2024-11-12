@@ -113,6 +113,10 @@ form_sig(struct xcl_context *xcp, Form *fp)
   if (!fp)
     return NULL;
 
+  if (bit_get(fp->flags, FORM_FLAGS_IS_PSU))
+    return form_psu_sig(xcp, fp);
+
+  
   if (fp->parts)
     {
       unsigned char *tmp = NULL;
@@ -180,6 +184,9 @@ form_psu_sig(struct xcl_context *xcp, Form *fp)
 {
   unsigned char psu_buf[4096];
 
+  sprintf((char*)psu_buf, "%s[%s//%s]%s'%s", fp->cf, fp->gw, fp->sense, fp->pos, fp->epos);
+  fp->sig = pool_copy(psu_buf, xcp->pool);
+  
   if (fp->parts)
     { 
       int i;
@@ -244,7 +251,7 @@ form_psu_sig(struct xcl_context *xcp, Form *fp)
                 strcat((char*)buf,tabless(fp->parts[i]->sig));
             }
         }
-      sprintf((char*)psu_buf,"{%s= %s}::%s",psu_form,fp->psu_ngram,buf);
+      sprintf((char*)psu_buf,"{%s= %s += %s}::%s",psu_form,fp->psu_ngram,fp->sig,buf);
     }
   else
     sprintf((char*)psu_buf,"{%s}::",fp->psu_ngram);
