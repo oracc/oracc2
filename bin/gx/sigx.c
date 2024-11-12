@@ -9,6 +9,59 @@ const char *project;
 int lnum, verbose, fuzzy_aliasing, lem_autolem, lem_dynalem, bootstrap_mode;
 int neo_mode = 0, oid_mode = 1;
 
+Hash *neo = NULL;
+Hash *sig = NULL;
+Pool *poo = NULL;
+
+static void
+neo_proxies(void)
+{
+  int nlines;
+  unsigned char *fmem;
+  unsigned char **lpp = loadfile_lines3("00lib/proxy.lst", &nlines, &fmem);
+  if (lpp)
+    {
+      neo = hash_create(nlines/100);
+      int i;
+      for (i = 0; i < nlines; ++i)
+	hash_add(neo, lpp[i], "");
+    }
+  else
+    neo = hash_create(1);
+}
+
+static void
+sig_inst(List *lp, unsigned char *ip)
+{
+  unsigned char *s = ip;
+  while (*s)
+    {
+      unsigned char *e = s, *dot = NULL, save;
+      while (*e && !isspace(*e))
+	{
+	  if ('.' == *e && !dot)
+	    dot = e;
+	  ++e;
+	  if (*e)
+	    *e++ = '\0';
+	}
+      if (dot)
+	{
+	  save = '.';
+	  *dot = '\0';
+	}
+      if (hash_find(neo, s))
+	{
+	  if (save)
+	    *dot = '.';
+	  list_add(lp, s);
+	}
+      s = e;
+      while (isspace(*s)) /* can't happen ... */
+	++s;
+    }
+}
+
 int
 main(int argc, char **argv)
 {
@@ -24,6 +77,9 @@ main(int argc, char **argv)
     {
       xcp = xcl_create();
       xcp->project = project = "neo";
+      neo_proxies();
+      sig = hash_create(8192);
+      poo = pool_init();
     }
   
   mesg_init();
@@ -37,6 +93,9 @@ main(int argc, char **argv)
   while ((lp = loadoneline(stdin, NULL)))
     {
       const char *orig_lp = strdup(lp);
+      char *inst = strchr(lp, '\t');
+      if (inst)
+	*inst++ = '\0';
       memset(&f, '\0', sizeof(Form));
       if (!form_parse((uccp)"<stdin>", ++ln, lp, &f, NULL))
 	{
@@ -57,7 +116,15 @@ main(int argc, char **argv)
 		{
 		  f.lang = (uccp)f.core->name;
 		  f.morph2 = NULL;
-		  printf("%s\n", form_sig(xcp, &f));
+		  unsigned char *sigp = form_sig_nopool(xcp, &f);
+		  List *sl = hash_find(sig, sigp);
+		  if (!sl)
+		    {
+		      hash_add(sig, pool_copy(sigp, poo), (sl = list_create(LIST_SINGLE)));
+		      free(sigp);
+		    }
+		  if (inst)
+		    sig_inst(inst, sl);
 		}
 	      else
 		{
@@ -71,6 +138,33 @@ main(int argc, char **argv)
 	  mesg_init();
 	}
       free(orig_lp);
+    }
+
+  if (neo_mode)
+    {
+      int nk;
+      unsigned char **k = hash_keys2(sig, &nk);
+      qsort(k, nk, sizeof(unsigned char *), cmpstringp);
+      int i;
+      for (i = 0; i < nk; ++i)
+	{
+	  printf("%s\t", k[i]);
+	  List *lp = hash_find(sig, k[i]);
+	  if (lp)
+	    {
+	      unsigned char *ip;
+	      int sp = 0;
+	      for (ip = list_first(lp); ip; ip = list_next(lp))
+		{
+		  if (sp)
+		    fputc(' ', stdout);
+		  else
+		    ++sp;
+		  fputs(ip, stdout);
+		}
+	    }
+	  fputc('\n', stdout);
+	}
     }
 }
 int

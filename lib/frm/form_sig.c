@@ -104,51 +104,52 @@ sig_one(struct xcl_context *xcp, struct ilem_form *ifp, Form *fp, int tail)
 }
 
 unsigned char *
+form_sig_nopool(struct xcl_context *xcp, Form *fp)
+{
+  if (fp)
+    {
+      unsigned char *ret = NULL;
+      struct ilem_form *ifp = fp->owner;
+
+      if (bit_get(fp->flags, FORM_FLAGS_IS_PSU))
+	ret = form_psu_sig(xcp, fp);
+      else if (fp->parts) /* COF */
+	{
+	  unsigned char *tmp = NULL;
+	  tmp = sig_one(xcp, ifp, fp, 0);
+	  if (tmp) 
+	    {
+	      List *parts = list_create(LIST_SINGLE);
+	      int i;
+	      list_add(parts, tmp);
+	      for (i = 0; fp->parts[i]; ++i)
+		{
+		  fp->parts[i]->tail_sig = tmp = sig_one(xcp, ifp, fp->parts[i], 1);
+		  if (tmp)
+		    list_add(parts, tmp);
+		  else
+		    return NULL;
+		}
+	      ret = list_to_str2(parts, "&&");
+	    }
+	}
+      else
+	ret = sig_one(xcp, ifp, fp, 0);
+    }
+
+  return ret;
+}
+
+unsigned char *
 form_sig(struct xcl_context *xcp, Form *fp)
 {
   unsigned char *ret = NULL;
-  Pool *pool = xcp->pool;
-  struct ilem_form *ifp = fp->owner;
-  
-  if (!fp)
-    return NULL;
-
-  if (bit_get(fp->flags, FORM_FLAGS_IS_PSU))
-    return form_psu_sig(xcp, fp);
-
-  
-  if (fp->parts)
+  unsigned char *res = form_sig_nopool(xcp, fp);
+  if (res)
     {
-      unsigned char *tmp = NULL;
-      tmp = sig_one(xcp, ifp, fp, 0);
-      if (tmp) 
-	{
-	  List *parts = list_create(LIST_SINGLE);
-	  int i;
-	  list_add(parts, tmp);
-	  for (i = 0; fp->parts[i]; ++i)
-	    {
-	      fp->parts[i]->tail_sig = tmp = sig_one(xcp, ifp, fp->parts[i], 1);
-	      if (tmp)
-		list_add(parts, tmp);
-	      else
-		return NULL;
-	    }
-	  tmp = list_to_str2(parts, "&&");
-	  ret = pool_copy(tmp,pool);
-	  free(tmp);
-	}
-      else
-	return NULL;
+      ret = pool_copy(res, xcp->pool);
+      free(res);
     }
-  else
-    {
-      unsigned char *tmp = NULL;
-      tmp = sig_one(xcp, ifp, fp, 0);
-      ret = pool_copy(tmp,pool);
-      free(tmp);
-    }
-
   return ret;
 }
 
@@ -256,5 +257,5 @@ form_psu_sig(struct xcl_context *xcp, Form *fp)
   else
     sprintf((char*)psu_buf,"{%s}::",fp->psu_ngram);
 
-  return pool_copy(psu_buf,xcp->pool);
+  return strdup(psu_buf);
 }
