@@ -13,6 +13,55 @@ Hash *neo = NULL;
 Hash *sig = NULL;
 Pool *poo = NULL;
 
+int
+cmpinstidp(const void *p1, const void *p2)
+{
+  char *pq1 = strchr(* (char * const *) p1, ':') + 1;
+  char *pq2 = strchr(* (char * const *) p2, ':') + 1;
+  int ret;
+
+  char *d1 = strchr(pq1, '.');
+  char *d2 = strchr(pq1, '.');
+  if (!d1 || !d2)
+    return d1 ? 1 : 0;
+  *d1 = *d2 = '\0';
+
+  ret = strcmp(pq1,pq2);
+  *d1 = *d2 = '.';
+  if (ret)
+      return ret;
+
+  /* compare line id */
+  int n1 = atoi(d1+1);
+  int n2 = atoi(d2+1);
+  if (n1 != n2)
+    return n1 - n2;
+
+  d1 = strchr(d1+1, '.');
+  d2 = strchr(d2+1, '.');
+  if (!d1 || !d2)
+    return d1 ? 1 : 0;
+
+  /* compare word id */
+  n1 = atoi(d1+1);
+  n2 = atoi(d2+1);
+  if (n1 != n2)
+    return n1 - n2;
+
+  d1 = strchr(d1+1, '.');
+  d2 = strchr(d2+1, '.');
+  if (!d1 || !d2)
+    return d1 ? 1 : 0;
+
+  /* compare grapheme id */
+  n1 = atoi(d1+1);
+  n2 = atoi(d2+1);
+  if (n1 != n2)
+    return n1 - n2;
+
+  return 0;
+}
+
 static void
 neo_proxies(void)
 {
@@ -98,8 +147,8 @@ main(int argc, char **argv)
     }
   while ((lp = loadoneline(stdin, NULL)))
     {
-      lp = strdup((ccp)lp);
-      char *orig_lp = strdup(lp);
+      lp = (ucp)strdup((ccp)lp);
+      char *orig_lp = strdup((ccp)lp);
       char *inst = strchr((ccp)lp, '\t');
       if (inst)
 	*inst++ = '\0';
@@ -160,18 +209,17 @@ main(int argc, char **argv)
 	{
 	  printf("%s\t", k[i]);
 	  List *lp = hash_find(sig, (uccp)k[i]);
-	  if (lp)
+	  if (lp && list_len(lp))
 	    {
-	      unsigned char *ip;
-	      int sp = 0;
-	      /* sort here */
-	      for (ip = list_first(lp); ip; ip = list_next(lp))
+	      int n;
+	      const char **ll = (const char **)list2array_c(lp, &n);
+	      qsort(ll, n, sizeof(const char *), cmpinstidp);
+	      int j;
+	      for (j = 0; j < n; ++j)
 		{
-		  if (sp)
+		  if (j)
 		    fputc(' ', stdout);
-		  else
-		    ++sp;
-		  fputs((ccp)ip, stdout);
+		  fputs(ll[j], stdout);
 		}
 	    }
 	  fputc('\n', stdout);
