@@ -67,21 +67,47 @@ oid_ok_pair_last(struct oid_ok_pair *lp)
   return lp;
 }
 
+static void
+oid_first_available(Oids *o)
+{
+  int i;
+  int32_t last;
+  for (i = 0; o->lines[i]; ++i)
+    {
+      int32_t curr;
+      curr = strtol((const char *)&o->lines[i][1], NULL, 10);
+      if (prev >= 0)
+	{
+	  if (curr - prev > 1) /* this is a gap in numbering */
+	    {    
+	      o->first = 1;
+	      o->first_lnum = i;
+	    }
+	}
+      else if (curr > 1)
+	{
+	  o->next = 1;
+	  o->next_line = i;
+	  break;
+	}
+    }
+}
+
 static int32_t
 oid_next_idnum(Oids *o)
 {
   static int i = 0;
-  static int lowest_i = 0;
-  int32_t last = -1;
+  static int32_t prev = -1;
+  static int32_t last_assigned = -1;
   for (; o->lines[i]; ++i)
     {
-      int32_t this;
-      this = strtol((const char *)&o->lines[i][1], NULL, 10);
-      if (last >= 0) {
-	if (this - last > 1)
-	  {
-	    lowest_i = last+1;
-	    return last + 1;
+      int32_t curr;
+      curr = strtol((const char *)&o->lines[i][1], NULL, 10);
+      if (prev >= 0) {
+	if (curr - prev > 1) /* this is a gap in numbering */
+	  {    
+	    last_assigned = prev + 1;
+	    last_assigned;
 	  }
       }
       last = this;
