@@ -42,6 +42,7 @@ struct oid
 				   sign, word or sense */
   const char *extension;	/* For sense this is the word OID the
 				   sense belongs to */
+  const char *ext_type;		/* For keys this can be 'word' when extension is a CGP not an OID */
   struct oid_edit *history;  	/* List of changes for the OID encoded as history nodes */
 };
 

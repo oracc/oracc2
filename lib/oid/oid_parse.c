@@ -92,7 +92,15 @@ oid_parse(Oids *o, enum oid_tab_t t)
 		      s = nextfield(s);
 		      /* split list and check they are all legal OIDs */
 		      if (s != NULL)
-			op_error("unexpected data after EXTENSION");
+			{
+			  if (!strncmp((ccp)s, "word", strlen("word")))
+			    {
+			      o->oo[i]->ext_type = (ccp)s;
+			      s = nextfield(s);
+			    }
+			  if (s != NULL)
+			    op_error("unexpected data after EXTENSION");
+			}
 		    }
 		  /* else OK--we allow a missing last field */
 		}

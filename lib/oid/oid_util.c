@@ -19,6 +19,7 @@ oid_assign(Oids *o, Oids *k)
       if (!k->oo[i]->id)
 	{
 	  k->oo[i]->id = strdup(oid_next_oid(o));
+	  fprintf(stderr, "adding %s with oid %s\n", k->oo[i]->key, k->oo[i]->id);
 	  list_add(w, k->oo[i]);
 	}
     }
@@ -69,15 +70,19 @@ oid_ok_pair_last(struct oid_ok_pair *lp)
 static int32_t
 oid_next_idnum(Oids *o)
 {
-  int i;
+  static int i = 0;
+  static int lowest_i = 0;
   int32_t last = -1;
-  for (i = 0; o->lines[i]; ++i)
+  for (; o->lines[i]; ++i)
     {
       int32_t this;
       this = strtol((const char *)&o->lines[i][1], NULL, 10);
       if (last >= 0) {
 	if (this - last > 1)
-	  return last + 1;
+	  {
+	    lowest_i = last+1;
+	    return last + 1;
+	  }
       }
       last = this;
     }
