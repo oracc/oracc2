@@ -125,6 +125,7 @@ extern int form_parse(const Uchar *file, size_t line, Uchar *lp, Form *formp, Uc
 extern int form_parse_psu(const Uchar *file, size_t line, Uchar *lp, struct form *formp);
 
 extern unsigned char *form_sig(struct xcl_context *xcp, Form *fp);
+extern unsigned char *form_sig_nopool(struct xcl_context *xcp, Form *fp);
 extern unsigned char *form_psu_sig(struct xcl_context *xcp, Form *fp);
 
 extern int form_alias(struct sig_context *scp, Form *fp, Form *ref_fp);

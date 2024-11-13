@@ -106,9 +106,9 @@ sig_one(struct xcl_context *xcp, struct ilem_form *ifp, Form *fp, int tail)
 unsigned char *
 form_sig_nopool(struct xcl_context *xcp, Form *fp)
 {
+  unsigned char *ret = NULL;
   if (fp)
     {
-      unsigned char *ret = NULL;
       struct ilem_form *ifp = fp->owner;
 
       if (bit_get(fp->flags, FORM_FLAGS_IS_PSU))
@@ -257,5 +257,5 @@ form_psu_sig(struct xcl_context *xcp, Form *fp)
   else
     sprintf((char*)psu_buf,"{%s}::",fp->psu_ngram);
 
-  return strdup(psu_buf);
+  return (ucp)strdup((ccp)psu_buf);
 }

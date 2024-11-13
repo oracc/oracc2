@@ -7,7 +7,7 @@ FILE *f_log;
 const char *file;
 const char *project;
 int lnum, verbose, fuzzy_aliasing, lem_autolem, lem_dynalem, bootstrap_mode;
-int neo_mode = 0, oid_mode = 1;
+int bare_input = 0, neo_mode = 0, oid_mode = 1;
 
 Hash *neo = NULL;
 Hash *sig = NULL;
@@ -16,9 +16,9 @@ Pool *poo = NULL;
 static void
 neo_proxies(void)
 {
-  int nlines;
+  size_t nlines;
   unsigned char *fmem;
-  unsigned char **lpp = loadfile_lines3("00lib/proxy.lst", &nlines, &fmem);
+  unsigned char **lpp = loadfile_lines3((uccp)"00lib/proxy.lst", &nlines, &fmem);
   if (lpp)
     {
       neo = hash_create(nlines/100);
@@ -40,16 +40,19 @@ sig_inst(List *lp, unsigned char *ip)
       while (*e && !isspace(*e))
 	{
 	  if ('.' == *e && !dot)
-	    dot = e;
+	    {
+	      dot = e;
+	      break;
+	    }
 	  ++e;
-	  if (*e)
-	    *e++ = '\0';
 	}
       if (dot)
 	{
 	  save = '.';
 	  *dot = '\0';
 	}
+      else
+	*e++ = '\0';
       if (hash_find(neo, s))
 	{
 	  if (save)
@@ -57,7 +60,7 @@ sig_inst(List *lp, unsigned char *ip)
 	  list_add(lp, s);
 	}
       s = e;
-      while (isspace(*s)) /* can't happen ... */
+      while (*s && !isspace(*s))
 	++s;
     }
 }
@@ -71,7 +74,7 @@ main(int argc, char **argv)
   ccp lang;
   struct xcl_context *xcp = NULL;
 
-  options(argc, argv, "no");
+  options(argc, argv, "bno");
 
   if (neo_mode)
     {
@@ -84,20 +87,24 @@ main(int argc, char **argv)
   
   mesg_init();
   form_init();
-  lp = loadoneline(stdin, NULL);
-  if (strncmp(lp, "@fields", strlen("@fields")))
+  if (!bare_input)
     {
-      fprintf(stderr, "sigx: first line of .sig file should start with @fields\n");
-      exit(1);
+      lp = loadoneline(stdin, NULL);
+      if (strncmp((ccp)lp, "@fields", strlen("@fields")))
+	{
+	  fprintf(stderr, "sigx: first line of .sig file should start with @fields\n");
+	  exit(1);
+	}
     }
   while ((lp = loadoneline(stdin, NULL)))
     {
-      const char *orig_lp = strdup(lp);
-      char *inst = strchr(lp, '\t');
+      lp = strdup((ccp)lp);
+      char *orig_lp = strdup(lp);
+      char *inst = strchr((ccp)lp, '\t');
       if (inst)
 	*inst++ = '\0';
       memset(&f, '\0', sizeof(Form));
-      if (!form_parse((uccp)"<stdin>", ++ln, lp, &f, NULL))
+      if (-1 != form_parse((uccp)"<stdin>", ++ln, lp, &f, NULL))
 	{
 	  if (oid_mode)
 	    {
@@ -117,14 +124,17 @@ main(int argc, char **argv)
 		  f.lang = (uccp)f.core->name;
 		  f.morph2 = NULL;
 		  unsigned char *sigp = form_sig_nopool(xcp, &f);
-		  List *sl = hash_find(sig, sigp);
-		  if (!sl)
+		  if (sigp)
 		    {
-		      hash_add(sig, pool_copy(sigp, poo), (sl = list_create(LIST_SINGLE)));
-		      free(sigp);
+		      List *sl = hash_find(sig, sigp);
+		      if (!sl)
+			{
+			  hash_add(sig, pool_copy(sigp, poo), (sl = list_create(LIST_SINGLE)));
+			  free(sigp);
+			}
+		      if (inst)
+			sig_inst(sl, (ucp)inst);
 		    }
-		  if (inst)
-		    sig_inst(inst, sl);
 		}
 	      else
 		{
@@ -143,24 +153,25 @@ main(int argc, char **argv)
   if (neo_mode)
     {
       int nk;
-      unsigned char **k = hash_keys2(sig, &nk);
-      qsort(k, nk, sizeof(unsigned char *), cmpstringp);
+      const char **k = hash_keys2(sig, &nk);
+      qsort(k, nk, sizeof(const char *), cmpstringp);
       int i;
       for (i = 0; i < nk; ++i)
 	{
 	  printf("%s\t", k[i]);
-	  List *lp = hash_find(sig, k[i]);
+	  List *lp = hash_find(sig, (uccp)k[i]);
 	  if (lp)
 	    {
 	      unsigned char *ip;
 	      int sp = 0;
+	      /* sort here */
 	      for (ip = list_first(lp); ip; ip = list_next(lp))
 		{
 		  if (sp)
 		    fputc(' ', stdout);
 		  else
 		    ++sp;
-		  fputs(ip, stdout);
+		  fputs((ccp)ip, stdout);
 		}
 	    }
 	  fputc('\n', stdout);
@@ -172,6 +183,9 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'b':
+      bare_input = 1;
+      break;
     case 'n':
       neo_mode = 1;
       oid_mode = 0;
