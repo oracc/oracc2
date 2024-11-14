@@ -16,7 +16,8 @@ struct oids
   size_t nlines;		/* count of lines */
   int32_t first_available;    	/* first available OID to use */
   int first_line;		/* line number of last OID before first_available */
-  Hash *h;			/* hash with key=oid and value=struct oid* */
+  Hash *h_oid;			/* hash with key=oid and value=struct oid* */
+  Hash *h_key;			/* hash with key=dom:key and value=struct oid* */
   struct oid *o;		/* array of parsed oids */
   struct oid **oo;		/* array of ptrs to the parsed oids */
 };

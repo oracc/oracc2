@@ -23,8 +23,10 @@ oid_assign(List *w, Oids *o)
       static char buf[9];
       sprintf(buf, "%c%07d", (oo_xids ? 'x' : 'o'), newids[i++]);
       op->id = strdup(buf);
-      hash_add(o->h, (uccp)op->id, op);
       fprintf(stderr, "adding %s with oid %s\n", op->key, op->id);
+      hash_add(o->h_oid, (uccp)op->id, op);
+      const char *dk = oid_domainify(op->domain, (ccp)op->key);
+      hash_add(o->h_key, (uccp)strdup(dk), op);
     }
   free(newids);
 }
@@ -141,7 +143,7 @@ oid_wants(Oids *o, Oids *k)
       if (!k->oo[i]->id)
 	{
 	  const char *dk = oid_domainify(k->oo[i]->domain, (ccp)k->oo[i]->key);
-	  struct oid *ho = hash_find(o->h, (uccp)dk);
+	  struct oid *ho = hash_find(o->h_key, (uccp)dk);
 	  if (ho)
 	    k->oo[i]->id = ho->id;
 	  else
@@ -155,15 +157,16 @@ void
 oid_write(FILE *fp, Oids*o)
 {
   int noids;
-  const char **oids = hash_keys2(o->h, &noids);
+  const char **oids = hash_keys2(o->h_oid, &noids);
   qsort(oids, noids, sizeof(const char *), cmpstringp);
   size_t i;
   for (i = 0; i < noids; ++i)
     {
-      Oid *op = hash_find(o->h, (uccp)oids[i]);
+      Oid *op = hash_find(o->h_oid, (uccp)oids[i]);
       if (op->ext_type && !strcmp(op->ext_type, "word"))
 	{
-	  Oid *word_op = hash_find(o->h, (uccp)op->extension);
+	  const char *dk = oid_domainify(op->domain, (ccp)op->key);
+	  Oid *word_op = hash_find(o->h_key, (uccp)dk);
 	  if (word_op)
 	    op->extension = word_op->id;
 	  else

@@ -136,7 +136,7 @@ main(int argc, char * const*argv)
 		  oid_assign(w, o);
 		  struct oid *op;
 		  for (op = list_first(w); op; op = list_next(w))
-		    fprintf(oo_out_fp, "add %s\t%s\t%s\t%s => %s\n",
+		    fprintf(stderr, "add %s\t%s\t%s\t%s => %s\n",
 			    op->domain, op->key, op->type, op->extension ? op->extension : "", op->id);
 		}
 	      if (!oo_nowrite)
@@ -161,7 +161,7 @@ main(int argc, char * const*argv)
 		      tab = '\t';
 		      *t = '\0';
 		    }
-		  if ((op = hash_find(o->h, (uccp)oid_domainify(oo_domain, l))))
+		  if ((op = hash_find(o->h_key, (uccp)oid_domainify(oo_domain, l))))
 		    fputs(op->id, stdout);
 		  else
 		    fprintf(stderr, "oid: key %s not found in domain %s\n", l, oo_domain);
