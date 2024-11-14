@@ -14,8 +14,12 @@ const char *oo_oidfile = NULL;
 const char *oo_outfile = NULL;
 int oo_tsv_mode = 0;
 const char *oo_project = NULL;
+int oo_quiet = 0;
 int oo_wants = 0;
+
 extern int oo_xids;
+
+List *dom_ignore = NULL;
 
 FILE *oo_out_fp = NULL;
 
@@ -29,7 +33,7 @@ main(int argc, char * const*argv)
 
   mesg_init();
 
-  options(argc, argv, "acd:e:f:ik:no:p:tvwx");
+  options(argc, argv, "acd:e:f:iI:k:no:p:qtvwx");
 
   if (oo_outfile)
     {
@@ -61,29 +65,33 @@ main(int argc, char * const*argv)
       struct oid_domain *dp = NULL;
       if (oo_domain)
 	{
-	  if (!(dp = oid_domain(oo_domain, strlen(oo_domain))))
+	  if (oo_project)
 	    {
-	      fprintf(stderr, "oid: unknown domain %s. Stop.\n", oo_domain);
+	      if (!(dp = oid_domain(oo_domain, strlen(oo_domain))))
+		{
+		  fprintf(stderr, "oid: unknown domain %s. Stop.\n", oo_domain);
+		  exit(1);
+		}
+	      else if (strcmp(oo_project, dp->auth))
+		{
+		  fprintf(stderr, "oid: project %s no authorized to assign in domain %s. Stop.\n",
+			  oo_project, oo_domain);
+		  exit(1);
+		}
+	    }
+	  else
+	    {
+	      fprintf(stderr, "oid: must give -p [PROJECT] with -a (ASSIGN) argument. Stop.\n");
 	      exit(1);
 	    }
 	}
-      else
+      else if (oo_project)
 	{
-	  fprintf(stderr, "oid: must give -d [DOMAIN] with -a [ASSIGN] argument. Stop.\n");
-	  exit(1);
-	}
-      if (oo_project)
-	{
-	  if (strcmp(oo_project, dp->auth))
-	    {
-	      fprintf(stderr, "oid: project %s does not authority to assign OIDs in domain %s\n",
-		      oo_project, oo_domain);
-	      exit(1);
-	    }
+	  oo_project_domain_mode = 1;
 	}
       else
 	{
-	  fprintf(stderr, "oid: must give -p [PROJECT] with -a [ASSIGN] argument. Stop.\n");
+	  fprintf(stderr, "oid: must give -p [PROJECT] and optional -d [DOMAIN] with -a (ASSIGN) argument. Stop.\n");
 	  exit(1);
 	}
     }
@@ -103,6 +111,17 @@ main(int argc, char * const*argv)
     }
   
   o = oid_load();
+  o->project = oo_project;
+
+  if (oo_assign)
+    o->h_ignore = hash_create(7);
+
+  if (dom_ignore)
+    {
+      const char *d;
+      for (d = list_first(dom_ignore); d; d = list_next(dom_ignore))
+	hash_add(o->h_ignore, (uccp)d, "");
+    }
 
   if (oid_parse(o, ot_oids))
     {
@@ -136,8 +155,11 @@ main(int argc, char * const*argv)
 		  oid_assign(w, o);
 		  struct oid *op;
 		  for (op = list_first(w); op; op = list_next(w))
-		    fprintf(stderr, "add %s\t%s\t%s\t%s => %s\n",
-			    op->domain, op->key, op->type, op->extension ? op->extension : "", op->id);
+		    if (op->bad)
+		      continue;
+		    else if (!oo_quiet)
+		      fprintf(stderr, "add %s\t%s\t%s\t%s => %s\n",
+			      op->domain, op->key, op->type, op->extension ? op->extension : "", op->id);
 		}
 	      if (!oo_nowrite)
 		oid_write(oo_out_fp, o);
@@ -195,6 +217,11 @@ opts(int opt, const char *arg)
     case 'e':
       oo_edits = arg;
       break;
+    case 'I':
+      if (!dom_ignore)
+	dom_ignore = list_create(LIST_SINGLE);
+      list_add(dom_ignore, (void*)arg);
+      break;
     case 'i':
       oo_identity = 1; /* replaces -dump in oid.plx */
       break;
@@ -208,6 +235,9 @@ opts(int opt, const char *arg)
       oo_nowrite = 1;
     case 'o':
       oo_oidfile = arg;
+      break;
+    case 'q':
+      oo_quiet = 1;
       break;
     case 'p':
       oo_project = arg;

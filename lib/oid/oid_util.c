@@ -20,10 +20,36 @@ oid_assign(List *w, Oids *o)
   struct oid *op;
   for (op = list_first(w); op; op = list_next(w))
     {
+      if (oo_project_domain_mode)
+	{
+	  if (hash_find(o->h_ignore, (uccp)op->domain))
+	    {
+	      op->bad = 1;
+	      continue;
+	    }
+
+	  struct oid_domain *odp = oid_domain(op->domain, strlen(op->domain));
+	  if (odp)
+	    {
+	      if (strcmp(odp->auth, o->project))
+		{
+		  fprintf(stderr, "oid_assign: project %s cannot assign in domain %s\n", o->project, op->domain);
+		  op->bad = 1;
+		  continue;
+		}
+	    }
+	  else
+	    {
+	      fprintf(stderr, "oid_assign: unknown domain %s\n", op->domain);
+	      op->bad = 1;
+	      continue;
+	    }
+	}
       static char buf[9];
       sprintf(buf, "%c%07d", (oo_xids ? 'x' : 'o'), newids[i++]);
       op->id = strdup(buf);
-      fprintf(stderr, "adding %s with oid %s\n", op->key, op->id);
+      if (oo_verbose)
+	fprintf(stderr, "adding %s:%s with oid %s\n", op->domain, op->key, op->id);
       hash_add(o->h_oid, (uccp)op->id, op);
       const char *dk = oid_domainify(op->domain, (ccp)op->key);
       hash_add(o->h_key, (uccp)strdup(dk), op);
@@ -84,7 +110,7 @@ oid_new_oids(Oids *o, int n)
       curr = strtol((const char *)&o->lines[i][1], NULL, 10);
       next = strtol((const char *)&o->lines[i+1][1], NULL, 10);
       int gap = next - curr;
-      while (gap-- > 1)
+      while (gap-- > 1 && j < n)
 	no[j++] = ++curr;
     }
   int32_t last = strtol((const char *)&o->lines[i][1], NULL, 10);
@@ -94,8 +120,10 @@ oid_new_oids(Oids *o, int n)
 	no[j++] = ++last;
     }
 
+#if 0
   for (i = 0; i < n; ++i)
     fprintf(stderr, "oid_new_oids: %d\n", no[i]);
+#endif
   
   return no;
 }
@@ -163,6 +191,10 @@ oid_write(FILE *fp, Oids*o)
   for (i = 0; i < noids; ++i)
     {
       Oid *op = hash_find(o->h_oid, (uccp)oids[i]);
+      /* This is only for keys in assign mode that the project is not
+	 authorized to assign */
+      if (op->bad)
+	continue;
       if (op->ext_type && !strcmp(op->ext_type, "word"))
 	{
 	  const char *dk = oid_domainify(op->domain, (ccp)op->key);

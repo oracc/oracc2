@@ -1,5 +1,6 @@
 %{
 #include "oid.h"
+int oo_project_domain_mode = 0;
 %}
 struct oid_domain;
 %%

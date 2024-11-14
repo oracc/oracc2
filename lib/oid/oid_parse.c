@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <hash.h>
 #include <mesg.h>
 #include <oid.h>
@@ -24,6 +25,19 @@ nextfield(unsigned char *s)
 }
 
 #define op_error(x) mesg_verr(mesg_mloc(o->file,i),"oid parse error: "x),++op_status
+
+static int
+is_oxid(const unsigned char *ox)
+{
+  if (ox && ('o' == *ox || 'x' == *ox))
+    {
+      ++ox;
+      while (isdigit((*ox)))
+	++ox;
+      return '\0' == *ox;
+    }
+  return 0;
+}
 
 int
 oid_parse(Oids *o, enum oid_tab_t t)
@@ -66,12 +80,13 @@ oid_parse(Oids *o, enum oid_tab_t t)
 
 	      if (hash_find(o->h_key, (uccp)dk))
 		{
-		  if ('o' != *o->oo[i]->key && 'x' != *o->oo[i]->key && strcmp((ccp)o->oo[i]->key, "deleted"))
-		    mesg_verr(mesg_mloc(o->file,i), "duplicate KEY %s:%s", o->oo[i]->domain, o->oo[i]->key), ++op_status;		  
+		  /* if ('o' != *o->oo[i]->key && 'x' != *o->oo[i]->key && strcmp((ccp)o->oo[i]->key, "deleted"))*/
+		  if (!is_oxid(o->oo[i]->key) && strcmp((ccp)o->oo[i]->key, "deleted"))
+		    mesg_verr(mesg_mloc(o->file,i), "duplicate KEY %s:%s", o->oo[i]->domain, o->oo[i]->key), ++op_status;
 		}
 	      else
 		{
-		  if (t != ot_keys && 'o' != *o->oo[i]->key && 'x' != *o->oo[i]->key &&strcmp((ccp)o->oo[i]->key, "deleted"))
+		  if (t != ot_keys && !is_oxid(o->oo[i]->key) && strcmp((ccp)o->oo[i]->key, "deleted"))
 		    {
 		      if (oo_verbose > 1)
 			fprintf(stderr, "oid_parse adding %s <=> %s\n", dk, o->oo[i]->id);

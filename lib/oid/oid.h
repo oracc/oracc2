@@ -10,6 +10,7 @@
    requests for OIDs */
 struct oids
 {
+  const char *project;		/* from -p [PROJECT] arg */
   const char *file;		/* source of oids */
   unsigned char *mem;		/* memory allocated by loadfile */
   unsigned char **lines;	/* array of ptrs to lines */
@@ -18,6 +19,7 @@ struct oids
   int first_line;		/* line number of last OID before first_available */
   Hash *h_oid;			/* hash with key=oid and value=struct oid* */
   Hash *h_key;			/* hash with key=dom:key and value=struct oid* */
+  Hash *h_ignore;		/* domains to ignore */
   struct oid *o;		/* array of parsed oids */
   struct oid **oo;		/* array of ptrs to the parsed oids */
 };
@@ -47,6 +49,7 @@ struct oid
 				   sense belongs to */
   const char *ext_type;		/* For keys this can be 'word' when extension is a CGP not an OID */
   struct oid_edit *history;  	/* List of changes for the OID encoded as history nodes */
+  int bad;			/* Set during assign to indicate this OID is not valid for assignment */
 };
 
 typedef struct oid Oid;
@@ -128,7 +131,7 @@ struct oid_type
 };
 
 extern int oo_verbose;
-
+extern int oo_project_domain_mode;
 extern Oids *oid_load(void);
 extern Oids *oid_load_keys(const char *file);
 extern Oide *oid_load_edits(const char *file);
