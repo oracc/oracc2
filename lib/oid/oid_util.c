@@ -4,26 +4,29 @@
 #include <list.h>
 #include <oid.h>
 
+static int32_t* oid_new_oids(Oids *o, int n);
+
 int oo_xids = 0;
 int oo_verbose = 0;
 
 /* The assignees, k, have already been checked by oid_wants so we know
    that anything without an id needs one */
-List *
-oid_assign(Oids *o, Oids *k)
+void
+oid_assign(List *w, Oids *o)
 {
-  size_t i;
-  List *w = list_create(LIST_SINGLE);
-  for (i = 0; i < k->nlines; ++i)
+  int need_oid = list_len(w);
+  int32_t *newids = oid_new_oids(o, need_oid);
+  int i = 0;
+  struct oid *op;
+  for (op = list_first(w); op; op = list_next(w))
     {
-      if (!k->oo[i]->id)
-	{
-	  k->oo[i]->id = strdup(oid_next_oid(o));
-	  fprintf(stderr, "adding %s with oid %s\n", k->oo[i]->key, k->oo[i]->id);
-	  list_add(w, k->oo[i]);
-	}
+      static char buf[9];
+      sprintf(buf, "%c%07d", (oo_xids ? 'x' : 'o'), newids[i++]);
+      op->id = strdup(buf);
+      hash_add(o->h, (uccp)op->id, op);
+      fprintf(stderr, "adding %s with oid %s\n", op->key, op->id);
     }
-  return w;
+  free(newids);
 }
 
 const char *
@@ -67,32 +70,35 @@ oid_ok_pair_last(struct oid_ok_pair *lp)
   return lp;
 }
 
-static void
-oid_first_available(Oids *o)
+static int32_t *
+oid_new_oids(Oids *o, int n)
 {
-  int i;
-  int32_t last;
-  for (i = 0; o->lines[i]; ++i)
+  int i, j;
+  int32_t *no = malloc(n*sizeof(int32_t));
+  
+  for (i = j = 0; o->lines[i+1] && j < n; ++i)
     {
-      int32_t curr;
+      int32_t curr, next;
       curr = strtol((const char *)&o->lines[i][1], NULL, 10);
-      if (prev >= 0)
-	{
-	  if (curr - prev > 1) /* this is a gap in numbering */
-	    {    
-	      o->first = 1;
-	      o->first_lnum = i;
-	    }
-	}
-      else if (curr > 1)
-	{
-	  o->next = 1;
-	  o->next_line = i;
-	  break;
-	}
+      next = strtol((const char *)&o->lines[i+1][1], NULL, 10);
+      int gap = next - curr;
+      while (gap-- > 1)
+	no[j++] = ++curr;
     }
+  int32_t last = strtol((const char *)&o->lines[i][1], NULL, 10);
+  if (j < n)
+    {
+      while (j < n)
+	no[j++] = ++last;
+    }
+
+  for (i = 0; i < n; ++i)
+    fprintf(stderr, "oid_new_oids: %d\n", no[i]);
+  
+  return no;
 }
 
+#if 0
 static int32_t
 oid_next_idnum(Oids *o)
 {
@@ -123,6 +129,7 @@ oid_next_oid(Oids *o)
   sprintf(buf, "%c%07d", (oo_xids ? 'x' : 'o'), n);
   return buf;
 }
+#endif
 
 List *
 oid_wants(Oids *o, Oids *k)
@@ -147,12 +154,26 @@ oid_wants(Oids *o, Oids *k)
 void
 oid_write(FILE *fp, Oids*o)
 {
+  int noids;
+  const char **oids = hash_keys2(o->h, &noids);
+  qsort(oids, noids, sizeof(const char *), cmpstringp);
   size_t i;
-  for (i = 0; i < o->nlines; ++i)
-    fprintf(fp, "%s\t%s\t%s\t%s\t%s\n",
-	    o->oo[i]->id,
-	    o->oo[i]->domain,
-	    o->oo[i]->key,
-	    o->oo[i]->type,
-	    o->oo[i]->extension ? o->oo[i]->extension : "");
+  for (i = 0; i < noids; ++i)
+    {
+      Oid *op = hash_find(o->h, (uccp)oids[i]);
+      if (op->ext_type && !strcmp(op->ext_type, "word"))
+	{
+	  Oid *word_op = hash_find(o->h, (uccp)op->extension);
+	  if (word_op)
+	    op->extension = word_op->id;
+	  else
+	    fprintf(stderr, "oid_write: no OID for word %s\n", op->extension);
+	}
+      fprintf(fp, "%s\t%s\t%s\t%s\t%s\n",
+	      op->id,
+	      op->domain,
+	      op->key,
+	      op->type,
+	      op->extension ? op->extension : "");
+    }
 }

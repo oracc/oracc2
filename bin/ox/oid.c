@@ -115,10 +115,7 @@ main(int argc, char * const*argv)
       if (oo_check)
 	{
 	  if (oo_verbose)
-	    {
-	      fprintf(stderr, "oid: next free OID is %s\n", oid_next_oid(o));
-	      fprintf(stderr, "oid: %s parsed OK\n", o->file);
-	    }
+	    fprintf(stderr, "oid: %s parsed OK\n", o->file);
 	}
       else if (oo_identity)
 	oid_write(oo_out_fp, o);
@@ -134,9 +131,9 @@ main(int argc, char * const*argv)
 	    }
 	  else
 	    {
-	      List *w = oid_assign(o, k);
 	      if (list_len(w))
 		{
+		  oid_assign(w, o);
 		  struct oid *op;
 		  for (op = list_first(w); op; op = list_next(w))
 		    fprintf(oo_out_fp, "add %s\t%s\t%s\t%s => %s\n",

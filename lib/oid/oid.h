@@ -48,6 +48,8 @@ struct oid
   struct oid_edit *history;  	/* List of changes for the OID encoded as history nodes */
 };
 
+typedef struct oid Oid;
+
 /* Argument to OID parser to tell it what to expect */
 enum oid_tab_t { ot_oids , ot_keys };
      
@@ -135,7 +137,7 @@ extern struct oid_type *oid_type (register const char *str, register size_t len)
 extern int oid_parse(Oids *o, enum oid_tab_t t);
 extern void oid_write(FILE *fp, Oids*o);
 extern void oid_set_oidtab(const char *s);
-extern List *oid_assign(Oids *o, Oids *k);
+extern void oid_assign(List *w, Oids *o);
 extern const char *oid_domainify(const char *d, const char *k);
 extern List *oid_wants(Oids *o, Oids *k);
 extern struct oid_ok_pair *oid_ok_pair_last(struct oid_ok_pair *lp);
