@@ -612,10 +612,11 @@ pui_at_cuneify_bar(Isp *ip, FILE *fp)
   if (ip->form && !strcmp(ip->form, "cuneify"))
     {
       fprintf(fp, "\t<div id=\"p4CuneifyBar\">"
-	      "<p>Cuneified version of %s:%s -- click on a button to switch fonts: "
+	      "<p>Cuneified version of <a href=\"/%s/%s\" target=\"_new\">%s:%s</a> -- click on a button to switch fonts: "
 	      "<span class=\"cfy-button cfy-noto\" onclick=\"cuneify_reset(event)\" data-font=\"noto\">NOTO</span>"
 	      "<span class=\"cfy-button cfy-oobf\" onclick=\"cuneify_reset(event)\" data-font=\"oobf\">OOBF</span></p>"
 	      "</div>\n",
+	      ip->itemdata.proj, ip->itemdata.item,
 	      ip->itemdata.proj, ip->itemdata.item);
     }
 }
