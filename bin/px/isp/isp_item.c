@@ -159,6 +159,45 @@ isp_item_langs(Isp *ip)
 }
 
 static int
+isp_create_cfy(Isp *ip)
+{
+  List *args = list_create(LIST_SINGLE);
+  list_add(args, (void*)ip->oracc);
+  list_add(args, (void*)"/bin/ispcfy.sh");
+  list_add(args, " ");
+  list_add(args, (void*)(ip->itemdata.proj ? ip->itemdata.proj : ip->project));
+  list_add(args, " ");
+  list_add(args, (void*)ip->itemdata.item);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.prox);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.out);
+  unsigned char *syscmd = list_concat(args);
+
+  if (ip->verbose)
+    fprintf(stderr, "isp: isp_create_cfy: %s\n", syscmd);
+
+  int sys;
+  if ((sys = system((ccp)syscmd)))
+    {
+      int xstatus = WEXITSTATUS(sys);
+      /*int ifexited = WIFEXITED(sys);*/
+      if (xstatus > 1)
+	{
+	  ip->itemdata.not = xstatus;
+	}
+      else
+	{
+	  ip->err = PX_ERROR_START "isp_create_xtf failed system call:\n\t%s\n";
+	  ip->errx = (ccp)syscmd;
+	  return 1;
+	}
+    }
+  
+  return 0;
+}
+
+static int
 isp_create_xtf(Isp *ip)
 {
   List *args = list_create(LIST_SINGLE);
@@ -345,3 +384,40 @@ isp_item_set(Isp *ip)
   return 0;
 }
 
+int
+isp_item_cfy(Isp *ip)
+{
+  isp_htmd(ip);
+	   
+  expand_base(ip->itemdata.htmd);
+
+  /* always use host project for xmd, never proxy; cache.item is only used for meta.xml */
+  ip->cache.item = (ccp)pool_copy((ucp)expand(ip->project, ip->item, NULL), ip->p);
+ 
+  if (ip->itemdata.proj && strcmp(ip->project, ip->itemdata.proj))
+    ip->cache.prox = (ccp)pool_copy((ucp)expand(ip->itemdata.proj, ip->item, NULL), ip->p);
+  else
+    ip->cache.prox = ip->cache.item;
+  
+  char *html = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project, ip->item, "cfy");
+  expand_base(NULL);
+
+  /* +5 here is lang which can be 2 or 3, '.' before lang and \0 at end */
+  char *xh = (char*)pool_alloc(strlen(html)+5,ip->p);
+  strcpy(xh, html);
+  ip->itemdata.html = xh;
+
+  fprintf(stderr, "itemdata.html = %s\n", ip->itemdata.html);
+  
+  int need_html = access(ip->itemdata.html, R_OK);
+
+  if (need_html)
+    {
+      if (isp_create_cfy(ip))
+	return 1;
+      else if (ip->err) /* ispxtf succeeded so clear any prx db error */
+	ip->err = ip->errx = NULL;
+    }
+
+  return 0;
+}

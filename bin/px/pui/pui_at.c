@@ -605,3 +605,24 @@ pui_at_what_not(Isp *ip, FILE *fp)
       fputs("[unknown requested data type]", fp);
     }
 }
+
+void
+pui_at_cuneify_bar(Isp *ip, FILE *fp)
+{
+  if (ip->form && !strcmp(ip->form, "cuneify"))
+    {
+      fprintf(fp, "\t<div id=\"p4CuneifyBar\">"
+	      "<p>Cuneified version of %s:%s -- click on a button to switch fonts: "
+	      "<span class=\"cfy-button cfy-noto\" onclick=\"cuneify_reset(event)\" data-font=\"noto\">NOTO</span>"
+	      "<span class=\"cfy-button cfy-oobf\" onclick=\"cuneify_reset(event)\" data-font=\"oobf\">OOBF</span></p>"
+	      "</div>\n",
+	      ip->itemdata.proj, ip->itemdata.item);
+    }
+}
+
+void
+pui_at_cuneify_onload(Isp *ip, FILE *fp)
+{
+  if (ip->form && !strcmp(ip->form, "cuneify"))
+    fputs(" onload=\"cuneify()\"", fp);
+}

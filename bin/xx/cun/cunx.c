@@ -12,7 +12,7 @@ extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
    lives */
 int buildmode = 0;
 int force = 0; /* default is not to remake if the output already exists */
-int no_output = 1;
+int no_output = 0;
 int verbose = 0;
 int weboutput = 0;
 
@@ -87,23 +87,30 @@ cc_skip_prefix(const char *c)
 void
 cun_head(FILE *fp, const char *n, Cun_class *cp)
 {
+  if (!weboutput) /* paradoxically, weboutput skips the html head/body because those are provided by P4 */
+    {
+      fprintf(fp,
+	      "<html >"
+	      "<head><meta charset=\"utf-8\"/>"
+	      "<title>Cuneified %s</title>"
+	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
+	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
+	      "<script type=\"text/javascript\" src=\"/js/p4-cuneify.js\">&#160;</script>"
+	      "</head><body onload=\"cuneify()\"", n);
+    }
   fprintf(fp,
-	  "<html >"
-	  "<head><meta charset=\"utf-8\"/>"
-	  "<title>Cuneified %s</title>"
-	  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
-	  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
-	  "<script type=\"text/javascript\" src=\"/js/p4-cuneify.js\">&#160;</script>"
-	  "</head><body onload=\"cuneify()\" id=\"p4Cuneify\" "
+	  "<div id=\"p4Cuneify\" "
 	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\">",
-	  n, cp->fnt, cp->mag, cp->scr);
-  fprintf(outfp, "<h1>%s</h1><p><span class=\"button\" onclick=\"cuneify_reset('noto')\">NOTO</span><span class=\"button\" onclick=\"cuneify_reset('oobf')\">OOBF</span></p><table class=\"cfy-table\">", n);
+	  cp->fnt, cp->mag, cp->scr);
+  fprintf(outfp, "<h1 class=\"p3h2 border-top heading\">%s</h1><table class=\"cfy-table\">", n);
 }
 
 void
 cun_foot(FILE *fp)
 {
-  fprintf(fp, "</table></body></html>");
+  fprintf(fp, "</table></div>");
+  if (!weboutput)
+    fprintf(fp, "</body></html>");
 }
 
 Cun_class *
@@ -230,15 +237,6 @@ ei_eH(void *userData, const char *name)
 #endif
 }
 
-void
-expat_identity(const char *fname, const char *xml_id, FILE *outfp)
-{
-  char const *fnlist[2];
-  fnlist[0] = fname;
-  fnlist[1] = NULL;
-  runexpat(i_list, fnlist, ei_sH, ei_eH);
-}
-
 static void
 show_vars(void)
 {
@@ -256,10 +254,11 @@ main(int argc, char **argv)
 
   if (!infile && argv[optind])
     infile = argv[optind++];
+
+  const char **f = calloc(2, sizeof(char*));
   
   if (infile || qfile)
     {
-      const char **f = calloc(2, sizeof(char*));
       if (weboutput)
 	{
 	  if (!p4htmld)
@@ -276,7 +275,7 @@ main(int argc, char **argv)
 	}
       if (qfile)
 	{
-	  file_args(p4htmld, qfile, "xtf", outfile, "cun", NULL, &inpath, &outpath, &htmlpath);
+	  file_args(p4htmld, qfile, "xtf", outfile, "cfy", NULL, &inpath, &outpath, &htmlpath);
 	  f[0] = inpath;
 	}
       else if (infile)
@@ -293,18 +292,23 @@ main(int argc, char **argv)
 
   if (!no_output)
     {
-      if (outpath && strcmp(outpath, "-"))
+      if (f[0] && !access(f[0], R_OK))
 	{
-	  if (!(outfp = fopen(outpath, "w")))
+	  if (outpath && strcmp(outpath, "-"))
 	    {
-	      fprintf(stderr, "cunx: unable to write to outpath %s: %s\n", outpath, strerror(errno));
-	      exit(1);
+	      if (!(outfp = fopen(outpath, "w")))
+		{
+		  fprintf(stderr, "cunx: unable to write to outpath %s: %s\n", outpath, strerror(errno));
+		  exit(1);
+		}
 	    }
+	  runexpat_omit_rp_wrap();
+	  if (!setjmp(done))
+	    runexpat(i_list, f, ei_sH, ei_eH);
+	  cun_foot(outfp);
 	}
-      runexpat_omit_rp_wrap();
-      if (!setjmp(done))
-	expat_identity(argv[optind], NULL, NULL);
-      cun_foot(outfp);
+      else
+	fprintf(stderr, "cunx: nothing to cuneify. Stop.\n");
     }
 }
 

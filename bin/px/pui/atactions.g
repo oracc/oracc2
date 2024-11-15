@@ -38,3 +38,5 @@ struct atactionstab;
 "pui_article()", &pui_at_article
 "pui_generator()", &pui_at_generator
 "pui_hili()", &pui_at_hili
+"pui_cuneify_bar()", &pui_at_cuneify_bar
+"pui_cuneify_onload()", &pui_at_cuneify_onload

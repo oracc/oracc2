@@ -1,3 +1,7 @@
+#p4CuneifyBar { margin: 10px; }
+
+#p4Cuneify { padding-left: 1in; }
+
 body { font-family: serif; font-weight: normal; font-size: 1em }
 .roman { font-family: serif; font-weight: normal; font-size: 1em; }
     
@@ -50,18 +54,27 @@ span.csquare:before { content: "]"; }
 
 .cfy-table tr>td { padding-bottom: .5em; }
 
-.button{
-    padding: 10px;
+.cfy-button{
+    padding: 3px;
     display: inline;
     border-radius: 2px;
     font-family: "Arial";
     border: 0;
-    margin: 0 10px;
+    margin: 0 3px;
     background: silver;
-    font-size: 15px;    
-    line-height: 15px;
+    font-size: 12px;    
+    line-height: 12px;
     color: white;
     width: auto;
     height: auto;
     box-sizing: content-box;
 }
+
+.cfy-curr { border: solid 2px red; }
+
+.cfy-noto { cursor: url("noto-an.cur"), auto; }
+
+.cfy-oobf { cursor: url("oobf-an.cur"), auto; }
+
+
+/*    cursor: url(ban.cur), auto; */

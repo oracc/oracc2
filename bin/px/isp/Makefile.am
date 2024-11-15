@@ -4,7 +4,7 @@ AM_CPPFLAGS+=-I/usr/include/libxml2
 
 noinst_LTLIBRARIES=libisp.la
 
-bin_SCRIPTS=ispdiv.sh ispent.sh ispxtf.sh ispxtl.sh
+bin_SCRIPTS=ispcfy.sh ispdiv.sh ispent.sh ispxtf.sh ispxtl.sh
 
 scriptdata_DATA=isp-ce-HTML.xsl isp-xtl2lst.xsl
 
