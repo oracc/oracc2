@@ -7,4 +7,4 @@ for a in `cat 00lib/order.lst`; do
 	grep -v ^@fields $xsig
     fi
 done \
-    | sigx -b -n
+    | sigx -b -n >01bld/project.sig

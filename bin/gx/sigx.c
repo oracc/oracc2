@@ -201,6 +201,7 @@ main(int argc, char **argv)
 
   if (neo_mode)
     {
+      printf("@fields sig rank freq inst\n");
       int nk;
       const char **k = hash_keys2(sig, &nk);
       qsort(k, nk, sizeof(const char *), cmpstringp);
@@ -214,6 +215,7 @@ main(int argc, char **argv)
 	      int n;
 	      const char **ll = (const char **)list2array_c(lp, &n);
 	      qsort(ll, n, sizeof(const char *), cmpinstidp);
+	      printf("0\t%d\t", n);
 	      int j;
 	      for (j = 0; j < n; ++j)
 		{

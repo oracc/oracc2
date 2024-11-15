@@ -104,7 +104,7 @@ oid_new_oids(Oids *o, int n)
   int i, j;
   int32_t *no = malloc(n*sizeof(int32_t));
   
-  for (i = j = 0; o->lines[i+1] && j < n; ++i)
+  for (i = j = 0; o->lines[i] && o->lines[i+1] && j < n; ++i)
     {
       int32_t curr, next;
       curr = strtol((const char *)&o->lines[i][1], NULL, 10);
@@ -113,7 +113,11 @@ oid_new_oids(Oids *o, int n)
       while (gap-- > 1 && j < n)
 	no[j++] = ++curr;
     }
-  int32_t last = strtol((const char *)&o->lines[i][1], NULL, 10);
+  int32_t last = 0;
+
+  if (o->lines[i])
+    last = strtol((const char *)&o->lines[i][1], NULL, 10);
+
   if (j < n)
     {
       while (j < n)
