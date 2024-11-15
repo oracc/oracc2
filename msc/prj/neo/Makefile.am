@@ -1,6 +1,7 @@
 include ../../../oracc-am-rules.txt
 
-bin_SCRIPTS=neo-proxies.sh neo-rebuild.sh neo-sigs.sh neo-oids.sh neo-oids-sub.sh
+bin_SCRIPTS=neo-proxies.sh neo-rebuild.sh neo-sigs.sh neo-oids.sh neo-oids-sub.sh \
+	neo-prepare.sh
 
 neo:
 	echo hi

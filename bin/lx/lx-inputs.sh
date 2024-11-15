@@ -7,7 +7,7 @@
 #
 
 #set -x
-echo $0 $*
+#echo $0 $*
 
 lxd=01bld/lxinputs
 if [ -d $lxd ]; then
@@ -52,7 +52,11 @@ cut -f1 02pub/atf-data.tab | lx -cus -p $project -o $lxd/00atf.lst -
 # umbrella.lst doesn't have the top-level project in its members;
 # search.lst members are full project paths
 #
-if [ -r 00lib/umbrella.lst ]; then
+bap=`oraccopt . build-approved-policy`
+if [ "$bap" == "proxy" ]; then
+    cp 00lib/proxy.lst 01bld/lists/outlined.lst
+    cp 00lib/proxy.lst 01bld/lists/proxy-atf.lst
+elif [ -r 00lib/umbrella.lst ]; then
     rm -f 01tmp/00umbrella.lst
     >&2 echo $0: marshalling 00lib/umbrella.lst
     exec >>01tmp/00umbrella.lst
