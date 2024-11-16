@@ -31,6 +31,7 @@ span.csquare:before { content: "]"; }
 :root {
     --ofs-noto: "Oracc Noto SansCuneiform";
     --ofs-oobf: "Oracc OBFreie Regular";
+    --ofs-nao: "Oracc NA Outline";
     --ofs-early:  "ss01";
     --ofs-middle: "ss01", "ss02";
     --ofs-late:   "ss01", "ss02", "ss03";
@@ -72,9 +73,10 @@ span.csquare:before { content: "]"; }
 
 .cfy-curr { border: solid 2px red; }
 
+.cfy-nao  { cursor: url("nao-an.cur"), auto; }
+
 .cfy-noto { cursor: url("noto-an.cur"), auto; }
 
 .cfy-oobf { cursor: url("oobf-an.cur"), auto; }
-
 
 /*    cursor: url(ban.cur), auto; */

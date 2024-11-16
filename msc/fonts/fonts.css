@@ -14,6 +14,11 @@
 }
 
 @font-face {
+   font-family: 'Oracc RSP';
+   src: url('/fonts/Oracc-RSP.ttf');
+}
+
+@font-face {
    font-family: 'Oracc LAK';
    src: url('/fonts/Oracc-LAK.ttf');
 }
@@ -52,6 +57,10 @@
 
 .ofs-lak {
    font-family: "Oracc LAK";
+}
+
+.ofs-rsp {
+   font-family: "Oracc RSP";
 }
 
 .ofs-nao {
