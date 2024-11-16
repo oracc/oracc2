@@ -2,6 +2,7 @@
 #include <xmlify.h>
 #include <setjmp.h>
 #include "runexpat.h"
+#include "cun.h"
 
 extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 		     const char *outdir, const char *outext, const char *trans,
@@ -20,6 +21,7 @@ const char *invoke;
 const char *infile;
 const char *outfile;
 const char *p4htmld;
+const char *period;
 const char *project;
 const char *qfile;
 const char *translation;
@@ -96,7 +98,7 @@ cun_head(FILE *fp, const char *n, Cun_class *cp)
 	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
 	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
 	      "<script type=\"text/javascript\" src=\"/js/p4-cuneify.js\">&#160;</script>"
-	      "</head><body onload=\"cuneify()\"", n);
+	      "</head><body onload=\"cuneify()\">", n);
     }
   fprintf(fp,
 	  "<div id=\"p4Cuneify\" "
@@ -250,8 +252,15 @@ int
 main(int argc, char **argv)
 {
   outfp = stdout;
-  options(argc, argv, "bfi:l:no:p:q:st:vw");
+  options(argc, argv, "bfi:l:no:p:P:q:st:vw");
 
+  if (period)
+    {
+      struct perfnt *pfp = perfnt(period, strlen(period));
+      if (pfp)
+	cun_defaults.fnt = pfp->fnt;
+    }
+  
   if (!infile && argv[optind])
     infile = argv[optind++];
 
@@ -331,6 +340,9 @@ opts(int opt, const char *arg)
       break;
     case 'o':
       outfile = arg;
+      break;
+    case 'P':
+      period = arg;
       break;
     case 'p':
       project = arg;

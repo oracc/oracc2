@@ -3,7 +3,7 @@ include ../../oracc-am-rules.txt
 SUBDIRS=../../lib
 
 noinst_PROGRAMS=catx expat-identity
-bin_PROGRAMS=gdlx repx rocox xmlfilter
+bin_PROGRAMS=gdlx repx rocox xmlfilter xmdx
 
 catx_SOURCES=catx.c
 catx_LDADD = $(xLDADD)
@@ -28,3 +28,7 @@ rocox_DEPENDENCIES = $(xLDADD)
 xmlfilter_SOURCES=xmlfilter.c
 xmlfilter_LDADD = $(xLDADD)
 xmlfilter_DEPENDENCIES = $(xLDADD)
+
+xmdx_SOURCES=xmdx.c
+xmdx_LDADD = $(xLDADD)
+xmdx_DEPENDENCIES = $(xLDADD)
