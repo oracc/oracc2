@@ -524,8 +524,8 @@ sx_marshall(struct sl_signlist *sl)
 		      if (sl->signs[i]->inst->valid && sl->signs[i]->type != sx_tle_lref
 			  && sl->signs[i]->type != sx_tle_sref /*&& !sl->signs[i]->smap*/)
 			{
-			  mesg_verr(&sl->signs[i]->inst->mloc, "OID needed:\nsl\t%s\tsign\t\t",
-				    sl->signs[i]->name);
+			  mesg_verr(&sl->signs[i]->inst->mloc, "OID needed:\n%s\t%s\tsign\t\t",
+				    sl->domain, sl->signs[i]->name);
 			  hash_add(oid_warned, sl->signs[i]->name, "");
 			}
 		    }
@@ -601,7 +601,8 @@ sx_marshall(struct sl_signlist *sl)
 	      struct sl_inst *inst = list_first(sl->forms[i]->insts);
 	      if (inst->valid)
 		{
-		  mesg_verr(&inst->mloc, "OID needed:\nsl\t%s\tsign\t\t", sl->forms[i]->name);
+		  mesg_verr(&inst->mloc, "OID needed:\n%s\t%s\tsign\t\t",
+			    sl->domain, sl->forms[i]->name);
 		  hash_add(oid_warned, sl->forms[i]->name, "");
 		}
 	    }

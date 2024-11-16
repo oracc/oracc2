@@ -288,8 +288,8 @@ main(int argc, char * const*argv)
 	    fprintf(stderr, "sx: unable to dump @sys data; can't write sx-syss.out\n");
 	}
 
-      if (!kdata_file)
-	sx_forms(sl); /* dump forms file unless subsetting */
+      if (!kdata_file && strcmp(sl->domain, "pc"))
+	sx_forms(sl); /* dump forms file unless subsetting or processing PCSL (is the latter right?) */
       
       if (!kdata_file && scripts_dump)
 	sx_script(sl, 0);

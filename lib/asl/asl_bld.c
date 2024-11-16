@@ -1329,10 +1329,11 @@ asl_bld_signlist(Mloc *locp, const unsigned char *n, int project)
 	{
 	  curr_asl->project = (ccp)n;
 	  curr_asl->config = asl_get_config();
-	  if (!curr_asl->config)
+	  if (!curr_asl->config->configged)
 	    {
 	      asl_config(curr_asl->project, &aslconfig);
 	      aslconfig.project = curr_asl->project;
+	      curr_asl->config = &aslconfig;
 	    }
 	}
       if (project == 2)

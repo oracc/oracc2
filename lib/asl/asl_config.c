@@ -15,6 +15,7 @@ asl_config(const char *project, struct sl_config *cp)
       xpdpool = pool_init();
       xpdp = xpd_init(project, xpdpool);
       const char *val;
+      cp->configged = 1;
       cp->project = project;
       if ((val = xpd_option(xpdp, "asl-domain")))
 	cp->domain = val;

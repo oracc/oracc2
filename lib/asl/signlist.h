@@ -564,6 +564,7 @@ extern struct numvmap_tab *numvmap (register const char *str, register size_t le
 
 struct sl_config
 {
+  int configged;	/* did we read a config file yet */
   const char *project;  /* set from -P[PROJECT] */
   const char *signlist; /* default: csl */
   const char *domain; 	/* default: sl */

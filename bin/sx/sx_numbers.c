@@ -182,7 +182,11 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   /*assert(np->ref != NULL);*/
   if (np->ref == NULL)
     {
-      fprintf(stderr, "sx_number: np->ref==NULL for %s\n", tp->gdl->kids->kids->text);
+      const char *o = hash_find(oids, np->set);
+      if (o)
+	np->ref = np->oid = o;
+      else
+	fprintf(stderr, "sx_number: np->ref==NULL for %s\n", tp->t);
     }
 }
 
