@@ -50,20 +50,7 @@ struct noset_tab
   const char *one;
 };
 
-struct sx_config
-{
-  const char *project;  /* set from -P[PROJECT] */
-  const char *signlist; /* default: csl */
-  const char *domain; 	/* default: sl */
-  const char *font;	/* default: noto */
-  const char *script;	/* default: empty; this is preferred over font
-			   because it is used by various sxweb and
-			   cuneify routines to display characters with
-			   the script-appropriate glyph */
-  const char *merge;	/* default: 00lib/csl.mrg */
-};
-
-extern struct sx_config sxconfig;
+extern struct sl_config sxconfig;
 
 #define SX_IDATA_COMPONLY (char *)(uintptr_t)-1
 

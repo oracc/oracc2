@@ -179,7 +179,11 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 #if 0
     }
 #endif
-  assert(np->ref != NULL);
+  /*assert(np->ref != NULL);*/
+  if (np->ref == NULL)
+    {
+      fprintf(stderr, "sx_number: np->ref==NULL for %s\n", tp->gdl->kids->kids->text);
+    }
 }
 
 static void

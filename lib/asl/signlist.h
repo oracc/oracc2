@@ -121,6 +121,7 @@ struct sl_signlist
 		     		   form, so we can generate system tables easily */
   List *images; 		/* list of names of image manifests as char * */
   Hash *hnums;			/* Hash of token pointers where gdl is g:n */
+  struct sl_config *config;	/* settings from 00lib/config.xml */
   struct sx_iheader *iheaders;	/* array of header data read from @cmds in image manifests */
   Roco *iarray;			/* images data read into a Roco array */  
   Hash *oid2ucode;
@@ -150,19 +151,6 @@ struct sl_signlist
   Pool *p;
   Mloc mloc;
   Mloc eloc;
-};
-
-struct sl_config
-{
-  const char *project;  /* set from -P[PROJECT] */
-  const char *signlist; /* default: csl */
-  const char *domain; 	/* default: sl */
-  const char *font;	/* default: noto */
-  const char *script;	/* default: empty; this is preferred over font
-			   because it is used by various sxweb and
-			   cuneify routines to display characters with
-			   the script-appropriate glyph */
-  const char *merge;	/* default: 00lib/csl.mrg */
 };
 
 struct sl_token
@@ -574,7 +562,21 @@ struct numvmap_tab
 };
 extern struct numvmap_tab *numvmap (register const char *str, register size_t len);
 
-extern void asl_config(const char *project);
+struct sl_config
+{
+  const char *project;  /* set from -P[PROJECT] */
+  const char *signlist; /* default: csl */
+  const char *domain; 	/* default: sl */
+  const char *font;	/* default: noto */
+  const char *script;	/* default: empty; this is preferred over font
+			   because it is used by various sxweb and
+			   cuneify routines to display characters with
+			   the script-appropriate glyph */
+  const char *merge;	/* default: 00lib/csl.mrg */
+  int nokeys;
+};
+
+extern void asl_config(const char *project, struct sl_config *cp);
 extern struct sl_signlist *asl_bld_init(void);
 extern void asl_bld_listdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *in);
 extern void asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, char *text);
@@ -627,5 +629,7 @@ extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name
 extern void asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
 
 extern void asl_bld_liga(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *fseq, const unsigned char *u);
+
+extern struct sl_config *asl_get_config(void);
 
 #endif/*SIGNLIST_H_*/

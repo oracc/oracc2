@@ -177,7 +177,7 @@ main(int argc, char * const*argv)
   nodeh_register(treexml_c_handlers, NS_SL, treexml_c_generic);
 
   gdl_init();
-  asl_init();
+  asl_init(&sxconfig);
   sl = aslyacc(file);
   
 #if 0

@@ -2,35 +2,30 @@
 #include <xpd.h>
 #include "signlist.h"
 
-/* Read config variables from 00lib/config.xml */
-
-struct sl_config aslconfig = 
-{
-  .signlist="csl",
-  .domain="sl",
-  .font="noto"
-};
 
 static Pool *xpdpool;
 static struct xpd *xpdp;
 
+/* Read config variables from 00lib/config.xml */
 void
-asl_config(const char *project)
+asl_config(const char *project, struct sl_config *cp)
 {
   if (project)
     {
       xpdpool = pool_init();
       xpdp = xpd_init(project, xpdpool);
       const char *val;
-      aslconfig.project = project;
+      cp->project = project;
       if ((val = xpd_option(xpdp, "asl-domain")))
-	aslconfig.domain = val;
+	cp->domain = val;
       if ((val = xpd_option(xpdp, "asl-script")))
-	aslconfig.script = aslconfig.font = val;
+	cp->script = cp->font = val;
       if ((val = xpd_option(xpdp, "asl-merge")))
-	aslconfig.merge = val;
-      else if (aslconfig.script)
-	aslconfig.merge = aslconfig.script;
+	cp->merge = val;
+      else if (cp->script)
+	cp->merge = cp->script;
+      if ((val = xpd_option(xpdp, "asl-nokeys")))
+	cp->nokeys = !strcmp(val, "yes");
     }
   else if (xpdp)
     {

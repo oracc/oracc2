@@ -13,10 +13,11 @@ extern const char *curraslfile, *aslfile;
 
 extern int asl_at_check(const char *atp);
 extern struct sl_signlist *aslyacc(const char *file);
-extern void asl_init(void);
+extern void asl_init(struct sl_config *cp);
 extern void asl_term(void);
 extern int aslparse(void);
 extern char *longtext(struct sl_signlist *sl, char *t, char *a);
 extern Hash *asl_get_oids(void);
+extern struct sl_config *asl_get_config(void);
 
 #endif

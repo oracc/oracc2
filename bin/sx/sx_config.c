@@ -1,10 +1,10 @@
 #include <oraccsys.h>
 #include <xpd.h>
-#include "sx.h"
+#include "signlist.h"
 
 /* Read config variables from 00lib/config.xml */
 
-struct sx_config sxconfig = 
+struct sl_config sxconfig = 
 {
   .signlist="csl",
   .domain="sl",
@@ -19,18 +19,7 @@ sx_config(const char *project)
 {
   if (project)
     {
-      xpdpool = pool_init();
-      xpdp = xpd_init(project, xpdpool);
-      const char *val;
-      sxconfig.project = project;
-      if ((val = xpd_option(xpdp, "asl-domain")))
-	sxconfig.domain = val;
-      if ((val = xpd_option(xpdp, "asl-script")))
-	sxconfig.script = sxconfig.font = val;
-      if ((val = xpd_option(xpdp, "asl-merge")))
-	sxconfig.merge = val;
-      else if (sxconfig.script)
-	sxconfig.merge = sxconfig.script;
+      asl_config(project, &sxconfig);
     }
   else if (xpdp)
     {
