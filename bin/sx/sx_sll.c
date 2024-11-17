@@ -122,7 +122,10 @@ sx_s_sign(FILE *f, struct sl_sign *s)
 	curr_oid = s->oid;
 
       if (s->smoid)
-	fprintf(f, "%s\t%s\n", s->smap, curr_oid);
+	{
+	  fprintf(f, "%s\t%s\n", s->smap, curr_oid);
+	  fprintf(f, "%s;spoid\t%s\n", s->oid, s->name);
+	}
       fprintf(f, "%s\t%s\n", s->name, curr_oid);
       fprintf(f, "%s\t%s\n", curr_oid, s->name);
 
