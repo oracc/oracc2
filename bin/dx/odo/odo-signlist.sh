@@ -16,18 +16,20 @@ if [ "$projtype" = "corpus" ]; then
 	sx-csl.sh $tok
 	sx-slix.sh $project 01tmp/csl.asl
 	asl="01tmp/csl.asl"
+	o2=
     fi
-else
+fi
+if [ "$asl" = "" ]; then
     set 00lib/*.asl
     if [ "$1" = "00lib/*.asl" ]; then
 	false
     else
 	asl=$1
     fi
+    # TODO: locate stats for osl/pcsl
     if [ "$o2" = "o2" ]; then
 	sx-slix.sh `oraccopt` $asl
     fi
-    # TODO: locate stats for osl/pcsl
 fi
 if [ "$asl" != "" ]; then
     sxweb.sh
