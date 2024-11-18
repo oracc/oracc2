@@ -26,6 +26,8 @@ Hash *mhash;
 Pool *fpool;
 Hash *fhash;
 
+struct sl_config aslcfg;
+
 const char *signlist = "osl";
 
 /* tokex operates on corpus token output so it has to use the corpus
@@ -79,7 +81,7 @@ merge_load(void)
 {
   size_t nline;
   unsigned char *fmem;
-  unsigned char **lp = loadfile_lines3((uccp)merge_fn(aslconfig.merge), &nline, &fmem);
+  unsigned char **lp = loadfile_lines3((uccp)merge_fn(aslcfg.merge), &nline, &fmem);
   int i;
   for (i = 0; i < nline; ++i)
     {
@@ -129,8 +131,9 @@ main(int argc, char **argv)
     {
       mpool = pool_init();
       mhash = hash_create(100);
-      asl_config(project);
-      merge_load();
+      asl_config(project, &aslcfg);
+      if (aslcfg.merge)
+	merge_load();
     }
   while ((b = fgets(buf, 1024, stdin)))
     {

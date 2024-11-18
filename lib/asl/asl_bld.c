@@ -1167,6 +1167,7 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
 	      l->type = sl_ll_lref;
 	      sl->curr_inst = l->inst = sl->curr_sign->inst;
 	      hash_add(sl->hlentry, n, l);
+	      (void)asl_bld_token(locp, sl, (ucp)n, 1);
 	      asl_register_list_item(locp, sl, l);
 	    }
 	}

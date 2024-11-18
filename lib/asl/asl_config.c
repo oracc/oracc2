@@ -2,7 +2,6 @@
 #include <xpd.h>
 #include "signlist.h"
 
-
 static Pool *xpdpool;
 static struct xpd *xpdp;
 

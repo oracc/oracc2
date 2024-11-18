@@ -3,7 +3,9 @@
 
 #define gsb_strcpy(dest,src) dest=(char*)hpool_copy((uccp)src,r->p)
 
-static const char * gsb_target_lang = "sux";
+/* This should be settable via tokx option */
+static const char * gsb_target_lang = NULL; /*"sux";*/
+
 void
 gsb_set_target_lang(const char *l)
 {
@@ -34,7 +36,7 @@ gsb_get(Word *w)
 Gsig *
 gsb_get_n(Word *w, int n)
 {
-  if (n < w->gpp_used)
+  if (n >= 0 && n < w->gpp_used)
     return &w->gpp[n];
   else
     return NULL;
@@ -44,22 +46,25 @@ void
 gsb_status(Trun *r, const char *pres, const char *edit, const char *flag)
 {
   Gsig *wgp = gsb_get_n(r->rw, r->rw->gpp_used-1);
-  struct tokflags *tfp;
-  if (*pres)
+  if (wgp)
     {
-      tfp = tokflags(pres,strlen(pres));
-      wgp->preserved = *tfp->attr;
+      struct tokflags *tfp;
+      if (*pres)
+	{
+	  tfp = tokflags(pres,strlen(pres));
+	  wgp->preserved = *tfp->attr;
+	}
+      else
+	wgp->preserved = '+';
+      if (*edit)
+	{
+	  tfp = tokflags(edit,strlen(edit));
+	  wgp->editorial = *tfp->attr;
+	}
+      else
+	wgp->editorial = 'k';
+      gsb_strcpy(wgp->flags, flag);
     }
-  else
-    wgp->preserved = '+';
-  if (*edit)
-    {
-      tfp = tokflags(edit,strlen(edit));
-      wgp->editorial = *tfp->attr;
-    }
-  else
-    wgp->editorial = 'k';
-  gsb_strcpy(wgp->flags, flag);
 }
 
 void
@@ -67,7 +72,8 @@ gsb_add(Trun *r,
 	char type, const char *form, const char *oid, const char *sign,
 	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
-  /* If we are only processing sux accept sux, sux-x-emesal, etc., but reject everything else */
+  /* If we are only processing, e.g., sux accept sux, sux-x-emesal,
+     etc., but reject everything else */
   if (lang && gsb_target_lang && strncmp(lang, gsb_target_lang, strlen(gsb_target_lang)))
     return;
   
