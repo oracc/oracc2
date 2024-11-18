@@ -70,6 +70,8 @@ if [ "$stats" == "yes" ]; then
 fi
 sxweb-pos.sh
 
+sxweb-lists.sh
+
 rm -fr signlist ; mkdir signlist
 
 (cd $ORACC_BUILDS ;
@@ -150,8 +152,8 @@ if [ "$abbrev" != "osl" ]; then
 fi
 
 if [ "$project" = "osl" ]; then
-    cp 00etc/Oracc_OGSL.txt 02pub
-    chmod o+r 02pub/Oracc_OGSL.txt
+    cp 00etc/Oracc_OSL.txt 02pub
+    chmod o+r 02pub/Oracc_OSL.txt
 fi
 
 xsltproc -stringparam project $project -stringparam projesp "$ORACC_BUILDS/$project" $libscripts/sxweb-signs.xsl 02xml/sl.xml
