@@ -197,9 +197,9 @@
   </xsl:if>
   <xsl:choose>
     <xsl:when test="string-length($salt)>0">
-      <span class="salt{$salt}"><xsl:value-of select="sl:ucun"/></span>
+      <span class="{$asl-script} salt{$salt}"><xsl:value-of select="sl:ucun"/></span>
     </xsl:when>
-    <xsl:otherwise><xsl:value-of select="sl:ucun"/></xsl:otherwise>
+    <xsl:otherwise><span class="{$asl-script}"><xsl:value-of select="sl:ucun"/></span></xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 

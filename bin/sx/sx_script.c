@@ -29,7 +29,10 @@ static FILE *
 sx_merge_file(struct sl_signlist *sl, const char *script, char **fnamep)
 {
   *fnamep = sx_script_merge_fn(sl, script);
-  return fopen(*fnamep, "w");
+  if (!access(*fnamep, R_OK))
+    return fopen(*fnamep, "w");
+  else
+    return NULL;
 }
 
 static void

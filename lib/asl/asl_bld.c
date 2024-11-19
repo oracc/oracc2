@@ -673,8 +673,13 @@ asl_bld_end_form(Mloc *locp, struct sl_signlist *sl)
     {
       if (!sl->curr_form)
 	mesg_verr(locp, "misplaced @@\n");
-      else if (!sl->curr_form->key && !sl->config->nokeys)
-	mesg_verr(locp, "no key set for form %s", sl->curr_form->u.f->name);
+      else if (!sl->curr_form->key)
+	{
+	  if (sl->curr_form->u.f->compoundonly)
+	    ;
+	  else if (!sl->config->nokeys)
+	    mesg_verr(locp, "no key set for form %s", sl->curr_form->u.f->name);
+	}
       sl->curr_form = sl->curr_inst = NULL;
     }
 }
@@ -688,9 +693,11 @@ asl_register_list_item(Mloc *locp, struct sl_signlist *sl, struct sl_list *l)
   if (strlen((ccp)l->name) < 32)
     {
       strcpy(name, (ccp)l->name);
-      char *end = strpbrk(name, "0123456789");
+      char *end = strpbrk(name, "+0123456789"); /* including '+' means U+FFFFA passes */
       if (end)
 	{
+	  if ('+' == *end)
+	    ++end;
 	  struct sl_listdef *ldp = NULL;
 	  *end = '\0';
 	  if ('U' == name[0] && '+' == name[1])

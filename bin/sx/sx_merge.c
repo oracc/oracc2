@@ -65,44 +65,48 @@ sx_merge_load(struct sl_signlist *sl)
   size_t nline;
   sl->h_merges = hash_create(256);
 
-  lp = loadfile_lines3((uccp)sx_script_merge_fn(sl, sxconfig.merge), &nline, &fmem);
-  int i;
-  for (i = 0; i < nline; ++i)
+  char *mfn = sx_script_merge_fn(sl, sxconfig.merge);
+  if (!access(mfn, R_OK))
     {
-      if ('o' == lp[i][0]) /* ignore o0000237++      o0000237 o0002827 lines */
-	continue;
-      unsigned char *v = lp[i];
-      while (*v && !isspace(*v))
-	++v;
-      if (*v)
+      lp = loadfile_lines3((uccp)mfn, &nline, &fmem);
+      int i;
+      for (i = 0; i < nline; ++i)
 	{
-	  *v++ = '\0';
-	  while (isspace(*v))
+	  if ('o' == lp[i][0]) /* ignore o0000237++      o0000237 o0002827 lines */
+	    continue;
+	  unsigned char *v = lp[i];
+	  while (*v && !isspace(*v))
 	    ++v;
 	  if (*v)
 	    {
-	      /*hash_add(sl->h_merges, lp[i], v);*/
-	      char *vv = strdup((ccp)v);
-	      char **mm = space_split(vv);
-	      int j;
-	      List *need = list_create(LIST_SINGLE);
-	      for (j = 0; mm[j]; ++j)
+	      *v++ = '\0';
+	      while (isspace(*v))
+		++v;
+	      if (*v)
 		{
-		  struct sl_sign *sp = hash_find(sl->hsentry, (uccp)mm[j]);
-		  if (sp)
+		  /*hash_add(sl->h_merges, lp[i], v);*/
+		  char *vv = strdup((ccp)v);
+		  char **mm = space_split(vv);
+		  int j;
+		  List *need = list_create(LIST_SINGLE);
+		  for (j = 0; mm[j]; ++j)
 		    {
-		      char buf[12];
-		      sprintf(buf, "%s..", sp->oid);
-		      if (hash_find(sl->h_kdata, (uccp)buf))
-			list_add(need, mm[j]);
+		      struct sl_sign *sp = hash_find(sl->hsentry, (uccp)mm[j]);
+		      if (sp)
+			{
+			  char buf[12];
+			  sprintf(buf, "%s..", sp->oid);
+			  if (hash_find(sl->h_kdata, (uccp)buf))
+			    list_add(need, mm[j]);
+			}
+		      else
+			{
+			  mesg_verr(mesg_mloc(sxconfig.merge,i+1), "%s: unknown sign in merge\n", mm[j]);
+			}
 		    }
-		  else
-		    {
-		      mesg_verr(mesg_mloc(sxconfig.merge,i+1), "%s: unknown sign in merge\n", mm[j]);
-		    }
+		  if (list_len(need))
+		    hash_add(sl->h_merges, lp[i], list_to_str(need));
 		}
-	      if (list_len(need))
-		hash_add(sl->h_merges, lp[i], list_to_str(need));
 	    }
 	}
     }
