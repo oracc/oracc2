@@ -45,6 +45,9 @@ static Hash *hheads = NULL;
 
 static GS_item gsort_null_item = { (uccp)"\\0" , 0, (uccp)"", (uccp)"", (uccp)"", NULL, (uccp)"", 0, -1 };
 
+static char archaic_numeral_suffix[128];
+
+
 #ifdef GSORT_CMP_TRACE
 #include "gsort_cmp_trace.c"
 #endif
@@ -61,6 +64,12 @@ gsort_init(void)
   hitems = hash_create(1024);
   hheads = hash_create(1024);
   collate_init((ucp)"unicode");
+  /* N07A has been lowercased to n07a by the time this is used */
+  archaic_numeral_suffix['a'] = 
+    archaic_numeral_suffix['b'] = 
+    archaic_numeral_suffix['c'] =
+    archaic_numeral_suffix['d'] =
+    archaic_numeral_suffix['e'] = 1;
 #ifdef GSORT_CMP_TRACE
   gsort_cmp_trace_init();
 #endif
@@ -258,13 +267,17 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
   else if ('n' == *gp->b || 'f' == *gp->b) /* F is F(raction) */
     {
       unsigned const char *b = gp->b + 1;
-      while (*b)
-	if (*b > 128 || !isdigit(*b))
-	  break;
-	else
-	  ++b;
-      if (!*b)
-	gp->t = 2;
+      /* N or F followed by at least one digit plus optional additional digits plus [ABC]+ for ACN */
+      if (isdigit(*b))
+	{
+	  while (*b)
+	    if (*b > 128 || !isdigit(*b))
+	      break;
+	    else
+	      ++b;
+	  if (!*b || archaic_numeral_suffix[*b])
+	    gp->t = 2;
+	}
     }
   else if ('U' == gp->b[0] && '+' == gp->b[1])
     {
