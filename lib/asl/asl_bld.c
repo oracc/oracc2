@@ -280,7 +280,7 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
 
 	      hash_add(sl->hnums, n, tokp);
 	      
-	      /* ensure that future set names are tokens */
+	      /* numset: ensure that future set names are tokens */
 	      if (!strcmp(setnode->name, "g:c"))
 		{
 		  struct sl_token *stp = asl_bld_token(locp, sl, pool_copy(g_uc(set_n), sl->p), 0);

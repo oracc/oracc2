@@ -389,24 +389,26 @@
       <tr>
 	<td>
 	  <p class="asl-ucun">
-	    <span class="{$asl-script}">
-	      <xsl:choose>
-		<xsl:when test="sl:ucun">
-		  <xsl:call-template name="sxweb-ucun"/>
-		</xsl:when>
-		<xsl:when test="sl:useq">
+	    <xsl:choose>
+	      <xsl:when test="sl:ucun">
+		<xsl:call-template name="sxweb-ucun"/>
+	      </xsl:when>
+	      <xsl:when test="sl:useq">
+		<span class="{$asl-script}">
 		  <xsl:value-of select="sl:useq"/>
-		</xsl:when>
-		<xsl:otherwise>
+		</span>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<span class="{$asl-script}">
 		  <xsl:for-each select=".//sl:name[1]//*">
 		    <xsl:choose>
 		      <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
 		      <xsl:otherwise/>
 		    </xsl:choose>
 		  </xsl:for-each>
-		</xsl:otherwise>
-	      </xsl:choose>
-	    </span>
+		</span>
+	      </xsl:otherwise>
+	    </xsl:choose>
 	  </p>
 	</td>
       </tr>

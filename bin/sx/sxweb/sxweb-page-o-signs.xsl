@@ -7,6 +7,8 @@
 	       exclude-result-prefixes="sl">
 
   <xsl:param name="project" select="'osl'"/>
+  <xsl:variable name="slxml" select="concat('/home/oracc/',$project,'/02xml/sl.xml')"/>
+  
   <xsl:include href="sxweb-util.xsl"/>
 
   <xsl:template match="sxw:page-o-signs">
@@ -15,13 +17,14 @@
     <xsl:variable name="stats" select="@stats"/>
     <xsl:variable name="xml" select="@xml"/>
     <xsl:variable name="values" select="@values"/>
+    <xsl:message>sxweb-page-o-signs.xml using <xsl:value-of select="$slxml"/></xsl:message>
     <table class="page-o-signs pretty">
       <xsl:choose>
 	<xsl:when test="@xml='yes'">
 	  <xsl:for-each select="*/*"> <!--no ns on oids/oid so use */* as workaround -->
 	    <xsl:variable name="childnodes" select="*"/>
 	    <xsl:variable name="id" select="@xml:id"/>
-	    <xsl:for-each select="document('/home/oracc/osl/02xml/sl.xml')">	      
+	    <xsl:for-each select="document($slxml)">
 	      <xsl:for-each select="id($id)">
 		<xsl:call-template name="sxw-pos-tr">
 		  <xsl:with-param name="children" select="$children"/>
@@ -39,7 +42,7 @@
 	    <xsl:sort data-type="number" select="@sort"/>
 	    <xsl:variable name="freq" select="@freq"/>
 	    <xsl:variable name="id" select="@xml:id"/>
-	    <xsl:for-each select="document('/home/oracc/osl/02xml/sl.xml')">	      
+	    <xsl:for-each select="document($slxml)">	      
 	      <xsl:for-each select="id($id)">
 		<xsl:call-template name="sxw-pos-tr">
 		  <xsl:with-param name="codes" select="$codes"/>
@@ -52,7 +55,7 @@
 	</xsl:when>
 	<xsl:otherwise>
 	  <xsl:variable name="ids" select="text()"/>
-	  <xsl:for-each select="document('/home/oracc/osl/02xml/sl.xml')">
+	  <xsl:for-each select="document($slxml)">
 	    <xsl:for-each select="id($ids)">
 	      <xsl:sort data-type="number" select="@sort"/>
 	      <xsl:call-template name="sxw-pos-tr">
