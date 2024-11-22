@@ -7,7 +7,8 @@
 	       exclude-result-prefixes="sl">
 
   <xsl:param name="project" select="'osl'"/>
-  <xsl:variable name="slxml" select="concat('/home/oracc/',$project,'/02xml/sl.xml')"/>
+  <xsl:variable name="slxml" select="'/home/oracc/osl/02xml/sl.xml'"/>
+  <xsl:variable name="pcxml" select="'/home/oracc/pcsl/02xml/sl.xml'"/>
   
   <xsl:include href="sxweb-util.xsl"/>
 
@@ -24,7 +25,13 @@
 	  <xsl:for-each select="*/*"> <!--no ns on oids/oid so use */* as workaround -->
 	    <xsl:variable name="childnodes" select="*"/>
 	    <xsl:variable name="id" select="@xml:id"/>
-	    <xsl:for-each select="document($slxml)">
+	    <xsl:variable name="xxml">
+	      <xsl:choose>
+		<xsl:when test="starts-with($id,'o09')"><xsl:value-of select="$pcxml"/></xsl:when>
+		<xsl:otherwise><xsl:value-of select="$slxml"/></xsl:otherwise>
+	      </xsl:choose>
+	    </xsl:variable>
+	    <xsl:for-each select="document($xxml)">
 	      <xsl:for-each select="id($id)">
 		<xsl:call-template name="sxw-pos-tr">
 		  <xsl:with-param name="children" select="$children"/>
