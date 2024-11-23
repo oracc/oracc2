@@ -90,6 +90,15 @@
   </xsl:call-template>
 </xsl:variable>
 
+<xsl:variable name="max-inline-forms">
+  <xsl:message>sl-config-xml in asl-max-forms set = <xsl:value-of select="$sl-config-xml"/></xsl:message>
+  <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
+    <xsl:with-param name="option" select="'asl-max-forms'"/>
+    <xsl:with-param name="default" select="3"/>
+  </xsl:call-template>
+</xsl:variable>
+
 <xsl:variable name="font">
   <xsl:choose>
     <xsl:when test="string-length($asl-script)>0">
@@ -189,7 +198,24 @@
 </xsl:template>
 
 <xsl:template name="sxweb-ucun">
-  <xsl:variable name="hex" select="sl:ucun/@hex"/>
+  <xsl:choose>
+    <xsl:when test="sl:ucun">
+      <xsl:for-each select="sl:ucun">
+	<xsl:call-template name="sxweb-ucun-sub"/>
+      </xsl:for-each>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:for-each select=".//sl:ucun">
+	<xsl:if test="position()=1">
+	  <xsl:call-template name="sxweb-ucun-sub"/>
+	</xsl:if>
+      </xsl:for-each>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="sxweb-ucun-sub">
+  <xsl:variable name="hex" select="@hex"/>
   <xsl:variable name="salt" select="/*/sl:scripts/*[@n=$asl-script]/*[@code=$hex]/@salt"/>
   <xsl:if test="$hex='U+12324'">
     <xsl:message>sxweb-ucun asl-script=<xsl:value-of select="$asl-script"
@@ -197,9 +223,9 @@
   </xsl:if>
   <xsl:choose>
     <xsl:when test="string-length($salt)>0">
-      <span class="{$asl-script} salt{$salt}"><xsl:value-of select="sl:ucun"/></span>
+      <span class="{$asl-script} salt{$salt}"><xsl:value-of select="."/></span>
     </xsl:when>
-    <xsl:otherwise><span class="{$asl-script}"><xsl:value-of select="sl:ucun"/></span></xsl:otherwise>
+    <xsl:otherwise><span class="{$asl-script}"><xsl:value-of select="."/></span></xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 

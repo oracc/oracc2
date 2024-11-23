@@ -225,20 +225,6 @@ reset_num_n(struct sl_signlist *sl, const unsigned char *n, const unsigned char 
     *b++ = *t++;
   *b = '\0';
   return pool_copy((uccp)buf, sl->p);
-#if 0
-  struct sl_token *tokp = asl_bld_token(NULL, sl, n, 0);
-  if (asl_bld_num(NULL, sl, n, tokp, 3))
-    {
-      /* This is strange but true; we re-reset the text of the reset
-	 tokp to be the original value. We do this so the value maps
-	 to an OID in sx_num_data */
-      tokp->t = tp->t;
-      tokp->s = tp->s;
-      return tokp;
-    }
-  else
-    return NULL;
-#endif
 }
 
 int
@@ -344,6 +330,8 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
       tokp->priority = 100;
       tokp->gdl = tp->root;
       tokp->gdl->name = "g:w";
+      if (!tokp->gdl->mloc)
+	tokp->gdl->mloc = mloc_mloc(locp);
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
       tokp->gsh = gsort_prep(tp);

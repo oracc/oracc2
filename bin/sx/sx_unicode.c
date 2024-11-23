@@ -442,7 +442,11 @@ sx_unicode_rx_mangle(struct sl_signlist *sl, const char *g, int *multi)
 	    }
 	}
       else if ('|' == *src)
-	++src;
+	{
+	  ++src;
+	  *dst = '\0';
+	  break;
+	}
       else if ('(' == *src)
 	{
 	  *dst++ = '<';
@@ -532,6 +536,26 @@ sx_unicode_useq(const char *m, Pool *p)
       else
 	{
 	  x = hash_find(usigns, s);
+	  if (!x)
+	    {
+	      if ('<' == s[1] && '>' == s[strlen(s)-2])
+		{
+		  char ss[strlen(s)];
+		  *ss = '#';
+		  strcpy(ss+1,s+2);
+		  ss[strlen(ss)-2] = '#';
+		  ss[strlen(ss)-1] = '\0';
+		  char *h = ss+1;
+		  while (*h)
+		    {
+		      if ('.' == *h)
+			*h = '#';
+		      ++h;
+		    }
+		  if ((x = hash_find(usigns, ss)))
+		    s = pool_copy(ss, p);
+		}
+	    }
 	  if (!x)
 	    {
 	      fprintf(stderr, "sx_unicode: element %s not found in usigns while processing mangled %s\n", s, m);

@@ -74,7 +74,7 @@
 		<div id="Forms">
 		  <!--<h1>FORMS</h1>-->
 		  <xsl:choose>
-		    <xsl:when test="count(sl:form)>3">
+		    <xsl:when test="count(sl:form)>$max-inline-forms">
 		      <p class="sl-hang"
 			 ><span class="sl-ihead-h">FORMS PAGE</span
 			 ><esp:link
