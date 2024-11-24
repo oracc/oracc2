@@ -306,7 +306,8 @@ sx_unicode(struct sl_signlist *sl)
 		      else if (useq && *useq && !isspace(*useq))
 			{
 			  hash_add(useqs, (uccp)name, (ucp)(Up->useq = (ccp)pool_copy((uccp)useq, sl->p)));
-			  mesg_vnotice(ip->mloc.file, ip->mloc.line, "%s: adding useq %s\n", (ccp)name, Up->useq);
+			  if (adding_useq_messages)
+			    mesg_vnotice(ip->mloc.file, ip->mloc.line, "%s: adding useq %s\n", (ccp)name, Up->useq);
 			}
 		      free((void*)useq);
 		      useq = NULL;
@@ -332,7 +333,8 @@ sx_unicode(struct sl_signlist *sl)
 			    {
 			      Up->useq = useq;
 			      hash_add(useqs, (uccp)name, (ucp)(Up->useq = (ccp)pool_copy((uccp)useq, sl->p)));
-			      mesg_vnotice(ip->mloc.file, ip->mloc.line, "%s: adding useq %s\n", (ccp)name, Up->useq);
+			      if (adding_useq_messages)
+				mesg_vnotice(ip->mloc.file, ip->mloc.line, "%s: adding useq %s\n", (ccp)name, Up->useq);
 			    }
 			}
 		    }

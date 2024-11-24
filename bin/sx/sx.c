@@ -29,6 +29,7 @@ int asltrace,rnvtrace;
 
 int status = 0; /* for rnc; should be in library there */
 
+int adding_useq_messages = 1;
 int akas_dump = 0;
 int asl_output = 0;
 int dump_stdout = 0;
@@ -353,6 +354,7 @@ opts(int opt, const char *arg)
       break;
     case 'c':
       check_mode = 1;
+      adding_useq_messages = 0;
       break;
     case 'C':
       ctrace = 1;

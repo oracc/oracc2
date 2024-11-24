@@ -57,6 +57,7 @@ extern struct sl_config sxconfig;
 extern Hash *parent_sl;
 extern const char *parent_sl_project;
 extern int unicode_from_parent;
+extern int adding_useq_messages;
 extern int useq_force;
 
 extern int extra_needs, identity_mode, listdef_check;
