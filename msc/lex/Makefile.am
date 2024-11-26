@@ -20,7 +20,7 @@ scriptdata_DATA = lex-sign-data.xsl lex-sign-group.xsl			\
 	lex-pull-tail.xsl lex-phra-tail-group.xsl lex-merge-phra.xsl	\
 	lex-word-equi-HTML.xsl lex-sign-ref-codes.xsl			\
 	lex-sign-ref-sort.xsl lex-sign-sortkeys.xsl lex-provides-xi.xsl	\
-	lex-act-isid.xsl
+	lex-act-isid.xsl lex-group@refs.xsl
 
 lex_collapse_refs_SOURCES=lex-collapse-refs.c
 lex_collapse_refs_LDADD = $(xLDADD)

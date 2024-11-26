@@ -33,6 +33,11 @@
    src: url('/fonts/Oracc-NA-Outline.ttf');
 }
 
+@font-face {
+   font-family: 'PC';
+   src: url('/pcsl/fonts/PC-all.ttf');
+}
+
 .ofs-100 { font-size: 100%; }
 
 .ofs-120 { font-size: 120%; }
@@ -59,10 +64,6 @@
    font-family: "Oracc LAK";
 }
 
-.ofs-rsp {
-   font-family: "Oracc RSP";
-}
-
 .ofs-nao {
    font-family: "Oracc NA Outline";
 }
@@ -73,6 +74,14 @@
 
 .ofs-oobf {
    font-family: "Oracc OBFreie Regular";
+}
+
+.ofs-pc {
+    font-family: "PC";
+}
+
+.ofs-rsp {
+   font-family: "Oracc RSP";
 }
 
 .ss01 {
@@ -105,6 +114,10 @@
 
 .cv01 {
     font-feature-settings: "cv01";
+}
+
+.cv02 {
+    font-feature-settings: "cv02";
 }
 
 .early {

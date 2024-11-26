@@ -25,6 +25,7 @@
 	  <xsl:for-each select="*/*"> <!--no ns on oids/oid so use */* as workaround -->
 	    <xsl:variable name="childnodes" select="*"/>
 	    <xsl:variable name="id" select="@xml:id"/>
+	    <xsl:variable name="iso-script" select="@script"/>
 	    <xsl:variable name="xxml">
 	      <xsl:choose>
 		<xsl:when test="starts-with($id,'o09')"><xsl:value-of select="$pcxml"/></xsl:when>
@@ -38,6 +39,7 @@
 		  <xsl:with-param name="childnodes" select="$childnodes"/>
 		  <xsl:with-param name="codes" select="$codes"/>
 		  <xsl:with-param name="values" select="$values"/>
+		  <xsl:with-param name="iso-script" select="$iso-script"/>
 		</xsl:call-template>
 	      </xsl:for-each>
 	    </xsl:for-each>
@@ -82,6 +84,7 @@
     <xsl:param name="children"/>
     <xsl:param name="codes"/>
     <xsl:param name="freq"/>
+    <xsl:param name="iso-script"/>
     <xsl:param name="stats"/>
     <xsl:param name="values"/>
     <tr>
@@ -98,6 +101,7 @@
 	  <xsl:with-param name="childnodes" select="$childnodes"/>
 	  <xsl:with-param name="children" select="$children"/>
 	  <xsl:with-param name="values" select="$values"/>
+	  <xsl:with-param name="iso-script" select="$iso-script"/>
 	</xsl:call-template>
       </xsl:for-each>
     </tr>
@@ -107,9 +111,12 @@
   <xsl:template name="sxw-pos-summary">
     <xsl:param name="children"/>
     <xsl:param name="childnodes"/>
+    <xsl:param name="iso-script"/>
     <xsl:param name="values"/>
     <xsl:call-template name="sxw-pos-link-td"/>
-    <xsl:call-template name="sxw-pos-ucun-td"/>
+    <xsl:call-template name="sxw-pos-ucun-td">
+      <xsl:with-param name="iso-script" select="$iso-script"/>
+    </xsl:call-template>
     <xsl:if test="not($values='no')">
       <td class="sxw-pos-vals-td">
 	<xsl:choose>
@@ -117,7 +124,7 @@
 	    <xsl:for-each select="ancestor-or-self::sl:form/sl:v[not(@deprecated='1')]">
 	      <xsl:value-of select="@n"/>
 	      <xsl:if test="not(position() = last())"><xsl:text> </xsl:text></xsl:if>
-	    </xsl:for-each>	
+	    </xsl:for-each>
 	  </xsl:when>
 	  <xsl:otherwise>
 	    <xsl:for-each select="ancestor-or-self::sl:sign/sl:v[not(@deprecated='1')]">
@@ -166,14 +173,20 @@
   </xsl:template>
 
   <xsl:template name="sxw-pos-ucun-td">
-    <td class="sxw-pos-ucun ofs-noto">
+    <xsl:param name="iso-script"/>
+    <xsl:message>sxw-pos-ucun-td: iso-script=<xsl:value-of select="$iso-script"/></xsl:message>
+    <td class="sxw-pos-ucun">
       <xsl:choose>
 	<xsl:when test="sl:ucun">
-	  <xsl:call-template name="sxweb-ucun"/>
+	  <xsl:call-template name="sxweb-ucun">
+	    <xsl:with-param name="iso-script" select="$iso-script"/>
+	  </xsl:call-template>
 	</xsl:when>
 	<xsl:when test="@oid">
 	  <xsl:for-each select="id(@oid)">
-	    <xsl:call-template name="sxweb-ucun"/>
+	    <xsl:call-template name="sxweb-ucun">
+	      <xsl:with-param name="iso-script" select="$iso-script"/>
+	    </xsl:call-template>
 	  </xsl:for-each>
 	</xsl:when>
 	<xsl:otherwise/><!-- nothing to display for Cuneiform -->

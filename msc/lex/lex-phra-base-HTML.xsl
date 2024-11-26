@@ -7,6 +7,7 @@
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:include href="lex-act-isid.xsl"/>
+<xsl:include href="lex-group@refs.xsl"/>
 
 <xsl:template match="lex:phra-base-data">
   <body>
@@ -16,7 +17,7 @@
 
 <xsl:template match="lex:group[@type='word']">
   <div class="lex-word" title="{@value}" o:id="{@oid}">
-    <!-- <h3 class="lex-base">Pronunciation Data</h3> -->
+    <h3 class="lex-base">Pronunciation Data for bases</h3>
     <xsl:apply-templates/>
   </div>
 </xsl:template>
@@ -62,54 +63,6 @@
       </xsl:if>
     </span>
   </xsl:for-each>
-</xsl:template>
-
-<xsl:template match="lex:group[@type='refs']">
-  <xsl:variable name="word" select="lex:data/*/lex:word/@wref[1]"/>
-  <xsl:if test="string-length($word)=0">
-    <xsl:message><xsl:value-of select="concat(*[1]/@id_text,':',*[1]/@label)"/>: lex:data/@sref is empty</xsl:message>
-  </xsl:if>
-  <xsl:variable name="text">
-    <xsl:choose>
-      <xsl:when test="contains($word,'.')">
-	<xsl:value-of select="substring-before($word,'.')"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:value-of select="$word"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-  <xsl:variable name="line-dots">
-    <xsl:choose>
-      <xsl:when test="contains($word,'.')">
-	<xsl:value-of select="substring-after($word,'.')"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:value-of select="$word"/> <!-- shouldn't be able to happen -->
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-  <xsl:variable name="line">
-    <xsl:choose>
-      <xsl:when test="contains($line-dots,'.')">
-	<xsl:value-of select="substring-before($line-dots,'.')"/>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:value-of select="$line-dots"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
-  <xsl:variable name="proj" select="@project"/>
-  <a href="http://oracc.org/{$proj}/{$text}.{$line}" title="{$proj} on Oracc">
-    <xsl:value-of select="@n"/>
-    <xsl:text> </xsl:text>
-    <xsl:for-each select="lex:data/@label">
-      <xsl:value-of select="."/>
-      <xsl:if test="not(position()=last())">
-	<xsl:text>, </xsl:text>
-      </xsl:if>
-    </xsl:for-each>
-  </a>
 </xsl:template>
 
 </xsl:stylesheet>

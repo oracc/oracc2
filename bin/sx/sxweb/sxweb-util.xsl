@@ -198,16 +198,22 @@
 </xsl:template>
 
 <xsl:template name="sxweb-ucun">
+  <xsl:param name="iso-script"/>
+  <xsl:message>sxweb-ucun: iso-script=<xsl:value-of select="$iso-script"/></xsl:message>
   <xsl:choose>
     <xsl:when test="sl:ucun">
       <xsl:for-each select="sl:ucun">
-	<xsl:call-template name="sxweb-ucun-sub"/>
+	<xsl:call-template name="sxweb-ucun-sub">
+	  <xsl:with-param name="iso-script" select="$iso-script"/>
+	</xsl:call-template>
       </xsl:for-each>
     </xsl:when>
     <xsl:otherwise>
       <xsl:for-each select=".//sl:ucun">
 	<xsl:if test="position()=1">
-	  <xsl:call-template name="sxweb-ucun-sub"/>
+	  <xsl:call-template name="sxweb-ucun-sub">
+	    <xsl:with-param name="iso-script" select="$iso-script"/>
+	  </xsl:call-template>
 	</xsl:if>
       </xsl:for-each>
     </xsl:otherwise>
@@ -215,17 +221,28 @@
 </xsl:template>
 
 <xsl:template name="sxweb-ucun-sub">
+  <xsl:param name="iso-script"/>
   <xsl:variable name="hex" select="@hex"/>
   <xsl:variable name="salt" select="/*/sl:scripts/*[@n=$asl-script]/*[@code=$hex]/@salt"/>
   <xsl:if test="$hex='U+12324'">
     <xsl:message>sxweb-ucun asl-script=<xsl:value-of select="$asl-script"
     />; <xsl:value-of select="$hex"/> has salt=<xsl:value-of select="$salt"/></xsl:message>
   </xsl:if>
+  <xsl:variable name="script">
+    <xsl:choose>
+      <xsl:when test="$iso-script='Pcun'">
+	<xsl:value-of select="'ofs-pc'"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="$asl-script"/>
+      </xsl:otherwise>
+    </xsl:choose>	  
+  </xsl:variable>
   <xsl:choose>
     <xsl:when test="string-length($salt)>0">
-      <span class="{$asl-script} salt{$salt}"><xsl:value-of select="."/></span>
+      <span class="{$script} salt{$salt}"><xsl:value-of select="."/></span>
     </xsl:when>
-    <xsl:otherwise><span class="{$asl-script}"><xsl:value-of select="."/></span></xsl:otherwise>
+    <xsl:otherwise><span class="{$script}"><xsl:value-of select="."/></span></xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 

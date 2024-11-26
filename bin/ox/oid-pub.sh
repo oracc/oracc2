@@ -20,7 +20,7 @@
 # one glossary are not added to oid.tsv--they are handled later by
 # px's oxid db.
 #
-# Any OID in oid.tsv is returned by wx. The structure of oid.tsv is:
+# The structure of oid.tsv is:
 #
 # OID\t[uh]\tURL
 #
@@ -50,6 +50,13 @@ rm -f $puboid
 
 if [ -s signlist/02pub/oid.tsv ]; then
     cp signlist/02pub/oid.tsv $puboid
+    if [ "$p" == "osl" ]; then
+	if [ -s ../pcsl/02pub/oid.tsv ]; then
+	    cat ../pcsl/02pub/oid.tsv >>$puboid
+	    rm -f signlist/02pub/oid.{dbh,dbi}
+	fi
+	# could add other sl here also
+    fi
 elif [ ! -s 02pub/cbd/oxid.tsv ]; then
     echo $0: no signlist and no glossary OIDs. Nothing to do here. Stop.
     exit 0
@@ -68,3 +75,7 @@ if [ -s 02pub/cbd/oxid.tsv ]; then
 fi
 
 (cd 02pub ; dbix -d . -n oid oid.tsv ; chmod o+r oid.*)
+if [ "$p" == "osl" ]; then
+    osl=$ORACC/pub/osl
+    (cd signlist/02pub ; ln -sf $osl/oid.dbh . ; ln -sf $osl/oid.dbi .)
+fi
