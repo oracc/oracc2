@@ -81,7 +81,14 @@ merge_load(void)
 {
   size_t nline;
   unsigned char *fmem;
-  unsigned char **lp = loadfile_lines3((uccp)merge_fn(aslcfg.merge), &nline, &fmem);
+  unsigned char **lp = NULL;
+  char *mfn = merge_fn(aslcfg.merge);
+
+  /* silently ignore missing .mrg files */
+  if (access(mfn, R_OK))
+    return;
+  
+  lp = loadfile_lines3((uccp)mfn, &nline, &fmem);
   int i;
   for (i = 0; i < nline; ++i)
     {
