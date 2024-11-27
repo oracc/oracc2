@@ -46,7 +46,6 @@ function onloadScroll()
     }
 }
 
-
 function getPageNav() {
     return document.getElementById("p4PageNav");
 }
@@ -323,14 +322,16 @@ function act_iref(evt) {
 }
 
 function act_ilnk(evt) {
-    let lproj = getData(evt).getAttribute('data-proj');
+    let e = getData(evt);
+    let lproj = e.getAttribute('data-proj');
+    let item = e.getAttribute('data-iref');
     if (!lproj) {
 	let pager = getPager();
 	lproj = pager.getAttribute('data-proj');
+	item = pager.getAttribute('data-iref');
     }
-    let item = pager.getAttribute('data-iref');
     let loc = '/'+lproj+'/'+item;
-    alert('act_ilnk loc='+loc);
+    // alert('act_ilnk loc='+loc);
     window.location=loc;
 }
 
