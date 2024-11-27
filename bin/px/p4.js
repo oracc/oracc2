@@ -324,12 +324,11 @@ function act_iref(evt) {
 function act_ilnk(evt) {
     let e = getData(evt);
     let lproj = e.getAttribute('data-proj');
-    let item = e.getAttribute('data-iref');
     if (!lproj) {
 	let pager = getPager();
 	lproj = pager.getAttribute('data-proj');
-	item = pager.getAttribute('data-iref');
     }
+    let item = e.getAttribute('data-iref');
     let loc = '/'+lproj+'/'+item;
     // alert('act_ilnk loc='+loc);
     window.location=loc;
