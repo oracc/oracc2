@@ -45,7 +45,7 @@
     </xsl:choose>
   </xsl:variable>
   <xsl:variable name="proj" select="@project"/>
-  <a href="javascript://" onclick="act_iref(event)" title="{$proj} on Oracc"
+  <a href="javascript://" onclick="act_ilnk(event)" title="{$proj} on Oracc"
      data-proj="{$proj}" data-iref="{$text}.{$line}">
     <xsl:value-of select="@n"/>
     <xsl:text> </xsl:text>

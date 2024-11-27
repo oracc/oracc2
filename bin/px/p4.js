@@ -322,6 +322,18 @@ function act_iref(evt) {
     itemLocation();
 }
 
+function act_ilnk(evt) {
+    let lproj = getData(evt).getAttribute('data-proj');
+    if (!lproj) {
+	let pager = getPager();
+	lproj = pager.getAttribute('data-proj');
+    }
+    let item = pager.getAttribute('data-iref');
+    let loc = '/'+lproj+'/'+item;
+    alert('act_ilnk loc='+loc);
+    window.location=loc;
+}
+
 function act_wsig(evt) {
     // alert('act_wsig evt='+evt+'; getData(evt)='+getData(evt)+'; evt.currentTarget='+evt.currentTarget);
     let pager = getPager();
