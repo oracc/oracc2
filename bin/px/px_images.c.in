@@ -1,0 +1,47 @@
+#include <oraccsys.h>
+#include "px.h"
+
+int pxi_use_cache = 0;
+
+const char *eic = "@@ORACC@@/eic";
+const char *ooi = "@@ORACC@@/ooi";
+
+static void
+pxi_cache_setting(const char *project)
+{
+  char c[strlen(oracc())+strlen(project)+strlen("//.eic0")];
+  sprintf(c, "%s/%s/.eic", oracc(), project);
+  pxi_use_cache = !access(c, R_OK);
+}
+
+static char *
+pxi_one_image(Isp *ip, const char *dir, const char *px, const char *type, const char *ext)
+{
+  char img[strlen(dir)+strlen(px)+strlen(type)+strlen(ext)+strlen("/.0")];
+  sprintf(img, "%s/%s%s.%s", dir, px, type, ext);
+  if (!access(img, R_OK))
+    return (char*)pool_copy((uccp)img, ip->p);
+  else
+    return NULL;
+}
+
+const char **
+pxi_images(Isp *ip, const char *px)
+{
+  if (!px || ('P' != *px && 'X' != *px))
+    return NULL;
+  pxi_cache_setting(ip->project);
+  List *lp = list_create(LIST_SINGLE);
+  char *img = NULL;
+  if ((img = pxi_one_image(ip, ooi, px, "", "png")))
+    list_add(lp, img);
+  if ((img = pxi_one_image(ip, eic, px, "", "jpg")))
+    list_add(lp, img);
+  if ((img = pxi_one_image(ip, eic, px, "_l", "jpg")))
+    list_add(lp, img);
+  if ((img = pxi_one_image(ip, eic, px, "_d", "jpg")))
+    list_add(lp, img);
+
+  return list2chars(lp);
+}
+

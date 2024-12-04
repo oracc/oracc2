@@ -169,6 +169,7 @@ bin/dx/osh/osh.c
 bin/ox/cbd-oid-tab.xsl
 bin/px/p4-xmd-div.xsl
 bin/px/sig.c
+bin/px/px_images.c
 bin/px/wsigx.c
 bin/px/ice/pg/ptoq.c
 bin/px/ice/pg/pd.c
