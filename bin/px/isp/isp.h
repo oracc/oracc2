@@ -101,6 +101,8 @@ struct isp_itemdata
   const char *proj; /* the item's project as opposed to the host project, possibly a proxy */
   const char *htmd; /* the path to and including /htm */
   const char *html;
+  const char *cfy;
+  const char *img;
   const char *dotted;
   const char *index;
   const char *page;

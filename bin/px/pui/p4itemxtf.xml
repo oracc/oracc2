@@ -1,4 +1,6 @@
 <div id="p4Item" class="xtf">
   <div id="p4XtfMeta">@@pui_item_meta()@@</div>
   <div id="p4XtfData">@@pui_item_data()@@</div>
+  @@pui_item_img()@@
+  @@pui_item_cfy()@@
 </div>

@@ -628,3 +628,29 @@ pui_at_cuneify_onload(Isp *ip, FILE *fp)
   if (ip->form && !strcmp(ip->form, "cuneify"))
     fputs(" onload=\"cuneify()\"", fp);
 }
+
+void
+pui_at_item_img(Isp *ip, FILE *fp)
+{
+  const char *yes = hash_find(ip->xpd->opts, (ucp)"pager-item-images");
+  if (!strcmp(yes, "yes"))
+    {
+      if (!isp_item_img(ip))
+	px_file_copy(ip, ip->itemdata.img, "=");
+      else
+	fputs("<div><p>(No image results)</p></div>", fp);
+    }
+}
+
+void
+pui_at_item_img(Isp *ip, FILE *fp)
+{
+  const char *yes = hash_find(ip->xpd->opts, (ucp)"pager-item-cuneify");
+  if (!strcmp(yes, "yes"))
+    {
+      if (!isp_item_cfy(ip))
+	px_file_copy(ip, ip->itemdata.cfy, "-");
+      else
+	fputs("<div><p>(No cuneify result)</p></div>", fp);
+    }
+}

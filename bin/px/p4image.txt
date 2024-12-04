@@ -1,0 +1,46 @@
+P4 Image Support:=
+==================
+
+In addition to the standard access to CDLI, P4 has two features for
+local image support: the External Image Cache (EIC) and Oracc's Own
+Images (OOI).
+
+All OOI are in .png format. EIC are in the format of the cached
+original.
+
+Per-project images continue to be managed via 00res as usual.
+
+OOI access is via metadata and/or config options; cache support is not
+generally enabled.
+
+Implementation:=
+================
+
+Filesystem:-
+------------
+
+In the filesystem images live in @@ORACC@@, e.g., /home/oracc. The
+cache is in /home/oracc/eic and OOI is in /home/oracc/ooi. Images are
+stored by X/P directories in a flatter version of Oracc tiering in
+which only the top (short) tiering is used. Thus, P123455.jpg and
+P123456.jpg will both be in /home/oracc/image/cache/P123.
+
+The images div, with extension .img, lives in @@ORACC@@/p4.d/img in a
+similar tiering to the eic and ooi directories.
+
+PX and OOI:-
+------------
+
+PX looks for OOI images when the 'Image' link in the outline pane is
+activated.
+
+PX Image Popups:-
+-----------------
+
+PX has a helper script, pximages.sh, which sets up an images div
+containing links to OOI or to external images (if the cache is enabled
+it is checked before looking for external images).
+
+A PX page builder can incorporate the image div, or it can be popped
+up with an HTML wrapper via onload.
+

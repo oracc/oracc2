@@ -188,7 +188,7 @@ isp_create_cfy(Isp *ip)
 	}
       else
 	{
-	  ip->err = PX_ERROR_START "isp_create_xtf failed system call:\n\t%s\n";
+	  ip->err = PX_ERROR_START "isp_create_cfy failed system call:\n\t%s\n";
 	  ip->errx = (ccp)syscmd;
 	  return 1;
 	}
@@ -383,7 +383,7 @@ isp_item_set(Isp *ip)
 
   return 0;
 }
-
+ 
 int
 isp_item_cfy(Isp *ip)
 {
@@ -399,25 +399,77 @@ isp_item_cfy(Isp *ip)
   else
     ip->cache.prox = ip->cache.item;
   
-  char *html = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project, ip->item, "cfy");
+  char *cfy = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project, ip->item, "cfy");
   expand_base(NULL);
 
   /* +5 here is lang which can be 2 or 3, '.' before lang and \0 at end */
-  char *xh = (char*)pool_alloc(strlen(html)+5,ip->p);
-  strcpy(xh, html);
-  ip->itemdata.html = xh;
+  char *xh = (char*)pool_alloc(strlen(cfy)+5,ip->p);
+  strcpy(xh, cfy);
+  ip->itemdata.html = ip->itemdata.cfy = xh;
 
-  fprintf(stderr, "itemdata.html = %s\n", ip->itemdata.html);
+  fprintf(stderr, "itemdata.cfy = %s\n", ip->itemdata.cfy);
   
-  int need_html = access(ip->itemdata.html, R_OK);
+  int need_html = access(ip->itemdata.cfy, R_OK);
 
   if (need_html)
     {
       if (isp_create_cfy(ip))
 	return 1;
-      else if (ip->err) /* ispxtf succeeded so clear any prx db error */
+      else if (ip->err) /* ispcfy succeeded so clear any prx db error */
 	ip->err = ip->errx = NULL;
     }
-
+  
   return 0;
 }
+ 
+ 
+int
+isp_item_img(Isp *ip)
+{
+  char img[strlen(ip->cache.sys)+strlen("/P123/P123456.img0")];
+  char four[5]; strncpy(four,ip->item, 4); four[4] = '\0';
+  sprintf(img, "%s/%s/%s.img", ip->cache.sys, four, ip->item);
+  ip->itemdata.img = pool_copy(img, ip->p);
+  if (access(img, R_OK))
+    if (isp_create_img(ip))
+      return 1;
+  return 0;
+}
+
+static int
+isp_create_img(Isp *ip)
+{
+  List *args = list_create(LIST_SINGLE);
+  list_add(args, (void*)ip->oracc);
+  list_add(args, (void*)"/bin/ispimg.sh");
+  list_add(args, " ");
+  list_add(args, (void*)ip->itemdata.item);
+  list_add(args, " ");
+  list_add(args, (void*)ip->itemdata.img);
+  list_add(args, " ");
+  list_add(args, (void*)ip->cache.out);
+  unsigned char *syscmd = list_concat(args);
+
+  if (ip->verbose)
+    fprintf(stderr, "isp: isp_create_img: %s\n", syscmd);
+
+  int sys;
+  if ((sys = system((ccp)syscmd)))
+    {
+      int xstatus = WEXITSTATUS(sys);
+      /*int ifexited = WIFEXITED(sys);*/
+      if (xstatus > 1)
+	{
+	  ip->itemdata.not = xstatus;
+	}
+      else
+	{
+	  ip->err = PX_ERROR_START "isp_create_img failed system call:\n\t%s\n";
+	  ip->errx = (ccp)syscmd;
+	  return 1;
+	}
+    }
+  
+  return 0;
+}
+
