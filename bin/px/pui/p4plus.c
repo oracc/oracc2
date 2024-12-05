@@ -2,7 +2,7 @@ const char *p4plus =
 "<!DOCTYPE html>\n"
 "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
 "  <head>@@p4head.xml@@</head>\n"
-"  <body@@pui_cuneify_onload()@@>\n"
+"  <body@@pui_onload()@@>\n"
 "    <div id=\"p4Masthead\">\n"
 "      <p id=\"p4HeadTitle\" class=\"banner bborder-top bborder1-bot\">\n"
 "	<a href=\"/\">Oracc:</a> <a href=\"/@@pui_project()@@\">@@pui_title()@@</a>\n"

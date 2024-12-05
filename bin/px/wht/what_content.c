@@ -24,7 +24,7 @@ static void printEnd(struct what_frag *frag, const char *name);
 static void printHTMLStart(struct what_frag *frag);
 static void printStart(struct what_frag *frag, const char *name, const char **atts, const char *xid);
 static void printText(const char *s, FILE *frag_fp);
-static char *set_p4pager(Isp *ip);
+static char *set_p4pager(struct what_frag *wp);
 
 static int cop_output(Isp *ip, struct content_opts *cop, const char *input);
 static int pxr_output(Isp *ip);
@@ -90,10 +90,24 @@ cop_output(Isp *ip, struct content_opts *cop, const char *input)
 }
 
 static char *
-set_p4pager(Isp *ip)
+set_p4pager(struct what_frag *wp)
 {
-  char p4pager[strlen("id=.p4Pager..data-proj=...data-item=..0")+strlen(ip->itemdata.proj)+strlen(ip->itemdata.item)];
-  sprintf(p4pager, "id=\"p4Pager\" data-proj=\"%s\" data-item=\"%s\"", ip->itemdata.proj, ip->itemdata.item);
+  Isp *ip = wp->ip;
+  char *hash = NULL;
+  if (wp->cop->frag_id)
+    {
+      char buf[strlen(wp->cop->frag_id)+strlen(".data-hash=..0")];
+      sprintf(buf, " data-hash=\"%s\"", wp->cop->frag_id);
+      hash = strdup(buf);
+    }
+  char p4pager[strlen("id=.p4Pager..data-proj=...data-item=..0")
+	       +strlen(ip->itemdata.proj)+strlen(ip->itemdata.item)
+	       +(hash?strlen(hash):0)
+	       ];
+  sprintf(p4pager, "id=\"p4Pager\" data-proj=\"%s\" data-item=\"%s\"%s",
+	  ip->itemdata.proj,ip->itemdata.item, hash?hash:"");
+  if (hash)
+    free(hash);
   return strdup(p4pager);
 }
 
@@ -226,7 +240,7 @@ content_sH(void *userData, const char *name, const char **atts)
 	}
       else if (!strcmp(name, "body"))
 	{
-	  char *p4pager = set_p4pager(frag->ip);
+	  char *p4pager = set_p4pager(frag);
 	  fprintf(frag->fp, "<body %s>", p4pager);
 	  free(p4pager);
 	  ++frag->nesting;
@@ -318,11 +332,9 @@ printHTMLStart(struct what_frag *frag)
 	      "</script>\n"
 	      );
     }
-  char *p4pager = set_p4pager(frag->ip);
-  if (frag->cop->frag_id)
-    fprintf(frag->fp, "</head>\n<body %s class=\"printHTMLStart\" onload=\"location.hash='%s'\">\n", p4pager, frag->cop->frag_id);
-  else
-    fprintf(frag->fp, "</head>\n<body %s>\n", p4pager);
+  char *p4pager = set_p4pager(frag);
+  fprintf(frag->fp, "</head>\n<body %s class=\"printHTMLStart\" onload=\"p4Onload()\">\n",
+	  p4pager);
   free(p4pager);
 }
 

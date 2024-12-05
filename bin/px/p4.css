@@ -48,8 +48,14 @@
 	     border-right: solid lightgray 1px;
 	     height: 85%; overflow-y: auto; }
 
-#p4XtfData { flex: 1 1 80%; display: inline-block; vertical-align: top;
+#p4XtfData { flex: 1 1 35%; display: inline-block; vertical-align: top;
 	     height: 85%; overflow-y: auto; }
+
+#p4Images { flex: 1 1 25%; display: inline-block; vertical-align: top; }
+
+#p4Images img { max-width: 400px; }
+
+#p4Cuneify { flex: 1 1 20%; display: inline-block; vertical-align: top; }
 
 #p4Translations { vertical-align: middle; }
 

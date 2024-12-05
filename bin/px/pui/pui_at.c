@@ -149,12 +149,9 @@ pui_at_pager_data(Isp *ip, FILE *fp)
 
 
 void
-pui_at_hili(Isp *ip, FILE *fp)
+pui_at_onload(Isp *ip, FILE *fp)
 {
-  if (ip->itemdata.hili)
-    {
-      fputs(" onload=\"p4Onload()\"", fp);
-    }
+  fputs(" onload=\"p4Onload()\"", fp);
 }
 
 void
@@ -622,12 +619,14 @@ pui_at_cuneify_bar(Isp *ip, FILE *fp)
     }
 }
 
+#if 0
 void
 pui_at_cuneify_onload(Isp *ip, FILE *fp)
 {
   if (ip->form && !strcmp(ip->form, "cuneify"))
     fputs(" onload=\"p4Onload()\"", fp);
 }
+#endif
 
 void
 pui_at_item_img(Isp *ip, FILE *fp)
@@ -638,7 +637,7 @@ pui_at_item_img(Isp *ip, FILE *fp)
       if (!isp_item_img(ip))
 	px_file_copy(ip, ip->itemdata.img, "-");
       else
-	fputs("<div class=\"p4Images\"><p>(No image results)</p></div>", fp);
+	fputs("<div id=\"p4Images\"><p>(No image results)</p></div>", fp);
     }
 }
 

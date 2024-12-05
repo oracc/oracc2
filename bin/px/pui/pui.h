@@ -35,8 +35,8 @@ extern atfunc pui_at_error, pui_at_invocation, pui_at_status,
   pui_at_item_data, pui_at_item_meta, pui_at_item_label, pui_at_srchterm, pui_at_pager_class,
   pui_at_item_index, pui_at_item_index_nth, pui_at_item_index_typ, pui_at_select_ce,
   pui_at_select_sort, pui_at_select_trans, pui_at_page_label, pui_at_item_qpqx, pui_what_not,
-  pui_at_tmax, pui_at_tmax_texts, pui_at_article, pui_at_generator, pui_at_hili,
-  pui_at_cuneify_bar, pui_at_cuneify_onload, pui_at_item_cfy, pui_at_item_img;
+  pui_at_tmax, pui_at_tmax_texts, pui_at_article, pui_at_generator,
+  pui_at_cuneify_bar, pui_at_onload, pui_at_item_cfy, pui_at_item_img;
 
 extern int pui_123(Isp *ip, const char *perm, const char *cfg, FILE *fp);
 

@@ -37,8 +37,7 @@ struct atactionstab;
 "pui_tmax_texts()", &pui_at_tmax_texts
 "pui_article()", &pui_at_article
 "pui_generator()", &pui_at_generator
-"pui_hili()", &pui_at_hili
 "pui_cuneify_bar()", &pui_at_cuneify_bar
-"pui_cuneify_onload()", &pui_at_cuneify_onload
+"pui_onload()", &pui_at_onload
 "pui_item_cfy()", &pui_at_item_cfy
 "pui_item_img()", &pui_at_item_img
