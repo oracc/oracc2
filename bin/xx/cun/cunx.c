@@ -36,7 +36,7 @@ extern int options(int, char*const*,const char*);
 extern int optind;
 
 int in_break = 0;
-int in_l = 0, in_n = 0, in_q = 0;
+int in_c = 0, in_l = 0, in_n = 0, in_q = 0;
 int last_was_ellipsis = 0;
 int word_count = 0;
 
@@ -151,7 +151,7 @@ ei_sH(void *userData, const char *name, const char **atts)
     }
   else
     {
-      if (in_l && !in_n && !in_q)
+      if (in_l && !in_c && !in_n && !in_q)
 	{
 	  const char *utf8 = findAttr(atts, "g:utf8");
 	  const char *gtype = findAttr(atts, "g:type");
@@ -210,6 +210,8 @@ ei_sH(void *userData, const char *name, const char **atts)
 	    in_n = 1;
 	  else if (!strcmp(name, "g:q"))
 	    in_q = 1;
+	  else if (!strcmp(name, "g:c"))
+	    in_c = 1;
 	}
       else
 	{
@@ -240,6 +242,8 @@ ei_eH(void *userData, const char *name)
     in_n = 0;
   else if (!strcmp(name, "g:q"))
     in_q = 0;
+  else if (!strcmp(name, "g:c"))
+    in_c = 0;
 #if 0
   else if (!strcmp(name, "g:w"))
     {
