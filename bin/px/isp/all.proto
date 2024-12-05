@@ -38,6 +38,7 @@ extern const char *first_lang(const char **a, const char **b);
 extern int isp_item_xtf(Isp *ip);
 extern int isp_item_set(Isp *ip);
 extern int isp_item_cfy(Isp *ip);
+extern int isp_item_img(Isp *ip);
 /* isp_list.c */
 extern void isp_list_cemd(Isp *ip);
 extern int isp_list_create(Isp *ip);

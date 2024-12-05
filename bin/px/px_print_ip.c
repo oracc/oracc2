@@ -100,6 +100,8 @@ pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name)
   fprintf(fp,"\t\tproj=%s\n",(char*)xmlify((ucp)pr->proj));
   fprintf(fp,"\t\thtmd=%s\n",(char*)xmlify((ucp)pr->htmd));
   fprintf(fp,"\t\thtml=%s\n",(char*)xmlify((ucp)pr->html));
+  fprintf(fp,"\t\tcfy=%s\n",(char*)xmlify((ucp)pr->cfy));
+  fprintf(fp,"\t\timg=%s\n",(char*)xmlify((ucp)pr->img));
   fprintf(fp,"\t\tdotted=%s\n",(char*)xmlify((ucp)pr->dotted));
   fprintf(fp,"\t\tindex=%s\n",(char*)xmlify((ucp)pr->index));
   fprintf(fp,"\t\tpage=%s\n",(char*)xmlify((ucp)pr->page));

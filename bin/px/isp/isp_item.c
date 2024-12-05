@@ -423,19 +423,6 @@ isp_item_cfy(Isp *ip)
 }
  
  
-int
-isp_item_img(Isp *ip)
-{
-  char img[strlen(ip->cache.sys)+strlen("/P123/P123456.img0")];
-  char four[5]; strncpy(four,ip->item, 4); four[4] = '\0';
-  sprintf(img, "%s/%s/%s.img", ip->cache.sys, four, ip->item);
-  ip->itemdata.img = pool_copy(img, ip->p);
-  if (access(img, R_OK))
-    if (isp_create_img(ip))
-      return 1;
-  return 0;
-}
-
 static int
 isp_create_img(Isp *ip)
 {
@@ -456,20 +443,49 @@ isp_create_img(Isp *ip)
   int sys;
   if ((sys = system((ccp)syscmd)))
     {
-      int xstatus = WEXITSTATUS(sys);
-      /*int ifexited = WIFEXITED(sys);*/
-      if (xstatus > 1)
+      if (sys >= 0)
 	{
-	  ip->itemdata.not = xstatus;
+	  int xstatus = WEXITSTATUS(sys);
+	  /*int ifexited = WIFEXITED(sys);*/
+	  if (xstatus == 127)
+	    {
+	      ip->err = PX_ERROR_START "non-existent command:\n\t%s\n";
+	      ip->errx = (ccp)syscmd;
+	      return 1;
+	    }
+	  else if (xstatus > 1)
+	    {
+	      ip->itemdata.not = xstatus;
+	    }
+	  else
+	    {
+	      ip->err = PX_ERROR_START "isp_create_img failed system call:\n\t%s\n";
+	      ip->errx = (ccp)syscmd;
+	      return 1;
+	    }
 	}
       else
 	{
-	  ip->err = PX_ERROR_START "isp_create_img failed system call:\n\t%s\n";
+	  ip->err = PX_ERROR_START "isp_create_img failed system call failed:\n\t%s\n";
 	  ip->errx = (ccp)syscmd;
 	  return 1;
 	}
+	    
     }
   
+  return 0;
+}
+
+int
+isp_item_img(Isp *ip)
+{
+  char img[strlen(ip->cache.sys)+strlen("/img/P123/P123456.img0")];
+  char four[5]; strncpy(four,ip->item, 4); four[4] = '\0';
+  sprintf(img, "%s/img/%s/%s.img", ip->cache.sys, four, ip->item);
+  ip->itemdata.img = (ccp)pool_copy((uccp)img, ip->p);
+  if (access(img, R_OK))
+    if (isp_create_img(ip))
+      return 1;
   return 0;
 }
 
