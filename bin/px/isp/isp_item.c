@@ -410,11 +410,18 @@ isp_item_cfy(Isp *ip)
 static int
 isp_create_img(Isp *ip)
 {
+  char nodot[8];
   List *args = list_create(LIST_SINGLE);
   list_add(args, (void*)ip->oracc);
   list_add(args, (void*)"/bin/ispimg.sh");
   list_add(args, " ");
-  list_add(args, (void*)ip->itemdata.item);
+  if (strchr(ip->itemdata.item, '.'))
+    {
+      strncpy(nodot,ip->itemdata.item,7); nodot[7] = '\0';
+      list_add(args, nodot);
+    }
+  else
+    list_add(args, (void*)ip->itemdata.item);
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.img);
   list_add(args, " ");
