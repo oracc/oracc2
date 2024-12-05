@@ -11,8 +11,8 @@ egy, "050", -1, "", m_sign, m_lang, c_egy,
 grc, "200", -1, "akk", m_sign, m_lang, c_grc, LF_NORM
 hit, "020", -1, "sux", m_logo, m_logo, c_hit, LF_NORM|LF_SAC|LF_LOGO
 qca, "020", -1, "qca", m_sign, m_lang, c_qca, LF_NORM|LF_SAC
-qpc, "900", -1, "qpc", m_sign, m_lang, c_qpc, LF_NORM
-qpe, "938", -1, "qpe", m_sign, m_lang, c_qpe, LF_NORM
+qpc, "900", -1, "qpc", m_sign, m_lang, c_qpc, LF_NORM|LF_PC
+qpe, "938", -1, "qpe", m_sign, m_lang, c_qpe, LF_NORM|LF_PE
 elx, "020", -1, "sux", m_sign, m_logo, c_elx, LF_BASE|LF_SAC
 peo, "030", -1, "peo", m_logo, m_lang, c_peo, LF_NORM
 plq, "020", -1, "plq", m_logo, m_lang, c_plq, LF_NORM

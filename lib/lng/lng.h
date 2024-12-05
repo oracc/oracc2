@@ -31,6 +31,8 @@ enum langcode
 #define LF_NORM 0x002
 #define LF_SAC  0x004
 #define LF_LOGO 0x008
+#define LF_PC   0x010
+#define LF_PE   0x020
 
 struct langcore
 {
