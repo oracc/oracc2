@@ -32,6 +32,7 @@ span.csquare:before { content: "]"; }
     --ofs-noto: "Oracc Noto SansCuneiform";
     --ofs-oobf: "Oracc OBFreie Regular";
     --ofs-nao: "Oracc NA Outline";
+    --ofs-pc: "Oracc PC";
     --ofs-early:  "ss01";
     --ofs-middle: "ss01", "ss02";
     --ofs-late:   "ss01", "ss02", "ss03";

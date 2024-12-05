@@ -97,8 +97,8 @@ cun_head(FILE *fp, const char *n, Cun_class *cp)
 	      "<title>Cuneified %s</title>"
 	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
 	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
-	      "<script type=\"text/javascript\" src=\"/js/p4-cuneify.js\">&#160;</script>"
-	      "</head><body onload=\"cuneify()\">", n);
+	      "<script type=\"text/javascript\" src=\"/js/p4.js\">&#160;</script>"
+	      "</head><body onload=\"p4Onload()\">", n);
     }
   fprintf(fp,
 	  "<div id=\"p4Cuneify\" "

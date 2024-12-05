@@ -19,10 +19,21 @@ function getTR(elt) {
     return elt;
 }
 
-function onloadScroll()
+function p4Onload()
 {
     pager = getPager();
     let hili = pager.getAttribute("data-hili");
+    if (hili) {
+	onloadScroll(hili);
+    }
+    let cfy = document.getElementById("p4Cuneify");
+    if (cfy) {
+	onloadCuneify(cfy);
+    }
+}
+
+function onloadScroll(hili)
+{
     let scrollid = hili;
     if (hili.includes(" ")) {
 	scrollid = hili.substring(0, hili.indexOf(' '));
@@ -719,3 +730,51 @@ function viewsProofing(project,PQ) {
     var url = '/'+project+'/'+PQ+'?proofing';
     popup(url,'exemplarWindow',800,900,10,10);
 }
+
+// Cuneify
+
+function getCuneify() {
+    return document.getElementById("p4Cuneify");
+}
+
+function onloadCuneify(c) {
+    if (!c) {
+	c = getCuneify();
+    }
+    let currf = c.getAttribute("data-cfy-fnt")
+    let f = '--ofs-'+currf;
+    let m = c.getAttribute("data-cfy-mag")+'%';
+    let s = '--ofs-'+c.getAttribute("data-cfy-scr");
+
+    let b = document.getElementById("p4CuneifyBar");
+    //alert('b='+b);
+    if (b) {
+	let p = b.firstChild;
+	//alert('p='+p);
+	let bb = p.children;
+	for (let i = 0; i < bb.length; i++) {
+	    bb[i].classList.remove("cfy-curr");
+	    let thisf = bb[i].getAttribute("data-font");
+	    if (thisf === currf) {
+		//alert('switch on '+thisf);
+		bb[i].classList.toggle("cfy-curr");
+	    }
+	}
+    }
+    
+    //alert('f='+f+'; m='+m+'; s='+s);
+
+    var r = document.querySelector(':root');
+    r.style.setProperty('--ofs-font', 'var('+f+')');
+    r.style.setProperty('--ofs-mag', m);
+    r.style.setProperty('--ofs-script', 'var('+s+')');
+}
+
+function cuneify_reset(evt) {
+    let e = getData(evt);
+    let f = e.getAttribute('data-font');
+    let c = getCuneify();
+    c.setAttribute('data-cfy-fnt', f);
+    cuneify();
+}
+

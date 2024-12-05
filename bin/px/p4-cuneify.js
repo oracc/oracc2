@@ -2,16 +2,8 @@ function getCuneify() {
     return document.getElementById("p4Cuneify");
 }
 
-function getData(evt) {
-    let n = evt.target;
-    while (!n.hasAttribute('onclick')) {
-	n = n.parentElement;
-    }
-    return n;
-}
-
-function cuneify() {
-    let c = getCuneify();
+function cuneify(c) {
+    //let c = getCuneify();
     let currf = c.getAttribute("data-cfy-fnt")
     let f = '--ofs-'+currf;
     let m = c.getAttribute("data-cfy-mag")+'%';
@@ -39,6 +31,14 @@ function cuneify() {
     r.style.setProperty('--ofs-font', 'var('+f+')');
     r.style.setProperty('--ofs-mag', m);
     r.style.setProperty('--ofs-script', 'var('+s+')');
+}
+
+function getData(evt) {
+    let n = evt.target;
+    while (!n.hasAttribute('onclick')) {
+	n = n.parentElement;
+    }
+    return n;
 }
 
 function cuneify_reset(evt) {

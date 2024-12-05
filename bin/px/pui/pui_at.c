@@ -153,7 +153,7 @@ pui_at_hili(Isp *ip, FILE *fp)
 {
   if (ip->itemdata.hili)
     {
-      fputs(" onload=\"onloadScroll()\"", fp);
+      fputs(" onload=\"p4Onload()\"", fp);
     }
 }
 
@@ -626,7 +626,7 @@ void
 pui_at_cuneify_onload(Isp *ip, FILE *fp)
 {
   if (ip->form && !strcmp(ip->form, "cuneify"))
-    fputs(" onload=\"cuneify()\"", fp);
+    fputs(" onload=\"p4Onload()\"", fp);
 }
 
 void
