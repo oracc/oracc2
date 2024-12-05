@@ -636,7 +636,7 @@ pui_at_item_img(Isp *ip, FILE *fp)
   if (yes && !strcmp(yes, "yes"))
     {
       if (!isp_item_img(ip))
-	px_file_copy(ip, ip->itemdata.img, "=");
+	px_file_copy(ip, ip->itemdata.img, "-");
       else
 	fputs("<div class=\"p4Images\"><p>(No image results)</p></div>", fp);
     }

@@ -205,6 +205,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	      if (++word_count && !last_was_ellipsis)
 		fprintf(outfp, "<span class=\"cfy-ws\"> </span>");
 	    }
+
 	  if (!strcmp(name, "g:n"))
 	    in_n = 1;
 	  else if (!strcmp(name, "g:q"))

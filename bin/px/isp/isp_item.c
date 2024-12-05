@@ -285,44 +285,28 @@ isp_item_lang(Isp *ip)
 int
 isp_item_xtf(Isp *ip)
 {
-#if 0
-  if (ip->item_replace)
+  if (!ip->itemdata.xmdxsl)
+    if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
+      return 1;
+
+  /* prx db is created from atf-data.tab and contains entries for
+     all texts, not only proxied ones */
+  ip->itemdata.proj =
+    isp_dbx_one_off(ip, ip->project, "02pub", "prx", dotless(ip->itemdata.item), NULL);
+  /* This can error but we keep going anyway because if there's no
+     ATF but the text is in the catalogue we want to go ahead and
+     create meta.xml */
+
+  ip->itemdata.bld = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project,
+			    dotless(ip->itemdata.item), NULL);
+  struct stat st;
+  stat(ip->itemdata.bld, &st);
+  if (!S_ISDIR(st.st_mode))
     {
-      ip->itemdata.proj = (ccp)pool_copy((ucp)ip->item_replace, ip->p);
-      char *colon = strchr(ip->itemdata.proj, ':');
-      if (colon)
-	*colon = '\0';
-      else
-	ip->itemdata.proj = NULL;
+      ip->err = PX_ERROR_START "item bld directory %s not found or not readable\n";
+      ip->errx = ip->itemdata.bld ? ip->itemdata.bld : "(null)";
+      return 1;
     }
-  else
-    {
-#else
-      if (!ip->itemdata.xmdxsl)
-	if (!(ip->itemdata.xmdxsl = isp_xmd_outline(ip)))
-	  return 1;
-
-      /* prx db is created from atf-data.tab and contains entries for
-	 all texts, not only proxied ones */
-      ip->itemdata.proj =
-	isp_dbx_one_off(ip, ip->project, "02pub", "prx", dotless(ip->itemdata.item), NULL);
-      /* This can error but we keep going anyway because if there's no
-	 ATF but the text is in the catalogue we want to go ahead and
-	 create meta.xml */
-
-      ip->itemdata.bld = expand(ip->itemdata.proj ? ip->itemdata.proj : ip->project,
-				dotless(ip->itemdata.item), NULL);
-      struct stat st;
-      stat(ip->itemdata.bld, &st);
-      if (!S_ISDIR(st.st_mode))
-	{
-	  ip->err = PX_ERROR_START "item bld directory %s not found or not readable\n";
-	  ip->errx = ip->itemdata.bld ? ip->itemdata.bld : "(null)";
-	  return 1;
-	}
-
-#endif
-      /*}*/
   
   ip->itemdata.xtflang = isp_item_lang(ip);
 
@@ -484,8 +468,7 @@ isp_item_img(Isp *ip)
   sprintf(img, "%s/img/%s/%s.img", ip->cache.sys, four, ip->item);
   ip->itemdata.img = (ccp)pool_copy((uccp)img, ip->p);
   if (access(img, R_OK))
-    if (isp_create_img(ip))
-      return 1;
+    return isp_create_img(ip);
   return 0;
 }
 
