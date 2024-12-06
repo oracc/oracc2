@@ -13,7 +13,12 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
 span.osquare:before { content: "["; }
 span.csquare:before { content: "]"; }
 
-.cuneify-label { font-size: 70%; color: gray; margin-bottom: 5px; }
+.cuneify-label {
+    font-size: 70%;
+    color: gray;
+    margin-bottom: 5px;
+    vertical-align: middle;
+}
 
 .cuneify-text { width: 99%; 
 	      }
@@ -43,7 +48,10 @@ span.csquare:before { content: "]"; }
     font-family: var(--ofs-font);
     font-size: var(--ofs-mag);
     font-feature-settings: var(--ofs-script);
+    vertical-align: middle;
 }
+
+.cfy-cun a , .cfy-cun a:link[href] { color: black; text-decoration: none; }
 
 .cfy-ws {
     padding-left: 2px;

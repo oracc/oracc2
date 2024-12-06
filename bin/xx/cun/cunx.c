@@ -4,6 +4,26 @@
 #include "runexpat.h"
 #include "cun.h"
 
+/* Structure for damaged tokens */
+#define CT_WSP 0x01
+#define CT_ELL 0x02
+#define CT_XXX 0x04
+#define CT_GRP 0x08
+
+List *cqueue = NULL;
+
+struct d
+{
+  int type;
+  const char *name;
+  const char *oid;
+  const char *utf8;
+  Hash *atts;
+  int damaged;
+};
+Memo *mem_d;
+Pool *p;
+
 extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 		     const char *outdir, const char *outext, const char *trans,
 		     char **inp, char **outp, char **hdir);
@@ -35,10 +55,12 @@ jmp_buf done;
 extern int options(int, char*const*,const char*);
 extern int optind;
 
+int hc_pending = 0; /* set when a grapheme has a close-half-square on it */
 int in_break = 0;
 int in_c = 0, in_l = 0, in_n = 0, in_q = 0;
 int last_was_ellipsis = 0;
 int word_count = 0;
+int ws_pending = 0;
 
 typedef struct Cun_class
 {
@@ -50,32 +72,7 @@ typedef struct Cun_class
 Cun_class cun_defaults = { .fnt="noto" , .mag="100", .scr="middle" };
 Cun_class *curr_cp = &cun_defaults;
 
-/* This printText implements the same escaping as used by oracc2's
-   xmlify library routine */
-void
-printText(const char *s, FILE *frag_fp)
-{
-  while (*s)
-    {
-      if (*s == '<')
-	fputs("&lt;",frag_fp);
-      else if (*s == '>')
-	fputs("&gt;",frag_fp);
-      else if (*s == '&')
-	fputs("&amp;",frag_fp);
-#if 0
-      else if (*s == '\'')
-	fputs("&apos;",frag_fp);
-#endif
-      else if (*s == '"')
-	fputs("&quot;",frag_fp);
-      else
-	fputc(*s,frag_fp);
-      ++s;
-    }
-}
-
-const char *
+static const char *
 cc_skip_prefix(const char *c)
 {
   const char *ofs = "ofs-";
@@ -86,36 +83,7 @@ cc_skip_prefix(const char *c)
   return c;
 }
 
-void
-cun_head(FILE *fp, const char *n, Cun_class *cp)
-{
-  if (!weboutput) /* paradoxically, weboutput skips the html head/body because those are provided by P4 */
-    {
-      fprintf(fp,
-	      "<html >"
-	      "<head><meta charset=\"utf-8\"/>"
-	      "<title>Cuneified %s</title>"
-	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
-	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
-	      "<script type=\"text/javascript\" src=\"/js/p4.js\">&#160;</script>"
-	      "</head><body onload=\"p4Onload()\">", n);
-    }
-  fprintf(fp,
-	  "<div id=\"p4Cuneify\" "
-	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\">",
-	  cp->fnt, cp->mag, cp->scr);
-  fprintf(outfp, "<h1 class=\"p3h2 border-top heading\">%s</h1><table class=\"cfy-table\">", n);
-}
-
-void
-cun_foot(FILE *fp)
-{
-  fprintf(fp, "</table></div>");
-  if (!weboutput)
-    fprintf(fp, "</body></html>");
-}
-
-Cun_class *
+static Cun_class *
 cun_class(const char **atts, Cun_class *curr_cp)
 {
   static Cun_class cp;
@@ -137,6 +105,152 @@ cun_class(const char **atts, Cun_class *curr_cp)
 }
 
 void
+cfy_head(FILE *fp, const char *n, Cun_class *cp)
+{
+  if (!weboutput) /* paradoxically, weboutput skips the html head/body because those are provided by P4 */
+    {
+      fprintf(fp,
+	      "<html >"
+	      "<head><meta charset=\"utf-8\"/>"
+	      "<title>Cuneified %s</title>"
+	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
+	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
+	      "<script type=\"text/javascript\" src=\"/js/p4.js\">&#160;</script>"
+	      "</head><body onload=\"p4Onload()\">", n);
+    }
+  fprintf(fp,
+	  "<div id=\"p4Cuneify\" "
+	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\">",
+	  cp->fnt, cp->mag, cp->scr);
+  fprintf(outfp, "<h1 class=\"p3h2 border-top heading\"><span class=\"cfy-generic\">Cuneified </span><span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table\">", n);
+}
+
+void
+cfy_space(void)
+{
+  fprintf(outfp, "<span class=\"cfy-ws\"> </span>");  
+}
+
+void
+cfy_ellipsis(void)
+{
+  fprintf(outfp, "<span class=\"roman\">%s. . .</span>", last_was_ellipsis ? " " : "");
+}
+
+void
+cfy_x(void)
+{
+  fprintf(outfp, "<span class=\"roman gray\">×</span>");
+}
+
+void
+cfy_cun(const char *name, const char *oid, const char *utf8)
+{
+  if (oid)
+    fprintf(outfp, "<span class=\"cfy-cun\"><a href=\"/osl/signlist/%s\">%s</a></span>",
+	    oid, utf8);
+  else
+    fprintf(outfp, "<span class=\"cfy-cun\">%s</span>", utf8);
+}
+
+void
+cfy_foot(FILE *fp)
+{
+  fprintf(fp, "</table></div>");
+  if (!weboutput)
+    fprintf(fp, "</body></html>");
+}
+
+int
+printable(const char *name, const char **atts, const char **utf8p)
+{
+  const char *utf8 = findAttr(atts, "g:utf8");
+  if (utf8p)
+    *utf8p = utf8;
+  return *utf8;
+}
+
+int
+breakage(const char *name, const char **atts)
+{
+  const char *utf8 = findAttr(atts, "g:utf8");
+  const char *b = findAttr(atts, "g:break");
+  if (!strcmp(b, "missing") || !strcmp(b, "damaged") || 'x' == *utf8 || 'X' == *utf8)
+    return 1;
+  return 0;
+}
+
+Hash *
+hashatts(const char **atts)
+{
+  Hash *h = hash_create(7);
+  Pool *p = pool_init();
+  hash_add(h, (ucp)"#p", p);
+  int i;
+  for (i = 0; atts[i]; i += 2)
+    hash_add(h, pool_copy((ucp)atts[i],p), pool_copy((ucp)atts[i+1],p));
+  return h;
+}
+
+void
+enqueue(const char *name, const char **atts, const char *oid, const char *utf8)
+{
+  if (!cqueue)
+    cqueue = list_create(LIST_DOUBLE);
+  struct d *dp = memo_new(mem_d);
+  dp->name = (ccp)pool_copy((ucp)name, p);
+  dp->oid = oid;
+  dp->utf8 = utf8;
+  if (atts)
+    dp->atts = hashatts(atts);
+}
+
+void
+damagedws(void)
+{
+  ((struct d*)list_last(cqueue))->damaged = 1;
+}
+
+void
+dequeue(void)
+{
+  struct d *dp;
+  int span_closed = 0;
+  fprintf(outfp, "<span class=\"broken\">");
+  for (dp = list_first(cqueue); dp; dp = list_next(cqueue))
+    {
+      const char *go = (ccp)hash_find(dp->atts, (ucp)"g:o");
+      if (strchr(go, '['))
+	fprintf(outfp, "<span class=\"roman\">[</span>");
+      switch (dp->type)
+	{
+	case CT_WSP:
+	  if (!dp->damaged)
+	    {
+	      fputs("</span>", outfp);
+	      span_closed = 1;
+	    }
+	  cfy_space();
+	  break;
+	case CT_ELL:
+	  cfy_ellipsis();
+	  break;
+	case CT_XXX:
+	  cfy_x();
+	  break;
+	case CT_GRP:
+	  cfy_cun(dp->name, dp->oid, dp->utf8);
+	  break;
+	}
+      const char *gc = hash_find(dp->atts, (ucp)"g:c");
+      if (strchr(gc, ']'))
+	fprintf(outfp, "<span class=\"roman\">]</span>");
+    }
+  if (!span_closed)
+    fputs("</span>", outfp);
+}
+
+void
 ei_sH(void *userData, const char *name, const char **atts)
 {
   if (!strcmp(name, "xcl"))
@@ -147,63 +261,35 @@ ei_sH(void *userData, const char *name, const char **atts)
       const char *xn = (ccp)xmlify((uccp)findAttr(atts, "n"));
       Cun_class *cp = cun_class(atts, curr_cp);
       *curr_cp = *cp;
-      cun_head(outfp, xn, cp);
+      cfy_head(outfp, xn, cp);
     }
   else
     {
       if (in_l && !in_c && !in_n && !in_q)
 	{
-	  const char *utf8 = findAttr(atts, "g:utf8");
-	  const char *gtype = findAttr(atts, "g:type");
-	  const char *o = findAttr(atts, "g:o");
-	  const char *c = findAttr(atts, "g:c");
-	  const char *b = findAttr(atts, "g:break");
-
-	  if (!in_break)
+	  const char *utf8;
+	  if (printable(name, atts, &utf8))
 	    {
-	      if (!strcmp(b, "missing") || 'x' == *utf8 || 'X' == *utf8)
+	      const char *oid = findAttr(atts, "spoid");
+	      if (!oid || !*oid)
+		oid = findAttr(atts, "oid");
+	      if (*oid)
+		oid = (ccp)pool_copy((ucp)oid, p);
+	      else
+		oid = NULL;
+	      if (utf8 && *utf8)
+		utf8 = (ccp)pool_copy((ucp)utf8, p);
+	      if (breakage(name, atts))
 		{
-		  fprintf(outfp, "<span class=\"broken\">");
-		  in_break = 1;
-		}
-	    }
-	  else
-	    {
-	      if (strcmp(b, "missing") && *utf8 && 'x' != *utf8 && 'X' != *utf8)
-		{
-		  fprintf(outfp, "</span>");
-		  in_break = 0;
-		}
-	    }
-      
-	  if (*utf8 || !strcmp(gtype, "ellipsis"))
-	    {
-	      if (strchr(o, '['))
-		fprintf(outfp, "<span class=\"roman\">[</span>");
-      
-	      if ('x' == *utf8 || 'X' == *utf8)
-		{
-		  fprintf(outfp, "<span class=\"roman gray\">×</span>");
-		  last_was_ellipsis = 0;
-		}
-	      else if (!*utf8)
-		{
-		  fprintf(outfp, "<span class=\"roman\">%s. . .</span>", last_was_ellipsis ? " " : "");
-		  last_was_ellipsis = 1;
+		  if (cqueue)
+		    damagedws();
+		  enqueue(name, atts, oid, utf8);
 		}
 	      else
 		{
-		  fprintf(outfp, "<span class=\"cfy-cun\">%s</span>", utf8);
-		  last_was_ellipsis = 0;
+		  dequeue();
+		  cfy_cun(name, oid, utf8);
 		}
-	  
-	      if (strchr(c, ']'))
-		fprintf(outfp, "<span class=\"roman\">]</span>");
-	    }
-	  else if (!strcmp(name, "g:w"))
-	    {
-	      if (++word_count && !last_was_ellipsis)
-		fprintf(outfp, "<span class=\"cfy-ws\"> </span>");
 	    }
 
 	  if (!strcmp(name, "g:n"))
@@ -218,7 +304,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	  if (!strcmp(name, "l"))
 	    {
 	      fprintf(outfp, "<tr><td class=\"cuneify-label\">%s</td><td>", findAttr(atts, "label"));
-	      last_was_ellipsis = word_count = 0;
+	      hc_pending = ws_pending = last_was_ellipsis = word_count = 0;
 	      in_l = 1;
 	    }
 	}
@@ -230,11 +316,7 @@ ei_eH(void *userData, const char *name)
 {
   if (!strcmp(name, "l"))
     {
-      if (in_break)
-	{
-	  fprintf(outfp, "</span>");
-	  in_break = 0;
-	}
+      dequeue();
       fprintf(outfp, "</td></tr>");
       in_l = last_was_ellipsis = 0;
     }
@@ -244,12 +326,13 @@ ei_eH(void *userData, const char *name)
     in_q = 0;
   else if (!strcmp(name, "g:c"))
     in_c = 0;
-#if 0
   else if (!strcmp(name, "g:w"))
     {
-      ;
+      if (list_len(cqueue))
+	enqueue(name, NULL, NULL, NULL);
+      else
+	cfy_space();
     }
-#endif
 }
 
 static void
@@ -267,6 +350,9 @@ main(int argc, char **argv)
   outfp = stdout;
   options(argc, argv, "bfi:l:no:p:P:q:st:vw");
 
+  p = pool_init();
+  mem_d = memo_init(sizeof(struct d), 10);
+  
   if (period)
     {
       struct perfnt *pfp = perfnt(period, strlen(period));
@@ -327,7 +413,7 @@ main(int argc, char **argv)
 	  runexpat_omit_rp_wrap();
 	  if (!setjmp(done))
 	    runexpat(i_list, f, ei_sH, ei_eH);
-	  cun_foot(outfp);
+	  cfy_foot(outfp);
 	}
       else
 	fprintf(stderr, "cunx: nothing to cuneify. Stop.\n");

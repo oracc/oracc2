@@ -51,14 +51,16 @@
 #p4XtfData { flex: 1 1 30%; display: inline-block; vertical-align: top;
 	     height: 85%; overflow-y: auto; }
 
-#p4Images { flex: 1 1 20%; display: inline-block; vertical-align: top; }
+#p4Images { flex: 1 1 22%; display: inline-block; vertical-align: top; overflow-y: auto; }
 
 #p4Images div.image { border-bottom: solid 2px red; margin-bottom: 5px; }
 #p4Images div.caption { background-color: #eee; }
 
-#p4Images img { max-width: 300px; }
+#p4Images img { max-width: 95%; }
 
-#p4Cuneify { flex: 1 1 20%; display: inline-block; vertical-align: top; }
+#p4Item>#p4Cuneify { flex: 1 1 20%; display: inline-block; vertical-align: top; }
+
+#p4Item>#p4Cuneify .cfy-specific { display: none; }
 
 #p4Cuneify .cfy-cun { font-size: 150%; }
 
