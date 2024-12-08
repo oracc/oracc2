@@ -174,7 +174,7 @@
 
   <xsl:template name="sxw-pos-ucun-td">
     <xsl:param name="iso-script"/>
-    <xsl:message>sxw-pos-ucun-td: iso-script=<xsl:value-of select="$iso-script"/></xsl:message>
+    <!--<xsl:message>sxw-pos-ucun-td: iso-script=<xsl:value-of select="$iso-script"/></xsl:message>-->
     <td class="sxw-pos-ucun">
       <xsl:choose>
 	<xsl:when test="sl:ucun">

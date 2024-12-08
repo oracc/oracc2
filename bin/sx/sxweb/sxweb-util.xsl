@@ -199,7 +199,7 @@
 
 <xsl:template name="sxweb-ucun">
   <xsl:param name="iso-script"/>
-  <xsl:message>sxweb-ucun: iso-script=<xsl:value-of select="$iso-script"/></xsl:message>
+  <!--<xsl:message>sxweb-ucun: iso-script=<xsl:value-of select="$iso-script"/></xsl:message>-->
   <xsl:choose>
     <xsl:when test="sl:ucun">
       <xsl:for-each select="sl:ucun">
