@@ -288,13 +288,25 @@
 
 <xsl:template name="sws-asl-cun-img">
   <xsl:param name="esp-mode" select="true()"/>
-  <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
+  <xsl:if test="sl:ucun|sl:images/sl:i[@loc]|sl:sys[@token='img-page']">
     <div class="asl-cun-img">
       <span class="sl-ihead">CUNEIFORM</span>
-      <xsl:call-template name="sws-cuneiform"/>
+      <xsl:call-template name="sws-cuneiform">
+	<xsl:with-param name="esp-mode" select="$esp-mode"/>
+      </xsl:call-template>
       <xsl:call-template name="sws-images">
 	<xsl:with-param name="esp-mode" select="$esp-mode"/>
       </xsl:call-template>
+      <xsl:if test="self::sl:sign and sl:sys[@token='img-page']">
+	<table class="itable">
+	  <tr>
+	    <td><esp:link url="/pcsl/cdli-gh/{@xml:id}.html">CDLI-gh original:</esp:link></td>
+	  </tr>
+	  <tr><td>
+	    <object data="/pcsl/cdli-gh/{@xml:id}.html" height="100px" width="200px"/>
+	  </td></tr>
+	</table>
+      </xsl:if>
     </div>
   </xsl:if>
 </xsl:template>
@@ -336,36 +348,6 @@
 	<xsl:call-template name="sws-asl-cun-img">
 	  <xsl:with-param name="esp-mode" select="$esp-mode"/>
 	</xsl:call-template>
-	<!--
-	  <xsl:choose>
-	    <xsl:when test="self::sl:sign and sl:sys[@token='img-page']">
-	      <div class="img-page-wrapper">
-		<xsl:call-template name="sws-asl-cun-img">
-		  <xsl:with-param name="esp-mode" select="$esp-mode"/>
-		</xsl:call-template>
-		<div class="img-page-div-outer">
-		  <object data="/pcsl/cdli-gh/{@xml:id}.html" height="100px" width="200px"/>
-		</div>
-	      </div>
-	    </xsl:when>
-	    <xsl:otherwise>
-	      <xsl:call-template name="sws-asl-cun-img">
-		<xsl:with-param name="esp-mode" select="$esp-mode"/>
-	      </xsl:call-template>
-	    </xsl:otherwise>
-	    </xsl:choose>
-	-->
-<!--
-	  <xsl:if test="sl:ucun|sl:images/sl:i[@loc]">
-	  <div class="asl-cun-img">
-	    <span class="sl-ihead">CUNEIFORM</span>
-	    <xsl:call-template name="sws-cuneiform"/>
-	    <xsl:call-template name="sws-images">
-	      <xsl:with-param name="esp-mode" select="$esp-mode"/>
-	    </xsl:call-template>
-	  </div>
-	</xsl:if>
--->
       </xsl:otherwise>
     </xsl:choose>
     <xsl:call-template name="sws-stats"/>
@@ -411,6 +393,7 @@
 </xsl:template>
 
 <xsl:template name="sws-cuneiform">
+  <xsl:param name="esp-mode"/>
   <div class="asl-cuneiform">
     <table class="itable">
       <tr>
