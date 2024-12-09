@@ -44,11 +44,11 @@
 
 #p4XtfMeta.hide	{ display: none; }
 
-#p4XtfMeta { flex: 1 1 20%; display: inline-block; vertical-align: top;
+#p4XtfMeta { flex: 0 0 20%; display: inline-block; vertical-align: top;
 	     border-right: solid lightgray 1px;
 	     height: 85%; overflow-y: auto; }
 
-#p4XtfData { flex: 1 1 30%; display: inline-block; vertical-align: top;
+#p4XtfData { flex: 1 1 auto; display: inline-block; vertical-align: top;
 	     height: 85%; overflow-y: auto; }
 
 #p4Images { flex: 1 1 22%; display: inline-block; vertical-align: top; overflow-y: auto; }
