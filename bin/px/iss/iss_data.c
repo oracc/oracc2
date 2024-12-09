@@ -212,7 +212,7 @@ iss_i_dump(Dbi_index *dp, Isp *ip, struct page *p, int i, int item, int page, in
       proj = (char*)ip->project;
     }
 
-  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%d\t%d%s\t%s\t%s", item, page, pitem, zoom, zpage, zitem, prev, next, proj);
+  int n = snprintf(NULL, 0, "%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s", item, page, pitem, zoom, zpage, zitem, prev, next, proj);
   char data[n+1];
   sprintf(data, "%d\t%d\t%d\t%d\t%d\t%d\t%s\t%s\t%s", item, page, pitem, zoom, zpage, zitem, prev, next, proj);
 
