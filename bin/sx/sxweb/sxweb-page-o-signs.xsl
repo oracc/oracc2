@@ -18,7 +18,6 @@
     <xsl:variable name="stats" select="@stats"/>
     <xsl:variable name="xml" select="@xml"/>
     <xsl:variable name="values" select="@values"/>
-    <xsl:message>sxweb-page-o-signs.xml using <xsl:value-of select="$slxml"/></xsl:message>
     <table class="page-o-signs pretty">
       <xsl:choose>
 	<xsl:when test="@xml='yes'">
@@ -64,7 +63,14 @@
 	</xsl:when>
 	<xsl:otherwise>
 	  <xsl:variable name="ids" select="text()"/>
-	  <xsl:for-each select="document($slxml)">
+	  <xsl:variable name="sl">
+	    <xsl:choose>
+	      <xsl:when test="contains($ids,'o09')"><xsl:value-of select="$pcxml"/></xsl:when>
+	      <xsl:otherwise><xsl:value-of select="$slxml"/></xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:variable>
+	  <xsl:message>sxweb-page-o-signs.xml using <xsl:value-of select="$sl"/>; ids=<xsl:value-of select="$ids"/></xsl:message>
+	  <xsl:for-each select="document($sl)">
 	    <xsl:for-each select="id($ids)">
 	      <xsl:sort data-type="number" select="@sort"/>
 	      <xsl:call-template name="sxw-pos-tr">
