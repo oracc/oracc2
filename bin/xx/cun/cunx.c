@@ -19,6 +19,7 @@ struct d
   const char *name;
   const char *oid;
   const char *utf8;
+  const char *xid; /* xml:id */
   Hash *atts;
   int broken; /* used for spaces--if it is inside a broken sequence this is 1 */
 };
@@ -145,14 +146,14 @@ cfy_x(void)
 }
 
 void
-cfy_cun(const char *name, const char *oid, const char *utf8)
+cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8)
 {
   const char *miss = (in_missing ? " missing" : "");
   if (oid)
-    fprintf(outfp, "<span class=\"cfy-cun%s\"><a href=\"/osl/signlist/%s\">%s</a></span>",
-	    miss, oid, utf8);
+    fprintf(outfp, "<span id=\"c.%s\" class=\"cfy-cun%s\"><a href=\"/osl/signlist/%s\">%s</a></span>",
+	    xid, miss, oid, utf8);
   else
-    fprintf(outfp, "<span class=\"cfy-cun%s\">%s</span>", miss, utf8);
+    fprintf(outfp, "<span id=\"c.%s\" class=\"cfy-cun%s\">%s</span>", xid, miss, utf8);
 }
 
 void
@@ -236,6 +237,7 @@ enqueue(const char *name, const char **atts, const char *oid, const char *utf8)
   dp->name = (ccp)pool_copy((ucp)name, p);
   dp->oid = oid;
   dp->utf8 = utf8;
+  dp->xid = (ccp)pool_copy((ucp)get_xml_id(atts));
   if (atts)
     dp->atts = hashatts(atts);
   list_add(cqueue, dp);
@@ -286,7 +288,7 @@ dequeue(void)
 	  cfy_x();
 	  break;
 	case CT_GRP:
-	  cfy_cun(dp->name, dp->oid, dp->utf8);
+	  cfy_cun(dp->name, dp->xid, dp->oid, dp->utf8);
 	  break;
 	default:
 	  fprintf(stderr, "cunx: unknown token in cuneify queue\n");
