@@ -29,7 +29,7 @@ FRAC		[0-9n]\/[0-9]
 
 %[^ \t]+				{ nsave; return NS_NAME; }
 
-[0-9.]+(cm|ha|kg|mm|m2|g|l|m|u)		{ nsave; return NS_CONV; }
+[0-9.]+(cm2?|ha|kg|mm|m2?|g|l|m|u)     	{ nsave; return NS_CONV; }
 
 {NUM}\(({G}{M}*|N[0-9]+)\)	       	{ nsave; return NU_GVAL; }
 

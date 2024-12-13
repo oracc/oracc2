@@ -463,7 +463,7 @@ nxp_add_det(nx_number **cand, const uchar *tok, const void *data)
 static void
 nxp_badnum(nx_result *r, nx_numtok type, const uchar *tok, const void *data)
 {
-  if (parse_trace)
+  if (1/*parse_trace*/)
     fprintf(stderr, "nxp_badnum: tok %s typed as %s but not found in num registry\n", tok, nxt_str[type]);
 
   /* Should produce a diagnostic here */

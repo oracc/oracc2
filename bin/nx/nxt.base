@@ -4,19 +4,22 @@
 %}
 struct nxt_tab;
 %%
+".",  nxt_nz
 {gan₂}, nxt_nd
 {gur},  nxt_nd
 (gur), 	nxt_nv
-gur, 	nxt_nw
-".",  nxt_nz
-guru₇, nxt_nw
-sila₃, nxt_nw
-giŋ₄, nxt_nw
-nindan, nxt_nw
 gi, nxt_nw
+giŋ₄, nxt_nw
+gur, 	nxt_nw
+guru₇, nxt_nw
+igi, nxt_no
+iku, nxt_nw
 kuš₃, nxt_nw
+la₂, nxt_no
+mana, nxt_nw
+nindan, nxt_nw
+sar, nxt_nw
+sila₃, nxt_nw
 zipah, nxt_nw
 šudua, nxt_nw
 šusi, nxt_nw
-igi, nxt_no
-la₂, nxt_no
