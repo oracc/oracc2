@@ -22,27 +22,42 @@ function getTR(elt) {
 function p4Onload()
 {
     pager = getPager();
+    let cfy = document.getElementById("p4Cuneify");
     let hili = pager.getAttribute("data-hili");
     if (hili) {
-	onloadScroll(hili);
+	onloadHili(hili, cfy);
     }
-    let cfy = document.getElementById("p4Cuneify");
     if (cfy) {
 	onloadCuneify(cfy);
     }
 }
 
-function onloadScroll(hili)
+function onloadHili(hili, cfy)
 {
-    let scrollid = hili;
-    if (hili.includes(" ")) {
-	scrollid = hili.substring(0, hili.indexOf(' '));
+    let hh = hili.split(" ");
+    onloadScroll(hh[0]);
+    for (let i = 0; i < hh.length; i++) {
+	document.getElementById(hh[i]).classList.add('selected');
+	if (cfy) {
+	    let idbase = 'c.'+hh[i]+'.';
+	    let c = 0;
+	    // alert('onloadHili='+idbase+c);
+	    let ce = document.getElementById(idbase+c++);
+	    while (ce) {
+		ce.classList.add('selected');
+		ce = document.getElementById(idbase+c++);
+	    }
+	}
     }
+}
+
+function onloadScroll(scrollid)
+{
     // alert('hili='+hili+'; scrollid='+scrollid);
     let e = document.getElementById(scrollid);
     if (e) {
 	e = getTR(e);
-	let i = 5;
+	let i = 3;
 	while (i) {	    
 	    if (e.previousSibling) {
 		e = e.previousSibling;
@@ -775,6 +790,5 @@ function cuneify_reset(evt) {
     let f = e.getAttribute('data-font');
     let c = getCuneify();
     c.setAttribute('data-cfy-fnt', f);
-    cuneify();
+    onloadCuneify();
 }
-
