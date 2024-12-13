@@ -237,9 +237,11 @@ enqueue(const char *name, const char **atts, const char *oid, const char *utf8)
   dp->name = (ccp)pool_copy((ucp)name, p);
   dp->oid = oid;
   dp->utf8 = utf8;
-  dp->xid = (ccp)pool_copy((ucp)get_xml_id(atts));
   if (atts)
-    dp->atts = hashatts(atts);
+    {
+      dp->xid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
+      dp->atts = hashatts(atts);
+    }
   list_add(cqueue, dp);
 }
 
@@ -361,7 +363,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 		      cfy_space();
 		      ws_pending = 0;
 		    }
-		  cfy_cun(name, oid, utf8);
+		  cfy_cun(name, get_xml_id(atts), oid, utf8);
 		}
 	    }
 
