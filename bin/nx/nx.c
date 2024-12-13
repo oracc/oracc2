@@ -103,12 +103,12 @@ main(int argc, char **argv)
 {
   options(argc, argv, "d:t");
 
-  extern int parse_trace, debug;
+  extern int build_trace, parse_trace, debug;
 
   if ((parse_trace = opt_trace))
     debug = 1;
 
-  ns_flex_debug = nsflextrace = 0;
+  build_trace = ns_flex_debug = nsflextrace = debug;
 
   nx_init();
 

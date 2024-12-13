@@ -40,10 +40,11 @@ ns: 	  ns_sys
 	| ns ns_sys
 	;
 
-ns_sys:	  ns_name ns_equiv ns_nu ns_det ns_stop
-	| ns_name ns_equiv ns_nes ns_nu ns_det ns_stop
-	| ns_name ns_equiv ns_nu ns_det ns_nis ns_stop
-	| ns_name ns_equiv ns_nes ns_nu ns_det ns_nis ns_stop
+/* The ':' is necessary because ns_equiv and ns_nu can both begin with an NU_UNIT */
+ns_sys:	  ns_name ns_equiv ':' ns_nu ns_det ns_stop
+	| ns_name ns_equiv ns_nes ':' ns_nu ns_det ns_stop
+	| ns_name ns_equiv ':' ns_nu ns_det ns_nis ns_stop
+	| ns_name ns_equiv ns_nes ':' ns_nu ns_det ns_nis ns_stop
 	;
 
 ns_name: NS_NAME				{ nsb_sys($1); }
@@ -74,6 +75,8 @@ ns_nu:    nu_multunit
 
 nu_multunit: NU_NUM nu_xunit   			{ nsb_step(NULL,$1,$2); }
 	| NU_AXIS NU_NUM nu_xunit   		{ nsb_step($1,$2,$3); }
+	| NU_UNIT '*' NU_NUM			{ nsb_step(NULL,$3,$1); }
+	| NU_UNIT '*' NU_AXIS NU_NUM   		{ nsb_step($3,$4,$1); }
 	;
 
 nu_gval:  NU_FRAC | NU_GVAL ;
