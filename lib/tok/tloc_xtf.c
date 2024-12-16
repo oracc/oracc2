@@ -2,6 +2,8 @@
 #include <runexpat.h>
 #include <tok.h>
 
+int tlw_want_LW = 1;
+
 void
 tloc_xtf_sH(void *userData, const char *name, const char **atts)
 {
@@ -20,14 +22,17 @@ tloc_xtf_sH(void *userData, const char *name, const char **atts)
       mds_xmd(r, loch_text(r)->text_project, loch_text(r)->text_id);
 
       tlw_T(r);
+      if (tlw_want_LW)
+	fprintf(r->o, "Y\txtf\n");
+      r->rs.in_xcl = 0;
     }
-  else if (!r->rs.in_xcl && !strcmp(name, "l"))
+  else if (tlw_want_LW && !r->rs.in_xcl && !strcmp(name, "l"))
     {
       tlb_L(r, pi_line, get_xml_id(atts), findAttr(atts, "label"));
       tlw_L(r);
       r->rs.printing = 1;
     }
-  else if (!strcmp(name, "g:w") || !strcmp(name, "g:nonw"))
+  else if (tlw_want_LW && (!strcmp(name, "g:w") || !strcmp(name, "g:nonw")))
     {
       const char *id = get_xml_id(atts);
       if (id && *id && strncmp(id, "gdl.", 4))

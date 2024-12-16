@@ -16,6 +16,8 @@ int stdinput = 0;
 int tok_input_cbd = 0, tok_input_xtf = 1;
 int tok_data_g = 1, tok_data_l = 0, tok_data_m = 1;
 
+extern int tlw_want_LW;
+
 XML_StartElementHandler tok_sHs[3], tok_sHp;
 XML_EndElementHandler tok_eHs[3], tok_eHp;
 
@@ -195,7 +197,7 @@ main(int argc, char **argv)
 {
   Trun *r = NULL;
   
-  if (options(argc, argv, "cfglmo:p:s"))
+  if (options(argc, argv, "cfgGlmo:p:s"))
     exit(1);
 
   r = trun_init(run_multi);
@@ -232,6 +234,9 @@ int opts(int arg, const char*str)
       break;
     case 'g':
       tok_data_g = 1;
+      break;
+    case 'G':
+      tlw_want_LW = tok_data_g = 0;
       break;
     case 'l':
       tok_data_l = 1;
