@@ -4,6 +4,8 @@
 # Make implementation of corpus-asl.sh functionality
 #
 
+P="-p`oraccopt`"
+
 tok: 02pub/csl.tok
 kis: 01tmp/csl.kis
 key: 01tmp/csl.key
@@ -16,7 +18,7 @@ clean:
 	rm -f 01tmp/csl.* 02pub/csl.*
 
 02pub/csl.tok: 01bld/lists/xtfindex.lst
-	tokx <$< >$@
+	tokx $P <$< >$@
 
 01tmp/csl.kis: 02pub/csl.tok
 	-mkdir -p 02pub/tok
@@ -26,8 +28,8 @@ clean:
 	cut -f2 <$< | tail -n +2 >$@
 
 01tmp/cbd.tok: 01bld/sux/summaries.xml 01bld/qpn/summaries.xml
-	tokx -s -c <01bld/sux/summaries.xml | cbdex >01tmp/cbd1.tok
-	tokx -s -c <01bld/qpn/summaries.xml | cbdex >01tmp/cbd2.tok
+	tokx $P -s -c <01bld/sux/summaries.xml | cbdex >01tmp/cbd1.tok
+	tokx $P -s -c <01bld/qpn/summaries.xml | cbdex >01tmp/cbd2.tok
 	sort -u 01tmp/cbd[12].tok >$@
 
 01tmp/csl.asl: 01tmp/csl.key
