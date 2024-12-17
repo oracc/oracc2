@@ -12,7 +12,15 @@ static void
 prtoks(List *tp, List *dp)
 {
   const char *first_data = (dp ? ((const char *)list_first(dp)) : NULL);
+  const char *last_tok = (tp ? ((const char *)list_last(tp)) : NULL);
   const uchar *t;
+
+  if (last_tok && !strcmp(last_tok, "%lb"))
+    {
+      list_pop(tp);
+      list_pop(dp);
+    }
+  
   printf("%%%%id %s %%%%n", first_data);
   for (t = list_first(tp); t; t = list_next(tp))
     printf(" %s", t);
@@ -100,7 +108,13 @@ savetoks(uchar *s)
 static void
 newline(uchar *s)
 {
-#if 0
+#if 1
+  if (toks)
+    {
+      list_add(toks, "%lb");
+      list_add(data, "-");
+    }
+#else
   if (list_len(toks))
     {
       mesg_print(stderr);
@@ -127,12 +141,24 @@ main(int argc, const char **argv)
 	  else
 	    doing=0;
 	  break;
+	case 'T':
+	  if (toks && list_len(toks))
+	    prtoks(toks,data);	  
+	  break;
 	case 'l':
 	  if (doing)
 	    savetoks(l+2);
 	  break;
 	case 'L':
-	  newline(l);
+	  if (doing)
+	    newline(l);
+	  break;
+	case 'D':
+	  if (doing && !strncmp((ccp)l, "D.eof", 5))
+	    {
+	      if (toks && list_len(toks))
+		prtoks(toks,data);
+	    }
 	  break;
 	}
     }
