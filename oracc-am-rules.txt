@@ -66,8 +66,10 @@ install-exec-local:
 %.def: %.def.in
 	$(ORACCIFY) $<
 
-%.ofp: %.oin %.def ${bindir}/ofpx ${bindir}/ttf2ofp.sh
-	ttf2ofp.sh $*
+xxfont=${top_srcdir}/bin/xx/fonts/
+
+%.ofp: %.oin %.def ${xxfont}/ofpx ${xxfont}/ttf2ofp.sh
+	${xxfont}/ttf2ofp.sh $*
 
 %.ofpx: %.ofp
 

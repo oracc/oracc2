@@ -1,7 +1,7 @@
 @label	OB
 @title	Oracc version of OB-Freie
 @page	/osl/Fonts/Oracc-OBF/
-@font	/home/oracc/www/fonts/Oracc-OBF-Regular.ttf
+@font	/Users/stinney/orc/www/fonts/Oracc-OBF-Regular.ttf
 @css	ofs-oobf
 @mag	110
 @list	ABZL

@@ -18,5 +18,7 @@ font_DATA=Oracc-Noto-SansCuneiform.ttf Oracc-gudea.ttf Oracc-NA-Outline.ttf \
 	Oracc-OBF-Regular.ttf CuneiformClassic-final.ttf Oracc-LAK.ttf \
 	Oracc-RSP.ttf
 
-*.ofp: ${bindir}/ttf2ofp.sh ${bindir}/ofp2im.sh ${bindir}/ofpx \
-	${prefix}/osl/02pub/lists.tsv ${prefix}/osl/02pub/unicode.tsv
+*.ofp: ${xxfont}/ttf2ofp.sh ${xxfont}/ofp2im.sh ${xxfont}/ofpx
+
+#\
+#	${prefix}/osl/02pub/lists.tsv ${prefix}/osl/02pub/unicode.tsv
