@@ -11,8 +11,9 @@ static int non_num = 0;
 static void
 prtoks(List *tp, List *dp)
 {
+  const char *first_data = (dp ? ((const char *)list_first(dp)) : NULL);
   const uchar *t;
-  printf("%%%%n");
+  printf("%%%%id %s %%%%n", first_data);
   for (t = list_first(tp); t; t = list_next(tp))
     printf(" %s", t);
   printf(" %%%%d");

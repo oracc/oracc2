@@ -7,6 +7,7 @@ static List *tlist = NULL, *dlist = NULL, *curr = NULL;
 static nxmode mode = NXM_NONE;
 
 static const uchar *untok = NULL;
+static char *curr_id = NULL;
 
 static const uchar *nx_input_tok(FILE *fp);
 static void nx_input_ne(const uchar *t);
@@ -113,7 +114,13 @@ nx_input(void)
     {
       if ('%' == *t)
 	{
-	  if (!strcmp((ccp)t, "%%n"))
+	  if (!strcmp((ccp)t, "%%id"))
+	    {
+	      char *id = (char*)nx_input_tok(nxp->input);
+	      if (id)
+		curr_id = strdup(id);
+	    }
+	  else if (!strcmp((ccp)t, "%%n"))
 	    {
 	      if (tlist && list_len(tlist))
 		{
@@ -135,8 +142,11 @@ nx_input(void)
 	    {
 	      nx_exec_lists(tlist, dlist);
 	      nx_input_unset();
+	      if (curr_id)
+		free(curr_id);
 	      const uchar *u = nx_input_tok(nxp->input);
-	      if (u && strcmp((ccp)u, "%%n"))
+	      if (u && strcmp((ccp)u, "%%n")
+		  && strcmp((ccp)u, "%%id"))
 		nx_input_setup();
 	      nx_input_untok(u);
 	    }
