@@ -54,6 +54,9 @@ install-exec-local:
 %.sh: %.sh.in
 	$(ORACCIFY) $<
 
+%.plx: %.plx.in
+	$(ORACCIFY) $<
+
 %.xsl: %.xsl.in
 	$(ORACCIFY) $<
 

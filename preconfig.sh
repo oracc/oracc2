@@ -22,6 +22,7 @@ fi
 ## KEEP ALL DIRECTORY CREATION HERE
 
 ./mkdirs.sh
+cp oraccenv.sh $ORACC/bin
 cp -a .oracc{user,group} $ORACC_BUILDS
 if [[ $ORACC_MODE == "single" ]]; then
     ./prmdirs.sh

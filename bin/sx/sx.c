@@ -57,6 +57,7 @@ int validate = 1;
 
 extern int asl_raw_tokens; /* ask asl to produce list of @sign/@form/@v tokens */
 extern int ctrace;
+extern int no_image_data;
 
 struct sl_signlist *parent_asl;
 
@@ -92,7 +93,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nMoOP:p:qQsStTuUxX:?");
+  options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUxX:?");
   asltrace = asl_flex_debug = gdl_flex_debug = trace_mode;
   if (sortcode_output > 1)
     gsort_trace = 1;
@@ -180,6 +181,10 @@ main(int argc, char * const*argv)
   gdl_init();
   asl_init(&sxconfig);
   sl = aslyacc(file);
+
+  /* This is slightly brute-force: if no_image_data is set we NULL out sl->images */
+  if (no_image_data)
+    sl->images = NULL;
   
 #if 0
   /* Probably deprecate; unnecessary with new subsetting implementation */
@@ -421,6 +426,9 @@ opts(int opt, const char *arg)
       break;
     case 'n':
       list_names_mode = 1;
+      break;
+    case 'N':
+      no_image_data = 1;
       break;
     case 'm':
       listdef_check = 1;

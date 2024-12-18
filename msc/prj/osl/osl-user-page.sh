@@ -1,3 +1,3 @@
 #!/bin/sh
-(cd /home/ogsl/osl ; pwd ; /home/oracc/bin/orc 00bin/osl-font-pages.sh)
-(cd /home/ogsl/osl ; pwd ; /home/oracc/bin/orc 00bin/sxw-pua.sh)
+(cd ~/orc/osl ; pwd ; $ORACC/bin/orc 00bin/osl-font-pages.sh)
+(cd ~/orc/osl ; pwd ; $ORACC/bin/orc 00bin/sxw-pua.sh)

@@ -2,7 +2,7 @@
 #include <signlist.h>
 #include <sx.h>
 
-
+int no_image_data = 0;
 
 /**sx_images -- load the image manifests into a Roco
  *
