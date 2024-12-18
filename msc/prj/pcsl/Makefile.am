@@ -2,7 +2,12 @@ include ../../../oracc-am-rules.txt
 
 noinst_SCRIPTS: *.sh
 
-all: pcsl
+dir=$(shell pwd)
+
+default: all
+
+all:
+	@echo make in ${dir} only works with \'make osl\'
 
 pcsl:
 	@(cd /home/stinney/orc/pcsl ; cp -u fonts/PC-all.ttf 00res/fonts)

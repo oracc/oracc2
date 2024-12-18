@@ -2,7 +2,12 @@ include ../../../oracc-am-rules.txt
 
 noinst_SCRIPTS: *.sh
 
-all: osl
+dir=$(shell pwd)
+
+default: all
+
+all:
+	@echo make in ${dir} only works with \'make osl\'
 
 osl:
 	@./osl-font-update.sh
