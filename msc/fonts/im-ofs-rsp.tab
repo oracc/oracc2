@@ -1,7 +1,7 @@
 @label	RSP
 @title	Oracc RSP font
 @page	/osl/Fonts/Oracc-RSP/
-@font	/home/oracc/www/fonts/Oracc-RSP.ttf
+@font	Oracc-RSP.ttf
 @css	ofs-rsp
 @mag	110
 @list	RSP

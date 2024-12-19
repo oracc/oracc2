@@ -1,5 +1,7 @@
 include ../../oracc-am-rules.txt
 
+include Makefile.fnt
+
 css_DATA=fonts.css *.cur
 
 data_DATA=Oracc-Noto-SansCuneiform.ofp Oracc-gudea.ofp	Oracc-NA-Outline.ofp \
@@ -17,8 +19,3 @@ data_DATA=Oracc-Noto-SansCuneiform.ofp Oracc-gudea.ofp	Oracc-NA-Outline.ofp \
 font_DATA=Oracc-Noto-SansCuneiform.ttf Oracc-gudea.ttf Oracc-NA-Outline.ttf \
 	Oracc-OBF-Regular.ttf CuneiformClassic-final.ttf Oracc-LAK.ttf \
 	Oracc-RSP.ttf
-
-*.ofp: ${xxfont}/ttf2ofp.sh ${xxfont}/ofp2im.sh ${xxfont}/ofpx
-
-#\
-#	${prefix}/osl/02pub/lists.tsv ${prefix}/osl/02pub/unicode.tsv

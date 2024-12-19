@@ -11,7 +11,9 @@ osl_unicode(void)
 {
   Osl_unicode *o = calloc(1, sizeof(Osl_unicode));
   char buf[strlen(oracc())+strlen("/osl/02pub/0")];
-  sprintf(buf, "%s/osl/02pub/unicode.tsv", oracc());
+  sprintf(buf, "sl/unicode.tsv");
+  if (access(buf, R_OK))
+    sprintf(buf, "%s/osl/02pub/unicode.tsv", oracc());
   o->r = roco_load(buf, 0, NULL, NULL, NULL);
   if (o->r)
     {
@@ -25,10 +27,14 @@ osl_unicode(void)
 	    o->e[i].seq = 1;
 	  o->e[i].n = o->r->rows[i][1];
 	  o->e[i].o = (ccp)o->r->rows[i][2];
-	  o->e[i].s = atoi((ccp)o->r->rows[i][3]);
+	  if (o->r->rows[i][3])
+	    o->e[i].s = atoi((ccp)o->r->rows[i][3]);
+	  else
+	    o->e[i].s = -1;
 	  hash_add(o->h, (uccp)o->e[i].u, &o->e[i]);
 	  hash_add(o->h, o->e[i].n, &o->e[i]);
-	  hash_add(o->h, (uccp)o->e[i].o, &o->e[i]);
+	  if (o->e[i].o)
+	    hash_add(o->h, (uccp)o->e[i].o, &o->e[i]);
 	  if (!o->e[i].seq)
 	    hash_add(o->h, (uccp)o->e[i].u+2, &o->e[i]);
 	}

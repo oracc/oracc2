@@ -69,13 +69,6 @@ install-exec-local:
 %.def: %.def.in
 	$(ORACCIFY) $<
 
-xxfont=${top_srcdir}/bin/xx/fonts/
-
-%.ofp: %.oin %.def ${xxfont}/ofpx ${xxfont}/ttf2ofp.sh
-	${xxfont}/ttf2ofp.sh $*
-
-%.ofpx: %.ofp
-
 all.proto: *.c
 	cproto -e $(AM_CPPFLAGS) *.c >x.proto
 	mv x.proto all.proto

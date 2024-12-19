@@ -1,0 +1,13 @@
+default: Oracc-RSP.ofp
+
+xxfont=${top_srcdir}/bin/xx/fonts
+
+sl/lists.tsv: ${ORACC}/osl/00lib/osl.asl
+	-sx -c -N -u -dLISTS ${ORACC}/osl/00lib/osl.asl
+	mv sx-lists.out sl/lists.tsv
+	cut -f 2-4,6 unicode.tsv | grep '	o[0-9]\+	' >sl/unicode.tsv
+
+%.ofp: %.oin %.def ${xxfont}/ofpx ${xxfont}/ttf2ofp.sh sl/lists.tsv sl/unicode.tsv
+	${xxfont}/ttf2ofp.sh $*
+
+%.ofpx: %.ofp
