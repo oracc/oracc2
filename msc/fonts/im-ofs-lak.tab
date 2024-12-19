@@ -1,7 +1,7 @@
 @label	LAK
 @title	Oracc LAK font
 @page	/osl/Fonts/Oracc-LAK/
-@font	/Users/stinney/orc/www/fonts/Oracc-LAK.ttf
+@font	/home/oracc/www/fonts/Oracc-LAK.ttf
 @css	ofs-lak
 @mag	110
 @list	LAK
