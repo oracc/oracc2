@@ -68,9 +68,14 @@ ns_ne: 	  NE_BOO				{ nsb_env($1, one); }
 	| NE_KEY '=' NE_VAL			{ nsb_env($1, $3); }
 	;
 
-ns_nu:    nu_multunit
-	| ns_nu '=' nu_multunit
-	| ns_nu '|' { nsb_altflag=1; } nu_multunit
+ns_nu:    ns_altunit
+	| ns_nu '=' ns_altunit
+	  /*| ns_nu '|' { nsb_altflag=1; } nu_multunit*/
+	;
+
+ns_altunit:
+	  nu_multunit
+	  | ns_altunit '|' { nsb_altflag=1; } nu_multunit
 	;
 
 nu_multunit: NU_NUM nu_xunit   			{ nsb_step(NULL,$1,$2); }
