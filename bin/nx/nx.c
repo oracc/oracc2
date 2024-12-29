@@ -5,6 +5,7 @@ Pool *nspool;
 
 const char *arg_dat = NULL;
 int opt_trace;
+int opt_pacify;
 
 #if 0
 static const uchar **nx_toks(uchar *t, int *ntoks);
@@ -101,7 +102,7 @@ const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "d:t");
+  options(argc, argv, "d:pt");
 
   extern int build_trace, parse_trace, debug;
 
@@ -114,6 +115,9 @@ main(int argc, char **argv)
 
   ns_data();
 
+  if (opt_pacify)
+    fprintf(stderr, "nx: waiting for input:\n");
+  
 #if 0
   nxp->testfp = fopen("test.tsv", "w");
   if (!nxp->testfp)
@@ -139,6 +143,9 @@ opts(int c, const char *v)
     {
     case 'd':
       arg_dat = v;
+      break;
+    case 'p':
+      opt_pacify = 1;
       break;
     case 't':
       opt_trace = 1;
