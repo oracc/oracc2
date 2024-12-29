@@ -87,7 +87,7 @@ nsb_step(uchar *a, uchar *m, uchar *u)
 	  ns_step *a;
 	  for (a = nxp->sys->last->alt; a->next; a = a->next)
 	    ;
-	  a->next = a;
+	  a->next = s;
 	  s->prev = a;
 	}
       else
