@@ -11,6 +11,7 @@ nsb_sys(uchar *t)
   nxp->sys = memo_new(nxp->m_ns_sys);
   nxp->sys->name = t+1;
   hash_add(nxp->hsys, nxp->sys->name, nxp->sys);
+  list_add(nxp->lsys, nxp->sys->name);
   nxp->sys->e = hash_create(7);
   list_add(nxp->hashes, nxp->sys->e);
   nxp->sys->ilist = list_create(LIST_SINGLE);

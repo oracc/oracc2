@@ -143,4 +143,6 @@ extern void nx_exec_lists(List *t, List *d);
 
 extern void nxd_show_nxnu(nx_number *np);
 
+extern int ns_jx(Hash *hsys, List *lsys);
+
 #endif/*NX_H_*/

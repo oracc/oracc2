@@ -27,6 +27,7 @@ typedef struct nx
   struct ns_sys *sys;
   int nsys;
   Hash *hsys;			/* global hash from sys-name to sys */
+  List *lsys;			/* List of sys names in order they are scanned */
   Hash *ir;			/* global inst registry which indexes inst text to sys
 				   that it can be part of */
   Pool *p;

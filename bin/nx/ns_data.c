@@ -1,6 +1,9 @@
 #include <oraccsys.h>
 #include "nx.h"
 
+const char *file;
+Mloc *xo_loc;
+
 /* This is a simple driver to read the step-diagram data */
 extern const char *arg_dat; /* .dat file given with -d on command line */
 extern int nsrestart(FILE *);
@@ -13,6 +16,8 @@ ns_data(void)
   char dat[strlen(oracc())+strlen("/lib/data/ns.dat0")];
 
   const char *use_dat = arg_dat ? arg_dat : "ns.dat";  
+
+  file = use_dat;
   
   if (!access(use_dat, R_OK))
     strcpy(dat, use_dat);

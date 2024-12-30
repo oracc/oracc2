@@ -1,0 +1,62 @@
+namespace nss = "http://oracc.org/ns/numsys/1.0"
+
+start = systems
+
+systems =
+  element nss:systems {
+    attribute project { text } ,
+    attribute file { text } ,
+    sys*
+  }
+
+sys =
+  element nss:sys {
+    attribute name { text } ,
+    attribute base { text }? ,
+    attribute conv { text }? ,
+    attribute det { text }? ,
+    (alt | step)*
+  }
+
+alt =
+  element nss:alt {
+    step*
+  }
+  
+step =
+  element nss:step {
+    attribute unit { text }? ,
+    attribute axis { text }? ,
+    step_aev? ,
+    step_mul? ,
+    inst*
+  }
+
+inst =
+  element nss:inst {
+    attribute n { text } ,
+    attribute unit { text }? ,
+    step_aev? ,
+    step_mul? ,
+    inst_count* ,
+    attribute axis { text }?
+  }
+
+step_aev =
+  element nss:aev {
+    nss_num
+  }
+
+step_mul = 
+  element nss:mul {
+    nss_num
+  }
+
+inst_count = 
+  element nss:count {
+    nss_num
+  }
+
+nss_num =
+    attribute n { text },
+    attribute d { text }

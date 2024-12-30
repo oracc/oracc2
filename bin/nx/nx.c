@@ -4,8 +4,16 @@
 Pool *nspool;
 
 const char *arg_dat = NULL;
-int opt_trace;
+int opt_json;
 int opt_pacify;
+int opt_trace;
+int opt_xml;
+
+int verbose;
+int status;
+
+const char *jfn = NULL;
+const char *xfn = NULL;
 
 #if 0
 static const uchar **nx_toks(uchar *t, int *ntoks);
@@ -28,6 +36,7 @@ nx_init(void)
   nxp->m_nx_inst = memo_init(sizeof(ns_inst), 1000);
   nxp->m_nx_number = memo_init(sizeof(nx_number), 100);
   nxp->hsys = hash_create(10);
+  nxp->lsys = list_create(LIST_SINGLE);
   nxp->ir = hash_create(1024);
   nxp->env = hash_create(7);
   nxp->e = hpool_init();
@@ -68,6 +77,7 @@ nx_term(void)
   memo_term(nxp->m_nx_inst);
   memo_term(nxp->m_nx_number);
   hash_free(nxp->hsys, NULL);
+  list_free(nxp->lsys, NULL);
   hash_free(nxp->ir, NULL);
   if (nxp->toks)
     free(nxp->toks);
@@ -102,7 +112,7 @@ const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "d:pt");
+  options(argc, argv, "d:jptx");
 
   extern int build_trace, parse_trace, debug;
 
@@ -114,6 +124,12 @@ main(int argc, char **argv)
   nx_init();
 
   ns_data();
+
+  if (opt_xml)
+    {
+      (void)ns_jx(nxp->hsys, nxp->lsys);
+      exit(0);
+    }
 
   if (opt_pacify)
     fprintf(stderr, "nx: waiting for input:\n");
@@ -144,11 +160,17 @@ opts(int c, const char *v)
     case 'd':
       arg_dat = v;
       break;
+    case 'j':
+      opt_json = 1;
+      break;
     case 'p':
       opt_pacify = 1;
       break;
     case 't':
       opt_trace = 1;
+      break;
+    case 'x':
+      opt_xml = 1;
       break;
     default:
       return 1;
