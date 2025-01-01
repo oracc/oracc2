@@ -70,7 +70,6 @@ ns_ne: 	  NE_BOO				{ nsb_env($1, one); }
 
 ns_nu:    ns_altunit
 	| ns_nu '=' ns_altunit
-	  /*| ns_nu '|' { nsb_altflag=1; } nu_multunit*/
 	;
 
 ns_altunit:

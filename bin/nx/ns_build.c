@@ -274,46 +274,6 @@ nsb_auto_inst_g(ns_sys *sp, int m, const uchar *u)
     }
 }
 
-#if 0
-static void
-nsb_auto_inst_axis(const uchar *axis, ns_inst *ui)
-{
-  char S[strlen((ccp)axis)+3];
-  S[0] = 'S';
-  S[1] = tolower(*axis);
-  strcpy(&S[2], (ccp)axis+1);
-  ns_sys *a_sys = hash_find(nxp->hsys, (ucp)S);
-  if (a_sys)
-    {
-      ns_inst *ip;
-      for (ip = list_first(a_sys->ilist); ip; ip = list_next(a_sys->ilist))
-	{
-	  ns_inst *r = hash_find(nxp->ir, ip->text);
-	  if (r)
-	    {
-	      ns_inst *defd;
-	      for (defd = r; defd; defd = defd->ir_next)
-		{
-		  if (!strcmp(defd->step->sys->name, ui->step->sys->name)
-		      && !strcmp(ip->text, defd->text))
-		    fprintf(stderr, "skipping sys=%s; defd=%s\n", defd->step->sys->name, defd->text);
-		}
-	      if (!defd)
-		{
-		  fprintf(stderr, "adding sys=%s to inst=%s\n", ui->step->sys->name, ip->text);
-		  r->ir_last->ir_next = ui;
-		  r->ir_last = ui;
-		}
-	    }
-	}
-    }
-  else
-    {
-      fprintf(stderr, "nsb_auto_inst_axis: request to use undefined sys %s in ns data\n", S);
-    }
-}
-#endif
-
 static void
 nsb_wrapup_step(ns_step *stp)
 {
@@ -350,6 +310,9 @@ nsb_wrapup(void)
       nsb_wrapup_step(stp);
       ns_step *alt;
       for (alt = stp->alt; alt; alt = alt->next)
-	nsb_wrapup_step(alt);
+	{
+	  nxp->sys->last = alt;
+	  nsb_wrapup_step(alt);
+	}
     }
 }
