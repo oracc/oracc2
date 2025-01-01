@@ -100,6 +100,26 @@ typedef struct nx_result
   nx_numtok *nptoks;
 } nx_result;
 
+/* Debug support:
+ *
+ * 	-D ARG
+ *
+ * ARG is a string of letters:
+ *
+ *	L lex
+ *	Y yacc
+ *	T tokens
+ *	P parse
+ *	V values
+ *
+ */
+extern const char *nxd_arg;
+#define nxd_lex() strchr(nxd_arg,'L')
+#define nxd_yacc() strchr(nxd_arg,'Y')
+#define nxd_tokens() strchr(nxd_arg,'T')
+#define nxd_parse() strchr(nxd_arg,'P')
+#define nxd_values() strchr(nxd_arg,'V')
+
 extern int nsb_altflag;
 extern int opt_trace;
 extern const char *currnsfile;
@@ -142,6 +162,7 @@ extern void nx_exec(const uchar **toks, const uchar **data, int ntoks);
 extern void nx_exec_lists(List *t, List *d);
 
 extern void nxd_show_nxnu(nx_number *np);
+extern int nxd_arg_ok(const char *arg);
 
 extern int ns_jx(Hash *hsys, List *lsys);
 

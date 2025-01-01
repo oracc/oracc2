@@ -3,8 +3,22 @@
 
 int debug = 0;
 
+const char *nxd_arg = "";
+
 void nxd_show_aevs(nx_number *np);
 void nxd_show_step(nx_step *ns);
+
+int
+nxd_arg_ok(const char *arg)
+{
+  const char *nxd_arg_ok = "LYTPV";
+  while (*arg)
+    if (!strchr(nxd_arg_ok, *arg))
+      return 0;
+    else
+      ++arg;
+  return 1;
+}
 
 void
 nxd_show_num(nx_num *nump)

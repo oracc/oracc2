@@ -4,6 +4,7 @@
 Pool *nspool;
 
 const char *arg_dat = NULL;
+
 int opt_json;
 int opt_pacify;
 int opt_trace;
@@ -112,9 +113,9 @@ const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "d:jptx");
-
   extern int build_trace, parse_trace, debug;
+
+  options(argc, argv, "d:D:jpx");
 
   if ((parse_trace = opt_trace))
     debug = 1;
@@ -157,6 +158,11 @@ opts(int c, const char *v)
 {
   switch (c)
     {
+    case 'D':
+      nxd_arg = v;
+      if (!nxd_arg_ok(nxd_arg))
+	return 1;
+      break;
     case 'd':
       arg_dat = v;
       break;
@@ -165,9 +171,6 @@ opts(int c, const char *v)
       break;
     case 'p':
       opt_pacify = 1;
-      break;
-    case 't':
-      opt_trace = 1;
       break;
     case 'x':
       opt_xml = 1;
@@ -181,4 +184,5 @@ opts(int c, const char *v)
 void
 help(void)
 {
+  printf("nx [-d[DATA]] [-D[LYTPV]] [-j] [-p] [-x]\n");
 }
