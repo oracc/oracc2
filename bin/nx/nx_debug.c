@@ -32,8 +32,6 @@ nxd_show_num(nx_num *nump)
 void
 nxd_show_sum(nx_num *sump)
 {
-  if (!debug)
-    return;
   fprintf(stderr,"==>> ");
   nxd_show_num(sump);
   fprintf(stderr,"\n");
@@ -42,8 +40,6 @@ nxd_show_sum(nx_num *sump)
 void
 nxd_show_nxnu(nx_number *np)
 {
-  if (!debug)
-    return;
   nx_step *nxs;
   fprintf(stderr,"%s => ", np->sys->name);
   for (nxs = np->steps; nxs; nxs = nxs->next)
@@ -57,8 +53,6 @@ nxd_show_nxnu(nx_number *np)
 void
 nxd_show_aevs(nx_number *np)
 {
-  if (!debug)
-    return;
   nx_step *nxs;
   fprintf(stderr,"%s => ", np->sys->name);
   for (nxs = np->steps; nxs; nxs = nxs->next)
@@ -116,9 +110,6 @@ nxd_show_step(nx_step *nxs)
 void
 nxd_show_inst(const uchar *tok, ns_inst *ip)
 {
-  if (!debug)
-    return;
-    
   if (tok)
     fprintf(stderr,"tok %s from hash gives inst: ", tok);
   fprintf(stderr,"%s => %llu/%d %s ", ip->text, ip->count.n, ip->count.d, ip->unit);
@@ -133,9 +124,6 @@ nxd_show_inst(const uchar *tok, ns_inst *ip)
 void
 nxd_show_start_toks(const uchar **toks, nx_numtok *nptoks, int from, int to)
 {
-  if (!debug)
-    return;
-  
   int f = from;
   fprintf(stderr,"nxp:\ntoks:");
   while (from <= to)

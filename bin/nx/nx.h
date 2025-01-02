@@ -158,6 +158,7 @@ extern void nx_init(void);
 extern void nx_reset(void);
 extern void nx_term(void);
 extern void nx_input(void);
+extern void nx_cli_input(const char **argv);
 extern void nx_exec(const uchar **toks, const uchar **data, int ntoks);
 extern void nx_exec_lists(List *t, List *d);
 

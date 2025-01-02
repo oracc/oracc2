@@ -113,15 +113,32 @@ const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 int
 main(int argc, char **argv)
 {
-  extern int build_trace, parse_trace, debug;
+  extern int build_trace, parse_trace, nsdebug, token_trace, values_trace;
 
-  options(argc, argv, "d:D:jpx");
+  if (options(argc, argv, "d:D:jpx"))
+    exit(1);
 
-  if ((parse_trace = opt_trace))
-    debug = 1;
+#if 1
+  if (nxd_lex())
+    ns_flex_debug = nsflextrace = 1;
 
+  if (nxd_yacc())
+    nsdebug = 1;
+  else
+    nsdebug = ns_flex_debug = 0;
+
+  if (nxd_parse())
+    parse_trace = 1;
+
+  if (nxd_tokens())
+    token_trace = 1;
+
+  if (nxd_values())
+    values_trace = 1;
+#else
   build_trace = ns_flex_debug = nsflextrace = debug;
-
+#endif
+  
   nx_init();
 
   ns_data();
@@ -132,23 +149,19 @@ main(int argc, char **argv)
       exit(0);
     }
 
-  if (opt_pacify)
-    fprintf(stderr, "nx: waiting for input:\n");
-  
-#if 0
-  nxp->testfp = fopen("test.tsv", "w");
-  if (!nxp->testfp)
-    fprintf(stderr, "nx: unable to open test.tsv; no testdata will be written\n");
-#endif
-  
-  nxp->input = stdin; /* set this in opts to read from file/toks/etc */
-  
-  nx_input();
-
-#if 0
-  if (nxp->testfp)
-    fclose(nxp->testfp);
-#endif
+  if (argv[optind])
+    {
+      nx_cli_input(argv+optind);
+    }
+  else
+    {
+      if (opt_pacify)
+	fprintf(stderr, "nx: waiting for input:\n");
+      
+      nxp->input = stdin; /* set this in opts to read from file/toks/etc */
+      
+      nx_input();
+    }
 
   nx_term();
 }

@@ -105,6 +105,22 @@ nx_input_tok(FILE *fp)
 }
 
 void
+nx_cli_input(const char **argv)
+{
+  nx_input_setup();
+
+  int i;
+  for (i = 0; argv[i]; ++i)
+    list_add(curr, (void*)argv[i]);
+
+  if (tlist && list_len(tlist))
+    {
+      nx_exec_lists(tlist, dlist);
+      nx_input_unset();
+    }  
+}
+
+void
 nx_input(void)
 {
   const uchar *t = NULL;

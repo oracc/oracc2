@@ -4,6 +4,7 @@
 typedef enum nx_xstep { NX_ASS , NX_COM , NX_DET } nx_xstep;
 
 int parse_trace = 0;
+int token_trace = 0;
 int test_data = 0;
 
 const char *nxt_str[] = { "nn" , "ng" , "nw" , "nv", "nd" , "nc" , "na" , "nz" , "ne" , "gc" , "gw" , "no",  NULL };
@@ -30,7 +31,7 @@ static int nxp_curve_match(nx_number *n, const uchar *sys);
 void
 nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**data, int from, int to)
 {
-  if (parse_trace)
+  if (token_trace)
     nxd_show_start_toks(toks, nptoks, from, to);
 
   /* the candidate systems for the current */
@@ -401,7 +402,7 @@ nxp_add_inst(nx_number **cand, ns_inst *ip, nx_numtok type, const void *data)
 			   ? cand[i]->last->tok.inst
 			   : cand[i]->last->num->unit->tok.inst
 			   );
-	  if (!strcmp(cand[i]->sys->name,jp->step->sys->name)  && nxp_sys_step_ok(left, jp))
+	  if (!strcmp((ccp)cand[i]->sys->name,(ccp)jp->step->sys->name)  && nxp_sys_step_ok(left, jp))
 	    {
 	      nx_step *n = nxp_nx_step(jp, NX_STEP_TOK, jp->text, type, data, NULL);
 	      cand[i]->last->next = n;
@@ -578,8 +579,8 @@ nxp_curve_match(nx_number *n, const uchar *sys)
 {
   if (sys && n->axis)
     {
-      int sysc = (strstr(sys,"@c") ? 1 : 0);
-      int axisc = (strstr(n->axis, "@c") ? 1 : 0);
+      int sysc = (strstr((ccp)sys,"@c") ? 1 : 0);
+      int axisc = (strstr((ccp)n->axis, "@c") ? 1 : 0);
       return sysc == axisc;
     }
   else if (sys || n->axis)

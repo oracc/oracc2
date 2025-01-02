@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include "nx.h"
 
-int trace_values = 0;
+int values_trace = 0;
 
 static nx_num nx_sum_aevs(nx_number *np);
 static void nx_inst_aevs(nx_number *np);
@@ -40,11 +40,14 @@ nx_values_np(nx_number *np)
   /* Compute the aev for each step-inst in the number */
   nx_inst_aevs(np);
 
-  nxd_show_aevs(np);
+  if (values_trace)
+    nxd_show_aevs(np);
 
   nx_num sum = nx_sum_aevs(np);
   nx_simplify(&sum);
-  nxd_show_sum(&sum);
+
+  if (values_trace)
+    nxd_show_sum(&sum);
 	  
   /* Divide the sum by the base fraction; the mev is expressed
      in terms of the base, so this step ensures that np->aev
@@ -54,7 +57,7 @@ nx_values_np(nx_number *np)
   /* render aev result */
   np->ae_str = nxr_format_aev(np->sys, &np->aev);
 
-  if (trace_values)
+  if (values_trace)
     printf("nx_values: %llu/%d ÷ %llu/%d = %llu/%d\n",
 	   sum.n, sum.d,
 	   np->sys->base_step->aev.n, np->sys->base_step->aev.d,
