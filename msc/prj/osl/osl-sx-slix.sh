@@ -1,2 +1,3 @@
 #!/bin/sh
-(cd $ORACC/osl ; $ORACC/bin/orc sx-slix.sh osl 00lib/osl.asl)
+(cd /home/oracc/osl ;
+ /home/oracc/bin/orc sx-slix.sh osl 00lib/osl.asl)
