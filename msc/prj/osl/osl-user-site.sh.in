@@ -1,0 +1,2 @@
+#!/bin/sh
+@@ORACC@@/bin/orc 00bin/osl-site-update.sh

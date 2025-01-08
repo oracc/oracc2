@@ -251,7 +251,11 @@ msc/lex/lex-word-data.xsl
 msc/oscx/osh.c
 msc/oscx/odo
 msc/otf/odfmanager.plx
-oracc_builds.c
+msc/prj/osl/osl-prepare-update.sh
+msc/prj/osl/osl-sx-slix.sh
+msc/prj/osl/osl-user-page.sh
+msc/prj/osl/osl-user-site.sh
+msc/prj/osl/oracc_builds.c
 
 # rnc derivatives
 *.rng

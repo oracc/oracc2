@@ -1,3 +1,4 @@
 #!/bin/sh
 echo $0
-sudo ./osl-user-site.sh
+shd=`pwd`
+(cd ~/orc/osl ; sudo $shd/osl-user-site.sh)

@@ -1,0 +1,3 @@
+#!/bin/sh
+@@ORACC@@/bin/orc 00bin/osl-font-pages.sh
+@@ORACC@@/bin/orc 00bin/sxw-pua.sh

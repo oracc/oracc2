@@ -6,10 +6,11 @@ dir=$(shell pwd)
 
 default: all
 
-all: osl-prepare-update.sh osl-sx-slix.sh
+all: osl-prepare-update.sh osl-sx-slix.sh osl-user-page.sh osl-user-site.sh
 	@echo To build OSL say \'make osl\'
 
 osl:
+	@./osl-check.sh
 	@./osl-font-update.sh
 	(cd ../../../lib/ofp ; make)
 	(cd ../../../lib ; make)
