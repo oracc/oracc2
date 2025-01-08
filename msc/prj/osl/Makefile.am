@@ -6,8 +6,8 @@ dir=$(shell pwd)
 
 default: all
 
-all:
-	@echo make in ${dir} only works with \'make osl\'
+all: osl-prepare-update.sh osl-sx-slix.sh
+	@echo To build OSL say \'make osl\'
 
 osl:
 	@./osl-font-update.sh

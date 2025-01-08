@@ -1,0 +1,3 @@
+#!/bin/sh
+(cd @@ORACC@@/osl ;
+ @@ORACC@@/bin/orc sx-slix.sh osl 00lib/osl.asl)

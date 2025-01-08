@@ -7,7 +7,7 @@ static int ns_jx_init(void);
 static void ns_jx_num(const char *tag, nx_num n);
 static void ns_jx_step(ns_step *sp);
 
-Mloc *xo_loc;
+extern Mloc *xo_loc;
 int rnvtrace = 0;
 
 extern int opt_json, opt_xml;
