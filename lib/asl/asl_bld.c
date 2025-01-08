@@ -742,7 +742,7 @@ asl_list_lref_guard(Mloc *locp, struct sl_signlist *sl, unsigned const char *n, 
   return 0;
 }
 static void
-asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit, int q, int m)
+asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit, int q, int m, const unsigned char *feat)
 {
   struct sl_list *l = NULL;
   struct sl_inst *i = new_inst(sl);
@@ -788,6 +788,7 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
 	{
 	  l = memo_new(sl->m_lists);
 	  l->name = n;
+	  l->feat = feat;
 	  l->insts = list_create(LIST_SINGLE);
 	  l->type = sl_ll_list;
 	  list_add(l->insts, parent_inst);
@@ -816,7 +817,7 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
 }
 
 void
-asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag)
+asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag, const unsigned char *feat)
 {
   if (asl_sign_guard(locp, sl, "list"))
     {
@@ -827,9 +828,9 @@ asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
       (void)asl_bld_token(locp, sl, (ucp)n, 1);
   
       if (sl->curr_form)
-	asl_add_list(locp, sl, n, literal, query, minus_flag);
+	asl_add_list(locp, sl, n, literal, query, minus_flag, feat);
       else
-	asl_add_list(locp, sl, n, literal, query, minus_flag);
+	asl_add_list(locp, sl, n, literal, query, minus_flag, feat);
 
       /* U+ list entries are both lists and uhex; they are specialcased on
 	 output and emitted only as @list U+ but within the Unicode

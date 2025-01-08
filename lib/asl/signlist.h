@@ -499,6 +499,9 @@ struct sl_list
   const unsigned char *name;
   const unsigned char *base;
   const unsigned char *num;
+  const unsigned char *feat; /* OpenType features string, e.g., .1
+				.ss01 .cv32; concatenated to U+ value
+				for @list entry */
   int sort;
   List *insts; 		/* signs or forms where this list occurs */
   const char **oids; 	/* NULL-terminated, sorted and uniqued list of
@@ -584,7 +587,7 @@ extern void asl_bld_scriptdef(Mloc *locp, struct sl_signlist *sl, char *text);
 extern void asl_bld_sysdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_images(Mloc *locp, struct sl_signlist *sl, const unsigned char *n);
 extern void asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
-extern void asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag);
+extern void asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag, const unsigned char *feat);
 extern int asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token *tokp, int priority);
 extern void asl_bld_aka(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);
 extern void asl_bld_smap(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);

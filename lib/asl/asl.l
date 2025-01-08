@@ -65,6 +65,8 @@ NUMGRAPH	[0-9XnN]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})\){M}{Q}{L}
 FRACTION	[0-9]\/[0-9]
 PUNCT		("*"|:['".:]?|"/"){Q}{L}
 SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
+OTF		("."|ss|cv)[0-9]+
+OTFEAT		{OTF}([ \t\n]+{OTF})*
 
 LIGATURE       	({GRAPHEME}|{COMPOUND})([-\+]({GRAPHEME}|{COMPOUND}))+
 LIGAFONT	(u[0-9A-F]+)(_u[0-9A-F]+)+
@@ -185,6 +187,8 @@ LIGAUCUN	{UTF8SEQ}+
 {GRAPHEME}|{COMPOUND}          	{ aslsave; return asl_grapheme(asllval.text); }
 
 {LISTNUM}   	 	      	{ aslsave; return LISTNUM; }
+
+{OTFEAT}   	 	      	{ aslsave; return OTFEAT; }
 
 {PHONGRAPH}	       		{ aslsave; return GVALUE; }
 

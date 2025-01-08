@@ -30,7 +30,7 @@ int minus_flag = 0;
 %token	<text>  TOK TRANS TAB EOL PAR BAD LINE SIGLUM
 		SIGN PCUN XSUX FAKE AKA COMP PNAME FORM NOFORM
 		GNAME GVALUE GVALUEX GOESTO
-		GBAD ATF LANG V LIST LISTNUM
+		GBAD ATF LANG V LIST LISTNUM OTFEAT
 		INOTE LIT NOTE REF TEXT END EBAD
 		ESIGN EPCUN EXSUX EFORM
 		UAGE USEQ UTF8 UMAP UNAME UNOTE UPUA
@@ -178,7 +178,8 @@ atlink:
 	;
 
 atlist:
-          LIST LISTNUM	 { asl_bld_list(&@1, curr_asl, (uccp)$2, minus_flag); }
+	  LIST LISTNUM		{ asl_bld_list(&@1, curr_asl, (uccp)$2, minus_flag, NULL); }
+	| LIST LISTNUM OTFEAT	{ asl_bld_list(&@1, curr_asl, (uccp)$2, minus_flag, (uccp)$3); }
 	;
 
 atliga:
