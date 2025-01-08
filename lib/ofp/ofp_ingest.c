@@ -14,6 +14,8 @@ ofp_ingest(Ofp *ofp)
 {
   unsigned char *fmem, **lp;
   size_t nline;
+  Hash *seen = hash_create(1024);
+  int offset = 0;
 
   lp = loadfile_lines3((uccp)ofp->file, &nline, &fmem);
 
@@ -23,6 +25,17 @@ ofp_ingest(Ofp *ofp)
   int i;
   for (i = 0; i < nline; ++i)
     {
+      /* ignore duplicate entries; input is programmatically generated
+	 so we can use simple equivalency check without
+	 canonicalizing */
+      if (hash_find(seen, lp[i]))
+	{
+	  ++offset;
+	  continue;
+	}
+      else
+	hash_add(seen, (ucp)strdup((ccp)lp[i]), "");
+      
       char *name = (char*)lp[i];
       Ofp_feature f = OFPF_BASE;
       const char *ext = NULL;
@@ -94,9 +107,10 @@ ofp_ingest(Ofp *ofp)
 		}
 	    }
 	}
-      set_glyph(ofp, i, name, ucode, fcode, f, ext, ligl, liga, ivs);
+      set_glyph(ofp, i - offset, name, ucode, fcode, f, ext, ligl, liga, ivs);
       /*set_liga_glyphs(ofp);*/
     }
+  ofp->nglyphs -= offset;
 }
 
 #if 0
