@@ -137,6 +137,8 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 			  else
 			    mesg_verr(&ip->mloc, "untyped @list or @lref");
 
+			  const char *feat = (lp->feat ? (ccp)lp->feat : "");
+
 			  struct sl_unicode *u = (ip->type == 's' ? &ip->u.s->U : &ip->u.f->sign->U);
 			  if (u->uhex)
 			    code = u->uhex;
@@ -160,11 +162,11 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 				ucun = u->utf8;
 			    }
 			  struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
-			  fprintf(f, "%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s\n", ldp->names[j],
+			  fprintf(f, "%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s\t%s\n", ldp->names[j],
 				  ip->type == 's' ? ip->u.s->oid : ip->u.f->oid,
 				  tp->s,
 				  ip->type == 's' ? ip->u.s->sort : ip->u.f->sort,
-				  name, code, ucun, note);
+				  name, code, ucun, note, feat);
 			}
 		    }
 		  else if (lp->inst)
