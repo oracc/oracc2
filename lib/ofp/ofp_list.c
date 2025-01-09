@@ -20,7 +20,22 @@ ofp_list(Ofp *o, const char *l)
       char *t = strchr((ccp)lp[i], '\t');
       *t++ = '\0';
       olp->o = (ccp)t;
+      char *f = strchr(t, '\t');
+      if (f)
+	{
+	  ++f;
+	  if (*f)
+	    olp->f = f;
+	}
       olp->s = i;
-      hash_add(o->h_list, (uccp)olp->o, olp);
+      Ofp_list *h = hash_find(o->h_list, (uccp)olp->o);
+      if (h)
+	{
+	  while (h->next)
+	    h = h->next;
+	  h->next = olp;
+	}
+      else
+	hash_add(o->h_list, (uccp)olp->o, olp);
     }
 }

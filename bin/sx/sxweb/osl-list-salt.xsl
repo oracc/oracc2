@@ -3,7 +3,7 @@
     xmlns:ofp="http://oracc.org/ns/ofp/1.0"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xh="http://www.w3.org/1999/xhtml">
-  <xsl:key name="ofp-sign" match="ofp:sign" use="@list"/>
+  <xsl:key name="ofp-sign" match="ofp:list" use="@l"/>
   <xsl:param name="ofpx"/>
   <xsl:template match="xh:tr">
     <xsl:copy>

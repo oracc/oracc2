@@ -18,9 +18,21 @@ ofp_marshall(Ofp *ofp)
 	 under curr_sp */
       if (strcmp(curr_sp->glyph->key, gp(i)->key))
 	{
-	  curr_sp = memo_new(ofp->m_sign);
-	  curr_sp->glyph = gp(i);
-	  hash_add(ofp->h_sign, (uccp)gp(i)->key, curr_sp);
+#if 1
+	      curr_sp = memo_new(ofp->m_sign);
+	      curr_sp->glyph = gp(i);
+	      hash_add(ofp->h_sign, (uccp)gp(i)->key, curr_sp);
+#else
+	  /* .liga come first in glyphs and .liga.1 come last--this
+	     allows .liga.1 to find its parent despite not being
+	     sorted */
+	  if (!(curr_sp = hash_find(ofp->h_sign, (uccp)gp(i)->key)))
+	    {
+	      curr_sp = memo_new(ofp->m_sign);
+	      curr_sp->glyph = gp(i);
+	      hash_add(ofp->h_sign, (uccp)gp(i)->key, curr_sp);
+	    }
+#endif
 	}
       if (gp(i)->ligl && strlen(gp(i)->key) < strlen(gp(i)->liga))
 	{

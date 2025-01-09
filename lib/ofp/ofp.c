@@ -52,9 +52,9 @@ ofp_glyph_cmp(const void *a, const void *b)
       if (ap->liga && bp->liga && (ret = strcmp(ap->liga,bp->liga)))
 	return ret;
       else if (ap->liga)
-	return 1;
-      else if (bp->liga)
 	return -1;
+      else if (bp->liga)
+	return 1;
       
       return strcmp(ap->name, bp->name);
     }

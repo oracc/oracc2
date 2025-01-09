@@ -10,7 +10,7 @@ if [ -s $f.oin ]; then
     list=`grep @list $f.def | cut -f2`
     if [ "$list" != "" ]; then
 	larg="-l$list"
-	grep ^$list sl/lists.tsv | cut -f1-2 >$list.tsv
+	grep ^$list sl/lists.tsv | cut -f1-2,9 >$list.tsv
     fi
     echo $bin/ofpx $larg -t$f.ofp -x$f.ofpx '<'$f.oin
     $bin/ofpx $larg -t$f.ofp -x$f.ofpx <$f.oin

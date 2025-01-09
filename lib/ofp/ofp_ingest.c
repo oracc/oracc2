@@ -40,21 +40,30 @@ ofp_ingest(Ofp *ofp)
       Ofp_feature f = OFPF_BASE;
       const char *ext = NULL;
       char *liga = strstr((ccp)lp[i], "<-");
+      if (!liga)
+	{
+	  if (strstr(name, ".liga"))
+	    {
+	      /* set liga as though there were a <- LIGA component */
+	      liga = (char*)pool_copy((uccp)name, ofp->p);
+	      char *ldot = strchr(liga, '.');
+	      *ldot = '\0';
+	    }
+	}
+      else
+	{
+	  liga += 2;
+	  while (isspace(*liga))
+	    ++liga;
+	}
       char *ligl = NULL;
       const char *fcode = NULL;
       char *ucode = NULL;
       const char *ivs = NULL;
       if (liga)
 	{
-	  char *e = liga;
-	  while (isspace(e[-1]))
-	    --e;
-	  *e = '\0';
-	  liga += 2;
-	  while (isspace(*liga))
-	    ++liga;
 	  hash_add(ofp->h_liga, (uccp)name, &ofp->glyphs[i]);
-	  char lig[strlen(liga)], *l;
+	  char lig[strlen(liga)+1], *l;
 	  strcpy(lig, liga);
 	  l = strchr(lig, '_');
 	  *l = '\0';
@@ -63,12 +72,14 @@ ofp_ingest(Ofp *ofp)
 	  /* Now lp is the glyph name (may have double
 	     extension, e.g., AGRIG.liga.ss01); lig is the lead
 	     ligature element; liga is the ligature sequence */
-	  char *dot = strrchr((ccp)lp, '.');
-	  if (dot && strcmp(dot, ".liga")) /* .liga is left as part of the name */
+	  char *dot = strrchr(name, '.');
+	  if (dot && strcmp(dot, ".liga"))
 	    {
 	      *dot++ = '\0';
 	      ext = dot;
 	      f = ext_type(dot);
+	      if ((dot = strchr(dot, '.')))
+		*dot = '\0';
 	    }
 
 	  if ((ivs = strstr(liga, "_uE01")))
@@ -92,18 +103,18 @@ ofp_ingest(Ofp *ofp)
 	  else
 	    {
 	      /* UCODE.FEAT e.g., u12345.ss01, etc. */
-	      ucode = (char*)ucode_from_name(ofp, name);
-	      if (!ucode || !unicode_value(ucode))
-		{
-		  name = "-";
-		  ucode = "0000";
-		}
 	      char *dot = strchr(name, '.');
 	      if (dot)
 		{
 		  *dot++ = '\0';
 		  ext = dot;
 		  f = ext_type(dot);
+		}
+	      ucode = (char*)ucode_from_name(ofp, name);
+	      if (!ucode || !unicode_value(ucode))
+		{
+		  /*name = "-";*/
+		  ucode = "0000";
 		}
 	    }
 	}
@@ -314,7 +325,7 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
       else
 	{
 	  gp(i)->osl = NULL;
-	  if (gp(i)->code)
+	  if (gp(i)->code && strcmp(code, "0000"))
 	    gp(i)->key = gp(i)->code;
 	  else
 	    gp(i)->key = gp(i)->name;

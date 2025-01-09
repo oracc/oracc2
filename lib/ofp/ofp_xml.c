@@ -131,6 +131,37 @@ xid_of(Ofp *o, Ofp_glyph *gp)
 }
 
 static void
+list_features(char *f, List **salt, List **sset, List **cvnn)
+{
+  List *sa = list_create(LIST_SINGLE), *ss = list_create(LIST_SINGLE), *cv = list_create(LIST_SINGLE);
+  while (*f)
+    {
+      while (isspace(*f))
+	*f++ = '\0';
+      if ('.' == *f)
+	list_add(sa, ++f);
+      else if ('s' == *f)
+	list_add(ss, f);
+      else if ('c' == *f)
+	list_add(cv, f);
+      while (!isspace(*f))
+	++f;
+    }
+  if (list_len(sa))
+    *salt = sa;
+  else
+    *salt = NULL;
+  if (list_len(ss))
+    *sset = ss;
+  else
+    *sset = NULL;
+  if (list_len(cv))
+    *cvnn = cv;
+  else
+    *cvnn = NULL;
+}
+
+static void
 xml_sign(Ofp *ofp, const char *sn, FILE *fp)
 {
   Ofp_sign *osp = hash_find(ofp->h_sign, (uccp)sn);
@@ -168,12 +199,38 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
       Ofp_list *olp = NULL;
       fprintf(fp, " oid=\"%s\" n=\"%s\" sort=\"%d\"",
 	      osp->glyph->osl->o, xmlify(osp->glyph->osl->n), osp->glyph->osl->s);
-      if (ofp->list && (olp = hash_find(ofp->h_list, (uccp)osp->glyph->osl->o)))
-	fprintf(fp, " list=\"%s\" lsort=\"%d\"", olp->l, olp->s);
       fputc('>', fp);
+      if (ofp->list && (olp = hash_find(ofp->h_list, (uccp)osp->glyph->osl->o)))
+	{
+	  fputs("<lists>", fp);
+	  while (olp)
+	    {
+	      fprintf(fp, "<list l=\"%s\" s=\"%d\"", olp->l, olp->s);
+	      if (olp->f)
+		{
+		  fprintf(fp, " f=\"%s\">", olp->f);
+		  List *fsalt, *fsset, *fcvnn;
+		  char *f = strdup(olp->f);
+		  list_features(f, &fsalt, &fsset, &fcvnn);
+		  if (fsset)
+		    xml_list(ofp, fsset, "ssets", "sset", fp);
+		  if (fcvnn)
+		    xml_list(ofp, fcvnn, "cvnns", "cvnn", fp);
+		  if (fsalt)
+		    xml_list(ofp, fsalt, "salts", "salt", fp);
+		  free(f);
+		}
+	      else
+		fputc('>', fp);
+	      fputs("</list>", fp);
+	      olp = olp->next;
+	    }
+	  fputs("</lists>", fp);	  
+	}
     }
   else
     fputc('>', fp);
+
   if (osp->ssets)
     xml_list(ofp, osp->ssets, "ssets", "sset", fp);
   if (osp->cvnns)

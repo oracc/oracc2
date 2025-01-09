@@ -71,7 +71,9 @@ typedef struct Ofp_list
 {
   const char *l; /* list */
   const char *o; /* oid */
+  const char *f; /* OT features */
   int s; /* sort code */
+  struct Ofp_list *next;
 } Ofp_list;
 
 typedef struct ofp_bv_arg { Ofp *o; const char *code; FILE *fp; } ofp_bv_arg;
