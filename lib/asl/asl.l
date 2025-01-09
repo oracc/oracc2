@@ -71,11 +71,12 @@ OTFEAT		{OTF}([ \t\n]+{OTF})*
 LIGATURE       	({GRAPHEME}|{COMPOUND})([-\+]({GRAPHEME}|{COMPOUND}))+
 LIGAFONT	(u[0-9A-F]+)(_u[0-9A-F]+)+
 UTF8SEQ		([\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xec][\x80-\xbf][\x80-\xbf]|\xed[\x80-\x9f][\x80-\xbf]|[\xee\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf])
-LIGAUCUN	{UTF8SEQ}+
+UTF8UCUN	{UTF8SEQ}+
 
 %s E
 %x G
 %s L
+%s LES
 %s S
 %s T
 %x Y
@@ -96,11 +97,16 @@ LIGAUCUN	{UTF8SEQ}+
 
 <G>{LIGATURE}/[ \t]+         	{ aslsave; return LIGATURE; }
 <G>{LIGAFONT}/[ \t]+		{ aslsave; return LIGAFONT; }
-<G>{LIGAUCUN}/[ \t\n]	       	{ aslsave; BEGIN 0 ;return LIGAUCUN; }
+<G>{UTF8UCUN}/[ \t\n]	       	{ aslsave; BEGIN 0 ;return LIGAUCUN; }
 <G>[ \t]			{ }
 <G>\n		       		{ BEGIN(0); }
 
 <L>{LISTNAME}/[ \t]+         	{ aslsave; BEGIN(S); return LISTNAME; }
+
+<LES>{UTF8UCUN}			{ aslsave; return UTOKEN; }
+<LES>@[^ \t\n]+			{ aslsave; return TEXT; }
+<LES>{OTFEAT}			{ aslsave; return OTFEAT; }
+<LES>\n@			{ BEGIN 0; }
 
 <S>[ \t]+			{ BEGIN T; }
 
@@ -142,7 +148,7 @@ LIGAUCUN	{UTF8SEQ}+
 ^@nosign/[ \t]     		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@nosign' has been replaced by '@sign-'");
 				  /*atcmd(SIGN,-1);*/ }
 ^@liga-?/[ \t]       		{ atcmd(LIGA,G); }
-^@list-?/[ \t]       		{ atcmd(LIST,0); }
+^@list-?/[ \t]       		{ atcmd(LIST,LES); }
 ^@form[-+]?/[ \t]              	{ atcmd(FORM,0); }
 ^@noform/[ \t]         		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@noform' has been replaced by '@form-'");
 				  /* atcmd(FORM,-1);*/ }
@@ -165,7 +171,7 @@ LIGAUCUN	{UTF8SEQ}+
 ^@uage/[ \t]+			{ Tcmd(UAGE,S); }
 ^@upua/[ \t]+			{ Tcmd(UPUA,S); }
 ^@fake[ \t]+1[ \t]*/\n		{ return FAKE; }
-^@lref/[ \t]+			{ atcmd(LREF,0); }
+^@lref/[ \t]+			{ atcmd(LIST,0); }
 ^@sref/[ \t]+			{ atcmd(SREF,0); }
 
 ^@[a-z]+         		{ BEGIN 0; mesg_vwarning(curraslfile, asllineno,

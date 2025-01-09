@@ -817,7 +817,8 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
 }
 
 void
-asl_bld_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int minus_flag, const unsigned char *feat)
+asl_bld_list(Mloc *locp, struct sl_signlist *sl, const char *listlref, const unsigned char *n, int minus_flag, const unsigned char *feat,
+	     unsigned const char *sname, unsigned const char *uniimg, unsigned const char *values)
 {
   if (asl_sign_guard(locp, sl, "list"))
     {

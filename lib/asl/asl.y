@@ -34,14 +34,14 @@ int minus_flag = 0;
 		INOTE LIT NOTE REF TEXT END EBAD
 		ESIGN EPCUN EXSUX EFORM
 		UAGE USEQ UTF8 UMAP UNAME UNOTE UPUA
-		SIGNLIST PROJECT DOMAIN LISTDEF LISTNAME LREF SREF
+		SIGNLIST PROJECT DOMAIN LISTDEF LISTNAME SREF
 		SYSDEF SYSNAME SYS SYSGOESTO SYSTEXT
 		SMAP LITERAL IMAGES MERGE OID
 		LINKDEF LINK
 		LIGA LIGATURE LIGAFONT LIGAUCUN
-		SCRIPTDEF SCRIPT
+		SCRIPTDEF SCRIPT UTOKEN
 
-%nterm  <text>  anynote atftoken atftokens lang longtext token
+%nterm  <text>  anynote atftoken atftokens lang longtext token uniimg utoken utokens
 
 %start fields
 
@@ -80,7 +80,6 @@ atcmd:
 	| atsysdef
 	| atimages
 	| atsign
-        | atlref
         | atsref
         | atoid
         | ataka
@@ -177,20 +176,39 @@ atlink:
 	  LINK SYSNAME SYSTEXT	{ asl_bld_link(&@1, curr_asl, (ccp)$2, (uccp)$3, NULL); }
 	;
 
+utoken:   UTOKEN		
+	;
+
+utokens:  utoken		{ $$ = longtext(curr_asl, $1, NULL); }
+	| utokens utoken	{ $$ = longtext(curr_asl, $1, $2); }
+	;
+
+uniimg:   utokens
+	| TEXT			{ $$ = curr_asl; }
+	;
+
 atlist:
-	  LIST LISTNUM		{ asl_bld_list(&@1, curr_asl, (uccp)$2, minus_flag, NULL); }
-	| LIST LISTNUM OTFEAT	{ asl_bld_list(&@1, curr_asl, (uccp)$2, minus_flag, (uccp)$3); }
+	  LIST LISTNUM
+		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, NULL, NULL, NULL, NULL); }
+	| LIST LISTNUM OTFEAT	
+		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, (uccp)$3, NULL, NULL, NULL); }
+	| LIST LISTNUM ':' token uniimg atftokens
+		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, NULL, (uccp)$4, (uccp)$5, (uccp)$6); }
+	| LIST LISTNUM ':' token uniimg atftokens OTFEAT
+		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, (uccp)$4, (uccp)$5, (uccp)$6, (uccp)$7); }
 	;
 
 atliga:
           LIGA 	LIGATURE LIGAFONT LIGAUCUN { asl_bld_liga(&@1, curr_asl, (uccp)$2, (uccp)$3, (uccp)$4); }
 	;
 
+/*
 atlref:
 	  LREF LISTNUM 	 { asl_bld_tle(&@1, curr_asl, (uccp)$2, NULL, sx_tle_lref); }
 	| LREF LISTNUM GOESTO atftoken
 			 { asl_bld_tle(&@1, curr_asl, (uccp)$2, (uccp)$4, sx_tle_lref); }
 	;
+*/
 
 atsref:
 	SREF atftoken GOESTO atftokens { asl_bld_tle(&@1, curr_asl, (uccp)$2, (uccp)longtext(NULL,NULL,NULL), sx_tle_sref); }

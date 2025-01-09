@@ -17,6 +17,6 @@ osl:
 	(cd ../../../bin/xx/fonts ; make)
 	(cd ../../../bin/xx/fonts ; sudo make install)
 	(cd ../../../msc/fonts ; make)
-	(cd ../../../msc/fonts ; sudo make install)
+	(cd ../../../msc/fonts ; sudo -E make install)
 	@./osl-page-update.sh
 	@./osl-site-update.sh
