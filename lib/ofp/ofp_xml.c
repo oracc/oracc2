@@ -63,6 +63,16 @@ xml_list(Ofp *ofp, List *lp, const char *gtag, const char *itag, FILE *fp)
   fprintf(fp, "</%s>", gtag);
 }
 
+static void
+xml_list2(Ofp *ofp, List *lp, const char *gtag, const char *itag, FILE *fp)
+{
+  fprintf(fp, "<%s>", gtag);
+  const char *f;
+  for (f = list_first(lp); f; f = list_next(lp))
+    fprintf(fp, "<%s>%s</%s>", itag, f, itag);
+  fprintf(fp, "</%s>", gtag);
+}
+
 static const char *
 xutf8_useq(Ofp *o, const char *useq, int zwnj)
 {
@@ -144,7 +154,7 @@ list_features(char *f, List **salt, List **sset, List **cvnn)
 	list_add(ss, f);
       else if ('c' == *f)
 	list_add(cv, f);
-      while (!isspace(*f))
+      while (*f && !isspace(*f))
 	++f;
     }
   if (list_len(sa))
@@ -213,11 +223,20 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
 		  char *f = strdup(olp->f);
 		  list_features(f, &fsalt, &fsset, &fcvnn);
 		  if (fsset)
-		    xml_list(ofp, fsset, "ssets", "sset", fp);
+		    {
+		      xml_list2(ofp, fsset, "ssets", "sset", fp);
+		      list_free(fsset, NULL);
+		    }
 		  if (fcvnn)
-		    xml_list(ofp, fcvnn, "cvnns", "cvnn", fp);
+		    {
+		      xml_list2(ofp, fcvnn, "cvnns", "cvnn", fp);
+		      list_free(fcvnn, NULL);
+		    }
 		  if (fsalt)
-		    xml_list(ofp, fsalt, "salts", "salt", fp);
+		    {
+		      xml_list2(ofp, fsalt, "salts", "salt", fp);
+		      list_free(fsalt, NULL);
+		    }		      
 		  free(f);
 		}
 	      else

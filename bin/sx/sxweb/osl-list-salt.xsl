@@ -12,17 +12,25 @@
       <xsl:variable name="c" select="xh:td[4]/@class"/>
       <xsl:variable name="u" select="xh:td[4]/text()"/>
       <xsl:for-each select="document($ofpx)">
-	<xsl:variable name="salts" select="key('ofp-sign', $l)/ofp:salts"/>
+	<xsl:variable name="lnode" select="key('ofp-sign', $l)"/>
 	<td>
-	  <xsl:if test="count($salts)>0">
-	    <xsl:for-each select="$salts/*">
-	      <xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
-			    /><span class="{$c} salt{.}"
-			    ><xsl:value-of select="$u"/></span>
-	      <xsl:if test="not(position()=last())"><xsl:text>, </xsl:text></xsl:if>
-	    </xsl:for-each>
-	    <xsl:text>.</xsl:text>
-	  </xsl:if>
+	  <xsl:choose>
+	    <xsl:when test="count($lnode/ofp:salts)>0">
+	      <xsl:for-each select="$lnode/ofp:salts/*">
+		<xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
+			      /><span class="{$c} salt{.}"
+			      ><xsl:value-of select="$u"/></span>
+	      </xsl:for-each>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:for-each select="$lnode/../ofp:salts/*">
+		<xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
+			      /><span class="list-salt {$c} salt{.}"
+			      ><xsl:value-of select="$u"/></span>
+		<xsl:text> </xsl:text>
+	      </xsl:for-each>
+	    </xsl:otherwise>
+	  </xsl:choose>
 	</td>
       </xsl:for-each>
       <xsl:copy-of select="*[5]|*[6]"/>

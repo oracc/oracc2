@@ -23,7 +23,7 @@ ofp_list(Ofp *o, const char *l)
       char *f = strchr(t, '\t');
       if (f)
 	{
-	  ++f;
+	  *f++ = '\0';
 	  if (*f)
 	    olp->f = f;
 	}
