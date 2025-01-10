@@ -43,6 +43,8 @@
 	  <dd><xsl:value-of select="sl:lit"/></dd>
 	  <dt class="dt-sub">Numbers:</dt>
 	  <dd><xsl:value-of select="sl:info"/></dd>
+	  <dt class="dt-sub">Missing</dt>
+	  <dd><xsl:copy-of select="document(concat('missing-',@name,'.xml'),/)"/></dd>
 	  <xsl:if test="sl:note">
 	    <dt>class="dt-sub">Notes:</dt>
 	    <dd><xsl:value-of select="sl:note"/></dd>

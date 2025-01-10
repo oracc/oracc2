@@ -10,6 +10,6 @@ scriptdata_DATA=sxweb-signs.xsl sl-map-js.xsl sl-oid-data.xsl		\
 	sxweb-mcol.xsl sxweb-oid-tab.xsl sxweb-overview.xsl		\
 	sxweb-page-o-signs.xsl sxweb-period.xsl sxweb-sortorder.xsl	\
 	sxweb-structure.xsl sxweb-sws-sel.xsl sxweb-tis.xsl		\
-	sxweb-util.xsl sl-jsmap-data.xsl sxw-list-pages.xsl osl-list-salt.xsl
+	sxweb-util.xsl sl-jsmap-data.xsl sxw-list-pages.xsl sxw-list-table.xsl
 
 data_DATA=*.css *.html *.xml *.js list-fonts.tsv

@@ -26,6 +26,13 @@ if [ -r $asl ]; then
     lists=`cat $dir/listnames.lst`
     for a in $lists; do
 	grep $a'[0-9]' $dir/missing.out | pr -t -5 -l 1000 >$dir/missing-$a.txt
+	if [ ! -s $dir/missing-$a.txt ]; then
+	    echo '(none)' >$dir/missing/$a.txt
+	fi
+	x=02xml/missing-$a.xml
+	echo '<pre>' >$x
+	cat $dir/missing-$a.txt >>$x
+	echo '</pre>' >>$x
     done
     exit 0
 else

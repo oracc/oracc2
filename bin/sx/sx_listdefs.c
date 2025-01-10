@@ -154,6 +154,21 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
   n = hash_keys2(sl->listdefs, &nn);
   qsort(n, nn, sizeof(const char *), cmpstringp);
   int i;
+  fputs("name"
+	"\toid"
+	"\tlsort"
+	"\tsfsort"
+	"\tsfname"
+	"\tucode"
+	"\tucun"
+	"\tnote"
+	"\tlfeat"
+	"\tlsname"
+	"\tlucun"
+	"\tlimage"
+	"\tlvalues"
+	"\n",
+	f);
   for (i = 0; n[i]; ++i)
     {
       if (list_names_mode)

@@ -9,13 +9,11 @@ do
 	echo processing list $l using font $f
 	grep "^$l[0-9]" 02pub/lists.tsv | sort -u \
 	    | sort -t'	' -n -k3 >01tmp/$l.tsv
-	rocox -h -x table -n \
-	      -R'<tr><td>%1</td><td>%5</td><td class="ofs-noto ofs-150">%7</td><td class="ofs-'$f' ofs-200">%7</td><td>%6</td><td>%9</td></tr>' \
-	      <01tmp/$l.tsv | \
-	    xsltproc -stringparam ofpx $ORACC/lib/data/*$l.ofpx \
-		     $ORACC/lib/scripts/osl-list-salt.xsl \
-		     - \
-		     >02xml/$l.xml
+	rocox -f -x list -r entry <sx-lists.out >01tmp/$l.xml
+	xsltproc -stringparam ofpx $ORACC/lib/data/*$l.ofpx \
+		 -stringparam font $f \
+		 $ORACC/lib/scripts/sxw-list-table.xsl 01tmp/$l.xml \
+		 >02xml/$l.xml
     fi
 done < $ORACC/lib/data/list-fonts.tsv 
 xsltproc $ORACC/lib/scripts/sxw-list-pages.xsl 02xml/sl.xml
