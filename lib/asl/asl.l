@@ -76,7 +76,7 @@ UTF8UCUN	{UTF8SEQ}+
 %s E
 %x G
 %s L
-%s LES
+%x LES
 %s S
 %s T
 %x Y
@@ -103,10 +103,15 @@ UTF8UCUN	{UTF8SEQ}+
 
 <L>{LISTNAME}/[ \t]+         	{ aslsave; BEGIN(S); return LISTNAME; }
 
+<LES>"<"[^ \t\n]+      		{ aslsave; return LISTIMAGE; }
+<LES>{LISTNUM}   	 	{ aslsave; return LISTNUM; }
 <LES>{UTF8UCUN}			{ aslsave; return UTOKEN; }
-<LES>@[^ \t\n]+			{ aslsave; return TEXT; }
+<LES>{GRAPHEME}|{COMPOUND}|{NUMGRAPH} { aslsave; return asl_grapheme(asllval.text); }
 <LES>{OTFEAT}			{ aslsave; return OTFEAT; }
-<LES>\n@			{ BEGIN 0; }
+<LES>[^ \t\n]+			{ aslsave; return ATF; } /* Not really ATF but satisfies the atftoken grammar */
+<LES>[ \t]+			{ }
+<LES>\n/@			{ BEGIN 0; pmatch("###<LES>eol\n"); return EOL; }
+<LES>\n				{ }
 
 <S>[ \t]+			{ BEGIN T; }
 
@@ -192,9 +197,7 @@ UTF8UCUN	{UTF8SEQ}+
 
 {GRAPHEME}|{COMPOUND}          	{ aslsave; return asl_grapheme(asllval.text); }
 
-{LISTNUM}   	 	      	{ aslsave; return LISTNUM; }
-
-{OTFEAT}   	 	      	{ aslsave; return OTFEAT; }
+{LISTNUM}   	 		{ aslsave; return LISTNUM; }
 
 {PHONGRAPH}	       		{ aslsave; return GVALUE; }
 

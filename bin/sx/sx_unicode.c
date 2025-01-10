@@ -540,11 +540,11 @@ sx_unicode_useq(const char *m, Pool *p)
 	  x = hash_find(usigns, s);
 	  if (!x)
 	    {
-	      if ('<' == s[1] && '>' == s[strlen(s)-2])
+	      if ('<' == s[1] && '>' == s[strlen((ccp)s)-2])
 		{
-		  char ss[strlen(s)];
+		  char ss[strlen((ccp)s)];
 		  *ss = '#';
-		  strcpy(ss+1,s+2);
+		  strcpy(ss+1,(ccp)s+2);
 		  ss[strlen(ss)-2] = '#';
 		  ss[strlen(ss)-1] = '\0';
 		  char *h = ss+1;
@@ -554,8 +554,8 @@ sx_unicode_useq(const char *m, Pool *p)
 			*h = '#';
 		      ++h;
 		    }
-		  if ((x = hash_find(usigns, ss)))
-		    s = pool_copy(ss, p);
+		  if ((x = hash_find(usigns, (uccp)ss)))
+		    s = pool_copy((uccp)ss, p);
 		}
 	    }
 	  if (!x)

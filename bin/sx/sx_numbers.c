@@ -184,7 +184,7 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
     {
       const char *o = hash_find(oids, np->set);
       if (o)
-	np->ref = np->oid = o;
+	np->ref = np->oid = (uccp)o;
       else
 	fprintf(stderr, "sx_number: np->ref==NULL for %s\n", tp->t);
     }

@@ -30,7 +30,7 @@ int minus_flag = 0;
 %token	<text>  TOK TRANS TAB EOL PAR BAD LINE SIGLUM
 		SIGN PCUN XSUX FAKE AKA COMP PNAME FORM NOFORM
 		GNAME GVALUE GVALUEX GOESTO
-		GBAD ATF LANG V LIST LISTNUM OTFEAT
+		GBAD ATF LANG V LIST LISTNUM OTFEAT LISTIMAGE
 		INOTE LIT NOTE REF TEXT END EBAD
 		ESIGN EPCUN EXSUX EFORM
 		UAGE USEQ UTF8 UMAP UNAME UNOTE UPUA
@@ -165,7 +165,7 @@ atsmap:
 	;
 
 atcomp:
-	  COMP token	 { asl_bld_tle(&@1, curr_asl, (uccp)$2, NULL, sx_tle_componly); }
+	  COMP token	 { (void)asl_bld_tle(&@1, curr_asl, (uccp)$2, NULL, sx_tle_componly); }
 	;
 
 atpname:
@@ -184,18 +184,20 @@ utokens:  utoken		{ $$ = longtext(curr_asl, $1, NULL); }
 	;
 
 uniimg:   utokens
-	| TEXT			{ $$ = curr_asl; }
+	| LISTIMAGE			{ $$ = $1; }
 	;
 
 atlist:
 	  LIST LISTNUM
-		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, NULL, NULL, NULL, NULL); }
-	| LIST LISTNUM OTFEAT	
-		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, (uccp)$3, NULL, NULL, NULL); }
-	| LIST LISTNUM ':' token uniimg atftokens
-		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, NULL, (uccp)$4, (uccp)$5, (uccp)$6); }
-	| LIST LISTNUM ':' token uniimg atftokens OTFEAT
-		{ asl_bld_list(&@1, curr_asl, (uccp)$1, (uccp)$2, minus_flag, (uccp)$4, (uccp)$5, (uccp)$6, (uccp)$7); }
+		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, NULL, NULL, NULL); }
+	| LIST LISTNUM OTFEAT
+		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, (uccp)$3, NULL, NULL, NULL); }
+	| LIST LISTNUM LISTIMAGE
+		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, (uccp)$3, NULL, NULL); }
+	| LIST LISTNUM token uniimg atftokens
+		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, (uccp)$3, (uccp)$4, (uccp)longtext(NULL,NULL,NULL)); }
+	| LIST LISTNUM token uniimg atftokens OTFEAT
+		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, (uccp)$3, (uccp)$4, (uccp)longtext(NULL,NULL,NULL), (uccp)$6); }
 	;
 
 atliga:
@@ -211,7 +213,7 @@ atlref:
 */
 
 atsref:
-	SREF atftoken GOESTO atftokens { asl_bld_tle(&@1, curr_asl, (uccp)$2, (uccp)longtext(NULL,NULL,NULL), sx_tle_sref); }
+	SREF atftoken GOESTO atftokens { (void)asl_bld_tle(&@1, curr_asl, (uccp)$2, (uccp)longtext(NULL,NULL,NULL), sx_tle_sref); }
 	;
 
 atform:
@@ -232,8 +234,8 @@ atsys:
         ;
 
 atftokens:
-	  atftoken		{ $$ = longtext(curr_asl, $1, NULL); }
-	| atftokens atftoken	{ $$ = longtext(curr_asl, $1, $2); }
+	  atftoken		{ $$ = longtext_sep(curr_asl, $1, NULL, " "); }
+	| atftokens atftoken	{ $$ = longtext_sep(curr_asl, $1, $2, " "); }
 	;
 
 atftoken:

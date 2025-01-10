@@ -23,10 +23,8 @@ aslyacc(const char *file)
   return curr_asl;
 }
 
-/**If t and a are both NULL return n; else if a is NULL initialize to t; else append a to t.
- */
 char *
-longtext(struct sl_signlist *sl, char *t, char *a)
+longtext_sep(struct sl_signlist *sl, char *t, char *a, const char *sep)
 {
   static char *n;
   char *ret = NULL;
@@ -37,7 +35,7 @@ longtext(struct sl_signlist *sl, char *t, char *a)
 	++a;
       n2 = (char*)pool_alloc(strlen(t)+strlen(a)+3, sl->p);
       strcpy(n2,n);
-      strcat(n2,"\n\t");
+      strcat(n2,sep);
       strcat(n2, a);
       ret = n = n2;
     }
@@ -49,4 +47,12 @@ longtext(struct sl_signlist *sl, char *t, char *a)
       n = NULL;
     }
   return ret;
+}
+
+/**If t and a are both NULL return n; else if a is NULL initialize to t; else append a to t.
+ */
+char *
+longtext(struct sl_signlist *sl, char *t, char *a)
+{
+  return longtext_sep(sl, t, a, "\n\t");
 }

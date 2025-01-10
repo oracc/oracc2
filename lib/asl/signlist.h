@@ -499,6 +499,10 @@ struct sl_list
   const unsigned char *name;
   const unsigned char *base;
   const unsigned char *num;
+  const unsigned char *sname;
+  const unsigned char *ucun;
+  const unsigned char *imagefile;
+  const unsigned char *values;
   const unsigned char *feat; /* OpenType features string, e.g., .1
 				.ss01 .cv32; concatenated to U+ value
 				for @list entry */
@@ -594,7 +598,7 @@ extern void asl_bld_smap(Mloc *locp, struct sl_signlist *sl, const unsigned char
 extern void asl_bld_pname(Mloc *locp, struct sl_signlist *sl, const unsigned char *t);
 extern void asl_bld_comp(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int list);
 
-extern void asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *m, enum sx_tle type);
+extern struct sl_list* asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *m, enum sx_tle type);
 extern void asl_bld_sign(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
 extern void asl_bld_pcun(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);
 extern void asl_bld_xsux(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,int minus_flag);

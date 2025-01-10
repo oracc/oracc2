@@ -102,11 +102,11 @@ asl_bld_init(void)
   sl->h_compoids = hash_create(1024);
   sl->m_tokens = memo_init(sizeof(struct sl_token), 1024);
   sl->m_letters = memo_init(sizeof(struct sl_letter), 32);
-  sl->m_groups = memo_init(sizeof(struct sl_letter), 128);
+  sl->m_groups = memo_init(sizeof(struct sl_group), 128);
   sl->m_signs = memo_init(sizeof(struct sl_sign),512);
   sl->m_signs_p = memo_init(sizeof(struct sl_sign*),512);
   sl->m_forms = memo_init(sizeof(struct sl_form),512);
-  sl->m_lists = memo_init(sizeof(struct sl_value),256);
+  sl->m_lists = memo_init(sizeof(struct sl_list),256);
   sl->m_values = memo_init(sizeof(struct sl_value),1024);
   sl->m_insts = memo_init(sizeof(struct sl_inst),1024);
   sl->m_insts_p = memo_init(sizeof(struct sl_inst*),512);
@@ -121,7 +121,7 @@ asl_bld_init(void)
   sl->m_scriptdefs = memo_init(sizeof(struct sl_scriptdef), 8);
   sl->m_scriptdata = memo_init(sizeof(struct sl_scriptdata), 128);
   sl->m_links = memo_init(sizeof(Link), 512);
-  sl->m_ligas = memo_init(sizeof(Link), 8);
+  sl->m_ligas = memo_init(sizeof(struct sl_liga), 8);
   sl->p = pool_init();
   sl->compounds = list_create(LIST_SINGLE);
   sl->componly = list_create(LIST_SINGLE);
@@ -741,8 +741,8 @@ asl_list_lref_guard(Mloc *locp, struct sl_signlist *sl, unsigned const char *n, 
     }
   return 0;
 }
-static void
-asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit, int q, int m, const unsigned char *feat)
+static struct sl_list *
+asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit, int q, int m)
 {
   struct sl_list *l = NULL;
   struct sl_inst *i = new_inst(sl);
@@ -756,7 +756,7 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
   /*sl->curr_inst = i;*/
 
   if (asl_list_lref_guard(locp, sl, n, sl_ll_list))
-    return;
+    return NULL;
 
   /* If this list is already in the lists hash for the sign or the form-instance it's an error */
   if (sl->curr_form)
@@ -788,7 +788,6 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
 	{
 	  l = memo_new(sl->m_lists);
 	  l->name = n;
-	  l->feat = feat;
 	  l->insts = list_create(LIST_SINGLE);
 	  l->type = sl_ll_list;
 	  list_add(l->insts, parent_inst);
@@ -814,13 +813,21 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
       hash_add(sl->curr_sign->hlentry, l->name, i);
       /*list_add(l->insts, sl->curr_sign->inst);*/
     }
+
+  return l;
 }
 
 void
-asl_bld_list(Mloc *locp, struct sl_signlist *sl, const char *listlref, const unsigned char *n, int minus_flag, const unsigned char *feat,
-	     unsigned const char *sname, unsigned const char *uniimg, unsigned const char *values)
+asl_bld_list(Mloc *locp, struct sl_signlist *sl, const char *listlref, const unsigned char *n, int minus_flag,
+	     const unsigned char *feat, unsigned const char *sname, unsigned const char *uniimg, unsigned const char *values)
 {
-  if (asl_sign_guard(locp, sl, "list"))
+  struct sl_list *lp = NULL;
+  
+  if (!strcmp(listlref, "@lref"))
+    {
+      lp = asl_bld_tle(locp, curr_asl, n, NULL, sx_tle_lref);
+    }
+  else if (asl_sign_guard(locp, sl, "list"))
     {
       int literal, query = 0;
 
@@ -829,15 +836,25 @@ asl_bld_list(Mloc *locp, struct sl_signlist *sl, const char *listlref, const uns
       (void)asl_bld_token(locp, sl, (ucp)n, 1);
   
       if (sl->curr_form)
-	asl_add_list(locp, sl, n, literal, query, minus_flag, feat);
+	lp = asl_add_list(locp, sl, n, literal, query, minus_flag);
       else
-	asl_add_list(locp, sl, n, literal, query, minus_flag, feat);
+	lp = asl_add_list(locp, sl, n, literal, query, minus_flag);
 
       /* U+ list entries are both lists and uhex; they are specialcased on
 	 output and emitted only as @list U+ but within the Unicode
 	 block */
       if ('U' == n[0] && '+' == n[1])
 	asl_bld_uhex(locp, sl, n);
+    }
+  if (lp)
+    {
+      lp->sname = sname;
+      if (uniimg && '<' == *uniimg)
+	lp->imagefile = uniimg;
+      else
+	lp->ucun = uniimg;
+      lp->values = values;
+      lp->feat = feat;
     }
 }
 
@@ -1129,7 +1146,7 @@ asl_bld_pname(Mloc *locp, struct sl_signlist *sl, const unsigned char *t)
 /* Top-level entities other than sign set sl->curr_inst to host
    metadata but NULL-out sl->curr-sign because it's an error for them
    to have values */
-void
+struct sl_list *
 asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *m, enum sx_tle type)
 {
   if (type == sx_tle_componly && sl->curr_sign)
@@ -1166,6 +1183,8 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
 	      hash_add(sl->hlentry, n, l);
 	      (void)asl_bld_token(locp, sl, (ucp)n, 1);
 	      asl_register_list_item(locp, sl, l);
+	      sl->curr_sign = NULL;
+	      return l;
 	    }
 	}
       else
@@ -1173,6 +1192,7 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
       /* There is no current sign in effect after a tle except for componly in a form */
       sl->curr_sign = NULL;
     }
+  return NULL;
 }
 
 static void

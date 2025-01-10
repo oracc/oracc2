@@ -95,10 +95,58 @@ sx_listdefs(struct sl_signlist *sl, const char *listnames)
   free(names);
 }
 
+static void
+sx_list_row(FILE *f, struct sl_signlist *sl, const unsigned char *name,
+	    struct sl_inst *ip, struct sl_token *tp,
+	    struct sl_unicode *up, struct sl_list *lp,
+	    const unsigned char *note)
+{
+#define nonull(s) (ccp)(s ? (ccp)s : "")
+
+  const char *code = "";
+  const unsigned char *ucun = (uccp)"";
+ 
+  if (up->uhex)
+    code = up->uhex;
+  else if (up->upua)
+    code = up->upua;
+  else if (up->useq)
+    code = up->useq;
+  if (up->utf8)
+    ucun = up->utf8;
+
+  int sf_sort = 0;
+  unsigned const char *sf_name = (uccp)"";
+  if (ip->type == 's')
+    {
+      sf_sort = ip->u.s->sort;
+      sf_name = ip->u.s->name;
+    }
+  else if (ip->type == 'f')
+    {
+      sf_sort = ip->u.f->sort;
+      sf_name = ip->u.f->name;
+    }  
+  
+  fprintf(f, "%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s", name,
+	  ip->type == 's' ? ip->u.s->oid : ip->u.f->oid,
+	  tp->s, sf_sort, sf_name, code, ucun, nonull(note));
+
+  if (lp)
+    fprintf(f, "\t%s\t%s\t%s\t%s\t%s", nonull(lp->feat), nonull(lp->sname),
+	    nonull(lp->ucun), nonull(lp->imagefile), nonull(lp->values));
+  else
+    fputs("\t\t\t\t", f);
+
+  fputc('\n', f);
+
+#undef nonull
+}
+
 /* Dump either the names in @listdef tags or the numbers defined in
    all the listdefs */
 void
-sx_list_dump(FILE *f, struct sl_signlist *sl)  
+sx_list_dump(FILE *f, struct sl_signlist *sl)
 {
   extern int list_names_mode, list_warnings;
   const char **n = NULL;
@@ -123,50 +171,21 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 	      if (lp)
 		{
 		  struct sl_inst *ip;
-		  unsigned const char *name = (uccp)"", *note = (uccp)"";
-		  const char *code = "";
-		  const unsigned char *ucun = (uccp)"";
+		  unsigned const char *note = (uccp)"";
 		  if (lp->insts)
 		    {
 		      for (ip = list_first(lp->insts); ip; ip = list_next(lp->insts))
 			{
-			  if (lp->type == sl_ll_list)
-			    name = (ip->type == 's') ? ip->u.s->name : ip->u.f->name;
-			  else if (lp->type == sl_ll_lref)
+			  if (lp->type == sl_ll_lref)
 			    mesg_verr(&lp->inst->mloc, "strange: @lref has instances more than just its own (this can't happen)");
-			  else
+			  else if (lp->type != sl_ll_list)
 			    mesg_verr(&ip->mloc, "untyped @list or @lref");
 
-			  const char *feat = (lp->feat ? (ccp)lp->feat : "");
-
 			  struct sl_unicode *u = (ip->type == 's' ? &ip->u.s->U : &ip->u.f->sign->U);
-			  if (u->uhex)
-			    code = u->uhex;
-			  else if (u->upua)
-			    code = u->upua;
-			  else if (u->useq)
-			    code = u->useq;
-			  if (u->utf8)
-			    ucun = u->utf8;
-
-			  if (!code && ip->type == 'f')
-			    {
-			      u = &ip->u.f->U;
-			      if (u->uhex)
-				code = u->uhex;
-			      else if (u->upua)
-				code = u->upua;
-			      else if (u->useq)
-				code = u->useq;
-			      if (u->utf8)
-				ucun = u->utf8;
-			    }
+			  if (!u)
+			    u = &ip->u.f->U;
 			  struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
-			  fprintf(f, "%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s\t%s\n", ldp->names[j],
-				  ip->type == 's' ? ip->u.s->oid : ip->u.f->oid,
-				  tp->s,
-				  ip->type == 's' ? ip->u.s->sort : ip->u.f->sort,
-				  name, code, ucun, note, feat);
+			  sx_list_row(f, sl, (uccp)ldp->names[j], ip, tp, u, lp, NULL);
 			}
 		    }
 		  else if (lp->inst)
@@ -192,7 +211,8 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 		      else
 			mesg_verr(&ip->mloc, "untyped @list or @lref");
 		      struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
-		      fprintf(f, "%s\t\t%d\t0\t\t\t\t\t%s\n", ldp->names[j], tp->s, note);
+		      sx_list_row(f, sl, (uccp)ldp->names[j], ip, tp, NULL, lp, note);
+		      /*fprintf(f, "%s\t\t%d\t0\t\t\t\t\t%s\n", ldp->names[j], tp->s, note);*/
 		    }
 		}
 	      else
@@ -200,7 +220,8 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 		  if (list_warnings)
 		    mesg_verr(&sl->mloc, "list entry %s missing (no @list or @lref)", ldp->names[j]);
 		  struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
-		  fprintf(f, "%s\t\t%d\t0\t\t\t\t\t[Omitted]\n", ldp->names[j], tp->s);
+		  sx_list_row(f, sl, (uccp)ldp->names[j], NULL, tp, NULL, lp, NULL);
+		  /*fprintf(f, "%s\t\t%d\t0\t\t\t\t\t[Omitted]\n", ldp->names[j], tp->s);*/
 		}
 	    }
 	}
