@@ -71,7 +71,8 @@ OTFEAT		{OTF}([ \t\n]+{OTF})*
 LIGATURE       	({GRAPHEME}|{COMPOUND})([-\+]({GRAPHEME}|{COMPOUND}))+
 LIGAFONT	(u[0-9A-F]+)(_u[0-9A-F]+)+
 UTF8SEQ		([\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xec][\x80-\xbf][\x80-\xbf]|\xed[\x80-\x9f][\x80-\xbf]|[\xee\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf])
-UTF8UCUN	{UTF8SEQ}+
+UCUNSEQ		(\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf])
+UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 %s E
 %x G
@@ -111,6 +112,7 @@ UTF8UCUN	{UTF8SEQ}+
 <LES>[^ \t\n]+			{ aslsave; return ATF; } /* Not really ATF but satisfies the atftoken grammar */
 <LES>[ \t]+			{ }
 <LES>\n/@			{ BEGIN 0; pmatch("###<LES>eol\n"); return EOL; }
+<LES>\n/[ \t]*\n	       	{ BEGIN 0; pmatch("###<LES>eol\n"); return EOL; }
 <LES>\n				{ }
 
 <S>[ \t]+			{ BEGIN T; }
@@ -154,6 +156,7 @@ UTF8UCUN	{UTF8SEQ}+
 				  /*atcmd(SIGN,-1);*/ }
 ^@liga-?/[ \t]       		{ atcmd(LIGA,G); }
 ^@list-?/[ \t]       		{ atcmd(LIST,LES); }
+^@lref/[ \t]+			{ atcmd(LIST,LES); }
 ^@form[-+]?/[ \t]              	{ atcmd(FORM,0); }
 ^@noform/[ \t]         		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@noform' has been replaced by '@form-'");
 				  /* atcmd(FORM,-1);*/ }
@@ -176,7 +179,6 @@ UTF8UCUN	{UTF8SEQ}+
 ^@uage/[ \t]+			{ Tcmd(UAGE,S); }
 ^@upua/[ \t]+			{ Tcmd(UPUA,S); }
 ^@fake[ \t]+1[ \t]*/\n		{ return FAKE; }
-^@lref/[ \t]+			{ atcmd(LIST,0); }
 ^@sref/[ \t]+			{ atcmd(SREF,0); }
 
 ^@[a-z]+         		{ BEGIN 0; mesg_vwarning(curraslfile, asllineno,

@@ -10,29 +10,38 @@
   <xsl:param name="ofpx"/>
 
   <xsl:template match="list">
-    <xh:table class="pretty">
+    <table class="pretty list-page">
       <xsl:apply-templates/>
-    </xh:table>
+    </table>
   </xsl:template>
 
   <xsl:template match="entry">
-    <xh:tr>
-      <xh:td><xsl:value-of select="name"/></xh:td>
-      <xh:td><xsl:value-of select="sfname|lsname"/></xh:td>
-      <xh:td>
-	<xsl:if test="ucun|lucun">
-	  <xsl:value-of select="ucun"/>
-	</xsl:if>
-      </xh:td>
-      <xh:td>
+    <tr>
+      <td><xsl:value-of select="name"/></td>
+      <td>
 	<xsl:choose>
-	  <xsl:when test="limage">
+	  <xsl:when test="string-length(lsname)>0">
+	    <xsl:value-of select="lsname"/>
 	  </xsl:when>
 	  <xsl:otherwise>
-	    <xsl:value-of select="ucun|lucun"/>
+	    <xsl:value-of select="sfname"/>
 	  </xsl:otherwise>
 	</xsl:choose>
-      </xh:td>
+      </td>
+      <td><xsl:value-of select="ucun"/></td>
+      <td>
+	<xsl:choose>
+	  <xsl:when test="string-length(lucun)>0">
+	    <span class="{$font} ofs-200"><xsl:value-of select="lucun"/></span>
+	  </xsl:when>
+	  <xsl:when test="string-length(limage)>0">
+	    <xsl:value-of select="limage"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	     <span class="{$font} ofs-200"><xsl:value-of select="ucun"/></span>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </td>
       <xsl:variable name="l" select="name"/>
       <xsl:variable name="c" select="concat($font, ' ofs-200')"/>
       <xsl:variable name="u" select="ucun"/>
@@ -43,7 +52,7 @@
 	    <xsl:when test="count($lnode/ofp:salts)>0">
 	      <xsl:for-each select="$lnode/ofp:salts/*">
 		<xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
-			      /><span class="{$c} salt{.}"
+			      /><span class="list-salt {$c} salt{.}"
 			      ><xsl:value-of select="$u"/></span>
 	      </xsl:for-each>
 	    </xsl:when>
@@ -58,9 +67,9 @@
 	  </xsl:choose>
 	</td>
       </xsl:for-each>
-      <xh:td><xsl:value-of select="ucode"/></xh:td>
-      <xh:td><xsl:value-of select="note"/></xh:td>
-    </xh:tr>
+      <td><xsl:value-of select="ucode"/></td>
+      <td><xsl:value-of select="note"/></td>
+    </tr>
   </xsl:template>
 
   <!--

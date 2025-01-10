@@ -30,7 +30,7 @@ if [ -r $asl ]; then
 	    echo '(none)' >$dir/missing-$a.txt
 	fi
 	x=02xml/missing-$a.xml
-	echo '<pre>' >$x
+	echo '<pre xmlns="http://www.w3.org/1999/xhtml">' >$x
 	cat $dir/missing-$a.txt >>$x
 	echo '</pre>' >>$x
     done
