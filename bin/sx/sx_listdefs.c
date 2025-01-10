@@ -106,30 +106,38 @@ sx_list_row(FILE *f, struct sl_signlist *sl, const unsigned char *name,
   const char *code = "";
   const unsigned char *ucun = (uccp)"";
  
-  if (up->uhex)
-    code = up->uhex;
-  else if (up->upua)
-    code = up->upua;
-  else if (up->useq)
-    code = up->useq;
-  if (up->utf8)
-    ucun = up->utf8;
+  if (up)
+    {
+      if (up->uhex)
+	code = up->uhex;
+      else if (up->upua)
+	code = up->upua;
+      else if (up->useq)
+	code = up->useq;
+      if (up->utf8)
+	ucun = up->utf8;
+    }
 
   int sf_sort = 0;
   unsigned const char *sf_name = (uccp)"";
-  if (ip->type == 's')
+  const char *oid = "";
+  if (ip)
     {
-      sf_sort = ip->u.s->sort;
-      sf_name = ip->u.s->name;
+      if (ip->type == 's')
+	{
+	  oid = ip->u.s->oid;
+	  sf_sort = ip->u.s->sort;
+	  sf_name = ip->u.s->name;
+	}
+      else if (ip->type == 'f')
+	{
+	  oid = ip->u.f->oid;
+	  sf_sort = ip->u.f->sort;
+	  sf_name = ip->u.f->name;
+	}
     }
-  else if (ip->type == 'f')
-    {
-      sf_sort = ip->u.f->sort;
-      sf_name = ip->u.f->name;
-    }  
   
-  fprintf(f, "%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s", name,
-	  ip->type == 's' ? ip->u.s->oid : ip->u.f->oid,
+  fprintf(f, "%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s", name, oid,
 	  tp->s, sf_sort, sf_name, code, ucun, nonull(note));
 
   if (lp)
@@ -154,21 +162,22 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
   n = hash_keys2(sl->listdefs, &nn);
   qsort(n, nn, sizeof(const char *), cmpstringp);
   int i;
-  fputs("name"
-	"\toid"
-	"\tlsort"
-	"\tsfsort"
-	"\tsfname"
-	"\tucode"
-	"\tucun"
-	"\tnote"
-	"\tlfeat"
-	"\tlsname"
-	"\tlucun"
-	"\tlimage"
-	"\tlvalues"
-	"\n",
-	f);
+  if (!list_names_mode)
+    fputs("name"
+	  "\toid"
+	  "\tlsort"
+	  "\tsfsort"
+	  "\tsfname"
+	  "\tucode"
+	  "\tucun"
+	  "\tnote"
+	  "\tlfeat"
+	  "\tlsname"
+	  "\tlucun"
+	  "\tlimage"
+	  "\tlvalues"
+	  "\n",
+	  f);
   for (i = 0; n[i]; ++i)
     {
       if (list_names_mode)
