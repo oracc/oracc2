@@ -233,7 +233,7 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 			      else
 				mesg_verr(&lp->inst->mloc, "strange: @lref @note is NULL");
 			    }
-			  else
+			  else if (!lp->sname && !lp->ucun && !lp->imagefile && !lp->values)
 			    mesg_verr(&lp->inst->mloc, "@lref requires @note (use '@note -' to suppress this message)");
 			}
 		      else
