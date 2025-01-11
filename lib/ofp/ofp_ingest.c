@@ -66,10 +66,11 @@ ofp_ingest(Ofp *ofp)
 	  char lig[strlen(liga)+1], *l;
 	  strcpy(lig, liga);
 	  l = strchr(lig, '_');
-	  *l = '\0';
+	  if (l)
+	    *l = '\0';
 	  ligl = (char*)pool_copy((uccp)lig, ofp->p);
 
-	  /* Now lp is the glyph name (may have double
+	  /* Now name is the glyph name (may have double
 	     extension, e.g., AGRIG.liga.ss01); lig is the lead
 	     ligature element; liga is the ligature sequence */
 	  char *dot = strrchr(name, '.');

@@ -20,8 +20,12 @@
       <td><xsl:value-of select="name"/></td>
       <td>
 	<xsl:choose>
-	  <xsl:when test="string-length(lsname)>0">
+	  <xsl:when test="string-length(lvalues)>0 and not(lsname='O')">
 	    <xsl:value-of select="lsname"/>
+	    <xsl:value-of select="concat(' (',lvalues,')')"/>
+	  </xsl:when>
+	  <xsl:when test="string-length(lvalues)>0">
+	    <xsl:value-of select="lvalues"/>
 	  </xsl:when>
 	  <xsl:otherwise>
 	    <xsl:value-of select="sfname"/>

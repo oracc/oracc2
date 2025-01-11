@@ -136,8 +136,12 @@ sx_list_row(FILE *f, struct sl_signlist *sl, const unsigned char *name,
 	  sf_name = ip->u.f->name;
 	}
     }
+
+  const char *lrefmarker = "";
+  if (lp && lp->type == sl_ll_lref)
+    lrefmarker = "►";
   
-  fprintf(f, "%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s", name, oid,
+  fprintf(f, "%s%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s", lrefmarker, name, oid,
 	  tp->s, sf_sort, sf_name, code, ucun, nonull(note));
 
   if (lp)
