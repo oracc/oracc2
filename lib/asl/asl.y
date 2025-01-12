@@ -194,9 +194,9 @@ atlist:
 		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, (uccp)$3, NULL, NULL, NULL); }
 	| LIST LISTNUM LISTIMAGE
 		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, NULL, (uccp)$3, NULL); }
-	| LIST LISTNUM token uniimg atftokens
+	| LIST LISTNUM atftoken uniimg atftokens
 		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, (uccp)$3, (uccp)$4, (uccp)longtext(NULL,NULL,NULL)); }
-	| LIST LISTNUM token uniimg atftokens OTFEAT
+	| LIST LISTNUM atftoken uniimg atftokens OTFEAT
 		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, (uccp)$6, (uccp)$3, (uccp)$4, (uccp)longtext(NULL,NULL,NULL)); }
 	;
 
