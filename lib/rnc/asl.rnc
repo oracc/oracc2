@@ -174,7 +174,8 @@ sl.images = element sl:images {
             	    element sl:i { (attribute ref { xsd:NCName } ,
 		    	    	    attribute loc { text }?,
 		    	    	    attribute chr { text }?,
-		    	    	    attribute n { text }?)?
+		    	    	    attribute n { text }?)?, 
+				    element sl:f { text }*
 			 	  }*
       	    }
 
