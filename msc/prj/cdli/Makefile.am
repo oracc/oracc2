@@ -2,7 +2,8 @@ include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=cdliperiodx cdlixtfx
 
-bin_SCRIPTS =cdli-tsv2cat.sh cdli-field-tab.sh cdli-period+.sh cdli-period-lists.sh
+bin_SCRIPTS =cdli-tsv2cat.sh cdli-field-tab.sh cdli-period+.sh cdli-period-lists.sh \
+	cdli-imgs-export.sh
 
 cdliperiodx_SOURCES=cdliperiodx.c periods.c
 cdliperiodx_LDADD = $(xLDADD)
