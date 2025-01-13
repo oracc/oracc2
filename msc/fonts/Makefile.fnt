@@ -1,6 +1,6 @@
 xxfont=${top_srcdir}/bin/xx/fonts
 
-sl/lists.tsv: ${ORACC}/osl/00lib/osl.asl
-	-sx -c -N -u -dLISTS ${ORACC}/osl/00lib/osl.asl
+sl/lists.tsv: ~/orc/osl/00lib/osl.asl
+	-sx -c -N -u -dLIST $?
 	mv sx-lists.out sl/lists.tsv
 	cut -f 2-4,6 unicode.tsv | grep '	o[0-9]\+	' >sl/unicode.tsv

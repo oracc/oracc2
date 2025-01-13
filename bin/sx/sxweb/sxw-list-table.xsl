@@ -50,22 +50,26 @@
       <xsl:variable name="c" select="concat($font, ' ofs-200')"/>
       <xsl:variable name="u" select="ucun"/>
       <xsl:for-each select="document($ofpx)">
-	<xsl:variable name="lnode" select="key('ofp-sign', $l)"/>
+	<xsl:variable name="lnode" select="key('ofp-sign', $l)[1]"/>
 	<td>
 	  <xsl:choose>
 	    <xsl:when test="count($lnode/ofp:salts)>0">
 	      <xsl:for-each select="$lnode/ofp:salts/*">
-		<xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
-			      /><span class="list-salt {$c} salt{.}"
-			      ><xsl:value-of select="$u"/></span>
+		<xsl:if test="not(.='0')">
+		  <xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
+				/><span class="list-salt {$c} salt{.}"
+				><xsl:value-of select="$u"/></span>
+		</xsl:if>
 	      </xsl:for-each>
 	    </xsl:when>
 	    <xsl:otherwise>
 	      <xsl:for-each select="$lnode/ancestor::ofp:sign/ofp:salts/*">
-		<xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
-			      /><span class="list-salt {$c} salt{.}"
-			      ><xsl:value-of select="$u"/></span>
-		<xsl:text> </xsl:text>
+		<xsl:if test="not(.='0')">
+		  <xsl:value-of select="concat('.',translate(.,'0123456789','₀₁₂₃₄₅₆₇₈₉'), '&#xa0;')"
+				/><span class="list-salt {$c} salt{.}"
+				><xsl:value-of select="$u"/></span>
+		  <xsl:text> </xsl:text>
+		</xsl:if>
 	      </xsl:for-each>
 	    </xsl:otherwise>
 	  </xsl:choose>
