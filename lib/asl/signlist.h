@@ -43,6 +43,7 @@ struct sx_iheader
   int type; /* 0 = file; 1 = FONT */
   const char *css;
   const char *mag;
+  const char *data;
   int sparse;
   Mloc mloc;
 };

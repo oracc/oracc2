@@ -3,6 +3,19 @@
 
 #include "osl_unicode.h"
 
+typedef struct Ofp_header
+{
+  const char *label;
+  const char *title;
+  const char *page;
+  const char *font;
+  const char *css;
+  const char *mag;
+  const char *list;
+  const char *data;
+  const char *path;
+} Ofp_header;
+
 /* When indexing by U+ or u123AF names we use the 5-hex-digit portion
    only for all hash keys */
 typedef struct Ofp
@@ -21,6 +34,7 @@ typedef struct Ofp
   Osl_unicode *osl;
   struct Ofp_list *list;
   Hash *h_list;
+  Ofp_header h;
 } Ofp;
 
 typedef enum Ofp_feature
@@ -78,6 +92,11 @@ typedef struct Ofp_list
 
 typedef struct ofp_bv_arg { Ofp *o; const char *code; FILE *fp; } ofp_bv_arg;
 
+enum ofpdefs_val { ofpdefs_label, ofpdefs_title, ofpdefs_page,
+		   ofpdefs_font, ofpdefs_css, ofpdefs_mag, ofpdefs_list,
+		   ofpdefs_data, ofpdefs_path };
+struct ofpdefs_tab { const char *name; enum ofpdefs_val v; };
+
 extern Ofp *ofp_init(void);
 extern void ofp_term(Ofp *ofp);
 extern void ofp_list(Ofp *ofp, const char *larg);
@@ -89,5 +108,6 @@ extern void ofp_xml(Ofp *ofp, FILE *fp);
 extern void ofp_debug(Ofp *ofp, const char *fname);
 extern char *liga2useq(Ofp *ofp, const char *liga);
 extern Osl_uentry *osl_autocreate(const char *u);
-
+extern struct ofpdefs_tab *ofpdefs (register const char *str, register size_t len);
+extern void ofp_header(Ofp *o, const char *def);
 #endif/*OFP_H_*/

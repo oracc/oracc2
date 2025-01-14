@@ -69,10 +69,7 @@ install-exec-local:
 %.def: %.def.in
 	$(ORACCIFY) $<
 
-%.ofp: %.ofpx
-	@true
-
-%.ofpx: %.oin %.def ${xxfont}/ofpx ${xxfont}/ttf2ofp.sh sl/lists.tsv sl/unicode.tsv
+%.ofp: %.oin %.def ${xxfont}/ofpx ${xxfont}/ttf2ofp.sh ${xxfont}/ofp2im.sh ${xxfont}/ofp2im.xsl sl/lists.tsv sl/unicode.tsv
 	${xxfont}/ttf2ofp.sh $*
 
 all.proto: *.c

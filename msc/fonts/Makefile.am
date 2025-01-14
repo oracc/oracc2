@@ -7,9 +7,6 @@ css_DATA=fonts.css *.cur
 data_DATA=Oracc-Noto-SansCuneiform.ofp Oracc-gudea.ofp	Oracc-NA-Outline.ofp \
 	Oracc-OBF-Regular.ofp CuneiformClassic-final.ofp Oracc-LAK.ofp \
 	Oracc-RSP.ofp \
-	Oracc-Noto-SansCuneiform.ofpx Oracc-gudea.ofpx	Oracc-NA-Outline.ofpx \
-	Oracc-OBF-Regular.ofpx CuneiformClassic-final.ofpx Oracc-LAK.ofpx \
-	Oracc-RSP.ofpx \
 	Oracc-Noto-SansCuneiform.def Oracc-gudea.def Oracc-NA-Outline.def \
 	Oracc-OBF-Regular.def CuneiformClassic-final.def Oracc-LAK.def \
 	Oracc-RSP.def \

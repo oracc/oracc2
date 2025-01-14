@@ -6,14 +6,17 @@ static void xml_list(Ofp *ofp, List *lp, const char *gtag, const char *itag, FIL
 static void xml_sign(Ofp *ofp, const char *sn, FILE *fp);
 static const char *xutf8_liga_literal(Ofp *o, Ofp_glyph *gp);
 static const char *xutf8_of(Ofp *o, Ofp_glyph *gp);
+static void xml_header(Ofp_header *hp, FILE *fp);
 
 const char *ofp_ns = "http://oracc.org/ns/ofp/1.0";
 
 void
 ofp_xml(Ofp *ofp, FILE *fp)
 {
-  fprintf(fp, "<ofp xmlns=\"%s\" xmlns:ofp=\"%s\" n=\"%s\" f=\"%s\">",
+  fprintf(fp, "<ofp xmlns=\"%s\" xmlns:ofp=\"%s\" n=\"%s\" f=\"%s\"",
 	  ofp_ns, ofp_ns, ofp->name, ofp->file);
+  xml_header(&ofp->h, fp);
+  fputc('>', fp);
   int nsign;
   const char **k = hash_keys2(ofp->h_sign, &nsign);
   qsort(k, nsign, sizeof(char*), cmpstringp);
@@ -24,6 +27,26 @@ ofp_xml(Ofp *ofp, FILE *fp)
 	xml_sign(ofp, k[i], fp);
     }
   fprintf(fp, "</ofp>");
+}
+
+static void
+xml_attr(const char *n, const char *v, FILE *fp)
+{
+  if (v)
+    fprintf(fp, " %s=\"%s\"", n, xmlify((uccp)v));
+}
+
+static void
+xml_header(Ofp_header *hp, FILE *fp)
+{
+  xml_attr("title", hp->title, fp);
+  xml_attr("label", hp->label, fp);
+  xml_attr("page", hp->page, fp);
+  xml_attr("font", hp->font, fp);
+  xml_attr("css", hp->css, fp);
+  xml_attr("mag", hp->mag, fp);
+  xml_attr("list", hp->list, fp);
+  xml_attr("data", hp->data, fp);
 }
 
 static void

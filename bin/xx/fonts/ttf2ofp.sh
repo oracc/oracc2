@@ -10,10 +10,10 @@ if [ -s $f.oin ]; then
     list=`grep @list $f.def | cut -f2`
     if [ "$list" != "" ]; then
 	larg="-l$list"
-	grep ^$list sl/lists.tsv | cut -f1-2,9 >$list.tsv
+	grep ^$list sl/lists.tsv | cut -f1-2,9 | sort -u >$list.tsv
     fi
-    echo $bin/ofpx $larg -t$f.ofp -x$f.ofpx '<'$f.oin
-    $bin/ofpx $larg -t$f.ofp -x$f.ofpx <$f.oin
+    echo $bin/ofpx $larg -d${ORACC}/lib/data/$f.def '<'$f.oin
+    $bin/ofpx $larg -d${ORACC}/lib/data/$f.def -x$f.ofp <$f.oin
     rm -f *.{names,ucode,namuni,lig} *-ttf.txt *-ofp.in
     $bin/ofp2im.sh $f
 fi
