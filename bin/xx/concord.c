@@ -1344,7 +1344,7 @@ treeout (wp)			/* output a tree element */
 	  nb = numbuf;
 	}
       numlen = strlen ((char *) nb);
-      if (numlen + linelen + 1 > LINESIZE)
+      if (numlen + linelen + 2 > LINESIZE)
 	{
 	  if (do_line_breaks)
 	    {
