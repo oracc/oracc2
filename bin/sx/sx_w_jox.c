@@ -567,9 +567,12 @@ sx_w_jx_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *i
 		    if (sl->iarray->rows[index][i])
 		      list_add(ll, (void*)sl->iheaders[i-1].id);
 		  unsigned char *lls = list_join(ll, " ");
-		  
-		  ratts = rnvval_aa("x", "refs", lls, NULL);
-		  joxer_ec(NULL, "sl:images", ratts);
+
+		  if (lls && strlen((ccp)lls))
+		    {
+		      ratts = rnvval_aa("x", "refs", lls, NULL);
+		      joxer_ec(NULL, "sl:images", ratts);
+		    }
 #if 0
 		  joxer_ao("j:imagenodes");
 		  for (i = 1; i < n; ++i)

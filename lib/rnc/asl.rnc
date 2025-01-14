@@ -170,6 +170,7 @@ sl.iheader = element sl:iheader { attribute xml:id { xsd:NCName } ,
 				  attribute period { text }? }
 
 sl.images = element sl:images {
+	    	    attribute refs { xsd:IDREFS }? ,
 	    	    # sl:i can be empty so the entire attribute group is optional
             	    element sl:i { (attribute ref { xsd:NCName } ,
 		    	    	    attribute loc { text }?,
