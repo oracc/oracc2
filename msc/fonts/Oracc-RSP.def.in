@@ -5,3 +5,4 @@
 @css	ofs-rsp
 @mag	110
 @list	RSP
+@data	@@ORACC@@/lib/data/Oracc-RSP.ofpx

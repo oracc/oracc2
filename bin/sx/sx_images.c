@@ -88,6 +88,8 @@ sx_images(struct sl_signlist *sl)
 			sl->iheaders[nm].css = (ccp)mr->rows[i][1];
 		      else if (!strcmp((ccp)mr->rows[i][0], "@mag"))
 			sl->iheaders[nm].mag = (ccp)mr->rows[i][1];
+		      else if (!strcmp((ccp)mr->rows[i][0], "@data"))
+			sl->iheaders[nm].data = (ccp)mr->rows[i][1];
 		      else
 			fprintf(stderr, "%s:%d: %s: unknown @-command in image map\n", imfile, i+1, mr->rows[i][0]);
 		      break;

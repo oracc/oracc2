@@ -562,7 +562,15 @@ sx_w_jx_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *i
 		{
 		  int i;
 		  int n = list_len(sl->images)+1;
-		  joxer_ea(NULL, "sl:images", NULL);
+		  List *ll = list_create(LIST_SINGLE);
+		  for (i = 1; i < n; ++i)
+		    if (sl->iarray->rows[index][i])
+		      list_add(ll, (void*)sl->iheaders[i-1].id);
+		  unsigned char *lls = list_join(ll, " ");
+		  
+		  ratts = rnvval_aa("x", "refs", lls, NULL);
+		  joxer_ec(NULL, "sl:images", ratts);
+#if 0
 		  joxer_ao("j:imagenodes");
 		  for (i = 1; i < n; ++i)
 		    {
@@ -572,15 +580,35 @@ sx_w_jx_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *i
 			  Link *lp;
 			  for (lp = (Link*)sl->iarray->rows[index][i]; lp; lp = lp->next)
 			    {
-			      const char *n = ((char**)lp->data)[2];
-			      if (n)
-				ratts = rnvval_aa("x", "ref", sl->iheaders[i-1].id,
-						  "loc", ((char**)lp->data)[1],
-						  "n", n,
-						  NULL);
-			      else
-				ratts = rnvval_aa("x", "ref", sl->iheaders[i-1].id, "loc", ((char**)lp->data)[1], NULL);
+			      ratts = rnvval_aa("x", "ref", lls, NULL);
 			      joxer_ec(NULL,"sl:i", ratts);
+			      const char *n = ((char**)lp->data)[2];
+			      char *f = NULL;
+			      if (((char**)lp->data)[3])
+				f = strdup(((char**)lp->data)[3]);
+			      if (n)
+				{
+				  ratts = rnvval_aa("x", "ref", sl->iheaders[i-1].id,
+						    "loc", ((char**)lp->data)[1],
+						    "n", n,
+						    NULL);
+				}
+			      else
+				ratts = rnvval_aa("x", "ref", sl->iheaders[i-1].id, "loc",
+						  ((char**)lp->data)[1], NULL);
+			      if (f && strlen(f))
+				{
+				  joxer_ea(NULL, "sl:i", ratts);
+				  size_t vsiz, i;
+				  char **ff = vec_from_str(f, NULL, &vsiz);
+				  for (i = 0; i < vsiz; ++i)
+				    joxer_et(NULL, "sl:f", NULL, ff[i]);
+				  free(ff);
+				  free(f);
+				  joxer_ee(NULL, "sl:i");
+				}
+			      else
+				joxer_ec(NULL,"sl:i", ratts);
 			    }
 			}
 		      else
@@ -588,6 +616,7 @@ sx_w_jx_images(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *i
 		    }
 		  joxer_ac();
 		  joxer_ee(NULL,"sl:images");
+#endif
 		}
 	    }
 	}
