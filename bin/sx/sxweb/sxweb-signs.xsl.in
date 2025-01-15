@@ -42,6 +42,8 @@
 
 <xsl:template match="sl:signlist">
   <xsl:message>sxweb-signs.xsl processing <xsl:value-of select="count(sl:letter/sl:sign)"/> signs in <xsl:value-of select="@project"/>:
+&#x9;asl-script=<xsl:value-of select="$asl-script"/>
+&#x9;asl-salt=<xsl:value-of select="$asl-salt"/>
 &#x9;asl-stats=<xsl:value-of select="$asl-stats"/>
 &#x9;asl-periods=<xsl:value-of select="$asl-periods"/>
 &#x9;asl-insts=<xsl:value-of select="$asl-insts"/>

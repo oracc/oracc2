@@ -90,6 +90,15 @@
   </xsl:call-template>
 </xsl:variable>
 
+<xsl:variable name="asl-salt">
+  <xsl:message>sl-config-xml in asl-salt set = <xsl:value-of select="$sl-config-xml"/></xsl:message>
+  <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
+    <xsl:with-param name="option" select="'asl-salt'"/>
+    <xsl:with-param name="default" select="'no'"/>
+  </xsl:call-template>
+</xsl:variable>
+
 <xsl:variable name="max-inline-forms">
   <xsl:message>sl-config-xml in asl-max-forms set = <xsl:value-of select="$sl-config-xml"/></xsl:message>
   <xsl:call-template name="xpd-option">
