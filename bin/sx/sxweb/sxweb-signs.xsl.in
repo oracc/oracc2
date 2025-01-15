@@ -27,6 +27,7 @@
 <!--xpd.xsl is included by g2-gdl-HTML.xsl-->
 <!--<xsl:include href="g2-gdl-HTML.xsl"/>-->
 <xsl:include href="sxweb-util.xsl"/>
+<xsl:include href="sxweb-images.xsl"/>
 <xsl:include href="sxweb-sws-sel.xsl"/>
 <xsl:include href="esp2-head.xsl"/>
 
@@ -514,7 +515,9 @@
   <xsl:param name="esp-mode" select="true()"/>
 <!--  <xsl:message>sws-compounds-link: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>-->
   <xsl:apply-templates select="@n"/>
-  <xsl:call-template name="sws-compounds-link-img"/>
+  <xsl:call-template name="sws-compounds-link-img">
+    <xsl:with-param name="esp-mode" select="$esp-mode"/>
+  </xsl:call-template>
 </xsl:template>
 
 <xsl:template name="sws-cpd-refs">

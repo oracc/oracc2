@@ -224,10 +224,12 @@
   <xsl:param name="iso-script"/>
   <xsl:variable name="hex" select="@hex"/>
   <xsl:variable name="salt" select="/*/sl:scripts/*[@n=$asl-script]/*[@code=$hex]/@salt"/>
+  <!--
   <xsl:if test="$hex='U+12324'">
     <xsl:message>sxweb-ucun asl-script=<xsl:value-of select="$asl-script"
     />; <xsl:value-of select="$hex"/> has salt=<xsl:value-of select="$salt"/></xsl:message>
-  </xsl:if>
+    </xsl:if>
+    -->
   <xsl:variable name="script">
     <xsl:choose>
       <xsl:when test="$iso-script='Pcun'">
