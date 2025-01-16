@@ -6,7 +6,7 @@ if [ "$p" == "" ]; then
 fi
 f=$2
 if [ ! -r $f ]; then 
-    echo $0: must give full path to .ofpx file on command line. Stop.
+    echo $0: must give full path to .ofp file on command line. Stop.
     exit 1
 fi
 crpsigns.sh $p

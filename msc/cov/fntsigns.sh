@@ -2,7 +2,7 @@
 #
 # List OIDs that occur in the font argument.
 #
-# The argument should be a .ofpx file
+# The argument should be a .ofp file
 #
 f=$1
 if [[ "$f" == "" ]]; then
