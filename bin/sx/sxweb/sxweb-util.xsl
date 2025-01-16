@@ -90,6 +90,15 @@
   </xsl:call-template>
 </xsl:variable>
 
+<xsl:variable name="asl-salt">
+  <xsl:message>sl-config-xml in asl-salt set = <xsl:value-of select="$sl-config-xml"/></xsl:message>
+  <xsl:call-template name="xpd-option">
+    <xsl:with-param name="config-xml" select="$sl-config-xml"/>
+    <xsl:with-param name="option" select="'asl-salt'"/>
+    <xsl:with-param name="default" select="'no'"/>
+  </xsl:call-template>
+</xsl:variable>
+
 <xsl:variable name="max-inline-forms">
   <xsl:message>sl-config-xml in asl-max-forms set = <xsl:value-of select="$sl-config-xml"/></xsl:message>
   <xsl:call-template name="xpd-option">
@@ -224,10 +233,12 @@
   <xsl:param name="iso-script"/>
   <xsl:variable name="hex" select="@hex"/>
   <xsl:variable name="salt" select="/*/sl:scripts/*[@n=$asl-script]/*[@code=$hex]/@salt"/>
+  <!--
   <xsl:if test="$hex='U+12324'">
     <xsl:message>sxweb-ucun asl-script=<xsl:value-of select="$asl-script"
     />; <xsl:value-of select="$hex"/> has salt=<xsl:value-of select="$salt"/></xsl:message>
-  </xsl:if>
+    </xsl:if>
+    -->
   <xsl:variable name="script">
     <xsl:choose>
       <xsl:when test="$iso-script='Pcun'">

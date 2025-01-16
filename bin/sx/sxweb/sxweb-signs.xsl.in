@@ -27,6 +27,7 @@
 <!--xpd.xsl is included by g2-gdl-HTML.xsl-->
 <!--<xsl:include href="g2-gdl-HTML.xsl"/>-->
 <xsl:include href="sxweb-util.xsl"/>
+<xsl:include href="sxweb-images.xsl"/>
 <xsl:include href="sxweb-sws-sel.xsl"/>
 <xsl:include href="esp2-head.xsl"/>
 
@@ -41,6 +42,8 @@
 
 <xsl:template match="sl:signlist">
   <xsl:message>sxweb-signs.xsl processing <xsl:value-of select="count(sl:letter/sl:sign)"/> signs in <xsl:value-of select="@project"/>:
+&#x9;asl-script=<xsl:value-of select="$asl-script"/>
+&#x9;asl-salt=<xsl:value-of select="$asl-salt"/>
 &#x9;asl-stats=<xsl:value-of select="$asl-stats"/>
 &#x9;asl-periods=<xsl:value-of select="$asl-periods"/>
 &#x9;asl-insts=<xsl:value-of select="$asl-insts"/>
@@ -514,7 +517,9 @@
   <xsl:param name="esp-mode" select="true()"/>
 <!--  <xsl:message>sws-compounds-link: esp-mode=<xsl:value-of select="$esp-mode"/></xsl:message>-->
   <xsl:apply-templates select="@n"/>
-  <xsl:call-template name="sws-compounds-link-img"/>
+  <xsl:call-template name="sws-compounds-link-img">
+    <xsl:with-param name="esp-mode" select="$esp-mode"/>
+  </xsl:call-template>
 </xsl:template>
 
 <xsl:template name="sws-cpd-refs">

@@ -33,6 +33,15 @@ if [ "$1" != "$try" ]; then
 	echo "ooi	$a"
     done | sed "s#$ORACC/##" >/tmp/$$.pxi
 fi
+
+try=`dbx -d $ORACC/cdli/02pub/img -n img $px`
+if [ "$try" != "" ]; then
+    found=1
+    for a in $try; do
+	echo "img	$a"
+    done >/tmp/$$.pxi    
+fi
+
 if [ "$found" != "1" ]; then
     eic=$ORACC/eic/$four
     try=$eic/$px'*'
