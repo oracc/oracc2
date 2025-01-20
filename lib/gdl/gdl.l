@@ -49,6 +49,7 @@ static void cvq_reset(void);
 /* NUMGRAPH	[0-9XNn]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})\) */
 %}
 
+L		([A-Z][A-Z]+[0-9]+[A-Z0-9a-z_'"/+*^]*(′|″)*){M}*
 B		("["|"]"|\xe2\xb8[\xa2-\xa5])
 S		\xe2\xb8[^\xa2-\xa5]|([0-9][a-wyz]*)
 G		([a-ru-zA-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[stST],?|{S}|\xc3[^\x97]|\xe2[^\xb8])+
@@ -157,6 +158,8 @@ _			{ gsave; return LANG_FLIP; }
 ":\""			{ /*"*/ GIN=1; gsave; return PUNCT; }
 "::"      		{ /*"*/ GIN=1; gsave; return PUNCT; }
 "/"/[ \t\n\(]		{ /*"*/ GIN=1; gsave; return PUNCT; }
+
+{L}			{ gsave; return LISTNUM; }
 
 [0-9nN]+(\/[0-9]+)?/"("	{ GIN=1; gsave; return NUMBER; }
 
