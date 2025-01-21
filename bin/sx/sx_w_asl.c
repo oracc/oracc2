@@ -217,7 +217,7 @@ sx_w_a_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 static void
 sx_w_a_ivalue(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, enum sx_pos_e p)
 {
-  if (!identity_mode)
+  if (!identity_mode || sl->h_kdata)
     f->val(f, sl, v, p);
 }
 
@@ -455,7 +455,7 @@ sx_w_a_links(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 static void
 sx_w_a_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v, enum sx_pos_e p)
 {
-  if (sx_pos_inst == p && !v->inherited)
+  if (sx_pos_inst == p && (!v->inherited || sl->h_kdata))
     {
       if (sl->h_kdata && (!hash_find(sl->h_kdata,v->key)))
 	return;

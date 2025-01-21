@@ -134,7 +134,8 @@ sl.form	   = element sl:form {
       element sl:inherited {
         element sl:iv {
           attribute sort { text }, 
-          attribute n { text }
+          attribute n { text },
+	  attribute key { text }?
         }+
       }?
     }

@@ -915,8 +915,11 @@ sx_w_jx_ivalue(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v
 	    joxer_ee(&v->mloc, "sl:iv");
 	  else
 	    in_value = 1;
-	  
-	  ratts = rnvval_aa("x", "n", v->u.v->name, "sort", scode, NULL);
+
+	  if (v->key)
+	    ratts = rnvval_aa("x", "n", v->u.v->name, "sort", scode, "key", v->key, NULL);
+	  else
+	    ratts = rnvval_aa("x", "n", v->u.v->name, "sort", scode, NULL);
 	  joxer_ea(&v->mloc, "sl:iv", ratts);
 	}
     }

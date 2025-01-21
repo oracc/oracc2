@@ -99,9 +99,11 @@ sx_inherited(struct sl_signlist *sl)
 				fprintf(ifp, "inherit: adding %s(%s) to form_inst->lv->hventry with inherited=1\n", b, form_inst->u.f->name);
 			      /*hash_add(form_inst->lv->hivalues, (uccp)b, "");*/
 			      ++form_inst->lv->nivalues;
+			      struct sl_inst *vinst;
 			      hash_add(form_inst->lv->hventry, (uccp)b,
-				       clone_inherited(sl, hash_find(form_inst->parent_s->u.s->hventry, (uccp)b)));
+				       vinst = clone_inherited(sl, hash_find(form_inst->parent_s->u.s->hventry, (uccp)b)));
 			      sx_v_fowner(sl, form_inst, b);
+			      asl_add_key(&form_inst->mloc, sl, vinst, form_inst->parent_s->atoid, form_inst->atoid, (ccp)b);
 			    }
 			  else
 			    {
@@ -140,9 +142,11 @@ sx_inherited(struct sl_signlist *sl)
 			fprintf(ifp, "inherit: adding %s(%s) to form_inst->lv->hventry with inherited=1\n", b, form_inst->u.f->name);
 		      /*hash_add(form_inst->lv->hivalues, (uccp)b, "");*/
 		      ++form_inst->lv->nivalues;
+		      struct sl_inst *vinst;
 		      hash_add(form_inst->lv->hventry, (uccp)b,
-			       clone_inherited(sl, hash_find(form_inst->parent_s->u.s->hventry, (uccp)b)));
+			       vinst = clone_inherited(sl, hash_find(form_inst->parent_s->u.s->hventry, (uccp)b)));
 		      sx_v_fowner(sl, form_inst, b);
+		      asl_add_key(&form_inst->mloc, sl, vinst, form_inst->parent_s->atoid, form_inst->atoid, (ccp)b);
 		    }
 		}
 	    }

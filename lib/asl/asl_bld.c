@@ -61,7 +61,10 @@ asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval,
 {
   unsigned const char *k = asl_make_key(locp, sl, s, f, v);
   if (k)
-    hash_add(sl->hkeys, (hval->key = k), hval);
+    {
+      /*fprintf(stderr, "asl_add_key adding key %s\n", k);*/
+      hash_add(sl->hkeys, (hval->key = k), hval);
+    }
 }
 
 Hash *
