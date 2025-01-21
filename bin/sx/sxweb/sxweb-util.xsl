@@ -201,7 +201,7 @@
 	  <p class="sl-td-seq"><xsl:text>(Sequence)</xsl:text></p>
 	</xsl:when>
 	<xsl:otherwise>
-	  <p class="sl-td-name"><xsl:value-of select="@n"/></p>
+	  <p class="sl-td-name"><xsl:value-of select="ancestor-or-self::sl:sign/@n"/></p>
 	  <xsl:choose>
 	    <xsl:when test="$overview-images='font'">
 	      <p class="sl-td-sign {$font}"><xsl:call-template name="sxweb-ucun"/></p>
