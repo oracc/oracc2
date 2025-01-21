@@ -141,8 +141,9 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 					  int m;
 					  f->inh(f, sl, NULL, sx_pos_init);
 					  for (m = 0; m < sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nvalues; ++m)
-					    f->inh(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m],
-						   sx_pos_inst);
+					    if (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m]->inherited)
+					      f->inh(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->values[m],
+						     sx_pos_inst);
 					  f->inh(f, sl, NULL, sx_pos_term);
 					}
 				    }

@@ -152,6 +152,22 @@
 </xsl:template>
 
 <xsl:template mode="mcol" match="sl:sign">
+  <xsl:choose>
+    <xsl:when test="@moid">
+      <xsl:call-template name="mcol-sl-sign"/>
+    </xsl:when>
+    <xsl:when test="@ficnt and not(@icnt)">
+      <xsl:for-each select="sl:form[@icnt][1]">
+	<xsl:call-template name="mcol-sl-sign"/>
+      </xsl:for-each>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:call-template name="mcol-sl-sign"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="mcol-sl-sign">
   <!--<xsl:message>sl:sign <xsl:value-of select="@n"
       /> moid=<xsl:value-of select="@moid"/></xsl:message>-->
   <xsl:variable name="img" select="(.//sl:images/sl:i[@loc])[1]"/>
@@ -170,6 +186,9 @@
 	  <xsl:when test="@moid">
 	    <!--<xsl:message>sl:sign page link using @moid <xsl:value-of select="@moid"/></xsl:message>-->
 	    <xsl:value-of select="@moid"/>
+	  </xsl:when>
+	  <xsl:when test="self::sl:form">
+	    <xsl:value-of select="../@xml:id"/>
 	  </xsl:when>
 	  <xsl:otherwise>
 	    <xsl:value-of select="@xml:id"/>
