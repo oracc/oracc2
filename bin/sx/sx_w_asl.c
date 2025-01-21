@@ -168,7 +168,7 @@ sx_w_a_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
 	return;
 
       /* When a .tis is read the signs and forms which occur in the
-	 keys are checked to see if they have dependeencies; if so,
+	 keys are checked to see if they have dependencies; if so,
 	 those dependencies are added to sl->h_idata with a flag value
 	 of -1 in tip->cnt */
       if (tip && tip->cnt ==  SX_IDATA_COMPONLY)

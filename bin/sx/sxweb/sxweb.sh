@@ -67,10 +67,7 @@ if [ "$stats" == "yes" ]; then
 #    csl-need.sh
     csl-miss-need.sh miss
     csl-miss-need.sh need
-    ofp=`oraccopt . asl-ofp`
-    if [ "$ofp" != "" ]; then
-	
-    fi
+#    ofp=`oraccopt . asl-ofp`
 fi
 sxweb-pos.sh
 

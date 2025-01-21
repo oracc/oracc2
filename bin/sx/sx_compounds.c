@@ -61,8 +61,11 @@ sx_compounds(struct sl_signlist *sl)
 
 	  if (sl->h_kdata)
 	    {
-	      char buf[12];
-	      sprintf(buf, "%s..", s->inst->atoid);
+	      char buf[19];
+	      if (ip->type == 'f')
+		sprintf(buf, "%s.%s.", ip->parent_s->atoid, ip->atoid);
+	      else
+		sprintf(buf, "%s..", s->inst->atoid);
 	      if (hash_find(sl->h_kdata, (uccp)buf))
 		{
 		  in_subsl = 1;
