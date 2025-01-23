@@ -109,7 +109,7 @@ main(int argc, char **argv)
     }
   if (key)
     {
-      if (!word_ids)
+      if (!word_ids && !value_only)
 	fprintf(o, "%s\t", key);
       dbx_one(d, key, o);
     }
