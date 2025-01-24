@@ -111,10 +111,12 @@ const char *test[] = { "1(u)" , "ba" , "2(u)" , "1(aš)" , "bu" , NULL };
 #endif
 
 int
-main(int argc, char **argv)
+main(int argc, char * const *argv)
 {
-  extern int build_trace, parse_trace, nsdebug, token_trace, values_trace;
+  extern int parse_trace, nsdebug, token_trace, values_trace;
 
+  /*build_trace,*/
+    
   if (options(argc, argv, "d:D:jpx"))
     exit(1);
 

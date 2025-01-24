@@ -118,7 +118,17 @@ ns_jx_step(ns_step *sp)
     {
       list_add(a, "axis");
       list_add(a, (char*)sp->axis);
-    }	    
+    }
+  if (sp->type == nxt_nw)
+    {
+      list_add(a, "type");
+      list_add(a, "word");
+    }
+  else if (sp->type == nxt_nb)
+    {
+      list_add(a, "type");
+      list_add(a, "sign");
+    }
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
   list_free(a, NULL);

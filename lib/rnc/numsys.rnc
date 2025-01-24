@@ -26,6 +26,7 @@ alt =
 step =
   element nss:step {
     attribute unit { text }? ,
+    attribute type { text }? ,
     attribute axis { text }? ,
     step_aev? ,
     step_mul? ,

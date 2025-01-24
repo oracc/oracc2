@@ -30,6 +30,7 @@ typedef struct ns_step
 		   version for the instance */
   nx_num mult;
   uchar *unit;
+  enum nx_numtok type;
   struct ns_sys *sys;
   struct ns_step *next;
   struct ns_step *prev;
@@ -54,6 +55,8 @@ typedef struct ns_inst
 				   the inst list so we can add new inst to the list
 				   without traversing the list to the end all the time */
   const uchar *text;		/* the grapheme or word in the instance */
+  const char *oid;		/* the OID of the grapheme or word */
+  const uchar *ucun;		/* the Unicode for a grapheme in UTF-8 */
   const uchar *unit;		/* the name of the corresponding step */
   nx_num aev;			/* the aev for the count * the ns_step->aev */
   nx_num count;			/* the count for the step; can be integer or fraction */

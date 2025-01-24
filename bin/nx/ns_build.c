@@ -79,6 +79,7 @@ nsb_step(uchar *a, uchar *m, uchar *u)
       s->axis = (ccp)a;
     }
   s->unit = u;
+  s->type = nxp_tok_type(u);
   s->sys = nxp->sys;
   if (nsb_altflag)
     {
@@ -315,4 +316,5 @@ nsb_wrapup(void)
 	  nsb_wrapup_step(alt);
 	}
     }
+  nx_sys_aevs(nxp->sys);
 }

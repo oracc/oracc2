@@ -6,12 +6,6 @@
 
 struct nx_step;
 
-/* nxt_gc = gur-commodity token */
-typedef enum nx_numtok
-  {
-   nxt_nn , nxt_ng , nxt_nw , nxt_nv , nxt_nd , nxt_nc , nxt_na , nxt_nz , nxt_ne , nxt_gc , nxt_gw , nxt_no
-  } nx_numtok;
-
 typedef struct nx_nonnum
 {
   const uchar *tok;
@@ -158,7 +152,7 @@ extern void nx_init(void);
 extern void nx_reset(void);
 extern void nx_term(void);
 extern void nx_input(void);
-extern void nx_cli_input(const char **argv);
+extern void nx_cli_input(char *const *argv);
 extern void nx_exec(const uchar **toks, const uchar **data, int ntoks);
 extern void nx_exec_lists(List *t, List *d);
 
@@ -166,5 +160,7 @@ extern void nxd_show_nxnu(nx_number *np);
 extern int nxd_arg_ok(const char *arg);
 
 extern int ns_jx(Hash *hsys, List *lsys);
+
+extern nx_numtok nxp_tok_type(const uchar *t);
 
 #endif/*NX_H_*/

@@ -6,6 +6,13 @@
 #include <memo.h>
 #include <pool.h>
 
+/* nxt_gc = gur-commodity token */
+typedef enum nx_numtok
+  {
+    nxt_nn , nxt_ng , nxt_nb, nxt_nw , nxt_nv , nxt_nd ,
+    nxt_nc , nxt_na , nxt_nz , nxt_ne , nxt_gc , nxt_gw , nxt_no
+  } nx_numtok;
+
 typedef struct nx_num
 {
   unsigned long long n;		/* numerator, can be huge when multiplying up ancient

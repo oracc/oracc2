@@ -30,6 +30,8 @@ num input consists of tokens of the following possibly types
 
  ng -- number grapheme
 
+ nb -- number base--the part of a number grapheme inside (...)
+
  nw -- number words
 
  nv -- number virtual

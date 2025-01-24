@@ -6,7 +6,6 @@ static int nxp_last_num(const uchar **t, nx_numtok *n, int from);
 static nx_result *nxp_new_result(int ntoks);
 static int nxp_next_num(const uchar **t, nx_numtok *n, int from);
 static void nxp_nonnums(nx_result *r, const uchar **toks, const void**data, int from, int to);
-static nx_numtok nxp_tok_type(const uchar *t);
 
 /*nx_parse works on a list of tokens which must be simple graphemes or
   unit-words.  Any other input must be preprocessed to meet this
@@ -120,7 +119,7 @@ nxp_nonnums(nx_result *r, const uchar **toks, const void**data, int from, int to
     }
 }
 
-static nx_numtok
+nx_numtok
 nxp_tok_type(const uchar *t)
 {
   int len = strlen((ccp)t);

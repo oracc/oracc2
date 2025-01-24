@@ -105,7 +105,7 @@ nx_input_tok(FILE *fp)
 }
 
 void
-nx_cli_input(const char **argv)
+nx_cli_input(char *const *argv)
 {
   nx_input_setup();
 
