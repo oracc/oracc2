@@ -79,7 +79,10 @@ nsb_step(uchar *a, uchar *m, uchar *u)
       s->axis = (ccp)a;
     }
   s->unit = u;
-  s->type = nxp_tok_type(u);
+  if (strchr(u, '('))
+    s->type = nxt_ng;
+  else
+    s->type = nxp_tok_type(u);
   s->sys = nxp->sys;
   if (nsb_altflag)
     {

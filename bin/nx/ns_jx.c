@@ -124,7 +124,7 @@ ns_jx_step(ns_step *sp)
       list_add(a, "type");
       list_add(a, "word");
     }
-  else if (sp->type == nxt_nb)
+  else if (sp->type == nxt_nb || sp->type == nxt_ng)
     {
       list_add(a, "type");
       list_add(a, "sign");
