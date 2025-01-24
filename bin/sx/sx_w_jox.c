@@ -1199,7 +1199,7 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	  in_sign = NULL;
 	}
 
-      if (s->type == 's')
+      if (s->type == 's' && s->valid)
 	{
 	  struct sl_token *tp = NULL;
 	  tp = hash_find(sl->htoken, s->u.s->name);
@@ -1251,7 +1251,8 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
     joxer_ao("j:values");
   else if (p == sx_pos_inst)
     {
-      if (!v->inherited && !v->u.v->atf)
+      int valid = v->parent_f ? v->parent_f->valid : v->parent_s->valid;
+      if (!v->inherited && !v->u.v->atf && valid)
 	{
 	  char scode[32];
 	  struct sl_token *tp = NULL;

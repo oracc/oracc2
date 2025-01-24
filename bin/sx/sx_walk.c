@@ -39,7 +39,8 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 			  List *qv = list_create(LIST_SINGLE);
 			  f->sgn(f, sl, sl->letters[i].groups[j].signs[k], sx_pos_init);
 			  f->sgn(f, sl, sl->letters[i].groups[j].signs[k], sx_pos_inst);
-			  if ('s' == sl->letters[i].groups[j].signs[k]->type)
+			  if ('s' == sl->letters[i].groups[j].signs[k]->type
+			      && sl->letters[i].groups[j].signs[k]->valid)
 			    {
 			      if (sl->letters[i].groups[j].signs[k]->u.s->nlists)
 				{
