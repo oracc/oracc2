@@ -4,9 +4,13 @@
 	       xmlns:xh="http://www.w3.org/1999/xhtml"	       
 	       >
 
+  <xsl:param name="font" select="'ofs-noto'"/>
+  
   <xsl:template match="nss:systems">
     <html>
       <head>
+	<meta charset="UTF-8"/>
+	<link rel="stylesheet" type="text/css" media="screen,projection,print" href="/css/fonts.css"/>
 	<title>Number Systems</title>
       </head>
       <body>
@@ -28,18 +32,16 @@
     <table>
       <tr class="ns-steps">
 	<xsl:for-each select="nss:step">
-	  <td class="ns-step"><xsl:value-of select="@unit"/></td>
 	  <xsl:if test="not(position() = last())">
-	    <td class="ns-mult">× <xsl:value-of select="nss:mul/@n div nss:mul/@d"/></td>
+	    <td class="ns-mult"> = <xsl:value-of select="nss:mul/@n div nss:mul/@d"/> × </td>
 	  </xsl:if>
+	  <td class="ns-step"><xsl:value-of select="@unit"/></td>
 	</xsl:for-each>
       </tr>
       <tr class="ns-aevs">
 	<xsl:for-each select="nss:step">
+	  <xsl:if test="not(position() = last())"><td/></xsl:if>
 	  <td class="ns-aev"><xsl:value-of select="nss:aev/@n div nss:aev/@d"/></td>
-	  <xsl:if test="not(position() = last())">
-	    <td/>
-	  </xsl:if>
 	</xsl:for-each>
       </tr>
       <xsl:variable name="sys" select="."/>
@@ -47,8 +49,8 @@
 	<xsl:variable name="nth" select="position()"/>
 	<tr class="x">
 	  <xsl:for-each select="$sys/nss:step">
-	    <td><xsl:value-of select="nss:inst[$nth]/@ucun"/></td>
-	    <td/>
+	    <xsl:if test="not(position() = last())"><td/></xsl:if>
+	    <td><span class="{$font} {nss:inst[$nth]/@feat}"><xsl:value-of select="nss:inst[$nth]/@ucun"/></span></td>
 	  </xsl:for-each>
 	</tr>
       </xsl:for-each>

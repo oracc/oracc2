@@ -47,6 +47,9 @@
 	  <xsl:copy-of select="$slv/@key"/>
 	  <xsl:for-each select="$slv/../sl:ucun">
 	    <xsl:copy-of select="@*"/>
+	    <xsl:if test="$v='1(šar₂)' or $v='1(šargal)'">
+	      <xsl:attribute name="feat"><xsl:text>ss02</xsl:text></xsl:attribute>
+	    </xsl:if>
 	    <xsl:attribute name="ucun"><xsl:value-of select="."/></xsl:attribute>
 	  </xsl:for-each>
 	</xsl:when>
