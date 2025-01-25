@@ -34,6 +34,17 @@ nx_values(nx_result *r)
     }
 }
 
+const char *
+nx_step_mev(ns_step *sp)
+{
+  nx_number n;
+  n.sys = sp->sys;
+  n.aev = sp->aev;
+  const char *meu;
+  nx_calculate_mev(&n, &meu);
+  return nx_modern(&n.mev, meu);
+}
+
 void
 nx_values_np(nx_number *np)
 {

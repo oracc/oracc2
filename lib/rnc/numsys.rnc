@@ -27,6 +27,7 @@ step =
     attribute oid { text }? ,
     attribute ucun { text }? ,
     step_aev? ,
+    step_mev? ,
     step_mul? ,
     inst*
   }
@@ -36,6 +37,7 @@ inst =
     attribute n { text } ,
     attribute type { text }? ,
     step_aev? ,
+    step_mev? ,
     step_mul? ,
     inst_count* ,
     attribute axis { text }?
@@ -44,6 +46,11 @@ inst =
 step_aev =
   element nss:aev {
     nss_num
+  }
+
+step_mev =
+  element nss:mev {
+    text
   }
 
 step_mul = 

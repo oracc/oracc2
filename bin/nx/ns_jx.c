@@ -2,6 +2,7 @@
 #include <joxer.h>
 #include <ns-numsys.h>
 #include "ns.h"
+#include "nx.h"
 
 static int ns_jx_init(void);
 static void ns_jx_num(const char *tag, nx_num n, const char *u);
@@ -180,7 +181,10 @@ ns_jx_step(ns_step *sp)
   list_free(a, NULL);
   joxer_ea(xo_loc, frac_mode ? "nss:inst" : "nss:step", ratts);
   if (sp->aev.d)
-    ns_jx_num("nss:aev", sp->aev, NULL);
+    {
+      ns_jx_num("nss:aev", sp->aev, NULL);
+      joxer_et(xo_loc, "nss:mev", NULL, nx_step_mev(sp));
+    }
   if (sp->mult.d)
     ns_jx_num("nss:mul", sp->mult, NULL);
   ns_inst *ip;

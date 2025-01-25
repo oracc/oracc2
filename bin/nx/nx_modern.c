@@ -4,8 +4,9 @@
 int trace_modern = 0;
 
 static char *nx_decimal(nx_num *c);
-static char *render_litres(double val);
+static char *render_cmsq(double val);
 static char *render_grams(double val);
+static char *render_litres(double val);
 static char *render_mm(double val);
 static char *render_msq(double val);
 static char *render_raw(double val, const char *meu);
@@ -26,6 +27,8 @@ nx_modern(struct nx_num *mev, const char *meu)
 	return render_mm(val);
       else if (!strcmp(meu,"m2"))
 	return render_msq(val);
+      else if (!strcmp(meu,"cm2"))
+	return render_cmsq(val);
       else
 	{
 	  fprintf(stderr,"nx: modern unit %s not handled\n",meu);
@@ -35,7 +38,22 @@ nx_modern(struct nx_num *mev, const char *meu)
 }
 
 static void
-trim00(char*buf)
+trimfinal0(char*buf)
+{
+  char *dot;
+  if (buf && (dot = strchr(buf, '.')))
+    {
+      char *end = buf + strlen(buf);
+      while (end > dot && '0' == end[-1])
+	*--end = '\0';
+      if ('.' == end[-1])
+	end[-1] = '\0';
+    }
+}
+
+#if 0
+static void
+trimfinal0(char*buf)
 {
   if (buf)
     {
@@ -55,6 +73,7 @@ trim00(char*buf)
 	}
     }
 }
+#endif
 
 static char *
 nx_decimal(nx_num *c)
@@ -70,7 +89,7 @@ nx_decimal(nx_num *c)
     }
   else
     sprintf(buf, "%lld",c->n);
-  trim00(buf);
+  trimfinal0(buf);
   return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
@@ -81,10 +100,11 @@ render_litres(double val)
   const char *meu = "l";
 
   if (val < 1)
-    sprintf(buf,"%.03f%s",val,meu);
+    sprintf(buf,"%.03f",val);
   else
-    sprintf(buf,"%.02f%s",val,meu);
-  trim00(buf);
+    sprintf(buf,"%.02f",val);
+  trimfinal0(buf);
+  strcat(buf,meu);
   return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
@@ -97,14 +117,15 @@ render_grams(double val)
     {
       meu = "kg";
       val /= 1000;
-      sprintf(buf,"%.3f%s",val,meu);
+      sprintf(buf,"%.3f",val);
     }
   else
     {
       meu = "g";
-      sprintf(buf,"%.f%s",val,meu);
+      sprintf(buf,"%.f",val);
     }
-  trim00(buf);
+  trimfinal0(buf);
+  strcat(buf,meu);
   return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
@@ -117,26 +138,27 @@ render_mm(double val)
     {
       meu = "km";
       val /= 1000000;
-      sprintf(buf,"%.3f%s",val,meu);
+      sprintf(buf,"%.3f",val);
     }
   else if (val > 1000)
     {
       meu = "m";
       val /= 1000;
-      sprintf(buf,"%.3f%s",val,meu);
+      sprintf(buf,"%.3f",val);
     }
   else if (val > 100)
     {
       meu = "cm";
       val /= 100;
-      sprintf(buf,"%.2f%s",val,meu);
+      sprintf(buf,"%.2f",val);
     }
   else
     {
       meu = "mm";
-      sprintf(buf,"%.f%s",val,meu);
+      sprintf(buf,"%.f",val);
     }
-  trim00(buf);
+  trimfinal0(buf);
+  strcat(buf,meu);
   return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
@@ -149,14 +171,37 @@ render_msq(double val)
     {
       meu = "ha";
       val /= 10000;
-      sprintf(buf,"%.2f%s",val,meu);
+      sprintf(buf,"%.2f",val);
     }
   else
     {
-      meu = "m^2";
-      sprintf(buf,"%.2f%s",val,meu);
+      meu = "m2";
+      sprintf(buf,"%.2f",val);
     }
-  trim00(buf);
+  trimfinal0(buf);
+  strcat(buf,meu);
+  return (char*)pool_copy((ucp)buf, nxp->p);
+}
+
+static char *
+render_cmsq(double val)
+{
+  static char buf[64];
+  const char *meu = NULL;
+  if (val > 1000000)
+    {
+      meu = "ha";
+      val /= 100000000;
+      sprintf(buf,"%.2f",val);
+    }
+  else
+    {
+      meu = "m2";
+      val /= 10000;
+      sprintf(buf,"%.2f",val);
+    }
+  trimfinal0(buf);
+  strcat(buf,meu);
   return (char*)pool_copy((ucp)buf, nxp->p);
 }
 
@@ -164,7 +209,8 @@ static char *
 render_raw(double val,const char *meu)
 {
   static char buf[64];
-  sprintf(buf,"%.2f%s",val,meu);
-  trim00(buf);
+  sprintf(buf,"%.2f",val);
+  trimfinal0(buf);
+  strcat(buf,meu);
   return (char*)pool_copy((ucp)buf, nxp->p);
 }

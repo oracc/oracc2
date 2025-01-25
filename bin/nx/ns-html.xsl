@@ -59,16 +59,16 @@
 	  </xsl:choose>
 	</xsl:for-each>
       </tr>
-      <tr class="ns-aevs">
+      <tr class="ns-mevs">
 	<xsl:for-each select="nss:step">
 	  <xsl:choose>
 	    <xsl:when test="not(@type='frac')">
 	      <!--<xsl:if test="not(position() = last())"><td/></xsl:if>-->
 	      <td/>
-	      <td class="ns-aev"><xsl:value-of select="nss:aev/@n div nss:aev/@d"/></td>
+	      <td class="ns-mev"><xsl:value-of select="nss:mev"/></td>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <td class="ns-aev"/>
+	      <td class="ns-mev"/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:for-each>
