@@ -68,13 +68,19 @@ ns_ne: 	  NE_BOO				{ nsb_env($1, one); }
 	| NE_KEY '=' NE_VAL			{ nsb_env($1, $3); }
 	;
 
-ns_nu:    ns_altunit
-	| ns_nu '=' ns_altunit
+ns_nu:    ns_multunits
+	| ns_multunits '/' ns_fracunits
 	;
 
-ns_altunit:
-	  nu_multunit
-	  | ns_altunit '|' { nsb_altflag=1; } nu_multunit
+ns_fracunits: ns_fracunit
+	| ns_fracunits '|' { nsb_altflag=1; } ns_fracunit
+	;
+
+ns_fracunit: NU_FRAC { nsb_step(NULL,NULL,$1); }
+	;
+
+ns_multunits: nu_multunit
+	| ns_multunits '=' nu_multunit
 	;
 
 nu_multunit: NU_NUM nu_xunit   			{ nsb_step(NULL,$1,$2); }

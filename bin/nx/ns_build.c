@@ -53,6 +53,29 @@ nsb_env(uchar *e, uchar *v)
     }
 }
 
+static void
+nsb_mult_from_frac(nx_num*n, const uchar *frac)
+{
+#if 0
+  /* right now we use notation 1/4(igiŋal) */
+  if (strstr(frac,"igiŋal"))
+    {
+      n->n = 1;
+      if ('n' == *frac)
+	n->d = 1;
+      else
+	n->d = atoi(frac);
+    }
+  else
+    {
+#endif
+      n->n = atoi(frac);
+      n->d = atoi(strchr(frac,'/')+1);
+#if 0
+    }
+#endif
+}
+
 void
 nsb_mult(nx_num*n, const uchar *m)
 {
@@ -75,13 +98,18 @@ nsb_step(uchar *a, uchar *m, uchar *u)
 
   if (build_trace)
     printf("nsb_step: step has mult %s and unit %s; altflag=%d\n", m, u, nsb_altflag);
+
+  if (m)
+    nsb_mult(&s->mult, m);
+  else
+    nsb_mult_from_frac(&s->mult,u);
   
-  nsb_mult(&s->mult, m);
   if (a)
     {
       s->a_or_d = tolower(*a);
       s->axis = (ccp)a;
     }
+
   s->unit = u;
   if (strchr((ccp)u+1, '('))
     s->type = nxt_nf;
@@ -326,9 +354,9 @@ nsb_wrapup(void)
     {
       nxp->sys->last = stp;
       nsb_wrapup_step(stp);
-      ns_step *alt;
       if (stp->alt)
 	{
+	  ns_step *alt;
 	  int d = stp->mult.d;
 	  for (alt = stp->alt; alt->next; alt = alt->next)
 	    {

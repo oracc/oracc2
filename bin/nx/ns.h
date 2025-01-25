@@ -27,7 +27,7 @@ typedef struct ns_step
 {
   nx_num aev;	/* ancient equivalence value, i.e., this step
 		   expressed in terms of the system base--this is for
-		   1x the unit; nx_step->aev has the multiplied
+		   1x the unit; nx_inst->aev has the multiplied
 		   version for the instance */
   nx_num mult;
   uchar *unit;

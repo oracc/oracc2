@@ -27,12 +27,12 @@ nx_sys_aevs(ns_sys *sys)
       int d = 1;
       for (r = s; r->next; r = r->next)
 	{
-	  d *= (int)r->next->mult.n;
+	  d *= (int)r->next->mult.d;
 	  if (!r->next)
 	    break;
 	}
 
-      r->aev.n = 1;
+      r->aev.n = r->mult.n * (d / r->mult.d);
       r->aev.d = d;
 
       if (trace_aev)
@@ -52,10 +52,10 @@ nx_set_aev_r(ns_step *s, int d)
 {
   ns_step *r = s->next;
   unsigned long long n;
-  if (r)
+  if (r && r->type != nxt_nf)
     n = r->aev.n * r->mult.n;
   else
-    n = 1;
+    n = d;
   s->aev.n = n;
   s->aev.d = d;
   if (trace_aev)
