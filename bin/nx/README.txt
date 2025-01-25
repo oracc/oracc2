@@ -288,6 +288,9 @@ ng -- number grapheme
 An ng is one of the tokens that can be part of an nu sequence and consists of
 numeric graphemes such as 1(aš).
 
+nf -- number fraction
+
+An nf is a ng which is a fraction, e.g., 1/2(diš).
 
 
 nw -- number words
@@ -301,6 +304,8 @@ no -- number operators
 Two tokens are in this category: la₂, "less, minus" and igi,
 "fraction".  The fraction expression, igi n ŋal₂ is handled by
 treating igi as the operative term and ŋal₂ as an optional appendage.
+It is specified in system definitions as the pseudo-fraction
+n(igiŋal), e.g., 3(igiŋal).
 
 
 nv -- number virtual

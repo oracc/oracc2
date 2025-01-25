@@ -9,7 +9,7 @@
 
   <xsl:key name="v" match="sl:v" use="@n"/>
   
-  <xsl:template match="nss:step[@type='sign']">
+  <xsl:template match="nss:step[@type='sign' or @type='frac']">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates mode="sl"/>
@@ -47,10 +47,13 @@
 	  <xsl:copy-of select="$slv/@key"/>
 	  <xsl:for-each select="$slv/../sl:ucun">
 	    <xsl:copy-of select="@*"/>
+	    <xsl:variable name="gal">
+	      <xsl:if test="contains($v,'gal')"><xsl:text>𒃲</xsl:text></xsl:if>
+	    </xsl:variable>
 	    <xsl:if test="$v='1(šar₂)' or $v='1(šargal)'">
 	      <xsl:attribute name="feat"><xsl:text>ss02</xsl:text></xsl:attribute>
 	    </xsl:if>
-	    <xsl:attribute name="ucun"><xsl:value-of select="."/></xsl:attribute>
+	    <xsl:attribute name="ucun"><xsl:value-of select="concat(.,$gal)"/></xsl:attribute>
 	  </xsl:for-each>
 	</xsl:when>
 	<xsl:otherwise>

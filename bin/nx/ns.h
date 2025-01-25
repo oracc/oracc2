@@ -36,7 +36,8 @@ typedef struct ns_step
   struct ns_step *prev;
   struct ns_step *alt;
   struct ns_inst *insts;
-  struct ns_inst *last;  
+  struct ns_inst *last;
+  struct nw_tab *nwp;
   char a_or_d;
   const char *axis;
 } ns_step;
@@ -59,6 +60,7 @@ typedef struct ns_inst
   const uchar *ucun;		/* the Unicode for a grapheme in UTF-8 */
   const uchar *unit;		/* the name of the corresponding step */
   nx_num aev;			/* the aev for the count * the ns_step->aev */
+  nx_num mult;			/* the mult for the inst when ns_step has fraction insts */
   nx_num count;			/* the count for the step; can be integer or fraction */
   char a_or_d;			/* 'a' or 'd' for aš or diš */
   const char *axis;	       	/* axis--full meta-system e.g. A@c */

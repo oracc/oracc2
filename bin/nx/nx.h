@@ -105,6 +105,7 @@ typedef struct nx_result
  *	T tokens
  *	P parse
  *	V values
+ *	M math
  *
  */
 extern const char *nxd_arg;
@@ -113,14 +114,16 @@ extern const char *nxd_arg;
 #define nxd_tokens() strchr(nxd_arg,'T')
 #define nxd_parse() strchr(nxd_arg,'P')
 #define nxd_values() strchr(nxd_arg,'V')
+#define nxd_math() strchr(nxd_arg,'M')
 
 extern int nsb_altflag;
-extern int opt_trace;
+extern int opt_trace, math_trace;
 extern const char *currnsfile;
 extern const char *nxt_str[];
 
 struct nxt_tab { const char *name; int tok; }; /* nx_numtok or integer sort index in ne.g */
 struct nw_map { const char *name; const char *mapped; };
+
 extern struct nxt_tab *nxt(register const char *str, register size_t len);
 extern struct nw_map *nwmap(register const char *str, register size_t len);
 extern struct nxt_tab *gc(register const char *str, register size_t len);

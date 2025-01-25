@@ -53,7 +53,8 @@ ns_jx(Hash *hsys, List *lsys)
 	{
 	  if (sp->alt)
 	    {
-	      joxer_ea(xo_loc, "nss:alt", NULL);
+	      ratts = rnvval_aa("x", "unit", "fracs", NULL);
+	      joxer_ea(xo_loc, "nss:alt", ratts);
 	      ns_jx_step(sp);
 	      ns_step *ap;
 	      for (ap = sp->alt; ap; ap = ap->next)
@@ -103,6 +104,26 @@ ns_jx_num(const char *tag, nx_num n)
   joxer_ec(xo_loc, tag, ratts);
 }
 
+static const char *
+axis_ucun(const char *a)
+{
+  if (*a == 'A')
+    {
+      if (a[1])
+	return "𒕐";
+      else
+	return "𒀸";	  
+    }
+  else
+    {
+      if (a[1])
+	return a[2] == 'c' ? "𒕙" : "𒀹";
+      else
+	return "𒁹";
+    }
+  return NULL;
+}
+
 static void
 ns_jx_step(ns_step *sp)
 {
@@ -118,16 +139,36 @@ ns_jx_step(ns_step *sp)
     {
       list_add(a, "axis");
       list_add(a, (char*)sp->axis);
+      const char *ac = axis_ucun(sp->axis);
+      if (ac)
+	{
+	  list_add(a, (char*)"axis-ucun");
+	  list_add(a, (char*)ac);
+	}
     }
   if (sp->type == nxt_nw)
     {
       list_add(a, "type");
       list_add(a, "word");
+      if (sp->nwp)
+	{
+	  list_add(a, "cgp");
+	  list_add(a, (char*)sp->nwp->cgp);
+	  list_add(a, "oid");
+	  list_add(a, (char*)sp->nwp->oid);
+	  list_add(a, "ucun");
+	  list_add(a, (char*)sp->nwp->ucun);
+	}
     }
   else if (sp->type == nxt_nb || sp->type == nxt_ng)
     {
       list_add(a, "type");
       list_add(a, "sign");
+    }
+  else if (sp->type == nxt_nf)
+    {
+      list_add(a, "type");
+      list_add(a, "frac");
     }
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);

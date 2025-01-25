@@ -44,7 +44,7 @@ nxp_numbers(nx_result *r, nx_numtok *nptoks, const uchar **toks, const void**dat
       /* get the system data for the token */
       if (!cand)
 	{
-	  if (nptoks[from] == nxt_ng)
+	  if (nptoks[from] == nxt_ng || nptoks[from] == nxt_nf)
 	    {
 	      /* if this is the first token initialize the candidate systems
 		 and add an nx_step to each candidate for the token */

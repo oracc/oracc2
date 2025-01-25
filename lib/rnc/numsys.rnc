@@ -28,6 +28,9 @@ step =
     attribute unit { text }? ,
     attribute type { text }? ,
     attribute axis { text }? ,
+    attribute cgp { text }? ,
+    attribute oid { text }? ,
+    attribute ucun { text }? ,
     step_aev? ,
     step_mul? ,
     inst*

@@ -79,10 +79,20 @@ nsb_step(uchar *a, uchar *m, uchar *u)
       s->axis = (ccp)a;
     }
   s->unit = u;
-  if (strchr(u, '('))
-    s->type = nxt_ng;
+  if (strchr((ccp)u+1, '('))
+    s->type = nxt_nf;
   else
     s->type = nxp_tok_type(u);
+  if (s->type == nxt_nw)
+    {
+      if (!(s->nwp = nw((ccp)u, strlen((ccp)u))))
+	fprintf(stderr, "%s: no word data\n", u);
+    }
+  else if (s->type == nxt_nn)
+    {
+      fprintf(stderr, "%s: step unit is not a number.\n", u);
+    }
+  
   s->sys = nxp->sys;
   if (nsb_altflag)
     {
@@ -197,8 +207,12 @@ nsb_inst_add(ns_inst *i, ns_inst_method meth)
 void
 nsb_inst_frac(const char *f, ns_inst_method meth)
 {
+#if 1
+  char *buf = (char*)pool_copy((uccp)f, nxp->p);
+#else
   char buf[strlen(f)+1];
   strcpy(buf,f);
+#endif
   char *slash, *paren;
   slash = strchr(buf, '/');
   if (slash)
@@ -287,19 +301,15 @@ nsb_wrapup_step(ns_step *stp)
     }
   else
     {
-      if (stp->mult.d == 1)
+      if (strchr((ccp)stp->unit, '/'))
+	nsb_inst_frac((ccp)stp->unit, NS_INST_AUTO);
+      else if (stp->mult.d == 1)
 	{
-	  if (strchr((ccp)stp->unit, '/'))
-	    {
-	      nsb_inst_frac((ccp)stp->unit, NS_INST_AUTO);
-	    }
-	  else
-	    {
-	      int i = (int)stp->mult.n;
-	      int m;
-	      for (m = 1; m < i; ++m)
-		nsb_auto_inst_g(nxp->sys, m, stp->unit);
-	    }
+	  int i = (int)stp->mult.n;
+	  int m = 1;
+	  do
+	    nsb_auto_inst_g(nxp->sys, m, stp->unit);
+	  while (++m < i); 
 	}
     }
 }
@@ -313,10 +323,28 @@ nsb_wrapup(void)
       nxp->sys->last = stp;
       nsb_wrapup_step(stp);
       ns_step *alt;
-      for (alt = stp->alt; alt; alt = alt->next)
+      if (stp->alt)
 	{
-	  nxp->sys->last = alt;
-	  nsb_wrapup_step(alt);
+	  int d = 1;
+	  for (alt = stp->alt; alt->next; alt = alt->next)
+	    {
+	      d *= (int)alt->next->mult.d;
+	      if (!alt->next)
+		break;
+	    }
+
+	  for (alt = stp->alt; alt; alt = alt->next)
+	    {
+	      int m = d / alt->mult.d;
+	      alt->mult.n *= m;
+	      alt->mult.d = d;
+	    }
+
+	  for (alt = stp->alt; alt; alt = alt->next)
+	    {
+	      nxp->sys->last = alt;
+	      nsb_wrapup_step(alt);
+	    }
 	}
     }
   nx_sys_aevs(nxp->sys);

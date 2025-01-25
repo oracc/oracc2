@@ -9,7 +9,7 @@
 /* nxt_gc = gur-commodity token */
 typedef enum nx_numtok
   {
-    nxt_nn , nxt_ng , nxt_nb, nxt_nw , nxt_nv , nxt_nd ,
+    nxt_nn , nxt_ng , nxt_nf , nxt_nb , nxt_nw , nxt_nv , nxt_nd ,
     nxt_nc , nxt_na , nxt_nz , nxt_ne , nxt_gc , nxt_gw , nxt_no
   } nx_numtok;
 
@@ -54,5 +54,8 @@ typedef struct nx
 } nx;
 
 extern nx *nxp;
+
+struct nw_tab { const char *name; const char *cgp; const char *oid; const char *ucun; };
+extern struct nw_tab *nw(register const char *str, register size_t len);
 
 #endif/*NXCOMMON_H_*/

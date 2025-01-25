@@ -137,6 +137,9 @@ main(int argc, char * const *argv)
 
   if (nxd_values())
     values_trace = 1;
+
+  if (nxd_math())
+    math_trace = 1;
 #else
   build_trace = ns_flex_debug = nsflextrace = debug;
 #endif

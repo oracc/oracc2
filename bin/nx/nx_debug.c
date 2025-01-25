@@ -11,7 +11,7 @@ void nxd_show_step(nx_step *ns);
 int
 nxd_arg_ok(const char *arg)
 {
-  const char *nxd_arg_ok = "LYTPV";
+  const char *nxd_arg_ok = "LYTPVM";
   while (*arg)
     if (!strchr(nxd_arg_ok, *arg))
       return 0;
