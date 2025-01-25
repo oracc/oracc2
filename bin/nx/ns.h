@@ -20,6 +20,7 @@ typedef struct ns_sys
   uchar *det;
   Hash *i;			/* inst text pointing to sys copy of inst */
   int aev_done;
+  int lnum;
 } ns_sys;
 
 typedef struct ns_step

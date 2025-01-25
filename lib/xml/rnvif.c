@@ -8,6 +8,7 @@
 
 #include <list.h>
 #include <pool.h>
+#include <mesg.h>
 
 #include "../rnv/m.h"
 #include "../rnv/s.h"
@@ -23,6 +24,8 @@
 #include "../rnv/er.h"
 
 extern int rn_notAllowed,rx_compact,drv_compact;
+
+extern Mloc *xo_loc;
 
 #define LEN_T XCL_LEN_T
 #define LIM_T XCL_LIM_T
@@ -120,7 +123,7 @@ static void verror_handler(int erno,va_list ap) {
   if(erno&ERBIT_RNL) {
     rnl_default_verror_handler(erno&~ERBIT_RNL,ap);
   } else {
-    int line = 0; /* tree_get_line();*/
+    int line = xo_loc->line; /* tree_get_line();*/
       
       if (rnvif_text_id)
 	(*er_printf)("%s:%d:%s: XML error: ",file,line,rnvif_text_id);
@@ -260,6 +263,7 @@ rnv_characters(void *userData,const char *s,int len)
     mytext = s;
 }
 
+#if 0
 int
 rnv_validate(struct node *np)
 {
@@ -268,6 +272,7 @@ rnv_validate(struct node *np)
   /*tree_validate(np);*/
   return !ok;
 }
+#endif
 
 int
 rnv_validate_start(void)

@@ -19,7 +19,14 @@
   <xsl:template match="nss:inst" mode="sl">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:call-template name="add-sl-attr"/>
+      <xsl:choose>
+	<xsl:when test="contains(@n, 'igiŋal')">
+	  <xsl:call-template name="add-igiŋal"/>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:call-template name="add-sl-attr"/>
+	</xsl:otherwise>
+      </xsl:choose>
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
@@ -36,6 +43,16 @@
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates/>
     </xsl:copy>
+  </xsl:template>
+
+  <xsl:template name="add-igiŋal">
+    <xsl:variable name="v" select="concat(nss:count/@d,'(diš)')"/>
+    <xsl:variable name="ucun">
+      <xsl:for-each select="document($sl)">
+	<xsl:value-of select="key('v',$v)/../sl:ucun"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:attribute name="ucun"><xsl:value-of select="concat('𒅆',$ucun,'𒅅')"/></xsl:attribute>
   </xsl:template>
 
   <xsl:template name="add-sl-attr">

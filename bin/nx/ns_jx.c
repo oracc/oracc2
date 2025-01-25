@@ -4,7 +4,7 @@
 #include "ns.h"
 
 static int ns_jx_init(void);
-static void ns_jx_num(const char *tag, nx_num n);
+static void ns_jx_num(const char *tag, nx_num n, const char *u);
 static void ns_jx_step(ns_step *sp);
 
 extern Mloc *xo_loc;
@@ -31,6 +31,7 @@ ns_jx(Hash *hsys, List *lsys)
   for (sysname = list_first(lsys); sysname; sysname = list_next(lsys))
     {
       ns_sys *sysp = hash_find(hsys, (uccp)sysname);
+      xo_loc->line = sysp->lnum;
       List *a = list_create(LIST_SINGLE);
       list_add(a, "name");
       list_add(a, sysp->name);
@@ -51,15 +52,18 @@ ns_jx(Hash *hsys, List *lsys)
       ns_step *sp;
       for (sp = sysp->steps; sp; sp = sp->next)
 	{
-	  if (sp->alt)
+	  if (sp->type == nxt_nf)
 	    {
-	      ratts = rnvval_aa("x", "unit", "fracs", NULL);
-	      joxer_ea(xo_loc, "nss:alt", ratts);
+	      ratts = rnvval_aa("x", "unit", "/", "type", "frac", NULL);
+	      joxer_ea(xo_loc, "nss:step", ratts);
 	      ns_jx_step(sp);
-	      ns_step *ap;
-	      for (ap = sp->alt; ap; ap = ap->next)
-		ns_jx_step(ap);
-	      joxer_ee(xo_loc, "nss:alt");
+	      if (sp->alt)
+		{
+		  ns_step *ap;
+		  for (ap = sp->alt; ap; ap = ap->next)
+		    ns_jx_step(ap);
+		}
+	      joxer_ee(xo_loc, "nss:step");
 	    }
 	  else
 	    {
@@ -94,13 +98,16 @@ ns_jx_init(void)
 }
 
 static void
-ns_jx_num(const char *tag, nx_num n)
+ns_jx_num(const char *tag, nx_num n, const char *u)
 {
   char nbuf[128];
   char dbuf[32];
   sprintf(nbuf, "%lld", n.n);
   sprintf(dbuf, "%d", n.d);
-  ratts = rnvval_aa("x", "n", nbuf, "d", dbuf, NULL);
+  if (u)
+    ratts = rnvval_aa("x", "n", nbuf, "d", dbuf, "unit", u, NULL);
+  else
+    ratts = rnvval_aa("x", "n", nbuf, "d", dbuf, NULL);
   joxer_ec(xo_loc, tag, ratts);
 }
 
@@ -129,10 +136,12 @@ ns_jx_step(ns_step *sp)
 {
   List *a;
   const char **atts;
+  int frac_mode = (sp->type == nxt_nf);
+  
   a = list_create(LIST_SINGLE);
   if (sp->unit)
     {
-      list_add(a, "unit");
+      list_add(a, frac_mode ? "n" : "unit");
       list_add(a, sp->unit);
     }
   if (sp->axis)
@@ -165,19 +174,15 @@ ns_jx_step(ns_step *sp)
       list_add(a, "type");
       list_add(a, "sign");
     }
-  else if (sp->type == nxt_nf)
-    {
-      list_add(a, "type");
-      list_add(a, "frac");
-    }
+
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
   list_free(a, NULL);
-  joxer_ea(xo_loc, "nss:step", ratts);
+  joxer_ea(xo_loc, frac_mode ? "nss:inst" : "nss:step", ratts);
   if (sp->aev.d)
-    ns_jx_num("nss:aev", sp->aev);
+    ns_jx_num("nss:aev", sp->aev, NULL);
   if (sp->mult.d)
-    ns_jx_num("nss:mul", sp->mult);
+    ns_jx_num("nss:mul", sp->mult, NULL);
   ns_inst *ip;
   for (ip = sp->insts; ip; ip = ip->next)
     {
@@ -187,11 +192,6 @@ ns_jx_step(ns_step *sp)
 	  list_add(a, "n");
 	  list_add(a, (char*)ip->text);
 	}
-      if (ip->unit && *ip->unit != 1)
-	{
-	  list_add(a, "unit");
-	  list_add(a, (char*)ip->unit);
-	}
       if (ip->axis)
 	{
 	  list_add(a, "axis");
@@ -200,12 +200,17 @@ ns_jx_step(ns_step *sp)
       atts = list2chars(a);
       ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
       list_free(a, NULL);
-      joxer_ea(xo_loc, "nss:inst", ratts);
-      if (ip->aev.d)
-	ns_jx_num("nss:aev", ip->aev);
-      if (ip->count.d)
-	ns_jx_num("nss:count", ip->count);
-      joxer_ee(xo_loc, "nss:inst");
+      if (!frac_mode)
+	{
+	  joxer_ea(xo_loc, "nss:inst", ratts);
+	  if (ip->aev.d)
+	    ns_jx_num("nss:aev", ip->aev, NULL);
+	  if (ip->count.d)
+	    ns_jx_num("nss:count", ip->count, (ccp)ip->unit);
+	  joxer_ee(xo_loc, "nss:inst");
+	}
+      else if (ip->count.d)
+	ns_jx_num("nss:count", ip->count, (ccp)ip->unit);	
     }
-  joxer_ee(xo_loc, "nss:step");
+  joxer_ee(xo_loc, frac_mode ? "nss:inst" : "nss:step");
 }

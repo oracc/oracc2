@@ -4,6 +4,7 @@
 int build_trace = 0;
 
 int nsb_altflag;
+extern int nslineno;
 
 void
 nsb_sys(uchar *t)
@@ -15,8 +16,9 @@ nsb_sys(uchar *t)
   nxp->sys->e = hash_create(7);
   list_add(nxp->hashes, nxp->sys->e);
   nxp->sys->ilist = list_create(LIST_SINGLE);
+  nxp->sys->lnum = nslineno;
   ++nxp->nsys;
-  nsb_altflag = 0;
+  nsb_altflag = 0;  
   if (build_trace)
     printf("nsb_sys: sys %s is sys %d\n", nxp->sys->name, nxp->nsys);
 }
@@ -55,6 +57,8 @@ void
 nsb_mult(nx_num*n, const uchar *m)
 {
   n->n = atoi((char*)m);
+  if (n->n == 0L)
+    n->n = 1L;
   char *slash = strchr((char*)m, '/');
   if (slash)
     n->d = atoi(++slash);
@@ -325,19 +329,23 @@ nsb_wrapup(void)
       ns_step *alt;
       if (stp->alt)
 	{
-	  int d = 1;
+	  int d = stp->mult.d;
 	  for (alt = stp->alt; alt->next; alt = alt->next)
 	    {
 	      d *= (int)alt->next->mult.d;
 	      if (!alt->next)
 		break;
 	    }
-
+	  
+	  int m = d / stp->mult.d;
+	  stp->mult.n *= m;
+	  stp->mult.d = d;
 	  for (alt = stp->alt; alt; alt = alt->next)
 	    {
-	      int m = d / alt->mult.d;
+	      m = d / alt->mult.d;
 	      alt->mult.n *= m;
 	      alt->mult.d = d;
+	      alt->aev = alt->mult;
 	    }
 
 	  for (alt = stp->alt; alt; alt = alt->next)

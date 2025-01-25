@@ -41,7 +41,7 @@ nx_sys_aevs(ns_sys *sys)
       /* traverse up setting all the aev to have the same
 	 denominator */
       ns_step *b; /* bigger */
-      for (b = r; b; b = b->prev)
+      for (b = base_step; b; b = b->prev)
 	nx_set_aev_r(b, d);
     }
   sys->base_step = base_step;

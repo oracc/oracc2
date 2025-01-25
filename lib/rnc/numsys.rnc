@@ -15,14 +15,9 @@ sys =
     attribute base { text }? ,
     attribute conv { text }? ,
     attribute det { text }? ,
-    (alt | step)*
-  }
-
-alt =
-  element nss:alt {
     step*
   }
-  
+
 step =
   element nss:step {
     attribute unit { text }? ,
@@ -39,7 +34,7 @@ step =
 inst =
   element nss:inst {
     attribute n { text } ,
-    attribute unit { text }? ,
+    attribute type { text }? ,
     step_aev? ,
     step_mul? ,
     inst_count* ,
@@ -58,6 +53,7 @@ step_mul =
 
 inst_count = 
   element nss:count {
+    attribute unit { text }? ,
     nss_num
   }
 
