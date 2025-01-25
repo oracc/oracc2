@@ -103,15 +103,17 @@
 		    <xsl:value-of select="nss:inst[$nth]/@ucun"/>
 		  </span>
 		  <xsl:if test="@type='frac' and string-length(nss:inst[$nth]/@ucun)>0">
-		    <xsl:choose>
-		      <xsl:when test="contains(nss:inst[$nth]/@n, 'igiŋal')">
-			<span class="ns-frac">
-			&#xa0;igi-<xsl:value-of select="nss:inst[$nth]/nss:count/@d"/>(diš)-ŋal₂</span>
-		      </xsl:when>
-		      <xsl:otherwise>
-			<span class="ns-frac">&#xa0;<xsl:value-of select="nss:inst[$nth]/@n"/></span>
-		      </xsl:otherwise>
-		    </xsl:choose>
+		    <td>
+		      <xsl:choose>
+			<xsl:when test="contains(nss:inst[$nth]/@n, 'igiŋal')">
+			  <span class="ns-frac">
+			  &#xa0;igi-<xsl:value-of select="nss:inst[$nth]/nss:count/@d"/>(diš)-ŋal₂</span>
+			</xsl:when>
+			<xsl:otherwise>
+			  <span class="ns-frac">&#xa0;<xsl:value-of select="nss:inst[$nth]/@n"/></span>
+			</xsl:otherwise>
+		      </xsl:choose>
+		    </td>
 		  </xsl:if>
 		</xsl:otherwise>
 	      </xsl:choose>
