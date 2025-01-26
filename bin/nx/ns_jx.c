@@ -88,7 +88,7 @@ ns_jx_init(void)
   if (!jfn)
     jfn = "ns.jsn";
   if (!xfn)
-    xfn = "ns.xml";
+    xfn = "numsys.xml";
   jfp = opt_json ? fopen(jfn, "w") : NULL;
   f_xml = xfp = opt_xml ? fopen(xfn, "w") : NULL;
 

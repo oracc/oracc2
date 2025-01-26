@@ -31,8 +31,8 @@
     <!--<xsl:message><xsl:value-of select="@name"
 	/> max-inst=<xsl:value-of select="$max-inst"/></xsl:message>-->
     <h1><xsl:value-of select="@name"/></h1>
-    <table>
-      <tr class="ns-steps">
+    <table class="pretty">
+      <tr class="ns-mults">
 	<xsl:for-each select="nss:step">
 	  <xsl:choose>
 	    <xsl:when test="not(@type='frac')">
@@ -50,11 +50,40 @@
 		</xsl:choose>
 		<xsl:text> × </xsl:text>
 	      </td>
+	      <!--<td class="ns-step"><xsl:value-of select="@unit"/></td>-->
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <td><span class="spacer"> 000 </span></td><!-- spacer instead of '= N ×' -->
+	      <td/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</xsl:for-each>
+      </tr>
+      <tr class="ns-mults">
+	<xsl:for-each select="nss:step">
+	  <xsl:choose>
+	    <xsl:when test="not(@type='frac')">
+	      <!--
+	      <td class="ns-mult">
+		<xsl:if test="not(position()=1)">
+		  <xsl:text> = </xsl:text>
+		</xsl:if>
+		<xsl:choose>
+		  <xsl:when test="nss:mul/@n = '0'">
+		    <xsl:text>1</xsl:text>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:value-of select="nss:mul/@n div nss:mul/@d"/>
+		  </xsl:otherwise>
+		</xsl:choose>
+		<xsl:text> × </xsl:text>
+		</td>
+		-->
 	      <td class="ns-step"><xsl:value-of select="@unit"/></td>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <td>&#xa0;</td><!-- spacer instead of '= N ×' -->
-	      <td>/</td>
+	      <!--<td>&#xa0;</td>--><!-- spacer instead of '= N ×' -->
+	      <td>/</td><td/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:for-each>
@@ -64,11 +93,11 @@
 	  <xsl:choose>
 	    <xsl:when test="not(@type='frac')">
 	      <!--<xsl:if test="not(position() = last())"><td/></xsl:if>-->
-	      <td/>
+	      <!--<td/>-->
 	      <td class="ns-mev"><xsl:value-of select="nss:mev"/></td>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <td class="ns-mev"/>
+	      <td class="ns-mev"/><td/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:for-each>
@@ -79,7 +108,7 @@
 	<tr class="x">
 	  <xsl:for-each select="$sys/nss:step">
 	    <!--<xsl:if test="not(position() = last())"><td/></xsl:if>-->
-	    <td/>
+	    <!--<td/>-->
 	    <td>
 	      <xsl:choose>
 		<xsl:when test="@type='word'">
@@ -102,16 +131,16 @@
 		  <span class="ns-ucun {$font} {nss:inst[$nth]/@feat}">
 		    <xsl:value-of select="nss:inst[$nth]/@ucun"/>
 		  </span>
-		  <xsl:if test="@type='frac' and string-length(nss:inst[$nth]/@ucun)>0">
+		  <xsl:if test="@type='frac'">
 		    <td>
 		      <xsl:choose>
 			<xsl:when test="contains(nss:inst[$nth]/@n, 'igiŋal')">
 			  <span class="ns-frac">
 			  &#xa0;igi-<xsl:value-of select="nss:inst[$nth]/nss:count/@d"/>(diš)-ŋal₂</span>
 			</xsl:when>
-			<xsl:otherwise>
+			<xsl:when test="string-length(nss:inst[$nth]/@ucun)>0">
 			  <span class="ns-frac">&#xa0;<xsl:value-of select="nss:inst[$nth]/@n"/></span>
-			</xsl:otherwise>
+			</xsl:when>
 		      </xsl:choose>
 		    </td>
 		  </xsl:if>

@@ -1,8 +1,8 @@
 include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=nx nxtokx
-bin_SCRIPTS=
-scriptdata_DATA=
+bin_SCRIPTS=numsys-html.sh
+scriptdata_DATA=*.xsl
 data_DATA=ns.dat
 
 nx_SOURCES=nx.c ns.tab.c ns.lex.c ns_data.c ns_build.c nxt.c		\
