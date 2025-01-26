@@ -37,6 +37,7 @@ typedef struct ns_step
   struct ns_step *prev;
   struct ns_step *alt;
   struct ns_inst *insts;
+  struct ns_inst *fracs;
   struct ns_inst *last;
   struct nw_tab *nwp;
   char a_or_d;
@@ -82,5 +83,6 @@ extern void nsb_step (uchar * a, uchar * b, uchar * c);
 extern void nsb_inst_g (const uchar * g, const uchar * n, const uchar * u, ns_inst_method meth);
 extern ns_inst *nsb_inst_u (const uchar * x, uchar * g, uchar * u, ns_inst_method meth);
 extern void nsb_wrapup (void);
+extern void nsb_frac(const uchar *f);
 
 #endif /* NS_H_ */

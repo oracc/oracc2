@@ -69,8 +69,8 @@ nsb_mult_from_frac(nx_num*n, const uchar *frac)
   else
     {
 #endif
-      n->n = atoi(frac);
-      n->d = atoi(strchr(frac,'/')+1);
+      n->n = atoi((ccp)frac);
+      n->d = atoi(strchr((ccp)frac,'/')+1);
 #if 0
     }
 #endif
@@ -234,6 +234,48 @@ nsb_inst_add(ns_inst *i, ns_inst_method meth)
     }
   hash_add(h, i->text, i);
   nsb_inst_register(i);
+}
+
+void
+nsb_frac(const uchar *frac)
+{
+  char *buf = (char*)pool_copy((uccp)frac, nxp->p);
+  ns_inst *i = memo_new(nxp->m_ns_inst);
+
+  char *slash, *paren;
+  slash = strchr(buf, '/');
+  if (slash)
+    {
+      ++slash;
+      int n = atoi(buf);
+      int d = atoi(slash);
+      const char *u = NULL;
+      paren = strchr(slash,'(');
+      if (paren)
+	{
+	  u = ++paren;
+	  paren = strchr(paren,')');
+	  *paren = '\0';
+	  i->text = (uccp)frac;
+	  i->unit = (uccp)u;
+	  i->count.n = n;
+	  i->count.d = d;
+	  i->step = nxp->sys->last;
+	  /*nsb_inst_add(i, meth);*/
+	}
+    }  
+  if (nxp->sys->last->fracs)
+    {
+      ns_inst *a;
+      for (a = nxp->sys->last->fracs; a->next; a = a->next)
+	;
+      a->next = i;
+      i->prev = a;
+    }
+  else
+    {
+      nxp->sys->last->fracs = i;
+    }
 }
 
 void

@@ -49,7 +49,7 @@ FRAC		[0-9n]\/[0-9]
 
 \{{G}{M}*("."{G}{M}*)*\}?  		{ nsave; return NU_DET; }
 
-[|"*=>.:/]			       	{ return *nstext; }
+[|"*=>.:/\\]			       	{ return *nstext; }
 
 [ \t\n]+				{ }
 

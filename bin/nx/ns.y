@@ -69,24 +69,30 @@ ns_ne: 	  NE_BOO				{ nsb_env($1, one); }
 	;
 
 ns_nu:    ns_multunits
-	| ns_multunits '/' ns_fracunits
+	;
+
+ns_fracs: '/' ns_fracunits '\\'
 	;
 
 ns_fracunits: ns_fracunit
-	| ns_fracunits '|' { nsb_altflag=1; } ns_fracunit
+	| ns_fracunits ns_fracunit
 	;
 
-ns_fracunit: NU_FRAC { nsb_step(NULL,NULL,$1); }
+ns_fracunit: NU_FRAC 				{ nsb_frac($1); }
 	;
 
 ns_multunits: nu_multunit
 	| ns_multunits '=' nu_multunit
 	;
 
-nu_multunit: NU_NUM nu_xunit   			{ nsb_step(NULL,$1,$2); }
+nu_multunit: ns_mult_mult
+	| ns_mult_mult ns_fracs
+	;
+
+ns_mult_mult: NU_NUM nu_xunit   	       	{ nsb_step(NULL,$1,$2); }
 	| NU_AXIS NU_NUM nu_xunit   		{ nsb_step($1,$2,$3); }
 	| NU_UNIT '*' NU_NUM			{ nsb_step(NULL,$3,$1); }
-	| NU_UNIT '*' NU_AXIS NU_NUM   		{ nsb_step($3,$4,$1); }
+	| NU_UNIT '*' NU_AXIS NU_NUM   		{ nsb_step($3,$4,$1); }	
 	;
 
 nu_gval:  NU_FRAC | NU_GVAL ;

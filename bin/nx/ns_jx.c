@@ -10,6 +10,7 @@ static void ns_jx_step(ns_step *sp);
 
 extern Mloc *xo_loc;
 int rnvtrace = 0;
+int frac_mode = 0;
 
 extern int opt_json, opt_xml;
 extern const char *jfn, *xfn, *file;
@@ -53,6 +54,7 @@ ns_jx(Hash *hsys, List *lsys)
       ns_step *sp;
       for (sp = sysp->steps; sp; sp = sp->next)
 	{
+#if 0 /* This can't happen with new sp->fracs architecture */
 	  if (sp->type == nxt_nf)
 	    {
 	      ratts = rnvval_aa("x", "unit", "/", "type", "frac", NULL);
@@ -70,6 +72,8 @@ ns_jx(Hash *hsys, List *lsys)
 	    {
 	      ns_jx_step(sp);
 	    }
+#endif
+	  ns_jx_step(sp);
 	}
       joxer_ee(xo_loc, "nss:sys");
     }
@@ -137,58 +141,75 @@ ns_jx_step(ns_step *sp)
 {
   List *a;
   const char **atts;
-  int frac_mode = (sp->type == nxt_nf);
   
   a = list_create(LIST_SINGLE);
   if (sp->unit)
     {
-      list_add(a, frac_mode ? "n" : "unit");
-      list_add(a, sp->unit);
-    }
-  if (sp->axis)
-    {
-      list_add(a, "axis");
-      list_add(a, (char*)sp->axis);
-      const char *ac = axis_ucun(sp->axis);
-      if (ac)
+      list_add(a, "unit");
+      if (frac_mode)
 	{
-	  list_add(a, (char*)"axis-ucun");
-	  list_add(a, (char*)ac);
+	  char buf[strlen((ccp)sp->unit)+3];
+	  sprintf(buf, "/-%s", sp->unit);
+	  list_add(a, pool_copy((uccp)buf, nxp->p));
+	}
+      else
+	list_add(a, sp->unit);
+    }
+  if (!frac_mode)
+    {
+      if (sp->axis)
+	{
+	  list_add(a, "axis");
+	  list_add(a, (char*)sp->axis);
+	  const char *ac = axis_ucun(sp->axis);
+	  if (ac)
+	    {
+	      list_add(a, (char*)"axis-ucun");
+	      list_add(a, (char*)ac);
+	    }
+	}
+      if (sp->type == nxt_nw)
+	{
+	  list_add(a, "type");
+	  list_add(a, "word");
+	  if (sp->nwp)
+	    {
+	      list_add(a, "cgp");
+	      list_add(a, (char*)sp->nwp->cgp);
+	      list_add(a, "oid");
+	      list_add(a, (char*)sp->nwp->oid);
+	      list_add(a, "ucun");
+	      list_add(a, (char*)sp->nwp->ucun);
+	    }
+	}
+      else if (sp->type == nxt_nb || sp->type == nxt_ng)
+	{
+	  list_add(a, "type");
+	  list_add(a, "sign");
 	}
     }
-  if (sp->type == nxt_nw)
+  else
     {
       list_add(a, "type");
-      list_add(a, "word");
-      if (sp->nwp)
-	{
-	  list_add(a, "cgp");
-	  list_add(a, (char*)sp->nwp->cgp);
-	  list_add(a, "oid");
-	  list_add(a, (char*)sp->nwp->oid);
-	  list_add(a, "ucun");
-	  list_add(a, (char*)sp->nwp->ucun);
-	}
-    }
-  else if (sp->type == nxt_nb || sp->type == nxt_ng)
-    {
-      list_add(a, "type");
-      list_add(a, "sign");
-    }
+      list_add(a, "frac");
+    }    
 
   atts = list2chars(a);
   ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
   list_free(a, NULL);
-  joxer_ea(xo_loc, frac_mode ? "nss:inst" : "nss:step", ratts);
-  if (sp->aev.d)
+  joxer_ea(xo_loc, "nss:step", ratts);
+  if (!frac_mode)
     {
-      ns_jx_num("nss:aev", sp->aev, NULL);
-      joxer_et(xo_loc, "nss:mev", NULL, nx_step_mev(sp));
+      if (sp->aev.d)
+	{
+	  ns_jx_num("nss:aev", sp->aev, NULL);
+	  joxer_et(xo_loc, "nss:mev", NULL, nx_step_mev(sp));
+	}
+      if (sp->mult.d)
+	ns_jx_num("nss:mul", sp->mult, NULL);
     }
-  if (sp->mult.d)
-    ns_jx_num("nss:mul", sp->mult, NULL);
   ns_inst *ip;
-  for (ip = sp->insts; ip; ip = ip->next)
+  for (ip = frac_mode ? sp->fracs : sp->insts; ip; ip = ip->next)
     {
       a = list_create(LIST_SINGLE);
       if (ip->text)
@@ -204,17 +225,18 @@ ns_jx_step(ns_step *sp)
       atts = list2chars(a);
       ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
       list_free(a, NULL);
-      if (!frac_mode)
-	{
-	  joxer_ea(xo_loc, "nss:inst", ratts);
-	  if (ip->aev.d)
-	    ns_jx_num("nss:aev", ip->aev, NULL);
-	  if (ip->count.d)
-	    ns_jx_num("nss:count", ip->count, (ccp)ip->unit);
-	  joxer_ee(xo_loc, "nss:inst");
-	}
-      else if (ip->count.d)
-	ns_jx_num("nss:count", ip->count, (ccp)ip->unit);	
+      joxer_ea(xo_loc, "nss:inst", ratts);
+      if (ip->aev.d)
+	ns_jx_num("nss:aev", ip->aev, NULL);
+      if (ip->count.d)
+	ns_jx_num("nss:count", ip->count, (ccp)ip->unit);
+      joxer_ee(xo_loc, "nss:inst");
     }
-  joxer_ee(xo_loc, frac_mode ? "nss:inst" : "nss:step");
+  joxer_ee(xo_loc, "nss:step");
+  if (sp->fracs && !frac_mode)
+    {
+      frac_mode = 1;
+      ns_jx_step(sp);
+      frac_mode = 0;
+    }
 }

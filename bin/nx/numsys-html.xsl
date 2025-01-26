@@ -83,7 +83,7 @@
 	    </xsl:when>
 	    <xsl:otherwise>
 	      <!--<td>&#xa0;</td>--><!-- spacer instead of '= N ×' -->
-	      <td>/</td><td/>
+	      <td><xsl:value-of select="@unit"/></td><td/>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:for-each>
@@ -120,7 +120,7 @@
 		    </span>
 		  </xsl:if>
 		</xsl:when>
-		<xsl:when test="@unit='(gur)'">
+		<xsl:when test="@unit='(gur)' or @unit='(iku)'">
 		  <xsl:if test="$nth=1">
 		    <span class="{$font} {@feat}">
 		      <xsl:value-of select="@axis-ucun"/>
@@ -130,16 +130,24 @@
 		<xsl:otherwise>
 		  <span class="ns-ucun {$font} {nss:inst[$nth]/@feat}">
 		    <xsl:value-of select="nss:inst[$nth]/@ucun"/>
+		    <xsl:if test="contains(nss:inst[$nth]/@n,'/3(diš@c)')">
+		      <xsl:text>𒊭</xsl:text>
+		    </xsl:if>
 		  </span>
 		  <xsl:if test="@type='frac'">
 		    <td>
 		      <xsl:choose>
 			<xsl:when test="contains(nss:inst[$nth]/@n, 'igiŋal')">
-			  <span class="ns-frac">
-			  &#xa0;igi-<xsl:value-of select="nss:inst[$nth]/nss:count/@d"/>(diš)-ŋal₂</span>
+			  <span class="ns-frac"
+				>igi-<xsl:value-of select="nss:inst[$nth]/nss:count/@d"
+				/>(diš)-ŋal₂</span>
 			</xsl:when>
 			<xsl:when test="string-length(nss:inst[$nth]/@ucun)>0">
-			  <span class="ns-frac">&#xa0;<xsl:value-of select="nss:inst[$nth]/@n"/></span>
+			  <span class="ns-frac"><xsl:value-of select="nss:inst[$nth]/@n"/>
+			  <xsl:if test="contains(nss:inst[$nth]/@n,'/3(diš@c)')">
+			    <xsl:text>{ša}"</xsl:text>
+			  </xsl:if>
+			  </span>
 			</xsl:when>
 		      </xsl:choose>
 		    </td>
