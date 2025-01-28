@@ -25,6 +25,12 @@ active_pages(Isp *ip)
 }
 
 void
+pui_at_cfy_fam(Isp *ip, FILE *fp)
+{
+  fputs(cfy_fam(ip->itemdata.proj ? ip->itemdata.proj : ip->project), fp);
+}
+
+void
 pui_at_pager_class(Isp *ip, FILE *fp)
 {
   fputs("bborder-top", fp);

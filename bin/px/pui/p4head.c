@@ -3,6 +3,7 @@ const char *p4head =
 "  <meta name=\"generator\" content=\"@@pui_generator()@@\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4.css\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>\n"
+"  <link rel=\"stylesheet\" type=\"text/css\" href=\"@@pui_cfy_fam()@@\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/@@pui_project()@@/css/p3colours.css\"/>\n"
 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"/@@pui_project()@@/css/projcss.css\"/>\n"
 "  <script type=\"text/javascript\" src=\"/js/p4.js\">&#160;</script>\n"

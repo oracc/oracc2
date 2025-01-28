@@ -15,6 +15,8 @@ List *cqueue = NULL;
 
 int in_word; /* incremented by grapheme-start */
 
+extern Hash *lig;
+
 struct d
 {
   int type;
@@ -353,6 +355,12 @@ ei_sH(void *userData, const char *name, const char **atts)
     {
       const char *xn = (ccp)xmlify((uccp)findAttr(atts, "n"));
       Cun_class *cp = cun_class(atts, curr_cp);
+      if (cp->fnt)
+	{
+	  char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(cp->fnt)];
+	  sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), cp->fnt);
+	  load_lig(ligf);
+	}
       *curr_cp = *cp;
       cfy_head(outfp, xn, cp);
     }
