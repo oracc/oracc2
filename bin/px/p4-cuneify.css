@@ -91,4 +91,10 @@ span.csquare:before { content: "]"; }
 
 .cfy-oobf { cursor: url("oobf-an.cur"), auto; }
 
+/* Cuneify word spacing */
+.cfy-wsp { margin-left: .5em; }
+
+/* Cuneify grapheme spacing */
+.cfy-gsp { margin-left: .1em; }
+
 /*    cursor: url(ban.cur), auto; */

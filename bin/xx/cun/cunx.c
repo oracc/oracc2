@@ -13,6 +13,8 @@
 
 List *cqueue = NULL;
 
+int in_word; /* incremented by grapheme-start */
+
 struct d
 {
   int type;
@@ -112,27 +114,31 @@ cfy_head(FILE *fp, const char *n, Cun_class *cp)
 {
   if (!weboutput) /* paradoxically, weboutput skips the html head/body because those are provided by P4 */
     {
+      const char *cfyfam = cfy_fam(project);
       fprintf(fp,
 	      "<html >"
 	      "<head><meta charset=\"utf-8\"/>"
 	      "<title>Cuneified %s</title>"
 	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
 	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>"
+	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"/>"
 	      "<script type=\"text/javascript\" src=\"/js/p4.js\">&#160;</script>"
-	      "</head><body onload=\"p4Onload()\">", n);
+	      "</head><body onload=\"p4Onload()\">", n, cfyfam);
     }
   fprintf(fp,
 	  "<div id=\"p4Cuneify\" "
-	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\">",
-	  cp->fnt, cp->mag, cp->scr);
+	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\" data-proj=\"%s\">",
+	  cp->fnt, cp->mag, cp->scr, project);
   fprintf(outfp, "<h1 class=\"p3h2 border-top heading\"><span class=\"cfy-generic\">Cuneified </span><span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table\">", n);
 }
 
+#if 0
 void
 cfy_space(void)
 {
   fprintf(outfp, "<span class=\"cfy-ws\"> </span>");  
 }
+#endif
 
 void
 cfy_ellipsis(void)
@@ -149,12 +155,35 @@ cfy_x(void)
 void
 cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8, const char *form)
 {
+#if 1
+  const char *miss = (in_missing ? " missing" : "");
+  const char *space = "";
+
+  if (in_word > 1)
+    space = " cfy-gsp";
+  else if (ws_pending)
+    {
+      space = " cfy-wsp";
+      ws_pending = 0;
+    }
+  
+  if (oid)
+    fprintf(outfp,
+	    "<span id=\"c.%s\" title=\"%s\" "
+	    "data-oid=\"%s\" onclick=\"cfySL(event)\" "
+	    "class=\"cfy-fam cfy-def%s%s\">%s</span>",
+	    xid, form, oid, miss, space, utf8);
+  else
+    fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-fam cfy-def%s%s\">%s</span>",
+	    xid, form, miss, space, utf8);
+#else
   const char *miss = (in_missing ? " missing" : "");
   if (oid)
     fprintf(outfp, "<span id=\"c.%s\" class=\"cfy-cun%s\"><a href=\"/osl/signlist/%s\" title=\"%s\">%s</a></span>",
 	    xid, miss, oid, form, utf8);
   else
     fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-cun%s\">%s</span>", xid, form, miss, utf8);
+#endif
 }
 
 void
@@ -264,11 +293,13 @@ dequeue(void)
   fprintf(outfp, "<span class=\"broken\">");
   for (dp = list_first(cqueue); dp; dp = list_next(cqueue))
     {
+#if 0
       if (ws_pending)
 	{
 	  cfy_space();
 	  ws_pending = 0;
 	}
+#endif
       const char *go = (ccp)hash_find(dp->atts, (ucp)"g:o");
       if (go && strchr(go, '['))
 	{
@@ -332,6 +363,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	  const char *utf8 = NULL;
 	  if (printable(name, atts, &utf8))
 	    {
+#if 0
 	      /* ws_pending is only set when we are not in breakage so
 		 if we find something printable it's always right to
 		 emit the space */
@@ -340,7 +372,10 @@ ei_sH(void *userData, const char *name, const char **atts)
 		  cfy_space();
 		  ws_pending = 0;
 		}
+#endif
 
+	      ++in_word;
+	      
 	      const char *form = findAttr(atts, "form");
 	      if (!form || !*form)
 		{
@@ -368,12 +403,14 @@ ei_sH(void *userData, const char *name, const char **atts)
 	      else
 		{
 		  dequeue();
+#if 0
 		  /* Spaces in the queue set ws_pending rather than calling cfy_space directly */
 		  if (ws_pending)
 		    {
 		      cfy_space();
 		      ws_pending = 0;
 		    }
+#endif
 		  cfy_cun(name, get_xml_id(atts), oid, utf8, form);
 		}
 	    }
@@ -390,7 +427,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	  if (!strcmp(name, "l"))
 	    {
 	      fprintf(outfp, "<tr><td class=\"cuneify-label\">%s</td><td class=\"cuneify-content\">", findAttr(atts, "label"));
-	      ws_pending = last_was_ellipsis = word_count = 0;
+	      in_word = ws_pending = last_was_ellipsis = word_count = 0;
 	      in_l = 1;
 	    }
 	}
@@ -417,7 +454,10 @@ ei_eH(void *userData, const char *name)
       if (list_len(cqueue))
 	enqueue(name, NULL, NULL, NULL, NULL);
       else
-	ws_pending = 1;
+	{
+	  ws_pending = 1;
+	  in_word = 0;
+	}
     }
 }
 
@@ -466,6 +506,15 @@ main(int argc, char **argv)
 	}
       if (qfile)
 	{
+	  project = strdup(qfile);
+	  char *colon = strchr(project, ':');
+	  if (colon)
+	    *colon = '\0';
+	  else
+	    {
+	      fprintf(stderr, "cunx: must give project:PQX when using -q option. Stop.\n");
+	      exit(1);
+	    }
 	  file_args(p4htmld, qfile, "xtf", outfile, "cfy", NULL, &inpath, &outpath, &htmlpath);
 	  f[0] = inpath;
 	}
