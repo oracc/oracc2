@@ -25,8 +25,11 @@ struct d
   const char *utf8;
   const char *form;
   const char *xid; /* xml:id */
+  int gsp;
+  int wsp;
+  int brk; /* broken */
+  int mis; /* missing */
   Hash *atts;
-  int broken; /* used for spaces--if it is inside a broken sequence this is 1 */
 };
 Memo *mem_d;
 Pool *p;
@@ -78,6 +81,70 @@ typedef struct Cun_class
 
 Cun_class cun_defaults = { .fnt="noto" , .mag="100", .scr="middle" };
 Cun_class *curr_cp = &cun_defaults;
+
+
+Hash *lig;
+
+/* dp is the first grapheme of a sequence; peek ahead to see if any further d nodes make up a ligature.
+ *
+ * If so, move cq's list_next so that it is at the d node that ends the ligature.
+ *
+ * Adjust that d node to reflect breakage and title for the ligature and return it.
+ */  
+static struct d *
+lig_dequeue(struct d *dp, List *cq)
+{
+  struct d *dp2 = list_peek(cq);
+  if (dp2)
+    {
+      struct d *dp1 = dp;
+      uchar ligbuf[64];
+      uchar lignam[1024];
+      strcpy(ligbuf, dp->utf8);
+      strcpy(lignam, dp->form);
+      int nlig = 0;
+      while (hash_find(lig, ligbuf))
+	{
+	  ++nlig;
+	  strcat(ligbuf, dp2->utf8);
+	  strcat(lignam, "+");
+	  strcat(lignam, dp->form);
+	  dp = list_next(cq);
+	  dp2 = list_peek(cq);
+	  if (dp2)
+	    strcat(ligbuf, dp2->utf8);
+	  else
+	    break;
+	}
+      /* Now dp is the last d node in the lig and d1 is the initial node */
+      if (nlig)
+	{
+	  dp->utf8 = strdup(ligbuf);
+	  dp->form = strdup(lignam);
+#if 0
+	  if (dp1->brk)
+	    {
+	      dp->brk = dp1->brk;
+	    }
+#endif
+	}
+      else
+	return dp;
+    }
+  else
+    return dp;
+}
+
+static void
+lig_load(const char *ligfile)
+{
+  lig = hash_create(1024);
+  size_t nl;
+  uchar **l = loadfile_lines((uccp)ligfile, &nl);
+  int i;
+  for (i = 0; i < nl; ++i)
+    hash_add(lig, l[i], "");
+}
 
 static const char *
 cc_skip_prefix(const char *c)
@@ -134,14 +201,6 @@ cfy_head(FILE *fp, const char *n, Cun_class *cp)
   fprintf(outfp, "<h1 class=\"p3h2 border-top heading\"><span class=\"cfy-generic\">Cuneified </span><span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table\">", n);
 }
 
-#if 0
-void
-cfy_space(void)
-{
-  fprintf(outfp, "<span class=\"cfy-ws\"> </span>");  
-}
-#endif
-
 void
 cfy_ellipsis(void)
 {
@@ -155,19 +214,16 @@ cfy_x(void)
 }
 
 void
-cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8, const char *form)
+cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8, const char *form,
+	int gsp, int wsp)
 {
-#if 1
   const char *miss = (in_missing ? " missing" : "");
   const char *space = "";
 
-  if (in_word > 1)
+  if (gsp > 1)
     space = " cfy-gsp";
-  else if (ws_pending)
-    {
-      space = " cfy-wsp";
-      ws_pending = 0;
-    }
+  else if (wsp)
+    space = " cfy-wsp";
   
   if (oid)
     fprintf(outfp,
@@ -178,14 +234,6 @@ cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8, co
   else
     fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-fam cfy-def%s%s\">%s</span>",
 	    xid, form, miss, space, utf8);
-#else
-  const char *miss = (in_missing ? " missing" : "");
-  if (oid)
-    fprintf(outfp, "<span id=\"c.%s\" class=\"cfy-cun%s\"><a href=\"/osl/signlist/%s\" title=\"%s\">%s</a></span>",
-	    xid, miss, oid, form, utf8);
-  else
-    fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-cun%s\">%s</span>", xid, form, miss, utf8);
-#endif
 }
 
 void
@@ -260,7 +308,8 @@ d_type(const char *name, const char **atts, const char *utf8)
 }
 
 void
-enqueue(const char *name, const char **atts, const char *oid, const char *utf8, const char *form)
+enqueue(const char *name, const char **atts, const char *oid, const char *utf8,
+	const char *form, int brk, int mis, int gsp, int wsp)
 {
   if (!cqueue)
     cqueue = list_create(LIST_DOUBLE);
@@ -270,6 +319,10 @@ enqueue(const char *name, const char **atts, const char *oid, const char *utf8, 
   dp->oid = oid;
   dp->utf8 = utf8;
   dp->form = form;
+  dp->brk = brk;
+  dp->mis = mis;
+  dp->gsp = gsp;
+  dp->wsp = wsp;
   if (atts)
     {
       dp->xid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
@@ -279,29 +332,15 @@ enqueue(const char *name, const char **atts, const char *oid, const char *utf8, 
 }
 
 void
-damagedws(void)
-{
-  ((struct d*)list_last(cqueue))->broken = 1;
-}
-
-void
 dequeue(void)
 {
   if (!list_len(cqueue))
     return;
   
   struct d *dp;
-  int span_closed = 0;
-  fprintf(outfp, "<span class=\"broken\">");
+  int span_closed = 1;
   for (dp = list_first(cqueue); dp; dp = list_next(cqueue))
     {
-#if 0
-      if (ws_pending)
-	{
-	  cfy_space();
-	  ws_pending = 0;
-	}
-#endif
       const char *go = (ccp)hash_find(dp->atts, (ucp)"g:o");
       if (go && strchr(go, '['))
 	{
@@ -310,14 +349,6 @@ dequeue(void)
 	}
       switch (dp->type)
 	{
-	case CT_WSP:
-	  if (!dp->broken)
-	    {
-	      fputs("</span>", outfp);
-	      span_closed = 1;
-	    }
-	  ws_pending = 1;
-	  break;
 	case CT_ELL:
 	  cfy_ellipsis();
 	  break;
@@ -325,7 +356,19 @@ dequeue(void)
 	  cfy_x();
 	  break;
 	case CT_GRP:
-	  cfy_cun(dp->name, dp->xid, dp->oid, dp->utf8, dp->form);
+	  dp = lig_dequeue(dp, cqueue);
+	  if (dp->brk)
+	    {
+	      if (span_closed)
+	      fprintf(outfp, "<span class=\"broken\">");
+	      span_closed = 0;
+	    }
+	  else if (!span_closed)
+	    {
+	      fputs("</span>", outfp);
+	      span_closed = 1;
+	    }
+	  cfy_cun(dp->name, dp->xid, dp->oid, dp->utf8, dp->form, dp->gsp, dp->wsp);
 	  break;
 	default:
 	  fprintf(stderr, "cunx: unknown token in cuneify queue\n");
@@ -340,7 +383,10 @@ dequeue(void)
       d_free(dp);
     }
   if (!span_closed)
-    fputs("</span>", outfp);
+    {
+      fputs("</span>", outfp);
+      span_closed = 1;
+    }
   list_free(cqueue, NULL);
   cqueue = NULL;
 }
@@ -359,7 +405,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	{
 	  char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(cp->fnt)];
 	  sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), cp->fnt);
-	  load_lig(ligf);
+	  lig_load(ligf);
 	}
       *curr_cp = *cp;
       cfy_head(outfp, xn, cp);
@@ -371,19 +417,6 @@ ei_sH(void *userData, const char *name, const char **atts)
 	  const char *utf8 = NULL;
 	  if (printable(name, atts, &utf8))
 	    {
-#if 0
-	      /* ws_pending is only set when we are not in breakage so
-		 if we find something printable it's always right to
-		 emit the space */
-	      if (ws_pending)
-		{
-		  cfy_space();
-		  ws_pending = 0;
-		}
-#endif
-
-	      ++in_word;
-	      
 	      const char *form = findAttr(atts, "form");
 	      if (!form || !*form)
 		{
@@ -403,24 +436,14 @@ ei_sH(void *userData, const char *name, const char **atts)
 	      if (utf8 && *utf8)
 		utf8 = (ccp)pool_copy((ucp)utf8, p);
 	      if (breakage(name, atts))
-		{
-		  if (cqueue)
-		    damagedws();
-		  enqueue(name, atts, oid, utf8, form);
-		}
+		in_break = 1;
 	      else
-		{
-		  dequeue();
-#if 0
-		  /* Spaces in the queue set ws_pending rather than calling cfy_space directly */
-		  if (ws_pending)
-		    {
-		      cfy_space();
-		      ws_pending = 0;
-		    }
-#endif
-		  cfy_cun(name, get_xml_id(atts), oid, utf8, form);
-		}
+		in_break = 0;
+
+	      enqueue(name, atts, oid, utf8, form, in_break, in_missing, in_word, ws_pending);
+
+	      ++in_word;	      
+	      ws_pending = 0;
 	    }
 
 	  if (!strcmp(name, "g:n"))
@@ -459,13 +482,8 @@ ei_eH(void *userData, const char *name)
     in_c = 0;
   else if (!strcmp(name, "g:w"))
     {
-      if (list_len(cqueue))
-	enqueue(name, NULL, NULL, NULL, NULL);
-      else
-	{
-	  ws_pending = 1;
-	  in_word = 0;
-	}
+      ws_pending = 1;
+      in_word = 0;
     }
 }
 

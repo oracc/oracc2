@@ -327,6 +327,14 @@ list_next (List *lp)
     }
 }
 
+void*
+list_peek(List *lp)
+{
+  if (lp->rover->next)
+    return lp->rover->next->data;
+  return NULL;
+}
+
 void *
 list_pop (List *lp)
 {

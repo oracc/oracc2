@@ -67,6 +67,7 @@ extern void *list_reduce (Boolean, List *,
 extern void list_exec (List *, void (*)(void *));
 extern  void *list_first (List *);
 extern  void *list_next (List *);
+extern  void *list_peek (List *);
 extern void list_xfree (void *);
 extern  void *list_find (List *lp, const void *eltp, 
 			int (*cmp)(const void*lelt, const void*celt));
