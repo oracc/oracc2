@@ -23,9 +23,11 @@ function p4Onload()
 {
     pager = getPager();
     let cfy = document.getElementById("p4Cuneify");
-    let hili = pager.getAttribute("data-hili");
-    if (hili) {
-	onloadHili(hili, cfy);
+    if (pager) {
+	let hili = pager.getAttribute("data-hili");
+	if (hili) {
+	    onloadHili(hili, cfy);
+	}
     }
     if (cfy) {
 	onloadCuneify(cfy);
