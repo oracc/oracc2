@@ -19,6 +19,7 @@ struct d
   const char *name;
   const char *oid;
   const char *utf8;
+  const char *form;
   const char *xid; /* xml:id */
   Hash *atts;
   int broken; /* used for spaces--if it is inside a broken sequence this is 1 */
@@ -146,14 +147,14 @@ cfy_x(void)
 }
 
 void
-cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8)
+cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8, const char *form)
 {
   const char *miss = (in_missing ? " missing" : "");
   if (oid)
-    fprintf(outfp, "<span id=\"c.%s\" class=\"cfy-cun%s\"><a href=\"/osl/signlist/%s\">%s</a></span>",
-	    xid, miss, oid, utf8);
+    fprintf(outfp, "<span id=\"c.%s\" class=\"cfy-cun%s\"><a href=\"/osl/signlist/%s\" title=\"%s\">%s</a></span>",
+	    xid, miss, oid, form, utf8);
   else
-    fprintf(outfp, "<span id=\"c.%s\" class=\"cfy-cun%s\">%s</span>", xid, miss, utf8);
+    fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-cun%s\">%s</span>", xid, form, miss, utf8);
 }
 
 void
@@ -228,7 +229,7 @@ d_type(const char *name, const char **atts, const char *utf8)
 }
 
 void
-enqueue(const char *name, const char **atts, const char *oid, const char *utf8)
+enqueue(const char *name, const char **atts, const char *oid, const char *utf8, const char *form)
 {
   if (!cqueue)
     cqueue = list_create(LIST_DOUBLE);
@@ -237,6 +238,7 @@ enqueue(const char *name, const char **atts, const char *oid, const char *utf8)
   dp->name = (ccp)pool_copy((ucp)name, p);
   dp->oid = oid;
   dp->utf8 = utf8;
+  dp->form = form;
   if (atts)
     {
       dp->xid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
@@ -290,7 +292,7 @@ dequeue(void)
 	  cfy_x();
 	  break;
 	case CT_GRP:
-	  cfy_cun(dp->name, dp->xid, dp->oid, dp->utf8);
+	  cfy_cun(dp->name, dp->xid, dp->oid, dp->utf8, dp->form);
 	  break;
 	default:
 	  fprintf(stderr, "cunx: unknown token in cuneify queue\n");
@@ -338,7 +340,16 @@ ei_sH(void *userData, const char *name, const char **atts)
 		  cfy_space();
 		  ws_pending = 0;
 		}
-	      
+
+	      const char *form = findAttr(atts, "form");
+	      if (!form || !*form)
+		{
+		  form = findAttr(atts, "key");
+		  if (form && *form)
+		    form = strrchr(form,'.')+1;
+		}
+	      if (form && *form)
+		form = (ccp)pool_copy((ucp)form, p);
 	      const char *oid = findAttr(atts, "spoid");
 	      if (!oid || !*oid)
 		oid = findAttr(atts, "oid");
@@ -352,7 +363,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 		{
 		  if (cqueue)
 		    damagedws();
-		  enqueue(name, atts, oid, utf8);
+		  enqueue(name, atts, oid, utf8, form);
 		}
 	      else
 		{
@@ -363,7 +374,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 		      cfy_space();
 		      ws_pending = 0;
 		    }
-		  cfy_cun(name, get_xml_id(atts), oid, utf8);
+		  cfy_cun(name, get_xml_id(atts), oid, utf8, form);
 		}
 	    }
 
@@ -378,7 +389,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	{
 	  if (!strcmp(name, "l"))
 	    {
-	      fprintf(outfp, "<tr><td class=\"cuneify-label\">%s</td><td>", findAttr(atts, "label"));
+	      fprintf(outfp, "<tr><td class=\"cuneify-label\">%s</td><td class=\"cuneify-content\">", findAttr(atts, "label"));
 	      ws_pending = last_was_ellipsis = word_count = 0;
 	      in_l = 1;
 	    }
@@ -404,7 +415,7 @@ ei_eH(void *userData, const char *name)
   else if (!strcmp(name, "g:w"))
     {
       if (list_len(cqueue))
-	enqueue(name, NULL, NULL, NULL);
+	enqueue(name, NULL, NULL, NULL, NULL);
       else
 	ws_pending = 1;
     }
