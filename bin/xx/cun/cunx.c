@@ -4,39 +4,11 @@
 #include "runexpat.h"
 #include "cun.h"
 
-/* Structure for damaged tokens */
-#define CT_NOT 0
-#define CT_WSP 0x01
-#define CT_ELL 0x02
-#define CT_XXX 0x04
-#define CT_GRP 0x08
-
 List *cqueue = NULL;
 
-int in_word; /* incremented by grapheme-start */
-
-extern Hash *lig;
-
-struct d
-{
-  int type;
-  const char *name;
-  const char *oid;
-  const char *utf8;
-  const char *form;
-  const char *xid; /* xml:id */
-  int gsp;
-  int wsp;
-  int brk; /* broken */
-  int mis; /* missing */
-  Hash *atts;
-};
-Memo *mem_d;
 Pool *p;
-
-extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
-		     const char *outdir, const char *outext, const char *trans,
-		     char **inp, char **outp, char **hdir);
+Hash *lig;
+Memo *mem_d;
 
 /* The default is to generate outputs into the P4 cache; if -b is
    specified outputs are generated into the PQX-dir where the xtf
@@ -67,8 +39,7 @@ extern int optind;
 
 int hc_pending = 0; /* set when a grapheme has a close-half-square on it */
 int in_break = 0, in_missing = 0;
-int in_c = 0, in_l = 0, in_n = 0, in_q = 0;
-int last_was_ellipsis = 0;
+int in_c = 0, in_l = 0, in_n = 0, in_q = 0, in_word = 0;
 int word_count = 0;
 int ws_pending = 0;
 
@@ -82,9 +53,7 @@ typedef struct Cun_class
 Cun_class cun_defaults = { .fnt="noto" , .mag="100", .scr="middle" };
 Cun_class *curr_cp = &cun_defaults;
 
-
-Hash *lig;
-
+#if 0
 /* dp is the first grapheme of a sequence; peek ahead to see if any further d nodes make up a ligature.
  *
  * If so, move cq's list_next so that it is at the d node that ends the ligature.
@@ -134,6 +103,7 @@ lig_dequeue(struct d *dp, List *cq)
   else
     return dp;
 }
+#endif
 
 static void
 lig_load(const char *ligfile)
@@ -201,6 +171,7 @@ cfy_head(FILE *fp, const char *n, Cun_class *cp)
   fprintf(outfp, "<h1 class=\"p3h2 border-top heading\"><span class=\"cfy-generic\">Cuneified </span><span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table\">", n);
 }
 
+#if 0
 void
 cfy_ellipsis(void)
 {
@@ -235,6 +206,7 @@ cfy_cun(const char *name, const char *xid, const char *oid, const char *utf8, co
     fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-fam cfy-def%s%s\">%s</span>",
 	    xid, form, miss, space, utf8);
 }
+#endif
 
 void
 cfy_foot(FILE *fp)
@@ -271,6 +243,7 @@ breakage(const char *name, const char **atts)
   return 0;
 }
 
+#if 0
 Hash *
 hashatts(const char **atts)
 {
@@ -282,6 +255,7 @@ hashatts(const char **atts)
     hash_add(h, pool_copy((ucp)atts[i],pp), pool_copy((ucp)atts[i+1],pp));
   return h;
 }
+#endif
 
 static void
 d_free(struct d *dp)
@@ -297,7 +271,8 @@ d_type(const char *name, const char **atts, const char *utf8)
   const char *gt = NULL;
   if (!atts)
     return CT_WSP;
-  else if (utf8 && ('x' == *utf8 || 'X' == *utf8))
+  else
+    if (utf8 && ('x' == *utf8 || 'X' == *utf8))
     return CT_XXX;
   else if ((gt=findAttr(atts,"g:type")) && !strcmp(gt,"ellipsis"))
     return CT_ELL;
@@ -323,14 +298,21 @@ enqueue(const char *name, const char **atts, const char *oid, const char *utf8,
   dp->mis = mis;
   dp->gsp = gsp;
   dp->wsp = wsp;
+#if 1
+  const char *gbreak = hash_find(atts, "g:break");
+  if (gbreak && !strcmp(gbreak, "missing"))
+    dp->gmissing = 1;
+#else
   if (atts)
     {
       dp->xid = (ccp)pool_copy((ucp)get_xml_id(atts), p);
       dp->atts = hashatts(atts);
     }
+#endif
   list_add(cqueue, dp);
 }
 
+#if 0
 void
 dequeue(void)
 {
@@ -390,6 +372,7 @@ dequeue(void)
   list_free(cqueue, NULL);
   cqueue = NULL;
 }
+#endif
 
 void
 ei_sH(void *userData, const char *name, const char **atts)
@@ -458,7 +441,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	  if (!strcmp(name, "l"))
 	    {
 	      fprintf(outfp, "<tr><td class=\"cuneify-label\">%s</td><td class=\"cuneify-content\">", findAttr(atts, "label"));
-	      in_word = ws_pending = last_was_ellipsis = word_count = 0;
+	      in_word = ws_pending = word_count = 0;
 	      in_l = 1;
 	    }
 	}
@@ -470,9 +453,13 @@ ei_eH(void *userData, const char *name)
 {
   if (!strcmp(name, "l"))
     {
+#if 1
+      cfy_render();
+#else
       dequeue();
+#endif
       fprintf(outfp, "</td></tr>");
-      in_l = last_was_ellipsis = 0;
+      in_l = 0;
     }
   else if (!strcmp(name, "g:n"))
     in_n = 0;
