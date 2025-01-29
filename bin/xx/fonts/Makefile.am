@@ -1,6 +1,6 @@
 include ../../../oracc-am-rules.txt
 
-bin_PROGRAMS=ofpx
+bin_PROGRAMS=ofpx oin2lig
 
 bin_SCRIPTS=ttf2ofp.sh ofp2im.sh
 
@@ -10,11 +10,6 @@ ofpx_SOURCES = ofpx.c
 ofpx_LDADD = $(xLDADD)
 ofpx_DEPENDENCIES = $(xLDADD)
 
-#showttfx
-#ttf2oin.sh 
-#showttfx_SOURCES = showttf.c
-#showttfx_LDADD = $(xLDADD)
-#showttfx_DEPENDENCIES = $(xLDADD)
-
-#lists.tsv unicode.tsv: ${ORACC}/osl/00lib/osl.asl
-#	./oslfiles.sh ${top_srcdir}
+oin2lig_SOURCES = oin2lig.c
+oin2lig_LDADD = $(xLDADD)
+oin2lig_DEPENDENCIES = $(xLDADD)

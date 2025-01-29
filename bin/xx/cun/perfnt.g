@@ -1,5 +1,5 @@
 %{
-#include <string.h>
+#include <oraccsys.h>
 #include "cun.h"
 %}
 struct perfnt;
