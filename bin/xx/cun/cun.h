@@ -24,13 +24,11 @@ struct d
   Hash *atts;
 #endif
 };
+
 extern Pool *p;
 extern Hash *lig;
 extern List *cqueue;
-
-extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
-		     const char *outdir, const char *outext, const char *trans,
-		     char **inp, char **outp, char **hdir);
+extern FILE *outfp;
 
 struct perfnt
 {
@@ -38,5 +36,10 @@ struct perfnt
   const char *fnt;
 };
 extern struct perfnt *perfnt (register const char *str, register size_t len);
+
+extern void cfy_render(void);
+extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
+		     const char *outdir, const char *outext, const char *trans,
+		     char **inp, char **outp, char **hdir);
 
 #endif/*CUN_H_*/

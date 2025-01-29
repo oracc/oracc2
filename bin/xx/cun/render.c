@@ -17,13 +17,11 @@ cfy_liga(struct d *dp, List *cq)
   struct d *dp2 = list_peek(cq);
   if (dp2)
     {
-      struct d *dp1 = dp;
-      uchar ligchk[64];
-      uchar ligbuf[64];
-      uchar lignam[1024];
+      char ligchk[64];
+      char ligbuf[64];
+      char lignam[1024];
       int brk = 0;
       int all_missing = 1;
-      const char *this_missing = "";
 
       /* Initialize with leading component; if there is no lig these
 	 initializations will be ignored */
@@ -37,7 +35,7 @@ cfy_liga(struct d *dp, List *cq)
       /* Initialize the buffer we use to check for ligs */
       strcpy(ligchk, dp->utf8);
       strcpy(ligchk, dp2->utf8);
-      while (hash_find(lig, ligchk))
+      while (hash_find(lig, (uccp)ligchk))
 	{
 	  ++nlig;
 	  strcat(ligbuf, dp2->utf8);
@@ -104,25 +102,26 @@ cfy_missing(struct d *dp)
     return dp->gmissing ? " cfy-mis" : "";
 }
 
-void
-cfy_ellipsis(int last)
+static void
+cfy_ellipsis(struct d *dp, int last)
 {
   const char *miss = cfy_missing(dp);
   fprintf(outfp, "<span class=\"roman%s\">%s. . .</span>", miss, (last==CT_ELL) ? " " : "");
 }
 
-void
+static void
 cfy_x(void)
 {
   fprintf(outfp, "<span class=\"roman gray\">×</span>");
 }
 
-void
+static void
 cfy_cun(struct d *dp)
 {
   const char *miss = cfy_missing(dp);
-  
-  if (oid)
+  const char *space = cfy_space(dp);
+
+  if (dp->oid)
     fprintf(outfp,
 	    "<span id=\"c.%s\" title=\"%s\" "
 	    "data-oid=\"%s\" onclick=\"cfySL(event)\" "
@@ -143,7 +142,7 @@ cfy_render(void)
   int in_brk = 0;
   for (dp = list_first(cqueue); dp; dp = list_next(cqueue))
     {
-      if (CT_GRP = dp->type)
+      if (CT_GRP == dp->type)
 	dp = cfy_liga(dp, cqueue);
 
       if (dp->brk)
@@ -166,7 +165,7 @@ cfy_render(void)
       switch (dp->type)
 	{
 	case CT_ELL:
-	  cfy_ellipsis(cfy_last_dtype(cqueue));
+	  cfy_ellipsis(dp, cfy_last_dtype(cqueue));
 	  break;
 	case CT_XXX:
 	  cfy_x();
@@ -178,8 +177,9 @@ cfy_render(void)
 	  fprintf(stderr, "cunx: unknown token in cuneify queue\n");
 	  break;
 	}
-
+#if 0
       d_free(dp);
+#endif
     }
   if (in_brk)
     {

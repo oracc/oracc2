@@ -257,6 +257,7 @@ hashatts(const char **atts)
 }
 #endif
 
+#if 0
 static void
 d_free(struct d *dp)
 {
@@ -264,15 +265,13 @@ d_free(struct d *dp)
   pool_term(pp);
   hash_free(dp->atts, NULL);
 }
+#endif
 
 static int
 d_type(const char *name, const char **atts, const char *utf8)
 {
   const char *gt = NULL;
-  if (!atts)
-    return CT_WSP;
-  else
-    if (utf8 && ('x' == *utf8 || 'X' == *utf8))
+  if (utf8 && ('x' == *utf8 || 'X' == *utf8))
     return CT_XXX;
   else if ((gt=findAttr(atts,"g:type")) && !strcmp(gt,"ellipsis"))
     return CT_ELL;
@@ -299,7 +298,7 @@ enqueue(const char *name, const char **atts, const char *oid, const char *utf8,
   dp->gsp = gsp;
   dp->wsp = wsp;
 #if 1
-  const char *gbreak = hash_find(atts, "g:break");
+  const char *gbreak = findAttr(atts, "g:break");
   if (gbreak && !strcmp(gbreak, "missing"))
     dp->gmissing = 1;
 #else
