@@ -15,10 +15,10 @@ static struct d *
 cfy_liga(struct d *dp, List *cq)
 {
   struct d *dp2 = list_peek(cq);
-  if (dp2)
+  if (dp2 && dp2->utf8)
     {
-      char ligchk[64];
-      char ligbuf[64];
+      char ligchk[64]; /* This is what we use for hash lookups */
+      char ligbuf[64]; /* This is where we build the return utf8 */
       char lignam[1024];
       int brk = 0;
       int all_missing = 1;
@@ -34,20 +34,20 @@ cfy_liga(struct d *dp, List *cq)
       int nlig = 0;
       /* Initialize the buffer we use to check for ligs */
       strcpy(ligchk, dp->utf8);
-      strcpy(ligchk, dp2->utf8);
+      strcat(ligchk, dp2->utf8);
       while (hash_find(lig, (uccp)ligchk))
 	{
 	  ++nlig;
 	  strcat(ligbuf, dp2->utf8);
 	  strcat(lignam, "+");
-	  strcat(lignam, dp->form);
+	  strcat(lignam, dp2->form);
 	  if (all_missing && !dp->gmissing)
 	    all_missing = 0;
 	  if (dp->brk)
 	    brk = 1;
 	  dp = list_next(cq);
 	  dp2 = list_peek(cq);
-	  if (dp2)
+	  if (dp2 && dp2->utf8)
 	    strcat(ligchk, dp2->utf8);
 	  else
 	    break;
@@ -84,7 +84,7 @@ static const char *
 cfy_space(struct d *dp)
 {
   const char *space = "";
-  if (dp->gsp > 1)
+  if (dp->gsp)
     space = " cfy-gsp";
   else if (dp->wsp)
     space = " cfy-wsp";
@@ -125,7 +125,7 @@ cfy_cun(struct d *dp)
     fprintf(outfp,
 	    "<span id=\"c.%s\" title=\"%s\" "
 	    "data-oid=\"%s\" onclick=\"cfySL(event)\" "
-	    "class=\"cfy-fam cfy-def%s%s\">%s</span>",
+	    "class=\"cfy-cun%s%s\">%s</span>",
 	    dp->xid, dp->form, dp->oid, miss, space, dp->utf8);
   else
     fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-fam cfy-def%s%s\">%s</span>",
@@ -142,7 +142,7 @@ cfy_render(void)
   int in_brk = 0;
   for (dp = list_first(cqueue); dp; dp = list_next(cqueue))
     {
-      if (CT_GRP == dp->type)
+      if (CT_GRP == dp->type && dp->utf8)
 	dp = cfy_liga(dp, cqueue);
 
       if (dp->brk)

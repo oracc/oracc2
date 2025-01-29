@@ -53,14 +53,9 @@ span.csquare:before { content: "]"; }
     vertical-align: middle;
 }
 
-.cfy-cun.missing { color: #999; }
-
-.cfy-cun a , .cfy-cun a:link[href] { color: black; text-decoration: none; }
-.cfy-cun.missing a , .cfy-cun.missing a:link[href] { color: #999; text-decoration: none; }
-
-.cfy-ws {
-    padding-left: 2px;
-    padding-right: 2px;
+.cfy-mis { color: #666; }
+.cfy-gsp { margin-left: .1em; }
+.cfy-wsp { margin-left: .5em; }
 }
 
 .cfy-table { }
@@ -90,11 +85,5 @@ span.csquare:before { content: "]"; }
 .cfy-noto { cursor: url("noto-an.cur"), auto; }
 
 .cfy-oobf { cursor: url("oobf-an.cur"), auto; }
-
-/* Cuneify word spacing */
-.cfy-wsp { margin-left: .5em; }
-
-/* Cuneify grapheme spacing */
-.cfy-gsp { margin-left: .1em; }
 
 /*    cursor: url(ban.cur), auto; */
