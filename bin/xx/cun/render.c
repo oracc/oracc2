@@ -85,9 +85,16 @@ cfy_space(struct d *dp)
 {
   const char *space = "";
   if (dp->gsp)
-    space = " cfy-gsp";
+    {
+      space = " cfy-gsp";
+      if (dp->gsp > 2)
+	fputs("<wbr/>", outfp);
+    }
   else if (dp->wsp)
-    space = " cfy-wsp";
+    {
+      fputs("<wbr/>", outfp);
+      space = " cfy-wsp";
+    }
   if (*space)
     dp->gsp = dp->wsp = 0;
   return space;
