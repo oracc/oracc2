@@ -20,6 +20,8 @@ if [[ ! "$px" =~ [PX][0-9]{6} ]]; then
     echo $0: malformed PX number. Stop.
     exit 1
 fi
+# just in case this exists ...
+rm -f /tmp/$$.pxi
 imgdir=`dirname $img`
 mkdir -p $imgdir
 if [ ! -d $imgdir ] || [ ! -w $imgdir ]; then
@@ -28,10 +30,13 @@ if [ ! -d $imgdir ] || [ ! -w $imgdir ]; then
 fi
 
 # First try the oracc online images (ooi)
-four=`/bin/echo -n $px | sed 's/^\(....\).*$/\1/'`
-ooi=$ORACC/www/ooi/$four
+#four="${px:0:4}"
+
+ooi=$ORACC/ooi
 try=$ooi/$px'*'
 set $try
+# if found echo the names of found items into the .pxi stripping
+# /home/oracc/ as we go; this leaves names such as eic/P123456.jpg
 if [ "$1" != "$try" ]; then
     found=1
     for a in $try; do
@@ -41,7 +46,7 @@ fi
 
 # Now try the cache
 if [ "$found" != "1" ]; then
-    eic=$ORACC/www/eic/$four
+    eic=$ORACC/eic
     try=$eic/$px'*'
     set $try
     if [ "$1" != "$try" ]; then
@@ -52,24 +57,26 @@ if [ "$found" != "1" ]; then
     fi
 fi
 
-# Now try the CDLI img db
-try=`dbx -v -d $ORACC/cdli/02pub/img -n img $px | tr ' ' '\n' | grep -v 'tn_\|_d'`
-if [ "$try" != "" ]; then
-    found=1
-    if [ ! "$project" = "" ] && [ -r $ORACC/$project/.eic ]; then
-	use_eic=1
-	mkdir -p $ORACC/www/p4.d/eic/$four
-    fi
-    for a in $try; do
-	if [ "$use_eic" = "1" ]; then
-	    b=`basename $a`
-	    p="$cdli${a}"
-	    curl -o $eic/$b -s $p
-	    echo "eic	$b"
-	else
-	    echo "cdli	$a" >>/tmp/$$.pxi
+if [ "$found" != "1" ]; then
+    # Now try the CDLI img db
+    try=`dbx -v -d $ORACC/cdli/02pub/img -n img $px | tr ' ' '\n' | grep -v 'tn_\|_d'`
+    if [ "$try" != "" ]; then
+	found=1
+	if [ ! "$project" = "" ] && [ -r $ORACC/$project/.eic ]; then
+	    use_eic=1
+	    #	mkdir -p $ORACC/www/p4.d/eic/$four
 	fi
-    done >/tmp/$$.pxi    
+	for a in $try; do
+	    if [ "$use_eic" = "1" ]; then
+		b=`basename $a`
+		p="$cdli${a}"
+		curl -o $eic/$b -s $p
+		echo "eic	$b"
+	    else
+		echo "cdli	$a"
+	    fi
+	done >/tmp/$$.pxi
+    fi
 fi
 
 # Now try the XMD metadata for @src entries
@@ -118,41 +125,31 @@ if [ "$found" != "1" ]; then
     fi
 fi
 
-echo '<div id="p4Images"><h1 class="p3h2 border-top heading">Images</h1>' >$img
 if [ -s /tmp/$$.pxi ]; then
-    while read typ url
+    while read typ loc
     do
 	case $typ in
 	    eic)
-		n=`basename $url .jpg`
-		u="/eic/$n/$url"
-		cat <<EOF >>$img
-<div class="image"><img src="$u" alt="image of $n"/>
-  <div class="caption">Cached image from <a href="$u">$u</a></div>
-</div>
-EOF
+		host=
+		url="/$loc"
 	    ;;
 	    ooi)
-		n=`basename $url .png`
-		cat <<EOF >>$img
-<div class="image"><img src="$u" alt="image of $n"/>
-  <div class="caption">Oracc image</div>
-</div>
-EOF
+		host=
+		url="/$loc"
 	    ;;
 	    cdli)
-		n=`basename $url .jpg`
-		nn=`basename $n _l`
-		u="${cdli}/$nn"
-		cat <<EOF >>$img
-<div class="image"><img src="${cdli}/$url" alt="image of $n"/>
-  <div class="caption">CDLI image from <a href="$u">$u</a></div>
-</div>
-EOF
+		host=$cdli
+		u="${cdli}/$loc"
 	    ;;
 	esac
     done </tmp/$$.pxi
 fi
+echo '<div id="p4Images"><h1 class="p3h2 border-top heading">Images</h1>' >$img
+cat <<EOF >>$img
+<div class="image"><img src="$host/$url" alt="image of $n"/>
+  <div class="caption">$origin image from <a href="$host/$url">$u</a></div>
+</div>
+EOF
 echo '</div>'>>$img
 
 # rm -f /tmp/$$.pxi
