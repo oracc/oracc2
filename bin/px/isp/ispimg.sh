@@ -28,8 +28,8 @@ if [ -d $div ]; then
 fi
 
 # just in case this exists ...
-pxi=/
-rm -f /tmp/$$.pxi $div
+pxi=/tmp/$$.pxi
+rm -f $pxi $div
 
 divdir=`dirname $div`
 mkdir -p $divdir
@@ -42,14 +42,28 @@ fi
 ooi=$ORACC/ooi
 try=$ooi/$px'*'
 set $try
+#
 # if found echo the names of found items into the .pxi stripping
 # /home/oracc/ as we go; this leaves names such as oic/P123456.jpg
+#
+# Note that for ooi we don't set 'found' because this allows ooi to
+# have photos or lineart that isn't in CDLI and then aggregate that
+# with the CDLI images from cache or cdli img db.
+#
+# The found images are sorted before generating the div with stable
+# and uniq options in effect to ensure that ooi images get priority if
+# there is also a CDLI image.
+#
 if [ "$1" != "$try" ]; then
-    found=1
     x=ooi
     for a in $try; do
-	echo "ooi	$a"
-    done | sed "s#$ORACC/##" >/tmp/$$.pxi
+	if [[ $a == *"_"* ]]; then
+	    srt=1
+	else
+	    srt=0
+	fi
+	echo "$srt	ooi	$a"
+    done | sed "s#$ORACC/##" >$pxi
 fi
 
 # Now try the cache
@@ -61,8 +75,13 @@ if [ "$found" != "1" ]; then
 	found=1
 	x=oic
 	for a in $*; do
-	    echo "oic	$a"
-	done | sed "s#$ORACC/##" >/tmp/$$.pxi
+	    if [[ $a == *"_"* ]]; then
+		srt=1
+	    else
+		srt=0
+	    fi
+	    echo "$srt	oic	$a"
+	done | sed "s#$ORACC/##" >$pxi
     fi
 fi
 
@@ -73,22 +92,28 @@ if [ "$found" != "1" ]; then
 	found=1
 	x=dbx
 	for a in $try; do
+	    if [[ $a == *"_"* ]]; then
+		srt=1
+	    else
+		srt=0
+	    fi
 	    if [ "$use_oic" = "1" ]; then
 		x=dbxc
 		b=`basename $a`
 		p="$cdli${a}"
 		curl -o $oic/$b -s $p
-		echo "oic	oic/$b"
+		echo "$srt	oic	oic/$b"
 	    else
-		echo "cdli	$a"
+		echo "$srt	cdli	$a"
 	    fi
-	done >/tmp/$$.pxi
+	done >$pxi
     fi
 fi
 
-if [ -s /tmp/$$.pxi ]; then
+if [ -s $pxi ]; then
+    sort -s -k1n -o $pxi -u $pxi
     echo '<div id="p4Images"><h1 class="p3h2 border-top heading">Images</h1>' >$div
-    while read typ loc
+    while read srt typ loc
     do
 	case $typ in
 	    oic)
@@ -115,9 +140,9 @@ if [ -s /tmp/$$.pxi ]; then
   <div class="caption">[$x] $origin image from <a target="_blank" href="$host$url">$url</a></div>
 </div>
 EOF
-    done </tmp/$$.pxi
+    done <$pxi
     echo '</div>'>>$div
-    #rm -f /tmp/$$.pxi
+    #rm -f $pxi
     exit 0
 else
     exit 2
