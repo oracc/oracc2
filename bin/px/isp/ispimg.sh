@@ -3,13 +3,14 @@
 # $1 = PX number
 # $2 = output directory for PX page building
 # $3 = project (optional, only needed if caching is requested)
+# $4 = 1 if caching is in use; empty or non-1 otherwise
 #
 # Create an image div for the PX number $1 in file $2
 #
 px=$1
 div=$2
-project=
-#$3
+project=$3
+use_oic=$4
 
 cdli='https://cdli.mpiwg-berlin.mpg.de/';
 
@@ -42,7 +43,7 @@ ooi=$ORACC/ooi
 try=$ooi/$px'*'
 set $try
 # if found echo the names of found items into the .pxi stripping
-# /home/oracc/ as we go; this leaves names such as eic/P123456.jpg
+# /home/oracc/ as we go; this leaves names such as oic/P123456.jpg
 if [ "$1" != "$try" ]; then
     found=1
     x=ooi
@@ -53,14 +54,14 @@ fi
 
 # Now try the cache
 if [ "$found" != "1" ]; then
-    eic=$ORACC/eic
-    try=$eic/$px'*'
+    oic=$ORACC/oic
+    try=$oic/$px'*'
     set $try
     if [ "$1" != "$try" ]; then
 	found=1
-	x=eic
+	x=oic
 	for a in $*; do
-	    echo "eic	$a"
+	    echo "oic	$a"
 	done | sed "s#$ORACC/##" >/tmp/$$.pxi
     fi
 fi
@@ -71,15 +72,13 @@ if [ "$found" != "1" ]; then
     if [ "$try" != "" ]; then
 	found=1
 	x=dbx
-	if [ ! "$project" = "" ] && [ -r $ORACC/$project/.eic ]; then
-	    use_eic=1
-	fi
 	for a in $try; do
-	    if [ "$use_eic" = "1" ]; then
+	    if [ "$use_oic" = "1" ]; then
+		x=dbxc
 		b=`basename $a`
 		p="$cdli${a}"
-		curl -o $eic/$b -s $p
-		echo "eic	eic/$b"
+		curl -o $oic/$b -s $p
+		echo "oic	oic/$b"
 	    else
 		echo "cdli	$a"
 	    fi
@@ -87,33 +86,12 @@ if [ "$found" != "1" ]; then
     fi
 fi
 
-# Now try the XMD metadata for @src entries
-if [ "$found" != "1" ]; then
-    four="${px:0:4}"
-    cxmd=$ORACC/cdli/01bld/$four/$px/$px.xmd
-    if [ -s "$cxmd" ]; then
-	xcdli=`xmllint -xpath './/*[@src]' $cxmd 2>/dev/null | grep -v 'tn_\|_d\|svg' | cut -d'"' -f6 | sort -t/ -k2`
-    fi
-    if [ "$xcdli" != "" ]; then
-	found=1
-	x=xmd
-	for a in $xcdli; do
-	    echo "cdli	dl/$a"
-	done >>/tmp/$$.pxi
-    fi
-fi
-
-if [ "$found" != "1" ]; then
-    x=crl
-    $ORACC/bin/ispimg-curl.sh $px $use_eic >/tmp/$$.pxi
-fi
-
 if [ -s /tmp/$$.pxi ]; then
     echo '<div id="p4Images"><h1 class="p3h2 border-top heading">Images</h1>' >$div
     while read typ loc
     do
 	case $typ in
-	    eic)
+	    oic)
 		host=
 		url="/$loc"
 		n=`basename $loc`
@@ -134,10 +112,13 @@ if [ -s /tmp/$$.pxi ]; then
 	esac
 	cat <<EOF >>$div
 <div class="image"><img src="$host$url" alt="image of $n"/>
-  <div class="caption">[$x] $origin image from <a href="$host$url">$url</a></div>
+  <div class="caption">[$x] $origin image from <a target="_blank" href="$host$url">$url</a></div>
 </div>
 EOF
     done </tmp/$$.pxi
     echo '</div>'>>$div
+    #rm -f /tmp/$$.pxi
+    exit 0
+else
+    exit 2
 fi
-#rm -f /tmp/$$.pxi

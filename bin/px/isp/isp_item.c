@@ -406,7 +406,6 @@ isp_item_cfy(Isp *ip)
   return 0;
 }
  
- 
 static int
 isp_create_img(Isp *ip)
 {
@@ -424,12 +423,14 @@ isp_create_img(Isp *ip)
     list_add(args, (void*)ip->itemdata.item);
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.img);
-#if 0
-  list_add(args, " ");
-  list_add(args, (void*)ip->cache.out);
-#endif
-  list_add(args, " ");
-  list_add(args, (void*)ip->project);
+
+  if (ip->itemdata.oic)
+    {
+      list_add(args, " ");
+      list_add(args, (void*)ip->project);
+      list_add(args, " ");
+      list_add(args, (void*)"1");
+    }
 
   unsigned char *syscmd = list_concat(args);
 
@@ -452,6 +453,7 @@ isp_create_img(Isp *ip)
 	  else if (xstatus > 1)
 	    {
 	      ip->itemdata.not = xstatus;
+	      return 1;
 	    }
 	  else
 	    {
@@ -466,7 +468,6 @@ isp_create_img(Isp *ip)
 	  ip->errx = (ccp)syscmd;
 	  return 1;
 	}
-	    
     }
   
   return 0;
@@ -475,12 +476,16 @@ isp_create_img(Isp *ip)
 int
 isp_item_img(Isp *ip)
 {
+  char oic[strlen(ip->oracc)+strlen(ip->project)+strlen("//P123456.img0")];
+  sprintf(oic, "%s/%s/.oic", ip->oracc, ip->project, ip->itemdata.item);
   char img[strlen(ip->cache.sys)+strlen("/img/P123/P123456.img0")];
-  char four[5]; strncpy(four,ip->item, 4); four[4] = '\0';
-  sprintf(img, "%s/img/%s/%s.img", ip->cache.sys, four, ip->item);
+  ip->itemdata.oic = !access(oic, R_OK);
+  if (ip->itemdata.oic)
+    sprintf(img, "%s/oic/%s.img", ip->oracc, ip->itemdata.item);
+  else
+    sprintf(img, "%s/img/%s.img", ip->cache.sys, ip->item);
   ip->itemdata.img = (ccp)pool_copy((uccp)img, ip->p);
   if (access(img, R_OK))
     return isp_create_img(ip);
   return 0;
 }
-

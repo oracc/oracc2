@@ -119,6 +119,7 @@ struct isp_itemdata
   Dbi_index *dp;
   Dbi_index *hilitedb;
   int not; /* 2 = no xmd (i.e., text not in project); 3 = no xtf */
+  int oic; /* 0 = no image caching ; 1 = do image caching */
 };
 
 struct isp_glosdata
