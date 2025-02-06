@@ -1,3 +1,5 @@
+var currHili;
+
 function getPager() {
     return document.getElementById("p4Pager");
 }
@@ -793,4 +795,37 @@ function cuneify_reset(evt) {
     let c = getCuneify();
     c.setAttribute('data-cfy-fnt', f);
     onloadCuneify();
+}
+
+function cfySL(evt) {
+    let e = getData(evt);
+    let o = e.getAttribute('data-oid');
+    let p = getPager().getAttribute('data-proj');
+    let u = '/'+p+'/signlist/'+o;
+    popup(u,'slWindow',700,800,100,350);
+}
+
+function cfyUnHi(h) {
+    document.getElementById(h).classList.toggle('selected');
+    let idbase = 'c.'+h+'.';
+    let c = 0;
+    let ce = document.getElementById(idbase+c++);
+    while (ce) {
+	ce.classList.toggle('selected');
+	ce = document.getElementById(idbase+c++);
+    }
+}
+
+function cfyHi(evt) {
+    if (currHili) {
+	cfyUnHi(currHili);
+    }
+    let cid = getData(evt).getAttribute('id');
+    let x = cid.lastIndexOf('.');
+    let id = cid.substring(2,x);
+    currHili = id;
+    // alert('cid '+cid+' => id '+id);
+    let cfy = document.getElementById("p4Cuneify");
+    onloadHili(id, cfy);
+    return false;
 }

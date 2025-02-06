@@ -33,4 +33,4 @@ chmod -R o+r 02www/lists
 pxp3p4.sh neo
 pxreset.sh neo
 
-#docker restart oracc-ingest
+docker restart oracc-ingest

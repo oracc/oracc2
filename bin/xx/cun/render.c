@@ -131,7 +131,7 @@ cfy_cun(struct d *dp)
   if (dp->oid)
     fprintf(outfp,
 	    "<span id=\"c.%s\" title=\"%s\" "
-	    "data-oid=\"%s\" onclick=\"cfySL(event)\" "
+	    "data-oid=\"%s\" onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\""
 	    "class=\"cfy-cun%s%s\">%s</span>",
 	    dp->xid, dp->form, dp->oid, miss, space, dp->utf8);
   else
