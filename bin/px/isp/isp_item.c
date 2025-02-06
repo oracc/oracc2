@@ -424,8 +424,13 @@ isp_create_img(Isp *ip)
     list_add(args, (void*)ip->itemdata.item);
   list_add(args, " ");
   list_add(args, (void*)ip->itemdata.img);
+#if 0
   list_add(args, " ");
   list_add(args, (void*)ip->cache.out);
+#endif
+  list_add(args, " ");
+  list_add(args, (void*)ip->project);
+
   unsigned char *syscmd = list_concat(args);
 
   if (ip->verbose)
