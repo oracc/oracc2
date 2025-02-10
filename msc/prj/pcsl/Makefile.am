@@ -6,8 +6,9 @@ dir=$(shell pwd)
 
 default: all
 
+# If there are an .sh.in scripts or the like add them as targets of all:
 all:
-	@echo make in ${dir} only works with \'make osl\'
+	@echo To build PCSL say \'make pcsl\'
 
 pcsl:
 	@(cd /home/stinney/orc/pcsl ; cp -u fonts/PC-all.ttf 00res/fonts)

@@ -109,11 +109,14 @@ static void
 lig_load(const char *ligfile)
 {
   lig = hash_create(1024);
-  size_t nl;
-  uchar **l = loadfile_lines((uccp)ligfile, &nl);
-  int i;
-  for (i = 0; i < nl; ++i)
-    hash_add(lig, l[i], "");
+  if (!access(ligfile, R_OK))
+    {
+      size_t nl;
+      uchar **l = loadfile_lines((uccp)ligfile, &nl);
+      int i;
+      for (i = 0; i < nl; ++i)
+	hash_add(lig, l[i], "");
+    }
 }
 
 static const char *
