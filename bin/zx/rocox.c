@@ -48,12 +48,16 @@ opts(int opt, const char *arg)
     case 'c':
       celtag = arg;
       break;
+    case 'e':
+      roco_esp_ns = 1;
+      break;
     case 'f':
       fields_from_row1 = 1;
       break;
     case 'h':
       roco_html_ns = 1;
-      xmltag = "table";
+      if (!xmltag)
+	xmltag = "table";
       xml_output = 1;
       break;
     case 'n':      
