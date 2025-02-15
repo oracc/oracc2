@@ -69,7 +69,7 @@
 	      <xsl:otherwise><xsl:value-of select="$slxml"/></xsl:otherwise>
 	    </xsl:choose>
 	  </xsl:variable>
-	  <xsl:message>sxweb-page-o-signs.xml using <xsl:value-of select="$sl"/>; ids=<xsl:value-of select="$ids"/></xsl:message>
+	  <xsl:message>sxweb-page-o-signs.xsl using <xsl:value-of select="$sl"/>; ids=<xsl:value-of select="$ids"/></xsl:message>
 	  <xsl:for-each select="document($sl)">
 	    <xsl:for-each select="id($ids)">
 	      <xsl:sort data-type="number" select="@sort"/>
