@@ -17,7 +17,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
   
-  options(argc, argv, "c:C:fhnr:R:stx:X?");
+  options(argc, argv, "c:C:efhnr:R:stx:X?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
