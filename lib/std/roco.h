@@ -21,6 +21,7 @@ struct roco
   const char *xmltag;    /* tag to wrap XML output */
   const char *rowtag;    /* tag to wrap row output */
   const char *celtag;    /* tag to wrap cell output */
+  const char *class;     /* class for xmltag */
   int linkcells;	 /* The cells are Link* not char * */
   int maxcols;
 };
@@ -39,13 +40,13 @@ extern int roco_xmlify;
 extern Roco *roco_create(int rows, int cols);
 extern Hash *roco_hash(Roco *r);
 extern void roco_hash_hash(Hash *h, Roco *r);
-extern Roco *roco_load(const char *file, int fieldsr1, const char *xtag, const char *rtag, const char *ctag);
+extern Roco *roco_load(const char *file, int fieldsr1, const char *xtag, const char *rtag, const char *ctag, const char *class);
 extern void roco_row_format(FILE*fp, const unsigned char **row);
 extern Roco *roco_swap(Roco *r);
 extern void roco_write(FILE *fp, Roco *r);
 extern void roco_write_trtd(FILE *fp, Roco *r);
 extern void roco_write_xml(FILE *fp, Roco *r);
 
-#define roco_load1(x) roco_load((x),0,NULL,NULL,NULL)
+#define roco_load1(x) roco_load((x),0,NULL,NULL,NULL,NULL)
 
 #endif/*ROCO_H_*/

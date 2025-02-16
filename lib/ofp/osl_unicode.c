@@ -14,7 +14,7 @@ osl_unicode(void)
   sprintf(buf, "sl/unicode.tsv");
   if (access(buf, R_OK))
     sprintf(buf, "%s/osl/02pub/unicode.tsv", oracc());
-  o->r = roco_load(buf, 0, NULL, NULL, NULL);
+  o->r = roco_load(buf, 0, NULL, NULL, NULL, NULL);
   if (o->r)
     {
       o->e = calloc(o->r->nlines, sizeof(Osl_uentry));

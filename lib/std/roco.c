@@ -30,7 +30,7 @@ roco_create(int rows, int cols)
 
 Roco *
 roco_load(const char *file, int fieldsr1,
-	  const char *xtag, const char *rtag, const char *ctag)
+	  const char *xtag, const char *rtag, const char *ctag, const char *class)
 {
   Roco *r = calloc(1, sizeof(Roco));
   r->file = file;
@@ -41,6 +41,7 @@ roco_load(const char *file, int fieldsr1,
   r->xmltag = (xtag ? xtag : "x");
   r->rowtag = (rtag ? rtag : "r");
   r->celtag = (ctag ? ctag : "c");
+  r->class = class;
 
   int i;
   for (i = 0; i < r->nlines; ++i)

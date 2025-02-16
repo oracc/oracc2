@@ -10,7 +10,7 @@ int suppress_xmlify = 0;
 int trtd_output = 0;
 int xml_output = 0;
 
-const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL;
+const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL, *class = NULL;
 
 int
 main(int argc, char *const *argv)
@@ -22,7 +22,7 @@ main(int argc, char *const *argv)
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
 
-  r = roco_load("-", fields_from_row1, xmltag, rowtag, celtag);
+  r = roco_load("-", fields_from_row1, xmltag, rowtag, celtag, class);
 
   if (roco_swap_axes)
     r = roco_swap(s=r);
@@ -57,7 +57,12 @@ opts(int opt, const char *arg)
     case 'h':
       roco_html_ns = 1;
       if (!xmltag)
-	xmltag = "table";
+	{
+	  xmltag = "table";
+	  rowtag = "tr";
+	  celtag = "td";
+	  class = "pretty";
+	}
       xml_output = 1;
       break;
     case 'n':      

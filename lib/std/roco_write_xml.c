@@ -20,9 +20,11 @@ roco_write_xml(FILE *fp, Roco *r)
     {
       fprintf(fp, "<%s", r->xmltag);
       if (roco_html_ns)
-	fprintf(fp, " xmlns=\"%s\">", html_ns);
+	fprintf(fp, " xmlns=\"%s\"", html_ns);
       if (roco_esp_ns)
-	fprintf(fp, " xmlns:esp=\"%s\">", esp_ns);
+	fprintf(fp, " xmlns:esp=\"%s\"", esp_ns);
+      if (r->class)
+	fprintf(fp, " class=\"%s\"", r->class);
       fputc('>', fp);
     }
   for (i = start_row; i < r->nlines; ++i)
