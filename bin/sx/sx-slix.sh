@@ -52,6 +52,9 @@ if [ "$asl" != "" ]; then
 	echo "$0: sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl"
 	sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl
 	mv -f sx-lists.out 02pub/lists.tsv
+	if [ -r 02pub/csl-dist.xml ]; then
+	    xsltproc -o 02xml/sl.xml $ORACC/lib/scripts/csl-dist.xsl 02xml/sl.xml 02pub/csl-dist.xml
+	fi
 	# cp 02xml/sl.xml 02xml/sl-mcu.xml
 	sx -S $asl | tee 02pub/sortcodes.tsv | \
 	    rocox -R '<t c="%2">%1</t>' -x sort >02pub/sortcodes.xml

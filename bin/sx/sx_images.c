@@ -48,7 +48,7 @@ sx_images(struct sl_signlist *sl)
 	      imfile = (ccp)pool_copy((uccp)buf, sl->p);
 	      improj = "@@oracc@@";
 	    }
-	  Roco *mr = roco_load(imfile, 0, NULL, NULL, NULL);
+	  Roco *mr = roco_load(imfile, 0, NULL, NULL, NULL, NULL);
 	  char buf[16];
 	  sprintf(buf, "i%d", nm);
 	  sl->iheaders[nm].r = mr;

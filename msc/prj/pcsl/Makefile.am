@@ -1,12 +1,14 @@
 include ../../../oracc-am-rules.txt
 
-noinst_SCRIPTS: *.sh
+bin_SCRIPTS=pcsl-csl-hook.sh
+
+noinst_SCRIPTS=*.sh
 
 dir=$(shell pwd)
 
 default: all
 
-# If there are an .sh.in scripts or the like add them as targets of all:
+# If there are any .sh.in scripts or the like add them as targets of all:
 all:
 	@echo To build PCSL say \'make pcsl\'
 

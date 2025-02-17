@@ -5,6 +5,8 @@
 #
 
 P="-p`oraccopt`"
+H=$(shell oraccopt | tr / -)
+HSH=${ORACC}/bin/${H}-csl-hook.sh
 
 tok: 02pub/csl.tok
 kis: 01tmp/csl.kis
@@ -16,6 +18,9 @@ csl: 01tmp/csl.asl
 # dependency chain
 clean:
 	rm -f 01tmp/csl.* 02pub/csl.*
+
+hook:
+	@[ -x ${HSH} ] && ${HSH} || true
 
 02pub/csl.tok: 01bld/lists/xtfindex.lst
 	tokx $P <$< >$@
