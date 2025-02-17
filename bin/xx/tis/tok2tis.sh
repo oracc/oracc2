@@ -5,4 +5,7 @@
 # TOKENID TOKEN COUNT PERCENT
 #
 p=`oraccopt`
-tokex -p$p | tee 02pub/csl.tkx | tokix -p$p | tee 02pub/csl.tix | tokpct
+if [ -r 00lib/toklists.lst ]; then
+    l="-l00lib/toklists.lst"
+fi
+tokex $l -p$p | tee 02pub/csl.tkx | tokix -p$p | tee 02pub/csl.tix | tokpct

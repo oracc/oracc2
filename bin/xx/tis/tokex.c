@@ -30,6 +30,75 @@ struct sl_config aslcfg;
 
 const char *signlist = "osl";
 
+const char *prlists_file = NULL;
+Hash *prlists = NULL;
+
+static void
+prlists_load_one(const char *base)
+{
+  char list[strlen("00lib/lists/0")+strlen(base)];
+  sprintf(list, "00lib/lists/%s", base);
+  size_t nline;
+  unsigned char *fmem;
+  unsigned char **lp = loadfile_lines3((uccp)list, &nline, &fmem);
+  int i;
+  prlists = hash_create(1024);
+  for (i = 0; lp[i]; ++i)
+    {
+      char *pqx = (char*)lp[i], *tmp = strchr((ccp)lp[i],':');
+      if (tmp)
+	pqx = tmp+1;
+      if ((tmp = strchr(pqx,'@')))
+	*tmp = '\0';
+      List *l = hash_find(prlists, (uccp)pqx);
+      if (!l)
+	{
+	  l = list_create(LIST_SINGLE);
+	  hash_add(prlists, (uccp)pqx, l);
+	}
+      list_add(l, (void*)base);
+    }
+}
+
+static void
+prlists_load(void)
+{
+  size_t nline;
+  unsigned char *fmem;
+  unsigned char **lp = loadfile_lines3((uccp)prlists_file, &nline, &fmem);
+  int i;
+  for (i = 0; lp[i]; ++i)
+    prlists_load_one((ccp)lp[i]);
+}
+
+static char *
+pqx_of(const char *qid)
+{
+  static char pqx[8];
+  qid = strchr(qid, ':');
+  ++qid;
+  strncpy(pqx,qid,7);
+  pqx[7] = '\0';
+  return pqx;
+}
+
+static void
+pr(const char *k, Vido *vp, const char *q)
+{
+  printf("%s\t%s\t%s\n", k, vido_new_id(vp,k), q);
+  if (prlists)
+    {
+      List *prlist = hash_find(prlists, (uccp)pqx_of(q));
+      const char *prefix;
+      for (prefix = list_first(prlist); prefix; prefix = list_next(prlist))
+	{
+	  char pk[strlen(prefix)+strlen(k)+2];
+	  sprintf(pk, "%s:%s", prefix, k);
+	  printf("%s\t%s\t%s\n", pk, vido_new_id(vp,pk), q);
+	}
+    }
+}
+
 /* tokex operates on corpus token output so it has to use the corpus
    forms table; this needs parameterization by pcsl/osl/pesl */
 static char *
@@ -65,7 +134,8 @@ forms_entry(char *t, Vido *vp, char *qid)
     *dot = '\0';
   const char *key = hash_find(fhash, (uccp)t);
   if (key)
-    printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);
+    /*printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);*/
+    pr(key, vp, qid);
 }
 
 char *
@@ -124,13 +194,14 @@ merge_entry(char *t, Vido *vp, char *qid)
     *dot = '\0';
   const char *key = hash_find(mhash, (uccp)t);
   if (key)
-    printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);
+    /*printf("%s\t%s\t%s\n", key, vido_new_id(vp,key), qid);*/
+    pr(key, vp, qid);
 }
 
 int
 main(int argc, char **argv)
 {
-  options(argc,argv,"d:np:");
+  options(argc,argv,"d:nl:p:");
   char buf[1024], *b, qid[1024], wdid[32];
   Vido *vp = vido_init('t', 0);
   forms_load();
@@ -174,7 +245,8 @@ main(int argc, char **argv)
 	    *w++ = '\0';
 
 	  /* Always save the entire S.F.V */
-	  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+	  /*printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);*/
+	  pr(t, vp, qid);
 
 	  /* if the key contains ..[^\000] the SFV is o0..v so just zero dot[2] and save the sign key */
 	  char *dot = strchr(t, '.');
@@ -183,7 +255,8 @@ main(int argc, char **argv)
 	      if (dot[2])
 		{
 		  dot[2] = '\0';
-		  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+		  /*printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);*/
+		  pr(t, vp, qid);
 		}
 	      /* This handles o0000087.. and o0000087..a */
 	      merge_entry(t,vp,qid);
@@ -195,7 +268,8 @@ main(int argc, char **argv)
 	      if (dot[1]) /* . is the . before value; if dot[1] is not \0 there is a value */
 		{
 		  dot[1] = '\0';
-		  printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);
+		  /*printf("%s\t%s\t%s\n", t, vido_new_id(vp,t), qid);*/
+		  pr(t, vp, qid);
 		}
 	      merge_entry(t,vp,qid);
 	    }
@@ -221,6 +295,10 @@ opts(int argc, const char *arg)
     case 'd':
       index_dir = arg;
       break;
+    case 'l':
+      prlists_file = arg;
+      prlists_load();
+      break;
     case 'n':
       no_output = 1;
       break;
@@ -240,6 +318,7 @@ void
 help ()
 {
   printf("  -d [index_dir] Gives the name of the index directory; defaults to 02pub/tok\n");
+  printf("  -l [lists_file] give name of list of lists for tokex slices\n");
   printf("  -n no output; suppress vid dump\n");
   printf("  -p project; required if merge data is used by project\n");
 }
