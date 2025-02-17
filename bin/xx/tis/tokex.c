@@ -42,7 +42,6 @@ prlists_load_one(const char *base)
   unsigned char *fmem;
   unsigned char **lp = loadfile_lines3((uccp)list, &nline, &fmem);
   int i;
-  prlists = hash_create(1024);
   for (i = 0; lp[i]; ++i)
     {
       char *pqx = (char*)lp[i], *tmp = strchr((ccp)lp[i],':');
@@ -67,7 +66,8 @@ prlists_load(void)
   unsigned char *fmem;
   unsigned char **lp = loadfile_lines3((uccp)prlists_file, &nline, &fmem);
   int i;
-  for (i = 0; lp[i]; ++i)
+  prlists = hash_create(1024);
+ for (i = 0; lp[i]; ++i)
     prlists_load_one((ccp)lp[i]);
 }
 
