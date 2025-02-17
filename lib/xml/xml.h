@@ -12,6 +12,7 @@
 
 struct xmlhelper {
   FILE *fp;
+  void *user;
 };
 
 extern int xml_printing, xml_validating;
@@ -21,6 +22,9 @@ typedef struct xmlhelper Xmlhelper;
 extern nodehandlers treexml_o_handlers;
 extern nodehandlers treexml_p_handlers;
 extern nodehandlers treexml_c_handlers;
+
+extern void tree_xml_node(Node *np, void *user);
+extern void tree_xml_post(Node *np, void *user);
 
 extern void treexml_o_generic(Node *np, void *user);
 extern void treexml_c_generic(Node *np, void *user);

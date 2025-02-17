@@ -200,7 +200,7 @@ xcl_eH(void *userData, const char *name)
 		  form_parse((unsigned char *)xcp->file, lp->lnum,
 			   pool_copy((unsigned char*)((curr_sig&&*curr_sig) ? curr_sig : curr_pos),xcp->pool),
 			   &lp->f->f2, NULL);
-		  lp->f->f2.core = langcore_of(lp->f->f2.lang);
+		  lp->f->f2.core = langcore_of((ccp)lp->f->f2.lang);
 		}
 	    }
 #if 0

@@ -54,7 +54,7 @@ treexml_c_generic(Node *np, void *user)
   fprintf(xhp->fp, "</%s>", np->name);
 }
 
-static void
+void
 tree_xml_node(Node *np, void *user)
 {
   Xmlhelper *xhp = user;
@@ -62,13 +62,9 @@ tree_xml_node(Node *np, void *user)
     (treexml_o_handlers[np->ns])(np, xhp);
   else
     treexml_o_generic(np, xhp);
-#if 0
-  if (np->data && treexml_p_handlers[np->data->ns])
-    (treexml_p_handlers[np->data->ns])(np, xhp);
-#endif
 }
 
-static void
+void
 tree_xml_post(Node *np, void *user)
 {
   Xmlhelper *xhp = user;

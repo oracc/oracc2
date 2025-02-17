@@ -149,7 +149,7 @@ tree_pop(Tree *tp)
 Node *
 tree_push(Tree *tp)
 {
-  if (tp->curr->last)
+  if (tp->curr && tp->curr->last)
     return tp->curr = tp->curr->last;
   else
     return NULL;
