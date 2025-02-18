@@ -3,6 +3,7 @@ include ../../../oracc-am-rules.txt
 bin_SCRIPTS=pcsl-csl-hook.sh
 
 noinst_SCRIPTS=*.sh
+scriptdata_DATA=pcsl-csldata.xsl
 
 dir=$(shell pwd)
 

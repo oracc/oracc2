@@ -26,6 +26,7 @@ bin/qx/lem/qlemx
 bin/qx/qxx/qx
 bin/qx/tra/qtrax
 bin/qx/txt/qtxtx
+bin/sx/csldist
 bin/sx/sig2asl
 bin/sx/slix
 bin/sx/slx
@@ -280,6 +281,8 @@ oracc.sed
 
 # temp, junk, and backup files
 01tmp
+junk
+old
 *~
 *.bak
 *.dump
