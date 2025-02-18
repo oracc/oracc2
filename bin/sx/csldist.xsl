@@ -16,7 +16,7 @@
   <xsl:template match="sl:sign|sl:form">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:copy-of select="*"/>
+      <xsl:apply-templates/>
       <xsl:variable name="k" select="@key"/>
       <xsl:for-each select="document('csldist.xml',/)">
 	<xsl:for-each select="key('data',$k)">

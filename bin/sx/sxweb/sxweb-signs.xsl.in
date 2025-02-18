@@ -346,6 +346,7 @@
       <xsl:call-template name="sws-akas"/>
       <xsl:call-template name="sws-systems"/>
       <xsl:call-template name="sws-links"/>
+      <xsl:call-template name="sws-distribution"/>
       <xsl:call-template name="sws-compounds">
 	<xsl:with-param name="esp-mode" select="$esp-mode"/>
       </xsl:call-template>
@@ -478,6 +479,21 @@
 	</xsl:if>
       </xsl:for-each>
     </p>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="sws-distribution">
+  <xsl:if test="sl:distribution">
+    <div class="p">
+      <div>
+	<p>
+	  <span class="sl-ihead">DISTRIBUTION</span>
+	</p>
+      </div>
+      <div>
+	<xsl:copy-of select="sl:distribution/*"/>
+      </div>
+    </div>
   </xsl:if>
 </xsl:template>
 
