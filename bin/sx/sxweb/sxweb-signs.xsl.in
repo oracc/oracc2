@@ -510,7 +510,7 @@
 
 <xsl:template mode="distribution" match="*">
   <xsl:copy>
-    <xsl:copy-of select="@class"/>
+    <xsl:copy-of select="@class|@colspan|@rowspan"/>
     <xsl:apply-templates mode="distribution"/>
   </xsl:copy>
 </xsl:template>

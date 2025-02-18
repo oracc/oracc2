@@ -101,6 +101,7 @@ sl.sign.model =
     sl.stats?,
     sl.name?,
     sl.aka*,
+    sl.glyf*,
     sl.signform.note,
     sl.lemmas?,
     sl.v*,
@@ -266,6 +267,18 @@ sl.pname =
     attribute n { text }
   }
 
+sl.glyf =
+  element sl:glyf {
+    attribute n { text } ,
+    attribute tag { text } ,
+    attribute sort { text } ,
+    attribute ucun { text } ,
+    attribute uhex { text } ,
+    attribute ivs { text },
+    sl.scriptcode* ,
+    (sl.list | sl.sys | sl.inote | sl.lit | sl.note)*
+  }
+
 slvattr =
     attribute comment { xsd:NCName }?,
     attribute deprecated { "1" }?,
@@ -356,7 +369,7 @@ sl.script = element sl:script {
 sl.scriptcode = element sl:code {
      attribute code { text }?, 
      attribute sset { text }?,
-     attribute svnn { text }?,
+     attribute cvnn { text }?,
      attribute salt { text }?, 
      attribute oivs { text }?, 
      attribute merge { text }?
