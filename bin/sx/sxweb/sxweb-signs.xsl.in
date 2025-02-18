@@ -484,18 +484,38 @@
 
 <xsl:template name="sws-distribution">
   <xsl:if test="sl:distribution">
-    <div class="p">
+    <div class="distribution p">
       <div>
 	<p>
 	  <span class="sl-ihead">DISTRIBUTION</span>
 	</p>
       </div>
       <div>
-	<xsl:copy-of select="sl:distribution/*"/>
+	<xsl:apply-templates mode="distribution" select="sl:distribution/*"/>
       </div>
     </div>
   </xsl:if>
 </xsl:template>
+
+<xsl:template mode="distribution" match="xh:td">
+  <xsl:copy>
+    <xsl:copy-of select="@class|@colspan|@rowspan"/>
+    <xsl:if test="@t">
+      <esp:link url="javascript://" onclick="act_isid(event)"
+		data-lang="tok" data-isid="{@t}"
+		notarget="yes"><xsl:value-of select="text()"/></esp:link>
+    </xsl:if>
+  </xsl:copy>
+</xsl:template>
+
+<xsl:template mode="distribution" match="*">
+  <xsl:copy>
+    <xsl:copy-of select="@class"/>
+    <xsl:apply-templates mode="distribution"/>
+  </xsl:copy>
+</xsl:template>
+
+
 
 <xsl:template name="sws-sl-cpds-memb">
   <xsl:param name="esp-mode" select="true()"/>
