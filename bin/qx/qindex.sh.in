@@ -71,7 +71,10 @@ fi
 # Signlist stats use a tok output file which is in 02pub/csl.tok; this
 # line recreates the 02pub/tok index from it.
 if [ -s 02pub/csl.tok ]; then
-    tokex -p $project <02pub/csl.tok | tokix -n -p $project
+    if [ -r 00lib/toklists.lst ]; then
+	l="-l00lib/toklists.lst"
+    fi
+    tokex $l -p $project <02pub/csl.tok | tokix -n -p $project
 fi
 
 chmod -R o+r 02pub
