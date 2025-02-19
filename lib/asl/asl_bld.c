@@ -109,6 +109,7 @@ asl_bld_init(void)
   sl->m_signs = memo_init(sizeof(struct sl_sign),512);
   sl->m_signs_p = memo_init(sizeof(struct sl_sign*),512);
   sl->m_forms = memo_init(sizeof(struct sl_form),512);
+  sl->m_glyfs = memo_init(sizeof(struct sl_glyf),512);
   sl->m_lists = memo_init(sizeof(struct sl_list),256);
   sl->m_values = memo_init(sizeof(struct sl_value),1024);
   sl->m_insts = memo_init(sizeof(struct sl_inst),1024);
@@ -818,6 +819,33 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
     }
 
   return l;
+}
+
+void
+asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned char *uni,
+	     const char *hex, const char *ivs, const char *otf)
+{
+    if (asl_sign_guard(locp, sl, "glyf"))
+      {
+	struct sl_glyf *gp = memo_new(sl->m_glyfs);
+	gp->tag = tag;
+	gp->uni = uni;
+	gp->hex = hex;
+	gp->ivs = ivs;
+	gp->otf = otf;
+	const unsigned char *p = (sl->curr_form ? sl->curr_form->u.f->name : sl->curr_sign->name);
+	char atf[strlen((ccp)p)+strlen(tag)+1];
+	sprintf(atf,"%s%s", p, tag);
+	if (!hash_find(sl->htoken, (uccp)atf))
+	  {
+	    gp->atf = (ccp)pool_copy((uccp)atf, sl->p);
+	    gp->t = asl_bld_token(locp, sl, (ucp)gp->atf, 0);
+	  }
+	else
+	  {
+	    mesg_verr(locp, "@glyf creates duplicate sign+tag %s\n", atf);
+	  }
+      }
 }
 
 void

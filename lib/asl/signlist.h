@@ -132,6 +132,7 @@ struct sl_signlist
   Memo *m_signs;
   Memo *m_signs_p;
   Memo *m_forms;
+  Memo *m_glyfs;
   Memo *m_lists;
   Memo *m_values;
   Memo *m_insts;
@@ -254,6 +255,17 @@ struct sl_lv_data
   int nivalues;
 };
 
+struct sl_glyf
+{
+  const char *atf; /* concatenation of parent name and tag */
+  const char *tag;
+  const unsigned char *uni;
+  const char *hex;
+  const char *ivs;
+  const char *otf;
+  struct sl_token *t;
+};
+
 struct sl_inst
 {
   const char *iid;		/* ID for this instance */
@@ -277,6 +289,7 @@ struct sl_inst
   List *notes;			/* A list of struct sl_note * */
   List *sys;			/* A list of @sys in a sign or form */
   List *links;			/* A list of @link in a sign or form */
+  List *glyfs;			/* A list of @glyf in a sign or form */
   const char *lang; 	  	/* this is inline in the @v; an x-value could have a lang with one sign but not another */
   unsigned const char *key;	/* SIGN.FORM.VALUE key for this inst */
   const char *atoid;		/* An OID given with @oid */
@@ -637,6 +650,7 @@ extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval
 extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
 
+extern void asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned char *uni, const char *hex, const char *ivs, const char *otf);
 extern void asl_bld_liga(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *fseq, const unsigned char *u);
 
 extern struct sl_config *asl_get_config(void);

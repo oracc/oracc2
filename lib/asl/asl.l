@@ -76,6 +76,7 @@ UCUNSEQ		(\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf
 UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 %s E
+%x F
 %x G
 %s L
 %x LES
@@ -96,6 +97,14 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 <E>"form"			{ fake_flag = 0; atcmd(EFORM,0); }
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
+
+<F>~[a-z][a-z0-9]*		{ aslsave; return GLYF_TAG; }
+<F>"\\"[0-9]+			{ aslsave; return GLYF_TAG; }
+<F>{UCUNSEQ}			{ aslsave; return GLYF_UNI; }
+<F>FA[0-9A-E]{3}		{ aslsave; return GLYF_HEX; }
+<F>E[0-9A-E]{4}			{ aslsave; return GLYF_IVS; }
+<F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
+
 
 <G>{LIGATURE}/[ \t]+         	{ aslsave; return LIGATURE; }
 <G>{LIGAFONT}/[ \t]+		{ aslsave; return LIGAFONT; }
@@ -155,6 +164,7 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 ^@pname/[ \t]       		{ atcmd(PNAME,0); }
 ^@nosign/[ \t]     		{ mesg_vwarning(curraslfile, asllineno, "[asl] '@nosign' has been replaced by '@sign-'");
 				  /*atcmd(SIGN,-1);*/ }
+^@glyf/[ \t]       		{ atcmd(GLYF,F); }
 ^@liga-?/[ \t]       		{ atcmd(LIGA,G); }
 ^@list-?/[ \t]       		{ atcmd(LIST,LES); }
 ^@lref/[ \t]+			{ atcmd(LIST,LES); }

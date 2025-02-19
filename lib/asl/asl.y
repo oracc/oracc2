@@ -40,6 +40,7 @@ int minus_flag = 0;
 		LINKDEF LINK
 		LIGA LIGATURE LIGAFONT LIGAUCUN
 		SCRIPTDEF SCRIPT UTOKEN
+		GLYF GLYF_TAG GLYF_UNI GLYF_HEX GLYF_IVS GLYF_OTF
 
 %nterm  <text>  anynote atftoken atftokens lang longtext token uniimg utoken utokens
 
@@ -95,6 +96,7 @@ atcmd:
 	| atscript
 	| atmerge
 	| atform
+	| atglyf
 	| atmeta
 	| atunicode
 	| atend
@@ -202,6 +204,15 @@ atlist:
 
 atliga:
           LIGA 	LIGATURE LIGAFONT LIGAUCUN { asl_bld_liga(&@1, curr_asl, (uccp)$2, (uccp)$3, (uccp)$4); }
+	;
+
+atglyf:
+	  GLYF GLYF_TAG GLYF_UNI GLYF_HEX
+	  { asl_bld_glyf(&@1, curr_asl, (ccp)$2, (uccp)$3, (ccp)$4, NULL, NULL); }
+	| GLYF GLYF_TAG GLYF_UNI GLYF_HEX GLYF_IVS 
+	  { asl_bld_glyf(&@1, curr_asl, (ccp)$2, (uccp)$3, (ccp)$4, (ccp)$5, NULL); }
+	| GLYF GLYF_TAG GLYF_UNI GLYF_HEX GLYF_IVS GLYF_OTF
+	  { asl_bld_glyf(&@1, curr_asl, (ccp)$2, (uccp)$3, (ccp)$4, (ccp)$5, (ccp)$6); }
 	;
 
 /*
