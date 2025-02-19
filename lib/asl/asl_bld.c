@@ -823,16 +823,19 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
 
 void
 asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned char *uni,
-	     const char *hex, const char *ivs, const char *otf)
+	     const char *hex, const char *otf)
 {
     if (asl_sign_guard(locp, sl, "glyf"))
       {
 	struct sl_glyf *gp = memo_new(sl->m_glyfs);
+	if ('*' == *tag)
+	  {
+	    gp->ref = 1;
+	    ++tag;
+	  }
 	gp->tag = tag;
 	gp->uni = uni;
 	gp->hex = hex;
-	gp->ivs = ivs;
-	gp->otf = otf;
 	const unsigned char *p = (sl->curr_form ? sl->curr_form->u.f->name : sl->curr_sign->name);
 	char atf[strlen((ccp)p)+strlen(tag)+1];
 	sprintf(atf,"%s%s", p, tag);

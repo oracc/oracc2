@@ -98,13 +98,10 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
 
-<F>~[a-z][a-z0-9]*		{ aslsave; return GLYF_TAG; }
-<F>"\\"[0-9]+			{ aslsave; return GLYF_TAG; }
+<F>"*"?[0-9]+			{ aslsave; return GLYF_TAG; }
 <F>{UCUNSEQ}			{ aslsave; return GLYF_UNI; }
-<F>FA[0-9A-E]{3}		{ aslsave; return GLYF_HEX; }
-<F>E[0-9A-E]{4}			{ aslsave; return GLYF_IVS; }
+<F>FA[0-9A-F]{3}		{ aslsave; return GLYF_HEX; }
 <F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
-
 
 <G>{LIGATURE}/[ \t]+         	{ aslsave; return LIGATURE; }
 <G>{LIGAFONT}/[ \t]+		{ aslsave; return LIGAFONT; }

@@ -261,21 +261,22 @@ struct sl_glyf
   const char *tag;
   const unsigned char *uni;
   const char *hex;
-  const char *ivs;
   const char *otf;
+  int ref; /* 1 = this is Unicode reference glyph */
   struct sl_token *t;
 };
 
 struct sl_inst
 {
   const char *iid;		/* ID for this instance */
-  char type; /* S = signlist; d = listdef; y = sysdef; s = sign; f = form; l = list; v = value; L = linkdef */
+  char type; /* S = signlist; d = listdef; y = sysdef; s = sign; f = form; g = glyf; l = list; v = value; L = linkdef */
   union {
     struct sl_signlist *S;
     struct sl_listdef *d;
     struct sl_sysdef *y;
     struct sl_sign *s;
     struct sl_form *f;
+    struct sl_glyf *g;
     struct sl_list *l;
     struct sl_linkdef *L;
     struct sl_value *v; } u;

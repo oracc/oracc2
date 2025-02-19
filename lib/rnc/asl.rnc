@@ -270,11 +270,11 @@ sl.pname =
 sl.glyf =
   element sl:glyf {
     attribute n { text } ,
-    attribute tag { text } ,
+    attribute num { text } ,
     attribute sort { text } ,
     attribute ucun { text } ,
     attribute uhex { text } ,
-    attribute ivs { text },
+    attribute ref  { "yes" | "no" }? ,
     sl.scriptcode* ,
     (sl.list | sl.sys | sl.inote | sl.lit | sl.note)*
   }
