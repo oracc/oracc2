@@ -50,7 +50,10 @@ gvl_bridge_key()
       else
 	{
 	  char key[strlen((ccp)gbgp->orig)+14];
-	  sprintf(key, "%s..%s", gbgp->oid, gbgp->orig);
+	  if (gbgp->type)
+	    sprintf(key, "%s..%s", gbgp->oid, (*gbgp->type=='v' ? (ccp)gbgp->orig : ""));
+	  else
+	    sprintf(key, "%s..", gbgp->oid);
 	  return pool_copy((uccp)key, bridge_p);
 	}
     }
