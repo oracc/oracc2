@@ -17,14 +17,17 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates/>
-      <xsl:variable name="k" select="@key"/>
-      <xsl:for-each select="document('csldist.xml',/)">
-	<xsl:for-each select="key('data',$k)">
-	  <sl:distribution>
-	    <xsl:copy-of select="."/>
-	  </sl:distribution>
+      <xsl:if test="not(sl:distribution)">
+	<xsl:variable name="k" select="@key"/>
+	<xsl:for-each select="document('csldist.xml',/)">
+	  <xsl:variable name="knodes" select="key('data',$k)[1]"/>
+	  <xsl:for-each select="$knodes[1]">
+	    <sl:distribution>
+	      <xsl:copy-of select="."/>
+	    </sl:distribution>
+	  </xsl:for-each>
 	</xsl:for-each>
-      </xsl:for-each>
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
 
