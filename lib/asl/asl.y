@@ -40,7 +40,7 @@ int minus_flag = 0;
 		LINKDEF LINK
 		LIGA LIGATURE LIGAFONT LIGAUCUN
 		SCRIPTDEF SCRIPT UTOKEN
-		GLYF GLYF_TAG GLYF_UNI GLYF_HEX GLYF_IVS GLYF_OTF
+		GLYF GLYF_TAG GLYF_UNI GLYF_HEX GLYF_OTF
 
 %nterm  <text>  anynote atftoken atftokens lang longtext token uniimg utoken utokens
 

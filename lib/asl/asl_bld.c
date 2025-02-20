@@ -605,6 +605,7 @@ asl_bld_form(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int min
       else if (sl->curr_invalid == 2)
 	sl->curr_invalid = 0;
 
+      sl->curr_glyf = NULL;
       sl->curr_value = NULL;
       check_flags(locp, (char*)n, &query, &literal);
 
@@ -837,16 +838,32 @@ asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned
 	gp->uni = uni;
 	gp->hex = hex;
 	const unsigned char *p = (sl->curr_form ? sl->curr_form->u.f->name : sl->curr_sign->name);
-	char atf[strlen((ccp)p)+strlen(tag)+1];
-	sprintf(atf,"%s%s", p, tag);
+	char atf[strlen((ccp)p)+strlen(tag)+2];
+	sprintf(atf,"%s\\%s", p, tag);
 	if (!hash_find(sl->htoken, (uccp)atf))
 	  {
 	    gp->atf = (ccp)pool_copy((uccp)atf, sl->p);
 	    gp->t = asl_bld_token(locp, sl, (ucp)gp->atf, 0);
+	    struct sl_inst *i = new_inst(sl);
+	    i->type = 'g';
+	    i->u.g = gp;
+	    sl->curr_glyf = sl->curr_inst = i;
+	    if (sl->curr_form)
+	      {
+		if (!sl->curr_form->u.f->glyfs)
+		  sl->curr_form->u.f->glyfs = list_create(LIST_SINGLE);
+		list_add(sl->curr_form->u.f->glyfs, i);
+	      }
+	    else
+	      {
+		if (!sl->curr_sign->glyfs)
+		  sl->curr_sign->glyfs = list_create(LIST_SINGLE);
+		list_add(sl->curr_sign->glyfs, i);
+	      }
 	  }
 	else
 	  {
-	    mesg_verr(locp, "@glyf creates duplicate sign+tag %s\n", atf);
+	    mesg_verr(locp, "@glyf creates duplicate sign+tag %s; ignored\n", atf);
 	  }
       }
 }
@@ -1068,7 +1085,17 @@ asl_bld_aka(Mloc *locp, struct sl_signlist *sl, const unsigned char *t)
 
   (void)asl_bld_token(locp, sl, (ucp)t, literal);
 
-  if (sl->curr_form)
+  if (sl->curr_glyf)
+    {
+      if (!sl->curr_glyf->u.g->aka)
+	sl->curr_glyf->u.g->aka = list_create(LIST_SINGLE);
+      list_add(sl->curr_glyf->u.g->aka, (m = memo_str(locp, t)));
+      if (literal)
+	m->user = &one;
+      else
+	m->user = NULL;
+    }
+  else if (sl->curr_form)
     {
       if (!sl->curr_form->u.f->aka)
 	sl->curr_form->u.f->aka = list_create(LIST_SINGLE);
@@ -1352,6 +1379,7 @@ asl_bld_end_sign(Mloc *locp, struct sl_signlist *sl, enum sx_tle t)
 	  sl->curr_sign = NULL;
 	  sl->curr_form = NULL;
 	  sl->curr_inst = NULL;
+	  sl->curr_glyf = NULL;
 	  sl->curr_invalid = 0;
 	}
       else

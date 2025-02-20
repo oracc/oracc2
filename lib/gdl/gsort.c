@@ -203,6 +203,7 @@ gsort_node(Node *np, List *lp)
       break;
     case 'a':
     case 'm':
+    case 'f':
       list_add(lp, &gsort_null_item);
       list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
       break;

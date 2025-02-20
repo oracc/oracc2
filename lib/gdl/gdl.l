@@ -54,7 +54,7 @@ B		("["|"]"|\xe2\xb8[\xa2-\xa5])
 S		\xe2\xb8[^\xa2-\xa5]|([0-9][a-wyz]*)
 G		([a-ru-zA-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[stST],?|{S}|\xc3[^\x97]|\xe2[^\xb8])+
 CG		([A-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[ST],?|{S}|\xc3[^\x97]|\xe2[^\xb8])+
-M		([@~\\]([a-wyz]+[0-9]*|90|180|270))
+M		([@~]([a-wyz]+[0-9]*|90|180|270)|"\\"[a-z]*[0-9]+)
 NNUM		([N][0-9][0-9]?[ACF]?)
 GRAPHEME 	({G}|"15")
 FRACTION	[0-9]\/[0-9]

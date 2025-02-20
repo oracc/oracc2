@@ -649,6 +649,37 @@ sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
 }
 
 static void
+sx_w_jx_glyfs(struct sx_functions *f, struct sl_signlist *sl, List *a)
+{
+  struct sl_inst *ip;
+  joxer_ao("j:glyfs");
+  for (ip = list_first(a); ip; ip = list_next(a))
+    {
+      static char s[10]; sprintf(s, "%d", ip->u.g->t->s);
+      List *a = list_create(LIST_SINGLE);
+      list_add(a, "n");
+      list_add(a, (void*)ip->u.g->atf);
+      list_add(a, "num");
+      list_add(a, (void*)ip->u.g->tag);
+      list_add(a, "sort");
+      list_add(a, s);
+      list_add(a, "ucun");
+      list_add(a, (void*)ip->u.g->uni);
+      list_add(a, "uhex");
+      list_add(a, (void*)ip->u.g->hex);
+      list_add(a, "ref");
+      list_add(a, ip->u.g->ref ? "yes" : "no");
+      const char **atts = list2chars(a);
+      ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
+      list_free(a, NULL);
+      joxer_ea(&ip->mloc, "sl:glyf", ratts);
+      /* script and meta need to go here */
+      joxer_ee(&ip->mloc, "sl:glyf");
+    }
+  joxer_ac();
+}
+
+static void
 x_tis_atts(List *a, struct tis_data *tp, size_t ctotal)
 {
   list_add(a, "icnt");
@@ -835,6 +866,8 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      joxer_eeaa(&s->mloc, "sl:name");
 	      if (s->u.f->aka && list_len(s->u.f->aka))
 		sx_w_jx_aka(f, sl, s->u.f->aka);
+	      if (s->u.f->glyfs && list_len(s->u.f->glyfs))
+		sx_w_jx_glyfs(f, sl, s->u.f->glyfs);
 	      in_form = 1;
 	    }
 	}
@@ -1218,6 +1251,8 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	    }
 	  if (s->u.s->aka && list_len(s->u.s->aka))
 	    sx_w_jx_aka(f, sl, s->u.s->aka);
+	  if (s->u.s->glyfs && list_len(s->u.s->glyfs))
+	    sx_w_jx_glyfs(f, sl, s->u.s->glyfs);
 
 #if 0
 	  if (s->u.s->nvalues)

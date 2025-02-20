@@ -61,7 +61,7 @@ ZERO		"00"(~[a-d])?
 PHONGRAPH	"/"{G}"/"
 LISTNAME	(U\+|[A-Z]+)
 LISTNUM		(U\+[A-F0-9]+|[A-Z]+[0-9]+[()A-Z0-9a-z_'"+*/^]*{M}{Q}{L})
-NUMGRAPH	[0-9XnN]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})\){M}{Q}{L}
+NUMGRAPH	[0-9XnN]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})(′|″)?\){M}{Q}{L}
 FRACTION	[0-9]\/[0-9]
 PUNCT		("*"|:['".:]?|"/"){Q}{L}
 SYSNAME		[a-zA-Z][a-zA-Z0-9_:-]+
@@ -102,12 +102,14 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 <F>{UCUNSEQ}			{ aslsave; return GLYF_UNI; }
 <F>FA[0-9A-F]{3}		{ aslsave; return GLYF_HEX; }
 <F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
+<F>[ \t]			{ }
+<F>\n		       		{ BEGIN(0); return EOL; }
 
 <G>{LIGATURE}/[ \t]+         	{ aslsave; return LIGATURE; }
 <G>{LIGAFONT}/[ \t]+		{ aslsave; return LIGAFONT; }
 <G>{UTF8UCUN}/[ \t\n]	       	{ aslsave; BEGIN 0 ;return LIGAUCUN; }
 <G>[ \t]			{ }
-<G>\n		       		{ BEGIN(0); }
+<G>\n		       		{ BEGIN(0); return EOL; }
 
 <L>{LISTNAME}/[ \t]+         	{ aslsave; BEGIN(S); return LISTNAME; }
 

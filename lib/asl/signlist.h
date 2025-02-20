@@ -112,6 +112,7 @@ struct sl_signlist
   struct sl_sign *curr_sign;
   struct sl_inst *curr_form;
   struct sl_inst *curr_value;
+  struct sl_inst *curr_glyf;
   struct sl_inst *curr_inst; /* used to attach meta to correct tag */
   int curr_invalid; 		/* 1=@sign- 2=@form- 3=@v- */
   List *compounds;
@@ -264,6 +265,7 @@ struct sl_glyf
   const char *otf;
   int ref; /* 1 = this is Unicode reference glyph */
   struct sl_token *t;
+  List *aka;
 };
 
 struct sl_inst
@@ -290,7 +292,6 @@ struct sl_inst
   List *notes;			/* A list of struct sl_note * */
   List *sys;			/* A list of @sys in a sign or form */
   List *links;			/* A list of @link in a sign or form */
-  List *glyfs;			/* A list of @glyf in a sign or form */
   const char *lang; 	  	/* this is inline in the @v; an x-value could have a lang with one sign but not another */
   unsigned const char *key;	/* SIGN.FORM.VALUE key for this inst */
   const char *atoid;		/* An OID given with @oid */
@@ -454,6 +455,7 @@ struct sl_sign
   List *as_form;		/* List of instances where this sign
 				   occurs as a form of another sign */
   struct sl_inst *formdef;	/* The defining instance of a form */
+  List *glyfs;			/* A list of @glyf; each @glyf is an inst type 'g' */
   int sort;
   size_t count;
   size_t mcount;
@@ -493,6 +495,7 @@ struct sl_form
 			   corresponds to the form; if the form
 			   doesn't occur as an @sign entry, the
 			   back-reference form->sign->xref is set */
+  List *glyfs;	       	/* A list of @glyf; each @glyf is an inst type 'g' */
   Hash *h_ligas;	/* Hash for @liga by name token */
   List *owners; 	/* this is a list of sl_sign* the form is associated with */
   struct sl_sign **owners_sort; /* owners as sorted array */
@@ -651,7 +654,7 @@ extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval
 extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
 
-extern void asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned char *uni, const char *hex, const char *ivs, const char *otf);
+extern void asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned char *uni, const char *hex, const char *otf);
 extern void asl_bld_liga(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *fseq, const unsigned char *u);
 
 extern struct sl_config *asl_get_config(void);
