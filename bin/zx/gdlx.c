@@ -21,6 +21,7 @@ static Mloc ml;
 Mloc xo_loc;
 FILE *f_xml;
 const char *file;
+int key = 0;
 int verbose = 1;
 int status;
 int rnvtrace;
@@ -95,7 +96,10 @@ do_one(char *s)
       const unsigned char *ucun = (uccp)gvl_cuneify_tree(tp), *ivs;
       if (bare_mode)
 	{
-	  printf("%s\t%s\n", s, ucun);
+	  if (key)
+	    printf("\t%s\n", ucun);
+	  else
+	    printf("%s\t%s\n", s, ucun);
 	}
       else
 	{
@@ -113,7 +117,10 @@ do_one(char *s)
       else
 	gvl_uname_prefix = "CUNEIFORM";
       const unsigned char *uname = (uccp)gvl_uname_tree(tp);
-      printf("%s\t%s\n", s, uname);
+      if (key)
+	printf("\t%s\n", uname);
+      else
+	printf("%s\t%s\n", s, uname);
     }
   else
     {
@@ -187,7 +194,31 @@ do_many(const char *fn)
       if (wrapper)
 	printf("<gdlx>");
       while ((s = fgets(buf, 1024, fp)))
-	do_one(s);
+	{
+	  if (key)
+	    {
+	      s[strlen(s)-1] = '\0';
+	      printf("%s", s);
+	      int i = 1;
+	      while (i < key)
+		{
+		  while (*s && '\t' != *s)
+		    ++s;
+		  ++i;
+		  if (*s)
+		    ++s;
+		}
+	      if (*s)
+		{
+		  char *t = s;
+		  while (*t && '\t' != *t)
+		    ++t;
+		  if (*t)
+		    *t = '\0';
+		}
+	    }
+	  do_one(s);
+	}
       if (wrapper)
 	printf("</gdlx>");
     }
@@ -202,7 +233,7 @@ main(int argc, char **argv)
   gdl_unicode = 1;
   setlocale(LC_ALL, ORACC_LOCALE);
 
-  options(argc, argv, "1abcCdef:gG:ilnop:PrstUvw");
+  options(argc, argv, "1abcCdef:gG:ik:lnop:PrstUvw");
   
   gdl_flex_debug = gdldebug = trace_mode;
 
@@ -326,6 +357,11 @@ opts(int opt, const char *arg)
       break;
     case 'j':
       json_mode = 1;
+      break;
+      /* process the key counting from 1; print the entire line first
+	 and append the result of processing */
+    case 'k':
+      key = atoi(optarg);
       break;
     case 'l':
       gdl_legacy = 1;
