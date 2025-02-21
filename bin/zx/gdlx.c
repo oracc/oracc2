@@ -31,6 +31,7 @@ extern int gdl_flex_debug, gdldebug, gdl_orig_mode, gdl_unicode;
 int bare_mode = 0;
 int check_mode = 0;
 int cuneify_mode = 0;
+int gdlseq_mode = 0;
 extern int gdlsig_depth_mode;
 int error_stdout = 0;
 const char *fname = NULL;
@@ -110,9 +111,20 @@ do_one(char *s)
 	  printf("ucun %s => %s => ivs %s\n", s, ucun, ivs);
 	}
     }
+  else if (gdlseq_mode)
+    {
+      if (key)
+	printf("\t%s\n", gdlseq((ucp)s));
+      else
+	{
+	  unsigned char s2[strlen(s)+1];
+	  strcpy((char*)s2,s);
+	  printf("%s\t%s\n", s, gdlseq(s2));
+	}
+    }
   else if (uname_mode)
     {
-      if (!strcmp(project, "pcsl"))
+      if (strstr(project, "pcsl"))
 	gvl_uname_prefix = "PROTO-CUNEIFORM";
       else
 	gvl_uname_prefix = "CUNEIFORM";
@@ -233,7 +245,7 @@ main(int argc, char **argv)
   gdl_unicode = 1;
   setlocale(LC_ALL, ORACC_LOCALE);
 
-  options(argc, argv, "1abcCdef:gG:ik:lnop:PrstUvw");
+  options(argc, argv, "1abcCdef:gG:ik:lnop:PqrstUvw");
   
   gdl_flex_debug = gdldebug = trace_mode;
 
@@ -377,6 +389,9 @@ opts(int opt, const char *arg)
       break;
     case 'P':
       gvl_strict = pedantic = 1;
+      break;
+    case 'q':
+      gdlseq_mode = 1;
       break;
     case 'r':
       ns_output = rnv_xml = 1;

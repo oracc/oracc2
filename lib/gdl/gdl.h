@@ -137,4 +137,6 @@ extern const unsigned char *gdl_first_s(Node *gdl);
 extern void grx_jox(Node *np, const char *gdltag);
 extern void grx_xml(Node *np, const char *gdltag);
 
+extern unsigned char *gdlseq(unsigned char *s);
+
 #endif /*GDL_H_*/
