@@ -4,6 +4,11 @@
 }
 
 @font-face {
+   font-family: 'Oracc UET2';
+   src: url('/fonts/Oracc-UET2.ttf');
+}
+
+@font-face {
    font-family: 'Oracc Noto SansCuneiform';
    src: url('/fonts/Oracc-Noto-SansCuneiform.ttf');
 }
@@ -46,6 +51,8 @@
 
 .ofs-200 { font-size: 200%; }
 
+.ofs-300 { font-size: 300%; }
+
 .ofs-feat-r { text-align: right; padding-right: 1em; }
 
 .osl {
@@ -78,6 +85,10 @@
 
 .ofs-pc {
     font-family: "Oracc PC";
+}
+
+.ofs-u2 {
+    font-family: "Oracc UET2";
 }
 
 .ofs-rsp {

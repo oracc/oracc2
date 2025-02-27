@@ -33,14 +33,22 @@
 			  '/',@xml:id,
 			  '&#xa;')"/>
     <xsl:for-each select=".//sl:form">
-      <xsl:if test="starts-with(@oid,'o')">
-	<xsl:value-of select="concat(
-			      @oid, '&#x9;u2&#x9;',
-			      '/',/*/@project, '/signlist',$n,
-			      '/',ancestor::sl:letter/@xml:id,
-			      '/',ancestor::sl:sign/@xml:id,
-			      '&#xa;')"/>
-      </xsl:if>
+      <xsl:variable name="o">
+	<xsl:choose>
+	  <xsl:when test="starts-with(@oid,'o')">
+	    <xsl:value-of select="@oid"/>
+	  </xsl:when>
+	  <xsl:when test="starts-with(@xml:id,'o')">
+	    <xsl:value-of select="@xml:id"/>
+	  </xsl:when>
+	</xsl:choose>
+      </xsl:variable>
+      <xsl:value-of select="concat(
+			    $o, '&#x9;u2&#x9;',
+			    '/',/*/@project, '/signlist',$n,
+			    '/',ancestor::sl:letter/@xml:id,
+			    '/',ancestor::sl:sign/@xml:id,
+			    '&#xa;')"/>
     </xsl:for-each>
   </xsl:for-each>
 </xsl:template>
