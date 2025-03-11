@@ -15,13 +15,18 @@ p4url_vec(P4url *p)
   vec[dst++] = px_cgi_arg("web","1");
 
   vec[dst++] = px_cgi_arg("proj", p->project);
+
   if (p->glossary)
     vec[dst++] = px_cgi_arg("glos", p->glossary);
+  else if (p->file)
+    vec[dst++] = px_cgi_arg("file", p->file);
 
   if (p->oxid)
     vec[dst++] = px_cgi_arg("oxid", p->oxid);
   else if (p->pxid)
     vec[dst++] = px_cgi_arg("pxid", p->pxid);
+  else if (p->frag)
+    vec[dst++] = px_cgi_arg("frag", p->frag);
   
   int src;
 

@@ -28,6 +28,8 @@ static void xml_handler(char *xml, size_t len);
 
 /* static char *xml_value(const char *xml, const char *tag); */
 
+const char *script_file = NULL;
+
 typedef void(builtin)(const char *,const char *);
 builtin *builtins_handlers[] =
 {
@@ -48,7 +50,19 @@ p4_or_builtins(const char *script_url)
   else if (!strncmp(script_url, "/or/", strlen("/or/")))
     script_url += strlen("/or/");
   else if ('/' == *script_url)
-    ++script_url;
+    {
+#if 0
+      char fbuf[strlen("@@ORACC@@/www0")+strlen(script_url)];
+      sprintf(fbuf, "@@ORACC@@/www%s", script_url);
+      if (!access(fbuf, R_OK))
+	{
+	  script_file = strdup(fbuf);
+	  or_builtins_sub(builtins("file", strlen("file")));
+	}
+      else
+#endif
+	++script_url;      
+    }
 
   const char *slash = strchr(script_url, '/');
 
@@ -154,6 +168,9 @@ or_builtins_sub(struct builtinstab *builtinsp)
     case B_OAI:
       oai();
       break;
+    case B_FILE:
+      /*file();*/
+      break;
     case B_NONE:
       break;
     }
@@ -190,6 +207,7 @@ voltemplate(void)
   do404();
 }
 
+ #if 0
 /* Not static because or_pqx.c needs it */
 void
 cuneify(void)
@@ -197,6 +215,7 @@ cuneify(void)
   execl("/usr/bin/perl", "perl", "@@ORACC@@/bin/cuneify.plx", NULL);
   do404();
 }
+#endif
 
 static void
 datestamp()

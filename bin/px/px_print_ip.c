@@ -97,6 +97,7 @@ pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name)
   fprintf(fp,"\t\titem=%s\n",(char*)xmlify((ucp)pr->item));
   fprintf(fp,"\t\tfullitem=%s\n",(char*)xmlify((ucp)pr->fullitem));
   fprintf(fp,"\t\tblock=%s\n",(char*)xmlify((ucp)pr->block));
+  fprintf(fp,"\t\tfile=%s\n",(char*)xmlify((ucp)pr->file));
   fprintf(fp,"\t\tproj=%s\n",(char*)xmlify((ucp)pr->proj));
   fprintf(fp,"\t\thtmd=%s\n",(char*)xmlify((ucp)pr->htmd));
   fprintf(fp,"\t\thtml=%s\n",(char*)xmlify((ucp)pr->html));

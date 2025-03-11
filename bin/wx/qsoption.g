@@ -7,7 +7,7 @@
 %}
 struct qsoptionstab;
 %%
-what, "text|score|sources|block|sig|pager|corpus|statistics|searchbar|adhoc"
+what, "text|score|sources|block|sig|pager|corpus|statistics|searchbar|adhoc|file"
 part, "page|full|tlit|meta|xlat"
 form, "html|xml|tei|json"
 lang, "#LANG"
@@ -19,8 +19,9 @@ sort, "#PERM"
 q, 	  "#STRING"
 srch, "#LIST"
 cemd, "kwic|line|unit"
+frag, "#NCNAME"
 %%
 int qs_total_keywords(void)
 {
-    return TOTAL_KEYWORDS + 10; /* 10 is a magic number that == the number of 'what' types */
+    return TOTAL_KEYWORDS + 11; /* 11 is a magic number that == the number of 'what' types */
 }

@@ -76,7 +76,22 @@ px_options(int argc, char **argv, Isp *ip)
   if (argv[1] && '-' != argv[1][0])
     ret = cgi_options(argc, argv, ip);
   else
-    ret = options(argc, argv, "03EZPC:FOdf:j:l:r:R:m:a:z:p:Q:q:g:e:i:b:B:s:S:k:Hh:x:u:c:L:a:t:vwW:");
+    ret = options(argc, argv, "03EZPC:FG:Odf:j:l:r:R:m:a:z:p:Q:q:g:e:i:b:B:s:S:k:Hh:x:u:c:L:a:t:vwW:");
+
+  if (opt_ip->itemdata.block)
+    {
+      if (opt_ip->itemdata.file)
+	{
+	  opt_ip->what = "file";
+	  opt_ip->form = "frag";
+	}
+      else
+	{
+	  opt_ip->what = "score";
+	  opt_ip->form = "block";
+	}
+    }
+
   opt_ip = NULL;
 
   if (ip->err)
@@ -107,8 +122,6 @@ opts(int opt, const char *arg)
       break;
     case 'B':
       opt_ip->itemdata.block = arg;
-      opt_ip->what = "score";
-      opt_ip->form = "block";
       break;
     case 'C':
       opt_ip->cache.sys = arg;
@@ -122,6 +135,9 @@ opts(int opt, const char *arg)
       break;
     case 'f':
       opt_ip->form = arg;
+      break;
+    case 'G':
+      opt_ip->itemdata.file = arg;
       break;
     case 'g':
       if (arg && strlen(arg))

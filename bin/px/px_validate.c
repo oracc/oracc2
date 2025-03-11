@@ -47,9 +47,12 @@ px_valid_project(Isp *ip)
   struct stat sb;
   if (stat(dir, &sb) != 0 || !S_ISDIR(sb.st_mode))
     {
-      ip->err = "unknown project";
-      ip->pxerr = PX_ER_BAD_PROJECT;
-      return 1;
+      if (!ip->itemdata.file)
+	{
+	  ip->err = "unknown project";
+	  ip->pxerr = PX_ER_BAD_PROJECT;
+	  return 1;
+	}
     }
   else
     {
@@ -57,9 +60,12 @@ px_valid_project(Isp *ip)
       struct xpd *xp = xpd_init(ip->project, ip->p);
       if (!xp || 0 == xp->opts->key_count)
 	{
-	  ip->err = "failed to load project config.xml";
-	  ip->pxerr = PX_ER_BAD_PROJECT;
-	  return 1;
+	  if (!ip->itemdata.file)
+	    {
+	      ip->err = "failed to load project config.xml";
+	      ip->pxerr = PX_ER_BAD_PROJECT;
+	      return 1;
+	    }
 	}
       else
 	ip->xpd = xp;
@@ -139,7 +145,7 @@ px_validate(Isp *ip)
       ip->err = "PROJECT not set, use -j PROJECT";      
       goto error;
     }
-  else if (px_valid_project(ip))
+  else if (px_valid_project(ip) && !ip->itemdata.file)
     goto error;
 
   if (ip->glosdata.ent && !ip->glos)
@@ -242,7 +248,7 @@ px_validate(Isp *ip)
       goto error;
     }
 
-  if (ip->itemdata.block)
+  if (ip->itemdata.block && !ip->itemdata.file)
     {
       int block_id_ok = 0;
       const unsigned char *q = (ucp)ip->itemdata.block;

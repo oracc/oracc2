@@ -106,7 +106,7 @@ h_pqx_cuneified_html(const char *project, struct component *components)
   qs = malloc(strlen(xproject) + strlen(pqx) + 16);
   sprintf(qs, "project=%s&text=%s", xproject, pqx);
   setenv("QUERY_STRING", qs, 1);
-  cuneify();
+  /*cuneify();*//*need to deprecate this properly with switch to 'cuneify' urlkey and P4*/
   do404();
 }
 

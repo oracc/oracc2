@@ -12,9 +12,11 @@ typedef struct p4url
   char *u;	/* copy of URL to chop up */
   char *q;	/* copy of QUERY_STRING to chop up */
   const char *project;
+  const char *file;
   const char *glossary;
   const char *oxid;
   const char *pxid;
+  const char *frag;
   P4arg *args;
   int nargs;
   const char *err;
@@ -43,5 +45,5 @@ extern void p4oid(P4url *p);
 extern char const**p4url_vec(P4url *p);
 extern struct urlkeytab *urlkeys (register const char *str, register size_t len);
 extern struct qsoptionstab *qsoption (register const char *str, register size_t len);
-
+extern int _is_ncname(const char *name);
 #endif/*P4URL_H_*/

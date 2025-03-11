@@ -98,6 +98,7 @@ struct isp_itemdata
   const char *item;
   const char *fullitem; /* the full item with translation info */
   const char *block;
+  const char *file; /* the file from which to obtain a frag */
   const char *proj; /* the item's project as opposed to the host project, possibly a proxy */
   const char *htmd; /* the path to and including /htm */
   const char *html;

@@ -3,7 +3,14 @@
 #include "p4url.h"
 #include "ccgi/ccgi.h"
 
-typedef struct p4bits { const char *project; const char *one; const char *two; const char *bad; } P4bits;
+typedef struct p4bits
+{
+  const char *project;
+  const char *file;
+  const char *one;
+  const char *two;
+  const char *bad;
+} P4bits;
 
 static int p4url_is_glossary(const char *l);
 static int p4url_is_glossaryid(const char *i);
@@ -13,6 +20,7 @@ static int p4url_q(P4url *p);
 static int p4url_u(P4url *p);
 static int p4url_move_to_qs(P4bits *bp, P4url *p);
 static int p4url_is_urlkey(const char *k);
+static int p4url_file(const char *f, P4bits *b);
 
 static int p4url_arg_equals = 0;
 
@@ -29,6 +37,7 @@ static int p4url_arg_equals = 0;
  *	  PROJECT
  * 	| PROJECT ('/' PQXID)?
  *	| PROJECT ('/' LANGUAGE)? ('/' OXID)?
+ *	| PROJECT '/' FILE
  *
  *
  * q is:
@@ -64,8 +73,13 @@ static int
 p4url_u(P4url *p)
 {
   P4bits bits = { NULL , NULL , NULL , NULL };
-  p4url_is_project(p->u, &bits);  
-  if (bits.project)
+  p4url_is_project(p->u, &bits);
+  if (bits.file)
+    {
+      p->project = bits.project;
+      p->file = bits.file;
+    }
+  else if (bits.project)
     {
       int ret = 0;
       p->project = bits.project;
@@ -258,6 +272,10 @@ p4url_q(P4url *p)
 		  p->args[i].value = tok;
 		  what_index = i;
 		}
+	      else if (p->file && _is_ncname(tok))
+		{
+		  p->frag = tok;
+		}
 	      else
 		{
 		  p->status = 1;
@@ -278,6 +296,24 @@ p4url_q(P4url *p)
 	      p->args[i].option = "what";
 	      p->args[i].value = "adhoc";
 	      ++i;
+	    }
+	}
+      else if (p->file)
+	{
+	  if (p->frag)
+	    {
+	      if (what_index == -1)
+		{
+		  ++i;
+		  p->args[i].option = "what";
+		  p->args[i].value = "file";
+		  what_index = i;
+		}
+	    }
+	  else
+	    {
+	      p->status = 1;
+	      p->err = "file requested but no legal frag ID found in QUERY_STRING";
 	    }
 	}
       p->nargs = i;
@@ -427,7 +463,21 @@ p4url_is_project(char *p, P4bits *b)
     }
 
   /* We recognize at most PROJECT + GLOSSARY + ID; the strchr in this
-     function must be on the arg p not on buf */
+   * function must be on the arg p not on buf
+   *
+   * 2025-03-11: add support to recognize .xml or .html file name
+   * after project; note that this is only exercised if there is a
+   * QUERY_STRING--otherwise the apache config is set up to return the
+   * file directly.
+   *
+   * In the current implementation files can have at most one
+   * directory beyond project, e.g.,
+   *
+   *   easl/sltab.html or easl/files/sltab.html
+   *
+   * only files ending with .html or .xml are allowed.
+   *
+   */
   char *slash1 = strrchr(p, '/');
 
   if (slash1)
@@ -438,6 +488,8 @@ p4url_is_project(char *p, P4bits *b)
 	{
 	  b->project = p;
 	  b->one = slash1+1;
+	  if (p4url_file(b->one, b))
+	    b->one = NULL;
 	  return 1;
 	}
       char *slash2 = strrchr(p, '/');
@@ -450,8 +502,30 @@ p4url_is_project(char *p, P4bits *b)
 	      b->project = p;
 	      b->one = slash2+1;
 	      b->two = slash1+1;
+	      *slash2 = '/';
+	      if (p4url_file(b->one, b))
+		b->one = b->two = NULL;
+	      else
+		*slash2 = '\0';
 	      return 1;
 	    }
+	}
+    }
+  return 0;
+}
+
+static int
+p4url_file(const char *f, P4bits *b)
+{
+  char fbuf[strlen("/home/oracc/www//0")+strlen(b->project)+strlen(f)];
+  sprintf(fbuf, "/home/oracc/www/%s/%s", b->project, f);
+  if (!access(fbuf, R_OK))
+    {
+      const char *dot = strrchr(fbuf,'.');
+      if (dot && (!strcmp(dot,".xml") || !strcmp(dot,".html") || !strcmp(dot,".xhtml")))
+	{
+	  b->file = strdup(fbuf);
+	  return 1;
 	}
     }
   return 0;

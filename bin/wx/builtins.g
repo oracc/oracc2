@@ -22,3 +22,4 @@ srv,	   B_SRV
 json,	   B_JSON
 xff,	   B_XFF
 oai,	   B_OAI
+file,      B_FILE
