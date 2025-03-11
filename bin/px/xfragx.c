@@ -168,6 +168,11 @@ gdf_sH(void *userData, const char *name, const char **atts)
   else if (xid && !strcmp(((struct frag*)userData)->xid, xid))
     {
       charData_discard();
+      if (((struct frag*)userData)->xp)
+	{
+	  xft_print(userData);
+	  xft_clear(((struct frag*)userData)->xp);
+	}
       printStart(userData, name, atts);
     }
   else if (((struct frag*)userData)->nesting)
@@ -184,6 +189,13 @@ gdf_sH(void *userData, const char *name, const char **atts)
 	    ((struct frag*)userData)->fp);
       printStart(userData, name, atts);
     }
+  else if (!strcmp(name, "table"))
+    ((struct frag *)userData)->xp = xft_table(atts);
+  else if (((struct frag *)userData)->xp && !strcmp(name, "thead"))
+    xft_thead(((struct frag*)userData)->xp, atts);
+  else if (((struct frag*)userData)->xp
+	   && (!name[2] && 't' == name[0] && ('h' == name[1] || 'd' == name[1])))
+    xft_thtd(((struct frag*)userData)->xp, name, atts);
   else
     charData_discard();
 }
@@ -193,6 +205,8 @@ gdf_eH(void *userData, const char *name)
 {
   if (((struct frag*)userData)->nesting)
     printEnd(userData, name);
+  else if (!strcmp(name, "table") && ((struct frag*)userData)->xp)
+    xft_clear(((struct frag*)userData)->xp);
   else
     charData_discard();
 }

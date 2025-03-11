@@ -18,8 +18,11 @@ struct frag
 {
   int nesting;
   const char *xid;
+  struct xft *xp;
   FILE *fp;
 };
+
+#include "xftable.h"
 
 #if 1
 #include "all.proto"

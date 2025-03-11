@@ -24,7 +24,7 @@ wsigx_SOURCES=wsigx.c
 wsigx_LDADD = $(xLDADD)
 wsigx_DEPENDENCIES = $(xLDADD)
 
-xfragx_SOURCES=xfragx.c
+xfragx_SOURCES=xfragx.c xftable.c
 xfragx_LDADD = $(xLDADD)
 xfragx_DEPENDENCIES = $(xLDADD)
 
