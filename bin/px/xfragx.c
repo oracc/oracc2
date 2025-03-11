@@ -140,7 +140,13 @@ printEnd(struct frag *frag, const char *name)
 void
 gdf_sH(void *userData, const char *name, const char **atts)
 {
+#if 1
+  const char *xid = findAttr(atts, "id");
+  if (!xid || !*xid)
+    xid = get_xml_id(atts);
+#else
   const char *xid = (htmlid ? findAttr(atts, "id") : get_xml_id(atts));
+#endif
 
   if (unwrap_html)
     {

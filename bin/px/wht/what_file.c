@@ -14,8 +14,7 @@ what_file(Isp *ip)
 	  xfragx, ip->project, GENERATOR, ip->itemdata.file, ip->itemdata.block);
   execl(xfragx, "xfragx", 
 	"-hs4",
-	"-p", ip->itemdata.proj,
-	"-i", ip->itemdata.item,
+	"-p", ip->project,
 	"-g", GENERATOR,
 	ip->itemdata.file, ip->itemdata.block, NULL);
   ip->err = "fatal: xfragx call failed";
