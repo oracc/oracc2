@@ -4,26 +4,27 @@
 #include <oraccsys.h>
 #include "px.h"
 
-Memo *m_xft = NULL;
+Memo *m_xft_tr = NULL;
+Memo *m_xft_thtd = NULL;
 Pool *p_xft = NULL;
 static const char **xft_atts(const char **atts);
 
 void
 xft_print(struct frag *frag)
 {
-  printStart(frag, frag->xp->name, frag->xp->atts);
+  printStart(frag, "table", frag->xp->atts);
 }
 
 xft*
 xft_table(const char **atts)
 {
-  if (!m_xft)
+  if (!m_xft_tr)
     {
-      m_xft = memo_init(sizeof(xft), 32);
+      m_xft_tr = memo_init(sizeof(struct xft_tr), 16);
+      m_xft_thtd = memo_init(sizeof(struct xft_thtd), 32);
       p_xft = pool_init();
     }
-  xft *xp = memo_new(m_xft);  
-  xp->name = "table";
+  xft *xp = calloc(1, sizeof(xft));
   xp->atts = xft_atts(atts);
   return xp;
 }
@@ -31,36 +32,50 @@ xft_table(const char **atts)
 static void
 xft_free_atts(void *vp)
 {
-  xft *xp = vp;
+  struct xft_thtd *xp = vp;
   free(xp->atts);
 }
 
 void
 xft_clear(xft *xp)
 {
-  memo_term(m_xft);
-  pool_term(p_xft);
-  list_free(xp->td, xft_free_atts);
+  struct xft_tr*trp;
+  for (trp = list_first(xp->tr); trp; trp = list_next(xp->tr))
+    {
+      list_free(trp->thtd, xft_free_atts);
+      free(trp->atts);
+    }
+  list_free(xp->tr, NULL);
   free(xp->atts);
-  free(xp->thead->atts);
+  free(xp->thead_atts);
+  memo_term(m_xft_tr);
+  memo_term(m_xft_thtd);
+  pool_term(p_xft);
 }
 
 void
 xft_thead(xft *xp, const char **atts)
 {
-  xp->thead = memo_new(m_xft);
-  xp->thead->name = "thead";
-  xp->thead->atts = xft_atts(atts);
-  xp->td = list_create(LIST_SINGLE);
+  xp->thead_atts = xft_atts(atts);
+  xp->tr = list_create(LIST_SINGLE);
+}
+
+void
+xft_tr(xft *xp, const char **atts)
+{
+  struct xft_tr *trp = memo_new(m_xft_tr);
+  trp->atts = xft_atts(atts);
+  trp->thtd = list_create(LIST_SINGLE);
+  list_add(xp->tr, trp);
 }
 
 void
 xft_thtd(xft *xp, const char *name, const char **atts)
 {
-  xft *thtd = memo_new(m_xft);
+  struct xft_thtd *thtd = memo_new(m_xft_thtd);
   thtd->name = name;
   thtd->atts = xft_atts(atts);
-  list_add(xp->td, thtd);
+  list_add(((struct xft_tr*)list_last(xp->tr))->thtd, thtd);
 }
 
 static const char **

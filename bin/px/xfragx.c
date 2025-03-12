@@ -191,6 +191,8 @@ gdf_sH(void *userData, const char *name, const char **atts)
     }
   else if (!strcmp(name, "table"))
     ((struct frag *)userData)->xp = xft_table(atts);
+  else if (((struct frag *)userData)->xp && !strcmp(name, "tr"))
+    xft_tr(((struct frag*)userData)->xp, atts);
   else if (((struct frag *)userData)->xp && !strcmp(name, "thead"))
     xft_thead(((struct frag*)userData)->xp, atts);
   else if (((struct frag*)userData)->xp
