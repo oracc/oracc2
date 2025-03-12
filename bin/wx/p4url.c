@@ -77,7 +77,12 @@ p4url_u(P4url *p)
   if (bits.file)
     {
       p->project = bits.project;
-      p->file = bits.file;
+      p->file = bits.file;      
+      if (bits.one && _is_ncname(bits.one))
+	{
+	  p->frag = bits.one;
+	  bits.one = NULL;
+	}
     }
   else if (bits.project)
     {
@@ -502,11 +507,18 @@ p4url_is_project(char *p, P4bits *b)
 	      b->project = p;
 	      b->one = slash2+1;
 	      b->two = slash1+1;
-	      *slash2 = '/';
 	      if (p4url_file(b->one, b))
-		b->one = b->two = NULL;
+		{
+		  b->one = b->two;
+		}
 	      else
-		*slash2 = '\0';
+		{
+		  *slash2 = '/';
+		  if (p4url_file(b->one, b))
+		    b->one = b->two = NULL;
+		  else
+		    *slash2 = '\0';
+		}
 	      return 1;
 	    }
 	}

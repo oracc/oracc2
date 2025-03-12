@@ -90,7 +90,7 @@ void
 xft_thtd(xft *xp, const char *name, const char **atts)
 {
   struct xft_thtd *thtd = memo_new(m_xft_thtd);
-  thtd->name = name;
+  thtd->name = ('h' == name[1] ? "th" : "td");
   thtd->atts = xft_atts(atts);
   list_add(((struct xft_tr*)list_last(xp->tr))->thtd, thtd);
 }
