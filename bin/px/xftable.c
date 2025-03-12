@@ -13,6 +13,23 @@ void
 xft_print(struct frag *frag)
 {
   printStart(frag, "table", frag->xp->atts);
+  printStart(frag, "thead", frag->xp->thead_atts);
+  struct xft_tr *trp;
+  for (trp = list_first(frag->xp->tr); trp; trp = list_next(frag->xp->tr))
+    {
+      printStart(frag, "tr", trp->atts);
+      struct xft_thtd *tp;
+      for (tp = list_first(trp->thtd); tp; tp = list_next(trp->thtd))
+	{
+	  printStart(frag, tp->name, tp->atts);
+	  printText(tp->text, frag->fp);
+	  printEnd(frag, tp->name);
+	}
+      printEnd(frag, "tr");
+    }
+  printEnd(frag, "thead");
+  
+  frag->nesting = 0;
 }
 
 xft*
@@ -76,6 +93,14 @@ xft_thtd(xft *xp, const char *name, const char **atts)
   thtd->name = name;
   thtd->atts = xft_atts(atts);
   list_add(((struct xft_tr*)list_last(xp->tr))->thtd, thtd);
+}
+
+void
+xft_thtd_text(xft *xp, const char *t)
+{
+  struct xft_tr *tr = list_last(xp->tr);
+  struct xft_thtd *thtd = list_last(tr->thtd);
+  thtd->text = (ccp)pool_copy((uccp)t, p_xft);
 }
 
 static const char **

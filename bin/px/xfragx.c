@@ -122,7 +122,14 @@ printEnd(struct frag *frag, const char *name)
 	    else
 	      fputs("<body>", frag->fp);
 	  else
-	    fputs("</body></html>", frag->fp);
+	    {
+	      if (frag->xp_on == -1)
+		{
+		  fputs("</table>", frag->fp);
+		  frag->xp_on = 0;
+		}
+	      fputs("</body></html>", frag->fp);
+	    }
 	}
       else
 	{
@@ -165,13 +172,14 @@ gdf_sH(void *userData, const char *name, const char **atts)
       else
 	charData_discard();
     }
-  else if (xid && !strcmp(((struct frag*)userData)->xid, xid))
+  else if (*xid && !strcmp(((struct frag*)userData)->xid, xid))
     {
       charData_discard();
       if (((struct frag*)userData)->xp)
 	{
 	  xft_print(userData);
 	  xft_clear(((struct frag*)userData)->xp);
+	  ((struct frag*)userData)->xp = NULL;
 	}
       printStart(userData, name, atts);
     }
@@ -190,14 +198,20 @@ gdf_sH(void *userData, const char *name, const char **atts)
       printStart(userData, name, atts);
     }
   else if (!strcmp(name, "table"))
-    ((struct frag *)userData)->xp = xft_table(atts);
-  else if (((struct frag *)userData)->xp && !strcmp(name, "tr"))
-    xft_tr(((struct frag*)userData)->xp, atts);
-  else if (((struct frag *)userData)->xp && !strcmp(name, "thead"))
-    xft_thead(((struct frag*)userData)->xp, atts);
-  else if (((struct frag*)userData)->xp
-	   && (!name[2] && 't' == name[0] && ('h' == name[1] || 'd' == name[1])))
-    xft_thtd(((struct frag*)userData)->xp, name, atts);
+    {
+      ((struct frag *)userData)->xp = xft_table(atts);
+      ((struct frag *)userData)->xp_on = 1;
+    }
+  else if (((struct frag *)userData)->xp_on > 0)
+    {
+      if (((struct frag *)userData)->xp && !strcmp(name, "tr"))
+	xft_tr(((struct frag*)userData)->xp, atts);
+      else if (((struct frag *)userData)->xp && !strcmp(name, "thead"))
+	xft_thead(((struct frag*)userData)->xp, atts);
+      else if (((struct frag*)userData)->xp
+	       && (!name[2] && 't' == name[0] && ('h' == name[1] || 'd' == name[1])))
+	xft_thtd(((struct frag*)userData)->xp, name, atts);
+    }
   else
     charData_discard();
 }
@@ -207,6 +221,15 @@ gdf_eH(void *userData, const char *name)
 {
   if (((struct frag*)userData)->nesting)
     printEnd(userData, name);
+  else if (((struct frag*)userData)->xp_on > 0)
+    {
+      if (!strcmp(name, "thead"))
+	((struct frag*)userData)->xp_on = -1;
+      else if (!strcmp(name, "th") || !strcmp(name, "td"))
+	xft_thtd_text(((struct frag*)userData)->xp, charData_retrieve());
+      else
+	charData_discard();
+    }
   else if (!strcmp(name, "table") && ((struct frag*)userData)->xp)
     xft_clear(((struct frag*)userData)->xp);
   else

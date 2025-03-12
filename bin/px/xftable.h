@@ -17,7 +17,8 @@ struct xft_tr
 struct xft_thtd
 {
   const char *name;
-  const char **atts;  
+  const char **atts;
+  const char *text;
 };
 
 extern xft*xft_table(const char **atts);

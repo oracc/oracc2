@@ -19,6 +19,7 @@ struct frag
   int nesting;
   const char *xid;
   struct xft *xp;
+  int xp_on;
   FILE *fp;
 };
 
