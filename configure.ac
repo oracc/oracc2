@@ -162,5 +162,6 @@ AC_CONFIG_FILES([Makefile
 		 msc/prj/osl/Makefile
 		 msc/prj/pcsl/Makefile
 		 msc/sys/Makefile
+		 msc/tex/Makefile
                  ])
 AC_OUTPUT

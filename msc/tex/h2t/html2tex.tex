@@ -1,0 +1,119 @@
+%%% Additions and Modifications to Oracc CDF TeX
+%%% env.tex
+\def\@unorderfmt{%
+  \global\advance\activecount1
+  \Sanserif\ifcase\@utlinelev
+  \or•%
+  \or◦%
+  \or▪%
+  \or▫%
+  \or•%
+  \or◦%
+  \or▪%
+  \fi}
+\def\unorder{%
+  \ifnum\@listnestlev=0 \@ndentlev=0\fi
+  \listbegin \advance\@utlinelev1
+  \edef\activecount{\csname @utline\romannumeral\@utlinelev\endcsname}%
+  \activecount=0 % initialize enum lev counter
+  \everypar={\hbox to\@ndentamt{\ignorespaces\@unorderfmt\hfil}%
+             \hangindent\@ndentamt}} % define the label
+\def\endunorder{\listend \advance\@ndentlev-1 }
+
+%%% describe in env.tex doesn't handle leftskip correctly
+\def\describeditemfont{\bf}
+\def\describeditempunct{:}
+\newbox\descbox \let\p@r\par \newif\ifdescriberunins
+\def\description{\parindent0pt \advance\parskip0pt plus.1pt
+  \advance\leftskip4\indention % \everypar{\hskip-4\indention}%
+  \def\describe{%
+    \setbox\descbox=\hbox\bgroup\describeditemfont
+             \aftergroup\finish@describe
+	     \def\par{\egroup}}}
+\def\finish@describe{\leavevmode\hskip-2\indention
+  \hboxtomin{4\indention}{\unhbox\descbox\unskip
+			  \describeditempunct}%
+%  \ifhboxtominwaslong\newline\fi
+  \newline
+  \let\par\p@r}
+\def\enddescription{\endgraf\noindent}
+
+%%% div.tex
+%%% \heading, \subheading, and \subsubheading all need to have a formatting hook
+
+\long\def\heading#1\par{%
+  \@hdshell{\aboveheadingskip}{\belowheadingskip}{\leftpar\headfmt#1\par}}
+\long\def\subheading#1\par{%
+  \@hdshell{\aboveheadingskip}{\belowheadingskip}{\leftpar\subheadfmt#1\par}}
+\long\def\subsubheading#1\par{%
+  \@hdshell{\aboveheadingskip}{\belowheadingskip}{\leftpar\subsubheadfmt#1\par}}
+
+\def\headfmt{\eleven\bf}
+\def\subheadfmt{\ten\it}
+\def\subsubheadfmt{\nine\bf}
+
+%%% html2tex support
+
+\global\tracingfonts0
+
+\ten\rm
+
+\indention2em
+\aboveheadingskip 1pc plus.5pc minus.5pc
+\belowheadingskip .5pc plus.25pc minus.25pc
+\parindent2em
+\parskip0pt plus1pt
+\tabskip0pt plus1fil
+
+\def\tablerule{\noalign{\hrule}}
+\def\theadrule{\noalign{\hrule height1pt}}
+\def\Hstrut{\vrule height12pt depth5pt width0pt}
+\def\thead{\bf}
+
+\def\Ha#1#2{#2}
+
+\def\Hul{\begin{unorder}}
+\def\Hol{\begin{enumerate}}
+\def\Hdl{\begin{description}}
+\def\Henddl{\end{description}}
+\def\Hendol{\end{enumerate}}
+\def\Hendul{\end{unorder}}
+
+\def\Hdt{\describe}
+
+\let\Hli\relax
+
+\def\code#1{{\Sanserif#1}}
+\let\em\it
+
+\def\Hsub#1{#1}
+
+\let\Hh\heading
+\let\Hhh\subheading
+\let\Hhhh\subsubheading
+
+%\def\Hhhhh#1{\bgroup\nine\it#1\egroup\endgraf} % let this warn
+
+\def\imageinline{}
+
+\def\atfon{%
+  \catcode`\&=12\relax\relax
+  \catcode`\%=12\relax\atftrue}
+\def\atfoff{\catcode`\%=14\relax\catcode`\&=4\relax
+  \let~\~\atffalse}
+\catcode`\|\active
+\newif\ifatf
+\def|{\ifatf\atfoff\else\atfon\fi}
+
+\catcode"FE60\active \let﹠\&
+\catcode"223C\active \def∼{\~{}}
+\catcode"2052\active \def⁒{\%{}}
+
+\font\pcall="PC-all" at 18pt
+\font\pcxxv="PC25" at 18pt
+
+\def\rold{\pcall }
+\def\rnew{\pcxxv }
+\def\rname{\eight\rm}
+
+\endinput

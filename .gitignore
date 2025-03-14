@@ -280,6 +280,9 @@ oraxx
 oracc.sed
 
 # temp, junk, and backup files
+msc/fonts/*.backup
+msc/fonts/*.backup/*
+msc/fonts/*.25*.ttf
 01tmp
 junk
 old
