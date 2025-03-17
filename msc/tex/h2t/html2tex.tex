@@ -38,6 +38,8 @@
   \let\par\p@r}
 \def\enddescription{\endgraf\noindent}
 
+\def\verbatimfont{\mono}
+
 %%% div.tex
 %%% \heading, \subheading, and \subsubheading all need to have a formatting hook
 
@@ -70,7 +72,7 @@
 \def\Hstrut{\vrule height12pt depth5pt width0pt}
 \def\thead{\bf}
 
-\def\Ha#1#2{#2}
+\long\def\Ha#1#2{#2}
 
 \def\Hul{\begin{unorder}}
 \def\Hol{\begin{enumerate}}
@@ -105,13 +107,14 @@
 \newif\ifatf
 \def|{\ifatf\atfoff\else\atfon\fi}
 
+\catcode"FE5F\active \let﹟\#
 \catcode"FE60\active \let﹠\&
 \catcode"223C\active \def∼{\~{}}
 \catcode"2052\active \def⁒{\%{}}
 
 \font\pcall="PC-all" at 18pt
 \font\pcxxv="PC25" at 18pt
-
+\font\mono="[/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf]" at 9pt
 \def\rold{\pcall }
 \def\rnew{\pcxxv }
 \def\rname{\eight\rm}

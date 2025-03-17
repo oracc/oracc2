@@ -130,9 +130,14 @@
   </xsl:template>
 
   <xsl:template match="h:p">
-    <xsl:text>&#xa;\par </xsl:text>
-    <xsl:apply-templates/>
-    <xsl:text>&#xa;&#xa;</xsl:text>
+    <xsl:choose>
+      <xsl:when test="ancestor::h:table"/>
+      <xsl:otherwise>
+	<xsl:text>&#xa;\par </xsl:text>
+	<xsl:apply-templates/>
+	<xsl:text>&#xa;&#xa;</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="h:pre">
@@ -196,6 +201,7 @@
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:message>tex:preamble-row $p-row=<xsl:value-of select="$p-row"/></xsl:message>
     <xsl:text>\halign{</xsl:text>
     <xsl:choose>
       <xsl:when test="$ruled='yes'">
@@ -234,7 +240,10 @@
       <xsl:apply-templates mode="halign" select="."/>
       <xsl:choose>
 	<xsl:when test="position()=last()">
-	  <xsl:text>&amp;\cr</xsl:text>
+	  <xsl:if test="$ruled='yes'">
+	    <xsl:text>&amp;</xsl:text>
+	  </xsl:if>
+	  <xsl:text>\cr</xsl:text>
 	  <xsl:if test="$ruled='yes'">
 	    <xsl:choose>
 	      <xsl:when test="ancestor::h:thead">
@@ -298,7 +307,7 @@
   </xsl:template>
 
   <xsl:template match="text()">
-    <xsl:value-of select="translate(.,'&amp;~%', '&#xfe60;&#x223c;&#x2052;')"/>
+    <xsl:value-of select="translate(.,'&amp;~%#', '&#xfe60;&#x223c;&#x2052;&#xfe5f;')"/>
   </xsl:template>
   
   <!-- Ignored HTML tags -->
@@ -323,7 +332,7 @@
 
   <xsl:template name="class">
     <xsl:if test="string-length(@class)>0">
-      <xsl:value-of select="concat('\', @class)"/>
+      <xsl:value-of select="concat('\', translate(@class,' -', '\'))"/>
     </xsl:if>
     <xsl:text>{}</xsl:text>
   </xsl:template>
