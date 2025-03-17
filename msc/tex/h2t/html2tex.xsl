@@ -69,10 +69,12 @@
   </xsl:template>
 
   <xsl:template match="h:div" mode="hbox">
-    <xsl:text>\hbox{</xsl:text>
-    <xsl:call-template name="class"/>
-    <xsl:apply-templates/>
-    <xsl:text>}%&#xa;</xsl:text>
+    <xsl:if test="string-length(.)>0">
+      <xsl:text>\hbox{</xsl:text>
+      <xsl:call-template name="class"/>
+      <xsl:apply-templates/>
+      <xsl:text>}%&#xa;</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="h:dl">
