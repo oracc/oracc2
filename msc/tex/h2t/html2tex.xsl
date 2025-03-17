@@ -5,6 +5,8 @@
 	       xmlns:tex="http://oracc.org/ns/tex/1.0"
 	       >
 
+  <xsl:param name="class-arg" select="',sqopq,sqseq,sqinv,sqchr,not,'"/>
+  
   <xsl:output method="text" encoding="UTF-8"/>
 
   <xsl:strip-space elements="*"/>
@@ -183,9 +185,9 @@
   <xsl:template match="h:span">
     <xsl:text>\bgroup</xsl:text>
     <xsl:call-template name="class"/>
-    <xsl:text> </xsl:text>
     <xsl:apply-templates/>
-    <xsl:text>\egroup </xsl:text>
+    <xsl:call-template name="class-close"/>
+    <xsl:text>\egroup{}</xsl:text>
   </xsl:template>
 
   <xsl:template match="h:sub">
@@ -301,16 +303,36 @@
   </xsl:template>  
   
   <xsl:template mode="halign" match="h:th">
-    <xsl:call-template name="class"/>
+    <xsl:choose>
+      <xsl:when test="ancestor::h:tbody">
+	<xsl:call-template name="class">
+	  <xsl:with-param name="class" select="concat(../@class,' ',@class)"/>
+	</xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="class"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:text>\thead{}</xsl:text>
     <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="ancestor::h:tbody">
+	<xsl:call-template name="class-close">
+	  <xsl:with-param name="class" select="concat(../@class,' ',@class)"/>
+	</xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="class-close"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template mode="halign" match="h:td">
     <xsl:call-template name="class"/>
     <xsl:apply-templates/>
+    <xsl:call-template name="class-close"/>
   </xsl:template>
-  
+    
   <xsl:template name="halign-preamble">
     <xsl:param name="preamble-row" select="1"/>
     <xsl:param name="ruled"/>
@@ -372,12 +394,26 @@
     <xsl:param name="nono" select="''"/>
     <xsl:choose>
       <xsl:when test="not(contains($class, ' '))">
-	<xsl:if test="string-length($class)>0">
-	  <xsl:if test="not(contains($nono,$class))">
-	    <xsl:value-of select="concat('\', translate($class,' -', '\'))"/>
-	  </xsl:if>
-	</xsl:if>
-	<xsl:text>{}</xsl:text>
+	<xsl:choose>
+	  <xsl:when test="string-length($class)>0">
+	    <xsl:variable name="nhclass" select="translate($class,'-', '')"/>
+	    <xsl:choose>
+	      <xsl:when test="contains($class-arg, concat(',',$nhclass,','))">
+		<xsl:value-of select="concat('\', $nhclass,'{')"/>
+	      </xsl:when>
+	      <xsl:when test="not(contains($nono,$class))">
+		<xsl:value-of select="concat('\', $nhclass)"/>
+		<xsl:text>{}</xsl:text>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:text>{}</xsl:text>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:text>{}</xsl:text>
+	  </xsl:otherwise>
+	</xsl:choose>
       </xsl:when>
       <xsl:otherwise>
 	<xsl:call-template name="class">
@@ -392,9 +428,28 @@
     </xsl:choose>
   </xsl:template>
   
-  <xsl:template name="class-one">
+  <xsl:template name="class-close">
+    <xsl:param name="class" select="@class"/>
+    <xsl:choose>
+      <xsl:when test="not(contains($class, ' '))">
+	<xsl:if test="string-length($class)>0">
+	  <xsl:variable name="nhclass" select="translate($class,'-', '')"/>
+	  <xsl:if test="contains($class-arg, concat(',',$nhclass,','))">
+	    <xsl:text>}</xsl:text>
+	  </xsl:if>
+	</xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="class-close">
+	  <xsl:with-param name="class" select="substring-before($class,' ')"/>
+	</xsl:call-template>
+	<xsl:call-template name="class-close">
+	  <xsl:with-param name="class" select="substring-after($class,' ')"/>
+	</xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
-
+  
   <xsl:template name="ells">
     <xsl:param name="nells"/>
     <xsl:choose>
