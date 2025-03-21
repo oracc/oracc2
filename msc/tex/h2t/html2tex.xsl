@@ -5,6 +5,8 @@
 	       xmlns:tex="http://oracc.org/ns/tex/1.0"
 	       >
 
+  <xsl:param name="class-arg" select="',sqopq,sqseq,sqinv,sqchr,not,'"/>
+  
   <xsl:output method="text" encoding="UTF-8"/>
 
   <xsl:strip-space elements="*"/>
@@ -19,7 +21,7 @@
     <xsl:text>}</xsl:text>
   </xsl:template>
   
-  <xsl:template match="h:body|h:div">
+  <xsl:template match="h:body">
     <xsl:choose>
       <xsl:when test="@class">
 	<xsl:text>\bgroup</xsl:text>
@@ -44,6 +46,37 @@
     <xsl:call-template name="class"/>
     <xsl:apply-templates/>
     <xsl:text>}</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="h:div">
+    <xsl:choose>
+      <xsl:when test="contains(@class,'vbox')">
+	<xsl:text>\vbox{</xsl:text>
+	<xsl:call-template name="class">
+	  <xsl:with-param name="nono" select="'vbox'"/>
+	</xsl:call-template>
+	<xsl:apply-templates mode="hbox"/>
+	<xsl:text>}%&#xa;</xsl:text>
+      </xsl:when>
+      <xsl:when test="@class">
+	<xsl:text>\bgroup</xsl:text>
+	<xsl:call-template name="class"/>
+	<xsl:apply-templates/>
+	<xsl:text>\egroup&#xa;</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="h:div" mode="hbox">
+    <xsl:if test="string-length(.)>0">
+      <xsl:text>\hbox{</xsl:text>
+      <xsl:call-template name="class"/>
+      <xsl:apply-templates/>
+      <xsl:text>}%&#xa;</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="h:dl">
@@ -72,7 +105,8 @@
   </xsl:template>
 
   <xsl:template match="h:img">
-    <xsl:value-of select="concat('[[img:src=',@src,']]')"/>
+    <!--<xsl:value-of select="concat('[[img:src=',@src,']]')"/>-->
+    <xsl:value-of select="concat('\includegraphics{/home/stinney/orc/easl',@src,'}')"/>
   </xsl:template>
 
   <xsl:template match="h:li">
@@ -130,9 +164,16 @@
   </xsl:template>
 
   <xsl:template match="h:p">
-    <xsl:text>&#xa;\par </xsl:text>
-    <xsl:apply-templates/>
-    <xsl:text>&#xa;&#xa;</xsl:text>
+    <xsl:choose>
+      <xsl:when test="ancestor::h:table">
+	<xsl:apply-templates/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>&#xa;\par </xsl:text>
+	<xsl:apply-templates/>
+	<xsl:text>&#xa;&#xa;</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="h:pre">
@@ -144,9 +185,9 @@
   <xsl:template match="h:span">
     <xsl:text>\bgroup</xsl:text>
     <xsl:call-template name="class"/>
-    <xsl:text> </xsl:text>
     <xsl:apply-templates/>
-    <xsl:text>\egroup </xsl:text>
+    <xsl:call-template name="class-close"/>
+    <xsl:text>\egroup{}</xsl:text>
   </xsl:template>
 
   <xsl:template match="h:sub">
@@ -196,6 +237,7 @@
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <!--<xsl:message>tex:preamble-row $p-row=<xsl:value-of select="$p-row"/></xsl:message>-->
     <xsl:text>\halign{</xsl:text>
     <xsl:choose>
       <xsl:when test="$ruled='yes'">
@@ -226,6 +268,9 @@
     <xsl:apply-templates mode="halign">
       <xsl:with-param name="ruled" select="$ruled"/>
     </xsl:apply-templates>
+    <xsl:if test="contains(ancestor::h:table/@class,'tbodyrules')">
+      <xsl:text>\tbodyrule</xsl:text>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template mode="halign" match="h:tr">
@@ -234,7 +279,10 @@
       <xsl:apply-templates mode="halign" select="."/>
       <xsl:choose>
 	<xsl:when test="position()=last()">
-	  <xsl:text>&amp;\cr</xsl:text>
+	  <xsl:if test="$ruled='yes'">
+	    <xsl:text>&amp;</xsl:text>
+	  </xsl:if>
+	  <xsl:text>\cr</xsl:text>
 	  <xsl:if test="$ruled='yes'">
 	    <xsl:choose>
 	      <xsl:when test="ancestor::h:thead">
@@ -255,16 +303,36 @@
   </xsl:template>  
   
   <xsl:template mode="halign" match="h:th">
-    <xsl:call-template name="class"/>
+    <xsl:choose>
+      <xsl:when test="ancestor::h:tbody">
+	<xsl:call-template name="class">
+	  <xsl:with-param name="class" select="concat(../@class,' ',@class)"/>
+	</xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="class"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:text>\thead{}</xsl:text>
     <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="ancestor::h:tbody">
+	<xsl:call-template name="class-close">
+	  <xsl:with-param name="class" select="concat(../@class,' ',@class)"/>
+	</xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="class-close"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <xsl:template mode="halign" match="h:td">
     <xsl:call-template name="class"/>
     <xsl:apply-templates/>
+    <xsl:call-template name="class-close"/>
   </xsl:template>
-  
+    
   <xsl:template name="halign-preamble">
     <xsl:param name="preamble-row" select="1"/>
     <xsl:param name="ruled"/>
@@ -275,7 +343,7 @@
 	  <xsl:if test="$ruled='yes'">
 	    <xsl:text>\vrule\hskip2pt</xsl:text>
 	  </xsl:if>
-	  <xsl:text>#</xsl:text>
+	  <xsl:text>$\vcenter{\hbox{#}}$</xsl:text>
 	  <xsl:choose>
 	    <xsl:when test="position()=last()">
 	      <xsl:text>&amp;</xsl:text>
@@ -298,7 +366,7 @@
   </xsl:template>
 
   <xsl:template match="text()">
-    <xsl:value-of select="translate(.,'&amp;~%', '&#xfe60;&#x223c;&#x2052;')"/>
+    <xsl:value-of select="translate(.,'&amp;~%#', '&#xfe60;&#x223c;&#x2052;&#xfe5f;')"/>
   </xsl:template>
   
   <!-- Ignored HTML tags -->
@@ -322,12 +390,66 @@
   <!-- HTML FUNCTIONS -->
 
   <xsl:template name="class">
-    <xsl:if test="string-length(@class)>0">
-      <xsl:value-of select="concat('\', @class)"/>
-    </xsl:if>
-    <xsl:text>{}</xsl:text>
+    <xsl:param name="class" select="@class"/>
+    <xsl:param name="nono" select="''"/>
+    <xsl:choose>
+      <xsl:when test="not(contains($class, ' '))">
+	<xsl:choose>
+	  <xsl:when test="string-length($class)>0">
+	    <xsl:variable name="nhclass" select="translate($class,'-', '')"/>
+	    <xsl:choose>
+	      <xsl:when test="contains($class-arg, concat(',',$nhclass,','))">
+		<xsl:value-of select="concat('\', $nhclass,'{')"/>
+	      </xsl:when>
+	      <xsl:when test="not(contains($nono,$class))">
+		<xsl:value-of select="concat('\', $nhclass)"/>
+		<xsl:text>{}</xsl:text>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:text>{}</xsl:text>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:text>{}</xsl:text>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="class">
+	  <xsl:with-param name="class" select="substring-before($class,' ')"/>
+	  <xsl:with-param name="nono" select="$nono"/>
+	</xsl:call-template>
+	<xsl:call-template name="class">
+	  <xsl:with-param name="class" select="substring-after($class,' ')"/>
+	  <xsl:with-param name="nono" select="$nono"/>
+	</xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
-
+  
+  <xsl:template name="class-close">
+    <xsl:param name="class" select="@class"/>
+    <xsl:choose>
+      <xsl:when test="not(contains($class, ' '))">
+	<xsl:if test="string-length($class)>0">
+	  <xsl:variable name="nhclass" select="translate($class,'-', '')"/>
+	  <xsl:if test="contains($class-arg, concat(',',$nhclass,','))">
+	    <xsl:text>}</xsl:text>
+	  </xsl:if>
+	</xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="class-close">
+	  <xsl:with-param name="class" select="substring-before($class,' ')"/>
+	</xsl:call-template>
+	<xsl:call-template name="class-close">
+	  <xsl:with-param name="class" select="substring-after($class,' ')"/>
+	</xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  
   <xsl:template name="ells">
     <xsl:param name="nells"/>
     <xsl:choose>
