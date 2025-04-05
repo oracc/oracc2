@@ -98,8 +98,12 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 
   if (!gvl_looks_like_sname(np->set))
     np->set = pool_copy(g_uc((uchar*)np->set), sl->p);
+
+  const char *stok = np->set;
+  if (!strcmp(stok, "LAGAB"))
+    stok = "LAGAB~a";
   
-  struct sl_token *set_tok = hash_find(sl->htoken, np->set);
+  struct sl_token *set_tok = hash_find(sl->htoken, stok);
   if (set_tok)
     np->setsort = set_tok->s;
   else
