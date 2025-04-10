@@ -22,6 +22,9 @@ m_string(const char at)
     case 'g':
       m = "GUNU";
       break;
+    case 'h':
+      m = "HFLIP";
+      break;
     case 'n':
       m = "NUTILLU";
       break;
