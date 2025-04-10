@@ -37,7 +37,7 @@ GDLLTYPE gdllloc;
 %token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS NOTEMARK CELLSPAN
 		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD INDENT NEWLINE
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
-		C_TIMES C_4TIMES C_3TIMES CMOD
+		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
 		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
 		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
 
@@ -263,6 +263,7 @@ cdelim:
 	| C_TIMES					{ ynp = gdl_delim(ytp, "×"); }
 	| C_3TIMES					{ ynp = gdl_delim(ytp, "3×"); }
 	| C_4TIMES					{ ynp = gdl_delim(ytp, "4×"); }
+	| C_CIRCLE					{ ynp = gdl_delim(ytp, "∘"); }
 	;
 
 cmaybemodflags:

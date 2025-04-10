@@ -51,7 +51,7 @@ static char *skip_initial_ws(char *t);
 
 S		\xe2\xb8[^\xa2-\xa5]
 G		([a-zA-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|{S}|\xc3[^\x97]|\xe2[^\xb8])+
-M		([@~]([a-z]+[0-9]*|90|180|270))*
+M		([@~]([a-z0-9]*|90|180|270))*
 N		(N[0-9]+[ABCDE]*)
 Q		\??
 L		=?
@@ -98,9 +98,11 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
 
-<F>"*"?[0-9]+			{ aslsave; return GLYF_TAG; }
-<F>{UCUNSEQ}			{ aslsave; return GLYF_UNI; }
-<F>FA[0-9A-F]{3}		{ aslsave; return GLYF_HEX; }
+<F>{GRAPHEME}     		{ aslsave; return GLYF_NAM; }
+<F>{UCUNSEQ}(={UCUNSEQ})?	{ aslsave; return GLYF_UNI; }
+<F>[.x0-9A-F]+(=[.x0-9A-F]+)?  	{ aslsave; return GLYF_HEX; }
+<F>o[0-9]{7}			{ aslsave; return GLYF_OID; }
+<F>~[0-9A-F][0-9A-F]/[ \t]      { aslsave; return GLYF_VAR; }
 <F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
 <F>[ \t]			{ }
 <F>\n		       		{ BEGIN(0); return EOL; }

@@ -258,12 +258,14 @@ struct sl_lv_data
 
 struct sl_glyf
 {
-  const char *atf; /* concatenation of parent name and tag */
-  const char *tag;
+  const char *nam;
   const unsigned char *uni;
+  const unsigned char *usq; /* sequence expressed as ucun */
   const char *hex;
+  const char *uhx;	/* sequence expressed as @useq dotted x-notation */
+  const char *oid;
   const char *otf;
-  int ref; /* 1 = this is Unicode reference glyph */
+  const char *var;
   struct sl_token *t;
   List *aka;
 };
@@ -653,8 +655,7 @@ extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval
 
 extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
-
-extern void asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned char *uni, const char *hex, const char *otf);
+extern void asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned char *uni, const char *hex, const char *oid, const char *var, const char *otf);
 extern void asl_bld_liga(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *fseq, const unsigned char *u);
 
 extern struct sl_config *asl_get_config(void);

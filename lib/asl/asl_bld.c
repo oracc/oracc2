@@ -823,27 +823,42 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
 }
 
 void
-asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned char *uni,
-	     const char *hex, const char *otf)
+asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned char *uni,
+	     const char *hex, const char *oid, const char *var, const char *otf)
 {
     if (asl_sign_guard(locp, sl, "glyf"))
       {
 	struct sl_glyf *gp = memo_new(sl->m_glyfs);
-	if ('*' == *tag)
-	  {
-	    gp->ref = 1;
-	    ++tag;
-	  }
-	gp->tag = tag;
+	char *equals;
+	gp->nam = nam;
 	gp->uni = uni;
-	gp->hex = hex;
-	const unsigned char *p = (sl->curr_form ? sl->curr_form->u.f->name : sl->curr_sign->name);
-	char atf[strlen((ccp)p)+strlen(tag)+2];
-	sprintf(atf,"%s\\%s", p, tag);
-	if (!hash_find(sl->htoken, (uccp)atf))
+	if ((equals = strchr((char*)gp->uni,'=')))
 	  {
-	    gp->atf = (ccp)pool_copy((uccp)atf, sl->p);
-	    gp->t = asl_bld_token(locp, sl, (ucp)gp->atf, 0);
+	    *(char*)equals++ = '\0'; /* safe because uni is a pool_copy */
+	    gp->usq = (uccp)equals;
+	  }
+	else if ('x' == *gp->uni)
+	  {
+	    gp->usq = gp->uni;
+	    gp->uni = NULL;
+	  }
+	gp->hex = hex;
+	if ((equals = strchr((char *)gp->hex,'=')))
+	  {
+	    *(char*)equals++ = '\0'; /* safe because uni is a pool_copy */
+	    gp->uhx = (ccp)equals;
+	  }
+	else if ('x' == *gp->hex)
+	  {
+	    /* syntax is F3033=x12345.x12346 */
+	    gp->uhx = gp->hex;
+	    gp->hex = NULL;
+	  }
+	gp->oid = oid;
+	gp->var = var;
+	if (!hash_find(sl->htoken, (uccp)nam))
+	  {
+	    gp->t = asl_bld_token(locp, sl, (ucp)gp->nam, 0);
 	    struct sl_inst *i = new_inst(sl);
 	    i->type = 'g';
 	    i->u.g = gp;
@@ -863,7 +878,7 @@ asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *tag, const unsigned
 	  }
 	else
 	  {
-	    mesg_verr(locp, "@glyf creates duplicate sign+tag %s; ignored\n", atf);
+	    mesg_verr(locp, "@glyf creates duplicate sign+tag %s; ignored\n", nam);
 	  }
       }
 }
