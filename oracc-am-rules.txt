@@ -3,6 +3,8 @@ override CFLAGS=
 AM_CFLAGS=-pedantic -Wall -g -O0
 ACLOCAL_AMFLAGS=-I m4 -Wno-portability
 
+LD_GDBM=${ORACC_HOMEBREW}
+
 ORACCIFY = $(abs_top_builddir)/oracc-subst.sh $(top_srcdir)/oracc.sed
 
 cgibindir     = $(prefix)/www/cgi-bin
@@ -22,7 +24,7 @@ jsdir         = $(prefix)/www/js
 scriptdatadir = $(prefix)/lib/scripts
 skeldatadir    = $(prefix)/lib/skel
 texdatadir    = $(prefix)/lib/tex
-schemadir     = $(prefix)/www/lib/schemas
+schemadir     = $(prefix)/lib/schemas
 webscriptdatadir = $(prefix)/www/lib/scripts
 webdatadir   = $(prefix)/www/lib/data
 downloadsdir   = $(prefix)/www/downloads
@@ -49,7 +51,7 @@ install-exec-local:
 	bison -vdt $<
 
 %.rng: %.rnc
-	java -jar ${javadir}/trang.jar $< $@
+	java -jar ../../utl/trang.jar $< $@
 
 %.sh: %.sh.in
 	$(ORACCIFY) $<
@@ -77,10 +79,11 @@ all.proto: *.c
 	cproto -e $(AM_CPPFLAGS) *.c >x.proto
 	mv x.proto all.proto
 
-xLDADD=$(top_srcdir)/lib/liboracc2.la
+xLDADD=$(top_srcdir)/lib/liboracc2.la 
 
 AM_CPPFLAGS=\
 	-I/usr/local/include \
+	-I/opt/homebrew/include \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/lib/asl \
 	-I$(top_srcdir)/lib/atf \

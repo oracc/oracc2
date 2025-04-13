@@ -1,1 +1,1 @@
-SUBDIRS=h2t
+SUBDIRS=h2t o25

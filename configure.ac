@@ -16,7 +16,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 AC_PROG_CXX
 AC_PROG_YACC
 AC_PROG_CC
-AC_PROG_LEX
+AC_PROG_LEX(yywrap)
 AC_PROG_INSTALL
 AC_PROG_AWK
 AC_PROG_MKDIR_P
@@ -54,6 +54,7 @@ AC_FUNC_STRTOD
 AC_CHECK_FUNCS([gettimeofday memmove memset mkdir setlocale strchr strcspn strdup strerror strpbrk strrchr strstr strtol strtoul])
 
 AC_CONFIG_FILES([Makefile
+		 utl/Makefile
                  lib/Makefile
                  lib/asl/Makefile
                  lib/atf/Makefile
@@ -161,8 +162,11 @@ AC_CONFIG_FILES([Makefile
 		 msc/prj/neo/Makefile
 		 msc/prj/osl/Makefile
 		 msc/prj/pcsl/Makefile
+		 msc/saxon/Makefile
+		 msc/schemas/Makefile
 		 msc/sys/Makefile
 		 msc/tex/Makefile
 		 msc/tex/h2t/Makefile
+		 msc/tex/o25/Makefile
                  ])
 AC_OUTPUT
