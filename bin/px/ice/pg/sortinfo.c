@@ -277,7 +277,7 @@ si_dump_csi(unsigned char *csiname, struct sortinfo *sip)
 }
 
 struct sortinfo *
-si_load_csi()
+si_load_csi(const char *project)
 {
   struct stat csistat;
   int csifd;

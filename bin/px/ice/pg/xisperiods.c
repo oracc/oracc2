@@ -392,7 +392,7 @@ main(int argc, char **argv)
   if (!fpag)
     fpag = stdout;
 
-  if (NULL == (sip = si_load_csi()))
+  if (NULL == (sip = si_load_csi(project)))
     exit(1);
   
   if (heading_keys)
@@ -445,7 +445,7 @@ const char *prog = "xisperiods";
 int major_version = 1, minor_version = 1, verbose = 0;
 const char *usage_string = "[file]";
 void
-help ()
+help (void)
 {
 
 }

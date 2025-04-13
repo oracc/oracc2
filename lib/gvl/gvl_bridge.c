@@ -24,7 +24,7 @@ gvl_bridge_cuneify(void)
 }
 
 unsigned const char *
-gvl_bridge_key()
+gvl_bridge_key(void)
 {
   if (gbgp && gbgp->oid)
     {

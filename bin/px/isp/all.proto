@@ -59,13 +59,13 @@ extern void isp_show(FILE *fp, Isp *ip);
 /* isp_sort.c */
 extern const char *isp_set_perm(const char *str);
 extern int isp_cache_sort(Isp *ip);
+/* isp_srch_tmp.c */
+extern int isp_srch_tmp(Isp *ip);
 /* isp_srch.c */
 extern int isp_srch_fixup(Isp *ip);
 extern int isp_srch_bar(Isp *ip);
 extern int isp_srch_count(Isp *ip);
 extern int isp_srchdata(Isp *ip);
-/* isp_srch_tmp.c */
-extern int isp_srch_tmp(Isp *ip);
 /* isp_tis.c */
 extern int isp_tis_list(Isp *ip);
 /* isp_tmp.c */

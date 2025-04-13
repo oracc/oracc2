@@ -66,7 +66,7 @@ const char *prog = "pgcsi";
 int major_version = 1, minor_version = 0;
 const char *usage_string = "[file]";
 void
-help ()
+help (void)
 {
 
 }

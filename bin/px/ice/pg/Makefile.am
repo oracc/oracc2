@@ -1,5 +1,7 @@
 include ../../../../oracc-am-rules.txt
 
+AM_LDFLAGS=-L${LD_GDBM}
+
 bin_PROGRAMS=pgcsix pgux showcsix ptoqtestx pdx pgx xisperiodsx
 
 pgcsix_SOURCES=pgcsi.c sortinfo.c

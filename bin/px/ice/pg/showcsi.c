@@ -10,7 +10,7 @@ int
 main(int argc, char **argv)
 {
   project = argv[1];
-  sip = si_load_csi();
+  sip = si_load_csi(project);
   if (sip)
     si_debug_dump_csi(sip);
   else

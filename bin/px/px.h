@@ -29,6 +29,7 @@ struct frag
 #include "all.proto"
 extern int px_return(Isp *ip);
 extern struct cgioptstab *cgiopts(register const char *str, register size_t len);
+extern struct ispargstab *pxargs (register const char *str, size_t len);
 #else
 extern struct cgioptstab *cgiopts(register const char *str, register size_t len);
 extern struct ispargstab *pxargs (register const char *str, register size_t len);

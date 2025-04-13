@@ -27,18 +27,16 @@ extern struct Datum evaluate(struct token *toks, int fcode, int lmask, struct to
 extern struct Datum *merge_data_pair(struct Datum *d1, struct Datum *d2);
 /* px.c */
 extern int px_exec(struct qxdata *qp, struct sdata *sdp);
-/* qx.c */
-extern int qx_tmpdir(struct qxdata *qp);
-extern int qx(struct qxdata *qp);
-extern int qx_count_file(struct sdata *sdp);
 /* qx_error.c */
 extern int qx_error(struct qxdata *qp, struct sdata *sdp);
 /* qx_options.c */
 extern int qx_options(int argc, char **argv, struct qxdata *qp);
 extern int opts(int argc, const char *arg);
 extern void help(void);
-/* se.c */
-extern int main(int argc, char **argv);
+/* qx.c */
+extern int qx_tmpdir(struct qxdata *qp);
+extern int qx(struct qxdata *qp);
+extern int qx_count_file(struct sdata *sdp);
 /* se_any.c */
 extern int se_any(struct qxdata *qp, struct sdata *sdp);
 extern const char **anytoks(const char *project, const char *index, const char **toks);
@@ -63,6 +61,8 @@ extern long result_count(void);
 extern int se_run_qx(struct qxdata *qp, struct sdata *sdp);
 extern int se_run(struct qxdata *qp, struct sdata *sdp);
 extern void run_search(struct token *toks);
+/* se.c */
+extern int main(int argc, char **argv);
 /* setoks.c */
 extern struct se_tok_tab *setoks(register const char *str, size_t len);
 /* tokenize.c */

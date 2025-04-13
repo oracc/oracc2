@@ -73,6 +73,6 @@ const char *prog = "wmdebug";
 int major_version = 1, minor_version = 0;
 const char *usage_string = "";
 void
-help ()
+help (void)
 {
 }
