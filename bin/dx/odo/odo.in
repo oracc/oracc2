@@ -28,6 +28,7 @@ fail ()
 {
     echo "$0: $1. Stop."
     set_status error
+    rm -fr $tmpdir
     exit 1;
 }
 
@@ -43,19 +44,50 @@ set_status ()
     fi
 }
 
+set_tmpdir ()
+{
+    if [ -d /tmp ]; then
+	xtmp="/tmp/$$.odo"
+	mkdir -p $xtmp || fail "set_tmpdir: can't create tmp dir $xtmp"
+    else
+	fail "set_tmpdir: can't autocreate tmpdir if /tmp does not exist"
+    fi
+}
+
 exec 1>&2
 bin=@@ORACC_BUILDS@@/bin
-
-echo $0 called with arguments $*
 
 if [ "$1" = "-v" ]; then
     shift
     V="-v"
 fi
 
+# set defaults if fewer than three arguments
+# tmp => /tmp/$$
+# user => .
 if [ $# -lt 3 ]; then
-    fail "not enough arguments--need at least TMPDIR PROJECT COMMAND"
+    if [ $# -lt 2 ]; then
+	if [ $# -eq 0 ]; then
+	    # zero-argument form, print help and exit
+	    fail "not enough arguments--need at least TMPDIR PROJECT COMMAND"
+	    echo "$0: help. Stop."
+	    exit 1
+	else
+	    # one-argument form, assume command
+	    echo "$0: one-argument call detected."
+	    set_tmpdir
+	    set $xtmp "." $1
+	fi
+    else
+	# two-argument form: assume project and command;
+	# will fail later if assumption is wrong
+	echo "$0: two-argument call detected."
+	set_tmpdir
+	set $xtmp $1 $2
+    fi
 fi
+
+echo $0 called with arguments $*
 
 tmpdir=$1
 if [ "$tmpdir" = "-" ]; then
@@ -103,7 +135,7 @@ if [ $command = "init" ]; then
 	    set_status done
 	fi
     else
-	fail "$user already exists. Stop."
+	fail "$user already exists"
     fi
 else
     projdir=@@ORACC_BUILDS@@/$project
