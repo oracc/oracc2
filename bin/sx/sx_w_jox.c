@@ -658,17 +658,21 @@ sx_w_jx_glyfs(struct sx_functions *f, struct sl_signlist *sl, List *a)
       static char s[10]; sprintf(s, "%d", ip->u.g->t->s);
       List *a = list_create(LIST_SINGLE);
       list_add(a, "n");
-      list_add(a, (void*)ip->u.g->atf);
+      list_add(a, (void*)ip->u.g->nam);
+#if 0
       list_add(a, "num");
       list_add(a, (void*)ip->u.g->tag);
+#endif
       list_add(a, "sort");
       list_add(a, s);
       list_add(a, "ucun");
       list_add(a, (void*)ip->u.g->uni);
       list_add(a, "uhex");
       list_add(a, (void*)ip->u.g->hex);
+#if 0
       list_add(a, "ref");
       list_add(a, ip->u.g->ref ? "yes" : "no");
+#endif
       const char **atts = list2chars(a);
       ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
       list_free(a, NULL);
