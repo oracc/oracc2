@@ -33,7 +33,7 @@ clean-local:
 	$(top_srcdir)/oracc-clean-in.sh
 
 install-exec-local:
-	$(top_srcdir)/maybe-install-cgi-bin.sh
+	$(top_srcdir)/oracc-pm.sh $(DESTDIR)$(prefix) $(top_srcdir)
 
 %.c: %.c.in
 	$(ORACCIFY) $<
