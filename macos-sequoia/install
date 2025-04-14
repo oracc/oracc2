@@ -1,0 +1,18 @@
+brew install autoconf
+brew install automake
+brew install bison
+brew install cproto
+brew install gdbm
+brew install pcre
+brew install rnv
+echo 'export PATH="/opt/homebrew/opt/bison/bin:$PATH"' >> ~/.zshrc
+~/.zshrc
+http://www.java.com
+
+# This one should be parameterized for MacOS
+AM_CPPFLAGS+=-I/opt/homebrew/include
+
+preconfig should either not run as root if single user or reset the orc owner and perms
+
+# These may not all be necessary
+chown stinney:_www /Users/stinney /Users/stinney/orc /Users/stinney/www
