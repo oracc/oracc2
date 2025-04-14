@@ -30,11 +30,19 @@ if [ "$confproj" != "$project" ]; then
     exit 1
 fi
 
+if [ "$ORACC_MODE" = "single" ]; then
+    owner=`whoami`
+    group="staff"
+else
+    owner=oradmin
+    group=oradmin
+fi
+
 cd @@ORACC_BUILDS@@/$1
 for dir in bld pub tmp xml www ; do
     md=@@ORACC_BUILDS@@/$dir/$1
     mkdir $V -p $md
-    chown -R oradmin:oradmin $md
+    chown -R $owner:$group $md
     chmod 2775 $md
 done
 

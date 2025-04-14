@@ -11,8 +11,14 @@
 u=$1
 (cd @@ORACC_BUILDS@@/$u
  if [ -r .git ]; then
+     me=`whoami`
+     echo $0: running as $me
      echo $0: updating $u--cwd=`pwd`
-     runuser -u oradmin git pull
+     if [ "$ORACC_MODE" = "single" ]; then
+	 git pull
+     else
+	 runuser -u oradmin git pull
+     fi
      touch .oracc-git ; chmod 0644 .oracc-git
  else
      echo $0: `pwd` is not a git repository "(no .git)."

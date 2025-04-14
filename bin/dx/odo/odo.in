@@ -32,6 +32,11 @@ fail ()
     exit 1;
 }
 
+set_project()
+{
+    project=`xmllint -xpath '/*/@n' 00lib/config.xml | cut -d= -f2 | tr -d '"'`
+}
+
 set_status ()
 {
     if [ "$tmpdir" != "" ]; then
@@ -105,7 +110,7 @@ shift
 project=$1
 if [ "$project" = "." ]; then
     if [ -r 00lib/config.xml ]; then
-	project=`oraccopt`
+	set_project
     else
 	fail "you can only use 'odo .' in a project directory"
     fi

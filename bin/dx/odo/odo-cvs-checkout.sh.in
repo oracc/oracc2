@@ -22,18 +22,22 @@ checkfile=$repo/.git
 # This is the command to check out a repo from the CVS
 checkout="git clone git@github.com:$owner/$repo.git"
 
-
 if [ -r $checkfile ]; then
     echo $0: $checkfile already exists. Stop.
     exit 1
 fi
 me=`whoami`
 echo $0: running as $me
-echo $0: trying runuser -u oradmin whoami ...
-runuser -u oradmin whoami
 
-echo $0: trying runuser -u oradmin $checkout
-runuser -u oradmin $checkout
+if [ "$ORACC_MODE" = "single" ]; then
+    $checkout
+else
+    echo $0: trying runuser -u oradmin whoami ...
+    runuser -u oradmin whoami
+
+    echo $0: trying runuser -u oradmin $checkout
+    runuser -u oradmin $checkout
+fi
 
 if [ -r $checkfile ]; then
     echo $0: $repo successfully checked out.

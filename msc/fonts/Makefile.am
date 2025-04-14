@@ -17,6 +17,6 @@ font_DATA=Oracc-Noto-SansCuneiform.ttf Oracc-gudea.ttf Oracc-NA-Outline.ttf \
 	Oracc-OBF-Regular.ttf CuneiformClassic-final.ttf Oracc-LAK.ttf \
 	Oracc-RSP.ttf Oracc-UET2.ttf
 
-install-data-local:
-	chmod o+r *.lig
-	cp -a *.lig $(datadir)
+#install-data-local:
+#	chmod o+r *.lig
+#	cp -a *.lig $(datadir)
