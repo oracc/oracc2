@@ -16,3 +16,5 @@ preconfig should either not run as root if single user or reset the orc owner an
 
 # These may not all be necessary
 chown stinney:_www /Users/stinney /Users/stinney/orc /Users/stinney/www
+
+also chmod +s on /Users/stinney/orc and children
