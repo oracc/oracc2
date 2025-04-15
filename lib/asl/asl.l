@@ -28,6 +28,7 @@ static void check_minus(char *t);
 static void strip_literal(char *t);
 static char *skip_initial_ws(char *t);
 static void maybe_show_nam(void);
+static void xchar(void);
 
 /* #if 1 to print every matched rule */
 #if 0
@@ -100,7 +101,7 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
 
-<F>{UCUNSEQ}("="{UCUNSEQ})?	{ aslsave; return GLYF_UNI; }
+<F>{UCUNSEQ}("="{UCUNSEQ}+)?	{ aslsave; return GLYF_UNI; }
 <F>({COMPOUND}|{GRAPHEME}|{NUMGRAPH}|{ZATU})  { aslsave; maybe_show_nam(); return GLYF_NAM; }
 <F>[0-9A-F]{5}(=[.x0-9A-F]+)?  	{ aslsave; return GLYF_HEX; }
 <F>o[0-9]{7}			{ aslsave; return GLYF_OID; }
@@ -108,6 +109,7 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 <F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
 <F>[ \t]			{ }
 <F>\n		       		{ BEGIN(0); return EOL; }
+<F>.	{ xchar(); }
 
 <G>{LIGATURE}/[ \t]+         	{ aslsave; return LIGATURE; }
 <G>{LIGAFONT}/[ \t]+		{ aslsave; return LIGAFONT; }
@@ -241,13 +243,19 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 \?				{ mesg_vwarning(curraslfile, asllineno,
 						"[asl] misplaced '?'; say, e.g., @v ba?", *asltext); }
 
-.				{ if (mesg_last_line()!=asllineno)
-				    mesg_vwarning(curraslfile, asllineno,
-						  "[asl] unmatched character %c", *asltext); }
+.				{ xchar(); }
 
 <<EOF>>				{ if (!endofinput++) return EOL; else yyterminate(); }
 
 %%
+
+static void
+xchar(void)
+{
+  if (mesg_last_line()!=asllineno)
+     mesg_vwarning(curraslfile, asllineno,
+	      	  "[asl] unmatched character %c", *asltext);
+}
 
 static int
 asl_grapheme(const char *gp)
