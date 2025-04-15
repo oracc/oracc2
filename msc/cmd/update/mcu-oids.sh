@@ -12,7 +12,11 @@ if [ -d $ORACC_BUILDS/oid ]; then
     # should check for stale .pulling lock file
     if [ ! -r .pulling ]; then
 	touch .pulling
-	runuser -u oradmin git pull
+	if [ "$ORACC_MODE" = "single" ]; then
+	    git pull
+	else
+	    runuser -u oradmin git pull
+	fi
 	rm -f .pulling
     fi
     exit 0

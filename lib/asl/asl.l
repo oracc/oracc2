@@ -27,6 +27,7 @@ static int asl_grapheme(const char *gp);
 static void check_minus(char *t);
 static void strip_literal(char *t);
 static char *skip_initial_ws(char *t);
+static void maybe_show_nam(void);
 
 /* #if 1 to print every matched rule */
 #if 0
@@ -50,17 +51,18 @@ static char *skip_initial_ws(char *t);
 %}
 
 S		\xe2\xb8[^\xa2-\xa5]
-G		([a-zA-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|{S}|\xc3[^\x97]|\xe2[^\xb8])+
-M		([@~]([a-z0-9]*|90|180|270))*
+G		([abdeg-zABDEG-Z'\x80-\xc2\xc4-\xe1\xe3-\xef]|{S}|\xc3[^\x97]|\xe2[^\xb8])+
+M		([@~][a-z0-9]+)*
 N		(N[0-9]+[ABCDE]*)
 Q		\??
 L		=?
-COMPOUND	"|"([a-zA-Z\x80-\xff]|[@~().%&+()0-9])+"|"{M}{Q}{L}
+COMPOUND	"|"([a-zA-Z\x80-\xef]|[@~().%&+()0-9])+"|"{M}{Q}{L}
 GRAPHEME 	((({G}|{N}){M})|"15"){Q}{L}
 ZERO		"00"(~[a-d])?
 PHONGRAPH	"/"{G}"/"
 LISTNAME	(U\+|[A-Z]+)
 LISTNUM		(U\+[A-F0-9]+|[A-Z]+[0-9]+[()A-Z0-9a-z_'"+*/^]*{M}{Q}{L})
+ZATU		(ZATU[0-9]+{M})
 NUMGRAPH	[0-9XnN]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})(′|″)?\){M}{Q}{L}
 FRACTION	[0-9]\/[0-9]
 PUNCT		("*"|:['".:]?|"/"){Q}{L}
@@ -71,7 +73,7 @@ OTFEAT		{OTF}([ \t\n]+{OTF})*
 LIGATURE       	({GRAPHEME}|{COMPOUND})([-\+]({GRAPHEME}|{COMPOUND}))+
 LIGAFONT	(u[0-9A-F]+)(_u[0-9A-F]+)+
 UTF8SEQ		([\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xec][\x80-\xbf][\x80-\xbf]|\xed[\x80-\x9f][\x80-\xbf]|[\xee\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf])
-ZW		(\xE2\x80[\x8C\x8D])
+ZW		((\xe2\x80[\x8c\x8d])|(\xe2\x81[\xa2\xa4]))
 UCUNSEQ		(\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf]|{ZW})
 UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
@@ -98,11 +100,11 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
 
-<F>{GRAPHEME}     		{ aslsave; return GLYF_NAM; }
-<F>{UCUNSEQ}(={UCUNSEQ})?	{ aslsave; return GLYF_UNI; }
-<F>[.x0-9A-F]+(=[.x0-9A-F]+)?  	{ aslsave; return GLYF_HEX; }
+<F>{UCUNSEQ}("="{UCUNSEQ})?	{ aslsave; return GLYF_UNI; }
+<F>({COMPOUND}|{GRAPHEME}|{NUMGRAPH}|{ZATU})  { aslsave; maybe_show_nam(); return GLYF_NAM; }
+<F>[0-9A-F]{5}(=[.x0-9A-F]+)?  	{ aslsave; return GLYF_HEX; }
 <F>o[0-9]{7}			{ aslsave; return GLYF_OID; }
-<F>~[0-9A-F][0-9A-F]/[ \t]      { aslsave; return GLYF_VAR; }
+<F>"~"[0-9A-F]{2}/[ \t\n]      	{ aslsave; return GLYF_VAR; }
 <F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
 <F>[ \t]			{ }
 <F>\n		       		{ BEGIN(0); return EOL; }
@@ -325,4 +327,11 @@ strip_literal(char *t)
       *e = '\0';
       mesg_vwarning(curraslfile, asllineno, "[asl] missing closing \"-quote on LITERAL");
     }
+}
+
+static void
+maybe_show_nam(void)
+{
+  if (!strpbrk(asllval.text, "ABCDEFGHIJKLMNOPQRSTUVWZYZ0123456789"))
+    fprintf(stderr, "%s:%d: %s=GLYF_NAM\n", curraslfile, asllineno, asllval.text);
 }
