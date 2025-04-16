@@ -75,7 +75,7 @@ LIGATURE       	({GRAPHEME}|{COMPOUND})([-\+]({GRAPHEME}|{COMPOUND}))+
 LIGAFONT	(u[0-9A-F]+)(_u[0-9A-F]+)+
 UTF8SEQ		([\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xec][\x80-\xbf][\x80-\xbf]|\xed[\x80-\x9f][\x80-\xbf]|[\xee\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf])
 ZW		((\xe2\x80[\x8c\x8d])|(\xe2\x81[\xa2\xa4]))
-UCUNSEQ		(\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf]|{ZW})
+UCUNSEQ		(\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf3][\x80-\xbf][\x80-\xbf][\x80-\xbf]|\xf4[\x80-\x8f][\x80-\xbf][\x80-\xbf]|{ZW}|"O")
 UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 %s E
@@ -101,9 +101,10 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 
 <E>[^ \t]			{ fake_flag = 0; aslsave; fprintf(stderr, "###EBAD %s\n", asltext); return EBAD; }
 
-<F>{UCUNSEQ}("="{UCUNSEQ}+)?	{ aslsave; return GLYF_UNI; }
+<F>{UCUNSEQ}+("="{UCUNSEQ}+)?	{ aslsave; return GLYF_UNI; }
 <F>({COMPOUND}|{GRAPHEME}|{NUMGRAPH}|{ZATU})  { aslsave; maybe_show_nam(); return GLYF_NAM; }
 <F>[0-9A-F]{5}(=[.x0-9A-F]+)?  	{ aslsave; return GLYF_HEX; }
+<F>0/[ \t]			{ aslsave; return GLYF_HEX; }
 <F>o[0-9]{7}			{ aslsave; return GLYF_OID; }
 <F>"~"[0-9A-F]{2}/[ \t\n]      	{ aslsave; return GLYF_VAR; }
 <F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
