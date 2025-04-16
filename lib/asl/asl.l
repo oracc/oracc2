@@ -63,7 +63,7 @@ ZERO		"00"(~[a-d])?
 PHONGRAPH	"/"{G}"/"
 LISTNAME	(U\+|[A-Z]+)
 LISTNUM		(U\+[A-F0-9]+|[A-Z]+[0-9]+[()A-Z0-9a-z_'"+*/^]*{M}{Q}{L})
-ZATU		(ZATU[0-9]+{M})
+ZATU		((BAU|LAK|ZATU)[0-9]+{M})
 NUMGRAPH	[0-9XnN]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})(′|″)?\){M}{Q}{L}
 FRACTION	[0-9]\/[0-9]
 PUNCT		("*"|:['".:]?|"/"){Q}{L}

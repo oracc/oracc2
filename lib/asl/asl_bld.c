@@ -95,6 +95,7 @@ asl_bld_init(void)
   sl->sysdefs = hash_create(3);
   sl->hsentry = hash_create(2048);
   sl->hfentry = hash_create(1024);
+  sl->hglyf = hash_create(512);
   sl->haka = hash_create(128);
   sl->hventry = hash_create(2048);
   sl->hlentry = hash_create(1024);
@@ -822,6 +823,23 @@ asl_add_list(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, int lit
   return l;
 }
 
+int
+add_glyf_token(Mloc *locp, struct sl_signlist *sl, const char *nam)
+{
+  char g[strlen((ccp)sl->curr_sign->name)+strlen(nam)+2];
+  sprintf(g,"%s\t%s",sl->curr_sign->name,nam);
+  if (!hash_find(sl->hglyf, (uccp)g))
+    {
+      (void)hash_add(sl->hglyf, pool_copy((uccp)g, sl->p), "");
+      return 1;
+    }
+  else
+    {
+      mesg_verr(locp, "ignoring duplicate @glyf %s\n", g);
+      return 0;
+    }
+}
+
 void
 asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned char *uni,
 	     const char *hex, const char *oid, const char *var, const char *otf)
@@ -856,9 +874,10 @@ asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned
 	  }
 	gp->oid = oid;
 	gp->var = var;
-	if (!hash_find(sl->htoken, (uccp)nam))
+	if (add_glyf_token(locp, sl, nam))
 	  {
-	    gp->t = asl_bld_token(locp, sl, (ucp)gp->nam, 0);
+	    if (!(gp->t = hash_find(sl->htoken, (uccp)nam)))
+	      gp->t = asl_bld_token(locp, sl, (ucp)gp->nam, 0);
 	    struct sl_inst *i = new_inst(sl);
 	    i->type = 'g';
 	    i->u.g = gp;
@@ -875,10 +894,6 @@ asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned
 		  sl->curr_sign->glyfs = list_create(LIST_SINGLE);
 		list_add(sl->curr_sign->glyfs, i);
 	      }
-	  }
-	else
-	  {
-	    mesg_verr(locp, "@glyf creates duplicate sign+tag %s; ignored\n", nam);
 	  }
       }
 }

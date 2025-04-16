@@ -658,7 +658,7 @@ sx_w_jx_glyfs(struct sx_functions *f, struct sl_signlist *sl, List *a)
       static char s[10]; sprintf(s, "%d", ip->u.g->t->s);
       List *a = list_create(LIST_SINGLE);
       list_add(a, "n");
-      list_add(a, (void*)ip->u.g->nam);
+      list_add(a, (void*)xmlify((uccp)ip->u.g->nam));
 #if 0
       list_add(a, "num");
       list_add(a, (void*)ip->u.g->tag);

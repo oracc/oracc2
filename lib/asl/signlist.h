@@ -77,6 +77,7 @@ struct sl_signlist
 			   x-values include the 'ₓ' in their base */
   Hash *homophone_ids;  /* IDs for homophones */
   Hash *hcompoundnew;	/* Signs reported in sx_compound_new_sign to prevent multiple error messages */
+  Hash *hglyf;		/* Glyf registry with keys 'SIGNNAME\tGLYFNAME' */
   Hash *values_by_oid;
   Hash *oidindexes;
   Hash *hletters;
