@@ -106,7 +106,7 @@ UTF8UCUN	{UCUNSEQ}([ \t\n]*{UCUNSEQ})*
 <F>[0-9A-F]{5}(=[.x0-9A-F]+)?  	{ aslsave; return GLYF_HEX; }
 <F>0/[ \t]			{ aslsave; return GLYF_HEX; }
 <F>o[0-9]{7}			{ aslsave; return GLYF_OID; }
-<F>"~"[0-9A-F]{2}/[ \t\n]      	{ aslsave; return GLYF_VAR; }
+<F>"~"[0-9A-Fa-f]{2}/[ \t\n]      	{ aslsave; return GLYF_VAR; }
 <F>{OTFEAT}			{ aslsave; return GLYF_OTF; }
 <F>[ \t]			{ }
 <F>\n		       		{ BEGIN(0); return EOL; }
