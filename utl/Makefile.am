@@ -1,6 +1,6 @@
 include ../oracc-am-rules.txt
 
-bin_SCRIPTS = oraccenv.sh trang xl
+bin_SCRIPTS = oraccenv.sh oraccpaths.sh trang xl
 noinst_SCRIPTS = oraccsed.sh
 java_DATA = trang.jar
 
