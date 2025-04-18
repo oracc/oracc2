@@ -28,7 +28,11 @@ fail ()
 {
     echo "$0: $1. Stop."
     set_status error
-    rm -fr $tmpdir
+    if [ ! "$tmpdir" = "" ]; then
+       if [ -d $tmpdir ]; then
+	   rm -fr $tmpdir
+       fi
+    fi
     exit 1;
 }
 
@@ -70,25 +74,32 @@ fi
 # set defaults if fewer than three arguments
 # tmp => /tmp/$$
 # user => .
-if [ $# -lt 3 ]; then
-    if [ $# -lt 2 ]; then
-	if [ $# -eq 0 ]; then
-	    # zero-argument form, print help and exit
-	    fail "not enough arguments--need at least TMPDIR PROJECT COMMAND"
-	    echo "$0: help. Stop."
-	    exit 1
+if [ -x $bin/odo-$1.sh ]; then
+    # one-argument form, assume command
+    echo "$0: one-argument call detected with $*."
+    set_tmpdir
+    set $xtmp "." $*
+else
+    if [ $# -lt 3 ]; then
+	if [ $# -lt 2 ]; then
+	    if [ $# -eq 0 ]; then
+		# zero-argument form, print help and exit
+		fail "not enough arguments--need at least TMPDIR PROJECT COMMAND"
+		echo "$0: help. Stop."
+		exit 1
+	    else
+		# one-argument form, assume command
+		echo "$0: one-argument call detected."
+		set_tmpdir
+		set $xtmp "." $1
+	    fi
 	else
-	    # one-argument form, assume command
-	    echo "$0: one-argument call detected."
+	    # two-argument form: assume project and command;
+	    # will fail later if assumption is wrong
+	    echo "$0: two-argument call detected."
 	    set_tmpdir
-	    set $xtmp "." $1
+	    set $xtmp $1 $2
 	fi
-    else
-	# two-argument form: assume project and command;
-	# will fail later if assumption is wrong
-	echo "$0: two-argument call detected."
-	set_tmpdir
-	set $xtmp $1 $2
     fi
 fi
 

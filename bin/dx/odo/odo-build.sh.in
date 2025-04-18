@@ -26,6 +26,7 @@ set $user $project $rest
 touch .oracc-build ; chmod 0644 .oracc-build
 
 case $subcommand in
+    cat) 	odo-catalog.sh $* ;;
     corpus) 	odo-corpus.sh $* ;;
     gloss) 	odo-gloss.sh $* ;;
     portal) 	odo-portal.sh $* ;;

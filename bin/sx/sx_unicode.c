@@ -99,6 +99,9 @@ sx_unicode(struct sl_signlist *sl)
   useqs = hash_create(512);
   usigns = hash_create(1024);
   utf8s = hash_create(512);
+
+  if (sl->config->domain && !strcmp(sl->config->domain,"pc"))
+    adding_useq_messages = 0;
   
   /* Index the signs that have unames -- those are encoded so we treat
      them as atoms even if they are compounds */

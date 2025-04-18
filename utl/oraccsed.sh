@@ -46,4 +46,4 @@ fi
 export ORADMIN TeXLive
 
 #. ./oraccenv.sh ;
- printenv | grep 'ORACC\|ORADMIN\|TeXLive' | sed 's/=/@@#/' | sed 's/^/s#@@/' | sed 's/$/#/' >oracc.sed
+ printenv | grep 'ORACC\|ORADMIN\|TeXLive' | sed 's/=/@@#/' | sed 's/^/s#@@/' | sed 's/$/#g/' >oracc.sed

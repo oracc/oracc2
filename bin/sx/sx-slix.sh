@@ -61,7 +61,10 @@ if [ "$asl" != "" ]; then
 	sx -u $asl
 	cut -f 2-4,6 unicode.tsv | grep '	o[0-9]\+	' >02pub/unicode.tsv
 	rm -f unicode.tsv
-	chmod -R o+r 02pub/sl 02pub/lists.tsv 02pub/sortcodes.* 02pub/unicode.tsv 02xml/sl.xml 02pub/*.oss 02pub/*.mrg
+	x=$?
+	chmod -f -R o+r 02pub/sl 02pub/lists.tsv 02pub/sortcodes.* 02pub/unicode.tsv 02xml/sl.xml 02pub/*.oss 02pub/*.mrg
+	# ignore chmod status because MacOS -f doesn't work
+	exit $x
     else
 	echo "$0: errors in processing $asl. Stop."
 	exit 1
