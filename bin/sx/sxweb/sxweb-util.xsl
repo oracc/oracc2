@@ -111,7 +111,7 @@
 <xsl:variable name="font">
   <xsl:choose>
     <xsl:when test="string-length($asl-script)>0">
-      <xsl:message>font=<xsl:value-of select="$asl-script"/></xsl:message>
+      <xsl:message>sxweb-util.xsl: font=<xsl:value-of select="$asl-script"/></xsl:message>
       <xsl:value-of select="$asl-script"/>
     </xsl:when>
     <xsl:otherwise>

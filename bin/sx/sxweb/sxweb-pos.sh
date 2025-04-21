@@ -1,4 +1,6 @@
 #!/bin/sh
+#set -x
+echo sxweb-pos.sh $*
 set 00etc/*-pos.xml
 if [ "$1" != "00etc/*-pos.xml" ]; then
     for a in 00etc/*-pos.xml ; do
@@ -10,7 +12,7 @@ if [ "$1" != "00etc/*-pos.xml" ]; then
 	    $b.sh
 	fi
 	xmllint --encode UTF-8 --xinclude --noxincludenode $a | \
-	    xsltproc -stringparam project `oraccopt` \
+	    xsltproc -stringparam project `oraccopt` -stringparam input $a \
 		     ${ORACC}/lib/scripts/sxweb-page-o-signs.xsl - >00lib/signlist-x-$c.xml
     done
 fi

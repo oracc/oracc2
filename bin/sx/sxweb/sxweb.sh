@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#set -x
+
 function sxinst {
     if [ -r 00lib/$1 ]; then
 	input=00lib/$1
@@ -57,21 +59,22 @@ libdata=$ORACC_BUILDS/lib/data
 ls -l 02xml/sl.xml
 
 # FIXME: probably need project-config-level control of this
-if [ "$auto" != "yes" ]; then
-    sxmissing.sh 00etc $asl
-    sxudata.sh 00etc $asl
-    sxportal.sh
+if [ "$project" = "osl" ]; then
+    if [ "$auto" != "yes" ]; then
+	sxmissing.sh 00etc $asl
+	sxudata.sh 00etc $asl
+	sxportal.sh
+    fi
+    if [ "$stats" == "yes" ]; then
+	#    csl-need.sh
+	csl-miss-need.sh miss
+	csl-miss-need.sh need
+	#    ofp=`oraccopt . asl-ofp`
+    fi
+    sxweb-lists.sh
 fi
 
-if [ "$stats" == "yes" ]; then
-#    csl-need.sh
-    csl-miss-need.sh miss
-    csl-miss-need.sh need
-#    ofp=`oraccopt . asl-ofp`
-fi
 sxweb-pos.sh
-
-sxweb-lists.sh
 
 rm -fr signlist ; mkdir signlist
 

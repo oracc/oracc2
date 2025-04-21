@@ -6,9 +6,10 @@
 	       version="1.0"
 	       exclude-result-prefixes="sl">
 
+  <xsl:param name="input"/>
   <xsl:param name="project" select="'osl'"/>
-  <xsl:variable name="slxml" select="'/home/oracc/osl/02xml/sl.xml'"/>
-  <xsl:variable name="pcxml" select="'/home/oracc/pcsl/02xml/sl.xml'"/>
+  <xsl:variable name="slxml" select="'/Users/stinney/orc/osl/02xml/sl.xml'"/>
+  <xsl:variable name="pcxml" select="'/Users/stinney/orc/pcsl/02xml/sl.xml'"/>
   
   <xsl:include href="sxweb-util.xsl"/>
 
@@ -25,13 +26,16 @@
 	    <xsl:variable name="childnodes" select="*"/>
 	    <xsl:variable name="id" select="@xml:id"/>
 	    <xsl:variable name="iso-script" select="@script"/>
-	    <xsl:variable name="xxml">
+	    <xsl:variable name="sl">
 	      <xsl:choose>
 		<xsl:when test="starts-with($id,'o09')"><xsl:value-of select="$pcxml"/></xsl:when>
 		<xsl:otherwise><xsl:value-of select="$slxml"/></xsl:otherwise>
 	      </xsl:choose>
 	    </xsl:variable>
-	    <xsl:for-each select="document($xxml)">
+	    <xsl:if test="position()=1">
+	      <xsl:message>sxweb-page-o-signs.xsl[1]: using <xsl:value-of select="$sl"/>; input=<xsl:value-of select="$input"/></xsl:message>
+	    </xsl:if>
+	    <xsl:for-each select="document($sl)">
 	      <xsl:for-each select="id($id)">
 		<xsl:call-template name="sxw-pos-tr">
 		  <xsl:with-param name="children" select="$children"/>
@@ -50,7 +54,16 @@
 	    <xsl:sort data-type="number" select="@sort"/>
 	    <xsl:variable name="freq" select="@freq"/>
 	    <xsl:variable name="id" select="@xml:id"/>
-	    <xsl:for-each select="document($slxml)">	      
+	    <xsl:variable name="sl">
+	      <xsl:choose>
+		<xsl:when test="starts-with($id,'o09')"><xsl:value-of select="$pcxml"/></xsl:when>
+		<xsl:otherwise><xsl:value-of select="$slxml"/></xsl:otherwise>
+	      </xsl:choose>
+	    </xsl:variable>
+	    <xsl:if test="position()=1">
+	      <xsl:message>sxweb-page-o-signs.xsl[2]: using <xsl:value-of select="$sl"/>; input=<xsl:value-of select="$input"/></xsl:message>
+	    </xsl:if>
+	    <xsl:for-each select="document($sl)">	      
 	      <xsl:for-each select="id($id)">
 		<xsl:call-template name="sxw-pos-tr">
 		  <xsl:with-param name="codes" select="$codes"/>
@@ -69,7 +82,9 @@
 	      <xsl:otherwise><xsl:value-of select="$slxml"/></xsl:otherwise>
 	    </xsl:choose>
 	  </xsl:variable>
-	  <xsl:message>sxweb-page-o-signs.xsl using <xsl:value-of select="$sl"/>; ids=<xsl:value-of select="$ids"/></xsl:message>
+	  <xsl:if test="position()=1">
+	    <xsl:message>sxweb-page-o-signs.xsl[3]: using <xsl:value-of select="$sl"/>; input=<xsl:value-of select="$input"/></xsl:message>
+	  </xsl:if>
 	  <xsl:for-each select="document($sl)">
 	    <xsl:for-each select="id($ids)">
 	      <xsl:sort data-type="number" select="@sort"/>
