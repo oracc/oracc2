@@ -206,6 +206,7 @@ bin/qx/qindex.sh
 bin/qx/qindexall.sh
 bin/qx/qxxall.sh
 bin/sx/sxweb/sxweb-signs.xsl
+bin/sx/sxweb/sxweb-page-o-signs.xsl
 bin/wx/oai.c
 bin/wx/oid.c
 bin/wx/or_builtins.c

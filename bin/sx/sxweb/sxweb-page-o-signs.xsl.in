@@ -8,8 +8,8 @@
 
   <xsl:param name="input"/>
   <xsl:param name="project" select="'osl'"/>
-  <xsl:variable name="slxml" select="'/Users/stinney/orc/osl/02xml/sl.xml'"/>
-  <xsl:variable name="pcxml" select="'/Users/stinney/orc/pcsl/02xml/sl.xml'"/>
+  <xsl:variable name="slxml" select="'@@ORACC@@/osl/02xml/sl.xml'"/>
+  <xsl:variable name="pcxml" select="'@@ORACC@@/pcsl/02xml/sl.xml'"/>
   
   <xsl:include href="sxweb-util.xsl"/>
 
