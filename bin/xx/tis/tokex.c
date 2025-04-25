@@ -24,7 +24,7 @@ Pool *mpool;
 Hash *mhash;
 
 Pool *fpool;
-Hash *fhash;
+Hash *fhash = NULL;
 
 struct sl_config aslcfg;
 
@@ -113,16 +113,20 @@ static void
 forms_load(void)
 {
   size_t nline;
-  fhash = hash_create(1024);
   fpool = pool_init();
-  unsigned char *fmem;
-  unsigned char **lp = loadfile_lines3((uccp)forms_fn(project), &nline, &fmem);
-  int i;
-  for (i = 0; i < nline; ++i)
+  const char *ffn = forms_fn(project);
+  if (!access(ffn, R_OK))
     {
-      char buf[strlen((ccp)lp[i])+3];
-      sprintf(buf, "%s+f", lp[i]);
-      hash_add(fhash, (uccp)pool_copy((uccp)lp[i], fpool), pool_copy((uccp)buf, fpool));
+      fhash = hash_create(1024);
+      unsigned char *fmem;
+      unsigned char **lp = loadfile_lines3((uccp)ffn, &nline, &fmem);
+      int i;
+      for (i = 0; i < nline; ++i)
+	{
+	  char buf[strlen((ccp)lp[i])+3];
+	  sprintf(buf, "%s+f", lp[i]);
+	  hash_add(fhash, (uccp)pool_copy((uccp)lp[i], fpool), pool_copy((uccp)buf, fpool));
+	}
     }
 }
 
@@ -204,6 +208,7 @@ main(int argc, char **argv)
   options(argc,argv,"d:nl:p:");
   char buf[1024], *b, qid[1024], wdid[32];
   Vido *vp = vido_init('t', 0);
+  fpool = pool_init();
   forms_load();
   if (project)
     {
@@ -273,7 +278,8 @@ main(int argc, char **argv)
 		}
 	      merge_entry(t,vp,qid);
 	    }
-	  forms_entry(t,vp,qid);
+	  if (fhash)
+	    forms_entry(t,vp,qid);
 	}
     }
   if (!no_output)
@@ -315,7 +321,7 @@ const char *prog = "tokex";
 int major_version = 6, minor_version = 0, verbose;
 const char *usage_string = "-d [index_dir] [-n]";
 void
-help ()
+help (void)
 {
   printf("  -d [index_dir] Gives the name of the index directory; defaults to 02pub/tok\n");
   printf("  -l [lists_file] give name of list of lists for tokex slices\n");
