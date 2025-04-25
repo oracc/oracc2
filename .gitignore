@@ -89,6 +89,7 @@ bin/xx/tis/tokexp
 bin/xx/tis/tokex
 bin/xx/tis/tokix
 bin/xx/tis/tokpct
+bin/xx/tis/tokpg
 bin/xx/tis/tokx
 bin/xx/tis/vidx
 bin/xx/tlitsig
@@ -105,6 +106,7 @@ bin/zx/expat-identity
 bin/zx/gdlx
 bin/zx/repx
 bin/zx/rocox
+bin/zx/utr
 bin/zx/xmlfilter
 msc/lex/lex-collapse-refs
 msc/prj/cdli/cdliperiodx
