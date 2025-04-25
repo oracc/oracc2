@@ -2,6 +2,7 @@
 #include <oraccsys.h>
 #include <dirent.h>
 
+int istdin = 0;
 int ostdout = 0;
 int status = 0;
 int verbose = 1;
@@ -63,7 +64,13 @@ utr_file(char *fn)
   if (verbose)
     fprintf(stderr, "utr processing file: %s\n", fn);
   size_t n;
-  char *f = (char*)loadfile((uccp)fn, &n);
+  char *f = NULL;
+  
+  if (!strcmp(fn, "-"))
+    f = (char*)loadstdin(&n);
+  else
+    f = (char*)loadfile((uccp)fn, &n);
+
   if (f)
     {
       wchar_t wf[n+1];
@@ -78,8 +85,8 @@ utr_file(char *fn)
       int i;
       for (i = 0; wf[i]; ++i)
 	{
-	  if (wf[i] >= tmin && wf[i] <= tmax && trtab[wf[i]-tmin])
-	    wf[i] = trtab[wf[i]-tmin];
+	  if (wf[i] >= tmin && wf[i] <= tmax && trtab[wf[i]])
+	    wf[i] = trtab[wf[i]];
 	}
       free(f);
       int m = 6*wf_res;
@@ -143,27 +150,41 @@ int
 main(int argc, char **argv)
 {
   char *l = setlocale(LC_ALL, ORACC_LOCALE);
+  int optix = 1;
+  if (!strcmp(argv[optix], "-s"))
+    {
+      istdin = ostdout = 1;
+      ++optix;
+    }
+  
   if (l)
     {
       if (verbose)
 	fprintf(stderr, "utr set locale to %s\n", l);
       
-      char *tabfn = argv[1];
-      char *start = argv[2];
+      char *tabfn = argv[optix++];
       load_tab(tabfn);
-      struct stat statbuf;
-      if (stat(start, &statbuf) == 0)
+      if (istdin)
 	{
-	  if (S_ISDIR(statbuf.st_mode))
+	  utr_file("-");
+	}
+      else
+	{
+	  char *start = argv[optix++];
+	  struct stat statbuf;      
+	  if (stat(start, &statbuf) == 0)
 	    {
-	      if (verbose)
-		fprintf(stderr, "utr start directory: %s\n", start);
-	      utr_dir(start);
-	    }
-	  else
-	    {
-	      ostdout = 1;
-	      utr_file(start);
+	      if (S_ISDIR(statbuf.st_mode))
+		{
+		  if (verbose)
+		    fprintf(stderr, "utr start directory: %s\n", start);
+		  utr_dir(start);
+		}
+	      else
+		{
+		  ostdout = 1;
+		  utr_file(start);
+		}
 	    }
 	}
     }
