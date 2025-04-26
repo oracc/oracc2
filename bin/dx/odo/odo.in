@@ -170,6 +170,9 @@ else
 		     if [ -x $bin/$user-$command.sh ]; then
 			 $uscript $user $project $*
 		     else
+			 if [ "$command" = "catalogue" ]; then
+			     command=catalog
+			 fi
 			 script=$bin/odo-$command.sh
 			 if [ -x $script ]; then
 			     $script $user $project $*

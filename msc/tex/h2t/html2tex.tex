@@ -114,10 +114,14 @@
 \catcode"223C\active \def∼{\~{}}
 \catcode"2052\active \def⁒{\%{}}
 
-\font\pcall="PC-all" at 18pt
-\font\pcxxv="PC25" at 18pt
-\font\mono="[/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf]" at 9pt
-\def\rold{\pcall }
+\input fonts25
+
+\let\pc\relax
+\let\cookbook\relax
+\let\example\relax
+\let\everymathextra\relax
+\let\includegraphics\relax
+
 \def\rnew{\pcxxv }
 \def\rname{\eight\rm}
 
