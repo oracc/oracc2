@@ -51,12 +51,19 @@
   <xsl:template match="h:div">
     <xsl:choose>
       <xsl:when test="contains(@class,'vbox')">
-	<xsl:text>\vbox{</xsl:text>
+	<xsl:choose>
+	  <xsl:when test="ancestor::*[contains(@class,'codechart')]">
+	    <xsl:text>\vbox to\ccht{\vfil</xsl:text>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:text>\vbox{\vfil</xsl:text>
+	  </xsl:otherwise>
+	</xsl:choose>
 	<xsl:call-template name="class">
 	  <xsl:with-param name="nono" select="'vbox'"/>
 	</xsl:call-template>
 	<xsl:apply-templates mode="hbox"/>
-	<xsl:text>}%&#xa;</xsl:text>
+	<xsl:text>\vfil}%&#xa;</xsl:text>
       </xsl:when>
       <xsl:when test="@class">
 	<xsl:text>\bgroup</xsl:text>
@@ -64,7 +71,7 @@
 	<xsl:apply-templates/>
 	<xsl:text>\egroup&#xa;</xsl:text>
       </xsl:when>
-      <xsl:otherwise>
+      <xsl:otherwise>	
 	<xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
@@ -72,21 +79,28 @@
 
   <xsl:template match="h:div" mode="hbox">
     <xsl:if test="string-length(.)>0">
-      <xsl:text>\hbox{</xsl:text>
-      <xsl:call-template name="class"/>
-      <xsl:apply-templates/>
-      <xsl:text>}%&#xa;</xsl:text>
+      <xsl:choose>
+	<xsl:when test="h:span[@class='cc-chr']">
+	  <xsl:text>\vbox to\cccht{\vfil</xsl:text>
+	  <xsl:text>\hbox to\cccwd{\hfil</xsl:text>
+	  <xsl:call-template name="class"/>
+	  <xsl:apply-templates/>
+	  <xsl:text>\hfil}%&#xa;</xsl:text>
+	  <xsl:text>\vfil}%&#xa;</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:text>\hbox{</xsl:text>
+	  <xsl:call-template name="class"/>
+	  <xsl:apply-templates/>
+	  <xsl:text>}%&#xa;</xsl:text>
+	</xsl:otherwise>
+      </xsl:choose>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="h:dl">
     <xsl:text>\Hd</xsl:text>
     <xsl:text>l</xsl:text>
-    <!--
-	<xsl:call-template name="ells">
-	<xsl:with-param name="nells" select="count(ancestor-or-self::h:dl)"/>
-	</xsl:call-template>
-    -->
     <xsl:apply-templates/>
     <xsl:text>\Henddl&#xa;</xsl:text>
   </xsl:template>
@@ -119,11 +133,6 @@
   <xsl:template match="h:ol">
     <xsl:text>\Ho</xsl:text>
     <xsl:text>l</xsl:text>
-    <!--
-	<xsl:call-template name="ells">
-	<xsl:with-param name="nells" select="count(ancestor-or-self::h:ol)"/>
-	</xsl:call-template>
-    -->
     <xsl:apply-templates/>
     <xsl:text>\Hendol&#xa;</xsl:text>
   </xsl:template>
@@ -199,12 +208,20 @@
   <xsl:template match="h:table">
     <xsl:text>\bigskip&#xa;</xsl:text>
     <xsl:choose>
-      <xsl:when test="@class='pretty'">
-	\centerline{\vbox{\offinterlineskip\tabskip0pt
+      <xsl:when test="contains(@class,'pretty') or contains(@class,'borders') ">
+	<xsl:text>\centerline{\vbox{\offinterlineskip\tabskip0pt&#xa;</xsl:text>
 	<xsl:apply-templates mode="halign" select=".">
 	  <xsl:with-param name="ruled" select="'yes'"/>
 	</xsl:apply-templates>
 	<xsl:text>}}</xsl:text>
+      </xsl:when>
+      <xsl:when test="contains(@class,'codechart')">
+	<xsl:text>\centerline{\codechart\vbox{\offinterlineskip\tabskip0pt&#xa;</xsl:text>
+	<xsl:apply-templates mode="halign" select=".">
+	  <xsl:with-param name="ruled" select="'yes'"/>
+	  <xsl:with-param name="rulerules" select="'cc'"/>
+	</xsl:apply-templates>
+	<xsl:text>}}</xsl:text>	
       </xsl:when>
       <xsl:otherwise>
 	<xsl:apply-templates mode="halign" select="."/>
@@ -214,11 +231,6 @@
 
   <xsl:template match="h:ul">
     <xsl:text>\Hul</xsl:text>
-    <!--
-	<xsl:call-template name="ells">
-	<xsl:with-param name="nells" select="count(ancestor-or-self::h:ul)"/>
-	</xsl:call-template>
-      -->
     <xsl:apply-templates/>
     <xsl:text>\Hendul&#xa;</xsl:text>
   </xsl:template>
@@ -227,6 +239,8 @@
 
   <xsl:template mode="halign" match="h:table">
     <xsl:param name="ruled" select="'no'"/>
+    <xsl:param name="rulerules" select="'none'"/>
+    <xsl:param name="csname"/>
     <xsl:variable name="p-row">
       <xsl:choose>
 	<xsl:when test="@tex:preamble-row">
@@ -244,6 +258,7 @@
 	<xsl:call-template name="halign-preamble">
 	  <xsl:with-param name="preamble-row" select="$p-row"/>
 	  <xsl:with-param name="ruled" select="$ruled"/>
+	  <xsl:with-param name="rulerules" select="$rulerules"/>
 	</xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
@@ -252,21 +267,26 @@
     </xsl:choose>
     <xsl:apply-templates mode="halign">
       <xsl:with-param name="ruled" select="$ruled"/>
+      <xsl:with-param name="rulerules" select="$rulerules"/>
     </xsl:apply-templates>
     <xsl:text>}&#xa;</xsl:text>
   </xsl:template>
 
   <xsl:template mode="halign" match="h:thead">
     <xsl:param name="ruled"/>
+    <xsl:param name="rulerules" select="'none'"/>
     <xsl:apply-templates mode="halign">
       <xsl:with-param name="ruled" select="$ruled"/>
+      <xsl:with-param name="rulerules" select="$rulerules"/>
     </xsl:apply-templates>
   </xsl:template>
 
   <xsl:template mode="halign" match="h:tbody">
     <xsl:param name="ruled"/>
+    <xsl:param name="rulerules" select="'none'"/>
     <xsl:apply-templates mode="halign">
       <xsl:with-param name="ruled" select="$ruled"/>
+      <xsl:with-param name="rulerules" select="$rulerules"/>
     </xsl:apply-templates>
     <xsl:if test="contains(ancestor::h:table/@class,'tbodyrules')">
       <xsl:text>\tbodyrule</xsl:text>
@@ -275,34 +295,44 @@
 
   <xsl:template mode="halign" match="h:tr">
     <xsl:param name="ruled"/>
+    <xsl:param name="rulerules" select="'none'"/>
     <xsl:for-each select="*">
-      <xsl:apply-templates mode="halign" select="."/>
+      <xsl:apply-templates mode="halign" select=".">
+	<xsl:with-param name="rulerules" select="$rulerules"/>
+      </xsl:apply-templates>
       <xsl:choose>
 	<xsl:when test="position()=last()">
 	  <xsl:if test="$ruled='yes'">
 	    <xsl:text>&amp;</xsl:text>
 	  </xsl:if>
-	  <xsl:text>\cr</xsl:text>
-	  <xsl:if test="$ruled='yes'">
-	    <xsl:choose>
-	      <xsl:when test="ancestor::h:thead">
-		<xsl:text>\theadrule</xsl:text>
-	      </xsl:when>
-	      <xsl:otherwise>
-		<xsl:text>\tablerule</xsl:text>
-	      </xsl:otherwise>
-	    </xsl:choose>
+	  <xsl:if test="$rulerules='cc' and ancestor::h:thead">
+	    <xsl:text>\omit</xsl:text>
 	  </xsl:if>
-	  <xsl:text>&#xa;</xsl:text>
 	</xsl:when>
 	<xsl:otherwise>
 	  <xsl:text>&amp;</xsl:text>
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
+    <xsl:text>\cr</xsl:text>
+    <xsl:if test="$ruled='yes'">
+      <xsl:choose>
+	<xsl:when test="ancestor::h:thead">
+	  <xsl:text>\theadrule</xsl:text>
+	</xsl:when>
+	<xsl:when test="$rulerules='cc' and position()=last()">
+	  <xsl:text>\theadrule</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:text>\tablerule</xsl:text>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:if>
+    <xsl:text>&#xa;</xsl:text>
   </xsl:template>  
   
   <xsl:template mode="halign" match="h:th">
+    <xsl:param name="rulerules" select="'none'"/>
     <xsl:choose>
       <xsl:when test="ancestor::h:tbody">
 	<xsl:call-template name="class">
@@ -310,6 +340,13 @@
 	</xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
+	<xsl:if test="$rulerules='cc'">
+	  <xsl:text>\omit</xsl:text>
+	  <xsl:if test="ancestor::h:thead and count(preceding-sibling::h:th)=1">
+	    <xsl:text>\vrule width1pt</xsl:text>
+	  </xsl:if>
+	  <xsl:text>\trhook</xsl:text>
+	</xsl:if>
 	<xsl:call-template name="class"/>
       </xsl:otherwise>
     </xsl:choose>
@@ -326,8 +363,9 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template mode="halign" match="h:td">
+    <xsl:param name="rulerules" select="'none'"/>
     <xsl:call-template name="class"/>
     <xsl:apply-templates/>
     <xsl:call-template name="class-close"/>
@@ -336,28 +374,38 @@
   <xsl:template name="halign-preamble">
     <xsl:param name="preamble-row" select="1"/>
     <xsl:param name="ruled"/>
+    <xsl:param name="rulerules"/>
     <xsl:for-each select=".//h:tr[position()=$preamble-row]">
       <xsl:if test="position()=1">
 	<xsl:for-each select="*">
 	  <xsl:text>\Hstrut</xsl:text>
 	  <xsl:if test="$ruled='yes'">
-	    <xsl:text>\vrule\hskip2pt</xsl:text>
+	    <xsl:choose>
+	      <xsl:when test="position()=1 and $rulerules='cc'"/>
+	      <xsl:otherwise>
+		<xsl:text>\tvrule\hskip2pt</xsl:text>
+	      </xsl:otherwise>
+	    </xsl:choose>
 	  </xsl:if>
 	  <xsl:text>$\vcenter{\hbox{#}}$</xsl:text>
 	  <xsl:choose>
 	    <xsl:when test="position()=last()">
 	      <xsl:text>&amp;</xsl:text>
 	      <xsl:if test="$ruled='yes'">
-		<xsl:text>\vrule</xsl:text>
+		<xsl:text>\tvrule</xsl:text>
 	      </xsl:if>
 	      <xsl:text>#\tabskip0pt\cr</xsl:text>
-	      <xsl:if test="$ruled='yes'">
+	      <xsl:if test="$ruled='yes' and not($rulerules='cc')">
 		<xsl:text>\tablerule</xsl:text>
 	      </xsl:if>
 	      <xsl:text>&#xa;</xsl:text>
 	    </xsl:when>
 	    <xsl:otherwise>
-	      <xsl:text>\hfil\quad\tabskip3pt plus1pt&amp;</xsl:text>
+	      <xsl:text>\hfil</xsl:text>
+	      <xsl:if test="not($rulerules='cc')">
+		<xsl:text>\quad</xsl:text>
+	      </xsl:if>
+	      <xsl:text>\tabskip3pt plus1pt&amp;</xsl:text>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:for-each>
@@ -446,32 +494,6 @@
 	<xsl:call-template name="class-close">
 	  <xsl:with-param name="class" select="substring-after($class,' ')"/>
 	</xsl:call-template>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-  
-  <xsl:template name="ells">
-    <xsl:param name="nells"/>
-    <xsl:choose>
-      <xsl:when test="$nells=1">
-	<xsl:text>l</xsl:text>
-      </xsl:when>
-      <xsl:when test="$nells=2">
-	<xsl:text>ll</xsl:text>
-      </xsl:when>
-      <xsl:when test="$nells=3">
-	<xsl:text>lll</xsl:text>
-      </xsl:when>
-      <xsl:when test="$nells=4">
-	<xsl:text>llll</xsl:text>
-      </xsl:when>
-      <xsl:when test="$nells=5">
-	<xsl:text>lllll</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>
-	<xsl:message
-	    >ells called asking for too many ells: nells=<xsl:value-of select="$nells"
-	    /></xsl:message>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
