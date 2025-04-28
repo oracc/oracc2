@@ -258,7 +258,7 @@
       </xsl:choose>
     </xsl:variable>
     <!--<xsl:message>tex:preamble-row $p-row=<xsl:value-of select="$p-row"/></xsl:message>-->
-    <xsl:text>\halign{</xsl:text>
+    <xsl:text>\halign{%&#xa;</xsl:text>
     <xsl:choose>
       <xsl:when test="$ruled='yes'">
 	<xsl:call-template name="halign-preamble">
@@ -303,20 +303,30 @@
     <xsl:param name="ruled"/>
     <xsl:param name="rulerules" select="'none'"/>
     <xsl:for-each select="*">
-      <xsl:apply-templates mode="halign" select=".">
-	<xsl:with-param name="rulerules" select="$rulerules"/>
-      </xsl:apply-templates>
       <xsl:choose>
-	<xsl:when test="position()=last()">
-	  <xsl:if test="$ruled='yes'">
-	    <xsl:text>&amp;</xsl:text>
-	  </xsl:if>
-	  <xsl:if test="$rulerules='cc' and ancestor::h:thead">
-	    <xsl:text>\omit</xsl:text>
-	  </xsl:if>
-	</xsl:when>
+	<xsl:when test="$rulerules='cc' and position()=1"/><!--omit the left numbers in cc-->
 	<xsl:otherwise>
-	  <xsl:text>&amp;</xsl:text>
+	  <xsl:if test="self::h:td and $rulerules='cc' and position()=2">
+	    <xsl:text>\cclnum{</xsl:text>
+	    <xsl:value-of select="preceding-sibling::*[1]/text()"/>
+	    <xsl:text>}</xsl:text>
+	  </xsl:if>
+	  <xsl:apply-templates mode="halign" select=".">
+	    <xsl:with-param name="rulerules" select="$rulerules"/>
+	  </xsl:apply-templates>
+	  <xsl:choose>
+	    <xsl:when test="position()=last()">
+	      <xsl:if test="$ruled='yes'">
+		<xsl:text>&amp;</xsl:text>
+	      </xsl:if>
+	      <xsl:if test="$rulerules='cc' and ancestor::h:thead">
+		<xsl:text>\omit</xsl:text>
+	      </xsl:if>
+	    </xsl:when>
+	    <xsl:otherwise>
+	      <xsl:text>&amp;</xsl:text>
+	    </xsl:otherwise>
+	  </xsl:choose>
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:for-each>
@@ -356,8 +366,17 @@
 	<xsl:call-template name="class"/>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:text>\thead{}</xsl:text>
-    <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="$rulerules='cc'">
+	<xsl:text>\cctnum{</xsl:text>
+	<xsl:apply-templates/>
+	<xsl:text>}</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>\thead{}</xsl:text>
+	<xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:choose>
       <xsl:when test="ancestor::h:tbody">
 	<xsl:call-template name="class-close">
@@ -384,34 +403,55 @@
     <xsl:for-each select=".//h:tr[position()=$preamble-row]">
       <xsl:if test="position()=1">
 	<xsl:for-each select="*">
-	  <xsl:text>\Hstrut</xsl:text>
-	  <xsl:if test="$ruled='yes'">
-	    <xsl:choose>
-	      <xsl:when test="position()=1 and $rulerules='cc'"/>
-	      <xsl:otherwise>
-		<xsl:text>\tvrule\hskip2pt</xsl:text>
-	      </xsl:otherwise>
-	    </xsl:choose>
-	  </xsl:if>
-	  <xsl:text>$\vcenter{\hbox{#}}$</xsl:text>
 	  <xsl:choose>
-	    <xsl:when test="position()=last()">
-	      <xsl:text>&amp;</xsl:text>
-	      <xsl:if test="$ruled='yes'">
-		<xsl:text>\tvrule</xsl:text>
-	      </xsl:if>
-	      <xsl:text>#\tabskip0pt\cr</xsl:text>
-	      <xsl:if test="$ruled='yes' and not($rulerules='cc')">
-		<xsl:text>\tablerule</xsl:text>
-	      </xsl:if>
-	      <xsl:text>&#xa;</xsl:text>
-	    </xsl:when>
+	    <xsl:when test="$rulerules='cc' and position()=1"/><!--omit the left numbers in cc-->
 	    <xsl:otherwise>
-	      <xsl:text>\hfil</xsl:text>
-	      <xsl:if test="not($rulerules='cc')">
-		<xsl:text>\quad</xsl:text>
+	      <xsl:text>\Hstrut</xsl:text>
+	      <xsl:if test="$ruled='yes'">
+		<xsl:choose>
+		  <xsl:when test="$rulerules='cc'">
+		    <xsl:choose>
+		      <xsl:when test="position()=2"><!--position()=1 is still left number-->
+			<xsl:text>\tvrulex\hskip0pt</xsl:text>
+		      </xsl:when>
+		      <xsl:otherwise>
+			<xsl:text>\tvrule\hskip0pt</xsl:text>
+		      </xsl:otherwise>
+		    </xsl:choose>
+		  </xsl:when>
+		  <xsl:otherwise>
+		    <xsl:text>\tvrule\hskip2pt</xsl:text>
+		  </xsl:otherwise>
+		</xsl:choose>
 	      </xsl:if>
-	      <xsl:text>\tabskip3pt plus1pt&amp;</xsl:text>
+	      <xsl:text>$\vcenter{\hbox{#}}$</xsl:text>
+	      <xsl:choose>
+		<xsl:when test="position()=last()">
+		  <xsl:text>%&#xa;&amp;</xsl:text>
+		  <xsl:if test="$ruled='yes'">
+		    <xsl:text>\tvrule</xsl:text>
+		  </xsl:if>
+		  <xsl:text>#\tabskip0pt\cr</xsl:text>
+		  <xsl:if test="$ruled='yes' and not($rulerules='cc')">
+		    <xsl:text>\tablerule</xsl:text>
+		  </xsl:if>
+		  <xsl:text>&#xa;</xsl:text>
+		</xsl:when>
+		<xsl:otherwise>
+		  <xsl:text>\hfil</xsl:text>
+		  <xsl:if test="not($rulerules='cc')">
+		    <xsl:text>\quad</xsl:text>
+		  </xsl:if>
+		  <xsl:choose>
+		    <xsl:when test="$rulerules='cc'">
+		      <xsl:text>\tabskip0pt%&#xa;&amp;</xsl:text>
+		    </xsl:when>
+		    <xsl:otherwise>
+		      <xsl:text>\tabskip3pt plus1pt%&#xa;&amp;</xsl:text>
+		    </xsl:otherwise>
+		  </xsl:choose>
+		</xsl:otherwise>
+	      </xsl:choose>
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:for-each>
