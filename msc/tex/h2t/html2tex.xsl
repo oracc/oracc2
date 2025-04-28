@@ -459,10 +459,14 @@
     </xsl:for-each>
   </xsl:template>
 
+  <xsl:template match="h:br">
+    <xsl:text>\newline{}</xsl:text>
+  </xsl:template>
+
   <xsl:template match="text()">
     <xsl:value-of select="translate(.,'&amp;~%#', '&#xfe60;&#x223c;&#x2052;&#xfe5f;')"/>
   </xsl:template>
-  
+
   <!-- Ignored HTML tags -->
   <xsl:template match="h:head
 		       |h:a[@name]
@@ -475,6 +479,10 @@
     <xsl:message>Unhandled HTML tag <xsl:value-of select="local-name(.)"/></xsl:message>
   </xsl:template>
 
+  <xsl:template match="h2t-wrapper">
+    <xsl:apply-templates/>
+  </xsl:template>
+  
   <xsl:template match="*">
     <xsl:message>Unnamespaced tag <xsl:value-of select="local-name(.)"/></xsl:message>
   </xsl:template>
