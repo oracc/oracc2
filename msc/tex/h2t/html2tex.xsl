@@ -88,6 +88,12 @@
 	  <xsl:text>\hfil}%&#xa;</xsl:text>
 	  <xsl:text>\vfil}%&#xa;</xsl:text>
 	</xsl:when>
+	<xsl:when test="h:span[@class='cc-uni']">
+	  <xsl:text>\hbox to\cccwd{\hfil</xsl:text>
+	  <xsl:call-template name="class"/>
+	  <xsl:apply-templates/>
+	  <xsl:text>\hfil}%&#xa;</xsl:text>
+	</xsl:when>
 	<xsl:otherwise>
 	  <xsl:text>\hbox{</xsl:text>
 	  <xsl:call-template name="class"/>
