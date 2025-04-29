@@ -126,7 +126,7 @@
 
   <xsl:template match="h:img">
     <!--<xsl:value-of select="concat('[[img:src=',@src,']]')"/>-->
-    <xsl:value-of select="concat('\includegraphics{/home/stinney/orc/easl',@src,'}')"/>
+    <xsl:value-of select="concat('\includegraphics{/home/stinney/orc/www',@src,'}')"/>
   </xsl:template>
 
   <xsl:template match="h:li">
@@ -294,9 +294,14 @@
       <xsl:with-param name="ruled" select="$ruled"/>
       <xsl:with-param name="rulerules" select="$rulerules"/>
     </xsl:apply-templates>
-    <xsl:if test="contains(ancestor::h:table/@class,'tbodyrules')">
-      <xsl:text>\tbodyrule</xsl:text>
-    </xsl:if>
+    <xsl:choose>
+      <xsl:when test="contains(ancestor::h:table/@class,'tbodyrules')">
+	<xsl:text>\tbodyrule</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>\tbodybreak</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template mode="halign" match="h:tr">
