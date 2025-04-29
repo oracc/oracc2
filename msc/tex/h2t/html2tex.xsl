@@ -4,7 +4,7 @@
 	       xmlns:struct="http://oracc.org/ns/esp-struct/1.0"
 	       xmlns:tex="http://oracc.org/ns/tex/1.0"
 	       >
-
+  
   <xsl:param name="class-arg" select="',sqopq,sqseq,sqinv,sqchr,not,'"/>
   
   <xsl:output method="text" encoding="UTF-8"/>
@@ -210,6 +210,14 @@
     <xsl:apply-templates/>
     <xsl:text>}</xsl:text>
   </xsl:template>
+
+  <xsl:template match="h:table[contains(@class,'sltab')]">
+    <xsl:message>sltab</xsl:message>
+    <xsl:text>\bigskip&#xa;</xsl:text>
+    <xsl:apply-templates mode="halign" select=".">
+      <xsl:with-param name="rulerules" select="'sltab'"/>
+    </xsl:apply-templates>
+  </xsl:template>
   
   <xsl:template match="h:table">
     <xsl:text>\bigskip&#xa;</xsl:text>
@@ -295,6 +303,9 @@
       <xsl:with-param name="rulerules" select="$rulerules"/>
     </xsl:apply-templates>
     <xsl:choose>
+      <xsl:when test="$rulerules='sltab'">
+	<xsl:text>\sltabrule</xsl:text>
+      </xsl:when>
       <xsl:when test="contains(ancestor::h:table/@class,'tbodyrules')">
 	<xsl:text>\tbodyrule</xsl:text>
       </xsl:when>
