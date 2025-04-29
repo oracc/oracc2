@@ -211,6 +211,25 @@
     <xsl:text>}</xsl:text>
   </xsl:template>
 
+  <xsl:template match="h:table[contains(@class,'codechart-list')]">
+    <xsl:message>sltab</xsl:message>
+    <xsl:text>\bigskip&#xa;</xsl:text>
+    <xsl:text>\begin{2column}&#xa;</xsl:text>
+    <xsl:for-each select="h:tbody/h:tr">
+      <xsl:text>\cclrow{</xsl:text>
+      <xsl:value-of select="h:td[1]"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:value-of select="h:td[2]"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:value-of select="h:td[3]"/>
+      <xsl:text>}&#xa;</xsl:text>
+    </xsl:for-each>
+    <xsl:text>\end{2column}&#xa;</xsl:text>
+  </xsl:template>
+
+  <xsl:template mode="codechart-lsit" match="h:tr">
+  </xsl:template>
+  
   <xsl:template match="h:table[contains(@class,'sltab')]">
     <xsl:message>sltab</xsl:message>
     <xsl:text>\bigskip&#xa;</xsl:text>
