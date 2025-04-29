@@ -94,6 +94,18 @@
 	  <xsl:apply-templates/>
 	  <xsl:text>\hfil}%&#xa;</xsl:text>
 	</xsl:when>
+	<xsl:when test="h:span[@class='sl-cc']">
+	  <xsl:text>\hbox to\slcwd{\hfil</xsl:text>
+	  <xsl:call-template name="class"/>
+	  <xsl:apply-templates/>
+	  <xsl:text>\hfil}%&#xa;</xsl:text>
+	</xsl:when>
+	<xsl:when test="h:span[@class='sl-cu']">
+	  <xsl:text>\hbox to\{\hfil</xsl:text>
+	  <xsl:call-template name="class"/>
+	  <xsl:apply-templates/>
+	  <xsl:text>\hfil}%&#xa;</xsl:text>
+	</xsl:when>
 	<xsl:otherwise>
 	  <xsl:text>\hbox{</xsl:text>
 	  <xsl:call-template name="class"/>
@@ -124,7 +136,7 @@
     <xsl:text>&#xa;&#xa;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="h:img">
+  <xsl:template mode="hbox" match="h:img">
     <!--<xsl:value-of select="concat('[[img:src=',@src,']]')"/>-->
     <xsl:value-of select="concat('\includegraphics{/home/stinney/orc/www',@src,'}')"/>
   </xsl:template>
@@ -340,6 +352,7 @@
     <xsl:for-each select="*">
       <xsl:choose>
 	<xsl:when test="$rulerules='cc' and position()=1"/><!--omit the left numbers in cc-->
+	<xsl:when test="$rulerules='sltab' and position()=1"/><!--omit the left numbers in cc-->
 	<xsl:otherwise>
 	  <xsl:if test="self::h:td and $rulerules='cc' and position()=2">
 	    <xsl:text>\cclnum{</xsl:text>
@@ -440,6 +453,7 @@
 	<xsl:for-each select="*">
 	  <xsl:choose>
 	    <xsl:when test="$rulerules='cc' and position()=1"/><!--omit the left numbers in cc-->
+	    <xsl:when test="$rulerules='sltab' and position()=1"/><!--omit the left numbers in cc-->
 	    <xsl:otherwise>
 	      <xsl:text>\Hstrut</xsl:text>
 	      <xsl:if test="$ruled='yes'">
@@ -474,7 +488,7 @@
 		</xsl:when>
 		<xsl:otherwise>
 		  <xsl:text>\hfil</xsl:text>
-		  <xsl:if test="not($rulerules='cc')">
+		  <xsl:if test="not($rulerules='cc') and not($rulerules='sltab')">
 		    <xsl:text>\quad</xsl:text>
 		  </xsl:if>
 		  <xsl:choose>
@@ -585,6 +599,10 @@
 	</xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <xsl:template mode="hbox" match="*">
+    <xsl:message>Tag <xsl:value-of select="local-name(.)"/> not handled in mode=hbox</xsl:message>
   </xsl:template>
   
   <!-- ESP -->
