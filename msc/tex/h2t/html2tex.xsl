@@ -669,20 +669,41 @@
     <xsl:text>}{</xsl:text>
     <xsl:value-of select="*[@class='uname']"/>
     <xsl:text>}{</xsl:text>
-    <xsl:apply-templates select="*[@class='stags']"/>
+    <xsl:apply-templates select="*[@class='stags']/@data-hrt"/>
     <xsl:text>}{</xsl:text>
-    <xsl:value-of select="*[@class='rglyf']"/>
+    <xsl:value-of select="*[@class='uname']/@data-pc25g"/>
     <xsl:text>}{</xsl:text>
-    <xsl:apply-templates mode="nosqb" select="*[@class='rhex']"/>
+    <xsl:value-of select="*[@class='uname']/@data-pc25h"/>
+    <!--<xsl:apply-templates mode="nosqb" select="*[@class='rhex']"/>-->
     <xsl:text>}{</xsl:text>
     <xsl:apply-templates select="*[@class='zatu']"/>
     <xsl:text>}{</xsl:text>
-    <xsl:value-of select="*[@class='dist']"/>
+    <!--<xsl:value-of select="*[@class='dist']"/>-->
+    <xsl:call-template name="sl-dist"/>
     <xsl:text>}{</xsl:text>
     <xsl:value-of select="*[@class='notes']"/>
     <xsl:text>}&#xa;</xsl:text>
   </xsl:template>
-  
+
+  <xsl:template name="sl-dist">
+    <xsl:choose>
+      <xsl:when test="count(*[@class='dist'])>0">
+	<xsl:for-each select="*[@class='dist']">
+	  <xsl:text>\sldistt{</xsl:text>
+	  <xsl:value-of select="@data-distt"/>
+	  <xsl:text>}\sldistiv{</xsl:text>
+	  <xsl:value-of select="@data-dist4"/>
+	  <xsl:text>}\sldistiii{</xsl:text>
+	  <xsl:value-of select="@data-dist3"/>
+	  <xsl:text>}\sldist</xsl:text>
+	</xsl:for-each>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>\slnodist</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template mode="hbox" match="*">
     <xsl:message>Tag <xsl:value-of select="local-name(.)"/> not handled in mode=hbox</xsl:message>
   </xsl:template>
