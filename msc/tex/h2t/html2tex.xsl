@@ -53,6 +53,9 @@
       <xsl:when test="contains(@class,'names')">
 	<xsl:call-template name="sl-names"/>
       </xsl:when>
+      <xsl:when test="contains(@class,'cdligh') and count(*)=0">
+	<xsl:text>\slnocdli</xsl:text>
+      </xsl:when>
       <xsl:when test="contains(@class,'vbox')">
 	<xsl:choose>
 	  <xsl:when test="ancestor::*[contains(@class,'codechart')]">
@@ -671,6 +674,8 @@
     <xsl:value-of select="*[@class='rglyf']"/>
     <xsl:text>}{</xsl:text>
     <xsl:apply-templates mode="nosqb" select="*[@class='rhex']"/>
+    <xsl:text>}{</xsl:text>
+    <xsl:apply-templates select="*[@class='zatu']"/>
     <xsl:text>}{</xsl:text>
     <xsl:value-of select="*[@class='dist']"/>
     <xsl:text>}{</xsl:text>
