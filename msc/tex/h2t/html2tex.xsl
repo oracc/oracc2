@@ -50,6 +50,9 @@
 
   <xsl:template match="h:div">
     <xsl:choose>
+      <xsl:when test="contains(@class,'names')">
+	<xsl:call-template name="sl-names"/>
+      </xsl:when>
       <xsl:when test="contains(@class,'vbox')">
 	<xsl:choose>
 	  <xsl:when test="ancestor::*[contains(@class,'codechart')]">
@@ -94,15 +97,15 @@
 	  <xsl:apply-templates/>
 	  <xsl:text>\hfil}%&#xa;</xsl:text>
 	</xsl:when>
-	<xsl:when test="h:span[@class='sl-cc']">
-	  <xsl:text>\hbox to\slcwd{\hfil</xsl:text>
+	<xsl:when test="@class='sl-c-c' or @class='fchr'">
+	  <xsl:text>\hbox to\slcwd{\hss</xsl:text>
 	  <xsl:call-template name="class"/>
 	  <xsl:apply-templates/>
-	  <xsl:text>\hfil}%&#xa;</xsl:text>
+	  <xsl:text>\hss}%&#xa;</xsl:text>
 	</xsl:when>
-	<xsl:when test="h:span[@class='sl-cu']">
-	  <xsl:text>\hbox to\{\hfil</xsl:text>
-	  <xsl:call-template name="class"/>
+	<xsl:when test="@class='sl-c-u' or @class='fhex'">
+	  <xsl:text>\hbox to\slcwd{\hfil</xsl:text>
+	  <xsl:text>\slcufont</xsl:text>
 	  <xsl:apply-templates/>
 	  <xsl:text>\hfil}%&#xa;</xsl:text>
 	</xsl:when>
@@ -137,8 +140,9 @@
   </xsl:template>
 
   <xsl:template mode="hbox" match="h:img">
-    <!--<xsl:value-of select="concat('[[img:src=',@src,']]')"/>-->
+    <xsl:text>\hbox to\cdliwd{\hss</xsl:text>
     <xsl:value-of select="concat('\includegraphics{/home/stinney/orc/www',@src,'}')"/>
+    <xsl:text>\hss}</xsl:text>
   </xsl:template>
 
   <xsl:template match="h:li">
@@ -224,8 +228,6 @@
   </xsl:template>
 
   <xsl:template match="h:table[contains(@class,'codechart-list')]">
-    <xsl:message>sltab</xsl:message>
-    <xsl:text>\bigskip&#xa;</xsl:text>
     <xsl:text>\beginchartlist&#xa;</xsl:text>
     <xsl:for-each select="h:tbody/h:tr">
       <xsl:text>\cclrow{</xsl:text>
@@ -239,15 +241,45 @@
     <xsl:text>\endchartlist&#xa;</xsl:text>
   </xsl:template>
 
-  <xsl:template mode="codechart-lsit" match="h:tr">
-  </xsl:template>
-  
+  <!-- The column 1 that we are dropping is th not td so args are td[1] .. td[8] -->
   <xsl:template match="h:table[contains(@class,'sltab')]">
     <xsl:message>sltab</xsl:message>
-    <xsl:text>\bigskip&#xa;</xsl:text>
-    <xsl:apply-templates mode="halign" select=".">
-      <xsl:with-param name="rulerules" select="'sltab'"/>
-    </xsl:apply-templates>
+    <xsl:text>\beginpcsltab&#xa;</xsl:text>
+    <xsl:for-each select="h:tbody/h:tr">
+      <xsl:text>\pcslrow{</xsl:text>
+      <xsl:apply-templates select="h:td[1]" mode="sltab"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:apply-templates select="h:td[2]" mode="sltab"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:apply-templates select="h:td[3]" mode="sltab"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:apply-templates select="h:td[4]" mode="sltab"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:apply-templates select="h:td[5]" mode="sltab"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:apply-templates select="h:td[6]" mode="sltab"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:apply-templates select="h:td[7]" mode="sltab"/>
+      <xsl:text>}{</xsl:text>
+      <xsl:apply-templates select="h:td[8]" mode="sltab"/>
+      <xsl:text>}{.75}&#xa;</xsl:text>
+    </xsl:for-each>
+    <xsl:text>\endpcsltab&#xa;</xsl:text>
+  </xsl:template>
+
+  <xsl:template mode="sltab" match="h:td">
+    <xsl:call-template name="class"/>
+    <xsl:choose>
+      <xsl:when test="count(h:div[contains(@class,'vbox')])>1">
+	<xsl:text>\vbox{</xsl:text>
+	<xsl:apply-templates/>
+	<xsl:text>}</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:call-template name="class-close"/>
   </xsl:template>
   
   <xsl:template match="h:table">
@@ -307,7 +339,9 @@
 	</xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:call-template name="halign-preamble"/>
+	<xsl:call-template name="halign-preamble">
+	  <xsl:with-param name="rulerules" select="$rulerules"/>
+	</xsl:call-template>
       </xsl:otherwise>
     </xsl:choose>
     <xsl:apply-templates mode="halign">
@@ -440,7 +474,16 @@
   <xsl:template mode="halign" match="h:td">
     <xsl:param name="rulerules" select="'none'"/>
     <xsl:call-template name="class"/>
-    <xsl:apply-templates/>
+    <xsl:choose>
+      <xsl:when test="count(h:div[contains(@class,'vbox')])>1">
+	<xsl:text>\vbox{</xsl:text>
+	<xsl:apply-templates/>
+	<xsl:text>}</xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:call-template name="class-close"/>
   </xsl:template>
     
@@ -448,6 +491,7 @@
     <xsl:param name="preamble-row" select="1"/>
     <xsl:param name="ruled"/>
     <xsl:param name="rulerules"/>
+    <xsl:message>halign-preamble rulerules=<xsl:value-of select="$rulerules"/></xsl:message>
     <xsl:for-each select=".//h:tr[position()=$preamble-row]">
       <xsl:if test="position()=1">
 	<xsl:for-each select="*">
@@ -492,7 +536,7 @@
 		    <xsl:text>\quad</xsl:text>
 		  </xsl:if>
 		  <xsl:choose>
-		    <xsl:when test="$rulerules='cc'">
+		    <xsl:when test="$rulerules='cc' or $rulerules='sltab'">
 		      <xsl:text>\tabskip0pt%&#xa;&amp;</xsl:text>
 		    </xsl:when>
 		    <xsl:otherwise>
@@ -601,6 +645,24 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template name="sl-names">
+    <xsl:text>\slnames{</xsl:text>
+    <xsl:apply-templates select="*[@class='sname']"/>
+    <xsl:text>}{</xsl:text>
+    <xsl:value-of select="*[@class='uname']"/>
+    <xsl:text>}{</xsl:text>
+    <xsl:apply-templates select="*[@class='stags']"/>
+    <xsl:text>}{</xsl:text>
+    <xsl:value-of select="*[@class='rglyf']"/>
+    <xsl:text>}{</xsl:text>
+    <xsl:value-of select="*[@class='rhex']"/>
+    <xsl:text>}{</xsl:text>
+    <xsl:value-of select="*[@class='dist']"/>
+    <xsl:text>}{</xsl:text>
+    <xsl:value-of select="*[@class='notes']"/>
+    <xsl:text>}&#xa;</xsl:text>
+  </xsl:template>
+  
   <xsl:template mode="hbox" match="*">
     <xsl:message>Tag <xsl:value-of select="local-name(.)"/> not handled in mode=hbox</xsl:message>
   </xsl:template>
