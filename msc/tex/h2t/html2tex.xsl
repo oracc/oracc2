@@ -105,8 +105,8 @@
 	</xsl:when>
 	<xsl:when test="@class='sl-c-u' or @class='fhex'">
 	  <xsl:text>\hbox to\slcwd{\hfil</xsl:text>
-	  <xsl:text>\slcufont</xsl:text>
-	  <xsl:apply-templates/>
+	  <xsl:text>\slcufont </xsl:text>
+	  <xsl:apply-templates mode="nosqb"/>
 	  <xsl:text>\hfil}%&#xa;</xsl:text>
 	</xsl:when>
 	<xsl:otherwise>
@@ -253,18 +253,29 @@
       <xsl:text>}{</xsl:text>
       <xsl:apply-templates select="h:td[3]" mode="sltab"/>
       <xsl:text>}{</xsl:text>
-      <xsl:apply-templates select="h:td[4]" mode="sltab"/>
+      <xsl:apply-templates select="h:td[4]" mode="slglyf"/>
       <xsl:text>}{</xsl:text>
-      <xsl:apply-templates select="h:td[5]" mode="sltab"/>
+      <xsl:apply-templates select="h:td[5]" mode="slglyf"/>
       <xsl:text>}{</xsl:text>
-      <xsl:apply-templates select="h:td[6]" mode="sltab"/>
+      <xsl:apply-templates select="h:td[6]" mode="slglyf"/>
       <xsl:text>}{</xsl:text>
-      <xsl:apply-templates select="h:td[7]" mode="sltab"/>
+      <xsl:apply-templates select="h:td[7]" mode="slglyf"/>
       <xsl:text>}{</xsl:text>
-      <xsl:apply-templates select="h:td[8]" mode="sltab"/>
+      <xsl:apply-templates select="h:td[8]" mode="slglyf"/>
       <xsl:text>}{.75}&#xa;</xsl:text>
     </xsl:for-each>
     <xsl:text>\endpcsltab&#xa;</xsl:text>
+  </xsl:template>
+
+  <xsl:template mode="slglyf" match="h:td">
+    <xsl:choose>
+      <xsl:when test="count(*)>0">
+	<xsl:apply-templates mode="sltab" select="."/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>\slnoglyf</xsl:text>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template mode="sltab" match="h:td">
@@ -556,6 +567,10 @@
     <xsl:text>\newline{}</xsl:text>
   </xsl:template>
 
+  <xsl:template mode="nosqb" match="text()">
+    <xsl:value-of select="translate(.,'[]','')"/>
+  </xsl:template>
+  
   <xsl:template match="text()">
     <xsl:value-of select="translate(.,'&amp;~%#', '&#xfe60;&#x223c;&#x2052;&#xfe5f;')"/>
   </xsl:template>
@@ -655,7 +670,7 @@
     <xsl:text>}{</xsl:text>
     <xsl:value-of select="*[@class='rglyf']"/>
     <xsl:text>}{</xsl:text>
-    <xsl:value-of select="*[@class='rhex']"/>
+    <xsl:apply-templates mode="nosqb" select="*[@class='rhex']"/>
     <xsl:text>}{</xsl:text>
     <xsl:value-of select="*[@class='dist']"/>
     <xsl:text>}{</xsl:text>
