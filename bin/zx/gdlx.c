@@ -18,11 +18,14 @@
 
 static Mloc ml;
 
+Hash *keyhash = NULL;
+Pool *keypool = NULL;
+
 Mloc xo_loc;
 FILE *f_xml;
 const char *file;
 int key = 0;
-int verbose = 1;
+int verbose = 0;
 int status;
 int rnvtrace;
 
@@ -200,7 +203,7 @@ do_many(const char *fn)
     fp = fopen(fn, "r");
   if (fp)
     {
-      char buf[1024], *s;
+      char buf[1024], *s, *orig_s;
       ml.file = fn;
       ml.line = 1;
       if (wrapper)
@@ -210,7 +213,10 @@ do_many(const char *fn)
 	  if (key)
 	    {
 	      s[strlen(s)-1] = '\0';
-	      printf("%s", s);
+	      if (!gsort_mode)
+		printf("%s", s);
+	      else
+		orig_s = (char*)pool_copy((uccp)s, keypool);
 	      int i = 1;
 	      while (i < key)
 		{
@@ -228,6 +234,8 @@ do_many(const char *fn)
 		  if (*t)
 		    *t = '\0';
 		}
+	      if (gsort_mode)
+		hash_add(keyhash, pool_copy((uccp)s, keypool), orig_s);
 	    }
 	  do_one(s);
 	}
@@ -297,6 +305,8 @@ main(int argc, char **argv)
 
   if (gsort_mode)
     {
+      keyhash = hash_create(4096);
+      keypool = pool_init();
       gsort_init();
       gslp = list_create(LIST_SINGLE);
     }
@@ -317,8 +327,16 @@ main(int argc, char **argv)
       GS_head ** ghp = (GS_head**)list2array(gslp);
       int n = list_len(gslp), i;
       qsort(ghp, n, sizeof(GS_head*), gsort_cmp);
-      for (i = 0; i < n; ++i)
-	fprintf(stdout, "%s\n", ghp[i]->s);
+      if (key)
+	{
+	  for (i = 0; i < n; ++i)
+	    fprintf(stdout, "%s\t%s\n", ghp[i]->s, (char*)hash_find(keyhash, ghp[i]->s));
+	}
+      else
+	{
+	  for (i = 0; i < n; ++i)
+	    fprintf(stdout, "%s\n", ghp[i]->s);
+	}
       gsort_term();
     }
 
