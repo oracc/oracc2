@@ -146,7 +146,7 @@
     <xsl:text>\hbox to\cdliwd{\hss</xsl:text>
     <xsl:value-of select="concat('\includegraphics{propgh/o',
 			  substring-after(substring-before(@src,'.'),'o'),
-			  '.jpg}{',../@data-sf,'}')"/>
+			  '.png}{',../@data-sf,'}')"/>
     <xsl:text>\hss}</xsl:text>
   </xsl:template>
 
