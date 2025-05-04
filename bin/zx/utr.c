@@ -73,7 +73,7 @@ utr_file(char *fn)
 
   if (f)
     {
-      wchar_t wf[n+1];
+      wchar_t *wf = malloc(sizeof(wchar_t)*(n+1));
       size_t wf_res = mbstowcs(wf, f, n);
       if (wf_res < 0)
 	{
@@ -104,6 +104,8 @@ utr_file(char *fn)
 	  write(o,f,f_res);
 	  close(o);
 	}
+      free(wf);
+      free(f);
     }
 }
 
