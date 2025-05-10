@@ -77,7 +77,7 @@
 	<xsl:apply-templates/>
 	<xsl:text>\egroup&#xa;</xsl:text>
       </xsl:when>
-      <xsl:otherwise>	
+      <xsl:otherwise>
 	<xsl:apply-templates/>
       </xsl:otherwise>
     </xsl:choose>
@@ -101,12 +101,16 @@
 	  <xsl:text>\hfil}%&#xa;</xsl:text>
 	</xsl:when>
 	<xsl:when test="@class='sl-c-c' or @class='fchr'">
+	  <xsl:if test="preceding-sibling::*[@class='fchr']">
+	    <xsl:text>\kern3pt</xsl:text>
+	  </xsl:if>
 	  <xsl:text>\hbox to\slcwd{\hss</xsl:text>
 	  <xsl:call-template name="class"/>
 	  <xsl:apply-templates/>
 	  <xsl:text>\hss}%&#xa;</xsl:text>
 	</xsl:when>
 	<xsl:when test="@class='sl-c-u' or @class='fhex'">
+	  <xsl:text>\kern-1pt</xsl:text>
 	  <xsl:text>\hbox to\slcwd{\hfil</xsl:text>
 	  <xsl:text>\slcufont </xsl:text>
 	  <xsl:apply-templates mode="nosqb"/>
@@ -144,9 +148,7 @@
 
   <xsl:template mode="hbox" match="h:img">
     <xsl:text>\hbox to\cdliwd{\hss</xsl:text>
-    <xsl:value-of select="concat('\includegraphics{propgh/o',
-			  substring-after(substring-before(@src,'.'),'o'),
-			  '.png}{',../@data-sf,'}')"/>
+    <xsl:value-of select="concat('\includegraphics{propgh/',@data-row,'.png}{',../@data-sf,'}')"/>
     <xsl:text>\hss}</xsl:text>
   </xsl:template>
 
@@ -251,6 +253,20 @@
     <xsl:message>sltab</xsl:message>
     <xsl:text>\beginpcsltab&#xa;</xsl:text>
     <xsl:for-each select="h:tbody/h:tr">
+      <xsl:if test="../@data-aka">
+	<xsl:text>\akatoks{</xsl:text>
+	<xsl:call-template name="textmap">
+	  <xsl:with-param name="t" select="../@data-aka"/>
+	</xsl:call-template>
+	<xsl:text>}</xsl:text>
+      </xsl:if>
+      <xsl:if test="../@data-cdiff">
+	<xsl:text>\cdifftoks{</xsl:text>
+	<xsl:call-template name="textmap">
+	  <xsl:with-param name="t" select="../@data-cdiff"/>
+	</xsl:call-template>
+	<xsl:text>}</xsl:text>
+      </xsl:if>
       <xsl:text>\pcslrow{</xsl:text>
       <xsl:apply-templates select="h:td[1]" mode="sltab"/>
       <xsl:text>}{</xsl:text>
@@ -575,9 +591,17 @@
   <xsl:template mode="nosqb" match="text()">
     <xsl:value-of select="translate(.,'[]','')"/>
   </xsl:template>
-  
+
+  <!-- this deletes '_' -->
+  <xsl:template name="textmap">
+    <xsl:param name="t"/>
+    <xsl:value-of select="translate($t,'&amp;~%#_', '&#xfe60;&#x223c;&#x2052;&#xfe5f;')"/>
+  </xsl:template>
+
   <xsl:template match="text()">
-    <xsl:value-of select="translate(.,'&amp;~%#', '&#xfe60;&#x223c;&#x2052;&#xfe5f;')"/>
+    <xsl:call-template name="textmap">
+      <xsl:with-param name="t" select="."/>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Ignored HTML tags -->
@@ -599,7 +623,7 @@
   <xsl:template match="*">
     <xsl:message>Unnamespaced tag <xsl:value-of select="local-name(.)"/></xsl:message>
   </xsl:template>
-
+  
 <!--  <xsl:template match="text()"/> -->
   
   <!-- HTML FUNCTIONS -->
