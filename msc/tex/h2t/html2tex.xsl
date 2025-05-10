@@ -223,6 +223,7 @@
   <xsl:template match="h:span">
     <xsl:text>\bgroup</xsl:text>
     <xsl:call-template name="class"/>
+    <xsl:if test="@data-newgh"><xsl:text>\newgh</xsl:text></xsl:if>
     <xsl:apply-templates/>
     <xsl:call-template name="class-close"/>
     <xsl:text>\egroup{}</xsl:text>
