@@ -111,6 +111,8 @@ gsort_prep(Tree *tp)
 
       if (tp->root->text && (gs = hash_find(hheads, (uccp)tp->root->text)))
 	return gs;
+      else if (tp->root->text && gsort_ud_md_test((uccp)tp->root->text))
+	return gsort_ud_md(tp);
       else
 	{
 	  List *lp = list_create(LIST_SINGLE);
@@ -125,7 +127,7 @@ gsort_prep(Tree *tp)
 	      gs->i = (GS_item **)list2array(lp);
 	      list_free(lp, NULL);
 	      gs->s = (uccp)tp->root->text;
-	      if ('|' == *gs->s && gs->i[0]->t == 2)
+	      if ('|' == *gs->s && gs->i[0]->t == GST_NUM)
 		gsort_reset_c_type(gs);
 	      hash_add(hheads, gs->s, gs);
 	    }
@@ -162,12 +164,12 @@ gsort_node(Node *np, List *lp)
   switch (np->name[2])
     {
     case 'p':
-      list_add(lp, gsort_item(1, (uccp)np->text, (uccp)np->text, NULL));
+      list_add(lp, gsort_item(GST_PUNCT, (uccp)np->text, (uccp)np->text, NULL));
       break;
     case 'l':
     case 's':
     case 'v':
-      list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
+      list_add(lp, gsort_item(GST_REG, (uccp)np->text, (uccp)np->text, NULL));
       if (pending_r)
 	{
 	  GS_item *gp = list_pop(lp);
@@ -184,7 +186,7 @@ gsort_node(Node *np, List *lp)
       }
       break;
     case 'n':
-      list_add(lp, gsort_item(2, (uccp)np->text,
+      list_add(lp, gsort_item(GST_NUM, (uccp)np->text,
 			      np->kids ? (uccp)np->kids->next->text : (uccp)np->text,
 			      np->kids ? (uccp)np->kids->text : (uccp)np->text));
       {
@@ -199,13 +201,13 @@ gsort_node(Node *np, List *lp)
       if (*(uccp)np->text < 128 && isdigit(*np->text))
 	pending_r = atoi(np->text);
       else
-	list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
+	list_add(lp, gsort_item(GST_REG, (uccp)np->text, (uccp)np->text, NULL));
       break;
     case 'a':
     case 'm':
     case 'f':
       list_add(lp, &gsort_null_item);
-      list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->text, NULL));
+      list_add(lp, gsort_item(GST_REG, (uccp)np->text, (uccp)np->text, NULL));
       break;
     case 'b':
     case 'c':
@@ -219,7 +221,7 @@ gsort_node(Node *np, List *lp)
     case 'q':
       /* for qualified signs use the value, a NULL delimiter (which
 	 will sort before other delimiters) and the sign */
-      list_add(lp, gsort_item(0, (uccp)np->text, (uccp)np->kids->text, NULL));
+      list_add(lp, gsort_item(GST_REG, (uccp)np->text, (uccp)np->kids->text, NULL));
       list_add(lp, &gsort_null_item);
       {
 	Node *npp;
@@ -244,6 +246,9 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
   if ((gp = hash_find(hitems, n)))
     return gp;
 
+  if (!strncmp((ccp)n,"ZATU", 4))
+    type = GST_ZATU;
+  
   gp = memo_new(m_items);
   gp->t = type;
   gp->g = n;
@@ -264,7 +269,7 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
   /* Reset Punct/Num types for graphemes that aren't tagged g:p/g:n in
      GDL; gp->b (BASE) is lowercase by now */
   if (!strcmp((ccp)gp->b, "p"))
-    gp->t = 1;
+    gp->t = GST_PUNCT;
   else if ('n' == *gp->b || 'f' == *gp->b) /* F is F(raction) */
     {
       unsigned const char *b = gp->b + 1;
@@ -277,7 +282,7 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
 	    else
 	      ++b;
 	  if (!*b || archaic_numeral_suffix[*b])
-	    gp->t = 2;
+	    gp->t = GST_NUM;
 	}
     }
   else if ('U' == gp->b[0] && '+' == gp->b[1])
@@ -320,7 +325,7 @@ gsort_item(int type, unsigned const char *n, unsigned const char *g, unsigned co
       else
 	gp->r = atoi((ccp)r);
     }
-  else if (gp->t == 2)
+  else if (gp->t == GST_NUM)
     gp->r = 0;
   else
     gp->r = -1;
@@ -366,20 +371,22 @@ gsort_mods(unsigned char *m)
 static void
 gsort_reset_c_type(GS_head *gs)
 {
+  return; /* 250511 try sorting xN57 with numbers */
+  
   int non_num = 0, i;
   /* look for non-delimiter that has type 0 */
   for (i = 0; i < gs->n; ++i)
-    if (strpbrk((ccp)gs->i[i]->b, "aeiup") && gs->i[i]->t == 0)
+    if (strpbrk((ccp)gs->i[i]->b, "aeiup") && gs->i[i]->t == GST_REG)
       ++non_num;
   if (non_num)
     for (i = 0; i < gs->n; ++i)
-      if (gs->i[i]->t == 2)
+      if (gs->i[i]->t == GST_NUM)
 	{
 	  /* Clone the item so that 1(N57) isn't contaminated by |1(N57).ŠAH₂| */
 	  GS_item *gip = memo_new(m_items);
 	  *gip = *gs->i[i];
 	  gs->i[i] = gip;
-	  gs->i[i]->t = 0;
+	  gs->i[i]->t = GST_REG;
 	}
 }
 
@@ -473,7 +480,7 @@ gsort_cmp_item(GS_item *a, GS_item *b)
     return a->mp ? 1 : -1;
 
   /* compare repeat */
-  if (a->t == 2)
+  if (a->t == GST_NUM)
     {
       if (a->r > b->r)
 	return 1;
@@ -484,7 +491,7 @@ gsort_cmp_item(GS_item *a, GS_item *b)
     }
   else
     /* see if this is |3×AN| or like */
-    if (a->t == 0 && (a->r > 0 || b->r > 0) && a->r != b->r)
+    if (a->t == GST_REG && (a->r > 0 || b->r > 0) && a->r != b->r)
       {
 	if (a->r >= 0 && b->r >= 0)
 	  return a->r - b->r;

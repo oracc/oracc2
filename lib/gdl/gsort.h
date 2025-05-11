@@ -8,10 +8,12 @@ struct GS_mods
   struct GS_mods *next;
 };
 
+enum GS_type { GST_REG , GST_ZATU , GST_PUNCT , GST_NUM };
+
 struct GS_item
 {
   unsigned const char *g;	/* item grapheme */
-  int t;			/* grapheme type: 0=regular, 1=punctuation, 2=number */
+  int t;			/* grapheme type: see GS_type */
   unsigned const char *b;	/* grapheme base */
   unsigned const char *k;	/* grapheme key via lib/collate; this is stripped of mods */
   unsigned const char *m; 	/* mods for grapheme, "" if none */
@@ -38,6 +40,8 @@ extern GS_head *gsort_prep(Tree *tp);
 extern void gsort_show(GS_head *gsp);
 extern void gsort_show_sub(FILE *fp, GS_head *gsp);
 extern int gsort_cmp(const void *v1, const void *v2);
+extern int gsort_ud_md_test(unsigned const char *t);
+extern GS_head *gsort_ud_md(Tree *tp);
 
 extern int gsort_trace;
 
