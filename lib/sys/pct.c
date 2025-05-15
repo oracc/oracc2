@@ -1,3 +1,8 @@
+double
+pctd(double amount, double total) {
+  return (amount / total) * 100;
+}
+
 int
 pctint(int amount, int total)
 {
