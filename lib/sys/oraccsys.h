@@ -106,7 +106,7 @@ extern int file_copy(const char *from, const char *to);
 
 extern int glob_pattern(const char *pat, glob_t *gres);
 extern int pctint(int amount, int total);
-
+extern double pctd(double amount, double total);
 extern char *cfy_fam(const char *project);
 
 #endif/*ORACCSYS_H_*/
