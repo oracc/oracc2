@@ -5,14 +5,14 @@
 \textfont2=\tensy \scriptfont2=\sevensy \scriptscriptfont2=\fivesy
 \textfont3=\tenex \scriptfont3=\tenex \scriptscriptfont3=\tenex
 
-\font\pcxxv="[@@ORACC@@/lib/fonts/PC25.ttf]" at 18pt
+\font\pcxxv="[@@ORACC@@/lib/fonts/PCSL.ttf]" at 18pt
 
-\font\pccvi="[@@ORACC@@/lib/fonts/PC25.ttf:+cv01]" at 18pt
+\font\pccvi="[@@ORACC@@/lib/fonts/PCSL.ttf:+cv01]" at 18pt
 
-\font\pcssiii="[@@ORACC@@/lib/fonts/PC25.ttf:+ss03]" at 18pt
+\font\pcssiii="[@@ORACC@@/lib/fonts/PCSL.ttf:+ss03]" at 18pt
 
-\font\pcssiv="[@@ORACC@@/lib/fonts/PC25.ttf:+ss04]" at 18pt
+\font\pcssiv="[@@ORACC@@/lib/fonts/PCSL.ttf:+ss04]" at 18pt
 
-\font\pcssxx="[@@ORACC@@/lib/fonts/PC25.ttf:+ss20]" at 18pt
+\font\pcssxx="[@@ORACC@@/lib/fonts/PCSL.ttf:+ss20]" at 18pt
 
 \font\mono="[@@ORACC@@/lib/fonts/dejavu/DejaVuSansMono.ttf]" at 9pt
