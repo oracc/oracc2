@@ -153,7 +153,7 @@ const char *prog = "tokix";
 int major_version = 6, minor_version = 0, verbose;
 const char *usage_string = "-p [project] [-d [dir] -o [outfile] ]";
 void
-help ()
+help (void)
 {
   printf("  -p [project] Gives the name of the project; required\n");
   printf("  -d directory for index; default 'tok'\n");
