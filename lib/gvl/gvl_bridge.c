@@ -76,6 +76,14 @@ gvl_bridge_oid(void)
     return NULL;
 }
 
+const unsigned char *
+gvl_bridge_seq(const char *oid)
+{
+  char buf[strlen((ccp)oid)+5];
+  sprintf(buf, "%s;seq", oid);
+  return gvl_lookup((uccp)buf);
+}
+
 const char *
 gvl_bridge_spoid(void)
 {
