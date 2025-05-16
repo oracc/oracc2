@@ -13,5 +13,7 @@ tokw_G(Trun *r)
       gsig_print(r->o, wgp, "\t");
       fprintf(r->o, "\t%s", wgp->w->word_form);
       fputc('\n', r->o);
+      if (wgp->seq)
+	gsig_print_seq(r->o, wgp, "\t");
     }
 }

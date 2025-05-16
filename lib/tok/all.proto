@@ -13,7 +13,7 @@ extern Gsig *gsb_new(Trun *r);
 extern Gsig *gsb_get(Word *w);
 extern Gsig *gsb_get_n(Word *w, int n);
 extern void gsb_status(Trun *r, const char *pres, const char *edit, const char *flag);
-extern void gsb_add(Trun *r, char type, const char *form, const char *oid, const char *sign, const char *spoid, const char *spsign, const char *lang, const char *logolang);
+extern void gsb_add(Trun *r, char type, const char *form, const char *oid, const char *sign, const char *seq, const char *spoid, const char *spsign, const char *lang, const char *logolang);
 extern void gsb_set_positions(Word *w);
 extern void gsb_last(Trun *r);
 extern void gsb_c_last(Word *w);
@@ -32,6 +32,7 @@ extern Gsig *gsig_parse(char *s, Gsig *gp, const char *id_sig_sep);
 extern const char *gsig_no_d_pos(const char *gsig);
 /* gsig_print.c */
 extern void gsig_print(FILE *fp, Gsig *gp, const char *id_sig_sep);
+extern void gsig_print_seq(FILE *fp, Gsig *gp, const char *id_sig_sep);
 /* mds_xmd.c */
 extern void mds_xmd(Trun *r, const char *project, const char *pqx);
 /* tloc_builder.c */

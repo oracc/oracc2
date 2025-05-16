@@ -69,7 +69,7 @@ gsb_status(Trun *r, const char *pres, const char *edit, const char *flag)
 
 void
 gsb_add(Trun *r,
-	char type, const char *form, const char *oid, const char *sign,
+	char type, const char *form, const char *oid, const char *sign, const char *seq,
 	const char *spoid, const char *spsign, const char *lang, const char *logolang)
 {
   /* If we are only processing, e.g., sux accept sux, sux-x-emesal,
@@ -91,6 +91,10 @@ gsb_add(Trun *r,
       wgp->role = 'w'; 	/* may be reset later */
       wgp->roletype = 'n'; 	/* ditto */
     }
+
+  if (seq && *seq)
+    gsb_strcpy(wgp->seq, seq);
+
   if (spoid && *spoid)
     {
       gsb_strcpy(wgp->soid, spoid);

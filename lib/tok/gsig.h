@@ -39,6 +39,7 @@ typedef struct gsig
   char *logolang;	/* secondary language for logogram */
   char *soid;		/* sign-oid */
   char *sname;		/* sign-name */
+  char *seq;		/* sign-sequence-oids */
   char *foid;		/* form-oid */
   char *fname;		/* form-name */
   char *value;		/* value when gdltype == 'v' */

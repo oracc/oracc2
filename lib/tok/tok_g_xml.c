@@ -112,6 +112,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 			  form,
 			  findAttr(atts, "oid"),
 			  findAttr(atts, "g:sign"),
+			  findAttr(atts, "seq"),
 			  spoid, spform,
 			  r->rw->w->word_lang,
 			  findAttr(atts, "g:logolang"));
@@ -126,6 +127,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "g:type"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
+		      findAttr(atts, "seq"),
 		      findAttr(atts, "spoid"),
 		      findAttr(atts, "spform"),
 		      r->rw->w->word_lang,
@@ -140,6 +142,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "form"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
+		      findAttr(atts, "seq"),
 		      findAttr(atts, "spoid"),
 		      findAttr(atts, "spform"),
 		      r->rw->w->word_lang,
@@ -159,11 +162,12 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 		      findAttr(atts, "form"),
 		      findAttr(atts, "oid"),
 		      findAttr(atts, "g:sign"),
+		      findAttr(atts, "seq"),
 		      spoid, spform,
 		      r->rw->w->word_lang,
 		      findAttr(atts, "g:logolang"));
 	      tok_status(r, atts);
-	      break;
+	      break;		
 	    case 's':
 	    case 'v':
 	      if (!r->rw->in_c && !r->rw->in_n && !r->rw->in_p && !r->rw->in_q)
@@ -178,6 +182,7 @@ tok_g_sH(void *userData, const char *name, const char **atts)
 			  NULL,
 			  findAttr(atts, "oid"),
 			  findAttr(atts, "g:sign"),
+			  findAttr(atts, "seq"),
 			  spoid, spform,
 			  r->rw->w->word_lang,
 			  findAttr(atts, "g:logolang"));

@@ -11,6 +11,7 @@
 
 const char *outfile = NULL;
 const char *projproj = NULL;
+const char *infile = NULL;
 int run_multi = 0;
 int stdinput = 0;
 int tok_input_cbd = 0, tok_input_xtf = 1;
@@ -138,6 +139,16 @@ tokx_one(Trun *r, const char *QPQX)
 }
 
 static void
+tokx_file(Trun *r, const char *f)
+{
+  char *fname[2];
+  fname[0] = f;
+  fname[1] = NULL;
+  trun_file(r,fname[0]);
+  runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
+}
+
+static void
 tokx_stdin(Trun *r)
 {
   trun_file(r,"<stdin>");
@@ -158,6 +169,11 @@ tokx_input(Trun *r, const char *arginput)
 	tokx_one(r, arginput);
       else
 	tokx_cbd(r, arginput);
+    }
+  else if (infile)
+    {
+      /* This means read the XML data in .xtf format from the named file */
+      tokx_file(r, infile);
     }
   else if (stdinput)
     {
@@ -197,7 +213,7 @@ main(int argc, char **argv)
 {
   Trun *r = NULL;
   
-  if (options(argc, argv, "cfgGlmo:p:s"))
+  if (options(argc, argv, "cf:gGlmo:p:s"))
     exit(1);
 
   r = trun_init(run_multi);
@@ -231,6 +247,9 @@ int opts(int arg, const char*str)
       tok_input_cbd = 1;
       tok_data_g = 1;
       tok_data_l = tok_data_m = 0;
+      break;
+    case 'f':
+      infile = str;
       break;
     case 'g':
       tok_data_g = 1;
