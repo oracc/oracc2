@@ -111,8 +111,10 @@ gsort_prep(Tree *tp)
 
       if (tp->root->text && (gs = hash_find(hheads, (uccp)tp->root->text)))
 	return gs;
+#if 0
       else if (tp->root->text && gsort_ud_md_test((uccp)tp->root->text))
 	return gsort_ud_md(tp);
+#endif
       else
 	{
 	  List *lp = list_create(LIST_SINGLE);

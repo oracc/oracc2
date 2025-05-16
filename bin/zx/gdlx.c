@@ -35,6 +35,7 @@ int bare_mode = 0;
 int check_mode = 0;
 int cuneify_mode = 0;
 int gdlseq_mode = 0;
+int gdlseq_oid_mode = 0;
 extern int gdlsig_depth_mode;
 int error_stdout = 0;
 const char *fname = NULL;
@@ -116,13 +117,22 @@ do_one(char *s)
     }
   else if (gdlseq_mode)
     {
+      unsigned const char *seq = NULL;
+      unsigned char s2[strlen(s)+1];
       if (key)
-	printf("\t%s\n", gdlseq((ucp)s));
+	seq = gdlseq((ucp)s);
       else
 	{
-	  unsigned char s2[strlen(s)+1];
 	  strcpy((char*)s2,s);
-	  printf("%s\t%s\n", s, gdlseq(s2));
+	  seq = gdlseq(s2);
+	}
+      if (gdlseq_oid_mode)
+	seq = sll_oids_of(seq, "_");
+      if (key)
+	printf("\t%s\n", seq);
+      else
+	{
+	  printf("%s\t%s\n", s, seq);
 	}
     }
   else if (uname_mode)
@@ -253,10 +263,10 @@ main(int argc, char **argv)
   gdl_unicode = 1;
   setlocale(LC_ALL, ORACC_LOCALE);
 
-  options(argc, argv, "1abcCdef:gG:ik:lnop:PqrstUvw");
+  options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstUvw");
   
   gdl_flex_debug = gdldebug = trace_mode;
-
+  
   if (gdl_one_off_mode)
     {
       if (argv[optind])
@@ -408,6 +418,8 @@ opts(int opt, const char *arg)
     case 'P':
       gvl_strict = pedantic = 1;
       break;
+    case 'Q':
+      gdlseq_oid_mode = 1;
     case 'q':
       gdlseq_mode = 1;
       break;

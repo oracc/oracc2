@@ -1,5 +1,6 @@
 #include <signlist.h>
 #include <sx.h>
+#include <gdl.h>
 
 /** This is the output for the signlist database; it does not use sx_walk
  */
@@ -111,6 +112,35 @@ sx_s_values_by_oid(FILE *fp, struct sl_signlist *sl)
     }
 }
 
+/* Return a string consisting of the OIDs for each of the sign names
+   in the arg string */
+static unsigned char *
+sx_sll_oids_of(unsigned const char *sns)
+{
+  List *l = list_create(LIST_SINGLE);
+  unsigned char *xsns = (ucp)pool_copy((uccp)sns,sllpool), *xsn, *x, *ret;
+  x = xsns;
+  while (*x)
+    {
+      xsn = x;
+      while (*x && ' ' != *x)
+	++x;
+      if (*x)
+	*x++ = '\0';
+      struct sl_sign sp = hash_find(sl->hsentry, (uccp)xsn);
+      const char *o = NULL;
+      if (sp)
+	o = sp->oid;
+      if (!o)
+	o = "q99";
+      list_add(l,(void*)o);
+    }
+  ret = list_join(l, j);
+  list_free(l,NULL);
+  return ret;
+}
+
+
 static void
 sx_s_sign(FILE *f, struct sl_sign *s)
 {
@@ -129,6 +159,19 @@ sx_s_sign(FILE *f, struct sl_sign *s)
       fprintf(f, "%s\t%s\n", s->name, curr_oid);
       fprintf(f, "%s\t%s\n", curr_oid, s->name);
 
+      if ('|' == *s->name && strchr((ccp)s->name, '.'))
+	{
+	  char seqbuf[strlen(s->name)+1];
+	  strcpy(seqbuf,s->name);
+	  unsigned char *seq = gdlseq(ucp)seqbuf);
+	  if (seq)
+	    {
+	      if (strchr((ccp)seq, ' '))
+		fprintf(f, "%s;seq\t%s\n", curr_oid, (seq = sx_sll_oids_ofs(seq)));
+	      free(seq);
+	    }
+	}
+      
       if (s->fake)
 	fprintf(f, "%s;fake\t1\n", curr_oid);	
 

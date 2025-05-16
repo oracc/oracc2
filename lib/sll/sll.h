@@ -54,6 +54,7 @@ extern void sll_cli_handler(unsigned const char *key);
 extern void sll_web_handler(const char *wcaller, const char *wproject, const char *wgrapheme, const char *wextension);
 extern unsigned char *sll_strip_pp(unsigned const char *g);
 extern unsigned char *sll_snames_of(unsigned const char *oids);
+extern unsigned char *sll_oids_of(unsigned const char *oids, const char *j);
 extern unsigned const char *sll_lookup(unsigned const char *key);
 extern unsigned char *sll_lookup_t(unsigned const char *key);
 extern unsigned char *sll_lookup_d(Dbi_index *dbi, unsigned const char *key);

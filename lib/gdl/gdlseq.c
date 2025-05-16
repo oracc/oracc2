@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "../sll/sll.h"
 
 /* Punctuate the argument by replacing '.' with ' ' if the '.' is not
  * inside '(' ... ')'; pipes are removed if present.
@@ -27,4 +28,10 @@ gdlseq(unsigned char *s)
       ++s;
     }
   return ret;
+}
+
+unsigned char *
+gdlseq_oids(unsigned char *s, const char *j)
+{
+  return sll_oids_of(gdlseq(s), j);
 }

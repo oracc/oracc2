@@ -340,3 +340,30 @@ sll_snames_of(unsigned const char *oids)
   list_free(l,NULL);
   return ret;
 }
+
+/* Return a string consisting of the OIDs for each of the sign names
+   in the arg string */
+unsigned char *
+sll_oids_of(unsigned const char *sns, const char *j)
+{
+  if (!j)
+    j = " ";
+  List *l = list_create(LIST_SINGLE);
+  unsigned char *xsns = (ucp)pool_copy((uccp)sns,sllpool), *xsn, *x, *ret;
+  x = xsns;
+  while (*x)
+    {
+      xsn = x;
+      while (*x && ' ' != *x)
+	++x;
+      if (*x)
+	*x++ = '\0';
+      const char *o = sll_lookup(xsn);
+      if (!o)
+	o = "q99";
+      list_add(l,(void*)o);
+    }
+  ret = list_join(l, j);
+  list_free(l,NULL);
+  return ret;
+}
