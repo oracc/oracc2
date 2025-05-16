@@ -36,7 +36,7 @@ gsig_print_seq(FILE *fp, Gsig *gp, const char *id_sig_sep)
 	}
       else
 	save = '\0';
-      fprintf(fp, "%s.%s.%s%s@%s%%%s:%c/%s=%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d^%d#%c%d#%c%d#%c%c%s\n",
+      fprintf(fp, "g\t%s.%s.%s%s@%s%%%s:%c/%s=%s-%s-%s#%c%c%%%s:#%c%%%s:#%c%d^%d#%c%d#%c%d#%c%c%s\t-\n",
 	      o, "", "",
 	      id_sig_sep,
 	      pp(gp->project), gp->asltype, 'e',
