@@ -373,7 +373,7 @@ gsort_mods(unsigned char *m)
 static void
 gsort_reset_c_type(GS_head *gs)
 {
-  return; /* 250511 try sorting xN57 with numbers */
+  /*  return; */ /* 250511 try sorting xN57 with numbers */
   
   int non_num = 0, i;
   /* look for non-delimiter that has type 0 */
@@ -381,15 +381,40 @@ gsort_reset_c_type(GS_head *gs)
     if (strpbrk((ccp)gs->i[i]->b, "aeiup") && gs->i[i]->t == GST_REG)
       ++non_num;
   if (non_num)
-    for (i = 0; i < gs->n; ++i)
-      if (gs->i[i]->t == GST_NUM)
+    {
+      /* if this is an N57 reset the swap the first two items so it
+	 sorts by, e.g., GAR then N(N57); clone the new first item and
+	 set its type to N57 */
+      if (strstr(gs->i[0]->g, "N57"))
 	{
-	  /* Clone the item so that 1(N57) isn't contaminated by |1(N57).ŠAH₂| */
-	  GS_item *gip = memo_new(m_items);
-	  *gip = *gs->i[i];
-	  gs->i[i] = gip;
-	  gs->i[i]->t = GST_REG;
+	  /*fprintf(stderr, "n57\n");*/
+	  /* Clone the N57 item so that 1(N57) isn't contaminated by |1(N57).ŠAH₂| */
+	  GS_item *gip0 = memo_new(m_items);
+	  GS_item *gip1 = memo_new(m_items);
+	  GS_item *gip2 = memo_new(m_items);
+	  *gip0 = *gs->i[0];
+	  *gip1 = *gs->i[1];
+	  *gip2 = *gs->i[2];
+	  gs->i[0] = gip2;
+	  gs->i[0]->t = GST_N57;
+	  gs->i[1] = gip1;
+	  gs->i[2] = gip0;
 	}
+      else
+	{
+	  for (i = 0; i < gs->n; ++i)
+	    {
+	      if (gs->i[i]->t == GST_NUM)
+		{
+		  /* Clone the item so that 1(N57) isn't contaminated by |1(N57).ŠAH₂| */
+		  GS_item *gip = memo_new(m_items);
+		  *gip = *gs->i[i];
+		  gs->i[i] = gip;
+		  gs->i[i]->t = GST_REG;
+		}
+	    }
+	}      
+    }
 }
 
 /**

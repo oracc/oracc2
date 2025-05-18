@@ -8,7 +8,7 @@ struct GS_mods
   struct GS_mods *next;
 };
 
-enum GS_type { GST_REG , GST_ZATU , GST_PUNCT , GST_NUM };
+enum GS_type { GST_REG , GST_ZATU , GST_PUNCT , GST_NUM , GST_N57 };
 
 struct GS_item
 {
