@@ -185,7 +185,7 @@
     <element name="g:a">
       <choice>
         <data type="string">
-          <param name="pattern">[a-wyz0-9]+</param>
+          <param name="pattern">[a-z0-9]+</param>
         </data>
         <data type="string">
           <param name="pattern">[\+\-]</param>
