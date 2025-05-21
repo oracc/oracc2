@@ -68,6 +68,7 @@ xft_clear(xft *xp)
   memo_term(m_xft_tr);
   memo_term(m_xft_thtd);
   pool_term(p_xft);
+  m_xft_tr = NULL; /* trigger reinitialization in xft_table */  
 }
 
 void
@@ -82,6 +83,8 @@ xft_tr(xft *xp, const char **atts)
 {
   struct xft_tr *trp = memo_new(m_xft_tr);
   trp->atts = xft_atts(atts);
+  if (!xp->tr)
+    xp->tr = list_create(LIST_SINGLE);
   trp->thtd = list_create(LIST_SINGLE);
   list_add(xp->tr, trp);
 }
