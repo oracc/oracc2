@@ -34,6 +34,13 @@ function p4Onload()
     if (cfy) {
 	onloadCuneify(cfy);
     }
+    let menubutton = document.querySelector("#menu-button");
+    if (menubutton) {
+	menubutton.addEventListener("click", function() {
+	    var menu = document.querySelector("#Menu");
+	    drawer.classList.toggle("hidden");
+	});
+    }
 }
 
 function onloadHili(hili, cfy)
