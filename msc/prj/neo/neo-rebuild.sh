@@ -22,7 +22,7 @@ for a in 02pub/cbd/* ; do
     fi
 done
 o2-weblive.sh
-o2-prm.sh
+sudo o2-prm.sh
 neo-cbd-json.sh
 sudo chown -R root:oracc /home/oracc/www/neo/downloads
 sudo chmod g+r /home/oracc/www/neo/downloads
