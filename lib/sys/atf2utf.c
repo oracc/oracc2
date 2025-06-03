@@ -216,7 +216,7 @@ atf2utf(Mloc *locp, register const unsigned char *s, int rx)
 	  switch (s[1])
 	    {
 	    case ',':
-	    case 'y':
+	      /*case 'y':*/
 	      xstrcpy(t,unitab[u_sadhe]);
 	      t+=xstrlen(t);
 	      s+=2;
@@ -239,7 +239,7 @@ atf2utf(Mloc *locp, register const unsigned char *s, int rx)
 	  switch (s[1])
 	    {
 	    case ',':
-	    case 'y':
+	      /*case 'y':*/
 	      xstrcpy(t,unitab[u_SADHE]);
 	      t+=xstrlen(t);
 	      s+=2;
@@ -299,7 +299,7 @@ atf2utf(Mloc *locp, register const unsigned char *s, int rx)
 	  ++s;
 	  break;
 	case 't':
-	  if (s[1] == ',' || s[1] == 'y')
+	  if (s[1] == ','/* || s[1] == 'y'*/)
 	    {
 	      xstrcpy(t,unitab[u_tet]);
 	      t+=xstrlen(t);
@@ -309,7 +309,7 @@ atf2utf(Mloc *locp, register const unsigned char *s, int rx)
 	    *t++ = *s++;
 	  break;
 	case 'T':
-	  if (s[1] == ',' || s[1] == 'y')
+	  if (s[1] == ','/* || s[1] == 'y'*/)
 	    {
 	      xstrcpy(t,unitab[u_TET]);
 	      t+=xstrlen(t);
