@@ -52,7 +52,7 @@ static void xchar(void);
 %}
 
 S		\xe2\xb8[^\xa2-\xa5]
-G		([abdeg-zABDEG-Z'\x80-\xc2\xc4-\xe1\xe3-\xef]|{S}|\xc3[^\x97]|\xe2[^\xb8])+
+G		([a-zA-Z'\x80-\xc2\xc4-\xe1\xe3-\xef]|{S}|\xc3[^\x97]|\xe2[^\xb8])+
 M		([@~][a-z0-9]+)*
 N		(N[0-9]+[ABCDE]*)
 Q		\??
