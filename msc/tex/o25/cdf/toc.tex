@@ -31,14 +31,14 @@
 
 \def\writet@@#1#2#3#4#5{%
   \iftocopen\else\opentoc\fi
-  \iftocpageno\def\next{\write\tocfile%
+  \iftocpageno\def\next{\immediate\write\tocfile%
     {\noexpand\tocentry#2:t:\the\pageno:#4,\iftocranges#1\fi;}%
     \unexpandedwrite\tocfile{#5}%
     \write\tocfile{\noexpand\endtocentry}}%
-  \else\def\next{\tocpagenotrue\write\tocfile%
+  \else\def\next{\tocpagenotrue\immediate\write\tocfile%
     {\noexpand\tocentry#2:f::#4.\iftocranges#1\fi}%
     \unexpandedwrite\tocfile{#5}%
-    \write\tocfile{\noexpand\endtocentry}}\fi
+    \immediate\write\tocfile{\noexpand\endtocentry}}\fi
   \next}
 
 \def\skipt@c#1#2#3#4#5{\ifskiptoconce\dotocentrytrue\fi}
@@ -71,10 +71,11 @@
       \fi
     \fi
   \fi
-  \next
+  \hangindent0pt \parindent0pt \next
   \vbox\bgroup\singlespace
   \global\toc@lastlevel#1
-  \csname toclev\ifcase#1zero\or one\or two\or three\or four\fi\endcsname}
+  \csname toclev\ifcase#1zero\or one\or two\or three\or four\fi\endcsname
+  }
 \def\endtocentry{\endgraf\egroup}
 
 \newcount\tocpagev@l
@@ -103,7 +104,8 @@
   \gettocpagev@l{#2}%
   \noindent\rightskip\toczerorightskip plus1fil
   \ifx\testthree\empty\else\toczeronumformat{#3}\fi
-  \unskip\hangindent\toczerohang\toczeroformat{\strut\ignorespaces#5\unskip}%
+  \unskip
+  \hangindent\toczerohang\toczeroformat{\leavevmode\strut\ignorespaces#5\unskip}%
   \ifx\test\true\def\next{\iftoczerodotfill\tocdotfill\else
 			  \hfill\fi
 			  \parfillskip-\toczerorightskip plus-1fil\relax
@@ -116,9 +118,10 @@
 
 \def\toclevone#1:#2:#3,#4;#5\endtocentry{\def\test{#1}\def\testthree{#3}%
   \gettocpagev@l{#2}%
-  \noindent\rightskip\toconerightskip plus1fil
+  \leavevmode\noindent\rightskip\toconerightskip plus1fil
   \ifx\testthree\empty\else\toconenumformat{#3}\fi
-  \unskip\hangindent\toconehang\toconeformat{\strut\ignorespaces#5\unskip}%
+  %\unskip
+  \hangindent\toconehang\toconeformat{\strut\ignorespaces#5\unskip}%
   \ifx\test\true\def\next{\iftoconedotfill\tocdotfill\else
 			  \hfill\fi
 			  \parfillskip-\toconerightskip plus-1fil\relax
@@ -177,22 +180,22 @@
 \newif\iftocthreedotfill \tocthreedotfilltrue
 
 \def\toczeroformat#1{\bf\expandafter\uppercase{#1}}
-\def\toczeronumformat#1{\hbox to\toczerohang{\bf#1.\hss}}
+\def\toczeronumformat#1{\hbox to\toczerohang{\bf#1\hss}}
 \def\toczeropageformat#1{\rm#1}
 \def\toczerorangeformat#1#2{\ifnum#1=#2\else--\tocprintpageno{#2}\fi}
 
 \def\toconeformat#1{\expandafter\uppercase{#1}}
-\def\toconenumformat#1{\hbox to\toconehang{\bf#1.\hss}}
+\def\toconenumformat#1{\hbox to\toconehang{\bf#1\hss}}
 \def\toconepageformat#1{\rm#1}
 \def\toconerangeformat#1#2{\ifnum#1=#2\else--\tocprintpageno{#2}\fi}
 
 \def\toctwoformat#1{\expandafter\uppercase{#1}}
-\def\toctwonumformat#1{\hbox to\toctwohang{\bf#1.\hss}}
+\def\toctwonumformat#1{\hbox to\toctwohang{\bf#1\hss}}
 \def\toctwopageformat#1{\rm#1}
 \def\toctworangeformat#1#2{\ifnum#1=#2\else--\tocprintpageno{#2}\fi}
 
 \def\tocthreeformat#1{\expandafter\uppercase{#1}}
-\def\tocthreenumformat#1{\hbox to\tocthreehang{\bf#1.\hss}}
+\def\tocthreenumformat#1{\hbox to\tocthreehang{\bf#1\hss}}
 \def\tocthreepageformat#1{\rm#1}
 \def\tocthreerangeformat#1#2{\ifnum#1=#2\else--\tocprintpageno{#2}\fi}
 

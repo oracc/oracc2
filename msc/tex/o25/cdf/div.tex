@@ -106,10 +106,10 @@
 		   \ifchapsecnums\ifsecfinaldots.\fi\else\ifsecfirstlevelfinaldot.\fi\fi}%
      \xdef\curr@secnum{\the\toc@rangeid}%
      \@secnumtoks={\@secnum}%
-     \ifsectionpagesintoc\def\withpage{t}\def\withpage{f}\fi%
+     \ifsectionpagesintoc\def\withpage{t}\else\def\withpage{f}\fi%
      \ifsectionsintoc
        \count255=#1 \advance\count255by1
-       \edef\next\withpage{\sec@toc{\the\count255}{#2}{\@secnum}{\curr@secnum}}%
+       \def\next{\sec@toc{#1}{\the\count255}{#2}{\@secnum}{\curr@secnum}}%
      \else
        \let\next\relax
      \fi
@@ -166,8 +166,8 @@
     \def\next{\subsubsubsectionformat}\fi
     \next{\the\@secnumtoks}{#2}}
 
-\def\sec@toc#1#2#3#4#5{\ifusenumber\edef\next{{#3}}\else\edef\next{{\relax}}\fi%
-  \expandafter\writetocb\next#1#5{#2}{#4}}
+\def\sec@toc#1#2#3#4#5{\ifusenumber\edef\next{{#4}}\else\edef\next{{\relax}}\fi%
+  \expandafter\writetocb\next#1#5{#3}{#4}}
 
 \def\section#1\par{\subsectct=0 \subsubsectct=0%
   \@hdshell{\aboveheadingskip}{\belowheadingskip}{{\@sectfmt1{#1}}}}
@@ -257,11 +257,11 @@
 \newcount\appendixno \appendixno=`A
 \def\appendixhead#1{\centerline{\titlesize\bf \appendixstr #1}}
 \def\appendixtitle#1{\centerpar\singlespace\titlesize\bf\uppercase{#1}\par}
-\def\appnumstyle#1{\char#1}
-\def\appendix#1\par{\endgraf\newpage 
-  \edef\appval{\appnumstyle\appendixno}%
+\xdef\appnumstyle#1{\char#1}
+\def\appendix#1\par{\endgraf\newpage
+  \xdef\appval{\appnumstyle\appendixno}%
   \vglue\aboveappendix\nointerlineskip 
-  \ifusenumber\def\next{\d@apphead\writetoc1t{\appval}{#1}{}}%
+  \ifusenumber\def\next{\d@apphead\writetoc1t{\expandafter\char\the\appendixno}{#1}{}}%
   \else\def\next{\usenumbertrue\writetoc1t{}{#1}{}}\fi
   \next
   \appendixtitle{#1}%
