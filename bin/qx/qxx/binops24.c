@@ -98,6 +98,7 @@ binop24_init()
   binop24_tab[n_grapheme]= sign24;
   binop24_tab[se_or]     = merge24;
   binop24_tab[se_space]  = space24;
+  binop24_tab[se_dot] = hyphen24;
   binop24_tab[se_hyphen] = hyphen24;
   binop24_tab[se_tilde]  = any24;
 
