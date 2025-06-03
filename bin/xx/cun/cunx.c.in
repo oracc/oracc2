@@ -395,7 +395,7 @@ main(int argc, char **argv)
 		  sprintf((char*)p4htmld, "%s/htm", p4cache);
 		}
 	      else
-		p4htmld = "/home/oracc/www/p4.d/htm";
+		p4htmld = "@@ORACC@@/www/p4.d/htm";
 	    }
 	}
       if (qfile)
