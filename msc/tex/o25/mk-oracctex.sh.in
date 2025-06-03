@@ -1,7 +1,8 @@
 #!/bin/sh
 t=@@ORACC@@/lib/tex
 mkdir -p $t
-TEXINPUTS=.:./graphics:$TEXINPUTS
+TEXINPUTS=.:./graphics:$TEXINPUTS:/usr/local/src/eplain/tex
 cd $t ; xetex -etex -ini oracctex.ini
+cd $t ; xetex -etex -ini oraccetex.ini
 cd $t ; xetex -etex -ini oraccplain.ini
 chmod o+r $t/*.fmt

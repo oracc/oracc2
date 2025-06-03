@@ -1,6 +1,7 @@
 nxt-gb.lst
 status
 texlive.path
+xetex.err
 
 # px test suite
 bin/px/t/orc
@@ -275,6 +276,7 @@ msc/prj/osl/oracc_builds.c
 msc/tex/o25/fonts25.tex
 msc/tex/o25/mk-oracctex.sh
 msc/tex/o25/oracctex
+msc/tex/o25/oraccetex
 
 # rnc derivatives
 *.rng
