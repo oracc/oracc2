@@ -121,7 +121,7 @@
      \xdef\curr@subsecnum{\the\toc@rangeid}%
      \@secnumtoks={\@secnum}%
      \ifsubsectionsintoc
-       \def\next{\sec@toc{#1}{#2}{\@secnum}{\curr@subsecnum}f}%
+       \def\next{\sec@toc{#1}{\the\@secnum}{#2}{\@secnum}{\curr@subsecnum}}%
      \else
        \let\next\relax
      \fi

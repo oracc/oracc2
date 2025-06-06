@@ -44,8 +44,8 @@
 
 \def\skipt@c#1#2#3#4#5{\ifskiptoconce\dotocentrytrue\fi}
 \def\writetoc{\ifdotocentry\def\next{\writet@c}\else\def\next{\skipt@c}\fi\next}
-\def\writetocb#1#2#3#4#5{\writetoc{#2}{#3}{#1}{#4}{#5}{#6}}
-  
+\def\writetocb#1#2#3#4#5#6{\writetoc{#2}{#3}{#1}{#4}{#5}{#6}}
+
 \def\usetoc{%
   \iftocopen\closetoc\fi
   \checkfile{\jobname.toc}%
