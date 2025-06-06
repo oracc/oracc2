@@ -6,6 +6,7 @@
 	       >
   
   <xsl:param name="class-arg" select="',sqopq,sqseq,sqinv,sqchr,not,'"/>
+  <xsl:param name="h-sections" select="'yes'"/>
   
   <xsl:output method="text" encoding="UTF-8"/>
 
@@ -167,22 +168,43 @@
   </xsl:template>
   
   <xsl:template match="h:h1">
-    <xsl:text>\Hh</xsl:text>
-    <xsl:call-template name="class"/>
+    <xsl:choose>
+      <xsl:when test="$h-sections='yes'">
+	<xsl:text>\section </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>\Hh</xsl:text>
+	<xsl:call-template name="class"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:apply-templates/>
     <xsl:text>&#xa;&#xa;</xsl:text>
   </xsl:template>
 
   <xsl:template match="h:h2">
-    <xsl:text>\Hhh</xsl:text>
-    <xsl:call-template name="class"/>
+    <xsl:choose>
+      <xsl:when test="$h-sections='yes'">
+	<xsl:text>\subsection </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>\Hhh</xsl:text>
+	<xsl:call-template name="class"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:apply-templates/>
     <xsl:text>&#xa;&#xa;</xsl:text>
   </xsl:template>
 
   <xsl:template match="h:h3">
-    <xsl:text>\Hhhh</xsl:text>
-    <xsl:call-template name="class"/>
+    <xsl:choose>
+      <xsl:when test="$h-sections='yes'">
+	<xsl:text>\subsubsection </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:text>\Hhhh</xsl:text>
+	<xsl:call-template name="class"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:apply-templates/>
     <xsl:text>&#xa;&#xa;</xsl:text>
   </xsl:template>
