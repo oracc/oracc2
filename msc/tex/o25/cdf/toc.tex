@@ -16,8 +16,8 @@
 % #2 = put page-num or not (t or f) [this argument is ignored]
 % #3 = label for text
 % #4 = text to write
-\def\writet@c#1#2#3#4#5{\edef\next{{#5}}%
-  \expandafter\writet@@\next{#1}{#2}{#3}{#4}}
+\def\writet@c#1#2#3#4#5#6{\edef\next{{#5}}%
+  \expandafter\writet@@\next{#1}{#2}{#3}{#4}{#6}}
 %  \iftocopen\else\opentoc\fi
 %  \iftocpageno\def\next{\write\tocfile%
 %    {\noexpand\tocentry#1:t:\the\pageno:#3,\iftocranges#5\fi;}%
@@ -29,10 +29,11 @@
 %    \write\tocfile{\noexpand\endtocentry}}\fi
 %  \next}
 
-\def\writet@@#1#2#3#4#5{%
+%% new 2025-06-03: #6 is hyperlink name
+\def\writet@@#1#2#3#4#5#6{%
   \iftocopen\else\opentoc\fi
   \iftocpageno\def\next{\immediate\write\tocfile%
-    {\noexpand\tocentry#2:t:\the\pageno:#4,\iftocranges#1\fi;}%
+    {\noexpand\tocentry#2:t:\the\pageno:#6:#4,\iftocranges#1\fi;}%
     \unexpandedwrite\tocfile{#5}%
     \write\tocfile{\noexpand\endtocentry}}%
   \else\def\next{\tocpagenotrue\immediate\write\tocfile%
@@ -43,7 +44,7 @@
 
 \def\skipt@c#1#2#3#4#5{\ifskiptoconce\dotocentrytrue\fi}
 \def\writetoc{\ifdotocentry\def\next{\writet@c}\else\def\next{\skipt@c}\fi\next}
-\def\writetocb#1#2#3#4#5{\writetoc{#2}{#3}{#1}{#4}{#5}}
+\def\writetocb#1#2#3#4#5{\writetoc{#2}{#3}{#1}{#4}{#5}{#6}}
   
 \def\usetoc{%
   \iftocopen\closetoc\fi

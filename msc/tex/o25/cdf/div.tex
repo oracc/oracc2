@@ -260,7 +260,9 @@
 \xdef\appnumstyle#1{\char#1}
 \def\appendix#1\par{\endgraf\newpage
   \xdef\appval{\appnumstyle\appendixno}%
-  \vglue\aboveappendix\nointerlineskip 
+  \vglue\aboveappendix\nointerlineskip
+  \edef\hl{appendix\the\appendixno}%
+  \message{Appendix lable = \hl^^J}%
   \ifusenumber\def\next{\d@apphead\writetoc1t{\expandafter\char\the\appendixno}{#1}{}}%
   \else\def\next{\usenumbertrue\writetoc1t{}{#1}{}}\fi
   \next
