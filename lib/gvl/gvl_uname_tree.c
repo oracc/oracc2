@@ -63,14 +63,16 @@ gvl_uname_ascii(const char *t, int bspace, int nhyphen)
   wchar_t *w;
   size_t len;
 
-  /* for N01 remove '0' in tmp to process as N1 */
+  /* NO: we leave N01 etc as NO1. [-for N01 remove '0' in tmp to process as N1-] */
   if (bspace && 'N' == *t)
     {
       char *t2 = tmp;
       *t2++ = 'N';
       ++t;
+#if 0
       while ('0' == *t)
 	++t;
+#endif
       while (*t)
 	*t2++ = *t++;
       *t2 = '\0';
@@ -83,7 +85,7 @@ gvl_uname_ascii(const char *t, int bspace, int nhyphen)
       if (bspace)
 	*dest++ = '\b';
       if (nhyphen)
-	*dest++ = '-';
+	*dest++ = ' ';
       for (i = 0; w[i]; ++i)
 	{
 	  switch (w[i])
@@ -270,7 +272,7 @@ gvl_uname_tree(Tree *tp)
       List *lp = list_create(LIST_SINGLE);
       list_add(lp, (void*)gvl_uname_prefix);
       if (!strcmp(tp->root->kids->name, "g:n"))
-	list_add(lp, (void*)"NUMBER");
+	list_add(lp, (void*)"NUMERIC SIGN");
       else
 	list_add(lp, (void*)"SIGN");
       gvl_uname_curr = tp->root->text;
