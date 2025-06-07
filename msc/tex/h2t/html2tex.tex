@@ -111,7 +111,8 @@
 
 \catcode"FE5F\active \let﹟\#
 \catcode"FE60\active \let﹠\&
-\catcode"223C\active \def∼{\~{}}
+\catcode"223C\active %\def∼{\~{}}
+\def∼{{\Sans\six\rm\~{}}}
 \catcode"2052\active \def⁒{\%{}}
 
 \input fonts25
