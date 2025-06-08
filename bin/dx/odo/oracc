@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ -r .odo ]; then
+    odo $*
+else
+    oracc.plx $*
+fi

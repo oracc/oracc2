@@ -9,12 +9,14 @@ bin_SCRIPTS=odo odo-cvs-checkout.sh odo-cvs-refresh.sh \
 	odo-catalog.sh odo-corpus.sh odo-signlist.sh \
 	odo-gloss.sh odo-gloss-xml.sh odo-gloss-htm.sh odo-gloss-web.sh \
 	odo-gloss-htm-wrapup.sh odo-gloss-web-wrapup.sh \
-	odo-chown.sh odo-chmod.sh odo-sudo.sh
+	odo-chown.sh odo-chmod.sh odo-sudo.sh makedeps.sh
 
-noinst_SCRIPTS=oracc-single.sh
+noinst_SCRIPTS=oracc-odo.sh oracc
+
+data_DATA=*.mk
 
 odo: odo.in
 	$(ORACCIFY) $<
 
 install-exec-local:
-	. ./oracc-single.sh
+	. ./oracc-odo.sh

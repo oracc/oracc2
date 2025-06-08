@@ -77,8 +77,8 @@ else
 	    echo "$0: do 'rm -f `pwd`/01bld/buildstamp' and try again."
 	    exit 1
 	else
-	    echo "$0: igoring lack of .asl because project has not been built."
-	    exit 1
+	    echo "$0: ignoring lack of .asl because project has not been built."
+	    exit 0
 	fi
     else
 	echo "$0: no 00lib/*.asl and asl-auto != 'yes'."

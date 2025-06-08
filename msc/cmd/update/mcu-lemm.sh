@@ -37,8 +37,18 @@ elif [ "$projtype" = "superglo" ]; then
 	    make -f $ORACC_BUILDS/lib/data/mcu-lemm.mk super $lemmsuper
 	fi
     else
-	echo "$0: superglo has no glossary in 00src. Stop."
-	exit 1
+	set 00lib/*.glo
+	if [ "$1" != "00src/*.glo" ]; then
+	    if [ "$2" != "" ]; then
+		echo "$0: superglo limited to one glossary (found $*). Stop."
+		exit 1
+	    else
+		SUPER=$1 make -e -f $ORACC_BUILDS/lib/data/mcu-lemm.mk $lemmsuper
+	    fi
+	else
+	    echo "$0: superglo has no glossary in 00src or 00lib. Stop."
+	    exit 1
+	fi
     fi
 else
     if [ "$lemm" != "" ]; then
