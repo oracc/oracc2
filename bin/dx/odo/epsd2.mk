@@ -13,5 +13,9 @@ project check: epsd2lemm
 	@rm -f .deps
 	@$(MAKE) -f ${ORACC}/lib/data/oracc2.mk $@ 2>/dev/null
 
+clean:
+	@rm -f .deps
+	@$(MAKE) -f ${ORACC}/lib/data/oracc2.mk $@ 2>/dev/null
+
 epsd2lemm:
 	(cd ${ORACC}/epsd2 ; make lemm)

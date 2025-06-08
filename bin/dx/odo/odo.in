@@ -26,7 +26,14 @@
 
 fail ()
 {
+    exec 1>&3
+    exec 2>&4
     echo "$0: $1. Stop."
+    if [ -s $log ]; then
+	cat $log
+    else
+	echo "$0: logfile $log is empty"
+    fi
     set_status error
     if [ ! "$tmpdir" = "" ]; then
        if [ -d $tmpdir ]; then
@@ -63,7 +70,6 @@ set_tmpdir ()
     fi
 }
 
-exec 1>&2
 bin=@@ORACC_BUILDS@@/bin
 
 if [ "$1" = "-v" ]; then
@@ -137,10 +143,14 @@ command=$1
 if [ "$command" = "" ]; then
     fail "empty command argument"
 fi
-
+log="$tmpdir/odo.log"
 shift
-echo "$0: tmpdir=$tmpdir; user=$user; project=$project; command=$command"
+echo "$0: log=$log; user=$user; project=$project; command=$command"
+echo "$0: switching output to $log"
 
+exec 3>&1
+exec 4>&2
+exec >$log 2>&1
 if [ $command = "init" ]; then
     cd @@ORACC_BUILDS@@
     if [ ! -r $user ]; then
@@ -157,7 +167,7 @@ else
     projdir=@@ORACC_BUILDS@@/$project
     if [ -d $projdir ]; then
 	(cd $projdir
-	 /bin/echo -n "$tmpdir/request.log" >.dxlog
+	 /bin/echo -n $log >.odolog
 	 . $bin/odo-environment.sh
 	 $bin/odo-cvs-refresh.sh $user $*
 	 $bin/odo-dir-links.sh $project $V
@@ -176,6 +186,9 @@ else
 			 script=$bin/odo-$command.sh
 			 if [ -x $script ]; then
 			     $script $user $project $*
+			     exec 1>&3
+			     exec 2>&4
+			     cat $log
 			 else
 			     fail "no command $uscript or $script"
 			 fi

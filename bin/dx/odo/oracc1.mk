@@ -10,6 +10,6 @@
 # the only way I can see to turn off the error that .deps does not
 # exist, which is on purpose because we rebuild .deps via include
 # .deps in oracc2.mk
-project check:
+project check clean:
 	@rm -f .deps
 	@$(MAKE) -f ${ORACC}/lib/data/oracc2.mk $@ 2>/dev/null

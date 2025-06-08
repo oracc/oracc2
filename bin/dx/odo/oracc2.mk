@@ -1,16 +1,21 @@
 include .deps
 
-project: build.log
+.DELETE_ON_ERROR: .build .check
 
-check: check.log
+project: .build
 
-build.log: ${DEPS}
-	oracc build 2>build.log
-	cat build.log
+check: .check
 
-check.log: ${DEPS}
-	oracc check 2>check.log
-	cat check.log
+.build: ${DEPS}
+	oracc build
+	touch $@
+
+.check: ${DEPS}
+	oracc check
+	touch $@
+
+clean:
+	rm -f .build .check
 
 .deps:
 	@makedeps.sh
