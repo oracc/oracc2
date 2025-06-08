@@ -15,7 +15,7 @@ check: .check
 	touch $@
 
 clean:
-	rm -f .build .check
+	rm -f .build .check 01bld/buildstamp
 
 .deps:
 	@makedeps.sh

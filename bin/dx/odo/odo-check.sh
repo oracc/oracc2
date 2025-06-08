@@ -11,9 +11,11 @@
 # odo check sl
 #
 
+# args should be $1=user $2=project $3..$n=[check opts]
 echo $0 $*
 
-if [ "$*" = "" ]; then
+# Note that adding lem to the list here also does atf check
+if [ "$3" = "" ]; then
     set sl glo lem
     echo $0 check list set to $*
 fi
