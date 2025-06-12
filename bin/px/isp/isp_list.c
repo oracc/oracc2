@@ -121,6 +121,7 @@ isp_try_list(Isp *ip, const char *dir)
       ip->lloc.type = "www";
       return 0;
     }
+  ip->errx = pool_copy((uccp)path, ip->p);
   return 1;
 }
 
@@ -185,7 +186,7 @@ isp_list_method(Isp *ip)
   if ('w' == *ip->lloc.type) /* www */
     {
       if (!ip->lloc.method && isp_try_www_list(ip) && isp_try_bld_list(ip))
-	ip->err = "list file not found in project www or bld lists directories";
+	ip->err = PX_ERROR_START "list file %s not found\n";
       else
 	isp_list_cemd(ip);
     }

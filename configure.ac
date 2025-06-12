@@ -156,6 +156,7 @@ AC_CONFIG_FILES([Makefile
 		 msc/ela/Makefile
 		 msc/fonts/Makefile
 		 msc/lex/Makefile
+		 msc/ood/Makefile
 		 msc/otf/Makefile
 		 msc/prj/Makefile
 		 msc/prj/cdli/Makefile
