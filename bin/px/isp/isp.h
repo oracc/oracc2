@@ -214,6 +214,7 @@ typedef struct isp
   int web;
   int zlev; 	/* not sure this is necessary with refactor */
   int argc;
+  int ood;		/* flag = 1 for ood project */
   enum px_err pxerr;
   const char *referer;
   const char *tmpdir;

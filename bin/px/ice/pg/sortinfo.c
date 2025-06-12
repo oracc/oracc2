@@ -17,6 +17,8 @@ extern const char *project;
 extern int verbose;
 extern struct sortinfo *sip;
 
+int ood_mode = 0;
+
 static unsigned char *
 findpool(unsigned char *tab,u4*nstring)
 {
@@ -29,7 +31,7 @@ findpool(unsigned char *tab,u4*nstring)
 	--pool;
       if (pool == (const char *)tab)
 	{
-	  fprintf(stderr,"%s: corrupt sortinfo.tab: no newline before stringpool\n",pool);
+	  fprintf(stderr,"%s: corrupt sortinfo.tab: no newline before stringpool\n",prog);
 	  exit(1);
 	}
       nstringp = pool-1;
@@ -133,7 +135,7 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 			}
 		      else
 			{
-			  fprintf(stderr,"expected newline in #field\n");
+			  fprintf(stderr,"%s: expected newline in #field\n", prog);
 			  goto badret;
 			}
 		      while (*n)
@@ -180,19 +182,18 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 		      for (i = 0; i < sip->nmember; ++i)
 			{
 			  int j;
-			  if (*s != 'P' && *s != 'Q' && *s != 'X')
+			  if (!ood_mode)
 			    {
-			      fprintf(stderr,"expected P or Q at start of line\n");
-			      goto badret;
+			      if (*s != 'P' && *s != 'Q' && *s != 'X')
+				{
+				  fprintf(stderr,"%s: expected P or Q at start of line\n", prog);
+				  goto badret;
+				}
+			      if (*s == 'P')
+				++p;
+			      ++s;
 			    }
-			  if (*s == 'P')
-			    ++p;
-			  ++s;
 			  sip->idlist[i] = strtoul((const char *)s,NULL,10);
-#if 0
-			  if (s[-1] == 'Q')
-			    setQ(sip->idlist[i]);
-#endif
 			  while (isdigit(*s))
 			    ++s;
 			  for (j = 0; j < sip->nfields; ++j)

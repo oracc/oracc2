@@ -132,7 +132,7 @@ pg_sort(Isp *ip, struct item*items, int *nitems,
     pdata[i] = &items[i];
   
   /* presort by P/Q and ID so we can traverse the sortinfo without thrashing */
-  qsort(pdata,ndata,sizeof(struct item*),icmp);
+  qsort(pdata,ndata,sizeof(struct item*), ip->ood ? strcmp : icmp);
 
   /* this is a good time to uniq unless we want full counts */
   if (!full_count_mode)

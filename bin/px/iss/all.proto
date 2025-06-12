@@ -1,7 +1,3 @@
-/* iss.c */
-extern struct item *pg_load(Isp *ip, int *nitems);
-extern const char *iss_perm(Isp *ip, const char *sort_keys, int nkeys);
-extern int iss_sort(Isp *ip);
 /* iss_data.c */
 extern int iss_data(Isp *ip, struct page *p);
 extern int iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max, const char *mol);
@@ -31,3 +27,7 @@ extern struct item **pg_sort(Isp *ip, struct item *items, int *nitems, const cha
 extern struct sortinfo *si_load_csi(Isp *ip);
 /* iss_texts.c */
 extern int iss_texts(Isp *ip, struct page *p);
+/* iss.c */
+extern struct item *pg_load(Isp *ip, int *nitems);
+extern const char *iss_perm(Isp *ip, const char *sort_keys, int nkeys);
+extern int iss_sort(Isp *ip);

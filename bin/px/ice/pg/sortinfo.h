@@ -44,6 +44,8 @@ struct si_cache
   short seq;
 };
 
+extern int ood_mode;
+
 struct sortinfo *si_load_tab(unsigned char *tab,size_t tabsize);
 void si_dump_csi(unsigned char *csiname,struct sortinfo *sip);
 struct sortinfo *si_load_csi(const char *);

@@ -32,6 +32,11 @@ config.xml	data.xml	outlined.lst
 ./ood/niod/00web/00config:
 parameters.xml	structure.xml
 
+CONFIG.XML
+==========
+
+For an ood project the <type> field in config.xml must be 'ood'.
+
 DATA.XML
 ========
 
@@ -81,3 +86,44 @@ The first record in ood/niod/00lib/data.xml is:
     <Publication>CTN II no. 024; see on ND 480 for this unnumbered fragment</Publication>
     <Date/>
   </o:record>
+  
+
+CREATING DATA.XML
+=================
+
+If your data is in XML or TSV it is fairly easy to create data.xml.
+Name your file with the appropriate extension and run:
+
+ ood-data-dot-xml.sh [field-name]
+
+A .tsv file must have the field-names in the first row, and the first
+column must have the field name o:n and contain the name the record
+should be known by.
+
+A .xml file must have a field that can be used as the o:n field.  If
+the data has a suitable field you can give the name of that field:
+
+ ood-data-dot-xml.sh designation
+
+Otherwise, you must create such a field and use the appropriate name.
+
+One restriction on input data is that it may not have a field with a
+local-name() of 'id' because that would conflict with the use of o:id.
+The names are case-sensitive, so 'Id' or 'ID' are allowable.
+
+The same applies to fields named 'n': a data set must rename any field
+whose local-name() is 'n'--'N' would be allowable.
+
+
+KEYDATA.XML
+===========
+
+Although this is strictly speaking optional, in practice it is much
+better to use 00lib/keydata.xml to provide sortability of fields.
+
+Once you have 00lib/data.xml you can run:
+
+ ood-keydata-dot-xml.sh
+
+To create a draft 00lib/keydata.xml and edit that as necessary.
+

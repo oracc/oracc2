@@ -89,7 +89,7 @@ pg_load(Isp *ip, int *nitems)
       colon = strchr((char*)s,':');
       if (colon)
 	s = ++colon;
-      if (*s == 'P' || *s == 'Q' || *s == 'X' || is_lang_id((char *)s) || *s == 'o')
+      if (ip->ood || *s == 'P' || *s == 'Q' || *s == 'X' || is_lang_id((char *)s) || *s == 'o')
 	{
 	  items[items_used].s = (ucp)orig_s;
 	  while (*s && '\n' != *s)

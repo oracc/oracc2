@@ -16,7 +16,7 @@ main(int argc, char **argv)
   size_t tabsize = 0;
   char *ext;
 
-  options(argc,argv,"d");
+  options(argc,argv,"do");
   if (argv[optind])
     tab = loadfile((unsigned char*)argv[optind],&tabsize);
   else
@@ -50,6 +50,9 @@ opts(int argc, const char *arg)
     {
     case 'd':
       csi_debug = 1;
+      break;
+    case 'o':
+      ood_mode = 1;
       break;
     case 'p':
       project = arg;

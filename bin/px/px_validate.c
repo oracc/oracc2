@@ -38,7 +38,8 @@ px_valid_arg(const char *p, int step)
   return 0;
 }
 
-/* This routine loads the project's config.xml as a side-effect */
+/* This routine loads the project's config.xml as a side-effect; it
+   sets the ood flag as another side-effect */
 static int
 px_valid_project(Isp *ip)
 {
@@ -70,6 +71,7 @@ px_valid_project(Isp *ip)
       else
 	ip->xpd = xp;
     }
+  ip->ood = (strstr(ip->project,"/ood/") ? 1 : 0);
   return 0;
 }
 
