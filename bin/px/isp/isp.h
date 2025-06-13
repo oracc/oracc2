@@ -101,7 +101,7 @@ struct isp_itemdata
   const char *file; /* the file from which to obtain a frag */
   const char *proj; /* the item's project as opposed to the host project, possibly a proxy */
   const char *htmd; /* the path to and including /htm */
-  const char *html;
+  const char *html; /* the file which contains the HTML output of ispxsl.sh etc. */
   const char *cfy;
   const char *img;
   const char *dotted;
@@ -117,6 +117,10 @@ struct isp_itemdata
   const char *xmdxsl;
   const char *bld;
   const char *hili; /* itemdata.item's data from hilite.db */
+  const char *type; /* this is an item time for the request execution;
+		       xtf is the default way of proding a text, but
+		       we might do an extf (esp2-xtf) in the future;
+		       ood is for ood/gdf item */
   Dbi_index *dp;
   Dbi_index *hilitedb;
   int not; /* 2 = no xmd (i.e., text not in project); 3 = no xtf */

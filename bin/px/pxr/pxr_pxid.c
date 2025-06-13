@@ -65,7 +65,7 @@ pxr_item_pathneeds(Isp *ip)
 int
 pxr_item_outputs(Isp *ip)
 {
-  wpx_print_hdr();
+  wpx_print_hdr(ip);
   if (!strcmp(ip->part, "full"))
     return pui_output(ip, stdout, pui_filetext("p4full.xml"));
   else if (!strcmp(ip->part, "plus"))

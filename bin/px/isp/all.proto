@@ -35,6 +35,7 @@ extern void isp_term(Isp *ip);
 extern void isp_item_undump(char *k, struct isp_itemdata *idp);
 extern int isp_item_load(Isp *ip);
 extern const char *first_lang(const char **a, const char **b);
+extern int isp_item_xsl(Isp *ip);
 extern int isp_item_xtf(Isp *ip);
 extern int isp_item_set(Isp *ip);
 extern int isp_item_cfy(Isp *ip);

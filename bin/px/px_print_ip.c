@@ -113,6 +113,7 @@ pr_isp_itemdata(FILE *fp, struct isp_itemdata *pr, const char *name)
   fprintf(fp,"\t\txmdxsl=%s\n",(char*)xmlify((ucp)pr->xmdxsl));
   fprintf(fp,"\t\tbld=%s\n",(char*)xmlify((ucp)pr->bld));
   fprintf(fp,"\t\thili=%s\n",(char*)xmlify((ucp)pr->hili));
+  fprintf(fp,"\t\ttype=%s\n",(char*)xmlify((ucp)pr->type));
   fprintf(fp,"\t\tnot=%d\n",(int)pr->not);
   fprintf(fp,"\t\toic=%d\n",(int)pr->oic);
 }

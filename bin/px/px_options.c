@@ -262,6 +262,10 @@ opts(int opt, const char *arg)
     case 'v':
       ++opt_ip->verbose;
       break;
+    case 'o':
+      opt_ip->ood = 1;
+      opt_ip->itemdata.type = "ood";
+      break;
     case '0':
       ++opt_ip->noheader;
       break;

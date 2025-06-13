@@ -13,15 +13,15 @@ px_cat_file(const char *file)
 #endif
 
 int
-px_return_file(const char *form, const char *file)
+px_return_file(Isp *ip, const char *form, const char *file)
 {
   /* the file-finder routines must set wpx_err appropriately */
   if (!file)
     return 1;
   if (form && strcmp(form, "html"))
-    wpx_cat_xml(form, file);
+    wpx_cat_xml(ip, form, file);
   else
-    wpx_cat_html(form, file);
+    wpx_cat_html(ip, form, file);
   return 1;
 }
 
@@ -32,9 +32,9 @@ px_return(Isp *ip)
     {
       ip->data = "dglo";
       if (ip->item)
-	return px_return_file(ip->form, pxr_find_gent(ip->project, ip->glos, ip->item, ip->form));
+	return px_return_file(ip, ip->form, pxr_find_gent(ip->project, ip->glos, ip->item, ip->form));
       else
-	return px_return_file(ip->form, pxr_find_glos(ip->project, ip->glos, ip->form));
+	return px_return_file(ip, ip->form, pxr_find_glos(ip->project, ip->glos, ip->form));
     }
   else if (ip->item)
     {

@@ -197,12 +197,12 @@ isp_create_cfy(Isp *ip)
   return 0;
 }
 
-static int
-isp_create_xtf(Isp *ip)
+static List *
+isp_xtf_xsl_args(Isp *ip, const char *exec)
 {
   List *args = list_create(LIST_SINGLE);
   list_add(args, (void*)ip->oracc);
-  list_add(args, (void*)"/bin/ispxtf.sh");
+  list_add(args, (void*)exec);
   list_add(args, " ");
   list_add(args, (void*)ip->project);
   list_add(args, " ");
@@ -219,7 +219,14 @@ isp_create_xtf(Isp *ip)
   list_add(args, (void*)ip->itemdata.xmdxsl);
   list_add(args, " ");
   list_add(args, (void*)ip->cache.out);
+  return args;
+}
+static int
+isp_xtf_xsl_sys(Isp *ip, List *args)
+{
   unsigned char *syscmd = list_concat(args);
+
+  list_free(args, NULL);
 
   if (ip->verbose)
     fprintf(stderr, "isp: isp_create_xtf: %s\n", syscmd);
@@ -240,8 +247,23 @@ isp_create_xtf(Isp *ip)
 	  return 1;
 	}
     }
-  
   return 0;
+}
+
+static int
+isp_create_xsl(Isp *ip)
+{
+  List *args = isp_xtf_xsl_args(ip, "/bin/ispxsl.sh");
+  list_add(args, " ");
+  list_add(args, ip->itemdata.type);  
+  return isp_xtf_xsl_sys(ip, args);
+}
+
+static int
+isp_create_xtf(Isp *ip)
+{
+  List *args = isp_xtf_xsl_args(ip, "/bin/ispxtf.sh");
+  return isp_xtf_xsl_sys(ip, args);
 }
 
 /* return the first char* in b that is in a or NULL if none
@@ -280,6 +302,23 @@ isp_item_lang(Isp *ip)
 	return ip->itemdata.langp[0];
     }
   return NULL;
+}
+
+int
+isp_item_xsl(Isp *ip)
+{
+  isp_htmd(ip);
+  expand_base(ip->itemdata.htmd);
+  ip->cache.item = (ccp)pool_copy((ucp)expand(ip->project, ip->item, NULL), ip->p);
+  ip->itemdata.html = (ccp)pool_alloc(strlen(ip->cache.item)+strlen("/gdf.html0"), ip->p);
+  sprintf((char*)ip->itemdata.html, "%s/gdf.html", ip->cache.item);
+  expand_base(NULL);
+
+  /* To do: check cache to see if xsl result already exists */
+  if (isp_create_xsl(ip))
+    return 1;
+  else if (ip->err) /* ispxsl succeeded so clear any prx db error */
+    ip->err = ip->errx = NULL;
 }
 
 int
@@ -352,6 +391,19 @@ isp_item_xtf(Isp *ip)
 int
 isp_item_set(Isp *ip)
 {
+  if (ip->ood)
+    {
+      extern const char *px_find_file(Isp *ip, const char *file2find, const char *deflt);
+      const char *path = px_find_file(ip, "p4-ood.xsl", "p4-ood.xsl");
+      if (path)
+	{
+	  ip->itemdata.xmdxsl = path;
+	  return isp_item_xsl(ip);
+	}
+      /* error messages already set by pxr_find_file */
+      return 1;
+    }
+  
   if (isp_item_load(ip))
     return 1;
   

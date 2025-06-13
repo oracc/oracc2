@@ -1,5 +1,5 @@
 /* px_return.c */
-extern int px_return_file(const char *form, const char *file);
+extern int px_return_file(Isp *ip, const char *form, const char *file);
 extern int px_return(Isp *ip);
 /* pxr_find.c */
 extern char *pxr_find_www_file(const char *project, const char *dir, const char *basename, const char *ext);
@@ -7,6 +7,7 @@ extern char *pxr_find_gent(const char *project, const char *glos, const char *oi
 extern char *pxr_find_glos(const char *project, const char *glos, const char *form);
 extern char *pxr_find_pqx_file(const char *project, const char *pqid, const char *ext);
 extern char *pxr_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang);
+extern const char *pxr_find_file(Isp *ip, const char *file2find, const char *deflt);
 /* pxr_pqx.c */
 extern int pxr_pqx(Isp *ip);
 /* pxr_pxid.c */
@@ -14,4 +15,3 @@ extern int pxr_item_defaults(Isp *ip);
 extern int pxr_pqx(Isp *ip);
 extern int pxr_item_pathneeds(Isp *ip);
 extern int pxr_item_outputs(Isp *ip);
-extern const char *pxr_find_file(Isp *ip, const char *file2find, const char *default);

@@ -497,21 +497,16 @@ pui_at_item_data(Isp *ip, FILE *fp)
 void
 pui_at_item_xslt(Isp *ip, FILE *fp)
 {
-  const char *type = (ip->ood ? "ood" : "xslt");
-  const char *path = pxr_find_file(ip, "p4-ood.xsl", "p4-ood.xsl");
-  if (path)
-    {
-      
-    }
+  px_file_copy(ip, ip->itemdata.html, "-");
 }
 
 void
 pui_at_xslt_class(Isp *ip, FILE *fp)
 {
   if (ip->ood)
-    return "ood";
+    fputs("ood", fp);
   else
-    return "xslt";
+    fputs("xslt", fp);
 }
 
 void
