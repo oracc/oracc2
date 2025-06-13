@@ -17,6 +17,8 @@ extern const char *project;
 extern int verbose;
 extern struct sortinfo *sip;
 
+int ood_mode = 0;
+
 static unsigned char *
 findpool(unsigned char *tab,u4*nstring)
 {
@@ -133,7 +135,7 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 			}
 		      else
 			{
-			  fprintf(stderr,"expected newline in #field\n");
+			  fprintf(stderr,"%s: expected newline in #field\n", prog);
 			  goto badret;
 			}
 		      while (*n)
@@ -180,19 +182,17 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 		      for (i = 0; i < sip->nmember; ++i)
 			{
 			  int j;
-			  if (*s != 'P' && *s != 'Q' && *s != 'X')
+			  if (!ood_mode && *s != 'P' && *s != 'Q' && *s != 'X')
 			    {
-			      fprintf(stderr,"expected P or Q at start of line\n");
+			      fprintf(stderr,"%s: expected P or Q at start of line\n", prog);
 			      goto badret;
+			      if (*s == 'P')
+				++p;
+			      ++s;
 			    }
-			  if (*s == 'P')
-			    ++p;
-			  ++s;
+			  else
+			    ++p; /* to fake qoffset in ood_mode */
 			  sip->idlist[i] = strtoul((const char *)s,NULL,10);
-#if 0
-			  if (s[-1] == 'Q')
-			    setQ(sip->idlist[i]);
-#endif
 			  while (isdigit(*s))
 			    ++s;
 			  for (j = 0; j < sip->nfields; ++j)
@@ -277,14 +277,14 @@ si_dump_csi(unsigned char *csiname, struct sortinfo *sip)
 }
 
 struct sortinfo *
-si_load_csi()
+si_load_csi(const char *p)
 {
   struct stat csistat;
   int csifd;
   void *csimap;
   char csiname[MAX_PATH];
 
-  sprintf(csiname,"@@ORACC@@/pub/%s/sortinfo.csi",project);
+  sprintf(csiname,"@@ORACC@@/pub/%s/sortinfo.csi",p?p:project);
 
   if (stat(csiname,&csistat))
     {

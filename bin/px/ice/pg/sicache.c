@@ -122,11 +122,14 @@ make_cache(struct item **items, int nitems, int*sic_size)
 	  static int one = 1;
 	  char buf[10];
 	  int *onep = NULL;
-	  sprintf(buf, "%u", id);
+	  if (ood_mode)
+	    sprintf(buf, "%04u", id);
+	  else
+	    sprintf(buf, "%u", id);
 	  onep = hash_find(seen, (unsigned char *)buf);
 	  if (!onep)
 	    {
-	      fprintf(stderr,"pg: member %lu not in sortinfo\n", (unsigned long)id);
+	      fprintf(stderr,"pg: member %s not in sortinfo\n", buf);
 	      hash_add(seen, (unsigned char*)strdup(buf), &one);
 	    }
 	  items[i]->skey = 1000000; /* "unknown" */

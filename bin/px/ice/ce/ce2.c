@@ -539,11 +539,6 @@ main(int argc, char * const*argv)
       usage();
     }
 
-#if 0
-  if (strstr(argv[0], "/cex"))
-    p4 = 1;
-#endif
-  
   f_log = stderr;
   
   if (lang)
@@ -558,6 +553,7 @@ main(int argc, char * const*argv)
       sprintf(xgdf_xml, "%s/pub/%s/data.xml", ohome, project);
       gdf_xml = xgdf_xml;
       ood_mode = 1;
+      fprintf(stderr, "ood_mode=1; gdf_xml=%s\n",gdf_xml);
       /* TODO: check access for gdf_xml */
     }
 

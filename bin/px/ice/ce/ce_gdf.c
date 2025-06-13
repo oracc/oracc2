@@ -29,8 +29,6 @@ static Hash *curr_record_hash = NULL;
 
 static void gdfprinter2(Hash *fields);
 
-static char *url_base = NULL;
-
 extern int *idcountp;
 extern Hash *ht;
 extern int echoing;
@@ -92,7 +90,25 @@ gdf_eH(void *userData, const char *name)
 	}
     }
   else
-    charData_discard();
+    {
+      /* Support ID in o:record@xml:id or in o:record/o:id */
+      if (!strcmp(name, "o:id"))
+	{
+	  const char *id = charData_retrieve();
+	  if (id && (idcountp = hash_find(ht,(const unsigned char*)id)))
+	    {
+	      if (!curr_record_hash)
+		{
+		  curr_record_hash = hash_create(1);
+		  hash_add(curr_record_hash,
+			   (unsigned char *)"o:id", pool_copy((unsigned char *)id, record_pool));
+		  echoing = 1;
+		}
+	    }	  
+	}
+      else 
+	charData_discard();
+    }
 }
 
 void
@@ -122,19 +138,12 @@ gdfprinter2(Hash *fields)
   ++nth;
 
   const char *pqx = hash_find(fields, (ucp)"o:id");
-  
-#if 1
-  if (!url_base)
-    url_base = malloc(strlen(project) + strlen("javascript:act_item_mode('P123456','cat')0"));
-  sprintf(url_base, "javascript:act_item_mode('%s','cat')", pqx);
-#else
-  if (!url_base)
-    url_base = malloc(strlen(project) + strlen("javascript:p3item('cat',)")+8);
-  sprintf(url_base, "javascript:p3item('cat',%d)", item_offset+nth);
-#endif
 
+  char anchor[strlen("<a href=.javascript://. onclick=.act_iref(event). data-iref=..0>")+strlen(pqx)];
+  sprintf(anchor, "<a href=\"javascript://\" onclick=\"act_iref(event)\" data-iref=\"%s\">", pqx);
   fputs("<ce:data><tr xmlns=\"http://www.w3.org/1999/xhtml\">",stdout);
-  fprintf(stdout, "<td class=\"ce-ood-id\"><a href=\"javascript:act_item(%s)\">%s</a></td>", pqx, (char*)hash_find(fields, (const unsigned char *)"o:id"));
+
+  fprintf(stdout,"<td class=\"ce-ood-id\">%s%s</a></td>", anchor, pqx);
   for (i = 0; width_specs[i]; ++i)
     {
       List *tmp = field_lists[i];

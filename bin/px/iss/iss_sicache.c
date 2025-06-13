@@ -42,7 +42,7 @@ pd_sort_cache(void)
 }
 
 struct si_cache **
-make_cache(struct item **items, int nitems, int*sicsize)
+make_cache(Isp *ip, struct item **items, int nitems, int*sicsize)
 {
   struct rbtree *rb;
   RBLIST *rbl;
@@ -73,11 +73,11 @@ make_cache(struct item **items, int nitems, int*sicsize)
 	  id = -1;
 	}
 
-      new_id = strtoul((const char *)items[i]->pq+1,NULL,10);
+      new_id = strtoul((const char *)items[i]->pq + (ip->ood ? 0 : 1),NULL,10);
       if (*items[i]->pq == 'X')
 	new_id += 2000000;
 
-      if (id  == new_id)
+      if (id == new_id)
 	{
 	  items[i]->skey = items[i-1]->skey;
 	  items[i]->grp = items[i-1]->grp;
@@ -116,11 +116,14 @@ make_cache(struct item **items, int nitems, int*sicsize)
 	  static int one = 1;
 	  char buf[10];
 	  int *onep = NULL;
-	  sprintf(buf, "%u", id);
+	  if (ip->ood)
+	    sprintf(buf, "%04u", id);
+	  else
+	    sprintf(buf, "%u", id);
 	  onep = hash_find(seen, (unsigned char *)buf);
 	  if (!onep)
 	    {
-	      fprintf(stderr,"pg: member %lu not in sortinfo\n", (unsigned long)id);
+	      fprintf(stderr,"iss_sicache: member %s not in sortinfo\n", buf);
 	      hash_add(seen, (unsigned char*)strdup(buf), &one);
 	    }
 	  items[i]->skey = 1000000; /* "unknown" */

@@ -19,7 +19,7 @@ extern int sic_cmp(const void *a, const void *b, const void *c);
 extern int sic_id_cmp(const void *a, const void *b);
 extern int sic_pd_cmp(const void *a, const void *b);
 extern void pd_sort_cache(void);
-extern struct si_cache **make_cache(struct item **items, int nitems, int *sicsize);
+extern struct si_cache **make_cache(Isp *ip, struct item **items, int nitems, int *sicsize);
 /* iss_sk_lookup.c */
 /* iss_sort.c */
 extern struct item **pg_sort(Isp *ip, struct item *items, int *nitems, const char *sortkeys);

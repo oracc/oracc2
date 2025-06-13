@@ -9,7 +9,7 @@ p4url_vec(P4url *p)
   char const** vec;
 
   int dst = 0;
-  vec = malloc((p->nargs+6) * sizeof(const char*));
+  vec = malloc((p->nargs+7) * sizeof(const char*));
   
   vec[dst++] = p->exe;
   vec[dst++] = px_cgi_arg("web","1");
@@ -27,6 +27,9 @@ p4url_vec(P4url *p)
     vec[dst++] = px_cgi_arg("pxid", p->pxid);
   else if (p->frag)
     vec[dst++] = px_cgi_arg("frag", p->frag);
+
+  if (p->ood)
+    vec[dst++] = px_cgi_arg("ood", "1");
   
   int src;
 

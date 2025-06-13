@@ -9,7 +9,7 @@ long ndata = 0;
 int *sortfields;
 int nsortfields;
 
-struct si_cache **make_cache(struct item **items, int nitems, int *sicsize);
+struct si_cache **make_cache(Isp *ip, struct item **items, int nitems, int *sicsize);
 
 /* compare only by PQ id because we uniq the pitems array down to one
    entry per text */
@@ -31,6 +31,13 @@ icmp(const void *a,const void *b)
     }
 
   return ap->lkey - bp->lkey;
+}
+static int
+istrcmp(const void *a,const void *b)
+{
+  struct item *ap = *(struct item**)a;
+  struct item *bp = *(struct item**)b;
+  return strcmp((const char*)ap->pq,(const char *)bp->pq);
 }
 
 static int
@@ -132,7 +139,7 @@ pg_sort(Isp *ip, struct item*items, int *nitems,
     pdata[i] = &items[i];
   
   /* presort by P/Q and ID so we can traverse the sortinfo without thrashing */
-  qsort(pdata,ndata,sizeof(struct item*), ip->ood ? strcmp : icmp);
+  qsort(pdata,ndata,sizeof(struct item*), ip->ood ? istrcmp : icmp);
 
   /* this is a good time to uniq unless we want full counts */
   if (!full_count_mode)
@@ -154,7 +161,7 @@ pg_sort(Isp *ip, struct item*items, int *nitems,
 	  exit(1);
       }
 
-  sicache = make_cache(pdata,ndata,&sic_size);
+  sicache = make_cache(ip,pdata,ndata,&sic_size);
 
   /* run the sort */
   qsort(pdata,ndata,sizeof(struct item*),pg_cmp);

@@ -32,10 +32,12 @@ static int p4url_arg_equals = 0;
  * P4 URLs have the data in the URL (u) and aditional parameters in
  * the QUERY_STRING (q).
  *
+ * A GDFID is a string of digits used as an ID in an ood project.
+ *
  * u is:
  *
  *	  PROJECT
- * 	| PROJECT ('/' PQXID)?
+ * 	| PROJECT ('/' (PQXID|GDFID))?
  *	| PROJECT ('/' LANGUAGE)? ('/' OXID)?
  *	| PROJECT '/' FILE
  *
@@ -105,6 +107,9 @@ p4url_u(P4url *p)
 	    }
 	  else if ((ret = p4url_is_textid(bits.one)))
 	    {
+	      /* This also returns true for a GDFID so we disambiguate here */
+	      if (isdigit(*bits.one))
+		p->ood = 1;
 	      if (2 == ret)
 		p->adhoc = 1;
 	      bits.bad = bits.two;
@@ -122,6 +127,9 @@ p4url_u(P4url *p)
 	{
 	  if ((ret = p4url_is_textid(bits.one)))
 	    {
+	      /* This also returns true for a GDFID so we disambiguate here */
+	      if (isdigit(*bits.one))
+		p->ood = 1;
 	      if (2 == ret)
 		p->adhoc = 1;
 	      p->pxid = bits.one;
@@ -405,6 +413,13 @@ p4url_is_textid(const char *i)
 		return 1;
 	    }
 	}
+    }
+  else
+    {
+      while (isdigit(*i))
+	++i;
+      if (!(*i))
+	return 1;
     }
   return 0;
 }

@@ -22,6 +22,7 @@ typedef struct p4url
   const char *err;
   int status;
   int adhoc;
+  int ood;
   const char *exe; /* p = px; q = qx */
 } P4url;
 
