@@ -116,3 +116,39 @@ pxr_find_pqx_xtr(const char *project, const char *pqid, const char *code, const 
   return bufp;
 }
 
+const char *
+pxr_find_file(Isp *ip, const char *file2find, const char *default)
+{
+  int flen = strlen(file2find);
+  if (strlen(default)>flen)
+    flen = strlen(default);
+  char pbuf[strlen(ip->project)+1];
+  strcpy(pbuf, ip->project);
+  char *p = strrchr(pbuf,'/');
+  if (!p)
+    p = pbuf;
+  char fil[strlen(oracc_builds())+strlen("/www/0")+strlen(pbuf)+flen];
+  do
+    {
+      sprintf(xsl, "%s/www/%s/%s", oracc_builds(), pbuf, file2find);
+      if (!access(xsl, R_OK))
+	return (ccp)pool_copy((ucp)fil, ip->p);
+      else
+	fprintf(stderr, "isp_xmd_outline: %s not found\n", xsl);
+      p = strrchr(pbuf,'/');
+      if (p)
+	*p = '\0';
+      else
+	p = pbuf;
+    }
+  while (p != pbuf);
+  sprintf(xsl, "%s/lib/scripts/%s", oracc_builds(), default);
+  if (!access(xsl, R_OK))
+    return (ccp)pool_copy((ucp)fil, ip->p);
+  else
+    {
+      ip->err = PX_ERROR_START "system default file %s not found\n";
+      ip->errx = (ccp)pool_copy((ucp)fil, ip->p);
+      return NULL;
+    }
+}

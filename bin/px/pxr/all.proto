@@ -14,3 +14,4 @@ extern int pxr_item_defaults(Isp *ip);
 extern int pxr_pqx(Isp *ip);
 extern int pxr_item_pathneeds(Isp *ip);
 extern int pxr_item_outputs(Isp *ip);
+extern const char *pxr_find_file(Isp *ip, const char *file2find, const char *default);
