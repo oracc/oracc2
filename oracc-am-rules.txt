@@ -3,7 +3,7 @@ override CFLAGS=
 AM_CFLAGS=-pedantic -Wall -g -O0
 ACLOCAL_AMFLAGS=-I m4 -Wno-portability
 
-LD_GDBM=-L${ORACC_HOMEBREW}
+LD_GDBM=${ORACC_HOMEBREW}
 
 ORACCIFY = $(abs_top_builddir)/oracc-subst.sh $(top_srcdir)/oracc.sed
 
