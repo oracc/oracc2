@@ -123,7 +123,13 @@ make_cache(Isp *ip, struct item **items, int nitems, int*sicsize)
 	  onep = hash_find(seen, (unsigned char *)buf);
 	  if (!onep)
 	    {
-	      fprintf(stderr,"iss_sicache: member %s not in sortinfo\n", buf);
+	      char pqxbuf[8];
+	      if (id > 2000000)
+		sprintf(pqxbuf, "X%06d", id-2000000);
+	      else
+		sprintf(pqxbuf, "P-or-Q%06d", id);
+
+	      fprintf(stderr,"iss_sicache: member %s (%s) not in sortinfo\n", buf, pqxbuf);
 	      hash_add(seen, (unsigned char*)strdup(buf), &one);
 	    }
 	  items[i]->skey = 1000000; /* "unknown" */

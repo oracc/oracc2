@@ -66,6 +66,9 @@ void
 pr_item(FILE *fp, struct item *pr, const char *name)
 {
   fprintf(fp, "<h3>\tstruct item ip->%s</h3>\n", name);
+  fprintf(fp,"\t\ts=%s\n",(char*)xmlify((ucp)pr->s));
+  fprintf(fp,"\t\tpq=%s\n",(char*)xmlify((ucp)pr->pq));
+  fprintf(fp,"\t\tqpq=%s\n",(char*)xmlify((ucp)pr->qpq));
   fprintf(fp,"\t\tskey=%d\n",(int)pr->skey);
   fprintf(fp,"\t\tlkey=%d\n",(int)pr->lkey);
   fprintf(fp,"\t\tgrp=%d\n",(int)pr->grp);

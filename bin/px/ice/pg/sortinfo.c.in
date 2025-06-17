@@ -327,7 +327,10 @@ si_debug_dump_csi(struct sortinfo *dsi)
   s4*scodes;
   for (i = 0; i < dsi->nmember; ++i)
     {
-      printf("%c%06d",i>=sip->qoffset?'Q':'P',sip->idlist[i]);
+      if (sip->idlist[i] > 2000000)
+	printf("X%06d",sip->idlist[i]-2000000);
+      else
+	printf("%c%06d",i>=sip->qoffset?'Q':'P',sip->idlist[i]);
       for (j = 0,scodes=&sip->scodes[i*sip->nfields]; j < dsi->nfields; ++j)
 	{
 	  printf("\t%7d",scodes[j]);
