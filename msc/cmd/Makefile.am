@@ -1,1 +1,1 @@
-SUBDIRS=config update
+SUBDIRS=check config update
