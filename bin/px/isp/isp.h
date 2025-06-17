@@ -256,6 +256,7 @@ struct ispargstab
 extern int iso_master(Isp *ip, const char *mol);
 extern int iso_zoutline(Isp *ip);
 extern int iss_sort(Isp *ip);
+extern void isp_htmd(Isp *ip);
 
 #include "all.proto"
 

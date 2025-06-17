@@ -1,3 +1,26 @@
+# .xml -> .c in pui
+bin/px/pui/p4ceselect.c
+bin/px/pui/p4controls.c
+bin/px/pui/p4debug.c
+bin/px/pui/p4debugdiv.c
+bin/px/pui/p4dropdown.c
+bin/px/pui/p4error.c
+bin/px/pui/p4footer.c
+bin/px/pui/p4full.c
+bin/px/pui/p4head.c
+bin/px/pui/p4html.c
+bin/px/pui/p4icons.c
+bin/px/pui/p4itemglo.c
+bin/px/pui/p4itemxtf.c
+bin/px/pui/p4nosrch.c
+bin/px/pui/p4noxtf.c
+bin/px/pui/p4pager.c
+bin/px/pui/p4plus.c
+bin/px/pui/p4search.c
+bin/px/pui/p4select.c
+bin/px/pui/p4unknown.c
+
+all.proto
 nxt-gb.lst
 status
 texlive.path
@@ -207,6 +230,7 @@ bin/px/px_images.c
 bin/px/pxsrch.sh
 bin/px/sig.c
 bin/px/wsigx.c
+bin/qx/qxx/px.c
 bin/qx/qindex.sh
 bin/qx/qindexall.sh
 bin/qx/qxxall.sh
