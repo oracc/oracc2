@@ -182,16 +182,19 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 		      for (i = 0; i < sip->nmember; ++i)
 			{
 			  int j;
-			  if (!ood_mode && *s != 'P' && *s != 'Q' && *s != 'X')
+			  if (ood_mode)
+			    ++p; /* to fake qoffset in ood_mode */
+			  else
 			    {
-			      fprintf(stderr,"%s: expected P or Q at start of line\n", prog);
-			      goto badret;
-			      if (*s == 'P')
+			      if (*s != 'P' && *s != 'Q' && *s != 'X')
+				{
+				  fprintf(stderr,"%s: expected P or Q at start of line\n", prog);
+				  goto badret;
+				}
+			      else if (*s == 'P')
 				++p;
 			      ++s;
 			    }
-			  else
-			    ++p; /* to fake qoffset in ood_mode */
 			  sip->idlist[i] = strtoul((const char *)s,NULL,10);
 			  while (isdigit(*s))
 			    ++s;
