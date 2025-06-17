@@ -200,8 +200,10 @@ main(int argc, char * const*argv)
   est_dump(estp);
   est_term(estp);
 
-  vids = se_file (gdfpath, curr_index, "vid.dat");
-  vido_dump_data(vidp,vids,NULL);
+  /*vids = se_file (gdfpath, curr_index, "vid.dat");*/
+  char vidfn[1024];
+  strcpy(vidfn, se_file(curr_project,"cat","vid.vid"));
+  vido_dump_data(vidp,vidfn,NULL);
   vido_term(vidp);
   vidp = NULL;
 #if 0
