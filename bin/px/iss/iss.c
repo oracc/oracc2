@@ -75,9 +75,20 @@ pg_load(Isp *ip, int *nitems)
       return NULL;
     }
   s = buf;
-  
-  /* we know that each entry takes up at least 8 bytes */
+#if 1
+  {
+    register size_t nitems = 0;
+    register char *b = buf;
+    while (*b)
+      if ('\n' == *b++)
+	++nitems;
+    items = malloc((nitems + 2) * sizeof(struct item)); /* alloc +2 in case no \n at EOF */
+  }
+#else
+  /* we know that each entry takes up at least 8 bytes [2025-06-18: not true since ood support] */
   items = malloc(((buflen / 8) + 1) * sizeof(struct item));
+#endif
+
   while (s - buf < buflen)
     {
       /* set up orig_s so it points to the PQX, which may be

@@ -46,6 +46,6 @@ struct si_cache
 
 struct sortinfo *si_load_tab(unsigned char *tab,size_t tabsize);
 void si_dump_csi(unsigned char *csiname,struct sortinfo *sip);
-struct sortinfo *si_load_csi();
+struct sortinfo *si_load_csi(Isp *ip);
 
 #endif /*SORTINFO_H_*/
