@@ -80,6 +80,8 @@ startElement(void *userData, const char *name, const char **atts)
   if (!strcmp(name,"o:record"))
     {
       curr_id = findAttr(atts, "xml:id");
+      if ('o' == curr_id[0])
+	++curr_id; /* xml:id for 001 is o001 but we use 001 internally */
       /*vido_new_id(vidp, curr_id);*/
       fprintf(pqidsf,"%s\n",curr_id);
       loc8(vido_new_id(vidp,curr_id), 0, lang_mask(atts), &l8);
