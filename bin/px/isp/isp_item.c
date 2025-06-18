@@ -228,6 +228,8 @@ isp_xtf_xsl_sys(Isp *ip, List *args)
 
   list_free(args, NULL);
 
+  ip->verbose = 1;
+  
   if (ip->verbose)
     fprintf(stderr, "isp: isp_create_xtf: %s\n", syscmd);
 
@@ -235,6 +237,7 @@ isp_xtf_xsl_sys(Isp *ip, List *args)
   if ((sys = system((ccp)syscmd)))
     {
       int xstatus = WEXITSTATUS(sys);
+      fprintf(stderr, "isp_xtf_xsl_sys return sys=%d; xstatus=%d\n", sys, xstatus);
       /*int ifexited = WIFEXITED(sys);*/
       if (xstatus > 1)
 	{
@@ -320,6 +323,7 @@ isp_item_xsl(Isp *ip)
     return 1;
   else if (ip->err) /* ispxsl succeeded so clear any prx db error */
     ip->err = ip->errx = NULL;
+  return 0;
 }
 
 int

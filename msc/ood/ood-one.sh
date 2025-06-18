@@ -14,3 +14,7 @@ sudo chmod -R o+r 02pub/cat
 pxp3p4.sh $project
 pxreset.sh $project
 o2-web.sh
+if [ ! -r 02www/lists/outlined.lst ]; then
+    mkdir -p 02www/lists
+    cp 00lib/outlined.lst 02www/lists
+fi

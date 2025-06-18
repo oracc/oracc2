@@ -40,4 +40,5 @@ struct atactionstab;
 "pui_cuneify_bar()", &pui_at_cuneify_bar
 "pui_onload()", &pui_at_onload
 "pui_item_cfy()", &pui_at_item_cfy
-"pui_item_img()", &pui_at_item_img
+"pui_item_xslt()", &pui_at_item_xslt
+"pui_xslt_class()", &pui_at_xslt_class

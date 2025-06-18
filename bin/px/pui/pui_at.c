@@ -24,11 +24,13 @@ active_pages(Isp *ip)
   return npages;
 }
 
+#if 0
 void
 pui_at_cfy_fam(Isp *ip, FILE *fp)
 {
   fputs(cfy_fam(ip->itemdata.proj ? ip->itemdata.proj : ip->project), fp);
 }
+#endif
 
 void
 pui_at_pager_class(Isp *ip, FILE *fp)
@@ -448,6 +450,12 @@ pui_at_content(Isp *ip, FILE *fp)
       else if (ip->nowhat)
 	{
 	  if (pui_output(ip, stdout, pui_filetext("p4nowhat.xml")))
+	    longjmp(ip->errjmp, 1);
+	}
+      else if (ip->ood)
+	{
+	  const char *itemxsl = ip->itemdata.not ? "p4unknown.xml" : "p4itemxsl.xml";
+	  if (pui_output(ip, stdout, pui_filetext(itemxsl)))
 	    longjmp(ip->errjmp, 1);
 	}
       else

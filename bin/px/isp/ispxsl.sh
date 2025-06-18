@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/sh
 #
 # This is a version of ispxtf.sh which handles application of a
 # generic XSL script to generic IDs.
@@ -39,6 +39,7 @@ if [ "$cachedir" != "" ]; then
     rm -f $errlog
     >&2 echo $0: args=$*
     echo $0: transferring error logging to $errlog >&2
+    exec 4>&2
     exec 2>$errlog
     echo $0 $* >&2
 else
@@ -62,9 +63,12 @@ fi
 case $type in
     ood)
 	input=$metadir/gdf.xml
+	>&2 echo $oraccbin/ood-item.sh $prox_project $item $input
 	>&2 $oraccbin/ood-item.sh $prox_project $item $input
-	if [ $? -ne 0 ]; then
-	    echo $0: unknown $oraccbin/ood-item.sh $prox_project $item failed. Stop.
+	if [ $? -eq 0 ]; then
+	    >&2 echo $0: $oraccbin/ood-item.sh successful
+	else
+	    >&2 echo $0: unknown $oraccbin/ood-item.sh $prox_project $item failed. Stop.
 	    exit 3
 	fi
     ;;
@@ -77,10 +81,13 @@ esac
 # Check that we have the necessary source data
 [ -r $input ] || exit 2
 
->&2 echo $0 xsltproc $oraccarg $projarg $xtlarg $xmdotl $xmd '>'$metadir/gdf.html
+>&2 echo xsltproc $oraccarg $projarg $xtlarg $xmdotl $xmd '>'$metadir/gdf.html
 xsltproc $oraccarg $projarg $xslt $input >$metadir/gdf.html
-if [ $? -ne 0 ]; then
-    echo "Failed call invoked as:" >&2
+if [ $? -eq 0 ]; then
+    >&2 echo "$0 successful (status=$?)."
+    exit 0
+else
+    echo "Failed call (status=$?) invoked as:" >&2
     echo "	xsltproc $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml" >&2
     echo $0: xsltproc failed. Stop. >&2
     exit 1
@@ -96,3 +103,4 @@ fi
 
 # exit with last program's status; don't exit 0/1 based on empty
 # errlog because that could contain diagnostics
+exec 2>&4 4>&-

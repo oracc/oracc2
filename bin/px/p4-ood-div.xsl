@@ -15,7 +15,7 @@
   <xsl:if test="string-length($project)=0">
     <xsl:message terminate="yes">p3-xmd-div.xsl: project not set. Stop.</xsl:message>
   </xsl:if>
-  <xsl:apply-templates/>
+  <xsl:apply-templates select="*/o:record"/>
 </xsl:template>
 
 <xsl:template match="o:record">
