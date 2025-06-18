@@ -80,7 +80,6 @@ esac
 >&2 echo $0 xsltproc $oraccarg $projarg $xtlarg $xmdotl $xmd '>'$metadir/gdf.html
 xsltproc $oraccarg $projarg $xslt $input >$metadir/gdf.html
 if [ $? -ne 0 ]; then
-else
     echo "Failed call invoked as:" >&2
     echo "	xsltproc $projarg $xtlarg $xmdotl $xmd >$metadir/meta.xml" >&2
     echo $0: xsltproc failed. Stop. >&2

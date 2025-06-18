@@ -17,9 +17,12 @@ px_find_file(Isp *ip, const char *file2find, const char *deflt)
     {
       sprintf(fil, "%s/www/%s/%s", oracc_builds(), pbuf, file2find);
       if (!access(fil, R_OK))
-	return (ccp)pool_copy((ucp)fil, ip->p);
+	{
+	  fprintf(stderr, "px_find_file: using %s\n", fil);
+	  return (ccp)pool_copy((ucp)fil, ip->p);
+	}
       else
-	fprintf(stderr, "isp_xmd_outline: %s not found\n", fil);
+	fprintf(stderr, "px_find_file: %s not found\n", fil);
       p = strrchr(pbuf,'/');
       if (p)
 	*p = '\0';
@@ -29,9 +32,13 @@ px_find_file(Isp *ip, const char *file2find, const char *deflt)
   while (p != pbuf);
   sprintf(fil, "%s/lib/scripts/%s", oracc_builds(), deflt);
   if (!access(fil, R_OK))
-    return (ccp)pool_copy((ucp)fil, ip->p);
+    {
+      fprintf(stderr, "px_find_file: using %s\n", fil);
+      return (ccp)pool_copy((ucp)fil, ip->p);
+    }
   else
     {
+      fprintf(stderr, "px_find_file: default file %s not found\n", fil);
       ip->err = PX_ERROR_START "system default file %s not found\n";
       ip->errx = (ccp)pool_copy((ucp)fil, ip->p);
       return NULL;

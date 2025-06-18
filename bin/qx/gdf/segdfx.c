@@ -159,7 +159,7 @@ main(int argc, char * const*argv)
 {
   unsigned char *key;
   FILE*keysf;
-  const char *keysname, *fldsname, *vids;
+  const char *keysname, *fldsname;
   char *gdfpath = NULL;
 
   f_log = stderr;
@@ -248,7 +248,7 @@ const char *prog = "segdfx";
 int major_version = 6, minor_version = 0, verbose;
 const char *usage_string = "-p [project] [-s]";
 void
-help ()
+help (void)
 {
   printf("  -p [project] Gives the name of the project; required\n");
 }

@@ -45,7 +45,10 @@ isp_xmd_outline(Isp *ip)
     {
       sprintf(xsl, "%s/www/%s/xmdoutline.xsl", oracc_builds(), pbuf);
       if (!access(xsl, R_OK))
-	return (ccp)pool_copy((ucp)xsl, ip->p);
+	{
+	  fprintf(stderr, "isp_xmd_outline: using %s\n", xsl);
+	  return (ccp)pool_copy((ucp)xsl, ip->p);
+	}
       else
 	fprintf(stderr, "isp_xmd_outline: %s not found\n", xsl);
       p = strrchr(pbuf,'/');
@@ -57,7 +60,10 @@ isp_xmd_outline(Isp *ip)
   while (p != pbuf);
   sprintf(xsl, "%s/lib/scripts/p4-xmd-div.xsl", oracc_builds());
   if (!access(xsl, R_OK))
-    return (ccp)pool_copy((ucp)xsl, ip->p);
+    {
+      fprintf(stderr, "isp_xmd_outline: using %s\n", xsl);
+      return (ccp)pool_copy((ucp)xsl, ip->p);
+    }
   else
     {
       ip->err = PX_ERROR_START "system XMD outline processor %s not found\n";

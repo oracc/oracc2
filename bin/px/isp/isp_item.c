@@ -255,7 +255,7 @@ isp_create_xsl(Isp *ip)
 {
   List *args = isp_xtf_xsl_args(ip, "/bin/ispxsl.sh");
   list_add(args, " ");
-  list_add(args, ip->itemdata.type);  
+  list_add(args, ip->itemdata.type);
   return isp_xtf_xsl_sys(ip, args);
 }
 
@@ -310,6 +310,7 @@ isp_item_xsl(Isp *ip)
   isp_htmd(ip);
   expand_base(ip->itemdata.htmd);
   ip->cache.item = (ccp)pool_copy((ucp)expand(ip->project, ip->item, NULL), ip->p);
+  ip->cache.prox = ip->cache.item;
   ip->itemdata.html = (ccp)pool_alloc(strlen(ip->cache.item)+strlen("/gdf.html0"), ip->p);
   sprintf((char*)ip->itemdata.html, "%s/gdf.html", ip->cache.item);
   expand_base(NULL);
@@ -394,9 +395,10 @@ isp_item_set(Isp *ip)
   if (ip->ood)
     {
       extern const char *px_find_file(Isp *ip, const char *file2find, const char *deflt);
-      const char *path = px_find_file(ip, "p4-ood.xsl", "p4-ood.xsl");
+      const char *path = px_find_file(ip, "p4-ood.xsl", "p4-ood-div.xsl");
       if (path)
 	{
+	  ip->itemdata.item = ip->item;
 	  ip->itemdata.xmdxsl = path;
 	  return isp_item_xsl(ip);
 	}
