@@ -125,34 +125,42 @@ p4url_u(P4url *p)
 	}
       else if (bits.one)
 	{
-	  if ((ret = p4url_is_textid(bits.one)))
+	  if (!strcmp(bits.one,"pager"))
 	    {
-	      /* This also returns true for a GDFID so we disambiguate here */
-	      if (isdigit(*bits.one))
-		p->ood = 1;
-	      if (2 == ret)
-		p->adhoc = 1;
-	      p->pxid = bits.one;
-	    }
-	  else if (p4url_is_glossaryid(bits.one))
-	    {
-	      p->oxid = bits.one;
-	    }
-	  else if (p4url_is_urlkey(bits.one))
-	    {
-	      /* /rimanum/sig is not a glossary; check if bits.one is a urlkey */
-	      bits.bad = bits.one;
-	      bits.one = NULL;
-	      p4url_move_to_qs(&bits, p);
-	    }
-	  else if (p4url_is_glossary(bits.one))
-	    {
-		p->glossary = bits.one;
+	      bits.one = bits.two;
+	      bits.two = NULL;
 	    }
 	  else
 	    {
-	      p->status = 1;
-	      p->err = "found good PROJECT but rest of URL is neither GLOSSARY nor TEXTID";
+	      if ((ret = p4url_is_textid(bits.one)))
+		{
+		  /* This also returns true for a GDFID so we disambiguate here */
+		  if (isdigit(*bits.one))
+		    p->ood = 1;
+		  if (2 == ret)
+		    p->adhoc = 1;
+		  p->pxid = bits.one;
+		}
+	      else if (p4url_is_glossaryid(bits.one))
+		{
+		  p->oxid = bits.one;
+		}
+	      else if (p4url_is_urlkey(bits.one))
+		{
+		  /* /rimanum/sig is not a glossary; check if bits.one is a urlkey */
+		  bits.bad = bits.one;
+		  bits.one = NULL;
+		  p4url_move_to_qs(&bits, p);
+		}
+	      else if (p4url_is_glossary(bits.one))
+		{
+		  p->glossary = bits.one;
+		}
+	      else
+		{
+		  p->status = 1;
+		  p->err = "found good PROJECT but rest of URL is neither GLOSSARY nor TEXTID";
+		}
 	    }
 	}
     }
