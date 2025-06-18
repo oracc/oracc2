@@ -44,6 +44,8 @@ isp_config(Isp *ip)
 	{
 	  if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
 	    ip->default_cfg.select = 1;
+	  else
+	    ip->default_cfg.leftmenu = 0;
 	}
       else
 	ip->default_cfg.select = 1;
@@ -67,8 +69,12 @@ isp_config(Isp *ip)
   if (ip->xpd)
     {
       if ((sel = hash_find(ip->xpd->opts, (ucp)"outline-special-select")))
-	if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
-	  ip->special_cfg.select = 1;
+	{
+	  if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
+	    ip->special_cfg.select = 1;
+	  else
+	    ip->special_cfg.leftmenu = 0;
+	}
       
       s(cat_fields,"outline-special-catalog-fields");
       s(cat_widths,"outline-special-catalog-widths");
