@@ -396,12 +396,17 @@ isp_item_xtf(Isp *ip)
 int
 isp_item_set(Isp *ip)
 {
+  if (isp_item_load(ip))
+    return 1;
+
   if (ip->ood)
     {
       extern const char *px_find_file(Isp *ip, const char *file2find, const char *deflt);
       const char *path = px_find_file(ip, "p4-ood.xsl", "p4-ood-div.xsl");
       if (path)
 	{
+	  ip->zoom = 0; /* ood currently always uses z0 */
+	  ip->page = ip->itemdata.zpag;
 	  ip->itemdata.item = ip->item;
 	  ip->itemdata.xmdxsl = path;
 	  return isp_item_xsl(ip);
@@ -409,19 +414,18 @@ isp_item_set(Isp *ip)
       /* error messages already set by pxr_find_file */
       return 1;
     }
-  
-  if (isp_item_load(ip))
-    return 1;
-  
-  /* This implementation doesn't support creating an unzoomed pager from an item yet */
-  ip->zoom = ip->itemdata.zoom;
-  ip->page = ip->itemdata.zpag;
+  else
+    {
+      /* This implementation doesn't support creating an unzoomed pager from an item yet */
+      ip->zoom = ip->itemdata.zoom;
+      ip->page = ip->itemdata.zpag;
 
-  if (isp_item_langs(ip))
-    return 1;
+      if (isp_item_langs(ip))
+	return 1;
   
-  if (isp_item_xtf(ip))
-    return 1;
+      if (isp_item_xtf(ip))
+	return 1;
+    }
 
   return 0;
 }
