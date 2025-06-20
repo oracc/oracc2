@@ -158,7 +158,7 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 		    }
 		  else
 		    {
-		      fprintf(stderr,"bad format in #fields\n");
+		      fprintf(stderr,"%s: bad format in #fields\n", prog);
 		      goto badret;
 		    }
 		  ++nfields;
@@ -214,7 +214,7 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 				}
 			      else
 				{
-				  fprintf(stderr,"bad format in values\n");
+				  fprintf(stderr, "%s: bad format in values\n", prog);
 				  goto badret;
 				}
 			    }
@@ -225,14 +225,19 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 		}
 	      else
 		{
-		  fprintf(stderr,"expected #nmembers\n");
+		  fprintf(stderr, "%s: expected #nmembers\n", prog);
 		  goto badret;
 		}
 	    }
 	}
     }
+  else
+    {
+      fprintf(stderr, "%s: expected #nfields\n", prog);
+      goto badret;
+    }
  badret:
-  fprintf(stderr,"pgcsi: compilation failed\n");
+  fprintf(stderr,"%s: compilation failed\n", prog);
   return NULL;
 }
 

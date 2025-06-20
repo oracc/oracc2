@@ -9,7 +9,7 @@ if [ -r 00lib/keydata.xml ]; then
     echo "and then run $b again."
     exit 1
 fi
-ff=`xmllint --xpath '*/*/*' 00lib/data.xml | grep '^<' | cut -d'>' -f1 | tr -d '</' | sort -u`
+ff=`xmllint --xpath '*/*/*' 00lib/data.xml | grep '^<' | cut -d' ' -f1  | cut -d'>' -f1 | tr -d '</' | sort -u`
 exec 3>&1
 exec >00lib/keydata.xml
 echo '<?xml version="1.0" encoding="utf-8"?>'

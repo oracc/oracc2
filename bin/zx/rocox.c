@@ -17,7 +17,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
   
-  options(argc, argv, "c:C:efh::nr:R:stx:X?");
+  options(argc, argv, "c:C:efh::nor:R:stx:X?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
@@ -67,6 +67,9 @@ opts(int opt, const char *arg)
       break;
     case 'n':      
       roco_newline = 1;
+      break;
+    case 'o':
+      roco_ood_ns = 1;
       break;
     case 'R':
       roco_format = arg;

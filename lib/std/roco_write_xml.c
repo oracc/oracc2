@@ -5,7 +5,10 @@
 
 static const char *esp_ns = "http://oracc.org/ns/esp/1.0";
 static const char *html_ns = "http://www.w3.org/1999/xhtml";
+static const char *ood_ns = "http://oracc.org/ns/ood/1.0";
+
 int roco_esp_ns = 0;
+int roco_ood_ns = 0;
 int roco_html_ns = 0;
 
 void
@@ -23,6 +26,8 @@ roco_write_xml(FILE *fp, Roco *r)
 	fprintf(fp, " xmlns=\"%s\"", html_ns);
       if (roco_esp_ns)
 	fprintf(fp, " xmlns:esp=\"%s\"", esp_ns);
+      if (roco_ood_ns)
+	fprintf(fp, " xmlns:o=\"%s\"", ood_ns);
       if (r->class)
 	fprintf(fp, " class=\"%s\"", r->class);
       fputc('>', fp);
