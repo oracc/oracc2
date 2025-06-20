@@ -137,20 +137,36 @@ static void
 xpd_eH(struct xpd *xp, const char *name)
 {
   char *colon = strrchr(name, ':');
-  if (colon && strcmp(colon, ":option") && strcmp(colon, ":project"))
+  if (colon)
     {
-      char *t = (char *)charData_retrieve(), *end;
-      unsigned char *n = pool_copy((unsigned char *)(colon+1),xp->pool);
-      while (isspace(*t))
-	++t;
-      end = t + strlen(t);
-      while (end > t && isspace(end[-1]))
-	--end;
-      *end = '\0';
-      hash_add(xp->opts,
-	       n,
-	       pool_copy((unsigned char *)t,xp->pool));      
+      if (strcmp(colon, ":option") && strcmp(colon, ":project"))
+	{
+	  char *t = (char *)charData_retrieve(), *end;
+	  unsigned char *n = pool_copy((unsigned char *)(colon+1),xp->pool);
+	  while (isspace(*t))
+	    ++t;
+	  end = t + strlen(t);
+	  while (end > t && isspace(end[-1]))
+	    --end;
+	  *end = '\0';
+	  hash_add(xp->opts,
+		   n,
+		   pool_copy((unsigned char *)t,xp->pool));
+	}
     }
+#if 0
+  else
+    {
+      char *t = charData_retrieve();
+      if (t && *t)
+	{
+	  unsigned char *n = pool_copy(name,xp->pool);
+	  hash_add(xp->opts,
+		   n,
+		   pool_copy((unsigned char *)t,xp->pool));
+	}
+    }
+#endif
   charData_discard();
 }
 

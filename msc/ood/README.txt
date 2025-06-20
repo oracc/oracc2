@@ -37,6 +37,11 @@ CONFIG.XML
 
 For an ood project the <type> field in config.xml must be 'ood'.
 
+To switch off left menu:
+
+ outline-default-leftmenu no
+ outline-default-select no
+
 DATA.XML
 ========
 

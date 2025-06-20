@@ -1,6 +1,6 @@
 #!/bin/dash
 #OLD# $1=project $2=input $3=output $4=cemd $5=state $6=glos-lang
-#NEW# $1=project $2=tsv $3=key $4=output $5=cemd $6=state $7=glos-lang
+#NEW# $1=project $2=tsv $3=key $4=output $5=cemd $6=state $7=glos-lang $8=-O if ip->ood
 >&2 echo px: called $0 $*
 bin=${ORACC}/bin
 lib=${ORACC}/lib
@@ -8,7 +8,7 @@ o="-stringparam oracc ${ORACC}"
 p="-stringparam project $1"
 if [ "$5" = "ccat" ]; then
     S=-S$6
-    $bin/tx -s -t $2 -k $3 | $bin/cex $S -p $1 -icat |
+    $bin/tx -s -t $2 -k $3 | $bin/cex $8 $S -p $1 -icat |
 	xsltproc $o $p $lib/scripts/isp-ce-HTML.xsl - >$4
 elif [ "$5" = "ctra" ]; then
     S=-S$6

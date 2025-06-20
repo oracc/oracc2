@@ -44,8 +44,12 @@ isp_config(Isp *ip)
 	{
 	  if (!strcmp(sel, "true")|| !strcmp(sel, "yes"))
 	    ip->default_cfg.select = 1;
+#if 0
+	  /*NO: bad change. cfg.select is for whether you have a select at top of leftmenu;
+	    you can have leftmanu without select */
 	  else
 	    ip->default_cfg.leftmenu = 0;
+#endif
 	}
       else
 	ip->default_cfg.select = 1;

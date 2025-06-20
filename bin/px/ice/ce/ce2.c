@@ -184,10 +184,15 @@ ce_file(const char *idp)
       *proj = '\0';
     }
 
-  strncpy(pqid,idp,7);
-  pqid[7] = '\0';
+  if (strlen(idp)<7)
+    strcpy(pqid, idp);
+  else
+    {
+      strncpy(pqid,idp,7);
+      pqid[7] = '\0';
+    }
 
-  if (idp[7] == '_' || project_en)
+  if (idp[strlen(idp)] == '_' || project_en)
     {
       char base[128], *pd;
       pd = strchr(idp,'.');
@@ -531,7 +536,7 @@ int
 main(int argc, char * const*argv)
 {
   /*exit_on_error = TRUE;*/
-  options(argc, argv, "23a:c:C:f:g:i:l:m:o:p:S:tvx");
+  options(argc, argv, "23a:c:C:f:g:i:l:m:o:Op:S:tvx");
 
   if (!project || !ce_index)
     {
@@ -546,13 +551,12 @@ main(int argc, char * const*argv)
   else
     strcpy(langindex,ce_index);
 
-  if (strstr(project, "/ood/"))
+  if (ood_mode)
     {
       const char *ohome = oracc_home();
       char *xgdf_xml = malloc(strlen(ohome) + strlen("/pub/") + strlen(project) + strlen("/data.xml") + 1);
       sprintf(xgdf_xml, "%s/pub/%s/data.xml", ohome, project);
       gdf_xml = xgdf_xml;
-      ood_mode = 1;
       fprintf(stderr, "ood_mode=1; gdf_xml=%s\n",gdf_xml);
       /* TODO: check access for gdf_xml */
     }
@@ -684,6 +688,9 @@ opts(int argc, const char *arg)
       break;
     case 'o':
       item_offset = atoi(arg);
+      break;
+    case 'O':
+      ood_mode = 1;
       break;
     case 'p':
       project = arg;

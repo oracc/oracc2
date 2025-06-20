@@ -71,7 +71,8 @@ px_valid_project(Isp *ip)
       else
 	ip->xpd = xp;
     }
-  ip->ood = (strstr(ip->project,"/ood/") ? 1 : 0);
+  char *type = xpd_option(ip->xpd, "type");
+  ip->ood = (!strcmp(type, "ood") ? 1 : 0);
   return 0;
 }
 

@@ -68,6 +68,17 @@ create_page_div(Isp *ip)
       list_add(args, " ");
       list_add(args, (void*)ip->glos);
     }
+  else
+    {
+      list_add(args, " ");
+      list_add(args, "-");
+    }
+
+  if (ip->ood)
+    {
+      list_add(args, " ");
+      list_add(args, "-O");
+    }
 
   unsigned char *syscmd = list_concat(args);
 
