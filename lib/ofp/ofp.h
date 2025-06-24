@@ -41,7 +41,7 @@ typedef enum Ofp_feature
   {
     OFPF_BASE , OFPF_LIGA , OFPF_SSET , OFPF_CVNN , OFPF_OIVS , OFPF_SALT , OFPF_NONE
   } Ofp_feature;
-extern const char *ofp_feat_str[OFPF_NONE];
+extern const char *ofp_feat_str[];
 
 typedef struct Ofp_glyph
 {

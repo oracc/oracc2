@@ -32,6 +32,7 @@ extern const char *roco_colorder;
 extern const char *roco_format;
 extern int roco_html_ns, roco_esp_ns, roco_ood_ns;
 extern int roco_newline;
+extern int roco_no_void_xml;
 extern int roco_swap_axes;
 extern int roco_xmlify;
 

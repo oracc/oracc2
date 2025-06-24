@@ -2,7 +2,7 @@
 #include "osl_unicode.h"
 #include "ofp.h"
 
-const char *ofp_feat_str[OFPF_NONE];
+const char *ofp_feat_str[OFPF_NONE+1];
 
 /* The OFP file format is very simple and consists of two different kinds of lines:
 

@@ -103,7 +103,7 @@ roco_hash(Roco *r)
 }
 
 static const char *
-roco_co_fo()
+roco_co_fo(void)
 {
   char buf[strlen(roco_colorder) * 4], *b = buf;
   const char *s;

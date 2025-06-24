@@ -10,6 +10,7 @@ static const char *ood_ns = "http://oracc.org/ns/ood/1.0";
 int roco_esp_ns = 0;
 int roco_ood_ns = 0;
 int roco_html_ns = 0;
+int roco_no_void_xml = 0;
 
 void
 roco_write_xml(FILE *fp, Roco *r)
@@ -49,8 +50,9 @@ roco_write_xml(FILE *fp, Roco *r)
 	      if (*r->rows[i][j])
 		fprintf(fp, "<%s>%s</%s>",
 			ctag, roco_xmlify ? xmlify(r->rows[i][j]) : r->rows[i][j], ctag);
-	      else
+	      else if (!roco_no_void_xml)
 		fprintf(fp, "<%s/>", ctag);
+	      /* else don't emit an empty tag for void data */
 	    }
 	  fprintf(fp, "</%s\n>", r->rowtag);
 	}

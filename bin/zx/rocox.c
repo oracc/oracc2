@@ -17,7 +17,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
   
-  options(argc, argv, "c:C:efh::nor:R:stx:X?");
+  options(argc, argv, "c:C:efh::nor:R:stvx:X?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
@@ -86,6 +86,9 @@ opts(int opt, const char *arg)
       rowtag = "tr";
       celtag = "td";
       xml_output = 1;
+      break;
+    case 'v':
+      roco_no_void_xml = 1;
       break;
     case 'x':
       xmltag = arg;

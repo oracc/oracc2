@@ -7,7 +7,12 @@ fi
 mkdir -p $ORACC/$project/01bld/lists
 mkdir -p $ORACC/pub/$project/cat
 cp 00lib/outlined.lst 01bld/lists
-cp 00lib/data.xml 02pub
+if [ -d 00lib/data.d ] ; then
+    rm -f 02pub/data.d
+    ln -sf `pwd`00lib/data.d 02pub
+else
+    cp 00lib/data.xml 02pub
+fi
 $ORACC/bin/xmdmanager2.plx
 $ORACC/bin/qgdfx -p $project < 02pub/data.xml
 sudo chmod -R o+r 02pub/cat
