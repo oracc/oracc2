@@ -9,13 +9,13 @@ const char *usage_string = " [-t tsv] [-d dir] [-n name] [-k key]";
   
 const char *arg_dir, *arg_key, *arg_name, *arg_tsv;
 
-int space_newlines, undbi;
+int ood_id, ood_pad, space_newlines, undbi;
 
 int
 main(int argc, char **argv)
 {
   program_values(prog, major_version, minor_version, usage_string, NULL);
-  options(argc, argv, "d:k:n:st:u");
+  options(argc, argv, "d:k:n:o:st:u");
 
   if (arg_key)
     {
@@ -33,6 +33,22 @@ main(int argc, char **argv)
       /* index tsv */
       int res = tsv_index(arg_tsv, arg_dir, arg_name);
       exit(res);
+    }
+  else if (ood_pad)
+    {
+      char *lp;
+      switch (ood_pad)
+	{
+	case 5:
+	  while ((lp = (char*)loadoneline(stdin,NULL)))
+	    {
+	      printf("%05d\t", ++ood_id);
+	      puts(lp);
+	    }
+	  break;
+	default:
+	  break;
+	}
     }
   else
     usage();
@@ -60,6 +76,9 @@ opts(int argc, const char *arg)
       break;
     case 'n':
       arg_name = arg;
+      break;
+    case 'o':
+      ood_pad = atoi(arg);
       break;
     case 's':
       space_newlines = 1;
