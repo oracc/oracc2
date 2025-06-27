@@ -46,8 +46,8 @@ else
     exec 2>/dev/null
 fi
 
-oraccarg="-param oracc '$ORACC'"
-projarg="-param project '$prox_project'"
+oraccarg="-stringparam oracc '$ORACC'"
+projarg="-stringparam project '$prox_project'"
 
 # Check we have or can make the metadir--this ends with
 # p4/htm/P123/123456 so it prepares for HTML generation as well
@@ -81,7 +81,7 @@ esac
 # Check that we have the necessary source data
 [ -r $input ] || exit 2
 
->&2 echo xsltproc $oraccarg $projarg $xtlarg $xmdotl $xmd '>'$metadir/gdf.html
+>&2 echo xsltproc $oraccarg $projarg $xtlarg $xslt $input '>'$metadir/gdf.html
 xsltproc $oraccarg $projarg $xslt $input >$metadir/gdf.html
 if [ $? -eq 0 ]; then
     >&2 echo "$0 successful (status=$?)."

@@ -8,7 +8,7 @@
 
 <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
 
-<xsl:param name="oracc" select="'/Users/stinney/orc'"/>
+<xsl:param name="oracc" select="'/home/oracc'"/>
 <xsl:param name="project" select="''"/>
 
 <xsl:template match="/">
