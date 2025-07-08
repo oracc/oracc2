@@ -9,7 +9,11 @@ if [ -r 00lib/keydata.xml ]; then
     echo "and then run $b again."
     exit 1
 fi
-ff=`xmllint --xpath '*/*/*' 00lib/data.xml | grep '^<' | cut -d' ' -f1  | cut -d'>' -f1 | tr -d '</' | sort -u`
+if [ -r 00lib/data.xml ]; then
+    ff=`xmllint --xpath '*/*/*' 00lib/data.xml | grep '^<' | cut -d' ' -f1  | cut -d'>' -f1 | tr -d '</' | sort -u`
+else
+    ff=`00bin/ood-fields.sh`
+fi
 exec 3>&1
 exec >00lib/keydata.xml
 echo '<?xml version="1.0" encoding="utf-8"?>'
