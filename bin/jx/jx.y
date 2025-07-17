@@ -99,7 +99,10 @@ vstr(const char *s)
 	    if ('"' == *s)
 	      puts("&quot;");
 	    else
-	      putchar(*s);
+	      {
+		putchar('\\');
+		putchar(*s);
+	      }
 	    break;
 	  case '\'':
 	    puts("&apos;");

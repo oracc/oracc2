@@ -4,7 +4,7 @@ bin_PROGRAMS=jx
 
 bin_SCRIPTS=jx.sh
 
-scriptdata_DATA=jx-uptag.xsl
+scriptdata_DATA=jx-uptag.xsl jx-un-a.xsl
 
 jx.tab.c jx.tab.h: jx.y jx.l
 
