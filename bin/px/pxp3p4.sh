@@ -30,5 +30,9 @@ if [ -s 02pub/atf-data.tab ]; then
     fi
 fi
 rm -fr 02pub/p4.d
-pxprecompute.sh
+if [ -r 01bld/lists/outlined.lst ]; then
+    pxprecompute.sh
+else
+    echo "$0: no outlined.lst. Not calling pxprecompute.sh (normal for non-corpus projects)."
+fi
 chmod -R o+r 02pub

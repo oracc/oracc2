@@ -8,6 +8,8 @@
 
 echo $0 $*
 
+mkdir -p 01bld/lists
+
 lx-inputs.sh
 
 listdir=01bld/lxlists

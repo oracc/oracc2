@@ -21,13 +21,14 @@ for a in 02pub/cbd/* ; do
 	cp 01bld/$lang/L*.lst $a
     fi
 done
+
 o2-weblive.sh
-sudo o2-prm.sh
+o2-prm.sh
 neo-cbd-json.sh
 sudo chown -R root:oracc /home/oracc/www/neo/downloads
 sudo chmod g+r /home/oracc/www/neo/downloads
 mkdir -p 02www/lists
-cp 01bld/lists/outlined.lst >02www/lists/outlined.lst
+cp 01bld/lists/outlined.lst 02www/lists/outlined.lst
 chmod -R o+r 02www/lists
 
 pxp3p4.sh neo
