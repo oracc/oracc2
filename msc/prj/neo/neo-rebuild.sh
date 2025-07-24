@@ -26,7 +26,7 @@ o2-weblive.sh
 o2-prm.sh
 neo-cbd-json.sh
 chown -R root:oracc /home/oracc/www/neo/downloads
-chmod -R +r /home/oracc/www/neo/downloads
+chmod -R o+r /home/oracc/www/neo/downloads
 mkdir -p 02www/lists
 cp 01bld/lists/outlined.lst 02www/lists/outlined.lst
 chmod -R o+r 02www/lists
