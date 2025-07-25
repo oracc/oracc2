@@ -23,7 +23,6 @@ try_map(char *sig,char *map_file,const char*projlang)
       fprintf(stderr, "wsigx: map file %s not found\n", map_file);
       printf("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head><body><p>No such map file %s</p></body></html>",map_file);
       exit(1);
-
     }
   if (verbose)
     fprintf(stderr, "wsigx: looking for %s in %s\n", sig, map_file);
@@ -211,7 +210,7 @@ int
 main(int argc, char **argv)
 {
   char *map = NULL;
-  char *sig = argv[2], *usig, *msig, *trysig, *postproj, *script = NULL;
+  char *sig = argv[2], *usig, *msig, *trysig, *postproj, *script = NULL, *hyph = NULL;
   wchar_t *wsig = NULL;
   size_t nwchar = 0, i;
   char *locale = NULL;
@@ -240,9 +239,14 @@ main(int argc, char **argv)
       fflush(stdout);
       return 0;
     }
-
-  ++wsig; /* skip biohazard symbol */
-  --nwchar;
+  else
+    {
+      while (*wsig == 0x2623)
+	{
+	  ++wsig; /* skip biohazard symbol */
+	  --nwchar;
+	}
+    }
   for (i=0; i < nwchar; ++i)
     {
       switch(wsig[i])
@@ -280,6 +284,16 @@ main(int argc, char **argv)
 	*langp = '\0';
       }  
 
+  if (!strcmp(project, "neo") && ((hyph = strchr(lang, '-'))))
+    {
+      char *langp = NULL;
+      *hyph = '\0';
+      langp = langend - 9; /* langp now points at first - of -x-stdbab vel sim */
+      while (*langend)
+	*langp++ = *langend++;
+      *langp = '\0';
+    }
+  
   map = make_map(trysig, project);
   try_map(trysig, map, lang);
   map = make_map(msig, NULL);
