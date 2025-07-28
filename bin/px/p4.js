@@ -69,7 +69,7 @@ function onloadScroll(scrollid)
     if (e) {
 	e = getTR(e);
 	let i = 3;
-	while (i) {	    
+	while (i) {
 	    if (e.previousSibling) {
 		e = e.previousSibling;
 	    } else {
@@ -851,6 +851,6 @@ function act_hide_show(evt) {
 	// this is the h2.hsheader
 	n.parentElement.classList.toggle('hiding');
 	// this is the p.hide
-	n.parentElement.followingSibling.classList.toggle('hide');
+	n.parentElement.nextElementSibling.classList.toggle('hide');
     }
 }
