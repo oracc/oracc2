@@ -554,4 +554,4 @@ div.purl {  border: 0px; border-top: 2px; border-style: solid; border-color: #ee
 div.compounds { padding-top: 5px; padding-bottom: 5px; }
 
 .hsheader:after { content: "▲"; }
-.hsheaderhiding:after { content: "▼"; }
+.hsheader.hiding:after { content: "▼"; }
