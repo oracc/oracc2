@@ -839,3 +839,18 @@ function cfyHi(evt) {
     onloadHili(id, cfy);
     return false;
 }
+
+
+function act_hide_show(evt) {
+    let n = evt.target;
+    // find the <a>
+    while (!n.hasAttribute('onclick')) {
+	n = n.parentElement;
+    }
+    if (n) {
+	// this is the h2.hsheader
+	n.parentElement.classList.toggle('hiding');
+	// this is the p.hide
+	n.parentElement.followingSibling.classList.toggle('hide');
+    }
+}
