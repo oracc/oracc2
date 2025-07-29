@@ -25,6 +25,11 @@ p.summary { margin-left: 1.1em; text-indent: -1em;
 /* div.ce    { margin-left: 2em; } */
 
 p.norms   { width: 90%; margin: auto; }
+p.bases   { width: 90%; margin: auto; }
+p.stems   { width: 90%; margin: auto; }
+p.conts   { width: 90%; margin: auto; }
+p.morphs   { width: 90%; margin: auto; }
+p.prefs   { width: 90%; margin: auto; }
 
 div.morphology { width: 90%; margin: auto; }
 
@@ -555,5 +560,6 @@ div.purl {  border: 0px; border-top: 2px; border-style: solid; border-color: #ee
 
 div.compounds { padding-top: 5px; padding-bottom: 5px; }
 
+.hsheader { font-size: 90%; font-weight: bold; width: 90%; margin: auto; }
 .hsheader:after { content: "▲"; }
 .hsheader.hiding:after { content: "▼"; }

@@ -840,7 +840,6 @@ function cfyHi(evt) {
     return false;
 }
 
-
 function act_hide_show(evt) {
     let n = evt.target;
     // find the <a>
