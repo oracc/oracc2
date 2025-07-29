@@ -15,6 +15,22 @@ int
 sigmap_item(Isp *ip)
 {
   ip->sig = unweb_sig(ip->sig);
+
+  if (!strcmp(ip->project, "neo"))
+    {
+      char *p = strchr(ip->sig, '%');
+      while (':' != *p)
+	if ('-' == *p)
+	  break;
+	else
+	  ++p;
+      if ('-' == *p)
+	{
+	  char *c = strchr(p, ':');
+	  memmove(p,c,strlen(c)+1);
+	}
+    }
+  
   const char *pos = find_pos(ip->sig);
   const char *lng = find_lang(ip->sig, NULL);
 
@@ -25,6 +41,7 @@ sigmap_item(Isp *ip)
   
   if (pos && strlen(pos) == 2 && pos[1] == 'N')
     lng = "qpn";
+
   if (lng && *lng)
     {
       char cbd[strlen(ip->oracc)+strlen(ip->project)+strlen(lng)+strlen("//pub/cbd/0")];
@@ -121,7 +138,7 @@ find_lang(const char *sig, char **endp)
 	  buf[c-p] = '\0';
 	}
       else
-	fprintf(stderr, "wsigx: lang too long (%s)\n", p);
+	fprintf(stderr, "sigmap: lang too long (%s)\n", p);
     }
   else
     *buf = '\0';
@@ -143,7 +160,7 @@ find_proj(const char *sig)
 	  buf[p-at] = '\0';
 	}
       else
-	fprintf(stderr, "wsigx: project too long (%s)\n", p);
+	fprintf(stderr, "sigmap: project too long (%s)\n", p);
     }
   else
     *buf = '\0';
