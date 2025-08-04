@@ -113,7 +113,7 @@ sx_s_values_by_oid(FILE *fp, struct sl_signlist *sl)
 }
 
 static const char *
-sx_sll_oid_anywhere(struct sl_signlist *sl, unsigned const char *sn)
+sx_sll_oid_anywhere(struct sl_signlist *sl, unsigned const char *sn, int *co)
 {
   struct sl_sign *sp = hash_find(sl->hsentry, sn);
   const char *o = NULL;
@@ -139,6 +139,8 @@ sx_sll_oid_anywhere(struct sl_signlist *sl, unsigned const char *sn)
 	      else if (ip->type == 'f')
 		o = ip->u.f->oid;
 	    }
+	  else if ((ip = hash_find(sl->hcomponly, sn)))
+	    *co = 1;
 	}
     }
   return o;
@@ -154,36 +156,51 @@ sx_sll_oids_of(unsigned const char *sns, struct sl_signlist *sl)
   x = xsns;
   while (*x)
     {
+      int componly = 0;
       xsn = x;
       while (*x && ' ' != *x)
 	++x;
       if (*x)
 	*x++ = '\0';
-      const char *o = sx_sll_oid_anywhere(sl, (uccp)xsn);
+      const char *o = sx_sll_oid_anywhere(sl, (uccp)xsn, &componly);
       if (!o)
 	{
 	  char xnm[strlen((ccp)xsn)+2];
-	  xnm[0] = '|';
+	  strcpy(xnm, "|");
 	  /* The third test here is a hack for |(HI×1(N57))&(HI×1(N57))| */
 	  if ('(' == *xsn && ')' == xsn[strlen((ccp)xsn)-1] && !strstr((ccp)xsn,"))&("))
 	    {
-	      strcpy((char*)xnm+1,(ccp)xsn+1);
-	      xnm[strlen(xnm)-1] = '|';
-	      xnm[strlen(xnm)] = '\0';
-	      o = sx_sll_oid_anywhere(sl, (uccp)xnm);
+	      strcat(xnm,(ccp)xsn);
+	      strcat(xnm, "|");
+	      o = sx_sll_oid_anywhere(sl, (uccp)xnm, &componly);
+	      if (!o && !componly)
+		{
+		  strcpy(xnm+1,(ccp)xsn+1);
+		  xnm[strlen(xnm)-1] = '|';
+		  xnm[strlen(xnm)] = '\0';
+		  o = sx_sll_oid_anywhere(sl, (uccp)xnm, &componly);
+		}
 	    }
 	  else
 	    {
 	      strcpy((char*)xnm+1,(ccp)xsn);
 	      strcat(xnm, "|");
-	      o = sx_sll_oid_anywhere(sl, (uccp)xnm);
+	      o = sx_sll_oid_anywhere(sl, (uccp)xnm, &componly);
 	    }
 	  
 	}
       if (!o)
 	{
-	  o = "q99";
-	  mesg_verr(NULL, "%s has no OID\n", xsn);
+	  if (componly)
+	    {
+	      list_free(l,NULL);
+	      return NULL;
+	    }
+	  else
+	    {
+	      o = "q99";
+	      mesg_verr(NULL, "%s has no OID\n", xsn);
+	    }
 	}
       list_add(l,(void*)o);
     }
@@ -195,6 +212,8 @@ sx_sll_oids_of(unsigned const char *sns, struct sl_signlist *sl)
 static void
 sx_s_sign(FILE *f, struct sl_sign *s, struct sl_signlist *sl)
 {
+  if (!s->inst->valid)
+    return;
   if (!s->xref && (s->oid || s->smoid))
     {
       if (s->smoid)
@@ -215,12 +234,25 @@ sx_s_sign(FILE *f, struct sl_sign *s, struct sl_signlist *sl)
 	  char seqbuf[strlen((ccp)s->name)+1];
 	  strcpy(seqbuf,(ccp)s->name);
 	  unsigned char *seq = gdlseq((ucp)seqbuf);
+	  if (strchr((ccp)seq, '+'))
+	    {
+	      unsigned char *s = seq;
+	      while (*s)
+		if ('+' == *s)
+		  *s++ = ' ';
+		else
+		  ++s;
+	    }
 	  if (seq)
 	    {
 	      if (strchr((ccp)seq, ' '))
 		{
-		  fprintf(f, "%s;seq\t%s\n", curr_oid, (seq = sx_sll_oids_of(seq, sl)));
-		  free(seq);
+		  seq = sx_sll_oids_of(seq, sl);
+		  if (seq)
+		    {
+		      fprintf(f, "%s;seq\t%s\n", curr_oid, seq);
+		      free(seq);
+		    }
 		}
 	    }
 	}

@@ -198,7 +198,7 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 	      struct sl_list *lp = hash_find(sl->hlentry, (uccp)ldp->names[j]);
 	      if (lp)
 		{
-		  struct sl_inst *ip;
+		  struct sl_inst *ip = NULL;
 		  unsigned const char *note = (uccp)"";
 		  if (lp->insts)
 		    {
@@ -237,7 +237,7 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 			    mesg_verr(&lp->inst->mloc, "@lref requires @note (use '@note -' to suppress this message)");
 			}
 		      else
-			mesg_verr(&ip->mloc, "untyped @list or @lref");
+			mesg_verr(NULL, "untyped @list or @lref");
 		      struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
 		      sx_list_row(f, sl, (uccp)ldp->names[j], ip, tp, NULL, lp, note);
 		      /*fprintf(f, "%s\t\t%d\t0\t\t\t\t\t%s\n", ldp->names[j], tp->s, note);*/

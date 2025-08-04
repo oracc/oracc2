@@ -130,6 +130,7 @@ asl_bld_init(void)
   sl->p = pool_init();
   sl->compounds = list_create(LIST_SINGLE);
   sl->componly = list_create(LIST_SINGLE);
+  sl->hcomponly = hash_create(128);
   sl->hnums = hash_create(1000);
 
   sl->notes = new_inst(sl);
@@ -1251,6 +1252,7 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
       f->sign->type = sx_tle_formproxy;
       f->compoundonly = 1;
       list_add(sl->componly, sl->curr_inst);
+      hash_add(sl->hcomponly, sl->curr_form->u.f->name, sl->curr_inst);
     }
   else
     {
@@ -1259,7 +1261,11 @@ asl_bld_tle(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const un
       sl->curr_sign->pname = pool_copy(m, sl->p);
       sl->curr_inst = sl->curr_sign->inst;
       if (type == sx_tle_componly)
-	list_add(sl->componly, sl->curr_inst);
+	{
+	  list_add(sl->componly, sl->curr_inst);
+	  /*fprintf(stderr, "adding %s to hcomponly\n", sl->curr_sign->name);*/
+	  hash_add(sl->hcomponly, sl->curr_sign->name, sl->curr_inst);
+	}
 
       /* At this point sl->curr_sign is still set, e.g., to the @lref;
 	 this means we can use the sign's inst for the list inst */
