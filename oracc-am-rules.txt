@@ -75,7 +75,7 @@ install-exec-local:
 	$(ORACCIFY) $<
 
 %.oin: %.ttf ${xxfont}/ttf2oin.sh
-       ${$xxfont}/ttf2ofp.sh $*
+	${$xxfont}/ttf2ofp.sh $*
 
 %.ofp: %.ttf %.oin %.def ${xxfont}/ttf2ofp.sh ${xxfont}/ofp2im.sh ${xxfont}/ofp2im.xsl \
 	sl/lists.tsv sl/unicode.tsv
