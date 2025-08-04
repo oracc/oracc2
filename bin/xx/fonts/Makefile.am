@@ -2,9 +2,9 @@ include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=ofpx oin2lig
 
-bin_SCRIPTS=ttf2ofp.sh ofp2im.sh
+bin_SCRIPTS=ttf2ofp.sh ofp2im.sh ttx2oin.sh
 
-scriptdata_DATA=ofp2im.xsl
+scriptdata_DATA=ofp2im.xsl ttx2oin.xsl
 
 ofpx_SOURCES = ofpx.c
 ofpx_LDADD = $(xLDADD)

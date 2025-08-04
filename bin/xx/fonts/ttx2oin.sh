@@ -1,10 +1,11 @@
 #!/bin/sh
+set -x
 if [ "$AFDKO_PATH" = "" ]; then
     AFDKO_PATH=~
 fi
 ff=$1
 if [ "$ff" == "" ]; then
-    echo $0: must give basename of .ttf file on command line. Stop.
+    echo $0: must give .ttf file on command line. Stop.
     exit 1;
 fi
 x=`basename $ff .ttf`.ttx
