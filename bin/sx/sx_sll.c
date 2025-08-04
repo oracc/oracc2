@@ -112,6 +112,38 @@ sx_s_values_by_oid(FILE *fp, struct sl_signlist *sl)
     }
 }
 
+static const char *
+sx_sll_oid_anywhere(struct sl_signlist *sl, unsigned const char *sn)
+{
+  struct sl_sign *sp = hash_find(sl->hsentry, sn);
+  const char *o = NULL;
+  if (sp)
+    {
+      if (sp->formdef)
+	o = sp->formdef->u.f->oid;
+      else
+	o = sp->oid;
+    }
+  else
+    {
+      struct sl_form *fp = hash_find(sl->hfentry, sn);
+      if (fp)
+	o = fp->oid;
+      else
+	{
+	  struct sl_inst *ip = hash_find(sl->haka, sn);
+	  if (ip)
+	    {
+	      if (ip->type == 's')
+		o = ip->u.s->oid;
+	      else if (ip->type == 'f')
+		o = ip->u.f->oid;
+	    }
+	}
+    }
+  return o;
+}
+
 /* Return a string consisting of the OIDs for each of the sign names
    in the arg string */
 static unsigned char *
@@ -127,31 +159,24 @@ sx_sll_oids_of(unsigned const char *sns, struct sl_signlist *sl)
 	++x;
       if (*x)
 	*x++ = '\0';
-      struct sl_sign *sp = hash_find(sl->hsentry, (uccp)xsn);
-      const char *o = NULL;
-      if (sp)
-	o = sp->oid;
-      else
+      const char *o = sx_sll_oid_anywhere(sl, (uccp)xsn);
+      if (!o)
 	{
-	  char xnm[strlen(xsn)+2];
+	  char xnm[strlen((ccp)xsn)+2];
 	  xnm[0] = '|';
 	  /* The third test here is a hack for |(HI×1(N57))&(HI×1(N57))| */
-	  if ('(' == *xsn && ')' == xsn[strlen(xsn)-1] && !strstr(xsn,"))&("))
+	  if ('(' == *xsn && ')' == xsn[strlen((ccp)xsn)-1] && !strstr((ccp)xsn,"))&("))
 	    {
-	      strcpy(xnm+1,xsn+1);
+	      strcpy((char*)xnm+1,(ccp)xsn+1);
 	      xnm[strlen(xnm)-1] = '|';
 	      xnm[strlen(xnm)] = '\0';
-	      sp = hash_find(sl->hsentry, (uccp)xnm);
-	      if (sp)
-		o = sp->oid;
+	      o = sx_sll_oid_anywhere(sl, (uccp)xnm);
 	    }
 	  else
 	    {
-	      strcpy(xnm+1,xsn);
+	      strcpy((char*)xnm+1,(ccp)xsn);
 	      strcat(xnm, "|");
-	      sp = hash_find(sl->hsentry, (uccp)xnm);
-	      if (sp)
-		o = sp->oid;
+	      o = sx_sll_oid_anywhere(sl, (uccp)xnm);
 	    }
 	  
 	}
