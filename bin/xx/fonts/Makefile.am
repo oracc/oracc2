@@ -2,7 +2,7 @@ include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=ofpx oin2lig
 
-bin_SCRIPTS=ttf2ofp.sh ofp2im.sh ttx2oin.sh
+bin_SCRIPTS=ttf2ofp.sh ofp2im.sh ttf2oin.sh
 
 scriptdata_DATA=ofp2im.xsl ttx2oin.xsl
 
