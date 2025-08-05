@@ -12,6 +12,12 @@ OFP=	Oracc-Noto-SansCuneiform.ofp Oracc-gudea.ofp Oracc-NA-Outline.ofp \
 	Oracc-OBF-Regular.ofp CuneiformClassic-final.ofp Oracc-LAK.ofp \
 	Oracc-RSP.ofp
 
+OIN=	Oracc-Noto-SansCuneiform.oin Oracc-gudea.oin Oracc-NA-Outline.oin \
+	Oracc-OBF-Regular.oin CuneiformClassic-final.oin Oracc-LAK.oin \
+	Oracc-RSP.oin
+
+.PRECIOUS: ${OIN}
+
 data_DATA=${OFP} ${DEF} \
 	im-ofs-cc.tab im-ofs-gudea.tab im-ofs-noto.tab im-ofs-oobf.tab \
 	im-ofs-lak.tab im-ofs-nao.tab im-ofs-rsp.tab

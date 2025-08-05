@@ -68,7 +68,8 @@
 }
 
 .ofs-lak {
-   font-family: "Oracc LAK";
+    font-family: "Oracc LAK";
+    font-variant-ligatures: common-ligatures;
 }
 
 .ofs-nao {
@@ -93,6 +94,7 @@
 
 .ofs-rsp {
    font-family: "Oracc RSP";
+    font-variant-ligatures: common-ligatures;
 }
 
 .ss01 {
@@ -141,6 +143,26 @@
 
 .salt9 {
     font-feature-settings: "salt" 9;
+}
+
+.salt10 {
+    font-feature-settings: "salt" 10;
+}
+
+.salt11 {
+    font-feature-settings: "salt" 11;
+}
+
+.salt12 {
+    font-feature-settings: "salt" 12;
+}
+
+.salt13 {
+    font-feature-settings: "salt" 13;
+}
+
+.salt14 {
+    font-feature-settings: "salt" 14;
 }
 
 .cv01 {
