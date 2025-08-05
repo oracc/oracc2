@@ -1,3 +1,5 @@
+*.ttx
+
 # .xml -> .c in pui
 bin/px/pui/p4ceselect.c
 bin/px/pui/p4controls.c
