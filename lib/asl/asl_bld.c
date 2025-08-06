@@ -11,6 +11,22 @@
 #include <asl.tab.h>
 #include "signlist.h"
 
+const char *cvnn[] = {
+  NULL  , "cv01", "cv02", "cv03", "cv04", "cv05", "cv06", "cv07",
+  "cv08", "cv09", "cv10", "cv11", "cv12", "cv13", "cv14", "cv15",
+  "cv16", "cv17", "cv18", "cv19", "cv20", "cv21", "cv22", "cv23",
+  "cv24", "cv25", "cv26", "cv27", "cv28", "cv29", "cv30", "cv31",
+  "cv32", "cv33", "cv34", "cv35", "cv36", "cv37", "cv38", "cv39",
+  "cv40", "cv41", "cv42", "cv43", "cv44", "cv45", "cv46", "cv47",
+  "cv48", "cv49", "cv50", "cv51", "cv52", "cv53", "cv54", "cv55",
+  "cv56", "cv57", "cv58", "cv59", "cv60", "cv61", "cv62", "cv63",
+  "cv64", "cv65", "cv66", "cv67", "cv68", "cv69", "cv70", "cv71",
+  "cv72", "cv73", "cv74", "cv75", "cv76", "cv77", "cv78", "cv79",
+  "cv80", "cv81", "cv82", "cv83", "cv84", "cv85", "cv86", "cv87",
+  "cv88", "cv89", "cv90", "cv91", "cv92", "cv93", "cv94", "cv95",
+  "cv96", "cv97", "cv98", "cv99"
+};
+  
 extern int asl_literal_flag;
 
 static void check_flags(Mloc* locp, char *n, int *q, int *l);
@@ -841,6 +857,21 @@ add_glyf_token(Mloc *locp, struct sl_signlist *sl, const char *nam)
     }
 }
 
+static const char *
+glyf_cvnn(const char *nam)
+{
+  const char *ret = NULL;
+  nam = strrchr(nam, '~');
+  if (nam)
+    {
+      ++nam;
+      int cv = atoi(nam)-1;
+      if (cv > 0 && cv <= 100)
+	ret = cvnn[cv];
+    }
+  return ret;
+}
+
 void
 asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned char *uni,
 	     const char *hex, const char *oid, const char *var, const char *otf)
@@ -850,6 +881,7 @@ asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned
 	struct sl_glyf *gp = memo_new(sl->m_glyfs);
 	char *equals;
 	gp->nam = nam;
+	gp->otf = glyf_cvnn(nam);
 	gp->uni = uni;
 	if ((equals = strchr((char*)gp->uni,'=')))
 	  {

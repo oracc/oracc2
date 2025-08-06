@@ -54,43 +54,50 @@
 <xsl:template name="sws-cuneiform">
   <xsl:param name="esp-mode"/>
   <div class="asl-cuneiform">
-    <table class="itable">
-      <tr>
-	<td><span class="im-label">&#xa0;</span></td>
-      </tr>
-      <tr>
-	<td>
-	  <p class="asl-ucun">
-	    <xsl:choose>
-	      <xsl:when test="sl:ucun">
-		<xsl:call-template name="sxweb-ucun"/>
-		<xsl:if test="not($asl-salt='no')">
-		  <xsl:call-template name="sws-cun-salt"/>
-		</xsl:if>
-	      </xsl:when>
-	      <xsl:when test="sl:useq">
-		<span class="{$asl-script}">
-		  <xsl:value-of select="sl:useq"/>
-		</span>
-		<xsl:if test="not($asl-salt='no')">
-		  <xsl:call-template name="sws-cun-salt"/>
-		</xsl:if>
-	      </xsl:when>
-	      <xsl:otherwise>
-		<span class="{$asl-script}">
-		  <xsl:for-each select=".//sl:name[1]//*">
-		    <xsl:choose>
-		      <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
-		      <xsl:otherwise/>
-		    </xsl:choose>
-		  </xsl:for-each>
-		</span>
-	      </xsl:otherwise>
-	    </xsl:choose>
-	  </p>
-	</td>
-      </tr>
-    </table>
+    <xsl:choose>
+      <xsl:when test="sl:glyf">
+	<xsl:call-template name="sws-glyfs"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<table class="itable">
+	  <tr>
+	    <td><span class="im-label">&#xa0;</span></td>
+	  </tr>
+	  <tr>
+	    <td>
+	      <p class="asl-ucun">
+		<xsl:choose>
+		  <xsl:when test="sl:ucun">
+		    <xsl:call-template name="sxweb-ucun"/>
+		    <xsl:if test="not($asl-salt='no')">
+		      <xsl:call-template name="sws-cun-salt"/>
+		    </xsl:if>
+		  </xsl:when>
+		  <xsl:when test="sl:useq">
+		    <span class="{$asl-script}">
+		      <xsl:value-of select="sl:useq"/>
+		    </span>
+		    <xsl:if test="not($asl-salt='no')">
+		      <xsl:call-template name="sws-cun-salt"/>
+		    </xsl:if>
+		  </xsl:when>	      
+		  <xsl:otherwise>
+		    <span class="{$asl-script}">
+		      <xsl:for-each select=".//sl:name[1]//*">
+			<xsl:choose>
+			  <xsl:when test="@g:utf8"><xsl:value-of select="@g:utf8"/></xsl:when>
+			  <xsl:otherwise/>
+			</xsl:choose>
+		      </xsl:for-each>
+		    </span>
+		  </xsl:otherwise>
+		</xsl:choose>
+	      </p>
+	    </td>
+	  </tr>
+	</table>
+      </xsl:otherwise>
+    </xsl:choose>
   </div>
 </xsl:template>
 
@@ -107,6 +114,22 @@
       <wbr/>
     </xsl:for-each>
   </xsl:for-each>
+</xsl:template>
+
+<xsl:template name="sws-glyfs">
+  <table class="glyfs">
+    <tr>
+      <xsl:for-each select="sl:glyf">
+	<td>
+	  <div class="glyf vbox">
+	    <div class="glyf-ucun"><span class="ofs-pc ofs-200"><xsl:value-of select="@ucun"/></span></div>
+	    <div class="glyf-uhex"><xsl:value-of select="@uhex"/></div>
+	    <div class="glyf-cvnn"><xsl:value-of select="@cvnn"/></div>
+	  </div>
+	</td>
+      </xsl:for-each>
+    </tr>
+  </table>
 </xsl:template>
 
 <!-- Display the reference image for each entry in sl:images/@refs -->

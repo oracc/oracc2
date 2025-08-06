@@ -266,7 +266,7 @@ struct sl_glyf
   const char *hex;
   const char *uhx;	/* sequence expressed as @useq dotted x-notation */
   const char *oid;
-  const char *otf;
+  const char *otf;	/* cvnn code, e.g., cv01; NULL for reference glyph; name ~INDEX-1 for others */
   const char *var;
   struct sl_token *t;
   List *aka;

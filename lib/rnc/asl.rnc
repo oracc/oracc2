@@ -273,6 +273,7 @@ sl.glyf =
     attribute sort { text } ,
     attribute ucun { text } ,
     attribute uhex { text } ,
+    attribute cvnn { text }? ,
     sl.scriptcode* ,
     (sl.aka | sl.list | sl.sys | sl.inote | sl.lit | sl.note)*
   }

@@ -669,6 +669,12 @@ sx_w_jx_glyfs(struct sx_functions *f, struct sl_signlist *sl, List *a)
       list_add(a, (void*)ip->u.g->uni);
       list_add(a, "uhex");
       list_add(a, (void*)ip->u.g->hex);
+      if (ip->u.g->otf)
+	{
+	  list_add(a, "cvnn");
+	  list_add(a, (void*)ip->u.g->otf);
+	}
+	
 #if 0
       list_add(a, "ref");
       list_add(a, ip->u.g->ref ? "yes" : "no");
