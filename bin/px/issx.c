@@ -47,7 +47,7 @@ main(int argc, char **argv)
   
  error:
   
-  if (strncmp(ip->err, PX_ERROR_START, strlen(PX_ERROR_START)))
+  if (strstr(ip->err, PX_ERROR_START))
     fprintf(stderr, "%s", ip->err);
   else
     fprintf(stderr, ip->errx ? ip->err : PX_ERROR_START "%s. Stop.\n",
