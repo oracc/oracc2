@@ -372,7 +372,12 @@ main(int argc, char **argv)
 
   if (period)
     {
-      struct perfnt *pfp = perfnt(period, strlen(period));
+      char xperiod[strlen(period)+1], *t;
+      strcpy(xperiod,period);
+      for (t = xperiod; *t; ++t)
+	if ('_' == *t)
+	  *t = ' ';
+      struct perfnt *pfp = perfnt(xperiod, strlen(xperiod));
       if (pfp)
 	cun_defaults.fnt = pfp->fnt;
     }

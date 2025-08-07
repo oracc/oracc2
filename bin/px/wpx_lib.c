@@ -40,14 +40,18 @@ do400(const char *msg400)
   exit(0);
 }
 
+/* not currently used */
+#if 0
 void
 do404(void)
 {
-  fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
+  fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n",
+	stdout);
   fflush(stdout);
   /*execl("/bin/cat", "cat", "@@ORACC@@/www/404.html", NULL);*/
   printf("404\n");
 }
+#endif
 
 void
 wpx_print_hdr(Isp*ip)

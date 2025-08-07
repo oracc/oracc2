@@ -212,6 +212,10 @@ bin/dx/osh/osh.c
 bin/gx/sigx
 bin/ox/cbd-oid-tab.xsl
 bin/ox/oidx
+bin/px/p4-mk-cache.sh
+bin/px/pxlocalreset.sh
+bin/px/pxperms.sh
+bin/px/pxreset.sh
 bin/px/ice/pg/pd.c
 bin/px/ice/pg/pg2.c
 bin/px/ice/pg/ptoq.c

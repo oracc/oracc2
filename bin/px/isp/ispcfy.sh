@@ -23,7 +23,8 @@ cachedir=$4
 period=`$oraccbin/xmdx $prox_project $PQX`
 >&2 echo $0: period=$period
 if [ "$period" != "" ]; then
-    Parg=" -P $period"
+    xperiod=`/bin/echo -n $period | tr ' ' '_'`
+    Parg=" -P $xperiod"
     >&2 echo $0: Parg=$Parg
 fi
 
@@ -48,7 +49,8 @@ xtf=`$oraccbin/pqxpand xtf $prox_project:$PQX`
 >&2 mkdir -v -p $htmldir || exit 1
 
 # Generate the cuneified output
-$oraccbin/cunx $Parg -w -q $prox_project:$PQX
+>&2 echo $0 calling "$oraccbin/cunx $Parg -vw -q $prox_project:$PQX" 
+$oraccbin/cunx $Parg -vw -q $prox_project:$PQX
 
 if [ ! $? -eq 0 ]; then
     echo "Failed call invoked as:" >&2

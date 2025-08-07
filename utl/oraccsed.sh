@@ -45,5 +45,13 @@ fi
 
 export ORADMIN TeXLive
 
-#. ./oraccenv.sh ;
- printenv | grep 'ORACC\|ORADMIN\|TeXLive' | sed 's/=/@@#/' | sed 's/^/s#@@/' | sed 's/$/#g/' >oracc.sed
+printenv | grep 'ORACC\|ORADMIN\|TeXLive' | sed 's/=/@@#/' | sed 's/^/s#@@/' | sed 's/$/#g/' >oracc.sed
+
+# set sed map for Httpd User Group; this needs to be more robust
+w=`./httpduser.sh`
+if [ "$ORACC_MODE" = "single" ]; then
+	u=`whoami`
+	echo "s#@@ORACC_HUG@@#$u:$w#g" >>oracc.sed
+else
+    echo "s#@@ORACC_HUG@@#$w:oracc#g" >>oracc.sed
+fi

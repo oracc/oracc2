@@ -1,0 +1,34 @@
+OIN FORMAT
+==========
+
+The OFP format is created by ofpx which reads a .oin file (OIN).
+
+OIN's have three parts: ligatures; glyphs; features.
+
+Ligatures
+---------
+
+Ligatures are given in the format: LIGA '<-' COMPOSITION.
+
+LIGA is the name of the ligature character, e.g., ANxEN.liga or u12137_u122DB.liga.
+
+'<-' is the literal sequence '<' '-'
+
+COMPOSITION is the ligature composition in the font notation uX_uX
+
+
+Glyphs
+------
+
+Glyphs are given in the format: UNICODE<TAB>NAME.
+
+UNICODE is in the format 0xHEX
+
+NAME is the font's name for the character
+
+
+Features
+--------
+
+Features are given in the font format: NAME '.' FEATURE
+

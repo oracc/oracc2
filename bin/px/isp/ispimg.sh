@@ -12,7 +12,7 @@ div=$2
 project=$3
 use_oic=$4
 
-cdli='https://cdli.mpiwg-berlin.mpg.de/';
+cdli='https://cdli.earth/';
 
 if [ "$px" == "" ] || [ "$div" == "" ]; then
     echo $0: must give px-number and div-file on command line. Stop.

@@ -236,7 +236,6 @@ table.csltab tbody tr:last-child td {
     border-bottom: 1px black solid;
 }
 
-
 table.csltab th {
         background: #dcdcdc;
         text-align: left;
@@ -244,3 +243,6 @@ table.csltab th {
 }
 
 table.csltab td { text-align: right; }
+
+table.glyfs td { text-align: center;
+		 vertical-align: top; }

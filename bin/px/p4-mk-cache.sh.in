@@ -12,7 +12,7 @@ elif [ "$1" == "" ]; then
     else
 	p4d=$ORACC_BUILDS/www/p4.d
 	sudo mkdir -vp $p4d
-	sudo chown www-data:oracc $p4d
+	sudo chown @@ORACC_HUG@@ $p4d
 	sudo chmod 755 $p4d
 	sudo chmod ug+s $p4d
     fi

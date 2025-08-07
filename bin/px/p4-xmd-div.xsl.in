@@ -225,7 +225,7 @@
       <li>
 	<xsl:choose>	  
 	  <xsl:when test="starts-with(md:id_text,'P')">
-	    <a href="https://cdli.mpiwg-berlin.mpg.de/{md:id_text/text()}" target="_blank">
+	    <a href="https://cdli.earth/{md:id_text/text()}" target="_blank">
 	      <xsl:value-of select="concat('CDLI ', md:id_text)"/>
 	    </a>
 	  </xsl:when>
@@ -239,7 +239,7 @@
       </li>
       <xsl:if test="string-length(md:bdtns_id)>0">
 	<li>
-	  <a href="http://bdtns.filol.csic.es/{md:bdtns_id/text()}" target="_blank">
+	  <a href="http://bdtns.cesga.es/{md:bdtns_id/text()}" target="_blank">
 	    <xsl:value-of select="concat('BDTNS ', md:bdtns_id)"/>
 	  </a>
 	</li>

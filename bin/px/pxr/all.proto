@@ -7,7 +7,6 @@ extern char *pxr_find_gent(const char *project, const char *glos, const char *oi
 extern char *pxr_find_glos(const char *project, const char *glos, const char *form);
 extern char *pxr_find_pqx_file(const char *project, const char *pqid, const char *ext);
 extern char *pxr_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang);
-extern const char *pxr_find_file(Isp *ip, const char *file2find, const char *deflt);
 /* pxr_pqx.c */
 extern int pxr_pqx(Isp *ip);
 /* pxr_pxid.c */

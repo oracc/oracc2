@@ -123,7 +123,7 @@ make_cache(Isp *ip, struct item **items, int nitems, int*sicsize)
 	  onep = hash_find(seen, (unsigned char *)buf);
 	  if (!onep)
 	    {
-	      char pqxbuf[8];
+	      char pqxbuf[14];
 	      if (id > 2000000)
 		sprintf(pqxbuf, "X%06d", id-2000000);
 	      else

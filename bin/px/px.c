@@ -7,19 +7,6 @@ int precomputing = 0;
 
 extern int what(Isp *ip);
 
-#if 0
-static void
-print_hdr(ipvoid)
-{
-  static int hdone = 0;
-  if (!hdone++)
-    {
-      fputs("Content-type: text/html; charset=utf-8\nAccess-Control-Allow-Origin: *\n\n", stdout);
-      fflush(stdout);
-    }
-}
-#endif
-
 int
 main(int argc, char **argv)
 {
