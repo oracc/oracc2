@@ -68,7 +68,7 @@ isp_list_create(Isp *ip)
 #if 1
 		  ip->err = px_err("isp_list_create: failed to copy %s to %s\n", ip->lloc.path, ip->cache.list);
 #else
-		  ip->err = PX_ERROR_START "isp_list_create: failed to copy %s to cache-list";
+		  ip->err = "isp_list_create: failed to copy %s to cache-list";
 		  ip->errx = ip->lloc.path;
 #endif
 		}
@@ -186,7 +186,10 @@ isp_list_method(Isp *ip)
   if ('w' == *ip->lloc.type) /* www */
     {
       if (!ip->lloc.method && isp_try_www_list(ip) && isp_try_bld_list(ip))
-	ip->err = PX_ERROR_START "list file %s not found\n";
+	{
+	  ip->err = "list file %s not found\n";
+	  ip->errx = ip->list_name;
+	}
       else
 	isp_list_cemd(ip);
     }
@@ -213,7 +216,7 @@ isp_list_method(Isp *ip)
       ip->lloc.method = "xisdb";
       if (isp_list_dbx(ip))
 	{
-	  ip->err = PX_ERROR_START "xis database %s/tis.dbh not found\n";
+	  ip->err = "xis database %s/tis.dbh not found\n";
 	  ip->errx = ip->lloc.dbpath;
 	}
     }
@@ -226,7 +229,7 @@ isp_list_method(Isp *ip)
       ip->lloc.method = "dbx";
       if (isp_list_dbx(ip))
 	{
-	  ip->err = PX_ERROR_START "tok/tis database %s/tok.dbh not found\n";
+	  ip->err = "tok/tis database %s/tok.dbh not found\n";
 	  ip->errx = ip->lloc.dbpath;
 	}
     }
