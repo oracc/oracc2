@@ -22,7 +22,7 @@ nth_line(Isp *ip, const char *file, int lnum, int more)
     {
       if (!(fp = fopen(file, "r")))
 	{
-	  ip->err = PX_ERROR_START "nth_line: fatal: failed to open %s\n";
+	  ip->err = "nth_line: fatal: failed to open %s\n";
 	  ip->errx = (ccp)pool_copy((ucp)file, ip->p);
 	  return NULL;
 	}
