@@ -183,6 +183,8 @@ isp_cache_list(Isp *ip)
     {
       (void)isp_list_create(ip);
       isp_list_cemd(ip);
+      if (ip->err)
+	return 1;
     }
   else
     {
@@ -204,6 +206,8 @@ isp_cache_list(Isp *ip)
 		      const char *p = ip->lloc.path;
 		      ip->lloc.path = ip->cache.list;
 		      isp_list_cemd(ip);
+		      if (ip->err)
+			return 1;
 		      ip->lloc.path = p;
 		    }
 		}
@@ -216,6 +220,8 @@ isp_cache_list(Isp *ip)
 	      const char *p = ip->lloc.path;
 	      ip->lloc.path = ip->cache.list;
 	      isp_list_cemd(ip);
+	      if (ip->err)
+		return 1;
 	      ip->lloc.path = p;
 	    }
 	}

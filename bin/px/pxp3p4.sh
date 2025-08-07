@@ -4,6 +4,7 @@
 #
 
 echo $0 $*
+echo $0 pwd=`pwd`
 project=$1
 if [ "$project" = "" ]; then
     echo $0: must give project argument. Stop.

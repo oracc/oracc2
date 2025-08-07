@@ -17,6 +17,8 @@ isp_adhoc(Isp*ip)
   else
     {
       isp_list_cemd(ip);
+      if (ip->err)
+	return 1;
       ip->cache.list = ip->lloc.path;
       char qxnew[strlen(ip->srchdata.tmp)+7];
       sprintf(qxnew, "%s/ad.new", ip->srchdata.tmp);

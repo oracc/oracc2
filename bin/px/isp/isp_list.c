@@ -49,7 +49,7 @@ isp_list_cemd(Isp *ip)
 	}
     }
   else
-    ip->err = "unable to set CE type from list contents";
+    ip->err = "fatal: unable to set CE type from list contents";
 }
 
 int
