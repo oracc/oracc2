@@ -225,8 +225,22 @@ gvl_uname_node(Node *np, List *lp)
 	  break;
 	case 'r':
 	  {
-	    char *nn[] = { "ZERO" , "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE" };
-	    list_add(lp, (void*)(isdigit(*np->text)?nn[*np->text - '0']:np->text));
+	    char *nn[] = {
+	      "ZERO" ,
+	      "ONE", "TWO", "THREE", "FOUR", "FIVE",
+	      "SIX", "SEVEN", "EIGHT", "NINE", "TEN",
+	      "ELEVEN", "TWELVE"
+	    };
+	    if (isdigit(*np->text))
+	      {
+		int n = atoi(np->text);
+		if (n > 0 && n <= 12)
+		  list_add(lp, (void*)nn[n]);
+		else
+		  list_add(lp, (void*)np->text);
+	      }
+	    else
+	      list_add(lp, (void*)np->text);
 	  }
 	  break;
 	default:
