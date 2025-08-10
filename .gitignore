@@ -261,6 +261,7 @@ bin/wx/wx_log.c
 bin/wx/xff.c
 bin/wx/xmlrpc.c
 bin/xx/cun/cunx.c
+bin/xx/cun/ncunx.c
 bin/xx/fonts/ofpx
 bin/xx/tis/tisdiv.c
 bin/xx/fonts/oslfiles.sh
