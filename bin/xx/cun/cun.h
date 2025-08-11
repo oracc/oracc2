@@ -5,6 +5,7 @@
 #define CT_ELL 0x01
 #define CT_XXX 0x02
 #define CT_GRP 0x04
+
 struct d
 {
   int type;
