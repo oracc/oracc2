@@ -6,7 +6,9 @@ char innertags[128];
 /* Cuneify output uses the HTML class attribute to render cuneiform
    with different fonts (fnt), script sets (set), and an appropriate
    default magnification for the font (mag). It may also use script
-   (scr) information to manage splits and mergers.
+   (scr) information to manage splits and mergers. If the cuneified
+   grapheme should link to anything other than osl the project name
+   can be given in an asl attribute.
  */
 typedef struct class
 {
@@ -14,10 +16,21 @@ typedef struct class
   const char *set;
   const char *mag;
   const char *scr;
+  const char *asl;
 } Class;
+
+Class cfy_defaults = { .fnt="noto" , .set=NULL, .mag="100", .scr="middle", .asl="osl" };
+Class *curr_cp = &cfy_defaults;
 
 /* An element is an input item such as a grapheme, ellipsis, ZWNJ,
  * ZWJ, or word-boundary.
+ *
+ * Support for justifying lines is provided by the FILL type;
+ * this will work like TeX's hfil to enable simulation of spacing to
+ * the left of graphemes in a continuation line or between graphemes.
+ *
+ * The ATF soft newline ';', indicating an indented line, is captured
+ * in the RETURN type. This is always followed by a FILL.
  *
  * The output structure consists of spans which manage the breakage
  * state. Within each span is a sequence of graphemes, ellipses, and
@@ -45,10 +58,21 @@ typedef struct class
  * span. If a sequence mixes breakage states, all of the breakage is
  * set to damaged as an approximation of the state of the ligature
  * sequence as a whole.
+ *
  */
 
-typedef enum elt_type { ELT_G /*grapheme*/, ELT_W /*word*/, ELT_J /*ZWJ*/, ELT_N /*ZWNJ*/ } Etype;
-typedef enum brk_type { BRK_NONE /*clear*/, BRK_HASH /*damaged*/, BRK_LOST /*broken*/ } Btype;
+typedef enum elt_type { ELT_G /*grapheme*/,
+			ELT_W /*word*/,
+			ELT_J /*ZWJ*/,
+			ELT_N /*ZWNJ*/,
+			ELT_F /*fill*/,
+			ELT_R /*return*/
+} Etype;
+
+typedef enum brk_type { BRK_NONE /*clear*/,
+			BRK_HASH /*damaged*/,
+			BRK_LOST /*broken*/
+} Btype;
 
 typedef struct elt
 {
@@ -79,6 +103,42 @@ breakage(const char *name, const char **atts)
   else if (!strcmp(b, "damaged") || 'x' == *utf8 || 'X' == *utf8)
     return BRK_HASH;
   return BRK_NONE;
+}
+
+static Class *
+cfy_class(const char **atts, Cun_class *curr_cp)
+{
+  static Class cp;
+  const char *fnt = findAttr(atts, "fnt"), *set = NULL;
+  const char *mag = findAttr(atts, "mag");
+  const char *scr = findAttr(atts, "scr");
+  const char *asl = findAttr(atts, "asl");
+  char *sp = NULL;
+
+  char fntset[strlen(fnt)+1];
+  
+  if (*fnt)
+    fnt = cc_skip_prefix(fnt);
+  if (*mag)
+    mag = cc_skip_prefix(mag);
+  if (*scr)
+    scr = cc_skip_prefix(scr);
+
+  if ((sp = strchr(fnt,' ')))
+    {
+      strcpy(fntset,fnt);
+      fnt = fntset;
+      *sp++ = '\0';
+      while (*sp && ' ' == *sp)
+	++sp;
+      set = sp;
+    }
+  
+  cp.fnt = *fnt ? (ccp)hpool_copy((uccp)fnt,hp) : curr_cp->fnt;
+  cp.set = *set ? (ccp)hpool_copy((uccp)set,hp) : curr_cp->set;
+  cp.mag = *mag ? (ccp)hpool_copy((uccp)mag,hp) : curr_cp->mag;
+  cp.scr = *scr ? (ccp)hpool_copy((uccp)scr,hp) : curr_cp->scr;
+  return &cp;
 }
 
 static void
@@ -142,7 +202,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	  if (*prj)
 	    project = (ccp)pool_copy((uchar*)prj, p);
 	}
-      Cun_class *cp = cun_class(atts, curr_cp);
+      cfy_class *cp = cfy_class(findAttr(atts, "cfy"), curr_cp);
       if (cp->fnt)
 	{
 	  char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(cp->fnt)];
@@ -158,11 +218,11 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	{
 	  const char *utf8 = findAttr(atts, "utf8");
 	  if (*utf8)
-	    cfy_grapheme(atts, utf8, breakage(atts), cun_class(atts, curr_cp));
+	    cfy_grapheme(atts, utf8, breakage(atts), cfy_class(atts, curr_cp));
 	  else if (':' == name[1] && 'g' == name[0] && innertags[name[2]])
 	    ++inner;
 	  else if (!strcmp(name, "g:x"))
-	    cfy_x(atts, breakage(atts), cun_class(atts, curr_cp));
+	    cfy_x(atts, breakage(atts), cfy_class(atts, curr_cp));
 
 	}
     }
