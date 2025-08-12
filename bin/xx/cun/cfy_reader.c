@@ -66,7 +66,8 @@ typedef enum elt_type { ELT_G /*grapheme*/,
 			ELT_J /*ZWJ*/,
 			ELT_N /*ZWNJ*/,
 			ELT_F /*fill*/,
-			ELT_R /*return*/
+			ELT_R /*return*/,
+			ELT_D /*deleted, for ligatures*/
 } Etype;
 
 typedef enum brk_type { BRK_NONE /*clear*/,
@@ -82,11 +83,15 @@ typedef struct elt
   Class *c;	/* the current class for the grapheme; usually set at
 		   start of file but may be switched grapheme by
 		   grapheme */
+  const char *oid;/* OID for linking to sign list: may be a parent
+		     sign to the sign that is displayed in u8 */
 } Elt;
 
 List *cfy_line; /* A list of pointers to Elts; initially the XTF line, but
 	       reset and rebuilt from the sequence line if there is
 	       one. */
+
+#define elt_grapheme(listnode) (((Elt*)listnode->data)->etype == ELT_G)
 
 Memo *m_elt;
 Memo *m_class;
@@ -142,15 +147,18 @@ cfy_class(const char **atts, Cun_class *curr_cp)
 }
 
 static void
-cfy_grapheme(const char **atts, const char *utf8, Btype brk, Class *cp)
+cfy_grapheme(const char **atts, const char *utf8, Btype brk, Class *cp, const char *oid)
 {
   if (!line)
     line = list_create(LIST_DOUBLE);
+
   Elt *ep = memo_new(mem_d);
   ep->etype = ELT_G;
   ep->u8 = utf8;
   ep->btype = brk;
   ep->c = cp;
+  ep->oid = oid;
+  
   list_add(line, ep);
 
   /* add ZWJ/ZWNJ if the boundary requires it */
@@ -218,7 +226,27 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	{
 	  const char *utf8 = findAttr(atts, "utf8");
 	  if (*utf8)
-	    cfy_grapheme(atts, utf8, breakage(atts), cfy_class(atts, curr_cp));
+	    {
+	      const char *oid = findAttr(atts, "spoid");
+	      if (!oid || !*oid)
+		oid = findAttr(atts, "key");
+	      if (*oid)
+		{
+		  const char *dot = strchr(oid, '.');
+		  if (dot)
+		    {
+		      char o[strlen(oid)+1];
+		      o[dot-oid] = '\0';
+		      oid = (ccp)hpool_copy((ucp)o, hp);
+		    }
+		  else
+		    oid = (ccp)hpool_copy((ucp)oid, hp);
+		}
+	      else
+		oid = NULL;
+
+	      cfy_grapheme(atts, utf8, breakage(atts), cfy_class(atts, curr_cp), oid);
+	    }
 	  else if (':' == name[1] && 'g' == name[0] && innertags[name[2]])
 	    ++inner;
 	  else if (!strcmp(name, "g:x"))
@@ -238,9 +266,9 @@ void
 cfy_eH(void *userData, const char *name)
 {
   if (!strcmp(name, "l"))
-    in_l = 0;
-  else if (!strcmp(name, "g:n"))
-    in_n = 0;
+    in_l = inner = 0;
+  else if (':' == name[1] && 'g' == name[0] && innertags[name[2]])
+    --inner;
   else if (!strcmp(name, "g:q"))
     in_q = 0;
   else if (!strcmp(name, "g:c"))
