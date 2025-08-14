@@ -44,9 +44,9 @@ Osl_unicode *
 osl_unicode(const char *project)
 {
   char buf[strlen(oracc())+strlen("/02pub/0")+strlen(project)];
-  sprintf(buf, "sl/unicode.tsv");
+  sprintf(buf, "%s/%s/02pub/unicode.tsv", oracc(), project);
   if (access(buf, R_OK))
-    sprintf(buf, "%s/%s/02pub/unicode.tsv", oracc(), project);
+    sprintf(buf, "sl/unicode.tsv");
   return osl_unicode_tsv(buf);
 }
 
