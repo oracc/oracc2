@@ -5,32 +5,39 @@
 const char *ofp_feat_str[OFPF_NONE+1];
 
 /* The OFP data input file format, .oin, is very simple and consists
-   of three different kinds of lines:
+   of four different kinds of lines:
 
-   1) xHEX '\t' NAME
+   1) NAME '<-' LIGATURE_SEQUENCE_MAPPING_TO_NAME
 
-   2) NAME.FEAT
+   2) xHEX '\t' NAME
 
-   2) NAME '<-' LIGATURE_SEQUENCE_MAPPING_TO_NAME
+   3) NAME.FEAT
+
+   4) LIG '->' PUA
 
    Examples of (1):
-
-   x12000	u12000
-
-   Examples of (2):
-   
-   u122DC.ss01
-   GEME2.liga 
-   u12324.1   
-   u12324.cv01
-
-   Examples of (3):
 
    u12016_uni200D_u122AE <- u12016_uni200D_u122AE 
    u1202D_uni200D_u12097 <- u1202D_uni200D_u12097 
 
    NUMUN2.liga <- u12364_u121B8 
    PAD3.liga <- u12146_u12292 
+
+   Examples of (2):
+
+   x12000	u12000
+
+   Examples of (3):
+   
+   u122DC.ss01
+   GEME2.liga 
+   u12324.1   
+   u12324.cv01
+
+   Examples of (4):
+
+   u12787_u12908_u127FE.liga -> uF20C8
+   u12787_u12908_u127FE.liga.cv01 -> uF20C9
 
  */
 

@@ -203,7 +203,7 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
 {
   Ofp_sign *osp = hash_find(ofp->h_sign, (uccp)sn);
 
-  if (!osp->glyph->osl)
+  if (!osp->glyph->osl && ofp->h.list)
     return;
   
   const char *xid = xid_of(ofp, osp->glyph);

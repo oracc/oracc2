@@ -44,7 +44,8 @@ ofp_ingest(Ofp *ofp)
       char *comp = NULL;
       if (!liga)
 	{
-	  if (strstr(name, ".liga"))
+	  char *dotliga = strstr(name, ".liga");
+	  if (dotliga)
 	    {
 	      if ((comp = strstr(name, "->")))
 		{
@@ -57,6 +58,16 @@ ofp_ingest(Ofp *ofp)
 		    ++comp;
 		  set_lig_pua_binding(ofp, name, comp);
 		  continue;
+		}
+	      else if ('.' == dotliga[5])
+		{
+#if 0
+		  char ligaliga[strlen(name)+1], *dot;
+		  strcpy(ligaliga, name);
+		  dot = strchr(ligaliga, '.');
+		  dot = strchr(dot+1, '.');
+		  *dot = '\0';
+#endif		  
 		}
 	      else
 		{
