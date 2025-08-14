@@ -117,6 +117,7 @@ cfy_class(const char **atts, Cun_class *curr_cp)
   const char *fnt = findAttr(atts, "fnt"), *set = NULL;
   const char *mag = findAttr(atts, "mag");
   const char *scr = findAttr(atts, "scr");
+  const char *set = findAttr(atts, "set");
   const char *asl = findAttr(atts, "asl");
   char *sp = NULL;
 

@@ -807,9 +807,12 @@ function cuneify_reset(evt) {
 function cfySL(evt) {
     let e = getData(evt);
     let o = e.getAttribute('data-oid');
-    let p = getPager().getAttribute('data-proj-sl');
+    let p = e.getAttribute('data-asl');
     if (p == null) {
-	p = 'osl';
+	p = getPager().getAttribute('data-asl');
+	if (p == null) {
+	    p = 'osl';
+	}
     }
     let u = '/'+p+'/signlist/'+o;
     popup(u,'slWindow',700,800,100,350);

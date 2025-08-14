@@ -131,9 +131,9 @@ cfy_cun(struct d *dp)
   if (dp->oid)
     fprintf(outfp,
 	    "<span id=\"c.%s\" title=\"%s\" "
-	    "data-oid=\"%s\" onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\" "
+	    "data-oid=\"%s\" data-asl=\"%s\" onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\" "
 	    "class=\"cfy-cun%s%s\">%s</span>",
-	    dp->xid, dp->form, dp->oid, miss, space, dp->utf8);
+	    dp->xid, dp->form, dp->oid, dp->oid[2]=='9'?"pcsl":"osl", miss, space, dp->utf8);
   else
     fprintf(outfp, "<span id=\"c.%s\" title=\"%s\" class=\"cfy-fam cfy-def%s%s\">%s</span>",
 	    dp->xid, dp->form, miss, space, dp->utf8);
