@@ -4,22 +4,27 @@
 
 const char *ofp_feat_str[OFPF_NONE+1];
 
-/* The OFP file format is very simple and consists of two different kinds of lines:
+/* The OFP data input file format, .oin, is very simple and consists
+   of three different kinds of lines:
 
-   1) NAME\tU+CODE
+   1) xHEX '\t' NAME
+
+   2) NAME.FEAT
 
    2) NAME '<-' LIGATURE_SEQUENCE_MAPPING_TO_NAME
 
    Examples of (1):
 
-   u12000	U+12000
-   u122DC.ss01	U+0000
-   GEME2.liga	U+0000
-   u12324.1	U+0000
-   u12324.cv01	U+0000
-   u12324_uE0100	U+0000
+   x12000	u12000
 
    Examples of (2):
+   
+   u122DC.ss01
+   GEME2.liga 
+   u12324.1   
+   u12324.cv01
+
+   Examples of (3):
 
    u12016_uni200D_u122AE <- u12016_uni200D_u122AE 
    u1202D_uni200D_u12097 <- u1202D_uni200D_u12097 
@@ -76,7 +81,8 @@ ofp_init(void)
   ofp->h_sign = hash_create(2048);
   ofp->h_liga = hash_create(128);
   ofp->p = pool_init();
-  ofp->osl = osl_unicode();
+  ofp->osl = osl_unicode("osl");
+  ofp->pcsl = osl_unicode("pcsl");
   ofp_feat_str[OFPF_BASE] = "";
   ofp_feat_str[OFPF_LIGA] = "liga";
   ofp_feat_str[OFPF_SSET] = "ss";
@@ -93,7 +99,7 @@ ofp_load(const char *fontname)
   
   char buf[strlen(oracc())+strlen("/lib/data/.ofp0")+strlen(fontname)];
   if (strcmp(fontname, "-"))
-    sprintf(buf, "%s/lib/data/%s.ofp", oracc(), fontname);
+    strcpy(buf, fontname);
   else
     strcpy(buf, "-");
 

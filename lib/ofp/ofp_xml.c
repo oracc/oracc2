@@ -23,6 +23,7 @@ ofp_xml(Ofp *ofp, FILE *fp)
   int i;
   for (i = 0; k[i]; ++i)
     {
+      fprintf(stderr, "ofp_xml: k[i] = %s\n", k[i]);
       if ('-' != k[i][0])
 	xml_sign(ofp, k[i], fp);
     }

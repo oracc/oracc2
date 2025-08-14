@@ -13,8 +13,11 @@ if [ -s $f.oin ]; then
 	grep ^$list sl/lists.tsv | cut -f1-2,9 | sort -u >$list.tsv
     fi
     def=${ORACC}/lib/data/$f.def
+    if [ ! -r $def ]; then
+	def=$f.def
+    fi
     echo $bin/ofpx $larg -d$def '<'$f.oin
-    $bin/ofpx $larg -d${ORACC}/lib/data/$f.def -x$f.ofp <$f.oin
+    $bin/ofpx $larg -d$def -x$f.ofp <$f.oin
     rm -f *.{names,ucode,namuni,lig} *-ttf.txt *-ofp.in
     $bin/ofp2im.sh $f
     css=`grep ^@css $def | cut -f2`

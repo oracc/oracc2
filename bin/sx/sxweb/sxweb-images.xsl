@@ -124,7 +124,7 @@
 	  <div class="glyf vbox">
 	    <div class="glyf-ucun"><span class="ofs-pc ofs-200"><xsl:value-of select="@ucun"/></span></div>
 	    <div class="glyf-uhex"><xsl:value-of select="@uhex"/></div>
-	    <div class="glyf-cvnn"><xsl:value-of select="@cvnn"/></div>
+	    <div class="glyf-cvnn"><xsl:text>.</xsl:text><xsl:value-of select="@cvnn"/></div>
 	  </div>
 	</td>
       </xsl:for-each>

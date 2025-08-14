@@ -364,8 +364,13 @@
 	  <xsl:when test="sl:ucun|sl:uname">
 	    <xsl:value-of select="sl:ucun/@hex"/>
 	    <xsl:if test="sl:uname">
-	      <xsl:text> = </xsl:text><span class="snames"><xsl:value-of select="sl:uname"/><xsl:text>
-	      (</xsl:text><xsl:value-of select="sl:uage"/><xsl:text>)</xsl:text></span>
+	      <xsl:text> = </xsl:text>
+	      <span class="snames"><xsl:value-of select="sl:uname"/>
+	      <xsl:if test="string-length(sl:uage) > 0">
+		<xsl:text>
+		  (</xsl:text><xsl:value-of select="sl:uage"/><xsl:text>)</xsl:text>
+	      </xsl:if>
+	      </span>
 	    </xsl:if>
 	  </xsl:when>
 	  <xsl:when test="sl:useq">

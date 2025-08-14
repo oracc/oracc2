@@ -5,14 +5,22 @@ int xml_dump = 1;
 
 const char *list_arg = NULL;
 const char *def_file = NULL;
+const char *oin_file = NULL;
 const char *xml_file = "-";
 
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "d:l:x:");
+  options(argc, argv, "d:l:o:x:");
 
-  Ofp *ofp = ofp_load("-");
+  Ofp *ofp = ofp_load(oin_file ? oin_file : "-");
+
+  if (!ofp)
+    {
+      fprintf(stderr, "ofpx: failed to load .oin data from `%s'\n",
+	      oin_file ? oin_file : "-");
+      exit(1);
+    }
 
   if (def_file)
     ofp_header(ofp, def_file);
@@ -42,6 +50,9 @@ opts(int argc, const char *arg)
       break;
     case 'd':
       def_file = arg;
+      break;
+    case 'o':
+      oin_file = arg;
       break;
     case 'x':
       xml_file = arg;

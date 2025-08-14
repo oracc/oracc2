@@ -6,15 +6,11 @@ static Osl_uentry entryX = { .u="U+0000" , .n=(uccp)"X"    , .o=NULL , .s=-1 };
 static Osl_uentry u200C =  { .u="U+200C" , .n=(uccp)"ZWNJ" , .o=NULL , .s=-1 };
 static Osl_uentry u200D =  { .u="U+200D" , .n=(uccp)"ZWJ"  , .o=NULL , .s=-1 };
 
-Osl_unicode *
-osl_unicode(void)
+static Osl_unicode *
+osl_unicode_tsv(const char *utsv)
 {
   Osl_unicode *o = calloc(1, sizeof(Osl_unicode));
-  char buf[strlen(oracc())+strlen("/osl/02pub/0")];
-  sprintf(buf, "sl/unicode.tsv");
-  if (access(buf, R_OK))
-    sprintf(buf, "%s/osl/02pub/unicode.tsv", oracc());
-  o->r = roco_load(buf, 0, NULL, NULL, NULL, NULL);
+  o->r = roco_load(utsv, 0, NULL, NULL, NULL, NULL);
   if (o->r)
     {
       o->e = calloc(o->r->nlines, sizeof(Osl_uentry));
@@ -42,6 +38,16 @@ osl_unicode(void)
   hash_add(o->h, (uccp)"200C", &u200C);
   hash_add(o->h, (uccp)"200D", &u200D);
   return o;
+}
+
+Osl_unicode *
+osl_unicode(const char *project)
+{
+  char buf[strlen(oracc())+strlen("/02pub/0")+strlen(project)];
+  sprintf(buf, "sl/unicode.tsv");
+  if (access(buf, R_OK))
+    sprintf(buf, "%s/%s/02pub/unicode.tsv", oracc(), project);
+  return osl_unicode_tsv(buf);
 }
 
 Osl_uentry *

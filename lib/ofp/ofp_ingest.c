@@ -235,7 +235,9 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
 		  (void)memmove(up+2, up+1, strlen(up)+1);
 		  up[0] = 'U'; up[1] = '+';
 		}
-	      e = hash_find(o->osl->h, (uccp)up);
+	      if (!(e = hash_find(o->osl->h, (uccp)up)))
+		e = hash_find(o->pcsl->h, (uccp)up);
+	      
 	    }
 	}
       if (!e) /* the ligature sequence is not a sign */
@@ -245,7 +247,8 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
 	  strcpy(buf+1, gp->ligl);
 	  buf[0] = 'U'; buf[1] = '+';
 	  up = strdup(buf);
-	  e = hash_find(o->osl->h, (uccp)up);
+	  if (!(e = hash_find(o->osl->h, (uccp)up)))
+	    e = hash_find(o->pcsl->h, (uccp)up);
 	}
     }
   else
@@ -254,7 +257,8 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
       char u[strlen(c)+3];
       sprintf(u, "U+%s", c);
       up = strdup(u);
-      e = hash_find(o->osl->h, (uccp)u);
+      if (!(e = hash_find(o->osl->h, (uccp)u)))
+	e = hash_find(o->pcsl->h, (uccp)u);
     }
   if (!e && !strstr(up, "U+0000") && !strstr(up, ".xE01") && !strstr(up, "U+E"))
     {

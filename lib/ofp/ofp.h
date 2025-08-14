@@ -32,6 +32,7 @@ typedef struct Ofp
   Memo *m_liga;
   Pool *p;
   Osl_unicode *osl;
+  Osl_unicode *pcsl;
   struct Ofp_list *list;
   Hash *h_list;
   Ofp_header h;
