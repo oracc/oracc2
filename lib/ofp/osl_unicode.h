@@ -3,6 +3,8 @@
 
 #include <roco.h>
 
+struct Ofp;
+
 typedef struct Osl_unicode
 {
   Hash *h;
@@ -20,9 +22,9 @@ typedef struct Osl_uentry
 } Osl_uentry;
 
 extern Osl_unicode *osl_unicode(const char *project);
-extern unsigned char *osl_ou_seq_name(Osl_uentry **oup, int noup, Pool *p);
-extern Osl_uentry **osl_sequence(Osl_unicode *op, const char *seq, int *noup);
-extern unsigned char *osl_seq_name(Osl_unicode *op, const char *seq, Pool *p);
+extern unsigned char *osl_ou_seq_name(Osl_uentry **op, int noup, Pool *p);
+extern Osl_uentry **osl_sequence(struct Ofp *op, const char *seq, int *noup);
+extern unsigned char *osl_seq_name(struct Ofp *op, const char *seq, Pool *p);
 Osl_uentry *osl_autocreate(const char *u);
 
 #endif/*OSL_UNICODE_H_*/

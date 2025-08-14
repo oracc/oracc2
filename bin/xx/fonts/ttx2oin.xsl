@@ -7,6 +7,7 @@
     <xsl:apply-templates select=".//LigatureSet"/>
     <xsl:apply-templates select=".//map"/>
     <xsl:apply-templates select=".//GlyphID[contains(@name,'.')]"/>
+    <xsl:apply-templates select=".//TTGlyph[contains(@name,'.liga')]"/>
   </xsl:template>
   
   <xsl:template match="LigatureSet">
@@ -33,9 +34,18 @@
   </xsl:template>
 
   <xsl:template match="GlyphID">
-    <xsl:if test="not(contains(@name, '.liga'))">
+    <xsl:if test="not(contains(@name, '.liga')) or contains(@name, '.liga.')">
       <xsl:value-of select="@name"/>
       <xsl:text>&#xa;</xsl:text>      
+    </xsl:if>
+  </xsl:template>
+  
+  <xsl:template match="TTGlyph">
+    <xsl:if test="component">
+      <xsl:value-of select="@name"/>
+      <xsl:text> -> </xsl:text>
+      <xsl:value-of select="component/@glyphName"/>
+      <xsl:text>&#xa;</xsl:text>
     </xsl:if>
   </xsl:template>
   

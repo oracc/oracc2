@@ -13,6 +13,10 @@ ofp_marshall(Ofp *ofp)
   hash_add(ofp->h_sign, (uccp)gp(0)->key, curr_sp);
   for (i = 0; i < ofp->nglyphs; ++i)
     {
+      /* liga -> comp does not set glyph */
+      if (gp(i)->key == NULL)
+	continue;
+      
       /* ligas that are signs use liga as key so they change curr_sp;
 	 ligas that are not signs use ligl as key so they get added
 	 under curr_sp */

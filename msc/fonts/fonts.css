@@ -105,6 +105,18 @@
     font-feature-settings: "ss02";
 }
 
+.ss03 {
+    font-feature-settings: "ss03";
+}
+
+.ss04 {
+    font-feature-settings: "ss04";
+}
+
+.ss20 {
+    font-feature-settings: "ss20";
+}
+
 .ss012 {
     font-feature-settings: "ss01", "ss02";
 }

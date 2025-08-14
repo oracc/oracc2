@@ -3,6 +3,7 @@
 
 static enum Ofp_feature ext_type(const char *ext);
 static int fnum(const char *n);
+static void set_lig_pua_binding(Ofp *o, const char *name, const char *comp);
 static void set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
 		      Ofp_feature f, const char *ext, const char *ligl, const char *liga, const char *ivs);
 static const char *ucode_from_name(Ofp *o, const char *name);
@@ -40,18 +41,38 @@ ofp_ingest(Ofp *ofp)
       Ofp_feature f = OFPF_BASE;
       const char *ext = NULL;
       char *liga = strstr((ccp)lp[i], "<-");
+      char *comp = NULL;
       if (!liga)
 	{
 	  if (strstr(name, ".liga"))
 	    {
-	      /* set liga as though there were a <- LIGA component */
-	      liga = (char*)pool_copy((uccp)name, ofp->p);
-	      char *ldot = strchr(liga, '.');
-	      *ldot = '\0';
+	      if ((comp = strstr(name, "->")))
+		{
+		  if (' ' == comp[-1])
+		    comp[-1] = '\0';
+		  else
+		    *comp = '\0';
+		  comp += 2;
+		  while (isspace(*comp))
+		    ++comp;
+		  set_lig_pua_binding(ofp, name, comp);
+		  continue;
+		}
+	      else
+		{
+		  /* set liga as though there were a <- LIGA component */
+		  liga = (char*)pool_copy((uccp)name, ofp->p);
+		  char *ldot = strchr(liga, '.');
+		  *ldot = '\0';
+		}
 	    }
 	}
       else
 	{
+	  if (' ' == liga[-1])
+	    liga[-1] = '\0';
+	  else
+	    *liga = '\0';
 	  liga += 2;
 	  while (isspace(*liga))
 	    ++liga;
@@ -62,7 +83,7 @@ ofp_ingest(Ofp *ofp)
       const char *ivs = NULL;
       if (liga)
 	{
-	  hash_add(ofp->h_liga, (uccp)name, &ofp->glyphs[i]);
+	  hash_add(ofp->h_liga, pool_copy((uccp)name, ofp->p), &ofp->glyphs[i]);
 	  char lig[strlen(liga)+1], *l;
 	  strcpy(lig, liga);
 	  l = strchr(lig, '_');
@@ -92,14 +113,14 @@ ofp_ingest(Ofp *ofp)
 	  if (tab)
 	    {
 	      ucode = (char*)lp[i]+2; /* new format is 0x12345 */
+	      name = tab+1;
+	      *tab = '\0';
 	      char *uup = ucode;
 	      while (*uup)
 		{
 		  *uup = toupper(*uup);
 		  ++uup;
 		}
-	      name = tab+1;
-	      *tab = '\0';
 	    }
 	  else
 	    {
@@ -120,42 +141,9 @@ ofp_ingest(Ofp *ofp)
 	    }
 	}
       set_glyph(ofp, i - offset, name, ucode, fcode, f, ext, ligl, liga, ivs);
-      /*set_liga_glyphs(ofp);*/
     }
   ofp->nglyphs -= offset;
 }
-
-#if 0
-void
-set_liga_glyphs(Ofp *ofp)
-{
-  int nliga;
-  const char **lnames = hash_keys2(ofp->h_liga, &nliga);
-
-  int i;
-  for (i = 0; i < nliga; ++i)
-    {
-      /* handle AGRIG.liga.ss01 */
-      char *dot = strrchr(name, '.');
-      if (strcmp(dot+1, "liga"))
-	{
-	  *dot++ = '\0';
-	  Ofp_glyph *gp = hash_find(ofp->h_liga, (uccp)name);
-	  if (gp)
-	    {
-	      ligl = (char*)gp->ligl;
-	      liga = (char*)gp->liga;
-	      ucode = (char*)gp->code;
-	      ext = dot;
-	      f = ext_type(dot);
-	    }
-	}
-      else
-	name = "-";
-      set_glyph(ofp, i, name, ucode, fcode, f, ext, ligl, liga, ivs);
-    }
-}
-#endif
 
 static enum Ofp_feature
 ext_type(const char *ext)
@@ -275,6 +263,31 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
   return e;
 }
 
+
+/* name is a liga, e.g., u125BE_u12995.liga; comp is a component,
+   e.g., uF2251. We need to find the glyph for each side and mutually
+   connect them */
+static void
+set_lig_pua_binding(Ofp *o, const char *name, const char *comp)
+{
+  Ofp_glyph *n_glyph = hash_find(o->h_liga, (uccp)name);
+  Ofp_glyph *c_glyph = hash_find(o->h_glyf, (uccp)comp);
+  if (n_glyph && c_glyph)
+    {
+      n_glyph->gcomp = c_glyph;
+      c_glyph->gliga = n_glyph;
+    }
+  else
+    {
+      if (!n_glyph && !c_glyph)
+	fprintf(stderr, "ofpx: unknown name and component %s -> %s\n", name, comp);
+      else if (!n_glyph)
+	fprintf(stderr, "ofpx: unknown name `%s' in %s -> %s\n", name, name, comp);
+      else
+	fprintf(stderr, "ofpx: unknown component `%s' in %s -> %s\n", comp, name, comp);
+    }
+}
+
 static void
 set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
 	  Ofp_feature f, const char *ext, const char *ligl, const char *liga, const char *ivs)
@@ -282,6 +295,7 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
 #define gp(i) (&o->glyphs[i])
   gp(i)->index = i;
   gp(i)->name = name;
+  hash_add(o->h_glyf, (uccp)name, gp(i));
   gp(i)->code = code;
   gp(i)->fcode = code /*fcode*/; /* can probably discontinue this */
   gp(i)->f = f;

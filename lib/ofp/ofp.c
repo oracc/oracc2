@@ -1,6 +1,6 @@
 #include <oraccsys.h>
-#include "osl_unicode.h"
 #include "ofp.h"
+#include "osl_unicode.h"
 
 const char *ofp_feat_str[OFPF_NONE+1];
 
@@ -79,6 +79,7 @@ ofp_init(void)
   ofp->m_sign = memo_init(sizeof(Ofp_sign), 256);
   ofp->m_liga = memo_init(sizeof(Ofp_liga), 128);
   ofp->h_sign = hash_create(2048);
+  ofp->h_glyf = hash_create(2048);
   ofp->h_liga = hash_create(128);
   ofp->p = pool_init();
   ofp->osl = osl_unicode("osl");

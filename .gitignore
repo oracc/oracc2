@@ -292,6 +292,7 @@ msc/fonts/Oracc-Noto-SansCuneiform.def
 msc/fonts/Oracc-OBF-Regular.def
 msc/fonts/Oracc-RSP.def
 msc/fonts/Oracc-gudea.def
+msc/fonts/PCSL.def
 msc/lex/lex-provides-xi.xsl
 msc/lex/lex-sign-lookup.xsl
 msc/lex/lex-word-data.xsl

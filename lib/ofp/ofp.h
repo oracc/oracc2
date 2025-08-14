@@ -25,7 +25,8 @@ typedef struct Ofp
   int nglyphs;
   struct Ofp_glyph *glyphs;
   Hash *h_sign;
-  Hash *h_liga;
+  Hash *h_glyf; /* glyphs that are not .liga */
+  Hash *h_liga; /* glyphs that are .liga */
   int nsigns;
   struct Ofp_sign *signs;
   Memo *m_sign;
@@ -58,9 +59,14 @@ typedef struct Ofp_glyph
   const char *liga;
   const char *useq; /* liga as useq i.e., u12345_u12345 => x12345.x12345 */
   const char *ivs;
-  List *ligas;		/* liga entries which are not sign entries, grouped under their ligl */
-  int is_liga; /* 1 if this entry is a ligature which is listed under another sign */
+  List *ligas;	    /* liga entries which are not sign entries,
+		       grouped under their ligl; note that sign entry
+		       only applies if there is a list--if no list
+		       then we list all liga under their ligl */
+  int is_liga; 	    /* 1 if this entry is a ligature which is listed under another sign */
   Osl_uentry *osl;
+  struct Ofp_glyph *gcomp; /* component if this glyph is a .liga */
+  struct Ofp_glyph *gliga; /* ligature if this glyph is a PUA used as a component */
 } Ofp_glyph;
 
 typedef struct Ofp_sign

@@ -23,7 +23,7 @@ ofp_xml(Ofp *ofp, FILE *fp)
   int i;
   for (i = 0; k[i]; ++i)
     {
-      fprintf(stderr, "ofp_xml: k[i] = %s\n", k[i]);
+      /*fprintf(stderr, "ofp_xml: k[i] = %s\n", k[i]);*/
       if ('-' != k[i][0])
 	xml_sign(ofp, k[i], fp);
     }
@@ -57,11 +57,14 @@ xml_liga(Ofp *ofp, List *lp, FILE *fp)
   Ofp_liga *gp;
   for (gp = list_first(lp); gp; gp = list_next(lp))
     {
-      fprintf(fp, "<liga n=\"%s\" utf8=\"%s\" l=\"%s\" zwnj=\"%s\">",
-	      xmlify(osl_seq_name(ofp->osl, gp->glyph->liga, ofp->p)),
+      fprintf(fp, "<liga n=\"%s\" utf8=\"%s\" l=\"%s\" zwnj=\"%s\"",
+	      xmlify(osl_seq_name(ofp, gp->glyph->liga, ofp->p)),
 	      xutf8_liga_literal(ofp, gp->glyph),
 	      gp->glyph->liga,
 	      xutf8_of(ofp, gp->glyph));
+      if (gp->glyph->gcomp)
+	fprintf(fp, " ref=\"x%s\"", gp->glyph->gcomp->code);
+      fputc('>',fp);
       if (gp->ssets)
 	xml_list(ofp, gp->ssets, "ssets", "sset", fp);
       if (gp->cvnns)
@@ -224,6 +227,9 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
   
   fprintf(fp, "<sign xml:id=\"%s\" utf8=\"%s\"", xid,
 	  liga_utf8 ? liga_utf8 : xutf8_of(ofp, osp->glyph));
+
+  if (osp->glyph->gliga)
+    fprintf(fp, " lref=\"%s\"", osp->glyph->gliga->name);
   
   if (osp->glyph->liga)
     fprintf(fp, " l=\"%s\" zwnj=\"%s\"", osp->glyph->liga, xutf8_of(ofp, osp->glyph));

@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "roco.h"
+#include "ofp.h"
 #include "osl_unicode.h"
 
 static Osl_uentry entryX = { .u="U+0000" , .n=(uccp)"X"    , .o=NULL , .s=-1 };
@@ -80,7 +81,7 @@ osl_autocreate(const char *u)
  * (u12345_u12345) and return a NULL-terminated array of Osl_unicode structs
  */
 Osl_uentry **
-osl_sequence(Osl_unicode *op, const char *seq, int *nseq)
+osl_sequence(Ofp *op, const char *seq, int *nseq)
 {
   if (!op || !seq)
     return NULL;
@@ -107,7 +108,9 @@ osl_sequence(Osl_unicode *op, const char *seq, int *nseq)
       else
 	strcpy(buf, next);
       /*fprintf(stderr, "osl_sequence looking for '%s'\n", buf);*/
-      Osl_uentry *e = hash_find(op->h, (uccp)buf);
+      Osl_uentry *e = hash_find(op->osl->h, (uccp)buf);
+      if (!e)
+	e = hash_find(op->pcsl->h, (uccp)buf);
       if (e)
 	oo[i] = e;
       else
@@ -126,7 +129,7 @@ osl_sequence(Osl_unicode *op, const char *seq, int *nseq)
 }
 
 unsigned char *
-osl_seq_name(Osl_unicode *op, const char *seq, Pool *p)
+osl_seq_name(Ofp *op, const char *seq, Pool *p)
 {
   Osl_uentry**oup;
   int noup;
