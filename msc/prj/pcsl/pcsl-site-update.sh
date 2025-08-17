@@ -1,5 +1,3 @@
 #!/bin/sh
 echo $0
-#(cd /home/stinney/orc/pcsl/pc25/w ; make)
-(cd /home/stinney/orc/pcsl/cepc ; pwd ; 00bin/update-pages.sh ; oracc build)
-#(cd /home/stinney/orc/pcsl/newsl ; pwd ; make)
+(cd /home/stinney/orc/pcsl ; oracc build clean)

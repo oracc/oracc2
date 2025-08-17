@@ -510,9 +510,13 @@
 
   <!-- get the first TR para's ID to put as data-tlat-ref in tr -->
   <xsl:variable name="xtr-ref">
+    <xsl:message>xtr-ref $xtr-count = <xsl:value-of select="$xtr-count"/></xsl:message>
     <xsl:if test="$xtr-count > 0">
-      <xsl:for-each select="key('tr-id',$id)[1]">
-	<xsl:value-of select="@xml:id"/>
+      <xsl:message>xtr-ref id=<xsl:value-of select="$id"/></xsl:message>
+      <xsl:for-each select="$xtr">
+	<xsl:for-each select="key('tr-id',$id)[1]">
+	  <xsl:value-of select="@xml:id"/>
+	</xsl:for-each>
       </xsl:for-each>
     </xsl:if>
   </xsl:variable>
