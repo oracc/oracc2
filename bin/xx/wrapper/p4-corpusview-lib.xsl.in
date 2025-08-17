@@ -240,7 +240,7 @@
 	<xsl:value-of select="$external-url-host"/>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:text>cdli.ucla.edu</xsl:text>
+	<xsl:text>cdli.earth</xsl:text>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
@@ -299,7 +299,7 @@
   <xsl:param name="xtr"/>
   <xsl:param name="config-xml-file"/>
   <h1 class="p3h2 heading border-top">
-    <a href="http://cdli.ucla.edu/{$pqid}" target="_blank">
+    <a href="https://cdli.earth/{$pqid}" target="_blank">
       Preview of <xsl:value-of select="$pqid"/> = <xsl:value-of select="$name"/>
     </a>
     <xsl:call-template name="via"/>
@@ -367,7 +367,7 @@
       </xsl:variable>
       <xsl:choose>
 	<xsl:when test="$pager-fallback-cdli='yes' and starts-with($pqid,'P')">
-	  <xsl:variable name="cdli-url" select="concat('https://cdli.ucla.edu/',$pqid)"/>
+	  <xsl:variable name="cdli-url" select="concat('https://cdli.earth/',$pqid)"/>
 	  <h3>No transliteration available: you can try the CDLI page
 	  <a href="{$cdli-url}"><xsl:value-of select="$cdli-url"/></a></h3>
 	  <!--<p>bdtns_id = <xsl:value-of select="$xmd/xmd:cat/xmd:bdtns_id"/></p>-->
@@ -470,7 +470,7 @@
   <!-- emit any translation headings that are supposed to precede this line -->
   <xsl:for-each select="$xtr">
     <xsl:for-each select="key('xtr-h',$id)">
-      <tr class="xtr-h">
+      <tr class="xtr-h xtr">
 	<td colspan="{1+$tlit-cols}"> </td>
 	<td colspan="{$xtr/*/@xtr:cols}" class="{concat('xtr-',local-name(.))}">
 	  <xsl:choose>
@@ -508,6 +508,15 @@
     </xsl:for-each>
   </xsl:variable>
 
+  <!-- get the first TR para's ID to put as data-tlat-ref in tr -->
+  <xsl:variable name="xtr-ref">
+    <xsl:if test="$xtr-count > 0">
+      <xsl:for-each select="key('tr-id',$id)[1]">
+	<xsl:value-of select="@xml:id"/>
+      </xsl:for-each>
+    </xsl:if>
+  </xsl:variable>
+
   <!-- this is where we copy the <tr> element and use the first of the TR paras -->
   <xsl:copy>
     <xsl:attribute name="id">
@@ -516,6 +525,9 @@
     <xsl:attribute name="class">
       <xsl:value-of select="$class"/>
     </xsl:attribute>
+    <xsl:if test="string-length($xtr-ref)>0)">
+      <xsl:attribute name="data-tlat-ref"><xsl:value-of select="$xtr-ref"/></xsl:attribute>
+    </xsl:if>
 
     <!-- this copies the TD elements of the transliteration -->
     <xsl:apply-templates select="*[position() &lt; last()]">
@@ -528,6 +540,7 @@
     <xsl:choose>
       <xsl:when test="$xtr-count > 0">
 	<xsl:for-each select="$xtr">
+	  <!-- this is where we align tlit with tlat -->
 	  <xsl:for-each select="key('tr-id',$id)[1]">
 	    <xsl:call-template name="render-xtr">
 	      <xsl:with-param name="config-xml-file" select="$config-xml-file"/>
@@ -592,7 +605,7 @@
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:variable>
-	<td class="{$class} xtr">
+	<td class="{$class} xtr" data-tlit-id="@ref" id="@xml:id">
 	  <xsl:if test="@xtr:span">
 	    <xsl:variable name="cspan">
 	      <xsl:choose>
