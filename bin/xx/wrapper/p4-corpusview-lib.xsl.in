@@ -525,7 +525,7 @@
     <xsl:attribute name="class">
       <xsl:value-of select="$class"/>
     </xsl:attribute>
-    <xsl:if test="string-length($xtr-ref)>0)">
+    <xsl:if test="string-length($xtr-ref)>0">
       <xsl:attribute name="data-tlat-ref"><xsl:value-of select="$xtr-ref"/></xsl:attribute>
     </xsl:if>
 
