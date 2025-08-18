@@ -91,4 +91,8 @@ p.model =
 gimplicit = attribute implicit { "1" }
 
 # This is a new addition for printing the text value of GDL literals
+#
+# 20250818: also use as first node of new diszless group: subsequent
+# nodes are the components of the sexified diszless number
+
 t = element g:t { text }
