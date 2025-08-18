@@ -609,7 +609,7 @@
 	    </xsl:otherwise>
 	  </xsl:choose>
 	</xsl:variable>
-	<td class="{$class} xtr" data-tlit-id="@ref" id="@xml:id">
+	<td class="{$class} xtr" data-tlit-id="{@xtr:ref|@xtr:sref}" id="{@xml:id}">
 	  <xsl:if test="@xtr:span">
 	    <xsl:variable name="cspan">
 	      <xsl:choose>
@@ -632,7 +632,7 @@
 	</td>
       </xsl:for-each>
       <xsl:for-each select="xh:span[position()>1]">
-	<td class="t2 xtr">
+	<td class="t2 xtr" data-tlit-id="{@xtr:ref|@xtr:sref}" id="{@xml:id}">
 	  <xsl:if test="@xtr:span">
 	    <xsl:attribute name="colspan">
 	      <xsl:value-of select="@xtr:span"/>
@@ -643,7 +643,7 @@
       </xsl:for-each>
     </xsl:when>
     <xsl:otherwise>
-      <td class="t1 xtr">
+      <td class="t1 xtr" data-tlit-id="{@xtr:ref|@xtr:sref}" id="{@xml:id}">
 	<xsl:if test="@xtr:rows">
 	  <xsl:variable name="rows" select="@xtr:rows"/>
 	  <xsl:if test="not($rows = 'NaN') and $rows > 0">
