@@ -361,7 +361,12 @@
       <value>1</value>
     </attribute>
   </define>
-  <!-- This is a new addition for printing the text value of GDL literals -->
+  <!--
+    This is a new addition for printing the text value of GDL literals
+    
+    20250818: also use as first node of new diszless group: subsequent
+    nodes are the components of the sexified diszless number
+  -->
   <define name="t">
     <element name="g:t">
       <text/>
