@@ -192,7 +192,7 @@ ce_file(const char *idp)
       pqid[7] = '\0';
     }
 
-  if (idp[strlen(idp)] == '_' || project_en)
+  if (idp[strlen(pqid)] == '_' || project_en)
     {
       char base[128], *pd;
       pd = strchr(idp,'.');
