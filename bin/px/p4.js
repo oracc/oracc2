@@ -387,9 +387,11 @@ function act_wsig(evt) {
 
 function act_block(evt) {
     let pager = getPager();
-    let project = pager.getAttribute('data-proj');
-    let item = pager.getAttribute('data-item');
+    let bprj = getData(evt).getAttribute('data-bprj');
+    let btxt = getData(evt).getAttribute('data-btxt');
     let block = getData(evt).getAttribute('data-bloc');
+    let project = (bprj ? bprj : pager.getAttribute('data-proj'));
+    let item = (btxt ? btxt : pager.getAttribute('data-item'));
     let url = '/'+project+'/'+item+'?block='+block;
     // alert('act_block url='+url);
     popup(url,400,600,700,50);
