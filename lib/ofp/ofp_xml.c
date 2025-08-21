@@ -31,6 +31,50 @@ ofp_xml(Ofp *ofp, FILE *fp)
   fprintf(fp, "</ofp>");
 }
 
+static char *
+liga_feat_attr(Ofp_glyph *gp, int tex)
+{
+  const char *liga = strstr(gp->name, ".liga.");  
+  liga += 6;
+  char buf[strlen(liga)*10];
+  const char *src = liga;
+  char *dst = buf;
+  while (*src)
+    {
+      if (tex)
+	*dst++ = '+';
+      int salt = atoi(src);
+      if (salt)
+	{
+	  sprintf(dst, "salt%d", salt - tex);
+	  dst += strlen(dst);
+	  while (*src && '.' != *src)
+	    ++src;
+	}
+      else
+	{
+	  while (*src && '.' != *src)
+	    *dst++ = *src++;
+	}
+      if (*src)
+	{
+	  *dst++ = (tex ? ';' : ' ');
+	  ++src;
+	}
+      *dst = '\0';
+    }
+  return strdup(buf);
+}
+
+#if 0
+static char *
+liga_feat_tex(Ofs_glyph *gp)
+{
+  const char *liga = strstr(gp->name, ".liga.");
+  liga += 6;
+}
+#endif
+
 static void
 xml_attr(const char *n, const char *v, FILE *fp)
 {
@@ -75,6 +119,12 @@ xml_liga(Ofp *ofp, List *lp, FILE *fp, int top)
 	     ancestor liga node has the liga seq data */
 	  fprintf(fp, "<feat name=\"%s\" feat=\"%s\"",
 		  gp->glyph->name,  gp->glyph->f_chr);
+	  /* Precompute CSS and TeX designators for post-.liga bits */
+	  char *css = liga_feat_attr(gp->glyph, 0);
+	  char *tex = liga_feat_attr(gp->glyph, 1);
+	  fprintf(fp, " css=\"%s\" tex=\"%s\"", css, tex);
+	  free(css);
+	  free(tex);
 	}
       if (gp->glyph->gcomp)
 	fprintf(fp, " ref=\"x%s\"", gp->glyph->gcomp);
