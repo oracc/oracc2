@@ -37,6 +37,7 @@ typedef struct Ofp
   struct Ofp_list *list;
   Hash *h_list;
   Ofp_header h;
+  FILE *trace;
 } Ofp;
 
 typedef enum Ofp_feature
@@ -65,8 +66,8 @@ typedef struct Ofp_glyph
 		       then we list all liga under their ligl */
   int is_liga; 	    /* 1 if this entry is a ligature which is listed under another sign */
   Osl_uentry *osl;
-  struct Ofp_glyph *gcomp; /* component if this glyph is a .liga */
-  struct Ofp_glyph *gliga; /* ligature if this glyph is a PUA used as a component */
+  const char*gcomp; /* prebuilt char if this glyph is a .liga */
+  const char*gliga; /* ligature if this glyph is a PUA used as a component */
 } Ofp_glyph;
 
 typedef struct Ofp_sign
@@ -107,7 +108,7 @@ struct ofpdefs_tab { const char *name; enum ofpdefs_val v; };
 extern Ofp *ofp_init(void);
 extern void ofp_term(Ofp *ofp);
 extern void ofp_list(Ofp *ofp, const char *larg);
-extern Ofp *ofp_load(const char *font);
+extern Ofp *ofp_load(const char *font, int tracing);
 extern void ofp_dump(Ofp *ofp, FILE *fp);
 extern void ofp_ingest(Ofp *ofp);
 extern void ofp_marshall(Ofp *ofp);

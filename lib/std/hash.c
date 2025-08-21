@@ -504,6 +504,46 @@ hash_keys2 (Hash *htab, int *nkeys)
     return NULL;
 }
 
+const void **
+hash_vals (Hash *htab)
+{
+  return hash_vals2(htab, NULL);
+}
+
+const void **
+hash_vals2 (Hash *htab, int *nvals)
+{
+  Unsigned32 i, j;
+  Hash_element **s, *p;
+ 
+  if (htab != NULL)
+    {
+      const void **vals = malloc((1+htab->key_count)*sizeof(char *));
+      int keyindex = 0;
+      for (i = 0; i < htab->segment_count; i++)
+	{
+	  if ((s = htab->directory[i]) != NULL)
+	    {
+	      for (j = 0; j < SEGMENT_SIZE; j++)
+		{
+		  p = s[j];
+		  while (p != NULL)
+		    {
+		      vals[keyindex++] = p->data;
+		      p = p->next;
+		    }
+		}
+	    }
+	}
+      vals[keyindex] = NULL;
+      if (nvals)
+	*nvals = keyindex;
+      return vals;
+    }
+  else
+    return NULL;
+}
+
 #include "list.h"
 List *
 hash2list(Hash *htab, sort_cmp_func*cmp)

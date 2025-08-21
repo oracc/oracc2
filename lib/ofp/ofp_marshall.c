@@ -1,9 +1,76 @@
 #include <oraccsys.h>
 #include "ofp.h"
 
-/* Collect all the glyphs that belong to each sign */
+int
+liganamecmp(const void *p1, const void *p2)
+{
+  return strcmp((*(Ofp_glyph**)p1)->name, (*(Ofp_glyph**)p2)->name);
+}
+
+#if 0
+static void ofp_marshall_liga(Ofp *ofp, Ofp_sign *sp, Ofp_glyph *gp);
+#endif
+
+/* Collect all the glyphs that belong to each sign
+ *
+ * non-ligature glyphs are in h_glyf; liga in h_liga
+ *
+ * add all the h_glyf to h_sign first, then add h_liga to the head
+ * signs
+ *
+ * sort the liga by name so they naturally ramp up onto the lists
+ *
+ */
 void
 ofp_marshall(Ofp *ofp)
+{
+  int i;
+  int nk;
+  const char **k = hash_keys2(ofp->h_glyf, &nk);
+  for (i = 0; i < nk; ++i)
+    {
+      Ofp_sign *sp = memo_new(ofp->m_sign);
+      sp->glyph = hash_find(ofp->h_glyf, (uccp)k[i]);
+      hash_add(ofp->h_sign, (uccp)k[i], sp);
+    }
+  
+  Ofp_glyph **v = (Ofp_glyph**)hash_vals2(ofp->h_liga, &nk);
+  qsort(v, nk, sizeof(Ofp_glyph*), liganamecmp);
+  if (ofp->trace)
+    {
+      fprintf(ofp->trace, "===\nofp_marshall begin sorted liga:\n");
+      for (i = 0; i < nk; ++i)
+	fprintf(ofp->trace, "%s\n", v[i]->name);
+      fprintf(ofp->trace, "ofp_marshall end sorted liga\n===\n");
+    }
+#if 0
+  List *liga_feat = list_create(LIST_SINGLE);
+  for (i = 0; i < nliga; ++i)
+    {
+      Ofp_sign *sp = hash_find(ofp->h_sign, k[i]);
+      Ofp_glyph *gp = hash_find(ofp->h_liga, k[i]);
+      if (!sp)
+	fprintf("%s:%d: undefined ligature head %s\n", ofp->file, gp->index, k);
+      else
+	ofp_marshall_liga(ofp, sp, gp);
+    }
+#endif
+}
+
+#if 0
+static void
+ofp_marshall_liga(Ofp *ofp, Ofp_sign *sp, Ofp_glyph *gp)
+{
+}
+
+static void
+ofp_marshall_liga_feat(Ofp *ofp, Ofp_glyph *gp)
+{
+}
+#endif
+
+void
+xofp_marshall(Ofp *ofp)
 {
   Ofp_liga *curr_lig = NULL;
 #define gp(x) (&ofp->glyphs[x])
@@ -13,7 +80,7 @@ ofp_marshall(Ofp *ofp)
   hash_add(ofp->h_sign, (uccp)gp(0)->key, curr_sp);
   for (i = 0; i < ofp->nglyphs; ++i)
     {
-      /* liga -> comp does not set glyph */
+      /* liga -> comp binding does not set glyph */
       if (gp(i)->key == NULL)
 	continue;
       

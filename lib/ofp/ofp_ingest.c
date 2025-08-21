@@ -94,6 +94,8 @@ ofp_ingest(Ofp *ofp)
       const char *ivs = NULL;
       if (liga)
 	{
+	  if (ofp->trace)
+	    fprintf(ofp->trace, "ofp_ingest: hash_add h_liga %s gp(%d)\n", name, i);
 	  hash_add(ofp->h_liga, pool_copy((uccp)name, ofp->p), &ofp->glyphs[i]);
 	  char lig[strlen(liga)+1], *l;
 	  strcpy(lig, liga);
@@ -133,6 +135,11 @@ ofp_ingest(Ofp *ofp)
 		  ++uup;
 		}
 	    }
+	  else if (strchr((ccp)lp[i], ' '))
+	    {
+	      fprintf(stderr, "%s:%d: space character in line\n", ofp->file, i);
+	      continue;
+	    }
 	  else
 	    {
 	      /* UCODE.FEAT e.g., u12345.ss01, etc. */
@@ -150,6 +157,9 @@ ofp_ingest(Ofp *ofp)
 		  ucode = "0000";
 		}
 	    }
+	  if (ofp->trace)
+	    fprintf(ofp->trace, "ofp_ingest: hash_add h_glyf %s gp(%d)\n", name, i);
+	  hash_add(ofp->h_glyf, pool_copy((uccp)name, ofp->p), &ofp->glyphs[i]);
 	}
       set_glyph(ofp, i - offset, name, ucode, fcode, f, ext, ligl, liga, ivs);
     }
@@ -275,9 +285,9 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
 }
 
 
-/* name is a liga, e.g., u125BE_u12995.liga; comp is a component,
-   e.g., uF2251. We need to find the glyph for each side and mutually
-   connect them */
+/* name is a liga, e.g., u125BE_u12995.liga; comp is a prebuilt
+   ligature, e.g., uF2251. We need to find the glyph for each side and
+   mutually connect them */
 static void
 set_lig_pua_binding(Ofp *o, const char *name, const char *comp)
 {
@@ -285,8 +295,12 @@ set_lig_pua_binding(Ofp *o, const char *name, const char *comp)
   Ofp_glyph *c_glyph = hash_find(o->h_glyf, (uccp)comp);
   if (n_glyph && c_glyph)
     {
-      n_glyph->gcomp = c_glyph;
-      c_glyph->gliga = n_glyph;
+      n_glyph->gcomp = c_glyph->code;
+      c_glyph->gliga = n_glyph->liga;
+      if (o->trace)
+	fprintf(o->trace, "set_lig_pua_binding %s=>%s , %s=>%s\n",
+		name, n_glyph->gcomp,
+		comp, c_glyph->gliga);
     }
   else
     {
@@ -306,7 +320,6 @@ set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
 #define gp(i) (&o->glyphs[i])
   gp(i)->index = i;
   gp(i)->name = name;
-  hash_add(o->h_glyf, (uccp)name, gp(i));
   gp(i)->code = code;
   gp(i)->fcode = code /*fcode*/; /* can probably discontinue this */
   gp(i)->f = f;

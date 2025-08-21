@@ -101,7 +101,7 @@ ofp_init(void)
 }
 
 Ofp *
-ofp_load(const char *fontname)
+ofp_load(const char *fontname, int tracing)
 {
   Ofp *ofp = NULL;
   
@@ -114,10 +114,12 @@ ofp_load(const char *fontname)
   if (!access(buf, R_OK) || !strcmp(buf, "-"))
     {
       ofp = ofp_init();
+      if (tracing && !(ofp->trace = fopen("ofp.log", "w")))
+	fprintf(stderr, "ofp failed to open log file ofp.log; proceeding without tracing\n");
       ofp->name = fontname;
       ofp->file = (ccp)pool_copy((uccp)buf, ofp->p);
       ofp_ingest(ofp);
-      qsort(ofp->glyphs, ofp->nglyphs, sizeof(Ofp_glyph), ofp_glyph_cmp);
+      /*qsort(ofp->glyphs, ofp->nglyphs, sizeof(Ofp_glyph), ofp_glyph_cmp);*/
       ofp_marshall(ofp);
    }
   else

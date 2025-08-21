@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include "../../lib/ofp/ofp.h"
 
+int tracing = 0;
 int xml_dump = 1;
 
 const char *list_arg = NULL;
@@ -11,9 +12,9 @@ const char *xml_file = "-";
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "d:l:o:x:");
+  options(argc, argv, "d:l:o:tx:");
 
-  Ofp *ofp = ofp_load(oin_file ? oin_file : "-");
+  Ofp *ofp = ofp_load(oin_file ? oin_file : "-", tracing);
 
   if (!ofp)
     {
@@ -38,6 +39,9 @@ main(int argc, char **argv)
       if ('-' != *xml_file)
 	fclose(fp);
     }
+  
+  if (ofp->trace)
+    fclose(ofp->trace);
 }
 
 int
@@ -53,6 +57,9 @@ opts(int argc, const char *arg)
       break;
     case 'o':
       oin_file = arg;
+      break;
+    case 't':
+      tracing = 1;
       break;
     case 'x':
       xml_file = arg;
