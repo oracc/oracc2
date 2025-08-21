@@ -40,7 +40,7 @@ const char *ofp_feat_str[OFPF_NONE+1];
    u12787_u12908_u127FE.liga.cv01 -> uF20C9
 
  */
-
+#if 0
 static int
 ofp_glyph_cmp(const void *a, const void *b)
 {
@@ -78,6 +78,7 @@ ofp_glyph_cmp(const void *a, const void *b)
 	return 1;
     }
 }
+#endif
 
 Ofp *
 ofp_init(void)

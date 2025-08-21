@@ -1,11 +1,9 @@
 #include <oraccsys.h>
 #include "ofp.h"
 
-static enum Ofp_feature ext_type(const char *ext);
-static int fnum(const char *n);
 static void set_lig_pua_binding(Ofp *o, const char *name, const char *comp);
-static void set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
-		      Ofp_feature f, const char *ext, const char *ligl, const char *liga, const char *ivs);
+static void set_glyph(Ofp *o, int i, const char *name, const char *code,
+		      const char *ligl, const char *liga);
 static const char *ucode_from_name(Ofp *o, const char *name);
 static const char *un_u(const char *u);
 static int unicode_value(const char *u);
@@ -38,8 +36,6 @@ ofp_ingest(Ofp *ofp)
 	hash_add(seen, (ucp)strdup((ccp)lp[i]), "");
       
       char *name = (char*)lp[i];
-      Ofp_feature f = OFPF_BASE;
-      const char *ext = NULL;
       char *liga = strstr((ccp)lp[i], "<-");
       char *comp = NULL;
       if (!liga)
@@ -89,9 +85,7 @@ ofp_ingest(Ofp *ofp)
 	    ++liga;
 	}
       char *ligl = NULL;
-      const char *fcode = NULL;
       char *ucode = NULL;
-      const char *ivs = NULL;
       if (liga)
 	{
 	  if (ofp->trace)
@@ -103,22 +97,6 @@ ofp_ingest(Ofp *ofp)
 	  if (l)
 	    *l = '\0';
 	  ligl = (char*)pool_copy((uccp)lig, ofp->p);
-
-	  /* Now name is the glyph name (may have double
-	     extension, e.g., AGRIG.liga.ss01); lig is the lead
-	     ligature element; liga is the ligature sequence */
-	  char *dot = strrchr(name, '.');
-	  if (dot && strcmp(dot, ".liga"))
-	    {
-	      *dot++ = '\0';
-	      ext = dot;
-	      f = ext_type(dot);
-	      if ((dot = strchr(dot, '.')))
-		*dot = '\0';
-	    }
-
-	  if ((ivs = strstr(liga, "_uE01")))
-	    ivs += 2;
 	}
       else
 	{
@@ -145,12 +123,9 @@ ofp_ingest(Ofp *ofp)
 	      /* UCODE.FEAT e.g., u12345.ss01, etc. */
 	      char *dot = strchr(name, '.');
 	      if (dot)
-		{
-		  *dot++ = '\0';
-		  ext = dot;
-		  f = ext_type(dot);
-		}
+		*dot++ = '\0';
 	      ucode = (char*)ucode_from_name(ofp, name);
+	      *dot = '.'; /* preserve features in name */
 	      if (!ucode || !unicode_value(ucode))
 		{
 		  /*name = "-";*/
@@ -161,41 +136,9 @@ ofp_ingest(Ofp *ofp)
 	    fprintf(ofp->trace, "ofp_ingest: hash_add h_glyf %s gp(%d)\n", name, i);
 	  hash_add(ofp->h_glyf, pool_copy((uccp)name, ofp->p), &ofp->glyphs[i]);
 	}
-      set_glyph(ofp, i - offset, name, ucode, fcode, f, ext, ligl, liga, ivs);
+      set_glyph(ofp, i - offset, name, ucode, ligl, liga);
     }
   ofp->nglyphs -= offset;
-}
-
-static enum Ofp_feature
-ext_type(const char *ext)
-{
-  if (isdigit(*ext))
-    {
-      do
-	++ext;
-      while (isdigit(*ext));
-      if (!*ext)
-	return OFPF_SALT;
-    }
-
-  if ('c' == ext[0] && 'v' == ext[1] && isdigit(ext[2]) && isdigit(ext[3]) && !ext[4])
-    return OFPF_CVNN;
-
-  if ('s' == ext[0] && 's' == ext[1] && isdigit(ext[2]) && isdigit(ext[3]) && !ext[4])
-    return OFPF_SSET;
-
-  return OFPF_NONE;
-}
-
-static int
-fnum(const char *n)
-{
-  while (*n && !isdigit(*n))
-    ++n;
-  if (n)
-    return atoi(n);
-  else
-    return 0;
 }
 
 char *
@@ -262,7 +205,7 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
     }
   else
     {
-      const char *c = (gp->code ? gp->code : gp->fcode);
+      const char *c = gp->code;
       char u[strlen(c)+3];
       sprintf(u, "U+%s", c);
       up = strdup(u);
@@ -314,23 +257,16 @@ set_lig_pua_binding(Ofp *o, const char *name, const char *comp)
 }
 
 static void
-set_glyph(Ofp *o, int i, const char *name, const char *code, const char *fcode,
-	  Ofp_feature f, const char *ext, const char *ligl, const char *liga, const char *ivs)
+set_glyph(Ofp *o, int i, const char *name, const char *code,
+	  const char *ligl, const char *liga)
 {
 #define gp(i) (&o->glyphs[i])
   gp(i)->index = i;
   gp(i)->name = name;
   gp(i)->code = code;
-  gp(i)->fcode = code /*fcode*/; /* can probably discontinue this */
-  gp(i)->f = f;
-  if (ext)
-    {
-      gp(i)->f_int = (f == OFPF_OIVS ? (int)strtol(ext,NULL,16) : fnum(ext));
-      gp(i)->f_chr = ext;
-    }
   gp(i)->ligl = ligl;
   gp(i)->liga = liga;
-  gp(i)->ivs = ivs;
+
   /*
    * If the liga or name is known in the sign list use liga or name as
    * key.

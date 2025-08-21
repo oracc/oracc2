@@ -52,7 +52,6 @@ typedef struct Ofp_glyph
   const char *key;
   const char *name;
   const char *code;  /* the derived value of the code from or u123AF name */
-  const char *fcode; /* the font's value of the code */
   Ofp_feature f;
   int f_int;
   const char *f_chr;
@@ -70,6 +69,8 @@ typedef struct Ofp_glyph
   const char*gliga; /* ligature if this glyph is a PUA used as a component */
 } Ofp_glyph;
 
+/* In the refactor Ofp_sign and Ofp_liga have ended up identical */
+
 typedef struct Ofp_sign
 {
   Ofp_glyph *glyph;
@@ -80,6 +81,9 @@ typedef struct Ofp_sign
   List *ligas;
 } Ofp_sign;
 
+#if 1
+typedef Ofp_sign Ofp_liga;
+#else
 typedef struct Ofp_liga
 {
   Ofp_glyph *glyph;
@@ -87,7 +91,9 @@ typedef struct Ofp_liga
   List *cvnns;
   List *ssets;
   List *oivs;
+  List *ligas;
 } Ofp_liga;
+#endif
 
 typedef struct Ofp_list
 {
