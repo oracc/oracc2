@@ -93,9 +93,12 @@ static void
 liga_add(Ofp *ofp, List *lp, Ofp_glyph *gp, const char *f)
 {
   Ofp_liga *ligp = memo_new(ofp->m_liga);
+  ligp->glyph = gp;
   hash_add(lindex, (uccp)gp->name, ligp);
-  feature_set(ligp, gp, f);
-}
+  if (f)
+    feature_set(ligp, gp, f);
+  list_add(lp, ligp);
+ }
 
 /* Collect all the glyphs that belong to each sign
  *
@@ -112,7 +115,7 @@ ofp_marshall(Ofp *ofp)
 {
   int i;
   int nk;
-  Ofp_glyph **v = (Ofp_glyph**)hash_vals2(ofp->h_liga, &nk);
+  Ofp_glyph **v = (Ofp_glyph**)hash_vals2(ofp->h_glyf, &nk);
   qsort(v, nk, sizeof(Ofp_glyph*), glyphnamep);
   if (ofp->trace)
     {
@@ -138,6 +141,7 @@ ofp_marshall(Ofp *ofp)
       else
 	{
 	  Ofp_sign *sp = memo_new(ofp->m_sign);
+	  sp->glyph = v[i];
 	  hash_add(ofp->h_sign, (uccp)v[i]->name, sp);
 	}
     }
