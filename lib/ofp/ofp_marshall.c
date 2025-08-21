@@ -1,7 +1,9 @@
 #include <oraccsys.h>
 #include "ofp.h"
 
-static Hash *lindex;
+static Hash *lindex;/*hash of Ofp_liga for each .liga and .liga.FEATURE*/
+static List *llist; /*list of .liga.FEATURE for processing after lindex is filled */
+		      
 static enum Ofp_feature feature_code(const char *ext);
 static int feature_int(const char *n);
 
@@ -94,11 +96,47 @@ liga_add(Ofp *ofp, List *lp, Ofp_glyph *gp, const char *f)
 {
   Ofp_liga *ligp = memo_new(ofp->m_liga);
   ligp->glyph = gp;
+  if (ofp->trace)
+    fprintf(ofp->trace, "liga_add hash_add lindex %s\n", gp->name);
   hash_add(lindex, (uccp)gp->name, ligp);
   if (f)
     feature_set(ligp, gp, f);
   list_add(lp, ligp);
  }
+
+static void
+ofp_marshall_liga(Ofp *ofp, Ofp_glyph *vp)
+{
+  const char *f = feature_check(vp->name);
+  if (f)
+    {
+      char *p = (char *)pool_copy((uccp)vp->name, ofp->p);
+      p[f++ - vp->name] = '\0';
+      Ofp_liga *ligp = hash_find(lindex, (uccp)p);
+      if (!ligp)
+	fprintf(stderr, "%s:%d: ofp_marshall_liga: %s has undefined parent %s\n",
+		ofp->file, vp->index, vp->name, p);
+      else
+	{
+	  if (!ligp->ligas)
+	    ligp->ligas = list_create(LIST_SINGLE);
+	  liga_add(ofp, ligp->ligas, vp, f);
+	}
+    }
+  else
+    {
+      Ofp_sign *sp = hash_find(ofp->h_sign, (uccp)vp->ligl);
+      if (!sp)
+	fprintf(stderr, "%s:%d: ofp_marshall_liga: %s has undefined head %s\n",
+		ofp->file, vp->index, vp->name, vp->ligl);
+      else
+	{
+	  if (!sp->ligas)
+	    sp->ligas = list_create(LIST_SINGLE);
+	  liga_add(ofp, sp->ligas, vp, NULL);
+	}
+    }
+}
 
 /* Collect all the glyphs that belong to each sign
  *
@@ -115,7 +153,21 @@ ofp_marshall(Ofp *ofp)
 {
   int i;
   int nk;
+
+  llist = list_create(LIST_SINGLE);
+
+  int nck;
   Ofp_glyph **v = (Ofp_glyph**)hash_vals2(ofp->h_glyf, &nk);
+
+  if (ofp->trace)
+    {
+      const char **k = (const char **)hash_keys2(ofp->h_glyf, &nck);
+      for (i = 0; i < nk; ++i)
+	if (!v[i]->key && !v[i]->name)
+	  fprintf(stderr, "ofp_marshall key=%s has NULL name/key at index %d of %d\n",
+		  k[i], i, nk);
+    }
+  
   qsort(v, nk, sizeof(Ofp_glyph*), glyphnamep);
   if (ofp->trace)
     {
@@ -133,8 +185,13 @@ ofp_marshall(Ofp *ofp)
 	  p[f++ - v[i]->name] = '\0';
 	  Ofp_sign *sp = hash_find(ofp->h_sign, (uccp)p);
 	  if (!sp)
-	    fprintf(stderr, "%s:%d: %s has undefined parent %s\n",
-		    ofp->file, v[i]->index, v[i]->name, p);
+	    {
+	      if (strstr(v[i]->name, ".liga."))
+		list_add(llist, v[i]);
+	      else
+		fprintf(stderr, "%s:%d: ofp_marshall: %s has undefined parent %s\n",
+			ofp->file, v[i]->index, v[i]->name, p);
+	    }
 	  else
 	    feature_set(sp, v[i], f);
 	}
@@ -157,38 +214,14 @@ ofp_marshall(Ofp *ofp)
     }
 
   lindex = hash_create(1024);
+  
   for (i = 0; i < nk; ++i)
-    {
-      const char *f = feature_check(v[i]->name);
-      if (f)
-	{
-	  char *p = (char *)pool_copy((uccp)v[i]->name, ofp->p);
-	  p[f++ - v[i]->name] = '\0';
-	  Ofp_liga *ligp = hash_find(lindex, (uccp)p);
-	  if (!ligp)
-	    fprintf(stderr, "%s:%d: %s has undefined parent %s\n",
-		    ofp->file, v[i]->index, v[i]->name, p);
-	  else
-	    {
-	      if (!ligp->ligas)
-		ligp->ligas = list_create(LIST_SINGLE);
-	      liga_add(ofp, ligp->ligas, v[i], f);
-	    }
-	}
-      else
-	{
-	  Ofp_sign *sp = hash_find(ofp->h_sign, (uccp)v[i]->ligl);
-	  if (!sp)
-	    fprintf(stderr, "%s:%d: %s has undefined head %s\n",
-		    ofp->file, v[i]->index, v[i]->name, v[i]->ligl);
-	  else
-	    {
-	      if (!sp->ligas)
-		sp->ligas = list_create(LIST_SINGLE);
-	      liga_add(ofp, sp->ligas, v[i], NULL);
-	    }
-	}
-    }
+    ofp_marshall_liga(ofp, v[i]);
+
+  Ofp_glyph *gp;
+  for (gp = list_first(llist); gp; gp = list_next(llist))
+    ofp_marshall_liga(ofp, gp);
+
   hash_free(lindex, NULL);
 }
 

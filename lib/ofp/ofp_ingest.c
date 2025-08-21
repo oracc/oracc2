@@ -27,7 +27,7 @@ ofp_ingest(Ofp *ofp)
       /* ignore duplicate entries; input is programmatically generated
 	 so we can use simple equivalency check without
 	 canonicalizing */
-      if (hash_find(seen, lp[i]))
+      if (hash_find(seen, lp[i]) || '.' == *lp[i])
 	{
 	  ++offset;
 	  continue;
@@ -123,7 +123,7 @@ ofp_ingest(Ofp *ofp)
 	      /* UCODE.FEAT e.g., u12345.ss01, etc. */
 	      char *dot = strchr(name, '.');
 	      if (dot)
-		*dot++ = '\0';
+		*dot = '\0';
 	      ucode = (char*)ucode_from_name(ofp, name);
 	      *dot = '.'; /* preserve features in name */
 	      if (!ucode || !unicode_value(ucode))
@@ -133,8 +133,9 @@ ofp_ingest(Ofp *ofp)
 		}
 	    }
 	  if (ofp->trace)
-	    fprintf(ofp->trace, "ofp_ingest: hash_add h_glyf %s gp(%d)\n", name, i);
-	  hash_add(ofp->h_glyf, pool_copy((uccp)name, ofp->p), &ofp->glyphs[i]);
+	    fprintf(ofp->trace, "ofp_ingest: hash_add h_glyf %s gp(%d)\n",
+		    name, i-offset);
+	  hash_add(ofp->h_glyf, pool_copy((uccp)name, ofp->p), &ofp->glyphs[i-offset]);
 	}
       set_glyph(ofp, i - offset, name, ucode, ligl, liga);
     }
@@ -234,7 +235,7 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
 static void
 set_lig_pua_binding(Ofp *o, const char *name, const char *comp)
 {
-  Ofp_glyph *n_glyph = hash_find(o->h_liga, (uccp)name);
+  Ofp_glyph *n_glyph = hash_find(strstr(name,".liga.")?o->h_glyf:o->h_liga, (uccp)name);
   Ofp_glyph *c_glyph = hash_find(o->h_glyf, (uccp)comp);
   if (n_glyph && c_glyph)
     {
