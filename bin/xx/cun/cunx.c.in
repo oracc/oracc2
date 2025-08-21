@@ -284,9 +284,16 @@ ei_sH(void *userData, const char *name, const char **atts)
 	      const char *form = findAttr(atts, "form");
 	      if (!form || !*form)
 		{
-		  form = findAttr(atts, "key");
-		  if (form && *form)
-		    form = strrchr(form,'.')+1;
+		  if ('s' == name[2])
+		    form = findAttr(atts, "g:sign");
+		  else
+		    {
+		      form = findAttr(atts, "key");
+		      if (form && *form && '.' != form[strlen(form)-1])
+			form = strrchr(form,'.')+1;
+		      else
+			form = findAttr(atts, "g:sign");
+		    }
 		}
 	      if (form && *form)
 		form = (ccp)pool_copy((ucp)form, p);
