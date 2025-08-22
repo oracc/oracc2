@@ -37,6 +37,8 @@ table.pretty p { margin: 0 0 0 0; }
 
 table.ofp p { margin-top: 5px; }
 
+.ofp-uhex { font-size: 80%; }
+
 /* Common ASL formatting; the colours here need to be redone to work with project colours */
 
 a:link	{ color: blue; text-decoration: none; }
