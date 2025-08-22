@@ -73,27 +73,32 @@
 }
 
 .ofs-nao {
-   font-family: "Oracc NA Outline";
+    font-family: "Oracc NA Outline";
+    font-variant-ligatures: common-ligatures;
 }
 
 .ofs-noto {
-   font-family: "Oracc Noto SansCuneiform";
+    font-family: "Oracc Noto SansCuneiform";
+    font-variant-ligatures: common-ligatures;
 }
 
 .ofs-oobf {
-   font-family: "Oracc OBFreie Regular";
+    font-family: "Oracc OBFreie Regular";
+    font-variant-ligatures: common-ligatures;
 }
 
 .ofs-pc {
     font-family: "Oracc PC";
+    font-variant-ligatures: common-ligatures;
 }
 
 .ofs-u2 {
     font-family: "Oracc UET2";
+    font-variant-ligatures: common-ligatures;
 }
 
 .ofs-rsp {
-   font-family: "Oracc RSP";
+    font-family: "Oracc RSP";
     font-variant-ligatures: common-ligatures;
 }
 
@@ -177,12 +182,31 @@
     font-feature-settings: "salt" 14;
 }
 
-.cv01 {
-    font-feature-settings: "cv01";
+/* .cv01 works for non-.liga characters but '"salt" 1' is needed to
+   get .liga.cv01 to display correctly */
+
+.cv01 {    
+    font-feature-settings: "cv01", "salt" 1;
 }
 
 .cv02 {
-    font-feature-settings: "cv02";
+    font-feature-settings: "cv02", "salt" 2;
+}
+
+.cv03 {
+    font-feature-settings: "cv03", "salt" 3;
+}
+
+.cv04 {
+    font-feature-settings: "cv04", "salt" 4;
+}
+
+.cv05 {
+    font-feature-settings: "cv05", "salt" 5;
+}
+
+.cv06 {
+    font-feature-settings: "cv06", "salt" 6;
 }
 
 .early {
