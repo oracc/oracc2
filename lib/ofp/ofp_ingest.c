@@ -73,6 +73,18 @@ ofp_ingest(Ofp *ofp)
 		  *ldot = '\0';
 		}
 	    }
+	  else if ((comp = strstr(name, "->")))
+	    {
+	      if (' ' == comp[-1])
+		comp[-1] = '\0';
+	      else
+		*comp = '\0';
+	      comp += 2;
+	      while (isspace(*comp))
+		++comp;
+	      set_lig_pua_binding(ofp, name, comp);
+	      continue;
+	    }
 	}
       else
 	{
@@ -228,6 +240,15 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
   return e;
 }
 
+static int
+name_is_liga(const char *name)
+{
+  const char *l = strstr(name,".liga");
+  if (l)
+    return '\0' == l[5];
+  else
+    return 0;
+}
 
 /* name is a liga, e.g., u125BE_u12995.liga; comp is a prebuilt
    ligature, e.g., uF2251. We need to find the glyph for each side and
@@ -235,16 +256,20 @@ get_osl(Ofp *o, Ofp_glyph *gp, char **found_as)
 static void
 set_lig_pua_binding(Ofp *o, const char *name, const char *comp)
 {
-  Ofp_glyph *n_glyph = hash_find(strstr(name,".liga.")?o->h_glyf:o->h_liga, (uccp)name);
+  Ofp_glyph *n_glyph = hash_find(name_is_liga(name)?o->h_liga:o->h_glyf, (uccp)name);
   Ofp_glyph *c_glyph = hash_find(o->h_glyf, (uccp)comp);
   if (n_glyph && c_glyph)
     {
-      n_glyph->gcomp = c_glyph->code;
-      c_glyph->gliga = n_glyph->liga;
+      /* don't assign gcom/gref in same glyphs */
+      if (n_glyph->index != c_glyph->index)
+	{
+	  n_glyph->gcom = c_glyph->code;
+	  c_glyph->gref = n_glyph->liga ? n_glyph->liga : n_glyph->name;
+	}
       if (o->trace)
 	fprintf(o->trace, "set_lig_pua_binding %s=>%s , %s=>%s\n",
-		name, n_glyph->gcomp,
-		comp, c_glyph->gliga);
+		name, n_glyph->gcom,
+		comp, c_glyph->gref);
     }
   else
     {

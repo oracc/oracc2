@@ -7,7 +7,7 @@
     <xsl:apply-templates select=".//LigatureSet"/>
     <xsl:apply-templates select=".//map"/>
     <xsl:apply-templates select=".//GlyphID[contains(@name,'.')]"/>
-    <xsl:apply-templates select=".//TTGlyph[contains(@name,'.liga')]"/>
+    <xsl:apply-templates select=".//TTGlyph[contains(@name,'.')]"/>
   </xsl:template>
   
   <xsl:template match="LigatureSet">

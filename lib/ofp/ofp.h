@@ -65,8 +65,8 @@ typedef struct Ofp_glyph
 		       then we list all liga under their ligl */
   int is_liga; 	    /* 1 if this entry is a ligature which is listed under another sign */
   Osl_uentry *osl;
-  const char*gcomp; /* prebuilt char if this glyph is a .liga */
-  const char*gliga; /* ligature if this glyph is a PUA used as a component */
+  const char*gcom; /* component char for liga and features  */
+  const char*gref; /* reference to char that includes this PUA char */
 } Ofp_glyph;
 
 /* In the refactor Ofp_sign and Ofp_liga have ended up identical */

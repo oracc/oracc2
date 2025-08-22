@@ -126,8 +126,11 @@ xml_liga(Ofp *ofp, List *lp, FILE *fp, int top)
 	  free(css);
 	  free(tex);
 	}
-      if (gp->glyph->gcomp)
-	fprintf(fp, " ref=\"x%s\"", gp->glyph->gcomp);
+      if (gp->glyph->gcom)
+	{
+	  const char *r8 = utf8ify(strtol(gp->glyph->gcom,NULL,16));
+	  fprintf(fp, " ref=\"x%s\" ref8=\"%s\"", gp->glyph->gcom, r8);
+	}
       fputc('>',fp);
       if (gp->glyph->liga)
 	{
@@ -303,8 +306,8 @@ xml_sign(Ofp *ofp, const char *sn, FILE *fp)
   fprintf(fp, "<sign xml:id=\"%s\" utf8=\"%s\"", xid,
 	  liga_utf8 ? liga_utf8 : xutf8_of(ofp, osp->glyph));
 
-  if (osp->glyph->gliga)
-    fprintf(fp, " lref=\"%s\"", osp->glyph->gliga);
+  if (osp->glyph->gref)
+    fprintf(fp, " lref=\"%s\"", osp->glyph->gref);
   
   if (osp->glyph->liga)
     fprintf(fp, " l=\"%s\" zwnj=\"%s\"", osp->glyph->liga, xutf8_of(ofp, osp->glyph));
