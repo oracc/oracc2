@@ -15,8 +15,8 @@ osl:
 	(cd ../../../lib/ofp ; make)
 	(cd ../../../lib ; make)
 	(cd ../../../bin/xx/fonts ; make)
-	(cd ../../../bin/xx/fonts ; sudo make install)
+	(cd ../../../bin/xx/fonts ; $(ORACC_sudo) make install)
 	(cd ../../../msc/fonts ; make)
-	(cd ../../../msc/fonts ; sudo -E make install)
+	(cd ../../../msc/fonts ; $(ORACC_sudo_E) make install)
 	@./osl-page-update.sh
 	@./osl-site-update.sh
