@@ -358,7 +358,7 @@ sll_oids_of(unsigned const char *sns, const char *j)
 	++x;
       if (*x)
 	*x++ = '\0';
-      const char *o = sll_lookup(xsn);
+      const char *o = (ccp)sll_lookup(xsn);
       if (!o)
 	o = "q99";
       list_add(l,(void*)o);

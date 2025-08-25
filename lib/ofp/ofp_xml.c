@@ -128,7 +128,7 @@ xml_liga(Ofp *ofp, List *lp, FILE *fp, int top)
 	}
       if (gp->glyph->gcom)
 	{
-	  const char *r8 = utf8ify(strtol(gp->glyph->gcom,NULL,16));
+	  const unsigned char *r8 = utf8ify(strtol(gp->glyph->gcom,NULL,16));
 	  fprintf(fp, " ref=\"x%s\" ref8=\"%s\"", gp->glyph->gcom, r8);
 	}
       fputc('>',fp);

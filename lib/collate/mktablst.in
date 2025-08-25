@@ -27,7 +27,7 @@ foreach (@tabs) {
 }
 print "\nstruct Collate_info_list_node collate_infos[] = \n\{\n";
 foreach (@tabs) {
-    print "  \{ \"$_\", \&${_}_collate_info \},\n";
+    print "  \{ (const unsigned char *)\"$_\", \&${_}_collate_info \},\n";
 }
 print "  \{ NULL, NULL \},\n";
 print "\};\n";

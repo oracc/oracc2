@@ -125,7 +125,7 @@ print "\#define COLLATE_DIGIT_OFFSET $digit_offset\n";
 print <<COLLTAB;
 struct Collate_info ${seq_name}_collate_info =
 {
-  \"$seq_name\",
+  (const unsigned char *)\"$seq_name\",
   ${seq_name}_delims,
   ${seq_name}_digits,
   ${seq_name}_tiles,

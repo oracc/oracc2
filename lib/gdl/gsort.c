@@ -385,7 +385,7 @@ gsort_reset_c_type(GS_head *gs)
       /* if this is an N57 reset the swap the first two items so it
 	 sorts by, e.g., GAR then N(N57); clone the new first item and
 	 set its type to N57 */
-      if (strstr(gs->i[0]->g, "N57"))
+      if (strstr((ccp)gs->i[0]->g, "N57"))
 	{
 	  /*fprintf(stderr, "n57\n");*/
 	  /* Clone the N57 item so that 1(N57) isn't contaminated by |1(N57).ŠAH₂| */
