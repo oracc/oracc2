@@ -1,2 +1,3 @@
 #!/bin/sh
-cat $1 | j2x | xsltproc $ORACC_BUILDS/lib/scripts/j2x-uptag.xsl -
+jx <$1 | xsltproc $ORACC_BUILDS/lib/scripts/jx-uptag.xsl - \
+    | xsltproc $ORACC_BUILDS/lib/scripts/jx-un-a.xsl -

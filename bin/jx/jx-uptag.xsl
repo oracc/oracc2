@@ -11,7 +11,7 @@
 	</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:element name="{$n}">
+    <xsl:element name="jx.{$n}">
       <xsl:choose>
 	<xsl:when test="local-name(*[2]) = 'v'">
 	  <xsl:value-of select="v/text()"/>
