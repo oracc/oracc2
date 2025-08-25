@@ -165,7 +165,7 @@ sx_sll_oids_of(unsigned const char *sns, struct sl_signlist *sl)
       const char *o = sx_sll_oid_anywhere(sl, (uccp)xsn, &componly);
       if (!o)
 	{
-	  char xnm[strlen((ccp)xsn)+2];
+	  char xnm[strlen((ccp)xsn)+3];
 	  strcpy(xnm, "|");
 	  /* The third test here is a hack for |(HI×1(N57))&(HI×1(N57))| */
 	  if ('(' == *xsn && ')' == xsn[strlen((ccp)xsn)-1] && !strstr((ccp)xsn,"))&("))
@@ -297,6 +297,10 @@ sx_s_sign(FILE *f, struct sl_sign *s, struct sl_signlist *sl)
 static void
 sx_s_form(FILE *f, struct sl_form *s)
 {
+#if 0
+  if (!strcmp((ccp)s->name, "|A.GUD×KUR|"))
+    fprintf(stderr, "found A.GUD×KUR\n");
+#endif
   if (s->sign->xref)
     {
       curr_oid = s->oid;
@@ -326,10 +330,6 @@ sx_s_form(FILE *f, struct sl_form *s)
 	}
       fputc('\n', f);      
     }
-#if 0
-  if (!strcmp(s->name, "|MUŠ×PA|"))
-    fprintf(stderr, "found MUŠ×PA\n");
-#endif
   struct sl_inst *ip;
   for (ip = list_first(s->insts); ip; ip = list_next(s->insts))
     {
