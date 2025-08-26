@@ -65,6 +65,7 @@
 
 .ofs-gudea {
    font-family: "Oracc Gudea";
+   font-feature-settings: "ss01", "ss02", "cv01";
 }
 
 .ofs-lak {
@@ -85,6 +86,7 @@
 .gudea {
     font-family: "Oracc Noto SansCuneiform";
     font-variant-ligatures: common-ligatures;
+    font-feature-settings: "ss01", "ss02", "cv01";    
 }
 
 .ofs-oobf {
