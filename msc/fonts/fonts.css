@@ -83,12 +83,6 @@
     font-variant-ligatures: common-ligatures;
 }
 
-.gudea {
-    font-family: "Oracc Noto SansCuneiform";
-    font-variant-ligatures: common-ligatures;
-    font-feature-settings: "ss01", "ss02", "cv01";    
-}
-
 .ofs-oobf {
     font-family: "Oracc OBFreie Regular";
     font-variant-ligatures: common-ligatures;
@@ -221,7 +215,9 @@
 }
 
 .gudea {
-    font-feature-settings: "ss01", "ss02";
+    font-family: "Oracc Noto SansCuneiform";
+    font-variant-ligatures: common-ligatures;
+    font-feature-settings: "ss01", "ss02", "cv01";    
 }
 
 .middle {
