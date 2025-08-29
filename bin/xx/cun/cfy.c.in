@@ -1,0 +1,204 @@
+#include <oraccsys.h>
+#include <xmlify.h>
+#include <setjmp.h>
+#include "runexpat.h"
+#include "cfy.h"
+
+Cfy cfy;
+
+/* The default is to generate outputs into the P4 cache; if -b is
+   specified outputs are generated into the PQX-dir where the xtf
+   lives */
+int buildmode = 0;
+int force = 0; /* default is not to remake if the output already exists */
+int no_output = 0;
+int verbose = 0;
+int weboutput = 0;
+
+const char *invoke;
+const char *infile;
+const char *outfile;
+const char *p4htmld;
+const char *period;
+const char *project;
+const char *qfile;
+const char *translation;
+
+char *inpath, *outpath, *htmlpath;
+
+FILE *outfp = NULL;
+
+jmp_buf done;
+
+extern int options(int, char*const*,const char*);
+extern int optind;
+
+static void
+show_vars(void)
+{
+  fprintf(stderr, "cfy variables:\n");
+  fprintf(stderr, "\tinput-arg: %s\n", qfile ? qfile : infile);
+  fprintf(stderr, "\tinput-path: %s\n", inpath);
+  fprintf(stderr, "\toutput-path: %s\n", outpath);
+}
+
+static void
+cfy_init()
+{
+  cfy.p = pool_init();
+  cfy.hp = hpool_init();
+  cfy.hclasses = hash_init(32);
+  cfy.hfonts = hash_init(8);
+  cfy.m_class = memo_init(sizeof(Class), 10);
+}
+
+static void
+cfy_term()
+{
+  pool_term(cfy.p);
+  hpool_term(cfy.hp);
+  hash_free(cfy.hclasses, NULL);
+  hash_free(cfy.hfonts, NULL);
+  memo_term(mem_d);
+}
+
+int
+main(int argc, char **argv)
+{
+  outfp = stdout;
+  options(argc, argv, "bfi:l:no:p:P:q:st:vw");
+
+  if (period)
+    {
+      char xperiod[strlen(period)+1], *t;
+      strcpy(xperiod,period);
+      for (t = xperiod; *t; ++t)
+	if ('_' == *t)
+	  *t = ' ';
+      struct perfnt *pfp = perfnt(xperiod, strlen(xperiod));
+      if (pfp)
+	cfy.fnt = pfp->fnt;
+    }
+  
+  if (!infile && argv[optind])
+    infile = argv[optind++];
+
+  const char **f = calloc(2, sizeof(char*));
+
+  if (infile || qfile)
+    {
+      if (weboutput)
+	{
+	  if (!p4htmld)
+	    {
+	      const char *p4cache = getenv("ORACC_P4_CACHE");
+	      if (p4cache)
+		{
+		  p4htmld = malloc(strlen(p4cache)+5);
+		  sprintf((char*)p4htmld, "%s/htm", p4cache);
+		}
+	      else
+		p4htmld = "@@ORACC@@/www/p4.d/htm";
+	    }
+	}
+      if (qfile)
+	{
+	  project = strdup(qfile);
+	  char *colon = strchr(project, ':');
+	  if (colon)
+	    *colon = '\0';
+	  else
+	    {
+	      fprintf(stderr, "cfy: must give project:PQX when using -q option. Stop.\n");
+	      exit(1);
+	    }
+	  file_args(p4htmld, qfile, "xtf", outfile, "cfy", NULL, &inpath, &outpath, &htmlpath);
+	  f[0] = inpath;
+	}
+      else if (infile)
+	{
+	  inpath = strdup(infile);
+	  f[0] = inpath;
+	  if (outfile)
+	    outpath = strdup(outfile);
+	}
+    }
+  
+  if (verbose)
+    show_vars();
+
+  if (!no_output)
+    {
+      if (f[0] && !access(f[0], R_OK))
+	{
+	  if (outpath && strcmp(outpath, "-"))
+	    {
+	      if (!(outfp = fopen(outpath, "w")))
+		{
+		  fprintf(stderr, "cfy: unable to write to outpath %s: %s\n", outpath, strerror(errno));
+		  exit(1);
+		}
+	    }
+
+	  runexpat_omit_rp_wrap();
+	  cfy_init();	  
+	  if (!setjmp(done))
+	    runexpat(i_list, f, cfy_sH, cfy_eH);
+	  
+	  cfy_foot(outfp);
+	  cfy_term();
+	}
+      else
+	fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
+    }
+}
+
+int
+opts(int opt, const char *arg)
+{
+  switch (opt)
+    {
+    case 'b':
+      buildmode = 1;
+      break;
+    case 'f':
+      force = 1;
+      break;
+    case 'i':
+      infile = arg;
+      break;
+    case 'k':
+      cfy.key = arg;
+      break;
+    case 'n':
+      verbose = no_output = 1;
+      break;
+    case 'o':
+      outfile = arg;
+      break;
+    case 'P':
+      period = arg;
+      break;
+    case 'p':
+      project = arg;
+      break;
+    case 'q':
+      qfile = arg;
+      break;
+    case 't':
+      translation = arg;
+      break;
+    case 'v':
+      verbose = 1;
+      break;
+    case 'w':
+      weboutput = 1;
+      break;
+    default:
+      fprintf(stderr, "%s: unknown option -%c\n", invoke, opt);
+      return 1;
+    }
+  return 0;
+}
+
+void help(void) { }

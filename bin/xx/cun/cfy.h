@@ -1,0 +1,135 @@
+#ifndef CFY_H_
+#define CFY_H_
+
+/* Global management structure */
+typedef struct Cfy
+{
+  Pool *p;
+  Pool *hp;
+  Hash *hclasses;
+  Hash *hfonts;
+  Memo *m_class;
+  Memo *m_elt;
+  const char *fnt; /* font from CLI -p [period] arg */
+  const char *key; /* CLI -k arg */
+} Cfy;
+
+/* Cuneify output uses the HTML class attribute to render cuneiform
+   with different fonts (fnt), script sets (set), and an appropriate
+   default magnification for the font (mag). It may also use script
+   (scr) information to manage splits and mergers. If the cuneified
+   grapheme should link to anything other than osl the project name
+   can be given in an asl attribute.
+
+   For TeX the implementation uses macros to achieve the same ends.
+
+   Fonts usually have ligatures, which are managed via the lig hash.
+
+   A class key is a string where each member is given joined by
+   dashes, using '*' for absent/wildcard members.  It is used as a
+   hash key to test if a specific class combination is already loaded.
+
+   Example: gudea-ss01-150-middle-osl
+
+   When class data is read from attributes any missing members are
+   provided from the current class, starting with the system default
+   at the root of the process.
+
+   The key is generated and if the class is not already in the hash it
+   is added. For fonts, the first time a font is loaded it is added to
+   the font hash so fonts are only loaded once regardless of how many
+   combinations of mag and script etc., may be used in the run.
+ */
+typedef struct class
+{
+  const char *key;
+  const char *fnt;
+  const char *otf;
+  const char *mag;
+  const char *scr;
+  const char *asl;
+  Hash *lig;
+} Class;
+
+/* An element is an input item such as a grapheme, ellipsis, ZWNJ,
+ * ZWJ, or word-boundary.
+ *
+ * Support for justifying lines is provided by the FILL type;
+ * this will work like TeX's hfil to enable simulation of spacing to
+ * the left of graphemes in a continuation line or between graphemes.
+ *
+ * The ATF soft newline ';', indicating an indented line, is captured
+ * in the RETURN type. This is always followed by a FILL.
+ *
+ * The output structure consists of spans which manage the breakage
+ * state. Within each span is a sequence of graphemes, ellipses, and
+ * word-spaces, ZWNJ, or ZWJ.
+ *
+ * The input is read into an array and is only output when the next
+ * XTF line is encountered or at the closing XTF tag in the case of
+ * the last line.
+ *
+ * If a reordering line is encountered, that is used as the sequence
+ * for grapheme output. Otherwise the output follows the main
+ * transliteration stream, obeying any local reordering of graphemes
+ * that may be present.
+ *
+ * Breakage state is recorded in the grapheme structures:
+ * conceptually, the states are broken; damaged; or clear.
+ *
+ * If the font referenced by the current class provides a ligature
+ * table, that is checked for immediately adjacent sequences that are
+ * in the ligtable--sequences are broken by word boundaries and by
+ * ZWNJ.
+ *
+ * If a ligtable sequence is matched, the breakage state is adjusted
+ * to ensure that the ligature falls within the enclosing breakage
+ * span. If a sequence mixes breakage states, all of the breakage is
+ * set to damaged as an approximation of the state of the ligature
+ * sequence as a whole.
+ *
+ */
+typedef enum elt_type { ELT_G /*grapheme*/,
+			ELT_W /*word*/,
+			ELT_J /*ZWJ*/,
+			ELT_N /*ZWNJ*/,
+			ELT_F /*fill*/,
+			ELT_R /*return*/,
+			ELT_D /*deleted, for ligatures*/
+} Etype;
+
+typedef enum brk_type { BRK_NONE /*clear*/,
+			BRK_HASH /*damaged*/,
+			BRK_LOST /*broken*/
+} Btype;
+
+typedef struct elt
+{
+  Etype etype;	/* the element type */
+  const char*u8;/* the utf8 to output for the element */
+  Btype btype;  /* the breakage type */
+  Class *c;	/* the current class for the grapheme; usually set at
+		   start of file but may be switched grapheme by
+		   grapheme */
+  const char *oid;/* OID for linking to sign list: may be a parent
+		     sign to the sign that is displayed in u8 */
+} Elt;
+
+
+extern Pool *p;
+extern List *cqueue;
+extern FILE *outfp;
+
+struct perfnt
+{
+  const char *name;
+  const char *fnt;
+};
+extern struct perfnt *perfnt (register const char *str, register size_t len);
+
+extern void cfy_render(void);
+extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
+		     const char *outdir, const char *outext, const char *trans,
+		     char **inp, char **outp, char **hdir);
+
+#endif/*CFY_H_*/
