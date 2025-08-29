@@ -50,13 +50,9 @@ cfy_init(void)
   cfy.hfonts = hash_create(8);
   cfy.m_class = memo_init(sizeof(Class), 10);
   cfy.m_elt = memo_init(sizeof(Elt), 1024);
+  cfy.m_line = memo_init(sizeof(Line), 256);
+  cfy.body = list_create(LIST_SINGLE);
   cfy_reader_init();
-}
-
-void
-cfy_reset(void)
-{
-  memo_reset(cfy.m_elt);
 }
 
 static void
@@ -68,6 +64,7 @@ cfy_term(void)
   hash_free(cfy.hfonts, NULL);
   memo_term(cfy.m_class);
   memo_term(cfy.m_elt);
+  memo_term(cfy.m_line);
 }
 
 int

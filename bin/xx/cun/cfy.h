@@ -14,10 +14,12 @@ typedef struct Cfy
   Hash *hfonts;
   Memo *m_class;
   Memo *m_elt;
-  List *line; /* list of Elt built by cfy_reader for output */
-  List *cline; /* colon-line, i.e., grapheme sequence to use for
-		  output; one day this might align with 'line'--needs
-		  ATF support */
+  Memo *m_line;
+  List *body; /* list of line or cline pointers for actual output */
+  List *line; /* list of Elt built by cfy_reader */
+  List *cline; /* colon-line, i.e., grapheme sequence to use instead
+		  of 'line'; one day this might align with
+		  'line'--needs ATF support */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
 } Cfy;
@@ -99,8 +101,9 @@ extern Class *curr_cp;
  * sequence as a whole.
  *
  */
-typedef enum elt_type { ELT_G /*grapheme*/,
+typedef enum elt_type { ELT_L /*line*/,
 			ELT_W /*word*/,
+			ELT_G /*grapheme*/,
 			ELT_J /*ZWJ*/,
 			ELT_N /*ZWNJ*/,
 			ELT_F /*fill*/,
@@ -117,7 +120,8 @@ typedef enum brk_type { BRK_NONE /*clear*/,
 typedef struct elt
 {
   Etype etype;	/* the element type */
-  const char*u8;/* the utf8 to output for the element */
+  void*u8;	/* the utf8 to output for the element;
+		   or a pointer to a line header if etype==ELT_L */
   Btype btype;  /* the breakage type */
   Class *c;	/* the current class for the grapheme; usually set at
 		   start of file but may be switched grapheme by
@@ -125,6 +129,12 @@ typedef struct elt
   const char *oid;/* OID for linking to sign list: may be a parent
 		     sign to the sign that is displayed in u8 */
 } Elt;
+
+typedef struct line
+{
+  const char *xid;
+  const char *label;
+} Line;
 
 /* Access the u8 member of the Elt in the data member of the List node lp */
 #define elt_grapheme(lp)	(((Elt*)(lp)->data)->etype==ELT_G)

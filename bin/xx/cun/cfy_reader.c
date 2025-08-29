@@ -31,7 +31,7 @@ cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, 
 
   Elt *ep = memo_new(c->m_elt);
   ep->etype = ELT_G;
-  ep->u8 = utf8;
+  ep->u8 = (void*)utf8;
   ep->btype = brk;
   ep->c = cp;
   ep->oid = oid;
@@ -88,17 +88,19 @@ cfy_reader_init(void)
 void
 cfy_sH(void *userData, const char *name, const char **atts)
 {
+  Cfy *c = userData;
+  
   if (!strcmp(name, "xcl"))
     longjmp(done, 0);
 
   if (!strcmp(name, "transliteration") || !strcmp(name, "composite"))
     {
-      ((Cfy*)userData)->n = (ccp)xmlify((uccp)findAttr(atts, "n"));
-      if (!((Cfy*)userData)->project)
+      c->n = (ccp)xmlify((uccp)findAttr(atts, "n"));
+      if (!c->project)
 	{
 	  const char *prj = findAttr(atts, "project");
 	  if (*prj)
-	    ((Cfy*)userData)->project = (ccp)pool_copy((uchar*)prj, ((Cfy*)userData)->p);
+	    c->project = (ccp)pool_copy((uchar*)prj, c->p);
 	}
       Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
       if (cp)
@@ -121,10 +123,10 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		    {
 		      char o[strlen(oid)+1];
 		      o[dot-oid] = '\0';
-		      oid = (ccp)hpool_copy((ucp)o, ((Cfy*)userData)->hp);
+		      oid = (ccp)hpool_copy((ucp)o, c->hp);
 		    }
 		  else
-		    oid = (ccp)hpool_copy((ucp)oid, ((Cfy*)userData)->hp);
+		    oid = (ccp)hpool_copy((ucp)oid, c->hp);
 		}
 	      else
 		oid = NULL;
@@ -144,15 +146,15 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		*curr_cp = *cp;	      
 	      cfy_x(userData, atts, breakage(name, atts), curr_cp);
 	    }
-
 	}
-    }
-  if (!strcmp(name, "l"))
-    {
-      if (((Cfy*)userData)->line)
+      else if (!strcmp(name, "l"))
 	{
-	  /*cfy_render(((Cfy*)userData)->line)*/;
-	  cfy_reset();
+	  Line *lp = memo_new(c->m_line);
+	  lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
+	  lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
+	  /* TODO: test for colon-line here and add first list node of userData-line to it */
+	  c->line = list_create(LIST_SINGLE);
+	  list_add(c->line, lp);
 	}
     }
 }
@@ -161,7 +163,14 @@ void
 cfy_eH(void *userData, const char *name)
 {
   if (!strcmp(name, "l"))
-    in_l = inner = 0;
+    {
+      in_l = inner = 0;
+      if (((Cfy*)userData)->cline)
+	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->cline);
+      else if (((Cfy*)userData)->line)
+	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->line);
+      ((Cfy*)userData)->cline = ((Cfy*)userData)->line = NULL;
+    }
   else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
     --inner;
   else if (!strcmp(name, "g:q"))
