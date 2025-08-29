@@ -136,7 +136,6 @@ main(int argc, char **argv)
 
   if (!no_output)
     {
-#if 0
       if (f[0] && !access(f[0], R_OK))
 	{
 	  if (outpath && strcmp(outpath, "-"))
@@ -151,12 +150,10 @@ main(int argc, char **argv)
 	  runexpat_omit_rp_wrap();
 	  if (!setjmp(done))
 	    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
-	  
-	  cfy_foot(outfp);
+	  cfy_render(&cfy, stdout, "xml");
 	}
       else
 	fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
-#endif
     }
 
   cfy_term();

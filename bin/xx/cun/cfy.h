@@ -155,13 +155,15 @@ extern struct perfnt *perfnt (register const char *str, register size_t len);
 
 extern jmp_buf done;
 
+extern void cfy_eH(void *userData, const char *name);
+extern void cfy_sH(void *userData, const char *name, const char **atts);
+extern void cfy_out_xml(Cfy *c, FILE *fp);
 extern Class *cfy_class(Cfy *c, const char *key, Class *cp);
 extern void cfy_reader_init(void);
-extern void cfy_render(void);
+extern void cfy_render(Cfy *c, FILE *fp, const char *om);
 extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 		     const char *outdir, const char *outext, const char *trans,
 		     char **inp, char **outp, char **hdir);
-
 extern Hash **cfy_lig_load(const char *ligfile);
 extern void cfy_lig_line(Cfy *c, List *lp);
 extern void cfy_reset(void);
