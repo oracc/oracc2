@@ -17,13 +17,13 @@ Class *curr_cp = &defaults;
 
 static char **dash_split(char *l);
 
-static void cfy_class_set(Cfy *c, Class *cp, const char *key);
+static void cfy_class_set(char *key, Class *cp);
 
 /* Validate a key that has been split into dash-separated members */
 static int
-cfy_class_check_mem(const char *k, const char **m)
+cfy_class_check_mem(const char *k, char **m)
 {
-  if (!m[0] || !m[1] || !m[2] || !m[3] || !m[4] || m5)
+  if (!m[0] || !m[1] || !m[2] || !m[3] || !m[4] || m[5])
     {
       fprintf(stderr, "cfy: bad key %s: wrong number of members\n", k);
       return 1;
@@ -42,20 +42,20 @@ cfy_class_check_mem(const char *k, const char **m)
   return 0;
 }
 
-static void
+static char *
 cfy_class_key(const char *fnt, const char *otf, const char *mag,
 	      const char *scr, const char *asl)
 {
   int len = strlen(fnt)+strlen(otf)+strlen(mag)+strlen(scr)+strlen(asl)+6;
   char *k = malloc(len);
-  sprintf(k, "%s-%s-%s-%s-%s");
+  sprintf(k, "%s-%s-%s-%s-%s", fnt, otf, mag, scr, asl);
   return k;
 }
 
 static void
-cfy_class_set(char *m, Class *cp)
+cfy_class_set(char *k, Class *cp)
 {
-  char **mem = dash-split(k);
+  char **mem = dash_split(k);
   cp->fnt = mem[0];
   cp->otf = mem[1];
   cp->mag = mem[2];
@@ -65,47 +65,46 @@ cfy_class_set(char *m, Class *cp)
 }
 
 Class *
-cfy_class(Cfy *c, const char **atts, Class *curr_cp)
+cfy_class(Cfy *c, const char *key, Class *cp)
 {
-  const char *key = findAttr(atts, "cfy-key");
   if (key && *key)
     {
-      char *kk = strdup(k);
-      char **mem = dash-split(kk);
+      char *kk = strdup(key);
+      char **mem = dash_split(kk);
       
-      if (cfy_class_check_mem(k, mem))
+      if (cfy_class_check_mem(key, mem))
 	{
 	  free(mem);
-	  free(k);
+	  free(kk);
 	  return NULL;
 	}
 #define mcp(m,c) (*(m)=='*' ? (c) : (m))
-      const char *newkey = cfy_class_key(mcp(mem[0], cp->fnt),
-					 mcp(mem[1], cp->otf),
-					 mcp(mem[2], cp->mag)
-					 mcp(mem[3], cp->scr),
-					 mcp(mem[4], cp->asl));
+      char *newkey = cfy_class_key(mcp(mem[0], cp->fnt),
+				   mcp(mem[1], cp->otf),
+				   mcp(mem[2], cp->mag),
+				   mcp(mem[3], cp->scr),
+				   mcp(mem[4], cp->asl));
 #undef mcp
-      if (!hash_find(c->hclasses, newkey))
+      if (!hash_find(c->hclasses, (uccp)newkey))
 	{
-	  const char *hk = hpool_copy(newkey, c->hp);
-	  Class *cp = memo_new(c->m_classes);
-	  cfy_class_set(cp, (char*)pool_copy((uccp)newkey, c->p));
-	  hash_add(c->hclasses, hk, cp);
-	  if (!hash_find(c->hfonts, cp->fnt))
+	  const char *hk = (ccp)hpool_copy((uccp)newkey, c->hp);
+	  Class *cp = memo_new(c->m_class);
+	  cfy_class_set((char*)pool_copy((uccp)newkey, c->p), cp);
+	  hash_add(c->hclasses, (uccp)hk, cp);
+	  if (!hash_find(c->hfonts, (uccp)cp->fnt))
 	    {
 	      char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(cp->fnt)];
 	      sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), cp->fnt);
-	      cp->lig = lig_load(ligf);
-	      hash_add(c->hfonts, cp->fnt, cp);
+	      cp->lig = cfy_lig_load(ligf);
+	      hash_add(c->hfonts, (uccp)cp->fnt, cp);
 	    }
 	}
-      free(k);
+      free(kk);
       free(mem);
       free(newkey);
     }
 
-  return &cp;
+  return cp;
 }
 
 static char **

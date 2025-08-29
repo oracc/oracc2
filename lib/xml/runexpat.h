@@ -8,6 +8,7 @@ extern int pi_line;
 
 #define  runexpat(from,list,sH,eH) runexpatNSuD(from,list,sH,eH,NULL,NULL)
 #define  runexpatNS(from,list,sH,eH,ns) runexpatNSuD(from,list,sH,eH,ns,NULL)
+#define  runexpatuD(from,list,sH,eH,uD) runexpatNSuD(from,list,sH,eH,NULL,uD)
 
 extern const char *findAttr(const char **atts, const char *name);
 extern void charData_discard(void);

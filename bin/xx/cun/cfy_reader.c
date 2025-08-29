@@ -1,21 +1,15 @@
 #include <oraccsys.h>
+#include <setjmp.h>
+#include <runexpat.h>
+#include <xml.h>
 #include "cfy.h"
+
+int in_c = 0, in_l = 0, in_n = 0, in_q = 0, inner = 0;
 
 char innertags[128];
 
-Class cfy_defaults = { .fnt="noto" , .set=NULL, .mag="100", .scr="middle", .asl="osl" };
-Class *curr_cp = &cfy_defaults;
-
-List *cfy_line; /* A list of pointers to Elts; initially the XTF line, but
-	       reset and rebuilt from the sequence line if there is
-	       one. */
-
-#define elt_grapheme(listnode) (((Elt*)listnode->data)->etype == ELT_G)
-
-Memo *m_elt;
-Memo *m_class;
-Hash *lig;
-Pool *hp;
+Elt e_zwj = { .etype=ELT_J, .u8="\xE2\x80\x8D" };
+Elt e_zwnj = { .etype=ELT_N, .u8="\xE2\x80\x8C" };
 
 static Btype
 breakage(const char *name, const char **atts)
@@ -32,8 +26,8 @@ breakage(const char *name, const char **atts)
 static void
 cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, const char *oid)
 {
-  if (!line)
-    line = list_create(LIST_DOUBLE);
+  if (!c->line)
+    c->line = list_create(LIST_DOUBLE);
 
   Elt *ep = memo_new(c->m_elt);
   ep->etype = ELT_G;
@@ -42,40 +36,53 @@ cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, 
   ep->c = cp;
   ep->oid = oid;
   
-  list_add(line, ep);
+  list_add(c->line, ep);
 
   /* add ZWJ/ZWNJ if the boundary requires it */
   const char *b = findAttr(atts, "g:boundary");
   if ('+' == *b)
-    list_add(line, e_zwj);
+    list_add(c->line, &e_zwj);
   else if ('\\' == *b)
-    list_add(line, e_zwnj);
+    list_add(c->line, &e_zwnj);
+}
+
+static void
+cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
+{
+  if (!c->line)
+    c->line = list_create(LIST_DOUBLE);
+
+  Elt *ep = memo_new(c->m_elt);
+  ep->etype = ELT_X;
+  ep->btype = brk;
+  ep->c = cp;
+  
+  list_add(c->line, ep);
+
+  /* add ZWJ/ZWNJ if the boundary requires it */
+  const char *b = findAttr(atts, "g:boundary");
+  if ('+' == *b)
+    list_add(c->line, &e_zwj);
+  else if ('\\' == *b)
+    list_add(c->line, &e_zwnj);
+}
+
+static void
+cfy_ws(Cfy *c)
+{
+  if (!c->line)
+    c->line = list_create(LIST_DOUBLE);
+
+  Elt *ep = memo_new(c->m_elt);
+  ep->etype = ELT_W;
+  
+  list_add(c->line, ep);
 }
 
 void
 cfy_reader_init(void)
 {
-  innertags['c'] = innertags['n'] = innertags[q] = 1;
-  m_elt = memo_init(sizeof(Elt), 1024);
-  m_class = memo_init(sizeof(Class), 8);
-  hp = hpool_create();
-}
-
-void
-cfy_reader_reset(void)
-{
-  memo_reset(m_elt);
-}
-
-void
-cfy_reader_term(void)
-{
-  memo_free(m_elt);
-  memo_free(m_class);
-  if (lig)
-    hash_free(lig);
-  pool_term(p);
-  pool_term(hp);
+  innertags['c'] = innertags['n'] = innertags['q'] = 1;
 }
 
 void
@@ -86,18 +93,16 @@ cfy_sH(void *userData, const char *name, const char **atts)
 
   if (!strcmp(name, "transliteration") || !strcmp(name, "composite"))
     {
-      const char *xn = (ccp)xmlify((uccp)findAttr(atts, "n"));
-      if (!project)
+      ((Cfy*)userData)->n = (ccp)xmlify((uccp)findAttr(atts, "n"));
+      if (!((Cfy*)userData)->project)
 	{
 	  const char *prj = findAttr(atts, "project");
 	  if (*prj)
-	    project = (ccp)pool_copy((uchar*)prj, p);
+	    ((Cfy*)userData)->project = (ccp)pool_copy((uchar*)prj, ((Cfy*)userData)->p);
 	}
-      cfy_class *cp = cfy_class(findAttr(atts, "cfy"), curr_cp);
+      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
       if (cp)
 	*curr_cp = *cp;
-	
-      cfy_head(outfp, xn, cp);
     }
   else
     {
@@ -106,7 +111,6 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	  const char *utf8 = findAttr(atts, "utf8");
 	  if (*utf8)
 	    {
-	      cfy_class *cp = cfy_class(findAttr(atts, "cfy"), curr_cp);
 	      const char *oid = findAttr(atts, "spoid");
 	      if (!oid || !*oid)
 		oid = findAttr(atts, "key");
@@ -117,32 +121,39 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		    {
 		      char o[strlen(oid)+1];
 		      o[dot-oid] = '\0';
-		      oid = (ccp)hpool_copy((ucp)o, hp);
+		      oid = (ccp)hpool_copy((ucp)o, ((Cfy*)userData)->hp);
 		    }
 		  else
-		    oid = (ccp)hpool_copy((ucp)oid, hp);
+		    oid = (ccp)hpool_copy((ucp)oid, ((Cfy*)userData)->hp);
 		}
 	      else
 		oid = NULL;
 
-	      cfy_class *cp = cfy_class(findAttr(atts, "cfy"), curr_cp);
+	      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
 	      if (cp)
 		*curr_cp = *cp;	      
 
-	      cfy_grapheme(atts, utf8, breakage(atts), curr_cp, oid);
+	      cfy_grapheme(userData, atts, utf8, breakage(name, atts), curr_cp, oid);
 	    }
-	  else if (':' == name[1] && 'g' == name[0] && innertags[name[2]])
+	  else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
 	    ++inner;
 	  else if (!strcmp(name, "g:x"))
-	    cfy_x(atts, breakage(atts), cfy_class(atts, curr_cp));
+	    {
+	      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
+	      if (cp)
+		*curr_cp = *cp;	      
+	      cfy_x(userData, atts, breakage(name, atts), curr_cp);
+	    }
 
 	}
     }
   if (!strcmp(name, "l"))
     {
-      if (cfy_line)
-	cfy_line_term();
-      cfy_line_init();
+      if (((Cfy*)userData)->line)
+	{
+	  /*cfy_render(((Cfy*)userData)->line)*/;
+	  cfy_reset();
+	}
     }
 }
 
@@ -151,12 +162,12 @@ cfy_eH(void *userData, const char *name)
 {
   if (!strcmp(name, "l"))
     in_l = inner = 0;
-  else if (':' == name[1] && 'g' == name[0] && innertags[name[2]])
+  else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
     --inner;
   else if (!strcmp(name, "g:q"))
     in_q = 0;
   else if (!strcmp(name, "g:c"))
     in_c = 0;
   else if (!strcmp(name, "g:w"))
-    cfy_word_space();
+    cfy_ws(userData);
 }

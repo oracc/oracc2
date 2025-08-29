@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include "cun.h"
 
+static int cfy_head_printed = 0;
+
 /* dp is the first grapheme of a sequence; peek ahead to see if any further d nodes make up a ligature.
  *
  * If so, move cq's list_next so that it is at the d node that ends the ligature.
@@ -117,7 +119,7 @@ cfy_ellipsis(struct d *dp, int last)
 }
 
 static void
-cfy_x(void)
+cfy_render_x(void)
 {
   fprintf(outfp, "<span class=\"roman gray\">×</span>");
 }
@@ -142,6 +144,10 @@ cfy_cun(struct d *dp)
 void
 cfy_render(void)
 {
+  if (!cfy_head_printed)
+    cfy_head(outfp, xn, cp);
+
+
   if (!list_len(cqueue))
     return;
   
@@ -150,7 +156,7 @@ cfy_render(void)
   for (dp = list_first(cqueue); dp; dp = list_next(cqueue))
     {
       if (CT_GRP == dp->type && dp->utf8)
-	dp = cfy_liga(dp, cqueue);
+	dp = cfy_liga_line(dp, cqueue);
 
       if (dp->brk)
 	{
@@ -201,6 +207,7 @@ cfy_render(void)
 void
 cfy_head(FILE *fp, const char *n, Cun_class *cp)
 {
+  cfy_head_printed = 1;
   if (!weboutput) /* paradoxically, weboutput skips the html head/body
 		     because those are provided by P4 */
     {

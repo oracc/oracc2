@@ -20,7 +20,6 @@ const char *infile;
 const char *outfile;
 const char *p4htmld;
 const char *period;
-const char *project;
 const char *qfile;
 const char *translation;
 
@@ -43,28 +42,39 @@ show_vars(void)
 }
 
 static void
-cfy_init()
+cfy_init(void)
 {
   cfy.p = pool_init();
   cfy.hp = hpool_init();
-  cfy.hclasses = hash_init(32);
-  cfy.hfonts = hash_init(8);
+  cfy.hclasses = hash_create(32);
+  cfy.hfonts = hash_create(8);
   cfy.m_class = memo_init(sizeof(Class), 10);
+  cfy.m_elt = memo_init(sizeof(Elt), 1024);
+  cfy_reader_init();
+}
+
+void
+cfy_reset(void)
+{
+  memo_reset(cfy.m_elt);
 }
 
 static void
-cfy_term()
+cfy_term(void)
 {
   pool_term(cfy.p);
   hpool_term(cfy.hp);
   hash_free(cfy.hclasses, NULL);
   hash_free(cfy.hfonts, NULL);
-  memo_term(mem_d);
+  memo_term(cfy.m_class);
+  memo_term(cfy.m_elt);
 }
 
 int
 main(int argc, char **argv)
 {
+  cfy_init();
+
   outfp = stdout;
   options(argc, argv, "bfi:l:no:p:P:q:st:vw");
 
@@ -103,8 +113,8 @@ main(int argc, char **argv)
 	}
       if (qfile)
 	{
-	  project = strdup(qfile);
-	  char *colon = strchr(project, ':');
+	  cfy.project = strdup(qfile);
+	  char *colon = strchr(cfy.project, ':');
 	  if (colon)
 	    *colon = '\0';
 	  else
@@ -129,6 +139,7 @@ main(int argc, char **argv)
 
   if (!no_output)
     {
+#if 0
       if (f[0] && !access(f[0], R_OK))
 	{
 	  if (outpath && strcmp(outpath, "-"))
@@ -141,16 +152,17 @@ main(int argc, char **argv)
 	    }
 
 	  runexpat_omit_rp_wrap();
-	  cfy_init();	  
 	  if (!setjmp(done))
-	    runexpat(i_list, f, cfy_sH, cfy_eH);
+	    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
 	  
 	  cfy_foot(outfp);
-	  cfy_term();
 	}
       else
 	fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
+#endif
     }
+
+  cfy_term();
 }
 
 int
@@ -180,7 +192,7 @@ opts(int opt, const char *arg)
       period = arg;
       break;
     case 'p':
-      project = arg;
+      cfy.project = arg;
       break;
     case 'q':
       qfile = arg;

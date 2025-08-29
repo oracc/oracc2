@@ -1,15 +1,23 @@
 #ifndef CFY_H_
 #define CFY_H_
 
+#include <setjmp.h>
+
 /* Global management structure */
 typedef struct Cfy
 {
+  const char *n;
+  const char *project;
   Pool *p;
   Pool *hp;
   Hash *hclasses;
   Hash *hfonts;
   Memo *m_class;
   Memo *m_elt;
+  List *line; /* list of Elt built by cfy_reader for output */
+  List *cline; /* colon-line, i.e., grapheme sequence to use for
+		  output; one day this might align with 'line'--needs
+		  ATF support */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
 } Cfy;
@@ -48,8 +56,10 @@ typedef struct class
   const char *mag;
   const char *scr;
   const char *asl;
-  Hash *lig;
+  Hash **lig; /* ligatures are an array of hashes essentially implementing a trie */
 } Class;
+
+extern Class *curr_cp;
 
 /* An element is an input item such as a grapheme, ellipsis, ZWNJ,
  * ZWJ, or word-boundary.
@@ -95,6 +105,7 @@ typedef enum elt_type { ELT_G /*grapheme*/,
 			ELT_N /*ZWNJ*/,
 			ELT_F /*fill*/,
 			ELT_R /*return*/,
+			ELT_X /*'x' in input */,
 			ELT_D /*deleted, for ligatures*/
 } Etype;
 
@@ -115,6 +126,11 @@ typedef struct elt
 		     sign to the sign that is displayed in u8 */
 } Elt;
 
+/* Access the u8 member of the Elt in the data member of the List node lp */
+#define elt_grapheme(lp)	(((Elt*)(lp)->data)->etype==ELT_G)
+#define elt_btype(lp)		((Elt*)(lp)->data)->btype
+#define elt_etype(lp)		((Elt*)(lp)->data)->etype
+#define elt_u8(lp)		((Elt*)(lp)->data)->u8
 
 extern Pool *p;
 extern List *cqueue;
@@ -127,9 +143,17 @@ struct perfnt
 };
 extern struct perfnt *perfnt (register const char *str, register size_t len);
 
+extern jmp_buf done;
+
+extern Class *cfy_class(Cfy *c, const char *key, Class *cp);
+extern void cfy_reader_init(void);
 extern void cfy_render(void);
 extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 		     const char *outdir, const char *outext, const char *trans,
 		     char **inp, char **outp, char **hdir);
+
+extern Hash **cfy_lig_load(const char *ligfile);
+extern void cfy_lig_line(Cfy *c, List *lp);
+extern void cfy_reset(void);
 
 #endif/*CFY_H_*/
