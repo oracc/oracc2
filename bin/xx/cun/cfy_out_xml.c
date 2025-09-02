@@ -3,11 +3,26 @@
 
 static FILE *o;
 
-extern void cx_head(Cfy *c);
-extern void cx_body(Cfy *c);
-extern void cx_foot(Cfy *c);
-extern void cx_line(Cfy *c, Line *l);
-extern void cx_elt(Cfy *c, Elt *e);
+static void cx_head(Cfy *c);
+static void cx_body(Cfy *c);
+static void cx_foot(Cfy *c);
+static void cx_line_o(Cfy *c, Line *l);
+static void cx_line_c(Cfy *c);
+
+static void cx_elt_L(Cfy*c, Elt *e);
+static void cx_elt_W(Cfy*c, Elt *e);
+static void cx_elt_G(Cfy*c, Elt *e);
+static void cx_elt_J(Cfy*c, Elt *e);
+static void cx_elt_N(Cfy*c, Elt *e);
+static void cx_elt_F(Cfy*c, Elt *e);
+static void cx_elt_R(Cfy*c, Elt *e);
+static void cx_elt_X(Cfy*c, Elt *e);
+static void cx_elt_D(Cfy*c, Elt *e);
+
+typedef void (cx_elt)(Cfy*c,Elt*e);
+cx_elt* cx_elt_p[] = { cx_elt_L, cx_elt_W, cx_elt_G, cx_elt_J,
+		       cx_elt_N, cx_elt_F, cx_elt_R, cx_elt_X,
+		       cx_elt_D };
 
 void
 cfy_out_xml(Cfy *c, FILE *fp)
@@ -18,37 +33,102 @@ cfy_out_xml(Cfy *c, FILE *fp)
   cx_foot(c);
 }
 
-void
+static void
 cx_head(Cfy *c)
 {
-  fprintf(o, "<cfy xmlns=\"http://oracc.org/ns/1.0/cuneify\">");
+  fprintf(c->o,
+	  "<cfy xmlns=\"http://oracc.org/ns/1.0/cuneify\" xml:id=\"cfy.%s\""
+	  " n=\"%s\" project=\"%s\" id=\"%s\" fnt=\"%s\" key=\"%s\">",
+	  c->pqx, c->n, c->project, c->pqx, c->fnt, c->key);
 }
 
-void
+static void
 cx_body(Cfy *c)
 {
   List *lp;
   for (lp = list_first(c->body); lp; lp = list_next(lp))
     {
       Elt *ep = list_first(lp);
-      cx_line(c, (Line *)ep->u8);
+      cx_line_o(c, (Line *)ep->u8);
       for (ep = list_next(lp); ep; ep = list_next(lp))
-	cx_elt(c, ep);
+	cx_elt_p[ep->etype](c, ep);
+      cx_line_c(c);
     }
 }
 
-void
-cx_line(Cfy *c, Line *l)
+static void
+cx_line_o(Cfy *c, Line *l)
 {
+  fprintf(c->o,
+	  "<l xml:id=\"cfy.%s\" label=\"%s\">",
+	  l->xid, l->label); 
 }
 
-void
-cx_elt(Cfy *c, Elt *e)
+static void
+cx_line_c(Cfy*c)
 {
+  fputs("</l>", c->o);
 }
 
-void
+static void
 cx_foot(Cfy *c)
 {
   fprintf(o, "</cfy>");
 }
+
+/* cx_elt_? */
+
+static void
+cx_elt_L(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_W(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_G(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_J(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_N(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_F(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_R(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_X(Cfy *c, Elt *e)
+{
+  
+}
+
+static void
+cx_elt_D(Cfy *c, Elt *e)
+{
+  ;
+}
+

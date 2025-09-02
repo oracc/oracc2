@@ -8,6 +8,7 @@ typedef struct Cfy
 {
   const char *n;
   const char *project;
+  const char *pqx;
   Pool *p;
   Pool *hp;
   Hash *hclasses;
@@ -15,11 +16,12 @@ typedef struct Cfy
   Memo *m_class;
   Memo *m_elt;
   Memo *m_line;
-  List *body; /* list of line or cline pointers for actual output */
-  List *line; /* list of Elt built by cfy_reader */
-  List *cline; /* colon-line, i.e., grapheme sequence to use instead
-		  of 'line'; one day this might align with
-		  'line'--needs ATF support */
+  List *body; 	/* list of line or cline pointers for actual output */
+  List *line; 	/* list of Elt built by cfy_reader */
+  List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
+		   of 'line'; one day this might align with
+		   'line'--needs ATF support */
+  FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
 } Cfy;
