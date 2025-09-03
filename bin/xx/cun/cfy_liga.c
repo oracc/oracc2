@@ -81,7 +81,7 @@ cfy_lig_check(Cfy *c, List_node *lnp)
   int i, hval;
   List_node *lnp_init = lnp;
 
-  strcpy((char*)lchars, elt_u8(lnp));
+  strcpy((char*)lchars, (ccp)elt_cun(lnp));
   for (i = 0; strlen((char*)lchars) < (LIG_MAX * (CHAR_MAX-1)) + 1; ++i)
     {
       if ((hval = (uintptr_t)hash_find(curr_cp->lig[i], (uccp)lchars)))
@@ -89,7 +89,7 @@ cfy_lig_check(Cfy *c, List_node *lnp)
 	  if (hval == 1)
 	    {
 	      List_node *lnp_end = lnp;
-	      elt_u8(lnp_init) = (void*)hpool_copy(lchars, c->hp);
+	      elt_cun(lnp_init) = (void*)hpool_copy(lchars, c->hp);
 	      lnp = lnp_init;
 	      Btype b_init = elt_btype(lnp), new_b_init = BRK_NONE;
 	      while (lnp < lnp_end)
@@ -103,7 +103,7 @@ cfy_lig_check(Cfy *c, List_node *lnp)
 	  else if (lnp->next && elt_grapheme(lnp->next))
 	    {
 	      lnp = lnp->next;
-	      strcat((char*)lchars, elt_u8(lnp));
+	      strcat((char*)lchars, (ccp)elt_cun(lnp));
 	    }
 	  else
 	    break;

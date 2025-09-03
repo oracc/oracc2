@@ -8,8 +8,8 @@ int in_c = 0, in_l = 0, in_n = 0, in_q = 0, inner = 0;
 
 char innertags[128];
 
-Elt e_zwj = { .etype=ELT_J, .u8="\xE2\x80\x8D" };
-Elt e_zwnj = { .etype=ELT_N, .u8="\xE2\x80\x8C" };
+Elt e_zwj = { .etype=ELT_J, .cun=(uccp)"\xE2\x80\x8D" };
+Elt e_zwnj = { .etype=ELT_N, .cun=(uccp)"\xE2\x80\x8C" };
 
 static Btype
 breakage(const char *name, const char **atts)
@@ -31,10 +31,11 @@ cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, 
 
   Elt *ep = memo_new(c->m_elt);
   ep->etype = ELT_G;
-  ep->u8 = (void*)utf8;
+  ep->cun = hpool_copy((uccp)utf8, c->hp);
   ep->btype = brk;
   ep->c = cp;
   ep->oid = oid;
+  ep->xid = pool_copy((uccp)get_xml_id(atts), c->p);
   
   list_add(c->line, ep);
 
@@ -110,7 +111,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
     {
       if (in_l && !inner)
 	{
-	  const char *utf8 = findAttr(atts, "utf8");
+	  const char *utf8 = findAttr(atts, "g:utf8");
 	  if (*utf8)
 	    {
 	      const char *oid = findAttr(atts, "spoid");
@@ -122,6 +123,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		  if (dot)
 		    {
 		      char o[strlen(oid)+1];
+		      strcpy(o, oid);
 		      o[dot-oid] = '\0';
 		      oid = (ccp)hpool_copy((ucp)o, c->hp);
 		    }
@@ -155,6 +157,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	  /* TODO: test for colon-line here and add first list node of userData-line to it */
 	  c->line = list_create(LIST_SINGLE);
 	  list_add(c->line, lp);
+	  in_l = 1;
 	}
     }
 }
@@ -169,6 +172,13 @@ cfy_eH(void *userData, const char *name)
 	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->cline);
       else if (((Cfy*)userData)->line)
 	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->line);
+
+      /* if final Elt is wordspace pop it off */
+      List *line = list_last(((Cfy*)userData)->body);
+      Elt *ep = list_last(line);
+      if (ep->etype == ELT_W)
+	(void)list_pop(line);
+      
       ((Cfy*)userData)->cline = ((Cfy*)userData)->line = NULL;
     }
   else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])

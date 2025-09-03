@@ -91,6 +91,7 @@ bin/wx/wx
 bin/wx/p4url
 bin/xx/concord
 bin/xx/cun/cunx
+bin/xx/cun/cfy
 bin/xx/cunhtmlx
 bin/xx/dbix
 bin/xx/dbx
@@ -262,6 +263,7 @@ bin/wx/xff.c
 bin/wx/xmlrpc.c
 bin/xx/cun/cunx.c
 bin/xx/cun/ncunx.c
+bin/xx/cun/cfy.c
 bin/xx/fonts/ofpx
 bin/xx/tis/tisdiv.c
 bin/xx/fonts/oslfiles.sh

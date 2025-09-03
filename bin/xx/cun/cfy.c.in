@@ -29,6 +29,8 @@ FILE *outfp = NULL;
 
 jmp_buf done;
 
+const char *brk_str[] = { NULL , "#", "[]" };
+
 extern int options(int, char*const*,const char*);
 extern int optind;
 
@@ -53,6 +55,10 @@ cfy_init(void)
   cfy.m_line = memo_init(sizeof(Line), 256);
   cfy.body = list_create(LIST_SINGLE);
   cfy_reader_init();
+  cfy.o = stdout;
+  cfy.pqx = "X000000";
+  cfy.fnt = "noto";
+  cfy.key = "cfy-noto-*-100-middle-osl";
 }
 
 static void

@@ -103,7 +103,7 @@ extern Class *curr_cp;
  * sequence as a whole.
  *
  */
-typedef enum elt_type { ELT_L /*line*/,
+typedef enum elt_type { ELT_L /*line; not presently used in this impl*/,
 			ELT_W /*word*/,
 			ELT_G /*grapheme*/,
 			ELT_J /*ZWJ*/,
@@ -114,6 +114,8 @@ typedef enum elt_type { ELT_L /*line*/,
 			ELT_D /*deleted, for ligatures*/
 } Etype;
 
+extern const char *brk_str[];
+
 typedef enum brk_type { BRK_NONE /*clear*/,
 			BRK_HASH /*damaged*/,
 			BRK_LOST /*broken*/
@@ -122,14 +124,14 @@ typedef enum brk_type { BRK_NONE /*clear*/,
 typedef struct elt
 {
   Etype etype;	/* the element type */
-  void*u8;	/* the utf8 to output for the element;
-		   or a pointer to a line header if etype==ELT_L */
+  uccp cun;	/* the cuneiform to output for the element */
   Btype btype;  /* the breakage type */
   Class *c;	/* the current class for the grapheme; usually set at
 		   start of file but may be switched grapheme by
 		   grapheme */
   const char *oid;/* OID for linking to sign list: may be a parent
 		     sign to the sign that is displayed in u8 */
+  const char *xid;/* grapheme id to be output as ref */
 } Elt;
 
 typedef struct line
@@ -142,7 +144,8 @@ typedef struct line
 #define elt_grapheme(lp)	(((Elt*)(lp)->data)->etype==ELT_G)
 #define elt_btype(lp)		((Elt*)(lp)->data)->btype
 #define elt_etype(lp)		((Elt*)(lp)->data)->etype
-#define elt_u8(lp)		((Elt*)(lp)->data)->u8
+#define elt_cun(lp)		((Elt*)(lp)->data)->cun
+#define elt_oid(lp)		((Elt*)(lp)->data)->oid
 
 extern Pool *p;
 extern List *cqueue;
@@ -156,6 +159,8 @@ struct perfnt
 extern struct perfnt *perfnt (register const char *str, register size_t len);
 
 extern jmp_buf done;
+
+extern const char *brk_str[];
 
 extern void cfy_eH(void *userData, const char *name);
 extern void cfy_sH(void *userData, const char *name, const char **atts);

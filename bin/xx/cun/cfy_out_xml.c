@@ -49,7 +49,7 @@ cx_body(Cfy *c)
   for (lp = list_first(c->body); lp; lp = list_next(lp))
     {
       Elt *ep = list_first(lp);
-      cx_line_o(c, (Line *)ep->u8);
+      cx_line_o(c, (Line *)ep);
       for (ep = list_next(lp); ep; ep = list_next(lp))
 	cx_elt_p[ep->etype](c, ep);
       cx_line_c(c);
@@ -73,62 +73,64 @@ cx_line_c(Cfy*c)
 static void
 cx_foot(Cfy *c)
 {
-  fprintf(o, "</cfy>");
+  fprintf(c->o, "</cfy>");
 }
 
 /* cx_elt_? */
 
-static void
-cx_elt_L(Cfy *c, Elt *e)
-{
-  
-}
+static void cx_elt_L(Cfy *c, Elt *e){} /* unused stub */
 
 static void
 cx_elt_W(Cfy *c, Elt *e)
 {
-  
+  fprintf(c->o, "<w/>");
 }
 
 static void
 cx_elt_G(Cfy *c, Elt *e)
 {
-  
+  fprintf(c->o, "<g u=\"%s\" o=\"%s\" r=\"%s\"", e->cun, e->oid, e->xid);
+  if (e->btype)
+    fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
+  fputs("/>", c->o);
 }
 
 static void
 cx_elt_J(Cfy *c, Elt *e)
 {
-  
+  fprintf(c->o, "<j/>");  
 }
 
 static void
 cx_elt_N(Cfy *c, Elt *e)
 {
-  
+  fprintf(c->o, "<n/>");  
 }
 
 static void
 cx_elt_F(Cfy *c, Elt *e)
 {
-  
+  fprintf(c->o, "<f/>");  
 }
 
 static void
 cx_elt_R(Cfy *c, Elt *e)
 {
-  
+  fprintf(c->o, "<r/>");  
 }
 
 static void
 cx_elt_X(Cfy *c, Elt *e)
 {
-  
+  fprintf(c->o, "<x r=\"%s\"", e->xid);
+  if (e->btype)
+    fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
+  fputs("/>", c->o);  
 }
 
 static void
 cx_elt_D(Cfy *c, Elt *e)
 {
-  ;
+  /* deleted so do nothing */;
 }
 
