@@ -15,6 +15,8 @@ int no_output = 0;
 int verbose = 0;
 int weboutput = 0;
 
+const char *arg_lig_file;
+Hash **arg_ligs;
 const char *invoke;
 const char *infile;
 const char *outfile;
@@ -61,6 +63,8 @@ cfy_init(void)
   cfy.fnt = "noto";
   cfy.key = "cfy-noto-*-100-middle-osl";
   cfy.c = cfy_class(&cfy, cfy.key, NULL);
+  if (arg_lig_file)
+    cfy.c->lig = cfy_lig_load(arg_lig_file);
   espaces[ELT_C] = espaces[ELT_W] = espaces[ELT_J] = espaces[ELT_N] = espaces[ELT_F] = 1;
 }
 
@@ -112,7 +116,7 @@ main(int argc, char **argv)
       if (pfp)
 	cfy.fnt = pfp->fnt;
     }
-  
+
   if (!infile && argv[optind])
     infile = argv[optind++];
 
@@ -209,6 +213,9 @@ opts(int opt, const char *arg)
       break;
     case 'k':
       cfy.key = arg;
+      break;
+    case 'l':
+      arg_lig_file = arg;
       break;
     case 'n':
       verbose = no_output = 1;
