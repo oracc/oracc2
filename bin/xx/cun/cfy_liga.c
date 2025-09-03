@@ -26,7 +26,7 @@ static void
 cfy_lig_breakage(Cfy*c, Elt **epp, int i, int j)
 {
   int k;
-  Btype b = epp[k]->btype;
+  Btype b = epp[i]->btype;
   for (k = i+1; k <= j; ++k)
     {
       if (epp[k]->btype != b)
@@ -51,10 +51,11 @@ cfy_lig_check(Cfy *c, Elt **epp, int i)
     {
       if (epp[j]->etype == ELT_G)
 	{
+	  int hval;
 	  strcat(l, epp[j]->data);
-	  if (1 == (hval = (uintptr_t)hash_find(cp->lig[k++], (uccp)l)))
+	  if (1 == (hval = (intptr_t)hash_find(cp->lig[k++], (uccp)l)))
 	    {
-	      epp[i]->data = pool_copy(l, c->p);
+	      epp[i]->data = pool_copy((uccp)l, c->p);
 	      cfy_lig_breakage(c, epp, i, j);
 	      return j+1;
 	    }
@@ -63,12 +64,13 @@ cfy_lig_check(Cfy *c, Elt **epp, int i)
 	    return i+1;
 	}
     }
+  return i+1;
 }
 
 void
 cfy_ligatures(Cfy*c, Elt **epp)
 {
-  int i;
+  int i = 0;
   while (epp[i])
     {
       if (epp[i]->etype == ELT_G

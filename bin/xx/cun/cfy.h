@@ -198,5 +198,6 @@ extern Hash **cfy_lig_load(const char *ligfile);
 extern void cfy_lig_line(Cfy *c, List *lp);
 extern void cfy_reset(void);
 extern void cfy_breakage(Cfy *c, Elt **ep);
+extern void cfy_ligatures(Cfy*c, Elt **epp);
 
 #endif/*CFY_H_*/
