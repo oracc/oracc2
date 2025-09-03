@@ -8,6 +8,7 @@ static void ch_line_o(Cfy *c, Line *l);
 static void ch_line_c(Cfy *c);
 
 static void ch_elt_L(Cfy*c, Elt *e);
+static void ch_elt_C(Cfy*c, Elt *e);
 static void ch_elt_W(Cfy*c, Elt *e);
 static void ch_elt_G(Cfy*c, Elt *e);
 static void ch_elt_J(Cfy*c, Elt *e);
@@ -18,9 +19,11 @@ static void ch_elt_X(Cfy*c, Elt *e);
 static void ch_elt_D(Cfy*c, Elt *e);
 
 typedef void (ch_elt)(Cfy*c,Elt*e);
-ch_elt* ch_elt_p[] = { ch_elt_L, ch_elt_W, ch_elt_G, ch_elt_J,
+ch_elt* ch_elt_p[] = { ch_elt_L, ch_elt_C, ch_elt_W, ch_elt_G, ch_elt_J,
 		       ch_elt_N, ch_elt_F, ch_elt_R, ch_elt_X,
 		       ch_elt_D };
+
+static int in_cell;
 
 void
 cfy_out_html(Cfy *c)
@@ -66,6 +69,16 @@ ch_head(Cfy *c)
 static void
 ch_body(Cfy *c)
 {
+#if 1
+  int i, j;
+  for (i = 0; c->elt_lines[i]; ++i)
+    {
+      ch_line_o(c, c->elt_lines[i][0]->data);
+      for (j = 1; c->elt_lines[i][j]; ++j)
+	ch_elt_p[c->elt_lines[i][j]->etype](c, c->elt_lines[i][j]);
+      ch_line_c(c);
+    }
+#else
   List *lp;
   for (lp = list_first(c->body); lp; lp = list_next(lp))
     {
@@ -75,6 +88,7 @@ ch_body(Cfy *c)
 	ch_elt_p[ep->etype](c, ep);
       ch_line_c(c);
     }
+#endif
 }
 
 static void
@@ -88,6 +102,11 @@ ch_line_o(Cfy *c, Line *l)
 static void
 ch_line_c(Cfy*c)
 {
+  if (in_cell)
+    {
+      fputs("</td>", c->o);
+      in_cell = 0;
+    }
   fputs("</tr>", c->o);
 }
 
@@ -104,6 +123,16 @@ ch_foot(Cfy *c)
 static void ch_elt_L(Cfy *c, Elt *e){} /* unused stub */
 
 static void
+ch_elt_C(Cfy *c, Elt *e)
+{
+  Cell *cp = e->data;
+  if (in_cell)
+    fputs("</td>", c->o);
+  fprintf(c->o, "<td span=\"%d\">", cp->span);
+  in_cell = 1;
+}
+
+static void
 ch_elt_W(Cfy *c, Elt *e)
 {
   fputc(' ', c->o);
@@ -112,7 +141,7 @@ ch_elt_W(Cfy *c, Elt *e)
 static void
 ch_elt_G(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<g u=\"%s\" o=\"%s\" r=\"%s\"", e->cun, e->oid, e->xid);
+  fprintf(c->o, "<g u=\"%s\" o=\"%s\" r=\"%s\"", (ccp)e->data, e->oid, e->xid);
   if (e->btype)
     fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
   fputs("/>", c->o);

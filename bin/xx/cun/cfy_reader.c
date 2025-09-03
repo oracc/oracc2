@@ -8,8 +8,8 @@ int in_c = 0, in_l = 0, in_n = 0, in_q = 0, inner = 0;
 
 char innertags[128];
 
-Elt e_zwj = { .etype=ELT_J, .cun=(uccp)"\xE2\x80\x8D" };
-Elt e_zwnj = { .etype=ELT_N, .cun=(uccp)"\xE2\x80\x8C" };
+Elt e_zwj = { .etype=ELT_J, .data=(ucp)"\xE2\x80\x8D" };
+Elt e_zwnj = { .etype=ELT_N, .data=(ucp)"\xE2\x80\x8C" };
 
 static Btype
 breakage(const char *name, const char **atts)
@@ -24,6 +24,21 @@ breakage(const char *name, const char **atts)
 }
 
 static void
+cfy_cell(Cfy *c, const char **atts)
+{
+  Elt *ep = memo_new(c->m_elt);
+  ep->etype = ELT_C;
+  Cell *cellp = memo_new(c->m_cell);
+  const char *span = findAttr(atts, "span");
+  if (span)
+    cellp->span = atoi(span);
+  else
+    cellp->span = 1;
+  ep->data = cellp;
+  list_add(c->line, ep);
+}
+
+static void
 cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, const char *oid)
 {
   if (!c->line)
@@ -31,7 +46,7 @@ cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, 
 
   Elt *ep = memo_new(c->m_elt);
   ep->etype = ELT_G;
-  ep->cun = hpool_copy((uccp)utf8, c->hp);
+  ep->data = hpool_copy((uccp)utf8, c->hp);
   ep->btype = brk;
   ep->c = cp;
   ep->oid = oid;
@@ -45,6 +60,20 @@ cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, 
     list_add(c->line, &e_zwj);
   else if ('\\' == *b)
     list_add(c->line, &e_zwnj);
+}
+
+static void
+cfy_line(Cfy *c, const char **atts)
+{
+  Elt *ep = memo_new(c->m_elt);
+  Line *lp = memo_new(c->m_line);
+  lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
+  lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
+  /* TODO: test for colon-line here and add first list node of userData-line to it */
+  c->line = list_create(LIST_SINGLE);
+  ep->data = lp;
+  list_add(c->line, ep);
+  in_l = 1;
 }
 
 static void
@@ -141,6 +170,8 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	    }
 	  else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
 	    ++inner;
+	  else if (!strcmp(name, "c"))
+	    cfy_cell(userData, atts);
 	  else if (!strcmp(name, "g:x"))
 	    {
 	      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
@@ -151,13 +182,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	}
       else if (!strcmp(name, "l"))
 	{
-	  Line *lp = memo_new(c->m_line);
-	  lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
-	  lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
-	  /* TODO: test for colon-line here and add first list node of userData-line to it */
-	  c->line = list_create(LIST_SINGLE);
-	  list_add(c->line, lp);
-	  in_l = 1;
+	  cfy_line(userData, atts);
 	}
     }
 }
@@ -189,4 +214,10 @@ cfy_eH(void *userData, const char *name)
     in_c = 0;
   else if (!strcmp(name, "g:w"))
     cfy_ws(userData);
+  else if (!strcmp(name, "c"))
+    {
+      Elt *ep = list_last(((Cfy*)userData)->line);
+      if (ep->etype == ELT_W)
+	(void)list_pop(((Cfy*)userData)->line);
+    }
 }

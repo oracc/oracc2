@@ -3,7 +3,9 @@
 
 #include <setjmp.h>
 
+struct cell;
 struct class;
+struct line;
 
 /* Global management structure */
 typedef struct Cfy
@@ -16,13 +18,16 @@ typedef struct Cfy
   Hash *hclasses;
   Hash *hfonts;
   Memo *m_class;
-  Memo *m_elt;
   Memo *m_line;
+  Memo *m_cell;
+  Memo *m_elt;
   List *body; 	/* list of line or cline pointers for actual output */
   List *line; 	/* list of Elt built by cfy_reader */
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
 		   of 'line'; one day this might align with
 		   'line'--needs ATF support */
+  struct elt ***elt_lines; /* NULL-terminated array of lines rewritten as
+		      NULL-terminated arrays of Elt* */
   struct class *c;	/* the class for the initial state */
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
@@ -110,6 +115,7 @@ extern Class *curr_cp;
  *
  */
 typedef enum elt_type { ELT_L /*line; not presently used in this impl*/,
+			ELT_C /*cell*/,
 			ELT_W /*word*/,
 			ELT_G /*grapheme*/,
 			ELT_J /*ZWJ*/,
@@ -117,8 +123,11 @@ typedef enum elt_type { ELT_L /*line; not presently used in this impl*/,
 			ELT_F /*fill*/,
 			ELT_R /*return*/,
 			ELT_X /*'x' in input */,
-			ELT_D /*deleted, for ligatures*/
+			ELT_D /*deleted, for ligatures*/,
+			ELT_LAST
 } Etype;
+
+extern int espaces[];
 
 extern const char *brk_str[];
 
@@ -130,7 +139,7 @@ typedef enum brk_type { BRK_NONE /*clear*/,
 typedef struct elt
 {
   Etype etype;	/* the element type */
-  uccp cun;	/* the cuneiform to output for the element */
+  void *data;	/* cuneiform, Line, or Cell */
   Btype btype;  /* the breakage type */
   Class *c;	/* the current class for the grapheme; usually set at
 		   start of file but may be switched grapheme by
@@ -146,11 +155,18 @@ typedef struct line
   const char *label;
 } Line;
 
+typedef struct cell
+{
+  int span;
+} Cell;
+
 /* Access the u8 member of the Elt in the data member of the List node lp */
 #define elt_grapheme(lp)	(((Elt*)(lp)->data)->etype==ELT_G)
 #define elt_btype(lp)		((Elt*)(lp)->data)->btype
 #define elt_etype(lp)		((Elt*)(lp)->data)->etype
-#define elt_cun(lp)		((Elt*)(lp)->data)->cun
+#define elt_cun(lp)		((Elt*)(lp)->data)->data
+#define elt_line(lp)		(Line *)((Elt*)(lp)->data)->data
+#define elt_cell(lp)		(Cell*)((Elt*)(lp)->data)->data
 #define elt_oid(lp)		((Elt*)(lp)->data)->oid
 
 extern Pool *p;
@@ -181,5 +197,6 @@ extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 extern Hash **cfy_lig_load(const char *ligfile);
 extern void cfy_lig_line(Cfy *c, List *lp);
 extern void cfy_reset(void);
+extern void cfy_breakage(Cfy *c, Elt **ep);
 
 #endif/*CFY_H_*/

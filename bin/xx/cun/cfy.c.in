@@ -51,8 +51,9 @@ cfy_init(void)
   cfy.hclasses = hash_create(32);
   cfy.hfonts = hash_create(8);
   cfy.m_class = memo_init(sizeof(Class), 10);
-  cfy.m_elt = memo_init(sizeof(Elt), 1024);
   cfy.m_line = memo_init(sizeof(Line), 256);
+  cfy.m_cell = memo_init(sizeof(Cell), 256);
+  cfy.m_elt = memo_init(sizeof(Elt), 1024);
   cfy.body = list_create(LIST_SINGLE);
   cfy_reader_init();
   cfy.o = stdout;
@@ -60,6 +61,7 @@ cfy_init(void)
   cfy.fnt = "noto";
   cfy.key = "cfy-noto-*-100-middle-osl";
   cfy.c = cfy_class(&cfy, cfy.key, NULL);
+  espaces[ELT_C] = espaces[ELT_W] = espaces[ELT_J] = espaces[ELT_N] = espaces[ELT_F] = 1;
 }
 
 static void
@@ -72,6 +74,23 @@ cfy_term(void)
   memo_term(cfy.m_class);
   memo_term(cfy.m_elt);
   memo_term(cfy.m_line);
+}
+
+static void
+cfy_post(Cfy *c)
+{
+  /* Flatten the list of lists into an array of arrays */
+  c->elt_lines = calloc(list_len(c->body), sizeof(Elt*));
+  int i;
+  List *lp;
+  for (i = 0, lp = list_first(c->body); lp; ++i, lp = list_next(c->body))
+    c->elt_lines[i] = (Elt**)list2array(lp);
+
+  for (i = 0; c->elt_lines[i]; ++i)
+    {
+      /*cfy_ligatures(c->elt_lines[i]);*/
+      cfy_breakage(c, c->elt_lines[i]);
+    }
 }
 
 int
@@ -149,7 +168,8 @@ main(int argc, char **argv)
 	    {
 	      if (!(outfp = fopen(outpath, "w")))
 		{
-		  fprintf(stderr, "cfy: unable to write to outpath %s: %s\n", outpath, strerror(errno));
+		  fprintf(stderr, "cfy: unable to write to outpath %s: %s\n",
+			  outpath, strerror(errno));
 		  exit(1);
 		}
 	    }
@@ -157,6 +177,7 @@ main(int argc, char **argv)
 	  runexpat_omit_rp_wrap();
 	  if (!setjmp(done))
 	    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
+	  cfy_post(&cfy);
 	  if (cfy.html)
 	    cfy_render(&cfy, "html");
 	  else
