@@ -16,15 +16,11 @@ main(int argc, char *const *argv)
 	  lig += 3;
 	  while ('u' == *lig)
 	    {
-	      if (i)
-		fputc(' ', stdout);
-	      ++lig;
-	      memcpy(u[i++], utf8ify((unsigned int)strtol(lig,NULL,16)), 5);
-	      int j;
-	      for (j = 0; j < i; ++j)
-		fputs(u[j], stdout);
-	      lig = strchr(lig, '_');
-	      if (lig)
+	      memcpy(u[i++], utf8ify((unsigned int)strtol(++lig,NULL,16)), 5);
+	      int j = 0;
+	      while (j < i)
+		fputs(u[j++], stdout);
+	      if ((lig = strchr(lig, '_')))
 		++lig;
 	      else
 		break;
@@ -33,6 +29,7 @@ main(int argc, char *const *argv)
 		  fprintf(stderr, "oin2lig: ligature too long. Stop.\n");
 		  exit(1);
 		}
+	      fputc(' ', stdout);
 	    }
 	  fputc('\n', stdout);
 	}
