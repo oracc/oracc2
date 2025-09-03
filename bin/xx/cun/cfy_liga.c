@@ -22,7 +22,63 @@
  * be increased if necessary.
  */
 
-static const char *ligs = NULL;
+static void
+cfy_lig_breakage(Cfy*c, Elt **epp, int i, int j)
+{
+  int k;
+  Btype b = epp[k]->btype;
+  for (k = i+1; k <= j; ++k)
+    {
+      if (epp[k]->btype != b)
+	b = BRK_HASH;
+    }
+  for (k = i; k <= j; ++k)
+    {
+      epp[k]->btype = b;
+      if (k > i)
+	epp[k]->etype = ELT_D;
+    }
+}
+
+static int
+cfy_lig_check(Cfy *c, Elt **epp, int i)
+{
+  Class *cp = epp[i]->c;
+  char l[LIG_MAX*6];
+  int j = i, k = 1;
+  strcpy(l, epp[j]->data);
+  while (epp[++j])
+    {
+      if (epp[j]->etype == ELT_G)
+	{
+	  strcat(l, epp[j]->data);
+	  if (1 == (hval = (uintptr_t)hash_find(cp->lig[k++], (uccp)l)))
+	    {
+	      epp[i]->data = pool_copy(l, c->p);
+	      cfy_lig_breakage(c, epp, i, j);
+	      return j+1;
+	    }
+	  /* max length means failure */
+	  if (k > LIG_MAX)
+	    return i+1;
+	}
+    }
+}
+
+void
+cfy_ligatures(Cfy*c, Elt **epp)
+{
+  int i;
+  while (epp[i])
+    {
+      if (epp[i]->etype == ELT_G
+	  && epp[i]->c->lig
+	  && hash_find(epp[i]->c->lig[0], epp[i]->data))
+	i = cfy_lig_check(c, epp, i);
+      else
+	++i;
+    }
+}
 
 int hsizes[LIG_MAX] = { 1024 , 512 , 256 , 128 , 64 , 32 , 16 , 16 , 16 , 16 };
 
@@ -66,76 +122,11 @@ cfy_lig_hash(const char *ligfile, int lnum, Hash **hligs, Uchar *lp)
     }
 }
 
-/* Check the arg List_node to see if it is the first char of a
-   ligature; if so, look along the list and see if there is a complete
-   ligature here.  If so, wrap it up as a unit and return the 'next'
-   member of the last List_node that is part of the ligature.  If not,
-   return the 'next' node of the arg List_node
- */
-List_node *
-cfy_lig_check(Cfy *c, List_node *lnp)
-{
-  unsigned char lchars[(LIG_MAX * CHAR_MAX) + 1];
-  int i, hval;
-  List_node *lnp_init = lnp;
-
-  strcpy((char*)lchars, (ccp)elt_cun(lnp));
-  for (i = 0; strlen((char*)lchars) < (LIG_MAX * (CHAR_MAX-1)) + 1; ++i)
-    {
-      if ((hval = (uintptr_t)hash_find(curr_cp->lig[i], (uccp)lchars)))
-	{
-	  if (hval == 1)
-	    {
-	      List_node *lnp_end = lnp;
-	      elt_cun(lnp_init) = (void*)hpool_copy(lchars, c->hp);
-	      lnp = lnp_init;
-	      Btype b_init = elt_btype(lnp), new_b_init = BRK_NONE;
-	      while (lnp < lnp_end)
-		{
-		  if (elt_btype(lnp) != b_init && new_b_init == BRK_NONE)
-		    new_b_init = BRK_HASH;
-		  elt_etype(lnp) = ELT_D;
-		}
-	      return lnp_end->next;
-	    }
-	  else if (lnp->next && elt_grapheme(lnp->next))
-	    {
-	      lnp = lnp->next;
-	      strcat((char*)lchars, (ccp)elt_cun(lnp));
-	    }
-	  else
-	    break;
-	}
-      else
-	break;
-    }
-  return lnp->next;
-}
-
-/* Traverse the list of elements that will be output looking for
- * matches to the ligatures hash.  For any match, concatenate the
- * components to the first list node and reset the breakage state if
- * there is more than one Btype in the ligature's graphemes.
- */
-void
-cfy_lig_line(Cfy *c, List *lp)
-{
-  List_node *r = lp->first;
-  while (r)
-    {
-      if (elt_grapheme(r))
-	r = cfy_lig_check(c, r);
-      else
-	r = r->next;
-    }
-}
-
 Hash **
 cfy_lig_load(const char *ligfile)
 {
   if (!access(ligfile, R_OK))
     {
-      ligs = ligfile;
       size_t nl;
       uchar **l = loadfile_lines((uccp)ligfile, &nl);
       int i;

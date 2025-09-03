@@ -88,7 +88,7 @@ cfy_post(Cfy *c)
 
   for (i = 0; c->elt_lines[i]; ++i)
     {
-      /*cfy_ligatures(c->elt_lines[i]);*/
+      cfy_ligatures(c->elt_lines[i]);
       cfy_breakage(c, c->elt_lines[i]);
     }
 }
