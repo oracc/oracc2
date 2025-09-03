@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "cfy.h"
+#include "ligmax.h"
 
 /* Cuneify ligatures are stored files $ORACC/lib/data/FONTNAME.lig
  *
@@ -20,9 +21,6 @@
  * Cuneify has a maximum of 10 characters in a ligature but this could
  * be increased if necessary.
  */
-
-/* no Oracc ligature can be more characters than this */
-#define LIG_MAX 10
 
 static const char *ligs = NULL;
 
