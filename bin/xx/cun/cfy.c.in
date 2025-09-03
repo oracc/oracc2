@@ -59,6 +59,7 @@ cfy_init(void)
   cfy.pqx = "X000000";
   cfy.fnt = "noto";
   cfy.key = "cfy-noto-*-100-middle-osl";
+  cfy.c = cfy_class(&cfy, cfy.key, NULL);
 }
 
 static void
@@ -79,7 +80,7 @@ main(int argc, char **argv)
   cfy_init();
 
   outfp = stdout;
-  options(argc, argv, "bfi:l:no:p:P:q:st:vw");
+  options(argc, argv, "bfhi:l:no:p:P:q:st:vw");
 
   if (period)
     {
@@ -156,7 +157,10 @@ main(int argc, char **argv)
 	  runexpat_omit_rp_wrap();
 	  if (!setjmp(done))
 	    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
-	  cfy_render(&cfy, stdout, "xml");
+	  if (cfy.html)
+	    cfy_render(&cfy, "html");
+	  else
+	    cfy_render(&cfy, "xml");
 	}
       else
 	fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
@@ -175,6 +179,9 @@ opts(int opt, const char *arg)
       break;
     case 'f':
       force = 1;
+      break;
+    case 'h':
+      cfy.html = 1;
       break;
     case 'i':
       infile = arg;
@@ -204,7 +211,8 @@ opts(int opt, const char *arg)
       verbose = 1;
       break;
     case 'w':
-      weboutput = 1;
+      cfy.weboutput = 1;
+      cfy.html = 1;
       break;
     default:
       fprintf(stderr, "%s: unknown option -%c\n", invoke, opt);

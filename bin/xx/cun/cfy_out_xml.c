@@ -1,8 +1,6 @@
 #include <oraccsys.h>
 #include "cfy.h"
 
-static FILE *o;
-
 static void cx_head(Cfy *c);
 static void cx_body(Cfy *c);
 static void cx_foot(Cfy *c);
@@ -25,9 +23,8 @@ cx_elt* cx_elt_p[] = { cx_elt_L, cx_elt_W, cx_elt_G, cx_elt_J,
 		       cx_elt_D };
 
 void
-cfy_out_xml(Cfy *c, FILE *fp)
+cfy_out_xml(Cfy *c)
 {
-  o = fp;
   cx_head(c);
   cx_body(c);
   cx_foot(c);

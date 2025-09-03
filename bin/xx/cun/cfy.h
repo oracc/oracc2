@@ -3,6 +3,8 @@
 
 #include <setjmp.h>
 
+struct class;
+
 /* Global management structure */
 typedef struct Cfy
 {
@@ -21,9 +23,12 @@ typedef struct Cfy
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
 		   of 'line'; one day this might align with
 		   'line'--needs ATF support */
+  struct class *c;	/* the class for the initial state */
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
+  int html;
+  int weboutput;
 } Cfy;
 
 /* Cuneify output uses the HTML class attribute to render cuneiform
@@ -60,6 +65,7 @@ typedef struct class
   const char *mag;
   const char *scr;
   const char *asl;
+  const char *css;
   Hash **lig; /* ligatures are an array of hashes essentially implementing a trie */
 } Class;
 
@@ -164,10 +170,11 @@ extern const char *brk_str[];
 
 extern void cfy_eH(void *userData, const char *name);
 extern void cfy_sH(void *userData, const char *name, const char **atts);
-extern void cfy_out_xml(Cfy *c, FILE *fp);
+extern void cfy_out_html(Cfy *c);
+extern void cfy_out_xml(Cfy *c);
 extern Class *cfy_class(Cfy *c, const char *key, Class *cp);
 extern void cfy_reader_init(void);
-extern void cfy_render(Cfy *c, FILE *fp, const char *om);
+extern void cfy_render(Cfy *c, const char *om);
 extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 		     const char *outdir, const char *outext, const char *trans,
 		     char **inp, char **outp, char **hdir);

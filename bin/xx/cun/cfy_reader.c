@@ -35,7 +35,7 @@ cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, 
   ep->btype = brk;
   ep->c = cp;
   ep->oid = oid;
-  ep->xid = pool_copy((uccp)get_xml_id(atts), c->p);
+  ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   
   list_add(c->line, ep);
 
