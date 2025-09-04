@@ -1,3 +1,5 @@
+/* N.B. This code was never tested because it was not clear that is is necessary */
+
 #include <oraccsys.h>
 #include "cfy.h"
 #include "ligmax.h"

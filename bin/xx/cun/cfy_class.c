@@ -92,6 +92,7 @@ cfy_class(Cfy *c, const char *key, Class *cp)
 	  ncp = memo_new(c->m_class);
 	  cfy_class_set((char*)pool_copy((uccp)newkey, c->p), ncp);
 	  hash_add(c->hclasses, (uccp)hk, ncp);
+#if 0
 	  if (!hash_find(c->hfonts, (uccp)ncp->fnt))
 	    {
 	      char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(ncp->fnt)];
@@ -99,7 +100,7 @@ cfy_class(Cfy *c, const char *key, Class *cp)
 	      ncp->lig = cfy_lig_load(ligf);
 	      hash_add(c->hfonts, (uccp)ncp->fnt, ncp);
 	    }
-	  
+#endif	  
 	}
       free(kk);
       free(mem);

@@ -63,8 +63,10 @@ cfy_init(void)
   cfy.fnt = "noto";
   cfy.key = "cfy-noto-*-100-middle-osl";
   cfy.c = cfy_class(&cfy, cfy.key, NULL);
+#if 0
   if (arg_lig_file)
     cfy.c->lig = cfy_lig_load(arg_lig_file);
+#endif
   espaces[ELT_C] = espaces[ELT_W] = espaces[ELT_J] = espaces[ELT_N] = espaces[ELT_F] = 1;
 }
 
@@ -92,7 +94,7 @@ cfy_post(Cfy *c)
 
   for (i = 0; c->elt_lines[i]; ++i)
     {
-      cfy_ligatures(c, c->elt_lines[i]);
+      /*cfy_ligatures(c, c->elt_lines[i]);*/
       cfy_breakage(c, c->elt_lines[i]);
     }
 }

@@ -65,3 +65,15 @@ restores the previous class data.
 This approach means that Cuneify does not have to manage a state stack
 of class data.
 
+Ligatures
+=========
+
+For now, Cuneify does not handle ligatures specially (despite the
+existence of some code to do that).  Instead, Cuneify relies on the
+sign list to define sequences that can be ligatures, such as
+|IGI.RU|. Values (g:v) in the transliteration are output with wrapper
+nodes (HTML) or (for TeX) are interrupted by U+200B, ZERO WIDTH SPACE.
+In a font with an |IGI.RU| ligature, This prevents ši-ru from being
+ligatured while allowing |IGI.RU| (pad₃) to be ligatured.
+
+It also means that Cuneify can be font-agnostic in processing ATF.

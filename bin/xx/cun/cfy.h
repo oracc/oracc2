@@ -131,16 +131,25 @@ extern int espaces[];
 
 extern const char *brk_str[];
 
-typedef enum brk_type { BRK_NONE /*clear*/,
-			BRK_HASH /*damaged*/,
-			BRK_LOST /*broken*/
+typedef enum btype { BRK_NONE /*clear*/,
+		     BRK_HASH /*damaged*/,
+		     BRK_LOST /*broken*/
 } Btype;
+
+typedef enum gtype { G_V /*g:v value*/,
+		     G_S /*g:s sign*/,
+		     G_N /*g:n number*/,
+		     G_Q /*seQuence member from split @ucun*/,
+		     G_X /*none of the above but not ...*/,
+		     G_U /*...unknown reading, i.e., $MU notation*/
+} Gtype;
 
 typedef struct elt
 {
   Etype etype;	/* the element type */
-  void *data;	/* cuneiform, Line, or Cell */
+  Gtype gtype;  /* the grapheme type */
   Btype btype;  /* the breakage type */
+  void *data;	/* cuneiform, Line, or Cell */
   Class *c;	/* the current class for the grapheme; usually set at
 		   start of file but may be switched grapheme by
 		   grapheme */

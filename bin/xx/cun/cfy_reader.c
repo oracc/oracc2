@@ -39,8 +39,20 @@ cfy_cell(Cfy *c, const char **atts)
 }
 
 static void
-cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, const char *oid)
+cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Class *cp, const char *oid)
 {
+  Btype brk = breakage(name, atts);
+  /* can't currently do G_U because ATF $MU doesn't annotate the $-status*/
+  Gtype g = (name[2] == 'v'
+	     ? G_V : (name[2] == 's'
+		      ? G_S : (name[2] == 'n'
+			       ? G_N : G_X)));
+
+  size_t wlen;
+  (void)utf2wcs((uccp)utf8,&wlen);
+  if (wlen > 1)
+    g = G_Q;
+  
   if (!c->line)
     c->line = list_create(LIST_DOUBLE);
 
@@ -48,6 +60,7 @@ cfy_grapheme(Cfy *c, const char **atts, const char *utf8, Btype brk, Class *cp, 
   ep->etype = ELT_G;
   ep->data = hpool_copy((uccp)utf8, c->hp);
   ep->btype = brk;
+  ep->gtype = g;
   ep->c = cp;
   ep->oid = oid;
   ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
@@ -166,7 +179,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	      if (cp)
 		*curr_cp = *cp;	      
 
-	      cfy_grapheme(userData, atts, utf8, breakage(name, atts), curr_cp, oid);
+	      cfy_grapheme(userData, name, atts, utf8, curr_cp, oid);
 	    }
 	  else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
 	    ++inner;
