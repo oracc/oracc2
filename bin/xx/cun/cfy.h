@@ -1,6 +1,7 @@
 #ifndef CFY_H_
 #define CFY_H_
 
+#include <oraccsys.h>
 #include <setjmp.h>
 
 struct cell;
@@ -16,6 +17,7 @@ typedef struct Cfy
   Pool *p;
   Pool *hp;
   Hash *hclasses;
+  Hash *hsubkeys;
   Hash *hfonts;
   Memo *m_class;
   Memo *m_line;
@@ -112,9 +114,8 @@ extern Class *curr_cp;
  * span. If a sequence mixes breakage states, all of the breakage is
  * set to damaged as an approximation of the state of the ligature
  * sequence as a whole.
- *
  */
-typedef enum elt_type { ELT_L /*line; not presently used in this impl*/,
+typedef enum elt_type { ELT_L /*line*/,
 			ELT_C /*cell*/,
 			ELT_W /*word*/,
 			ELT_G /*grapheme*/,
@@ -122,8 +123,9 @@ typedef enum elt_type { ELT_L /*line; not presently used in this impl*/,
 			ELT_N /*ZWNJ*/,
 			ELT_F /*fill*/,
 			ELT_R /*return*/,
-			ELT_X /*'x' in input */,
+			ELT_X /*'x' in input*/,
 			ELT_D /*deleted, for ligatures*/,
+			ELT_Q /*Quoted literal*/,
 			ELT_LAST
 } Etype;
 
@@ -146,16 +148,17 @@ typedef enum gtype { G_V /*g:v value*/,
 
 typedef struct elt
 {
-  Etype etype;	/* the element type */
-  Gtype gtype;  /* the grapheme type */
-  Btype btype;  /* the breakage type */
-  void *data;	/* cuneiform, Line, or Cell */
-  Class *c;	/* the current class for the grapheme; usually set at
+  Etype etype;	  /* the element type */
+  Gtype gtype;    /* the grapheme type */
+  Btype btype;    /* the breakage type */
+  void *data;	  /* cuneiform, Line, or Cell */
+  Class *c;	  /* the current class for the grapheme; usually set at
 		   start of file but may be switched grapheme by
 		   grapheme */
   const char *oid;/* OID for linking to sign list: may be a parent
 		     sign to the sign that is displayed in u8 */
   const char *xid;/* grapheme id to be output as ref */
+  const char *key;/* ASL grapheme key for type ELT_G */
 } Elt;
 
 typedef struct line
@@ -191,6 +194,7 @@ extern struct perfnt *perfnt (register const char *str, register size_t len);
 
 extern jmp_buf done;
 
+extern Cfy cfy;
 extern const char *brk_str[];
 
 extern void cfy_eH(void *userData, const char *name);
@@ -208,5 +212,17 @@ extern void cfy_lig_line(Cfy *c, List *lp);
 extern void cfy_reset(void);
 extern void cfy_breakage(Cfy *c, Elt **ep);
 extern void cfy_ligatures(Cfy*c, Elt **epp);
+
+extern void cfy_cfg_elt_g(Mloc m, Cfy *c, uccp g);
+extern void cfy_cfg_elt_f(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_l(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_r(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_w(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_j(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_n(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_q(Mloc m, Cfy *c, uccp q);
+
+extern void cfy_cfg_stash(Mloc m, Cfy *c);
+extern char *elts_key(Cfy *c, Elt **lelts, int n);
 
 #endif/*CFY_H_*/
