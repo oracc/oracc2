@@ -60,13 +60,16 @@ cfy_init(void)
   cfy_reader_init();
   cfy.o = stdout;
   cfy.pqx = "X000000";
-  cfy.fnt = "noto";
-  cfy.key = "cfy-noto-*-100-middle-osl";
-  cfy.c = cfy_class(&cfy, cfy.key, NULL);
-#if 0
+  cfy.c = curr_cp;
+  cfy.key = cfy.c->key;
+  cfy.fnt = cfy.c->fnt;
+
   if (arg_lig_file)
-    cfy.c->lig = cfy_lig_load(arg_lig_file);
-#endif
+    {
+      cfy.c->lig = cfy_lig_load(arg_lig_file);
+      hash_add(cfy.hfonts, (uccp)cfy.c->fnt, cfy.c);
+    }
+
   espaces[ELT_C] = espaces[ELT_W] = espaces[ELT_J] = espaces[ELT_N] = espaces[ELT_F] = 1;
 }
 
@@ -79,6 +82,7 @@ cfy_term(void)
   hash_free(cfy.hfonts, NULL);
   memo_term(cfy.m_class);
   memo_term(cfy.m_elt);
+  memo_term(cfy.m_cell);
   memo_term(cfy.m_line);
 }
 
@@ -94,7 +98,8 @@ cfy_post(Cfy *c)
 
   for (i = 0; c->elt_lines[i]; ++i)
     {
-      /*cfy_ligatures(c, c->elt_lines[i]);*/
+      /*cfy_subs(c);*/
+      cfy_ligatures(c, c->elt_lines[i]);
       cfy_breakage(c, c->elt_lines[i]);
     }
 }
@@ -102,10 +107,10 @@ cfy_post(Cfy *c)
 int
 main(int argc, char **argv)
 {
-  cfy_init();
-
   outfp = stdout;
   options(argc, argv, "bfhi:l:no:p:P:q:st:vw");
+
+  cfy_init();
 
   if (period)
     {

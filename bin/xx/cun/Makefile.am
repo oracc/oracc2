@@ -8,7 +8,7 @@ cunx_DEPENDENCIES = $(xLDADD)
 
 cfy_SOURCES = cfy.c cfy_class.c cfy_reader.c cfy_render.c \
 	cfy_out_html.c cfy_out_xml.c fileargs.c perfnt.c \
-	cfy_breakage.c
+	cfy_breakage.c cfy_liga.c
 
 cfy_LDADD = $(xLDADD)
 cfy_DEPENDENCIES = $(xLDADD)

@@ -38,7 +38,8 @@ cx_head(Cfy *c)
 {
   fprintf(c->o,
 	  "<cfy xmlns=\"http://oracc.org/ns/1.0/cuneify\" xml:id=\"cfy.%s\""
-	  " n=\"%s\" project=\"%s\" id=\"%s\" fnt=\"%s\" key=\"%s\">",
+	  " xmlns:cfy=\"http://oracc.org/ns/1.0/cuneify\""
+	  " n=\"%s\" project=\"%s\" id=\"%s\" cfy:fnt=\"%s\" cfy:key=\"%s\">",
 	  c->pqx, c->n, c->project, c->pqx, c->fnt, c->key);
 }
 

@@ -92,15 +92,18 @@ cfy_class(Cfy *c, const char *key, Class *cp)
 	  ncp = memo_new(c->m_class);
 	  cfy_class_set((char*)pool_copy((uccp)newkey, c->p), ncp);
 	  hash_add(c->hclasses, (uccp)hk, ncp);
-#if 0
-	  if (!hash_find(c->hfonts, (uccp)ncp->fnt))
+	  Class *fontc = hash_find(c->hfonts, (uccp)ncp->fnt);
+	  if (!fontc)
 	    {
 	      char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(ncp->fnt)];
 	      sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), ncp->fnt);
 	      ncp->lig = cfy_lig_load(ligf);
 	      hash_add(c->hfonts, (uccp)ncp->fnt, ncp);
 	    }
-#endif	  
+	  else
+	    {
+	      ncp->lig = fontc->lig;	      
+	    }
 	}
       free(kk);
       free(mem);
