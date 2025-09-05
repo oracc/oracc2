@@ -47,23 +47,31 @@ cfy_lig_check(Cfy *c, Elt **epp, int i)
   char l[LIG_MAX*6];
   int j = i, k = 1;
   strcpy(l, epp[j]->data);
+  List *l_ids = list_create(LIST_SINGLE);
   while (epp[++j])
     {
       if (epp[j]->etype == ELT_G)
 	{
 	  int hval;
 	  strcat(l, epp[j]->data);
+	  list_add(l_ids, (void*)epp[j]->xid);
 	  if (1 == (hval = (intptr_t)hash_find(cp->lig[k++], (uccp)l)))
 	    {
 	      epp[i]->data = pool_copy((uccp)l, c->p);
+	      epp[i]->xid = (ccp)list_to_str2(l_ids, "+");
+	      list_free(l_ids, NULL);
 	      cfy_lig_breakage(c, epp, i, j);
 	      return j+1;
 	    }
 	  /* max length means failure */
 	  if (k > LIG_MAX)
-	    return i+1;
+	    {
+	      list_free(l_ids, NULL);
+	      return i+1;
+	    }
 	}
     }
+  list_free(l_ids, NULL);
   return i+1;
 }
 

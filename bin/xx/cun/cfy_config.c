@@ -198,9 +198,14 @@ cfy_cfg_elt_g(Mloc m, Cfy *c, uccp g)
   Tree *tp = gdlparse_string(&m, (char*)pool_copy(g,c->p));
   if (tp && tp->root && tp->root->kids)
     {
-      uccp gkey = gvl_key(tp->root->kids->user, c->p);
+      gvl_g *gp = tp->root->kids->user;
+      uccp gkey = gvl_key(gp, c->p);
       if (gkey)
-	ep->key = (ccp)gkey;
+	{
+	  ep->key = (ccp)gkey;
+	  ep->data = (void*)gvl_cuneify_gv(gp);
+	  ep->oid = gp->oid;
+	}
       else
 	++cfy_cfg_status;
     }
