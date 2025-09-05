@@ -17,12 +17,14 @@ typedef struct Cfy
   Pool *p;
   Pool *hp;
   Hash *hclasses;
+  Hash *hsubhead;
   Hash *hsubkeys;
   Hash *hfonts;
   Memo *m_class;
   Memo *m_line;
   Memo *m_cell;
   Memo *m_elt;
+  Memo *m_subspec;
   List *body; 	/* list of line or cline pointers for actual output */
   List *line; 	/* list of Elt built by cfy_reader */
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
@@ -172,6 +174,16 @@ typedef struct cell
   int span;
 } Cell;
 
+/* Cuneify config defines substition specifications that are stored in
+   this structure */
+typedef struct subspec
+{
+  int start; 	/* did the left spec begin with '^' */
+  int end;	/* did the left spec end with '$' */
+  Elt **l;	/* left elements */
+  Elt **r;	/* right elements */
+} Subspec;
+
 /* Access the u8 member of the Elt in the data member of the List node lp */
 #define elt_grapheme(lp)	(((Elt*)(lp)->data)->etype==ELT_G)
 #define elt_btype(lp)		((Elt*)(lp)->data)->btype
@@ -193,7 +205,7 @@ struct perfnt
 extern struct perfnt *perfnt (register const char *str, register size_t len);
 
 extern jmp_buf done;
-
+extern int anchor_start, anchor_end;
 extern Cfy cfy;
 extern const char *brk_str[];
 
