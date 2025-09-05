@@ -44,7 +44,7 @@ sub_replace(Cfy *c, Eltline *elp, int i, Subspec *sp, int *ip)
   Elt**dest = elp->epp;
   if (sp->r_len > sp->l_len)
     {
-      int nlen = elp->len + (sp->r_len - sp->len) + 1;
+      int nlen = elp->len + (sp->r_len - sp->l_len) + 1;
       int last_seg = elp->len - (i+sp->l_len); 	/* Elt* after the end
 						   of the replaced
 						   segment */
@@ -64,7 +64,7 @@ sub_replace(Cfy *c, Eltline *elp, int i, Subspec *sp, int *ip)
 						   of the replaced
 						   segment */
       memcpy(dest+i, sp->r, sp->r_len * sizeof(Elt*));
-      memmove(dest+i+sp->rlen, elp->epp+i+sp->l_len, last_seg * sizeof(Elt*));
+      memmove(dest+i+sp->r_len, elp->epp+i+sp->l_len, last_seg * sizeof(Elt*));
       *ip = i + sp->r_len + last_seg;
       dest[*ip] = NULL;
     }
