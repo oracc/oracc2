@@ -48,7 +48,7 @@ cx_body(Cfy *c)
 {
 #if 1
   int i, j;
-  for (i = 0; c->elt_lines[i]->epp; ++i)
+  for (i = 0; c->elt_lines[i]; ++i)
     {
       cx_line_o(c, c->elt_lines[i]->epp[0]->data);
       for (j = 1; c->elt_lines[i]->epp[j]; ++j)

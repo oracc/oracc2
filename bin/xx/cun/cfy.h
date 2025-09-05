@@ -25,6 +25,7 @@ typedef struct Cfy
   Memo *m_line;
   Memo *m_cell;
   Memo *m_elt;
+  Memo *m_eltline;
   Memo *m_subspec;
   List *body; 	/* list of line or cline pointers for actual output */
   List *line; 	/* list of Elt built by cfy_reader */
