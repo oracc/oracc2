@@ -4,18 +4,29 @@
 %{
 #include <stdlib.h>
 #include <string.h>
+#include <mesg.h>
+
+#define CFYLTYPE Mloc
 #include "cfy.tab.h"
+static void cfy_user_action(void);
+#define YY_USER_ACTION cfy_user_action();
+extern Mloc cfylloc;
+const char *currcfyfile = NULL;
+
 #include "cfy.h"
 int anchor_start, anchor_end;
+static int endofinput = 0;
+
+
 %}
 
 anchor_e	"$"
 anchor_s	"^"
 comment		^"#".*/[\n\r]
-eol		"[\r\n]+"
+eol		[\r\n]+
 fill		"++"
 goesto		"=>"
-grapheme	([aeinuxAEINUX0-9]|[^& \t\n\r=>].+)
+grapheme	([aeinuxAEINUX0-9]|[^& \t\n\r=>][^ \t\n\r]+)
 literal		'"'[^\"\n\r]+'"'
 return		"&r"
 word		"&w"
@@ -29,7 +40,7 @@ zwnj		"&n"
 
 {anchor_s}	{ ++anchor_start; return *cfytext; }
 
-{comment}	{ }
+{comment}	{ ; }
 
 {eol}		{ return EOL; }
 
@@ -43,6 +54,21 @@ zwnj		"&n"
 
 {word}		{ return WORD; }
 
-{ws}		{ }
+{ws}		{ ; }
+
+{zwj}		{ return ZWJ; }
+
+{zwnj}		{ return ZWNJ; }
+
+.		{ fprintf(stderr, "cfy.l: unhandled input `%s'\n", yytext); }
+
+<<EOF>>		{ if (!endofinput++) return EOL; else yyterminate(); }
 
 %%
+
+static void
+cfy_user_action(void)
+{
+  cfylloc.file = currcfyfile;
+  cfylloc.line = yylineno;
+}

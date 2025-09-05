@@ -38,8 +38,8 @@ subs:
 	;
 
 sub:
-	EOL
-	| lelts GOESTO { elts_rhs = 1; } elts { cfy_cfg_stash(@1, &cfy); } EOL
+	  EOL
+	| lelts GOESTO { elts_rhs = 1; } elts { cfy_cfg_stash(@$, &cfy); } EOL
 	;
 
 lelts:
@@ -68,6 +68,7 @@ elt:	  GRAPHEME 	{ cfy_cfg_elt_g(@1, &cfy, (uccp)$1); }
 void
 yyerror(const char *e)
 {
-  extern int yylineno;
-  fprintf(stderr, "cfy-config: %s at line %d\n", e, yylineno);
+  extern int yylineno, cfy_cfg_status;
+  mesg_vwarning(cfy.config, yylineno, "%s\n", e);
+  ++cfy_cfg_status;
 }

@@ -4,6 +4,9 @@
 #include "runexpat.h"
 #include "cfy.h"
 
+extern void cfyset_debug (int debug_flag);
+extern void gdlset_debug (int debug_flag);
+
 Cfy cfy;
 
 /* The default is to generate outputs into the P4 cache; if -b is
@@ -64,6 +67,9 @@ cfy_init(void)
   cfy.key = cfy.c->key;
   cfy.fnt = cfy.c->fnt;
 
+  mesg_init();
+  mloc_init();
+  
   if (arg_lig_file)
     {
       cfy.c->lig = cfy_lig_load(arg_lig_file);
@@ -84,34 +90,51 @@ cfy_term(void)
   memo_term(cfy.m_elt);
   memo_term(cfy.m_cell);
   memo_term(cfy.m_line);
+
+  mloc_term();
+  mesg_term();
 }
 
 static void
 cfy_post(Cfy *c)
 {
   /* Flatten the list of lists into an array of arrays */
-  c->elt_lines = calloc(list_len(c->body), sizeof(Elt*));
+  c->elt_lines = calloc(list_len(c->body), sizeof(Eltline*));
   int i;
   List *lp;
   for (i = 0, lp = list_first(c->body); lp; ++i, lp = list_next(c->body))
-    c->elt_lines[i] = (Elt**)list2array(lp);
+    c->elt_lines[i]->epp = (Elt**)list2array_c(lp, &c->elt_lines[i]->len);
+  /*c->elt_lines[i] = (Elt**)list2array(lp);*/
 
   for (i = 0; c->elt_lines[i]; ++i)
     {
-      /*cfy_subs(c);*/
-      cfy_ligatures(c, c->elt_lines[i]);
-      cfy_breakage(c, c->elt_lines[i]);
+      cfy_subbings(c, c->elt_lines[i]);
+      cfy_ligatures(c, c->elt_lines[i]->epp);
+      cfy_breakage(c, c->elt_lines[i]->epp);
     }
 }
 
 int
 main(int argc, char **argv)
-{
+{  
   outfp = stdout;
-  options(argc, argv, "bfhi:l:no:p:P:q:st:vw");
+  options(argc, argv, "bc:fhi:l:no:p:P:q:st:vw");
 
+  cfyset_debug(0);
+  gdlset_debug(0);
+  
   cfy_init();
 
+  if (cfy.config)
+    if (cfy_cfg_load(&cfy, cfy.config))
+      {
+	extern int cfylineno;
+	mesg_warning(cfy.config, cfylineno,
+		     "cfy exiting because of configuration errors.");
+	mesg_print(stderr);	
+	exit(1);
+      }
+  
   if (period)
     {
       char xperiod[strlen(period)+1], *t;
@@ -208,6 +231,9 @@ opts(int opt, const char *arg)
     {
     case 'b':
       buildmode = 1;
+      break;
+    case 'c':
+      cfy.config = arg;
       break;
     case 'f':
       force = 1;

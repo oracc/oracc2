@@ -71,11 +71,11 @@ ch_body(Cfy *c)
 {
 #if 1
   int i, j;
-  for (i = 0; c->elt_lines[i]; ++i)
+  for (i = 0; c->elt_lines[i]->epp; ++i)
     {
-      ch_line_o(c, c->elt_lines[i][0]->data);
-      for (j = 1; c->elt_lines[i][j]; ++j)
-	ch_elt_p[c->elt_lines[i][j]->etype](c, c->elt_lines[i][j]);
+      ch_line_o(c, c->elt_lines[i]->epp[0]->data);
+      for (j = 1; c->elt_lines[i]->epp[j]; ++j)
+	ch_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
       ch_line_c(c);
     }
 #else

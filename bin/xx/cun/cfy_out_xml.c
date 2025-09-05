@@ -48,11 +48,11 @@ cx_body(Cfy *c)
 {
 #if 1
   int i, j;
-  for (i = 0; c->elt_lines[i]; ++i)
+  for (i = 0; c->elt_lines[i]->epp; ++i)
     {
-      cx_line_o(c, c->elt_lines[i][0]->data);
-      for (j = 1; c->elt_lines[i][j]; ++j)
-	cx_elt_p[c->elt_lines[i][j]->etype](c, c->elt_lines[i][j]);
+      cx_line_o(c, c->elt_lines[i]->epp[0]->data);
+      for (j = 1; c->elt_lines[i]->epp[j]; ++j)
+	cx_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
       cx_line_c(c);
     }
 #else

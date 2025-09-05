@@ -10,27 +10,27 @@ int espaces[ELT_LAST];
  * entire run of breakage elements to be match the environment
  */
 void
-cfy_breakage(Cfy *c, Elt **ep)
+cfy_breakage(Cfy *c, Elt **epp)
 {
   int i;
   Btype last_breakage = BRK_NONE;
-  for (i = 0; ep[i]; ++i)
+  for (i = 0; epp[i]; ++i)
     {
-      if (espaces[ep[i]->etype])
+      if (espaces[epp[i]->etype])
 	{
 	  if (last_breakage != BRK_NONE)
 	    {
 	      int j = i+1;
-	      while (ep[j] && espaces[ep[j]->etype])
+	      while (epp[j] && espaces[epp[j]->etype])
 		++j;
-	      if (ep[j] && ep[j]->btype == last_breakage)
+	      if (epp[j] && epp[j]->btype == last_breakage)
 		{
 		  while (i < j)
-		    ep[i++]->btype = last_breakage;
+		    epp[i++]->btype = last_breakage;
 		}
 	    }
 	}
       else
-	last_breakage = ep[i]->btype;
+	last_breakage = epp[i]->btype;
     }
 }

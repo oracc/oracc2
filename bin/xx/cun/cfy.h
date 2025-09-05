@@ -7,6 +7,7 @@
 struct cell;
 struct class;
 struct line;
+struct eltline;
 
 /* Global management structure */
 typedef struct Cfy
@@ -30,12 +31,13 @@ typedef struct Cfy
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
 		   of 'line'; one day this might align with
 		   'line'--needs ATF support */
-  struct elt ***elt_lines; /* NULL-terminated array of lines rewritten as
-		      NULL-terminated arrays of Elt* */
+  struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
+				 NULL-terminated arrays of Eltline* */
   struct class *c;	/* the class for the initial state */
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
+  const char *config; /* config file name */
   int html;
   int weboutput;
 } Cfy;
@@ -140,7 +142,8 @@ typedef enum btype { BRK_NONE /*clear*/,
 		     BRK_LOST /*broken*/
 } Btype;
 
-typedef enum gtype { G_V /*g:v value*/,
+typedef enum gtype { G_NOT,
+		     G_V /*g:v value*/,
 		     G_S /*g:s sign*/,
 		     G_N /*g:n number*/,
 		     G_Q /*seQuence member from split @ucun*/,
@@ -169,6 +172,12 @@ typedef struct line
   const char *label;
 } Line;
 
+typedef struct eltline
+{
+  Elt **epp;
+  int len;
+} Eltline;
+
 typedef struct cell
 {
   int span;
@@ -182,6 +191,8 @@ typedef struct subspec
   int end;	/* did the left spec end with '$' */
   Elt **l;	/* left elements */
   Elt **r;	/* right elements */
+  int l_len;
+  int r_len;
 } Subspec;
 
 /* Access the u8 member of the Elt in the data member of the List node lp */
@@ -222,8 +233,9 @@ extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 extern Hash **cfy_lig_load(const char *ligfile);
 extern void cfy_lig_line(Cfy *c, List *lp);
 extern void cfy_reset(void);
-extern void cfy_breakage(Cfy *c, Elt **ep);
+extern void cfy_breakage(Cfy *c, Elt **epp);
 extern void cfy_ligatures(Cfy*c, Elt **epp);
+extern void cfy_subbings(Cfy *c, Eltline *elp);
 
 extern void cfy_cfg_elt_g(Mloc m, Cfy *c, uccp g);
 extern void cfy_cfg_elt_f(Mloc m, Cfy *c);
@@ -234,7 +246,8 @@ extern void cfy_cfg_elt_j(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_n(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_q(Mloc m, Cfy *c, uccp q);
 
+extern int cfy_cfg_load(Cfy *c, const char *cfgfile);
 extern void cfy_cfg_stash(Mloc m, Cfy *c);
-extern char *elts_key(Cfy *c, Elt **lelts, int n);
+extern const char *elts_one_key(Elt *e);
 
 #endif/*CFY_H_*/
