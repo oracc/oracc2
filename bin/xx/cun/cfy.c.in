@@ -15,6 +15,7 @@ Cfy cfy;
 int buildmode = 0;
 int force = 0; /* default is not to remake if the output already exists */
 int no_output = 0;
+int trace = 0;
 int verbose = 0;
 int weboutput = 0;
 
@@ -89,6 +90,7 @@ cfy_term(void)
   hash_free(cfy.hfonts, NULL);
   memo_term(cfy.m_class);
   memo_term(cfy.m_elt);
+  free(cfy.elt_lines); /* this one is calloc'ed */
   memo_term(cfy.m_eltline);
   memo_term(cfy.m_cell);
   memo_term(cfy.m_line);
@@ -101,17 +103,17 @@ static void
 cfy_post(Cfy *c)
 {
   /* Flatten the list of lists into an array of arrays */
-  c->elt_lines = calloc(list_len(c->body), sizeof(Eltline*));
+  c->elt_lines = calloc(list_len(c->body)+1, sizeof(Eltline*));
+  
   int i;
   List *lp;
   for (i = 0, lp = list_first(c->body); lp; ++i, lp = list_next(c->body))
     {
-      int len;
       c->elt_lines[i] = memo_new(c->m_eltline);
       c->elt_lines[i]->epp = (Elt**)list2array_c(lp, &c->elt_lines[i]->len);
     }
-  /*c->elt_lines[i] = (Elt**)list2array(lp);*/
-
+  c->elt_lines[i] = NULL;
+  
   for (i = 0; c->elt_lines[i]; ++i)
     {
       cfy_subbings(c, c->elt_lines[i]);
@@ -124,7 +126,7 @@ int
 main(int argc, char **argv)
 {  
   outfp = stdout;
-  options(argc, argv, "bc:fhi:l:no:p:P:q:st:vw");
+  options(argc, argv, "bc:fhi:l:no:p:P:q:st:Tvw");
 
   cfyset_debug(0);
   gdlset_debug(0);
@@ -196,7 +198,13 @@ main(int argc, char **argv)
 	    outpath = strdup(outfile);
 	}
     }
-  
+
+  if (!f[0])
+    {
+      fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
+      exit(1);
+    }
+
   if (verbose)
     show_vars();
 
@@ -213,20 +221,23 @@ main(int argc, char **argv)
 		  exit(1);
 		}
 	    }
-
-	  runexpat_omit_rp_wrap();
-	  if (!setjmp(done))
-	    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
-	  cfy_post(&cfy);
-	  if (cfy.html)
-	    cfy_render(&cfy, "html");
-	  else
-	    cfy_render(&cfy, "xml");
 	}
-      else
-	fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
     }
+  
+  runexpat_omit_rp_wrap();
+  if (!setjmp(done))
+    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
 
+  cfy_post(&cfy);
+  
+  if (!no_output)
+    {
+      if (cfy.html)
+	cfy_render(&cfy, "html");
+      else
+	cfy_render(&cfy, "xml");
+    }
+  
   cfy_term();
 }
 
@@ -257,7 +268,7 @@ opts(int opt, const char *arg)
       arg_lig_file = arg;
       break;
     case 'n':
-      verbose = no_output = 1;
+      no_output = 1;
       break;
     case 'o':
       outfile = arg;
@@ -273,6 +284,9 @@ opts(int opt, const char *arg)
       break;
     case 't':
       translation = arg;
+      break;
+    case 'T':
+      trace = 1;
       break;
     case 'v':
       verbose = 1;

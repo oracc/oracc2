@@ -4,13 +4,15 @@
 #define CFY_SUB_MAX	1024
 
 static Subspec *
-sub_match(Cfy *c, Elt **epp, int i)
+sub_match(Cfy *c, Elt **epp, int i, Subspec *hsp)
 {
   char buf[CFY_SUB_MAX];
-  Subspec *msp = NULL; /* matching Subspec */
-  int j = i;
-  *buf = '\0';
-  while (epp[j])
+  int j;
+  Subspec *msp = (hsp->terminal ? hsp : NULL); /* matching Subspec */
+  strcpy(buf, epp[i]->key);
+  if (trace && msp)
+    fprintf(stderr, "trace: sub_match() entered with single-elt terminal %s\n", buf);
+  for (j = i+1; epp[j]; ++j)
     {
       const char *k = elts_one_key(epp[j]);
       if (k) /* deleted nodes return NULL so they get ignored */
@@ -25,14 +27,22 @@ sub_match(Cfy *c, Elt **epp, int i)
 	      if (*buf)
 		strcat(buf, "_");
 	      strcat(buf, k);
+	      if (trace)
+		fprintf(stderr, "trace: sub_match trying hsubkeys for %s\n", buf);
 	      Subspec *sp = hash_find(c->hsubkeys, (uccp)buf);
 	      if (sp)
-		msp = sp; /* keep trying so matching is greedy */
+		{
+		  if (sp->terminal)
+		    msp = sp; /* last longest match but keep trying because match is greedy */
+		  if (trace)
+		    fprintf(stderr,
+			    "trace: sub_match found %s %s\n",
+			    sp->terminal ? "terminal" : "subpath", buf);
+		}
 	      else
 		break; /* quit on first match failure */
 	    }
 	}
-      ++j;
     }
   /* the last successful match, if any, is now in msp */
   return msp;
@@ -78,9 +88,10 @@ cfy_subbings(Cfy *c, Eltline *elp)
   int i;
   for (i = 0; elp->epp[i]; )
     {
-      if (elp->epp[i]->key && hash_find(c->hsubhead, (uccp)elp->epp[i]->key))
+      Subspec *hsp;
+      if (elp->epp[i]->key && (hsp = hash_find(c->hsubkeys, (uccp)elp->epp[i]->key)))
 	{
-	  Subspec *sp = sub_match(c, elp->epp, i);
+	  Subspec *sp = sub_match(c, elp->epp, i, hsp);
 	  /* because this does not increment i we should implement an
 	     infinite-loop trap because multiple subspecs could
 	     recreate matches for each other */

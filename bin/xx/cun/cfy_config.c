@@ -93,6 +93,14 @@ elts_key(Cfy *c, Elt **lelts, int n)
   return p;
 }
 
+static Subspec *
+sp_clone(Cfy *c, Subspec *sp)
+{
+  Subspec *clone = memo_new(c->m_subspec);
+  *clone = *sp;
+  return clone;
+}
+
 void
 cfy_cfg_stash(Mloc m, Cfy *c)
 {
@@ -104,14 +112,59 @@ cfy_cfg_stash(Mloc m, Cfy *c)
     {
       sp->l = (Elt**)list2array_c(lhs, &sp->l_len);
       sp->r = (Elt**)list2array_c(rhs, &sp->r_len);
-      if (sp->l[0]->key)
-	hash_add(c->hsubhead, (uccp)sp->l[0]->key, "");
-      else
+      if (!sp->l[0]->key)
 	{
 	  mesg_verr(&m, "substitution must begin with a grapheme");
 	  ++cfy_cfg_status;
 	}
-      hash_add(c->hsubkeys, (uccp)elts_key(c, sp->l, sp->l_len), sp);
+      else
+	{
+	  /* check that this isn't a duplicate */
+	  const char *ek = elts_key(c, sp->l, sp->l_len);
+	  Subspec *hsp = hash_find(c->hsubkeys, (uccp)ek);
+	  if (hsp && !hsp->terminal)
+	    {
+	      mesg_verr(&m, "duplicate left subspec %s\n", ek);
+	      ++cfy_cfg_status;
+	    }
+	  else
+	    {
+	      /* add subpaths, not overwriting any previous terminal subpaths */
+	      char buf[strlen(ek)+1];
+	      strcpy(buf, ek);
+	      char *uscore;
+	      sp->terminal = 0;
+	      while ((uscore = strrchr(buf, '_')))
+		{
+		  *uscore = '\0';
+		  /* If subpath is in hash then hsp is either subpath
+		     or terminal; since buf is also a subpath and we
+		     wouldn't want to override a terminal with a
+		     subpath we don't need to update hsp with a new
+		     Subspec clone here */
+		  if (!(hsp = hash_find(c->hsubkeys, (uccp)buf)))
+		    {
+		      if (trace)
+			fprintf(stderr,
+				"trace: cfy_cfg_stash() adding subpath %s for key %s\n",
+				buf, ek);
+		      /* This is a new subpath; we need to clone the
+			 Subspec to ensure sp->terminal stays 0 */
+		      hash_add(c->hsubkeys, (uccp)hpool_copy((uccp)buf,c->hp), sp_clone(c, sp));
+		    }
+		  else if (trace)
+		    fprintf(stderr,
+			    "trace: cfy_cfg_stash() subpath %s for key %s is a terminal\n",
+			    buf, ek);
+		}
+	      sp->terminal = 1;
+	      hash_add(c->hsubkeys, (uccp)ek, sp);
+	      if (trace)
+		fprintf(stderr,
+			"trace: cfy_cfg_stash() adding terminal %s\n",
+			ek);
+	    }
+	}
     }
   else
     mesg_verr(&m, "substitution specification ignored because of errors\n");
@@ -147,7 +200,7 @@ cfy_cfg_elt_g(Mloc m, Cfy *c, uccp g)
     {
       uccp gkey = gvl_key(tp->root->kids->user, c->p);
       if (gkey)
-	ep->key = (ccp)g;
+	ep->key = (ccp)gkey;
       else
 	++cfy_cfg_status;
     }

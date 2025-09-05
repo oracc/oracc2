@@ -194,6 +194,7 @@ typedef struct subspec
   Elt **r;	/* right elements */
   int l_len;
   int r_len;
+  int terminal; /* 1 if this is a terminal match */
 } Subspec;
 
 /* Access the u8 member of the Elt in the data member of the List node lp */
@@ -218,6 +219,7 @@ extern struct perfnt *perfnt (register const char *str, register size_t len);
 
 extern jmp_buf done;
 extern int anchor_start, anchor_end;
+extern int trace, verbose;
 extern Cfy cfy;
 extern const char *brk_str[];
 
