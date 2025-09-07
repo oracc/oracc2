@@ -21,8 +21,8 @@ CFYLTYPE cfylloc;
 
 %union { char *s; int i; }
 
-%token <i> EOL FILL GOESTO RETURN WORD ZWJ ZWNJ
-%token <s> GRAPHEME LITERAL
+%token <i> FILL GOESTO RETURN STRUCTMEM WORD ZWJ ZWNJ
+%token <s> ELTREF GRAPHEME LITERAL MEMBER VALUE
 
 %start sublist
 
@@ -38,8 +38,7 @@ subs:
 	;
 
 sub:
-	  EOL
-	| lelts GOESTO { elts_rhs = 1; } elts { cfy_cfg_stash(@$, &cfy); } EOL
+	lelts GOESTO { elts_rhs = 1; } relts { cfy_cfg_stash(@$, &cfy); } '.'
 	;
 
 lelts:
@@ -49,9 +48,17 @@ lelts:
 	| '^' elts '$'
 	;
 
-elts:
-	elt
+relts:    elts
+	| assignment
+	;
+
+elts:     elt
 	| elts elt
+	;
+
+assignment:
+	  ELTREF '=' VALUE			{ cfy_cfg_asgn(@1, &cfy, atoi($1), NULL, $3); }
+	| ELTREF STRUCTMEM MEMBER '=' VALUE	{ cfy_cfg_asgn(@1, &cfy, atoi($1), $3, $5); }
 	;
 
 elt:	  GRAPHEME 	{ cfy_cfg_elt_g(@1, &cfy, (uccp)$1); }

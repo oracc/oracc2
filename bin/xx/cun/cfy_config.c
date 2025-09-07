@@ -176,6 +176,12 @@ cfy_cfg_stash(Mloc m, Cfy *c)
 
 static List *lhs = NULL, *rhs = NULL;
 
+void
+cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val)
+{
+  
+}
+
 static Elt *
 cfy_cfg_elt(Cfy *c, Etype e)
 {

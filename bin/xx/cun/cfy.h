@@ -252,5 +252,6 @@ extern void cfy_cfg_elt_q(Mloc m, Cfy *c, uccp q);
 extern int cfy_cfg_load(Cfy *c, const char *cfgfile);
 extern void cfy_cfg_stash(Mloc m, Cfy *c);
 extern const char *elts_one_key(Elt *e);
+extern void cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val);
 
 #endif/*CFY_H_*/

@@ -13,6 +13,7 @@ Cfy cfy;
    specified outputs are generated into the PQX-dir where the xtf
    lives */
 int buildmode = 0;
+int config_and_exit = 0;
 int force = 0; /* default is not to remake if the output already exists */
 int no_output = 0;
 int trace = 0;
@@ -126,22 +127,26 @@ int
 main(int argc, char **argv)
 {  
   outfp = stdout;
-  options(argc, argv, "bc:fhi:l:no:p:P:q:st:Tvw");
+  options(argc, argv, "bC:c:fhi:l:no:p:P:q:st:Tvw");
 
-  cfyset_debug(0);
+  cfyset_debug(verbose);
   gdlset_debug(0);
   
   cfy_init();
 
   if (cfy.config)
-    if (cfy_cfg_load(&cfy, cfy.config))
-      {
-	extern int cfylineno;
-	mesg_warning(cfy.config, cfylineno,
-		     "cfy exiting because of configuration errors.");
-	mesg_print(stderr);	
-	exit(1);
-      }
+    {
+      if (cfy_cfg_load(&cfy, cfy.config))
+	{
+	  extern int cfylineno;
+	  mesg_warning(cfy.config, cfylineno,
+		       "cfy exiting because of configuration errors.");
+	  mesg_print(stderr);	
+	  exit(1);
+	}
+      else if (config_and_exit)
+	exit(0);
+    }
   
   if (period)
     {
@@ -249,6 +254,8 @@ opts(int opt, const char *arg)
     case 'b':
       buildmode = 1;
       break;
+    case 'C':
+      config_and_exit = 1;
     case 'c':
       cfy.config = arg;
       break;
