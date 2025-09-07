@@ -199,6 +199,7 @@ typedef struct subspec
   int l_len;
   int r_len;
   int terminal; /* 1 if this is a terminal match */
+  int has_assignment; /* 1 if assignments are used in the subspec */
   Elt **lrefs;	/* when eltrefs are used in the config they are
 		   accessed through these pointers to clones */
 } Subspec;

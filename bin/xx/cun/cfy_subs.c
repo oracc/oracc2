@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <stddef.h>
 #include "cfy.h"
 
 #define CFY_SUB_MAX	1024
@@ -56,6 +57,43 @@ sub_match(Cfy *c, Elt **epp, int i, Subspec *hsp)
   return msp;
 }
 
+/* Exec any assignments in the rhs; clone the lhs elt into the rhs elt
+   only once so that multiple assignments to the same lhs elt are
+   applied to the same clone instance */
+static Elt **
+sub_r_asgn(Cfy *c, Subspec *sp)
+{
+  int i;
+  int *lrefs = calloc(sp->l_len, sizeof(int));
+  for (i = 0; i < sp->r_len; ++i)
+    {
+      if (sp->r[i]->etype == ELT_A)
+	{
+	  Assignment *ap = sp->r[i]->data;
+	  if (!lrefs[i])
+	    {
+	      lrefs[i] = 1;
+	      sp->r[i] = elt_clone(c, sp->l[i]);
+	    }
+	  if (ap->offof != UINTPTR_MAX)
+	    {
+	      if (ap->valtype == V_STR)
+		sp->r[i]->data = ap->value;
+	      else if (ap->offof == offsetof(Elt,etype))
+		sp->r[i]->etype = (Etype)(uintptr_t)ap->value;
+	      else if (ap->offof == offsetof(Elt,btype))
+		sp->r[i]->btype = (Btype)(uintptr_t)ap->value;
+	      else if (ap->offof == offsetof(Elt,gtype))
+		sp->r[i]->gtype = (Gtype)(uintptr_t)ap->value;
+	      else
+		fprintf(stderr, "cfy: uknown Elt data-member with offset %d",
+			(int)(uintptr_t)ap->value);
+	    }
+	}
+    }
+  free(lrefs);
+}
+
 /* For ELT_G types, import class, oid, xid from original data to replacement sp->r */
 static Elt **
 sub_r_fix(Cfy *c, Eltline *elp, int i, Subspec *sp)
@@ -103,8 +141,14 @@ sub_r_fix(Cfy *c, Eltline *elp, int i, Subspec *sp)
 static Elt **
 sub_replace(Cfy *c, Eltline *elp, int i, Subspec *sp, int *ip)
 {
+  Elt **new_r = NULL;
+  
+  if (sp->has_assignment)
+    new_r = sub_r_asgn(c, sp);
+  else
+    new_r = sub_r_fix(c, elp, i, sp);
+  
   Elt**dest = elp->epp;
-  Elt **new_r = sub_r_fix(c, elp, i, sp);
   if (sp->r_len > sp->l_len)
     {
       int nlen = elp->len + (sp->r_len - sp->l_len) + 1;

@@ -8,6 +8,7 @@
 int cfy_cfg_status; /* set to 1 if there are parse errors for a sub */
 static List *lhs, *rhs;
 extern int elts_rhs;
+int sub_has_assignment;
 
 int
 cfy_cfg_load(Cfy *c, const char *cfgfile)
@@ -100,16 +101,6 @@ elts_key(Cfy *c, Elt **lelts, int n)
   return p;
 }
 
-#if 0
-static Elt *
-elt_clone(Cfy *c, Elt *ep)
-{
-  Elt *clone = memo_new(c->m_elt);
-  *clone = *ep;
-  return clone;
-}
-#endif
-
 static Subspec *
 sp_clone(Cfy *c, Subspec *sp)
 {
@@ -129,6 +120,11 @@ cfy_cfg_stash(Mloc m, Cfy *c)
     {
       sp->l = (Elt**)list2array_c(lhs, &sp->l_len);
       sp->r = (Elt**)list2array_c(rhs, &sp->r_len);
+      if (sub_has_assignment)
+	{
+	  sp->has_assignment = sub_has_assignment;
+	  sub_has_assignment = 0;
+	}
       if (!sp->l[0]->key)
 	{
 	  mesg_verr(&m, "substitution must begin with a grapheme");
@@ -202,6 +198,8 @@ cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val)
       Elt *ep = memo_new(c->m_elt);
       ep->etype = ELT_A;
       ep->data = ap;
+      list_add(rhs, ep);
+      sub_has_assignment = 1;
       ap->lindex = nth;
       if (memb)
 	{
