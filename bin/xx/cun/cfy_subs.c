@@ -3,6 +3,14 @@
 
 #define CFY_SUB_MAX	1024
 
+static Elt *
+elt_clone(Cfy *c, Elt *ep)
+{
+  Elt *clone = memo_new(c->m_elt);
+  *clone = *ep;
+  return clone;
+}
+
 static Subspec *
 sub_match(Cfy *c, Elt **epp, int i, Subspec *hsp)
 {

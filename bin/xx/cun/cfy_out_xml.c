@@ -7,6 +7,7 @@ static void cx_foot(Cfy *c);
 static void cx_line_o(Cfy *c, Line *l);
 static void cx_line_c(Cfy *c);
 
+static void cx_elt_NOT(Cfy*c, Elt *e);
 static void cx_elt_L(Cfy*c, Elt *e);
 static void cx_elt_C(Cfy*c, Elt *e);
 static void cx_elt_W(Cfy*c, Elt *e);
@@ -19,7 +20,8 @@ static void cx_elt_X(Cfy*c, Elt *e);
 static void cx_elt_D(Cfy*c, Elt *e);
 
 typedef void (cx_elt)(Cfy*c,Elt*e);
-cx_elt* cx_elt_p[] = { cx_elt_L, cx_elt_C, cx_elt_W, cx_elt_G,
+cx_elt* cx_elt_p[] = { cx_elt_NOT,
+		       cx_elt_L, cx_elt_C, cx_elt_W, cx_elt_G,
 		       cx_elt_J, cx_elt_N, cx_elt_F, cx_elt_R,
 		       cx_elt_X, cx_elt_D };
 
@@ -67,6 +69,8 @@ cx_body(Cfy *c)
     }
 #endif
 }
+
+static void cx_elt_NOT(Cfy *c, Elt *e){} /* unused stub */
 
 static void
 cx_line_o(Cfy *c, Line *l)

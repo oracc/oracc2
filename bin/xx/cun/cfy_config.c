@@ -47,6 +47,8 @@ elts_one_key(Elt *e)
 {
   switch (e->etype)
     {
+    case ELT_NOT:
+      return NULL;
     case ELT_L:
       return "l";
     case ELT_C:
@@ -70,6 +72,9 @@ elts_one_key(Elt *e)
       return NULL;
     case ELT_Q:
       return e->data;	  
+    case ELT_A:
+      /* only used in subbing rule rhs */
+      return NULL;	  
     case ELT_LAST:
       return NULL; /* this can't happen */
     }
@@ -91,6 +96,14 @@ elts_key(Cfy *c, Elt **lelts, int n)
   free(s);
   list_free(klist, NULL);
   return p;
+}
+
+static Elt *
+elt_clone(Cfy *c, Elt *ep)
+{
+  Elt *clone = memo_new(c->m_elt);
+  *clone = *ep;
+  return clone;
 }
 
 static Subspec *

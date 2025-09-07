@@ -120,7 +120,8 @@ extern Class *curr_cp;
  * set to damaged as an approximation of the state of the ligature
  * sequence as a whole.
  */
-typedef enum elt_type { ELT_L /*line*/,
+typedef enum elt_type { ELT_NOT,
+			ELT_L /*line*/,
 			ELT_C /*cell*/,
 			ELT_W /*word*/,
 			ELT_G /*grapheme*/,
@@ -131,6 +132,7 @@ typedef enum elt_type { ELT_L /*line*/,
 			ELT_X /*'x' in input*/,
 			ELT_D /*deleted, for ligatures*/,
 			ELT_Q /*Quoted literal*/,
+			ELT_A /*Assignment, used in subbing rules */,
 			ELT_LAST
 } Etype;
 
@@ -138,7 +140,8 @@ extern int espaces[];
 
 extern const char *brk_str[];
 
-typedef enum btype { BRK_NONE /*clear*/,
+typedef enum btype { BRK_NOT,
+		     BRK_NONE /*clear*/,
 		     BRK_HASH /*damaged*/,
 		     BRK_LOST /*broken*/
 } Btype;
@@ -158,8 +161,8 @@ typedef struct elt
   Gtype gtype;    /* the grapheme type */
   Btype btype;    /* the breakage type */
   void *data;	  /* cuneiform, Line, or Cell */
-  Class *c;	  /* the current class for the grapheme; usually set at
-		   start of file but may be switched grapheme by
+  Class *c;	  /* the current class for the grapheme; usually set
+		   at start of file but may be switched grapheme by
 		   grapheme */
   const char *oid;/* OID for linking to sign list: may be a parent
 		     sign to the sign that is displayed in u8 */
@@ -195,7 +198,19 @@ typedef struct subspec
   int l_len;
   int r_len;
   int terminal; /* 1 if this is a terminal match */
+  Elt **lrefs;	/* when eltrefs are used in the config they are
+		   accessed through these pointers to clones */
 } Subspec;
+
+typedef enum vtype { V_NOT, V_INT, V_STR } Vtype;
+
+typedef struct assignment
+{
+  int lindex; 		/* index into lhs of sub rule */
+  uintptr_t offof; 	/* offsetof of member; UINTPTR_MAX if not set */
+  Vtype valtype;	/* value type */
+  void *value; 		/* value to assign; for vtype=V_INT this is (uintptr_t*)VALUE */
+} Assignment;
 
 /* Access the u8 member of the Elt in the data member of the List node lp */
 #define elt_grapheme(lp)	(((Elt*)(lp)->data)->etype==ELT_G)
@@ -216,6 +231,13 @@ struct perfnt
   const char *fnt;
 };
 extern struct perfnt *perfnt (register const char *str, register size_t len);
+
+struct subtok
+{
+  const char *name;
+  size_t memb_or_val; /* offsetof Elt member or value to assign to a member */
+  Vtype valtype;
+};  
 
 extern jmp_buf done;
 extern int anchor_start, anchor_end;
