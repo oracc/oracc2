@@ -21,6 +21,7 @@ typedef struct Cfy
   Hash *hsubhead;
   Hash *hsubkeys;
   Hash *hfonts;
+  Memo *m_assignment;
   Memo *m_class;
   Memo *m_line;
   Memo *m_cell;
@@ -202,12 +203,16 @@ typedef struct subspec
 		   accessed through these pointers to clones */
 } Subspec;
 
+typedef enum ttype { T_NOT, T_OFF, T_ELT, T_BRK, T_G } Ttype;
+
 typedef enum vtype { V_NOT, V_INT, V_STR } Vtype;
 
 typedef struct assignment
 {
   int lindex; 		/* index into lhs of sub rule */
   uintptr_t offof; 	/* offsetof of member; UINTPTR_MAX if not set */
+  Ttype toktype;	/* token type so we can trap mismatches
+			   between the member and the value token */
   Vtype valtype;	/* value type */
   void *value; 		/* value to assign; for vtype=V_INT this is (uintptr_t*)VALUE */
 } Assignment;
@@ -230,14 +235,16 @@ struct perfnt
   const char *name;
   const char *fnt;
 };
-extern struct perfnt *perfnt (register const char *str, register size_t len);
+extern struct perfnt *perfnt(register const char *str, register size_t len);
 
 struct subtok
 {
   const char *name;
   size_t memb_or_val; /* offsetof Elt member or value to assign to a member */
+  Ttype toktype;
   Vtype valtype;
 };  
+extern struct subtok *subtok(register const char *str, register size_t len);
 
 extern jmp_buf done;
 extern int anchor_start, anchor_end;

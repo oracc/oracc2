@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <stddef.h>
 #include <tree.h>
 #include <gdl.h>
 #include "cfy.h"
@@ -6,6 +7,7 @@
 
 int cfy_cfg_status; /* set to 1 if there are parse errors for a sub */
 static List *lhs, *rhs;
+extern int elts_rhs;
 
 int
 cfy_cfg_load(Cfy *c, const char *cfgfile)
@@ -98,6 +100,7 @@ elts_key(Cfy *c, Elt **lelts, int n)
   return p;
 }
 
+#if 0
 static Elt *
 elt_clone(Cfy *c, Elt *ep)
 {
@@ -105,6 +108,7 @@ elt_clone(Cfy *c, Elt *ep)
   *clone = *ep;
   return clone;
 }
+#endif
 
 static Subspec *
 sp_clone(Cfy *c, Subspec *sp)
@@ -192,13 +196,76 @@ static List *lhs = NULL, *rhs = NULL;
 void
 cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val)
 {
-  
+  if (elts_rhs)
+    {
+      Assignment *ap = memo_new(c->m_assignment);
+      Elt *ep = memo_new(c->m_elt);
+      ep->etype = ELT_A;
+      ep->data = ap;
+      ap->lindex = nth;
+      if (memb)
+	{
+	  struct subtok *sp = subtok(memb, strlen(memb));
+	  if (sp)
+	    {
+	      if (sp->toktype == T_OFF)
+		ap->offof = sp->memb_or_val;
+	      else
+		ap->offof = UINTPTR_MAX;
+	      if (sp->valtype == V_STR)
+		ap->value = (char*)val;
+	      else
+		{
+		  sp = subtok(val, strlen(val));
+		  if (sp)
+		    {
+		      if (ap->offof != UINTPTR_MAX)
+			{
+			  if (ap->offof == offsetof(Elt,etype) && sp->toktype != T_ELT)
+			    {
+			      mesg_verr(&m, "%s is not a known ELT token", val);
+			      ++cfy_cfg_status;
+			    }
+			  else if (ap->offof == offsetof(Elt,btype) && sp->toktype != T_BRK)
+			    {
+			      mesg_verr(&m, "%s is not a known BRK token", val);
+			      ++cfy_cfg_status;
+			    }
+			  else if (ap->offof == offsetof(Elt,gtype) && sp->toktype != T_G)
+			    {
+			      mesg_verr(&m, "%s is not a known G token", val);
+			      ++cfy_cfg_status;
+			    }
+			  else
+			    ap->value = (uintptr_t*)sp->memb_or_val;
+			}
+		      else
+			ap->value = (uintptr_t*)sp->memb_or_val;
+		    }
+		  else
+		    {
+		      mesg_verr(&m, "%s is not a known subbing token", val);
+		      ++cfy_cfg_status;
+		    }
+		}
+	    }
+	}
+      else
+	{
+	  mesg_verr(&m, "%s is not a member of Elt", memb);
+	  ++cfy_cfg_status;
+	}
+    }
+  else
+    {
+      mesg_verr(&m, "assignments only allowed after =>");
+      ++cfy_cfg_status;
+    }
 }
 
 static Elt *
 cfy_cfg_elt(Cfy *c, Etype e)
 {
-  extern int elts_rhs;
   if (!lhs)
     {
       lhs = list_create(LIST_SINGLE);

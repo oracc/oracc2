@@ -5,6 +5,6 @@
 %}
 struct subtok;
 %%
-"data", offsetof(Elt,data), V_STR
-"etype", offsetof(Elt,etype), V_INT
-"ELT_G", ELT_G, V_INT
+"data", offsetof(Elt,data), T_OFF, V_STR
+"etype", offsetof(Elt,etype), T_OFF, V_INT
+"ELT_G", ELT_G, T_ELT, V_INT

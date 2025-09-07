@@ -57,7 +57,8 @@ cfy_init(void)
   cfy.hp = hpool_init();
   cfy.hclasses = hash_create(32);
   cfy.hfonts = hash_create(8);
-  cfy.m_class = memo_init(sizeof(Class), 10);
+  cfy.m_assignment = memo_init(sizeof(Assignment), 16);
+  cfy.m_class = memo_init(sizeof(Class), 16);
   cfy.m_line = memo_init(sizeof(Line), 256);
   cfy.m_cell = memo_init(sizeof(Cell), 256);
   cfy.m_elt = memo_init(sizeof(Elt), 1024);
@@ -89,6 +90,7 @@ cfy_term(void)
   hpool_term(cfy.hp);
   hash_free(cfy.hclasses, NULL);
   hash_free(cfy.hfonts, NULL);
+  memo_term(cfy.m_assignment);
   memo_term(cfy.m_class);
   memo_term(cfy.m_elt);
   free(cfy.elt_lines); /* this one is calloc'ed */
