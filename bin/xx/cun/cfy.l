@@ -21,7 +21,7 @@ int anchor_start, anchor_end;
 anchor_e	"$"
 anchor_s	"^"
 comment		^"#".*/[\n\r]
-eltref		(^@[0-9]+)
+eltref		@[0-9]+
 endrule		"."
 equals		=
 fill		"++"
@@ -32,7 +32,7 @@ literal		'"'[^\"\n\r]+'"'
 member		[a-zA-Z0-9][a-zA-Z0-9_]
 return		"&r"
 structmem      	"->"
-value		(^"$"[a-zA-Z][a-zA-Z0-9_]*)
+value		"$"[a-zA-Z][a-zA-Z0-9_]*
 word		"&w"
 ws		[ \t\r\n]+
 zwj		"&j"

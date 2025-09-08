@@ -200,7 +200,13 @@ cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val)
       ep->data = ap;
       list_add(rhs, ep);
       sub_has_assignment = 1;
-      ap->lindex = nth;
+      if (nth > 0 && nth <= list_len(lhs))
+	  ap->lindex = nth-1;
+      else
+	{
+	  mesg_verr(&m, "@-index is should be > 0 and <= %d", list_len(lhs));
+	  ++cfy_cfg_status;
+	}
       if (memb)
 	{
 	  struct subtok *sp = subtok(memb, strlen(memb));
@@ -247,12 +253,14 @@ cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val)
 		    }
 		}
 	    }
+	  else
+	    {
+	      mesg_verr(&m, "%s is not a member of Elt", memb);
+	      ++cfy_cfg_status;
+	    }
 	}
       else
-	{
-	  mesg_verr(&m, "%s is not a member of Elt", memb);
-	  ++cfy_cfg_status;
-	}
+	ap->offof = UINTPTR_MAX;
     }
   else
     {

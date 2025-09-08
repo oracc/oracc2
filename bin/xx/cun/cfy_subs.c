@@ -61,7 +61,7 @@ sub_match(Cfy *c, Elt **epp, int i, Subspec *hsp)
    only once so that multiple assignments to the same lhs elt are
    applied to the same clone instance */
 static Elt **
-sub_r_asgn(Cfy *c, Subspec *sp)
+sub_r_asgn(Cfy *c, Eltline *elp, int elp_i, Subspec *sp)
 {
   int i;
   int *lrefs = calloc(sp->l_len, sizeof(int));
@@ -70,10 +70,10 @@ sub_r_asgn(Cfy *c, Subspec *sp)
       if (sp->r[i]->etype == ELT_A)
 	{
 	  Assignment *ap = sp->r[i]->data;
-	  if (!lrefs[i])
+	  if (!lrefs[ap->lindex])
 	    {
-	      lrefs[i] = 1;
-	      sp->r[i] = elt_clone(c, sp->l[i]);
+	      lrefs[ap->lindex] = 1;
+	      sp->r[i] = elt_clone(c, elp->epp[elp_i+ap->lindex]);
 	    }
 	  if (ap->offof != UINTPTR_MAX)
 	    {
@@ -92,6 +92,7 @@ sub_r_asgn(Cfy *c, Subspec *sp)
 	}
     }
   free(lrefs);
+  return sp->r;
 }
 
 /* For ELT_G types, import class, oid, xid from original data to replacement sp->r */
@@ -144,7 +145,7 @@ sub_replace(Cfy *c, Eltline *elp, int i, Subspec *sp, int *ip)
   Elt **new_r = NULL;
   
   if (sp->has_assignment)
-    new_r = sub_r_asgn(c, sp);
+    new_r = sub_r_asgn(c, elp, i, sp);
   else
     new_r = sub_r_fix(c, elp, i, sp);
   

@@ -101,7 +101,7 @@ static const char *
 cx_breakage(Elt *e)
 {
   static char buf[10];
-  if (e->btype)
+  if (brk_str[e->btype])
     sprintf(buf, " brk=\"%s\"", brk_str[e->btype]);
   else
     *buf = '\0';
@@ -132,7 +132,7 @@ static void
 cx_elt_G(Cfy *c, Elt *e)
 {
   fprintf(c->o, "<g u=\"%s\" o=\"%s\" r=\"%s\"", (uccp)e->data, e->oid, e->xid);
-  if (e->btype)
+  if (brk_str[e->btype])
     fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
   fputs("/>", c->o);
 }

@@ -81,6 +81,7 @@ static void
 cfy_line(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
+  ep->etype = ELT_L;
   Line *lp = memo_new(c->m_line);
   lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);

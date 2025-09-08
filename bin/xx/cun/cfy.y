@@ -48,7 +48,11 @@ lelts:
 	| '^' elts '$'
 	;
 
-relts:    elts
+relts:    relt
+	| relts relt
+	;
+
+relt:	  elt
 	| assignment
 	;
 
@@ -57,7 +61,8 @@ elts:     elt
 	;
 
 assignment:
-	  ELTREF '=' VALUE			{ cfy_cfg_asgn(@1, &cfy, atoi($1), NULL, $3); }
+	  ELTREF				{ cfy_cfg_asgn(@1, &cfy, atoi($1), NULL, NULL); }
+	| ELTREF '=' VALUE			{ cfy_cfg_asgn(@1, &cfy, atoi($1), NULL, $3); }
 	| ELTREF STRUCTMEM MEMBER '=' VALUE	{ cfy_cfg_asgn(@1, &cfy, atoi($1), $3, $5); }
 	;
 
