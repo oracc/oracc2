@@ -4,14 +4,19 @@
 #include "runexpat.h"
 #include "cfy.h"
 
+extern void cfyset_debug (int debug_flag);
+extern void gdlset_debug (int debug_flag);
+
 Cfy cfy;
 
 /* The default is to generate outputs into the P4 cache; if -b is
    specified outputs are generated into the PQX-dir where the xtf
    lives */
 int buildmode = 0;
+int config_and_exit = 0;
 int force = 0; /* default is not to remake if the output already exists */
 int no_output = 0;
+int trace = 0;
 int verbose = 0;
 int weboutput = 0;
 
@@ -31,7 +36,7 @@ FILE *outfp = NULL;
 
 jmp_buf done;
 
-const char *brk_str[] = { NULL , "#", "[]" };
+const char *brk_str[] = { NULL, NULL , "#", "[]" };
 
 extern int options(int, char*const*,const char*);
 extern int optind;
@@ -52,21 +57,29 @@ cfy_init(void)
   cfy.hp = hpool_init();
   cfy.hclasses = hash_create(32);
   cfy.hfonts = hash_create(8);
-  cfy.m_class = memo_init(sizeof(Class), 10);
+  cfy.m_assignment = memo_init(sizeof(Assignment), 16);
+  cfy.m_class = memo_init(sizeof(Class), 16);
   cfy.m_line = memo_init(sizeof(Line), 256);
   cfy.m_cell = memo_init(sizeof(Cell), 256);
   cfy.m_elt = memo_init(sizeof(Elt), 1024);
+  cfy.m_eltline = memo_init(sizeof(Elt), 256);
   cfy.body = list_create(LIST_SINGLE);
   cfy_reader_init();
   cfy.o = stdout;
   cfy.pqx = "X000000";
-  cfy.fnt = "noto";
-  cfy.key = "cfy-noto-*-100-middle-osl";
-  cfy.c = cfy_class(&cfy, cfy.key, NULL);
-#if 0
+  cfy.c = curr_cp;
+  cfy.key = cfy.c->key;
+  cfy.fnt = cfy.c->fnt;
+
+  mesg_init();
+  mloc_init();
+  
   if (arg_lig_file)
-    cfy.c->lig = cfy_lig_load(arg_lig_file);
-#endif
+    {
+      cfy.c->lig = cfy_lig_load(arg_lig_file);
+      hash_add(cfy.hfonts, (uccp)cfy.c->fnt, cfy.c);
+    }
+
   espaces[ELT_C] = espaces[ELT_W] = espaces[ELT_J] = espaces[ELT_N] = espaces[ELT_F] = 1;
 }
 
@@ -77,36 +90,66 @@ cfy_term(void)
   hpool_term(cfy.hp);
   hash_free(cfy.hclasses, NULL);
   hash_free(cfy.hfonts, NULL);
+  memo_term(cfy.m_assignment);
   memo_term(cfy.m_class);
   memo_term(cfy.m_elt);
+  free(cfy.elt_lines); /* this one is calloc'ed */
+  memo_term(cfy.m_eltline);
+  memo_term(cfy.m_cell);
   memo_term(cfy.m_line);
+
+  mloc_term();
+  mesg_term();
 }
 
 static void
 cfy_post(Cfy *c)
 {
   /* Flatten the list of lists into an array of arrays */
-  c->elt_lines = calloc(list_len(c->body), sizeof(Elt*));
+  c->elt_lines = calloc(list_len(c->body)+1, sizeof(Eltline*));
+  
   int i;
   List *lp;
   for (i = 0, lp = list_first(c->body); lp; ++i, lp = list_next(c->body))
-    c->elt_lines[i] = (Elt**)list2array(lp);
-
+    {
+      c->elt_lines[i] = memo_new(c->m_eltline);
+      c->elt_lines[i]->epp = (Elt**)list2array_c(lp, &c->elt_lines[i]->len);
+    }
+  c->elt_lines[i] = NULL;
+  
   for (i = 0; c->elt_lines[i]; ++i)
     {
-      /*cfy_ligatures(c, c->elt_lines[i]);*/
-      cfy_breakage(c, c->elt_lines[i]);
+      cfy_subbings(c, c->elt_lines[i]);
+      cfy_ligatures(c, c->elt_lines[i]->epp);
+      cfy_breakage(c, c->elt_lines[i]->epp);
     }
 }
 
 int
 main(int argc, char **argv)
-{
+{  
+  outfp = stdout;
+  options(argc, argv, "bC:c:fhi:l:no:p:P:q:st:Tvw");
+
+  cfyset_debug(verbose);
+  gdlset_debug(0);
+  
   cfy_init();
 
-  outfp = stdout;
-  options(argc, argv, "bfhi:l:no:p:P:q:st:vw");
-
+  if (cfy.config)
+    {
+      if (cfy_cfg_load(&cfy, cfy.config))
+	{
+	  extern int cfylineno;
+	  mesg_warning(cfy.config, cfylineno,
+		       "cfy exiting because of configuration errors.");
+	  mesg_print(stderr);	
+	  exit(1);
+	}
+      else if (config_and_exit)
+	exit(0);
+    }
+  
   if (period)
     {
       char xperiod[strlen(period)+1], *t;
@@ -162,7 +205,13 @@ main(int argc, char **argv)
 	    outpath = strdup(outfile);
 	}
     }
-  
+
+  if (!f[0])
+    {
+      fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
+      exit(1);
+    }
+
   if (verbose)
     show_vars();
 
@@ -179,20 +228,23 @@ main(int argc, char **argv)
 		  exit(1);
 		}
 	    }
-
-	  runexpat_omit_rp_wrap();
-	  if (!setjmp(done))
-	    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
-	  cfy_post(&cfy);
-	  if (cfy.html)
-	    cfy_render(&cfy, "html");
-	  else
-	    cfy_render(&cfy, "xml");
 	}
-      else
-	fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
     }
+  
+  runexpat_omit_rp_wrap();
+  if (!setjmp(done))
+    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
 
+  cfy_post(&cfy);
+  
+  if (!no_output)
+    {
+      if (cfy.html)
+	cfy_render(&cfy, "html");
+      else
+	cfy_render(&cfy, "xml");
+    }
+  
   cfy_term();
 }
 
@@ -203,6 +255,11 @@ opts(int opt, const char *arg)
     {
     case 'b':
       buildmode = 1;
+      break;
+    case 'C':
+      config_and_exit = 1;
+    case 'c':
+      cfy.config = arg;
       break;
     case 'f':
       force = 1;
@@ -220,7 +277,7 @@ opts(int opt, const char *arg)
       arg_lig_file = arg;
       break;
     case 'n':
-      verbose = no_output = 1;
+      no_output = 1;
       break;
     case 'o':
       outfile = arg;
@@ -236,6 +293,9 @@ opts(int opt, const char *arg)
       break;
     case 't':
       translation = arg;
+      break;
+    case 'T':
+      trace = 1;
       break;
     case 'v':
       verbose = 1;

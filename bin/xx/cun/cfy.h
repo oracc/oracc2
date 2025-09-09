@@ -1,11 +1,13 @@
 #ifndef CFY_H_
 #define CFY_H_
 
+#include <oraccsys.h>
 #include <setjmp.h>
 
 struct cell;
 struct class;
 struct line;
+struct eltline;
 
 /* Global management structure */
 typedef struct Cfy
@@ -16,22 +18,28 @@ typedef struct Cfy
   Pool *p;
   Pool *hp;
   Hash *hclasses;
+  Hash *hsubhead;
+  Hash *hsubkeys;
   Hash *hfonts;
+  Memo *m_assignment;
   Memo *m_class;
   Memo *m_line;
   Memo *m_cell;
   Memo *m_elt;
+  Memo *m_eltline;
+  Memo *m_subspec;
   List *body; 	/* list of line or cline pointers for actual output */
   List *line; 	/* list of Elt built by cfy_reader */
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
 		   of 'line'; one day this might align with
 		   'line'--needs ATF support */
-  struct elt ***elt_lines; /* NULL-terminated array of lines rewritten as
-		      NULL-terminated arrays of Elt* */
+  struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
+				 NULL-terminated arrays of Eltline* */
   struct class *c;	/* the class for the initial state */
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
+  const char *config; /* config file name */
   int html;
   int weboutput;
 } Cfy;
@@ -112,9 +120,9 @@ extern Class *curr_cp;
  * span. If a sequence mixes breakage states, all of the breakage is
  * set to damaged as an approximation of the state of the ligature
  * sequence as a whole.
- *
  */
-typedef enum elt_type { ELT_L /*line; not presently used in this impl*/,
+typedef enum elt_type { ELT_NOT,
+			ELT_L /*line*/,
 			ELT_C /*cell*/,
 			ELT_W /*word*/,
 			ELT_G /*grapheme*/,
@@ -122,8 +130,10 @@ typedef enum elt_type { ELT_L /*line; not presently used in this impl*/,
 			ELT_N /*ZWNJ*/,
 			ELT_F /*fill*/,
 			ELT_R /*return*/,
-			ELT_X /*'x' in input */,
+			ELT_X /*'x' in input*/,
 			ELT_D /*deleted, for ligatures*/,
+			ELT_Q /*Quoted literal*/,
+			ELT_A /*Assignment, used in subbing rules */,
 			ELT_LAST
 } Etype;
 
@@ -131,12 +141,14 @@ extern int espaces[];
 
 extern const char *brk_str[];
 
-typedef enum btype { BRK_NONE /*clear*/,
+typedef enum btype { BRK_NOT,
+		     BRK_NONE /*clear*/,
 		     BRK_HASH /*damaged*/,
 		     BRK_LOST /*broken*/
 } Btype;
 
-typedef enum gtype { G_V /*g:v value*/,
+typedef enum gtype { G_NOT,
+		     G_V /*g:v value*/,
 		     G_S /*g:s sign*/,
 		     G_N /*g:n number*/,
 		     G_Q /*seQuence member from split @ucun*/,
@@ -146,16 +158,17 @@ typedef enum gtype { G_V /*g:v value*/,
 
 typedef struct elt
 {
-  Etype etype;	/* the element type */
-  Gtype gtype;  /* the grapheme type */
-  Btype btype;  /* the breakage type */
-  void *data;	/* cuneiform, Line, or Cell */
-  Class *c;	/* the current class for the grapheme; usually set at
-		   start of file but may be switched grapheme by
+  Etype etype;	  /* the element type */
+  Gtype gtype;    /* the grapheme type */
+  Btype btype;    /* the breakage type */
+  void *data;	  /* cuneiform, Line, or Cell */
+  Class *c;	  /* the current class for the grapheme; usually set
+		   at start of file but may be switched grapheme by
 		   grapheme */
   const char *oid;/* OID for linking to sign list: may be a parent
 		     sign to the sign that is displayed in u8 */
   const char *xid;/* grapheme id to be output as ref */
+  const char *key;/* ASL grapheme key for type ELT_G */
 } Elt;
 
 typedef struct line
@@ -164,10 +177,46 @@ typedef struct line
   const char *label;
 } Line;
 
+typedef struct eltline
+{
+  Elt **epp;
+  int len;
+} Eltline;
+
 typedef struct cell
 {
   int span;
 } Cell;
+
+/* Cuneify config defines substition specifications that are stored in
+   this structure */
+typedef struct subspec
+{
+  int start; 	/* did the left spec begin with '^' */
+  int end;	/* did the left spec end with '$' */
+  Elt **l;	/* left elements */
+  Elt **r;	/* right elements */
+  int l_len;
+  int r_len;
+  int terminal; /* 1 if this is a terminal match */
+  int has_assignment; /* 1 if assignments are used in the subspec */
+  Elt **lrefs;	/* when eltrefs are used in the config they are
+		   accessed through these pointers to clones */
+} Subspec;
+
+typedef enum ttype { T_NOT, T_OFF, T_ELT, T_BRK, T_G } Ttype;
+
+typedef enum vtype { V_NOT, V_INT, V_STR } Vtype;
+
+typedef struct assignment
+{
+  int lindex; 		/* index into lhs of sub rule */
+  uintptr_t offof; 	/* offsetof of member; UINTPTR_MAX if not set */
+  Ttype toktype;	/* token type so we can trap mismatches
+			   between the member and the value token */
+  Vtype valtype;	/* value type */
+  void *value; 		/* value to assign; for vtype=V_INT this is (uintptr_t*)VALUE */
+} Assignment;
 
 /* Access the u8 member of the Elt in the data member of the List node lp */
 #define elt_grapheme(lp)	(((Elt*)(lp)->data)->etype==ELT_G)
@@ -187,10 +236,21 @@ struct perfnt
   const char *name;
   const char *fnt;
 };
-extern struct perfnt *perfnt (register const char *str, register size_t len);
+extern struct perfnt *perfnt(register const char *str, register size_t len);
+
+struct subtok
+{
+  const char *name;
+  size_t memb_or_val; /* offsetof Elt member or value to assign to a member */
+  Ttype toktype;
+  Vtype valtype;
+};  
+extern struct subtok *subtok(register const char *str, register size_t len);
 
 extern jmp_buf done;
-
+extern int anchor_start, anchor_end;
+extern int trace, verbose;
+extern Cfy cfy;
 extern const char *brk_str[];
 
 extern void cfy_eH(void *userData, const char *name);
@@ -206,7 +266,22 @@ extern int file_args(const char *htmldir, const char *qpqx, const char *inext,
 extern Hash **cfy_lig_load(const char *ligfile);
 extern void cfy_lig_line(Cfy *c, List *lp);
 extern void cfy_reset(void);
-extern void cfy_breakage(Cfy *c, Elt **ep);
+extern void cfy_breakage(Cfy *c, Elt **epp);
 extern void cfy_ligatures(Cfy*c, Elt **epp);
+extern void cfy_subbings(Cfy *c, Eltline *elp);
+
+extern void cfy_cfg_elt_g(Mloc m, Cfy *c, uccp g);
+extern void cfy_cfg_elt_f(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_l(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_r(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_w(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_j(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_n(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_q(Mloc m, Cfy *c, uccp q);
+
+extern int cfy_cfg_load(Cfy *c, const char *cfgfile);
+extern void cfy_cfg_stash(Mloc m, Cfy *c);
+extern const char *elts_one_key(Elt *e);
+extern void cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val);
 
 #endif/*CFY_H_*/

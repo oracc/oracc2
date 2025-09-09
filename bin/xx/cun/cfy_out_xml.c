@@ -7,6 +7,7 @@ static void cx_foot(Cfy *c);
 static void cx_line_o(Cfy *c, Line *l);
 static void cx_line_c(Cfy *c);
 
+static void cx_elt_NOT(Cfy*c, Elt *e);
 static void cx_elt_L(Cfy*c, Elt *e);
 static void cx_elt_C(Cfy*c, Elt *e);
 static void cx_elt_W(Cfy*c, Elt *e);
@@ -19,7 +20,8 @@ static void cx_elt_X(Cfy*c, Elt *e);
 static void cx_elt_D(Cfy*c, Elt *e);
 
 typedef void (cx_elt)(Cfy*c,Elt*e);
-cx_elt* cx_elt_p[] = { cx_elt_L, cx_elt_C, cx_elt_W, cx_elt_G,
+cx_elt* cx_elt_p[] = { cx_elt_NOT,
+		       cx_elt_L, cx_elt_C, cx_elt_W, cx_elt_G,
 		       cx_elt_J, cx_elt_N, cx_elt_F, cx_elt_R,
 		       cx_elt_X, cx_elt_D };
 
@@ -38,7 +40,8 @@ cx_head(Cfy *c)
 {
   fprintf(c->o,
 	  "<cfy xmlns=\"http://oracc.org/ns/1.0/cuneify\" xml:id=\"cfy.%s\""
-	  " n=\"%s\" project=\"%s\" id=\"%s\" fnt=\"%s\" key=\"%s\">",
+	  " xmlns:cfy=\"http://oracc.org/ns/1.0/cuneify\""
+	  " n=\"%s\" project=\"%s\" id=\"%s\" cfy:fnt=\"%s\" cfy:key=\"%s\">",
 	  c->pqx, c->n, c->project, c->pqx, c->fnt, c->key);
 }
 
@@ -49,9 +52,9 @@ cx_body(Cfy *c)
   int i, j;
   for (i = 0; c->elt_lines[i]; ++i)
     {
-      cx_line_o(c, c->elt_lines[i][0]->data);
-      for (j = 1; c->elt_lines[i][j]; ++j)
-	cx_elt_p[c->elt_lines[i][j]->etype](c, c->elt_lines[i][j]);
+      cx_line_o(c, c->elt_lines[i]->epp[0]->data);
+      for (j = 1; c->elt_lines[i]->epp[j]; ++j)
+	cx_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
       cx_line_c(c);
     }
 #else
@@ -66,6 +69,8 @@ cx_body(Cfy *c)
     }
 #endif
 }
+
+static void cx_elt_NOT(Cfy *c, Elt *e){} /* unused stub */
 
 static void
 cx_line_o(Cfy *c, Line *l)
@@ -96,7 +101,7 @@ static const char *
 cx_breakage(Elt *e)
 {
   static char buf[10];
-  if (e->btype)
+  if (brk_str[e->btype])
     sprintf(buf, " brk=\"%s\"", brk_str[e->btype]);
   else
     *buf = '\0';
@@ -127,7 +132,7 @@ static void
 cx_elt_G(Cfy *c, Elt *e)
 {
   fprintf(c->o, "<g u=\"%s\" o=\"%s\" r=\"%s\"", (uccp)e->data, e->oid, e->xid);
-  if (e->btype)
+  if (brk_str[e->btype])
     fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
   fputs("/>", c->o);
 }

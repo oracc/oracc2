@@ -68,12 +68,17 @@ of class data.
 Ligatures
 =========
 
-For now, Cuneify does not handle ligatures specially (despite the
-existence of some code to do that).  Instead, Cuneify relies on the
-sign list to define sequences that can be ligatures, such as
-|IGI.RU|. Values (g:v) in the transliteration are output with wrapper
-nodes (HTML) or (for TeX) are interrupted by U+200B, ZERO WIDTH SPACE.
-In a font with an |IGI.RU| ligature, This prevents ši-ru from being
-ligatured while allowing |IGI.RU| (pad₃) to be ligatured.
+Cuneify loads ligature tables associated with fonts and ensures that
+characters that belong to ligatures are emitted within a single node
+to ensure that the ligatures are recognized.
 
-It also means that Cuneify can be font-agnostic in processing ATF.
+To break up ligatures use the following in ATF or in the sub table:
+
+	\- = ZWS
+	\  = ZWS
+
+To request a discretionary ligature use
+
+	+  = ZWJ
+
+***should every sign list sequence be a ligature in the font?

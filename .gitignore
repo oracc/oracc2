@@ -191,6 +191,7 @@ sll_signlist.c
 sllext.c
 sn_alias.c
 statnames.c
+subtok.c
 tokflags.c
 urlkeys.c
 whatfuncs.c

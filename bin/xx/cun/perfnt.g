@@ -1,6 +1,6 @@
 %{
 #include <oraccsys.h>
-#include "cun.h"
+#include "cfy.h"
 %}
 struct perfnt;
 %%
@@ -8,7 +8,7 @@ struct perfnt;
 "ED IIIb", "rsp"
 "Ur III", "noto"
 "Old Babylonian", "oobf"
-"Neo-Assyrian", "nao"
+"Neo-Assyrian", "nni"
 "Uruk III", "pc ss03",
 "Uruk IV", "pc ss04",
 "Uruk V", "pc",

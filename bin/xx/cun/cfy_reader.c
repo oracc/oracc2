@@ -64,7 +64,9 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   ep->c = cp;
   ep->oid = oid;
   ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
-  
+  const char *gkey = findAttr(atts, "key");
+  if (gkey && *gkey)
+    ep->key = (ccp)hpool_copy((uccp)gkey, c->hp);
   list_add(c->line, ep);
 
   /* add ZWJ/ZWNJ if the boundary requires it */
@@ -79,6 +81,7 @@ static void
 cfy_line(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
+  ep->etype = ELT_L;
   Line *lp = memo_new(c->m_line);
   lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);

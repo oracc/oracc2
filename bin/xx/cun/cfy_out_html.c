@@ -7,6 +7,7 @@ static void ch_foot(Cfy *c);
 static void ch_line_o(Cfy *c, Line *l);
 static void ch_line_c(Cfy *c);
 
+static void ch_elt_NOT(Cfy*c, Elt *e);
 static void ch_elt_L(Cfy*c, Elt *e);
 static void ch_elt_C(Cfy*c, Elt *e);
 static void ch_elt_W(Cfy*c, Elt *e);
@@ -19,7 +20,8 @@ static void ch_elt_X(Cfy*c, Elt *e);
 static void ch_elt_D(Cfy*c, Elt *e);
 
 typedef void (ch_elt)(Cfy*c,Elt*e);
-ch_elt* ch_elt_p[] = { ch_elt_L, ch_elt_C, ch_elt_W, ch_elt_G, ch_elt_J,
+ch_elt* ch_elt_p[] = { ch_elt_NOT,
+		       ch_elt_L, ch_elt_C, ch_elt_W, ch_elt_G, ch_elt_J,
 		       ch_elt_N, ch_elt_F, ch_elt_R, ch_elt_X,
 		       ch_elt_D };
 
@@ -73,9 +75,9 @@ ch_body(Cfy *c)
   int i, j;
   for (i = 0; c->elt_lines[i]; ++i)
     {
-      ch_line_o(c, c->elt_lines[i][0]->data);
-      for (j = 1; c->elt_lines[i][j]; ++j)
-	ch_elt_p[c->elt_lines[i][j]->etype](c, c->elt_lines[i][j]);
+      ch_line_o(c, c->elt_lines[i]->epp[0]->data);
+      for (j = 1; c->elt_lines[i]->epp[j]; ++j)
+	ch_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
       ch_line_c(c);
     }
 #else
@@ -120,6 +122,7 @@ ch_foot(Cfy *c)
 
 /* ch_elt_? */
 
+static void ch_elt_NOT(Cfy *c, Elt *e){} /* unused stub */
 static void ch_elt_L(Cfy *c, Elt *e){} /* unused stub */
 
 static void
