@@ -16,6 +16,7 @@ static void cx_elt_J(Cfy*c, Elt *e);
 static void cx_elt_N(Cfy*c, Elt *e);
 static void cx_elt_F(Cfy*c, Elt *e);
 static void cx_elt_R(Cfy*c, Elt *e);
+static void cx_elt_E(Cfy*c, Elt *e);
 static void cx_elt_X(Cfy*c, Elt *e);
 static void cx_elt_D(Cfy*c, Elt *e);
 
@@ -23,9 +24,34 @@ typedef void (cx_elt)(Cfy*c,Elt*e);
 cx_elt* cx_elt_p[] = { cx_elt_NOT,
 		       cx_elt_L, cx_elt_C, cx_elt_W, cx_elt_G,
 		       cx_elt_J, cx_elt_N, cx_elt_F, cx_elt_R,
-		       cx_elt_X, cx_elt_D };
+		       cx_elt_E, cx_elt_X, cx_elt_D };
 
 static int in_cell;
+
+static Btype last_b, curr_b;
+
+void
+cx_b_switch(Cfy *c, Btype this_b)
+{
+  if (brk_str[last_b])
+    fputs("</b>", c->o);
+  if (brk_str[this_b])
+    fprintf(c->o, "<b brk=\"%s\">", brk_str[this_b]);
+  last_b = curr_b = this_b;
+}
+
+/* if reset==0 don't reset curr_b; this is used when closing a
+   cell because then we are just suspending the breakage type to
+   balance the XML output */
+void
+cx_b_closer(Cfy *c, int reset)
+{
+  fputs("</b>", c->o);
+  if (reset)
+    last_b = curr_b = BRK_NONE;
+  else
+    last_b = BRK_NONE;
+}
 
 void
 cfy_out_xml(Cfy *c)
@@ -48,26 +74,20 @@ cx_head(Cfy *c)
 static void
 cx_body(Cfy *c)
 {
-#if 1
   int i, j;
   for (i = 0; c->elt_lines[i]; ++i)
     {
       cx_line_o(c, c->elt_lines[i]->epp[0]->data);
       for (j = 1; c->elt_lines[i]->epp[j]; ++j)
-	cx_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
+	{
+	  if (last_b != c->elt_lines[i]->epp[j]->btype)
+	    cx_b_switch(c, c->elt_lines[i]->epp[j]->btype);
+	  cx_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
+	}
+      if (brk_str[last_b])
+	cx_b_closer(c, 1);
       cx_line_c(c);
     }
-#else
-  List *lp;
-  for (lp = list_first(c->body); lp; lp = list_next(lp))
-    {
-      Elt *ep = list_first(lp);
-      cx_line_o(c, (Line *)ep->data);
-      for (ep = list_next(lp); ep; ep = list_next(lp))
-	cx_elt_p[ep->etype](c, ep);
-      cx_line_c(c);
-    }
-#endif
 }
 
 static void cx_elt_NOT(Cfy *c, Elt *e){} /* unused stub */
@@ -85,6 +105,8 @@ cx_line_c(Cfy*c)
 {
   if (in_cell)
     {
+      if (brk_str[last_b])
+	cx_b_closer(c, 0);
       fputs("</c>", c->o);
       in_cell = 0;
     }
@@ -117,8 +139,14 @@ cx_elt_C(Cfy *c, Elt *e)
 {
   Cell *cp = e->data;
   if (in_cell)
-    fputs("</c>", c->o);
+    {
+      if (brk_str[last_b])
+	cx_b_closer(c, 0);
+      fputs("</c>", c->o);
+    }
   fprintf(c->o, "<c span=\"%d\">", cp->span);
+  if (last_b != curr_b)
+    cx_b_switch(c, curr_b);
   in_cell = 1;
 }
 
@@ -162,11 +190,16 @@ cx_elt_R(Cfy *c, Elt *e)
 }
 
 static void
+cx_elt_E(Cfy *c, Elt *e)
+{
+  fprintf(c->o, "<x r=\"%s\"%s", e->xid, cx_breakage(e));
+  fputs(">...</x>", c->o);  
+}
+
+static void
 cx_elt_X(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<x r=\"%s\"", e->xid);
-  if (e->btype)
-    fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
+  fprintf(c->o, "<x r=\"%s\"%s", e->xid, cx_breakage(e));
   fputs("/>", c->o);  
 }
 

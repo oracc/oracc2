@@ -99,7 +99,9 @@ cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
     c->line = list_create(LIST_DOUBLE);
 
   Elt *ep = memo_new(c->m_elt);
-  ep->etype = ELT_X;
+  const char *gt = gt=findAttr(atts,"g:type");
+  ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
+  ep->etype = (!strcmp(gt,"ellipsis") ? ELT_E : ELT_X);
   ep->btype = brk;
   ep->c = cp;
   

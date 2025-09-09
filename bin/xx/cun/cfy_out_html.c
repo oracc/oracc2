@@ -16,13 +16,14 @@ static void ch_elt_J(Cfy*c, Elt *e);
 static void ch_elt_N(Cfy*c, Elt *e);
 static void ch_elt_F(Cfy*c, Elt *e);
 static void ch_elt_R(Cfy*c, Elt *e);
+static void ch_elt_E(Cfy*c, Elt *e);
 static void ch_elt_X(Cfy*c, Elt *e);
 static void ch_elt_D(Cfy*c, Elt *e);
 
 typedef void (ch_elt)(Cfy*c,Elt*e);
 ch_elt* ch_elt_p[] = { ch_elt_NOT,
 		       ch_elt_L, ch_elt_C, ch_elt_W, ch_elt_G, ch_elt_J,
-		       ch_elt_N, ch_elt_F, ch_elt_R, ch_elt_X,
+		       ch_elt_N, ch_elt_F, ch_elt_R, ch_elt_E, ch_elt_X,
 		       ch_elt_D };
 
 static int in_cell;
@@ -176,6 +177,15 @@ ch_elt_R(Cfy *c, Elt *e)
 
 static void
 ch_elt_X(Cfy *c, Elt *e)
+{
+  fprintf(c->o, "<x r=\"%s\"", e->xid);
+  if (e->btype)
+    fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
+  fputs(">...</x>", c->o);  
+}
+
+static void
+ch_elt_E(Cfy *c, Elt *e)
 {
   fprintf(c->o, "<x r=\"%s\"", e->xid);
   if (e->btype)

@@ -6,15 +6,15 @@ css_DATA=fonts.css *.cur
 
 DEF=	Oracc-Noto-SansCuneiform.def Oracc-gudea.def Oracc-NA-Outline.def \
 	Oracc-OBF-Regular.def CuneiformClassic-final.def Oracc-LAK.def \
-	Oracc-RSP.def PCSL.def
+	Oracc-RSP.def PCSL.def Nabuninuaihsus.def
 
 OFP=	Oracc-Noto-SansCuneiform.ofp Oracc-gudea.ofp Oracc-NA-Outline.ofp \
 	Oracc-OBF-Regular.ofp CuneiformClassic-final.ofp Oracc-LAK.ofp \
-	Oracc-RSP.ofp PCSL.ofp
+	Oracc-RSP.ofp PCSL.ofp Nabuninuaihsus.ofp
 
 OIN=	Oracc-Noto-SansCuneiform.oin Oracc-gudea.oin Oracc-NA-Outline.oin \
 	Oracc-OBF-Regular.oin CuneiformClassic-final.oin Oracc-LAK.oin \
-	Oracc-RSP.oin PCSL.oin
+	Oracc-RSP.oin PCSL.oin Nabuninuaihsus.oin
 
 .PRECIOUS: ${OIN}
 

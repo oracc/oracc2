@@ -68,6 +68,8 @@ elts_one_key(Elt *e)
       return "f";
     case ELT_R:
       return "r";
+    case ELT_E:
+      return "e";
     case ELT_X:
       return "x";
     case ELT_D:
