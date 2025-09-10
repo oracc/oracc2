@@ -39,6 +39,11 @@
 }
 
 @font-face {
+   font-family: 'Nabuninuaihsus';
+   src: url('/fonts/Nabuninuaihsus.ttf');
+}
+
+@font-face {
    font-family: 'Oracc NA Outline';
    src: url('/fonts/Oracc-NA-Outline.ttf');
 }
@@ -50,7 +55,7 @@
 .ofs-150 { font-size: 150%; }
 
 .ofs-200 { font-size: 200%; }
-
+ofs
 .ofs-300 { font-size: 300%; }
 
 .ofs-feat-r { text-align: right; padding-right: 1em; }
@@ -75,6 +80,11 @@
 
 .ofs-nao {
     font-family: "Oracc NA Outline";
+    font-variant-ligatures: common-ligatures;
+}
+
+.ofs-nni {
+    font-family: "Nabuninuaihsus";
     font-variant-ligatures: common-ligatures;
 }
 
