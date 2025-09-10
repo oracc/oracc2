@@ -24,7 +24,18 @@ data_DATA=${OFP} ${DEF} \
 
 font_DATA=Oracc-Noto-SansCuneiform.ttf Oracc-gudea.ttf Oracc-NA-Outline.ttf \
 	Oracc-OBF-Regular.ttf CuneiformClassic-final.ttf Oracc-LAK.ttf \
-	Oracc-RSP.ttf Oracc-UET2.ttf PCSL.ttf
+	Oracc-RSP.ttf Oracc-UET2.ttf PCSL.ttf Nabuninuaihsus.ttf
+
+Nabuninuaihsus:
+	./nni.sh
+
+nni-pull: Nabuninuaihsus
+	(cd $< ; git pull)
+
+Nabuninuaihsus/Nabuninuaihsus.ttf: nni-pull
+
+Nabuninuaihsus.ttf: Nabuninuaihsus/Nabuninuaihsus.ttf
+	cp Nabuninuaihsus/Nabuninuaihsus.ttf $@
 
 default: sl/lists.tsv ${OFP} ${DEF}
 
