@@ -267,7 +267,6 @@ struct sl_glyf
   const char *uhx;	/* sequence expressed as @useq dotted x-notation */
   const char *oid;
   const char *otf;	/* cvnn code, e.g., cv01; NULL for reference glyph; name ~INDEX-1 for others */
-  const char *var;
   struct sl_token *t;
   List *aka;
 };
@@ -657,7 +656,7 @@ extern void asl_add_key(Mloc *locp, struct sl_signlist *sl, struct sl_inst *hval
 
 extern void asl_bld_linkdef(Mloc *locp, struct sl_signlist *sl, const char *name, const char *comment);
 extern void asl_bld_link(Mloc *locp, struct sl_signlist *sl, const char *sysname, unsigned const char *v, unsigned const char *vv);
-extern void asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned char *uni, const char *hex, const char *oid, const char *var, const char *otf);
+extern void asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned char *uni, const char *hex, const char *oid, const char *otf);
 extern void asl_bld_liga(Mloc *locp, struct sl_signlist *sl, const unsigned char *n, const unsigned char *fseq, const unsigned char *u);
 
 extern struct sl_config *asl_get_config(void);

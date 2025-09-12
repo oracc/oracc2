@@ -21,7 +21,7 @@ int tsv_mode = 1;
 int verbose = 0;
 
 static void
-slx_handler()
+slx_handler(void)
 {
   int done = 0;
   if (fast_mode)
