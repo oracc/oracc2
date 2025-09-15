@@ -89,6 +89,10 @@ cx_elt_G(Cfy *c, Elt *e)
   fprintf(c->o, "<g u=\"%s\" o=\"%s\" r=\"%s\"", (uccp)e->data, e->oid, e->xid);
   if (brk_str[e->btype])
     fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
+  if (e->g_o)
+    fprintf(c->o, " g_o=\"%s\"", e->g_o);
+  if (e->g_c)
+    fprintf(c->o, " g_c=\"%s\"", e->g_c);
   fputs("/>", c->o);
 }
 

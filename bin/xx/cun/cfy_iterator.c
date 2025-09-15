@@ -5,6 +5,8 @@
 ci_elt**ci_elt_p;
 Tagfuncs *ci_tags;
 
+int line_cell_pending = 0;
+
 static Btype last_b, curr_b;
 static int in_cell;
 const char *brk_str[] = { NULL, NULL , "#", "[]" };
@@ -26,7 +28,11 @@ ci_body(Cfy *c)
 	  if (last_b != c->elt_lines[i]->epp[j]->btype)
 	    ci_b_switch(c, c->elt_lines[i]->epp[j]->btype);
 	  if (ci_elt_p[c->elt_lines[i]->epp[j]->etype])
-	    ci_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
+	    {
+	      if (line_cell_pending && ELT_C != c->elt_lines[i]->epp[j]->etype)
+		ci_cell_o(c, NULL);
+	      ci_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
+	    }
 	}
       if (brk_str[last_b])
 	ci_b_closer(c, "");
@@ -77,6 +83,8 @@ ci_line_o(Cfy *c, Line*l)
   ci_tags->l_o(c, l);
   ci_tags->c_o(c, NULL);
   ci_tags->l(c, l->label, ci_printable_label(l->label));
+  ci_tags->c_c(c);
+  line_cell_pending = 1;
 }
 
 static void
@@ -95,7 +103,7 @@ ci_line_c(Cfy*c)
 void
 ci_cell_o(Cfy *c, Elt *e)
 {
-  Cell *cp = e->data;
+  Cell *cp = e ? e->data : NULL;
   if (in_cell)
     {
       if (brk_str[last_b])
@@ -106,5 +114,6 @@ ci_cell_o(Cfy *c, Elt *e)
   if (last_b != curr_b)
     ci_b_switch(c, curr_b);
   in_cell = 1;
+  line_cell_pending = 0;
 }
 

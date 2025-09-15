@@ -166,6 +166,8 @@ typedef struct elt
   Class *c;	  /* the current class for the grapheme; usually set
 		   at start of file but may be switched grapheme by
 		   grapheme */
+  const char *g_o; /* openers from @g:o */
+  const char *g_c; /* closers from @g:c */
   const char *oid;/* OID for linking to sign list: may be a parent
 		     sign to the sign that is displayed in u8 */
   const char *xid;/* grapheme id to be output as ref */

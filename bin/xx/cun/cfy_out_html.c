@@ -94,11 +94,46 @@ ch_elt_W(Cfy *c, Elt *e)
   fputs("<span class=\"ws\"> </span>", c->o);
 }
 
+static const char *
+ch_g_o_char_class(char c)
+{
+  switch (c)
+    {
+    case '[':
+      return "osquare";
+    case ']':
+      return "csquare";
+    default:
+      return "";
+    }
+}
+
+static char *
+ch_g_o_class(Cfy *c, Elt *e)
+{
+  const char *p = e->g_o;
+  List *c_list = list_create(LIST_SINGLE);
+  if (p)
+    while (*p)
+      list_add(c_list, (void*)ch_g_o_char_class(*p++));
+  p = e->g_c;
+  if (p)
+    while (*p)
+      list_add(c_list, (void*)ch_g_o_char_class(*p++));
+  uchar *tmp = list_to_str(c_list);
+  uchar *ptmp = hpool_copy(tmp, c->hp);
+  free(tmp);
+  list_free(c_list, NULL);
+  return (char*)ptmp;
+}
+
 static void
 ch_elt_G(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4-cfy-grapheme(evt)\" data-oid=\"%s\" data-ref=\"%s\">%s</a>",
-	  e->oid, e->xid, (ccp)e->data);
+  fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4-cfy-grapheme(evt)\" data-oid=\"%s\" data-ref=\"%s\"", e->oid, e->xid);
+  if (e->g_o || e->g_c)
+    fprintf(c->o, " class=\"%s\"", ch_g_o_class(c, e));
+  fprintf(c->o, ">%s</a>", (ccp)e->data);
 }
 
 static void
@@ -160,7 +195,10 @@ ch_l_c(Cfy *c)
 static void
 ch_c_o(Cfy *c, Cell *cp)
 {
-  fprintf(c->o, "<td colspan=\"%d\">", cp->span);
+  if (cp)
+    fprintf(c->o, "<td colspan=\"%d\">", cp->span);
+  else
+    fputs("<td>", c->o);
 }
 
 static void
@@ -172,7 +210,7 @@ ch_c_c(Cfy *c)
 static void
 ch_b_o(Cfy *c, Btype b)
 {
-  fprintf(c->o, "<span class=\"%s\">", brk_str[b]);
+  fprintf(c->o, "<span class=\"broken\">");
 }
 
 static void
