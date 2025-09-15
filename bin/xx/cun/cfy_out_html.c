@@ -20,8 +20,7 @@ static void ch_elt_E(Cfy*c, Elt *e);
 static void ch_elt_X(Cfy*c, Elt *e);
 static void ch_elt_D(Cfy*c, Elt *e);
 
-typedef void (ch_elt)(Cfy*c,Elt*e);
-ch_elt* ch_elt_p[] = { ch_elt_NOT,
+cc_elt* ch_elt_p[] = { ch_elt_NOT,
 		       ch_elt_L, ch_elt_C, ch_elt_W, ch_elt_G, ch_elt_J,
 		       ch_elt_N, ch_elt_F, ch_elt_R, ch_elt_E, ch_elt_X,
 		       ch_elt_D };
@@ -31,8 +30,10 @@ static int in_cell;
 void
 cfy_out_html(Cfy *c)
 {
+  cc_elt_p = ch_elt_p;
+  cc_tag_p = ch_tag_p;
   ch_head(c);
-  ch_body(c);
+  cc_body(c);
   ch_foot(c);
 }
 
@@ -67,31 +68,6 @@ ch_head(Cfy *c)
 	  "<span class=\"cfy-generic\">Cuneified </span>"
 	  "<span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table\">",
 	  c->n);
-}
-
-static void
-ch_body(Cfy *c)
-{
-#if 1
-  int i, j;
-  for (i = 0; c->elt_lines[i]; ++i)
-    {
-      ch_line_o(c, c->elt_lines[i]->epp[0]->data);
-      for (j = 1; c->elt_lines[i]->epp[j]; ++j)
-	ch_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
-      ch_line_c(c);
-    }
-#else
-  List *lp;
-  for (lp = list_first(c->body); lp; lp = list_next(lp))
-    {
-      Elt *ep = list_first(lp);
-      ch_line_o(c, (Line *)ep);
-      for (ep = list_next(lp); ep; ep = list_next(lp))
-	ch_elt_p[ep->etype](c, ep);
-      ch_line_c(c);
-    }
-#endif
 }
 
 static void

@@ -36,8 +36,6 @@ FILE *outfp = NULL;
 
 jmp_buf done;
 
-const char *brk_str[] = { NULL, NULL , "#", "[]" };
-
 extern int options(int, char*const*,const char*);
 extern int optind;
 
