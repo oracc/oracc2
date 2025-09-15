@@ -208,10 +208,10 @@ atliga:
 	;
 
 atglyf:
-	  GLYF GLYF_NAM GLYF_UNI GLYF_HEX GLYF_OID GLYF_VAR
-	  { asl_bld_glyf(&@1, curr_asl, (ccp)$2, (uccp)$3, (ccp)$4, (ccp)$5, (ccp)$6, NULL); }
-	| GLYF GLYF_NAM GLYF_UNI GLYF_HEX GLYF_OID GLYF_VAR GLYF_OTF
-	{ asl_bld_glyf(&@1, curr_asl, (ccp)$2, (uccp)$3, (ccp)$4, (ccp)$5, (ccp)$6, (ccp)$7); }
+	  GLYF GLYF_NAM GLYF_UNI GLYF_HEX GLYF_OID 
+	  { asl_bld_glyf(&@1, curr_asl, (ccp)$2, (uccp)$3, (ccp)$4, (ccp)$5, NULL); }
+	| GLYF GLYF_NAM GLYF_UNI GLYF_HEX GLYF_OID GLYF_OTF
+	{ asl_bld_glyf(&@1, curr_asl, (ccp)$2, (uccp)$3, (ccp)$4, (ccp)$5, (ccp)$6); }
 	;
 
 /*

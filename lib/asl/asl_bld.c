@@ -874,7 +874,7 @@ glyf_cvnn(const char *nam)
 
 void
 asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned char *uni,
-	     const char *hex, const char *oid, const char *var, const char *otf)
+	     const char *hex, const char *oid, const char *otf)
 {
     if (asl_sign_guard(locp, sl, "glyf"))
       {
@@ -906,7 +906,6 @@ asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned
 	    gp->hex = NULL;
 	  }
 	gp->oid = oid;
-	gp->var = var;
 	if (add_glyf_token(locp, sl, nam))
 	  {
 	    if (!(gp->t = hash_find(sl->htoken, (uccp)nam)))
