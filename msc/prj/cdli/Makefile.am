@@ -16,3 +16,6 @@ cdlixtfx_DEPENDENCIES = $(xLDADD)
 imgp4_SOURCES=imgp4.c 
 imgp4_LDADD = $(xLDADD)
 imgp4_DEPENDENCIES = $(xLDADD)
+
+cdli:
+	rm -f nohup.out ; nohup time ./cdli-build.sh &
