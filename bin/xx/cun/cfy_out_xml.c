@@ -1,6 +1,6 @@
 #include <oraccsys.h>
 #include "cfy.h"
-#include "cfy_common.h"
+#include "cfy_iterator.h"
 
 static void cx_head(Cfy *c);
 static void cx_foot(Cfy *c);
@@ -14,8 +14,8 @@ static void cx_elt_R(Cfy*c, Elt *e);
 static void cx_elt_E(Cfy*c, Elt *e);
 static void cx_elt_X(Cfy*c, Elt *e);
 
-cc_elt* cx_elt_p[] = { NULL, NULL,
-		       cc_cell_o,
+ci_elt* cx_elt_p[] = { NULL, NULL,
+		       ci_cell_o,
 		       cx_elt_W, cx_elt_G, cx_elt_J, cx_elt_N,
 		       cx_elt_F, cx_elt_R, cx_elt_E, cx_elt_X,
 		       NULL };
@@ -26,20 +26,22 @@ static void cx_c_o(Cfy*c, Cell *cp);
 static void cx_c_c(Cfy*c);
 static void cx_b_o(Cfy*c, Btype b);
 static void cx_b_c(Cfy*c);
+static void cx_label(Cfy *c, const char *l, int print);
 
 Tagfuncs cx_tags = {
   .l_o=cx_l_o, .l_c=cx_l_c,
   .c_o=cx_c_o, .c_c=cx_c_c,
-  .b_o=cx_b_o, .b_c=cx_b_c
+  .b_o=cx_b_o, .b_c=cx_b_c,
+  .l=cx_label
 };
 
 void
 cfy_out_xml(Cfy *c)
 {
-  cc_elt_p = cx_elt_p;
-  cc_tags = &cx_tags;
+  ci_elt_p = cx_elt_p;
+  ci_tags = &cx_tags;
   cx_head(c);
-  cc_body(c);
+  ci_body(c);
   cx_foot(c);
 }
 
@@ -145,7 +147,10 @@ cx_l_c(Cfy *c)
 static void
 cx_c_o(Cfy *c, Cell *cp)
 {
-  fprintf(c->o, "<c span=\"%d\">", cp->span);
+  if (cp)
+    fprintf(c->o, "<c span=\"%d\">", cp->span);
+  else
+    fputs("<c>", c->o);
 }
 
 static void
@@ -166,3 +171,9 @@ cx_b_c(Cfy *c)
   fputs("</b>", c->o);
 }
 
+static void
+cx_label(Cfy *c, const char *l, int print)
+{
+  if (print)
+    fprintf(c->o, "<label>%s</label>", l); 
+}

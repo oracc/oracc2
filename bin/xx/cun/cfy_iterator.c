@@ -1,0 +1,110 @@
+#include <oraccsys.h>
+#include "cfy.h"
+#include "cfy_iterator.h"
+
+ci_elt**ci_elt_p;
+Tagfuncs *ci_tags;
+
+static Btype last_b, curr_b;
+static int in_cell;
+const char *brk_str[] = { NULL, NULL , "#", "[]" };
+
+static void ci_line_o(Cfy *c, Line*l);
+static void ci_line_c(Cfy*c);
+static void ci_b_switch(Cfy *c, Btype this_b);
+static void ci_b_closer(Cfy *c, void *reset);
+
+void
+ci_body(Cfy *c)
+{
+  int i, j;
+  for (i = 0; c->elt_lines[i]; ++i)
+    {
+      ci_line_o(c, c->elt_lines[i]->epp[0]->data);
+      for (j = 1; c->elt_lines[i]->epp[j]; ++j)
+	{
+	  if (last_b != c->elt_lines[i]->epp[j]->btype)
+	    ci_b_switch(c, c->elt_lines[i]->epp[j]->btype);
+	  if (ci_elt_p[c->elt_lines[i]->epp[j]->etype])
+	    ci_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
+	}
+      if (brk_str[last_b])
+	ci_b_closer(c, "");
+      ci_line_c(c);
+    }
+}
+
+static void
+ci_b_switch(Cfy *c, Btype this_b)
+{
+  if (brk_str[last_b])
+    ci_tags->b_c(c);
+  if (brk_str[this_b])
+    ci_tags->b_o(c, this_b);
+  last_b = curr_b = this_b;
+}
+
+/* if reset==0 don't reset curr_b; this is used when closing a
+   cell because then we are just suspending the breakage type to
+   balance the XML output */
+static void
+ci_b_closer(Cfy *c, void *reset)
+{
+  ci_tags->b_c(c);
+  if (reset)
+    last_b = curr_b = BRK_NONE;
+  else
+    last_b = BRK_NONE;
+}
+
+static int
+ci_printable_label(const char *l)
+{
+  const char *sp = strrchr(l, ' ');
+  if (sp)
+    ++sp;
+  else
+    sp = l;
+  if ('1' == *sp && !isdigit(sp[1]))
+    return 1;
+  else
+    return !(atoi(sp) % 5);      
+}
+
+static void
+ci_line_o(Cfy *c, Line*l)
+{
+  ci_tags->l_o(c, l);
+  ci_tags->c_o(c, NULL);
+  ci_tags->l(c, l->label, ci_printable_label(l->label));
+}
+
+static void
+ci_line_c(Cfy*c)
+{
+  if (in_cell)
+    {
+      if (brk_str[last_b])
+	ci_tags->b_c(c);
+      ci_tags->c_c(c);
+      in_cell = 0;
+    }
+  ci_tags->l_c(c);
+}
+
+void
+ci_cell_o(Cfy *c, Elt *e)
+{
+  Cell *cp = e->data;
+  if (in_cell)
+    {
+      if (brk_str[last_b])
+	ci_b_closer(c, NULL);
+      ci_tags->c_c(c);
+    }
+  ci_tags->c_o(c,cp);
+  if (last_b != curr_b)
+    ci_b_switch(c, curr_b);
+  in_cell = 1;
+}
+
