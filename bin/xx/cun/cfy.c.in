@@ -18,7 +18,6 @@ int force = 0; /* default is not to remake if the output already exists */
 int no_output = 0;
 int trace = 0;
 int verbose = 0;
-int weboutput = 0;
 
 const char *arg_lig_file;
 Hash **arg_ligs;
@@ -165,7 +164,7 @@ main(int argc, char **argv)
 
   if (infile || qfile)
     {
-      if (weboutput)
+      if (cfy.weboutput)
 	{
 	  if (!p4htmld)
 	    {

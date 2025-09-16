@@ -6,9 +6,21 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
 .broken {
   background-image: url('/breaks.png');
   background-repeat: repeat;
+  color: gray;
 }
 
+.broken a { color: gray; }
+.broken a:link { color: gray; }
+.broken a:link[href] { color: darkgray; }
+
 .gray { color: gray; }
+
+a { color: black; }
+a:link { color: black; }
+a:link[href] { color: black; text-decoration: none; }
+
+.cfy-brack:before { content: attr(data-bracko); color: dimgrey; }
+.cfy-brack:after  { content: attr(data-brackc); color: dimgrey; }
 
 span.osquare:before { content: "["; }
 span.csquare:before { content: "]"; }
