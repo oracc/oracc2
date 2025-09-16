@@ -94,45 +94,18 @@ ch_elt_W(Cfy *c, Elt *e)
   fputs("<span class=\"ws\"> </span>", c->o);
 }
 
-static const char *
-ch_g_o_char_class(char c)
-{
-  switch (c)
-    {
-    case '[':
-      return "osquare";
-    case ']':
-      return "csquare";
-    default:
-      return "";
-    }
-}
-
-static char *
-ch_g_o_class(Cfy *c, Elt *e)
-{
-  const char *p = e->g_o;
-  List *c_list = list_create(LIST_SINGLE);
-  if (p)
-    while (*p)
-      list_add(c_list, (void*)ch_g_o_char_class(*p++));
-  p = e->g_c;
-  if (p)
-    while (*p)
-      list_add(c_list, (void*)ch_g_o_char_class(*p++));
-  uchar *tmp = list_to_str(c_list);
-  uchar *ptmp = hpool_copy(tmp, c->hp);
-  free(tmp);
-  list_free(c_list, NULL);
-  return (char*)ptmp;
-}
-
 static void
 ch_elt_G(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4-cfy-grapheme(evt)\" data-oid=\"%s\" data-ref=\"%s\"", e->oid, e->xid);
+  fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4_cuneify_g(evt)\" data-oid=\"%s\" data-ref=\"%s\"", e->oid, e->xid);
   if (e->g_o || e->g_c)
-    fprintf(c->o, " class=\"%s\"", ch_g_o_class(c, e));
+    {
+      fputs(" class=\"cfy-brack\"", c->o);
+      if (e->g_o)
+	fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
+      if (e->g_c)
+	fprintf(c->o, " data-brackc=\"%s\"", e->g_c);
+    }
   fprintf(c->o, ">%s</a>", (ccp)e->data);
 }
 

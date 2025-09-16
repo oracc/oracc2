@@ -87,4 +87,8 @@ span.csquare:before { content: "]"; }
 
 .cfy-oobf { cursor: url("oobf-an.cur"), auto; }
 
+.cfy-brack::before { attr(data-bracko); }
+
+.cfy-brack::after { attr(data-brackc); }
+
 /*    cursor: url(ban.cur), auto; */
