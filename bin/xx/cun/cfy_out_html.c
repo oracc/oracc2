@@ -71,7 +71,7 @@ ch_head(Cfy *c)
 	  "<div id=\"p4Cuneify\" "
 	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\" data-proj=\"%s\">",
 	  c->c->fnt, c->c->mag, c->c->scr, c->project);
-  fprintf(outfp,
+  fprintf(c->o,
 	  "<h1 class=\"p3h2 border-top heading\">"
 	  "<span class=\"cfy-generic\">Cuneified </span>"
 	  "<span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table\">",

@@ -32,8 +32,6 @@ const char *translation;
 
 char *inpath, *outpath, *htmlpath;
 
-FILE *outfp = NULL;
-
 jmp_buf done;
 
 extern int options(int, char*const*,const char*);
@@ -126,7 +124,7 @@ cfy_post(Cfy *c)
 int
 main(int argc, char **argv)
 {  
-  outfp = stdout;
+  cfy.o = stdout;
   options(argc, argv, "bC:c:fhi:l:no:p:P:q:st:Tvw");
 
   cfyset_debug(verbose);
@@ -219,7 +217,7 @@ main(int argc, char **argv)
 	{
 	  if (outpath && strcmp(outpath, "-"))
 	    {
-	      if (!(outfp = fopen(outpath, "w")))
+	      if (!(cfy.o = fopen(outpath, "w")))
 		{
 		  fprintf(stderr, "cfy: unable to write to outpath %s: %s\n",
 			  outpath, strerror(errno));

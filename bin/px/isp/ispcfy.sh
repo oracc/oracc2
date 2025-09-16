@@ -14,6 +14,12 @@
 
 >&2 echo $0 $*
 
+cuneify=cunx
+if [ -r ${ORACC}/www/.cfy ]; then
+    cuneify=cfy
+fi
+>&2 echo $0 Using Cuneify executable $cuneify
+
 oraccbin=${ORACC}/bin
 prox_project=$1
 PQX=$2
@@ -49,13 +55,13 @@ xtf=`$oraccbin/pqxpand xtf $prox_project:$PQX`
 >&2 mkdir -v -p $htmldir || exit 1
 
 # Generate the cuneified output
->&2 echo $0 calling "$oraccbin/cunx $Parg -vw -q $prox_project:$PQX" 
-$oraccbin/cunx $Parg -vw -q $prox_project:$PQX
+>&2 echo $0 calling "$oraccbin/$cuneify $Parg -vw -q $prox_project:$PQX" 
+$oraccbin/$cuneify $Parg -vw -q $prox_project:$PQX
 
 if [ ! $? -eq 0 ]; then
     echo "Failed call invoked as:" >&2
-    echo "	$oraccbin/cunx $Parg -w -q $prox_project:$PQX" >&2
-    echo $0: cunx failed. Stop. >&2
+    echo "	$oraccbin/$cuneify $Parg -w -q $prox_project:$PQX" >&2
+    echo $0: $cuneify failed. Stop. >&2
     exit 1
 fi
 #

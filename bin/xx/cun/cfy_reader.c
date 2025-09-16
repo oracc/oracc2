@@ -74,9 +74,9 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   g_o = findAttr(atts, "g:o");
   g_c = findAttr(atts, "g:c");
   if (g_o && *g_o)
-    ep->g_o = (ccp)hpool_copy((uccp)g_o, c->hp);
+    ep->g_o = (ccp)hpool_copy(xmlify((uccp)g_o), c->hp);
   if (g_c && *g_c)
-    ep->g_c = (ccp)hpool_copy((uccp)g_c, c->hp);
+    ep->g_c = (ccp)hpool_copy(xmlify((uccp)g_c), c->hp);
   const char *gkey = findAttr(atts, "key");
   if (gkey && *gkey)
     ep->key = (ccp)hpool_copy((uccp)gkey, c->hp);
