@@ -19,19 +19,28 @@ static void ci_b_closer(Cfy *c, void *reset);
 void
 ci_body(Cfy *c)
 {
+  static Cell content_cell = { 1, "cfy-content" };
+  static Elt content_elt = { .data = &content_cell };
   int i, j;
   for (i = 0; c->elt_lines[i]; ++i)
     {
       ci_line_o(c, c->elt_lines[i]->epp[0]->data);
       for (j = 1; c->elt_lines[i]->epp[j]; ++j)
 	{
-	  if (last_b != c->elt_lines[i]->epp[j]->btype)
-	    ci_b_switch(c, c->elt_lines[i]->epp[j]->btype);
-	  if (ci_elt_p[c->elt_lines[i]->epp[j]->etype])
+	  if (ELT_C == c->elt_lines[i]->epp[j]->etype)
 	    {
-	      if (line_cell_pending && ELT_C != c->elt_lines[i]->epp[j]->etype)
-		ci_cell_o(c, NULL);
-	      ci_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
+	      ci_cell_o(c, c->elt_lines[i]->epp[j]);
+	      if (last_b != c->elt_lines[i]->epp[j]->btype)
+		ci_b_switch(c, c->elt_lines[i]->epp[j]->btype);
+	    }
+	  else
+	    {
+	      if (ci_elt_p[c->elt_lines[i]->epp[j]->etype] && line_cell_pending)
+		ci_cell_o(c, &content_elt);
+	      if (last_b != c->elt_lines[i]->epp[j]->btype)
+		ci_b_switch(c, c->elt_lines[i]->epp[j]->btype);
+	      if (ci_elt_p[c->elt_lines[i]->epp[j]->etype])
+		ci_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
 	    }
 	}
       if (brk_str[last_b])
@@ -80,8 +89,9 @@ ci_printable_label(const char *l)
 static void
 ci_line_o(Cfy *c, Line*l)
 {
+  static Cell label_cell = { 1 , "cfy-label" };
   ci_tags->l_o(c, l);
-  ci_tags->c_o(c, NULL);
+  ci_tags->c_o(c, &label_cell);
   ci_tags->l(c, l->label, ci_printable_label(l->label));
   ci_tags->c_c(c);
   line_cell_pending = 1;

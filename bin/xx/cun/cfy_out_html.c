@@ -97,16 +97,35 @@ ch_elt_W(Cfy *c, Elt *e)
 static void
 ch_elt_G(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4_cuneify_g(evt)\" data-oid=\"%s\" data-ref=\"%s\"", e->oid, e->xid);
-  if (e->g_o || e->g_c)
+  if (!strcmp(e->data, "X"))
     {
-      fputs(" class=\"cfy-brack\"", c->o);
-      if (e->g_o)
-	fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
-      if (e->g_c)
-	fprintf(c->o, " data-brackc=\"%s\"", e->g_c);
+      if (e->g_o || e->g_c)
+	{
+	  fputs("<span class=\"roman gray cfy-brack\"", c->o);
+	  if (e->g_o)
+	    fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
+	  if (e->g_c)
+	    fprintf(c->o, " data-brackc=\"%s\"", e->g_c);
+	  fputs(">X</span>", c->o);
+	}
+      else
+	{
+	  fputs("<span class=\"roman gray\">X</span>", c->o);
+	}
     }
-  fprintf(c->o, ">%s</a>", (ccp)e->data);
+  else
+    {
+      fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4_cuneify_g(evt)\" data-oid=\"%s\" data-ref=\"%s\"", e->oid, e->xid);
+      if (e->g_o || e->g_c)
+	{
+	  fputs(" class=\"cfy-brack\"", c->o);
+	  if (e->g_o)
+	    fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
+	  if (e->g_c)
+	    fprintf(c->o, " data-brackc=\"%s\"", e->g_c);
+	}
+      fprintf(c->o, ">%s</a>", (ccp)e->data);
+    }
 }
 
 static void
@@ -136,19 +155,21 @@ ch_elt_R(Cfy *c, Elt *e)
 static void
 ch_elt_X(Cfy *c, Elt *e)
 {
+#if 1
+  fprintf(stderr, "untrapped ch_elt_X\n");
+  fprintf(c->o, "<span style=\"color: red\">UNTRAPPED ch_elt_X</span>");
+#else
   fprintf(c->o, "<x r=\"%s\"", e->xid);
   if (e->btype)
     fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
-  fputs(">...</x>", c->o);  
+  fputs(">...</x>", c->o);
+#endif
 }
 
 static void
 ch_elt_E(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<x r=\"%s\"", e->xid);
-  if (e->btype)
-    fprintf(c->o, " brk=\"%s\"", brk_str[e->btype]);
-  fputs("/>", c->o);  
+  fputs("<span class=\"roman\">. . .</span>",c->o);
 }
 
 static void
@@ -168,7 +189,9 @@ ch_l_c(Cfy *c)
 static void
 ch_c_o(Cfy *c, Cell *cp)
 {
-  if (cp)
+  if (cp && cp->class)
+    fprintf(c->o, "<td colspan=\"%d\" class=\"%s\">", cp->span, cp->class);
+  else if (cp)
     fprintf(c->o, "<td colspan=\"%d\">", cp->span);
   else
     fputs("<td>", c->o);
@@ -196,5 +219,5 @@ static void
 ch_label(Cfy *c, const char *l, int print)
 {
   if (print)
-    fprintf(c->o, "<span class=\"lnum\">%s</span>", l);
+    fprintf(c->o, "<span class=\"cfy-lnum\">%s</span>", l);
 }

@@ -11,6 +11,8 @@ char innertags[128];
 Elt e_zwj = { .etype=ELT_J, .data=(ucp)"\xE2\x80\x8D" };
 Elt e_zwnj = { .etype=ELT_N, .data=(ucp)"\xE2\x80\x8C" };
 
+static Elt *last_ep = NULL;
+
 static Btype
 breakage(const char *name, const char **atts)
 {
@@ -28,6 +30,8 @@ cfy_cell(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
   ep->etype = ELT_C;
+  ep->prev = last_ep;
+  last_ep = ep;
   Cell *cellp = memo_new(c->m_cell);
   const char *span = findAttr(atts, "span");
   if (span)
@@ -57,6 +61,8 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
     c->line = list_create(LIST_DOUBLE);
 
   Elt *ep = memo_new(c->m_elt);
+  ep->prev = last_ep;
+  last_ep = ep;
   ep->etype = ELT_G;
   ep->data = hpool_copy((uccp)utf8, c->hp);
   ep->btype = brk;
@@ -89,6 +95,8 @@ cfy_line(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
   ep->etype = ELT_L;
+  ep->prev = last_ep;
+  last_ep = ep;
   Line *lp = memo_new(c->m_line);
   lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
@@ -106,6 +114,8 @@ cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
     c->line = list_create(LIST_DOUBLE);
 
   Elt *ep = memo_new(c->m_elt);
+  ep->prev = last_ep;
+  last_ep = ep;
   const char *gt = gt=findAttr(atts,"g:type");
   ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   ep->etype = (!strcmp(gt,"ellipsis") ? ELT_E : ELT_X);
@@ -130,6 +140,8 @@ cfy_ws(Cfy *c)
 
   Elt *ep = memo_new(c->m_elt);
   ep->etype = ELT_W;
+  ep->prev = last_ep;
+  last_ep = ep;
   
   list_add(c->line, ep);
 }

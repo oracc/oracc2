@@ -13,7 +13,7 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
 span.osquare:before { content: "["; }
 span.csquare:before { content: "]"; }
 
-.cuneify-label {
+.cfy-label {
     font-size: 70%;
     color: gray;
     margin-bottom: 5px;
@@ -26,10 +26,10 @@ span.csquare:before { content: "]"; }
 .cuneify-line { 
 }
 
-.cuneify-content {
-		width: 100%;
-	      	text-align: justify;
-		}
+.cfy-content {
+    width: 100%;
+    text-align: justify;
+}
 
 :root {
     --ofs-noto: "Oracc Noto SansCuneiform";

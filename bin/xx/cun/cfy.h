@@ -162,6 +162,7 @@ typedef struct elt
   Etype etype;	  /* the element type */
   Gtype gtype;    /* the grapheme type */
   Btype btype;    /* the breakage type */
+  struct elt *prev;/* the previous element */
   void *data;	  /* cuneiform, Line, or Cell */
   Class *c;	  /* the current class for the grapheme; usually set
 		   at start of file but may be switched grapheme by
@@ -189,6 +190,7 @@ typedef struct eltline
 typedef struct cell
 {
   int span;
+  const char *class;
 } Cell;
 
 /* Cuneify config defines substition specifications that are stored in
