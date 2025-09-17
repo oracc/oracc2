@@ -10,6 +10,8 @@
 #
 echo $0: $*
 
+rm -f 01bld/cancel
+
 user=$1 ; shift
 project=$1 ; shift
 
