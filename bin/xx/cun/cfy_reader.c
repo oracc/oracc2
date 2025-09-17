@@ -4,7 +4,7 @@
 #include <xml.h>
 #include "cfy.h"
 
-int in_c = 0, in_l = 0, in_n = 0, in_q = 0, inner = 0;
+int in_l = 0, inner = 0;
 
 char innertags[128];
 
@@ -217,7 +217,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 
 	      cfy_grapheme(userData, name, atts, utf8, curr_cp, oid);
 	    }
-	  else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
+	  if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
 	    ++inner;
 	  else if (!strcmp(name, "c"))
 	    cfy_cell(userData, atts);
@@ -257,10 +257,6 @@ cfy_eH(void *userData, const char *name)
     }
   else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
     --inner;
-  else if (!strcmp(name, "g:q"))
-    in_q = 0;
-  else if (!strcmp(name, "g:c"))
-    in_c = 0;
   else if (!strcmp(name, "g:w"))
     cfy_ws(userData);
   else if (!strcmp(name, "c"))
