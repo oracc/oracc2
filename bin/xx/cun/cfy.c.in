@@ -1,7 +1,8 @@
 #include <oraccsys.h>
 #include <xmlify.h>
 #include <setjmp.h>
-#include "runexpat.h"
+#include <runexpat.h>
+#include <xpd.h>
 #include "cfy.h"
 
 extern void cfyset_debug (int debug_flag);
@@ -211,7 +212,7 @@ main(int argc, char **argv)
     {
       cfy.xpd = xpd_init(cfy.project, cfy.p);
       const char *cfykey = xpd_option(cfy.xpd, "cfy-key");
-      if (cfykey && !(cfy.class = cfy_class(cfykey,NULL)))
+      if (cfykey && !(cfy.c = cfy_class(&cfy, cfykey,NULL)))
 	{
 	  fprintf(stderr, "cfy: errors in config key %s. Stop.\n", cfykey);
 	  exit(1);

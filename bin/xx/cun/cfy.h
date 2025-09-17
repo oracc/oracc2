@@ -40,6 +40,7 @@ typedef struct Cfy
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
   const char *config; /* config file name */
+  struct xpd *xpd;
   int html;
   int weboutput;
 } Cfy;
