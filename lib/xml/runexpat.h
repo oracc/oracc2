@@ -11,6 +11,7 @@ extern int pi_line;
 #define  runexpatuD(from,list,sH,eH,uD) runexpatNSuD(from,list,sH,eH,NULL,uD)
 
 extern const char *findAttr(const char **atts, const char *name);
+extern const char *findAttrNULL(const char **atts, const char *name);
 extern void charData_discard(void);
 extern XML_Char*charData_retrieve(void);
 

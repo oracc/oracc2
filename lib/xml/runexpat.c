@@ -79,16 +79,25 @@ findAttr(const char **atts, const char *name)
 {
   while (*atts)
     {
-#if 0
-      if (verbose)
-	fprintf(stderr, "findAttr testing attr %s looking for %s\n", *atts, name);
-#endif
       if (!strcmp(*atts,name))
 	return atts[1];
       else
 	atts+=2;
     }
   return "";
+}
+
+const char *
+findAttrNULL(const char **atts, const char *name)
+{
+  while (*atts)
+    {
+      if (!strcmp(*atts,name))
+	return atts[1];
+      else
+	atts+=2;
+    }
+  return NULL;
 }
 
 static void
