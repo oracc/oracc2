@@ -118,12 +118,14 @@ ch_elt_G(Cfy *c, Elt *e)
       fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4_cuneify_g(evt)\" data-oid=\"%s\" data-ref=\"%s\"", e->oid, e->xid);
       if (e->g_o || e->g_c)
 	{
-	  fputs(" class=\"cfy-brack\"", c->o);
+	  fputs(" class=\"cfy-cun cfy-brack\"", c->o);
 	  if (e->g_o)
 	    fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
 	  if (e->g_c)
 	    fprintf(c->o, " data-brackc=\"%s\"", e->g_c);
 	}
+      else
+	fputs(" class=\"cfy-cun\"", c->o);
       fprintf(c->o, ">%s</a>", (ccp)e->data);
     }
 }
