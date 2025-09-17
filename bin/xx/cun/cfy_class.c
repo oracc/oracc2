@@ -61,6 +61,8 @@ cfy_class_set(char *k, Class *cp)
   cp->mag = mem[3];
   cp->scr = mem[4];
   cp->asl = mem[5];
+  if (cp->asl && '.' == *cp->asl)
+    cp->asl = cp->cfy->project;
   free(mem);
 }
 
@@ -89,6 +91,7 @@ cfy_class(Cfy *c, const char *key, Class *cp)
       if (!hash_find(c->hclasses, (uccp)newkey))
 	{
 	  ncp = memo_new(c->m_class);
+	  ncp->cfy = c;
 	  ncp->key = (ccp)hpool_copy((uccp)newkey, c->hp); 
 	  free(newkey);
 	  cfy_class_set((char*)pool_copy((uccp)ncp->key, c->p), ncp);

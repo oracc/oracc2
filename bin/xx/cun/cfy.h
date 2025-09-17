@@ -84,6 +84,7 @@ typedef struct class
   const char *asl;
   const char *css;
   Hash **lig; /* ligatures are an array of hashes essentially implementing a trie */
+  Cfy *cfy;
 } Class;
 
 extern Class *curr_cp;
