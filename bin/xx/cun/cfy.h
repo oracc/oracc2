@@ -69,6 +69,9 @@ typedef struct Cfy
    is added. For fonts, the first time a font is loaded it is added to
    the font hash so fonts are only loaded once regardless of how many
    combinations of mag and script etc., may be used in the run.
+
+   In the 'asl' member of the key, the special value '.' means use the
+   project sign list.
  */
 typedef struct class
 {
@@ -173,6 +176,7 @@ typedef struct elt
 		     sign to the sign that is displayed in u8 */
   const char *xid;/* grapheme id to be output as ref */
   const char *key;/* ASL grapheme key for type ELT_G */
+  const char *title; /* value or sign name */
 } Elt;
 
 typedef struct line

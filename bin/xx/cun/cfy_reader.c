@@ -70,6 +70,7 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   ep->c = cp;
   ep->oid = oid;
   ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
+
   const char *g_o, *g_c;
   g_o = findAttr(atts, "g:o");
   g_c = findAttr(atts, "g:c");
@@ -77,9 +78,20 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
     ep->g_o = (ccp)hpool_copy(xmlify((uccp)g_o), c->hp);
   if (g_c && *g_c)
     ep->g_c = (ccp)hpool_copy(xmlify((uccp)g_c), c->hp);
+
   const char *gkey = findAttr(atts, "key");
   if (gkey && *gkey)
-    ep->key = (ccp)hpool_copy((uccp)gkey, c->hp);
+    {
+      ep->key = (ccp)hpool_copy((uccp)gkey, c->hp);
+      char *dot = strrchr(gkey, '.');
+      if (dot[1])
+	ep->title = dot+1;
+      else
+	ep->title = findAttrNULL(atts, "g:sign");
+      if (ep->title)
+	ep->title = hpool_copy((uccp)ep->title, c->hp);
+    }
+
   list_add(c->line, ep);
 
   /* add ZWJ/ZWNJ if the boundary requires it */

@@ -115,7 +115,13 @@ ch_elt_G(Cfy *c, Elt *e)
     }
   else
     {
-      fprintf(c->o, "<a href=\"javascript://\" onhover=\"p4_cuneify_g(evt)\" data-oid=\"%s\" data-ref=\"%s\"", e->oid, e->xid);
+      fprintf(c->o,
+	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
+	      " onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\"",
+	      e->xid, e->xid, e->oid,
+	      e->c->asl ? e->c->asl : ('9' == e->oid[2] ? "pcsl" : "osl"));
+      if (e->title)
+	fprintf(c->o, " title=\"%s\"", e->title);
       if (e->g_o || e->g_c)
 	{
 	  fputs(" class=\"cfy-cun cfy-brack\"", c->o);
@@ -126,7 +132,7 @@ ch_elt_G(Cfy *c, Elt *e)
 	}
       else
 	fputs(" class=\"cfy-cun\"", c->o);
-      fprintf(c->o, ">%s</a>", (ccp)e->data);
+      fprintf(c->o, ">%s</span>", (ccp)e->data);
     }
 }
 
