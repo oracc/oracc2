@@ -21,7 +21,7 @@ static void cfy_class_set(char *key, Class *cp);
 
 /* Validate a key that has been split into dash-separated members */
 static int
-cfy_class_check_mem(const char *k, char **m)
+cfy_class_check(const char *k, char **m)
 {
   if (!m[0] || !m[1] || !m[2] || !m[3] || !m[4] || !m[5] || m[6])
     {
@@ -46,7 +46,7 @@ static char *
 cfy_class_key(const char *fnt, const char *otf, const char *mag,
 	      const char *scr, const char *asl)
 {
-  int len = strlen(fnt)+strlen(otf)+strlen(mag)+strlen(scr)+strlen(asl)+6;
+  int len = strlen(fnt)+strlen(otf)+strlen(mag)+strlen(scr)+strlen(asl)+9;
   char *k = malloc(len);
   sprintf(k, "cfy-%s-%s-%s-%s-%s", fnt, otf, mag, scr, asl);
   return k;
@@ -73,7 +73,7 @@ cfy_class(Cfy *c, const char *key, Class *cp)
       char *kk = strdup(key);
       char **mem = dash_split(kk);
       
-      if (cfy_class_check_mem(key, mem))
+      if (cfy_class_check(key, mem))
 	{
 	  free(mem);
 	  free(kk);
@@ -88,10 +88,11 @@ cfy_class(Cfy *c, const char *key, Class *cp)
 #undef mcp
       if (!hash_find(c->hclasses, (uccp)newkey))
 	{
-	  const char *hk = (ccp)hpool_copy((uccp)newkey, c->hp);
 	  ncp = memo_new(c->m_class);
-	  cfy_class_set((char*)pool_copy((uccp)newkey, c->p), ncp);
-	  hash_add(c->hclasses, (uccp)hk, ncp);
+	  ncp->key = (ccp)hpool_copy((uccp)newkey, c->hp); 
+	  free(newkey);
+	  cfy_class_set((char*)pool_copy((uccp)ncp->key, c->p), ncp);
+	  hash_add(c->hclasses, (uccp)ncp->key, ncp);
 	  Class *fontc = hash_find(c->hfonts, (uccp)ncp->fnt);
 	  if (!fontc)
 	    {

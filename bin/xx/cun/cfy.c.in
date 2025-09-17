@@ -207,6 +207,17 @@ main(int argc, char **argv)
       exit(1);
     }
 
+  if (cfy.project)
+    {
+      cfy.xpd = xpd_init(cfy.project, cfy.p);
+      const char *cfykey = xpd_option(cfy.xpd, "cfy-key");
+      if (cfykey && !(cfy.class = cfy_class(cfykey,NULL)))
+	{
+	  fprintf(stderr, "cfy: errors in config key %s. Stop.\n", cfykey);
+	  exit(1);
+	}
+    }
+  
   if (verbose)
     show_vars();
 
