@@ -89,7 +89,7 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
       else
 	ep->title = findAttrNULL(atts, "g:sign");
       if (ep->title)
-	ep->title = hpool_copy((uccp)ep->title, c->hp);
+	ep->title = (ccp)hpool_copy((uccp)ep->title, c->hp);
     }
 
   list_add(c->line, ep);

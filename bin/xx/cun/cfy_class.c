@@ -7,7 +7,7 @@ static Class defaults =
   {
     .key="cfy-noto-*-100-middle-osl",
     .fnt="noto",
-    .otf="*",
+    .ffs="*",
     .mag="100",
     .scr="middle",
     .asl="osl"
@@ -57,7 +57,7 @@ cfy_class_set(char *k, Class *cp)
 {
   char **mem = dash_split(k);
   cp->fnt = mem[1];
-  cp->otf = mem[2];
+  cp->ffs = mem[2];
   cp->mag = mem[3];
   cp->scr = mem[4];
   cp->asl = mem[5];
@@ -83,7 +83,7 @@ cfy_class(Cfy *c, const char *key, Class *cp)
 	}
 #define mcp(m,c) (*(m)=='*' ? (c) : (m))
       char *newkey = cfy_class_key(mcp(mem[1], cp ? cp->fnt : "*"),
-				   mcp(mem[2], cp ? cp->otf : "*"),
+				   mcp(mem[2], cp ? cp->ffs : "*"),
 				   mcp(mem[3], cp ? cp->mag : "*"),
 				   mcp(mem[4], cp ? cp->scr : "*"),
 				   mcp(mem[5], cp ? cp->asl : "*"));

@@ -6,6 +6,8 @@ function cuneify(c) {
     //let c = getCuneify();
     let currf = c.getAttribute("data-cfy-fnt")
     let f = '--ofs-'+currf;
+    let currffs = c.getAttribute("data-cfy-ffs");
+    let ffs = '--ffs-'+currf;
     let m = c.getAttribute("data-cfy-mag")+'%';
     let s = '--ofs-'+c.getAttribute("data-cfy-scr");
 
@@ -29,6 +31,7 @@ function cuneify(c) {
 
     var r = document.querySelector(':root');
     r.style.setProperty('--ofs-font', 'var('+f+')');
+    r.style.setProperty('--ofs-ffs', 'var('+ffs+')');
     r.style.setProperty('--ofs-mag', m);
     r.style.setProperty('--ofs-script', 'var('+s+')');
 }

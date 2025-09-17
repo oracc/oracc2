@@ -69,8 +69,11 @@ ch_head(Cfy *c)
     }
   fprintf(c->o,
 	  "<div id=\"p4Cuneify\" "
-	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\" data-proj=\"%s\">",
+	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\" data-proj=\"%s\"",
 	  c->c->fnt, c->c->mag, c->c->scr, c->project);
+  if (c->c->ffs)
+    fprintf(c->o, " data-cfy-ffs=\"%s\"", c->c->ffs);
+  fputc('>', c->o);
   fprintf(c->o,
 	  "<h1 class=\"p3h2 border-top heading\">"
 	  "<span class=\"cfy-generic\">Cuneified </span>"

@@ -78,7 +78,7 @@ typedef struct class
 {
   const char *key;
   const char *fnt;
-  const char *otf;
+  const char *ffs; /* font-feature-settings */
   const char *mag;
   const char *scr;
   const char *asl;

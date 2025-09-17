@@ -9,23 +9,12 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
   color: gray;
 }
 
-.broken a { color: gray; }
-.broken a:link { color: gray; }
-.broken a:link[href] { color: darkgray; }
-
 .gray { color: gray; }
-
-a { color: black; }
-a:link { color: black; }
-a:link[href] { color: black; text-decoration: none; }
 
 .cfy-brack:before { content: attr(data-bracko); color: dimgrey; }
 .cfy-brack:after  { content: attr(data-brackc); color: dimgrey; }
 
 span[onclick]:hover { cursor: pointer; }
-
-span.osquare:before { content: "["; }
-span.csquare:before { content: "]"; }
 
 .cfy-label {
     font-size: 70%;
@@ -46,19 +35,22 @@ span.csquare:before { content: "]"; }
 }
 
 :root {
-    --ofs-noto: "Oracc Noto SansCuneiform";
-    --ofs-oobf: "Oracc OBFreie Regular";
+    --ofs-gudea: "Oracc Gudea";
+    --ofs-lak: "Oracc LAK";
     --ofs-nao: "Oracc NA Outline";
     --ofs-nni: "Nabu-Ninua-Ihsus";
-    --ofs-lak: "Oracc LAK";
+    --ofs-noto: "Oracc Noto SansCuneiform";
+    --ofs-oobf: "Oracc OBFreie Regular";
     --ofs-pc: "Oracc PC";
     --ofs-rsp: "Oracc RSP";
     --ofs-early:  "ss01";
     --ofs-middle: "ss01", "ss02";
     --ofs-late:   "ss01", "ss02", "ss03";
     --ofs-font: var(--ofs-noto);
+    --ofs-ffs: var(--ofs-middle);
     --ofs-mag: 100%;
     --ofs-script: var(--ofs-middle);
+    --ffs-ss01: "ss01";
 }
 
 .cfy-cun {
@@ -101,8 +93,4 @@ span.csquare:before { content: "]"; }
 
 .cfy-oobf { cursor: url("oobf-an.cur"), auto; }
 
-/*
-.cfy-brack::before { attr(data-bracko); }
-.cfy-brack::after { attr(data-brackc); }
-*/
 /*    cursor: url(ban.cur), auto; */
