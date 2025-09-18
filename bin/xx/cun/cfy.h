@@ -39,7 +39,11 @@ typedef struct Cfy
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
-  const char *config; /* config file name */
+  const char *arg_ccf;
+  const char *period_ccf;
+  const char *project_ccf;
+  const char *protocol_ccf;
+  const char *text_ccf;
   struct xpd *xpd;
   int html;
   int weboutput;
@@ -245,7 +249,7 @@ extern FILE *outfp;
 struct perfnt
 {
   const char *name;
-  const char *fnt;
+  const char *ccf;
 };
 extern struct perfnt *perfnt(register const char *str, register size_t len);
 

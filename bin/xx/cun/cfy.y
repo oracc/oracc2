@@ -81,6 +81,7 @@ void
 yyerror(const char *e)
 {
   extern int yylineno, cfy_cfg_status;
-  mesg_vwarning(cfy.config, yylineno, "%s\n", e);
+  extern const char *curr_ccf;
+  mesg_vwarning(curr_ccf, yylineno, "%s\n", e);
   ++cfy_cfg_status;
 }

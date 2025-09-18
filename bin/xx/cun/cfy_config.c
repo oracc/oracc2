@@ -23,9 +23,9 @@ cfy_cfg_load(Cfy *c, const char *cfgfile)
 	  c->m_subspec = memo_init(sizeof(Subspec), 1024);
 	  c->hsubhead = hash_create(128);
 	  c->hsubkeys = hash_create(128);
-	  extern const char *currcfyfile;
+	  extern const char *curr_ccf;
 	  extern FILE *cfyin;
-	  currcfyfile = c->config;
+	  curr_ccf= cfgfile;
 	  cfyin = cfp;
 	  cfyparse();
 	  fclose(cfp);

@@ -5,7 +5,7 @@
 #include "cfy.h"
 
 int in_l = 0, inner = 0;
-
+int protocol_cfy_ccf;
 char innertags[128];
 
 Elt e_zwj = { .etype=ELT_J, .data=(ucp)"\xE2\x80\x8D" };
@@ -185,6 +185,10 @@ cfy_sH(void *userData, const char *name, const char **atts)
       if (cp)
 	*curr_cp = *cp;
     }
+  else if (!strcmp(name, "protocol") && !strcmp(findAttr(atts, "type"), "cfy"))
+    {
+      protocol_cfy_ccf = 1;
+    }
   else
     {
       if (in_l && !inner)
@@ -255,6 +259,11 @@ cfy_eH(void *userData, const char *name)
       
       ((Cfy*)userData)->cline = ((Cfy*)userData)->line = NULL;
     }
+  else if (!strcmp(name, "protocol") && protocol_cfy_ccf)
+    {
+      ((Cfy*)userData)->protocol_ccf = (ccp)pool_copy((uccp)charData_retrieve(), ((Cfy*)userData)->p);
+      protocol_cfy_ccf = 0;
+    }
   else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
     --inner;
   else if (!strcmp(name, "g:w"))
@@ -265,4 +274,5 @@ cfy_eH(void *userData, const char *name)
       if (ep->etype == ELT_W)
 	(void)list_pop(((Cfy*)userData)->line);
     }
+  (void)charData_discard();
 }

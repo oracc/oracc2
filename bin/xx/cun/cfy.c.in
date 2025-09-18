@@ -132,12 +132,12 @@ main(int argc, char **argv)
   
   cfy_init();
 
-  if (cfy.config)
+  if (cfy.arg_ccf)
     {
-      if (cfy_cfg_load(&cfy, cfy.config))
+      if (cfy_cfg_load(&cfy, cfy.arg_ccf))
 	{
 	  extern int cfylineno;
-	  mesg_warning(cfy.config, cfylineno,
+	  mesg_warning(cfy.arg_ccf, cfylineno,
 		       "cfy exiting because of configuration errors.");
 	  mesg_print(stderr);	
 	  exit(1);
@@ -155,7 +155,7 @@ main(int argc, char **argv)
 	  *t = ' ';
       struct perfnt *pfp = perfnt(xperiod, strlen(xperiod));
       if (pfp)
-	cfy.fnt = pfp->fnt;
+	cfy.period_ccf = pfp->ccf;
     }
 
   if (!infile && argv[optind])
@@ -266,7 +266,7 @@ opts(int opt, const char *arg)
     case 'C':
       config_and_exit = 1;
     case 'c':
-      cfy.config = arg;
+      cfy.arg_ccf = arg;
       break;
     case 'f':
       force = 1;

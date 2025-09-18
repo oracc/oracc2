@@ -11,7 +11,7 @@
 static void cfy_user_action(void);
 #define YY_USER_ACTION cfy_user_action();
 extern Mloc cfylloc;
-const char *currcfyfile = NULL;
+const char *curr_ccf = NULL;
 
 #include "cfy.h"
 int anchor_start, anchor_end;
@@ -81,6 +81,6 @@ zwnj		"&n"
 static void
 cfy_user_action(void)
 {
-  cfylloc.file = currcfyfile;
+  cfylloc.file = curr_ccf;
   cfylloc.line = yylineno;
 }
