@@ -21,20 +21,28 @@ CFYLTYPE cfylloc;
 
 %union { char *s; int i; }
 
-%token <i> FILL GOESTO RETURN STRUCTMEM WORD ZWJ ZWNJ
-%token <s> ELTREF GRAPHEME LITERAL MEMBER VALUE
+%token <i> FILL GOESTO KW_CCF KW_KEY RETURN STRUCTMEM WORD ZWJ ZWNJ
+%token <s> CFYCCF CFYKEY ELTREF GRAPHEME LITERAL MEMBER PQX VALUE
 
-%start sublist
+%start configs
 
 %%
 
-sublist:
-	subs
+configs:  config
+	| configs config
 	;
 
-subs:
-	  sub
-	| subs sub
+config:   cfyccf
+	| cfykey
+	| sub
+	;
+
+cfyccf: KW_CCF CFYCCF pqxs {  } ;
+
+cfykey: KW_KEY CFYKEY  	{  } ;
+
+pqxs:     PQX
+	| pqxs PQX
 	;
 
 sub:

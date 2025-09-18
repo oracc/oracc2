@@ -192,6 +192,11 @@ typedef enum gtype { G_NOT,
 		     G_U /*...unknown reading, i.e., $MU notation*/
 } Gtype;
 
+typedef enum ltype { LOC_ARG,
+		     LOC_PRJ,
+		     LOC_TXT
+} Ltype;
+
 typedef struct elt
 {
   Etype etype;	  /* the element type */

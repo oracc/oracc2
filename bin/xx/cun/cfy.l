@@ -20,16 +20,20 @@ int anchor_start, anchor_end;
 
 anchor_e	"$"
 anchor_s	"^"
+cfyccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
+cfykey		cfy-[a-z]+-.*
 comment		^"#".*/[\n\r]
 eltref		@[0-9]+
 endrule		"."
 equals		=
 fill		"++"
 goesto		"=>"
-xgrapheme	([^&@*$ \t\n\r=][^ >\t\n\r]*)
+kw_ccf		^cfy-ccf
+kw_key		^cfy-key
 grapheme	([a-zA-Z0-9\x80-\xff]+)
 literal		'"'[^\"\n\r]+'"'
 member		[a-zA-Z0-9][a-zA-Z0-9_]
+pqx		([a-z0-9/]+:)?[PQX][0-9]{6}
 return		"&r"
 structmem      	"->"
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
@@ -38,6 +42,7 @@ ws		[ \t\r\n]+
 zwj		"&j"
 zwnj		"&n"
 
+%x C
 %x M
 
 %%
@@ -45,6 +50,8 @@ zwnj		"&n"
 {anchor_e}	{ ++anchor_end; return *cfytext; }
 
 {anchor_s}	{ ++anchor_start; return *cfytext; }
+
+{cfykey}       	{ cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return CFYKEY; }
 
 {comment}	{ ; }
 
@@ -60,7 +67,19 @@ zwnj		"&n"
 
 {literal}      	{ return LITERAL; }
 
-<M>{member}	{ cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return MEMBER; }
+<M>{member}	{ BEGIN 0; cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return MEMBER; }
+
+{kw_ccf}       	{ BEGIN C; return KW_CCF; }
+
+{kw_key}       	{ return KW_KEY; }
+
+<C>{cfyccf}	{ cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return CFYCCF; }
+
+<C>{endrule}   	{ BEGIN 0; }
+
+<C>{pqx}       	{ return PQX; }
+
+<C>{ws}		{ ; }
 
 {structmem}	{ BEGIN M; return STRUCTMEM; }
 

@@ -17,22 +17,69 @@ int sub_has_assignment;
 #endif
 
 static const char *
-cfy_cfg_locate(const char *ccf)
+cfy_cfg_locate(Cfy *c, const char *ccf, Ltype cloc)
 {
-  return NULL;
+  if (cloc == LOC_ARG)
+    {
+      return ccf; /* simple access, let cfy_cfg_load handle it */
+    }
+  else if (cloc == LOC_PRJ)
+    {
+      /* for project, look in project/00lib then in system */
+      char path[strlen(oracc())+strlen(c->project)+strlen("//00lib/0")+strlen(ccf)];
+      sprintf(path, "%s/%s/00lib/%s", oracc(), c->project, ccf);
+      if (!access(path, R_OK))
+	return (ccp)pool_copy((uccp)path,c->p);
+      if (c->proxy)
+	{
+	  char path2[strlen(oracc())+strlen(c->proxy)+strlen("//00lib/0")+strlen(ccf)];
+	  sprintf(path2, "%s/%s/00lib/%s", oracc(), c->proxy, ccf);
+	  if (!access(path2, R_OK))
+	    return (ccp)pool_copy((uccp)path2,c->p);
+	}
+      char path3[strlen(oracc())+strlen("/lib/data/0")+strlen(ccf)];
+      sprintf(path3, "%s/lib/data/%s", oracc(), ccf);
+      if (!access(path3, R_OK))
+	return (ccp)pool_copy((uccp)path3,c->p);
+    }
+  else if (cloc == LOC_TXT)
+    {
+      /* look in text dir, then try project places */
+      extern char *inpath;
+      char path[strlen(inpath)+1];
+      strcpy(path, inpath);
+      char *dot = strrchr(path,'.');
+      if (dot) /* should always be true because .xtf input */
+	{
+	  strcpy(dot, ".ccf");
+	  if (!access(path, R_OK))
+	    return (ccp)pool_copy((uccp)path, c->p);
+	  char *p = expand(c->project, c->pqx, "ccf");
+	  if (strcmp(path, p) && !access(p, R_OK))
+	    return (ccp)pool_copy((uccp)p, c->p);
+	  if (c->proxy)
+	    {
+	      p = expand(c->proxy, c->pqx, "ccf");
+	      if (!access(p, R_OK))
+		return (ccp)pool_copy((uccp)p, c->p);
+	    }
+	}
+      return cfy_cfg_locate(c, ccf, LOC_PRJ);
+    }
+  return ccf; /* default return allows cfy_cfg_load to report missing file */
 }
 
 int
 cfy_cfg_run(Cfy *c)
 {
   if (c->arg_ccf)
-    return cfy_cfg_load(c, cfy_cfg_locate(c->arg_ccf));
+    return cfy_cfg_load(c, cfy_cfg_locate(c, c->arg_ccf, LOC_ARG));
   else
     {
       const char *ccfpath;
-      if ((ccfpath = cfy_cfg_locate(c->project_ccf)))
+      if ((ccfpath = cfy_cfg_locate(c, c->project_ccf, LOC_PRJ)))
 	return cfy_cfg_load(c, ccfpath);
-      else if ((ccfpath = cfy_cfg_locate(c->proxy_ccf)))
+      else if ((ccfpath = cfy_cfg_locate(c, c->proxy_ccf, LOC_PRJ)))
 	return cfy_cfg_load(c, ccfpath);
     }
   return 0;
@@ -44,11 +91,11 @@ cfy_cfg_text(Cfy *c)
   if (!c->arg_ccf)
     {
       if (c->text_ccf)
-	return cfy_cfg_load(c, cfy_cfg_locate(c->text_ccf));
+	return cfy_cfg_load(c, cfy_cfg_locate(c, c->text_ccf, LOC_TXT));
       else if (c->protocol_ccf)
-	return cfy_cfg_load(c, cfy_cfg_locate(c->protocol_ccf));
+	return cfy_cfg_load(c, cfy_cfg_locate(c, c->protocol_ccf, LOC_TXT));
       else if (c->proxypro_ccf)
-	return cfy_cfg_load(c, cfy_cfg_locate(c->proxypro_ccf));
+	return cfy_cfg_load(c, cfy_cfg_locate(c, c->proxypro_ccf, LOC_TXT));
     }
   return 0;
 }
@@ -61,6 +108,8 @@ cfy_cfg_load(Cfy *c, const char *cfgpath)
       FILE *cfp = fopen(cfgpath, "r");
       if (cfp)
 	{
+	  if (verbose)
+	    fprintf(stderr, "cfy_cfg_load: using %s\n", cfgpath);
 	  c->cfg = memo_new(c->m_cfg);
 	  c->cfg->path = cfgpath;
  	  c->cfg->m_subspec = memo_init(sizeof(Subspec), 1024);
