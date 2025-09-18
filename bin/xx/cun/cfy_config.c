@@ -287,6 +287,7 @@ cfy_cfg_stash(Mloc m, Cfy *cp)
   list_free(lhs, NULL);
   list_free(rhs, NULL);
   lhs = rhs = NULL;
+  elts_rhs = 0;
 }
 
 static List *lhs = NULL, *rhs = NULL;

@@ -65,10 +65,11 @@ cfy_init(void)
   cfy_reader_init();
   cfy.o = stdout;
   cfy.pqx = "X000000";
+  curr_cp->fntp = cfy_class_fnt(&cfy, curr_cp);
   cfy.c = curr_cp;
   cfy.key = cfy.c->key;
   cfy.fnt = cfy.c->fnt;
-
+  
   mesg_init();
   mloc_init();
 

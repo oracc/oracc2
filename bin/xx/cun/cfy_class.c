@@ -66,6 +66,23 @@ cfy_class_set(char *k, Class *cp)
   free(mem);
 }
 
+Fnt *
+cfy_class_fnt(Cfy *c, Class *ncp)
+{
+  Fnt *fontp = hash_find(c->hfonts, (uccp)ncp->fnt);
+  if (!fontp)
+    {
+      fontp = memo_new(c->m_fnt);
+      char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(ncp->fnt)];
+      sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), ncp->fnt);
+      ncp->fntp = fontp;
+      fontp->ligs = cfy_lig_load(ligf);
+      hash_add(c->hfonts, (uccp)ncp->fnt, fontp);
+      /* LOAD uni HERE */
+    }
+  return fontp;
+}
+
 Class *
 cfy_class(Cfy *c, const char *key, Class *cp)
 {
@@ -96,21 +113,7 @@ cfy_class(Cfy *c, const char *key, Class *cp)
 	  free(newkey);
 	  cfy_class_set((char*)pool_copy((uccp)ncp->key, c->p), ncp);
 	  hash_add(c->hclasses, (uccp)ncp->key, ncp);
-	  Fnt *fontp = hash_find(c->hfonts, (uccp)ncp->fnt);
-	  if (!fontp)
-	    {
-	      fontp = memo_new(c->m_fnt);
-	      char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(ncp->fnt)];
-	      sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), ncp->fnt);
-	      ncp->fntp = fontp;
-	      fontp->ligs = cfy_lig_load(ligf);
-	      hash_add(c->hfonts, (uccp)ncp->fnt, fontp);
-	      /* LOAD uni HERE */
-	    }
-	  else
-	    {
-	      ncp->fntp = fontp;
-	    }
+	  ncp->fntp = cfy_class_fnt(c, ncp);
 	}
       free(kk);
       free(mem);
