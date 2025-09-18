@@ -103,6 +103,12 @@ cfy_cfg_text(Cfy *c)
 int
 cfy_cfg_load(Cfy *c, const char *cfgpath)
 {
+  Cfg *cfgp = hash_find(c->hconfigs, (uccp)cfgpath);
+  if (cfgp)
+    {
+      c->cfg = cfgp;
+      return 0;
+    }
   if (!access(cfgpath, R_OK))
     {
       FILE *cfp = fopen(cfgpath, "r");
