@@ -46,7 +46,7 @@ static char *
 cfy_class_key(const char *fnt, const char *otf, const char *mag,
 	      const char *scr, const char *asl)
 {
-  int len = strlen(fnt)+strlen(otf)+strlen(mag)+strlen(scr)+strlen(asl)+9;
+  int len = strlen(fnt)+strlen(otf)+strlen(mag)+strlen(scr)+strlen(asl)+strlen("cfy-----0");
   char *k = malloc(len);
   sprintf(k, "cfy-%s-%s-%s-%s-%s", fnt, otf, mag, scr, asl);
   return k;
@@ -110,7 +110,6 @@ cfy_class(Cfy *c, const char *key, Class *cp)
 	  ncp = memo_new(c->m_class);
 	  ncp->cfyp = c;
 	  ncp->key = (ccp)hpool_copy((uccp)newkey, c->hp); 
-	  free(newkey);
 	  cfy_class_set((char*)pool_copy((uccp)ncp->key, c->p), ncp);
 	  hash_add(c->hclasses, (uccp)ncp->key, ncp);
 	  ncp->fntp = cfy_class_fnt(c, ncp);
