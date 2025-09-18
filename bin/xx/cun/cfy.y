@@ -39,7 +39,7 @@ config:   cfyccf
 
 cfyccf: KW_CCF CFYCCF pqxs {  } ;
 
-cfykey: KW_KEY CFYKEY  	{  } ;
+cfykey: KW_KEY CFYKEY  	{ cfy_cfg_key(@$, &cfy, $2); } ;
 
 pqxs:     PQX
 	| pqxs PQX

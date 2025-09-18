@@ -101,6 +101,13 @@ cfy_cfg_text(Cfy *c)
 }
 
 int
+cfy_cfg_key(Mloc m, Cfy *c, const char *k)
+{
+  curr_cp = c->c = cfy_class(c, k, c->c);
+  return 0;
+}
+
+int
 cfy_cfg_load(Cfy *c, const char *cfgpath)
 {
   Cfg *cfgp = hash_find(c->hconfigs, (uccp)cfgpath);
