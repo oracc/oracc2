@@ -74,6 +74,12 @@ install-exec-local:
 %.def: %.def.in
 	$(ORACCIFY) $<
 
+%.lig: %.oin
+	${xxfont}/oin2lig <$< >$@
+
+%.uni: %.ofp
+	${xxfont}/ofp2uni.sh $< >$@
+
 %.oin: %.ttf
 	${xxfont}/ttf2oin.sh $*
 
