@@ -38,7 +38,7 @@ sub_match(Cfy *c, Elt **epp, int i, Subspec *hsp)
 	      strcat(buf, k);
 	      if (trace)
 		fprintf(stderr, "trace: sub_match trying hsubkeys for %s\n", buf);
-	      Subspec *sp = hash_find(c->hsubkeys, (uccp)buf);
+	      Subspec *sp = hash_find(c->cfg->hsubkeys, (uccp)buf);
 	      if (sp)
 		{
 		  if (sp->terminal)
@@ -99,7 +99,7 @@ sub_r_asgn(Cfy *c, Eltline *elp, int elp_i, Subspec *sp)
 static Elt **
 sub_r_fix(Cfy *c, Eltline *elp, int i, Subspec *sp)
 {
-  Elt **nr = memo_new_array(c->m_subspec, sp->r_len);
+  Elt **nr = memo_new_array(c->cfg->m_subspec, sp->r_len);
   Elt *o_g = elp->epp[i]; /* matches always start with ELT_G */
   memcpy(nr, sp->r, sizeof(Elt*) * sp->r_len);
   int j;
@@ -187,7 +187,7 @@ cfy_subbings(Cfy *c, Eltline *elp)
   for (i = 0; elp->epp[i]; )
     {
       Subspec *hsp;
-      if (elp->epp[i]->key && (hsp = hash_find(c->hsubkeys, (uccp)elp->epp[i]->key)))
+      if (elp->epp[i]->key && (hsp = hash_find(c->cfg->hsubkeys, (uccp)elp->epp[i]->key)))
 	{
 	  Subspec *sp = sub_match(c, elp->epp, i, hsp);
 	  /* because this does not increment i we should implement an

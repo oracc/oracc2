@@ -10,24 +10,25 @@ struct line;
 struct eltline;
 
 /* Global management structure */
-typedef struct Cfy
+typedef struct cfy
 {
   const char *n;
   const char *project;
+  const char *proxy; /* set when text project is different from
+			previously set project */
   const char *pqx;
   Pool *p;
   Pool *hp;
   Hash *hclasses;
-  Hash *hsubhead;
-  Hash *hsubkeys;
+  Hash *hconfigs; /* hash of config paths to loaded config structures */
   Hash *hfonts;
-  Memo *m_assignment;
+  Memo *m_cfg;
   Memo *m_class;
+  Memo *m_fnt;
   Memo *m_line;
   Memo *m_cell;
   Memo *m_elt;
   Memo *m_eltline;
-  Memo *m_subspec;
   List *body; 	/* list of line or cline pointers for actual output */
   List *line; 	/* list of Elt built by cfy_reader */
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
@@ -39,15 +40,40 @@ typedef struct Cfy
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
-  const char *arg_ccf;
-  const char *period_ccf;
-  const char *project_ccf;
-  const char *protocol_ccf;
-  const char *text_ccf;
+  const char *arg_ccf;		/* from the CLI */
+  const char *period_ccf;	/* from the perfnt table */
+  const char *project_ccf;	/* from the project */
+  const char *protocol_ccf; 	/* from the text */
+  const char *proxy_ccf; 	/* from the proxy project if defined */
+  const char *proxypro_ccf; 	/* from the text from the proxy project */
+  const char *text_ccf;		/* from the hash of texts and ccfs in a ccf */
   struct xpd *xpd;
+  struct cfg *cfg;		/* the active config data */
   int html;
   int weboutput;
 } Cfy;
+
+typedef struct cfg
+{
+  const char *path; 	/* path to loaded file */
+  const char *key; 	/* cfy-key */
+  struct class *c;	/* Class for the key */
+  const char *pfs[10];  /* percent-font-switch %10..%19 indexed as 0..9 */
+  struct class *pc[10]; /* Classes for percent-font-switch */
+  Memo *m_subspec;
+  Memo *m_assignment;
+  Hash *hsubhead;
+  Hash *hsubkeys;
+  Hash *pqxccf;		/* hash mapping (qualified) PQX to cfg files */
+  Cfy *cfy;
+} Cfg;
+
+typedef struct fnt
+{
+  const char *name;
+  Hash *uni;
+  Hash **ligs; /* ligatures are an array of hashes essentially implementing a trie */
+} Fnt;
 
 /* Cuneify output uses the HTML class attribute to render cuneiform
    with different fonts (fnt), script sets (set), and an appropriate
@@ -87,8 +113,8 @@ typedef struct class
   const char *scr;
   const char *asl;
   const char *css;
-  Hash **lig; /* ligatures are an array of hashes essentially implementing a trie */
-  Cfy *cfy;
+  Fnt *fntp; 
+  Cfy *cfyp;
 } Class;
 
 extern Class *curr_cp;
@@ -294,6 +320,8 @@ extern void cfy_cfg_elt_j(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_n(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_q(Mloc m, Cfy *c, uccp q);
 
+extern int cfy_cfg_run(Cfy *c);
+extern int cfy_cfg_text(Cfy *c);
 extern int cfy_cfg_load(Cfy *c, const char *cfgfile);
 extern void cfy_cfg_stash(Mloc m, Cfy *c);
 extern const char *elts_one_key(Elt *e);

@@ -179,7 +179,12 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	{
 	  const char *prj = findAttr(atts, "project");
 	  if (*prj)
-	    c->project = (ccp)pool_copy((uchar*)prj, c->p);
+	    {
+	      if (c->project && strcmp(prj, c->project))
+		c->proxy = (ccp)pool_copy((uchar*)prj, c->p);
+	      else
+		c->project = (ccp)pool_copy((uchar*)prj, c->p);
+	    }
 	}
       Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
       if (cp)
@@ -261,8 +266,13 @@ cfy_eH(void *userData, const char *name)
     }
   else if (!strcmp(name, "protocol") && protocol_cfy_ccf)
     {
-      ((Cfy*)userData)->protocol_ccf = (ccp)pool_copy((uccp)charData_retrieve(), ((Cfy*)userData)->p);
+      Cfy *c = userData;
+      if (c->proxy)
+	c->proxypro_ccf = (ccp)pool_copy((uccp)charData_retrieve(), c->p);
+      else
+	c->protocol_ccf = (ccp)pool_copy((uccp)charData_retrieve(), c->p);
       protocol_cfy_ccf = 0;
+      cfy_cfg_text(c);
     }
   else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
     --inner;

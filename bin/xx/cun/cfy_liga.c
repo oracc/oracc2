@@ -55,7 +55,7 @@ cfy_lig_check(Cfy *c, Elt **epp, int i)
 	  int hval;
 	  strcat(l, epp[j]->data);
 	  list_add(l_ids, (void*)epp[j]->xid);
-	  if (1 == (hval = (intptr_t)hash_find(cp->lig[k++], (uccp)l)))
+	  if (1 == (hval = (intptr_t)hash_find(cp->fntp->ligs[k++], (uccp)l)))
 	    {
 	      epp[i]->data = pool_copy((uccp)l, c->p);
 	      epp[i]->xid = (ccp)list_to_str2(l_ids, "+");
@@ -82,8 +82,8 @@ cfy_ligatures(Cfy*c, Elt **epp)
   while (epp[i])
     {
       if (epp[i]->etype == ELT_G
-	  && epp[i]->c->lig
-	  && hash_find(epp[i]->c->lig[0], epp[i]->data))
+	  && epp[i]->c->fntp->ligs
+	  && hash_find(epp[i]->c->fntp->ligs[0], epp[i]->data))
 	i = cfy_lig_check(c, epp, i);
       else
 	++i;

@@ -10,22 +10,69 @@ static List *lhs, *rhs;
 extern int elts_rhs;
 int sub_has_assignment;
 
-int
-cfy_cfg_load(Cfy *c, const char *cfgfile)
+#if 0
+	   && !(cfy.c = cfy_class(&cfy, cfykey,NULL)))
+	  fprintf(stderr, "cfy: errors in config key %s. Stop.\n", cfykey);
+	  exit(1);
+#endif
+
+static const char *
+cfy_cfg_locate(const char *ccf)
 {
-  if (!access(cfgfile, R_OK))
+  return NULL;
+}
+
+int
+cfy_cfg_run(Cfy *c)
+{
+  if (c->arg_ccf)
+    return cfy_cfg_load(c, cfy_cfg_locate(c->arg_ccf));
+  else
     {
-      FILE *cfp = fopen(cfgfile, "r");
+      const char *ccfpath;
+      if ((ccfpath = cfy_cfg_locate(c->project_ccf)))
+	return cfy_cfg_load(c, ccfpath);
+      else if ((ccfpath = cfy_cfg_locate(c->proxy_ccf)))
+	return cfy_cfg_load(c, ccfpath);
+    }
+  return 0;
+}
+
+int
+cfy_cfg_text(Cfy *c)
+{
+  if (!c->arg_ccf)
+    {
+      if (c->text_ccf)
+	return cfy_cfg_load(c, cfy_cfg_locate(c->text_ccf));
+      else if (c->protocol_ccf)
+	return cfy_cfg_load(c, cfy_cfg_locate(c->protocol_ccf));
+      else if (c->proxypro_ccf)
+	return cfy_cfg_load(c, cfy_cfg_locate(c->proxypro_ccf));
+    }
+  return 0;
+}
+
+int
+cfy_cfg_load(Cfy *c, const char *cfgpath)
+{
+  if (!access(cfgpath, R_OK))
+    {
+      FILE *cfp = fopen(cfgpath, "r");
       if (cfp)
 	{
+	  c->cfg = memo_new(c->m_cfg);
+	  c->cfg->path = cfgpath;
+ 	  c->cfg->m_subspec = memo_init(sizeof(Subspec), 1024);
+	  c->cfg->m_assignment = memo_init(sizeof(Assignment), 16);
+	  hash_add(c->hconfigs, (uccp)c->cfg->path, c->cfg);
+	  c->cfg->hsubhead = hash_create(128);
+	  c->cfg->hsubkeys = hash_create(128);
 	  gdl_init();
 	  gvl_setup("osl", "osl", "020");
-	  c->m_subspec = memo_init(sizeof(Subspec), 1024);
-	  c->hsubhead = hash_create(128);
-	  c->hsubkeys = hash_create(128);
 	  extern const char *curr_ccf;
 	  extern FILE *cfyin;
-	  curr_ccf= cfgfile;
+	  curr_ccf= cfgpath;
 	  cfyin = cfp;
 	  cfyparse();
 	  fclose(cfp);
@@ -34,13 +81,13 @@ cfy_cfg_load(Cfy *c, const char *cfgfile)
 	}
       else
 	{
-	  mesg_verr(NULL, "failed to open config file %s", cfgfile);
+	  mesg_verr(NULL, "failed to open config file %s", cfgpath);
 	  return 1;
 	}
     }
   else
     {
-      mesg_verr(NULL, "config file %s not readable", cfgfile);
+      mesg_verr(NULL, "config file %s not readable", cfgpath);
       return 1;
     }
 }
@@ -104,16 +151,18 @@ elts_key(Cfy *c, Elt **lelts, int n)
 }
 
 static Subspec *
-sp_clone(Cfy *c, Subspec *sp)
+sp_clone(Cfy *cp, Subspec *sp)
 {
+  Cfg *c = cp->cfg;
   Subspec *clone = memo_new(c->m_subspec);
   *clone = *sp;
   return clone;
 }
 
 void
-cfy_cfg_stash(Mloc m, Cfy *c)
+cfy_cfg_stash(Mloc m, Cfy *cp)
 {
+  Cfg *c = cp->cfg;
   Subspec *sp = memo_new(c->m_subspec);
   sp->start = anchor_start;
   sp->end = anchor_end;
@@ -135,7 +184,7 @@ cfy_cfg_stash(Mloc m, Cfy *c)
       else
 	{
 	  /* check that this isn't a duplicate */
-	  const char *ek = elts_key(c, sp->l, sp->l_len);
+	  const char *ek = elts_key(cp, sp->l, sp->l_len);
 	  Subspec *hsp = hash_find(c->hsubkeys, (uccp)ek);
 	  if (hsp && !hsp->terminal)
 	    {
@@ -165,7 +214,9 @@ cfy_cfg_stash(Mloc m, Cfy *c)
 				buf, ek);
 		      /* This is a new subpath; we need to clone the
 			 Subspec to ensure sp->terminal stays 0 */
-		      hash_add(c->hsubkeys, (uccp)hpool_copy((uccp)buf,c->hp), sp_clone(c, sp));
+		      hash_add(c->hsubkeys,
+			       (uccp)hpool_copy((uccp)buf,cp->hp),
+			       sp_clone(cp, sp));
 		    }
 		  else if (trace)
 		    fprintf(stderr,
@@ -192,12 +243,13 @@ cfy_cfg_stash(Mloc m, Cfy *c)
 static List *lhs = NULL, *rhs = NULL;
 
 void
-cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val)
+cfy_cfg_asgn(Mloc m, Cfy *cp, int nth, const char *memb, const char *val)
 {
+  Cfg *c = cp->cfg;
   if (elts_rhs)
     {
       Assignment *ap = memo_new(c->m_assignment);
-      Elt *ep = memo_new(c->m_elt);
+      Elt *ep = memo_new(cp->m_elt);
       ep->etype = ELT_A;
       ep->data = ap;
       list_add(rhs, ep);

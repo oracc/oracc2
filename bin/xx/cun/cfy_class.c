@@ -62,7 +62,7 @@ cfy_class_set(char *k, Class *cp)
   cp->scr = mem[4];
   cp->asl = mem[5];
   if (cp->asl && '.' == *cp->asl)
-    cp->asl = cp->cfy->project;
+    cp->asl = cp->cfyp->project;
   free(mem);
 }
 
@@ -91,22 +91,25 @@ cfy_class(Cfy *c, const char *key, Class *cp)
       if (!hash_find(c->hclasses, (uccp)newkey))
 	{
 	  ncp = memo_new(c->m_class);
-	  ncp->cfy = c;
+	  ncp->cfyp = c;
 	  ncp->key = (ccp)hpool_copy((uccp)newkey, c->hp); 
 	  free(newkey);
 	  cfy_class_set((char*)pool_copy((uccp)ncp->key, c->p), ncp);
 	  hash_add(c->hclasses, (uccp)ncp->key, ncp);
-	  Class *fontc = hash_find(c->hfonts, (uccp)ncp->fnt);
-	  if (!fontc)
+	  Fnt *fontp = hash_find(c->hfonts, (uccp)ncp->fnt);
+	  if (!fontp)
 	    {
+	      fontp = memo_new(c->m_fnt);
 	      char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(ncp->fnt)];
 	      sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), ncp->fnt);
-	      ncp->lig = cfy_lig_load(ligf);
-	      hash_add(c->hfonts, (uccp)ncp->fnt, ncp);
+	      ncp->fntp = fontp;
+	      fontp->ligs = cfy_lig_load(ligf);
+	      hash_add(c->hfonts, (uccp)ncp->fnt, fontp);
+	      /* LOAD uni HERE */
 	    }
 	  else
 	    {
-	      ncp->lig = fontc->lig;	      
+	      ncp->fntp = fontp;
 	    }
 	}
       free(kk);
