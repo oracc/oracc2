@@ -8,7 +8,7 @@ cfy_uni_check(Cfy *c, uccp u)
 }
 
 Hash *
-cfy_uni_load(const char *unifile)
+cfy_uni_load(Cfy *c, const char *unifile)
 {
   if (!access(unifile, R_OK))
     {
@@ -21,5 +21,9 @@ cfy_uni_load(const char *unifile)
       return u;
     }
   else
-    return NULL;
+    {
+      fprintf(stderr, "cfy_uni_load: coverage checking deactivated; %s not found\n", unifile);
+      c->coverage = 0;
+      return NULL;
+    }
 }

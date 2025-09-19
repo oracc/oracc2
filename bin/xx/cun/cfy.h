@@ -346,6 +346,6 @@ extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
 
 extern int cfy_uni_check(Cfy *c, uccp u);
-extern Hash *cfy_uni_load(const char *unifile);
+extern Hash *cfy_uni_load(Cfy *c, const char *unifile);
 
 #endif/*CFY_H_*/
