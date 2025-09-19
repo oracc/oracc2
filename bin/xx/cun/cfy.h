@@ -74,6 +74,7 @@ typedef struct fnt
   const char *name;
   const char *full;
   Hash *uni;
+  Hash *uni_seen;
   Hash **ligs; /* ligatures are an array of hashes essentially implementing a trie */
 } Fnt;
 

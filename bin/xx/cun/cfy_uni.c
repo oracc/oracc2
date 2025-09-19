@@ -10,9 +10,9 @@ cfy_uni_check(Cfy *c, uccp u)
 Hash *
 cfy_uni_load(const char *unifile)
 {
-  Hash *u = hash_create(4096);
   if (!access(unifile, R_OK))
     {
+      Hash *u = hash_create(4096);
       size_t nl;
       uchar **l = loadfile_lines((uccp)unifile, &nl);
       int i;
@@ -20,5 +20,6 @@ cfy_uni_load(const char *unifile)
 	hash_add(u, l[i], "");
       return u;
     }
-  return NULL;
+  else
+    return NULL;
 }

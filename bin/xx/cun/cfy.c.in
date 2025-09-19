@@ -130,7 +130,7 @@ int
 main(int argc, char **argv)
 {  
   cfy.o = stdout;
-  options(argc, argv, "bC:c:fhi:l:no:p:P:q:st:Tvw");
+  options(argc, argv, "bC:c:fhi:l:no:P:p:q:sTt:Uuvw");
 
   cfyset_debug(verbose);
   gdlset_debug(0);

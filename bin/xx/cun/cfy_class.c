@@ -83,12 +83,13 @@ cfy_class_fnt(Cfy *c, Class *ncp)
 	  char ligf[strlen(oracc()) + strlen("/lib/data/.xxx0") + strlen(fontp->full)];
 	  
 	  sprintf(ligf, "%s/lib/data/%s.lig", oracc(), fontp->full);
-	  fontp->ligs = cfy_lig_load(ligf);
+	  ncp->fntp->ligs = cfy_lig_load(ligf);
 
 	  if (c->coverage)
 	    {
 	      sprintf(ligf, "%s/lib/data/%s.uni", oracc(), fontp->full);
-	      fontp->uni = cfy_uni_load(ligf);
+	      if ((ncp->fntp->uni = cfy_uni_load(ligf)))
+		ncp->fntp->uni_seen = hash_create(2048);
 	    }
 	}
       else
