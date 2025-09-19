@@ -45,22 +45,9 @@ cfy_cell(Cfy *c, const char **atts)
 static void
 cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Class *cp, const char *oid)
 {
-  if (c->coverage && !hash_find(c->c->fntp->uni_seen, (uccp)utf8))
-    {
-      hash_add(c->c->fntp->uni_seen, (uccp)utf8, "");
-      if (!cfy_uni_check(c, (uccp)utf8))
-	{
-	  if (c->cov_list)
-	    fprintf(stderr,
-		    "%s:%d: list %s missing %s=%s=%s\n",
-		    pi_file, pi_line, c->cov_list, utf8, oid, findAttr(atts, "g:sign"));
-	  else
-	    fprintf(stderr,
-		    "%s:%d: font %s missing %s=%s=%s\n",
-		    pi_file, pi_line, c->c->fntp->full, utf8, oid, findAttr(atts, "g:sign"));
-	}
-    }
-  
+  if (c->coverage)
+    cfy_uni_check(c, (uccp)utf8);
+
   Btype brk = breakage(name, atts);
   /* can't currently do G_U because ATF $MU doesn't annotate the $-status*/
   Gtype g = (name[2] == 'v'

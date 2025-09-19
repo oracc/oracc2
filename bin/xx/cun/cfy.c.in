@@ -3,6 +3,10 @@
 #include <setjmp.h>
 #include <runexpat.h>
 #include <xpd.h>
+
+#include <locale.h>
+#include "oracclocale.h"
+
 #include "cfy.h"
 
 extern void cfyset_debug (int debug_flag);
@@ -129,8 +133,10 @@ cfy_post(Cfy *c)
 
 int
 main(int argc, char **argv)
-{  
-  cfy.o = stdout;
+{
+  setlocale (LC_ALL, ORACC_LOCALE);
+
+  cfy.o = stdout;  
   options(argc, argv, "bC:c:fhi:l:no:P:p:q:sTt:U:uvw");
 
   cfyset_debug(verbose);
