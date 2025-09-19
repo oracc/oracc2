@@ -56,6 +56,13 @@ loadfile_lines(unsigned const char *fname, size_t *nlines)
   size_t i, j, n, l;
   unsigned char *f = loadfile(fname,&n);
   unsigned char **lp;
+
+  if (!n)
+    {
+      if (nlines)
+	*nlines = 0;
+      return NULL;
+    }
   
   for (i = l = 0; i < n; ++i)
     if ('\n' == f[i])
