@@ -45,6 +45,11 @@ cfy_cell(Cfy *c, const char **atts)
 static void
 cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Class *cp, const char *oid)
 {
+  if (c->coverage && !cfy_uni_check(c, (uccp)utf8))
+    fprintf(stderr,
+	    "%s:%d: font %s missing %s=%s=%s\n",
+	    pi_file, pi_line, c->c->fntp->full, utf8, oid, findAttr(atts, "g:sign"));
+  
   Btype brk = breakage(name, atts);
   /* can't currently do G_U because ATF $MU doesn't annotate the $-status*/
   Gtype g = (name[2] == 'v'

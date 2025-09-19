@@ -72,13 +72,27 @@ cfy_class_fnt(Cfy *c, Class *ncp)
   Fnt *fontp = hash_find(c->hfonts, (uccp)ncp->fnt);
   if (!fontp)
     {
-      fontp = memo_new(c->m_fnt);
-      char ligf[strlen(oracc()) + strlen("/lib/data/ofs-.lig0") + strlen(ncp->fnt)];
-      sprintf(ligf, "%s/lib/data/ofs-%s.lig", oracc(), ncp->fnt);
-      ncp->fntp = fontp;
-      fontp->ligs = cfy_lig_load(ligf);
-      hash_add(c->hfonts, (uccp)ncp->fnt, fontp);
-      /* LOAD uni HERE */
+      struct fontname *fp = fontname(ncp->fnt, strlen(ncp->fnt));
+      if (fp)
+	{
+	  fontp = memo_new(c->m_fnt);
+	  ncp->fntp = fontp;
+	  hash_add(c->hfonts, (uccp)ncp->fnt, ncp->fntp);
+	  fontp->name = ncp->fnt;
+	  fontp->full = fp->full;
+	  char ligf[strlen(oracc()) + strlen("/lib/data/.xxx0") + strlen(fontp->full)];
+	  
+	  sprintf(ligf, "%s/lib/data/%s.lig", oracc(), fontp->full);
+	  fontp->ligs = cfy_lig_load(ligf);
+
+	  if (c->coverage)
+	    {
+	      sprintf(ligf, "%s/lib/data/%s.uni", oracc(), fontp->full);
+	      fontp->uni = cfy_uni_load(ligf);
+	    }
+	}
+      else
+	fprintf(stderr, "cfy_class_fnt: no full font name for %s\n", ncp->fnt);
     }
   return fontp;
 }

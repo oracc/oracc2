@@ -154,6 +154,7 @@ cbdpos.c
 cbdrws.c
 cbdtags.c
 cgiopts.c
+fontname.c
 iomethod.c
 idactions.c
 ikeysub.c

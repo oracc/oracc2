@@ -309,6 +309,12 @@ opts(int opt, const char *arg)
     case 'T':
       trace = 1;
       break;
+    case 'U':
+      cfy.coverage = 2;
+      break;
+    case 'u':
+      cfy.coverage = 1;
+      break;
     case 'v':
       verbose = 1;
       break;

@@ -49,6 +49,7 @@ typedef struct cfy
   const char *text_ccf;		/* from the hash of texts and ccfs in a ccf */
   struct xpd *xpd;
   struct cfg *cfg;		/* the active config data */
+  int coverage;
   int html;
   int weboutput;
 } Cfy;
@@ -71,6 +72,7 @@ typedef struct cfg
 typedef struct fnt
 {
   const char *name;
+  const char *full;
   Hash *uni;
   Hash **ligs; /* ligatures are an array of hashes essentially implementing a trie */
 } Fnt;
@@ -284,6 +286,13 @@ struct perfnt
 };
 extern struct perfnt *perfnt(register const char *str, register size_t len);
 
+struct fontname
+{
+  const char *name;
+  const char *full;
+};
+extern struct fontname *fontname(register const char *str, register size_t len);
+
 struct subtok
 {
   const char *name;
@@ -334,5 +343,8 @@ extern void cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *
 extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
+
+extern int cfy_uni_check(Cfy *c, uccp u);
+extern Hash *cfy_uni_load(const char *unifile);
 
 #endif/*CFY_H_*/
