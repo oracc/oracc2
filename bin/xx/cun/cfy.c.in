@@ -60,7 +60,7 @@ cfy_init(void)
   cfy.m_line = memo_init(sizeof(Line), 256);
   cfy.m_cell = memo_init(sizeof(Cell), 256);
   cfy.m_elt = memo_init(sizeof(Elt), 1024);
-  cfy.m_eltline = memo_init(sizeof(Elt), 256);
+  cfy.m_eltline = memo_init(sizeof(Eltline), 256);
   cfy.body = list_create(LIST_SINGLE);
   cfy_reader_init();
   cfy.o = stdout;
