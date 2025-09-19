@@ -1,6 +1,7 @@
 include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=cfy
+bin_SCRIPTS=cfycov.sh
 
 # cunx
 # cunx_SOURCES = cunx.c fileargs.c perfnt.c render.c
