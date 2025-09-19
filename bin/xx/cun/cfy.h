@@ -50,6 +50,7 @@ typedef struct cfy
   struct xpd *xpd;
   struct cfg *cfg;		/* the active config data */
   int coverage;
+  const char *cov_list;
   int html;
   int weboutput;
 } Cfy;
