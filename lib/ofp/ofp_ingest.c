@@ -144,6 +144,14 @@ ofp_ingest(Ofp *ofp)
 		  ucode = "0000";
 		}
 	    }
+	  if (hash_find(ofp->h_glyf, (uccp)name))
+	    {
+	      /* this indicates a name with multiple unicode values */
+	      static char buf[7];
+	      strcpy(buf, "u");
+	      strcat(buf, ucode);
+	      name = buf;
+	    }
 	  if (ofp->trace)
 	    fprintf(ofp->trace, "ofp_ingest: hash_add h_glyf %s gp(%d)\n",
 		    name, i-offset);
