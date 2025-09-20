@@ -2,6 +2,18 @@
 #
 # Use cfy to test coverage of a text:
 #
+function usage {
+    cat <<EOF
+Usage: cfycov.sh -u UNILIST [-p PROJECT | -q QUALTEXT | -t TEXTLIST ]
+
+	-u UNILIST : list of unicode characters to test coverage against
+	-p PROJECT : check all texts in named PROJECT
+	-q QUALTEXT : check coverage of a the given single text
+	              QUALTEXT is PROJECT:PQXID, e.g., epsd2/admin/ed3a:P011110
+	-t TEXTLIST : check all entries in TEXTLIST, one QUALTEXT per line
+
+EOF
+}
 
 function fail {
     echo "==="
@@ -22,19 +34,6 @@ function texts {
 	>2 echo ::$t
 	cfy -U$unilist -q $t
     done <$1
-}
-
-function usage {
-    cat <<EOF
-Usage: cfycov.sh -u UNILIST [-p PROJECT | -q QUALTEXT | -t TEXTLIST ]
-
-	-u UNILIST : list of unicode characters to test coverage against
-	-p PROJECT : check all texts in named PROJECT
-	-q QUALTEXT : check coverage of a the given single text
-	              QUALTEXT is PROJECT:PQXID, e.g., epsd2/admin/ed3a:P011110
-	-t TEXTLIST : check all entries in TEXTLIST, one QUALTEXT per line
-
-EOF
 }
 
 if [[ "$*" == "" ]]; then

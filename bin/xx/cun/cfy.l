@@ -15,20 +15,22 @@ const char *curr_ccf = NULL;
 
 #include "cfy.h"
 int anchor_start, anchor_end;
-
+#define lval(v) cfylval.s = (char *)pool_copy((uccp)(v),cfy.p)
 %}
 
 anchor_e	"$"
 anchor_s	"^"
-cfyccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
-cfykey		cfy-[a-z]+-.*
 comment		^"#".*/[\n\r]
 eltref		@[0-9]+
 endrule		"."
 equals		=
 fill		"++"
 goesto		"=>"
+kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
+kv_key		cfy-[a-z]+-.*
+kv_justify     	(none|spread|penult)
 kw_ccf		^cfy-ccf
+kw_justify     	^cfy-justify
 kw_key		^cfy-key
 grapheme	([a-zA-Z0-9\x80-\xff]+)
 literal		'"'[^\"\n\r]+'"'
@@ -43,6 +45,7 @@ zwj		"&j"
 zwnj		"&n"
 
 %x C
+%x J
 %x M
 
 %%
@@ -51,11 +54,9 @@ zwnj		"&n"
 
 {anchor_s}	{ ++anchor_start; return *cfytext; }
 
-{cfykey}       	{ cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return CFYKEY; }
-
 {comment}	{ ; }
 
-{eltref}	{ cfylval.s = (char *)pool_copy((uccp)cfytext+1,cfy.p); return ELTREF; }
+{eltref}	{ lval(cfytext+1); return ELTREF; }
 
 {endrule}	{ return *cfytext; }
 
@@ -63,17 +64,13 @@ zwnj		"&n"
 
 {goesto}	{ return GOESTO; }
 
-{grapheme} 	{ cfylval.s = (char *)pool_copy((uccp)cfytext,cfy.p); return GRAPHEME; }
+{grapheme} 	{ lval(cfytext); return GRAPHEME; }
 
 {literal}      	{ return LITERAL; }
 
-<M>{member}	{ BEGIN 0; cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return MEMBER; }
-
 {kw_ccf}       	{ BEGIN C; return KW_CCF; }
 
-{kw_key}       	{ return KW_KEY; }
-
-<C>{cfyccf}	{ cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return CFYCCF; }
+<C>{kv_ccf}	{ lval(cfytext); return CFYCCF; }
 
 <C>{endrule}   	{ BEGIN 0; }
 
@@ -81,9 +78,23 @@ zwnj		"&n"
 
 <C>{ws}		{ ; }
 
+{kw_key}       	{ return KW_KEY; }
+
+{kv_key}       	{ lval(cfytext); return CFYKEY; }
+
+{kw_justify}	{ BEGIN J; return KW_JUSTIFY; }
+
+<J>{kv_justify}	{ BEGIN 0; lval(cfytext); return 0; }
+
+<J>{ws}		{ ; }
+
+{return}	{ return RETURN; }
+
 {structmem}	{ BEGIN M; return STRUCTMEM; }
 
-{value}		{ cfylval.s = (char*)pool_copy((uccp)cfytext,cfy.p); return VALUE; }
+<M>{member}	{ BEGIN 0; lval(cfytext); return MEMBER; }
+
+{value}		{ lval(cfytext); return VALUE; }
 
 {word}		{ return WORD; }
 
