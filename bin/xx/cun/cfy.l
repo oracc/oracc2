@@ -26,9 +26,13 @@ endrule		"."
 equals		=
 fill		"++"
 goesto		"=>"
+jeltl		"&Jl"
+jeltr		"&Jr"
+jelts		"&Js"
+jeltp		"&Jp"
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_key		cfy-[a-z]+-.*
-kv_justify     	(none|spread|penult)
+kv_justify     	(none|left|right|spread|penult)
 kw_ccf		^cfy-ccf
 kw_justify     	^cfy-justify
 kw_key		^cfy-key
@@ -43,6 +47,7 @@ word		"&w"
 ws		[ \t\r\n]+
 zwj		"&j"
 zwnj		"&n"
+zws		"&s"
 
 %x C
 %x J
@@ -68,6 +73,14 @@ zwnj		"&n"
 
 {literal}      	{ return LITERAL; }
 
+{jeltl}		{ return JELTl; }
+
+{jeltr}		{ return JELTr; }
+
+{jelts}		{ return JELTs; }
+
+{jeltp}		{ return JELTp; }
+
 {kw_ccf}       	{ BEGIN C; return KW_CCF; }
 
 <C>{kv_ccf}	{ lval(cfytext); return CFYCCF; }
@@ -84,7 +97,7 @@ zwnj		"&n"
 
 {kw_justify}	{ BEGIN J; return KW_JUSTIFY; }
 
-<J>{kv_justify}	{ BEGIN 0; lval(cfytext); return 0; }
+<J>{kv_justify}	{ BEGIN 0; lval(cfytext); return CFYJUSTIFY; }
 
 <J>{ws}		{ ; }
 
@@ -103,6 +116,8 @@ zwnj		"&n"
 {zwj}		{ return ZWJ; }
 
 {zwnj}		{ return ZWNJ; }
+
+{zws}		{ return ZWS; }
 
 .		{ fprintf(stderr, "cfy.l: unhandled input `%s'\n", yytext); }
 

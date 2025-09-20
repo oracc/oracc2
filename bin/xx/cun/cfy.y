@@ -21,8 +21,9 @@ CFYLTYPE cfylloc;
 
 %union { char *s; int i; }
 
-%token <i> FILL GOESTO KW_CCF KW_KEY KW_JUSTIFY RETURN STRUCTMEM WORD ZWJ ZWNJ
-%token <s> CFYCCF CFYKEY ELTREF GRAPHEME LITERAL MEMBER PQX VALUE
+%token <i> FILL GOESTO KW_CCF KW_KEY KW_JUSTIFY RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS
+%token <s> CFYCCF CFYJUSTIFY CFYKEY ELTREF GRAPHEME JELTl JELTp JELTr JELTs
+	   LITERAL MEMBER PQX VALUE
 
 %start configs
 
@@ -33,11 +34,14 @@ configs:  config
 	;
 
 config:   cfyccf
+	| cfyjustify
 	| cfykey
 	| sub
 	;
 
 cfyccf: KW_CCF CFYCCF pqxs {  } ;
+
+cfyjustify: KW_JUSTIFY CFYJUSTIFY { cfy_cfg_justify(@$, &cfy, $2); } ;
 
 cfykey: KW_KEY CFYKEY  	{ cfy_cfg_key(@$, &cfy, $2); } ;
 
@@ -76,11 +80,16 @@ assignment:
 
 elt:	  GRAPHEME 	{ cfy_cfg_elt_g(@1, &cfy, (uccp)$1); }
 	| FILL		{ cfy_cfg_elt_f(@1, &cfy); }
+	| JELTl		{ cfy_cfg_elt_Jl(@1, &cfy); }
+	| JELTp		{ cfy_cfg_elt_Jp(@1, &cfy); }
+	| JELTr		{ cfy_cfg_elt_Jr(@1, &cfy); }
+	| JELTs		{ cfy_cfg_elt_Js(@1, &cfy); }
 	| LITERAL      	{ cfy_cfg_elt_q(@1, &cfy, (uccp)$1); }
 	| RETURN      	{ cfy_cfg_elt_r(@1, &cfy); }
 	| WORD		{ cfy_cfg_elt_w(@1, &cfy); }
 	| ZWJ		{ cfy_cfg_elt_j(@1, &cfy); }
 	| ZWNJ		{ cfy_cfg_elt_n(@1, &cfy); }
+	| ZWS		{ cfy_cfg_elt_s(@1, &cfy); }
 	;
 
 %%

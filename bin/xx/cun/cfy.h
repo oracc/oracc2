@@ -55,6 +55,65 @@ typedef struct cfy
   int weboutput;
 } Cfy;
 
+/* An element is an input item such as a grapheme, ellipsis, ZWNJ,
+ * ZWJ, or word-boundary.
+ *
+ * Support for justifying lines is provided by the FILL type;
+ * this will work like TeX's hfil to enable simulation of spacing to
+ * the left of graphemes in a continuation line or between graphemes.
+ *
+ * The ATF soft newline ';', indicating an indented line, is captured
+ * in the RETURN type. This is always followed by a FILL.
+ *
+ * The output structure consists of spans which manage the breakage
+ * state. Within each span is a sequence of graphemes, ellipses, and
+ * word-spaces, ZWNJ, or ZWJ.
+ *
+ * The input is read into an array and is only output when the next
+ * XTF line is encountered or at the closing XTF tag in the case of
+ * the last line.
+ *
+ * If a reordering line is encountered, that is used as the sequence
+ * for grapheme output. Otherwise the output follows the main
+ * transliteration stream, obeying any local reordering of graphemes
+ * that may be present.
+ *
+ * Breakage state is recorded in the grapheme structures:
+ * conceptually, the states are broken; damaged; or clear.
+ *
+ * If the font referenced by the current class provides a ligature
+ * table, that is checked for immediately adjacent sequences that are
+ * in the ligtable--sequences are broken by word boundaries and by
+ * ZWNJ.
+ *
+ * If a ligtable sequence is matched, the breakage state is adjusted
+ * to ensure that the ligature falls within the enclosing breakage
+ * span. If a sequence mixes breakage states, all of the breakage is
+ * set to damaged as an approximation of the state of the ligature
+ * sequence as a whole.
+ */
+typedef enum elt_type { ELT_NOT,
+			ELT_L /*line*/,
+			ELT_C /*cell*/,
+			ELT_W /*word*/,
+			ELT_G /*grapheme*/,
+			ELT_J /*ZWJ*/,
+			ELT_N /*ZWNJ*/,
+			ELT_F /*fill*/,
+			ELT_R /*return*/,
+			ELT_E /*ellipsis (...) in input*/,
+			ELT_X /*'x' in input*/,
+			ELT_D /*deleted, for ligatures*/,
+			ELT_Q /*Quoted literal*/,
+			ELT_A /*Assignment, used in subbing rules */,
+			ELT_S /* ZW-space */,
+			ELT_Jl/* justify-left */,
+			ELT_Jp/* justify-penult */,
+			ELT_Jr/* justify-right */,
+			ELT_Js/* justify-spread */,
+			ELT_LAST
+} Etype;
+
 typedef struct cfg
 {
   const char *path; 	/* path to loaded file */
@@ -117,65 +176,12 @@ typedef struct class
   const char *scr;
   const char *asl;
   const char *css;
+  Etype justify;
   Fnt *fntp; 
   Cfy *cfyp;
 } Class;
 
 extern Class *curr_cp;
-
-/* An element is an input item such as a grapheme, ellipsis, ZWNJ,
- * ZWJ, or word-boundary.
- *
- * Support for justifying lines is provided by the FILL type;
- * this will work like TeX's hfil to enable simulation of spacing to
- * the left of graphemes in a continuation line or between graphemes.
- *
- * The ATF soft newline ';', indicating an indented line, is captured
- * in the RETURN type. This is always followed by a FILL.
- *
- * The output structure consists of spans which manage the breakage
- * state. Within each span is a sequence of graphemes, ellipses, and
- * word-spaces, ZWNJ, or ZWJ.
- *
- * The input is read into an array and is only output when the next
- * XTF line is encountered or at the closing XTF tag in the case of
- * the last line.
- *
- * If a reordering line is encountered, that is used as the sequence
- * for grapheme output. Otherwise the output follows the main
- * transliteration stream, obeying any local reordering of graphemes
- * that may be present.
- *
- * Breakage state is recorded in the grapheme structures:
- * conceptually, the states are broken; damaged; or clear.
- *
- * If the font referenced by the current class provides a ligature
- * table, that is checked for immediately adjacent sequences that are
- * in the ligtable--sequences are broken by word boundaries and by
- * ZWNJ.
- *
- * If a ligtable sequence is matched, the breakage state is adjusted
- * to ensure that the ligature falls within the enclosing breakage
- * span. If a sequence mixes breakage states, all of the breakage is
- * set to damaged as an approximation of the state of the ligature
- * sequence as a whole.
- */
-typedef enum elt_type { ELT_NOT,
-			ELT_L /*line*/,
-			ELT_C /*cell*/,
-			ELT_W /*word*/,
-			ELT_G /*grapheme*/,
-			ELT_J /*ZWJ*/,
-			ELT_N /*ZWNJ*/,
-			ELT_F /*fill*/,
-			ELT_R /*return*/,
-			ELT_E /*ellipsis (...) in input*/,
-			ELT_X /*'x' in input*/,
-			ELT_D /*deleted, for ligatures*/,
-			ELT_Q /*Quoted literal*/,
-			ELT_A /*Assignment, used in subbing rules */,
-			ELT_LAST
-} Etype;
 
 extern int espaces[];
 
@@ -333,8 +339,14 @@ extern void cfy_cfg_elt_l(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_r(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_w(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_j(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_J(Mloc m, Cfy *c, uccp J);
 extern void cfy_cfg_elt_n(Mloc m, Cfy *c);
 extern void cfy_cfg_elt_q(Mloc m, Cfy *c, uccp q);
+extern void cfy_cfg_elt_s(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_Jl(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_Jp(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_Jr(Mloc m, Cfy *c);
+extern void cfy_cfg_elt_Js(Mloc m, Cfy *c);
 
 extern int cfy_cfg_run(Cfy *c);
 extern int cfy_cfg_text(Cfy *c);
@@ -345,6 +357,7 @@ extern void cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *
 extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
+extern int cfy_cfg_justify(Mloc m, Cfy *c, const char *j);
 
 extern void cfy_uni_check(Cfy *c, uccp u);
 extern Hash *cfy_uni_load(Cfy *c, const char *unifile);

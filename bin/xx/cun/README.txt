@@ -82,3 +82,12 @@ To request a discretionary ligature use
 	+  = ZWJ
 
 ***should every sign list sequence be a ligature in the font?
+
+
+Formatting
+==========
+
+Cuneify provides some basic support for emulating the format
+characteristics of cuneiform manuscripts, but it is not intended as a
+general purpose solution for producing facsimiles.
+

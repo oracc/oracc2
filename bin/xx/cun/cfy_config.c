@@ -107,6 +107,13 @@ cfy_cfg_text(Cfy *c)
 }
 
 int
+cfy_cfg_justify(Mloc m, Cfy *c, Etype e)
+{
+  curr_cp->justify = e;
+  return 0;
+}
+
+int
 cfy_cfg_key(Mloc m, Cfy *c, const char *k)
 {
   curr_cp = c->c = cfy_class(c, k, c->c);
@@ -179,6 +186,8 @@ elts_one_key(Elt *e)
       return "j";
     case ELT_N:
       return "n";
+    case ELT_S:
+      return "s";
     case ELT_F:
       return "f";
     case ELT_R:
@@ -192,6 +201,14 @@ elts_one_key(Elt *e)
       return NULL;
     case ELT_Q:
       return e->data;	  
+    case ELT_Jl:
+      return "Jl";
+    case ELT_Jp:
+      return "Jp";
+    case ELT_Jr:
+      return "Jr";
+    case ELT_Js:
+      return "Js";
     case ELT_A:
       /* only used in subbing rule rhs */
       return NULL;	  
@@ -465,4 +482,32 @@ cfy_cfg_elt_n(Mloc m, Cfy *c)
   (void)cfy_cfg_elt(c, ELT_N);
 }
 
-	      
+void
+cfy_cfg_elt_s(Mloc m, Cfy *c)
+{
+  (void)cfy_cfg_elt(c, ELT_S);
+}
+
+void
+cfy_cfg_elt_Jl(Mloc m, Cfy *c)
+{
+  (void)cfy_cfg_elt(c, ELT_Jl);
+}
+
+void
+cfy_cfg_elt_Jp(Mloc m, Cfy *c)
+{
+  (void)cfy_cfg_elt(c, ELT_Jp);
+}
+
+void
+cfy_cfg_elt_Jr(Mloc m, Cfy *c)
+{
+  (void)cfy_cfg_elt(c, ELT_Jr);
+}
+
+void
+cfy_cfg_elt_Js(Mloc m, Cfy *c)
+{
+  (void)cfy_cfg_elt(c, ELT_Js);
+}
