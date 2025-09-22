@@ -32,14 +32,17 @@ jelts		"&Js"
 jeltp		"&Jp"
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_key		cfy-[a-z]+-.*
-kv_justify     	(none|left|right|spread|penult)
+kv_format     	(none|left|right|spread|penult|boxed|ruled|colruled)
 kw_ccf		^cfy-ccf
-kw_justify     	^cfy-justify
+kw_format     	^cfy-justify
 kw_key		^cfy-key
 grapheme	([a-zA-Z0-9\x80-\xff]+)
 literal		'"'[^\"\n\r]+'"'
 member		[a-zA-Z0-9][a-zA-Z0-9_]
 pqx		([a-z0-9/]+:)?[PQX][0-9]{6}
+reltb		"&Rb";
+reltl		"&Rl";
+reltc		"&Rc";
 return		"&r"
 structmem      	"->"
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
@@ -73,13 +76,13 @@ zws		"&s"
 
 {literal}      	{ return LITERAL; }
 
-{jeltl}		{ return JELTl; }
+{jeltl}		{ return ELTJl; }
 
-{jeltr}		{ return JELTr; }
+{jeltr}		{ return ELTJr; }
 
-{jelts}		{ return JELTs; }
+{jelts}		{ return ELTJs; }
 
-{jeltp}		{ return JELTp; }
+{jeltp}		{ return ELTJp; }
 
 {kw_ccf}       	{ BEGIN C; return KW_CCF; }
 
@@ -95,11 +98,13 @@ zws		"&s"
 
 {kv_key}       	{ lval(cfytext); return CFYKEY; }
 
-{kw_justify}	{ BEGIN J; return KW_JUSTIFY; }
+{kw_format}	{ BEGIN J; return KW_FORMAT; }
 
-<J>{kv_justify}	{ BEGIN 0; lval(cfytext); return CFYJUSTIFY; }
+{reltb}		{ return ELTRb; }
 
-<J>{ws}		{ ; }
+{reltl}		{ return ELTRl; }
+
+{reltc}		{ return ELTRc; }
 
 {return}	{ return RETURN; }
 

@@ -31,7 +31,7 @@ function texts {
     while read l
     do
 	t=`echo $l | cut -d@ -f1`
-	>2 echo ::$t
+	>&2 echo ::$t
 	cfy -U$unilist -q $t
     done <$1
 }

@@ -107,6 +107,27 @@ cfy_cfg_text(Cfy *c)
 }
 
 int
+cfy_cfg_rbox(Mloc m, Cfy *c)
+{
+  curr_cp->rbox = ELT_Rb;
+  return 0;
+}
+
+int
+cfy_cfg_rline(Mloc m, Cfy *c)
+{
+  curr_cp->rline = ELT_Rl;
+  return 0;
+}
+
+int
+cfy_cfg_rcol(Mloc m, Cfy *c)
+{
+  curr_cp->rcol = ELT_Rc;
+  return 0;
+}
+
+int
 cfy_cfg_justify(Mloc m, Cfy *c, Etype e)
 {
   curr_cp->justify = e;
@@ -200,7 +221,13 @@ elts_one_key(Elt *e)
       /* ignore deleted nodes */
       return NULL;
     case ELT_Q:
-      return e->data;	  
+      return e->data;
+    case ELT_Rb:
+      return "Rb";
+    case ELT_Rl:
+      return "Rl";
+    case ELT_Rc:
+      return "Rc";
     case ELT_Jl:
       return "Jl";
     case ELT_Jp:

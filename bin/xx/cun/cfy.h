@@ -107,6 +107,9 @@ typedef enum elt_type { ELT_NOT,
 			ELT_Q /*Quoted literal*/,
 			ELT_A /*Assignment, used in subbing rules */,
 			ELT_S /* ZW-space */,
+			ELT_Rb/* ruling-boxed */,
+			ELT_Rl/* ruling-line */,
+			ELT_Rc/* ruling-column */,
 			ELT_Jl/* justify-left */,
 			ELT_Jp/* justify-penult */,
 			ELT_Jr/* justify-right */,
@@ -176,6 +179,9 @@ typedef struct class
   const char *scr;
   const char *asl;
   const char *css;
+  Etype rbox;
+  Etype rline;
+  Etype rcol;
   Etype justify;
   Fnt *fntp; 
   Cfy *cfyp;
@@ -357,7 +363,11 @@ extern void cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *
 extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
-extern int cfy_cfg_justify(Mloc m, Cfy *c, const char *j);
+extern int cfy_cfg_justify(Mloc m, Cfy *c, Etype e);
+
+extern int cfy_cfg_rbox(Mloc m, Cfy *c);
+extern int cfy_cfg_rline(Mloc m, Cfy *c);
+extern int cfy_cfg_rcol(Mloc m, Cfy *c);
 
 extern void cfy_uni_check(Cfy *c, uccp u);
 extern Hash *cfy_uni_load(Cfy *c, const char *unifile);
