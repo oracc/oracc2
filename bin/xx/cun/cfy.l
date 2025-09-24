@@ -30,11 +30,13 @@ jeltl		"&Jl"
 jeltr		"&Jr"
 jelts		"&Js"
 jeltp		"&Jp"
+jeltcs		"&Jcs"
+jeltcp		"&Jcp"
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_key		cfy-[a-z]+-.*
-kv_format     	(none|left|right|spread|penult|boxed|ruled|colruled)
+kv_format     	(none|left|right|char-spread|char-penult|spread|penult|boxed|ruled|colruled)
 kw_ccf		^cfy-ccf
-kw_format     	^cfy-justify
+kw_format     	^cfy-format
 kw_key		^cfy-key
 grapheme	([a-zA-Z0-9\x80-\xff]+)
 literal		'"'[^\"\n\r]+'"'

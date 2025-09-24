@@ -46,8 +46,10 @@ cfyformat: KW_FORMAT eltf
 
 eltf:	  ELTJl { cfy_cfg_justify(@$, &cfy, ELT_Jl); }
 	| ELTJp { cfy_cfg_justify(@$, &cfy, ELT_Jp); }
+	| ELTJcp { cfy_cfg_justify(@$, &cfy, ELT_Jcp); }
 	| ELTJr { cfy_cfg_justify(@$, &cfy, ELT_Jr); }
 	| ELTJs { cfy_cfg_justify(@$, &cfy, ELT_Js); }
+	| ELTJcs { cfy_cfg_justify(@$, &cfy, ELT_Jcs); }
 	| ELTRb { cfy_cfg_rbox(@$, &cfy); }
 	| ELTRl { cfy_cfg_rline(@$, &cfy); }
 	| ELTRc { cfy_cfg_rcol(@$, &cfy); }
