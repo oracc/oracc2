@@ -115,8 +115,12 @@ cfy_line(Cfy *c, const char **atts)
   Line *lp = memo_new(c->m_line);
   lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
-  /* TODO: test for colon-line here and add first list node of userData-line to it */
-  c->line = list_create(LIST_SINGLE);
+  
+  if (!strcmp(findAttr(atts, "type"), "lgs"))
+    c->cline = list_create(LIST_SINGLE);
+  else
+    c->line = list_create(LIST_SINGLE);
+  
   ep->data = lp;
   list_add(c->line, ep);
   in_l = 1;
@@ -133,7 +137,12 @@ cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
   last_ep = ep;
   const char *gt = gt=findAttr(atts,"g:type");
   ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
-  ep->etype = (!strcmp(gt,"ellipsis") ? ELT_E : ELT_X);
+  if (!strcmp(gt, "ellipsis"))
+    ep->etype = ELT_E;
+  else if (!strcmp(gt, "newline"))
+    ep->etype = ELT_R;
+  else
+    ep->etype = ELT_X;
   ep->btype = brk;
   ep->c = cp;
   
