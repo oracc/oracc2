@@ -296,5 +296,11 @@ cfy_eH(void *userData, const char *name)
       if (ep->etype == ELT_W)
 	(void)list_pop(((Cfy*)userData)->line);
     }
+  else if (!strcmp(name, "g:f"))
+    {
+      if (ELT_G == last_ep->etype)
+	last_ep->otf = (ccp)pool_copy((uccp)charData_retrieve(), ((Cfy*)userData)->p);
+	
+    }
   (void)charData_discard();
 }

@@ -118,6 +118,8 @@ ch_elt_G(Cfy *c, Elt *e)
     }
   else
     {
+      static char otfbuf[7] = { 's', 'a', 'l', 't', '\0', '\0', '\0' };
+      const char *otf_str = otfbuf;
       fprintf(c->o,
 	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
 	      " onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\"",
@@ -125,16 +127,26 @@ ch_elt_G(Cfy *c, Elt *e)
 	      e->c->asl ? e->c->asl : ('9' == e->oid[2] ? "pcsl" : "osl"));
       if (e->title)
 	fprintf(c->o, " title=\"%s\"", e->title);
+      if (e->otf)
+	{
+	  if (isdigit(*e->otf))
+	    {
+	      otfbuf[4] = e->otf[0];
+	      otfbuf[5] = e->otf[1];
+	    }
+	  else
+	    otf_str = e->otf;
+	}
       if (e->g_o || e->g_c)
 	{
-	  fputs(" class=\"cfy-cun cfy-brack\"", c->o);
+	  fprintf(c->o, " class=\"cfy-cun%s cfy-brack\"", otf_str);
 	  if (e->g_o)
 	    fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
 	  if (e->g_c)
 	    fprintf(c->o, " data-brackc=\"%s\"", e->g_c);
 	}
       else
-	fputs(" class=\"cfy-cun\"", c->o);
+	fprintf(c->o, " class=\"cfy-cun%s\"", otf_str);
       fprintf(c->o, ">%s</span>", (ccp)e->data);
     }
 }

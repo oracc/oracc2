@@ -1,7 +1,8 @@
 include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=cfy
-bin_SCRIPTS=cfycov.sh
+bin_SCRIPTS=cfycov.sh cfylgs.sh
+scriptdata_DATA=*.xsl
 
 # cunx
 # cunx_SOURCES = cunx.c fileargs.c perfnt.c render.c

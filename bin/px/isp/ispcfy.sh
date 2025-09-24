@@ -54,6 +54,12 @@ xtf=`$oraccbin/pqxpand xtf $prox_project:$PQX`
 # Check we have or can make the htmldir
 >&2 mkdir -v -p $htmldir || exit 1
 
+# generate lgs map if specified in project
+lgs=`oraccopt $project cfy-lgs`
+if [ "$lgs" != "" ]; then
+    $oraccbin/cfy-lgs.sh $xtf >$htmldir/lgs.tab
+fi
+
 # Generate the cuneified output
 >&2 echo $0 calling "$oraccbin/$cuneify $Parg -vw -q $prox_project:$PQX" 
 $oraccbin/$cuneify $Parg -vw -q $prox_project:$PQX

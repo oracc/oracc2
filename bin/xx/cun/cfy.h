@@ -232,6 +232,7 @@ typedef struct elt
   const char *xid;/* grapheme id to be output as ref */
   const char *key;/* ASL grapheme key for type ELT_G */
   const char *title; /* value or sign name */
+  const char *otf; /* from \1 or \cv01 etc */
 } Elt;
 
 typedef struct line
