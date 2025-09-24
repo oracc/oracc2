@@ -207,16 +207,6 @@ voltemplate(void)
   do404();
 }
 
- #if 0
-/* Not static because or_pqx.c needs it */
-void
-cuneify(void)
-{
-  execl("/usr/bin/perl", "perl", "@@ORACC@@/bin/cuneify.plx", NULL);
-  do404();
-}
-#endif
-
 static void
 datestamp()
 {
