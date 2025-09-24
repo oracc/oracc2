@@ -86,6 +86,10 @@ zws		"&s"
 
 {jeltp}		{ return ELTJp; }
 
+{jeltcs}       	{ return ELTJcs; }
+
+{jeltcp}       	{ return ELTJcp; }
+
 {kw_ccf}       	{ BEGIN C; return KW_CCF; }
 
 <C>{kv_ccf}	{ lval(cfytext); return CFYCCF; }

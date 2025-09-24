@@ -114,6 +114,8 @@ typedef enum elt_type { ELT_NOT,
 			ELT_Jp/* justify-penult */,
 			ELT_Jr/* justify-right */,
 			ELT_Js/* justify-spread */,
+			ELT_Jcp/* justify-char-penult */,
+			ELT_Jcs/* justify-char-spread */,
 			ELT_LAST
 } Etype;
 
