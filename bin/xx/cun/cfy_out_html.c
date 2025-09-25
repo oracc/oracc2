@@ -112,7 +112,8 @@ ch_elt_S(Cfy *c, Elt *e)
 static void
 ch_elt_W(Cfy *c, Elt *e)
 {
-  fputs("<span class=\"ws\"> </span>", c->o);
+  if (!e->prev || e->prev->etype != ELT_R)
+    fputs("<span class=\"ws\"> </span>", c->o);
 }
 
 /* Try to map an LGS grapheme ID to a corresponding MTS word ID.
@@ -218,7 +219,7 @@ ch_elt_F(Cfy *c, Elt *e)
 static void
 ch_elt_R(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<r/>");  
+  fprintf(c->o, "</p><p>");
 }
 
 static void
@@ -261,15 +262,16 @@ ch_c_o(Cfy *c, Cell *cp)
   if (cp && cp->class)
     fprintf(c->o, "<td colspan=\"%d\" class=\"%s\">", cp->span, cp->class);
   else if (cp)
-    fprintf(c->o, "<td colspan=\"%d\">", cp->span);
+    fprintf(c->o, "<td colspan=\"%d\"><p>", cp->span);
   else
     fputs("<td>", c->o);
+  fputs("<p>", c->o);
 }
 
 static void
 ch_c_c(Cfy *c)
 {
-  fputs("</td>", c->o);
+  fputs("</p></td>", c->o);
 }
 
 static void

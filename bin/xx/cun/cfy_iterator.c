@@ -126,4 +126,3 @@ ci_cell_o(Cfy *c, Elt *e)
   in_cell = 1;
   line_cell_pending = 0;
 }
-
