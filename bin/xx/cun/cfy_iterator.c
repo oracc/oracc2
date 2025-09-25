@@ -2,6 +2,8 @@
 #include "cfy.h"
 #include "cfy_iterator.h"
 
+int ci_i, ci_j;
+
 ci_elt**ci_elt_p;
 Tagfuncs *ci_tags;
 
@@ -21,26 +23,25 @@ ci_body(Cfy *c)
 {
   static Cell content_cell = { 1, "cfy-content" };
   static Elt content_elt = { .data = &content_cell };
-  int i, j;
-  for (i = 0; c->elt_lines[i]; ++i)
+  for (ci_i = 0; c->elt_lines[ci_i]; ++ci_i)
     {
-      ci_line_o(c, c->elt_lines[i]->epp[0]->data);
-      for (j = 1; c->elt_lines[i]->epp[j]; ++j)
+      ci_line_o(c, c->elt_lines[ci_i]->epp[0]->data);
+      for (ci_j = 1; c->elt_lines[ci_i]->epp[ci_j]; ++ci_j)
 	{
-	  if (ELT_C == c->elt_lines[i]->epp[j]->etype)
+	  if (ELT_C == c->elt_lines[ci_i]->epp[ci_j]->etype)
 	    {
-	      ci_cell_o(c, c->elt_lines[i]->epp[j]);
-	      if (last_b != c->elt_lines[i]->epp[j]->btype)
-		ci_b_switch(c, c->elt_lines[i]->epp[j]->btype);
+	      ci_cell_o(c, c->elt_lines[ci_i]->epp[ci_j]);
+	      if (last_b != c->elt_lines[ci_i]->epp[ci_j]->btype)
+		ci_b_switch(c, c->elt_lines[ci_i]->epp[ci_j]->btype);
 	    }
 	  else
 	    {
-	      if (ci_elt_p[c->elt_lines[i]->epp[j]->etype] && line_cell_pending)
+	      if (ci_elt_p[c->elt_lines[ci_i]->epp[ci_j]->etype] && line_cell_pending)
 		ci_cell_o(c, &content_elt);
-	      if (last_b != c->elt_lines[i]->epp[j]->btype)
-		ci_b_switch(c, c->elt_lines[i]->epp[j]->btype);
-	      if (ci_elt_p[c->elt_lines[i]->epp[j]->etype])
-		ci_elt_p[c->elt_lines[i]->epp[j]->etype](c, c->elt_lines[i]->epp[j]);
+	      if (last_b != c->elt_lines[ci_i]->epp[ci_j]->btype)
+		ci_b_switch(c, c->elt_lines[ci_i]->epp[ci_j]->btype);
+	      if (ci_elt_p[c->elt_lines[ci_i]->epp[ci_j]->etype])
+		ci_elt_p[c->elt_lines[ci_i]->epp[ci_j]->etype](c, c->elt_lines[ci_i]->epp[ci_j]);
 	    }
 	}
       if (brk_str[last_b])

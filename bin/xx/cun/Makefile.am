@@ -13,7 +13,8 @@ cfy_SOURCES = cfy.c cfy_class.c cfy_reader.c cfy_render.c \
 	cfy_out_html.c cfy_out_xml.c fileargs.c perfnt.c \
 	cfy_breakage.c cfy_liga.c cfy.tab.c cfy.lex.c \
 	cfy_config.c cfy_iterator.c cfy_subs.c subtok.c \
-	cfy_uni.c fontname.c cfy_lgs.c cfy_justify.c
+	cfy_uni.c fontname.c cfy_lgs.c cfy_justify.c \
+	cfy_charspace.c
 
 cfy_LDADD = $(xLDADD)
 cfy_DEPENDENCIES = $(xLDADD)

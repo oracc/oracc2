@@ -4,7 +4,7 @@
 
 #define CFY_SUB_MAX	1024
 
-static Elt *
+Elt *
 elt_clone(Cfy *c, Elt *ep)
 {
   Elt *clone = memo_new(c->m_elt);

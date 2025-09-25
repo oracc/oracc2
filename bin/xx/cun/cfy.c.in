@@ -126,6 +126,8 @@ cfy_post(Cfy *c)
     {
       if (c->cfg && c->cfg->hsubkeys)
 	cfy_subbings(c, c->elt_lines[i]);
+      if (ELT_Jcs == c->c->justify || ELT_Jcp == c->c->justify)
+	cfy_charspace(c, c->elt_lines[i]);
       cfy_ligatures(c, c->elt_lines[i]->epp);
       cfy_breakage(c, c->elt_lines[i]->epp);
     }

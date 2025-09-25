@@ -111,6 +111,7 @@ typedef enum elt_type { ELT_NOT,
 			ELT_Q /*Quoted literal*/,
 			ELT_A /*Assignment, used in subbing rules */,
 			ELT_S /* ZW-space */,
+			ELT_Sp/* space-pseudo-element */,
 			ELT_Rb/* ruling-boxed */,
 			ELT_Rl/* ruling-line */,
 			ELT_Rc/* ruling-column */,
@@ -244,6 +245,7 @@ typedef struct line
 {
   const char *xid;
   const char *label;
+  int last_w;
 } Line;
 
 typedef struct eltline
@@ -383,6 +385,9 @@ extern Hash *cfy_uni_load(Cfy *c, const char *unifile);
 extern void cfy_lgs(Cfy *c);
 
 extern const char *cfy_justify_class(Etype j);
-extern char *cfy_justify_charspace(const char *u);
+extern void cfy_charspace(Cfy *c, Eltline *elp);
+extern Elt *elt_clone(Cfy *c, Elt *ep);
+
+extern int ci_i, ci_j;
 
 #endif/*CFY_H_*/

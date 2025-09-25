@@ -15,6 +15,7 @@ Elt e_zws = { .etype=ELT_S, .data=(ucp)"\xE2\x80\x8B" };
 int zws_pending = 0, zwnj_pending = 0, plus_pending = 0;
 
 static Elt *last_ep = NULL;
+static Line *curr_line;
 
 static Btype
 breakage(const char *name, const char **atts)
@@ -147,9 +148,9 @@ cfy_line(Cfy *c, const char **atts)
   ep->etype = ELT_L;
   ep->prev = last_ep;
   last_ep = ep;
-  Line *lp = memo_new(c->m_line);
-  lp->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
-  lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
+  curr_line = memo_new(c->m_line);
+  curr_line->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
+  curr_line->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
   
   if (!strcmp(findAttr(atts, "type"), "lgs"))
     {
@@ -162,7 +163,7 @@ cfy_line(Cfy *c, const char **atts)
       c->line = c->mline;
     }
   
-  ep->data = lp;
+  ep->data = curr_line;
   list_add(c->line, ep);
   in_l = 1;
 }
@@ -208,6 +209,7 @@ cfy_ws(Cfy *c)
       ep->prev = last_ep;
       last_ep = ep;
       list_add(c->line, ep);
+      curr_line->last_w = list_len(c->line);
     }
 }
 
