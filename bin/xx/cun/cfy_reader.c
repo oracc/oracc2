@@ -48,10 +48,31 @@ cfy_cell(Cfy *c, const char **atts)
 static void
 cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Class *cp, const char *oid)
 {
+  static int zwj_murub = 0;
+  
   if (c->coverage)
     cfy_uni_check(c, (uccp)utf8);
 
-  Btype brk = breakage(name, atts);
+  Btype brk = breakage(name, atts); /* front this because zwj needs it */
+
+  if (zwj_murub)
+    {
+      if (ELT_G == last_ep->etype && !strcmp(((char*)last_ep->data)-3, e_zwj.data))
+	{
+	  char buf[strlen((char*)last_ep->data)+strlen(utf8)+1];
+	  strcpy(buf, (char*)last_ep->data);
+	  strcat(buf, utf8);
+	  /* emulate cfy_liga_breakage where differing adjacent btypes all map to BRK_HASH */
+	  if (brk != last_ep->btype)
+	    last_ep->btype = BRK_HASH;
+	  /* we are done; the new grapheme has been concatenated onto the prev+ZWJ data */
+	  return;
+	}
+      else
+	fprintf(stderr, "%s:%d: discontinuous ZWJ (sign'+'nonsign)\n", pi_file, pi_line);
+      zwj_murub = 0;
+    }    
+  
   /* can't currently do G_U because ATF $MU doesn't annotate the $-status*/
   Gtype g = (name[2] == 'v'
 	     ? G_V : (name[2] == 's'
@@ -70,7 +91,17 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   ep->prev = last_ep;
   last_ep = ep;
   ep->etype = ELT_G;
-  ep->data = hpool_copy((uccp)utf8, c->hp);
+  const char *b = findAttr(atts, "g:boundary");
+  if ('+' == *b)
+    {
+      char buf[strlen(utf8)+strlen(e_zwj.data)+1];
+      strcpy(buf, utf8);
+      strcpy(buf+strlen(utf8), e_zwj.data);
+      ep->data = hpool_copy((uccp)buf, c->hp);
+      zwj_murub = 1;
+    }
+  else
+    ep->data = hpool_copy((uccp)utf8, c->hp);
   ep->btype = brk;
   ep->gtype = g;
   ep->c = cp;
@@ -100,16 +131,9 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
 
   list_add(c->line, ep);
 
-  /* add ZWJ/ZWNJ if the boundary requires it */
-  const char *b = findAttr(atts, "g:boundary");
-  if ('+' == *b)
-    list_add(c->line, &e_zwj);
-  else
-    {
-      const char *zwnj = findAttr(atts, "g:zwnj");
-      if (zwnj && *zwnj)
-	list_add(c->line, &e_zwnj);
-    }
+  const char *zwnj = findAttr(atts, "g:zwnj");
+  if (zwnj && *zwnj)
+    list_add(c->line, &e_zwnj);
 }
 
 static void

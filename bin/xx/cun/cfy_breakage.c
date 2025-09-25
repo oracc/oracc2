@@ -7,7 +7,7 @@ int espaces[ELT_LAST];
  *
  * When the same breakage is set on the non-space elements before or
  * after a run of one or more space elements, set the breakage on the
- * entire run of breakage elements to be match the environment
+ * entire run of breakage elements to match the environment.
  */
 void
 cfy_breakage(Cfy *c, Elt **epp)
