@@ -382,6 +382,7 @@ extern Hash *cfy_uni_load(Cfy *c, const char *unifile);
 
 extern void cfy_lgs(Cfy *c);
 
-const char *cfy_justify_class(Etype j);
+extern const char *cfy_justify_class(Etype j);
+extern char *cfy_justify_charspace(const char *u);
 
 #endif/*CFY_H_*/
