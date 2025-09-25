@@ -48,7 +48,11 @@ cfy_charspace(Cfy *c, Eltline *elp)
       if (ELT_G == elp->epp[i]->etype)
 	cfy_charify(c, elp->epp[i], lp);
       else
-	list_add(lp, elp->epp[i]);
+	{
+	  if (ELT_W == elp->epp[i]->etype)
+	    curr_line->last_w = list_len(lp);
+	  list_add(lp, elp->epp[i]);
+	}
     }
   elp->epp = (Elt **)list2array_c(lp, &elp->len);
 }
