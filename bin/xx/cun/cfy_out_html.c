@@ -5,6 +5,7 @@
 static void ch_head(Cfy *c);
 static void ch_foot(Cfy *c);
 
+static void ch_elt_S(Cfy*c, Elt *e);
 static void ch_elt_W(Cfy*c, Elt *e);
 static void ch_elt_G(Cfy*c, Elt *e);
 static void ch_elt_J(Cfy*c, Elt *e);
@@ -18,7 +19,7 @@ ci_elt* ch_elt_p[] = { NULL, NULL,
 		       ci_cell_o,
 		       ch_elt_W, ch_elt_G, ch_elt_J, ch_elt_N,
 		       ch_elt_F, ch_elt_R, ch_elt_E, ch_elt_X,
-		       NULL };
+		       NULL, NULL, NULL, ch_elt_S };
 
 static void ch_l_o(Cfy*c, Line *l);
 static void ch_l_c(Cfy*c);
@@ -92,6 +93,12 @@ ch_foot(Cfy *c)
 /* ch_elt_? */
 
 static void
+ch_elt_S(Cfy *c, Elt *e)
+{
+  fputs("<span class=\"ws\">​</span>", c->o);
+}
+
+static void
 ch_elt_W(Cfy *c, Elt *e)
 {
   fputs("<span class=\"ws\"> </span>", c->o);
@@ -119,7 +126,7 @@ ch_elt_G(Cfy *c, Elt *e)
   else
     {
       static char otfbuf[7] = { 's', 'a', 'l', 't', '\0', '\0', '\0' };
-      const char *otf_str = otfbuf;
+      const char *otf_str = "";
       fprintf(c->o,
 	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
 	      " onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\"",
@@ -133,6 +140,7 @@ ch_elt_G(Cfy *c, Elt *e)
 	    {
 	      otfbuf[4] = e->otf[0];
 	      otfbuf[5] = e->otf[1];
+	      otf_str = otfbuf;
 	    }
 	  else
 	    otf_str = e->otf;

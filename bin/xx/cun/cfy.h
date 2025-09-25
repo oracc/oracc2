@@ -30,10 +30,11 @@ typedef struct cfy
   Memo *m_elt;
   Memo *m_eltline;
   List *body; 	/* list of line or cline pointers for actual output */
-  List *line; 	/* list of Elt built by cfy_reader */
+  List *mline; 	/* mts-line, list of Elt built by cfy_reader */
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
-		   of 'line'; one day this might align with
-		   'line'--needs ATF support */
+		   of 'mline'; doesn't align with 'mline' but
+		   cfylgs.sh provides a crude bolt-on alignment */
+  List *line;	/* current line to add elts to  */
   struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
 				 NULL-terminated arrays of Eltline* */
   struct class *c;	/* the class for the initial state */

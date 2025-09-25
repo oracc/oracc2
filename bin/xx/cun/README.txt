@@ -74,14 +74,13 @@ to ensure that the ligatures are recognized.
 
 To break up ligatures use the following in ATF or in the sub table:
 
-	\- = ZWS
+	\- = ZWNJ
 	\  = ZWS
 
 To request a discretionary ligature use
 
 	+  = ZWJ
 
-***should every sign list sequence be a ligature in the font?
 
 
 Formatting

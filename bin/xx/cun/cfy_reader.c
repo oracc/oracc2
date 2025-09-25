@@ -10,6 +10,9 @@ char innertags[128];
 
 Elt e_zwj = { .etype=ELT_J, .data=(ucp)"\xE2\x80\x8D" };
 Elt e_zwnj = { .etype=ELT_N, .data=(ucp)"\xE2\x80\x8C" };
+Elt e_zws = { .etype=ELT_S, .data=(ucp)"\xE2\x80\x8B" };
+
+int zws_pending = 0, zwnj_pending = 0;
 
 static Elt *last_ep = NULL;
 
@@ -101,8 +104,12 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   const char *b = findAttr(atts, "g:boundary");
   if ('+' == *b)
     list_add(c->line, &e_zwj);
-  else if ('\\' == *b)
-    list_add(c->line, &e_zwnj);
+  else
+    {
+      const char *zwnj = findAttr(atts, "g:zwnj");
+      if (zwnj && *zwnj)
+	list_add(c->line, &e_zwnj);
+    }
 }
 
 static void
@@ -117,9 +124,15 @@ cfy_line(Cfy *c, const char **atts)
   lp->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
   
   if (!strcmp(findAttr(atts, "type"), "lgs"))
-    c->cline = list_create(LIST_SINGLE);
+    {
+      c->cline = list_create(LIST_SINGLE);
+      c->line = c->cline;
+    }
   else
-    c->line = list_create(LIST_SINGLE);
+    {
+      c->mline = list_create(LIST_SINGLE);
+      c->line = c->mline;
+    }
   
   ep->data = lp;
   list_add(c->line, ep);
@@ -147,13 +160,6 @@ cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
   ep->c = cp;
   
   list_add(c->line, ep);
-
-  /* add ZWJ/ZWNJ if the boundary requires it */
-  const char *b = findAttr(atts, "g:boundary");
-  if ('+' == *b)
-    list_add(c->line, &e_zwj);
-  else if ('\\' == *b)
-    list_add(c->line, &e_zwnj);
 }
 
 static void
@@ -162,12 +168,19 @@ cfy_ws(Cfy *c)
   if (!c->line)
     c->line = list_create(LIST_DOUBLE);
 
-  Elt *ep = memo_new(c->m_elt);
-  ep->etype = ELT_W;
-  ep->prev = last_ep;
-  last_ep = ep;
-  
-  list_add(c->line, ep);
+  if (zws_pending)
+    {
+      list_add(c->line, &e_zws);
+      zws_pending = 0;
+    }
+  else
+    {
+      Elt *ep = memo_new(c->m_elt);
+      ep->etype = ELT_W;
+      ep->prev = last_ep;
+      last_ep = ep;
+      list_add(c->line, ep);
+    }
 }
 
 void
@@ -240,6 +253,12 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	    }
 	  if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
 	    ++inner;
+	  else if (!strcmp(name, "g:w"))
+	    {
+	      const char *zws = findAttr(atts, "g:zws");
+	      if (zws && *zws)
+		zws_pending = 1;
+	    }
 	  else if (!strcmp(name, "c"))
 	    cfy_cell(userData, atts);
 	  else if (!strcmp(name, "g:x"))
@@ -265,8 +284,8 @@ cfy_eH(void *userData, const char *name)
       in_l = inner = 0;
       if (((Cfy*)userData)->cline)
 	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->cline);
-      else if (((Cfy*)userData)->line)
-	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->line);
+      else if (((Cfy*)userData)->mline)
+	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->mline);
 
       /* if final Elt is wordspace pop it off */
       List *line = list_last(((Cfy*)userData)->body);
@@ -274,7 +293,7 @@ cfy_eH(void *userData, const char *name)
       if (ep->etype == ELT_W)
 	(void)list_pop(line);
       
-      ((Cfy*)userData)->cline = ((Cfy*)userData)->line = NULL;
+      ((Cfy*)userData)->cline = ((Cfy*)userData)->mline = NULL;
     }
   else if (!strcmp(name, "protocol") && protocol_cfy_ccf)
     {
