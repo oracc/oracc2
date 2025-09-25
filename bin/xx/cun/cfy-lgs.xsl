@@ -11,12 +11,14 @@
       <xsl:variable name="u" select="@gdl:utf8"/>
       <xsl:variable
 	  name="r"
-	  select="ancestor::xtf:lg/xtf:l[1]/gdl:w[contains(.//@gdl:utf8, $u)]"/>
+	  select="ancestor::xtf:lg/xtf:l[1]/gdl:w//*[@gdl:utf8]"/>
       <xsl:value-of select="@xml:id"/>
       <xsl:text>&#x9;</xsl:text>
       <xsl:for-each select="$r">
-	<xsl:value-of select="@xml:id"/>
-	<xsl:if test="not(position()=last())"><xsl:text> </xsl:text></xsl:if>
+	<xsl:if test="contains(@gdl:utf8,$u)">
+	  <xsl:value-of select="ancestor::gdl:w/@xml:id"/>
+	  <xsl:if test="not(position()=last())"><xsl:text> </xsl:text></xsl:if>
+	</xsl:if>
       </xsl:for-each>
       <xsl:text>&#xa;</xsl:text>
     </xsl:for-each>
