@@ -12,7 +12,7 @@
       <xsl:variable
 	  name="r"
 	  select="ancestor::xtf:lg/xtf:l[1]/gdl:w//*[@gdl:utf8]"/>
-      <xsl:value-of select="@xml:id"/>
+      <xsl:value-of select="ancestor::gdl:w/@xml:id"/>
       <xsl:text>&#x9;</xsl:text>
       <xsl:for-each select="$r">
 	<xsl:if test="contains(@gdl:utf8,$u)">
