@@ -9,8 +9,8 @@
 
 #include "cfy.h"
 
-extern void cfyset_debug (int debug_flag);
-extern void gdlset_debug (int debug_flag);
+extern void cfyset_debug(int debug_flag);
+extern void gdlset_debug(int debug_flag);
 
 Cfy cfy;
 
@@ -139,7 +139,10 @@ main(int argc, char **argv)
   cfy.o = stdout;  
   options(argc, argv, "bC:c:fhi:l:no:P:p:q:sTt:U:uvw");
 
-  cfyset_debug(verbose);
+  if (verbose > 1)
+    cfyset_debug(1);
+  else
+    cfyset_debug(0);
   gdlset_debug(0);
   
   cfy_init();
@@ -220,6 +223,8 @@ main(int argc, char **argv)
       exit(1);
     }
 
+  cfy.infile = f[0];
+  
   if (cfy.project)
     {
       cfy.xpd = xpd_init(cfy.project, cfy.p);
@@ -231,6 +236,8 @@ main(int argc, char **argv)
   if (verbose)
     show_vars();
 
+  cfy_lgs(&cfy);
+  
   if (!no_output)
     {
       if (f[0] && !access(f[0], R_OK))
@@ -325,7 +332,7 @@ opts(int opt, const char *arg)
       ++cfy.coverage;
       break;
     case 'v':
-      verbose = 1;
+      ++verbose;
       break;
     case 'w':
       cfy.weboutput = 1;

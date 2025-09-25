@@ -104,6 +104,29 @@ ch_elt_W(Cfy *c, Elt *e)
   fputs("<span class=\"ws\"> </span>", c->o);
 }
 
+/* Try to map an LGS grapheme ID to a corresponding MTS word ID.
+ *
+ * No reasonable ID will be more than 22 characters including terminating '\0', i.e.,
+ * P123456.99999.9999.99 (line.word.grapheme)
+ */
+static const char *
+lgs_word(Cfy *c, const char *lgs_g)
+{
+  static char buf[32];
+  strncpy(buf, lgs_g, 31);
+  if (!buf[31]) /* reasonable ID */
+    {
+      char *dot = strrchr(buf, '.');
+      if (dot)
+	{
+	  *dot = '\0';
+	  const char *w = hash_find(c->hlgs, (uccp)buf);
+	  return w ? w : lgs_g;
+	}
+    }
+  return lgs_g;
+}
+
 static void
 ch_elt_G(Cfy *c, Elt *e)
 {
@@ -129,7 +152,7 @@ ch_elt_G(Cfy *c, Elt *e)
       fprintf(c->o,
 	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
 	      " onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\"",
-	      e->xid, e->xid, e->oid,
+	      e->xid, c->hlgs ? lgs_word(c, e->xid) : e->xid, e->oid,
 	      e->c->asl ? e->c->asl : ('9' == e->oid[2] ? "pcsl" : "osl"));
       if (e->title)
 	fprintf(c->o, " title=\"%s\"", e->title);

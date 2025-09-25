@@ -17,11 +17,13 @@ typedef struct cfy
   const char *proxy; /* set when text project is different from
 			previously set project */
   const char *pqx;
+  const char *infile;
   Pool *p;
   Pool *hp;
   Hash *hclasses;
   Hash *hconfigs; /* hash of config paths to loaded config structures */
   Hash *hfonts;
+  Hash *hlgs;
   Memo *m_cfg;
   Memo *m_class;
   Memo *m_fnt;
@@ -375,5 +377,7 @@ extern int cfy_cfg_rcol(Mloc m, Cfy *c);
 
 extern void cfy_uni_check(Cfy *c, uccp u);
 extern Hash *cfy_uni_load(Cfy *c, const char *unifile);
+
+extern void cfy_lgs(Cfy *c);
 
 #endif/*CFY_H_*/

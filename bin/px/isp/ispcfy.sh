@@ -57,7 +57,7 @@ xtf=`$oraccbin/pqxpand xtf $prox_project:$PQX`
 # generate lgs map if specified in project
 lgs=`oraccopt $project cfy-lgs`
 if [ "$lgs" != "" ]; then
-    $oraccbin/cfy-lgs.sh $xtf >$htmldir/lgs.tab
+    $oraccbin/cfy-lgs.sh $xtf >$htmldir/$PQX.lgs
 fi
 
 # Generate the cuneified output

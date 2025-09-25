@@ -317,7 +317,12 @@ cfy_eH(void *userData, const char *name)
     {
       in_l = inner = 0;
       if (((Cfy*)userData)->cline)
-	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->cline);
+	{
+	  List *mline = list_pop(((Cfy*)userData)->body);
+	  Line *mlineline = list_first(mline);
+	  ((Cfy*)userData)->cline->first->data = mlineline;
+	  list_add(((Cfy*)userData)->body, ((Cfy*)userData)->cline);
+	}
       else if (((Cfy*)userData)->mline)
 	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->mline);
 
