@@ -28,16 +28,19 @@ sub demo_div {
     my $base = $cfy;
     $base =~ s/\.html$//;
     my $atf = `cat $base.atf`;
+    my $ccf = `cat $base.ccf`;
     my $txt = `cat $base.txt`;
     print <<EOF;
 <div class="cfy-demo">
   <h1>Test $base</h1>
   <p>$txt</p>
-  <h2>ATF</h2>
+  <h2>$base.atf</h2>
   <pre>
-$atf
-</pre>
-  <h2>Cuneified</h2>
+$atf</pre>
+  <h2>$base.ccf</h2>
+  <pre>
+$ccf</pre>
+  <h2>$base.html</h2>
   <iframe src="$cfy" width="300px"/>
 </div>
 EOF
@@ -45,7 +48,12 @@ EOF
 
 sub demo_header {
     print <<EOF;
-<html><head><title>Cuneify Demo Page</title></head><body>
+<html>
+<head>
+<title>Cuneify Demo Page</title>
+<link rel="stylesheet" type="text/css" href="demo.css"/>
+</head>
+<body>
 EOF
 }
 

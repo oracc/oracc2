@@ -25,3 +25,9 @@ cfy.lex.c: cfy.l cfy.tab.h
 
 fontname.g: ../../../msc/fonts/*.def
 	./fontname.sh $^
+
+demo: ${ORACC}/www/osl/cuneify/demo/demo.html
+
+${ORACC}/www/osl/cuneify/demo/demo.html: ${ORACC}/bin/cfy t/Makefile \
+	t/demo.sh t/demo.plx t/demo.css
+	(cd t ; make clean ; make)

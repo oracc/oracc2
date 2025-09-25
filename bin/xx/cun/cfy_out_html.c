@@ -58,10 +58,14 @@ ch_head(Cfy *c)
       fprintf(c->o,
 	      "<html >"
 	      "<head><meta charset=\"utf-8\"/>"
-	      "<title>Cuneified %s</title>"
-	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
-	      "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>",
+	      "<title>Cuneified %s</title>",
 	      c->n);
+      fputs("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
+	    "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>", c->o);
+      if (html_css)
+	fprintf(c->o,
+		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"/>",
+		html_css);
       if (c->c->css)
 	fprintf(c->o,
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"/>",
@@ -175,7 +179,7 @@ ch_elt_G(Cfy *c, Elt *e)
     }
   else
     {
-      const char *otf_str = "";
+      const char *otf_str = " ";
       fprintf(c->o,
 	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
 	      " onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\"",

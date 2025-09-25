@@ -26,6 +26,7 @@ int verbose = 0;
 
 const char *arg_lig_file;
 Hash **arg_ligs;
+const char *html_css;
 const char *invoke;
 const char *infile;
 const char *outfile;
@@ -139,7 +140,7 @@ main(int argc, char **argv)
   setlocale (LC_ALL, ORACC_LOCALE);
 
   cfy.o = stdout;  
-  options(argc, argv, "bC:c:fhi:l:no:P:p:q:sTt:U:uvw");
+  options(argc, argv, "bC:c:fH:hi:l:no:P:p:q:sTt:U:uvw");
 
   if (verbose > 1)
     cfyset_debug(1);
@@ -290,6 +291,9 @@ opts(int opt, const char *arg)
     case 'f':
       force = 1;
       break;
+    case 'H':
+      html_css = arg;
+      /*falls through*/
     case 'h':
       cfy.html = 1;
       break;

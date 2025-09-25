@@ -331,6 +331,7 @@ extern int anchor_start, anchor_end;
 extern int trace, verbose;
 extern Cfy cfy;
 extern const char *brk_str[];
+extern const char *html_css;
 
 extern void cfy_eH(void *userData, const char *name);
 extern void cfy_sH(void *userData, const char *name, const char **atts);
