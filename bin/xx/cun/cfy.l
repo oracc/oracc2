@@ -34,7 +34,6 @@ jeltcs		"&Jcs"
 jeltcp		"&Jcp"
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_key		cfy-[a-z]+-.*
-kv_format     	(none|left|right|char-spread|char-penult|spread|penult|boxed|ruled|colruled)
 kw_ccf		^cfy-ccf
 kw_format     	^cfy-format
 kw_key		^cfy-key
@@ -42,9 +41,9 @@ grapheme	([a-zA-Z0-9\x80-\xff]+)
 literal		'"'[^\"\n\r]+'"'
 member		[a-zA-Z0-9][a-zA-Z0-9_]
 pqx		([a-z0-9/]+:)?[PQX][0-9]{6}
-reltb		"&Rb";
-reltl		"&Rl";
-reltc		"&Rc";
+reltb		"&Rb"
+reltl		"&Rl"
+reltc		"&Rc"
 return		"&r"
 structmem      	"->"
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
@@ -104,7 +103,7 @@ zws		"&s"
 
 {kv_key}       	{ lval(cfytext); return CFYKEY; }
 
-{kw_format}	{ BEGIN J; return KW_FORMAT; }
+{kw_format}	{ return KW_FORMAT; }
 
 {reltb}		{ return ELTRb; }
 

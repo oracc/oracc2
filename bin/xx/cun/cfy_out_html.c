@@ -75,11 +75,22 @@ ch_head(Cfy *c)
   if (c->c->ffs)
     fprintf(c->o, " data-cfy-ffs=\"%s\"", c->c->ffs);
   fputc('>', c->o);
+  char format_options[strlen(" cfy-boxed cfy-ruled cfy-crules0")];
+  *format_options = '\0';
+  if (c->c->rbox)
+    strcat(format_options, " cfy-boxed");
+  if (c->c->rline)
+    strcat(format_options, " cfy-ruled");
+  if (c->c->rcol)
+    strcat(format_options, " cfy-crules");
+  const char *justify = cfy_justify_class(c->c->justify);
   fprintf(c->o,
 	  "<h1 class=\"p3h2 border-top heading\">"
 	  "<span class=\"cfy-generic\">Cuneified </span>"
-	  "<span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table\">",
-	  c->n);
+	  "<span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table%s%s\">",
+	  c->n,
+	  format_options,
+	  justify);
 }
 
 static void

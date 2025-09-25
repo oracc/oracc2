@@ -39,7 +39,8 @@ typedef struct cfy
   List *line;	/* current line to add elts to  */
   struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
 				 NULL-terminated arrays of Eltline* */
-  struct class *c;	/* the class for the initial state */
+  struct class *c;	/* the class for the text-wide state; does not
+			   change as inline classes change */
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
@@ -113,6 +114,7 @@ typedef enum elt_type { ELT_NOT,
 			ELT_Rb/* ruling-boxed */,
 			ELT_Rl/* ruling-line */,
 			ELT_Rc/* ruling-column */,
+			ELT_Jc/* justify-centre */,
 			ELT_Jl/* justify-left */,
 			ELT_Jp/* justify-penult */,
 			ELT_Jr/* justify-right */,
@@ -379,5 +381,7 @@ extern void cfy_uni_check(Cfy *c, uccp u);
 extern Hash *cfy_uni_load(Cfy *c, const char *unifile);
 
 extern void cfy_lgs(Cfy *c);
+
+const char *cfy_justify_class(Etype j);
 
 #endif/*CFY_H_*/

@@ -10,12 +10,6 @@ static List *lhs, *rhs;
 extern int elts_rhs;
 int sub_has_assignment;
 
-#if 0
-	   && !(cfy.c = cfy_class(&cfy, cfykey,NULL)))
-	  fprintf(stderr, "cfy: errors in config key %s. Stop.\n", cfykey);
-	  exit(1);
-#endif
-
 static const char *
 cfy_cfg_locate(Cfy *c, const char *ccf, Ltype cloc)
 {
@@ -168,7 +162,7 @@ cfy_cfg_load(Cfy *c, const char *cfgpath)
 	  gvl_setup("osl", "osl", "020");
 	  extern const char *curr_ccf;
 	  extern FILE *cfyin;
-	  curr_ccf= cfgpath;
+	  curr_ccf = cfgpath;
 	  cfyin = cfp;
 	  cfyparse();
 	  fclose(cfp);
@@ -228,6 +222,12 @@ elts_one_key(Elt *e)
       return "Rl";
     case ELT_Rc:
       return "Rc";
+    case ELT_Jc:
+      return "Jc";
+    case ELT_Jcp:
+      return "Jcp";
+    case ELT_Jcs:
+      return "Jcs";
     case ELT_Jl:
       return "Jl";
     case ELT_Jp:
