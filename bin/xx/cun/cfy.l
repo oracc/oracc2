@@ -28,10 +28,20 @@ fill		"++"
 goesto		"=>"
 jeltl		"&Jl"
 jeltr		"&Jr"
+jeltc		"&Jc"
 jelts		"&Js"
 jeltp		"&Jp"
 jeltcs		"&Jcs"
 jeltcp		"&Jcp"
+
+jkwl		"left"
+jkwr		"right"
+jkwc		"centre"
+jkws		"spread"
+jkwp		"penult"
+jkwcs		"char-spread"
+jkwcp		"char-penult"
+
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_key		cfy-[a-z]+-.*
 kw_ccf		^cfy-ccf
@@ -44,6 +54,11 @@ pqx		([a-z0-9/]+:)?[PQX][0-9]{6}
 reltb		"&Rb"
 reltl		"&Rl"
 reltc		"&Rc"
+
+rkwb		"boxed"
+rkwl		"ruled"
+rkwc		"crule"
+
 return		"&r"
 structmem      	"->"
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
@@ -81,6 +96,8 @@ zws		"&s"
 
 {jeltr}		{ return ELTJr; }
 
+{jeltc}		{ return ELTJc; }
+
 {jelts}		{ return ELTJs; }
 
 {jeltp}		{ return ELTJp; }
@@ -103,7 +120,27 @@ zws		"&s"
 
 {kv_key}       	{ lval(cfytext); return CFYKEY; }
 
-{kw_format}	{ return KW_FORMAT; }
+{kw_format}	{ BEGIN J; return KW_FORMAT; }
+
+<J>{jkwl}	{ BEGIN 0; return ELTJl; }
+
+<J>{jkwr}	{ BEGIN 0; return ELTJr; }
+
+<J>{jkwc}	{ BEGIN 0; return ELTJc; }
+
+<J>{jkws}	{ BEGIN 0; return ELTJs; }
+
+<J>{jkwp}	{ BEGIN 0; return ELTJp; }
+
+<J>{jkwcs}	{ BEGIN 0; return ELTJcs; }
+
+<J>{jkwcp}	{ BEGIN 0; return ELTJcp; }
+
+<J>{rkwb}	{ BEGIN 0; return ELTRb; }
+
+<J>{rkwl}	{ BEGIN 0; return ELTRl; }
+
+<J>{rkwc}	{ BEGIN 0; return ELTRc; }
 
 {reltb}		{ return ELTRb; }
 
