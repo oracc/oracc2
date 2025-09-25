@@ -95,7 +95,7 @@ ch_foot(Cfy *c)
 static void
 ch_elt_S(Cfy *c, Elt *e)
 {
-  fputs("<span class=\"ws\">​</span>", c->o);
+  fprintf(c->o, "<span class=\"zws\">%s</span>", (char*)e->data);
 }
 
 static void
@@ -125,7 +125,6 @@ ch_elt_G(Cfy *c, Elt *e)
     }
   else
     {
-      static char otfbuf[7] = { 's', 'a', 'l', 't', '\0', '\0', '\0' };
       const char *otf_str = "";
       fprintf(c->o,
 	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
@@ -138,16 +137,21 @@ ch_elt_G(Cfy *c, Elt *e)
 	{
 	  if (isdigit(*e->otf))
 	    {
-	      otfbuf[4] = e->otf[0];
-	      otfbuf[5] = e->otf[1];
-	      otf_str = otfbuf;
+	      static char saltbuf[8] = { ' ', 's', 'a', 'l', 't', '\0', '\0', '\0' };
+	      saltbuf[5] = e->otf[0];
+	      saltbuf[6] = e->otf[1];
+	      otf_str = saltbuf;
 	    }
 	  else
-	    otf_str = e->otf;
+	    {
+	      static char cvbuf[6] = { ' ', 'c', 'v', '0', '0', '\0' };
+	      strcpy(cvbuf+3,e->otf+2);
+	      otf_str = cvbuf;
+	    }
 	}
       if (e->g_o || e->g_c)
 	{
-	  fprintf(c->o, " class=\"cfy-cun%s cfy-brack\"", otf_str);
+	  fprintf(c->o, " class=\"cfy-cun%scfy-brack\"", otf_str);
 	  if (e->g_o)
 	    fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
 	  if (e->g_c)
@@ -168,7 +172,7 @@ ch_elt_J(Cfy *c, Elt *e)
 static void
 ch_elt_N(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<n/>");  
+  fprintf(c->o, "<span class=\"zwnj\">%s</span>", (char*)e->data);
 }
 
 static void

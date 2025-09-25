@@ -318,7 +318,17 @@ cfy_eH(void *userData, const char *name)
   else if (!strcmp(name, "g:f"))
     {
       if (ELT_G == last_ep->etype)
-	last_ep->otf = (ccp)pool_copy((uccp)charData_retrieve(), ((Cfy*)userData)->p);
+	{
+	  const char *o = last_ep->otf = (ccp)pool_copy((uccp)charData_retrieve(), ((Cfy*)userData)->p);
+	  if ((isdigit(o[0]) && (!o[1] || (isdigit(o[1]) && !o[2])))
+	      || ('c' == o[0] && 'v' == o[1] && isdigit(o[2]) && isdigit(o[3]) && !o[4]))
+	    ;
+	  else
+	    {
+	      fprintf(stderr, "%s:%d: ignoring unknown or malformed OpenType feature %s\n", pi_file, pi_line, o);
+	      last_ep->otf = NULL;
+	    }
+	}
 	
     }
   (void)charData_discard();
