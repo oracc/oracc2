@@ -12,7 +12,7 @@ Elt e_zwj = { .etype=ELT_J, .data=(ucp)"\xE2\x80\x8D" };
 Elt e_zwnj = { .etype=ELT_N, .data=(ucp)"\xE2\x80\x8C" };
 Elt e_zws = { .etype=ELT_S, .data=(ucp)"\xE2\x80\x8B" };
 
-int zws_pending = 0, zwnj_pending = 0;
+int zws_pending = 0, zwnj_pending = 0, plus_pending = 0;
 
 static Elt *last_ep = NULL;
 
@@ -57,11 +57,14 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
 
   if (zwj_murub)
     {
-      if (ELT_G == last_ep->etype && !strcmp(((char*)last_ep->data)-3, e_zwj.data))
+      char *d = last_ep->data;
+      d += strlen(d)-3;
+      if (ELT_G == last_ep->etype && !strcmp(d, e_zwj.data))
 	{
 	  char buf[strlen((char*)last_ep->data)+strlen(utf8)+1];
 	  strcpy(buf, (char*)last_ep->data);
 	  strcat(buf, utf8);
+	  last_ep->data = hpool_copy((uccp)buf, c->hp);
 	  /* emulate cfy_liga_breakage where differing adjacent btypes all map to BRK_HASH */
 	  if (brk != last_ep->btype)
 	    last_ep->btype = BRK_HASH;
@@ -91,14 +94,15 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   ep->prev = last_ep;
   last_ep = ep;
   ep->etype = ELT_G;
-  const char *b = findAttr(atts, "g:boundary");
-  if ('+' == *b)
+  const char *b = findAttr(atts, "g:delim");
+  if (plus_pending || '+' == *b)
     {
       char buf[strlen(utf8)+strlen(e_zwj.data)+1];
       strcpy(buf, utf8);
-      strcpy(buf+strlen(utf8), e_zwj.data);
+      strcat(buf, e_zwj.data);
       ep->data = hpool_copy((uccp)buf, c->hp);
       zwj_murub = 1;
+      plus_pending = 0;
     }
   else
     ep->data = hpool_copy((uccp)utf8, c->hp);
@@ -285,6 +289,12 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	    }
 	  else if (!strcmp(name, "c"))
 	    cfy_cell(userData, atts);
+	  else if (!strcmp(name, "g:d"))
+	    {
+	      const char *dd = findAttr(atts, "g:delim");
+	      if ('+' == *dd)
+		plus_pending = 1;
+	    }
 	  else if (!strcmp(name, "g:x"))
 	    {
 	      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
