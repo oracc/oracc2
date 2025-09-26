@@ -111,7 +111,7 @@ ch_foot(Cfy *c)
 static void
 ch_elt_S(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<span class=\"zws\">%s</span>", (char*)e->data);
+  fprintf(c->o, "<span class=\"zws\"> </span>");
 }
 
 static void

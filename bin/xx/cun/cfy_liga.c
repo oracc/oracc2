@@ -70,6 +70,8 @@ cfy_lig_check(Cfy *c, Elt **epp, int i)
 	      return i+1;
 	    }
 	}
+      else
+	break;
     }
   list_free(l_ids, NULL);
   return i+1;

@@ -56,7 +56,7 @@ sub demo_header {
 <title>Cuneify Demo Page</title>
 <link rel="stylesheet" type="text/css" href="demo.css"/>
 </head>
-<body>
+<body class="demo">
 EOF
 }
 

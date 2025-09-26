@@ -201,8 +201,7 @@ extern int espaces[];
 
 extern const char *brk_str[];
 
-typedef enum btype { BRK_NOT,
-		     BRK_NONE /*clear*/,
+typedef enum btype { BRK_NONE /*clear*/,
 		     BRK_HASH /*damaged*/,
 		     BRK_LOST /*broken*/
 } Btype;
