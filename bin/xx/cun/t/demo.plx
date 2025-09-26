@@ -33,7 +33,8 @@ sub demo_div {
     $base =~ s/\.html$//;
     my $atf = xmlify(join('',`grep '^[0-9]' $base.atf`));
     my $ccf = xmlify(join('',`cat $base.ccf`));
-    my $txt = xmlify(join('',`cat $base.txt`));
+    my $txt = xmlify(join("\n",`cat $base.txt`));
+    my @txt = split(/\n/, $txt); $txt = join("<br/>", grep (!/^$/, @txt));
     print <<EOF;
 <div class="test">
   <h1 class="test">Test $base</h1>
@@ -58,7 +59,11 @@ sub demo_header {
 <title>Cuneify Demo Page</title>
 <link rel="stylesheet" type="text/css" href="demo.css"/>
 </head>
-<body class="demo"><h1>Cuneify Test/Demo Page</h1><div class="grid">
+<body class="demo"><h1>Cuneify Test/Demo Page</h1>
+<p>In the examples below, the Cuneified display uses <code>iframe</code> to include
+entire cuneified documents into the Test/Demo page. The HTML/CSS implementation
+can be explored using the browser inspector facility.</p>
+<div class="grid">
 EOF
 }
 
