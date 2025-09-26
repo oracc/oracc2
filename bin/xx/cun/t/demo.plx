@@ -15,9 +15,11 @@ GetOptions(
     );
 
 my @cfy = (<t*.html>);
+my $ndiv = 0;
 demo_header();
 foreach (@cfy) {
     demo_div($_);
+    ++$ndiv;
 }
 demo_trailer();
 
@@ -29,21 +31,21 @@ sub demo_div {
     my $cfy = shift;
     my $base = $cfy;
     $base =~ s/\.html$//;
-    my $atf = xmlify(join('',`cat $base.atf`));
+    my $atf = xmlify(join('',`grep '^[0-9]' $base.atf`));
     my $ccf = xmlify(join('',`cat $base.ccf`));
     my $txt = xmlify(join('',`cat $base.txt`));
     print <<EOF;
-<div class="cfy-demo">
-  <h1>Test $base</h1>
+<div class="test">
+  <h1 class="test">Test $base</h1>
   <p>$txt</p>
-  <h2>$base.atf</h2>
+  <h2>ATF</h2>
   <pre>
 $atf</pre>
-  <h2>$base.ccf</h2>
+  <h2>Configuration</h2>
   <pre>
 $ccf</pre>
-  <h2>$base.html</h2>
-  <iframe src="$cfy" width="300px"></iframe>
+  <h2 class="cuneified">Cuneified</h2>
+  <iframe src="$cfy" class="t$ndiv"></iframe>
 </div>
 EOF
 }
@@ -56,10 +58,10 @@ sub demo_header {
 <title>Cuneify Demo Page</title>
 <link rel="stylesheet" type="text/css" href="demo.css"/>
 </head>
-<body class="demo">
+<body class="demo"><h1>Cuneify Test/Demo Page</h1><div class="grid">
 EOF
 }
 
 sub demo_trailer {
-    print "</body></html>";
+    print "</div></body></html>";
 }

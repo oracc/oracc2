@@ -1,11 +1,34 @@
+div.grid { display: flex; flex-flow: row wrap;
+	   /*justify-content: space-around; */ }
+
+div.test { border-bottom: solid gray 2px; border-right: solid gray 1px;
+	   width: 350px;
+	   /* margin: auto; */
+	   margin-top: 0px;
+}
+
 .p3h2 { display: none; }
 
-h1 { font-size: 100%; }
+h1.test { font-size: 100%; background-color: silver; margin-top: 0px; }
 
-h2 { font-size: 100%; }
+h2 { font-size: 100%; padding-left: 3px; }
 
-h3 { font-size: 90%; }
+h2.cuneified { margin-bottom: 0px; }
 
-.demo p { margin: 0px; width: 325px; }
+h3 { font-size: 90%; padding-left: 3px; }
+
+.demo p { margin: 0px; width: 325px; padding-left: 3px; }
+
+.demo pre { padding-left: 15px; }
 
 .cfy-table tr>td { padding: 0px; }
+
+iframe { width: 300px; border: none; }
+
+/* 35px per line is a good rule of thumb */
+
+iframe.t0 { height: 140px; }
+
+iframe.t1 { height: 70px; }
+
+iframe.t2 { height: 70px; }
