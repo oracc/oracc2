@@ -1,27 +1,71 @@
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Cuneify Demo Page</title>
 <link rel="stylesheet" type="text/css" href="demo.css"/>
 </head>
 <body>
 <div class="cfy-demo">
-  <h1>Test 01-a</h1>
+  <h1>Test t01-a</h1>
   <p>Basic features: signs and breakage.
 </p>
-  <h2>01-a.atf</h2>
+  <h2>t01-a.atf</h2>
   <pre>
-&X000001 = Test 01
+&amp;X000001 = Test 01
 #project: epsd2
 1. a ba
 2. a#-ba
 3. [a]-ba#-bu
-4. [a & ba]
+4. [a &amp; ba]
 </pre>
-  <h2>01-a.ccf</h2>
+  <h2>t01-a.ccf</h2>
   <pre>
 cfy-key	cfy-gudea-0-150-middle-.
 </pre>
-  <h2>01-a.html</h2>
-  <iframe src="01-a.html" width="300px"/>
+  <h2>t01-a.html</h2>
+  <iframe src="t01-a.html" width="300px"></iframe>
+</div>
+<div class="cfy-demo">
+  <h1>Test t02-ne</h1>
+  <p>Config: cfy-key passes font and styleset to class.
+
+Salt: ATF \3 selects salt3.
+</p>
+  <h2>t02-ne.atf</h2>
+  <pre>
+&amp;X000001 = Test 02
+#project: epsd2
+#atf: use unicode
+1. ne
+2. balag balag\3
+</pre>
+  <h2>t02-ne.ccf</h2>
+  <pre>
+cfy-key	cfy-lak-ss01-150-early-.
+</pre>
+  <h2>t02-ne.html</h2>
+  <iframe src="t02-ne.html" width="300px"></iframe>
+</div>
+<div class="cfy-demo">
+  <h1>Test t03-sajgal2</h1>
+  <p>Liga: space splits liga but config sub override.
+
+A liga substitution can be broken up by ATF `\ '.
+</p>
+  <h2>t03-sajgal2.atf</h2>
+  <pre>
+&amp;X000001 = Test 03
+#project: epsd2
+#atf: use unicode
+1. saŋ ŋal₂
+2. saŋ+ŋal₂
+</pre>
+  <h2>t03-sajgal2.ccf</h2>
+  <pre>
+cfy-key	cfy-rsp-0-150-middle-.
+saŋ &amp;w ŋal₂ => saŋ ŋal₂ .
+</pre>
+  <h2>t03-sajgal2.html</h2>
+  <iframe src="t03-sajgal2.html" width="300px"></iframe>
 </div>
 </body></html>

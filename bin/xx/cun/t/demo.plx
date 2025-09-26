@@ -7,12 +7,14 @@ use Data::Dumper;
 
 use lib "$ENV{'ORACC_BUILDS'}/lib";
 
+use ORACC::XML;
+
 use Getopt::Long;
 
 GetOptions(
     );
 
-my @cfy = grep /^[01]/, (<*.html>);
+my @cfy = (<t*.html>);
 demo_header();
 foreach (@cfy) {
     demo_div($_);
@@ -27,9 +29,9 @@ sub demo_div {
     my $cfy = shift;
     my $base = $cfy;
     $base =~ s/\.html$//;
-    my $atf = `cat $base.atf`;
-    my $ccf = `cat $base.ccf`;
-    my $txt = `cat $base.txt`;
+    my $atf = xmlify(join('',`cat $base.atf`));
+    my $ccf = xmlify(join('',`cat $base.ccf`));
+    my $txt = xmlify(join('',`cat $base.txt`));
     print <<EOF;
 <div class="cfy-demo">
   <h1>Test $base</h1>
@@ -41,7 +43,7 @@ $atf</pre>
   <pre>
 $ccf</pre>
   <h2>$base.html</h2>
-  <iframe src="$cfy" width="300px"/>
+  <iframe src="$cfy" width="300px"></iframe>
 </div>
 EOF
 }
@@ -50,6 +52,7 @@ sub demo_header {
     print <<EOF;
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Cuneify Demo Page</title>
 <link rel="stylesheet" type="text/css" href="demo.css"/>
 </head>
