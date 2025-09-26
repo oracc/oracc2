@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>BR test</title>
+    <style type="text/css">
+      p { width: 300px; background-color: red; }
+      .pbr { text-align: justify; text-align-last: justify; }
+      .br { white-space: pre; }
+      span.br:before { content: "\200B\000A\00A0"; }
+    </style>
+  </head>
+  <body>
+    <p class="pbr">This is justified with a<span class="br"/>br or two</p>
+  </body>
+</html>
