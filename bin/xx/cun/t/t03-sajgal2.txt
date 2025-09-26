@@ -1,0 +1,3 @@
+Liga: space splits liga but config sub override.
+
+A liga substitution can be broken up by ATF `\ '.

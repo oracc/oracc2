@@ -1,0 +1,5 @@
+&X000001 = Test 02
+#project: epsd2
+#atf: use unicode
+1. ne
+2. balag balag\3

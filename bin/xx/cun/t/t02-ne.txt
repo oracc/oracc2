@@ -1,0 +1,3 @@
+Config: cfy-key passes font and styleset to class.
+
+Salt: ATF \3 selects salt3.
