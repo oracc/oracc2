@@ -13,13 +13,10 @@ cfy_justify_class(Etype j)
     case ELT_Jc:
       return " cfy-j-centre";
     case ELT_Js:
-      return " cfy-j-spread";
     case ELT_Jp:
-      return " cfy-j-penult";
     case ELT_Jcs:
-      return " cfy-j-cspread";
     case ELT_Jcp:
-      return " cfy-j-cpenult";
+      return " cfy-j-spread";
     default:
       return "";
     }

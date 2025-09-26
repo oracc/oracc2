@@ -16,6 +16,8 @@ int zws_pending = 0, zwnj_pending = 0, plus_pending = 0;
 
 static Elt *last_ep = NULL;
 static Line *curr_line;
+static int prev_last_w; /* we keep the prev_last_w to use when we pop
+			   the final w of the line off the list */
 
 static Btype
 breakage(const char *name, const char **atts)
@@ -208,8 +210,10 @@ cfy_ws(Cfy *c)
       ep->etype = ELT_W;
       ep->prev = last_ep;
       last_ep = ep;
-      list_add(c->line, ep);
+      prev_last_w = curr_line->last_w;
       curr_line->last_w = list_len(c->line);
+      list_add(c->line, ep);
+      fprintf(stderr, "cfy_ws last_w = %d\n", curr_line->last_w);
     }
 }
 
@@ -332,7 +336,11 @@ cfy_eH(void *userData, const char *name)
       List *line = list_last(((Cfy*)userData)->body);
       Elt *ep = list_last(line);
       if (ep->etype == ELT_W)
-	(void)list_pop(line);
+	{
+	  (void)list_pop(line);
+	  curr_line->last_w = prev_last_w;
+	  fprintf(stderr, "cfy_eH resetting last_w to %d\n", curr_line->last_w);
+	}
       
       ((Cfy*)userData)->cline = ((Cfy*)userData)->mline = NULL;
     }
@@ -354,7 +362,11 @@ cfy_eH(void *userData, const char *name)
     {
       Elt *ep = list_last(((Cfy*)userData)->line);
       if (ep->etype == ELT_W)
-	(void)list_pop(((Cfy*)userData)->line);
+	{
+	  (void)list_pop(((Cfy*)userData)->line);
+	  curr_line->last_w = prev_last_w;
+	  fprintf(stderr, "cfy_eH resetting last_w to %d\n", curr_line->last_w);
+	}
     }
   else if (!strcmp(name, "g:f"))
     {

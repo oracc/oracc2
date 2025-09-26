@@ -182,3 +182,6 @@ span[onclick]:hover { cursor: pointer; }
     font-feature-settings: "cv06", "salt" 6;
 }
 
+.cfy-j-spread p { text-align: justify; text-align-last: justify; }
+
+span.cfy-penult:before { content: " "; }
