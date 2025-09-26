@@ -185,3 +185,7 @@ span[onclick]:hover { cursor: pointer; }
 .cfy-j-spread p { text-align: justify; text-align-last: justify; }
 
 span.cfy-penult:before { content: " "; }
+
+/* Fake a line-break for ATF ';' */
+span.br { white-space: pre; }
+span.br:before { content: "\200B\000A\00A0"; }

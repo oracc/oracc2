@@ -31,7 +31,7 @@ sub demo_div {
     my $cfy = shift;
     my $base = $cfy;
     $base =~ s/\.html$//;
-    my $atf = xmlify(join('',`grep '^[0-9]' $base.atf`));
+    my $atf = xmlify(join('',`grep '^[0-9=]' $base.atf`));
     my $ccf = xmlify(join('',`cat $base.ccf`));
     my $txt = xmlify(join("\n",`cat $base.txt`));
     my @txt = split(/\n/, $txt); $txt = join("<br/>", grep (!/^$/, @txt));

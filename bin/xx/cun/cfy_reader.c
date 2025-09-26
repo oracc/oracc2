@@ -213,7 +213,7 @@ cfy_ws(Cfy *c)
       prev_last_w = curr_line->last_w;
       curr_line->last_w = list_len(c->line);
       list_add(c->line, ep);
-      fprintf(stderr, "cfy_ws last_w = %d\n", curr_line->last_w);
+      /*fprintf(stderr, "cfy_ws last_w = %d\n", curr_line->last_w);*/
     }
 }
 
@@ -339,7 +339,7 @@ cfy_eH(void *userData, const char *name)
 	{
 	  (void)list_pop(line);
 	  curr_line->last_w = prev_last_w;
-	  fprintf(stderr, "cfy_eH resetting last_w to %d\n", curr_line->last_w);
+	  /*fprintf(stderr, "cfy_eH resetting last_w to %d\n", curr_line->last_w);*/
 	}
       
       ((Cfy*)userData)->cline = ((Cfy*)userData)->mline = NULL;
@@ -365,7 +365,7 @@ cfy_eH(void *userData, const char *name)
 	{
 	  (void)list_pop(((Cfy*)userData)->line);
 	  curr_line->last_w = prev_last_w;
-	  fprintf(stderr, "cfy_eH resetting last_w to %d\n", curr_line->last_w);
+	  /*fprintf(stderr, "cfy_eH resetting last_w to %d\n", curr_line->last_w);*/
 	}
     }
   else if (!strcmp(name, "g:f"))

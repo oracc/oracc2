@@ -130,7 +130,7 @@ ch_elt_W(Cfy *c, Elt *e)
   if (!e->prev || e->prev->etype != ELT_R)
     {
       const char *lw = "";
-      fprintf(stderr, "ch_elt_W processing epp[%d]\n", ci_j);
+      /*fprintf(stderr, "ch_elt_W processing epp[%d]\n", ci_j);*/
       if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
 	  && ci_j == ((Line*)c->elt_lines[ci_i]->epp[0]->data)->last_w)
 	lw = " cfy-penult";
@@ -241,7 +241,7 @@ ch_elt_F(Cfy *c, Elt *e)
 static void
 ch_elt_R(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "</p><p>");
+  fputs("<span class=\"br\"/>", c->o);
 }
 
 static void
