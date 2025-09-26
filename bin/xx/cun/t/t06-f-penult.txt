@@ -1,0 +1,1 @@
+Format: penult justifies left and right and puts extra space in the penultimate location, i.e., the last word space.

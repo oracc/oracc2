@@ -221,6 +221,8 @@ elts_one_key(Elt *e)
       return "n";
     case ELT_S:
       return "s";
+    case ELT_Hp:
+      return "Hp";
     case ELT_Sp:
       return "Sp";
     case ELT_F:

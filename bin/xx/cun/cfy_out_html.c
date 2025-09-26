@@ -5,6 +5,7 @@
 static void ch_head(Cfy *c);
 static void ch_foot(Cfy *c);
 
+static void ch_elt_Hp(Cfy*c, Elt *e);
 static void ch_elt_S(Cfy*c, Elt *e);
 static void ch_elt_Sp(Cfy*c, Elt *e);
 static void ch_elt_W(Cfy*c, Elt *e);
@@ -20,7 +21,7 @@ ci_elt* ch_elt_p[] = { NULL, NULL,
 		       ci_cell_o,
 		       ch_elt_W, ch_elt_G, ch_elt_J, ch_elt_N,
 		       ch_elt_F, ch_elt_R, ch_elt_E, ch_elt_X,
-		       NULL, NULL, NULL, ch_elt_S, ch_elt_Sp };
+		       NULL, NULL, NULL, ch_elt_S, ch_elt_Sp, ch_elt_Hp };
 
 static void ch_l_o(Cfy*c, Line *l);
 static void ch_l_c(Cfy*c);
@@ -115,13 +116,19 @@ ch_elt_S(Cfy *c, Elt *e)
 }
 
 static void
+ch_elt_Hp(Cfy *c, Elt *e)
+{
+  fputs("<span class=\"cfy-pseudo-h\"></span>", c->o);
+}
+
+static void
 ch_elt_Sp(Cfy *c, Elt *e)
 {
   const char *lw = "";
   if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
       && ci_j == ((Line*)c->elt_lines[ci_i]->epp[0]->data)->last_w)
     lw = " cfy-penult";
-  fprintf(c->o, "<span class=\"cfy-pseudo-s%s\"/>", lw);
+  fprintf(c->o, "<span class=\"cfy-pseudo-s%s\"></span>", lw);
 }
 
 static void

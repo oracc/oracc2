@@ -184,7 +184,19 @@ span[onclick]:hover { cursor: pointer; }
 
 .cfy-j-spread p { text-align: justify; text-align-last: justify; }
 
+span.cfy-pseudo-h { white-space: pre; }
+span.cfy-pseudo-h:before { content: " "; }
+
+span.cfy-penult { white-space: pre; }
 span.cfy-penult:before { content: " "; }
+
+/* Fake a space for char-spread */
+span.cfy-pseudo-s { white-space: pre; }
+span.cfy-pseudo-s:before { content: " ";  }
+
+/* Combine pseudo-s and penult */
+span.cfy-pseudo-s.cfy-penult { white-space: pre; }
+span.cfy-pseudo-s.cfy-penult:before { content: "  ";  }
 
 /* Fake a line-break for ATF ';' */
 span.br { white-space: pre; }

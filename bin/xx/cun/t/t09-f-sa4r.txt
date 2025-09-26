@@ -1,0 +1,1 @@
+LGS: ATF does not allow a ';'-linebreak within compounds but it can be emulated using the LGS.

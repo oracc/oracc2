@@ -1,0 +1,2 @@
+Format: In ATF ';' is used to indicate that the scribe has split the line between rulings; such lines are usually right-justified in the manuscripts.
+

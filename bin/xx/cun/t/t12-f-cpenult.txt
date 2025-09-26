@@ -1,0 +1,1 @@
+Format: The char-penult option justifies text by inserting space between characters and puts extra space before the last character in the line.

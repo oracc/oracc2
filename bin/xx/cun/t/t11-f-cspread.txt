@@ -1,0 +1,1 @@
+Format: The char-spread option justifies text by inserting space between characters.

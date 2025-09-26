@@ -2,6 +2,7 @@
 #include "cfy.h"
 
 static Line *curr_line = NULL;
+Elt e_hp = { .etype=ELT_Hp };
 
 static void
 cfy_charify(Cfy *c, Elt *ep, List *lp)
@@ -34,7 +35,7 @@ cfy_charify(Cfy *c, Elt *ep, List *lp)
 	    }
 	}
     }
-  free(w);
+  /*free(w);*//* this is not how to free utf2wcs mem */
 }
 
 void
@@ -46,7 +47,11 @@ cfy_charspace(Cfy *c, Eltline *elp)
   for (i = 0; elp->epp[i]; ++i)
     {
       if (ELT_G == elp->epp[i]->etype)
-	cfy_charify(c, elp->epp[i], lp);
+	{
+	  if (elp->epp[i]->prev->etype == ELT_G)
+	    list_add(lp, &e_hp);
+	  cfy_charify(c, elp->epp[i], lp);
+	}
       else
 	{
 	  if (ELT_W == elp->epp[i]->etype)

@@ -1,0 +1,1 @@
+LGS: In addition to the main transliteration, ATF provides a secondary transliteration called LGS (Linearized Grapheme Stream) which can be used to insert formatting effects where it would be difficult to do so otherwise.
