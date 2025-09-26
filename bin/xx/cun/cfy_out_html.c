@@ -281,7 +281,7 @@ ch_c_o(Cfy *c, Cell *cp)
   if (cp && cp->class)
     fprintf(c->o, "<td colspan=\"%d\" class=\"%s\">", cp->span, cp->class);
   else if (cp)
-    fprintf(c->o, "<td colspan=\"%d\"><p>", cp->span);
+    fprintf(c->o, "<td colspan=\"%d\">", cp->span);
   else
     fputs("<td>", c->o);
   fputs("<p>", c->o);

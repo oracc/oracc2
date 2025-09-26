@@ -76,6 +76,17 @@ cfy_cfg_run(Cfy *c)
     return cfy_cfg_load(c, cfy_cfg_locate(c, c->arg_ccf, LOC_ARG));
   else
     {
+      /* Look for a .ccf in the same place as the .xtf */
+      char buf[strlen(c->infile)+1];
+      strcpy(buf, c->infile);
+      strcpy(buf+strlen(buf)-3, "ccf");
+      if (!access(buf, R_OK))
+	c->text_ccf = (ccp)pool_copy((uccp)buf,c->p);
+
+      if (c->text_ccf)
+	return cfy_cfg_load(c, cfy_cfg_locate(c, c->text_ccf, LOC_TXT));
+
+      /* Look for a project .ccf or a proxy project .ccf */
       const char *ccfpath;
       if ((ccfpath = cfy_cfg_locate(c, c->project_ccf, LOC_PRJ)))
 	return cfy_cfg_load(c, ccfpath);
@@ -90,9 +101,7 @@ cfy_cfg_text(Cfy *c)
 {
   if (!c->arg_ccf)
     {
-      if (c->text_ccf)
-	return cfy_cfg_load(c, cfy_cfg_locate(c, c->text_ccf, LOC_TXT));
-      else if (c->protocol_ccf)
+      if (c->protocol_ccf)
 	return cfy_cfg_load(c, cfy_cfg_locate(c, c->protocol_ccf, LOC_TXT));
       else if (c->proxypro_ccf)
 	return cfy_cfg_load(c, cfy_cfg_locate(c, c->proxypro_ccf, LOC_TXT));
@@ -167,7 +176,16 @@ cfy_cfg_load(Cfy *c, const char *cfgpath)
 	  cfyparse();
 	  fclose(cfp);
 	  gdl_term();
-	  return cfy_cfg_status;
+
+	  if (cfy_cfg_status)
+	    {
+	      extern int cfylineno;
+	      mesg_warning(curr_ccf, cfylineno,
+			   "cfy exiting because of configuration errors.");
+	      mesg_print(stderr);
+	      exit(1);
+	    }
+	  return 0;
 	}
       else
 	{

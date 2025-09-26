@@ -5,3 +5,7 @@ h1 { font-size: 100%; }
 h2 { font-size: 100%; }
 
 h3 { font-size: 90%; }
+
+p { margin: 0px }
+
+.cfy-table tr>td { padding: 0px; }

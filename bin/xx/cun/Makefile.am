@@ -29,5 +29,5 @@ fontname.g: ../../../msc/fonts/*.def
 demo: ${ORACC}/www/osl/cuneify/demo/demo.html
 
 ${ORACC}/www/osl/cuneify/demo/demo.html: ${ORACC}/bin/cfy t/Makefile \
-	t/demo.sh t/demo.plx t/demo.css
+	t/demo.sh t/demo.plx t/demo.css t/*.atf
 	(cd t ; make clean ; make)
