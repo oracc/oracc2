@@ -5,7 +5,7 @@
 struct fontname;
 %%
 cc,"CuneiformClassic-final"
-gudeabf,"Gudea-bold"
+gudeabf,"Gudea-Bold"
 nni,"Nabuninuaihsus"
 gudea,"Oracc-gudea"
 lak,"Oracc-LAK"
