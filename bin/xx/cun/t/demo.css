@@ -28,12 +28,8 @@ body.demo p { width: 100%; margin-bottom: 10px; }
 
 .cfy-table tr>td { padding: 0px; }
 
-iframe { width: 300px; border: none; }
+iframe { width: 300px; border: none; height: 70px; }
 
 /* 35px per line is a good rule of thumb */
 
 iframe.t0 { height: 140px; }
-
-iframe.t1 { height: 70px; }
-
-iframe.t2 { height: 70px; }
