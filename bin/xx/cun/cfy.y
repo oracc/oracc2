@@ -49,7 +49,8 @@ cfyccf: KW_CCF CFYCCF pqxs {  } ;
 
 cfyformat: KW_FORMAT eltf
 
-cfywidth: KW_WIDTH UNIT
+cfywidth: KW_WIDTH UNIT	{ cfy_cfg_width(@$, &cfy, $2); }
+	;
 
 eltf:	  ELTJl { cfy_cfg_justify(@$, &cfy, ELT_Jl); }
 	| ELTJp { cfy_cfg_justify(@$, &cfy, ELT_Jp); }

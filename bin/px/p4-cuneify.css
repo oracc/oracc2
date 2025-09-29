@@ -60,6 +60,7 @@ span[onclick]:hover { cursor: pointer; }
     --rc-w: 1px;
     --rc-c: black;
     --rc-s: solid;
+    --cfy-width: 100%;
 }
 
 .cfy-cun {
@@ -73,10 +74,6 @@ span[onclick]:hover { cursor: pointer; }
 .cfy-gsp { margin-left: .1em; }
 .cfy-wsp { margin-left: .5em; }
 }
-
-.cfy-table { }
-
-.cfy-table tr>td { padding-bottom: .5em; }
 
 .cfy-button{
     padding: 3px;
@@ -94,7 +91,9 @@ span[onclick]:hover { cursor: pointer; }
     box-sizing: content-box;
 }
 
-.cfy-boxed {
+table.cfy-table { width: var(--cfy-width); }
+
+table.cfy-boxed {
     border-collapse: collapse;
 }
 

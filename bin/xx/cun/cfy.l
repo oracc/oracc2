@@ -73,7 +73,7 @@ return		"&r"
 sp		[ \t]+
 structmem      	"->"
 
-unit		[0-9][.0-9]*(em|px|□)
+unit		[0-9][.0-9]*("em"|"px"|"□")
 
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
 
@@ -162,6 +162,10 @@ zws		"&s"
 
 <J>{rkwc}	{ BEGIN B; return ELTRc; }
 
+<J>{unit}      	{ BEGIN 0; lval(cfytext); return UNIT; }
+
+<J>{ws}		{ ; }
+
 <B>{unit}	{ lval(cfytext); return UNIT; }
 
 <B>{colour}	{ lval(cfytext); return COLOUR; }
@@ -183,8 +187,6 @@ zws		"&s"
 {structmem}	{ BEGIN M; return STRUCTMEM; }
 
 <M>{member}	{ BEGIN 0; lval(cfytext); return MEMBER; }
-
-{unit}		{ lval(cfytext); return UNIT; }
 
 {value}		{ lval(cfytext); return VALUE; }
 

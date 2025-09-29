@@ -810,6 +810,12 @@ function onloadCuneify(c) {
 	++i;
     }
 
+    let w=c.getAttribute('data-cfy-width');
+    if (w) {
+	// alert('Setting cfy-width to '+w);
+	r.style.setProperty('--cfy-width', w);
+    }
+    
 }
 
 function cuneify_reset(evt) {

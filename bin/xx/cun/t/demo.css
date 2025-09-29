@@ -26,8 +26,6 @@ body.demo p { width: 100%; margin-bottom: 10px; }
 
 .demo pre { padding-left: 15px; }
 
-.cfy-table tr>td { padding: 0px; }
-
 iframe { width: 300px; border: none; height: 70px; }
 
 /* 35px per line is a good rule of thumb */
@@ -37,3 +35,4 @@ iframe.t13 { height: 105px; }
 iframe.t14 { height: 110px; }
 iframe.t15 { height: 110px; }
 iframe.t16 { height: 110px; }
+iframe.t17 { height: 110px; }

@@ -242,6 +242,12 @@ cfy_cfg_load(Cfy *c, const char *cfgpath)
     }
 }
 
+void
+cfy_cfg_width(Mloc m, Cfy *c, const char *w)
+{
+  c->c->width = w;
+}
+
 const char *
 elts_one_key(Elt *e)
 {

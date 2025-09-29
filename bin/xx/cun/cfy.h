@@ -201,6 +201,7 @@ typedef struct class
   Rule rcol;
   Etype justify;
   int ruledata;
+  const char *width;
   Fnt *fntp; 
   Cfy *cfyp;
 } Class;
@@ -384,6 +385,7 @@ extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
 extern int cfy_cfg_justify(Mloc m, Cfy *c, Etype e);
+extern void cfy_cfg_width(Mloc m, Cfy *c, const char *w);
 
 extern int cfy_r(Mloc m, Cfy *c, Etype e, const char *unit, const char *style, const char *colour);
 

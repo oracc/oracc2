@@ -104,6 +104,8 @@ ch_head(Cfy *c)
     fprintf(c->o, " data-cfy-ffs=\"%s\"", c->c->ffs);
   if (c->c->ruledata)
     ch_ruledata(c);
+  if (c->c->width)
+    fprintf(c->o, " data-cfy-width=\"%s\"", c->c->width);
   fputc('>', c->o);
   char format_options[strlen(" cfy-boxed cfy-ruled cfy-crule0")];
   *format_options = '\0';
