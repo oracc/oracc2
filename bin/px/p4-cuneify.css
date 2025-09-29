@@ -98,6 +98,10 @@ span[onclick]:hover { cursor: pointer; }
     border-collapse: collapse;
 }
 
+.cfy-crule {
+    border-collapse: collapse;
+}
+
 .cfy-boxed tbody:first-child>tr:first-child>td.cfy-content {
     border-top: var(--rb-w) var(--rb-s) var(--rb-c);
 }
@@ -115,8 +119,12 @@ span[onclick]:hover { cursor: pointer; }
     border-bottom: var(--rl-w) var(--rl-s) var(--rl-c);
 }
 
-.cfy-crule cfy-content {
-    border-left: var(--rc-w) var(--rc-s) var(--rc-c);
+.cfy-crule .cfy-content {
+    border-right: var(--rc-w) var(--rc-s) var(--rc-c);
+}
+
+.cfy-crule td:last-child {
+    border-right: none;
 }
 
 .cfy-curr { border: solid 2px red; }

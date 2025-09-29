@@ -105,14 +105,14 @@ ch_head(Cfy *c)
   if (c->c->ruledata)
     ch_ruledata(c);
   fputc('>', c->o);
-  char format_options[strlen(" cfy-boxed cfy-ruled cfy-crules0")];
+  char format_options[strlen(" cfy-boxed cfy-ruled cfy-crule0")];
   *format_options = '\0';
   if (c->c->rbox.e)
     strcat(format_options, " cfy-boxed");
   if (c->c->rline.e)
     strcat(format_options, " cfy-ruled");
   if (c->c->rcol.e)
-    strcat(format_options, " cfy-crules");
+    strcat(format_options, " cfy-crule");
   const char *justify = cfy_justify_class(c->c->justify);
   fprintf(c->o,
 	  "<h1 class=\"p3h2 border-top heading\">"
@@ -325,9 +325,9 @@ static void
 ch_c_o(Cfy *c, Cell *cp)
 {
   if (cp && cp->class)
-    fprintf(c->o, "<td colspan=\"%d\" class=\"%s\">", cp->span, cp->class);
+    fprintf(c->o, "<td colspan=\"%d\" class=\"cfy-content %s\">", cp->span, cp->class);
   else if (cp)
-    fprintf(c->o, "<td colspan=\"%d\">", cp->span);
+    fprintf(c->o, "<td colspan=\"%d\" class=\"cfy-content\">", cp->span);
   else
     fputs("<td>", c->o);
   fputs("<p>", c->o);
