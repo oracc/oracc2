@@ -1,0 +1,1 @@
+Ruled: the boxed format puts a ruled box around the text.

@@ -1,0 +1,1 @@
+Format: Default text width is 100%, but this is configurable.

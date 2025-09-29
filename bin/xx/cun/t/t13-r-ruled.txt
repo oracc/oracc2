@@ -1,0 +1,1 @@
+Ruled: Tablet rulings by default are 1px solid black.
