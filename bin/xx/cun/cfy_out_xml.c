@@ -22,6 +22,8 @@ ci_elt* cx_elt_p[] = { NULL, NULL,
 
 static void cx_l_o(Cfy*c, Line *l);
 static void cx_l_c(Cfy*c);
+static void cx_h_o(Cfy*c);
+static void cx_h_c(Cfy*c);
 static void cx_c_o(Cfy*c, Cell *cp);
 static void cx_c_c(Cfy*c);
 static void cx_b_o(Cfy*c, Btype b);
@@ -30,6 +32,7 @@ static void cx_label(Cfy *c, const char *l, int print);
 
 Tagfuncs cx_tags = {
   .l_o=cx_l_o, .l_c=cx_l_c,
+  .h_o=cx_h_o, .h_c=cx_h_c,
   .c_o=cx_c_o, .c_c=cx_c_c,
   .b_o=cx_b_o, .b_c=cx_b_c,
   .l=cx_label
@@ -146,6 +149,18 @@ static void
 cx_l_c(Cfy *c)
 {
   fputs("</l>", c->o);
+}
+
+static void
+cx_h_o(Cfy *c)
+{
+  fputs("<h>", c->o);
+}
+
+static void
+cx_h_c(Cfy *c)
+{
+  fputs("</h>", c->o);
 }
 
 static void

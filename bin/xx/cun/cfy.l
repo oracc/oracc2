@@ -26,6 +26,7 @@ endrule		"."
 equals		=
 fill		"++"
 goesto		"=>"
+
 jeltl		"&Jl"
 jeltr		"&Jr"
 jeltc		"&Jc"
@@ -47,10 +48,13 @@ kv_key		cfy-[a-z]+-.*
 kw_ccf		^cfy-ccf
 kw_format     	^cfy-format
 kw_key		^cfy-key
+kw_width	^cfy-width
+
 grapheme	([a-zA-Z0-9\x80-\xff]+)
 literal		'"'[^\"\n\r]+'"'
 member		[a-zA-Z0-9][a-zA-Z0-9_]
 pqx		([a-z0-9/]+:)?[PQX][0-9]{6}
+
 reltb		"&Rb"
 reltl		"&Rl"
 reltc		"&Rc"
@@ -61,7 +65,11 @@ rkwc		"crule"
 
 return		"&r"
 structmem      	"->"
+
+unit		[0-9][.0-9]*(em|px|□)
+
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
+
 word		"&w"
 ws		[ \t\r\n]+
 zwj		"&j"
@@ -122,6 +130,8 @@ zws		"&s"
 
 {kw_format}	{ BEGIN J; return KW_FORMAT; }
 
+{kw_width}	{ BEGIN J; return KW_WIDTH; }
+
 <J>{jkwl}	{ BEGIN 0; return ELTJl; }
 
 <J>{jkwr}	{ BEGIN 0; return ELTJr; }
@@ -153,6 +163,8 @@ zws		"&s"
 {structmem}	{ BEGIN M; return STRUCTMEM; }
 
 <M>{member}	{ BEGIN 0; lval(cfytext); return MEMBER; }
+
+{unit}		{ lval(cfytext); return UNIT; }
 
 {value}		{ lval(cfytext); return VALUE; }
 

@@ -16,7 +16,7 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
 
 span[onclick]:hover { cursor: pointer; }
 
-.cfy-label {
+.cfy-lnum {
     font-size: 70%;
     color: gray;
     margin-bottom: 5px;

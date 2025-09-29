@@ -110,23 +110,35 @@ cfy_cfg_text(Cfy *c)
 }
 
 int
-cfy_cfg_rbox(Mloc m, Cfy *c)
+cfy_cfg_rbox(Mloc m, Cfy *c, const char *unit, const char *css)
 {
-  curr_cp->rbox = ELT_Rb;
+  curr_cp->rbox.e = ELT_Rb;
+  if (unit)
+    curr_cp->rbox.u = unit;
+  else if (css)
+    curr_cp->rbox.u = css;
   return 0;
 }
 
 int
-cfy_cfg_rline(Mloc m, Cfy *c)
+cfy_cfg_rline(Mloc m, Cfy *c, const char *unit, const char *css)
 {
-  curr_cp->rline = ELT_Rl;
+  curr_cp->rline.e = ELT_Rl;
+  if (unit)
+    curr_cp->rbox.u = unit;
+  else if (css)
+    curr_cp->rbox.u = css;
   return 0;
 }
 
 int
-cfy_cfg_rcol(Mloc m, Cfy *c)
+cfy_cfg_rcol(Mloc m, Cfy *c, const char *unit, const char *css)
 {
-  curr_cp->rcol = ELT_Rc;
+  curr_cp->rcol.e = ELT_Rc;
+  if (unit)
+    curr_cp->rbox.u = unit;
+  else if (css)
+    curr_cp->rbox.u = css;
   return 0;
 }
 

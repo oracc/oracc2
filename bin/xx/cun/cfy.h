@@ -179,6 +179,13 @@ typedef struct fnt
    In the 'asl' member of the key, the special value '.' means use the
    project sign list.
  */
+typedef struct rule
+{
+  Etype e;
+  const char *u;
+  const char *c;
+} Rule;
+
 typedef struct class
 {
   const char *key;
@@ -188,9 +195,9 @@ typedef struct class
   const char *scr;
   const char *asl;
   const char *css;
-  Etype rbox;
-  Etype rline;
-  Etype rcol;
+  Rule rbox;
+  Rule rline;
+  Rule rcol;
   Etype justify;
   Fnt *fntp; 
   Cfy *cfyp;
@@ -376,9 +383,9 @@ extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
 extern int cfy_cfg_justify(Mloc m, Cfy *c, Etype e);
 
-extern int cfy_cfg_rbox(Mloc m, Cfy *c);
-extern int cfy_cfg_rline(Mloc m, Cfy *c);
-extern int cfy_cfg_rcol(Mloc m, Cfy *c);
+extern int cfy_cfg_rbox(Mloc m, Cfy *c, const char *unit, const char *css);
+extern int cfy_cfg_rline(Mloc m, Cfy *c, const char *unit, const char *css);
+extern int cfy_cfg_rcol(Mloc m, Cfy *c, const char *unit, const char *css);
 
 extern void cfy_uni_check(Cfy *c, uccp u);
 extern Hash *cfy_uni_load(Cfy *c, const char *unifile);

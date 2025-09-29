@@ -21,10 +21,11 @@ CFYLTYPE cfylloc;
 
 %union { char *s; int i; }
 
-%token <i> FILL GOESTO KW_CCF KW_KEY KW_FORMAT RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS
+%token <i> FILL GOESTO KW_CCF KW_KEY KW_FORMAT KW_WIDTH
+	   RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS
 %token <i> ELTRb ELTJcp ELTJcs ELTRl ELTRc ELTJl ELTJc ELTJp ELTJr ELTJs
 %token <s> CFYCCF CFYKEY ELTREF GRAPHEME JELTl JELTp JELTr JELTs
-	   LITERAL MEMBER PQX VALUE
+	   LITERAL MEMBER PQX VALUE UNIT
 
 %start configs
 
@@ -37,6 +38,7 @@ configs:  config
 config:   cfyccf
 	| cfyformat
 	| cfykey
+	| cfywidth
 	| sub
 	;
 
@@ -44,15 +46,23 @@ cfyccf: KW_CCF CFYCCF pqxs {  } ;
 
 cfyformat: KW_FORMAT eltf
 
+cfywidth: KW_WIDTH UNIT
+
 eltf:	  ELTJl { cfy_cfg_justify(@$, &cfy, ELT_Jl); }
 	| ELTJp { cfy_cfg_justify(@$, &cfy, ELT_Jp); }
 	| ELTJcp { cfy_cfg_justify(@$, &cfy, ELT_Jcp); }
 	| ELTJr { cfy_cfg_justify(@$, &cfy, ELT_Jr); }
 	| ELTJs { cfy_cfg_justify(@$, &cfy, ELT_Js); }
 	| ELTJcs { cfy_cfg_justify(@$, &cfy, ELT_Jcs); }
-	| ELTRb { cfy_cfg_rbox(@$, &cfy); }
-	| ELTRl { cfy_cfg_rline(@$, &cfy); }
-	| ELTRc { cfy_cfg_rcol(@$, &cfy); }
+	| ELTRb { cfy_cfg_rbox(@$, &cfy, NULL, NULL); }
+	| ELTRl { cfy_cfg_rline(@$, &cfy, NULL, NULL); }
+	| ELTRc { cfy_cfg_rcol(@$, &cfy, NULL, NULL); }
+	| ELTRb UNIT { cfy_cfg_rbox(@$, &cfy, $2, NULL); }
+	| ELTRl UNIT { cfy_cfg_rline(@$, &cfy, $2, NULL); }
+	| ELTRc UNIT { cfy_cfg_rcol(@$, &cfy, $2, NULL); }
+	| ELTRb LITERAL { cfy_cfg_rbox(@$, &cfy, NULL, $2); }
+	| ELTRl LITERAL { cfy_cfg_rline(@$, &cfy, NULL, $2); }
+	| ELTRc LITERAL { cfy_cfg_rcol(@$, &cfy, NULL, $2); }
 	;
 
 cfykey: KW_KEY CFYKEY  	{ cfy_cfg_key(@$, &cfy, $2); } ;

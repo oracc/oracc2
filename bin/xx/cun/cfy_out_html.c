@@ -25,6 +25,8 @@ ci_elt* ch_elt_p[] = { NULL, NULL,
 
 static void ch_l_o(Cfy*c, Line *l);
 static void ch_l_c(Cfy*c);
+static void ch_h_o(Cfy*c);
+static void ch_h_c(Cfy*c);
 static void ch_c_o(Cfy*c, Cell *cp);
 static void ch_c_c(Cfy*c);
 static void ch_b_o(Cfy*c, Btype b);
@@ -33,6 +35,7 @@ static void ch_label(Cfy *c, const char *l, int print);
 
 Tagfuncs ch_tags = {
   .l_o=ch_l_o, .l_c=ch_l_c,
+  .h_o=ch_h_o, .h_c=ch_h_c,
   .c_o=ch_c_o, .c_c=ch_c_c,
   .b_o=ch_b_o, .b_c=ch_b_c,
   .l=ch_label
@@ -83,11 +86,11 @@ ch_head(Cfy *c)
   fputc('>', c->o);
   char format_options[strlen(" cfy-boxed cfy-ruled cfy-crules0")];
   *format_options = '\0';
-  if (c->c->rbox)
+  if (c->c->rbox.e)
     strcat(format_options, " cfy-boxed");
-  if (c->c->rline)
+  if (c->c->rline.e)
     strcat(format_options, " cfy-ruled");
-  if (c->c->rcol)
+  if (c->c->rcol.e)
     strcat(format_options, " cfy-crules");
   const char *justify = cfy_justify_class(c->c->justify);
   fprintf(c->o,
@@ -283,6 +286,18 @@ static void
 ch_l_c(Cfy *c)
 {
   fputs("</tr>", c->o);
+}
+
+static void
+ch_h_o(Cfy *c)
+{
+  fputs("<th>", c->o);
+}
+
+static void
+ch_h_c(Cfy *c)
+{
+  fputs("</th>", c->o);
 }
 
 static void

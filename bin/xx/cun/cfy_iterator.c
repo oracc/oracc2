@@ -90,11 +90,11 @@ ci_printable_label(const char *l)
 static void
 ci_line_o(Cfy *c, Line*l)
 {
-  static Cell label_cell = { 1 , "cfy-label" };
+  /*static Cell label_cell = { 1 , "cfy-label" };*/
   ci_tags->l_o(c, l);
-  ci_tags->c_o(c, &label_cell);
+  ci_tags->h_o(c /*, &label_cell*/);
   ci_tags->l(c, l->label, ci_printable_label(l->label));
-  ci_tags->c_c(c);
+  ci_tags->h_c(c);
   line_cell_pending = 1;
 }
 
