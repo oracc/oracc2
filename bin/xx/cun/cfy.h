@@ -182,8 +182,9 @@ typedef struct fnt
 typedef struct rule
 {
   Etype e;
-  const char *u;
-  const char *c;
+  const char *w; /* width */
+  const char *c; /* colour */
+  const char *s; /* style */
 } Rule;
 
 typedef struct class
@@ -199,6 +200,7 @@ typedef struct class
   Rule rline;
   Rule rcol;
   Etype justify;
+  int ruledata;
   Fnt *fntp; 
   Cfy *cfyp;
 } Class;
@@ -383,9 +385,7 @@ extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
 extern int cfy_cfg_justify(Mloc m, Cfy *c, Etype e);
 
-extern int cfy_cfg_rbox(Mloc m, Cfy *c, const char *unit, const char *css);
-extern int cfy_cfg_rline(Mloc m, Cfy *c, const char *unit, const char *css);
-extern int cfy_cfg_rcol(Mloc m, Cfy *c, const char *unit, const char *css);
+extern int cfy_r(Mloc m, Cfy *c, Etype e, const char *unit, const char *style, const char *colour);
 
 extern void cfy_uni_check(Cfy *c, uccp u);
 extern Hash *cfy_uni_load(Cfy *c, const char *unifile);

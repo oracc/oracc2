@@ -30,6 +30,7 @@ demo_trailer();
 sub demo_div {
     my $cfy = shift;
     my $base = $cfy;
+    my $tclass = sprintf("t%02d",$ndiv+1);
     $base =~ s/\.html$//;
     my $atf = xmlify(join('',`grep '^[0-9=]' $base.atf`));
     my $ccf = xmlify(join('',`cat $base.ccf`));
@@ -46,7 +47,7 @@ $atf</pre>
   <pre>
 $ccf</pre>
   <h2 class="cuneified">Cuneified</h2>
-  <iframe src="$cfy" class="t$ndiv"></iframe>
+  <iframe src="$cfy" class="$tclass"></iframe>
 </div>
 EOF
 }

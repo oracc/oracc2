@@ -25,7 +25,10 @@ CFYLTYPE cfylloc;
 	   RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS
 %token <i> ELTRb ELTJcp ELTJcs ELTRl ELTRc ELTJl ELTJc ELTJp ELTJr ELTJs
 %token <s> CFYCCF CFYKEY ELTREF GRAPHEME JELTl JELTp JELTr JELTs
-	   LITERAL MEMBER PQX VALUE UNIT
+	   LITERAL MEMBER PQX VALUE UNIT COLOUR BORDERSTYLE
+
+%type <i> rulingelt
+%type <s> r_unit r_colour r_style
 
 %start configs
 
@@ -54,16 +57,28 @@ eltf:	  ELTJl { cfy_cfg_justify(@$, &cfy, ELT_Jl); }
 	| ELTJr { cfy_cfg_justify(@$, &cfy, ELT_Jr); }
 	| ELTJs { cfy_cfg_justify(@$, &cfy, ELT_Js); }
 	| ELTJcs { cfy_cfg_justify(@$, &cfy, ELT_Jcs); }
-	| ELTRb { cfy_cfg_rbox(@$, &cfy, NULL, NULL); }
-	| ELTRl { cfy_cfg_rline(@$, &cfy, NULL, NULL); }
-	| ELTRc { cfy_cfg_rcol(@$, &cfy, NULL, NULL); }
-	| ELTRb UNIT { cfy_cfg_rbox(@$, &cfy, $2, NULL); }
-	| ELTRl UNIT { cfy_cfg_rline(@$, &cfy, $2, NULL); }
-	| ELTRc UNIT { cfy_cfg_rcol(@$, &cfy, $2, NULL); }
-	| ELTRb LITERAL { cfy_cfg_rbox(@$, &cfy, NULL, $2); }
-	| ELTRl LITERAL { cfy_cfg_rline(@$, &cfy, NULL, $2); }
-	| ELTRc LITERAL { cfy_cfg_rcol(@$, &cfy, NULL, $2); }
+	| ruling
 	;
+
+ruling:
+	  rulingelt			       	{ cfy_r(@$, &cfy, $1, NULL, NULL, NULL); }
+	| rulingelt r_unit	       		{ cfy_r(@$, &cfy, $1, $2, NULL, NULL); }
+	| rulingelt r_unit r_colour		{ cfy_r(@$, &cfy, $1, $2, $3, NULL); }
+	| rulingelt r_unit r_style		{ cfy_r(@$, &cfy, $1, $2, NULL, $3); }
+	| rulingelt r_unit r_colour r_style	{ cfy_r(@$, &cfy, $1, $2, $3, $4); }
+	;
+
+rulingelt:
+	  ELTRb { $$ = ELT_Rb; }
+	| ELTRl { $$ = ELT_Rl; }
+	| ELTRc { $$ = ELT_Rc; }
+	;
+
+r_unit: UNIT ;
+
+r_colour: COLOUR ;
+
+r_style: BORDERSTYLE ;
 
 cfykey: KW_KEY CFYKEY  	{ cfy_cfg_key(@$, &cfy, $2); } ;
 

@@ -32,4 +32,6 @@ iframe { width: 300px; border: none; height: 70px; }
 
 /* 35px per line is a good rule of thumb */
 
-iframe.t0 { height: 140px; }
+iframe.t01 { height: 140px; }
+iframe.t13 { height: 105px; }
+iframe.t14 { height: 110px; }

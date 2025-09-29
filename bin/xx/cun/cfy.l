@@ -20,9 +20,14 @@ int anchor_start, anchor_end;
 
 anchor_e	"$"
 anchor_s	"^"
+
+bstyle		("dashed"|"dotted"|"double"|"groove"|"ridge"|"inset"|"outset"|"solid")
+
+colour		"#"([0-9a-fA-F]{3}|[0-9a-fA-F]{6})
 comment		^"#".*/[\n\r]
 eltref		@[0-9]+
 endrule		"."
+eol		[\r\n]+
 equals		=
 fill		"++"
 goesto		"=>"
@@ -64,6 +69,8 @@ rkwl		"ruled"
 rkwc		"crule"
 
 return		"&r"
+
+sp		[ \t]+
 structmem      	"->"
 
 unit		[0-9][.0-9]*(em|px|□)
@@ -76,6 +83,7 @@ zwj		"&j"
 zwnj		"&n"
 zws		"&s"
 
+%x B
 %x C
 %x J
 %x M
@@ -85,6 +93,8 @@ zws		"&s"
 {anchor_e}	{ ++anchor_end; return *cfytext; }
 
 {anchor_s}	{ ++anchor_start; return *cfytext; }
+
+{colour}	{ lval(cfytext); return COLOUR; }
 
 {comment}	{ ; }
 
@@ -146,11 +156,21 @@ zws		"&s"
 
 <J>{jkwcp}	{ BEGIN 0; return ELTJcp; }
 
-<J>{rkwb}	{ BEGIN 0; return ELTRb; }
+<J>{rkwb}	{ BEGIN B; return ELTRb; }
 
-<J>{rkwl}	{ BEGIN 0; return ELTRl; }
+<J>{rkwl}	{ BEGIN B; return ELTRl; }
 
-<J>{rkwc}	{ BEGIN 0; return ELTRc; }
+<J>{rkwc}	{ BEGIN B; return ELTRc; }
+
+<B>{unit}	{ lval(cfytext); return UNIT; }
+
+<B>{colour}	{ lval(cfytext); return COLOUR; }
+
+<B>{bstyle}	{ lval(cfytext); return BORDERSTYLE; }
+
+<B>{sp}		{ ; }
+
+<B>{eol}	{ BEGIN 0; }
 
 {reltb}		{ return ELTRb; }
 

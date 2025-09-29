@@ -109,36 +109,66 @@ cfy_cfg_text(Cfy *c)
   return 0;
 }
 
-int
-cfy_cfg_rbox(Mloc m, Cfy *c, const char *unit, const char *css)
+static int
+cfy_cfg_rbox(Mloc m, Cfy *c, const char *unit, const char *colour, const char *style)
 {
   curr_cp->rbox.e = ELT_Rb;
   if (unit)
-    curr_cp->rbox.u = unit;
-  else if (css)
-    curr_cp->rbox.u = css;
+    curr_cp->rbox.w = unit;
+  if (colour)
+    curr_cp->rbox.c = colour;
+  if (colour)
+    curr_cp->rbox.s = style;
   return 0;
 }
 
-int
-cfy_cfg_rline(Mloc m, Cfy *c, const char *unit, const char *css)
+static int
+cfy_cfg_rline(Mloc m, Cfy *c, const char *unit, const char *colour, const char *style)
 {
   curr_cp->rline.e = ELT_Rl;
   if (unit)
-    curr_cp->rbox.u = unit;
-  else if (css)
-    curr_cp->rbox.u = css;
+    curr_cp->rline.w = unit;
+  if (colour)
+    curr_cp->rline.c = colour;
+  if (style)
+    curr_cp->rline.s = style;
+  return 0;
+}
+
+static int
+cfy_cfg_rcol(Mloc m, Cfy *c, const char *unit, const char *colour, const char *style)
+{
+  curr_cp->rcol.e = ELT_Rc;
+  if (unit)
+    curr_cp->rcol.w = unit;
+  if (colour)
+    curr_cp->rcol.c = colour;
+  if (style)
+    curr_cp->rcol.s = style;
   return 0;
 }
 
 int
-cfy_cfg_rcol(Mloc m, Cfy *c, const char *unit, const char *css)
+cfy_r(Mloc m, Cfy *c, Etype e, const char *unit, const char *colour, const char *style)
 {
-  curr_cp->rcol.e = ELT_Rc;
-  if (unit)
-    curr_cp->rbox.u = unit;
-  else if (css)
-    curr_cp->rbox.u = css;
+  if (unit || colour || style)
+    ++curr_cp->ruledata;
+  switch (e)
+    {
+    case ELT_Rb:
+      return cfy_cfg_rbox(m, c, unit, colour, style);
+      break;
+    case ELT_Rl:
+      return cfy_cfg_rline(m, c, unit, colour, style);
+      break;
+    case ELT_Rc:
+      return cfy_cfg_rcol(m, c, unit, colour, style);
+      break;
+    default:
+      /*can't happen*/
+      fprintf(stderr, "cfy_r: bad Etype: %d\n", e);
+      break;
+    }
   return 0;
 }
 

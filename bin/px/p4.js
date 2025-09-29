@@ -1,4 +1,5 @@
 var currHili;
+const ruledata = [ "rb-w", "rb-c", "rb-s", "rl-w", "rl-c", "rl-s", "rc-w", "rc-c", "rc-s" ];
 
 function getPager() {
     return document.getElementById("p4Pager");
@@ -796,6 +797,19 @@ function onloadCuneify(c) {
     r.style.setProperty('--ofs-font', 'var('+f+')');
     r.style.setProperty('--ofs-mag', m);
     r.style.setProperty('--ofs-script', 'var('+s+')');
+
+    let i=0;
+    while (i < 9) {
+	let data='data-'+ruledata[i];
+	let dval=c.getAttribute(data);
+	if (dval) {
+	    let dvar='--'+ruledata[i];
+	    alert('Setting '+dvar+' to '+dval);
+	    r.style.setProperty(dvar, dval);
+	}
+	++i;
+    }
+
 }
 
 function cuneify_reset(evt) {

@@ -1,3 +1,5 @@
+const ruledata = [ "rb-w", "rb-c", "rb-s", "rl-w", "rl-c", "rl-s", "rc-w", "rc-c", "rc-s" ];
+
 function getCuneify() {
     return document.getElementById("p4Cuneify");
 }
@@ -34,6 +36,18 @@ function cuneify(c) {
     r.style.setProperty('--ofs-ffs', 'var('+ffs+')');
     r.style.setProperty('--ofs-mag', m);
     r.style.setProperty('--ofs-script', 'var('+s+')');
+
+    let i=0;
+    while (i < 9) {
+	let data='data-'+ruledata[i];
+	let dval=c.getattribute(data);
+	if (dval) {
+	    let dvar='--'+ruledata[i];
+	    alert('Setting '+dvar+' to '+dval);
+	    r.style.setProperty(dvar, dval);
+	}
+	++i;
+    }
 }
 
 function getData(evt) {

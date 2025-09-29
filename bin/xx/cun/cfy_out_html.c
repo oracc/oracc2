@@ -52,6 +52,25 @@ cfy_out_html(Cfy *c)
 }
 
 static void
+ch_ruledata_sub(Cfy *c, const char *ch, Rule *rp)
+{
+  if (rp->w)
+    fprintf(c->o, " data-r%s-w=\"%s\"", ch, rp->w);
+  if (rp->c)
+    fprintf(c->o, " data-r%s-c=\"%s\"", ch, rp->c);
+  if (rp->s)
+    fprintf(c->o, " data-r%s-s=\"%s\"", ch, rp->s);
+}
+
+static void
+ch_ruledata(Cfy *c)
+{
+  ch_ruledata_sub(c, "b", &c->c->rbox);
+  ch_ruledata_sub(c, "l", &c->c->rline);
+  ch_ruledata_sub(c, "c", &c->c->rcol);
+}
+
+static void
 ch_head(Cfy *c)
 {
   /* paradoxically, weboutput skips the html head/body because those
@@ -73,7 +92,7 @@ ch_head(Cfy *c)
       if (c->c->css)
 	fprintf(c->o,
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"/>",
-		c->c->css);
+		c->c->css);      
       fputs("<script type=\"text/javascript\" src=\"/js/p4.js\">&#160;</script>"
 	    "</head><body onload=\"p4Onload()\">", c->o);
     }
@@ -83,6 +102,8 @@ ch_head(Cfy *c)
 	  c->c->fnt, c->c->mag, c->c->scr, c->project);
   if (c->c->ffs)
     fprintf(c->o, " data-cfy-ffs=\"%s\"", c->c->ffs);
+  if (c->c->ruledata)
+    ch_ruledata(c);
   fputc('>', c->o);
   char format_options[strlen(" cfy-boxed cfy-ruled cfy-crules0")];
   *format_options = '\0';
