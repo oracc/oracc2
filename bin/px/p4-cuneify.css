@@ -51,7 +51,7 @@ span[onclick]:hover { cursor: pointer; }
     --ofs-mag: 100%;
     --ofs-script: var(--ofs-middle);
     --ffs-ss01: "ss01";
-    --rb-w: 1px;
+    --rb-w: 2px;
     --rb-c: black;
     --rb-s: solid;
     --rl-w: 1px;
@@ -95,14 +95,28 @@ span[onclick]:hover { cursor: pointer; }
 }
 
 .cfy-boxed {
+    border-collapse: collapse;
+}
+
+.cfy-boxed tbody:first-child>tr:first-child>td.cfy-content {
+    border-top: var(--rb-w) var(--rb-s) var(--rb-c);
+}
+
+.cfy-boxed tbody:last-child>tr:last-child>td.cfy-content {
+    border-bottom: var(--rb-w) var(--rb-s) var(--rb-c);
+}
+
+.cfy-boxed .cfy-content {
+    border-left: var(--rb-w) var(--rb-s) var(--rb-c);
+    border-right: var(--rb-w) var(--rb-s) var(--rb-c);
 }
 
 .cfy-ruled .cfy-content {
-    border-bottom: var(--rl-s) var(--rl-w) var(--rl-c);
+    border-bottom: var(--rl-w) var(--rl-s) var(--rl-c);
 }
 
-cfy-crule cfy-content {
-    border-left: var(--rc-s) var(--rc-w) var(--rc-c);
+.cfy-crule cfy-content {
+    border-left: var(--rc-w) var(--rc-s) var(--rc-c);
 }
 
 .cfy-curr { border: solid 2px red; }

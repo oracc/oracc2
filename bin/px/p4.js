@@ -804,7 +804,7 @@ function onloadCuneify(c) {
 	let dval=c.getAttribute(data);
 	if (dval) {
 	    let dvar='--'+ruledata[i];
-	    alert('Setting '+dvar+' to '+dval);
+	    // alert('Setting '+dvar+' to '+dval);
 	    r.style.setProperty(dvar, dval);
 	}
 	++i;

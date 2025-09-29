@@ -58,9 +58,9 @@ main(int argc, char **argv)
 
 /* More options:
  *
- * -o output_fn
  * -i print key as first column
  * -f first line is fields
+ * -t output_fn
  */
 
 int
