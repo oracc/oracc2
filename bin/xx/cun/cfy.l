@@ -51,6 +51,7 @@ jkwcp		"char-penult"
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_key		cfy-[a-z]+-.*
 kw_ccf		^cfy-ccf
+kw_colwidths	^cfy-colwidths
 kw_format     	^cfy-format
 kw_key		^cfy-key
 kw_width	^cfy-width
@@ -86,6 +87,7 @@ zws		"&s"
 %x B
 %x C
 %x J
+%x JJ
 %x M
 
 %%
@@ -165,6 +167,14 @@ zws		"&s"
 <J>{unit}      	{ BEGIN 0; lval(cfytext); return UNIT; }
 
 <J>{ws}		{ ; }
+
+{kw_colwidths}	{ BEGIN JJ; return KW_COLWIDTHS; }
+
+<JJ>{unit}     	{ lval(cfytext); return UNIT; }
+
+<JJ>{endrule}	{ return *cfytext; }
+
+<JJ>{ws}	{ ; }
 
 <B>{unit}	{ lval(cfytext); return UNIT; }
 

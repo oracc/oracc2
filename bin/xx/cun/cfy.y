@@ -21,7 +21,7 @@ CFYLTYPE cfylloc;
 
 %union { char *s; int i; }
 
-%token <i> FILL GOESTO KW_CCF KW_KEY KW_FORMAT KW_WIDTH
+%token <i> FILL GOESTO KW_CCF KW_KEY KW_FORMAT KW_WIDTH KW_COLWIDTHS
 	   RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS
 %token <i> ELTRb ELTJcp ELTJcs ELTRl ELTRc ELTJl ELTJc ELTJp ELTJr ELTJs
 %token <s> CFYCCF CFYKEY ELTREF GRAPHEME JELTl JELTp JELTr JELTs
@@ -42,6 +42,7 @@ config:   cfyccf
 	| cfyformat
 	| cfykey
 	| cfywidth
+	| cfycolwidths
 	| sub
 	;
 
@@ -50,6 +51,13 @@ cfyccf: KW_CCF CFYCCF pqxs {  } ;
 cfyformat: KW_FORMAT eltf
 
 cfywidth: KW_WIDTH UNIT	{ cfy_cfg_width(@$, &cfy, $2); }
+	;
+
+cfycolwidths: KW_COLWIDTHS unitlist '.' { cfy_cfg_col_wrap(@$, &cfy); }
+	;
+
+unitlist: UNIT			{ cfy_cfg_col_unit(@$, &cfy, $1); }
+	| unitlist UNIT		{ cfy_cfg_col_unit(@$, &cfy, $2); }
 	;
 
 eltf:	  ELTJl { cfy_cfg_justify(@$, &cfy, ELT_Jl); }

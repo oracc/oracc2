@@ -202,6 +202,7 @@ typedef struct class
   Etype justify;
   int ruledata;
   const char *width;
+  const char *colwidths;
   Fnt *fntp; 
   Cfy *cfyp;
 } Class;
@@ -397,6 +398,9 @@ extern void cfy_lgs(Cfy *c);
 extern const char *cfy_justify_class(Etype j);
 extern void cfy_charspace(Cfy *c, Eltline *elp);
 extern Elt *elt_clone(Cfy *c, Elt *ep);
+
+extern void cfy_cfg_col_unit(Mloc m, Cfy *c, const char *u);
+extern void cfy_cfg_col_wrap(Mloc m, Cfy *c);
 
 extern int ci_i, ci_j;
 

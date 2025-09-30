@@ -6,7 +6,7 @@
 #include "cfy.tab.h"
 
 int cfy_cfg_status; /* set to 1 if there are parse errors for a sub */
-static List *lhs, *rhs;
+static List *lhs, *rhs, *cfy_col_units;
 extern int elts_rhs;
 int sub_has_assignment;
 
@@ -246,6 +246,22 @@ void
 cfy_cfg_width(Mloc m, Cfy *c, const char *w)
 {
   c->c->width = w;
+}
+
+void
+cfy_cfg_col_unit(Mloc m, Cfy *c, const char *u)
+{
+  if (!cfy_col_units)
+    cfy_col_units = list_create(LIST_SINGLE);
+  list_add(cfy_col_units, (void*)u);
+}
+
+void
+cfy_cfg_col_wrap(Mloc m, Cfy *c)
+{
+  c->c->colwidths = (ccp)list_join(cfy_col_units, ",");
+  list_free(cfy_col_units, NULL);
+  cfy_col_units = NULL;
 }
 
 const char *
