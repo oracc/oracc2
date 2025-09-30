@@ -302,6 +302,7 @@ ch_elt_E(Cfy *c, Elt *e)
 static void
 ch_l_o(Cfy *c, Line *l)
 {
+  ch_c_o(NULL,NULL);
   fprintf(c->o,
 	  "<tr id=\"cfy.%s\" data-label=\"%s\">",
 	  l->xid, l->label);
@@ -316,7 +317,7 @@ ch_l_c(Cfy *c)
 static void
 ch_h_o(Cfy *c)
 {
-  fputs("<th>", c->o);
+  fputs("<th class=\"td00\">", c->o);
 }
 
 static void
@@ -328,12 +329,21 @@ ch_h_c(Cfy *c)
 static void
 ch_c_o(Cfy *c, Cell *cp)
 {
+  static int nth;
+
+  if (!c)
+    {
+      nth=0;
+      return;
+    }
+  
   if (cp && cp->class)
-    fprintf(c->o, "<td colspan=\"%d\" class=\"cfy-content %s\">", cp->span, cp->class);
+    fprintf(c->o, "<td colspan=\"%d\" class=\"cfy-content %s td%02d\">", cp->span, cp->class, ++nth);
   else if (cp)
-    fprintf(c->o, "<td colspan=\"%d\" class=\"cfy-content\">", cp->span);
+    fprintf(c->o, "<td colspan=\"%d\" class=\"cfy-content td%02d\">", cp->span, ++nth);
   else
-    fputs("<td>", c->o);
+    fprintf(c->o, "<td class=\"td%02d\">", ++nth);
+
   fputs("<p>", c->o);
 }
 

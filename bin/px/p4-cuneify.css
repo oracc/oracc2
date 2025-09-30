@@ -29,9 +29,9 @@ span[onclick]:hover { cursor: pointer; }
 .cuneify-line { 
 }
 
-.cfy-content {
-    width: 100%;
+.cfy-content p {
     text-align: justify;
+    text-align-last: justify;
 }
 
 :root {
@@ -61,6 +61,16 @@ span[onclick]:hover { cursor: pointer; }
     --rc-c: black;
     --rc-s: solid;
     --cfy-width: 100%;
+    --td00: auto;
+    --td01: auto;
+    --td02: auto;
+    --td03: auto;
+    --td04: auto;
+    --td05: auto;
+    --td06: auto;
+    --td07: auto;
+    --td08: auto;
+    --td09: auto;
 }
 
 .cfy-cun {
@@ -242,3 +252,15 @@ span.cfy-pseudo-s.cfy-penult:before { content: "  ";  }
 /* Fake a line-break for ATF ';' */
 span.br { white-space: pre; }
 span.br:before { content: "\200B\000A\00A0"; }
+
+/* table cell classes */
+.td00 { width: var(--td00); }
+.td01 { width: var(--td01); }
+.td02 { width: var(--td02); }
+.td03 { width: var(--td03); }
+.td04 { width: var(--td04); }
+.td05 { width: var(--td05); }
+.td06 { width: var(--td06); }
+.td07 { width: var(--td07); }
+.td08 { width: var(--td08); }
+.td09 { width: var(--td09); }

@@ -815,7 +815,23 @@ function onloadCuneify(c) {
 	// alert('Setting cfy-width to '+w);
 	r.style.setProperty('--cfy-width', w);
     }
-    
+
+    let w=c.getAttribute('data-cfy-colwidths');
+    if (w) {
+	warray = w.split(",");
+	i=0;
+	let j = '';
+	while (i < warray.length) {
+	    if (i < 10) {
+		j = '0'+i;
+	    } else {
+		j = ''+i;
+	    }
+	    alert('Setting --td'+j+' to '+i);
+	    r.style.setProperty('--td'+j, w);
+	}
+    }
+
 }
 
 function cuneify_reset(evt) {

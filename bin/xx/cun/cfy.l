@@ -74,7 +74,7 @@ return		"&r"
 sp		[ \t]+
 structmem      	"->"
 
-unit		[0-9][.0-9]*("em"|"px"|"□")
+unit		[0-9][.0-9]*("em"|"px"|"□"|"%")
 
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
 
