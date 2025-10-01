@@ -816,7 +816,7 @@ function onloadCuneify(c) {
 	r.style.setProperty('--cfy-width', w);
     }
 
-    let w=c.getAttribute('data-cfy-colwidths');
+    w=c.getAttribute('data-cfy-colwidths');
     if (w) {
 	warray = w.split(",");
 	i=0;
@@ -827,8 +827,9 @@ function onloadCuneify(c) {
 	    } else {
 		j = ''+i;
 	    }
-	    alert('Setting --td'+j+' to '+i);
-	    r.style.setProperty('--td'+j, w);
+	    // alert('Setting --td'+j+' to '+warray[i]);
+	    r.style.setProperty('--td'+j, warray[i]);
+	    ++i;
 	}
     }
 
