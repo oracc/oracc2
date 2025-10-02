@@ -1,1 +1,1 @@
-Format: spread justifies left and right.
+Format: Default is 'spread' which justifies left and right

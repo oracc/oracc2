@@ -1,1 +1,1 @@
-Format: default is left-justified.
+Format: Text can be left-justified
