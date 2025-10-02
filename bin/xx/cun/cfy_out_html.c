@@ -100,7 +100,7 @@ ch_head(Cfy *c)
 	  "<div id=\"p4Cuneify\" "
 	  "data-cfy-fnt=\"%s\" data-cfy-mag=\"%s\" data-cfy-scr=\"%s\" data-proj=\"%s\"",
 	  c->c->fnt, c->c->mag, c->c->scr, c->project);
-  if (c->c->ffs)
+  if (c->c->ffs && strcmp(c->c->ffs, "0"))
     fprintf(c->o, " data-cfy-ffs=\"%s\"", c->c->ffs);
   if (c->c->ruledata)
     ch_ruledata(c);
@@ -196,6 +196,10 @@ lgs_word(Cfy *c, const char *lgs_g)
   return lgs_g;
 }
 
+/* Take care not to emit a class attribute that has both salt/cvNN and
+   a font-feature-setting from the cfy key, e.g., ss01. This is so
+   that fonts.css can contain all of the ffs stuff without it
+   conflicting */
 static const char *
 ch_cun_class(Cfy *c, Elt *e)
 {
@@ -243,13 +247,14 @@ ch_cun_class(Cfy *c, Elt *e)
     }
   else
     {
-      int need_len = strlen("cfy-cun") + strlen(otf_str);
+      const char *ffs = strlen(otf_str) ? otf_str : "cfy-ffs";
+      int need_len = strlen("cfy-cun") + strlen(ffs);
       if (need_len >= buf_len)
 	{
 	  buf = realloc(buf, need_len * 2);
 	  buf_len = need_len * 2;
 	}
-      sprintf(buf, "cfy-cun%s", otf_str);
+      sprintf(buf, "cfy-cun %s", ffs);
     }
 
   return buf;
@@ -286,7 +291,7 @@ ch_elt_G(Cfy *c, Elt *e)
       const char *cun_class = ch_cun_class(c, e);
       if (e->g_o || e->g_c)
 	{
-	  fprintf(c->o, " class=\"%scfy-brack\"", cun_class);
+	  fprintf(c->o, " class=\"%s cfy-brack\"", cun_class);
 	  if (e->g_o)
 	    fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
 	  if (e->g_c)
@@ -386,7 +391,6 @@ ch_c_o(Cfy *c, Cell *cp)
     fprintf(c->o, "<td colspan=\"%d\" class=\"cfy-content td%02d\">", cp->span, ++nth);
   else
     fprintf(c->o, "<td class=\"td%02d\">", ++nth);
-
   fputs("<p>", c->o);
 }
 

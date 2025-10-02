@@ -16,8 +16,7 @@ cfy_justify_class(Etype j)
     case ELT_Jp:
     case ELT_Jcs:
     case ELT_Jcp:
-      return " cfy-j-spread";
     default:
-      return "";
+      return " cfy-j-spread";
     }
 }

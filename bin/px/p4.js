@@ -773,7 +773,8 @@ function onloadCuneify(c) {
     let currf = c.getAttribute("data-cfy-fnt")
     let f = '--ofs-'+currf;
     let m = c.getAttribute("data-cfy-mag")+'%';
-    let s = '--ofs-'+c.getAttribute("data-cfy-scr");
+    let ffs = c.getAttribute("data-cfy-ffs");
+    let s = c.getAttribute("data-cfy-scr");
 
     let b = document.getElementById("p4CuneifyBar");
     //alert('b='+b);
@@ -796,7 +797,11 @@ function onloadCuneify(c) {
     var r = document.querySelector(':root');
     r.style.setProperty('--ofs-font', 'var('+f+')');
     r.style.setProperty('--ofs-mag', m);
-    r.style.setProperty('--ofs-script', 'var('+s+')');
+    if (ffs) {
+	r.style.setProperty('--ofs-script', '"'+ffs+'"');
+    } else if (s) {
+	r.style.setProperty('--ofs-script', 'var(--ofs-'+s+')');
+    }
 
     let i=0;
     while (i < 9) {

@@ -5,7 +5,7 @@ T=t01-a.html t02-ne.html t03-sajgal2.html \
 	t07-f-sa4.html t08-f-return.html t09-f-sa4r.html t10-d+en.html \
 	t11-f-cspread.html t12-f-cpenult.html \
 	t13-r-ruled.html t14-r-ruled.html t15-r-boxed.html t16-r-column.html \
-	t17-width.html t18-r-column.html t19-font.html
+	t17-width.html t18-r-column.html t19-font.html t20-zwnj.html
 
 .PRECIOUS: %.xtf
 
