@@ -278,12 +278,24 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		}
 	      else
 		oid = NULL;
-
+#if 1
+	      Class *gcp = curr_cp;
+	      const char *f = findAttr(atts, "g:font");
+	      if (f && *f)
+		{
+		  if (!(gcp = ((Cfy*)userData)->fontclasses[atoi(f)]))
+		    {
+		      fprintf(stderr, "%s:%d: ignoring undefined font switch %s\n", pi_file, pi_line, f);
+		      gcp = curr_cp;
+		    }
+		}
+	      cfy_grapheme(userData, name, atts, utf8, gcp, oid);
+#else
 	      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
 	      if (cp)
-		*curr_cp = *cp;	      
-
+		*curr_cp = *cp;
 	      cfy_grapheme(userData, name, atts, utf8, curr_cp, oid);
+#endif
 	    }
 	  if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
 	    ++inner;

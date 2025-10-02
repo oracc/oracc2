@@ -21,11 +21,11 @@ CFYLTYPE cfylloc;
 
 %union { char *s; int i; }
 
-%token <i> FILL GOESTO KW_CCF KW_KEY KW_FORMAT KW_WIDTH KW_COLWIDTHS
+%token <i> FILL GOESTO KW_CCF KW_KEY KW_FONT KW_FORMAT KW_WIDTH KW_COLWIDTHS
 	   RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS
 %token <i> ELTRb ELTJcp ELTJcs ELTRl ELTRc ELTJl ELTJc ELTJp ELTJr ELTJs
 %token <s> CFYCCF CFYKEY ELTREF GRAPHEME JELTl JELTp JELTr JELTs
-	   LITERAL MEMBER PQX VALUE UNIT COLOUR BORDERSTYLE
+	   FONT_NM FONT_PC LITERAL MEMBER PQX VALUE UNIT COLOUR BORDERSTYLE
 
 %type <i> rulingelt
 %type <s> r_unit r_colour r_style
@@ -39,6 +39,7 @@ configs:  config
 	;
 
 config:   cfyccf
+	| cfyfont
 	| cfyformat
 	| cfykey
 	| cfywidth
@@ -47,6 +48,8 @@ config:   cfyccf
 	;
 
 cfyccf: KW_CCF CFYCCF pqxs {  } ;
+
+cfyfont: KW_FONT FONT_PC FONT_NM	{ cfy_cfg_font(@$, &cfy, $2, $3); }
 
 cfyformat: KW_FORMAT eltf
 

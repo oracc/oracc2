@@ -179,6 +179,22 @@ cfy_cfg_justify(Mloc m, Cfy *c, Etype e)
   return 0;
 }
 
+void
+cfy_cfg_font(Mloc m, Cfy *c, const char *pc, const char *nm)
+{
+  Class *cp = NULL;
+  if (!strchr(nm,'-'))
+    {
+      const char *nmkey = cfy_class_key(nm, c->c->ffs, c->c->mag, c->c->scr, c->c->asl);
+      cp = cfy_class(c, nmkey, c->c);
+    }
+  else
+    {
+      cp = cfy_class(c, nm, c->c);
+    }
+  c->fontclasses[atoi(pc)] = cp;
+}
+
 int
 cfy_cfg_key(Mloc m, Cfy *c, const char *k)
 {

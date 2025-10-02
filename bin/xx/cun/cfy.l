@@ -49,9 +49,12 @@ jkwcs		"char-spread"
 jkwcp		"char-penult"
 
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
+kv_font_nm	([a-z0-9]+|cfy-[a-z]+-.*)
+kv_font_pc	"%"[0-9]{2,3}
 kv_key		cfy-[a-z]+-.*
 kw_ccf		^cfy-ccf
 kw_colwidths	^cfy-colwidths
+kw_font		^cfy-font
 kw_format     	^cfy-format
 kw_key		^cfy-key
 kw_width	^cfy-width
@@ -86,6 +89,7 @@ zws		"&s"
 
 %x B
 %x C
+%x F
 %x J
 %x JJ
 %x M
@@ -139,6 +143,14 @@ zws		"&s"
 {kw_key}       	{ return KW_KEY; }
 
 {kv_key}       	{ lval(cfytext); return CFYKEY; }
+
+{kw_font}	{ BEGIN F; return KW_FONT; }
+
+<F>{kv_font_pc} { lval(cfytext+1); return FONT_PC; }
+
+<F>{kv_font_nm} { BEGIN 0; lval(cfytext); return FONT_NM; }
+
+<F>{ws}		{ ; }
 
 {kw_format}	{ BEGIN J; return KW_FORMAT; }
 

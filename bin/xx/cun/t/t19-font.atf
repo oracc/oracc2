@@ -1,0 +1,3 @@
+&X000001 = Test 01
+#project: epsd2
+1. ne %01 ne %02 ne

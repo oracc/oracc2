@@ -1,0 +1,1 @@
+ATF: ATF font switches have the form %01, %02.

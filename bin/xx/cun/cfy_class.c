@@ -42,7 +42,7 @@ cfy_class_check(const char *k, char **m)
   return 0;
 }
 
-static char *
+char *
 cfy_class_key(const char *fnt, const char *otf, const char *mag,
 	      const char *scr, const char *asl)
 {
@@ -62,7 +62,10 @@ cfy_class_set(char *k, Class *cp)
   cp->scr = mem[4];
   cp->asl = mem[5];
   if (cp->asl && '.' == *cp->asl)
-    cp->asl = cp->cfyp->project;
+    {
+      if (cp->cfyp->project)
+	cp->asl = cp->cfyp->project;
+    }
   free(mem);
 }
 

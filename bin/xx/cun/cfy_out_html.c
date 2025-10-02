@@ -196,6 +196,65 @@ lgs_word(Cfy *c, const char *lgs_g)
   return lgs_g;
 }
 
+static const char *
+ch_cun_class(Cfy *c, Elt *e)
+{
+  char *otf_str = "";
+  static char *buf = NULL;
+  static int buf_len = 0;
+
+  if (!c)
+    {
+      free(buf);
+      buf = NULL;
+      buf_len = 0;
+      return NULL;
+    }
+  
+  if (e->otf)
+    {
+      if (isdigit(*e->otf))
+	{
+	  static char saltbuf[8] = { ' ', 's', 'a', 'l', 't', '\0', '\0', '\0' };
+	  saltbuf[5] = e->otf[0];
+	  saltbuf[6] = e->otf[1];
+	  otf_str = saltbuf;
+	}
+      else
+	{
+	  static char cvbuf[6] = { ' ', 'c', 'v', '0', '0', '\0' };
+	  strcpy(cvbuf+3,e->otf+2);
+	  otf_str = cvbuf;
+	}
+    }
+
+  if (e->c && e->c != c->c)
+    {
+      const char *o = (*otf_str ? otf_str : (!strcmp(e->c->ffs, "0") ? "" : e->c->ffs));
+      if (!o)
+	o = "";
+      int need_len = strlen("ofs- -ofs--0")+strlen(e->c->fnt)+strlen(o)+strlen(e->c->mag);
+      if (need_len >= buf_len)
+	{
+	  buf = realloc(buf, need_len *2);
+	  buf_len = need_len * 2;
+	}
+      sprintf(buf, "ofs-%s%s%s ofs-%s", e->c->fnt, (o && *o)? " " : "", o, e->c->mag);
+    }
+  else
+    {
+      int need_len = strlen("cfy-cun") + strlen(otf_str);
+      if (need_len >= buf_len)
+	{
+	  buf = realloc(buf, need_len * 2);
+	  buf_len = need_len * 2;
+	}
+      sprintf(buf, "cfy-cun%s", otf_str);
+    }
+
+  return buf;
+}
+
 static void
 ch_elt_G(Cfy *c, Elt *e)
 {
@@ -217,7 +276,6 @@ ch_elt_G(Cfy *c, Elt *e)
     }
   else
     {
-      const char *otf_str = " ";
       fprintf(c->o,
 	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
 	      " onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\"",
@@ -225,32 +283,17 @@ ch_elt_G(Cfy *c, Elt *e)
 	      e->c->asl ? e->c->asl : ('9' == e->oid[2] ? "pcsl" : "osl"));
       if (e->title)
 	fprintf(c->o, " title=\"%s\"", e->title);
-      if (e->otf)
-	{
-	  if (isdigit(*e->otf))
-	    {
-	      static char saltbuf[8] = { ' ', 's', 'a', 'l', 't', '\0', '\0', '\0' };
-	      saltbuf[5] = e->otf[0];
-	      saltbuf[6] = e->otf[1];
-	      otf_str = saltbuf;
-	    }
-	  else
-	    {
-	      static char cvbuf[6] = { ' ', 'c', 'v', '0', '0', '\0' };
-	      strcpy(cvbuf+3,e->otf+2);
-	      otf_str = cvbuf;
-	    }
-	}
+      const char *cun_class = ch_cun_class(c, e);
       if (e->g_o || e->g_c)
 	{
-	  fprintf(c->o, " class=\"cfy-cun%scfy-brack\"", otf_str);
+	  fprintf(c->o, " class=\"%scfy-brack\"", cun_class);
 	  if (e->g_o)
 	    fprintf(c->o, " data-bracko=\"%s\"", e->g_o);
 	  if (e->g_c)
 	    fprintf(c->o, " data-brackc=\"%s\"", e->g_c);
 	}
       else
-	fprintf(c->o, " class=\"cfy-cun%s\"", otf_str);
+	fprintf(c->o, " class=\"%s\"", cun_class);
       fprintf(c->o, ">%s</span>", (ccp)e->data);
     }
 }

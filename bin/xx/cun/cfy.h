@@ -41,6 +41,7 @@ typedef struct cfy
 				 NULL-terminated arrays of Eltline* */
   struct class *c;	/* the class for the text-wide state; does not
 			   change as inline classes change */
+  struct class *fontclasses[100]; /* array of classes where [1] is class for font switch %01 etc */
   FILE *o; 	/* output fp */
   const char *fnt; /* font from CLI -p [period] arg */
   const char *key; /* CLI -k arg */
@@ -401,6 +402,9 @@ extern Elt *elt_clone(Cfy *c, Elt *ep);
 
 extern void cfy_cfg_col_unit(Mloc m, Cfy *c, const char *u);
 extern void cfy_cfg_col_wrap(Mloc m, Cfy *c);
+
+extern void cfy_cfg_font(Mloc m, Cfy *c, const char *pc, const char *nm);
+extern char *cfy_class_key(const char *fnt, const char *otf, const char *mag, const char *scr, const char *asl);
 
 extern int ci_i, ci_j;
 
