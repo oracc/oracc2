@@ -216,7 +216,7 @@ xutf8_of(Ofp *o, Ofp_glyph *gp)
     }
   else
     {
-      return (ccp)pool_copy(utf8ify(strtoul(gp->key,NULL,16)), o->p);
+      return (ccp)pool_copy(xmlify(utf8ify(strtoul(gp->key,NULL,16))), o->p);
     }
 }
 
