@@ -31,6 +31,7 @@ case $subcommand in
     cat) 	odo-catalog.sh $* ;;
     corpus) 	odo-corpus.sh $* ;;
     gloss) 	odo-gloss.sh $* ;;
+    ood) 	odo-ood.sh $* ;;
     portal) 	odo-portal.sh $* ;;
     lexdata)    odo-lexdata.sh $* ;;
     signlist)	odo-signlist.sh $* ;;
