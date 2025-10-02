@@ -55,7 +55,7 @@
 .ofs-150 { font-size: 150%; }
 
 .ofs-200 { font-size: 200%; }
-ofs
+
 .ofs-300 { font-size: 300%; }
 
 .ofs-feat-r { text-align: right; padding-right: 1em; }
@@ -153,4 +153,87 @@ ofs
 
 .late {
     font-feature-settings: "ss01", "ss02", "ss03";
+}
+
+.salt1 {
+    font-feature-settings: "salt" 1;
+}
+
+.salt2 {
+    font-feature-settings: "salt" 2;
+}
+
+.salt3 {
+    font-feature-settings: "salt" 3;
+}
+
+.salt4 {
+    font-feature-settings: "salt" 4;
+}
+
+.salt5 {
+    font-feature-settings: "salt" 5;
+}
+
+.salt6 {
+    font-feature-settings: "salt" 6;
+}
+
+.salt7 {
+    font-feature-settings: "salt" 7;
+}
+
+.salt8 {
+    font-feature-settings: "salt" 8;
+}
+
+.salt9 {
+    font-feature-settings: "salt" 9;
+}
+
+.salt10 {
+    font-feature-settings: "salt" 10;
+}
+
+.salt11 {
+    font-feature-settings: "salt" 11;
+}
+
+.salt12 {
+    font-feature-settings: "salt" 12;
+}
+
+.salt13 {
+    font-feature-settings: "salt" 13;
+}
+
+.salt14 {
+    font-feature-settings: "salt" 14;
+}
+
+/* .cv01 works for non-.liga characters but '"salt" 1' is needed to
+   get .liga.cv01 to display correctly */
+
+.cv01 {    
+    font-feature-settings: "cv01", "salt" 1;
+}
+
+.cv02 {
+    font-feature-settings: "cv02", "salt" 2;
+}
+
+.cv03 {
+    font-feature-settings: "cv03", "salt" 3;
+}
+
+.cv04 {
+    font-feature-settings: "cv04", "salt" 4;
+}
+
+.cv05 {
+    font-feature-settings: "cv05", "salt" 5;
+}
+
+.cv06 {
+    font-feature-settings: "cv06", "salt" 6;
 }
