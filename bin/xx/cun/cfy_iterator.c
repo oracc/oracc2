@@ -11,7 +11,7 @@ int line_cell_pending = 0;
 
 static Btype last_b, curr_b;
 static int in_cell;
-const char *brk_str[] = { NULL, NULL , "#", "[]" };
+const char *brk_str[] = { NULL, "#", "[]" };
 
 static void ci_line_o(Cfy *c, Line*l);
 static void ci_line_c(Cfy*c);
