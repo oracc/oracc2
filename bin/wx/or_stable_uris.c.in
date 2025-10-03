@@ -8,7 +8,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "ccgi/ccgi.h"
-#include "resolver.h"
+#include "wx.h"
 
 #include "px.h"
 

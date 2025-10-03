@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype128.h>
-#include "resolver.h"
+#include "wx.h"
 #include "content.h"
 
 extern void pxurlitem(const char *item, const char *replace);

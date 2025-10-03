@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "resolver.h"
+#include "wx.h"
 
 void
 or_gdf(void)

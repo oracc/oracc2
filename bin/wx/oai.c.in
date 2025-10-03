@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "ctype128.h"
-#include "resolver.h"
+#include "wx.h"
 #include "ccgi/ccgi.h"
 
 extern void dump_vl(CGI_varlist *vl);

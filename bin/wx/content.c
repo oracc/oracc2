@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <glob.h>
 #include <runexpat.h>
-#include "resolver.h"
+#include "wx.h"
 #include "content.h"
 
 struct frag

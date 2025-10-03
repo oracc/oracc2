@@ -4,6 +4,8 @@ bin_PROGRAMS=cfy
 bin_SCRIPTS=cfycov.sh cfylgs.sh
 scriptdata_DATA=*.xsl
 
+html_DATA=cuneify.html
+
 # cunx
 # cunx_SOURCES = cunx.c fileargs.c perfnt.c render.c
 # cunx_LDADD = $(xLDADD)

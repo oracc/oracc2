@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include "resolver.h"
+#include "wx.h"
 
 void
 xmlrpc(void)

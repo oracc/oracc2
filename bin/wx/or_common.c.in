@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include "resolver.h"
+#include "wx.h"
 
 const char *
 cgi_arg(const char *arg, const char *val)

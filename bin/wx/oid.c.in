@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "wx_dbxlib.h"
-#include "resolver.h"
+#include "wx.h"
 #include "ccgi/ccgi.h"
 #include "p4url.h"
 

@@ -1,4 +1,4 @@
-#include "resolver.h"
+#include "wx.h"
 #include "content.c"
 
 extern int options(int, char**,const char*);

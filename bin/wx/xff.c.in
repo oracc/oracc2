@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "ctype128.h"
-#include "resolver.h"
+#include "wx.h"
 
 void
 xff(const char *e2)

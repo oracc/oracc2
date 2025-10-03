@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include "resolver.h"
+#include "wx.h"
 
 /* This module remaps XMD files; ATF files are remapped in p3-pager since the time when metadata and atf
    started being proxied separately */

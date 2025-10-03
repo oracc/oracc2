@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <ctype128.h>
-#include "resolver.h"
+#include "wx.h"
 
 /*static void as_handler(const char *session);*/
 static void atf(void);
