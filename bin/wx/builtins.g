@@ -1,6 +1,6 @@
 %{
 #include <string.h>
-#include "resolver.h"
+#include "wx.h"
 %}
 struct builtinstab;
 %%
@@ -23,3 +23,4 @@ json,	   B_JSON
 xff,	   B_XFF
 oai,	   B_OAI
 file,      B_FILE
+cfy, 	   B_CFY

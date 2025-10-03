@@ -9,7 +9,7 @@ enum e_builtins  { B_NONE, B_ATF, B_AS, B_DATESTAMP, B_DOC, B_FIND,
 		   B_ITEMMAIN, B_ITEMSIDE, B_OUTLINE, B_RESULTS, B_RPC, 
 		   B_SIG, B_XFORMS, B_XIS, B_RUNTIME, B_SL, B_OAS, 
 		   B_ATFTMP, B_VOLTMP, B_SEARCHBAR , B_SRV, B_JSON,
-		   B_XFF, B_OAI, B_FILE
+		   B_XFF, B_OAI, B_FILE, B_CFY
 };
 enum e_component { C_NONE, C_RES, C_SEL, C_VIEW, C_FORMAT, C_UI };
 enum e_resource  { R_NONE, R_PQX, R_WORD, R_ENTITY, R_LANG, R_KEY, R_LIST };
@@ -175,6 +175,7 @@ extern void pxvl(CGI_varlist *v);
 extern void pxglossary(const char *project, const char *glos);
 
 extern void wx_log(const char *u, const char *q, const char *r);
+extern void cfy(void);
 
 extern const char *script_file;
 

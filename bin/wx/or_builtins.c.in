@@ -107,11 +107,14 @@ or_builtins_sub(struct builtinstab *builtinsp)
       else
 	do404();
       break;
+    case B_CFY:
+      if (elements)
+	do404(); /* lazy, should error */
+      else
+	cfy();
+      break;
     case B_FIND:
       find(project, query_string);
-      break;
-    case B_XFORMS:
-      xforms_handler();
       break;
     case B_OAS:
       p3_oas(NULL);
@@ -136,7 +139,7 @@ or_builtins_sub(struct builtinstab *builtinsp)
       break;
     case B_DATESTAMP:
       datestamp();
-      break;      
+      break;
     case B_SIG:
       sig(elements[2]);
       break;
@@ -164,6 +167,9 @@ or_builtins_sub(struct builtinstab *builtinsp)
       break;
     case B_JSON:
       json_zip(project);
+      break;
+    case B_XFORMS:
+      xforms_handler();
       break;
     case B_OAI:
       oai();
@@ -208,7 +214,7 @@ voltemplate(void)
 }
 
 static void
-datestamp()
+datestamp(void)
 {
 #define TM_MAX 256
   char tmbuf[TM_MAX];
