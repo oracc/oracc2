@@ -239,6 +239,38 @@
     font-feature-settings: "salt" 21;
 }
 
+.salt22 {
+    font-feature-settings: "salt" 22;
+}
+
+.salt23 {
+    font-feature-settings: "salt" 23;
+}
+
+.salt24 {
+    font-feature-settings: "salt" 24;
+}
+
+.salt25 {
+    font-feature-settings: "salt" 25;
+}
+
+.salt26 {
+    font-feature-settings: "salt" 26;
+}
+
+.salt27 {
+    font-feature-settings: "salt" 27;
+}
+
+.salt28 {
+    font-feature-settings: "salt" 28;
+}
+
+.salt29 {
+    font-feature-settings: "salt" 29;
+}
+
 /* .cv01 works for non-.liga characters but '"salt" 1' is needed to
    get .liga.cv01 to display correctly */
 
