@@ -71,6 +71,9 @@ if [[ "$*" == "" ]]; then
     exit 0
 fi
 
+# default lang; when no project is set lang=sux means project=epsd2
+lang="sux"
+
 while [[ $# -gt 0 ]]; do
     case $1 in
 	-a|-atf)
@@ -83,6 +86,11 @@ while [[ $# -gt 0 ]]; do
 	    shift
 	    shift
 	    ;;
+	-l|-lang)
+	    lang="$2"
+	    shift
+	    shift
+	    ;;	    
 	-k|-key)
 	    key="$2"
 	    shift
@@ -128,7 +136,7 @@ if [[ "$atf" != "" ]]; then
     if [[ "$file" != "" ]]; then
 	fail "can't use both -atf and -file"
     fi
-    atffile="y/$$.atf.cfy"
+    atffile="/tmp/$$.cfy.atf"
     echo "$atf" >$atffile
     if [ $? -ne 0 ]; then
 	fail "unable to write $atffile for ATF text"
@@ -140,6 +148,10 @@ fi
 if [[ "$file" == "" ]]; then
     fail "must give give -atf TEXT or -file FILE"
 fi
+
+logfile="/tmp$$.cfy.log"
+xtffile="/tmp$$.cfy.xtf"
+head -10 $file | atfheader.sh $attfile | oxx -l$logfile >$xtffile
 
 # if [[ "$unilist" == "" ]]; then
 #     fail "Must give -u UNILIST"
