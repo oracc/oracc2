@@ -1,7 +1,7 @@
 include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=cfy atfuni atfnum
-bin_SCRIPTS=cfycov.sh cfylgs.sh atfheader.sh
+bin_SCRIPTS=cfycov.sh cfylgs.sh atfheader.sh cfy.sh
 scriptdata_DATA=*.xsl
 
 html_DATA=cuneify.html

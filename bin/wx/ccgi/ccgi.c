@@ -909,9 +909,12 @@ CGI_get_post(CGI_varlist *v, const char *template) {
 	  {
 	    buf = (char *) mymalloc(len + 1);
 	    if (fread(buf, 1, len, stdin) == len) {
-	      buf[len] = 0;
+	      if ('\n' == buf[len-1])
+		buf[--len] = 0;
+	      else
+		buf[len] = 0;
 	      if (ccgi_verbose)
-		fprintf(stderr, "%s\n", buf);
+		fprintf(stderr, "ccgi-posted-content: %s\n", buf);
 	      v = CGI_decode_query(v, buf);
 	    }
 	    free(buf);

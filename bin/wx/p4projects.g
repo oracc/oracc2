@@ -1,6 +1,7 @@
 %{
+#include <stdio.h>
 #include <string.h>
-#include "resolver.h"
+#include "wx.h"
 
     /* The list of project's below should not contain subprojects--P4 project is
        set based on the top-level project only */

@@ -105,47 +105,47 @@ fi
 lang="sux"
 while [[ $# -gt 0 ]]; do
     case $1 in
-	-a|-atf)
+	-a|atf)
 	    atf="$2"
 	    shift
 	    shift
 	    ;;
-	-f|-file)
+	-f|file)
 	    file="$2"
 	    shift
 	    shift
 	    ;;
-	-l|-lang)
+	-l|lang)
 	    lang="$2"
 	    shift
 	    shift
 	    ;;	    
-	-k|-key)
+	-k|key)
 	    key="$2"
 	    shift
 	    shift
 	    ;;
-	-r|-rem)
+	-r|rem)
 	    rmfile=1
 	    shift
 	    ;;
-	-T|-TeX)
+	-T|TeX)
 	    mode=TeX
 	    shift
 	    ;;
-	-t|-text)
+	-t|text)
 	    mode=text
 	    shift
 	    ;;
-	-v|-verbose)
+	-v|verbose)
 	    verbose=1
 	    shift
 	    ;;
-	-w|-web)
+	-w|web)
 	    mode=web
 	    shift
 	    ;;
-	-x|-xml)
+	-x|xml)
 	    mode=xml
 	    shift
 	    ;;
@@ -159,8 +159,6 @@ while [[ $# -gt 0 ]]; do
 	    ;;
   esac
 done
-
-echo atf=$atf
 
 if [[ "$atf" != "" ]]; then
     if [[ "$file" != "" ]]; then
@@ -194,16 +192,20 @@ fi
 
 # Could create LGS table here; is it worth it for cuneify.html?
 
-cfy -w $xtffile >$cfyfile 2>$logfile
+cfy -h $xtffile >$cfyfile 2>$logfile
 if [ $? -ne 0 ]; then
     logfail 'Cuneify processing' $logfile
 else
+    cat <<EOF
+Content-type: text/html; charset=utf-8
+
+EOF
     cat $cfyfile
 fi
 
-rm -f $atffile $xtffile $cfyfile $logfile
-if [[ "$rmfile" == "" ]]; then
-    rm -f $file
-fi
+#rm -f $atffile $xtffile $cfyfile $logfile
+#if [[ "$rmfile" == "" ]]; then
+#    rm -f $file
+#fi
 
 exit 0

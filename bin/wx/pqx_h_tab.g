@@ -1,6 +1,7 @@
 %{
+#include <stdio.h>
 #include <string.h>
-#include "resolver.h"
+#include "wx.h"
 %}
 struct h_pqxtab;
 %%

@@ -11,9 +11,10 @@ main(int argc, char **argv)
       int ch, lastch;
       while (EOF != (ch = getchar()))
 	if (isspace(ch))
-	  exit(lastch=='.' ? 0 : 1);
+	  break;
 	else
 	  lastch = ch;
+      exit(lastch=='.' ? 0 : 1);
     }
   else
     {
@@ -30,5 +31,6 @@ main(int argc, char **argv)
 		break;
 	    }
 	}
+      putchar('\n'); /* input can lack final \n if it comes from CGI */
     }
 }

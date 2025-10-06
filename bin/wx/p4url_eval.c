@@ -2,6 +2,8 @@
 #include "px.h"
 #include "p4url.h"
 
+extern void dump_vec(const char *name,char *const *v);
+
 static void
 print_p(P4url *p)
 {
@@ -60,14 +62,14 @@ p4url_eval(const char *u, const char *q)
   if (verbose)
     {
       p4url_show(&p, u, q);
-      dump_vec("px", v);
+      dump_vec("px", (char*const*)v);
     }
 
-  dump_vec(p.exe, v);
+  dump_vec(p.exe, (char*const*)v);
   execv(p.exe, (char*const*)v);
 
   /* exec failed */
   fprintf(stderr, "p4url_eval: exec failed:\n\t");
-  dump_vec(PX_EXE, v);
+  dump_vec(PX_EXE, (char*const*)v);
   return 1;
 }

@@ -9,18 +9,6 @@
 
 #include "px.h"
 
-extern void dump_vl(CGI_varlist *vl);
-
-void
-dump_vec(const char *porq, const char **vec)
-{
-  int i;
-  fprintf(stderr, "wx calling %s", porq);
-  for (i = 0; vec[i]; ++i)
-    fprintf(stderr, " %s", vec[i]);
-  fputc('\n', stderr);
-}
-
 const char *
 px_cgi_arg(const char *arg, const char *val)
 {

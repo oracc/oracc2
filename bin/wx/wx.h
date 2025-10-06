@@ -177,6 +177,10 @@ extern void pxglossary(const char *project, const char *glos);
 extern void wx_log(const char *u, const char *q, const char *r);
 extern void cfy(void);
 
+extern void dump_env(FILE *fp);
+extern void dump_vl(CGI_varlist *vl);
+extern void dump_vec(const char *name,char *const *v);
+
 extern const char *script_file;
 
 extern int p4;
