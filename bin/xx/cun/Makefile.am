@@ -1,7 +1,7 @@
 include ../../../oracc-am-rules.txt
 
-bin_PROGRAMS=cfy
-bin_SCRIPTS=cfycov.sh cfylgs.sh
+bin_PROGRAMS=cfy atfuni atfnum
+bin_SCRIPTS=cfycov.sh cfylgs.sh atfheader.sh
 scriptdata_DATA=*.xsl
 
 html_DATA=cuneify.html
@@ -10,6 +10,10 @@ html_DATA=cuneify.html
 # cunx_SOURCES = cunx.c fileargs.c perfnt.c render.c
 # cunx_LDADD = $(xLDADD)
 # cunx_DEPENDENCIES = $(xLDADD)
+
+atfnum_SOURCES=atfnum.c
+
+atfuni_SOURCES=atfuni.c
 
 cfy_SOURCES = cfy.c cfy_class.c cfy_reader.c cfy_render.c \
 	cfy_out_html.c cfy_out_xml.c fileargs.c perfnt.c \

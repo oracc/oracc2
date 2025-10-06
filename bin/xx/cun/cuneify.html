@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta equiv="charset" encoding="UTF-8"/>
+    <title>Cuneify</title>
+  </head>
+  <body>
+
+    <form action="/cfy" method="post" target="cfyresult">
+      <div>
+        <label for="username">Transliteration:</label>
+        <input type="text" id="data" name="data"/>
+      </div>
+      <div>
+        <button type="submit">Cuneify</button>
+      </div>
+    </form>
+
+    <iframe id="cfyresult" name="cfyresult">
+    </iframe>
+    
+  </body>
+</html>

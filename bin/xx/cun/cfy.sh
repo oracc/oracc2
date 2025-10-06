@@ -37,7 +37,6 @@ function fail {
 	echo "==="
 	echo $0: $1. Stop.
 	echo "==="
-#	usage
 	exit 1
     fi	
 }
@@ -57,8 +56,39 @@ Content-type: text/html; charset=utf-8
 <h1>Cuneify Error</h1>
 <pre>$x</pre>
 </body>
+</html>
 EOF
-    }
+}
+
+function logfail {
+    if [[ "$mode" == "web" ]]; then
+	logfailw $*
+    else
+	echo "==="
+	echo $0: $1 failed, log file follows. Stop
+	echo "==="
+	cat $2
+	exit 1	
+    fi
+}
+
+function logfailw {
+    cat <<EOF
+Content-type: text/html; charset=utf-8
+
+<html>
+<head><title>Cuneify Error</title></head>
+<body>
+<h1>$1 failed</h1>
+<h2>Error log:</h2>
+EOF
+    xmlify <$2
+    cat <<EOF
+</body>
+</html>
+EOF
+    exit 1	
+}
 
 function tell {
     if [[ "$verbose" != "" ]]; then
@@ -73,7 +103,6 @@ fi
 
 # default lang; when no project is set lang=sux means project=epsd2
 lang="sux"
-
 while [[ $# -gt 0 ]]; do
     case $1 in
 	-a|-atf)
@@ -96,29 +125,28 @@ while [[ $# -gt 0 ]]; do
 	    shift
 	    shift
 	    ;;
+	-r|-rem)
+	    rmfile=1
+	    shift
+	    ;;
 	-T|-TeX)
 	    mode=TeX
 	    shift
-	    shift
 	    ;;
 	-t|-text)
-	    mode=TeX
-	    shift
+	    mode=text
 	    shift
 	    ;;
 	-v|-verbose)
 	    verbose=1
 	    shift
-	    shift
 	    ;;
 	-w|-web)
 	    mode=web
 	    shift
-	    shift
 	    ;;
 	-x|-xml)
 	    mode=xml
-	    shift
 	    shift
 	    ;;
 	-*)
@@ -132,57 +160,50 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+echo atf=$atf
+
 if [[ "$atf" != "" ]]; then
     if [[ "$file" != "" ]]; then
 	fail "can't use both -atf and -file"
     fi
-    atffile="/tmp/$$.cfy.atf"
-    echo "$atf" >$atffile
+    file="/tmp/$$.cfy.tmp"
+    echo "$atf" >$file
     if [ $? -ne 0 ]; then
-	fail "unable to write $atffile for ATF text"
+	fail "unable to write $file for ATF text"
     fi
-    file=$atffile
-    tell "using $atffile"
+    file=$file
+    tell "ATF string arg written to $file"
 fi
 
 if [[ "$file" == "" ]]; then
     fail "must give give -atf TEXT or -file FILE"
 fi
 
-logfile="/tmp$$.cfy.log"
-xtffile="/tmp$$.cfy.xtf"
-head -10 $file | atfheader.sh $attfile | oxx -l$logfile >$xtffile
+atffile="/tmp/$$.cfy.atf"
+cfyfile="/tmp/$$.cfy.cfy"
+logfile="/tmp/$$.cfy.log"
+xtffile="/tmp/$$.cfy.xtf"
 
-# if [[ "$unilist" == "" ]]; then
-#     fail "Must give -u UNILIST"
-# fi
+# Create .xtf with ATF header if necessary
+atfheader.sh $file $lang >$atffile
+oxx -l$logfile $atffile >$xtffile
 
-# if [[ "$arg" == "" ]]; then
-#     fail "No argument given with action"
-# fi
+if [ $? -ne 0 ]; then
+    logfail 'ATF processing' $logfile
+fi
 
-# case $check in
-#     p)
-# 	texts ${ORACC}/$arg/01bld/lists/txtindex.lst
-#     ;;
-#     q)
-# 	cfy -U$unilist -q $arg
-#     ;;
-#     t)
-# 	texts $arg
-#     ;;
-# esac
+# Could create LGS table here; is it worth it for cuneify.html?
 
-# function texts {
-#     if [ ! -r $1 ]; then
-# 	fail "No such text list $1"
-#     fi
-#     echo $0 checking contents of $1
-#     while read l
-#     do
-# 	t=`echo $l | cut -d@ -f1`
-# 	>&2 echo ::$t
-# 	cfy -U$unilist -q $t
-#     done <$1
-# }
+cfy -w $xtffile >$cfyfile 2>$logfile
+if [ $? -ne 0 ]; then
+    logfail 'Cuneify processing' $logfile
+else
+    cat $cfyfile
+fi
 
+rm -f $atffile $xtffile $cfyfile $logfile
+if [[ "$rmfile" == "" ]]; then
+    rm -f $file
+fi
+
+exit 0
