@@ -36,11 +36,12 @@ cfy_vec(CGI_varlist *vl)
 
   i *= 2;
   
-  vec = malloc((i+3) * sizeof(const char*));
-
+  vec = malloc((i+4) * sizeof(const char*));
+  
   vec[i=0] = "/bin/sh";
   vec[i=1] = "/Users/stinney/orc/bin/cfy.sh";
-  for (i=2, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl))
+  vec[i=2] = "html";
+  for (++i, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl))
     {
       if (strcmp(name, "data"))
 	{
@@ -59,7 +60,7 @@ cfy_data(CGI_varlist *v)
   CGI_value *dataval = CGI_lookup_all(v, "data");
   if (dataval)
     {
-      char *data = dataval[0];
+      const char *data = dataval[0];
       char pid[8];
       sprintf(pid, "%d", getpid());
       char buf[strlen("/tmp/.cfy0")+strlen(pid)];

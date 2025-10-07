@@ -12,17 +12,21 @@
 # generation.
 #
 
+oracc=@@ORACC@@
+oraccbin=$oracc/bin
+
 function usage {
     cat <<EOF
 Usage: cfy.sh [-web] [-atf ATF] [-file DATAFILE] [-key KEY] [-verbose]
 
 	-atf	: ATF text
 	-file	: a file of ATF text
-	-key 	: a cfy key
+	-html   : flag for standalone HTML output
+       	-key 	: a cfy key
 	-TeX	: TeX output (not yet implemented)
 	-text	: text output (not yet implemented)
 	-verbose: if non-empty give informational messages
-	-web    : flag for HTML output
+	-web    : flag for P4 web output
 	-xml	: XML output (incompletely implemented)
 
 All of the options can be abbreviated to their first letter.
@@ -46,7 +50,7 @@ function failw {
 }
 
 function htmlerr {
-    x=`echo $* | xmlify`
+    x=`echo $* | $oraccbin/xmlify`
     cat <<EOF
 Content-type: text/html; charset=utf-8
 
@@ -82,7 +86,7 @@ Content-type: text/html; charset=utf-8
 <h1>$1 failed</h1>
 <h2>Error log:</h2>
 EOF
-    xmlify <$2
+    ${oraccbin}/xmlify <$2
     cat <<EOF
 </body>
 </html>
@@ -115,6 +119,11 @@ while [[ $# -gt 0 ]]; do
 	    shift
 	    shift
 	    ;;
+	-h|html)
+	    mode=web
+	    hwarg='-h'
+	    shift
+	    ;;
 	-l|lang)
 	    lang="$2"
 	    shift
@@ -143,6 +152,7 @@ while [[ $# -gt 0 ]]; do
 	    ;;
 	-w|web)
 	    mode=web
+	    hwarg='-w'
 	    shift
 	    ;;
 	-x|xml)
@@ -183,18 +193,18 @@ logfile="/tmp/$$.cfy.log"
 xtffile="/tmp/$$.cfy.xtf"
 
 # Create .xtf with ATF header if necessary
-atfheader.sh $file $lang >$atffile
-oxx -l$logfile $atffile >$xtffile
+${oraccbin}/atfheader.sh $file $lang >$atffile
+${oraccbin}/oxx -l$logfile $atffile >$xtffile
 
 if [ $? -ne 0 ]; then
-    logfail 'ATF processing' $logfile
+    logfail ATF $logfile
 fi
 
 # Could create LGS table here; is it worth it for cuneify.html?
 
-cfy -h $xtffile >$cfyfile 2>$logfile
+${oraccbin}/cfy $hwarg $xtffile >$cfyfile 2>$logfile
 if [ $? -ne 0 ]; then
-    logfail 'Cuneify processing' $logfile
+    logfail Cuneify $logfile
 else
     cat <<EOF
 Content-type: text/html; charset=utf-8

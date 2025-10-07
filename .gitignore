@@ -265,9 +265,9 @@ bin/wx/wx.c
 bin/wx/wx_log.c
 bin/wx/xff.c
 bin/wx/xmlrpc.c
-bin/xx/cun/cunx.c
-bin/xx/cun/ncunx.c
+bin/xx/cun/atfheader.sh
 bin/xx/cun/cfy.c
+bin/xx/cun/cfy.sh
 bin/xx/fonts/ofpx
 bin/xx/tis/tisdiv.c
 bin/xx/fonts/oslfiles.sh

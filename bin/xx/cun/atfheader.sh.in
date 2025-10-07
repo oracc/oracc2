@@ -1,4 +1,6 @@
 #!/bin/sh
+oracc=@@ORACC@@
+oraccbin=$oracc/bin
 atf=$1
 if [[ "$atf" == "" ]]; then
     echo $0: must give ATF file. Stop.
@@ -14,7 +16,7 @@ if [[ $char != "&" ]]; then
 	proj="cams"
     fi
     if [[ "$unicode" != "" ]]; then
-	unicode=`atfuni $atf`
+	unicode=`$oraccbin/atfuni $atf`
     fi
     cat <<EOF
 &X010101=Cuneify Data
@@ -22,9 +24,9 @@ if [[ $char != "&" ]]; then
 #atf: use math
 $unicode
 EOF
-    atfnum check <$atf
+    $oraccbin/atfnum check <$atf
     if [ $? != 0 ]; then
-	atfnum <$atf
+	$oraccbin/atfnum <$atf
     else
 	cat $atf
     fi
