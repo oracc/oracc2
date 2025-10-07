@@ -118,10 +118,12 @@ ch_head(Cfy *c)
   if (c->c->rcol.e)
     strcat(format_options, " cfy-crule");
   const char *justify = cfy_justify_class(c->c->justify);
-  fprintf(c->o,
-	  "<h1 class=\"p3h2 border-top heading\">"
-	  "<span class=\"cfy-generic\">Cuneified </span>"
-	  "<span class=\"cfy-specific\">%s</span></h1><table class=\"cfy-table%s%s\">",
+  if (!cfy.bare)
+    fprintf(c->o,
+	    "<h1 class=\"p3h2 border-top heading\">"
+	    "<span class=\"cfy-generic\">Cuneified </span>"
+	    "<span class=\"cfy-specific\">%s</span></h1>", c->n);
+  fprintf(c->o, "<table class=\"cfy-table%s%s\">",
 	  c->n,
 	  format_options,
 	  justify);

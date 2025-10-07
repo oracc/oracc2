@@ -1,21 +1,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta equiv="charset" encoding="UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="/css/cfyform.css"/>
+    <script type="text/javascript" src="/js/cfyform.js">&#160;</script>
     <title>Cuneify</title>
   </head>
   <body>
-
-    <form action="/cfy" method="post" target="cfyresult">
+    <h1>Cuneify</h1>
+    <form id="cfyForm" name="cfyForm" action="/cfy" method="post" target="cfyresult">
       <div>
-        <label for="username">Transliteration:</label>
-        <input type="text" id="data" name="data"/>
+	<h2>Transliteration:</h2>
+        <textarea id="xdata" name="xdata" cols="50" rows="20"
+		  placeholder="Enter ATF transliteration here"></textarea>
       </div>
       <div>
         <button type="submit">Cuneify</button>
       </div>
     </form>
 
-    <iframe id="cfyresult" name="cfyresult">
+    <h2>Cuneified Result</h2>
+    <iframe width="400px" id="cfyresult" name="cfyresult">
     </iframe>
     
   </body>

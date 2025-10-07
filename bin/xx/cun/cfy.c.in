@@ -275,8 +275,11 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
-    case 'b':
+    case 'B':
       buildmode = 1;
+      break;
+    case 'b':
+      cfy.html = cfy.bare = 1;      
       break;
     case 'C':
       config_and_exit = 1;

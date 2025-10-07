@@ -43,7 +43,7 @@ cfy_vec(CGI_varlist *vl)
   vec[i=2] = "html";
   for (++i, name = CGI_first_name(vl); name != 0; name = CGI_next_name(vl))
     {
-      if (strcmp(name, "data"))
+      if (strcmp(name, "data") && strcmp(name, "xdata"))
 	{
 	  vec[i++] = (char*)name;
 	  vec[i++] = (char*)CGI_lookup(vl,name);
@@ -60,7 +60,7 @@ cfy_data(CGI_varlist *v)
   CGI_value *dataval = CGI_lookup_all(v, "data");
   if (dataval)
     {
-      const char *data = dataval[0];
+      const char *data = CGI_decode_url(dataval[0]);
       char pid[8];
       sprintf(pid, "%d", getpid());
       char buf[strlen("/tmp/.cfy0")+strlen(pid)];

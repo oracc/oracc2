@@ -6,10 +6,9 @@ scriptdata_DATA=*.xsl
 
 html_DATA=cuneify.html
 
-# cunx
-# cunx_SOURCES = cunx.c fileargs.c perfnt.c render.c
-# cunx_LDADD = $(xLDADD)
-# cunx_DEPENDENCIES = $(xLDADD)
+css_DATA = *.css
+
+js_DATA = *.js
 
 atfnum_SOURCES=atfnum.c
 
@@ -32,8 +31,8 @@ cfy.lex.c: cfy.l cfy.tab.h
 fontname.g: ../../../msc/fonts/*.def
 	./fontname.sh $^
 
-demo: ${ORACC}/www/osl/cuneify/demo/demo.html
+demo: ${ORACC}/www/osl/OraccCuneiformFonts/Cuneify/demo/index.html
 
-${ORACC}/www/osl/cuneify/demo/demo.html: ${ORACC}/bin/cfy t/Makefile \
-	t/demo.sh t/demo.plx t/demo.css t/*.atf
+${ORACC}/www/osl/OraccCuneiformFonts/Cuneify/demo/index.html: ${ORACC}/bin/cfy t/Makefile \
+	t/demo.sh t/demo.plx t/demo.css t/*.atf t/*.ccf t/*.txt
 	(cd t ; make clean ; make)

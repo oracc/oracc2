@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 oracc=@@ORACC@@
 oraccbin=$oracc/bin
 atf=$1
@@ -19,7 +19,7 @@ if [[ $char != "&" ]]; then
 	unicode=`$oraccbin/atfuni $atf`
     fi
     cat <<EOF
-&X010101=Cuneify Data
+&X111111=Data
 #project: $proj
 #atf: use math
 $unicode

@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# N.B. test data must be double-URL-encoded to emulate the server's behaviour.
+#
 infile=$1
 shift
 if [ -r $infile ]; then

@@ -85,9 +85,11 @@ Content-type: text/html; charset=utf-8
 <body>
 <h1>$1 failed</h1>
 <h2>Error log:</h2>
+<pre>
 EOF
     ${oraccbin}/xmlify <$2
     cat <<EOF
+</pre>
 </body>
 </html>
 EOF
@@ -121,7 +123,7 @@ while [[ $# -gt 0 ]]; do
 	    ;;
 	-h|html)
 	    mode=web
-	    hwarg='-h'
+	    hwarg='-b'
 	    shift
 	    ;;
 	-l|lang)
@@ -152,7 +154,7 @@ while [[ $# -gt 0 ]]; do
 	    ;;
 	-w|web)
 	    mode=web
-	    hwarg='-w'
+	    hwarg='-wb'
 	    shift
 	    ;;
 	-x|xml)
