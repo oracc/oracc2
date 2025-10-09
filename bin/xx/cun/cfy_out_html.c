@@ -284,11 +284,14 @@ ch_elt_G(Cfy *c, Elt *e)
     }
   else
     {
+      const char *asl =
+	e->c->asl
+	? ('.' == *e->c->asl ? c->project : e->c->asl)
+	: ('9' == e->oid[2] ? "pcsl" : "osl");
       fprintf(c->o,
 	      "<span id=\"c.%s\" data-ref=\"%s\" data-oid=\"%s\" data-asl=\"%s\""
 	      " onclick=\"cfySL(event)\" oncontextmenu=\"cfyHi(event); return false;\"",
-	      e->xid, c->hlgs ? lgs_word(c, e->xid) : e->xid, e->oid,
-	      e->c->asl ? e->c->asl : ('9' == e->oid[2] ? "pcsl" : "osl"));
+	      e->xid, c->hlgs ? lgs_word(c, e->xid) : e->xid, e->oid, asl);
       if (e->title)
 	fprintf(c->o, " title=\"%s\"", e->title);
       const char *cun_class = ch_cun_class(c, e);
