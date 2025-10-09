@@ -9,6 +9,9 @@
 
 #include "cfy.h"
 
+static char *crashbuf;
+static void signals(int argc, char **argv);
+
 extern void cfyset_debug(int debug_flag);
 extern void gdlset_debug(int debug_flag);
 
@@ -138,11 +141,11 @@ int
 main(int argc, char **argv)
 {
   setlocale (LC_ALL, ORACC_LOCALE);
-
-  cfy.o = stdout;  
+  signals(argc, argv);
+  cfy.o = stdout;
   options(argc, argv, "bC:c:fH:hi:l:no:P:p:q:sTt:U:uvw");
 
-  if (verbose > 1)
+  if (verbose > 2)
     cfyset_debug(1);
   else
     cfyset_debug(0);
@@ -350,3 +353,33 @@ opts(int opt, const char *arg)
 }
 
 void help(void) { }
+
+static void 
+clean_exit_on_sig(int sig_num)
+{
+  (void)write(STDERR_FILENO, crashbuf, strlen(crashbuf));
+  exit(128+sig_num);
+}
+
+static void
+signals(int argc, char **argv)
+{
+  int i, len;
+  for (i = len = 0; i < argc; ++i)
+    len += strlen(argv[i]);
+  crashbuf = malloc(len + argc + 128);
+  strcpy(crashbuf, "cfy: emergency stop, program crash. Invoked as:\n\t");
+  for (i = 0; i < argc; ++i)
+    {
+      if (i)
+        strcat(crashbuf, " ");
+      strcat(crashbuf, argv[i]);
+    }
+  strcat(crashbuf, "\n");
+  signal(SIGINT  , clean_exit_on_sig);
+  signal(SIGABRT , clean_exit_on_sig);
+  signal(SIGILL  , clean_exit_on_sig);
+  signal(SIGFPE  , clean_exit_on_sig);
+  signal(SIGSEGV , clean_exit_on_sig);
+  signal(SIGTERM , clean_exit_on_sig);
+}
