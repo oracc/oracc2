@@ -32,7 +32,7 @@ sub demo_div {
     my $base = $cfy;
     my $tclass = sprintf("t%02d",$ndiv+1);
     $base =~ s/\.html$//;
-    my $atf = xmlify(join('',`grep '^[0-9=]' $base.atf`));
+    my $atf = xmlify(join('',`grep '^[0-9=	]' $base.atf`));
     my $ccf = xmlify(join('',`cat $base.ccf`));
     my $txt = xmlify(join("\n",`cat $base.txt`));
     my @txt = split(/\n/, $txt); $txt = join("<br/>", grep (!/^$/, @txt));
