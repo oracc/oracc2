@@ -21,7 +21,14 @@ echo '<keydata xmlns="http://oracc.org/ns/keydata/1.0">'
 echo '  <not-indexed/>'
 echo '  <sortable>'
 for f in $ff; do
-    echo "    <field n=\"$f\"	hr=\"$f\"/>"
+    if [ "$f" = "o:id" ]; then
+	echo "    <field n=\"$f\"	hr=\"$f\"/>"
+    fi
+done
+for f in $ff; do
+    if [ "$f" != "o:id" ]; then
+	echo "    <field n=\"$f\"	hr=\"$f\"/>"
+    fi
 done
 echo '  </sortable>'
 for f in $ff; do
