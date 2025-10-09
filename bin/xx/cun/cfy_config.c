@@ -344,6 +344,7 @@ elts_one_key(Elt *e)
       /* only used in subbing rule rhs */
       return NULL;	  
     case ELT_LAST:
+    default:
       return NULL; /* this can't happen */
     }
 }
