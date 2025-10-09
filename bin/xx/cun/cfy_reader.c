@@ -189,8 +189,10 @@ cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
   if (!c->line)
     c->line = list_create(LIST_DOUBLE);
 
+#if 0
   if (zwj_murub)
     zwj_murub = 0;
+#endif
   
   Elt *ep = memo_new(c->m_elt);
   ep->line = pi_line;
@@ -396,7 +398,10 @@ cfy_eH(void *userData, const char *name)
   else if (!strcmp(name, "g:x"))
     {
       Elt *ep = list_last(((Cfy*)userData)->line);
-      ep->data = (char*)pool_copy((uccp)charData_retrieve(), cfy.p);
+      if (ep->etype != ELT_C)
+	ep->data = (char*)pool_copy((uccp)charData_retrieve(), cfy.p);
+      else
+	fprintf(stderr, "%s:%d: g:x follows ELT_C\n", pi_file, pi_line);
     }
   else if (!strcmp(name, "c"))
     {
