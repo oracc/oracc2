@@ -42,8 +42,7 @@ char *inpath, *outpath, *htmlpath;
 
 jmp_buf done;
 
-extern int options(int, char*const*,const char*);
-extern int optind;
+int stdin_xtf;
 
 static void
 show_vars(void)
@@ -218,7 +217,7 @@ main(int argc, char **argv)
 	}
     }
 
-  if (!f[0])
+  if (!f[0] && !stdin_xtf)
     {
       fprintf(stderr, "cfy: nothing to cuneify. Stop.\n");
       exit(1);
@@ -254,21 +253,26 @@ main(int argc, char **argv)
 	    }
 	}
     }
+  else
+    {
+      if (!freopen("/dev/null", "w", stdout))
+	{
+	  perror("Failed to redirect stdout");
+	  return EXIT_FAILURE;
+	}
+    }
   
   runexpat_omit_rp_wrap();
   cfy_cfg_run(&cfy);
   if (!setjmp(done))
-    runexpatuD(i_list, f, cfy_sH, cfy_eH, &cfy);
+    runexpatuD(stdin_xtf ? i_stdin : i_list, f, cfy_sH, cfy_eH, &cfy);
 
   cfy_post(&cfy);
   
-  if (!no_output)
-    {
-      if (cfy.html)
-	cfy_render(&cfy, "html");
-      else
-	cfy_render(&cfy, "xml");
-    }
+  if (cfy.html)
+    cfy_render(&cfy, "html");
+  else
+    cfy_render(&cfy, "xml");
   
   cfy_term();
 }
@@ -323,6 +327,9 @@ opts(int opt, const char *arg)
       break;
     case 'q':
       qfile = arg;
+      break;
+    case 's':
+      stdin_xtf = 1;
       break;
     case 't':
       translation = arg;

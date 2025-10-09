@@ -74,6 +74,8 @@ cfy_cfg_run(Cfy *c)
 {
   if (c->arg_ccf)
     return cfy_cfg_load(c, cfy_cfg_locate(c, c->arg_ccf, LOC_ARG));
+  else if (!c->infile)
+    return 0;
   else
     {
       /* Look for a .ccf in the same place as the .xtf */

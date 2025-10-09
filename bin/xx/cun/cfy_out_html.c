@@ -2,6 +2,8 @@
 #include "cfy.h"
 #include "cfy_iterator.h"
 
+extern const char *pi_file;
+
 static void ch_head(Cfy *c);
 static void ch_foot(Cfy *c);
 
@@ -124,7 +126,6 @@ ch_head(Cfy *c)
 	    "<span class=\"cfy-generic\">Cuneified </span>"
 	    "<span class=\"cfy-specific\">%s</span></h1>", c->n);
   fprintf(c->o, "<table class=\"cfy-table%s%s\">",
-	  c->n,
 	  format_options,
 	  justify);
 }
@@ -333,8 +334,13 @@ static void
 ch_elt_X(Cfy *c, Elt *e)
 {
 #if 1
-  fprintf(stderr, "untrapped ch_elt_X\n");
-  fprintf(c->o, "<span style=\"color: red\">UNTRAPPED ch_elt_X</span>");
+  if (!strcmp(e->atype, "dollar"))
+    /* FIXME: should handle Amarna red dots coded as ($r$) [if Jake uses that] */;
+  else
+    {
+      fprintf(stderr, "%s:%d: untrapped ch_elt_X\n", pi_file, e->line);
+      fprintf(c->o, "<span style=\"color: red\">UNTRAPPED ch_elt_X</span>");
+    }
 #else
   fprintf(c->o, "<x r=\"%s\"", e->xid);
   if (e->btype)

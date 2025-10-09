@@ -18,6 +18,7 @@ static Elt *last_ep = NULL;
 static Line *curr_line;
 static int prev_last_w; /* we keep the prev_last_w to use when we pop
 			   the final w of the line off the list */
+static int zwj_murub = 0;
 
 static Btype
 breakage(const char *name, const char **atts)
@@ -35,6 +36,7 @@ static void
 cfy_cell(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
+  ep->line = pi_line;
   ep->etype = ELT_C;
   ep->prev = last_ep;
   last_ep = ep;
@@ -51,31 +53,38 @@ cfy_cell(Cfy *c, const char **atts)
 static void
 cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Class *cp, const char *oid)
 {
-  static int zwj_murub = 0;
-  
   if (c->coverage)
     cfy_uni_check(c, (uccp)utf8);
+
+  if (verbose > 1)
+    fprintf(stderr, "%s:%d:%s: %s\n", pi_file, pi_line = (short)pi_line, c->pqx, findAttr(atts, "key"));
 
   Btype brk = breakage(name, atts); /* front this because zwj needs it */
 
   if (zwj_murub)
     {
       char *d = last_ep->data;
-      d += strlen(d)-3;
-      if (ELT_G == last_ep->etype && !strcmp(d, e_zwj.data))
+      if (d)
 	{
-	  char buf[strlen((char*)last_ep->data)+strlen(utf8)+1];
-	  strcpy(buf, (char*)last_ep->data);
-	  strcat(buf, utf8);
-	  last_ep->data = hpool_copy((uccp)buf, c->hp);
-	  /* emulate cfy_liga_breakage where differing adjacent btypes all map to BRK_HASH */
-	  if (brk != last_ep->btype)
-	    last_ep->btype = BRK_HASH;
-	  /* we are done; the new grapheme has been concatenated onto the prev+ZWJ data */
-	  return;
+	  d += strlen(d)-3;
+	  if (ELT_G == last_ep->etype && !strcmp(d, e_zwj.data))
+	    {
+	      char buf[strlen((char*)last_ep->data)+strlen(utf8)+1];
+	      strcpy(buf, (char*)last_ep->data);
+	      strcat(buf, utf8);
+	      last_ep->data = hpool_copy((uccp)buf, c->hp);
+	      /* emulate cfy_liga_breakage where differing adjacent btypes all map to BRK_HASH */
+	      if (brk != last_ep->btype)
+		last_ep->btype = BRK_HASH;
+	      zwj_murub = 0;
+	      /* we are done; the new grapheme has been concatenated onto the prev+ZWJ data */
+	      return;
+	    }
+	  else
+	    fprintf(stderr, "%s:%d: discontinuous ZWJ (sign'+'nonsign)\n", pi_file, pi_line);
 	}
       else
-	fprintf(stderr, "%s:%d: discontinuous ZWJ (sign'+'nonsign)\n", pi_file, pi_line);
+	fprintf(stderr, "%s:%d: one-sided ZWJ (nonsign'+'sign)\n", pi_file, pi_line);
       zwj_murub = 0;
     }    
   
@@ -94,6 +103,7 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
     c->line = list_create(LIST_DOUBLE);
 
   Elt *ep = memo_new(c->m_elt);
+  ep->line = pi_line;
   ep->prev = last_ep;
   last_ep = ep;
   ep->etype = ELT_G;
@@ -147,8 +157,9 @@ static void
 cfy_line(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
+  ep->line = pi_line;
   if (verbose)
-    fprintf(stderr, "%s:%s:%d\n", c->pqx, pi_file, ep->pi_line = (short)pi_line);
+    fprintf(stderr, "%s:%d:%s\n", pi_file, ep->line = (short)pi_line, c->pqx);
   ep->etype = ELT_L;
   ep->prev = last_ep;
   last_ep = ep;
@@ -178,10 +189,15 @@ cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
   if (!c->line)
     c->line = list_create(LIST_DOUBLE);
 
+  if (zwj_murub)
+    zwj_murub = 0;
+  
   Elt *ep = memo_new(c->m_elt);
+  ep->line = pi_line;
   ep->prev = last_ep;
   last_ep = ep;
   const char *gt = gt=findAttr(atts,"g:type");
+  ep->atype = (ccp)pool_copy((uccp)gt, cfy.p);
   ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   if (!strcmp(gt, "ellipsis"))
     ep->etype = ELT_E;
@@ -201,6 +217,9 @@ cfy_ws(Cfy *c)
   if (!c->line)
     c->line = list_create(LIST_DOUBLE);
 
+  if (zwj_murub)
+    zwj_murub = 0;
+  
   if (zws_pending)
     {
       list_add(c->line, &e_zws);
@@ -209,6 +228,7 @@ cfy_ws(Cfy *c)
   else
     {
       Elt *ep = memo_new(c->m_elt);
+      ep->line = pi_line;
       ep->etype = ELT_W;
       ep->prev = last_ep;
       last_ep = ep;
@@ -236,6 +256,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
   if (!strcmp(name, "transliteration") || !strcmp(name, "composite"))
     {
       c->n = (ccp)xmlify((uccp)findAttr(atts, "n"));
+      c->pqx = (ccp)pool_copy((uccp)get_xml_id(atts), cfy.p);
       if (!c->project)
 	{
 	  const char *prj = findAttr(atts, "project");
@@ -319,7 +340,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	    {
 	      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
 	      if (cp)
-		*curr_cp = *cp;	      
+		*curr_cp = *cp;
 	      cfy_x(userData, atts, breakage(name, atts), curr_cp);
 	    }
 	}
@@ -372,6 +393,11 @@ cfy_eH(void *userData, const char *name)
     --inner;
   else if (!strcmp(name, "g:w"))
     cfy_ws(userData);
+  else if (!strcmp(name, "g:x"))
+    {
+      Elt *ep = list_last(((Cfy*)userData)->line);
+      ep->data = (char*)pool_copy((uccp)charData_retrieve(), cfy.p);
+    }
   else if (!strcmp(name, "c"))
     {
       Elt *ep = list_last(((Cfy*)userData)->line);

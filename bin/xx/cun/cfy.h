@@ -239,6 +239,7 @@ typedef struct elt
   Etype etype;	  /* the element type */
   Gtype gtype;    /* the grapheme type */
   Btype btype;    /* the breakage type */
+  const char *atype;    /* type from an attribute, e.g., @type on g:nonw or @g:type on g:x */
   struct elt *prev;/* the previous element */
   void *data;	  /* cuneiform, Line, or Cell */
   Class *c;	  /* the current class for the grapheme; usually set
@@ -252,7 +253,7 @@ typedef struct elt
   const char *key;/* ASL grapheme key for type ELT_G */
   const char *title; /* value or sign name */
   const char *otf; /* from \1 or \cv01 etc */
-  short pi_line; /* don't need to store pi_file as long as cfy is a single-shot program */
+  short line; /* don't need to store pi_file as long as cfy is a single-shot program */
 } Elt;
 
 typedef struct line
