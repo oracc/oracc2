@@ -148,7 +148,7 @@ cfy_line(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
   if (verbose)
-    fprintf(stderr, "%s:%s:%d\n", c->pqx, ep->pi_file = pi_file, ep->pi_line = (short)pi_line);
+    fprintf(stderr, "%s:%s:%d\n", c->pqx, pi_file, ep->pi_line = (short)pi_line);
   ep->etype = ELT_L;
   ep->prev = last_ep;
   last_ep = ep;

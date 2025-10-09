@@ -252,8 +252,7 @@ typedef struct elt
   const char *key;/* ASL grapheme key for type ELT_G */
   const char *title; /* value or sign name */
   const char *otf; /* from \1 or \cv01 etc */
-  const char *pi_file;
-  short pi_line;
+  short pi_line; /* don't need to store pi_file as long as cfy is a single-shot program */
 } Elt;
 
 typedef struct line
