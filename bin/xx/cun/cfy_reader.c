@@ -310,7 +310,9 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		{
 		  if (!(gcp = ((Cfy*)userData)->fontclasses[atoi(f)]))
 		    {
-		      fprintf(stderr, "%s:%d: ignoring undefined font switch %s\n", pi_file, pi_line, f);
+		      if (strlen(f) > 1)
+			fprintf(stderr, "%s:%d: ignoring undefined font switch %s\n",
+				pi_file, pi_line, f);
 		      gcp = curr_cp;
 		    }
 		}
