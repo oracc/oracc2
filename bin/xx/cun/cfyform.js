@@ -27,3 +27,22 @@ document.addEventListener('DOMContentLoaded', function() {
         cfyForm.submit();
     });
 });
+
+function cfyKey() {
+    let cKey='cfy-'
+	+document.getElementById('cK-font').value+'-'
+	+document.getElementById('cK-feat').value+'-'
+	+document.getElementById('cK-mag').value+'-'
+	+document.getElementById('cK-script').value+'-'
+	+document.getElementById('cK-asl').value;
+    let hiddenKey = document.getElementById('key');
+    if (!hiddenKey) {
+            hiddenKey = document.createElement('input');
+            hiddenKey.type = 'hidden';
+	    hiddenKey.id = 'key';
+            hiddenKey.name = 'key'; // Name for the server-side
+	}
+    hiddenKey.value = cKey;
+
+    alert('Hidden cfy #key = '+hiddenKey.value);
+}
