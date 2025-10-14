@@ -8,18 +8,58 @@
   <body>
     <h1>Cuneify</h1>
     <form id="cfyForm" name="cfyForm" action="/cfy" method="post" target="cfyresult">
+      <h2>Settings</h2>
+      
+      <div id="cfyKey">
+	<div id="cK-prefix">cfy</div>
+	<div>
+	  <select name="cK-font" id="cK-font" onchange="cfyKey()">
+	    <option value="nni">Nabu-Ninua-Ihsus [NA]</option>
+	    <option value="gudea">Gudea</option>
+	    <option value="rsp">RSP [ED IIIb]</option>
+	    <option value="lak">LAK [ED IIIa]</option>
+	  </select>
+	</div>
+	<div>
+	  <select name="cK-feat" id="cK-feat" onchange="cfyKey()">
+	    <option value=".">--None--</option>
+	    <option value="ss01">ss01</option>
+	  </select>
+	</div>
+	<div>
+	  <input name="cK-mag" id="cK-mag" type="number" min="1" max="999" value="150"
+		 onchange="cfyKey()"/>
+	</div>
+	<div>
+	  <select name="cK-script" id="cK-script" onchange="cfyKey()">
+	    <option value=".">--None--</option>
+	    <option value="early">Early</option>
+	    <option value="early">Middle</option>
+	    <option value="early">Late</option>
+	  </select>
+	</div>
+	<div>
+	  <select name="cK-asl" id="cK-asl" onchange="cfyKey()">
+	    <option value="osl">OSL</option>
+	    <option value=".">Project</option>
+	  </select>
+	</div>
+      </div>
+
       <div>
 	<h2>Transliteration:</h2>
-        <textarea id="xdata" name="xdata" cols="50" rows="20"
+        <textarea id="xdata" name="xdata" cols="40" rows="10"
 		  placeholder="Enter ATF transliteration here"></textarea>
       </div>
+      
       <div>
         <button type="submit">Cuneify</button>
       </div>
+
     </form>
 
     <h2>Cuneified Result</h2>
-    <iframe width="400px" id="cfyresult" name="cfyresult">
+    <iframe width="300px" id="cfyresult" name="cfyresult">
     </iframe>
     
   </body>
