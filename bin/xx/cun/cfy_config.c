@@ -24,9 +24,9 @@ cfy_cfg_locate(Cfy *c, const char *ccf, Ltype cloc)
     {
       if (c->project)
 	{
-	  /* for project, look in project/00lib then in system */
+	  /* for project, look in project/00lib/cfy.d then in system */
 	  char path[strlen(oracc())+strlen(c->project)+strlen("//00lib/0")+strlen(ccf)];
-	  sprintf(path, "%s/%s/00lib/%s", oracc(), c->project, ccf);
+	  sprintf(path, "%s/%s/00lib/cfy.d/%s", oracc(), c->project, ccf);
 	  if (!access(path, R_OK))
 	    return (ccp)pool_copy((uccp)path,c->p);
 	  if (c->proxy)
