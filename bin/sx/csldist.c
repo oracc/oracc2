@@ -200,7 +200,7 @@ const char *prog = "csldist";
 int major_version = 6, minor_version = 0, verbose;
 const char *usage_string = "-t [template]";
 void
-help ()
+help (void)
 {
   printf("  -t [template] Gives the name of the template for list organization\n");
 }

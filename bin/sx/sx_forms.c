@@ -6,7 +6,8 @@ static FILE *
 sx_forms_file(struct sl_signlist *sl, char **fnamep)
 {
   char buf[strlen(oracc())+strlen("//")+(2*strlen(sl->project))+strlen("/02pub/.frm0")];
-  sprintf(buf, "%s/%s/02pub/%s.frm", oracc(), sl->project, sl->project);
+  char *hproj = projhyph(sl->project);
+  sprintf(buf, "%s/%s/02pub/%s.frm", oracc(), sl->project, hproj);
   *fnamep = (char*)pool_copy((uchar *)buf, sl->p);
   return fopen(*fnamep, "w");
 }

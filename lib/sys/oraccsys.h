@@ -109,4 +109,6 @@ extern int pctint(int amount, int total);
 extern double pctd(double amount, double total);
 extern char *cfy_fam(const char *project);
 
+extern char *projhyph(const char *p);
+
 #endif/*ORACCSYS_H_*/
