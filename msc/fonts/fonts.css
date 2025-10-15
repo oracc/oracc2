@@ -24,6 +24,11 @@
 }
 
 @font-face {
+   font-family: 'Oracc Gudea Monumental';
+   src: url('/fonts/Gudea-bold.ttf');
+}
+
+@font-face {
    font-family: 'Oracc RSP';
    src: url('/fonts/Oracc-RSP.ttf');
 }
@@ -71,6 +76,10 @@
 .ofs-gudea {
    font-family: "Oracc Gudea";
    font-feature-settings: "ss01", "ss02", "cv01";
+}
+
+.ofs-gudeamon {
+   font-family: "Oracc Gudea Monumental";
 }
 
 .ofs-lak {
