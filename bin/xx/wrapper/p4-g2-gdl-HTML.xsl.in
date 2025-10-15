@@ -530,7 +530,10 @@
       </xsl:for-each>
     </xsl:when>
     <xsl:when test="@g:type='diszless'">
+      <xsl:call-template name="render-o"/>
       <xsl:apply-templates select="g:t"/>
+      <xsl:call-template name="render-c"/>
+      <xsl:value-of select="*[position()=last()]/@g:delim"/>
     </xsl:when>
     <xsl:otherwise>
       <xsl:message>g2-gdl-HTML: group type <xsl:value-of select="@g:type"/> not handled</xsl:message>
