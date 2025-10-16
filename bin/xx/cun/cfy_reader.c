@@ -165,7 +165,11 @@ cfy_line(Cfy *c, const char **atts)
   last_ep = ep;
   curr_line = memo_new(c->m_line);
   curr_line->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
-  curr_line->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
+
+  /* label 2 is used in with milestones and contains only column/line */
+  curr_line->label = (ccp)pool_copy((uccp)findAttr(atts, "label2"), c->p);
+  if (!*curr_line->label)
+    curr_line->label = (ccp)pool_copy((uccp)findAttr(atts, "label"), c->p);
   
   if (!strcmp(findAttr(atts, "type"), "lgs"))
     {
