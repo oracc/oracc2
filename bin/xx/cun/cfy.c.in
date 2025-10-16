@@ -70,7 +70,7 @@ cfy_init(void)
   cfy.m_cell = memo_init(sizeof(Cell), 256);
   cfy.m_elt = memo_init(sizeof(Elt), 1024);
   cfy.m_eltline = memo_init(sizeof(Eltline), 256);
-  cfy.body = list_create(LIST_SINGLE);
+  /*cfy.body = list_create(LIST_SINGLE);*/
   cfy_reader_init();
   cfy.o = stdout;
   cfy.pqx = "X000000";
@@ -116,11 +116,11 @@ static void
 cfy_post(Cfy *c)
 {
   /* Flatten the list of lists into an array of arrays */
-  c->elt_lines = calloc(list_len(c->body)+1, sizeof(Eltline*));
+  c->elt_lines = calloc(list_len(c->lines)+1, sizeof(Eltline*));
   
   int i;
   List *lp;
-  for (i = 0, lp = list_first(c->body); lp; ++i, lp = list_next(c->body))
+  for (i = 0, lp = list_first(c->lines); lp; ++i, lp = list_next(c->lines))
     {
       c->elt_lines[i] = memo_new(c->m_eltline);
       c->elt_lines[i]->epp = (Elt**)list2array_c(lp, &c->elt_lines[i]->len);

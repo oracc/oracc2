@@ -14,6 +14,7 @@ Elt e_zws = { .etype=ELT_S, .data=(ucp)"\xE2\x80\x8B" };
 
 int zws_pending = 0, zwnj_pending = 0, plus_pending = 0;
 
+static Div *curr_div = NULL;
 static Elt *last_ep = NULL;
 static Line *curr_line;
 static Heading *curr_heading;
@@ -164,7 +165,7 @@ cfy_heading(Cfy *c, const char **atts)
   curr_heading->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   curr_heading->level = atoi(findAttr(atts, "level"));
   ep->data = curr_heading;
-  list_add(c->body, curr_heading);
+  list_add(c->lines, curr_heading);
 }
 
 static void
@@ -269,6 +270,7 @@ void
 cfy_sH(void *userData, const char *name, const char **atts)
 {
   Cfy *c = userData;
+  struct xtfbody *xp;
   
   if (!strcmp(name, "xcl"))
     longjmp(done, 0);
@@ -291,10 +293,18 @@ cfy_sH(void *userData, const char *name, const char **atts)
       Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
       if (cp)
 	*curr_cp = *cp;
+      cfy_body_init(userData, name);
     }
   else if (!strcmp(name, "protocol") && !strcmp(findAttr(atts, "type"), "cfy"))
     {
       protocol_cfy_ccf = 1;
+    }
+  else if ((xp = xtfbody(name, strlen(name)))
+	   || (!strcmp(name, "m")
+	       && (xp = xtfbody(findAttr(atts, "subtype"),
+				strlen(findAttr(atts, "subtype"))))))
+    {
+      curr_div = cfy_body(userData, xp, atts);
     }
   else
     {
@@ -385,16 +395,16 @@ cfy_eH(void *userData, const char *name)
       in_l = inner = 0;
       if (((Cfy*)userData)->cline)
 	{
-	  List *mline = list_pop(((Cfy*)userData)->body);
+	  List *mline = list_pop(((Cfy*)userData)->lines);
 	  Line *mlineline = list_first(mline);
 	  ((Cfy*)userData)->cline->first->data = mlineline;
-	  list_add(((Cfy*)userData)->body, ((Cfy*)userData)->cline);
+	  list_add(((Cfy*)userData)->lines, ((Cfy*)userData)->cline);
 	}
       else if (((Cfy*)userData)->mline)
-	list_add(((Cfy*)userData)->body, ((Cfy*)userData)->mline);
+	list_add(((Cfy*)userData)->lines, ((Cfy*)userData)->mline);
 
       /* if final Elt is wordspace pop it off */
-      List *line = list_last(((Cfy*)userData)->body);
+      List *line = list_last(((Cfy*)userData)->lines);
       Elt *ep = list_last(line);
       if (ep->etype == ELT_W)
 	{
@@ -455,6 +465,13 @@ cfy_eH(void *userData, const char *name)
   else if (!strcmp(name, "h"))
     {
       curr_heading->text = (ccp)pool_copy((uccp)charData_retrieve(), cfy.p);
+    }
+  else if (curr_div
+	   && ((xtfbody(name, strlen(name)))
+	       || (!strcmp(name, "m"))))
+    {
+      curr_div->text = (ccp)pool_copy((uccp)charData_retrieve(), ((Cfy*)userData)->p);
+      curr_div = NULL;
     }
   (void)charData_discard();
 }

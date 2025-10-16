@@ -3,6 +3,7 @@
 
 #include <oraccsys.h>
 #include <setjmp.h>
+#include <tree.h>
 
 struct cell;
 struct class;
@@ -32,7 +33,8 @@ typedef struct cfy
   Memo *m_cell;
   Memo *m_elt;
   Memo *m_eltline;
-  List *body; 	/* list of line or cline pointers for actual output */
+  Tree *body; 	/* The body of the composite or transliteration */
+  List *lines;  /* The list belonging to the body-node where lines should attach */
   List *mline; 	/* mts-line, list of Elt built by cfy_reader */
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
 		   of 'mline'; doesn't align with 'mline' but
@@ -127,6 +129,11 @@ typedef enum elt_type { ELT_NOT,
 			ELT_Js/* justify-spread */,
 			ELT_Jcp/* justify-char-penult */,
 			ELT_Jcs/* justify-char-spread */,
+			ELT_BC /* body-composite */,
+			ELT_BT /* body-transliteration */,
+			ELT_Bo /* body-object */,
+			ELT_Bs /* body-surface */,
+			ELT_Bc /* body-column */,
 			ELT_LAST
 } Etype;
 
@@ -236,6 +243,23 @@ typedef enum ltype { LOC_ARG,
 		     LOC_TXT
 } Ltype;
 
+/* XTF-body types; in the input we say Xtfbody but when internalized
+   and unified in the Cfy structures we call them Div */
+typedef enum xbtype { XB_NONE , XB_CMP, XB_TRA,
+		      XB_OBJ, XB_SRF, XB_COL, XB_TOP
+} Xbtype;
+typedef struct xtfbody
+{
+  const char *name;
+  Xbtype b;
+  Etype e;
+  /*const char *xid;*/ /*needed?*/
+  const char *text;
+  List *lines;
+} Xtfbody;
+typedef Xtfbody Div;
+extern struct xtfbody *xtfbody(register const char *str, register size_t len);
+
 typedef struct elt
 {
   Etype etype;	  /* the element type */
@@ -243,7 +267,7 @@ typedef struct elt
   Btype btype;    /* the breakage type */
   const char *atype;    /* type from an attribute, e.g., @type on g:nonw or @g:type on g:x */
   struct elt *prev;/* the previous element */
-  void *data;	  /* cuneiform, Line, or Cell */
+  void *data;	  /* cuneiform, Line, Cell, or Div */
   Class *c;	  /* the current class for the grapheme; usually set
 		   at start of file but may be switched grapheme by
 		   grapheme */
@@ -417,6 +441,10 @@ extern void cfy_cfg_col_wrap(Mloc m, Cfy *c);
 
 extern void cfy_cfg_font(Mloc m, Cfy *c, const char *pc, const char *nm);
 extern char *cfy_class_key(const char *fnt, const char *otf, const char *mag, const char *scr, const char *asl);
+
+extern Div *cfy_body(Cfy *c, Xtfbody *xp, const char **atts);
+extern Tree *cfy_body_init(Cfy *c, const char *name);
+extern void cfy_body_term(void);
 
 extern int ci_i, ci_j;
 
