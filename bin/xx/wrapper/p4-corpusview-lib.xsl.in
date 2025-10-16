@@ -423,6 +423,9 @@
     <xsl:when test="$txh and $txh/xh:table[@class='score']|$txh/*/xh:table[@class='score']">
       <xsl:copy-of select="."/>
     </xsl:when>
+    <xsl:when test="count($xtr)=0">
+      <xsl:copy-of select="."/>
+    </xsl:when>
     <xsl:otherwise>
       <xsl:for-each select="$xtr">
 	<xsl:for-each select="key('xtr-h',$id)">
