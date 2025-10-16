@@ -21,27 +21,33 @@ static void ci_b_closer(Cfy *c, void *reset);
 void
 ci_body(Cfy *c)
 {
+}
+
+void
+ci_div(Cfy *c, Div *dp)
+{
   static Cell content_cell = { 1, "cfy-content" };
   static Elt content_elt = { .data = &content_cell };
-  for (ci_i = 0; c->elt_lines[ci_i]; ++ci_i)
+  curr_div = dp;
+  for (ci_i = 0; dp->elt_lines[ci_i]; ++ci_i)
     {
-      ci_line_o(c, c->elt_lines[ci_i]->epp[0]->data);
-      for (ci_j = 1; c->elt_lines[ci_i]->epp[ci_j]; ++ci_j)
+      ci_line_o(c, dp->elt_lines[ci_i]->epp[0]->data);
+      for (ci_j = 1; dp->elt_lines[ci_i]->epp[ci_j]; ++ci_j)
 	{
-	  if (ELT_C == c->elt_lines[ci_i]->epp[ci_j]->etype)
+	  if (ELT_C == dp->elt_lines[ci_i]->epp[ci_j]->etype)
 	    {
-	      ci_cell_o(c, c->elt_lines[ci_i]->epp[ci_j]);
-	      if (last_b != c->elt_lines[ci_i]->epp[ci_j]->btype)
-		ci_b_switch(c, c->elt_lines[ci_i]->epp[ci_j]->btype);
+	      ci_cell_o(c, dp->elt_lines[ci_i]->epp[ci_j]);
+	      if (last_b != dp->elt_lines[ci_i]->epp[ci_j]->btype)
+		ci_b_switch(c, dp->elt_lines[ci_i]->epp[ci_j]->btype);
 	    }
 	  else
 	    {
-	      if (ci_elt_p[c->elt_lines[ci_i]->epp[ci_j]->etype] && line_cell_pending)
+	      if (ci_elt_p[dp->elt_lines[ci_i]->epp[ci_j]->etype] && line_cell_pending)
 		ci_cell_o(c, &content_elt);
-	      if (last_b != c->elt_lines[ci_i]->epp[ci_j]->btype)
-		ci_b_switch(c, c->elt_lines[ci_i]->epp[ci_j]->btype);
-	      if (ci_elt_p[c->elt_lines[ci_i]->epp[ci_j]->etype])
-		ci_elt_p[c->elt_lines[ci_i]->epp[ci_j]->etype](c, c->elt_lines[ci_i]->epp[ci_j]);
+	      if (last_b != dp->elt_lines[ci_i]->epp[ci_j]->btype)
+		ci_b_switch(c, dp->elt_lines[ci_i]->epp[ci_j]->btype);
+	      if (ci_elt_p[dp->elt_lines[ci_i]->epp[ci_j]->etype])
+		ci_elt_p[dp->elt_lines[ci_i]->epp[ci_j]->etype](c, dp->elt_lines[ci_i]->epp[ci_j]);
 	    }
 	}
       if (brk_str[last_b])

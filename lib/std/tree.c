@@ -174,7 +174,16 @@ void
 tree_iterator(Tree *tp, void *user, void (*nodefnc)(Node *np, void *user), void (*postfnc)(Node *np, void *user))
 {
   if (tp && tp->root)
-    _do_node(tp->root, user, nodefnc, postfnc);
+    {
+      if (tp->rootless)
+	{
+	  Node *np = tp->root;
+	  for (np = np->kids; np; np = np->next)
+	    _do_node(np, user, nodefnc, postfnc);
+	}
+      else
+	_do_node(tp->root, user, nodefnc, postfnc);
+    }
 }
 
 /* Graft the kids of tree tp onto node np */

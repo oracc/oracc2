@@ -4,6 +4,7 @@
 #include <oraccsys.h>
 #include <setjmp.h>
 #include <tree.h>
+#include <xml.h>
 
 struct cell;
 struct class;
@@ -31,17 +32,17 @@ typedef struct cfy
   Memo *m_heading;
   Memo *m_line;
   Memo *m_cell;
+  Memo *m_div;
   Memo *m_elt;
   Memo *m_eltline;
   Tree *body; 	/* The body of the composite or transliteration */
+  List *divs_with_lines;
   List *lines;  /* The list belonging to the body-node where lines should attach */
   List *mline; 	/* mts-line, list of Elt built by cfy_reader */
   List *cline; 	/* colon-line, i.e., grapheme sequence to use instead
 		   of 'mline'; doesn't align with 'mline' but
 		   cfylgs.sh provides a crude bolt-on alignment */
   List *line;	/* current line to add elts to  */
-  struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
-				 NULL-terminated arrays of Eltline* */
   struct class *c;	/* the class for the text-wide state; does not
 			   change as inline classes change */
   struct class *fontclasses[100]; /* array of classes where [1] is class for font switch %01 etc */
@@ -62,6 +63,7 @@ typedef struct cfy
   int bare;
   int html;
   int weboutput;
+  int no_output;
 } Cfy;
 
 /* An element is an input item such as a grapheme, ellipsis, ZWNJ,
@@ -256,6 +258,8 @@ typedef struct xtfbody
   /*const char *xid;*/ /*needed?*/
   const char *text;
   List *lines;
+  struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
+				 NULL-terminated arrays of Eltline* */
 } Xtfbody;
 typedef Xtfbody Div;
 extern struct xtfbody *xtfbody(register const char *str, register size_t len);
@@ -445,7 +449,11 @@ extern char *cfy_class_key(const char *fnt, const char *otf, const char *mag, co
 extern Div *cfy_body(Cfy *c, Xtfbody *xp, const char **atts);
 extern Tree *cfy_body_init(Cfy *c, const char *name);
 extern void cfy_body_term(void);
+extern void cfy_body_debug(Cfy *c);
+extern void cfy_body_lines(Cfy *c);
 
 extern int ci_i, ci_j;
+
+extern Div *curr_div;
 
 #endif/*CFY_H_*/

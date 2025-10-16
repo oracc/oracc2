@@ -14,7 +14,7 @@ Elt e_zws = { .etype=ELT_S, .data=(ucp)"\xE2\x80\x8B" };
 
 int zws_pending = 0, zwnj_pending = 0, plus_pending = 0;
 
-static Div *curr_div = NULL;
+Div *curr_div = NULL;
 static Elt *last_ep = NULL;
 static Line *curr_line;
 static Heading *curr_heading;
@@ -165,7 +165,9 @@ cfy_heading(Cfy *c, const char **atts)
   curr_heading->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   curr_heading->level = atoi(findAttr(atts, "level"));
   ep->data = curr_heading;
-  list_add(c->lines, curr_heading);
+  if (!curr_div->lines)
+    cfy_body_lines(c);
+  list_add(curr_div->lines, curr_heading);
 }
 
 static void
@@ -393,18 +395,20 @@ cfy_eH(void *userData, const char *name)
   if (!strcmp(name, "l"))
     {
       in_l = inner = 0;
+      if (!curr_div->lines)
+	cfy_body_lines(userData);
       if (((Cfy*)userData)->cline)
 	{
-	  List *mline = list_pop(((Cfy*)userData)->lines);
+	  List *mline = list_pop(curr_div->lines);
 	  Line *mlineline = list_first(mline);
 	  ((Cfy*)userData)->cline->first->data = mlineline;
-	  list_add(((Cfy*)userData)->lines, ((Cfy*)userData)->cline);
+	  list_add(curr_div->lines, ((Cfy*)userData)->cline);
 	}
       else if (((Cfy*)userData)->mline)
-	list_add(((Cfy*)userData)->lines, ((Cfy*)userData)->mline);
+	list_add(curr_div->lines, ((Cfy*)userData)->mline);
 
       /* if final Elt is wordspace pop it off */
-      List *line = list_last(((Cfy*)userData)->lines);
+      List *line = list_last(curr_div->lines);
       Elt *ep = list_last(line);
       if (ep->etype == ELT_W)
 	{

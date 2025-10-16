@@ -6,7 +6,7 @@
 #include <pool.h>
 #include <prop.h>
 
-enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XMD , NS_CFY, NS_LAST };
+enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XMD , NS_CFY, NS_HTM, NS_LAST };
 typedef enum nscode nscode;
 typedef nscode nsrefs[NS_LAST];
 
@@ -24,6 +24,7 @@ struct tree {
   struct node *root;
   struct node *curr;
   nsrefs ns_used;
+  int rootless; /* non-zero means don't print root node */
 };
 
 typedef struct tree Tree;

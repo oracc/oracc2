@@ -157,7 +157,7 @@ ch_elt_Sp(Cfy *c, Elt *e)
 {
   const char *lw = "";
   if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
-      && ci_j == ((Line*)c->elt_lines[ci_i]->epp[0]->data)->last_w)
+      && ci_j == ((Line*)curr_div->elt_lines[ci_i]->epp[0]->data)->last_w)
     lw = " cfy-penult";
   fprintf(c->o, "<span class=\"cfy-pseudo-s%s\"></span>", lw);
 }
@@ -170,7 +170,7 @@ ch_elt_W(Cfy *c, Elt *e)
       const char *lw = "";
       /*fprintf(stderr, "ch_elt_W processing epp[%d]\n", ci_j);*/
       if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
-	  && ci_j == ((Line*)c->elt_lines[ci_i]->epp[0]->data)->last_w)
+	  && ci_j == ((Line*)curr_div->elt_lines[ci_i]->epp[0]->data)->last_w)
 	lw = " cfy-penult";
       fprintf(c->o, "<span class=\"ws%s\"> </span>", lw);
     }

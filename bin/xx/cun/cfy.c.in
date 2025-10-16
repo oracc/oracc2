@@ -25,7 +25,6 @@ Cfy cfy;
 int buildmode = 0;
 int config_and_exit = 0;
 int force = 0; /* default is not to remake if the output already exists */
-int no_output = 0;
 int trace = 0;
 int verbose = 0;
 
@@ -70,6 +69,9 @@ cfy_init(void)
   cfy.m_cell = memo_init(sizeof(Cell), 256);
   cfy.m_elt = memo_init(sizeof(Elt), 1024);
   cfy.m_eltline = memo_init(sizeof(Eltline), 256);
+  cfy.m_div = memo_init(sizeof(Div), 256);
+  cfy.m_heading = memo_init(sizeof(Heading), 16);
+
   /*cfy.body = list_create(LIST_SINGLE);*/
   cfy_reader_init();
   cfy.o = stdout;
@@ -103,7 +105,7 @@ cfy_term(void)
   hash_free(cfy.hfonts, NULL);
   memo_term(cfy.m_class);
   memo_term(cfy.m_elt);
-  free(cfy.elt_lines); /* this one is calloc'ed */
+  /*free(cfy.elt_lines);*/ /* this one is calloc'ed */
   memo_term(cfy.m_eltline);
   memo_term(cfy.m_cell);
   memo_term(cfy.m_line);
@@ -113,29 +115,37 @@ cfy_term(void)
 }
 
 static void
-cfy_post(Cfy *c)
+cfy_post_div(Cfy *c, Div *dp)
 {
   /* Flatten the list of lists into an array of arrays */
-  c->elt_lines = calloc(list_len(c->lines)+1, sizeof(Eltline*));
+  dp->elt_lines = calloc(list_len(c->lines)+1, sizeof(Eltline*));
   
   int i;
   List *lp;
   for (i = 0, lp = list_first(c->lines); lp; ++i, lp = list_next(c->lines))
     {
-      c->elt_lines[i] = memo_new(c->m_eltline);
-      c->elt_lines[i]->epp = (Elt**)list2array_c(lp, &c->elt_lines[i]->len);
+      dp->elt_lines[i] = memo_new(c->m_eltline);
+      dp->elt_lines[i]->epp = (Elt**)list2array_c(lp, &dp->elt_lines[i]->len);
     }
-  c->elt_lines[i] = NULL;
+  dp->elt_lines[i] = NULL;
   
-  for (i = 0; c->elt_lines[i]; ++i)
+  for (i = 0; dp->elt_lines[i]; ++i)
     {
       if (c->cfg && c->cfg->hsubkeys)
-	cfy_subbings(c, c->elt_lines[i]);
+	cfy_subbings(c, dp->elt_lines[i]);
       if (ELT_Jcs == c->c->justify || ELT_Jcp == c->c->justify)
-	cfy_charspace(c, c->elt_lines[i]);
-      cfy_ligatures(c, c->elt_lines[i]->epp);
-      cfy_breakage(c, c->elt_lines[i]->epp);
+	cfy_charspace(c, dp->elt_lines[i]);
+      cfy_ligatures(c, dp->elt_lines[i]->epp);
+      cfy_breakage(c, dp->elt_lines[i]->epp);
     }
+}
+
+static void
+cfy_post(Cfy *c)
+{
+  Div *dp;
+  for (dp = list_first(c->divs_with_lines); dp; dp = list_next(c->divs_with_lines))
+    cfy_post_div(c, dp);
 }
 
 int
@@ -235,12 +245,12 @@ main(int argc, char **argv)
 	cfy.project_ccf = (ccp)pool_copy((uccp)cfyccf, cfy.p);
     }
   
-  if (verbose)
+  if (verbose > 1)
     show_vars();
 
   cfy_lgs(&cfy);
   
-  if (!no_output)
+  if (!cfy.no_output)
     {
       if (f[0] && !access(f[0], R_OK))
 	{
@@ -254,6 +264,8 @@ main(int argc, char **argv)
 		}
 	    }
 	}
+      nodeh_register(treexml_o_handlers, NS_CFY, treexml_o_generic);
+      nodeh_register(treexml_c_handlers, NS_CFY, treexml_c_generic);
     }
   else
     {
@@ -270,6 +282,12 @@ main(int argc, char **argv)
     runexpatuD(stdin_xtf ? i_stdin : i_list, f, cfy_sH, cfy_eH, &cfy);
 
   cfy_post(&cfy);
+
+  if (verbose)
+    {
+      cfy_body_debug(&cfy);
+      exit(1);
+    }
   
   if (cfy.html)
     cfy_render(&cfy, "html");
@@ -316,7 +334,7 @@ opts(int opt, const char *arg)
       break;
 #endif
     case 'n':
-      no_output = 1;
+      cfy.no_output = 1;
       break;
     case 'o':
       outfile = arg;
@@ -340,7 +358,7 @@ opts(int opt, const char *arg)
       trace = 1;
       break;
     case 'U':
-      no_output = 1;
+      cfy.no_output = 1;
       cfy.coverage = 1;
       cfy.cov_list = arg;
       break;

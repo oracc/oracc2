@@ -23,9 +23,15 @@ cfy_body_init(Cfy *c, const char *name)
 {
   Tree *tp = tree_init();
   tree_ns_default(tp, NS_CFY);
-  tree_root(tp, NS_CFY, name, 0, NULL);
-  Div *b = xtfbody(name, strlen(name));
-  tp->root->user = (void*)(uintptr_t)b;
+  const char *n = (ccp)pool_copy((uccp)name, c->p);
+  tree_root(tp, NS_CFY, n, 0, NULL);
+  tp->rootless = 1;
+  Div *dp = memo_new(c->m_div);
+  Xtfbody *xp = xtfbody(name, strlen(n));
+  *dp = *xp;
+  tp->root->user = dp;
+  c->body = tp;
+  c->divs_with_lines = list_create(LIST_SINGLE);
   return tp;
 }
 
@@ -36,29 +42,45 @@ cfy_body(Cfy *c, Xtfbody *xp, const char **atts)
   Elt *ep = memo_new(c->m_elt);
   ep->line = pi_line;
   ep->etype = xp->e;
-  ep->data = xp;
-  Div *dp = ((Elt *)c->body->curr->user)->data;
+
+  Div *dp = memo_new(c->m_div);
+  *dp = *xp;
+  ep->data = dp;
+
   if (verbose)
-    fprintf(stderr, "cfy_body: called with div=%s[%s]\n", dp->name, dp->text);
-  if (xp->b < dp->b)
+    fprintf(stderr, "cfy_body: called with div=%s\n", dp->name);
+  Div *tdp = c->body->curr->user;
+  while (xp->b <= tdp->b)
     {
-      while (xp->b < dp->b)
-	{
-	  (void)tree_pop(c->body);
-	  dp = ((Elt *)c->body->curr->user)->data;
-	}
+      (void)tree_pop(c->body);
+      tdp = c->body->curr->user;
     }
-  else
-    {
-      (void)tree_add(c->body, NS_CFY, "div", c->body->curr->depth, NULL);
-      if (xp->b > dp->b)
-	(void)tree_push(c->body);
-    }      
-  return ep->data;
+  Node *np = tree_add(c->body, NS_CFY, "div", c->body->curr->depth, NULL);
+  np->text = dp->name;
+  np->user = dp;
+  if (xp->b > tdp->b)
+    (void)tree_push(c->body);
+
+  c->body->curr->user = dp;
+  return dp;
 }
 
 void
 cfy_body_term(void)
 {
   tree_term();
+}
+
+void
+cfy_body_debug(Cfy *c)
+{
+  c->body->rootless = 0;
+  tree_xml(stdout, c->body);
+}
+
+void
+cfy_body_lines(Cfy *c)
+{
+  curr_div->lines = list_create(LIST_SINGLE);
+  list_add(c->divs_with_lines, curr_div);
 }
