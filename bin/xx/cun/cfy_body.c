@@ -87,7 +87,6 @@ cfybody_debug_attr(Node *np, void *user)
 void
 cfybody_debug_user(Node *np, void *user)
 {
-  Xmlhelper *xhp = user;
   Div *dp = np->user;
   if (dp->elt_lines)
     ci_div(dp->c, dp);

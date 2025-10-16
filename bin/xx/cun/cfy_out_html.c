@@ -47,11 +47,28 @@ Tagfuncs ch_tags = {
   .l=ch_label
 };
 
+static void
+cfy_out_html_attr(Node *np, void *user)
+{
+  Div *dp = np->user;
+  fprintf(dp->c->o, " class=\"%s\" n=\"%s\"", dp->name, np->text);
+}
+
+static void
+cfy_out_html_user(Node *np, void *user)
+{
+  Div *dp = np->user;
+  if (dp->elt_lines)
+    ci_div(dp->c, dp);
+}
+
 void
 cfy_out_html_config(void)
 {
   ci_elt_p = ch_elt_p;
   ci_tags = &ch_tags;
+  nodeh_register(treexml_a_handlers, NS_CFY, (nodehandler)cfy_out_html_attr);
+  nodeh_register(treexml_u_handlers, NS_CFY, (nodehandler)cfy_out_html_user);
 }
 
 void
@@ -132,7 +149,7 @@ static void
 ch_foot(Cfy *c)
 {
   if (!c->weboutput)
-    fprintf(c->o, "</body></html>");
+    fprintf(c->o, "</div></body></html>");
 }
 
 static void

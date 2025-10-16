@@ -21,6 +21,7 @@ static void ci_b_closer(Cfy *c, void *reset);
 void
 ci_body(Cfy *c)
 {
+  tree_xml(c->o, c->body); 
 }
 
 void
