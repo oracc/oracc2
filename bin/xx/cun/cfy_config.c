@@ -197,6 +197,16 @@ cfy_cfg_font(Mloc m, Cfy *c, const char *pc, const char *nm)
   c->fontclasses[atoi(pc)] = cp;
 }
 
+void
+cfy_cfg_grid(Mloc m, Cfy *c, const char *t, const char *n)
+{
+  if ('o' == *t)
+    curr_cp->grid.o = strcmp(n, "0") ? n : NULL;
+  else
+    curr_cp->grid.s = strcmp(n, "0") ? n : NULL;
+  ++c->need_style;
+}
+
 int
 cfy_cfg_key(Mloc m, Cfy *c, const char *k)
 {

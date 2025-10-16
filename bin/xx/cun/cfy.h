@@ -62,8 +62,9 @@ typedef struct cfy
   const char *cov_list;
   int bare;
   int html;
-  int weboutput;
+  int need_style;
   int no_output;
+  int weboutput;
 } Cfy;
 
 /* An element is an input item such as a grapheme, ellipsis, ZWNJ,
@@ -138,6 +139,12 @@ typedef enum elt_type { ELT_NOT,
 			ELT_Bc /* body-column */,
 			ELT_LAST
 } Etype;
+
+typedef struct grid
+{
+  const char *o;
+  const char *s;
+} Grid;
 
 typedef struct cfg
 {
@@ -217,6 +224,7 @@ typedef struct class
   const char *width;
   const char *colwidths;
   Fnt *fntp; 
+  Grid grid;
   Cfy *cfyp;
 } Class;
 
@@ -261,6 +269,7 @@ typedef struct xtfbody
   struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
 				 NULL-terminated arrays of Eltline* */
   Cfy *c;
+  Grid g;
 } Xtfbody;
 typedef Xtfbody Div;
 extern struct xtfbody *xtfbody(register const char *str, register size_t len);
@@ -427,6 +436,7 @@ extern const char *elts_one_key(Elt *e);
 extern void cfy_cfg_asgn(Mloc m, Cfy *c, int nth, const char *memb, const char *val);
 extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 
+extern void cfy_cfg_grid(Mloc m, Cfy *c, const char *t, const char *n);
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
 extern int cfy_cfg_justify(Mloc m, Cfy *c, Etype e);
 extern void cfy_cfg_width(Mloc m, Cfy *c, const char *w);

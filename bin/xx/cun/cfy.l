@@ -51,15 +51,19 @@ jkwcp		"char-penult"
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_font_nm	([a-z0-9]+|cfy-[a-z]+-.*)
 kv_font_pc	"%"[0-9]{2,3}
+kv_grid_t	"object"|"surface"
 kv_key		cfy-[a-z]+-.*
 kw_ccf		^cfy-ccf
 kw_colwidths	^cfy-colwidths
 kw_font		^cfy-font
 kw_format     	^cfy-format
+kw_grid		^cfy-grid
 kw_key		^cfy-key
 kw_width	^cfy-width
 
+auto		"auto"
 grapheme	([a-zA-Z0-9\x80-\xff]+)
+integer		[0-9]+
 literal		'"'[^\"\n\r]+'"'
 member		[a-zA-Z0-9][a-zA-Z0-9_]
 pqx		([a-z0-9/]+:)?[PQX][0-9]{6}
@@ -77,7 +81,7 @@ return		"&r"
 sp		[ \t]+
 structmem      	"->"
 
-unit		([0-9][.0-9]*("em"|"px"|"□"|"%"))|"auto"
+unit		([0-9][.0-9]*("em"|"px"|"□"|"%"))
 
 value		"$"[a-zA-Z][a-zA-Z0-9_]*
 
@@ -90,6 +94,7 @@ zws		"&s"
 %x B
 %x C
 %x F
+%x G
 %x J
 %x JJ
 %x M
@@ -140,6 +145,16 @@ zws		"&s"
 
 <C>{ws}		{ ; }
 
+{kw_grid}	{ BEGIN G; return KW_GRID; }
+
+<G>{kv_grid_t}	{ lval(cfytext); return GRID_T; }
+
+<G>{integer}	{ BEGIN 0; lval(cfytext); return GRID_N; }
+
+<G>{auto}	{ BEGIN 0; lval(cfytext); return GRID_N; }
+
+<G>{ws}		{ ; }
+
 {kw_key}       	{ return KW_KEY; }
 
 {kv_key}       	{ lval(cfytext); return CFYKEY; }
@@ -155,6 +170,20 @@ zws		"&s"
 {kw_format}	{ BEGIN J; return KW_FORMAT; }
 
 {kw_width}	{ BEGIN J; return KW_WIDTH; }
+
+<J>{jeltl}	{ BEGIN 0; return ELTJl; }
+
+<J>{jeltr}	{ BEGIN 0; return ELTJr; }
+
+<J>{jeltc}	{ BEGIN 0; return ELTJc; }
+
+<J>{jelts}	{ BEGIN 0; return ELTJs; }
+
+<J>{jeltp}	{ BEGIN 0; return ELTJp; }
+
+<J>{jeltcs}     { BEGIN 0; return ELTJcs; }
+
+<J>{jeltcp}     { BEGIN 0; return ELTJcp; }
 
 <J>{jkwl}	{ BEGIN 0; return ELTJl; }
 
@@ -175,6 +204,12 @@ zws		"&s"
 <J>{rkwl}	{ BEGIN B; return ELTRl; }
 
 <J>{rkwc}	{ BEGIN B; return ELTRc; }
+
+<J>{reltb}	{ BEGIN B; return ELTRb; }
+
+<J>{reltl}	{ BEGIN B; return ELTRl; }
+
+<J>{reltc}	{ BEGIN B; return ELTRc; }
 
 <J>{unit}      	{ BEGIN 0; lval(cfytext); return UNIT; }
 

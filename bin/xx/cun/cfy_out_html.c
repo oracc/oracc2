@@ -100,6 +100,17 @@ ch_ruledata(Cfy *c)
 }
 
 static void
+html_style(Cfy *c)
+{
+  fputs("<style>\n", c->o);
+  if (c->c->grid.o)
+    fprintf(c->o, "    div[class='object'] {\n    display: flex;\n}\n");
+  if (c->c->grid.s)
+    fprintf(c->o, "\tdiv[class='surface'] { display: flex; }\n");
+  fputs("</style>\n", c->o);
+}
+
+static void
 ch_head(Cfy *c)
 {
   /* paradoxically, weboutput skips the html head/body because those
@@ -114,6 +125,8 @@ ch_head(Cfy *c)
 	      c->n);
       fputs("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
 	    "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>", c->o);
+      if (c->need_style)
+	html_style(c);
       if (html_css)
 	fprintf(c->o,
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"/>",
