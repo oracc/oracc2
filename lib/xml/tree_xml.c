@@ -20,6 +20,8 @@ struct ns_key_val {
 nodehandlers treexml_o_handlers;
 nodehandlers treexml_p_handlers;
 nodehandlers treexml_c_handlers;
+nodehandlers treexml_a_handlers; /* attr */
+nodehandlers treexml_u_handlers; /* text */
 
 void
 tree_ns_xml_print(Tree *tp, FILE *fp)
@@ -41,9 +43,15 @@ treexml_o_generic(Node *np, void *user)
   if (!np->rent)
     tree_ns_xml_print(np->tree, xhp->fp);
 
+  if (treexml_a_handlers[np->ns] && user)
+    treexml_a_handlers[np->ns](np, user);
+
   fputc('>', xhp->fp);
 
-  if (np->text)
+  if (treexml_u_handlers[np->ns] && user)
+    treexml_u_handlers[np->ns](np, user);
+
+  else if (np->text)
     fprintf(xhp->fp, "<text>%s</text>", xmlify((uccp)np->text));
 }
 

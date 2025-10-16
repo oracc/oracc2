@@ -91,7 +91,7 @@ rnvxml_init(struct xnn_data *xdp, const char *rncbase)
 }
 
 void
-rnvxml_term(/*Tree *tp*/)
+rnvxml_term(void /*Tree *tp*/)
 {
   /*rnvval_ee(tp->root->name);*/
 }

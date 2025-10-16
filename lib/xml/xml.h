@@ -22,6 +22,8 @@ typedef struct xmlhelper Xmlhelper;
 extern nodehandlers treexml_o_handlers;
 extern nodehandlers treexml_p_handlers;
 extern nodehandlers treexml_c_handlers;
+extern nodehandlers treexml_a_handlers;
+extern nodehandlers treexml_u_handlers;
 
 extern void tree_xml_node(Node *np, void *user);
 extern void tree_xml_post(Node *np, void *user);
