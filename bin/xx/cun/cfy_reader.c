@@ -16,6 +16,7 @@ int zws_pending = 0, zwnj_pending = 0, plus_pending = 0;
 
 static Elt *last_ep = NULL;
 static Line *curr_line;
+static Heading *curr_heading;
 static int prev_last_w; /* we keep the prev_last_w to use when we pop
 			   the final w of the line off the list */
 static int zwj_murub = 0;
@@ -151,6 +152,19 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   const char *zwnj = findAttr(atts, "g:zwnj");
   if (zwnj && *zwnj)
     list_add(c->line, &e_zwnj);
+}
+
+static void
+cfy_heading(Cfy *c, const char **atts)
+{
+  Elt *ep = memo_new(c->m_elt);
+  ep->line = pi_line;
+  ep->etype = ELT_L;
+  curr_heading = memo_new(c->m_heading);
+  curr_heading->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
+  curr_heading->level = atoi(findAttr(atts, "level"));
+  ep->data = curr_heading;
+  list_add(c->body, curr_heading);
 }
 
 static void
@@ -356,6 +370,10 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	{
 	  cfy_line(userData, atts);
 	}
+      else if (!strcmp(name, "h"))
+	{
+	  cfy_heading(userData, atts);
+	}
     }
 }
 
@@ -433,7 +451,10 @@ cfy_eH(void *userData, const char *name)
 	      last_ep->otf = NULL;
 	    }
 	}
-	
+    }
+  else if (!strcmp(name, "h"))
+    {
+      curr_heading->text = (ccp)pool_copy((uccp)charData_retrieve(), cfy.p);
     }
   (void)charData_discard();
 }

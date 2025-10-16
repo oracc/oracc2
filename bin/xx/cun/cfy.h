@@ -27,6 +27,7 @@ typedef struct cfy
   Memo *m_cfg;
   Memo *m_class;
   Memo *m_fnt;
+  Memo *m_heading;
   Memo *m_line;
   Memo *m_cell;
   Memo *m_elt;
@@ -99,6 +100,7 @@ typedef struct cfy
  * sequence as a whole.
  */
 typedef enum elt_type { ELT_NOT,
+			ELT_H /*@h(eading)*/,
 			ELT_L /*line*/,
 			ELT_C /*cell*/,
 			ELT_W /*word*/,
@@ -255,6 +257,13 @@ typedef struct elt
   const char *otf; /* from \1 or \cv01 etc */
   short line; /* don't need to store pi_file as long as cfy is a single-shot program */
 } Elt;
+
+typedef struct heading
+{
+  const char *text;
+  const char *xid;
+  int level;
+} Heading;
 
 typedef struct line
 {
