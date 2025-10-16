@@ -61,7 +61,8 @@ cfy_body(Cfy *c, Xtfbody *xp, const char **atts)
       tdp = c->body->curr->user;
     }
   Node *np = tree_add(c->body, NS_CFY, "div", c->body->curr->depth, NULL);
-  np->text = (ccp)pool_copy((uccp)findAttr(atts, "n"), c->p);
+  /* This will be empty for <m> nodes but we will catch that on cfy_eH */
+  dp->text = (ccp)pool_copy((uccp)findAttr(atts, "n"), c->p);
   np->user = dp;
   if (xp->b > tdp->b)
     (void)tree_push(c->body);
@@ -81,7 +82,7 @@ cfybody_debug_attr(Node *np, void *user)
 {
   Xmlhelper *xhp = user;
   Div *dp = np->user;
-  fprintf(xhp->fp, " class=\"%s\" n=\"%s\"", dp->name, np->text);
+  fprintf(xhp->fp, " class=\"%s\" n=\"%s\"", dp->name, dp->text);
 }
 
 void

@@ -51,7 +51,7 @@ static void
 cfy_out_html_attr(Node *np, void *user)
 {
   Div *dp = np->user;
-  fprintf(dp->c->o, " class=\"%s\" n=\"%s\"", dp->name, np->text);
+  fprintf(dp->c->o, " class=\"%s\" n=\"%s\"", dp->name, dp->text);
 }
 
 static void
