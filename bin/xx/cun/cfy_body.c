@@ -29,6 +29,7 @@ cfy_body_init(Cfy *c, const char *name, const char **atts)
   tree_root(tp, NS_CFY, n, 0, NULL);
   tp->rootless = 1;
   Div *dp = memo_new(c->m_div);
+  curr_div = dp;
   Xtfbody *xp = xtfbody(n, strlen(n));
   *dp = *xp;
   dp->c = c;

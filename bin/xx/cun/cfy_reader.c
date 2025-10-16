@@ -167,7 +167,9 @@ cfy_heading(Cfy *c, const char **atts)
   ep->data = curr_heading;
   if (!curr_div->lines)
     cfy_body_lines(c);
-  list_add(curr_div->lines, curr_heading);
+  List *hl = list_create(LIST_SINGLE);
+  list_add(hl, ep);
+  list_add(curr_div->lines, hl);
 }
 
 static void
