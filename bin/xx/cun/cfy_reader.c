@@ -295,7 +295,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
       Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
       if (cp)
 	*curr_cp = *cp;
-      cfy_body_init(userData, name);
+      cfy_body_init(userData, name, atts);
     }
   else if (!strcmp(name, "protocol") && !strcmp(findAttr(atts, "type"), "cfy"))
     {
@@ -333,7 +333,6 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		}
 	      else
 		oid = NULL;
-#if 1
 	      Class *gcp = curr_cp;
 	      const char *f = findAttr(atts, "g:font");
 	      if (f && *f)
@@ -347,12 +346,6 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		    }
 		}
 	      cfy_grapheme(userData, name, atts, utf8, gcp, oid);
-#else
-	      Class *cp = cfy_class(((Cfy*)userData), findAttr(atts, "cfy-key"), curr_cp);
-	      if (cp)
-		*curr_cp = *cp;
-	      cfy_grapheme(userData, name, atts, utf8, curr_cp, oid);
-#endif
 	    }
 	  if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
 	    ++inner;

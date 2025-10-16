@@ -4,8 +4,8 @@
 #include <xml.h>
 #include "cfy.h"
 
-/* This module manages the Cfy.body which tracks the current location
- * in XTF's segment/object/surface/fragment/column/fragment hierarchy.
+/* This module manages the Cfy.body which is a Tree representing XTF's
+ * segment/object/surface/fragment/column/fragment hierarchy.
  *
  * The XTF expression of this hierarchy differs between
  * xtf:transliteration and xtf:composite; the cfy implementation
@@ -13,7 +13,7 @@
  *
  * To implement this fully for @composites requires an audit of all of
  * the xtf:m and xtf:div uses in the corpus because these are defined
- * in the XTF schema to have text values.
+ * in the XTF schema to have free text values (D'oh!).
  *
  * The initial implementation handles all of the @transliteration
  * structure and those parts of @composite that mirror the
@@ -21,7 +21,7 @@
  */
 
 Tree *
-cfy_body_init(Cfy *c, const char *name)
+cfy_body_init(Cfy *c, const char *name, const char **atts)
 {
   Tree *tp = tree_init();
   tree_ns_default(tp, NS_CFY);
@@ -29,8 +29,10 @@ cfy_body_init(Cfy *c, const char *name)
   tree_root(tp, NS_CFY, n, 0, NULL);
   tp->rootless = 1;
   Div *dp = memo_new(c->m_div);
-  Xtfbody *xp = xtfbody(name, strlen(n));
+  Xtfbody *xp = xtfbody(n, strlen(n));
   *dp = *xp;
+  dp->c = c;
+  tp->root->text = (ccp)pool_copy((uccp)findAttr(atts, "n"), c->p);
   tp->root->user = dp;
   c->body = tp;
   c->divs_with_lines = list_create(LIST_SINGLE);
@@ -47,6 +49,7 @@ cfy_body(Cfy *c, Xtfbody *xp, const char **atts)
 
   Div *dp = memo_new(c->m_div);
   *dp = *xp;
+  dp->c = c;
   ep->data = dp;
 
   if (verbose)
@@ -74,9 +77,29 @@ cfy_body_term(void)
 }
 
 void
+cfybody_debug_attr(Node *np, void *user)
+{
+  Xmlhelper *xhp = user;
+  Div *dp = np->user;
+  fprintf(xhp->fp, " class=\"%s\" n=\"%s\"", dp->name, np->text);
+}
+
+void
+cfybody_debug_user(Node *np, void *user)
+{
+  Xmlhelper *xhp = user;
+  Div *dp = np->user;
+  if (dp->elt_lines)
+    ci_div(dp->c, dp);
+}
+
+void
 cfy_body_debug(Cfy *c)
 {
+  cfy_out_html_config();
   c->body->rootless = 0;
+  nodeh_register(treexml_a_handlers, NS_CFY, (nodehandler)cfybody_debug_attr);
+  nodeh_register(treexml_u_handlers, NS_CFY, (nodehandler)cfybody_debug_user);
   tree_xml(stdout, c->body);
 }
 

@@ -260,6 +260,7 @@ typedef struct xtfbody
   List *lines;
   struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
 				 NULL-terminated arrays of Eltline* */
+  Cfy *c;
 } Xtfbody;
 typedef Xtfbody Div;
 extern struct xtfbody *xtfbody(register const char *str, register size_t len);
@@ -388,6 +389,7 @@ extern const char *html_css;
 extern void cfy_eH(void *userData, const char *name);
 extern void cfy_sH(void *userData, const char *name, const char **atts);
 extern void cfy_out_html(Cfy *c);
+extern void cfy_out_html_config(void);
 extern void cfy_out_xml(Cfy *c);
 extern Class *cfy_class(Cfy *c, const char *key, Class *cp);
 extern void cfy_reader_init(void);
@@ -447,10 +449,13 @@ extern void cfy_cfg_font(Mloc m, Cfy *c, const char *pc, const char *nm);
 extern char *cfy_class_key(const char *fnt, const char *otf, const char *mag, const char *scr, const char *asl);
 
 extern Div *cfy_body(Cfy *c, Xtfbody *xp, const char **atts);
-extern Tree *cfy_body_init(Cfy *c, const char *name);
+extern Tree *cfy_body_init(Cfy *c, const char *name, const char **atts);
 extern void cfy_body_term(void);
 extern void cfy_body_debug(Cfy *c);
 extern void cfy_body_lines(Cfy *c);
+
+extern void ci_body(Cfy *c);
+extern void ci_div(Cfy *c, Div *dp);
 
 extern int ci_i, ci_j;
 

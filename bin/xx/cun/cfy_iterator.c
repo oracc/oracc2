@@ -29,6 +29,7 @@ ci_div(Cfy *c, Div *dp)
   static Cell content_cell = { 1, "cfy-content" };
   static Elt content_elt = { .data = &content_cell };
   curr_div = dp;
+  ci_tags->d_o(c);
   for (ci_i = 0; dp->elt_lines[ci_i]; ++ci_i)
     {
       ci_line_o(c, dp->elt_lines[ci_i]->epp[0]->data);
@@ -54,6 +55,7 @@ ci_div(Cfy *c, Div *dp)
 	ci_b_closer(c, "");
       ci_line_c(c);
     }
+  ci_tags->d_c(c);
 }
 
 static void

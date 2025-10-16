@@ -11,6 +11,8 @@ typedef void (ci_h_o)(Cfy*c);
 typedef void (ci_h_c)(Cfy*c);
 typedef void (ci_b_o)(Cfy*c, Btype b);
 typedef void (ci_b_c)(Cfy*c);
+typedef void (ci_d_o)(Cfy*c); /* div that contains lines, open/close */
+typedef void (ci_d_c)(Cfy*c);
 typedef void (ci_label)(Cfy*c,const char *label,int print);
 
 typedef struct tagfuncs
@@ -23,6 +25,8 @@ typedef struct tagfuncs
   ci_c_c *c_c;
   ci_b_o *b_o;
   ci_b_c *b_c;
+  ci_d_o *d_o;
+  ci_d_c *d_c;
   ci_label *l;
 } Tagfuncs;
 

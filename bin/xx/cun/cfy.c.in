@@ -118,11 +118,11 @@ static void
 cfy_post_div(Cfy *c, Div *dp)
 {
   /* Flatten the list of lists into an array of arrays */
-  dp->elt_lines = calloc(list_len(c->lines)+1, sizeof(Eltline*));
+  dp->elt_lines = calloc(list_len(dp->lines)+1, sizeof(Eltline*));
   
   int i;
   List *lp;
-  for (i = 0, lp = list_first(c->lines); lp; ++i, lp = list_next(c->lines))
+  for (i = 0, lp = list_first(dp->lines); lp; ++i, lp = list_next(dp->lines))
     {
       dp->elt_lines[i] = memo_new(c->m_eltline);
       dp->elt_lines[i]->epp = (Elt**)list2array_c(lp, &dp->elt_lines[i]->len);

@@ -19,11 +19,12 @@ static void ch_elt_R(Cfy*c, Elt *e);
 static void ch_elt_E(Cfy*c, Elt *e);
 static void ch_elt_X(Cfy*c, Elt *e);
 
-ci_elt* ch_elt_p[] = { NULL, NULL,
+ci_elt* ch_elt_p[] = { NULL, NULL, NULL,
 		       ci_cell_o,
 		       ch_elt_W, ch_elt_G, ch_elt_J, ch_elt_N,
 		       ch_elt_F, ch_elt_R, ch_elt_E, ch_elt_X,
-		       NULL, NULL, NULL, ch_elt_S, ch_elt_Sp, ch_elt_Hp };
+		       NULL, NULL, NULL, ch_elt_S, ch_elt_Sp, ch_elt_Hp,
+};
 
 static void ch_l_o(Cfy*c, Line *l);
 static void ch_l_c(Cfy*c);
@@ -33,6 +34,8 @@ static void ch_c_o(Cfy*c, Cell *cp);
 static void ch_c_c(Cfy*c);
 static void ch_b_o(Cfy*c, Btype b);
 static void ch_b_c(Cfy*c);
+static void ch_d_o(Cfy*c);
+static void ch_d_c(Cfy*c);
 static void ch_label(Cfy *c, const char *l, int print);
 
 Tagfuncs ch_tags = {
@@ -40,14 +43,21 @@ Tagfuncs ch_tags = {
   .h_o=ch_h_o, .h_c=ch_h_c,
   .c_o=ch_c_o, .c_c=ch_c_c,
   .b_o=ch_b_o, .b_c=ch_b_c,
+  .d_o=ch_d_o, .d_c=ch_d_c,
   .l=ch_label
 };
 
 void
-cfy_out_html(Cfy *c)
+cfy_out_html_config(void)
 {
   ci_elt_p = ch_elt_p;
   ci_tags = &ch_tags;
+}
+
+void
+cfy_out_html(Cfy *c)
+{
+  cfy_out_html_config();
   ch_head(c);
   ci_body(c);
   ch_foot(c);
@@ -111,6 +121,23 @@ ch_head(Cfy *c)
   if (c->c->colwidths)
     fprintf(c->o, " data-cfy-colwidths=\"%s\"", c->c->colwidths);
   fputc('>', c->o);
+  if (!cfy.bare)
+    fprintf(c->o,
+	    "<h1 class=\"p3h2 border-top heading\">"
+	    "<span class=\"cfy-generic\">Cuneified </span>"
+	    "<span class=\"cfy-specific\">%s</span></h1>", c->n);
+}
+
+static void
+ch_foot(Cfy *c)
+{
+  if (!c->weboutput)
+    fprintf(c->o, "</body></html>");
+}
+
+static void
+ch_d_o(Cfy *c)
+{
   char format_options[strlen(" cfy-boxed cfy-ruled cfy-crule0")];
   *format_options = '\0';
   if (c->c->rbox.e)
@@ -120,22 +147,14 @@ ch_head(Cfy *c)
   if (c->c->rcol.e)
     strcat(format_options, " cfy-crule");
   const char *justify = cfy_justify_class(c->c->justify);
-  if (!cfy.bare)
-    fprintf(c->o,
-	    "<h1 class=\"p3h2 border-top heading\">"
-	    "<span class=\"cfy-generic\">Cuneified </span>"
-	    "<span class=\"cfy-specific\">%s</span></h1>", c->n);
   fprintf(c->o, "<table class=\"cfy-table%s%s\">",
 	  format_options,
 	  justify);
 }
-
 static void
-ch_foot(Cfy *c)
+ch_d_c(Cfy *c)
 {
-  fprintf(c->o, "</table></div>");
-  if (!c->weboutput)
-    fprintf(c->o, "</body></html>");
+  fprintf(c->o, "</table>");
 }
 
 /* ch_elt_? */
