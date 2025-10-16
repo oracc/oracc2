@@ -470,12 +470,5 @@ cfy_eH(void *userData, const char *name)
     {
       curr_heading->text = (ccp)pool_copy((uccp)charData_retrieve(), cfy.p);
     }
-  else if (curr_div
-	   && ((xtfbody(name, strlen(name)))
-	       || (!strcmp(name, "m"))))
-    {
-      curr_div->text = (ccp)pool_copy((uccp)charData_retrieve(), ((Cfy*)userData)->p);
-      curr_div = NULL;
-    }
   (void)charData_discard();
 }

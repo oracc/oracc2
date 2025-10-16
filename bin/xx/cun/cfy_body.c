@@ -1,5 +1,7 @@
 #include <oraccsys.h>
 #include <tree.h>
+#include <runexpat.h>
+#include <xml.h>
 #include "cfy.h"
 
 /* This module manages the Cfy.body which tracks the current location
@@ -56,7 +58,7 @@ cfy_body(Cfy *c, Xtfbody *xp, const char **atts)
       tdp = c->body->curr->user;
     }
   Node *np = tree_add(c->body, NS_CFY, "div", c->body->curr->depth, NULL);
-  np->text = dp->name;
+  np->text = (ccp)pool_copy((uccp)findAttr(atts, "n"), c->p);
   np->user = dp;
   if (xp->b > tdp->b)
     (void)tree_push(c->body);
