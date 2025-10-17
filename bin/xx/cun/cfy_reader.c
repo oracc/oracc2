@@ -160,7 +160,7 @@ cfy_heading(Cfy *c, const char **atts)
 {
   Elt *ep = memo_new(c->m_elt);
   ep->line = pi_line;
-  ep->etype = ELT_L;
+  ep->etype = ELT_H;
   curr_heading = memo_new(c->m_heading);
   curr_heading->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   curr_heading->level = atoi(findAttr(atts, "level"));

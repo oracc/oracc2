@@ -33,23 +33,35 @@ ci_div(Cfy *c, Div *dp)
   ci_tags->d_o(c);
   for (ci_i = 0; dp->elt_lines[ci_i]; ++ci_i)
     {
-      ci_line_o(c, dp->elt_lines[ci_i]->epp[0]->data);
-      for (ci_j = 1; dp->elt_lines[ci_i]->epp[ci_j]; ++ci_j)
+      Elt *epp_curr;
+      for (ci_j = 0; (epp_curr = dp->elt_lines[ci_i]->epp[ci_j]); ++ci_j)
 	{
-	  if (ELT_C == dp->elt_lines[ci_i]->epp[ci_j]->etype)
+	  switch (epp_curr->etype)
 	    {
-	      ci_cell_o(c, dp->elt_lines[ci_i]->epp[ci_j]);
-	      if (last_b != dp->elt_lines[ci_i]->epp[ci_j]->btype)
-		ci_b_switch(c, dp->elt_lines[ci_i]->epp[ci_j]->btype);
-	    }
-	  else
-	    {
-	      if (ci_elt_p[dp->elt_lines[ci_i]->epp[ci_j]->etype] && line_cell_pending)
+	    case ELT_L:
+	      ci_line_o(c, epp_curr->data);
+	      break;
+	    case ELT_C:
+	      ci_cell_o(c, epp_curr);
+	      if (last_b != epp_curr->btype)
+		ci_b_switch(c, epp_curr->btype);
+	    case ELT_H:
+	      {
+		Cell hcell = { 3, NULL};
+		ci_tags->l_o(c, NULL);
+		ci_tags->c_o(c, &hcell);
+		ci_elt_p[epp_curr->etype](c, epp_curr);
+		ci_tags->c_c(c);
+	      }
+	      break;
+	    default:
+	      if (ci_elt_p[epp_curr->etype] && line_cell_pending)
 		ci_cell_o(c, &content_elt);
-	      if (last_b != dp->elt_lines[ci_i]->epp[ci_j]->btype)
-		ci_b_switch(c, dp->elt_lines[ci_i]->epp[ci_j]->btype);
-	      if (ci_elt_p[dp->elt_lines[ci_i]->epp[ci_j]->etype])
-		ci_elt_p[dp->elt_lines[ci_i]->epp[ci_j]->etype](c, dp->elt_lines[ci_i]->epp[ci_j]);
+	      if (last_b != epp_curr->btype)
+		ci_b_switch(c, epp_curr->btype);
+	      if (ci_elt_p[epp_curr->etype])
+		ci_elt_p[epp_curr->etype](c, epp_curr);
+	      break;
 	    }
 	}
       if (brk_str[last_b])

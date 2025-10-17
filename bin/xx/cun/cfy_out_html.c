@@ -7,6 +7,7 @@ extern const char *pi_file;
 static void ch_head(Cfy *c);
 static void ch_foot(Cfy *c);
 
+static void ch_elt_H(Cfy*c, Elt *e);
 static void ch_elt_Hp(Cfy*c, Elt *e);
 static void ch_elt_S(Cfy*c, Elt *e);
 static void ch_elt_Sp(Cfy*c, Elt *e);
@@ -19,7 +20,7 @@ static void ch_elt_R(Cfy*c, Elt *e);
 static void ch_elt_E(Cfy*c, Elt *e);
 static void ch_elt_X(Cfy*c, Elt *e);
 
-ci_elt* ch_elt_p[] = { NULL, NULL, NULL,
+ci_elt* ch_elt_p[] = { NULL, ch_elt_H, NULL,
 		       ci_cell_o,
 		       ch_elt_W, ch_elt_G, ch_elt_J, ch_elt_N,
 		       ch_elt_F, ch_elt_R, ch_elt_E, ch_elt_X,
@@ -52,6 +53,13 @@ cfy_out_html_attr(Node *np, void *user)
 {
   Div *dp = np->user;
   fprintf(dp->c->o, " class=\"%s\" n=\"%s\"", dp->name, dp->text);
+  if (dp->c->need_style)
+    {
+      if (!strcmp(dp->name, "object") && dp->c->c->grid.o)
+	fputs(" style=\"display: flex;\"", dp->c->o);
+      else if (!strcmp(dp->name, "surface") && dp->c->c->grid.s)
+	fputs(" style=\"display: flex;\"", dp->c->o);
+    }
 }
 
 static void
@@ -99,6 +107,8 @@ ch_ruledata(Cfy *c)
   ch_ruledata_sub(c, "c", &c->c->rcol);
 }
 
+#if 0
+/* Needs to go on <div> because P4 doesn't use the cfy-generated <head> */
 static void
 html_style(Cfy *c)
 {
@@ -109,6 +119,7 @@ html_style(Cfy *c)
     fprintf(c->o, "\tdiv[class='surface'] { display: flex; }\n");
   fputs("</style>\n", c->o);
 }
+#endif
 
 static void
 ch_head(Cfy *c)
@@ -125,8 +136,10 @@ ch_head(Cfy *c)
 	      c->n);
       fputs("<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/fonts.css\"/>"
 	    "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/p4-cuneify.css\"/>", c->o);
+#if 0
       if (c->need_style)
 	html_style(c);
+#endif
       if (html_css)
 	fprintf(c->o,
 		"<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\"/>",
@@ -193,6 +206,12 @@ static void
 ch_elt_S(Cfy *c, Elt *e)
 {
   fprintf(c->o, "<span class=\"zws\"> </span>");
+}
+
+static void
+ch_elt_H(Cfy *c, Elt *e)
+{
+  fprintf(c->o, "<span class=\"cfy-heading\">%s</span>", ((Heading*)e->data)->text);
 }
 
 static void
@@ -411,9 +430,12 @@ static void
 ch_l_o(Cfy *c, Line *l)
 {
   ch_c_o(NULL,NULL);
-  fprintf(c->o,
-	  "<tr id=\"cfy.%s\" data-label=\"%s\">",
-	  l->xid, l->label);
+  if (l)
+    fprintf(c->o,
+	    "<tr id=\"cfy.%s\" data-label=\"%s\">",
+	    l->xid, l->label);
+  else
+    fprintf(c->o, "<tr class=\"heading\">");
 }
 
 static void
