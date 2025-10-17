@@ -61,8 +61,8 @@ if [ "$lgs" != "" ]; then
 fi
 
 # Generate the cuneified output
->&2 echo $0 calling "$oraccbin/$cuneify $Parg -vw -q $prox_project:$PQX" 
-$oraccbin/$cuneify $Parg -vw -q $prox_project:$PQX
+>&2 echo $0 calling "$oraccbin/$cuneify $Parg -w -q $prox_project:$PQX" 
+$oraccbin/$cuneify $Parg -w -q $prox_project:$PQX
 
 if [ ! $? -eq 0 ]; then
     echo "Failed call invoked as:" >&2

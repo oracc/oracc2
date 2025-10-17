@@ -56,9 +56,9 @@ cfy_out_html_attr(Node *np, void *user)
   if (dp->c->need_style)
     {
       if (!strcmp(dp->name, "object") && dp->c->c->grid.o)
-	fputs(" style=\"display: flex;\"", dp->c->o);
+	fputs(" style=\"display: flex; align-items: flex-start;\"", dp->c->o);
       else if (!strcmp(dp->name, "surface") && dp->c->c->grid.s)
-	fputs(" style=\"display: flex;\"", dp->c->o);
+	fputs(" style=\"display: flex; align-items: flex-start;\"", dp->c->o);
     }
 }
 
