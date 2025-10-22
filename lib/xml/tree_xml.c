@@ -50,7 +50,6 @@ treexml_o_generic(Node *np, void *user)
 
   if (treexml_u_handlers[np->ns] && user)
     treexml_u_handlers[np->ns](np, user);
-
   else if (np->text)
     fprintf(xhp->fp, "<text>%s</text>", xmlify((uccp)np->text));
 }

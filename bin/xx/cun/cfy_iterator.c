@@ -21,7 +21,7 @@ static void ci_b_closer(Cfy *c, void *reset);
 void
 ci_body(Cfy *c)
 {
-  tree_xml(c->o, c->body); 
+  tree_xml(c->o, c->body);
 }
 
 void
@@ -47,6 +47,7 @@ ci_div(Cfy *c, Div *dp)
 		ci_b_switch(c, epp_curr->btype);
 	    case ELT_H:
 	      {
+		/* only @h2 and above are processed through here; @h1 are attached to the div */
 		Cell hcell = { 3, NULL};
 		ci_tags->l_o(c, NULL);
 		ci_tags->c_o(c, &hcell);

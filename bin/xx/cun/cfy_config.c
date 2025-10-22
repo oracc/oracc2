@@ -202,6 +202,8 @@ cfy_cfg_grid(Mloc m, Cfy *c, const char *t, const char *n)
 {
   if ('o' == *t)
     curr_cp->grid.o = strcmp(n, "0") ? n : NULL;
+  else if ('c' == *t)
+     curr_cp->grid.c = strcmp(n, "0") ? n : NULL;
   else
     curr_cp->grid.s = strcmp(n, "0") ? n : NULL;
   ++c->need_style;

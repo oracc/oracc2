@@ -144,6 +144,7 @@ typedef struct grid
 {
   const char *o;
   const char *s;
+  const char *c;
 } Grid;
 
 typedef struct cfg
@@ -265,11 +266,13 @@ typedef struct xtfbody
   Etype e;
   /*const char *xid;*/ /*needed?*/
   const char *text;
+  struct elt *head;			/* use Elt not Heading so it can be passed to ch_elt_H */
   List *lines;
   struct eltline **elt_lines; /* NULL-terminated array of lines rewritten as
 				 NULL-terminated arrays of Eltline* */
   Cfy *c;
   Grid g;
+  /*int o_o, s_o, c_o; *//* grid div open flags */
 } Xtfbody;
 typedef Xtfbody Div;
 extern struct xtfbody *xtfbody(register const char *str, register size_t len);
@@ -293,6 +296,7 @@ typedef struct elt
   const char *key;/* ASL grapheme key for type ELT_G */
   const char *title; /* value or sign name */
   const char *otf; /* from \1 or \cv01 etc */
+  int indented; /* does this element follow a ';' in ATF? */
   short line; /* don't need to store pi_file as long as cfy is a single-shot program */
 } Elt;
 
@@ -466,6 +470,9 @@ extern void cfy_body_lines(Cfy *c);
 
 extern void ci_body(Cfy *c);
 extern void ci_div(Cfy *c, Div *dp);
+
+extern void treexml_o_cfy(Node *np, void *user);
+extern void treexml_c_cfy(Node *np, void *user);
 
 extern int ci_i, ci_j;
 

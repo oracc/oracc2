@@ -25,11 +25,13 @@ cfy_charify(Cfy *c, Elt *ep, List *lp)
 	  g[0] = w[i]; g[1]=L'\0';
 	  Elt *xep = elt_clone(c, ep);
 	  xep->data = hpool_copy(wcs2utf(g, 1), c->hp);
+	  xep->indented = ep->indented;
 	  list_add(lp, xep);
 	  if (w[i+1])
 	    {
 	      Elt *ep2 = memo_new(c->m_elt);
 	      ep2->etype = ELT_Sp;
+	      ep2->indented = ep->indented;
 	      curr_line->last_w = list_len(lp);
 	      list_add(lp, ep2);
 	    }
@@ -49,7 +51,11 @@ cfy_charspace(Cfy *c, Eltline *elp)
       if (ELT_G == elp->epp[i]->etype)
 	{
 	  if (elp->epp[i]->prev->etype == ELT_G)
-	    list_add(lp, &e_hp);
+	    {
+	      Elt *hp = elt_clone(c, &e_hp);
+	      hp->indented = elp->epp[i]->indented;
+	      list_add(lp, hp);
+	    }
 	  cfy_charify(c, elp->epp[i], lp);
 	}
       else

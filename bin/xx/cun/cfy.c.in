@@ -264,8 +264,8 @@ main(int argc, char **argv)
 		}
 	    }
 	}
-      nodeh_register(treexml_o_handlers, NS_CFY, treexml_o_generic);
-      nodeh_register(treexml_c_handlers, NS_CFY, treexml_c_generic);
+      nodeh_register(treexml_o_handlers, NS_CFY, treexml_o_cfy);
+      nodeh_register(treexml_c_handlers, NS_CFY, treexml_c_cfy);
     }
   else
     {

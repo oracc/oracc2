@@ -51,7 +51,7 @@ jkwcp		"char-penult"
 kv_ccf		[a-zA-Z0-9][-a-zA-Z0-9]*".ccf"
 kv_font_nm	([a-z0-9]+|cfy-[a-z]+-.*)
 kv_font_pc	"%"[0-9]{2,3}
-kv_grid_t	"object"|"surface"
+kv_grid_t	"objects"|"surfaces"|"columns"
 kv_key		cfy-[a-z]+-.*
 kw_ccf		^cfy-ccf
 kw_colwidths	^cfy-colwidths

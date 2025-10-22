@@ -4,6 +4,9 @@
 
 extern const char *pi_file;
 
+static int dp_o_o, dp_s_o, dp_c_o;
+static int need_wrapper;
+
 static void ch_head(Cfy *c);
 static void ch_foot(Cfy *c);
 
@@ -48,24 +51,76 @@ Tagfuncs ch_tags = {
   .l=ch_label
 };
 
+/* the user hook is called after the <div> is generated but we want to
+   switch the <h1> up before the <div> */
+void
+treexml_o_cfy(Node *np, void *user)
+{
+  Div *dp = np->user;
+
+  /* If the div level is a grid, output the wrapper and set the
+     grid_open flag for the level */
+  if (dp->c->need_style)
+    {
+      if (
+	  (!strcmp(dp->name, "object") && dp->c->c->grid.o && !dp_o_o)
+	  || (!strcmp(dp->name, "surface") && dp->c->c->grid.s && !dp_s_o)
+	  || (!strcmp(dp->name, "column") && dp->c->c->grid.c && !dp_c_o)
+	  )
+	{
+	  fprintf(dp->c->o, "<div class=\"%s-flex\"", dp->name);
+	  fputs(" style=\"display: flex; align-items: flex-start;\"", dp->c->o);
+	  fputs(">", dp->c->o);
+	  switch (*dp->name)
+	    {
+	    case 'o': dp_o_o = 1; break;
+	    case 's': dp_s_o = 1; break;
+	    case 'c': dp_c_o = 1; break;
+	    }
+	}
+    }
+
+  treexml_o_generic(np, user);  
+}
+
+void
+treexml_c_cfy(Node *np, void *user)
+{
+  Xmlhelper *xhp = user;
+  fprintf(xhp->fp, "</%s>", np->name);
+  Div *dp = np->user;
+  if (dp->b == XB_OBJ || dp->b == XB_SRF || dp->b == XB_COL)
+    {
+      if ((dp_c_o && strcmp(dp->name, "column"))
+	  || (!dp_c_o && dp_s_o && strcmp(dp->name, "surface"))
+	  || (!dp_c_o && !dp_s_o && dp_o_o && strcmp(dp->name, "object")))
+	{
+	  fputs("</div>", dp->c->o);
+	  switch (*dp->name)
+	    {
+	    case 'o': dp_o_o = 0; break;
+	    case 's': dp_s_o = 0; break;
+	    case 'c': dp_c_o = 0; break;
+	    }
+	}
+    }
+}
+
 static void
 cfy_out_html_attr(Node *np, void *user)
 {
   Div *dp = np->user;
   fprintf(dp->c->o, " class=\"%s\" n=\"%s\"", dp->name, dp->text);
-  if (dp->c->need_style)
-    {
-      if (!strcmp(dp->name, "object") && dp->c->c->grid.o)
-	fputs(" style=\"display: flex; align-items: flex-start;\"", dp->c->o);
-      else if (!strcmp(dp->name, "surface") && dp->c->c->grid.s)
-	fputs(" style=\"display: flex; align-items: flex-start;\"", dp->c->o);
-    }
 }
 
 static void
 cfy_out_html_user(Node *np, void *user)
 {
   Div *dp = np->user;
+
+  if (dp->head)
+    ch_elt_H(dp->c, dp->head);
+
   if (dp->elt_lines)
     ci_div(dp->c, dp);
 }
@@ -106,20 +161,6 @@ ch_ruledata(Cfy *c)
   ch_ruledata_sub(c, "l", &c->c->rline);
   ch_ruledata_sub(c, "c", &c->c->rcol);
 }
-
-#if 0
-/* Needs to go on <div> because P4 doesn't use the cfy-generated <head> */
-static void
-html_style(Cfy *c)
-{
-  fputs("<style>\n", c->o);
-  if (c->c->grid.o)
-    fprintf(c->o, "    div[class='object'] {\n    display: flex;\n}\n");
-  if (c->c->grid.s)
-    fprintf(c->o, "\tdiv[class='surface'] { display: flex; }\n");
-  fputs("</style>\n", c->o);
-}
-#endif
 
 static void
 ch_head(Cfy *c)
@@ -197,7 +238,14 @@ ch_d_o(Cfy *c)
 static void
 ch_d_c(Cfy *c)
 {
-  fprintf(c->o, "</table>");
+  fputs("</table>", c->o);
+#if 0
+  if (need_wrapper)
+    {
+      fputs("</div>", c->o);
+      need_wrapper = 0;
+    }
+#endif
 }
 
 /* ch_elt_? */
@@ -208,26 +256,43 @@ ch_elt_S(Cfy *c, Elt *e)
   fprintf(c->o, "<span class=\"zws\"> </span>");
 }
 
+/* If a transliteration uses @h1 or @h2 etc, @h1 should be at the
+   start of a block because they are output as <h1> outside the table;
+   @h2 etc., are output as <tr> within the transliteration */
 static void
 ch_elt_H(Cfy *c, Elt *e)
 {
-  fprintf(c->o, "<span class=\"cfy-heading\">%s</span>", ((Heading*)e->data)->text);
+  Heading *hp = e->data;
+  if (hp->level == 1)
+    {
+      /* <div class=\"cfy-wrapper\"> */
+      fprintf(c->o, "<h1 class=\"cfy-heading\">%s</h1>", hp->text);
+#if 0
+      need_wrapper = 1;
+#endif
+    }
+  else
+    fprintf(c->o, "<span class=\"cfy-heading\">%s</span>", hp->text);
 }
 
 static void
 ch_elt_Hp(Cfy *c, Elt *e)
 {
-  fputs("<span class=\"cfy-pseudo-h\"></span>", c->o);
+  if (!e->indented)
+    fputs("<span class=\"cfy-pseudo-h\"></span>", c->o);
 }
 
 static void
 ch_elt_Sp(Cfy *c, Elt *e)
 {
-  const char *lw = "";
-  if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
-      && ci_j == ((Line*)curr_div->elt_lines[ci_i]->epp[0]->data)->last_w)
-    lw = " cfy-penult";
-  fprintf(c->o, "<span class=\"cfy-pseudo-s%s\"></span>", lw);
+  if (!e->indented)
+    {
+      const char *lw = "";
+      if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
+	  && ci_j == ((Line*)curr_div->elt_lines[ci_i]->epp[0]->data)->last_w)
+	lw = " cfy-penult";
+      fprintf(c->o, "<span class=\"cfy-pseudo-s%s\"></span>", lw);
+    }
 }
 
 static void
@@ -435,13 +500,14 @@ ch_l_o(Cfy *c, Line *l)
 	    "<tr id=\"cfy.%s\" data-label=\"%s\">",
 	    l->xid, l->label);
   else
-    fprintf(c->o, "<tr class=\"heading\">");
+    fprintf(c->o, "<tr class=\"cfy-heading\">");
 }
 
 static void
 ch_l_c(Cfy *c)
 {
-  fputs("</tr>", c->o);
+  /*if (!need_wrapper)*/
+    fputs("</tr>", c->o);
 }
 
 static void

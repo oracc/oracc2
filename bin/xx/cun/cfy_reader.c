@@ -4,7 +4,7 @@
 #include <xml.h>
 #include "cfy.h"
 
-int in_l = 0, inner = 0;
+int in_l = 0, inner = 0, indented = 0;
 int protocol_cfy_ccf;
 char innertags[128];
 
@@ -34,14 +34,22 @@ breakage(const char *name, const char **atts)
   return BRK_NONE;
 }
 
+static Elt *
+new_elt(Cfy *c, Etype e)
+{
+  Elt *ep = memo_new(c->m_elt);
+  ep->etype = e;
+  ep->line = pi_line;
+  ep->prev = last_ep;
+  last_ep = ep;
+  ep->indented = indented;
+  return ep;
+}
+
 static void
 cfy_cell(Cfy *c, const char **atts)
 {
-  Elt *ep = memo_new(c->m_elt);
-  ep->line = pi_line;
-  ep->etype = ELT_C;
-  ep->prev = last_ep;
-  last_ep = ep;
+  Elt *ep = new_elt(c, ELT_C);
   Cell *cellp = memo_new(c->m_cell);
   const char *span = findAttr(atts, "span");
   if (span)
@@ -104,11 +112,7 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
   if (!c->line)
     c->line = list_create(LIST_DOUBLE);
 
-  Elt *ep = memo_new(c->m_elt);
-  ep->line = pi_line;
-  ep->prev = last_ep;
-  last_ep = ep;
-  ep->etype = ELT_G;
+  Elt *ep = new_elt(c, ELT_G);
   const char *b = findAttr(atts, "g:delim");
   if (plus_pending || '+' == *b)
     {
@@ -158,30 +162,29 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
 static void
 cfy_heading(Cfy *c, const char **atts)
 {
-  Elt *ep = memo_new(c->m_elt);
-  ep->line = pi_line;
-  ep->etype = ELT_H;
+  Elt *ep = new_elt(c, ELT_H);
   curr_heading = memo_new(c->m_heading);
   curr_heading->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   curr_heading->level = atoi(findAttr(atts, "level"));
   ep->data = curr_heading;
-  if (!curr_div->lines)
-    cfy_body_lines(c);
-  List *hl = list_create(LIST_SINGLE);
-  list_add(hl, ep);
-  list_add(curr_div->lines, hl);
+  if (curr_heading->level == 1)
+    curr_div->head = ep;
+  else
+    {
+      if (!curr_div->lines)
+	cfy_body_lines(c);
+      List *hl = list_create(LIST_SINGLE);
+      list_add(hl, ep);
+      list_add(curr_div->lines, hl);
+    }
 }
 
 static void
 cfy_line(Cfy *c, const char **atts)
 {
-  Elt *ep = memo_new(c->m_elt);
-  ep->line = pi_line;
+  Elt *ep = new_elt(c, ELT_L);
   if (verbose)
     fprintf(stderr, "%s:%d:%s\n", pi_file, ep->line = (short)pi_line, c->pqx);
-  ep->etype = ELT_L;
-  ep->prev = last_ep;
-  last_ep = ep;
   curr_line = memo_new(c->m_line);
   curr_line->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
 
@@ -217,17 +220,17 @@ cfy_x(Cfy *c, const char **atts, Btype brk, Class *cp)
     zwj_murub = 0;
 #endif
   
-  Elt *ep = memo_new(c->m_elt);
-  ep->line = pi_line;
-  ep->prev = last_ep;
-  last_ep = ep;
+  Elt *ep = new_elt(c, ELT_E); /* ELT_E gets reset depending on g:x type */
   const char *gt = gt=findAttr(atts,"g:type");
   ep->atype = (ccp)pool_copy((uccp)gt, cfy.p);
   ep->xid = (ccp)pool_copy((uccp)get_xml_id(atts), c->p);
   if (!strcmp(gt, "ellipsis"))
     ep->etype = ELT_E;
   else if (!strcmp(gt, "newline"))
-    ep->etype = ELT_R;
+    {
+      ep->etype = ELT_R;
+      indented = 1;
+    }
   else
     ep->etype = ELT_X;
   ep->btype = brk;
@@ -252,11 +255,7 @@ cfy_ws(Cfy *c)
     }
   else
     {
-      Elt *ep = memo_new(c->m_elt);
-      ep->line = pi_line;
-      ep->etype = ELT_W;
-      ep->prev = last_ep;
-      last_ep = ep;
+      Elt *ep = new_elt(c, ELT_W);
       prev_last_w = curr_line->last_w;
       curr_line->last_w = list_len(c->line);
       list_add(c->line, ep);
@@ -389,7 +388,7 @@ cfy_eH(void *userData, const char *name)
 {
   if (!strcmp(name, "l"))
     {
-      in_l = inner = 0;
+      in_l = inner = indented = 0;
       if (!curr_div->lines)
 	cfy_body_lines(userData);
       if (((Cfy*)userData)->cline)
