@@ -776,18 +776,24 @@ function onloadCuneify(c) {
     let ffs = c.getAttribute("data-cfy-ffs");
     let s = c.getAttribute("data-cfy-scr");
 
+    let nobar = c.getAttribute("data-cfy-nobar");
+    
     let b = document.getElementById("p4CuneifyBar");
     //alert('b='+b);
     if (b) {
-	let p = b.firstChild;
-	//alert('p='+p);
-	let bb = p.children;
-	for (let i = 0; i < bb.length; i++) {
-	    bb[i].classList.remove("cfy-curr");
-	    let thisf = bb[i].getAttribute("data-font");
-	    if (thisf === currf) {
-		//alert('switch on '+thisf);
-		bb[i].classList.toggle("cfy-curr");
+	if (nobar) {
+	    b.classList.toggle('hide', true);
+	} else {
+	    let p = b.firstChild;
+	    //alert('p='+p);
+	    let bb = p.children;
+	    for (let i = 0; i < bb.length; i++) {
+		bb[i].classList.remove("cfy-curr");
+		let thisf = bb[i].getAttribute("data-font");
+		if (thisf === currf) {
+		    //alert('switch on '+thisf);
+		    bb[i].classList.toggle("cfy-curr");
+		}
 	    }
 	}
     }

@@ -22,10 +22,10 @@ CFYLTYPE cfylloc;
 %union { char *s; int i; }
 
 %token <i> FILL GOESTO KW_CCF KW_KEY KW_FONT KW_FORMAT KW_WIDTH KW_COLWIDTHS
-	   RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS KW_GRID
+	   RETURN STRUCTMEM WORD ZWJ ZWNJ ZWS KW_GRID KW_UI
 %token <i> ELTRb ELTJcp ELTJcs ELTRl ELTRc ELTJl ELTJc ELTJp ELTJr ELTJs
 %token <s> CFYCCF CFYKEY ELTREF GRAPHEME JELTl JELTp JELTr JELTs GRID_T GRID_N
-	   FONT_NM FONT_PC LITERAL MEMBER PQX VALUE UNIT COLOUR BORDERSTYLE
+	   FONT_NM FONT_PC LITERAL MEMBER PQX VALUE UNIT COLOUR BORDERSTYLE KV_UI
 
 %type <i> rulingelt
 %type <s> r_unit r_colour r_style
@@ -43,6 +43,7 @@ config:   cfyccf
 	| cfyformat
 	| cfygrid
 	| cfykey
+	| cfyui
 	| cfywidth
 	| cfycolwidths
 	| sub
@@ -56,7 +57,9 @@ cfyformat: KW_FORMAT eltf
 
 cfygrid: KW_GRID GRID_T GRID_N		{ cfy_cfg_grid(@$, &cfy, $2, $3); }
 
-cfywidth: KW_WIDTH UNIT	{ cfy_cfg_width(@$, &cfy, $2); }
+cfyui: KW_UI KV_UI 			{ cfy_cfg_ui(@$, &cfy, $2); }
+
+cfywidth: KW_WIDTH UNIT			{ cfy_cfg_width(@$, &cfy, $2); }
 	;
 
 cfycolwidths: KW_COLWIDTHS unitlist '.' { cfy_cfg_col_wrap(@$, &cfy); }

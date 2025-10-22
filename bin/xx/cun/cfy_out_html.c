@@ -5,7 +5,9 @@
 extern const char *pi_file;
 
 static int dp_o_o, dp_s_o, dp_c_o;
+#if 0
 static int need_wrapper;
+#endif
 
 static void ch_head(Cfy *c);
 static void ch_foot(Cfy *c);
@@ -204,6 +206,8 @@ ch_head(Cfy *c)
     fprintf(c->o, " data-cfy-width=\"%s\"", c->c->width);
   if (c->c->colwidths)
     fprintf(c->o, " data-cfy-colwidths=\"%s\"", c->c->colwidths);
+  if (c->no_CuneifyBar)
+    fputs(" data-cfy-nobar=\"1\"", c->o);
   fputc('>', c->o);
   if (!cfy.bare)
     fprintf(c->o,

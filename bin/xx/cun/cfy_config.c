@@ -209,6 +209,13 @@ cfy_cfg_grid(Mloc m, Cfy *c, const char *t, const char *n)
   ++c->need_style;
 }
 
+void
+cfy_cfg_ui(Mloc m, Cfy *c, const char *u)
+{
+  if (!strcmp(u, "no-CuneifyBar"))
+    c->no_CuneifyBar = 1;
+}
+
 int
 cfy_cfg_key(Mloc m, Cfy *c, const char *k)
 {

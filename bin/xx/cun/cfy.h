@@ -63,6 +63,7 @@ typedef struct cfy
   int bare;
   int html;
   int need_style;
+  int no_CuneifyBar;
   int no_output;
   int weboutput;
 } Cfy;
@@ -443,6 +444,7 @@ extern Fnt *cfy_class_fnt(Cfy *c, Class *ncp);
 extern void cfy_cfg_grid(Mloc m, Cfy *c, const char *t, const char *n);
 extern int cfy_cfg_key(Mloc m, Cfy *c, const char *k);
 extern int cfy_cfg_justify(Mloc m, Cfy *c, Etype e);
+extern void cfy_cfg_ui(Mloc m, Cfy *c, const char *u);
 extern void cfy_cfg_width(Mloc m, Cfy *c, const char *w);
 
 extern int cfy_r(Mloc m, Cfy *c, Etype e, const char *unit, const char *style, const char *colour);

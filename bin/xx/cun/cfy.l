@@ -53,12 +53,14 @@ kv_font_nm	([a-z0-9]+|cfy-[a-z]+-.*)
 kv_font_pc	"%"[0-9]{2,3}
 kv_grid_t	"objects"|"surfaces"|"columns"
 kv_key		cfy-[a-z]+-.*
+kv_ui		"no-CuneifyBar"
 kw_ccf		^cfy-ccf
 kw_colwidths	^cfy-colwidths
 kw_font		^cfy-font
 kw_format     	^cfy-format
 kw_grid		^cfy-grid
 kw_key		^cfy-key
+kw_ui		^cfy-ui
 kw_width	^cfy-width
 
 auto		"auto"
@@ -169,7 +171,11 @@ zws		"&s"
 
 {kw_format}	{ BEGIN J; return KW_FORMAT; }
 
+{kw_ui}		{ BEGIN J; return KW_UI; }
+
 {kw_width}	{ BEGIN J; return KW_WIDTH; }
+
+<J>{kv_ui}	{ BEGIN 0; lval(cfytext); return KV_UI; }
 
 <J>{jeltl}	{ BEGIN 0; return ELTJl; }
 
