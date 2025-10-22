@@ -1,0 +1,13 @@
+\documentclass{article}
+\usepackage[backend=biber,style=alphabetic]{biblatex} % Use biber backend and alphabetic style
+\addbibresource{your_references.bib} % Replace 'your_references.bib' with your .bib file name
+
+\begin{document}
+
+This is some text in the document.
+
+\nocite{*} % This command tells biblatex to include all entries from the .bib file in the bibliography.
+
+\printbibliography % This command prints the bibliography.
+
+\end{document}
