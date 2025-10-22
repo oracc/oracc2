@@ -213,7 +213,10 @@ ch_head(Cfy *c)
     fprintf(c->o,
 	    "<h1 class=\"p3h2 border-top heading\">"
 	    "<span class=\"cfy-generic\">Cuneified </span>"
-	    "<span class=\"cfy-specific\">%s</span></h1>", c->n);
+	    "<span class=\"cfy-specific\"><a href=\"/%s/%s\">%s</a></span></h1>",
+	    c->project,
+	    c->pqx,
+	    c->n);
 }
 
 static void
