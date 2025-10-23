@@ -12,7 +12,7 @@ Elt e_zwj = { .etype=ELT_J, .data=(ucp)"\xE2\x80\x8D" };
 Elt e_zwnj = { .etype=ELT_N, .data=(ucp)"\xE2\x80\x8C" };
 Elt e_zws = { .etype=ELT_S, .data=(ucp)"\xE2\x80\x8B" };
 
-int zws_pending = 0, zwnj_pending = 0, plus_pending = 0;
+int zws_pending = 0, zwnj_pending = 0, plus_pending = 0, spforce_pending = 0, spkill_pending = 0;
 
 Div *curr_div = NULL;
 static Elt *last_ep = NULL;
@@ -152,6 +152,16 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
 	ep->title = (ccp)hpool_copy((uccp)ep->title, c->hp);
     }
 
+  const char *sp = findAttr(atts, "g:spforce");
+  if (sp && *sp)
+    ep->spforce = 1;
+  else
+    {
+      sp = findAttr(atts, "g:spkill");
+      if (sp && *sp)
+	ep->spkill = 1;
+    }
+  
   list_add(c->line, ep);
 
   const char *zwnj = findAttr(atts, "g:zwnj");
@@ -256,6 +266,16 @@ cfy_ws(Cfy *c)
   else
     {
       Elt *ep = new_elt(c, ELT_W);
+      if (spforce_pending)
+	{
+	  ep->spforce = 1;
+	  spforce_pending = 0;
+	}
+      if (spkill_pending)
+	{
+	  ep->spkill = 1;
+	  spkill_pending = 0;
+	}
       prev_last_w = curr_line->last_w;
       curr_line->last_w = list_len(c->line);
       list_add(c->line, ep);
@@ -355,6 +375,17 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	      const char *zws = findAttr(atts, "g:zws");
 	      if (zws && *zws)
 		zws_pending = 1;
+	      const char *sp = findAttr(atts, "g:spforce");
+	      if (sp && *sp)
+		{
+		  spforce_pending = 1;
+		}
+	      else
+		{
+		  sp = findAttr(atts, "g:spkill");
+		  if (sp && *sp)
+		    spkill_pending = 1;
+		}
 	    }
 	  else if (!strcmp(name, "c"))
 	    cfy_cell(userData, atts);

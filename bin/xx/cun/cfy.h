@@ -297,7 +297,9 @@ typedef struct elt
   const char *key;/* ASL grapheme key for type ELT_G */
   const char *title; /* value or sign name */
   const char *otf; /* from \1 or \cv01 etc */
-  int indented; /* does this element follow a ';' in ATF? */
+  char indented; /* does this element follow a ';' in ATF? */
+  char spforce; /* for boundary Elt, is there a g:spforce attribute */
+  char spkill; /* for boundary Elt, is there a g:spkill attribute */
   short line; /* don't need to store pi_file as long as cfy is a single-shot program */
 } Elt;
 
