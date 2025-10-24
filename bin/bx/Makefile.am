@@ -1,5 +1,7 @@
 include ../../oracc-am-rules.txt
 
+bin_SCRIPTS=oraccbib.sh
+
 bin_PROGRAMS=bx
 bx_SOURCES=bx.c
 
