@@ -285,7 +285,7 @@ ch_elt_H(Cfy *c, Elt *e)
 static void
 ch_elt_Hp(Cfy *c, Elt *e)
 {
-  if (!e->indented)
+  if (!e->indented || e->spforce)
     fputs("<span class=\"cfy-pseudo-h\"></span>", c->o);
 }
 
@@ -305,14 +305,17 @@ ch_elt_Sp(Cfy *c, Elt *e)
 static void
 ch_elt_W(Cfy *c, Elt *e)
 {
-  if (!e->prev || e->prev->etype != ELT_R)
+  if (!e->spkill)
     {
-      const char *lw = "";
-      /*fprintf(stderr, "ch_elt_W processing epp[%d]\n", ci_j);*/
-      if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
-	  && ci_j == ((Line*)curr_div->elt_lines[ci_i]->epp[0]->data)->last_w)
-	lw = " cfy-penult";
-      fprintf(c->o, "<span class=\"ws%s\"> </span>", lw);
+      if (!e->prev || e->prev->etype != ELT_R)
+	{
+	  const char *lw = "";
+	  /*fprintf(stderr, "ch_elt_W processing epp[%d]\n", ci_j);*/
+	  if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
+	      && ci_j == ((Line*)curr_div->elt_lines[ci_i]->epp[0]->data)->last_w)
+	    lw = " cfy-penult";
+	  fprintf(c->o, "<span class=\"ws%s\"> </span>", lw);
+	}
     }
 }
 

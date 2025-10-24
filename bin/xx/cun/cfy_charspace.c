@@ -54,6 +54,7 @@ cfy_charspace(Cfy *c, Eltline *elp)
 	    {
 	      Elt *hp = elt_clone(c, &e_hp);
 	      hp->indented = elp->epp[i]->indented;
+	      hp->spforce = elp->epp[i]->prev->spforce;
 	      list_add(lp, hp);
 	    }
 	  cfy_charify(c, elp->epp[i], lp);

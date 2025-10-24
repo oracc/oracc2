@@ -6,7 +6,7 @@ T=t01-a.html t02-ne.html t03-sajgal2.html \
 	t11-f-cspread.html t12-f-cpenult.html \
 	t13-r-ruled.html t14-r-ruled.html t15-r-boxed.html t16-r-column.html \
 	t17-width.html t18-r-column.html t19-font.html t20-zwnj.html \
-	t21-macgugar.html
+	t21-macgugar.html t22-spkill.html t23-spforce.html
 
 .PRECIOUS: %.xtf
 

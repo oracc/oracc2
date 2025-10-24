@@ -152,11 +152,16 @@ cfy_grapheme(Cfy *c, const char *name, const char **atts, const char *utf8, Clas
 	ep->title = (ccp)hpool_copy((uccp)ep->title, c->hp);
     }
 
-  const char *sp = findAttr(atts, "g:spforce");
-  if (sp && *sp)
-    ep->spforce = 1;
+  if (spforce_pending)
+    {
+      ep->spforce = 1;
+      spforce_pending = 0;
+    }
   else
     {
+      const char *sp = findAttr(atts, "g:spforce");
+      if (sp && *sp)
+	ep->spforce = 1;
       sp = findAttr(atts, "g:spkill");
       if (sp && *sp)
 	ep->spkill = 1;
@@ -394,6 +399,9 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	      const char *dd = findAttr(atts, "g:delim");
 	      if ('+' == *dd)
 		plus_pending = 1;
+	      const char *sp = findAttr(atts, "g:spforce");
+	      if (sp && *sp)
+		spforce_pending = 1;
 	    }
 	  else if (!strcmp(name, "g:x"))
 	    {
