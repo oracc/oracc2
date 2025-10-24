@@ -150,6 +150,11 @@ table.cfy-boxed {
     border-right: none;
 }
 
+h1.cfy-heading {
+    font-size: 100%; font-weight: bold;
+    margin-block-start: .15em; margin-block-end: .3em;
+}
+
 .cfy-curr { border: solid 2px red; }
 
 .cfy-nao  { cursor: url("nao-an.cur"), auto; }

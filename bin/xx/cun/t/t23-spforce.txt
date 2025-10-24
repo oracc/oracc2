@@ -1,0 +1,1 @@
+Format: by default spaces are suppressed when a line is indented; to force a space use '\>'

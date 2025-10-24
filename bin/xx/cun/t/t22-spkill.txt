@@ -1,0 +1,1 @@
+Format: spacing in spread mode can be suppressed with '\<'

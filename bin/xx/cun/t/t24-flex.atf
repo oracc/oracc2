@@ -1,0 +1,26 @@
+&Q001540 = Gudea Statue A [E3/1.01.07]
+@composite
+#project: gudea/statues
+#atf: use unicode
+#atf: use mylines
+#cfy: ccf gudea-statue.ccf
+#link: source cdli:P232274 = RIME 3/1.01.07, St A
+
+@m=object statue
+
+@m=surface arm
+
+@h1 Arm
+
+1.	gu₃
+
+@m=surface body
+
+@h1 Body
+
+@m column 1
+
+1.	nin
+
+@m column 2
+1.	dub
