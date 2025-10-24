@@ -45,6 +45,7 @@ ci_div(Cfy *c, Div *dp)
 	      ci_cell_o(c, epp_curr);
 	      if (last_b != epp_curr->btype)
 		ci_b_switch(c, epp_curr->btype);
+	      break;
 	    case ELT_H:
 	      {
 		/* only @h2 and above are processed through here; @h1 are attached to the div */
