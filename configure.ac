@@ -99,6 +99,7 @@ AC_CONFIG_FILES([Makefile
                  lib/xpd/Makefile
 		 bin/Makefile
 		 bin/ax/Makefile
+		 bin/bx/Makefile
 		 bin/cx/Makefile
 		 bin/dx/Makefile
 		 bin/dx/lib/Makefile

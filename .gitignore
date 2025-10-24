@@ -38,6 +38,7 @@ bin/px/t/xsrv
 # Executables; be specific so, e.g., sx ignore doesn't make whole subdir ignored
 bin/ax/ax
 bin/ax/atfdatax
+bin/bx/bx
 bin/dx/dxx/dcx
 bin/dx/dxx/dx
 bin/dx/odo/odo

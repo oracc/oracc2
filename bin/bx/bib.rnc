@@ -1,0 +1,6 @@
+namespace b = "http://oracc.org/ns/bib/1.0"
+cite = element b:cite {
+     attribute key { text },
+     attribute ast { "*" }? ,
+     attribute pp  { text }
+}

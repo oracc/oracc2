@@ -1,0 +1,3 @@
+<x xmlns:b="http://oracc.org/ns/bib/1.0">
+  <p>This is a test of bx <b:cite key="BX-test"/></p>
+</x>
