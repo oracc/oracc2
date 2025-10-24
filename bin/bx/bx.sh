@@ -4,9 +4,13 @@
 #
 # INPUTS: xml files given as post-option arguments
 #
-# CONFIG: LaTeX-format header file
+# DRIVER: LaTeX-format header file; local in 00lib/bib.d or system in $ORACC/lib/bib
+#	system drivers are bx-article.ltx, bx-book.ltx, etc.
+#	local drivers are named with -d arg; can be literal file or doc-class such as
+#	'article' in which case they are looked for in 00lib/bib.d/CLASS.ltx
+#	and $ORACC/lib/bib/bx-CLASS.ltx	
 #
-# DOTBIB: .bib files; can be included in the 
+# RESOURCES: local 00lib/bib.d/addresources.ltx or system $ORACC/lib/bib/addresources.ltx
 #
 # TMPDIR: all work is done in a temp dir
 #
@@ -18,7 +22,7 @@ function usage {
 Usage: oraccbib.sh
 
 	-c(ites):   extract citations but don't echo input to output
-	-d(ryrun):  don't run mklatex
+	-d(river):  LaTeX driver file
 	-t(mpdir):  use ARG for temp directory
 	-v(erbose): if non-empty give informational messages
 
@@ -90,7 +94,15 @@ if [ -r 00lib/bib.d/$driver ]; then
 elif [ -r ${ORACC}/lib/bib/$driver ]; then
     cp ${ORACC}/lib/bib/$driver $tmpdir
 else
-    fail "no $driver in 00lib or ORACC/lib/bib"
+    fail "no $driver in 00lib or ORACC/lib/bib.d"
+fi
+
+if [ -r 00lib/bib.d/addresources.ltx ]; then
+    cp 00lib/bib.d/addresources.ltx $tmpdir
+elif [ -r ${ORACC}/lib/bib/addresources.ltx ]; then
+    cp ${ORACC}/lib/bib/addresources.ltx $tmpdir
+else
+    fail "no addresource.ltx in 00lib or ORACC/lib/bib.d"
 fi
 
 if [ "$cites" == "1" ]; then
