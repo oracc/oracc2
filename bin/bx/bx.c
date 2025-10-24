@@ -9,10 +9,12 @@
 
 extern int optind;
 
+int append_cites = 0;
 int no_output = 0;
 int verbose = 0;
 
 const char *keyfile = "bibkey.ltx";
+const char *outdir = NULL;
 
 Hash *keys = NULL;
 Pool *p = NULL;
@@ -120,7 +122,7 @@ dump_keys(void)
   int i, nk;
   const char **kk = hash_keys2(keys, &nk);
   qsort(kk, nk, sizeof(const char *), cmpstringp);
-  FILE *keyfp = fopen(keyfile, "w");
+  FILE *keyfp = fopen(keyfile, append_cites ? "a" : "w");
   for (i = 0; i < nk; ++i)
     fprintf(keyfp, "\\nocite{%s}\n", kk[i]);
   fclose(keyfp);
@@ -129,7 +131,7 @@ dump_keys(void)
 int
 main(int argc, char * const*argv)
 {
-  options(argc, argv, "n");
+  options(argc, argv, "ano:");
   keys = hash_create(1024);
   p = pool_init();
   runexpat_omit_rp_wrap();
@@ -142,8 +144,14 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'a':
+      append_cites = 1;
+      break;
     case 'n':
       no_output = 1;
+      break;
+    case 'o':
+      outdir = arg;
       break;
     default:
       return 1;
