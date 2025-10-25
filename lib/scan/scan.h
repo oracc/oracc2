@@ -4,6 +4,27 @@
 #include <tree.h>
 #include <pool.h>
 
+/* The scan library supports o2's inline mode, inl. There are only
+   three node types:
+
+   span	= a command that takes an argument in curly brackets
+   text	= a text string between or within spans
+   #	= a command that takes no argument, e.g., @newline
+
+   The library XML writer uses the xmlns
+   i=http://oracc.org/ns/inl/1.0, i.e., the output tags are
+
+   <i:span>
+   <i:text>
+   <i:newline> etc.
+
+   For spans, the tag name is given in an attribute, tag, and anything
+   between square brackets is given in a second attribute, att:
+
+   @up[2cm]{d}   =>   <i:span tag="up" att="2cm"><i:text>d</i:text></i:span>
+
+ */
+
 extern Pool *scan_pool;
 
 typedef enum sterm { SCAN_WHITE , SCAN_LINE , SCAN_PARA , SCAN_END , SCAN_TERM_TOP } Sterm;
