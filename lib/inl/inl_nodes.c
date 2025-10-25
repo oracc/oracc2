@@ -22,7 +22,7 @@ void
 inl_text(Tree *tp, const char *text)
 {
   Scan *sp = memo_new(inl_scan_m);
-  sp->np = tree_add(tp, NS_INL, "#text", tp->curr->depth, NULL);
+  sp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
   sp->name = NULL;
   sp->np->user = sp;
 } 

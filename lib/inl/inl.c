@@ -46,7 +46,7 @@ inl(char *s)
       tp = tree_init();
       tree_ns_default(tp, NS_INL);
       tree_root(tp, NS_INL, "inl", 0, NULL);
-      tp->rootless = 1;
+      /*tp->rootless = 1;*/
       tp->root->text = s;
 
       (void)inl_nodes(tp->root, tp->root->text);
