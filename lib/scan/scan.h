@@ -2,6 +2,9 @@
 #define _SCAN_H
 #include <stdlib.h>
 #include <tree.h>
+#include <pool.h>
+
+extern Pool *scan_pool;
 
 typedef enum sterm { SCAN_WHITE , SCAN_LINE , SCAN_PARA , SCAN_END , SCAN_TERM_TOP } Sterm;
 

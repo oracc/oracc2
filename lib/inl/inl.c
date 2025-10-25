@@ -1,13 +1,17 @@
 #include <memo.h>
+#include <pool.h>
 #include "inl.h"
 
 Memo *inl_scan_m = NULL;
+Pool *inl_scan_p = NULL;
 
 void
 inl_init(void)
 {
   if (!inl_scan_m)
     inl_scan_m = memo_init(sizeof(Scan), 256);
+  if (!inl_scan_p)
+    inl_scan_p = pool_init();
 }
 
 void
@@ -15,8 +19,13 @@ inl_term(void)
 {
   if (inl_scan_m)
     {
-      free(inl_scan_m);
+      memo_term(inl_scan_m);
       inl_scan_m = NULL;
+    }
+  if (!inl_scan_p)
+    {
+      pool_term(inl_scan_p);
+      inl_scan_p = NULL;
     }
 }
 
