@@ -136,6 +136,7 @@ bin/xx/wrapper/xsltx
 bin/zx/catx
 bin/zx/expat-identity
 bin/zx/gdlx
+bin/zx/inlx
 bin/zx/repx
 bin/zx/rocox
 bin/zx/utr

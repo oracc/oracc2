@@ -1,5 +1,8 @@
+#include <tree.h>
 #include <memo.h>
 #include <pool.h>
+#include <scan.h>
+
 #include "inl.h"
 
 Memo *inl_scan_m = NULL;
@@ -46,7 +49,7 @@ inl(char *s)
       tp->rootless = 1;
       tp->root->text = s;
 
-      (void)inl_nodes(&tp->root, tp->root->text);
+      (void)inl_nodes(tp->root, tp->root->text);
     }
   return tp;
 }

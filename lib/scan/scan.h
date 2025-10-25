@@ -12,21 +12,27 @@ typedef enum stype { SCAN_SPAN , SCAN_TEXT , SCAN_TYPE_TOP } Stype;
 
 typedef struct scan
 {
-  Node n;
+  Node *np;
   Stype t;
   Sterm term;
-  const char *attr;
+  const char *name; /* this is where the result of scan_name is put */
+  const char *attr; /* this is the result of scan_quare */
 } Scan;
 
+extern void scan_init(void);
+extern void scan_term(void);
+
 typedef int (*scan_block_tester)(const unsigned char *p);
-unsigned char *skip_white(unsigned char *fext, size_t *lnump);
-unsigned char *scan_token(unsigned char *tokp, unsigned char **endtokp, 
+
+extern unsigned char *skip_white(unsigned char *fext, size_t *lnump);
+extern unsigned char *scan_token(unsigned char *tokp, unsigned char **endtokp, 
 			  unsigned char *savep);
-char* scan_curly(char *p, char **endp);
-void scan_square(Scan *s, unsigned char *endtok, 
+extern char* scan_curly(char *p, char **endp);
+extern char *scan_name(char *s, char **endp);
+extern void scan_square(Scan *s, unsigned char *endtok, 
 		 unsigned char **text_start, size_t *local_lnump);
-void scan_text(Scan *s, unsigned char *text_start, 
+extern void scan_text(Scan *s, unsigned char *text_start, 
 	       unsigned char **text_end, size_t *local_lnump,
 	       scan_block_tester f);
-int block_peek(unsigned char *p, scan_block_tester f);
+extern int block_peek(unsigned char *p, scan_block_tester f);
 #endif/*_SCAN_H*/

@@ -31,9 +31,9 @@ scan_text(Scan *s, unsigned char *text_start,
     case SCAN_LINE: /* end at first newline */
       while (' ' == *text_start || '\t' == *text_start)
 	++text_start;
-      if (!s->n.text)
+      if (!s->np->text)
 	{
-	  s->n.text = (char*)text_start;
+	  s->np->text = (char*)text_start;
 	  end = text_start;
 	}
       else
@@ -54,7 +54,7 @@ scan_text(Scan *s, unsigned char *text_start,
     case SCAN_PARA: /* end at blank line or cdt block token */
       while (' ' == *text_start || '\t' == *text_start)
 	++text_start;
-      s->n.text = (char*)text_start;
+      s->np->text = (char*)text_start;
       end = text_start;
       while (*end)
 	{
@@ -90,7 +90,7 @@ scan_text(Scan *s, unsigned char *text_start,
 	}
       break;
     case SCAN_END:
-      s->n.text = (char *)text_start;
+      s->np->text = (char *)text_start;
       end = text_start;
       while (*end)
 	{
@@ -100,11 +100,11 @@ scan_text(Scan *s, unsigned char *text_start,
 	      if (!strncmp((const char *)end+1,"@end",4))
 		{
 		  unsigned char *start_of_end = end;
-		  int namelen = strlen(s->n.name);
+		  int namelen = strlen(s->np->name);
 		  end += 5;
 		  while (' ' == *end || '\t' == *end)
 		    ++end;
-		  if (!strncmp((const char *)end,s->n.name,namelen) 
+		  if (!strncmp((const char *)end,s->np->name,namelen) 
 		      && (isspace(end[namelen]) || !end[namelen]))
 		    {
 		      *start_of_end = '\0';
