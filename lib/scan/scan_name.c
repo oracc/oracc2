@@ -13,5 +13,5 @@ scan_name(char *s, char **endp)
   p[len] = '\0';
   if (endp)
     *endp = e;
-  return e;
+  return p;
 }
