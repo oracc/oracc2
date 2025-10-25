@@ -64,7 +64,7 @@ main(int argc, char *const *argv)
   return status;
 }
 
-const char *prog = "rocox";
+const char *prog = "repx";
 int major_version = 1, minor_version = 0, verbose;
 const char *usage_string = "";
 

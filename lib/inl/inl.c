@@ -9,6 +9,28 @@ Memo *inl_scan_m = NULL;
 Pool *inl_scan_p = NULL;
 
 static void
+treexml_o_bib(Node *np, void *user)
+{
+  Xmlhelper *xhp = user;
+
+  fprintf(xhp->fp, "<b:%s", np->name);
+  Scan *sp = np->user;
+  if (sp)
+    {
+      fprintf(xhp->fp, " key=\"%s\"", np->text);
+      sp->np->kids = NULL; /* the key is also np->text so we've printed it */
+      if (sp->attr)
+	fprintf(xhp->fp, " pp=\"%s\"", sp->attr);
+    }
+  fputs("/>", xhp->fp);
+}
+
+void
+treexml_c_bib(Node *np, void *user)
+{
+}
+
+static void
 treexml_o_inl(Node *np, void *user)
 {
   Xmlhelper *xhp = user;
@@ -64,6 +86,8 @@ inl_init(void)
   if (!inl_scan_p)
     inl_scan_p = pool_init();
 
+  nodeh_register(treexml_o_handlers, NS_BIB, treexml_o_bib);
+  nodeh_register(treexml_c_handlers, NS_BIB, treexml_c_bib);
   nodeh_register(treexml_o_handlers, NS_INL, treexml_o_inl);
   nodeh_register(treexml_c_handlers, NS_INL, treexml_c_inl);
 }
@@ -99,7 +123,7 @@ inl(char *s)
       tree_root(tp, NS_INL, "inl", 0, NULL);
       /*tp->rootless = 1;*/
       tp->root->text = s;
-      (void)inl_nodes(tp->root, strdup(tp->root->text));
+      (void)inl_nodes(tp->root, (char*)tp->root->text);
     }
   return tp;
 }

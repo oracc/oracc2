@@ -8,8 +8,11 @@ char *
 inl_span(Tree *tp, char *s)
 {
   Scan *sp = memo_new(inl_scan_m);
-  sp->np = tree_add(tp, NS_INL, "span", tp->curr->depth, NULL);
   sp->name = scan_name(s, &s);
+  if (!strcmp(sp->name, "cite"))
+    sp->np = tree_add(tp, NS_BIB, "cite", tp->curr->depth, NULL);
+  else
+    sp->np = tree_add(tp, NS_INL, "span", tp->curr->depth, NULL);
   if ('[' == *s)
     scan_square(sp, s, &s, &line);
   if ('{' == *s)

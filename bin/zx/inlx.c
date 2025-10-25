@@ -8,11 +8,16 @@ int line = 1;
 int
 main(int argc, char * const *argv)
 {
+  options(argc, argv, "?");
   mesg_init();
   scan_init();
   inl_init();
 
-  Tree *tp = inl(strdup("a @em{b1 @dn{z} b2} c @nl d @up[2cm]{e} f"));
+  Tree *tp;
+  if (argv[optind])
+    tp = inl(strdup(argv[optind]));
+  else
+    tp = inl(strdup("a @em{b1 @dn{z} b2} c @nl d @up[2cm]{e} f"));
   
   tree_ns_default(tp, NS_INL);
   tree_xml(NULL, tp);
@@ -20,3 +25,29 @@ main(int argc, char * const *argv)
   scan_term();
   inl_term();
 }
+
+const char *prog = "inlx";
+int major_version = 1, minor_version = 0, verbose;
+const char *usage_string = "";
+
+int
+opts(int opt, const char *arg)
+{
+  switch (opt)
+    {
+    case '?':
+      help();
+      exit(1);
+      break;
+    default:
+      return 1;
+      break;
+    }
+  return 0;
+}
+
+void help (void)
+{
+  printf("inlx converts a string arg to http://oracc.org/ns/inl/1.0 XML.\n");
+}
+

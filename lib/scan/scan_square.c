@@ -13,7 +13,7 @@ scan_square(Scan *s, unsigned char *endtok, unsigned char **text_start,
       if (endattr)
 	{
 	  *endattr = '\0';
-	  s->attr = ++endtok;	
+	  s->attr = (ccp)++endtok;
 	  if ((newline = (unsigned char *)strchr((const char *)endtok,'\n')))
 	    {
 	      while (newline)
