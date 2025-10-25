@@ -6,7 +6,8 @@
 #include <pool.h>
 #include <prop.h>
 
-enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XMD , NS_CFY, NS_HTM, NS_LAST };
+enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XMD ,
+	      NS_CFY, NS_HTM, NS_INL, NS_LAST };
 typedef enum nscode nscode;
 typedef nscode nsrefs[NS_LAST];
 

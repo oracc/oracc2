@@ -14,6 +14,7 @@ struct ns_key_val {
   { "m" , "http://oracc.org/ns/xmd/1.0" } ,
   { "cfy" , "http://oracc.org/ns/cfy/1.0" } ,
   { "h" , "http://www.w3.org/1999/xhtml" } ,
+  { "i" , "http://oracc.org/ns/inl/1.0" } ,
   { NULL , NULL } 
 };
 

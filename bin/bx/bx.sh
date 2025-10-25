@@ -19,7 +19,7 @@
 
 function usage {
     cat <<EOF
-Usage: oraccbib.sh
+Usage: bx.sh
 
 	-c(ites):   extract citations but don't echo input to output
 	-d(river):  LaTeX driver file
