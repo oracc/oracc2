@@ -14,7 +14,8 @@ struct inltok
   inl_nym arg;
   inl_nym txt;
   const char *term;
-  const char *alias;
+  const char *tag;
+  const char *attr;
   inl_handler h;
 };
 extern struct inltok *inltok(register const char *str, register size_t len);

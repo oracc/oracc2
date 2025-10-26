@@ -13,7 +13,12 @@ inl_span(Tree *tp, char *s)
   struct inltok *itp = inltok(sp->name, strlen(sp->name));
   if (itp)
     {
-      if ('[' == *s)
+      if (itp->tag)
+	{
+	  sp->name = itp->tag;
+	  sp->attr = itp->attr;
+	}
+      else if ('[' == *s)
 	scan_square(sp, (uchar*)s, (uchar**)&s, (size_t*)&line);
 
       char *stext = NULL;
