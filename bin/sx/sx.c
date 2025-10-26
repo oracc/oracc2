@@ -16,6 +16,8 @@
 #include <oracclocale.h>
 #include "sx.h"
 
+int line;
+
 Mloc *xo_loc;
 FILE *f_xml;
 

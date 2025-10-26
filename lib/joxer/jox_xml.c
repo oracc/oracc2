@@ -1,5 +1,8 @@
-#include <joxer.h>
 #include <stdio.h>
+#include <xml.h>
+#include <joxer.h>
+#include <scan.h>
+#include <inl.h>
 
 static FILE *f_xml;
 
@@ -14,6 +17,20 @@ void
 jox_xml_ch(const char *ch)
 {
   fputs(ch,f_xml);
+}
+
+void
+jox_xml_inl(char *ch)
+{
+  static int first = 1;
+  if (first)
+    {
+      scan_init();
+      inl_init();
+      first = 0;
+    }
+  Tree *tp = inl(ch);
+  tree_xml(f_xml, tp);
 }
 
 void

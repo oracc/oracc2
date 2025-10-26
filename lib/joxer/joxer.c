@@ -19,6 +19,8 @@
 extern FILE *f_xml;
 extern int rnx_n_exp;
 
+static int joxer_inl = 0;
+
 struct rnvval_atts *ratts;
 
 static struct pool *xgi_pool;
@@ -34,6 +36,12 @@ static Mloc *ehmp;
 extern int (*er_printf)(char *format,...);
 extern int (*er_vprintf)(char *format,...);
 #endif
+
+void
+joxer_set_inl(int i)
+{
+  joxer_inl = i;
+}
 
 static void
 jox_verror_handler(int erno,va_list ap)
@@ -209,6 +217,7 @@ joxer_eto_vxj(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   rnvval_ch(xch);
   rnvval_ee(pname);
   jox_xml_ea(pname, rats);
+  fprintf(stderr, "calling jox_xml_ch from joxer_eto_vxj\n");
   jox_xml_ch(xch);
   jox_xml_ee(pname);
   jox_jsn_eto(pname, rats, ch);
@@ -476,7 +485,11 @@ joxer_eto_vx(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   rnvval_ch(xch);
   rnvval_ee(pname);
   jox_xml_ea(pname, rats);
-  jox_xml_ch(xch);
+  /*fprintf(stderr, "calling jox_xml_ch from joxer_eto_vx\n");*/
+  if (joxer_inl)
+    jox_xml_inl((char*)ch);
+  else
+    jox_xml_ch(xch);
   jox_xml_ee(pname);
   if (rats && ratts)
     {
