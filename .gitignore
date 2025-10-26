@@ -205,6 +205,7 @@ bin/ax/ax_check.c
 bin/px/ice/pg/periodmap.c
 bin/px/pxargs.c
 bin/xx/cun/perfnt.c
+lib/inl/inltok.c
 
 # .in derivatives
 mac-config.sh

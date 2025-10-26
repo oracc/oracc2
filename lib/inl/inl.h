@@ -1,6 +1,24 @@
 #ifndef INL_H_
 #define INL_H_
 
+#include <scan.h>
+
+typedef enum inl_nym { INL_NO , INL_YES , INL_MAY , INL_TOK } inl_nym;
+
+typedef void (*inl_handler)(Tree *tp, Scan *sp, const char *text);
+
+struct inltok
+{
+  const char *name;
+  nscode ns;
+  inl_nym arg;
+  inl_nym txt;
+  const char *term;
+  const char *alias;
+  inl_handler h;
+};
+extern struct inltok *inltok(register const char *str, register size_t len);
+
 extern void inl_init(void);
 extern void inl_term(void);
 extern char *inl_nodes(Node *np, char *s);
