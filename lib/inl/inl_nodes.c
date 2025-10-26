@@ -22,16 +22,18 @@ inl_span(Tree *tp, char *s)
 	scan_square(sp, (uchar*)s, (uchar**)&s, (size_t*)&line);
 
       char *stext = NULL;
-      if ('{' == *s)
-	stext = scan_curly(s, &s);
+      if (itp->txt)
+	{
+	  if ('{' == *s)
+	    stext = scan_curly(s, &s);
+	  else
+	    fprintf(stderr, "missing {...} content after %s\n", sp->name);
+	}
 
       if (itp->h)
 	{
 	  itp->h(tp, sp, stext);
-#if 0
-	  if (!strcmp(sp->name, "cite"))
-	    sp->np = tree_add(tp, NS_BIB, "cite", tp->curr->depth, NULL);
-#endif
+	  sp->np->user = sp;
 	}
       else
 	{
@@ -51,7 +53,7 @@ inl_span(Tree *tp, char *s)
 	}
     }
   else
-    ;/*error*/
+    fprintf(stderr, "bad tag %s\n", sp->name);
   return s;
 }
 
@@ -68,7 +70,7 @@ inl_text(Tree *tp, const char *text)
 char *
 inl_nodes(Node *np, char *s)
 {
-  char save = (s && *s) ? *s : '\0';
+  char save = (s && '@' == *s) ? '@' : '\0';
   while (*s)
     {
       if ('@' == save)
@@ -97,7 +99,7 @@ inl_nodes(Node *np, char *s)
 	  char *at = NULL;
 	  while (1)
 	    {
-	      /* Find the next text chunk, skipping over @@ */
+	      /* Find the end of this text chunk, skipping over @@ */
 	      at = strchr(s, '@');
 	      if (at && '@' == at[1])
 		s += 2;

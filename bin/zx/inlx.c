@@ -17,7 +17,7 @@ main(int argc, char * const *argv)
   if (argv[optind])
     tp = inl(strdup(argv[optind]));
   else
-    tp = inl(strdup("a @em{b1 @dn{z} b2} c @nl d @up[2cm]{e} f"));
+    tp = inl(strdup("a @em{b1 @sub{z} b2} c @br{} @cite[p20]{Englund1999} d @sub[2cm]{e} f"));
   
   tree_ns_default(tp, NS_INL);
   tree_xml(NULL, tp);
