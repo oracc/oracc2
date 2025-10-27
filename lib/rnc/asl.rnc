@@ -2,6 +2,8 @@ namespace g = "http://oracc.org/ns/gdl/1.0"
 namespace n = "http://oracc.org/ns/norm/1.0"
 namespace sl = "http://oracc.org/ns/sl/1.0"
 
+include "inl.rnc"
+
 start =
   element sl:signlist {
     attribute project { text } ,

@@ -119,7 +119,7 @@ inl(char *s)
   if (s && *s)
     {
       tp = tree_init();
-      tree_ns_default(tp, NS_INL);
+      /*tree_ns_default(tp, NS_INL);*/
       tree_root(tp, NS_INL, "inl", 0, NULL);
       /*tp->rootless = 1;*/
       tp->root->text = s;

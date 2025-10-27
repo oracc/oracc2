@@ -1,0 +1,13 @@
+namespace i = "http://oracc.org/ns/inl/1.0"
+namespace b = "http://oracc.org/ns/bib/1.0"
+
+inl = element i:inl { text_node | span_node | bib_node }*
+
+text_node = element i:text { text }
+span_node = element i:span {
+	       attribute tag { text },
+	       attribute att { text }? ,
+	       (text_node | span_node | bib_node)*
+	    }
+
+bib_node = element b:cite { attribute key {text}, attribute pp {text}?}

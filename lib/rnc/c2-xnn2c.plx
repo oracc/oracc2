@@ -30,6 +30,8 @@ my %zns = (
     xtr=>'http://oracc.org/ns/xtr/1.0',
     xh =>'http://www.w3.org/1999/xhtml',
     xml=>'http://www.w3.org/XML/1998/namespace',
+    i => "http://oracc.org/ns/inl/1.0",
+    b => "http://oracc.org/ns/bib/1.0",
     );
 
 my %ns_omit = (
