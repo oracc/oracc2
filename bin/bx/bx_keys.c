@@ -5,15 +5,16 @@
  * bib handler to validate keys
  */
 
-extern Hash *keys = NULL;
-extern Pool *p = NULL;
+extern Hash *keys;
+extern Pool *p;
 
 static FILE *keyfp;
+const char *bib_file;
 static int bib_lnum;
 
 static void bx_keys_sub(const char *f);
-static void bx_keys_ids(const char *f);
-static void bx_keys_key(FILE *bibfp);
+static void bx_keys_ids(FILE *bibfp);
+static int bx_keys_key(FILE *bibfp);
 
 void
 bx_keys(const char **bibfiles, const char *keyfile)
@@ -33,7 +34,7 @@ bx_keys(const char **bibfiles, const char *keyfile)
   for (i = 0; bibfiles[i]; ++i)
     bx_keys_sub(bibfiles[i]);
 
-  const char **kk = hash_keys2(hkeys, &i);
+  const char **kk = hash_keys2(keys, &i);
   qsort(kk, i, sizeof(const char *), cmpstringp);
   for (i = 0; kk[i]; ++i)
     fprintf(keyfp, "%s\n", kk[i]);
@@ -51,6 +52,7 @@ bx_keys_sub(const char *f)
       return;
     }
   int ch;
+  bib_file = f;
   bib_lnum = 1;
   while (EOF != (ch = fgetc(bibfp)))
     {
@@ -59,7 +61,7 @@ bx_keys_sub(const char *f)
 	  while (EOF != (ch = fgetc(bibfp)))
 	    if ('{' == ch)
 	      break;
-	  bx_keys_key(bibfp);
+	  (void)bx_keys_key(bibfp);
 	}
       else if ('\n' == ch)
 	{
@@ -69,12 +71,10 @@ bx_keys_sub(const char *f)
 	      break;
 	  if ('@' == ch)
 	    ungetc(ch, bibfp);
-	  else if ('i' == ch)
-	    {
-	      if ('d' == (ch = fgetc(bibfp))
-		  && 's' == ch = fget(bibfp))
-		bx_keys_ids(bibfp);
-	    }
+	  else if ('i' == ch
+		   && ('d' == (ch = fgetc(bibfp)))
+		   && ('s' == (ch = fgetc(bibfp))))
+	    bx_keys_ids(bibfp);
 	}
     }
 }
@@ -82,6 +82,7 @@ bx_keys_sub(const char *f)
 static void
 bx_keys_ids(FILE *bibfp)
 {
+  int ch;
   while (EOF != (ch = fgetc(bibfp)))
     if ('{' == ch)
       break;
@@ -89,7 +90,7 @@ bx_keys_ids(FILE *bibfp)
     ;
 }
 
-static void
+static int
 bx_keys_key(FILE *bibfp)
 {
   char buf[1024];
@@ -97,7 +98,7 @@ bx_keys_key(FILE *bibfp)
   int ch;
   while (EOF != (ch = fgetc(bibfp)))
     {
-      if (' ' != ch && '\t' != ch && '\n' != ch)
+      if (' ' != ch && '\t' != ch && '\n' != ch && ',' != ch)
 	break;
       if ('\n' == ch)
 	++bib_lnum;
@@ -105,11 +106,11 @@ bx_keys_key(FILE *bibfp)
   buf[nch++] = ch;
   while (EOF != (ch = fgetc(bibfp)))
     {
-      if (strcspn(ch, " \t\n,{}"))
+      if (strchr(" \t\n,{}", ch))
 	break;
-      else if (nch == 1022)
+      else if (nch >= 1023)
 	{
-	  buf[nch] = '\0';
+	  buf[1023] = '\0';
 	  fprintf(stderr, "overlong key ignored (max = 1023): %s\n", buf);
 	  return 0;
 	}
@@ -119,10 +120,22 @@ bx_keys_key(FILE *bibfp)
   if (nch)
     {
       buf[nch] = '\0';
-      if (!hash_find(keys, buf))
-	hash_add(keys, pool_copy((uccp)buf, p), "");
+      Mloc *mp = hash_find(keys, (uccp)buf);
+      if (!mp)
+	{
+	  hash_add(keys, pool_copy((uccp)buf, p),
+		   mloc_file_line(bib_file, bib_lnum));
+	}
       else
-	fprintf(stderr, "duplicate key %s\n", buf);
+	{
+	  mesg_verr(mp, "Initial occurrence of %s\n", buf);
+	  char mbuf[strlen(bib_file)+strlen(":1000000: duplicate 0")+strlen(buf)];
+	  sprintf(mbuf, "%s:%d: duplicate %s\n", bib_file, bib_lnum, buf);
+	  mesg_append(mbuf);
+	  mesg_status_ignore_one();
+	}
+      while (' ' == ch || '\t' == ch)
+	ch = fgetc(bibfp);
       if (ch == '}')
 	return 0;
       else

@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "runexpat.h"
+#include "bx.h"
 
 /* Simple program based on expat-identity.c to extract b:cite
  * attributes from inputs; a future version may format the cites in
@@ -10,11 +11,13 @@
 extern int optind;
 
 int append_cites = 0;
+const char *bibsfile = NULL; /* file of paths to .bib files */
+int keys_mode = 0;
 int no_output = 0;
 int verbose = 0;
 
 const char *keyfile = "bibkey.ltx";
-const char *outdir = NULL;
+const char *output = NULL;
 
 Hash *keys = NULL;
 Pool *p = NULL;
@@ -131,12 +134,34 @@ dump_keys(void)
 int
 main(int argc, char * const*argv)
 {
-  options(argc, argv, "ano:");
+  options(argc, argv, "ab:kno:v");
   keys = hash_create(1024);
   p = pool_init();
-  runexpat_omit_rp_wrap();
-  expat_identity(argv[optind], NULL, stdout);
-  dump_keys();
+  mesg_init();
+  if (keys_mode)
+    {
+      const char **bibs;
+      if (argv[optind])
+	bibs = (const char **)&argv[optind];
+      else if (bibsfile)
+	bibs = bx_bibs_file(bibsfile);
+      else
+	bibs = bx_bibs_file("-");
+      if (verbose)
+	{
+	  int i;
+	  for (i = 0; bibs[i]; ++i)
+	    fprintf(stderr, "using .bib file %s\n", bibs[i]);
+	}
+      bx_keys(bibs, output);
+      mesg_print(stderr);
+    }
+  else
+    {
+      runexpat_omit_rp_wrap();
+      expat_identity(argv[optind], NULL, stdout);
+      dump_keys();
+    }
 }
 
 int
@@ -147,11 +172,20 @@ opts(int opt, const char *arg)
     case 'a':
       append_cites = 1;
       break;
+    case 'b':
+      bibsfile = arg;
+      break;
+    case 'k':
+      keys_mode = 1;
+      break;
     case 'n':
       no_output = 1;
       break;
     case 'o':
-      outdir = arg;
+      output = arg; /* in keys_mode a file; otherwise a directory */
+      break;
+    case 'v':
+      ++verbose;
       break;
     default:
       return 1;
