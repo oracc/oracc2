@@ -6,7 +6,9 @@
 
 typedef struct bbl
 {
-  const char *basename;
+  const char *file;
+  const char *type;
+  Hash *ehash;
   List *elist;
   struct bblentry **eptrs;
 } Bbl;
@@ -21,5 +23,7 @@ typedef struct bblentry
 } Bblentry;
 
 extern void bbl_load(const char *bblfile);
+extern void bbl_datalist(Mloc m, const char *tok);
+extern void bbl_entry(Mloc m, const char *tok);
 
 #endif/*BBL_H_*/

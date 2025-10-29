@@ -1,10 +1,6 @@
 #include <oraccsys.h>
 #include "bx.h"
 
-extern Pool *p;
-extern const char *project;
-extern int verbose;
-
 const char **
 bx_bibs_file(const char *bibf)
 {

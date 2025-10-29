@@ -33,11 +33,11 @@ bbl:   datalist
      ;
 
 datalist:
-BBL_DATALIST '[' BBL_TOKEN ']' '{' BBL_TOKEN '}'	{ printf("found datalist %s\n", $3); }
+BBL_DATALIST '[' BBL_TOKEN ']' '{' BBL_TOKEN '}' { bbl_datalist(@$, $3); }
         ;
 
 entry:
-	  BBL_ENTRY '{' BBL_TOKEN '}'		{ printf("found entry %s\n", $3); }
+	  BBL_ENTRY '{' BBL_TOKEN '}'		 { bbl_entry(@$, $3); }
 	  | '{' | '[' | ']' | '}'
 	;
 %%
