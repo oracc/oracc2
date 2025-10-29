@@ -1,5 +1,7 @@
 #include <oraccsys.h>
-#include "runexpat.h"
+#include <locale.h>
+#include <oracclocale.h>
+#include <runexpat.h>
 #include "bx.h"
 #include "bbl.h"
 
@@ -139,6 +141,7 @@ dump_keys(void)
 int
 main(int argc, char * const*argv)
 {
+  setlocale (LC_ALL, ORACC_LOCALE);
   options(argc, argv, "ab:kl:no:t:v");
   keys = hash_create(1024);
   p = pool_init();

@@ -46,7 +46,11 @@ bbl_entry(Mloc m, const char *tok)
   ep->ref = tok;
   ep->index = entry_index++;
   hash_add(bbl->ehash, (uccp)ep->ref, ep);
-  ep->h4t_ref = bxh4t_ref(tok);
+  ep->h4t_ref = bx4ht_ref(tok);
   if (strcmp(ep->ref, ep->h4t_ref))
-    hash_add(bbl->ehash, (uccp)ep->h4t_ref, ep);
+    {
+      if (verbose)
+	fprintf(stderr, "bbl_entry: ref %s => h4t_ref %s\n", ep->ref, ep->h4t_ref);
+      hash_add(bbl->ehash, (uccp)ep->h4t_ref, ep);
+    }
 }
