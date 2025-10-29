@@ -19,13 +19,25 @@ containing \nocite{KEY} for each key.
 It then calls latex on a wrapper (see bx.sh notes) to create the .bcf
 file.
 
-It then calls biber on the .bcf to create the .bbl file.
+It then calls biber on the .bcf to create the .bbl file   
 
-Formatting the .bbl is TBD; it may use tex4ht.
+===Formatting inline cites
 
 Formatting inline cites will probably be added to bx which could add
 an attribute to b:cite or add a child with the formatted inline
 citation.
+
+===Formatting the reference list
+
+Formatting the bibliography will use tex4ht.
+
+Given a bibliography in mybib.tex
+
+ latex mybib
+ biber mybib
+ xhlatex mybib
+
+produces XHTML mybib.html and mybib.css
 
 ===
 
@@ -35,5 +47,4 @@ values foot|paren|no to correspond to \footcite, \parencite, and
 
 bx needs an option to set b:cite type attribute so it's not hardwired
 into documents
-
 

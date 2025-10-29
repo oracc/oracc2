@@ -135,7 +135,7 @@ dump_keys(void)
 int
 main(int argc, char * const*argv)
 {
-  options(argc, argv, "ab:kno:v");
+  options(argc, argv, "ab:kno:t:v");
   keys = hash_create(1024);
   p = pool_init();
   mesg_init();
@@ -182,6 +182,9 @@ opts(int opt, const char *arg)
       break;
     case 'p':
       project = arg;
+      break;
+    case 't':
+      cite_type = arg;
       break;
     case 'v':
       ++verbose;

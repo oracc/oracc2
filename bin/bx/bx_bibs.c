@@ -51,7 +51,7 @@ bx_bibs_res(const char *proj, const char **bibs)
     {
       if (verbose)
 	fprintf(stderr, "using .bib file %s\n", bibs[i]);
-      fprintf(resfp, "\\addresource{%s}\n", bibs[i]);
+      fprintf(resfp, "\\addbibresource{%s}\n", bibs[i]);
     }
 
   fclose(resfp);
