@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include "runexpat.h"
 #include "bx.h"
+#include "bbl.h"
 
 /* Simple program based on expat-identity.c to extract b:cite
  * attributes from inputs; a future version may format the cites in
@@ -11,12 +12,15 @@
 extern int optind;
 
 int append_cites = 0;
+int bbl_mode = 0;
 const char *bibsfile = NULL; /* file of paths to .bib files */
+const char *cite_type = NULL;
 int keys_mode = 0;
 int no_output = 0;
 const char *project = NULL;
 int verbose = 0;
 
+const char *bblfile;
 const char *keyfile = "bibkey.ltx";
 const char *output = NULL;
 
@@ -135,7 +139,7 @@ dump_keys(void)
 int
 main(int argc, char * const*argv)
 {
-  options(argc, argv, "ab:kno:t:v");
+  options(argc, argv, "ab:kl:no:t:v");
   keys = hash_create(1024);
   p = pool_init();
   mesg_init();
@@ -151,6 +155,10 @@ main(int argc, char * const*argv)
       bx_bibs_res(project, bibs);
       bx_keys(project, bibs);
       mesg_print(stderr);
+    }
+  else if (bbl_mode)
+    {
+      bbl_load(bblfile);
     }
   else
     {
@@ -173,6 +181,10 @@ opts(int opt, const char *arg)
       break;
     case 'k':
       keys_mode = 1;
+      break;
+    case 'l':
+      bblfile = arg;
+      bbl_mode = 1;
       break;
     case 'n':
       no_output = 1;
