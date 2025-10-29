@@ -14,6 +14,7 @@ int append_cites = 0;
 const char *bibsfile = NULL; /* file of paths to .bib files */
 int keys_mode = 0;
 int no_output = 0;
+const char *project = NULL;
 int verbose = 0;
 
 const char *keyfile = "bibkey.ltx";
@@ -147,13 +148,8 @@ main(int argc, char * const*argv)
 	bibs = bx_bibs_file(bibsfile);
       else
 	bibs = bx_bibs_file("-");
-      if (verbose)
-	{
-	  int i;
-	  for (i = 0; bibs[i]; ++i)
-	    fprintf(stderr, "using .bib file %s\n", bibs[i]);
-	}
-      bx_keys(bibs, output);
+      bx_bibs_res(project, bibs);
+      bx_keys(project, bibs);
       mesg_print(stderr);
     }
   else
@@ -183,6 +179,9 @@ opts(int opt, const char *arg)
       break;
     case 'o':
       output = arg; /* in keys_mode a file; otherwise a directory */
+      break;
+    case 'p':
+      project = arg;
       break;
     case 'v':
       ++verbose;

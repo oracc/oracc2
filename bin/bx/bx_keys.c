@@ -6,6 +6,7 @@
  */
 
 extern Hash *keys;
+extern const char *output;
 extern Pool *p;
 
 static FILE *keyfp;
@@ -17,19 +18,35 @@ static void bx_keys_ids(FILE *bibfp);
 static int bx_keys_key(FILE *bibfp);
 
 void
-bx_keys(const char **bibfiles, const char *keyfile)
+bx_keys(const char *project, const char **bibfiles)
 {
   int i;
-  if (keyfile)
+  if (output)
     {
-      if (!(keyfp = fopen(keyfile, "w")))
+      if (!strcmp(output, "-"))
+	keyfp = stdout;
+    }
+  else if (project)
+    {
+      char buf[strlen(oracc())+strlen(project)+strlen("/pub/bib-key.txt0")];
+      (void)sprintf(buf, "%s/pub/%s/bib-key.txt", oracc(), project);
+      output = (ccp)pool_copy((uccp)buf, p);
+    }
+  else
+    {
+      char buf[strlen(oracc())+strlen("/lib/data/bib-key.txt0")];
+      (void)sprintf(buf, "%s/lib/data/bib-key.txt", oracc());
+      output = (ccp)pool_copy((uccp)buf, p);
+    }
+
+  if (!keyfp)
+    {
+      if (!(keyfp = fopen(output, "w")))
 	{
-	  fprintf(stderr, "can't write keyfile %s", keyfile);
+	  fprintf(stderr, "can't write key output %s", output);
 	  exit(1);
 	}
     }
-  else
-    keyfp = stdout;
   
   for (i = 0; bibfiles[i]; ++i)
     bx_keys_sub(bibfiles[i]);

@@ -10,4 +10,8 @@ span_node = element i:span {
 	       (text_node | span_node | bib_node)*
 	    }
 
-bib_node = element b:cite { attribute key {text}, attribute pp {text}?}
+bib_node = element b:cite {
+	 attribute key {text},
+	 attribute pp {text}?,
+	 attribute type { "foot" | "paren" | "no" }?
+}
