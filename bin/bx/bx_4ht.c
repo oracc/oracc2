@@ -7,7 +7,7 @@ extern Bbl *bbl;
 static int tex4ht_found = 0;
 static Bblentry *curr_ep = NULL;
 
-void
+static void
 bx4ht_sH(void *userData, const char *name, const char **atts)
 {
   if (!strcmp(name, "meta"))
@@ -42,7 +42,7 @@ bx4ht_sH(void *userData, const char *name, const char **atts)
     }
 }
 
-void
+static void
 bx4ht_eH(void *userData, const char *name)
 {
   

@@ -20,6 +20,8 @@ const char *cite_type = NULL;
 int keys_mode = 0;
 int no_output = 0;
 const char *project = NULL;
+const char *t4ht_file = NULL;
+int t4ht_mode = 0;
 int verbose = 0;
 
 const char *bblfile;
@@ -162,6 +164,8 @@ main(int argc, char * const*argv)
   else if (bbl_mode)
     {
       bbl_load(bblfile);
+      if (t4ht_mode)
+	bx_4ht(t4ht_file);
     }
   else
     {
@@ -181,6 +185,10 @@ opts(int opt, const char *arg)
       break;
     case 'b':
       bibsfile = arg;
+      break;
+    case 'h':
+      t4ht_file = arg;
+      t4ht_mode = 1;
       break;
     case 'k':
       keys_mode = 1;
