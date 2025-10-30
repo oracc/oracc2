@@ -30,12 +30,20 @@ bx4ht_sH(void *userData, const char *name, const char **atts)
 		{
 		  fprintf(stderr, "bx4ht id %s not found in bbl refs", id);
 		}
-	      /* else: we have just found curr_ep via h4t_ref which
-		 gets set when reading the .bbl file */
+	      else if (verbose)
+		{
+		  /* we have just found curr_ep via h4t_ref which
+		     gets set when reading the .bbl file */
+		  fprintf(stderr, "bx4ht_sH: found ref %s via 4ht %s\n",
+			  curr_ep->ref, curr_ep->h4t_ref);
+		}
 	    }
 	  else if (curr_ep)
 	    {
 	      curr_ep->h4t_bib = (ccp)pool_copy((uccp)id, p);
+	      if (verbose)
+		fprintf(stderr, "bx4ht_sH: found bib id %s for ref %s\n",
+			curr_ep->h4t_bib, curr_ep->ref);
 	      curr_ep = NULL;
 	    }
 	}

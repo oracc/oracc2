@@ -144,7 +144,7 @@ int
 main(int argc, char * const*argv)
 {
   setlocale (LC_ALL, ORACC_LOCALE);
-  options(argc, argv, "ab:kl:no:t:v");
+  options(argc, argv, "ab:h:kl:no:t:v");
   keys = hash_create(1024);
   p = pool_init();
   mesg_init();
