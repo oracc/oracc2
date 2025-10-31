@@ -18,6 +18,7 @@ bx_bibs_file(const char *bibf)
   return bfs;
 }
 
+#if 0
 void
 bx_bibs_res(const char *proj, const char **bibs)
 {
@@ -52,3 +53,4 @@ bx_bibs_res(const char *proj, const char **bibs)
 
   fclose(resfp);
 }
+#endif

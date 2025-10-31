@@ -5,20 +5,17 @@
  * bib handler to validate keys
  */
 
-extern Hash *keys;
 extern const char *output;
-extern Pool *p;
-
 static FILE *keyfp;
 const char *bib_file;
 static int bib_lnum;
 
-static void bx_keys_sub(const char *f);
-static void bx_keys_ids(FILE *bibfp);
-static int bx_keys_key(FILE *bibfp);
+static void bx_keys_sub(Bx *bp, const char *f);
+static void bx_keys_ids(Bx *bp, FILE *bibfp);
+static int bx_keys_key(Bx *bp, FILE *bibfp);
 
 void
-bx_keys(const char *project, const char **bibfiles)
+bx_keys(Bx *bp, const char *project, const char **bibfiles)
 {
   int i;
   if (output)
@@ -30,13 +27,13 @@ bx_keys(const char *project, const char **bibfiles)
     {
       char buf[strlen(oracc())+strlen(project)+strlen("/pub/bib-key.txt0")];
       (void)sprintf(buf, "%s/pub/%s/bib-key.txt", oracc(), project);
-      output = (ccp)pool_copy((uccp)buf, p);
+      output = (ccp)pool_copy((uccp)buf, bp->p);
     }
   else
     {
       char buf[strlen(oracc())+strlen("/lib/data/bib-key.txt0")];
       (void)sprintf(buf, "%s/lib/data/bib-key.txt", oracc());
-      output = (ccp)pool_copy((uccp)buf, p);
+      output = (ccp)pool_copy((uccp)buf, bp->p);
     }
 
   if (!keyfp)
@@ -49,9 +46,9 @@ bx_keys(const char *project, const char **bibfiles)
     }
   
   for (i = 0; bibfiles[i]; ++i)
-    bx_keys_sub(bibfiles[i]);
+    bx_keys_sub(bp, bibfiles[i]);
 
-  const char **kk = hash_keys2(keys, &i);
+  const char **kk = hash_keys2(bp->keys, &i);
   qsort(kk, i, sizeof(const char *), cmpstringp);
   for (i = 0; kk[i]; ++i)
     fprintf(keyfp, "%s\n", kk[i]);
@@ -60,7 +57,7 @@ bx_keys(const char *project, const char **bibfiles)
 }
 
 static void
-bx_keys_sub(const char *f)
+bx_keys_sub(Bx *bp, const char *f)
 {
   FILE *bibfp = fopen(f, "r");
   if (!bibfp)
@@ -78,7 +75,7 @@ bx_keys_sub(const char *f)
 	  while (EOF != (ch = fgetc(bibfp)))
 	    if ('{' == ch)
 	      break;
-	  (void)bx_keys_key(bibfp);
+	  (void)bx_keys_key(bp, bibfp);
 	}
       else if ('\n' == ch)
 	{
@@ -91,24 +88,24 @@ bx_keys_sub(const char *f)
 	  else if ('i' == ch
 		   && ('d' == (ch = fgetc(bibfp)))
 		   && ('s' == (ch = fgetc(bibfp))))
-	    bx_keys_ids(bibfp);
+	    bx_keys_ids(bp, bibfp);
 	}
     }
 }
 
 static void
-bx_keys_ids(FILE *bibfp)
+bx_keys_ids(Bx *bp, FILE *bibfp)
 {
   int ch;
   while (EOF != (ch = fgetc(bibfp)))
     if ('{' == ch)
       break;
-  while (bx_keys_key(bibfp))
+  while (bx_keys_key(bp, bibfp))
     ;
 }
 
 static int
-bx_keys_key(FILE *bibfp)
+bx_keys_key(Bx *bp, FILE *bibfp)
 {
   char buf[1024];
   int nch = 0;
@@ -137,10 +134,10 @@ bx_keys_key(FILE *bibfp)
   if (nch)
     {
       buf[nch] = '\0';
-      Mloc *mp = hash_find(keys, (uccp)buf);
+      Mloc *mp = hash_find(bp->keys, (uccp)buf);
       if (!mp)
 	{
-	  hash_add(keys, pool_copy((uccp)buf, p),
+	  hash_add(bp->keys, pool_copy((uccp)buf, bp->p),
 		   mloc_file_line(bib_file, bib_lnum));
 	}
       else

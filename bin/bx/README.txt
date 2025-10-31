@@ -1,45 +1,66 @@
 BX--Oracc Bibliography Processing
 
-Quick notes ...
+bx operates in several different modes:
 
-bx -k generates key list from .bib files
 
-.bib can be on command line, or sent in to bx -k via stdin
+1) Cites Mode (CIT)
+===================
 
-bx -k generates system ORACC/lib/data/bib-res.ltx, a file of
-\addresource{...bib} lines and ORACC/lib/data/bib-key.txt, a file of
-legal keys, one per line
+Default mode. Scans XML inputs for <cite> elements and uses the found
+ref-keys to generate a .bib file. XML inputs are on command line.
 
-bx -p PROJECT -k generates PROJECT/02pub/bib-res.ltx and
-PROJECT/02pub/bib-key.txt
+Source .bib files are in a file named with -b arg; file
+may be '-' to pass .bib files in from stdin.
 
-bx.sh uses bx to get <b:cite> from XML files and writes a file
-containing \nocite{KEY} for each key.
+TODO: would be nice for XML inputs to follow xincludes; or be given as
+dir
 
-It then calls latex on a wrapper (see bx.sh notes) to create the .bcf
-file.
+TODO: give list of directories with -B to look for .bib files in.
 
-It then calls biber on the .bcf to create the .bbl file   
+TODO: project-level bib using config.xml to give list of .bib
+      files or dirs
 
-===Formatting inline cites
 
-Formatting inline cites will probably be added to bx which could add
-an attribute to b:cite or add a child with the formatted inline
-citation.
+2) Keys Mode (KEY)
+==================
 
-===Formatting the reference list
+Arg -k, scans .bib files checking for duplicate keys and outputs it to
+a file named with -o, or in a conventional location
+ORACC/lib/data/bib-key.txt or ORACC/pub/PROJECT/bib-key.txt if the -p
+arg is given.
 
-Formatting the bibliography will use tex4ht.
+Reports duplicates and the location of first occurences.
 
-Given a bibliography in mybib.tex
+.bib files as Cites mode but argv files are also .bib in Keys mode.
 
- latex mybib
- biber mybib
- xhlatex mybib
 
-produces XHTML mybib.html and mybib.css
+3) Refs Mode (REF)
+==================
 
-===
+Arg -r, reads .bib files.  Default is to validate and sort.
+
+Output to XML with -x or HTML with -d (div only) or -h (full html file).
+
+Uses popen to pipe through xsltproc bib-HTML.xsl).
+
+Arg -p [PROJECT] is passed to xsltproc; arg -d is implemented as arg
+param to xsltproc.
+
+.bib files as Keys mode.
+
+
+4) Inline Cite Formatting Mode (ICF)
+====================================
+
+Arg -f, reads XML inputs and adds a formatted citation as child of
+<cite>. Any <cite> children already in the input are discarded and
+replaced with newly produced ones.
+
+Outputs to a arg -t [TMP] directory or in-place with arg -i.  
+
+
+TODO
+====
 
 In the XML only b:cite is defined; a @type attr needs to be added with
 values foot|paren|no to correspond to \footcite, \parencite, and
@@ -47,4 +68,3 @@ values foot|paren|no to correspond to \footcite, \parencite, and
 
 bx needs an option to set b:cite type attribute so it's not hardwired
 into documents
-

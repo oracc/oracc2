@@ -3,7 +3,7 @@ include ../../oracc-am-rules.txt
 bin_SCRIPTS=bx.sh
 
 bin_PROGRAMS=bx bibx
-bx_SOURCES=bx.c bx_keys.c bx_bibs.c
+bx_SOURCES=bx.c bx_cit.c bx_icf.c bx_key.c bx_ref.c bx_keys.c bx_bibs.c
 
 bx_LDADD = $(xLDADD)
 bx_DEPENDENCIES = $(bx_LDADD)
@@ -16,4 +16,3 @@ bibx_DEPENDENCIES = $(bibx_LDADD)
 bib.tab.c bib.tab.h: bib.y bib.l
 
 bib.lex.c: bib.l bib.tab.h
-

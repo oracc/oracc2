@@ -7,192 +7,36 @@
 #include "bbl.h"
 #endif
 
-/* Simple program based on expat-identity.c to extract b:cite
- * attributes from inputs; a future version may format the cites in
- * the output and/or add a reference to the .bib data to support cite
- * formatting.
- */
+Bx b = {
+  .mode=BX_CIT ,
+  .pre[BX_CIT] = bx_cit_pre,
+  .pre[BX_ICF] = bx_icf_pre,
+  .pre[BX_KEY] = bx_key_pre,
+  .pre[BX_REF] = bx_ref_pre
+};
 
 extern int optind;
 
-#if 0
-int append_cites = 0;
-int bbl_mode = 0;
-#endif
 const char *bibsfile = NULL; /* file of paths to .bib files */
 const char *cite_type = NULL;
-int keys_mode = 0;
 int no_output = 0;
-const char *project = NULL;
-#if 0
-const char *t4ht_file = NULL;
-int t4ht_mode = 0;
-#endif
-
 int verbose = 0;
 
-#if 0
-const char *bblfile;
-const char *keyfile = "bibkey.ltx";
-#endif
-
 const char *output = NULL;
-
-Hash *keys = NULL;
-Pool *p = NULL;
-
-void
-bx_cite(const char **atts)
-{
-  const char *k = findAttr(atts, "key");
-  if (!hash_find(keys, (uccp)k))
-    hash_add(keys, pool_copy((uccp)k, p), "");
-}
-
-/* This printText implements the same escaping as used by oracc2's
-   xmlify library routine */
-void
-printText(const char *s, FILE *frag_fp)
-{
-  while (*s)
-    {
-      if (*s == '<')
-	fputs("&lt;",frag_fp);
-      else if (*s == '>')
-	fputs("&gt;",frag_fp);
-      else if (*s == '&')
-	fputs("&amp;",frag_fp);
-#if 0
-      else if (*s == '\'')
-	fputs("&apos;",frag_fp);
-#endif
-      else if (*s == '"')
-	fputs("&quot;",frag_fp);
-      else
-	fputc(*s,frag_fp);
-      ++s;
-    }
-}
-
-void
-printStart(FILE *fp, const char *name, const char **atts)
-{
-  const char **ap = atts;
-  printText((const char*)charData_retrieve(), fp);
-  fprintf(fp, "<%s", name);
-  if (atts)
-    {
-      for (ap = atts; ap[0]; )
-	{
-	  fprintf(fp, " %s=\"",*ap++);
-	  printText(*ap++, fp);
-	  fputc('"', fp);
-	}
-    }
-  fputc('>', fp);
-}
-
-void
-printEnd(FILE *fp, const char *name)
-{
-  printText((const char *)charData_retrieve(), fp);
-  fprintf(fp, "</%s>", name);
-}
-
-void
-ei_sH(void *userData, const char *name, const char **atts)
-{
-  printStart(userData, name, atts);
-  
-  if (!strcmp(name, "b:cite"))
-    bx_cite(atts);
-}
-
-void
-ei_eH(void *userData, const char *name)
-{
-  printEnd(userData, name);
-}
-
-void
-no_sH(void *userData, const char *name, const char **atts)
-{
-  if (!strcmp(name, "b:cite"))
-    bx_cite(atts);
-}
-
-void
-no_eH(void *userData, const char *name)
-{
-}
-
-void
-expat_identity(const char *fname, const char *xml_id, FILE *outfp)
-{
-  char const *fnlist[2];
-  fnlist[0] = fname;
-  fnlist[1] = NULL;
-  runexpatNSuD(i_list, fnlist,
-	       no_output ? no_sH : ei_sH,
-	       no_output ? no_eH : ei_eH,
-	       NULL, outfp);
-}
-
-#if 0
-void
-dump_keys(void)
-{
-  int i, nk;
-  const char **kk = hash_keys2(keys, &nk);
-  qsort(kk, nk, sizeof(const char *), cmpstringp);
-  FILE *keyfp = fopen(keyfile, append_cites ? "a" : "w");
-  for (i = 0; i < nk; ++i)
-    fprintf(keyfp, "\\nocite{%s}\n", kk[i]);
-  fclose(keyfp);
-}
-#endif
 
 int
 main(int argc, char * const*argv)
 {
   setlocale (LC_ALL, ORACC_LOCALE);
-#if 1
-  options(argc, argv, "b:kno:t:v");
-#else
-  options(argc, argv, "ab:h:kl:no:t:v");
-#endif
-  keys = hash_create(1024);
-  p = pool_init();
-  mesg_init();
-  if (keys_mode)
-    {
-      const char **bibs;
-      if (argv[optind])
-	bibs = (const char **)&argv[optind];
-      else if (bibsfile)
-	bibs = bx_bibs_file(bibsfile);
-      else
-	bibs = bx_bibs_file("-");
-      bx_bibs_res(project, bibs);
-      bx_keys(project, bibs);
-      mesg_print(stderr);
-    }
-#if 0
-  else if (bbl_mode)
-    {
-      bbl_load(bblfile);
-      if (t4ht_mode)
-	bx_4ht(t4ht_file);
-    }
-#endif
-  else
-    {
-      runexpat_omit_rp_wrap();
-      expat_identity(argv[optind], NULL, stdout);
-#if 0
-      dump_keys();
-#endif
-    }
+  options(argc, argv,
+	  "fkr"     /* mode args */
+	  "b:ptv"   /* adjunct args */
+	  "d:h:ix:" /* output args */ 
+	  );
+
+  b.pre[b.mode](&b);
+  b.run[b.mode](&b);
+  b.out[b.mode](&b);
 }
 
 int
@@ -200,37 +44,23 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
-#if 0
-    case 'a':
-      append_cites = 1;
+    case 'f':
+      b.mode = BX_ICF;
       break;
-#endif
+    case 'k':
+      b.mode = BX_KEY;
+      break;
+    case 'r':
+      b.mode = BX_REF;
+      break;
     case 'b':
       bibsfile = arg;
       break;
-#if 0
-    case 'h':
-      t4ht_file = arg;
-      t4ht_mode = 1;
-      break;
-#endif
-    case 'k':
-      keys_mode = 1;
-      break;
-#if 0
-    case 'l':
-      bblfile = arg;
-      bbl_mode = 1;
-      break;
-#endif
-    case 'n':
-      no_output = 1;
-      break;
     case 'o':
-      output = arg; /* in keys_mode a file; otherwise a directory */
+      output = arg; /* in keys_mode a file; in dotbib_mode a .bib file */
       break;
     case 'p':
-      project = arg;
+      b.project = arg;
       break;
     case 't':
       cite_type = arg;
