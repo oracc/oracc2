@@ -34,6 +34,7 @@ struct runinfo
   int this_one_is_done;
   enum isource from;
   Pool *pool;
+  XML_Parser parser;
 };
 
 struct runinfo *curr_rip;
@@ -153,6 +154,18 @@ charHandler(void *userData, const XML_Char *data, int len)
   curr_rip->charData_bufused += len;
 }
 
+const char *
+runexpat_file(void)
+{
+  return curr_rip->fname;
+}
+
+size_t
+runexpat_lnum(void)
+{
+  return XML_GetCurrentLineNumber(curr_rip->parser);
+}
+
 static void
 fail(XML_Parser parser, struct runinfo *rip)
 {
@@ -194,6 +207,8 @@ runexpatNSuD(enum isource from,
       fprintf(stderr,"runexpat: NULL return from XML_ParserCreate()\n");
       return;
     }
+  else
+    curr_rip->parser = parser;
 
   depth = 0;
   runexpat_init(rip);
@@ -243,10 +258,6 @@ runexpatNSuD(enum isource from,
 
   XML_ParserFree(parser);
   runexpat_term(rip);
-#if 0
-  /* rip->fname is always pool_copy()ed these days */
-  free(rip->fname);
-#endif
   free(rip);
 
   if (runinfo_stack)

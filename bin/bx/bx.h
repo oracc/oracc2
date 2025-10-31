@@ -10,13 +10,23 @@ typedef void (*bxfunc)(struct bx*);
 typedef struct bx
 {
   Bxmode mode;
+  char * const*argv;
   Hash *keys;
+  Hash *keys_cit;
   Hash *refs;
   Pool *p;
+  const char *outfile;
   const char *project;
+  const char *bibkey_file;
+  Hash *hbibkey;
+  const char *flist_bib;
+  const char **files_bib;
+  const char *flist_cit;
+  const char **files_cit;
   bxfunc pre[BX_TOP];
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];
+  int quiet;
 } Bx;
 
 extern Bx bx;
@@ -45,5 +55,9 @@ extern void bx_cit_out(Bx *bp);
 extern void bx_icf_out(Bx *bp);
 extern void bx_key_out(Bx *bp);
 extern void bx_ref_out(Bx *bp);
+
+extern void bxl_bibkeys(Bx *bp);
+extern void bxl_bibkey_file(Bx *bp);
+extern const char **bxl_flist_files(Bx *bp, const char *flist, const char *ext, char **fmem);
 
 #endif/*BX_H_*/

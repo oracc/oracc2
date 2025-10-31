@@ -5,7 +5,6 @@
  * bib handler to validate keys
  */
 
-extern const char *output;
 static FILE *keyfp;
 const char *bib_file;
 static int bib_lnum;
@@ -18,29 +17,29 @@ void
 bx_keys(Bx *bp, const char *project, const char **bibfiles)
 {
   int i;
-  if (output)
+  if (bp->outfile)
     {
-      if (!strcmp(output, "-"))
+      if (!strcmp(bp->outfile, "-"))
 	keyfp = stdout;
     }
   else if (project)
     {
       char buf[strlen(oracc())+strlen(project)+strlen("/pub/bib-key.txt0")];
       (void)sprintf(buf, "%s/pub/%s/bib-key.txt", oracc(), project);
-      output = (ccp)pool_copy((uccp)buf, bp->p);
+      bp->outfile = (ccp)pool_copy((uccp)buf, bp->p);
     }
   else
     {
       char buf[strlen(oracc())+strlen("/lib/data/bib-key.txt0")];
       (void)sprintf(buf, "%s/lib/data/bib-key.txt", oracc());
-      output = (ccp)pool_copy((uccp)buf, bp->p);
+      bp->outfile = (ccp)pool_copy((uccp)buf, bp->p);
     }
 
   if (!keyfp)
     {
-      if (!(keyfp = fopen(output, "w")))
+      if (!(keyfp = fopen(bp->outfile, "w")))
 	{
-	  fprintf(stderr, "can't write key output %s", output);
+	  fprintf(stderr, "can't write key output %s", bp->outfile);
 	  exit(1);
 	}
     }

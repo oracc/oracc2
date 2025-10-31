@@ -14,6 +14,8 @@ extern const char *findAttr(const char **atts, const char *name);
 extern const char *findAttrNULL(const char **atts, const char *name);
 extern void charData_discard(void);
 extern XML_Char*charData_retrieve(void);
+extern const char *runexpat_file(void);
+extern size_t runexpat_lnum(void);
 
 extern void runexpatNSuD(enum isource from, void *list,
 			 XML_StartElementHandler startElement, 

@@ -12,28 +12,35 @@ Bx b = {
   .pre[BX_CIT] = bx_cit_pre,
   .pre[BX_ICF] = bx_icf_pre,
   .pre[BX_KEY] = bx_key_pre,
-  .pre[BX_REF] = bx_ref_pre
+  .pre[BX_REF] = bx_ref_pre,
+  .run[BX_CIT] = bx_cit_run,
+  .run[BX_ICF] = bx_icf_run,
+  .run[BX_KEY] = bx_key_run,
+  .run[BX_REF] = bx_ref_run,
+  .out[BX_CIT] = bx_cit_out,
+  .out[BX_ICF] = bx_icf_out,
+  .out[BX_KEY] = bx_key_out,
+  .out[BX_REF] = bx_ref_out
 };
 
 extern int optind;
 
 const char *bibsfile = NULL; /* file of paths to .bib files */
 const char *cite_type = NULL;
-int no_output = 0;
 int verbose = 0;
-
-const char *output = NULL;
 
 int
 main(int argc, char * const*argv)
 {
   setlocale (LC_ALL, ORACC_LOCALE);
+  b.argv = argv;
   options(argc, argv,
 	  "fkr"     /* mode args */
-	  "b:ptv"   /* adjunct args */
+	  "b:c:"    /* input args */
 	  "d:h:ix:" /* output args */ 
+	  "pqtv"     /* adjunct args */
 	  );
-
+  b.p = pool_init();
   b.pre[b.mode](&b);
   b.run[b.mode](&b);
   b.out[b.mode](&b);
@@ -54,13 +61,19 @@ opts(int opt, const char *arg)
       b.mode = BX_REF;
       break;
     case 'b':
-      bibsfile = arg;
+      b.flist_bib = arg;
+      break;
+    case 'c':
+      b.flist_cit = arg;
       break;
     case 'o':
-      output = arg; /* in keys_mode a file; in dotbib_mode a .bib file */
+      b.outfile = arg; /* in keys_mode a file; in dotbib_mode a .bib file */
       break;
     case 'p':
       b.project = arg;
+      break;
+    case 'q':
+      b.quiet = 1;
       break;
     case 't':
       cite_type = arg;
