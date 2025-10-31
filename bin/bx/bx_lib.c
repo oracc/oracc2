@@ -2,6 +2,17 @@
 #include <roco.h>
 #include "bx.h"
 
+void
+bxl_bib_files(Bx *bp)
+{
+  char *fmem;
+  if (bp->flist_bib)
+    bp->files_bib = bxl_flist_files(bp, bp->flist_bib, "*.bib", &fmem);
+  else if (bp->argv[optind])
+    bp->files_bib = (const char **)&bp->argv[optind];
+  list_add(bp->mem, fmem);
+}
+
 /* Future iterations of this routine will allow a comma-separated list
  * of files in flist and also check for directories in the flist or
  * its contents which will then be globbed using the ext arg
@@ -52,16 +63,27 @@ bxl_bibkey_file(Bx *bp)
     } 
 }
 
+const char **
+bxl_key_array(Hash *h)
+{
+  int i;
+  const char **kk = hash_keys2(h, &i);
+  qsort(kk, i, sizeof(const char *), cmpstringp);
+  return kk;
+}
+
 void
 bxl_key_writer(Bx *bp, FILE *fp)
 {
   int i;
-  const char **kk = hash_keys2(m_cit(bp) ? bp->keys_cit : bp->keys, &i);
-  qsort(kk, i, sizeof(const char *), cmpstringp);
-  if (m_cit(bp))
-    for (i = 0; kk[i]; ++i)
-      fprintf(fp, "%s\n", kk[i]);
-  else
-    for (i = 0; kk[i]; ++i)
-      fprintf(fp, "%s\t%s\n", kk[i], (char*)hash_find(bp->keys, (uccp)kk[i]));
+  Hash *h = m_cit(bp) ? bp->keys_cit : bp->keys;
+  const char **kk = bxl_key_array(h);
+  for (i = 0; kk[i]; ++i)
+    {
+      Mloc *mp = hash_find(h, (uccp)kk[i]);
+      if (mp)
+	fprintf(fp, "%s\t%s\n", kk[i], mp->file ? mp->file : "#unknown_key");
+      else
+	fprintf(stderr, "bxl_key_writer: internal error: key %s has NULL Mloc*\n", kk[i]);
+    }
 }

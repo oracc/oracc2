@@ -15,6 +15,7 @@ typedef struct bx
   Hash *keys_cit;
   Hash *refs;
   Pool *p;
+  List *mem; /* odd memory items that need to be freed at end of run */
   const char *outfile;
   const char *project;
   const char *bibkey_file;
@@ -23,9 +24,12 @@ typedef struct bx
   const char **files_bib;
   const char *flist_cit;
   const char **files_cit;
+  const char *citations_file;
+  const char **citations;
   bxfunc pre[BX_TOP];
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];
+  int bibonly;
   int no_output;
   int quiet;
 } Bx;
@@ -61,5 +65,6 @@ extern void bxl_bibkeys(Bx *bp);
 extern void bxl_bibkey_file(Bx *bp);
 extern const char **bxl_flist_files(Bx *bp, const char *flist, const char *ext, char **fmem);
 extern void bxl_key_writer(Bx *bp, FILE *fp);
+extern void bxl_bib_files(Bx *bp);
 
 #endif/*BX_H_*/

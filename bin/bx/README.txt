@@ -39,7 +39,9 @@ Reports duplicates and the location of first occurences.
 3) Refs Mode (REF)
 ==================
 
-Arg -r, reads .bib files.  Default is to validate and sort.
+Arg -r, read .xml files, use CIT to get citations; augment for bib needs; gen output
+
+Arg -R, read .bib files.  Default is to validate; with output, sort as well
 
 Output to XML with -x or HTML with -d (div only) or -h (full html file).
 

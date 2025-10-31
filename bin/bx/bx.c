@@ -35,9 +35,9 @@ main(int argc, char * const*argv)
   setlocale (LC_ALL, ORACC_LOCALE);
   b.argv = argv;
   options(argc, argv,
-	  "fkr"     /* mode args */
+	  "fkrR"     /* mode args */
 	  "b:c:"    /* input args */
-	  "d:h:ix:" /* output args */ 
+	  "d:h:io:x:" /* output args */ 
 	  "npqtv"     /* adjunct args */
 	  );
   mesg_init();
@@ -60,6 +60,8 @@ opts(int opt, const char *arg)
     case 'k':
       b.mode = BX_KEY;
       break;
+    case 'R':
+      b.bibonly = 1;
     case 'r':
       b.mode = BX_REF;
       break;
@@ -68,6 +70,9 @@ opts(int opt, const char *arg)
       break;
     case 'c':
       b.flist_cit = arg;
+      break;
+    case 'C':
+      b.citations_file = arg;
       break;
     case 'n':
       b.no_output = 1;

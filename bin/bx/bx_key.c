@@ -14,20 +14,19 @@ static void bx_key_run_one(Bx *bp, const char *fname);
 void
 bx_key_pre(Bx *bp)
 {
-  char *fmem;
-  if (bp->flist_bib)
-    bp->files_bib = bxl_flist_files(bp, bp->flist_bib, "*.bib", &fmem);
-  else if (bp->argv[optind])
-    bp->files_bib = (const char **)&bp->argv[optind];
+  bxl_bib_files(bp);
   bp->keys = hash_create(1024);
 }
 
 void
 bx_key_run(Bx *bp)
 {
-  int i;
-  for (i = 0; bp->files_bib[i]; ++i)
-    bx_key_run_one(bp, bp->files_bib[i]);
+  if (bp->files_bib)
+    {
+      int i;
+      for (i = 0; bp->files_bib[i]; ++i)
+	bx_key_run_one(bp, bp->files_bib[i]);
+    }
 }
 
 void
