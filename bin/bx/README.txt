@@ -8,10 +8,9 @@ bx operates in several different modes:
 
 Default mode. Scans XML inputs for <cite> elements and uses the found
 ref-keys to generate a .bib file. XML inputs are on command line or in
-a file named with -c arg.
+a file named with -c arg, which may be '-' to read XML inputs from stdin.
 
-Source .bib files are in a file named with -b arg; file
-may be '-' to pass .bib files in from stdin.
+.bib files are not used in CIT mode.
 
 TODO: would be nice for XML inputs to follow xincludes; or be given as
 dir
@@ -32,7 +31,9 @@ arg is given.
 
 Reports duplicates and the location of first occurences.
 
-.bib files as Cites mode but argv files are also .bib in Keys mode.
+.bib files as Cites mode but with -b arg for bib files list.
+
+.xml files are not used in KEY mode.
 
 
 3) Refs Mode (REF)

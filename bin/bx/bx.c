@@ -38,12 +38,15 @@ main(int argc, char * const*argv)
 	  "fkr"     /* mode args */
 	  "b:c:"    /* input args */
 	  "d:h:ix:" /* output args */ 
-	  "pqtv"     /* adjunct args */
+	  "npqtv"     /* adjunct args */
 	  );
+  mesg_init();
   b.p = pool_init();
   b.pre[b.mode](&b);
   b.run[b.mode](&b);
   b.out[b.mode](&b);
+
+  mesg_print(stderr);
 }
 
 int
@@ -65,6 +68,9 @@ opts(int opt, const char *arg)
       break;
     case 'c':
       b.flist_cit = arg;
+      break;
+    case 'n':
+      b.no_output = 1;
       break;
     case 'o':
       b.outfile = arg; /* in keys_mode a file; in dotbib_mode a .bib file */

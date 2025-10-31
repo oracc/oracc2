@@ -26,15 +26,16 @@ typedef struct bx
   bxfunc pre[BX_TOP];
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];
+  int no_output;
   int quiet;
 } Bx;
 
 extern Bx bx;
 
-#define m_cit (b.mode==BX_cit)
-#define m_icf (b.mode==BX_icf)
-#define m_key (b.mode==BX_key)
-#define m_ref (b.mode==BX_ref)
+#define m_cit(b) ((b)->mode==BX_CIT)
+#define m_icf(b) ((b)->mode==BX_ICF)
+#define m_key(b) ((b)->mode==BX_KEY)
+#define m_ref(b) ((b)->mode==BX_REF)
 
 extern int verbose;
 
@@ -59,5 +60,6 @@ extern void bx_ref_out(Bx *bp);
 extern void bxl_bibkeys(Bx *bp);
 extern void bxl_bibkey_file(Bx *bp);
 extern const char **bxl_flist_files(Bx *bp, const char *flist, const char *ext, char **fmem);
+extern void bxl_key_writer(Bx *bp, FILE *fp);
 
 #endif/*BX_H_*/
