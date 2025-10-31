@@ -3,7 +3,9 @@
 #include <oracclocale.h>
 #include <runexpat.h>
 #include "bx.h"
+#if 0
 #include "bbl.h"
+#endif
 
 /* Simple program based on expat-identity.c to extract b:cite
  * attributes from inputs; a future version may format the cites in
@@ -13,19 +15,27 @@
 
 extern int optind;
 
+#if 0
 int append_cites = 0;
 int bbl_mode = 0;
+#endif
 const char *bibsfile = NULL; /* file of paths to .bib files */
 const char *cite_type = NULL;
 int keys_mode = 0;
 int no_output = 0;
 const char *project = NULL;
+#if 0
 const char *t4ht_file = NULL;
 int t4ht_mode = 0;
+#endif
+
 int verbose = 0;
 
+#if 0
 const char *bblfile;
 const char *keyfile = "bibkey.ltx";
+#endif
+
 const char *output = NULL;
 
 Hash *keys = NULL;
@@ -128,6 +138,7 @@ expat_identity(const char *fname, const char *xml_id, FILE *outfp)
 	       NULL, outfp);
 }
 
+#if 0
 void
 dump_keys(void)
 {
@@ -139,12 +150,17 @@ dump_keys(void)
     fprintf(keyfp, "\\nocite{%s}\n", kk[i]);
   fclose(keyfp);
 }
+#endif
 
 int
 main(int argc, char * const*argv)
 {
   setlocale (LC_ALL, ORACC_LOCALE);
+#if 1
+  options(argc, argv, "b:kno:t:v");
+#else
   options(argc, argv, "ab:h:kl:no:t:v");
+#endif
   keys = hash_create(1024);
   p = pool_init();
   mesg_init();
@@ -161,17 +177,21 @@ main(int argc, char * const*argv)
       bx_keys(project, bibs);
       mesg_print(stderr);
     }
+#if 0
   else if (bbl_mode)
     {
       bbl_load(bblfile);
       if (t4ht_mode)
 	bx_4ht(t4ht_file);
     }
+#endif
   else
     {
       runexpat_omit_rp_wrap();
       expat_identity(argv[optind], NULL, stdout);
+#if 0
       dump_keys();
+#endif
     }
 }
 
@@ -180,23 +200,29 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+#if 0
     case 'a':
       append_cites = 1;
       break;
+#endif
     case 'b':
       bibsfile = arg;
       break;
+#if 0
     case 'h':
       t4ht_file = arg;
       t4ht_mode = 1;
       break;
+#endif
     case 'k':
       keys_mode = 1;
       break;
+#if 0
     case 'l':
       bblfile = arg;
       bbl_mode = 1;
       break;
+#endif
     case 'n':
       no_output = 1;
       break;
