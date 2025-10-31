@@ -17,9 +17,9 @@ const char *fldnames[] = {
 };
 
 void
-bib_xml(List *b)
+bib_xml(List *b, FILE *fp)
 {
-  xout = stdout;
+  xout = fp;
   Bib *bp;
   fputs("<bib xmlns=\"http://oracc.org/ns/bib/1.0\">", xout);
   for (bp = list_first(b); bp; bp = list_next(b))

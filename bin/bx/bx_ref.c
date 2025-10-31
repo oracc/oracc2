@@ -48,6 +48,7 @@ bx_ref_pre(Bx *bp)
       bx_ref_bib_from_cit(bp);
       bp->entries = list_create(LIST_SINGLE);
     }
+  bp->bibs = list_create(LIST_SINGLE);
   bib_init(bp);
 }
 
@@ -55,6 +56,7 @@ void
 bx_ref_run(Bx *bp)
 {
   int i;
+  bibset_debug(0);
   /* load the entries from the .bib files */
   for (i = 0; bp->files_bib[i]; ++i)
     {
@@ -65,7 +67,7 @@ bx_ref_run(Bx *bp)
       /* per-file entry lists are done by resetting top-level entries
        * pointer; during load always add to top-level bp->entries
        */
-      if (!bp->bibonly)
+      if (bp->bibonly)
 	bp->entries = bibp->entries = list_create(LIST_SINGLE);
       bx_ref_run_one(bibp->file, bp->keys_cit);
     }
@@ -81,6 +83,15 @@ bx_ref_run(Bx *bp)
 void
 bx_ref_out(Bx *bp)
 {
+  if (bp->xmloutput)
+    {
+      FILE *xfp = NULL;
+      if (!strcmp(bp->outfile, "-"))
+	xfp = stdout;
+      else
+	xfp = fopen(bp->outfile, "w");
+      bib_xml(bp->bibs, xfp);
+    }
 }
 
 static void

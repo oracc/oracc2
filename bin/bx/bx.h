@@ -41,6 +41,7 @@ typedef struct bx
   int bibonly;
   int no_output;
   int quiet;
+  int xmloutput;
 } Bx;
 
 extern Bx bx;

@@ -32,7 +32,7 @@ bib_load(const char *bibfile)
   biblineno = 1;
   bibparse();
   bibreset();
- fclose(fp);
+  fclose(fp);
 }
 
 int
@@ -56,7 +56,7 @@ main(int argc, char * const*argv)
       curr_bibp = bp;
       bib_load(argv[i]);
     }
-  bib_xml(b.bibs);
+  bib_xml(b.bibs, stdout);
 }
 
 int

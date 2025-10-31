@@ -86,7 +86,7 @@ bib_entry_init(Mloc m, const char *ent, const char *key)
     fprintf(stderr, "warning: unknown entry type %s\n", ent);
   curr_ep->type = ent;
   curr_ep->key = key;
-  if (bib_cites && hash_find(bib_cites, (uccp)key))
+  if (!bib_cites || hash_find(bib_cites, (uccp)key))
     list_add(curr_bp->entries, curr_ep);
 }
 

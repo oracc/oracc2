@@ -57,7 +57,7 @@ extern const int l_biblloc_line(void);
 
 extern void bibreset(void);
 
-extern void bib_xml(List *b);
+extern void bib_xml(List *b, FILE *fp);
 
 extern Hash *bib_cites;
 extern Mloc biblloc;

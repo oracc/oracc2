@@ -41,6 +41,7 @@ main(int argc, char * const*argv)
 	  "npqtv"     /* adjunct args */
 	  );
   mesg_init();
+  b.mem = list_create(LIST_SINGLE);
   b.p = pool_init();
   b.pre[b.mode](&b);
   b.run[b.mode](&b);
@@ -91,6 +92,10 @@ opts(int opt, const char *arg)
       break;
     case 'v':
       ++verbose;
+      break;
+    case 'x':
+      b.xmloutput = 1;
+      b.outfile = arg;
       break;
     default:
       return 1;
