@@ -68,7 +68,7 @@ bx_ref_run(Bx *bp)
       if (!bp->bibonly)
 	bp->entries = bibp->entries = list_create(LIST_SINGLE);
       bx_ref_run_one(bibp->file, bp->keys_cit);
-    }  
+    }
 
   /* validate the entries */
 
@@ -116,6 +116,7 @@ bx_ref_run_one(const char *bibfile, Hash *cites)
     }
   bibin = fp;
   field = NULL;
+  bib_cites = cites;
   bib_field = bib_nesting = 0;
   biblineno = 1;
   bibparse();

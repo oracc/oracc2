@@ -23,6 +23,7 @@ const char *curr_bib, *curr_key, *field;
 Bx *curr_bp;
 Bib *curr_bibp;
 Bibentry *curr_ep;
+Hash *bib_cites;
 
 static struct bib_fld_tab *curr_bfp;
 
@@ -85,7 +86,8 @@ bib_entry_init(Mloc m, const char *ent, const char *key)
     fprintf(stderr, "warning: unknown entry type %s\n", ent);
   curr_ep->type = ent;
   curr_ep->key = key;
-  list_add(curr_bp->entries, curr_ep);
+  if (bib_cites && hash_find(bib_cites, (uccp)key))
+    list_add(curr_bp->entries, curr_ep);
 }
 
 void

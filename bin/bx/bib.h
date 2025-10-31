@@ -59,6 +59,7 @@ extern void bibreset(void);
 
 extern void bib_xml(List *b);
 
+extern Hash *bib_cites;
 extern Mloc biblloc;
 extern int bibparse(void);
 extern void bib_init(Bx *bp);
