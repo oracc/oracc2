@@ -1,7 +1,9 @@
 #include <oraccsys.h>
 #include "bx.h"
+#include "bib.h"
 
 static void bx_ref_bib_from_cit(Bx *bp);
+static void bx_ref_run_one(const char *bibfile, Hash *cites);
 
 /* REF mode:
  *
@@ -36,6 +38,7 @@ bx_ref_pre(Bx *bp)
   if (bp->bibonly)
     {
       bxl_bib_files(bp);
+      bp->keys_cit = NULL; /* transparency for bib_load arg */
     }
   else
     {
@@ -43,13 +46,29 @@ bx_ref_pre(Bx *bp)
       bx_cit_pre(bp);
       bx_cit_run(bp);
       bx_ref_bib_from_cit(bp);
+      bp->entries = list_create(LIST_SINGLE);
     }
+  bib_init(bp);
 }
 
 void
 bx_ref_run(Bx *bp)
 {
-  /* load the necessary .bib files */
+  int i;
+  /* load the entries from the .bib files */
+  for (i = 0; bp->files_bib[i]; ++i)
+    {
+      Bib *bibp = memo_new(bp->m_bib);
+      bibp->file = bp->files_bib[i];
+      list_add(bp->bibs, bibp);
+      curr_bibp = bibp;
+      /* per-file entry lists are done by resetting top-level entries
+       * pointer; during load always add to top-level bp->entries
+       */
+      if (!bp->bibonly)
+	bp->entries = bibp->entries = list_create(LIST_SINGLE);
+      bx_ref_run_one(bibp->file, bp->keys_cit);
+    }  
 
   /* validate the entries */
 
@@ -81,4 +100,25 @@ bx_ref_bib_from_cit(Bx *bp)
     }
   bp->files_bib = hash_keys(hbib);
   free(hbib);
+}
+
+static void
+bx_ref_run_one(const char *bibfile, Hash *cites)
+{
+  extern const char *curr_bib;
+  extern FILE *bibin;
+  curr_bib = bibfile;
+  FILE *fp = fopen(bibfile, "r");
+  if (!fp)
+    {
+      fprintf(stderr, "can't read .bib %s\n", bibfile);
+      exit(1);
+    }
+  bibin = fp;
+  field = NULL;
+  bib_field = bib_nesting = 0;
+  biblineno = 1;
+  bibparse();
+  bibreset();
+ fclose(fp);
 }

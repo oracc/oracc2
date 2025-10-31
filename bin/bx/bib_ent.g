@@ -1,5 +1,6 @@
 %{
 #include <string.h>
+#include "bx.h"
 #include "bib.h"
 %}
 struct bib_ent_tab;

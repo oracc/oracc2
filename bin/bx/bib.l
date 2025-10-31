@@ -4,22 +4,19 @@
 %{
 #include <stdlib.h>
 #include <string.h>
-#include <mesg.h>
-#include <pool.h>
-
+#include "bx.h"
 #define BIBLTYPE Mloc
 #include "bib.tab.h"
 static void bib_user_action(void);
 extern Mloc biblloc;
 #define YY_USER_ACTION bib_user_action();
+extern Bx *curr_bp;
 const char *curr_bib;
-extern Pool *p;
-extern char *field;
 extern int bib_field, bib_nesting;
 int bib_key_next;
 
 #include "bib.h"
-#define lval(v) biblval.s = (char *)pool_copy((uccp)(v),p)
+#define lval(v) biblval.s = (char *)pool_copy((uccp)(v),curr_bp->p)
 %}
 
 /* Regular expressions for .bib elements */

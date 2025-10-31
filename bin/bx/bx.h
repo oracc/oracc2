@@ -1,6 +1,10 @@
 #ifndef BX_H_
 #define BX_H_
 
+#include <hash.h>
+#include <pool.h>
+#include <list.h>
+#include <memo.h>
 struct bx;
 
 typedef enum bxmode { BX_CIT , BX_ICF , BX_KEY , BX_REF, BX_TOP } Bxmode;
@@ -14,6 +18,8 @@ typedef struct bx
   Hash *keys;
   Hash *keys_cit;
   Hash *refs;
+  Memo *m_bib;
+  Memo *m_bibentry;
   Pool *p;
   List *mem; /* odd memory items that need to be freed at end of run */
   const char *outfile;
@@ -26,6 +32,9 @@ typedef struct bx
   const char **files_cit;
   const char *citations_file;
   const char **citations;
+  List *bibs;
+  List *entries;	/* used for !bibonly run; redirects to
+			   per-bib-file entries in bibonly mode */
   bxfunc pre[BX_TOP];
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];

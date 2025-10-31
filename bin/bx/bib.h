@@ -39,7 +39,12 @@ struct bib_fld_tab { const char *name; enum bib_ftype t; };
 
 extern struct bib_ent_tab *bib_ent(register const char *str, register size_t len);
 extern struct bib_fld_tab *bib_fld(register const char *str, register size_t len);
+
 extern int biblineno, bib_key_next;
+extern int bib_field, bib_nesting;
+extern const char *curr_bib, *curr_key, *field;
+extern Bib *curr_bibp;
+extern Bibentry *curr_ep;
 
 extern void bib_entry_init(Mloc m, const char *ent, const char *key);
 extern void bib_entry_term(Mloc m);
@@ -53,5 +58,11 @@ extern const int l_biblloc_line(void);
 extern void bibreset(void);
 
 extern void bib_xml(List *b);
+
+extern Mloc biblloc;
+extern int bibparse(void);
+extern void bib_init(Bx *bp);
+extern void bibset_debug(int);
+extern void bib_wrapup_buffer(void);
 
 #endif/*BIB_H_*/

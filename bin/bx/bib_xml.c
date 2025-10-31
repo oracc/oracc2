@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <xml.h>
+#include "bx.h"
 #include "bib.h"
 
 static FILE *xout;
