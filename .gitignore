@@ -202,6 +202,8 @@ urlkeys.c
 whatfuncs.c
 msc/prj/cdli/periods.c
 bin/ax/ax_check.c
+bin/bx/bib_ent.c
+bin/bx/bib_fld.c
 bin/px/ice/pg/periodmap.c
 bin/px/pxargs.c
 bin/xx/cun/perfnt.c

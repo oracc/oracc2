@@ -1,0 +1,4120 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{CrüsemannEssHilgertSaljeothers2019}{article}{}{}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Uruk}
+      \field{title}{2013}
+      \field{volume}{5000 Jahre Megacity. Petersberg: Imhof Verl. (En. edition Uruk. First City of the Ancient World. Los Angeles: J. Paul Getty Museum Publications)}
+      \field{year}{2019}
+      \true{nocite}
+    \endentry
+    \entry{Amiet1966}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=51ff4158e94bcecb849992764da60fae}{%
+           family={Amiet},
+           familyi={A\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{fullhash}{51ff4158e94bcecb849992764da60fae}
+      \strng{fullhashraw}{51ff4158e94bcecb849992764da60fae}
+      \strng{bibnamehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authorbibnamehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authornamehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authorfullhash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authorfullhashraw}{51ff4158e94bcecb849992764da60fae}
+      \field{extraname}{1}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Archeologia}
+      \field{title}{Il y a 5000 ans, les Elamites inventaient l'écriture}
+      \field{volume}{12}
+      \field{year}{1966}
+      \true{nocite}
+      \field{pages}{16\bibrangedash 23}
+      \range{pages}{8}
+    \endentry
+    \entry{Amiet1980}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=51ff4158e94bcecb849992764da60fae}{%
+           family={Amiet},
+           familyi={A\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Paris}%
+      }
+      \list{publisher}{1}{%
+        {Editions Recherches sur les Civilisations}%
+      }
+      \strng{namehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{fullhash}{51ff4158e94bcecb849992764da60fae}
+      \strng{fullhashraw}{51ff4158e94bcecb849992764da60fae}
+      \strng{bibnamehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authorbibnamehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authornamehash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authorfullhash}{51ff4158e94bcecb849992764da60fae}
+      \strng{authorfullhashraw}{51ff4158e94bcecb849992764da60fae}
+      \field{extraname}{2}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{La glyptique Mésopotamienne archaïque}
+      \field{year}{1980}
+      \true{nocite}
+    \endentry
+    \entry{Aruz2003}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=478ab2647a5f96de499666ef85e489fd}{%
+           family={Aruz},
+           familyi={A\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {New York/New Haven/London}%
+      }
+      \list{publisher}{1}{%
+        {The Metropolitan Museum of Art/ Yale University Press}%
+      }
+      \strng{namehash}{478ab2647a5f96de499666ef85e489fd}
+      \strng{fullhash}{478ab2647a5f96de499666ef85e489fd}
+      \strng{fullhashraw}{478ab2647a5f96de499666ef85e489fd}
+      \strng{bibnamehash}{478ab2647a5f96de499666ef85e489fd}
+      \strng{authorbibnamehash}{478ab2647a5f96de499666ef85e489fd}
+      \strng{authornamehash}{478ab2647a5f96de499666ef85e489fd}
+      \strng{authorfullhash}{478ab2647a5f96de499666ef85e489fd}
+      \strng{authorfullhashraw}{478ab2647a5f96de499666ef85e489fd}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Art of the First Cities}
+      \field{year}{2003}
+      \true{nocite}
+    \endentry
+    \entry{Atkin2013}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=d96800071f60b2e874ce7d13101ec7f9}{%
+           family={Atkin},
+           familyi={A\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=8426a39c21a91aac15a8c3cf39c52251}{%
+           family={Zalta},
+           familyi={Z\bibinitperiod},
+           given={E.\bibnamedelimi N.},
+           giveni={E\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {URL =}%
+      }
+      \strng{namehash}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{fullhash}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{fullhashraw}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{bibnamehash}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{authorbibnamehash}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{authornamehash}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{authorfullhash}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{authorfullhashraw}{d96800071f60b2e874ce7d13101ec7f9}
+      \strng{editorbibnamehash}{8426a39c21a91aac15a8c3cf39c52251}
+      \strng{editornamehash}{8426a39c21a91aac15a8c3cf39c52251}
+      \strng{editorfullhash}{8426a39c21a91aac15a8c3cf39c52251}
+      \strng{editorfullhashraw}{8426a39c21a91aac15a8c3cf39c52251}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The Stanford Encyclopedia of Philosophy (Summer 2013 Edition)}
+      \field{title}{Peirce's theory of signs}
+      \field{year}{2013}
+      \true{nocite}
+    \endentry
+    \entry{Attinger2021}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=6b919ac1a8ca224fe277cef3053e3dc3}{%
+           family={Attinger},
+           familyi={A\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Wiesbaden}%
+      }
+      \list{publisher}{1}{%
+        {Harrassowitz}%
+      }
+      \strng{namehash}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \strng{fullhash}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \strng{fullhashraw}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \strng{bibnamehash}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \strng{authorbibnamehash}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \strng{authornamehash}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \strng{authorfullhash}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \strng{authorfullhashraw}{6b919ac1a8ca224fe277cef3053e3dc3}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Glossaire sumérien-français principalement des textes littéraires paléobabyloniens}
+      \field{year}{2021}
+      \true{nocite}
+    \endentry
+    \entry{Battini2017}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9c383447e5dba8e2d3b20a2ccf0d2597}{%
+           family={Battini},
+           familyi={B\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{fullhash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{fullhashraw}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{bibnamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authorbibnamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authornamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authorfullhash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authorfullhashraw}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \field{extraname}{1}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Akkadica}
+      \field{title}{L'épiphanie divine en Mésopotamie à travers les terres cuites}
+      \field{volume}{138}
+      \field{year}{2017}
+      \true{nocite}
+      \field{pages}{69\bibrangedash 106}
+      \range{pages}{38}
+    \endentry
+    \entry{Battini2022}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=9c383447e5dba8e2d3b20a2ccf0d2597}{%
+           family={Battini},
+           familyi={B\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=9c383447e5dba8e2d3b20a2ccf0d2597}{%
+           family={Battini},
+           familyi={B\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Oxford}%
+      }
+      \list{publisher}{1}{%
+        {Archaeopress}%
+      }
+      \strng{namehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{fullhash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{fullhashraw}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{bibnamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authorbibnamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authornamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authorfullhash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{authorfullhashraw}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{editorbibnamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{editornamehash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{editorfullhash}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \strng{editorfullhashraw}{9c383447e5dba8e2d3b20a2ccf0d2597}
+      \field{extraname}{2}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Image and Identity in the Ancient Near East. Papers in memoriam Pierre Amiet (Archaeopress Ancient Near Eastern Archaeology 8)}
+      \field{title}{Reprise de motifs akkadiens en Assyrie: de la porte `` habitée '' à l'arbre de vie}
+      \field{year}{2022}
+      \true{nocite}
+      \field{pages}{125\bibrangedash 191}
+      \range{pages}{67}
+    \endentry
+    \entry{Boehmer1965}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e51eedb59151da311cd93aa97e6718e2}{%
+           family={Boehmer},
+           familyi={B\bibinitperiod},
+           given={R.\bibnamedelimi M.},
+           giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {De Gruyter}%
+      }
+      \strng{namehash}{e51eedb59151da311cd93aa97e6718e2}
+      \strng{fullhash}{e51eedb59151da311cd93aa97e6718e2}
+      \strng{fullhashraw}{e51eedb59151da311cd93aa97e6718e2}
+      \strng{bibnamehash}{e51eedb59151da311cd93aa97e6718e2}
+      \strng{authorbibnamehash}{e51eedb59151da311cd93aa97e6718e2}
+      \strng{authornamehash}{e51eedb59151da311cd93aa97e6718e2}
+      \strng{authorfullhash}{e51eedb59151da311cd93aa97e6718e2}
+      \strng{authorfullhashraw}{e51eedb59151da311cd93aa97e6718e2}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die Entwicklung der Glyptik während der Akkad-Zeit (Untersuchungen zur Assyriologie und Vorderasiatischen Archäologie 4)}
+      \field{year}{1965}
+      \true{nocite}
+    \endentry
+    \entry{CancikKirschbaum2012}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ebaa860f768d1dec3bc9c4c3ba9a4a42}{%
+           family={Cancik-Kirschbaum},
+           familyi={C\bibinithyphendelim K\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=39b8a08a764832bf0557b2d002a58c22}{%
+           family={Krämer},
+           familyi={K\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{fullhash}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{fullhashraw}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{bibnamehash}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{authorbibnamehash}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{authornamehash}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{authorfullhash}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{authorfullhashraw}{ebaa860f768d1dec3bc9c4c3ba9a4a42}
+      \strng{editorbibnamehash}{39b8a08a764832bf0557b2d002a58c22}
+      \strng{editornamehash}{39b8a08a764832bf0557b2d002a58c22}
+      \strng{editorfullhash}{39b8a08a764832bf0557b2d002a58c22}
+      \strng{editorfullhashraw}{39b8a08a764832bf0557b2d002a58c22}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Bildschriftlichkeit in der Keilschriftlichen Schreibkultur}
+      \field{year}{2012}
+      \true{nocite}
+    \endentry
+    \entry{CancikKirschbaumTotzke??}{book}{}{}
+      \name{editor}{2}{}{%
+        {{un=0,uniquepart=base,hash=ebaa860f768d1dec3bc9c4c3ba9a4a42}{%
+           family={Cancik-Kirschbaum},
+           familyi={C\bibinithyphendelim K\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bb24c5ba013cb2a215a097a58037d43e}{%
+           family={Totzke},
+           familyi={T\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {De Gruyter}%
+      }
+      \strng{namehash}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \strng{fullhash}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \strng{fullhashraw}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \strng{bibnamehash}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \strng{editorbibnamehash}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \strng{editornamehash}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \strng{editorfullhash}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \strng{editorfullhashraw}{9962f5ddbe3eaab0b334f388c3e3b20d}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labeldatesource}{nodate}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{102--121}
+      \field{title}{Schriftbildlichkeit. Wahrnehmbarkeit, Materialität und Operativität von Notationen}
+      \true{nocite}
+    \endentry
+    \entry{Charvát2005}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c9d8ddb708dcc6ace8aee6d5b1d0a1b6}{%
+           family={Charvát},
+           familyi={C\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Prague}%
+      }
+      \list{publisher}{1}{%
+        {Karolinum}%
+      }
+      \strng{namehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{fullhash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{fullhashraw}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{bibnamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorbibnamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authornamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorfullhash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorfullhashraw}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \field{extraname}{1}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Iconography of Early Statehood. Painted Pottery and Seal Impressions from Susa, Southwestern Iran}
+      \field{year}{2005}
+      \true{nocite}
+    \endentry
+    \entry{Charvát2012}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c9d8ddb708dcc6ace8aee6d5b1d0a1b6}{%
+           family={Charvát},
+           familyi={C\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \true{moreeditor}
+      \name{editor}{1}{}{%
+        {{hash=3d55dda8543fb0d6af12842f34386ed3}{%
+           family={Boy},
+           familyi={B\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Leuven}%
+      }
+      \list{publisher}{1}{%
+        {Peeters}%
+      }
+      \strng{namehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{fullhash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{fullhashraw}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{bibnamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorbibnamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authornamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorfullhash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorfullhashraw}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{editorbibnamehash}{1bf6f13e73886f75cb0483f2c09c64ed}
+      \strng{editornamehash}{1bf6f13e73886f75cb0483f2c09c64ed}
+      \strng{editorfullhash}{1bf6f13e73886f75cb0483f2c09c64ed}
+      \strng{editorfullhashraw}{1bf6f13e73886f75cb0483f2c09c64ed}
+      \field{extraname}{2}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The Ancient Near East, A Life. Festschrift Karel Van Lerberghe (Orientalia Lovaniensia Analecta 22)}
+      \field{title}{Uruk mater urbium: The sign URU in proto-cuneiform writing}
+      \field{year}{2012}
+      \true{nocite}
+      \field{pages}{105\bibrangedash 114}
+      \range{pages}{10}
+    \endentry
+    \entry{Charvát2016}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c9d8ddb708dcc6ace8aee6d5b1d0a1b6}{%
+           family={Charvát},
+           familyi={C\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {London}%
+      }
+      \list{publisher}{1}{%
+        {British Museum Publication}%
+      }
+      \strng{namehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{fullhash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{fullhashraw}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{bibnamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorbibnamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authornamehash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorfullhash}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \strng{authorfullhashraw}{c9d8ddb708dcc6ace8aee6d5b1d0a1b6}
+      \field{extraname}{3}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Signs from Silence: Ur of the First Sumerians. Prague: Karolinum. Collon, D. 2005. First Impressions. Cylinder Seals in the Ancient Near East}
+      \field{year}{2016}
+      \true{nocite}
+    \endentry
+    \entry{Cooper2008}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=90d67a7115a45201b87fbdb59fc8b255}{%
+           family={Cooper},
+           familyi={C\bibinitperiod},
+           given={J.\bibnamedelimi S.},
+           giveni={J\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=9fc8b6405571bbdd9dd418e6cfcc7627}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {London/Torino}%
+      }
+      \list{publisher}{1}{%
+        {The Warburg Institute/Nino Aragno Editore}%
+      }
+      \strng{namehash}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{fullhash}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{fullhashraw}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{bibnamehash}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{authorbibnamehash}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{authornamehash}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{authorfullhash}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{authorfullhashraw}{90d67a7115a45201b87fbdb59fc8b255}
+      \strng{editorbibnamehash}{9fc8b6405571bbdd9dd418e6cfcc7627}
+      \strng{editornamehash}{9fc8b6405571bbdd9dd418e6cfcc7627}
+      \strng{editorfullhash}{9fc8b6405571bbdd9dd418e6cfcc7627}
+      \strng{editorfullhashraw}{9fc8b6405571bbdd9dd418e6cfcc7627}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Iconography without Texts (Warburg Institute Colloquia 13)}
+      \field{title}{Incongruent corpora. Writing and art in ancient Iraq}
+      \field{year}{2008}
+      \true{nocite}
+      \field{pages}{69\bibrangedash 94}
+      \range{pages}{26}
+    \endentry
+    \entry{Crawford2014}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=aede1ff35f27277c04cb31e90d1003ac}{%
+           family={Crawford},
+           familyi={C\bibinitperiod},
+           given={C.\bibnamedelimi D.},
+           giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=dd41984699212cd29de5d4ed751bc415}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={B.\bibnamedelimi A.},
+           giveni={B\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=1966a74bc86ba186695cbbdb9888c5c3}{%
+           family={Feldman},
+           familyi={F\bibinitperiod},
+           given={M.\bibnamedelimi H.},
+           giveni={M\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {De Gruyter}%
+      }
+      \strng{namehash}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{fullhash}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{fullhashraw}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{bibnamehash}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{authorbibnamehash}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{authornamehash}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{authorfullhash}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{authorfullhashraw}{aede1ff35f27277c04cb31e90d1003ac}
+      \strng{editorbibnamehash}{c534012772a3e841bf30d9b3230a7064}
+      \strng{editornamehash}{c534012772a3e841bf30d9b3230a7064}
+      \strng{editorfullhash}{c534012772a3e841bf30d9b3230a7064}
+      \strng{editorfullhashraw}{c534012772a3e841bf30d9b3230a7064}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Critical Approaches to Ancient Near Eastern Art}
+      \field{title}{Relating image and word in Ancient Mesopotamia}
+      \field{year}{2014}
+      \true{nocite}
+      \field{pages}{241\bibrangedash 264}
+      \range{pages}{24}
+    \endentry
+    \entry{DAnnaJaußJohnson2016}{incollection}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=fbdcee06c905602610859111e75aadf8}{%
+           family={D'Anna},
+           familyi={D\bibinitperiod},
+           given={M.\bibnamedelimi B.},
+           giveni={M\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=af0cb7204cc2c92bfb873df00cfa91b9}{%
+           family={Jauß},
+           familyi={J\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=2,uniquepart=given,hash=9beb38e22752dc0fd12c1e497dd36511}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=2}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=fbdcee06c905602610859111e75aadf8}{%
+           family={D'Anna},
+           familyi={D\bibinitperiod},
+           given={M.\bibnamedelimi B.},
+           giveni={M\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=af0cb7204cc2c92bfb873df00cfa91b9}{%
+           family={Jauß},
+           familyi={J\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=9beb38e22752dc0fd12c1e497dd36511}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Rivista de Preistoria e Protostoria della Civiltà Antiche 37}%
+      }
+      \strng{namehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{fullhash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{fullhashraw}{c9a17b47d06be279e5f4396660367be9}
+      \strng{bibnamehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{authorbibnamehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{authornamehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{authorfullhash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{authorfullhashraw}{c9a17b47d06be279e5f4396660367be9}
+      \strng{editorbibnamehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{editornamehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{editorfullhash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{editorfullhashraw}{c9a17b47d06be279e5f4396660367be9}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booksubtitle}{Material and Textual Perspectives on Alimentary Practice in Early Mesopotamia, Origini}
+      \field{booktitle}{Food and Urbanization}
+      \field{title}{Introduction}
+      \field{year}{2016}
+      \true{nocite}
+      \field{pages}{8\bibrangedash 14}
+      \range{pages}{7}
+    \endentry
+    \entry{DamerowEnglundNissen1996}{incollection}{}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=e23958ad59c76a342e7ce65a37f1f07c}{%
+           family={Damerow},
+           familyi={D\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a92f9d6d701c7899dec807d28c22eb13}{%
+           family={Englund},
+           familyi={E\bibinitperiod},
+           given={R.\bibnamedelimi K.},
+           giveni={R\bibinitperiod\bibinitdelim K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=38ed58135d78ce31662700a427b4de26}{%
+           family={Nissen},
+           familyi={N\bibinitperiod},
+           given={H.\bibnamedelimi J.},
+           giveni={H\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=e23958ad59c76a342e7ce65a37f1f07c}{%
+           family={Damerow},
+           familyi={D\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Dordrecht}%
+      }
+      \list{publisher}{1}{%
+        {Kluwer}%
+      }
+      \strng{namehash}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{fullhash}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{fullhashraw}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{bibnamehash}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{authorbibnamehash}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{authornamehash}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{authorfullhash}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{authorfullhashraw}{4d0bb22e8a7356a8ef4e751c17efa875}
+      \strng{editorbibnamehash}{e23958ad59c76a342e7ce65a37f1f07c}
+      \strng{editornamehash}{e23958ad59c76a342e7ce65a37f1f07c}
+      \strng{editorfullhash}{e23958ad59c76a342e7ce65a37f1f07c}
+      \strng{editorfullhashraw}{e23958ad59c76a342e7ce65a37f1f07c}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booksubtitle}{Essays on the Cultural Evolution of Thinking}
+      \field{booktitle}{Abstraction and Representation}
+      \field{title}{The first representations of numbers and the development of the number concept}
+      \field{year}{1996}
+      \true{nocite}
+      \field{pages}{275\bibrangedash 297}
+      \range{pages}{23}
+    \endentry
+    \entry{DeSarzecHeuzey1884--1913}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=6bcdc607036499c3f2f7a7c8ce27048a}{%
+           family={De\bibnamedelima Sarzec},
+           familyi={D\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e7033663cdf65e7566f3fca5d11c5cc4}{%
+           family={Heuzey},
+           familyi={H\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Paris}%
+      }
+      \list{publisher}{1}{%
+        {Ernest Leroux Éditeur}%
+      }
+      \strng{namehash}{33f0c7f48b78a378995a4ead802a4216}
+      \strng{fullhash}{33f0c7f48b78a378995a4ead802a4216}
+      \strng{fullhashraw}{33f0c7f48b78a378995a4ead802a4216}
+      \strng{bibnamehash}{33f0c7f48b78a378995a4ead802a4216}
+      \strng{authorbibnamehash}{33f0c7f48b78a378995a4ead802a4216}
+      \strng{authornamehash}{33f0c7f48b78a378995a4ead802a4216}
+      \strng{authorfullhash}{33f0c7f48b78a378995a4ead802a4216}
+      \strng{authorfullhashraw}{33f0c7f48b78a378995a4ead802a4216}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Decouvertes en Chaldée}
+      \field{year}{1884--1913}
+      \true{nocite}
+    \endentry
+    \entry{Deimel1928--1932}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=361c79d42d226ef03bfda0c4b9311bdd}{%
+           family={Deimel},
+           familyi={D\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Roma}%
+      }
+      \list{publisher}{1}{%
+        {Pontificio Istituto Biblico}%
+      }
+      \strng{namehash}{361c79d42d226ef03bfda0c4b9311bdd}
+      \strng{fullhash}{361c79d42d226ef03bfda0c4b9311bdd}
+      \strng{fullhashraw}{361c79d42d226ef03bfda0c4b9311bdd}
+      \strng{bibnamehash}{361c79d42d226ef03bfda0c4b9311bdd}
+      \strng{authorbibnamehash}{361c79d42d226ef03bfda0c4b9311bdd}
+      \strng{authornamehash}{361c79d42d226ef03bfda0c4b9311bdd}
+      \strng{authorfullhash}{361c79d42d226ef03bfda0c4b9311bdd}
+      \strng{authorfullhashraw}{361c79d42d226ef03bfda0c4b9311bdd}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{Vollständige Ideogrammsammlung}
+      \field{title}{Šumerisches Lexikon. II. Teil}
+      \field{year}{1928--1932}
+      \true{nocite}
+    \endentry
+    \entry{vanDijkCoombes2018}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1b97f2c71e9d5368cd4424d5d57e3176}{%
+           family={Dijk-Coombes},
+           familyi={D\bibinithyphendelim C\bibinitperiod},
+           given={R.\bibnamedelimi M.},
+           giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0,
+           prefix={van},
+           prefixi={v\bibinitperiod},
+           prefixun=0}}%
+      }
+      \strng{namehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{fullhash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{fullhashraw}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{bibnamehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authorbibnamehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authornamehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authorfullhash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authorfullhashraw}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \field{extraname}{1}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Antiguo Oriente}
+      \field{title}{The architectural origin of Mesopotamian standards in Late Uruk/Jemdet Nasr iconography}
+      \field{volume}{16}
+      \field{year}{2018}
+      \true{nocite}
+      \field{pages}{117\bibrangedash 146}
+      \range{pages}{30}
+    \endentry
+    \entry{vanDijkCoombes2023}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1b97f2c71e9d5368cd4424d5d57e3176}{%
+           family={Dijk-Coombes},
+           familyi={D\bibinithyphendelim C\bibinitperiod},
+           given={R.\bibnamedelimi M.},
+           giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0,
+           prefix={van},
+           prefixi={v\bibinitperiod},
+           prefixun=0}}%
+      }
+      \list{location}{1}{%
+        {Tübingen}%
+      }
+      \list{publisher}{1}{%
+        {Mohr Siebeck}%
+      }
+      \strng{namehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{fullhash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{fullhashraw}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{bibnamehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authorbibnamehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authornamehash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authorfullhash}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \strng{authorfullhashraw}{1b97f2c71e9d5368cd4424d5d57e3176}
+      \field{extraname}{2}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{An Iconographic Study (Orientalische Religionen in der Antike 52)}
+      \field{title}{The Standards of Mesopotamia in the Third and Fourth Millennia BCE}
+      \field{year}{2023}
+      \true{nocite}
+    \endentry
+    \entry{Englund1998}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=a92f9d6d701c7899dec807d28c22eb13}{%
+           family={Englund},
+           familyi={E\bibinitperiod},
+           given={R.\bibnamedelimi K.},
+           giveni={R\bibinitperiod\bibinitdelim K\bibinitperiod},
+           givenun=0}}%
+      }
+      \true{moreeditor}
+      \name{editor}{1}{}{%
+        {{hash=ebda88f7501c51c949ef5ce3ee6f25e1}{%
+           family={Bauer},
+           familyi={B\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Fribourg}%
+      }
+      \list{publisher}{1}{%
+        {Fribourg Academic Press}%
+      }
+      \strng{namehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{fullhash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{fullhashraw}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{bibnamehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authorbibnamehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authornamehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authorfullhash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authorfullhashraw}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{editorbibnamehash}{85df4e5318dbd21ea63125efe0a4d0ce}
+      \strng{editornamehash}{85df4e5318dbd21ea63125efe0a4d0ce}
+      \strng{editorfullhash}{85df4e5318dbd21ea63125efe0a4d0ce}
+      \strng{editorfullhashraw}{85df4e5318dbd21ea63125efe0a4d0ce}
+      \field{extraname}{1}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Mesopotamien. Späturuk-Zeit und Frühdynastische Zeit (OBO 160/1)}
+      \field{title}{Texts from the late Uruk period}
+      \field{year}{1998}
+      \true{nocite}
+      \field{pages}{15\bibrangedash 233}
+      \range{pages}{219}
+    \endentry
+    \entry{Englund2009}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=a92f9d6d701c7899dec807d28c22eb13}{%
+           family={Englund},
+           familyi={E\bibinitperiod},
+           given={R.\bibnamedelimi K.},
+           giveni={R\bibinitperiod\bibinitdelim K\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{fullhash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{fullhashraw}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{bibnamehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authorbibnamehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authornamehash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authorfullhash}{a92f9d6d701c7899dec807d28c22eb13}
+      \strng{authorfullhashraw}{a92f9d6d701c7899dec807d28c22eb13}
+      \field{extraname}{2}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{CDLJ}
+      \field{title}{The smell of the cage}
+      \field{volume}{2009}
+      \field{year}{2009}
+      \true{nocite}
+      \field{pages}{4}
+      \range{pages}{1}
+      \verb{urlraw}
+      \verb https://cdli.earth/articles/cdlj/2009-4
+      \endverb
+      \verb{url}
+      \verb https://cdli.earth/articles/cdlj/2009-4
+      \endverb
+    \endentry
+    \entry{Falkenstein1936}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=32c419ac9b284ad69c8b1b22009a50db}{%
+           family={Falkenstein},
+           familyi={F\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Mann Gebr}%
+      }
+      \strng{namehash}{32c419ac9b284ad69c8b1b22009a50db}
+      \strng{fullhash}{32c419ac9b284ad69c8b1b22009a50db}
+      \strng{fullhashraw}{32c419ac9b284ad69c8b1b22009a50db}
+      \strng{bibnamehash}{32c419ac9b284ad69c8b1b22009a50db}
+      \strng{authorbibnamehash}{32c419ac9b284ad69c8b1b22009a50db}
+      \strng{authornamehash}{32c419ac9b284ad69c8b1b22009a50db}
+      \strng{authorfullhash}{32c419ac9b284ad69c8b1b22009a50db}
+      \strng{authorfullhashraw}{32c419ac9b284ad69c8b1b22009a50db}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Archaische Texte aus Uruk (ADFU 2)}
+      \field{year}{1936}
+      \true{nocite}
+    \endentry
+    \entry{Frahm2011}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=2d6ee5cb3267082a7ab2a7717d5841d0}{%
+           family={Frahm},
+           familyi={F\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Ugarit Verlag}%
+      }
+      \strng{namehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{fullhash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{fullhashraw}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{bibnamehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authorbibnamehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authornamehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authorfullhash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authorfullhashraw}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \field{extraname}{1}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Babylonian and Assyrian Text Commentaries. Origins of Interpretations}
+      \field{year}{2011}
+      \true{nocite}
+    \endentry
+    \entry{Frahm2019}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=2d6ee5cb3267082a7ab2a7717d5841d0}{%
+           family={Frahm},
+           familyi={F\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{fullhash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{fullhashraw}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{bibnamehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authorbibnamehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authornamehash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authorfullhash}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \strng{authorfullhashraw}{2d6ee5cb3267082a7ab2a7717d5841d0}
+      \field{extraname}{2}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Ancient Near Eastern History}
+      \field{title}{The perils of omnisignificance: Language and reason in Mesopotamian hermeneutics}
+      \field{volume}{5}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{107\bibrangedash 129}
+      \range{pages}{23}
+    \endentry
+    \entry{Frankfort1939}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=3512853b4af4ea9cd3f07fd00ebf5c67}{%
+           family={Frankfort},
+           familyi={F\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {London}%
+      }
+      \list{publisher}{2}{%
+        {MacMillan}%
+        {Co}%
+      }
+      \strng{namehash}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \strng{fullhash}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \strng{fullhashraw}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \strng{bibnamehash}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \strng{authorbibnamehash}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \strng{authornamehash}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \strng{authorfullhash}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \strng{authorfullhashraw}{3512853b4af4ea9cd3f07fd00ebf5c67}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{A Documentary Essay on the Art and Religion of the Ancient Near East}
+      \field{title}{Cylinder Seals}
+      \field{year}{1939}
+      \true{nocite}
+    \endentry
+    \entry{Goldwasser2005}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7dac294bd98d52d6c112b54c99c96dfc}{%
+           family={Goldwasser},
+           familyi={G\bibinitperiod},
+           given={O.},
+           giveni={O\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7dac294bd98d52d6c112b54c99c96dfc}
+      \strng{fullhash}{7dac294bd98d52d6c112b54c99c96dfc}
+      \strng{fullhashraw}{7dac294bd98d52d6c112b54c99c96dfc}
+      \strng{bibnamehash}{7dac294bd98d52d6c112b54c99c96dfc}
+      \strng{authorbibnamehash}{7dac294bd98d52d6c112b54c99c96dfc}
+      \strng{authornamehash}{7dac294bd98d52d6c112b54c99c96dfc}
+      \strng{authorfullhash}{7dac294bd98d52d6c112b54c99c96dfc}
+      \strng{authorfullhashraw}{7dac294bd98d52d6c112b54c99c96dfc}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Metaphor and Symbol}
+      \field{title}{Where is metaphor? Conceptual metaphor and alternative classification in the hieroglyphic script}
+      \field{volume}{20}
+      \field{year}{2005}
+      \true{nocite}
+      \field{pages}{95\bibrangedash 113}
+      \range{pages}{19}
+    \endentry
+    \entry{Gordin2014}{book}{}{}
+      \name{editor}{1}{}{%
+        {{un=0,uniquepart=base,hash=fec94e0688cd7193632740b92047a8f4}{%
+           family={Gordin},
+           familyi={G\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berliner Beiträge zum Vorderen Orient). Gladbeck}%
+      }
+      \list{publisher}{1}{%
+        {Pewe-Verlag}%
+      }
+      \strng{namehash}{fec94e0688cd7193632740b92047a8f4}
+      \strng{fullhash}{fec94e0688cd7193632740b92047a8f4}
+      \strng{fullhashraw}{fec94e0688cd7193632740b92047a8f4}
+      \strng{bibnamehash}{fec94e0688cd7193632740b92047a8f4}
+      \strng{editorbibnamehash}{fec94e0688cd7193632740b92047a8f4}
+      \strng{editornamehash}{fec94e0688cd7193632740b92047a8f4}
+      \strng{editorfullhash}{fec94e0688cd7193632740b92047a8f4}
+      \strng{editorfullhashraw}{fec94e0688cd7193632740b92047a8f4}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{title}{Visualizing Knowledge and Creating Meaning in Ancient Writing Systems}
+      \field{year}{2014}
+      \true{nocite}
+    \endentry
+    \entry{GreenNissen1987}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=a1c976977e896e1139760d92dc61375a}{%
+           family={Green},
+           familyi={G\bibinitperiod},
+           given={M.\bibnamedelimi W.},
+           giveni={M\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=38ed58135d78ce31662700a427b4de26}{%
+           family={Nissen},
+           familyi={N\bibinitperiod},
+           given={H.\bibnamedelimi J.},
+           giveni={H\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Mann Gebr}%
+      }
+      \strng{namehash}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \strng{fullhash}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \strng{fullhashraw}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \strng{bibnamehash}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \strng{authorbibnamehash}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \strng{authornamehash}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \strng{authorfullhash}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \strng{authorfullhashraw}{4ec90e9dda012fc09f607c4a7fe432c7}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Zeichenliste der Archaischen Texte aus Uruk (Archaische Texte aus Uruk II)}
+      \field{year}{1987}
+      \true{nocite}
+    \endentry
+    \entry{HallWoolley1927}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=f5c16591f1924b2cdb2534674e60a8e4}{%
+           family={Hall},
+           familyi={H\bibinitperiod},
+           given={H.\bibnamedelimi R.},
+           giveni={H\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c0a65f29a2a4d53d2b430f11cc082f64}{%
+           family={Woolley},
+           familyi={W\bibinitperiod},
+           given={C.\bibnamedelimi L.},
+           giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {London/Philadelphia}%
+      }
+      \list{publisher}{1}{%
+        {The Trustees of the two Museums}%
+      }
+      \strng{namehash}{628e25c9aaadb6248ec1cc598219b99d}
+      \strng{fullhash}{628e25c9aaadb6248ec1cc598219b99d}
+      \strng{fullhashraw}{628e25c9aaadb6248ec1cc598219b99d}
+      \strng{bibnamehash}{628e25c9aaadb6248ec1cc598219b99d}
+      \strng{authorbibnamehash}{628e25c9aaadb6248ec1cc598219b99d}
+      \strng{authornamehash}{628e25c9aaadb6248ec1cc598219b99d}
+      \strng{authorfullhash}{628e25c9aaadb6248ec1cc598219b99d}
+      \strng{authorfullhashraw}{628e25c9aaadb6248ec1cc598219b99d}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{A Report on the Work Carried Out at Al-`Ubaid for the British Museum in 1919 and for the Joint Expedition in 1922--23 (Ur Excavations I)}
+      \field{title}{Al-`Ubaid}
+      \field{year}{1927}
+      \true{nocite}
+    \endentry
+    \entry{Heuzey1902}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e7033663cdf65e7566f3fca5d11c5cc4}{%
+           family={Heuzey},
+           familyi={H\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Paris}%
+      }
+      \list{publisher}{1}{%
+        {Librairies-imprimeries réunies}%
+      }
+      \strng{namehash}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \strng{fullhash}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \strng{fullhashraw}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \strng{bibnamehash}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \strng{authorbibnamehash}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \strng{authornamehash}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \strng{authorfullhash}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \strng{authorfullhashraw}{e7033663cdf65e7566f3fca5d11c5cc4}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Musée National du Louvre catalogue des antiquités Chaldéennes sculpture et gravure à la pointe}
+      \field{year}{1902}
+      \true{nocite}
+    \endentry
+    \entry{HilgertHofmannSimon2018}{book}{}{}
+      \name{editor}{3}{}{%
+        {{un=0,uniquepart=base,hash=69602d13ba10c43d977edba9f12ec2d1}{%
+           family={Hilgert},
+           familyi={H\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b6a0d8d90c4d7f81e8e172d7036c537a}{%
+           family={Hofmann},
+           familyi={H\bibinitperiod},
+           given={K.\bibnamedelimi P.},
+           giveni={K\bibinitperiod\bibinitdelim P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=09cab6bba7885375ee5eadfb3e870692}{%
+           family={Simon},
+           familyi={S\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin Studies of the Ancient World 59). Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Topoi}%
+      }
+      \strng{namehash}{c0f1fbd649b09a831a375466425e5c63}
+      \strng{fullhash}{c0f1fbd649b09a831a375466425e5c63}
+      \strng{fullhashraw}{c0f1fbd649b09a831a375466425e5c63}
+      \strng{bibnamehash}{c0f1fbd649b09a831a375466425e5c63}
+      \strng{editorbibnamehash}{c0f1fbd649b09a831a375466425e5c63}
+      \strng{editornamehash}{c0f1fbd649b09a831a375466425e5c63}
+      \strng{editorfullhash}{c0f1fbd649b09a831a375466425e5c63}
+      \strng{editorfullhashraw}{c0f1fbd649b09a831a375466425e5c63}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{editor}
+      \field{labeltitlesource}{title}
+      \field{title}{Objektepistemologien. Zur Vermessung eines transdisziplinären Forschungsraums}
+      \field{year}{2018}
+      \true{nocite}
+    \endentry
+    \entry{Hyman2006}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=bcd8865321b59130f0a776f0ba83d8cd}{%
+           family={Hyman},
+           familyi={H\bibinitperiod},
+           given={M.\bibnamedelimi E.},
+           giveni={M\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{bcd8865321b59130f0a776f0ba83d8cd}
+      \strng{fullhash}{bcd8865321b59130f0a776f0ba83d8cd}
+      \strng{fullhashraw}{bcd8865321b59130f0a776f0ba83d8cd}
+      \strng{bibnamehash}{bcd8865321b59130f0a776f0ba83d8cd}
+      \strng{authorbibnamehash}{bcd8865321b59130f0a776f0ba83d8cd}
+      \strng{authornamehash}{bcd8865321b59130f0a776f0ba83d8cd}
+      \strng{authorfullhash}{bcd8865321b59130f0a776f0ba83d8cd}
+      \strng{authorfullhashraw}{bcd8865321b59130f0a776f0ba83d8cd}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Language \& Communication}
+      \field{title}{Of glyphs and glottography}
+      \field{volume}{26/ : 231--249}
+      \field{year}{2006}
+      \true{nocite}
+      \field{pages}{3\bibrangedash 4}
+      \range{pages}{2}
+    \endentry
+    \entry{Johandi2019}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=8bbecd3109eb8dbbb9b869b9e01187ab}{%
+           family={Johandi},
+           familyi={J\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {University of Tartu}%
+      }
+      \strng{namehash}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \strng{fullhash}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \strng{fullhashraw}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \strng{bibnamehash}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \strng{authorbibnamehash}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \strng{authornamehash}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \strng{authorfullhash}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \strng{authorfullhashraw}{8bbecd3109eb8dbbb9b869b9e01187ab}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The God Asar/Asalluhi in the Early Mesopotamian Pantheon}
+      \field{type}{phdthesis}
+      \field{year}{2019}
+      \true{nocite}
+    \endentry
+    \entry{Johnson2016}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=2,uniquepart=given,hash=9beb38e22752dc0fd12c1e497dd36511}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=2}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=fbdcee06c905602610859111e75aadf8}{%
+           family={D'Anna},
+           familyi={D\bibinitperiod},
+           given={M.\bibnamedelimi B.},
+           giveni={M\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=af0cb7204cc2c92bfb873df00cfa91b9}{%
+           family={Jauß},
+           familyi={J\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=9beb38e22752dc0fd12c1e497dd36511}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Roma}%
+      }
+      \list{publisher}{1}{%
+        {Gangemi Editore}%
+      }
+      \strng{namehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{fullhash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{fullhashraw}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{bibnamehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authorbibnamehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authornamehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authorfullhash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authorfullhashraw}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{editorbibnamehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{editornamehash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{editorfullhash}{c9a17b47d06be279e5f4396660367be9}
+      \strng{editorfullhashraw}{c9a17b47d06be279e5f4396660367be9}
+      \field{extraname}{1}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{terial and Textual Perspectives on Alimentary Practice in Early Mesopotamia (Origini. Rivista de Preistoria e Protostoria della Civiltà Antiche 37)}
+      \field{title}{Deciphering the Late Uruk butchering texts}
+      \field{year}{2016}
+      \true{nocite}
+      \field{pages}{46\bibrangedash 55}
+      \range{pages}{10}
+    \endentry
+    \entry{Johnson2019}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=2,uniquepart=given,hash=9beb38e22752dc0fd12c1e497dd36511}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={J.\bibnamedelimi C.},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=2}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=13649beb8968e7d43db5d2e8db9527ce}{%
+           family={Renn},
+           familyi={R\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+        {{hash=0a10498e2016e611016097d8191ccff0}{%
+           family={Schemmel},
+           familyi={S\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Max-Planck- Gesellschaft zur Förderung der Wissenschaften}%
+      }
+      \strng{namehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{fullhash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{fullhashraw}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{bibnamehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authorbibnamehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authornamehash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authorfullhash}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{authorfullhashraw}{9beb38e22752dc0fd12c1e497dd36511}
+      \strng{editorbibnamehash}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \strng{editornamehash}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \strng{editorfullhash}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \strng{editorfullhashraw}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \field{extraname}{2}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Culture and Cognition. Essays in Honor of Peter Damerow (Max Planck Research Library for the History and Development of Knowledge, Proceedings 11)}
+      \field{title}{Meat distribution in Late Uruk diacritical feasts. Second-order bookkeeping techniques and their institutional context in late fourth millennium BCE Mesopotamia}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{69\bibrangedash 80}
+      \range{pages}{12}
+    \endentry
+    \entry{Johnson2015}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=2,uniquepart=given,hash=6aa085cd85ad60e5b9d422286b48f901}{%
+           family={Johnson},
+           familyi={J\bibinitperiod},
+           given={J.\bibnamedelimi Cale},
+           giveni={J\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=2}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=c540c088376d080347195554e9f7963d}{%
+           family={Dittmann},
+           familyi={D\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Ugarit Verlag}%
+      }
+      \strng{namehash}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{fullhash}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{fullhashraw}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{bibnamehash}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{authorbibnamehash}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{authornamehash}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{authorfullhash}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{authorfullhashraw}{6aa085cd85ad60e5b9d422286b48f901}
+      \strng{editorbibnamehash}{f81320c7c8f9203a3959c9514845d731}
+      \strng{editornamehash}{f81320c7c8f9203a3959c9514845d731}
+      \strng{editorfullhash}{f81320c7c8f9203a3959c9514845d731}
+      \strng{editorfullhashraw}{f81320c7c8f9203a3959c9514845d731}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{It's a Long Way to a Historiography of the Early Dynastic Period(s) (Altertumskunde des Vorderen Orients 15)}
+      \field{title}{Late Uruk bicameral orthographies and their Early Dynastic Rezeptionsgeschichte}
+      \field{year}{2015}
+      \true{nocite}
+      \field{pages}{169\bibrangedash 210}
+      \range{pages}{42}
+    \endentry
+    \entry{Keetman2005}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1fb337c606c61389c96b9d5c3ac6decb}{%
+           family={Keetman},
+           familyi={K\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{fullhash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{fullhashraw}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{bibnamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorbibnamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authornamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorfullhash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorfullhashraw}{1fb337c606c61389c96b9d5c3ac6decb}
+      \field{extraname}{1}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Cuneiform Studies}
+      \field{title}{Die altsumerische Vokalharmonie und die Vokale im Sumerischen}
+      \field{volume}{57}
+      \field{year}{2005}
+      \true{nocite}
+      \field{pages}{1\bibrangedash 16}
+      \range{pages}{16}
+    \endentry
+    \entry{Keetman2020}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1fb337c606c61389c96b9d5c3ac6decb}{%
+           family={Keetman},
+           familyi={K\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=f925b3a2bc26bcd071b4d4530db8be9a}{%
+           family={Arkhipov},
+           familyi={A\bibinitperiod},
+           given={I.},
+           giveni={I\bibinitperiod}}}%
+        {{hash=8b63a7467e6bd7cf293bf516b49bd391}{%
+           family={Kogan},
+           familyi={K\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=f28876f2f71f2c1edc89a588d7bcd935}{%
+           family={Koslova},
+           familyi={K\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Boston}%
+      }
+      \list{publisher}{1}{%
+        {Brill}%
+      }
+      \strng{namehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{fullhash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{fullhashraw}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{bibnamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorbibnamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authornamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorfullhash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorfullhashraw}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{editorbibnamehash}{e690d90e7913d36b6193f1e3f8cb380c}
+      \strng{editornamehash}{e690d90e7913d36b6193f1e3f8cb380c}
+      \strng{editorfullhash}{e690d90e7913d36b6193f1e3f8cb380c}
+      \strng{editorfullhashraw}{e690d90e7913d36b6193f1e3f8cb380c}
+      \field{extraname}{2}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The Third Millennium: Studies in Early Mesopotamia and Syria in Honor of Walter Sommerfeld and Manfred Krebernik: . Leiden/}
+      \field{title}{Sumerisch auf Tafeln der Schriftstufe Uruk III}
+      \field{year}{2020}
+      \true{nocite}
+      \field{pages}{341\bibrangedash 376}
+      \range{pages}{36}
+    \endentry
+    \entry{Keetman2022}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1fb337c606c61389c96b9d5c3ac6decb}{%
+           family={Keetman},
+           familyi={K\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{fullhash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{fullhashraw}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{bibnamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorbibnamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authornamehash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorfullhash}{1fb337c606c61389c96b9d5c3ac6decb}
+      \strng{authorfullhashraw}{1fb337c606c61389c96b9d5c3ac6decb}
+      \field{extraname}{3}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Iraq}
+      \field{title}{The telling name of the Sumerian god Isimu the Mesopotamian Janus}
+      \field{volume}{84}
+      \field{year}{2022}
+      \true{nocite}
+      \field{pages}{141\bibrangedash 155}
+      \range{pages}{15}
+    \endentry
+    \entry{Kelley2018}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=1cdc2e35c7c9850581416bc2881bf489}{%
+           family={Kelley},
+           familyi={K\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {University of Oxford}%
+      }
+      \strng{namehash}{1cdc2e35c7c9850581416bc2881bf489}
+      \strng{fullhash}{1cdc2e35c7c9850581416bc2881bf489}
+      \strng{fullhashraw}{1cdc2e35c7c9850581416bc2881bf489}
+      \strng{bibnamehash}{1cdc2e35c7c9850581416bc2881bf489}
+      \strng{authorbibnamehash}{1cdc2e35c7c9850581416bc2881bf489}
+      \strng{authornamehash}{1cdc2e35c7c9850581416bc2881bf489}
+      \strng{authorfullhash}{1cdc2e35c7c9850581416bc2881bf489}
+      \strng{authorfullhashraw}{1cdc2e35c7c9850581416bc2881bf489}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Gender, Age, and Labour Organization in the Earliest Texts from Mesopotamia and Iran (c. 3300--2900 BC)}
+      \field{type}{phdthesis}
+      \field{year}{2018}
+      \true{nocite}
+    \endentry
+    \entry{Kluge1989}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b9125bb6b592aaa20a7a4ac21c152950}{%
+           family={Kluge},
+           familyi={K\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Akademie-Verlag}%
+      }
+      \strng{namehash}{b9125bb6b592aaa20a7a4ac21c152950}
+      \strng{fullhash}{b9125bb6b592aaa20a7a4ac21c152950}
+      \strng{fullhashraw}{b9125bb6b592aaa20a7a4ac21c152950}
+      \strng{bibnamehash}{b9125bb6b592aaa20a7a4ac21c152950}
+      \strng{authorbibnamehash}{b9125bb6b592aaa20a7a4ac21c152950}
+      \strng{authornamehash}{b9125bb6b592aaa20a7a4ac21c152950}
+      \strng{authorfullhash}{b9125bb6b592aaa20a7a4ac21c152950}
+      \strng{authorfullhashraw}{b9125bb6b592aaa20a7a4ac21c152950}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Etymologisches Wörterbuch der deutschen Sprache}
+      \field{year}{1989}
+      \true{nocite}
+    \endentry
+    \entry{KochWestenholz2000}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=419c0f03e640e0c2288063fcca91c50b}{%
+           family={Koch-Westenholz},
+           familyi={K\bibinithyphendelim W\bibinitperiod},
+           given={U.},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Copenhagen}%
+      }
+      \list{publisher}{1}{%
+        {Picard}%
+      }
+      \strng{namehash}{419c0f03e640e0c2288063fcca91c50b}
+      \strng{fullhash}{419c0f03e640e0c2288063fcca91c50b}
+      \strng{fullhashraw}{419c0f03e640e0c2288063fcca91c50b}
+      \strng{bibnamehash}{419c0f03e640e0c2288063fcca91c50b}
+      \strng{authorbibnamehash}{419c0f03e640e0c2288063fcca91c50b}
+      \strng{authornamehash}{419c0f03e640e0c2288063fcca91c50b}
+      \strng{authorfullhash}{419c0f03e640e0c2288063fcca91c50b}
+      \strng{authorfullhashraw}{419c0f03e640e0c2288063fcca91c50b}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{series}{Padanu and Pan Takalti of the Babylonian Extispicy Series Mainly from Assurbanipal's Library}
+      \field{subtitle}{The Chapters Manzazu}
+      \field{title}{Babylonian Liver Omens}
+      \field{year}{2000}
+      \true{nocite}
+    \endentry
+    \entry{Krebernik2007}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=56e9d833f8111bd2209bcfc36efeaf44}{%
+           family={Krebernik},
+           familyi={K\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{bibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorbibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authornamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \field{extraname}{1}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Babel und Bibel}
+      \field{title}{Philologische Aspekte elamisch- mesopotamischer Beziehungen im Überblick}
+      \field{volume}{3}
+      \field{year}{2007}
+      \true{nocite}
+      \field{pages}{59\bibrangedash 99}
+      \range{pages}{41}
+    \endentry
+    \entry{Krebernik2013}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=56e9d833f8111bd2209bcfc36efeaf44}{%
+           family={Krebernik},
+           familyi={K\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \true{moreeditor}
+      \name{editor}{1}{}{%
+        {{hash=629467f2b6ad3958be1405b783423d6b}{%
+           family={Salje},
+           familyi={S\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Uruk. 5000 Jahre Megacity: . Petersberg: Imhof Verl}%
+      }
+      \strng{namehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{bibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorbibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authornamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{editorbibnamehash}{4aac51901129e6c1ce766222fb267f1f}
+      \strng{editornamehash}{4aac51901129e6c1ce766222fb267f1f}
+      \strng{editorfullhash}{4aac51901129e6c1ce766222fb267f1f}
+      \strng{editorfullhashraw}{4aac51901129e6c1ce766222fb267f1f}
+      \field{extraname}{2}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{N. Crüsemann, M. van Ess, M. Hilgert}
+      \field{title}{Die frühe Keilschrift und ihr Verhältnis zur Sprache}
+      \field{year}{2013}
+      \true{nocite}
+      \field{pages}{187\bibrangedash 193}
+      \range{pages}{7}
+    \endentry
+    \entry{Krebernik2019}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=56e9d833f8111bd2209bcfc36efeaf44}{%
+           family={Krebernik},
+           familyi={K\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=13649beb8968e7d43db5d2e8db9527ce}{%
+           family={Renn},
+           familyi={R\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+        {{hash=0a10498e2016e611016097d8191ccff0}{%
+           family={Schemmel},
+           familyi={S\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Max-Planck-Gesellschaft zur Förderung der Wissenschaften}%
+      }
+      \strng{namehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{bibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorbibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authornamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{editorbibnamehash}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \strng{editornamehash}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \strng{editorfullhash}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \strng{editorfullhashraw}{b5fea8f773d3d96a8784a9608bb67d3c}
+      \field{extraname}{3}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booksubtitle}{Essays in Honor of Peter Damerow}
+      \field{booktitle}{Culture and Cognition}
+      \field{title}{Towards the deciphering of the ``Blau Monuments'': Some new readings and perspectives}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{35\bibrangedash 56}
+      \range{pages}{22}
+    \endentry
+    \entry{Krebernik2021}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=56e9d833f8111bd2209bcfc36efeaf44}{%
+           family={Krebernik},
+           familyi={K\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=dcbdcb10bbc208e7d08b6f18ad49d73e}{%
+           family={Gabriel},
+           familyi={G\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=ea532586c6d08537e307f7992b005876}{%
+           family={Overman},
+           familyi={O\bibinitperiod},
+           given={K.\bibnamedelimi A.},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=8c92f6bfd4182b922a1b37229cb33140}{%
+           family={Payne},
+           familyi={P\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Ugarit Verlag}%
+      }
+      \strng{namehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{fullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{bibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorbibnamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authornamehash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhash}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{authorfullhashraw}{56e9d833f8111bd2209bcfc36efeaf44}
+      \strng{editorbibnamehash}{bf2631db93c439f870d9c6b3e5747e9a}
+      \strng{editornamehash}{bf2631db93c439f870d9c6b3e5747e9a}
+      \strng{editorfullhash}{bf2631db93c439f870d9c6b3e5747e9a}
+      \strng{editorfullhashraw}{bf2631db93c439f870d9c6b3e5747e9a}
+      \field{extraname}{4}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Signs -- Sounds -- Semantics -- Nature and Transformation of Writing Systems in the Ancient Near East (Wiener Offene Orientalistik 13)}
+      \field{title}{Early cuneiform: Writing and language}
+      \field{year}{2021}
+      \true{nocite}
+      \field{pages}{9\bibrangedash 25}
+      \range{pages}{17}
+    \endentry
+    \entry{Lecompte2018}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=2c7bc4df5afb6a4c3dd1f7fae44f3bec}{%
+           family={Lecompte},
+           familyi={L\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=0d3528e5cc1e60db93a941df23e31583}{%
+           family={Garcia-Ventura},
+           familyi={G\bibinithyphendelim V\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Ugarit-Verlag}%
+      }
+      \strng{namehash}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{fullhash}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{fullhashraw}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{bibnamehash}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{authorbibnamehash}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{authornamehash}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{authorfullhash}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{authorfullhashraw}{2c7bc4df5afb6a4c3dd1f7fae44f3bec}
+      \strng{editorbibnamehash}{0d3528e5cc1e60db93a941df23e31583}
+      \strng{editornamehash}{0d3528e5cc1e60db93a941df23e31583}
+      \strng{editorfullhash}{0d3528e5cc1e60db93a941df23e31583}
+      \strng{editorfullhashraw}{0d3528e5cc1e60db93a941df23e31583}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{What's in a Name? Terminology related to the Work Force and Job Categories in the Ancient Near East (Alter Orient und Altes Testament 440)}
+      \field{title}{The archaic lists of professions and their relevance for the Late Uruk period. Observations on some officials in their administrative context}
+      \field{year}{2018}
+      \true{nocite}
+      \field{pages}{81\bibrangedash 131}
+      \range{pages}{51}
+    \endentry
+    \entry{Malafouris2010}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=6ae632192e2a6b0e97232ecca556b895}{%
+           family={Malafouris},
+           familyi={M\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=a8a3976ca0c426ea8ea49b3b3d603c7a}{%
+           family={Renfrew},
+           familyi={R\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=9b1cc712ac26b30701ed22f8eef96034}{%
+           family={Morley},
+           familyi={M\bibinitperiod},
+           given={I.},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cambridge}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{fullhash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{fullhashraw}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{bibnamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorbibnamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authornamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorfullhash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorfullhashraw}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{editorbibnamehash}{de4206f8e71fa15cbfc29753b0c36450}
+      \strng{editornamehash}{de4206f8e71fa15cbfc29753b0c36450}
+      \strng{editorfullhash}{de4206f8e71fa15cbfc29753b0c36450}
+      \strng{editorfullhashraw}{de4206f8e71fa15cbfc29753b0c36450}
+      \field{extraname}{1}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The Archaeology of Measurement. Comprehending Heaven, Earth and Time in Ancient Societies}
+      \field{title}{Grasping the concept of number. How did the sapient mind move beyond approximation?}
+      \field{year}{2010}
+      \true{nocite}
+      \field{pages}{35\bibrangedash 42}
+      \range{pages}{8}
+    \endentry
+    \entry{Malafouris2013}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=6ae632192e2a6b0e97232ecca556b895}{%
+           family={Malafouris},
+           familyi={M\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Cambridge}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{fullhash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{fullhashraw}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{bibnamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorbibnamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authornamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorfullhash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorfullhashraw}{6ae632192e2a6b0e97232ecca556b895}
+      \field{extraname}{2}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{A Theory of Material Engagement}
+      \field{title}{How Things Shape the Mind}
+      \field{year}{2013}
+      \true{nocite}
+    \endentry
+    \entry{Malafouris2019}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=6ae632192e2a6b0e97232ecca556b895}{%
+           family={Malafouris},
+           familyi={M\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{fullhash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{fullhashraw}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{bibnamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorbibnamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authornamehash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorfullhash}{6ae632192e2a6b0e97232ecca556b895}
+      \strng{authorfullhashraw}{6ae632192e2a6b0e97232ecca556b895}
+      \field{extraname}{3}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Phenomenology and the Cognitive Sciences}
+      \field{title}{Mind and material engagement}
+      \field{volume}{18}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{1\bibrangedash 17}
+      \range{pages}{17}
+    \endentry
+    \entry{MarchesiMarchetti2011}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=30af7d9dee9bf57fcb94db7d8bf811eb}{%
+           family={Marchesi},
+           familyi={M\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=11e52aedcb5ec79046abaf82ce261316}{%
+           family={Marchetti},
+           familyi={M\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Winona Lake}%
+      }
+      \list{publisher}{1}{%
+        {Eisenbrauns}%
+      }
+      \strng{namehash}{fe96aef024e7f8c030a88a4407073f99}
+      \strng{fullhash}{fe96aef024e7f8c030a88a4407073f99}
+      \strng{fullhashraw}{fe96aef024e7f8c030a88a4407073f99}
+      \strng{bibnamehash}{fe96aef024e7f8c030a88a4407073f99}
+      \strng{authorbibnamehash}{fe96aef024e7f8c030a88a4407073f99}
+      \strng{authornamehash}{fe96aef024e7f8c030a88a4407073f99}
+      \strng{authorfullhash}{fe96aef024e7f8c030a88a4407073f99}
+      \strng{authorfullhashraw}{fe96aef024e7f8c030a88a4407073f99}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Royal Statuary of Early Dynastic Mesopotamia}
+      \field{year}{2011}
+      \true{nocite}
+    \endentry
+    \entry{Matthews2013}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ac97f922dad1ff7926a1fd0ecc756dc8}{%
+           family={Matthews},
+           familyi={M\bibinitperiod},
+           given={R.\bibnamedelimi J.},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{4}{}{%
+        {{hash=542319e5dfe82f636c096a01b9c2da02}{%
+           family={Crüsemann},
+           familyi={C\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=514a09a2258cf60a4a602aac41416479}{%
+           family={Ess},
+           familyi={E\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod},
+           prefix={van},
+           prefixi={v\bibinitperiod}}}%
+        {{hash=69602d13ba10c43d977edba9f12ec2d1}{%
+           family={Hilgert},
+           familyi={H\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=629467f2b6ad3958be1405b783423d6b}{%
+           family={Salje},
+           familyi={S\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Petersberg}%
+      }
+      \list{publisher}{1}{%
+        {Staatliche Museen Zu Berlin}%
+      }
+      \strng{namehash}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{fullhash}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{fullhashraw}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{bibnamehash}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{authorbibnamehash}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{authornamehash}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{authorfullhash}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{authorfullhashraw}{ac97f922dad1ff7926a1fd0ecc756dc8}
+      \strng{editorbibnamehash}{91a8c518c50e9362872bac368ef02ea1}
+      \strng{editornamehash}{91a8c518c50e9362872bac368ef02ea1}
+      \strng{editorfullhash}{f82765a56382d594724f8ca8078f5756}
+      \strng{editorfullhashraw}{f82765a56382d594724f8ca8078f5756}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booksubtitle}{146--147 (en. edition 2019}
+      \field{booktitle}{Uruk. 5000 Jahre Megacity}
+      \field{title}{Archaische Städtesiegel aus Mesopotamien und Iran}
+      \field{year}{2013}
+      \true{nocite}
+      \field{pages}{126\bibrangedash 127}
+      \range{pages}{2}
+    \endentry
+    \entry{Meißner1920}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7c3740b3b5ef0a97f0a5f7903d31a455}{%
+           family={Meißner},
+           familyi={M\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Carl Winters Universitätsbuchhandlung}%
+      }
+      \strng{namehash}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \strng{fullhash}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \strng{fullhashraw}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \strng{bibnamehash}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \strng{authorbibnamehash}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \strng{authornamehash}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \strng{authorfullhash}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \strng{authorfullhashraw}{7c3740b3b5ef0a97f0a5f7903d31a455}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Babylonien und Assyrien}
+      \field{year}{1920}
+      \true{nocite}
+    \endentry
+    \entry{Michalowski1990}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c04a5efdda6b88483367125638bb41aa}{%
+           family={Michalowski},
+           familyi={M\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=d6b8abc868abb6938607d699024756a6}{%
+           family={Gunter},
+           familyi={G\bibinitperiod},
+           given={A.\bibnamedelimi C.},
+           giveni={A\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Washington}%
+      }
+      \list{publisher}{1}{%
+        {Arthur M}%
+      }
+      \strng{namehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{fullhash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{fullhashraw}{c04a5efdda6b88483367125638bb41aa}
+      \strng{bibnamehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authorbibnamehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authornamehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authorfullhash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authorfullhashraw}{c04a5efdda6b88483367125638bb41aa}
+      \strng{editorbibnamehash}{d6b8abc868abb6938607d699024756a6}
+      \strng{editornamehash}{d6b8abc868abb6938607d699024756a6}
+      \strng{editorfullhash}{d6b8abc868abb6938607d699024756a6}
+      \strng{editorfullhashraw}{d6b8abc868abb6938607d699024756a6}
+      \field{extraname}{1}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booksubtitle}{53--69}
+      \field{booktitle}{Investigating Artistic Environments in the Ancient Near East}
+      \field{title}{Early Mesopotamian communicative systems. Art, literature, and writing}
+      \field{year}{1990}
+      \true{nocite}
+      \field{pages}{996\bibrangedash 999}
+      \range{pages}{4}
+    \endentry
+    \entry{Michalowski1996}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c04a5efdda6b88483367125638bb41aa}{%
+           family={Michalowski},
+           familyi={M\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=1169fc4b62427b8a7c6f2b0be8528f2b}{%
+           family={Daniels},
+           familyi={D\bibinitperiod},
+           given={P.\bibnamedelimi T.},
+           giveni={P\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+        {{hash=cbc8a0b5fe35ce26a4788cceddb35c17}{%
+           family={Bright},
+           familyi={B\bibinitperiod},
+           given={W.},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Oxford}%
+      }
+      \list{publisher}{1}{%
+        {Oxford University Press}%
+      }
+      \strng{namehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{fullhash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{fullhashraw}{c04a5efdda6b88483367125638bb41aa}
+      \strng{bibnamehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authorbibnamehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authornamehash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authorfullhash}{c04a5efdda6b88483367125638bb41aa}
+      \strng{authorfullhashraw}{c04a5efdda6b88483367125638bb41aa}
+      \strng{editorbibnamehash}{46668ba70343a1e0fbd75a75bd8dc09a}
+      \strng{editornamehash}{46668ba70343a1e0fbd75a75bd8dc09a}
+      \strng{editorfullhash}{46668ba70343a1e0fbd75a75bd8dc09a}
+      \strng{editorfullhashraw}{46668ba70343a1e0fbd75a75bd8dc09a}
+      \field{extraname}{2}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The World's Writing Systems}
+      \field{title}{Mesopotamian cuneiform. Origins}
+      \field{year}{1996}
+      \true{nocite}
+      \field{pages}{33\bibrangedash 36}
+      \range{pages}{4}
+    \endentry
+    \entry{Mittermayer2005}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=89dcef2f65080faae1616b31bd838fc4}{%
+           family={Mittermayer},
+           familyi={M\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Ugarit Verlag}%
+      }
+      \strng{namehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{fullhash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{fullhashraw}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{bibnamehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authorbibnamehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authornamehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authorfullhash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authorfullhashraw}{89dcef2f65080faae1616b31bd838fc4}
+      \field{extraname}{1}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die Entwicklung der Tierkopfzeichen (Alter Orient und Altes Testament 319)}
+      \field{year}{2005}
+      \true{nocite}
+    \endentry
+    \entry{Mittermayer2009}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=89dcef2f65080faae1616b31bd838fc4}{%
+           family={Mittermayer},
+           familyi={M\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Fribourg/ Göttingen}%
+      }
+      \list{publisher}{1}{%
+        {Fribourg Academic Press/Vandenhoeck \& Ruprecht}%
+      }
+      \strng{namehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{fullhash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{fullhashraw}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{bibnamehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authorbibnamehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authornamehash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authorfullhash}{89dcef2f65080faae1616b31bd838fc4}
+      \strng{authorfullhashraw}{89dcef2f65080faae1616b31bd838fc4}
+      \field{extraname}{2}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{Ein ungleicher Wettstreit (OBO 239)}
+      \field{title}{Enmerkara und der Herr von Arata}
+      \field{year}{2009}
+      \true{nocite}
+    \endentry
+    \entry{Moortgat1967}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=063baaa5292933cc5d8ecfb0d76f8efe}{%
+           family={Moortgat},
+           familyi={M\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Darmstadt}%
+      }
+      \list{publisher}{1}{%
+        {Wissenschaftliche Buchgesellschaft}%
+      }
+      \strng{namehash}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \strng{fullhash}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \strng{fullhashraw}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \strng{bibnamehash}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \strng{authorbibnamehash}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \strng{authornamehash}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \strng{authorfullhash}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \strng{authorfullhashraw}{063baaa5292933cc5d8ecfb0d76f8efe}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die Kunst des Alten Mesopotamien}
+      \field{year}{1967}
+      \true{nocite}
+    \endentry
+    \entry{Morenz2004}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=f81c071fbbeafcead167578c18976056}{%
+           family={Morenz},
+           familyi={M\bibinitperiod},
+           given={L.\bibnamedelimi D.},
+           giveni={L\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Fribourg/Göttingen}%
+      }
+      \list{publisher}{1}{%
+        {University Press Fribourg/ Vandenhoeck \& Ruprecht}%
+      }
+      \strng{namehash}{f81c071fbbeafcead167578c18976056}
+      \strng{fullhash}{f81c071fbbeafcead167578c18976056}
+      \strng{fullhashraw}{f81c071fbbeafcead167578c18976056}
+      \strng{bibnamehash}{f81c071fbbeafcead167578c18976056}
+      \strng{authorbibnamehash}{f81c071fbbeafcead167578c18976056}
+      \strng{authornamehash}{f81c071fbbeafcead167578c18976056}
+      \strng{authorfullhash}{f81c071fbbeafcead167578c18976056}
+      \strng{authorfullhashraw}{f81c071fbbeafcead167578c18976056}
+      \field{extraname}{1}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Bild-Buchstaben und symbolische Zeichen. Die Herausbildung der Schrift in der hohen Kultur Altägyptens (Orbis Biblicus et Orientalis 205)}
+      \field{year}{2004}
+      \true{nocite}
+    \endentry
+    \entry{Morenz2014}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=f81c071fbbeafcead167578c18976056}{%
+           family={Morenz},
+           familyi={M\bibinitperiod},
+           given={L.\bibnamedelimi D.},
+           giveni={L\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=c9fab8de776c19f66c33eb9a51c74ec1}{%
+           family={Sassmannshausen},
+           familyi={S\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=558ad96da83eb0c92e63fdb1a4617347}{%
+           family={Neumann},
+           familyi={N\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Boston}%
+      }
+      \list{publisher}{1}{%
+        {Brill}%
+      }
+      \strng{namehash}{f81c071fbbeafcead167578c18976056}
+      \strng{fullhash}{f81c071fbbeafcead167578c18976056}
+      \strng{fullhashraw}{f81c071fbbeafcead167578c18976056}
+      \strng{bibnamehash}{f81c071fbbeafcead167578c18976056}
+      \strng{authorbibnamehash}{f81c071fbbeafcead167578c18976056}
+      \strng{authornamehash}{f81c071fbbeafcead167578c18976056}
+      \strng{authorfullhash}{f81c071fbbeafcead167578c18976056}
+      \strng{authorfullhashraw}{f81c071fbbeafcead167578c18976056}
+      \strng{editorbibnamehash}{b2131a3490ea4e009c70e39fa3b9c414}
+      \strng{editornamehash}{b2131a3490ea4e009c70e39fa3b9c414}
+      \strng{editorfullhash}{b2131a3490ea4e009c70e39fa3b9c414}
+      \strng{editorfullhashraw}{b2131a3490ea4e009c70e39fa3b9c414}
+      \field{extraname}{2}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booksubtitle}{. Leiden/}
+      \field{booktitle}{He Has Opened Nisaba's House of Learning (Fs Sjöberg II)}
+      \field{title}{Zur Archäologie der Schrift: Die Erfindung des Rebusprinzips in protoschriftlicher Zeit}
+      \field{year}{2014}
+      \true{nocite}
+      \field{pages}{125\bibrangedash 145}
+      \range{pages}{21}
+    \endentry
+    \entry{Nadali2019}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=85dfda9568d69faa1e96f5a3a2a2065f}{%
+           family={Nadali},
+           familyi={N\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \strng{fullhash}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \strng{fullhashraw}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \strng{bibnamehash}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \strng{authorbibnamehash}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \strng{authornamehash}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \strng{authorfullhash}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \strng{authorfullhashraw}{85dfda9568d69faa1e96f5a3a2a2065f}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Studi Micenei ed Egeo-anatolici Nuova Serie}
+      \field{title}{Speaking pictures, writing words: On the interplay of communication in Ancient Mesopotamia}
+      \field{volume}{5}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{47\bibrangedash 58}
+      \range{pages}{12}
+    \endentry
+    \entry{Orthmann1988}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=dff9be076d8ef003cf83b573c46d405b}{%
+           family={Orthmann},
+           familyi={O\bibinitperiod},
+           given={W.},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Propyläen Verlag}%
+      }
+      \strng{namehash}{dff9be076d8ef003cf83b573c46d405b}
+      \strng{fullhash}{dff9be076d8ef003cf83b573c46d405b}
+      \strng{fullhashraw}{dff9be076d8ef003cf83b573c46d405b}
+      \strng{bibnamehash}{dff9be076d8ef003cf83b573c46d405b}
+      \strng{authorbibnamehash}{dff9be076d8ef003cf83b573c46d405b}
+      \strng{authornamehash}{dff9be076d8ef003cf83b573c46d405b}
+      \strng{authorfullhash}{dff9be076d8ef003cf83b573c46d405b}
+      \strng{authorfullhashraw}{dff9be076d8ef003cf83b573c46d405b}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Der Alte Orient (Propyläen Kunstgeschichte 18)}
+      \field{year}{1988}
+      \true{nocite}
+    \endentry
+    \entry{Overmann2018}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b6b883574243209a145255576e178ce7}{%
+           family={Overmann},
+           familyi={O\bibinitperiod},
+           given={K.\bibnamedelimi A.},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b6b883574243209a145255576e178ce7}
+      \strng{fullhash}{b6b883574243209a145255576e178ce7}
+      \strng{fullhashraw}{b6b883574243209a145255576e178ce7}
+      \strng{bibnamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authorbibnamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authornamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authorfullhash}{b6b883574243209a145255576e178ce7}
+      \strng{authorfullhashraw}{b6b883574243209a145255576e178ce7}
+      \field{extraname}{1}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Numerical Cognition}
+      \field{number}{4}
+      \field{title}{Constructing a concept of number}
+      \field{volume}{2}
+      \field{year}{2018}
+      \true{nocite}
+      \field{pages}{464\bibrangedash 493}
+      \range{pages}{30}
+    \endentry
+    \entry{Overmann2018-1}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b6b883574243209a145255576e178ce7}{%
+           family={Overmann},
+           familyi={O\bibinitperiod},
+           given={K.\bibnamedelimi A.},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b6b883574243209a145255576e178ce7}
+      \strng{fullhash}{b6b883574243209a145255576e178ce7}
+      \strng{fullhashraw}{b6b883574243209a145255576e178ce7}
+      \strng{bibnamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authorbibnamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authornamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authorfullhash}{b6b883574243209a145255576e178ce7}
+      \strng{authorfullhashraw}{b6b883574243209a145255576e178ce7}
+      \field{extraname}{2}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Cuneiform Digital Library Journal}
+      \field{title}{Updating the ``abstract-- concrete'' distinction in Ancient Near Eastern numbers}
+      \field{volume}{1}
+      \field{year}{2018}
+      \true{nocite}
+      \field{pages}{1\bibrangedash 22}
+      \range{pages}{22}
+    \endentry
+    \entry{Overmann2019}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b6b883574243209a145255576e178ce7}{%
+           family={Overmann},
+           familyi={O\bibinitperiod},
+           given={K.\bibnamedelimi A.},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b6b883574243209a145255576e178ce7}
+      \strng{fullhash}{b6b883574243209a145255576e178ce7}
+      \strng{fullhashraw}{b6b883574243209a145255576e178ce7}
+      \strng{bibnamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authorbibnamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authornamehash}{b6b883574243209a145255576e178ce7}
+      \strng{authorfullhash}{b6b883574243209a145255576e178ce7}
+      \strng{authorfullhashraw}{b6b883574243209a145255576e178ce7}
+      \field{extraname}{3}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Phenomenology and the Cognitive Sciences}
+      \field{number}{1}
+      \field{title}{Concepts and how they get that way}
+      \field{volume}{18}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{153\bibrangedash 168}
+      \range{pages}{16}
+    \endentry
+    \entry{Parrot1948}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e5b8f030aa11360180f61f526aa34275}{%
+           family={Parrot},
+           familyi={P\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Paris}%
+      }
+      \list{publisher}{1}{%
+        {Editions Albin Michel}%
+      }
+      \strng{namehash}{e5b8f030aa11360180f61f526aa34275}
+      \strng{fullhash}{e5b8f030aa11360180f61f526aa34275}
+      \strng{fullhashraw}{e5b8f030aa11360180f61f526aa34275}
+      \strng{bibnamehash}{e5b8f030aa11360180f61f526aa34275}
+      \strng{authorbibnamehash}{e5b8f030aa11360180f61f526aa34275}
+      \strng{authornamehash}{e5b8f030aa11360180f61f526aa34275}
+      \strng{authorfullhash}{e5b8f030aa11360180f61f526aa34275}
+      \strng{authorfullhashraw}{e5b8f030aa11360180f61f526aa34275}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{Vingt campagnes de fouilles (1877-- 1933)}
+      \field{title}{Tello}
+      \field{year}{1948}
+      \true{nocite}
+    \endentry
+    \entry{Pfitzner2014}{online}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=5a5af25ca3fb6e732d743cef4606c56b}{%
+           family={Pfitzner},
+           familyi={P\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{fullhash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{fullhashraw}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{bibnamehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authorbibnamehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authornamehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authorfullhash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authorfullhashraw}{5a5af25ca3fb6e732d743cef4606c56b}
+      \field{extraname}{1}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die lexikalische Liste Diri -- Watru und ihre Diri-Komposita. Unpublished MA thesis, University of Vienna (Philologisch-Kulturwissenschaftliche Fakultät: <}
+      \field{year}{2014}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://othes.univie.ac.at/34586/>
+      \endverb
+      \verb{url}
+      \verb http://othes.univie.ac.at/34586/%3E
+      \endverb
+    \endentry
+    \entry{Pfitzner2019}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=5a5af25ca3fb6e732d743cef4606c56b}{%
+           family={Pfitzner},
+           familyi={P\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{fullhash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{fullhashraw}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{bibnamehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authorbibnamehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authornamehash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authorfullhash}{5a5af25ca3fb6e732d743cef4606c56b}
+      \strng{authorfullhashraw}{5a5af25ca3fb6e732d743cef4606c56b}
+      \field{extraname}{2}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{KASKAL. Rivista di storia, ambienti e culture del Vicino Oriente Antico}
+      \field{title}{The use of ellum, ebbum, and namrum in the sign list Diri}
+      \field{volume}{16}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{237\bibrangedash 257}
+      \range{pages}{21}
+    \endentry
+    \entry{Porada1948}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=70620bdb7f8ea1e20a6e64343ddaf15d}{%
+           family={Porada},
+           familyi={P\bibinitperiod},
+           given={E.},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {C.: Pantheon Books}%
+      }
+      \strng{namehash}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \strng{fullhash}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \strng{fullhashraw}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \strng{bibnamehash}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \strng{authorbibnamehash}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \strng{authornamehash}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \strng{authorfullhash}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \strng{authorfullhashraw}{70620bdb7f8ea1e20a6e64343ddaf15d}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{series}{Vols 1 and 2. New York/ Washington D}
+      \field{subtitle}{The Collection of the Pierpont Morgan Library}
+      \field{title}{Corpus of Ancient Near Eastern Seals in North {A}merican Collections}
+      \field{year}{1948}
+      \true{nocite}
+    \endentry
+    \entry{Rubio2013}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=59338a045824eabc2dec53dd8ece6d66}{%
+           family={Rubio},
+           familyi={R\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{59338a045824eabc2dec53dd8ece6d66}
+      \strng{fullhash}{59338a045824eabc2dec53dd8ece6d66}
+      \strng{fullhashraw}{59338a045824eabc2dec53dd8ece6d66}
+      \strng{bibnamehash}{59338a045824eabc2dec53dd8ece6d66}
+      \strng{authorbibnamehash}{59338a045824eabc2dec53dd8ece6d66}
+      \strng{authornamehash}{59338a045824eabc2dec53dd8ece6d66}
+      \strng{authorfullhash}{59338a045824eabc2dec53dd8ece6d66}
+      \strng{authorfullhashraw}{59338a045824eabc2dec53dd8ece6d66}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Revue d'Assyriologie}
+      \field{title}{SANGA2: A graphic story}
+      \field{volume}{107}
+      \field{year}{2013}
+      \true{nocite}
+      \field{pages}{101\bibrangedash 104}
+      \range{pages}{4}
+    \endentry
+    \entry{Sayce1877}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=7d84755f543f0ce315865eb4772070c8}{%
+           family={Sayce},
+           familyi={S\bibinitperiod},
+           given={A.\bibnamedelimi H.},
+           giveni={A\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7d84755f543f0ce315865eb4772070c8}
+      \strng{fullhash}{7d84755f543f0ce315865eb4772070c8}
+      \strng{fullhashraw}{7d84755f543f0ce315865eb4772070c8}
+      \strng{bibnamehash}{7d84755f543f0ce315865eb4772070c8}
+      \strng{authorbibnamehash}{7d84755f543f0ce315865eb4772070c8}
+      \strng{authornamehash}{7d84755f543f0ce315865eb4772070c8}
+      \strng{authorfullhash}{7d84755f543f0ce315865eb4772070c8}
+      \strng{authorfullhashraw}{7d84755f543f0ce315865eb4772070c8}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{London: Samuel Bagster \& Sons. (Reprint in}
+      \field{title}{Lectures upon the Assyrian Language, and Syllabary: Delivered to the Students of the Archaic Classes}
+      \field{volume}{2008 by Kessinger Publishing}
+      \field{year}{1877}
+      \true{nocite}
+    \endentry
+    \entry{SchroerKeel2005}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=dc3d7d2f4cb0084dd0f90618c49f21f2}{%
+           family={Schroer},
+           familyi={S\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b07ecfb8404bd75f453e3cd340a13afb}{%
+           family={Keel},
+           familyi={K\bibinitperiod},
+           given={O.},
+           giveni={O\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Vom ausgehenden Mesolithikum bis zur Frühbronzezeit. Freiburg}%
+      }
+      \list{publisher}{1}{%
+        {Schwabe Verlag}%
+      }
+      \strng{namehash}{f4199cf6af1cdd34594ad913054b1438}
+      \strng{fullhash}{f4199cf6af1cdd34594ad913054b1438}
+      \strng{fullhashraw}{f4199cf6af1cdd34594ad913054b1438}
+      \strng{bibnamehash}{f4199cf6af1cdd34594ad913054b1438}
+      \strng{authorbibnamehash}{f4199cf6af1cdd34594ad913054b1438}
+      \strng{authornamehash}{f4199cf6af1cdd34594ad913054b1438}
+      \strng{authorfullhash}{f4199cf6af1cdd34594ad913054b1438}
+      \strng{authorfullhashraw}{f4199cf6af1cdd34594ad913054b1438}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die Ikonographie Palästinas/ Israels und der Alte Orient (IPIAO). Eine Religionsgeschichte in Bildern}
+      \field{volume}{I}
+      \field{year}{2005}
+      \true{nocite}
+    \endentry
+    \entry{Selz1995-1}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \field{extraname}{1}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Ein Versuch über da----ři ``an der Seite führen'' ein zusammengesetztes Verbum und einige nominale Ableitungen: Acta Sumerologica Japan}
+      \field{title}{Maš-da-ři-a und Verwandtes}
+      \field{volume}{17}
+      \field{year}{1995}
+      \true{nocite}
+      \field{pages}{251\bibrangedash 274}
+      \range{pages}{24}
+    \endentry
+    \entry{Selz1995}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Philadelphia}%
+      }
+      \list{publisher}{1}{%
+        {The University of Pennsylvania Museum}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \field{extraname}{2}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Untersuchungen zur Götterwelt des altsumerischen Staates von Lagaš (Occasional Publications of the Samuel Noah Kramer Fund 11)}
+      \field{year}{1995}
+      \true{nocite}
+    \endentry
+    \entry{Selz1997}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \field{extraname}{3}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Der Karpfen {ku₆}suhur-TÙN. N. A. B. U}
+      \field{title}{TÙN = tùn bei Gudea: 1. Nochmals zu den Gießbechern des Gudea. 2}
+      \field{volume}{1997}
+      \field{year}{1997}
+      \true{nocite}
+      \field{pages}{36}
+      \range{pages}{1}
+    \endentry
+    \entry{Selz1998}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \field{extraname}{4}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Archív Orientální}
+      \field{title}{Von Treidlern, Schif(bau)ern und Werftarbeitern}
+      \field{volume}{66}
+      \field{year}{1998}
+      \true{nocite}
+      \field{pages}{255\bibrangedash 264}
+      \range{pages}{10}
+    \endentry
+    \entry{Selz2002}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=cf8acb0ef52b10ade76d01f5e294b667}{%
+           family={Loretz},
+           familyi={L\bibinitperiod},
+           given={O.},
+           giveni={O\bibinitperiod}}}%
+        {{hash=ce4b575882cd53a0b75b83e49e45f411}{%
+           family={Metzler},
+           familyi={M\bibinitperiod},
+           given={K.\bibnamedelimi A.},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=c1d88a761e5c042ba117b65fe0c40b49}{%
+           family={Schaudig},
+           familyi={S\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Ugarit Verlag}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{0d67ca877bda8f339a67e9cd36a43937}
+      \strng{editornamehash}{0d67ca877bda8f339a67e9cd36a43937}
+      \strng{editorfullhash}{0d67ca877bda8f339a67e9cd36a43937}
+      \strng{editorfullhashraw}{0d67ca877bda8f339a67e9cd36a43937}
+      \field{extraname}{5}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Ex Mesopotamia et Syria Lux. Festschrift für Manfried Dietrich zu seinem 65. Geburtstag, (Alter Orient und Altes Testament 281)}
+      \field{title}{``Babilismus'' und die Gottheit dnindagar}
+      \field{year}{2002}
+      \true{nocite}
+      \field{pages}{647\bibrangedash 684}
+      \range{pages}{38}
+    \endentry
+    \entry{Selz2011}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Roma}%
+      }
+      \list{publisher}{1}{%
+        {Edizioni Quasar}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \field{extraname}{6}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Beyond the written text. Scienze dell'Antichità 17 (Dipartimento di Scienze dell'Antichità dell'Università La Sapienza di Roma)}
+      \field{title}{Medium and message}
+      \field{year}{2011}
+      \true{nocite}
+      \field{pages}{283\bibrangedash 295}
+      \range{pages}{13}
+    \endentry
+    \entry{Selz2013-1}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \true{moreeditor}
+      \name{editor}{1}{}{%
+        {{hash=a93459e204aaeeb281a64cb0888038ff}{%
+           family={J.\bibnamedelimi Budka},
+           familyi={J\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Göttingen}%
+      }
+      \list{publisher}{1}{%
+        {Seminar für Ägyptologie und Koptologie der Universität}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{d1ee22f1b947fd8b86e308e7629391b1}
+      \strng{editornamehash}{d1ee22f1b947fd8b86e308e7629391b1}
+      \strng{editorfullhash}{d1ee22f1b947fd8b86e308e7629391b1}
+      \strng{editorfullhashraw}{d1ee22f1b947fd8b86e308e7629391b1}
+      \field{extraname}{7}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Florilegium Aegyptiacum -- Eine wissenschaftliche Blütenlese von Schülern und Freunden für Helmut Satzinger zum 75. Geburtstag am 21. Jänner 2013 (Göttinger Miszellen, Beihefte 14)}
+      \field{title}{On some early dynastic Sumerian toponyms}
+      \field{year}{2013}
+      \true{nocite}
+      \field{pages}{317\bibrangedash 326}
+      \range{pages}{10}
+    \endentry
+    \entry{Selz2013}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=533414980a1054e7857eda675bddc681}{%
+           family={Bauks},
+           familyi={B\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=fa855669eeda12ccb304d31662711d62}{%
+           family={Horowitz},
+           familyi={H\bibinitperiod},
+           given={W.},
+           giveni={W\bibinitperiod}}}%
+        {{hash=3cd925bdb154a939c8a69a46e6e206f8}{%
+           family={Lange},
+           familyi={L\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Göttingen}%
+      }
+      \list{publisher}{1}{%
+        {Vandenhoeck \& Ruprecht}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{ed32d15b7d2ef114794df932250d9f7f}
+      \strng{editornamehash}{ed32d15b7d2ef114794df932250d9f7f}
+      \strng{editorfullhash}{ed32d15b7d2ef114794df932250d9f7f}
+      \strng{editorfullhashraw}{ed32d15b7d2ef114794df932250d9f7f}
+      \field{extraname}{8}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Between Text and Text. The Hermeneutics of Intertextuality in Ancient Cultures and their Afterlife in Medieval and Modern Times (JAJ Supplements 6)}
+      \field{title}{Texts, textual bilingualism, and the evolution of Mesopotamian hermeneutics}
+      \field{year}{2013}
+      \true{nocite}
+      \field{pages}{47\bibrangedash 65}
+      \range{pages}{19}
+    \endentry
+    \entry{Selz2014}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=f28876f2f71f2c1edc89a588d7bcd935}{%
+           family={Koslova},
+           familyi={K\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=30a8e02141667a36a1286fcd041b0226}{%
+           family={Vizirova},
+           familyi={V\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=40a6b6db9acd7063e87df94085422cab}{%
+           family={Zólyomi},
+           familyi={Z\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Philadelphia}%
+      }
+      \list{publisher}{1}{%
+        {Penn State University Press/ Eisenbrauns}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{2266b8ab8c1250f2509c63b6afa4a8ec}
+      \strng{editornamehash}{2266b8ab8c1250f2509c63b6afa4a8ec}
+      \strng{editorfullhash}{2266b8ab8c1250f2509c63b6afa4a8ec}
+      \strng{editorfullhashraw}{2266b8ab8c1250f2509c63b6afa4a8ec}
+      \field{extraname}{9}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Studies in Sumerian Language and Literature. Festschrift für Joachim Krecher, (Babel und Bibel 8)}
+      \field{title}{Considerations on narration in early Mesopotamia}
+      \field{year}{2014}
+      \true{nocite}
+      \field{pages}{437\bibrangedash 454}
+      \range{pages}{18}
+    \endentry
+    \entry{Selz2017}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=eed174e0d0169927d8097140012fcdd7}{%
+           family={Feliu},
+           familyi={F\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod}}}%
+        {{hash=443e5d74ac58757f2cea8133cf7e79df}{%
+           family={Karahashi},
+           familyi={K\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=59338a045824eabc2dec53dd8ece6d66}{%
+           family={Rubio},
+           familyi={R\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {de Gruyter}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{90cfa6c5ccc7722af666f8d4c92b84a2}
+      \strng{editornamehash}{90cfa6c5ccc7722af666f8d4c92b84a2}
+      \strng{editorfullhash}{90cfa6c5ccc7722af666f8d4c92b84a2}
+      \strng{editorfullhashraw}{90cfa6c5ccc7722af666f8d4c92b84a2}
+      \field{extraname}{10}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The First Ninety Years. A Sumerian Celebration in Honor of Miguel Civil (Studies in Ancient Near Eastern Records 12)}
+      \field{title}{To carry coals to Newcastle or observations concerning sign formation as an early concept of Mesopotamian ``commentaries''}
+      \field{year}{2017}
+      \true{nocite}
+      \field{pages}{300\bibrangedash 310}
+      \range{pages}{11}
+    \endentry
+    \entry{Selz2018-1}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=69602d13ba10c43d977edba9f12ec2d1}{%
+           family={Hilgert},
+           familyi={H\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=09cab6bba7885375ee5eadfb3e870692}{%
+           family={Simon},
+           familyi={S\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod}}}%
+        {{hash=884aeaa058e487b612f4fc09cfe0641a}{%
+           family={Objektepistemologien},
+           familyi={O\bibinitperiod},
+           given={K.\bibnamedelimi P.\bibnamedelimi Hofmann},
+           giveni={K\bibinitperiod\bibinitdelim P\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Zur Vermessung eines transdisziplinären Forschungsraums}%
+      }
+      \list{publisher}{1}{%
+        {. Berlin: Edition Topoi}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{b7b694575fb62df2d30296c79e42c186}
+      \strng{editornamehash}{b7b694575fb62df2d30296c79e42c186}
+      \strng{editorfullhash}{b7b694575fb62df2d30296c79e42c186}
+      \strng{editorfullhashraw}{b7b694575fb62df2d30296c79e42c186}
+      \field{extraname}{11}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Dinge und Wissen. Zu Objektepistemologien im frühen Mesopotamien}
+      \field{year}{2018}
+      \true{nocite}
+    \endentry
+    \entry{Selz2018}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=72c93c8788a7b1903d4a44928b9faa81}{%
+           family={Fink},
+           familyi={F\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=f9809d78dfe5e6129453365bf4ecb0dc}{%
+           family={Lang},
+           familyi={L\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=e3a9d3cdce6f661a5c5f033b56ebf3af}{%
+           family={Schretter},
+           familyi={S\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Zaphon Verlag}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{4e9d242b92ba803371e9e543a5755e01}
+      \strng{editornamehash}{4e9d242b92ba803371e9e543a5755e01}
+      \strng{editorfullhash}{4e9d242b92ba803371e9e543a5755e01}
+      \strng{editorfullhashraw}{4e9d242b92ba803371e9e543a5755e01}
+      \field{extraname}{12}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Mehrsprachigkeit: Vom Alten Orient bis zum Esperanto (Dubsar 2): Münster}
+      \field{title}{Scriptura Franca? Zur Rolle einer ideographisch basierten Schrift in einer mehrsprachigen Gesellschaft}
+      \field{year}{2018}
+      \true{nocite}
+      \field{pages}{113\bibrangedash 127}
+      \range{pages}{15}
+    \endentry
+    \entry{Selz2019}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=fdb3805a68f00c587cfd4d9fce0a2a61}{%
+           family={Gunter},
+           familyi={G\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Hoboken}%
+      }
+      \list{publisher}{1}{%
+        {Blackwell}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{fdb3805a68f00c587cfd4d9fce0a2a61}
+      \strng{editornamehash}{fdb3805a68f00c587cfd4d9fce0a2a61}
+      \strng{editorfullhash}{fdb3805a68f00c587cfd4d9fce0a2a61}
+      \strng{editorfullhashraw}{fdb3805a68f00c587cfd4d9fce0a2a61}
+      \field{extraname}{13}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{A Companion to Ancient Near Eastern Art. (Blackwell Companions to the Ancient World)}
+      \field{title}{Aesthetics}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{359\bibrangedash 381}
+      \range{pages}{23}
+    \endentry
+    \entry{Selz2019-1}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=ad987fc6dd3018766eb14ba58efc8c2d}{%
+           family={Karlsson},
+           familyi={K\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Festschrift for Olof Pedersén}%
+      }
+      \list{publisher}{1}{%
+        {. Wiesbaden: Harrassowitz}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{ad987fc6dd3018766eb14ba58efc8c2d}
+      \strng{editornamehash}{ad987fc6dd3018766eb14ba58efc8c2d}
+      \strng{editorfullhash}{ad987fc6dd3018766eb14ba58efc8c2d}
+      \strng{editorfullhashraw}{ad987fc6dd3018766eb14ba58efc8c2d}
+      \field{extraname}{14}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The Rod and Measuring Rope}
+      \field{title}{Whirlwinds and the ``Babel of the tongues''. Remarks on secondary iconization}
+      \field{year}{2019}
+      \true{nocite}
+      \field{pages}{184\bibrangedash 197}
+      \range{pages}{14}
+    \endentry
+    \entry{Selz2020}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=b08252b255cfbf2f4a187eaec1c092cf}{%
+           family={Gabbay},
+           familyi={G\bibinitperiod},
+           given={U.},
+           giveni={U\bibinitperiod}}}%
+        {{hash=84743f584a124dc2a6f1b8150c60a2dd}{%
+           family={Pérennès},
+           familyi={P\bibinitperiod},
+           given={J.\bibnamedelimi J.},
+           giveni={J\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Leuven}%
+      }
+      \list{publisher}{1}{%
+        {Peeters}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{f653a1d671a32e5645ee3e986a285733}
+      \strng{editornamehash}{f653a1d671a32e5645ee3e986a285733}
+      \strng{editorfullhash}{f653a1d671a32e5645ee3e986a285733}
+      \strng{editorfullhashraw}{f653a1d671a32e5645ee3e986a285733}
+      \field{extraname}{15}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{1}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Des polythéismes aux monothéismes. Mélanges d`assyriologie offerts à Marcel Sigrist}
+      \field{title}{On the beginnings of Mesopotamian ``theology''}
+      \field{year}{2020}
+      \true{nocite}
+      \field{pages}{411\bibrangedash 436}
+      \range{pages}{26}
+    \endentry
+    \entry{Selz2020-1}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=70feb57c50bca5310060f73490239917}{%
+           family={Formation},
+           familyi={F\bibinitperiod},
+           given={Word},
+           giveni={W\bibinitperiod}}}%
+      }
+      \list{publisher}{3}{%
+        {Grammar}%
+        {Lexicology. Contrastive, Multilingual}%
+        {Comparative-Historical Perspectives, (Indogermanische Textlinguistik, Poetik und Stilistik 4): . Hamburg: Baar Verlag}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{70feb57c50bca5310060f73490239917}
+      \strng{editornamehash}{70feb57c50bca5310060f73490239917}
+      \strng{editorfullhash}{70feb57c50bca5310060f73490239917}
+      \strng{editorfullhashraw}{70feb57c50bca5310060f73490239917}
+      \field{extraname}{16}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradate}{2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{M.- C. Benvenuto, J. E. Braarvig, F. Pompeo, A. V. Rossi and V. V. Sadovski}
+      \field{title}{Sumerian compound nouns. Typological considerations}
+      \field{year}{2020}
+      \true{nocite}
+      \field{pages}{319\bibrangedash 347}
+      \range{pages}{29}
+    \endentry
+    \entry{Selz2021}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{3}{}{%
+        {{hash=dcbdcb10bbc208e7d08b6f18ad49d73e}{%
+           family={Gabriel},
+           familyi={G\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+        {{hash=3b004870105436708d86167b582f3b2b}{%
+           family={Overmann},
+           familyi={O\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+        {{hash=8c92f6bfd4182b922a1b37229cb33140}{%
+           family={Payne},
+           familyi={P\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Münster}%
+      }
+      \list{publisher}{1}{%
+        {Ugarit Verlag}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{f3388a125a31dbcdd2beb466e990e947}
+      \strng{editornamehash}{f3388a125a31dbcdd2beb466e990e947}
+      \strng{editorfullhash}{f3388a125a31dbcdd2beb466e990e947}
+      \strng{editorfullhashraw}{f3388a125a31dbcdd2beb466e990e947}
+      \field{extraname}{17}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Signs -- Sounds -- Semantics. Nature and Transformation of Writing Systems in the Ancient Near East (Wiener Offene Orientalistik 13)}
+      \field{title}{The puzzling logogram. Writing and reasoning in early Mesopotamia}
+      \field{year}{2021}
+      \true{nocite}
+      \field{pages}{27\bibrangedash 47}
+      \range{pages}{21}
+    \endentry
+    \entry{Selz2022}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=7467eff1fcb2d75c44e73a40c18eebca}{%
+           family={Wengrow},
+           familyi={W\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Propylaeum}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{7467eff1fcb2d75c44e73a40c18eebca}
+      \strng{editornamehash}{7467eff1fcb2d75c44e73a40c18eebca}
+      \strng{editorfullhash}{7467eff1fcb2d75c44e73a40c18eebca}
+      \strng{editorfullhashraw}{7467eff1fcb2d75c44e73a40c18eebca}
+      \field{extraname}{18}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Image Thought, and the Making of Social Worlds (Freiburger Studien zur Archäologie \& Visuellen Kultur 3)}
+      \field{title}{Beyond speech. Advocating a non- logocentric view on the evolution of cuneiform writing}
+      \field{year}{2022}
+      \true{nocite}
+      \field{pages}{214\bibrangedash 249}
+      \range{pages}{36}
+    \endentry
+    \entry{Selz2024}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ae11642e197cc59178a0b9cdc4e04cdd}{%
+           family={Selz},
+           familyi={S\bibinitperiod},
+           given={G.\bibnamedelimi J.},
+           giveni={G\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \true{moreeditor}
+      \name{editor}{1}{}{%
+        {{hash=a79828b1be0f4baaece2f9f052b08292}{%
+           family={Ruffing},
+           familyi={R\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Wiesbaden}%
+      }
+      \list{publisher}{1}{%
+        {Harrassowitz}%
+      }
+      \strng{namehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{fullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{bibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorbibnamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authornamehash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhash}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{authorfullhashraw}{ae11642e197cc59178a0b9cdc4e04cdd}
+      \strng{editorbibnamehash}{d335d641b9bf6559996136029b3a8a29}
+      \strng{editornamehash}{d335d641b9bf6559996136029b3a8a29}
+      \strng{editorfullhash}{d335d641b9bf6559996136029b3a8a29}
+      \strng{editorfullhashraw}{d335d641b9bf6559996136029b3a8a29}
+      \field{extraname}{19}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Navigating the Worlds of History, Studies in Honor of Robert Rollinger on the Occasion of His 60th Birthday}
+      \field{title}{Of pots and people}
+      \field{volume}{2}
+      \field{year}{2024}
+      \true{nocite}
+      \field{pages}{845\bibrangedash 883}
+      \range{pages}{39}
+    \endentry
+    \entry{Steinert2012}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=048b0636b6887a111bc4895c6162a3c9}{%
+           family={Steinert},
+           familyi={S\bibinitperiod},
+           given={U.},
+           giveni={U\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Jt. v. Chr.. Leiden/Boston}%
+      }
+      \list{publisher}{1}{%
+        {Brill}%
+      }
+      \strng{namehash}{048b0636b6887a111bc4895c6162a3c9}
+      \strng{fullhash}{048b0636b6887a111bc4895c6162a3c9}
+      \strng{fullhashraw}{048b0636b6887a111bc4895c6162a3c9}
+      \strng{bibnamehash}{048b0636b6887a111bc4895c6162a3c9}
+      \strng{authorbibnamehash}{048b0636b6887a111bc4895c6162a3c9}
+      \strng{authornamehash}{048b0636b6887a111bc4895c6162a3c9}
+      \strng{authorfullhash}{048b0636b6887a111bc4895c6162a3c9}
+      \strng{authorfullhashraw}{048b0636b6887a111bc4895c6162a3c9}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Aspekte des Menschseins im Alten Mesopotamien. Eine Studie zu Person und Identität im 2. und 1}
+      \field{year}{2012}
+      \true{nocite}
+    \endentry
+    \entry{Steinkeller1995}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=836b9535b4991577da27a5a850f34906}{%
+           family={Steinkeller},
+           familyi={S\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{836b9535b4991577da27a5a850f34906}
+      \strng{fullhash}{836b9535b4991577da27a5a850f34906}
+      \strng{fullhashraw}{836b9535b4991577da27a5a850f34906}
+      \strng{bibnamehash}{836b9535b4991577da27a5a850f34906}
+      \strng{authorbibnamehash}{836b9535b4991577da27a5a850f34906}
+      \strng{authornamehash}{836b9535b4991577da27a5a850f34906}
+      \strng{authorfullhash}{836b9535b4991577da27a5a850f34906}
+      \strng{authorfullhashraw}{836b9535b4991577da27a5a850f34906}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Bibliotheca Orientalis}
+      \field{title}{Review of Green and Nissen 1987}
+      \field{volume}{62}
+      \field{year}{1995}
+      \true{nocite}
+      \field{pages}{689\bibrangedash 713}
+      \range{pages}{25}
+    \endentry
+    \entry{Szarzyńska1993}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=aba857c98e30998645c74e09b417c953}{%
+           family={Szarzyńska},
+           familyi={S\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{aba857c98e30998645c74e09b417c953}
+      \strng{fullhash}{aba857c98e30998645c74e09b417c953}
+      \strng{fullhashraw}{aba857c98e30998645c74e09b417c953}
+      \strng{bibnamehash}{aba857c98e30998645c74e09b417c953}
+      \strng{authorbibnamehash}{aba857c98e30998645c74e09b417c953}
+      \strng{authornamehash}{aba857c98e30998645c74e09b417c953}
+      \strng{authorfullhash}{aba857c98e30998645c74e09b417c953}
+      \strng{authorfullhashraw}{aba857c98e30998645c74e09b417c953}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Revue d'Assyriologie}
+      \field{note}{‒26}
+      \field{title}{Offerings for the goddess Inana in archaic Uruk}
+      \field{volume}{87}
+      \field{year}{1993}
+      \true{nocite}
+      \field{pages}{7}
+      \range{pages}{1}
+    \endentry
+    \entry{Vukosavović2011}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=59504f3e9c62a3b7faaf24edb3b5390c}{%
+           family={Vukosavović},
+           familyi={V\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \strng{fullhash}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \strng{fullhashraw}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \strng{bibnamehash}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \strng{authorbibnamehash}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \strng{authornamehash}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \strng{authorfullhash}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \strng{authorfullhashraw}{59504f3e9c62a3b7faaf24edb3b5390c}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Ancient Near Eastern Studies}
+      \field{title}{Sumerian gi-lam and igi-tab}
+      \field{volume}{31}
+      \field{year}{2011}
+      \true{nocite}
+      \field{pages}{139\bibrangedash 143}
+      \range{pages}{5}
+    \endentry
+    \entry{Waetzoldt2006}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ccc440daed9a559795f727dfc6ac047c}{%
+           family={Waetzoldt},
+           familyi={W\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{ccc440daed9a559795f727dfc6ac047c}
+      \strng{fullhash}{ccc440daed9a559795f727dfc6ac047c}
+      \strng{fullhashraw}{ccc440daed9a559795f727dfc6ac047c}
+      \strng{bibnamehash}{ccc440daed9a559795f727dfc6ac047c}
+      \strng{authorbibnamehash}{ccc440daed9a559795f727dfc6ac047c}
+      \strng{authornamehash}{ccc440daed9a559795f727dfc6ac047c}
+      \strng{authorfullhash}{ccc440daed9a559795f727dfc6ac047c}
+      \strng{authorfullhashraw}{ccc440daed9a559795f727dfc6ac047c}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Zeitschrift für Assyriologie}
+      \field{title}{Zu den Siegeln der Vorsteher der Opferschauer Nannazišaĝal und Enlilzišaĝal}
+      \field{volume}{96}
+      \field{year}{2006}
+      \true{nocite}
+      \field{pages}{178\bibrangedash 184}
+      \range{pages}{7}
+    \endentry
+    \entry{Wagensonner2016}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=e1e7c861bd433fdd60b39907e6fdb84f}{%
+           family={Wagensonner},
+           familyi={W\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {University of Vienna}%
+      }
+      \strng{namehash}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \strng{fullhash}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \strng{fullhashraw}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \strng{bibnamehash}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \strng{authorbibnamehash}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \strng{authornamehash}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \strng{authorfullhash}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \strng{authorfullhashraw}{e1e7c861bd433fdd60b39907e6fdb84f}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die frühen lexikalischen Texte und ihr Aufbau. Zu den Archaischen und frühdynastischen Wortlisten, der Anordnung ihrer Einträge und den Klassifikationssystemen in den frühen Phasen der Keilschrift}
+      \field{type}{phdthesis}
+      \field{year}{2016}
+      \true{nocite}
+    \endentry
+    \entry{Woods2010}{incollection}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=0bcd7fa98aa06a88606638bf1fc3c82b}{%
+           family={Woods},
+           familyi={W\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \true{moreeditor}
+      \name{editor}{1}{}{%
+        {{hash=0bcd7fa98aa06a88606638bf1fc3c82b}{%
+           family={Woods},
+           familyi={W\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Chicago}%
+      }
+      \list{publisher}{1}{%
+        {The Chicago University Press}%
+      }
+      \strng{namehash}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{fullhash}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{fullhashraw}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{bibnamehash}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{authorbibnamehash}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{authornamehash}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{authorfullhash}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{authorfullhashraw}{0bcd7fa98aa06a88606638bf1fc3c82b}
+      \strng{editorbibnamehash}{1e34ba69b67edc270a454a250234abe0}
+      \strng{editornamehash}{1e34ba69b67edc270a454a250234abe0}
+      \strng{editorfullhash}{1e34ba69b67edc270a454a250234abe0}
+      \strng{editorfullhashraw}{1e34ba69b67edc270a454a250234abe0}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booksubtitle}{Inventions of Writing in the Ancient Middle East and Beyond (Oriental Institute Museum Publications 32) Chicago}
+      \field{booktitle}{Visible Language}
+      \field{title}{The earliest Mesopotamian writing}
+      \field{year}{2010}
+      \true{nocite}
+      \field{pages}{33\bibrangedash 50}
+      \range{pages}{18}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
