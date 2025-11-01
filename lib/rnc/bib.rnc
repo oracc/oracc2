@@ -1,0 +1,58 @@
+default namespace = "http://oracc.org/ns/bib/1.0"
+
+start =
+  element bib {
+    element file {
+      attribute n { text },
+      element entry {
+        attribute key { xsd:anyURI },
+        attribute type { xsd:NCName },
+        element address { text }?,
+        element author { text }?,
+        element authortype { xsd:NCName }?,
+        (element bookauthor { text }
+         | element booksubtitle { text })?,
+        element booktitle { text }?,
+        element chapter { xsd:integer }?,
+        element date { text }?,
+        (element doi { text }
+         | element edition { text })?,
+        element ids { xsd:NCName }?,
+        element editor { text }?,
+        element entrysubtype { xsd:NCName }?,
+        element eprint { xsd:anyURI }?,
+        element isbn { xsd:NMTOKEN }?,
+        element issn { xsd:NMTOKEN }?,
+        element journal { text }?,
+        element month { xsd:NMTOKEN }?,
+        element institution { text }?,
+        element eprinttype { xsd:NCName }?,
+        element event { text }?,
+        element eventdate { text }?,
+        element keywords { text }?,
+        element langid { xsd:NCName }?,
+        element location { text }?,
+        element part { xsd:integer }?,
+        element note { text }?,
+        element number { text }?,
+        (element page { xsd:NMTOKEN }
+         | element pages { text })?,
+        element school { text }?,
+        element publisher { text }?,
+        element related { text }?,
+        element relatedtype { xsd:NCName }?,
+        element series { text }?,
+        element shorthand { xsd:NCName }?,
+        element eventtitle { text }?,
+        element eventvenue { xsd:NCName }?,
+        element subtitle { text }?,
+        element title { text }?,
+        element url { xsd:anyURI }?,
+        element translator { text }?,
+        element volume { text }?,
+        element venue { xsd:NCName }?,
+        element type { text }?,
+        element year { text }?
+      }+
+    }+
+  }

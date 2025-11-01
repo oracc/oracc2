@@ -3,6 +3,7 @@
 
 #include <memo.h>
 #include <mesg.h>
+#include <runexpat.h>
 
 enum bib_etype {
   e_article, e_book, e_booklet, e_collection, e_dataset,
@@ -27,18 +28,58 @@ typedef struct bib
   List *entries;
 } Bib;
 
+struct name;
+
 typedef struct bibentry
 {
   const char *type;
   const char *key;
   const char *fields[f_top];
+  int nnames;
+  struct name **names;
 } Bibentry;
+
+typedef struct name
+{
+  const char *key;
+  const char *orig;
+  const char *last;
+  const char *rest;
+  const char *init;
+  const char *was;
+  struct name *next;
+  int bm_name_xml;
+} Name;
 
 struct bib_ent_tab { const char *name; enum bib_etype t; };
 struct bib_fld_tab { const char *name; enum bib_ftype t; };
 
 extern struct bib_ent_tab *bib_ent(register const char *str, register size_t len);
 extern struct bib_fld_tab *bib_fld(register const char *str, register size_t len);
+
+#if 0
+extern XML_StartElementHandler bnm_s_namemap, bnm_s_name, bnm_s_last, bnm_s_rest, bnm_s_aka, bnm_s_was, bnm_s_init;
+extern XML_EndElementHandler bnm_e_namemap, bnm_e_name, bnm_e_last, bnm_e_rest, bnm_e_aka, bnm_e_was, bnm_e_init;
+#endif
+
+extern void bnm_s_namemap(void *userData, const char *name, const char **atts);
+extern void bnm_s_name(void *userData, const char *name, const char **atts);
+extern void bnm_s_last(void *userData, const char *name, const char **atts);
+extern void bnm_s_rest(void *userData, const char *name, const char **atts);
+extern void bnm_s_was(void *userData, const char *name, const char **atts);
+extern void bnm_s_aka(void *userData, const char *name, const char **atts);
+extern void bnm_s_init(void *userData, const char *name, const char **atts);
+
+extern void bnm_e_namemap(void *userData, const char *name);
+extern void bnm_e_name(void *userData, const char *name);
+extern void bnm_e_last(void *userData, const char *name);
+extern void bnm_e_rest(void *userData, const char *name);
+extern void bnm_e_was(void *userData, const char *name);
+extern void bnm_e_aka(void *userData, const char *name);
+extern void bnm_e_init(void *userData, const char *name);
+
+struct bnm_tab { const char *name; XML_StartElementHandler s; XML_EndElementHandler e; };
+extern struct bnm_tab *bnm_tab(register const char *str, register size_t len);
 
 extern int biblineno, bib_key_next;
 extern int bib_field, bib_nesting;
@@ -65,5 +106,8 @@ extern int bibparse(void);
 extern void bib_init(Bx *bp);
 extern void bibset_debug(int);
 extern void bib_wrapup_buffer(void);
+
+extern void bnm_init(Bx *bp);
+extern void bnm_tab_init(void);
 
 #endif/*BIB_H_*/

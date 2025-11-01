@@ -39,6 +39,7 @@ bin/px/t/xsrv
 bin/ax/ax
 bin/ax/atfdatax
 bin/bx/bx
+bin/bx/bibx
 bin/dx/dxx/dcx
 bin/dx/dxx/dx
 bin/dx/odo/odo
@@ -204,6 +205,7 @@ msc/prj/cdli/periods.c
 bin/ax/ax_check.c
 bin/bx/bib_ent.c
 bin/bx/bib_fld.c
+bin/bx/bnm_tab.c
 bin/px/ice/pg/periodmap.c
 bin/px/pxargs.c
 bin/xx/cun/perfnt.c

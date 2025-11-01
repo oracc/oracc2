@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<namemap>
+<namemap xmlns="http://oracc.org/ns/bib-names/1.0">
   <name key=".Anonymous">
     <last>Anonymous</last>
     <rest/>
@@ -1107,6 +1107,7 @@
     <last>Freedman</last>
     <rest>Sally M.</rest>
     <aka>Freedman, Sally M.</aka>
+    <was ref="MorenS"/>
     <init>S.M.</init>
   </name>
   <name key="FreydankH">
@@ -2453,7 +2454,6 @@
     <last>Moren</last>
     <rest>Sally</rest>
     <aka>Moren, Sally</aka>
-    <now ref="FreedmanS"/>
     <init>S.</init>
   </name>
   <name key="MoriM">

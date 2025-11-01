@@ -1,0 +1,16 @@
+default namespace = "http://oracc.org/ns/bib-names/1.0"
+
+start =
+  element namemap {
+    element name {
+      attribute key { text },
+      attribute type { xsd:NCName }?,
+      element last { text },
+      element rest { text }+,
+      (element aka { text }
+       | element was {
+           attribute ref { xsd:NCName }
+         })+,
+      element init { text }
+    }+
+  }

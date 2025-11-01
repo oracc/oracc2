@@ -55,6 +55,7 @@ extern  char * new_ext_no_alloc(char *oldfile,const char *ext);
 extern  char * new_path(char *fn, const char *fpath, int force);
 extern const char *oracc (void);
 extern const char *oracc_builds (void);
+extern char *oracc_data(const char *fname);
 extern const char *oracc_home (void);
 extern const char *oracc_project_home (void);
 extern const char *oracc_var (void);

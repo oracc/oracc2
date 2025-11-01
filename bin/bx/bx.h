@@ -17,9 +17,12 @@ typedef struct bx
   char * const*argv;
   Hash *keys;
   Hash *keys_cit;
+  Hash *names;
+  Hash *akanames;
   Hash *refs;
   Memo *m_bib;
   Memo *m_bibentry;
+  Memo *m_name;
   Pool *p;
   List *mem; /* odd memory items that need to be freed at end of run */
   const char *outfile;

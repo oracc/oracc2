@@ -56,7 +56,7 @@ options (int argc, char * const *argv, const char *optstr)
 }
 
 void
-banner ()
+banner (void)
 {
   if (banner_done)
     return;
@@ -76,7 +76,7 @@ banner ()
 }
 
 void
-usage ()
+usage (void)
 {
   banner ();
   fprintf(stderr, "Usage:\n      %s %s\n\n", prog, usage_string);

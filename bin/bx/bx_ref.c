@@ -27,8 +27,8 @@ static void bx_ref_run_one(const char *bibfile, Hash *cites);
  *
  * For full function:
  *
- * - load the bib-names.xml db
- * - load the bib-jrnser.xml db
+ * - load the bm-names.xml db
+ * - load the bm-jrnser.xml db
  *
  */
 
@@ -49,6 +49,7 @@ bx_ref_pre(Bx *bp)
       bp->entries = list_create(LIST_SINGLE);
     }
   bp->bibs = list_create(LIST_SINGLE);
+  bnm_init(bp);
   bib_init(bp);
 }
 

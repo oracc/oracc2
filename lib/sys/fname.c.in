@@ -27,6 +27,14 @@ oracc_builds (void)
   return oracc();
 }
 
+char *
+oracc_data(const char *fname)
+{
+  char buf[strlen(oracc())+strlen("/lib/data/0")+strlen(fname)];
+  sprintf(buf, "%s/lib/data/%s", oracc(), fname);
+  return strdup(buf);
+}
+
 const char *
 oracc_home (void)
 {
