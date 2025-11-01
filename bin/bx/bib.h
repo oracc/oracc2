@@ -28,6 +28,7 @@ typedef struct bib
   List *entries;
 } Bib;
 
+struct bib_fld_tab;
 struct name;
 
 typedef struct bibentry
@@ -51,8 +52,9 @@ typedef struct name
   int bm_name_xml;
 } Name;
 
+typedef void (*bibvalfnc)(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
 struct bib_ent_tab { const char *name; enum bib_etype t; };
-struct bib_fld_tab { const char *name; enum bib_ftype t; };
+struct bib_fld_tab { const char *name; enum bib_ftype t; bibvalfnc v;};
 
 extern struct bib_ent_tab *bib_ent(register const char *str, register size_t len);
 extern struct bib_fld_tab *bib_fld(register const char *str, register size_t len);
@@ -109,5 +111,12 @@ extern void bib_wrapup_buffer(void);
 
 extern void bnm_init(Bx *bp);
 extern void bnm_tab_init(void);
+extern void bib_fld_tab_init(void);
+
+extern void bvl_ids(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
+extern void bvl_page(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
+extern void bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
+extern void bvl_year(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
+
 
 #endif/*BIB_H_*/

@@ -14,7 +14,22 @@ bnm_init(Bx *bp)
   bnm_tab_init();
   const char *f[2] = { NULL , NULL };
   f[0] = oracc_data("bm-names.xml");
+  runexpat_omit_rp_wrap();
   runexpatNSuD(i_list, f, bnm_sH, bnm_eH, NULL, bp);
+}
+
+Name *
+bnm_lookup(Name *nmp)
+{
+  return NULL;
+}
+
+static const char *
+bnm_make_name(Bx *bp, const char *last, const char *first)
+{
+  char buf[strlen(last)+strlen(first)+3];
+  sprintf(buf, "%s, %s", last, first);
+  return (ccp)pool_copy((uccp)buf, bp->p);
 }
 
 static Name *curr_name;
@@ -58,6 +73,8 @@ bnm_s_name(void *userData, const char *name, const char **atts)
   curr_name->key = (ccp)pool_copy((uccp)findAttr(atts, "key"), ubp->p);
   curr_name->bm_name_xml = 1;
   hash_add(ubp->names, (uccp)curr_name->key, curr_name);
+  if (verbose)
+    fprintf(stderr, "bnm_s_name: curr_name = %s\n", curr_name->key);
 }
 
 void
@@ -86,6 +103,9 @@ void
 bnm_e_rest(void *userData, const char *name)
 {
   cdr(rest);
+  hash_add(ubp->akanames,
+	   (uccp)bnm_make_name(userData, curr_name->last, curr_name->rest),
+	   curr_name);
 }
 
 void
@@ -119,5 +139,10 @@ void
 bnm_e_init(void *userData, const char *name)
 {
   cdr(init);
+  hash_add(ubp->akanames,
+	   (uccp)bnm_make_name(userData, curr_name->last, curr_name->init),
+	   curr_name);
 }
+
+#undef cdr
 #undef ubp

@@ -113,7 +113,11 @@ bib_field_term(Mloc m)
 {
   bib_field = 0;
   if (curr_bfp)
-    curr_ep->fields[curr_bfp->t] = bib_content(m, NULL);
+    {
+      curr_ep->fields[curr_bfp->t] = bib_content(m, NULL);
+      if (curr_bfp->v)
+        curr_bfp->v(&m,curr_bp,curr_bfp,curr_ep);
+    }
 }
 
 char *
