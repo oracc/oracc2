@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <ctype.h>
 #include "bx.h"
 #include "bib.h"
 
@@ -11,7 +12,9 @@ bnm_init(Bx *bp)
   bp->names = hash_create(1024);
   bp->akanames = hash_create(1024);
   bp->m_name = memo_init(sizeof(Name), 256);
+  bp->m_name_ptr = memo_init(sizeof(Name*), 256);
   bnm_tab_init();
+  bib_fld_tab_init();
   const char *f[2] = { NULL , NULL };
   f[0] = oracc_data("bm-names.xml");
   runexpat_omit_rp_wrap();
@@ -22,6 +25,50 @@ Name *
 bnm_lookup(Name *nmp)
 {
   return NULL;
+}
+
+static char *
+bnm_split_one_name(List *lp, char *s)
+{
+  list_add(lp, s);
+  if (s[1])
+    {
+      s[1] = '.';
+      s[2] = '\0';
+      s += 3;
+    }
+  while (*s && '.' != *s && !isspace(*s))
+    ++s;
+  while ('.' == *s || isspace(*s))
+    ++s;
+  return *s ? s : NULL;
+}
+
+void
+bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
+{
+  char *s = (char*)pool_copy((uccp)np->orig, bp->p);
+  char *t = strchr(s, ',');
+  if (t)
+    {
+      np->last = s;
+      *t++ = '\0';
+      while (isspace(*t))
+	++t;
+      np->rest = t;
+      char *dup = strdup(t);
+      t = dup;
+      List *init = list_create(LIST_SINGLE);
+      while ((t = bnm_split_one_name(init, t)))
+	;
+      np->init = (ccp)pool_copy(list_join(init, "::"), bp->p);
+      list_free(init, NULL);
+      free(dup);
+    }
+  else
+    {
+      mesg_verr(mp, "name with no comma: %s\n", t);
+    }
 }
 
 static const char *
@@ -73,7 +120,7 @@ bnm_s_name(void *userData, const char *name, const char **atts)
   curr_name->key = (ccp)pool_copy((uccp)findAttr(atts, "key"), ubp->p);
   curr_name->bm_name_xml = 1;
   hash_add(ubp->names, (uccp)curr_name->key, curr_name);
-  if (verbose)
+  if (verbose > 1)
     fprintf(stderr, "bnm_s_name: curr_name = %s\n", curr_name->key);
 }
 

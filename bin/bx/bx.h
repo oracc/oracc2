@@ -23,6 +23,7 @@ typedef struct bx
   Memo *m_bib;
   Memo *m_bibentry;
   Memo *m_name;
+  Memo *m_name_ptr;
   Pool *p;
   List *mem; /* odd memory items that need to be freed at end of run */
   const char *outfile;
