@@ -33,13 +33,49 @@ bnm_split_one_name(List *lp, char *s)
   list_add(lp, s);
   if (s[1])
     {
-      s[1] = '.';
-      s[2] = '\0';
-      s += 3;
+      if ('.' == s[1])
+	{
+	  if (isspace(s[2]))
+	    {
+	      s[2] = '\0';
+	      s += 3;
+	    }
+	  else
+	    {
+	      list_pop(lp);
+	      char buf[3] = { *s , '.' , '\0' };
+	      list_add(lp, strdup(buf)); /* this needs to be handled better */
+	      s += 2;
+	    }
+	}
+      else if (isspace(s[1]))
+	{
+	  /* This is either a missing '.' or a single-letter first name */
+	  s[1] = '\0';
+	  s += 2;
+	  while (isspace(*s))
+	    ++s;
+	}
+      else
+	{
+	  s[1] = '.';
+	  if (!isspace(s[2]))
+	    {
+	      s[2] = '\0';
+	      s += 3;
+	    }
+	  else
+	    {
+	      list_pop(lp);
+	      char buf[3] = { *s , '.' , '\0' };
+	      list_add(lp, strdup(buf)); /* this needs to be handled better */
+	      s += 2;
+	    }
+	  while (*s && !isspace(*s))
+	    ++s;
+	}
     }
-  while (*s && '.' != *s && !isspace(*s))
-    ++s;
-  while ('.' == *s || isspace(*s))
+  while (isspace(*s))
     ++s;
   return *s ? s : NULL;
 }
