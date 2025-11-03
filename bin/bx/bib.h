@@ -110,6 +110,8 @@ extern void bib_wrapup_buffer(void);
 
 extern void bib_fld_tab_init(void);
 
+extern void bib_sort(Bx *bp);
+
 extern void bnm_init(Bx *bp);
 extern void bnm_tab_init(void);
 extern void bnm_key(Mloc *mp, Bx *bp, Name *np);

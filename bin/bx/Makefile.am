@@ -6,7 +6,7 @@ bin_PROGRAMS=bx
 data_DATA=bm-jrnser.xml bm-names.xml
 
 BIBLIB=bib.tab.c bib.lex.c bib_ent.c bib_fld.c bib_xml.c \
-	bib_names.c bnm_tab.c bib_validate.c
+	bib_names.c bnm_tab.c bib_validate.c bib_sort.c
 
 bx_SOURCES=bx.c bx_cit.c bx_icf.c bx_key.c bx_ref.c bx_lib.c ${BIBLIB}
 

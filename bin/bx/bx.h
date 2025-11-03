@@ -39,12 +39,15 @@ typedef struct bx
   List *bibs;
   List *entries;	/* used for !bibonly run; redirects to
 			   per-bib-file entries in bibonly mode */
+  struct bibentry **ents;
+  int nents;
   bxfunc pre[BX_TOP];
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];
   int bibonly;
   int no_output;
   int quiet;
+  int sort;
   int xmloutput;
 } Bx;
 

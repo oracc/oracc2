@@ -46,8 +46,8 @@ bx_ref_pre(Bx *bp)
       bx_cit_pre(bp);
       bx_cit_run(bp);
       bx_ref_bib_from_cit(bp);
-      bp->entries = list_create(LIST_SINGLE);
     }
+  bp->entries = list_create(LIST_SINGLE);
   bp->bibs = list_create(LIST_SINGLE);
   bnm_init(bp);
   bib_init(bp);
@@ -68,7 +68,7 @@ bx_ref_run(Bx *bp)
       /* per-file entry lists are done by resetting top-level entries
        * pointer; during load always add to top-level bp->entries
        */
-      if (bp->bibonly)
+      if (bp->bibonly && !bp->sort)
 	bp->entries = bibp->entries = list_create(LIST_SINGLE);
       bx_ref_run_one(bibp->file, bp->keys_cit);
     }
@@ -76,6 +76,9 @@ bx_ref_run(Bx *bp)
   /* validate the entries */
 
   /* sort the entries */
+
+  if (bp->sort)
+    bib_sort(bp);
   
   /* augment the entries */
   

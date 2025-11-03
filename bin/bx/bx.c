@@ -3,9 +3,6 @@
 #include <oracclocale.h>
 #include <runexpat.h>
 #include "bx.h"
-#if 0
-#include "bbl.h"
-#endif
 
 Bx b = {
   .mode=BX_CIT ,
@@ -38,7 +35,7 @@ main(int argc, char * const*argv)
 	  "fkrR"     /* mode args */
 	  "b:c:"    /* input args */
 	  "d:h:io:x:" /* output args */ 
-	  "npqtv"     /* adjunct args */
+	  "npqstv"     /* adjunct args */
 	  );
   mesg_init();
   b.mem = list_create(LIST_SINGLE);
@@ -86,6 +83,9 @@ opts(int opt, const char *arg)
       break;
     case 'q':
       b.quiet = 1;
+      break;
+    case 's':
+      b.sort = 1;
       break;
     case 't':
       cite_type = arg;

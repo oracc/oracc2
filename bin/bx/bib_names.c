@@ -69,7 +69,8 @@ bnm_key(Mloc *mp, Bx *bp, Name *np)
 {
   char buf[strlen(np->last) + strlen(np->init) + 1];
   strcpy(buf, np->last);
-  char *e = buf+strlen(buf), *i = np->init;
+  char *e = buf+strlen(buf);
+  const char *i = np->init;
   while (*i)
     {
       if ('.' != *i && !isspace(*i))
