@@ -108,10 +108,13 @@ extern void bib_init(Bx *bp);
 extern void bibset_debug(int);
 extern void bib_wrapup_buffer(void);
 
+extern void bib_fld_tab_init(void);
+
 extern void bnm_init(Bx *bp);
 extern void bnm_tab_init(void);
-extern void bib_fld_tab_init(void);
+extern void bnm_key(Mloc *mp, Bx *bp, Name *np);
 extern void bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np);
+
 extern void bvl_ids(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
 extern void bvl_page(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
 extern void bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);

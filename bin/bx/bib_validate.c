@@ -24,8 +24,8 @@ static void
 bvl_name_dump(Bibentry *ep, int i)
 {
   Name *np = ep->names[i];
-  fprintf(stderr, "\tnp[%d]: orig=%s; last=%s; rest=%s; init=%s\n",
-	  i, np->orig, np->last, np->rest, np->init);
+  fprintf(stderr, "\tnp[%d]: orig=%s; last=%s; rest=%s; init=%s; key=%s\n",
+	  i, np->orig, np->last, np->rest, np->init, np->key);
 }
 
 /* side effect: split and parse into individual names then store as
@@ -63,6 +63,7 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
 	    ++t;	  
 	}
       bnm_split(mp, bp, ep, ep->names[i]);
+      bnm_key(mp, bp, ep->names[i]);
       if (verbose)
 	bvl_name_dump(ep, i);
     }

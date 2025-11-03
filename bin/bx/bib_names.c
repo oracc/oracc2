@@ -65,6 +65,22 @@ bnm_split_one_name(Bx *bp, List *lp, char *s)
 }
 
 void
+bnm_key(Mloc *mp, Bx *bp, Name *np)
+{
+  char buf[strlen(np->last) + strlen(np->init) + 1];
+  strcpy(buf, np->last);
+  char *e = buf+strlen(buf), *i = np->init;
+  while (*i)
+    {
+      if ('.' != *i && !isspace(*i))
+	*e++ = *i++;
+      else
+	++i;
+    }
+  np->key = (ccp)pool_copy((uccp)buf, bp->p);
+}
+
+void
 bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
 {
   char *s = (char*)pool_copy((uccp)np->orig, bp->p);
