@@ -28,56 +28,40 @@ bnm_lookup(Name *nmp)
 }
 
 static char *
-bnm_split_one_name(List *lp, char *s)
+bnm_split_one_name(Bx *bp, List *lp, char *s)
 {
-  list_add(lp, s);
-  if (s[1])
+  size_t ulen;
+  wchar_t *w = utf2wcs((uccp)s, &ulen), *orig_w;
+  wchar_t w_init[3];
+  orig_w = w;
+  w_init[0] = *w;
+  if (L' ' != w[1] && '\t' != w[1])
     {
-      if ('.' == s[1])
-	{
-	  if (isspace(s[2]))
-	    {
-	      s[2] = '\0';
-	      s += 3;
-	    }
-	  else
-	    {
-	      list_pop(lp);
-	      char buf[3] = { *s , '.' , '\0' };
-	      list_add(lp, strdup(buf)); /* this needs to be handled better */
-	      s += 2;
-	    }
-	}
-      else if (isspace(s[1]))
-	{
-	  /* This is either a missing '.' or a single-letter first name */
-	  s[1] = '\0';
-	  s += 2;
-	  while (isspace(*s))
-	    ++s;
-	}
-      else
-	{
-	  s[1] = '.';
-	  if (!isspace(s[2]))
-	    {
-	      s[2] = '\0';
-	      s += 3;
-	    }
-	  else
-	    {
-	      list_pop(lp);
-	      char buf[3] = { *s , '.' , '\0' };
-	      list_add(lp, strdup(buf)); /* this needs to be handled better */
-	      s += 2;
-	    }
-	  while (*s && !isspace(*s))
-	    ++s;
-	}
+      w_init[1] = L'.';
+      w_init[2] = L'\0';
+      ++w;
     }
-  while (isspace(*s))
-    ++s;
-  return *s ? s : NULL;
+  else
+    {
+      w_init[1] = '\0';
+    }
+  while (*w && L' ' != *w && L'\t' != *w && '.' != *w)
+    ++w;
+  while (L' ' == *w || L'\t' == *w)
+    ++w;
+  list_add(lp, pool_copy(wcs2utf(w_init, 3), bp->p));
+  if (L'.' == *w || L' ' == *w || '\t' == *w)
+    while (L'.' == *w || L' ' == *w || '\t' == *w)
+      ++w;
+  else
+    {
+      while (*w && L' ' != *w && L'\t' == *w)
+	++w;
+    }
+  if (*w)
+    return strcpy(s, (ccp)wcs2utf(w, ulen - (w - orig_w)));
+  else
+    return NULL;  
 }
 
 void
@@ -95,7 +79,7 @@ bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
       char *dup = strdup(t);
       t = dup;
       List *init = list_create(LIST_SINGLE);
-      while ((t = bnm_split_one_name(init, t)))
+      while ((t = bnm_split_one_name(bp, init, t)))
 	;
       np->init = (ccp)pool_copy(list_join(init, "::"), bp->p);
       list_free(init, NULL);
