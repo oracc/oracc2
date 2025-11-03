@@ -34,14 +34,17 @@ struct name;
 typedef struct bibentry
 {
   const char *type;
-  const char *key;
+  const char *bkey;	/* .bib key, the one after @article{ or the like */
+  const char **aka;    	/* aka from @ids */
   const char *fields[f_top];
   struct name **names;
+  int year;
+  Bib *bib;
 } Bibentry;
 
 typedef struct name
 {
-  const char *key;
+  const char *nkey;	/* name key, i.e., last + init with no '.' or spaces */
   const char *orig;
   const char *last;
   const char *rest;
@@ -50,6 +53,9 @@ typedef struct name
   struct name *next;
   int bm_name_xml;
 } Name;
+
+struct bib_year_tab { const char *name; int year; };
+extern struct bib_year_tab *bib_year(register const char *str, register size_t len);
 
 typedef void (*bibvalfnc)(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
 struct bib_ent_tab { const char *name; enum bib_etype t; };
@@ -99,7 +105,7 @@ extern const int l_biblloc_line(void);
 
 extern void bibreset(void);
 
-extern void bib_xml(List *b, FILE *fp);
+extern void bib_xml(Bx *bp, List *b, FILE *fp);
 
 extern Hash *bib_cites;
 extern Mloc biblloc;
@@ -114,7 +120,7 @@ extern void bib_sort(Bx *bp);
 
 extern void bnm_init(Bx *bp);
 extern void bnm_tab_init(void);
-extern void bnm_key(Mloc *mp, Bx *bp, Name *np);
+extern void bnm_nkey(Mloc *mp, Bx *bp, Name *np);
 extern void bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np);
 
 extern void bvl_ids(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);

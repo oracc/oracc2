@@ -56,32 +56,38 @@ bx_ref_pre(Bx *bp)
 void
 bx_ref_run(Bx *bp)
 {
-  int i;
-  bibset_debug(0);
-  /* load the entries from the .bib files */
-  for (i = 0; bp->files_bib[i]; ++i)
+  if (!bp->files_bib)
     {
-      Bib *bibp = memo_new(bp->m_bib);
-      bibp->file = bp->files_bib[i];
-      list_add(bp->bibs, bibp);
-      curr_bibp = bibp;
-      /* per-file entry lists are done by resetting top-level entries
-       * pointer; during load always add to top-level bp->entries
-       */
-      if (bp->bibonly && !bp->sort)
-	bp->entries = bibp->entries = list_create(LIST_SINGLE);
-      bx_ref_run_one(bibp->file, bp->keys_cit);
+      fprintf(stderr, "bx: no .bib files to process. Stop.\n");
     }
+  else
+    {
+      int i;
+      bibset_debug(0);
+      /* load the entries from the .bib files */
+      for (i = 0; bp->files_bib[i]; ++i)
+	{
+	  Bib *bibp = memo_new(bp->m_bib);
+	  bibp->file = bp->files_bib[i];
+	  list_add(bp->bibs, bibp);
+	  curr_bibp = bibp;
+	  /* per-file entry lists are done by resetting top-level entries
+	   * pointer; during load always add to top-level bp->entries
+	   */
+	  if (bp->bibonly && !bp->sort)
+	    bp->entries = bibp->entries = list_create(LIST_SINGLE);
+	  bx_ref_run_one(bibp->file, bp->keys_cit);
+	}
 
-  /* validate the entries */
+      /* validate the entries */
 
-  /* sort the entries */
+      /* sort the entries */
 
-  if (bp->sort)
-    bib_sort(bp);
+      if (bp->sort)
+	bib_sort(bp);
   
-  /* augment the entries */
-  
+      /* augment the entries */
+    }  
 }
 
 void
@@ -94,7 +100,7 @@ bx_ref_out(Bx *bp)
 	xfp = stdout;
       else
 	xfp = fopen(bp->outfile, "w");
-      bib_xml(bp->bibs, xfp);
+      bib_xml(bp, bp->bibs, xfp);
     }
 }
 

@@ -65,7 +65,7 @@ bnm_split_one_name(Bx *bp, List *lp, char *s)
 }
 
 void
-bnm_key(Mloc *mp, Bx *bp, Name *np)
+bnm_nkey(Mloc *mp, Bx *bp, Name *np)
 {
   char buf[strlen(np->last) + strlen(np->init) + 1];
   strcpy(buf, np->last);
@@ -78,7 +78,7 @@ bnm_key(Mloc *mp, Bx *bp, Name *np)
       else
 	++i;
     }
-  np->key = (ccp)pool_copy((uccp)buf, bp->p);
+  np->nkey = (ccp)pool_copy((uccp)buf, bp->p);
 }
 
 void
@@ -154,11 +154,11 @@ void
 bnm_s_name(void *userData, const char *name, const char **atts)
 {
   curr_name = memo_new(ubp->m_name);
-  curr_name->key = (ccp)pool_copy((uccp)findAttr(atts, "key"), ubp->p);
+  curr_name->nkey = (ccp)pool_copy((uccp)findAttr(atts, "key"), ubp->p);
   curr_name->bm_name_xml = 1;
-  hash_add(ubp->names, (uccp)curr_name->key, curr_name);
+  hash_add(ubp->names, (uccp)curr_name->nkey, curr_name);
   if (verbose > 1)
-    fprintf(stderr, "bnm_s_name: curr_name = %s\n", curr_name->key);
+    fprintf(stderr, "bnm_s_name: curr_name = %s\n", curr_name->nkey);
 }
 
 void

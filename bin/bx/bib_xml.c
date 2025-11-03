@@ -17,27 +17,41 @@ const char *fldnames[] = {
 };
 
 void
-bib_xml(List *b, FILE *fp)
+bib_xml_entry(Bibentry *ep)
+{
+  fprintf(xout, "<entry type=\"%s\" key=\"%s\">", ep->type, xmlify((uccp)ep->bkey));
+  int i;
+  for (i = 0; i < f_top; ++i)
+    {
+      if (ep->fields[i])
+	fprintf(xout, "<%s>%s</%s>",
+		fldnames[i], xmlify((uccp)ep->fields[i]), fldnames[i]);
+    }
+  fputs("</entry>", xout);
+}
+
+void
+bib_xml(Bx *bp, List *b, FILE *fp)
 {
   xout = fp;
-  Bib *bp;
   fputs("<bib xmlns=\"http://oracc.org/ns/bib/1.0\">", xout);
-  for (bp = list_first(b); bp; bp = list_next(b))
+  if (bp->entries)
     {
-      fprintf(xout, "<file n=\"%s\">", bp->file);
-      Bibentry *ep;
-      for (ep = list_first(bp->entries); ep; ep = list_next(bp->entries))
+      int i;
+      for (i = 0; bp->ents[i]; ++i)
+	bib_xml_entry(bp->ents[i]);
+    }
+  else
+    {
+      Bib *bibp;
+      for (bibp = list_first(b); bibp; bibp = list_next(b))
 	{
-	  fprintf(xout, "<entry type=\"%s\" key=\"%s\">", ep->type, xmlify((uccp)ep->key));
-	  int i;
-	  for (i = 0; i < f_top; ++i)
-	    {
-	      if (ep->fields[i])
-		fprintf(xout, "<%s>%s</%s>", fldnames[i], xmlify((uccp)ep->fields[i]), fldnames[i]);
-	    }
-	  fputs("</entry>", xout);
+	  fprintf(xout, "<file n=\"%s\">", bibp->file);
+	  Bibentry *ep;
+	  for (ep = list_first(bibp->entries); ep; ep = list_next(bibp->entries))
+	    bib_xml_entry(ep);
+	  fputs("</file>", xout);
 	}
-      fputs("</file>", xout);
     }
   fputs("</bib>", xout);
 }
