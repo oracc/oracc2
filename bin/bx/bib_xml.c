@@ -57,7 +57,8 @@ bib_xml_entry(Bx *bp, Bibentry *ep)
     sprintf(dis, " disamb=\"%s\"", disamb_alpha(bp, ep->disamb-1));
   else
     *dis = '\0';
-  fprintf(xout, "<entry type=\"%s\" key=\"%s\"%s>", ep->type, xmlify((uccp)ep->bkey), dis);
+  const char *same = ep->sameauth ? " sameauth=\"1\"" : "";
+  fprintf(xout, "<entry type=\"%s\" key=\"%s\"%s%s>", ep->type, xmlify((uccp)ep->bkey), dis, same);
   int i;
   for (i = 0; i < f_top; ++i)
     {
