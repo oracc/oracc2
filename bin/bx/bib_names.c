@@ -81,7 +81,7 @@ bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
       List *init = list_create(LIST_SINGLE);
       while ((t = bnm_split_one_name(bp, init, t)))
 	;
-      np->init = (ccp)pool_copy(list_join(init, "::"), bp->p);
+      np->init = (ccp)pool_copy(list_join(init, " "), bp->p);
       list_free(init, NULL);
       free(dup);
     }
