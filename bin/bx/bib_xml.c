@@ -16,10 +16,48 @@ const char *fldnames[] = {
   "translator", "type", "url", "venue", "volume", "year", NULL
 };
 
-void
-bib_xml_entry(Bibentry *ep)
+static const char *
+disamb_alpha(Bx *bp, int num)
 {
-  fprintf(xout, "<entry type=\"%s\" key=\"%s\">", ep->type, xmlify((uccp)ep->bkey));
+  static const char *alpha[] = {
+    "a","b","c","d","e","f","g","h","i","j","k","l","m",
+    "n","o","p","q","r","s","t","u","v","w","x","w","y","z"
+  };
+  if (num < 26)
+    return alpha[num];
+
+  int i = 0;
+  char temp[32]; 
+
+  /* Process the number from right to left (least significant 'digit' first) */
+  while (num > 0)
+    {
+      int remainder = num % 26;
+      temp[i++] = 'a' + remainder;
+      num /= 26;
+    }
+  temp[i] = '\0';
+
+  /* Reverse the temporary string into the final destination buffer */
+  char *letters = malloc(i+1);
+  list_add(bp->mem, letters);
+  int j = 0;
+  while (i > 0)
+    letters[j++] = temp[--i];
+
+  letters[j] = '\0';
+  return letters;
+}
+
+void
+bib_xml_entry(Bx *bp, Bibentry *ep)
+{
+  char dis[strlen(" disamb=\"aaaa0\"")];
+  if (ep->disamb)
+    sprintf(dis, " disamb=\"%s\"", disamb_alpha(bp, ep->disamb-1));
+  else
+    *dis = '\0';
+  fprintf(xout, "<entry type=\"%s\" key=\"%s\"%s>", ep->type, xmlify((uccp)ep->bkey), dis);
   int i;
   for (i = 0; i < f_top; ++i)
     {
@@ -39,7 +77,7 @@ bib_xml(Bx *bp, List *b, FILE *fp)
     {
       int i;
       for (i = 0; bp->ents[i]; ++i)
-	bib_xml_entry(bp->ents[i]);
+	bib_xml_entry(bp, bp->ents[i]);
     }
   else
     {
@@ -49,7 +87,7 @@ bib_xml(Bx *bp, List *b, FILE *fp)
 	  fprintf(xout, "<file n=\"%s\">", bibp->file);
 	  Bibentry *ep;
 	  for (ep = list_first(bibp->entries); ep; ep = list_next(bibp->entries))
-	    bib_xml_entry(ep);
+	    bib_xml_entry(bp, ep);
 	  fputs("</file>", xout);
 	}
     }

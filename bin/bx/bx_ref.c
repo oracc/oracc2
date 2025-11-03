@@ -46,6 +46,7 @@ bx_ref_pre(Bx *bp)
       bx_cit_pre(bp);
       bx_cit_run(bp);
       bx_ref_bib_from_cit(bp);
+      bp->sort = 1;
     }
   bp->entries = list_create(LIST_SINGLE);
   bp->bibs = list_create(LIST_SINGLE);
@@ -64,10 +65,11 @@ bx_ref_run(Bx *bp)
     {
       int i;
       bibset_debug(0);
-      /* load the entries from the .bib files */
+      /* load and validate the entries from the .bib files */
       for (i = 0; bp->files_bib[i]; ++i)
 	{
 	  Bib *bibp = memo_new(bp->m_bib);
+	  bibp->bp = bp;
 	  bibp->file = bp->files_bib[i];
 	  list_add(bp->bibs, bibp);
 	  curr_bibp = bibp;
@@ -79,14 +81,12 @@ bx_ref_run(Bx *bp)
 	  bx_ref_run_one(bibp->file, bp->keys_cit);
 	}
 
-      /* validate the entries */
-
-      /* sort the entries */
-
+      /* sort and disambiguate the entries */
       if (bp->sort)
-	bib_sort(bp);
-  
-      /* augment the entries */
+	{
+	  bib_sort(bp);
+	  bib_disambiguate(bp);
+	}        
     }  
 }
 

@@ -26,6 +26,7 @@ typedef struct bib
 {
   const char *file;
   List *entries;
+  Bx *bp;
 } Bib;
 
 struct bib_fld_tab;
@@ -38,7 +39,10 @@ typedef struct bibentry
   const char **aka;    	/* aka from @ids */
   const char *fields[f_top];
   struct name **names;
+  int nnames;
+  const char *allnames;
   int year;
+  int disamb; /* nth in sequence of disambiguated entries */
   Bib *bib;
 } Bibentry;
 
@@ -117,9 +121,11 @@ extern void bib_wrapup_buffer(void);
 extern void bib_fld_tab_init(void);
 
 extern void bib_sort(Bx *bp);
+extern void bib_disambiguate(Bx *bp);
 
 extern void bnm_init(Bx *bp);
 extern void bnm_tab_init(void);
+extern void bnm_all_names(Bibentry *ep);
 extern void bnm_nkey(Mloc *mp, Bx *bp, Name *np);
 extern void bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np);
 

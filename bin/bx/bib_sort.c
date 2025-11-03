@@ -28,3 +28,16 @@ bib_sort(Bx *bp)
   bp->ents = (struct bibentry **)list2array_c(bp->entries, &bp->nents);
   qsort(bp->ents, bp->nents, sizeof(Bibentry *), (cmp_fnc_t)ent_cmp);
 }
+
+/* disambiguation is only done when sorting is done */
+void
+bib_disambiguate(Bx *bp)
+{
+  int i, penult;
+  for (i = 0, penult=bp->nents-1; i < penult; ++i)
+    {
+      if (!strcmp(bp->ents[i]->allnames, bp->ents[i+1]->allnames)
+	  && bp->ents[i]->year == bp->ents[i+1]->year)
+	bp->ents[i+1]->disamb = bp->ents[i]->disamb + 1;
+    }    
+}

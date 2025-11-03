@@ -43,6 +43,7 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
       ++nnames;
       s2 += 5;
     }
+  ep->nnames = nnames;
   ep->names = memo_new_array(bp->m_name_ptr, nnames+1);
   int i;
   char *dup = strdup(ep->fields[bfp->t]);
@@ -68,6 +69,10 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
 	bvl_name_dump(ep, i);
     }
   free(dup);
+  if (nnames == 1)
+    ep->allnames = ep->names[0]->nkey;
+  else
+    bnm_all_names(ep);
 }
 
 void

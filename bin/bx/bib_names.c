@@ -65,6 +65,23 @@ bnm_split_one_name(Bx *bp, List *lp, char *s)
 }
 
 void
+bnm_all_names(Bibentry *ep)
+{
+  int i;
+  int len;
+  for (i = len = 0; i < ep->nnames; ++i)
+    len += strlen(ep->names[i]->nkey)+1;
+  char buf[len+1]; *buf = '\0';
+  for (i = 0; i < ep->nnames; ++i)
+    {
+      strcat(buf, ep->names[i]->nkey);
+      strcat(buf, "+");
+    }
+  buf[strlen(buf)-1] = '\0';
+  ep->allnames = (ccp)pool_copy((uccp)buf, ep->bib->bp->p);
+}
+
+void
 bnm_nkey(Mloc *mp, Bx *bp, Name *np)
 {
   char buf[strlen(np->last) + strlen(np->init) + 1];
