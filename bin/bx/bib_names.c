@@ -11,6 +11,7 @@ bnm_init(Bx *bp)
 {
   bp->names = hash_create(1024);
   bp->akanames = hash_create(1024);
+  bp->hlasts = hash_create(1024);
   bp->m_name = memo_init(sizeof(Name), 256);
   bp->m_name_ptr = memo_init(sizeof(Name*), 256);
   bnm_tab_init();
@@ -65,16 +66,18 @@ bnm_split_one_name(Bx *bp, List *lp, char *s)
 }
 
 void
-bnm_all_names(Bibentry *ep)
+bnm_all_names(Bibentry *ep, enum bib_ftype t)
 {
   int i;
   int len;
-  for (i = len = 0; i < ep->nnames; ++i)
-    len += strlen(ep->names[i]->nkey)+1;
+  int nnames = (t == f_author ? ep->nnames : ep->nenames);
+  Name **names = (t == f_author ? ep->names : ep->enames);
+  for (i = len = 0; i < nnames; ++i)
+    len += strlen(names[i]->nkey)+1;
   char buf[len+1]; *buf = '\0';
-  for (i = 0; i < ep->nnames; ++i)
+  for (i = 0; i < nnames; ++i)
     {
-      strcat(buf, ep->names[i]->nkey);
+      strcat(buf, names[i]->nkey);
       strcat(buf, "+");
     }
   buf[strlen(buf)-1] = '\0';
@@ -107,6 +110,7 @@ bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
     {
       np->last = s;
       *t++ = '\0';
+
       while (isspace(*t))
 	++t;
       np->rest = t;

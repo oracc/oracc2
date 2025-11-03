@@ -19,6 +19,7 @@ typedef struct bx
   Hash *keys_cit;
   Hash *names;
   Hash *akanames;
+  Hash *hlasts;
   Hash *refs;
   Memo *m_bib;
   Memo *m_bibentry;
@@ -41,6 +42,8 @@ typedef struct bx
 			   per-bib-file entries in bibonly mode */
   struct bibentry **ents;
   int nents;
+  struct name **people;
+  int npeople;
   bxfunc pre[BX_TOP];
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];

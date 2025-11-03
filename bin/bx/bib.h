@@ -38,11 +38,14 @@ typedef struct bibentry
   const char *bkey;	/* .bib key, the one after @article{ or the like */
   const char **aka;    	/* aka from @ids */
   const char *fields[f_top];
-  struct name **names;
+  struct name **names;	/* author names */
   int nnames;
-  const char *allnames;
+  struct name **enames; /* editor names */
+  int nenames;
+  const char *allnames; /* either author names or if no authors then editor names */
   int year;
-  int disamb; /* nth in sequence of disambiguated entries */
+  int sameauth; 	/* in sorted list, this entry has same author(s) as previous */
+  int disamb;   	/* nth in sequence of disambiguated entries in sorted list */
   Bib *bib;
 } Bibentry;
 
@@ -54,7 +57,7 @@ typedef struct name
   const char *rest;
   const char *init;
   const char *was;
-  struct name *next;
+  int sames;		/* this person's last name is same as another person's */
   int bm_name_xml;
 } Name;
 
@@ -125,7 +128,7 @@ extern void bib_disambiguate(Bx *bp);
 
 extern void bnm_init(Bx *bp);
 extern void bnm_tab_init(void);
-extern void bnm_all_names(Bibentry *ep);
+extern void bnm_all_names(Bibentry *ep, enum bib_ftype t);
 extern void bnm_nkey(Mloc *mp, Bx *bp, Name *np);
 extern void bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np);
 

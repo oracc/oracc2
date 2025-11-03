@@ -17,7 +17,7 @@
 <xsl:stylesheet version="1.0" 
   xmlns="http://www.w3.org/1999/xhtml"
   xmlns:h="http://www.w3.org/1999/xhtml"
-  xmlns:bib="http://oracc.org/ns/bib/1.0"
+  xmlns:b="http://oracc.org/ns/bib/1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:include href="map-jrnser.xsl"/>
@@ -35,11 +35,8 @@
       <xsl:when test="string-length($title) > 0">
         <xsl:value-of select="$title"/>
       </xsl:when>
-      <xsl:when test="string-length(/t:listBibl/t:title|/*/t:listBibl/t:title) > 0">
-        <xsl:value-of select="/t:listBibl/t:title|/*/t:listBibl/t:title"/>
-      </xsl:when>
-      <xsl:when test="string-length(/t:title|/*/t:title) > 0">
-        <xsl:value-of select="/t:title|/*/t:title"/>
+      <xsl:when test="string-length(/b:title|/*/b:title) > 0">
+        <xsl:value-of select="/b:title|/*/b:title"/>
       </xsl:when>
       <xsl:otherwise>
 	<xsl:text>Bibliography</xsl:text>
@@ -49,67 +46,58 @@
   <html>
     <head>
       <link rel="stylesheet" type="text/css" 
-           href="/bib-reflist.css"/>
+           href="/css/bib-reflist.css"/>
       <title><xsl:value-of select="$ti"/></title>
     </head>
     <body>
-      <xsl:apply-templates select="t:listBibl|*/t:listBibl"/>
+      <xsl:apply-templates select="b:entry"/>
     </body>
   </html>
 </xsl:template>
 
-<xsl:template match="t:listBibl">
-  <xsl:call-template name="format-biblist">
-    <xsl:with-param name="nl" select="*"/>
-  </xsl:call-template>
-</xsl:template>
-
-<xsl:template name="format-biblStruct">
+<xsl:template match="b:entry">
   <xsl:choose>
-    <xsl:when test="t:analytic/t:title and t:monogr/t:title">
+    <xsl:when test="@type='article' or @type eq 'incollection'">
       <xsl:call-template name="format-article">
         <xsl:with-param name="same-auth" select="@bib:same-auth"/>
-	<xsl:with-param name="aut" select="t:analytic/t:author"/>
-	<xsl:with-param name="edi" select="t:monogr/t:editor"/>
-	<xsl:with-param name="art" select="t:analytic/t:title"/>
-	<xsl:with-param name="boo" select="t:monogr/t:title"/>
-	<xsl:with-param name="vol" 
-			select="t:monogr/t:biblScope[@type='vol']|
-				t:monogr/t:imprint/biblScope[@type='vol']"/>
-	<xsl:with-param name="pag"
-                        select="t:monogr/t:biblScope[@type='pages']
-				|t:monogr/t:imprint/t:biblScope[@type='pages']"/>
-	<xsl:with-param name="sn1" select="t:series[1]/t:title"/>
-	<xsl:with-param name="sv1" 
-			select="t:series[1]/t:biblScope[@type='number']"/>
-	<xsl:with-param name="sn2" select="t:series[2]/t:title"/>
-	<xsl:with-param name="sv2" 
-			select="t:series[2]/t:biblScope[@type='number']"/>
-	<xsl:with-param name="pub" select="t:monogr/t:imprint/t:publisher"/>
-	<xsl:with-param name="pla" select="t:monogr/t:imprint/t:pubPlace"/>
-	<xsl:with-param name="dat" select="t:monogr/t:imprint/t:date"/>
-	<xsl:with-param name="not" select="t:note"/>
+	<xsl:with-param name="aut" select="b:author"/>
+	<xsl:with-param name="edi" select="b:editor"/>
+	<xsl:with-param name="art" select="b:title"/>
+	<xsl:with-param name="boo" select="b:booktitle"/>
+	<xsl:with-param name="vol" select="b:volume"/>
+	<xsl:with-param name="pag" select="b:pages"/>
+	<xsl:with-param name="sn1" select="b:series"/>
+	<xsl:with-param name="sv1" select="b:volume"/>
+	<!-- bx doesn't handle multiple series yet -->
+	<!--
+	    <xsl:with-param name="sn2" select="t:series[2]/t:title"/>
+	    <xsl:with-param name="sv2" select="t:series[2]/t:biblScope[@type='number']"/>
+	-->
+	<xsl:with-param name="pub" select="b:publisher"/>
+	<xsl:with-param name="pla" select="b:location"/>
+	<xsl:with-param name="dat" select="b:year"/>
+	<xsl:with-param name="not" select="b:note"/>
         <xsl:with-param name="typ" select="@type"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:otherwise>
       <xsl:call-template name="format-book">
         <xsl:with-param name="same-auth" select="@bib:same-auth"/>
-	<xsl:with-param name="aut" select="t:analytic/t:author|t:monogr/t:author"/>
-	<xsl:with-param name="edi" select="t:analytic/t:editor|t:monogr/t:editor"/>
-	<xsl:with-param name="boo" select="t:analytic/t:title|t:monogr/t:title"/>
-	<xsl:with-param name="sn1" select="t:series[1]/t:title"/>
-	<xsl:with-param name="sv1" 
-			select="t:series[1]/t:biblScope[@type='number']
-				|t:series[1]/t:biblScope[@type='vol']"/>
-	<xsl:with-param name="sn2" select="t:series[2]/t:title"/>
-	<xsl:with-param name="sv2" 
-			select="t:series[2]/t:biblScope[@type='number']
-				|t:series[2]/t:biblScope[@type='vol']"/>
-	<xsl:with-param name="pub" select="t:monogr/t:imprint/t:publisher"/>
-	<xsl:with-param name="pla" select="t:monogr/t:imprint/t:pubPlace"/>
-	<xsl:with-param name="dat" select="t:monogr/t:imprint/t:date"/>
-	<xsl:with-param name="not" select="t:note"/>
+	<xsl:with-param name="aut" select="b:author"/>
+	<xsl:with-param name="edi" select="b:editor"/>
+	<xsl:with-param name="boo" select="b:title"/>
+	<xsl:with-param name="sn1" select="b:series[1]"/>
+	<xsl:with-param name="sv1" select="b:volume"/>
+	<!--
+	    <xsl:with-param name="sn2" select="t:series[2]/t:title"/>
+	    <xsl:with-param name="sv2" 
+	    select="t:series[2]/t:biblScope[@type='number']
+	    |t:series[2]/t:biblScope[@type='vol']"/>
+	-->
+	<xsl:with-param name="pub" select="b:publisher"/>
+	<xsl:with-param name="pla" select="b:location"/>
+	<xsl:with-param name="dat" select="b:year"/>
+	<xsl:with-param name="not" select="b:note"/>
       </xsl:call-template>
     </xsl:otherwise>
   </xsl:choose>

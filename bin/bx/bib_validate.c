@@ -21,9 +21,8 @@ bvl_page(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
 }
 
 static void
-bvl_name_dump(Bibentry *ep, int i)
+bvl_name_dump(Name *np, int i)
 {
-  Name *np = ep->names[i];
   fprintf(stderr, "  np[%d]: orig=%s; last=%s; rest=%s; init=%s; nkey=%s\n",
 	  i, np->orig, np->last, np->rest, np->init, np->nkey);
 }
@@ -43,16 +42,15 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
       ++nnames;
       s2 += 5;
     }
-  ep->nnames = nnames;
-  ep->names = memo_new_array(bp->m_name_ptr, nnames+1);
+  Name **names = memo_new_array(bp->m_name_ptr, nnames+1);
   int i;
   char *dup = strdup(ep->fields[bfp->t]);
   if (verbose)
     fprintf(stderr, "bib %s starting field=%s\n", ep->bkey, dup);
   for (i = 0, t = dup; i < nnames; ++i)
     {
-      ep->names[i] = memo_new(bp->m_name);
-      ep->names[i]->orig = t;
+      names[i] = memo_new(bp->m_name);
+      names[i]->orig = t;
       t = dup;
       while (isspace(*t))
 	++t;
@@ -63,16 +61,31 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
 	  while (isspace(*t))
 	    ++t;	  
 	}
-      bnm_split(mp, bp, ep, ep->names[i]);
-      bnm_nkey(mp, bp, ep->names[i]);
+      bnm_split(mp, bp, ep, names[i]);
+      bnm_nkey(mp, bp, names[i]);
       if (verbose)
-	bvl_name_dump(ep, i);
+	bvl_name_dump(names[i], i);
     }
   free(dup);
-  if (nnames == 1)
-    ep->allnames = ep->names[0]->nkey;
+
+  if (bfp->t == f_author)
+    {
+      ep->nnames = nnames;
+      ep->names = names;
+      if (nnames == 1)
+	ep->allnames = ep->names[0]->nkey;
+      else
+	bnm_all_names(ep, f_author);
+    }
+  else if (bfp->t == f_editor)
+    {
+      ep->nenames = nnames;
+      ep->enames = names;
+    }
   else
-    bnm_all_names(ep);
+    {
+      fprintf(stderr, "bvl_name: name validation applied to non-author/editor field %s\n", bfp->name);
+    }
 }
 
 void

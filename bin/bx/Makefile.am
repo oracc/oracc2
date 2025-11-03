@@ -3,7 +3,9 @@ include ../../oracc-am-rules.txt
 bin_SCRIPTS=bx.sh
 bin_PROGRAMS=bx
 
+css_DATA=*.css
 data_DATA=bm-jrnser.xml bm-names.xml
+scriptdata_DATA=bib-HTML.xsl map-jrnser.xsl
 
 BIBLIB=bib.tab.c bib.lex.c bib_ent.c bib_fld.c bib_xml.c \
 	bib_names.c bnm_tab.c bib_validate.c bib_sort.c bib_year.c

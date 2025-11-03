@@ -95,6 +95,13 @@ bib_entry_term(Mloc m)
 {
   if (bib_field || bib_nesting)
     mesg_vwarning(curr_bib, biblineno, "wrongly nested {...} in entry %s", curr_key);
+    if (!curr_ep->fields[f_author])
+      {
+        if (curr_ep->nenames == 1)
+          curr_ep->allnames = curr_ep->enames[0]->nkey;
+        else
+          bnm_all_names(curr_ep, f_editor);
+      }
 }
 
 void
