@@ -1,6 +1,12 @@
 #include <oraccsys.h>
+#include <uninorm.h>
 #include "bx.h"
 #include "bib.h"
+
+/*
+  int u8_normcmp (const uint8_t *s1, size_t n1, const uint8_t *s2, size_t n2,
+  uninorm_t nf, int *resultp)
+*/
 
 static int ent_cmp(const void *a, const void *b)
 {
@@ -30,23 +36,28 @@ static int ent_cmp(const void *a, const void *b)
       int c = 0;
       for (i = 0; n1[i] && n2[i]; ++i)
 	{
+	  int res = 0;/*strcmp(n1[i]->nkey, n2[i]->nkey)*/
 	  if (n1[i]->nkey && n2[i]->nkey)
-	    c = strcmp(n1[i]->nkey, n2[i]->nkey);
+	    {
+	      res = u8_normcmp((uccp)n1[i]->nkey, strlen(n1[i]->nkey),
+			       (uccp)n2[i]->nkey, strlen(n2[i]->nkey),
+			       UNINORM_NFD, &c);
+	      if (-1 == res)
+		fprintf(stderr, "bib_sort: u8_normcmp returned error\n");
+	    }
 	  else if (n1[i]->nkey)
 	    c = -1;
 	  else if (n2[i]->nkey)
 	    c = 1;
 	  if (c)
-	    break;
+	    return c;
 	}
-      if (c)
-	return c;
     }
   else if (n1)
     return 1;
   else if (n2)
     return -1;
-  
+
   return e1->year - e2->year;
 }
 

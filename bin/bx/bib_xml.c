@@ -64,7 +64,7 @@ bib_xml_entry(Bx *bp, Bibentry *ep)
     {
       if (ep->fields[i])
 	fprintf(xout, "<%s>%s</%s>",
-		fldnames[i], xmlify((uccp)ep->fields[i]), fldnames[i]);
+		fldnames[i], xmlify((uccp)ep->fields[i]->data), fldnames[i]);
     }
   fputs("</entry>", xout);
 }

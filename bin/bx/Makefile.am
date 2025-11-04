@@ -12,8 +12,8 @@ BIBLIB=bib.tab.c bib.lex.c bib_ent.c bib_fld.c bib_xml.c \
 
 bx_SOURCES=bx.c bx_cit.c bx_icf.c bx_key.c bx_ref.c bx_lib.c ${BIBLIB}
 
-bx_LDADD = $(xLDADD)
-bx_DEPENDENCIES = $(bx_LDADD)
+bx_LDADD = $(xLDADD) -L/opt/homebrew/lib -lunistring
+bx_DEPENDENCIES = $(xLDADD)
 
 bib.tab.c bib.tab.h: bib.y bib.l
 

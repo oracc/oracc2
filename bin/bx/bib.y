@@ -26,6 +26,7 @@ Bibentry *curr_ep;
 Hash *bib_cites;
 
 static struct bib_fld_tab *curr_bfp;
+static Bibfield anonymous = { "Anonymous", 0 };
 
 %}
 
@@ -75,6 +76,8 @@ bib_init(Bx *bp)
   curr_bp = bp;
   bp->m_bib = memo_init(sizeof(Bib), 32);
   bp->m_bibentry = memo_init(sizeof(Bibentry), 1024);
+  bp->m_bibfield = memo_init(sizeof(Bibentry), 1024);
+  bvl_init();
 }
 
 void
@@ -96,6 +99,22 @@ bib_entry_term(Mloc m)
 {
   if (bib_field || bib_nesting)
     mesg_vwarning(curr_bib, biblineno, "wrongly nested {...} in entry %s", curr_key);
+
+  int i;
+
+  if ((!curr_ep->fields[f_author] && !curr_ep->fields[f_editor])
+      || (curr_ep->fields[f_author] && !curr_ep->fields[f_author]->data))
+    curr_ep->fields[f_author] = &anonymous;
+
+  for (i = 0; i < f_top; ++i)
+    {
+      if (curr_ep->fields[i] && bib_validators[i])
+        {
+	  m.line = curr_ep->fields[i]->line;	
+          bib_validators[i](&m,curr_bp,i,curr_ep);
+	}
+    }
+
   if (!curr_ep->fields[f_author])
     {
       if (curr_ep->nenames == 1)
@@ -113,7 +132,11 @@ bib_field_init(Mloc m, const char *f)
   if (!bfp)
     fprintf(stderr, "warning: unknown field type %s\n", f);
   else
-    curr_bfp = bfp;
+    {
+      curr_bfp = bfp;
+      curr_ep->fields[curr_bfp->t] = memo_new(curr_bp->m_bibfield);
+      curr_ep->fields[curr_bfp->t]->line = biblineno;
+    }
 }
 
 void
@@ -121,11 +144,7 @@ bib_field_term(Mloc m)
 {
   bib_field = 0;
   if (curr_bfp)
-    {
-      curr_ep->fields[curr_bfp->t] = bib_content(m, NULL);
-      if (curr_bfp->v)
-        curr_bfp->v(&m,curr_bp,curr_bfp,curr_ep);
-    }
+    curr_ep->fields[curr_bfp->t]->data = bib_content(m, NULL);
 }
 
 char *

@@ -37,7 +37,7 @@ typedef struct bibentry
   const char *type;
   const char *bkey;	/* .bib key, the one after @article{ or the like */
   const char **aka;    	/* aka from @ids */
-  const char *fields[f_top];
+  struct bibfield *fields[f_top];
   struct name **names;	/* author names */
   int nnames;
   struct name **enames; /* editor names */
@@ -48,6 +48,12 @@ typedef struct bibentry
   int disamb;   	/* nth in sequence of disambiguated entries in sorted list */
   Bib *bib;
 } Bibentry;
+
+typedef struct bibfield
+{
+  const char *data;
+  int line;
+} Bibfield;
 
 typedef struct name
 {
@@ -64,17 +70,14 @@ typedef struct name
 struct bib_year_tab { const char *name; int year; };
 extern struct bib_year_tab *bib_year(register const char *str, register size_t len);
 
-typedef void (*bibvalfnc)(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
+typedef void (*bibvalfnc)(Mloc *mp, Bx *bp, enum bib_ftype t, Bibentry *ep);
+extern bibvalfnc bib_validators[f_top];
+
 struct bib_ent_tab { const char *name; enum bib_etype t; };
-struct bib_fld_tab { const char *name; enum bib_ftype t; bibvalfnc v;};
+struct bib_fld_tab { const char *name; enum bib_ftype t; };
 
 extern struct bib_ent_tab *bib_ent(register const char *str, register size_t len);
 extern struct bib_fld_tab *bib_fld(register const char *str, register size_t len);
-
-#if 0
-extern XML_StartElementHandler bnm_s_namemap, bnm_s_name, bnm_s_last, bnm_s_rest, bnm_s_aka, bnm_s_was, bnm_s_init;
-extern XML_EndElementHandler bnm_e_namemap, bnm_e_name, bnm_e_last, bnm_e_rest, bnm_e_aka, bnm_e_was, bnm_e_init;
-#endif
 
 extern void bnm_s_namemap(void *userData, const char *name, const char **atts);
 extern void bnm_s_name(void *userData, const char *name, const char **atts);
@@ -133,10 +136,10 @@ extern void bnm_nkey(Mloc *mp, Bx *bp, Name *np);
 extern void bnm_people(Bx *bp);
 extern void bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np);
 
-extern void bvl_ids(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
-extern void bvl_page(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
-extern void bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
-extern void bvl_year(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);
-
+extern void bvl_init(void);
+extern void bvl_ids(Mloc *mp, Bx *bp, enum bib_ftype t, Bibentry *ep);
+extern void bvl_page(Mloc *mp, Bx *bp, enum bib_ftype t, Bibentry *ep);
+extern void bvl_name(Mloc *mp, Bx *bp, enum bib_ftype t, Bibentry *ep);
+extern void bvl_year(Mloc *mp, Bx *bp, enum bib_ftype t, Bibentry *ep);
 
 #endif/*BIB_H_*/

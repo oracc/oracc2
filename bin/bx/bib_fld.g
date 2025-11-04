@@ -52,21 +52,3 @@ venue,	f_venue
 volume,	f_volume
 year,	f_year
 %%
-
-static void
-bib_fld_set_val(const char *name, bibvalfnc v)
-{
-    struct bib_fld_tab *fp = bib_fld(name, strlen(name)); fp->v = v;
-}
-void
-bib_fld_tab_init(void)
-{
-  bib_fld_set_val("author", bvl_name);
-  bib_fld_set_val("bookauthor", bvl_name);
-  bib_fld_set_val("editor", bvl_name);
-  bib_fld_set_val("translator", bvl_name);
-  bib_fld_set_val("ids", bvl_ids);
-  bib_fld_set_val("page", bvl_page);
-  bib_fld_set_val("pages", bvl_page);
-  bib_fld_set_val("year", bvl_year);
-}

@@ -7,15 +7,37 @@
  * designed to have side effects
  */
 
+bibvalfnc bib_validators[f_top];
+
+static void
+bib_fld_set_val(const char *name, bibvalfnc v)
+{
+    struct bib_fld_tab *fp = bib_fld(name, strlen(name));
+    bib_validators[fp->t] = v;
+}
+
+void
+bvl_init(void)
+{
+  bib_fld_set_val("author", bvl_name);
+  bib_fld_set_val("bookauthor", bvl_name);
+  bib_fld_set_val("editor", bvl_name);
+  bib_fld_set_val("translator", bvl_name);
+  bib_fld_set_val("ids", bvl_ids);
+  bib_fld_set_val("page", bvl_page);
+  bib_fld_set_val("pages", bvl_page);
+  bib_fld_set_val("year", bvl_year);
+}
+
 /* side effect: add alternate refs to entries hash
  */
 void
-bvl_ids(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
+bvl_ids(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 {
   
 }
 void
-bvl_page(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
+bvl_page(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 {
   
 }
@@ -31,9 +53,9 @@ bvl_name_dump(Name *np, int i)
  * Name structs in the Bibentry
  */
 void
-bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
+bvl_name(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 {
-  const char *s = ep->fields[bfp->t];
+  const char *s = ep->fields[ft]->data;
 
   /* entries with empty author or editor are bad form but may occur */
   if (!s)
@@ -49,7 +71,7 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
     }
   Name **names = memo_new_array(bp->m_name_ptr, nnames+1);
   int i;
-  char *dup = strdup(ep->fields[bfp->t]);
+  char *dup = strdup(ep->fields[ft]->data);
   if (verbose)
     fprintf(stderr, "bib %s starting field=%s\n", ep->bkey, dup);
   for (i = 0, t = dup; i < nnames; ++i)
@@ -72,7 +94,7 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
     }
   free(dup);
 
-  if (bfp->t == f_author)
+  if (ft == f_author)
     {
       ep->nnames = nnames;
       ep->names = names;
@@ -81,21 +103,21 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
       else
 	bnm_all_names(ep, f_author);
     }
-  else if (bfp->t == f_editor)
+  else if (ft == f_editor)
     {
       ep->nenames = nnames;
       ep->enames = names;
     }
   else
     {
-      fprintf(stderr, "bvl_name: name validation applied to non-author/editor field %s\n", bfp->name);
+      fprintf(stderr, "bvl_name: name validation applied to non-author/editor field [type=%d]\n", ft);
     }
 }
 
 void
-bvl_year(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
+bvl_year(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 {
-  const char *y = ep->fields[bfp->t];
+  const char *y = ep->fields[ft]->data;
 
   if (!y)
     {
@@ -127,29 +149,29 @@ bvl_year(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
   
       /* simple case, year is four digits */
       if (ndig == 4 && !hyph && !nbad)
-	ep->year = atoi(ep->fields[bfp->t]);
+	ep->year = atoi(ep->fields[ft]->data);
       else if (hyph && !nbad)
 	{
-	  int y1 = atoi(ep->fields[bfp->t]);
+	  int y1 = atoi(ep->fields[ft]->data);
 	  ep->year = y1;
-	  const char *hyph = strchr(ep->fields[bfp->t], '-');
+	  const char *hyph = strchr(ep->fields[ft]->data, '-');
 	  if (hyph && '-' == hyph[1] && isdigit(hyph[2]))
 	    {
 	      if (hyph[6])
-		mesg_verr(mp, "%s: junk after range in year\n", ep->fields[bfp->t]);
+		mesg_verr(mp, "%s: junk after range in year\n", ep->fields[ft]->data);
 	      else
 		{
 		  int y2 = atoi(&hyph[2]);
 		  if (y2 <= y1)
-		    mesg_verr(mp, "%s: year range end <= range start\n", ep->fields[bfp->t]);
+		    mesg_verr(mp, "%s: year range end <= range start\n", ep->fields[ft]->data);
 		}
 	    }
 	  else
-	    mesg_verr(mp, "%s: malformed range in year\n", ep->fields[bfp->t]);	
+	    mesg_verr(mp, "%s: malformed range in year\n", ep->fields[ft]->data);	
 	}
       else
 	{
-	  mesg_verr(mp, "%s: bad character(s) in year\n", ep->fields[bfp->t]);
+	  mesg_verr(mp, "%s: bad character(s) in year\n", ep->fields[ft]->data);
 	}
     }
 }

@@ -15,7 +15,6 @@ bnm_init(Bx *bp)
   bp->m_name = memo_init(sizeof(Name), 256);
   bp->m_name_ptr = memo_init(sizeof(Name*), 256);
   bnm_tab_init();
-  bib_fld_tab_init();
   const char *f[2] = { NULL , NULL };
   f[0] = oracc_data("bm-names.xml");
   runexpat_omit_rp_wrap();

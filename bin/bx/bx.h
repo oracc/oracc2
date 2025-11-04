@@ -27,6 +27,7 @@ typedef struct bx
   Hash *refs;
   Memo *m_bib;
   Memo *m_bibentry;
+  Memo *m_bibfield;
   Memo *m_name;
   Memo *m_name_ptr;
   Pool *p;
