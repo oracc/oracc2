@@ -130,6 +130,7 @@ extern void bnm_init(Bx *bp);
 extern void bnm_tab_init(void);
 extern void bnm_all_names(Bibentry *ep, enum bib_ftype t);
 extern void bnm_nkey(Mloc *mp, Bx *bp, Name *np);
+extern void bnm_people(Bx *bp);
 extern void bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np);
 
 extern void bvl_ids(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep);

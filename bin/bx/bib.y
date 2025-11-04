@@ -82,6 +82,7 @@ bib_entry_init(Mloc m, const char *ent, const char *key)
 {
   bib_key_next = 0;
   curr_ep = memo_new(curr_bp->m_bibentry);
+  curr_ep->bib = curr_bibp;
   if (!bib_ent(ent, strlen(ent)))
     fprintf(stderr, "warning: unknown entry type %s\n", ent);
   curr_ep->type = ent;
@@ -95,13 +96,13 @@ bib_entry_term(Mloc m)
 {
   if (bib_field || bib_nesting)
     mesg_vwarning(curr_bib, biblineno, "wrongly nested {...} in entry %s", curr_key);
-    if (!curr_ep->fields[f_author])
-      {
-        if (curr_ep->nenames == 1)
-          curr_ep->allnames = curr_ep->enames[0]->nkey;
-        else
-          bnm_all_names(curr_ep, f_editor);
-      }
+  if (!curr_ep->fields[f_author])
+    {
+      if (curr_ep->nenames == 1)
+        curr_ep->allnames = curr_ep->enames[0]->nkey;
+      else
+        bnm_all_names(curr_ep, f_editor);
+    }
 }
 
 void

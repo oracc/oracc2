@@ -9,6 +9,10 @@ struct bx;
 
 typedef enum bxmode { BX_CIT , BX_ICF , BX_KEY , BX_REF, BX_TOP } Bxmode;
 
+#define BX_DB_PEOPLE 1
+#define BX_HTML_DIV  1
+#define BX_HTML_PAGE 2
+
 typedef void (*bxfunc)(struct bx*);
 
 typedef struct bx
@@ -48,6 +52,8 @@ typedef struct bx
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];
   int bibonly;
+  int dbs;
+  int html_mode;
   int no_output;
   int quiet;
   int sort;

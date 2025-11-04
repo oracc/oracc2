@@ -78,6 +78,7 @@ bx_ref_run(Bx *bp)
 	   */
 	  if (bp->bibonly && !bp->sort)
 	    bp->entries = bibp->entries = list_create(LIST_SINGLE);
+	  curr_bibp = bibp;
 	  bx_ref_run_one(bibp->file, bp->keys_cit);
 	}
 
@@ -93,6 +94,11 @@ bx_ref_run(Bx *bp)
 void
 bx_ref_out(Bx *bp)
 {
+  if (bp->dbs)
+    {
+      if (bp->dbs & BX_DB_PEOPLE)
+	bnm_people(bp);
+    }
   if (bp->xmloutput)
     {
       FILE *xfp = NULL;

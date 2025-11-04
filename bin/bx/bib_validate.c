@@ -34,6 +34,11 @@ void
 bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
 {
   const char *s = ep->fields[bfp->t];
+
+  /* entries with empty author or editor are bad form but may occur */
+  if (!s)
+    return;
+  
   char *t;
   int nnames = 1;
   const char *s2 = s;
@@ -51,7 +56,6 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
     {
       names[i] = memo_new(bp->m_name);
       names[i]->orig = t;
-      t = dup;
       while (isspace(*t))
 	++t;
       if ((t = strstr(t, " and ")))
@@ -59,7 +63,7 @@ bvl_name(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
 	  *t = '\0';
 	  t += 5;
 	  while (isspace(*t))
-	    ++t;	  
+	    ++t;
 	}
       bnm_split(mp, bp, ep, names[i]);
       bnm_nkey(mp, bp, names[i]);
@@ -92,6 +96,12 @@ void
 bvl_year(Mloc *mp, Bx *bp, struct bib_fld_tab *bfp, Bibentry *ep)
 {
   const char *y = ep->fields[bfp->t];
+
+  if (!y)
+    {
+      ep->year = 0;
+      return;
+    }
 
   struct bib_year_tab *yp = bib_year(y, strlen(y));
   if (yp)

@@ -31,15 +31,18 @@ main(int argc, char * const*argv)
 {
   setlocale (LC_ALL, ORACC_LOCALE);
   b.argv = argv;
+
   options(argc, argv,
-	  "fkrR"     /* mode args */
-	  "b:c:"    /* input args */
+	  "fkrR"      /* mode args */
+	  "b:c:"      /* input args */
 	  "d:h:io:x:" /* output args */ 
-	  "npqstv"     /* adjunct args */
+	  "D:npqstv"    /* adjunct args */
 	  );
+
   mesg_init();
   b.mem = list_create(LIST_SINGLE);
   b.p = pool_init();
+
   b.pre[b.mode](&b);
   b.run[b.mode](&b);
   b.out[b.mode](&b);
@@ -72,6 +75,10 @@ opts(int opt, const char *arg)
     case 'C':
       b.citations_file = arg;
       break;
+    case 'D':
+      if (strstr(arg, "people"))
+	b.dbs |= BX_DB_PEOPLE;
+      break;
     case 'n':
       b.no_output = 1;
       break;
@@ -92,6 +99,12 @@ opts(int opt, const char *arg)
       break;
     case 'v':
       ++verbose;
+      break;
+    case 'd':
+      b.html_mode = BX_HTML_DIV;
+      break;
+    case 'h':
+      b.html_mode = BX_HTML_PAGE;
       break;
     case 'x':
       b.xmloutput = 1;

@@ -22,6 +22,29 @@ bnm_init(Bx *bp)
   runexpatNSuD(i_list, f, bnm_sH, bnm_eH, NULL, bp);
 }
 
+static void
+bnm_people_one(FILE *fp, Name *np)
+{
+  fprintf(fp, "<person nkey=\"%s\" sames=\"%d\"/>", np->nkey, np->sames);
+}
+
+void
+bnm_people(Bx *bp)
+{
+  FILE *fp;
+  if (!(fp = fopen("people.xml", "w")))
+    {
+      fprintf(stderr, "bx: unable to write people.xml\n");
+      return;
+    }
+  int i;
+  fputs("<people>", fp);
+  for (i = 0; bp->people[i]; ++i)
+    bnm_people_one(fp, bp->people[i]);
+  fputs("</people>", fp);
+  fclose(fp);
+}
+
 Name *
 bnm_lookup(Name *nmp)
 {
@@ -87,18 +110,24 @@ bnm_all_names(Bibentry *ep, enum bib_ftype t)
 void
 bnm_nkey(Mloc *mp, Bx *bp, Name *np)
 {
-  char buf[strlen(np->last) + strlen(np->init) + 1];
-  strcpy(buf, np->last);
-  char *e = buf+strlen(buf);
-  const char *i = np->init;
-  while (*i)
+  if (np->last && np->init)
     {
-      if ('.' != *i && !isspace(*i))
-	*e++ = *i++;
-      else
-	++i;
+      char buf[strlen(np->last) + strlen(np->init) + 1];
+      strcpy(buf, np->last);
+      char *e = buf+strlen(buf);
+      const char *i = np->init;
+      while (*i)
+	{
+	  if ('.' != *i && !isspace(*i))
+	    *e++ = *i++;
+	  else
+	    ++i;
+	}
+      *e = '\0';
+      np->nkey = (ccp)pool_copy((uccp)buf, bp->p);
     }
-  np->nkey = (ccp)pool_copy((uccp)buf, bp->p);
+  else
+    np->nkey = np->orig;
 }
 
 void
@@ -106,11 +135,33 @@ bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
 {
   char *s = (char*)pool_copy((uccp)np->orig, bp->p);
   char *t = strchr(s, ',');
+  if (!t)
+    {
+      t = strrchr(s, ' ');
+      if (t)
+	{
+	  char *u;
+	  while ((u = strrchr(t-1, ' ')))
+	    if (!islower(*u))
+	      break;
+	    else
+	      t = u;
+	  char buf[strlen(s)+2];
+	  strcpy(buf, t+1);
+	  strcat(buf, ", ");
+	  int len = strlen(buf);
+	  strncpy(buf+len, s, t-s);
+	  len += t-s;
+	  buf[len] = '\0';
+	  s = (char *)pool_copy((uccp)buf, bp->p);
+	  t = strchr(s, ',');
+	  fprintf(stderr, "%s reversed to %s\n", np->orig, s);
+	}
+    }
   if (t)
     {
       np->last = s;
       *t++ = '\0';
-
       while (isspace(*t))
 	++t;
       np->rest = t;
@@ -125,7 +176,8 @@ bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
     }
   else
     {
-      mesg_verr(mp, "name with no comma: %s\n", t);
+      if (strcmp(s, "others"))
+	mesg_verr(mp, "name with no comma: %s\n", np->orig);
     }
 }
 
