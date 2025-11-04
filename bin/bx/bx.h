@@ -28,6 +28,7 @@ typedef struct bx
   Memo *m_bib;
   Memo *m_bibentry;
   Memo *m_bibfield;
+  Memo *m_bibicf;
   Memo *m_name;
   Memo *m_name_ptr;
   Pool *p;
@@ -36,6 +37,7 @@ typedef struct bx
   const char *project;
   const char *bibkey_file;
   Hash *hbibkey;
+  Hash *hicf;
   const char *flist_bib;
   const char **files_bib;
   const char *flist_cit;

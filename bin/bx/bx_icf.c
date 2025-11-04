@@ -2,9 +2,16 @@
 #include <runexpat.h>
 #include "bx.h"
 
+static Bibicf *bx_icf_data(Bx *bp, Bibentry *ep);
+
 void
 bx_icf_pre(Bx *bp)
 {
+  bp->m_bibicf = memo_init(sizeof(Bibicf), 256);
+  bp->hicf = hash_create(1024);
+  int i;
+  for (i = 0; bp->ents[i]; ++i)
+    hash_add(bp->hicf, bp->ents[i]->bkey, bx_icf_data(bp, bp->ents[i]));
 }
 
 void
@@ -16,10 +23,63 @@ void
 bx_icf_run(Bx *bp)
 {
 }
+ 
+static const char *
+bx_icf_str(Bx *bp, Bibentry *ep)
+{
+  const char *name = "", *init = "", *etal = "", *eds = "", *year = "", *comma = "";
+  if (ep->fields[f_author])
+    {
+      name = ep->names[0]->last;
+      if (ep->names[0]->sames)
+	{
+	  init = ep->names[0]->init;
+	  comma = ", ";
+      if (ep->names[1])
+	etal = " et al.";
+    }
+  else
+    {
+      name = ep->enames[0]->last;
+      if (ep->enames[0]->sames)
+	init = ep->enames[0]->init;
+      if (ep->enames[1])
+	{
+	  etal = " et al.";
+	  eds = " (eds.)";
+	}
+      else
+	eds = " (ed)";
+    }
+  
+  year = ep->fields[f_year];
+
+  len = strlen(name)+strlen(comma)+strlen(init)+strlen(etal)+strlen(eds)+strlen(year)+2;
+  char buf[len];
+  sprintf(buf, "%s%s%s%s%s %s", name, comma, init, etal, eds, year);
+  return (ccp)pool_copy((uccp)buf, bx->p);
+}
+ 
+static Bibicf *
+bx_icf_data(Bx *bp, Bibentry *ep)
+{
+  Bibicf *bip = memo_new(bp->m_bibicf);
+  bip->str = bx_icf_str(bp, ep);
+  bip->ep = ep;
+  return bip;
+}
 
 static void
-bx_icf_cite(Bx *bp, const char **atts)
+bx_icf_cite_one(Bx *bp, const char *r)
 {
+  Bibicf *ip = hash_find(bp->hicf, r);
+  
+}
+
+static void
+bx_icf_cite(Bx *bp, const char *ref)
+{
+  bx_icf_cite_one(bp, ref);
 }
 
 /* This printText implements the same escaping as used by oracc2's
@@ -75,10 +135,19 @@ printEnd(FILE *fp, const char *name)
 void
 icf_sH(void *userData, const char *name, const char **atts)
 {
-  printStart(userData, name, atts);
-  
+  static int hmode = 0;
   if (!strcmp(name, "b:cite"))
-    bx_icf_cite(userData, atts);
+    {
+      /* If we are emitting HTML output we probably want to put the
+	 cite in span with a JS link to the full bib item */
+      if (hmode)
+	printHTMLStart(userData, name, atts);
+      else
+	printStart(userData, name, atts);
+      bx_icf_cite(userData, findAttr(atts, "ref"));
+    }
+  else
+    printStart(userData, name, atts);
 }
 
 void

@@ -84,11 +84,23 @@ static int nam_cmp(const void *a, const void *b)
     return 0;
 }
 
+static const char *
+bib_id(Bx *bp, int i)
+{
+  char buf[8];
+  sprintf(buf, "B%08d", i);
+  return (ccp)pool_copy((uccp)buf, bp->p);
+}
+
 void
 bib_sort(Bx *bp)
 {
   bp->ents = (struct bibentry **)list2array_c(bp->entries, &bp->nents);
   qsort(bp->ents, bp->nents, sizeof(Bibentry *), (cmp_fnc_t)ent_cmp);
+  int i;
+  for (i = 0; bp->ents[i]; ++i)
+    bp->ents[i]->id = bib_id(bp, i);
+  
 }
 
 /* For Oracc bib a name-key (last+initials) designates a person; if
