@@ -39,6 +39,7 @@ typedef struct bibentry
   const char **aka;    	/* aka from @ids */
   const char *id;
   struct bibfield *fields[f_top];
+  struct bibicf *icf;
   struct name **names;	/* author names */
   int nnames;
   struct name **enames; /* editor names */

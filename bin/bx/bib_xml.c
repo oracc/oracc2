@@ -59,6 +59,8 @@ bib_xml_entry(Bx *bp, Bibentry *ep)
     *dis = '\0';
   const char *same = ep->sameauth ? " sameauth=\"1\"" : "";
   fprintf(xout, "<entry type=\"%s\" key=\"%s\"%s%s>", ep->type, xmlify((uccp)ep->bkey), dis, same);
+  if (bp->mode == BX_ICF)
+    fprintf(xout, "<icf>%s</icf>", ep->icf->str);
   int i;
   for (i = 0; i < f_top; ++i)
     {

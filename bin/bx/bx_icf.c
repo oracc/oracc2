@@ -13,31 +13,40 @@ bx_icf_pre(Bx *bp)
   /* call bx_ref which will call bx_cit so the two modes will set
      things up for ICF between them */
   bx_ref_pre(bp);
-  bx_ref_run(bp);
-  if (!bp->icfonly)
-    bx_ref_out(bp);
-  
-  /* Build ICF output strings for every entry in bib */
-  bp->m_bibicf = memo_init(sizeof(Bibicf), 256);
-  bp->hicf = hash_create(1024);
-  int i;
-  for (i = 0; bp->ents[i]; ++i)
-    hash_add(bp->hicf, (uccp)bp->ents[i]->bkey, bx_icf_data(bp, bp->ents[i]));
+
+  /* bx_ref_pre calls CIT mode to load keys */
+  if (bp->keys_cit->key_count)
+    bx_ref_run(bp);
 }
 
 void
 bx_icf_run(Bx *bp)
+{
+  if (bp->ents)
+    {
+      /* Build ICF output strings for every entry in bib */
+      bp->m_bibicf = memo_init(sizeof(Bibicf), 256);
+      bp->hicf = hash_create(1024);
+      int i;
+      for (i = 0; bp->ents[i]; ++i)
+	hash_add(bp->hicf, (uccp)bp->ents[i]->bkey,
+		 (bp->ents[i]->icf = bx_icf_data(bp, bp->ents[i])));
+    }
+}
+
+void
+bx_icf_out(Bx *bp)
 {
   bp->outfp = stdout; /* place-holder for better things */
   int i;
   /* icf always runs over same inputs as cit */
   for (i = 0; bp->files_cit[i]; ++i)
     bx_run_icf(bp, bp->files_cit[i]);
-}
- 
-void
-bx_icf_out(Bx *bp)
-{
+
+  /* Do this after the Bibicf building so we can include it in bib
+     output if appropriate */
+  if (!bp->icfonly)
+    bx_ref_out(bp);
 }
 
 static const char *

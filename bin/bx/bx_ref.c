@@ -45,7 +45,10 @@ bx_ref_pre(Bx *bp)
       /* this will load bp->keys_cit with the cite keys from the .xml inputs */
       bx_cit_pre(bp);
       bx_cit_run(bp);
-      bx_ref_bib_from_cit(bp);
+      if (bp->keys_cit->key_count)
+	bx_ref_bib_from_cit(bp);
+      else
+	fprintf(stderr, "bx: no cite keys found in input\n");
       bp->sort = 1;
     }
   bp->entries = list_create(LIST_SINGLE);
