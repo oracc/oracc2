@@ -37,6 +37,7 @@ typedef struct bibentry
   const char *type;
   const char *bkey;	/* .bib key, the one after @article{ or the like */
   const char **aka;    	/* aka from @ids */
+  const char *id;
   struct bibfield *fields[f_top];
   struct name **names;	/* author names */
   int nnames;
@@ -66,6 +67,12 @@ typedef struct name
   int sames;		/* this person's last name is same as another person's */
   int bm_name_xml;
 } Name;
+
+typedef struct bibicf
+{
+  const char *str;
+  Bibentry *ep;
+} Bibicf;
 
 struct bib_year_tab { const char *name; int year; };
 extern struct bib_year_tab *bib_year(register const char *str, register size_t len);

@@ -56,11 +56,16 @@ param to xsltproc.
 4) Inline Cite Formatting Mode (ICF)
 ====================================
 
-Arg -f, reads XML inputs and adds a formatted citation as child of
-<cite>. Any <cite> children already in the input are discarded and
-replaced with newly produced ones.
+ICF depends on CIT mode, so it calls CIT and REF then runs itself.
 
-Outputs to a arg -t [TMP] directory or in-place with arg -i.  
+Arg -f, or -F to have no formatted bibliography output.
+
+Reads the same XML inputs as were specified for the CIT
+modeand adds a formatted citation as child of <cite>. Any <cite>
+children already in the input are discarded and replaced with newly
+produced ones.
+
+Outputs to arg -t [TMP] directory or in-place with arg -i.  
 
 
 TODO

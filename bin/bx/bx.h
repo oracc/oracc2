@@ -54,9 +54,11 @@ typedef struct bx
   bxfunc pre[BX_TOP];
   bxfunc run[BX_TOP];
   bxfunc out[BX_TOP];
+  FILE *outfp; /* current output for icf mode */
   int bibonly;
   int dbs;
   int html_mode;
+  int icfonly;
   int no_output;
   int quiet;
   int sort;

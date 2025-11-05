@@ -88,7 +88,7 @@ static const char *
 bib_id(Bx *bp, int i)
 {
   char buf[8];
-  sprintf(buf, "B%08d", i);
+  sprintf(buf, "B%06d", i);
   return (ccp)pool_copy((uccp)buf, bp->p);
 }
 
@@ -100,7 +100,6 @@ bib_sort(Bx *bp)
   int i;
   for (i = 0; bp->ents[i]; ++i)
     bp->ents[i]->id = bib_id(bp, i);
-  
 }
 
 /* For Oracc bib a name-key (last+initials) designates a person; if

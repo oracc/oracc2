@@ -55,6 +55,8 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'F':
+      b.icfonly = 1;
     case 'f':
       b.mode = BX_ICF;
       break;
