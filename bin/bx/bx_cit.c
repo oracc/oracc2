@@ -15,7 +15,10 @@ void
 bx_cit_pre(Bx *bp)
 {
   char *fmem;
-  bxl_bibkeys(bp);
+  if (bp->mode != BX_CIT && bp->mode != BX_ICF)
+    bxl_bibkeys(bp); /* argv may have .bib files */
+  else
+    bxl_bibkeys(bp); /* argv has .xml files */
   if (bp->citations_file)
     {
       bp->citations = (const char **)loadfile_lines3((uccp)bp->citations_file, NULL, NULL);
@@ -76,12 +79,20 @@ bx_cite(Bx *bp, const char *k)
       Mloc *mp = hash_find(bp->keys, (uccp)k);
       if (!mp)
 	{
-	  if (!bp->quiet)
-	    fprintf(stderr, "%s:%ld: unknown cite key %s\n", runexpat_file(), runexpat_lnum(), k);
-	  hash_add(bp->keys_cit, pool_copy((uccp)k, bp->p), &no_known_loc);
+	  const char *keyf = hash_find(bp->hbibkey, (uccp)k);
+	  if (keyf)
+	    {
+	      hash_add(bp->keys_cit, pool_copy((uccp)k, bp->p), (void*)keyf);
+	    }
+	  else
+	    {
+	      if (!bp->quiet)
+		fprintf(stderr, "%s:%ld: unknown cite key %s\n", runexpat_file(), runexpat_lnum(), k);
+	      hash_add(bp->keys_cit, pool_copy((uccp)k, bp->p), &no_known_loc);
+	    }
 	}
       else
-	hash_add(bp->keys_cit, pool_copy((uccp)k, bp->p), mp);
+	hash_add(bp->keys_cit, pool_copy((uccp)k, bp->p), (void*)mp->file);
     }
 }
 

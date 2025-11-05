@@ -37,7 +37,7 @@ bx_ref_pre(Bx *bp)
 {
   if (bp->bibonly)
     {
-      bxl_bib_files(bp);
+      bxl_bib_files(bp, 1);
       bp->keys_cit = NULL; /* transparency for bib_load arg */
     }
   else
@@ -141,7 +141,7 @@ bx_ref_run_one(const char *bibfile, Hash *cites)
   FILE *fp = fopen(bibfile, "r");
   if (!fp)
     {
-      fprintf(stderr, "can't read .bib %s\n", bibfile);
+      fprintf(stderr, "bx: can't open .bib file %s for loading\n", bibfile);
       exit(1);
     }
   bibin = fp;

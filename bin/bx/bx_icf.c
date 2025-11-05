@@ -6,10 +6,17 @@
 static Bibicf *bx_icf_data(Bx *bp, Bibentry *ep);
 static void bx_run_icf(Bx *bp, const char *fname);
 
-  static int span_pending;
+static int span_pending;
+
 void
 bx_icf_pre(Bx *bp)
 {
+  if (bp->keys_from_bib)
+    {
+      bx_key_pre(bp);
+      bx_key_run(bp);
+    }
+
   /* call bx_ref which will call bx_cit so the two modes will set
      things up for ICF between them */
   bx_ref_pre(bp);
@@ -99,7 +106,10 @@ static void
 bx_icf_cite_one(Bx *bp, const char *r)
 {
   Bibicf *ip = hash_find(bp->hicf, (uccp)r);
-  fprintf(bp->outfp, "%s", ip->str);
+  if (ip)
+    fprintf(bp->outfp, "%s", ip->str);
+  else
+    fprintf(stderr, "bx: failed to find cite string for key `%s'\n", r);
 }
 
 static void
@@ -158,6 +168,8 @@ printEnd(FILE *fp, const char *name)
   fprintf(fp, "</%s>", name);
 }
 
+#define ubp	((Bx*)userData)
+
 void
 icf_sH(void *userData, const char *name, const char **atts)
 {
@@ -168,18 +180,18 @@ icf_sH(void *userData, const char *name, const char **atts)
 	 cite in span with a JS link to the full bib item */
       if (hmode)
 	{
-	  printStart(userData, "span", atts);
+	  printStart(ubp->outfp, "span", atts);
 	  span_pending = 1;
 	}
       else
-	printStart(userData, name, atts);
-      bx_icf_cite(userData, findAttr(atts, "ref"));
+	printStart(ubp->outfp, name, atts);
+      bx_icf_cite(userData, findAttr(atts, "key"));
     }
   else
     {
       if (span_pending)
 	++span_pending;
-      printStart(userData, name, atts);
+      printStart(ubp->outfp, name, atts);
     }
 }
 
@@ -193,7 +205,7 @@ icf_eH(void *userData, const char *name)
 	name = "span";
     }
   else
-    printEnd(userData, name);
+    printEnd(ubp->outfp, name);
 }
 
 static void

@@ -14,7 +14,10 @@ static void bx_key_run_one(Bx *bp, const char *fname);
 void
 bx_key_pre(Bx *bp)
 {
-  bxl_bib_files(bp);
+  if (bp->mode == BX_ICF) /* in ICF mode argv has .xml files; must use -b to name .bib files */
+    bxl_bib_files(bp, 0);
+  else
+    bxl_bib_files(bp, 1);
   bp->keys = hash_create(1024);
 }
 
@@ -46,7 +49,7 @@ bx_key_out(Bx *bp)
       if (!strcmp(bp->bibkey_file, "-"))
 	keyfp = stdout;
       else if (!(keyfp = fopen(bp->bibkey_file, "w")))
-	fprintf(stderr, "can't write key output %s", bp->bibkey_file);
+	fprintf(stderr, "bx: can't write key output %s", bp->bibkey_file);
       if (keyfp)
 	{
 	  bxl_key_writer(bp, keyfp);
@@ -77,7 +80,7 @@ bx_key_key(Bx *bp, FILE *bibfp)
       else if (nch >= 1023)
 	{
 	  buf[1023] = '\0';
-	  fprintf(stderr, "overlong key ignored (max = 1023): %s\n", buf);
+	  fprintf(stderr, "bx: overlong key ignored (max = 1023): %s\n", buf);
 	  return 0;
 	}
       else
@@ -109,7 +112,7 @@ bx_key_key(Bx *bp, FILE *bibfp)
     }
   else
     {
-      fprintf(stderr, "unexpected failure to find key");
+      fprintf(stderr, "bx: unexpected failure to find key");
       return 0;
     }
 }
@@ -131,7 +134,7 @@ bx_key_run_one(Bx *bp, const char *f)
   FILE *bibfp = fopen(f, "r");
   if (!bibfp)
     {
-      fprintf(stderr, "can't read .bib file %s\n", f);
+      fprintf(stderr, "bx: can't read .bib file %s for key extraction\n", f);
       return;
     }
   else if (verbose)

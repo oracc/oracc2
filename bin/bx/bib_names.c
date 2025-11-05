@@ -154,7 +154,8 @@ bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
 	  buf[len] = '\0';
 	  s = (char *)pool_copy((uccp)buf, bp->p);
 	  t = strchr(s, ',');
-	  fprintf(stderr, "%s reversed to %s\n", np->orig, s);
+	  if (verbose)
+	    fprintf(stderr, "%s reversed to %s\n", np->orig, s);
 	}
     }
   if (t)

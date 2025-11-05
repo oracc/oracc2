@@ -3,12 +3,12 @@
 #include "bx.h"
 
 void
-bxl_bib_files(Bx *bp)
+bxl_bib_files(Bx *bp, int use_argv)
 {
   char *fmem = NULL;
   if (bp->flist_bib)
     bp->files_bib = bxl_flist_files(bp, bp->flist_bib, "*.bib", &fmem);
-  else if (bp->argv[optind])
+  else if (use_argv && bp->argv[optind])
     bp->files_bib = (const char **)&bp->argv[optind];
   list_add(bp->mem, fmem);
 }

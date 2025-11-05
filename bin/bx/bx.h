@@ -59,6 +59,7 @@ typedef struct bx
   int dbs;
   int html_mode;
   int icfonly;
+  int keys_from_bib;
   int no_output;
   int quiet;
   int sort;
@@ -96,6 +97,6 @@ extern void bxl_bibkeys(Bx *bp);
 extern void bxl_bibkey_file(Bx *bp);
 extern const char **bxl_flist_files(Bx *bp, const char *flist, const char *ext, char **fmem);
 extern void bxl_key_writer(Bx *bp, FILE *fp);
-extern void bxl_bib_files(Bx *bp);
+extern void bxl_bib_files(Bx *bp, int use_argv);
 
 #endif/*BX_H_*/

@@ -33,7 +33,7 @@ main(int argc, char * const*argv)
   b.argv = argv;
 
   options(argc, argv,
-	  "fkrR"      /* mode args */
+	  "fFkKrR"      /* mode args */
 	  "b:c:"      /* input args */
 	  "d:h:io:x:" /* output args */ 
 	  "D:npqstv"    /* adjunct args */
@@ -59,6 +59,9 @@ opts(int opt, const char *arg)
       b.icfonly = 1;
     case 'f':
       b.mode = BX_ICF;
+      break;
+    case 'K':
+      b.keys_from_bib = 1;
       break;
     case 'k':
       b.mode = BX_KEY;

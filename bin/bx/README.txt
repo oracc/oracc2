@@ -35,6 +35,10 @@ Reports duplicates and the location of first occurences.
 
 .xml files are not used in KEY mode.
 
+KEY mode can be used as a subsidiary of ICF mode with the -K arg. In
+this case, bib files must be given in a list file and the keys are
+first harvested from the files in the list.
+
 
 3) Refs Mode (REF)
 ==================
