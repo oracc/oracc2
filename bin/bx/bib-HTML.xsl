@@ -25,6 +25,8 @@
 <xsl:variable name="lq" select="'&#x201c;'"/>
 <xsl:variable name="rq" select="'&#x201d;'"/>
 
+<xsl:param name="outmode" select="''"/>
+<xsl:param name="project" select="''"/>
 <xsl:param name="title"/>
 <xsl:strip-space elements="*"/>
 <xsl:output method="xml" indent="yes" encoding="utf-8"/>
@@ -50,16 +52,16 @@
       <title><xsl:value-of select="$ti"/></title>
     </head>
     <body>
-      <xsl:apply-templates select="b:entry"/>
+      <xsl:apply-templates select="*/b:entry"/>
     </body>
   </html>
 </xsl:template>
 
 <xsl:template match="b:entry">
   <xsl:choose>
-    <xsl:when test="@type='article' or @type eq 'incollection'">
+    <xsl:when test="@type='article' or @type='incollection'">
       <xsl:call-template name="format-article">
-        <xsl:with-param name="same-auth" select="@bib:same-auth"/>
+        <xsl:with-param name="same-auth" select="@sameauth"/>
 	<xsl:with-param name="aut" select="b:author"/>
 	<xsl:with-param name="edi" select="b:editor"/>
 	<xsl:with-param name="art" select="b:title"/>
@@ -82,7 +84,7 @@
     </xsl:when>
     <xsl:otherwise>
       <xsl:call-template name="format-book">
-        <xsl:with-param name="same-auth" select="@bib:same-auth"/>
+        <xsl:with-param name="same-auth" select="@sameauth"/>
 	<xsl:with-param name="aut" select="b:author"/>
 	<xsl:with-param name="edi" select="b:editor"/>
 	<xsl:with-param name="boo" select="b:title"/>

@@ -215,6 +215,7 @@ lib/inl/inltok.c
 # .in derivatives
 mac-config.sh
 oraccenv.sh
+bin/bx/bx_xslt.c
 bin/bx/map-jrnser.xsl
 bin/dx/dxx/dx-install.sh
 bin/dx/odo/odo-build.sh

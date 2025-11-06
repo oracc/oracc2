@@ -10,7 +10,7 @@
   <xsl:variable name="jsname" select="normalize-space($js)"/>
   <xsl:variable name="xmlid" select="ancestor-or-self::*[@xml:id]/@xml:id"/>
   <xsl:if test="string-length($jsname) > 0">
-    <xsl:for-each select="document('@@ORACC@@/lib/bib/jrnser.xml')">
+    <xsl:for-each select="document('@@ORACC@@/lib/data/bm-jrnser.xml')">
       <xsl:variable name="key" select="key('js-aka',$jsname)"/>
       <xsl:choose>
         <xsl:when test="$key">

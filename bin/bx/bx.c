@@ -34,8 +34,8 @@ main(int argc, char * const*argv)
 
   options(argc, argv,
 	  "fFkKrR"      /* mode args */
-	  "b:c:"      /* input args */
-	  "d:h:io:x:" /* output args */ 
+	  "b:c:"        /* input args */
+	  "d:h:io:x:"    /* output args */ 
 	  "D:npqstv"    /* adjunct args */
 	  );
 
@@ -106,10 +106,14 @@ opts(int opt, const char *arg)
       ++verbose;
       break;
     case 'd':
+      b.htmloutput = 1;
       b.html_mode = BX_HTML_DIV;
+      b.outfile = arg;
       break;
     case 'h':
+      b.htmloutput = 1;
       b.html_mode = BX_HTML_PAGE;
+      b.outfile = arg;
       break;
     case 'x':
       b.xmloutput = 1;

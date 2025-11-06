@@ -111,6 +111,35 @@ bx_ref_out(Bx *bp)
 	xfp = fopen(bp->outfile, "w");
       bib_xml(bp, bp->bibs, xfp);
     }
+  else if (bp->htmloutput)
+    {
+      FILE *pfp;
+      const char *pcmd = bx_xsltproc(bp);
+      if (verbose)
+	fprintf(stderr, "bx_ref_out: html via `%s'\n", pcmd);
+      if ((pfp = popen(pcmd, "w")) == NULL)
+	{
+	  perror("bib_xml popen failed");
+	  return;
+	}
+      bib_xml(bp, bp->bibs, pfp);
+      if (ferror(pfp))
+	{
+	  perror("bib_xml error writing to xsltproc");
+	  pclose(pfp);
+	}
+      int status = pclose(pfp);
+      if (status == -1)
+	{
+	  perror("bib_xml pclose failed");
+	  return;
+	}
+      else if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+	{
+	  fprintf(stderr, "bib_xml: %s: error: %d\n", pcmd, WEXITSTATUS(status));
+	  return;
+	}
+    }
 }
 
 static void
