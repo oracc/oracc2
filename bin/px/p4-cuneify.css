@@ -15,8 +15,15 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
 
 .gray { color: gray; }
 
-.cfy-brack:before { content: attr(data-bracko); color: dimgrey; }
-.cfy-brack:after  { content: attr(data-brackc); color: dimgrey; }
+/*.cfy-brack:before { content: attr(data-bracko); color: dimgrey; }*/
+
+.cfy-brack { color: gainsboro; }
+
+.cfy-brack:before { content: attr(data-bracko); font-size: 10pt;
+		    vertical-align: super; color: firebrick; }
+
+.cfy-brack:after  { content: attr(data-brackc); font-size: 10pt;
+		    vertical-align: super; color: firebrick; }
 
 span[onclick]:hover { cursor: pointer; }
 
