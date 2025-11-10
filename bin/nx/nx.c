@@ -5,6 +5,7 @@ Pool *nspool;
 
 const char *arg_dat = NULL;
 
+int line;
 int opt_json;
 int opt_pacify;
 int opt_trace;
