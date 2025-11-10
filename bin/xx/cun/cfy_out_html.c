@@ -71,7 +71,10 @@ treexml_o_cfy(Node *np, void *user)
 	  )
 	{
 	  fprintf(dp->c->o, "<div class=\"%s-flex\"", dp->name);
-	  fputs(" style=\"display: flex; align-items: flex-start;\"", dp->c->o);
+	  const char *wrap = "";
+	  if (!strcmp(dp->name, "surface"))
+	    wrap = " flex-wrap: wrap;";
+	  fprintf(dp->c->o, " style=\"display: flex; align-items: flex-start;%s\"", wrap);
 	  fputs(">", dp->c->o);
 	  switch (*dp->name)
 	    {
@@ -100,9 +103,9 @@ treexml_c_cfy(Node *np, void *user)
 	  fputs("</div>", dp->c->o);
 	  switch (*dp->name)
 	    {
-	    case 'o': dp_o_o = 0; break;
-	    case 's': dp_s_o = 0; break;
-	    case 'c': dp_c_o = 0; break;
+	    case 'o': dp_s_o = 0; break;
+	    case 's': dp_c_o = 0; break;
+	      /*case 'c': dp_c_o = 0; break;*/
 	    }
 	}
     }
