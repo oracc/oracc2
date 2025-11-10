@@ -24,8 +24,8 @@
 }
 
 @font-face {
-   font-family: 'Oracc Gudea Monumental';
-   src: url('/fonts/Gudea-bold.ttf');
+   font-family: 'Oracc Early Monumental Cuneiform';
+   src: url('/fonts/Oracc-EMC.ttf');
 }
 
 @font-face {
@@ -78,8 +78,8 @@
    font-feature-settings: "ss01", "ss02", "cv01";
 }
 
-.ofs-gudeamon {
-   font-family: "Oracc Gudea Monumental";
+.ofs-emc {
+   font-family: "Oracc Early Monumental Cuneiform";
 }
 
 .ofs-lak {
