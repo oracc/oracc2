@@ -100,7 +100,7 @@ treexml_c_cfy(Node *np, void *user)
 	  || (!dp_c_o && dp_s_o && strcmp(dp->name, "surface"))
 	  || (!dp_c_o && !dp_s_o && dp_o_o && strcmp(dp->name, "object")))
 	{
-	  fputs("</div>", dp->c->o);
+	  fprintf(dp->c->o, "</div><!--%s-->", dp->name);
 	  switch (*dp->name)
 	    {
 	    case 'o': dp_s_o = 0; break;
@@ -226,7 +226,9 @@ static void
 ch_foot(Cfy *c)
 {
   if (!c->weboutput)
-    fprintf(c->o, "</div></body></html>");
+    fprintf(c->o, "</div><!--p4cuneify--></body></html>");
+  else if (c->html)
+    fprintf(c->o, "</div><!--p4cuneify-->");
 }
 
 static void
@@ -249,13 +251,6 @@ static void
 ch_d_c(Cfy *c)
 {
   fputs("</table>", c->o);
-#if 0
-  if (need_wrapper)
-    {
-      fputs("</div>", c->o);
-      need_wrapper = 0;
-    }
-#endif
 }
 
 /* ch_elt_? */
