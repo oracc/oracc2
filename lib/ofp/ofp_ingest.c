@@ -150,7 +150,7 @@ ofp_ingest(Ofp *ofp)
 	      static char buf[7];
 	      strcpy(buf, "u");
 	      strcat(buf, ucode);
-	      name = buf;
+	      name = pool_copy(buf, ofp->p);
 	    }
 	  if (ofp->trace)
 	    fprintf(ofp->trace, "ofp_ingest: hash_add h_glyf %s gp(%d)\n",
