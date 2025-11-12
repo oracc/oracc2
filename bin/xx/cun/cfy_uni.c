@@ -13,7 +13,7 @@ cfy_uni_check_one(Cfy *c, uccp u)
 	  wchar_t w = utf1char(u, NULL);
 	  if (c->cov_list)
 	    fprintf(stderr,
-		    "%s:%d: list %s missing U+%X=%s\n",
+		    "%s:%d: list %s missing U+\t%X\t%s\n",
 		    pi_file, pi_line, c->cov_list, (unsigned)w, u);
 	  else
 	    fprintf(stderr,
