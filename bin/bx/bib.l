@@ -11,7 +11,7 @@ static void bib_user_action(void);
 extern Mloc biblloc;
 #define YY_USER_ACTION bib_user_action();
 extern Bx *curr_bp;
-const char *curr_bib;
+extern const char *curr_bib;
 extern int bib_field, bib_nesting;
 int bib_key_next;
 
