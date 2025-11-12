@@ -92,7 +92,6 @@ void
 treexml_c_cfy(Node *np, void *user)
 {
   Xmlhelper *xhp = user;
-  fprintf(xhp->fp, "</%s>", np->name);
   Div *dp = np->user;
   if (dp->b == XB_OBJ || dp->b == XB_SRF || dp->b == XB_COL)
     {
@@ -100,15 +99,17 @@ treexml_c_cfy(Node *np, void *user)
 	  || (!dp_c_o && dp_s_o && strcmp(dp->name, "surface"))
 	  || (!dp_c_o && !dp_s_o && dp_o_o && strcmp(dp->name, "object")))
 	{
-	  fprintf(dp->c->o, "</div><!--%s-->", dp->name);
 	  switch (*dp->name)
 	    {
-	    case 'o': dp_s_o = 0; break;
-	    case 's': dp_c_o = 0; break;
+	    case 'o': dp_s_o = 0; fprintf(dp->c->o, "</div><!--surface-flex-->"); break;
+	    case 's': dp_c_o = 0; fprintf(dp->c->o, "</div><!--column-flex-->");break;
 	      /*case 'c': dp_c_o = 0; break;*/
 	    }
 	}
     }
+  fprintf(xhp->fp, "</%s>", np->name);
+  if (!strcmp(np->name, "div"))
+    fprintf(xhp->fp, "<!--%s-->", dp->name);
 }
 
 static void
