@@ -8,6 +8,10 @@ Nabuninuaihsus
 *.lig
 im-ofs-*.tab
 
+# cfy test derivatives
+bin/xx/cun/t/*.html
+bin/xx/cun/t/*.xtf
+
 # .xml -> .c in pui
 bin/px/pui/p4ceselect.c
 bin/px/pui/p4controls.c
