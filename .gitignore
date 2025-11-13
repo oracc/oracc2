@@ -1,6 +1,12 @@
 Nabuninuaihsus
 
+# font derivatives
+*.ofp
+*.oin
 *.ttx
+*.uni
+*.lig
+im-ofs-*.tab
 
 # .xml -> .c in pui
 bin/px/pui/p4ceselect.c
