@@ -133,9 +133,10 @@ cfy_post_div(Cfy *c, Div *dp)
     {
       if (c->cfg && c->cfg->hsubkeys)
 	cfy_subbings(c, dp->elt_lines[i]);
+      /* N.B.: must do ligs before charspace */
+      cfy_ligatures(c, dp->elt_lines[i]->epp);
       if (ELT_Jcs == c->c->justify || ELT_Jcp == c->c->justify)
 	cfy_charspace(c, dp->elt_lines[i]);
-      cfy_ligatures(c, dp->elt_lines[i]->epp);
       cfy_breakage(c, dp->elt_lines[i]->epp);
     }
 }

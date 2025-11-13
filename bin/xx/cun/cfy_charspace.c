@@ -57,7 +57,10 @@ cfy_charspace(Cfy *c, Eltline *elp)
 	      hp->spforce = elp->epp[i]->prev->spforce;
 	      list_add(lp, hp);
 	    }
-	  cfy_charify(c, elp->epp[i], lp);
+	  if (!elp->epp[i]->liga)
+	    cfy_charify(c, elp->epp[i], lp);
+	  else
+	    list_add(lp, elp->epp[i]);
 	}
       else
 	{

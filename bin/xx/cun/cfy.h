@@ -300,6 +300,7 @@ typedef struct elt
   char indented; /* does this element follow a ';' in ATF? */
   char spforce; /* for boundary Elt, is there a g:spforce attribute */
   char spkill; /* for boundary Elt, is there a g:spkill attribute */
+  char liga;   /* is the data member a ligature; this is used to suppress charification */
   short line; /* don't need to store pi_file as long as cfy is a single-shot program */
 } Elt;
 
