@@ -373,9 +373,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		}
 	      cfy_grapheme(userData, name, atts, utf8, gcp, oid);
 	    }
-	  if (':' == name[1] && 'g' == name[0] && '\0' == name[3] && innertags[(int)name[2]])
-	    ++inner;
-	  else if (!strcmp(name, "g:w"))
+	  if (!strcmp(name, "g:w"))
 	    {
 	      const char *zws = findAttr(atts, "g:zws");
 	      if (zws && *zws)
@@ -421,6 +419,8 @@ cfy_sH(void *userData, const char *name, const char **atts)
 	      cfy_x(userData, atts, breakage(name, atts), curr_cp);
 	    }
 	}
+      if (':' == name[1] && 'g' == name[0] && '\0' == name[3] && innertags[(int)name[2]])
+	++inner;
       else if (!strcmp(name, "l"))
 	{
 	  cfy_line(userData, atts);
