@@ -1197,10 +1197,19 @@
 	      <xsl:attribute name="onclick"><xsl:text>act_block(event)</xsl:text></xsl:attribute>
 	      <xsl:attribute name="data-bloc"><xsl:value-of select="@score-block-ref"/></xsl:attribute>
 	    </xsl:if>
-	    <span class="xlabel">
-	      <xsl:value-of select="$label"/>
-	    </span>
-	    <xsl:call-template name="span-lnum"/>
+	    <xsl:choose>
+	      <xsl:when test="@label2">
+		<span class="label-two">
+		  <xsl:value-of select="@label2"/>
+		</span>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<span class="xlabel">
+		  <xsl:value-of select="$label"/>
+		</span>
+		<xsl:call-template name="span-lnum"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
 	  </a>
 	</xsl:if>
       </xsl:when>
