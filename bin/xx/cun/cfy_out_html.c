@@ -313,7 +313,10 @@ ch_elt_W(Cfy *c, Elt *e)
 	  if ((ELT_Jp == c->c->justify || ELT_Jcp == c->c->justify)
 	      && ci_j == ((Line*)curr_div->elt_lines[ci_i]->epp[0]->data)->last_w)
 	    lw = " cfy-penult";
-	  fprintf(c->o, "<span class=\"ws%s\"> </span>", lw);
+	  if (e->spforce)
+	    fprintf(c->o, "<span class=\"cfy-pseudo-h%s\"> </span>", lw);
+	  else
+	    fprintf(c->o, "<span class=\"ws%s\"> </span>", lw);
 	}
     }
 }

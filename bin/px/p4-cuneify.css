@@ -17,7 +17,7 @@ body { font-family: serif; font-weight: normal; font-size: 1em }
 
 /*.cfy-brack:before { content: attr(data-bracko); color: dimgrey; }*/
 
-.cfy-brack { color: gainsboro; }
+.cfy-brack { color: gray; }
 
 .cfy-brack:before { content: attr(data-bracko); font-size: 10pt;
 		    vertical-align: super; color: firebrick; }

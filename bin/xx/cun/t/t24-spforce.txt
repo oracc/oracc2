@@ -1,0 +1,4 @@
+Format: \> at the start of line must be followed by a single space;
+the ATF processor handles this specially to ensure it works as
+intended.
+

@@ -373,7 +373,7 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		}
 	      cfy_grapheme(userData, name, atts, utf8, gcp, oid);
 	    }
-	  if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
+	  if (':' == name[1] && 'g' == name[0] && '\0' == name[3] && innertags[(int)name[2]])
 	    ++inner;
 	  else if (!strcmp(name, "g:w"))
 	    {
@@ -390,6 +390,16 @@ cfy_sH(void *userData, const char *name, const char **atts)
 		  sp = findAttr(atts, "g:spkill");
 		  if (sp && *sp)
 		    spkill_pending = 1;
+		}
+	    }
+	  else if (!strcmp(name, "g:nonw"))
+	    {
+	      const char *gsp = findAttr(atts, "g:spforce");
+	      if (*gsp)
+		{
+		  Elt *ep = new_elt(c, ELT_W);
+		  ep->spforce = 1;
+		  list_add(c->line, ep);		  
 		}
 	    }
 	  else if (!strcmp(name, "c"))
@@ -462,7 +472,7 @@ cfy_eH(void *userData, const char *name)
       protocol_cfy_ccf = 0;
       cfy_cfg_text(c);
     }
-  else if (':' == name[1] && 'g' == name[0] && innertags[(int)name[2]])
+  else if (':' == name[1] && 'g' == name[0] && '\0' == name[3] && innertags[(int)name[2]])
     --inner;
   else if (!strcmp(name, "g:w"))
     cfy_ws(userData);
