@@ -12,7 +12,7 @@
 # types so it's better to encapsulate each generator neatly)
 pub=${ORACC}/$1/02pub
 if [ -d $pub/data.d ]; then
-    cp -u $pub/data.d/o$2.xml $3
+    cp $pub/data.d/o$2.xml $3
 else
     ${ORACC}/bin/xfragx $pub/data.xml o$2 >$3
 fi
