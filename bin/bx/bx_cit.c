@@ -45,7 +45,7 @@ bx_cit_run(Bx *bp)
       for (i = 0; bp->citations[i]; ++i)
 	bx_cite(bp, bp->citations[i]);
     }
-  else
+  else if (bp->files_cit)
     {
       int i;
       for (i = 0; bp->files_cit[i]; ++i)

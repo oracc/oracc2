@@ -114,10 +114,12 @@ opts(int opt, const char *arg)
       b.htmloutput = 1;
       b.html_mode = BX_HTML_PAGE;
       b.outfile = arg;
+      b.sort = 1;
       break;
     case 'x':
       b.xmloutput = 1;
       b.outfile = arg;
+      b.sort = 1;
       break;
     default:
       return 1;
