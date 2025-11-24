@@ -108,7 +108,7 @@ extern struct bnm_tab *bnm_tab(register const char *str, register size_t len);
 
 extern int biblineno, bib_key_next;
 extern int bib_field, bib_nesting;
-extern const char *curr_bib, *curr_key, *field;
+extern const char *curr_bib, *curr_key, *field, *fldnames[];
 extern Bib *curr_bibp;
 extern Bibentry *curr_ep;
 

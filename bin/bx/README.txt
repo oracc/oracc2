@@ -1,4 +1,6 @@
-BX--Oracc Bibliography Processing
+BIB and BX--Oracc Bibliography Processing
+
+Bib (the short name for Oracc bibliography) is mostly managed by bx.
 
 bx operates in several different modes:
 
@@ -45,7 +47,7 @@ first harvested from the files in the list.
 
 Arg -r, read .xml files, use CIT to get citations; augment for bib needs; gen output
 
-Arg -R, read .bib files.  Default is to validate; with output, sort as well
+Arg -R, read .bib files.  Default is to validate; with -o write .bib; with -s sorted .bib
 
 Output to XML with -x or HTML with -d (div only) or -h (full html file).
 
@@ -70,6 +72,55 @@ children already in the input are discarded and replaced with newly
 produced ones.
 
 Outputs to arg -t [TMP] directory or in-place with arg -i.  
+
+
+5) Bib-ID mode (BID)
+
+BID reads and writes .bib files, adding B-IDs to any entries that lack
+them. See Oracc Bibliography IDs for further information.
+
+
+Oracc Bibliography IDs
+======================
+
+Oracc uses Bibliography IDs of the form B123456 to ensure unique and
+stable addressing of bibliography entries.  These IDs are stored in
+the BiBTeX ids field:
+
+ ids = { B000123 },
+
+To ensure persistency, bibliography items that are determined to be
+identical after they have been assigned B-IDs are merged by adding the
+B-ID to the ids field of the retained item:
+
+ ids = { B000123, B001432 },
+
+B-IDs are programmatically assigned in bx's BID mode by running bx -i
+[FILE].  Only one file is processed at a time, without output to
+STDOUT or the destination named with the -o argument.
+
+In BID mode bx reads all of the Oracc system .bib files
+(/home/oracc/bib/00etc/*.bib) to determine the last used B-ID, then it
+reads the input file to assign B-IDs to any entries that lack one.
+
+
+Bib and OOD (Oracc Open Data)
+=============================
+
+Oracc supports searching and listing bibliography entries using the
+OOD infrastructure which allows data to be treated as a special form
+of Oracc catalogue.
+
+The bib ood uses the bx XML output to create its searchable format and
+the bx HTML output for the display data.
+
+The searchable data supports field prefixes id for B-ID, au for
+author, and ti for title.  These and all other fields are also merged
+into a generic 'keys' field.
+
+The displayed version consists of a formatted version of the entry
+along with the lead reference; a button allows the lead reference to
+be copied to the clipboard.
 
 
 TODO

@@ -7,7 +7,7 @@
 #include <memo.h>
 struct bx;
 
-typedef enum bxmode { BX_CIT , BX_ICF , BX_KEY , BX_REF, BX_TOP } Bxmode;
+typedef enum bxmode { BX_BID , BX_CIT , BX_ICF , BX_KEY , BX_REF, BX_TOP } Bxmode;
 
 #define BX_DB_PEOPLE 1
 #define BX_HTML_DIV  1

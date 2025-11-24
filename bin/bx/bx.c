@@ -60,6 +60,9 @@ opts(int opt, const char *arg)
     case 'f':
       b.mode = BX_ICF;
       break;
+    case 'i':
+      b.mode = BX_BID;
+      break;
     case 'K':
       b.keys_from_bib = 1;
       break;
