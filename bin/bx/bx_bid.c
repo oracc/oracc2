@@ -140,10 +140,44 @@ bx_bid_pre(Bx *bp)
   bx_ref_run(bp);
 }
 
+int
+bx_bid_already(const char *ids)
+{
+  const char *B, *s = ids;
+  
+  while ((B = strchr(s, 'B')))
+    {
+      if (B == s || strchr(BID_STOPS, B[-1]))
+	{
+	  while (isdigit(B[1]))
+	    ++B;
+	  if (!B[1] || strchr(BID_STOPS, B[1]))
+	    return 1;
+	}
+    }
+  return 0;
+}
+
+void
+bx_bid_add_bid(Bx *bp, Bibentry *ep)
+{
+  const char *x = (ep->fields[f_ids] ? ep->fields[f_ids]->data : "");
+  char buf[strlen(x)+strlen("0 , B123456")];
+  if (*x)
+    strcpy(buf, " , ");
+  sprintf(buf + strlen(x), "B%06u", ++last_BID);
+  ep->fields[f_ids]->data = (ccp)pool_copy((uccp)buf, bp->p);
+}
+
 void
 bx_bid_run(Bx *bp)
 {
-  ++last_BID;
+  Bibentry *ep;
+  for (ep = list_first(bp->entries); ep; ep = list_next(bp->entries))
+    {
+      if (!ep->fields[f_ids] || !bx_bid_already(ep->fields[f_ids]->data))
+	bx_bid_add_bid(bp, ep);
+    }
 }
 
 void
