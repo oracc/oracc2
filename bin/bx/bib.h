@@ -53,6 +53,7 @@ typedef struct bibentry
 
 typedef struct bibfield
 {
+  const char *name;
   const char *data;
   int line;
 } Bibfield;
@@ -82,7 +83,7 @@ typedef void (*bibvalfnc)(Mloc *mp, Bx *bp, enum bib_ftype t, Bibentry *ep);
 extern bibvalfnc bib_validators[f_top];
 
 struct bib_ent_tab { const char *name; enum bib_etype t; };
-struct bib_fld_tab { const char *name; enum bib_ftype t; };
+struct bib_fld_tab { const char *name; enum bib_ftype t; int sort; };
 
 extern struct bib_ent_tab *bib_ent(register const char *str, register size_t len);
 extern struct bib_fld_tab *bib_fld(register const char *str, register size_t len);
@@ -124,6 +125,7 @@ extern const int l_biblloc_line(void);
 extern void bibreset(void);
 
 extern void bib_xml(Bx *bp, List *b, FILE *fp);
+extern void bib_bib(Bx *bp, List *b, FILE *fp);
 
 extern Hash *bib_cites;
 extern Mloc biblloc;

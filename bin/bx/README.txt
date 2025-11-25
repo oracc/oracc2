@@ -47,7 +47,10 @@ first harvested from the files in the list.
 
 Arg -r, read .xml files, use CIT to get citations; augment for bib needs; gen output
 
-Arg -R, read .bib files.  Default is to validate; with -o write .bib; with -s sorted .bib
+Arg -R, read .bib files.  Default is to validate; with -o write .bib;
+    with -s sorted .bib
+    with -S sort fields within entries (only used in -R mode)
+    *note* -s and -S are separate options; -sS for sorted .bib with sorted fields
 
 Output to XML with -x or HTML with -d (div only) or -h (full html file).
 
@@ -76,8 +79,13 @@ Outputs to arg -t [TMP] directory or in-place with arg -i.
 
 5) Bib-ID mode (BID)
 
-BID reads and writes .bib files, adding B-IDs to any entries that lack
-them. See Oracc Bibliography IDs for further information.
+Arg -i: BID scans $ORACC/bib/00etc/*.bib to find last used B-ID and
+then reads and writes .bib files, adding B-IDs to any entries that
+lack them. See Oracc Bibliography IDs for further information.
+
+Arg -I: BID reads and writes .bib files but does no B-ID handling:
+with no -s/-S the output should diff -w clean against the original;
+use with -s/-S to sort entries/fields.
 
 
 Oracc Bibliography IDs

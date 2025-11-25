@@ -30,6 +30,8 @@
 
 #define TIS_TEMPLATE "t123456"
 
+typedef int sort_cmp_func(const void*,const void*);
+
 /* Defines for porting L2 and other old code */
 #define xaccess(buf,mode,quit) access(buf,mode)
 #define vwarning2 mesg_vwarning

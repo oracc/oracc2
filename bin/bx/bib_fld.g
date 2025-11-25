@@ -4,51 +4,52 @@
 #include "bib.h"
 %}
 struct bib_fld_tab;
+/* The field names must be in alphabetical order */
 %%
-address,	f_address
-author,	f_author
-authortype,	f_authortype
-bookauthor,	f_bookauthor
-booksubtitle,	f_booksubtitle
-booktitle,	f_booktitle
-chapter,	f_chapter
-date,	f_date
-doi,	f_doi
-edition,	f_edition
-editor,	f_editor
-entrysubtype,	f_entrysubtype
-eprint,	f_eprint
-eprinttype,	f_eprinttype
-event,	f_event
-eventdate,	f_eventdate
-eventtitle,	f_eventtitle
-eventvenue,	f_eventvenue
-ids,	f_ids
-institution,	f_institution
-isbn,	f_isbn
-issn,	f_issn
-journal,	f_journal
-keywords,	f_keywords
-langid,	f_langid
-location,	f_location
-month,	f_month
-note,	f_note
-number,	f_number
-page,	f_page
-pages,	f_pages
-part,	f_part
-publisher,	f_publisher
-related,	f_related
-relatedtype,	f_relatedtype
-school,	f_school
-series,	f_series
-shorthand,	f_shorthand
-subtitle,	f_subtitle
-title,	f_title
-translator,	f_translator
-type,	f_type
-url,	f_url
-venue,	f_venue
-volume,	f_volume
-year,	f_year
+address,	f_address, 0,
+author,	f_author, 1,
+authortype,	f_authortype, 2,
+bookauthor,	f_bookauthor, 3,
+booksubtitle,	f_booksubtitle, 4,
+booktitle,	f_booktitle, 5,
+chapter,	f_chapter, 6,
+date,	f_date, 7,
+doi,	f_doi, 8,
+edition,	f_edition, 9,
+editor,	f_editor, 10,
+entrysubtype,	f_entrysubtype, 11,
+eprint,	f_eprint, 12,
+eprinttype,	f_eprinttype, 13,
+event,	f_event, 14,
+eventdate,	f_eventdate, 15,
+eventtitle,	f_eventtitle, 16,
+eventvenue,	f_eventvenue, 17,
+ids,	f_ids, 18,
+institution,	f_institution, 19,
+isbn,	f_isbn, 20,
+issn,	f_issn, 21,
+journal,	f_journal, 22,
+keywords,	f_keywords, 23,
+langid,	f_langid, 24,
+location,	f_location, 25,
+month,	f_month, 26,
+note,	f_note, 27,
+number,	f_number, 28,
+page,	f_page, 29,
+pages,	f_pages, 30,
+part,	f_part, 31,
+publisher,	f_publisher, 32,
+related,	f_related, 33,
+relatedtype,	f_relatedtype, 34,
+school,	f_school, 35,
+series,	f_series, 36,
+shorthand,	f_shorthand, 37,
+subtitle,	f_subtitle, 38,
+title,	f_title, 39,
+translator,	f_translator, 40,
+type,	f_type, 41,
+url,	f_url, 42,
+venue,	f_venue, 43,
+volume,	f_volume, 44,
+year,	f_year, 45,
 %%

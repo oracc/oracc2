@@ -13,6 +13,9 @@ typedef enum bxmode { BX_BID , BX_CIT , BX_ICF , BX_KEY , BX_REF, BX_TOP } Bxmod
 #define BX_HTML_DIV  1
 #define BX_HTML_PAGE 2
 
+#define BX_BID_NORMAL 0
+#define BX_BID_IDENTITY 1
+
 typedef void (*bxfunc)(struct bx*);
 
 typedef struct bx
@@ -56,14 +59,16 @@ typedef struct bx
   bxfunc out[BX_TOP];
   FILE *outfp; /* current output for icf mode */
   int bibonly;
+  int bid_mode;
+  int html_mode;
   int dbs;
   int htmloutput;
-  int html_mode;
   int icfonly;
   int keys_from_bib;
   int no_output;
   int quiet;
   int sort;
+  int sortfields;
   int xmloutput;
 } Bx;
 
@@ -79,16 +84,19 @@ extern int verbose;
 extern const char **bx_bibs_file(const char *fn);
 extern void bx_keys(Bx *bp, const char *project, const char **bibfiles);
 
+extern void bx_bid_pre(Bx *bp);
 extern void bx_cit_pre(Bx *bp);
 extern void bx_icf_pre(Bx *bp);
 extern void bx_key_pre(Bx *bp);
 extern void bx_ref_pre(Bx *bp);
 
+extern void bx_bid_run(Bx *bp);
 extern void bx_cit_run(Bx *bp);
 extern void bx_icf_run(Bx *bp);
 extern void bx_key_run(Bx *bp);
 extern void bx_ref_run(Bx *bp);
 
+extern void bx_bid_out(Bx *bp);
 extern void bx_cit_out(Bx *bp);
 extern void bx_icf_out(Bx *bp);
 extern void bx_key_out(Bx *bp);

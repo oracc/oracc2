@@ -102,10 +102,11 @@ bx_ref_out(Bx *bp)
       if (bp->dbs & BX_DB_PEOPLE)
 	bnm_people(bp);
     }
+
   if (bp->xmloutput)
     {
       FILE *xfp = NULL;
-      if (!strcmp(bp->outfile, "-"))
+      if (!bp->outfile || !strcmp(bp->outfile, "-"))
 	xfp = stdout;
       else
 	xfp = fopen(bp->outfile, "w");
@@ -119,25 +120,42 @@ bx_ref_out(Bx *bp)
 	fprintf(stderr, "bx_ref_out: html via `%s'\n", pcmd);
       if ((pfp = popen(pcmd, "w")) == NULL)
 	{
-	  perror("bib_xml popen failed");
+	  perror("bib_html popen failed");
 	  return;
 	}
       bib_xml(bp, bp->bibs, pfp);
       if (ferror(pfp))
 	{
-	  perror("bib_xml error writing to xsltproc");
+	  perror("bib_html error writing to xsltproc");
 	  pclose(pfp);
 	}
       int status = pclose(pfp);
       if (status == -1)
 	{
-	  perror("bib_xml pclose failed");
+	  perror("bib_html pclose failed");
 	  return;
 	}
       else if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
 	{
-	  fprintf(stderr, "bib_xml: %s: error: %d\n", pcmd, WEXITSTATUS(status));
+	  fprintf(stderr, "bib_html: %s: error: %d\n", pcmd, WEXITSTATUS(status));
 	  return;
+	}
+    }
+  else
+    {
+      if (bp->bibs)
+	{
+	  if (bp->outfile)
+	    {
+	      /* could iterate over all .bib files here constructing
+		 output name for each */
+	      FILE *bfp = NULL;
+	      if (!strcmp(bp->outfile, "-"))
+		bfp = stdout;
+	      else
+		bfp = fopen(bp->outfile, "w");
+	      bib_bib(bp, list_first(bp->bibs), bfp);
+	    }
 	}
     }
 }

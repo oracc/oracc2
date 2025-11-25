@@ -40,8 +40,8 @@ static Bibfield anonymous = { "Anonymous", 0 };
 %%
 
 entries: entry
-      | entries entry
-      ;
+       | entries entry
+       ;
 
 entry: 	BIB_ENTRY '{' { bib_key_next=1; }
 	BIB_KEY   ',' { bib_entry_init(@1, $1+1, $4); }/*+1 to skip '@' on entry names*/
@@ -87,7 +87,7 @@ bib_entry_init(Mloc m, const char *ent, const char *key)
   curr_ep = memo_new(curr_bp->m_bibentry);
   curr_ep->bib = curr_bibp;
   if (!bib_ent(ent, strlen(ent)))
-    fprintf(stderr, "warning: unknown entry type %s\n", ent);
+    mesg_vwarning(curr_bib, biblineno, "warning: unknown entry type %s\n", ent);
   curr_ep->type = ent;
   curr_ep->bkey = key;
   if (!bib_cites || hash_find(bib_cites, (uccp)key))
@@ -135,6 +135,7 @@ bib_field_init(Mloc m, const char *f)
     {
       curr_bfp = bfp;
       curr_ep->fields[curr_bfp->t] = memo_new(curr_bp->m_bibfield);
+      curr_ep->fields[curr_bfp->t]->name = bfp->name;
       curr_ep->fields[curr_bfp->t]->line = biblineno;
     }
 }
@@ -183,10 +184,10 @@ biberror(const char *e)
   if (field)
     {
       if ('@' == *field)
-	fprintf(stderr, "%s:%d: %s error: %s\n", f, l, field, e);
+	mesg_vwarning(f, l, "%s error: %s", field, e);
       else
-	fprintf(stderr, "%s:%d: field %s error: %s\n", f, l, field, e);
+	mesg_vwarning(f, l, "field %s error: %s", field, e);
     }
   else
-    fprintf(stderr, "%s:%d: %s\n", f, l, e);
+    mesg_vwarning(f, l, "%s\n", e);
 }

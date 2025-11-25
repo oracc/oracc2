@@ -6,14 +6,17 @@
 
 Bx b = {
   .mode=BX_CIT ,
+  .pre[BX_BID] = bx_bid_pre,
   .pre[BX_CIT] = bx_cit_pre,
   .pre[BX_ICF] = bx_icf_pre,
   .pre[BX_KEY] = bx_key_pre,
   .pre[BX_REF] = bx_ref_pre,
+  .run[BX_BID] = bx_bid_run,
   .run[BX_CIT] = bx_cit_run,
   .run[BX_ICF] = bx_icf_run,
   .run[BX_KEY] = bx_key_run,
   .run[BX_REF] = bx_ref_run,
+  .out[BX_BID] = bx_bid_out,
   .out[BX_CIT] = bx_cit_out,
   .out[BX_ICF] = bx_icf_out,
   .out[BX_KEY] = bx_key_out,
@@ -33,10 +36,10 @@ main(int argc, char * const*argv)
   b.argv = argv;
 
   options(argc, argv,
-	  "fFkKrR"      /* mode args */
+	  "fFiIkKrR"     /* mode args */
 	  "b:c:"        /* input args */
-	  "d:h:io:x:"    /* output args */ 
-	  "D:npqstv"    /* adjunct args */
+	  "d:h:o:x:"    /* output args */ 
+	  "D:npqsStv"   /* adjunct args */
 	  );
 
   mesg_init();
@@ -57,11 +60,16 @@ opts(int opt, const char *arg)
     {
     case 'F':
       b.icfonly = 1;
+      /*falls through*/
     case 'f':
       b.mode = BX_ICF;
       break;
+    case 'I':
+      b.bid_mode = BX_BID_IDENTITY;
+      /*falls through*/
     case 'i':
       b.mode = BX_BID;
+      b.bibonly = 1;
       break;
     case 'K':
       b.keys_from_bib = 1;
@@ -71,6 +79,7 @@ opts(int opt, const char *arg)
       break;
     case 'R':
       b.bibonly = 1;
+      /*falls through*/
     case 'r':
       b.mode = BX_REF;
       break;
@@ -98,6 +107,9 @@ opts(int opt, const char *arg)
       break;
     case 'q':
       b.quiet = 1;
+      break;
+    case 'S':
+      b.sortfields = 1;
       break;
     case 's':
       b.sort = 1;
