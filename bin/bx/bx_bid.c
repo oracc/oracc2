@@ -5,15 +5,21 @@
 
 static unsigned int last_BID = 0;
 
+const char *BID_STOPS = "{}, \t\n";
+
 /* Scan input until '}' checking for [{, \t\n]B[0-9]{6}[}, \t\n] */
 static void
-bx_bid_id_BIDs(FILE *fp)
+bx_bid_BIDs(FILE *fp)
 {
   int ch, lastch = '{';
+  /* we are called after '=' */
+  while (EOF != (ch = fgetc(fp)))
+    if ('{' == ch)
+      break;
   while (!feof(fp))
     {
       ch = fgetc(fp);
-      if ('B' == ch && strchr("{, \t\n", lastch))
+      if ('B' == ch && strchr(BID_STOPS, lastch))
 	{
 	  char bidbuf[8] = { 'B','\0','\0','\0','\0','\0','\0','\0' };
 	  int bidlen = 1;
@@ -31,13 +37,18 @@ bx_bid_id_BIDs(FILE *fp)
 		}
 	      else
 		{
-		  *bidbuf = '\0';
+		  if (!strchr(BID_STOPS, ch))
+		    *bidbuf = '\0';
 		  break;
 		}
 	    }
 	  if (strlen(bidbuf) == 7)
 	    {
-	      fprintf(stderr, "bx_bid_id_BIDs: found %s\n", bidbuf);
+	      if (verbose)
+		fprintf(stderr, "bx_bid_id_BIDs: found %s\n", bidbuf);
+	      unsigned long bval = strtoul(bidbuf+1,NULL,10);
+	      if (bval > last_BID)
+		last_BID = (unsigned int)bval;
 	    }
 	}
       else
@@ -52,28 +63,29 @@ bx_bid_find_id_line(FILE *fp)
   int ch;
   while (EOF != (ch = fgetc(fp)))
     {
-      if (!isspace(ch) && 'i' == ch)
+      /* top of loop is start of line */
+      /* read until first non-space */
+      if (!isspace(ch))
 	{
-	  ch = fgetc(fp);
-	  if ('d' == ch)
+	  if ('i' == ch)
 	    {
 	      ch = fgetc(fp);
-	      if (isspace(ch) || '=' == ch)
+	      if ('d' == ch)
 		{
-		  while (isspace(ch))
-		    ch = fgetc(fp);
-		  break;
-		}
-	      else
-		{
-		  while (EOF != (ch = fgetc(fp)))
-		    if ('\n' == ch)
-		      break;
+		  ch = fgetc(fp);
+		  if ('s' == ch)
+		    {
+		      ch = fgetc(fp);
+		      if (isspace(ch) || '=' == ch)
+			{
+			  while (isspace(ch))
+			    ch = fgetc(fp);
+			  break; /* breaks outer loop */
+			}
+		    }
 		}
 	    }
-	}
-      else
-	{
+	  /* skip to eol */
 	  while (EOF != (ch = fgetc(fp)))
 	    if ('\n' == ch)
 	      break;
@@ -98,7 +110,7 @@ bx_bid_luB_one(char *fn)
   else
     {
       while (!bx_bid_find_id_line(fp))
-	bx_bid_id_BIDs(fp);
+	bx_bid_BIDs(fp);
     }
 }
 
@@ -120,6 +132,8 @@ bx_bid_pre(Bx *bp)
 {
   /* scan the Oracc bib files to find last BID */
   bx_bid_last_used_BID();
+  if (verbose)
+    fprintf(stderr, "bx_bid_pre: last_BID = %u\n", last_BID);
   
   /* load the .bib file that we are adding BID to */
   bx_ref_pre(bp);
