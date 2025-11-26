@@ -97,6 +97,9 @@ bx_ref_run(Bx *bp)
 void
 bx_ref_out(Bx *bp)
 {
+  if (bp->no_output)
+    return;
+  
   if (bp->dbs)
     {
       if (bp->dbs & BX_DB_PEOPLE)
@@ -145,17 +148,17 @@ bx_ref_out(Bx *bp)
     {
       if (bp->bibs)
 	{
-	  if (bp->outfile)
-	    {
-	      /* could iterate over all .bib files here constructing
-		 output name for each */
-	      FILE *bfp = NULL;
-	      if (!strcmp(bp->outfile, "-"))
-		bfp = stdout;
-	      else
-		bfp = fopen(bp->outfile, "w");
-	      bib_bib(bp, list_first(bp->bibs), bfp);
-	    }
+	  if (!bp->outfile)
+	    bp->outfile = "-";
+
+	  /* could iterate over all .bib files here constructing
+	     output name for each */
+	  FILE *bfp = NULL;
+	  if (!strcmp(bp->outfile, "-"))
+	    bfp = stdout;
+	  else
+	    bfp = fopen(bp->outfile, "w");
+	  bib_bib(bp, list_first(bp->bibs), bfp);
 	}
     }
 }

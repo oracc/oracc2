@@ -78,14 +78,16 @@ Outputs to arg -t [TMP] directory or in-place with arg -i.
 
 
 5) Bib-ID mode (BID)
+====================
 
 Arg -i: BID scans $ORACC/bib/00etc/*.bib to find last used B-ID and
 then reads and writes .bib files, adding B-IDs to any entries that
 lack them. See Oracc Bibliography IDs for further information.
 
-Arg -I: BID reads and writes .bib files but does no B-ID handling:
-with no -s/-S the output should diff -w clean against the original;
-use with -s/-S to sort entries/fields.
+Arg -I: BID Identity sub-mode: reads and writes .bib files but does no
+B-ID handling.  With no -s/-S the output should diff -w clean against
+the original; use with -s/-S to sort entries/fields.  Default output
+to stdout; use -n for no output.
 
 
 Oracc Bibliography IDs
@@ -101,11 +103,11 @@ To ensure persistency, bibliography items that are determined to be
 identical after they have been assigned B-IDs are merged by adding the
 B-ID to the ids field of the retained item:
 
- ids = { B000123, B001432 },
+ ids = { B000123 , B001432 },
 
 B-IDs are programmatically assigned in bx's BID mode by running bx -i
-[FILE].  Only one file is processed at a time, without output to
-STDOUT or the destination named with the -o argument.
+[FILE].  Only one file is processed at a time, default output to STDOUT
+or the destination named with the -o argument; use -n for no output.
 
 In BID mode bx reads all of the Oracc system .bib files
 (/home/oracc/bib/00etc/*.bib) to determine the last used B-ID, then it
