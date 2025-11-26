@@ -12,7 +12,7 @@ extern Mloc biblloc;
 #define YY_USER_ACTION bib_user_action();
 extern Bx *curr_bp;
 extern const char *curr_bib;
-extern int bib_field, bib_nesting;
+extern int bib_entry, bib_field, bib_nesting;
 int bib_key_next;
 
 #include "bib.h"
@@ -36,11 +36,15 @@ WS  	    [ \t\n\r]+
 "{"             { ++bib_nesting; return bib_field ? (lval(bibtext),BIB_CHUNK) : '{'; }
 "}"             { --bib_nesting; return (bib_nesting>1) ? (lval(bibtext),BIB_CHUNK) : '}'; }
 ","             { return bib_field ? (lval(bibtext),BIB_CHUNK) : ','; }
-^"%"[^\n]*/\n   { /* Ignore single-line comments */ }
-{WS}   	        { if (bib_field) { lval(bibtext); return BIB_CHUNK; } }
+^"%"[^\n]*/\n   { lval(bibtext); return COMMENT; }
+{WS}   	        { lval(bibtext);
+		  if (bib_field) { return BIB_CHUNK; }
+		  else if (!bib_entry) { return COMMENT; }
+		}
 .               { fprintf(stderr, "%s:%d: unhandled character '%c'\n", curr_bib, yylineno, *bibtext);
 		  return BIB_ERROR; }
 
+<<EOF>>		{ bib_eof(); yyterminate();  }
 %%
 
 void bibreset(void) {

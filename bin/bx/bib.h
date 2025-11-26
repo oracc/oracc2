@@ -26,6 +26,9 @@ typedef struct bib
 {
   const char *file;
   List *entries;
+  List *eof_comments;   /* Comments before entries get attached to the
+			   entry; this keeps end-of-file comments that
+			   are not followed by an entry */
   Bx *bp;
 } Bib;
 
@@ -49,6 +52,7 @@ typedef struct bibentry
   int sameauth; 	/* in sorted list, this entry has same author(s) as previous */
   int disamb;   	/* nth in sequence of disambiguated entries in sorted list */
   Bib *bib;
+  List *comments;
 } Bibentry;
 
 typedef struct bibfield
@@ -113,11 +117,13 @@ extern const char *curr_bib, *curr_key, *field, *fldnames[];
 extern Bib *curr_bibp;
 extern Bibentry *curr_ep;
 
+extern void bib_eof(void);
 extern void bib_entry_init(Mloc m, const char *ent, const char *key);
 extern void bib_entry_term(Mloc m);
 extern void bib_field_init(Mloc m, const char *f);
 extern void bib_field_term(Mloc m);
 extern char *bib_content(Mloc m, const char *bit);
+extern void bib_comment(Mloc m, char *cmt);
 
 extern const char * l_biblloc_file(void);
 extern const int l_biblloc_line(void);

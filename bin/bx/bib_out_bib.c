@@ -6,7 +6,7 @@
 static FILE *bout;
 
 static int
-bib_field_cmp(Bibfield **a, Bibfield **b)
+bib_field_line_cmp(Bibfield **a, Bibfield **b)
 {
   /* bib fields may be NULL */
   if (!*a && !*b)
@@ -16,7 +16,7 @@ bib_field_cmp(Bibfield **a, Bibfield **b)
   else if (!*b)
     return -1;
 
-  return strcmp((*a)->name, (*b)->name);
+  return (*a)->line == (*b)->line ? 0 : ((*a)->line < (*b)->line ? -1 : 1);
 }
 
 /* To sort the fields within an entry alphabetically by name we
@@ -37,18 +37,24 @@ bib_reset_field_line(Bibentry *ep)
 void
 bib_bib_entry(Bx *bp, Bibentry *ep)
 {
+  if (ep->comments)
+    {
+      const char *c;
+      for (c = list_first(ep->comments); c; c = list_next(ep->comments))
+	fprintf(bout, "%s", c);
+    }
   fprintf(bout, "@%s{%s,\n", ep->type, xmlify((uccp)ep->bkey));
   int i;
 
   if (bp->sortfields)
     bib_reset_field_line(ep);
   
-  qsort(ep->fields, f_top, sizeof(Bibfield*), (sort_cmp_func*)bib_field_cmp);
+  qsort(ep->fields, f_top, sizeof(Bibfield*), (sort_cmp_func*)bib_field_line_cmp);
 
   for (i = 0; ep->fields[i]; ++i)
     fprintf(bout, " %s = { %s },\n", ep->fields[i]->name, ep->fields[i]->data);
 
-  fputs("}\n\n", bout);
+  fputs("}", bout);
 }
 
 void
@@ -69,6 +75,15 @@ bib_bib(Bx *bp, List *b, FILE *fp)
 	  for (ep = list_first(bp->entries); ep; ep = list_next(bp->entries))
 	    bib_bib_entry(bp, ep);
 	}
+      Bib *bibp = list_first(bp->bibs);
+      if (bibp && bibp->eof_comments)
+	{
+	  const char *c;
+	  for (c = list_first(bibp->eof_comments); c; c = list_next(bibp->eof_comments))
+	    fprintf(bout, "%s", c);
+	}
+      else
+	fprintf(stderr, "bib_bib: no eof_comments found; bibp == %lu\n", (uintptr_t)bibp);
     }
   else
     {

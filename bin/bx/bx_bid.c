@@ -166,6 +166,11 @@ bx_bid_add_bid(Bx *bp, Bibentry *ep)
   if (*x)
     strcpy(buf, " , ");
   sprintf(buf + strlen(x), "B%06u", ++last_BID);
+  if (!ep->fields[f_ids])
+    {
+      ep->fields[f_ids] = memo_new(bp->m_bibfield);
+      ep->fields[f_ids]->name = "ids";
+    }
   ep->fields[f_ids]->data = (ccp)pool_copy((uccp)buf, bp->p);
 }
 
@@ -175,7 +180,8 @@ bx_bid_run(Bx *bp)
   Bibentry *ep;
   for (ep = list_first(bp->entries); ep; ep = list_next(bp->entries))
     {
-      if (!ep->fields[f_ids] || !bx_bid_already(ep->fields[f_ids]->data))
+      if (bp->bid_mode != BX_BID_IDENTITY
+	  && (!ep->fields[f_ids] || !bx_bid_already(ep->fields[f_ids]->data)))
 	bx_bid_add_bid(bp, ep);
     }
 }
