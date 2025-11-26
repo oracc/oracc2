@@ -41,13 +41,17 @@ disamb_alpha(Bx *bp, int num)
 void
 bib_xml_entry(Bx *bp, Bibentry *ep)
 {
-  char dis[strlen(" disamb=\"aaaa0\"")];
+  char dis[strlen(" disamb=\"aaaa0\"")] = { '\0' };
   if (ep->disamb)
     sprintf(dis, " disamb=\"%s\"", disamb_alpha(bp, ep->disamb-1));
-  else
-    *dis = '\0';
+
+  char bid[strlen(" xml:id=\"B123456\"0")] = { '\0' };
+  if (ep->bid)
+    sprintf(bid, " xml:id=\"%s\"", ep->bid);
+  
   const char *same = ep->sameauth ? " sameauth=\"1\"" : "";
-  fprintf(xout, "<entry type=\"%s\" key=\"%s\"%s%s>", ep->type, xmlify((uccp)ep->bkey), dis, same);
+  fprintf(xout, "<entry type=\"%s\" key=\"%s\"%s%s%s>", ep->type, xmlify((uccp)ep->bkey),
+	  bid, dis, same);
   if (bp->mode == BX_ICF)
     fprintf(xout, "<icf>%s</icf>", ep->icf->str);
   int i;

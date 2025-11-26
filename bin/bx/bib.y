@@ -2,6 +2,7 @@
 %file-prefix"bib"
 %locations
 %define parse.error verbose
+%expect 1
 %{
 
 #include <oraccsys.h>
@@ -11,6 +12,7 @@
 
 extern int yylex(void);
 extern void yyerror(const char *);
+extern const char *bx_bid_first(const char *ids);
 
 #define BIBLTYPE_IS_DECLARED 1
 #define BIBLTYPE Mloc
@@ -27,6 +29,7 @@ Hash *bib_cites;
 static struct bib_fld_tab *curr_bfp;
 static Bibfield anonymous = { "Anonymous", 0 };
 static List *comments = NULL;
+static int bib_entry_id(Bibentry *ep);
  
 %}
 
@@ -150,8 +153,24 @@ bib_entry_term(Mloc m)
         bnm_all_names(curr_ep, f_editor);
     }
 
+  if (!curr_ep->fields[f_ids] || !bib_entry_id(curr_ep))
+    mesg_vwarning(curr_bib, biblineno, "no ids field or no B-ID in ids\n");
+
   curr_ep = NULL;
   bib_entry = bib_field = 0;
+}
+
+static int
+bib_entry_id(Bibentry *ep)
+{
+  const char *B = bx_bid_first(ep->fields[f_ids]->data);
+  if (B)
+    {
+      ep->bid = (char*)pool_alloc(8, curr_bp->p);
+      strncpy(ep->bid, B, 7);
+      ep->bid[7] = '\0';
+    }
+  return 0;
 }
 
 void

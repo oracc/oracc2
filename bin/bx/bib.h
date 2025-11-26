@@ -40,7 +40,8 @@ typedef struct bibentry
   const char *type;
   const char *bkey;	/* .bib key, the one after @article{ or the like */
   const char **aka;    	/* aka from @ids */
-  const char *id;
+  char *bid;	/* B-ID = B[0-9]{6} */
+  int sort;
   struct bibfield *fields[f_top];
   struct bibicf *icf;
   struct name **names;	/* author names */

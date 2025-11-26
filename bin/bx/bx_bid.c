@@ -140,8 +140,8 @@ bx_bid_pre(Bx *bp)
   bx_ref_run(bp);
 }
 
-int
-bx_bid_already(const char *ids)
+const char *
+bx_bid_first(const char *ids)
 {
   const char *B, *s = ids;
   
@@ -149,13 +149,14 @@ bx_bid_already(const char *ids)
     {
       if (B == s || strchr(BID_STOPS, B[-1]))
 	{
-	  while (isdigit(B[1]))
-	    ++B;
-	  if (!B[1] || strchr(BID_STOPS, B[1]))
-	    return 1;
+	  const char *b = B;
+	  while (isdigit(b[1]))
+	    ++b;
+	  if (!b[1] || strchr(BID_STOPS, b[1]))
+	    return B;
 	}
     }
-  return 0;
+  return NULL;
 }
 
 void
@@ -181,7 +182,7 @@ bx_bid_run(Bx *bp)
   for (ep = list_first(bp->entries); ep; ep = list_next(bp->entries))
     {
       if (bp->bid_mode != BX_BID_IDENTITY
-	  && (!ep->fields[f_ids] || !bx_bid_already(ep->fields[f_ids]->data)))
+	  && (!ep->fields[f_ids] || !bx_bid_first(ep->fields[f_ids]->data)))
 	bx_bid_add_bid(bp, ep);
     }
 }
