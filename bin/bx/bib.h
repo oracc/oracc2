@@ -5,13 +5,16 @@
 #include <mesg.h>
 #include <runexpat.h>
 
-enum bib_etype {
+typedef enum bib_etype
+{
   e_article, e_book, e_booklet, e_collection, e_dataset,
   e_inbook, e_incollection, e_inproceedings, e_mastersthesis,
   e_online, e_phdthesis, e_proceedings, e_report, e_software,
-  e_techreport, e_unpublished, e_top };
+  e_techreport, e_unpublished, e_top
+} Etype;
 
-enum bib_ftype {
+typedef enum bib_ftype
+{
   f_address, f_author, f_authortype, f_bookauthor, f_booksubtitle,
   f_booktitle, f_chapter, f_date, f_doi, f_edition, f_editor,
   f_entrysubtype, f_eprint, f_eprinttype, f_event, f_eventdate,
@@ -20,7 +23,7 @@ enum bib_ftype {
   f_number, f_page, f_pages, f_part, f_publisher, f_related,
   f_relatedtype, f_school, f_series, f_shorthand, f_subtitle, f_title,
   f_translator, f_type, f_url, f_venue, f_volume, f_year, f_top
-};
+} Ftype;
 
 typedef struct bib
 {
@@ -40,15 +43,14 @@ typedef struct bibentry
   const char *type;
   const char *bkey;	/* .bib key, the one after @article{ or the like */
   const char **aka;    	/* aka from @ids */
-  char *bid;	/* B-ID = B[0-9]{6} */
+  char *bid;		/* B-ID = B[0-9]{6} */
   int sort;
   struct bibfield *fields[f_top];
   struct bibicf *icf;
-  struct name **names;	/* author names */
-  int nnames;
-  struct name **enames; /* editor names */
-  int nenames;
-  const char *allnames; /* either author names or if no authors then editor names */
+  struct nameinfo *nm_author;
+  struct nameinfo *nm_editor;
+  struct nameinfo *nm_bookauthor;
+  struct nameinfo *nm_translator;
   int year;
   int sameauth; 	/* in sorted list, this entry has same author(s) as previous */
   int disamb;   	/* nth in sequence of disambiguated entries in sorted list */
@@ -74,6 +76,14 @@ typedef struct name
   int sames;		/* this person's last name is same as another person's */
   int bm_name_xml;
 } Name;
+
+typedef struct nameinfo
+{
+  Name **names;
+  int nnames;
+  const char *allnames;
+  Ftype ftype;
+} Nameinfo;
 
 typedef struct bibicf
 {

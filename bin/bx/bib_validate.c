@@ -55,9 +55,29 @@ bvl_name_dump(Name *np, int i)
 void
 bvl_name(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 {
+  Nameinfo *nip = memo_new(bp->m_nameinfo);
+  nip->ftype = ft;
+  switch (ft)
+    {
+    case f_author:
+      ep->nm_author = nip;
+      break;
+    case f_editor:
+      ep->nm_editor = nip;
+      break;
+    case f_bookauthor:
+      ep->nm_bookauthor = nip;
+      break;
+    case f_translator:
+      ep->nm_translator = nip;
+      break;
+    default:
+      mesg_verr(mp, "name validation applied to non-name field %s\n", fldnames[ft]);
+      break;
+    }
   const char *s = ep->fields[ft]->data;
 
-  /* entries with empty author or editor are bad form but may occur */
+  /* entries with empty author or editor are bad form but may occur; nothing more to set */
   if (!s)
     return;
   
@@ -69,15 +89,18 @@ bvl_name(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
       ++nnames;
       s2 += 5;
     }
-  Name **names = memo_new_array(bp->m_name_ptr, nnames+1);
+  
+  nip->nnames = nnames;
+  nip->names = memo_new_array(bp->m_name_ptr, nip->nnames+1);
+  
   int i;
   char *dup = strdup(ep->fields[ft]->data);
   if (verbose)
     fprintf(stderr, "bib %s starting field=%s\n", ep->bkey, dup);
-  for (i = 0, t = dup; i < nnames; ++i)
+  for (i = 0, t = dup; i < nip->nnames; ++i)
     {
-      names[i] = memo_new(bp->m_name);
-      names[i]->orig = t;
+      nip->names[i] = memo_new(bp->m_name);
+      nip->names[i]->orig = t;
       while (isspace(*t))
 	++t;
       if ((t = strstr(t, " and ")))
@@ -87,31 +110,17 @@ bvl_name(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 	  while (isspace(*t))
 	    ++t;
 	}
-      bnm_split(mp, bp, ep, names[i]);
-      bnm_nkey(mp, bp, names[i]);
+      bnm_split(mp, bp, ep, nip->names[i]);
+      bnm_nkey(mp, bp, nip->names[i]);
       if (verbose)
-	bvl_name_dump(names[i], i);
+	bvl_name_dump(nip->names[i], i);
     }
   free(dup);
 
-  if (ft == f_author)
-    {
-      ep->nnames = nnames;
-      ep->names = names;
-      if (nnames == 1)
-	ep->allnames = ep->names[0]->nkey;
-      else
-	bnm_all_names(ep, f_author);
-    }
-  else if (ft == f_editor)
-    {
-      ep->nenames = nnames;
-      ep->enames = names;
-    }
+  if (nip->nnames == 1)
+    nip->allnames = ep->names[0]->nkey;
   else
-    {
-      fprintf(stderr, "bvl_name: name validation applied to non-author/editor field [type=%d]\n", ft);
-    }
+    bnm_all_names(ep, nip);
 }
 
 void

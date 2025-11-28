@@ -34,6 +34,7 @@ typedef struct bx
   Memo *m_bibicf;
   Memo *m_name;
   Memo *m_name_ptr;
+  Memo *m_nameinfo;
   Pool *p;
   List *mem; /* odd memory items that need to be freed at end of run */
   const char *outfile;
