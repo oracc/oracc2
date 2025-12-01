@@ -158,8 +158,11 @@ bib_entry_term(Mloc m)
         bnm_all_names(curr_ep, curr_ep->nm_editor);
     }
 
-  if (verbose && (!curr_ep->fields[f_ids] || !bib_entry_id(curr_ep)))
-    mesg_vwarning(curr_bib, biblineno, "no ids field or no B-ID in ids\n");
+  if (!curr_ep->fields[f_ids] || bib_entry_id(curr_ep))
+    {
+      if (verbose)
+	mesg_vwarning(curr_bib, biblineno, "no ids field or no B-ID in ids\n");
+    }
 
   curr_ep = NULL;
   bib_entry = bib_field = 0;
@@ -174,8 +177,10 @@ bib_entry_id(Bibentry *ep)
       ep->bid = (char*)pool_alloc(8, curr_bp->p);
       strncpy(ep->bid, B, 7);
       ep->bid[7] = '\0';
+      return 0;
     }
-  return 0;
+  else
+    return 1;
 }
 
 void
