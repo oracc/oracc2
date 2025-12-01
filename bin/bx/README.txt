@@ -54,6 +54,8 @@ Arg -R, read .bib files.  Default is to validate; with -o write .bib;
 
 Output to XML with -x or HTML with -d (div only) or -h (full html file).
 
+bx refuses to write to an existing file unless -O (overwrite) is given before -[dhx].
+
 Uses popen to pipe through xsltproc bib-HTML.xsl).
 
 Arg -p [PROJECT] is passed to xsltproc; arg -d is implemented as arg

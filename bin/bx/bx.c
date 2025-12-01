@@ -27,7 +27,7 @@ extern int optind;
 
 const char *bibsfile = NULL; /* file of paths to .bib files */
 const char *cite_type = NULL;
-int verbose = 0;
+int overwrite = 0, verbose = 0;
 
 int
 main(int argc, char * const*argv)
@@ -39,7 +39,7 @@ main(int argc, char * const*argv)
 	  "fFiIkKrR"     /* mode args */
 	  "b:c:"        /* input args */
 	  "d:h:o:x:"    /* output args */ 
-	  "D:npqsStv"   /* adjunct args */
+	  "D:nOpqsStv"   /* adjunct args */
 	  );
 
   mesg_init();
@@ -51,6 +51,17 @@ main(int argc, char * const*argv)
   b.out[b.mode](&b);
 
   mesg_print(stderr);
+}
+
+static void
+bx_output_check(const char *file, const char *mode)
+{
+  if (!overwrite && !access(file, R_OK))
+    {
+      fprintf(stderr, "bx: %s output file `%s' already exists; remove it or use -O\n",
+	      mode, file);
+      exit(1);
+    }
 }
 
 int
@@ -99,7 +110,11 @@ opts(int opt, const char *arg)
     case 'n':
       b.no_output = 1;
       break;
+    case 'O':
+      overwrite = 1;
+      break;
     case 'o':
+      bx_output_check(arg, "default");
       b.outfile = arg; /* in keys_mode a file; in dotbib_mode a .bib file */
       break;
     case 'p':
@@ -121,17 +136,20 @@ opts(int opt, const char *arg)
       ++verbose;
       break;
     case 'd':
+      bx_output_check(arg, "div");
       b.htmloutput = 1;
       b.html_mode = BX_HTML_DIV;
       b.outfile = arg;
       break;
     case 'h':
+      bx_output_check(arg, "html");
       b.htmloutput = 1;
       b.html_mode = BX_HTML_PAGE;
       b.outfile = arg;
       b.sort = 1;
       break;
     case 'x':
+      bx_output_check(arg, "xml");
       b.xmloutput = 1;
       b.outfile = arg;
       b.sort = 1;
