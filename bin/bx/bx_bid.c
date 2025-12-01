@@ -165,8 +165,13 @@ bx_bid_add_bid(Bx *bp, Bibentry *ep)
   const char *x = (ep->fields[f_ids] ? ep->fields[f_ids]->data : "");
   char buf[strlen(x)+strlen("0 , B123456")];
   if (*x)
-    strcpy(buf, " , ");
-  sprintf(buf + strlen(x), "B%06u", ++last_BID);
+    {
+      strcpy(buf, x);
+      strcat(buf, " , ");
+    }
+  else
+    *buf = '\0';
+  sprintf(buf + strlen(buf), "B%06u", ++last_BID);
   if (!ep->fields[f_ids])
     {
       ep->fields[f_ids] = memo_new(bp->m_bibfield);

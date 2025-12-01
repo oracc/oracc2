@@ -54,6 +54,13 @@ bnm_lookup(Name *nmp)
 static char *
 bnm_split_one_name(Bx *bp, List *lp, char *s)
 {
+  /* author = {{NAME}} means {NAME} should not be altered */
+  if ('{' == *s)
+    {
+      list_add(lp, s);
+      return NULL;
+    }
+
   size_t ulen;
   wchar_t *w = utf2wcs((uccp)s, &ulen), *orig_w;
   wchar_t w_init[3];
@@ -132,6 +139,13 @@ void
 bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
 {
   char *s = (char*)pool_copy((uccp)np->orig, bp->p);
+  
+  if ('{' == *s)
+    {
+      np->last = s;
+      return;
+    }
+  
   char *t = strchr(s, ',');
   if (!t)
     {
@@ -183,9 +197,14 @@ bnm_split(Mloc *mp, Bx *bp, Bibentry *ep, Name *np)
 static const char *
 bnm_make_name(Bx *bp, const char *last, const char *first)
 {
-  char buf[strlen(last)+strlen(first)+3];
-  sprintf(buf, "%s, %s", last, first);
-  return (ccp)pool_copy((uccp)buf, bp->p);
+  if ('{' == *last)
+    return last;
+  else
+    {
+      char buf[strlen(last)+strlen(first)+3];
+      sprintf(buf, "%s, %s", last, first);
+      return (ccp)pool_copy((uccp)buf, bp->p);
+    }
 }
 
 static Name *curr_name;

@@ -27,7 +27,7 @@ WS  	    [ \t\n\r]+
 
 %%
 
-^[ \t]*@{TOKEN} { field = lval(bibtext); return BIB_ENTRY; }
+^[ \t]*@{TOKEN}[ \t]* { field = lval(bibtext); return BIB_ENTRY; }
 {TOKEN}         { field = lval(bibtext);
 		  return bib_field ? BIB_CHUNK : (bib_key_next ? BIB_KEY : BIB_FIELD); }
 {CHUNK}	        { lval(bibtext); return bib_field ? BIB_CHUNK : BIB_KEY; }

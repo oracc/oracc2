@@ -129,7 +129,7 @@ extern Bib *curr_bibp;
 extern Bibentry *curr_ep;
 
 extern void bib_eof(void);
-extern void bib_entry_init(Mloc m, const char *ent, const char *key);
+extern void bib_entry_init(Mloc m, char *ent, const char *key);
 extern void bib_entry_term(Mloc m);
 extern void bib_field_init(Mloc m, const char *f);
 extern void bib_field_term(Mloc m);

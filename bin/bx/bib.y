@@ -109,14 +109,19 @@ bib_comment(Mloc m, char *cmt)
 }
 
 void
-bib_entry_init(Mloc m, const char *ent, const char *key)
+bib_entry_init(Mloc m, char *ent, const char *key)
 {
+  char *endp = ent + strlen(ent);
+  while (endp > ent && isspace(endp[-1]))
+    --endp;
+  *endp = '\0';
+  
   bib_key_next = 0;
   curr_ep = memo_new(curr_bp->m_bibentry);
   curr_ep->bib = curr_bibp;
   curr_ep->comments = comments; comments = NULL;
   if (!bib_ent(ent, strlen(ent)))
-    mesg_vwarning(curr_bib, biblineno, "warning: unknown entry type %s\n", ent);
+    mesg_verr(&m, "warning: unknown entry type `%s'\n", ent);
   curr_ep->type = ent;
   curr_ep->bkey = key;
   if (!bib_cites || hash_find(bib_cites, (uccp)key))
@@ -153,7 +158,7 @@ bib_entry_term(Mloc m)
         bnm_all_names(curr_ep, curr_ep->nm_editor);
     }
 
-  if (!curr_ep->fields[f_ids] || !bib_entry_id(curr_ep))
+  if (verbose && (!curr_ep->fields[f_ids] || !bib_entry_id(curr_ep)))
     mesg_vwarning(curr_bib, biblineno, "no ids field or no B-ID in ids\n");
 
   curr_ep = NULL;
@@ -183,6 +188,8 @@ bib_field_init(Mloc m, const char *f)
   else
     {
       curr_bfp = bfp;
+      if (curr_ep->fields[curr_bfp->t])
+	mesg_verr(&m, "duplicate `%s' field", curr_bfp->name);
       curr_ep->fields[curr_bfp->t] = memo_new(curr_bp->m_bibfield);
       curr_field = curr_ep->fields[curr_bfp->t]->name = bfp->name;
       curr_ep->fields[curr_bfp->t]->line = biblineno;
@@ -195,7 +202,14 @@ bib_field_term(Mloc m)
   bib_field = 0;
   curr_field = NULL;
   if (curr_bfp)
-    curr_ep->fields[curr_bfp->t]->data = bib_content(m, NULL);
+    {
+      curr_ep->fields[curr_bfp->t]->data = bib_content(m, NULL);
+      if (verbose > 1)
+	fprintf(stderr, "bib_field_term: %s at line %d: `%s'\n",
+		curr_ep->fields[curr_bfp->t]->name,
+		curr_ep->fields[curr_bfp->t]->line,
+		curr_ep->fields[curr_bfp->t]->data);
+    }
 }
 
 char *
@@ -209,7 +223,14 @@ bib_content(Mloc m, const char *bit)
     {
       if (s)
 	{
-	  char *t = (char*)pool_copy((uccp)s, curr_bp->p);
+	  char *startp = s;
+	  while (isspace(*startp))
+	    ++startp;
+	  char *endp = startp + strlen(startp);
+	  while (endp > s && isspace(endp[-1]))
+	    --endp;
+	  *endp = '\0';
+	  char *t = (char*)pool_copy((uccp)startp, curr_bp->p);
 	  free(s);
 	  s = NULL;
 	  used = alloced = 0;
@@ -239,7 +260,7 @@ biberror(const char *e)
   if (curr_field)
     mesg_vwarning(f, l, "field %s error: %s", curr_field, e);
   else if (curr_ep)
-    mesg_vwarning(f, l, "%s error: %s", curr_ep->type, e);
+    mesg_vwarning(f, l, "@%s: %s", curr_ep->type, e);
   else
     mesg_vwarning(f, l, "%s\n", e);
 }

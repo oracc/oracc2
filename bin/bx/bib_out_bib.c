@@ -30,7 +30,7 @@ bib_reset_field_line(Bibentry *ep)
   for (i = 0; ep->fields[i]; ++i)
     {
       struct bib_fld_tab *bftp = bib_fld(ep->fields[i]->name, strlen(ep->fields[i]->name));
-      ep->fields[i]->line = bftp->sort;
+      ep->fields[i]->line = bftp->sort+1; /* ensure that ids can have sort == 0 */
     }
 }
 
@@ -83,7 +83,7 @@ bib_bib(Bx *bp, List *b, FILE *fp)
 	  for (c = list_first(bibp->eof_comments); c; c = list_next(bibp->eof_comments))
 	    fprintf(bout, "%s", c);
 	}
-      else
+      else if (verbose > 1)
 	fprintf(stderr, "bib_bib: no eof_comments found; bibp == %lu\n", (uintptr_t)bibp);
     }
   else
