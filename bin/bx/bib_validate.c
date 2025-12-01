@@ -34,8 +34,9 @@ bvl_init(void)
 void
 bvl_ids(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 {
-  
+  ep->bid = bx_bid_first(ep->fields[ft]->data);
 }
+
 void
 bvl_page(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 {

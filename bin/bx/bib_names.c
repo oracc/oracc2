@@ -14,7 +14,7 @@ bnm_init(Bx *bp)
   bp->hlasts = hash_create(1024);
   bp->m_name = memo_init(sizeof(Name), 256);
   bp->m_name_ptr = memo_init(sizeof(Name*), 256);
-  bp->m_nameinfo = memo_init(sizeof(Name*), 256);
+  bp->m_nameinfo = memo_init(sizeof(Nameinfo), 256);
   bnm_tab_init();
   const char *f[2] = { NULL , NULL };
   f[0] = oracc_data("bm-names.xml");

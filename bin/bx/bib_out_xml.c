@@ -41,11 +41,11 @@ disamb_alpha(Bx *bp, int num)
 void
 bib_xml_entry(Bx *bp, Bibentry *ep)
 {
-  char dis[strlen(" disamb=\"aaaa0\"")] = { '\0' };
+  char dis[strlen(" disamb=\"aaaa0\"")]; *dis = '\0';
   if (ep->disamb)
     sprintf(dis, " disamb=\"%s\"", disamb_alpha(bp, ep->disamb-1));
 
-  char bid[strlen(" xml:id=\"B123456\"0")] = { '\0' };
+  char bid[strlen(" xml:id=\"B123456\"0")]; *bid = '\0';
   if (ep->bid)
     sprintf(bid, " xml:id=\"%s\"", ep->bid);
   

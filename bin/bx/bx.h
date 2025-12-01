@@ -103,6 +103,7 @@ extern void bx_icf_out(Bx *bp);
 extern void bx_key_out(Bx *bp);
 extern void bx_ref_out(Bx *bp);
 
+extern const char *bx_bid_first(const char *ids);
 extern void bxl_bibkeys(Bx *bp);
 extern void bxl_bibkey_file(Bx *bp);
 extern const char **bxl_flist_files(Bx *bp, const char *flist, const char *ext, char **fmem);

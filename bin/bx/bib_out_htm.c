@@ -3,7 +3,7 @@
 #include "bib.h"
 
 static const char *xsltproc_path = "/usr/bin/xsltproc";
-static const char *xslt_script = "/Users/stinney/orc/lib/scripts/bib-HTML.xsl";
+static const char *xslt_script = "/home/oracc/lib/scripts/bib-HTML.xsl";
 
 const char *
 bx_xsltproc(Bx *bp)
