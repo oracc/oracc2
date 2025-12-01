@@ -118,7 +118,7 @@ bvl_name(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
   free(dup);
 
   if (nip->nnames == 1)
-    nip->allnames = ep->names[0]->nkey;
+    nip->allnames = nip->names[0]->nkey;
   else
     bnm_all_names(ep, nip);
 }

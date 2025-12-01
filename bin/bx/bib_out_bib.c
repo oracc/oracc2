@@ -52,7 +52,8 @@ bib_bib_entry(Bx *bp, Bibentry *ep)
   qsort(ep->fields, f_top, sizeof(Bibfield*), (sort_cmp_func*)bib_field_line_cmp);
 
   for (i = 0; ep->fields[i]; ++i)
-    fprintf(bout, " %s = { %s },\n", ep->fields[i]->name, ep->fields[i]->data);
+    if (ep->fields[i]->line >= 0 && ep->fields[i]->data)
+      fprintf(bout, " %s = { %s },\n", ep->fields[i]->name, ep->fields[i]->data);
 
   fputs("}", bout);
 }

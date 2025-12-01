@@ -27,7 +27,7 @@ Bibentry *curr_ep;
 Hash *bib_cites;
 
 static struct bib_fld_tab *curr_bfp;
-static Bibfield anonymous = { "Anonymous", 0 };
+static Bibfield nullauthor = { "author", "", -1 };
 static List *comments = NULL;
 static int bib_entry_id(Bibentry *ep);
  
@@ -134,7 +134,7 @@ bib_entry_term(Mloc m)
 
   if ((!curr_ep->fields[f_author] && !curr_ep->fields[f_editor])
       || (curr_ep->fields[f_author] && !curr_ep->fields[f_author]->data))
-    curr_ep->fields[f_author] = &anonymous;
+    curr_ep->fields[f_author] = &nullauthor;
 
   for (i = 0; i < f_top; ++i)
     {
@@ -147,10 +147,10 @@ bib_entry_term(Mloc m)
 
   if (!curr_ep->fields[f_author])
     {
-      if (curr_ep->nenames == 1)
-        curr_ep->allnames = curr_ep->enames[0]->nkey;
+      if (curr_ep->nm_editor->nnames == 1)
+        curr_ep->nm_editor->allnames = curr_ep->nm_editor->names[0]->nkey;
       else
-        bnm_all_names(curr_ep, f_editor);
+        bnm_all_names(curr_ep, curr_ep->nm_editor);
     }
 
   if (!curr_ep->fields[f_ids] || !bib_entry_id(curr_ep))
@@ -207,11 +207,16 @@ bib_content(Mloc m, const char *bit)
 
   if (bit == NULL)
     {
-      char *t = (char*)pool_copy((uccp)s, curr_bp->p);
-      free(s);
-      s = NULL;
-      used = alloced = 0;
-      return t;
+      if (s)
+	{
+	  char *t = (char*)pool_copy((uccp)s, curr_bp->p);
+	  free(s);
+	  s = NULL;
+	  used = alloced = 0;
+	  return t;
+	}
+      else
+	return "";
     }
   else
     {

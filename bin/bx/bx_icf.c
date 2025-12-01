@@ -62,24 +62,24 @@ bx_icf_str(Bx *bp, Bibentry *ep)
   const char *name = "", *init = "", *etal = "", *eds = "", *year = "", *comma = "";
   if (ep->fields[f_author])
     {
-      name = ep->names[0]->last;
-      if (ep->names[0]->sames)
+      name = ep->nm_author->names[0]->last;
+      if (ep->nm_author->names[0]->sames)
 	{
-	  init = ep->names[0]->init;
+	  init = ep->nm_author->names[0]->init;
 	  comma = ", ";
 	}
-      if (ep->names[1])
+      if (ep->nm_author->names[1])
 	etal = " et al.";
     }
   else
     {
-      name = ep->enames[0]->last;
-      if (ep->enames[0]->sames)
-	init = ep->enames[0]->init;
-      if (ep->enames[1])
+      name = ep->nm_editor->names[0]->last;
+      if (ep->nm_editor->names[0]->sames)
+	init = ep->nm_editor->names[0]->init;
+      if (ep->nm_editor->names[1])
 	{
 	  etal = " et al.";
-	  eds = " (eds.)";
+	  eds = " (eds)";
 	}
       else
 	eds = " (ed)";

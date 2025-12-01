@@ -25,7 +25,7 @@ static int ent_cmp(const void *a, const void *b)
   else
     {
       n1 = e1->nm_editor->names;
-      n2 = e2->nm_author;
+      n2 = e2->nm_author->names;
       if (!n2)
 	n2 = e2->nm_editor->names;
     }
@@ -127,27 +127,27 @@ bib_which_allnames(Bibentry *ep)
 }
 
 static void
-add_people(Hash *people, Name **nn)
+add_people(Hash *peeps, Name **nn)
 {
   if (nn)
     {
       int i;
       for (i = 0; nn[i]; ++i)
-	hash_add(people, (uccp)nn[i]->nkey, nn[i]);
+	hash_add(peeps, (uccp)nn[i]->nkey, nn[i]);
     }
 }
 
 static void
-bib_add_people(Bibentry *ep)
+bib_add_people(Hash *peeps,Bibentry *ep)
 {
-  if (bp->ents[i]->nm_author)
-    add_people(people, bp->ents[i]->nm_author->names);
-  if (bp->ents[i]->nm_editor)
-    add_people(people, bp->ents[i]->nm_editor->names);
-  if (bp->ents[i]->nm_bookauthor)
-    add_people(people, bp->ents[i]->nm_bookauthor->names);
-  if (bp->ents[i]->nm_translatoror)
-    add_people(people, bp->ents[i]->nm_translator->names);
+  if (ep->nm_author)
+    add_people(peeps, ep->nm_author->names);
+  if (ep->nm_editor)
+    add_people(peeps, ep->nm_editor->names);
+  if (ep->nm_bookauthor)
+    add_people(peeps, ep->nm_bookauthor->names);
+  if (ep->nm_translator)
+    add_people(peeps, ep->nm_translator->names);
 }
 
 /* disambiguation is only done when sorting is done */
@@ -155,10 +155,10 @@ void
 bib_disambiguate(Bx *bp)
 {
   int i, penult;
-  Hash *people = hash_create(1024);
+  Hash *hpeople = hash_create(1024);
   for (i = 0, penult=bp->nents-1; i < penult; ++i)
     {
-      bib_add_people(ep);
+      bib_add_people(hpeople,bp->ents[i]);
       const char *this_allnames = bib_which_allnames(bp->ents[i]);
       const char *next_allnames = bib_which_allnames(bp->ents[i+1]);
       
@@ -170,7 +170,7 @@ bib_disambiguate(Bx *bp)
 	}
     }
   /* i == penult so add last people */
-  bib_add_people(bp->ents[i]->fields[f_author]);
+  bib_add_people(hpeople, bp->ents[i]);
 
-  bib_disamb_people(bp, people);
+  bib_disamb_people(bp, hpeople);
 }
