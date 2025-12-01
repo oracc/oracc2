@@ -122,7 +122,7 @@
   <xsl:param name="dat"/>
   <xsl:param name="not"/>
 
-  <p class="article" id="{@xml:id}">
+  <p class="article" id="{@xml:id}" data-key="{@key}">
 
   <xsl:choose>
     <xsl:when test="$same-auth = 't'">
@@ -207,7 +207,7 @@
   <xsl:param name="dat"/>
   <xsl:param name="not"/>
 
-  <p class="book" id="{@xml:id}">
+  <p class="book" id="{@xml:id}" data-key="{@key}">
 
   <xsl:choose>
     <xsl:when test="$same-auth = 't'">

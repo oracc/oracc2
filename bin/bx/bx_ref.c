@@ -187,19 +187,24 @@ bx_ref_run_one(const char *bibfile, Hash *cites)
 {
   extern const char *curr_bib;
   extern FILE *bibin;
+  FILE *fp = NULL;
   curr_bib = bibfile;
-  FILE *fp = fopen(bibfile, "r");
-  if (!fp)
+  if (strcmp(bibfile, "-"))
     {
-      fprintf(stderr, "bx: can't open .bib file %s for loading\n", bibfile);
-      exit(1);
+      fp = fopen(bibfile, "r");
+      if (!fp)
+	{
+	  fprintf(stderr, "bx: can't open .bib file %s for loading\n", bibfile);
+	  exit(1);
+	}
+      bibin = fp;
     }
-  bibin = fp;
   field = NULL;
   bib_cites = cites;
   bib_field = bib_nesting = 0;
   biblineno = 1;
   bibparse();
   bibreset();
- fclose(fp);
+  if (fp)
+    fclose(fp);
 }

@@ -12,7 +12,7 @@ static int ent_cmp(const void *a, const void *b)
 {
   Bibentry *e1 = (*(Bibentry**)a);
   Bibentry *e2 = (*(Bibentry**)b);
-  Name **n1, **n2;
+  Name **n1 = NULL, **n2 = NULL;
 
   if (e1->nm_author)
     {
@@ -22,11 +22,12 @@ static int ent_cmp(const void *a, const void *b)
       else if (e2->nm_editor)
 	n2 = e2->nm_editor->names;
     }
-  else
+  else if (e1->nm_editor)
     {
       n1 = e1->nm_editor->names;
-      n2 = e2->nm_author->names;
-      if (!n2)
+      if (e2->nm_author)
+	n2 = e2->nm_author->names;
+      else if (e2->nm_editor)
 	n2 = e2->nm_editor->names;
     }
   
