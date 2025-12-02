@@ -1,8 +1,13 @@
 #!/bin/sh
 project=`oraccopt`
-if [ ! -r 00lib/data.xml ]; then
-    echo $0: no 00lib/data.xml
-    exit 0
+if [ "$project" = "" ]; then
+    echo $0: not in a project directory. Stop.
+    exit 1
+fi
+type=`oraccopt . type`
+if [ "$type" != "ood" ]; then
+    echo $0: $project is not an ood project. Stop.
+    exit 1
 fi
 mkdir -p $ORACC/$project/01bld/lists
 mkdir -p $ORACC/pub/$project/cat
