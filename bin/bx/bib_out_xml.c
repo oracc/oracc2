@@ -38,6 +38,53 @@ disamb_alpha(Bx *bp, int num)
   return letters;
 }
 
+static void
+bib_xml_one_name(Name *np)
+{
+#define xu(s) xmlify((uccp)s)
+  const char *xwas = (np->was ? (ccp)xmlify((uccp)np->was) : NULL);
+  const char *was = "", *sames = "", *nmxml = "";
+
+  char wasbuf[xwas ? strlen(xwas)+8 : 0];
+  if (np->was)
+    sprintf((char*)(was=wasbuf), " was=\"%s\"", xwas);
+
+  char samesbuf[11];
+  if (np->sames)
+    strcpy((char*)(sames=samesbuf), " sames=\"1\"");
+
+  char nmxmlbuf[11];
+  if (np->bm_name_xml)
+    strcpy((char*)(nmxml=nmxmlbuf), " nmxml=\"1\"");
+  
+  fprintf(xout,
+	  "<name nmkey=\"%s\" orig=\"%s\" last=\"%s\" rest=\"%s\" init=\"%s\"%s%s%s/>",
+	  xu(np->nkey),
+	  xu(np->orig),
+	  xu(np->last),
+	  xu(np->rest),
+	  xu(np->init),
+	  was,
+	  sames,
+	  nmxml);
+#undef xu
+}
+
+static void
+bib_xml_names(Bibentry *ep, Ftype f, Nameinfo *nip)
+{
+  if (nip)
+    {
+      fprintf(xout, "<%s all=\"%s\" num=\"%d\"><data>%s</data>",
+	      fldnames[f], xmlify((uccp)nip->allnames), nip->nnames,
+	      xmlify((uccp)ep->fields[f]->data));
+      int i;
+      for (i = 0; i < nip->nnames; ++i)
+	bib_xml_one_name(nip->names[i]);
+      fprintf(xout, "</%s>", fldnames[f]);
+    }
+}
+
 void
 bib_xml_entry(Bx *bp, Bibentry *ep)
 {
@@ -58,8 +105,27 @@ bib_xml_entry(Bx *bp, Bibentry *ep)
   for (i = 0; i < f_top; ++i)
     {
       if (ep->fields[i])
-	fprintf(xout, "<%s>%s</%s>",
-		fldnames[i], xmlify((uccp)ep->fields[i]->data), fldnames[i]);
+	{
+	  switch ((Ftype)i)
+	    {
+	    case f_author:
+	      bib_xml_names(ep, i, ep->nm_author);
+	      break;
+	    case f_editor:
+	      bib_xml_names(ep, i, ep->nm_editor);
+	      break;
+	    case f_bookauthor:
+	      bib_xml_names(ep, i, ep->nm_bookauthor);
+	      break;
+	    case f_translator:
+	      bib_xml_names(ep, i, ep->nm_translator);
+	      break;
+	    default:
+	      fprintf(xout, "<%s>%s</%s>",
+		      fldnames[i], xmlify((uccp)ep->fields[i]->data), fldnames[i]);
+	      break;
+	    }
+	}
     }
   fputs("</entry>", xout);
 }

@@ -118,6 +118,7 @@ bvl_name(Mloc *mp, Bx *bp, enum bib_ftype ft, Bibentry *ep)
 	  while (isspace(*t))
 	    ++t;
 	}
+      nip->names[i]->orig = (ccp)pool_copy((uccp)nip->names[i]->orig, bp->p);
       bnm_split(mp, bp, ep, nip->names[i]);
       bnm_nkey(mp, bp, nip->names[i]);
       if (verbose)

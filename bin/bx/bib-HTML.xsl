@@ -59,9 +59,11 @@
 
 <xsl:template match="b:entry">
   <xsl:choose>
+    <xsl:when test="journal='NABU'">
+      <xsl:call-template name="format-nabu"/>
+    </xsl:when>
     <xsl:when test="@type='article' or @type='incollection'">
       <xsl:call-template name="format-article">
-        <xsl:with-param name="same-auth" select="@sameauth"/>
 	<xsl:with-param name="aut" select="b:author"/>
 	<xsl:with-param name="edi" select="b:editor"/>
 	<xsl:with-param name="art" select="b:title"/>
@@ -84,7 +86,6 @@
     </xsl:when>
     <xsl:otherwise>
       <xsl:call-template name="format-book">
-        <xsl:with-param name="same-auth" select="@sameauth"/>
 	<xsl:with-param name="aut" select="b:author"/>
 	<xsl:with-param name="edi" select="b:editor"/>
 	<xsl:with-param name="boo" select="b:title"/>
@@ -105,8 +106,17 @@
   </xsl:choose>
 </xsl:template>
 
+<xsl:template name="format-nabu">
+  <p class="article" id="{@xml:id}" data-key="{@key}">
+    <xsl:call-template name="fmt-init-names"/>
+    <xsl:call-template name="fmt-journal-name"/>
+    <span class="bib-jrn-issue"><xsl:value-of select="b:number"/></span>
+    <span class="bib-jrn-pages"><xsl:value-of select="concat(' [', b:pages,']')"/></span>
+    <xsl:text>.</xsl:text>
+  </p>
+</xsl:template>
+
 <xsl:template name="format-article">
-  <xsl:param name="same-auth"/>
   <xsl:param name="aut"/>
   <xsl:param name="edi"/>
   <xsl:param name="art"/>
@@ -124,20 +134,7 @@
 
   <p class="article" id="{@xml:id}" data-key="{@key}">
 
-  <xsl:choose>
-    <xsl:when test="$same-auth = 't'">
-      <xsl:text>---------. </xsl:text>
-    </xsl:when>
-    <xsl:otherwise>
-      <xsl:call-template name="fmt-names">
-        <xsl:with-param name="names" select="$aut"/>
-      </xsl:call-template>
-      <xsl:call-template name="maybe-add-period">
-        <xsl:with-param name="prev-str" select="$aut[last()]"/>
-      </xsl:call-template>
-      <xsl:text> </xsl:text>
-    </xsl:otherwise>
-  </xsl:choose>
+  <xsl:call-template name="fmt-init-names"/>
   &newline;
 
   <xsl:value-of select="$lq"/>
@@ -194,7 +191,6 @@
 </xsl:template>
 
 <xsl:template name="format-book">
-  <xsl:param name="same-auth"/>
   <xsl:param name="aut"/>
   <xsl:param name="edi"/>
   <xsl:param name="boo"/>
@@ -210,7 +206,7 @@
   <p class="book" id="{@xml:id}" data-key="{@key}">
 
   <xsl:choose>
-    <xsl:when test="$same-auth = 't'">
+    <xsl:when test="@same-auth = 't'">
       <xsl:text>---------. </xsl:text>
     </xsl:when>
     <xsl:otherwise>
@@ -315,63 +311,82 @@
 </xsl:template>
 
 <xsl:template name="fmt-author">
-  <xsl:param name="aut"/>
-  <xsl:param name="edi"/>
-  <xsl:param name="pub"/>
   <xsl:choose>
-    <xsl:when test="count($aut) > 0">
+    <xsl:when test="count(b:author) > 0">
       <xsl:call-template name="fmt-names">
-        <xsl:with-param name="names" select="$aut"/>
+        <xsl:with-param name="names" select="b:author"/>
       </xsl:call-template>
       <xsl:call-template name="maybe-add-period">
-        <xsl:with-param name="prev-str" select="$aut[last()]"/>
+        <xsl:with-param name="prev-str" select="b:author[last()]"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="count($edi) > 0">
       <xsl:call-template name="fmt-names">
-        <xsl:with-param name="names" select="$edi"/>
+        <xsl:with-param name="names" select="b:editor"/>
         <xsl:with-param name="flags" select="1"/>
       </xsl:call-template>
 <!--
       <xsl:call-template name="maybe-add-period">
-        <xsl:with-param name="prev-str" select="$edi[last()]"/>
+        <xsl:with-param name="prev-str" select="b:editor[last()]"/>
       </xsl:call-template>
  -->
     </xsl:when>
     <xsl:otherwise>
       <xsl:call-template name="fmt-names">
-        <xsl:with-param name="names" select="$pub"/>
+        <xsl:with-param name="names" select="b:publisher"/>
         <xsl:with-param name="flags" select="2"/>
       </xsl:call-template>
       <xsl:call-template name="maybe-add-period">
-        <xsl:with-param name="prev-str" select="$pub[last()]"/>
+        <xsl:with-param name="prev-str" select="b:publisher[last()]"/>
       </xsl:call-template>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
 
+<xsl:template name="fmt-init-names">
+  <xsl:variable name="sames">
+    <xsl:choose>
+      <xsl:when test="@sameauth='1'"><xsl:text>sames</xsl:text></xsl:when>
+      <xsl:otherwise><xsl:text/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+  <xsl:call-template name="fmt-names">
+    <xsl:with-param name="names" select="b:author"/>
+  </xsl:call-template>
+  <xsl:call-template name="maybe-add-period">
+    <xsl:with-param name="prev-str" select="b:author[last()]"/>
+  </xsl:call-template>
+  <xsl:text> </xsl:text>
+</xsl:template>
+
+<xsl:template name="fmt-journal-name">
+  <span class="bib-journal"><xsl:value-of select="b:journal"/></span>
+</xsl:template>
+
 <xsl:template name="fmt-names">
   <xsl:param name="names"/>
-  <xsl:param name="flags" select="0"/>
+  <xsl:param name="sames"/>
 
-  <xsl:for-each select="$names">
-    <xsl:choose>
-      <xsl:when test="position() > 1 and position() = last()">
-        <xsl:text> and </xsl:text>
-      </xsl:when>
-      <xsl:when test="position() > 1">
-        <xsl:text>, </xsl:text>
-      </xsl:when>
-    </xsl:choose>
-    <xsl:value-of select="normalize-space(.)"/>
-  </xsl:for-each>
-  <xsl:if test="$flags = 1">
-    <xsl:text>, ed</xsl:text>
-    <xsl:if test="count($names) > 1">
-      <xsl:text>s</xsl:text>
+  <span class="bib-names$sames">
+    <xsl:for-each select="$names">
+      <xsl:choose>
+	<xsl:when test="position() > 1 and position() = last()">
+          <xsl:text> and </xsl:text>
+	</xsl:when>
+	<xsl:when test="position() > 1">
+          <xsl:text>, </xsl:text>
+	</xsl:when>
+      </xsl:choose>
+      <xsl:value-of select="normalize-space(.)"/>
+    </xsl:for-each>
+    <xsl:if test="$flags = 1">
+      <xsl:text>, ed</xsl:text>
+      <xsl:if test="count($names) > 1">
+	<xsl:text>s</xsl:text>
+      </xsl:if>
+      <xsl:text>. </xsl:text>
     </xsl:if>
-    <xsl:text>. </xsl:text>
-  </xsl:if>
+  </span>
 </xsl:template>
 
 <xsl:template name="maybe-add-period">
