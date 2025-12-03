@@ -43,6 +43,8 @@ bib_bib_entry(Bx *bp, Bibentry *ep)
       for (c = list_first(ep->comments); c; c = list_next(ep->comments))
 	fprintf(bout, "%s", c);
     }
+  else
+    fputs("\n", bout);
   fprintf(bout, "@%s{%s,\n", ep->type, xmlify((uccp)ep->bkey));
   int i;
 

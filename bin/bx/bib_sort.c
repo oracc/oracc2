@@ -30,7 +30,11 @@ static int ent_cmp(const void *a, const void *b)
       else if (e2->nm_editor)
 	n2 = e2->nm_editor->names;
     }
-
+  else if (e2->nm_author)
+    n2 = e2->nm_author->names;
+  else if (e2->nm_editor)
+    n2 = e2->nm_editor->names;
+  
   if (n1 && n2)
     {
       int i;
@@ -58,9 +62,7 @@ static int ent_cmp(const void *a, const void *b)
     return 1;
   else if (n2)
     return -1;
-  else
-    return 0;
-
+  
   if (e1->year != e2->year)
     return e1->year - e2->year;
   else if (e1->fields[f_number] && e2->fields[f_number])
