@@ -30,7 +30,7 @@ static int ent_cmp(const void *a, const void *b)
       else if (e2->nm_editor)
 	n2 = e2->nm_editor->names;
     }
-  
+
   if (n1 && n2)
     {
       int i;
@@ -47,9 +47,9 @@ static int ent_cmp(const void *a, const void *b)
 		fprintf(stderr, "bib_sort: u8_normcmp returned error\n");
 	    }
 	  else if (n1[i]->nkey)
-	    c = -1;
-	  else if (n2[i]->nkey)
 	    c = 1;
+	  else if (n2[i]->nkey)
+	    c = -1;
 	  if (c)
 	    return c;
 	}
@@ -58,8 +58,15 @@ static int ent_cmp(const void *a, const void *b)
     return 1;
   else if (n2)
     return -1;
+  else
+    return 0;
 
-  return e1->year - e2->year;
+  if (e1->year != e2->year)
+    return e1->year - e2->year;
+  else if (e1->fields[f_number] && e2->fields[f_number])
+    return strcmp(e1->fields[f_number]->data, e2->fields[f_number]->data);
+
+  return 0;
 }
 
 static int nam_cmp(const void *a, const void *b)
@@ -167,7 +174,11 @@ bib_disambiguate(Bx *bp)
 	{
 	  bp->ents[i+1]->sameauth = 1;
 	  if (bp->ents[i]->year == bp->ents[i+1]->year)
-	    bp->ents[i+1]->disamb = bp->ents[i]->disamb + 1;
+	    {
+	      if (!bp->ents[i]->disamb)
+		bp->ents[i]->disamb = 1;
+	      bp->ents[i+1]->disamb = bp->ents[i]->disamb + 1;
+	    }
 	}
     }
   /* i == penult so add last people */

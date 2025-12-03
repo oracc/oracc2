@@ -86,7 +86,7 @@ bib_xml_names(Bibentry *ep, Ftype f, Nameinfo *nip)
 }
 
 void
-bib_xml_entry(Bx *bp, Bibentry *ep)
+bib_xml_entry(Bx *bp, Bibentry *ep, int sort)
 {
   char dis[strlen(" disamb=\"aaaa0\"")]; *dis = '\0';
   if (ep->disamb)
@@ -97,8 +97,9 @@ bib_xml_entry(Bx *bp, Bibentry *ep)
     sprintf(bid, " xml:id=\"%s\"", ep->bid);
   
   const char *same = ep->sameauth ? " sameauth=\"1\"" : "";
-  fprintf(xout, "<entry type=\"%s\" key=\"%s\"%s%s%s>", ep->type, xmlify((uccp)ep->bkey),
-	  bid, dis, same);
+  fprintf(xout, "<entry type=\"%s\" key=\"%s\" sort=\"%d\"%s%s%s>",
+	  ep->type, xmlify((uccp)ep->bkey), sort, bid,
+	  dis, same);
   if (bp->mode == BX_ICF)
     fprintf(xout, "<icf>%s</icf>", ep->icf->str);
   int i;
@@ -139,17 +140,18 @@ bib_xml(Bx *bp, List *b, FILE *fp)
     {
       int i;
       for (i = 0; bp->ents[i]; ++i)
-	bib_xml_entry(bp, bp->ents[i]);
+	bib_xml_entry(bp, bp->ents[i], i);
     }
   else
     {
       Bib *bibp;
-      for (bibp = list_first(b); bibp; bibp = list_next(b))
+      int i;
+      for (i = 0, bibp = list_first(b); bibp; bibp = list_next(b), ++i)
 	{
 	  fprintf(xout, "<file n=\"%s\">", bibp->file);
 	  Bibentry *ep;
 	  for (ep = list_first(bibp->entries); ep; ep = list_next(bibp->entries))
-	    bib_xml_entry(bp, ep);
+	    bib_xml_entry(bp, ep, i);
 	  fputs("</file>", xout);
 	}
     }

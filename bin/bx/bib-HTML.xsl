@@ -12,7 +12,10 @@
  -->
 
 <!DOCTYPE xsl:stylesheet [
+<!ENTITY dot "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>.</xsl:text>">
+<!ENTITY nbsp "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>&#xa0;</xsl:text>">
 <!ENTITY newline "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>&#xa;</xsl:text>">
+<!ENTITY space "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'> </xsl:text>">
 ]>
 <xsl:stylesheet version="1.0" 
   xmlns="http://www.w3.org/1999/xhtml"
@@ -48,18 +51,20 @@
   <html>
     <head>
       <link rel="stylesheet" type="text/css" 
-           href="/css/bib-reflist.css"/>
+           href="/css/bib.css"/>
       <title><xsl:value-of select="$ti"/></title>
     </head>
     <body>
-      <xsl:apply-templates select="*/b:entry"/>
+      <div class="bib-reflist">
+	<xsl:apply-templates select="*/b:entry"/>
+      </div>
     </body>
   </html>
 </xsl:template>
 
 <xsl:template match="b:entry">
   <xsl:choose>
-    <xsl:when test="journal='NABU'">
+    <xsl:when test="b:journal='NABU'">
       <xsl:call-template name="format-nabu"/>
     </xsl:when>
     <xsl:when test="@type='article' or @type='incollection'">
@@ -107,12 +112,24 @@
 </xsl:template>
 
 <xsl:template name="format-nabu">
-  <p class="article" id="{@xml:id}" data-key="{@key}">
+  <p class="article nabu" id="{@xml:id}" data-key="{@key}">
     <xsl:call-template name="fmt-init-names"/>
+    &space;
+    <xsl:call-template name="fmt-title"/>
+    &space;
     <xsl:call-template name="fmt-journal-name"/>
+    &space;
     <span class="bib-jrn-issue"><xsl:value-of select="b:number"/></span>
-    <span class="bib-jrn-pages"><xsl:value-of select="concat(' [', b:pages,']')"/></span>
-    <xsl:text>.</xsl:text>
+    &space;
+    <xsl:variable name="pp">
+      <xsl:choose>
+	<xsl:when test="contains(b:pages, '-')"><xsl:text>pp.</xsl:text></xsl:when>
+	<xsl:otherwise><xsl:text>p.</xsl:text></xsl:otherwise>
+      </xsl:choose>
+      &nbsp;
+    </xsl:variable>
+    <span class="bib-jrn-pages"><xsl:value-of select="concat('[',$pp,b:pages,']')"/></span>
+    &dot;
   </p>
 </xsl:template>
 
@@ -366,8 +383,9 @@
 <xsl:template name="fmt-names">
   <xsl:param name="names"/>
   <xsl:param name="sames"/>
+  <xsl:param name="flags"/>
 
-  <span class="bib-names$sames">
+  <span class="bib-names{$sames}">
     <xsl:for-each select="$names">
       <xsl:choose>
 	<xsl:when test="position() > 1 and position() = last()">
@@ -385,6 +403,16 @@
 	<xsl:text>s</xsl:text>
       </xsl:if>
       <xsl:text>. </xsl:text>
+    </xsl:if>
+  </span>
+</xsl:template>
+
+<xsl:template name="fmt-title">
+  <span class="bib-title">
+    <xsl:value-of select="b:title"/>
+    <xsl:if test="b:subtitle">
+      <xsl:text>: </xsl:text>
+      <span class="bib-subtitle"><xsl:value-of select="b:subtitle"/></span>
     </xsl:if>
   </span>
 </xsl:template>
