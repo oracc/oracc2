@@ -78,7 +78,7 @@ ngdebug_hash(Hash *h)
 }
 
 void
-ngramify_init()
+ngramify_init(void)
 {
   if (ng_match_logging && !ng_match_log)
     {
@@ -100,7 +100,7 @@ ngramify_init()
     ngramify_mem = list_create(LIST_SINGLE);
 }
 void
-ngramify_reset()
+ngramify_reset(void)
 {
   match_list->matches_used = 0;
 #if 0
@@ -110,7 +110,7 @@ ngramify_reset()
 }
 
 void
-ngramify_term()
+ngramify_term(void)
 {
   if (match_list)
     {

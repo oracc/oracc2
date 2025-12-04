@@ -5,7 +5,7 @@
 
 static unsigned int last_BID = 0;
 
-const char *BID_STOPS = "{}, \t\n";
+#include "bx_bid_lib.c"
 
 /* Scan input until '}' checking for [{, \t\n]B[0-9]{6}[}, \t\n] */
 static void
@@ -138,25 +138,6 @@ bx_bid_pre(Bx *bp)
   /* load the .bib file that we are adding BID to */
   bx_ref_pre(bp);
   bx_ref_run(bp);
-}
-
-const char *
-bx_bid_first(const char *ids)
-{
-  const char *B, *s = ids;
-  
-  while ((B = strchr(s, 'B')))
-    {
-      if (B == s || strchr(BID_STOPS, B[-1]))
-	{
-	  const char *b = B;
-	  while (isdigit(b[1]))
-	    ++b;
-	  if (!*b || strchr(BID_STOPS, b[1]))
-	    return B;
-	}
-    }
-  return NULL;
 }
 
 void

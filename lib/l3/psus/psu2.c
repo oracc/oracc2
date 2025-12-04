@@ -15,7 +15,7 @@ psus2_init(struct sigset *sp)
 }
 
 void
-psus2_term()
+psus2_term(void)
 {
   ngramify_term();
 }

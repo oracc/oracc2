@@ -30,7 +30,8 @@ loadfile_lines3(unsigned const char *fname, size_t *nlines, unsigned char **fmem
 
   if (f)
     {
-      *fmem = f;
+      if (fmem)
+	*fmem = f;
       
       for (i = l = 0; i < n; ++i)
 	if ('\n' == f[i])
