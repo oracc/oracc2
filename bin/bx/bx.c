@@ -35,6 +35,8 @@ main(int argc, char * const*argv)
   setlocale (LC_ALL, ORACC_LOCALE);
   b.argv = argv;
 
+  b.mode = BX_TOP;
+  
   options(argc, argv,
 	  "fFiIkKrR"     /* mode args */
 	  "b:c:"        /* input args */
@@ -42,6 +44,12 @@ main(int argc, char * const*argv)
 	  "D:nOpqsStv"   /* adjunct args */
 	  );
 
+  if (BX_TOP == b.mode)
+    {
+      b.mode = BX_REF;
+      b.bibonly = 1;
+    }
+  
   mesg_init();
   b.mem = list_create(LIST_SINGLE);
   b.p = pool_init();

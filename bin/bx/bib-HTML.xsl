@@ -12,6 +12,7 @@
  -->
 
 <!DOCTYPE xsl:stylesheet [
+<!ENTITY comma "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>,</xsl:text>">
 <!ENTITY dot "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>.</xsl:text>">
 <!ENTITY nbsp "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>&#xa0;</xsl:text>">
 <!ENTITY newline "<xsl:text xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>&#xa;</xsl:text>">
@@ -48,18 +49,29 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
-  <html>
-    <head>
-      <link rel="stylesheet" type="text/css" 
-           href="/css/bib.css"/>
-      <title><xsl:value-of select="$ti"/></title>
-    </head>
-    <body>
-      <div class="bib-reflist">
-	<xsl:apply-templates select="*/b:entry"/>
-      </div>
-    </body>
-  </html>
+  <xsl:choose>
+    <xsl:when test="$outmode='div'">
+      <xsl:call-template name="bib-reflist"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <html>
+	<head>
+	  <link rel="stylesheet" type="text/css" 
+		href="/css/bib.css"/>
+	  <title><xsl:value-of select="$ti"/></title>
+	</head>
+	<body>
+	  <xsl:call-template name="bib-reflist"/>
+	</body>
+      </html>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="bib-reflist">
+  <div class="bib-reflist">
+    <xsl:apply-templates select="*/b:entry"/>
+  </div>
 </xsl:template>
 
 <xsl:template match="b:entry">
@@ -68,47 +80,103 @@
       <xsl:call-template name="format-nabu"/>
     </xsl:when>
     <xsl:when test="@type='article' or @type='incollection'">
-      <xsl:call-template name="format-article">
-	<xsl:with-param name="aut" select="b:author"/>
-	<xsl:with-param name="edi" select="b:editor"/>
-	<xsl:with-param name="art" select="b:title"/>
-	<xsl:with-param name="boo" select="b:booktitle"/>
-	<xsl:with-param name="vol" select="b:volume"/>
-	<xsl:with-param name="pag" select="b:pages"/>
-	<xsl:with-param name="sn1" select="b:series"/>
-	<xsl:with-param name="sv1" select="b:volume"/>
-	<!-- bx doesn't handle multiple series yet -->
-	<!--
-	    <xsl:with-param name="sn2" select="t:series[2]/t:title"/>
-	    <xsl:with-param name="sv2" select="t:series[2]/t:biblScope[@type='number']"/>
-	-->
-	<xsl:with-param name="pub" select="b:publisher"/>
-	<xsl:with-param name="pla" select="b:location"/>
-	<xsl:with-param name="dat" select="b:year"/>
-	<xsl:with-param name="not" select="b:note"/>
-        <xsl:with-param name="typ" select="@type"/>
-      </xsl:call-template>
+      <xsl:call-template name="format-article"/>
+    </xsl:when>
+    <xsl:when test="@type='book'">
+      <xsl:call-template name="format-book"/>
+    </xsl:when>
+    <xsl:when test="@type='booklet'">
+      <xsl:call-template name="format-booklet"/>
+    </xsl:when>
+    <xsl:when test="@type='collection'">
+      <xsl:call-template name="format-collection"/>
+    </xsl:when>
+    <xsl:when test="@type='dataset'">
+      <xsl:call-template name="format-dataset"/>
+    </xsl:when>
+    <xsl:when test="@type='inbook'">
+      <xsl:call-template name="format-inbook"/>
+    </xsl:when>
+    <xsl:when test="@type='inproceedings'">
+      <xsl:call-template name="format-inproceedings"/>
+    </xsl:when>
+    <xsl:when test="@type='mastersthesis'">
+      <xsl:call-template name="format-mastersthesis"/>
+    </xsl:when>
+    <xsl:when test="@type='online'">
+      <xsl:call-template name="format-online"/>
+    </xsl:when>
+    <xsl:when test="@type='phdthesis'">
+      <xsl:call-template name="format-phdthesis"/>
+    </xsl:when>
+    <xsl:when test="@type='proceedings'">
+      <xsl:call-template name="format-proceedings"/>
+    </xsl:when>
+    <xsl:when test="@type='report'">
+      <xsl:call-template name="format-report"/>
+    </xsl:when>
+    <xsl:when test="@type='software'">
+      <xsl:call-template name="format-software"/>
+    </xsl:when>
+    <xsl:when test="@type='techreport'">
+      <xsl:call-template name="format-techreport"/>
+    </xsl:when>
+    <xsl:when test="@type='unpublished'">
+      <xsl:call-template name="format-unpublished"/>
     </xsl:when>
     <xsl:otherwise>
-      <xsl:call-template name="format-book">
-	<xsl:with-param name="aut" select="b:author"/>
-	<xsl:with-param name="edi" select="b:editor"/>
-	<xsl:with-param name="boo" select="b:title"/>
-	<xsl:with-param name="sn1" select="b:series[1]"/>
-	<xsl:with-param name="sv1" select="b:volume"/>
-	<!--
-	    <xsl:with-param name="sn2" select="t:series[2]/t:title"/>
-	    <xsl:with-param name="sv2" 
-	    select="t:series[2]/t:biblScope[@type='number']
-	    |t:series[2]/t:biblScope[@type='vol']"/>
-	-->
-	<xsl:with-param name="pub" select="b:publisher"/>
-	<xsl:with-param name="pla" select="b:location"/>
-	<xsl:with-param name="dat" select="b:year"/>
-	<xsl:with-param name="not" select="b:note"/>
-      </xsl:call-template>
+      <xsl:message>bib-HTML.xsl: unhandled entry type `<xsl:value-of select="@type"/></xsl:message>
     </xsl:otherwise>
   </xsl:choose>
+</xsl:template>
+
+<xsl:template name="format-booklet">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-collection">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-dataset">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-inbook">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-inproceedings">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-mastersthesis">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-online">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-phdthesis">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-proceedings">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-report">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-software">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-techreport">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+<xsl:template name="format-unpublished">
+  <xsl:call-template name="format-generic"/>
+</xsl:template>
+
+<xsl:template name="format-generic">
+  <p class="generic" id="{@xml:id}" data-key="{@key}">
+    <xsl:call-template name="fmt-init-names"/>
+    &space;
+    <xsl:call-template name="fmt-title"/>
+    &dot;
+  </p>
 </xsl:template>
 
 <xsl:template name="format-nabu">
@@ -119,7 +187,11 @@
     &space;
     <xsl:call-template name="fmt-journal-name"/>
     &space;
-    <span class="bib-jrn-issue"><xsl:value-of select="b:number"/></span>
+    <span class="bib-jrn-issue">
+      <xsl:value-of select="b:year"/>
+      <xsl:text>/</xsl:text>
+      <xsl:value-of select="b:number"/>
+    </span>
     &space;
     <xsl:variable name="pp">
       <xsl:choose>
@@ -134,72 +206,45 @@
 </xsl:template>
 
 <xsl:template name="format-article">
-  <xsl:param name="aut"/>
-  <xsl:param name="edi"/>
-  <xsl:param name="art"/>
-  <xsl:param name="boo"/>
-  <xsl:param name="vol"/>
-  <xsl:param name="pag"/>
-  <xsl:param name="sn1"/>
-  <xsl:param name="sv1"/>
-  <xsl:param name="sn2"/>
-  <xsl:param name="sv2"/>
-  <xsl:param name="pub"/>
-  <xsl:param name="pla"/>
-  <xsl:param name="dat"/>
-  <xsl:param name="not"/>
-
   <p class="article" id="{@xml:id}" data-key="{@key}">
 
   <xsl:call-template name="fmt-init-names"/>
   &newline;
 
   <xsl:value-of select="$lq"/>
-    <xsl:value-of select="normalize-space($art)"/>
+    <xsl:value-of select="normalize-space(b:title)"/>
   <xsl:call-template name="maybe-add-period">
-    <xsl:with-param name="prev-str" select="$art"/>
+    <xsl:with-param name="prev-str" select="b:title"/>
   </xsl:call-template>
   <xsl:value-of select="$rq"/>
   <xsl:text> </xsl:text>
   &newline;
 
   <xsl:choose>
-    <xsl:when test="string-length($vol)=0">
+    <xsl:when test="string-length(b:volume)=0">
       <xsl:text>Pp. </xsl:text>
-      <xsl:value-of select="$pag"/>
+      <xsl:value-of select="b:pages"/>
       <xsl:text> in </xsl:text>
-      <xsl:call-template name="fmt-bookinfo">
-        <xsl:with-param name="aut" select="$aut"/>
-        <xsl:with-param name="edi" select="$edi"/>
-        <xsl:with-param name="boo" select="$boo"/>
-        <xsl:with-param name="sn1" select="$sn1"/>
-        <xsl:with-param name="sv1" select="$sv1"/>
-        <xsl:with-param name="sn2" select="$sn2"/>
-        <xsl:with-param name="sv2" select="$sv2"/>
-        <xsl:with-param name="pub" select="$pub"/>
-        <xsl:with-param name="pla" select="$pla"/>
-        <xsl:with-param name="dat" select="$dat"/>
-        <xsl:with-param name="not" select="$not"/>
-      </xsl:call-template>
+      <xsl:call-template name="fmt-bookinfo"/>
     </xsl:when>
     <xsl:otherwise>
       <span class="journal">
         <xsl:call-template name="map-jrnser">
-          <xsl:with-param name="js" select="$boo"/>
+          <xsl:with-param name="js" select="b:booktitle"/>
         </xsl:call-template>
       </span>
       <xsl:text> </xsl:text>
-      <xsl:if test="$vol">
-        <xsl:value-of select="$vol"/>
+      <xsl:if test="b:volume">
+        <xsl:value-of select="b:volume"/>
       </xsl:if>
-      <xsl:if test="$dat">
+      <xsl:if test="b:date">
         <xsl:text> (</xsl:text>
-        <xsl:value-of select="$dat"/>
+        <xsl:value-of select="b:date"/>
         <xsl:text>)</xsl:text>
       </xsl:if>
-      <xsl:if test="$pag">
+      <xsl:if test="b:pages">
         <xsl:text>: </xsl:text>
-        <xsl:value-of select="$pag"/>
+        <xsl:value-of select="b:pages"/>
       </xsl:if>
       <xsl:text>.</xsl:text>
     </xsl:otherwise>
@@ -208,89 +253,59 @@
 </xsl:template>
 
 <xsl:template name="format-book">
-  <xsl:param name="aut"/>
-  <xsl:param name="edi"/>
-  <xsl:param name="boo"/>
-  <xsl:param name="sn1"/>
-  <xsl:param name="sv1"/>
-  <xsl:param name="sn2"/>
-  <xsl:param name="sv2"/>
-  <xsl:param name="pub"/>
-  <xsl:param name="pla"/>
-  <xsl:param name="dat"/>
-  <xsl:param name="not"/>
-
   <p class="book" id="{@xml:id}" data-key="{@key}">
 
-  <xsl:choose>
-    <xsl:when test="@same-auth = 't'">
-      <xsl:text>---------. </xsl:text>
-    </xsl:when>
-    <xsl:otherwise>
-      <xsl:call-template name="fmt-author">
-        <xsl:with-param name="aut" select="$aut"/>
-        <xsl:with-param name="edi" select="$edi"/>
-        <xsl:with-param name="pub" select="$pub"/>
-      </xsl:call-template>
-      <xsl:text> </xsl:text>
-    </xsl:otherwise>
-  </xsl:choose>
-  &newline;
-
-  <xsl:call-template name="fmt-bookinfo">
-    <xsl:with-param name="aut" select="$aut"/>
-    <xsl:with-param name="edi" select="$edi"/>
-    <xsl:with-param name="boo" select="$boo"/>
-    <xsl:with-param name="sn1" select="$sn1"/>
-    <xsl:with-param name="sv1" select="$sv1"/>
-    <xsl:with-param name="sn2" select="$sn2"/>
-    <xsl:with-param name="sv2" select="$sv2"/>
-    <xsl:with-param name="pub" select="$pub"/>
-    <xsl:with-param name="pla" select="$pla"/>
-    <xsl:with-param name="dat" select="$dat"/>
-    <xsl:with-param name="not" select="$not"/>
-  </xsl:call-template>
+    <xsl:choose>
+      <xsl:when test="@same-auth = 't'">
+	<xsl:text>---------. </xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:call-template name="fmt-author"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    &newline;
+    
+    <xsl:call-template name="fmt-bookinfo"/>
   </p>
 </xsl:template>
 
 <xsl:template name="fmt-bookinfo">
-  <xsl:param name="aut"/>
-  <xsl:param name="edi"/>
-  <xsl:param name="boo"/>
-  <xsl:param name="sn1"/>
-  <xsl:param name="sv1"/>
-  <xsl:param name="sn2"/>
-  <xsl:param name="sv2"/>
-  <xsl:param name="pub"/>
-  <xsl:param name="pla"/>
-  <xsl:param name="dat"/>
-  <xsl:param name="not"/>
+  <xsl:variable name="norm-boo">
+    <xsl:choose>
+      <xsl:when test="string-length(b:booktitle)>0">
+	<xsl:value-of select="normalize-space(b:booktitle)"/>
+      </xsl:when>
+      <xsl:otherwise><xsl:value-of select="normalize-space(b:title)"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
 
-  <xsl:variable name="norm-boo" select="normalize-space($boo)"/>
-
-  <span class="booktitle"><xsl:value-of select="$norm-boo"/>
+  <span class="booktitle">
+    <xsl:value-of select="$norm-boo"/>
     <xsl:call-template name="maybe-add-period">
       <xsl:with-param name="prev-str" select="$norm-boo"/>
     </xsl:call-template>
   </span>
-  <xsl:if test="$edi and $aut">
+
+  <xsl:if test="b:editor and b:author">
     <xsl:text> </xsl:text>
     &newline;
     <xsl:call-template name="fmt-names">
-      <xsl:with-param name="names" select="$edi"/>
+      <xsl:with-param name="names" select="b:editor"/>
       <xsl:with-param name="flags" select="1"/>
     </xsl:call-template>
   </xsl:if>
 
-  <xsl:if test="$sn1">
+  <xsl:if test="b:series">
     <xsl:text> </xsl:text>
     &newline;
     <xsl:text>(</xsl:text>
     <xsl:call-template name="map-jrnser">
-      <xsl:with-param name="js" select="$sn1"/>
+      <xsl:with-param name="js" select="b:series"/>
     </xsl:call-template>
     <xsl:text> </xsl:text>
-    <xsl:value-of select="$sv1"/>
+    <xsl:value-of select="b:volume"/>
+    <!--
     <xsl:if test="$sn2">
       <xsl:text> = </xsl:text>
       <xsl:call-template name="map-jrnser">
@@ -298,29 +313,30 @@
       </xsl:call-template>
       <xsl:text> </xsl:text>
       <xsl:value-of select="$sv2"/>
-    </xsl:if>
+      </xsl:if>
+      -->
     <xsl:text>). </xsl:text>
   </xsl:if>
 
   <xsl:call-template name="trap-diss">
-    <xsl:with-param name="strs" select="$not"/>
+    <xsl:with-param name="strs" select="b:note"/>
   </xsl:call-template>
 
-  <xsl:if test="$pub or $pla or $dat">
+  <xsl:if test="b:publisher or b:location or b:date">
     <xsl:text> </xsl:text>
     &newline;
-    <xsl:value-of select="$pla"/>
-    <xsl:if test="$pub">
-      <xsl:if test="$pla">
+    <xsl:value-of select="b:location"/>
+    <xsl:if test="b:publisher">
+      <xsl:if test="b:location">
         <xsl:text>: </xsl:text>
       </xsl:if>
-      <xsl:value-of select="$pub"/>
+      <xsl:value-of select="b:publisher"/>
     </xsl:if>
-    <xsl:if test="$dat">
-      <xsl:if test="$pub or $pla">
+    <xsl:if test="b:date">
+      <xsl:if test="b:publisher or b:location">
         <xsl:text>, </xsl:text>
       </xsl:if>
-      <xsl:value-of select="$dat"/>
+      <xsl:value-of select="b:date"/>
     </xsl:if>
     <xsl:text>. </xsl:text>
   </xsl:if>
@@ -337,7 +353,7 @@
         <xsl:with-param name="prev-str" select="b:author[last()]"/>
       </xsl:call-template>
     </xsl:when>
-    <xsl:when test="count($edi) > 0">
+    <xsl:when test="count(b:editor) > 0">
       <xsl:call-template name="fmt-names">
         <xsl:with-param name="names" select="b:editor"/>
         <xsl:with-param name="flags" select="1"/>
@@ -363,19 +379,47 @@
 <xsl:template name="fmt-init-names">
   <xsl:variable name="sames">
     <xsl:choose>
-      <xsl:when test="@sameauth='1'"><xsl:text>sames</xsl:text></xsl:when>
+      <xsl:when test="@sameauth='1'"><xsl:text> sames</xsl:text></xsl:when>
       <xsl:otherwise><xsl:text/></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
-  <xsl:call-template name="fmt-names">
-    <xsl:with-param name="names" select="b:author"/>
-  </xsl:call-template>
+  <xsl:choose>
+    <xsl:when test="b:author">
+      <xsl:call-template name="fmt-names">
+	<xsl:with-param name="names" select="b:author"/>
+	<xsl:with-param name="sames" select="$sames"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="b:editor">
+      <xsl:call-template name="fmt-names">
+	<xsl:with-param name="names" select="b:editor"/>
+	<xsl:with-param name="sames" select="$sames"/>
+        <xsl:with-param name="flags" select="1"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="b:publisher">
+      <xsl:call-template name="fmt-names">
+	<xsl:with-param name="names" select="b:publisher"/>
+	<xsl:with-param name="sames" select="$sames"/>
+        <xsl:with-param name="flags" select="2"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:call-template name="fmt-names">
+	<xsl:with-param name="names" select="document(/)/*/xsl:template[name='anon']"/>
+	<xsl:with-param name="sames" select="$sames"/>
+      </xsl:call-template>
+    </xsl:otherwise>
+  </xsl:choose>
+
   <xsl:call-template name="maybe-add-period">
     <xsl:with-param name="prev-str" select="b:author[last()]"/>
   </xsl:call-template>
   <xsl:text> </xsl:text>
 </xsl:template>
 
+<xsl:template name="anon"><b:name last="Anonymous"/></xsl:template>
+  
 <xsl:template name="fmt-journal-name">
   <span class="bib-journal"><xsl:value-of select="b:journal"/></span>
 </xsl:template>
@@ -386,7 +430,7 @@
   <xsl:param name="flags"/>
 
   <span class="bib-names{$sames}">
-    <xsl:for-each select="$names">
+    <xsl:for-each select="$names/b:name">
       <xsl:choose>
 	<xsl:when test="position() > 1 and position() = last()">
           <xsl:text> and </xsl:text>
@@ -395,11 +439,15 @@
           <xsl:text>, </xsl:text>
 	</xsl:when>
       </xsl:choose>
-      <xsl:value-of select="normalize-space(.)"/>
+      <xsl:value-of select="@last"/>
+      <xsl:if test="string-length(@rest)>0">
+	&comma;&space;
+	<xsl:value-of select="@rest"/>
+      </xsl:if>
     </xsl:for-each>
     <xsl:if test="$flags = 1">
       <xsl:text>, ed</xsl:text>
-      <xsl:if test="count($names) > 1">
+      <xsl:if test="count($names/b:name) > 1">
 	<xsl:text>s</xsl:text>
       </xsl:if>
       <xsl:text>. </xsl:text>
