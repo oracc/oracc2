@@ -3,6 +3,7 @@
 #include "inl.h"
 
 extern int line;
+int suppress_empty_text_nodes = 1;
 
 char *
 inl_span(Tree *tp, char *s)
@@ -60,11 +61,17 @@ inl_span(Tree *tp, char *s)
 void
 inl_text(Tree *tp, const char *text)
 {
-  Scan *sp = memo_new(inl_scan_m);
-  sp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
-  sp->name = NULL;
-  sp->np->text = text;
-  sp->np->user = sp;
+  if (text)
+    {
+      if (*text || !suppress_empty_text_nodes)
+	{
+	  Scan *sp = memo_new(inl_scan_m);
+	  sp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
+	  sp->name = NULL;
+	  sp->np->text = text;
+	  sp->np->user = sp;
+	}
+    }
 } 
 
 char *
