@@ -1,8 +1,9 @@
 #include <oraccsys.h>
 #include <runexpat.h>
 #include "bx.h"
+#include "bib.h"
 
-static void bx_cite(Bx *bp, const char *k);
+static void bx_cite(Bx *bp, struct bib_cite_tab *tp, const char *k);
 static void bx_cit_run_one(Bx *bp, const char *fname);
 Mloc no_known_loc = { .file = NULL, .line = -1 };
 
@@ -30,6 +31,7 @@ bx_cit_pre(Bx *bp)
       else if (bp->argv[optind])
 	bp->files_cit = (const char **)&bp->argv[optind];
       bp->keys_cit = hash_create(1024);
+      bp->keys_full = hash_create(1024);
     }
 }
 
@@ -43,7 +45,7 @@ bx_cit_run(Bx *bp)
     {
       int i;
       for (i = 0; bp->citations[i]; ++i)
-	bx_cite(bp, bp->citations[i]);
+	bx_cite(bp, bib_cite("cite", 4), bp->citations[i]);
     }
   else if (bp->files_cit)
     {
@@ -72,7 +74,7 @@ bx_cit_out(Bx *bp)
 }
 
 static void
-bx_cite(Bx *bp, const char *k)
+bx_cite(Bx *bp, struct bib_cite_tab *tp, const char *k)
 {
   if (!hash_find(bp->keys_cit, (uccp)k))
     {
@@ -82,7 +84,10 @@ bx_cite(Bx *bp, const char *k)
 	  const char *keyf = hash_find(bp->hbibkey, (uccp)k);
 	  if (keyf)
 	    {
-	      hash_add(bp->keys_cit, pool_copy((uccp)k, bp->p), (void*)keyf);
+	      uccp kk;
+	      hash_add(bp->keys_cit, kk = pool_copy((uccp)k, bp->p), (void*)keyf);
+	      if (C_FULL == tp->ctype)
+		hash_add(bp->keys_full, kk, "");
 	    }
 	  else
 	    {
@@ -99,10 +104,11 @@ bx_cite(Bx *bp, const char *k)
 static void
 cit_sH(void *userData, const char *name, const char **atts)
 {
-  if (!strcmp(name, "b:cite"))
+  struct bib_cite_tab *tp = bib_cite(name+2, strlen(name+2));
+  if (tp)
     {
       const char *k = findAttr(atts, "key");
-      bx_cite(userData, k);
+      bx_cite(userData, tp, k);
     }
 }
 

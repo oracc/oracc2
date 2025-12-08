@@ -8,9 +8,10 @@ bx operates in several different modes:
 1) Cites Mode (CIT)
 ===================
 
-Default mode. Scans XML inputs for <cite> elements and uses the found
-ref-keys to generate a .bib file. XML inputs are on command line or in
-a file named with -c arg, which may be '-' to read XML inputs from stdin.
+Default mode. Scans XML inputs for <(full|no)?cite> elements and uses
+the found ref-keys to generate a .bib file. XML inputs are on command
+line or in a file named with -c arg, which may be '-' to read XML
+inputs from stdin.
 
 .bib files are not used in CIT mode.
 
@@ -72,11 +73,11 @@ ICF depends on CIT mode, so it calls CIT and REF then runs itself.
 Arg -f, or -F to have no formatted bibliography output.
 
 Reads the same XML inputs as were specified for the CIT
-modeand adds a formatted citation as child of <cite>. Any <cite>
+mode and adds a formatted citation as child of <cite>. Any <cite>
 children already in the input are discarded and replaced with newly
 produced ones.
 
-Outputs to arg -t [TMP] directory or in-place with arg -i.  
+Output to stdout. 
 
 
 5) Bib-ID mode (BID)

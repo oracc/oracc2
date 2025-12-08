@@ -30,8 +30,8 @@ bx_keys(Bx *bp, const char *project, const char **bibfiles)
     }
   else
     {
-      char buf[strlen(oracc())+strlen("/lib/data/bib-key.txt0")];
-      (void)sprintf(buf, "%s/lib/data/bib-key.txt", oracc());
+      char buf[strlen(oracc())+strlen("/lib/keys.tab0")];
+      (void)sprintf(buf, "%s/lib/bib/keys.tab", oracc());
       bp->outfile = (ccp)pool_copy((uccp)buf, bp->p);
     }
 

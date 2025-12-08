@@ -2,12 +2,23 @@
 #include <roco.h>
 #include "bx.h"
 
+static const char *xbib[2] = { 0,0 };
+
 void
 bxl_bib_files(Bx *bp, int use_argv)
 {
   char *fmem = NULL;
   if (bp->flist_bib)
-    bp->files_bib = bxl_flist_files(bp, bp->flist_bib, "*.bib", &fmem);
+    {
+      const char *dotbib = strstr(bp->flist_bib, ".bib");
+      if (dotbib && !strcmp(dotbib, ".bib"))
+	{
+	  xbib[0] = bp->flist_bib;
+	  bp->files_bib = xbib;
+	}
+      else
+	bp->files_bib = bxl_flist_files(bp, bp->flist_bib, "*.bib", &fmem);
+    }
   else if (use_argv && bp->argv[optind])
     bp->files_bib = (const char **)&bp->argv[optind];
   list_add(bp->mem, fmem);
@@ -56,9 +67,9 @@ bxl_bibkey_file(Bx *bp)
 
   if (!bp->bibkey_file)
     {
-      char buf[strlen(oracc())+strlen("/lib/data/bib-key.txt0")];
-      (void)sprintf(buf, "%s/lib/data/bib-key.txt", oracc());
-      if (!access(buf, R_OK))
+      char buf[strlen(oracc())+strlen("/lib/bib/keys.tab0")];
+      (void)sprintf(buf, "%s/lib/bib/keys.tab", oracc());
+      if (BX_KEY == bp->mode || !access(buf, R_OK))
 	bp->bibkey_file = (ccp)pool_copy((uccp)buf, bp->p);
     } 
 }

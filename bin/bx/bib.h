@@ -88,8 +88,14 @@ typedef struct nameinfo
 typedef struct bibicf
 {
   const char *str;
+  const char *full;
   Bibentry *ep;
 } Bibicf;
+
+typedef enum ctype { C_CITE , C_NO , C_FULL, C_TEXT , C_FOOT , C_PAREN , C_AUTHOR , C_YEAR , C_TOP } Ctype;
+
+struct bib_cite_tab { const char *name; int ctype; };
+extern struct bib_cite_tab *bib_cite(register const char *str, register size_t len);
 
 struct bib_year_tab { const char *name; int year; };
 extern struct bib_year_tab *bib_year(register const char *str, register size_t len);

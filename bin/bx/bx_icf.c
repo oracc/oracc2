@@ -38,6 +38,8 @@ bx_icf_run(Bx *bp)
       for (i = 0; bp->ents[i]; ++i)
 	hash_add(bp->hicf, (uccp)bp->ents[i]->bkey,
 		 (bp->ents[i]->icf = bx_icf_data(bp, bp->ents[i])));
+      if (bp->keys_full)
+	bx_icf_full(bp);
     }
 }
 
@@ -103,24 +105,38 @@ bx_icf_data(Bx *bp, Bibentry *ep)
 }
 
 static void
-bx_icf_cite_one(Bx *bp, const char *r)
+bx_icf_cite_one(Bx *bp, struct bib_cite_tab *tp, const char *r)
 {
-  Bibicf *ip = hash_find(bp->hicf, (uccp)r);
-  if (ip)
-    fprintf(bp->outfp, "%s", ip->str);
-  else
-    fprintf(stderr, "bx: failed to find cite string for key `%s'\n", r);
+  switch (tp->ctype)
+    {
+    case C_CITE:
+      {
+	Bibicf *ip = hash_find(bp->hicf, (uccp)r);
+	if (ip)
+	  fprintf(bp->outfp, "%s", ip->str);
+	else
+	  fprintf(stderr, "bx: failed to find cite string for key `%s'\n", r);
+	break;
+      }
+    case C_FULL:
+      break;
+    case C_NO:
+      break;
+    default:
+      fprintf(stderr, "bx: unhandled cite type %s\n", tp->name);
+      break;
+    }
 }
 
 static void
-bx_icf_cite(Bx *bp, const char *ref)
+bx_icf_cite(Bx *bp, struct bib_cite_tab *tp, const char *ref)
 {
-  bx_icf_cite_one(bp, ref);
+  bx_icf_cite_one(bp, tp, ref);
 }
 
 /* This printText implements the same escaping as used by oracc2's
    xmlify library routine */
-void
+static void
 printText(const char *s, FILE *frag_fp)
 {
   while (*s)
@@ -143,7 +159,7 @@ printText(const char *s, FILE *frag_fp)
     }
 }
 
-void
+static void
 printStart(FILE *fp, const char *name, const char **atts)
 {
   const char **ap = atts;
@@ -161,7 +177,7 @@ printStart(FILE *fp, const char *name, const char **atts)
   fputc('>', fp);
 }
 
-void
+static void
 printEnd(FILE *fp, const char *name)
 {
   printText((const char *)charData_retrieve(), fp);
@@ -174,7 +190,8 @@ void
 icf_sH(void *userData, const char *name, const char **atts)
 {
   static int hmode = 0;
-  if (!strcmp(name, "b:cite"))
+  struct bib_cite_tab *tp = bib_cite(name+2, strlen(name+2));
+  if (tp)
     {
       /* If we are emitting HTML output we probably want to put the
 	 cite in span with a JS link to the full bib item */
@@ -185,7 +202,7 @@ icf_sH(void *userData, const char *name, const char **atts)
 	}
       else
 	printStart(ubp->outfp, name, atts);
-      bx_icf_cite(userData, findAttr(atts, "key"));
+      bx_icf_cite(userData, tp, findAttr(atts, "key"));
     }
   else
     {

@@ -148,6 +148,7 @@ opts(int opt, const char *arg)
       b.htmloutput = 1;
       b.html_mode = BX_HTML_DIV;
       b.outfile = arg;
+      b.sort = 1;
       break;
     case 'h':
       bx_output_check(arg, "html");

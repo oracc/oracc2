@@ -24,6 +24,7 @@ typedef struct bx
   char * const*argv;
   Hash *keys;
   Hash *keys_cit;
+  Hash *keys_full;
   Hash *names;
   Hash *akanames;
   Hash *hlasts;
@@ -42,6 +43,7 @@ typedef struct bx
   const char *bibkey_file;
   Hash *hbibkey;
   Hash *hicf;
+  const char *allbib_html;
   const char *flist_bib;
   const char **files_bib;
   const char *flist_cit;
@@ -52,6 +54,7 @@ typedef struct bx
   List *entries;	/* used for !bibonly run; redirects to
 			   per-bib-file entries in bibonly mode */
   struct bibentry **ents;
+  struct bibentry **full; /* pointers to data in ents for entries that are used in @fullcite */
   int nents;
   struct name **people;
   int npeople;
@@ -102,6 +105,8 @@ extern void bx_cit_out(Bx *bp);
 extern void bx_icf_out(Bx *bp);
 extern void bx_key_out(Bx *bp);
 extern void bx_ref_out(Bx *bp);
+
+extern void bx_icf_full(Bx *bp);
 
 extern const char *bx_bid_first(const char *ids);
 extern void bxl_bibkeys(Bx *bp);
