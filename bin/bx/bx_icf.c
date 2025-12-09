@@ -113,12 +113,19 @@ bx_icf_cite_one(Bx *bp, struct bib_cite_tab *tp, const char *r)
       {
 	Bibicf *ip = hash_find(bp->hicf, (uccp)r);
 	if (ip)
-	  fprintf(bp->outfp, "%s", ip->str);
+	  fputs(ip->str, bp->outfp);
 	else
-	  fprintf(stderr, "bx: failed to find cite string for key `%s'\n", r);
+	  fprintf(stderr, "bx: failed to find @cite string for key `%s'\n", r);
 	break;
       }
     case C_FULL:
+      {
+	const char *f = hash_find(bp->keys_full, (uccp)r);
+	if (f)
+	  fputs(f, bp->outfp);
+	else
+	  fprintf(stderr, "bx: failed to find @fullcite string for key `%s'\n", r);
+      }
       break;
     case C_NO:
       break;
