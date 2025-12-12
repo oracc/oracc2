@@ -328,6 +328,7 @@ msc/oscx/odo
 msc/otf/odfmanager.plx
 msc/prj/cdli/imgp4
 msc/prj/osl/osl-prepare-update.sh
+msc/prj/osl/osl-prereqs.sh
 msc/prj/osl/osl-sx-slix.sh
 msc/prj/osl/osl-user-page.sh
 msc/prj/osl/osl-user-site.sh
