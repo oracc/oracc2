@@ -1,0 +1,12 @@
+#!/bin/sh
+if [ ! -d @@ORACC@@/osl ]; then
+    echo $0: no @@ORACC@@/osl. Stop.
+    exit 1
+fi
+if [ ! -d @@ORACC@@/bib ]; then
+    echo $0: no @@ORACC@@/bib. Stop.
+    exit 1
+fi
+(cd @@ORACC@@ ; ${ORACC_sudo} make install)
+${ORACC_sudo} ./osl-prepare-update.sh
+${ORACC_sudo} ./osl-sx-slix.sh
