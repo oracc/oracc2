@@ -67,7 +67,7 @@ bib_bib(Bx *bp, List *b, FILE *fp)
   if (bp->entries)
     {
       int i;
-      if (bp->sort)
+      if (bp->ents)
 	{
 	  for (i = 0; bp->ents[i]; ++i)
 	    bib_bib_entry(bp, bp->ents[i]);
@@ -88,7 +88,7 @@ bib_bib(Bx *bp, List *b, FILE *fp)
       else if (verbose > 1)
 	fprintf(stderr, "bib_bib: no eof_comments found; bibp == %lu\n", (uintptr_t)bibp);
     }
-  else
+  else if (b)
     {
       Bib *bibp;
       for (bibp = list_first(b); bibp; bibp = list_next(b))

@@ -144,6 +144,14 @@ bx_ref_out(Bx *bp)
 	  return;
 	}
     }
+  else if (bp->reffile)
+    {
+      FILE *bfp = fopen(bp->reffile, "w");
+      if (bfp)
+	bib_bib(bp, NULL, bfp);
+      else
+	fprintf(stderr, "bx_out_ref: open failed for ref list %s\n", bp->reffile);
+    }
   else
     {
       if (bp->bibs)
@@ -158,7 +166,8 @@ bx_ref_out(Bx *bp)
 	    bfp = stdout;
 	  else
 	    bfp = fopen(bp->outfile, "w");
-	  bib_bib(bp, list_first(bp->bibs), bfp);
+	  if (bfp)
+	    bib_bib(bp, list_first(bp->bibs), bfp);
 	}
     }
 }

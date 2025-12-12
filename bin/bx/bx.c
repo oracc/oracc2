@@ -40,8 +40,8 @@ main(int argc, char * const*argv)
   options(argc, argv,
 	  "fFiIkKrR"     /* mode args */
 	  "b:c:"        /* input args */
-	  "d:h:o:x:"    /* output args */ 
-	  "D:nOpqsStv"   /* adjunct args */
+	  "d:h:l:no:x:" /* output args */ 
+	  "D:LOpqsStv"   /* adjunct args */
 	  );
 
   if (BX_TOP == b.mode)
@@ -114,6 +114,13 @@ opts(int opt, const char *arg)
     case 'D':
       if (strstr(arg, "people"))
 	b.dbs |= BX_DB_PEOPLE;
+      break;
+    case 'L':
+      b.bid_mode = BX_BID_LAST;
+      b.mode = BX_BID;
+      break;
+    case 'l':
+      b.reffile = arg;
       break;
     case 'n':
       b.no_output = 1;

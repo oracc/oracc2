@@ -97,11 +97,14 @@ static int nam_cmp(const void *a, const void *b)
 void
 bib_sort(Bx *bp)
 {
-  bp->ents = (struct bibentry **)list2array_c(bp->entries, &bp->nents);
-  qsort(bp->ents, bp->nents, sizeof(Bibentry *), (cmp_fnc_t)ent_cmp);
-  int i;
-  for (i = 0; bp->ents[i]; ++i)
-    bp->ents[i]->sort = i;
+  if (list_len(bp->entries))
+    {
+      bp->ents = (struct bibentry **)list2array_c(bp->entries, &bp->nents);
+      qsort(bp->ents, bp->nents, sizeof(Bibentry *), (cmp_fnc_t)ent_cmp);
+      int i;
+      for (i = 0; bp->ents[i]; ++i)
+	bp->ents[i]->sort = i;
+    }
 }
 
 /* For Oracc bib a name-key (last+initials) designates a person; if
@@ -164,6 +167,9 @@ bib_add_people(Hash *peeps,Bibentry *ep)
 void
 bib_disambiguate(Bx *bp)
 {
+  if (!bp->ents)
+    return;
+  
   int i, penult;
   Hash *hpeople = hash_create(1024);
   for (i = 0, penult=bp->nents-1; i < penult; ++i)

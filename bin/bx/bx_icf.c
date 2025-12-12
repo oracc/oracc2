@@ -46,7 +46,9 @@ bx_icf_run(Bx *bp)
 void
 bx_icf_out(Bx *bp)
 {
-  bp->outfp = stdout; /* place-holder for better things */
+  if (overwrite || !bp->outfp)
+    bp->outfp = stdout; /* place-holder for better things */
+
   int i;
   /* icf always runs over same inputs as cit */
   for (i = 0; bp->files_cit[i]; ++i)
@@ -55,7 +57,15 @@ bx_icf_out(Bx *bp)
   /* Do this after the Bibicf building so we can include it in bib
      output if appropriate */
   if (!bp->icfonly)
-    bx_ref_out(bp);
+    {
+      /* sort and disambiguate the entries */
+      if (bp->sort)
+	{
+	  bib_sort(bp);
+	  bib_disambiguate(bp);
+	}
+      bx_ref_out(bp);
+    }
 }
 
 static const char *
@@ -105,7 +115,7 @@ bx_icf_data(Bx *bp, Bibentry *ep)
 }
 
 static void
-bx_icf_cite_one(Bx *bp, struct bib_cite_tab *tp, const char *r)
+bx_icf_cite_one(Bx *bp, struct bib_cite_tab *tp, const char *r, const char *p)
 {
   switch (tp->ctype)
     {
@@ -113,7 +123,11 @@ bx_icf_cite_one(Bx *bp, struct bib_cite_tab *tp, const char *r)
       {
 	Bibicf *ip = hash_find(bp->hicf, (uccp)r);
 	if (ip)
-	  fputs(ip->str, bp->outfp);
+	  {
+	    fputs(ip->str, bp->outfp);
+	    if (p && *p)
+	      fprintf(bp->outfp, ", %s", p);
+	  }
 	else
 	  fprintf(stderr, "bx: failed to find @cite string for key `%s'\n", r);
 	break;
@@ -136,9 +150,9 @@ bx_icf_cite_one(Bx *bp, struct bib_cite_tab *tp, const char *r)
 }
 
 static void
-bx_icf_cite(Bx *bp, struct bib_cite_tab *tp, const char *ref)
+bx_icf_cite(Bx *bp, struct bib_cite_tab *tp, const char *ref, const char *pp)
 {
-  bx_icf_cite_one(bp, tp, ref);
+  bx_icf_cite_one(bp, tp, ref, pp);
 }
 
 /* This printText implements the same escaping as used by oracc2's
@@ -209,7 +223,7 @@ icf_sH(void *userData, const char *name, const char **atts)
 	}
       else
 	printStart(ubp->outfp, name, atts);
-      bx_icf_cite(userData, tp, findAttr(atts, "key"));
+      bx_icf_cite(userData, tp, findAttr(atts, "key"), findAttr(atts, "pp"));
     }
   else
     {

@@ -77,7 +77,10 @@ mode and adds a formatted citation as child of <cite>. Any <cite>
 children already in the input are discarded and replaced with newly
 produced ones.
 
-Output to stdout. 
+Output to stdout.
+
+Arg -l [list-of-refs-file] to produce a .bib file of all the
+referenced items in the citations.
 
 
 5) Bib-ID mode (BID)

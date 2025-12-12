@@ -134,6 +134,11 @@ bx_bid_pre(Bx *bp)
   bx_bid_last_used_BID();
   if (verbose)
     fprintf(stderr, "bx_bid_pre: last_BID = %u\n", last_BID);
+  else if (bp->bid_mode == BX_BID_LAST)
+    {
+      printf("highest BID found in inputs was B%06u\n", last_BID);
+      exit(0);
+    }
   
   /* load the .bib file that we are adding BID to */
   bx_ref_pre(bp);

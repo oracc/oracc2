@@ -15,6 +15,7 @@ typedef enum bxmode { BX_BID , BX_CIT , BX_ICF , BX_KEY , BX_REF, BX_TOP } Bxmod
 
 #define BX_BID_NORMAL 0
 #define BX_BID_IDENTITY 1
+#define BX_BID_LAST 2
 
 typedef void (*bxfunc)(struct bx*);
 
@@ -39,6 +40,7 @@ typedef struct bx
   Pool *p;
   List *mem; /* odd memory items that need to be freed at end of run */
   const char *outfile;
+  const char *reffile;
   const char *project;
   const char *bibkey_file;
   Hash *hbibkey;
@@ -83,7 +85,7 @@ extern Bx bx;
 #define m_key(b) ((b)->mode==BX_KEY)
 #define m_ref(b) ((b)->mode==BX_REF)
 
-extern int verbose;
+extern int overwrite, verbose;
 
 extern const char **bx_bibs_file(const char *fn);
 extern void bx_keys(Bx *bp, const char *project, const char **bibfiles);
