@@ -8,7 +8,7 @@ bin_SCRIPTS=\
 	sxcmp.sh sxnorm.sh sxclean.sh \
 	sxmissing.sh sxudata.sh sxportal.sh sx-osl-unicode.sh \
 	sxportal-listdata.sh sxportal-udata.sh sxoid.sh \
-	sximages.sh sx-add-oid.sh sxportal-abbrevs.sh sx-csl.sh \
+	sximages.sh sx-add-oid.sh sxportal-abbrevs.sh sx-bib.sh sx-csl.sh \
 	sxfreq.sh sxsortorder.sh sx-slix.sh sx-update.sh sx-tok.sh
 
 # osl-update.sh pcsl-update.sh 
