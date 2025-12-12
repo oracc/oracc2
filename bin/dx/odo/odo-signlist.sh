@@ -41,6 +41,7 @@ if [ "$asl" = "" ]; then
     fi
 fi
 if [ "$asl" != "" ]; then
+    sx-bib.sh
     sxweb.sh
 #    tisdbi.sh # this is not used at the moment but remember it in a possible ePSD3 tok implementation
     if [ "$projtype" = "signlist" ]; then
