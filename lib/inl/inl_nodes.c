@@ -2,80 +2,81 @@
 #include <scan.h>
 #include "inl.h"
 
-extern int line;
 int suppress_empty_text_nodes = 1;
 
 char *
-inl_span(Tree *tp, char *s)
+inl_span(Scan *sp, Tree *tp, char *s)
 {
-  Scan *sp = memo_new(inl_scan_m);
-  sp->name = scan_name(s, &s);
+  Scanseg *ssp = memo_new(inl_scanseg_m);
+  ssp->sp = sp;
+  ssp->name = scan_name(sp, s, &s);
 
-  struct inltok *itp = inltok(sp->name, strlen(sp->name));
+  struct inltok *itp = inltok(ssp->name, strlen(ssp->name));
   if (itp)
     {
       if (itp->tag)
 	{
-	  sp->name = itp->tag;
-	  sp->attr = itp->attr;
+	  ssp->name = itp->tag;
+	  ssp->attr = itp->attr;
 	}
       else if ('[' == *s)
-	scan_square(sp, (uchar*)s, (uchar**)&s, (size_t*)&line);
+	scan_square(sp, (uchar*)s, (uchar**)&s);
 
       char *stext = NULL;
       if (itp->txt)
 	{
 	  if ('{' == *s)
-	    stext = scan_curly(s, &s);
+	    stext = scan_curly(sp, s, &s);
 	  else
-	    fprintf(stderr, "missing {...} content after %s\n", sp->name);
+	    mesg_verr(sp->mp, "missing {...} content after %s\n", ssp->name);
 	}
 
       if (itp->h)
 	{
-	  itp->h(tp, sp, stext);
-	  sp->np->user = sp;
+	  itp->h(sp, ssp, stext);
+	  ssp->np->user = ssp;
 	}
       else
 	{
-	  sp->np = tree_add(tp, NS_INL, "span", tp->curr->depth, NULL);
-	  sp->np->text = stext;
+	  ssp->np = tree_add(tp, NS_INL, "span", tp->curr->depth, NULL);
+	  ssp->np->text = stext;
 	  if (!stext)
-	    sp->np->name = "#";
+	    ssp->np->name = "#";
 
-	  sp->np->user = sp;
+	  ssp->np->user = ssp;
 
-	  if (sp->np->text)
+	  if (ssp->np->text)
 	    {
 	      (void)tree_push(tp);
-	      (void)inl_nodes(sp->np, (char*)sp->np->text);
+	      (void)inl_nodes(sp, ssp->np, (char*)ssp->np->text);
 	      (void)tree_pop(tp);
 	    }
 	}
     }
   else
-    fprintf(stderr, "bad tag %s\n", sp->name);
+    mesg_verr(sp->mp, "bad tag %s\n", ssp->name);
   return s;
 }
 
 void
-inl_text(Tree *tp, const char *text)
+inl_text(Scan *sp, Tree *tp, const char *text)
 {
   if (text)
     {
       if (*text || !suppress_empty_text_nodes)
 	{
-	  Scan *sp = memo_new(inl_scan_m);
-	  sp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
-	  sp->name = NULL;
-	  sp->np->text = text;
-	  sp->np->user = sp;
+	  Scanseg *ssp = memo_new(inl_scanseg_m);
+	  ssp->sp = sp;
+	  ssp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
+	  ssp->name = NULL;
+	  ssp->np->text = text;
+	  ssp->np->user = ssp;
 	}
     }
 } 
 
 char *
-inl_nodes(Node *np, char *s)
+inl_nodes(Scan *sp, Node *np, char *s)
 {
   char save = (s && '@' == *s) ? '@' : '\0';
   while (*s)
@@ -84,7 +85,7 @@ inl_nodes(Node *np, char *s)
 	{
 	  save = '\0';
 	  if (isalpha(*s))
-	    s = inl_span(np->tree, s);
+	    s = inl_span(sp, np->tree, s);
 	  else
 	    {
 	      switch (*s)
@@ -117,13 +118,13 @@ inl_nodes(Node *np, char *s)
 	    {
 	      save = '@';
 	      *at = '\0';
-	      inl_text(np->tree, s);
+	      inl_text(sp, np->tree, s);
 	      s = ++at;
 	    }
 	  else
 	    {
 	      save = '\0';
-	      inl_text(np->tree, s);
+	      inl_text(sp, np->tree, s);
 	      s = s + strlen(s);
 	    }
 	}

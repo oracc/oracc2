@@ -6,6 +6,7 @@
 #include "inl.h"
 
 Memo *inl_scan_m = NULL;
+Memo *inl_scanseg_m = NULL;
 Pool *inl_scan_p = NULL;
 
 static void
@@ -14,7 +15,7 @@ treexml_o_bib(Node *np, void *user)
   Xmlhelper *xhp = user;
 
   fprintf(xhp->fp, "<b:%s", np->name);
-  Scan *sp = np->user;
+  Scanseg *sp = np->user;
   if (sp)
     {
       fprintf(xhp->fp, " key=\"%s\"", np->text);
@@ -46,7 +47,7 @@ treexml_o_inl(Node *np, void *user)
 	treexml_a_handlers[np->ns](np, user);
     }
 
-  Scan *sp = np->user;
+  Scanseg *sp = np->user;
   if (sp)
     {
       if (!sp->name)
@@ -82,7 +83,10 @@ void
 inl_init(void)
 {
   if (!inl_scan_m)
-    inl_scan_m = memo_init(sizeof(Scan), 256);
+    {
+      inl_scan_m = memo_init(sizeof(Scan), 256);
+      inl_scanseg_m = memo_init(sizeof(Scan), 1024);
+    }
   if (!inl_scan_p)
     inl_scan_p = pool_init();
 
@@ -98,7 +102,9 @@ inl_term(void)
   if (inl_scan_m)
     {
       memo_term(inl_scan_m);
+      memo_term(inl_scanseg_m);
       inl_scan_m = NULL;
+      inl_scanseg_m = NULL;
     }
   if (!inl_scan_p)
     {
@@ -113,7 +119,7 @@ inl_term(void)
  * arg 's' must be a string that can be chopped up by the inl routines.
  */
 Tree *
-inl(char *s)
+inl(Mloc *mp, char *s)
 {
   Tree *tp = NULL;
   if (s && *s)
@@ -123,7 +129,11 @@ inl(char *s)
       tree_root(tp, NS_INL, "inl", 0, NULL);
       tp->rootless = 1;
       tp->root->text = s;
-      (void)inl_nodes(tp->root, (char*)tp->root->text);
+      Scan *sp = memo_new(inl_scan_m);
+      sp->data = (ccp)pool_copy((uccp)s, inl_scan_p);
+      sp->tree = tp;
+      *sp->mp = *mp;
+      (void)inl_nodes(sp, tp->root, (char*)tp->root->text);
     }
   return tp;
 }

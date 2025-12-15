@@ -5,7 +5,7 @@
 
 typedef enum inl_nym { INL_NO , INL_YES , INL_MAY , INL_TOK } inl_nym;
 
-typedef void (inl_handler)(Tree *tp, Scan *sp, char *text);
+typedef void (inl_handler)(Scan *sp, Scanseg *ssp, char *text);
 
 struct inltok
 {
@@ -24,8 +24,8 @@ extern inl_handler inl_bib_h;
 extern inl_handler inl_gdl_h;
 extern void inl_init(void);
 extern void inl_term(void);
-extern char *inl_nodes(Node *np, char *s);
-extern Tree *inl(char *s);
-extern Memo *inl_scan_m;
+extern char *inl_nodes(Scan *sp, Node *np, char *s);
+extern Tree *inl(Mloc *mp, char *s);
+extern Memo *inl_scanseg_m;
 
 #endif/*INL_H_*/

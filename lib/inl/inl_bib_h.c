@@ -2,9 +2,9 @@
 #include "inl.h"
 
 void
-inl_bib_h(Tree *tp, Scan *sp, char *s)
+inl_bib_h(Scan *sp, Scanseg *ssp, char *s)
 {
   /*bib_check_keys(s);*/
-  sp->np = tree_add(tp, NS_BIB, sp->name, tp->curr->depth, NULL);
-  sp->np->text = s;
+  ssp->np = tree_add(sp->tree, NS_BIB, ssp->name, sp->tree->curr->depth, NULL);
+  ssp->np->text = s;
 }
