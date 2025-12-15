@@ -6,7 +6,7 @@ dir=$(shell pwd)
 
 default: all
 
-all: osl-prereqs.sh osl-sx-slix.sh osl-user-page.sh osl-user-site.sh
+all: osl-prereqs.sh osl-prepare-update.sh osl-sx-slix.sh osl-user-page.sh osl-user-site.sh
 	@echo To build OSL say \'make osl\'
 
 osl:

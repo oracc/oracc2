@@ -1,7 +1,10 @@
 #!/bin/sh
-if [ "$ORACC_MODE"="multi" ]; then
+if [ "${ORACC_MODE}" = "multi" ]; then
+    echo ORACC_MODE $ORACC_MODE = multi
     (cd @@ORACC@@/osl
      chown -R root:oracc 00lib/osl.asl 02pub
      chmod -R g+w 00lib/osl.asl 02pub
     )
+else
+    echo ORACC_MODE $ORACC_MODE = single
 fi
