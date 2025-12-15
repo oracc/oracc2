@@ -1,6 +1,6 @@
 #include "scan.h"
 char *
-scan_curly(char *p, char **endp)
+scan_curly(Scan *sp, char *p, char **endp)
 {
   char *start;
   int nesting = 0;

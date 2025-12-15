@@ -2,12 +2,10 @@
 #include "scan.h"
 
 unsigned char *
-skip_white(unsigned char *ftext, size_t *lnump)
+skip_white(Scan *sp, unsigned char *ftext)
 {
-  size_t local_lnum = *lnump;
   while (isspace(*ftext))
     if ('\n' == *ftext++)
-      ++local_lnum;
-  *lnump = local_lnum;
+      ++sp->mp->line;
   return ftext;
 }

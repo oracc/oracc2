@@ -2,7 +2,7 @@
 #include "scan.h"
 
 char *
-scan_name(char *s, char **endp)
+scan_name(Scan *sp, char *s, char **endp)
 {
   char *e = s;
   while (isalnum(*e))

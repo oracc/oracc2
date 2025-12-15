@@ -2,7 +2,7 @@
 #include "scan.h"
 
 unsigned char *
-scan_token(unsigned char *tokp, unsigned char **endtokp, unsigned char *savep)
+scan_token(Scan *sp, unsigned char *tokp, unsigned char **endtokp, unsigned char *savep)
 {
   unsigned char *endp = ++tokp;
   if (isalpha(*endp))

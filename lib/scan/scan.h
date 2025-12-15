@@ -31,29 +31,40 @@ typedef enum sterm { SCAN_WHITE , SCAN_LINE , SCAN_PARA , SCAN_END , SCAN_TERM_T
 
 typedef enum stype { SCAN_SPAN , SCAN_TEXT , SCAN_TYPE_TOP } Stype;
 
+
+/* This is the type for the context of a call from inl, the inline
+   library function that controls the scan process */
 typedef struct scan
 {
+  const char *data;
+  Tree *tree;
+  Mloc *mp;
+} Scan;
+
+/* This is the type for individual scanned segments */
+typedef struct scanseg
+{
+  Scan *sp;
   Node *np;
   Stype t;
   Sterm term;
   const char *name; /* this is where the result of scan_name is put */
   const char *attr; /* this is the result of scan_quare */
-} Scan;
+} Scanseg;
 
 extern void scan_init(void);
 extern void scan_term(void);
 
 typedef int (*scan_block_tester)(const unsigned char *p);
 
-extern unsigned char *skip_white(unsigned char *fext, size_t *lnump);
-extern unsigned char *scan_token(unsigned char *tokp, unsigned char **endtokp, 
-			  unsigned char *savep);
-extern char* scan_curly(char *p, char **endp);
-extern char *scan_name(char *s, char **endp);
-extern void scan_square(Scan *s, unsigned char *endtok, 
-		 unsigned char **text_start, size_t *local_lnump);
-extern void scan_text(Scan *s, unsigned char *text_start, 
-	       unsigned char **text_end, size_t *local_lnump,
-	       scan_block_tester f);
-extern int block_peek(unsigned char *p, scan_block_tester f);
+extern unsigned char *skip_white(Scan *sp, unsigned char *fext);
+extern unsigned char *scan_token(Scan *sp, unsigned char *tokp, unsigned char **endtokp, 
+				 unsigned char *savep);
+extern char* scan_curly(Scan *sp, char *p, char **endp);
+extern char *scan_name(Scan *sp, char *s, char **endp);
+extern void scan_square(Scanseg *ssp, unsigned char *endtok, 
+			unsigned char **text_start);
+extern void scan_text(Scanseg *ssp, unsigned char *text_start, 
+		      unsigned char **text_end, scan_block_tester f);
+extern int block_peek(Scan *sp, unsigned char *p, scan_block_tester f);
 #endif/*_SCAN_H*/
