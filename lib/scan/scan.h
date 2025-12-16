@@ -4,13 +4,15 @@
 #include <tree.h>
 #include <pool.h>
 
-/* The scan library supports o2's inline mode, inl. There are four
+/* The scan library supports o2's inline mode, inl. There are the following
    node types:
 
    span	= a command that takes an argument in curly brackets
+   pair = matching @["?] and ["?]@ for ATF translation  mode
+   wild = any @-sequence in ATF translation mode because '@me' means 'italicize "me"'
+   self	= an @name that is valid in a specific vocabulary and is passed through as itself   
    text	= a text string between or within spans
-   self	= an @name that is valid in a specific vocabulary and is passed through as itself
-   #	= a command that takes no argument, e.g., @newline
+   #	= a command that takes no argument, e.g., @br, @-, @~
 
    The library XML writer uses the xmlns
    i=http://oracc.org/ns/inl/1.0, i.e., the output tags are
@@ -68,4 +70,5 @@ extern void scan_square(Scanseg *ssp, unsigned char *endtok,
 extern void scan_text(Scanseg *ssp, unsigned char *text_start, 
 		      unsigned char **text_end, scan_block_tester f);
 extern int block_peek(Scan *sp, unsigned char *p, scan_block_tester f);
+extern char *scan_str_term(Scan *sp, const char *start, const char *match, char **endp);
 #endif/*_SCAN_H*/

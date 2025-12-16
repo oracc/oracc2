@@ -18,9 +18,11 @@ struct inltok
   const char *tag;
   const char *attr;
   inl_handler *h;
+  const char *text;
 };
 extern struct inltok *inltok(register const char *str, register size_t len);
 
+extern int inl_wild_mode;
 struct inl_self_tab { const char *name; };
 
 extern inl_self_func_p inl_self_func;

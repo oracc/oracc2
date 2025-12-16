@@ -9,6 +9,7 @@ Memo *inl_scan_m = NULL;
 Memo *inl_scanseg_m = NULL;
 Pool *inl_scan_p = NULL;
 
+int inl_wild_mode;
 inl_self_func_p inl_self_func = NULL;
 
 void

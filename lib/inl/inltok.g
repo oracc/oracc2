@@ -19,6 +19,8 @@ cite,NS_BIB , INL_NO , INL_YES , 0 , 0 , 0 , inl_bib_h
 nocite,NS_BIB , INL_NO , INL_YES , 0 , 0 , 0 , inl_bib_h
 fullcite,NS_BIB , INL_NO , INL_YES , 0 , 0 , 0 , inl_bib_h
 br,  NS_INL , INL_NO , INL_NO  , 0 , 0 , 0 , 0
-"-", NS_INL , INL_NO , INL_TOK , 0 , 0 , 0 , 0
+"-", NS_INL , INL_NO , INL_NO , 0 , 0 , 0 , 0
+"~", NS_INL , INL_NO , INL_NO , 0 , 0 , 0 , 0
 "?", NS_INL , INL_NO , INL_YES , "?@" , 0 , 0 , 0
-"\"",NS_INL , INL_NO , INL_YES , "\"@", 0 , 0 , 0
+"@*", NS_INL , INL_NO , INL_NO , 0 , 0 , 0 , 0
+"@=", NS_INL , INL_NO , INL_NO , 0 , 0 , 0 , 0
