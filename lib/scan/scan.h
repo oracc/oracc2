@@ -38,7 +38,7 @@ typedef struct scan
 {
   const char *data;
   Tree *tree;
-  Mloc *mp;
+  Mloc mp;
 } Scan;
 
 /* This is the type for individual scanned segments */

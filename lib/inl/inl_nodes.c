@@ -20,7 +20,7 @@ inl_span(Scan *sp, Tree *tp, char *s)
 	  ssp->attr = itp->attr;
 	}
       else if ('[' == *s)
-	scan_square(sp, (uchar*)s, (uchar**)&s);
+	scan_square(ssp, (uchar*)s, (uchar**)&s);
 
       char *stext = NULL;
       if (itp->txt)
@@ -28,7 +28,7 @@ inl_span(Scan *sp, Tree *tp, char *s)
 	  if ('{' == *s)
 	    stext = scan_curly(sp, s, &s);
 	  else
-	    mesg_verr(sp->mp, "missing {...} content after %s\n", ssp->name);
+	    mesg_verr(&sp->mp, "missing {...} content after %s\n", ssp->name);
 	}
 
       if (itp->h)
@@ -54,7 +54,7 @@ inl_span(Scan *sp, Tree *tp, char *s)
 	}
     }
   else
-    mesg_verr(sp->mp, "bad tag %s\n", ssp->name);
+    mesg_verr(&sp->mp, "bad inline tag %s\n", ssp->name);
   return s;
 }
 

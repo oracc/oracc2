@@ -1006,7 +1006,7 @@ sx_w_jx_notes(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip
 	  else if (*np->tag == 'l')
 	    xtag = "sl:lit";
 	  joxer_set_inl(1);
-	  joxer_eto(&ip->mloc, xtag, NULL, (char*)pool_copy((uccp)np->txt, sl->p));
+	  joxer_eto(&np->mloc, xtag, NULL, (char*)pool_copy((uccp)np->txt, sl->p));
 	  joxer_set_inl(0);
 	}
       joxer_ac();

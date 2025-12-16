@@ -45,7 +45,7 @@ scan_text(Scanseg *ssp, unsigned char *text_start,
 	*trailing_white = '\0';
       if (*end)
 	{
-	  ++ssp->sp->mp->line;
+	  ++ssp->sp->mp.line;
 	  *end++ = '\0';
 	}
       break;
@@ -60,19 +60,19 @@ scan_text(Scanseg *ssp, unsigned char *text_start,
 	    {
 	      unsigned char *start_of_end = end;
 	      ++end;
-	      ++ssp->sp->mp->line;
+	      ++ssp->sp->mp.line;
 	      while (' ' == *end || '\t' == *end)
 		++end;
 	      if ('\n' == *end) /* blank line */
 		{
 		  *start_of_end = '\0';
-		  ++ssp->sp->mp->line;
+		  ++ssp->sp->mp.line;
 		  ++end;
 		  break;
 		}
 	      else if ('@' == *end && block_peek(ssp->sp,end,f))
 		{
-		  ++ssp->sp->mp->line;
+		  ++ssp->sp->mp.line;
 		  trailing_white = start_of_end;
 		  while (trailing_white > text_start && isspace(trailing_white[-1]))
 		    --trailing_white;
@@ -94,7 +94,7 @@ scan_text(Scanseg *ssp, unsigned char *text_start,
 	{
 	  if ('\n' == *end)
 	    {
-	      ++ssp->sp->mp->line;
+	      ++ssp->sp->mp.line;
 	      if (!strncmp((const char *)end+1,"@end",4))
 		{
 		  unsigned char *start_of_end = end;
@@ -109,7 +109,7 @@ scan_text(Scanseg *ssp, unsigned char *text_start,
 		      end += namelen;
 		      while (isspace(*end))
 			if ('\n' == *end++)
-			  ++ssp->sp->mp->line;
+			  ++ssp->sp->mp.line;
 		      goto ret;
 		    }
 		}

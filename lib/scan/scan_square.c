@@ -19,10 +19,10 @@ scan_square(Scanseg *ssp, unsigned char *endtok, unsigned char **text_start)
 		  if (newline[-1] == '\\')
 		    newline[-1] = newline[0] = ' ';
 		  else
-		    mesg_err(ssp->sp->mp,"newline in attribute group (missing ']'?)");
+		    mesg_err(&ssp->sp->mp,"newline in attribute group (missing ']'?)");
 		  while ('\n' == *newline)
 		    {
-		      ++ssp->sp->mp->line;
+		      ++ssp->sp->mp.line;
 		      ++newline;
 		    }
 		  newline = (unsigned char *)strchr((const char *)newline,'\n');
@@ -32,7 +32,7 @@ scan_square(Scanseg *ssp, unsigned char *endtok, unsigned char **text_start)
 	}
       else
 	{
-	  mesg_err(ssp->sp->mp,"missing ']' on attribute group");
+	  mesg_err(&ssp->sp->mp,"missing ']' on attribute group");
 	  /* error recovery: reset text_start to end of current line */
 	  while (*endtok && '\n' != *endtok)
 	    ++endtok;

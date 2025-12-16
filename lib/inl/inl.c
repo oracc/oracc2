@@ -132,7 +132,7 @@ inl(Mloc *mp, char *s)
       Scan *sp = memo_new(inl_scan_m);
       sp->data = (ccp)pool_copy((uccp)s, inl_scan_p);
       sp->tree = tp;
-      *sp->mp = *mp;
+      sp->mp = *mp;
       (void)inl_nodes(sp, tp->root, (char*)tp->root->text);
     }
   return tp;

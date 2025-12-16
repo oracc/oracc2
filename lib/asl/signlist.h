@@ -207,6 +207,7 @@ struct sl_note
 {
   const char *tag;
   const char *txt;
+  Mloc mloc;
 };
 
 struct sl_unicode

@@ -20,7 +20,7 @@ jox_xml_ch(const char *ch)
 }
 
 void
-jox_xml_inl(char *ch)
+jox_xml_inl(Mloc *mp, char *ch)
 {
   static int first = 1;
   if (first)
@@ -29,7 +29,7 @@ jox_xml_inl(char *ch)
       inl_init();
       first = 0;
     }
-  Tree *tp = inl(ch);
+  Tree *tp = inl(mp, ch);
   tree_xml(f_xml, tp);
 }
 

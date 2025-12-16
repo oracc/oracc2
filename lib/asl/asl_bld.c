@@ -1113,6 +1113,7 @@ asl_bld_note(Mloc *locp, struct sl_signlist *sl, const char *tag, const char *tx
       struct sl_note *n = memo_new(sl->m_notes);
       n->tag = tag; /* tag is a constant from asl.y */
       n->txt = txt;
+      n->mloc = *locp;
       if (!sl->curr_inst->notes)
 	sl->curr_inst->notes = list_create(LIST_SINGLE);
       list_add(sl->curr_inst->notes, n);
@@ -1466,7 +1467,8 @@ asl_bld_signlist(Mloc *locp, const unsigned char *n, int project)
     {
       curr_asl = asl_bld_init();
       curr_asl->mloc = *locp;
-      curr_asl->curr_inst = curr_asl->notes = new_inst(curr_asl);
+      curr_asl->curr_inst = curr_asl->notes; /* = new_inst(curr_asl); */
+      curr_asl->notes->mloc = *locp;
     }
   if (n)
     {

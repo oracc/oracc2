@@ -6,6 +6,6 @@ skip_white(Scan *sp, unsigned char *ftext)
 {
   while (isspace(*ftext))
     if ('\n' == *ftext++)
-      ++sp->mp->line;
+      ++sp->mp.line;
   return ftext;
 }

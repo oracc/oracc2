@@ -43,7 +43,7 @@ extern void joxer_term(FILE *xfp, FILE *jfp);
 
 extern void jox_jsn_output(FILE *fp);
 extern void jox_xml_output(FILE *fp);
-extern void jox_xml_inl(char *ch);
+extern void jox_xml_inl(Mloc *mp, char *ch);
 
 extern void joxer_set_inl(int i);
 
