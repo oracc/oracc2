@@ -3,6 +3,7 @@
 #include "inl.h"
 
 int suppress_empty_text_nodes = 1;
+static void inl_text_node(Scan *sp, Tree *tp, const char *text);
 
 char *
 inl_span(Scan *sp, Tree *tp, char *s)
@@ -54,34 +55,79 @@ inl_span(Scan *sp, Tree *tp, char *s)
 	}
     }
   else
-    mesg_verr(&sp->mp, "bad inline tag %s\n", ssp->name);
+    {
+      if (inl_self_func && inl_self_func(ssp->name))
+	{
+	  char buf[strlen(ssp->name)+2];
+	  sprintf(buf, "@%s", ssp->name);
+	  inl_text_node(sp, tp, (ccp)pool_copy((uccp)buf, inl_scan_p));
+	}
+      else
+	mesg_verr(&sp->mp, "bad inline tag %s\n", ssp->name);
+    }
   return s;
 }
 
+static void
+inl_text_node(Scan *sp, Tree *tp, const char *text, int len)
+{
+  Scanseg *ssp = memo_new(inl_scanseg_m);
+  ssp->sp = sp;
+  ssp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
+  ssp->name = NULL;
+  char *tmp = pool_alloc(len+1);
+  strncpy(tmp, text, len);
+  tmp[len] = '\0';
+  ssp->np->text = tmp;
+  ssp->np->user = ssp;
+}
+
 void
-inl_text(Scan *sp, Tree *tp, const char *text)
+inl_text(Scan *sp, Tree *tp, const char *text, int len)
 {
   if (text)
     {
       if (*text || !suppress_empty_text_nodes)
-	{
-	  Scanseg *ssp = memo_new(inl_scanseg_m);
-	  ssp->sp = sp;
-	  ssp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
-	  ssp->name = NULL;
-	  ssp->np->text = text;
-	  ssp->np->user = ssp;
-	}
+	inl_text_node(sp, tp, text, len);
     }
 } 
 
 char *
 inl_nodes(Scan *sp, Node *np, char *s)
 {
+#if 1
+  while (*s)
+    {
+      char *e = NULL
+      if ('@' == *s && inl_command(s, &e))
+	{
+	  s = inl_span(sp, np->tree, s);
+	}
+      else
+	{
+	  char *at = NULL;
+	  const char *t = s;
+	  while (1)
+	    {
+	      /* Find the end of this text chunk, skipping over @@ */
+	      at = strchr(s, '@');
+	      if (at && '@' == at[1])
+		s += 2;
+	      else
+		break;
+	    }
+	  inl_text(sp, np->tree, t, at-t);
+	  if (at)
+	    s = at;
+	  else
+	    s += strlen(s);
+	}
+    }
+#else
   char save = (s && '@' == *s) ? '@' : '\0';
   while (*s)
     {
-      if ('@' == save)
+      if ('@' == save && '@' != s[1])
 	{
 	  save = '\0';
 	  if (isalpha(*s))
@@ -98,6 +144,8 @@ inl_nodes(Scan *sp, Node *np, char *s)
 		default:
 		  /* error, unknown; ask if it's the old @me for
 		     italicize-foreign-word; use @- now */
+		  save = '@';
+		  ++s;
 		  break;
 		}
 	    }
@@ -105,6 +153,7 @@ inl_nodes(Scan *sp, Node *np, char *s)
       else
 	{
 	  char *at = NULL;
+	  const char *t = s;
 	  while (1)
 	    {
 	      /* Find the end of this text chunk, skipping over @@ */
@@ -118,16 +167,17 @@ inl_nodes(Scan *sp, Node *np, char *s)
 	    {
 	      save = '@';
 	      *at = '\0';
-	      inl_text(sp, np->tree, s);
+	      inl_text(sp, np->tree, t);
 	      s = ++at;
 	    }
 	  else
 	    {
 	      save = '\0';
-	      inl_text(sp, np->tree, s);
+	      inl_text(sp, np->tree, t);
 	      s = s + strlen(s);
 	    }
 	}
     }
   return s;
+#endif
 }

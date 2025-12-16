@@ -4,11 +4,12 @@
 #include <tree.h>
 #include <pool.h>
 
-/* The scan library supports o2's inline mode, inl. There are only
-   three node types:
+/* The scan library supports o2's inline mode, inl. There are four
+   node types:
 
    span	= a command that takes an argument in curly brackets
    text	= a text string between or within spans
+   self	= an @name that is valid in a specific vocabulary and is passed through as itself
    #	= a command that takes no argument, e.g., @newline
 
    The library XML writer uses the xmlns
@@ -29,7 +30,7 @@ extern Pool *scan_pool;
 
 typedef enum sterm { SCAN_WHITE , SCAN_LINE , SCAN_PARA , SCAN_END , SCAN_TERM_TOP } Sterm;
 
-typedef enum stype { SCAN_SPAN , SCAN_TEXT , SCAN_TYPE_TOP } Stype;
+typedef enum stype { SCAN_SPAN , SCAN_TEXT , SCAN_SELF , SCAN_TYPE_TOP } Stype;
 
 
 /* This is the type for the context of a call from inl, the inline

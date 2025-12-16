@@ -7,6 +7,7 @@
 #include <joxer.h>
 #include <tok.h>
 #include <tis.h>
+#include <inl.h>
 
 int slgroups = 0;
 Hash *xidseen = NULL;
@@ -56,6 +57,7 @@ sx_w_jox_init(void)
   sx_w_jox_fncs.qvs = sx_w_jx_qvs;
   sx_w_jox_fncs.fp = NULL;
   sx_w_jox_fncs.fname = NULL;
+  inl_self_set(sx_inl_self_wrapper);
   return &sx_w_jox_fncs;
 }
 

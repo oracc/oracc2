@@ -9,6 +9,14 @@ Memo *inl_scan_m = NULL;
 Memo *inl_scanseg_m = NULL;
 Pool *inl_scan_p = NULL;
 
+inl_self_func_p inl_self_func = NULL;
+
+void
+inl_self_set(inl_self_func_p f)
+{
+  inl_self_func = f;
+}   
+
 static void
 treexml_o_bib(Node *np, void *user)
 {
