@@ -10,7 +10,8 @@
    span	= a command that takes an argument in curly brackets
    pair = matching @["?] and ["?]@ for ATF translation  mode
    wild = any @-sequence in ATF translation mode because '@me' means 'italicize "me"'
-   self	= an @name that is valid in a specific vocabulary and is passed through as itself   
+   self	= an @name that is valid in a specific vocabulary and is passed through as itself
+   escp = an escape sequence for '@', i.e., @@
    text	= a text string between or within spans
    #	= a command that takes no argument, e.g., @br, @-, @~
 

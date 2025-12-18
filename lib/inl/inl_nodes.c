@@ -2,6 +2,7 @@
 #include <scan.h>
 #include "inl.h"
 
+static int double_at_flag = 0;
 int suppress_empty_text_nodes = 1;
 static void inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext);
 static void inl_text_node(Scan *sp, Tree *tp, const char *text, int len);
@@ -123,6 +124,25 @@ inl_span(Scan *sp, struct inltok *itp, Tree *tp, char *s)
 }
 
 static void
+unescape_at(char *buf, const char *txt, int len)
+{
+  char *dest = buf;
+  int i;
+  for (i = 0; i < len; ++i)
+    {
+      if ('@' == *txt && '@' == txt[1])
+	{
+	  *dest++ = '@';
+	  txt += 2;
+	  ++i;
+	}
+      else
+	*dest++ = *txt++;
+    }
+  *dest = '\0';
+}
+
+static void
 inl_text_node(Scan *sp, Tree *tp, const char *text, int len)
 {
   Scanseg *ssp = memo_new(inl_scanseg_m);
@@ -130,8 +150,13 @@ inl_text_node(Scan *sp, Tree *tp, const char *text, int len)
   ssp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
   ssp->name = NULL;
   char *tmp = (char*)pool_alloc(len+1, inl_scan_p);
-  strncpy(tmp, text, len);
-  tmp[len] = '\0';
+  if (double_at_flag)
+    unescape_at(tmp, text, len);
+  else
+    {
+      strncpy(tmp, text, len);
+      tmp[len] = '\0';
+    }
   ssp->np->text = tmp;
   ssp->np->user = ssp;
 }
@@ -176,10 +201,25 @@ inl_nodes(Scan *sp, Node *np, char *s)
 	    {
 	      /* Find the end of this text chunk, skipping over @@ */
 	      at = strchr(s, '@');
-	      if (at && '@' == at[1])
-		s += 2;
+	      if (at)
+		{
+		  if ('@' == at[1])
+		    {
+		      s += 2;
+		      ++double_at_flag;
+		    }
+		  else if (at > t)
+		    break;
+		  else
+		    ++s;
+		}
 	      else
-		break;
+		{
+		  if (!*s)
+		    break;
+		  else
+		    ++s;
+		}
 	    }
 	  inl_text(sp, np->tree, t, at ? at-t : strlen(t));
 	  if (at)

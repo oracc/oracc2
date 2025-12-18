@@ -104,6 +104,8 @@ AM_CPPFLAGS=\
 	-I$(top_srcdir)/lib/chr \
 	-I$(top_srcdir)/lib/collate \
 	-I$(top_srcdir)/lib/rnc \
+	-I$(top_srcdir)/lib/scan \
+	-I$(top_srcdir)/lib/inl \
 	-I$(top_srcdir)/lib/std \
 	-I$(top_srcdir)/lib/fonts \
 	-I$(top_srcdir)/lib/frm \
