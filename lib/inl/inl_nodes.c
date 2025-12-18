@@ -15,7 +15,7 @@ inl_command(char *s)
   char buf[bmax+1];
   if (isalpha(s[1]))
     {
-      char *t = s, *b = buf;
+      char *t = s+1, *b = buf;
       while (isalpha(*t))
 	{
 	  if (b - buf < bmax)
@@ -23,6 +23,7 @@ inl_command(char *s)
 	  else
 	    break;
 	}
+      *b = '\0';
     }
   else
     {
@@ -36,12 +37,12 @@ inl_command(char *s)
       /* @* and @= are impossible sequences for token lookup */
       if (inl_wild_mode)
 	{
-	  itp = inltok("@*", 1);
+	  itp = inltok("@*", 2);
 	  itp->text = (ccp)pool_copy((uccp)buf, inl_scan_p);
 	}
       else if (inl_self_func && inl_self_func(buf))
 	{
-	  itp = inltok("@=", 1);
+	  itp = inltok("@=", 2);
 	  itp->text = (ccp)pool_copy((uccp)buf, inl_scan_p);
 	}
     }
@@ -52,7 +53,7 @@ char *
 inl_self(Scan *sp, struct inltok *itp, Tree *tp, char *s)
 {
   inl_text_node(sp, tp, itp->text, strlen(itp->text));
-  return s + strlen(itp->text);
+  return s + strlen(itp->text) + 1; /* s points at '@' of '@listdef' */
 }
 
 char *
@@ -62,7 +63,7 @@ inl_wild(Scan *sp, struct inltok *itp, Tree *tp, char *s)
   ssp->sp = sp;
   ssp->name = "langi";
   inl_span_node(sp, ssp, tp, s);
-  return s + strlen(itp->text);
+  return s + strlen(itp->text) + 1; /* s points at '@' of '@me' */
 }
 
 static void
@@ -163,7 +164,8 @@ inl_nodes(Scan *sp, Node *np, char *s)
 	      s = inl_self(sp, itp, np->tree, s);
 	      break;
 	    default:
-	      s = inl_span(sp, itp, np->tree, s);
+	      s = inl_span(sp, itp, np->tree, s+strlen(itp->name)+1);
+	      break;
 	    }
 	}
       else
@@ -179,7 +181,7 @@ inl_nodes(Scan *sp, Node *np, char *s)
 	      else
 		break;
 	    }
-	  inl_text(sp, np->tree, t, at-t);
+	  inl_text(sp, np->tree, t, at ? at-t : strlen(t));
 	  if (at)
 	    s = at;
 	  else
