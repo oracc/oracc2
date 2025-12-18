@@ -10,14 +10,26 @@ static void inl_text_node(Scan *sp, Tree *tp, const char *text, int len);
 #define INL_CMD_MAX 1023
 
 struct inltok *
-inl_command(char *s)
+inl_command(Scan *sp, char *s)
 {
   int bmax = INL_CMD_MAX;
   char buf[bmax+1];
   if (isalpha(s[1]))
     {
       char *t = s+1, *b = buf;
-      while (isalpha(*t))
+      while (isalnum(*t))
+	{
+	  if (b - buf < bmax)
+	    *b++ = *t++;
+	  else
+	    break;
+	}
+      *b = '\0';
+    }
+  else if (isdigit(s[1]))
+    {
+      char *t = s+1, *b = buf;
+      while (isdigit(*t))
 	{
 	  if (b - buf < bmax)
 	    *b++ = *t++;
@@ -46,6 +58,8 @@ inl_command(char *s)
 	  itp = inltok("@=", 2);
 	  itp->text = (ccp)pool_copy((uccp)buf, inl_scan_p);
 	}
+      else
+	mesg_verr(&sp->mp, "unknown command `@%s'; use '@@' to escape '@'", buf);
     }
   return itp;
 }
@@ -174,11 +188,10 @@ inl_text(Scan *sp, Tree *tp, const char *text, int len)
 char *
 inl_nodes(Scan *sp, Node *np, char *s)
 {
-#if 1
   while (*s)
     {
       struct inltok *itp = NULL;
-      if ('@' == *s && (itp = inl_command(s)))
+      if ('@' == *s && (itp = inl_command(sp, s)))
 	{
 	  switch (itp->name[1])
 	    {
@@ -229,61 +242,4 @@ inl_nodes(Scan *sp, Node *np, char *s)
 	}
     }
   return s;
-#else
-  char save = (s && '@' == *s) ? '@' : '\0';
-  while (*s)
-    {
-      if ('@' == save && '@' != s[1])
-	{
-	  save = '\0';
-	  if (isalpha(*s))
-	    s = inl_span(sp, np->tree, s);
-	  else
-	    {
-	      switch (*s)
-		{
-		case '-':
-		  break;
-		case '"':
-		case '?':
-		  break;
-		default:
-		  /* error, unknown; ask if it's the old @me for
-		     italicize-foreign-word; use @- now */
-		  save = '@';
-		  ++s;
-		  break;
-		}
-	    }
-	}
-      else
-	{
-	  char *at = NULL;
-	  const char *t = s;
-	  while (1)
-	    {
-	      /* Find the end of this text chunk, skipping over @@ */
-	      at = strchr(s, '@');
-	      if (at && '@' == at[1])
-		s += 2;
-	      else
-		break;
-	    }
-	  if (at)
-	    {
-	      save = '@';
-	      *at = '\0';
-	      inl_text(sp, np->tree, t);
-	      s = ++at;
-	    }
-	  else
-	    {
-	      save = '\0';
-	      inl_text(sp, np->tree, t);
-	      s = s + strlen(s);
-	    }
-	}
-    }
-  return s;
-#endif
 }
