@@ -22,8 +22,12 @@ do302(const char *loc)
 void
 do400(const char *msg400)
 {
-  puts("HTTP/1.1 400 Bad Request\n");
+  int len = strlen(msg400)+1;
+  puts("HTTP/1.1 400 Bad Request");
+  puts("Content-type: text/plain");
+  printf("Content-length: %d\n\n", len);
   puts(msg400);
+  fflush(stdout);
   exit(0);
 }
 

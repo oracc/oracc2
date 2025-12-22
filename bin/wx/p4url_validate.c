@@ -21,7 +21,7 @@ p4url_guard(const unsigned char *v)
 {
   if (!v)
     return NULL;
-  const unsigned char *vv;
+  const unsigned char *vv = v;
   while (*v)
     {
       if (*v < 128 && !isalnum(*v))
@@ -30,8 +30,7 @@ p4url_guard(const unsigned char *v)
 	  if (!strchr(ok, *v))
 	    do400("WX reports: Illegal character in query string.");
 	}
-      else
-	++v;
+      ++v;
     }
   return vv;
 }
