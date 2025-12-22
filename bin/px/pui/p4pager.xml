@@ -24,5 +24,4 @@
   <div id="p4Footer">
     @@p4footer.xml@@
   </div>
-  @@p4debugdiv.xml@@
 </div>

@@ -1,22 +1,6 @@
 <div id="p4Debug">
   <h1>Debugging Information</h1>
 
-  <h2>Invocation</h2>
+  <p>P4 debugging information is temporarily unavailable.</p>
   
-  <p>The pager was invoked as:</p>
-  
-  <pre id="p4Invoked">@@pui_invocation()@@</pre>
-
-  <h2>Pager Status</h2>
-  
-  <p>The pager reported status as:</p>
-
-  <pre id="p4Status">@@pui_status()@@</pre>
-
-  <h2>Environment</h2>
-
-  <p>HTTP environment variables:</p>
-
-  <pre id="p4Environment">@@pui_environment()@@</pre>
-
 </div>
