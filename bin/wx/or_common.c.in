@@ -35,34 +35,6 @@ do404(void)
   printf("404\n");
 }
 
-#if 0
-const char *
-oracc_home ()
-{
-  static char *cached_home = NULL;
-  if (NULL == cached_home)
-    {
-      cached_home = getenv ("ORACC");
-      if (NULL == cached_home)
-	cached_home = "@@ORACC@@";
-    }
-  return cached_home;
-}
-
-const char *
-oracc_var ()
-{
-  static char *cached_var = NULL;
-  if (NULL == cached_var)
-    {
-      cached_var = getenv ("ORACC_VAR");
-      if (NULL == cached_var)
-	cached_var = "@@ORACC@@";
-    }
-  return cached_var;
-}
-#endif
-
 char *
 or_find_www_file(const char *project, const char *dir, const char *basename, const char *ext)
 {
@@ -182,7 +154,7 @@ print_hdr_xml(void)
 }
 
 void
-print_hdr_json()
+print_hdr_json(void)
 {
   fprintf(stdout,
 	  "Content-type: application/json\n\n");

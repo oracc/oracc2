@@ -3,7 +3,17 @@
 
 #define LOCALE "C.UTF-8"
 
+#ifndef ccp
+#define ccp const char *
+#endif
+
+#ifndef uccp
+#define uccp unsigned const char *
+#endif
+
 #include "ccgi/ccgi.h"
+
+
 
 enum e_builtins  { B_NONE, B_ATF, B_AS, B_DATESTAMP, B_DOC, B_FIND, 
 		   B_ITEMMAIN, B_ITEMSIDE, B_OUTLINE, B_RESULTS, B_RPC, 
