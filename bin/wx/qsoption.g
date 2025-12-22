@@ -7,9 +7,9 @@
 %}
 struct qsoptionstab;
 %%
-what, "text|score|sources|block|sig|pager|corpus|statistics|searchbar|adhoc|file"
-part, "page|full|tlit|meta|xlat"
-form, "html|xml|tei|json"
+what, "|text|score|sources|block|sig|pager|corpus|statistics|searchbar|adhoc|file|"
+part, "|page|full|tlit|meta|xlat|"
+form, "|html|xml|tei|json|"
 lang, "#LANG"
 line, "#LREFS"
 page, "#NUM"
@@ -19,7 +19,7 @@ refs, "#REFS"
 sort, "#PERM"
 q, 	  "#STRING"
 srch, "#LIST"
-cemd, "kwic|line|unit"
+cemd, "|kwic|line|unit|"
 frag, "#NCNAME"
 %%
 int qs_total_keywords(void)

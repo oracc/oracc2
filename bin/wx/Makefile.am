@@ -9,7 +9,7 @@ cgibin_PROGRAMS=wx
 #noinst_SCRIPTS=wx-pub-p4projects.sh
 #bin_SCRIPTS=wx-is-p4-project.sh
 
-p4url_LIB=p4url.c qsoption.c urlkeys.c p4url_vec.c p4url_eval.c
+p4url_LIB=p4url.c qsoption.c urlkeys.c p4url_vec.c p4url_eval.c p4url_validate.c
 
 #noinst_PROGRAMS=p4url
 #p4url_SOURCES=mp4url.c px.c $(p4url_LIB)

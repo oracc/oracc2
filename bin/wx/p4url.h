@@ -47,4 +47,6 @@ extern char const**p4url_vec(P4url *p);
 extern struct urlkeytab *urlkeys (register const char *str, register size_t len);
 extern struct qsoptionstab *qsoption (register const char *str, register size_t len);
 extern int _is_ncname(const char *name);
+extern const char *p4url_validate(const char *value, const char *allow);
+
 #endif/*P4URL_H_*/
