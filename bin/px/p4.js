@@ -562,6 +562,13 @@ function qs_add(pager, qs, datum) {
     }
 }
 
+// remove angle, square, and half-brackets from search string
+function clean_srch(s) {
+    let s2 = s.replace(/[\[\]<>⸢⸣]/g,'');
+    // alert('clean_srch: '+s+' goes to '+s2);
+    return s2;
+}
+
 // act_srch is called when the search box changes or is activated and
 // only passes a URL to wx if the srch is new
 function act_srch_sub(toploc) {
@@ -577,7 +584,8 @@ function act_srch_sub(toploc) {
 	if (qury !== srch) {
 	    if (glos) { glos = '/'+glos; } else { glos = '' }
 	    pager.removeAttribute('data-item');
-	    let srch_url='/'+proj+glos+'?q='+encodeURIComponent(srch);
+	    let xsrch = clean_srch(srch);
+	    let srch_url='/'+proj+glos+'?q='+encodeURIComponent(xsrch);
 	    // alert('srch_url='+srch_url);
 	    if (toploc) {
 		top.window.location = srch_url;
