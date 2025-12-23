@@ -205,7 +205,7 @@ p4url_move_to_qs(P4bits *bp, P4url *p)
 }
 
 static const char *
-p4url_arg_tok(char *t, const char *allow)
+p4url_arg_tok(const char *name, char *t, const char *allow)
 {
   static char *x = NULL;
   char *ret = NULL;
@@ -227,7 +227,7 @@ p4url_arg_tok(char *t, const char *allow)
       ret = x;
       x = y;      
     }
-  return p4url_validate(CGI_decode_url(ret), allow);
+  return p4url_validate(name, CGI_decode_url(ret), allow);
 }
 
 static int
@@ -242,7 +242,7 @@ p4url_q(P4url *p)
       char *qs = p->q;
       const char *tok;
       int what_index = -1;
-      while ((tok = p4url_arg_tok(qs, NULL)))
+      while ((tok = p4url_arg_tok(NULL,qs,NULL)))
 	{
 	  struct urlkeytab *ukey = urlkeys(tok, strlen(tok));
 	  if (ukey)
@@ -286,7 +286,7 @@ p4url_q(P4url *p)
 	      if (qopt)
 		{
 		  p->args[i].option = tok;
-		  p->args[i].value = p4url_arg_tok(NULL, qopt->value);
+		  p->args[i].value = p4url_arg_tok(tok, NULL, qopt->value);
 		  if (!strcmp(tok, "q"))
 		    p->exe = QX_EXE;
 		}
