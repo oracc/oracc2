@@ -8,7 +8,7 @@ AM_CPPFLAGS+=-I/usr/include/libxml2
 
 img_DATA=icons/*.png
 
-bin_PROGRAMS=px cbditem issx wsigx xfragx
+bin_PROGRAMS=px cbditem issx xfragx
 
 scriptdata_DATA=p4-xmd-div.xsl p4-stats-HTML.xsl p4-proofing.xsl p4-ood-div.xsl
 
@@ -20,9 +20,9 @@ issx_SOURCES=issx.c $(pxlib)
 issx_LDADD = isp/libisp.la wht/libwht.la iss/libiss.la iso/libiso.la $(xLDADD)
 issx_DEPENDENCIES = $(issx_LDADD)
 
-wsigx_SOURCES=wsigx.c
-wsigx_LDADD = $(xLDADD)
-wsigx_DEPENDENCIES = $(xLDADD)
+# wsigx_SOURCES=wsigx.c
+# wsigx_LDADD = $(xLDADD)
+# wsigx_DEPENDENCIES = $(xLDADD)
 
 xfragx_SOURCES=xfragx.c xftable.c
 xfragx_LDADD = $(xLDADD)

@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <lng.h>
 #include "px.h"
 #include "isp/isp.h"
 
@@ -7,15 +8,12 @@ static char *find_lang(const char *sig, char **endp);
 static const char *unweb_sig(const char *sig);
 static void sigmap_ent(Isp *ip, const char *ent, const char *lng, const char *cbd);
 
-#if 0
-static char *find_proj(const char *sig);
-#endif
-
 int
 sigmap_item(Isp *ip)
 {
   ip->sig = unweb_sig(ip->sig);
 
+  /* neo ignores language dialect -x-XXXXXX codes */
   if (!strcmp(ip->project, "neo"))
     {
       char *p = strchr(ip->sig, '%');
@@ -30,7 +28,7 @@ sigmap_item(Isp *ip)
 	  memmove(p,c,strlen(c)+1);
 	}
     }
-  
+
   const char *pos = find_pos(ip->sig);
   const char *lng = find_lang(ip->sig, NULL);
 
@@ -72,7 +70,7 @@ sigmap_item(Isp *ip)
     }
   else
     {
-      ip->err = px_err("signmap_item found no lang in sig");
+      ip->err = px_err("signmap_item no lang or bad lang in sig");
     }
   return 1;
 }
@@ -97,6 +95,11 @@ find_pos(const char *sig)
   const unsigned char *p = NULL;
   const unsigned char *epos;
   p = (ucp)strstr(sig, "//");
+  if (!p)
+    {
+      fprintf(stderr, "find_pos: no POS found in sig %s\n", sig);
+      return NULL;
+    }
   while (*p && ']' != *++p)
     ;
   if (!*p)
@@ -136,6 +139,13 @@ find_lang(const char *sig, char **endp)
 	    *endp = (char*)c;
 	  strncpy(buf, p, c-p);
 	  buf[c-p] = '\0';
+	  langtag_pool_init();
+	  struct lang_tag *ltp = langtag_parse(buf, NULL, -1);
+	  if (ltp)
+	    free(ltp);
+	  else
+	    fprintf(stderr, "sigmap: malformed language tag (%s)\n", buf);
+	  langtag_pool_term();
 	}
       else
 	fprintf(stderr, "sigmap: lang too long (%s)\n", p);
@@ -145,36 +155,14 @@ find_lang(const char *sig, char **endp)
   return buf;
 }
 
-#if 0
-static char *
-find_proj(const char *sig)
-{
-  static char buf[256];
-  const char *at = strchr(sig, '@');
-  if (at)
-    {
-      const char *p = strchr(++at, '%');
-      if (p - at < 256)
-	{
-	  strncpy(buf, at, p-at);
-	  buf[p-at] = '\0';
-	}
-      else
-	fprintf(stderr, "sigmap: project too long (%s)\n", p);
-    }
-  else
-    *buf = '\0';
-  return buf;
-}
-#endif
-
 static const char *
 unweb_sig(const char *sig)
 {
   wchar_t *wsig = NULL;
   size_t nwchar = 0, i;
-  wsig = malloc((strlen(sig)+1) * sizeof(wchar_t));
-  if ((nwchar = mbstowcs(wsig, sig, strlen(sig)+1)) == (size_t)-1)
+  char *dsig = '%' == *sig ? CGI_decode_url(sig) : sig;
+  wsig = malloc((strlen(dsig)+1) * sizeof(wchar_t));
+  if ((nwchar = mbstowcs(wsig, dsig, strlen(dsig)+1)) == (size_t)-1)
     fprintf(stderr, "mbstowcs failed\n");
 
   for (i=0; i < nwchar; ++i)
@@ -193,7 +181,7 @@ unweb_sig(const char *sig)
 	}
     }
 
-  char *msig = malloc(2*strlen(sig)+1);
-  wcstombs(msig, wsig, 2*strlen(sig));
+  char *msig = malloc(2*strlen(dsig)+1);
+  wcstombs(msig, wsig, 2*strlen(dsig));
   return msig;
 }

@@ -18,8 +18,6 @@ static void langtag_error(const char *file, int lnum,
 			  const char *tag, const char *mess);
 static const char *langtag_atf(const char *atf,
 			       const char *file, int lnum);
-static struct lang_tag *langtag_parse(const char *tag, 
-				      const char *file, int lnum);
 
 void
 lng_init(void)
@@ -89,6 +87,20 @@ langtag_init(void)
       noscript_hash = hash_create(1);
       texttag_init();
     }
+}
+
+void
+langtag_pool_init(void)
+{
+  if (!langtag_pool)
+    langtag_pool = pool_init();
+}
+
+void
+langtag_pool_term(void)
+{
+  if (langtag_pool)
+    pool_term(langtag_pool);
 }
 
 void
@@ -188,7 +200,7 @@ texttag_term(void)
     }
 }
 
-static struct lang_tag *
+struct lang_tag *
 langtag_parse(const char *tag, const char *file, int lnum)
 {
   struct lang_tag *tmp = NULL; 
@@ -268,17 +280,10 @@ langtag_parse(const char *tag, const char *file, int lnum)
 static void
 langtag_error(const char *file, int lnum, const char *tag, const char *mess)
 {
-#if 1
   if (file && *file)
     mesg_vwarning(file, lnum, "%s: %s\n", tag, mess);
   else
     mesg_vwarning("",0,"%s: %s\n", tag, mess);
-#else
-  if (file && *file)
-    fprintf(stderr,"%s:%d: %s: %s\n", file, lnum, tag, mess);
-  else
-    fprintf(stderr,"%s: %s\n", tag, mess);
-#endif
 }
 
 static const char *

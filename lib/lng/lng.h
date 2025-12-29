@@ -162,6 +162,10 @@ extern void texttag_register(const char *tag);
 extern void texttag_term(void);
 extern char *tag_no_script(const char *tag);
 
+extern struct lang_tag *langtag_parse(const char *tag, const char *file, int lnum);
+extern void langtag_pool_init(void);
+extern void langtag_pool_term(void);
+
 extern const char *fwhost;
 
 #endif /*LANG_H_*/

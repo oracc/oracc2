@@ -227,7 +227,10 @@ p4url_arg_tok(const char *name, char *t, const char *allow)
       ret = x;
       x = y;      
     }
-  return p4url_validate(name, CGI_decode_url(ret), allow);
+  if (name)
+    return p4url_validate(name, CGI_decode_url(ret), allow);
+  else
+    return CGI_decode_url(ret);
 }
 
 static int
