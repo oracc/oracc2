@@ -1,5 +1,7 @@
 #!/bin/dash
 echo $0 $*
+user=$1
+proj=$2
 ### o2-corpus.sh ###
 o2-lst.sh
 lx-lists.sh
@@ -46,6 +48,7 @@ o2-glo.sh
 # 02www/inst currently holds signlist instances but could hold others in future
 rm -fr 02www/inst
 o2-xtf.sh $*
+qindex.sh ${proj}
 o2-web-corpus.sh
 odo-signlist.sh
 o2-weblive.sh

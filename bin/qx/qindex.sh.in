@@ -27,13 +27,6 @@ elif [ -s 01bld/cdlicat.xmd.gz ]; then
     zcat 01bld/cdlicat.xmd.gz | qcatx -p $project -s
 fi
 
-#if [ -r 01bld/lists/xtfindex.lst ]; then
-#    echo qindex qtxtx $project 01bld/lists/xtfindex.lst
-#    qtxtx -p $project <01bld/lists/xtfindex.lst
-#    echo qindex qtrax $project 01bld/lists/xtfindex.lst
-#    qtrax -p $project <01bld/lists/xtfindex.lst
-#fi
-
 (cd 01bld/lists ;
  if [ -r xtfindex.lst ]; then
      lx -u xtfindex.lst +? lemindex.lst >txtindex.lst

@@ -25,7 +25,7 @@ p4url_guard(const char *name, const unsigned char *v)
   /* Allow signatures to pass through because they can legitimately
      contain almost anything; they are handled carefully in
      px/sigmap.c to ensure they are not returned to the browser */
-  if (!strcmp(name, "sig"))
+  if (name && !strcmp(name, "sig"))
     return v;
 
   const unsigned char *vv = v;
@@ -33,7 +33,7 @@ p4url_guard(const char *name, const unsigned char *v)
     {
       if (*v < 128 && !isalnum(*v))
 	{
-	  static const char *ok = ",.%-_ \t()|&@";
+	  static const char *ok = ",.%-_ \t()|&@~:!/";
 	  if (!strchr(ok, *v))
 	    {
 	      if (name)

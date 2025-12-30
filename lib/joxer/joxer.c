@@ -217,7 +217,7 @@ joxer_eto_vxj(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   rnvval_ch(xch);
   rnvval_ee(pname);
   jox_xml_ea(pname, rats);
-  fprintf(stderr, "calling jox_xml_ch from joxer_eto_vxj\n");
+  /*fprintf(stderr, "calling jox_xml_ch from joxer_eto_vxj\n");*/
   jox_xml_ch(xch);
   jox_xml_ee(pname);
   jox_jsn_eto(pname, rats, ch);

@@ -279,7 +279,7 @@ p4url_q(P4url *p)
 		{
 		  ++i;
 		  p->args[i].option = ukey->name;
-		  p->args[i].value = p4url_arg_tok(NULL);
+		  p->args[i].value = p4url_arg_tok(ukey->name, NULL, NULL);
 		}
 #endif
 	    }

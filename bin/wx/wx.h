@@ -128,7 +128,10 @@ extern void list(const char *list);
 extern void sed_project(const char *xml, const char *session);
 extern void statistics(void);
 extern void xff(const char *e2);
+
+#if 0
 extern void xis(const char *xlang, const char *xid);
+#endif
 
 extern void pqx_handler(struct component *);
 

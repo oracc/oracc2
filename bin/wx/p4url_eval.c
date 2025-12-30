@@ -52,7 +52,13 @@ p4url_eval(const char *u, const char *q)
   /* there should be a way of knowing if the syntax is OK but the
      values are wrong or if the syntax doesn't match p4url */
   if ((res = p4url(&p, u, q)))
-    return 0;
+    {
+      if (p.err)
+	fprintf(stderr, "p4url_eval failed: %s\n", p.err);
+      else
+	fprintf(stderr, "p4url_eval failed: no diagnostic available\n");
+      return 0;
+    }
 
   if (p.oxid)
     p4oid(&p);
@@ -71,5 +77,5 @@ p4url_eval(const char *u, const char *q)
   /* exec failed */
   fprintf(stderr, "p4url_eval: exec failed:\n\t");
   dump_vec(PX_EXE, (char*const*)v);
-  return 1;
+  return 0;
 }

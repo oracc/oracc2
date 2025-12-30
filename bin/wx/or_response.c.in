@@ -210,6 +210,7 @@ tei(const char *item)
   perror("execl failed");
 }
 
+#if 0
 void
 xis(const char *xlang, const char *xid)
 {
@@ -221,6 +222,7 @@ xis(const char *xlang, const char *xid)
   perror("execl failed");
   exit(1);
 }
+#endif
 
 #if 0
 static void

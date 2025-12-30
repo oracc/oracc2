@@ -146,9 +146,11 @@ or_builtins_sub(struct builtinstab *builtinsp)
     case B_SL:
       sl((char*)elements[2]); /*, elements[3]); */
       break;
+#if 0
     case B_XIS:
       xis(elements[2], elements[3]);
       break;
+#endif
     case B_XFF:
       fprintf(stderr, "B_XFF REACHED elements[1]=%s; elements[2]=%s\n", elements[1], elements[2]);
       xff(elements[2]);
@@ -177,6 +179,7 @@ or_builtins_sub(struct builtinstab *builtinsp)
     case B_FILE:
       /*file();*/
       break;
+    case B_XIS:
     case B_NONE:
       break;
     }

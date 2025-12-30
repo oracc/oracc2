@@ -21,6 +21,7 @@ q, 	  "#STRING"
 srch, "#LIST"
 cemd, "|kwic|line|unit|"
 frag, "#NCNAME"
+xis, "#NCNAME"
 %%
 int qs_total_keywords(void)
 {

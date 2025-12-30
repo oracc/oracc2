@@ -8,7 +8,7 @@
 #include "ccgi/ccgi.h"
 
 static char *srchindex = NULL;
-static int p3trace = 0;
+static int p3trace = 1;
 
 static void
 p3srch(CGI_varlist *vl)
