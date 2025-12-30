@@ -6,11 +6,23 @@
 static const char *esp_ns = "http://oracc.org/ns/esp/1.0";
 static const char *html_ns = "http://www.w3.org/1999/xhtml";
 static const char *ood_ns = "http://oracc.org/ns/ood/1.0";
+static const char *xmd_ns = "http://oracc.org/ns/xmd/1.0";
 
 int roco_esp_ns = 0;
-int roco_ood_ns = 0;
 int roco_html_ns = 0;
+int roco_ood_ns = 0;
+int roco_xmd_ns = 0;
 int roco_no_void_xml = 0;
+
+Roco_row_hook roco_row_hook_outer = NULL, roco_row_hook_o = NULL, roco_row_hook_c = NULL;
+
+void
+roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook o, Roco_row_hook c)
+{
+  roco_row_hook_outer = outer;
+  roco_row_hook_o = o;
+  roco_row_hook_c = c;
+}
 
 void
 roco_write_xml(FILE *fp, Roco *r)
@@ -29,6 +41,8 @@ roco_write_xml(FILE *fp, Roco *r)
 	fprintf(fp, " xmlns:esp=\"%s\"", esp_ns);
       if (roco_ood_ns)
 	fprintf(fp, " xmlns:o=\"%s\"", ood_ns);
+      if (roco_xmd_ns)
+	fprintf(fp, " xmlns=\"%s\" xmlns:xmd=\"%s\"", xmd_ns, xmd_ns);
       if (r->class)
 	fprintf(fp, " class=\"%s\"", r->class);
       fputc('>', fp);
@@ -41,7 +55,11 @@ roco_write_xml(FILE *fp, Roco *r)
 	}
       else
 	{
+	  if (roco_row_hook_outer)
+	    roco_row_hook_outer(r,i,fp);
 	  fprintf(fp, "<%s\n>", r->rowtag);
+	  if (roco_row_hook_o)
+	    roco_row_hook_o(r,i,fp);
 	  int j;
 	  for (j = 0; r->rows[i][j] != NULL; ++j)
 	    {
@@ -54,6 +72,8 @@ roco_write_xml(FILE *fp, Roco *r)
 		fprintf(fp, "<%s/>", ctag);
 	      /* else don't emit an empty tag for void data */
 	    }
+	  if (roco_row_hook_c)
+	    roco_row_hook_c(r,i,fp);
 	  fprintf(fp, "</%s\n>", r->rowtag);
 	}
     }

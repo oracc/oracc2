@@ -28,9 +28,14 @@ struct roco
 
 typedef struct roco Roco;
 
+typedef void (*Roco_row_hook)(Roco *r, int i, FILE *fp);
+
+extern Roco_row_hook roco_row_hook_outer, roco_row_hook_o, roco_row_hook_c;
+extern void roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook o, Roco_row_hook c);
+
 extern const char *roco_colorder;
 extern const char *roco_format;
-extern int roco_html_ns, roco_esp_ns, roco_ood_ns;
+extern int roco_html_ns, roco_esp_ns, roco_ood_ns, roco_xmd_ns;
 extern int roco_newline;
 extern int roco_no_void_xml;
 extern int roco_swap_axes;
