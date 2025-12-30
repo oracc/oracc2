@@ -1,3 +1,7 @@
 include ../../oracc-am-rules.txt
 
-noinst_PROGRAMS=
+bin_PROGRAMS=cx
+
+cx_SOURCES=cx.c
+cx_LDADD = $(xLDADD)
+cx_DEPENDENCIES = $(cx_LDADD)
