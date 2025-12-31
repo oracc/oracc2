@@ -3,6 +3,7 @@
 #include "cx.h"
 
 static const char *arg_project;
+static int arg_verbose;
 
 Cx *
 cx_init(void)
@@ -48,7 +49,7 @@ cx_load(Cx *c, const char *cat)
 int
 main(int argc, char * const *argv)
 {
-  options(argc, argv, "p:");
+  options(argc, argv, "p:v");
   if (!arg_project)
     {
       fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");
@@ -71,6 +72,9 @@ opts(int opt, const char *arg)
     {
     case 'p':
       arg_project = arg;
+      break;
+    case 'v':
+      ++arg_verbose;
       break;
     default:
       return 1;

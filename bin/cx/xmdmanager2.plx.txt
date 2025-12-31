@@ -296,6 +296,11 @@ print LOG
     "\">\n";
 my $locator = undef;
 
+###
+### For cx catalog selection is handled in the shell wrapper
+###
+### dyna, virtual, and derived are handled by separate cx modules.
+###
 if ($oodmode) {
     @catalogs = map { { 'file'=>$_ } } '02pub/data.xml';
 } elsif ($cat_policy eq 'auto') {
@@ -813,7 +818,6 @@ dump_images {
     my $img = ($imgdoc ? $imgdoc->getElementsById($id) : undef);
     if ($img) {
 	my $pub = ($pubimg{$id} ? 'yes' : 'no');
-#	print "<images public=\"$pub\">", map({ $_->toString() } $img->childNodes()), '</images>';
 	push @{$xmd_outputs{$curr_xmd}},
 		"<images public=\"$pub\">", map({ $_->toString() } $img->childNodes()), '</images>';
     }
@@ -862,7 +866,6 @@ dump_xmd {
 	    if $$fields[$i] eq 'designation';
     }
     $lang_index = $item_index if $lang_index < 0;
-#    print STDERR "lang_index = $lang_index; item_index = $item_index\n";
 
     my %slice_wanted = ();
     my @catslice = ();
@@ -870,15 +873,6 @@ dump_xmd {
     @slice_wanted{ @catslice } = ();
     my @sort_types = @{$$cat[4]};
     my @sortrows = ();
-
-#    if ($l2) {
-#	map { make_vid($$_[$item_index]) } @$rows;
-#	@sortrows = sort { $vid{$$a[$item_index]} 
-#			   cmp $vid{$$b[$item_index]} } @$rows;
-#	@sortrows = sort { $$a[$item_index] cmp $$b[$item_index] } @$rows;
-#    } else {
-#	@sortrows = sort { $$a[$item_index] cmp $$b[$item_index] } @$rows;
-#    }
 
     # Note that we don't care about sort order any more because we build the
     # resultset in a hash and sort it on output
@@ -891,11 +885,6 @@ dump_xmd {
 	my $pleiades_id = undef; 
 	my $coord = undef;
 
-#	my @slice = @catslice;
-#	for (my($i,$s) = (0,shift @slice); $i <= $last; ++$i) {
-#	    while ($s == -1 && $#slice >= 0) {
-#		$s = shift @slice;
-#	    }
 	for (my $i = 0; $i <= $last; ++$i) {
 	    my $f = $$r[$i];
 	    my $tag = $$fields[$i];
