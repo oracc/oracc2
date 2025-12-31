@@ -8,5 +8,6 @@ typedef struct cx
 } Cx;
 
 extern void cx_roco(Cx *cp);
+extern int cx_roco_id_index(Cx *c);
 
 #endif/*CX_H_*/

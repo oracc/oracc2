@@ -21,16 +21,17 @@ cx_load(Cx *c, const char *cat)
       /* All catalogues must have fields in row one */
       if ((c->r = roco_load(cat, 1, "xmd-set", "xmd", NULL, NULL)))
 	{
-	  uccp f1 = c->r->rows[0][0];
-	  if (!strcmp((ccp)f1, "id_text")
-	      || !strcmp((ccp)f1, "id_composite")
-	      || !strcmp((ccp)f1, "o:id"))
+	  int rt = cx_roco_id_index(c);
+	  if (!rt)
+	    return 0;
+	  else if (rt > 0)
 	    {
+	      roco_reorder(c->r, 0, rt);
 	      return 0;
 	    }
 	  else
 	    {
-	      fprintf(stderr, "cx: first field name must be id_text, id_composite, or o:id");
+	      fprintf(stderr, "cx: no id_text, id_composite, or o:id in row 0\n");
 	      return 1;
 	    }
 	}
@@ -48,12 +49,19 @@ int
 main(int argc, char * const *argv)
 {
   options(argc, argv, "p:");
+  if (!arg_project)
+    {
+      fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");
+      return 1;
+    }
   Cx *c = cx_init();
-  if (cx_load(c, argv[1]))
+  if (cx_load(c, argv[optind]))
     {
       fprintf(stderr, "cx: error loading catalogue. Stop.\n");
-      exit(1);
+      return 1;
     }
+  else
+    roco_write_xml(stdout, c->r);
 }
 
 int

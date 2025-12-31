@@ -174,3 +174,15 @@ roco_swap(Roco *r)
     }
   return s;
 }
+
+void
+roco_reorder(Roco *r, int left, int right)
+{
+  int i;
+  for (i = 0; r->rows[i]; ++i)
+    {
+      ucp tmp = r->rows[i][left];
+      r->rows[i][left] = r->rows[i][right];
+      r->rows[i][right] = tmp;
+    }
+}

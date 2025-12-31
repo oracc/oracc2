@@ -55,4 +55,6 @@ extern void roco_write_xml(FILE *fp, Roco *r);
 
 #define roco_load1(x) roco_load((x),0,NULL,NULL,NULL,NULL)
 
+extern void roco_reorder(Roco *r, int left, int right);
+
 #endif/*ROCO_H_*/

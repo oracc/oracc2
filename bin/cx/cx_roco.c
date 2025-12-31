@@ -32,3 +32,18 @@ cx_roco(Cx *c)
   roco_xmd_ns = 1;
   roco_xml_row_hooks(cx_roco_outer, cx_roco_o, cx_roco_c);
 }
+
+int
+cx_roco_id_index(Cx *c)
+{
+  int f;
+  for (f = 0; c->r->rows[0][f]; ++f)
+    {
+      uccp f1 = c->r->rows[0][f];
+      if (!strcmp((ccp)f1, "id_text")
+	  || !strcmp((ccp)f1, "id_composite")
+	  || !strcmp((ccp)f1, "o:id"))
+	return f;
+    }
+  return -1;
+}
