@@ -5,7 +5,7 @@ projtype=`oraccopt . type`;
 if [ ${projtype} = "ood" ]; then
     ${bin}/cx 02pub/data.xml
 else
-    set 00cat/*.tsv
+    set 01tmp/00cat/*.tsv
     if [ "$1" != "00cat/*.tsv" ]; then
 	${bin}/cx $1
     else
