@@ -1,8 +1,8 @@
 #include <oraccsys.h>
 #include "lx.h"
 
-/* If the result of processing the args is a non-null the list is
-   guaranteed to have be at list one list followed by a sequence of
+/* If the result of processing the args is non-null the list is
+   guaranteed to have be at least one list followed by a sequence of
    alternating operator-filename pairs*/
 List *
 lx_set_args(char * const*argv, int start)

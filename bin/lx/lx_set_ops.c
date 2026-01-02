@@ -61,7 +61,7 @@ lx_union(Hash *r, Hash *l)
       if (!hash_find(r, (uccp)keys[i]))
 	hash_add(new_r, (uccp)keys[i], hash_find(l, (uccp)keys[i]));      
     }
-  return new_r;  
+  return new_r;
 }
 
 Lxfile *

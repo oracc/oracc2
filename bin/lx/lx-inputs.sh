@@ -23,7 +23,8 @@ if [ "$project" = "" ]; then
 fi
 
 # 00cat list
-xmd-ids.plx >01tmp/xmdids.lst
+#xmd-ids.plx >01tmp/xmdids.lst
+cx-xmd-ids.plx
 if [ -s 01tmp/xmdids.lst ]; then
     lx -cus -p $project -o $lxd/00cat.lst 01tmp/xmdids.lst
 fi
