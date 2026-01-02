@@ -35,6 +35,8 @@ struct runinfo
   enum isource from;
   Pool *pool;
   XML_Parser parser;
+  int stop; /* set to 1 when runexpat_stop is used to exit XML
+	       processing from within a handler */
 };
 
 struct runinfo *curr_rip;
@@ -68,6 +70,13 @@ int atf_line = 0;
 
 const char *pi_file = NULL;
 int pi_line = 0;
+
+void
+runexpat_stop(void)
+{
+  curr_rip->stop = 1;
+  XML_StopParser(curr_rip->parser, 1);
+}
 
 void
 runexpat_omit_rp_wrap(void)
@@ -241,16 +250,19 @@ runexpatNSuD(enum isource from,
   set_input(rip);
   for (;;)
     {
-      if (NULL == (buf = get_input(rip)))
+      if (rip->stop || NULL == (buf = get_input(rip)))
 	break;
       if (rip->input_len && !XML_Parse(parser, buf, rip->input_len, 0))
 	{
-	  fprintf(stderr,"===\n%s\n===\n",buf);
-	  fail(parser, rip);
+	  if (!rip->stop)
+	    {
+	      fprintf(stderr,"===\n%s\n===\n",buf);
+	      fail(parser, rip);
+	    }
 	}
     }
 
-  if (!runexpat_no_rp_wrap)
+  if (!rip->stop && !runexpat_no_rp_wrap)
     {
       if (!XML_Parse(parser,"</rp-wrap>",10,1))
 	fail(parser, rip);

@@ -123,6 +123,28 @@ xremove (const char *fn)
     xperror ("remove failed on '%s'", fn);
 }
 
+/* Copy FROM to TO, then unlink FROM. */
+void
+xrename(const char * from, const char * to)
+{
+  int c;
+  FILE *input = xfopen (from, "r");
+  FILE *output = xfopen (to, "w");
+
+  while ((c = getc (input)) != EOF || !feof (input))
+    putc (c, output);
+
+  xfclose (from, input);
+  xfclose (to, output);
+
+  if (unlink (from) != 0)
+    {
+      fprintf (stderr, "warning: Could not unlink ");
+      perror (from);
+    }
+}
+
+
 void
 xstat (const char *fn, struct stat *res)
 {

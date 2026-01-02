@@ -33,4 +33,6 @@ extern void xmlfilter_actions(xf_action_attr attr, xf_action_func firstChild, xf
 
 extern XML_CommentHandler runexpatCommentHandler;
 
+extern void runexpat_stop(void);
+
 #endif /*_RUNEXPAT_H*/
