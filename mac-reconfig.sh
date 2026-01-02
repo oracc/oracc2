@@ -1,5 +1,5 @@
 #!/bin/sh
-. ./oraccenv.sh
+. ~/orc/bin/oraccenv.sh
 glibtoolize
 aclocal
 autoheader
