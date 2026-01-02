@@ -1,14 +1,15 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <oraccsys.h>
 #include <xmlify.h>
 #include <roco.h>
+#include <list.h>
 
 int fields_from_row1 = 0;
 int suppress_xmlify = 0;
 int trtd_output = 0;
 int xml_output = 0;
+int verbose;
+
+List *z_list;
 
 const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL, *class = NULL;
 
@@ -16,16 +17,23 @@ int
 main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
-  
-  options(argc, argv, "c:C:efh::nor:R:stvx:X?");
+
+  options(argc, argv, "c:C:efh::nor:R:stvx:Xz:?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
 
-  r = roco_load("-", fields_from_row1, xmltag, rowtag, celtag, class);
+  r = roco_load(argv[optind] ? argv[optind] : "-", fields_from_row1, xmltag, rowtag, celtag, class);
 
   if (roco_swap_axes)
     r = roco_swap(s=r);
+
+  if (z_list)
+    {
+      roco_format = roco_z_format(z_list, r);
+      if (verbose)
+	fprintf(stderr, "rocox: roco_format=`%s'", roco_format);
+    }
   
   if (xml_output)
     roco_write_xml(stdout, r);
@@ -34,7 +42,7 @@ main(int argc, char *const *argv)
 }
 
 const char *prog = "rocox";
-int major_version = 1, minor_version = 0, verbose;
+int major_version = 1, minor_version = 0;
 const char *usage_string = "";
 
 int
@@ -88,6 +96,9 @@ opts(int opt, const char *arg)
       xml_output = 1;
       break;
     case 'v':
+      verbose = 1;
+      break;
+    case 'V':
       roco_no_void_xml = 1;
       break;
     case 'x':
@@ -96,6 +107,12 @@ opts(int opt, const char *arg)
       break;
     case 'X':
       suppress_xmlify = 1;
+      break;
+    case 'z':
+      if (!z_list)
+	z_list = list_create(LIST_SINGLE);
+      list_add(z_list, (void*)arg);
+      fields_from_row1 = 1;
       break;
     case '?':
       help();
