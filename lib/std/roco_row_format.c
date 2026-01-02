@@ -73,12 +73,13 @@ roco_row_format(FILE*fp, const unsigned char **row)
 		      else
 			fputs((ccp)xmlify(row[colnum-1]), fp);
 		    }
+		  s = e;
 		}
 	      else
 		{
 		  fprintf(stderr, "bad character after percent sign: must be digit or percent sign\n");
+		  ++s;
 		}
-	      ++s;
 	    }
 	}
       else

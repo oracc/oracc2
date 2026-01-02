@@ -1,6 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <loadfile.h>
+#include <oraccsys.h>
 #include <list.h>
 #include <roco.h>
 #include <xmlify.h>
@@ -26,6 +24,16 @@ roco_create(int rows, int cols)
   for (i = 0; i < r->nlines; ++i)
     r->rows[i] = calloc(cols, sizeof(const char *));
   return r;
+}
+
+void
+roco_fields_row(Roco *r, const char **f)
+{
+  int i;
+  for (i = 0; f[i]; ++i)
+    r->rows[0][i] = (ucp)f[i];
+  r->rows[0][i] = NULL;
+  r->fields_from_row1 = 1;
 }
 
 Roco *
@@ -102,6 +110,19 @@ roco_hash(Roco *r)
   return h;
 }
 
+void
+roco_field_indexes(Roco *r)
+{
+  if (r->fields_from_row1)
+    {
+      r->fields = hash_create(128);
+      int i;
+      /* index from 1 because 0 == NULL ptr */
+      for (i = 0; i < r->maxcols; ++i)
+	hash_add(r->fields, r->rows[0][i], (void*)(uintptr_t)(i+1));
+    }
+}
+
 static const char *
 roco_co_fo(void)
 {
@@ -117,6 +138,66 @@ roco_co_fo(void)
   *b++ = '\n';
   *b = '\0';
   return strdup(buf);
+}
+
+const char *
+roco_z_format(List *lp, Roco *r)
+{
+  if (r->fields_from_row1)
+    {
+      int i, ip[r->maxcols+1];
+      if (!r->fields)
+	roco_field_indexes(r);
+      for (i = 0; i < r->maxcols; ++i)
+	ip[i] = ((int)(uintptr_t)hash_find(r->fields, (uccp)r->rows[0][i]));
+      ip[i] = 0;
+      char **zp = (char**)list2array(lp);
+      for (i = 0; zp[i]; ++i)
+	{
+	  char buf[strlen(zp[i])+1];
+	  strcpy(buf, zp[i]);
+	  char *eq = strchr(buf, '=');
+	  if (eq)
+	    {
+	      *eq++ = '\0';
+	      void
+		*v1 = hash_find(r->fields, (uccp)buf),
+		*v2 = hash_find(r->fields, (uccp)eq);
+	      if (v1 && v2)
+		{
+		  int
+		    zl = ((int)(uintptr_t)v1),
+		    zr = ((int)(uintptr_t)v2);
+		  ip[zl-1] = zr;
+		  ip[zr-1] = zl;
+		}
+	      else
+		{
+		  if (!v1)
+		    fprintf(stderr, "roco_z_format: field %s not in field indexes\n", buf);
+		  if (!v2)
+		    fprintf(stderr, "roco_z_format: field %s not in field indexes\n", eq);
+		  return NULL;
+		}
+	    }
+	}
+      char fmt[(i * 7) + 1];
+      for (i = 0, *fmt = '\0'; ip[i]; ++i)
+	{
+	  strcat(fmt, "%");
+	  strcat(fmt, itoa(ip[i])); /* -R indexes from 1 because %0 means pad with 1 zero */
+	  if (ip[i+1])
+	    strcat(fmt, "\t");
+	  else
+	    strcat(fmt, "\n");
+	}
+      return strdup(fmt);
+    }
+  else
+    {
+      fprintf(stderr, "roco_z_format: need fields_from_row1 == 1\n");
+      return NULL;
+    }
 }
 
 void
@@ -154,7 +235,8 @@ roco_write(FILE *fp, Roco *r)
 		    fputs((const char *)r->rows[i][j], fp);
 		}
 	    }
-	  fputc('\n', fp);
+	  if (j)
+	    fputc('\n', fp);
 	}
     }
 
