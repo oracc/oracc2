@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=cx
 
-bin_SCRIPTS=cx.sh
+bin_SCRIPTS=cx.sh cx-marshall.sh cx-xmd-ids.sh
 
 cx_SOURCES=cx.c cx_roco.c
 cx_LDADD = $(xLDADD)
