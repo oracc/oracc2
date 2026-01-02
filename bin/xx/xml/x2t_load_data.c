@@ -1,0 +1,62 @@
+#include <oraccsys.h>
+#include <runexpat.h>
+#include "xml2tsv.h"
+
+static int depth;
+static int rown = 1, coln = 0;
+static Pool *hp;
+
+void
+load_fmp_sH(void *userData, const char *name, const char **atts)
+{
+}
+
+void
+load_fmp_eH(void *userData, const char *name)
+{
+  if (!strcmp(name, "COL"))
+    {
+      r->rows[rown][coln] = hpool_copy((uccp)charData_retrieve(), hp);
+      ++coln;
+    }
+  else if (!strcmp(name, "ROW"))
+    {
+      coln = 0;
+      ++rown;
+    }
+  else if (!strcmp(name, "METADATA"))
+    (void)charData_retrieve();
+}
+
+void
+load_xml_sH(void *userData, const char *name, const char **atts)
+{
+  ++depth;
+}
+
+void
+load_xml_eH(void *userData, const char *name)
+{
+  --depth;
+  if (depth == 1)
+    ++rown;
+  else if (depth == 2)
+    {
+      coln = (int)(uintptr_t)hash_find(r->fields, (uccp)name);
+      r->rows[rown][coln] = hpool_copy((uccp)charData_retrieve(), hp);
+    }
+}
+
+void
+x2t_load_data(const char *fn, Roco *r)
+{
+  depth = 0;
+  runexpat_omit_rp_wrap();
+  char const *fnlist[2];
+  fnlist[0] = fn;
+  fnlist[1] = NULL;
+  hp = hpool_init();
+  runexpat(i_list, fnlist,
+	   fmp_mode ? load_fmp_sH : load_xml_sH,
+	   fmp_mode ? load_fmp_eH : load_xml_eH);
+}
