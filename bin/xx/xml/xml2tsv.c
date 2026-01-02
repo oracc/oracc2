@@ -61,8 +61,8 @@ main(int argc, char * const *argv)
 	}
     }
   
-  r = roco_create(nrec+1, nfld);
-
+  r = roco_create(nrec+1, nfld+1);
+  r->maxcols = nfld;
   roco_fields_row(r, fields);
   roco_field_indexes(r);
   if (verbose)
@@ -76,7 +76,7 @@ main(int argc, char * const *argv)
     }
 
   x2t_load_data(argv[optind], r);
-
+  roco_newline = 1;
   roco_write(stdout, r);
 }
 

@@ -18,6 +18,6 @@ xmlsplit_SOURCES = xmlsplit.c
 xmlsplit_LDADD = $(xLDADD)
 xmlsplit_DEPENDENCIES = $(xLDADD)
 
-xml2tsv_SOURCES = xml2tsv.c xmlns_lib.c
+xml2tsv_SOURCES = xml2tsv.c xmlns_lib.c x2t_fields.c x2t_load_data.c
 xml2tsv_LDADD = $(xLDADD)
 xml2tsv_DEPENDENCIES = $(xLDADD)

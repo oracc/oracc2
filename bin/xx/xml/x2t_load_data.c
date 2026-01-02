@@ -17,6 +17,9 @@ load_fmp_eH(void *userData, const char *name)
   if (!strcmp(name, "COL"))
     {
       r->rows[rown][coln] = hpool_copy((uccp)charData_retrieve(), hp);
+      char *t = (char*)r->rows[rown][coln];
+      while ((t = strchr(t, '\t')))
+	*t++ = ' ';
       ++coln;
     }
   else if (!strcmp(name, "ROW"))
@@ -44,6 +47,12 @@ load_xml_eH(void *userData, const char *name)
     {
       coln = (int)(uintptr_t)hash_find(r->fields, (uccp)name);
       r->rows[rown][coln] = hpool_copy((uccp)charData_retrieve(), hp);
+      char *t =  (char*)r->rows[rown][coln];
+      while ((t = strchr(t, '\t')))
+	{
+	  fprintf(stderr, "untab\n");
+	  *t++ = ' ';
+	}
     }
 }
 
