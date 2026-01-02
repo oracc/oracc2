@@ -8,7 +8,7 @@
 #
 echo $0 $*
 bin="$ORACC/bin"
-projtype=`oraccopt . type`;
+projtype=`oraccopt . type`
 
 rm -fr 01tmp/00cat ; mkdir -p 01tmp/00cat
 if [ ! -d 01tmp/00cat ]; then
@@ -34,8 +34,11 @@ fi
 set 01tmp/00cat/*.tsv
 if [ "$1" != "01tmp/00cat/*.tsv" ]; then
     for t in $* ; do
-	id=`head -1 $t | tr '\t' '\n' | grep ^id_ | tr -d '\n'`
-	rocox -z $id $t >$t.z
-	mv $t.z $t
+	id=`head -1 $t | grep ^id_`
+	if [ "${id}" = "" ]; then
+	    id=`head -1 $t | tr '\t' '\n' | grep ^id_ | tr -d '\n'`
+	    rocox -z $id $t >$t.z
+	    mv $t.z $t
+	fi
     done
 fi
