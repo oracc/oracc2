@@ -166,8 +166,8 @@ roco_z_format(List *lp, Roco *r)
 	      if (v1 && v2)
 		{
 		  int
-		    zl = ((int)(uintptr_t)v1),
-		    zr = ((int)(uintptr_t)v2);
+		    zl = (int)(uintptr_t)v1,
+		    zr = (int)(uintptr_t)v2;
 		  ip[zl-1] = zr;
 		  ip[zr-1] = zl;
 		}
@@ -177,6 +177,24 @@ roco_z_format(List *lp, Roco *r)
 		    fprintf(stderr, "roco_z_format: field %s not in field indexes\n", buf);
 		  if (!v2)
 		    fprintf(stderr, "roco_z_format: field %s not in field indexes\n", eq);
+		  return NULL;
+		}
+	    }
+	  else
+	    {
+	      void *v1 = hash_find(r->fields, (uccp)buf);
+	      if (v1)
+		{
+		  int z1 = (int)(uintptr_t)v1;
+		  int i;
+		  /* move everything before z1 one slot to the right */
+		  for (i = z1-1; i > 0; --i)
+		    ip[i] = ip[i-1];
+		  ip[0] = z1;
+		}
+	      else
+		{
+		  fprintf(stderr, "roco_z_format: field %s not in field indexes\n", buf);
 		  return NULL;
 		}
 	    }
