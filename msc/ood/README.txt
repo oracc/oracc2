@@ -132,3 +132,10 @@ Once you have 00lib/data.xml you can run:
 
 To create a draft 00lib/keydata.xml and edit that as necessary.
 
+
+CHANGES FOR Oracc II CX
+=======================
+
+For cx, ood must provide .tsv in 00cat (the indexed version) and
+data.xml in 02pub (the displayed version).
+
