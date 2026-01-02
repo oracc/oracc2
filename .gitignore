@@ -138,7 +138,10 @@ bin/xx/tis/tokx
 bin/xx/tis/vidx
 bin/xx/tlitsig
 bin/xx/xisdb
-bin/xx/xmlify
+bin/xx/xml/xmlify
+bin/xx/xml/xmlnl
+bin/xx/xml/xmlsplit
+bin/xx/xml/xml2tsv
 bin/xx/wrapper/xmd2htm
 bin/xx/wrapper/xtf2cun
 bin/xx/wrapper/xtf2prf
