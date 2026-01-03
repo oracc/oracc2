@@ -41,6 +41,7 @@ opts(int c, const char *arg)
       project = arg;
       break;
     case 'x':
+      printf("id_text\tdesignation\tperiod\tprovenience\n");
       x_mode = 1;
       break;
     }

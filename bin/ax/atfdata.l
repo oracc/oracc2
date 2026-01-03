@@ -131,5 +131,5 @@ x_term(void)
       ++p; while (isspace(*p)) ++p;
       *e = '\0';
     }
-  printf("%s\t%s\n", curr_pqx, p);
+  printf("%s\t%s\tunknown\tunknown\n", curr_pqx, p);
 }
