@@ -4,7 +4,7 @@
 
 echo $0 $*
 
-lxd=01bld/lxinputs
+lxd=01bld/lists
 project=`oraccopt`
 
 if [ "$project" = "" ]; then
