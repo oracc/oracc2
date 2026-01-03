@@ -9,7 +9,7 @@
 #set -x
 #echo $0 $*
 
-lxd=01bld/lxinputs
+lxd=01bld/lists
 if [ -d $lxd ]; then
     rm -f $lxd/*
 else
@@ -55,8 +55,8 @@ cut -f1 02pub/atf-data.tab | lx -cus -p $project -o $lxd/00atf.lst -
 #
 bap=`oraccopt . build-approved-policy`
 if [ "$bap" == "proxy" ]; then
-    cp 00lib/proxy.lst 01bld/lists/outlined.lst
-    cp 00lib/proxy.lst 01bld/lists/proxy-atf.lst
+    cp $lxd/proxy.lst $lxd/outlined.lst
+    cp $lxd/proxy.lst $lxd/proxy-atf.lst
 elif [ -r 00lib/umbrella.lst ]; then
     rm -f 01tmp/00umbrella.lst
     >&2 echo $0: marshalling 00lib/umbrella.lst
@@ -69,7 +69,7 @@ elif [ -r 00lib/search.lst ]; then
     exec >>01tmp/00search.lst
     lx-umbrella.sh search
     lx -cus -p $project -o $lxd/00search.lst 01tmp/00search.lst
-    if [ ! -s 01bld/lists/outlined.lst ]; then
-	cut -d'@' -f1 <$lxd/00search.lst >01bld/lists/outlined.lst
+    if [ ! -s $lxd/outlined.lst ]; then
+	cut -d'@' -f1 <$lxd/00search.lst >$lxd/outlined.lst
     fi
 fi

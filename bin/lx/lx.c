@@ -31,7 +31,7 @@ main(int argc, char * const*argv)
 {
   loadfile_prog((prog = argv[0]));
   
-  if (options(argc, argv, "a:cio:p:qsuvxz"))
+  if (options(argc, argv, "a:cim:o:p:qsuvxz"))
     return 1;
 
   if (qualify && !project)
