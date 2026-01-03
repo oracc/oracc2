@@ -3,13 +3,14 @@
 const char *cat_mode;
 const char *catproj;
 const char *project;
+extern int x_mode; /* extract ID and NAME for X-IDs */
 extern int atfd_flex_debug;
 extern void atfdlex(void);
 
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "c:j:p:");
+  options(argc, argv, "c:j:p:x");
   if (!project)
     {
       fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
@@ -38,6 +39,9 @@ opts(int c, const char *arg)
     case 'j':
     case 'p':
       project = arg;
+      break;
+    case 'x':
+      x_mode = 1;
       break;
     }
   return 0;

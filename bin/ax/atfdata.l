@@ -13,10 +13,12 @@ static void lem(void);
 static void pqx(void);
 static void tr(void);
 static void pqx_term(void);
+static void x_term(void);
 const char *curratffile = "<file>";
 
 const char *curr_pqx;
 int curr_lem = 0;
+int x_mode = 0;
 Hash *hdata = NULL;
 Pool *p = NULL;
 
@@ -27,13 +29,15 @@ BOM2	"\xfe\xff"
 PQX	[PQX][0-9]{6}
 TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 
-%s AMP ATR DROP ITR
+%s AMP ATR DROP ITR X
 
 %%
 
-<AMP>{PQX}		{ BEGIN(DROP); pqx(); }
+<AMP>{PQX}		{ if (x_mode&&'X'==*atfdtext) { BEGIN(X); } else { BEGIN(DROP); } pqx(); }
 
 <ATR>[^ \t]+		{ BEGIN(DROP); tr(); }
+
+<X>.*/\n		{ BEGIN(0); x_term(); }
 
 <DROP>.*/\n		{ BEGIN(0); }
 
@@ -103,7 +107,7 @@ lem(void)
 static void
 pqx(void)
 {
-  if (curr_pqx)
+  if (curr_pqx && !x_mode)
     pqx_term();
   pqx_init(atfdtext);
 }
@@ -113,4 +117,19 @@ tr(void)
 {
   if (!hash_find(hdata, (uccp)atfdtext))
     hash_add(hdata, (uccp)pool_copy((uccp)atfdtext,p), "");
+}
+
+static void
+x_term(void)
+{
+  char *p = atfdtext; while (isspace(*p)) ++p;
+  char *e = p + strlen(p); while (e > p && isspace(e[-1])) --e;
+  if (e == p)
+    p = "Unnamed";
+  else if ('=' == *p)
+    {
+      ++p; while (isspace(*p)) ++p;
+      *e = '\0';
+    }
+  printf("%s\t%s\n", curr_pqx, p);
 }
