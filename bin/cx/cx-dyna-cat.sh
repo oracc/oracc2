@@ -17,6 +17,7 @@
 # their ATF.
 #
 echo $0 $*
+bin=${ORACC}/bin
 list=$1
 work=01tmp/`basename $1`
 cut -d: -f2 $list | tr @ '\t' >$work
@@ -25,6 +26,8 @@ grep ^Q $work >$work.Q
 grep ^X $work >$work.X
 
 project=`oraccopt`
+
+$bin/cx-xcat.sh
 
 pdyna=01bld/cat/dynamic-p.cat
 qdyna=01bld/cat/dynamic-q.cat

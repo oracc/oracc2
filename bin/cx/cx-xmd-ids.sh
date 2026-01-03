@@ -1,5 +1,7 @@
 #!/bin/sh
 #
+# cx-marshall.sh should be run before this script.
+#
 # Replacement for xmd-ids.plx; much simpler now because 01tmp/00cat
 # contains all the relevant .tsv with the id_text|composite in col 0.
 #

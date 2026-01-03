@@ -5,32 +5,41 @@
 #
 echo $0 $*
 bin="$ORACC/bin"
+lxd=01bld/lists
 policy=`oraccopt . catalog-build-policy`
+approved=$lxd/approved.lst
+incat=$lxd/cat-ids.lst
+nocat=$lxd/no-cat-data.lst
 
-function auto {
-    
-}
-
-function custom {
-}
-
-function mixed {
-}
-
-function virtual {
-}
-
-function unknown {
-    echo $0: unknown catalog-build-policy '$policy'. Stop.
-    exit 1
-}
+# no-cat-data.lst is a list of approved IDs that are not in project 00cat
+lx -q $approved - $incat >$nocat
 
 case $policy in
-    auto)	auto ;;
-    custom)	custom ;;
-    local)	local ;;
-    mixed)	mixed ;;
-    virtual)	virtual ;;
-    *)	unknown;;
+    auto|virtual)
+	cx-dyna-cat.sh $approved
+	;;
+    custom)
+	# in custom mode all data must be maintained by the project
+	if [ -s $nocat ]; then
+	    echo "$0: custom catalog must contain all items. Missing data for:"
+	    cat $nocat
+	    exit 1
+	fi
+	;;
+    local)
+	if [ -s $nocat ]; then
+	    echo "$0: local catalog items to be supplied from fallback cat:"
+	    cat $nocat
+	    cx-dyna-cat.sh $nocat
+	fi
+    ;;
+    mixed)
+	if [ -s $nocat ]; then
+	    cx-dyna-cat.sh $nocat
+	fi
+    ;;
+    *)
+	echo $0: unknown catalog-build-policy '$policy'. Stop.
+	exit 1
+	;;
 esac
-
