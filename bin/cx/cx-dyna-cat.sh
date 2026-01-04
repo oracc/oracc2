@@ -40,17 +40,17 @@ qmaster=`oraccopt . catalog-master-q`
 xmaster=`oraccopt . catalog-master-x`
 
 if [ "${pmaster}" = "" ]; then
-    pcat=cdli
+    pcat=${ORACC}/cdli/00cat/cdli_catalogue.tsv
 else
     pcat=${pmaster}
 fi
 if [ "${qmaster}" = "" ]; then
-    qcat=qcat
+    qcat=${ORACC}/qcat/00cat/qcat.tsv
 else
     qcat=${qmaster}
 fi
 if [ "${xmaster}" = "" ]; then
-    xcat=xcat
+    xcat=01bld/cat/auto-x.tsv
 else
     xcat=${xmaster}
 fi
