@@ -22,7 +22,7 @@ main(int argc, char **argv)
   FILE *infile;
   size_t nbytes;
 
-  options(argc, argv, "d:n:s?");
+  options(argc, argv, "d:fn:s?");
   tsvfile = argv[optind];
 
   if (!tsvfile && !stdinput)
