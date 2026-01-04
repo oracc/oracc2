@@ -78,6 +78,7 @@ main(int argc, char **argv)
   int nkeys;
   const char **pkeys = hash_keys2(h, &nkeys);
   qsort(pkeys, nkeys, sizeof(const char *), cmpstringp);
+  fprintf(stdout, "id_text\timages\n");
   size_t i;
   for (i = 0; i < nkeys; ++i)
     {
