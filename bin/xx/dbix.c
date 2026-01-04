@@ -9,6 +9,7 @@
 #endif
 
 const char *dbidir, *dbiname;
+int first_row_is_fields = 0;
 int stdinput = 0;
 
 int
@@ -45,6 +46,10 @@ main(int argc, char **argv)
 
   dbi = dbi_create(dbiname, dbidir, 0, 1, DBI_BALK);
   int lnum = 0;
+
+  if (first_row_is_fields)
+    (void)loadoneline(infile,&nbytes);
+  
   while ((k = loadoneline(infile,&nbytes)))
     {
       ++lnum;
@@ -75,6 +80,9 @@ opts(int opt, const char *arg)
     {
     case 'd':
       dbidir = arg;
+      break;
+    case 'f':
+      first_row_is_fields = 1;
       break;
     case 'n':
       dbiname = arg;
