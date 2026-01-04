@@ -4,4 +4,5 @@ if [ "$ORACC_MODE" = "single" ]; then
 else
     rm -f $ORACC/bin/oracc
     cp -v oracc $ORACC/bin
+    (cd $ORACC/bin ; chmod o+rx oracc)
 fi
