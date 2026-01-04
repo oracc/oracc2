@@ -20,8 +20,18 @@ fmp_sH(void *userData, const char *name, const char **atts)
 void
 xml_sH(void *userData, const char *name, const char **atts)
 {
+  static int tried_xid = 0;
   if (depth == 1)
-    ++nrec;
+    {
+      ++nrec;
+      if (!tried_xid)
+	{
+	  const char *xid = get_xml_id(atts);
+	  if (*xid)
+	    hash_add(hfields, (uccp)"xml_id_attr", "");
+	  tried_xid = 1;
+	}
+    }
   else if (depth == 2)
     {
       if (!hash_find(hfields, (uccp)name))

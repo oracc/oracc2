@@ -61,7 +61,7 @@ main(int argc, char * const *argv)
 	}
     }
   
-  r = roco_create(nrec+1, nfld+1);
+  r = roco_create(nrec+2, nfld+1);
   r->maxcols = nfld;
   roco_fields_row(r, fields);
   roco_field_indexes(r);
