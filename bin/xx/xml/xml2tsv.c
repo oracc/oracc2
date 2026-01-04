@@ -1,6 +1,8 @@
 #include <oraccsys.h>
+#include <roco.h>
 #include "xml2tsv.h"
 
+List *z_list;
 int fmp_mode, verbose, xml_mode;
 size_t nrec;
 int nfld;
@@ -76,7 +78,18 @@ main(int argc, char * const *argv)
     }
 
   x2t_load_data(argv[optind], r);
-  roco_newline = 1;
+  r->rows[nrec+1] = NULL;
+  if (!hash_find(r->fields, (uccp)"id_text")
+      && !hash_find(r->fields, (uccp)"id_composite")
+      && hash_find(r->fields, (uccp)"id_attr"))
+    {
+      z_list = list_create(LIST_SINGLE);
+      list_add(z_list, (void*)"id_attr");
+      r->fields_from_row1 = 1;
+      roco_format = roco_z_format(z_list, r);
+    }
+  else
+    roco_newline = 1;
   roco_write(stdout, r);
 }
 

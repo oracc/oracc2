@@ -28,7 +28,7 @@ xml_sH(void *userData, const char *name, const char **atts)
 	{
 	  const char *xid = get_xml_id(atts);
 	  if (*xid)
-	    hash_add(hfields, (uccp)"xml_id_attr", "");
+	    hash_add(hfields, (uccp)"id_attr", "");
 	  tried_xid = 1;
 	}
     }

@@ -40,7 +40,7 @@ load_xml_sH(void *userData, const char *name, const char **atts)
       const char *xid = get_xml_id(atts);
       if (*xid)
 	{
-	  coln = (int)(uintptr_t)hash_find(r->fields, (uccp)"xml_id_attr");
+	  coln = (int)(uintptr_t)hash_find(r->fields, (uccp)"id_attr");
 	  r->rows[rown][coln-1] = pool_copy((uccp)xid, p);
 	}
     }
