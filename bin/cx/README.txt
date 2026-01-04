@@ -14,8 +14,8 @@ Phases
 	     - -or- catalog-build-policy auto|virtual => build cat from ATF
 	     - -or- catalog-build-policy mixed => use local/custom supplemented by dynacat
 	     Some of this work was previously done by lx-inputs.sh/lx-lists.sh and xmd-ids.plx.
-	2 -- extra -- marshall additional cat data for each ID, including img data, cat.d,
-	     designation sort orders, and imported fields from keydata.xml
+	2 -- extra -- marshall additional cat data for each ID, including cat.d,
+	     and imported fields from keydata.xml; CDLI img data now in cdli/02pub/img.tsv
 	3 -- generate single 01bld/cat.tsv with all necessary cat entry data
 	4 -- load 01bld/cat.tsv
 	5 -- save sortinfo data

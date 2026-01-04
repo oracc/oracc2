@@ -154,6 +154,9 @@ my %xproject_uris = (
     'ETCSL'=>'http://www-etcsl.orient.ox.ac.uk',
     );
 
+###
+### To be redone in cx using cdli/02pub/img.tsv
+###
 my $imgdb = "@@ORACC@@/xml/cdli/imgdb.xml";
 my $imgdoc = load_xml($imgdb);
 #die "xmdmanager.plx: can't open image database $imgdb\n" unless $imgdoc;
