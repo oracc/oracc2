@@ -2,6 +2,7 @@
 #define ROCO_H_
 
 #include <hash.h>
+#include <list.h>
 
 /* Row-and-column type
  *
@@ -22,14 +23,19 @@ struct roco
   const char *rowtag;    /* tag to wrap row output */
   const char *celtag;    /* tag to wrap cell output */
   const char *class;     /* class for xmltag */
+  const char *empty_row; /* row of maxcols tabs; for Roco in j_list, maxcols-1*'\t' */
   Hash *fields;		 /* Hash of field names to index in row */
+  Hash *hdata;		 /* Hash of cell1 to row */
   int linkcells;	 /* The cells are Link* not char * */
   int maxcols;
+  int joiner;
 };
 
 typedef struct roco Roco;
 
 typedef void (*Roco_row_hook)(Roco *r, int i, FILE *fp);
+
+extern List *r_list;
 
 extern Roco_row_hook roco_row_hook_outer, roco_row_hook_o, roco_row_hook_c;
 extern void roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook o, Roco_row_hook c);
@@ -60,5 +66,7 @@ extern void roco_write_xml(FILE *fp, Roco *r);
 extern void roco_reorder(Roco *r, int left, int right);
 extern void roco_fields_row(Roco *r, const char **f);
 extern const char *roco_z_format(List *lp, Roco *r);
+extern void roco_empty_row(Roco *r);
+extern Hash *roco_hash_r(Roco *r);
 
 #endif/*ROCO_H_*/

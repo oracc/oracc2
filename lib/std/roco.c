@@ -6,6 +6,8 @@
 /* FIXME: MEMORY MANAGEMENT -- keep roco list and delete or use static
    Memo for Rocos */
 
+List *r_list;
+
 #define uccp unsigned const char *
 
 const char *roco_colorder = NULL;
@@ -107,6 +109,30 @@ roco_hash(Roco *r)
 {
   Hash *h = hash_create(r->nlines/2);
   roco_hash_hash(h, r);
+  return h;
+}
+
+static void
+roco_hash_hash_r(Hash *h, Roco *r)
+{
+  size_t i;
+  for (i = 0; i < r->nlines; ++i)
+    {
+      if ('#' != *r->rows[i][0])
+	{
+	  if (!strcmp((ccp)r->rows[i][0], ".include"))
+	    roco_hash_hash(h, roco_load1((ccp)r->rows[i][1]));      
+	  else
+	    hash_add(h, r->rows[i][0], r->rows[i]);
+	}
+    }
+}
+
+Hash *
+roco_hash_r(Roco *r)
+{
+  Hash *h = hash_create(r->nlines/2);
+  roco_hash_hash_r(h, r);
   return h;
 }
 
@@ -219,6 +245,57 @@ roco_z_format(List *lp, Roco *r)
 }
 
 void
+roco_empty_row(Roco *r)
+{
+  char buf[(r->maxcols-r->joiner)+1];
+  memset(buf, r->maxcols-r->joiner, '\t');
+  buf[r->maxcols-r->joiner] = '\0';
+  r->empty_row = strdup(buf);
+}
+
+static void
+roco_join(FILE *fp, Roco *r, int i)
+{
+  if (!i)
+    {
+      Roco *jr;
+      for (jr = list_first(r_list); jr; jr = list_next(r_list))
+	{
+	  int j;
+	  for (j = 1; jr->rows[0][j]; ++j)
+	    {
+	      fputc('\t', fp);
+	      if (*r->rows[0][j])
+		fputs((const char *)r->rows[0][j], fp);
+	    }
+	}
+    }
+  else
+    {
+      Roco *jr;
+      for (jr = list_first(r_list); jr; jr = list_next(r_list))
+	{
+	  int j;
+	  if (jr->hdata)
+	    {
+	      const char **row = hash_find(jr->hdata, r->rows[i][0]);
+	      if (r)
+		{
+		  for (j = 1; row[j]; ++j)
+		    {
+		      fputc('\t', fp);
+		      if (*row[j])
+			fputs(row[j], fp);
+		    }
+		}
+	      else
+		fputs(jr->empty_row, fp);
+	    }
+	}      
+    }
+}
+
+void
 roco_write(FILE *fp, Roco *r)
 {
   size_t i;
@@ -253,6 +330,10 @@ roco_write(FILE *fp, Roco *r)
 		    fputs((const char *)r->rows[i][j], fp);
 		}
 	    }
+
+	  if (r_list)
+	    roco_join(fp, r, i);
+
 	  if (j)
 	    fputc('\n', fp);
 	}

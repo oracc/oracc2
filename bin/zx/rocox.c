@@ -9,7 +9,7 @@ int trtd_output = 0;
 int xml_output = 0;
 int verbose;
 
-List *z_list;
+List *j_list, *z_list;
 
 const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL, *class = NULL;
 
@@ -18,11 +18,25 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
 
-  options(argc, argv, "c:C:efh::nor:R:stvx:Xz:?");
+  options(argc, argv, "c:C:efh::j:nor:R:stvx:Xz:?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
 
+  if (j_list)
+    {
+      r_list = list_create(LIST_SINGLE);
+      const char *j;
+      for (j = list_first(j_list); j; j = list_next(j_list))
+	{
+	  Roco *jr = roco_load(j, fields_from_row1, NULL, NULL, NULL, NULL);
+	  jr->hdata = roco_hash_r(jr);
+	  jr->joiner = 1;
+	  roco_empty_row(jr);
+	  list_add(r_list, jr);
+	}
+    }
+  
   r = roco_load(argv[optind] ? argv[optind] : "-", fields_from_row1, xmltag, rowtag, celtag, class);
 
   if (roco_swap_axes)
@@ -72,6 +86,11 @@ opts(int opt, const char *arg)
 	  class = arg ? arg : "pretty";
 	}
       xml_output = 1;
+      break;
+    case 'j':
+      if (!j_list)
+	j_list = list_create(LIST_SINGLE);
+      list_add(j_list, (void*)arg);
       break;
     case 'n':      
       roco_newline = 1;
