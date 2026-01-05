@@ -1048,6 +1048,10 @@ sub find_keydata_in_parent {
 #    $orig{$xru{$f}} = $xf;
 #}
 
+###
+### <imported> does not seem to be used by any keydata.xml any more so
+### cx implementation is deferred for now.
+###
 sub
 imports {
     my $cat = shift;
