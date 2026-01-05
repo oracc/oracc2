@@ -265,8 +265,8 @@ roco_join(FILE *fp, Roco *r, int i)
 	  for (j = 1; jr->rows[0][j]; ++j)
 	    {
 	      fputc('\t', fp);
-	      if (*r->rows[0][j])
-		fputs((const char *)r->rows[0][j], fp);
+	      if (*jr->rows[0][j])
+		fputs((const char *)jr->rows[0][j], fp);
 	    }
 	}
     }
