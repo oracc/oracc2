@@ -10,6 +10,8 @@ int lnum;
 int status;
 const char *curr_filename;
 
+FILE *f_log;
+
 #define MTX_ISDELIM(c) ((c)=='-'||(c)=='.'||(c)==' '||(c)=='\t'||(c)=='\n')
 
 #define prev(ptr) (ptr)->parent->prev
@@ -221,7 +223,6 @@ scan_input (int ac, char **av)
       else
 	{
 	  extern const char *file;
-	  extern FILE *f_log;
 	  f_log = stderr;
 	  if (!(fp = fopen (fname, "r")))
 	    fprintf(stderr, "mx: unable to open %s\n", fname);
