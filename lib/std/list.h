@@ -82,5 +82,6 @@ extern const char *vec_sep_str;
 extern const void **list2array(List *l);
 extern const void **list2array_c(List *l, int *n);
 #define list2chars(l) (const char **)list2array((l))
+extern List *list_from_ary (void **ary, List_types_e type);
 
 #endif /* LIST_H_ */

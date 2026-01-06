@@ -248,7 +248,7 @@ void
 roco_empty_row(Roco *r)
 {
   char buf[(r->maxcols-r->joiner)+1];
-  memset(buf, r->maxcols-r->joiner, '\t');
+  memset(buf, '\t', r->maxcols-r->joiner);
   buf[r->maxcols-r->joiner] = '\0';
   r->empty_row = strdup(buf);
 }
@@ -279,7 +279,7 @@ roco_join(FILE *fp, Roco *r, int i)
 	  if (jr->hdata)
 	    {
 	      const char **row = hash_find(jr->hdata, r->rows[i][0]);
-	      if (r)
+	      if (row)
 		{
 		  for (j = 1; row[j]; ++j)
 		    {

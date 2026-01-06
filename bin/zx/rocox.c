@@ -23,6 +23,13 @@ main(int argc, char *const *argv)
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
 
+  if (j_file)
+    {
+      char **jj = loadfile_lines3(j_file, NULL, NULL);
+      if (jj)
+	j_list = list_from_ary(jj, LIST_SINGLE);
+    }
+  
   if (j_list)
     {
       r_list = list_create(LIST_SINGLE);
@@ -86,6 +93,9 @@ opts(int opt, const char *arg)
 	  class = arg ? arg : "pretty";
 	}
       xml_output = 1;
+      break;
+    case 'J':
+      j_file = arg;
       break;
     case 'j':
       if (!j_list)

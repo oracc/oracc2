@@ -8,7 +8,7 @@
 static struct pool_block *new_block(struct pool *p);
 
 struct pool *
-pool_init()
+pool_init(void)
 {
   struct pool *p = calloc(1,sizeof(struct pool));
   if (!p)

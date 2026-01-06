@@ -373,6 +373,16 @@ list_pop (List *lp)
 }
 
 List *
+list_from_ary (void **ary, List_types_e type)
+{
+  List *tmp = list_create (type);
+  int i;
+  for (i = 0; ary[i]; ++i)
+    list_add(tmp, ary[i]);
+  return tmp;
+}
+
+List *
 list_from_str (char *str, char *(*tok)(char *), List_types_e type)
 {
   List *tmp = list_create (type);
