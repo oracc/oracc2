@@ -1,0 +1,8 @@
+phantom.c:25:15: warning: passing 'Uchar *' (aka 'unsigned char *') to parameter of type 'const char *' converts between pointers to integer types with different sign [-Wpointer-sign]
+                  vwarning2(iterate_line->file,iterate_line->linenum,"%s",
+                            ^~~~~~~~~~~~~~~~~~
+../../../c/include/warning.h:16:35: note: passing argument to parameter 'myfile' here
+extern void vwarning2(const char *myfile, int mylnum, const char *fmt,...);
+                                  ^
+1 warning generated.
+clang: warning: argument unused during compilation: '-ansi' [-Wunused-command-line-argument]
