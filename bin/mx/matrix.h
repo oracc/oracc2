@@ -29,7 +29,7 @@ extern Tabloc empty_tabloc;
 
 struct LINE
 {
-  Uchar *file;
+  const char *file;
   Unsigned32 linenum;
   enum Line_type_e type;
   int index;
@@ -132,8 +132,8 @@ typedef struct SOURCE_COLUMN Source_column;
 #define EXIT_WARNING 1
 #define warning(w) fprintf(stderr, "mx: %s\n", (w))
 
-struct FileLine { const char *f; long int l; };
-struct FileLine matrix_location(void);
+/*struct FileLine { const char *f; long int l; };*/
+Mloc matrix_location(void);
 
 extern Boolean do_aka_primary;
 extern Boolean do_encapsulate;
