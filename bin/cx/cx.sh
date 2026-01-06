@@ -7,7 +7,10 @@ if [ ${projtype} = "ood" ]; then
 else
     set 01tmp/00cat/*.tsv
     if [ "$1" != "00cat/*.tsv" ]; then
-	${bin}/cx $1
+	${bin}/cx-marshall.sh
+	${bin}/cx-extra.sh
+	${bin}/cx-all.sh
+	${bin}/cx 01tmp/00cat/all
     else
 	echo $0: no .tsv file found in 00cat. Stop.
 	exit 1
