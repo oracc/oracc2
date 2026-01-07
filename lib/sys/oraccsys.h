@@ -115,5 +115,6 @@ extern char *cfy_fam(const char *project);
 extern char *projhyph(const char *p);
 
 extern char** dirarray(const char* path, int* count);
+extern const char *findfile(const char *project, const char *file2find, const char *deflt);
 
 #endif/*ORACCSYS_H_*/

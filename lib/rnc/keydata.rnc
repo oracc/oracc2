@@ -1,0 +1,35 @@
+default namespace = "http://oracc.org/ns/keydata/1.0"
+
+start =
+  element keydata {
+    element not-indexed {
+      element field {
+        attribute n { xsd:NCName }
+      }+
+    }?,
+    element keytypes {
+      element keytype {
+        attribute n { xsd:NCName },
+        attribute type { xsd:NCName }
+      }+
+    },
+    element sortable {
+      element type {
+        attribute hr { text },
+        attribute n { xsd:NCName }
+      }+
+    },
+    element keys {
+      attribute class { xsd:NCName },
+      attribute method { xsd:NCName }?,
+      attribute queryable { xsd:integer },
+      attribute remap { xsd:integer },
+      attribute remap-to { xsd:NCName }?,
+      attribute reorder { xsd:integer },
+      attribute type { xsd:NCName },
+      element val {
+        attribute n { text },
+        attribute remap { xsd:NCName }?
+      }*
+    }+
+  }
