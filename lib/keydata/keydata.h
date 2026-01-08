@@ -8,8 +8,9 @@ typedef struct key
   int queryable;
   int remap;
   const char *remapto;
+  int reorder;
   const char *type;
-  List *lvals;
+  List *lvals; /* preserve order of key values for sorting */
   Hash *hvals;
 } Key;
 
@@ -25,12 +26,10 @@ typedef struct keydata
   Hash *notindexed;	/* key is field name; val is "" */
   Hash *keytypes;	/* key is field name; val = field type */
   Hash *sortable;	/* key is field type; val = human-readable version of field type */
-  List *lkeys;
-  Hash *hkeys;
+  Hash *hkeys;		/* key is 'type' attr; val = Key ptr */
   Memo *mkey;
   Memo *mval;
   Pool *p;	/* regular pool */
-  Pool *hp;	/* hash pool */
 } Keydata;
 
 
