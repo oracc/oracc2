@@ -2,7 +2,7 @@
 #include <runexpat.h>
 #include "keydata.h"
 
-static Key *curr_keyp = NULL;
+static KD_key *curr_keyp = NULL;
 
 Keydata *
 keydata_init(const char *file)
@@ -13,8 +13,8 @@ keydata_init(const char *file)
   kp->keytypes = hash_create(128);
   kp->sortable = hash_create(128);
   kp->hkeys = hash_create(128);
-  kp->mkey = memo_init(sizeof(Key), 256);
-  kp->mval = memo_init(sizeof(Val), 256);
+  kp->mkey = memo_init(sizeof(KD_key), 256);
+  kp->mval = memo_init(sizeof(KD_val), 256);
   kp->p = pool_init();
   return kp;
 }
@@ -31,7 +31,16 @@ keydata_term(Keydata *kp)
   pool_term(kp->p);
 }
 
-const char *
+int
+keydata_validate(Keydata *kp)
+{
+  char *rnc = oracc_data("keydata.rnc");
+  int chk = rnv_check(rnc, kp->file);
+  free(rnc);
+  return chk;
+}
+
+char *
 keydata_find(const char *project)
 {
   return findfile(project, "keydata.xml", "lib/data/keydata.xml");
@@ -47,10 +56,15 @@ kd_sH(void *userData, const char *name, const char **atts)
   else if (!strcmp(name, "keytype"))
     hash_add(kp->keytypes, pattr("n"), pattr("type"));
   else if (!strcmp(name, "type"))
-    hash_add(kp->sortable, pattr("n"), pattr("hr"));
+    {
+      KD_map *mp = memo_new(kp->mmap);
+      mp->hr = pattr("hr");
+      mp->fields = list_create(LIST_SINGLE);
+      hash_add(kp->sortable, pattr("n"), mp);
+    }
   else if (!strcmp(name, "keys"))
     {
-      Key *keyp = memo_new(kp->mkey);
+      KD_key *keyp = memo_new(kp->mkey);
       keyp->class = (ccp)pattr("class");
       keyp->method = (ccp)pattr("method");
       keyp->type = (ccp)pattr("type");
@@ -63,7 +77,7 @@ kd_sH(void *userData, const char *name, const char **atts)
     }
   else if (!strcmp(name, "val"))
     {
-      Val *vp = memo_new(kp->mval);
+      KD_val *vp = memo_new(kp->mval);
       vp->v = (ccp)pattr("n");
       vp->r = (ccp)pattr("remap");
       if (!*vp->r)
@@ -80,5 +94,7 @@ keydata_load(Keydata *kp)
   const char *fns[2] = { NULL,NULL};
   fns[0] = kp->file;
   runexpatNSuD(i_list, fns, kd_sH, NULL, NULL, kp);
+  kp->fields = hash_keys(kp->sortable, &kp->nfields);
+  qsort(kp->fields, kp->nfields, sizeof(char*), cmpstringp);
 }
 

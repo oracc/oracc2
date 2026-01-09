@@ -354,7 +354,6 @@ isp_glos_entry(Isp *ip)
   return 0;
 }
 
-
 int
 isp_glos_item(Isp *ip)
 {

@@ -1,6 +1,9 @@
 #ifndef CX_H_
 #define CX_H_
 
+#include <roco.h>
+#include <keydata.h>
+
 typedef struct cx
 {
   const char *project;

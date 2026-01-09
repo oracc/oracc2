@@ -1,6 +1,6 @@
 #include <oraccsys.h>
 
-const char *
+char *
 findfile(const char *project, const char *file2find, const char *deflt)
 {
   int flen = strlen(file2find);

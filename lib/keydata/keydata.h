@@ -1,7 +1,7 @@
 #ifndef KEYDATA_H_
 #define KEYDATA_H_
 
-typedef struct key
+typedef struct kdkey
 {
   const char *class;
   const char *method;
@@ -12,13 +12,19 @@ typedef struct key
   const char *type;
   List *lvals; /* preserve order of key values for sorting */
   Hash *hvals;
-} Key;
+} KD_key;
 
-typedef struct val
+typedef struct kdval
 {
   const char *v; /* value in incoming data */
   const char *r; /* value to remap v to */
-} Val;
+} KD_val;
+
+typedef struct kdmap
+{
+  List *fields;
+  const char *hr;
+} KD_map;
 
 typedef struct keydata
 {
@@ -29,13 +35,18 @@ typedef struct keydata
   Hash *hkeys;		/* key is 'type' attr; val = Key ptr */
   Memo *mkey;
   Memo *mval;
-  Pool *p;	/* regular pool */
+  Memo *mmap;
+  char **fields;
+  int nfields;
+  int nmapentries;
+  Pool *p;
 } Keydata;
 
 
-const char *keydata_find(const char *project);
-Keydata *keydata_init(const char *file);
-void keydata_load(Keydata *kp);
-void keydata_term(Keydata *kp);
+extern char *keydata_find(const char *project);
+extern Keydata *keydata_init(const char *file);
+extern void keydata_load(Keydata *kp);
+extern void keydata_term(Keydata *kp);
+extern int keydata_validate(Keydata *kp);
 
 #endif/*KEYDATA_H_*/

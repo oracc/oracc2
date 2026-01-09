@@ -137,4 +137,5 @@ AM_CPPFLAGS=\
 	-I$(top_srcdir)/lib/xpd \
 	-I$(top_srcdir)/lib/scan \
 	-I$(top_srcdir)/lib/inl \
+	-I$(top_srcdir)/lib/keydata \
 	-I$(top_srcdir)/lib/sys
