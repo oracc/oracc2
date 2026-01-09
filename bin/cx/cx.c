@@ -55,6 +55,7 @@ main(int argc, char * const *argv)
       return 1;
     }
   Cx *c = cx_init();
+  cx_keydata(c);
   if (cx_load(c, argv[optind]))
     {
       fprintf(stderr, "cx: error loading catalogue. Stop.\n");

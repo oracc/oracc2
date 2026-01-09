@@ -8,6 +8,7 @@ typedef struct cx
 {
   const char *project;
   Roco *r;
+  Keydata *k;
 } Cx;
 
 extern void cx_roco(Cx *cp);
