@@ -58,7 +58,7 @@ kd_sH(void *userData, const char *name, const char **atts)
   else if (!strcmp(name, "type"))
     {
       KD_map *mp = memo_new(kp->mmap);
-      mp->hr = pattr("hr");
+      mp->hr = (ccp)pattr("hr");
       mp->fields = list_create(LIST_SINGLE);
       hash_add(kp->sortable, pattr("n"), mp);
     }
@@ -88,13 +88,23 @@ kd_sH(void *userData, const char *name, const char **atts)
 #undef kp
 }
 
+static void
+keydata_map(const unsigned char *k, void *v, void *u)
+{
+  List *lp = hash_find(((Keydata*)u)->sortable, v);
+  if (lp)
+    list_add(lp, (void*)k);
+}
+
 void
 keydata_load(Keydata *kp)
 {
   const char *fns[2] = { NULL,NULL};
   fns[0] = kp->file;
   runexpatNSuD(i_list, fns, kd_sH, NULL, NULL, kp);
-  kp->fields = hash_keys(kp->sortable, &kp->nfields);
+  kp->fields = (char**)hash_keys2(kp->sortable, &kp->nfields);
   qsort(kp->fields, kp->nfields, sizeof(char*), cmpstringp);
+  kp->nmapentries = kp->keytypes->key_count;
+  hash_exec_user_key_data(kp->keytypes, keydata_map, kp);
 }
 
