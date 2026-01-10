@@ -6,10 +6,13 @@
 #include <stdlib.h>
 #include <hash.h>
 
+typedef enum pooltype { POOL_CHR , POOL_SZT } Pooltype;
+
 struct pool
 {
   struct pool_block *rover;
   struct pool_block *base;
+  Pooltype type;
   Hash *h;
 };
 
@@ -24,6 +27,8 @@ struct pool_block
   struct pool_block *next;
 };
 
+#define hpool_term(p) pool_term((p))
+
 extern Pool* pool_init(void);
 extern void pool_reset(Pool*);
 extern void pool_term(Pool*);
@@ -31,7 +36,6 @@ extern unsigned char *pool_alloc(size_t len, Pool *p);
 extern unsigned char *pool_copy(const unsigned char *s, Pool*p);
 
 extern Pool* hpool_init(void);
-extern void hpool_term(Pool*);
 extern unsigned char *hpool_copy(const unsigned char *s, Pool*p);
 
 #endif
