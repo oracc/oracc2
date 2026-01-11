@@ -1,9 +1,12 @@
 #include <oraccsys.h>
+#include <pool.h>
 #include "cx.h"
+#include "keydata.h"
 
 static FILE *sifp;
 static Pool *sip;
-static int fccmp(Fsort *a, Fsort *b)
+
+static int cx_fccmp(Fsort *a, Fsort *b)
 {
   return cmpstringp(ipool_str(sip,a->cp->index), ipool_str(sip,b->cp->index));
 }
@@ -19,7 +22,7 @@ cx_si_fields(Cx *c)
       KD_map *mp = hash_find(c->k->sortable, (uccp)c->k->fields[i]);
       fprintf(sifp, "#field ");
       const char *f;
-      for (f = list_first(mp->fields); f; list_next(mp->fields))
+      for (f = list_first(mp->fields); f; f = list_next(mp->fields))
 	fprintf(sifp, "%s ", f);
       fprintf(sifp, "= %s\n", mp->hr);
     }
@@ -31,14 +34,14 @@ cx_si_fields(Cx *c)
 void
 cx_si_pool(Cx *c)
 {
-  int i, fc_i;
-  c->si_rows = calloc((1+c->r->nlines) * sizeof(Fcell **));
+  int i, fc_i = 0;
+  c->si_rows = calloc((1+c->r->nlines), sizeof(Fcell **));
 
   for (i = 0; i < c->r->nlines; ++i)
-    si_rows[i] = calloc((1+c->r->maxcols) * sizeof(Fcell));
+    c->si_rows[i] = calloc((1+c->r->maxcols), sizeof(Fcell));
 
   /* hash-index-pool of all the strings in the roco */
-  c->si_pool = ihpool_init();
+  sip = c->si_pool = ihpool_init();
 
   for (i = 0; c->r->rows[0][i]; ++i)
     {
@@ -54,23 +57,23 @@ cx_si_pool(Cx *c)
 	   */
 	  Hash *fh = hash_create(1024);
 	  int j;
-	  for (j = 1; rows[j]; ++j)
+	  for (j = 1; c->r->rows[j]; ++j)
 	    {
-	      Fsort *fsp = hash_find(fh, rows[j][i]);
-	      Fcell *fcp = si_rows[j][fc_i];
+	      Fsort *fsp = hash_find(fh, c->r->rows[j][i]);
+	      Fcell *fcp = &c->si_rows[j][fc_i];
 	      if (fsp)
 		{
-		  *fcp = *((Fsort*)list_first(fsp->cells));
+		  *fcp = *(Fcell*)list_first(fsp->cells);
 		  list_add(fsp->cells, fcp);
 		}
 	      else
 		{
-		  size_t ix = ipool_copy(si_pool, rows[j][i]);
+		  size_t ix = ipool_copy(c->r->rows[j][i], c->si_pool);
 		  fcp->index = ix;
 		  fsp = memo_new(c->msort);
-		  fsp->list = list_create(LIST_SINGLE);
-		  list_add(fsp->list, fcp);
-		  hash_add(fh, rows[i][j], fsp);
+		  fsp->cells = list_create(LIST_SINGLE);
+		  list_add(fsp->cells, fcp);
+		  hash_add(fh, c->r->rows[i][j], fsp);
 		}
 	    }
 
@@ -80,13 +83,13 @@ cx_si_pool(Cx *c)
 	   * into the cell data
 	   */
 	  int nvals;
-	  const Fsort **vals = hash_vals2(fh, &nvals);
-	  qsort(vals, nvals, sizeof(void*), cx_fccmp);
+	  const Fsort **vals = (const Fsort **)hash_vals2(fh, &nvals);
+	  qsort(vals, nvals, sizeof(void*), (sort_cmp_func*)cx_fccmp);
 	  int k;
 	  for (k = 0; k < nvals; ++k)
 	    {
 	      Fcell *fcp;
-	      for (fcp = list_first(vals[i]->list); fcp; fcp = list_next(vals[i]->list))
+	      for (fcp = list_first(vals[i]->cells); fcp; fcp = list_next(vals[i]->cells))
 		fcp->sort = k;
 	    }
 	}

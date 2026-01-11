@@ -38,4 +38,11 @@ extern unsigned char *pool_copy(const unsigned char *s, Pool*p);
 extern Pool* hpool_init(void);
 extern unsigned char *hpool_copy(const unsigned char *s, Pool*p);
 
+extern Pool *ipool_init(void);
+extern size_t ipool_copy(register const unsigned char *s, Pool *p);
+#define ipool_str(pl,ix) ((pl)->base->mem+ix)
+
+extern Pool *ihpool_init(void);
+extern size_t ihpool_copy(register const unsigned char *s, Pool *p);
+
 #endif
