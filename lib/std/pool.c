@@ -202,6 +202,13 @@ ipool_copy(register const unsigned char *s, Pool *p)
 }
 
 size_t
+ipool_len(Pool *p)
+{
+  const unsigned char *end = p->base->used + strlen((ccp)p->base->used);
+  return end - p->base->mem;
+}
+
+size_t
 ihpool_copy(register const unsigned char *s, Pool *p)
 {
   if (s && p && p->h)

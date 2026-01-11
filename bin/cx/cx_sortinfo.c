@@ -11,28 +11,11 @@ static int cx_fccmp(Fsort *a, Fsort *b)
   return cmpstringp(ipool_str(sip,a->cp->index), ipool_str(sip,b->cp->index));
 }
 
-static void
-cx_si_fields(Cx *c)
-{
-  fprintf(sifp, "#nfields %d\n", c->k->nfields);
-  fprintf(sifp, "#nmapentries %d\n", c->k->nmapentries);
-  int i;
-  for (i = 0; c->k->fields[i]; ++i)
-    {
-      KD_map *mp = hash_find(c->k->sortable, (uccp)c->k->fields[i]);
-      fprintf(sifp, "#field ");
-      const char *f;
-      for (f = list_first(mp->fields); f; f = list_next(mp->fields))
-	fprintf(sifp, "%s ", f);
-      fprintf(sifp, "= %s\n", mp->hr);
-    }
-}
-
 /* Turn the roco for the catalogue data into a matrix of structures
  * storing index into a pool and sort code
  */
-void
-cx_si_pool(Cx *c)
+static void
+cx_si_marshall(Cx *c)
 {
   int i, fc_i = 0;
   c->si_rows = calloc((1+c->r->nlines), sizeof(Fcell **));
@@ -96,11 +79,55 @@ cx_si_pool(Cx *c)
     }
 }
 
+static void
+cx_si_fields(Cx *c)
+{
+  fprintf(sifp, "#nfields %d\n", c->k->nfields);
+  fprintf(sifp, "#nmapentries %d\n", c->k->nmapentries);
+  int i;
+  for (i = 0; c->k->fields[i]; ++i)
+    {
+      KD_map *mp = hash_find(c->k->sortable, (uccp)c->k->fields[i]);
+      fprintf(sifp, "#field ");
+      const char *f;
+      for (f = list_first(mp->fields); f; f = list_next(mp->fields))
+	fprintf(sifp, "%s ", f);
+      fprintf(sifp, "= %s\n", mp->hr);
+    }
+}
+
+static void
+cx_si_sortdata(Cx *c)
+{
+  fprintf(sifp, "#nmembers %ld\n", c->r->nlines);
+  int i;
+  for (i = 0; c->si_rows[i]; ++i)
+    {
+      fprintf(sifp, "%s\t", c->r->rows[i][0]);
+      int j;
+      for (j = 0; j < c->k->nfields; ++j)
+	{
+	  fprintf(sifp, "%ld/%ld", c->si_rows[i][j].sort, c->si_rows[i][j].index);
+	  if (c->k->nfields - j > 1)
+	    fputc('\t', sifp);
+	}
+      fputc('\n', sifp);
+    }
+}
+
+static void
+cx_si_pool(Cx *c)
+{
+  fprintf(sifp, "#nstring %d\n", (int)c->si_pool->h->key_count);
+  fwrite(c->si_pool->base, 1, ipool_len(c->si_pool)+1, sifp);
+}
 
 void
 cx_sortinfo(Cx *c)
 {
   sifp = stdout;
+  cx_si_marshall(c);
   cx_si_fields(c);
+  cx_si_sortdata(c);
   cx_si_pool(c);
 }
