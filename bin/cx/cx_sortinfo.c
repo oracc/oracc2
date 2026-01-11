@@ -2,6 +2,11 @@
 #include "cx.h"
 
 static FILE *sifp;
+static Pool *sip;
+static int fccmp(Fsort *a, Fsort *b)
+{
+  return cmpstringp(ipool_str(sip,a->cp->index), ipool_str(sip,b->cp->index));
+}
 
 static void
 cx_si_fields(Cx *c)
@@ -20,9 +25,79 @@ cx_si_fields(Cx *c)
     }
 }
 
+/* Turn the roco for the catalogue data into a matrix of structures
+ * storing index into a pool and sort code
+ */
+void
+cx_si_pool(Cx *c)
+{
+  int i, fc_i;
+  c->si_rows = calloc((1+c->r->nlines) * sizeof(Fcell **));
+
+  for (i = 0; i < c->r->nlines; ++i)
+    si_rows[i] = calloc((1+c->r->maxcols) * sizeof(Fcell));
+
+  /* hash-index-pool of all the strings in the roco */
+  c->si_pool = ihpool_init();
+
+  for (i = 0; c->r->rows[0][i]; ++i)
+    {
+      /* Only index fields that are sortable */
+      if (hash_find(c->k->sortable, c->r->rows[0][i]))
+	{
+	  /* This is the index into the field cell data matrix */
+	  ++fc_i;
+
+	  /* Each field has its own hash of field sort data; the sort
+	   * data is a pointer to the field cell data and a list of
+	   * cells that have the sort data in common
+	   */
+	  Hash *fh = hash_create(1024);
+	  int j;
+	  for (j = 1; rows[j]; ++j)
+	    {
+	      Fsort *fsp = hash_find(fh, rows[j][i]);
+	      Fcell *fcp = si_rows[j][fc_i];
+	      if (fsp)
+		{
+		  *fcp = *((Fsort*)list_first(fsp->cells));
+		  list_add(fsp->cells, fcp);
+		}
+	      else
+		{
+		  size_t ix = ipool_copy(si_pool, rows[j][i]);
+		  fcp->index = ix;
+		  fsp = memo_new(c->msort);
+		  fsp->list = list_create(LIST_SINGLE);
+		  list_add(fsp->list, fcp);
+		  hash_add(fh, rows[i][j], fsp);
+		}
+	    }
+
+	  /* Now we have all the data for a field, get an array of the
+	   * values which are field sort data; sort the array; use
+	   * the list in the sort data to push the sort codes back
+	   * into the cell data
+	   */
+	  int nvals;
+	  const Fsort **vals = hash_vals2(fh, &nvals);
+	  qsort(vals, nvals, sizeof(void*), cx_fccmp);
+	  int k;
+	  for (k = 0; k < nvals; ++k)
+	    {
+	      Fcell *fcp;
+	      for (fcp = list_first(vals[i]->list); fcp; fcp = list_next(vals[i]->list))
+		fcp->sort = k;
+	    }
+	}
+    }
+}
+
+
 void
 cx_sortinfo(Cx *c)
 {
   sifp = stdout;
   cx_si_fields(c);
+  cx_si_pool(c);
 }

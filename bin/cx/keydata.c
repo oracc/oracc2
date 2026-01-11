@@ -5,7 +5,7 @@
 static KD_key *curr_keyp = NULL;
 
 Keydata *
-keydata_init(const char *file)
+keydata_init(Cx *c, const char *file)
 {
   Keydata *kp = calloc(1, sizeof(Keydata));
   kp->file = file;
@@ -16,6 +16,7 @@ keydata_init(const char *file)
   kp->mkey = memo_init(sizeof(KD_key), 256);
   kp->mval = memo_init(sizeof(KD_val), 256);
   kp->p = pool_init();
+  kp->c = c;
   return kp;
 }
 
@@ -54,13 +55,21 @@ kd_sH(void *userData, const char *name, const char **atts)
   if (!strcmp(name, "field"))
     hash_add(kp->notindexed, pattr("n"), (void*)"");
   else if (!strcmp(name, "keytype"))
-    hash_add(kp->keytypes, pattr("n"), pattr("type"));
+    {
+      const char *n = findAttr(atts, "n");
+      if (*n && hash_find(kp->c->r->fields, (uccp)n))
+	hash_add(kp->keytypes, pattr("n"), pattr("type"));
+    }
   else if (!strcmp(name, "type"))
     {
-      KD_map *mp = memo_new(kp->mmap);
-      mp->hr = (ccp)pattr("hr");
-      mp->fields = list_create(LIST_SINGLE);
-      hash_add(kp->sortable, pattr("n"), mp);
+      const char *n = findAttr(atts, "n");
+      if (*n && hash_find(kp->c->r->fields, (uccp)n))
+	{
+	  KD_map *mp = memo_new(kp->mmap);
+	  mp->hr = (ccp)pattr("hr");
+	  mp->fields = list_create(LIST_SINGLE);
+	  hash_add(kp->sortable, pattr("n"), mp);
+	}
     }
   else if (!strcmp(name, "keys"))
     {

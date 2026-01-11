@@ -1,6 +1,8 @@
 #ifndef KEYDATA_H_
 #define KEYDATA_H_
 
+#include "cx.h"
+
 typedef struct kdkey
 {
   const char *class;
@@ -28,6 +30,7 @@ typedef struct kdmap
 
 typedef struct keydata
 {
+  Cx *c;
   const char *file;
   Hash *notindexed;	/* key is field name; val is "" */
   Hash *keytypes;	/* key is field name; val = field type */
@@ -39,12 +42,15 @@ typedef struct keydata
   char **fields;
   int nfields;
   int nmapentries;
+  char **fields_used;
+  int nfields_used;
+  int nmapentries_used;
   Pool *p;
 } Keydata;
 
 
 extern char *keydata_find(const char *project);
-extern Keydata *keydata_init(const char *file);
+extern Keydata *keydata_init(Cx *c, const char *file);
 extern void keydata_load(Keydata *kp);
 extern void keydata_term(Keydata *kp);
 extern int keydata_validate(Keydata *kp);

@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "cx.h"
+#include "keydata.h"
 
 void
 cx_keydata(Cx *c)
@@ -8,7 +9,7 @@ cx_keydata(Cx *c)
   char *kd = keydata_find(c->project);
   if (kd)
     {
-      kp = keydata_init(kd);
+      kp = keydata_init(c, kd);
       if (!keydata_validate(kp))
 	{
 	  keydata_load(kp);
