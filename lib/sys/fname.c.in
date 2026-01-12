@@ -35,6 +35,14 @@ oracc_data(const char *fname)
   return strdup(buf);
 }
 
+char *
+oracc_rnc(const char *fname)
+{
+  char buf[strlen(oracc())+strlen("/lib/rnc/0")+strlen(fname)];
+  sprintf(buf, "%s/lib/rnc/%s", oracc(), fname);
+  return strdup(buf);
+}
+
 const char *
 oracc_home (void)
 {

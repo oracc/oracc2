@@ -60,6 +60,7 @@ extern const char *oracc_builds (void);
 extern char *oracc_data(const char *fname);
 extern const char *oracc_home (void);
 extern const char *oracc_project_home (void);
+extern char *oracc_rnc(const char *fname);
 extern const char *oracc_var (void);
 extern const char *projectify(const char *path, const char **projp);
 

@@ -5,16 +5,19 @@
 static KD_key *curr_keyp = NULL;
 
 Keydata *
-keydata_init(Cx *c, const char *file)
+keydata_init(Cx *c, const char *file, Hash *hfields)
 {
   Keydata *kp = calloc(1, sizeof(Keydata));
   kp->file = file;
+  kp->hfields = hfields;
   kp->notindexed = hash_create(128);
   kp->keytypes = hash_create(128);
+  kp->needtype = hash_create(128);
   kp->sortable = hash_create(128);
   kp->hkeys = hash_create(128);
   kp->mkey = memo_init(sizeof(KD_key), 256);
   kp->mval = memo_init(sizeof(KD_val), 256);
+  kp->mmap = memo_init(sizeof(KD_map), 256);
   kp->p = pool_init();
   kp->c = c;
   return kp;
@@ -25,6 +28,7 @@ keydata_term(Keydata *kp)
 {
   hash_free(kp->notindexed, NULL);
   hash_free(kp->keytypes, NULL);
+  hash_free(kp->needtype, NULL);
   hash_free(kp->sortable, NULL);
   hash_free(kp->hkeys, NULL);
   memo_term(kp->mkey);
@@ -35,7 +39,7 @@ keydata_term(Keydata *kp)
 int
 keydata_validate(Keydata *kp)
 {
-  char *rnc = oracc_data("keydata.rnc");
+  char *rnc = oracc_rnc("keydata.rnc");
   int chk = rnv_check(rnc, kp->file);
   free(rnc);
   return chk;
@@ -57,13 +61,17 @@ kd_sH(void *userData, const char *name, const char **atts)
   else if (!strcmp(name, "keytype"))
     {
       const char *n = findAttr(atts, "n");
-      if (*n && hash_find(kp->c->r->fields, (uccp)n))
-	hash_add(kp->keytypes, pattr("n"), pattr("type"));
+      if (*n && hash_find(kp->hfields, (uccp)n))
+	{
+	  uccp t;
+	  hash_add(kp->keytypes, pattr("n"), (void*)(t = pattr("type")));
+	  hash_add(kp->needtype, t, "");
+	}
     }
   else if (!strcmp(name, "type"))
     {
       const char *n = findAttr(atts, "n");
-      if (*n && hash_find(kp->c->r->fields, (uccp)n))
+      if (*n && hash_find(kp->needtype, (uccp)n))
 	{
 	  KD_map *mp = memo_new(kp->mmap);
 	  mp->hr = (ccp)pattr("hr");
@@ -82,6 +90,7 @@ kd_sH(void *userData, const char *name, const char **atts)
       keyp->remap = atoi(findAttr(atts, "remap"));
       keyp->reorder = atoi(findAttr(atts, "reorder"));
       keyp->lvals = list_create(LIST_SINGLE);
+      keyp->hvals = hash_create(128);
       curr_keyp = keyp;
     }
   else if (!strcmp(name, "val"))
@@ -100,9 +109,9 @@ kd_sH(void *userData, const char *name, const char **atts)
 static void
 keydata_map(const unsigned char *k, void *v, void *u)
 {
-  List *lp = hash_find(((Keydata*)u)->sortable, v);
-  if (lp)
-    list_add(lp, (void*)k);
+  KD_map *mp = hash_find(((Keydata*)u)->sortable, v);
+  if (mp)
+    list_add(mp->fields, (void*)k);
 }
 
 void

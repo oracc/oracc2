@@ -34,6 +34,7 @@ typedef struct keydata
   const char *file;
   Hash *notindexed;	/* key is field name; val is "" */
   Hash *keytypes;	/* key is field name; val = field type */
+  Hash *needtype;	/* key is type referenced in keytype@type; val = "" */
   Hash *sortable;	/* key is field type; val = human-readable version of field type */
   Hash *hkeys;		/* key is 'type' attr; val = Key ptr */
   Memo *mkey;
@@ -45,12 +46,13 @@ typedef struct keydata
   char **fields_used;
   int nfields_used;
   int nmapentries_used;
+  Hash *hfields;	/* fields that are wanted from keydata */
   Pool *p;
 } Keydata;
 
 
 extern char *keydata_find(const char *project);
-extern Keydata *keydata_init(Cx *c, const char *file);
+extern Keydata *keydata_init(Cx *c, const char *file, Hash *hfields);
 extern void keydata_load(Keydata *kp);
 extern void keydata_term(Keydata *kp);
 extern int keydata_validate(Keydata *kp);

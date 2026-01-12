@@ -9,7 +9,7 @@ cx_keydata(Cx *c)
   char *kd = keydata_find(c->project);
   if (kd)
     {
-      kp = keydata_init(c, kd);
+      kp = keydata_init(c, kd, c->r->fields);
       if (!keydata_validate(kp))
 	{
 	  keydata_load(kp);

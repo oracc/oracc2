@@ -6,9 +6,11 @@
 static FILE *sifp;
 static Pool *sip;
 
-static int cx_fccmp(Fsort *a, Fsort *b)
+static int cx_fccmp(void *a, void*b)
 {
-  return cmpstringp(ipool_str(sip,a->cp->index), ipool_str(sip,b->cp->index));
+  Fsort *fs_a = *(Fsort**)a;
+  Fsort *fs_b = *(Fsort**)b;
+  return strcmp((ccp)ipool_str(sip,fs_a->cp->index), (ccp)ipool_str(sip,fs_b->cp->index));
 }
 
 /* Turn the roco for the catalogue data into a matrix of structures
@@ -29,7 +31,8 @@ cx_si_marshall(Cx *c)
   for (i = 0; c->r->rows[0][i]; ++i)
     {
       /* Only index fields that are sortable */
-      if (hash_find(c->k->sortable, c->r->rows[0][i]))
+      const char *ktype = hash_find(c->k->keytypes,c->r->rows[0][i]);
+      if (ktype && hash_find(c->k->sortable,(uccp)ktype))
 	{
 	  /* This is the index into the field cell data matrix */
 	  ++fc_i;
@@ -54,9 +57,10 @@ cx_si_marshall(Cx *c)
 		  size_t ix = ipool_copy(c->r->rows[j][i], c->si_pool);
 		  fcp->index = ix;
 		  fsp = memo_new(c->msort);
+		  fsp->cp = fcp;
 		  fsp->cells = list_create(LIST_SINGLE);
 		  list_add(fsp->cells, fcp);
-		  hash_add(fh, c->r->rows[i][j], fsp);
+		  hash_add(fh, c->r->rows[j][i], fsp);
 		}
 	    }
 
@@ -67,12 +71,12 @@ cx_si_marshall(Cx *c)
 	   */
 	  int nvals;
 	  const Fsort **vals = (const Fsort **)hash_vals2(fh, &nvals);
-	  qsort(vals, nvals, sizeof(void*), (sort_cmp_func*)cx_fccmp);
+	  qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_fccmp);
 	  int k;
 	  for (k = 0; k < nvals; ++k)
 	    {
 	      Fcell *fcp;
-	      for (fcp = list_first(vals[i]->cells); fcp; fcp = list_next(vals[i]->cells))
+	      for (fcp = list_first(vals[k]->cells); fcp; fcp = list_next(vals[k]->cells))
 		fcp->sort = k;
 	    }
 	}
@@ -101,13 +105,13 @@ cx_si_sortdata(Cx *c)
 {
   fprintf(sifp, "#nmembers %ld\n", c->r->nlines);
   int i;
-  for (i = 0; c->si_rows[i]; ++i)
+  for (i = 1; c->si_rows[i]; ++i)
     {
       fprintf(sifp, "%s\t", c->r->rows[i][0]);
       int j;
       for (j = 0; j < c->k->nfields; ++j)
 	{
-	  fprintf(sifp, "%ld/%ld", c->si_rows[i][j].sort, c->si_rows[i][j].index);
+	  fprintf(sifp, "%ld=%ld", c->si_rows[i][j].sort, c->si_rows[i][j].index);
 	  if (c->k->nfields - j > 1)
 	    fputc('\t', sifp);
 	}
@@ -118,7 +122,7 @@ cx_si_sortdata(Cx *c)
 static void
 cx_si_pool(Cx *c)
 {
-  fprintf(sifp, "#nstring %d\n", (int)c->si_pool->h->key_count);
+  fprintf(sifp, "#nstring %ld\n", c->si_pool->nstr);
   ipool_write(c->si_pool, sifp);
 }
 

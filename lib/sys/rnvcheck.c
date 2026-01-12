@@ -10,7 +10,8 @@ rnv_check(const char *rnc, const char *xml)
     }
   if (access(rnc, R_OK))
     {
-      xperror("rnv_check: %s: ", rnc);
+      xperror("rnv_check: %s", rnc);
+      fputc('\n', stderr);
       return -1;
     }
   if (!xml)
@@ -20,7 +21,8 @@ rnv_check(const char *rnc, const char *xml)
     }
   if (access(xml, R_OK))
     {
-      xperror("rnv_check: %s: ", xml);
+      xperror("rnv_check: %s", xml);
+      fputc('\n', stderr);
       return -1;
     }
 
