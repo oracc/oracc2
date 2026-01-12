@@ -91,6 +91,7 @@ kd_sH(void *userData, const char *name, const char **atts)
       keyp->reorder = atoi(findAttr(atts, "reorder"));
       keyp->lvals = list_create(LIST_SINGLE);
       keyp->hvals = hash_create(128);
+      hash_add(kp->hkeys, keyp->type, keyp);
       curr_keyp = keyp;
     }
   else if (!strcmp(name, "val"))

@@ -6,11 +6,28 @@
 static FILE *sifp;
 static Pool *sip;
 
+/* compare as strings */
 static int cx_fccmp(void *a, void*b)
 {
   Fsort *fs_a = *(Fsort**)a;
   Fsort *fs_b = *(Fsort**)b;
   return strcmp((ccp)ipool_str(sip,fs_a->cp->index), (ccp)ipool_str(sip,fs_b->cp->index));
+}
+
+/* compare by value hash */
+static int cx_vhcmp(void *a, void*b)
+{
+  Fsort *fs_a = *(Fsort**)a;
+  Fsort *fs_b = *(Fsort**)b;
+  unsigned int c_a = (uintptr_t)hash_find(curr_hv, ipool_str(sip,fs_a->cp->index));
+  unsigned int c_b = (uintptr_t)hash_find(curr_hv, ipool_str(sip,fs_b->cp->index));
+  if (c_a && c_b)
+    return (int)((size_t)c_a - (size_t)c_b);
+  else if (c_a)
+    return -1;
+  else if (c_b)
+    return 1;
+  return 0;
 }
 
 /* Turn the roco for the catalogue data into a matrix of structures
@@ -64,10 +81,22 @@ cx_si_marshall(Cx *c)
 		}
 	    }
 
-	  /* Now we have all the data for a field, get an array of the
-	   * values which are field sort data; sort the array; use
-	   * the list in the sort data to push the sort codes back
-	   * into the cell data
+	  /* Now we have all the data for a field, determine the sort method.
+	   *
+	   * For reorder=0/class=closed, set KD_key->hvals to contain
+	   * the possible keys with a sort code based on their order
+	   * in keydata.xml.
+	   *
+	   * For reorder=1/class=closed, set KD_key->hvals to contain
+	   * the possible keys with a sort code based on sorting the
+	   * values in keydata.xml.
+	   *
+	   * For reorder=1/class=open get an array of the values which
+	   * are in field sort data; sort the array.
+	   *
+	   * For all types, use the list in the sort data to push the
+	   * sort codes back into the cell data.
+	   *
 	   */
 	  int nvals;
 	  const Fsort **vals = (const Fsort **)hash_vals2(fh, &nvals);
