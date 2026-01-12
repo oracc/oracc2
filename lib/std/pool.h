@@ -14,6 +14,7 @@ struct pool
   struct pool_block *base;
   Pooltype type;
   Hash *h;
+  size_t nstr;
 };
 
 typedef struct pool Pool;
@@ -41,6 +42,7 @@ extern unsigned char *hpool_copy(const unsigned char *s, Pool*p);
 extern Pool *ipool_init(void);
 extern size_t ipool_copy(register const unsigned char *s, Pool *p);
 extern size_t ipool_len(Pool *p);
+extern void ipool_write(Pool *p, FILE *fp);
 #define ipool_str(pl,ix) ((pl)->base->mem+ix)
 
 extern Pool *ihpool_init(void);

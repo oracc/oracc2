@@ -9,6 +9,7 @@ int trtd_output = 0;
 int xml_output = 0;
 int verbose;
 
+const char *j_file;
 List *j_list, *z_list;
 
 const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL, *class = NULL;

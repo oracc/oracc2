@@ -197,6 +197,7 @@ ipool_copy(register const unsigned char *s, Pool *p)
 
   p->rover->last_begin = memcpy(p->rover->used, s, len);
   p->rover->used += len;
+  ++p->nstr;
   
   return p->rover->last_begin - p->rover->mem;
 }
@@ -208,11 +209,18 @@ ipool_len(Pool *p)
   return end - p->base->mem;
 }
 
+void
+ipool_write(Pool *p, FILE *fp)
+{
+  if (p->type == POOL_SZT)
+    fwrite(p->base->mem, 1, ipool_len(p)+1, fp);
+}
+
 size_t
 ihpool_copy(register const unsigned char *s, Pool *p)
 {
   if (s && p && p->h)
-    {      
+    {
       size_t t = (size_t)(uintptr_t)hash_find(p->h, (ucp)s);
       if (!t)
 	{

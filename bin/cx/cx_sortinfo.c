@@ -119,7 +119,7 @@ static void
 cx_si_pool(Cx *c)
 {
   fprintf(sifp, "#nstring %d\n", (int)c->si_pool->h->key_count);
-  fwrite(c->si_pool->base, 1, ipool_len(c->si_pool)+1, sifp);
+  ipool_write(c->si_pool, sifp);
 }
 
 void
