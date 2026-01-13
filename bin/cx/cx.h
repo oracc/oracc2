@@ -4,9 +4,16 @@
 #include <roco.h>
 
 struct keydata;
+#define FCELL_STRP 0
+#define FCELL_SORT 1
 typedef struct fcell
 {
-  size_t index;
+  int type;
+  union
+  {
+    const char *str;
+    size_t index;
+  } u;
   size_t sort;  
 } Fcell;
 

@@ -3,16 +3,18 @@
 #include "cx.h"
 #include "keydata.h"
 
+extern Hash *cx_sortcodes(Cx *c, KD_key*kp, const char *ktype, const Fsort **vals);
+
 static FILE *sifp;
 static Pool *sip;
-static Hash *curr_hv;
+static Hash *curr_vh;
 
 /* compare as strings */
 static int cx_fccmp(void *a, void*b)
 {
   Fsort *fs_a = *(Fsort**)a;
   Fsort *fs_b = *(Fsort**)b;
-  return strcmp((ccp)ipool_str(sip,fs_a->cp->index), (ccp)ipool_str(sip,fs_b->cp->index));
+  return strcmp((ccp)ipool_str(sip,fs_a->cp->u.index), (ccp)ipool_str(sip,fs_b->cp->u.index));
 }
 
 /* compare by value hash */
@@ -20,8 +22,8 @@ static int cx_vhcmp(void *a, void*b)
 {
   Fsort *fs_a = *(Fsort**)a;
   Fsort *fs_b = *(Fsort**)b;
-  unsigned int c_a = (uintptr_t)hash_find(curr_hv, ipool_str(sip,fs_a->cp->index));
-  unsigned int c_b = (uintptr_t)hash_find(curr_hv, ipool_str(sip,fs_b->cp->index));
+  unsigned int c_a = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_a->cp->u.index));
+  unsigned int c_b = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_b->cp->u.index));
   if (c_a && c_b)
     return (int)((size_t)c_a - (size_t)c_b);
   else if (c_a)
@@ -37,7 +39,9 @@ static int cx_vhcmp(void *a, void*b)
 static void
 cx_si_marshall(Cx *c)
 {
-  int i, fc_i = 0;
+  Hash *typevals = hash_create(128);
+  
+  int i;
   c->si_rows = calloc((1+c->r->nlines), sizeof(Fcell **));
 
   for (i = 0; i < c->r->nlines; ++i)
@@ -46,38 +50,60 @@ cx_si_marshall(Cx *c)
   /* hash-index-pool of all the strings in the roco */
   sip = c->si_pool = ihpool_init();
 
+  /* First we need to marshall all the field-values as a collection of
+   * key-type values; multiple fields can map to the same key type, so
+   * we have to assemble the values before setting sort codes and then
+   * possibly sorting.
+   *
+   * We build an entire new matrix so we can emit both the full XMD
+   * data with sort codes and the sortable subset that goes in
+   * sortinfo.tab.
+   */
   for (i = 0; c->r->rows[0][i]; ++i)
     {
       /* Only index fields that are sortable */
       const char *ktype = hash_find(c->k->keytypes,c->r->rows[0][i]);
       if (ktype && hash_find(c->k->sortable,(uccp)ktype))
 	{
-	  /* This is the index into the field cell data matrix */
-	  ++fc_i;
-
-	  /* Each field-type has its own rules about sorting for value
-	   * sets. Value sets can be open or closed: open value sets
-	   * are built from all of the values attested for a
-	   * field-type in the catalogue; for closed value sets, a
-	   * diagnostic is issued for any values not specified in
-	   * keydata.xml
-	   *
-	   * Value sets can be reordered, in which case the values are
-	   * sorted before assigning sort codes.  If @reordered = 0
-	   * sort codes are assigned in the order the values are given
-	   * in keydata.xml.
-	   */
+	  KD_key *kp = hash_find(c->k->hkeys, (uccp)ktype);
 	  
-	  /* Each field has its own hash of field sort data; the sort
-	   * data is a pointer to the field cell data and a list of
-	   * cells that have the sort data in common
+	  /* Each key type has its own hash of field sort data; the
+	   * sort data is a pointer to the field cell data and a list
+	   * of cells that have the sort data in common
 	   */
-	  Hash *fh = hash_create(1024);
+	  Hash *fh = hash_find(typevals, (uccp)ktype);
+	  if (!fh)
+	    {
+	      fh = hash_create(1024);
+	      hash_add(typevals, (uccp)ktype, fh);
+	    }
 	  int j;
 	  for (j = 1; c->r->rows[j]; ++j)
 	    {
+	      /* We are iterating over each value. For key types that
+	       * have a <val> list check to see if the value is known.
+	       * Unknown values in closed sets generate a diagnostic;
+	       * those in open sets get added silently to the set.
+	       */
+	      if (kp->hvals && !hash_find(kp->hvals, c->r->rows[j][i]))
+		{
+		  if (kp->closed)
+		    {
+		      fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
+			      c->r->rows[j][0],
+			      c->r->rows[0][i],
+			      c->r->rows[j][i]);
+		      /* is it right to ignore these? */
+		    }
+		  else
+		    {
+		      list_add(kp->lvals, c->r->rows[j][i]);
+		      hash_add(kp->hvals, (uccp)c->r->rows[j][i], "");
+		    }
+		}
+	      
 	      Fsort *fsp = hash_find(fh, c->r->rows[j][i]);
-	      Fcell *fcp = &c->si_rows[j][fc_i];
+	      Fcell *fcp = &c->si_rows[j][i];
 	      if (fsp)
 		{
 		  *fcp = *(Fcell*)list_first(fsp->cells);
@@ -86,7 +112,8 @@ cx_si_marshall(Cx *c)
 	      else
 		{
 		  size_t ix = ipool_copy(c->r->rows[j][i], c->si_pool);
-		  fcp->index = ix;
+		  fcp->type = FCELL_SORT;
+		  fcp->u.index = ix;
 		  fsp = memo_new(c->msort);
 		  fsp->cp = fcp;
 		  fsp->cells = list_create(LIST_SINGLE);
@@ -94,27 +121,33 @@ cx_si_marshall(Cx *c)
 		  hash_add(fh, c->r->rows[j][i], fsp);
 		}
 	    }
+	}
+      else
+	{
+	  int j;
+	  for (j = 1; c->r->rows[j]; ++j)
+	    {
+	      Fcell *fcp = &c->si_rows[j][i];
+	      fcp->type = FCELL_STRP;
+	      fcp->u.str = (ccp)c->r->rows[j][i];
+	    }
+	}
+    }
 
-	  /* Now we have all the data for a field, determine the sort method.
-	   *
-	   * For reorder=0/class=closed, set KD_key->hvals to contain
-	   * the possible keys with a sort code based on their order
-	   * in keydata.xml.
-	   *
-	   * For reorder=1/class=closed, set KD_key->hvals to contain
-	   * the possible keys with a sort code based on sorting the
-	   * values in keydata.xml.
-	   *
-	   * For reorder=1/class=open get an array of the values which
-	   * are in field sort data; sort the array.
-	   *
-	   * For all types, use the list in the sort data to push the
-	   * sort codes back into the cell data.
-	   *
-	   */
+  const char **typekeys = hash_keys(typevals);
+  for (int i = 0; typekeys[i]; ++i)
+    {
+      KD_key *kp = hash_find(c->k->hkeys, (uccp)typekeys[i]);
+      if (kp->reorder)
+	{
 	  int nvals;
-	  const Fsort **vals = (const Fsort **)hash_vals2(fh, &nvals);
-	  qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_fccmp);
+	  const Fsort **vals = (const Fsort **)hash_vals2(hash_find(typevals, (uccp)typekeys[i]),
+							  &nvals);
+      	  /* Now set up the sort protocol for the key-type */
+	  if ((curr_vh = cx_sortcodes(c, kp, typekeys[i], vals)))
+	    qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_vhcmp);
+	  else
+	    qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_fccmp);
 	  int k;
 	  for (k = 0; k < nvals; ++k)
 	    {
@@ -154,9 +187,12 @@ cx_si_sortdata(Cx *c)
       int j;
       for (j = 0; j < c->k->nfields; ++j)
 	{
-	  fprintf(sifp, "%ld=%ld", c->si_rows[i][j].sort, c->si_rows[i][j].index);
-	  if (c->k->nfields - j > 1)
-	    fputc('\t', sifp);
+	  if (c->si_rows[i][j].type == FCELL_SORT)
+	    {
+	      fprintf(sifp, "%ld=%ld", c->si_rows[i][j].sort, c->si_rows[i][j].u.index);
+	      if (c->k->nfields - j > 1)
+		fputc('\t', sifp);
+	    }
 	}
       fputc('\n', sifp);
     }

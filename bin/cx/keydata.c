@@ -93,7 +93,7 @@ kd_sH(void *userData, const char *name, const char **atts)
       keyp->lvals = list_create(LIST_SINGLE);
       keyp->rvals = hash_create(128);
       /* leave key->hvals NULL for now to indicate string sort if key-type is open */
-      hash_add(kp->hkeys, keyp->type, keyp);
+      hash_add(kp->hkeys, (uccp)keyp->type, keyp);
       curr_keyp = keyp;
     }
   else if (!strcmp(name, "val"))
@@ -106,6 +106,9 @@ kd_sH(void *userData, const char *name, const char **atts)
       else	
 	hash_add(curr_keyp->rvals, (uccp)vp->v, (void*)vp->r);
       list_add(curr_keyp->lvals, vp);
+      if (!curr_keyp->hvals)
+	curr_keyp->hvals = hash_create(1024);
+      hash_add(curr_keyp->hvals, (uccp)vp->v, "");
     }
 #undef kp
 }

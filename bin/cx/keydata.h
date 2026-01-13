@@ -14,7 +14,7 @@ typedef struct kdkey
   const char *type;
   List *lvals; /* preserve order of key values for sorting */
   Hash *rvals; /* hash of value to remapped value */
-  Hash *hvals; /* hash of value to sort code */
+  Hash *hvals; /* hash of known values */
 } KD_key;
 
 typedef struct kdval
