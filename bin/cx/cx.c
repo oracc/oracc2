@@ -3,7 +3,8 @@
 
 static const char *arg_project;
 static int arg_verbose;
-int sortinfo_only = 1;
+int remap_only = 0;
+int sortinfo_only = 0;
 
 Cx *
 cx_init(void)
@@ -50,7 +51,7 @@ cx_load(Cx *c, const char *cat)
 int
 main(int argc, char * const *argv)
 {
-  options(argc, argv, "p:sv");
+  options(argc, argv, "p:rsv");
   if (!arg_project)
     {
       fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");
@@ -66,9 +67,14 @@ main(int argc, char * const *argv)
     {
       roco_field_indexes(c->r);
       cx_keydata(c);
-      cx_sortinfo(c);
-      if (!sortinfo_only)
-	roco_write_xml(stdout, c->r);
+      if (remap_only)
+	return cx_remap(c);
+      else
+	{
+	  cx_sortinfo(c);
+	  if (!sortinfo_only)
+	    roco_write_xml(stdout, c->r);
+	}
     }
 }
 
@@ -79,6 +85,9 @@ opts(int opt, const char *arg)
     {
     case 'p':
       arg_project = arg;
+      break;
+    case 'r':
+      remap_only = 1;
       break;
     case 's':
       sortinfo_only = 1;

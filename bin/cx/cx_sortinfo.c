@@ -5,6 +5,7 @@
 
 static FILE *sifp;
 static Pool *sip;
+static Hash *curr_hv;
 
 /* compare as strings */
 static int cx_fccmp(void *a, void*b)
@@ -54,6 +55,19 @@ cx_si_marshall(Cx *c)
 	  /* This is the index into the field cell data matrix */
 	  ++fc_i;
 
+	  /* Each field-type has its own rules about sorting for value
+	   * sets. Value sets can be open or closed: open value sets
+	   * are built from all of the values attested for a
+	   * field-type in the catalogue; for closed value sets, a
+	   * diagnostic is issued for any values not specified in
+	   * keydata.xml
+	   *
+	   * Value sets can be reordered, in which case the values are
+	   * sorted before assigning sort codes.  If @reordered = 0
+	   * sort codes are assigned in the order the values are given
+	   * in keydata.xml.
+	   */
+	  
 	  /* Each field has its own hash of field sort data; the sort
 	   * data is a pointer to the field cell data and a list of
 	   * cells that have the sort data in common

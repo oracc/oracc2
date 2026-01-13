@@ -82,7 +82,8 @@ kd_sH(void *userData, const char *name, const char **atts)
   else if (!strcmp(name, "keys"))
     {
       KD_key *keyp = memo_new(kp->mkey);
-      keyp->class = (ccp)pattr("class");
+      if (!strcmp((ccp)pattr("class"), "closed"))
+	keyp->closed = 1;
       keyp->method = (ccp)pattr("method");
       keyp->type = (ccp)pattr("type");
       keyp->remapto = (ccp)pattr("remap-to");
@@ -90,7 +91,8 @@ kd_sH(void *userData, const char *name, const char **atts)
       keyp->remap = atoi(findAttr(atts, "remap"));
       keyp->reorder = atoi(findAttr(atts, "reorder"));
       keyp->lvals = list_create(LIST_SINGLE);
-      keyp->hvals = hash_create(128);
+      keyp->rvals = hash_create(128);
+      /* leave key->hvals NULL for now to indicate string sort if key-type is open */
       hash_add(kp->hkeys, keyp->type, keyp);
       curr_keyp = keyp;
     }
@@ -101,8 +103,9 @@ kd_sH(void *userData, const char *name, const char **atts)
       vp->r = (ccp)pattr("remap");
       if (!*vp->r)
 	vp->r = NULL;
+      else	
+	hash_add(curr_keyp->rvals, (uccp)vp->v, (void*)vp->r);
       list_add(curr_keyp->lvals, vp);
-      hash_add(curr_keyp->hvals, (uccp)vp->v, (void*)vp->r);
     }
 #undef kp
 }

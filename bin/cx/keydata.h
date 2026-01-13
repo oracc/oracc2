@@ -5,15 +5,16 @@
 
 typedef struct kdkey
 {
-  const char *class;
-  const char *method;
-  int queryable;
   int remap;
-  const char *remapto;
+  int closed;
   int reorder;
+  int queryable;
+  const char *method;
+  const char *remapto;
   const char *type;
   List *lvals; /* preserve order of key values for sorting */
-  Hash *hvals;
+  Hash *rvals; /* hash of value to remapped value */
+  Hash *hvals; /* hash of value to sort code */
 } KD_key;
 
 typedef struct kdval
