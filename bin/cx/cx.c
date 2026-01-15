@@ -25,7 +25,7 @@ cx_load(Cx *c, const char *cat)
       if ((c->r = roco_load(cat, 1, "xmd-set", "xmd", NULL, NULL)))
 	{
 	  int rt = cx_roco_id_index(c);
-	  if (!rt)
+	  if (rt == 0)
 	    return 0;
 	  else if (rt > 0)
 	    {
