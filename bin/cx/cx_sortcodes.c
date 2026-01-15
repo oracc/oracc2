@@ -29,13 +29,23 @@ cx_sc_from_file(Cx *c, const char *ktype)
   
   if (ok)
     {
-      unsigned char *m;
-      size_t n;
-      char **lp = (char**)loadfile_lines3((uccp)ok, &n, &m);
-      int i;
-      h = hash_create(1024);
-      for (i = 0; lp[i]; ++i)
-	hash_add(h, (uccp)lp[i], (void*)(uintptr_t)i);
+      if (strstr(ok, "-order"))
+	{
+	  unsigned char *m;
+	  size_t n;
+	  char **lp = (char**)loadfile_lines3((uccp)ok, &n, &m);
+	  int i;
+	  h = hash_create(1024);
+	  for (i = 0; lp[i]; ++i)
+	    hash_add(h, (uccp)lp[i], (void*)(uintptr_t)i);
+	}
+      else
+	{
+	  Roco *r = roco_load1(ok);
+	  int i;
+	  for (i = 0; i < r->nlines; ++i)
+	    hash_add(h, (uccp)r->rows[i][0], (void*)(uintptr_t)atoi((ccp)r->rows[i][1]));
+	}
     }
 
   return h;
