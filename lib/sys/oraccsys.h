@@ -117,6 +117,7 @@ extern char *projhyph(const char *p);
 
 extern char** dirarray(const char* path, int* count);
 extern char *findfile(const char *project, const char *file2find, const char *deflt);
+extern char *findfile_dir(const char *project, const char *file2find, const char *deflt, const char *dir);
 extern int rnv_check(const char *rnc, const char *xml);
 
 #endif/*ORACCSYS_H_*/

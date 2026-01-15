@@ -3,6 +3,12 @@
 char *
 findfile(const char *project, const char *file2find, const char *deflt)
 {
+  return findfile_dir(project, file2find, deflt, "www");
+}
+
+char *
+findfile_dir(const char *project, const char *file2find, const char *deflt, const char *dir)
+{
   int flen = strlen(file2find);
   if (strlen(deflt)>flen)
     flen = strlen(deflt);
@@ -11,10 +17,10 @@ findfile(const char *project, const char *file2find, const char *deflt)
   char *p = strrchr(pbuf,'/');
   if (!p)
     p = pbuf;
-  char fil[strlen(oracc_builds())+strlen("/www/0")+strlen(pbuf)+flen];
+  char fil[strlen(oracc_builds())+strlen("//0")+strlen(pbuf)+flen+strlen(dir)];
   do
     {
-      sprintf(fil, "%s/www/%s/%s", oracc_builds(), pbuf, file2find);
+      sprintf(fil, "%s/%s/%s/%s", oracc_builds(), dir, pbuf, file2find);
       if (!access(fil, R_OK))
 	{
 	  fprintf(stderr, "findfile: using %s\n", fil);
@@ -29,15 +35,20 @@ findfile(const char *project, const char *file2find, const char *deflt)
 	p = pbuf;
     }
   while (p != pbuf);
-  sprintf(fil, "%s/%s", oracc_builds(), deflt);
-  if (!access(fil, R_OK))
+  if (deflt)
     {
-      fprintf(stderr, "findfile: using %s\n", fil);
-      return strdup(fil);
+      sprintf(fil, "%s/%s", oracc_builds(), deflt);
+      if (!access(fil, R_OK))
+	{
+	  fprintf(stderr, "findfile: using %s\n", fil);
+	  return strdup(fil);
+	}
+      else
+	{
+	  fprintf(stderr, "findfile: default file %s not found\n", fil);
+	  return NULL;
+	}
     }
   else
-    {
-      fprintf(stderr, "px_find_file: default file %s not found\n", fil);
-      return NULL;
-    }
+    return NULL;
 }
