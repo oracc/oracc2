@@ -179,7 +179,7 @@ cx_si_fields(Cx *c)
 static void
 cx_si_sortdata(Cx *c)
 {
-  fprintf(sifp, "#nmembers %ld\n", c->r->nlines);
+  fprintf(sifp, "#nmembers %ld\n", c->r->nlines-1);
   int i;
   for (i = 1; c->si_rows[i]; ++i)
     {
