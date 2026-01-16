@@ -11,6 +11,9 @@ else
 	${bin}/cx-extra.sh
 	${bin}/cx-all.sh
 	${bin}/cx 01tmp/00cat/all
+	if [ -r 01bld/sortinfo.tab ]; then
+	    ${bin}/pgcsix 01bld/sortinfo.tab
+	fi
     else
 	echo $0: no .tsv file found in 00cat. Stop.
 	exit 1

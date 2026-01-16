@@ -211,7 +211,7 @@ cx_sortinfo(Cx *c)
   if (sortinfo_only)
     sifp = stdout;
   else
-    sifp = xfopen("sortinfo.tab", "w");
+    sifp = xfopen("01bld/sortinfo.tab", "w");
   cx_si_marshall(c);
   cx_si_fields(c);
   cx_si_sortdata(c);
