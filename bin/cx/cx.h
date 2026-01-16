@@ -33,6 +33,8 @@ typedef struct cx
   Pool *si_pool;
 } Cx;
 
+extern int sortinfo_only;
+
 extern void cx_roco(Cx *cp);
 extern int cx_roco_id_index(Cx *c);
 extern void cx_keydata(Cx *c);

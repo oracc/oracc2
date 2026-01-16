@@ -29,6 +29,7 @@ struct roco
   int linkcells;	 /* The cells are Link* not char * */
   int maxcols;
   int joiner;
+  void *user;
 };
 
 typedef struct roco Roco;
@@ -37,8 +38,13 @@ typedef void (*Roco_row_hook)(Roco *r, int i, FILE *fp);
 
 extern List *r_list;
 
+#if 1
+extern Roco_row_hook roco_row_hook_outer, roco_row_hook;
+extern void roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook rh);
+#else
 extern Roco_row_hook roco_row_hook_outer, roco_row_hook_o, roco_row_hook_c;
 extern void roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook o, Roco_row_hook c);
+#endif
 
 extern const char *roco_colorder;
 extern const char *roco_format;

@@ -24,6 +24,7 @@ cx_load(Cx *c, const char *cat)
       /* All catalogues must have fields in row one */
       if ((c->r = roco_load(cat, 1, "xmd-set", "xmd", NULL, NULL)))
 	{
+	  c->r->user = c;
 	  int rt = cx_roco_id_index(c);
 	  if (rt == 0)
 	    return 0;

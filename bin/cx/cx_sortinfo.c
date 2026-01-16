@@ -208,7 +208,10 @@ cx_si_pool(Cx *c)
 void
 cx_sortinfo(Cx *c)
 {
-  sifp = stdout;
+  if (sortinfo_only)
+    sifp = stdout;
+  else
+    sifp = xfopen("sortinfo.tab", "w");
   cx_si_marshall(c);
   cx_si_fields(c);
   cx_si_sortdata(c);

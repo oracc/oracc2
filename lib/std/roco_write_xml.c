@@ -14,8 +14,36 @@ int roco_ood_ns = 0;
 int roco_xmd_ns = 0;
 int roco_no_void_xml = 0;
 
-Roco_row_hook roco_row_hook_outer = NULL, roco_row_hook_o = NULL, roco_row_hook_c = NULL;
+#if 1
+Roco_row_hook roco_row_hook_outer = NULL, roco_row_hook = NULL;
+void
+roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook rh)
+{
+  roco_row_hook_outer = outer;
+  roco_row_hook = rh;
+}
 
+static void
+roco_row_dflt(Roco *r, int i, FILE *fp)
+{
+  int j;
+  const char **ftags = (r->fields_from_row1
+			? (const char **)r->rows[0] : NULL);
+  const char *ctag = r->celtag;
+  for (j = 0; r->rows[i][j] != NULL; ++j)
+    {
+      if (ftags)
+	ctag = ftags[j];
+      if (*r->rows[i][j])
+	fprintf(fp, "<%s>%s</%s>",
+		ctag, roco_xmlify ? xmlify(r->rows[i][j]) : r->rows[i][j], ctag);
+      else if (!roco_no_void_xml)
+	fprintf(fp, "<%s/>", ctag);
+      /* else don't emit an empty tag for void data */
+    }
+}
+#else
+Roco_row_hook roco_row_hook_outer = NULL, roco_row_hook_o = NULL, roco_row_hook_c = NULL;
 void
 roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook o, Roco_row_hook c)
 {
@@ -23,15 +51,13 @@ roco_xml_row_hooks(Roco_row_hook outer, Roco_row_hook o, Roco_row_hook c)
   roco_row_hook_o = o;
   roco_row_hook_c = c;
 }
+#endif
 
 void
 roco_write_xml(FILE *fp, Roco *r)
 {
   size_t i;
   int start_row = r->fields_from_row1;
-  const char **ftags = (r->fields_from_row1
-			? (const char **)r->rows[0] : NULL);
-  const char *ctag = r->celtag;
   if ('-' != *r->xmltag)
     {
       fprintf(fp, "<%s", r->xmltag);
@@ -58,6 +84,12 @@ roco_write_xml(FILE *fp, Roco *r)
 	  if (roco_row_hook_outer)
 	    roco_row_hook_outer(r,i,fp);
 	  fprintf(fp, "<%s\n>", r->rowtag);
+#if 1
+	  if (roco_row_hook)
+	    roco_row_hook(r,i,fp);
+	  else
+	    roco_row_dflt(r,i,fp);
+#else
 	  if (roco_row_hook_o)
 	    roco_row_hook_o(r,i,fp);
 	  int j;
@@ -74,6 +106,7 @@ roco_write_xml(FILE *fp, Roco *r)
 	    }
 	  if (roco_row_hook_c)
 	    roco_row_hook_c(r,i,fp);
+#endif
 	  fprintf(fp, "</%s\n>", r->rowtag);
 	}
     }
