@@ -75,6 +75,8 @@ main(int argc, char * const *argv)
 	return cx_remap(c);
       else
 	{
+	  if (!strcmp(xpd_option(c->cfg, "cat-merge-periods"), "yes"))
+	    cx_merge_periods(c);
 	  cx_sortinfo(c);
 	  if (!sortinfo_only)
 	    roco_write_xml(stdout, c->r);

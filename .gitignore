@@ -171,6 +171,7 @@ cbdpos.c
 cbdrws.c
 cbdtags.c
 cgiopts.c
+cx_merper.c
 fontname.c
 iomethod.c
 idactions.c

@@ -36,14 +36,19 @@ typedef struct cx
   struct xpd *cfg;
 } Cx;
 
+typedef const char * (*Repfunc)(const char *s);
+
 extern int sortinfo_only;
 
 struct merper { const char *name; const char *merge; };
-
+extern struct merper * cx_merper(const char *s, size_t len);
 extern void cx_roco(Cx *cp);
 extern int cx_roco_id_index(Cx *c);
 extern void cx_keydata(Cx *c);
 extern int cx_remap(Cx *c);
 extern void cx_sortinfo(Cx *c);
+extern int cx_roco_field_index(Cx *c, const char *fld);
+extern void cx_merge_periods(Cx *c);
+extern void cx_replace(Cx *c, const char *field, Repfunc r);
 
 #endif/*CX_H_*/

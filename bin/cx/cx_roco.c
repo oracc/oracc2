@@ -43,24 +43,23 @@ cx_roco_row(Roco *r, int i, FILE *fp)
 #undef cxp
 }
 
-#if 0
-static void
-cx_roco_o(Roco *r, int i, FILE *fp)
-{
-  fputs("<cat>", fp);
-}
-static void
-cx_roco_c(Roco *r, int i, FILE *fp)
-{
-  fputs("</cat>", fp);
-}
-#endif
-
 void
 cx_roco(Cx *c)
 {
   roco_xmd_ns = 1;
   roco_xml_row_hooks(cx_roco_outer, cx_roco_row);
+}
+
+int
+cx_roco_field_index(Cx *c, const char *fld)
+{
+  int f;
+  for (f = 0; c->r->rows[0][f]; ++f)
+    {
+      if (!strcmp((ccp)c->r->rows[0][f], fld))
+	return f;
+    }
+  return -1;
 }
 
 int
