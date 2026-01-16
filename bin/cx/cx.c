@@ -2,9 +2,9 @@
 #include "cx.h"
 
 static const char *arg_project;
-static int arg_verbose;
 int remap_only = 0;
 int sortinfo_only = 0;
+int verbose = 0;
 
 Cx *
 cx_init(void)
@@ -13,6 +13,8 @@ cx_init(void)
   cp->project = arg_project;
   cp->msort = memo_init(sizeof(Fsort), 1024);
   cx_roco(cp);
+  cp->p = pool_init();
+  cp->cfg = xpd_init(cp->project, cp->p);
   return cp;
 }
 
@@ -58,7 +60,7 @@ main(int argc, char * const *argv)
       fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");
       return 1;
     }
-  ff_verbose = arg_verbose;
+  ff_verbose = verbose;
   Cx *c = cx_init();
   if (cx_load(c, argv[optind]))
     {
@@ -95,7 +97,7 @@ opts(int opt, const char *arg)
       sortinfo_only = 1;
       break;
     case 'v':
-      ++arg_verbose;
+      ++verbose;
       break;
     default:
       return 1;

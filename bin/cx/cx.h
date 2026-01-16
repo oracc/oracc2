@@ -2,6 +2,7 @@
 #define CX_H_
 
 #include <roco.h>
+#include <xpd.h>
 
 struct keydata;
 #define FCELL_STRP 0
@@ -30,10 +31,14 @@ typedef struct cx
   struct keydata *k;
   Memo *msort;
   Fcell **si_rows;
-  Pool *si_pool;
+  Pool *si_pool; /* pool exclusively for sortinfo */
+  Pool *p; /* general purpose pool */
+  struct xpd *cfg;
 } Cx;
 
 extern int sortinfo_only;
+
+struct merper { const char *name; const char *merge; };
 
 extern void cx_roco(Cx *cp);
 extern int cx_roco_id_index(Cx *c);
