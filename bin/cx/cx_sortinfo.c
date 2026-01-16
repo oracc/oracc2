@@ -22,15 +22,18 @@ static int cx_vhcmp(void *a, void*b)
 {
   Fsort *fs_a = *(Fsort**)a;
   Fsort *fs_b = *(Fsort**)b;
-  unsigned int c_a = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_a->cp->u.index));
-  unsigned int c_b = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_b->cp->u.index));
-  if (c_a && c_b)
-    return (int)((size_t)c_a - (size_t)c_b);
-  else if (c_a)
-    return -1;
-  else if (c_b)
-    return 1;
-  return 0;
+  long c_a = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_a->cp->u.index));
+  long c_b = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_b->cp->u.index));
+#if 0
+  fprintf(stderr, "s_a=%s/c_a=%ld; s_b=%s/c_b=%ld\n",
+	  ipool_str(sip,fs_a->cp->u.index), c_a,
+	  ipool_str(sip,fs_b->cp->u.index), c_b);
+#endif
+  long ret = c_a - c_b;
+  if (ret)
+    return (ret > 0 ? 1 : -1);
+  else
+    return 0;
 }
 
 /* Turn the roco for the catalogue data into a matrix of structures
@@ -138,23 +141,20 @@ cx_si_marshall(Cx *c)
   for (int i = 0; typekeys[i]; ++i)
     {
       KD_key *kp = hash_find(c->k->hkeys, (uccp)typekeys[i]);
-      if (kp->reorder)
+      int nvals;
+      const Fsort **vals = (const Fsort **)hash_vals2(hash_find(typevals, (uccp)typekeys[i]),
+						      &nvals);
+      /* Now set up the sort protocol for the key-type */
+      if ((curr_vh = cx_sortcodes(c, kp, typekeys[i], vals)))
+	qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_vhcmp);
+      else
+	qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_fccmp);
+      int k;
+      for (k = 0; k < nvals; ++k)
 	{
-	  int nvals;
-	  const Fsort **vals = (const Fsort **)hash_vals2(hash_find(typevals, (uccp)typekeys[i]),
-							  &nvals);
-      	  /* Now set up the sort protocol for the key-type */
-	  if ((curr_vh = cx_sortcodes(c, kp, typekeys[i], vals)))
-	    qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_vhcmp);
-	  else
-	    qsort(vals, nvals, sizeof(Fsort *), (sort_cmp_func*)cx_fccmp);
-	  int k;
-	  for (k = 0; k < nvals; ++k)
-	    {
-	      Fcell *fcp;
-	      for (fcp = list_first(vals[k]->cells); fcp; fcp = list_next(vals[k]->cells))
-		fcp->sort = k;
-	    }
+	  Fcell *fcp;
+	  for (fcp = list_first(vals[k]->cells); fcp; fcp = list_next(vals[k]->cells))
+	    fcp->sort = k;
 	}
     }
 }
@@ -185,12 +185,12 @@ cx_si_sortdata(Cx *c)
     {
       fprintf(sifp, "%s\t", c->r->rows[i][0]);
       int j;
-      for (j = 0; j < c->k->nfields; ++j)
+      for (j = 0; j < c->r->maxcols; ++j)
 	{
 	  if (c->si_rows[i][j].type == FCELL_SORT)
 	    {
 	      fprintf(sifp, "%ld=%ld", c->si_rows[i][j].sort, c->si_rows[i][j].u.index);
-	      if (c->k->nfields - j > 1)
+	      if (c->r->maxcols - j > 1)
 		fputc('\t', sifp);
 	    }
 	}

@@ -19,3 +19,9 @@ Phases
 	3 -- generate single 01bld/cat.tsv with all necessary cat entry data
 	4 -- load 01bld/cat.tsv
 	5 -- save sortinfo data
+
+TODO
+====
+
+	designation-sort-codes and friends do no validation so keys not given will just sort weirdly
+

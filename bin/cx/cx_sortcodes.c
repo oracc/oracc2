@@ -29,13 +29,13 @@ cx_sc_from_file(Cx *c, const char *ktype)
   
   if (ok)
     {
+      h = hash_create(1024);
       if (strstr(ok, "-order"))
 	{
 	  unsigned char *m;
 	  size_t n;
 	  char **lp = (char**)loadfile_lines3((uccp)ok, &n, &m);
 	  int i;
-	  h = hash_create(1024);
 	  for (i = 0; lp[i]; ++i)
 	    hash_add(h, (uccp)lp[i], (void*)(uintptr_t)i);
 	}
@@ -44,10 +44,13 @@ cx_sc_from_file(Cx *c, const char *ktype)
 	  Roco *r = roco_load1(ok);
 	  int i;
 	  for (i = 0; i < r->nlines; ++i)
-	    hash_add(h, (uccp)r->rows[i][0], (void*)(uintptr_t)atoi((ccp)r->rows[i][1]));
+	    hash_add(h, (uccp)r->rows[i][0], (void*)(uintptr_t)strtoul((ccp)r->rows[i][1], NULL, 10));
 	}
     }
 
+  if (!h && !strcmp(ktype, "names"))
+    return cx_sc_from_file(c, "designation");
+  
   return h;
 }
 
@@ -72,5 +75,5 @@ cx_sortcodes(Cx *c, KD_key *kp, const char *ktype, const Fsort **vals)
 	    }
 	}
     }
-  return NULL;
+  return vh;
 }

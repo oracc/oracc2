@@ -57,6 +57,7 @@ main(int argc, char * const *argv)
       fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");
       return 1;
     }
+  ff_verbose = arg_verbose;
   Cx *c = cx_init();
   if (cx_load(c, argv[optind]))
     {
