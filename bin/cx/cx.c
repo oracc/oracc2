@@ -2,6 +2,7 @@
 #include "cx.h"
 
 static const char *arg_project;
+int merge_fields = 0;
 int remap_only = 0;
 int sortinfo_only = 0;
 int verbose = 0;
@@ -9,6 +10,7 @@ int verbose = 0;
 Cx *
 cx_init(void)
 {
+  mesg_init();
   Cx *cp = calloc(1, sizeof(Cx));
   cp->project = arg_project;
   cp->msort = memo_init(sizeof(Fsort), 1024);
@@ -54,7 +56,7 @@ cx_load(Cx *c, const char *cat)
 int
 main(int argc, char * const *argv)
 {
-  options(argc, argv, "p:rsv");
+  options(argc, argv, "mp:rsv");
   if (!arg_project)
     {
       fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");
@@ -75,13 +77,14 @@ main(int argc, char * const *argv)
 	return cx_remap(c);
       else
 	{
-	  if (!strcmp(xpd_option(c->cfg, "cat-merge-periods"), "yes"))
+	  if (merge_fields || !strcmp(xpd_option(c->cfg, "cat-merge-periods"), "yes"))
 	    cx_merge_periods(c);
 	  cx_sortinfo(c);
 	  if (!sortinfo_only)
 	    roco_write_xml(stdout, c->r);
 	}
     }
+  mesg_print(stderr);
 }
 
 int
@@ -89,6 +92,8 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'm':
+      merge_fields = 1;
     case 'p':
       arg_project = arg;
       break;

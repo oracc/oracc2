@@ -24,7 +24,7 @@ static int cx_vhcmp(void *a, void*b)
   Fsort *fs_b = *(Fsort**)b;
   long c_a = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_a->cp->u.index));
   long c_b = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_b->cp->u.index));
-#if 0
+#if 1
   fprintf(stderr, "s_a=%s/c_a=%ld; s_b=%s/c_b=%ld\n",
 	  ipool_str(sip,fs_a->cp->u.index), c_a,
 	  ipool_str(sip,fs_b->cp->u.index), c_b);
@@ -210,8 +210,9 @@ cx_sortinfo(Cx *c)
 {
   if (sortinfo_only)
     sifp = stdout;
-  else
-    sifp = xfopen("01bld/sortinfo.tab", "w");
+  else if (!(sifp = xfopen("01bld/sortinfo.tab", "w")))
+    exit(1);
+  
   cx_si_marshall(c);
   cx_si_fields(c);
   cx_si_sortdata(c);

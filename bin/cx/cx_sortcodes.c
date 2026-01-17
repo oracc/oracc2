@@ -44,7 +44,9 @@ cx_sc_from_file(Cx *c, const char *ktype)
 	  Roco *r = roco_load1(ok);
 	  int i;
 	  for (i = 0; i < r->nlines; ++i)
-	    hash_add(h, (uccp)r->rows[i][0], (void*)(uintptr_t)strtoul((ccp)r->rows[i][1], NULL, 10));
+	    hash_add(h,
+		     (uccp)r->rows[i][0],
+		     (void*)(uintptr_t)strtoul((ccp)r->rows[i][1], NULL, 10));
 	}
     }
 
@@ -62,16 +64,17 @@ cx_sortcodes(Cx *c, KD_key *kp, const char *ktype, const Fsort **vals)
      set the key values list from that */
   if (!(vh = cx_sc_from_file(c, ktype)))
     {
-      if (!kp->reorder)
+      /* if a non-reordered key type has a <val> list assign sortcodes based on the list */
+      if (kp->lvals)
 	{
-	  /* if a non-reordered key type has a <val> list assign sortcodes based on the list */
-	  if (kp->lvals)
+	  vh = hash_create(1024);
+	  int i;
+	  KD_val *vp;
+	  for (i = 0, vp = list_first(kp->lvals); vp; vp = list_next(kp->lvals), ++i)
 	    {
-	      vh = hash_create(1024);
-	      int i;
-	      const char *s;
-	      for (i = 0, s = list_first(kp->lvals); s; s = list_next(kp->lvals), ++i)
-		hash_add(vh, (uccp)s, (void*)(uintptr_t)i);
+	      if (verbose)
+		fprintf(stderr, "cx_sortcodes: %s: add %s code %d\n", ktype, vp->v, i);
+	      hash_add(vh, (uccp)vp->v, (void*)(uintptr_t)i);
 	    }
 	}
     }

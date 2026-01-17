@@ -4,7 +4,7 @@
 static const char *
 cx_merper_wrapper(const char *s)
 {
-  return (cx_merper(s, strlen(s)))->name;
+  return (cx_merper(s, strlen(s)))->merge;
 }
 
 void

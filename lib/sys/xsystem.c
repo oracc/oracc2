@@ -112,6 +112,8 @@ xperror (const char *fmt,...)
   (void) sprintf (buf+strlen(buf), "%s%s", 
 		  *buf ? ": " : "system error: ", strerror(errno));
   fprintf(stderr, "%s", buf);
+  if ('\n' != buf[strlen(buf)-1])
+    fputc('\n', stderr);
 }
 
 void

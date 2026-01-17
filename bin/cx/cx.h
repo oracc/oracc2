@@ -38,7 +38,7 @@ typedef struct cx
 
 typedef const char * (*Repfunc)(const char *s);
 
-extern int sortinfo_only;
+extern int merge_fields, sortinfo_only, verbose;
 
 struct merper { const char *name; const char *merge; };
 extern struct merper * cx_merper(const char *s, size_t len);
