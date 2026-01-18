@@ -1,13 +1,15 @@
 #!/bin/sh
 #
-# Marshall inputs from 00cat in 01tmp/00cat/local-[pqx].tsv
+# Marshall inputs from 00cat in 01tmp/00cat/local-[pqx].tsv.  This
+# script is designed so that all projects in a new Oracc installation
+# can run cx-marshall.sh before any actual catalogue building is done.
 #
-# For 00cat/*.tsv cp to 01tmp/00cat/l/*.tsv
+# For 00cat/*.tsv cp to 01tmp/00cat/l/*.tsv.
 #
-# For 00cat/*.xml convert 00cat/*.xml to 01tmp/00cat/l/*.tsv
+# For 00cat/*.xml convert 00cat/*.xml to 01tmp/00cat/l/*.tsv.
 #
 # Then rotate all .tsv to ensure ID is at start and split into
-# separate files
+# separate files.
 #
 echo $0 $*
 bin="$ORACC/bin"
@@ -15,12 +17,14 @@ projtype=`oraccopt . type`
 
 ldir=01tmp/00cat/l
 
+# clean out old cat data
 rm -fr $ldir ; mkdir -p $ldir
 if [ ! -d $ldir ]; then
     echo $0: failed to make $ldir. Stop.
     exit 1
 fi
 
+# copy .tsv data because we might reorder fields
 set 00cat/*.tsv
 if [ "$1" != "00cat/*.tsv" ]; then
     for t in $* ; do
@@ -28,6 +32,7 @@ if [ "$1" != "00cat/*.tsv" ]; then
     done
 fi
 
+# convert XML to TSV
 set 00cat/*.xml
 if [ "$1" != "00cat/*.xml" ]; then
     for x in $* ; do
@@ -36,6 +41,7 @@ if [ "$1" != "00cat/*.xml" ]; then
     done
 fi
 
+# rotate id_text/id_composite; OOD data is not touched by this script.
 set $ldir/*.tsv
 if [ "$1" != "$ldir/*.tsv" ]; then
     for t in $* ; do
@@ -48,12 +54,12 @@ if [ "$1" != "$ldir/*.tsv" ]; then
     done
 fi
 
+# ensure basic requirements are met
 cx-sanity.sh
 if [ $? -ne 0]; then
     echo $0: failed catalague sanity checks. Stop.
     exit 1
 fi
 
-cx-local.sh $ldir/*.tsv
-
-cx-fields.sh
+# set up 01bld/00cat/local-[pqx].tsv
+cx-local.sh
