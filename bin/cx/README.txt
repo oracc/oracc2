@@ -25,3 +25,34 @@ TODO
 
 	designation-sort-codes and friends do no validation so keys not given will just sort weirdly
 
+===========
+
+01tmp/00cat should have local-p, dynamic-p and proxy-p which then get cat *-p | cx -
+
+cat building needs to be split into two phases; local-[pqx] need to be built as part of oracc config vel sim, so that all projects can be configured before building.  This will allow mutual proxying between projects
+
+local-[pqx].tsv get built into 01bld/00cat
+
+NEW 3ff
+    3 - generate cat-[pqx].tsv; load each into their own roco; create one sortinfo hash from all of them; export as single XML stream; this needs to track which ones came from proxies
+
+OR:
+
+	cx local-[pqx].tsv dynamic-[pqx].tsv proxy-[pqx].tsv
+
+into one sortinfo but only outputs local and dynamic
+
+==========
+
+0) all projects get local data built into 01bld/00cat
+
+For non-local data:
+
+a1) set fields for P/X: if any P/X in 00cat, use head -1; else use head -1 cdli|pmaster
+a2) set fields for Q: if any Q in 00cat, use head -1; else use head -1 qcat|qmaster
+
+b) set source projects for any non-local XMD needed, either dynamic or proxied
+
+c) extract non-local data into 01bld/00cat/{dynamic|proxied}-[pqx].tsv
+-- this won't need field-header lines because it will use the same
+fields and order as the local data

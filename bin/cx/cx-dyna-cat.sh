@@ -19,6 +19,7 @@
 echo $0 $*
 bin=${ORACC}/bin
 list=$1
+type=$2
 work=01tmp/`basename $1`
 cut -d: -f2 $list | tr @ '\t' >$work
 grep ^P $work >$work.P
@@ -29,9 +30,12 @@ project=`oraccopt`
 
 $bin/cx-xcat.sh
 
-pdyna=01bld/cat/dynamic-p.cat
-qdyna=01bld/cat/dynamic-q.cat
-xdyna=01bld/cat/dynamic-x.cat
+if [ "${type}" = "" ]; then
+    type=dynamic
+fi
+pdyna=01bld/cat/${type}-p.cat
+qdyna=01bld/cat/${type}-q.cat
+xdyna=01bld/cat/${type}-x.cat
 
 rm -f $pdyna $qdyna $xdyna
 
@@ -57,7 +61,7 @@ fi
 
 cat $work.P | while read IFS=$'\t' id cat ; do
     if [ "${cat}" != "${project}" ]; then
-	data=`grep ^$id ${ORACC}${cat}/00cat/*.tsv`
+	data=`grep ^$id ${ORACC}/${cat}/01bld/00cat/local-p.tsv`
     fi
     if [ "${data}" = "" ]; then
 	data=`grep ^$id $pcat`
@@ -71,7 +75,7 @@ done
 
 cat $work.Q | while read IFS=$'\t' id cat ; do
     if [ "${cat}" != "${project}" ]; then
-	data=`grep ^$id ${ORACC}${cat}/00cat/*.tsv`
+	data=`grep ^$id ${ORACC}/${cat}/01bld/00cat/local-q.tsv`
     fi
     if [ "${data}" = "" ]; then
 	data=`grep ^$id $qcat`
@@ -85,7 +89,7 @@ done
 
 cat $work.X | while read IFS=$'\t' id cat ; do
     if [ "${cat}" != "${project}" ]; then
-	data=`grep ^$id ${ORACC}${cat}/00cat/*.tsv`
+	data=`grep ^$id ${ORACC}/${cat}/01bld/00cat/local-x.tsv`
     fi
     if [ "${data}" = "" ]; then
 	data=`grep ^$id $xcat`

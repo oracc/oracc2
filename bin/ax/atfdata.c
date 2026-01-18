@@ -10,7 +10,7 @@ extern void atfdlex(void);
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "c:j:p:x");
+  options(argc, argv, "c:j:p:xX");
   if (!project)
     {
       fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
@@ -40,8 +40,12 @@ opts(int c, const char *arg)
     case 'p':
       project = arg;
       break;
+    case 'X':
+      x_mode = 2;
     case 'x':
       printf("id_text\tdesignation\tperiod\tprovenience\n");
+      if (x_mode)
+	exit(0);
       x_mode = 1;
       break;
     }

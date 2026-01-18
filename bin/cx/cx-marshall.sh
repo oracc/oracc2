@@ -1,25 +1,30 @@
 #!/bin/sh
 #
-# Marshall inputs for .tsv in 01tmp/00cat
+# Marshall inputs from 00cat in 01tmp/00cat/local-[pqx].tsv
 #
-# For 00cat/*.tsv link to 01tmp/00cat/*.tsv
+# For 00cat/*.tsv cp to 01tmp/00cat/l/*.tsv
 #
-# For 00cat/*.xml convert 00cat/*.xml to 01tmp/00cat/*.tsv
+# For 00cat/*.xml convert 00cat/*.xml to 01tmp/00cat/l/*.tsv
+#
+# Then rotate all .tsv to ensure ID is at start and split into
+# separate files
 #
 echo $0 $*
 bin="$ORACC/bin"
 projtype=`oraccopt . type`
 
-rm -fr 01tmp/00cat ; mkdir -p 01tmp/00cat
-if [ ! -d 01tmp/00cat ]; then
-    echo $0: failed to make 01tmp/00cat. Stop.
+ldir=01tmp/00cat/l
+
+rm -fr $ldir ; mkdir -p $ldir
+if [ ! -d $ldir ]; then
+    echo $0: failed to make $ldir. Stop.
     exit 1
 fi
 
 set 00cat/*.tsv
 if [ "$1" != "00cat/*.tsv" ]; then
     for t in $* ; do
-	cp $t 01tmp/00cat/
+	cp $t $ldir
     done
 fi
 
@@ -27,12 +32,12 @@ set 00cat/*.xml
 if [ "$1" != "00cat/*.xml" ]; then
     for x in $* ; do
 	t=`basename $x .xml`.tsv 
-	xml2tsv $t >01tmp/00cat/$t
+	xml2tsv $t >$ldir/$t
     done
 fi
 
-set 01tmp/00cat/*.tsv
-if [ "$1" != "01tmp/00cat/*.tsv" ]; then
+set $ldir/*.tsv
+if [ "$1" != "$ldir/*.tsv" ]; then
     for t in $* ; do
 	id=`head -1 $t | grep ^id_`
 	if [ "${id}" = "" ]; then
@@ -42,3 +47,13 @@ if [ "$1" != "01tmp/00cat/*.tsv" ]; then
 	fi
     done
 fi
+
+cx-sanity.sh
+if [ $? -ne 0]; then
+    echo $0: failed catalague sanity checks. Stop.
+    exit 1
+fi
+
+cx-local.sh $ldir/*.tsv
+
+cx-fields.sh
