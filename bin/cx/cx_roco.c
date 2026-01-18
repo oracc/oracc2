@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <roco.h>
 #include <xml.h>
+#include <oraccns.h>
 #include "cx.h"
 
 /* Hooks for Roco library to generate backward-compatible XMD */
@@ -12,6 +13,40 @@ cx_roco_outer(Roco *r, int i, FILE *fp)
   fprintf(fp, "<?destfile %s?>\n", dest);
 }
 
+static const char *
+cx_langmask(Cx *c, Roco *r, int i)
+{
+  int langfld = cx_roco_field_index(c, "language");
+  if (-1 == langfld)
+    langfld = cx_roco_field_index(c, "language");
+  if (langfld > 0)
+    {
+      char *ls = strdup((ccp)r->rows[i][langfld]), *s = ls;
+      while (*s)
+	*s = tolower(*s);
+      char **ll = space_split(ls);
+      size_t l = 0;
+      int i;
+      for (i = 0; ll[i]; ++i)
+	{
+	  if (!strcmp(ll[i], "akkadian"))
+	    l |= LM_AKK;
+	  else if (!strcmp(ll[i], "sumerian"))
+	    l |= LM_AKK;
+	  else if (!strcmp(ll[i], "proto-cuneiform"))
+	    l |= LM_PCUN;
+	  else if (!strcmp(ll[i], "proto-elamite"))
+	    l |= LM_PCUN;
+	  else
+	    l |= LM_MISC;
+	}
+      char buf[strlen(" langs=\"\"0")+9];
+      sprintf(buf, " langs=\"%08lx\"", l);
+      return strdup(buf);
+    }
+  return NULL;
+}
+
 static void
 cx_roco_row(Roco *r, int i, FILE *fp)
 {
@@ -19,6 +54,11 @@ cx_roco_row(Roco *r, int i, FILE *fp)
   const char **ftags = (r->fields_from_row1
 			? (const char **)r->rows[0] : NULL);
   const char *ctag = r->celtag;
+  const char *lmattr = cx_langmask(r->user, r, i);
+  fprintf(fp, "<xmd xmlns=\"%s\" xmlns:xmd=\"%s\"", NS_XMD, NS_XMD);
+  if (lmattr)
+    fputs(lmattr, fp);
+  fputc('>', fp);
 #define cxp(ru) ((Cx*)(ru->user))
   fputs("<cat>", fp);
   for (j = 0; j < r->maxcols; ++j)
@@ -39,7 +79,7 @@ cx_roco_row(Roco *r, int i, FILE *fp)
 	    fprintf(fp, "<%s>%s</%s>", ctag, xmlify((uccp)s), ctag);
 	}
     }
-  fputs("</cat>", fp);
+  fputs("</cat></xmd>", fp);
 #undef cxp
 }
 

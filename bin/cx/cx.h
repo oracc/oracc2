@@ -36,6 +36,14 @@ typedef struct cx
   struct xpd *cfg;
 } Cx;
 
+
+#define LM_QQQ  0x01000000
+#define LM_SUX  0x02000000
+#define LM_AKK  0x08000000
+#define LM_PCUN 0x10000000
+#define LM_PELM 0x20000000
+#define LM_MISC 0x80000000
+
 typedef const char * (*Repfunc)(const char *s);
 
 extern int merge_fields, sortinfo_only, verbose;
