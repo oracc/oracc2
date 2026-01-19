@@ -305,7 +305,7 @@ roco_write(FILE *fp, Roco *r)
   
   for (i = 0; i < r->nlines; ++i)
     {
-      if (roco_format)
+      if (roco_format && (i || !r->row1_literal))
 	roco_row_format(fp, (const unsigned char **)r->rows[i]);
       else
 	{

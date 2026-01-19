@@ -51,8 +51,20 @@ main(int argc, char *const *argv)
 
   if (template_row)
     {
-      roco_format = roco_row_template(r, strdup(template_row), template_add_empty);
-      roco_write(stdout, r);      
+      roco_newline = 1;
+      r->fields_from_row1 = 1;
+      char *t = strdup(template_row), *e = t;
+      while (*e++)
+	if (e[-1] == '+')
+	  e[-1] = '\t';
+      char **v = vec_from_str(t, NULL, NULL);
+      roco_format = roco_row_template(r, v, template_add_empty);
+      if (verbose)
+	fprintf(stderr, "rocox: template_row => roco_format `%s'\n", roco_format);
+      r->row1_literal = 1;
+      r->rows[0] = (unsigned char**)v;
+      roco_write(stdout, r);
+      return 0;
     }
 
 

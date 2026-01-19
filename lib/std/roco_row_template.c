@@ -9,6 +9,7 @@
 
 #define ccp const char *
 #define uccp unsigned const char *
+extern int verbose;
 
 /* Create a roco_row_format template which will output Roco r
  * according to the field sequence in template t.  If parameter
@@ -16,25 +17,32 @@
  * silently drop them
  */
 char *
-roco_row_template(Roco *r, char *t, int add_empty)
+roco_row_template(Roco *r, char **v, int add_empty)
 {
-  if (!r || !r->fields_from_row1 || !t)
+  if (!r || !r->fields_from_row1 || !v)
     return NULL;
 
   if (!r->fields)
     roco_field_indexes(r);
   
-  char **v = vec_from_str(t, NULL, NULL);
   int i;
+
+  if (verbose)
+    {
+      fputs("v[]=", stderr);
+      for (i = 0; v[i]; ++i)
+	fprintf(stderr, "\t%s", v[i]);
+      fputc('\n', stderr);
+    }
 
   List *tlp = list_create(LIST_SINGLE);
   for (i = 0; v[i]; ++v)
     {
       int f = (uintptr_t)hash_find(r->fields, (uccp)v[i]);
       if (f)
-	list_add(tlp, (void*)(uintptr_t)f);
+	list_add(tlp, (void*)(intptr_t)f);
       else if (add_empty)
-	list_add(tlp, (void*)0);
+	list_add(tlp, (void*)(intptr_t)-1);
     }
 
   char buf[list_len(tlp)*5];
@@ -42,8 +50,8 @@ roco_row_template(Roco *r, char *t, int add_empty)
   void *vp;
   for (vp = list_first(tlp); vp; vp = list_next(tlp))
     {
-      if ((uintptr_t)vp > 0)
-	sprintf(buf+strlen(buf), "%%%lu", (uintptr_t)vp);
+      if ((intptr_t)vp > 0)
+	sprintf(buf+strlen(buf), "%%%lu", (intptr_t)vp);
       strcat(buf, "\t");
     }
   buf[strlen(buf)-1] = '\0';

@@ -29,6 +29,7 @@ struct roco
   int linkcells;	 /* The cells are Link* not char * */
   int maxcols;
   int joiner;
+  int row1_literal;	/* Do not pass row1 through the roco_format template */
   void *user;
 };
 
@@ -74,6 +75,6 @@ extern void roco_fields_row(Roco *r, const char **f);
 extern const char *roco_z_format(List *lp, Roco *r);
 extern void roco_empty_row(Roco *r);
 extern Hash *roco_hash_r(Roco *r);
-extern char *roco_row_template(Roco *r, char *t, int add_empty);
+extern char *roco_row_template(Roco *r, char **v, int add_empty);
 
 #endif/*ROCO_H_*/
