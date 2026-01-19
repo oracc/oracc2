@@ -22,7 +22,7 @@ lx -q $approved - $incat >$nocat
 
 case $policy in
     auto|virtual)
-	cx-dyna-cat.sh $approved
+	cx-outer.sh $approved
 	;;
     custom)
 	# in custom mode all data must be maintained by the project
@@ -36,12 +36,12 @@ case $policy in
 	if [ -s $nocat ]; then
 	    echo "$0: local catalog items to be supplied from fallback cat:"
 	    cat $nocat
-	    cx-dyna-cat.sh $nocat
+	    cx-outer.sh $nocat
 	fi
     ;;
     mixed)
 	if [ -s $nocat ]; then
-	    cx-dyna-cat.sh $nocat
+	    cx-outer.sh $nocat
 	fi
     ;;
     *)

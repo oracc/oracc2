@@ -37,7 +37,7 @@ set 00cat/*.xml
 if [ "$1" != "00cat/*.xml" ]; then
     for x in $* ; do
 	t=`basename $x .xml`.tsv 
-	xml2tsv $t >$ldir/$t
+	${bin}/xml2tsv $t >$ldir/$t
     done
 fi
 
@@ -48,18 +48,27 @@ if [ "$1" != "$ldir/*.tsv" ]; then
 	id=`head -1 $t | grep ^id_`
 	if [ "${id}" = "" ]; then
 	    id=`head -1 $t | tr '\t' '\n' | grep ^id_ | tr -d '\n'`
-	    rocox -z $id $t >$t.z
+	    ${bin}/rocox -z $id $t >$t.z
 	    mv $t.z $t
 	fi
     done
 fi
 
 # ensure basic requirements are met
-cx-sanity.sh
+${bin}/cx-sanity.sh
 if [ $? -ne 0]; then
     echo $0: failed catalague sanity checks. Stop.
     exit 1
 fi
 
 # set up 01bld/00cat/local-[pqx].tsv
-cx-local.sh
+${bin}/cx-local.sh
+
+# process 00lib/cat.d
+${bin}/cx-extra.sh
+
+# join local and cat.d
+${bin}/cx-all.sh
+
+# Now 01bld/00cat contains local-[pqx].tsv based on catalogue data
+# actually in the project

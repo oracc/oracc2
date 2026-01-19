@@ -17,9 +17,27 @@ for p in $proj; do
 done
 
 # set the templates
-pt=`head -1 01bld/00cat/local-p.tsv`
-qt=`head -1 01bld/00cat/local-q.tsv`
-xt=`head -1 01bld/00cat/local-x.tsv`
+lp=01bld/00cat/local-p.tsv
+lq=01bld/00cat/local-q.tsv
+lx=01bld/00cat/local-x.tsv
+op=01bld/00cat/outer-p.tsv
+oq=01bld/00cat/outer-q.tsv
+ox=01bld/00cat/outer-x.tsv
+
+# initialize the outputs
+if [ ! -s $op ]; then
+    head -1 $lp >$op
+fi
+if [ ! -s $oq ]; then
+    head -1 $lq >$oq
+fi
+if [ ! -s $ox ]; then
+    head -1 $lx >$ox
+fi
+
+pt=`head -1 $lp | tr '\t' +`
+qt=`head -1 $lq | tr '\t' +`
+xt=`head -1 $lx | tr '\t' +`
 
 # extract the P for each project and expand the tsv according to the template
 for f in ${tdir}/*.P ; do
@@ -29,7 +47,7 @@ for f in ${tdir}/*.P ; do
 	t=${tdir}/${p}-p.tsv
 	head -1 $l >$t
 	grep $l >>$t
-	rocox -E -T'"'${pt}'"' $t >>01bld/00cat/outer-p.tsv
+	rocox -E -T$pt $t >>$op
 	rm -f $t
     fi
 done
@@ -42,7 +60,7 @@ for f in ${tdir}/*.Q ; do
 	t=${tdir}/${p}-q.tsv
 	head -1 $l >$t
 	grep $l >>$t
-	rocox -E -T'"'${pt}'"' $t >>01bld/00cat/outer-q.tsv
+	rocox -E -T$pt $t >>$oq
 	rm -f $t
     fi
 done
@@ -55,7 +73,7 @@ for f in ${tdir}/*.X ; do
 	t=${tdir}/${p}-x.tsv
 	head -1 $l >$t
 	grep $l >>$t
-	rocox -E -T'"'${xt}'"' $t >>01bld/00cat/outer-x.tsv
+	rocox -E -T$xt $t >>$ox
 	rm -f $t
     fi
 done
