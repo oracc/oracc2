@@ -56,7 +56,7 @@ cx_load(Cx *c, const char *cat)
 int
 main(int argc, char * const *argv)
 {
-  options(argc, argv, "mp:rsv");
+  options(argc, argv, "mp:rsvt:");
   if (!arg_project)
     {
       fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");

@@ -74,5 +74,6 @@ extern void roco_fields_row(Roco *r, const char **f);
 extern const char *roco_z_format(List *lp, Roco *r);
 extern void roco_empty_row(Roco *r);
 extern Hash *roco_hash_r(Roco *r);
+extern char *roco_row_template(Roco *r, char *t, int add_empty);
 
 #endif/*ROCO_H_*/

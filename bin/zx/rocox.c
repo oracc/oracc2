@@ -5,6 +5,7 @@
 
 int fields_from_row1 = 0;
 int suppress_xmlify = 0;
+int template_add_empty = 0;
 int trtd_output = 0;
 int xml_output = 0;
 int verbose;
@@ -13,22 +14,23 @@ const char *j_file;
 List *j_list, *z_list;
 
 const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL, *class = NULL;
+const char *template_row;
 
 int
 main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
 
-  options(argc, argv, "c:C:efh::j:nor:R:stvx:Xz:?");
+  options(argc, argv, "c:C:eEfh::j:nor:R:stT:vx:Xz:?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
 
   if (j_file)
     {
-      char **jj = loadfile_lines3(j_file, NULL, NULL);
+      char **jj = (char**)loadfile_lines3((uccp)j_file, NULL, NULL);
       if (jj)
-	j_list = list_from_ary(jj, LIST_SINGLE);
+	j_list = list_from_ary((void**)jj, LIST_SINGLE);
     }
   
   if (j_list)
@@ -46,6 +48,13 @@ main(int argc, char *const *argv)
     }
   
   r = roco_load(argv[optind] ? argv[optind] : "-", fields_from_row1, xmltag, rowtag, celtag, class);
+
+  if (template_row)
+    {
+      roco_format = roco_row_template(r, strdup(template_row), template_add_empty);
+      roco_write(stdout, r);      
+    }
+
 
   if (roco_swap_axes)
     r = roco_swap(s=r);
@@ -80,6 +89,9 @@ opts(int opt, const char *arg)
       break;
     case 'e':
       roco_esp_ns = 1;
+      break;
+    case 'E':
+      template_add_empty = 1;
       break;
     case 'f':
       fields_from_row1 = 1;
@@ -124,6 +136,9 @@ opts(int opt, const char *arg)
       rowtag = "tr";
       celtag = "td";
       xml_output = 1;
+      break;
+    case 'T':
+      template_row = arg;
       break;
     case 'v':
       verbose = 1;
