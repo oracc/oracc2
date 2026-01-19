@@ -182,22 +182,31 @@ cx_si_fields(Cx *c)
 static void
 cx_si_sortdata(Cx *c)
 {
-  fprintf(sifp, "#nmembers %ld\n", c->r->nlines-1);
-  int i;
-  for (i = 1; c->si_rows[i]; ++i)
+  int r;
+  size_t n = 0;
+
+  for (r = 0; c->rr[r]; ++r)
+    n += c->rr[r]->nlines;
+  fprintf(sifp, "#nmembers %ld\n", n);
+
+  for (r = 0; c->rr[r]; ++r)
     {
-      fprintf(sifp, "%s\t", c->r->rows[i][0]);
-      int j;
-      for (j = 0; j < c->r->maxcols; ++j)
+      int i;
+      for (i = 1; c->sirr[r][i]; ++i)
 	{
-	  if (c->si_rows[i][j].type == FCELL_SORT)
+	  fprintf(sifp, "%s\t", c->rr[0]->rows[i][0]);
+	  int j;
+	  for (j = 0; j < c->rr[0]->maxcols; ++j)
 	    {
-	      fprintf(sifp, "%ld=%ld", c->si_rows[i][j].sort, c->si_rows[i][j].u.index);
-	      if (c->r->maxcols - j > 1)
-		fputc('\t', sifp);
+	      if (c->sirr[r][i][j].type == FCELL_SORT)
+		{
+		  fprintf(sifp, "%ld=%ld", c->sirr[r][i][j].sort, c->sirr[r][i][j].u.index);
+		  if (c->rr[0]->maxcols - j > 1)
+		    fputc('\t', sifp);
+		}
 	    }
+	  fputc('\n', sifp);
 	}
-      fputc('\n', sifp);
     }
 }
 

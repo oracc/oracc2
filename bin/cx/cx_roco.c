@@ -7,7 +7,7 @@
 /* Hooks for Roco library to generate backward-compatible XMD */
 
 static void
-cx_roco_outer(Roco *r, int i, FILE *fp)
+cx_roco_outer_dest(Roco *r, int i, FILE *fp)
 {
   char *dest = expand(((Cx *)r->user)->project, (ccp)r->rows[i][0], "xmd");
   fprintf(fp, "<?destfile %s?>\n", dest);
@@ -16,15 +16,15 @@ cx_roco_outer(Roco *r, int i, FILE *fp)
 static void
 cx_roco_outer_none(Roco *r, int i, FILE *fp)
 {
-  fprintf(fp, "<?destfile #none?>\n", dest);
+  fputs("<?destfile #none?>\n", fp);
 }
 
 static const char *
 cx_langmask(Cx *c, Roco *r, int i)
 {
-  int langfld = cx_roco_field_index(c, "language");
+  int langfld = cx_roco_field_index(r, "language");
   if (-1 == langfld)
-    langfld = cx_roco_field_index(c, "language");
+    langfld = cx_roco_field_index(r, "lang");
   if (langfld > 0)
     {
       char *ls = strdup((ccp)r->rows[i][langfld]), *s = ls;
@@ -65,22 +65,23 @@ cx_roco_row(Roco *r, int i, FILE *fp)
   if (lmattr)
     fputs(lmattr, fp);
   fputc('>', fp);
-#define cxp(ru) ((Cx*)(ru->user))
+#define cxp(ru) (((struct cx_xml_user*)(ru->user))->c)
+#define fcp(ru) (((struct cx_xml_user*)(ru->user))->f)
   fputs("<cat>", fp);
   for (j = 0; j < r->maxcols; ++j)
     {
       if (ftags)
 	ctag = ftags[j];
-      if (cxp(r)->si_rows[i][j].type == FCELL_SORT)
+      if (fcp(r)[i][j].type == FCELL_SORT)
 	{
 	  fprintf(fp, "<%s c=\"%ld\">%s</%s>",
-		  ctag, cxp(r)->si_rows[i][j].sort,
-		  xmlify(ipool_str(cxp(r)->si_pool,cxp(r)->si_rows[i][j].u.index)),
+		  ctag, fcp(r)[i][j].sort,
+		  xmlify(ipool_str(cxp(r)->si_pool,fcp(r)[i][j].u.index)),
 		  ctag);
 	}
       else
 	{
-	  const char *s = cxp(r)->si_rows[i][j].u.str;
+	  const char *s = fcp(r)[i][j].u.str;
 	  if (*s)
 	    fprintf(fp, "<%s>%s</%s>", ctag, xmlify((uccp)s), ctag);
 	}
@@ -93,7 +94,7 @@ void
 cx_roco(Cx *c)
 {
   roco_xmd_ns = 1;
-  roco_xml_row_hooks(cx_roco_outer, cx_roco_row);
+  roco_xml_row_hooks(cx_roco_outer_dest, cx_roco_row);
 }
 
 void
@@ -103,24 +104,24 @@ cx_roco_outer(Cx *c)
 }
 
 int
-cx_roco_field_index(Cx *c, const char *fld)
+cx_roco_field_index(Roco *r, const char *fld)
 {
   int f;
-  for (f = 0; c->r->rows[0][f]; ++f)
+  for (f = 0; r->rows[0][f]; ++f)
     {
-      if (!strcmp((ccp)c->r->rows[0][f], fld))
+      if (!strcmp((ccp)r->rows[0][f], fld))
 	return f;
     }
   return -1;
 }
 
 int
-cx_roco_id_index(Cx *c)
+cx_roco_id_index(Roco *r)
 {
   int f;
-  for (f = 0; c->r->rows[0][f]; ++f)
+  for (f = 0; r->rows[0][f]; ++f)
     {
-      uccp f1 = c->r->rows[0][f];
+      uccp f1 = r->rows[0][f];
       if (!strcmp((ccp)f1, "id_text")
 	  || !strcmp((ccp)f1, "id_composite")
 	  || !strcmp((ccp)f1, "o:id"))

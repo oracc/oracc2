@@ -2,13 +2,12 @@
 #include "cx.h"
 
 static const char *arg_project;
+int build_mode = 0;
 int merge_fields = 0;
 int remap_only = 0;
 int sortinfo_only = 0;
 int verbose = 0;
 
-static Roco *inputs[7];
-static Fcell **sirows[7];
 
 Cx *
 cx_init(void)
@@ -29,15 +28,15 @@ cx_load(Cx *c, const char *cat)
   if (!access(cat, R_OK))
     {
       /* All catalogues must have fields in row one */
-      if ((c->r = roco_load(cat, 1, "xmd-set", NULL, NULL, NULL)))
+      if ((c->rr[0] = roco_load(cat, 1, "xmd-set", NULL, NULL, NULL)))
 	{
-	  c->r->user = c;
-	  int rt = cx_roco_id_index(c);
+	  c->rr[0]->user = c;
+	  int rt = cx_roco_id_index(c->rr[0]);
 	  if (rt == 0)
 	    return 0;
 	  else if (rt > 0)
 	    {
-	      roco_reorder(c->r, 0, rt);
+	      roco_reorder(c->rr[0], 0, rt);
 	      return 0;
 	    }
 	  else
@@ -84,10 +83,10 @@ main(int argc, char * const *argv)
 	      fprintf(stderr, "cx: too many input files (MAX=6). Stop.\n");
 	      exit(1);
 	    }
-	  if ((inputs[i] = roco_load1(argv[optind])))
+	  if ((c->rr[i] = roco_load1(argv[optind])))
 	    {
-	      inputs[i]->user = c;
-	      if (cx_roco_id_index(c))
+	      c->rr[i]->user = c;
+	      if (cx_roco_id_index(c->rr[i]))
 		{
 		  fprintf(stderr, "cx: %s: no ID in row 1 column 1. Stop.\n", argv[optind]);
 		  exit(1);
@@ -101,22 +100,27 @@ main(int argc, char * const *argv)
 	      exit(1);
 	    }
 	}
-      for (i = 0; inputs[i]; ++i)
+
+      for (i = 0; c->rr[i]; ++i)
 	{
 	  if (merge_fields || !strcmp(xpd_option(c->cfg, "cat-merge-periods"), "yes"))
-	    cx_merge_periods(c->r);
-	  cx_si_marshall(c->r);
+	    cx_merge_periods(c->rr[i]);
+	  cx_si_marshall(c->rr[i]);
 	}
+
+      for (i = 0; c->rr[i]; ++i)
+	c->sirr[i] = cx_si_marshall(c->rr[i]);
+
       cx_sortinfo(c);
       
-      for (i = 0; inputs[i]; ++i)
-	sirows[i] = cx_si_marshall(c->r);
-
-      cx_sortinfo(c, inputs, sirows);
-      
       fputs("<xxx>", stdout);
-      for (i = 0; inputs[i]; ++i)
-	roco_write_xml(stdout, inputs[i]);
+      for (i = 0; c->rr[i]; ++i)
+	{
+	  /* overload roco->user to carry Fcell ** not Cx * when writing XML */
+	  struct cx_xml_user xu = { c , c->sirr[i] };
+	  c->rr[i]->user = &xu;
+	  roco_write_xml(stdout, c->rr[i]);
+	}
       fputs("</xxx>", stdout);
     }
   else
@@ -128,17 +132,23 @@ main(int argc, char * const *argv)
 	}
       else
 	{
-	  roco_field_indexes(c->r);
+	  roco_field_indexes(c->rr[0]);
 	  cx_keydata(c);
 	  if (remap_only)
 	    return cx_remap(c);
 	  else
 	    {
-	      if (merge_fields || !strcmp(xpd_option(c->cfg, "cat-merge-periods"), "yes"))
-		cx_merge_periods(c);
+	      const char *cmp = xpd_option(c->cfg, "cat-merge-periods");
+	      if (merge_fields || (cmp && !strcmp(cmp, "yes")))
+		cx_merge_periods(c->rr[0]);
+	      c->sirr[0] = cx_si_marshall(c->rr[0]);
 	      cx_sortinfo(c);
 	      if (!sortinfo_only)
-		roco_write_xml(stdout, c->r);
+		{
+		  struct cx_xml_user xu = { c , c->sirr[0] };
+		  c->rr[0]->user = &xu;
+		  roco_write_xml(stdout, c->rr[0]);
+		}
 	    }
 	}
     }

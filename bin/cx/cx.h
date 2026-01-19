@@ -27,15 +27,20 @@ typedef struct fsort
 typedef struct cx
 {
   const char *project;
-  Roco *r;
   struct keydata *k;
   Memo *msort;
-  Fcell **si_rows;
   Pool *si_pool; /* pool exclusively for sortinfo */
   Pool *p; /* general purpose pool */
   struct xpd *cfg;
+  Roco *rr[7];
+  Fcell **sirr[7];
 } Cx;
 
+struct cx_xml_user
+{
+  Cx *c;
+  Fcell **f;
+};
 
 #define LM_QQQ  0x01000000
 #define LM_SUX  0x02000000
@@ -51,12 +56,13 @@ extern int merge_fields, sortinfo_only, verbose;
 struct merper { const char *name; const char *merge; };
 extern struct merper * cx_merper(const char *s, size_t len);
 extern void cx_roco(Cx *cp);
-extern int cx_roco_id_index(Cx *c);
+extern int cx_roco_id_index(Roco *r);
 extern void cx_keydata(Cx *c);
 extern int cx_remap(Cx *c);
 extern void cx_sortinfo(Cx *c);
-extern int cx_roco_field_index(Cx *c, const char *fld);
-extern void cx_merge_periods(Cx *c);
-extern void cx_replace(Cx *c, const char *field, Repfunc r);
+extern int cx_roco_field_index(Roco *r, const char *fld);
+extern void cx_merge_periods(Roco *r);
+extern void cx_replace(Roco *r, const char *field, Repfunc repfunc);
+extern Fcell **cx_si_marshall(Roco *r);
 
 #endif/*CX_H_*/

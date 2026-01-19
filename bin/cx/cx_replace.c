@@ -8,9 +8,9 @@ cx_merper_wrapper(const char *s)
 }
 
 void
-cx_merge_periods(Cx *c)
+cx_merge_periods(Roco *r)
 {
-  cx_replace(c, "period", cx_merper_wrapper);
+  cx_replace(r, "period", cx_merper_wrapper);
 }			
 
 /* General purpose routine to support merge_periods; replace the
@@ -18,17 +18,17 @@ cx_merge_periods(Cx *c)
  * function.
  */
 void
-cx_replace(Cx *c, const char *field, Repfunc r)
+cx_replace(Roco *r, const char *field, Repfunc repfunc)
 {
-  int f = cx_roco_field_index(c, field);
+  int f = cx_roco_field_index(r, field);
   if (f >= 0)
     {
       int i;
-      for (i = 1; i < c->r->nlines; ++i)
+      for (i = 1; i < r->nlines; ++i)
 	{
-	  const char *rep = r((ccp)c->r->rows[i][f]);
+	  const char *rep = repfunc((ccp)r->rows[i][f]);
 	  if (rep)
-	    c->r->rows[i][f] = (ucp)rep;
+	    r->rows[i][f] = (ucp)rep;
 	}
     }
 }

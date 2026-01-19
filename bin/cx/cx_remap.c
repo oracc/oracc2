@@ -2,7 +2,9 @@
 #include "cx.h"
 #include "keydata.h"
 
-/* Output the catalogue data augmenting it with remaps given in
+/* This routine only operates on a single input.
+ *
+ * Output the catalogue data augmenting it with remaps given in
  * keydata.xml key-types:
  *
  * if keys/@remap = 1
@@ -18,8 +20,8 @@ cx_remap(Cx *c)
 {
   Hash *remaps[c->k->nfields+1];
   KD_key *kt[c->k->nfields+1];
-  int i, status = 0;;
-  unsigned char **fields = c->r->rows[0];
+  int i, status = 0;
+  unsigned char **fields = c->rr[0]->rows[0];
   FILE *rfp = stdout;
 
   memset(remaps, '\0', c->k->nfields+1 * sizeof(Hash*));
@@ -61,9 +63,9 @@ cx_remap(Cx *c)
     }
   fputc('\n', rfp);
 
-  for (i = 1; i < c->r->nlines; ++i)
+  for (i = 1; i < c->rr[0]->nlines; ++i)
     {
-      unsigned char **vals = c->r->rows[i];
+      unsigned char **vals = c->rr[0]->rows[i];
       int j;
       for (j = 0; vals[j]; ++j)
 	{
