@@ -13,6 +13,12 @@ cx_roco_outer(Roco *r, int i, FILE *fp)
   fprintf(fp, "<?destfile %s?>\n", dest);
 }
 
+static void
+cx_roco_outer_none(Roco *r, int i, FILE *fp)
+{
+  fprintf(fp, "<?destfile #none?>\n", dest);
+}
+
 static const char *
 cx_langmask(Cx *c, Roco *r, int i)
 {
@@ -88,6 +94,12 @@ cx_roco(Cx *c)
 {
   roco_xmd_ns = 1;
   roco_xml_row_hooks(cx_roco_outer, cx_roco_row);
+}
+
+void
+cx_roco_outer(Cx *c)
+{
+  roco_xml_row_hooks(cx_roco_outer_none, cx_roco_row);
 }
 
 int

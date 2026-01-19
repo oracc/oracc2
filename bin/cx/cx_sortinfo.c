@@ -39,16 +39,17 @@ static int cx_vhcmp(void *a, void*b)
 /* Turn the roco for the catalogue data into a matrix of structures
  * storing index into a pool and sort code
  */
-static void
-cx_si_marshall(Cx *c)
+Fcell **
+cx_si_marshall(Roco *r)
 {
+  Cx *c = r->user;
   Hash *typevals = hash_create(128);
-  
-  int i;
-  c->si_rows = calloc((1+c->r->nlines), sizeof(Fcell **));
+  Fcell **si_rows = calloc((1+r->nlines), sizeof(Fcell **));
 
-  for (i = 0; i < c->r->nlines; ++i)
-    c->si_rows[i] = calloc((1+c->r->maxcols), sizeof(Fcell));
+  int i;
+
+  for (i = 0; i < r->nlines; ++i)
+    si_rows[i] = calloc((1+r->maxcols), sizeof(Fcell));
 
   /* hash-index-pool of all the strings in the roco */
   sip = c->si_pool = ihpool_init();
@@ -62,10 +63,10 @@ cx_si_marshall(Cx *c)
    * data with sort codes and the sortable subset that goes in
    * sortinfo.tab.
    */
-  for (i = 0; c->r->rows[0][i]; ++i)
+  for (i = 0; r->rows[0][i]; ++i)
     {
       /* Only index fields that are sortable */
-      const char *ktype = hash_find(c->k->keytypes,c->r->rows[0][i]);
+      const char *ktype = hash_find(c->k->keytypes,r->rows[0][i]);
       if (ktype && hash_find(c->k->sortable,(uccp)ktype))
 	{
 	  KD_key *kp = hash_find(c->k->hkeys, (uccp)ktype);
@@ -81,32 +82,32 @@ cx_si_marshall(Cx *c)
 	      hash_add(typevals, (uccp)ktype, fh);
 	    }
 	  int j;
-	  for (j = 1; c->r->rows[j]; ++j)
+	  for (j = 1; r->rows[j]; ++j)
 	    {
 	      /* We are iterating over each value. For key types that
 	       * have a <val> list check to see if the value is known.
 	       * Unknown values in closed sets generate a diagnostic;
 	       * those in open sets get added silently to the set.
 	       */
-	      if (kp->hvals && !hash_find(kp->hvals, c->r->rows[j][i]))
+	      if (kp->hvals && !hash_find(kp->hvals, r->rows[j][i]))
 		{
 		  if (kp->closed)
 		    {
 		      fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
-			      c->r->rows[j][0],
-			      c->r->rows[0][i],
-			      c->r->rows[j][i]);
+			      r->rows[j][0],
+			      r->rows[0][i],
+			      r->rows[j][i]);
 		      /* is it right to ignore these? */
 		    }
 		  else
 		    {
-		      list_add(kp->lvals, c->r->rows[j][i]);
-		      hash_add(kp->hvals, (uccp)c->r->rows[j][i], "");
+		      list_add(kp->lvals, r->rows[j][i]);
+		      hash_add(kp->hvals, (uccp)r->rows[j][i], "");
 		    }
 		}
 	      
-	      Fsort *fsp = hash_find(fh, c->r->rows[j][i]);
-	      Fcell *fcp = &c->si_rows[j][i];
+	      Fsort *fsp = hash_find(fh, r->rows[j][i]);
+	      Fcell *fcp = &si_rows[j][i];
 	      if (fsp)
 		{
 		  *fcp = *(Fcell*)list_first(fsp->cells);
@@ -114,25 +115,25 @@ cx_si_marshall(Cx *c)
 		}
 	      else
 		{
-		  size_t ix = ipool_copy(c->r->rows[j][i], c->si_pool);
+		  size_t ix = ipool_copy(r->rows[j][i], c->si_pool);
 		  fcp->type = FCELL_SORT;
 		  fcp->u.index = ix;
 		  fsp = memo_new(c->msort);
 		  fsp->cp = fcp;
 		  fsp->cells = list_create(LIST_SINGLE);
 		  list_add(fsp->cells, fcp);
-		  hash_add(fh, c->r->rows[j][i], fsp);
+		  hash_add(fh, r->rows[j][i], fsp);
 		}
 	    }
 	}
       else
 	{
 	  int j;
-	  for (j = 1; c->r->rows[j]; ++j)
+	  for (j = 1; r->rows[j]; ++j)
 	    {
-	      Fcell *fcp = &c->si_rows[j][i];
+	      Fcell *fcp = &si_rows[j][i];
 	      fcp->type = FCELL_STRP;
-	      fcp->u.str = (ccp)c->r->rows[j][i];
+	      fcp->u.str = (ccp)r->rows[j][i];
 	    }
 	}
     }
@@ -157,6 +158,8 @@ cx_si_marshall(Cx *c)
 	    fcp->sort = k;
 	}
     }
+
+  return si_rows;
 }
 
 static void
@@ -211,9 +214,7 @@ cx_sortinfo(Cx *c)
   if (sortinfo_only)
     sifp = stdout;
   else if (!(sifp = xfopen("01bld/sortinfo.tab", "w")))
-    exit(1);
-  
-  cx_si_marshall(c);
+    exit(1);  
   cx_si_fields(c);
   cx_si_sortdata(c);
   cx_si_pool(c);

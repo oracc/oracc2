@@ -18,7 +18,7 @@ else
     ${bin}/cx-clean.sh 01bld/00cat/*.tsv
     set 01bld/00cat/*.tsv
     if [ "$*" != "01bld/00cat/*.tsv" ]; then
-	${bin}/cx 01bld/00cat/*.tsv
+	${bin}/cx 01bld/00cat/local-[pqx].tsv 01bld/00cat/outer-[pqx].tsv
 	if [ -r 01bld/sortinfo.tab ]; then
 	    ${bin}/pgcsix 01bld/sortinfo.tab
 	fi
