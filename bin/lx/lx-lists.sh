@@ -1,8 +1,10 @@
 #!/bin/sh
 #
-# create base lists from cat, atf, lib and umbrella/search in
+# Create base lists from cat, atf, lib and umbrella/search in
 # 01bld/lxinputs
 #
+# This script and those it calls should be a complete replacement for
+# o2-lst.sh
 
 #set -x
 

@@ -179,22 +179,86 @@ cx_si_fields(Cx *c)
     }
 }
 
+static long
+lify(char **row)
+{
+  if ('X' == row[0][0])
+    {
+      char buf[9];
+      sprintf(buf, "P2%s", row[0]+1);
+      row[0] = strdup(buf);
+    }
+  long l = strtoul(&row[0][1], NULL, 10);
+  if ('Q' == row[0][0])
+    l += 3000000;
+  return l;
+}
+
+static int siscmp(const void *a, const void *b)
+{
+  long l_a = ((Sis *)a)->l;
+  long l_b = ((Sis *)b)->l;
+
+  if (l_a > l_b)
+    return 1;
+  else if (l_a < l_b)
+    return -1;
+  else
+    return 0;  
+}
+
 static void
 cx_si_sortdata(Cx *c)
 {
   int r;
-  size_t n = 0;
+  size_t n = 0, s = 0;
 
   for (r = 0; c->rr[r]; ++r)
     n += c->rr[r]->nlines;
   fprintf(sifp, "#nmembers %ld\n", n);
 
+  Sis *sis = calloc(n+1, sizeof(Sis));
+  
+  for (r = 0; c->rr[r]; ++r)
+    {
+      int i;
+      for (i = 1; c->sirr[r][i]; ++i, ++s)
+	{
+	  sis[s].r = r;
+	  sis[s].l = lify((char**)c->rr[r]->rows[i]);
+	  sis[s].f = c->sirr[r][i];
+	}
+    }
+
+  qsort(sis, s, sizeof(Sis), siscmp);
+
+  for (n = 0; n < s; ++n)
+    {
+      if (sis[n].l > 3000000)
+	fprintf(sifp, "Q%06ld\t", sis[n].l - 3000000);
+      else
+	fprintf(sifp, "P%06ld\t", sis[n].l);
+
+      int j;
+      for (j = 0; j < c->rr[sis[n].r]->maxcols; ++j)
+	{
+	  if (sis[n].f[j].type == FCELL_SORT)
+	    {
+	      fprintf(sifp, "%ld=%ld", sis[n].f[j].sort, sis[n].f[j].u.index);
+	      if (c->rr[0]->maxcols - j > 1)
+		fputc('\t', sifp);
+	    }
+	}
+      fputc('\n', sifp);
+    }
+  
+#if 0
   for (r = 0; c->rr[r]; ++r)
     {
       int i;
       for (i = 1; c->sirr[r][i]; ++i)
 	{
-	  fprintf(sifp, "%s\t", c->rr[0]->rows[i][0]);
+	  fprintf(sifp, "%s\t", c->rr[r]->rows[i][0]);
 	  int j;
 	  for (j = 0; j < c->rr[0]->maxcols; ++j)
 	    {
@@ -208,6 +272,7 @@ cx_si_sortdata(Cx *c)
 	  fputc('\n', sifp);
 	}
     }
+#endif
 }
 
 static void

@@ -116,7 +116,6 @@ main(int argc, char * const *argv)
       fputs("<xxx>", stdout);
       for (i = 0; c->rr[i]; ++i)
 	{
-	  /* overload roco->user to carry Fcell ** not Cx * when writing XML */
 	  struct cx_xml_user xu = { c , c->sirr[i] };
 	  c->rr[i]->user = &xu;
 	  roco_write_xml(stdout, c->rr[i]);

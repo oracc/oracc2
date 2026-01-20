@@ -42,6 +42,15 @@ struct cx_xml_user
   Fcell **f;
 };
 
+typedef struct sis
+{
+  int r; /* remember which Roco this sis comes from; the number of
+	    fields in keydata is the same for all roco, but the
+	    maxcols value can vary among the different roco */
+  long l;
+  Fcell *f;
+} Sis;
+
 #define LM_QQQ  0x01000000
 #define LM_SUX  0x02000000
 #define LM_AKK  0x08000000

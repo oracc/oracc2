@@ -611,6 +611,10 @@ if ($onebigfile) {
     }
     print XOUT '<?destfile?></xmd-set>';
     close(XOUT);
+###
+### Not reimplemented in Cx because it is probably built in to secatx now;
+### pqxrecurse.plx is no longer needed with P4/atf-data.tab
+###
     if (scalar keys %valtab) {
 	my $xproject = ($project ? $project : 'cdli');
 	xsystem 'mkdir', '-p', "@@ORACC@@/pub/$project/cat";

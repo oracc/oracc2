@@ -3,7 +3,7 @@ echo $0 $*
 user=$1
 proj=$2
 ### o2-corpus.sh ###
-o2-lst.sh
+# o2-lst.sh ## should be fully replaced by lx-lists.sh and cx(-marshall).sh
 lx-lists.sh
 o2-cat.sh
 o2-atf.sh
