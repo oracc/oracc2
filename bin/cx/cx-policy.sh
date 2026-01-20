@@ -14,7 +14,7 @@ approved=$lxd/approved.lst
 incat=$lxd/cat-ids.lst
 nocat=$lxd/no-cat-data.lst
 
-# set up 01bld/00cat/fields.[pqx]
+# set up 01bld/cat/fields.[pqx]
 cx-fields.sh
 
 # no-cat-data.lst is a list of approved IDs that are not in project 00cat

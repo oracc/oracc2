@@ -17,12 +17,12 @@ for p in $proj; do
 done
 
 # set the templates
-lp=01bld/00cat/local-p.tsv
-lq=01bld/00cat/local-q.tsv
-lx=01bld/00cat/local-x.tsv
-op=01bld/00cat/outer-p.tsv
-oq=01bld/00cat/outer-q.tsv
-ox=01bld/00cat/outer-x.tsv
+lp=01bld/cat/local-p.tsv
+lq=01bld/cat/local-q.tsv
+lx=01bld/cat/local-x.tsv
+op=01bld/cat/outer-p.tsv
+oq=01bld/cat/outer-q.tsv
+ox=01bld/cat/outer-x.tsv
 
 # initialize the outputs
 if [ ! -s $op ]; then
@@ -43,7 +43,7 @@ xt=`head -1 $lx | tr '\t' +`
 for f in ${tdir}/*.P ; do
     if [ -s $f ]; then
 	p=`basename $f` .P
-	l=${ORACC}/$p/01bld/00cat/local-p.tsv
+	l=${ORACC}/$p/01bld/cat/local-p.tsv
 	t=${tdir}/${p}-p.tsv
 	head -1 $l >$t
 	grep $l >>$t
@@ -56,7 +56,7 @@ done
 for f in ${tdir}/*.Q ; do
     if [ -s $f ]; then
 	p=`basename $f` .Q
-	l=${ORACC}/$p/01bld/00cat/local-q.tsv
+	l=${ORACC}/$p/01bld/cat/local-q.tsv
 	t=${tdir}/${p}-q.tsv
 	head -1 $l >$t
 	grep $l >>$t
@@ -69,7 +69,7 @@ done
 for f in ${tdir}/*.X ; do
     if [ -s $f ]; then
 	p=`basename $f` .X
-	l=${ORACC}/$p/01bld/00cat/local-x.tsv
+	l=${ORACC}/$p/01bld/cat/local-x.tsv
 	t=${tdir}/${p}-x.tsv
 	head -1 $l >$t
 	grep $l >>$t

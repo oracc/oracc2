@@ -12,20 +12,20 @@
 # atfdatax.
 #
 
-$cdir=01bld/00cat
+$cdir=01bld/cat
 pmaster=`oraccopt . catalog-master-p`
 qmaster=`oraccopt . catalog-master-q`
 xmaster=`oraccopt . catalog-master-x`
-fpmaster=${ORACC}/${xmaster}/01bld/00cat/local-p.tsv
-fqmaster=${ORACC}/${xmaster}/01bld/00cat/local-q.tsv
-fxmaster=${ORACC}/${xmaster}/01bld/00cat/local-x.tsv
+fpmaster=${ORACC}/${xmaster}/01bld/cat/local-p.tsv
+fqmaster=${ORACC}/${xmaster}/01bld/cat/local-q.tsv
+fxmaster=${ORACC}/${xmaster}/01bld/cat/local-x.tsv
 
 if [ -s $cdir/local-p.tsv ]; then
     head -1 $cdir/local-p.tsv >$cdir/fields.p
 elif [ -s ${fpmaster} ]; then
     head -1 ${fpmaster} >$cdir/fields.p
 else
-    cdli=${ORACC}/cdli/01bld/00cat/local-p.tsv
+    cdli=${ORACC}/cdli/01bld/cat/local-p.tsv
     head -1 ${cdli} >$cdir/fields.p
 fi
 
@@ -34,7 +34,7 @@ if [ -s $cdir/local-q.tsv ]; then
 elif [ -s ${fqmaster} ]; then
     head -1 ${fqmaster} >$cdir/fields.q
 else
-    qcat=${ORACC}/qcat/01bld/00cat/local-q.tsv
+    qcat=${ORACC}/qcat/01bld/cat/local-q.tsv
     head -1 ${qcat} >$cdir/fields.q    
 fi
 

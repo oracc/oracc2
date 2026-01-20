@@ -4,12 +4,20 @@ user=$1
 proj=$2
 ### o2-corpus.sh ###
 # o2-lst.sh ## should be fully replaced by lx-lists.sh and cx(-marshall).sh
-lx-lists.sh
-o2-cat.sh
+# lx-lists.sh ## this is done in odo-catalog.sh
+odo-catalog.sh
+
+## These two were in o2-cat but they belong in corpus really
+atflinks.plx >01bld/atflinks.tab
+linknorm.plx 01bld/atflinks.tab >01bld/normlinks.tab
+
 o2-atf.sh
-if [ -r 01bld/destfiles.lst ]; then
-    o2-tr-lst.plx <01bld/destfiles.lst >01bld/lists/have-xtr.tab
-fi
+
+### should be obviated by atf-data.tab:
+### if [ -r 01bld/destfiles.lst ]; then
+###    o2-tr-lst.plx <01bld/destfiles.lst >01bld/lists/have-xtr.tab
+###fi
+
 buildpolicy=`oraccopt . build-approved-policy`;
 if [ "$buildpolicy" != "search" ]; then
     umbrella=`oraccopt . cbd-super`;

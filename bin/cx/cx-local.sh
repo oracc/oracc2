@@ -1,10 +1,10 @@
 #!/bin/sh
 #
 # Rewrite the marshalled and sanity checked local cat files into
-# 01bld/00cat/local-[pqx].tsv.
+# 01bld/cat/local-[pqx].tsv.
 #
-cdir=01bld/00cat
-ldir=01bld/00cat/l/*.tsv
+cdir=01bld/cat
+ldir=01bld/cat/l/*.tsv
 set $ldir
 if [ "$1" != "${ldir}" ]; then
     for c in $* ; do

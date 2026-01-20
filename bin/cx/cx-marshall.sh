@@ -61,7 +61,7 @@ if [ $? -ne 0]; then
     exit 1
 fi
 
-# set up 01bld/00cat/local-[pqx].tsv
+# set up 01bld/cat/local-[pqx].tsv
 ${bin}/cx-local.sh
 
 # process 00lib/cat.d
@@ -70,5 +70,5 @@ ${bin}/cx-extra.sh
 # join local and cat.d
 ${bin}/cx-all.sh
 
-# Now 01bld/00cat contains local-[pqx].tsv based on catalogue data
+# Now 01bld/cat contains local-[pqx].tsv based on catalogue data
 # actually in the project

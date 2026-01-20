@@ -7,7 +7,7 @@
 # This script must be run after cx-marshall.sh because it requires
 # .tsv with ID in column 1.
 #
-ldir=01bld/00cat/*.tsv
+ldir=01bld/cat/*.tsv
 if [ "$1" != "${ldir}" ]; then
     # 1a) catalogues may not mix id_text and id_composite
     for c in $* ; do

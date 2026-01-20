@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # This script assumes that cx-marshall.sh has previously been run
-# earlier in the odo build process.  It is allowed for 01bld/00cat to
+# earlier in the odo build process.  It is allowed for 01bld/cat to
 # be empty at this point--this just means there is no local catalogue
 # data.
 #
@@ -15,10 +15,10 @@ else
     if [ -s 01bld/lists/proxy-cat.lst ]; then
 	${bin}/cx-outer.sh 01bld/lists/proxy-cat.lst
     fi
-    ${bin}/cx-clean.sh 01bld/00cat/*.tsv
-    set 01bld/00cat/*.tsv
-    if [ "$*" != "01bld/00cat/*.tsv" ]; then
-	${bin}/cx 01bld/00cat/local-[pqx].tsv 01bld/00cat/outer-[pqx].tsv
+    ${bin}/cx-clean.sh 01bld/cat/*.tsv
+    set 01bld/cat/*.tsv
+    if [ "$*" != "01bld/cat/*.tsv" ]; then
+	${bin}/cx 01bld/cat/local-[pqx].tsv 01bld/cat/outer-[pqx].tsv
 	if [ -r 01bld/sortinfo.tab ]; then
 	    ${bin}/pgcsix 01bld/sortinfo.tab
 	fi

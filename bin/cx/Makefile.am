@@ -4,6 +4,8 @@ bin_PROGRAMS=cx
 
 bin_SCRIPTS=cx.sh cx-marshall.sh cx-xmd-ids.sh
 
+scriptdata_DATA=*.xsl
+
 cx_SOURCES=cx.c cx_roco.c cx_keydata.c keydata.c cx_sortinfo.c \
 	cx_remap.c cx_sortcodes.c cx_merper.c cx_replace.c
 
