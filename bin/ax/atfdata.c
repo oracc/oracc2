@@ -1,16 +1,18 @@
 #include <oraccsys.h>
 
+int atflink_mode = 1;
 const char *cat_mode;
 const char *catproj;
 const char *project;
 extern int x_mode; /* extract ID and NAME for X-IDs */
-extern int atfd_flex_debug;
+extern int atfd_flex_debug, atfl_flex_debug;
 extern void atfdlex(void);
+extern void atfllex(void);
 
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "c:j:p:xX");
+  options(argc, argv, "c:j:lp:xX");
   if (!project)
     {
       fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
@@ -21,9 +23,12 @@ main(int argc, char **argv)
   else
     catproj = "cdli";
       
-  atfd_flex_debug = 0;
+  atfd_flex_debug = atfl_flex_debug = 0;
   mesg_init();
-  atfdlex();
+  if (atflink_mode)
+    atfllex();
+  else
+    atfdlex();
   mesg_print(stderr);
 }
 
@@ -35,6 +40,9 @@ opts(int c, const char *arg)
     {
     case 'c':
       cat_mode = arg;
+      break;
+    case 'l':
+      atflink_mode = 1;
       break;
     case 'j':
     case 'p':

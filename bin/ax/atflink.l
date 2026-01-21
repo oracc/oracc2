@@ -8,14 +8,10 @@
 
 extern const char *project;
 
-static void stash(void);
-const char *curratffile = "<file>";
+static void output(void);
+extern const char *curratffile;
 
-const char *curr_pqx = NULL;
-int curr_lem = 0;
-int x_mode = 0;
-Hash *hdata = NULL;
-Pool *p = NULL;
+char *curr_pqx = NULL;
 int type;
 #define LINK 1
 #define RELN 2
@@ -28,15 +24,15 @@ PQX	[PQX][0-9]{6}
 LINK	"#link:"
 RELN	"<<"|">>"|"||"|"++"
 
-%s AMP
+%s AMP DROP GRAB
 
 %%
 
-<AMP>{PQX}		{ BEGIN(DROP); if (curr_pqx) free(currpqx); curr_pqx = strdup(atfltext); }
+<AMP>{PQX}		{ BEGIN(DROP); if (curr_pqx) free(curr_pqx); curr_pqx = strdup(atfltext); }
 
 <DROP>.*/\n		{ BEGIN(0); }
 
-<GRAB>.*/\n		{ BEGIN(0); stash(atfltext); }
+<GRAB>.*/\n		{ BEGIN(0); output(); }
 
 ^{BOM3}"&"		{ BEGIN(AMP); }
 
@@ -56,45 +52,22 @@ RELN	"<<"|">>"|"||"|"++"
 
 %%
 
-static const char *
-pqx_trs(void)
-{
-  if (hdata->key_count)
-    {
-      int nptrs;
-      const char **trptrs = hash_keys2(hdata, &nptrs);
-      return vec_to_str((char**)trptrs, nptrs, " ");
-    }
-  else
-    return "";
-}
-
 static void
-pqx(void)
-{
-  if (curr_pqx && !x_mode)
-    pqx_term();
-  pqx_init(atfltext);
-}
-
-static void
-tr(void)
-{
-  if (!hash_find(hdata, (uccp)atfltext))
-    hash_add(hdata, (uccp)pool_copy((uccp)atfltext,p), "");
-}
-
-static void
-x_term(void)
+output(void)
 {
   char *p = atfltext; while (isspace(*p)) ++p;
-  char *e = p + strlen(p); while (e > p && isspace(e[-1])) --e;
-  if (e == p)
-    p = "Unnamed";
-  else if ('=' == *p)
+  if (type==RELN)
     {
-      ++p; while (isspace(*p)) ++p;
-      *e = '\0';
+      p += 2;
+      char *q = p;
+      while (isspace(*q))
+        ++q;
+      if (q > p)
+        {
+          while (*q)
+            *p++ = *q++;
+          *p = '\0';
+        } 
     }
-  printf("%s\t%s\tunknown\tunknown\n", curr_pqx, p);
+  printf("%s:%s\t%s\n", project, curr_pqx, p);
 }
