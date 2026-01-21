@@ -28,7 +28,7 @@ cx_load(Cx *c, const char *cat)
   if (!access(cat, R_OK))
     {
       /* All catalogues must have fields in row one */
-      if ((c->rr[0] = roco_load(cat, 1, "xmd-set", NULL, NULL, NULL)))
+      if ((c->rr[0] = roco_load(cat, 1, "-", NULL, NULL, NULL)))
 	{
 	  c->rr[0]->user = c;
 	  int rt = cx_roco_id_index(c->rr[0]);
@@ -113,14 +113,16 @@ main(int argc, char * const *argv)
 
       cx_sortinfo(c);
       
-      fputs("<xxx>", stdout);
+      fprintf(stdout, "<xmd-set project=\"%s\">", c->project);
       for (i = 0; c->rr[i]; ++i)
 	{
 	  struct cx_xml_user xu = { c , c->sirr[i] };
 	  c->rr[i]->user = &xu;
+	  fprintf(stdout, "<xmd-set source=\"%s\">", c->rr[i]->file);
 	  roco_write_xml(stdout, c->rr[i]);
+	  fputs("</xmd-set>", stdout);
 	}
-      fputs("</xxx>", stdout);
+      fputs("</xmd-set>", stdout);
     }
   else
     {
@@ -146,7 +148,11 @@ main(int argc, char * const *argv)
 		{
 		  struct cx_xml_user xu = { c , c->sirr[0] };
 		  c->rr[0]->user = &xu;
+		  fprintf(stdout, "<xmd-set project=\"%s\">", c->project);
+		  fprintf(stdout, "<xmd-set source=\"%s\">", c->rr[0]->file);
 		  roco_write_xml(stdout, c->rr[0]);
+		  fputs("</xmd-set>", stdout);
+		  fputs("</xmd-set>", stdout);
 		}
 	    }
 	}

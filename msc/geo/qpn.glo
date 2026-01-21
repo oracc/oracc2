@@ -1,0 +1,3603 @@
+@project geonames
+@lang qpn
+@name geonames, qpn
+
+@entry Abu_Jawan [1] SN
+@sense SN Abu Jawan
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Abu_Salabikh [1] SN
+@sense SN Abu Salabikh
+@pl_id 912950
+@pl_coord [45.054494428,32.2526542346]
+@alias uncertain (mod. Abu Salabikh)
+@alias Abu Salabikh
+@end entry
+
+
+@entry Acem_Höyük [1] SN
+@sense SN Acem Höyük
+@pl_id 804216207
+@pl_coord [33.833806,38.4097631]
+@alias Acem Höyük
+@alias uncertain (mod. Acem Höyük)
+@end entry
+
+
+@entry Acharneh [1] SN
+@sense SN Acharneh
+@pl_id 668200
+@pl_coord [36.4000000,35.2833333]
+@alias Tunip (mod. Acharneh)
+@alias Acharneh (Tunip)
+@alias Tunip
+@end entry
+
+
+@entry Adab [1] SN
+@sense SN Adab
+@pl_id 787747618
+@pl_coord [45.6283350,31.9516440]
+@alias Bismaya (Adab)
+@alias Adab (mod. Bismaya)
+@alias Adab
+@end entry
+
+
+@entry Adummatu [1] SN
+@sense SN Adummatu
+@pl_id 29548
+@pl_coord [39.882216,29.803206]
+@alias Adummatu
+@alias Dumatha
+@end entry
+
+
+@entry Agade [1] SN
+@sense SN Agade
+@pl_id 63806066
+@pl_coord []
+@alias Agade (mod. uncertain)
+@end entry
+
+
+@entry Akku [1] SN
+@sense SN Akkû
+@pl_id 678010
+@pl_coord [35.074187,32.924716]
+@alias Acco
+@alias Accra
+@alias T. al-Fuḫḫār
+@alias Akkû
+@end entry
+
+
+@entry Akzibi [1] SN
+@sense SN Akzībi
+@pl_id 678128
+@pl_coord [35.108399,33.047809]
+@alias Akzībi
+@alias T. Achzib
+@alias Akzîb
+@alias az-Zīb
+@end entry
+
+
+@entry Alalah [1] SN
+@sense SN Alalah
+@pl_id 309866128
+@pl_coord [36.3834638406,36.2384508975]
+@alias Alalakh (mod. Tell Açana)
+@alias Tell Açana (Alalakh)
+@end entry
+
+
+@entry Aliler [1] SN
+@sense SN Aliler
+@pl_id 291498921
+@pl_coord [43.4991276,38.8439399]
+@end entry
+
+
+@entry Altaqu [1] SN
+@sense SN Altaqû
+@pl_id 498102722
+@pl_coord [34.817,31.882833]
+@alias T. aš-Šallāf
+@alias Altaqû
+@alias Elteqēh
+@end entry
+
+
+@entry Altıntepe [1] SN
+@sense SN Altıntepe
+@pl_id 874316
+@pl_coord [39.6479773,39.6978948]
+@alias uncertain (mod. Altıntepe)
+@end entry
+
+
+@entry alu_ša_Harani [1] SN
+@sense SN ālu ša Ḫarāni
+@pl_id 498102723
+@pl_coord [40.516667,35.25]
+@alias T. Ḫanḏal
+@alias ālu ša Ḫarāni
+@alias alu ša Harani
+@end entry
+
+
+@entry Amarna [1] SN
+@sense SN Amarna
+@pl_id 149576487
+@pl_coord [30.899569,27.645956]
+@alias Akhetaten (mod. el-Amarna)
+@alias Akhetaten
+@alias el-Amarna (Akhetaten)
+@end entry
+
+
+@entry Ammana [1] SN
+@sense SN Ammāna
+@pl_id 697728
+@pl_coord [35.934602,31.955128]
+@end entry
+
+
+@entry Amuda [1] SN
+@sense SN Amuda
+@pl_id 874318
+@pl_coord [40.93, 37.104165999999999]
+@end entry
+
+
+@entry Ana [1] SN
+@sense SN Ānat
+@pl_id 893936
+@pl_coord [41.978974,34.469451]
+@alias uncertain (mod. 'Ana)
+@alias ʾAna
+@alias Ānat
+@alias Āna
+@alias Ana
+@alias ’Ana
+@alias Anat
+@alias Anatho
+@end entry
+
+
+@entry Anqarruna [1] SN
+@sense SN Anqarrūna
+@pl_id 687888
+@pl_coord [34.848363,31.779672]
+@alias Anqarrūna
+@alias Tel Miqne
+@alias Ekron
+@alias Akkaron
+@end entry
+
+
+@entry Antakya [1] SN
+@sense SN Antakya
+@pl_id 658381
+@pl_coord [36.137399,36.182294]
+@alias uncertain (mod. Antakya)
+@alias Antiocheia am Orontes
+@alias Theoupolis
+@alias Antiochia
+@end entry
+
+
+@entry Anzan [1] SN
+@sense SN Anzan
+@pl_id 922729
+@pl_coord [52.409340,29.998874]
+@alias Anšan
+@alias Tall-i Malyān
+@alias Anzan
+@end entry
+
+
+@entry Apqu_ša_Adad [1] SN
+@sense SN Apqu ša Adad
+@pl_id 874723
+@pl_coord [42.597299,36.429708]
+@alias Apku
+@alias T. Abū Mārīyā
+@alias Apqu-ša-Adad (mod. Tell Abu Marya)
+@alias Tell Abu Marya (Apqu-ša-Adad)
+@alias Tell Abu Marya
+@alias Apqu ša Adad
+@alias Apqu
+@end entry
+
+
+@entry Arbela [1] SN
+@sense SN Arbail
+@pl_id 874341
+@pl_coord [44.009240,36.191265]
+@alias Arbail (mod. Erbil)
+@alias Erbil (Arbail)
+@alias Arbail
+@alias Arbēla
+@alias Arbīl
+@end entry
+
+
+@entry Argishtikhinili [1] SN
+@sense SN Argishtikhinili
+@pl_id 825227
+@pl_coord [44.04,40.15]
+@alias Argištiḫinili
+@alias Argištiḫinili (mod. Armavir)
+@alias Armavir (Argištiḫinili)
+@alias Armavir
+@alias Argishtikhinili
+@end entry
+
+
+@entry Aridu [1] SN
+@sense SN Arīdu
+@pl_id 811007392
+@pl_coord [40.397,37.0045]
+@alias Arīdu
+@alias T. ʿArāda
+@end entry
+
+
+@entry Arman [1] SN
+@sense SN Armān
+@pl_id 903043
+@pl_coord [45.862667,34.459833]
+@alias Ḫalmān/Armān
+@alias Ḫalman/Hulwan
+@alias Ḥolwa
+@alias Armān
+@alias Halman
+@alias Ḫalman
+@alias Arman
+@alias Hulwan
+@alias Ḥulwān
+@end entry
+
+
+@entry Arne [1] SN
+@sense SN Arnê
+@pl_id 540663
+@pl_coord [22.933280,38.482880]
+@alias Arnê (?)
+@alias T. ʿArān
+@alias Erin
+@alias Arna
+@end entry
+
+
+@entry Arpadda [1] SN
+@sense SN Arpadda
+@pl_id 122919705
+@pl_coord [37.108167,36.474833]
+@alias T. Rifʿat
+@alias ʾrpd
+@alias Arpadda
+@end entry
+
+
+@entry Arqa [1] SN
+@sense SN Arqâ
+@pl_id 628929
+@pl_coord [37.971131,38.334540]
+@alias Arqâ
+@alias Archis
+@alias T. ʿArqā
+@alias Arca
+@end entry
+
+
+@entry Arrapha [1] SN
+@sense SN Arrapḫa
+@pl_id 893941
+@pl_coord [44.395300,35.468099]
+@alias Karkūk
+@alias Arrapḫa
+@end entry
+
+
+@entry Aruma [1] SN
+@sense SN Arūmâ
+@pl_id 626129075
+@pl_coord [35.317667,32.790833]
+@alias Ḫirbat ar-Rūma
+@alias Arūmâ
+@alias Arumā
+@end entry
+
+
+@entry Arwada [1] SN
+@sense SN Arwāda
+@pl_id 668197
+@pl_coord [35.86,34.863333]
+@alias Aradus
+@alias Arwāda
+@alias Arwād
+@end entry
+
+
+@entry Arza [1] SN
+@sense SN Arzâ
+@pl_id 309101265
+@pl_coord [34.4635,31.391833]
+@alias Arzâ
+@alias T. Ǧāmā
+@end entry
+
+
+@entry Asdudimmu [1] SN
+@sense SN Asdūdimmu
+@pl_id 687843
+@pl_coord [34.628333,31.770833]
+@alias Ašdôd-Yam
+@alias Tel Mor
+@alias Asdūdimmu
+@end entry
+
+
+@entry Asdudu [1] SN
+@sense SN Asdūdu
+@pl_id 687838
+@pl_coord [34.652079,31.765635]
+@alias Ashdod (Asdūdu)
+@alias Ašdôd
+@alias Asdūdu (mod. Ashdod)
+@alias Esdūd
+@alias Asdūdu
+@alias Ashdod
+@end entry
+
+
+@entry Ashani [1] SN
+@sense SN Ašḫāni
+@pl_id 190903325
+@pl_coord [36.653,35.441667]
+@alias Ašḫāni
+@alias Ḫān Šayḫūn
+@alias Isḫanikka
+@end entry
+
+
+@entry Assyria [1] GN
+@sense GN Assyria
+@pl_id 29492
+@pl_coord [43.2,36.2]
+@alias uncertain (mod. Assyria)
+@alias Māt Aššur
+@alias Mat Aššur
+@alias Mat-Aššur
+@alias Subartu
+@end entry
+
+
+@entry Astamaku [1] SN
+@sense SN Aštamāku
+@pl_id 56494917
+@pl_coord [36.616667,35.866667]
+@alias Aštamāku
+@alias ʾystmk
+@alias al- Mastumaḥ
+@alias Stumak
+@end entry
+
+
+@entry Astartu [1] SN
+@sense SN Astārtu
+@pl_id 678227
+@pl_coord [36.029358,32.837408]
+@alias Aštārôt
+@alias T. Aštara
+@alias Astārtu
+@end entry
+
+
+@entry Aššur [1] SN
+@sense SN Aššur
+@pl_id 893945
+@pl_coord [43.262037,35.458121]
+@alias Aššur/Libbi-āli
+@alias Qalat Sherqat (Assur)
+@alias Assur (mod. Qalat Sherqat)
+@alias Aššur (mod. Qalʿat Sherqat)
+@alias Qalʿat Šarqāṭ
+@alias Libbi-ali
+@alias Assur
+@alias Ashur
+@end entry
+
+
+@entry Atmannu [1] SN
+@sense SN Atmannu
+@pl_id 532748466
+@pl_coord [43.6813950, 35.3820100]
+@alias Atmannu (mod. Tell 'Ali)
+@alias Tell &apos;Ali (Atmannu)
+@alias Tell ʾAli (Atmannu)
+@alias Tall 'Ali
+@alias Tell 'Ali
+@alias Tell 'Ali (Atmannu)
+@alias Tell ’Ali (Atmannu)
+@end entry
+
+
+@entry Atunna [1] SN
+@sense SN Atunna
+@pl_id 648802
+@pl_coord [34.564162,37.520926]
+@alias Porsuk
+@alias Tynna
+@end entry
+
+
+@entry Azaqa [1] SN
+@sense SN Azaqâ
+@pl_id 687871
+@pl_coord [34.933333,31.7]
+@alias Azaqâ
+@alias ʿAzēqāh
+@alias T. Zakarīya
+@end entry
+
+
+@entry Azuru [1] SN
+@sense SN Azuru
+@pl_id 977603752
+@pl_coord [34.7805,32.021667]
+@alias Yāzūr
+@alias Azuru
+@alias Azor
+@end entry
+
+
+@entry Babil [1] SN
+@sense SN Babil
+@pl_id 7082320
+@pl_coord [42.027333,37.18775]
+@alias uncertain (mod. Babil)
+@end entry
+
+
+@entry Babili [1] SN
+@sense SN Bābili
+@pl_id 893951
+@pl_coord [44.422236,32.543395]
+@alias Babylon (Bābili)
+@alias Bābili (mod. Babylon)
+@alias Bābili
+@alias Bābil
+@alias Babylon
+@end entry
+
+
+@entry Babylonia [1] GN
+@sense GN Babylonia
+@pl_id 912816
+@pl_coord [44.5,32.5]
+@alias uncertain (mod. Babylonia)
+@alias Karduniaš
+@end entry
+
+
+@entry Banai-barqa [1] SN
+@sense SN Banai-barqa
+@pl_id 687847
+@pl_coord [34.818553,32.044043]
+@alias Banai-barqa
+@alias Bnē Brāq
+@alias Ibn Ibrāq
+@alias Bene Beraq
+@end entry
+
+
+@entry Barsip [1] SN
+@sense SN Barsip
+@pl_id 893964
+@pl_coord [44.344757,32.390721]
+@alias Barsip
+@alias Birs Nimrud (Borsippa)
+@alias Borsippa (mod. Birs Nimrud)
+@alias Borsipa
+@alias Borsippa
+@alias Birs Nimrūd
+@end entry
+
+
+@entry Başkale [1] SN
+@sense SN Başkale
+@pl_id 705365883
+@pl_coord [44.0180863,38.0444545]
+@alias uncertain (mod. Başkale)
+@end entry
+
+
+@entry Bastam [1] SN
+@sense SN Bastam
+@pl_id 874396
+@pl_coord [44.893607000000003,38.891105000000003]
+@alias uncertain (mod. Bastam)
+@end entry
+
+
+@entry Bavian [1] SN
+@sense SN Bavian
+@pl_id 874398
+@pl_coord [43.405319,36.725062]
+@alias Āmidu
+@alias uncertain (mod. Bavian)
+@alias Bāwiān 
+@alias Diyarbakir
+@alias Bāwiyān
+@alias Āmid
+@end entry
+
+
+@entry Beʾru [1] SN
+@sense SN Be'rū
+@pl_id 678060
+@pl_coord [35.501176,33.897902]
+@alias Be'rū
+@alias Beirut
+@alias Bairūt
+@alias Berytos
+@end entry
+
+
+@entry Beisan [1] SN
+@sense SN Beisan
+@pl_id 505388706
+@pl_coord [43.1044,36.4087]
+@alias Baysān
+@end entry
+
+
+@entry Ben_Shemen_Forest [1] GN
+@sense GN Ben Shemen Forest
+@pl_id 413309736
+@pl_coord [34.9249,31.954]
+@alias Ben Shemen Forest
+@alias uncertain (mod. Ben Shemen)
+@alias Ben Shemen
+@end entry
+
+
+@entry Bingöl_Dağ [1] GN
+@sense GN Bingöl Dağ
+@pl_id 874294
+@pl_coord [41.5,39.5]
+@alias Bingöl Dağ
+@alias uncertain (mod. Bingöl Dağ)
+@end entry
+
+
+@entry Bisutun [1] GN
+@sense GN Bisutun
+@pl_id 903002
+@pl_coord [47.454353,34.393528]
+@alias Behistun
+@alias uncertain (mod. Behistun)
+@end entry
+
+
+@entry Bit-Adad-eriba [1] SN
+@sense SN Bīt-Adad-erība
+@pl_id 977603753
+@pl_coord [42.933333,36.666667]
+@alias Bīt-Adad-erība
+@alias T. Baqāq 2
+@end entry
+
+
+@entry Bitlis [1] SN
+@sense SN Bitlis
+@pl_id 874438
+@pl_coord [42.116666,38.4]
+@alias uncertain (mod. Bitlis)
+@end entry
+
+
+@entry Brissa [1] SN
+@sense SN Brisa
+@pl_id 809004346
+@pl_coord [36.310844,34.432209]
+@alias uncertain (mod. Brissa)
+@alias Wadi Esh-Sharbin
+@alias Wadi Ash-Shab
+@alias Braïssé
+@alias Brisa
+@end entry
+
+
+@entry Burmarina [1] SN
+@sense SN Būr-marʾīna
+@pl_id 727743777
+@pl_coord [38.0615,36.782]
+@alias T. Suḫ Fawqāni
+@alias Būr-marʾīna
+@end entry
+
+
+@entry Çavuştepe [1] SN
+@sense SN Çavuştepe
+@pl_id 825333700
+@pl_coord [43.459885978,38.3526615055]
+@alias Sardurihinili (mod. Çavuştepe)
+@alias Çavuştepe (Sardurihinili)
+@end entry
+
+
+@entry Chagar_Bazar [1] SN
+@sense SN Chagar Bazar
+@pl_id 480215077
+@pl_coord [40.8976593415,36.8755945806]
+@alias uncertain (mod. Chagar Bazar)
+@alias Chagar Bazar
+@end entry
+
+
+@entry Cythera_(island) [1] GN
+@sense GN Cythera (island)
+@pl_id 570186
+@pl_coord [22.981207,36.267241]
+@alias Cythera (island)
+@alias uncertain (mod. Kastri, Cythera, Greece)
+@alias Kastri island
+@end entry
+
+
+@entry Dabigu [1] SN
+@sense SN Dābigu
+@pl_id 727743778
+@pl_coord [37,268667,36,550833]
+@alias Dābiq
+@alias Dābigu
+@alias Dabekon
+@end entry
+
+
+@entry Dana [1] SN
+@sense SN Dāna
+@pl_id 858843277
+@pl_coord [36,780833,36,218]
+@alias ad- Dāna
+@alias Atanni
+@alias Dāna
+@end entry
+
+
+@entry Daskyleion [1] SN
+@sense SN Daskyleion
+@pl_id 511225
+@pl_coord [28.062536,40.138708]
+@alias Daskyleion (mod. Ergili)
+@alias Ergili (Daskyleion)
+@end entry
+
+
+@entry Dawali [1] SN
+@sense SN Dawali
+@pl_id 945906723
+@pl_coord [41.992053,34.453904]
+@alias Ad Dawālī
+@alias uncertain (mod. Dawali)
+@end entry
+
+
+@entry Deru [1] SN
+@sense SN Dēru
+@pl_id 903013
+@pl_coord [45.947885,33.109452]
+@alias Der (mod. Tell Aqar)
+@alias T. Aqar (near Badra)
+@alias Tell Aqar (Der)
+@alias Der
+@alias Dēru
+@end entry
+
+
+@entry Dilbat [1] SN
+@sense SN Dilbat
+@pl_id 893987
+@pl_coord [44.466967,32.295211]
+@alias Dilbat (mod. Deilam)
+@alias Deilam (Dilbat)
+@alias T. Dulaim
+@alias T. Dailam
+@alias Dilbat
+@end entry
+
+
+@entry Dilmun [1] SN
+@sense SN Dilmun
+@pl_id 912837
+@pl_coord [49.2147584551,27.7606274393]
+@alias Bahrain
+@alias Dilmun (mod. A'ali, Bahrain)
+@alias Dilmun (mod. Qal'at al-Bahrain)
+@alias A&apos;ali, Bahrain (Dilmun)
+@alias Aʾali, Bahrain (Dilmun)
+@alias Tilmun
+@alias Telmun
+@alias Aʾali (Dilmun)
+@end entry
+
+
+@entry Dimasqa [1] SN
+@sense SN Dimašqa
+@pl_id 678106
+@pl_coord [36.306749,33.511461]
+@alias Dimašqa
+@alias Damascus
+@alias Dimašq
+@end entry
+
+
+@entry Diniktum [1] SN
+@sense SN Diniktum
+@pl_id 249999668
+@pl_coord [44.482146,33.29375]
+@alias Tell Muhammad (Diniktum)
+@alias Diniktum (mod. Tell Muhammad)
+@alias Tell Muhammad
+@end entry
+
+
+@entry Diqdiqqah [1] SN
+@sense SN Diqdiqqah
+@pl_id 138636347
+@pl_coord [46.11862957480,30.97454761630]
+@alias uncertain (mod. Diqdiqqah)
+@end entry
+
+
+@entry Diyala [1] GN
+@sense GN Diyala
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Dohok [1] SN
+@sense SN Dohok
+@pl_id 955792756
+@pl_coord [42.918763,36.858746]
+@alias Dehok
+@alias uncertain (mod. Dohok)
+@alias Dohuk
+@end entry
+
+
+@entry Du-Enlila [1] SN
+@sense SN Du-Enlila
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Dunnu-ša-Uzībi [1] SN
+@sense SN Dunnu-ša-Uzībi
+@pl_id 293088342
+@pl_coord [40.7499196,37.816986]
+@alias Giricano
+@alias Giricano (Dunnu-ša-Uzībi)
+@alias Dunnu-ša-Uzībi (mod. Giricano)
+@end entry
+
+
+@entry Dur-Abi-ešuh [1] SN
+@sense SN Dur-Abi-ešuh
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Dur-Aššur-ketti-leṣir [1] SN
+@sense SN Dūr-Aššūr-ketti-lēṣir
+@pl_id 473755738
+@pl_coord [40.860667,36.3985]
+@alias Dūr-Aššūr-ketti-lēṣir
+@alias T. Bdēri
+@end entry
+
+
+@entry Dur-Katlimmu [1] SN
+@sense SN Dūr-Katlimmu
+@pl_id 893991
+@pl_coord [40.740208,35.643628]
+@alias Dur-Katlimmu (mod. Tall Shekh Hamad)
+@alias Tall Shekh Hamad (Dur-Katlimmu)
+@alias T. Šēḫ Ḥamad
+@alias Dūr-Katlimmu
+@end entry
+
+
+@entry Dur-Kurigalzu [1] SN
+@sense SN Dūr-Kurigalzu
+@pl_id 893988
+@pl_coord [44.201763,33.354401]
+@alias ʿAqarqūf
+@alias Dur-Kurigalzu (mod. Aqar Quf)
+@alias Aqar Quf (Dur-Kurigalzu)
+@alias Dūr-Kurigalzu
+@end entry
+
+
+@entry Dur-Šarrukin [1] SN
+@sense SN Dūr-Šarrukīn
+@pl_id 874458
+@pl_coord [43.228261,36.510016]
+@alias Khorsabad (Dur-Šarrukin)
+@alias Dūr Šarrukīn
+@alias Dur-Šarrukin (mod. Khorsabad)
+@alias Dūr-Šarrukīn
+@alias Ḫorsābād
+@alias Horsābād
+@alias Dur-Sharrukin
+@alias Khorsabad
+@end entry
+
+
+@entry Dur-Undasi [1] SN
+@sense SN Dūr-Undāsi
+@pl_id 459393126
+@pl_coord [48.520833,32.008333]
+@alias Dūr-Undāsi
+@alias Dūr Undāsi
+@alias Dūr Untaš
+@alias Dūr Untasi
+@alias Dūr-Untaš
+@alias Šuġā Zanbīl
+@alias Côga Zanbīl
+@alias Čoġa Zanbil
+@alias Čoġā Zanbīl
+@alias Chogha Zanbil (Dur-Untaš)
+@end entry
+
+
+@entry Dura-Europus [1] SN
+@sense SN Dura-Europus
+@pl_id 893990
+@pl_coord [40.7300288605,34.747546619]
+@alias uncertain (mod. Dura-Europus)
+@end entry
+
+
+@entry Duru [1] SN
+@sense SN Dūru
+@pl_id 713816456
+@pl_coord [39.0245,37.140833]
+@alias Anaz
+@alias Dūru
+@end entry
+
+
+@entry Duʾru [1] SN
+@sense SN Dūʾru
+@pl_id 678121
+@pl_coord [34.916907,32.617589]
+@alias Dūʾru
+@alias Dôr
+@alias Dora
+@end entry
+
+
+@entry Dusabar [1] SN
+@sense SN Dusabar
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Džanfida [1] SN
+@sense SN Džanfida
+@pl_id 280340257
+@pl_coord [44.0245673778,40.0442003093]
+@alias uncertain (mod. Džanfida)
+@end entry
+
+
+@entry Ebla [1] SN
+@sense SN Ebla
+@pl_id 869702586
+@pl_coord [36.7983658027,35.7990446787]
+@alias Ebla (mod. Tell Mardikh)
+@alias Tell Mardikh (Ebla)
+@end entry
+
+
+@entry Ecbatana [1] SN
+@sense SN Ecbatana
+@pl_id 903021
+@pl_coord [48.512209,34.799294]
+@alias Ἐκβάτανα
+@alias Hamadān (Ecbatana)
+@alias Achmeta
+@alias Agbatana
+@alias Agmatanu
+@alias Ahmadan
+@alias Ecbatana
+@alias Epiphaneia
+@alias Hagmatana
+@alias Hamadān
+@alias Hamaḏān
+@alias Hamdān
+@alias Hamādan
+@alias Hamadan
+@alias Hāgmātana
+@alias Hāmādān
+@alias Ḥamdan
+@end entry
+
+
+@entry Ediʾil [1] SN
+@sense SN Ediʾil
+@pl_id 707519
+@pl_coord [33.424817,35.016090]
+@alias Ediʾil
+@alias Idalion
+@end entry
+
+
+@entry Edremit [1] SN
+@sense SN Edremit
+@pl_id 874362
+@pl_coord [43.276591,38.422069]
+@alias uncertain (mod. Edremit)
+@end entry
+
+
+@entry Eʾedin [1] SN
+@sense SN Eʾedin
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Egypt [1] GN
+@sense GN Egypt
+@pl_id 48012424
+@pl_coord [30.802498,26.820553]
+@alias uncertain (mod. Egypt)
+@alias Muṣur
+@end entry
+
+
+@entry Ekalte [1] SN
+@sense SN Ekalte
+@pl_id 703315102
+@pl_coord [38.1299921,36.2194381]
+@alias Ekalte (mod. Tell Munbaqa)
+@alias Tell Munbaqa (Ekalte)
+@end entry
+
+
+@entry el-Ghab [1] GN
+@sense GN el-Ghab
+@pl_id 413309735
+@pl_coord [36.356,35.587]
+@alias Al-Ghab
+@alias uncertain (mod. el-Ghab)
+@end entry
+
+
+@entry El-Khargeh [1] SN
+@sense SN El-Khargeh
+@pl_id 776181
+@pl_coord [30.553476,25.438054]
+@alias El-Khargeh
+@alias Hibis
+@alias El-Hiba
+@alias Hibiton polis
+@end entry
+
+
+@entry El-Qitar [1] SN
+@sense SN El-Qitar
+@pl_id 457651161
+@pl_coord [38.1807242179,36.3840362544]
+@alias El-Qitar
+@alias uncertain (mod. El-Qitar)
+@end entry
+
+
+@entry Ellitarbi [1] SN
+@sense SN Ellitarbi
+@pl_id 658521
+@pl_coord [36.858743,36.145528]
+@alias el-Atārib
+@alias Tērib
+@alias Ellitarbi
+@alias Litarba
+@end entry
+
+
+@entry Elvend [1] SN
+@sense SN Elvend
+@pl_id 903032
+@pl_coord [48.43661,34.759872]
+@alias Mount Elvend
+@alias uncertain (mod. Mount Elvend)
+@end entry
+
+
+@entry Emar [1] SN
+@sense SN Emar
+@pl_id 279984092
+@pl_coord [38.1109976469,35.9870203108]
+@alias Tell Meskene (Emar)
+@alias Emar (mod. Tell Meskene)
+@alias Imar
+@alias Tell Meskene
+@end entry
+
+
+@entry Erek_Dağ [1] GN
+@sense GN Erek Dağ
+@pl_id 356811079
+@pl_coord [43.4938043,38.4537563]
+@alias Erek Dağ
+@alias uncertain (mod. Erek Dağ)
+@end entry
+
+
+@entry Eridu [1] SN
+@sense SN Eridu
+@pl_id 912845
+@pl_coord [45.969820,30.821525]
+@alias Abu Shahrain (Eridu)
+@alias Eridu (mod. Abu Shahrain)
+@alias Eridu
+@alias Abū Šaḥrain
+@end entry
+
+
+@entry Ešnunna [1] SN
+@sense SN Ešnunna
+@pl_id 90720956
+@pl_coord [44.7247598,33.4873408]
+@alias Eshnunna
+@alias Tell Asmar (Ešnunna)
+@alias Ešnunna (mod. Tell Asmar)
+@end entry
+
+
+@entry Failaka [1] SN
+@sense SN Failaka
+@pl_id 912851
+@pl_coord [48.274487000000001,29.433698]
+@end entry
+
+
+@entry Firakdin [1] SN
+@sense SN Firakdin
+@pl_id 628979
+@pl_coord [35.623396,38.253654]
+@alias uncertain (mod. Firakdin)
+@end entry
+
+
+@entry Gabbutunu [1] SN
+@sense SN Gabbutūnu
+@pl_id 329386245
+@pl_coord [34.833333,31.833333]
+@alias Gibbetôn
+@alias Raʾs Abī Ḥamīd
+@alias Gabbutūnu
+@end entry
+
+
+@entry Galʾad [1] SN
+@sense SN Galʾad
+@pl_id 889522883
+@pl_coord [35.75,32.083333]
+@alias Galʾad
+@alias Gilʾad
+@alias Ḫirbat Ǧalʿad
+@alias Gilead
+@end entry
+
+
+@entry Gargamis [1] SN
+@sense SN Gargamīs
+@pl_id 658465
+@pl_coord [38.013529,36.829505]
+@alias Gargamīs
+@alias Ǧarablūs
+@alias krkymyš
+@alias Carchamish
+@alias Carchemish (mod. Europos)
+@alias Europos (Carchemish)
+@alias Carchemish
+@end entry
+
+
+@entry Garni [1] SN
+@sense SN Garni
+@pl_id 863795
+@pl_coord [44.7276745333,40.1146976667]
+@alias uncertain (mod. Garni)
+@end entry
+
+
+@entry Garšana [1] SN
+@sense SN Garšana
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Gazandži [1] SN
+@sense SN Gazandži
+@pl_id 904615255
+@pl_coord [44.0265520,40.0067314]
+@alias uncertain (mod. Gazandži)
+@end entry
+
+
+@entry Gazru [1] SN
+@sense SN Gazru
+@pl_id 687904
+@pl_coord [34.920181,31.866353]
+@alias Gazru
+@alias Gezer
+@alias Gazara
+@end entry
+
+
+@entry Gherla_(Romania) [1] SN
+@sense SN Gherla (Romania)
+@pl_id 207133
+@pl_coord [23.899912,47.019833]
+@alias Gherla (Romania)
+@alias Gherla, Romania
+@alias Gherla
+@alias uncertain (mod. Gherla, Romania)
+@end entry
+
+
+@entry Gidira [1] SN
+@sense SN Gidira
+@pl_id 697665
+@pl_coord [35.716993,32.022341]
+@alias Gidira
+@alias Gader
+@alias Gadara/Pompeia
+@end entry
+
+
+@entry Giʾa [1] SN
+@sense SN Gīʾa
+@pl_id 678338
+@pl_coord [35.428727,33.663081]
+@alias Gīʾa
+@alias Gīya
+@alias Porphyreon Polis
+@end entry
+
+
+@entry Gimtu [1] SN
+@sense SN Gimtu
+@pl_id 889522884
+@pl_coord [34.77,31.608833]
+@alias Gat
+@alias Tel es-Safī
+@alias Gimtu
+@end entry
+
+
+@entry Gingilinis [1] SN
+@sense SN Gingiliniš
+@pl_id 146790518
+@pl_coord [43.2535,36.469667]
+@alias Gingiliniš
+@alias Tepe Chenchi
+@end entry
+
+
+@entry Girmua [1] SN
+@sense SN Girmua
+@pl_id 248782116
+@pl_coord [43.353833,36.659]
+@alias Ǧirwān
+@alias Jerwan
+@alias Girmua
+@end entry
+
+
+@entry Girsu [1] SN
+@sense SN Girsu
+@pl_id 912855
+@pl_coord [46.175712,31.576909]
+@alias Girsu (mod. Tello)
+@alias Tello (Girsu)
+@end entry
+
+
+@entry Gleieh [1] SN
+@sense SN Gleiʾeh
+@pl_id 223856812
+@pl_coord [42.211404,34.302925]
+@alias uncertain (mod. Glai'a)
+@alias Glai&apos;a
+@alias Glaiʾa
+@alias Kar-Apla-Adad
+@alias Kār-Apladad
+@alias Glai'a
+@alias Glai’a
+@end entry
+
+
+@entry Godin_Tepe [1] SN
+@sense SN Godin Tepe
+@pl_id 903035
+@pl_coord [48.091718,34.530021]
+@alias Godin Tepe
+@end entry
+
+
+@entry Gubal/Gubla [1] SN
+@sense SN Gubal/Gubla
+@pl_id 668250
+@pl_coord [35.922327,35.378062]
+@alias Gubal/Gubla
+@alias Ǧabla
+@alias Byblos (Gubla)
+@alias Gubla (mod. Byblos)
+@alias Gabala
+@end entry
+
+
+@entry Gubla [1] SN
+@sense SN Gubla
+@pl_id 668216
+@pl_coord [35.645732,34.119026]
+@alias Gebal
+@alias Gubla
+@alias Byblos
+@alias Ǧubail
+@end entry
+
+
+@entry Guzana [1] SN
+@sense SN Gūzāna
+@pl_id 874739
+@pl_coord [40.039460,36.826606]
+@alias Gôzān/gwzn/Gizania
+@alias T. Ḥalaf
+@alias Gūzāna
+@end entry
+
+
+@entry Habıbuşağı [1] SN
+@sense SN Habıbuşağı
+@pl_id 87556001
+@pl_coord [38.7937720,38.4334490]
+@alias uncertain (mod. Habıbuşağı)
+@end entry
+
+
+@entry Habuba_Kabira [1] SN
+@sense SN Habuba Kabira
+@pl_id 494566507
+@pl_coord [38.061005, 36.149450]
+@alias Habuba Kabira
+@end entry
+
+
+@entry Hadattu [1] SN
+@sense SN Ḫadattu
+@pl_id 658399
+@pl_coord [38.407778,36.848889]
+@alias Ḫadattu
+@alias Arslān Ṭāš
+@alias Arslan Tash (Ḫadatu)
+@alias Ḫadatu (mod. Arslan Tash)
+@alias Arslan Tash
+@end entry
+
+
+@entry Halab/Halman [1] SN
+@sense SN Ḫalab/Ḫalman
+@pl_id 658409
+@pl_coord [37.156825,36.199335]
+@alias Ḫalab/Ḫalman
+@alias Aleppo
+@alias Ḥalab
+@end entry
+
+
+@entry Hamam [1] SN
+@sense SN Hamam
+@pl_id 887415955
+@pl_coord [41.2727638,39.9063215]
+@alias uncertain (mod. Hamam)
+@end entry
+
+
+@entry Hamat/Amattu [1] SN
+@sense SN Ḫamat/Amattu
+@pl_id 668261
+@pl_coord [34.723414,36.714401]
+@alias Ḫamat/Amattu
+@alias Amattu
+@alias Hamat
+@alias Ḥamāt
+@alias Ḥamā
+@end entry
+
+
+@entry Hanusa [1] SN
+@sense SN Ḫanusa
+@pl_id 641191183
+@pl_coord [43.412667,36.760833]
+@alias Ḫinnis
+@alias Ḫanusa
+@alias Ḫinis
+@end entry
+
+
+@entry Haradum [1] SN
+@sense SN Haradum
+@pl_id 894003
+@pl_coord [41.6,34.433333]
+@alias Kirbet ed Diniye
+@alias Haradum (mod. Khirbet ed-Diniye)
+@alias Khirbet ed-Diniye (Haradum)
+@alias Haradu
+@end entry
+
+
+@entry Harbe [1] SN
+@sense SN Harbe
+@pl_id 677382294
+@pl_coord [39.4981890,36.6465219]
+@alias Tell Chuera (Ḫarbe)
+@alias Ḫarbe (mod. Tell Chuera)
+@alias Tell Chuēra
+@alias Tell Chuera
+@alias Tall Ḑahr ash Shuwayrah
+@end entry
+
+
+@entry Harisu [1] SN
+@sense SN Ḫariṣû
+@pl_id 135436342
+@pl_coord [35.674167,33.978167]
+@alias Ḫariṣû
+@alias Ḥariṣṣa
+@end entry
+
+
+@entry Harran [1] SN
+@sense SN Ḫarrānu
+@pl_id 658427
+@pl_coord [39.031184,36.864682]
+@alias Ḫarrānu
+@alias Harran (Harran)
+@alias Harran (mod. Harran)
+@alias Ḥarrān
+@alias Carrhae
+@end entry
+
+
+@entry Hasankale_(Pasinler) [1] SN
+@sense SN Hasankale (Pasinler)
+@pl_id 874492
+@pl_coord [41.6662835,39.984743]
+@alias Hasankale (Pasinler)
+@alias Hasankale
+@alias uncertain (mod. Hasankale)
+@end entry
+
+
+@entry Hattusa [1] SN
+@sense SN Hattusa
+@pl_id 283602441
+@pl_coord [34.615278,40.019722]
+@alias Boğazkale (Ḫattusa)
+@alias Ḫattusa (mod. Boğazkale)
+@alias Ḫattusa
+@alias Boghazkoy
+@alias Boğazkale
+@alias Bogazkale
+@alias Boğazköy
+@alias Boghazköy
+@alias Bogazkoy
+@alias Ḫattuša
+@alias Hattuşaş
+@alias Hattusas
+@end entry
+
+
+@entry Haurina [1] SN
+@sense SN Ḫāurīna
+@pl_id 161546548
+@pl_coord [37.084667,34.2695]
+@alias Ḫāurīna
+@alias Ḥawārīn
+@end entry
+
+
+@entry Hazazu [1] SN
+@sense SN Ḫazāzu
+@pl_id 688460609
+@pl_coord [37.053,36.592833]
+@alias Ḫazāzu
+@alias ʿAzāz
+@end entry
+
+
+@entry Hazor [1] SN
+@sense SN Hazor
+@pl_id 779967430
+@pl_coord [35.568137176,33.017462128]
+@alias uncertain (mod. Hazor)
+@alias Tel Hazor
+@end entry
+
+
+@entry Hazzat [1] SN
+@sense SN Ḫazzat
+@pl_id 687902
+@pl_coord [34.445392,31.529444]
+@alias Ḫazzat
+@alias Gaza
+@alias Ġazza
+@alias ʿazza
+@end entry
+
+
+@entry Hidalu [1] SN
+@sense SN Ḫīdālu
+@pl_id 283684589
+@pl_coord [50,30.966667]
+@alias Ḫaidalu/Ḫīdālu
+@alias Ḫīdālu
+@alias Ardjān
+@alias Ḫaidālu
+@end entry
+
+
+@entry Hildua [1] SN
+@sense SN Ḫildua
+@pl_id 678177
+@pl_coord [35.483833,33.776833]
+@alias Ḫān el-Ḫulda
+@alias Ḫuldā
+@alias Ḫalde
+@alias Ḫildua
+@end entry
+
+
+@entry Hillah [1] SN
+@sense SN Hillah
+@pl_id 296101142
+@pl_coord [44.433333,32.483333]
+@alias uncertain (mod. Hillah)
+@end entry
+
+
+@entry Hindanu [1] SN
+@sense SN Ḫindānu
+@pl_id 894006
+@pl_coord [41.027992,34.389685]
+@alias Giddan
+@alias al-Ǧābirīya
+@alias Ḫindānu
+@alias Eddana
+@end entry
+
+
+@entry Hinnatuna [1] SN
+@sense SN Ḫinnatūna
+@pl_id 352442975
+@pl_coord [35.202667,32.7525]
+@alias Ḫinnatūna
+@alias T. al-Badawīya
+@alias Ḥannātôn
+@end entry
+
+
+@entry Hinnis_Monuments [1] SN
+@sense SN Hinnis Monuments
+@pl_id 359792983
+@pl_coord [43.420619,36.76194]
+@alias Bavian
+@alias Hinnis Monuments
+@end entry
+
+
+@entry Hursagkalama [1] SN
+@sense SN Hursagkalama
+@pl_id 000001
+@pl_coord [44.5993371, 32.5407858]
+@alias Tell Ingharra (Hursagkalama)
+@end entry
+
+
+@entry Huzirina [1] SN
+@sense SN Huzirina
+@pl_id 249509021
+@pl_coord [38.9061,37.05]
+@alias Sultantepe (Huzirina)
+@alias Huzirina (mod. Sultantepe)
+@alias Huzirina (Sultantepe)
+@alias Sultantepe
+@end entry
+
+
+@entry Ibn_Hani [1] SN
+@sense SN Ibn Hani
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Idu [1] SN
+@sense SN Idu
+@pl_id 894008
+@pl_coord [44.697222,35.878056]
+@alias Idu (mod. Tell Satu Qala)
+@alias Tell Satu Qala (Idu)
+@end entry
+
+
+@entry Imgur-Enlil [1] SN
+@sense SN Imgur-Enlil
+@pl_id 90032637
+@pl_coord [43.414221,36.221946]
+@alias Imgur-Enlil (mod. Balawat)
+@alias Balawat (Imgur-Enlil)
+@alias Balawat
+@alias Balāwāt
+@alias Imgur-Bēl
+@end entry
+
+
+@entry Irisagrig [1] SN
+@sense SN Irisagrig
+@pl_id 237830124
+@pl_coord []
+@alias Irisagrig (mod. uncertain)
+@end entry
+
+
+@entry Isin [1] SN
+@sense SN Isin
+@pl_id 912868
+@pl_coord [45.267191,31.920259]
+@alias Isin (mod. Bahriyat)
+@alias Bahriyat (Isin)
+@end entry
+
+
+@entry Isqalluna [1] SN
+@sense SN Isqalluna
+@pl_id 687839
+@pl_coord [34.545947,31.6659785]
+@alias Isqalluna (mod. Ashkelon)
+@alias Ashkelon (Isqalluna)
+@alias Ashkelon
+@end entry
+
+
+@entry Jemdet_Nasr [1] SN
+@sense SN Jemdet Nasr
+@pl_id 733910291
+@pl_coord [44.7796331942,32.7182104498]
+@alias uncertain (mod. Jemdet Nasr)
+@alias Jemdet Nasr
+@end entry
+
+
+@entry Jerwan_Aqueduct [1] SN
+@sense SN Jerwan Aqueduct
+@pl_id 10280471
+@pl_coord [43.393475,36.669779]
+@alias Jerwan Aqueduct
+@alias Girmua (mod. Jerwan)
+@alias Girmua
+@end entry
+
+
+@entry Judeideh [1] SN
+@sense SN Judeideh
+@pl_id 945906724
+@pl_coord [42.028552,34.3887]
+@alias uncertain (mod. Jedide)
+@alias Jedide
+@end entry
+
+
+@entry Judi_Dagh [1] SN
+@sense SN Judi Dagh
+@pl_id 471828778
+@pl_coord [42.3288972,37.3923021]
+@alias Judi Dagh
+@alias uncertain (mod. Judi Dagh)
+@alias Ǧudi Dağ
+@alias Cudi Dağı
+@end entry
+
+
+@entry Kabnak [1] SN
+@sense SN Kabnak
+@pl_id 379400932
+@pl_coord [48.3289663161,32.0807748717]
+@alias Kabnak (mod. Haft Tepe)
+@alias Haft Tepe
+@alias Haft Tepe (Kabnak)
+@end entry
+
+
+
+@entry Kaḫat [1] SN
+@sense SN Kaḫat
+@pl_id 874732
+@pl_coord [41.1270847952,36.7390002415]
+@alias Kahat (mod. Tell Barri)
+@alias Tell Barri (Kahat)
+@alias Tell Barri
+@alias Kahat
+@end entry
+
+
+@entry Kalmakarra_Cave [1] SN
+@sense SN Kalmakarra Cave
+@pl_id 413309734
+@pl_coord [47.3796339,33.0010272]
+@alias Kalmakarra Cave
+@alias Cave Kalm-karra
+@alias uncertain (mod. Cave Kalm-karra)
+@alias Pol Dokhtar
+@alias Cave Kalmakareh
+@alias Pol-e Dokhtar
+@end entry
+
+
+@entry Kaniš [1] SN
+@sense SN Kaniš
+@pl_id 628923
+@pl_coord [35.63486,38.85093]
+@alias Kültepe (Kanesh)
+@alias Kanesh (mod. Kültepe)
+@alias Anisa
+@alias Kaneš
+@alias Karahüyük
+@alias Kültepe
+@alias Kültepe Karahüyük
+@alias Neša
+@end entry
+
+
+@entry Karmir-blur [1] SN
+@sense SN Karmir-blur
+@pl_id 863822
+@pl_coord [44.4502581,40.1551476]
+@alias Teišebaini (mod. Karmir-blur)
+@alias Karmir-blur (Teišebaini)
+@end entry
+
+
+@entry Kars [1] SN
+@sense SN Kars
+@pl_id 692712721
+@pl_coord [43.1040302701,40.6013491238]
+@alias uncertain (mod. Kars)
+@end entry
+
+
+@entry Kar-Tukulti-Ninurta [1] SN
+@sense SN Kar-Tukulti-Ninurta 
+@pl_id 430344980
+@pl_coord [43.268593,35.496419]
+@alias Tulul al-ʿAqir (Kar-Tukulti-Ninurta)
+@alias Kar-Tukulti-Ninurta (mod. Tulul al-ʿAqir)
+@alias Kār-Tukultī-Ninurta
+@alias Tulul al ʿAqr
+@alias Tulūl al-ʿAqar
+@end entry
+
+
+@entry Kavuncu [1] SN
+@sense SN Kavuncu
+@pl_id 929709014
+@pl_coord [43.4767586, 38.5124956]
+@alias uncertain (mod. Kavuncu)
+@end entry
+
+
+@entry Kayseri [1] GN
+@sense GN Kayseri
+@pl_id 629035
+@pl_coord [35.484988999999999,38.728033000000003]
+@end entry
+
+
+@entry Kenk_Boğazı [1] SN
+@sense SN Kenk Boğazı
+@pl_id 842949950
+@pl_coord [37.8543333,37.2416667]
+@alias uncertain (mod. Kenk Boǧazı)
+@alias Kenk Boğazı
+@alias Kenk Boǧazı
+@end entry
+
+
+@entry Kermanshah [1] GN
+@sense GN Kermanshah
+@pl_id 903102
+@pl_coord [47.5,34.5]
+@alias uncertain (mod. Kermanshah)
+@end entry
+
+
+@entry KI.AN [1] SN
+@sense SN KI.AN
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Kibbutz_Hama’apil [1] SN
+@sense SN Kibbutz Hama’apil
+@pl_id 189103682
+@pl_coord [34.983333,32.377778]
+@alias uncertain (mod. Kibbutz Hama-apil)
+@alias Kibbutz Hamaʾapil
+@alias Kibbutz Hama-apil
+@alias Kibbutz Hama’apil
+@alias Kibbutz Hama'apil
+@alias HaMa'apil
+@end entry
+
+
+@entry Kilizu [1] SN
+@sense SN Kilizu
+@pl_id 894027
+@pl_coord [43.751839,36.105774]
+@alias Kilizu (mod. Qasr Shamamuk)
+@alias Qasr Shamamuk (Kilizu)
+@end entry
+
+
+@entry Kish [1] SN
+@sense SN Kish
+@pl_id 894028
+@pl_coord [44.585271,32.551977]
+@alias Tell Uhaimir (Kish)
+@alias Kish (Uhaimir)
+@alias Kish (mod. Tell Uhaimir)
+@alias Kish
+@alias Kiš
+@alias Tall Antika
+@alias Tall Antīka
+@alias Tall al Uḥaimir
+@alias Tall al-Uḥaimar Kiš
+@alias Tall al-Uḥaimir
+@alias Tall al-Uḥēmir
+@end entry
+
+
+@entry Kisurra [1] SN
+@sense SN Kisurra
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Kizkapanli [1] SN
+@sense SN Kizkapanli
+@pl_id 193878353
+@pl_coord [37.293138,37.37502]
+@alias uncertain (mod. Kizkapanlı)
+@alias uncertain Kizkapanlı
+@alias Kizkapanlı
+@end entry
+
+
+@entry Kullanīa [1] SN
+@sense SN Kullanīa
+@pl_id 913163220
+@pl_coord [36.376389,36.2475]
+@alias Kalnē
+@alias T. Taʿyīnāt
+@alias Tell Ta’yinat
+@alias Tell Tayinat 
+@alias Unqi (mod. Tell Tayinat)
+@alias Tell Tayinat (Unqi)
+@alias Kinalua
+@end entry
+
+
+@entry Kurkh [1] SN
+@sense SN Kurkh
+@pl_id 874418
+@pl_coord [40.539708,37.825989]
+@alias uncertain (mod. Kurkh)
+@alias Üçtepe
+@alias Arcaiapis
+@alias Charcha
+@alias Karcharoman
+@end entry
+
+
+@entry Kutha [1] SN
+@sense SN Kutha
+@pl_id 893977
+@pl_coord [44.6115870118,32.7609196481]
+@alias Kutha (mod. Tell Ibrahim)
+@alias Cutha
+@alias Kūtû
+@end entry
+
+
+@entry Lagaš [1] SN
+@sense SN Lagaš
+@pl_id 959120263
+@pl_coord [46.40836,31.420485]
+@alias Lagash (mod. El-Hiba)
+@alias El-Hiba (Lagash)
+@alias Al-Hiba
+@alias Lagash
+@end entry
+
+
+@entry Lake_Urmia [1] WN
+@sense WN Lake Urmia
+@pl_id 874631
+@pl_coord [45.518417,37.086953]
+@alias Lake Urmia
+@alias uncertain (mod. Lake Urmia)
+@alias Urmia
+@alias Ormi
+@end entry
+
+
+@entry Larak [1] SN
+@sense SN Larak
+@pl_id 762762282
+@pl_coord [45.6602857173,32.3124558594]
+@alias Larak (mod. Tell Wilayah)
+@alias Tell Wilayah (Larak)
+@end entry
+
+
+@entry Larnaka [1] SN
+@sense SN Larnaka
+@pl_id 707556
+@pl_coord [33.633337,34.916662]
+@alias uncertain (mod. Larnaka)
+@end entry
+
+
+@entry Larsa [1] SN
+@sense SN Larsa
+@pl_id 912897
+@pl_coord [45.853611,31.285833]
+@alias Larsa (mod. Tell as-Senkereh)
+@alias Tell as-Senkereh (Larsa)
+@alias Larsa
+@alias Larsam
+@alias Sankara
+@alias Senkere
+@alias as-Sankara
+@end entry
+
+
+@entry Luristan [1] GN
+@sense GN Luristan
+@pl_id 191400484
+@pl_coord [48.4,33.6]
+@alias uncertain (mod. Luristan)
+@alias Lorestan Province
+@alias Lurestan
+@alias Loristan
+@end entry
+
+
+@entry Maʾallanate [1] SN
+@sense SN Maʾallanate
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Magidu [1] SN
+@sense SN Magidû
+@pl_id 26356565
+@pl_coord [35.185167,32.579667]
+@alias Megiddo
+@alias Magidû (mod. Megiddo)
+@alias Megiddo (Magidû)
+@alias Megiddôn
+@alias T. al-Mutesellim
+@alias Magidû
+@end entry
+
+
+@entry Mahalliba [1] SN
+@sense SN Maḫalliba
+@pl_id 69255711
+@pl_coord [35.483333,33.35]
+@alias Maḥālib
+@alias Maḫalliba
+@end entry
+
+
+@entry Mansuati [1] SN
+@sense SN Manṣuāti
+@pl_id 708431251
+@pl_coord [36.347167,35.063167]
+@alias Manṣuāti
+@alias Maṣyāf (Maṣyāt/ṭ/d)
+@alias Mnḏt
+@end entry
+
+
+@entry Marad [1] SN
+@sense SN Marad
+@pl_id 912901
+@pl_coord [44.78567,32.070556]
+@alias Wanna wa Sadūm
+@alias Marad (mod. Wanna-wa-Sadum)
+@alias Tell Wannat es Sadum
+@alias Wanna-wa-Sadum (Marad)
+@alias Marda
+@alias Marad
+@end entry
+
+
+@entry Mardin [1] SN
+@sense SN Mardin
+@pl_id 874588
+@pl_coord [40.739222,37.319049]
+@alias uncertain (mod. Mardin)
+@alias Marde
+@alias Mardeberd
+@alias Mardin
+@alias Mardēberd
+@alias Margdis
+@alias Mārdīn
+@alias Māridīn
+@alias Taḫt-i Dara
+@end entry
+
+
+@entry Mari [1] SN
+@sense SN Mari
+@pl_id 286681704
+@pl_coord [40.889225,34.550398]
+@alias Tell Hariri (Mari)
+@alias Mari (mod. Tell Hariri)
+@alias Māri
+@alias Tall al-Ḥarīrī
+@alias Tall Ḥarīrī
+@end entry
+
+
+@entry Marqasu [1] SN
+@sense SN Marqasu
+@pl_id 658474
+@pl_coord [36.925326,37.586682]
+@alias Germanicia
+@alias Germanikeia
+@alias Germanikeia Kaisareia
+@alias K. Maraş
+@alias Kahramanmaraş
+@alias Maraqasi
+@alias Marasch
+@alias Marhasāja
+@alias Marhasi
+@alias Mariscum
+@alias Caesarea Germanice
+@alias Gurgumāja
+@alias Gurgume
+@alias Maraš
+@alias Maraş
+@alias Marqasāja
+@alias Marqašāja
+@alias Marqasi
+@alias Marʿaš
+@alias Kahramanmaraş (Marqasu)
+@end entry
+
+
+
+@entry Maškan-šapir [1] SN
+@sense SN Maškan-šapir
+@pl_id 715980704
+@pl_coord [45.3067537,32.2285887]
+@alias Maškan-šapir (mod. Tell Abu Duwari)
+@alias Tell Abu Duwari (Maškan-šapir)
+@end entry
+
+
+@entry Matiatu [1] SN
+@sense SN Matiātu
+@pl_id 708431252
+@pl_coord [41.387333,37.415667]
+@alias Matiātu
+@alias Midyāt
+@end entry
+
+
+@entry Mazyad [1] SN
+@sense SN Mazyad
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Melidi [1] SN
+@sense SN Melīdi
+@pl_id 629040
+@pl_coord [38.382217, 38.361152]
+@alias Melīdi
+@alias Melidu (mod. Arslantepe)
+@alias Arslantepe (Melidu)
+@alias Arslantepe
+@alias Eski Malatya
+@end entry
+
+
+@entry Mesta [1] SN
+@sense SN Mešta
+@pl_id 874502
+@pl_coord [45.464993,37.017977]
+@alias Mešta
+@alias Hasanlu
+@end entry
+
+
+@entry Me-Turran [1] SN
+@sense SN Mēturna
+@pl_id 894042
+@pl_coord [45.095015,34.225642]
+@alias Mēturna
+@alias T. Ḥaddād
+@alias Tell Haddad (Me-Turan)
+@alias T. al-Sīb
+@alias Mê-Turran
+@alias Me-Turan (mod. Tell Haddad)
+@alias Me-Turran (mod. Tell Haddad)
+@alias Haddad
+@alias Me-Turnat
+@alias Me-Turan
+@alias Mê-Turan
+@end entry
+
+
+@entry Mila_Mergi [1] GN
+@sense GN Mila Mergi
+@pl_id 649834357
+@pl_coord [42.9135000,37.0058333]
+@alias uncertain (mod. Mila Mergi)
+@alias Ilimmer
+@alias Mila Mergi
+@alias Millet Mergi
+@end entry
+
+
+@entry Mugdan [1] SN
+@sense SN Mugdan
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Musasir [1] SN
+@sense SN Muṣāṣir
+@pl_id 126728263
+@pl_coord [44.321667,36.835667]
+@alias Muṣāṣir
+@alias Muğēsir
+@alias Muğaisir
+@end entry
+
+
+@entry Mutkinu [1] SN
+@sense SN Mutkīnu
+@pl_id 539776277
+@pl_coord [36.692,36.692]
+@alias T. ʿAbīr
+@alias Mutkīnu
+@end entry
+
+
+@entry Nabula [1] SN
+@sense SN Nabula
+@pl_id 539776278
+@pl_coord [41.211333,37.1595]
+@alias Nabula
+@alias Gir Nawas
+@alias Girnavaz
+@end entry
+
+
+@entry Nagar [1] SN
+@sense SN Nagar
+@pl_id 874735
+@pl_coord [41.0703913,36.6687803]
+@alias Nagar (mod. Tell Brak)
+@alias Nilibši
+@alias T. Brāk
+@alias Tell Brak (Nagar)
+@alias Nilabšini
+@end entry
+
+
+@entry Nahr_el-Kelb [1] SN
+@sense SN Nahr el-Kelb
+@pl_id 2970016
+@pl_coord [35.598922,33.956087]
+@alias Nahr el-Kelb
+@alias uncertain (mod. Nahr el-Kelb)
+@alias Nahr al-Kalb
+@end entry
+
+
+@entry Najafabad [1] SN
+@sense SN Najafabad
+@pl_id 811827554
+@pl_coord [48.5924864,33.3322314]
+@alias Najafabad (Kišesim)
+@alias Kišesim (mod. Najafabad)
+@alias Kišesim
+@alias Najafābād
+@end entry
+
+
+@entry Nampigu [1] SN
+@sense SN Nampigu
+@pl_id 658480
+@pl_coord [37.954538,36.526117]
+@alias Nampigu
+@alias Menbiğ
+@alias Membiğ
+@alias Bambykē
+@end entry
+
+
+@entry Nasibina [1] SN
+@sense SN Naṣībina
+@pl_id 874623
+@pl_coord [41.215055,37.067233]
+@alias Naṣībina
+@alias Nuṣaybin
+@alias Nisibin
+@alias Nisibis
+@end entry
+
+
+@entry Naqsh-i_Rustam [1] SN
+@sense SN Naqsh-i Rustam
+@pl_id 922685
+@pl_coord [52.87465819,29.9887346875]
+@alias Naqsh-i Rustam
+@alias Naqš-i-Rustam
+@alias uncertain (mod. Naqš-i-Rustam)
+@end entry
+
+
+@entry Negub_Tunnel [1] WN
+@sense WN Negub Tunnel
+@pl_id 413309737
+@pl_coord [43.405813,36.022095]
+@alias Negub Tunnel
+@alias uncertain (mod. Negub tunnel)
+@end entry
+
+
+@entry Nerab [1] SN
+@sense SN Nērab
+@pl_id 633912597
+@pl_coord [37.176,36.199833]
+@alias Nērab
+@alias Nayrab
+@end entry
+
+
+@entry Nerebtum [1] SN
+@sense SN Nerebtum
+@pl_id 357565832
+@pl_coord [44.5833330,33.3000000]
+@alias Nerebtum (mod. Iščali)
+@alias Iščali (Nerebtum)
+@end entry
+
+
+@entry Nimrud [1] SN
+@sense SN Nimrud
+@pl_id 894019
+@pl_coord [43.3275,36.099167]
+@alias Kalhu (mod. Nimrud)
+@alias Nimrud (Kalhu)
+@alias Kalhu
+@alias Calah
+@end entry
+
+
+@entry Nineveh [1] SN
+@sense SN Nineveh
+@pl_id 874621
+@pl_coord [43.151937,36.358684]
+@alias Kuyunjik (Nineveh)
+@alias Nīnevē
+@alias Nineveh (mod. Kuyunjik)
+@alias Nīnuwa
+@alias Nebi Yunus
+@alias Nīnuwā
+@alias Ninuwa
+@end entry
+
+
+@entry Nippur [1] SN
+@sense SN Nippur
+@pl_id 912910
+@pl_coord [45.230832,32.126944]
+@alias Nippur (mod. Nuffar)
+@alias Nuffar (Nippur)
+@alias Nippur
+@alias Nuffar
+@end entry
+
+
+@entry NIʾu [1] SN
+@sense SN NIʾu
+@pl_id 668335
+@pl_coord [36.410440,35.429282]
+@alias NIʾu
+@alias Niya
+@alias Qalʿat Maḍīq
+@alias Apamea
+@end entry
+
+
+@entry Nuzi [1] SN
+@sense SN Nuzi
+@pl_id 894054
+@pl_coord [44.2549396934,35.3698975688]
+@alias Nuzi (mod. Yorgan Tepe)
+@alias Yorgan Tepe (Nuzi)
+@alias Gasur (mod. Yorgan Tepe)
+@alias Gasur
+@end entry
+
+
+@entry Padakku [1] SN
+@sense SN Padakku
+@pl_id 982176368
+@pl_coord [40.467002,25.978610]
+@alias Padakka/Ha&apos;it
+@alias Padakka/Haʾit
+@alias uncertain (mod. Padakka/Ha'it)
+@alias Padakka/Ha'it
+@alias Padakka/Ha’it
+@end entry
+
+
+@entry Pallukat [1] SN
+@sense SN Pallūkat
+@pl_id 894059
+@pl_coord [43.775833,33.357]
+@alias Pallūkat
+@alias al-Fallūğa
+@alias Pallakottas
+@alias Pallakattu
+@alias Pallaconta
+@end entry
+
+
+@entry Pappa [1] SN
+@sense SN Pappa
+@pl_id 707596
+@pl_coord [32.584460,34.703504]
+@alias Pappa
+@alias Pāphos
+@end entry
+
+
+@entry Para [1] SN
+@sense SN Para
+@pl_id 914118847
+@pl_coord [41.4910030,36.3711370]
+@alias Bara
+@alias Pāra
+@alias uncertain (mod. Pāra)
+@end entry
+
+
+@entry Pasargadae [1] SN
+@sense SN Pasargadae
+@pl_id 922693
+@pl_coord [53.1684426, 30.1930914]
+@alias Tall-I Takht (mod. Pasargadae)
+@alias Pasargadae (Tall-I Takht)
+@end entry
+
+
+@entry Patibiri [1] SN
+@sense SN Patibīri
+@pl_id 771224406
+@pl_coord [46.0,31.766667]
+@alias Patibīri
+@alias Tell Medinah (Bad-Tibira)
+@alias Bad-Tibira (mod. Tell Medinah)
+@alias T. Madain
+@alias Bad-tibira
+@end entry
+
+
+@entry Patnos [1] SN
+@sense SN Patnos
+@pl_id 874529
+@pl_coord [42.866666,39.233333]
+@alias uncertain (mod. Patnos)
+@end entry
+
+
+@entry Persepolis [1] SN
+@sense SN Persepolis
+@pl_id 922695
+@pl_coord [52.889437,29.9353403333]
+@alias Persepolis (Pārśa)
+@alias Pārśa (mod. Persepolis)
+@alias Parsa
+@alias Persai
+@alias Persepolis
+@alias Sat Setun
+@end entry
+
+
+@entry Persia [1] GN
+@sense GN Persia
+@pl_id 922698
+@pl_coord [51.5,30.5]
+@alias uncertain (mod. Persia)
+@end entry
+
+
+@entry Pituru [1] SN
+@sense SN Pitūru
+@pl_id 771224407
+@pl_coord [38.074833,36.6725]
+@alias Pitūru
+@alias Ausheriya
+@end entry
+
+
+@entry Puzriš-Dagan [1] SN
+@sense SN Puzriš-Dagan
+@pl_id 359215729
+@pl_coord [45.29101,32.06236]
+@alias Puzriš-Dagan (mod. Drehem)
+@alias Drehem (Puzriš-Dagan)
+@end entry
+
+
+@entry Qadisu [1] SN
+@sense SN Qadīsu
+@pl_id 518764376
+@pl_coord [36.521167,34.558167]
+@alias Qadīsu
+@alias Qādēš
+@alias T. Nebī Mend
+@end entry
+
+
+@entry Qal’eh-i_Imam [1] SN
+@sense SN Qal’eh-i Imam
+@pl_id 858969850
+@pl_coord [46.1758797,35.4913372]
+@alias Qalʾeh-i Imam
+@alias uncertain (mod. Qal’eh-i Imam)
+@alias Qal’eh-i Imam
+@end entry
+
+
+@entry Qarnina [1] SN
+@sense SN Qarnīna
+@pl_id 518764377
+@pl_coord [36.041667,32.831167]
+@alias Qarnīna
+@alias Qarnaim
+@alias Šeiḫ Saʿd
+@end entry
+
+
+@entry Qarti-hadasti [1] SN
+@sense SN Qarti-ḫadasti
+@pl_id 707534
+@pl_coord [33.629471,34.929597]
+@alias Qarti-ḫadasti
+@alias Kition
+@end entry
+
+
+@entry Qinnasrina [1] SN
+@sense SN Qinnasrīna
+@pl_id 668226
+@pl_coord [37.015824,36.026207]
+@alias Qinnasrīna
+@alias Nebīʾ ʿĪs
+@alias Chalcisad Belum
+@alias Qinnasrīn
+@end entry
+
+
+@entry Rabla [1] SN
+@sense SN Rablâ
+@pl_id 431124909
+@pl_coord [36.556333,34.447]
+@alias Rablâ
+@alias Riblāh
+@end entry
+
+
+@entry Rapihu [1] SN
+@sense SN Rapīḫu
+@pl_id 688015
+@pl_coord [34.225777,31.297428]
+@alias Rafaḥ
+@alias Rapīḫu
+@alias Raphía
+@end entry
+
+
+@entry Rapiqu [1] SN
+@sense SN Rāpiqu
+@pl_id 894043
+@pl_coord [43.434525,33.461297]
+@alias Rāpiqu
+@alias Raphaka
+@alias T. al-Anbār
+@end entry
+
+
+@entry Res-eni [1] SN
+@sense SN Rēš-ēni
+@pl_id 979932680
+@pl_coord [43.216667,36.55]
+@alias Rēš-ēni
+@alias Rus al-ʿAin
+@end entry
+
+
+@entry Rusahinili_Eidurukai [1] SN
+@sense SN Rusaḫinili Eidurukai
+@pl_id 237391810
+@pl_coord [43.2485,38.661167]
+@alias Ayanis (Rusahinili Eidurukai)
+@alias Ayanis
+@alias Rusaḫinili Eidurukai
+@alias Rusahinili Eidurukai
+@end entry
+
+
+@entry Saʾarru [1] SN
+@sense SN Saʾarru
+@pl_id 100842079
+@pl_coord [36.355,33.114333]
+@alias Saʾarru
+@alias Šaʿāra
+@end entry
+
+
+@entry Sabaʾa [1] SN
+@sense SN Sabaʾa
+@pl_id 528477900
+@pl_coord [40.65609,36.08196]
+@alias Al-Sabaa wa Arbain
+@alias Saba&apos;a
+@alias uncertain (mod. Saba'a)
+@alias Saba'a
+@alias Saba’a
+@end entry
+
+
+@entry Sagub [1] SN
+@sense SN Sagub
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Samʾalla [1] SN
+@sense SN Samʾalla
+@pl_id 192555966
+@pl_coord [36.678477,37.102208]
+@alias Zencirli
+@alias Zinčirli (Samal)
+@alias Samal (mod. Zinčirli)
+@alias Sam'al
+@alias šmʿl
+@alias Samʾalla
+@alias Zinçirli
+@alias Zincirli
+@end entry
+
+
+@entry Samerina [1] SN
+@sense SN Sāmerīna
+@pl_id 678370
+@pl_coord [35.190436,32.276529]
+@alias Samaria/Šomerôn
+@alias Sāmerīna (mod. Samaria)
+@alias Samaria (Sāmerīna)
+@alias Sāmerīna
+@alias Samaria
+@end entry
+
+
+@entry Sar-i_Pul [1] GN
+@sense GN Sar-i Pul
+@pl_id 961961
+@pl_coord [45.869125,34.462706]
+@alias Sar-i Pul
+@alias uncertain (mod. Sar-i-pul-i-Zohāb)
+@alias Sar-i-pul-i-Zohāb
+@end entry
+
+
+@entry Sardurihinili [1] SN
+@sense SN Sarduriḫinili
+@pl_id 285112754
+@pl_coord [43.516667,38.283333]
+@alias Chavushtepe
+@alias Sarduriḫinili
+@end entry
+
+
+@entry Sazabu [1] SN
+@sense SN Sazabu
+@pl_id 658615
+@pl_coord [38.011310,36.740409]
+@alias Sazabu
+@alias T. ʿAmarna
+@alias Šaḏabu
+@end entry
+
+
+@entry Sealand [1] GN
+@sense GN Sealand
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Selaʾ [1] SN
+@sense SN Selaʾ
+@pl_id 86623849
+@pl_coord [35.726658,30.750217]
+@alias uncertain (mod. Sela)
+@alias Sela
+@end entry
+
+
+@entry Seleucia [1] SN
+@sense SN Seleucia
+@pl_id 894178
+@pl_coord [44.520378,33.094346]
+@alias Tell &apos;Umar (Seleucia)
+@alias Tell ʾUmar (Seleucia)
+@alias Seleucia (mod. Tell 'Umar)
+@alias Azochis
+@alias Bahūrasīr
+@alias Tell 'Umar (Seleucia)
+@alias Tell ’Umar (Seleucia)
+@alias Beh Ard Šīr
+@alias Beh Ardašīr
+@alias Coche
+@alias Kaukaba
+@alias Maḥoza
+@alias Seleucia
+@alias Seleukeia
+@alias Seleukeia am Tigris
+@alias Seleukeia pros tō Tigrei
+@alias Sēliq
+@alias Tall ʿUmar
+@alias Veh Ardashir
+@alias Veh Ardašīr
+@alias Vēh-Ardašir
+@alias Ōpis
+@end entry
+
+
+@entry Shir_Sanam [1] SN
+@sense SN Shir Sanam
+@pl_id 582911
+@pl_coord [36.26839,34.52795]
+@alias Shir Sanam
+@alias uncertain (mod. Shir as-Sanam)
+@alias Shir as Sanam
+@alias Shir as-Sanam
+@alias Shir es-Sanam
+@end entry
+
+
+@entry Siannu [1] SN
+@sense SN Siannu
+@pl_id 313020255
+@pl_coord [36.0155,35.3335]
+@alias Siannu
+@alias T. Siyānu
+@end entry
+
+
+@entry Sillu [1] SN
+@sense SN Sillu
+@pl_id 707624
+@pl_coord [32.814174,35.136687]
+@alias Sillu
+@alias Soloi
+@end entry
+
+
+@entry Silluwa [1] SN
+@sense SN Silluwa
+@pl_id 707617
+@pl_coord [33.903588,35.175100]
+@alias Silluwa
+@alias Salamis
+@end entry
+
+
+@entry Singara [1] SN
+@sense SN Singāra
+@pl_id 874699
+@pl_coord [41.864400,36.323599]
+@alias Singāra
+@alias Singara
+@alias Balad Sinǧār
+@end entry
+
+
+@entry Sippar [1] SN
+@sense SN Sippar
+@pl_id 894089
+@pl_coord [44.253809,33.059195]
+@alias T. Abū Ḥabba
+@alias Tell Abu Habbah
+@alias Sippar-Yahrurum (mod. Tell Abu Habbah)
+@alias Tell Abu Habbah (Sippar-Yahrurum)
+@alias Sippar-Yahrurum
+@alias Sippar
+@end entry
+
+
+@entry Sippar-Amnanum [1] SN
+@sense SN Sippar-Amnanum
+@pl_id 392373882
+@pl_coord [44.298871,33.099559]
+@alias Tell ed-Der (Sippar-Amnanum)
+@alias T. ed-Dēr
+@alias Sippar-Amnanum (mod. Tell ed-Der)
+@alias Sippar-Arūru
+@alias Tell ed-Der
+@end entry
+
+
+@entry Sirqu [1] SN
+@sense SN Sirqu
+@pl_id 894158
+@pl_coord [40.568065,34.923106]
+@alias T. ʿAšāra
+@alias Ashara (Terqa)
+@alias Terqa (mod. Ashara)
+@alias Sirqu
+@alias Terqa
+@end entry
+
+
+@entry Sissu [1] SN
+@sense SN Sissû
+@pl_id 34546779
+@pl_coord [35.825,37.4475]
+@alias Sission
+@alias Sissû
+@alias Sīs
+@alias Kozan
+@end entry
+
+
+@entry Suez [1] SN
+@sense SN Suez
+@pl_id 727088
+@pl_coord [31.5110853352,30.5723823112]
+@alias uncertain (mod. Suez)
+@end entry
+
+
+@entry Sur_Jureh [1] SN
+@sense SN Sur Jureh
+@pl_id 413309738
+@pl_coord [42.205610,34.311256]
+@alias uncertain (mod. Sur Jar'a)
+@alias Sur Jar&apos;a
+@alias Sur Jarʾa
+@alias Al-gabbari-bani
+@alias Sūr Ğurʿa
+@alias Gabbāri-bānî
+@alias Sur Jureh
+@alias Sur Jar'a
+@alias Sur Jar’a
+@alias Gabbāri-ibni
+@end entry
+
+
+@entry Sur-marrati [1] SN
+@sense SN Surmarrati
+@pl_id 894082
+@pl_coord [43.876735,34.200116]
+@alias Sur-marrati
+@alias Sur-marrati (mod. Samarra)
+@alias Surra-man-rāʾ
+@alias Samarra (Sur-marrati)
+@alias Surmarrāti
+@alias Sāmarrāʾ
+@end entry
+
+
+@entry Suru [1] SN
+@sense SN Sūru
+@pl_id 894133
+@pl_coord [40.532167,35.358833]
+@alias T. Fidēn
+@alias Tell Fidain/Appadana?/Neapolis?
+@alias Sūru
+@end entry
+
+
+@entry Susa [1] SN
+@sense SN Susa
+@pl_id 912936
+@pl_coord [48.257787,32.189217]
+@alias Susa (mod. Shush)
+@alias Shush (Susa)
+@alias Šūšan
+@alias Šūš
+@alias Sūsa
+@alias Šûšan
+@end entry
+
+
+@entry Syria [1] GN
+@sense GN Syria
+@pl_id 1001932
+@pl_coord [37.051252,36.150945]
+@alias uncertain (mod. Syria)
+@end entry
+
+
+@entry Ṣariptu [1] SN
+@sense SN Ṣariptu
+@pl_id 678374
+@pl_coord [35.294673,33.460648]
+@alias aṣ-Ṣarafand
+@alias Ṣariptu
+@alias Sarepta
+@end entry
+
+
+@entry Ṣidunu [1] SN
+@sense SN Ṣīdūnu
+@pl_id 678393
+@pl_coord [35.375272,33.560412]
+@alias Ṣīdūnu
+@alias Ṣīdôn
+@alias Ṣaidā
+@end entry
+
+
+@entry Ṣimirra [1] SN
+@sense SN Ṣimirra
+@pl_id 668372
+@pl_coord [36.007810,34.726216]
+@alias T. Kazel
+@alias Ṣumra
+@alias Ṣimirra
+@alias Simyra
+@end entry
+
+
+@entry Ṣurru [1] SN
+@sense SN Ṣurru
+@pl_id 678437
+@pl_coord [35.198329,33.271624]
+@alias Tyre
+@alias Ṣurru
+@alias Ṣūr
+@alias Ṣôr
+@end entry
+
+
+@entry Šadikanni [1] SN
+@sense SN Šadikanni
+@pl_id 874688
+@pl_coord [40.720582,36.208061]
+@alias T. ʿArbān
+@alias Šaddikanni (mod. Tell Ajaja)
+@alias Tell Ajaja (Šaddikanni)
+@alias Arabana
+@alias T. ʿAǧāǧa
+@alias Šadikanni
+@end entry
+
+
+@entry Šaduppum [1] SN
+@sense SN Šaduppum
+@pl_id 821129014
+@pl_coord [44.466548,33.309745]
+@alias Shaduppum
+@alias Shaduppum (mod. Tell Harmal)
+@alias Tell Harmal (Šaduppum)
+@end entry
+
+
+@entry Šapinuwa [1] SN
+@sense SN Šapinuwa
+@pl_id 964671598
+@pl_coord [35.25,40.266667]
+@alias Ortaköy (Šapinuwa)
+@end entry
+
+
+@entry Šarrakum [1] SN
+@sense SN Šarrakum
+@pl_id 
+@pl_coord []
+@end entry
+
+
+@entry Šibaniba [1] SN
+@sense SN Šibanība
+@pl_id 237391811
+@pl_coord [43.347545,36.4330610]
+@alias Šibaniba (mod. Tell Billa)
+@alias Tell Billa (Šibaniba)
+@alias Šibanība
+@alias Tell Billa
+@alias Šibaniba
+@end entry
+
+
+@entry Šuruppak [1] SN
+@sense SN Šuruppak
+@pl_id 326150788
+@pl_coord [45.5097359,31.7778493]
+@alias Shuruppak
+@alias Fara (Šuruppak)
+@alias Šuruppak (mod. Fara)
+@alias Shuruppak (mod. Fara)
+@alias Fara
+@end entry
+
+
+@entry Tadmar [1] SN
+@sense SN Tadmar
+@pl_id 668331
+@pl_coord [38.266882,34.552237]
+@alias Tadmar
+@alias Palmyra
+@alias Tadmor
+@alias Palmyra (Tadmar)
+@end entry
+
+
+@entry Takrit [1] SN
+@sense SN Takrit
+@pl_id 894099
+@pl_coord [43.698871,34.581814]
+@alias Tagrītiānu
+@alias uncertain (mod. Tikrit)
+@alias Birta
+@alias Takrit
+@alias Tikrit
+@alias Takrīt
+@alias Tikrīt
+@alias Ṭrīhān
+@end entry
+
+
+@entry Talbis/Talmis [1] SN
+@sense SN Talbiš/Talmiš
+@pl_id 894103
+@pl_coord [42.039360,34.374445]
+@alias Talbiš/Talmiš
+@alias Thilutha
+@alias Talbis
+@alias Talmis
+@alias Telbis
+@alias Thilabous
+@end entry
+
+
+@entry Tang-i_Var [1] GN
+@sense GN Tang-i Var
+@pl_id 155838204
+@pl_coord [46.6234660,35.0123977]
+@alias Tang-i Var
+@alias uncertain (mod. Tang-i Var)
+@end entry
+
+
+@entry Tamessu [1] SN
+@sense SN Tamessu
+@pl_id 707628
+@pl_coord [33.238045,35.027492]
+@alias Tamessu
+@alias Tamassos
+@end entry
+
+
+@entry Tamna [1] SN
+@sense SN Tamna
+@pl_id 746825
+@pl_coord [34.963689,29.761686]
+@alias Timnāh
+@alias Tel Baṭaš
+@alias Tamna
+@end entry
+
+
+@entry Tarbiṣu [1] SN
+@sense SN Tarbiṣu
+@pl_id 30774368
+@pl_coord [43.0773110,36.4087884]
+@alias Tell Sherif Khan (Tarbisu)
+@alias Tarbisu (mod. Tell Sherif Khan)
+@alias Tarbiṣu
+@alias Tarbisu
+@alias Sherif Khan
+@end entry
+
+
+@entry Tarzi [1] SN
+@sense SN Tarzi
+@pl_id 648789
+@pl_coord [34.900117,36.920059]
+@alias Tarzi
+@alias Tarsus
+@end entry
+
+
+@entry Tayma [1] SN
+@sense SN Tayma
+@pl_id 814739
+@pl_coord [38.549681,27.622821]
+@alias Tayma (Tema)
+@alias Tema (mod. Tayma)
+@alias Thaima
+@alias Tema
+@end entry
+
+
+@entry Tell_Abta [1] SN
+@sense SN Tell Abta
+@pl_id 111343632
+@pl_coord [42.1622211, 36.2145244 ]
+@alias Dur-Bel-Harran-beli-uṣur 
+@alias T. ʿAbṭa
+@alias Tal Abta
+@alias uncertain (mod. Tell Abta)
+@alias Tell Abta
+@alias Dūr-Bēl-Ḫarrān-bēlī-uṣur
+@alias Dur-Bel-Harran-beli-uṣur
+@alias Tell Abta (Dūr-Bēl-Ḫarrān-bēlī-uṣur)
+@end entry
+
+
+@entry Tell_Agrab [1] SN
+@sense SN Tell Agrab
+@pl_id 171585551
+@pl_coord [44.87428506230,33.33918619560]
+@alias uncertain (mod. Tell Agrab)
+@alias Tell Agrab
+@end entry
+
+
+@entry Tell_al-Dhibaʾi [1] SN
+@sense SN Tell al-Dhibaʾi
+@pl_id 912952
+@pl_coord [45.516945999999997,31.693200000000001]
+@alias Tell al-Dhibaʾi
+@alias Tell al-Diba&apos;i
+@alias Tell al-Dibaʾi
+@alias uncertain (mod. Tell al-Diba'i)
+@alias Tell al-Diba'i
+@alias Tell al-Diba’i
+@end entry
+
+
+@entry Tell_al-Hawa [1] SN
+@sense SN Tell al-Hawa
+@pl_id 874728
+@pl_coord [42.301984,36.747619]
+@alias Tell al-Hawa
+@alias uncertain (mod. Tell al-Hawa)
+@end entry
+
+
+@entry Tell_al-Lahm [1] SN
+@sense SN Tell al-Lahm
+@pl_id 912953
+@pl_coord [46.3341009,30.8348232]
+@alias Tell al-Lahm
+@alias uncertain (mod. Tell al-Lahm)
+@alias uncertain (mod. Tell Lahm)
+@alias Kuar
+@alias Dur-Yakin
+@alias Duru
+@alias Durum
+@alias Kissik
+@end entry
+
+
+@entry Tell_al-Rimah [1] SN
+@sense SN Tell al-Rimah
+@pl_id 356369838
+@pl_coord [42.4500569089,36.2569908298]
+@alias Qatara
+@alias Qattara?
+@alias Karana?
+@alias Qatara (mod. Tell al Rimah)
+@alias Tell al Rimah (Qatara)
+@alias Tell al-Rimah
+@alias Qattara
+@alias Qaṭṭara
+@alias Zamahu
+@end entry
+
+
+@entry Tell_al-Ubaid [1] SN
+@sense SN Tell al-Ubaid
+@pl_id 339709658
+@pl_coord [46.0306280, 30.9723062]
+@alias Tell al-Ubaid
+@alias uncertain (mod. Tell al-Ubaid)
+@end entry
+
+
+@entry Tell_Baradan [1] SN
+@sense SN Tell Baradan
+@pl_id 894127
+@pl_coord [45.063962,34.238641]
+@alias Tell Baradan
+@alias uncertain (mod. Tell Baradan)
+@end entry
+
+
+@entry Tell_Bazmusian [1] SN
+@sense SN Tell Bazmusian
+@pl_id 532748467
+@pl_coord [44.924366, 36.161481]
+@alias uncertain (mod. Tell Bazmusian)
+@alias Tall Bāz Musiyān
+@alias Tell Bazmusian
+@end entry
+
+
+@entry Tell_Beydar [1] SN
+@sense SN Tell Beydar
+@pl_id 423885388
+@pl_coord [40.586944,36.737778]
+@alias Nabada
+@alias Tell Beydar
+@end entry
+
+@entry Tell_el-Hesi [1] SN
+@sense SN Tell el-Hesi
+@pl_id 720628458
+@pl_coord [34.7307012,31.5471245]
+@alias Tell el-Hesi
+@alias uncertain (mod. Tell el-Hesi)
+@alias Tel Hesi
+@end entry
+
+
+@entry Tell_Fekherye [1] SN
+@sense SN Tell Fekherye
+@pl_id 572048102
+@pl_coord [40.0709816, 36.8425922]
+@alias Tell Fekherye
+@alias Wašukanni
+@alias Sikāni (mod. Tell Fakhariyah)
+@alias Tell el-Fakhariya
+@alias T. Faḫārīya
+@alias Tell Fecheriye
+@alias Tell Fakhariyah (Sikāni)
+@alias Sikkan
+@alias Sikāni
+@alias Tell Fekheriye
+@alias Sikani
+@end entry
+
+
+@entry Tell_Hammam [1] SN
+@sense SN Tell Hammam
+@pl_id 912956
+@pl_coord [45.780292,31.642015]
+@alias Tell Hammam
+@alias uncertain (mod. Tell Hammam)
+@end entry
+
+
+@entry Tell_Hammam_et-Turkman [1] SN
+@sense SN Tell Hammam et-Turkman
+@pl_id 874741
+@pl_coord [39.026003000000003,36.521037999999997]
+@alias Tell Hammam et-Turkman
+@alias uncertain (mod. Tell Hammam et-Turkman)
+@end entry
+
+
+@entry Tell_Jidr [1] SN
+@sense SN Tell Jidr
+@pl_id 912957
+@pl_coord [45.725183,31.815617]
+@alias Tell Jidr
+@alias uncertain (mod. Tell Jidr)
+@alias Karkar
+@alias Dabrum
+@end entry
+
+
+@entry Tell_Leilan [1] SN
+@sense SN Tell Leilan
+@pl_id 223856813
+@pl_coord [41.505096,36.958877]
+@alias Leilan (Šubat-Enlil)
+@alias Šubat-Enlil (mod. Leilan)
+@alias Tell Leilan
+@alias Šubat-Enlil
+@alias Shekhna
+@end entry
+
+
+@entry Tell_Razzuq [1] SN
+@sense SN Tell_Razzuq
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Tell_Sabi_Abyad [1] SN
+@sense SN Tell Sabi Abyad
+@pl_id 293088343
+@pl_coord [39.09153,36.505714]
+@alias Tall Ṣabī Ābiyaḍ
+@alias uncertain (mod. Tell Sabi Abyad)
+@alias Tell Sabi Abyad
+@end entry
+
+
+@entry Tell_Uaqir [1] SN
+@sense SN Tell Uaqir
+@pl_id 678637578
+@pl_coord [44.66446944,32.7817696968]
+@alias Tell Uaqir
+@end entry
+
+
+@entry Tell_Zurghul [1] SN
+@sense SN Tell Zurghul
+@pl_id 912909
+@pl_coord [46.714373,31.403458]
+@alias Surġūl
+@alias Tell Zurghul
+@alias uncertain (mod. Tell Zurghul)
+@alias Ninâ
+@alias Tulūl az-Zurġūl Nineveh
+@alias T. Qūyunǧiq
+@alias Nina
+@alias Sirara
+@end entry
+
+
+@entry Terqa [1] SN
+@sense SN Terqa
+@pl_id 94158
+@pl_coord [40.569453000000003, 34.922224999999997]
+@end entry
+
+
+@entry Thebes_(Boeotia) [1] SN
+@sense SN Thebes (Boeotia)
+@pl_id 541138
+@pl_coord [23.317799, 38.319076]
+@alias Thebes (Boeotia)
+@end entry
+
+
+@entry Tigris_Tunnel [1] GN
+@sense GN Tigris Tunnel
+@pl_id 914118846
+@pl_coord [40.5475,38.529722]
+@alias Tigris Tunnel
+@alias uncertain (mod. Tigris Tunnel)
+@end entry
+
+
+@entry Til-Barsip [1] SN
+@sense SN Til-Barsib/Tarbusībi
+@pl_id 658410
+@pl_coord [38.1191944, 36.6749623]
+@alias Tarbusībi
+@alias Til-Barsib/Tarbusībi
+@alias T. Aḥmar
+@alias Til-Barsib
+@alias Til Barsip (mod. Tell Ahmar)
+@alias Tell Ahmar (Til Barsip)
+@alias Til Barsib
+@alias Til Barsip
+@alias Bersiba
+@alias Kār-Šulmānu-ašarēd
+@alias Mazuwati
+@alias Tall Ahmar
+@alias Tall Aḥmar
+@alias Tall al-Aḥmar
+@alias at-Tall al-Aḥmar
+@end entry
+
+
+@entry Til-Basere [1] SN
+@sense SN Til-Baserê
+@pl_id 404687440
+@pl_coord [37.516667,36.883333]
+@alias T. Bašir
+@alias Til-Baserê
+@end entry
+
+
+@entry Til-Turi [1] SN
+@sense SN Til-Tūri
+@pl_id 135544311
+@pl_coord [37.671,36.426]
+@alias ʿAǧāmī
+@alias T. Tūrin
+@alias Thiltauri
+@alias Til-Tūri
+@end entry
+
+
+@entry Toprakkale [1] SN
+@sense SN Toprakkale
+@pl_id 379202545
+@pl_coord [43.4038002,38.5205001]
+@alias Rusahinili Qilbanikai
+@alias Rusahinili Qilbanikai (mod. Toprakkale)
+@alias Toprakkale (Rusahinili Qilbanikai)
+@alias Toprakkale
+@end entry
+
+
+@entry Tuhana [1] SN
+@sense SN Tuḫana
+@pl_id 648801
+@pl_coord [34.560186,37.893751]
+@alias Tuḫana
+@alias Tuwan
+@alias Kemerhisar
+@alias Tyana
+@end entry
+
+
+@entry Tulul_al-Lak [1] SN
+@sense SN Tulul al-Lak
+@pl_id 741318296
+@pl_coord [43.263445,36.298266]
+@alias Qaryat al Lak
+@alias uncertain (mod. Tulul al-Lak)
+@alias Tulul al-Lak
+@end entry
+
+
+@entry Tulul_Khattab [1] SN
+@sense SN Tulul Khattab
+@pl_id 894167
+@pl_coord [44.51621,33.475577]
+@alias Tulul Khattab
+@end entry
+
+
+@entry Turlu_Höyük [1] SN
+@sense SN Turlu Höyük
+@pl_id 201144661
+@pl_coord [37.069119,37.758916]
+@alias uncertain (mod. Turlu Höyük)
+@alias Turlu Höyük
+@end entry
+
+
+@entry Tursana [1] SN
+@sense SN Tursāna
+@pl_id 894148
+@pl_coord [43.837,35.491667]
+@alias T. Māḥūz
+@alias Turšā(n)
+@alias Tell Mahuz
+@alias Tursāna
+@end entry
+
+
+@entry Turuspa [1] SN
+@sense SN Ṭurušpâ
+@pl_id 874771
+@pl_coord [43.380000,38.494166]
+@alias Ṭurušpâ
+@alias Van (Ṭušpa)
+@alias Tushpa
+@alias Ṭušpa (mod. Van and Van Kalesi)
+@alias Van
+@alias Van (Ṭušpa)
+@alias Van Kalesi
+@alias Thospia
+@alias Tušpa
+@alias Van/Van Kalesi (Ṭušpa)
+@end entry
+
+
+@entry Tuttul [1] SN
+@sense SN Tuttul
+@pl_id 582993625
+@pl_coord [39.0472662969,35.9580498787]
+@alias Tuttul (mod. Tell Bi'a)
+@alias Tell Biʾa (Tuttul)
+@alias Tell Bi'a (Tuttul)
+@alias Tell Bi’a (Tuttul)
+@end entry
+
+
+@entry Tutub [1] SN
+@sense SN Tutub
+@pl_id 490043590
+@pl_coord [44.55662,33.354728]
+@alias Khafaje (Tutub)
+@alias Tutub (mod. Khafaje)
+@alias Dūr Samsuiluna
+@alias Hafaǧi
+@alias Hafagi
+@alias Tall Ḫafāǧa
+@alias Tutub
+@alias Ḫafāǧa
+@end entry
+
+
+@entry Ṭabatum [1] SN
+@sense SN Ṭābēte
+@pl_id 874754
+@pl_coord [40.78481,36.364184]
+@alias Ṭābēte
+@alias Ṭabatum  (mod. Tell Taban)
+@alias T. Tābān
+@alias Tell Taban (Ṭabatum)
+@alias Thebeta (1)
+@alias Ṭābātu
+@alias Tell Taban
+@end entry
+
+
+@entry Ugarit [1] SN
+@sense SN Ugarit
+@pl_id 668295
+@pl_coord [35.780703,35.610222]
+@alias Ugarit (mod. Ras Shamra)
+@alias Ras Shamra (Ugarit)
+@end entry
+
+
+@entry Umm_al-Jir [1] SN
+@sense SN Umm al-Jir 
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Umm_el-Hafriyat [1] SN
+@sense SN Umm el-Hafriyat
+@pl_id 000002
+@pl_coord []
+@end entry
+
+
+@entry Umma [1] SN
+@sense SN Umma
+@pl_id 44626252
+@pl_coord [45.9000000,31.6500000]
+@alias Tell Jokha (Umma)
+@alias Umma (mod. Tell Jokha)
+@end entry
+
+
+@entry Upi [1] SN
+@sense SN Upî
+@pl_id 894056
+@pl_coord [44.702767,33.185612]
+@alias T. al-Muǧailāt
+@alias Upî
+@alias Ôpis
+@end entry
+
+
+@entry Ur [1] SN
+@sense SN Ūru
+@pl_id 912985
+@pl_coord [46.104748,30.961580]
+@alias T. al-Muqayyar
+@alias Tell Muqayyar (Ur)
+@alias Ur (mod. Tell Muqayyar)
+@alias Ūru
+@alias Ûr
+@alias Uri
+@alias Uru
+@end entry
+
+
+@entry Urakka [1] SN
+@sense SN Urakka
+@pl_id 404687441
+@pl_coord [40.979167,37.037167]
+@alias T. Mūzān
+@alias Urakka
+@alias Urkiš
+@end entry
+
+
+@entry Urkesh [1] SN
+@sense SN Urkesh
+@pl_id 260976011
+@pl_coord [40.9977581282,37.0578401483]
+@alias Tell Mozan (Urkesh)
+@alias Urkesh (mod. Tell Mozan)
+@end entry
+
+
+@entry Urrus [1] SN
+@sense SN Urrus
+@pl_id 658585
+@pl_coord [35.892814,36.411822]
+@alias Orossus
+@alias Arsuz
+@alias Uluçinar
+@alias Urrus
+@alias Rhosos
+@end entry
+
+
+@entry Ursalimmu [1] SN
+@sense SN Ursalimmu
+@pl_id 687928
+@pl_coord [35.234155,31.776679]
+@alias Yerūšalaim
+@alias Ursalimmu
+@alias Jerusalem
+@end entry
+
+
+@entry Uruk [1] SN
+@sense SN Uruk
+@pl_id 912986
+@pl_coord [45.638752,31.32446]
+@alias Warka (Uruk)
+@alias Uruk (mod. Warka)
+@alias Uruk
+@alias Warka
+@alias Erech
+@end entry
+
+
+@entry Usnu [1] SN
+@sense SN Usnû
+@pl_id 668332
+@pl_coord [35.927407,35.272666]
+@alias Usnû
+@alias Paltos
+@end entry
+
+
+@entry Usu [1] SN
+@sense SN Ušû
+@pl_id 678323
+@pl_coord [35.219993,33.23657]
+@alias T. Rašīdīya
+@alias Ušû
+@alias Palaityros
+@end entry
+
+
+@entry Wadi_Bastura_Tunnel [1] WN
+@sense WN Wadi Bastura Tunnel
+@pl_id 359792984
+@pl_coord [44.1158443,36.3516938]
+@alias Wadi Bastura Tunnel
+@alias uncertain (mod. Wadi Bastura Tunnel)
+@end entry
+
+
+@entry Wadi_es-Saba [1] SN
+@sense SN Wadi es-Saba
+@pl_id 528477899
+@pl_coord [36.341947,34.541323]
+@alias Wadi es-Saba
+@end entry
+
+
+@entry Yoncali [1] SN
+@sense SN Yoncali
+@pl_id 708232007
+@pl_coord [42.187778,39.128611]
+@alias uncertain (mod. Yoncali)
+@end entry
+
+
+@entry Zabala [1] SN
+@sense SN Zabala
+@pl_id 921099766
+@pl_coord [45.8777935,31.7434653]
+@alias Zabalu
+@alias Zabalam (mod. Ibzaikh)
+@alias Zabalum
+@alias Ibzaikh (Zabalam)
+@alias Zabalam
+@alias Tell Ibzeikh
+@end entry
+
+
+@entry Zalu-Ab [1] SN
+@sense SN Zalu Ab
+@pl_id 420860522
+@pl_coord [46.905556,33.026389]
+@alias uncertain (mod. Zalil Ab)
+@alias Zalū Āb
+@alias Zalil Ab
+@alias Zālūāb
+@end entry
+
+
+@entry Zamaha [1] SN
+@sense SN Zamaḫâ
+@pl_id 89966224
+@pl_coord [42.4535,36.259667]
+@alias Zamaḫâ
+@alias T. al-Rimāḥ
+@end entry
+
+
+@entry Zawiyeh [1] SN
+@sense SN Zawiyeh
+@pl_id 767486703
+@pl_coord [42.175323,34.292103]
+@alias uncertain (mod. Zawiyya)
+@alias Zawiyyā
+@alias Zāwiyah
+@alias Zawiyya
+@alias Zawiyah
+@end entry
+
+
+@entry Zitanu [1] SN
+@sense SN Zitānu
+@pl_id 132051959
+@pl_coord [37.018333,36.057167]
+@alias Zitānu
+@alias Zaytān
+@end entry
+
+
+@entry Zvartnots [1] SN
+@sense SN Zvartnots
+@pl_id 929634889
+@pl_coord [44.336575,40.159714]
+@alias uncertain (mod. Zvartnots)
+@end entry
+
+

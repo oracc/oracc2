@@ -9,7 +9,7 @@
 static void
 cx_roco_outer_dest(Roco *r, int i, FILE *fp)
 {
-  char *dest = expand(((Cx *)r->user)->project, (ccp)r->rows[i][0], "xmd");
+  char *dest = expand(((struct cx_xml_user *)r->user)->c->project, (ccp)r->rows[i][0], "xmd");
   fprintf(fp, "<?destfile %s?>\n", dest);
 }
 

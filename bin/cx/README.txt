@@ -30,3 +30,11 @@ TODO
 ====
 
 	designation-sort-codes and friends do no validation so keys not given will just sort weirdly
+
+	Pleiades support
+
+	JSON support (including geojson)
+
+	AVL support (is this really used via keydata?)
+
+

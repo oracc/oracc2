@@ -18,7 +18,8 @@ else
     ${bin}/cx-clean.sh 01bld/cat/*.tsv
     set 01bld/cat/*.tsv
     if [ "$*" != "01bld/cat/*.tsv" ]; then
-	${bin}/cx 01bld/cat/local-[pqx].tsv 01bld/cat/outer-[pqx].tsv
+	${bin}/cx 01bld/cat/local-[pqx].tsv 01bld/cat/outer-[pqx].tsv | \
+	    tee 01bld/cdlicat.xmd | ${bin}/xmlsplit
 	if [ -r 01bld/sortinfo.tab ]; then
 	    ${bin}/pgcsix 01bld/sortinfo.tab
 	fi

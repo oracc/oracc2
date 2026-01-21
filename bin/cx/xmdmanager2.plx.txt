@@ -530,6 +530,10 @@ foreach my $si (keys %sortable_types) {
     }
 }
 
+###
+### sortvals.xml is deprecated; does sortcodes.json still need to be produced?
+###
+
 # dump sort values information
 my $sortvals = "$results/sortvals.xml";
 #my $sortvals_ = "@@ORACC@@/texts/lib/sortvals-.xml";
@@ -673,6 +677,10 @@ print OUT $lhtml->toString(1);
 close(OUT);
 
 ########################################################
+
+###
+### XIFY_ID and XIFY_P handled in cx_sortinfo.c lify()
+###
 
 sub XIFY_ID {
     return $_[0] if $oodmode;
@@ -2275,6 +2283,9 @@ pleiades_init {
     }
 }
 
+###
+### NOT YET REIMPLEMENTED
+###
 sub
 xmd_geojson {
     my($f, $r, $p_id,$p_co) = @_;
@@ -2309,6 +2320,9 @@ xmd_geojson {
     }
 }
 
+###
+### NOT YET REIMPLEMENTED
+###
 sub
 xmd_json_begin {
 #    warn "xmd_json_begin\n" if $project eq 'rinap/rinap3';
@@ -2316,6 +2330,9 @@ xmd_json_begin {
     print J "{\n\t\"type\": \"catalogue\",\n\t\"project\": \"$project\",\n\t\"members\": {\n";
 }
 
+###
+### NOT YET REIMPLEMENTED
+###
 sub
 xmd_json_end {
 #    warn "xmd_json_end: entry\n" if $project eq 'rinap/rinap3';
@@ -2323,6 +2340,9 @@ xmd_json_end {
     close J;
 }
 
+###
+### NOT YET REIMPLEMENTED
+###
 sub
 xmd_json_item {
     my($f, $r, $p_id, $prov_index, $pl_id, $pl_co) = @_;
@@ -2365,6 +2385,9 @@ xmd_json_item {
     print J "\n\t\t}";
 }
 
+###
+### NOT YET REIMPLEMENTED
+###
 sub
 jsonify {
     my $tmp = shift;
@@ -2376,6 +2399,9 @@ jsonify {
     $tmp;
 }
 
+###
+### DEPRECATED FOR atf-data.tab
+###
 sub
 load_translist {
     if (open(T,'01bld/translist.txt')) {
@@ -2404,6 +2430,10 @@ load_translist {
     }
 }
 
+###
+### DEPRECATED FOR atf-data.tab; this could be an issue because it
+### means XMD no longer tracks translations--but does that matter?
+###
 sub
 dump_translist {
     my $id = shift;
