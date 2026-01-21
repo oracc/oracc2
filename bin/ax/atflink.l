@@ -11,7 +11,7 @@ extern const char *project;
 static void output(void);
 extern const char *curratffile;
 
-char *curr_pqx = NULL;
+char *curr_pqx = NULL, *reln = NULL;
 int type;
 #define LINK 1
 #define RELN 2
@@ -42,7 +42,7 @@ RELN	"<<"|">>"|"||"|"++"
 
 ^{LINK}			{ BEGIN(GRAB); type=LINK; }
 
-^{RELN}			{ BEGIN(GRAB); type=RELN; }
+^{RELN}			{ BEGIN(GRAB); reln=strdup(atfltext); type=RELN; }
 
 \n			{ }
 
@@ -55,19 +55,29 @@ RELN	"<<"|">>"|"||"|"++"
 static void
 output(void)
 {
-  char *p = atfltext; while (isspace(*p)) ++p;
+  char *p = normalize_ws(atfltext);
   if (type==RELN)
     {
-      p += 2;
-      char *q = p;
-      while (isspace(*q))
-        ++q;
-      if (q > p)
-        {
-          while (*q)
-            *p++ = *q++;
-          *p = '\0';
-        } 
+      char *pp = p;
+      while (!isspace(*pp))
+        ++pp;
+      *pp++ = '\t';
+      printf("%s:%s\t%s%s\n", project, curr_pqx, reln, p);
+      free(reln);
     }
-  printf("%s:%s\t%s\n", project, curr_pqx, p);
+  else
+    {
+      if (!strncmp(p, "def", 3))
+        {
+	  char *pdest = p+4;
+          while (!isspace(*pdest))
+            ++pdest;
+          *pdest++ = '\t';
+          char *pfrom=pdest+2;
+          while (*pfrom)
+            *pdest++ = *pfrom++;	  
+          *pdest = '\0';
+       }
+      printf("%s:%s\t%s\n", project, curr_pqx, p);
+    }
 }
