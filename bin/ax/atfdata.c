@@ -27,7 +27,7 @@ main(int argc, char **argv)
   mesg_print(stderr);
 }
 
-void help(void) { fprintf(stderr, "atfdatax: -c [cat_mode] -p [project]\n"); }
+void help(void) { fprintf(stderr, "atfdatax: [-xX] -c [cat_mode] -p [project]\n"); }
 int
 opts(int c, const char *arg)
 {
