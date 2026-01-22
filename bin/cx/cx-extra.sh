@@ -27,18 +27,24 @@ set 00lib/cat.d/*.xml
 if [ "$1" != "00lib/cat.d/*.xml" ]; then
     for x in $* ; do
 	t=`basename $x .xml`.tsv 
-	xml2tsv $t >01tmp/00cat/cat.d/$t
+	xml2tsv $x >01tmp/00cat/cat.d/$t
     done
 fi
 
 set 01tmp/00cat/cat.d/*.tsv
 if [ "$1" != "01tmp/00cat/cat.d/*.tsv" ]; then
     for t in $* ; do
-	id=`head -1 $t | grep ^id_`
-	if [ "${id}" = "" ]; then
-	    id=`head -1 $t | tr '\t' '\n' | grep ^id_ | tr -d '\n'`
-	    rocox -z $id $t >$t.z
-	    mv $t.z $t
+	if [ -s $t ]; then
+	    id=`head -1 $t | grep ^id_`
+	    if [ "${id}" = "" ]; then
+		id=`head -1 $t | tr '\t' '\n' | grep ^id_ | tr -d '\n'`
+		if [ "${id}" != "" ]; then
+		    rocox -z ${id} $t >$t.z
+		    mv $t.z $t
+		else
+		    >&2 echo $0: no ID found in first row of $t
+		fi
+	    fi
 	fi
     done
 fi

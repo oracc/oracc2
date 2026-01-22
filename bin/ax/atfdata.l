@@ -35,13 +35,13 @@ TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 
 <AMP>{PQX}		{ if (x_mode&&'X'==*atfdtext) { BEGIN(X); } else { BEGIN(DROP); } pqx(); }
 
-<ATR>[^ \t]+		{ BEGIN(DROP); tr(); }
+<ATR>[^ \t]+		{ BEGIN(DROP); if (!x_mode) tr(); }
 
 <X>.*/\n		{ BEGIN(0); x_term(); }
 
 <DROP>.*/\n		{ BEGIN(0); }
 
-<ITR>[-a-z0-9]+/:	{ BEGIN(DROP); tr(); }
+<ITR>[-a-z0-9]+/:	{ BEGIN(DROP); if (!x_mode) tr(); }
 
 ^{BOM3}"&"		{ BEGIN(AMP); }
 
@@ -53,15 +53,15 @@ TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 
 ^"#tr."  		{ BEGIN(ITR); }
 
-^"#tr:"  		{ atfdtext="en"; tr(); }
+^"#tr:"  		{ atfdtext="en"; if (!x_mode) tr(); }
 
-^"#lem:"  		{ BEGIN(DROP); lem(); }
+^"#lem:"  		{ BEGIN(DROP); if (!x_mode) lem(); }
 
 \n			{ }
 
 .			{ }
 
-<<EOF>>			{ pqx_term(); yyterminate(); }
+<<EOF>>			{ if (!x_mode) pqx_term(); yyterminate(); }
 
 %%
 

@@ -8,6 +8,7 @@
 # .tsv with ID in column 1.
 #
 ldir=01bld/cat/*.tsv
+set $ldir
 if [ "$1" != "${ldir}" ]; then
     # 1a) catalogues may not mix id_text and id_composite
     for c in $* ; do

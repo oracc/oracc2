@@ -81,6 +81,10 @@ fi
 # tmp => /tmp/$$
 # user => .
 if [ -x $bin/odo-$1.sh ]; then
+    # odo log doesn't need further action
+    if [ "$1" = "log" ]; then
+	exec $bin/odo-log.sh
+    fi
     # one-argument form, assume command
     echo "$0: one-argument call detected with $*."
     set_tmpdir
@@ -172,6 +176,9 @@ else
 	 $bin/odo-cvs-refresh.sh $user $*
 	 $bin/odo-dir-links.sh $project $V
 	 $bin/odo-config.sh $project $V
+	 if [ "${command}" = "config" ]; then
+	     exit $?
+	 fi
 	 if [ $? -eq 0 ]; then
 	     $bin/odo-update.sh $project $V
 	     if [ $? -eq 0 ]; then

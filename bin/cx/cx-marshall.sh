@@ -56,7 +56,7 @@ fi
 
 # ensure basic requirements are met
 ${bin}/cx-sanity.sh
-if [ $? -ne 0]; then
+if [ $? -ne 0 ]; then
     echo $0: failed catalague sanity checks. Stop.
     exit 1
 fi

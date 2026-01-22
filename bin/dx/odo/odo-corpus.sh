@@ -8,8 +8,12 @@ proj=$2
 odo-catalog.sh
 
 ## These two were in o2-cat but they belong in corpus really
-atflinks.plx >01bld/atflinks.tab
-linknorm.plx 01bld/atflinks.tab >01bld/normlinks.tab
+##
+## Update: looks like normlinks.tab is no longer used though the json
+## build does build a version of it.
+
+### atflinks.plx >01bld/atflinks.tab
+### linknorm.plx 01bld/atflinks.tab >01bld/normlinks.tab
 
 o2-atf.sh
 

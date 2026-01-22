@@ -4,7 +4,7 @@
 
 List *z_list;
 int fmp_mode, verbose, xml_mode;
-size_t nrec;
+size_t nrec = 0;
 int nfld;
 Roco *r;
 const char **fields;
@@ -13,7 +13,7 @@ static void
 x2t_set_mode(const char *fn)
 {
   const char *xns = xmlns(fn);
-  if (!strcmp(xns, "http://www.filemaker.com/fmpxmlresult"))
+  if (xns && !strcmp(xns, "http://www.filemaker.com/fmpxmlresult"))
     fmp_mode = 1;
   else
     xml_mode = 1;
@@ -50,6 +50,12 @@ main(int argc, char * const *argv)
   x2t_set_mode(argv[optind]);
 
   x2t_set_fields(argv[optind]);
+
+  if (!nfld)
+    {
+      fprintf(stderr, "xml2tsv: XML file %s has no child nodes so output is empty\n", argv[optind]);
+      exit(0);
+    }
 
   if (xml_mode) /* can't sort in fmp_mode because the XML data is ordered by METADATA/FIELD */
     {

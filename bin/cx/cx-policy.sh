@@ -6,6 +6,7 @@
 # Use project lists to figure out which cat data should come from
 # project and which can be drawn from other projects.
 #
+
 echo $0 $*
 bin="$ORACC/bin"
 lxd=01bld/lists
@@ -18,30 +19,30 @@ nocat=$lxd/no-cat-data.lst
 cx-fields.sh
 
 # no-cat-data.lst is a list of approved IDs that are not in project 00cat
-lx -q $approved - $incat >$nocat
+${bin}/lx -p `oraccopt` -q $approved - $incat >$nocat
 
 case $policy in
     auto|virtual)
-	cx-outer.sh $approved
+	${bin}/cx-outer.sh $approved
 	;;
     custom)
 	# in custom mode all data must be maintained by the project
 	if [ -s $nocat ]; then
-	    echo "$0: custom catalog must contain all items. Missing data for:"
+	    echo "$0: custom catalog should contain all items. Missing data for:"
 	    cat $nocat
-	    exit 1
+	    ${bin}/cx-outer.sh $nocat
 	fi
 	;;
     local)
 	if [ -s $nocat ]; then
 	    echo "$0: local catalog items to be supplied from fallback cat:"
 	    cat $nocat
-	    cx-outer.sh $nocat
+	    ${bin}/cx-outer.sh $nocat
 	fi
     ;;
     mixed)
 	if [ -s $nocat ]; then
-	    cx-outer.sh $nocat
+	    ${bin}/cx-outer.sh $nocat
 	fi
     ;;
     *)

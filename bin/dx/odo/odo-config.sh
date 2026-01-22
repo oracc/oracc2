@@ -10,6 +10,7 @@ echo $0 $*
 
 project=$1
 V=$2
+bin=${ORACC}/bin
 
 if [ ! -r 00lib/config.xml ]; then
     echo $0: must be run from a project directory
@@ -57,6 +58,6 @@ fi
 # the cx reimplementation of xmdmanager works in two phases; local
 # catalogue marshalling is done with the following script; the build
 # is done in odo-catalog.sh via cx.sh
-cx-marshall.sh
+${bin}/cx-marshall.sh
 
 exit 0

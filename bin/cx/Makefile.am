@@ -2,7 +2,8 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=cx
 
-bin_SCRIPTS=cx.sh cx-marshall.sh cx-xmd-ids.sh
+bin_SCRIPTS=cx.sh cx-marshall.sh cx-xmd-ids.sh cx-sanity.sh cx-local.sh cx-xcat.sh \
+	cx-extra.sh cx-all.sh cx-policy.sh cx-outer.sh cx-clean.sh cx-fields.sh
 
 scriptdata_DATA=*.xsl
 

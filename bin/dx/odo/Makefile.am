@@ -1,7 +1,7 @@
 include ../../../oracc-am-rules.txt
 
 bin_SCRIPTS=odo odo-cvs-checkout.sh odo-cvs-refresh.sh \
-	odo-dir-links.sh odo-list.sh \
+	odo-dir-links.sh odo-list.sh odo-log.sh \
 	odo-update.sh odo-config.sh odo-environment.sh \
 	odo-status.sh odo-check.sh odo-check-glo.sh odo-check-atf.sh \
 	odo-check-asl.sh odo-lexdata.sh odo-portal.sh \

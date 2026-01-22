@@ -11,8 +11,7 @@
 # For X-ids with no local-x.tsv, use the minimal field set ensured by
 # atfdatax.
 #
-
-$cdir=01bld/cat
+cdir=01bld/cat
 pmaster=`oraccopt . catalog-master-p`
 qmaster=`oraccopt . catalog-master-q`
 xmaster=`oraccopt . catalog-master-x`
@@ -26,7 +25,13 @@ elif [ -s ${fpmaster} ]; then
     head -1 ${fpmaster} >$cdir/fields.p
 else
     cdli=${ORACC}/cdli/01bld/cat/local-p.tsv
-    head -1 ${cdli} >$cdir/fields.p
+    if [ -p $cdli ]; then
+	head -1 ${cdli} >$cdir/fields.p
+    fi
+fi
+
+if [ ! -s $cdir/local-p.tsv ]; then
+    rm -f $cdir/local-p.tsv
 fi
 
 if [ -s $cdir/local-q.tsv ]; then
@@ -35,7 +40,13 @@ elif [ -s ${fqmaster} ]; then
     head -1 ${fqmaster} >$cdir/fields.q
 else
     qcat=${ORACC}/qcat/01bld/cat/local-q.tsv
-    head -1 ${qcat} >$cdir/fields.q    
+    if [ -r $qcat ]; then
+	head -1 ${qcat} >$cdir/fields.q
+    fi
+fi
+
+if [ ! -s $cdir/local-q.tsv ]; then
+    rm -f $cdir/local-q.tsv
 fi
 
 if [ -s $cdir/local-x.tsv ]; then
@@ -43,5 +54,9 @@ if [ -s $cdir/local-x.tsv ]; then
 elif [ -s ${fxmaster} ]; then
     head -1 ${fxmaster} >$cdir/fields.x
 else
-    atfdatax -X >$cdir/fields.x
+    if $(grep -q :X 02pub/atf-data.tab); then
+	atfdatax -X >$cdir/fields.x
+    elif $(grep -q '&X' 00atf/*.atf); then
+	atfdatax -X >$cdir/fields.x
+    fi
 fi

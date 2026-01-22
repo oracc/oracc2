@@ -15,6 +15,7 @@ const char *roco_format = NULL;
 int roco_swap_axes = 0;
 int roco_newline = 0;
 int roco_xmlify = 1;
+int roco_allow_empty = 0;
 
 Roco *
 roco_create(int rows, int cols)
@@ -45,6 +46,10 @@ roco_load(const char *file, int fieldsr1,
   Roco *r = calloc(1, sizeof(Roco));
   r->file = file;
   r->lines = loadfile_lines3((uccp)r->file, (size_t*)&r->nlines, &r->mem);
+
+  if (r->nlines == 0 && !roco_allow_empty)
+    return NULL;
+  
   r->rows = calloc(r->nlines, sizeof(unsigned char **));
   r->fields_from_row1 = fieldsr1;
 
@@ -85,6 +90,7 @@ roco_load(const char *file, int fieldsr1,
 	
       r->rows[i][col] = NULL;
     }
+  
   return r;
 }
 

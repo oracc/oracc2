@@ -21,7 +21,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
 
-  options(argc, argv, "c:C:eEfh::j:nor:R:stT:vx:Xz:?");
+  options(argc, argv, "c:C:eEfh::j:J:nor:R:stT:vx:Xz:?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
@@ -40,10 +40,15 @@ main(int argc, char *const *argv)
       for (j = list_first(j_list); j; j = list_next(j_list))
 	{
 	  Roco *jr = roco_load(j, fields_from_row1, NULL, NULL, NULL, NULL);
-	  jr->hdata = roco_hash_r(jr);
-	  jr->joiner = 1;
-	  roco_empty_row(jr);
-	  list_add(r_list, jr);
+	  if (jr)
+	    {
+	      jr->hdata = roco_hash_r(jr);
+	      jr->joiner = 1;
+	      roco_empty_row(jr);
+	      list_add(r_list, jr);
+	    }
+	  else
+	    fprintf(stderr, "rocox: ignoring empty joiner %s\n", j);
 	}
     }
   
