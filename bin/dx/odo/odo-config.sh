@@ -55,9 +55,12 @@ if [ -r $ORACC_BUILDS/$project-config.sh ]; then
     $ORACC_BUILDS/${project}-config.sh
 fi
 
-# the cx reimplementation of xmdmanager works in two phases; local
+# The cx reimplementation of xmdmanager works in two phases; local
 # catalogue marshalling is done with the following script; the build
 # is done in odo-catalog.sh via cx.sh
+#
+# This phase must precede lx-lists.sh
+#
 ${bin}/cx-marshall.sh
 
 exit 0

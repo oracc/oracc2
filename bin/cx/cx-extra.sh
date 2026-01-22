@@ -7,8 +7,6 @@
 # For 00lib/cat.d/*.xml convert 00lib/cat.d/*.xml to 01tmp/00cat/cat.d/*.tsv
 #
 echo $0 $*
-bin="$ORACC/bin"
-projtype=`oraccopt . type`
 
 rm -fr 01tmp/00cat/cat.d ; mkdir -p 01tmp/00cat/cat.d
 if [ ! -d 01tmp/00cat/cat.d ]; then

@@ -24,6 +24,7 @@ lxd=01bld/lists
 cat_ids="$lxd/cat-ids.lst"
 have_atf="$lxd/have-atf.lst"
 have_lem="$lxd/have-lem.lst"
+sans_lem="$lxd/sans-lem.lst"
 have_xtf="$lxd/have-xtf.lst"
 out_approved="$lxd/approved.lst"
 out_outlined="$lxd/outlined.lst"
@@ -32,7 +33,7 @@ out_outlined="$lxd/outlined.lst"
 $bin/lx-update-lists-bap.sh
 
 # build-outlined-policy
-$bin/lx-update-lists-bop.sh
+$bin/lx-update-lists-bop.sh $out_outlined
 
 cp $have_atf $lxd/withatf
 lx $out_outlined - $have_atf >$lxd/sansatf

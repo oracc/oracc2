@@ -4,10 +4,8 @@
 # 01tmp/00cat/local-[pqx].tsv.  From there they get augmented by
 # cx-extra.sh into 01bld/cat.
 #
-bin=${ORACC}/bin
-cdir=01tmp/00cat
-ldir=01tmp/00cat/l/*.tsv
-set $ldir
+set -x
+set $ldir/*
 if [ "$1" != "${ldir}" ]; then
     for c in $* ; do
 	if $(grep -q ^P $c); then
@@ -26,4 +24,3 @@ if [ "$1" != "${ldir}" ]; then
 	fi
     done
 fi
-${bin}/cx-xcat.sh

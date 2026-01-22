@@ -7,13 +7,13 @@
 #
 
 #set -x
-#echo $0 $*
+echo $0 $*
 
 lxd=01bld/lists
-if [ -d $lxd ]; then
-    rm -f $lxd/*
-else
-    mkdir -p $lxd
+rm -fr $lxd ; mkdir -p $lxd
+if [ ! -d $lxd ]; then
+    echo $0: unable to create directory $lxd. Stop.
+    exit 1
 fi
 
 project=`oraccopt`
@@ -22,11 +22,9 @@ if [ "$project" = "" ]; then
     exit 1
 fi
 
-# 00cat list
-#xmd-ids.plx >01tmp/xmdids.lst
-cx-xmd-ids.plx
-if [ -s 01tmp/xmdids.lst ]; then
-    lx -cus -p $project -o $lxd/00cat.lst 01tmp/xmdids.lst
+# 01tmp/00cat.lst created in cx-marshall.sh
+if [ -s 01tmp/cat.lst ]; then
+    lx -cus -p $project -o $lxd/00cat.lst 01tmp/cat.lst
 fi
 
 # 00lib lists

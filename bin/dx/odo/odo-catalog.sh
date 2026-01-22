@@ -1,10 +1,7 @@
 #!/bin/dash
 echo $0 $*
-# o2-lst.sh ## should be fully replaced by lx-lists.sh and cx(-marshall).sh
+# o2-lst.sh ## should be fully replaced by lx-lists.sh
 lx-lists.sh
-## translist.sh >01bld/translist.txt ## replaced by atf-data.tab
-## xmd-sessions.plx ## deprecated; probably not used any more
-## xmdmanager2.plx ## replaced by cx.sh
 cx.sh
 xsltproc ${ORACC}/lib/scripts/xmd-summaries.xsl 01bld/cdlicat.xmd >01bld/cat-sum.xml
 xsltproc ${ORACC}/lib/scripts/xmd-HTML-summaries.xsl 01bld/cat-sum.xml >01bld/cat-sum.html

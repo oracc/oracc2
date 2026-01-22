@@ -6,11 +6,16 @@
 # This script and those it calls should be a complete replacement for
 # o2-lst.sh
 
-#set -x
+set -x
 
 echo $0 $*
+ldir=01bld/lists
+rm -fr $ldir ; mkdir -p $ldir
+if [ ! -d $ldir ]; then
+    echo $0: unable to create $ldir. Stop.
+    exit 1
+fi
 
-mkdir -p 01bld/lists
 project=`oraccopt`
 lx-inputs.sh
 
@@ -35,8 +40,8 @@ fi
 
 #o2-lst.plx #2': cat-ids.lst is redundantly created in o2-lst.sh and
 #o2-lst.plx so we separate that out during cx implementation
-if [ -s $lxd/00cat.sh ]; then
-    cut -d@ -f1 $lxd/00cat.lst >$lxd/cat-ids.lst
+if [ -s $lxd/00cat.lst ]; then
+    cut -d@ -f1 $lxd/00cat.lst | cut -d: -f2 | grep '^[PQX]' >$lxd/cat-ids.lst
 fi
 
 #o2-lst.plx #3: proxy_lists

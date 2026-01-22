@@ -11,14 +11,26 @@
 # Then rotate all .tsv to ensure ID is at start and split into
 # separate files.
 #
+#set -x
+set -a
 echo $0 $*
-bin="$ORACC/bin"
 projtype=`oraccopt . type`
 
+bin="$ORACC/bin"
+bdir=01bld/cat
+cdir=01tmp/00cat
 ldir=01tmp/00cat/l
 
 # clean out old cat data
-rm -fr $ldir ; mkdir -p $ldir
+rm -fr $$bdir $cdir $ldir ; mkdir -p $bdir $cdir $ldir
+if [ ! -d $bdir ]; then
+    echo $0: failed to make $bdir. Stop.
+    exit 1
+fi
+if [ ! -d $cdir ]; then
+    echo $0: failed to make cdir. Stop.
+    exit 1
+fi
 if [ ! -d $ldir ]; then
     echo $0: failed to make $ldir. Stop.
     exit 1
@@ -69,6 +81,12 @@ ${bin}/cx-extra.sh
 
 # join local and cat.d
 ${bin}/cx-all.sh
+
+# create 01bld/00cat.lst
+${bin}/cx-00cat-lst.sh
+
+# must do this after creating 00cat.lst
+${bin}/cx-xcat.sh
 
 # Now 01bld/cat contains local-[pqx].tsv based on catalogue data
 # actually in the project

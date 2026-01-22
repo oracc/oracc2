@@ -2,6 +2,7 @@
 #
 # Implement o2-lst.plx update_lists() build-outlined-policy
 #
+
 #set -x
 echo $0 $project
 opt=`oraccopt . build-outlined-policy`

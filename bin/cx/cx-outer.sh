@@ -3,77 +3,104 @@
 # Take a list of IDs and group them by metadata project and
 # PQX-type. For each group, use rocox -ET to rewrite them according to
 # the template
+#
+set -x
 echo $0 $*
 tdir=01tmp/00cat/t
 rm -fr ${tdir} ; mkdir -p ${tdir}
 list=$1
 
+if [ "$list" = "" ]; then
+    echo $0: must give list on command line. Stop.
+    exit 1
+fi
+
+function outer {
+    pqx=$1
+    shift
+    PQX=`/bin/echo -n $pqx | tr pqx PQX`
+    echo pqx=$pqx PQX=$PQX rest=$*
+    for f in $* ; do
+	if [ -s $f ]; then
+	    F=$f
+	    break;
+	fi
+    done
+    if [ "$F" != "" ]; then
+	if [ "${list}" != "01bld/lists/proxy-cat.lst" ]; then
+	    omaster=`oraccopt catalog-master-${pqx}`
+	    if [ "${omaster}" = "" ]; then
+		if [ "${pqx}" = "p" ]; then
+		    ocat="cdli"
+		elif [ "${pqx}" = "q" ]; then
+		    ocat="qcat"
+		else
+		    ocat="auto"
+		fiy
+	    else
+		ocat=${omaster}
+	    fi
+	fi
+	ltsv=01bld/cat/local-${pxq}.tsv
+	otsv=01bld/cat/outer-${pxq}.tsv
+	# set $otsv line one to a reasonable output template
+	if [ -s $ltsv ]; then
+	    head -1 $ltsv >$otsv
+	else
+	    if [ "${ocat}" = "auto" ]; then
+		head -1 01tmp/00cat/auto-x.tsv >$otsv
+	    elif [ "${ocat}" != "" ]; then
+		head -1 ${ORACC}/$qcat/01bld/cat/local-${pqx}.tsv >$otsv
+	    else
+		ph=`basename $F .${PQX}`
+		p=`/bin/echo -n $ph | tr - /`
+		head -1 ${ORACC}/$p/01bld/cat/local-${pqx}.tsv >$otsv
+	    fi
+	fi
+	for f in $*; do
+	    if [ -s $f ]; then
+		if [ "${ocat}" = "auto" ]; then
+		    l=01tmp/00cat/auto-x.tsv
+		elif [ "${ocat}" != "" ]; then
+		    l=${ORACC}/$qcat/01bld/cat/local-${pqx}.tsv
+		else
+		    ph=`basename $f .${PQX}`
+		    p=`/bin/echo -n $ph | tr - /`
+		    l=${ORACC}/$p/01bld/cat/local-${pqx}.tsv
+		fi
+		if [ -s $l ]; then
+		    t=${tdir}/${p}-${pqx}.tsv
+		    head -1 $l >$t
+		    grep ^${PQX} $l >>$t
+		    T=`head -1 $otsv | tr '\t' +`
+		    rocox -E -T$T $t >>$otsv
+		    rm -f $t
+		fi
+	    fi
+	done	 
+    fi
+}
+
 # split the input list by project
-proj=`cut -d@ ${list} -f2 | sort -1 | tr '\n' ' '`
+proj=`cut -d@ ${list} -f2 | sort -u | tr '\n' ' '`
 for p in $proj; do
+    ph=`/bin/echo -n $p | tr / -`
     for pqx in P Q X; do
-	grep @$p ${list} | grep ^$pqx >${tdir}/$p.$pqx
+	grep @$p ${list} | grep :$pqx >${tdir}/$ph.$pqx
     done
 done
 
-# set the templates
-lp=01bld/cat/local-p.tsv
-lq=01bld/cat/local-q.tsv
-lx=01bld/cat/local-x.tsv
-op=01bld/cat/outer-p.tsv
-oq=01bld/cat/outer-q.tsv
-ox=01bld/cat/outer-x.tsv
-
-# initialize the outputs
-if [ ! -s $op ]; then
-    head -1 $lp >$op
-fi
-if [ ! -s $oq ]; then
-    head -1 $lq >$oq
-fi
-if [ ! -s $ox ]; then
-    head -1 $lx >$ox
+set ${tdir}/*.P
+if [ "$1" != "${tdir}/*.P" ]; then
+    outer p $*
 fi
 
-pt=`head -1 $lp | tr '\t' +`
-qt=`head -1 $lq | tr '\t' +`
-xt=`head -1 $lx | tr '\t' +`
+set ${tdir}/*.Q
+if [ "$1" != "${tdir}/*.Q" ]; then
+    outer q $*
+fi
 
-# extract the P for each project and expand the tsv according to the template
-for f in ${tdir}/*.P ; do
-    if [ -s $f ]; then
-	p=`basename $f` .P
-	l=${ORACC}/$p/01bld/cat/local-p.tsv
-	t=${tdir}/${p}-p.tsv
-	head -1 $l >$t
-	grep $l >>$t
-	rocox -E -T$pt $t >>$op
-	rm -f $t
-    fi
-done
-
-# extract the Q for each project and expand the tsv according to the template
-for f in ${tdir}/*.Q ; do
-    if [ -s $f ]; then
-	p=`basename $f` .Q
-	l=${ORACC}/$p/01bld/cat/local-q.tsv
-	t=${tdir}/${p}-q.tsv
-	head -1 $l >$t
-	grep $l >>$t
-	rocox -E -T$pt $t >>$oq
-	rm -f $t
-    fi
-done
-
-# extract the X for each project and expand the tsv according to the template
-for f in ${tdir}/*.X ; do
-    if [ -s $f ]; then
-	p=`basename $f` .X
-	l=${ORACC}/$p/01bld/cat/local-x.tsv
-	t=${tdir}/${p}-x.tsv
-	head -1 $l >$t
-	grep $l >>$t
-	rocox -E -T$xt $t >>$ox
-	rm -f $t
-    fi
-done
+set ${tdir}/*.X
+if [ "$1" != "${tdir}/*.X" ]; then
+    outer x $*
+fi
