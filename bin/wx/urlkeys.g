@@ -10,7 +10,7 @@ struct urlkeytab;
 %%
 adhoc, "what"
 block, "form"
-Wblock, "score"
+Wblock, "block"
 corpus, "what"
 cuneify, "form"
 Wcuneify, "text"
