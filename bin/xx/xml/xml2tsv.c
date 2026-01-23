@@ -69,7 +69,7 @@ main(int argc, char * const *argv)
 	}
     }
   
-  r = roco_create(nrec+2, nfld+1);
+  r = roco_create(nrec+1, nfld+1);
   r->maxcols = nfld;
   roco_fields_row(r, fields);
   roco_field_indexes(r);
@@ -85,14 +85,22 @@ main(int argc, char * const *argv)
 
   x2t_load_data(argv[optind], r);
   r->rows[nrec+1] = NULL;
-  if (!hash_find(r->fields, (uccp)"id_text")
-      && !hash_find(r->fields, (uccp)"id_composite")
-      && hash_find(r->fields, (uccp)"id_attr"))
+  const char *init_id = NULL;
+  if (hash_find(r->fields, (uccp)"id_text"))
+    init_id = "id_text";
+  else if (hash_find(r->fields, (uccp)"id_composite"))
+    init_id = "id_composite";
+  else if (hash_find(r->fields, (uccp)"id_attr"))
+    init_id = "id_attr";
+
+  if (init_id)
     {
       z_list = list_create(LIST_SINGLE);
-      list_add(z_list, (void*)"id_attr");
+      list_add(z_list, (void*)init_id);
       r->fields_from_row1 = 1;
       roco_format = roco_z_format(z_list, r);
+      if (verbose)
+	fprintf(stderr, "xml2tsv: roco_format=`%s'", roco_format);
     }
   else
     roco_newline = 1;

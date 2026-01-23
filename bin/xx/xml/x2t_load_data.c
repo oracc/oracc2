@@ -9,6 +9,11 @@ static Pool *hp, *p;
 void
 load_fmp_sH(void *userData, const char *name, const char **atts)
 {
+  if (!strcmp(name, "ROW"))
+    {
+      coln = 0;
+      ++rown;
+    }
 }
 
 void
@@ -18,14 +23,14 @@ load_fmp_eH(void *userData, const char *name)
     {
       r->rows[rown][coln] = hpool_copy((uccp)charData_retrieve(), hp);
       char *t = (char*)r->rows[rown][coln];
-      while ((t = strchr(t, '\t')))
-	*t++ = ' ';
+      while (*t)
+	{
+	  if ('\t' == *t || '\r' == *t || '\n' == *t)
+	    *t++ = ' ';
+	  else
+	    ++t;
+	}
       ++coln;
-    }
-  else if (!strcmp(name, "ROW"))
-    {
-      coln = 0;
-      ++rown;
     }
   else if (!strcmp(name, "METADATA"))
     (void)charData_retrieve();

@@ -4,6 +4,7 @@
 
 static int depth;
 static Hash *hfields;
+static List *lfields;
 
 void
 fmp_sH(void *userData, const char *name, const char **atts)
@@ -11,7 +12,7 @@ fmp_sH(void *userData, const char *name, const char **atts)
   if (!strcmp(name, "FIELD"))
     {
       const char *name = findAttr(atts, "NAME");
-      hash_add(hfields, (uccp)strdup(name), "");
+      list_add(lfields, strdup(name));
     }
   else if (!strcmp(name, "ROW"))
     ++nrec;
@@ -63,9 +64,15 @@ x2t_set_fields(const char *fn)
   char const *fnlist[2];
   fnlist[0] = fn;
   fnlist[1] = NULL;
-  hfields = hash_create(128);
+  if (fmp_mode)
+    lfields = list_create(LIST_SINGLE);
+  else
+    hfields = hash_create(128);
   runexpat(i_list, fnlist, fmp_mode ? fmp_sH : xml_sH, fmp_mode ? fmp_eH : xml_eH);
-  fields = hash_keys2(hfields, &nfld);
+  if (fmp_mode)
+    fields = (const char**)list2array_c(lfields, &nfld);
+  else
+    fields = hash_keys2(hfields, &nfld);
   if (verbose)
     {
       int i;
