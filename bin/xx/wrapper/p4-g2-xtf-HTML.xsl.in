@@ -1198,7 +1198,7 @@
 	      <xsl:attribute name="data-bloc"><xsl:value-of select="@score-block-ref"/></xsl:attribute>
 	    </xsl:if>
 	    <xsl:choose>
-	      <xsl:when test="@label2">
+	      <xsl:when test="@label2x"> <!-- should main display ever use label2 ? -->
 		<span class="label-two">
 		  <xsl:value-of select="@label2"/>
 		</span>
