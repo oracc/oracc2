@@ -309,7 +309,7 @@ roco_write(FILE *fp, Roco *r)
   if (roco_colorder)
     roco_format = roco_co_fo();
   
-  for (i = 0; i < r->nlines; ++i)
+  for (i = r->row1_fields_omit; i < r->nlines; ++i)
     {
       if (roco_format && (i || !r->row1_literal))
 	roco_row_format(fp, (const unsigned char **)r->rows[i]);

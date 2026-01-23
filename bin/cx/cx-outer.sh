@@ -4,7 +4,7 @@
 # PQX-type. For each group, use rocox -ET to rewrite them according to
 # the template
 #
-set -x
+#set -x
 echo $0 $*
 tdir=01tmp/00cat/t
 rm -fr ${tdir} ; mkdir -p ${tdir}
@@ -28,7 +28,7 @@ function outer {
     done
     if [ "$F" != "" ]; then
 	if [ "${list}" != "01bld/lists/proxy-cat.lst" ]; then
-	    omaster=`oraccopt catalog-master-${pqx}`
+	    omaster=`oraccopt . catalog-master-${pqx}`
 	    if [ "${omaster}" = "" ]; then
 		if [ "${pqx}" = "p" ]; then
 		    ocat="cdli"
@@ -36,13 +36,13 @@ function outer {
 		    ocat="qcat"
 		else
 		    ocat="auto"
-		fiy
+		fi
 	    else
 		ocat=${omaster}
 	    fi
 	fi
-	ltsv=01bld/cat/local-${pxq}.tsv
-	otsv=01bld/cat/outer-${pxq}.tsv
+	ltsv=01bld/cat/local-${pqx}.tsv
+	otsv=01bld/cat/outer-${pqx}.tsv
 	# set $otsv line one to a reasonable output template
 	if [ -s $ltsv ]; then
 	    head -1 $ltsv >$otsv
@@ -73,11 +73,11 @@ function outer {
 		    head -1 $l >$t
 		    grep ^${PQX} $l >>$t
 		    T=`head -1 $otsv | tr '\t' +`
-		    rocox -E -T$T $t >>$otsv
+		    rocox -EF -T$T $t >>$otsv
 		    rm -f $t
 		fi
 	    fi
-	done	 
+	done
     fi
 }
 

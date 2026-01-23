@@ -3,7 +3,7 @@
 #include <roco.h>
 #include <list.h>
 
-int fields_from_row1 = 0;
+int fields_from_row1 = 0, fields_no_output = 0;
 int suppress_xmlify = 0;
 int template_add_empty = 0;
 int trtd_output = 0;
@@ -21,7 +21,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
 
-  options(argc, argv, "c:C:eEfh::j:J:nor:R:stT:vx:Xz:?");
+  options(argc, argv, "c:C:eEfFh::j:J:nor:R:stT:vx:Xz:?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
@@ -53,11 +53,11 @@ main(int argc, char *const *argv)
     }
   
   r = roco_load(argv[optind] ? argv[optind] : "-", fields_from_row1, xmltag, rowtag, celtag, class);
-
   if (template_row)
     {
       roco_newline = 1;
       r->fields_from_row1 = 1;
+      r->row1_fields_omit = 1;
       char *t = strdup(template_row), *e = t;
       while (*e++)
 	if (e[-1] == '+')
@@ -71,7 +71,8 @@ main(int argc, char *const *argv)
       roco_write(stdout, r);
       return 0;
     }
-
+  else if (r->fields_from_row1)
+    r->row1_fields_omit = fields_no_output;
 
   if (roco_swap_axes)
     r = roco_swap(s=r);
@@ -112,6 +113,9 @@ opts(int opt, const char *arg)
       break;
     case 'f':
       fields_from_row1 = 1;
+      break;
+    case 'F':
+      fields_no_output = 1;
       break;
     case 'h':
       roco_html_ns = 1;

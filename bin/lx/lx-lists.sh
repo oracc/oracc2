@@ -6,7 +6,7 @@
 # This script and those it calls should be a complete replacement for
 # o2-lst.sh
 
-set -x
+#set -x
 
 echo $0 $*
 ldir=01bld/lists
