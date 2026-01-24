@@ -1,28 +1,18 @@
-#include <stdio.h>
-#include <unistd.h>
 #include <oraccsys.h>
 #include <c2types.h>
 #include <iome.h>
-#include "pool.h"
-#include "tree.h"
-#if 0
-#include "options.h"
-#include "runexpat.h"
-#include "xmlutil.h"
-#include "atf.h"
-#endif
+#include <pool.h>
+#include <tree.h>
 #include <lng.h>
 #include <gdl.h>
 #include <cbd.h>
 #include <cbdyacc.h>
 #include "gx.h"
 
-#if 0
-#include "rnvif.h"
-#include "../lib/rnv/rnl.h"
-#include "rnvtgi.h"
-#include "rnvxml.h"
-#endif
+static int major_version = 1, minor_version = 0;
+static const char *project = NULL;
+static const char *prog = "gx";
+static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
 
 extern int cbd_flex_debug;
 
@@ -95,7 +85,7 @@ gx_init(void)
   cbd_pool = pool_init();
   tree_init();
   mesg_init();
-  gvl_setup("ogsl","ogsl","020");
+  gvl_setup("osl","osl","020");
   gdlparse_init();
   lng_init();
   curr_lang_ctxt = global_lang = lang_switch(NULL,"sux",NULL,NULL,0);
@@ -121,7 +111,7 @@ gx_run()
       if (!keepgoing)
 	{
 	  mesg_print(stderr);
-	  fprintf(stderr, "cx: exiting after syntax errors\n");
+	  fprintf(stderr, "gx: exiting after syntax errors\n");
 	  exit(1);
 	}
     }
@@ -229,13 +219,16 @@ io_run(void)
       curr_cbd = cbd_bld_cbd();
       phase = "syn";
       parse_return = cbdparse();
+      cbd_l_term();
+
       /*rnvtgi_term();*/
+
       if (parse_return || parser_status)
 	{
 	  mesg_print(stderr);
 	  if (!keepgoing)
 	    {
-	      fprintf(stderr, "cx: exiting after syntax errors\n");
+	      fprintf(stderr, "gx: exiting after syntax errors\n");
 	      exit(1);
 	    }
 	}
@@ -243,7 +236,6 @@ io_run(void)
       if (check)
 	validator(curr_cbd);
 
-      cbd_l_term();
       break;
 #if 0
     case iome_tg2:
@@ -260,7 +252,7 @@ io_run(void)
 	  mesg_print(stderr);
 	  if (!keepgoing)
 	    {
-	      fprintf(stderr, "cx: exiting after syntax errors\n");
+	      fprintf(stderr, "gx: exiting after syntax errors\n");
 	      exit(1);
 	    }
 	}
@@ -274,7 +266,7 @@ io_run(void)
     case iome_x22:
 #endif
     default:
-      fprintf(stderr, "cx: %s input not supported\n", input_method->name);
+      fprintf(stderr, "gx: %s input not supported\n", input_method->name);
       exit(1);
       break;
     }
@@ -287,7 +279,7 @@ io_run(void)
 	{
 	case iome_cbd:
 	  /*identity(curr_cbd);*/
-	  fprintf(stderr, "cx: tg1 output request should use tg2\n");
+	  fprintf(stderr, "gx: tg1 output request should use tg2\n");
 	  exit(1);
 	  break;
 #if 0
@@ -295,7 +287,7 @@ io_run(void)
 	  o_tg2(curr_cbd);
 	  break;
 	case iome_xc1:
-	  fprintf(stderr, "cx: xg1 output request should use xc2\n");
+	  fprintf(stderr, "gx: xg1 output request should use xc2\n");
 	  exit(1);
 	case iome_xc2:
 	  rnvxml_init_err();
@@ -309,7 +301,7 @@ io_run(void)
 	case iome_x21:
 	case iome_x22:
 	default:
-	  fprintf(stderr, "cx: %s output not supported\n", output_method->name);
+	  fprintf(stderr, "gx: %s output not supported\n", output_method->name);
 	  break;
 	}
     }
@@ -320,13 +312,13 @@ main(int argc, char **argv)
 {
   extern void cbdset_debug(int);
   extern int gdl_flex_debug, gdldebug;
-  
+  program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:i:o:ckrtTv");
+  options(argc,argv,"A:I:O:i:o:chkp:rtTv");
 
   if (status)
     {
-      fprintf(stderr, "cx: quitting after errors in option processing\n");
+      fprintf(stderr, "gx: quitting after errors in option processing\n");
       exit(1);
     }
 
@@ -347,10 +339,6 @@ main(int argc, char **argv)
   return 1;
 }
 
-int major_version = 1; int minor_version = 0;
-const char *project = NULL;
-const char *prog = "cx";
-const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
 void help(void)
 {
   fprintf(stderr, "OPTIONS:\n\n");
@@ -364,6 +352,7 @@ void help(void)
   fprintf(stderr, "\n\t-A [ACTIONS]\n\n");
   fprintf(stderr, "ACTIONS:\n\n");
   fprintf(stderr, "\t(none yet)\n\n");
+  exit(0);
 }
 int opts(int och, const char *oarg)
 {
@@ -372,14 +361,14 @@ int opts(int och, const char *oarg)
     case 'I':
       if (!(input_method = iomethod(optarg, strlen(optarg))))
 	{
-	  fprintf(stderr, "cx: unknown input method: %s\n", optarg);
+	  fprintf(stderr, "gx: unknown input method: %s\n", optarg);
 	  status = 1;
 	}
       break;
     case 'O':
       if (!(output_method = iomethod(optarg, strlen(optarg))))
 	{
-	  fprintf(stderr, "cx: unknown output method: %s\n", optarg);
+	  fprintf(stderr, "gx: unknown output method: %s\n", optarg);
 	  status = 1;
 	}	
       break;
@@ -400,6 +389,9 @@ int opts(int och, const char *oarg)
       break;
     case 'g':
       break;
+    case 'h':
+      usage();
+      break;
     case 'i':
       input_file = optarg;
       break;
@@ -414,6 +406,7 @@ int opts(int och, const char *oarg)
       output_file = optarg;
       break;
     case 'p':
+      project = optarg;
       break;
     case 'r':
       rnvtrace = 1;
@@ -457,13 +450,13 @@ cbd_rnc_init(void)
       sprintf(fn, "%s.rnc", output_method->name);
       if (!xaccess(fn, R_OK, 0))
 	{
-	  fprintf(stderr, "cx: found output method schema %s\n", fn);
+	  fprintf(stderr, "gx: found output method schema %s\n", fn);
 	  rnc_start = rnl_fn(fn);
 	  status = !rnc_start;
 	}
       else
 	{
-	  fprintf(stderr, "cx: no such output method schema %s\n", fn);
+	  fprintf(stderr, "gx: no such output method schema %s\n", fn);
 	}
     }
 }
