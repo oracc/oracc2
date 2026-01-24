@@ -38,16 +38,16 @@ o_jox_aliases(struct entry *e)
 {
   List_node *lp;
   xo_loc = &((struct alias *)e->aliases->first->data)->l;
-  rnvxml_ea("aliases", NULL);
+  joxer_ea(xo_loc,"aliases", NULL);
   for (lp = e->aliases->first; lp; lp = lp->next)
     {
       struct alias *ap = lp->data;
       xo_loc = &ap->l;
-      rnvxml_ea("alias", NULL);
-      rnvxml_ch((const char*)ap->cgp->tight);
-      rnvxml_ee("alias");
+      joxer_ea(xo_loc,"alias", NULL);
+      joxer_ch(xo_loc,(const char*)ap->cgp->tight);
+      joxer_ee(xo_loc,"alias");
     }
-  rnvxml_ee("aliases");
+  joxer_ee(xo_loc,"aliases");
 }
 
 static void
@@ -55,7 +55,7 @@ o_jox_allow(struct entry *e)
 {
   List_node *lp;
   xo_loc = &((struct alias *)e->allows->first->data)->l;
-  rnvxml_ea("allows", NULL);
+  joxer_ea(xo_loc,"allows", NULL);
   for (lp = e->allows->first; lp; lp = lp->next)
     {
       struct allow *ap = lp->data;
@@ -64,9 +64,9 @@ o_jox_allow(struct entry *e)
 					    "lhs", ap->lhs,
 					    "rhs", ap->rhs,
 					    (ccp)NULL);
-      rnvxml_ec("allow",ratts);
+      joxer_ec(xo_loc,"allow",ratts);
     }
-  rnvxml_ee("allows");
+  joxer_ee(xo_loc,"allows");
 }
 
 static void
@@ -75,7 +75,7 @@ o_jox_bases(struct entry *e)
   List_node *outer;
 
   xo_loc = &((struct loctok *)((List*)(e->bases->first->data))->first->data)->l;
-  rnvxml_ea("bases", NULL);
+  joxer_ea(xo_loc,"bases", NULL);
   for (outer = e->bases->first; outer; outer = outer->next)
     {
       List *bp = ((List *)(outer->data));
@@ -84,25 +84,25 @@ o_jox_bases(struct entry *e)
 
       blt = inner->data;
       xo_loc = &((struct loctok *)inner->data)->l;
-      rnvxml_ea("base", NULL);
+      joxer_ea(xo_loc,"base", NULL);
 
       if (!blt->lang)
 	blt->lang = e->lang;
-      rnvxml_ea("pri", rnvval_aa("av", "xml:lang", blt->lang, (ccp)NULL));
-      rnvxml_ch((const char *)blt->tok);
-      rnvxml_ee("pri");
+      joxer_ea(xo_loc,"pri", rnvval_aa("av", "xml:lang", blt->lang, (ccp)NULL));
+      joxer_ch(xo_loc,(const char *)blt->tok);
+      joxer_ee(xo_loc,"pri");
       if (list_len(bp) > 1)
 	{
 	  for (inner = inner->next; inner; inner = inner->next)
 	    {
-	      rnvxml_ea("alt", NULL);
-	      rnvxml_ch((const char *)((struct loctok *)inner->data)->tok);
-	      rnvxml_ee("alt");
+	      joxer_ea(xo_loc,"alt", NULL);
+	      joxer_ch(xo_loc,(const char *)((struct loctok *)inner->data)->tok);
+	      joxer_ee(xo_loc,"alt");
 	    }
 	}
-      rnvxml_ee("base");
+      joxer_ee(xo_loc,"base");
     }
-  rnvxml_ee("bases");
+  joxer_ee(xo_loc,"bases");
 }
 
 static void
@@ -113,7 +113,7 @@ o_jox_cbd(struct cbd *c)
 					"xml:lang", c->lang,
 					"name", c->name,
 					(ccp)NULL);
-  jox_xml_ea("cbd", ratts);
+  joxer_ea(xo_loc,"cbd", ratts);
 }
 
 static void
@@ -163,7 +163,7 @@ o_jox_entry(struct entry *e)
 	  break;
 	}
     }
-  rnvxml_ea("entry", NULL);
+  joxer_ea(xo_loc,"entry", NULL);
   if (e->disc)
     f1(/* @disc */ e->disc);
 }
@@ -172,8 +172,7 @@ static void
 o_jox_end_cbd(struct cbd *c)
 {
 #if 1
-  rnvxml_ee("cbd");
-  rnvxml_term();
+  joxer_ee(xo_loc,"cbd");
 #else
   fprintf(f_jox, "</cbd>");
 #endif
@@ -182,7 +181,7 @@ o_jox_end_cbd(struct cbd *c)
 static void
 o_jox_end_entry(struct entry *e)
 {
-  rnvxml_ee("entry");
+  joxer_ee(xo_loc,"entry");
 }
 
 static void
