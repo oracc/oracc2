@@ -25,7 +25,6 @@ void
 o_jox(struct cbd*cbd)
 {
   iterator_fnc *fncs = ifnc_init();
-  f_jox = stdout;
   iterator(cbd,fncs);
   free(fncs);
 }

@@ -19,7 +19,7 @@ extern const char *file;
 extern FILE *f_xml;
 
 extern void o_tg2(struct cbd*c);
-extern void o_xc2(struct cbd*c);
+extern void o_jox(struct cbd*c);
 extern void validator(struct cbd*c);
 
 extern void common_init(void);

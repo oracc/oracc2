@@ -5,8 +5,13 @@
 #include <tree.h>
 #include <lng.h>
 #include <gdl.h>
+#include <xnn.h>
 #include <cbd.h>
+#include <ns-cbd.h>
 #include <cbdyacc.h>
+#include <rnvif.h>
+#include <rnvxml.h>
+#include <joxer.h>
 #include "gx.h"
 
 static int major_version = 1, minor_version = 0;
@@ -14,7 +19,11 @@ static const char *project = NULL;
 static const char *prog = "gx";
 static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
 
+const char *jfn = NULL, *xfn = NULL;
+
 extern int cbd_flex_debug;
+
+int jsn_output = 1, xml_output = 0;
 
 #ifdef __APPLE__
 int cbddebug;
@@ -293,9 +302,9 @@ io_run(void)
 	  rnvxml_init_err();
 	  rnvif_init();
 	  rnvxml_init(&cbd_xc2_data, output_method->name);
-#endif
 	  o_xc2(curr_cbd);
 	  break;
+#endif
 	case iome_x11:
 	case iome_x12:
 	case iome_x21:
@@ -307,6 +316,26 @@ io_run(void)
     }
 }
 
+void
+gx_output(void)
+{
+  if (xml_output || jsn_output)
+    {
+      if (!jfn)
+	jfn = "cbd.jsn";
+      if (!xfn)
+	xfn = "cbd.xml";
+      FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
+      FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
+
+      jox_jsn_output(jfp);
+      jox_xml_output(xfp);
+      joxer_init(&cbd_data, "cbd", output_validation, xfp, jfp);	  
+      o_jox(curr_cbd);
+      joxer_term(xfp,jfp);
+    }
+}
+
 int
 main(int argc, char **argv)
 {
@@ -314,7 +343,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:i:o:chkp:rtTv");
+  options(argc,argv,"A:I:O:i:o:chjJkp:rtTxXv");
 
   if (status)
     {
@@ -334,6 +363,8 @@ main(int argc, char **argv)
 
   io_run();
 
+  gx_output();
+  
   gx_term();
 
   return 1;
@@ -395,7 +426,12 @@ int opts(int och, const char *oarg)
     case 'i':
       input_file = optarg;
       break;
+    case 'J':
+      jsn_output = 1;
+      xml_output = 0;
+      break;
     case 'j':
+      jsn_output = 1;
       break;
     case 'k':
       keepgoing = 1;
@@ -423,7 +459,11 @@ int opts(int och, const char *oarg)
     case 'v':
       verbose = 1;
       break;
+    case 'X':
+      xml_output = 1;
+      jsn_output = 0;
     case 'x':
+      xml_output = 1;
       break;
     default:
       return 1;
