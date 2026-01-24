@@ -1,6 +1,6 @@
 #!/bin/sh
 rm -f rngnames.out
-for a in *.rng; do
+for a in $1; do
     ../../utl/xl $a | grep '\( ns=\|xmlns:\)' | \
 	tr ' ' '\n' | tr -d '>"' | \
 	grep -v '^<' >> rngnames.out
@@ -8,7 +8,4 @@ for a in *.rng; do
 	sed 's/ name=/=/g' | \
 	tr -d '<>"/' | tr -s ' ' | sed 's/^ //' >>rngnames.out
 done
-grep -v xmlns= rngnames.out >$1
-
-
-# /opt/homebrew/Cellar/pcre2/10.45/include/
+grep -v xmlns= rngnames.out >$2

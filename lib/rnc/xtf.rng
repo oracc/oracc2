@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar ns="http://oracc.org/ns/xtf/1.0" xmlns:note="http://oracc.org/ns/note/1.0" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
-  <include href="gdl-lib.rng"/>
-  <include href="xtr-lib.rng"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="gdl-lib.rng"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="xtr-lib.rng"/>
   <start>
     <choice>
       <ref name="xtf"/>

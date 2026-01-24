@@ -52,7 +52,7 @@ install-exec-local:
 	bison -vdt $<
 
 %.rng: %.rnc
-	java -jar ../../utl/trang.jar $< $@
+	./c2.rng $< $@
 
 %.sh: %.sh.in
 	$(ORACCIFY) $<
@@ -67,7 +67,7 @@ install-exec-local:
 	$(ORACCIFY) $<
 
 %.xnn: %.rng
-	./c2-rng2xnn.sh $@
+	./c2-rng2xnn.sh $< $@
 
 %.c: %.xnn
 	./c2-xnn2c.plx $<

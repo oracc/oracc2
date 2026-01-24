@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar xmlns="http://relaxng.org/ns/structure/1.0">
-  <include href="grapheme.rng"/>
-  <include href="graphmeta.rng"/>
-  <include href="words.rng"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="grapheme.rng"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="graphmeta.rng"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="words.rng"/>
 </grammar>
