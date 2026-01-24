@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include "rnvif.h"
-#include "xmlify.h"
-#include "pool.h"
+#include <rnvif.h>
+#include <xmlify.h>
+#include <pool.h>
+#include <joxer.h>
 #include "gx.h"
 #include "o_jox_fncs.c"
 #include "rnvxml.h"
@@ -24,6 +25,9 @@ static Hash *cbd_qanames = NULL;
 void
 o_jox(struct cbd*cbd)
 {
+  xo_loc = malloc(sizeof(locator));
+  xo_loc->file = file = cbd->file;
+  xo_loc->line = 1;
   iterator_fnc *fncs = ifnc_init();
   iterator(cbd,fncs);
   free(fncs);
@@ -109,7 +113,7 @@ o_jox_cbd(struct cbd *c)
 					"xml:lang", c->lang,
 					"name", c->name,
 					(ccp)NULL);
-  rnvxml_ea("cbd", ratts);
+  jox_xml_ea("cbd", ratts);
 }
 
 static void

@@ -22,6 +22,7 @@
 
 struct cbd {
   Mloc l;
+  const char *file;
   unsigned const char *project;
   unsigned const char *lang;
   unsigned const char *name;  /* this is the name as given in @name */

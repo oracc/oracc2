@@ -52,7 +52,7 @@ install-exec-local:
 	bison -vdt $<
 
 %.rng: %.rnc
-	./c2.rng $< $@
+	./c2-rng.sh $< $@
 
 %.sh: %.sh.in
 	$(ORACCIFY) $<

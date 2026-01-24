@@ -2,7 +2,7 @@ default namespace = "http://oracc.org/ns/cbd/2.0"
 
 start = cbd
 
-cbd	 = element cbd { cbd.attr , entries } 
+cbd	 = element cbd { cbd.attr , (letters | entries) } 
 
 cbd.attr = attribute project { text } ,
 	   attribute xml:lang { text } ,
@@ -18,21 +18,23 @@ reldef = element reldef { text }
 i18nlangs = element i18langs  { i18nlang+ }
 i18nlang  = element i18nlang { text }
 
+letters = letter*
+
+letter = element letter { letter.attr , entries }
+
+letter.attr = attribute n { text }
+
 entries  = entry*
 
-entry    = entry_block , lang_block? , sense_block? , meta_block?
-
-entry_block = entry.model 
-
-entry.model = element entry { entry.attr ,
-	      	       	      cgp? , gwls? , mod? ,
-			      aliases? , partss? , discs? }
-
+entry    =  element entry { entry.attr , lang_block? , sense_block? , meta_block? }
+	       	       	      
 entry.attr = attribute n      { text }? ,
 	     attribute oid    { text }? ,
 	     attribute xml:id { text }? ,
 	     attribute bang   { text }? ,
 	     attribute star   { text }?
+
+entry_block = cgp? , gwls? , mod? , aliases? , partss? , discs?
 
 cgp = cf , gw , pos
 

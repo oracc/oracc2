@@ -23,7 +23,7 @@ const char *jfn = NULL, *xfn = NULL;
 
 extern int cbd_flex_debug;
 
-int jsn_output = 1, xml_output = 0;
+int jsn_output = 1, xml_output = 1;
 
 #ifdef __APPLE__
 int cbddebug;
@@ -54,7 +54,7 @@ int keepgoing = 0;
 int input_validation = 0;
 int lnum = 0;
 int math_mode = 0;
-int output_validation = 0;
+int output_validation = 1;
 int parser_status = 0;
 int sigs = 0;
 int status = 0;
@@ -226,6 +226,7 @@ io_run(void)
 #endif
       cbd_l_init(&input_io);
       curr_cbd = cbd_bld_cbd();
+      curr_cbd->file = input_io.fn;
       phase = "syn";
       parse_return = cbdparse();
       cbd_l_term();
@@ -325,12 +326,13 @@ gx_output(void)
 	jfn = "cbd.jsn";
       if (!xfn)
 	xfn = "cbd.xml";
+
       FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
       FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
 
       jox_jsn_output(jfp);
       jox_xml_output(xfp);
-      joxer_init(&cbd_data, "cbd", output_validation, xfp, jfp);	  
+      joxer_init(&cbd_data, "cbd", 1, xfp, jfp);
       o_jox(curr_cbd);
       joxer_term(xfp,jfp);
     }
@@ -351,8 +353,13 @@ main(int argc, char **argv)
       exit(1);
     }
 
+  if (argv[optind] && !input_file)
+    input_file = argv[optind];
+  
   gdl_flex_debug = gdldebug = cbd_flex_debug = cbddebug = trace_mode;
   cbdset_debug(trace_mode);
+
+  mesg_init();
   
   gx_init();
 
