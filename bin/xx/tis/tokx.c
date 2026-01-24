@@ -2,7 +2,7 @@
 #include <runexpat.h>
 #include <tok.h>
 
-/**tokx -- token exactractor
+/**tokx -- token extractor
  *
  * extract locations and token data from XTF/XCL/XLB/CBD XML formats
  *
