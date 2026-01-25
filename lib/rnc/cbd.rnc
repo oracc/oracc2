@@ -2,7 +2,7 @@ default namespace = "http://oracc.org/ns/cbd/2.0"
 
 start = cbd
 
-cbd	 = element cbd { cbd.attr , (letters | entries) } 
+cbd	 = element entries { cbd.attr , (letters | entries) } 
 
 cbd.attr = attribute project { text } ,
 	   attribute xml:lang { text } ,

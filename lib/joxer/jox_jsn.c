@@ -1,4 +1,3 @@
-
 #include <joxer.h>
 #include <stck.h>
 #include <json.h>

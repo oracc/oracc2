@@ -4,7 +4,7 @@
 #include <pool.h>
 #include <joxer.h>
 #include "gx.h"
-#include "o_jox_fncs.c"
+#include "o_jsn_fncs.c"
 #include "rnvxml.h"
 
 locator *xo_loc;
@@ -23,7 +23,7 @@ static Hash *cbd_qnames = NULL;
 static Hash *cbd_qanames = NULL;
 
 void
-o_jox(struct cbd*cbd)
+o_jsn(struct cbd*cbd)
 {
   xo_loc = malloc(sizeof(locator));
   xo_loc->file = file = cbd->file;
@@ -34,7 +34,7 @@ o_jox(struct cbd*cbd)
 }
 
 static void
-o_jox_aliases(struct entry *e)
+o_jsn_aliases(struct entry *e)
 {
 #if 0
   List_node *lp;
@@ -53,7 +53,7 @@ o_jox_aliases(struct entry *e)
 }
 
 static void
-o_jox_allow(struct entry *e)
+o_jsn_allow(struct entry *e)
 {
 #if 0
   List_node *lp;
@@ -74,7 +74,7 @@ o_jox_allow(struct entry *e)
 }
 
 static void
-o_jox_bases(struct entry *e)
+o_jsn_bases(struct entry *e)
 {
 #if 0
   List_node *outer;
@@ -112,22 +112,25 @@ o_jox_bases(struct entry *e)
 }
 
 static void
-o_jox_cbd(struct cbd *c)
+o_jsn_cbd(struct cbd *c)
 {
   struct rnvval_atts *ratts = rnvval_aa("cbd",
+					"type", "cbd",
 					"project", c->project,
 					"xml:lang", c->lang,
 					"name", c->name,
 					(ccp)NULL);
 #if 1
-  joxer_ea(xo_loc, "entries", ratts);
+  jsn_xmlns_atts = NULL;
+  joxer_ea(xo_loc, "cbd", ratts);
+  joxer_ao("entries");
 #else
   joxer_ea(xo_loc, "cbd", ratts);
 #endif
 }
 
 static void
-o_jox_dcfs(struct entry *e)
+o_jsn_dcfs(struct entry *e)
 {
 #if 0
   List_node *lp;
@@ -141,7 +144,7 @@ o_jox_dcfs(struct entry *e)
 }
 
 static void
-o_jox_entry(struct entry *e)
+o_jsn_entry(struct entry *e)
 {
   if (e->ed)
     {
@@ -181,19 +184,20 @@ o_jox_entry(struct entry *e)
 }
 
 static void
-o_jox_end_cbd(struct cbd *c)
+o_jsn_end_cbd(struct cbd *c)
 {
-  joxer_ee(xo_loc,"entries");
+  joxer_ac();
+  joxer_ee(xo_loc,"cbd");
 }
 
 static void
-o_jox_end_entry(struct entry *e)
+o_jsn_end_entry(struct entry *e)
 {
   joxer_ee(xo_loc,"entry");
 }
 
 static void
-o_jox_forms(struct entry *e)
+o_jsn_forms(struct entry *e)
 {
 #if 0
   if (e->forms && list_len(e->forms))
@@ -223,7 +227,7 @@ o_jox_forms(struct entry *e)
 }
 
 static void
-o_jox_meta(struct entry *e)
+o_jsn_meta(struct entry *e)
 {
 #if 0
   if (e->meta && e->meta->order)
@@ -286,7 +290,7 @@ o_jox_meta(struct entry *e)
 }
 
 static void
-o_jox_parts(struct entry *e)
+o_jsn_parts(struct entry *e)
 {
 #if 0
   List_node *lp;
@@ -308,25 +312,25 @@ o_jox_parts(struct entry *e)
 }
 
 static void
-o_jox_phon(struct entry *e)
+o_jsn_phon(struct entry *e)
 {
   f1(/* @phon */ (ccp)e->phon);
 }
 
 static void
-o_jox_proplist(const char *p)
+o_jsn_proplist(const char *p)
 {
   f1(/* @proplist */ p);
 }
 
 static void
-o_jox_root(struct entry *e)
+o_jsn_root(struct entry *e)
 {
   f1(/* @root */ (ccp)e->root);
 }
 
 static void
-o_jox_senses(struct entry *e)
+o_jsn_senses(struct entry *e)
 {
 #if 0
   if (e->begin_senses)
@@ -390,7 +394,7 @@ o_jox_senses(struct entry *e)
 }
 
 static void
-o_jox_stems(struct entry *e)
+o_jsn_stems(struct entry *e)
 {
 #if 0
   List_node *lp;

@@ -2,9 +2,9 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=siglangx sigx gx
 
-gx_SOURCES=common.c gx.c o_glo.c o_jox.c validate.c iterator.c
+gx_SOURCES=common.c gx.c o_glo.c o_jox.c o_jsn.c validate.c iterator.c
 gx_LDADD = $(xLDADD)
-gx_DEPENDENCIES = $(gx_LDADD) o_glo_fncs.c o_jox_fncs.c validate_fncs.c
+gx_DEPENDENCIES = $(gx_LDADD) o_glo_fncs.c o_jox_fncs.c o_jsn_fncs.c validate_fncs.c
 
 siglangx_SOURCES=siglangx.c qpnnames.c
 siglangx_LDADD = $(xLDADD)

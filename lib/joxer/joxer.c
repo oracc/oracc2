@@ -498,6 +498,114 @@ joxer_eto_vx(Mloc *mp, const char *pname, Rats *rats, const char *ch)
     }
 }
 
+/*** joxer_j ***/
+static void
+joxer_ao_j(const char *name)
+{
+  jox_jsn_ao(name);
+}
+
+static void
+joxer_ac_j(void)
+{
+  jox_jsn_ac();
+}
+
+static void
+joxer_ch_j(Mloc *mp, const char *ch)
+{
+  joxer_mloc(mp);
+  jox_jsn_ch(ch);
+}
+
+static void
+joxer_ea_j(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  jox_jsn_ea(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_ee_j(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  jox_jsn_ee(pname);
+}
+
+static void
+joxer_eaa_j(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  jox_jsn_eaa(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eea_j(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  jox_jsn_eea(pname);
+}
+
+static void
+joxer_eaaa_j(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  jox_jsn_eaaa(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eeaa_j(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  jox_jsn_eeaa(pname);
+}
+
+static void
+joxer_ec_j(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_ea_j(mp, pname, rats);
+  joxer_ee_j(mp, pname);
+}
+
+static void
+joxer_et_j(Mloc *mp, const char *pname, Rats *rats, const char *ch)
+{
+  joxer_mloc(mp);
+  jox_jsn_et(pname, rats, ch);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eto_j(Mloc *mp, const char *pname, Rats *rats, const char *ch)
+{
+  joxer_mloc(mp);
+  jox_jsn_eto(pname, rats, ch);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
 /*** joxer_v ***/
 static void
 joxer_ao_v(const char *name)
@@ -674,8 +782,18 @@ joxer_set_x(void)
 static void
 joxer_set_j(void)
 {
-  fprintf(stderr, "joxer selection 'j' not yet implemented. Stop\n");
-  exit(1);
+  joxer_ch = joxer_ch_j;
+  joxer_ea = joxer_ea_j;
+  joxer_ee = joxer_ee_j;
+  joxer_eaa = joxer_eaa_j;
+  joxer_eea = joxer_eea_j;
+  joxer_eaaa = joxer_eaaa_j;
+  joxer_eeaa = joxer_eeaa_j;
+  joxer_ec = joxer_ec_j;
+  joxer_et = joxer_et_j;
+  joxer_eto = joxer_eto_j;
+  joxer_ao = joxer_ao_j;
+  joxer_ac = joxer_ac_j;
 }
 
 void
@@ -737,4 +855,6 @@ joxer_term(FILE *xfp, FILE *jfp)
       /*jw_object_c();*/
       jw_term();
     }
+  jox_xml_output(NULL);
+  jox_jsn_output(NULL);
 }

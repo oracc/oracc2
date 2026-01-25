@@ -18,8 +18,12 @@ extern const char *file;
 
 extern FILE *f_xml;
 
+#if 0
 extern void o_tg2(struct cbd*c);
+#endif
+
 extern void o_jox(struct cbd*c);
+extern void o_jsn(struct cbd*c);
 extern void validator(struct cbd*c);
 
 extern void common_init(void);

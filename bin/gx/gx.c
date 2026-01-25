@@ -330,11 +330,15 @@ gx_output(void)
       FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
       FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
 
-      jox_jsn_output(jfp);
       jox_xml_output(xfp);
-      joxer_init(&cbd_data, "cbd", 1, xfp, jfp);
+      joxer_init(&cbd_data, "cbd", 1, xfp, NULL);
       o_jox(curr_cbd);
-      joxer_term(xfp,jfp);
+      joxer_term(xfp,NULL);
+
+      jox_jsn_output(jfp);
+      joxer_init(&cbd_data, "cbd", 0, NULL, jfp);
+      o_jsn(curr_cbd);
+      joxer_term(xfp,NULL);
     }
 }
 
