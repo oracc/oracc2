@@ -12,6 +12,8 @@ im-ofs-*.tab
 *.tix
 *.tkx
 *.tok
+*.tpc
+*.tvl
 *.vid
 
 # cfy test derivatives
@@ -141,6 +143,7 @@ bin/xx/tis/tokex
 bin/xx/tis/tokexl
 bin/xx/tis/tokix
 bin/xx/tis/tokpct
+bin/xx/tis/tokpctl
 bin/xx/tis/tokpg
 bin/xx/tis/tokval
 bin/xx/tis/tokx
