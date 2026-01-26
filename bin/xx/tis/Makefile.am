@@ -3,7 +3,7 @@ include ../../../oracc-am-rules.txt
 SUBDIRS=../../../lib 
 
 bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokex tokix \
-	tokpct cbdex cbdikey tokpg tokexl
+	tokpct cbdex cbdikey tokpg tokexl tokval
 
 #vidx
 
@@ -62,3 +62,7 @@ cbdikey_DEPENDENCIES = $(xLDADD)
 tokpg_SOURCES=tokpg.c
 tokpg_LDADD = $(xLDADD)
 tokpg_DEPENDENCIES = $(xLDADD)
+
+tokval_SOURCES=tokval.c
+tokval_LDADD = $(xLDADD)
+tokval_DEPENDENCIES = $(xLDADD)
