@@ -3,9 +3,9 @@
 #include <xmlify.h>
 #include <pool.h>
 #include <joxer.h>
+#include <rnvxml.h>
 #include "gx.h"
 #include "o_jox_fncs.c"
-#include "rnvxml.h"
 
 locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
@@ -114,11 +114,15 @@ o_jox_bases(struct entry *e)
 static void
 o_jox_cbd(struct cbd *c)
 {
+#if 1
+  Ratts *ratts = ratts_cbd(c, O_XML);
+#else
   struct rnvval_atts *ratts = rnvval_aa("cbd",
 					"project", c->project,
 					"xml:lang", c->lang,
 					"name", c->name,
 					(ccp)NULL);
+#endif
 #if 1
   joxer_ea(xo_loc, "entries", ratts);
 #else
@@ -175,7 +179,11 @@ o_jox_entry(struct entry *e)
 	  break;
 	}
     }
-  joxer_ea(xo_loc,"entry", NULL);
+  Ratts*ratts = ratts_entry(e, O_XML);
+  joxer_ea(xo_loc, "entry", ratts);
+  joxer_et(xo_loc, "cf", NULL, e->cgp->cf);
+  joxer_et(xo_loc, "gw", NULL, e->cgp->gw);
+  joxer_et(xo_loc, "pos", NULL, e->cgp->pos);
   if (e->disc)
     f1(/* @disc */ e->disc);
 }

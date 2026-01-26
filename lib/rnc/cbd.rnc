@@ -6,7 +6,7 @@ cbd	 = element entries { cbd.attr , (letters | entries) }
 
 cbd.attr = attribute project { text } ,
 	   attribute xml:lang { text } ,
-	   attribute name { text } ,
+	   attribute n { text } ,
 	   attribute translang { text }? ,
 	   attribute version { text }? ,
 	   props* ,
@@ -26,7 +26,7 @@ letter.attr = attribute n { text }
 
 entries  = entry*
 
-entry    =  element entry { entry.attr , lang_block? , sense_block? , meta_block? }
+entry    =  element entry { entry.attr , entry_block? , lang_block? , sense_block? , meta_block? }
 	       	       	      
 entry.attr = attribute n      { text }? ,
 	     attribute oid    { text }? ,

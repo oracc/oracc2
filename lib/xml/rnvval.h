@@ -1,10 +1,10 @@
 #ifndef _RNVVAL_H
 #define _RNVVAL_H
 
-struct rnvval_atts {
+typedef struct rnvval_atts {
   const char **atts;
   const char **qatts;
-};
+} Ratts;
 
 extern void rnvval_init_err(void (*eh)(int erno,va_list ap));
 extern void rnvval_init(struct xnn_data *xdp, const char *rncfile);

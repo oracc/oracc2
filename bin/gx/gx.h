@@ -1,6 +1,7 @@
 #ifndef GX_H_
 #define GX_H_ 1
 
+#include <rnvxml.h>
 #include <cbd.h>
 
 typedef void (*iterator_fnc)(void*);
@@ -18,12 +19,18 @@ extern const char *file;
 
 extern FILE *f_xml;
 
+enum o_mode { O_JSN , O_XML };
+
 #if 0
 extern void o_tg2(struct cbd*c);
 #endif
 
 extern void o_jox(struct cbd*c);
 extern void o_jsn(struct cbd*c);
+
+extern Ratts *ratts_cbd(Cbd *c, enum o_mode mode);
+extern Ratts *ratts_entry(Entry *e, enum o_mode mode);
+
 extern void validator(struct cbd*c);
 
 extern void common_init(void);

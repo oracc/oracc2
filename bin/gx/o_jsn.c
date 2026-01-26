@@ -114,19 +114,19 @@ o_jsn_bases(struct entry *e)
 static void
 o_jsn_cbd(struct cbd *c)
 {
+#if 1
+  Ratts *ratts = ratts_cbd(c, O_JSN);
+#else
   struct rnvval_atts *ratts = rnvval_aa("cbd",
 					"type", "cbd",
 					"project", c->project,
 					"xml:lang", c->lang,
 					"name", c->name,
 					(ccp)NULL);
-#if 1
-  jsn_xmlns_atts = NULL;
-  joxer_ea(xo_loc, "cbd", ratts);
-  joxer_ao("entries");
-#else
-  joxer_ea(xo_loc, "cbd", ratts);
 #endif
+  jsn_xmlns_atts = NULL;
+  joxer_ea(xo_loc, NULL, ratts);
+  joxer_ao("entries");
 }
 
 static void
@@ -178,7 +178,8 @@ o_jsn_entry(struct entry *e)
 	  break;
 	}
     }
-  joxer_ea(xo_loc,"entry", NULL);
+  Ratts*ratts = ratts_entry(e, O_JSN);
+  joxer_ea(xo_loc, NULL, ratts);
   if (e->disc)
     f1(/* @disc */ e->disc);
 }
@@ -187,13 +188,13 @@ static void
 o_jsn_end_cbd(struct cbd *c)
 {
   joxer_ac();
-  joxer_ee(xo_loc,"cbd");
+  joxer_ee(xo_loc, NULL);
 }
 
 static void
 o_jsn_end_entry(struct entry *e)
 {
-  joxer_ee(xo_loc,"entry");
+  joxer_ee(xo_loc, NULL);
 }
 
 static void

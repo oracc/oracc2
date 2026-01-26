@@ -216,7 +216,9 @@ rnvval_aa_ccpp(const char **a)
 	    }
 	  else
 	    {
-	      fprintf(stderr, "rnvval: NULL value in rnvval_aa_ccpp; returning NULL\n");
+	      fprintf(stderr,
+		      "rnvval: %s has NULL value in rnvval_aa_ccpp; returning NULL\n",
+		      a[nargs]);
 	      free(atts);
 	      free(qatts);
 	      free(ratts);

@@ -20,7 +20,7 @@
 #define ucp unsigned char *
 #endif
 
-struct cbd {
+typedef struct cbd {
   Mloc l;
   const char *file;
   unsigned const char *project;
@@ -60,7 +60,7 @@ struct cbd {
   Memo *sensesmem;
   Memo *tagmem;
   Memo *taglmem;
-};
+} Cbd;
 
 /* Store translated data */
 struct i18n {
@@ -75,13 +75,13 @@ struct loctok {
   const char *lang;
 };
 
-struct cgp {
+typedef struct cgp {
   unsigned const char *cf;
   unsigned const char *gw;
   unsigned const char *pos;
   unsigned const char *tight;
   unsigned const char *loose;
-};
+} Cgp;
 
 enum edit_t { ADD_E, ADD_S, DEL_E, DEL_S, REN_E, REN_S, MRG_E, MRG_S, TOP };
 
@@ -95,7 +95,7 @@ struct edit {
   void *owner;
 };
 
-struct entry {
+typedef struct entry {
   Mloc l;
   struct cgp *cgp;
   const char *eid;
@@ -131,7 +131,7 @@ struct entry {
   struct meta *meta;
   List *gwls; /* list of struct i18n with (char*) data */
   List *discls; /* list of struct i18n with (char*) data; one day this will be OTF inline tree */
-};
+} Entry;
 
 struct allow {
   Mloc l;

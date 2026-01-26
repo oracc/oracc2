@@ -81,7 +81,7 @@ main(int argc, char **argv)
     {
       keys = hash_keys2(hlang,&nkeys);
       qsort(keys, nkeys, sizeof(const char *), cmpstringp);
-      int i;
+      int i = 0;
       while (keys[i])
 	{
 	  if (i)
@@ -98,7 +98,7 @@ main(int argc, char **argv)
 	{
 	  fputs("qpn ", stdout);
 	  qsort(keys, nkeys, sizeof(const char *), cmpstringp);
-	  int i;
+	  int i = 0;
 	  while (keys[i])
 	    {
 	      if (i)

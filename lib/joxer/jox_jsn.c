@@ -23,8 +23,11 @@ jox_jsn_ea(const char *pname, Rats *rats)
 {
   int i;
   jw_object_o();
-  jw_member(pname);
-  jw_object_o();
+  if (pname)
+    {
+      jw_member(pname);
+      jw_object_o();
+    }
   if (jsn_xmlns_atts)
     {
       int i;
@@ -47,7 +50,8 @@ jox_jsn_ea(const char *pname, Rats *rats)
 void
 jox_jsn_ee(const char *pname)
 {
-  jw_object_c();
+  if (pname)
+    jw_object_c();
   jw_object_c();
 }
 
