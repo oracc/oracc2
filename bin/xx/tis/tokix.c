@@ -33,7 +33,9 @@ tokix_hook(const char *key, Unsigned32 n, struct tokix_data *tp)
 int
 main(int argc, char * const*argv)
 {
-  options(argc,argv,"d:no:p:");
+  const char *file;
+  FILE *in_fp;
+  options(argc,argv,"d:lno:p:");
 
   if (!curr_project && !index_dir)
     {
@@ -41,12 +43,36 @@ main(int argc, char * const*argv)
       exit(1);
     }
 
+  if (argv[optind])
+    {
+      file = argv[optind];
+      in_fp = xfopen(file, "r");
+      if (!in_fp)
+	exit(1);
+    }
+  else
+    {
+      file = "-";
+      in_fp = stdin;
+    }
+
+  if (outfile)
+    {
+      td.fn = outfile;
+      td.fp = fopen(td.fn, "w");
+    }
+  else
+    {
+      td.fn = "<stdout>";
+      td.fp = stdout;
+    }
+
   if (!index_dir)
     index_dir = ose_dir(curr_project, curr_index);
 
   Vido *vp = vido_init('v', 1);
   
-  dip = dbi_create("tok",
+  dip = dbi_create(curr_index,
 		  index_dir,
 		  500000,
 		  sizeof(struct location8),
@@ -63,16 +89,6 @@ main(int argc, char * const*argv)
   dbi_set_user(dip,d_tok);
   dbi_set_cache(dip,cache_size);
 
-  if (outfile)
-    {
-      td.fn = outfile;
-      td.fp = fopen(td.fn, "w");
-    }
-  else
-    {
-      td.fn = "<stdout>";
-      td.fp = stdout;
-    }
   td.htokens = hash_create(4096);
   td.hcounts = hash_create(4096);
   td.p = pool_init();
@@ -83,8 +99,8 @@ main(int argc, char * const*argv)
    *
    * TOKEN TOKENID WORDID
    */
-  char buf[1024], *s;
-  while ((s = fgets(buf, 1024, stdin)))
+  char *s;
+  while ((s = (char*)loadoneline(in_fp, NULL)))
     {
       static struct location8 l8;
       s[strlen(s)-1] = '\0';
@@ -133,6 +149,9 @@ opts(int argc, const char *arg)
     {
     case 'd':
       index_dir = arg;
+      break;
+    case 'l':
+      curr_index = "tokl";
       break;
     case 'n':
       no_triple_output = 1;

@@ -122,7 +122,7 @@ main(int argc, char *const *argv)
 	pcount = (uintptr_t)hash_find(sem, (uccp)parent);
       else
 	pcount = (uintptr_t)hash_find(bis, (uccp)parent);
-      
+
       if (pcount)
 	printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct(count,pcount));
       else

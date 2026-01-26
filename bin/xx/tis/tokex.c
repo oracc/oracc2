@@ -9,6 +9,8 @@
  *
  * The expansions vary according to token type.
  *
+ * THIS PROGRAM IS FOR GRAPHEMES ^g IN TOKX OUTPOUT
+ *
  * For 'g' type, graphemes, the expansion includes generating SIGN and
  * FORM parent entries for values and various features based on the
  * grapheme signature.

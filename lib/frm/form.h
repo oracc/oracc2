@@ -49,7 +49,7 @@
 
 struct ilem_form;
 
-struct form
+typedef struct form
 {
   /* Administrative fields */
   const Uchar *file;
@@ -108,9 +108,7 @@ struct form
 
   /* Support for arbitrary user data extensions */
   void *user;
-};
-
-typedef struct form Form;
+} Form;
 
 #include "sigs.h"
 struct sig_context; /* need this because of interweave of form.h/sigs.h includes */

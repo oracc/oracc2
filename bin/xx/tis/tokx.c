@@ -141,7 +141,7 @@ tokx_one(Trun *r, const char *QPQX)
 static void
 tokx_file(Trun *r, const char *f)
 {
-  char *fname[2];
+  const char *fname[2];
   fname[0] = f;
   fname[1] = NULL;
   trun_file(r,fname[0]);
@@ -213,7 +213,7 @@ main(int argc, char **argv)
 {
   Trun *r = NULL;
   
-  if (options(argc, argv, "cf:gGlmo:p:s"))
+  if (options(argc, argv, "cf:gGlLmo:p:s"))
     exit(1);
 
   r = trun_init(run_multi);
@@ -257,6 +257,8 @@ int opts(int arg, const char*str)
     case 'G':
       tlw_want_LW = tok_data_g = 0;
       break;
+    case 'L':
+      tok_data_g = 0;
     case 'l':
       tok_data_l = 1;
       break;
