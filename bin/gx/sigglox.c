@@ -16,10 +16,51 @@ typedef struct entry
 } Entry;
 
 static void
+sgx_bases(FILE *fp, Hash *b)
+{
+  int n;
+  const char **bb = hash_keys2(b, &n);
+  fprintf(fp, "@bases ");
+  int i;
+  for (i = 0; bb[i]; ++i)
+    {
+      fputs(bb[i], fp);
+      if (bb[i+1])
+	fputs("; ", fp);
+    }
+  fputs("\n", fp);
+}
+
+static void
+sgx_forms(FILE *fp, Hash *f)
+{
+  int n;
+  const char **ff = hash_keys2(f, &n);
+  int i;
+  for (i = 0; ff[i]; ++i)
+    fprintf(fp, "@form %s\n", ff[i]);
+}
+
+static void
+sgx_senses(FILE *fp, Hash *s)
+{
+  int n;
+  const char **ff = hash_keys2(s, &n);
+  int i;
+  for (i = 0; ff[i]; ++i)
+    fprintf(fp, "@sense %s\n", ff[i]);  
+}
+
+static void
 sgx_entry(FILE *fp, const char *cgp, Entry *ep)
 {
   fprintf(fp, "@entry %s\n", cgp);
-  
+  if (ep->bases->key_count)
+    sgx_bases(fp, ep->bases);
+  if (ep->forms->key_count)
+    sgx_forms(fp, ep->forms);
+  if (ep->bases->key_count)
+    sgx_senses(fp, ep->senses);
   fputs("@end entry\n\n", fp);
 }
 
@@ -77,6 +118,7 @@ main(int argc, char * const *argv)
 	continue;
       
       Form f;
+      memset(&f, '\0', sizeof(Form));
       form_parse((uccp)file, line, pool_copy((uccp)s,p), &f, NULL);
       const unsigned char *cbdlang = f.lang;
       if (strlen((ccp)f.pos) == 2 && 'N' == f.pos[1])
@@ -107,7 +149,7 @@ main(int argc, char * const *argv)
       if (!hash_find(ep->senses, (uccp)sns))
 	hash_add(ep->senses, pool_copy((uccp)sns, p), "");
 
-      if (!hash_find(ep->bases, f.base))
+      if (f.base && !hash_find(ep->bases, f.base))
 	hash_add(ep->bases, pool_copy(f.base, p), "");
       
       unsigned char *fp = form_cbd(&f, p, qpn_mode);

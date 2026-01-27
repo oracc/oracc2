@@ -490,7 +490,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 		  ++lp;
 		  break;
 		case '#':
-		  if (*lp == '#')
+		  if (lp[1] == '#')
 		    {
 		      ++lp;
 		      formp->morph2 = lp;

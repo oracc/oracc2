@@ -39,7 +39,7 @@ form_cbd(Form *fp, Pool *p, int with_lang)
   if (fp->morph2)
     sprintf((char*)(buf+strlen((char*)buf))," ##%s",fp->morph2);
 
-  if (fp->stem)
+  if (fp->stem && *fp->stem)
     sprintf((char*)(buf+strlen((char*)buf))," *%s",fp->stem);
 
   return pool_copy((uccp)buf, p);
