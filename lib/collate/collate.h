@@ -9,14 +9,15 @@
 #include "colltype.h"
 /*extern struct Collate_info *curr_collate;*/
 extern struct Collate_info_list_node collate_infos[];
-int collate_cmp_utf8 (const Uchar *k1, const Uchar *k2);
-int collate_cmp_graphemes (const Uchar *k1, const Uchar *k2);
-int collate_cmp_graphemes_cc (const Uchar *k1c, const Uchar *k2c);
-Uchar *collate_makekey (Uchar *s);
-Uchar *collate_makekey_i (Uchar *s);
-Uchar *collate_significant (Uchar *s, Boolean foldcase);
-void collate_set_tiles (void);
-void collate_set_tiles_i (void);
+extern int collate_cmp_utf8 (const Uchar *k1, const Uchar *k2);
+extern int collate_cmp_utf8_qs (const Uchar *k1, const Uchar *k2);
+extern int collate_cmp_graphemes (const Uchar *k1, const Uchar *k2);
+extern int collate_cmp_graphemes_cc (const Uchar *k1c, const Uchar *k2c);
+extern Uchar *collate_makekey (Uchar *s);
+extern Uchar *collate_makekey_i (Uchar *s);
+extern Uchar *collate_significant (Uchar *s, Boolean foldcase);
+extern void collate_set_tiles (void);
+extern void collate_set_tiles_i (void);
 extern int collate_obey_delims;
 extern int graphemic_compare (const unsigned char *a, const unsigned char *b);
 extern void graphemic_init (void);

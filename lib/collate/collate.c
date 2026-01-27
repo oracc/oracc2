@@ -29,7 +29,10 @@ collate_init (const unsigned char *name)
       exit (1);
     }
   else
-    curr_collate = cp->coll;
+    {
+      curr_collate = cp->coll;
+      curr_tiles = curr_collate->tiles;
+    }
 }
 
 void
@@ -168,6 +171,31 @@ int
 collate_cmp_utf8 (const Uchar *k1, const Uchar *k2)
 {
   const Uchar *kk1 = k1, *kk2 = k2;
+  while (*kk1 && *kk2)
+    {
+      int ret = (int)keyval(UTF2Unicode(kk1)) 
+	- (int)keyval(UTF2Unicode(kk2));
+      if (ret)
+	return ret;
+      else
+	{
+	  int kk1inc = *kk1 < 0x80 ? 1 : ((!(*kk1 & 0x20)) ? 2 : 3);
+	  int kk2inc = *kk2 < 0x80 ? 1 : ((!(*kk2 & 0x20)) ? 2 : 3);
+	  kk1 += kk1inc;
+	  kk2 += kk2inc;
+	}
+    }
+  return (int)keyval(UTF2Unicode(kk1)) 
+    - (int)keyval(UTF2Unicode(kk2));
+}
+
+/* Use this one with qsort */
+int
+collate_cmp_utf8_qs (const Uchar *k1, const Uchar *k2)
+{
+  const Uchar *kk1, *kk2;
+  kk1 = *(const uchar **)k1;
+  kk2 = *(const uchar **)k2;
   while (*kk1 && *kk2)
     {
       int ret = (int)keyval(UTF2Unicode(kk1)) 

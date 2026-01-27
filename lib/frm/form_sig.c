@@ -8,20 +8,79 @@
 
 extern int bootstrap_mode, lem_extended;
 
+int form_cbd_sux_norm = 0;
+
 #ifndef strdup
 extern char *strdup(const char *);
 #endif
 
+
+static int
+cbd_cof_len(Form *fp)
+{
+  int len = strlen((ccp)fp->norm) + 3;
+  Form *cof = (Form*)fp->cof_id;
+  int i;
+  for (i = 0; cof->parts[i]; ++i)
+    len += 3 + strlen((ccp)cof->parts[i]->norm);
+  return len;
+}
+
+static int
+cbd_form_len(Form *fp)
+{
+#define flen(x) (fp->x?strlen((ccp)fp->x):0)
+  int len = flen(form)+flen(norm)+flen(lang)+flen(base)+flen(cont)
+    +flen(morph)+flen(morph2)+flen(stem) + strlen(" $ % / + # ## *0");
+
+  /* This oversizes the return value because it counts cof-head->norm
+     twice, but that is benign */
+  if (fp->cof_id)
+    len += cbd_cof_len(fp);
+  
+  return len;
+}
+
+static unsigned char *
+cof_norm(Form *fp)
+{
+  char buf[cbd_cof_len(fp)];
+  uintptr_t self = (uintptr_t)fp;
+  Form *head = (Form*)fp->cof_id;
+  if (self == head->cof_id)
+    sprintf(buf, "$%s", head->norm);
+  else
+    sprintf(buf, "$(%s)", head->norm);
+  int i;
+  for (i = 0; head->parts[i]; ++i)
+    {
+      if (self == (uintptr_t)head->parts[i])
+	sprintf(buf+strlen(buf), " $%s", head->parts[i]->norm);
+      else
+	sprintf(buf+strlen(buf), " $(%s)", head->parts[i]->norm);
+    }
+  return (ucp)strdup(buf);
+}
+
 unsigned char *
 form_cbd(Form *fp, Pool *p, int with_lang)
 {
-#define flen(x) (fp->x?strlen((ccp)fp->x):0)
+#if 1
+  char buf[cbd_form_len(fp)];
+#else
   char buf[flen(form)+flen(norm)+flen(lang)+flen(base)+flen(cont)
 	   +flen(morph)+flen(morph2)+flen(stem) + strlen(" $ % / + # ## *0")];
+#endif
   
   sprintf((char*)buf,"%s",fp->form);
 
-  if (fp->norm)
+  if (fp->cof_id)
+    {
+      unsigned char *cofnorm = cof_norm(fp);
+      sprintf((char*)(buf+strlen((char*)buf))," %s", cofnorm);
+      free(cofnorm);
+    }
+  else if (fp->norm && (form_cbd_sux_norm || strncmp((ccp)fp->lang, "sux", 3)))
     sprintf((char*)(buf+strlen((char*)buf))," $%s",fp->norm);
 
   if (with_lang)
@@ -111,9 +170,8 @@ sig_one(struct xcl_context *xcp, struct ilem_form *ifp, Form *fp, int tail)
 
   if (!fp->norm)
     fp->norm = (Uchar*)"X";
-
-  if (fp->norm)
-      sprintf((char*)(buf+strlen((char*)buf)),"$%s",fp->norm);
+  
+  sprintf((char*)(buf+strlen((char*)buf)),"$%s",fp->norm);
 
   if (fp->base)
     sprintf((char*)(buf+strlen((char*)buf)),"/%s",fp->base);

@@ -101,7 +101,7 @@ typedef struct form
    * determine if COF or PSU.
    */
   struct form **parts;
-  uintptr_t cof_id;
+  uintptr_t cof_id; /* This is actually the memory address  of COF head stored as uintptr_t */
 
   /* Store rank so it can persist across nlcp_rewrite */
   int rank;

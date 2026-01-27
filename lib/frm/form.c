@@ -511,7 +511,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 		case '\t':
 		case 0:
 		  goto break_switch_loop;
-		default:
+		default:		  
 		  mesg_vwarning((char*)file,line,"%s: parse error at '%c'", err_lp, field);
 		  ++ret;
 		  goto ret;
