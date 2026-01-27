@@ -25,10 +25,12 @@ main(int argc, char **argv)
     }
   else
     sigfile = argv[optind];
-  
-  if (!(fp = fopen(sigfile, "r")))
+
+  if (!strcmp(sigfile, "-"))
+    fp = stdin;
+  else if (!(fp = fopen(sigfile, "r")))
     {
-      fprintf(stderr, "sigx: unable to open sig file %s. Stop.\n", sigfile);
+      fprintf(stderr, "siglangx: unable to open sig file %s. Stop.\n", sigfile);
       goto error;
     }
     

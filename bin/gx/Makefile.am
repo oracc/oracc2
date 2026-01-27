@@ -1,6 +1,8 @@
 include ../../oracc-am-rules.txt
 
-bin_PROGRAMS=siglangx sigx gx
+bin_PROGRAMS=siglangx sigx sigglox gx
+
+bin_SCRIPTS=sigglo.sh
 
 gx_SOURCES=common.c gx.c o_glo.c o_jox.c o_jsn.c validate.c iterator.c o_ratts.c
 gx_LDADD = $(xLDADD)
@@ -13,3 +15,7 @@ siglangx_DEPENDENCIES = $(siglangx_LDADD)
 sigx_SOURCES=sigx.c ../../lib/liboracc2.la
 sigx_LDADD = $(xLDADD)
 sigx_DEPENDENCIES = $(sigx_LDADD)
+
+sigglox_SOURCES=sigglox.c ../../lib/liboracc2.la
+sigglox_LDADD = $(xLDADD)
+sigglox_DEPENDENCIES = $(sigglox_LDADD)

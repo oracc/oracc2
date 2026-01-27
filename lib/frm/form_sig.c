@@ -12,6 +12,39 @@ extern int bootstrap_mode, lem_extended;
 extern char *strdup(const char *);
 #endif
 
+unsigned char *
+form_cbd(Form *fp, Pool *p, int with_lang)
+{
+#define flen(x) (fp->x?strlen((ccp)fp->x):0)
+  char buf[flen(form)+flen(norm)+flen(lang)+flen(base)+flen(cont)
+	   +flen(morph)+flen(morph2)+flen(stem) + strlen(" $ % / + # ## *0")];
+  
+  sprintf((char*)buf,"%s",fp->form);
+
+  if (fp->norm)
+    sprintf((char*)(buf+strlen((char*)buf))," $%s",fp->norm);
+
+  if (with_lang)
+    sprintf((char*)(buf+strlen((char*)buf))," %%%s",fp->lang);
+
+  if (fp->base)
+    sprintf((char*)(buf+strlen((char*)buf))," /%s",fp->base);
+
+  if (fp->cont && *fp->cont)
+    sprintf((char*)(buf+strlen((char*)buf))," +%s",fp->cont);
+
+  if (fp->morph)
+    sprintf((char*)(buf+strlen((char*)buf))," #%s",fp->morph);
+
+  if (fp->morph2)
+    sprintf((char*)(buf+strlen((char*)buf))," ##%s",fp->morph2);
+
+  if (fp->stem)
+    sprintf((char*)(buf+strlen((char*)buf))," *%s",fp->stem);
+
+  return pool_copy((uccp)buf, p);
+}
+
 static unsigned char *
 sig_one(struct xcl_context *xcp, struct ilem_form *ifp, Form *fp, int tail)
 {

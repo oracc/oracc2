@@ -16,5 +16,23 @@
 * gx's XML output will be reimplemented using lib/joxer so that JSON
   output will also be built in; the JSON output must conform closely
   to the exising Perl-based JSON output for glossaries because it is
-  used by some non-Oracc projects
+  used by some non-Oracc projects: UPDATE: JSON output is built-in but
+  uses a separate joxer stream from XML output to ensure the JSON is
+  identical with previous JSON output.
+
+* Processing works in multiple phases:
+
+  - (possibly construct a CBD from the corpus sigs)
+
+  - (possibly build token data from corpus)
+
+  - load the corpus-CBD if any
+
+  - load the 00lib/*.glo if any
+
+  - augment corpus-CBD with 00lib/*.glo if necessary
+
+  - valid xrefs, parts, and rels and cross-link them to the entries
+
+  - process each entry in turn, freeing mem as we go to keep resource needs reasonable
 

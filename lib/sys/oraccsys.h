@@ -110,6 +110,8 @@ extern off_t fsize (const char *fn, FILE *fp);
 
 extern int file_copy(const char *from, const char *to);
 
+extern int xmkdir (const char *path, mode_t mode, Boolean quit);
+
 extern int glob_pattern(const char *pat, glob_t *gres);
 extern int pctint(int amount, int total);
 extern double pctd(double amount, double total);

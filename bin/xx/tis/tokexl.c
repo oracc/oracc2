@@ -166,14 +166,14 @@ main(int argc, char **argv)
 
       char t[strlen((ccp)s)+strlen(period)+10];
 
-      sprintf(t, "%s[%s]%s%c%c", f.cf, f.gw, f.pos, 1, 1);
+      sprintf(t, "%%%s:%s[%s]%s%c%c", f.lang, f.cf, f.gw, f.pos, 1, 1);
       pr(t, vp, qid);
 
       pr_sig_fields(t, qid);
       
       if (strcmp((ccp)f.gw, (ccp)f.sense) || strcmp((ccp)f.pos, (ccp)f.epos))
 	{
-	  sprintf(t, "%s[%s]%s%c//%s'%s%c", f.cf, f.gw, f.pos, 1, f.sense, f.epos, 1);
+	  sprintf(t, "%%%s:%s[%s]%s%c//%s'%s%c", f.lang, f.cf, f.gw, f.pos, 1, f.sense, f.epos, 1);
 	  pr(t, vp, qid);
 	  pr_sig_fields(t, qid);
 	}

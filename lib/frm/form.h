@@ -135,4 +135,6 @@ extern void form_clear(Form*f);
 extern void form_serialize_form(FILE *f_f2, Form *f);
 extern void form_serialize_form_2(FILE *f_f2, struct ilem_form *f);
 
+extern unsigned char *form_cbd(Form *fp, Pool *p, int with_lang);
+
 #endif/*FORM_H_*/
