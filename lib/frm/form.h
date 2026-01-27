@@ -122,9 +122,9 @@ extern void form_term(void);
 extern int form_parse(const Uchar *file, size_t line, Uchar *lp, Form *formp, Uchar **psu_sense);
 extern int form_parse_psu(const Uchar *file, size_t line, Uchar *lp, struct form *formp);
 
-extern unsigned char *form_sig(struct xcl_context *xcp, Form *fp);
-extern unsigned char *form_sig_nopool(struct xcl_context *xcp, Form *fp);
-extern unsigned char *form_psu_sig(struct xcl_context *xcp, Form *fp);
+extern unsigned char *form_sig(Pool *p, Form *fp);
+extern unsigned char *form_sig_sub(Pool *p, Form *fp);
+extern unsigned char *form_psu_sig(Pool *p, Form *fp);
 
 extern int form_alias(struct sig_context *scp, Form *fp, Form *ref_fp);
 extern int form_extreme_alias(struct sig_context *scp, Form *fp, Form *ref_fp);
@@ -136,5 +136,7 @@ extern void form_serialize_form(FILE *f_f2, Form *f);
 extern void form_serialize_form_2(FILE *f_f2, struct ilem_form *f);
 
 extern unsigned char *form_cbd(Form *fp, Pool *p, int with_lang);
+
+extern void form_set_xcp(struct xcl_context *xcp);
 
 #endif/*FORM_H_*/

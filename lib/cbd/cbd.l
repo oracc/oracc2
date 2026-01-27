@@ -392,6 +392,8 @@ clean_alt_paren(void)
 static char *
 unspace(char*s)
 {
+  while (isspace(*s))
+    ++s;
   int i = strlen(s);
   while (isspace(s[i-1]))
     --i;

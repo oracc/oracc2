@@ -32,7 +32,7 @@ form_parse_psu(const Uchar *file, size_t line, Uchar *lp, struct form *formp)
 	  /* move psu_cfgw to cf of cfgw */
 	  while (isspace(*psu_cfgw))
 	    ++psu_cfgw;
-	  form_parse(file, line, strdup(psu_cfgw), formp, NULL);
+	  form_parse(file, line, (ucp)strdup((ccp)psu_cfgw), formp, NULL);
 	  psu_form = (char*)lp+1;
 	  while (isspace(*psu_form))
 	    ++psu_form;

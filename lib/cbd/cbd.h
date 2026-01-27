@@ -172,7 +172,7 @@ struct parts {
   List *cgps; /* list_free(cgps,NULL) when freeing cbd */
 };
 
-struct sense {
+typedef struct sense {
   Mloc l;
   unsigned const char *num;
   unsigned const char *sgw;
@@ -186,7 +186,7 @@ struct sense {
   struct edit *ed;
   struct meta *meta;
   List *sensels; /* list of translated senses with (struct sense *) data--struct has l and lng so i18n not needed */
-};
+} Sense;
 
 struct equiv {
   Mloc l;

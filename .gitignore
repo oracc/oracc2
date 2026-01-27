@@ -236,6 +236,7 @@ bin/bx/bib_ent.c
 bin/bx/bib_fld.c
 bin/bx/bib_year.c
 bin/bx/bnm_tab.c
+bin/gx/lang949.c
 bin/px/ice/pg/periodmap.c
 bin/px/pxargs.c
 bin/xx/cun/perfnt.c

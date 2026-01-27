@@ -6,6 +6,14 @@
 #include "xli.h"
 #include "xcl.h"
 
+static struct xcl_context *xxcp;
+
+void
+form_set_xcp(struct xcl_context *xcp)
+{
+  xxcp = xcp;
+}
+
 extern int bootstrap_mode, lem_extended;
 
 int form_cbd_sux_norm = 0;
@@ -105,20 +113,25 @@ form_cbd(Form *fp, Pool *p, int with_lang)
 }
 
 static unsigned char *
-sig_one(struct xcl_context *xcp, struct ilem_form *ifp, Form *fp, int tail)
+sig_one(Pool *p, struct ilem_form *ifp, Form *fp, int tail)
 {
   unsigned char buf[1024];
   const unsigned char *form_to_use;
   int wild_form = 0;
 
+  /* 20260127: remove struct xcl_context from form_sig functions to
+     make them easier to use outside the lemmatizer; require setting
+     xxcp using form_set_xcp(struct xcl_context*) to set up
+     xli_ilem */
   if (ifp && lem_extended)
-    xli_ilem(xcp, ifp, fp);
-
+    xli_ilem(xxcp, ifp, fp);
+  
   if (strstr((const char *)fp->lang, "-949"))
     wild_form = 1;
-
+  
   if (!fp->project)
-    fp->project = (const Uchar *)xcp->project;
+    /*fp->project = (const Uchar *)xcp->project*/
+    fprintf(stderr, "sig_one: internal error: must set fp->project\n");
   
   if (BIT_ISSET(fp->flags, FORM_FLAGS_NORM_IS_CF)) 
     fp->cf = fp->norm;
@@ -148,8 +161,7 @@ sig_one(struct xcl_context *xcp, struct ilem_form *ifp, Form *fp, int tail)
 	  (char*)(fp->pos ? fp->pos : (Uchar*)"X"),
 	  (char*)(fp->epos ? fp->epos : (Uchar*)"X"));
 
-  if (BIT_ISSET(fp->core->features,LF_BASE)
-      && !fp->base)
+  if (!fp->base && fp->core && BIT_ISSET(fp->core->features,LF_BASE))
     {
       if (fp->pos && !strcmp((char *)fp->pos, "n"))
 	{
@@ -195,7 +207,7 @@ sig_one(struct xcl_context *xcp, struct ilem_form *ifp, Form *fp, int tail)
 }
 
 unsigned char *
-form_sig_nopool(struct xcl_context *xcp, Form *fp)
+form_sig_sub(Pool *p, Form *fp)
 {
   unsigned char *ret = NULL;
   if (fp)
@@ -203,11 +215,11 @@ form_sig_nopool(struct xcl_context *xcp, Form *fp)
       struct ilem_form *ifp = fp->owner;
 
       if (bit_get(fp->flags, FORM_FLAGS_IS_PSU))
-	ret = form_psu_sig(xcp, fp);
+	ret = form_psu_sig(p, fp);
       else if (fp->parts) /* COF */
 	{
 	  unsigned char *tmp = NULL;
-	  tmp = sig_one(xcp, ifp, fp, 0);
+	  tmp = sig_one(p, ifp, fp, 0);
 	  if (tmp) 
 	    {
 	      List *parts = list_create(LIST_SINGLE);
@@ -215,7 +227,7 @@ form_sig_nopool(struct xcl_context *xcp, Form *fp)
 	      list_add(parts, tmp);
 	      for (i = 0; fp->parts[i]; ++i)
 		{
-		  fp->parts[i]->tail_sig = tmp = sig_one(xcp, ifp, fp->parts[i], 1);
+		  fp->parts[i]->tail_sig = tmp = sig_one(p, ifp, fp->parts[i], 1);
 		  if (tmp)
 		    list_add(parts, tmp);
 		  else
@@ -225,20 +237,20 @@ form_sig_nopool(struct xcl_context *xcp, Form *fp)
 	    }
 	}
       else
-	ret = sig_one(xcp, ifp, fp, 0);
+	ret = sig_one(p, ifp, fp, 0);
     }
 
   return ret;
 }
 
 unsigned char *
-form_sig(struct xcl_context *xcp, Form *fp)
+form_sig(Pool *p, Form *fp)
 {
   unsigned char *ret = NULL;
-  unsigned char *res = form_sig_nopool(xcp, fp);
+  unsigned char *res = form_sig_sub(p, fp);
   if (res)
     {
-      ret = pool_copy(res, xcp->pool);
+      ret = pool_copy(res, p);
       free(res);
     }
   return ret;
@@ -272,12 +284,12 @@ tabless(const unsigned char *s)
 }
 
 unsigned char *
-form_psu_sig(struct xcl_context *xcp, Form *fp)
+form_psu_sig(Pool *p, Form *fp)
 {
   unsigned char psu_buf[4096];
 
   sprintf((char*)psu_buf, "%s[%s//%s]%s'%s", fp->cf, fp->gw, fp->sense, fp->pos, fp->epos);
-  fp->sig = pool_copy(psu_buf, xcp->pool);
+  fp->sig = pool_copy(psu_buf, p);
   
   if (fp->parts)
     { 
@@ -331,7 +343,7 @@ form_psu_sig(struct xcl_context *xcp, Form *fp)
 		 * fp->owner instead; if things misbehave check that
 		 * fp->parts[i]->owner is NULL.
 		 */
-                fp->parts[i]->sig = form_sig(xcp, fp->parts[i]);
+                fp->parts[i]->sig = form_sig(p, fp->parts[i]);
 
               if ((amp = strstr((char*)fp->parts[i]->sig, "&&")))
                 {

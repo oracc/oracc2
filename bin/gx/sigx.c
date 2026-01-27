@@ -172,7 +172,7 @@ main(int argc, char **argv)
 		{
 		  f.lang = (uccp)f.core->name;
 		  f.morph2 = NULL;
-		  unsigned char *sigp = form_sig_nopool(xcp, &f);
+		  unsigned char *sigp = form_sig_sub(poo, &f);
 		  if (sigp)
 		    {
 		      List *sl = hash_find(sig, sigp);
