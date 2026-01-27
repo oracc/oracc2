@@ -92,7 +92,7 @@ static struct cbdtag cbdtags_wl[] =
     {"gwl",   GWL, 0, s_text},
     {""},
 #line 27 "cbdtags.g"
-    {"collo", COLLO, 0, 0},
+    {"collo", COLLO, 0, s_text},
     {""}, {""}, {""},
 #line 37 "cbdtags.g"
     {"file",  FILESPEC, 0, s_word},
@@ -170,7 +170,7 @@ static struct cbdtag cbdtags_wl[] =
     {"allow", ALLOW, 0, s_allow},
     {""}, {""}, {""}, {""},
 #line 25 "cbdtags.g"
-    {"equiv", EQUIV, 0, s_text},
+    {"equiv", EQUIV, 0, s_equiv},
     {""}, {""}, {""}, {""},
 #line 21 "cbdtags.g"
     {"alias", ALIAS, 0, s_cf}

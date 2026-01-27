@@ -315,36 +315,25 @@ fform:	     	FFORM 		{ curr_form->form = (ucp)$1; }
 flang: 		FLANG 		{ curr_form->lang = (ucp)$1; }
 frws: 		FRWS 		{ curr_form->rws  = (ucp)$1; }
 
-form_args:	fbase form_norm
-	|      	fbase form_morph form_norm
-	|  	fbase fcont form_morph form_norm
-	|  	fbase fcont form_norm
-	|  	fbase fstem fcont form_morph form_norm
-	|  	fbase fstem fcont form_norm
-	|  	fbase fstem form_morph form_norm
-	|  	fbase fstem form_norm
-	|	fstem form_norm
-	|	fstem form_morph form_norm
-	|	fstem fcont form_norm
-	|	fstem fcont form_morph form_norm
-	|	fcont form_norm
-	|	fcont form_morph form_norm
-	|	form_morph form_norm
-	|	form_norm
+form_args:
+          form_arg
+	| form_args form_arg
+	;
+
+form_arg:
+	  fbase
+	| fcont
+	| fstem
+	| fmorph
+	| fmorph2
+	| fnorm
+	;
 
 fbase: 		FBASE 		{ curr_form->base = (ucp)$1; }
 fstem: 		FSTEM 		{ curr_form->stem = (ucp)$1; }
 fcont: 		FCONT 		{ curr_form->cont = (ucp)$1; }
-
-form_morph: fmorph
-	|	fmorph fmorph2
-
 fmorph:        	FMORPH  	{ curr_form->morph = (ucp)$1; }
-fmorph2: 	FMORPH2 	{ curr_form->morph2 = (ucp)$1; }	       
-
-form_norm: fnorm
-	|      /* empty */
-
+fmorph2: 	FMORPH2 	{ curr_form->morph2 = (ucp)$1; }
 fnorm: 		FNORM 		{ curr_form->norm = (ucp)$1; }
 
 senses_block: senses
@@ -439,7 +428,8 @@ anymeta: 	pleiades
 
 equiv: 		EQUIV LANG TEXTSPEC		{ cbd_bld_meta_add(@1,curr_entry, curr_meta, $1, "equiv",
 		    					   cbd_bld_equiv(curr_entry,(ucp)$2,(ucp)$3)); }
-isslp:		ISSLP TEXTSPEC			{ cbd_bld_meta_add(@1,curr_entry, curr_meta, $1, "isslp", (ucp)$2); }
+isslp:		ISSLP TEXTSPEC			{ cbd_bld_meta_add(@1, curr_entry, curr_meta, $1, "isslp", (ucp)$2); }
+
 bib:		BIB TEXTSPEC			{ cbd_bld_meta_add(@1,curr_entry, curr_meta, $1, "bib", (ucp)$2); }
 
 inote:		INOTE TEXTSPEC			{ cbd_bld_meta_add(@1,curr_entry, curr_meta, $1, "inote", (ucp)$2); }

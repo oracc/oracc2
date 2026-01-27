@@ -22,9 +22,9 @@ alias, ALIAS, 0, s_cf
 allow, ALLOW, 0, s_allow
 note,  NOTE, 0, s_text
 bib,   BIB, 0, s_text
-equiv, EQUIV, 0, s_text
+equiv, EQUIV, 0, s_equiv
 oid,   OID, 0, s_word
-collo, COLLO, 0, 0
+collo, COLLO, 0, s_text
 phon,  PHON, 0, 0
 root,  ROOT, 0, 0
 stems, STEMS, 0, 0

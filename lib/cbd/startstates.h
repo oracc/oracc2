@@ -11,3 +11,4 @@
 #define s_text 11
 #define s_word 12
 #define s_allow 13
+#define s_equiv 14

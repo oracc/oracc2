@@ -21,7 +21,7 @@
 /* yytext-dup strips beginning/end spaces */
 #define ytdup() (yylval.text = (char*)pool_copy((ucp)unspace(yytext),curr_cbd->pool))
 #define ytdupn(n) yylval.text = (char*)pool_copy((ucp)unspace(yytext+(n)),curr_cbd->pool)
-#define yi(tok) yylval.i = tok;
+#define yi(tok) yylval.i = tok
 #define yln(s) if (ylntrace) {fprintf(stderr, "%s: %d\n",(s),yylineno);}
 
 static int after_s_entsns = 0;
@@ -98,8 +98,9 @@ char *ssnames[] = {
 "s_s",
 "s_lang",
 "s_text",
-"s_word"
-"s_allow"
+"s_word",
+"s_allow",
+"s_equiv"
 };
 
 %}
@@ -117,6 +118,7 @@ char *ssnames[] = {
 %x s_text
 %x s_word
 %x s_allow
+%x s_equiv
 %%
 
 	/* OUTER LEVEL TOKENIZER */
@@ -124,13 +126,14 @@ char *ssnames[] = {
 ^[-+]		{ BEGIN ss(s_sol); 	 return(yytext[0]); }
 ^>>[ \t]*      	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(RENAME); }
 ^>[ \t]*       	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(MERGE); }
-^@end[ \t]+entry[ \t]*\n  { BEGIN ss(0); return(END_ENTRY); }
-^@end[ \t]+senses[ \t]*\n { BEGIN ss(0); return(END_SENSES); }
-^@[a-z]+	{ if (set_ctp()) xreturn(ctp->tok); }
+^@letter.*/\n   { /* ignore @letter */ }
+^@end[ \t]+entry[ \t]*/\n  { BEGIN ss(0); return(END_ENTRY); }
+^@end[ \t]+senses[ \t]*/\n { BEGIN ss(0); return(END_SENSES); }
+^@[a-z]+	{ if (set_ctp()) xreturn(yi(ctp->tok)); }
 ^@[a-z]+/[!*]+	{ if (set_ctp()) BEGIN ss(s_flag); }
-<s_flag>[!*]+	{ tg_set_flags(yytext) ; xreturn(ctp->tok); }
+<s_flag>[!*]+	{ tg_set_flags(yytext) ; xreturn(yi(ctp->tok)); }
 ^@[A-Z]+	{ if (set_rws()) xreturn(DCF); } 
-<s_sol>@[a-z]+	{ BEGIN ss(0); if (set_ctp()) xreturn(ctp->tok); }
+<s_sol>@[a-z]+	{ BEGIN ss(0); if (set_ctp()) xreturn(yi(ctp->tok)); }
 [ \t]+       	{ /* empty */ }
 \n		{ BEGIN ss(0); }
 
@@ -158,6 +161,11 @@ char *ssnames[] = {
 <s_allow>\n	    { BEGIN ss(0); }
 <s_allow>[ \t]+	    { /* empty */ }
 
+	/* EQUIV TOKENIZER */
+
+<s_equiv>%[^ \t\n]+[ \t]*  { ksdup(yytext); BEGIN(s_text); xreturn(LANG); }
+<s_equiv>[ \t]+	    	   { /* empty */ }
+
 	/* BASES TOKENIZER */
 
 <s_b>[^ \t\n]+	{ return base_tok(); }
@@ -170,7 +178,7 @@ char *ssnames[] = {
 <s_f>@[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FRWS); }
 <s_f>\/[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FBASE); }
 <s_f>\+[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FCONT); }
-<s_f>\$[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FNORM); }
+<s_f>(\$[^ \t\n]+[ \t]*)+[ \t]*	  { ytdupn(1); xreturn(FNORM); }
 <s_f>##[^ \t\n]+[ \t]*	  { ytdupn(2); xreturn(FMORPH2); }
 <s_f>#[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FMORPH); }
 <s_f>\*[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FSTEM); }
@@ -192,6 +200,8 @@ char *ssnames[] = {
 <s_incl>[^ \t\n]+   	  { includeo(yytext); }
 
 <s_flush>.*		  { BEGIN ss(0); }
+
+<<EOF>>			{ yyterminate(); }
 
 %%
 
@@ -251,7 +261,7 @@ set_ctp(void)
   while (*atname && '@' != *atname)
     ++atname;
   if (*atname)
-    ++atname;
+  ++atname;
   ctp = cbdtags(atname,strlen(atname));
   if (!ctp)
     {
