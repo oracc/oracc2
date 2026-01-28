@@ -91,7 +91,9 @@ typedef struct form
   const Uchar *morph2;
   const Uchar *stem;
   const Uchar *augment; /* need to store +.*ra until we get morphology from cbd */
+#if 0
   const Uchar *restrictor;
+#endif
   const Uchar *rws;
   
   /* Data structure for use by wordset lookup */
@@ -106,8 +108,12 @@ typedef struct form
   /* Store rank so it can persist across nlcp_rewrite */
   int rank;
 
+  /* struct form is used by CBD as well */
+  void *entry;
+  
   /* Support for arbitrary user data extensions */
   void *user;
+
 } Form;
 
 #include "sigs.h"

@@ -107,7 +107,9 @@ form_serialize_form_2(FILE *f_f2, struct ilem_form *f)
 	form_attr(f_f2,"invalid","1");
       form_attr(f_f2,"literal",f->literal);
       form_attr(f_f2,"sublem",f->sublem);
+#if 0
       form_attr(f_f2,"restrictor",f->restrictor);
+#endif
       form_attr(f_f2,"fdisamb",f->fdisamb);
       form_attr(f_f2,"sdisamb",f->sdisamb);
 

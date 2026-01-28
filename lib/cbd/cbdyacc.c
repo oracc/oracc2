@@ -14,6 +14,9 @@ static List *curr_base_list = NULL;
 struct parts *curr_parts;
 List *cmt_queue = NULL;
 
+Cbds *cbdset;
+static void cbd_bld_set(void);
+
 Hash *cbds = NULL;
 
 #define cmts(l) (l) = cmt_queue , cmt_queue = NULL;
@@ -102,7 +105,10 @@ cbd_bld_cbd(void)
 {
   struct cbd *c = NULL;
   extern const char *file; /*FIXME*/
-  c = malloc(sizeof(struct cbd));
+  if (!cbdset)
+    cbd_bld_set();
+  c = memo_new(cbdset->cbdmem);
+  list_add(cbdset->cbds, c);
   c->aliasmem = memo_init(sizeof(struct alias), 1024);
   c->allowmem = memo_init(sizeof(struct allow), 1024);
   c->cgpmem = memo_init(sizeof(struct cgp), 1024);
@@ -180,6 +186,11 @@ cbd_bld_cmt_queue(locator *lp, unsigned char *cmt)
     }
   else
     mesg_err(lp, "#comments are only allowed inside entries");
+}
+
+void
+cbd_bld_cof(locator *lp, Entry *ep)
+{
 }
 
 void
@@ -367,6 +378,7 @@ cbd_bld_form(YYLTYPE l, struct entry *e)
   f2p = memo_new(e->owner->formsmem);
   f2p->file = (ucp)l.file;
   f2p->lnum = l.line;
+  f2p->entry = e;
   cmts(f2p->user);
   list_add(e->forms, f2p);
   if (bang)
@@ -387,6 +399,8 @@ cbd_bld_form_setup(struct entry *e, Form* f2p)
   f2p->cf = e->cgp->cf;
   f2p->gw = e->cgp->gw;
   f2p->pos = e->cgp->pos;
+  if (f2p->norm && strstr(f2p->norm, "$("))
+    cbd_bld_save_cof(f2p);
 }
 
 void
@@ -608,6 +622,17 @@ cbd_bld_sensel(YYLTYPE l, struct entry *e)
   cmts(sp->l.user);
   list_add(curr_sense->sensels, sp);
   return sp;
+}
+
+static void
+cbd_bld_set(void)
+{
+  cbdset = calloc(1, sizeof(Cbds));
+  cbdset->cbds = list_create(LIST_SINGLE);
+  cbdset->cofs = hash_create(128);
+  cbdset->lngs = hash_create(8);
+  cbdset->psus = hash_create(1024);
+  cbdset->cbdmem = memo_init(sizeof(Cbd), 8);
 }
 
 void

@@ -20,8 +20,20 @@
 #define ucp unsigned char *
 #endif
 
+typedef struct cbdset
+{
+  List *cbds;
+  Hash *lngs;
+  Hash *cofs;
+  Hash *psus;
+  Memo *cbdmem;
+} Cbds;
+
+extern Cbds *cbdset;
+
 typedef struct cbd {
   Mloc l;
+  Cbds *set;
   const char *file;
   unsigned const char *project;
   unsigned const char *lang;
@@ -39,8 +51,6 @@ typedef struct cbd {
   Hash *hentries;
   Hash *haliases;
   Hash *simple;
-  Hash *cofs;
-  Hash *psus;
   char *i18nstr; 	/* content of the @i18n header tag */
   List *i18n;		/* list of i18n langs from @i18n tag in header */
   Memo *aliasmem;
@@ -170,6 +180,7 @@ struct alias {
 struct parts {
   Mloc l;
   List *cgps; /* list_free(cgps,NULL) when freeing cbd */
+  Entry *owner;
 };
 
 typedef struct sense {

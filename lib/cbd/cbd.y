@@ -180,8 +180,8 @@ entry: 		entry_block end_entry
 
 entry_block:    atentry
 	|	atentry aliases
-	| 	atentry aliases parts
-	| 	atentry aliases parts disc
+	| 	atentry aliases partses
+	| 	atentry aliases partses disc
 	|	atentry modentry
 	|	atentry modentry aliases
 	| 	atentry modentry aliases partses
@@ -236,7 +236,7 @@ partses:	parts
 	| 	partses parts
 	;
 
-parts:  	atparts cgplist { curr_parts->cgps = cgp_get_all(); }
+parts:  	atparts cgplist { curr_parts->cgps = cgp_get_all(); cbd_bld_save_psu(curr_entry,curr_parts); }
 
 atparts: 	PARTS { curr_parts = cbd_bld_parts(@1,curr_entry); }
 
