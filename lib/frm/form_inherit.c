@@ -82,7 +82,7 @@ form_clear(Form *f2p)
   f2p->cf = f2p->gw = f2p->sense = f2p->pos = f2p->epos
     = f2p->norm = f2p->base = f2p->cont = f2p->morph
     = f2p->morph2 = f2p->rws = f2p->stem = f2p->augment
-    = f2p->restrictor = f2p->sig
+    /*= f2p->restrictor*/ = f2p->sig
     = NULL;
   BIT_SET(f2p->flags, FORM_FLAGS_CLEARED);
 }

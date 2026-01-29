@@ -399,8 +399,8 @@ cbd_bld_form_setup(struct entry *e, Form* f2p)
   f2p->cf = e->cgp->cf;
   f2p->gw = e->cgp->gw;
   f2p->pos = e->cgp->pos;
-  if (f2p->norm && strstr(f2p->norm, "$("))
-    cbd_bld_save_cof(f2p);
+  if (f2p->norm && ('(' == *f2p->norm || strstr((ccp)f2p->norm, "$(")))
+    cbd_cof_register(f2p);
 }
 
 void
@@ -629,7 +629,8 @@ cbd_bld_set(void)
 {
   cbdset = calloc(1, sizeof(Cbds));
   cbdset->cbds = list_create(LIST_SINGLE);
-  cbdset->cofs = hash_create(128);
+  cbdset->cof_heads = hash_create(64);
+  cbdset->cof_tails = hash_create(128);
   cbdset->lngs = hash_create(8);
   cbdset->psus = hash_create(1024);
   cbdset->cbdmem = memo_init(sizeof(Cbd), 8);

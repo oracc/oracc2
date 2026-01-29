@@ -24,7 +24,8 @@ typedef struct cbdset
 {
   List *cbds;
   Hash *lngs;
-  Hash *cofs;
+  Hash *cof_heads;
+  Hash *cof_tails;
   Hash *psus;
   Memo *cbdmem;
 } Cbds;
@@ -177,11 +178,11 @@ struct alias {
   struct cgp *cgp;
 };
 
-struct parts {
+typedef struct parts {
   Mloc l;
   List *cgps; /* list_free(cgps,NULL) when freeing cbd */
   Entry *owner;
-};
+} Parts;
 
 typedef struct sense {
   Mloc l;
@@ -306,6 +307,9 @@ extern struct sense *cbd_bld_sense(YYLTYPE l, struct entry *e);
 extern struct sense *cbd_bld_sensel(YYLTYPE l, struct entry *e);
 extern void cbd_bld_stem(YYLTYPE l, struct entry *e, unsigned char *stem);
 extern struct tag *cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, unsigned char *val);
+
+extern void cbd_cof_register(Form *f2p);
+extern void cbd_psu_register(Entry *ep, Parts *pp);
 
 #endif/*CBD_H_*/
 

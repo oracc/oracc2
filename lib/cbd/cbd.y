@@ -236,7 +236,8 @@ partses:	parts
 	| 	partses parts
 	;
 
-parts:  	atparts cgplist { curr_parts->cgps = cgp_get_all(); cbd_bld_save_psu(curr_entry,curr_parts); }
+parts:  	atparts cgplist { curr_parts->cgps = cgp_get_all();
+  				  cbd_psu_register(curr_entry,curr_parts); }
 
 atparts: 	PARTS { curr_parts = cbd_bld_parts(@1,curr_entry); }
 
