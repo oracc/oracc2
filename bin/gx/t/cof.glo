@@ -1,0 +1,21 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry šuš [cover] V/t
+@bases u°šu₂
+@form ušu₂ $(ud) $šuš $(u) /u°šu₂ #~
+@sense V/t to cover, to spread over
+@end entry
+
+@entry u [grass] V/t
+@bases uš°u₂
+@form ušu₂ $(ud) $(šuš) $u /uš°u₂ #~
+@sense N grass
+@end entry
+
+@entry ud [sun] N
+@bases u·šu₂
+@form ušu₂ $ud $(šuš) $(u) /u·šu₂ #~
+@sense N day
+@end entry

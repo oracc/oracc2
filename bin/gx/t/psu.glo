@@ -1,0 +1,16 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry a [water] N
+@bases a (e₄); a₂ (A₂)
+@form a /a #~
+@sense N water
+@end entry
+
+@entry a dug [to demolish] V/t
+@parts a[water]N dug[speak]V/t
+@end entry
+
+@entry dug [speak] V/t
+@end entry

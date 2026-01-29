@@ -1,0 +1,7 @@
+{
+"type" : "glossary","project" : "epsd2","source" : "http:\/\/oracc.org\/epsd2","license" : "This data is released under the CC0 license","license-url" : "https:\/\/creativecommons.org\/publicdomain\/zero\/1.0\/","more-info" : "http:\/\/oracc.org\/doc\/opendata\/","lang" : "sux","entries" : [{
+"headword" : "šuš[cover]V\/t","id" : "z000001","oid" : "z000001","dc_title" : "epsd2\/sux\/šuš[cover]V\/t","cf" : "šuš","gw" : "cover","pos" : "V\/t"
+},{
+"headword" : "ud[sun]N","id" : "z000002","oid" : "z000002","dc_title" : "epsd2\/sux\/ud[sun]N","cf" : "ud","gw" : "sun","pos" : "N"
+}]
+}
