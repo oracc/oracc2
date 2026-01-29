@@ -22,19 +22,23 @@
 
 typedef struct cbdset
 {
-  List *cbds;
+  List *lcbds;
+  Hash *hcbds;
   Hash *lngs;
   Hash *cof_heads;
-  Hash *cof_tails;
+  Hash **cof_tails;
+  int ntails;
   Hash *psus;
   Memo *cbdmem;
+  Memo *cofmem;
+  Memo *formsmem;
+  Pool *pool;
 } Cbds;
 
-extern Cbds *cbdset;
+extern Cbds *csetp;
 
 typedef struct cbd {
   Mloc l;
-  Cbds *set;
   const char *file;
   unsigned const char *project;
   unsigned const char *lang;
@@ -42,7 +46,6 @@ typedef struct cbd {
   unsigned const char *trans;
   unsigned const char *version;
   unsigned const char *iname; /* this is the internal name used as the hash key in cbds */
-  Pool *pool;
   struct xpd *xpd;
   List *letters;
   List *entries;
@@ -57,11 +60,9 @@ typedef struct cbd {
   Memo *aliasmem;
   Memo *allowmem;
   Memo *cgpmem;
-  Memo *cofmem;
   Memo *editmem;
   Memo *entrymem;
   Memo *equivmem;
-  Memo *formsmem;
   Memo *i18nmem;
   Memo *loctokmem;
   Memo *locatormem;
@@ -157,6 +158,7 @@ typedef struct cof
 {
   unsigned char *s;
   struct entry *e;
+  struct form *f;
   int i;
 } Cof;
 
@@ -260,7 +262,7 @@ struct cbdtag {
 
 extern const char *errmsg_fn;
 
-extern Hash *cbds;
+/*extern Hash *cbds;*/
 extern struct cbd *curr_cbd;
 extern struct entry *curr_entry;
 extern struct alias *curr_alias;

@@ -28,7 +28,7 @@ ratts_cbd(Cbd *c, enum o_mode mode)
     {
       char src[strlen((ccp)c->project)+strlen("http://oracc.org/0")];
       sprintf(src, "http://oracc.org/%s", c->project);
-      list_pair(lp, "source", pool_copy((uccp)src, c->pool));
+      list_pair(lp, "source", pool_copy((uccp)src, csetp->pool));
       list_pair(lp, "license", "This data is released under the CC0 license");
       list_pair(lp, "license-url", "https://creativecommons.org/publicdomain/zero/1.0/");
       list_pair(lp, "more-info", "http://oracc.org/doc/opendata/");
@@ -68,7 +68,7 @@ ratts_entry(Entry *e, enum o_mode mode)
 	      +strlen((char*)cp->tight)
 	      +strlen("//0")];
       sprintf(dc, "%s/%s/%s", e->owner->project, e->owner->lang, cp->tight);
-      list_pair(lp, "dc_title", pool_copy((uccp)dc,e->owner->pool));
+      list_pair(lp, "dc_title", pool_copy((uccp)dc,csetp->pool));
       list_pair(lp, "cf", cp->cf);
       list_pair(lp, "gw", cp->gw);
       list_pair(lp, "pos", cp->pos);

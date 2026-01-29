@@ -65,13 +65,13 @@ cbd_no_form_bases(Entry *ep)
 	      const char *lang = ltp->lang ? ltp->lang : "sux";
 	      char f[strlen((ccp)pri)*2 + strlen(lang) + strlen("%/#~0")];
 	      sprintf(f, "%s%%%s/%s#~", pri, lang, pri);
-	      list_add(no_fo_ba, pool_copy((uccp)f, ep->owner->pool));
+	      list_add(no_fo_ba, pool_copy((uccp)f, csetp->pool));
 	    }
 	  else
 	    {
 	      char f[strlen((ccp)pri)*2 + strlen("/#~0")];
 	      sprintf(f, "%s/%s #~", pri, pri);
-	      list_add(no_fo_ba, pool_copy((uccp)f, ep->owner->pool));
+	      list_add(no_fo_ba, pool_copy((uccp)f, csetp->pool));
 	    }
 	}
     }
@@ -140,7 +140,7 @@ cbd_entry_sigs(Entry *ep, Hash *h)
 	  f.parts = fp->parts;
 	  f.cof_id = fp->cof_id;
 
-	  fprintf(stdout, "%s\n", form_sig(ep->owner->pool, &f));
+	  fprintf(stdout, "%s\n", form_sig(csetp->pool, &f));
 	}
     }
 }

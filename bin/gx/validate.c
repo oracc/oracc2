@@ -53,12 +53,12 @@ v_allow(struct entry *e)
       /* check that lhs and rhs both resolve to gdl sigs */
       if ((sig = gdlsig_str(&ap->l, ap->lhs,1,1)))
 	{
-	  ap->lsig = pool_copy((ucp)sig, e->owner->pool);
+	  ap->lsig = pool_copy((ucp)sig, csetp->pool);
 	  hash_add(e->b_allow, ap->lsig, ap);
 	}
       if ((sig = gdlsig_str(&ap->l, ap->rhs,1,1)))
 	{
-	  ap->rsig = pool_copy((ucp)sig, e->owner->pool);
+	  ap->rsig = pool_copy((ucp)sig, csetp->pool);
 	  hash_add(e->b_allow, ap->rsig, ap);
 	}
     }
@@ -131,7 +131,7 @@ v_bases(struct entry *e)
 	    }
 	  else
 	    {
-	      pri_sig = (ccp)pool_copy((ucp)sig, e->owner->pool);
+	      pri_sig = (ccp)pool_copy((ucp)sig, csetp->pool);
 	      hash_add(e->b_pri, pri, (ucp)pri_sig);
 	      hash_add(e->b_sig, (ucp)pri_sig, pri);
 	    }

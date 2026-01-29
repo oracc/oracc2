@@ -16,11 +16,11 @@
 #define yylval cbdlval
 
 /* keep-space-dup */
-#define ksdup(s) yylval.text = (char*)pool_copy((unsigned char *)(s),curr_cbd->pool)
+#define ksdup(s) yylval.text = (char*)pool_copy((unsigned char *)(s),csetp->pool)
 
 /* yytext-dup strips beginning/end spaces */
-#define ytdup() (yylval.text = (char*)pool_copy((ucp)unspace(yytext),curr_cbd->pool))
-#define ytdupn(n) yylval.text = (char*)pool_copy((ucp)unspace(yytext+(n)),curr_cbd->pool)
+#define ytdup() (yylval.text = (char*)pool_copy((ucp)unspace(yytext),csetp->pool))
+#define ytdupn(n) yylval.text = (char*)pool_copy((ucp)unspace(yytext+(n)),csetp->pool)
 #define yi(tok) yylval.i = tok
 #define yln(s) if (ylntrace) {fprintf(stderr, "%s: %d\n",(s),yylineno);}
 
@@ -243,7 +243,7 @@ set_rws(void)
   if (rws)
     {
       BEGIN ss(s_text);
-      yylval.text = (char*)pool_copy((ucp)rws->lang, curr_cbd->pool);
+      yylval.text = (char*)pool_copy((ucp)rws->lang, csetp->pool);
       return 1;
     }
   else
@@ -351,7 +351,7 @@ base_tok(void)
     {
       ret_state = base_state;
     }
-  yylval.text = (char*)pool_copy((ucp)t,curr_cbd->pool);
+  yylval.text = (char*)pool_copy((ucp)t,csetp->pool);
   return ret_state;
 }
 
@@ -361,7 +361,7 @@ alt_wrapup(int clean)
 {
   if (clean)
     clean_alt_paren(); 
-  (void)pool_copy((ucp)unspace(b_alt_tok),curr_cbd->pool);
+  (void)pool_copy((ucp)unspace(b_alt_tok),csetp->pool);
   free(b_alt_tok); 
   b_alt_tok = NULL;
 }
@@ -463,7 +463,7 @@ includeo(char *file)
 
   ++include_stack_ptr;      
 
-  efile = include_stack[include_stack_ptr].file = (char*)pool_copy((ucp)yytext,curr_cbd->pool);
+  efile = include_stack[include_stack_ptr].file = (char*)pool_copy((ucp)yytext,csetp->pool);
   include_stack[include_stack_ptr].yycb = YY_CURRENT_BUFFER;
   include_stack[include_stack_ptr].line = yylineno;
   include_stack[include_stack_ptr].fp = yyin = xfopen( yytext, "r" );

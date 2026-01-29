@@ -14,7 +14,7 @@ static List *curr_base_list = NULL;
 struct parts *curr_parts;
 List *cmt_queue = NULL;
 
-Cbds *cbdset;
+Cbds *csetp, cbdset;
 static void cbd_bld_set(void);
 
 Hash *cbds = NULL;
@@ -105,14 +105,13 @@ cbd_bld_cbd(void)
 {
   struct cbd *c = NULL;
   extern const char *file; /*FIXME*/
-  if (!cbdset)
+  if (!csetp)
     cbd_bld_set();
-  c = memo_new(cbdset->cbdmem);
-  list_add(cbdset->cbds, c);
+  c = memo_new(csetp->cbdmem);
+  list_add(csetp->lcbds, c);
   c->aliasmem = memo_init(sizeof(struct alias), 1024);
   c->allowmem = memo_init(sizeof(struct allow), 1024);
   c->cgpmem = memo_init(sizeof(struct cgp), 1024);
-  c->cofmem = memo_init(sizeof(struct cof), 128);
   c->editmem = memo_init(sizeof(struct edit), 1024);
   c->equivmem = memo_init(sizeof(struct equiv), 1024);
   c->entrymem = memo_init(sizeof(struct entry), 1024);
@@ -127,7 +126,6 @@ cbd_bld_cbd(void)
   c->sensesmem = memo_init(sizeof(struct sense), 1024);
   c->tagmem = memo_init(sizeof(struct tag), 1024);
   c->taglmem = memo_init(sizeof(struct tagl), 1024);
-  c->pool = pool_init();
   c->letters = list_create(LIST_SINGLE);
   c->entries = list_create(LIST_SINGLE);
   c->edits = list_create(LIST_SINGLE);
@@ -145,7 +143,7 @@ cbd_bld_cbd_setup(struct cbd*c)
 {
   c->iname = malloc(strlen((ccp)c->project) + strlen((ccp)c->lang) + 2);
   sprintf((char*)c->iname, "%s:%s", c->project, c->lang);
-  hash_add(cbds, c->iname, c);
+  hash_add(csetp->hcbds, c->iname, c);
   /* xpdinit */
   /* cuneify_init(c->xpd); */
 }
@@ -153,7 +151,7 @@ cbd_bld_cbd_setup(struct cbd*c)
 void
 cbd_bld_cbd_term(struct cbd*c)
 {
-  pool_term(c->pool);
+  pool_term(csetp->pool);
   hash_add(cbds, c->iname, NULL);
   /*cuneify_term();*/
   free(c);
@@ -628,13 +626,17 @@ cbd_bld_sensel(YYLTYPE l, struct entry *e)
 static void
 cbd_bld_set(void)
 {
-  cbdset = calloc(1, sizeof(Cbds));
-  cbdset->cbds = list_create(LIST_SINGLE);
-  cbdset->cof_heads = hash_create(64);
-  cbdset->cof_tails = hash_create(128);
-  cbdset->lngs = hash_create(8);
-  cbdset->psus = hash_create(1024);
-  cbdset->cbdmem = memo_init(sizeof(Cbd), 8);
+  csetp = &cbdset;
+  csetp->lcbds = list_create(LIST_SINGLE);
+  csetp->cof_heads = hash_create(64);
+  csetp->cof_tails = malloc(sizeof(Hash*));
+  csetp->cof_tails[0] = hash_create(128);
+  csetp->ntails = 1;
+  csetp->lngs = hash_create(8);
+  csetp->psus = hash_create(1024);
+  csetp->cbdmem = memo_init(sizeof(Cbd), 8);
+  csetp->cofmem = memo_init(sizeof(Cof), 16);
+  csetp->pool = pool_init();
 }
 
 void

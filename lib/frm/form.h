@@ -116,6 +116,8 @@ typedef struct form
 
 } Form;
 
+#define fentry(xfp) ((Entry *)(xfp)->entry)
+
 #include "sigs.h"
 struct sig_context; /* need this because of interweave of form.h/sigs.h includes */
 
