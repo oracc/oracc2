@@ -13,13 +13,14 @@ cbd_cofs(void)
   
 }
 
-static unsigned char *
+static Cof *
 cbd_cof_sig(Form *f2p)
 {
   char buf[strlen((ccp)f2p->norm)+1];
   char *b = buf, *s = buf;
   int index = 0, found_self = (*f2p->norm == '(' ? 0 : 1);
   strcpy(buf, (ccp)f2p->norm);
+  Cof *cofp = memo_new(((Entry*)f2p->entry)->owner->cofmem);
   while (*s)
     {
       if ('$' == *s)
@@ -50,11 +51,15 @@ cbd_cof_sig(Form *f2p)
     }
   *b = '\0';
   fprintf(stderr, "cbd_cof_sig: %s => %s [%d]\n", f2p->norm, buf, index);
-  return pool_copy((ucp)buf, ((Entry*)f2p->entry)->owner->pool);
+  cofp->e = f2p->entry;
+  cofp->s = pool_copy((ucp)buf, ((Entry*)f2p->entry)->owner->pool);
+  cofp->i = index;
+  return cofp;
 }
 
 void
 cbd_cof_register(Form *f2p)
 {
-  unsigned char *cofsig = (ucp)cbd_cof_sig(f2p);
+  Cof *cofp = cbd_cof_sig(f2p);
+  
 }

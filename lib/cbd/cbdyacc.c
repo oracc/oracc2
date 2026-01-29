@@ -112,6 +112,7 @@ cbd_bld_cbd(void)
   c->aliasmem = memo_init(sizeof(struct alias), 1024);
   c->allowmem = memo_init(sizeof(struct allow), 1024);
   c->cgpmem = memo_init(sizeof(struct cgp), 1024);
+  c->cofmem = memo_init(sizeof(struct cof), 128);
   c->editmem = memo_init(sizeof(struct edit), 1024);
   c->equivmem = memo_init(sizeof(struct equiv), 1024);
   c->entrymem = memo_init(sizeof(struct entry), 1024);

@@ -57,6 +57,7 @@ typedef struct cbd {
   Memo *aliasmem;
   Memo *allowmem;
   Memo *cgpmem;
+  Memo *cofmem;
   Memo *editmem;
   Memo *entrymem;
   Memo *equivmem;
@@ -151,6 +152,13 @@ struct allow {
   unsigned char *lsig;
   unsigned char *rsig;
 };
+
+typedef struct cof
+{
+  unsigned char *s;
+  struct entry *e;
+  int i;
+} Cof;
 
 struct meta {
   List *order;
