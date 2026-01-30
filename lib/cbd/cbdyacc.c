@@ -115,7 +115,6 @@ cbd_bld_cbd(void)
   c->editmem = memo_init(sizeof(struct edit), 1024);
   c->equivmem = memo_init(sizeof(struct equiv), 1024);
   c->entrymem = memo_init(sizeof(struct entry), 1024);
-  c->formsmem = memo_init(sizeof(Form), 1024);
   c->i18nmem = memo_init(sizeof(struct i18n), 1024);
   c->metamem = memo_init(sizeof(struct meta), 1024);
   c->locatormem = memo_init(sizeof(locator), 1024);
@@ -374,7 +373,7 @@ Form *
 cbd_bld_form(YYLTYPE l, struct entry *e)
 {
   static Form *f2p;
-  f2p = memo_new(e->owner->formsmem);
+  f2p = memo_new(csetp->formsmem);
   f2p->file = (ucp)l.file;
   f2p->lnum = l.line;
   f2p->entry = e;
@@ -636,6 +635,7 @@ cbd_bld_set(void)
   csetp->psus = hash_create(1024);
   csetp->cbdmem = memo_init(sizeof(Cbd), 8);
   csetp->cofmem = memo_init(sizeof(Cof), 16);
+  csetp->formsmem = memo_init(sizeof(Form), 512);
   csetp->pool = pool_init();
 }
 

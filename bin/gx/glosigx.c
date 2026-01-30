@@ -115,30 +115,41 @@ cbd_entry_sigs(Entry *ep, Hash *h)
       Form *fp;
       for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
 	{
-	  if (fp->lang)
-	    f.lang = fp->lang;
-	  char *n = strstr(f.lang, "/n");
-	  if (n)
+	  if (BIT_ISSET(fp, FORM_FLAGS_COF_TAIL))
 	    {
-	      *n = '\0';
-	      struct map *l949 = lang949(f.lang, strlen(f.lang));
-	      if (l949)
-		f.lang = l949->v;
-	      else
-		fprintf(stderr,
-			"glosigx: no -949 version of lang %s in lang949.g; ignoring -949 here\n",
-			f.lang);		
-	      f.form = "*";
+	      continue;
+	    }
+	  else if (BIT_ISSET(fp, FORM_FLAGS_COF_TAIL))
+	    {
+	      cof_sigs(csetp->pool, fp, stdout);
 	    }
 	  else
-	    f.form = fp->form;
-	  f.base = fp->base;
-	  f.stem = fp->stem;
-	  f.cont = fp->cont;
-	  f.norm = fp->norm;
-	  f.flags = fp->flags;
-	  f.parts = fp->parts;
-	  f.cof_id = fp->cof_id;
+	    {
+	      if (fp->lang)
+		f.lang = fp->lang;
+	      char *n = strstr(f.lang, "/n");
+	      if (n)
+		{
+		  *n = '\0';
+		  struct map *l949 = lang949(f.lang, strlen(f.lang));
+		  if (l949)
+		    f.lang = l949->v;
+		  else
+		    fprintf(stderr,
+			    "glosigx: no -949 version of lang %s in lang949.g; ignoring -949 here\n",
+			    f.lang);		
+		  f.form = "*";
+		}
+	      else
+		f.form = fp->form;
+	      f.base = fp->base;
+	      f.stem = fp->stem;
+	      f.cont = fp->cont;
+	      f.norm = fp->norm;
+	      f.flags = fp->flags;
+	      f.parts = fp->parts;
+	      /*f.cof_id = fp->cof_id;*//*No: this gets set on cbd load*/
+	    }
 
 	  fprintf(stdout, "%s\n", form_sig(csetp->pool, &f));
 	}
