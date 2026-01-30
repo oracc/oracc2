@@ -44,5 +44,6 @@ extern unsigned const char *cgp_entry_str(struct entry *e, int spread);
 extern const unsigned char *cgp_str(struct cgp *cp, int spread);
 extern void cgp_entry(struct cgp *c, struct entry *e);
 extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsize);
+extern List*cof_sigs(Form *f2p, Pool *p);
 
 #endif/*GX_H_*/

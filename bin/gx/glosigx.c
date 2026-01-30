@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <cbd.h>
+#include "gx.h"
 
 /* Read all the 00lib *.glo files and output 02pub/lemm-*.sig files.
  *
@@ -115,30 +116,30 @@ cbd_entry_sigs(Entry *ep, Hash *h)
       Form *fp;
       for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
 	{
-	  if (BIT_ISSET(fp, FORM_FLAGS_COF_TAIL))
+	  if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_TAIL))
 	    {
 	      continue;
 	    }
-	  else if (BIT_ISSET(fp, FORM_FLAGS_COF_TAIL))
+	  else if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_TAIL))
 	    {
-	      cof_sigs(csetp->pool, fp, stdout);
+	      cof_sigs(fp, csetp->pool);
 	    }
 	  else
 	    {
 	      if (fp->lang)
 		f.lang = fp->lang;
-	      char *n = strstr(f.lang, "/n");
+	      char *n = strstr((ccp)f.lang, "/n");
 	      if (n)
 		{
 		  *n = '\0';
-		  struct map *l949 = lang949(f.lang, strlen(f.lang));
+		  struct map *l949 = lang949((ccp)f.lang, strlen((ccp)f.lang));
 		  if (l949)
-		    f.lang = l949->v;
+		    f.lang = (uccp)l949->v;
 		  else
 		    fprintf(stderr,
 			    "glosigx: no -949 version of lang %s in lang949.g; ignoring -949 here\n",
 			    f.lang);		
-		  f.form = "*";
+		  f.form = (uccp)"*";
 		}
 	      else
 		f.form = fp->form;

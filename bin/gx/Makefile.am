@@ -20,6 +20,6 @@ sigglox_SOURCES=sigglox.c ../../lib/liboracc2.la
 sigglox_LDADD = $(xLDADD)
 sigglox_DEPENDENCIES = $(sigglox_LDADD)
 
-glosigx_SOURCES=common.c glosigx.c lang949.c ../../lib/liboracc2.la
+glosigx_SOURCES=common.c glosigx.c lang949.c cof_sigs.c ../../lib/liboracc2.la
 glosigx_LDADD = $(xLDADD)
 glosigx_DEPENDENCIES = $(glosigx_LDADD)
