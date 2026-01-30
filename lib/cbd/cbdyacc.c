@@ -132,6 +132,7 @@ cbd_bld_cbd(void)
   c->reldefs = list_create(LIST_SINGLE);
   c->haliases = hash_create(16);
   c->hentries = hash_create(1024);
+  c->hsenses = hash_create(1024);
   c->l.file = (char *)file;
   c->l.line = 1;
   return c;
@@ -338,7 +339,7 @@ void
 cbd_bld_entry_cgp(struct entry *e)
 {
   e->cgp = cgp_get_one();
-  hash_add(e->owner->hentries, e->cgp->tight, &one);
+  hash_add(e->owner->hentries, e->cgp->tight, e);
 }
 
 #if 0
@@ -544,7 +545,9 @@ cbd_bld_parts(YYLTYPE l, struct entry *e)
   if (!e->parts)
     e->parts = list_create(LIST_SINGLE);
   list_add(e->parts, pp);
+  list_add(csetp->parts, pp);
   pp->l = l;
+  pp->owner = e;
   cmts(pp->l.user);
   return pp;
 }
@@ -600,6 +603,7 @@ struct sense *
 cbd_bld_sense(YYLTYPE l, struct entry *e)
 {
   struct sense *sp = memo_new(e->owner->sensesmem);
+  sp->owner = curr_entry;
   sp->l = l;
   cmts(sp->l.user);
   list_add(e->senses, sp);
@@ -615,10 +619,10 @@ struct sense *
 cbd_bld_sensel(YYLTYPE l, struct entry *e)
 {
   struct sense *sp = memo_new(e->owner->sensesmem);
-  struct sense *curr_sense = list_last(e->senses);
+  struct sense *currsns = list_last(e->senses);
   sp->l = l;
   cmts(sp->l.user);
-  list_add(curr_sense->sensels, sp);
+  list_add(currsns->sensels, sp);
   return sp;
 }
 
@@ -632,7 +636,9 @@ cbd_bld_set(void)
   csetp->cof_tails[0] = hash_create(128);
   csetp->ntails = 1;
   csetp->lngs = hash_create(8);
-  csetp->psus = hash_create(1024);
+  csetp->parts = list_create(LIST_SINGLE);
+  /*csetp->psus = hash_create(1024);*/
+  csetp->hsiglangs = hash_create(8);
   csetp->cbdmem = memo_init(sizeof(Cbd), 8);
   csetp->cofmem = memo_init(sizeof(Cof), 16);
   csetp->formsmem = memo_init(sizeof(Form), 512);
@@ -660,3 +666,16 @@ cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, unsigned char *val)
   return tp;
 }
 
+void
+cbd_end_sense(void)
+{
+  char buf[strlen((ccp)curr_sense->owner->cgp->tight)
+	   +strlen((ccp)curr_sense->mng)+strlen((ccp)curr_sense->pos)+strlen("//0")];
+  strcpy(buf, (ccp)curr_sense->owner->cgp->tight);
+  char *brack = strchr(buf, ']');
+  sprintf(brack, "//%s]%s'%s", curr_sense->mng, curr_sense->owner->cgp->pos, curr_sense->pos);
+  hash_add(curr_sense->owner->owner->hsenses, pool_copy((uccp)buf, csetp->pool), curr_entry);
+#if 0  
+  fprintf(stderr, "cbd_end_sense: added %s to hash\n", buf);
+#endif
+}

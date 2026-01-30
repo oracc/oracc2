@@ -16,7 +16,7 @@
 
 static Form *curr_form;
 static struct meta *curr_meta;
-static struct sense *curr_sense;
+struct sense *curr_sense;
 static struct pleiades *curr_pleiades;
 
 extern int parser_status;
@@ -406,7 +406,8 @@ sid:		'#' 	{ curr_sense->sid = (ucp)$1; }
 sok:		'.' 	{ curr_sense->num = (ucp)$1; }
 sgw:		'['  	{ curr_sense->sgw = (ucp)$1; }
 pos:		POS /* should be restricted to legal POS */	  { curr_sense->pos = (ucp)$1; }
-mng:		TEXTSPEC /* shouldrestrict to disallow [ and ] */ { curr_sense->mng = (ucp)$1; }
+mng:		TEXTSPEC /* shouldrestrict to disallow [ and ] */ { curr_sense->mng = (ucp)$1;
+  								    cbd_end_sense(); }
 		
 modsense: 	RENAME POS TEXTSPEC { curr_sense = cbd_bld_edit_sense(curr_entry, '>');
     				      curr_sense->pos = (ucp)$2;

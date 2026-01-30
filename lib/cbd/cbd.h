@@ -27,8 +27,10 @@ typedef struct cbdset
   Hash *lngs;
   Hash *cof_heads;
   Hash **cof_tails;
+  Hash *hsiglangs;
   int ntails;
-  Hash *psus;
+  List *parts;
+  /*Hash *psus;*/
   Memo *cbdmem;
   Memo *cofmem;
   Memo *formsmem;
@@ -53,6 +55,7 @@ typedef struct cbd {
   List *propss;
   List *reldefs;
   Hash *hentries;
+  Hash *hsenses;
   Hash *haliases;
   Hash *simple;
   char *i18nstr; 	/* content of the @i18n header tag */
@@ -94,6 +97,7 @@ typedef struct cgp {
   unsigned const char *pos;
   unsigned const char *tight;
   unsigned const char *loose;
+  struct entry *owner;
 } Cgp;
 
 enum edit_t { ADD_E, ADD_S, DEL_E, DEL_S, REN_E, REN_S, MRG_E, MRG_S, TOP };
@@ -260,6 +264,7 @@ struct cbdtag {
   int ss;
 };
 
+extern Sense *curr_sense;
 extern const char *errmsg_fn;
 
 /*extern Hash *cbds;*/
@@ -320,6 +325,17 @@ extern struct tag *cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, uns
 extern void cbd_no_form_bases(Entry *ep);
 extern void cbd_cof_register(Form *f2p);
 extern void cbd_psu_register(Entry *ep, Parts *pp);
+extern void cbd_end_sense(void);
+
+extern List *cbd_sig_list(const char *l);
+extern void cbd_sig_add_one(const unsigned char *s);
+extern void cbd_sig_add_list(List *lp);
+
+extern void cgp_init(struct cgp *c, unsigned char *cf, unsigned char *gw, unsigned char *pos);
+extern unsigned const char *cgp_entry_str(struct entry *e, int spread);
+extern const unsigned char *cgp_str(struct cgp *cp, int spread);
+extern void cgp_entry(struct cgp *c, struct entry *e);
+extern void cbd_psus(void);
 
 #endif/*CBD_H_*/
 

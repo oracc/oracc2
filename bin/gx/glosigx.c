@@ -13,6 +13,8 @@ extern struct map *lang949(register const char *str, register size_t len);
 int parser_status = 0;
 int verbose = 1;
 int bootstrap_mode, lem_autolem, lem_dynalem;
+int out_stdout;
+
 struct cbd* curr_cbd;
 struct entry*curr_entry;
 const char *file, *efile, *errmsg_fn;
@@ -92,17 +94,25 @@ cbd_entry_sigs(Entry *ep, Hash *h)
 	    {
 	      List *csigl = cof_sigs(&f, csetp->pool);
 	      char *s;
-	      for (s = list_first(csigl); s; s = list_next(csigl))
-		fprintf(stdout, "%s\n", s);
+	      if (out_stdout)
+		{
+		  for (s = list_first(csigl); s; s = list_next(csigl))		
+		    fprintf(stdout, "%s\n", s);
+		}
+	      else
+		cbd_sig_add_list(csigl);
 	    }
 	  else
 	    {
 	      f.flags = fp->flags;
 	      f.parts = fp->parts;
 	      /*f.cof_id = fp->cof_id;*//*No: this gets set on cbd load*/
-	      fprintf(stdout, "%s\n", form_sig(csetp->pool, &f));
+	      char *sig = form_sig(csetp->pool, &f);
+	      if (out_stdout)
+		fprintf(stdout, "%s\n", sig);
+	      else
+		cbd_sig_add_one(sig);
 	    }
-
 	}
     }
 }
@@ -119,11 +129,14 @@ int
 main(int argc, char * const *argv)
 {
   extern int gdl_flex_debug, gdldebug, cbd_flex_debug, cbddebug;
-  int nglo = 0, nlem = 0;
+  /*int nglo = 0, nlem = 0;*/
   char **glos = glo_files();
   char **lems = lem_files();
 
   common_init();
+
+  options(argc,argv,"s");
+  
   if (argv[optind])
     glos = (char**)argv+optind;
   else
@@ -140,7 +153,7 @@ main(int argc, char * const *argv)
 	  printf(" %s", glos[i]);
       if (verbose)
 	fputc('\n', stdout);
-      nglo = i;
+      /*nglo = i;*/
     }
   else
     fprintf(stderr, "glosigx: no 00lib/*.glo found.\n");
@@ -154,7 +167,7 @@ main(int argc, char * const *argv)
 	  printf(" %s", lems[i]);
       if (verbose)
 	fputc('\n', stdout);
-      nlem = i;
+      /*nlem = i;*/
     }
   else
     fprintf(stderr, "glosigx: no 02pub/lemm-*.sig found.\n");
@@ -192,3 +205,17 @@ main(int argc, char * const *argv)
       mesg_print(stderr);
     }
 }
+
+int opts(int och, const char *oarg)
+{
+  switch (och)
+    {
+    case 's':
+      out_stdout = 1;
+      break;
+    default:
+      return 1;
+    }
+  return 0;
+}
+void help(void){}
