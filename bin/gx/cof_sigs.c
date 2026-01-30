@@ -81,39 +81,3 @@ cof_sigs(Form *f2p, Pool *p)
     }
   return sigs;
 }
-
-
-
-
-
-
-
-
- #if 0
-  int j;
-  Cof *hcp;
-      
-  for (hcp = list_first(lheads); hcp; hcp = list_next(lheads))
-    {
-      hcp->f->cof_id = hcp->f;
-      hcp->parts = memo_new_array(csetp->formsmem, csetp->ntails);
-      for (j = 0; j < csetp->ntails; ++j)
-	{
-	  List *ltails = hash_find(csetp->cof_tails[j], (uccp)heads[i]);
-	  if (!ltails)
-	    break;
-	  else
-	    {
-	      /* append each member of this list of tail segments to
-		 each member of the list of heads */
-	      Cof *tcp;
-	      for (tcp = list_first(ltails); tcp; tcp = list_next(ltails))
-		{
-		  tcp->f->cof_id = hcp->f;
-		  BIT_SET(tcp->f->flags, FORM_FLAGS_COF_TAIL);
-		  hcp->f->parts = tcp->f;
-		}
-	    }
-	}
-    }
-#endif

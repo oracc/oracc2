@@ -317,7 +317,7 @@ extern struct sense *cbd_bld_sense(YYLTYPE l, struct entry *e);
 extern struct sense *cbd_bld_sensel(YYLTYPE l, struct entry *e);
 extern void cbd_bld_stem(YYLTYPE l, struct entry *e, unsigned char *stem);
 extern struct tag *cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, unsigned char *val);
-
+extern void cbd_no_form_bases(Entry *ep);
 extern void cbd_cof_register(Form *f2p);
 extern void cbd_psu_register(Entry *ep, Parts *pp);
 

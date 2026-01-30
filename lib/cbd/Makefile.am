@@ -3,7 +3,7 @@ include ../../oracc-am-rules.txt
 noinst_LTLIBRARIES=libcbd.la
 
 libcbd_la_SOURCES=cbd.tab.c cbd.lex.c cbdyacc.c cbdpos.c cbdrws.c cbdtags.c \
-	cbd_cofs.c cbd_psus.c
+	cbd_cofs.c cbd_psus.c cbd_no_fo_ba.c
 
 cbd.tab.c cbd.tab.h: cbd.y cbd.l
 

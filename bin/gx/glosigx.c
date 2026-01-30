@@ -38,54 +38,6 @@ lem_files(void)
     return NULL;
 }
 
-static List *
-cbd_no_form_bases(Entry *ep)
-{
-  List *no_fo_ba = list_create(LIST_SINGLE);
-  
-  /* index the bases that occur in @form with morph=#~ */
-  Hash *fb = hash_create(5);
-  Form *fp;
-  for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
-    if (fp->morph && !strcmp((ccp)fp->morph, "~"))
-      hash_add(fb, fp->base, "");
-
-  /* now go through the primary bases and create a basic @form for
-     those not in the form-base index */
-  List_node *outer;
-  for (outer = ep->bases->first; outer; outer = outer->next)
-    {
-      List *bp = ((List *)(outer->data));
-      List_node *inner = bp->first;
-      struct loctok *ltp = (struct loctok *)inner->data;
-      const unsigned char *pri = ltp->tok;
-      if (!hash_find(fb, pri))
-	{
-	  if (strlen((ccp)ep->cgp->pos) == 2 && 'N' == ep->cgp->pos[1])
-	    {
-	      const char *lang = ltp->lang ? ltp->lang : "sux";
-	      char f[strlen((ccp)pri)*2 + strlen(lang) + strlen("%/#~0")];
-	      sprintf(f, "%s%%%s/%s#~", pri, lang, pri);
-	      list_add(no_fo_ba, pool_copy((uccp)f, csetp->pool));
-	    }
-	  else
-	    {
-	      char f[strlen((ccp)pri)*2 + strlen("/#~0")];
-	      sprintf(f, "%s/%s #~", pri, pri);
-	      list_add(no_fo_ba, pool_copy((uccp)f, csetp->pool));
-	    }
-	}
-    }
-  
-  if (list_len(no_fo_ba))
-    return no_fo_ba;
-  else
-    {
-      list_free(no_fo_ba, NULL);
-      return NULL;      
-    }
-}
-
 /* Iterate over the entry content creating sigs for any possible form.
  * In order to ensure that any base in the glossary entry can be
  * matched as a sig even if there is no corresponding @form, we begin
@@ -95,10 +47,6 @@ cbd_no_form_bases(Entry *ep)
 static void
 cbd_entry_sigs(Entry *ep, Hash *h)
 {
-  List *no_form_bases = NULL;
-  if (list_len(ep->bases))
-    no_form_bases = cbd_no_form_bases(ep);
-
   Form f;
   memset(&f, '\0', sizeof(Form));
   f.project = ep->owner->project;
