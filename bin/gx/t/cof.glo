@@ -2,20 +2,34 @@
 @lang sux
 @name epsd2/sux
 
+@entry šu [hand] N
+@bases u°šu₂
+@form ušu₂ $(ud) $šu $(u) /u°šu₂ #~
+@sense N hand
+@end entry
+
 @entry šuš [cover] V/t
 @bases u°šu₂
 @form ušu₂ $(ud) $šuš $(u) /u°šu₂ #~
 @sense V/t to cover, to spread over
 @end entry
 
+@entry šuš [reveal] V/t
+@bases u°šu₂
+@form ušu₂ $(ud) $šuš $(u) /u°šu₂ #~
+@sense V/t to reveal
+@end entry
+
 @entry u [grass] V/t
 @bases uš°u₂
 @form ušu₂ $(ud) $(šuš) $u /uš°u₂ #~
 @sense N grass
+@sense N food
 @end entry
 
 @entry ud [sun] N
 @bases u·šu₂
 @form ušu₂ $ud $(šuš) $(u) /u·šu₂ #~
+@form ušu₂ $ud $(šu) $(u) /u·šu₂ #~
 @sense N day
 @end entry

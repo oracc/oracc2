@@ -47,7 +47,7 @@ cbd_no_form_bases(Entry *ep)
   Hash *fb = hash_create(5);
   Form *fp;
   for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
-    if (fp->morph && !strcmp((ccp)fp->morph, "#~"))
+    if (fp->morph && !strcmp((ccp)fp->morph, "~"))
       hash_add(fb, fp->base, "");
 
   /* now go through the primary bases and create a basic @form for
@@ -117,42 +117,44 @@ cbd_entry_sigs(Entry *ep, Hash *h)
       for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
 	{
 	  if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_TAIL))
+	    continue;
+	  f.base = fp->base;
+	  f.stem = fp->stem;
+	  f.cont = fp->cont;
+	  f.norm = fp->norm;
+	  if (fp->lang)
+	    f.lang = fp->lang;
+	  char *n = strstr((ccp)f.lang, "/n");
+	  if (n)
 	    {
-	      continue;
+	      *n = '\0';
+	      struct map *l949 = lang949((ccp)f.lang, strlen((ccp)f.lang));
+	      if (l949)
+		f.lang = (uccp)l949->v;
+	      else
+		fprintf(stderr,
+			"glosigx: no -949 version of lang %s in lang949.g; ignoring -949 here\n",
+			f.lang);		
+	      f.form = (uccp)"*";
 	    }
-	  else if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_TAIL))
+	  else
+	    f.form = fp->form;
+	  
+	  if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_HEAD))
 	    {
-	      cof_sigs(fp, csetp->pool);
+	      List *csigl = cof_sigs(&f, csetp->pool);
+	      char *s;
+	      for (s = list_first(csigl); s; s = list_next(csigl))
+		fprintf(stdout, "%s\n", s);
 	    }
 	  else
 	    {
-	      if (fp->lang)
-		f.lang = fp->lang;
-	      char *n = strstr((ccp)f.lang, "/n");
-	      if (n)
-		{
-		  *n = '\0';
-		  struct map *l949 = lang949((ccp)f.lang, strlen((ccp)f.lang));
-		  if (l949)
-		    f.lang = (uccp)l949->v;
-		  else
-		    fprintf(stderr,
-			    "glosigx: no -949 version of lang %s in lang949.g; ignoring -949 here\n",
-			    f.lang);		
-		  f.form = (uccp)"*";
-		}
-	      else
-		f.form = fp->form;
-	      f.base = fp->base;
-	      f.stem = fp->stem;
-	      f.cont = fp->cont;
-	      f.norm = fp->norm;
 	      f.flags = fp->flags;
 	      f.parts = fp->parts;
 	      /*f.cof_id = fp->cof_id;*//*No: this gets set on cbd load*/
+	      fprintf(stdout, "%s\n", form_sig(csetp->pool, &f));
 	    }
 
-	  fprintf(stdout, "%s\n", form_sig(csetp->pool, &f));
 	}
     }
 }
@@ -170,16 +172,26 @@ main(int argc, char * const *argv)
 {
   extern int gdl_flex_debug, gdldebug, cbd_flex_debug, cbddebug;
   int nglo = 0, nlem = 0;
-  common_init();
   char **glos = glo_files();
   char **lems = lem_files();
+
+  common_init();
+  if (argv[optind])
+    glos = (char**)argv+optind;
+  else
+    glos = glo_files();
+  lems = lem_files();
+    
   if (glos)
     {
       int i;
-      fputs("00lib/*.glo =", stdout);
+      if (verbose)
+	fputs("00lib/*.glo =", stdout);
       for (i = 0; glos[i]; ++i)
-	printf(" %s", glos[i]);
-      fputc('\n', stdout);
+	if (verbose)
+	  printf(" %s", glos[i]);
+      if (verbose)
+	fputc('\n', stdout);
       nglo = i;
     }
   else
@@ -187,10 +199,13 @@ main(int argc, char * const *argv)
   if (lems)
     {
       int i;
-      fputs("02pub/lemm-*.sig =", stdout);
+      if (verbose)
+	fputs("02pub/lemm-*.sig =", stdout);
       for (i = 0; lems[i]; ++i)
-	printf(" %s", lems[i]);
-      fputc('\n', stdout);
+	if (verbose)
+	  printf(" %s", lems[i]);
+      if (verbose)
+	fputc('\n', stdout);
       nlem = i;
     }
   else

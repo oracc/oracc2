@@ -28,7 +28,8 @@ ratts_cbd(Cbd *c, enum o_mode mode)
     {
       char src[strlen((ccp)c->project)+strlen("http://oracc.org/0")];
       sprintf(src, "http://oracc.org/%s", c->project);
-      list_pair(lp, "source", pool_copy((uccp)src, csetp->pool));
+      unsigned char *psrc = pool_copy((uccp)src, csetp->pool);
+      list_pair(lp, "source", psrc);
       list_pair(lp, "license", "This data is released under the CC0 license");
       list_pair(lp, "license-url", "https://creativecommons.org/publicdomain/zero/1.0/");
       list_pair(lp, "more-info", "http://oracc.org/doc/opendata/");

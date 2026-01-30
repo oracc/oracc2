@@ -29,8 +29,8 @@ cbd_cof_norm_sig(Form *f2p)
 	    }
 	  else
 	    {
-	      found_self = 1;
-	      newnorm = b;
+	      found_self = 2;
+	      /*newnorm = b;*/
 	      *b++ = *s++;
 	    }
 	}
@@ -53,7 +53,7 @@ cbd_cof_norm_sig(Form *f2p)
   cofp->i = index;
   cofp->s = pool_copy((ucp)buf, csetp->pool);
 
-  if (found_self == 0)
+  if (found_self == 1)
     {
       BIT_SET(f2p->flags, FORM_FLAGS_COF_HEAD);
       f2p->norm = cofp->s;
@@ -74,13 +74,14 @@ cbd_cof_register(Form *f2p)
   List *lp;
   if (cofp->i)
     {
-      if (!csetp->cof_tails[cofp->i])
+      if (!csetp->cof_tails[cofp->i-1])
 	{
-	  csetp->cof_tails = realloc(csetp->cof_tails, cofp->i * sizeof(Hash*));
+	  csetp->cof_tails = realloc(csetp->cof_tails, (cofp->i+1) * sizeof(Hash*));
 	  int j;
 	  for (j = csetp->ntails; j < cofp->i; ++j)
 	    if (!csetp->cof_tails[j])
 	      csetp->cof_tails[j] = hash_create(12);
+	  csetp->cof_tails[j] = NULL;
 	  csetp->ntails = cofp->i;
 	}
       lp = hash_find(csetp->cof_tails[cofp->i-1], cofp->s);

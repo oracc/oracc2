@@ -5,10 +5,10 @@
 /* FIXME: the list creation here should use memo */
 
 static unsigned char *
-tail_norm(const unsigned char *n)
+tail_norm(const unsigned char *n, Pool *p)
 {
-  unsigned char buf[strlen((ccp)n)], *b, *s;
-  b = s = buf;
+  unsigned char buf[strlen((ccp)n)], *b = buf;
+  const unsigned char *s = n;
   while (*s)
     {
       if (isspace(*s) && '$' == s[1] && '(' != s[2])
@@ -17,8 +17,10 @@ tail_norm(const unsigned char *n)
 	  while (*s && !isspace(*s))
 	    *b++ = *s++;
 	  *b = '\0';
-	  return b;
+	  return pool_copy(buf, p);
 	}
+      else
+	++s;
     }
   return NULL;
 }
@@ -28,18 +30,26 @@ permute(List *heads, List *tails, Pool *p)
 {
   List *nheads = list_create(LIST_SINGLE);
   const unsigned char *h;
-  for (h = list_first(nheads); h; h = list_next(nheads))
+  for (h = list_first(heads); h; h = list_next(heads))
     {
       Cof *cfp;
       for (cfp = list_first(tails); cfp; cfp = list_next(tails))
 	{
 	  Form t = *cfp->f;
 	  t.form = (uccp)"";
-	  t.norm = pool_copy(tail_norm(cfp->f->norm), p);
-	  const unsigned char *tsig = form_sig(p, &t);
-	  char s[strlen((ccp)h)+strlen("&&0") + strlen((ccp)tsig)];
-	  sprintf(s, "%s&&%s", h, tsig);
-	  list_add(nheads, pool_copy((uccp)s, p));
+	  t.norm = tail_norm(cfp->f->norm, p);
+	  
+	  /* iterate over the entry's senses duplicating the COF for each */
+	  Sense *sp;
+	  for (sp = list_first(cfp->e->senses); sp; sp = list_next(cfp->e->senses))
+	    {
+	      t.sense = sp->mng;
+	      t.epos = sp->pos;
+	      const unsigned char *tsig = form_sig(p, &t);
+	      char s[strlen((ccp)h)+strlen("&&0") + strlen((ccp)tsig)];
+	      sprintf(s, "%s&&%s", h, tsig);
+	      list_add(nheads, pool_copy((uccp)s, p));
+	    }
 	}
     }
 
@@ -58,7 +68,7 @@ cof_sigs(Form *f2p, Pool *p)
   while (!isspace(*s))
     ++s;
   *s = '\0';
-  unsigned char *head = form_sig(p, f2p);
+  unsigned char *head = form_sig(p, &f);
   list_add(sigs, head);
   int j;
   for (j = 0; j < csetp->ntails; ++j)
