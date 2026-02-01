@@ -122,7 +122,7 @@ static void
 roco_hash_hash_r(Hash *h, Roco *r)
 {
   size_t i;
-  for (i = 0; i < r->nlines; ++i)
+  for (i = r->skip_initial_lines; i < r->nlines; ++i)
     {
       if ('#' != *r->rows[i][0])
 	{

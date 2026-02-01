@@ -24,7 +24,8 @@ typedef struct cbdset
 {
   List *lcbds;
   Hash *hcbds;
-  Hash *lngs;
+  Hash *lngs; /* Hash of signatures by lang field */
+  Hash *lems; /* Hash of loaded lemm-*.sig by lang element of file name */
   Hash *cof_heads;
   Hash **cof_tails;
   Hash *hsiglangs;

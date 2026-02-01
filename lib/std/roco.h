@@ -31,6 +31,7 @@ struct roco
   int joiner;
   int row1_literal;	/* Do not pass row1 through the roco_format template */
   int row1_fields_omit; /* Do not output row1 if it is fields */
+  int skip_initial_lines;/* roco hash skips this many lines at start*/
   void *user;
 };
 

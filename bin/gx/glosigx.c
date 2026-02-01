@@ -152,13 +152,12 @@ main(int argc, char * const *argv)
     {
       int i;
       if (verbose)
-	fputs("00lib/*.glo =", stdout);
-      for (i = 0; glos[i]; ++i)
-	if (verbose)
-	  printf(" %s", glos[i]);
-      if (verbose)
-	fputc('\n', stdout);
-      /*nglo = i;*/
+	{
+	  fputs("00lib/*.glo =", stdout);
+	  for (i = 0; glos[i]; ++i)
+	    printf(" %s", glos[i]);
+	  fputc('\n', stdout);
+	}
     }
   else
     fprintf(stderr, "glosigx: no 00lib/*.glo found.\n");
@@ -166,13 +165,12 @@ main(int argc, char * const *argv)
     {
       int i;
       if (verbose)
-	fputs("02pub/lemm-*.sig =", stdout);
-      for (i = 0; lems[i]; ++i)
-	if (verbose)
-	  printf(" %s", lems[i]);
-      if (verbose)
-	fputc('\n', stdout);
-      /*nlem = i;*/
+	{
+	  fputs("02pub/lemm-*.sig =", stdout);
+	  for (i = 0; lems[i]; ++i)
+	    printf(" %s", lems[i]);
+	  fputc('\n', stdout);
+	}
     }
   else
     fprintf(stderr, "glosigx: no 02pub/lemm-*.sig found.\n");
@@ -205,8 +203,16 @@ main(int argc, char * const *argv)
 	      exit(1);
 	    }
 	  cbd_psus();
-	  cbd_sigs(hsig, c);
+	  if (out_stdout)
+	    cbd_sigs(hsig, c);
 	  xfclose(file, glofp);
+	}
+      if (!out_stdout)
+	{
+	  int i;
+	  for (i = 0; lems[i]; ++i)
+	    lemm_sigs(lems[i]);
+	  cbd_sigs(hsig, c);
 	}
       mesg_print(stderr);
     }
