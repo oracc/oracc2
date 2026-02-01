@@ -338,6 +338,7 @@ void
 cbd_bld_entry_cgp(struct entry *e)
 {
   e->cgp = cgp_get_one();
+  e->cgp->owner = e;
   hash_add(e->owner->hentries, e->cgp->tight, e);
 }
 

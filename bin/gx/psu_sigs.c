@@ -20,7 +20,7 @@ psu_permute(List *heads, Cgp *cp, int ffi, int nbytes)
 	    ff[ffi] = *fp;
 	    ff[ffi].sense = sp->mng;
 	    ff[ffi].epos = sp->pos;
-	    list_add(heads, ff);
+	    list_add(nheads, ff);
 	  }
       }
   return nheads;
@@ -98,7 +98,7 @@ psu_parts_sigs(List *sigs, Entry *ep, Parts *p)
   Cgp *cp = list_first(p->cgps);
   Entry *ce = cp->owner;
   Sense *sp;
-  int i = 1;
+  int i = 1; /* index ff from 1 because ff[0] is the PSU form */
   for (sp = list_first(ce->senses); sp; sp = list_next(ce->senses))
     {
       Form *fp;
@@ -118,7 +118,7 @@ psu_parts_sigs(List *sigs, Entry *ep, Parts *p)
   Form *ff;
   for (ff = list_first(heads); ff; ff = list_next(heads))
     {
-      ff[0].form = psu_orth_form(ff, list_len(p->cgps));
+      ff[0].form = psu_orth_form(ff, 1+list_len(p->cgps));
       ff[0].cf = ep->cgp->cf;
       ff[0].gw = ep->cgp->gw;
       ff[0].pos = ep->cgp->pos;
@@ -127,7 +127,7 @@ psu_parts_sigs(List *sigs, Entry *ep, Parts *p)
 	{
 	  ff[0].sense = sp->mng;
 	  ff[0].epos = sp->pos;
-	  list_add(sigs, psu_one_sig(ff, list_len(p->cgps)));
+	  list_add(sigs, psu_one_sig(ff, 1+list_len(p->cgps)));
 	}
     }
 }

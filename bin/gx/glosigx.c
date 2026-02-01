@@ -204,6 +204,7 @@ main(int argc, char * const *argv)
 	      mesg_print(stderr);
 	      exit(1);
 	    }
+	  cbd_psus();
 	  cbd_sigs(hsig, c);
 	  xfclose(file, glofp);
 	}

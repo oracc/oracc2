@@ -19,7 +19,7 @@ void
 cbd_psus(void)
 {
   Parts *p;
-  for (p = list_first(csetp->lcbds); p; p = list_next(csetp->lcbds))
+  for (p = list_first(csetp->parts); p; p = list_next(csetp->parts))
     {
       Cbd *pcbd = p->owner->owner;
       Cgp *cp;
