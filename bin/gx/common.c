@@ -7,8 +7,6 @@
 #include <cbd.h>
 #include "gx.h"
 
-static List *cgplist = NULL;
-
 static Pool *common_pool = NULL;
 
 void

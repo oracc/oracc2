@@ -9,7 +9,6 @@
 #include "cbd.tab.h"
 
 extern int bang, star;
-static int one = 1;
 static List *curr_base_list = NULL;
 struct parts *curr_parts;
 List *cmt_queue = NULL;
@@ -545,7 +544,7 @@ cbd_bld_parts(YYLTYPE l, struct entry *e)
   if (!e->parts)
     e->parts = list_create(LIST_SINGLE);
   list_add(e->parts, pp);
-  list_add(csetp->parts, pp);
+  list_add(csetp->parts, pp); /* global registry of @parts */
   pp->l = l;
   pp->owner = e;
   cmts(pp->l.user);
@@ -643,6 +642,7 @@ cbd_bld_set(void)
   csetp->cofmem = memo_init(sizeof(Cof), 16);
   csetp->formsmem = memo_init(sizeof(Form), 512);
   csetp->pool = pool_init();
+  cgp_set_pool(csetp->pool);
 }
 
 void

@@ -336,6 +336,6 @@ extern unsigned const char *cgp_entry_str(struct entry *e, int spread);
 extern const unsigned char *cgp_str(struct cgp *cp, int spread);
 extern void cgp_entry(struct cgp *c, struct entry *e);
 extern void cbd_psus(void);
+extern void cgp_set_pool(Pool *p);
 
 #endif/*CBD_H_*/
-

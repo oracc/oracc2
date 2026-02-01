@@ -1,6 +1,15 @@
 #include <oraccsys.h>
 #include "cbd.h"
 
+static List *cgplist = NULL;
+static Pool *cgp_pool;
+
+void
+cgp_set_pool(Pool *p)
+{
+  cgp_pool = p;
+}
+
 List *
 cgp_get_all(void)
 {
@@ -68,7 +77,7 @@ cgp_str(struct cgp *cp, int loose)
     sprintf(tmp, "%s [%s] %s", cp->cf, cp->gw, cp->pos);
   else
     sprintf(tmp, "%s[%s]%s", cp->cf, cp->gw, cp->pos);
-  tmp2 = pool_copy((ucp)tmp, common_pool);
+  tmp2 = pool_copy((ucp)tmp, cgp_pool);
   free(tmp);
   return tmp2;
 }

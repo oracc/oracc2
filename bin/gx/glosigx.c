@@ -51,6 +51,7 @@ cbd_entry_sigs(Entry *ep, Hash *h)
 {
   Form f;
   memset(&f, '\0', sizeof(Form));
+
   f.project = ep->owner->project;
   f.lang = ep->owner->lang;
   f.cf = ep->cgp->cf;
@@ -68,6 +69,7 @@ cbd_entry_sigs(Entry *ep, Hash *h)
 	{
 	  if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_TAIL))
 	    continue;
+
 	  f.base = fp->base;
 	  f.stem = fp->stem;
 	  f.cont = fp->cont;
@@ -89,7 +91,7 @@ cbd_entry_sigs(Entry *ep, Hash *h)
 	    }
 	  else
 	    f.form = fp->form;
-	  
+
 	  if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_HEAD))
 	    {
 	      List *csigl = cof_sigs(&f, csetp->pool);
@@ -107,11 +109,11 @@ cbd_entry_sigs(Entry *ep, Hash *h)
 	      f.flags = fp->flags;
 	      f.parts = fp->parts;
 	      /*f.cof_id = fp->cof_id;*//*No: this gets set on cbd load*/
-	      char *sig = form_sig(csetp->pool, &f);
+	      char *sig = (char*)form_sig(csetp->pool, &f);
 	      if (out_stdout)
 		fprintf(stdout, "%s\n", sig);
 	      else
-		cbd_sig_add_one(sig);
+		cbd_sig_add_one((uccp)sig);
 	    }
 	}
     }
@@ -122,7 +124,10 @@ cbd_sigs(Hash *h, Cbd *c)
 {
   Entry *ep;
   for (ep = list_first(c->entries); ep; ep = list_next(c->entries))
-    cbd_entry_sigs(ep, h);
+    if (ep->parts)
+      psu_sigs(ep);
+    else
+      cbd_entry_sigs(ep, h);
 }
 
 int

@@ -14,6 +14,7 @@ extern int sigs;
 
 extern int lnum;
 extern int verbose;
+extern int out_stdout;
 
 extern const char *file;
 
@@ -41,5 +42,6 @@ extern unsigned char *check_bom(unsigned char *s);
 extern unsigned char **setup_lines(unsigned char *ftext);
 extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsize);
 extern List*cof_sigs(Form *f2p, Pool *p);
+extern void psu_sigs(Entry *ep);
 
 #endif/*GX_H_*/

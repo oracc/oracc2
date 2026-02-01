@@ -33,7 +33,12 @@ cbd_psus(void)
 	      if ((ep = xcbd_find(ep,cp->tight,pcbd)))
 		cp->owner = ep;
 	      else
-		mesg_verr(&p->l, "part %s not found in any glossary", cp->tight);
+		{
+		  mesg_verr(&p->l, "part %s not found in any glossary", cp->tight);
+		  p->owner = NULL; /* flag value to indicate that no
+				      future processing of @parts
+				      should be done */
+		}
 	    }
 	}
     }

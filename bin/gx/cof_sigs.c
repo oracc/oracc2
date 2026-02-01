@@ -5,7 +5,7 @@
 /* FIXME: the list creation here should use memo */
 
 static unsigned char *
-tail_norm(const unsigned char *n, Pool *p)
+cof_tail_norm(const unsigned char *n, Pool *p)
 {
   unsigned char buf[strlen((ccp)n)], *b = buf;
   const unsigned char *s = n;
@@ -26,7 +26,7 @@ tail_norm(const unsigned char *n, Pool *p)
 }
 
 static List *
-permute(List *heads, List *tails, Pool *p)
+cof_permute(List *heads, List *tails, Pool *p)
 {
   List *nheads = list_create(LIST_SINGLE);
   const unsigned char *h;
@@ -37,7 +37,7 @@ permute(List *heads, List *tails, Pool *p)
 	{
 	  Form t = *cfp->f;
 	  t.form = (uccp)"";
-	  t.norm = tail_norm(cfp->f->norm, p);
+	  t.norm = cof_tail_norm(cfp->f->norm, p);
 	  
 	  /* iterate over the entry's senses duplicating the COF for each */
 	  Sense *sp;
@@ -75,7 +75,7 @@ cof_sigs(Form *f2p, Pool *p)
     {
       List *ltp = hash_find(csetp->cof_tails[j], (uccp)f2p->norm);
       if (ltp)
-	sigs = permute(sigs, ltp, p);
+	sigs = cof_permute(sigs, ltp, p);
       else
 	break;
     }
