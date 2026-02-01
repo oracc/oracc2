@@ -25,7 +25,9 @@ cbd_sig_add_one(const unsigned char *s)
   char buf[len+1];
   strncpy(buf, (ccp)lng, len);
   buf[len] = '\0';
-  list_add(cbd_sig_list(buf), (void*)s);
+  Lemsig *lsp = memo_new(csetp->lsigmem);
+  lsp->sig = s;
+  list_add(cbd_sig_list(buf), lsp);
 }
 
 void

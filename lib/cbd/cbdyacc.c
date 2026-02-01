@@ -324,7 +324,7 @@ cbd_bld_entry(YYLTYPE l, struct cbd* c)
   if (bang)
     {
       bang = 0;
-      e->bang = 1;
+      e->rank = 1;
     }
   if (star)
     {
@@ -610,7 +610,7 @@ cbd_bld_sense(YYLTYPE l, struct entry *e)
   if (bang)
     {
       bang = 0;
-      sp->bang = 1;
+      sp->rank = 1;
     }
   return sp;
 }
@@ -642,6 +642,7 @@ cbd_bld_set(void)
   csetp->cbdmem = memo_init(sizeof(Cbd), 8);
   csetp->cofmem = memo_init(sizeof(Cof), 16);
   csetp->formsmem = memo_init(sizeof(Form), 512);
+  csetp->lsigmem = memo_init(sizeof(struct lemsig), 1024);
   csetp->pool = pool_init();
   cgp_set_pool(csetp->pool);
 }

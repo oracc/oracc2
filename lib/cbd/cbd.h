@@ -34,6 +34,7 @@ typedef struct cbdset
   Memo *cbdmem;
   Memo *cofmem;
   Memo *formsmem;
+  Memo *lsigmem;
   Pool *pool;
 } Cbds;
 
@@ -140,7 +141,7 @@ typedef struct entry {
   struct tag *root;
   List *stems;
   struct tag *disc;
-  int bang;
+  int rank;
   int usage;
   int compound;
   struct cbd *owner;
@@ -207,7 +208,7 @@ typedef struct sense {
   unsigned const char *mng;
   unsigned const char *sid;
   struct tag *disc;
-  int bang;
+  int rank;
   struct entry *owner;
   struct edit *ed;
   struct meta *meta;
@@ -263,6 +264,13 @@ struct cbdtag {
   int eol_sp;
   int ss;
 };
+
+typedef struct lemsig
+{
+  unsigned const char *sig;
+  int rank;
+  int freq;
+} Lemsig;
 
 extern Sense *curr_sense;
 extern const char *errmsg_fn;

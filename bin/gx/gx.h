@@ -5,6 +5,7 @@
 #include <cbd.h>
 
 typedef void (*iterator_fnc)(void*);
+
 extern Hash *cbds;
 
 extern int check;
