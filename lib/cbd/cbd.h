@@ -336,7 +336,6 @@ extern void cbd_cof_register(Form *f2p);
 extern void cbd_psu_register(Entry *ep, Parts *pp);
 extern void cbd_end_sense(void);
 
-extern List *cbd_sig_list(const char *l);
 extern void cbd_sig_add_one(const unsigned char *s);
 extern void cbd_sig_add_list(List *lp);
 

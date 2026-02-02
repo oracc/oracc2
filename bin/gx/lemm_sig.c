@@ -10,16 +10,17 @@ lemm_sigs(const char *fn)
   l = strchr(fn, '-');
   if (l)
     {
-      char *dot = strchr(l, '.');
+      char *dot = strchr(++l, '.');
       if (dot)
 	{
 	  *dot = '\0';
 	  strcpy(buf, l);
+	  *dot = '.';
 	  Roco *r = roco_load1(fn);
 	  if (r)
 	    {
 	      r->skip_initial_lines = 1;
-	      Hash *h = roco_hash(r);
+	      Hash *h = roco_hash_r(r);
 	      if (h)
 		{
 		  if (!csetp->lems)

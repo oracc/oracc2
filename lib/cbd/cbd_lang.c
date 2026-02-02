@@ -3,12 +3,6 @@
 
 /* Routines to manage data divided by lang rather than glossary */
 
-List *
-cbd_sig_list(const char *l)
-{
-  return lp;
-}
-
 void
 cbd_sig_add_one(const unsigned char *s)
 {
