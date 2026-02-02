@@ -6,12 +6,6 @@
 List *
 cbd_sig_list(const char *l)
 {
-  List *lp = hash_find(csetp->hsiglangs, (uccp)l);
-  if (!lp)
-    {
-      lp = list_create(LIST_SINGLE);
-      hash_add(csetp->hsiglangs, (uccp)strdup((ccp)l), lp);
-    }
   return lp;
 }
 
@@ -25,9 +19,14 @@ cbd_sig_add_one(const unsigned char *s)
   char buf[len+1];
   strncpy(buf, (ccp)lng, len);
   buf[len] = '\0';
+  List *lp = hash_find(csetp->hsiglangs, (uccp)buf);
+  if (!lp)
+    hash_add(csetp->hsiglangs, pool_copy((uccp)buf, csetp->pool), (lp = list_create(LIST_SINGLE)));
+
   Lemsig *lsp = memo_new(csetp->lsigmem);
   lsp->sig = s;
-  list_add(cbd_sig_list(buf), lsp);
+  lsp->rank = 0; /* Need to ensure that rank travels with sig at this phase of processing */
+  list_add(lp, lsp);
 }
 
 void

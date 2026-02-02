@@ -20,6 +20,12 @@ struct entry*curr_entry;
 const char *file, *efile, *errmsg_fn;
 extern void common_init(void);
 
+int
+lemsig_cmp(void *a, void *b)
+{
+  return 0;
+}
+
 static char **
 glo_files(void)
 {
@@ -41,13 +47,11 @@ lem_files(void)
 }
 
 /* Iterate over the entry content creating sigs for any possible form.
- * In order to ensure that any base in the glossary entry can be
- * matched as a sig even if there is no corresponding @form, we begin
- * by augmenting the list of @form with a minimal @form for any base
- * that is not attested in its absolute form (i.e., with morph=#~).
+ *
+ * (Bases that do not occur as @forms have already been added to the entry's forms.)
  */
 static void
-cbd_entry_sigs(Entry *ep, Hash *h)
+cbd_entry_sigs(Entry *ep)
 {
   Form f;
   memset(&f, '\0', sizeof(Form));
@@ -127,7 +131,7 @@ cbd_sigs(Hash *h, Cbd *c)
     if (ep->parts)
       psu_sigs(ep);
     else
-      cbd_entry_sigs(ep, h);
+      cbd_entry_sigs(ep);
 }
 
 int
@@ -202,17 +206,51 @@ main(int argc, char * const *argv)
 	      mesg_print(stderr);
 	      exit(1);
 	    }
-	  cbd_psus();
-	  if (out_stdout)
-	    cbd_sigs(hsig, c);
 	  xfclose(file, glofp);
+	  cbd_psus();
+	  cbd_sigs(hsig, c);
 	}
       if (!out_stdout)
 	{
 	  int i;
+
 	  for (i = 0; lems[i]; ++i)
 	    lemm_sigs(lems[i]);
-	  cbd_sigs(hsig, c);
+
+	  const char **langs = hash_keys(csetp->hsiglangs);
+	  for (i = 0; langs[i]; ++i)
+	    {
+	      List *lp = hash_find(csetp->hsiglangs, (uccp)langs[i]);
+	      if (list_len(lp))
+		{
+		  int n;
+		  Lemsig **lsp = (Lemsig**)list2array_c(lp, &n);
+		  Hash *hlem = hash_find(csetp->lems, (uccp)langs[i]);
+		  if (hlem)
+		    {
+		      for (i = 0; lsp[i]; ++i)
+			{
+			  const char **r = hash_find(hlem, lsp[i]->sig);
+			  if (r)
+			    /* Don't set rank here; only do it from glossary */
+			    lsp[i]->freq = atoi(r[2]);
+			}
+		    }
+		  qsort(lsp, n, sizeof(Lemsig *), (sort_cmp_func*)lemsig_cmp);
+		  char fn[strlen(langs[i])+strlen("02pubx/lemm-.sig0")];
+		  sprintf(fn, "02pubx/lemm-%s.sig", langs[i]);
+		  FILE *fp;
+		  if ((fp = xfopen(fn, "w")))
+		    {
+		      fputs("@fields sig rank freq\n", fp);
+		      for (i = 0; lsp[i]; ++i)
+			fprintf(fp, "%s\t%d\t%d\n", lsp[i]->sig, lsp[i]->rank, lsp[i]->freq);
+		      xfclose(fn, fp);
+		    }
+		  else
+		    fprintf(stderr, "glosigx: skipping output to %s\n", fn);
+		}
+	    }
 	}
       mesg_print(stderr);
     }
