@@ -55,6 +55,7 @@ lem_files(void)
 static void
 cbd_entry_sigs(Entry *ep)
 {
+  int e_rank = 0, s_rank = 0, f_rank = 0;
   Form f;
   memset(&f, '\0', sizeof(Form));
 
@@ -63,6 +64,8 @@ cbd_entry_sigs(Entry *ep)
   f.cf = ep->cgp->cf;
   f.gw = ep->cgp->gw;
   f.pos = ep->cgp->pos;
+
+  
 
   Sense *sp;
   for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
@@ -119,7 +122,7 @@ cbd_entry_sigs(Entry *ep)
 	      if (out_stdout)
 		fprintf(stdout, "%s\n", sig);
 	      else
-		cbd_sig_add_one((uccp)sig);
+		cbd_sig_add_one((uccp)sig, sp->rank | fp->rank);
 	    }
 	}
     }

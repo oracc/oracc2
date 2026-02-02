@@ -4,7 +4,7 @@
 /* Routines to manage data divided by lang rather than glossary */
 
 void
-cbd_sig_add_one(const unsigned char *s)
+cbd_sig_add_one(const unsigned char *s, int rank)
 {
   uccp lng = (uccp)strchr((ccp)s, '%');
   ++lng;
@@ -19,7 +19,7 @@ cbd_sig_add_one(const unsigned char *s)
 
   Lemsig *lsp = memo_new(csetp->lsigmem);
   lsp->sig = s;
-  lsp->rank = 0; /* Need to ensure that rank travels with sig at this phase of processing */
+  lsp->rank = rank;
   list_add(lp, lsp);
 }
 
@@ -28,5 +28,5 @@ cbd_sig_add_list(List *lp)
 {
   const unsigned char *s;
   for (s = list_first(lp); s; s = list_next(lp))
-    cbd_sig_add_one(s);
+    cbd_sig_add_one(s, 0);
 }

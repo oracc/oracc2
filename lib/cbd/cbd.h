@@ -336,7 +336,7 @@ extern void cbd_cof_register(Form *f2p);
 extern void cbd_psu_register(Entry *ep, Parts *pp);
 extern void cbd_end_sense(void);
 
-extern void cbd_sig_add_one(const unsigned char *s);
+extern void cbd_sig_add_one(const unsigned char *s, int rank);
 extern void cbd_sig_add_list(List *lp);
 
 extern void cgp_init(struct cgp *c, unsigned char *cf, unsigned char *gw, unsigned char *pos);

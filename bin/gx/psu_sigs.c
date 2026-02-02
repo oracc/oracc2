@@ -147,5 +147,5 @@ psu_sigs(Entry *ep)
     if (out_stdout)
       fprintf(stdout, "%s\n", sig);
     else
-      cbd_sig_add_one((uccp)sig);
+      cbd_sig_add_one((uccp)sig, 0);
 }

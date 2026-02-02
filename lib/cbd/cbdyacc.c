@@ -324,7 +324,7 @@ cbd_bld_entry(YYLTYPE l, struct cbd* c)
   if (bang)
     {
       bang = 0;
-      e->rank = 1;
+      e->rank = 4; /* This is only used to propagate a rank onto all @form in @entry */
     }
   if (star)
     {
@@ -380,10 +380,10 @@ cbd_bld_form(YYLTYPE l, struct entry *e)
   f2p->entry = e;
   cmts(f2p->user);
   list_add(e->forms, f2p);
-  if (bang)
+  if (bang || e->rank)
     {
       bang = 0;
-      f2p->rank = 1; /* check this is the right value for form! rank */
+      f2p->rank = 4;
     }
   return f2p;
 }
@@ -610,7 +610,9 @@ cbd_bld_sense(YYLTYPE l, struct entry *e)
   if (bang)
     {
       bang = 0;
-      sp->rank = 1;
+      /* Perl implementation set sp->rank == 1 when nsenses==1 but I
+	 don't see how that can be useful */
+      sp->rank = 2;
     }
   return sp;
 }
