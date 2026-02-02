@@ -50,6 +50,7 @@ static void clean_alt_paren(void);
 
 static int set_rws(void);
 static int set_ctp(void);
+static void set_after(void);
 
 static int tg_set_flags(char *f);
 
@@ -131,7 +132,7 @@ char *ssnames[] = {
 ^@end[ \t]+senses[ \t]*/\n { BEGIN ss(0); return(END_SENSES); }
 ^@[a-z]+	{ if (set_ctp()) xreturn(yi(ctp->tok)); }
 ^@[a-z]+/[!*]+	{ if (set_ctp()) BEGIN ss(s_flag); }
-<s_flag>[!*]+	{ tg_set_flags(yytext) ; xreturn(yi(ctp->tok)); }
+<s_flag>[!*]+	{ tg_set_flags(yytext) ; BEGIN ss(ctp->ss); set_after(); xreturn(yi(ctp->tok)); }
 ^@[A-Z]+	{ if (set_rws()) xreturn(DCF); } 
 <s_sol>@[a-z]+	{ BEGIN ss(0); if (set_ctp()) xreturn(yi(ctp->tok)); }
 [ \t]+       	{ /* empty */ }
@@ -205,7 +206,7 @@ char *ssnames[] = {
 
 %%
 
-void
+static void
 set_after(void)
 {
   switch (ctp->tok)
@@ -291,6 +292,7 @@ tg_set_flags(char *f)
 	bang = 1;
       else
 	fprintf(stderr, "cbd: internal error: unhandled flag char %c\n", *f);
+      ++f;
     }
   return ctp != NULL;
 }
