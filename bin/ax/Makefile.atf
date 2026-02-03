@@ -1,3 +1,9 @@
+#
+# Makefile to build derivatives of .atf, .xtf, etc.
+#
+# Replaces o2-atf.sh and o2-xtf.sh
+#
+
 default: ${pqx}.tok
 
 txh: ${pqx}.txh
