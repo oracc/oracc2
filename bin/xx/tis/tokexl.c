@@ -41,7 +41,6 @@
 const char *index_dir = "02pub/tokl";
 const char *project = NULL;
 char period[1024];
-Vido *vp;
 
 int files_from_stdin = 0;
 int no_output = 0;
@@ -58,7 +57,7 @@ pr(const char *k, Vido *vp, const char *q)
 }
 
 static void
-pr_sig_fields(char *t, const char *qid)
+pr_sig_fields(char *t, const char *qid, Vido *vp)
 {
   char *insert = t + strlen(t);
   sprintf(insert, "%s", period);
@@ -138,13 +137,13 @@ toks_from_file(const char *fn, FILE *fp, Vido *vp)
       sprintf(t, "%%%s:%s[%s]%s%c%c", f.lang, f.cf, f.gw, f.pos, 1, 1);
       pr(t, vp, qid);
 
-      pr_sig_fields(t, qid);
+      pr_sig_fields(t, qid, vp);
       
       if (strcmp((ccp)f.gw, (ccp)f.sense) || strcmp((ccp)f.pos, (ccp)f.epos))
 	{
 	  sprintf(t, "%%%s:%s[%s]%s%c//%s'%s%c", f.lang, f.cf, f.gw, f.pos, 1, f.sense, f.epos, 1);
 	  pr(t, vp, qid);
-	  pr_sig_fields(t, qid);
+	  pr_sig_fields(t, qid, vp);
 	}
     }
 }
@@ -155,10 +154,14 @@ stdin_files_toks(Vido *vp)
   char buf[_MAX_PATH+1], *b;
   while ((b = fgets(buf, _MAX_PATH, stdin)))
     {
+      if (buf[strlen(buf)-1] == '\n')
+	buf[strlen(buf)-1] = '\0';
       FILE *fp = xfopen(buf, "r");
       if (fp)
-	toks_from_file(buf, fp, vp);
-      xfclose(buf, fp);
+	{
+	  toks_from_file(buf, fp, vp);
+	  xfclose(buf, fp);
+	}
     }
 }
 
@@ -187,7 +190,7 @@ main(int argc, char **argv)
       FILE *in_fp = xfopen(file, "r");
       if (!in_fp)
 	exit(1);
-      toks_from_file(file, stdin, vp);
+      toks_from_file(file, in_fp, vp);
     }
   else if (files_from_stdin)
     stdin_files_toks(vp);

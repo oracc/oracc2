@@ -18,7 +18,7 @@
 
 extern struct sl_config aslconfig;
 
-const char *index_dir = "02pub/tok";
+const char *index_dir = "02pub/tokg";
 const char *project = NULL;
 
 int files_from_stdin = 0;
@@ -210,7 +210,7 @@ static void
 toks_from_file(const char *fn, FILE *fp, Vido *vp)
 {
   char buf[1024], *b, qid[1024], wdid[32];
-  while ((b = fgets(buf, 1024, stdin)))
+  while ((b = fgets(buf, 1024, fp)))
     {
       if (b[strlen(b)-1] == '\n')
 	b[strlen(b)-1] = '\0';
@@ -282,6 +282,8 @@ stdin_files_toks(Vido *vp)
   char buf[_MAX_PATH+1], *b;
   while ((b = fgets(buf, _MAX_PATH, stdin)))
     {
+      if (buf[strlen(buf)-1] == '\n')
+	buf[strlen(buf)-1] = '\0';
       FILE *fp = xfopen(buf, "r");
       if (fp)
 	toks_from_file(buf, fp, vp);
@@ -312,6 +314,7 @@ main(int argc, char **argv)
       if (!in_fp)
 	exit(1);
       toks_from_file(file, in_fp, vp);
+      xfclose(file, in_fp);
     }
   else if (files_from_stdin)
     stdin_files_toks(vp);
