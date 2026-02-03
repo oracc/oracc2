@@ -130,3 +130,5 @@ main(int argc, char * const *argv)
 	}
     }
 }
+void help(void){}
+int opts(int optch, const char*optarg){return 0;}

@@ -21,7 +21,7 @@ extern const uchar **runexinputs(const char *f);
 
 FILE *f_ref;
 int verbose = 0;
-char curr_ref[32];/*P123456.1234.1234 is reasonable maximum expectation*/
+char curr_ref2[32];/*P123456.1234.1234 is reasonable maximum expectation*/
 List *phr = NULL;/* gather phrase here */
 List *ref = NULL;/* gather @ref to wid here */
 Pool *hp = NULL; /* hash-pool because many times same small strings */
@@ -117,7 +117,7 @@ process_f(const char **atts)
   if (form && *form && pos && *pos && !strcmp(pos, "n"))
     {
       list_add(phr, hpool_copy((ucp)form, hp));
-      list_add(ref, strdup(curr_ref));
+      list_add(ref, strdup(curr_ref2));
     }
 }
 
@@ -134,7 +134,7 @@ process_l(const char **atts)
       else if (!strcmp(atts[0],"newsig"))
 	sig = (char*)atts[1];
       else if (!strcmp(atts[0], "ref"))
-	strcpy(curr_ref, atts[1]);
+	strcpy(curr_ref2, atts[1]);
       atts += 2;
     }
 
@@ -152,7 +152,7 @@ process_l(const char **atts)
 	      if (nw)
 		{
 		  list_add(phr, (void*)s);
-		  list_add(ref, strdup(curr_ref));
+		  list_add(ref, strdup(curr_ref2));
 		  if (nw->gur)
 		    waiting_for_gur = 1;
 		}
@@ -207,3 +207,5 @@ main(int argc, char **argv)
     }
   fclose(f_ref);
 }
+void help(void){}
+int opts(int optch, const char*optarg){return 0;}

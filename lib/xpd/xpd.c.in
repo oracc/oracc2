@@ -41,9 +41,14 @@ xpd_lang(struct xpd *xp, const char *lang)
 int
 xpd_option_int(struct xpd *xp, const char *name)
 {
-  const char *var = hash_find(xp->opts, (const unsigned char *)name);
-  if (var)
-    return atoi(var);
+  if (xp)
+    {
+      const char *var = hash_find(xp->opts, (const unsigned char *)name);
+      if (var)
+	return atoi(var);
+      else
+	return 0;
+    }
   else
     return 0;
 }
@@ -76,11 +81,15 @@ xpd_init(const char *project, Pool *pool)
 	mesg_vnotice(NULL, 0, "xpd_init: loaded %s",buf);
     }
   else if (strcmp(project, "oracc"))
-    mesg_vwarning(NULL, 0, "xpd_init: %s not found or not readable", buf);
+    {
+      mesg_vwarning(NULL, 0, "xpd_init: %s not found or not readable", buf);
+      free(xp);
+      xp = NULL;
+    }
   else
     {
       if (verbose)
-	mesg_notice(NULL, 0, "xpd_init: working with default project 'oracc'");
+	mesg_notice(NULL, 0, "xpd_init: working with vacuous default project 'oracc'");
     }
   
   return xp;

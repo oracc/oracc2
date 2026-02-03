@@ -126,4 +126,6 @@ extern int rnv_check(const char *rnc, const char *xml);
 extern char *normalize_ws(const char *s);
 extern int xmkdirs(const char *dir);
 
+extern const char *opts_prog(void);
+
 #endif/*ORACCSYS_H_*/

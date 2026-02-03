@@ -1,0 +1,15 @@
+default: ${pqx}.tok
+
+txh: ${pqx}.txh
+
+clean:
+	rm -f *.xtf *.tok
+
+%.xtf: %.atf
+	${ORACC}/bin/oxx ${atfargs} -x$@ $<
+
+%.tok: %.xtf
+	${ORACC}/bin/tokx -slg <$< >$@
+
+%.txh: %.xtf
+	${ORACC}/bin/xtf2txh ${project}:${pqx}

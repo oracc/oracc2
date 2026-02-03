@@ -2,6 +2,10 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=ax atfdatax atfinstall
 
+bin_SCRIPTS=atfmake.sh
+
+data_DATA=Makefile.atf
+
 ax_SOURCES=ax.c ax_check.c ax_parse.c
 ax_LDADD = $(xLDADD)
 ax_DEPENDENCIES = $(ax_LDADD)

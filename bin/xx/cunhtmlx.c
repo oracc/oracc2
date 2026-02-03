@@ -90,3 +90,5 @@ main(int argc, char **argv)
       free(out);
     }
 }
+void help(void){}
+int opts(int optch, const char*optarg){return 0;}

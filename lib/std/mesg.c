@@ -196,7 +196,7 @@ mesg_averr(Mloc *locp, const char *s, va_list ap)
   va_list ap2;
   va_copy(ap2, ap);
 
-  if (locp)
+  if (locp && locp->file)
     loc = mesg_loc(locp);
   else
     no_loc = 1;

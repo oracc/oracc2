@@ -12,12 +12,16 @@ main(int argc, char **argv)
   struct pool *pool = NULL;
   if ((pool = pool_init()))
     {
+      mesg_init();
+      char progbuf[strlen(argv[0])+3];
+      strcpy(progbuf, argv[0]);
+      strcat(progbuf, ": ");
+      mesg_prefix(progbuf);
       struct xpd *x = NULL;
       const char *project = NULL;
       const char *option = NULL;
       const char *deflt = NULL;
       const char *cfgname = NULL;
-
       if (argc == 3 || argc == 4 || argc == 5)
 	{
 	  project = argv[1];
@@ -76,6 +80,7 @@ main(int argc, char **argv)
 	      return 0;
 	    }
 	}
+      mesg_print(stderr);
     }
   return 1;
 }

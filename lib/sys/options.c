@@ -28,6 +28,12 @@ program_values(const char *name, int major, int minor, const char *usage, const 
     copyright_string = copyright;
 }
 
+const char *
+opts_prog(void)
+{
+  return prog;
+}
+
 int
 options (int argc, char * const *argv, const char *optstr)
 {

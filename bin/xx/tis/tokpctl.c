@@ -159,3 +159,6 @@ main(int argc, char *const *argv)
 	fprintf(stderr, "token %s should have parent %s but doesn't\n", k[i], parent);
     }
 }
+
+void help(void){}
+int opts(int optch, const char*optarg){return 0;}

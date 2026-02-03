@@ -168,3 +168,5 @@ main(int argc, char **argv)
       printf("%d\t%s\n", *pi, k[i]);
     }
 }
+void help(void){}
+int opts(int optch, const char*optarg){return 0;}
