@@ -142,7 +142,7 @@ bin/xx/tis/tisdiv
 bin/xx/tis/tisify
 bin/xx/tis/tok2tis
 bin/xx/tis/tokexp
-bin/xx/tis/tokex
+bin/xx/tis/tokexg
 bin/xx/tis/tokexl
 bin/xx/tis/tokix
 bin/xx/tis/tokpct

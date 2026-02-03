@@ -43,6 +43,7 @@ const char *project = NULL;
 char period[1024];
 Vido *vp;
 
+int files_from_stdin = 0;
 int no_output = 0;
 
 static Form f;
@@ -83,44 +84,12 @@ pr_sig_fields(char *t, const char *qid)
 #undef fpr
 }
 
-int
-main(int argc, char **argv)
+static void
+toks_from_file(const char *fn, FILE *fp, Vido *vp)
 {
-  options(argc,argv,"d:nl:p:");
-  unsigned char *b;
-  char qid[1024];
-  FILE *in_fp = NULL;
+  char *b, qid[1024];
   size_t line = 0;
-
-  if (project)
-    {
-      mpool = pool_init();
-      mhash = hash_create(100);
-    }
-  else
-    {
-      fprintf(stderr, "%s: -p [PROJECT] is required. Stop.\n", "tokexl");
-      exit(1);
-    }
-
-  form_init();
-  vp = vido_init('l', 0);
-  *period = '\0';
-
-  if (argv[optind])
-    {
-      file = argv[optind];
-      in_fp = xfopen(file, "r");
-      if (!in_fp)
-	exit(1);
-    }
-  else
-    {
-      file = "-";
-      in_fp = stdin;
-    }
-  
-  while ((b = loadoneline(in_fp, NULL)))
+  while ((b = (char*)loadoneline(fp, NULL)))
     {
       ++line;
       
@@ -178,7 +147,53 @@ main(int argc, char **argv)
 	  pr_sig_fields(t, qid);
 	}
     }
+}
 
+void
+stdin_files_toks(Vido *vp)
+{
+  char buf[_MAX_PATH+1], *b;
+  while ((b = fgets(buf, _MAX_PATH, stdin)))
+    {
+      FILE *fp = xfopen(buf, "r");
+      if (fp)
+	toks_from_file(buf, fp, vp);
+      xfclose(buf, fp);
+    }
+}
+
+int
+main(int argc, char **argv)
+{
+  options(argc,argv,"d:nl:p:s");
+  if (project)
+    {
+      mpool = pool_init();
+      mhash = hash_create(100);
+    }
+  else
+    {
+      fprintf(stderr, "%s: -p [PROJECT] is required. Stop.\n", "tokexl");
+      exit(1);
+    }
+
+  form_init();
+  Vido *vp = vido_init('l', 0);
+  *period = '\0';
+
+  if (argv[optind])
+    {
+      file = argv[optind];
+      FILE *in_fp = xfopen(file, "r");
+      if (!in_fp)
+	exit(1);
+      toks_from_file(file, stdin, vp);
+    }
+  else if (files_from_stdin)
+    stdin_files_toks(vp);
+  else
+    toks_from_file("-", stdin, vp);
+  
   if (!no_output)
     {
       char vidfile[strlen(index_dir)+strlen("tid.vid0")];
@@ -203,6 +218,9 @@ opts(int argc, const char *arg)
       break;
     case 'p':
       project = arg;
+      break;
+    case 's':
+      files_from_stdin = 1;
       break;
     default:
       return 1;

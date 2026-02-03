@@ -305,7 +305,15 @@ main(int argc, char **argv)
 	merge_load();
     }
 
-  if (files_from_stdin)
+  if (argv[optind])
+    {
+      const char *file = argv[optind];
+      FILE *in_fp = xfopen(file, "r");
+      if (!in_fp)
+	exit(1);
+      toks_from_file(file, in_fp, vp);
+    }
+  else if (files_from_stdin)
     stdin_files_toks(vp);
   else
     toks_from_file("-", stdin, vp);

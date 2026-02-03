@@ -29,8 +29,12 @@ glosigx -p $proj
 # them and then doing ods2atf in Makefile.atf
 atfinstall $proj 00atf/*.atf
 
-# This is the new way of making .xtf and other derivatives of .atf files
+# This is the new way of making .xtf and other derivatives of .atf files:
+# .xtf and .tok files are the default products.
 atfmake.sh
+
+# This is the new way of generating corpus statistics from .tok files.
+atftoks.sh
 
 ### should be obviated by atf-data.tab:
 ### if [ -r 01bld/destfiles.lst ]; then
