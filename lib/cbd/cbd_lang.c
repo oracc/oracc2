@@ -19,7 +19,8 @@ cbd_sig_add_one(const unsigned char *s, int rank)
 
   Lemsig *lsp = memo_new(csetp->lsigmem);
   lsp->sig = s;
-  lsp->rank = rank;
+  if (rank)
+    lsp->rank = rank;
   list_add(lp, lsp);
 }
 

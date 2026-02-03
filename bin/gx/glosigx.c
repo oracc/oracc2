@@ -55,7 +55,6 @@ lem_files(void)
 static void
 cbd_entry_sigs(Entry *ep)
 {
-  int e_rank = 0, s_rank = 0, f_rank = 0;
   Form f;
   memset(&f, '\0', sizeof(Form));
 
@@ -239,12 +238,13 @@ main(int argc, char * const *argv)
 	      Hash *hlem = hash_find(csetp->lems, (uccp)langs[i]);
 	      if (hlem)
 		{
-		  for (i = 0; lsp[i]; ++i)
+		  int ii;
+		  for (ii = 0; lsp[ii]; ++ii)
 		    {
-		      const char **r = hash_find(hlem, lsp[i]->sig);
+		      const char **r = hash_find(hlem, lsp[ii]->sig);
 		      if (r)
 			/* Don't set rank here; only do it from glossary */
-			lsp[i]->freq = atoi(r[2]);
+			lsp[ii]->freq = atoi(r[2]);
 		    }
 		}
 	      qsort(lsp, n, sizeof(Lemsig *), (sort_cmp_func*)lemsig_cmp);
