@@ -25,7 +25,11 @@ lemsig_cmp(void *a, void *b)
 {
   Lemsig *la = *(Lemsig**)a;
   Lemsig *lb = *(Lemsig**)b;
-  return strcmp(la->sig, lb->sig);
+  if (la->rank != lb->rank)
+    return lb->rank - la->rank;
+  if (la->freq != lb->freq)
+    return lb->freq - la->freq;
+  return strcmp((ccp)la->sig, (ccp)lb->sig);
 }
 
 static char **
@@ -63,8 +67,6 @@ cbd_entry_sigs(Entry *ep)
   f.cf = ep->cgp->cf;
   f.gw = ep->cgp->gw;
   f.pos = ep->cgp->pos;
-
-  
 
   Sense *sp;
   for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
