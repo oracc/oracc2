@@ -15,6 +15,11 @@ odo-catalog.sh
 ### atflinks.plx >01bld/atflinks.tab
 ### linknorm.plx 01bld/atflinks.tab >01bld/normlinks.tab
 
+# This used to rebuild 01bld/project.sig but that should not be needed
+# any more. It also handled batching, but with the odo architecture in
+# which .atf are installed first and then xtf conversion is done in
+# the individual text directories batching will not be used either.
+
 o2-atf.sh
 
 ### should be obviated by atf-data.tab:

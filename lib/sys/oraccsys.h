@@ -124,5 +124,6 @@ extern char *findfile(const char *project, const char *file2find, const char *de
 extern char *findfile_dir(const char *project, const char *file2find, const char *deflt, const char *dir);
 extern int rnv_check(const char *rnc, const char *xml);
 extern char *normalize_ws(const char *s);
+extern int xmkdirs(const char *dir);
 
 #endif/*ORACCSYS_H_*/

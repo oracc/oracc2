@@ -25,8 +25,11 @@ lemsig_cmp(void *a, void *b)
 {
   Lemsig *la = *(Lemsig**)a;
   Lemsig *lb = *(Lemsig**)b;
+#if 0
+  /* l2p1-lemm-data.plx which is replaced by glosigx did not sort by rank */
   if (la->rank != lb->rank)
     return lb->rank - la->rank;
+#endif
   if (la->freq != lb->freq)
     return lb->freq - la->freq;
   return strcmp((ccp)la->sig, (ccp)lb->sig);
