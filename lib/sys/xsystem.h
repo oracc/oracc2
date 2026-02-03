@@ -38,7 +38,7 @@ extern char *xgetcwd (void);
 extern char *xstrdup (const char *str);
 extern size_t xstrlen (const char *str, const char *fn, size_t ln);
 extern FILE *xfopen (const char *fn, const char *mode);
-extern void xfclose (const char *fn, FILE*fp);
+extern int xfclose (const char *fn, FILE*fp);
 extern void xstat (const char *fn, struct stat *res);
 extern void xfstat (const char *fn, int handle, struct stat *res);
 extern size_t xfwrite (const char *fn, Boolean binflag, const void *buf, 

@@ -34,11 +34,15 @@ xaccess (const char *path, int amode, Boolean quit)
   return ret;
 }
 
-void
+int
 xfclose (const char *fn, FILE *fp)
 {
   if (fclose (fp))
-    xperror ("close failed on '%s'", fn);
+    {
+      xperror ("close failed on '%s'", fn);
+      return 1;
+    }
+  return 0;
 }
 
 FILE *

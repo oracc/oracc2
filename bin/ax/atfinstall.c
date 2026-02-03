@@ -1,5 +1,7 @@
 #include <oraccsys.h>
 
+const char *list_fn;
+char *o_dir;
 const char *project;
 const char *efile;
 size_t eline;
@@ -20,6 +22,15 @@ errormode(void)
     }
 }
 
+static FILE *
+listfile(void)
+{
+  char buf[strlen(oracc())+strlen(project)+strlen("//01bld/lists/atfinstall.lst0")];
+  sprintf(buf, "%s/%s/01bld/lists/atfinstall.lst", oracc(), project);
+  list_fn = strdup(buf);
+  return xfopen(buf, "w");
+}
+
 static int
 o_dirs(const char *o_fn)
 {
@@ -29,6 +40,7 @@ o_dirs(const char *o_fn)
   if (f)
     {
       *f = '\0';
+      o_dir = strdup(dirs);
       return xmkdirs(dirs);
     }
   else
@@ -80,6 +92,11 @@ main(int argc, char *const *argv)
       fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
       exit(1);
     }
+
+  FILE *list_fp = listfile();
+  if (!list_fp)
+    return error_mode;
+
   while (argv[optind])
     {
       FILE *a = xfopen(argv[optind], "r");
@@ -125,6 +142,9 @@ main(int argc, char *const *argv)
 			{
 			  if (verbose)
 			    fprintf(stderr, "atfinstall: writing to %s\n", o_fn);
+			  fputs(o_dir, list_fp);
+			  fputc('\n', list_fp);
+			  free(o_dir);
 			  fprintf(o, "##file %s\n##line %ld\n", efile, eline);
 			}
 		    }
@@ -150,6 +170,9 @@ main(int argc, char *const *argv)
       if (o)
 	xfclose(o_fn, o);
     }
+  if (xfclose(list_fn, list_fp))
+    error_mode = 1;
+
   exit(error_mode);
 }
 
