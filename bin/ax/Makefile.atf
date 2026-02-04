@@ -9,10 +9,10 @@ default: ${pqx}.tok
 txh: ${pqx}.txh
 
 clean:
-	rm -f *.xtf *.tok
+	@rm -f *.xtf *.tok
 
 %.xtf: %.atf
-	${ORACC}/bin/oxx ${atfargs} -x$@ $<
+	${ORACC}/bin/oxx -C ${atfargs} -x$@ $<
 
 %.tok: %.xtf
 	${ORACC}/bin/tokx -slg <$< >$@

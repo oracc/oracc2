@@ -4,6 +4,7 @@
 static char *line, linebuf[_MAX_LINE];
 
 int r_access = 0;
+int verbose = 0;
 
 int
 main(int argc, char**argv)
@@ -32,7 +33,9 @@ main(int argc, char**argv)
 		  char *at = strchr(line, '@');
 		  if (at)
 		    *at = '\0';
-		  const char *fn = expand(NULL,line,argv[1]);
+		  const char *fn = expand(NULL,line,argv[optind]);
+		  if (verbose)
+		    fprintf(stderr, "pqxpand: %s\n", fn);
 		  if (!r_access || !access(fn, R_OK))
 		    puts(fn);
 		}

@@ -88,6 +88,7 @@ toks_from_file(const char *fn, FILE *fp, Vido *vp)
 {
   char *b, qid[1024];
   size_t line = 0;
+  int sig_len = 0;
   while ((b = (char*)loadoneline(fp, NULL)))
     {
       ++line;
@@ -115,6 +116,7 @@ toks_from_file(const char *fn, FILE *fp, Vido *vp)
 	  char *tab = strchr((ccp)s, '\t');
 	  if (tab)
 	    *tab = '\0';
+	  sig_len = strlen((ccp)s);
 	}
 
       /* ignore l entries for bad lemmatizations */
@@ -132,7 +134,7 @@ toks_from_file(const char *fn, FILE *fp, Vido *vp)
       memset(&f, '\0', sizeof(Form));
       form_parse((uccp)file, line, (ucp)s, &f, NULL);
 
-      char t[strlen((ccp)s)+strlen(period)+10];
+      char t[10*sig_len]; /* this is lazy, but there is no way we can generate keys bigger than this */
 
       sprintf(t, "%%%s:%s[%s]%s%c%c", f.lang, f.cf, f.gw, f.pos, 1, 1);
       pr(t, vp, qid);

@@ -8,5 +8,5 @@ p=`oraccopt`
 ##if [ -r 00lib/toklists.lst ]; then
 ##    l="-l00lib/toklists.lst"
 ##fi
-tokexl $l -p$p | tee 02pub/l.tkx | tokix -p$p | \
-    tee 02pub/csl.tix | grep -v : | tokpctg
+tokexl -s $l -p$p | tee 02pub/l.tkx | tokix -p$p | \
+    tee 02pub/l.tix | tokpctl
