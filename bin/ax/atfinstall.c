@@ -9,6 +9,8 @@ int error_mode = 0, verbose = 0;
 
 #define PQX_MAX 7
 
+static const char *prog = "atfinstall";
+
 #define BOM2(str)	(((uccp)(str))[0]==0xfe && ((uccp)(str))[1]==0xff)
 #define BOM3(str)	(((uccp)(str))[0]==0xef && ((uccp)(str))[1]==0xbb && ((uccp)(str))[1]==0xbf)
 
@@ -92,6 +94,7 @@ main(int argc, char *const *argv)
       fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
       exit(1);
     }
+  program_values(prog, 1, 0, "atfinstall -p [PROJECT] [-v]", NULL);
 
   FILE *list_fp = listfile();
   if (!list_fp)
@@ -168,7 +171,10 @@ main(int argc, char *const *argv)
 	}
       xfclose(argv[optind++], a);
       if (o)
-	xfclose(o_fn, o);
+	{
+	  xfclose(o_fn, o);
+	  o = NULL;
+	}
     }
   if (xfclose(list_fn, list_fp))
     error_mode = 1;

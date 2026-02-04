@@ -27,7 +27,7 @@ hook:
 
 01tmp/csl.kis: 02pub/csl.tok
 	-mkdir -p 02pub/tok
-	tok2tis.sh <$< >$@
+	tok2tis-csl.sh <$< >$@
 
 01tmp/csl.key: 01tmp/csl.kis
 	cut -f2 <$< | tail -n +2 >$@

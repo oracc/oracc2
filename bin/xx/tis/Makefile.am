@@ -2,12 +2,12 @@ include ../../../oracc-am-rules.txt
 
 SUBDIRS=../../../lib 
 
-bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokexg tokix \
-	tokpct tokpctl cbdex cbdikey tokpg tokexl tokval
+bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokix \
+	tokpctg tokpctl cbdex cbdikey tokpg tokexg tokexl tokval
 
 #vidx
 
-bin_SCRIPTS=tisdbi.sh tisdiv.sh tok2tis.sh
+bin_SCRIPTS=tisdbi.sh tisdiv.sh tok2tisl.sh tok2tis-csl.sh
 
 data_DATA=tis-[ht].html
 
@@ -47,9 +47,9 @@ tokix_DEPENDENCIES = $(xLDADD)
 #vidx_LDADD = $(xLDADD)
 #vidx_DEPENDENCIES = $(xLDADD)
 
-tokpct_SOURCES=tokpct.c
-tokpct_LDADD = $(xLDADD)
-tokpct_DEPENDENCIES = $(xLDADD)
+tokpctg_SOURCES=tokpctg.c
+tokpctg_LDADD = $(xLDADD)
+tokpctg_DEPENDENCIES = $(xLDADD)
 
 tokpctl_SOURCES=tokpctl.c
 tokpctl_LDADD = $(xLDADD)

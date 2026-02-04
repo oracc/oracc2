@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=ax atfdatax atfinstall
 
-bin_SCRIPTS=atfmake.sh
+bin_SCRIPTS=atfmake.sh atftoks.sh
 
 data_DATA=Makefile.atf
 
