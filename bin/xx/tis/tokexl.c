@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <vido.h>
 #include <form.h>
+#include <cbd.h>
 
 /**tokex reads and expands the output of tokx, simplifying it to a
  * stream of triples of the form:
@@ -38,6 +39,9 @@
  *      %sux:utud[bear]V/t^A[to bear]V/t^A#mu:~
  */
 
+static Vido *vp;
+static char qid[1024];
+
 const char *index_dir = "02pub/tokl";
 const char *project = NULL;
 char period[1024];
@@ -51,11 +55,12 @@ Pool *mpool;
 Hash *mhash;
 
 static void
-pr(const char *k, Vido *vp, const char *q)
+pr(const char *k)
 {
-  printf("%s\t%s\t%s\n", k, vido_new_id(vp,k), q);
+  printf("%s\t%s\t%s\n", k, vido_new_id(vp,k), qid);
 }
 
+#if 0
 static void
 pr_sig_fields(char *t, const char *qid, Vido *vp)
 {
@@ -82,13 +87,13 @@ pr_sig_fields(char *t, const char *qid, Vido *vp)
     }
 #undef fpr
 }
+#endif
 
 static void
-toks_from_file(const char *fn, FILE *fp, Vido *vp)
+toks_from_file(const char *fn, FILE *fp)
 {
-  char *b, qid[1024];
+  char *b;
   size_t line = 0;
-  int sig_len = 0;
   while ((b = (char*)loadoneline(fp, NULL)))
     {
       ++line;
@@ -116,7 +121,6 @@ toks_from_file(const char *fn, FILE *fp, Vido *vp)
 	  char *tab = strchr((ccp)s, '\t');
 	  if (tab)
 	    *tab = '\0';
-	  sig_len = strlen((ccp)s);
 	}
 
       /* ignore l entries for bad lemmatizations */
@@ -129,11 +133,16 @@ toks_from_file(const char *fn, FILE *fp, Vido *vp)
       strcat(qid, w);
       
       /* Always save the entire sig */
-      pr((ccp)s, vp, qid);
+      pr((ccp)s);
 
       memset(&f, '\0', sizeof(Form));
       form_parse((uccp)file, line, (ucp)s, &f, NULL);
 
+#if 1
+      cbd_key_cgp(&f, period);
+      if (strcmp((ccp)f.gw, (ccp)f.sense) || strcmp((ccp)f.pos, (ccp)f.epos))
+	cbd_key_cgpse(&f, period);
+#else
       char t[10*sig_len]; /* this is lazy, but there is no way we can generate keys bigger than this */
 
       sprintf(t, "%%%s:%s[%s]%s%c%c", f.lang, f.cf, f.gw, f.pos, 1, 1);
@@ -147,11 +156,12 @@ toks_from_file(const char *fn, FILE *fp, Vido *vp)
 	  pr(t, vp, qid);
 	  pr_sig_fields(t, qid, vp);
 	}
+#endif
     }
 }
 
 void
-stdin_files_toks(Vido *vp)
+stdin_files_toks(void)
 {
   char buf[_MAX_PATH+1], *b;
   while ((b = fgets(buf, _MAX_PATH, stdin)))
@@ -161,7 +171,7 @@ stdin_files_toks(Vido *vp)
       FILE *fp = xfopen(buf, "r");
       if (fp)
 	{
-	  toks_from_file(buf, fp, vp);
+	  toks_from_file(buf, fp);
 	  xfclose(buf, fp);
 	}
     }
@@ -183,8 +193,9 @@ main(int argc, char **argv)
     }
 
   form_init();
-  Vido *vp = vido_init('l', 0);
+  vp = vido_init('l', 0);
   *period = '\0';
+  cbd_key_set_action(pr);
 
   if (argv[optind])
     {
@@ -192,12 +203,12 @@ main(int argc, char **argv)
       FILE *in_fp = xfopen(file, "r");
       if (!in_fp)
 	exit(1);
-      toks_from_file(file, in_fp, vp);
+      toks_from_file(file, in_fp);
     }
   else if (files_from_stdin)
-    stdin_files_toks(vp);
+    stdin_files_toks();
   else
-    toks_from_file("-", stdin, vp);
+    toks_from_file("-", stdin);
   
   if (!no_output)
     {

@@ -273,6 +273,11 @@ typedef struct lemsig
   int freq;
 } Lemsig;
 
+typedef void (*cbdactionfunc)(const char *);
+extern void cbd_key_set_action(cbdactionfunc f);
+extern void cbd_key_cgp(Form *f, const char *period);
+extern void cbd_key_cgpse(Form *f, const char *period);
+
 extern Sense *curr_sense;
 extern const char *errmsg_fn;
 
