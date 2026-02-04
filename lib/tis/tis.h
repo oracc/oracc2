@@ -4,7 +4,7 @@
 
 typedef Hash *Tisp;
 
-struct tis_data
+typedef struct tis_data
 {
   char *key;
   char *ref;
@@ -12,7 +12,7 @@ struct tis_data
   char *pct;
   char *iss;
   List *subs;
-};
+} Tis;
 
 extern Tisp tis_init(void);
 extern char **tis_sort(Tisp tp);

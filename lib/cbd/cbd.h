@@ -140,7 +140,9 @@ typedef struct entry {
   Hash *hsenses; /* needed for building cbd from sigs */
   struct tag *phon;
   struct tag *root;
-  List *stems;
+  Hash *stems; /* embedded in @form; key is stem; val is Kis */
+  Hash *conts; /* embedded in @form; key is cont; val is Kis */
+  Hash *normforms; /* embedded in @form, key is norm::form; val is Kis */
   struct tag *disc;
   int rank;
   int usage;

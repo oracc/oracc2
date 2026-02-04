@@ -70,6 +70,7 @@ AC_CONFIG_FILES([Makefile
                  lib/joxer/Makefile
                  lib/jsn/Makefile
                  lib/keydata/Makefile
+                 lib/kis/Makefile
 		 lib/l3/Makefile
 		 lib/l3/bigrams/Makefile
 		 lib/l3/dsa/Makefile

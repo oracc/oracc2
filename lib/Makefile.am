@@ -2,7 +2,7 @@ include ../oracc-am-rules.txt
 
 SUBDIRS=asl atf cat cbd chr collate expat frm gdl gvl inl \
 	joxer jsn libstemmer_c lng ofp oid rnc rnv sas sll std sys \
-	tis tok tsv xmd xml xpd l3 scan
+	tis tok tsv xmd xml xpd l3 scan kis
 
 noinst_LTLIBRARIES=liboracc2.la
 
