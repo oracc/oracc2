@@ -128,9 +128,24 @@ cbd_kis_fw_h(Form *f, Cbd_fw_type t, void *v)
 }
 
 Kis_data *
-kis_data_h2k(Hash *h)
+kis_data_h2k(Hash *h, Efield e)
 {
-  return NULL;
+  int n;
+  Kis_data *kp = (Kis_data*)hash_vals2(h, &n);
+
+  /* Bases sort by frequency */
+  
+  /* Everything else sorts alpha */
+  
+  return kp;
+}
+
+void
+kisdata_show(Kis_data* k, FILE *fp)
+{
+  int i;
+  for (i = 0; k[i]; ++i)
+    fprintf(fp, "%s %s\n", k[i][1], kis_data_debug(k[i]));
 }
 
 /* Reduce all the field hashes to arrays and sort them so they are
@@ -151,13 +166,12 @@ cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
   for (i = 0; i < EFLD_TOP; ++i)
     {
       if (*(ep->u.hfields)[i])
-	(ep->u.kisdata)[i] = kis_data_h2k(*(ep->u.hfields)[i]);
+	{
+	  (ep->u.kisdata)[i] = kis_data_h2k(*(ep->u.hfields)[i], i);
+	  kisdata_show((ep->u.kisdata)[i], stderr);
+	}
     }
   
-  /* Bases sort by frequency */
-  
-
-  /* Everything else sorts alpha */
 }
 
 void

@@ -162,7 +162,7 @@ cbd_fw_fields(List *forms, Form *f, int context, void *vp, cbdfwfunc h)
       f->parts = fp->parts;
 
       if ('s'==context && !fp->sense_p)
-	fp->sense_p = vp;
+	f->sense_p = vp;
 
       h(&f[0], context=='e' ? CBD_FW_EF : CBD_FW_SF, fp);
     }
@@ -174,6 +174,7 @@ cbd_fw_entry(Entry *ep, cbdfwfunc h)
   Form f;
   memset(&f, '\0', sizeof(Form));
 
+  f.entry = ep;
   f.project = ep->owner->project;
   f.lang = ep->owner->lang;
   f.cf = ep->cgp->cf;
@@ -182,12 +183,12 @@ cbd_fw_entry(Entry *ep, cbdfwfunc h)
 
   /*fprintf(stderr, "FW_E entry: ");*/
   h(&f, CBD_FW_E, ep);
-
   cbd_fw_fields(ep->forms, &f, 'e', ep, h);
 
   Sense *sp;
   for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
     {
+      f.sense_p = sp;
       f.sense = sp->mng;
       f.epos = sp->pos;
 
