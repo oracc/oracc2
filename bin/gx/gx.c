@@ -246,6 +246,12 @@ io_run(void)
       if (check)
 	validator(curr_cbd);
 
+      if (keys)
+	{
+	  Kis *k = kis_load("02pub/tokl.kis");
+	  cbd_kis(curr_cbd, k);
+	}
+
       break;
 #if 0
     case iome_tg2:

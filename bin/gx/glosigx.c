@@ -8,8 +8,6 @@
  * that are already known.
  */
 
-extern struct map *lang949(register const char *str, register size_t len);
-
 int parser_status = 0;
 int verbose = 1;
 int bootstrap_mode, lem_autolem, lem_dynalem;
@@ -133,7 +131,7 @@ cbd_entry_sigs(Entry *ep)
 }
 
 static void
-cbd_sigs(Hash *h, Cbd *c)
+cbd_sigs(Cbd *c)
 {
   Entry *ep;
   for (ep = list_first(c->entries); ep; ep = list_next(c->entries))
@@ -217,7 +215,7 @@ main(int argc, char * const *argv)
 	    }
 	  xfclose(file, glofp);
 	  cbd_psus();
-	  cbd_sigs(hsig, c);
+	  cbd_sigs(c);
 	}
       mesg_print(stderr);
     }

@@ -1,11 +1,12 @@
 #ifndef CBD_H_
 #define CBD_H_ 1
 
-#include "hash.h"
-#include "memo.h"
-#include "pool.h"
-#include "mesg.h"
-#include "form.h"
+#include <hash.h>
+#include <memo.h>
+#include <pool.h>
+#include <mesg.h>
+#include <form.h>
+#include <kis.h>
 
 /* Common grammar header file for cbd.l and cbd.y */
 #include "cbdyacc.h"
@@ -69,6 +70,7 @@ typedef struct cbd {
   Memo *entrymem;
   Memo *equivmem;
   Memo *i18nmem;
+  Memo *kisnullmem;
   Memo *loctokmem;
   Memo *locatormem;
   Memo *metamem;
@@ -216,6 +218,7 @@ typedef struct sense {
   struct edit *ed;
   struct meta *meta;
   List *sensels; /* list of translated senses with (struct sense *) data--struct has l and lng so i18n not needed */
+  List *forms; /* not yet used: future provision for tying @form under @sense */
 } Sense;
 
 struct equiv {
@@ -275,10 +278,21 @@ typedef struct lemsig
   int freq;
 } Lemsig;
 
-typedef void (*cbdactionfunc)(const char *);
+typedef enum form_walk_type {
+  CBD_FW_E , 	/* entry */
+  CBD_FW_EE , 	/* end entry */
+  CBD_FW_S , 	/* sense */
+  CBD_FW_SE , 	/* end sense */
+  CBD_FW_EF , 	/* entry-level form */
+  CBD_FW_SF  	/* sense-level form */
+} Cbd_fw_type;
+typedef void (*cbdfwfunc)(Form *,Cbd_fw_type,void *);
+
+typedef void (*cbdactionfunc)(const char *,int,int,void*);
 extern void cbd_key_set_action(cbdactionfunc f);
-extern void cbd_key_cgp(Form *f, const char *period);
-extern void cbd_key_cgpse(Form *f, const char *period);
+extern void cbd_key_cgp(Form *f, Entry *e, const char *period);
+extern void cbd_key_cgpse(Form *f, Sense *s, const char *period);
+extern void cbd_key_fields(Form *f, int context, void *v, const char *period);
 
 extern Sense *curr_sense;
 extern const char *errmsg_fn;
@@ -352,5 +366,7 @@ extern const unsigned char *cgp_str(struct cgp *cp, int spread);
 extern void cgp_entry(struct cgp *c, struct entry *e);
 extern void cbd_psus(void);
 extern void cgp_set_pool(Pool *p);
+
+extern void cbd_form_walk(Cbd *c, cbdfwfunc h);
 
 #endif/*CBD_H_*/

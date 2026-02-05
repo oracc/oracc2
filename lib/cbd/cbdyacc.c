@@ -653,9 +653,9 @@ void
 cbd_bld_stem(YYLTYPE l, struct entry *e, unsigned char *stem)
 {
   if (!e->stems)
-    e->stems = list_create(LIST_SINGLE);
+    e->stems = hash_create(5);
   
-  list_add(e->stems, cbd_bld_loctok(&l,e,stem));
+  hash_add(e->stems, stem, cbd_bld_loctok(&l,e,stem));
 }
 
 struct tag *

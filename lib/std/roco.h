@@ -26,9 +26,10 @@ struct roco
   const char *empty_row; /* row of maxcols tabs; for Roco in j_list, maxcols-1*'\t' */
   Hash *fields;		 /* Hash of field names to index in row */
   Hash *hdata;		 /* Hash of cell1 to row */
+  int hash_key_col;	 /* which col to use as hash key **ONLY WITH hash_r**, default 0 */
+  int joiner;
   int linkcells;	 /* The cells are Link* not char * */
   int maxcols;
-  int joiner;
   int row1_literal;	/* Do not pass row1 through the roco_format template */
   int row1_fields_omit; /* Do not output row1 if it is fields */
   int skip_initial_lines;/* roco hash skips this many lines at start*/
@@ -60,6 +61,7 @@ extern int roco_xmlify;
 /* Keep this on one line so GCC errors show the whole prototype
  */
 extern Roco *roco_create(int rows, int cols);
+extern void roco_destroy(Roco *r);
 extern void roco_field_indexes(Roco *r);
 extern Hash *roco_hash(Roco *r);
 extern void roco_hash_hash(Hash *h, Roco *r);

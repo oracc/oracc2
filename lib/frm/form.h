@@ -111,6 +111,7 @@ typedef struct form
 
   /* struct form is used by CBD as well */
   void *entry;
+  void *sense_p;
   
   /* Support for arbitrary user data extensions */
   void *user;
@@ -147,5 +148,7 @@ extern void form_serialize_form_2(FILE *f_f2, struct ilem_form *f);
 extern unsigned char *form_cbd(Form *fp, Pool *p, int with_lang);
 
 extern void form_set_xcp(struct xcl_context *xcp);
+
+extern struct map *lang949(register const char *str, register size_t len);
 
 #endif/*FORM_H_*/

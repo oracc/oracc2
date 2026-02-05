@@ -30,6 +30,18 @@ roco_create(int rows, int cols)
 }
 
 void
+roco_destroy(Roco *r)
+{
+  if (!r)
+    return;
+  int i;
+  for (i = 0; i < r->nlines; ++i)
+    free(r->rows[i]);
+  free(r->rows);
+  free(r);
+}
+
+void
 roco_fields_row(Roco *r, const char **f)
 {
   int i;
@@ -129,7 +141,7 @@ roco_hash_hash_r(Hash *h, Roco *r)
 	  if (!strcmp((ccp)r->rows[i][0], ".include"))
 	    roco_hash_hash(h, roco_load1((ccp)r->rows[i][1]));      
 	  else
-	    hash_add(h, r->rows[i][0], r->rows[i]);
+	    hash_add(h, r->rows[i][r->hash_key_col], r->rows[i]);
 	}
     }
 }
