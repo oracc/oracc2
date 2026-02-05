@@ -88,7 +88,7 @@ cbd_key_cgp(Form *f, Entry *e, const char *period)
       buf = realloc(buf, buf_alloced);
     }
   sprintf(buf, "%%%s:%s[%s]%s%c%c", f->lang, f->cf, f->gw, f->pos, 1, 1);
-  cbdact(buf, 'e', 0, e);
+  cbdact(buf, 'e', 'e', e);
   if (period)
     cbd_key_period(f, 'e', e, period);
 }
@@ -99,7 +99,7 @@ void
 cbd_key_cgpse(Form *f, Sense *s, const char *period)
 {
   sprintf(buf, "%%%s:%s[%s]%s%c//%s'%s%c", f->lang, f->cf, f->gw, f->pos, 1, f->sense, f->epos, 1);
-  cbdact(buf, 's', 0, s);
+  cbdact(buf, 's', 's', s);
   if (period)
     cbd_key_period(f, 's', s, period);
 }

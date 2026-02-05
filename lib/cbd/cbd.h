@@ -118,6 +118,7 @@ struct edit {
 
 typedef struct entry {
   Mloc l;
+  Kis_data k;
   struct cgp *cgp;
   const char *eid;
   const char *lang;
@@ -206,6 +207,7 @@ typedef struct parts {
 
 typedef struct sense {
   Mloc l;
+  Kis_data k;
   unsigned const char *num;
   unsigned const char *sgw;
   unsigned const char *pos;

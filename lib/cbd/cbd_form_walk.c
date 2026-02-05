@@ -99,6 +99,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
   Form *ff;
   for (ff = list_first(heads); ff; ff = list_next(heads))
     {
+      ff[0].entry = ep;
       ff[0].lang = ff[1].lang;
       ff[0].form = psu_orth_form(ff, 1+list_len(p->cgps));
       ff[0].cf = ep->cgp->cf;
@@ -106,9 +107,10 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       ff[0].pos = ep->cgp->pos;
       ff[0].psu_ngram = psu_ngram(p->cgps);
       /*fprintf(stderr, "FW_PE: ");*/
-      h(&ff[0], CBD_FW_PE, sp);
+      h(&ff[0], CBD_FW_PE, ep);
       for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
 	{
+	  ff[0].sense_p = sp;
 	  ff[0].sense = sp->mng;
 	  ff[0].epos = sp->pos;
 	  /*fprintf(stderr, "FW_PS parts: ");*/

@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <roco.h>
 #include "cbd.h"
 
 /* cbd_kis.c: add Kis references to a Cbd by generating keys and
@@ -13,15 +14,52 @@
  * found in the Kis.
  */
 
+static Cbd *my_c;
 static Kis *my_k;
+
 static void cbd_kis_wrapup(Cbd_fw_type t, void *v);
+
+static Kis_data
+kis_data(const char *k)
+{
+  Kis_data kdp = hash_find(my_k->hdata, (uccp)k);
+  if (!kdp)
+    {
+      kdp = memo_new(my_c->kisnullmem);
+      kdp[0] = (char*)pool_copy((uccp)k, csetp->pool);
+    }
+  return kdp;
+}
+
+static const char *
+kis_data_debug(Kis_data kdp)
+{
+  static char buf[64];
+  if (kdp[1])
+    sprintf(buf, "%s %sx %s%%", kdp[0], kdp[2], kdp[3]);
+  else
+    sprintf(buf, "(null) 0x 0%%");
+  return buf;
+}
 
 /* Handler function used by cbd_key */
 void
 cbd_kis_key_h(const char *k, int context, int field, void *v)
 {
+  Kis_data kdp = NULL;
+  
   switch (field)
     {
+    case 'e':
+      if (!((Entry*)v)->k)
+	kdp = ((Entry*)v)->k = kis_data(k);
+      break;
+    case 's':
+      if (!((Sense*)v)->k)
+	kdp = ((Sense*)v)->k = kis_data(k);
+      break;
+    case 'p':
+      break;
     case '=':
       break;
     case '$':
@@ -36,14 +74,13 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
       break;
     case '*':
       break;
-    case 'p':
-      break;
     default:
       break;
     }
   
   /*fprintf(stderr, "FW_%c field %c: ", context, field);*/
-  fprintf(stderr, "%s\n", k);
+  if (kdp)
+    fprintf(stderr, "%s %s\n", k, kis_data_debug(kdp));
 }
 
 /* Handler function passed to cbd_form_walk */
@@ -93,6 +130,7 @@ cbd_kis(Cbd *c, Kis *k)
 {
   if (!c->kisnullmem)
     c->kisnullmem = memo_init(sizeof(Kis_null), 128);
+  my_c = c;
   my_k = k;
   cbd_key_set_action(cbd_kis_key_h);
   cbd_form_walk(c, cbd_kis_fw_h);
