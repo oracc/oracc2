@@ -14,10 +14,11 @@
  * found in the Kis.
  */
 
+Efield hfields[128];
 static Cbd *my_c;
 static Kis *my_k;
 
-static void cbd_kis_wrapup(Cbd_fw_type t, void *v);
+static void cbd_kis_wrapup(Cbd_fw_type t, Entry *v);
 
 static Kis_data
 kis_data(const char *k)
@@ -29,6 +30,13 @@ kis_data(const char *k)
       kdp[0] = (char*)pool_copy((uccp)k, csetp->pool);
     }
   return kdp;
+}
+
+static void
+kis_hdata(Hash *h, const char *k)
+{
+  if (!hash_find(h, (uccp)k))
+    hash_add(h, pool_copy((uccp)k, csetp->pool), kis_data(k));
 }
 
 static const char *
@@ -46,41 +54,43 @@ kis_data_debug(Kis_data kdp)
 void
 cbd_kis_key_h(const char *k, int context, int field, void *v)
 {
-  Kis_data kdp = NULL;
-  
-  switch (field)
+  if ('e' == field)
     {
-    case 'e':
       if (!((Entry*)v)->k)
-	kdp = ((Entry*)v)->k = kis_data(k);
-      break;
-    case 's':
+	{
+	  ((Entry*)v)->k = kis_data(k);
+	  ((Entry*)v)->u.hfields = calloc(1, sizeof(Hfields));
+	  int i;
+	  for (i = 0; i < sizeof(Hfields)/sizeof(Hash*); ++i)
+	    *(((Entry*)v)->u.hfields)[i] = hash_create(128);
+	}
+    }
+  else if ('s' == field)
+    {
       if (!((Sense*)v)->k)
-	kdp = ((Sense*)v)->k = kis_data(k);
-      break;
-    case 'p':
-      break;
-    case '=':
-      break;
-    case '$':
-      break;
-    case '/':
-      break;
-    case '+':
-      break;
-    case '#':
-      break;
-    case 'm':
-      break;
-    case '*':
-      break;
-    default:
-      break;
+	((Sense*)v)->k = kis_data(k);
+    }
+  else
+    {
+      int hfield = hfields[field];
+      if (hfield >= 0)
+	{
+#if 1
+	  /* We don't collect sense-specific field data yet */
+	  if ('e' == context)
+	    kis_hdata(*(((Entry*)v)->u.hfields)[hfield], k);
+#else
+	  kis_hdata(context=='e'
+		    ?((Entry*)v)->u.hfields[hfield]
+		    :((Sense*)v)->u.hfields[hfield],
+		    k);
+#endif
+	}
+      else
+	fprintf(stderr, "cbd_kis_key_h: internal error: unknown field '%c'\n", field);
     }
   
   /*fprintf(stderr, "FW_%c field %c: ", context, field);*/
-  if (kdp)
-    fprintf(stderr, "%s %s\n", k, kis_data_debug(kdp));
 }
 
 /* Handler function passed to cbd_form_walk */
@@ -117,19 +127,62 @@ cbd_kis_fw_h(Form *f, Cbd_fw_type t, void *v)
     }
 }
 
+Kis_data *
+kis_data_h2k(Hash *h)
+{
+  return NULL;
+}
+
 /* Reduce all the field hashes to arrays and sort them so they are
  * marshalled for further processing.
  */
 static void
-cbd_kis_wrapup(Cbd_fw_type t, void *v)
+cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
 {
+  if (ep->k)
+    fprintf(stderr, "%s %s\n", ep->k[1], kis_data_debug(ep->k));
+
+  Sense *sp;
+  for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
+    if (sp->k)
+      fprintf(stderr, "%s %s\n", sp->k[1], kis_data_debug(ep->k));
+
+  int i;
+  for (i = 0; i < EFLD_TOP; ++i)
+    {
+      if (*(ep->u.hfields)[i])
+	(ep->u.kisdata)[i] = kis_data_h2k(*(ep->u.hfields)[i]);
+    }
+  
+  /* Bases sort by frequency */
+  
+
+  /* Everything else sorts alpha */
+}
+
+void
+hfields_init(void)
+{
+  hfields['p'] = EFLD_PERD;
+  hfields['='] = EFLD_FORM;
+  hfields['$'] = EFLD_NORM;
+  hfields['^'] = EFLD_NMFM;
+  hfields['~'] = EFLD_FMOF;
+  hfields['/'] = EFLD_BASE;
+  hfields['*'] = EFLD_STEM;
+  hfields['+'] = EFLD_CONT;
+  hfields['#'] = EFLD_MRF1;
+  hfields['m'] = EFLD_MRF2;
 }
 
 void
 cbd_kis(Cbd *c, Kis *k)
 {
   if (!c->kisnullmem)
-    c->kisnullmem = memo_init(sizeof(Kis_null), 128);
+    {
+      c->kisnullmem = memo_init(sizeof(Kis_null), 128);
+      hfields_init();
+    }
   my_c = c;
   my_k = k;
   cbd_key_set_action(cbd_kis_key_h);

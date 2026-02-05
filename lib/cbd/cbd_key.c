@@ -65,6 +65,11 @@ cbd_key_fields(Form *f, int context, void *v)
   else
     fpr('=',form);
   fpr('$',norm);
+  if (f->form && f->norm)
+    {
+      sprintf(insert, "$%s=%s", f->norm, f->form);
+      cbdact(buf, context, '^', v);
+    }
   fpr('#',morph);
   fpr('/',base);
   fpr('+',cont);
