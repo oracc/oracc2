@@ -77,7 +77,7 @@ mm_free(struct mm *m)
 }
 
 struct xcl_context *
-xcl_create()
+xcl_create(void)
 {
   struct xcl_context *xc = calloc(1, sizeof(struct xcl_context));
 

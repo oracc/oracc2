@@ -41,12 +41,21 @@ cbd_key_form_len(Form *f)
 
 /* This routine assumes it has been caller is cbd_key_cgp or
    cbd_key_cgpse */
-void
-cbd_key_fields(Form *f, int context, void *v, const char *period)
+static void
+cbd_key_period(Form *f, int context, void *v, const char *period)
 {
   char *insert = buf + strlen(buf);
   sprintf(insert, "%s", period);
   cbdact(buf, context, 'p', v);
+  *insert = '\0';
+}
+
+/* This routine assumes it has been caller is cbd_key_cgp or
+   cbd_key_cgpse */
+void
+cbd_key_fields(Form *f, int context, void *v)
+{
+  char *insert = buf + strlen(buf);
 #define fpr(c,x) if(f->x){sprintf(insert,"%c%s",c,f->x); cbdact(buf,context,c,v); } /*(t,vp,qid)*/
   if (f->oform)
     {
@@ -59,13 +68,14 @@ cbd_key_fields(Form *f, int context, void *v, const char *period)
   fpr('#',morph);
   fpr('/',base);
   fpr('+',cont);
-  fpr('*',cont);
+  fpr('*',stem);
   if (f->morph2)
     {
       sprintf(insert, "##%s", f->morph2);
       cbdact(buf,context,'m',v);
     }
 #undef fpr
+  *insert = '\0';
 }
 
 void
@@ -78,9 +88,9 @@ cbd_key_cgp(Form *f, Entry *e, const char *period)
       buf = realloc(buf, buf_alloced);
     }
   sprintf(buf, "%%%s:%s[%s]%s%c%c", f->lang, f->cf, f->gw, f->pos, 1, 1);
-  cbdact(buf, 'e', 0, f->entry);
+  cbdact(buf, 'e', 0, e);
   if (period)
-    cbd_key_fields(f, 'e', e, period);
+    cbd_key_period(f, 'e', e, period);
 }
 
 /* This routine assumes it has been called immediately after
@@ -90,5 +100,6 @@ cbd_key_cgpse(Form *f, Sense *s, const char *period)
 {
   sprintf(buf, "%%%s:%s[%s]%s%c//%s'%s%c", f->lang, f->cf, f->gw, f->pos, 1, f->sense, f->epos, 1);
   cbdact(buf, 's', 0, s);
-  cbd_key_fields(f, 's', s, period);
+  if (period)
+    cbd_key_period(f, 's', s, period);
 }

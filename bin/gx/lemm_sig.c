@@ -25,7 +25,7 @@ lemm_sigs(const char *fn)
 		{
 		  if (!csetp->lems)
 		    csetp->lems = hash_create(10);
-		  hash_add(csetp->lems, pool_copy(buf,csetp->pool), h);
+		  hash_add(csetp->lems, pool_copy((uccp)buf,csetp->pool), h);
 		}
 	      else
 		fprintf(stderr, "lemm_sig: failed to make hash from loaded lemm file %s\n", fn);

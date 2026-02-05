@@ -14,6 +14,7 @@
  */
 
 static Kis *my_k;
+static void cbd_kis_wrapup(Cbd_fw_type t, void *v);
 
 /* Handler function used by cbd_key */
 void
@@ -40,7 +41,8 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
     default:
       break;
     }
-      
+  
+  /*fprintf(stderr, "FW_%c field %c: ", context, field);*/
   fprintf(stderr, "%s\n", k);
 }
 
@@ -54,18 +56,26 @@ cbd_kis_fw_h(Form *f, Cbd_fw_type t, void *v)
       cbd_key_cgp(f, v, NULL);
       break;
     case CBD_FW_EF:
-      cbd_key_fields(f, 'e', f->entry, NULL);
+      cbd_key_fields(f, 'e', f->entry);
       break;
     case CBD_FW_S:
       cbd_key_cgpse(f, v, NULL);
       break;
     case CBD_FW_SF:
-      cbd_key_fields(f, 's', f->sense_p, NULL);
+      cbd_key_fields(f, 's', f->sense_p);
       break;
-    case CBD_EE:
+    case CBD_FW_EE:
       cbd_kis_wrapup(t, v);
       break;
-    case CBD_SE:
+    case CBD_FW_SE:
+      break;
+    case CBD_FW_PE:
+      cbd_key_cgp(f, v, NULL);
+      cbd_key_fields(f, 'e', f->entry);
+      break;
+    case CBD_FW_PS:
+      cbd_key_cgpse(f, v, NULL);
+      cbd_key_fields(f, 's', f->sense_p);
       break;
     }
 }
@@ -83,6 +93,7 @@ cbd_kis(Cbd *c, Kis *k)
 {
   if (!c->kisnullmem)
     c->kisnullmem = memo_init(sizeof(Kis_null), 128);
-
+  my_k = k;
+  cbd_key_set_action(cbd_kis_key_h);
   cbd_form_walk(c, cbd_kis_fw_h);
 }

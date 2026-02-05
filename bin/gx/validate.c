@@ -478,13 +478,13 @@ v_senses(struct entry *e)
 static void
 v_stems(struct entry *e)
 {
+#if 0
   List_node *lp;
   f0(/* @stems */ );
   for (lp = e->stems->first; lp; lp = lp->next)
     {
-#if 0
       unsigned char *stem = /* (ucp)(lp->data) */"";
       f1(stem);
-#endif
     }
+#endif
 }

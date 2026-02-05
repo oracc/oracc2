@@ -99,16 +99,20 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
   Form *ff;
   for (ff = list_first(heads); ff; ff = list_next(heads))
     {
+      ff[0].lang = ff[1].lang;
       ff[0].form = psu_orth_form(ff, 1+list_len(p->cgps));
       ff[0].cf = ep->cgp->cf;
       ff[0].gw = ep->cgp->gw;
       ff[0].pos = ep->cgp->pos;
       ff[0].psu_ngram = psu_ngram(p->cgps);
+      /*fprintf(stderr, "FW_PE: ");*/
+      h(&ff[0], CBD_FW_PE, sp);
       for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
 	{
 	  ff[0].sense = sp->mng;
 	  ff[0].epos = sp->pos;
-	  h(&ff[0], CBD_FW_SF, sp);
+	  /*fprintf(stderr, "FW_PS parts: ");*/
+	  h(&ff[0], CBD_FW_PS, sp);
 	}
     }
 }
@@ -174,6 +178,7 @@ cbd_fw_entry(Entry *ep, cbdfwfunc h)
   f.gw = ep->cgp->gw;
   f.pos = ep->cgp->pos;
 
+  /*fprintf(stderr, "FW_E entry: ");*/
   h(&f, CBD_FW_E, ep);
 
   cbd_fw_fields(ep->forms, &f, 'e', ep, h);
@@ -184,7 +189,7 @@ cbd_fw_entry(Entry *ep, cbdfwfunc h)
       f.sense = sp->mng;
       f.epos = sp->pos;
 
-      h(&f, CBD_FW_SE, sp);
+      h(&f, CBD_FW_S, sp);
       cbd_fw_fields(sp->forms ? sp->forms : ep->forms, &f, 's', sp, h);
       h(&f, CBD_FW_SE, sp);
     }

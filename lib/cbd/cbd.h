@@ -284,7 +284,9 @@ typedef enum form_walk_type {
   CBD_FW_S , 	/* sense */
   CBD_FW_SE , 	/* end sense */
   CBD_FW_EF , 	/* entry-level form */
-  CBD_FW_SF  	/* sense-level form */
+  CBD_FW_SF , 	/* sense-level form */
+  CBD_FW_PE , 	/* PSU entry */
+  CBD_FW_PS  	/* PSU sense */
 } Cbd_fw_type;
 typedef void (*cbdfwfunc)(Form *,Cbd_fw_type,void *);
 
@@ -292,7 +294,7 @@ typedef void (*cbdactionfunc)(const char *,int,int,void*);
 extern void cbd_key_set_action(cbdactionfunc f);
 extern void cbd_key_cgp(Form *f, Entry *e, const char *period);
 extern void cbd_key_cgpse(Form *f, Sense *s, const char *period);
-extern void cbd_key_fields(Form *f, int context, void *v, const char *period);
+extern void cbd_key_fields(Form *f, int context, void *v);
 
 extern Sense *curr_sense;
 extern const char *errmsg_fn;
@@ -368,5 +370,6 @@ extern void cbd_psus(void);
 extern void cgp_set_pool(Pool *p);
 
 extern void cbd_form_walk(Cbd *c, cbdfwfunc h);
+extern void cbd_kis(Cbd *c, Kis *k);
 
 #endif/*CBD_H_*/

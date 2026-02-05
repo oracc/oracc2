@@ -381,6 +381,7 @@ o_glo_senses(struct entry *e)
 static void
 o_glo_stems(struct entry *e)
 {
+#if 0
   List_node *lp;
 
   o_glo_cmt(((struct loctok *)(e->stems->first->data))->l.user);
@@ -391,4 +392,5 @@ o_glo_stems(struct entry *e)
       printf(" %s", stem);
     }
   printf("\n");
+#endif
 }

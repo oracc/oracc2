@@ -197,7 +197,7 @@ sig_new_context_free_sigset(void)
 }
 
 struct sig_context *
-sig_context_init()
+sig_context_init(void)
 {
   if (!global_scp)
     {

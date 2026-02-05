@@ -3,6 +3,7 @@
 #include <iome.h>
 #include <pool.h>
 #include <tree.h>
+#include <kis.h>
 #include <lng.h>
 #include <gdl.h>
 #include <xnn.h>
@@ -20,6 +21,8 @@ static const char *prog = "gx";
 static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
 
 const char *jfn = NULL, *xfn = NULL;
+
+const char *kis_file = "02pub/tokl.kis";
 
 extern int cbd_flex_debug;
 
@@ -48,6 +51,7 @@ const char *efile = NULL;
 /* Hash *cbds = NULL; */ /* defined in nss/cbd/cbdyacc.c */
 
 int check = 0;
+int keys = 0;
 int trace_mode = 0;
 int rnvtrace = 0;
 int keepgoing = 0;
@@ -243,6 +247,8 @@ io_run(void)
 	    }
 	}
 
+      cbd_psus();
+
       if (check)
 	validator(curr_cbd);
 
@@ -355,7 +361,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:i:o:chjJkp:rtTxXv");
+  options(argc,argv,"A:I:O:i:o:chjJkK::p:rtTxXv");
 
   if (status)
     {
@@ -452,6 +458,11 @@ int opts(int och, const char *oarg)
       break;
     case 'k':
       keepgoing = 1;
+      break;
+    case 'K':
+      keys = 1;
+      if (optarg)
+	kis_file = optarg;
       break;
     case 'n':
       break;

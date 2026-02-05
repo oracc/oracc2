@@ -189,7 +189,6 @@ main(int argc, char * const *argv)
   gdl_flex_debug = gdldebug = cbddebug = 0;
   cbd_flex_debug = 0;
 
-  Hash *hsig = hash_create(16);
   int i;
   for (i = 0; glos[i]; ++i)
     {

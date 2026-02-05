@@ -34,7 +34,7 @@ bigrams_init(struct sigset *sp)
 }
 
 void
-bigrams_term()
+bigrams_term(void)
 {
   ngramify_term();
 }

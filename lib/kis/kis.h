@@ -23,4 +23,6 @@ typedef const char * Kis_null[2];
 #define kis_cnt(r) (kis->(r)[2])
 #define kis_pct(r) (kis->(r)[3])
 
+extern Kis *kis_load(const char *fn);
+
 #endif/*KIS_H_*/

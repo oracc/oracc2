@@ -242,7 +242,7 @@ sigs_new_sig(struct xcl_context *xcp, struct ilem_form *fp)
       *cofsig = '\0';
       while (1)
 	{
-	  unsigned char *sig = form_sig(xcp, &tmpfp->f2);
+	  unsigned char *sig = form_sig(xcp->pool, &tmpfp->f2);
 	  if (strlen((const char *)cofsig) + strlen((const char *)sig) + 3 > cofsig_len)
 	    cofsig = realloc(cofsig, cofsig_len += cofsig_len);
 	  if (*cofsig)
@@ -259,7 +259,7 @@ sigs_new_sig(struct xcl_context *xcp, struct ilem_form *fp)
     }
   else
     {
-      fp->f2.sig = form_sig(xcp, &fp->f2);
+      fp->f2.sig = form_sig(xcp->pool, &fp->f2);
     }
 
   if (bootstrap_mode)

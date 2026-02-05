@@ -13,4 +13,4 @@ liboracc2_la_LIBADD=asl/*.lo atf/*.lo cat/*.lo cbd/*.lo chr/*.lo	\
 	jsn/*.lo lng/*.lo ofp/*.lo oid/*.lo rnc/*.lo rnv/*.lo		\
 	sas/*.lo sll/*.lo std/*.lo sys/*.lo tis/*.lo tok/*.lo		\
 	tsv/*.lo xmd/*.lo xml/*.lo xpd/*.lo libstemmer_c/*/*.lo		\
-	l3/*/*.lo inl/*.lo scan/*.lo
+	l3/*/*.lo inl/*.lo scan/*.lo kis/*.lo
