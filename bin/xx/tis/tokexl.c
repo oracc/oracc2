@@ -54,8 +54,11 @@ const char *file;
 Pool *mpool;
 Hash *mhash;
 
+/* cbd_key in Cbd context needs more info than pr does so we have to
+ * supply dummy args for the cbd_key handler API
+ */
 static void
-pr(const char *k)
+pr(const char *k, int ignore1, int ignore2, void*ignore3)
 {
   printf("%s\t%s\t%s\n", k, vido_new_id(vp,k), qid);
 }
@@ -133,15 +136,16 @@ toks_from_file(const char *fn, FILE *fp)
       strcat(qid, w);
       
       /* Always save the entire sig */
-      pr((ccp)s);
+      pr((ccp)s, -1, -1, NULL);
 
       memset(&f, '\0', sizeof(Form));
       form_parse((uccp)file, line, (ucp)s, &f, NULL);
 
 #if 1
-      cbd_key_cgp(&f, period);
-      if (strcmp((ccp)f.gw, (ccp)f.sense) || strcmp((ccp)f.pos, (ccp)f.epos))
-	cbd_key_cgpse(&f, period);
+      cbd_key_cgp(&f, NULL, period);
+      cbd_key_fields(&f, 'e', NULL);
+      cbd_key_cgpse(&f, NULL, period);
+      cbd_key_fields(&f, 's', NULL);      
 #else
       char t[10*sig_len]; /* this is lazy, but there is no way we can generate keys bigger than this */
 

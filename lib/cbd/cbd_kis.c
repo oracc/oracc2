@@ -26,7 +26,7 @@ kis_data(const char *k)
   Kis_data kdp = hash_find(my_k->hdata, (uccp)k);
   if (!kdp)
     {
-      kdp = memo_new(my_c->kisnullmem);
+      kdp = memo_new_array(my_c->kisnullmem, 2);
       kdp[0] = (char*)pool_copy((uccp)k, csetp->pool);
     }
   return kdp;
@@ -141,11 +141,29 @@ kis_data_h2k(Hash *h, Efield e)
 }
 
 void
+kisdata_show_one(Kis_data k, FILE *fp)
+{
+  if (k[1])
+    fprintf(stderr, "%s %s\n", k[1], kis_data_debug(k));
+  else
+    fprintf(stderr, "%s (null) 0x 0%%\n", k[0]);
+}
+
+void
 kisdata_show(Kis_data* k, FILE *fp)
 {
   int i;
   for (i = 0; k[i]; ++i)
-    fprintf(fp, "%s %s\n", k[i][1], kis_data_debug(k[i]));
+    kisdata_show_one(k[i], fp);
+}
+
+void
+cbd_kis_periods(Kis *k, unsigned const char *key)
+{
+  /*fprintf(stderr, "cbd_kis_periods: key = ::%s::\n", key);*/
+  Kis_data *kdp = hash_find((Hash*)k->user, key);
+  if (kdp)
+    kisdata_show(kdp, stderr);
 }
 
 /* Reduce all the field hashes to arrays and sort them so they are
@@ -155,12 +173,20 @@ static void
 cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
 {
   if (ep->k)
-    fprintf(stderr, "%s %s\n", ep->k[1], kis_data_debug(ep->k));
+    {
+      kisdata_show_one(ep->k, stderr);
+      if (ep->k[1])
+	cbd_kis_periods(my_k, (uccp)ep->k[1]);
+    }
 
   Sense *sp;
   for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
     if (sp->k)
-      fprintf(stderr, "%s %s\n", sp->k[1], kis_data_debug(ep->k));
+      {
+	kisdata_show_one(sp->k, stderr);
+	if (sp->k[1])
+	  cbd_kis_periods(my_k, (uccp)sp->k[1]);
+      }
 
   int i;
   for (i = 0; i < EFLD_TOP; ++i)
@@ -194,7 +220,7 @@ cbd_kis(Cbd *c, Kis *k)
 {
   if (!c->kisnullmem)
     {
-      c->kisnullmem = memo_init(sizeof(Kis_null), 128);
+      c->kisnullmem = memo_init(sizeof(char *), 256);
       hfields_init();
     }
   my_c = c;

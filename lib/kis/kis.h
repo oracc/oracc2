@@ -16,7 +16,6 @@ typedef struct kis
 
 typedef struct roco Kis;
 typedef const char ** Kis_data;
-typedef const char * Kis_null[2];
 
 #define kis_tis(r) (kis->(r)[0])
 #define kis_key(r) (kis->(r)[1])

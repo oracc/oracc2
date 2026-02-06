@@ -45,7 +45,7 @@ static void
 cbd_key_period(Form *f, int context, void *v, const char *period)
 {
   char *insert = buf + strlen(buf);
-  sprintf(insert, "%s", period);
+  sprintf(insert, "p%s", period);
   cbdact(buf, context, 'p', v);
   *insert = '\0';
 }
