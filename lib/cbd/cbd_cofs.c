@@ -8,12 +8,12 @@
  */
 
 static Cof *
-cbd_cof_norm_sig(Form *f2p)
+cbd_cof_norm_sig(Cform *cfp)
 {
-  char buf[strlen((ccp)f2p->norm)+1];
-  int index = 0, found_self = (*f2p->norm == '(' ? 0 : 1);
+  char buf[strlen((ccp)cfp->f.norm)+1];
+  int index = 0, found_self = (*cfp->f.norm == '(' ? 0 : 1);
   char *b = buf, *s = buf;
-  strcpy(buf, (ccp)f2p->norm);
+  strcpy(buf, (ccp)cfp->f.norm);
   Cof *cofp = memo_new(csetp->cofmem);
   
   while (*s)
@@ -46,21 +46,21 @@ cbd_cof_norm_sig(Form *f2p)
 	*b++ = *s++;
     }
   *b = '\0';
-  fprintf(stderr, "cbd_cof_norm_sig: %s => %s [%d]\n", f2p->norm, buf, index);
+  fprintf(stderr, "cbd_cof_norm_sig: %s => %s [%d]\n", cfp->f.norm, buf, index);
 
-  cofp->e = f2p->entry;
+  cofp->e = cfp->entry;
   cofp->f = f2p;
   cofp->i = index;
   cofp->s = pool_copy((ucp)buf, csetp->pool);
 
   if (found_self == 1)
     {
-      BIT_SET(f2p->flags, FORM_FLAGS_COF_HEAD);
-      f2p->norm = cofp->s;
+      BIT_SET(cfp->f.flags, FORM_FLAGS_COF_HEAD);
+      cfp->f.norm = cofp->s;
     }
   else
     {
-      BIT_SET(f2p->flags, FORM_FLAGS_COF_TAIL);
+      BIT_SET(cfp->f.flags, FORM_FLAGS_COF_TAIL);
       /* can't set cof_id here because COFs read from glossary don't identify their COF_HEAD */
     }
 
@@ -68,7 +68,7 @@ cbd_cof_norm_sig(Form *f2p)
 }
 
 void
-cbd_cof_register(Form *f2p)
+cbd_cof_register(Cform *cfp)
 {
   Cof *cofp = cbd_cof_norm_sig(f2p);
   List *lp;

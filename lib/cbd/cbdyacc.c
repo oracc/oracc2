@@ -370,36 +370,37 @@ cbd_bld_equiv(struct entry *e, unsigned char *lang, unsigned char *text)
   return eq;
 }
 
-Form *
+Cform *
 cbd_bld_form(YYLTYPE l, struct entry *e)
 {
-  static Form *f2p;
-  f2p = memo_new(csetp->formsmem);
-  f2p->file = (ucp)l.file;
-  f2p->lnum = l.line;
-  f2p->entry = e;
-  cmts(f2p->user);
-  list_add(e->forms, f2p);
+  static Cform *cfp;
+  cfp = memo_new(csetp->cformsmem);
+  cfp->l = l;
+  cfp->e = e;
+  cfp->f.file = (ucp)l.file;
+  cfp->f.lnum = l.line;
+  cmts(cfp->f.user);
+  list_add(e->forms, cfp);
   if (bang || e->rank)
     {
       bang = 0;
-      f2p->rank = 4;
+      cfp->f.rank = 4;
     }
-  return f2p;
+  return cfp;
 }
 
 void
-cbd_bld_form_setup(struct entry *e, Form* f2p)
+cbd_bld_form_setup(struct entry *e, Cform* cfp)
 {
-  f2p->project = e->owner->project;
-  if (!f2p->lang)
-    f2p->lang = (ucp)e->lang;
-  f2p->core = langcore_of((ccp)f2p->lang);
-  f2p->cf = e->cgp->cf;
-  f2p->gw = e->cgp->gw;
-  f2p->pos = e->cgp->pos;
-  if (f2p->norm && ('(' == *f2p->norm || strstr((ccp)f2p->norm, "$(")))
-    cbd_cof_register(f2p);
+  cfp->f.project = e->owner->project;
+  if (!cfp->f.lang)
+    cfp->f.lang = (ucp)e->lang;
+  cfp->f.core = langcore_of((ccp)cfp->f.lang);
+  cfp->f.cf = e->cgp->cf;
+  cfp->f.gw = e->cgp->gw;
+  cfp->f.pos = e->cgp->pos;
+  if (cfp->f.norm && ('(' == *cfp->f.norm || strstr((ccp)cfp->f.norm, "$(")))
+    cbd_cof_register(cfp);
 }
 
 void
@@ -643,7 +644,7 @@ cbd_bld_set(void)
   csetp->hsiglangs = hash_create(8);
   csetp->cbdmem = memo_init(sizeof(Cbd), 8);
   csetp->cofmem = memo_init(sizeof(Cof), 16);
-  csetp->formsmem = memo_init(sizeof(Form), 512);
+  csetp->cformsmem = memo_init(sizeof(Cform), 512);
   csetp->lsigmem = memo_init(sizeof(struct lemsig), 1024);
   csetp->pool = pool_init();
   cgp_set_pool(csetp->pool);

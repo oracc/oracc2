@@ -34,7 +34,7 @@ typedef struct cbdset
   /*Hash *psus;*/
   Memo *cbdmem;
   Memo *cofmem;
-  Memo *formsmem;
+  Memo *cformsmem;
   Memo *lsigmem;
   Pool *pool;
 } Cbds;
@@ -139,7 +139,7 @@ typedef struct cform {
   Mloc l;
   const char *id;
   struct entry *e;
-  struct sense se;
+  struct sense *s;
   Form f;  
 } Cform;
 
@@ -320,7 +320,8 @@ typedef enum form_walk_type {
   CBD_FW_PE , 	/* PSU entry */
   CBD_FW_PS  	/* PSU sense */
 } Cbd_fw_type;
-typedef void (*cbdfwfunc)(Form *,Cbd_fw_type,void *);
+
+typedef void (*cbdfwfunc)(Cform *,Cbd_fw_type,void *);
 
 typedef void (*cbdactionfunc)(const char *,int,int,void*);
 extern void cbd_key_set_action(cbdactionfunc f);
@@ -367,8 +368,8 @@ extern void cbd_bld_edit_why(struct entry *e, char *why);
 extern struct entry *cbd_bld_entry(YYLTYPE l, struct cbd *c);
 extern void cbd_bld_entry_cgp(struct entry *e);
 extern struct equiv *cbd_bld_equiv(struct entry *e, unsigned char *lang, unsigned char *text);
-extern Form *cbd_bld_form(YYLTYPE l, struct entry *e);
-extern void cbd_bld_form_setup(struct entry *e, Form *fp);
+extern Cform *cbd_bld_form(YYLTYPE l, struct entry *e);
+extern void cbd_bld_form_setup(struct entry *e, Cform *fp);
 extern void cbd_bld_gwl(YYLTYPE l, struct entry *e, const char *lang, unsigned char *text);
 extern Mloc *cbd_bld_locator(YYLTYPE lp);
 extern struct loctok *cbd_bld_loctok(YYLTYPE *lp, struct entry *e, unsigned char *tok);
@@ -387,7 +388,7 @@ extern struct sense *cbd_bld_sensel(YYLTYPE l, struct entry *e);
 extern void cbd_bld_stem(YYLTYPE l, struct entry *e, unsigned char *stem);
 extern struct tag *cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, unsigned char *val);
 extern void cbd_no_form_bases(Entry *ep);
-extern void cbd_cof_register(Form *f2p);
+extern void cbd_cof_register(Cform *cfp);
 extern void cbd_psu_register(Entry *ep, Parts *pp);
 extern void cbd_end_sense(void);
 

@@ -14,7 +14,7 @@
 
 #define yylineno cbdlineno
 
-static Form *curr_form;
+static Cform *curr_form;
 static struct meta *curr_meta;
 struct sense *curr_sense;
 static struct pleiades *curr_pleiades;
@@ -313,9 +313,9 @@ formlang:	fform
 	|	fform frws
 	;
 
-fform:	     	FFORM 		{ curr_form->form = (ucp)$1; }
-flang: 		FLANG 		{ curr_form->lang = (ucp)$1; }
-frws: 		FRWS 		{ curr_form->rws  = (ucp)$1; }
+fform:	     	FFORM 		{ curr_form->f.form = (ucp)$1; }
+flang: 		FLANG 		{ curr_form->f.lang = (ucp)$1; }
+frws: 		FRWS 		{ curr_form->f.rws  = (ucp)$1; }
 
 form_args:
           form_arg
@@ -331,12 +331,12 @@ form_arg:
 	| fnorm
 	;
 
-fbase: 		FBASE 		{ curr_form->base = (ucp)$1; }
-fstem: 		FSTEM 		{ curr_form->stem = (ucp)$1; }
-fcont: 		FCONT 		{ curr_form->cont = (ucp)$1; }
-fmorph:        	FMORPH  	{ curr_form->morph = (ucp)$1; }
-fmorph2: 	FMORPH2 	{ curr_form->morph2 = (ucp)$1; }
-fnorm: 		FNORM 		{ curr_form->norm = (ucp)$1; }
+fbase: 		FBASE 		{ curr_form->f.base = (ucp)$1; }
+fstem: 		FSTEM 		{ curr_form->f.stem = (ucp)$1; }
+fcont: 		FCONT 		{ curr_form->f.cont = (ucp)$1; }
+fmorph:        	FMORPH  	{ curr_form->f.morph = (ucp)$1; }
+fmorph2: 	FMORPH2 	{ curr_form->f.morph2 = (ucp)$1; }
+fnorm: 		FNORM 		{ curr_form->f.norm = (ucp)$1; }
 
 senses_block: senses
 	      | begin_senses sensesmeta end_senses
