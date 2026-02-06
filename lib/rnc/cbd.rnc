@@ -4,8 +4,10 @@ start = cbd
 
 cbd	 = element entries { cbd.attr , (letters | entries) } 
 
+xlang = attribute xml:lang { text }
+
 cbd.attr = attribute project { text } ,
-	   attribute xml:lang { text } ,
+	   xlang ,
 	   attribute n { text } ,
 	   attribute translang { text }? ,
 	   attribute version { text }? ,
@@ -17,6 +19,10 @@ props  = element props  { text }
 reldef = element reldef { text }
 i18nlangs = element i18langs  { i18nlang+ }
 i18nlang  = element i18nlang { text }
+
+kis = (attribute icount { text },
+       attribute ipct { text },
+       attribute xis { text })
 
 letters = letter*
 
@@ -32,14 +38,15 @@ entry.attr = attribute n      { text }? ,
 	     attribute oid    { text }? ,
 	     attribute xml:id { text }? ,
 	     attribute bang   { text }? ,
-	     attribute star   { text }?
+	     attribute star   { text }? ,
+	     kis?
 
 entry_block = cgp? , gwls? , mod? , aliases? , partss? , discs?
 
 cgp = cf , gw , pos
 
 cf   = element cf   { text }
-gw   = element gw   { text }
+gw   = element gw   { xlang? , text }
 pos  = element pos  { text }
 
 gwls = element gwls { gwl+ }

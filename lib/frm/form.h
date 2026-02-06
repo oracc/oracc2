@@ -108,10 +108,6 @@ typedef struct form
 
   /* Store rank so it can persist across nlcp_rewrite */
   int rank;
-
-  /* struct form is used by CBD as well */
-  void *entry;
-  void *sense_p;
   
   /* Support for arbitrary user data extensions */
   void *user;

@@ -9,7 +9,9 @@ ratts_id(enum o_mode mode)
   static int i = 1;
   static char id[10];
   sprintf(id, "z%06d", i);
+#if 0
   if (mode == O_JSN)
+#endif
     ++i;
   return id;
 }
@@ -62,6 +64,12 @@ ratts_entry(Entry *e, enum o_mode mode)
       list_pair(lp, "n", cp->tight);
     }
   list_pair(lp, "oid", id);
+  if (e->k)
+    {
+      list_pair(lp, "icount", kis_cnt(e->k));
+      list_pair(lp, "ipct", kis_pct(e->k));
+      list_pair(lp, "xis", kis_tis(e->k));
+    }
   if (mode == O_JSN)
     {
       char dc[strlen((char*)e->owner->project)
@@ -77,4 +85,11 @@ ratts_entry(Entry *e, enum o_mode mode)
   Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
   list_free(lp, NULL);
   return r;
+}
+
+Ratts *
+ratts_one(const char *attr, const char *aval)
+{
+  const char *rar[3] = { attr , aval , NULL };
+  return rnvval_aa_ccpp(rar);
 }

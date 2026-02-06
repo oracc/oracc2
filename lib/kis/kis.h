@@ -17,10 +17,10 @@ typedef struct kis
 typedef struct roco Kis;
 typedef const char ** Kis_data;
 
-#define kis_tis(r) (kis->(r)[0])
-#define kis_key(r) (kis->(r)[1])
-#define kis_cnt(r) (kis->(r)[2])
-#define kis_pct(r) (kis->(r)[3])
+#define kis_tis(r) ((r)[0])
+#define kis_key(r) ((r)[1])
+#define kis_cnt(r) ((r)[2])
+#define kis_pct(r) ((r)[3])
 
 extern Kis *kis_load(const char *fn);
 

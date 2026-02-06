@@ -9,8 +9,16 @@
  */
 
 static void
+cbd_m_forms(Entry *tep, Entry *fep)
+{
+  Hash *hf = hash_create(128);
+  
+}
+
+static void
 cbd_m_entry(Entry *tep, Entry *fep)
 {
+  cbd_m_forms(tep, fep);
 }
 
 void

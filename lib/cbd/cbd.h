@@ -134,6 +134,15 @@ typedef enum efield {
 typedef Hash *Hfields[EFLD_TOP];
 typedef Kis_data Kfields[EFLD_TOP];
 
+/* Wrapper structure to help manage forms as they occur in CBD @form */
+typedef struct cform {
+  Mloc l;
+  const char *id;
+  struct entry *e;
+  struct sense se;
+  Form f;  
+} Cform;
+
 typedef struct entry {
   Mloc l;
   Kis_data k;

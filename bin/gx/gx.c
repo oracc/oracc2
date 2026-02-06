@@ -3,7 +3,6 @@
 #include <iome.h>
 #include <pool.h>
 #include <tree.h>
-#include <kis.h>
 #include <lng.h>
 #include <gdl.h>
 #include <xnn.h>
@@ -13,6 +12,7 @@
 #include <rnvif.h>
 #include <rnvxml.h>
 #include <joxer.h>
+#include <kis.h>
 #include "gx.h"
 
 static int major_version = 1, minor_version = 0;

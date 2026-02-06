@@ -182,7 +182,8 @@ o_jox_entry(struct entry *e)
   Ratts*ratts = ratts_entry(e, O_XML);
   joxer_ea(xo_loc, "entry", ratts);
   joxer_et(xo_loc, "cf", NULL, (ccp)e->cgp->cf);
-  joxer_et(xo_loc, "gw", NULL, (ccp)e->cgp->gw);
+  ratts = ratts_one("xml:lang", e->owner->trans ? (ccp)e->owner->trans : "en");
+  joxer_et(xo_loc, "gw", ratts, (ccp)e->cgp->gw);
   joxer_et(xo_loc, "pos", NULL, (ccp)e->cgp->pos);
   if (e->disc)
     f1(/* @disc */ e->disc);
