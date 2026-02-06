@@ -76,7 +76,7 @@ cbd_key_fields(Form *f, int context, void *v)
   fpr('*',stem);
   if (f->morph2)
     {
-      sprintf(insert, "##%s", f->morph2);
+      sprintf(insert, "m%s", f->morph2);
       cbdact(buf,context,'m',v);
     }
 #undef fpr

@@ -140,6 +140,8 @@ cbd_fw_fields(List *forms, Form *f, int context, void *vp, cbdfwfunc h)
       f->stem = fp->stem;
       f->cont = fp->cont;
       f->norm = fp->norm;
+      f->morph = fp->morph;
+      f->morph2 = fp->morph2;
       if (fp->lang)
 	f->lang = fp->lang;
       char *n = strstr((ccp)f->lang, "/n");

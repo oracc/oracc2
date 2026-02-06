@@ -17,6 +17,13 @@ static const unsigned char **curr_tiles;
 static const unsigned char collate_digit_values[12] = {0,1,2,3,4,5,6,7,8,9,100,200};
 
 void
+collate_init_check(const unsigned char *name)
+{
+  if (!curr_collate)
+    collate_init (name);
+}
+
+void
 collate_init (const unsigned char *name)
 {
   struct Collate_info_list_node *cp;

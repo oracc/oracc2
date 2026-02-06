@@ -6,7 +6,6 @@
 #include <pool.h>
 #include <mesg.h>
 #include <form.h>
-#include <kis.h>
 
 /* Common grammar header file for cbd.l and cbd.y */
 #include "cbdyacc.h"
@@ -20,9 +19,6 @@
 #ifndef ucp
 #define ucp unsigned char *
 #endif
-
-typedef Hash *Hfields[7];
-typedef Kis_data Kfields[7];
 
 typedef struct cbdset
 {
@@ -118,6 +114,25 @@ struct edit {
   int force;
   void *owner;
 };
+
+typedef enum efield {
+  EFLD_PERD,
+  EFLD_FORM,
+  EFLD_NORM,
+  EFLD_NMFM, /* ^ is the field code for $NORM=FORM */
+  EFLD_FMOF, /* ~ is the field code for FORM~~OFORM */
+  EFLD_BASE,
+  EFLD_CONT,
+  EFLD_STEM,
+  EFLD_MRF1,
+  EFLD_MRF2,
+  EFLD_TOP
+} Efield;
+
+#include <kis.h>
+
+typedef Hash *Hfields[EFLD_TOP];
+typedef Kis_data Kfields[EFLD_TOP];
 
 typedef struct entry {
   Mloc l;
@@ -297,20 +312,6 @@ typedef enum form_walk_type {
   CBD_FW_PS  	/* PSU sense */
 } Cbd_fw_type;
 typedef void (*cbdfwfunc)(Form *,Cbd_fw_type,void *);
-
-typedef enum efield {
-  EFLD_PERD,
-  EFLD_FORM,
-  EFLD_NORM,
-  EFLD_NMFM, /* ^ is the field code for $NORM=FORM */
-  EFLD_FMOF, /* ~ is the field code for FORM~~OFORM */
-  EFLD_BASE,
-  EFLD_CONT,
-  EFLD_STEM,
-  EFLD_MRF1,
-  EFLD_MRF2,
-  EFLD_TOP
-} Efield;
 
 typedef void (*cbdactionfunc)(const char *,int,int,void*);
 extern void cbd_key_set_action(cbdactionfunc f);

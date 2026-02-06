@@ -10,7 +10,7 @@
  * change
  *
  * If not found, save the key with pool copy, and add a char *r[2]
- * where r[0] is the key and r[1] is NULL indicating that it was not
+ * where r[1] is the key and r[0] is NULL indicating that it was not
  * found in the Kis.
  */
 
@@ -27,7 +27,8 @@ kis_data(const char *k)
   if (!kdp)
     {
       kdp = memo_new_array(my_c->kisnullmem, 2);
-      kdp[0] = (char*)pool_copy((uccp)k, csetp->pool);
+      /* kdp[0] is marker for key-not-found */
+      kdp[1] = (char*)pool_copy((uccp)k, csetp->pool);
     }
   return kdp;
 }
@@ -43,7 +44,7 @@ static const char *
 kis_data_debug(Kis_data kdp)
 {
   static char buf[64];
-  if (kdp[1])
+  if (kdp[0])
     sprintf(buf, "%s %sx %s%%", kdp[0], kdp[2], kdp[3]);
   else
     sprintf(buf, "(null) 0x 0%%");
@@ -61,7 +62,7 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 	  ((Entry*)v)->k = kis_data(k);
 	  ((Entry*)v)->u.hfields = calloc(1, sizeof(Hfields));
 	  int i;
-	  for (i = 0; i < sizeof(Hfields)/sizeof(Hash*); ++i)
+	  for (i = 0; i < EFLD_TOP; ++i)
 	    *(((Entry*)v)->u.hfields)[i] = hash_create(128);
 	}
     }
@@ -133,9 +134,9 @@ kis_data_h2k(Hash *h, Efield e)
   int n;
   Kis_data *kp = (Kis_data*)hash_vals2(h, &n);
 
-  /* Bases sort by frequency */
-  
-  /* Everything else sorts alpha */
+  /*kis_reset_key(kp, n);*/
+
+  qsort(kp, n, sizeof(Kis_data), kis_cmp(e));
   
   return kp;
 }
@@ -143,10 +144,10 @@ kis_data_h2k(Hash *h, Efield e)
 void
 kisdata_show_one(Kis_data k, FILE *fp)
 {
-  if (k[1])
+  if (k[0])
     fprintf(stderr, "%s %s\n", k[1], kis_data_debug(k));
   else
-    fprintf(stderr, "%s (null) 0x 0%%\n", k[0]);
+    fprintf(stderr, "%s (null) 0x 0%%\n", k[1]);
 }
 
 void

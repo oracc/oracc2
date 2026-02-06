@@ -1,7 +1,60 @@
 #include <oraccsys.h>
 #include <roco.h>
 #include <cbd.h>
+#include <collate.h>
 #include "kis.h"
+
+static const char *
+kis_field_val(const char *k)
+{
+  k = strchr(k, (char)1);
+  return strchr(k+1, (char)1) + 2;
+}
+
+int
+kis_unicode_cmp(const void *a, const void *b)
+{
+  Kis_data ka = *(Kis_data *)a;
+  Kis_data kb = *(Kis_data *)b;
+  const char *sa = kis_field_val(ka[1]);
+  const char *sb = kis_field_val(kb[1]);
+  return collate_cmp_utf8_qs((uccp)&sa, (uccp)&sb);
+}
+
+int
+kis_grapheme_cmp(const void *a, const void *b)
+{
+  Kis_data ka = *(Kis_data *)a;
+  Kis_data kb = *(Kis_data *)b;
+  const char *sa = kis_field_val(ka[1]);
+  const char *sb = kis_field_val(kb[1]);
+  return collate_cmp_graphemes((uccp)&sa, (uccp)&sb);
+}
+
+cmp_fnc_t
+kis_cmp(Efield f)
+{
+  switch (f)
+    {
+    case  EFLD_NORM:
+    case  EFLD_NMFM:
+    case  EFLD_MRF1:
+    case  EFLD_MRF2:
+    case  EFLD_PERD:
+    case  EFLD_STEM:
+      return kis_unicode_cmp;
+      break;
+    case  EFLD_BASE:
+    case  EFLD_CONT:
+    case  EFLD_FORM:
+    case  EFLD_FMOF:
+      return kis_grapheme_cmp;
+      break;
+    case EFLD_TOP:
+      return NULL;
+      break;
+    }
+}
 
 /* Scan a Kis and index the period keys where the hash key is the cgp
  * or cgpse and the values are a list period keys. Period keys are
@@ -63,5 +116,6 @@ kis_load(const char *kis_fn)
   kis->hash_key_col = 1;
   kis->hdata = roco_hash_r(kis);
   kis->user = kis_periods(kis);
+  collate_init_check((uccp)"unicode");
   return kis;
 }

@@ -23,4 +23,5 @@ extern int graphemic_compare (const unsigned char *a, const unsigned char *b);
 extern void graphemic_init (void);
 extern const Uchar *grapheme_base (const Uchar *txt, Boolean foldcase);
 extern void collate_init(const unsigned char *name);
+extern void collate_init_check(const unsigned char *name);
 #endif

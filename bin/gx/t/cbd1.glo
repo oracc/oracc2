@@ -6,8 +6,8 @@
 @NA e
 @alias e[water]N
 @bases a (e₄); a₂ (A₂)
-@form a /a #~
-@form a₂-ba /a₂ +-ba=b.a  #~
+@form a /a #~ ##~=3CPOSS=LOC1
+@form a₂-ba /a₂ +-ba=b.a  #~ ##~=3CPOSS=LOC1
 @sense N water
 @sense N semen
 @end entry

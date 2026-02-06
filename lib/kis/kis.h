@@ -24,4 +24,11 @@ typedef const char ** Kis_data;
 
 extern Kis *kis_load(const char *fn);
 
+extern cmp_fnc_t kis_cmp(enum efield f);
+
+#if 0
+extern int kis_unicode_cmp(const void *a, const void *b);
+extern int kis_grapheme_cmp(const void *a, const void *b);
+#endif
+
 #endif/*KIS_H_*/
