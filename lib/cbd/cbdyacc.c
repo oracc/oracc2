@@ -340,6 +340,7 @@ cbd_bld_entry_cgp(struct entry *e)
   e->cgp = cgp_get_one();
   e->cgp->owner = e;
   hash_add(e->owner->hentries, e->cgp->tight, e);
+  cbd_oid('e', e->cgp->tight, e);
 }
 
 #if 0
@@ -680,8 +681,10 @@ cbd_end_sense(void)
   strcpy(buf, (ccp)curr_sense->owner->cgp->tight);
   char *brack = strchr(buf, ']');
   sprintf(brack, "//%s]%s'%s", curr_sense->mng, curr_sense->owner->cgp->pos, curr_sense->pos);
-  hash_add(curr_sense->owner->owner->hsenses, pool_copy((uccp)buf, csetp->pool), curr_entry);
-#if 0  
+  curr_sense->cgspe = pool_copy((uccp)buf, csetp->pool);
+  hash_add(curr_sense->owner->owner->hsenses, curr_sense->cgspe, curr_entry);
+  cbd_oid('s', curr_sense->cgspe, curr_sense);
+  #if 0  
   fprintf(stderr, "cbd_end_sense: added %s to hash\n", buf);
 #endif
 }

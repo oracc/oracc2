@@ -40,8 +40,16 @@
 
   - cbd_kis creates similar data whether or not there is a .kis file
 
-    * each entry has an array of Field arrays, one for each field data
-      type, with period also being treated as a field
+    * each entry has an array of Field arrays, hshary, one for each
+      field data type, with period also being treated as a field
 
-    *
-  
+TODO:
+
+	OID loading
+
+	ID assigning for Field arrays
+
+	Implement co-field tracking: Norm needs to track each Form
+	used to write Norm; future morph/form?
+
+	Form, Base need GDL conversion and output

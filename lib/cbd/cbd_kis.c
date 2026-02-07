@@ -90,10 +90,9 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
       if (!((Entry*)v)->k)
 	{
 	  ((Entry*)v)->k = kis_data(k);
-	  ((Entry*)v)->u.hfields = calloc(1, sizeof(Hfields));
 	  int i;
 	  for (i = 0; i < EFLD_TOP; ++i)
-	    *(((Entry*)v)->u.hfields)[i] = hash_create(128);
+	    ((Entry*)v)->hshary[i] = hash_create(128);
 	}
     }
   else if ('s' == field)
@@ -109,11 +108,11 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 #if 1
 	  /* We don't collect sense-specific field data yet */
 	  if ('e' == context)
-	    kis_hdata(*(((Entry*)v)->u.hfields)[hfield], k);
+	    kis_hdata(((Entry*)v)->hshary[hfield], k);
 #else
 	  kis_hdata(context=='e'
-		    ?((Entry*)v)->u.hfields[hfield]
-		    :((Sense*)v)->u.hfields[hfield],
+		    ?((Entry*)v)->hshary[hfield]
+		    :((Sense*)v)->hshary[hfield],
 		    k);
 #endif
 	}
@@ -206,23 +205,22 @@ cbd_kis_periods(Kis *k, unsigned const char *key)
 static void
 cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
 {
-  ep->u.afields = calloc(1, sizeof(Afields));
   if (ep->k)
     {
       kisdata_show_one(ep->k, stderr);
       if (ep->k[0] && my_k)
-	*(ep->u.afields)[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)ep->k[1]);
+	ep->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)ep->k[1]);
+	  
     }
 
   Sense *sp;
   for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
     {
-      sp->u.afields = calloc(1, sizeof(Afields));
       if (sp->k)
 	{
 	  kisdata_show_one(sp->k, stderr);
 	  if (sp->k[0] && my_k)
-	    *(sp->u.afields)[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)sp->k[1]);
+	    sp->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)sp->k[1]);
 	}
     }
   
@@ -230,14 +228,14 @@ cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
   /* EFLD_PERD must be Efield == 0 for this to work */
   for (i = 1; i < EFLD_TOP; ++i)
     {
-      if (*(ep->u.hfields)[i])
+      if (ep->hshary[i])
 	{
-	  *(ep->u.afields)[i] = kis_data_h2k(*(ep->u.hfields)[i], i);
-	  hash_free(*(ep->u.hfields)[i], NULL);
-	  kisdata_show_ary(*(ep->u.afields)[i], stderr);
+	  void *a = kis_data_h2k(ep->hshary[i], i);	  
+	  hash_free(ep->hshary[i], NULL);
+	  ep->hshary[i] = a;
+	  kisdata_show_ary(ep->hshary[i], stderr);
 	}
     }
-  free(ep->u.hfields);
 }
 
 void

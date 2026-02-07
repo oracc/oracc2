@@ -148,9 +148,6 @@ typedef struct field {
 		 this norm; morph(2) could, too */
 } Field;
 
-typedef Hash   *Hfields[EFLD_TOP];
-typedef Field **Afields[EFLD_TOP];
-
 /*typedef Kis_data Kfields[EFLD_TOP];*/
 
 typedef struct entry {
@@ -179,11 +176,7 @@ typedef struct entry {
   Mloc *end_senses;
   Mloc *end_entry;
   Hash *hsenses; /* needed for building cbd from sigs */
-  union
-  {
-    Hfields *hfields;
-    Afields *afields;
-  } u;
+  void *hshary[EFLD_TOP]; /* Hash * or Field ** */
   struct tag *phon;
   struct tag *root;
   struct tag *disc;
@@ -248,18 +241,15 @@ typedef struct parts {
 typedef struct sense {
   Mloc l;
   Kis_data k;
+  unsigned const char *cgspe;
   unsigned const char *num;
   unsigned const char *sgw;
   unsigned const char *pos;
   unsigned const char *lng;
   unsigned const char *mng;
-  unsigned const char *sid;
+  const char *sid;
   struct tag *disc;
-  union
-  {
-    Hfields *hfields;
-    Afields *afields;
-  } u;
+  void *hshary[10];
   int rank;
   struct entry *owner;
   struct edit *ed;
@@ -420,5 +410,7 @@ extern void cgp_set_pool(Pool *p);
 extern void cbd_form_walk(Cbd *c, cbdfwfunc h);
 extern void cbd_kis(Cbd *c, Kis *k);
 extern Field *cbd_field(Kis_data k);
+
+extern void cbd_oid(int e_or_s, unsigned const char *k, void *v);
 
 #endif/*CBD_H_*/

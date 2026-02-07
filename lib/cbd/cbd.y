@@ -243,7 +243,7 @@ atparts: 	PARTS { curr_parts = cbd_bld_parts(@1,curr_entry); }
 end_entry:	END_ENTRY { if (curr_entry->bases) cbd_no_form_bases(curr_entry);
   			    curr_entry->end_entry = cbd_bld_locator(@1);
 			    curr_entry = NULL; }
-		
+
 lang_block: bases_block
 	    | bases_block forms
 	    | forms
@@ -401,7 +401,7 @@ ssense:		SENSE 		{ curr_sense = cbd_bld_sense(@1, curr_entry);
 		    		  if (curr_entry->begin_senses) { curr_meta = curr_sense->meta = cbd_bld_meta_create(curr_entry); } }
 slang:		'%'    	{ curr_sense->lng = (ucp)$1; }
 
-sid:		'#' 	{ curr_sense->sid = (ucp)$1; }
+sid:		'#' 	{ curr_sense->sid = (ccp)$1; }
 sok:		'.' 	{ curr_sense->num = (ucp)$1; }
 sgw:		'['  	{ curr_sense->sgw = (ucp)$1; }
 pos:		POS /* should be restricted to legal POS */	  { curr_sense->pos = (ucp)$1; }

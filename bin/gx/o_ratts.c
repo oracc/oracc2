@@ -3,19 +3,6 @@
 #include <rnvxml.h>
 #include "gx.h"
 
-static const char *
-ratts_id(enum o_mode mode)
-{
-  static int i = 1;
-  static char id[10];
-  sprintf(id, "z%06d", i);
-#if 0
-  if (mode == O_JSN)
-#endif
-    ++i;
-  return id;
-}
-
 Ratts *
 ratts_cbd(Cbd *c, enum o_mode mode)
 {
@@ -52,18 +39,17 @@ ratts_entry(Entry *e, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);
   Cgp *cp = e->cgp;
-  const char *id = e->eid ? e->eid : ratts_id(mode);
   if (mode == O_JSN)
     {
       list_pair(lp, "headword", cp->tight);
-      list_pair(lp, "id", id);
+      list_pair(lp, "id", e->id);
     }
   else
     {
-      list_pair(lp, "xml:id", id);
+      list_pair(lp, "xml:id", e->id);
       list_pair(lp, "n", cp->tight);
     }
-  list_pair(lp, "oid", id);
+  list_pair(lp, "oid", e->id);
   if (e->k)
     {
       list_pair(lp, "icount", kis_cnt(e->k));
