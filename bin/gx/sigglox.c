@@ -2,6 +2,9 @@
 #include <form.h>
 #include <collate.h>
 
+/* Turn .sig into .glo: N.B. this program is standalone and does not
+   use lib/cbd so it uses Form not CForm */
+
 const char *dir = "01bld";
 const char *project = NULL;
 

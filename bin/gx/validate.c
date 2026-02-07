@@ -261,7 +261,7 @@ v_forms(struct entry *e)
       List_node *lp;
       for (lp = e->forms->first; lp; lp = lp->next)
 	{
-	  Form *f2p = (Form*)(lp->data);
+	  Form *f2p = &((Cform*)(lp->data))->f;
 	  f1(/* @form */ f2p->form);
 	  if (f2p->lang) /* careful: we only should only emit this if lang is explicit in form */
 	    f1(/* %% */ f2p->lang);

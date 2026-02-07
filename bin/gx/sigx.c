@@ -3,6 +3,8 @@
 #include <lng.h>
 #include <xcl.h>
 
+/* This program does not use lib/cbd so it uses Form not Cform */
+
 FILE *f_log;
 const char *file;
 const char *project;
