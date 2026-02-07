@@ -60,50 +60,50 @@ lem_files(void)
 static void
 cbd_entry_sigs(Entry *ep)
 {
-  Form f;
-  memset(&f, '\0', sizeof(Form));
+  Cform f;
+  memset(&f, '\0', sizeof(Cform));
 
-  f.project = ep->owner->project;
-  f.lang = ep->owner->lang;
-  f.cf = ep->cgp->cf;
-  f.gw = ep->cgp->gw;
-  f.pos = ep->cgp->pos;
+  f.f.project = ep->owner->project;
+  f.f.lang = ep->owner->lang;
+  f.f.cf = ep->cgp->cf;
+  f.f.gw = ep->cgp->gw;
+  f.f.pos = ep->cgp->pos;
 
   Sense *sp;
   for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
     {
-      f.sense = sp->mng;
-      f.epos = sp->pos;
+      f.f.sense = sp->mng;
+      f.f.epos = sp->pos;
 
-      Form *fp;
+      Cform *fp;
       for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
 	{
-	  if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_TAIL))
+	  if (BIT_ISSET(fp->f.flags, FORM_FLAGS_COF_TAIL))
 	    continue;
 
-	  f.base = fp->base;
-	  f.stem = fp->stem;
-	  f.cont = fp->cont;
-	  f.norm = fp->norm;
-	  if (fp->lang)
-	    f.lang = fp->lang;
-	  char *n = strstr((ccp)f.lang, "/n");
+	  f.f.base = fp->f.base;
+	  f.f.stem = fp->f.stem;
+	  f.f.cont = fp->f.cont;
+	  f.f.norm = fp->f.norm;
+	  if (fp->f.lang)
+	    f.f.lang = fp->f.lang;
+	  char *n = strstr((ccp)f.f.lang, "/n");
 	  if (n)
 	    {
 	      *n = '\0';
-	      struct map *l949 = lang949((ccp)f.lang, strlen((ccp)f.lang));
+	      struct map *l949 = lang949((ccp)f.f.lang, strlen((ccp)f.f.lang));
 	      if (l949)
-		f.lang = (uccp)l949->v;
+		f.f.lang = (uccp)l949->v;
 	      else
 		fprintf(stderr,
 			"glosigx: no -949 version of lang %s in lang949.g; ignoring -949 here\n",
-			f.lang);		
-	      f.form = (uccp)"*";
+			f.f.lang);		
+	      f.f.form = (uccp)"*";
 	    }
 	  else
-	    f.form = fp->form;
+	    f.f.form = fp->f.form;
 
-	  if (BIT_ISSET(fp->flags, FORM_FLAGS_COF_HEAD))
+	  if (BIT_ISSET(fp->f.flags, FORM_FLAGS_COF_HEAD))
 	    {
 	      List *csigl = cof_sigs(&f, csetp->pool);
 	      char *s;
@@ -117,14 +117,14 @@ cbd_entry_sigs(Entry *ep)
 	    }
 	  else
 	    {
-	      f.flags = fp->flags;
-	      f.parts = fp->parts;
-	      /*f.cof_id = fp->cof_id;*//*No: this gets set on cbd load*/
-	      char *sig = (char*)form_sig(csetp->pool, &f);
+	      f.f.flags = fp->f.flags;
+	      f.f.parts = fp->f.parts;
+	      /*f.f.cof_id = fp->f.cof_id;*//*No: this gets set on cbd load*/
+	      char *sig = (char*)form_sig(csetp->pool, &f.f);
 	      if (out_stdout)
 		fprintf(stdout, "%s\n", sig);
 	      else
-		cbd_sig_add_one((uccp)sig, sp->rank | fp->rank);
+		cbd_sig_add_one((uccp)sig, sp->rank | fp->f.rank);
 	    }
 	}
     }

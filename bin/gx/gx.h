@@ -43,7 +43,7 @@ extern unsigned char *tok(unsigned char *s, unsigned char *end);
 extern unsigned char *check_bom(unsigned char *s);
 extern unsigned char **setup_lines(unsigned char *ftext);
 extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsize);
-extern List*cof_sigs(Form *f2p, Pool *p);
+extern List*cof_sigs(Cform *f2p, Pool *p);
 extern void psu_sigs(Entry *ep);
 extern void lemm_sigs(const char *fn);
 

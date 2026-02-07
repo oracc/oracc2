@@ -48,8 +48,8 @@ cbd_cof_norm_sig(Cform *cfp)
   *b = '\0';
   fprintf(stderr, "cbd_cof_norm_sig: %s => %s [%d]\n", cfp->f.norm, buf, index);
 
-  cofp->e = cfp->entry;
-  cofp->f = f2p;
+  cofp->e = cfp->e;
+  cofp->f = &cfp->f;
   cofp->i = index;
   cofp->s = pool_copy((ucp)buf, csetp->pool);
 
@@ -70,7 +70,7 @@ cbd_cof_norm_sig(Cform *cfp)
 void
 cbd_cof_register(Cform *cfp)
 {
-  Cof *cofp = cbd_cof_norm_sig(f2p);
+  Cof *cofp = cbd_cof_norm_sig(cfp);
   List *lp;
   if (cofp->i)
     {

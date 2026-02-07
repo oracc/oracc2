@@ -61,13 +61,13 @@ cbd_no_form_bases(Entry *ep)
       struct loctok *ltp = (struct loctok *)inner->data;
       if (!hash_find(fb, ltp->tok))
 	{
-	  Form *nfbf = cbd_bld_form(ep->l, ep);
-	  BIT_SET(nfbf->flags, FORM_FLAGS_IMPLICIT);
-	  nfbf->lang = (uccp)(ltp->lang ? ltp->lang : "sux");
-	  nfbf->form = nfbf->base = ltp->tok;
-	  nfbf->morph = (uccp)"~";
+	  Cform *nfbf = cbd_bld_form(ep->l, ep);
+	  BIT_SET(nfbf->f.flags, FORM_FLAGS_IMPLICIT);
+	  nfbf->f.lang = (uccp)(ltp->lang ? ltp->lang : "sux");
+	  nfbf->f.form = nfbf->f.base = ltp->tok;
+	  nfbf->f.morph = (uccp)"~";
 	  cbd_bld_form_setup(ep, nfbf);
-	  nfbf->norm = nfbf->cf;
+	  nfbf->f.norm = nfbf->f.cf;
 	}
     }
   hash_free(fb, NULL);

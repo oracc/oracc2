@@ -199,7 +199,7 @@ typedef struct cof
 {
   unsigned char *s;
   struct entry *e;
-  struct form *f;
+  struct cform *f;
   int i;
 } Cof;
 
@@ -325,9 +325,9 @@ typedef void (*cbdfwfunc)(Cform *,Cbd_fw_type,void *);
 
 typedef void (*cbdactionfunc)(const char *,int,int,void*);
 extern void cbd_key_set_action(cbdactionfunc f);
-extern void cbd_key_cgp(Form *f, Entry *e, const char *period);
-extern void cbd_key_cgpse(Form *f, Sense *s, const char *period);
-extern void cbd_key_fields(Form *f, int context, void *v);
+extern void cbd_key_cgp(Cform *f, Entry *e, const char *period);
+extern void cbd_key_cgpse(Cform *f, Sense *s, const char *period);
+extern void cbd_key_fields(Cform *f, int context, void *v);
 
 extern Sense *curr_sense;
 extern const char *errmsg_fn;

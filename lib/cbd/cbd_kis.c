@@ -96,7 +96,7 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 
 /* Handler function passed to cbd_form_walk */
 void
-cbd_kis_fw_h(Form *f, Cbd_fw_type t, void *v)
+cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
 {
   switch (t)
     {
@@ -104,13 +104,13 @@ cbd_kis_fw_h(Form *f, Cbd_fw_type t, void *v)
       cbd_key_cgp(f, v, NULL);
       break;
     case CBD_FW_EF:
-      cbd_key_fields(f, 'e', f->entry);
+      cbd_key_fields(f, 'e', f->e);
       break;
     case CBD_FW_S:
       cbd_key_cgpse(f, v, NULL);
       break;
     case CBD_FW_SF:
-      cbd_key_fields(f, 's', f->sense_p);
+      cbd_key_fields(f, 's', f->s);
       break;
     case CBD_FW_EE:
       cbd_kis_wrapup(t, v);
@@ -119,11 +119,11 @@ cbd_kis_fw_h(Form *f, Cbd_fw_type t, void *v)
       break;
     case CBD_FW_PE:
       cbd_key_cgp(f, v, NULL);
-      cbd_key_fields(f, 'e', f->entry);
+      cbd_key_fields(f, 'e', f->e);
       break;
     case CBD_FW_PS:
       cbd_key_cgpse(f, v, NULL);
-      cbd_key_fields(f, 's', f->sense_p);
+      cbd_key_fields(f, 's', f->s);
       break;
     }
 }

@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include "cbd.h"
 
-/* cbd_key.c: generate keys from Form structures */
+/* cbd_key.c: generate keys from Cform structures */
 
 static char *buf = NULL;
 static int buf_alloced = 0;
@@ -13,6 +13,8 @@ cbd_key_set_action(cbdactionfunc f)
   cbdact = f;
 }
 
+/* This function must take Form* not Cform* so it works with
+   form->parts */
 #define flen(x) (fp->x?strlen((ccp)fp->x):0)
 static int
 cbd_key_form_len_one(Form *fp)
@@ -25,16 +27,16 @@ cbd_key_form_len_one(Form *fp)
 #undef flen
 
 static int
-cbd_key_form_len(Form *f)
+cbd_key_form_len(Cform *f)
 {
-  int l = cbd_key_form_len_one(f);
-  if (f->parts)
+  int l = cbd_key_form_len_one(&f->f);
+  if (f->f.parts)
     {
-      if (!f->cof_id)
+      if (!f->f.cof_id)
 	l += 4; /* PSU {}:: */
       int i;
-      for (i = 0; f->parts[i]; ++i)
-	l += cbd_key_form_len_one(f->parts[i]) + 2; /* add 2 for each '&&' or '++' */
+      for (i = 0; f->f.parts[i]; ++i)
+	l += cbd_key_form_len_one(f->f.parts[i]) + 2; /* add 2 for each '&&' or '++' */
     }
   return l;
 }
@@ -42,7 +44,7 @@ cbd_key_form_len(Form *f)
 /* This routine assumes it has been caller is cbd_key_cgp or
    cbd_key_cgpse */
 static void
-cbd_key_period(Form *f, int context, void *v, const char *period)
+cbd_key_period(Cform *f, int context, void *v, const char *period)
 {
   char *insert = buf + strlen(buf);
   sprintf(insert, "p%s", period);
@@ -53,30 +55,64 @@ cbd_key_period(Form *f, int context, void *v, const char *period)
 /* This routine assumes it has been caller is cbd_key_cgp or
    cbd_key_cgpse */
 void
-cbd_key_fields(Form *f, int context, void *v)
+cbd_key_fields(Cform *f, int context, void *v)
 {
   char *insert = buf + strlen(buf);
-#define fpr(c,x) if(f->x){sprintf(insert,"%c%s",c,f->x); cbdact(buf,context,c,v); } /*(t,vp,qid)*/
-  if (f->oform)
+#define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,v); } /*(t,vp,qid)*/
+  if (f->f.oform)
     {
-      sprintf(insert, "=%s~~%s", f->form, f->oform);
+      sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
       cbdact(buf, context, '~', v);
     }
   else
     fpr('=',form);
   fpr('$',norm);
-  if (f->form && f->norm)
+  if (f->f.form && f->f.norm)
     {
-      sprintf(insert, "$%s=%s", f->norm, f->form);
+      sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
       cbdact(buf, context, '^', v);
     }
   fpr('#',morph);
   fpr('/',base);
   fpr('+',cont);
   fpr('*',stem);
-  if (f->morph2)
+  if (f->f.oform)
     {
-      sprintf(insert, "m%s", f->morph2);
+      sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
+      cbdact(buf, context, '~', v);
+    }
+  else
+    fpr('=',form);
+  fpr('$',norm);
+  if (f->f.form && f->f.norm)
+    {
+      sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
+      cbdact(buf, context, '^', v);
+    }
+  fpr('#',morph);
+  fpr('/',base);
+  fpr('+',cont);
+  fpr('*',stem);
+  if (f->f.oform)
+    {
+      sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
+      cbdact(buf, context, '~', v);
+    }
+  else
+    fpr('=',form);
+  fpr('$',norm);
+  if (f->f.form && f->f.norm)
+    {
+      sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
+      cbdact(buf, context, '^', v);
+    }
+  fpr('#',morph);
+  fpr('/',base);
+  fpr('+',cont);
+  fpr('*',stem);
+  if (f->f.morph2)
+    {
+      sprintf(insert, "m%s", f->f.morph2);
       cbdact(buf,context,'m',v);
     }
 #undef fpr
@@ -84,7 +120,7 @@ cbd_key_fields(Form *f, int context, void *v)
 }
 
 void
-cbd_key_cgp(Form *f, Entry *e, const char *period)
+cbd_key_cgp(Cform *f, Entry *e, const char *period)
 {
   int len = cbd_key_form_len(f) + 3; /* ^A^A\0 */
   if (buf_alloced < len)
@@ -92,7 +128,7 @@ cbd_key_cgp(Form *f, Entry *e, const char *period)
       buf_alloced = len;
       buf = realloc(buf, buf_alloced);
     }
-  sprintf(buf, "%%%s:%s[%s]%s%c%c", f->lang, f->cf, f->gw, f->pos, 1, 1);
+  sprintf(buf, "%%%s:%s[%s]%s%c%c", f->f.lang, f->f.cf, f->f.gw, f->f.pos, 1, 1);
   cbdact(buf, 'e', 'e', e);
   if (period)
     cbd_key_period(f, 'e', e, period);
@@ -101,9 +137,11 @@ cbd_key_cgp(Form *f, Entry *e, const char *period)
 /* This routine assumes it has been called immediately after
    cbd_key_cgp */
 void
-cbd_key_cgpse(Form *f, Sense *s, const char *period)
+cbd_key_cgpse(Cform *f, Sense *s, const char *period)
 {
-  sprintf(buf, "%%%s:%s[%s]%s%c//%s'%s%c", f->lang, f->cf, f->gw, f->pos, 1, f->sense, f->epos, 1);
+  sprintf(buf,
+	  "%%%s:%s[%s]%s%c//%s'%s%c",
+	  f->f.lang, f->f.cf, f->f.gw, f->f.pos, 1, f->f.sense, f->f.epos, 1);
   cbdact(buf, 's', 's', s);
   if (period)
     cbd_key_period(f, 's', s, period);

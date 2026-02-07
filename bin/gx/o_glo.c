@@ -175,23 +175,23 @@ o_glo_forms(struct entry *e)
       List_node *lp;
       for (lp = e->forms->first; lp; lp = lp->next)
 	{
-	  Form *f2p = (Form*)(lp->data);
-	  o_glo_cmt(f2p->user);
-	  printf("@form %s", f2p->form);
-	  if (f2p->lang) /* careful: we only should only emit this if lang is explicit in form */
-	    printf(" %%%s", f2p->lang);
-	  if (f2p->base)
-	    printf(" /%s", f2p->base);
-	  if (f2p->stem)
-	    printf(" *%s", f2p->stem);
-	  if (f2p->cont)
-	    printf(" +%s", f2p->cont);
-	  if (f2p->morph)
-	    printf(" #%s", f2p->morph);
-	  if (f2p->morph2)
-	    printf(" ##%s", f2p->morph2);
-	  if (f2p->norm)
-	    printf(" $%s", f2p->norm);
+	  Cform *f2p = (Cform*)(lp->data);
+	  o_glo_cmt(f2p->f.user);
+	  printf("@form %s", f2p->f.form);
+	  if (f2p->f.lang) /* careful: we only should only emit this if lang is explicit in form */
+	    printf(" %%%s", f2p->f.lang);
+	  if (f2p->f.base)
+	    printf(" /%s", f2p->f.base);
+	  if (f2p->f.stem)
+	    printf(" *%s", f2p->f.stem);
+	  if (f2p->f.cont)
+	    printf(" +%s", f2p->f.cont);
+	  if (f2p->f.morph)
+	    printf(" #%s", f2p->f.morph);
+	  if (f2p->f.morph2)
+	    printf(" ##%s", f2p->f.morph2);
+	  if (f2p->f.norm)
+	    printf(" $%s", f2p->f.norm);
 	  printf("\n");
 	}
     }
