@@ -174,7 +174,7 @@ static void
 cbd_fw_entry(Entry *ep, cbdfwfunc h)
 {
   Cform f;
-  memset(&f, '\0', sizeof(Form));
+  memset(&f, '\0', sizeof(Cform));
 
   f.e = ep;
   f.f.project = ep->owner->project;
