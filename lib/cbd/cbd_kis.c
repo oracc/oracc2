@@ -20,25 +20,55 @@ static Kis *my_k;
 
 static void cbd_kis_wrapup(Cbd_fw_type t, Entry *v);
 
+/** Kis look up is done via a pointer which is set to kis_data_no_kis
+ *  if there is no tokl.kis
+ */
+static Kis_data (*kis_data)(const char *);
+
 static Kis_data
-kis_data(const char *k)
+kis_data_no_kis(const char *k)
+{
+  Kis_data kdp = memo_new_array(my_c->kisnullmem, 2);
+  /* kdp[0] is marker for key-not-found */
+  kdp[1] = (char*)pool_copy((uccp)k, csetp->pool);
+  return kdp;
+}
+
+static Kis_data
+kis_data_ye_kis(const char *k)
 {
   Kis_data kdp = hash_find(my_k->hdata, (uccp)k);
   if (!kdp)
-    {
-      kdp = memo_new_array(my_c->kisnullmem, 2);
-      /* kdp[0] is marker for key-not-found */
-      kdp[1] = (char*)pool_copy((uccp)k, csetp->pool);
-    }
-  return kdp;
+    return kis_data_no_kis(k);
+  else
+    return kdp;
+}
+
+/****/
+
+/** Kis data is saved in a wrapper structure, Field, which has members
+ *  for ID and user data as well as the Kis being saved. Each key
+ *  only has one Field data structure; the has contains all the keys
+ *  for a given type, e.g., BASE, CONT, etc., so when these are
+ *  reduced to an array we have an array with type Field **
+ */
+
+Field *
+cbd_field(Kis_data k)
+{
+  Field *f = memo_new(csetp->fieldsmem);
+  f->k = k;
+  return f;
 }
 
 static void
 kis_hdata(Hash *h, const char *k)
 {
   if (!hash_find(h, (uccp)k))
-    hash_add(h, pool_copy((uccp)k, csetp->pool), kis_data(k));
+    hash_add(h, pool_copy((uccp)k, csetp->pool), cbd_field(kis_data(k)));
 }
+
+/****/
 
 static const char *
 kis_data_debug(Kis_data kdp)
@@ -128,15 +158,13 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
     }
 }
 
-Kis_data *
+Field **
 kis_data_h2k(Hash *h, Efield e)
 {
   int n;
-  Kis_data *kp = (Kis_data*)hash_vals2(h, &n);
+  Field **kp = (Field**)hash_vals2(h, &n);
 
-  /*kis_reset_key(kp, n);*/
-
-  qsort(kp, n, sizeof(Kis_data), kis_cmp(e));
+  /*qsort(kp, n, sizeof(Field), kis_fld_cmp(e));*/
   
   return kp;
 }
@@ -151,20 +179,25 @@ kisdata_show_one(Kis_data k, FILE *fp)
 }
 
 void
-kisdata_show(Kis_data* k, FILE *fp)
+kisdata_show_ary(Field **f, FILE *fp)
 {
   int i;
-  for (i = 0; k[i]; ++i)
-    kisdata_show_one(k[i], fp);
+  for (i = 0; f[i]; ++i)
+    kisdata_show_one(f[i]->k, fp);
 }
 
-void
+/** Kis periods are compiled in lib/kis/kis.c immediately after the
+ *  Kis is loaded; they are stored in a hash in k->user; hash keys are
+ *  CGP/CGPSE and values are Field ** like other field data
+ */
+static Field **
 cbd_kis_periods(Kis *k, unsigned const char *key)
 {
   /*fprintf(stderr, "cbd_kis_periods: key = ::%s::\n", key);*/
-  Kis_data *kdp = hash_find((Hash*)k->user, key);
+  Field **kdp = hash_find(k->user, key);
   if (kdp)
-    kisdata_show(kdp, stderr);
+    kisdata_show_ary(kdp, stderr);
+  return kdp;
 }
 
 /* Reduce all the field hashes to arrays and sort them so they are
@@ -173,32 +206,38 @@ cbd_kis_periods(Kis *k, unsigned const char *key)
 static void
 cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
 {
+  ep->u.afields = calloc(1, sizeof(Afields));
   if (ep->k)
     {
       kisdata_show_one(ep->k, stderr);
-      if (ep->k[1])
-	cbd_kis_periods(my_k, (uccp)ep->k[1]);
+      if (ep->k[0] && my_k)
+	*(ep->u.afields)[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)ep->k[1]);
     }
 
   Sense *sp;
   for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
-    if (sp->k)
-      {
-	kisdata_show_one(sp->k, stderr);
-	if (sp->k[1])
-	  cbd_kis_periods(my_k, (uccp)sp->k[1]);
-      }
-
-  int i;
-  for (i = 0; i < EFLD_TOP; ++i)
     {
-      if (*(ep->u.hfields)[i])
+      sp->u.afields = calloc(1, sizeof(Afields));
+      if (sp->k)
 	{
-	  (ep->u.kisdata)[i] = kis_data_h2k(*(ep->u.hfields)[i], i);
-	  kisdata_show((ep->u.kisdata)[i], stderr);
+	  kisdata_show_one(sp->k, stderr);
+	  if (sp->k[0] && my_k)
+	    *(sp->u.afields)[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)sp->k[1]);
 	}
     }
   
+  int i;
+  /* EFLD_PERD must be Efield == 0 for this to work */
+  for (i = 1; i < EFLD_TOP; ++i)
+    {
+      if (*(ep->u.hfields)[i])
+	{
+	  *(ep->u.afields)[i] = kis_data_h2k(*(ep->u.hfields)[i], i);
+	  hash_free(*(ep->u.hfields)[i], NULL);
+	  kisdata_show_ary(*(ep->u.afields)[i], stderr);
+	}
+    }
+  free(ep->u.hfields);
 }
 
 void
@@ -225,7 +264,13 @@ cbd_kis(Cbd *c, Kis *k)
       hfields_init();
     }
   my_c = c;
-  my_k = k;
+  if (k)
+    {
+      my_k = k;
+      kis_data = kis_data_ye_kis;
+    }
+  else
+    kis_data = kis_data_no_kis;
   cbd_key_set_action(cbd_kis_key_h);
   cbd_form_walk(c, cbd_kis_fw_h);
 }

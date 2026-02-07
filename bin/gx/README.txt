@@ -26,13 +26,22 @@
 
   - (possibly build token data from corpus)
 
-  - load the corpus-CBD if any
+  - load the corpus-sigs CBD if any
 
   - load the 00lib/*.glo if any
 
-  - augment corpus-CBD with 00lib/*.glo if necessary
+  - merge 00lib/*.glo into corpus-sigs CBD as necessary
 
-  - valid xrefs, parts, and rels and cross-link them to the entries
+  - validate xrefs, parts, and rels and cross-link them to the entries
 
-  - process each entry in turn, freeing mem as we go to keep resource needs reasonable
+  - add a @form for any entry in @bases that is not in any @form
 
+  - once all merging and field augmentation has been done, run cbd_kis to add stats
+
+  - cbd_kis creates similar data whether or not there is a .kis file
+
+    * each entry has an array of Field arrays, one for each field data
+      type, with period also being treated as a field
+
+    *
+  

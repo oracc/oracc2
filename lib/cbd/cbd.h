@@ -35,6 +35,7 @@ typedef struct cbdset
   Memo *cbdmem;
   Memo *cofmem;
   Memo *cformsmem;
+  Memo *fieldsmem;
   Memo *lsigmem;
   Pool *pool;
 } Cbds;
@@ -131,9 +132,6 @@ typedef enum efield {
 
 #include <kis.h>
 
-typedef Hash *Hfields[EFLD_TOP];
-typedef Kis_data Kfields[EFLD_TOP];
-
 /* Wrapper structure to help manage forms as they occur in CBD @form */
 typedef struct cform {
   Mloc l;
@@ -142,6 +140,18 @@ typedef struct cform {
   struct sense *s;
   Form f;  
 } Cform;
+
+typedef struct field {
+  const char *id;
+  Kis_data k;
+  void *user; /* norm field uses this for a List of form that have
+		 this norm; morph(2) could, too */
+} Field;
+
+typedef Hash   *Hfields[EFLD_TOP];
+typedef Field **Afields[EFLD_TOP];
+
+/*typedef Kis_data Kfields[EFLD_TOP];*/
 
 typedef struct entry {
   Mloc l;
@@ -171,8 +181,8 @@ typedef struct entry {
   Hash *hsenses; /* needed for building cbd from sigs */
   union
   {
-    Hfields  *hfields;
-    Kis_data **kisdata;
+    Hfields *hfields;
+    Afields *afields;
   } u;
   struct tag *phon;
   struct tag *root;
@@ -245,6 +255,11 @@ typedef struct sense {
   unsigned const char *mng;
   unsigned const char *sid;
   struct tag *disc;
+  union
+  {
+    Hfields *hfields;
+    Afields *afields;
+  } u;
   int rank;
   struct entry *owner;
   struct edit *ed;
@@ -404,5 +419,6 @@ extern void cgp_set_pool(Pool *p);
 
 extern void cbd_form_walk(Cbd *c, cbdfwfunc h);
 extern void cbd_kis(Cbd *c, Kis *k);
+extern Field *cbd_field(Kis_data k);
 
 #endif/*CBD_H_*/

@@ -49,7 +49,7 @@ cbd_cof_norm_sig(Cform *cfp)
   fprintf(stderr, "cbd_cof_norm_sig: %s => %s [%d]\n", cfp->f.norm, buf, index);
 
   cofp->e = cfp->e;
-  cofp->f = &cfp->f;
+  cofp->f = cfp;
   cofp->i = index;
   cofp->s = pool_copy((ucp)buf, csetp->pool);
 

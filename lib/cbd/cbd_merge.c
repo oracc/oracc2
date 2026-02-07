@@ -11,8 +11,7 @@
 static void
 cbd_m_forms(Entry *tep, Entry *fep)
 {
-  Hash *hf = hash_create(128);
-  
+  /*Hash *hf = hash_create(128);*/  
 }
 
 static void
