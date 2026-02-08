@@ -148,13 +148,11 @@ typedef struct field {
 		 this norm; morph(2) could, too */
 } Field;
 
-/*typedef Kis_data Kfields[EFLD_TOP];*/
-
 typedef struct entry {
   Mloc l;
+  const char *oid;
   Kis_data k;
   struct cgp *cgp;
-  const char *eid;
   const char *lang;
   Hash *b_pri;
   Hash *b_alt;
@@ -240,6 +238,7 @@ typedef struct parts {
 
 typedef struct sense {
   Mloc l;
+  const char *oid;
   Kis_data k;
   unsigned const char *cgspe;
   unsigned const char *num;
@@ -329,6 +328,9 @@ typedef enum form_walk_type {
 typedef void (*cbdfwfunc)(Cform *,Cbd_fw_type,void *);
 
 typedef void (*cbdactionfunc)(const char *,int,int,void*);
+
+#define qpnpos(s) ((s)[1] == 'N' && !(s)[2])
+
 extern void cbd_key_set_action(cbdactionfunc f);
 extern void cbd_key_cgp(Cform *f, Entry *e, const char *period);
 extern void cbd_key_cgpse(Cform *f, Sense *s, const char *period);
@@ -395,6 +397,7 @@ extern struct tag *cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, uns
 extern void cbd_no_form_bases(Entry *ep);
 extern void cbd_cof_register(Cform *cfp);
 extern void cbd_psu_register(Entry *ep, Parts *pp);
+extern void cbd_end_entry(YYLTYPE l);
 extern void cbd_end_sense(void);
 
 extern void cbd_sig_add_one(const unsigned char *s, int rank);
@@ -411,6 +414,8 @@ extern void cbd_form_walk(Cbd *c, cbdfwfunc h);
 extern void cbd_kis(Cbd *c, Kis *k);
 extern Field *cbd_field(Kis_data k);
 
-extern void cbd_oid(int e_or_s, unsigned const char *k, void *v);
+extern void cbd_oid_init(void);
+extern void cbd_oid_e(Entry *e);
+extern void cbd_oid_s(Sense *s);
 
 #endif/*CBD_H_*/

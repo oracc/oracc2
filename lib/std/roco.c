@@ -131,6 +131,22 @@ roco_hash(Roco *r)
 }
 
 static void
+roco_hash_hash_r_f(Hash *h, Roco *r, Roco_hash_key f)
+{
+  size_t i;
+  for (i = r->skip_initial_lines; i < r->nlines; ++i)
+    {
+      if ('#' != *r->rows[i][0])
+	{
+	  if (!strcmp((ccp)r->rows[i][0], ".include"))
+	    roco_hash_hash(h, roco_load1((ccp)r->rows[i][1]));      
+	  else
+	    hash_add(h, f((const char **)r->rows[i]), r->rows[i]);
+	}
+    }
+}
+
+static void
 roco_hash_hash_r(Hash *h, Roco *r)
 {
   size_t i;
@@ -151,6 +167,14 @@ roco_hash_r(Roco *r)
 {
   Hash *h = hash_create(r->nlines/2);
   roco_hash_hash_r(h, r);
+  return h;
+}
+
+Hash *
+roco_hash_r_f(Roco *r, Roco_hash_key f)
+{
+  Hash *h = hash_create(r->nlines/2);
+  roco_hash_hash_r_f(h, r, f);
   return h;
 }
 

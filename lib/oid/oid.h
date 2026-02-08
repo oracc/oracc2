@@ -141,6 +141,7 @@ extern struct oid_type *oid_type (register const char *str, register size_t len)
 extern int oid_parse(Oids *o, enum oid_tab_t t);
 extern void oid_write(FILE *fp, Oids*o);
 extern void oid_set_oidtab(const char *s);
+extern char *oid_tab(void);
 extern void oid_assign(List *w, Oids *o);
 extern const char *oid_domainify(const char *d, const char *k);
 extern List *oid_wants(Oids *o, Oids *k);

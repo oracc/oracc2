@@ -240,9 +240,7 @@ parts:  	atparts cgplist { curr_parts->cgps = cgp_get_all(); }
 
 atparts: 	PARTS { curr_parts = cbd_bld_parts(@1,curr_entry); }
 
-end_entry:	END_ENTRY { if (curr_entry->bases) cbd_no_form_bases(curr_entry);
-  			    curr_entry->end_entry = cbd_bld_locator(@1);
-			    curr_entry = NULL; }
+end_entry:	END_ENTRY { cbd_end_entry(@1); }
 
 lang_block: bases_block
 	    | bases_block forms

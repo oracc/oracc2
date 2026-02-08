@@ -42,14 +42,14 @@ ratts_entry(Entry *e, enum o_mode mode)
   if (mode == O_JSN)
     {
       list_pair(lp, "headword", cp->tight);
-      list_pair(lp, "id", e->id);
+      list_pair(lp, "id", e->oid);
     }
   else
     {
-      list_pair(lp, "xml:id", e->id);
+      list_pair(lp, "xml:id", e->oid);
       list_pair(lp, "n", cp->tight);
     }
-  list_pair(lp, "oid", e->id);
+  list_pair(lp, "oid", e->oid);
   if (e->k)
     {
       list_pair(lp, "icount", kis_cnt(e->k));

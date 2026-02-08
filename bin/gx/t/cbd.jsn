@@ -1,9 +1,9 @@
 {
 "type" : "glossary","project" : "epsd2","source" : "http:\/\/oracc.org\/epsd2","license" : "This data is released under the CC0 license","license-url" : "https:\/\/creativecommons.org\/publicdomain\/zero\/1.0\/","more-info" : "http:\/\/oracc.org\/doc\/opendata\/","lang" : "sux","entries" : [{
-"headword" : "a[water]N","id" : "z000004","oid" : "z000004","icount" : "60","ipct" : "1.03","xis" : "l000355","dc_title" : "epsd2\/sux\/a[water]N","cf" : "a","gw" : "water","pos" : "N"
+"headword" : "a[water]N","id" : "z000003","oid" : "z000003","icount" : "60","ipct" : "1.03","xis" : "l000355","dc_title" : "epsd2\/sux\/a[water]N","cf" : "a","gw" : "water","pos" : "N"
 },{
-"headword" : "a dug[to demolish]V\/t","id" : "z000005","oid" : "z000005","dc_title" : "epsd2\/sux\/a dug[to demolish]V\/t","cf" : "a dug","gw" : "to demolish","pos" : "V\/t"
+"headword" : "a dug[to demolish]V\/t","id" : "z000004","oid" : "z000004","dc_title" : "epsd2\/sux\/a dug[to demolish]V\/t","cf" : "a dug","gw" : "to demolish","pos" : "V\/t"
 },{
-"headword" : "dug[speak]V\/t","id" : "z000006","oid" : "z000006","icount" : "41","ipct" : "0.702","xis" : "l001876","dc_title" : "epsd2\/sux\/dug[speak]V\/t","cf" : "dug","gw" : "speak","pos" : "V\/t"
+"headword" : "dug[speak]V\/t","id" : "z000005","oid" : "z000005","icount" : "41","ipct" : "0.702","xis" : "l001876","dc_title" : "epsd2\/sux\/dug[speak]V\/t","cf" : "dug","gw" : "speak","pos" : "V\/t"
 }]
 }

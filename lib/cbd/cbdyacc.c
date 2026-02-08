@@ -340,7 +340,6 @@ cbd_bld_entry_cgp(struct entry *e)
   e->cgp = cgp_get_one();
   e->cgp->owner = e;
   hash_add(e->owner->hentries, e->cgp->tight, e);
-  cbd_oid('e', e->cgp->tight, e);
 }
 
 #if 0
@@ -650,6 +649,7 @@ cbd_bld_set(void)
   csetp->lsigmem = memo_init(sizeof(struct lemsig), 1024);
   csetp->pool = pool_init();
   cgp_set_pool(csetp->pool);
+  cbd_oid_init();
 }
 
 void
@@ -674,6 +674,15 @@ cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, unsigned char *val)
 }
 
 void
+cbd_end_entry(YYLTYPE l)
+{
+  if (curr_entry->bases) cbd_no_form_bases(curr_entry);
+  curr_entry->end_entry = cbd_bld_locator(l);
+  cbd_oid_e(curr_entry);
+  curr_entry = NULL;
+}
+
+void
 cbd_end_sense(void)
 {
   char buf[strlen((ccp)curr_sense->owner->cgp->tight)
@@ -683,7 +692,7 @@ cbd_end_sense(void)
   sprintf(brack, "//%s]%s'%s", curr_sense->mng, curr_sense->owner->cgp->pos, curr_sense->pos);
   curr_sense->cgspe = pool_copy((uccp)buf, csetp->pool);
   hash_add(curr_sense->owner->owner->hsenses, curr_sense->cgspe, curr_entry);
-  cbd_oid('s', curr_sense->cgspe, curr_sense);
+  cbd_oid_s(curr_sense);
   #if 0  
   fprintf(stderr, "cbd_end_sense: added %s to hash\n", buf);
 #endif
