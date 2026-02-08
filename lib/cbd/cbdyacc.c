@@ -403,6 +403,16 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
     cbd_cof_register(cfp);
 }
 
+static Tree *
+cbd_bld_gdl(Mloc *locp, unsigned char *s)
+{
+  Tree *tp = NULL;
+  mesg_init();
+  tp = gdlparse_string(locp, (char*)s);
+  gdlparse_reset();
+  return tp;
+}
+
 void
 cbd_bld_gwl(YYLTYPE l, struct entry *e, const char *lang, unsigned char *text)
 {
@@ -638,6 +648,7 @@ cbd_bld_set(void)
   csetp->cof_tails = malloc(sizeof(Hash*));
   csetp->cof_tails[0] = hash_create(128);
   csetp->ntails = 1;
+  csetp->hgdl = hash_create(1024);
   csetp->lngs = hash_create(8);
   csetp->parts = list_create(LIST_SINGLE);
   /*csetp->psus = hash_create(1024);*/

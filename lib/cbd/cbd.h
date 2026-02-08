@@ -28,6 +28,7 @@ typedef struct cbdset
   Hash *lems; /* Hash of loaded lemm-*.sig by lang element of file name */
   Hash *cof_heads;
   Hash **cof_tails;
+  Hash *hgdl;
   Hash *hsiglangs;
   int ntails;
   List *parts;
@@ -138,6 +139,12 @@ typedef struct cform {
   const char *id;
   struct entry *e;
   struct sense *s;
+  /* GDL graft as in sx */
+  Node *gdl;			/* token as GDL */
+  GS_head *gsh;			/* GDL gsort data */
+  const char *gsig;		/* return value from gdlsig run on
+				   parsed GDL; NULL if the token was a
+				   literal l*/
   Form f;  
 } Cform;
 

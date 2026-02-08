@@ -98,8 +98,10 @@ gx_init(void)
   cbd_pool = pool_init();
   tree_init();
   mesg_init();
+  gdl_unicode = 1;
   gvl_setup("osl","osl","020");
   gdlparse_init();
+  gsort_init();
   lng_init();
   curr_lang_ctxt = global_lang = lang_switch(NULL,"sux",NULL,NULL,0);
   cbds = hash_create(1);
@@ -373,6 +375,7 @@ main(int argc, char **argv)
     input_file = argv[optind];
   
   gdl_flex_debug = gdldebug = cbd_flex_debug = cbddebug = trace_mode;
+
   cbdset_debug(trace_mode);
 
   mesg_init();
