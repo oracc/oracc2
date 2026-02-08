@@ -14,8 +14,8 @@ kis_field_val(const char *k)
 int
 kis_unicode_cmp(const void *a, const void *b)
 {
-  Kis_data ka = *(Kis_data *)a;
-  Kis_data kb = *(Kis_data *)b;
+  Kis_data ka = (*(Field **)a)->k;
+  Kis_data kb = (*(Field **)b)->k;
   const char *sa = kis_field_val(ka[1]);
   const char *sb = kis_field_val(kb[1]);
   return collate_cmp_utf8_qs((uccp)&sa, (uccp)&sb);
@@ -24,15 +24,15 @@ kis_unicode_cmp(const void *a, const void *b)
 int
 kis_grapheme_cmp(const void *a, const void *b)
 {
-  Kis_data ka = *(Kis_data *)a;
-  Kis_data kb = *(Kis_data *)b;
+  Kis_data ka = (*(Field **)a)->k;
+  Kis_data kb = (*(Field **)b)->k;
   const char *sa = kis_field_val(ka[1]);
   const char *sb = kis_field_val(kb[1]);
   return collate_cmp_graphemes((uccp)&sa, (uccp)&sb);
 }
 
 cmp_fnc_t
-kis_cmp(Efield f)
+kis_fld_cmp(Efield f)
 {
   switch (f)
     {

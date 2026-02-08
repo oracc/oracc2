@@ -413,6 +413,7 @@ extern void cgp_set_pool(Pool *p);
 extern void cbd_form_walk(Cbd *c, cbdfwfunc h);
 extern void cbd_kis(Cbd *c, Kis *k);
 extern Field *cbd_field(Kis_data k);
+extern const char *cbd_field_id(Entry *ep);
 
 extern void cbd_oid_init(void);
 extern void cbd_oid_e(Entry *e);

@@ -53,6 +53,33 @@ kis_data_ye_kis(const char *k)
  *  reduced to an array we have an array with type Field **
  */
 
+const char *
+cbd_field_id(Entry *ep)
+{
+  static char id[32], *ins;
+  static int n = 0;
+  if (ep)
+    {
+      sprintf(id, "%s.", ep->oid);
+      ins = id+strlen(id);
+      n = 0;
+      return NULL;
+    }
+  else
+    {
+      sprintf(ins, "%d", n++);
+      return (ccp)pool_copy((uccp)id, csetp->pool);
+    }
+}
+
+void
+cbd_field_ids(Field **ffp)
+{
+  int i;
+  for (i = 0; ffp[i]; ++i)
+    ffp[i]->id = cbd_field_id(NULL);
+}
+
 Field *
 cbd_field(Kis_data k)
 {
@@ -163,7 +190,7 @@ kis_data_h2k(Hash *h, Efield e)
   int n;
   Field **kp = (Field**)hash_vals2(h, &n);
 
-  /*qsort(kp, n, sizeof(Field), kis_fld_cmp(e));*/
+  qsort(kp, n, sizeof(Field*), kis_fld_cmp(e));
   
   return kp;
 }
@@ -210,7 +237,7 @@ cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
       kisdata_show_one(ep->k, stderr);
       if (ep->k[0] && my_k)
 	ep->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)ep->k[1]);
-	  
+      cbd_field_id(ep);
     }
 
   Sense *sp;
@@ -230,8 +257,9 @@ cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
     {
       if (ep->hshary[i])
 	{
-	  void *a = kis_data_h2k(ep->hshary[i], i);	  
+	  void *a = kis_data_h2k(ep->hshary[i], i);
 	  hash_free(ep->hshary[i], NULL);
+	  cbd_field_ids(a);
 	  ep->hshary[i] = a;
 	  kisdata_show_ary(ep->hshary[i], stderr);
 	}
