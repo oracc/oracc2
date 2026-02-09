@@ -210,9 +210,12 @@ o_jox_field(Entry *e, Field **f, const char *tag)
   for (i = 0; f[i]; ++i)
     {
       joxer_ea(xo_loc, tag, ratts_form(e, f[i], O_XML));
-      
-      Gt *t = ((Cform*)f[i]->data)->t;
-      /*fprintf(stderr, "o_jox_field: %s %s\n", f[i]->id, f[i]->k[1]);*/
+
+      /* f[i]->data is NULL when processing periods as field data */
+      if (f[i]->data)
+	{
+	  Gt *t = ((Cform*)f[i]->data)->t;
+	}
 
       joxer_ee(xo_loc,"entry");
     }

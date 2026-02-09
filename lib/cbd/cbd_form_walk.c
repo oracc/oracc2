@@ -85,7 +85,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       Cform *fp;
       for (fp = list_first(ce->forms); fp; fp = list_next(ce->forms))
 	{
-	  Cform *ff = calloc(1+list_len(p->cgps), sizeof(Form));
+	  Cform *ff = calloc(1+list_len(p->cgps), sizeof(Cform));
 	  ff[i] = *fp;
 	  ff[i].f.sense = sp->mng;
 	  ff[i].f.epos = sp->pos;
@@ -94,7 +94,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
     }
 
   for (++i, cp = list_next(p->cgps); cp; cp = list_next(p->cgps), ++i)
-    heads = psu_permute(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Form));
+    heads = psu_permute(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
 
   Cform *ff;
   for (ff = list_first(heads); ff; ff = list_next(heads))

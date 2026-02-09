@@ -39,15 +39,15 @@ cbd_no_form_bases(Entry *ep)
 {
   /* index the bases that occur in @form with morph=#~ */
   Hash *fb = hash_create(5);
-  Form *fp;
+  Cform *fp;
   for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
     {
-      if (fp->base)
+      if (fp->f.base)
 	{
-	  if (fp->morph && !strcmp((ccp)fp->morph, "~"))
-	    hash_add(fb, fp->base, "");
-	  if (!fp->norm)
-	    cbd_auto_norm(fp);
+	  if (fp->f.morph && !strcmp((ccp)fp->f.morph, "~"))
+	    hash_add(fb, fp->f.base, "");
+	  if (!fp->f.norm)
+	    cbd_auto_norm(&fp->f);
 	}
     }
 

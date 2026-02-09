@@ -85,7 +85,7 @@ cbd_field(Kis_data k, void *v)
 {
   Field *f = memo_new(csetp->fieldsmem);
   f->k = k;
-  f->data = v; /* Usually Cform but may be entry if field is periods */
+  f->data = v; /* Usually Cform but NULL when called from kis_periods */
   return f;
 }
 

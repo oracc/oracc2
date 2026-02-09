@@ -91,7 +91,7 @@ kis_periods(Kis *k)
 		  ap = (ccp)pool_copy((uccp)buf, csetp->pool);
 		  hash_add(periods, (uccp)ap, pl);
 		}
-	      list_add(pl, cbd_field((void*)k->rows[i]));
+	      list_add(pl, cbd_field((void*)k->rows[i], NULL));
 	    }
 	}
     }
