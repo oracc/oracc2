@@ -1,5 +1,9 @@
 /* lx_atf_data.c */
 extern char *lx_atf_data(const char *u, const char *p);
+/* lx.c */
+extern int main(int argc, char *const *argv);
+extern int opts(int opt, const char *arg);
+extern void help(void);
 /* lx_check.c */
 extern void lx_check(const char *fn);
 /* lx_finish.c */
@@ -29,7 +33,3 @@ extern void lx_show(Lxfile *lxp, FILE *fp);
 extern void lx_sort(Lxfile *lxp);
 /* lx_ximport.c */
 extern void lx_ximport(Lxfile *lxf);
-/* lx.c */
-extern int main(int argc, char *const *argv);
-extern int opts(int opt, const char *arg);
-extern void help(void);

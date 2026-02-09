@@ -54,6 +54,7 @@ kis_fld_cmp(Efield f)
       return NULL;
       break;
     }
+  return NULL;
 }
 
 /* Scan a Kis and index the period keys where the hash key is the cgp
@@ -69,7 +70,7 @@ kis_periods(Kis *k)
   Hash *seen = hash_create(1024);
   Hash *periods = hash_create(1024);
   size_t i;
-  for (i = 0; k->rows[i]; ++i)
+  for (i = 0; i < k->nlines; ++i)
     {
       const char *ap = strstr((ccp)k->rows[i][1], "\x01p");
       if (ap)

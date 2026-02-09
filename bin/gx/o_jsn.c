@@ -7,7 +7,7 @@
 #include "o_jsn_fncs.c"
 #include "rnvxml.h"
 
-locator *xo_loc;
+extern locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
 static void o_jox_proplist(const char *p);
 

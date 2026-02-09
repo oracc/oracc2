@@ -22,7 +22,7 @@ cbd_key_form_len_one(Form *fp)
   return flen(cf)+flen(gw)+flen(sense)+flen(pos)+flen(epos)
     +flen(form)+flen(norm)+flen(lang)+flen(base)+flen(cont)
     +flen(morph)+flen(morph2)+flen(stem)
-    + strlen("[]' $ % / + # ## *0");
+    + strlen("[//]' %: = $ / + # ## *00");
 }
 #undef flen
 
@@ -57,6 +57,12 @@ cbd_key_period(Cform *f, int context, void *v, const char *period)
 void
 cbd_key_fields(Cform *f, int context, void *v)
 {
+  int len = cbd_key_form_len(f);
+  if (len <= buf_alloced)
+    {
+      buf_alloced = len * 2;
+      buf = realloc(buf, buf_alloced);
+    }
   char *insert = buf + strlen(buf);
 #define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,f); } /*(t,vp,qid)*/
   if (f->f.oform)
@@ -123,9 +129,9 @@ void
 cbd_key_cgp(Cform *f, Entry *e, const char *period)
 {
   int len = cbd_key_form_len(f) + 3; /* ^A^A\0 */
-  if (buf_alloced < len)
+  if (buf_alloced <= len)
     {
-      buf_alloced = len;
+      buf_alloced = 2 * len;
       buf = realloc(buf, buf_alloced);
     }
   sprintf(buf, "%%%s:%s[%s]%s%c%c", f->f.lang, f->f.cf, f->f.gw, f->f.pos, 1, 1);

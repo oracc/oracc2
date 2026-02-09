@@ -61,7 +61,7 @@ extern int adding_useq_messages;
 extern int useq_force;
 
 extern int extra_needs, identity_mode, listdef_check;
-extern int oid_list, oid_tab;
+extern int oid_list, oid_tab_fn;
 extern Hash *oids;
 extern Hash *oid_sort_keys;
 

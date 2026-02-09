@@ -3,6 +3,8 @@
 #include "isp.h"
 #include "../iso/iso.h"
 
+#define xmkdirs isp_xmkdirs
+
 int
 isp_cache_sys(Isp *ip)
 {
