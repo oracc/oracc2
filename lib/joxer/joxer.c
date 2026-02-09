@@ -16,6 +16,8 @@
 #include <json.h>
 #include "joxer.h"
 
+enum joxer_mode joxer_mode = JOXER_NONE;
+
 extern FILE *f_xml;
 extern int rnx_n_exp;
 
@@ -820,12 +822,14 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
       xgi_pool = pool_init();
       xgi_stack = list_create(LIST_LIFO);
       xgi_flags[0] = '\0';
+      joxer_mode = JOXER_XML;
     }
 
   if (jsn)
     {
       jsn_xmlns_atts = xdp->nstab;
       jw_init(jsn);
+      joxer_mode = (joxer_mode==JOXER_XML ? JOXER_BOTH : JOXER_JSN);
       /*jw_object_o();*/
     }
 

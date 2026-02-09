@@ -23,7 +23,8 @@ grx_jox_node(Node *np, int oflag)
   
   if (!strcmp(nodename, "g:w"))
     {
-      joxer_ao("j:w");
+      if (joxer_mode != JOXER_XML)
+	joxer_ao("j:w");
       joxer_ea(np->mloc, nodename,
 	       rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
       need_closer = 3;
@@ -137,7 +138,8 @@ grx_jox(Node *np, const char *gdltag)
     gdltag = np->name;
   
   joxer_ea(np->mloc, gdltag, rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
-  joxer_ao("j:w");
+  if (joxer_mode != JOXER_XML)
+    joxer_ao("j:w");
   if (np->kids)
     grx_jox_node(np->kids, 0);
   else

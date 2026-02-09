@@ -9,6 +9,9 @@ typedef struct rnvval_atts Rats;
 
 extern struct xnn_nstab *jsn_xmlns_atts, *xml_xmlns_atts;
 
+enum joxer_mode { JOXER_NONE , JOXER_JSN , JOXER_XML , JOXER_BOTH };
+extern enum joxer_mode joxer_mode;
+
 extern void (*joxer_ao)(const char *name);
 extern void (*joxer_ac)(void);
 extern void (*joxer_ch)(Mloc *mp, const char *ch);

@@ -403,16 +403,6 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
     cbd_cof_register(cfp);
 }
 
-static Tree *
-cbd_bld_gdl(Mloc *locp, unsigned char *s)
-{
-  Tree *tp = NULL;
-  mesg_init();
-  tp = gdlparse_string(locp, (char*)s);
-  gdlparse_reset();
-  return tp;
-}
-
 void
 cbd_bld_gwl(YYLTYPE l, struct entry *e, const char *lang, unsigned char *text)
 {

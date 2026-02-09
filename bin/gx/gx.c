@@ -5,6 +5,7 @@
 #include <tree.h>
 #include <lng.h>
 #include <gdl.h>
+#include <gt.h>
 #include <xnn.h>
 #include <cbd.h>
 #include <ns-cbd.h>
@@ -98,10 +99,16 @@ gx_init(void)
   cbd_pool = pool_init();
   tree_init();
   mesg_init();
+#if 1
+  Hash *htokens = hash_create(1024);
+  Memo *mtokens = memo_init(sizeof(Gt), 1024);
+  gt_config(htokens, mtokens);
+#else
   gdl_unicode = 1;
   gvl_setup("osl","osl","020");
   gdlparse_init();
   gsort_init();
+#endif
   lng_init();
   curr_lang_ctxt = global_lang = lang_switch(NULL,"sux",NULL,NULL,0);
   cbds = hash_create(1);

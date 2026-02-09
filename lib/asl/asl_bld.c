@@ -320,6 +320,12 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
 struct sl_token *
 asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 {
+#if 0
+  /* Future use of GDL token interface derived from the ASL/SX token stuff */
+  Gt *tokp = gt_token(locp, gtcfg, t, literal || asl_literal, sl->curr_inst);
+  asl_literal = 0;
+  return gt;  
+#else
   struct sl_token *tokp = NULL;
   
   if (!(tokp = hash_find(sl->htoken, t)))
@@ -364,6 +370,7 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
     }
   asl_literal_flag = 0;
   return tokp;
+#endif
 }
 
 /* This routine builds the signlist tree of letter/group/signs */
