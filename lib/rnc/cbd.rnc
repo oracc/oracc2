@@ -88,8 +88,14 @@ stem        = element stem   { text }
 phon	    = element phon   { text }
 root	    = element root   { text }
 
-forms	    = element forms    { form+ }
-form 	    = element form     { form.model }
+forms	    = element forms    { form* }
+form 	    = element form     { cbd.form.model }
+
+cbd.form.model =
+	       attribute xml:id { text },
+	       attribute n { text },
+	       kis?
+
 form.model  = attribute form   { text } ,
 	      attribute lang   { text } ,
 	      attribute rws    { text } ,

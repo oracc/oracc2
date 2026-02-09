@@ -109,7 +109,10 @@ kis_data_debug(Kis_data kdp)
   return buf;
 }
 
-/* Handler function used by cbd_key */
+/* Handler function used by cbd_key
+ *
+ * In fields call v is the source Cform.
+ */
 void
 cbd_kis_key_h(const char *k, int context, int field, void *v)
 {
@@ -161,13 +164,13 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
       cbd_key_cgp(f, v, NULL);
       break;
     case CBD_FW_EF:
-      cbd_key_fields(f, 'e', f->e);
+      cbd_key_fields(f, 'e', v);
       break;
     case CBD_FW_S:
       cbd_key_cgpse(f, v, NULL);
       break;
     case CBD_FW_SF:
-      cbd_key_fields(f, 's', f->s);
+      cbd_key_fields(f, 's', v);
       break;
     case CBD_FW_EE:
       cbd_kis_wrapup(t, v);

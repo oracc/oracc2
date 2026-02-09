@@ -91,7 +91,7 @@ ratts_form(Entry *e, Field *f, enum o_mode mode)
   List *lp = list_create(LIST_SINGLE);
   list_pair(lp, "xml:id", f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.form);
-  if (f->k)
+  if (f->k[0])
     ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }

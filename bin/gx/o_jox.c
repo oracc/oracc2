@@ -217,7 +217,7 @@ o_jox_field(Entry *e, Field **f, const char *tag)
 	  Gt *t = ((Cform*)f[i]->data)->t;
 	}
 
-      joxer_ee(xo_loc,"entry");
+      joxer_ee(xo_loc,tag);
     }
 }
 
