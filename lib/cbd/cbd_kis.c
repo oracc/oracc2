@@ -81,18 +81,19 @@ cbd_field_ids(Field **ffp)
 }
 
 Field *
-cbd_field(Kis_data k)
+cbd_field(Kis_data k, void *v)
 {
   Field *f = memo_new(csetp->fieldsmem);
   f->k = k;
+  f->data = v; /* Usually Cform but may be entry if field is periods */
   return f;
 }
 
 static void
-kis_hdata(Hash *h, const char *k)
+kis_hdata(Hash *h, const char *k, Cform *f)
 {
   if (!hash_find(h, (uccp)k))
-    hash_add(h, pool_copy((uccp)k, csetp->pool), cbd_field(kis_data(k)));
+    hash_add(h, pool_copy((uccp)k, csetp->pool), cbd_field(kis_data(k), f));
 }
 
 /****/
@@ -135,12 +136,12 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 #if 1
 	  /* We don't collect sense-specific field data yet */
 	  if ('e' == context)
-	    kis_hdata(((Entry*)v)->hshary[hfield], k);
+	    kis_hdata(((Cform*)v)->e->hshary[hfield], k, v);
 #else
 	  kis_hdata(context=='e'
-		    ?((Entry*)v)->hshary[hfield]
-		    :((Sense*)v)->hshary[hfield],
-		    k);
+		    ?((Cform*)v)->e->hshary[hfield]
+	    	    :((Cform*)v)->s->hshary[hfield],
+		    k, v);
 #endif
 	}
       else

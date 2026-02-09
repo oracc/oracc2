@@ -40,15 +40,15 @@ gt_gdl(Mloc *locp, unsigned char *s)
  *
  */
 Gt *
-gt_token(Mloc *locp, Gt_cfg *gtc, unsigned char *t, int literal, void *user)
+gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 {
   Gt *tokp = NULL;
   
-  if (!(tokp = hash_find(gtc->h, t)))
+  if (!(tokp = hash_find(gtcfg.h, t)))
     {
       Tree *tp;
       const char *gsig = NULL, *deep = NULL;
-      tokp = memo_new(gtc->m);
+      tokp = memo_new(gtcfg.m);
       tokp->t = t;
       if (literal > 0)
 	tp = gdl_literal(locp, (char*)t);
@@ -81,7 +81,7 @@ gt_token(Mloc *locp, Gt_cfg *gtc, unsigned char *t, int literal, void *user)
       tokp->gsig = gsig;
       tokp->deep = deep;
       tokp->user = user;
-      hash_add(gtc->h, t, tokp);
+      hash_add(gtcfg.h, t, tokp);
     }
   return tokp;
 }

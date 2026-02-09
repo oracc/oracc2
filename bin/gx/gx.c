@@ -27,7 +27,7 @@ const char *kis_file = "02pub/tokl.kis";
 
 extern int cbd_flex_debug;
 
-int jsn_output = 1, xml_output = 1;
+int jsn_output = 0, xml_output = 1;
 
 #ifdef __APPLE__
 int cbddebug;
@@ -102,12 +102,12 @@ gx_init(void)
 #if 1
   Hash *htokens = hash_create(1024);
   Memo *mtokens = memo_init(sizeof(Gt), 1024);
+  gdl_unicode = 1;
+  gdl_init();
+  gsort_init();
   gt_config(htokens, mtokens);
 #else
-  gdl_unicode = 1;
   gvl_setup("osl","osl","020");
-  gdlparse_init();
-  gsort_init();
 #endif
   lng_init();
   curr_lang_ctxt = global_lang = lang_switch(NULL,"sux",NULL,NULL,0);
@@ -351,15 +351,21 @@ gx_output(void)
       FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
       FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
 
-      jox_xml_output(xfp);
-      joxer_init(&cbd_data, "cbd", 1, xfp, NULL);
-      o_jox(curr_cbd);
-      joxer_term(xfp,NULL);
+      if (xml_output)
+	{
+	  jox_xml_output(xfp);
+	  joxer_init(&cbd_data, "cbd", 1, xfp, NULL);
+	  o_jox(curr_cbd);
+	  joxer_term(xfp,NULL);
+	}
 
-      jox_jsn_output(jfp);
-      joxer_init(&cbd_data, "cbd", 0, NULL, jfp);
-      o_jsn(curr_cbd);
-      joxer_term(xfp,NULL);
+      if (jsn_output)
+	{
+	  jox_jsn_output(jfp);
+	  joxer_init(&cbd_data, "cbd", 0, NULL, jfp);
+	  o_jsn(curr_cbd);
+	  joxer_term(xfp,NULL);
+	}
     }
 }
 
@@ -460,9 +466,7 @@ int opts(int och, const char *oarg)
       input_file = optarg;
       break;
     case 'J':
-      jsn_output = 1;
       xml_output = 0;
-      break;
     case 'j':
       jsn_output = 1;
       break;
@@ -498,7 +502,6 @@ int opts(int och, const char *oarg)
       verbose = 1;
       break;
     case 'X':
-      xml_output = 1;
       jsn_output = 0;
     case 'x':
       xml_output = 1;

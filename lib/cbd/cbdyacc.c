@@ -5,6 +5,7 @@
 #include <hash.h>
 #include <mesg.h>
 #include <lng.h>
+#include <gt.h>
 #include "cbd.h"
 #include "cbd.tab.h"
 
@@ -399,6 +400,7 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   cfp->f.cf = e->cgp->cf;
   cfp->f.gw = e->cgp->gw;
   cfp->f.pos = e->cgp->pos;
+  cfp->t = gt_token(&cfp->l, (ucp)cfp->f.form, 0, NULL);
   if (cfp->f.norm && ('(' == *cfp->f.norm || strstr((ccp)cfp->f.norm, "$(")))
     cbd_cof_register(cfp);
 }

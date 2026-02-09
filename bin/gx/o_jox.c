@@ -4,6 +4,7 @@
 #include <pool.h>
 #include <joxer.h>
 #include <rnvxml.h>
+#include <gt.h>
 #include "gx.h"
 #include "o_jox_fncs.c"
 
@@ -202,9 +203,30 @@ o_jox_end_entry(struct entry *e)
 }
 
 static void
+o_jox_field(Entry *e, Field **f, const char *tag)
+{
+  int i;
+  
+  for (i = 0; f[i]; ++i)
+    {
+      joxer_ea(xo_loc, tag, ratts_form(e, f[i], O_XML));
+      
+      Gt *t = ((Cform*)f[i]->data)->t;
+      /*fprintf(stderr, "o_jox_field: %s %s\n", f[i]->id, f[i]->k[1]);*/
+
+      joxer_ee(xo_loc,"entry");
+    }
+}
+
+static void
 o_jox_forms(struct entry *e)
 {
-#if 0
+#if 1
+  joxer_ea(xo_loc, "forms", NULL);
+  if (e->hshary[EFLD_FORM])
+    o_jox_field(e, e->hshary[EFLD_FORM], "form");
+  joxer_ee(xo_loc, "forms");
+#else
   if (e->forms && list_len(e->forms))
     {
       List_node *lp;

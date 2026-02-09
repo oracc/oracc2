@@ -58,11 +58,11 @@ void
 cbd_key_fields(Cform *f, int context, void *v)
 {
   char *insert = buf + strlen(buf);
-#define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,v); } /*(t,vp,qid)*/
+#define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,f); } /*(t,vp,qid)*/
   if (f->f.oform)
     {
       sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
-      cbdact(buf, context, '~', v);
+      cbdact(buf, context, '~', f);
     }
   else
     fpr('=',form);
@@ -70,7 +70,7 @@ cbd_key_fields(Cform *f, int context, void *v)
   if (f->f.form && f->f.norm)
     {
       sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
-      cbdact(buf, context, '^', v);
+      cbdact(buf, context, '^', f);
     }
   fpr('#',morph);
   fpr('/',base);
@@ -79,7 +79,7 @@ cbd_key_fields(Cform *f, int context, void *v)
   if (f->f.oform)
     {
       sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
-      cbdact(buf, context, '~', v);
+      cbdact(buf, context, '~', f);
     }
   else
     fpr('=',form);
@@ -87,7 +87,7 @@ cbd_key_fields(Cform *f, int context, void *v)
   if (f->f.form && f->f.norm)
     {
       sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
-      cbdact(buf, context, '^', v);
+      cbdact(buf, context, '^', f);
     }
   fpr('#',morph);
   fpr('/',base);
@@ -96,7 +96,7 @@ cbd_key_fields(Cform *f, int context, void *v)
   if (f->f.oform)
     {
       sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
-      cbdact(buf, context, '~', v);
+      cbdact(buf, context, '~', f);
     }
   else
     fpr('=',form);
@@ -104,7 +104,7 @@ cbd_key_fields(Cform *f, int context, void *v)
   if (f->f.form && f->f.norm)
     {
       sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
-      cbdact(buf, context, '^', v);
+      cbdact(buf, context, '^', f);
     }
   fpr('#',morph);
   fpr('/',base);
@@ -113,7 +113,7 @@ cbd_key_fields(Cform *f, int context, void *v)
   if (f->f.morph2)
     {
       sprintf(insert, "m%s", f->f.morph2);
-      cbdact(buf,context,'m',v);
+      cbdact(buf,context,'m',f);
     }
 #undef fpr
   *insert = '\0';

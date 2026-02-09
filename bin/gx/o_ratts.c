@@ -3,6 +3,22 @@
 #include <rnvxml.h>
 #include "gx.h"
 
+static void
+ratts_kis(List *lp, Kis_data k)
+{
+  list_pair(lp, "icount", kis_cnt(k));
+  list_pair(lp, "ipct", kis_pct(k));
+  list_pair(lp, "xis", kis_tis(k));
+}
+
+static Ratts *
+ratts_list2ratts(List *lp)
+{
+  Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
+  list_free(lp, NULL);
+  return r;
+}
+
 Ratts *
 ratts_cbd(Cbd *c, enum o_mode mode)
 {
@@ -50,12 +66,10 @@ ratts_entry(Entry *e, enum o_mode mode)
       list_pair(lp, "n", cp->tight);
     }
   list_pair(lp, "oid", e->oid);
+
   if (e->k)
-    {
-      list_pair(lp, "icount", kis_cnt(e->k));
-      list_pair(lp, "ipct", kis_pct(e->k));
-      list_pair(lp, "xis", kis_tis(e->k));
-    }
+    ratts_kis(lp, e->k);
+
   if (mode == O_JSN)
     {
       char dc[strlen((char*)e->owner->project)
@@ -68,9 +82,18 @@ ratts_entry(Entry *e, enum o_mode mode)
       list_pair(lp, "gw", cp->gw);
       list_pair(lp, "pos", cp->pos);
     }
-  Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
-  list_free(lp, NULL);
-  return r;
+  return ratts_list2ratts(lp);
+}
+
+Ratts *
+ratts_form(Entry *e, Field *f, enum o_mode mode)
+{
+  List *lp = list_create(LIST_SINGLE);
+  list_pair(lp, "xml:id", f->id);
+  list_pair(lp, "n", ((Cform*)f->data)->f.form);
+  if (f->k)
+    ratts_kis(lp, f->k);
+  return ratts_list2ratts(lp);
 }
 
 Ratts *

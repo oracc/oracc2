@@ -1,6 +1,10 @@
 #ifndef GT_H_
 #define GT_H_
 
+#include <hash.h>
+#include <memo.h>
+#include <gdl.h>
+
 /* context-free Grapheme sequence of a grapheme or words data type shared by gx and sx
  */
 
@@ -27,6 +31,6 @@ typedef struct gdl_token
 extern int gt_toks_gcmp(const void *a, const void *b);
 extern int gt_toks_scmp(const void *a, const void *b);
 extern void gt_config(Hash *h, Memo *m);
-extern Gt *gt_token(Mloc *locp, Gt_cfg *gtc, unsigned char *t, int literal, void *user);
+extern Gt *gt_token(Mloc *locp, unsigned char *t, int literal, void *user);
 
 #endif/*GT_H_*/

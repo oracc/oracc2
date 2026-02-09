@@ -32,6 +32,7 @@ extern void o_jsn(struct cbd*c);
 
 extern Ratts *ratts_cbd(Cbd *c, enum o_mode mode);
 extern Ratts *ratts_entry(Entry *e, enum o_mode mode);
+extern Ratts *ratts_form(Entry *e, Field *f, enum o_mode mode);
 extern Ratts *ratts_one(const char *attr, const char *aval);
 
 extern void validator(struct cbd*c);

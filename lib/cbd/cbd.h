@@ -146,6 +146,7 @@ typedef struct cform {
 typedef struct field {
   const char *id;
   Kis_data k;
+  void *data; /* Entry, Sense, Cform */
   void *user; /* norm field uses this for a List of form that have
 		 this norm; morph(2) could, too */
 } Field;
@@ -414,7 +415,7 @@ extern void cgp_set_pool(Pool *p);
 
 extern void cbd_form_walk(Cbd *c, cbdfwfunc h);
 extern void cbd_kis(Cbd *c, Kis *k);
-extern Field *cbd_field(Kis_data k);
+extern Field *cbd_field(Kis_data k, void*v);
 extern const char *cbd_field_id(Entry *ep);
 
 extern void cbd_oid_init(void);
