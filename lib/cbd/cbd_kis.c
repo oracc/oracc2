@@ -130,11 +130,11 @@ kis_data_debug(Kis_data kdp)
 static NmFm *
 norm_nmfm_data(const char *k, Cform *c)
 {
-  char nmfmk[strlen(k)+strlen(c->f.form)+2];
+  char nmfmk[strlen(k)+strlen((ccp)c->f.form)+2];
   sprintf(nmfmk, "%s=%s", k, c->f.form);
   NmFm *np = memo_new(csetp->nmfmsmem);
   np->normk = k;
-  np->nmfmk = (ccp)pool_copy((uccp)nk, csetp->pool);
+  np->nmfmk = (ccp)pool_copy((uccp)nmfmk, csetp->pool);
   np->form = c;
   return np;
 }

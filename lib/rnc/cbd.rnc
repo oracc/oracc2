@@ -1,5 +1,5 @@
 default namespace = "http://oracc.org/ns/cbd/2.0"
-
+namespace cbd = "http://oracc.org/ns/cbd/2.0"
 include "gdl-lib.rnc"
 
 start = cbd
@@ -76,7 +76,7 @@ disc.text   = text # actually otf:text in future
 
 disc.html   = text # actually html:div in future
 
-lang_block  = bases_block? , forms*
+lang_block  = bases_block? , forms? , norms?
 
 bases_block = allows? , bases , stems? , phon? , root?
 
@@ -100,6 +100,26 @@ cbd.form.model =
 	       attribute n { text },
 	       kis?,
 	       cbd.text	       
+
+norms 	    = element norms { norm* }
+norm	    = element norm { cbd.norm.model }
+
+cbd.norm.model =
+	       attribute xml:id { text },
+	       attribute n { text },
+	       kis?,
+	       element n { text },
+	       cbd.normforms
+
+cbd.normforms = element form { cbd.norm.f* }
+
+cbd.norm.f    = element f { cbd.normform.model }
+
+cbd.normform.model = 
+	       attribute cbd:id { text },
+	       attribute ref { text },
+	       attribute n { text },
+	       kis?
 
 form.model  = attribute form   { text } ,
 	      attribute lang   { text } ,
