@@ -214,7 +214,7 @@
       <ref name="glo"/>
     </choice>
   </define>
-  <define name="pos">
+  <define name="posn">
     <attribute name="g:pos">
       <choice>
         <value>pre</value>
@@ -223,13 +223,9 @@
       </choice>
     </attribute>
   </define>
-  <!--
-    det = element g:d { pos , dtyp , delim? , emhyph? , notemark? , surroStart? , g.meta ,
-                       (dingir | mister | word.content*)}
-  -->
   <define name="det">
     <element name="g:d">
-      <ref name="pos"/>
+      <ref name="posn"/>
       <ref name="dtyp"/>
       <optional>
         <ref name="delim"/>
@@ -268,7 +264,7 @@
       <optional>
         <ref name="delim"/>
       </optional>
-      <ref name="pos"/>
+      <ref name="posn"/>
       <ref name="words"/>
     </element>
   </define>

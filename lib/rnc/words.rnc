@@ -33,7 +33,7 @@ sword.cont =
   }
 
 word.attributes = 
-    attribute xml:id { xsd:ID } ,
+    attribute xml:id { xsd:ID }? ,
     attribute xml:lang { xsd:language } ,
     attribute fwhost { xsd:language }? ,
     attribute form  { text }? ,
@@ -71,7 +71,7 @@ nonword =
 group = 
   element g:gg {
     attribute g:type { 
-      "correction" | "alternation" | diszless | "group" | "reordering" | "ligature" | "implicit-ligature" | "logo" | "numword"
+      "correction" | "alternation" | "diszless" | "group" | "reordering" | "ligature" | "implicit-ligature" | "logo" | "numword"
     } ,
     g.meta ,
     (group | grapheme | normseg)+

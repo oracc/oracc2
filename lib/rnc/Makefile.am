@@ -6,4 +6,4 @@ rncdata_DATA=*.rnc
 
 librnc_la_SOURCES=asl.c gdl.c xtf.c numsys.c cbd.c
 
-#xpd.c
+cbd.c: cbd.rng grapheme.rng graphmeta.rng words.rng

@@ -69,9 +69,11 @@
     </element>
   </define>
   <define name="word.attributes">
-    <attribute name="xml:id">
-      <data type="ID"/>
-    </attribute>
+    <optional>
+      <attribute name="xml:id">
+        <data type="ID"/>
+      </attribute>
+    </optional>
     <attribute name="xml:lang">
       <data type="language"/>
     </attribute>
@@ -188,7 +190,7 @@
         <choice>
           <value>correction</value>
           <value>alternation</value>
-          <ref name="diszless"/>
+          <value>diszless</value>
           <value>group</value>
           <value>reordering</value>
           <value>ligature</value>

@@ -15,7 +15,7 @@
       <ref name="t"/>
     </choice>
   </define>
-  <define name="form">
+  <define name="g.form">
     <attribute name="form"/>
   </define>
   <define name="sb">
@@ -60,7 +60,7 @@
   <define name="v">
     <element name="g:v">
       <optional>
-        <ref name="form"/>
+        <ref name="g.form"/>
       </optional>
       <ref name="g.meta"/>
       <optional>
@@ -95,7 +95,7 @@
   <define name="s">
     <element name="g:s">
       <optional>
-        <ref name="form"/>
+        <ref name="g.form"/>
       </optional>
       <ref name="g.meta"/>
       <choice>
@@ -113,7 +113,7 @@
   <define name="q">
     <element name="g:q">
       <optional>
-        <ref name="form"/>
+        <ref name="g.form"/>
       </optional>
       <ref name="g.meta"/>
       <choice>
@@ -151,7 +151,7 @@
   <define name="n">
     <element name="g:n">
       <optional>
-        <ref name="form"/>
+        <ref name="g.form"/>
       </optional>
       <ref name="g.meta"/>
       <optional>
@@ -229,7 +229,7 @@
   <define name="c">
     <element name="g:c">
       <optional>
-        <ref name="form"/>
+        <ref name="g.form"/>
       </optional>
       <ref name="g.meta"/>
       <choice>

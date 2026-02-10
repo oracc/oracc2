@@ -215,6 +215,13 @@ o_jox_field(Entry *e, Field **f, const char *tag)
       if (f[i]->data)
 	{
 	  Gt *t = ((Cform*)f[i]->data)->t;
+	  if (t)
+	    {
+	      joxer_et(xo_loc, "s", NULL, (ccp)((Cform*)f[i]->data)->f.form);
+	      joxer_ea(xo_loc,"t", NULL);
+	      grx_jox(t->gdl, "g:w");
+	      joxer_ee(xo_loc,"t");
+	    }
 	}
 
       joxer_ee(xo_loc,tag);

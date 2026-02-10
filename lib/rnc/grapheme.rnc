@@ -1,7 +1,7 @@
 namespace g = "http://oracc.org/ns/gdl/1.0"
 
 grapheme = v | q | s | n | c | gloss | g | nongrapheme | punct | gsurro | t
-form     = attribute form { text }
+g.form   = attribute form { text }
 sb       = element g:b { s.model }
 vb       = element g:b { v.model }
 punct    = element g:p { p.model }
@@ -13,7 +13,7 @@ gsurro   =
 
 # Values
 v.model = text
-v        = element g:v { form? , g.meta , lang? , (v.model | (vb , mods+)) }
+v        = element g:v { g.form? , g.meta , lang? , (v.model | (vb , mods+)) }
 
 # Names
 s.model  = text
@@ -25,10 +25,10 @@ lst    = xsd:string {
 #[ABCD] is a stop-gap until lateuruk numbers are fixed
 num      = xsd:string { pattern = "N|N\d+[ABCD]?" }
 
-s        = element g:s { form? , g.meta , (s.model | (sb , mods+)) }
+s        = element g:s { g.form? , g.meta , (s.model | (sb , mods+)) }
 
 # Qualified graphemes
-q        = element g:q { form? , g.meta , (v|s|c) , (s|c|n) }
+q        = element g:q { g.form? , g.meta , (v|s|c) , (s|c|n) }
 
 # Numbers
 n.model  = r , (v|s|c|q|g)?
@@ -37,7 +37,7 @@ r        = element g:r {
              xsd:string {
 	       pattern = "[nN]\+[0-9]+|[nN]|[0-9]+|[n1-9]+/[n1-9]" } }
 
-n        = element g:n { form? , g.meta , sexified?, n.model , mods* }
+n        = element g:n { g.form? , g.meta , sexified?, n.model , mods* }
 sexified = attribute sexified { text }
 
 # Modifiers
@@ -55,7 +55,7 @@ c.model  = (compound , (o.join , compound)+) | unary | binary | ternary | (g , m
 
 c.b	 = element g:b { c.model }
 
-c        = element g:c { form? , g.meta , (c.b | c.model) , mods* }
+c        = element g:c { g.form? , g.meta , (c.b | c.model) , mods* }
 
 g        = element g:g { gimplicit? , g.meta , c.model , mods* , g.type? }
 

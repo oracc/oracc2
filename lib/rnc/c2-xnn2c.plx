@@ -49,6 +49,7 @@ my $ns = '';
 open(IN, $xnn_input) || die;
 while (<IN>) {
     s/\s*$//; chomp;
+    next if /^$/;
     if (/^ns=(.*)$/) {
 	$ns = $1;
     } elsif (/^xmlns:(.*?)=(.*)$/) {

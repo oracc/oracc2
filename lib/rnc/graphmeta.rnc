@@ -46,13 +46,11 @@ status.flags =
   attribute g:uflag4 { xsd:boolean } ? 
 
 gloss = det | glo
-pos = attribute g:pos { "pre" | "post" | "free" }
-#det = element g:d { pos , dtyp , delim? , emhyph? , notemark? , surroStart? , g.meta ,
-#                    (dingir | mister | word.content*)}
-det = element g:d { pos , dtyp , delim? , emhyph? , surroStart? , g.meta ,
+posn = attribute g:pos { "pre" | "post" | "free" }
+det = element g:d { posn , dtyp , delim? , emhyph? , surroStart? , g.meta ,
                     (word.content*)}
 dtyp= attribute g:role { "phonetic" | "semantic" }
-glo = element g:gloss { attribute g:type { "lang" | "text" } , surroEnd? , delim? , pos , words }
+glo = element g:gloss { attribute g:type { "lang" | "text" } , surroEnd? , delim? , posn , words }
 
 status.spans =
   attribute g:status {
