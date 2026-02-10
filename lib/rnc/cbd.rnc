@@ -111,7 +111,7 @@ cbd.norm.model =
 	       element n { text },
 	       cbd.normforms
 
-cbd.normforms = element form { cbd.norm.f* }
+cbd.normforms = element forms { cbd.norm.f* }
 
 cbd.norm.f    = element f { cbd.normform.model }
 

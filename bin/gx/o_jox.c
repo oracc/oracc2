@@ -195,22 +195,28 @@ o_jox_end_entry(struct entry *e)
 static void
 o_jox_nmfms(Field *f, Hash *hnmfm)
 {
-  NmFm *nfp = f->user;
-  Field *nmfmf = hash_find(hnmfm, (uccp)nfp->nmfmk);
-  if (nmfmf)
+  NmFm **nfp = f->user;
+  int i;
+  joxer_ea(xo_loc,"forms", NULL);
+  for (i = 0; nfp[i]; ++i)
     {
-      Form *fp = &((Cform *)f->data)->f;
-      List *lp = list_create(LIST_SINGLE);
-      list_pair(lp, "n", fp->form);
-      list_pair(lp, "cbd:id", f->id);
-      list_pair(lp, "ref", fp->user);
-      if (f->k[0])
-	ratts_kis(lp, f->k);
-      Ratts *ratts = ratts_list2ratts(lp);
-      joxer_ec(xo_loc, "f", ratts);
+      Field *nmfmf = hash_find(hnmfm, (uccp)nfp[i]->nmfmk);
+      if (nmfmf)
+	{
+	  Form *fp = &((Cform *)f->data)->f;
+	  List *lp = list_create(LIST_SINGLE);
+	  list_pair(lp, "n", fp->form);
+	  list_pair(lp, "cbd:id", f->id);
+	  list_pair(lp, "ref", fp->user);
+	  if (f->k[0])
+	    ratts_kis(lp, f->k);
+	  Ratts *ratts = ratts_list2ratts(lp);
+	  joxer_ec(xo_loc, "f", ratts);
+	}
+      else
+	fprintf(stderr, "o_jox_nmfms: internal error: norm-form key %s not found\n", nfp[i]->nmfmk);
     }
-  else
-    fprintf(stderr, "o_jox_nmfms: internal error: norm-form key %s not found\n", nfp->nmfmk);
+  joxer_ee(xo_loc,"forms");
 }
 
 /* Create a hash of norm-form keys to norm-form Fields */

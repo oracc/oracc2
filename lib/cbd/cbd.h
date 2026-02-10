@@ -330,7 +330,7 @@ typedef enum form_walk_type {
 } Cbd_fw_type;
 
 typedef struct normform {
-  const char *normk;
+  /*const char *normk;*/
   const char *nmfmk;
   Cform *form;
 } NmFm;
