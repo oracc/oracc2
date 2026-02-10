@@ -3,7 +3,7 @@
 #include <rnvxml.h>
 #include "gx.h"
 
-static void
+void
 ratts_kis(List *lp, Kis_data k)
 {
   list_pair(lp, "icount", kis_cnt(k));
@@ -11,7 +11,7 @@ ratts_kis(List *lp, Kis_data k)
   list_pair(lp, "xis", kis_tis(k));
 }
 
-static Ratts *
+Ratts *
 ratts_list2ratts(List *lp)
 {
   Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
@@ -86,11 +86,23 @@ ratts_entry(Entry *e, enum o_mode mode)
 }
 
 Ratts *
-ratts_form(Entry *e, Field *f, enum o_mode mode)
+ratts_form(Field *f, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);
   list_pair(lp, "xml:id", f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.form);
+  if (f->k[0])
+    ratts_kis(lp, f->k);
+  return ratts_list2ratts(lp);
+}
+
+Ratts *
+ratts_nmfm(Field *f, enum o_mode mode)
+{
+  List *lp = list_create(LIST_SINGLE);
+  list_pair(lp, "n", ((Cform*)f->data)->f.form);
+  list_pair(lp, "cbd:id", f->id);
+  list_pair(lp, "ref", ((Cform*)f->data)->f.user);
   if (f->k[0])
     ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);

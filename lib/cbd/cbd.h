@@ -38,6 +38,7 @@ typedef struct cbdset
   Memo *cformsmem;
   Memo *fieldsmem;
   Memo *lsigmem;
+  Memo *nmfmsmem;
   Pool *pool;
 } Cbds;
 
@@ -140,7 +141,7 @@ typedef struct cform {
   struct entry *e;
   struct sense *s;
   struct gdl_token *t;
-  Form f;  
+  Form f;
 } Cform;
 
 typedef struct field {
@@ -327,6 +328,12 @@ typedef enum form_walk_type {
   CBD_FW_PE , 	/* PSU entry */
   CBD_FW_PS  	/* PSU sense */
 } Cbd_fw_type;
+
+typedef struct normform {
+  const char *normk;
+  const char *nmfmk;
+  Cform *form;
+} NmFm;
 
 typedef void (*cbdfwfunc)(Cform *,Cbd_fw_type,void *);
 

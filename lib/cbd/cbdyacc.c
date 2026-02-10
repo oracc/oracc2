@@ -650,6 +650,7 @@ cbd_bld_set(void)
   csetp->cformsmem = memo_init(sizeof(Cform), 512);
   csetp->fieldsmem = memo_init(sizeof(Field), 512);
   csetp->lsigmem = memo_init(sizeof(struct lemsig), 1024);
+  csetp->nmfmsmem = memo_init(sizeof(NmFm), 512);
   csetp->pool = pool_init();
   cgp_set_pool(csetp->pool);
   cbd_oid_init();

@@ -18,6 +18,8 @@ Efield hfields[128];
 static Cbd *my_c;
 static Kis *my_k;
 
+static Field *curr_field = NULL;
+
 static void cbd_kis_wrapup(Cbd_fw_type t, Entry *v);
 
 /** Kis look up is done via a pointer which is set to kis_data_no_kis
@@ -77,7 +79,11 @@ cbd_field_ids(Field **ffp)
 {
   int i;
   for (i = 0; ffp[i]; ++i)
-    ffp[i]->id = cbd_field_id(NULL);
+    {
+      ffp[i]->id = cbd_field_id(NULL);
+      if (strstr(ffp[i]->k[1], "\x01="))
+	((Cform*)ffp[i]->data)->f.user = (void*)ffp[i]->id;
+    }
 }
 
 Field *
@@ -86,6 +92,7 @@ cbd_field(Kis_data k, void *v)
   Field *f = memo_new(csetp->fieldsmem);
   f->k = k;
   f->data = v; /* Usually Cform but NULL when called from kis_periods */
+  curr_field = f;
   return f;
 }
 
@@ -107,6 +114,29 @@ kis_data_debug(Kis_data kdp)
   else
     sprintf(buf, "(null) 0x 0%%");
   return buf;
+}
+
+/* This function is called when making a NORM field.
+ *
+ * norm-forms are handled by making a list of NmFm structures that
+ * encapsulate the norm key--where they have to attach--the norm-form
+ * key--which is used for norm-form stats--and the Cform for the
+ * orthographic form--which they need to reference in the serialized
+ * data.
+ *
+ * The NmFm are stored in the user field of the form belonging to the
+ * cform.
+ */
+static NmFm *
+norm_nmfm_data(const char *k, Cform *c)
+{
+  char nmfmk[strlen(k)+strlen(c->f.form)+2];
+  sprintf(nmfmk, "%s=%s", k, c->f.form);
+  NmFm *np = memo_new(csetp->nmfmsmem);
+  np->normk = k;
+  np->nmfmk = (ccp)pool_copy((uccp)nk, csetp->pool);
+  np->form = c;
+  return np;
 }
 
 /* Handler function used by cbd_key
@@ -139,7 +169,16 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 #if 1
 	  /* We don't collect sense-specific field data yet */
 	  if ('e' == context)
-	    kis_hdata(((Cform*)v)->e->hshary[hfield], k, v);
+	    {
+	      kis_hdata(((Cform*)v)->e->hshary[hfield], k, v);
+	      if ('$' == field)
+		{
+		  List *lp = curr_field->user;
+		  if (!lp)
+		    curr_field->user = lp = list_create(LIST_SINGLE);
+		  list_add(lp, norm_nmfm_data(k, v));
+		}
+	    }
 #else
 	  kis_hdata(context=='e'
 		    ?((Cform*)v)->e->hshary[hfield]
@@ -230,6 +269,23 @@ cbd_kis_periods(Kis *k, unsigned const char *key)
   return kdp;
 }
 
+/* Create an array of NmFm* in FIELD->user */
+static void
+cbd_kis_nmfm_wrap(Field **f)
+{
+  int i;
+  for (i = 0; f[i]; ++i)
+    {
+      List *lp = f[i]->user;
+      if (list_len(lp))
+	{
+	  int n;
+	  NmFm **nfp = (NmFm **)list2array_c(lp, &n);
+	  f[i]->user = nfp;
+	}
+    }
+}
+
 /* Reduce all the field hashes to arrays and sort them so they are
  * marshalled for further processing.
  */
@@ -266,6 +322,8 @@ cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
 	  cbd_field_ids(a);
 	  ep->hshary[i] = a;
 	  kisdata_show_ary(ep->hshary[i], stderr);
+	  if (EFLD_NORM == i)
+	    cbd_kis_nmfm_wrap(ep->hshary[i]);
 	}
     }
 }

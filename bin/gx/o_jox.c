@@ -115,20 +115,8 @@ o_jox_bases(struct entry *e)
 static void
 o_jox_cbd(struct cbd *c)
 {
-#if 1
   Ratts *ratts = ratts_cbd(c, O_XML);
-#else
-  struct rnvval_atts *ratts = rnvval_aa("cbd",
-					"project", c->project,
-					"xml:lang", c->lang,
-					"name", c->name,
-					(ccp)NULL);
-#endif
-#if 1
   joxer_ea(xo_loc, "entries", ratts);
-#else
-  joxer_ea(xo_loc, "cbd", ratts);
-#endif
 }
 
 static void
@@ -162,7 +150,6 @@ o_jox_entry(struct entry *e)
 	  break;
 	}
     }
-  ( /* @entry */ e->cgp->loose);
   if (e->ed)
     {
       switch (e->ed->type)
@@ -202,65 +189,100 @@ o_jox_end_entry(struct entry *e)
   joxer_ee(xo_loc,"entry");
 }
 
+/* This function is passed a pointer to a NORM field; the user member
+ * has an array of NmFm* with precomputed norm-form keys.
+ */
 static void
-o_jox_field(Entry *e, Field **f, const char *tag)
+o_jox_nmfms(Field *f, Hash *hnmfm)
+{
+  NmFm *nfp = f->user;
+  Field *nmfmf = hash_find(hnmfm, (uccp)nfp->nmfmk);
+  if (nmfmf)
+    {
+      Form *fp = &((Cform *)f->data)->f;
+      List *lp = list_create(LIST_SINGLE);
+      list_pair(lp, "n", fp->form);
+      list_pair(lp, "cbd:id", f->id);
+      list_pair(lp, "ref", fp->user);
+      if (f->k[0])
+	ratts_kis(lp, f->k);
+      Ratts *ratts = ratts_list2ratts(lp);
+      joxer_ec(xo_loc, "f", ratts);
+    }
+  else
+    fprintf(stderr, "o_jox_nmfms: internal error: norm-form key %s not found\n", nfp->nmfmk);
+}
+
+/* Create a hash of norm-form keys to norm-form Fields */
+static Hash *
+nmfm_hash(Field **f)
+{
+  Hash *h = hash_create(10);
+  int i;
+  for (i = 0; f[i]; ++i)
+    hash_add(h, (uccp)f[i]->k[1], f[i]);
+  return h;
+}
+
+static void
+o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 {
   int i;
+  char tagses[strlen(tag)+2];
+  sprintf(tagses, "%ss", tag);
+
+  Hash *hnmfm = NULL;
+  if (EFLD_NORM == ef)
+    hnmfm = nmfm_hash(e->hshary[EFLD_NMFM]);
   
+  joxer_ea(xo_loc, tagses, NULL);
   for (i = 0; f[i]; ++i)
     {
-      joxer_ea(xo_loc, tag, ratts_form(e, f[i], O_XML));
-
       /* f[i]->data is NULL when processing periods as field data */
       if (f[i]->data)
 	{
-	  Gt *t = ((Cform*)f[i]->data)->t;
-	  if (t)
+	  switch (ef)
 	    {
-	      joxer_et(xo_loc, "s", NULL, (ccp)((Cform*)f[i]->data)->f.form);
-	      joxer_ea(xo_loc,"t", NULL);
-	      grx_jox(t->gdl, "g:w");
-	      joxer_ee(xo_loc,"t");
-	    }
+	    case EFLD_FORM:
+	    case EFLD_BASE:
+	      {
+		joxer_ea(xo_loc, tag, ratts_form(f[i], O_XML));
+		Gt *t = ((Cform*)f[i]->data)->t;
+		if (t)
+		  {
+		    joxer_et(xo_loc, "s", NULL, (ccp)((Cform*)f[i]->data)->f.form);
+		    joxer_ea(xo_loc,"t", NULL);
+		    grx_jox(t->gdl, "g:w");
+		    joxer_ee(xo_loc,"t");
+		  }
+		joxer_ee(xo_loc,tag);
+	      }
+	      break;
+	    case EFLD_NORM:
+	      {
+		joxer_ea(xo_loc, tag, ratts_form(f[i], O_XML));
+		joxer_et(xo_loc, "n", NULL, (ccp)((Cform*)f[i]->data)->f.form);
+		o_jox_nmfms(f[i], hnmfm);
+		joxer_ee(xo_loc, tag);
+	      }
+	      break;
+	    default:
+	      break;
+	    }	  
 	}
-
-      joxer_ee(xo_loc,tag);
     }
+  joxer_ee(xo_loc, tagses);
+  if (hnmfm)
+    hash_free(hnmfm, NULL);
 }
 
 static void
 o_jox_forms(struct entry *e)
 {
-#if 1
-  joxer_ea(xo_loc, "forms", NULL);
   if (e->hshary[EFLD_FORM])
-    o_jox_field(e, e->hshary[EFLD_FORM], "form");
-  joxer_ee(xo_loc, "forms");
-#else
-  if (e->forms && list_len(e->forms))
-    {
-      List_node *lp;
-      for (lp = e->forms->first; lp; lp = lp->next)
-	{
-	  Cform *f2p = (Cform*)(lp->data);
-	  f1(/* @form */ f2p->f.form);
-	  if (f2p->f.lang) /* careful: we only should only emit this if lang is explicit in form */
-	    f1(/* %% */ f2p->f.lang);
-	  if (f2p->f.base)
-	    f1(/* /%s */ f2p->f.base);
-	  if (f2p->f.stem)
-	    f1(/* * */ f2p->f.stem);
-	  if (f2p->f.cont)
-	    f1(/* + */ f2p->f.cont);
-	  if (f2p->f.morph)
-	    f1(/* # */ f2p->f.morph);
-	  if (f2p->f.morph2)
-	    f1(/* ## */ f2p->f.morph2);
-	  if (f2p->f.norm)
-	    f1(/* $ */ f2p->f.norm);
-	}
-    }
-#endif
+    o_jox_field(e, EFLD_FORM, e->hshary[EFLD_FORM], "form");
+  if (e->hshary[EFLD_NORM])
+    o_jox_field(e, EFLD_NORM, e->hshary[EFLD_NORM], "norm");
 }
 
 static void
