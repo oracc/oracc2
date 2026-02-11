@@ -35,6 +35,28 @@ psu_permute(List *heads, Cgp *cp, int ffi, int nbytes)
   return nheads;
 }
 
+#define psu_cat(xff,xfld) \
+  int i, len = 0; \
+  for (i = 1; i < n; ++i) \
+    len += strlen((ccp)xff[i].f.xfld); \
+  len += n; \
+  char buf[len+2]; \
+  *buf = '\0'; \
+  for (i = 1; i < n; ++i) \
+    { \
+      strcat(buf, (ccp)xff[i].f.xfld); \
+      strcat(buf, " "); \
+    } \
+  buf[strlen(buf)-1] = '\0'; \
+  return pool_copy((uccp)buf, csetp->pool);
+
+static unsigned char *psu_norm(Cform *ff, int n) { psu_cat(ff,norm); }
+static unsigned char *psu_stem(Cform *ff, int n) { psu_cat(ff,stem); }
+static unsigned char *psu_base(Cform *ff, int n) { psu_cat(ff,base); }
+static unsigned char *psu_cont(Cform *ff, int n) { psu_cat(ff,cont); }
+static unsigned char *psu_morph(Cform *ff, int n) { psu_cat(ff,morph); }
+static unsigned char *psu_morph2(Cform *ff, int n) { psu_cat(ff,morph2); }
+
 static unsigned char *
 psu_orth_form(Cform *ff, int n)
 {
@@ -72,6 +94,23 @@ psu_ngram(List *cgps)
   return pool_copy((uccp)buf, csetp->pool);
 }
 
+void
+cbd_fw_psu_fields(Entry *ep, Parts *p, Cform *ff, cbdfwfunc h)
+{
+  Cform f;
+  memset(&f, '\0', sizeof(Cform));
+  f = ff[0]; /* clone what was set as the base PSU form */
+  f.e = ff[0].e;
+  f.f.norm = psu_norm(ff, 1+list_len(p->cgps));
+  f.f.stem = psu_stem(ff, 1+list_len(p->cgps));
+  f.f.base = psu_base(ff, 1+list_len(p->cgps));
+  f.f.cont = psu_cont(ff, 1+list_len(p->cgps));
+  f.f.morph = psu_morph(ff, 1+list_len(p->cgps));
+  f.f.morph2 = psu_morph2(ff, 1+list_len(p->cgps));
+
+  h(&f, CBD_FW_EF, &f);
+}
+
 static void
 cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 {
@@ -97,24 +136,40 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
     heads = psu_permute(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
 
   Cform *ff;
+  int e_done = 0;
   for (ff = list_first(heads); ff; ff = list_next(heads))
     {
       ff[0].e = ep;
       ff[0].f.lang = ff[1].f.lang;
-      ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
       ff[0].f.cf = ep->cgp->cf;
       ff[0].f.gw = ep->cgp->gw;
       ff[0].f.pos = ep->cgp->pos;
       ff[0].f.psu_ngram = psu_ngram(p->cgps);
       /*fprintf(stderr, "FW_PE: ");*/
-      h(&ff[0], CBD_FW_PE, &ff[0]);
+
+      /*** PSU_SIG CREATION HERE because the form component varies ***/
+      ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
+      /* psu_sig */
+
+      /* Only do this once because the CF[GW]POS doesn't vary across
+	 parts permutation */
+      if (!e_done++)
+	h(&ff[0], CBD_FW_PE, &ff[0]);
+
+      cbd_fw_psu_fields(ep, p, ff, h);
+      
       for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
 	{
+	  int s_done = 0;
 	  ff[0].s = sp;
 	  ff[0].f.sense = sp->mng;
 	  ff[0].f.epos = sp->pos;
+
 	  /*fprintf(stderr, "FW_PS parts: ");*/
-	  h(&ff[0], CBD_FW_PS, &ff[0]);
+	  /* Only do this once because the CF[GW//SENSE]POS'EPOS
+	     doesn't vary across parts permutation */
+	  if (!s_done++)
+	    h(&ff[0], CBD_FW_PS, &ff[0]);
 	}
     }
 }
