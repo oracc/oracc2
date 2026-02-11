@@ -192,7 +192,8 @@ gflag:
 	;
 
 simplexg:
-	  s maybegflags	       			       	{ /*ynp->mloc = mloc_mloc(&@1);*/ /*should now be covered in gdl_graph_node*/
+	  s maybegflags	       			       	{ /*ynp->mloc = mloc_mloc(&@1);*/
+	    						  /*should now be covered in gdl_graph_node*/
            					          if (gdl_legacy) gdl_unlegacy(ynp);
 							  if (ynp->kids) gdl_mod_wrap(ynp, 1);
 	    			  			  gvl_simplexg(ynp); }

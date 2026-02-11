@@ -432,6 +432,20 @@ gvl_simplexg(Node *ynp)
   if (gp)
     {
       ynp->user = gp;
+
+      if (gp->oid)
+	gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "oid", (ccp)gp->oid);
+
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:sign", (ccp)gp->sign);
+
+      gp->utf8 = gvl_cuneify(gp->sign);
+      if (gp->utf8)
+	gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:utf8", (ccp)gp->utf8);
+
+      gp->key = gvl_key(gp, gdlpool);
+      if (gp->key)
+	gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "key", (ccp)gp->key);
+      
       if (ynp->kids)
 	gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)gp->orig);
 

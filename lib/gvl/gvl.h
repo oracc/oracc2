@@ -20,6 +20,7 @@ struct gvl_g {
   unsigned const char *sign; /* sign name for OID; for a vq this is the canonical vq;
 			        when there are mods this is the sign+mods, e.g., GAN₂@t*/
   unsigned const char *utf8; /* UTF8 value for OID */
+  unsigned const char *key;
   unsigned const char *uhex; /* HEX value for OID */
   unsigned const char *mess; /* NULL if OK; if bad this is the error message for the grapheme */
   int status; 		     /* 0 for exactly right; 1 for required canonicalization; -1 on error */

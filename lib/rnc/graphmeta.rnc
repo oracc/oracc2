@@ -1,5 +1,5 @@
 namespace g = "http://oracc.org/ns/gdl/1.0"
-g.meta = 
+g.meta = oid? , key? ,
   break? , status.flags? , status.spans? , 
   paleography.attr? , linguistic.attr? , proximity.attr? ,
   opener? , closer? , hsqb_o?, hsqb_c? , emhyph? ,
@@ -10,6 +10,9 @@ g.meta =
   surroStart? , surroEnd? ,
   statusStart? , statusEnd? ,
   accented?
+
+oid = attribute oid { text }
+key = attribute key { text }
 
 accented = attribute g:accented { text }
 breakStart = attribute g:breakStart { "1" }

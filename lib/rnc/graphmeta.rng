@@ -2,6 +2,12 @@
 <grammar xmlns:g="http://oracc.org/ns/gdl/1.0" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <define name="g.meta">
     <optional>
+      <ref name="oid"/>
+    </optional>
+    <optional>
+      <ref name="key"/>
+    </optional>
+    <optional>
       <ref name="break"/>
     </optional>
     <optional>
@@ -78,6 +84,12 @@
     <optional>
       <ref name="accented"/>
     </optional>
+  </define>
+  <define name="oid">
+    <attribute name="oid"/>
+  </define>
+  <define name="key">
+    <attribute name="key"/>
   </define>
   <define name="accented">
     <attribute name="g:accented"/>

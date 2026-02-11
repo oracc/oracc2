@@ -77,6 +77,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	tokp->gdl->mloc = mloc_mloc(locp);
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
+      
       tokp->gsh = gsort_prep(tp);
       tokp->gsig = gsig;
       tokp->deep = deep;
