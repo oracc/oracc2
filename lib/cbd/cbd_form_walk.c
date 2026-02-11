@@ -107,14 +107,14 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       ff[0].f.pos = ep->cgp->pos;
       ff[0].f.psu_ngram = psu_ngram(p->cgps);
       /*fprintf(stderr, "FW_PE: ");*/
-      h(&ff[0], CBD_FW_PE, ep);
+      h(&ff[0], CBD_FW_PE, &ff[0]);
       for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
 	{
 	  ff[0].s = sp;
 	  ff[0].f.sense = sp->mng;
 	  ff[0].f.epos = sp->pos;
 	  /*fprintf(stderr, "FW_PS parts: ");*/
-	  h(&ff[0], CBD_FW_PS, sp);
+	  h(&ff[0], CBD_FW_PS, &ff[0]);
 	}
     }
 }
@@ -122,9 +122,24 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 static void
 cbd_fw_psu(Entry *ep, cbdfwfunc h)
 {
+  Cform f;
+  memset(&f, '\0', sizeof(Cform));
+
+  f.e = ep;
+  f.f.project = ep->owner->project;
+  f.f.lang = ep->owner->lang;
+  f.f.cf = ep->cgp->cf;
+  f.f.gw = ep->cgp->gw;
+  f.f.pos = ep->cgp->pos;
+
+  /*fprintf(stderr, "FW_E entry: ");*/
+  h(&f, CBD_FW_E, ep);
+
   Parts *p;
   for (p = list_first(ep->parts); p; p = list_next(ep->parts))
     cbd_fw_psu_parts(ep, p, h);
+
+  h(&f, CBD_FW_EE, ep);
 }
 
 static void
@@ -185,6 +200,7 @@ cbd_fw_entry(Entry *ep, cbdfwfunc h)
 
   /*fprintf(stderr, "FW_E entry: ");*/
   h(&f, CBD_FW_E, ep);
+
   cbd_fw_fields(ep->forms, &f, 'e', ep, h);
 
   Sense *sp;

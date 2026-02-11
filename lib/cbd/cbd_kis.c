@@ -218,7 +218,7 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
       break;
     case CBD_FW_PE:
       cbd_key_cgp(f, v, NULL);
-      cbd_key_fields(f, 'e', f->e);
+      cbd_key_fields(f, 'e', f);
       break;
     case CBD_FW_PS:
       cbd_key_cgpse(f, v, NULL);

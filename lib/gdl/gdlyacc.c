@@ -284,7 +284,7 @@ gdl_delim(Tree *ytp, const char *data)
     fprintf(stderr, "gt: DELIM: %s\n", data);
   np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
   if (np->prev)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+    gdl_prop_kv(np->prev, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
 
   if (c_processing)
     {

@@ -400,6 +400,9 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   cfp->f.cf = e->cgp->cf;
   cfp->f.gw = e->cgp->gw;
   cfp->f.pos = e->cgp->pos;
+  char *uscore;
+  while ((uscore = strchr((ccp)cfp->f.form, '_')))
+    *uscore++ = '\0';
   cfp->t = gt_token(&cfp->l, (ucp)cfp->f.form, 0, NULL);
   if (cfp->f.norm && ('(' == *cfp->f.norm || strstr((ccp)cfp->f.norm, "$(")))
     cbd_cof_register(cfp);

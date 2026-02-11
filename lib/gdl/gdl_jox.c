@@ -36,6 +36,10 @@ grx_jox_node(Node *np, int oflag)
       text[0] = '\0';
       switch (*(unsigned char *)np->text)
 	{
+	case '-':
+	case '\0':
+	  type = NULL;
+	  break;
 	case ':':
 	  type = "reordered";
 	  break;
@@ -67,10 +71,13 @@ grx_jox_node(Node *np, int oflag)
 	  fprintf(stderr, "unhandled character %c in delimiter node\n", *np->text);
 	  break;
 	}
-      if (*text)
-	joxer_eto(np->mloc, "g:o", rnvval_aa("x", "g:type", type, NULL), text);
-      else
-	joxer_ec(np->mloc, "g:o", rnvval_aa("x", "g:type", type, NULL));
+      if (type)
+	{
+	  if (*text)
+	    joxer_eto(np->mloc, "g:o", rnvval_aa("x", "g:type", type, NULL), text);
+	  else
+	    joxer_ec(np->mloc, "g:o", rnvval_aa("x", "g:type", type, NULL));
+	}
       need_closer = 0;
     }
   else if (!np->kids && (!strcmp(nodename, "g:s") || !strcmp(nodename, "g:v")
@@ -129,6 +136,9 @@ grx_jox_node(Node *np, int oflag)
       joxer_ee(np->mloc, nodename);
       break;
     }
+
+  if (np->next)
+    grx_jox_node(np->next, 0);
 }
 
 void

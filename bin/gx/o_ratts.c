@@ -43,7 +43,6 @@ ratts_cbd(Cbd *c, enum o_mode mode)
     list_pair(lp, "xml:lang", c->lang);
   else
     list_pair(lp, "lang", c->lang);
-
   
   Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
   list_free(lp, NULL);
@@ -67,7 +66,7 @@ ratts_entry(Entry *e, enum o_mode mode)
     }
   list_pair(lp, "oid", e->oid);
 
-  if (e->k)
+  if (e->k[0])
     ratts_kis(lp, e->k);
 
   if (mode == O_JSN)

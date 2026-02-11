@@ -301,7 +301,7 @@ atstem: 	STEM
 forms:		form
 	|	forms form
 
-form:		atform formlang form_args end_form
+form:		atform formlang end_form
 
 atform:		FORM		{ curr_form = cbd_bld_form(@1, curr_entry); }
 end_form:	END_FORM	{ cbd_bld_form_setup(curr_entry, curr_form); curr_form = NULL; }
@@ -309,6 +309,10 @@ formlang:	fform
 	|	fform flang
 	|	fform flang frws
 	|	fform frws
+	| 	fform form_args
+	|	fform flang form_args
+	|	fform flang frws form_args
+	|	fform frws form_args
 	;
 
 fform:	     	FFORM 		{ curr_form->f.form = (ucp)$1; }
