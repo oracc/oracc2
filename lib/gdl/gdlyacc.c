@@ -187,8 +187,10 @@ gdl_prop(Node *ynp, int ptype, int gtype)
 void
 gdl_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
 {
-  if (ynp)
+  if (ynp && v)
     prop_node_add(ynp, ptype, gtype, k, v);
+  else if (!v)
+    mesg_vwarning(currgdlfile, gdllineno, "gdl_prop passed NULL value for key %s", v);    
   else
     mesg_warning(currgdlfile, gdllineno, "gdl_prop passed NULL ynp");
 }

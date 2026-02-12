@@ -82,8 +82,13 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	}
       if (!tokp->gdl->mloc)
 	tokp->gdl->mloc = mloc_mloc(locp);
-      gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);
-      gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
+
+      Node *np;
+      for (np = tokp->gdl; np; np = np->next)
+	{
+	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "form", np->text);
+	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
+	}
       
       tokp->gsh = gsort_prep(tp);
       tokp->gsig = gsig;

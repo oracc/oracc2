@@ -9,7 +9,7 @@
  * The implementation here is very preliminary--just enough to support
  * the GDL that occurs in OSL.
  *
- * oflag gives an opener status
+ * oflag gives an opener status [not currently used; probably needs deprecating]
  *
  * nflag is 0 for no processing of np->next; 1 for do processing of np->next
  */
@@ -82,6 +82,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
 	  else
 	    joxer_ec(np->mloc, "g:o", rnvval_aa("x", "g:type", type, NULL));
 	}
+      else
+	return; /* don't go any further because we don't want to process np->next */
+      
       need_closer = 0;
     }
   else if (!np->kids && (!strcmp(nodename, "g:s") || !strcmp(nodename, "g:v")
@@ -149,12 +152,18 @@ void
 grx_jox(Node *np, const char *gdltag)
 {
   if (gdltag)
-    joxer_ea(np->mloc, gdltag, rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
+    {
+      joxer_ea(np->mloc, gdltag, rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
+      if (joxer_mode != JOXER_XML)
+	joxer_ao("j:w");
+    }
+
+  grx_jox_node(np, 0, 1);
+
   if (joxer_mode != JOXER_XML)
-    joxer_ao("j:w");
-  grx_jox_node(np->kids, 0, 1);
-  if (joxer_mode != JOXER_XML)
-    joxer_ac();
-  if (gdltag)
-    joxer_ee(np->mloc, gdltag);
+    {
+      joxer_ac();
+      if (gdltag)
+	joxer_ee(np->mloc, gdltag);
+    }
 }

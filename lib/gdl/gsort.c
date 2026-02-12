@@ -214,6 +214,7 @@ gsort_node(Node *np, List *lp)
     case 'b':
     case 'c':
     case 'g':
+    case 'w':
       {
 	Node *npp;
 	for (npp = np->kids; npp; npp = npp->next)
