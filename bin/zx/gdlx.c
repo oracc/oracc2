@@ -263,7 +263,7 @@ main(int argc, char **argv)
   gdl_unicode = 1;
   setlocale(LC_ALL, ORACC_LOCALE);
 
-  options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstUvwW");
+  options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
   
   gdl_flex_debug = gdldebug = trace_mode;
   

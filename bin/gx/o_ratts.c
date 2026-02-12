@@ -85,6 +85,17 @@ ratts_entry(Entry *e, enum o_mode mode)
 }
 
 Ratts *
+ratts_cpd(Cgp *c, enum o_mode mode)
+{
+  List *lp = list_create(LIST_SINGLE);
+  if (c->primary)
+    list_pair(lp, "primary", 1);
+  list_pair(lp, "partsig", c->tight);
+  list_pair(lp, "ref", c->owner->oid);
+  return ratts_list2ratts(lp);
+}
+
+Ratts *
 ratts_form(Field *f, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);

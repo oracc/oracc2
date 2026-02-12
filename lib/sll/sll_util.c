@@ -329,14 +329,20 @@ sll_snames_of(unsigned const char *oids)
   x = xoids;
   while (*x)
     {
-      xoid = x;
-      while (*x && ' ' != *x)
+      const char *xsave = NULL;
+      xoid = x;      
+      while (*x && ' ' != *x && '.' != *x)
 	++x;
       if (*x)
-	*x++ = '\0';
+	{
+	  xsave = (*x == '.' ? "." : " ");
+	  *x++ = '\0';
+	}
       list_add(l,(void*)sll_lookup(xoid));
+      if (xsave)
+	list_add(l, xsave);
     }
-  ret = list_join(l, " ");
+  ret = list_join(l, "");
   list_free(l,NULL);
   return ret;
 }

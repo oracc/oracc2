@@ -45,13 +45,15 @@ entry.attr = attribute n      { text }? ,
 	     attribute star   { text }? ,
 	     kis?
 
-entry_block = cgp? , gwls? , mod? , aliases? , partss? , discs?
+entry_block = cgp? , gwls? , mod? , aliases? , (partss|psu.compound)? , discs?
 
-cgp = cf , gw , pos
+cgp = cf , gw , mng? , pos , epos?
 
 cf   = element cf   { text }
 gw   = element gw   { xlang? , text }
+mng  = element mng  { xlang? , text }
 pos  = element pos  { text }
+epos = element epos { text }
 
 gwl  = element gwl  { text } 
 gwls = element gwls { gwl+ }
@@ -59,6 +61,14 @@ gwls = element gwls { gwl+ }
 mod         = element mod { attribute type   { text } ,
 	      	      	    attribute target { text } ,
 	      	      	    attribute why    { text }? }
+
+psu.compound = element compound { cpd+ }
+cpd = element cpd {
+    attribute primary { "1" }?,
+    attribute partsig { text },
+    attribute ref { text },
+    cgp
+    }
 
 aliases     = element aliases 	{ alias+ }
 

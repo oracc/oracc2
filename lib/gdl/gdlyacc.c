@@ -5,6 +5,7 @@
 #include <prop.h>
 #include <ctype128.h>
 #include <atf2utf.h>
+#include <sll.h>
 #include "gdl.tab.h"
 #include "gdlstate.h"
 #include "gdl.h"
@@ -62,6 +63,32 @@ gdlparse_deep(Node *np, void *mptr)
     }
 }
 
+/* Print the ->text value of each of the child nodes of a g:w */
+void
+gdl_wf_nodes(Node *w, FILE *wfp)
+{
+  Node *c;
+  for (c = w->kids; c; c = c->next)
+    fputs(c->text, wfp);
+}
+
+/* This routine assumes root=gdl; kids=g:w+ */
+void
+gdl_word_attr(Tree *tp)
+{
+  Node *w;
+  for (w = tp->root->kids; w; w = w->next)
+    {
+      char *wf_buf = NULL;
+      size_t wf_len = 0;
+      FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
+      gdl_wf_nodes(w, wf_fp);
+      fclose(wf_fp);
+      gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
+      free(wf_buf);
+    }
+}
+
 Tree *
 gdlparse_string(Mloc *m, char *s)
 {
@@ -86,6 +113,9 @@ gdlparse_string(Mloc *m, char *s)
   gdl_wrapup_buffer();
   free(s2);
 
+  if (gdl_word_mode)
+    gdl_word_attr(tp);
+  
   if (deep_parse)
     tree_iterator(tp, m, gdlparse_deep, NULL);
 

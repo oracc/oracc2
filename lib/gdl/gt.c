@@ -47,7 +47,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
   if (!(tokp = hash_find(gtcfg.h, t)))
     {
       Tree *tp;
-      const char *gsig = NULL, *deep = NULL;
+      const char *gsig = NULL, *deep = NULL, *sign = NULL;
       tokp = memo_new(gtcfg.m);
       tokp->t = t;
       if (literal > 0)
@@ -56,9 +56,13 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	{
 	  extern int gdlsig_depth_mode;
 	  tp = gt_gdl(locp, t);
+
 	  /* deep? or a special mode for unicode rendering? */
 	  gdlsig_depth_mode = -1;
+
 	  gsig = gdlsig(tp);
+	  sign = (ccp)sll_snames_of((uccp)gsig);
+  
 	  gdlsig_depth_mode = 1;
 	  deep = gdlsig(tp);
 	  if (deep)
@@ -93,6 +97,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       tokp->gsh = gsort_prep(tp);
       tokp->gsig = gsig;
       tokp->deep = deep;
+      tokp->sign = sign;
       tokp->user = user;
       hash_add(gtcfg.h, t, tokp);
     }

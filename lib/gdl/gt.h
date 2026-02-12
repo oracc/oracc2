@@ -22,6 +22,7 @@ typedef struct gdl_token
   const char *gsig;		/* return value from gdlsig run on
 				   parsed GDL; NULL if the token was a
 				   literal l*/
+  const char *sign;
   const char *deep;		/* deep sig from gdlsig */
   void *user;			/* in SL, sl_inst * to use for retrieving OID */
   int s;			/* sort code for token */

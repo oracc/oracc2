@@ -262,7 +262,7 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 		Gt *t = ((Cform*)f[i]->data)->t;
 		if (t)
 		  {
-		    joxer_et(xo_loc, "s", NULL, (ccp)((Cform*)f[i]->data)->f.form);
+		    joxer_et(xo_loc, "s", NULL, (ccp)t->sign);
 		    joxer_ea(xo_loc,"t", NULL);
 		    grx_jox(t->gdl, NULL);
 		    joxer_ee(xo_loc,"t");
@@ -364,25 +364,32 @@ o_jox_meta(struct entry *e)
 }
 
 static void
-o_jox_parts(struct entry *e)
+o_jox_parts(Entry *e)
 {
-#if 0
   List_node *lp;
   for (lp = e->parts->first; lp; lp = lp->next)
     {
-      struct parts *p = (struct parts*)lp->data;
-      printf("<partss>");
+      Parts *p = (Parts*)lp->data;
+      joxer_ea(xo_loc,"compound",NULL);
       if (p->cgps && list_len(p->cgps))
 	{
-	  printf("<parts>");
-	  List_node *cp;
-	  for (cp = p->cgps->first; cp; cp = cp->next)
-	    printf("<cgp>%s</cgp>", ((struct cgp*)(cp->data))->tight);
-	  printf("</parts>");
+	  Cgp *cp;
+	  for (cp = list_first(p->cgps); cp; cp = list_next(p->cgps))
+	    {
+	      Ratts *r = ratts_cpd(cp, O_XML);
+	      joxer_ea(xo_loc, "cpd", r);
+	      joxer_et(xo_loc, "cf", NULL, (ccp)cp->cf);
+	      joxer_et(xo_loc, "gw", NULL, (ccp)cp->gw);
+	      if (cp->mng)
+		joxer_et(xo_loc, "mng", NULL, (ccp)cp->mng);
+	      joxer_et(xo_loc, "pos", NULL, (ccp)cp->pos);
+	      if (cp->epos)
+		joxer_et(xo_loc, "epos", NULL, (ccp)cp->epos);
+	      joxer_ee(xo_loc,"cpd");
+	    }
 	}
-      printf("</partss>");
+      joxer_ee(xo_loc,"compound");
     }
-#endif
 }
 
 static void

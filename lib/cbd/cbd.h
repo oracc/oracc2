@@ -101,9 +101,12 @@ typedef struct cgp {
   unsigned const char *cf;
   unsigned const char *gw;
   unsigned const char *pos;
+  unsigned const char *mng;
+  unsigned const char *epos;
   unsigned const char *tight;
   unsigned const char *loose;
   struct entry *owner;
+  int primary;
 } Cgp;
 
 enum edit_t { ADD_E, ADD_S, DEL_E, DEL_S, REN_E, REN_S, MRG_E, MRG_S, TOP };
