@@ -11,8 +11,31 @@
  *  Void * -- the Cbd data structure from which the first arg was constructed
  */
 
+/*Permute at the entry level yielding a list of every combination of
+  Cform that this entry can possibly be attested with (many of these
+  will be unattested in the corpus */
 static List *
-psu_permute(List *heads, Cgp *cp, int ffi, int nbytes)
+psu_permute_e(List *heads, Cgp *cp, int ffi, int nbytes)
+{
+  List *nheads = list_create(LIST_SINGLE);
+  Entry *ce = cp->owner;
+  Cform *hff;
+  for (hff = list_first(heads); hff; hff = list_next(heads))
+    {
+      Cform *fp;
+      for (fp = list_first(ce->forms); fp; fp = list_next(ce->forms))
+	{
+	  Cform *ff = malloc(nbytes);
+	  memcpy(ff, hff, nbytes);
+	  ff[ffi] = *fp;
+	  list_add(nheads, ff);
+	}
+    }
+  return nheads;
+}
+
+static List *
+psu_permute_s(List *heads, Cgp *cp, int ffi, int nbytes)
 {
   List *nheads = list_create(LIST_SINGLE);
   Entry *ce = cp->owner;
@@ -38,7 +61,10 @@ psu_permute(List *heads, Cgp *cp, int ffi, int nbytes)
 #define psu_cat(xff,xfld) \
   int i, len = 0; \
   for (i = 1; i < n; ++i) \
-    len += strlen((ccp)xff[i].f.xfld); \
+    if (xff[i].f.xfld) \
+      len += strlen((ccp)xff[i].f.xfld);	\
+    else \
+      return NULL; \
   len += n; \
   char buf[len+2]; \
   *buf = '\0'; \
@@ -101,20 +127,23 @@ cbd_fw_psu_fields(Entry *ep, Parts *p, Cform *ff, cbdfwfunc h)
   memset(&f, '\0', sizeof(Cform));
   f = ff[0]; /* clone what was set as the base PSU form */
   f.e = ff[0].e;
-  f.f.norm = psu_norm(ff, 1+list_len(p->cgps));
-  f.f.stem = psu_stem(ff, 1+list_len(p->cgps));
-  f.f.base = psu_base(ff, 1+list_len(p->cgps));
-  f.f.cont = psu_cont(ff, 1+list_len(p->cgps));
-  f.f.morph = psu_morph(ff, 1+list_len(p->cgps));
-  f.f.morph2 = psu_morph2(ff, 1+list_len(p->cgps));
+  f.f.norm = ff[0].f.norm = psu_norm(ff, 1+list_len(p->cgps));
+  f.f.stem = ff[0].f.stem = psu_stem(ff, 1+list_len(p->cgps));
+  f.f.base = ff[0].f.base = psu_base(ff, 1+list_len(p->cgps));
+  f.f.cont = ff[0].f.cont = psu_cont(ff, 1+list_len(p->cgps));
+  f.f.morph = ff[0].f.morph = psu_morph(ff, 1+list_len(p->cgps));
+  f.f.morph2 = ff[0].f.morph2 = psu_morph2(ff, 1+list_len(p->cgps));
 
-  h(&f, CBD_FW_EF, &f);
+  h(&f, CBD_FW_EF, &ff[0]);
 }
 
 static void
 cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 {
   List *heads = list_create(LIST_SINGLE);
+  
+  List *e_heads = NULL , *s_heads = NULL;
+
   Cgp *cp = list_first(p->cgps);
   Entry *ce = cp->owner;
   Sense *sp;
@@ -133,11 +162,37 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
     }
 
   for (++i, cp = list_next(p->cgps); cp; cp = list_next(p->cgps), ++i)
-    heads = psu_permute(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
+    {
+      e_heads = psu_permute_e(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
+      s_heads = psu_permute_s(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
+    }
 
   Cform *ff;
   int e_done = 0;
-  for (ff = list_first(heads); ff; ff = list_next(heads))
+
+  for (ff = list_first(e_heads); ff; ff = list_next(e_heads))
+    {
+      ff[0].e = ep;
+      ff[0].f.lang = ff[1].f.lang;
+      ff[0].f.cf = ep->cgp->cf;
+      ff[0].f.gw = ep->cgp->gw;
+      ff[0].f.pos = ep->cgp->pos;
+      ff[0].f.psu_ngram = psu_ngram(p->cgps);
+      /*fprintf(stderr, "FW_PE: ");*/
+
+      /*** NO PSU_SIG CREATION HERE--only for s_heads ***/
+      ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
+      /* psu_sig */
+
+      /* Only do this once because the CF[GW]POS doesn't vary across
+	 parts permutation */
+      if (!e_done++)
+	h(&ff[0], CBD_FW_PE, &ff[0]);
+
+      cbd_fw_psu_fields(ep, p, ff, h);
+    }
+
+  for (ff = list_first(s_heads); ff; ff = list_next(s_heads))
     {
       ff[0].e = ep;
       ff[0].f.lang = ff[1].f.lang;
@@ -151,12 +206,15 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
       /* psu_sig */
 
+#if 0
       /* Only do this once because the CF[GW]POS doesn't vary across
 	 parts permutation */
       if (!e_done++)
 	h(&ff[0], CBD_FW_PE, &ff[0]);
+#endif
 
-      cbd_fw_psu_fields(ep, p, ff, h);
+      /* no field processing here until we do per-@sense @forms */
+      /*cbd_fw_psu_fields(ep, p, ff, h);*/ 
       
       for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
 	{

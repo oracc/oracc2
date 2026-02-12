@@ -17,6 +17,7 @@
 Efield hfields[128];
 static Cbd *my_c;
 static Kis *my_k;
+static Hash *nmfm_hash;
 
 static Field *curr_field = NULL;
 
@@ -116,27 +117,62 @@ kis_data_debug(Kis_data kdp)
   return buf;
 }
 
-/* This function is called when making a NORM field.
- *
- * norm-forms are handled by making a list of NmFm structures that
- * encapsulate the norm key--where they have to attach--the norm-form
- * key--which is used for norm-form stats--and the Cform for the
- * orthographic form--which they need to reference in the serialized
- * data.
- *
- * The NmFm are stored in the user field of the form belonging to the
- * cform.
- */
-static NmFm *
-norm_nmfm_data(const char *k, Cform *c)
+
+/* Remember the Cform for each FORM that occurs with a given NORM by
+   making a hash with key=NORM val=NmFm */
+static void
+norm_nmfm_hash(Cform *c)
 {
-  char nmfmk[strlen(k)+strlen((ccp)c->f.form)+2];
-  sprintf(nmfmk, "%s=%s", k, c->f.form);
-  NmFm *np = memo_new(csetp->nmfmsmem);
-  /*np->normk = (ccp)pool_copy((uccp)k, csetp->pool);*/
-  np->nmfmk = (ccp)pool_copy((uccp)nmfmk, csetp->pool);
-  np->form = c;
-  return np;
+  Hash *lp = hash_find(nmfm_hash, c->f.norm);
+  if (!lp)
+    hash_add(nmfm_hash, c->f.norm, (lp = hash_create(10)));
+  if (!hash_find(lp, c->f.form))
+    {
+      NmFm *np = memo_new(csetp->nmfmsmem);
+      np->form = c;
+      hash_add(lp, c->f.form, np);
+    }
+}
+
+/* On entry NmFm only has ->form set; add the key from $NORM=FORM */
+static NmFm *
+norm_nmfm_data(const char *normk, NmFm *nfp)
+{
+  char nmfmk[strlen(normk)+strlen((ccp)nfp->form->f.form)+2];
+  sprintf(nmfmk, "%s=%s", normk, (ccp)nfp->form->f.form);
+  fprintf(stderr, "norm_nmfm_data: normk = %s\n", nmfmk);
+  nfp->nmfmk = (ccp)pool_copy((uccp)nmfmk, csetp->pool);
+  return nfp;
+}
+
+/* For each NORM, look up the NmFm in nmfm_hash, augment the NmFm and
+ * add it to a list; then reduce the augmented list to an array and
+ * store it in the NORM field->user
+ */
+static void
+cbd_nmfm_wrap(Field **f)
+{
+  int i;
+  for (i = 0; f[i]; ++i)
+    {
+      Hash *lp = hash_find(nmfm_hash, (uccp)((Cform*)f[i]->data)->f.norm);
+      if (lp && lp->key_count)
+	{
+	  List *nmfm_list = list_create(LIST_SINGLE);
+	  const char **kk = hash_keys(lp);
+	  int j;
+	  for (j = 0; kk[j]; ++j)
+	    {
+	      NmFm *nfp = hash_find(lp, (uccp)kk[j]);
+	      list_add(nmfm_list, norm_nmfm_data(f[i]->k[1], nfp));
+	    }
+	  f[i]->user = list2array(nmfm_list);
+	}
+      else
+	fprintf(stderr, "cbd_nmfm_wrap: internal error: %s not found or empty list in nmfm_hash\n",
+		((Cform*)f[i]->data)->f.norm);
+    }
+  hash_free(nmfm_hash, NULL);
 }
 
 /* Handler function used by cbd_key
@@ -171,13 +207,8 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 	  if ('e' == context)
 	    {
 	      kis_hdata(((Cform*)v)->e->hshary[hfield], k, v);
-	      if ('$' == field)
-		{
-		  List *lp = curr_field->user;
-		  if (!lp)
-		    curr_field->user = lp = list_create(LIST_SINGLE);
-		  list_add(lp, norm_nmfm_data(k, v));
-		}
+	      if ('=' == field)
+		norm_nmfm_hash(v);
 	    }
 #else
 	  kis_hdata(context=='e'
@@ -200,6 +231,7 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
   switch (t)
     {
     case CBD_FW_E:
+      nmfm_hash = hash_create(10);
       cbd_key_cgp(f, v, NULL);
       break;
     case CBD_FW_EF:
@@ -268,23 +300,6 @@ cbd_kis_periods(Kis *k, unsigned const char *key)
   return kdp;
 }
 
-/* Create an array of NmFm* in FIELD->user */
-static void
-cbd_kis_nmfm_wrap(Field **f)
-{
-  int i;
-  for (i = 0; f[i]; ++i)
-    {
-      List *lp = f[i]->user;
-      if (list_len(lp))
-	{
-	  int n;
-	  NmFm **nfp = (NmFm **)list2array_c(lp, &n);
-	  f[i]->user = nfp;
-	}
-    }
-}
-
 /* Reduce all the field hashes to arrays and sort them so they are
  * marshalled for further processing.
  */
@@ -322,7 +337,7 @@ cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
 	  ep->hshary[i] = a;
 	  kisdata_show_ary(ep->hshary[i], stderr);
 	  if (EFLD_NORM == i)
-	    cbd_kis_nmfm_wrap(ep->hshary[i]);
+	    cbd_nmfm_wrap(ep->hshary[EFLD_NORM]);
 	}
     }
 }

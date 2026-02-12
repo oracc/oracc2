@@ -96,6 +96,17 @@ ratts_form(Field *f, enum o_mode mode)
 }
 
 Ratts *
+ratts_norm(Field *f, enum o_mode mode)
+{
+  List *lp = list_create(LIST_SINGLE);
+  list_pair(lp, "xml:id", f->id);
+  list_pair(lp, "n", ((Cform*)f->data)->f.norm);
+  if (f->k[0])
+    ratts_kis(lp, f->k);
+  return ratts_list2ratts(lp);
+}
+
+Ratts *
 ratts_nmfm(Field *f, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);

@@ -203,13 +203,12 @@ o_jox_nmfms(Field *f, Hash *hnmfm)
       Field *nmfmf = hash_find(hnmfm, (uccp)nfp[i]->nmfmk);
       if (nmfmf)
 	{
-	  Form *fp = &((Cform *)f->data)->f;
 	  List *lp = list_create(LIST_SINGLE);
-	  list_pair(lp, "n", fp->form);
+	  list_pair(lp, "n", nfp[i]->form->f.form);
 	  list_pair(lp, "cbd:id", f->id);
-	  list_pair(lp, "ref", fp->user);
-	  if (f->k[0])
-	    ratts_kis(lp, f->k);
+	  list_pair(lp, "ref", nfp[i]->form->f.user);
+	  if (nmfmf->k[0])
+	    ratts_kis(lp, nmfmf->k);
 	  Ratts *ratts = ratts_list2ratts(lp);
 	  joxer_ec(xo_loc, "f", ratts);
 	}
@@ -266,10 +265,13 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 	      break;
 	    case EFLD_NORM:
 	      {
-		joxer_ea(xo_loc, tag, ratts_form(f[i], O_XML));
-		joxer_et(xo_loc, "n", NULL, (ccp)((Cform*)f[i]->data)->f.form);
-		o_jox_nmfms(f[i], hnmfm);
-		joxer_ee(xo_loc, tag);
+		if (((Cform*)f[i]->data)->f.norm)
+		  {
+		    joxer_ea(xo_loc, tag, ratts_norm(f[i], O_XML));
+		    joxer_et(xo_loc, "n", NULL, (ccp)((Cform*)f[i]->data)->f.norm);
+		    o_jox_nmfms(f[i], hnmfm);
+		    joxer_ee(xo_loc, tag);
+		  }
 	      }
 	      break;
 	    default:
