@@ -388,7 +388,8 @@ main(int argc, char **argv)
     input_file = argv[optind];
   
   gdl_flex_debug = gdldebug = cbd_flex_debug = cbddebug = trace_mode;
-
+  gdl_word_mode = 1;
+  
   cbdset_debug(trace_mode);
 
   mesg_init();

@@ -113,9 +113,9 @@ comment:
 	;
 
 space:
-	  SPACE						{ ynp = gdl_delim(ytp, " ");
-	    						  gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
-								      "literal", gdllval.text); }
+	  SPACE						{ ynp = gdl_new_word(ytp);
+	    						  /*gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
+	      						    "literal", gdllval.text); */ }
 	| '\n'						{ gdl_balance_flush(@1); }
 	| END						{ gdl_balance_flush(@1); }
 	;
@@ -374,6 +374,8 @@ void
 gdl_set_tree(Tree *tp)
 {
   ytp = tp;
+  if (gdl_word_mode)
+    ynp = gdl_new_word(ytp);
 }
 
 void

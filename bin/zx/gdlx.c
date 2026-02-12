@@ -263,7 +263,7 @@ main(int argc, char **argv)
   gdl_unicode = 1;
   setlocale(LC_ALL, ORACC_LOCALE);
 
-  options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstUvw");
+  options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstUvwW");
   
   gdl_flex_debug = gdldebug = trace_mode;
   
@@ -443,6 +443,9 @@ opts(int opt, const char *arg)
       break;
     case 'w':
       wrapper = 1;
+      break;
+    case 'W':
+      gdl_word_mode = 1;
       break;
     default:
       return 1;

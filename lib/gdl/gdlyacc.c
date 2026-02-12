@@ -21,6 +21,8 @@ int deep_parse = 1;
 gdlstate_t gst; /* global gdl state */
 Node *lgp = NULL;   /* last grapheme node pointer */
 
+int gdl_word_mode;
+
 const char *c_last_implicit_delim = NULL;
 int c_delim_sentinel;
 int c_implicit_times_reset;
@@ -70,6 +72,7 @@ gdlparse_string(Mloc *m, char *s)
   strcat(s2, "\n");
 
   (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
+
   if (tp->root)
     tp->root->text = (ccp)pool_copy((uccp)s, gdlpool);
   
@@ -274,6 +277,24 @@ gdl_c_term(void)
       list_free(c_implicit_gps, NULL);
       c_implicit_gps = NULL;
     }
+}
+
+/* New behaviour 20260212: SPACE resets node to next node of last
+   child of either the parent l-node or the tree root (for
+   non-word-wrapped GDL */
+Node *
+gdl_new_word(Tree *ytp)
+{
+  if (gdl_word_mode)
+    {
+      Node *l = node_ancestor_or_self(ytp->curr, "g:w");
+      if (l)
+	tree_curr(l->rent);
+      else
+	tree_curr(ytp->root);
+      return gdl_push(ytp, "g:w");
+    }
+  return ytp->curr;
 }
 
 Node *

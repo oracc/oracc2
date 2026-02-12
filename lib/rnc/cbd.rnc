@@ -99,7 +99,7 @@ cbd.form.model =
 	       attribute xml:id { text },
 	       attribute n { text },
 	       kis?,
-	       cbd.text	       
+	       cbd.text
 
 norms 	    = element norms { norm* }
 norm	    = element norm { cbd.norm.model }

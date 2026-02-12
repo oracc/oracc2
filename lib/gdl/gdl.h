@@ -51,7 +51,7 @@ struct gdl_g {
 extern int c_processing;
 extern int gdl_corrq;
 extern int curr_lang;
-extern int gdltrace, gdl_legacy, gdl_orig_mode, gvl_no_mesg_add;
+extern int gdltrace, gdl_legacy, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
@@ -100,6 +100,7 @@ extern void gdl_lexfld_init(void);
 extern Node *gdl_mod(Tree *ytp, const char *data);
 extern Node *gdl_punct(Mloc *locp, Tree *ytp, const char *data);
 extern Node *gdl_listnum(Mloc *locp, Tree *ytp, const char *data);
+extern Node *gdl_new_word(Tree *ytp);
 extern Node *gdl_nnum(Mloc *locp, Tree *ytp, const char *data);
 extern Node *gdl_number(Mloc *locp, Tree *ytp, const char *data);
 extern Node *gdl_barenum(Mloc *locp, Tree *ytp, const char *data);

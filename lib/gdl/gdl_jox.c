@@ -8,9 +8,13 @@
  *
  * The implementation here is very preliminary--just enough to support
  * the GDL that occurs in OSL.
+ *
+ * oflag gives an opener status
+ *
+ * nflag is 0 for no processing of np->next; 1 for do processing of np->next
  */
 static void
-grx_jox_node(Node *np, int oflag)
+grx_jox_node(Node *np, int oflag, int nflag)
 {
   Node *npp;
   int need_closer = 1;
@@ -68,7 +72,7 @@ grx_jox_node(Node *np, int oflag)
 	  text[1] = '\0';
 	  break;
 	default:
-	  fprintf(stderr, "unhandled character %c in delimiter node\n", *np->text);
+	  fprintf(stderr, "unhandled character '%c' in delimiter node\n", *np->text);
 	  break;
 	}
       if (type)
@@ -115,7 +119,7 @@ grx_jox_node(Node *np, int oflag)
     }
 
   for (npp = np->kids; npp; npp = npp->next)
-    grx_jox_node(npp, need_closer);
+    grx_jox_node(npp, need_closer, 1);
 
   switch (need_closer)
     {
@@ -137,23 +141,20 @@ grx_jox_node(Node *np, int oflag)
       break;
     }
 
-  if (np->next)
-    grx_jox_node(np->next, 0);
+  if (nflag && np->next)
+    grx_jox_node(np->next, 0, 1);
 }
 
 void
 grx_jox(Node *np, const char *gdltag)
 {
-  if (NULL == gdltag)
-    gdltag = np->name;
-  
-  joxer_ea(np->mloc, gdltag, rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
+  if (gdltag)
+    joxer_ea(np->mloc, gdltag, rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
   if (joxer_mode != JOXER_XML)
     joxer_ao("j:w");
-  if (np->kids)
-    grx_jox_node(np->kids, 0);
-  else
-    joxer_eto(np->mloc, "g:t", NULL, np->text);
-  joxer_ac();
-  joxer_ee(np->mloc, gdltag);
+  grx_jox_node(np->kids, 0, 1);
+  if (joxer_mode != JOXER_XML)
+    joxer_ac();
+  if (gdltag)
+    joxer_ee(np->mloc, gdltag);
 }

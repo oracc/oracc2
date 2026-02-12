@@ -115,6 +115,7 @@ o_jox_bases(struct entry *e)
 static void
 o_jox_cbd(struct cbd *c)
 {
+  xo_loc = &c->l;
   Ratts *ratts = ratts_cbd(c, O_XML);
   joxer_ea(xo_loc, "entries", ratts);
 }
@@ -136,6 +137,7 @@ o_jox_dcfs(struct entry *e)
 static void
 o_jox_entry(struct entry *e)
 {
+  xo_loc = &e->l;
   if (e->ed)
     {
       switch (e->ed->type)
@@ -232,6 +234,10 @@ nmfm_hash(Field **f)
 static void
 o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 {
+  if (!f || !f[0])
+    return;
+  
+  xo_loc = &((Cform*)f[0]->data)->l;
   int i;
   char tagses[strlen(tag)+2];
   sprintf(tagses, "%ss", tag);
@@ -243,6 +249,7 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
   joxer_ea(xo_loc, tagses, NULL);
   for (i = 0; f[i]; ++i)
     {
+      xo_loc = &((Cform*)f[i]->data)->l;
       /* f[i]->data is NULL when processing periods as field data */
       if (f[i]->data)
 	{
@@ -257,7 +264,7 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 		  {
 		    joxer_et(xo_loc, "s", NULL, (ccp)((Cform*)f[i]->data)->f.form);
 		    joxer_ea(xo_loc,"t", NULL);
-		    grx_jox(t->gdl, "g:w");
+		    grx_jox(t->gdl, NULL);
 		    joxer_ee(xo_loc,"t");
 		  }
 		joxer_ee(xo_loc,tag);

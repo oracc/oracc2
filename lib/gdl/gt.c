@@ -71,8 +71,15 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	    }		
 	}
       tokp->priority = 100;
-      tokp->gdl = tp->root;
-      tokp->gdl->name = "g:w";
+      if (gdl_word_mode)
+	{
+	  tokp->gdl = tp->root->kids;
+	}
+      else
+	{
+	  tokp->gdl = tp->root;
+	  tokp->gdl->name = "g:w";
+	}
       if (!tokp->gdl->mloc)
 	tokp->gdl->mloc = mloc_mloc(locp);
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);

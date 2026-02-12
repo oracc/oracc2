@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <cbd.h>
 #include <form.h>
+#include <gt.h>
 
 /* Iterate over the Cbd calling a handler for each entry/sense/form.
  *
@@ -173,6 +174,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
   for (ff = list_first(e_heads); ff; ff = list_next(e_heads))
     {
       ff[0].e = ep;
+      ff[0].l = p->l;
       ff[0].f.lang = ff[1].f.lang;
       ff[0].f.cf = ep->cgp->cf;
       ff[0].f.gw = ep->cgp->gw;
@@ -182,6 +184,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 
       /*** NO PSU_SIG CREATION HERE--only for s_heads ***/
       ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
+      ff[0].t = gt_token(&ff[0].l, (ucp)ff[0].f.form, 0, NULL);
       /* psu_sig */
 
       /* Only do this once because the CF[GW]POS doesn't vary across
@@ -204,6 +207,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 
       /*** PSU_SIG CREATION HERE because the form component varies ***/
       ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
+
       /* psu_sig */
 
 #if 0
@@ -239,6 +243,7 @@ cbd_fw_psu(Entry *ep, cbdfwfunc h)
   memset(&f, '\0', sizeof(Cform));
 
   f.e = ep;
+  f.l = ep->l;
   f.f.project = ep->owner->project;
   f.f.lang = ep->owner->lang;
   f.f.cf = ep->cgp->cf;
@@ -264,6 +269,7 @@ cbd_fw_fields(List *forms, Cform *f, int context, void *vp, cbdfwfunc h)
       if (BIT_ISSET(fp->f.flags, FORM_FLAGS_COF_TAIL))
 	continue;
 
+      f->l = fp->l;
       f->f.base = fp->f.base;
       f->f.stem = fp->f.stem;
       f->f.cont = fp->f.cont;
