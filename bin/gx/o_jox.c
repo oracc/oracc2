@@ -11,6 +11,7 @@
 locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
 static void o_jox_proplist(const char *p);
+static void o_jox_field(Entry *e, Efield ef, Field **f, const char *tag);
 
 #define f0()
 #define f1(a)
@@ -77,39 +78,8 @@ o_jox_allow(struct entry *e)
 static void
 o_jox_bases(struct entry *e)
 {
-#if 0
-  List_node *outer;
-
-  xo_loc = &((struct loctok *)((List*)(e->bases->first->data))->first->data)->l;
-  joxer_eaaa(xo_loc,"bases", NULL);
-  for (outer = e->bases->first; outer; outer = outer->next)
-    {
-      List *bp = ((List *)(outer->data));
-      List_node *inner = bp->first;
-      struct loctok *blt = NULL;
-
-      blt = inner->data;
-      xo_loc = &((struct loctok *)inner->data)->l;
-      joxer_ea(xo_loc,"base", NULL);
-
-      if (!blt->lang)
-	blt->lang = e->lang;
-      joxer_ea(xo_loc,"pri", rnvval_aa("av", "xml:lang", blt->lang, (ccp)NULL));
-      joxer_ch(xo_loc,(const char *)blt->tok);
-      joxer_ee(xo_loc,"pri");
-      if (list_len(bp) > 1)
-	{
-	  for (inner = inner->next; inner; inner = inner->next)
-	    {
-	      joxer_ea(xo_loc,"alt", NULL);
-	      joxer_ch(xo_loc,(const char *)((struct loctok *)inner->data)->tok);
-	      joxer_ee(xo_loc,"alt");
-	    }
-	}
-      joxer_ee(xo_loc,"base");
-    }
-  joxer_eeaa(xo_loc,"bases");
-  #endif
+  if (e->hshary[EFLD_BASE])
+    o_jox_field(e, EFLD_BASE, e->hshary[EFLD_BASE], "base");
 }
 
 static void
@@ -258,7 +228,8 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 	    case EFLD_FORM:
 	    case EFLD_BASE:
 	      {
-		joxer_ea(xo_loc, tag, ratts_form(f[i], O_XML));
+		joxer_ea(xo_loc, tag,
+			 ef==EFLD_FORM ? ratts_form(f[i], O_XML) : ratts_base(f[i], O_XML));
 		Gt *t = ((Cform*)f[i]->data)->t;
 		if (t)
 		  {

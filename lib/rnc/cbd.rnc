@@ -93,9 +93,11 @@ bases_block = allows? , bases , stems? , phon? , root?
 allows 	    = element allows { allow+ }
 allow 	    = element allow  { attribute lhs { text } , attribute rhs { text } }
 bases 	    = element bases  { base+ }
-base 	    = element base   { basepri , basealt* }
-basepri	    = element pri    { attribute xml:lang { text } , text }
-basealt	    = element alt    { text }
+base 	    = element base   { attribute cbd:id { text },
+			       attribute n { text },
+	       		       kis?,
+			       cbd.text
+			      }
 
 stems	    = element stems  { stem+ }
 stem        = element stem   { text }

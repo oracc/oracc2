@@ -30,6 +30,7 @@ extern void o_tg2(struct cbd*c);
 extern void o_jox(struct cbd*c);
 extern void o_jsn(struct cbd*c);
 
+extern Ratts *ratts_base(Field *f, enum o_mode mode);
 extern Ratts *ratts_cbd(Cbd *c, enum o_mode mode);
 extern Ratts *ratts_cpd(Cgp *c, enum o_mode mode);
 extern Ratts *ratts_entry(Entry *e, enum o_mode mode);
