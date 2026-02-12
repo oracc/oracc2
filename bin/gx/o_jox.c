@@ -413,15 +413,12 @@ o_jox_root(struct entry *e)
 static void
 o_jox_senses(struct entry *e)
 {
-#if 0
-  if (e->begin_senses)
-    f1(/* @senses */ );
+  joxer_ea(xo_loc,"senses",NULL);
 
-  List_node *lp;
-  for (lp = e->senses->first; lp; lp = lp->next)
+  Sense *sp;
+  for (sp = list_first(e->senses); sp; sp = list_next(e->senses))
     {
-      struct sense *sp = (struct sense*)(lp->data);
-
+#if 0
       if (sp->ed)
 	{
 	  switch (sp->ed->type)
@@ -436,21 +433,14 @@ o_jox_senses(struct entry *e)
 	      break;
 	    }
 	}
-      
-      f0(/* @sense */ );
-      if (sp->lng)
-	{ f1(/* % */ sp->lng); }
-      if (sp->sid)
-	f1(/* # */ sp->sid);
-      if (sp->num)
-	f1(/* . */ sp->num);
-      if (sp->sgw)
-	f1(/* [%s] */ sp->sgw);
-      if (sp->pos)
-	f1(/*  */ sp->pos);
-      if (sp->mng)
-	f1(/*  */ sp->mng);
+#endif
 
+      Ratts *r = ratts_sense(sp, O_XML);
+      joxer_ea(xo_loc,"sense",r);
+      joxer_et(xo_loc, "pos", NULL, (ccp)sp->pos);
+      joxer_et(xo_loc, "mng", NULL, (ccp)sp->mng);
+      joxer_ee(xo_loc,"sense");      
+#if 0
       if (sp->ed)
 	{
 	  switch (sp->ed->type)
@@ -465,13 +455,13 @@ o_jox_senses(struct entry *e)
 	      break;
 	    }
 	}
+#endif
+
       if (sp->disc)
 	f1(/* @disc */ sp->disc);
     }
   
-  if (e->begin_senses)
-    f0(/* @end senses */ );
-#endif
+  joxer_ee(xo_loc,"senses");
 }
 
 static void

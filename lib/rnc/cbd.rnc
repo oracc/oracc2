@@ -143,7 +143,13 @@ form.model  = attribute form   { text } ,
 	      attribute bang   { text }?
 
 sense_block = element senses   { sense+ }
-sense 	    = element sense    { sense.model , mod? , sensel* }
+sense 	    = element sense    { cbd.sense.model , mod? , sensel* }
+
+cbd.sense.model = attribute n      { text }? ,
+	     attribute oid    { text }? ,
+	     attribute xml:id { text }? ,
+	     kis?,
+	     pos, mng
 
 sense.model = attribute sid    { text }? ,
 	      attribute sok    { text }? ,

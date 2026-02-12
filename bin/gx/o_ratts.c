@@ -135,3 +135,15 @@ ratts_one(const char *attr, const char *aval)
   const char *rar[3] = { attr , aval , NULL };
   return rnvval_aa_ccpp(rar);
 }
+
+Ratts *
+ratts_sense(Sense *s, enum o_mode mode)
+{
+  List *lp = list_create(LIST_SINGLE);
+  list_pair(lp, "xml:id", s->oid);
+  list_pair(lp, "n", s->cgspe);
+  list_pair(lp, "oid", s->oid);
+  if (s->k && s->k[0])
+    ratts_kis(lp, s->k);
+  return ratts_list2ratts(lp);
+}
