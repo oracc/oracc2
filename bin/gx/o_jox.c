@@ -14,6 +14,7 @@ locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
 static void o_jox_proplist(const char *p);
 static void o_jox_field(void *e, Efield ef, Field **f, const char *tag);
+static void o_jox_sigs(Hash *h);
 
 #define f0()
 #define f1(a)
@@ -441,6 +442,8 @@ o_jox_senses(struct entry *e)
 
       o_jox_forms(sp);
 
+      o_jox_sigs(sp->hsigs);
+
       joxer_ee(xo_loc,"sense");      
 #if 0
       if (sp->ed)
@@ -464,6 +467,23 @@ o_jox_senses(struct entry *e)
     }
   joxer_ee(xo_loc,"senses");
   sense_context = 0;
+}
+
+static void
+o_jox_sigs(Hash *h)
+{
+  const char **kk = hash_keys(h);
+  int i = 0;
+  if (kk[i])
+    {
+      joxer_ea(xo_loc,"sigs",NULL);
+      for (i = 0; kk[i]; ++i)
+	{
+	  Ratts *r = ratts_sig(hash_find(h, (uccp)kk[i]));
+	  joxer_ec(xo_loc, "sig", r);
+	}
+      joxer_ee(xo_loc,"sigs");
+    }
 }
 
 static void

@@ -217,7 +217,9 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 	    {
 	      kis_hdata(((Cform*)v)->s->hshary[hfield], k, v);
 	      if ('=' == field)
-		norm_nmfm_hash(nmfm_s, v);
+		{
+		  norm_nmfm_hash(nmfm_s, v);
+		}
 	    }
 	}
       else
@@ -246,7 +248,15 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
       nmfm_s = hash_create(10);
       break;
     case CBD_FW_SF:
-      cbd_key_fields(f, 's', v);
+      {
+	/* This is a safe place to make a sig for the sense/form combo */
+	Field *fp = memo_new(csetp->fieldsmem);
+	fp->id = cbd_field_id(NULL);
+	fp->data = form_sig(csetp->pool, &f->f);
+	fp->k = kis_data((char*)fp->data);
+	hash_add(((Cform*)v)->s->hsigs, (uccp)fp->data, fp);
+	cbd_key_fields(f, 's', v);
+      }
       break;
     case CBD_FW_EE:
       cbd_kis_wrapup_e(t, v);

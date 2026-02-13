@@ -16,6 +16,7 @@
 #include <kis.h>
 #include "gx.h"
 
+int bootstrap_mode, lem_autolem, lem_dynalem;
 static int major_version = 1, minor_version = 0;
 static const char *project = NULL;
 static const char *prog = "gx";

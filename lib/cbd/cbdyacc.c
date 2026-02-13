@@ -612,6 +612,7 @@ cbd_bld_sense(YYLTYPE l, struct entry *e)
 {
   struct sense *sp = memo_new(e->owner->sensesmem);
   sp->owner = curr_entry;
+  sp->hsigs = hash_create(5);
   sp->l = l;
   cmts(sp->l.user);
   list_add(e->senses, sp);

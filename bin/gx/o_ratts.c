@@ -158,3 +158,15 @@ ratts_sense(Sense *s, enum o_mode mode)
     ratts_kis(lp, s->k);
   return ratts_list2ratts(lp);
 }
+
+Ratts *
+ratts_sig(Field *f)
+{
+  List *lp = list_create(LIST_SINGLE);
+  list_pair(lp, "xml:id", f->id);
+  list_pair(lp, "sig", f->data);
+  if (f->k[0])
+    ratts_kis(lp, f->k);
+  return ratts_list2ratts(lp);
+}
+

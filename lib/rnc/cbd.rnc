@@ -151,7 +151,8 @@ cbd.sense.model = attribute n      { text }? ,
 	     attribute oid    { text }? ,
 	     attribute xml:id { text }? ,
 	     kis?,
-	     pos, mng, lang_block?
+	     pos, mng, lang_block?,
+	     sigs?
 
 sense.model = attribute sid    { text }? ,
 	      attribute sok    { text }? ,
@@ -159,6 +160,9 @@ sense.model = attribute sid    { text }? ,
 	      attribute pos    { text }? ,
 	      element   mng    { text }  ,
 	      element   disc   { text }?
+
+sigs	    = element sigs { sig* }
+sig	    = element sig { attribute xml:id { text }, attribute sig { text }, kis? }
 
 sensel 	    = element sensel  { attribute xml:lang { text } ,
 	      	      	      	sense.model }

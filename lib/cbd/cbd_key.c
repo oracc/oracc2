@@ -72,7 +72,7 @@ void
 cbd_key_fields(Cform *f, int context, void *v)
 {
   char *insert = buf + strlen(buf);
-#define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,v); }
+#define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,v);}
   if (f->f.oform)
     {
       sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);

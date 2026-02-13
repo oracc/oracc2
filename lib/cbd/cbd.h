@@ -263,6 +263,7 @@ typedef struct sense {
   struct meta *meta;
   List *sensels; /* list of translated senses with (struct sense *) data--struct has l and lng so i18n not needed */
   List *forms; /* not yet used: future provision for tying @form under @sense */
+  Hash *hsigs;
 } Sense;
 
 struct equiv {
