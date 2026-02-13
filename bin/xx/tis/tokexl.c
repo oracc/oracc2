@@ -49,7 +49,7 @@ char period[1024];
 int files_from_stdin = 0;
 int no_output = 0;
 
-static Form f;
+static Cform f;
 const char *file;
 Pool *mpool;
 Hash *mhash;
@@ -135,32 +135,16 @@ toks_from_file(const char *fn, FILE *fp)
       strcat(qid, ":");
       strcat(qid, w);
       
-      /* Always save the entire sig */
+      /* Always save the entire sig; args 2..4 are ignored */
       pr((ccp)s, -1, -1, NULL);
 
-      memset(&f, '\0', sizeof(Form));
-      form_parse((uccp)file, line, (ucp)s, &f, NULL);
+      memset(&f, '\0', sizeof(Cform));
+      form_parse((uccp)file, line, (ucp)s, &f.f, NULL);
 
-#if 1
       cbd_key_cgp(&f, NULL, period);
       cbd_key_fields(&f, 'e', NULL);
       cbd_key_cgpse(&f, NULL, period);
       cbd_key_fields(&f, 's', NULL);      
-#else
-      char t[10*sig_len]; /* this is lazy, but there is no way we can generate keys bigger than this */
-
-      sprintf(t, "%%%s:%s[%s]%s%c%c", f.lang, f.cf, f.gw, f.pos, 1, 1);
-      pr(t, vp, qid);
-
-      pr_sig_fields(t, qid, vp);
-      
-      if (strcmp((ccp)f.gw, (ccp)f.sense) || strcmp((ccp)f.pos, (ccp)f.epos))
-	{
-	  sprintf(t, "%%%s:%s[%s]%s%c//%s'%s%c", f.lang, f.cf, f.gw, f.pos, 1, f.sense, f.epos, 1);
-	  pr(t, vp, qid);
-	  pr_sig_fields(t, qid, vp);
-	}
-#endif
     }
 }
 

@@ -39,15 +39,17 @@ main(int argc, char *const *argv)
   const char *file;
   FILE *in_fp;
   char *s;
+  Hash *sig = NULL;
   Hash *sem = NULL;
   Hash *bis = NULL;
   Hash *ter = NULL;
   Hash *tid = NULL;
   tid = hash_create(1024);
   Pool *p = NULL;
-  size_t total = 0;
+  size_t total = 0, sigtotal = 0;
 
   p = pool_init();
+  sig = hash_create(1024);
   sem = hash_create(1024);
   bis = hash_create(1024);
   ter = hash_create(1024);
@@ -68,9 +70,6 @@ main(int argc, char *const *argv)
 
   while ((s = (char*)loadoneline(in_fp, NULL)))
     {
-      if ('@' == *s)
-	continue;
-      
       char **f = tab_split(s);
       if (!f[1])
 	continue;
@@ -79,6 +78,13 @@ main(int argc, char *const *argv)
       unsigned char *id = pool_copy((ucp)f[1], p);
       hash_add(tid,t,id);
       int count = atoi(f[2]);
+
+      if ('@' == *s)
+	{
+	  sigtotal += count;
+	  hash_add(sig, t, (void*)(uintptr_t)count);
+	  continue;
+	}      
 
       e = t + strlen((ccp)t);
       if (1 == e[-1] && 1 == e[-2])
@@ -96,10 +102,17 @@ main(int argc, char *const *argv)
 	}
     }
 
-  printf("t\to\t%ld\t%%\n", total);
+  printf("t\to\t%ld/%ld\t%%\n", total, sigtotal);
 
-  const char **k = hash_keys(sem);
+  const char **k = hash_keys(sig);
   int i;
+  for (i = 0; k[i]; ++i)
+    {
+      int count = (uintptr_t)hash_find(sig, (uccp)k[i]);
+      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)sigtotal));
+    }
+  
+  k = hash_keys(sem);
   for (i = 0; k[i]; ++i)
     {
       int count = (uintptr_t)hash_find(sem, (uccp)k[i]);

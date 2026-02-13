@@ -52,6 +52,17 @@ cbd_key_period(Cform *f, int context, void *v, const char *period)
   *insert = '\0';
 }
 
+/***N.B. In cbd_key_cgp, cbd_key_cgspe, and cbd_key_fields, arguments
+ ** other than Cform *f must not be used in the body of these
+ ** functions. They can safely be passed to the cbdact call.
+ **
+ ** For CBD, the additional arguments are meaningful.
+ **
+ ** For tokexl, the additional arguments are ignored and the
+ ** Entry/Sense/void * passed to the three functions below are all
+ ** NULL.
+ ***/
+
 /* This routine assumes it has been called after cbd_key_cgp or
  * cbd_key_cgpse
  *
@@ -61,7 +72,7 @@ void
 cbd_key_fields(Cform *f, int context, void *v)
 {
   char *insert = buf + strlen(buf);
-#define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,v); } /*(t,vp,qid)*/
+#define fpr(c,x) if(f->f.x){sprintf(insert,"%c%s",c,f->f.x); cbdact(buf,context,c,v); }
   if (f->f.oform)
     {
       sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
