@@ -122,12 +122,13 @@ psu_ngram(List *cgps)
 }
 
 void
-cbd_fw_psu_fields(Entry *ep, Parts *p, Cform *ff, cbdfwfunc h)
+cbd_fw_psu_fields(int context, Parts *p, Cform *ff, cbdfwfunc h)
 {
   Cform f;
   memset(&f, '\0', sizeof(Cform));
   f = ff[0]; /* clone what was set as the base PSU form */
   f.e = ff[0].e;
+  f.s = ff[0].s;
   f.f.norm = ff[0].f.norm = psu_norm(ff, 1+list_len(p->cgps));
   f.f.stem = ff[0].f.stem = psu_stem(ff, 1+list_len(p->cgps));
   f.f.base = ff[0].f.base = psu_base(ff, 1+list_len(p->cgps));
@@ -135,7 +136,20 @@ cbd_fw_psu_fields(Entry *ep, Parts *p, Cform *ff, cbdfwfunc h)
   f.f.morph = ff[0].f.morph = psu_morph(ff, 1+list_len(p->cgps));
   f.f.morph2 = ff[0].f.morph2 = psu_morph2(ff, 1+list_len(p->cgps));
 
-  h(&f, CBD_FW_EF, &ff[0]);
+  h(&f, context=='e' ? CBD_FW_EF : CBD_FW_SF, &ff[0]);
+}
+
+/* Convert ff[1] .. ff[last()] to an array of Form * */
+static Form **
+psu_parts(Cform *ff, int len)
+{
+  int i;
+  Form **fpp = calloc(len, sizeof(Form*));
+  for (i = 1; i < len; ++i)
+    fpp[i-1] = &ff[i].f;
+  fpp[i] = NULL;
+
+  return fpp;
 }
 
 static void
@@ -180,6 +194,9 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       ff[0].f.gw = ep->cgp->gw;
       ff[0].f.pos = ep->cgp->pos;
       ff[0].f.psu_ngram = psu_ngram(p->cgps);
+      bit_set(ff[0].f.flags, FORM_FLAGS_IS_PSU);
+      ff[0].f.parts = psu_parts(ff, 1+list_len(p->cgps));
+
       /*fprintf(stderr, "FW_PE: ");*/
 
       /*** NO PSU_SIG CREATION HERE--only for s_heads ***/
@@ -190,9 +207,11 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       /* Only do this once because the CF[GW]POS doesn't vary across
 	 parts permutation */
       if (!e_done++)
-	h(&ff[0], CBD_FW_PE, &ff[0]);
+	h(&ff[0], CBD_FW_PE, ep);
 
-      cbd_fw_psu_fields(ep, p, ff, h);
+      cbd_fw_psu_fields('e', p, ff, h);
+
+      free(ff[0].f.parts);
     }
 
   for (ff = list_first(s_heads); ff; ff = list_next(s_heads))
@@ -203,36 +222,27 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       ff[0].f.gw = ep->cgp->gw;
       ff[0].f.pos = ep->cgp->pos;
       ff[0].f.psu_ngram = psu_ngram(p->cgps);
-      /*fprintf(stderr, "FW_PE: ");*/
+
+      bit_set(ff[0].f.flags, FORM_FLAGS_IS_PSU);
+      ff[0].f.parts = psu_parts(ff, 1+list_len(p->cgps));
 
       /*** PSU_SIG CREATION HERE because the form component varies ***/
       ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
 
       /* psu_sig */
 
-#if 0
-      /* Only do this once because the CF[GW]POS doesn't vary across
-	 parts permutation */
-      if (!e_done++)
-	h(&ff[0], CBD_FW_PE, &ff[0]);
-#endif
-
-      /* no field processing here until we do per-@sense @forms */
-      /*cbd_fw_psu_fields(ep, p, ff, h);*/ 
-      
       for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
 	{
-	  int s_done = 0;
 	  ff[0].s = sp;
 	  ff[0].f.sense = sp->mng;
 	  ff[0].f.epos = sp->pos;
 
-	  /*fprintf(stderr, "FW_PS parts: ");*/
-	  /* Only do this once because the CF[GW//SENSE]POS'EPOS
-	     doesn't vary across parts permutation */
-	  if (!s_done++)
-	    h(&ff[0], CBD_FW_PS, &ff[0]);
+	  h(&ff[0], CBD_FW_PS, sp);
+	  cbd_fw_psu_fields('s', p, ff, h);
+	  h(&ff[0], CBD_FW_SE, sp);
 	}
+
+      free(ff[0].f.parts);
     }
 }
 

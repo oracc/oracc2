@@ -206,7 +206,6 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
       int hfield = hfields[field];
       if (hfield >= 0)
 	{
-	  /* We don't collect sense-specific field data yet */
 	  if ('e' == context)
 	    {
 	      kis_hdata(((Cform*)v)->e->hshary[hfield], k, v);
@@ -217,9 +216,7 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 	    {
 	      kis_hdata(((Cform*)v)->s->hshary[hfield], k, v);
 	      if ('=' == field)
-		{
-		  norm_nmfm_hash(nmfm_s, v);
-		}
+		norm_nmfm_hash(nmfm_s, v);
 	    }
 	}
       else
@@ -273,7 +270,6 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
       break;
     case CBD_FW_PS:
       cbd_key_cgpse(f, v, NULL);
-      /*cbd_key_psu_fields(f, 'e', f);*//* Don't do this yet; maybe one day */
       break;
     }
 }
