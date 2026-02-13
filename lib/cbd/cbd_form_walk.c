@@ -297,8 +297,8 @@ cbd_fw_fields(List *forms, Cform *f, int context, void *vp, cbdfwfunc h)
       f->f.flags = fp->f.flags;
       f->f.parts = fp->f.parts;
 
-      if ('s'==context && !fp->s)
-	f->s = vp;
+      if ('s'==context)
+	f->s = fp->s = vp;
 
       h(&f[0], context=='e' ? CBD_FW_EF : CBD_FW_SF, fp);
     }

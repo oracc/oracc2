@@ -8,10 +8,12 @@
 #include "gx.h"
 #include "o_jox_fncs.c"
 
+static int sense_context;
+
 locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
 static void o_jox_proplist(const char *p);
-static void o_jox_field(Entry *e, Efield ef, Field **f, const char *tag);
+static void o_jox_field(void *e, Efield ef, Field **f, const char *tag);
 
 #define f0()
 #define f1(a)
@@ -76,10 +78,18 @@ o_jox_allow(struct entry *e)
 }
 
 static void
-o_jox_bases(struct entry *e)
+o_jox_bases(void *e)
 {
-  if (e->hshary[EFLD_BASE])
-    o_jox_field(e, EFLD_BASE, e->hshary[EFLD_BASE], "base");
+  if (sense_context)
+    {
+      if (((Sense*)e)->hshary[EFLD_BASE])
+	o_jox_field(e, EFLD_BASE, ((Sense*)e)->hshary[EFLD_BASE], "base");
+    }
+  else
+    {
+      if (((Entry*)e)->hshary[EFLD_BASE])
+	o_jox_field(e, EFLD_BASE, ((Entry*)e)->hshary[EFLD_BASE], "base");
+    }
 }
 
 static void
@@ -197,12 +207,15 @@ nmfm_hash(Field **f)
   Hash *h = hash_create(10);
   int i;
   for (i = 0; f[i]; ++i)
-    hash_add(h, (uccp)f[i]->k[1], f[i]);
+    {
+      fprintf(stderr, "nmfm_hash: adding %s\n", f[i]->k[1]);
+      hash_add(h, (uccp)f[i]->k[1], f[i]);
+    }
   return h;
 }
 
 static void
-o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
+o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 {
   if (!f || !f[0])
     return;
@@ -214,8 +227,8 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 
   Hash *hnmfm = NULL;
   if (EFLD_NORM == ef)
-    hnmfm = nmfm_hash(e->hshary[EFLD_NMFM]);
-  
+    hnmfm = nmfm_hash(sense_context ? ((Sense*)e)->hshary[EFLD_NMFM] : ((Entry*)e)->hshary[EFLD_NMFM]);
+
   joxer_ea(xo_loc, tagses, NULL);
   for (i = 0; f[i]; ++i)
     {
@@ -230,10 +243,10 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 	      {
 		joxer_ea(xo_loc, tag,
 			 ef==EFLD_FORM ? ratts_form(f[i], O_XML) : ratts_base(f[i], O_XML));
-		Gt *t = ((Cform*)f[i]->data)->t;
+		Gt *t = ef==EFLD_FORM ? ((Cform*)f[i]->data)->t : ((Cform*)f[i]->data)->b;
 		if (t)
 		  {
-		    joxer_et(xo_loc, "s", NULL, (ccp)t->sign);
+		    joxer_et(xo_loc,"s", NULL, (ccp)t->sign);
 		    joxer_ea(xo_loc,"t", NULL);
 		    grx_jox(t->gdl, NULL);
 		    joxer_ee(xo_loc,"t");
@@ -247,7 +260,8 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 		  {
 		    joxer_ea(xo_loc, tag, ratts_norm(f[i], O_XML));
 		    joxer_et(xo_loc, "n", NULL, (ccp)((Cform*)f[i]->data)->f.norm);
-		    o_jox_nmfms(f[i], hnmfm);
+		    if (f[i]->user)
+		      o_jox_nmfms(f[i], hnmfm);
 		    joxer_ee(xo_loc, tag);
 		  }
 	      }
@@ -263,12 +277,22 @@ o_jox_field(Entry *e, Efield ef, Field **f, const char *tag)
 }
 
 static void
-o_jox_forms(struct entry *e)
+o_jox_forms(void *e)
 {
-  if (e->hshary[EFLD_FORM])
-    o_jox_field(e, EFLD_FORM, e->hshary[EFLD_FORM], "form");
-  if (e->hshary[EFLD_NORM])
-    o_jox_field(e, EFLD_NORM, e->hshary[EFLD_NORM], "norm");
+  if (sense_context)
+    {
+      if (((Sense*)e)->hshary[EFLD_FORM])
+	o_jox_field(e, EFLD_FORM, ((Sense*)e)->hshary[EFLD_FORM], "form");
+      if (((Sense*)e)->hshary[EFLD_NORM])
+	o_jox_field(e, EFLD_NORM, ((Sense*)e)->hshary[EFLD_NORM], "norm");
+    }
+  else
+    {
+      if (((Entry*)e)->hshary[EFLD_FORM])
+	o_jox_field(e, EFLD_FORM, ((Entry*)e)->hshary[EFLD_FORM], "form");
+      if (((Entry*)e)->hshary[EFLD_NORM])
+	o_jox_field(e, EFLD_NORM, ((Entry*)e)->hshary[EFLD_NORM], "norm");
+    }
 }
 
 static void
@@ -384,6 +408,8 @@ o_jox_root(struct entry *e)
 static void
 o_jox_senses(struct entry *e)
 {
+  sense_context = 1;
+
   joxer_ea(xo_loc,"senses",NULL);
 
   Sense *sp;
@@ -410,6 +436,11 @@ o_jox_senses(struct entry *e)
       joxer_ea(xo_loc,"sense",r);
       joxer_et(xo_loc, "pos", NULL, (ccp)sp->pos);
       joxer_et(xo_loc, "mng", NULL, (ccp)sp->mng);
+
+      o_jox_bases(sp);
+
+      o_jox_forms(sp);
+
       joxer_ee(xo_loc,"sense");      
 #if 0
       if (sp->ed)
@@ -431,8 +462,8 @@ o_jox_senses(struct entry *e)
       if (sp->disc)
 	f1(/* @disc */ sp->disc);
     }
-  
   joxer_ee(xo_loc,"senses");
+  sense_context = 0;
 }
 
 static void

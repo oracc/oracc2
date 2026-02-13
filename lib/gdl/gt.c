@@ -42,6 +42,9 @@ gt_gdl(Mloc *locp, unsigned char *s)
 Gt *
 gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 {
+  if (!t)
+    return NULL;
+
   Gt *tokp = NULL;
   
   if (!(tokp = hash_find(gtcfg.h, t)))

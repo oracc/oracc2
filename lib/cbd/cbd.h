@@ -143,7 +143,8 @@ typedef struct cform {
   const char *id;
   struct entry *e;
   struct sense *s;
-  struct gdl_token *t;
+  struct gdl_token *t; /* form token */
+  struct gdl_token *b; /* base token */
   Form f;
 } Cform;
 

@@ -2,13 +2,13 @@
 
 static void o_jox_aliases(struct entry *e);
 static void o_jox_allow(struct entry *e);
-static void o_jox_bases(struct entry *e);
+static void o_jox_bases(void *e);
 static void o_jox_cbd(struct cbd *c);
 static void o_jox_dcfs(struct entry *c);
 static void o_jox_end_cbd(struct cbd *c);
 static void o_jox_end_entry(struct entry *e);
 static void o_jox_entry(struct entry *e);
-static void o_jox_forms(struct entry *e);
+static void o_jox_forms(void *e);
 static void o_jox_meta(struct entry *e);
 static void o_jox_parts(struct entry *e);
 static void o_jox_phon(struct entry *e);

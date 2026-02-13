@@ -151,7 +151,7 @@ cbd.sense.model = attribute n      { text }? ,
 	     attribute oid    { text }? ,
 	     attribute xml:id { text }? ,
 	     kis?,
-	     pos, mng
+	     pos, mng, lang_block?
 
 sense.model = attribute sid    { text }? ,
 	      attribute sok    { text }? ,

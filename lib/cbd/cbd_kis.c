@@ -17,11 +17,12 @@
 Efield hfields[128];
 static Cbd *my_c;
 static Kis *my_k;
-static Hash *nmfm_hash;
+static Hash *nmfm_e, *nmfm_s;
 
 static Field *curr_field = NULL;
 
-static void cbd_kis_wrapup(Cbd_fw_type t, Entry *v);
+static void cbd_kis_wrapup_e(Cbd_fw_type t, Entry *v);
+static void cbd_kis_wrapup_s(Cbd_fw_type t, Sense *v);
 
 /** Kis look up is done via a pointer which is set to kis_data_no_kis
  *  if there is no tokl.kis
@@ -59,7 +60,7 @@ kis_data_ye_kis(const char *k)
 const char *
 cbd_field_id(Entry *ep)
 {
-  static char id[32], *ins;
+  static char id[32], *ins = NULL;
   static int n = 0;
   if (ep)
     {
@@ -121,7 +122,7 @@ kis_data_debug(Kis_data kdp)
 /* Remember the Cform for each FORM that occurs with a given NORM by
    making a hash with key=NORM val=NmFm */
 static void
-norm_nmfm_hash(Cform *c)
+norm_nmfm_hash(Hash *nmfm_hash, Cform *c)
 {
   Hash *lp = hash_find(nmfm_hash, c->f.norm);
   if (!lp)
@@ -150,7 +151,7 @@ norm_nmfm_data(const char *normk, NmFm *nfp)
  * store it in the NORM field->user
  */
 static void
-cbd_nmfm_wrap(Field **f)
+cbd_nmfm_wrap(Hash *nmfm_hash, Field **f)
 {
   int i;
   for (i = 0; f[i]; ++i)
@@ -172,7 +173,7 @@ cbd_nmfm_wrap(Field **f)
 	fprintf(stderr, "cbd_nmfm_wrap: internal error: %s not found or empty list in nmfm_hash\n",
 		((Cform*)f[i]->data)->f.norm);
     }
-  hash_free(nmfm_hash, NULL);
+  /*hash_free(nmfm_hash, NULL);*/
 }
 
 /* Handler function used by cbd_key
@@ -196,26 +197,28 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
     {
       if (!((Sense*)v)->k)
 	((Sense*)v)->k = kis_data(k);
+      int i;
+      for (i = 0; i < EFLD_TOP; ++i)
+	((Sense*)v)->hshary[i] = hash_create(128);
     }
   else
     {
       int hfield = hfields[field];
       if (hfield >= 0)
 	{
-#if 1
 	  /* We don't collect sense-specific field data yet */
 	  if ('e' == context)
 	    {
 	      kis_hdata(((Cform*)v)->e->hshary[hfield], k, v);
 	      if ('=' == field)
-		norm_nmfm_hash(v);
+		norm_nmfm_hash(nmfm_e, v);
 	    }
-#else
-	  kis_hdata(context=='e'
-		    ?((Cform*)v)->e->hshary[hfield]
-	    	    :((Cform*)v)->s->hshary[hfield],
-		    k, v);
-#endif
+	  else
+	    {
+	      kis_hdata(((Cform*)v)->s->hshary[hfield], k, v);
+	      if ('=' == field)
+		norm_nmfm_hash(nmfm_s, v);
+	    }
 	}
       else
 	fprintf(stderr, "cbd_kis_key_h: internal error: unknown field '%c'\n", field);
@@ -231,22 +234,29 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
   switch (t)
     {
     case CBD_FW_E:
-      nmfm_hash = hash_create(10);
       cbd_key_cgp(f, v, NULL);
+      nmfm_e = hash_create(10);
+      cbd_field_id(v); /* do this early because we do sense wrapup before entry wrapup */
       break;
     case CBD_FW_EF:
       cbd_key_fields(f, 'e', v);
       break;
     case CBD_FW_S:
       cbd_key_cgpse(f, v, NULL);
+      nmfm_s = hash_create(10);
       break;
     case CBD_FW_SF:
       cbd_key_fields(f, 's', v);
       break;
     case CBD_FW_EE:
-      cbd_kis_wrapup(t, v);
+      cbd_kis_wrapup_e(t, v);
+      if (((Entry*)v)->hshary[EFLD_NORM])
+	cbd_nmfm_wrap(nmfm_e, ((Entry*)v)->hshary[EFLD_NORM]);
       break;
     case CBD_FW_SE:
+      cbd_kis_wrapup_s(t, v);
+      if (((Sense*)v)->hshary[EFLD_NORM])
+	cbd_nmfm_wrap(nmfm_s, ((Sense*)v)->hshary[EFLD_NORM]);
       break;
     case CBD_FW_PE:
       cbd_key_cgp(f, v, NULL);
@@ -304,42 +314,51 @@ cbd_kis_periods(Kis *k, unsigned const char *key)
  * marshalled for further processing.
  */
 static void
-cbd_kis_wrapup(Cbd_fw_type t, Entry *ep)
+cbd_kis_wrapup_e(Cbd_fw_type t, Entry *ep)
 {
   if (ep->k)
     {
       kisdata_show_one(ep->k, stderr);
       if (ep->k[0] && my_k)
 	ep->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)ep->k[1]);
-      cbd_field_id(ep);
+      int i;
+      /* EFLD_PERD must be Efield == 0 for this to work */
+      for (i = 1; i < EFLD_TOP; ++i)
+	{
+	  if (ep->hshary[i])
+	    {
+	      void *a = kis_data_h2k(ep->hshary[i], i);
+	      hash_free(ep->hshary[i], NULL);
+	      cbd_field_ids(a);
+	      ep->hshary[i] = a;
+	      kisdata_show_ary(ep->hshary[i], stderr);
+	    }
+	}
     }
+}
 
-  Sense *sp;
-  for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
+static void
+cbd_kis_wrapup_s(Cbd_fw_type t, Sense *sp)
+{
+  if (sp->k)
     {
-      if (sp->k)
+      kisdata_show_one(sp->k, stderr);
+      if (sp->k[0] && my_k)
+	sp->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)sp->k[1]);
+      /* EFLD_PERD must be Efield == 0 for this to work */
+      int i;
+      for (i = 1; i < EFLD_TOP; ++i)
 	{
-	  kisdata_show_one(sp->k, stderr);
-	  if (sp->k[0] && my_k)
-	    sp->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)sp->k[1]);
+	  if (sp->hshary[i])
+	    {
+	      void *a = kis_data_h2k(sp->hshary[i], i);
+	      hash_free(sp->hshary[i], NULL);
+	      cbd_field_ids(a);
+	      sp->hshary[i] = a;
+	      kisdata_show_ary(sp->hshary[i], stderr);
+	    }
 	}
-    }
-  
-  int i;
-  /* EFLD_PERD must be Efield == 0 for this to work */
-  for (i = 1; i < EFLD_TOP; ++i)
-    {
-      if (ep->hshary[i])
-	{
-	  void *a = kis_data_h2k(ep->hshary[i], i);
-	  hash_free(ep->hshary[i], NULL);
-	  cbd_field_ids(a);
-	  ep->hshary[i] = a;
-	  kisdata_show_ary(ep->hshary[i], stderr);
-	  if (EFLD_NORM == i)
-	    cbd_nmfm_wrap(ep->hshary[EFLD_NORM]);
-	}
-    }
+    } 
 }
 
 void

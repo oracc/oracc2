@@ -52,7 +52,7 @@ cbd_key_period(Cform *f, int context, void *v, const char *period)
   *insert = '\0';
 }
 
-/* This routine assumes it has been caller is cbd_key_cgp or
+/* This routine assumes it has been called after cbd_key_cgp or
  * cbd_key_cgpse
  *
  * When called from cbd_fw_fields v is the source Cform and f is the temporary Cform.
@@ -137,8 +137,6 @@ cbd_key_cgp(Cform *f, Entry *e, const char *period)
     cbd_key_period(f, 'e', e, period);
 }
 
-/* This routine assumes it has been called immediately after
-   cbd_key_cgp */
 void
 cbd_key_cgpse(Cform *f, Sense *s, const char *period)
 {
