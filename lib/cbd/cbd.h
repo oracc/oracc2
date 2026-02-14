@@ -430,6 +430,8 @@ extern void cbd_kis(Cbd *c, Kis *k);
 extern Field *cbd_field(Kis_data k, void*v);
 extern const char *cbd_field_id(Entry *ep);
 
+extern void cbd_kis_data_log(FILE *fp);
+
 extern void cbd_oid_init(void);
 extern void cbd_oid_e(Entry *e);
 extern void cbd_oid_s(Sense *s);

@@ -30,6 +30,8 @@ extern int cbd_flex_debug;
 
 int jsn_output = 0, xml_output = 1;
 
+const char *log_file;
+
 #ifdef __APPLE__
 int cbddebug;
 #else
@@ -377,7 +379,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:i:o:chjJkK::p:rtTxXv");
+  options(argc,argv,"A:I:O:i:o:chjJkK::l::p:rtTxXv");
 
   if (status)
     {
@@ -385,6 +387,15 @@ main(int argc, char **argv)
       exit(1);
     }
 
+  if (log_file)
+    {
+      FILE *log_fp = xfopen(log_file, "w");
+      if (log_fp)
+	cbd_kis_data_log(log_fp);
+      else
+	exit(1);
+    }
+  
   if (argv[optind] && !input_file)
     input_file = argv[optind];
   
@@ -479,6 +490,12 @@ int opts(int och, const char *oarg)
       keys = 1;
       if (optarg)
 	kis_file = optarg;
+      break;
+    case 'l':
+      if (optarg)
+	log_file = optarg;
+      else
+	log_file = "gx.log";
       break;
     case 'n':
       break;

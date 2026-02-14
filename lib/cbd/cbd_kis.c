@@ -2,6 +2,8 @@
 #include <roco.h>
 #include "cbd.h"
 
+static FILE *kd_log_fp;
+
 /* cbd_kis.c: add Kis references to a Cbd by generating keys and
  * looking them up in the Kis.
  *
@@ -28,6 +30,12 @@ static void cbd_kis_wrapup_s(Cbd_fw_type t, Sense *v);
  *  if there is no tokl.kis
  */
 static Kis_data (*kis_data)(const char *);
+
+void
+cbd_kis_data_log(FILE *fp)
+{
+  kd_log_fp = fp;
+}
 
 static Kis_data
 kis_data_no_kis(const char *k)
@@ -141,7 +149,8 @@ norm_nmfm_data(const char *normk, NmFm *nfp)
 {
   char nmfmk[strlen(normk)+strlen((ccp)nfp->form->f.form)+2];
   sprintf(nmfmk, "%s=%s", normk, (ccp)nfp->form->f.form);
-  fprintf(stderr, "norm_nmfm_data: normk = %s\n", nmfmk);
+  if (kd_log_fp)
+    fprintf(kd_log_fp, "norm_nmfm_data: normk = %s\n", nmfmk);
   nfp->nmfmk = (ccp)pool_copy((uccp)nmfmk, csetp->pool);
   return nfp;
 }
@@ -286,20 +295,23 @@ kis_data_h2k(Hash *h, Efield e)
 }
 
 void
-kisdata_show_one(Kis_data k, FILE *fp)
+kisdata_show_one(Kis_data k)
 {
-  if (k[0])
-    fprintf(stderr, "%s %s\n", k[1], kis_data_debug(k));
-  else
-    fprintf(stderr, "%s (null) 0x 0%%\n", k[1]);
+  if (kd_log_fp)
+    {
+      if (k[0])
+	fprintf(kd_log_fp, "%s %s\n", k[1], kis_data_debug(k));
+      else
+	fprintf(kd_log_fp, "%s (null) 0x 0%%\n", k[1]);
+    }
 }
 
 void
-kisdata_show_ary(Field **f, FILE *fp)
+kisdata_show_ary(Field **f)
 {
   int i;
   for (i = 0; f[i]; ++i)
-    kisdata_show_one(f[i]->k, fp);
+    kisdata_show_one(f[i]->k);
 }
 
 /** Kis periods are compiled in lib/kis/kis.c immediately after the
@@ -309,10 +321,9 @@ kisdata_show_ary(Field **f, FILE *fp)
 static Field **
 cbd_kis_periods(Kis *k, unsigned const char *key)
 {
-  /*fprintf(stderr, "cbd_kis_periods: key = ::%s::\n", key);*/
   Field **kdp = hash_find(k->user, key);
   if (kdp)
-    kisdata_show_ary(kdp, stderr);
+    kisdata_show_ary(kdp);
   return kdp;
 }
 
@@ -324,7 +335,7 @@ cbd_kis_wrapup_e(Cbd_fw_type t, Entry *ep)
 {
   if (ep->k)
     {
-      kisdata_show_one(ep->k, stderr);
+      kisdata_show_one(ep->k);
       if (ep->k[0] && my_k)
 	ep->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)ep->k[1]);
       int i;
@@ -337,7 +348,7 @@ cbd_kis_wrapup_e(Cbd_fw_type t, Entry *ep)
 	      hash_free(ep->hshary[i], NULL);
 	      cbd_field_ids(a);
 	      ep->hshary[i] = a;
-	      kisdata_show_ary(ep->hshary[i], stderr);
+	      kisdata_show_ary(ep->hshary[i]);
 	    }
 	}
     }
@@ -348,7 +359,7 @@ cbd_kis_wrapup_s(Cbd_fw_type t, Sense *sp)
 {
   if (sp->k)
     {
-      kisdata_show_one(sp->k, stderr);
+      kisdata_show_one(sp->k);
       if (sp->k[0] && my_k)
 	sp->hshary[EFLD_PERD] = cbd_kis_periods(my_k, (uccp)sp->k[1]);
       /* EFLD_PERD must be Efield == 0 for this to work */
@@ -361,7 +372,7 @@ cbd_kis_wrapup_s(Cbd_fw_type t, Sense *sp)
 	      hash_free(sp->hshary[i], NULL);
 	      cbd_field_ids(a);
 	      sp->hshary[i] = a;
-	      kisdata_show_ary(sp->hshary[i], stderr);
+	      kisdata_show_ary(sp->hshary[i]);
 	    }
 	}
     } 
