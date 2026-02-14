@@ -45,7 +45,7 @@ entry.attr = attribute n      { text }? ,
 	     attribute star   { text }? ,
 	     kis?
 
-entry_block = cgp? , gwls? , mod? , aliases? , (partss|psu.compound)? , discs?
+entry_block = cgp? , gwls? , mod? , aliases? , (partss|psu.compound)? , discs? , periods?
 
 cgp = cf , gw , mng? , pos , epos?
 
@@ -85,6 +85,8 @@ disc.model  = disc.text | disc.html
 disc.text   = text # actually otf:text in future
 
 disc.html   = text # actually html:div in future
+
+periods = element periods { element p { kis? , text }+ }
 
 lang_block  = bases_block? , forms? , norms?
 

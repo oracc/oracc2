@@ -14,6 +14,7 @@ locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
 static void o_jox_proplist(const char *p);
 static void o_jox_field(void *e, Efield ef, Field **f, const char *tag);
+static void o_jox_periods(Entry *e);
 static void o_jox_sigs(Hash *h);
 
 #define f0()
@@ -169,6 +170,7 @@ o_jox_end_cbd(struct cbd *c)
 static void
 o_jox_end_entry(struct entry *e)
 {
+  o_jox_periods(e);
   joxer_ee(xo_loc,"entry");
 }
 
@@ -385,6 +387,25 @@ o_jox_parts(Entry *e)
 	    }
 	}
       joxer_ee(xo_loc,"compound");
+    }
+}
+
+static void
+o_jox_periods(Entry *e)
+{
+  if (e->hshary[0])
+    {
+      joxer_ea(xo_loc, "periods", NULL);
+      int i;
+      Field **ff = e->hshary[0];
+      for (i = 0; ff[i]; ++i)
+	{
+	  Ratts *r = ratts_kis_r(ff[i]->k);
+	  const char *p = strrchr(ff[i]->k[1], (char)1);
+	  p = strchr(p, '/') + 1;
+	  joxer_et(xo_loc, "p", r, p);
+	}
+      joxer_ee(xo_loc, "periods");      
     }
 }
 

@@ -6,9 +6,24 @@
 void
 ratts_kis(List *lp, Kis_data k)
 {
-  list_pair(lp, "icount", kis_cnt(k));
-  list_pair(lp, "ipct", kis_pct(k));
-  list_pair(lp, "xis", kis_tis(k));
+  if (k[0])
+    {
+      list_pair(lp, "icount", kis_cnt(k));
+      list_pair(lp, "ipct", kis_pct(k));
+      list_pair(lp, "xis", kis_tis(k));
+    }
+}
+
+Ratts *
+ratts_kis_r(Kis_data k)
+{
+  if (k[0])
+    {
+      List *lp = list_create(LIST_SINGLE);
+      ratts_kis(lp, k);
+      return ratts_list2ratts(lp);
+    }
+  return NULL;
 }
 
 Ratts *
