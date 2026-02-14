@@ -36,7 +36,8 @@ letter.attr = attribute n { text }
 
 entries  = entry*
 
-entry    =  element entry { entry.attr , entry_block? , lang_block? , sense_block? , meta_block? }
+entry    =  element entry { entry.attr , entry_block? , lang_block? ,
+	    	    	    sense_block? , meta_block? , periods? }
 	       	       	      
 entry.attr = attribute n      { text }? ,
 	     attribute oid    { text }? ,
@@ -45,7 +46,7 @@ entry.attr = attribute n      { text }? ,
 	     attribute star   { text }? ,
 	     kis?
 
-entry_block = cgp? , gwls? , mod? , aliases? , (partss|psu.compound)? , discs? , periods?
+entry_block = cgp? , gwls? , xcpd? , mod? , aliases? , (partss|psu.compound)? , discs?
 
 cgp = cf , gw , mng? , pos , epos?
 
@@ -57,6 +58,8 @@ epos = element epos { text }
 
 gwl  = element gwl  { text } 
 gwls = element gwls { gwl+ }
+
+xcpd = element see-compounds { element xcpd { attribute eref { text } , text }+ }
 
 mod         = element mod { attribute type   { text } ,
 	      	      	    attribute target { text } ,

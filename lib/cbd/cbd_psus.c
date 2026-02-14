@@ -13,6 +13,15 @@ xcbd_find(Entry *ep, unsigned const char *cgp, Cbd *x)
   return NULL;
 }
 
+static void
+psu_index(Entry *part, Entry *psu)
+{
+  List *lp = hash_find(csetp->hpsus, part->cgp->tight);
+  if (!lp)
+    hash_add(csetp->hpsus, part->cgp->tight, (lp = list_create(LIST_SINGLE)));
+  list_add(lp, psu);
+}
+
 /* validate @parts, linking each cgp to its Entry.
  */
 void
@@ -23,6 +32,7 @@ cbd_psus(void)
     {
       Cbd *pcbd = p->owner->owner;
       Cgp *cp;
+      Hash *seen = hash_create(0);
       for (cp = list_first(p->cgps); cp; cp = list_next(p->cgps))
 	{
 	  Entry *ep = hash_find(pcbd->hentries, cp->tight);
@@ -40,6 +50,16 @@ cbd_psus(void)
 				      should be done */
 		}
 	    }
+	  if (cp->owner && !hash_find(seen, cp->owner->cgp->tight))
+	    {
+	      psu_index(cp->owner, p->owner); /* index the current part
+						 as occurring in the
+						 current PSU */
+	      /* if a part occurs more than once in a PSU only index
+		 it once to avoid faffing with uniqing later */
+	      hash_add(seen, cp->owner->cgp->tight, "");
+	    }
 	}
+      hash_free(seen, NULL);  
     }
 }

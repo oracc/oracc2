@@ -649,7 +649,7 @@ cbd_bld_set(void)
   csetp->hgdl = hash_create(1024);
   csetp->lngs = hash_create(8);
   csetp->parts = list_create(LIST_SINGLE);
-  /*csetp->psus = hash_create(1024);*/
+  csetp->hpsus = hash_create(1024);
   csetp->hsiglangs = hash_create(8);
   csetp->cbdmem = memo_init(sizeof(Cbd), 8);
   csetp->cofmem = memo_init(sizeof(Cof), 16);

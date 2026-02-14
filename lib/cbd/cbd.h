@@ -32,7 +32,7 @@ typedef struct cbdset
   Hash *hsiglangs;
   int ntails;
   List *parts;
-  /*Hash *psus;*/
+  Hash *hpsus; /* index of psu-parts to psus they occur in */
   Memo *cbdmem;
   Memo *cofmem;
   Memo *cformsmem;

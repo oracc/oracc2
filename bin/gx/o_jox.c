@@ -16,6 +16,7 @@ static void o_jox_proplist(const char *p);
 static void o_jox_field(void *e, Efield ef, Field **f, const char *tag);
 static void o_jox_periods(Entry *e);
 static void o_jox_sigs(Hash *h);
+static void o_jox_xcpds(Entry *e);
 
 #define f0()
 #define f1(a)
@@ -157,6 +158,7 @@ o_jox_entry(struct entry *e)
   ratts = ratts_one("xml:lang", e->owner->trans ? (ccp)e->owner->trans : "en");
   joxer_et(xo_loc, "gw", ratts, (ccp)e->cgp->gw);
   joxer_et(xo_loc, "pos", NULL, (ccp)e->cgp->pos);
+  o_jox_xcpds(e);
   if (e->disc)
     f1(/* @disc */ e->disc);
 }
@@ -395,17 +397,20 @@ o_jox_periods(Entry *e)
 {
   if (e->hshary[0])
     {
-      joxer_ea(xo_loc, "periods", NULL);
-      int i;
       Field **ff = e->hshary[0];
-      for (i = 0; ff[i]; ++i)
+      if (ff[0])
 	{
-	  Ratts *r = ratts_kis_r(ff[i]->k);
-	  const char *p = strrchr(ff[i]->k[1], (char)1);
-	  p = strchr(p, '/') + 1;
-	  joxer_et(xo_loc, "p", r, p);
+	  joxer_ea(xo_loc, "periods", NULL);
+	  int i;
+	  for (i = 0; ff[i]; ++i)
+	    {
+	      Ratts *r = ratts_kis_r(ff[i]->k);
+	      const char *p = strrchr(ff[i]->k[1], (char)1);
+	      p = strchr(p, '/') + 1;
+	      joxer_et(xo_loc, "p", r, p);
+	    }
+	  joxer_ee(xo_loc, "periods");
 	}
-      joxer_ee(xo_loc, "periods");      
     }
 }
 
@@ -519,4 +524,31 @@ o_jox_stems(struct entry *e)
       f1(stem);
     }
 #endif
+}
+
+static int
+xcpd_cmp(const void *a, const void *b)
+{
+  Entry *ea = *(Entry**)a;
+  Entry *eb = *(Entry**)b;
+  return strcmp((ccp)ea->cgp->tight, (ccp)eb->cgp->tight);
+}
+
+static void
+o_jox_xcpds(Entry *e)
+{
+  List *lp = hash_find(csetp->hpsus, e->cgp->tight);
+  if (lp)
+    {
+      joxer_ea(xo_loc, "see-compounds", NULL);
+      int i, n;
+      Entry **epp = (Entry**)list2array_c(lp, &n);
+      qsort(epp, n, sizeof(Entry*), xcpd_cmp);
+      for (i = 0; i < n; ++i)
+	{
+	  const char *r[3] = { "eref" , epp[i]->oid, NULL };
+	  joxer_et(xo_loc, "xcpd", rnvval_aa_ccpp(r), (ccp)epp[i]->cgp->tight);
+	}
+      joxer_ee(xo_loc, "see-compounds");
+    }
 }
