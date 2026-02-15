@@ -132,6 +132,8 @@ cbd_fw_psu_fields(int context, Parts *p, Cform *ff, cbdfwfunc h)
   f.f.norm = ff[0].f.norm = psu_norm(ff, 1+list_len(p->cgps));
   f.f.stem = ff[0].f.stem = psu_stem(ff, 1+list_len(p->cgps));
   f.f.base = ff[0].f.base = psu_base(ff, 1+list_len(p->cgps));
+  if (f.f.base)
+    f.b = ff[0].b = gt_token(&ff[0].l, (ucp)f.f.base, 0, NULL);
   f.f.cont = ff[0].f.cont = psu_cont(ff, 1+list_len(p->cgps));
   f.f.morph = ff[0].f.morph = psu_morph(ff, 1+list_len(p->cgps));
   f.f.morph2 = ff[0].f.morph2 = psu_morph2(ff, 1+list_len(p->cgps));

@@ -2,8 +2,6 @@
 #include <roco.h>
 #include "cbd.h"
 
-static FILE *kd_log_fp;
-
 /* cbd_kis.c: add Kis references to a Cbd by generating keys and
  * looking them up in the Kis.
  *
@@ -30,12 +28,6 @@ static void cbd_kis_wrapup_s(Cbd_fw_type t, Sense *v);
  *  if there is no tokl.kis
  */
 static Kis_data (*kis_data)(const char *);
-
-void
-cbd_kis_data_log(FILE *fp)
-{
-  kd_log_fp = fp;
-}
 
 static Kis_data
 kis_data_no_kis(const char *k)
@@ -149,8 +141,8 @@ norm_nmfm_data(const char *normk, NmFm *nfp)
 {
   char nmfmk[strlen(normk)+strlen((ccp)nfp->form->f.form)+2];
   sprintf(nmfmk, "%s=%s", normk, (ccp)nfp->form->f.form);
-  if (kd_log_fp)
-    fprintf(kd_log_fp, "norm_nmfm_data: normk = %s\n", nmfmk);
+  if (cbd_log_fp)
+    fprintf(cbd_log_fp, "norm_nmfm_data: normk = %s\n", nmfmk);
   nfp->nmfmk = (ccp)pool_copy((uccp)nmfmk, csetp->pool);
   return nfp;
 }
@@ -297,12 +289,12 @@ kis_data_h2k(Hash *h, Efield e)
 void
 kisdata_show_one(Kis_data k)
 {
-  if (kd_log_fp)
+  if (cbd_log_fp)
     {
       if (k[0])
-	fprintf(kd_log_fp, "%s %s\n", k[1], kis_data_debug(k));
+	fprintf(cbd_log_fp, "%s %s\n", k[1], kis_data_debug(k));
       else
-	fprintf(kd_log_fp, "%s (null) 0x 0%%\n", k[1]);
+	fprintf(cbd_log_fp, "%s (null) 0x 0%%\n", k[1]);
     }
 }
 

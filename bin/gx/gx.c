@@ -31,6 +31,7 @@ extern int cbd_flex_debug;
 int jsn_output = 0, xml_output = 1;
 
 const char *log_file;
+FILE *log_fp;
 
 #ifdef __APPLE__
 int cbddebug;
@@ -389,9 +390,9 @@ main(int argc, char **argv)
 
   if (log_file)
     {
-      FILE *log_fp = xfopen(log_file, "w");
+      log_fp = xfopen(log_file, "w");
       if (log_fp)
-	cbd_kis_data_log(log_fp);
+	cbd_log(log_fp);
       else
 	exit(1);
     }

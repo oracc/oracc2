@@ -19,7 +19,7 @@ extern int out_stdout;
 
 extern const char *file;
 
-extern FILE *f_xml;
+extern FILE *f_xml, *log_fp;
 
 enum o_mode { O_JSN , O_XML };
 

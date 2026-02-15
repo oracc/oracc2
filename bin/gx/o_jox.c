@@ -213,7 +213,7 @@ nmfm_hash(Field **f)
   int i;
   for (i = 0; f[i]; ++i)
     {
-      fprintf(stderr, "nmfm_hash: adding %s\n", f[i]->k[1]);
+      fprintf(log_fp, "nmfm_hash: adding %s\n", f[i]->k[1]);
       hash_add(h, (uccp)f[i]->k[1], f[i]);
     }
   return h;

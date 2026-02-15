@@ -6,6 +6,14 @@
 static char *buf = NULL;
 static int buf_alloced = 0;
 
+FILE *cbd_log_fp = NULL;
+
+void
+cbd_log(FILE *fp)
+{
+  cbd_log_fp = fp;
+}
+
 static cbdactionfunc cbdact;
 void
 cbd_key_set_action(cbdactionfunc f)
