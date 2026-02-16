@@ -146,7 +146,10 @@ static Form **
 psu_parts(Cform *ff, int len)
 {
   int i;
-  Form **fpp = calloc(len, sizeof(Form*));
+  Form **fpp = calloc(len+1, sizeof(Form*)); /* len comes in as # of
+						parts + 1 for PSU; add
+						another 1 for NULL
+						termination */
   for (i = 1; i < len; ++i)
     fpp[i-1] = &ff[i].f;
   fpp[i] = NULL;

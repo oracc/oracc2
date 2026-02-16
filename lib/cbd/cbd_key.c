@@ -145,9 +145,9 @@ void
 cbd_key_cgp(Cform *f, Entry *e, const char *period)
 {
   int len = cbd_key_form_len(f) + 3; /* ^A^A\0 */
-  if (buf_alloced < len)
+  if (buf_alloced <= len)
     {
-      buf_alloced = len;
+      buf_alloced = len * 2;
       buf = realloc(buf, buf_alloced);
     }
   sprintf(buf, "%%%s:%s[%s]%s%c%c", f->f.lang, f->f.cf, f->f.gw, f->f.pos, 1, 1);
