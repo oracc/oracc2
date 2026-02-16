@@ -267,6 +267,9 @@ o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 		  {
 		    joxer_ea(xo_loc, tag, ratts_norm(f[i], O_XML));
 		    joxer_et(xo_loc, "n", NULL, (ccp)((Cform*)f[i]->data)->f.norm);
+		    if (log_fp)
+		      fprintf(log_fp, "o_jox_nmfms key %s has f->user = %p\n",
+			      f[i]->k[1], f[i]->user);
 		    if (f[i]->user)
 		      o_jox_nmfms(f[i], hnmfm);
 		    joxer_ee(xo_loc, tag);
