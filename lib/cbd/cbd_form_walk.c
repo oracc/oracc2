@@ -63,7 +63,7 @@ psu_permute_s(List *heads, Cgp *cp, int ffi, int nbytes)
   int i, len = 0; \
   for (i = 1; i < n; ++i) \
     if (xff[i].f.xfld) \
-      len += strlen((ccp)xff[i].f.xfld);	\
+      len += strlen((ccp)xff[i].f.xfld); \
     else \
       return NULL; \
   len += n; \
@@ -219,6 +219,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
   for (ff = list_first(s_heads); ff; ff = list_next(s_heads))
     {
       ff[0].e = ep;
+      ff[0].l = p->l;
       ff[0].f.lang = ff[1].f.lang;
       ff[0].f.cf = ep->cgp->cf;
       ff[0].f.gw = ep->cgp->gw;
@@ -230,6 +231,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 
       /*** PSU_SIG CREATION HERE because the form component varies ***/
       ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
+      ff[0].t = gt_token(&ff[0].l, (ucp)ff[0].f.form, 0, NULL);
 
       /* psu_sig */
 
