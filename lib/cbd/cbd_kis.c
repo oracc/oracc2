@@ -166,7 +166,8 @@ cbd_nmfm_wrap(Hash *nmfm_hash, Field **f)
 	  for (j = 0; kk[j]; ++j)
 	    {
 	      NmFm *nfp = hash_find(lp, (uccp)kk[j]);
-	      list_add(nmfm_list, norm_nmfm_data(f[i]->k[1], nfp));
+	      if (!nfp->nmfmk)
+		list_add(nmfm_list, norm_nmfm_data(f[i]->k[1], nfp));
 	    }
 	  f[i]->user = list2array(nmfm_list);
 	}
