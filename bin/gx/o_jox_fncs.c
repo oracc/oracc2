@@ -41,7 +41,7 @@ static iterator_fnc *
 ifnc_init(void)
 {
   int i;
-  fncs = calloc(if_top, sizeof(iterator_fnc));
+  fncs = calloc(1+if_top, sizeof(iterator_fnc));
   for (i = 0; i < if_top; ++i)
     fncs[imap[i].ix] = imap[i].fnc;
   return fncs;

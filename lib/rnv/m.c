@@ -42,7 +42,7 @@ void m_free(void *p) {
 }
 
 void *m_alloc(int length,int size) {
-  void *p=malloc(length*size);
+  void *p=calloc(length,size);
   if(p==NULL) {
     (*er_printf)("failed to allocate %i bytes of memory\n",length*size);
     exit(1);

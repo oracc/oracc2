@@ -916,6 +916,7 @@ static void add_well_known_nss(int dflt) {
 static int file(struct rnc_source *sp,int nsuri) {
   int ret=0;
   struct rnc_source src;
+  memset(&src, '\0', sizeof(struct rnc_source));
   add_well_known_nss(nsuri);
   if(rnc_open(&src,path)!=-1) {
     ret=topLevel(&src);
