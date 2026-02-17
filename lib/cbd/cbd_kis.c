@@ -286,9 +286,11 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
       break;
     case CBD_FW_PE:
       cbd_key_cgp(f, v, NULL);
+      nmfm_e = hash_create(10);
       break;
     case CBD_FW_PS:
       cbd_key_cgpse(f, v, NULL);
+      nmfm_s = hash_create(10);
       break;
     }
 }
