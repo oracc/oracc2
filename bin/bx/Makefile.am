@@ -14,7 +14,7 @@ BIBLIB=bib.tab.c bib.lex.c bib_ent.c bib_fld.c \
 
 bx_SOURCES=bx.c bx_bid.c bx_cit.c bx_icf.c bx_icf_full.c \
 	bx_key.c bx_ref.c bx_lib.c ${BIBLIB}
-bx_LDADD = $(xLDADD) $(LD_UNISTRING) -lunistring
+bx_LDADD = $(xLDADD)
 bx_DEPENDENCIES = $(xLDADD)
 
 bib.tab.c bib.tab.h: bib.y bib.l

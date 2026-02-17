@@ -81,7 +81,7 @@ extern int yylex(void);
 
 %%
 
-cbd: 		header entrylist { return(parser_status); }
+cbd: 		header entrylist { cbd_wrapup(); return(parser_status); }
 	|      	header  	 { return(parser_status); }
 	|	/* empty */ 	 { return(parser_status); }
 	;

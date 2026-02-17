@@ -13,7 +13,7 @@ die "$0: .xnn file $xnn_input not readable. Stop.\n" unless -r $xnn_input;
 my $c_output = $xnn_input;
 $c_output =~ s/xnn/c/ || die "$0: .xnn file $xnn_input should end in .xnn extension. Stop.";
 
-my $prefix = `basename $xnn_input .xnn`; chomp $prefix;
+my $prefix = `basename $xnn_input .xnn`; chomp $prefix; $prefix =~ tr/-/_/;
 my $PREFIX = "\U$prefix";
 
 my %ns = (

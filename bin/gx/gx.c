@@ -6,8 +6,8 @@
 #include <lng.h>
 #include <gdl.h>
 #include <gt.h>
-#include <xnn.h>
 #include <cbd.h>
+#include <xnn.h>
 #include <ns-cbd.h>
 #include <cbdyacc.h>
 #include <rnvif.h>
@@ -69,6 +69,7 @@ int sigs = 0;
 int status = 0;
 int stdin_input = 0;
 int stdin_output = 0;
+int summaries = 0;
 int verbose = 0;
 
 const char *file = NULL;
@@ -223,11 +224,6 @@ io_init(void)
 static void
 io_run(void)
 {
-#if 0
-  extern struct xnn_data cbd_tg1_data, cbd_tg2_data, cbd_xc2_data;  
-  extern void rnvtgi_init(struct xnn_data *xdp, const char *rncbase);
-  extern void rnvtgi_term(void);
-#endif
   extern void cbd_l_init(Iome_io  *ip);
   extern void cbd_l_term(void);
   
@@ -236,11 +232,6 @@ io_run(void)
   switch (input_method->type)
     {
     case iome_cbd:
-#if 0
-      rnvtgi_init_err();
-      rnvif_init();
-      rnvtgi_init(&cbd_tg1_data, input_method->name);
-#endif
       cbd_l_init(&input_io);
       curr_cbd = cbd_bld_cbd();
       curr_cbd->file = input_io.fn;
@@ -272,34 +263,6 @@ io_run(void)
 	}
 
       break;
-#if 0
-    case iome_tg2:
-      rnvtgi_init_err();
-      rnvif_init();
-      rnvtgi_init(&cbd_tg2_data, input_method->name);
-      tg2_l_init(&input_io);
-      curr_cbd = bld_cbd();
-      phase = "syn";
-      parse_return = tg2parse();
-      rnvtgi_term();
-      if (parse_return || parser_status)
-	{
-	  mesg_print(stderr);
-	  if (!keepgoing)
-	    {
-	      fprintf(stderr, "gx: exiting after syntax errors\n");
-	      exit(1);
-	    }
-	}
-      tg1_l_term();
-      break;
-    case iome_xc1:
-    case iome_xc2:
-    case iome_x11:
-    case iome_x12:
-    case iome_x21:
-    case iome_x22:
-#endif
     default:
       fprintf(stderr, "gx: %s input not supported\n", input_method->name);
       exit(1);
@@ -317,20 +280,6 @@ io_run(void)
 	  fprintf(stderr, "gx: tg1 output request should use tg2\n");
 	  exit(1);
 	  break;
-#if 0
-	case iome_tg2:
-	  o_tg2(curr_cbd);
-	  break;
-	case iome_xc1:
-	  fprintf(stderr, "gx: xg1 output request should use xc2\n");
-	  exit(1);
-	case iome_xc2:
-	  rnvxml_init_err();
-	  rnvif_init();
-	  rnvxml_init(&cbd_xc2_data, output_method->name);
-	  o_xc2(curr_cbd);
-	  break;
-#endif
 	case iome_x11:
 	case iome_x12:
 	case iome_x21:
@@ -371,6 +320,8 @@ gx_output(void)
 	  joxer_term(xfp,NULL);
 	}
     }
+  if (summaries)
+    gx_summaries(curr_cbd);
 }
 
 int
@@ -511,6 +462,9 @@ int opts(int och, const char *oarg)
       break;
     case 's':
       sigs = 1;
+      break;
+    case 'S':
+      summaries = 1;
       break;
     case 't':
       trace_mode = 1;

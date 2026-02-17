@@ -84,6 +84,7 @@ extern unsigned char *sexify(int n, const char *aszdisz);
 extern unsigned char *utf8ify(unsigned int c);
 
 extern int cmpstringp(const void *p1, const void *p2);
+extern int cmpu8normp(const void *p1, const void *p2);
 
 extern uint32_t hex2int(char *hex);
 extern unsigned char *uhex2utf8(unsigned const char *uhex);

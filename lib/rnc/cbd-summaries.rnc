@@ -1,0 +1,28 @@
+default namespace = "http://oracc.org/ns/cbd/2.0"
+namespace cbd = "http://oracc.org/ns/cbd/2.0"
+namespace dc = "http://dublincore.org/documents/2003/06/02/dces/"
+
+include "cbd-lib.rnc"
+include "gdl-lib.rnc"
+
+start =
+  element articles {
+    attribute n { xsd:NCName },
+    attribute project { xsd:NCName },
+    attribute dc:title { text },
+    attribute xml:lang { xsd:NCName },
+    element letter {
+      attribute dc:title { xsd:NCName },
+      element summary {
+        kis?,
+        attribute n { text },
+        attribute oid { xsd:NCName }?,
+        attribute periods { text },
+        attribute ref { xsd:NCName },
+        attribute dc:title { text },
+	cgp,
+	base*,
+	mng*
+      }+
+    }+
+  }

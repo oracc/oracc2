@@ -1,0 +1,24 @@
+kis = (attribute icount { text },
+       attribute ipct { text },
+       attribute xis { text })
+
+xlang = attribute xml:lang { text }
+
+cgp = cf , gw , mng? , pos , epos?
+
+cf   = element cf   { text }
+gw   = element gw   { xlang? , text }
+mng  = element mng  { xlang? , text }
+pos  = element pos  { text }
+epos = element epos { text }
+
+base  = element base { attribute id { text },
+      		       attribute n { text },
+		       kis?,
+		       cbd.text
+		     }
+
+cbd.text = (element s { text } , element t { words })
+
+noteref = empty
+noteauto = empty

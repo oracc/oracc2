@@ -54,7 +54,9 @@ typedef struct cbd {
   unsigned const char *version;
   unsigned const char *iname; /* this is the internal name used as the hash key in cbds */
   struct xpd *xpd;
-  List *letters;
+  struct letter *letters;
+  int nletters;
+  Hash *hletters;
   List *entries;
   List *edits;
   List *propss;
@@ -83,6 +85,11 @@ typedef struct cbd {
   Memo *tagmem;
   Memo *taglmem;
 } Cbd;
+
+typedef struct letter {
+  const unsigned char *l;
+  struct entry **entries;
+} Letter;
 
 /* Store translated data */
 struct i18n {
@@ -436,5 +443,7 @@ extern void cbd_log(FILE *fp);
 extern void cbd_oid_init(void);
 extern void cbd_oid_e(Entry *e);
 extern void cbd_oid_s(Sense *s);
+
+extern void cbd_wrapup(void);
 
 #endif/*CBD_H_*/

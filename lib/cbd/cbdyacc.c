@@ -1,7 +1,7 @@
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <oraccsys.h>
 #include <ctype128.h>
+#include <wchar.h>
+#include <wctype.h>
 #include <hash.h>
 #include <mesg.h>
 #include <lng.h>
@@ -125,7 +125,7 @@ cbd_bld_cbd(void)
   c->sensesmem = memo_init(sizeof(struct sense), 1024);
   c->tagmem = memo_init(sizeof(struct tag), 1024);
   c->taglmem = memo_init(sizeof(struct tagl), 1024);
-  c->letters = list_create(LIST_SINGLE);
+  c->hletters = hash_create(1);
   c->entries = list_create(LIST_SINGLE);
   c->edits = list_create(LIST_SINGLE);
   c->propss = list_create(LIST_SINGLE);
@@ -341,6 +341,12 @@ cbd_bld_entry_cgp(struct entry *e)
   e->cgp = cgp_get_one();
   e->cgp->owner = e;
   hash_add(e->owner->hentries, e->cgp->tight, e);
+  wchar_t w[2] = { towupper(utf1char(e->cgp->tight, NULL)), L'\0' };
+  const unsigned char *c = wcs2utf(w, 1);
+  Hash *le = hash_find(e->owner->hletters, c);
+  if (!le)
+    hash_add(e->owner->hletters, (c = pool_copy(c, csetp->pool)), (le = hash_create(1)));
+  hash_add(le, e->cgp->tight, e);
 }
 
 #if 0
@@ -706,4 +712,25 @@ cbd_end_sense(void)
   #if 0  
   fprintf(stderr, "cbd_end_sense: added %s to hash\n", buf);
 #endif
+}
+
+static int entrycmp(const void *a, const void *b)
+{
+  return 0;
+}
+
+void
+cbd_wrapup(void)
+{
+  const unsigned char **kk = (uccp*)hash_keys2(curr_cbd->hletters, &curr_cbd->nletters);
+  qsort(kk, curr_cbd->nletters, sizeof(const unsigned char *), cmpu8normp);
+  curr_cbd->letters = calloc(curr_cbd->nletters, sizeof(Letter));
+  int i;
+  for (i = 0; i < curr_cbd->nletters; ++i)
+    {
+      curr_cbd->letters[i].l = kk[i];
+      int n_e;
+      curr_cbd->letters[i].entries = (Entry**)hash_vals2(hash_find(curr_cbd->hletters, kk[i]), &n_e);
+      qsort(curr_cbd->letters[i].entries, n_e, sizeof(Entry*), entrycmp);
+    }
 }

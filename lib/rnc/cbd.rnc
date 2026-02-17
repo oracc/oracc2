@@ -1,12 +1,12 @@
 default namespace = "http://oracc.org/ns/cbd/2.0"
 namespace cbd = "http://oracc.org/ns/cbd/2.0"
+
+include "cbd-lib.rnc"
 include "gdl-lib.rnc"
 
 start = cbd
 
 cbd	 = element entries { cbd.attr , (letters | entries) } 
-
-xlang = attribute xml:lang { text }
 
 cbd.attr = attribute project { text } ,
 	   xlang ,
@@ -21,12 +21,6 @@ props  = element props  { text }
 reldef = element reldef { text }
 i18nlangs = element i18langs  { i18nlang+ }
 i18nlang  = element i18nlang { text }
-
-kis = (attribute icount { text },
-       attribute ipct { text },
-       attribute xis { text })
-
-cbd.text = (element s { text } , element t { words })
 
 letters = letter*
 
@@ -47,14 +41,6 @@ entry.attr = attribute n      { text }? ,
 	     kis?
 
 entry_block = cgp? , gwls? , xcpd? , mod? , aliases? , (partss|psu.compound)? , discs?
-
-cgp = cf , gw , mng? , pos , epos?
-
-cf   = element cf   { text }
-gw   = element gw   { xlang? , text }
-mng  = element mng  { xlang? , text }
-pos  = element pos  { text }
-epos = element epos { text }
 
 gwl  = element gwl  { text } 
 gwls = element gwls { gwl+ }
@@ -98,11 +84,6 @@ bases_block = allows? , bases , stems? , phon? , root?
 allows 	    = element allows { allow+ }
 allow 	    = element allow  { attribute lhs { text } , attribute rhs { text } }
 bases 	    = element bases  { base+ }
-base 	    = element base   { attribute cbd:id { text },
-			       attribute n { text },
-	       		       kis?,
-			       cbd.text
-			      }
 
 stems	    = element stems  { stem+ }
 stem        = element stem   { text }
@@ -200,7 +181,4 @@ bib	    = element bib     { text }
 
 collos	    = element collos  { collo+ }
 collo	    = element collo   { text }
-
-noteref = empty
-noteauto = empty
 
