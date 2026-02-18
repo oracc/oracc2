@@ -234,10 +234,10 @@ o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 	    case EFLD_FORM:
 	    case EFLD_BASE:
 	      {
-		joxer_ea(xo_loc, tag,
-			 ef==EFLD_FORM ? ratts_form(f[i], O_XML)
-			 : ratts_field(f[i], ((Cform*)f[i]->data)->f.base, O_XML));
 		Gt *t = ef==EFLD_FORM ? ((Cform*)f[i]->data)->t : ((Cform*)f[i]->data)->b;
+		joxer_ea(xo_loc, tag,
+			 ef==EFLD_FORM ? ratts_form(f[i], (t ? t->c : -1), O_XML)
+			 : ratts_field(f[i], ((Cform*)f[i]->data)->f.base, O_XML));
 		if (t)
 		  {
 		    joxer_et(xo_loc,"s", NULL, (ccp)t->sign);

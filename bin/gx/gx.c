@@ -294,6 +294,8 @@ io_run(void)
 void
 gx_output(void)
 {
+  gt_codes();
+
   if (xml_output || jsn_output)
     {
       if (!jfn)
@@ -320,6 +322,7 @@ gx_output(void)
 	  joxer_term(xfp,NULL);
 	}
     }
+
   if (summaries)
     gx_summaries(curr_cbd);
 }

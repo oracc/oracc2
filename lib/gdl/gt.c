@@ -107,6 +107,18 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
   return tokp;
 }
 
+/* Compare Gt by looking up string value and using previously computed sort code */
+int
+gt_toks_ccmp(const void *a, const void *b)
+{
+  const char *cc1 = (*(char**)a);
+  const char *cc2 = (*(char**)b);
+  Gt *t1 = hash_find(gtcfg.h, (uccp)cc1);
+  Gt *t2 = hash_find(gtcfg.h, (uccp)cc2);
+  return t1->c - t2->c;
+}
+
+/* Compare Gt by looking up string value and using gsort */
 int
 gt_toks_gcmp(const void *a, const void *b)
 {
@@ -117,22 +129,21 @@ gt_toks_gcmp(const void *a, const void *b)
   return gsort_cmp(&t1->gsh, &t2->gsh);
 }
 
+/* Compare Gt* directly using gsort */
 int
-gt_toks_scmp(const void *a, const void *b)
+gt_toks_vcmp(const void *a, const void *b)
 {
-  const char *cc1 = (*(char**)a);
-  const char *cc2 = (*(char**)b);
-  Gt *t1 = hash_find(gtcfg.h, (uccp)cc1);
-  Gt *t2 = hash_find(gtcfg.h, (uccp)cc2);
-  return t1->s - t2->s;
-#if 0
-  int a1 = t1->s;
-  int b1 = t2->s;
-  if (a1 < b1)
-    return -1;
-  else if (a1 > b1)
-    return 1;
-  else
-    return 0;
-#endif
+  Gt *t1 = *(Gt**)a;
+  Gt *t2 = *(Gt**)b;
+  return gsort_cmp(&t1->gsh, &t2->gsh);
+}
+
+void
+gt_codes(void)
+{
+  int n, i;
+  Gt **t = (Gt**)hash_vals2(gtcfg.h, &n);
+  qsort(t, n, sizeof(Gt *), gt_toks_vcmp);
+  for (i = 0; i < n; ++i)
+    t[i]->c = i;
 }

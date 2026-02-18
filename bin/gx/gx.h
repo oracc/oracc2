@@ -34,7 +34,7 @@ extern Ratts *ratts_field(Field *f, unsigned const char *n, enum o_mode mode);
 extern Ratts *ratts_cbd(Cbd *c, enum o_mode mode);
 extern Ratts *ratts_cpd(Cgp *c, enum o_mode mode);
 extern Ratts *ratts_entry(Entry *e, enum o_mode mode);
-extern Ratts *ratts_form(Field *f, enum o_mode mode);
+extern Ratts *ratts_form(Field *f, int c, enum o_mode mode);
 extern Ratts *ratts_norm(Field *f, enum o_mode mode);
 extern Ratts *ratts_sense(Sense *s, enum o_mode mode);
 extern void ratts_kis(List *lp, Kis_data k);

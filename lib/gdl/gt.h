@@ -25,13 +25,14 @@ typedef struct gdl_token
   const char *sign;
   const char *deep;		/* deep sig from gdlsig */
   void *user;			/* in SL, sl_inst * to use for retrieving OID */
-  int s;			/* sort code for token */
+  int c;			/* sort code for token */
   int priority;			/* in SL, used for registering nums */
 } Gt;
 
 extern int gt_toks_gcmp(const void *a, const void *b);
-extern int gt_toks_scmp(const void *a, const void *b);
+extern int gt_toks_ccmp(const void *a, const void *b);
 extern void gt_config(Hash *h, Memo *m);
+extern void gt_codes(void);
 extern Gt *gt_token(Mloc *locp, unsigned char *t, int literal, void *user);
 
 #endif/*GT_H_*/

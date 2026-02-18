@@ -106,6 +106,7 @@ form 	    = element form     { cbd.form.model }
 cbd.form.model =
 	       attribute xml:id { text },
 	       attribute n { text },
+ 	       attribute c { text }?,
 	       kis?,
 	       cbd.text
 
