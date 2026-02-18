@@ -1,3 +1,5 @@
+namespace cbd = "http://oracc.org/ns/cbd/2.0"
+
 kis = (attribute icount { text },
        attribute ipct { text },
        attribute xis { text })
@@ -12,7 +14,7 @@ mng  = element mng  { xlang? , text }
 pos  = element pos  { text }
 epos = element epos { text }
 
-base  = element base { attribute id { text },
+base  = element base { attribute cbd:id { text },
       		       attribute n { text },
 		       kis?,
 		       cbd.text

@@ -93,7 +93,7 @@ all.proto: *.c
 
 xLDADD=$(top_srcdir)/lib/liboracc2.la 
 
-AM_LDFLAGS=${ORACC_HOMEBREW} -lunistring
+AM_LDFLAGS=${ORACC_HOMEBREW} -lunistring -lgdbm
 
 AM_CPPFLAGS=\
 	-I/usr/local/include \

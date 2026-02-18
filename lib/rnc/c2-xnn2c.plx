@@ -123,8 +123,9 @@ struct xnn_nstab ${prefix}_nstab[] = {
 C
 if ($ns) {
     print C "  { ${prefix}_n__, \"xmlns\", \"$ns\" },\n";
-}	
+}
 foreach my $n (sort keys %ns) {
+    warn "ns key = $n\n";
     print C "  { ${prefix}_n_$n, \"xmlns:$n\", \"$ns{$n}\" },\n"
 	unless $allns || exists($ns_omit{$ns{$n}});
 }

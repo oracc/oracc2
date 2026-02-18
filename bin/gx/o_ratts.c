@@ -6,7 +6,7 @@
 void
 ratts_kis(List *lp, Kis_data k)
 {
-  if (k[0])
+  if (k && k[0])
     {
       list_pair(lp, "icount", kis_cnt(k));
       list_pair(lp, "ipct", kis_pct(k));
@@ -17,7 +17,7 @@ ratts_kis(List *lp, Kis_data k)
 Ratts *
 ratts_kis_r(Kis_data k)
 {
-  if (k[0])
+  if (k && k[0])
     {
       List *lp = list_create(LIST_SINGLE);
       ratts_kis(lp, k);
@@ -34,8 +34,8 @@ ratts_list2ratts(List *lp)
   return r;
 }
 
-Ratts *
-ratts_cbd(Cbd *c, enum o_mode mode)
+static List *
+ratts_cbd_list(Cbd *c, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);
 
@@ -54,11 +54,24 @@ ratts_cbd(Cbd *c, enum o_mode mode)
       list_pair(lp, "license-url", "https://creativecommons.org/publicdomain/zero/1.0/");
       list_pair(lp, "more-info", "http://oracc.org/doc/opendata/");
     }
-  if (mode == O_XML)
+  if (mode == O_XML || mode == O_XML_SUM)
     list_pair(lp, "xml:lang", c->lang);
   else
     list_pair(lp, "lang", c->lang);
-  
+
+  if (mode == O_XML_SUM)
+    {
+      char title[strlen((ccp)c->project)+strlen((ccp)c->lang) + strlen("  Glossary0")];
+      sprintf(title, "%s %s Glossary", c->project, c->lang);
+      list_pair(lp, "dc:title",pool_copy((uccp)title, csetp->pool));
+    }
+  return lp;
+}
+
+Ratts *
+ratts_cbd(Cbd *c, enum o_mode mode)
+{
+  List *lp = ratts_cbd_list(c, mode);
   Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
   list_free(lp, NULL);
   return r;
@@ -81,8 +94,7 @@ ratts_entry(Entry *e, enum o_mode mode)
     }
   list_pair(lp, "oid", e->oid);
 
-  if (e->k[0])
-    ratts_kis(lp, e->k);
+  ratts_kis(lp, e->k);
 
   if (mode == O_JSN)
     {
@@ -105,8 +117,7 @@ ratts_base(Field *f, enum o_mode mode)
   List *lp = list_create(LIST_SINGLE);
   list_pair(lp, "cbd:id", f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.base);
-  if (f->k[0])
-    ratts_kis(lp, f->k);
+  ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }
 
@@ -127,8 +138,7 @@ ratts_form(Field *f, enum o_mode mode)
   List *lp = list_create(LIST_SINGLE);
   list_pair(lp, "xml:id", f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.form);
-  if (f->k[0])
-    ratts_kis(lp, f->k);
+  ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }
 
@@ -138,8 +148,7 @@ ratts_norm(Field *f, enum o_mode mode)
   List *lp = list_create(LIST_SINGLE);
   list_pair(lp, "xml:id", f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.norm);
-  if (f->k[0])
-    ratts_kis(lp, f->k);
+  ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }
 
@@ -150,8 +159,7 @@ ratts_nmfm(Field *f, enum o_mode mode)
   list_pair(lp, "n", ((Cform*)f->data)->f.form);
   list_pair(lp, "cbd:id", f->id);
   list_pair(lp, "ref", ((Cform*)f->data)->f.user);
-  if (f->k[0])
-    ratts_kis(lp, f->k);
+  ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }
 
@@ -169,8 +177,7 @@ ratts_sense(Sense *s, enum o_mode mode)
   list_pair(lp, "xml:id", s->oid);
   list_pair(lp, "n", s->cgspe);
   list_pair(lp, "oid", s->oid);
-  if (s->k && s->k[0])
-    ratts_kis(lp, s->k);
+  ratts_kis(lp, s->k);
   return ratts_list2ratts(lp);
 }
 
@@ -180,8 +187,7 @@ ratts_sig(Field *f)
   List *lp = list_create(LIST_SINGLE);
   list_pair(lp, "xml:id", f->id);
   list_pair(lp, "sig", f->data);
-  if (f->k[0])
-    ratts_kis(lp, f->k);
+  ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }
 

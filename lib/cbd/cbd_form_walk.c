@@ -134,14 +134,16 @@ cbd_fw_psu_fields(int context, Parts *p, Cform *ff, cbdfwfunc h)
   f.f.base = ff[0].f.base = psu_base(ff, 1+list_len(p->cgps));
   if (f.f.base)
     {
-      fprintf(cbd_log_fp, "cbd_fw_psu_fields calling action with base=%s\n", f.f.base);
+      if (cbd_log_fp)
+	fprintf(cbd_log_fp, "cbd_fw_psu_fields calling action with base=%s\n", f.f.base);
       f.b = ff[0].b = gt_token(&ff[0].l, (ucp)f.f.base, 0, NULL);
     }
   f.f.cont = ff[0].f.cont = psu_cont(ff, 1+list_len(p->cgps));
   f.f.morph = ff[0].f.morph = psu_morph(ff, 1+list_len(p->cgps));
   f.f.morph2 = ff[0].f.morph2 = psu_morph2(ff, 1+list_len(p->cgps));
 
-  fprintf(cbd_log_fp, "cbd_fw_psu_fields calling action with norm=%s form=%s\n", f.f.norm, f.f.form);
+  if (cbd_log_fp)
+    fprintf(cbd_log_fp, "cbd_fw_psu_fields calling action with norm=%s form=%s\n", f.f.norm, f.f.form);
   h(&f, context=='e' ? CBD_FW_EF : CBD_FW_SF, &ff[0]);
 }
 
@@ -228,7 +230,7 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
       f.s = sp;
       f.f.sense = sp->mng;
       f.f.epos = sp->pos;
-      f.f.lang = ep->lang;
+      f.f.lang = (uccp)ep->lang;
       f.f.cf = ep->cgp->cf;
       f.f.gw = ep->cgp->gw;
       f.f.pos = ep->cgp->pos;
@@ -240,7 +242,8 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 	  ff[0] = f;
 	  ff[0].f.parts = psu_parts(ff, 1+list_len(p->cgps));
 	  ff[0].f.form = psu_orth_form(ff, 1+list_len(p->cgps));
-	  fprintf(cbd_log_fp, "cbd_fw_psu_parts: psu_orth_form => %s\n", ff[0].f.form);
+	  if (cbd_log_fp)
+	    fprintf(cbd_log_fp, "cbd_fw_psu_parts: psu_orth_form => %s\n", ff[0].f.form);
 	  ff[0].t = gt_token(&ff[0].l, (ucp)ff[0].f.form, 0, NULL);
 	  cbd_fw_psu_fields('s', p, ff, h);
 	  free(ff[0].f.parts);

@@ -21,7 +21,7 @@ extern const char *file;
 
 extern FILE *f_xml, *log_fp;
 
-enum o_mode { O_JSN , O_XML };
+enum o_mode { O_JSN , O_XML, O_XML_SUM };
 
 #if 0
 extern void o_tg2(struct cbd*c);

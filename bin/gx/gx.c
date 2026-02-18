@@ -331,7 +331,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:i:o:chjJkK::l::p:rtTxXv");
+  options(argc,argv,"A:I:O:i:o:chjJkK::l::p:rsStTxXv");
 
   if (status)
     {

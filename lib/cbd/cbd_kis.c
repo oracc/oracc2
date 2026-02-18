@@ -103,12 +103,14 @@ kis_hdata(Hash *h, const char *k, Cform *f)
 {
   if (!hash_find(h, (uccp)k))
     {
-      fprintf(cbd_log_fp, "kis_hdata: hashing k=%s\n", k);
+      if (cbd_log_fp)
+	fprintf(cbd_log_fp, "kis_hdata: hashing k=%s\n", k);
       hash_add(h, pool_copy((uccp)k, csetp->pool), cbd_field(kis_data(k), f));
     }
   else
     {
-      fprintf(cbd_log_fp, "kis_hdata: skipping k=%s -- already known\n", k);
+      if (cbd_log_fp)
+	fprintf(cbd_log_fp, "kis_hdata: skipping k=%s -- already known\n", k);
     }
 }
 
@@ -270,7 +272,8 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
 	fp->data = form_sig(csetp->pool, &f->f);
 	fp->k = kis_data((char*)fp->data);
 	hash_add(((Cform*)v)->s->hsigs, (uccp)fp->data, fp);
-	fprintf(cbd_log_fp, "sig %s\n", (char*)fp->data);
+	if (cbd_log_fp)
+	  fprintf(cbd_log_fp, "sig %s\n", (char*)fp->data);
 	cbd_key_fields(f, 's', v);
       }
       break;
@@ -301,7 +304,8 @@ kis_data_h2k(Hash *h, Efield e)
   int n;
   Field **kp = (Field**)hash_vals2(h, &n);
 
-  fprintf(cbd_log_fp, "kis_data_h2k: Efield=%d n=%d key_count=%d\n", e, n, (int)h->key_count);
+  if (cbd_log_fp)
+    fprintf(cbd_log_fp, "kis_data_h2k: Efield=%d n=%d key_count=%d\n", e, n, (int)h->key_count);
   qsort(kp, n, sizeof(Field*), kis_fld_cmp(e));
   
   return kp;
@@ -381,7 +385,7 @@ cbd_kis_wrapup_s(Cbd_fw_type t, Sense *sp)
 	{
 	  if (sp->hshary[i])
 	    {
-	      if (i == EFLD_BASE)
+	      if (i == EFLD_BASE && cbd_log_fp)
 		fprintf(cbd_log_fp, "cbd_kis_wrapup sense = %s key_count = %d\n",
 			sp->cgspe, (int)((Hash*)sp->hshary[i])->key_count);
 	      void *a = kis_data_h2k(sp->hshary[i], i);

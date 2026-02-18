@@ -341,7 +341,8 @@ cbd_bld_entry_cgp(struct entry *e)
   e->cgp = cgp_get_one();
   e->cgp->owner = e;
   hash_add(e->owner->hentries, e->cgp->tight, e);
-  wchar_t w[2] = { towupper(utf1char(e->cgp->tight, NULL)), L'\0' };
+  wchar_t w[2] = { *e->cgp->tight < 128 ? (wchar_t)toupper(*e->cgp->tight) :
+		   towupper(utf1char(e->cgp->tight, NULL)), L'\0' };
   const unsigned char *c = wcs2utf(w, 1);
   Hash *le = hash_find(e->owner->hletters, c);
   if (!le)
@@ -716,7 +717,9 @@ cbd_end_sense(void)
 
 static int entrycmp(const void *a, const void *b)
 {
-  return 0;
+  Entry *ea = *(Entry**)a;
+  Entry *eb = *(Entry**)a;
+  return cmpu8normp(&ea->cgp->tight, &eb->cgp->tight);
 }
 
 void
@@ -728,7 +731,7 @@ cbd_wrapup(void)
   int i;
   for (i = 0; i < curr_cbd->nletters; ++i)
     {
-      curr_cbd->letters[i].l = kk[i];
+      curr_cbd->letters[i].l = pool_copy(kk[i], csetp->pool);
       int n_e;
       curr_cbd->letters[i].entries = (Entry**)hash_vals2(hash_find(curr_cbd->hletters, kk[i]), &n_e);
       qsort(curr_cbd->letters[i].entries, n_e, sizeof(Entry*), entrycmp);
