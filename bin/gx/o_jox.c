@@ -12,11 +12,14 @@ static int sense_context;
 
 locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
+extern void iterator_fncs(iterator_fnc *fncs);
+extern void iterate_entry_body(Entry *e);
 static void o_jox_proplist(const char *p);
 static void o_jox_field(void *e, Efield ef, Field **f, const char *tag);
 static void o_jox_periods(Entry *e);
 static void o_jox_sigs(Hash *h);
 static void o_jox_xcpds(Entry *e);
+static void o_jox_end_entry(struct entry *e);
 
 #define f0()
 #define f1(a)
@@ -38,6 +41,12 @@ o_jox(struct cbd*cbd)
   iterator_fnc *fncs = ifnc_init();
   iterator(cbd,fncs);
   free(fncs);
+}
+
+void
+o_jox_sa(void)
+{
+  iterator_fncs(ifnc_init());
 }
 
 static void
@@ -103,6 +112,18 @@ o_jox_dcfs(struct entry *e)
 }
 
 static void
+o_jox_entry_body(Entry *e)
+{
+  joxer_et(xo_loc, "cf", NULL, (ccp)e->cgp->cf);
+  Ratts *ratts = ratts_one("xml:lang", e->owner->trans ? (ccp)e->owner->trans : "en");
+  joxer_et(xo_loc, "gw", ratts, (ccp)e->cgp->gw);
+  joxer_et(xo_loc, "pos", NULL, (ccp)e->cgp->pos);
+  o_jox_xcpds(e);
+  if (e->disc)
+    f1(/* @disc */ e->disc);
+}
+
+static void
 o_jox_entry(struct entry *e)
 {
   xo_loc = &e->l;
@@ -139,13 +160,18 @@ o_jox_entry(struct entry *e)
     }
   Ratts*ratts = ratts_entry(e, O_XML);
   joxer_ea(xo_loc, "entry", ratts);
-  joxer_et(xo_loc, "cf", NULL, (ccp)e->cgp->cf);
-  ratts = ratts_one("xml:lang", e->owner->trans ? (ccp)e->owner->trans : "en");
-  joxer_et(xo_loc, "gw", ratts, (ccp)e->cgp->gw);
-  joxer_et(xo_loc, "pos", NULL, (ccp)e->cgp->pos);
-  o_jox_xcpds(e);
-  if (e->disc)
-    f1(/* @disc */ e->disc);
+  o_jox_entry_body(e);
+}
+
+void
+o_jox_entry_sa(Entry *ep)
+{
+  xo_loc = &ep->l;
+  Ratts *ratts = ratts_entry_sa(ep, O_XML);
+  joxer_ea(xo_loc, "entry", ratts);
+  o_jox_entry_body(ep);
+  iterate_entry_body(ep);
+  o_jox_end_entry(ep);
 }
 
 static void

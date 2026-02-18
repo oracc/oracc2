@@ -34,11 +34,9 @@ ratts_list2ratts(List *lp)
   return r;
 }
 
-static List *
-ratts_cbd_list(Cbd *c, enum o_mode mode)
+static void
+ratts_cbd_list(List *lp, Cbd *c, enum o_mode mode)
 {
-  List *lp = list_create(LIST_SINGLE);
-
   if (mode == O_JSN)
     list_pair(lp, "type", "glossary");
   else
@@ -65,22 +63,21 @@ ratts_cbd_list(Cbd *c, enum o_mode mode)
       sprintf(title, "%s %s Glossary", c->project, c->lang);
       list_pair(lp, "dc:title",pool_copy((uccp)title, csetp->pool));
     }
-  return lp;
 }
 
 Ratts *
 ratts_cbd(Cbd *c, enum o_mode mode)
 {
-  List *lp = ratts_cbd_list(c, mode);
+  List *lp = list_create(LIST_SINGLE);
+  ratts_cbd_list(lp, c, mode);
   Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
   list_free(lp, NULL);
   return r;
 }
 
-Ratts *
-ratts_entry(Entry *e, enum o_mode mode)
+void
+ratts_entry_list(List *lp, Entry *e, enum o_mode mode)
 {
-  List *lp = list_create(LIST_SINGLE);
   Cgp *cp = e->cgp;
   if (mode == O_JSN)
     {
@@ -108,6 +105,25 @@ ratts_entry(Entry *e, enum o_mode mode)
       list_pair(lp, "gw", cp->gw);
       list_pair(lp, "pos", cp->pos);
     }
+}
+
+Ratts *
+ratts_entry_sa(Entry *e, enum o_mode mode)
+{
+  List *lp = list_create(LIST_SINGLE);
+  ratts_cbd_list(lp, e->owner, mode);
+  /*Hack: first entry of lp is "n" but we can't have cbd-n and entry-n*/
+  if (!strcmp((const char *)lp->first->data, "n"))
+    lp->first->data = "cbd-n";
+  ratts_entry_list(lp, e, mode);
+  return ratts_list2ratts(lp);
+}
+
+Ratts *
+ratts_entry(Entry *e, enum o_mode mode)
+{
+  List *lp = list_create(LIST_SINGLE);
+  ratts_entry_list(lp, e, mode);
   return ratts_list2ratts(lp);
 }
 

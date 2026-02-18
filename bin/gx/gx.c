@@ -22,6 +22,8 @@ static const char *project = NULL;
 static const char *prog = "gx";
 static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
 
+const char *out_dir = NULL;
+
 const char *jfn = NULL, *xfn = NULL;
 
 const char *kis_file = "02pub/tokl.kis";
@@ -119,53 +121,6 @@ gx_init(void)
   cbds = hash_create(1);
   with_textid = 0;
 }
-
-#if 0
-static void
-gx_run()
-{
-  if (file)
-    {
-      FILE *fp;
-      efile = errmsg_fn = file;
-      if ((fp = xfopen(efile, "r")))
-	tg1restart(fp);
-    }
-  curr_cbd = bld_cbd();
-  phase = "syn";
-  if (tg1parse() || parser_status)
-    {
-      if (!keepgoing)
-	{
-	  mesg_print(stderr);
-	  fprintf(stderr, "gx: exiting after syntax errors\n");
-	  exit(1);
-	}
-    }
-
-  if (check || output)
-    validator(curr_cbd);
-  
-  if (identity_output)
-    identity(curr_cbd);
-
-  if (xml_output)
-    {
-      extern void rnvxml_rnvif_init(void);
-      int rnvok = -1;
-      rnvxml_rnvif_init();
-      rnvif_init();
-      rnv_validate_start();      
-      xmloutput(curr_cbd);
-      rnvok = rnv_validate_finish();
-      rnvif_term();
-      if (verbose)
-	fprintf(stderr, "rnv returned %d\n", rnvok);
-    }
-  
-  mesg_print(stderr);
-}
-#endif
 
 static void
 gx_term(void)
@@ -296,30 +251,57 @@ gx_output(void)
 {
   gt_codes();
 
-  if (xml_output || jsn_output)
+  if (out_dir)
     {
-      if (!jfn)
-	jfn = "cbd.jsn";
-      if (!xfn)
-	xfn = "cbd.xml";
-
-      FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
-      FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
-
-      if (xml_output)
+      o_jox_sa();
+      int l;
+      for (l = 0; l < curr_cbd->nletters; ++l)
 	{
-	  jox_xml_output(xfp);
-	  joxer_init(&cbd_data, "cbd", 1, xfp, NULL);
-	  o_jox(curr_cbd);
-	  joxer_term(xfp,NULL);
+#define xep curr_cbd->letters[l].entries[e]
+	  int e;
+	  for (e = 0; xep; ++e)
+	    {
+	      char fn[strlen(out_dir)+strlen(xep->oid)+5];
+	      sprintf(fn, "%s/%s.enx", out_dir, xep->oid); 
+	      FILE *efp = xfopen(fn, "w");
+	      if (efp)
+		{
+		  jox_xml_output(efp);
+		  joxer_init(&cbd_data, "cbd", 1, efp, NULL);
+		  o_jox_entry_sa(xep);
+		  joxer_term(efp,NULL);
+		}
+	    }
 	}
-
-      if (jsn_output)
+#undef xep
+    }
+  else
+    {
+      if (xml_output || jsn_output)
 	{
-	  jox_jsn_output(jfp);
-	  joxer_init(&cbd_data, "cbd", 0, NULL, jfp);
-	  o_jsn(curr_cbd);
-	  joxer_term(xfp,NULL);
+	  if (!jfn)
+	    jfn = "cbd.jsn";
+	  if (!xfn)
+	    xfn = "cbd.xml";
+
+	  FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
+	  FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
+
+	  if (xml_output)
+	    {
+	      jox_xml_output(xfp);
+	      joxer_init(&cbd_data, "cbd", 1, xfp, NULL);
+	      o_jox(curr_cbd);
+	      joxer_term(xfp,NULL);
+	    }
+
+	  if (jsn_output)
+	    {
+	      jox_jsn_output(jfp);
+	      joxer_init(&cbd_data, "cbd", 0, NULL, jfp);
+	      o_jsn(curr_cbd);
+	      joxer_term(xfp,NULL);
+	    }
 	}
     }
 
@@ -341,6 +323,13 @@ main(int argc, char **argv)
       fprintf(stderr, "gx: quitting after errors in option processing\n");
       exit(1);
     }
+
+  if (out_dir)
+    if (xmkdirs(out_dir))
+      {
+	fprintf(stderr, "gx: error making dirs for out_dir=%s. Stop\n", out_dir);
+	exit(1);
+      }
 
   if (log_file)
     {
@@ -404,11 +393,15 @@ int opts(int och, const char *oarg)
 	}
       break;
     case 'O':
+#if 1
+      out_dir = oarg;
+#else
       if (!(output_method = iomethod(optarg, strlen(optarg))))
 	{
 	  fprintf(stderr, "gx: unknown output method: %s\n", optarg);
 	  status = 1;
-	}	
+	}
+#endif
       break;
     case 'a':
       break;

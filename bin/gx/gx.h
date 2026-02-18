@@ -18,6 +18,7 @@ extern int verbose;
 extern int out_stdout;
 
 extern const char *file;
+extern const char *out_dir;
 
 extern FILE *f_xml, *log_fp;
 
@@ -28,12 +29,15 @@ extern void o_tg2(struct cbd*c);
 #endif
 
 extern void o_jox(struct cbd*c);
+extern void o_jox_sa(void);
+extern void o_jox_entry_sa(Entry *ep);
 extern void o_jsn(struct cbd*c);
 
 extern Ratts *ratts_field(Field *f, unsigned const char *n, enum o_mode mode);
 extern Ratts *ratts_cbd(Cbd *c, enum o_mode mode);
 extern Ratts *ratts_cpd(Cgp *c, enum o_mode mode);
 extern Ratts *ratts_entry(Entry *e, enum o_mode mode);
+extern Ratts *ratts_entry_sa(Entry *e, enum o_mode mode);
 extern Ratts *ratts_form(Field *f, int c, enum o_mode mode);
 extern Ratts *ratts_norm(Field *f, enum o_mode mode);
 extern Ratts *ratts_sense(Sense *s, enum o_mode mode);

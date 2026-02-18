@@ -4,9 +4,8 @@
 static iterator_fnc *curr_fncs;
 
 void
-iterate_entries(struct entry *e)
+iterate_entry_body(Entry *e)
 {
-  curr_fncs[if_entry](e);
   if (list_len(e->aliases))
     curr_fncs[if_alias](e);
   if (list_len(e->dcfs))
@@ -27,13 +26,26 @@ iterate_entries(struct entry *e)
     curr_fncs[if_senses](e);
   if (e->meta)
     curr_fncs[if_meta](e);
+}
+
+void
+iterator_fncs(iterator_fnc *fncs)
+{
+  curr_fncs = fncs;
+}
+
+void
+iterate_entries(struct entry *e)
+{
+  curr_fncs[if_entry](e);
+  iterate_entry_body(e);
   curr_fncs[if_end_entry](e);
 }
 
 void
 iterator(struct cbd *c, iterator_fnc *fncs)
 {
-  curr_fncs = fncs;
+  iterator_fncs(fncs);
   curr_fncs[if_cbd](c);
   list_exec(c->entries, (list_exec_func*)iterate_entries);
   curr_fncs[if_end_cbd](c);
