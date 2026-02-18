@@ -21,8 +21,6 @@ iterate_entries(struct entry *e)
     curr_fncs[if_root](e);
   if (e->stems)
     curr_fncs[if_stems](e);
-  if (e->bases || e->hshary[EFLD_BASE])
-    curr_fncs[if_bases](e);
   if (e->forms || e->hshary[EFLD_FORM])
     curr_fncs[if_forms](e);
   if (e->senses)

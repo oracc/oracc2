@@ -112,11 +112,11 @@ ratts_entry(Entry *e, enum o_mode mode)
 }
 
 Ratts *
-ratts_base(Field *f, enum o_mode mode)
+ratts_field(Field *f, unsigned const char *n, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);
   list_pair(lp, "cbd:id", f->id);
-  list_pair(lp, "n", ((Cform*)f->data)->f.base);
+  list_pair(lp, "n", n);
   ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }

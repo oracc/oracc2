@@ -81,21 +81,6 @@ o_jox_allow(struct entry *e)
 }
 
 static void
-o_jox_bases(void *e)
-{
-  if (sense_context)
-    {
-      if (((Sense*)e)->hshary[EFLD_BASE])
-	o_jox_field(e, EFLD_BASE, ((Sense*)e)->hshary[EFLD_BASE], "base");
-    }
-  else
-    {
-      if (((Entry*)e)->hshary[EFLD_BASE])
-	o_jox_field(e, EFLD_BASE, ((Entry*)e)->hshary[EFLD_BASE], "base");
-    }
-}
-
-static void
 o_jox_cbd(struct cbd *c)
 {
   xo_loc = &c->l;
@@ -250,7 +235,8 @@ o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 	    case EFLD_BASE:
 	      {
 		joxer_ea(xo_loc, tag,
-			 ef==EFLD_FORM ? ratts_form(f[i], O_XML) : ratts_base(f[i], O_XML));
+			 ef==EFLD_FORM ? ratts_form(f[i], O_XML)
+			 : ratts_field(f[i], ((Cform*)f[i]->data)->f.base, O_XML));
 		Gt *t = ef==EFLD_FORM ? ((Cform*)f[i]->data)->t : ((Cform*)f[i]->data)->b;
 		if (t)
 		  {
@@ -277,6 +263,15 @@ o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 		  }
 	      }
 	      break;
+	    case EFLD_CONT:
+	      joxer_ec(xo_loc, tag, ratts_field(f[i], ((Cform*)f[i]->data)->f.cont, O_XML));	      
+	      break;
+	    case EFLD_MRF1:
+	      joxer_ec(xo_loc, tag, ratts_field(f[i], ((Cform*)f[i]->data)->f.morph, O_XML));
+	      break;
+	    case EFLD_MRF2:
+	      joxer_ec(xo_loc, tag, ratts_field(f[i], ((Cform*)f[i]->data)->f.morph2, O_XML));	      
+	      break;
 	    default:
 	      break;
 	    }	  
@@ -290,20 +285,22 @@ o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 static void
 o_jox_forms(void *e)
 {
-  if (sense_context)
-    {
-      if (((Sense*)e)->hshary[EFLD_FORM])
-	o_jox_field(e, EFLD_FORM, ((Sense*)e)->hshary[EFLD_FORM], "form");
-      if (((Sense*)e)->hshary[EFLD_NORM])
-	o_jox_field(e, EFLD_NORM, ((Sense*)e)->hshary[EFLD_NORM], "norm");
-    }
-  else
-    {
-      if (((Entry*)e)->hshary[EFLD_FORM])
-	o_jox_field(e, EFLD_FORM, ((Entry*)e)->hshary[EFLD_FORM], "form");
-      if (((Entry*)e)->hshary[EFLD_NORM])
-	o_jox_field(e, EFLD_NORM, ((Entry*)e)->hshary[EFLD_NORM], "norm");
-    }
+  Field ***hshary = (Field***)((sense_context) ? ((Sense*)e)->hshary : ((Entry*)e)->hshary);
+    
+  if (hshary[EFLD_FORM])
+    o_jox_field(e, EFLD_FORM, hshary[EFLD_FORM], "form");
+  if (hshary[EFLD_NORM])
+    o_jox_field(e, EFLD_NORM, hshary[EFLD_NORM], "norm");
+  if (hshary[EFLD_BASE])
+    o_jox_field(e, EFLD_BASE, hshary[EFLD_BASE], "base");
+  if (hshary[EFLD_STEM])
+    o_jox_field(e, EFLD_STEM, hshary[EFLD_STEM], "stem");
+  if (hshary[EFLD_CONT])
+    o_jox_field(e, EFLD_CONT, hshary[EFLD_CONT], "cont");
+  if (hshary[EFLD_MRF1])
+    o_jox_field(e, EFLD_MRF1, hshary[EFLD_MRF1], "morph");
+  if (hshary[EFLD_MRF2])
+    o_jox_field(e, EFLD_MRF2, hshary[EFLD_MRF2], "morph2");
 }
 
 static void
@@ -469,8 +466,6 @@ o_jox_senses(struct entry *e)
       joxer_ea(xo_loc,"sense",r);
       joxer_et(xo_loc, "pos", NULL, (ccp)sp->pos);
       joxer_et(xo_loc, "mng", NULL, (ccp)sp->mng);
-
-      o_jox_bases(sp);
 
       o_jox_forms(sp);
 

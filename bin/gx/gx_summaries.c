@@ -115,7 +115,7 @@ o_jox_sum_bases(Field **f)
   int i;
   for (i = 0; f[i]; ++i)
     {
-      joxer_ea(xo_loc, "base", ratts_base(f[i], O_XML));
+      joxer_ea(xo_loc, "base", ratts_field(f[i], ((Cform*)f[i]->data)->f.base, O_XML));
       Gt *t = ((Cform*)f[i]->data)->b;
       if (t)
 	{

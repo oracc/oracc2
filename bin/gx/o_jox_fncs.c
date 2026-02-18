@@ -19,7 +19,7 @@ static void o_jox_stems(struct entry *e);
 static struct ifnc_map imap[] = {
   { if_alias , (iterator_fnc)o_jox_aliases },
   { if_allow , (iterator_fnc)o_jox_allow },
-  { if_bases , (iterator_fnc)o_jox_bases },
+  { if_bases , (iterator_fnc)NULL },
   { if_cbd , (iterator_fnc)o_jox_cbd },
   { if_dcfs , (iterator_fnc)o_jox_dcfs },
   { if_end_cbd , (iterator_fnc)o_jox_end_cbd },

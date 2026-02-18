@@ -77,16 +77,26 @@ disc.html   = text # actually html:div in future
 
 periods = element periods { element p { kis? , text }+ }
 
-lang_block  = bases_block? , forms? , norms?
+lang_block  = forms? , norms? , bases_block? 
 
-bases_block = allows? , bases , stems? , phon? , root?
+bases_block = allows? , bases , stems? , conts? , morphs? , morph2s? , phon? , root?
 
 allows 	    = element allows { allow+ }
 allow 	    = element allow  { attribute lhs { text } , attribute rhs { text } }
 bases 	    = element bases  { base+ }
 
+morphs      = element morphs { morph+ }
+morph        = element morph   { field_attr }
+
+morph2s     = element morphs { morph2+ }
+morph2      = element morph2  { field_attr }
+
+conts       = element conts  { cont+ }
+cont        = element cont   { field_attr }
+
 stems	    = element stems  { stem+ }
-stem        = element stem   { text }
+stem        = element stem   { field_attr }
+
 phon	    = element phon   { text }
 root	    = element root   { text }
 

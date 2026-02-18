@@ -14,11 +14,13 @@ mng  = element mng  { xlang? , text }
 pos  = element pos  { text }
 epos = element epos { text }
 
-base  = element base { attribute cbd:id { text },
-      		       attribute n { text },
-		       kis?,
+base  = element base { field_attr ,
 		       cbd.text
 		     }
+
+field_attr =  attribute cbd:id { text },
+      	      attribute n { text },
+	      kis?
 
 cbd.text = (element s { text } , element t { words })
 
