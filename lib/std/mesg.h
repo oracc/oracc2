@@ -37,6 +37,8 @@ extern void mesg_warning(const char *file, int ln, const char *str);
 extern void mesg_vwarning(const char *file, int ln, const char *s, ...);
 extern void mesg_avwarning(const char *file, int ln, const char *str, va_list ap);
 
+#define warning(s) mesg_warning(NULL, -1, s)
+
 extern int mesg_remove_error(const char *file, int line, const char *str);
 extern const char *mesg_pop(void);
 extern void mloc_init(void);

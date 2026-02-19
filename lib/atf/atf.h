@@ -22,6 +22,7 @@ typedef struct atfm {
   Memo *mlinks;
   Memo *mkeys;
   Memo *mlatf;
+  Pool *pool;
   struct atf *atf;
 } Atfm;
 
@@ -101,6 +102,8 @@ typedef struct blk Line;
 typedef struct blk Cell;
 typedef struct blk Field;
 typedef struct blk Word;
+
+extern Atfm *atfmp;
 
 extern int atflineno;
 extern const char *atffile, *curratffile;

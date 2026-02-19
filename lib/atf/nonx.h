@@ -1,6 +1,8 @@
 #ifndef _NONX_H
 #define _NONX_H
 
+#include <mesg.h>
+
 /*struct node;*/ /*only for nonx_link_data which will be reimplemented*/
 
 enum x_class { x_qual, x_extent, x_scope, x_state, x_rule , x_docket ,
@@ -44,7 +46,7 @@ typedef struct nonx
   struct nonx_link * link;
 } Nonx;
 
-extern struct nonx*parse_nonx(unsigned char *l);
+extern struct nonx*parse_nonx(Mloc *mp, unsigned char *l);
 extern struct nonx_token *nonxtok(register const char *str,size_t len);
 extern struct nonx_link *nonx_link(unsigned char *l, char *http);
 /*extern void nonx_link_data(struct nonx_link *nonxp, struct node *tmp);*/

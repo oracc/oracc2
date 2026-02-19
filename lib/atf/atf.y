@@ -22,48 +22,74 @@ ATFLTYPE atflloc;
 
 %union { char *text; int i; }
 
-%token	<text> TOK TRANS TAB EOL PAR CMT BAD LINE SIGLUM
+%token	<text>  PQX TEXT DOC PROJECT ATF LEMMATIZER LINK KEY
+		MILESTONE OBJECT SURFACE COLUMN DIVISION
+		MTS NTS LGS GUS LEM
+		BIB VAR NOTE VERSION
 
-%start fields
+%start atf
 
 %%
 
-fields: blank
-	| field
-	| fields blank
-	| fields field
+atf: amp def preamble blocks
+
+amp: pqx '=' name
+
+pqx: PQX
+
+name: TEXT
+
+def: doc
+     | project
+     | doc project
+     ;
+
+doc: DOC
+
+project: PROJECT
+
+preamble: plk | preamble plk
+
+plk:      protocol.start
+	| link
+	| key
 	;
 
-blank:  EOL
-       	| PAR
-	;
+protocol.start: ATF | LEMMATIZER | VERSION
 
-field: 	line EOL
-	| cont EOL
-	| line PAR	{ if (atftrace) fprintf(stderr, "PAR\n");
-			  cat_chunk(curratffile,atflineno-1, ""); }
-	| cont PAR	{ if (atftrace) fprintf(stderr, "PAR\n");
-			  cat_chunk(curratffile,atflineno-1, ""); }
-	| BAD		{ mesg_warning(curratffile, atflineno, "atf: lines must begin with '@' or whitespace"); }
-	;
+link: LINK
 
-line:	TOK		{ if (atftrace) fprintf(stderr, "field/EOL: %s\n", atflval.text);
-   			  if (!strncmp(atflval.text,"#atf:",strlen("#atf:"))) { atf_protocol(atflval.text); }
-   			  cat_chunk(curratffile,atflineno,(char*)atflval.text);
- 			}
-	| CMT 		{ if (atftrace) fprintf(stderr, "comment/EOL: %s\n", atflval.text);
-   			  cat_chunk(curratffile,atflineno,(char*)atflval.text);
- 			}
-	| TRANS        	{ if (atftrace) fprintf(stderr, "trans/EOL: %s\n", atflval.text);
-   			  cat_chunk(curratffile,atflineno,(char*)atflval.text);
- 			}
-	;
+key: KEY
 
-cont: 	TAB		{ if (atftrace) fprintf(stderr, "field/TAB: %s\n", atflval.text);
-    			  cat_cont(atflineno,(char*)atflval.text);
- 			}
-	| cont TAB
-	;
+blocks: block
+  | blocks block
+  ;
+
+block:
+    locator-or-line
+  | locator-or-line protocols.inter
+  ;
+
+/* This grammar requires secondary enforcement of sequencing
+   constraints, e.g., NTS must follow MTS, COLUMN must not precede
+   SURFACE */
+locator-or-line:
+    MILESTONE
+  | DIVISION
+  | OBJECT
+  | SURFACE
+  | COLUMN
+  | line
+  ;
+
+line: MTS | NTS | LGS | GUS | LEM
+
+protocols.inter:
+   protocol.inter
+   | protocols.inter protocol.inter
+   ;
+
+protocol.inter: BIB | NOTE | VAR
 
 %%
 

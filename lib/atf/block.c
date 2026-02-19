@@ -1,38 +1,6 @@
-#include <stdio.h>
-#include <ctype128.h>
-#include <stdlib.h>
-#include <string.h>
-
-#if 0
-#include <unitypes.h>
-#include <unistr.h>
-#include <uniconv.h>
-#include <unictype.h>
-#endif
-
-#include <c1_list.h>
-#include "globals.h"
-#include "cdf.h"
-#include "run.h"
-#include "protocols.h"
+#include <oraccsys.h>
 #include "block.h"
-#include "text.h"
-#include "blocktok.h"
-#include "xmlnames.h"
-#include "tree.h"
-#include "atffile.h"
-#include "warning.h"
-/*#include "tokenizer.h"*/
-#include "pool.h"
-#include "nonx.h"
-#include "translate.h"
-#include "labtab.h"
-#include "label.h"
-#include "inline.h"
-#include "lemline.h"
-#include "note.h"
-#include "wordmatrix.h"
-#include "symbolattr.h"
+#include "atf.h"
 
 extern int lem_autolem, mylines;
 extern void set_tr_id(const char *id);
@@ -90,7 +58,7 @@ static enum f_type flags = f_none;
 
 unsigned const char *curr_discourse;
 
-Hash_table *last_tlit_h_hash = NULL;
+Hash *last_tlit_h_hash = NULL;
 static struct node **last_tlit_h = NULL;
 static int lth_alloced = 0;
 static int lth_used = 0;
@@ -327,7 +295,7 @@ skip_blank_func(unsigned char **lines)
 }
 
 unsigned char **
-parse_block(struct run_context *run, struct node *text, unsigned char **lines)
+parse_block(unsigned char *lines)
 {
   unsigned char *token;
   unsigned char *s, save;
@@ -435,7 +403,7 @@ parse_block(struct run_context *run, struct node *text, unsigned char **lines)
 		    continue;
 		  }
 		else
-		  protocol(run, protocol_state, LINE, current, *lines);
+		  protocol(protocol_state, LINE, current, *lines);
 	      }
 	    else
 	      {
@@ -948,7 +916,7 @@ $ start of reverse missing
 		      if (!xstrncmp(*lines, "#lem:",5))
 			{
 			  concat_continuations(lines);
-			  protocol(run, protocol_state, LINE, current, *lines);
+			  protocol(protocol_state, LINE, current, *lines);
 			}
 		      else
 			{
@@ -969,7 +937,7 @@ $ start of reverse missing
 			      --lines;
 			    }
 			  else if (xstrncmp(*lines,"#eid:",5))
-			    protocol(run, protocol_state, LINE, current, *lines);
+			    protocol(protocol_state, LINE, current, *lines);
 			  else
 			    {
 			      /* what should happen here ? */
@@ -1016,7 +984,7 @@ $ start of reverse missing
 		      if (!xstrncmp(*lines, "#lem:",5))
 			{
 			  concat_continuations(lines);
-			  protocol(run, protocol_state, LINE, current, *lines);
+			  protocol(protocol_state, LINE, current, *lines);
 			}
 		      else if (!xstrncmp(*lines,"#note:",6))
 			{
@@ -1037,7 +1005,7 @@ $ start of reverse missing
 			    --lines;
 			}
 		      else
-			protocol(run, protocol_state, LINE, current, *lines);
+			protocol(protocol_state, LINE, current, *lines);
 		      skip_blank();
 		    }		  
 		}
@@ -1074,7 +1042,7 @@ $ start of reverse missing
 		      if (!xstrncmp(*lines, "#lem:",5))
 			{
 			  concat_continuations(lines);
-			  protocol(run, protocol_state, LINE, current, *lines);
+			  protocol(protocol_state, LINE, current, *lines);
 			  skip_blank();
 			}
 		      else
@@ -2064,7 +2032,7 @@ compute_fragid(const char *qualid, const char *hlid)
     {
       for (n -= 5; n > 0; --n)
 	{
-	  extern Hash_table *label_table;
+	  extern Hash *label_table;
 	  char *fragid = malloc(strlen(qualid)+10);
 	  (void)sprintf(fragid, "%s.%d", qualid, n);
 	  if (hash_find(label_table, (const unsigned char *)fragid))

@@ -3,16 +3,7 @@
 #include "block.h"
 #include "blocktok.h"
 %}
-typedef struct block_token
-{
-  const char *name;
-  enum e_type etype;
-  const char *n;
-  enum block_levels type;
-  const char *full;
-  const char *abbr;
-  const char *nano;
-} Block;
+struct block_token;
 %%
 composite,  e_composite, NULL, B_TEXT, NULL, NULL, NULL
 score,  e_score, NULL, B_TEXT, NULL, NULL, NULL
@@ -26,7 +17,7 @@ obverse, 	e_surface, "obverse", B_SURFACE, "Obverse", "Obv.", "o"
 reverse,	e_surface, "reverse", B_SURFACE, "Reverse", "Rev.", "r"
 side,	e_surface, "side", B_SURFACE, "Side", "Side", "s."
 left,		e_surface, "left", B_SURFACE, "Left edge", "Left", "l.e."
-right,		e_surface, "right", SURFACE, "Right edge", "Right", "r.e."
+right,		e_surface, "right", B_SURFACE, "Right edge", "Right", "r.e."
 top,		e_surface, "top", B_SURFACE, "Top edge", "Top", "t.e."
 bottom,	    e_surface, "bottom", B_SURFACE, "Bottom edge", "Bottom", "b.e."
 edge,		e_surface, "edge", B_SURFACE, "Edge", "Edge", "e."

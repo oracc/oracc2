@@ -5,8 +5,12 @@
 #include <stdlib.h>
 #include "nonx.h"
 #include "pool.h"
+#include "mesg.h"
+#include "atf.h"
 
 int no_strict_dollar;
+
+#define uc(s) (unsigned char *)(s)
 
 extern const char *textid;
 
@@ -115,7 +119,7 @@ last_tok(unsigned char *end)
 }
 
 struct nonx*
-parse_nonx(unsigned char *l)
+parse_nonx(Mloc *mp, unsigned char *l)
 {
   static struct nonx nx;
   /*unsigned char *parenc = NULL; */
@@ -133,7 +137,7 @@ parse_nonx(unsigned char *l)
 
   if ('(' == *l)
     {
-      register unsigned char *end = l+xxstrlen(l);
+      register unsigned char *end = l+strlen((ccp)l);
       char *http = NULL;
       
       nx.strict = 0;
@@ -174,7 +178,7 @@ parse_nonx(unsigned char *l)
 		    {
 		      char refbuf[128];
 		      sprintf(refbuf,"%s@%s",textid,img_num);
-		      nx.ref = pool_copy((unsigned char *)refbuf);
+		      nx.ref = pool_copy((unsigned char *)refbuf, atfmp->pool);
 		      *savep = save;
 		      ++l;
 		      while (isspace(*l))
@@ -215,7 +219,7 @@ parse_nonx(unsigned char *l)
 	      *np = '\0';
 	      if (np[-1] == '-')
 		{
-		  vwarning("%s: malformed extent in $-line",n);
+		  mesg_verr(mp, "%s: malformed extent in $-line",n);
 		  return NULL;
 		}
 	      else
@@ -245,7 +249,7 @@ parse_nonx(unsigned char *l)
 	      if (*flags)
 		{
 		  flags_offset = flagsp-flags;
-		  xstrcpy(nx.flags,flags);
+		  strcpy((char*)nx.flags,(ccp)flags);
 		}
 	    }
 	  if (!*end || isspace(*end) || ')' == *end)
@@ -265,13 +269,13 @@ parse_nonx(unsigned char *l)
 			  register unsigned char *ofp = l;
 			  while (isspace(*ofp))
 			    ++ofp;
-			  if (!xstrncmp(ofp,"of",2))
+			  if (!strncmp((ccp)ofp,"of",2))
 			    l = ofp+2;
 			}
 		      break;
 		    case x_scope:
 		      nx.scope = nxp;
-		      if (!strncmp(cc(l),"seal ",5))
+		      if (!strncmp((ccp)l,"seal ",5))
 			{
 			  /* if there is a following token it's an impression
 			     notation */
@@ -287,7 +291,7 @@ parse_nonx(unsigned char *l)
 				++end;
 			      save = *end;
 			      *end = '\0';
-			      nx.number = pool_copy(tok);
+			      nx.number = pool_copy(tok, atfmp->pool);
 			      *end = save;
 			    }
 			  else if (!strncmp((const char*)end,"impression",10))
@@ -301,16 +305,16 @@ parse_nonx(unsigned char *l)
 			      nx.scope = nonxtok("impression", 10);
 			      while (isspace(*end))
 				++end;
-			      nx.ref = pool_copy(end);
+			      nx.ref = pool_copy(end, atfmp->pool);
 			      end += strlen((const char *)nx.ref);
 			    }
 			}
-		      else if (!strncmp(cc(l),"top ",3))
+		      else if (!strncmp((ccp)l,"top ",3))
 			{
 			  unsigned char *e = end;
 			  while (isspace(*e))
 			    ++e;
-			  if (!strncmp(cc(e),"of ",3))
+			  if (!strncmp((ccp)e,"of ",3))
 			    {
 			      warning("'top of' should be 'start of'");
 			      nx.extent = nonxtok("start",5);
@@ -318,7 +322,7 @@ parse_nonx(unsigned char *l)
 			      nx.scope = NULL;
 			    }
 			}
-		      else if (!strncmp(cc(l),"docket ",7))
+		      else if (!strncmp((ccp)l,"docket ",7))
 			{
 			  if (isdigit(*end) || isupper(*end))
 			    {
@@ -327,7 +331,7 @@ parse_nonx(unsigned char *l)
 				++end;
 			      save = *end;
 			      *end = '\0';
-			      nx.number = pool_copy(tok);
+			      nx.number = pool_copy(tok, atfmp->pool);
 			      *end = save;
 			    }
 			  else
@@ -367,7 +371,7 @@ parse_nonx(unsigned char *l)
 		  ++unknown_toks;
 		  if (nx.strict)
 		    {
-		      vwarning("%s: bad token in $-line", l);
+		      mesg_verr(mp, "%s: bad token in $-line", l);
 		      return NULL;
 		    }
 		}
@@ -378,7 +382,7 @@ parse_nonx(unsigned char *l)
 	      ++unknown_toks;
 	      if (nx.strict)
 		{
-		  vwarning("%s: bad token in $-line", l);
+		  mesg_verr(mp, "%s: bad token in $-line", l);
 		  return NULL;
 		}
 	      while (*end && !isspace(*end) && ')' != *end)
@@ -395,7 +399,7 @@ parse_nonx(unsigned char *l)
 	{
 	  if (nx.strict)
 	    {
-	      vwarning("%s: bad character in $-line",l);
+	      mesg_verr(mp, "%s: bad character in $-line",l);
 	      return NULL;
 	    }
 	  ++unknown_toks;
@@ -417,7 +421,7 @@ parse_nonx(unsigned char *l)
     nx.strict = 0;
   else if (!unknown_toks && !nx.strict && nx.scope && nx.state)
     {
-      notice("$-line meets strict criteria; remove parens");
+      mesg_notice(mp->file, mp->line, "$-line meets strict criteria; remove parens");
       nx.strict = -1;
     }
   return &nx;

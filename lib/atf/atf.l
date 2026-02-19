@@ -35,14 +35,16 @@ BOM2	("\xfe\xff")
 LINK	("<<"|">>"|"++"|"||")
 
 %s T
+%x AMPl
+%x AMPr
 
 %%
 
-^{BOM3}"&".*/\n         	{ atflval.text=atfpool(atftext+3); pmatch("###amp\n"); return TOK; }
-
-^{BOM2}"&".*/\n         	{ atflval.text=atfpool(atftext+2); pmatch("###amp\n"); return TOK; }
-
-^"&".*/\n         		{ BEGIN 0; atfsave; pmatch("###amp\n"); return TOK; }
+^({BOM3}|{BOM2})?"&"         	{ BEGIN AMP; }
+<AMPl>{PQX}			{ return PQX; }
+<AMPl>=				{ return '=';
+<AMPl,AMPr>[ \t]+	       	{ ; }
+<AMP>.*/[ \t]\n			{ BEGIN 0; atfsave; return NAME; }
 
 ^"@"translation.*/\n		{ BEGIN T; atfsave; pmatch("###translation\n"); return TOK; }
 
