@@ -20,7 +20,7 @@ static int linktext;
 static char *xs;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
-#define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
+#define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atfpool(xs);free(xs);
 static void atf_user_action(void);
 
 /* #if 1 to print every matched rule */
@@ -65,7 +65,7 @@ QID	{PROJECT}:{PQX}
 <s_AMPr>.+/\n	       		{ BEGIN 0; atfnorm; return r(TEXT); }
 <s_AMPl>[ \t]+	       		{ ; }
 
-<s_TEXT>.+/\n	       		{ BEGIN 0; atfnorm; return r(TEXT); }
+<s_TEXT>.+/\n	       		{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
 
@@ -104,6 +104,10 @@ QID	{PROJECT}:{PQX}
 				  linktext = 0; return '='; }
 <s_LINK>[ \t]			{ ; }
 <s_LINK>\n	       		{ BEGIN 0; }
+
+"#version"			{ BEGIN TEXT; return HASH_VERSION; }
+"#bib"				{ BEGIN TEXT; return HASH_BIB; }
+"#note"				{ BEGIN TEXT; return HASH_NOTE; }
 
 [ \t]+ 				{ ; }
 
