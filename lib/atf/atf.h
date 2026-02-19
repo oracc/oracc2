@@ -10,18 +10,20 @@ typedef enum keyt { KEYT_KEY , KEYT_URL , KEYT_TOP } Keyt;
 
 typedef enum linkt { LINK_DEF ,  LINK_EXEMPLAR , LINK_PARALLEL , LINK_TOP } Linkt;
 
-typedef enum doct { EDOC_TLIT , EDOC_TLAT , EDOC_SCORE , EDOC_COMPOSITE } Doct;
+typedef enum doct {
+  EDOC_NONE , EDOC_TLIT , EDOC_COMPOSITE , EDOC_SCORE ,
+  EDOC_MATRIX , EDOC_SYNOPTIC , EDOC_PARSED , EDOC_UNPARSED , EDOC_WORD
+} Doct;
 
 /* Management structure for ATF texts */
 typedef struct atfm {
   List *lpstart;
   List *llinks;
   List *lkeys;
-  List *lmos;
-  Memo *mprotocols;
-  Memo *mlinks;
+  Memo *mblks;
+  Memo *mxlinks;
   Memo *mkeys;
-  Memo *mlatf;
+  Memo *matfl;
   Pool *pool;
   struct atf *atf;
 } Atfm;
@@ -30,12 +32,13 @@ typedef struct atfm {
 typedef struct atf {
   struct atfm *man;
   struct atfl *src; /* &-line */
-  List *atflines; /* list of Latf pointers to the data for each line, to drive output */
+  List *atflines; /* list of Atfl pointers to the data for each line, to drive output */
   ccp pqx;
   uccp name;
-  ccp sdoc;  /* doctype as a string */
   enum doct edoc; /* doctype as enum */
-  int scoreflags; /* 0x01 = parsed, 0x02 = word */
+  enum doct stype;
+  enum doct sparse;
+  enum doct sword;
   uccp project;
   struct protocol *pstart;
   int npstart;
@@ -103,18 +106,23 @@ typedef struct blk Cell;
 typedef struct blk Field;
 typedef struct blk Word;
 
+extern ATF *atfp;
 extern Atfm *atfmp;
 
 extern int atflineno;
 extern const char *atffile, *curratffile;
 
 extern int atfparse(void); /* bison */
+extern ATF *atf_read(const char *);
+#if 0
 extern char *atf_name(struct catchunk *cp, char **data);
-extern struct catchunk *atf_read(const char *);
-extern struct catchunk *atfyacc(void);
+#endif
+extern ATF *atfyacc(void);
 extern void atf_lex_init(FILE *fp, const char *file);
 extern void atf_protocol(const char *p);
 extern void atf_init(void);
 extern void atf_term(void);
+
+extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
 
 #endif/*ATF_H_*/

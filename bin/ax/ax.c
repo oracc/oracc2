@@ -1,11 +1,9 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include <oraccsys.h>
 #include <mesg.h>
 #include <tree.h>
 #include <xml.h>
 #include <atf.h>
 #include <gdl.h>
-#include <oraccsys.h>
 
 Mloc xo_loc;
 FILE *f_xml;
@@ -14,40 +12,24 @@ int verbose;
 int status;
 int rnvtrace;
 
-extern int atfflextrace , atftrace, cattrace, gdlflextrace, gdltrace;
+extern int atfflextrace , atftrace, gdlflextrace, gdltrace;
 
 int check_mode = 0;
 int trace_mode = 0;
 
-struct cat axcat;
-
 extern struct catinfo *ax_check (const char *str,size_t len);
-     
-struct catconfig ax_cat_config =
-  {
-    NS_XTF, 	/* namespace */
-    "xtf", 	/* head */
-    atf_name, 	/* parser function to extract name from chunk */
-    ax_check,	/* checker function to test names and get name info */
-    1,		/* blank lines in record are not errors when processing cattree */
-    0		/* blank lines are not record-separators in cattree */
-  };
 
 void
 ax_input(const char *f)
 {
   mesg_init();
   gdlparse_init();
-  axcat.f = (f ? f : "<stdin>");
-  axcat.c = atf_read(f);
-  if (cattrace)
-    cat_dump(axcat.c);
-  axcat.t = cat_tree(axcat.c, &ax_cat_config);
-  if (!check_mode)
-    {
-      tree_ns_default(axcat.t, NS_XTF);
-      tree_xml(NULL, axcat.t);
-    }
+  ATF *a = atf_read(f);
+  fprintf(stderr, "&%s = %s\n", a->pqx, a->name);
+  if (a->edoc == EDOC_COMPOSITE)
+    fprintf(stderr, "@composite\n");
+  if (a->project)
+    fprintf(stderr, "#project: %s\n", a->project);
   atf_term();
   gdlparse_term();
   mesg_print(stderr);
@@ -64,7 +46,7 @@ main(int argc, char **argv)
 
   options(argc, argv, "ct");
 
-  atfflextrace = atftrace = cattrace = gdlflextrace = gdltrace = gdldebug = trace_mode;
+  atfflextrace = atftrace = gdlflextrace = gdltrace = gdldebug = trace_mode;
 
   gdlxml_setup();
   gvl_setup("osl", "osl","020");

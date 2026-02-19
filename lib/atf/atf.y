@@ -22,40 +22,68 @@ ATFLTYPE atflloc;
 
 %union { char *text; int i; }
 
-%token	<text>  PQX TEXT DOC PROJECT ATF LEMMATIZER LINK KEY
+%token	<text>  PQX TEXT DOC PROJECT ATFPRO LEMMATIZER LINK KEY
 		MILESTONE OBJECT SURFACE COLUMN DIVISION
 		MTS NTS LGS GUS LEM
 		BIB VAR NOTE VERSION
+
+%token  <i>     HASH_PROJECT COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
+
+%nterm <text>   pqx name
+
+%nterm <i> 	doc sparse stype
 
 %start atf
 
 %%
 
-atf: amp def preamble blocks
+atf: amp
+     | amp preamble
+     | amp preamble blocks
+     ;
 
-amp: pqx '=' name
+amp: pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
 
 pqx: PQX
 
 name: TEXT
 
-def: doc
-     | project
-     | doc project
-     ;
+preamble: plks
+	| doc plks
+	;
 
-doc: DOC
+doc:		COMPOSITE			{
+		    atfp->edoc = EDOC_COMPOSITE;
+		}
+	| 	SCORE stype sparse		{
+		    atfp->edoc = EDOC_SCORE;
+		    atfp->stype = $2; atfp->sparse = $3;
+		}
+	| 	SCORE stype sparse SWORD	{
+		    atfp->edoc = EDOC_SCORE;
+		    atfp->stype = $2; atfp->sparse = $3;
+		    atfp->sword = EDOC_WORD;
+		}
+	;
 
-project: PROJECT
+stype:
+	MATRIX { $$=EDOC_MATRIX; } | SYNOPTIC { $$=EDOC_SYNOPTIC; };
 
-preamble: plk | preamble plk
+sparse: PARSED { $$=EDOC_PARSED; } | UNPARSED { $$=EDOC_UNPARSED; };
+
+plks: plk
+  | plks plk
+;
 
 plk:      protocol.start
 	| link
 	| key
 	;
 
-protocol.start: ATF | LEMMATIZER | VERSION
+protocol.start: project | ATFPRO | LEMMATIZER | VERSION | BIB | NOTE
+
+project:	HASH_PROJECT PROJECT { atfp->project = $2; }
+	;
 
 link: LINK
 

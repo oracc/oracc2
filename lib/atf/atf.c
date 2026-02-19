@@ -13,19 +13,6 @@ int atftrace = 1;
 extern int gdl_legacy, gdl_lexical, gdl_unicode;
 
 void
-atf_init(void)
-{
-  cat_init();
-  gdl_legacy = gdl_lexical = gdl_unicode = 0;
-}
-
-void
-atf_term(void)
-{
-  cat_term();
-}
-
-void
 atf_protocol(const char *p)
 {
   const char *p2 = NULL;
@@ -46,7 +33,7 @@ atf_protocol(const char *p)
     }
 }
 
-struct catchunk *
+ATF *
 atf_read(const char *file)
 {
   if (file)

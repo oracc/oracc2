@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 
 char *
-normalize_ws(const char *s)
+normalize_ws(const unsigned char *s)
 {
   while (isspace(*s))
     ++s;

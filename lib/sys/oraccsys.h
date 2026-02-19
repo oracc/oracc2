@@ -124,7 +124,7 @@ extern char** dirarray(const char* path, int* count);
 extern char *findfile(const char *project, const char *file2find, const char *deflt);
 extern char *findfile_dir(const char *project, const char *file2find, const char *deflt, const char *dir);
 extern int rnv_check(const char *rnc, const char *xml);
-extern char *normalize_ws(const char *s);
+extern char *normalize_ws(const unsigned char *s);
 extern int xmkdirs(const char *dir);
 
 extern const char *opts_prog(void);

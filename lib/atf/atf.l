@@ -5,6 +5,7 @@
 #include <oraccsys.h>
 #include <mesg.h>
 #include <pool.h>
+#include "atf.h"
 
 #define ATFLTYPE Mloc
 #include "atf.tab.h"
@@ -15,8 +16,7 @@ const char *curratffile = NULL;
 
 int atfflextrace = 0;
 
-extern Pool *catpool;
-#define atfpool(s) (char*)pool_copy((const unsigned char*)(s),catpool);
+#define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 static void atf_user_action(void);
 
 /* #if 1 to print every matched rule */
@@ -29,50 +29,43 @@ static void atf_user_action(void);
 #define atfsave atflval.text=atfpool(atftext)
 
 %}
-
+PQX	([PQX][0-9]{6})
 BOM3	("\xef\xbb\xbf")
 BOM2	("\xfe\xff")
 LINK	("<<"|">>"|"++"|"||")
+PROJECT [a-z][a-z0-9/]+
 
 %s T
 %x AMPl
 %x AMPr
+%x SCO
+%x PRO
 
 %%
 
-^({BOM3}|{BOM2})?"&"         	{ BEGIN AMP; }
-<AMPl>{PQX}			{ return PQX; }
-<AMPl>=				{ return '=';
+^({BOM3}|{BOM2})?"&"         	{ BEGIN AMPl; }
+<AMPl>{PQX}			{ atfsave; return PQX; }
+<AMPl>=				{ BEGIN AMPr; return '='; }
 <AMPl,AMPr>[ \t]+	       	{ ; }
-<AMP>.*/[ \t]\n			{ BEGIN 0; atfsave; return NAME; }
+<AMPr>.+/\n	       		{ BEGIN 0; atfsave; return TEXT; }
 
-^"@"translation.*/\n		{ BEGIN T; atfsave; pmatch("###translation\n"); return TOK; }
+.				{ mesg_vwarning(curratffile, atflineno,
+						"atf.l: unmatched character %c\n", *atftext); }
 
-^"@".*/\n  			{ atfsave; pmatch("###at\n"); return TOK; }
+^"@composite"			{ return COMPOSITE; }
+^"@score"		       	{ BEGIN SCO; return SCORE; }
+<SCO>"matrix"			{ return MATRIX; }
+<SCO>"synoptic"			{ return SYNOPTIC; }
+<SCO>"parsed"			{ return PARSED; }
+<SCO>"unparsed"			{ return UNPARSED; }
+<SCO>"word"			{ return SWORD; }
+<SCO>[ \t]			{ ; }
+<SCO>\n				{ BEGIN 0; }
 
-^"$".*/\n  			{ atfsave; pmatch("###dollar\n"); return TOK; }
+"#project:"			{ BEGIN PRO; return HASH_PROJECT; }
+<PRO>{PROJECT}/[ \t]*\n		{ BEGIN 0; atfsave; return PROJECT; }
 
-^"#"[^ \t\n:]+:[ \t]+.*/\n  	{ atfsave; pmatch("###hash\n"); return TOK; }
-
-^{LINK}.*/\n  			{ atfsave; pmatch("###link\n"); return TOK; }
-
-^[^ \t\n]+\.([ \t]+.*)?/\n 	{ atfsave; pmatch("###line\n"); return TOK; }
-
-^[^ \t\n]+:([ \t]+.*)/\n 	{ atfsave; pmatch("###siglum\n"); return TOK; }
-
-^==.*/\n 			{ atfsave; pmatch("###equiv\n"); return TOK; }
-
-^\#.*/\n   			{ atfsave; pmatch("###comment\n"); return CMT; }
-
-^[ \t]+.+/\n    		{ atfsave; pmatch("###tab\n"); return TAB; }
-
-<T>^[^ \t\n].*/\n		{ atfsave; pmatch("###bad\n"); return TRANS; }
-
-^[^ \t\n].*/\n			{ pmatch("###bad\n"); return BAD; }
-
-\n([ \t]*)+/\n			{ pmatch("###par\n"); return PAR; }
-
-\n				{ pmatch("###eol\n"); return EOL; }
+[ \t]+ 				{ ; }
 
 .				{ mesg_vwarning(curratffile, atflineno,
 						"atf.l: unmatched character %c\n", *atftext); }
