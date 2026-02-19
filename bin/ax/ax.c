@@ -4,6 +4,7 @@
 #include <xml.h>
 #include <atf.h>
 #include <gdl.h>
+#include "ax.h"
 
 Mloc xo_loc;
 FILE *f_xml;
@@ -25,11 +26,7 @@ ax_input(const char *f)
   mesg_init();
   gdlparse_init();
   ATF *a = atf_read(f);
-  fprintf(stderr, "&%s = %s\n", a->pqx, a->name);
-  if (a->edoc == EDOC_COMPOSITE)
-    fprintf(stderr, "@composite\n");
-  if (a->project)
-    fprintf(stderr, "#project: %s\n", a->project);
+  ax_atf(a);
   atf_term();
   gdlparse_term();
   mesg_print(stderr);

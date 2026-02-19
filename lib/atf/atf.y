@@ -22,16 +22,19 @@ ATFLTYPE atflloc;
 
 %union { char *text; int i; }
 
-%token	<text>  PQX TEXT DOC PROJECT ATFPRO LEMMATIZER LINK KEY
+%token	<text>  PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
 		MILESTONE OBJECT SURFACE COLUMN DIVISION
 		MTS NTS LGS GUS LEM
 		BIB VAR NOTE VERSION
+		ATF_LANG
 
-%token  <i>     HASH_PROJECT COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
+%token  <i>     HASH_PROJECT HASH_LINK COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
+		ATF_MYLINES ATF_AGROUPS ATF_MATH ATF_UNICODE ATF_LEGACY ATF_LEXICAL
+		LINK_DEF LINK_PARALLEL LINK_SOURCE
 
 %nterm <text>   pqx name
 
-%nterm <i> 	doc sparse stype
+%nterm <i> 	doc sparse stype atfuse link_type
 
 %start atf
 
@@ -75,47 +78,69 @@ plks: plk
   | plks plk
 ;
 
-plk:      protocol.start
-	| link
-	| key
-	;
+plk:      	protocol.start
+	| 	link
+	| 	key
+		;
 
-protocol.start: project | ATFPRO | LEMMATIZER | VERSION | BIB | NOTE
+protocol.start: project | atfpro | LEMMATIZER | VERSION | BIB | NOTE
 
-project:	HASH_PROJECT PROJECT { atfp->project = $2; }
-	;
+project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2; }
+		;
 
-link: LINK
+atfpro:	       	ATF_LANG 	{ atf_lang(atfp, $1); };
+	|	atfuse		{ atfp->flags |= $1; }
+		;
 
-key: KEY
+atfuse:		ATF_MYLINES { $$=ATFF_MYLINES; }
+	|	ATF_AGROUPS { $$=ATFF_AGROUPS; }
+	|	ATF_MATH    { $$=ATFF_MATH; }
+	|	ATF_UNICODE { $$=ATFF_UNICODE; }
+	|	ATF_LEGACY  { $$=ATFF_LEGACY; }
+	|	ATF_LEXICAL { $$=ATFF_LEXICAL; }
+		;
 
-blocks: block
-  | blocks block
-  ;
+link:
+		HASH_LINK link_body
+		;
+
+link_body:
+		LINK_DEF TEXT '=' QID '=' TEXT 	{ atf_bld_link(@1, ELINK_DEF, $2, $4, $6); }
+	|	link_type QID '=' TEXT	        { atf_bld_link(@1, $1, NULL, $2, $4); }
+		;
+
+link_type:	LINK_PARALLEL {$$=ELINK_PARALLEL;} | LINK_SOURCE {$$=ELINK_SOURCE;}
+		;
+
+key: 		KEY
+		
+blocks: 	block
+	| 	blocks block
+		;
 
 block:
-    locator-or-line
-  | locator-or-line protocols.inter
-  ;
+		locator-or-line
+	| 	locator-or-line protocols.inter
+		;
 
 /* This grammar requires secondary enforcement of sequencing
    constraints, e.g., NTS must follow MTS, COLUMN must not precede
    SURFACE */
 locator-or-line:
-    MILESTONE
-  | DIVISION
-  | OBJECT
-  | SURFACE
-  | COLUMN
-  | line
-  ;
+		MILESTONE
+	| 	DIVISION
+	| 	OBJECT
+	| 	SURFACE
+	| 	COLUMN
+	| 	line
+		;
 
 line: MTS | NTS | LGS | GUS | LEM
 
 protocols.inter:
-   protocol.inter
-   | protocols.inter protocol.inter
-   ;
+		protocol.inter
+	| 	protocols.inter protocol.inter
+		;
 
 protocol.inter: BIB | NOTE | VAR
 

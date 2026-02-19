@@ -8,7 +8,7 @@ typedef enum e_type Atflt;
 
 typedef enum keyt { KEYT_KEY , KEYT_URL , KEYT_TOP } Keyt;
 
-typedef enum linkt { LINK_DEF ,  LINK_EXEMPLAR , LINK_PARALLEL , LINK_TOP } Linkt;
+typedef enum linkt { ELINK_DEF ,  ELINK_SOURCE , ELINK_PARALLEL , ELINK_TOP } Linkt;
 
 typedef enum doct {
   EDOC_NONE , EDOC_TLIT , EDOC_COMPOSITE , EDOC_SCORE ,
@@ -40,9 +40,13 @@ typedef struct atf {
   enum doct sparse;
   enum doct sword;
   uccp project;
+  const char *lang;
+  const char *altlang;
+  const char *script;
+  int flags;
   struct protocol *pstart;
   int npstart;
-  struct link *links;
+  struct xlink **links;
   int nlinks;
   struct key *keys;
   int nkeys;
@@ -60,7 +64,7 @@ typedef struct atfl {
     struct nonx*nox;
     ccp *	cmt;
     ccp *	nul; /* blank line */
-    struct mo * mos; /* milestones/objects */
+    struct blk* blk; /* milestones/objects */
   } u;
 } Atfl;
 
@@ -68,7 +72,7 @@ typedef struct xlink {
   struct atfl *src;
   enum linkt t;
   uccp siglum;
-  ccp pqx;
+  ccp qid;
   uccp name;
 } Xlink;
 
@@ -106,6 +110,14 @@ typedef struct blk Cell;
 typedef struct blk Field;
 typedef struct blk Word;
 
+#define ATFF_MYLINES 0x01
+#define ATFF_AGROUPS 0x02
+#define ATFF_MATH 0x04
+#define ATFF_UNICODE 0x08
+#define ATFF_LEGACY 0x10
+#define ATFF_LEXICAL 0x20
+#define ATFF_TOP 0x40
+
 extern ATF *atfp;
 extern Atfm *atfmp;
 
@@ -123,6 +135,9 @@ extern void atf_protocol(const char *p);
 extern void atf_init(void);
 extern void atf_term(void);
 
+extern void atf_lang(ATF *a, const char *atf_lang);
 extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
+extern void atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum,
+			 const char *qid, const unsigned char *name);
 
 #endif/*ATF_H_*/

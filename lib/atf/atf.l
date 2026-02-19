@@ -15,6 +15,7 @@ const char *atffile = "<stdin>";
 const char *curratffile = NULL;
 
 int atfflextrace = 0;
+static int linktext;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 static void atf_user_action(void);
@@ -34,20 +35,27 @@ BOM3	("\xef\xbb\xbf")
 BOM2	("\xfe\xff")
 LINK	("<<"|">>"|"++"|"||")
 PROJECT [a-z][a-z0-9/]+
+QID	{PROJECT}:{PQX}
 
 %s T
 %x AMPl
 %x AMPr
 %x SCO
 %x PRO
+%x ATFPRO
+%x LINK
+%x TEXT
+%x WORD
 
 %%
 
 ^({BOM3}|{BOM2})?"&"         	{ BEGIN AMPl; }
 <AMPl>{PQX}			{ atfsave; return PQX; }
-<AMPl>=				{ BEGIN AMPr; return '='; }
-<AMPl,AMPr>[ \t]+	       	{ ; }
-<AMPr>.+/\n	       		{ BEGIN 0; atfsave; return TEXT; }
+<AMPl>=				{ BEGIN TEXT; return '='; }
+<AMPl,TEXT>[ \t]+	       	{ ; }
+
+<TEXT>.+/\n	       		{ BEGIN 0; atfsave; return TEXT; }
+<WORD>[^ \t\n]+	       		{ BEGIN 0; atfsave; return WORD; }
 
 .				{ mesg_vwarning(curratffile, atflineno,
 						"atf.l: unmatched character %c\n", *atftext); }
@@ -64,6 +72,29 @@ PROJECT [a-z][a-z0-9/]+
 
 "#project:"			{ BEGIN PRO; return HASH_PROJECT; }
 <PRO>{PROJECT}/[ \t]*\n		{ BEGIN 0; atfsave; return PROJECT; }
+
+"#atf:"				{ BEGIN ATFPRO; }
+<ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
+<ATFPRO>use			{ ; }
+<ATFPRO>mylines		 	{ return ATF_MYLINES; }
+<ATFPRO>alignment-groups      	{ return ATF_AGROUPS; }
+<ATFPRO>math		 	{ return ATF_MATH; }
+<ATFPRO>unicode		 	{ return ATF_UNICODE; }
+<ATFPRO>legacy		 	{ return ATF_LEGACY; }
+<ATFPRO>cuneiform	 	{ ; } /* no longer useful; cuneify is default */
+<ATFPRO>lemconv			{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
+<ATFPRO>[ \t]			{ ; }
+<ATFPRO>\n	       		{ BEGIN 0; }
+
+"#link"				{ linktext = 0; BEGIN LINK; return HASH_LINK; }
+<LINK>"def"			{ linktext = 1; return LINK_DEF; }
+<LINK>"parallel"		{ return LINK_PARALLEL; }
+<LINK>"source"			{ return LINK_SOURCE; }
+<LINK>{QID}			{ linktext = 2; atfsave; return QID; }
+<LINK>=				{ if (linktext==2) BEGIN TEXT; else if (linktext==1) BEGIN WORD;
+				  linktext = 0; return '='; }
+<LINK>[ \t]			{ ; }
+<LINK>\n	       		{ BEGIN 0; }
 
 [ \t]+ 				{ ; }
 

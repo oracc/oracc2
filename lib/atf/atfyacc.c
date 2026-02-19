@@ -3,6 +3,8 @@
 #include <pool.h>
 #include "atf.h"
 
+static void atf_wrapup(void);
+
 Atfm *atfmp;
 ATF *atfp;
 
@@ -12,6 +14,7 @@ atfyacc(void)
   curratffile = atffile;
   atf_init();
   atfparse();
+  atf_wrapup();
   return atfp;
 }
 
@@ -36,4 +39,15 @@ atf_init(void)
 void
 atf_term(void)
 {
+}
+
+static void
+atf_wrapup(void)
+{
+  if (list_len(atfmp->llinks))
+    {
+      atfp->links = (Link**)list2array_c(atfmp->llinks, &atfp->nlinks);
+      list_free(atfmp->llinks, NULL);
+      atfmp->llinks = NULL;
+    }
 }
