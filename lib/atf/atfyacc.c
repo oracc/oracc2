@@ -46,7 +46,7 @@ atf_wrapup(void)
 {
   if (list_len(atfmp->llinks))
     {
-      atfp->links = (Link**)list2array_c(atfmp->llinks, &atfp->nlinks);
+      atfp->links = (Xlink**)list2array_c(atfmp->llinks, &atfp->nlinks);
       list_free(atfmp->llinks, NULL);
       atfmp->llinks = NULL;
     }

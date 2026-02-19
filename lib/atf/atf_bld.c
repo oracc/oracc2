@@ -10,9 +10,6 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   list_add(atfmp->atf->atflines, src);
   atfmp->atf->src = src;
   atfmp->atf->pqx = pqx;
-  const char *n = normalize_ws(name);
-  if (strlen(n) < strlen((ccp)name))
-    strcpy((char*)name, n);
   atfmp->atf->name = name;
 }
 

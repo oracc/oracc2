@@ -15,9 +15,12 @@ const char *atffile = "<stdin>";
 const char *curratffile = NULL;
 
 int atfflextrace = 0;
+static int s_next;
 static int linktext;
+static char *xs;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
+#define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
 static void atf_user_action(void);
 
 /* #if 1 to print every matched rule */
@@ -28,73 +31,79 @@ static void atf_user_action(void);
 #endif
 
 #define atfsave atflval.text=atfpool(atftext)
+#define atfnorm atflval.text=atfnormpool(atftext)
+
+#if 1
+#define r(x) x
+#else
+#define r(x) fprintf(stderr, "returning %d\n", x),x
+#endif
 
 %}
 PQX	([PQX][0-9]{6})
 BOM3	("\xef\xbb\xbf")
 BOM2	("\xfe\xff")
-LINK	("<<"|">>"|"++"|"||")
+ALINK	("<<"|">>"|"++"|"||")
 PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
 
-%s T
-%x AMPl
-%x AMPr
-%x SCO
-%x PRO
-%x ATFPRO
-%x LINK
-%x TEXT
-%x WORD
+%s s_T
+%x s_AMPl
+%x s_AMPr
+%x s_SCO
+%x s_PRO
+%x s_ATFPRO
+%x s_LINK
+%x s_TEXT
+%x s_WORD
 
 %%
 
-^({BOM3}|{BOM2})?"&"         	{ BEGIN AMPl; }
-<AMPl>{PQX}			{ atfsave; return PQX; }
-<AMPl>=				{ BEGIN TEXT; return '='; }
-<AMPl,TEXT>[ \t]+	       	{ ; }
+^({BOM3}|{BOM2})?"&"         	{ BEGIN s_AMPl; }
+<s_AMPl>{PQX}			{ atfsave; return r(PQX); }
+<s_AMPl>=	       		{ BEGIN s_AMPr; return r('='); }
+<s_AMPr>.+/\n	       		{ BEGIN 0; atfnorm; return r(TEXT); }
+<s_AMPl>[ \t]+	       		{ ; }
 
-<TEXT>.+/\n	       		{ BEGIN 0; atfsave; return TEXT; }
-<WORD>[^ \t\n]+	       		{ BEGIN 0; atfsave; return WORD; }
+<s_TEXT>.+/\n	       		{ BEGIN 0; atfnorm; return r(TEXT); }
 
-.				{ mesg_vwarning(curratffile, atflineno,
-						"atf.l: unmatched character %c\n", *atftext); }
+<s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
 
 ^"@composite"			{ return COMPOSITE; }
-^"@score"		       	{ BEGIN SCO; return SCORE; }
-<SCO>"matrix"			{ return MATRIX; }
-<SCO>"synoptic"			{ return SYNOPTIC; }
-<SCO>"parsed"			{ return PARSED; }
-<SCO>"unparsed"			{ return UNPARSED; }
-<SCO>"word"			{ return SWORD; }
-<SCO>[ \t]			{ ; }
-<SCO>\n				{ BEGIN 0; }
+^"@score"		       	{ BEGIN s_SCO; return SCORE; }
+<s_SCO>"matrix"			{ return MATRIX; }
+<s_SCO>"synoptic"	       	{ return SYNOPTIC; }
+<s_SCO>"parsed"			{ return PARSED; }
+<s_SCO>"unparsed"	       	{ return UNPARSED; }
+<s_SCO>"word"			{ return SWORD; }
+<s_SCO>[ \t]			{ ; }
+<s_SCO>\n	       		{ BEGIN 0; }
 
-"#project:"			{ BEGIN PRO; return HASH_PROJECT; }
-<PRO>{PROJECT}/[ \t]*\n		{ BEGIN 0; atfsave; return PROJECT; }
+"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
+<s_PRO>{PROJECT}/[ \t]*\n	{ BEGIN 0; atfsave; return PROJECT; }
 
-"#atf:"				{ BEGIN ATFPRO; }
-<ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
-<ATFPRO>use			{ ; }
-<ATFPRO>mylines		 	{ return ATF_MYLINES; }
-<ATFPRO>alignment-groups      	{ return ATF_AGROUPS; }
-<ATFPRO>math		 	{ return ATF_MATH; }
-<ATFPRO>unicode		 	{ return ATF_UNICODE; }
-<ATFPRO>legacy		 	{ return ATF_LEGACY; }
-<ATFPRO>cuneiform	 	{ ; } /* no longer useful; cuneify is default */
-<ATFPRO>lemconv			{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
-<ATFPRO>[ \t]			{ ; }
-<ATFPRO>\n	       		{ BEGIN 0; }
+"#atf:"				{ BEGIN s_ATFPRO; }
+<s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
+<s_ATFPRO>use			{ ; }
+<s_ATFPRO>mylines		{ return ATF_MYLINES; }
+<s_ATFPRO>alignment-groups      { return ATF_AGROUPS; }
+<s_ATFPRO>math		 	{ return ATF_MATH; }
+<s_ATFPRO>unicode		{ return ATF_UNICODE; }
+<s_ATFPRO>legacy		{ return ATF_LEGACY; }
+<s_ATFPRO>cuneiform	 	{ ; } /* no longer useful; cuneify is default */
+<s_ATFPRO>lemconv		{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
+<s_ATFPRO>[ \t]			{ ; }
+<s_ATFPRO>\n	       		{ BEGIN 0; }
 
-"#link"				{ linktext = 0; BEGIN LINK; return HASH_LINK; }
-<LINK>"def"			{ linktext = 1; return LINK_DEF; }
-<LINK>"parallel"		{ return LINK_PARALLEL; }
-<LINK>"source"			{ return LINK_SOURCE; }
-<LINK>{QID}			{ linktext = 2; atfsave; return QID; }
-<LINK>=				{ if (linktext==2) BEGIN TEXT; else if (linktext==1) BEGIN WORD;
+"#link"				{ linktext = 0; BEGIN s_LINK; return HASH_LINK; }
+<s_LINK>"def"			{ s_next=s_LINK; BEGIN s_WORD; return LINK_DEF; }
+<s_LINK>"parallel"		{ return LINK_PARALLEL; }
+<s_LINK>"source"		{ return LINK_SOURCE; }
+<s_LINK>{QID}			{ linktext = 2; atfsave; return QID; }
+<s_LINK>=			{ if (linktext==2) BEGIN s_TEXT; else if (linktext==1) BEGIN s_WORD;
 				  linktext = 0; return '='; }
-<LINK>[ \t]			{ ; }
-<LINK>\n	       		{ BEGIN 0; }
+<s_LINK>[ \t]			{ ; }
+<s_LINK>\n	       		{ BEGIN 0; }
 
 [ \t]+ 				{ ; }
 

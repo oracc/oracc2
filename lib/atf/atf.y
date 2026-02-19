@@ -74,9 +74,9 @@ stype:
 
 sparse: PARSED { $$=EDOC_PARSED; } | UNPARSED { $$=EDOC_UNPARSED; };
 
-plks: plk
-  | plks plk
-;
+plks: 		plk
+	| 	plks plk
+		;
 
 plk:      	protocol.start
 	| 	link
@@ -105,8 +105,8 @@ link:
 		;
 
 link_body:
-		LINK_DEF TEXT '=' QID '=' TEXT 	{ atf_bld_link(@1, ELINK_DEF, $2, $4, $6); }
-	|	link_type QID '=' TEXT	        { atf_bld_link(@1, $1, NULL, $2, $4); }
+		LINK_DEF WORD '=' QID '=' TEXT 	{ atf_bld_link(@1, ELINK_DEF,(uccp)$2, $4, (uccp)$6); }
+	|	link_type QID '=' TEXT	        { atf_bld_link(@1, $1, NULL, $2, (uccp)$4); }
 		;
 
 link_type:	LINK_PARALLEL {$$=ELINK_PARALLEL;} | LINK_SOURCE {$$=ELINK_SOURCE;}
