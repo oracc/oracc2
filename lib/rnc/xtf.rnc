@@ -3,7 +3,7 @@ namespace note = "http://oracc.org/ns/note/1.0"
 include "gdl-lib.rnc"
 include "xtr-lib.rnc"
 start = xtf | doctype
-xtf = element xtf { proto.outer? , doctype }
+xtf = element xtf { proto.outer? , doctype? }
 doctype = score | translation | transliteration | composite | atf
 atf = element atf { attribute xml:id   { xsd:ID } , text }
 

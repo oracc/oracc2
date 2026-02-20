@@ -17,6 +17,7 @@ extern int atfflextrace , atftrace, gdlflextrace, gdltrace;
 
 int check_mode = 0;
 int trace_mode = 0;
+int xml_output = 0;
 
 extern struct catinfo *ax_check (const char *str,size_t len);
 
@@ -26,7 +27,10 @@ ax_input(const char *f)
   mesg_init();
   gdlparse_init();
   ATF *a = atf_read(f);
-  ax_atf(a);
+  if (xml_output)
+    ax_jox(a);
+  else
+    ax_atf(a);
   atf_term();
   gdlparse_term();
   mesg_print(stderr);
@@ -41,7 +45,7 @@ main(int argc, char **argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "ct");
+  options(argc, argv, "ctx");
 
   atfflextrace = atftrace = gdlflextrace = gdltrace = gdldebug = trace_mode;
 
@@ -75,6 +79,9 @@ opts(int opt, const char *arg)
       break;
     case 't':
       trace_mode = 1;
+      break;
+    case 'x':
+      xml_output = 1;
       break;
     default:
       return 1;

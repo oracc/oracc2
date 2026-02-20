@@ -85,7 +85,7 @@ QID	{PROJECT}:{PQX}
 ^"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
 <s_PRO>{PROJECT}/\n		{ BEGIN 0; atfsave; return PROJECT; }
 
-^"#atf:"				{ BEGIN s_ATFPRO; }
+^"#atf:"			{ BEGIN s_ATFPRO; }
 <s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
 <s_ATFPRO>use			{ ; }
 <s_ATFPRO>mylines		{ return ATF_MYLINES; }
@@ -108,9 +108,9 @@ QID	{PROJECT}:{PQX}
 <s_LINK>[ \t]			{ ; }
 <s_LINK>\n	       		{ BEGIN 0; }
 
-^"#bib:"				{ BEGIN s_TEXT; return HASH_BIB; }
-^"#key:"				{ BEGIN s_TEXT; return HASH_KEY; }
-^"#note:"       			{ BEGIN s_TEXT; return HASH_NOTE; }
+^"#bib:"			{ BEGIN s_TEXT; return HASH_BIB; }
+^"#key:"			{ BEGIN s_TEXT; return HASH_KEY; }
+^"#note:"       		{ BEGIN s_TEXT; return HASH_NOTE; }
 ^"#version:"			{ BEGIN s_TEXT; return HASH_VERSION; }
 
 ^"#lemmatizer:"			{ BEGIN s_LZR; return HASH_LEMMATIZER; }
