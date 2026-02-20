@@ -119,6 +119,23 @@ QID	{PROJECT}:{PQX}
 <s_LZR>"stop"			{ BEGIN s_WORD; return LZR_SPARSE; }
 <s_LZR>\n				{ BEGIN 0; }
 
+^"@".*/\n  			{ atfsave; pmatch("###at\n"); return BLOCK; }
+
+^"$".*/\n  			{ atfsave; pmatch("###dollar\n"); return DOLLAR/L_DOLLAR; }
+
+^"#"[^ \t\n:]+:[ \t]+.*/\n  	{ atfsave; pmatch("###hash\n"); return LEM/L_NOTE/L_BIB; }
+
+^{LINK}.*/\n  			{ atfsave; pmatch("###link\n"); return L_LINK; }
+
+^[^ \t\n]+\.([ \t]+.*)?/\n 	{ atfsave; pmatch("###line\n"); return MTS; }
+
+^[^ \t\n]+:([ \t]+.*)/\n 	{ atfsave; pmatch("###siglum\n"); return EXX; }
+
+^==.*/\n 			{ atfsave; pmatch("###equiv\n"); return BIL; }
+
+^\#.*/\n   			{ atfsave; pmatch("###comment\n"); return CMT; }
+
+
 [ \t]+ 				{ ; }
 
 .				{ mesg_vwarning(curratffile, atflineno,
