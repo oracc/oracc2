@@ -71,3 +71,46 @@ atf_bld_protocol(Mloc l, Prot pt, const char *s)
   list_add(atfmp->lprotocols, p);
 }
 
+void
+atf_bld_column(Mloc l, Blocktok *curr_blocktok)
+{
+}
+
+void
+atf_bld_division(Mloc l, Blocktok *curr_blocktok)
+{
+}
+
+void
+atf_bld_heading(Mloc l, Blocktok *curr_blocktok)
+{
+}
+
+void
+atf_bld_milestone(Mloc l, Blocktok *curr_blocktok)
+{
+}
+
+void
+atf_bld_object(Mloc l, Blocktok *curr_blocktok)
+{
+}
+
+void
+atf_bld_surface(Mloc l, Blocktok *curr_blocktok)
+{
+}
+
+void
+atf_bld_mts(Mloc l, int linetype, const char *linetext)
+{
+  /* check current tree parent and build object/surface/column as
+   * implicit levels if necessary
+   */
+}
+
+void
+atf_bld_xxx(Mloc l, int linetype, const char *linetext)
+{
+  
+}

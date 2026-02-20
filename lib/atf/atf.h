@@ -192,4 +192,13 @@ extern void atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum,
 			 const char *qid, const unsigned char *name);
 extern void atf_bld_protocol(Mloc l, Prot pt, const char *s);
 
+extern void atf_bld_column(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_division(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_heading(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_milestone(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_object(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_surface(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_mts(Mloc l, int linetype, const char *linetext);
+extern void atf_bld_xxx(Mloc l, int linetype, const char *linetext);
+
 #endif/*ATF_H_*/

@@ -25,6 +25,7 @@
 #include <dbxlib.h>
 #include <xsystem.h>
 #include <bits.h>
+#include <longtext.h>
 
 #define QUALIFIED_PQX_MAX	512
 

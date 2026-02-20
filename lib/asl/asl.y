@@ -5,8 +5,7 @@
 %define parse.lac full
 
 %{
-#include <stdio.h>
-#include <string.h>
+#include <oraccsys.h>
 #include <mesg.h>
 #include "asl.h"
 extern int yylex(void);
@@ -68,8 +67,8 @@ line:	  atcmd		{ if (asltrace) fprintf(stderr, "atcmd/EOL: %s\n", asllval.text);
 	;
 
 longtext:
-	  TEXT		{ $$ = longtext(curr_asl, $1, NULL); /* fprintf(stderr,"longtext TEXT %s\n",$1); */ }
-        | longtext TAB	{ $$ = longtext(curr_asl, $1, $2);   /* fprintf(stderr,"longtext %s\n\t+ TAB %s\n",$1,$2);*/ }
+	  TEXT		{ $$ = longtext(curr_asl->p, $1, NULL); /* fprintf(stderr,"longtext TEXT %s\n",$1); */ }
+        | longtext TAB	{ $$ = longtext(curr_asl->p, $1, $2);   /* fprintf(stderr,"longtext %s\n\t+ TAB %s\n",$1,$2);*/ }
 	;
 
 atcmd:
@@ -182,8 +181,8 @@ atlink:
 utoken:   UTOKEN		
 	;
 
-utokens:  utoken		{ $$ = longtext(curr_asl, $1, NULL); }
-	| utokens utoken	{ $$ = longtext(curr_asl, $1, $2); }
+utokens:  utoken		{ $$ = longtext(curr_asl->p, $1, NULL); }
+	| utokens utoken	{ $$ = longtext(curr_asl->p, $1, $2); }
 	;
 
 uniimg:   utokens
@@ -244,8 +243,8 @@ atsys:
         ;
 
 atftokens:
-	  atftoken		{ $$ = longtext_sep(curr_asl, $1, NULL, " "); }
-	| atftokens atftoken	{ $$ = longtext_sep(curr_asl, $1, $2, " "); }
+	  atftoken		{ $$ = longtext_sep(curr_asl->p, $1, NULL, " "); }
+	| atftokens atftoken	{ $$ = longtext_sep(curr_asl->p, $1, $2, " "); }
 	;
 
 atftoken:

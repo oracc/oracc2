@@ -15,9 +15,11 @@ const char *atffile = "<stdin>";
 const char *curratffile = NULL;
 
 int atfflextrace = 0;
+static int endofinput;
 static int s_next;
 static int linktext;
 static char *xs;
+const char *initial_longtext;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 #define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
@@ -25,15 +27,10 @@ static char *xs;
 static int atf_block(const char *atcmd);
 static void atf_user_action(void);
 
-/* #if 1 to print every matched rule */
-#if 0
-#define pmatch(m) fprintf(stderr, (m))
-#else
-#define pmatch(m)
-#endif
-
 #define atfsave atflval.text=atfpool(atftext)
 #define atfnorm atflval.text=atfnormpool(atftext)
+
+#define longsave initial_longtext=atfpool(atftext)
 
 #if 1
 #define r(x) x
@@ -45,11 +42,13 @@ static void atf_user_action(void);
 PQX	([PQX][0-9]{6})
 BOM3	("\xef\xbb\xbf")
 BOM2	("\xfe\xff")
-ALINK	("<<"|">>"|"++"|"||")
+LK_TOTO ">>"
+LK_FROM "<<"
+LK_PLUS "++"
+LK_VBAR "||"
 PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
 
-%s s_T
 %x s_AMPl
 %x s_AMPr
 %x s_SCO
@@ -57,7 +56,7 @@ QID	{PROJECT}:{PQX}
 %x s_ATFPRO
 %x s_LINK
 %x s_LZR
-%x s_TEXT
+%s s_T
 %x s_WORD
 
 %%
@@ -68,7 +67,14 @@ QID	{PROJECT}:{PQX}
 <s_AMPr>[^\n]+      		{ BEGIN 0; atfnorm; return r(TEXT); }
 <s_AMPl>[ \t]+	       		{ ; }
 
-<s_TEXT>[^\n]+	       		{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
+<s_T>^\t[^\n]+			{ atfsave; return TAB; }
+<s_T>[^\t][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
+
+<s_T>^[ \t]+.*/\n[^\t]         	{ BEGIN 0; atfsave; return TAB; }
+<s_T>^[ \t]+.*/\n      		{ atfsave; return TAB; }
+<s_T>.+/\n[@#$\n]      		{ BEGIN 0; atfsave; return TEXT; }
+<s_T>.+/\n			{ atfsave; return TEXT; }
+<s_T><<EOF>>			{ if (!endofinput++) return EOL; else yyterminate(); }
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
 
@@ -103,39 +109,45 @@ QID	{PROJECT}:{PQX}
 <s_LINK>"parallel"		{ return LINK_PARALLEL; }
 <s_LINK>"source"		{ return LINK_SOURCE; }
 <s_LINK>{QID}			{ linktext = 2; atfsave; return QID; }
-<s_LINK>=			{ if (linktext==2) BEGIN s_TEXT; else if (linktext==1) BEGIN s_WORD;
+<s_LINK>=			{ if (linktext==2) BEGIN s_T; else if (linktext==1) BEGIN s_WORD;
 				  linktext = 0; return '='; }
 <s_LINK>[ \t]			{ ; }
 <s_LINK>\n	       		{ BEGIN 0; }
 
-^"#bib:"			{ BEGIN s_TEXT; return HASH_BIB; }
-^"#key:"			{ BEGIN s_TEXT; return HASH_KEY; }
-^"#note:"       		{ BEGIN s_TEXT; return HASH_NOTE; }
-^"#version:"			{ BEGIN s_TEXT; return HASH_VERSION; }
+^"#bib:"			{ BEGIN s_T; return HASH_BIB; }
+^"#key:"			{ BEGIN s_T; return HASH_KEY; }
+^"#note:"       		{ BEGIN s_T; return HASH_NOTE; }
+^"#version:"			{ BEGIN s_T; return HASH_VERSION; }
 
 ^"#lemmatizer:"			{ BEGIN s_LZR; return HASH_LEMMATIZER; }
 
 <s_LZR>"do"			{ ; }
 <s_LZR>[ \t]+			{ ; }
-<s_LZR>"sparse"			{ BEGIN s_TEXT; return LZR_SPARSE; }
+<s_LZR>"sparse"			{ BEGIN s_T; return LZR_SPARSE; }
 <s_LZR>"stop"			{ BEGIN s_WORD; return LZR_SPARSE; }
 <s_LZR>\n	       		{ BEGIN 0; }
 
-^@[a-z][a-z0-9]+       		{ BEGIN s_TEXT; return atf_block(atflval.text); }
+^@[a-z][a-z0-9]+       		{ BEGIN s_T; return atf_block(atflval.text); }
 
-^"$".*/\n  			{ atfsave; DOLLAR; }
+^"$"  				{ BEGIN s_T; atfsave; return DOLLAR; }
 
-^"#lem:"  			{ atfsave; return LEM; }
+^"#lem:"  			{ BEGIN s_T; atfsave; return LEM; }
 
-^{ALINK}.*/\n  			{ atfsave; return L_LINK; }
+^{LK_TOTO}  			{ BEGIN s_T; atfsave; return LNK_TOTO; }
 
-^[^ \t\n]+\.([ \t]+.*)?/\n 	{ atfsave; return MTS; }
+^{LK_FROM}  			{ BEGIN s_T; atfsave; return LNK_FROM; }
 
-^[^ \t\n#]+:([ \t]+.*)/\n 	{ atfsave; return EXX; }
+^{LK_PLUS}  			{ BEGIN s_T; atfsave; return LNK_PLUS; }
 
-^==.*/\n 			{ atfsave; return BIL; }
+^{LK_VBAR}  			{ BEGIN s_T; atfsave; return LNK_VBAR; }
 
-^\#   				{ BEGIN s_TEXT; return COMMENT; }
+^[^ \t\n]+\.[ \t]+ 		{ BEGIN s_T; longsave; return MTS; }
+
+^[^ \t\n#]+:[ \t]+ 		{ BEGIN s_T; longsave; return EXX; }
+
+^== 				{ BEGIN s_T; atfsave; return BIL; }
+
+^\#   				{ BEGIN s_T; return COMMENT; }
 
 [ \t]+ 				{ ; }
 

@@ -4,8 +4,7 @@
 %define parse.error verbose
 
 %{
-#include <stdio.h>
-#include <string.h>
+#include <oraccsys.h>
 #include "atf.h"
 extern int yylex(void);
 extern void yyerror(const char *);
@@ -28,17 +27,19 @@ ATFLTYPE atflloc;
 
 %token	<text>		PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
 			MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
-			MTS NTS LGS GUS LEM BIL EXX DOLLAR
+			TAB EOL
 			BIB VAR NOTE VERSION
-			ATF_LANG L_LINK
+			ATF_LANG
 
 %token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_BIB HASH_NOTE HASH_KEY
 			HASH_LEMMATIZER LZR_SPARSE LZR_STOP
 			COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
 			ATF_MYLINES ATF_AGROUPS ATF_MATH ATF_UNICODE ATF_LEGACY ATF_LEXICAL
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
+			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
 			COMMENT
-			L_BIB L_NOTE BLANK
+			L_BIB L_NOTE
+			MTS NTS LGS GUS LEM BIL EXX DOLLAR
 			Y_BAD
 			Y_BODY Y_BOTTOM Y_BULLA Y_CATCHLINE Y_CFRAGMENT Y_COLOPHON Y_COLUMN
 			Y_COMPOSITE Y_DATE Y_DIV Y_DOCKET Y_EDGE Y_END Y_ENDVARIANTS
@@ -48,10 +49,11 @@ ATFLTYPE atflloc;
 			Y_SIGNATURE Y_SPAN Y_SUMMARY Y_SURFACE Y_TABLET Y_TOP Y_TRANSLATION
 			Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
 
-%nterm <text>   pqx name
+%nterm <text>   pqx name longtext
 
 %nterm <i> 	doc sparse stype atfuse link_type column
 		division heading milestone object surface
+		line_mts line_etc line_xxx l_link
 
 %start atf
 
@@ -61,6 +63,11 @@ atf: 		amp
 	| 	amp preamble
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks /* xcl */
 		;
+
+longtext:
+	  TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
+        | longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
+	;
 
 amp: pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
 
@@ -151,12 +158,12 @@ blocks: 	{ atf_bld_implicit_block(); }   group 	{ atf_wrapup(WH_GROUP); }
 		;
 
 block:
-	 	column
-	| 	division
-	|	heading
-	|	milestone
-	| 	object
-	| 	surface
+		column			{ atf_bld_column(@1, curr_blocktok); }
+	| 	division		{ atf_bld_division(@1, curr_blocktok); }
+	|	heading			{ atf_bld_heading(@1, curr_blocktok); }
+	|	milestone		{ atf_bld_milestone(@1, curr_blocktok); }
+	| 	object			{ atf_bld_object(@1, curr_blocktok); }
+	| 	surface			{ atf_bld_surface(@1, curr_blocktok); }
 		;
 
 column:		Y_COLUMN
@@ -214,34 +221,39 @@ surface:
 	| 	Y_SIDE
 	| 	Y_SURFACE	
 	;
+
 group:
 		line_mts
 	|	line_mts line_etc
 		;
 
-line_mts:	MTS
+line_mts:	MTS longtext		{ atf_bld_mts(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
 
 line_etc:
-		line_xxx
-	| 	line_etc line_xxx
+		line_xxx		{ atf_bld_xxx(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
+	| 	line_etc line_xxx	{ atf_bld_xxx(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
 		;
 
 line_xxx:
-		NTS
-	| 	LGS
-	| 	GUS
-	| 	BIL
-	| 	EXX
-	| 	LEM
-	|	L_LINK
-	| 	L_BIB
-	| 	L_NOTE
-	| 	COMMENT
-	| 	DOLLAR
-	| 	BLANK
+		NTS longtext		{ $$=$1; }
+	| 	LGS longtext		{ $$=$1; }
+	| 	GUS longtext		{ $$=$1; }
+	| 	BIL longtext		{ $$=$1; }
+	| 	EXX longtext		{ $$=$1; }
+	| 	LEM longtext		{ $$=$1; }
+	|	l_link longtext		{ $$=$1; }
+	| 	L_BIB longtext		{ $$=$1; }
+	| 	L_NOTE longtext		{ $$=$1; }
+	| 	COMMENT longtext	{ $$=$1; }
+	| 	DOLLAR longtext		{ $$=$1; }
 		;
 
+l_link:		LNK_TOTO
+	|	LNK_FROM
+	|	LNK_PLUS
+	|	LNK_VBAR
+	;
 %%
 
 void
