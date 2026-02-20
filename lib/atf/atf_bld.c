@@ -1,8 +1,16 @@
 #include <oraccsys.h>
 #include "atf.h"
 
-void
-atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
+Node *
+gdl_push(Tree *ytp, const char *s)
+{
+  tree_add(ytp, NS_GDL, s, ytp->curr->depth, NULL);
+  return tree_push(ytp);
+}
+
+
+Node *
+atf_bld_amp(Mloc l, Tree *tp, const char *pqx, unsigned const char *name)
 {
   Atfl *src = memo_new(atfmp->matfl);
   src->l = l;
@@ -12,6 +20,10 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atfmp->atf->src = src;
   atfmp->atf->pqx = pqx;
   atfmp->atf->name = name;
+  Node *np = tree_add(tp, NS_XTF, "no-text-yet", tp->curr->depth, NULL);
+  np->mloc = mloc_mloc(&l);
+  np->user = atfmp->atf;
+  return tree_push(tp);
 }
 
 void

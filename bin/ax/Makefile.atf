@@ -4,6 +4,8 @@
 # Replaces o2-atf.sh and o2-xtf.sh
 #
 
+.PRECIOUS: .xtf
+
 default: ${pqx}.tok
 
 txh: ${pqx}.txh

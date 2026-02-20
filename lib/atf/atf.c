@@ -33,19 +33,12 @@ atf_protocol(const char *p)
     }
 }
 
-ATF *
+Tree *
 atf_read(const char *file)
 {
   if (file)
     {
       FILE *fp = NULL;
-#if 0
-      if (!(fp = fopen(file, "r")))
-	{
-	  fprintf(stderr, "open failed on %s\n", file);
-	  return NULL;
-	}
-#endif
       atf_lex_init(fp, file);
     }
   atf_init();

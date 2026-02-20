@@ -174,6 +174,12 @@ atf_block(const char *atcmd)
 }
 
 void
+atf_wrapup_buffer(void)
+{
+  atf_delete_buffer(YY_CURRENT_BUFFER);
+}
+
+void
 atf_lex_init(FILE *fp, const char *file)
 {
 #if 1

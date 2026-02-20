@@ -172,20 +172,20 @@ extern Group *curr_group;
 extern int atflineno;
 extern const char *atffile, *curratffile;
 
-extern int atfparse(void); /* bison */
-extern ATF *atf_read(const char *);
-#if 0
-extern char *atf_name(struct catchunk *cp, char **data);
-#endif
-extern ATF *atfyacc(void);
+extern int atfparse(void);
+extern Tree *atf_read(const char *);
+extern Tree *atfyacc(void);
 extern void atf_lex_init(FILE *fp, const char *file);
 extern void atf_protocol(const char *p);
 extern void atf_init(void);
 extern void atf_term(void);
 extern void atf_wrapup(Wheret where);
 
+extern void atf_set_tree(Tree *tp);
+extern void atf_wrapup_buffer(void);
+
 extern void atf_lang(ATF *a, const char *atf_lang);
-extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
+extern Node *atf_bld_amp(Mloc l, Tree *tp, const char *pqx, unsigned const char *name);
 extern void atf_bld_implicit_block(void);
 extern void atf_bld_key(Mloc l, char *str);
 extern void atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum,

@@ -20,18 +20,17 @@ struct treemem
   Memo *keva_mem;
 };
 
-struct tree {
+typedef struct tree {
   struct treemem *tm;
   struct node *root;
   struct node *curr;
   nsrefs ns_used;
   int rootless; /* non-zero means don't print root node */
-};
+} Tree;
 
-typedef struct tree Tree;
 struct prop;
 
-struct node {
+typedef struct node {
   enum nscode ns;   	/* node namespace */
   const char *name;    	/* node name */
   const char *text; 	/* unparsed text-data when node comes from cat-style input */
@@ -49,9 +48,7 @@ struct node {
   struct prop *props;
   Mloc *mloc;
   void *user;		/* data dependent on node prefix/prefix:name combination */
-};
-
-typedef struct node Node;
+} Node;
 
 typedef void (*nodehandler)(Node *np, void *user);
 typedef nodehandler nodehandlers[NS_LAST];

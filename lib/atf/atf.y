@@ -12,6 +12,9 @@ extern const char *atftext, *curratffile;
 extern int atflineno, atftrace;
 extern int gdl_unicode;
 
+static Tree *ytp;
+static Node *ynp/*, *yrem, *ycp, *mnp*/;
+
 Block *curr_block;
 Blocktok *curr_blocktok;
 Group *curr_group;
@@ -69,7 +72,7 @@ longtext:
         | longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
 	;
 
-amp: pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
+amp: pqx '=' name { ynp = atf_bld_amp(@1, ytp, $1, (uccp)$3); }
 
 pqx: PQX
 
@@ -255,6 +258,12 @@ l_link:		LNK_TOTO
 	|	LNK_VBAR
 	;
 %%
+
+void
+atf_set_tree(Tree *tp)
+{
+  ytp = tp;
+}
 
 void
 atferror(const char *e)

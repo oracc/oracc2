@@ -6,14 +6,30 @@
 Atfm *atfmp;
 ATF *atfp;
 
-ATF *
+Tree *
 atfyacc(void)
 {
   curratffile = atffile;
-  atf_init();
+
+  Tree *tp = tree_init();
+
+  (void)tree_root(tp, NS_XTF, "xtf", 1, NULL);
+
+  atf_set_tree(tp);
+#if 0
+  if (m)
+    atf_lex_init(m->file, m->line);
+  else
+    atf_lex_init("<string>", 1);
+#endif
+
   atfparse();
+  
   atf_wrapup(WH_PREAMBLE); /* in case there is no body */
-  return atfp;
+
+  atf_wrapup_buffer();
+
+  return tp;
 }
 
 void
