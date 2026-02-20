@@ -6,24 +6,35 @@
 #include "blocktok.h"
 typedef enum e_type Atflt;
 
-typedef enum keyt { KEYT_KEY , KEYT_URL , KEYT_TOP } Keyt;
-
 typedef enum linkt { ELINK_DEF ,  ELINK_SOURCE , ELINK_PARALLEL , ELINK_TOP } Linkt;
+
+typedef enum prot { PROT_LZR_SPARSE ,  PROT_LZR_STOP , PROT_BIB , PROT_NOTE ,
+		    PROT_VERSION , PROT_TOP } Prot;
+
+typedef enum linet { LINE_MTS , LINE_NTS , LINE_LGS, LINE_GUS ,
+		     LINE_LEM , LINE_LINK , LINE_COMMENT , LINE_DOLLAR ,
+		     LINE_BLANK , LINE_TOP } Linet;
 
 typedef enum doct {
   EDOC_NONE , EDOC_TLIT , EDOC_COMPOSITE , EDOC_SCORE ,
   EDOC_MATRIX , EDOC_SYNOPTIC , EDOC_PARSED , EDOC_UNPARSED , EDOC_WORD
 } Doct;
 
+typedef enum wheret { WH_NONE , WH_PREAMBLE , WH_GROUP } Wheret;
+
 /* Management structure for ATF texts */
 typedef struct atfm {
-  List *lpstart;
+  List *lprotocols; /* repeatedly reset to array */
   List *llinks;
+  List *llines;
   List *lkeys;
   Memo *mblks;
   Memo *mxlinks;
+  Memo *mlines;
   Memo *mkeys;
   Memo *matfl;
+  Memo *mprotocols;
+  Memo *mgroups;
   Pool *pool;
   struct atf *atf;
 } Atfm;
@@ -43,13 +54,16 @@ typedef struct atf {
   const char *lang;
   const char *altlang;
   const char *script;
+  struct protocol **protocols;
+  int nprotocols;
   int flags;
-  struct protocol *pstart;
-  int npstart;
+  Hash *lzr_sparse;
   struct xlink **links;
   int nlinks;
-  struct key *keys;
+  struct key **keys;
   int nkeys;
+  struct group *lines; /* attach point for #- and $-lines that occur before first MTS */
+  Tree *body; /* probable implementation of document hierarchy */
 } ATF;
 
 typedef struct atfl {
@@ -76,12 +90,37 @@ typedef struct xlink {
   uccp name;
 } Xlink;
 
+/* Ported from otf/lib/key.[ch] */
 typedef struct key {
   struct atfl *src;
-  enum keyt t;
-  struct keva k;
-  void *x;
+  const char *key;
+  const char *val;
+  const char *url;
 } Key;
+
+/* This is used for the following protocols:
+ *
+ * #lemmatizer: do sparse <FIELDS>
+ *
+ * #lemmatizer: stop <INTEGER>
+ *
+ * #bib: <STRING>
+ *
+ * #note: <STRING>
+ *
+ * #version: <STRING>
+ *
+ * It could also be used for #atf: use but they are currently handled as flags.
+*/
+typedef struct protocol {
+  struct atfl *src;
+  enum prot t;
+  union {
+    int stop;
+    const unsigned char *str;
+    Hash *sparse;
+  } u;
+} Protocol;
 
 /* nonx (mainly $-line) implementation ported from ox */
 #include "nonx.h"
@@ -96,19 +135,27 @@ typedef struct blk {
   } kids;
   struct atf *a;
   struct blk *up;
-  void *v; /* used by nonx to store Nox ptr */
+  struct group *lines;
+  void *v; /* used by nonx to store Nox ptr *//*probably not as it turns out */
 } Blk;
 
+typedef struct blk Block;
 typedef struct blk Column;
 typedef struct blk Div;
 typedef struct blk Milestone;
 typedef struct blk Object;
 typedef struct blk Surface;
-typedef struct blk Group; /* line-group */
-typedef struct blk Line;
-typedef struct blk Cell;
-typedef struct blk Field;
-typedef struct blk Word;
+
+typedef struct group {
+  struct block *parent; /* this is a locator group */
+  struct line **lines; /* these are gathered in atfmp->llines */
+  int nlines;
+} Group; /* line-group */
+
+typedef struct line {
+  Linet t;
+  Node *gdl;
+} Line;
 
 #define ATFF_MYLINES 0x01
 #define ATFF_AGROUPS 0x02
@@ -120,6 +167,8 @@ typedef struct blk Word;
 
 extern ATF *atfp;
 extern Atfm *atfmp;
+extern Block *curr_block;
+extern Group *curr_group;
 
 extern int atflineno;
 extern const char *atffile, *curratffile;
@@ -134,10 +183,14 @@ extern void atf_lex_init(FILE *fp, const char *file);
 extern void atf_protocol(const char *p);
 extern void atf_init(void);
 extern void atf_term(void);
+extern void atf_wrapup(Wheret where);
 
 extern void atf_lang(ATF *a, const char *atf_lang);
 extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
+extern void atf_bld_implicit_block(void);
+extern void atf_bld_key(Mloc l, char *str);
 extern void atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum,
 			 const char *qid, const unsigned char *name);
+extern void atf_bld_protocol(Mloc l, Prot pt, const char *s);
 
 #endif/*ATF_H_*/

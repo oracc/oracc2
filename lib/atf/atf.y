@@ -13,6 +13,9 @@ extern const char *atftext, *curratffile;
 extern int atflineno, atftrace;
 extern int gdl_unicode;
 
+Block *curr_block;
+Group *curr_group;
+
 #define ATFLTYPE_IS_DECLARED 1
 #define ATFLTYPE Mloc
 #define yylineno atflineno
@@ -23,15 +26,17 @@ ATFLTYPE atflloc;
 %union { char *text; int i; }
 
 %token	<text>		PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
-			MILESTONE OBJECT SURFACE COLUMN DIVISION
-			MTS NTS LGS GUS LEM
+			MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
+			MTS NTS LGS GUS LEM BIL
 			BIB VAR NOTE VERSION
 			ATF_LANG
 
-%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_BIB HASH_NOTE
+%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_BIB HASH_NOTE HASH_KEY
+			HASH_LEMMATIZER LZR_SPARSE LZR_STOP
 			COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
 			ATF_MYLINES ATF_AGROUPS ATF_MATH ATF_UNICODE ATF_LEGACY ATF_LEXICAL
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
+			L_BIB L_NOTE L_CMT L_DOLLAR L_BLANK
 
 %nterm <text>   pqx name
 
@@ -41,10 +46,10 @@ ATFLTYPE atflloc;
 
 %%
 
-atf: amp
-     | amp preamble
-     | amp preamble blocks
-     ;
+atf: 		amp
+	| 	amp preamble
+	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks /* xcl */
+		;
 
 amp: pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
 
@@ -84,15 +89,19 @@ plk:      	protocol.start
 	| 	key
 		;
 
-protocol.start: project | atfpro | LEMMATIZER | version | bib | note
+protocol.start: project | atfpro | lemmatizer | version | bib | note
 
-version:	HASH_VERSION TEXT
+lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT	{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
+	|	HASH_LEMMATIZER LZR_STOP WORD	{ atf_bld_protocol(@1, PROT_LZR_STOP, $3); }
 	;
 
-bib:		HASH_BIB TEXT
+version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
 	;
 
-note:		HASH_NOTE TEXT
+bib:		HASH_BIB TEXT 	     { atf_bld_protocol(@1, PROT_BIB, $2); }
+	;
+
+note:		HASH_NOTE TEXT 	     { atf_bld_protocol(@1, PROT_NOTE, $2); }
 	;
 
 project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2; }
@@ -122,37 +131,47 @@ link_body:
 link_type:	LINK_PARALLEL {$$=ELINK_PARALLEL;} | LINK_SOURCE {$$=ELINK_SOURCE;}
 		;
 
-key: 		KEY
+key: 		HASH_KEY TEXT 	     { atf_bld_key(@1, $2); }
+	;
 		
-blocks: 	block
-	| 	blocks block
+blocks: 	{ atf_bld_implicit_block(); }   group 	{ atf_wrapup(WH_GROUP); }
+	| 	block group 				{ atf_wrapup(WH_GROUP); }
+	| 	blocks block group 			{ atf_wrapup(WH_GROUP); }
 		;
 
-block:
-		locator-or-line
-	| 	locator-or-line protocols.inter
-		;
-
-/* This grammar requires secondary enforcement of sequencing
-   constraints, e.g., NTS must follow MTS, COLUMN must not precede
-   SURFACE */
-locator-or-line:
+ block:
 		MILESTONE
 	| 	DIVISION
 	| 	OBJECT
 	| 	SURFACE
 	| 	COLUMN
-	| 	line
 		;
 
-line: MTS | NTS | LGS | GUS | LEM
-
-protocols.inter:
-		protocol.inter
-	| 	protocols.inter protocol.inter
+group:
+		line_mts
+	|	line_mts line_etc
 		;
 
-protocol.inter: BIB | NOTE | VAR
+line_mts:	MTS
+	;
+
+line_etc:
+		line_xxx
+	| 	line_etc line_xxx
+		;
+
+line_xxx:
+		NTS
+	| 	LGS
+	| 	GUS
+	| 	BIL
+	| 	LEM
+	| 	L_BIB
+	| 	L_NOTE
+	| 	L_CMT
+	| 	L_DOLLAR
+	| 	L_BLANK
+		;
 
 %%
 
