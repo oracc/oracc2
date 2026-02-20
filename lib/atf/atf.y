@@ -28,8 +28,7 @@ ATFLTYPE atflloc;
 
 %token	<text>		PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
 			MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
-			MTS NTS LGS GUS LEM BIL EXX
-			COMMENT DOLLAR L_COMMENT L_DOLLAR
+			MTS NTS LGS GUS LEM BIL EXX DOLLAR
 			BIB VAR NOTE VERSION
 			ATF_LANG L_LINK
 
@@ -38,7 +37,8 @@ ATFLTYPE atflloc;
 			COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
 			ATF_MYLINES ATF_AGROUPS ATF_MATH ATF_UNICODE ATF_LEGACY ATF_LEXICAL
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
-			L_BIB L_NOTE L_BLANK
+			COMMENT
+			L_BIB L_NOTE BLANK
 			Y_BAD
 			Y_BODY Y_BOTTOM Y_BULLA Y_CATCHLINE Y_CFRAGMENT Y_COLOPHON Y_COLUMN
 			Y_COMPOSITE Y_DATE Y_DIV Y_DOCKET Y_EDGE Y_END Y_ENDVARIANTS
@@ -50,7 +50,8 @@ ATFLTYPE atflloc;
 
 %nterm <text>   pqx name
 
-%nterm <i> 	doc sparse stype atfuse link_type
+%nterm <i> 	doc sparse stype atfuse link_type column
+		division heading milestone object surface
 
 %start atf
 
@@ -150,15 +151,69 @@ blocks: 	{ atf_bld_implicit_block(); }   group 	{ atf_wrapup(WH_GROUP); }
 		;
 
 block:
-		MILESTONE
-	| 	DIVISION
-	| 	OBJECT
-	| 	SURFACE
-	| 	COLUMN
-	| 	DOLLAR
-	| 	COMMENT
+	 	column
+	| 	division
+	|	heading
+	|	milestone
+	| 	object
+	| 	surface
 		;
 
+column:		Y_COLUMN
+	;
+
+division:
+		Y_DIV
+	| 	Y_END
+	| 	Y_ENDVARIANTS
+	| 	Y_VARIANT
+	| 	Y_VARIANTS
+	;
+
+heading:
+		Y_H1X
+	|	Y_H2X
+	|	Y_H3X
+	;
+
+milestone:
+		Y_BODY
+	| 	Y_CATCHLINE
+	| 	Y_CFRAGMENT
+	| 	Y_COLOPHON
+	| 	Y_DATE
+	| 	Y_FRAGMENT
+	| 	Y_INCLUDE
+	| 	Y_LINECOUNT
+	| 	Y_M
+	| 	Y_REFERTO
+	| 	Y_SEALINGS
+	| 	Y_SIGNATURE
+	| 	Y_SUMMARY
+	| 	Y_WITNESSES
+	;
+
+object:
+		Y_BULLA
+	| 	Y_ENVELOPE
+	| 	Y_OBJECT
+	| 	Y_PRISM
+	| 	Y_TABLET
+	;
+
+surface:
+		Y_BOTTOM
+	| 	Y_DOCKET
+	| 	Y_EDGE
+	| 	Y_FACE
+	| 	Y_LEFT
+	| 	Y_OBVERSE
+	| 	Y_REVERSE
+	| 	Y_RIGHT
+	| 	Y_SEAL
+	| 	Y_SIDE
+	| 	Y_SURFACE	
+	;
 group:
 		line_mts
 	|	line_mts line_etc
@@ -182,9 +237,9 @@ line_xxx:
 	|	L_LINK
 	| 	L_BIB
 	| 	L_NOTE
-	| 	L_COMMENT
-	| 	L_DOLLAR
-	| 	L_BLANK
+	| 	COMMENT
+	| 	DOLLAR
+	| 	BLANK
 		;
 
 %%

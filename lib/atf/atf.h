@@ -127,25 +127,21 @@ typedef struct protocol {
 #include "nonx.h"
 
 /* These are the possible child nodes in a block hierarchy */
-typedef struct blk {
+typedef struct block {
   struct atfl *src;
-  struct block *b;
-  union {
-    List *l;		/* use this to build a list of divs/milestones/objects */
-    struct blk *b;	/* then convert it to an array for further processing */
-  } kids;
-  struct atf *a;
-  struct blk *up;
+  struct blocktok *b;
   struct group *lines;
   void *v; /* used by nonx to store Nox ptr *//*probably not as it turns out */
-} Blk;
+} Block;
 
+#if 0
 typedef struct blk Block;
 typedef struct blk Column;
 typedef struct blk Div;
 typedef struct blk Milestone;
 typedef struct blk Object;
 typedef struct blk Surface;
+#endif
 
 typedef struct group {
   struct block *parent; /* this is a locator group */

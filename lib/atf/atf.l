@@ -123,7 +123,7 @@ QID	{PROJECT}:{PQX}
 
 ^@[a-z][a-z0-9]+       		{ BEGIN s_TEXT; return atf_block(atflval.text); }
 
-^"$".*/\n  			{ atfsave; return curr_group ? L_DOLLAR : DOLLAR; }
+^"$".*/\n  			{ atfsave; DOLLAR; }
 
 ^"#lem:"  			{ atfsave; return LEM; }
 
@@ -135,7 +135,7 @@ QID	{PROJECT}:{PQX}
 
 ^==.*/\n 			{ atfsave; return BIL; }
 
-^\#   				{ BEGIN s_TEXT; return curr_group ? L_COMMENT : COMMENT; }
+^\#   				{ BEGIN s_TEXT; return COMMENT; }
 
 [ \t]+ 				{ ; }
 
