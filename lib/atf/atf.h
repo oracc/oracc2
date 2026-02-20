@@ -42,6 +42,7 @@ typedef struct atfm {
 /* Data structure for ATF texts */
 typedef struct atf {
   struct atfm *man;
+  const char *file;
   struct atfl *src; /* &-line */
   List *atflines; /* list of Atfl pointers to the data for each line, to drive output */
   ccp pqx;
@@ -167,7 +168,9 @@ typedef struct line {
 
 extern ATF *atfp;
 extern Atfm *atfmp;
+
 extern Block *curr_block;
+extern Blocktok *curr_blocktok;
 extern Group *curr_group;
 
 extern int atflineno;

@@ -8,6 +8,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   src->l = l;
   src->u.atf = atfmp->atf;
   list_add(atfmp->atf->atflines, src);
+  atfmp->atf->file = curratffile;
   atfmp->atf->src = src;
   atfmp->atf->pqx = pqx;
   atfmp->atf->name = name;

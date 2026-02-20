@@ -85,16 +85,18 @@ struct uflags
   /*struct fattr a[4];*/
 };
 
-struct block_token
+typedef struct block_token
 {
   const char *name;
+  int bison;
   enum e_type etype;
   const char *n;
   enum block_levels type;
   const char *full;
   const char *abbr;
   const char *nano;
-};
+} Blocktok;
+
 extern struct block_token *blocktok(register const char*str,
 				    register size_t len);
 #endif /*_BLOCKTOK_H*/

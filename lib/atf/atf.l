@@ -21,6 +21,8 @@ static char *xs;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 #define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
+
+static int atf_block(const char *atcmd);
 static void atf_user_action(void);
 
 /* #if 1 to print every matched rule */
@@ -63,10 +65,10 @@ QID	{PROJECT}:{PQX}
 ^({BOM3}|{BOM2})?"&"         	{ BEGIN s_AMPl; }
 <s_AMPl>{PQX}			{ atfsave; return r(PQX); }
 <s_AMPl>=	       		{ BEGIN s_AMPr; return r('='); }
-<s_AMPr>.+/\n	       		{ BEGIN 0; atfnorm; return r(TEXT); }
+<s_AMPr>[^\n]+      		{ BEGIN 0; atfnorm; return r(TEXT); }
 <s_AMPl>[ \t]+	       		{ ; }
 
-<s_TEXT>.+/\n	       		{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
+<s_TEXT>[^\n]+	       		{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
 
@@ -80,10 +82,10 @@ QID	{PROJECT}:{PQX}
 <s_SCO>[ \t]			{ ; }
 <s_SCO>\n	       		{ BEGIN 0; }
 
-"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
-<s_PRO>{PROJECT}/[ \t]*\n	{ BEGIN 0; atfsave; return PROJECT; }
+^"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
+<s_PRO>{PROJECT}/\n		{ BEGIN 0; atfsave; return PROJECT; }
 
-"#atf:"				{ BEGIN s_ATFPRO; }
+^"#atf:"				{ BEGIN s_ATFPRO; }
 <s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
 <s_ATFPRO>use			{ ; }
 <s_ATFPRO>mylines		{ return ATF_MYLINES; }
@@ -96,7 +98,7 @@ QID	{PROJECT}:{PQX}
 <s_ATFPRO>[ \t]			{ ; }
 <s_ATFPRO>\n	       		{ BEGIN 0; }
 
-"#link"				{ linktext = 0; BEGIN s_LINK; return HASH_LINK; }
+^"#link"				{ linktext = 0; BEGIN s_LINK; return HASH_LINK; }
 <s_LINK>"def"			{ s_next=s_LINK; BEGIN s_WORD; return LINK_DEF; }
 <s_LINK>"parallel"		{ return LINK_PARALLEL; }
 <s_LINK>"source"		{ return LINK_SOURCE; }
@@ -106,35 +108,34 @@ QID	{PROJECT}:{PQX}
 <s_LINK>[ \t]			{ ; }
 <s_LINK>\n	       		{ BEGIN 0; }
 
-"#bib:"				{ BEGIN s_TEXT; return HASH_BIB; }
-"#key:"				{ BEGIN s_TEXT; return HASH_KEY; }
-"#note:"       			{ BEGIN s_TEXT; return HASH_NOTE; }
-"#version:"			{ BEGIN s_TEXT; return HASH_VERSION; }
+^"#bib:"				{ BEGIN s_TEXT; return HASH_BIB; }
+^"#key:"				{ BEGIN s_TEXT; return HASH_KEY; }
+^"#note:"       			{ BEGIN s_TEXT; return HASH_NOTE; }
+^"#version:"			{ BEGIN s_TEXT; return HASH_VERSION; }
 
-"#lemmatizer:"			{ BEGIN s_LZR; return HASH_LEMMATIZER; }
+^"#lemmatizer:"			{ BEGIN s_LZR; return HASH_LEMMATIZER; }
 
 <s_LZR>"do"			{ ; }
 <s_LZR>[ \t]+			{ ; }
 <s_LZR>"sparse"			{ BEGIN s_TEXT; return LZR_SPARSE; }
 <s_LZR>"stop"			{ BEGIN s_WORD; return LZR_SPARSE; }
-<s_LZR>\n				{ BEGIN 0; }
+<s_LZR>\n	       		{ BEGIN 0; }
 
-^"@".*/\n  			{ atfsave; pmatch("###at\n"); return BLOCK; }
+^@[a-z][a-z0-9]+       		{ BEGIN s_TEXT; return atf_block(atflval.text); }
 
-^"$".*/\n  			{ atfsave; pmatch("###dollar\n"); return DOLLAR/L_DOLLAR; }
+^"$".*/\n  			{ atfsave; return curr_group ? L_DOLLAR : DOLLAR; }
 
-^"#"[^ \t\n:]+:[ \t]+.*/\n  	{ atfsave; pmatch("###hash\n"); return LEM/L_NOTE/L_BIB; }
+^"#lem:"  			{ atfsave; return LEM; }
 
-^{LINK}.*/\n  			{ atfsave; pmatch("###link\n"); return L_LINK; }
+^{ALINK}.*/\n  			{ atfsave; return L_LINK; }
 
-^[^ \t\n]+\.([ \t]+.*)?/\n 	{ atfsave; pmatch("###line\n"); return MTS; }
+^[^ \t\n]+\.([ \t]+.*)?/\n 	{ atfsave; return MTS; }
 
-^[^ \t\n]+:([ \t]+.*)/\n 	{ atfsave; pmatch("###siglum\n"); return EXX; }
+^[^ \t\n#]+:([ \t]+.*)/\n 	{ atfsave; return EXX; }
 
-^==.*/\n 			{ atfsave; pmatch("###equiv\n"); return BIL; }
+^==.*/\n 			{ atfsave; return BIL; }
 
-^\#.*/\n   			{ atfsave; pmatch("###comment\n"); return CMT; }
-
+^\#   				{ BEGIN s_TEXT; return curr_group ? L_COMMENT : COMMENT; }
 
 [ \t]+ 				{ ; }
 
@@ -142,6 +143,23 @@ QID	{PROJECT}:{PQX}
 						"atf.l: unmatched character %c\n", *atftext); }
 
 %%
+
+static int
+atf_block(const char *atcmd)
+{
+  ++atcmd;
+  Blocktok *bp = blocktok(atcmd, strlen(atcmd));
+  if (bp)
+    {
+      curr_blocktok = bp;
+      return bp->bison;
+    }
+  else
+    {
+      fprintf(stderr, "atf: bad at-command @%s\n", atcmd);
+      return Y_BAD;
+    }
+}
 
 void
 atf_lex_init(FILE *fp, const char *file)
