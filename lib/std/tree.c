@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "pool.h"
+/*#include "pool.h"*/
 #include "memo.h"
 #include "tree.h"
 
@@ -15,7 +15,7 @@ treemem_init(void)
   tmem->node_mem = memo_init(sizeof(Node), 1024);
   tmem->prop_mem = memo_init(sizeof(Prop), 1024);
   tmem->keva_mem = memo_init(sizeof(Keva), 1024);
-  tmem->pool = pool_init();
+  /*tmem->pool = pool_init();*/
 }
 
 void
@@ -27,7 +27,7 @@ tmem_term(void)
       memo_term(tmem->node_mem);
       memo_term(tmem->prop_mem);
       memo_term(tmem->keva_mem);
-      pool_term(tmem->pool);
+      /*pool_term(tmem->pool);*/
       free(tmem);
       tmem = NULL;
     }

@@ -13,11 +13,11 @@ extern int atflineno, atftrace;
 extern int gdl_unicode;
 
 static Tree *ytp;
-static Node *ynp/*, *yrem, *ycp, *mnp*/;
 
 Block *curr_block;
 Blocktok *curr_blocktok;
 Group *curr_group;
+const char *curr_use_str;
 
 #define ATFLTYPE_IS_DECLARED 1
 #define ATFLTYPE Mloc
@@ -63,7 +63,7 @@ ATFLTYPE atflloc;
 %%
 
 atf: 		amp
-	| 	amp preamble
+	| 	amp preamble { atf_wrapup(WH_PREAMBLE); }
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks /* xcl */
 		;
 
@@ -72,7 +72,7 @@ longtext:
         | longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
 	;
 
-amp: pqx '=' name { ynp = atf_bld_amp(@1, ytp, $1, (uccp)$3); }
+amp: pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
 
 pqx: PQX
 
@@ -84,20 +84,26 @@ preamble: plks
 
 doc:		COMPOSITE			{
 		    atfp->edoc = EDOC_COMPOSITE;
+		    atf_bld_doc(@1);
 		}
 	| 	SCORE stype sparse		{
 		    atfp->edoc = EDOC_SCORE;
 		    atfp->stype = $2; atfp->sparse = $3;
+		    atf_bld_doc(@1);
 		}
 	| 	SCORE stype sparse SWORD	{
 		    atfp->edoc = EDOC_SCORE;
 		    atfp->stype = $2; atfp->sparse = $3;
 		    atfp->sword = EDOC_WORD;
+		    atf_bld_doc(@1);
 		}
 	;
 
 stype:
-	MATRIX { $$=EDOC_MATRIX; } | SYNOPTIC { $$=EDOC_SYNOPTIC; };
+		/* I don't like "SYNOPSIS" for "SYNOPTIC" but its in the
+		 * original XTF schema so it can't change now
+		 */
+	MATRIX { $$=EDOC_MATRIX; } | SYNOPTIC { $$=EDOC_SYNOPSIS; };
 
 sparse: PARSED { $$=EDOC_PARSED; } | UNPARSED { $$=EDOC_UNPARSED; };
 
@@ -112,8 +118,10 @@ plk:      	protocol.start
 
 protocol.start: project | atfpro | lemmatizer | version | bib | note
 
-lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT	{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
-	|	HASH_LEMMATIZER LZR_STOP WORD	{ atf_bld_protocol(@1, PROT_LZR_STOP, $3); }
+lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
+		{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
+	|	HASH_LEMMATIZER LZR_STOP WORD
+		{ atf_bld_protocol(@1, PROT_LZR_STOP, $3); }
 	;
 
 version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
@@ -125,11 +133,14 @@ bib:		HASH_BIB TEXT 	     { atf_bld_protocol(@1, PROT_BIB, $2); }
 note:		HASH_NOTE TEXT 	     { atf_bld_protocol(@1, PROT_NOTE, $2); }
 	;
 
-project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2; }
+project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2;
+		    		       atf_xprop(ytp->root->kids,"project",$2);
+				       atf_bld_protocol(@1, PROT_PROJECT, $2);
+		}
 		;
 
 atfpro:	       	ATF_LANG 	{ atf_lang(atfp, $1); };
-	|	atfuse		{ atfp->flags |= $1; }
+	|	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, $1, curr_use_str); }
 		;
 
 atfuse:		ATF_MYLINES { $$=ATFF_MYLINES; }
@@ -263,6 +274,7 @@ void
 atf_set_tree(Tree *tp)
 {
   ytp = tp;
+  atf_bld_tree(tp);
 }
 
 void

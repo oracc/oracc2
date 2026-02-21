@@ -31,6 +31,7 @@ static void atf_user_action(void);
 #define atfnorm atflval.text=atfnormpool(atftext)
 
 #define longsave initial_longtext=atfpool(atftext)
+#define usesave curr_use_str=atfpool(atftext)
 
 #if 1
 #define r(x) x
@@ -78,8 +79,8 @@ QID	{PROJECT}:{PQX}
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
 
-^"@composite"			{ return COMPOSITE; }
-^"@score"		       	{ BEGIN s_SCO; return SCORE; }
+^"@composite"			{ (void)atf_block(atftext); return COMPOSITE; }
+^"@score"		       	{ BEGIN s_SCO; (void)atf_block(atftext); return SCORE; }
 <s_SCO>"matrix"			{ return MATRIX; }
 <s_SCO>"synoptic"	       	{ return SYNOPTIC; }
 <s_SCO>"parsed"			{ return PARSED; }
@@ -93,18 +94,17 @@ QID	{PROJECT}:{PQX}
 
 ^"#atf:"			{ BEGIN s_ATFPRO; }
 <s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
-<s_ATFPRO>use			{ ; }
-<s_ATFPRO>mylines		{ return ATF_MYLINES; }
-<s_ATFPRO>alignment-groups      { return ATF_AGROUPS; }
-<s_ATFPRO>math		 	{ return ATF_MATH; }
-<s_ATFPRO>unicode		{ return ATF_UNICODE; }
-<s_ATFPRO>legacy		{ return ATF_LEGACY; }
-<s_ATFPRO>cuneiform	 	{ ; } /* no longer useful; cuneify is default */
-<s_ATFPRO>lemconv		{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
+<s_ATFPRO>"use mylines"		{ usesave; return ATF_MYLINES; }
+<s_ATFPRO>"use alignment-groups" { usesave; return ATF_AGROUPS; }
+<s_ATFPRO>"use math"	       	{ usesave; return ATF_MATH; }
+<s_ATFPRO>"use unicode"		{ usesave; return ATF_UNICODE; }
+<s_ATFPRO>"use legacy"		{ usesave; return ATF_LEGACY; }
+<s_ATFPRO>"use cuneiform"      	{ ; } /* no longer useful; cuneify is default */
+<s_ATFPRO>"use lemconv"		{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
 <s_ATFPRO>[ \t]			{ ; }
 <s_ATFPRO>\n	       		{ BEGIN 0; }
 
-^"#link"				{ linktext = 0; BEGIN s_LINK; return HASH_LINK; }
+^"#link"	       		{ linktext = 0; BEGIN s_LINK; return HASH_LINK; }
 <s_LINK>"def"			{ s_next=s_LINK; BEGIN s_WORD; return LINK_DEF; }
 <s_LINK>"parallel"		{ return LINK_PARALLEL; }
 <s_LINK>"source"		{ return LINK_SOURCE; }

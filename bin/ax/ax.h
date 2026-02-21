@@ -6,6 +6,6 @@
 extern void ax_parse(Node *np, char *data);
 extern void ax_gparse(Node *np, char *data);
 extern void ax_atf(ATF*a);
-extern void ax_jox(ATF*a);
+extern void ax_jox(Tree*tp);
 
 #endif/*AX_H_*/

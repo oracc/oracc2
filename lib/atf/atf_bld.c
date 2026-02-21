@@ -1,35 +1,99 @@
 #include <oraccsys.h>
 #include "atf.h"
 
-Node *
-gdl_push(Tree *ytp, const char *s)
+static void atf_bld_protocols(Mloc *lp, const char *scope);
+int in_preamble;
+
+static Tree *abt;
+
+void
+atf_bld_tree(Tree*tp)
 {
-  tree_add(ytp, NS_GDL, s, ytp->curr->depth, NULL);
-  return tree_push(ytp);
+  abt = tp;
 }
 
+Node *
+atf_add(const char *s)
+{
+  return tree_add(abt, NS_XTF, s, abt->root->depth+1, NULL);
+}
 
 Node *
-atf_bld_amp(Mloc l, Tree *tp, const char *pqx, unsigned const char *name)
+atf_push(const char *s)
 {
-  Atfl *src = memo_new(atfmp->matfl);
-  src->l = l;
-  src->u.atf = atfmp->atf;
-  list_add(atfmp->atf->atflines, src);
-  atfmp->atf->file = curratffile;
-  atfmp->atf->src = src;
-  atfmp->atf->pqx = pqx;
-  atfmp->atf->name = name;
-  Node *np = tree_add(tp, NS_XTF, "no-text-yet", tp->curr->depth, NULL);
-  np->mloc = mloc_mloc(&l);
-  np->user = atfmp->atf;
-  return tree_push(tp);
+  tree_add(abt, NS_XTF, s, abt->curr->depth, NULL);
+  return tree_push(abt);
+}
+
+void
+atf_prop(Node *ynp, int ptype, int gtype)
+{
+  if (ynp)
+    ynp->props = prop_add(ynp->tree->tm->prop_mem, ynp->props, ptype, gtype);
+  else
+    mesg_warning(curratffile, atflineno, "atf_prop passed NULL ynp");
+}
+
+void
+atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
+{
+  if (ynp && v)
+    prop_node_add(ynp, ptype, gtype, k, v);
+  else if (!v)
+    mesg_vwarning(curratffile, atflineno, "atf_prop passed NULL value for key %s", v);    
+  else
+    mesg_warning(curratffile, atflineno, "atf_prop passed NULL ynp");
+}
+
+void
+atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
+{
+  atfp = atfmp->atf;
+  atfp->file = curratffile;
+  atfp->pqx = pqx;
+  atfp->name = name;
+  atfp->edoc = EDOC_TRANSLITERATION;
+  Blocktok *btp = blocktok("transliteration", strlen("transliteration"));
+  Node *np = atf_push(btp->name);
+  abt->root->mloc = np->mloc = mloc_mloc(&l);
+  abt->root->user = atfmp->atf;
+  np->user = btp;
+  atf_xprop(np, "xml:id", atfmp->atf->pqx);
+  atf_xprop(np, "n", (ccp)atfmp->atf->name);
+  atf_xprop(np, "xml:lang", "sux");
+  list_add(atfmp->atf->atflines, np);
+  in_preamble = 1;
+}
+
+void
+atf_bld_doc(Mloc l)
+{
+  if (atfp->edoc != EDOC_TRANSLITERATION)
+    {
+      abt->curr->user = curr_blocktok;
+      abt->curr->name = curr_blocktok->name;
+      if (atfp->stype)
+	{
+	  atf_xprop(abt->curr, "score-type",
+		      atfp->stype==EDOC_MATRIX ? "matrix" : "synopsis");
+	  atf_xprop(abt->curr, "score-mode",
+		      atfp->sparse==EDOC_PARSED ? "parsed" : "unparsed");
+	  if (atfp->sword)
+	    atf_xprop(abt->curr, "score-word", "yes");
+	}
+    }
+}
+
+void
+atf_bld_group(Mloc l, Tree *tp)
+{
+  
 }
 
 void
 atf_bld_implicit_block(void)
 {
-  curr_block = memo_new(atfmp->mblks);
+  curr_block = memo_new(atfmp->mblocks);
   /* for now curr_block->src == NULL means implicit */
   curr_group = memo_new(atfmp->mgroups);
   curr_block->lines = curr_group;
@@ -47,21 +111,47 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   list_add(atfmp->llinks, lp);
 }
 
+static void
+abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
+{
+  if (strcmp(abt->curr->name, "protocols"))
+    atf_bld_protocols(lp, scope);
+  Node *np = atf_add("protocol");
+  atf_xprop(np, "type", p->type);
+  np->text = str;
+  np->user = p;
+}
+
+static void
+atf_bld_protocols(Mloc *lp, const char *scope)
+{
+  Node *np = atf_push("protocols");
+  atf_xprop(np, "scope", scope);
+}
+
 void
-atf_bld_protocol(Mloc l, Prot pt, const char *s)
+atf_bld_protocol(Mloc l, Prot pt, const char *str)
 {
   Protocol *p = memo_new(atfmp->mprotocols);
   p->t = pt;
   switch (pt)
     {
     case PROT_BIB:
+      p->type = "bib";
+      p->u.str = (uccp)str;
+      break;
     case PROT_NOTE:
+      p->type = "note";
+      p->u.str = (uccp)str;
+      break;
     case PROT_VERSION:
-      p->u.str = (uccp)s;
+      p->type = "version";
+      p->u.str = (uccp)str;
       break;
     case PROT_LZR_SPARSE:
       {
-	char *dup = strdup(s);
+	p->type = "lemmatizer";
+	char *dup = strdup(str);
 	char **ff = vec_from_str(dup, NULL, NULL);
 	atfp->lzr_sparse = p->u.sparse = hash_create(0);
 	int i;
@@ -75,12 +165,27 @@ atf_bld_protocol(Mloc l, Prot pt, const char *s)
       }
       break;
     case PROT_LZR_STOP:
-      p->u.stop = atoi(s);
+      p->type = "lemmatizer";
+      p->u.stop = atoi(str);
       break;
+    case PROT_PROJECT:
+      p->type = "project";
+      break;
+    case PROT_ATF:
     case PROT_TOP:
       break;
     }
   list_add(atfmp->lprotocols, p);
+  abt_add_protocol(&l, p, in_preamble ? "text" : "intra", str);
+}
+
+void
+atf_bld_atf_protocol(Mloc l, int usetype, const char *str)
+{
+  Protocol *p = memo_new(atfmp->mprotocols);
+  p->t = PROT_ATF;
+  p->type = "atf";
+  abt_add_protocol(&l, p, "text", str);
 }
 
 void

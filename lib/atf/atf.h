@@ -9,15 +9,15 @@ typedef enum e_type Atflt;
 typedef enum linkt { ELINK_DEF ,  ELINK_SOURCE , ELINK_PARALLEL , ELINK_TOP } Linkt;
 
 typedef enum prot { PROT_LZR_SPARSE ,  PROT_LZR_STOP , PROT_BIB , PROT_NOTE ,
-		    PROT_VERSION , PROT_TOP } Prot;
+		    PROT_VERSION , PROT_ATF , PROT_PROJECT , PROT_TOP } Prot;
 
 typedef enum linet { LINE_MTS , LINE_NTS , LINE_LGS, LINE_GUS ,
 		     LINE_LEM , LINE_LINK , LINE_COMMENT , LINE_DOLLAR ,
 		     LINE_BLANK , LINE_TOP } Linet;
 
 typedef enum doct {
-  EDOC_NONE , EDOC_TLIT , EDOC_COMPOSITE , EDOC_SCORE ,
-  EDOC_MATRIX , EDOC_SYNOPTIC , EDOC_PARSED , EDOC_UNPARSED , EDOC_WORD
+  EDOC_NONE , EDOC_TRANSLITERATION , EDOC_COMPOSITE , EDOC_SCORE ,
+  EDOC_MATRIX , EDOC_SYNOPSIS , EDOC_PARSED , EDOC_UNPARSED , EDOC_WORD
 } Doct;
 
 typedef enum wheret { WH_NONE , WH_PREAMBLE , WH_GROUP } Wheret;
@@ -28,7 +28,7 @@ typedef struct atfm {
   List *llinks;
   List *llines;
   List *lkeys;
-  Memo *mblks;
+  Memo *mblocks;
   Memo *mxlinks;
   Memo *mlines;
   Memo *mkeys;
@@ -116,6 +116,7 @@ typedef struct key {
 typedef struct protocol {
   struct atfl *src;
   enum prot t;
+  const char *type;
   union {
     int stop;
     const unsigned char *str;
@@ -128,7 +129,6 @@ typedef struct protocol {
 
 /* These are the possible child nodes in a block hierarchy */
 typedef struct block {
-  struct atfl *src;
   struct blocktok *b;
   struct group *lines;
   void *v; /* used by nonx to store Nox ptr *//*probably not as it turns out */
@@ -162,6 +162,10 @@ typedef struct line {
 #define ATFF_LEXICAL 0x20
 #define ATFF_TOP 0x40
 
+#define AP_ATTR 1	/* for props; GP_xxx is more complex but ATF
+			   may only need this and can use PG_XML as
+			   type arg */
+
 extern ATF *atfp;
 extern Atfm *atfmp;
 
@@ -171,6 +175,10 @@ extern Group *curr_group;
 
 extern int atflineno;
 extern const char *atffile, *curratffile;
+extern int in_preamble;
+extern const char *curr_use_str;
+
+#define atf_xprop(xnp,xk,xv) atf_prop_kv(xnp,AP_ATTR,PG_XML,xk,xv)
 
 extern int atfparse(void);
 extern Tree *atf_read(const char *);
@@ -181,16 +189,19 @@ extern void atf_init(void);
 extern void atf_term(void);
 extern void atf_wrapup(Wheret where);
 
+extern void atf_bld_tree(Tree *tp);
 extern void atf_set_tree(Tree *tp);
 extern void atf_wrapup_buffer(void);
 
 extern void atf_lang(ATF *a, const char *atf_lang);
-extern Node *atf_bld_amp(Mloc l, Tree *tp, const char *pqx, unsigned const char *name);
+extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
+extern void atf_bld_doc(Mloc l);
 extern void atf_bld_implicit_block(void);
 extern void atf_bld_key(Mloc l, char *str);
 extern void atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum,
 			 const char *qid, const unsigned char *name);
 extern void atf_bld_protocol(Mloc l, Prot pt, const char *s);
+extern void atf_bld_atf_protocol(Mloc l, int usetype, const char *str);
 
 extern void atf_bld_column(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_division(Mloc l, Blocktok *curr_blocktok);
@@ -200,5 +211,6 @@ extern void atf_bld_object(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_surface(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_mts(Mloc l, int linetype, const char *linetext);
 extern void atf_bld_xxx(Mloc l, int linetype, const char *linetext);
+extern void atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v);
 
 #endif/*ATF_H_*/
