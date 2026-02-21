@@ -68,13 +68,13 @@ QID	{PROJECT}:{PQX}
 <s_AMPr>[^\n]+      		{ BEGIN 0; atfnorm; return r(TEXT); }
 <s_AMPl>[ \t]+	       		{ ; }
 
-<s_T>^\t[^\n]+			{ atfsave; return TAB; }
+<s_T>^\t[^\n]+			{ atfnorm; return TAB; }
 <s_T>[^\t][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
 
-<s_T>^[ \t]+.*/\n[^\t]         	{ BEGIN 0; atfsave; return TAB; }
+<s_T>^[ \t]+.*/\n[^\t]         	{ BEGIN 0; atfnorm; return TAB; }
 <s_T>^[ \t]+.*/\n      		{ atfsave; return TAB; }
-<s_T>.+/\n[@#$\n]      		{ BEGIN 0; atfsave; return TEXT; }
-<s_T>.+/\n			{ atfsave; return TEXT; }
+<s_T>.+/\n[@#$\n]      		{ BEGIN 0; atfnorm; return TEXT; }
+<s_T>.+/\n			{ atfnorm; return TEXT; }
 <s_T><<EOF>>			{ if (!endofinput++) return EOL; else yyterminate(); }
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }

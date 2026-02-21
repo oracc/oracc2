@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "atf.h"
+#include "atf_bld.h"
 
 static void atf_bld_protocols(Mloc *lp, const char *scope);
 int in_preamble;
@@ -100,6 +101,37 @@ atf_bld_implicit_block(void)
 }
 
 void
+abt_add_key_protocol(Mloc *lp, Key *kp)
+{
+  if (strcmp(abt->curr->name, "protocols"))
+    atf_bld_protocols(lp, "text");
+  Node *np = atf_add("protocol");
+  np->user = kp;  
+  if (!strcmp(kp->key, "after") || !strcmp(kp->key, "see"))
+    {
+      atf_xprop(np, "type", kp->key);
+      atf_xprop(np, "url", kp->url);
+    }
+  else
+    {
+      atf_xprop(np, "type", "key");
+      atf_xprop(np, "kkey", kp->key);
+      np->text = kp->val;
+    }
+}
+
+static void
+abt_add_link_protocol(Mloc *lp, Xlink *p, const char *str)
+{
+  if (strcmp(abt->curr->name, "protocols"))
+    atf_bld_protocols(lp, "text");
+  Node *np = atf_add("protocol");
+  atf_xprop(np, "type", "link");
+  np->text = str;
+  np->user = lp;  
+}
+
+void
 atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
 	     const unsigned char *name)
 {
@@ -109,6 +141,13 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   lp->qid = qid;
   lp->name = name;
   list_add(atfmp->llinks, lp);
+  const char *ltstr = (lt==ELINK_DEF?"def":(lt==ELINK_SOURCE?"source":"parallel"));
+  char str[strlen(ltstr)+(siglum?strlen((ccp)siglum):0)+strlen(qid)+strlen((ccp)name)+4];
+  if (siglum)
+    sprintf(str, "%s %s = %s = %s", ltstr, (ccp)siglum, qid, (ccp)name);
+  else
+    sprintf(str, "%s %s = %s", ltstr, qid, (ccp)name);
+  abt_add_link_protocol(&l, lp, (ccp)pool_copy((uccp)str, atfmp->pool));
 }
 
 static void

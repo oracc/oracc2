@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "atf.h"
+#include "atf_bld.h"
 
 static Key *
 key_parse(unsigned char *lp)
@@ -9,32 +10,48 @@ key_parse(unsigned char *lp)
   lp = (unsigned char *)kp->key;
   while (*lp && (*lp > 128 || (!isspace(*lp) && '=' != *lp)))
     ++lp;
+  char *key_end = (char *)lp;
+  while (isspace(*lp))
+    ++lp;
   if (*lp)
     {
       int equals_mode = '=' == *lp;
-      *lp++ = '\0';
-      while (*lp && (*lp > 128 || isspace(*lp)))
+      *key_end = '\0';
+      if (equals_mode)
+	++lp;
+      while (isspace(*lp))
 	++lp;
       kp->val = (char*)lp;
       if (!equals_mode)
 	{
-	  while (*lp && (*lp >128 || !isspace(*lp)))
-	    ++lp;
-	  if (*lp)
-	    *lp++ = '\0';
-	  while (*lp && (*lp > 128 || isspace(*lp)))
-	    ++lp;
-	  if (*lp)
-	    kp->url = (char*)lp;
-	  while (*lp && (*lp >128 || !isspace(*lp)))
-	    ++lp;
-	  if (*lp)
-	    *lp = '\0';
-	  if (!kp->url && kp->val && (!strncmp(kp->val,"http",4) || !strncmp(kp->val,"https",5)))
+	  /* This implements
+	     "#key: see Krebernik 1999 https://whatever"
+	     or
+	     "key: see https://whatever"
+	     or
+	     "key: see Krebernik 1999"
+	   */
+	  if (!strncmp(lp,"http",4) || !strncmp(lp,"https",5))
 	    {
 	      kp->url = kp->val;
 	      kp->val = "";
 	    }
+	  else
+	    {
+	      char *last_word = lp + strlen(lp);
+	      while (last_word > lp && isspace(last_word[-1]))
+		--last_word;
+	  
+	      if (last_word > lp
+		  && (!strncmp(last_word,"http",4) || !strncmp(last_word,"https",5)))
+		{
+		  kp->url = last_word;
+		  while (isspace(last_word[-1]))
+		    --last_word;
+		  *last_word = '\0';
+		  kp->val = lp; /* text between 'see/after' and URL */
+		}
+	      }
 	}
     }
   return kp;
@@ -64,8 +81,5 @@ atf_bld_key(Mloc m, char *str)
 	}
     }
   list_add(atfmp->lkeys, kp);
-#if 0
-  if (!strcmp(kp->key, "after") || !strcmp(kp->key, "see"))
-    type = (unsigned char*)kp->key;
-#endif
+  abt_add_key_protocol(&m, kp);
 }
