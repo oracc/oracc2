@@ -18,9 +18,11 @@ key_parse(unsigned char *lp)
       int equals_mode = '=' == *lp;
       *key_end = '\0';
       if (equals_mode)
-	++lp;
-      while (isspace(*lp))
-	++lp;
+	{
+	  ++lp;
+	  while (isspace(*lp))
+	    ++lp;
+	}
       kp->val = (char*)lp;
       if (!equals_mode)
 	{
@@ -31,25 +33,25 @@ key_parse(unsigned char *lp)
 	     or
 	     "key: see Krebernik 1999"
 	   */
-	  if (!strncmp(lp,"http",4) || !strncmp(lp,"https",5))
+	  if (!strncmp((ccp)lp,"http",4) || !strncmp((ccp)lp,"https",5))
 	    {
 	      kp->url = kp->val;
 	      kp->val = "";
 	    }
 	  else
 	    {
-	      char *last_word = lp + strlen(lp);
-	      while (last_word > lp && isspace(last_word[-1]))
+	      unsigned char *last_word = lp + strlen((ccp)lp);
+	      while (last_word > lp && !isspace(last_word[-1]))
 		--last_word;
 	  
 	      if (last_word > lp
-		  && (!strncmp(last_word,"http",4) || !strncmp(last_word,"https",5)))
+		  && (!strncmp((ccp)last_word,"http",4) || !strncmp((ccp)last_word,"https",5)))
 		{
-		  kp->url = last_word;
+		  kp->url = (ccp)last_word;
 		  while (isspace(last_word[-1]))
 		    --last_word;
 		  *last_word = '\0';
-		  kp->val = lp; /* text between 'see/after' and URL */
+		  kp->val = (ccp)lp; /* text between 'see/after' and URL */
 		}
 	      }
 	}

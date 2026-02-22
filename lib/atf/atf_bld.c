@@ -111,6 +111,8 @@ abt_add_key_protocol(Mloc *lp, Key *kp)
     {
       atf_xprop(np, "type", kp->key);
       atf_xprop(np, "url", kp->url);
+      if (kp->val)
+	np->text = kp->val;
     }
   else
     {
