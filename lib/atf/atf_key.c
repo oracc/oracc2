@@ -83,5 +83,6 @@ atf_bld_key(Mloc m, char *str)
 	}
     }
   list_add(atfmp->lkeys, kp);
+  atf_input(m, LT_KEY, kp);
   abt_add_key_protocol(&m, kp);
 }

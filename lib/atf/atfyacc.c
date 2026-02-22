@@ -40,12 +40,21 @@ atf_init(void)
   atfmp->mblocks = memo_init(sizeof(Block),256);
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
   atfmp->mkeys = memo_init(sizeof(Key),16);
-  atfmp->matfl = memo_init(sizeof(Atfl),256);
+  atfmp->matfls = memo_init(sizeof(Atfl),256);
   atfmp->mprotocols = memo_init(sizeof(Protocol),256);
   atfmp->pool = pool_init();
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
   atfp->man = atfmp;
-  atfp->atflines = list_create(LIST_SINGLE);
+  atfp->input = list_create(LIST_SINGLE);
+}
+
+void
+atf_input(Mloc l, Atflt t, void *p)
+{
+  Atfl a = { l , t , p };
+  Atfl*ap = memo_new(atfmp->matfls);
+  *ap = a;
+  list_add(atfp->input, ap);
 }
 
 void

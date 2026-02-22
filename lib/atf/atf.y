@@ -31,7 +31,7 @@ ATFLTYPE atflloc;
 %token	<text>		PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
 			MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
 			TAB EOL
-			BIB VAR NOTE VERSION
+			VAR VERSION
 			ATF_LANG
 
 %token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_BIB HASH_NOTE HASH_KEY
@@ -41,7 +41,6 @@ ATFLTYPE atflloc;
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
 			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
 			COMMENT
-			L_BIB L_NOTE
 			MTS NTS LGS GUS LEM BIL EXX DOLLAR
 			Y_BAD
 			Y_BODY Y_BOTTOM Y_BULLA Y_CATCHLINE Y_CFRAGMENT Y_COLOPHON Y_COLUMN
@@ -56,7 +55,7 @@ ATFLTYPE atflloc;
 
 %nterm <i> 	doc sparse stype atfuse link_type column
 		division heading milestone object surface
-		line_mts line_etc line_xxx l_link
+		line_mts line_etc line_xxx l_link note
 
 %start atf
 
@@ -127,10 +126,10 @@ lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
 	;
 
-bib:		HASH_BIB TEXT 	     { atf_bld_protocol(@1, PROT_BIB, $2); }
+bib:		HASH_BIB longtext    { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
 
-note:		HASH_NOTE TEXT 	     { atf_bld_protocol(@1, PROT_NOTE, $2); }
+note:		HASH_NOTE longtext   { atf_bld_note(@1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
 
 project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2;
@@ -257,8 +256,8 @@ line_xxx:
 	| 	EXX longtext		{ $$=$1; }
 	| 	LEM longtext		{ $$=$1; }
 	|	l_link longtext		{ $$=$1; }
-	| 	L_BIB longtext		{ $$=$1; }
-	| 	L_NOTE longtext		{ $$=$1; }
+	| 	bib
+	| 	note
 	| 	COMMENT longtext	{ $$=$1; }
 	| 	DOLLAR longtext		{ $$=$1; }
 		;

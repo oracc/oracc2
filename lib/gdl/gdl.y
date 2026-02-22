@@ -318,7 +318,10 @@ meta:
 	| stateo
 	| INDENT       					{ ynp = gdl_nongraph(&@1, ytp, ";"); }
 	| NEWLINE	       				{ ynp = gdl_nongraph(&@1, ytp, "//"); }
-	| NOTEMARK					/*TODO*/
+	| NOTEMARK
+		/* TODO: prob just add NOTEMARK as prop and keep a
+		list during line processing so it's easy to correlate
+		the marks with notes parsed in lib/atf */
 	;
 
 mods:

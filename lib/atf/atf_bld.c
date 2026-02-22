@@ -62,8 +62,13 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atf_xprop(np, "xml:id", atfmp->atf->pqx);
   atf_xprop(np, "n", (ccp)atfmp->atf->name);
   atf_xprop(np, "xml:lang", "sux");
-  list_add(atfmp->atf->atflines, np);
+  list_add(atfmp->atf->input, np);
   in_preamble = 1;
+}
+
+void
+atf_bld_bib(Mloc l, const char *ltext)
+{
 }
 
 void
@@ -152,6 +157,11 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   abt_add_link_protocol(&l, lp, (ccp)pool_copy((uccp)str, atfmp->pool));
 }
 
+void
+atf_bld_note(Mloc l, const char *ltext)
+{
+}
+
 static void
 abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 {
@@ -179,10 +189,6 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
     {
     case PROT_BIB:
       p->type = "bib";
-      p->u.str = (uccp)str;
-      break;
-    case PROT_NOTE:
-      p->type = "note";
       p->u.str = (uccp)str;
       break;
     case PROT_VERSION:
