@@ -83,7 +83,7 @@ atf_bld_doc(Mloc l)
   if (atfp->edoc != EDOC_TRANSLITERATION)
     {
       /*abt->curr->user = curr_blocktok;*/
-      abt->curr->name = curr_blocktok->name;
+      abt->curr->name = curr_bt->name;
       if (atfp->stype)
 	{
 	  atf_xprop(abt->curr, "score-type",
@@ -252,32 +252,7 @@ atf_bld_atf_protocol(Mloc l, const char *str)
 }
 
 void
-atf_bld_column(Mloc l, Blocktok *curr_blocktok)
-{
-}
-
-void
-atf_bld_division(Mloc l, Blocktok *curr_blocktok)
-{
-}
-
-void
 atf_bld_heading(Mloc l, Blocktok *curr_blocktok)
-{
-}
-
-void
-atf_bld_milestone(Mloc l, Blocktok *curr_blocktok)
-{
-}
-
-void
-atf_bld_object(Mloc l, Blocktok *curr_blocktok)
-{
-}
-
-void
-atf_bld_surface(Mloc l, Blocktok *curr_blocktok)
 {
 }
 

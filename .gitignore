@@ -234,7 +234,7 @@ urlkeys.c
 whatfuncs.c
 msc/prj/cdli/periods.c
 bin/ax/ax_check.c
-bin/ax/axjoxfnc.g
+bin/ax/axjoxfnc.c
 bin/bx/bib_cite.c
 bin/bx/bib_ent.c
 bin/bx/bib_fld.c

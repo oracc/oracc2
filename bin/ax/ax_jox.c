@@ -36,8 +36,13 @@ ax_jox_node(Node *np, int oflag, int nflag)
       if (ap)
 	ap->func(np, np->user);
       else
-	fprintf(stderr, "ax_jox_node: internal error: no handler for tag '%s'\n",
-		nodename);
+	{
+	  if (blocktok(nodename, strlen(nodename)))
+	    ax_jox_block(np, np->user);
+	  else
+	    fprintf(stderr, "ax_jox_node: internal error: no handler for tag '%s'\n",
+		    nodename);
+	}
     }
   else
     {
@@ -79,6 +84,12 @@ ax_jox_bib(Node *np, Bib *p)
 }
 
 void
+ax_jox_block(Node *np, Block *p)
+{
+  
+}
+
+void
 ax_jox_lang(Node *np, ATF *a)
 {
   char buf[(a->altlang?strlen(a->altlang)+3:0)+strlen(a->lang)+2];
@@ -105,5 +116,4 @@ ax_jox_protocol(Node *np, void *p)
   else if (ptype)
     ax_jox_lang(np, p);
 }
-
 

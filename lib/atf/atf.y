@@ -15,7 +15,7 @@ extern int gdl_unicode;
 static Tree *ytp;
 
 Block *curr_block;
-Blocktok *curr_blocktok;
+Blocktok *curr_bt;
 Group *curr_group;
 const char *curr_use_str;
 
@@ -34,8 +34,8 @@ ATFLTYPE atflloc;
 			VAR VERSION
 			ATF_LANG
 
-%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_BIB HASH_NOTE HASH_KEY
-			HASH_LEMMATIZER LZR_SPARSE LZR_STOP
+%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
+			HASH_LEMMATIZER LZR_SPARSE LZR_STOP HASH_BIB HASH_PROBIB
 			COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
 			ATF_MYLINES ATF_AGROUPS ATF_MATH ATF_UNICODE ATF_LEGACY ATF_LEXICAL
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
@@ -53,10 +53,12 @@ ATFLTYPE atflloc;
 
 %nterm <text>   	pqx name longtext
 
-%nterm <i> 		doc sparse stype atfuse link_type column
-			division heading milestone object surface
-			line_mts line_etc line_xxx l_link note bib
+%nterm <i> 		doc sparse stype atfuse link_type
+			division milestone
+			lines line l_link note bib
 			division_tok milestone_tok
+			object object_tok surface surface_tok column column_tok
+			heading
 
 %start atf
 
@@ -69,20 +71,23 @@ atf: 		amp
 		;
 
 longtext:
-	  TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
-        | longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
-	;
+		TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
+        | 	longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
+		;
 
-amp: pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
+amp: 		pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
+		;
 
-pqx: PQX
+pqx: 		PQX
+		;
 
-name: TEXT
+name: 		TEXT
+		;
 
 /* This can be empty because of atf definition above */
 preamble:
-		plks_notes
-	| 	doc plks_notes
+		plks
+	| 	doc plks
 	;
 
 doc:		COMPOSITE			{
@@ -110,12 +115,6 @@ stype:
 
 sparse: PARSED { $$=EDOC_PARSED; } | UNPARSED { $$=EDOC_UNPARSED; };
 
-plks_notes:
-	      	notes
-	|	plks { atf_clear_protocols(); }
-	|      	plks { atf_clear_protocols(); } notes
-		;
-
 plks: 		plk
 	| 	plks plk
 		;
@@ -125,7 +124,7 @@ plk:      	protocol.start
 	| 	key
 		;
 
-protocol.start: project | atfpro | lemmatizer | version | bib
+protocol.start: project | atfpro | lemmatizer | version | probib
 
 lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 		{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
@@ -136,12 +135,12 @@ lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
 	;
 
+probib: 	HASH_PROBIB longtext { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
+		;
+
 bib:		HASH_BIB longtext    { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
 
-notes:		note
-	|	notes note
-	;
 
 note:		HASH_NOTE longtext   { atf_bld_note(@1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
@@ -180,47 +179,85 @@ key: 		HASH_KEY TEXT 	     { atf_bld_key(@1, $2); }
 	;
 		
 /* composite or transliteration */
-blocks:		groups
+blocks:		lines
 	|	cblocks
 	|	tblocks
 	;
 
-cblocks:	cblock groups
-	|	cblocks cblock groups
+cblocks:
+		cblock
+	|	cblock lines
+	|	cblocks cblock lines
 	;
 
 cblock:		division
 	|	milestone
 	;
 
-division:	division_tok { atf_bld_division(@1, $1); }
+division:	division_tok TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
-milestone:	milestone_tok { atf_bld_division(@1, $1); }
+milestone:	milestone_tok TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
-
-tblocks:	tblock
-	|	tblocks tblock
-		;
-
-tblock:
+tblocks:
 		object
-	|	surface
-	|	column
-	|	group
-	;
-
-object:		object_tok { atf_bld_object(@1, curr_blocktok); }
-
-surface: 	surface_tok { atf_bld_surface(@1, curr_blocktok); }
-
-columns:
-		column
-	|	columns column
+	|	tblocks object
 		;
 
-column:		Y_COLUMN { atf_bld_column(@1, curr_blocktok); } group
+
+object: 	object_tok TEXT { atf_bld_block(@1, $1, $2); }
+	|	object_tok TEXT { atf_bld_block(@1, $1, $2); } lines
+	|	object_tok TEXT { atf_bld_block(@1, $1, $2); } surfaces
+	|	object_tok TEXT { atf_bld_block(@1, $1, $2); } columns
+	;
+
+surfaces:	surface
+	|	surfaces surface
+	;
+
+surface:
+		surface_tok TEXT { atf_bld_block(@1, $1, $2); }
+	|	surface_tok TEXT { atf_bld_block(@1, $1, $2); } lines
+	|	surface_tok TEXT { atf_bld_block(@1, $1, $2); } columns
+		;
+
+columns:	column
+	|	columns column
+	;
+
+column:		column_tok TEXT { atf_bld_block(@1, $1, $2); }
+	| 	column_tok TEXT { atf_bld_block(@1, $1, $2); } lines
+	;
+
+lines:		line
+	|	lines line
+	;
+
+/* The grammar doesn't impose constraints on prerequisites, sequence,
+ * or repetition of line types--that has to be handled by validating
+ * as we build
+ */
+line:
+		MTS longtext		{ $$=$1; }
+	| 	NTS longtext		{ $$=$1; } /* MTS prereq; singleton */
+	| 	LGS longtext		{ $$=$1; } /* MTS prereq; singleton */
+	| 	GUS longtext		{ $$=$1; } /* MTS prereq; singleton */
+	| 	BIL longtext		{ $$=$1; } /* MTS prereq */
+	| 	EXX longtext		{ $$=$1; } /* MTS prereq */
+	| 	LEM longtext		{ $$=$1; } /* MTS|NTS|BIL prereq */
+	|	l_link longtext		{ $$=$1; } /* MTS prereq */
+	|	COMMENT longtext	{ $$=$1; }
+	| 	DOLLAR longtext		{ $$=$1; }
+	| 	bib
+	| 	note
+	|	heading
+	;
+
+l_link:		LNK_TOTO
+	|	LNK_FROM
+	|	LNK_PLUS
+	|	LNK_VBAR
 	;
 
 division_tok:
@@ -229,12 +266,6 @@ division_tok:
 	| 	Y_ENDVARIANTS
 	| 	Y_VARIANT
 	| 	Y_VARIANTS
-	;
-
-heading:
-		Y_H1X
-	|	Y_H2X
-	|	Y_H3X
 	;
 
 milestone_tok:
@@ -264,54 +295,16 @@ object_tok:
 
 surface_tok:
 		Y_BOTTOM
-	| 	Y_DOCKET
-	| 	Y_EDGE
-	| 	Y_FACE
-	| 	Y_LEFT
-	| 	Y_OBVERSE
-	| 	Y_REVERSE
-	| 	Y_RIGHT
-	| 	Y_SEAL
-	| 	Y_SIDE
-	| 	Y_SURFACE	
 	;
 
-groups:		group
-	|	groups group
+column_tok:
+		Y_COLUMN
 	;
 
-group:
-	|	line_mts
-	|	line_mts line_etc
-		;
-
-line_mts:	MTS longtext		{ atf_bld_mts(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
+heading:
+		Y_H1X
 	;
 
-line_etc:
-		line_xxx		{ atf_bld_xxx(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
-	| 	line_etc line_xxx	{ atf_bld_xxx(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
-		;
-
-line_xxx:
-		NTS longtext		{ $$=$1; }
-	| 	LGS longtext		{ $$=$1; }
-	| 	GUS longtext		{ $$=$1; }
-	| 	BIL longtext		{ $$=$1; }
-	| 	EXX longtext		{ $$=$1; }
-	| 	LEM longtext		{ $$=$1; }
-	|	l_link longtext		{ $$=$1; }
-	| 	COMMENT longtext	{ $$=$1; }
-	| 	DOLLAR longtext		{ $$=$1; }
-	| 	bib
-	| 	note
-		;
-
-l_link:		LNK_TOTO
-	|	LNK_FROM
-	|	LNK_PLUS
-	|	LNK_VBAR
-	;
 %%
 
 void

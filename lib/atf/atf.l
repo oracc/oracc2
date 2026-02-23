@@ -49,7 +49,7 @@ LK_PLUS "++"
 LK_VBAR "||"
 PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
-
+	
 %x s_AMPl
 %x s_AMPr
 %x s_SCO
@@ -71,11 +71,11 @@ QID	{PROJECT}:{PQX}
 <s_T>^\t[^\n]+			{ atfnorm; return TAB; }
 <s_T>[^\t][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
 
-<s_T>^[ \t]+.*/\n[^\t]         	{ BEGIN 0; atfnorm; return TAB; }
-<s_T>^[ \t]+.*/\n      		{ atfsave; return TAB; }
-<s_T>.+/\n[@#$\n]      		{ BEGIN 0; atfnorm; return TEXT; }
-<s_T>.+/\n			{ atfnorm; return TEXT; }
-<s_T><<EOF>>			{ if (!endofinput++) return EOL; else yyterminate(); }
+<s_T>^[ \t]+.*/\n[ \t]       	{ atfnorm; return TAB; }
+<s_T>^[ \t]+.*/\n      		{ BEGIN 0; atfnorm; return TAB; }
+<s_T>.+/\n[ \t]      		{ atfnorm; return TAB; }
+<s_T>.+/\n			{ BEGIN 0; atfnorm; return TEXT; }
+<s_T><<EOF>>			{ yyterminate(); }
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
 
@@ -127,7 +127,7 @@ QID	{PROJECT}:{PQX}
 <s_LZR>"stop"			{ BEGIN s_WORD; return LZR_SPARSE; }
 <s_LZR>\n	       		{ BEGIN 0; }
 
-^@[a-z][a-z0-9]+       		{ BEGIN s_T; return atf_block(atflval.text); }
+^@([a-z][a-z0-9]*) 		{ BEGIN s_T; return atf_block(atftext); }
 
 ^"$"  				{ BEGIN s_T; atfsave; return DOLLAR; }
 
@@ -151,6 +151,8 @@ QID	{PROJECT}:{PQX}
 
 [ \t]+ 				{ ; }
 
+<<EOF>>				{ yyterminate(); }
+
 .				{ mesg_vwarning(curratffile, atflineno,
 						"atf.l: unmatched character %c\n", *atftext); }
 
@@ -160,11 +162,12 @@ static int
 atf_block(const char *atcmd)
 {
   ++atcmd;
+
   Blocktok *bp = blocktok(atcmd, strlen(atcmd));
   if (bp)
     {
-      curr_blocktok = bp;
-      return bp->bison;
+      curr_bt = bp;
+      return atflval.i = bp->bison;
     }
   else
     {

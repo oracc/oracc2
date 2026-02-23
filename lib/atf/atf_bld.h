@@ -3,5 +3,6 @@
 
 extern void abt_add_key_protocol(Mloc *lp, Key *kp);
 extern Node *atf_add(const char *s);
+extern Node *atf_push(const char *s);
 
 #endif/*ATF_BLD_H_*/

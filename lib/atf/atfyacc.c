@@ -86,6 +86,7 @@ atf_wrapup(Wheret where)
 	  list_free(atfmp->lprotocols, NULL);
 	  atfmp->lprotocols = NULL;
 	}
+      atf_clear_protocols();
       in_preamble = 0;
     }
   else if (where == WH_GROUP)
@@ -96,6 +97,5 @@ atf_wrapup(Wheret where)
 	  list_free(atfmp->llinks, NULL);
 	  atfmp->llinks = NULL;
 	}
-      atf_clear_protocols();
     }
 }

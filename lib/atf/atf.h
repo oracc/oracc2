@@ -122,10 +122,17 @@ typedef struct protocol {
 /* preliminary induction of note stuff from ox */
 #include "note.h"
 
+#include "blocktok.h"
+
 /* These are the possible child nodes in a block hierarchy */
 typedef struct block {
-  struct blocktok *b;
+  const char *type;
+  const char *subt;
+  const char *flag;
+  const char *text;
+  struct block_token *bt;
   struct group *lines;
+  Node *np;
 } Block;
 
 typedef struct group {
@@ -155,7 +162,7 @@ extern ATF *atfp;
 extern Atfm *atfmp;
 
 extern Block *curr_block;
-extern Blocktok *curr_blocktok;
+extern Blocktok *curr_bt;
 extern Group *curr_group;
 
 extern int atflineno;
@@ -171,7 +178,7 @@ extern Tree *atfyacc(void);
 extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
 extern void atf_bld_atf_protocol(Mloc l, const char *str);
 extern void atf_bld_bib(Mloc l, const char *ltext);
-extern void atf_bld_column(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_block(Mloc l, int ytok, char *rest);
 extern void atf_bld_division(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_doc(Mloc l);
 extern void atf_bld_heading(Mloc l, Blocktok *curr_blocktok);
@@ -181,9 +188,7 @@ extern void atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const ch
 extern void atf_bld_milestone(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_mts(Mloc l, int linetype, const char *linetext);
 extern void atf_bld_note(Mloc l, const char *ltext);
-extern void atf_bld_object(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_protocol(Mloc l, Prot pt, const char *s);
-extern void atf_bld_surface(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_tree(Tree *tp);
 extern void atf_bld_xxx(Mloc l, int linetype, const char *linetext);
 extern void atf_clear_protocols(void);
