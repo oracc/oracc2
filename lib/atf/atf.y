@@ -51,11 +51,12 @@ ATFLTYPE atflloc;
 			Y_SIGNATURE Y_SPAN Y_SUMMARY Y_SURFACE Y_TABLET Y_TOP Y_TRANSLATION
 			Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
 
-%nterm <text>   pqx name longtext
+%nterm <text>   	pqx name longtext
 
-%nterm <i> 	doc sparse stype atfuse link_type column
-		division heading milestone object surface
-		line_mts line_etc line_xxx l_link note bib
+%nterm <i> 		doc sparse stype atfuse link_type column
+			division heading milestone object surface
+			line_mts line_etc line_xxx l_link note bib
+			division_tok milestone_tok
 
 %start atf
 
@@ -178,24 +179,51 @@ link_type:	LINK_PARALLEL {$$=ELINK_PARALLEL;} | LINK_SOURCE {$$=ELINK_SOURCE;}
 key: 		HASH_KEY TEXT 	     { atf_bld_key(@1, $2); }
 	;
 		
-blocks: 	{ atf_bld_implicit_block(); }   group 	{ atf_wrapup(WH_GROUP); }
-	| 	block group 				{ atf_wrapup(WH_GROUP); }
-	| 	blocks block group 			{ atf_wrapup(WH_GROUP); }
-		;
-
-block:
-		column			{ atf_bld_column(@1, curr_blocktok); }
-	| 	division		{ atf_bld_division(@1, curr_blocktok); }
-	|	heading			{ atf_bld_heading(@1, curr_blocktok); }
-	|	milestone		{ atf_bld_milestone(@1, curr_blocktok); }
-	| 	object			{ atf_bld_object(@1, curr_blocktok); }
-	| 	surface			{ atf_bld_surface(@1, curr_blocktok); }
-		;
-
-column:		Y_COLUMN
+/* composite or transliteration */
+blocks:		groups
+	|	cblocks
+	|	tblocks
 	;
 
-division:
+cblocks:	cblock groups
+	|	cblocks cblock groups
+	;
+
+cblock:		division
+	|	milestone
+	;
+
+division:	division_tok { atf_bld_division(@1, $1); }
+	;
+
+milestone:	milestone_tok { atf_bld_division(@1, $1); }
+	;
+
+
+tblocks:	tblock
+	|	tblocks tblock
+		;
+
+tblock:
+		object
+	|	surface
+	|	column
+	|	group
+	;
+
+object:		object_tok { atf_bld_object(@1, curr_blocktok); }
+
+surface: 	surface_tok { atf_bld_surface(@1, curr_blocktok); }
+
+columns:
+		column
+	|	columns column
+		;
+
+column:		Y_COLUMN { atf_bld_column(@1, curr_blocktok); } group
+	;
+
+division_tok:
 		Y_DIV
 	| 	Y_END
 	| 	Y_ENDVARIANTS
@@ -209,7 +237,7 @@ heading:
 	|	Y_H3X
 	;
 
-milestone:
+milestone_tok:
 		Y_BODY
 	| 	Y_CATCHLINE
 	| 	Y_CFRAGMENT
@@ -226,7 +254,7 @@ milestone:
 	| 	Y_WITNESSES
 	;
 
-object:
+object_tok:
 		Y_BULLA
 	| 	Y_ENVELOPE
 	| 	Y_OBJECT
@@ -234,7 +262,7 @@ object:
 	| 	Y_TABLET
 	;
 
-surface:
+surface_tok:
 		Y_BOTTOM
 	| 	Y_DOCKET
 	| 	Y_EDGE
@@ -248,8 +276,12 @@ surface:
 	| 	Y_SURFACE	
 	;
 
+groups:		group
+	|	groups group
+	;
+
 group:
-		line_mts
+	|	line_mts
 	|	line_mts line_etc
 		;
 

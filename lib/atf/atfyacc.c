@@ -96,5 +96,6 @@ atf_wrapup(Wheret where)
 	  list_free(atfmp->llinks, NULL);
 	  atfmp->llinks = NULL;
 	}
+      atf_clear_protocols();
     }
 }
