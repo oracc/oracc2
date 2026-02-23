@@ -16,8 +16,11 @@ typedef struct note
 				   number */
   int automark; 		/* this is the note number's index in the text */
   const unsigned char *text;
+  const char *xid;		/* xml:id */
   enum note_status status;	/* registered and or referenced */
 } Note;
+
+const char *note_create_id(void);
 
 extern void note_initialize(void);
 extern void note_initialize_line(void);

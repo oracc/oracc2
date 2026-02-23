@@ -186,6 +186,7 @@ extern void atf_bld_protocol(Mloc l, Prot pt, const char *s);
 extern void atf_bld_surface(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_tree(Tree *tp);
 extern void atf_bld_xxx(Mloc l, int linetype, const char *linetext);
+extern void atf_clear_protocols(void);
 extern void atf_init(void);
 extern void atf_input(Mloc l, Atflt t, void *p);
 extern void atf_lang(Mloc l, ATF *a, const char *atf_lang);

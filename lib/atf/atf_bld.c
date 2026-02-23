@@ -57,8 +57,8 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   Blocktok *btp = blocktok("transliteration", strlen("transliteration"));
   Node *np = atf_push(btp->name);
   abt->root->mloc = np->mloc = mloc_mloc(&l);
-  abt->root->user = atfmp->atf;
-  np->user = btp;
+  /*abt->root->user = atfmp->atf;*//*if we do this we need a handler for "xtf" in axjoxfnc*/
+  /*np->user = btp;*/
   atf_xprop(np, "xml:id", atfmp->atf->pqx);
   atf_xprop(np, "n", (ccp)atfmp->atf->name);
   atf_xprop(np, "xml:lang", "sux");
@@ -71,7 +71,8 @@ atf_bld_bib(Mloc l, const char *ltext)
 {
   Bib *b = memo_new(atfmp->mbibs);
   b->text = ltext;
-  Node *np = atf_add("bib");
+  Node *np = atf_add("protocol");
+  atf_xprop(np, "type", "bib");
   np->user = b;
   atf_input(l, LT_BIB, b);
 }
@@ -81,7 +82,7 @@ atf_bld_doc(Mloc l)
 {
   if (atfp->edoc != EDOC_TRANSLITERATION)
     {
-      abt->curr->user = curr_blocktok;
+      /*abt->curr->user = curr_blocktok;*/
       abt->curr->name = curr_blocktok->name;
       if (atfp->stype)
 	{
@@ -141,7 +142,7 @@ abt_add_link_protocol(Mloc *lp, Xlink *p, const char *str)
   Node *np = atf_add("protocol");
   atf_xprop(np, "type", "link");
   np->text = str;
-  np->user = lp;  
+  /*np->user = lp;*/
 }
 
 void
@@ -168,8 +169,11 @@ void
 atf_bld_note(Mloc l, const char *ltext)
 {
   Note *n = memo_new(atfmp->mbibs);
-  n->text = ltext;
+  n->text = (uccp)ltext;
+  n->xid = (ccp)pool_copy((uccp)note_create_id(), atfmp->pool);
   Node *np = atf_add("note:text");
+  atf_xprop(np, "xml:id", n->xid);
+  atf_xprop(np, "note:mark", "1");/*place-holder*/
   np->user = n;
   atf_input(l, LT_NOTE, n);  
 }
@@ -182,7 +186,7 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
   Node *np = atf_add("protocol");
   atf_xprop(np, "type", p->type);
   np->text = str;
-  np->user = p;
+  /*np->user = p;*/
 }
 
 static void
@@ -289,4 +293,11 @@ void
 atf_bld_xxx(Mloc l, int linetype, const char *linetext)
 {
   
+}
+
+void
+atf_clear_protocols(void)
+{
+  if (!strcmp(abt->curr->name, "protocols"))
+    (void)tree_pop(abt);
 }

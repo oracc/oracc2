@@ -18,7 +18,10 @@ proto.start = element protocols {
      | proto.link | proto.project | proto.syntax | proto.version )*
 }
 
+# ox diverges from the schema here: #note: does not generate <protocol
+# type="note"> but <note:text>
 proto.after = proto.note
+proto.note   = element protocol { attribute type { "note" }   , text }
 
 proto.inter = proto.bib | proto.etcsl | proto.lem | proto.link 
             | proto.note | proto.psu | proto.var
@@ -40,7 +43,6 @@ proto.psu    = element protocol { attribute type { "psu" }    , text }
 proto.lemmatizer
              = element protocol { attribute type { "lemmatizer" }, text }
 proto.link   = element protocol { attribute type { "link" }   , text }
-proto.note   = element protocol { attribute type { "note" }   , text }
 proto.project= element protocol { attribute type { "project" }, text }
 proto.syntax = element protocol { attribute type { "syntax" } , text }
 proto.var    = element protocol { attribute type { "var" }    , text }

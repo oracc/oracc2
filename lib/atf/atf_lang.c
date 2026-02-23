@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include "atf.h"
+#include "atf_bld.h"
 
 /* atf_lang is "lang %s _%a_" vel sim */
 void
@@ -39,7 +40,9 @@ atf_lang(Mloc ml, ATF *a, const char *atf_lang)
 
   a->lang = (ccp)pool_copy((uccp)l, atfmp->pool);
   a->altlang = (ccp)pool_copy((uccp)altlang, atfmp->pool);
-
+  Node *np = atf_add("protocol");
+  atf_xprop(np, "type", "atf");
+  np->user = atfp;
   atf_input(ml, LT_LANG, a);
   
 #if 0

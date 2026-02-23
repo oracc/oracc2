@@ -62,6 +62,7 @@ ATFLTYPE atflloc;
 %%
 
 atf: 		amp
+	|	amp blocks
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); }
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks /* xcl */
 		;
@@ -77,8 +78,10 @@ pqx: PQX
 
 name: TEXT
 
-preamble: plks
-	| doc plks
+/* This can be empty because of atf definition above */
+preamble:
+		plks_notes
+	| 	doc plks_notes
 	;
 
 doc:		COMPOSITE			{
@@ -106,6 +109,12 @@ stype:
 
 sparse: PARSED { $$=EDOC_PARSED; } | UNPARSED { $$=EDOC_UNPARSED; };
 
+plks_notes:
+	      	notes
+	|	plks { atf_clear_protocols(); }
+	|      	plks { atf_clear_protocols(); } notes
+		;
+
 plks: 		plk
 	| 	plks plk
 		;
@@ -115,7 +124,7 @@ plk:      	protocol.start
 	| 	key
 		;
 
-protocol.start: project | atfpro | lemmatizer | version | bib | note
+protocol.start: project | atfpro | lemmatizer | version | bib
 
 lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 		{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
@@ -127,6 +136,10 @@ version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
 	;
 
 bib:		HASH_BIB longtext    { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
+	;
+
+notes:		note
+	|	notes note
 	;
 
 note:		HASH_NOTE longtext   { atf_bld_note(@1, (ccp)longtext(NULL,NULL,NULL)); }
