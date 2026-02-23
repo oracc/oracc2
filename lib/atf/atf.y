@@ -55,7 +55,7 @@ ATFLTYPE atflloc;
 
 %nterm <i> 	doc sparse stype atfuse link_type column
 		division heading milestone object surface
-		line_mts line_etc line_xxx l_link note
+		line_mts line_etc line_xxx l_link note bib
 
 %start atf
 
@@ -138,8 +138,8 @@ project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2;
 		}
 		;
 
-atfpro:	       	ATF_LANG 	{ atf_lang(atfp, $1); };
-	|	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, $1, curr_use_str); }
+atfpro:	       	ATF_LANG 	{ atf_lang(@1, atfp, $1); };
+	|	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, curr_use_str); }
 		;
 
 atfuse:		ATF_MYLINES { $$=ATFF_MYLINES; }
@@ -256,10 +256,10 @@ line_xxx:
 	| 	EXX longtext		{ $$=$1; }
 	| 	LEM longtext		{ $$=$1; }
 	|	l_link longtext		{ $$=$1; }
-	| 	bib
-	| 	note
 	| 	COMMENT longtext	{ $$=$1; }
 	| 	DOLLAR longtext		{ $$=$1; }
+	| 	bib
+	| 	note
 		;
 
 l_link:		LNK_TOTO

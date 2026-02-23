@@ -62,13 +62,18 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atf_xprop(np, "xml:id", atfmp->atf->pqx);
   atf_xprop(np, "n", (ccp)atfmp->atf->name);
   atf_xprop(np, "xml:lang", "sux");
-  list_add(atfmp->atf->input, np);
+  atf_input(l, LT_ANDLINE, atfp);
   in_preamble = 1;
 }
 
 void
 atf_bld_bib(Mloc l, const char *ltext)
 {
+  Bib *b = memo_new(atfmp->mbibs);
+  b->text = ltext;
+  Node *np = atf_add("bib");
+  np->user = b;
+  atf_input(l, LT_BIB, b);
 }
 
 void
@@ -88,6 +93,7 @@ atf_bld_doc(Mloc l)
 	    atf_xprop(abt->curr, "score-word", "yes");
 	}
     }
+  atf_input(l, LT_DOC, atfp);
 }
 
 void
@@ -155,11 +161,17 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   else
     sprintf(str, "%s %s = %s", ltstr, qid, (ccp)name);
   abt_add_link_protocol(&l, lp, (ccp)pool_copy((uccp)str, atfmp->pool));
+  atf_input(l, LT_XLINK, lp);
 }
 
 void
 atf_bld_note(Mloc l, const char *ltext)
 {
+  Note *n = memo_new(atfmp->mbibs);
+  n->text = ltext;
+  Node *np = atf_add("note:text");
+  np->user = n;
+  atf_input(l, LT_NOTE, n);  
 }
 
 static void
@@ -187,10 +199,6 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
   p->t = pt;
   switch (pt)
     {
-    case PROT_BIB:
-      p->type = "bib";
-      p->u.str = (uccp)str;
-      break;
     case PROT_VERSION:
       p->type = "version";
       p->u.str = (uccp)str;
@@ -217,6 +225,7 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
       break;
     case PROT_PROJECT:
       p->type = "project";
+      p->u.str = (uccp)str;
       break;
     case PROT_ATF:
     case PROT_TOP:
@@ -224,15 +233,18 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
     }
   list_add(atfmp->lprotocols, p);
   abt_add_protocol(&l, p, in_preamble ? "text" : "intra", str);
+  atf_input(l, LT_PROTOCOL, p);
 }
 
 void
-atf_bld_atf_protocol(Mloc l, int usetype, const char *str)
+atf_bld_atf_protocol(Mloc l, const char *str)
 {
   Protocol *p = memo_new(atfmp->mprotocols);
   p->t = PROT_ATF;
   p->type = "atf";
+  p->u.str = (uccp)str;
   abt_add_protocol(&l, p, "text", str);
+  atf_input(l, LT_PROTOCOL, p);
 }
 
 void

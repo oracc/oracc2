@@ -7,10 +7,10 @@
 
 typedef enum linkt { ELINK_DEF ,  ELINK_SOURCE , ELINK_PARALLEL , ELINK_TOP } Linkt;
 
-typedef enum prot { PROT_LZR_SPARSE ,  PROT_LZR_STOP , PROT_BIB , 
-		    PROT_VERSION , PROT_ATF , PROT_PROJECT , PROT_TOP } Prot;
+typedef enum prot { PROT_LZR_SPARSE ,  PROT_LZR_STOP , PROT_VERSION , PROT_ATF ,
+		    PROT_PROJECT , PROT_TOP } Prot;
 
-typedef enum atflt { LT_ANDLINE , LT_DOLLAR , LT_PROTOCOL, LT_LINK ,
+typedef enum atflt { LT_ANDLINE , LT_DOC , LT_LANG , LT_DOLLAR , LT_PROTOCOL, LT_XLINK ,
 		     LT_KEY , LT_BIB , LT_NOTE, LT_COMMENT , LT_BLOCK ,
 		     LINE_MTS , LINE_NTS , LINE_LGS, LINE_GUS ,
 		     LINE_LEM , LINE_LINK , LINE_BLANK , LINE_TOP } Atflt;
@@ -33,6 +33,7 @@ typedef struct atfm {
   Memo *mblocks;
   Memo *mxlinks;
   Memo *mlines;
+  Memo *mbibs;
   Memo *mkeys;
   Memo *matfls;
   Memo *mprotocols;
@@ -88,6 +89,10 @@ typedef struct key {
   const char *url;
 } Key;
 
+typedef struct bib {
+  const char *text; /* although vacuous now, in future this will be a bridge to bx */
+} Bib;
+
 /* This is used for the following protocols:
  *
  * #lemmatizer: do sparse <FIELDS>
@@ -113,6 +118,9 @@ typedef struct protocol {
 
 /* nonx (mainly $-line) implementation ported from ox */
 #include "nonx.h"
+
+/* preliminary induction of note stuff from ox */
+#include "note.h"
 
 /* These are the possible child nodes in a block hierarchy */
 typedef struct block {
@@ -161,7 +169,7 @@ extern int atfparse(void);
 extern Tree *atfyacc(void);
 
 extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
-extern void atf_bld_atf_protocol(Mloc l, int usetype, const char *str);
+extern void atf_bld_atf_protocol(Mloc l, const char *str);
 extern void atf_bld_bib(Mloc l, const char *ltext);
 extern void atf_bld_column(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_division(Mloc l, Blocktok *curr_blocktok);
@@ -180,7 +188,7 @@ extern void atf_bld_tree(Tree *tp);
 extern void atf_bld_xxx(Mloc l, int linetype, const char *linetext);
 extern void atf_init(void);
 extern void atf_input(Mloc l, Atflt t, void *p);
-extern void atf_lang(ATF *a, const char *atf_lang);
+extern void atf_lang(Mloc l, ATF *a, const char *atf_lang);
 extern void atf_lex_init(FILE *fp, const char *file);
 extern void atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v);
 extern void atf_protocol(const char *p);

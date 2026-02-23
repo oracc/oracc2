@@ -3,7 +3,7 @@
 
 /* atf_lang is "lang %s _%a_" vel sim */
 void
-atf_lang(ATF *a, const char *atf_lang)
+atf_lang(Mloc ml, ATF *a, const char *atf_lang)
 {
   char lbuf[strlen(atf_lang)], *l = lbuf;
   strcpy(l, atf_lang+4);
@@ -40,6 +40,8 @@ atf_lang(ATF *a, const char *atf_lang)
   a->lang = (ccp)pool_copy((uccp)l, atfmp->pool);
   a->altlang = (ccp)pool_copy((uccp)altlang, atfmp->pool);
 
+  atf_input(ml, LT_LANG, a);
+  
 #if 0
   char *atsign;
   if ((atsign = strchr(l,'@')))

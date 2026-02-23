@@ -39,6 +39,7 @@ atf_init(void)
   atfmp->lkeys = list_create(LIST_SINGLE);
   atfmp->mblocks = memo_init(sizeof(Block),256);
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
+  atfmp->mbibs = memo_init(sizeof(Bib),16);
   atfmp->mkeys = memo_init(sizeof(Key),16);
   atfmp->matfls = memo_init(sizeof(Atfl),256);
   atfmp->mprotocols = memo_init(sizeof(Protocol),256);
