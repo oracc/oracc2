@@ -148,7 +148,7 @@ grx_jox_node(Node *np, int oflag, int nflag)
     grx_jox_node(np->next, 0, 1);
 }
 
-void
+int
 grx_jox(Node *np, const char *gdltag)
 {
   if (gdltag)

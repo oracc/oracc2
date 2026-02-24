@@ -34,11 +34,21 @@ ax_jox_node(Node *np, int oflag, int nflag)
     {
       struct axjoxfnc *ap = axjoxfnc(nodename,strlen(nodename));
       if (ap)
-	ap->func(np, np->user);
+	{
+	  if (ap->func(np, np->user) > 0)
+	    /* Descend recursively into child nodes */
+	    for (npp = np->kids; npp; npp = npp->next)
+	      ax_jox_node(npp, need_closer, 1);
+	}
       else
 	{
 	  if (blocktok(nodename, strlen(nodename)))
-	    ax_jox_block(np, np->user);
+	    {
+	      ax_jox_block(np, np->user);
+	      /* Descend recursively into child nodes */
+	      for (npp = np->kids; npp; npp = npp->next)
+		ax_jox_node(npp, need_closer, 1);
+	    }
 	  else
 	    fprintf(stderr, "ax_jox_node: internal error: no handler for tag '%s'\n",
 		    nodename);
@@ -77,16 +87,17 @@ ax_jox(Tree *tp)
 }
 
 /* handler functions for np->user and GDL */
-void
+int
 ax_jox_bib(Node *np, Bib *p)
 {
   joxer_ch(np->mloc, (ccp)p->text);
+  return 0;
 }
 
 void
 ax_jox_block(Node *np, Block *p)
 {
-  
+  /* none of the block functions needs this yet */
 }
 
 void
@@ -100,14 +111,15 @@ ax_jox_lang(Node *np, ATF *a)
   joxer_ch(np->mloc, buf);
 }
 
-void
+int
 ax_jox_note(Node *np, Note *p)
 {
   joxer_ch(np->mloc, (ccp)p->text);
+  return 0;
 }
 
 /* This is to handle atf: lang -- the void ptr is ATF * */
-void
+int
 ax_jox_protocol(Node *np, void *p)
 {
   Prop*ptype = prop_find_kv(np->props, "type", NULL);
@@ -115,5 +127,6 @@ ax_jox_protocol(Node *np, void *p)
     ax_jox_bib(np, p);
   else if (ptype)
     ax_jox_lang(np, p);
+  return 0;
 }
 
