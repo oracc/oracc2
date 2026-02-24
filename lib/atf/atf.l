@@ -15,7 +15,6 @@ const char *atffile = "<stdin>";
 const char *curratffile = NULL;
 
 int atfflextrace = 0;
-static int endofinput;
 static int s_next;
 static int linktext;
 static char *xs;

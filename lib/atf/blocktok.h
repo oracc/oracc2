@@ -20,12 +20,12 @@ enum e_type {
   e_top
 };
 
-enum block_levels { 
+typedef enum block_levels {
   B_XTF, B_TEXT , B_OBJECT, B_SURFACE, B_COLUMN, B_LINE, B_CELL, B_FIELD,
   B_AGROUP, B_WORD, B_GRAPHEME , B_DIVISION , B_MILESTONE, B_H1, B_H2, B_H3,
   B_TR_TRANS, B_TR_SWITCH, B_TR_LABEL, B_TR_UNIT, B_TR_SPAN, B_TR_NOTE,
   B_TR_H1, B_TR_H2, B_TR_H3, B_bl_top
-};
+} Block_level;
 
 enum e_tu_types
 {

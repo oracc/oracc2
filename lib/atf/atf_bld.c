@@ -5,7 +5,7 @@
 static void atf_bld_protocols(Mloc *lp, const char *scope);
 int in_preamble;
 
-static Tree *abt;
+Tree *abt;
 
 void
 atf_bld_tree(Tree*tp)
