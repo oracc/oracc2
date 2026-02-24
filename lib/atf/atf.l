@@ -67,13 +67,10 @@ QID	{PROJECT}:{PQX}
 <s_AMPr>[^\n]+      		{ BEGIN 0; atfnorm; return r(TEXT); }
 <s_AMPl>[ \t]+	       		{ ; }
 
-<s_T>^\t[^\n]+			{ atfnorm; return TAB; }
-<s_T>[^\t][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
-
-<s_T>^[ \t]+.*/\n[ \t]       	{ atfnorm; return TAB; }
-<s_T>^[ \t]+.*/\n      		{ BEGIN 0; atfnorm; return TAB; }
-<s_T>.+/\n[ \t]      		{ atfnorm; return TAB; }
-<s_T>.+/\n			{ BEGIN 0; atfnorm; return TEXT; }
+<s_T>^[\t ]*/\n			{ ; }
+<s_T>^[^\t ][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
+<s_T>.*/\n[^ \t]+		{ BEGIN 0; atfnorm; return TEXT; }
+<s_T>^[\t ]+.+/\n      		{ BEGIN 0; atfnorm; return TAB; }
 <s_T><<EOF>>			{ yyterminate(); }
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
@@ -148,7 +145,7 @@ QID	{PROJECT}:{PQX}
 
 ^\#   				{ BEGIN s_T; return COMMENT; }
 
-[ \t]+ 				{ ; }
+[ \t\n]+       			{ ; }
 
 <<EOF>>				{ yyterminate(); }
 
@@ -165,8 +162,8 @@ atf_block(const char *atcmd)
   Blocktok *bp = blocktok(atcmd, strlen(atcmd));
   if (bp)
     {
-      curr_bt = bp;
-      return atflval.i = bp->bison;
+      atflval.b = bp;
+      return bp->bison;
     }
   else
     {

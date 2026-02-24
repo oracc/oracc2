@@ -132,15 +132,15 @@ set_block_curr(Block *bp)
 }
 
 void
-atf_bld_block(Mloc l, int ytok, char *rest)
+atf_bld_block(Mloc l, Blocktok *btp, char *rest)
 {
   Block *bp = memo_new(atfmp->mblocks);
-  bp->bt = curr_bt;
+  bp->bt = btp;
 
   if ('=' == *rest)
     ++rest;
 
-  if (Y_M == ytok)
+  if (Y_M == btp->bison)
     {
       bp->text = rest;
       m_types(rest, &bp->type, &bp->subt);

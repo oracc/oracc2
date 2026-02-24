@@ -15,7 +15,6 @@ extern int gdl_unicode;
 static Tree *ytp;
 
 Block *curr_block;
-Blocktok *curr_bt;
 Group *curr_group;
 const char *curr_use_str;
 
@@ -26,7 +25,7 @@ ATFLTYPE atflloc;
 
 %}
 
-%union { char *text; int i; }
+%union { char *text; int i; Blocktok *b; }
 
 %token	<text>		PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
 			MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
@@ -54,12 +53,15 @@ ATFLTYPE atflloc;
 %nterm <text>   	pqx name longtext
 
 %nterm <i> 		doc sparse stype atfuse link_type
-			division milestone
 			lines line l_link note bib
-			division_tok milestone_tok
-			object object_tok surface surface_tok column column_tok
-			heading
-
+			heading heading_tok
+			
+%nterm <b>		object object_tok
+			surface surface_tok
+			column column_tok
+			division division_tok
+			milestone milestone_tok
+			
 %start atf
 
 %%
@@ -72,6 +74,7 @@ atf: 		amp
 
 longtext:
 		TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
+        |      	TAB		{ $$ = longtext(atfmp->pool, $1, NULL); }
         | 	longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
 		;
 
@@ -183,21 +186,23 @@ blocks:		lines
 	|	cblocks
 	|	tblocks
 	;
-
+     
 cblocks:
 		cblock
 	|	cblock lines
 	|	cblocks cblock lines
 	;
 
-cblock:		division
+cblock:
+		division
 	|	milestone
 	;
 
 division:	division_tok TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
-milestone:	milestone_tok TEXT { atf_bld_block(@1, $1, $2); }
+milestone:
+		milestone_tok 	TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
 tblocks:
@@ -228,6 +233,9 @@ columns:	column
 
 column:		column_tok TEXT { atf_bld_block(@1, $1, $2); }
 	| 	column_tok TEXT { atf_bld_block(@1, $1, $2); } lines
+	;
+
+heading:	heading_tok longtext { atf_bld_heading(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
 
 lines:		line
@@ -261,57 +269,57 @@ l_link:		LNK_TOTO
 	;
 
 division_tok:
-		Y_DIV
-	| 	Y_END
-	| 	Y_ENDVARIANTS
-	| 	Y_VARIANT
-	| 	Y_VARIANTS
+		Y_DIV 		{ $$=yylval.b; }
+	| 	Y_END 		{ $$=yylval.b; }
+	| 	Y_ENDVARIANTS 	{ $$=yylval.b; }
+	| 	Y_VARIANT 	{ $$=yylval.b; }
+	| 	Y_VARIANTS 	{ $$=yylval.b; }
 	;
 
 milestone_tok:
-		Y_BODY
-	| 	Y_CATCHLINE
-	| 	Y_CFRAGMENT
-	| 	Y_COLOPHON
-	| 	Y_DATE
-	| 	Y_FRAGMENT
-	| 	Y_INCLUDE
-	| 	Y_LINECOUNT
-	| 	Y_M
-	| 	Y_REFERTO
-	| 	Y_SEALINGS
-	| 	Y_SIGNATURE
-	| 	Y_SUMMARY
-	| 	Y_WITNESSES
+		Y_BODY		{ $$=yylval.b; }
+	| 	Y_CATCHLINE	{ $$=yylval.b; }
+	| 	Y_CFRAGMENT	{ $$=yylval.b; }
+	| 	Y_COLOPHON      { $$=yylval.b; }
+	| 	Y_DATE	        { $$=yylval.b; }
+	| 	Y_FRAGMENT      { $$=yylval.b; }
+	| 	Y_INCLUDE       { $$=yylval.b; }
+	| 	Y_LINECOUNT	{ $$=yylval.b; }
+	| 	Y_M	        { $$=yylval.b; }
+	| 	Y_REFERTO       { $$=yylval.b; }
+	| 	Y_SEALINGS	{ $$=yylval.b; }
+	| 	Y_SIGNATURE	{ $$=yylval.b; }
+	| 	Y_SUMMARY	{ $$=yylval.b; }
+	| 	Y_WITNESSES	{ $$=yylval.b; }
 	;
 
 object_tok:
-		Y_BULLA
-	| 	Y_ENVELOPE
-	| 	Y_OBJECT
-	| 	Y_PRISM
-	| 	Y_TABLET
+		Y_BULLA  	{ $$=yylval.b; }
+	| 	Y_ENVELOPE  	{ $$=yylval.b; }
+	| 	Y_OBJECT  	{ $$=yylval.b; }
+	| 	Y_PRISM  	{ $$=yylval.b; }
+	| 	Y_TABLET  	{ $$=yylval.b; }
 	;
 
 surface_tok:
-		Y_BOTTOM
-	| 	Y_DOCKET
-	| 	Y_EDGE
-	| 	Y_FACE
-	| 	Y_LEFT
-	| 	Y_OBVERSE
-	| 	Y_REVERSE
-	| 	Y_RIGHT
-	| 	Y_SEAL
-	| 	Y_SIDE
-	| 	Y_SURFACE	
+		Y_BOTTOM       	{ $$=yylval.b; }
+	| 	Y_DOCKET       	{ $$=yylval.b; }
+	| 	Y_EDGE	        { $$=yylval.b; }
+	| 	Y_FACE	        { $$=yylval.b; }
+	| 	Y_LEFT	        { $$=yylval.b; }
+	| 	Y_OBVERSE       { $$=yylval.b; }
+	| 	Y_REVERSE      	{ $$=yylval.b; }
+	| 	Y_RIGHT	        { $$=yylval.b; }
+	| 	Y_SEAL	        { $$=yylval.b; }
+	| 	Y_SIDE	     	{ $$=yylval.b; }
+	| 	Y_SURFACE       { $$=yylval.b; }
 	;
 
 column_tok:
-		Y_COLUMN
+		Y_COLUMN     	{ $$=yylval.b; }
 	;
 
-heading:
+heading_tok:		
 		Y_H1X
 	;
 

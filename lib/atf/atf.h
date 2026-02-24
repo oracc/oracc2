@@ -162,7 +162,6 @@ extern ATF *atfp;
 extern Atfm *atfmp;
 
 extern Block *curr_block;
-extern Blocktok *curr_bt;
 extern Group *curr_group;
 
 extern int atflineno;
@@ -178,10 +177,10 @@ extern Tree *atfyacc(void);
 extern void atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name);
 extern void atf_bld_atf_protocol(Mloc l, const char *str);
 extern void atf_bld_bib(Mloc l, const char *ltext);
-extern void atf_bld_block(Mloc l, int ytok, char *rest);
+extern void atf_bld_block(Mloc l, Blocktok *btp, char *rest);
 extern void atf_bld_division(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_doc(Mloc l);
-extern void atf_bld_heading(Mloc l, Blocktok *curr_blocktok);
+extern void atf_bld_heading(Mloc l, int type, const char *text);
 extern void atf_bld_implicit_block(void);
 extern void atf_bld_key(Mloc l, char *str);
 extern void atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid, const unsigned char *name);

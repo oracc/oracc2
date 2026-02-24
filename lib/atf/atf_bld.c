@@ -5,6 +5,8 @@
 static void atf_bld_protocols(Mloc *lp, const char *scope);
 int in_preamble;
 
+int bld_trace = 1;
+
 Tree *abt;
 
 void
@@ -16,12 +18,16 @@ atf_bld_tree(Tree*tp)
 Node *
 atf_add(const char *s)
 {
+  if (bld_trace)
+    fprintf(stderr, "bld: atf_add %s to parent %s\n", s, abt->curr->name);
   return tree_add(abt, NS_XTF, s, abt->root->depth+1, NULL);
 }
 
 Node *
 atf_push(const char *s)
 {
+  if (bld_trace)
+    fprintf(stderr, "bld: atf_push %s to parent %s\n", s, abt->curr->name);
   tree_add(abt, NS_XTF, s, abt->curr->depth, NULL);
   return tree_push(abt);
 }
@@ -82,8 +88,7 @@ atf_bld_doc(Mloc l)
 {
   if (atfp->edoc != EDOC_TRANSLITERATION)
     {
-      /*abt->curr->user = curr_blocktok;*/
-      abt->curr->name = curr_bt->name;
+      abt->curr->name = (atfp->edoc == EDOC_COMPOSITE ? "composite" : "score");
       if (atfp->stype)
 	{
 	  atf_xprop(abt->curr, "score-type",
@@ -101,6 +106,11 @@ void
 atf_bld_group(Mloc l, Tree *tp)
 {
   
+}
+
+void
+atf_bld_heading(Mloc l, int type, const char *text)
+{
 }
 
 void
@@ -249,11 +259,6 @@ atf_bld_atf_protocol(Mloc l, const char *str)
   p->u.str = (uccp)str;
   abt_add_protocol(&l, p, "text", str);
   atf_input(l, LT_PROTOCOL, p);
-}
-
-void
-atf_bld_heading(Mloc l, Blocktok *curr_blocktok)
-{
 }
 
 void
