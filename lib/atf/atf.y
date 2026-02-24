@@ -295,6 +295,16 @@ object_tok:
 
 surface_tok:
 		Y_BOTTOM
+	| 	Y_DOCKET
+	| 	Y_EDGE
+	| 	Y_FACE
+	| 	Y_LEFT
+	| 	Y_OBVERSE
+	| 	Y_REVERSE
+	| 	Y_RIGHT
+	| 	Y_SEAL
+	| 	Y_SIDE
+	| 	Y_SURFACE	
 	;
 
 column_tok:

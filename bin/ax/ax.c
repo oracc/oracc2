@@ -27,14 +27,17 @@ ax_input(const char *f)
   mesg_init();
   gdlparse_init();
   Tree *tp = atf_read(f);
-  if (xml_output)
-    ax_jox(tp);
-  else
-    ax_atf(atfmp->atf);
-  atf_term();
-  gdlparse_term();
-  mesg_print(stderr);
-  mesg_term();
+  if (tp)
+    {
+      if (xml_output)
+	ax_jox(tp);
+      else
+	ax_atf(atfmp->atf);
+      atf_term();
+      gdlparse_term();
+      mesg_print(stderr);
+      mesg_term();
+    }
 }
 
 int

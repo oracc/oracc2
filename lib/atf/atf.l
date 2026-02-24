@@ -184,19 +184,20 @@ atf_wrapup_buffer(void)
 void
 atf_lex_init(FILE *fp, const char *file)
 {
-#if 1
   static ssize_t fsize;
   char *buf = (char*)slurp("atf", file, &fsize);
-#else
-  YY_FLUSH_BUFFER;
-  yyrestart(fp);
-#endif
-  atffile = curratffile = file;
-  atflineno = 1;
-#if 1
-  /* slurp adds \n\0\0 but only counts \n in the returned fsize */
-  atf_scan_buffer(buf,fsize+2);
-#endif
+  if (buf)
+    {
+      atffile = curratffile = file;
+      atflineno = 1;
+      /* slurp adds \n\0\0 but only counts \n in the returned fsize */
+      atf_scan_buffer(buf,fsize+2);
+    }
+  else
+    {
+      fprintf(stderr, "atf_lex_init: cannot read from NULL input\n");
+      exit(1);
+    }
 }
 
 static void

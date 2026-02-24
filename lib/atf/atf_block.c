@@ -4,6 +4,16 @@
 #include "atf.tab.h"
 #include "blocktok.h"
 
+#define MAX_ROMAN 40
+const char * const roman[] = {
+  "", 
+  "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x", 
+  "xi", "xii", "xiii", "xiv", "xv", "xvi", "xvii", "xviii", "xix", "xx", 
+  "xxi", "xxii", "xxiii", "xxiv", "xxv", "xxvi", "xxvii", "xxviii", "xxix", "xxx",
+  "xxxi", "xxxii", "xxxiii", "xxxiv", "xxxv", "xxxvi", "xxxvii", "xxxviii", "xxxix", 
+  "xl"
+};
+
 static void
 atf_implicit(const char *n)
 {
@@ -137,9 +147,13 @@ atf_bld_block(Mloc l, int ytok, char *rest)
     }
   else
     {
-      if (strcspn(rest, "*!?"))
+      /* for @object tablet? flags are at end of 'rest'
+       * for @tablet? flags are at end of name token
+       */
+      char *f = strpbrk(rest, "*!?");
+      if (f)
 	{
-	  bp->flag = rest;
+	  bp->flag = f;
 	  while ('!' == *rest || '?' == *rest || '*' == *rest)
 	    ++rest;
 	  if (*rest)
@@ -162,6 +176,7 @@ atf_bld_block(Mloc l, int ytok, char *rest)
 		  bp->text = rest;
 		}
 	    }
+	  *f = '\0';
 	}
     }
 
@@ -172,6 +187,35 @@ atf_bld_block(Mloc l, int ytok, char *rest)
   else
     bp->np = atf_add(bp->bt->name);
 
+  switch (bp->bt->type)
+    {
+    case B_OBJECT:
+      if (strcmp(bp->bt->name, "object"))
+	{
+	  bp->np->name = "object";
+	  atf_xprop(bp->np, "type", bp->bt->name);
+	}
+      else
+	atf_xprop(bp->np, "type", rest);
+      break;
+    case B_SURFACE:
+      if (strcmp(bp->bt->name, "surface"))
+	{
+	  bp->np->name = "surface";
+	  atf_xprop(bp->np, "type", bp->bt->name);
+	  atf_xprop(bp->np, "label", bp->bt->nano);
+	  atf_xprop(bp->np, "xml:id", bp->bt->nano);
+	}
+      else
+	atf_xprop(bp->np, "type", rest);
+      break;
+    case B_COLUMN:
+      atf_xprop(bp->np, "label", roman[atoi(rest)]);
+      break;
+    default:
+      break;
+    }
+  
   bp->np->user = bp;
   if (bp->type)
     {
