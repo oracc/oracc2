@@ -30,14 +30,15 @@ typedef struct atfm {
   List *llinks;
   List *llines;
   List *lkeys;
-  Memo *mblocks;
-  Memo *mxlinks;
-  Memo *mlines;
-  Memo *mbibs;
-  Memo *mkeys;
   Memo *matfls;
-  Memo *mprotocols;
+  Memo *mbibs;
+  Memo *mblocks;
   Memo *mgroups;
+  Memo *mkeys;
+  Memo *mlabels;
+  Memo *mlines;
+  Memo *mprotocols;
+  Memo *mxlinks;
   Pool *pool;
   struct atf *atf;
 } Atfm;
@@ -130,7 +131,9 @@ typedef struct block {
   const char *subt;
   const char *flag;
   const char *text;
+  struct label *label;
   struct block_token *bt;
+  int implicit;
   struct group *lines;
   Node *np;
 } Block;
@@ -168,6 +171,8 @@ extern int atflineno;
 extern const char *atffile, *curratffile;
 extern int in_preamble;
 extern const char *curr_use_str;
+
+extern const char * const roman[];
 
 #define atf_xprop(xnp,xk,xv) atf_prop_kv(xnp,AP_ATTR,PG_XML,xk,xv)
 

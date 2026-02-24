@@ -17,7 +17,12 @@ const char * const roman[] = {
 static void
 atf_implicit(const char *n)
 {
+  Block *bp = memo_new(atfmp->mblocks);
+  bp->implicit = 1;
+  bp->bt = blocktok(n, strlen(n));
   Node *np = atf_push(n);
+  np->user = bp;
+
   if (!strcmp(n, "object"))
     atf_xprop(np, "type", "tablet");
   else if (!strcmp(n, "surface"))
