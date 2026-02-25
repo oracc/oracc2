@@ -102,7 +102,7 @@ label_segtab(const char *st, unsigned const char *tok)
 	  if (have_stp)
 	    m_label_col_index = have_stp - (char*)line_label_buf;
 	}
-      update_mlabel(e_div,line_label_buf);
+      update_mlabel(B_DIVISION,line_label_buf);
       *line_label_buf = '\0'; /* hack of hacks */
     }
   else
@@ -147,24 +147,24 @@ reset_mlabel(void)
 }
 
 void
-update_mlabel(enum e_type type, unsigned const char *tok)
+update_mlabel(Block_level type, unsigned const char *tok)
 {
   switch (type)
     {
-    case e_object:
+    case B_OBJECT:
       /*      break; */
-    case e_surface:
+    case B_SURFACE:
       m_label_col_index = 0;
-    case e_div:
+    case B_DIVISION:
       m_label_col_index += sprintf(m_label+m_label_col_index,"%s ",tok);
       break;
-    case e_column:
+    case B_COLUMN:
       sprintf(m_label+m_label_col_index,"%s ",
 	      isdigit(*tok) ? cc(roman[atoi(cc(tok))]) : cc(tok));
       strcpy(m_label2, isdigit(*tok) ? cc(roman[atoi(cc(tok))]) : cc(tok));
       strcat(m_label2, " ");
       break;
-    case e_enum_top:
+    case B_bl_top:
       sprintf(m_label+strlen(m_label),"%s ",tok);
       break;
     default:
@@ -424,21 +424,17 @@ update_labels(struct node *current,enum e_tu_types transtype)
 {
   const char*ancestors[3] = { NULL , NULL, NULL };
   unsigned char idbuf[1024],*idbufp, *idtmp;
-  struct node *surfnode = NULL;
 
   switch (((Block*)current->user)->bt->type)
     {
     case B_OBJECT:
-      surfnode = NULL;
-      ancestors[0] = current->user;
+      ancestors[0] = ((Block*)current->user)->label;
       break;
     case B_SURFACE:
-      surfnode = current;
       ancestors[1] = ((Block*)current->user)->label;
       ancestors[0] = ((Block*)current->rent->user)->label;
       break;
     case B_COLUMN:
-      surfnode = current->rent;
       ancestors[2] = ((Block*)current->user)->label;
       ancestors[1] = ((Block*)current->rent->user)->label;
       ancestors[0] = ((Block*)current->rent->rent->user)->label;
@@ -450,44 +446,16 @@ update_labels(struct node *current,enum e_tu_types transtype)
   *line_label_buf = '\0';
 
   if (ancestors[0])
-    {
-      if (ancestors[0]->type == 'b')
-	{
-	  const char *s = ((struct block_token*)(ancestors[0]->ptr))->nano;
-	  if (s && !xstrcmp(s,"env"))
-	    sprintf((char*)line_label_buf, "%s ", s);
-	}
-#if 0      
-      else
-	sprintf((char*)line_label_buf, "%s ", (const char *)ancestors[0]->ptr);	
-#endif
-    }
-
+    sprintf((char*)line_label_buf, "%s ", ancestors[0]);
+  
   if (*frag_buf && frag_level == B_OBJECT)
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "frg.%s ", frag_buf);
 
   if (ancestors[1])
-    {
-      const char *flag = ((Block*)surfnode->user)->flag;
-      if (ancestors[1]->type == 'b')
-	{
-	  const char *s = ((struct block_token*)(ancestors[1]->ptr))->nano;
-	  if (s)
-	    sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "%s%s ", s, flag);
-	  else
-	    {
-	      sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "%s%s ", 
-		      ((struct block_token*)(ancestors[1]->ptr))->abbr, flag);
-	    }
-	}
-      else
-	sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "%s%s ",
-		(const char *)ancestors[1]->ptr, flag);
-    }
-
-  if (ancestors[2] && ((Block*)current->user)->implicit)
-    sprintf((char*)line_label_buf+xxstrlen(line_label_buf),
-	    "%s ", (const char *)ancestors[2]->ptr);
+    sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "%s ", ancestors[1]);
+  
+  if (ancestors[2])
+    sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "%s ", ancestors[2]);
 
   if (*frag_buf && frag_level == B_COLUMN)
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "frg.%s ", frag_buf);
@@ -506,21 +474,20 @@ update_labels(struct node *current,enum e_tu_types transtype)
   if (!((Block*)current->user)->label
       && !((Block*)current->user)->implicit)
     {
-      Label *lp = ((Block*)current->user)->label = memo_new(atfmp->mlabels);
-      
+      atf_xprop(current, "label", (ccp)idbuf);/*yes, idbuf--that has
+						just been set from
+						line_label_buf and
+						ws-truncated */
       if (!*idbuf)
 	{
 	  static int xid = 0;
-	  sprintf(idbuf,"x%d",xid++);
+	  sprintf((char*)idbuf,"x%d",xid++);
 	}
-#if 1
-      atf_xprop(current, "label", (ccp)idbuf);
-#else
-      setAttr(current,a_label,idbuf);
-#endif
+
       for (idbufp = idbuf; *idbufp; ++idbufp)
 	if (isspace(*idbufp))
 	  *idbufp = '.';
+
       idtmp = prepend_text_id(idbuf);
       if (idtmp)
       	{

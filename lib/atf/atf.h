@@ -216,7 +216,7 @@ void ncname_init(void);
 const char *newlabel(const char *);
 void update_labels(struct node *current,enum e_tu_types transtype);
 void label_segtab(const char *st,const unsigned char *tok);
-void update_mlabel(enum e_type type, unsigned const char *tok);
+void update_mlabel(Block_level type, unsigned const char *tok);
 const unsigned char *line_label(const unsigned char *tok,enum e_tu_types transtype,
 				const unsigned char *xid);
 void reset_labels(void);
