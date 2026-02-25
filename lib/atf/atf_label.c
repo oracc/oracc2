@@ -1,13 +1,6 @@
 #include <oraccsys.h>
 #include "atf.h"
-#include "label.h"
-
-#define xstrcmp(xa,xb) strcmp((ccp)(xa),(ccp)(xb))
-#define xstrcpy(xa,xb) strcpy((char*)(xa),(ccp)(xb))
-#define xxstrlen(xs) strlen((ccp)xs)
-#define cc(xs) ((ccp)xs)
-#define uc(xs) ((uccp)xs)
-#define textid (atfp->pqx)
+#include "otf-defs.h"
 
 int line_id;
 static Hash *my_label_table = NULL;
@@ -403,22 +396,33 @@ check_label(unsigned const char *lab,enum e_tu_types transtype,
   return ok;
 }
 
+#if 1
+const char *
+newlabel(const char *p)
+#else
 struct label *
 newlabel(char type, enum block_levels level, const void *p)
+#endif
 {
+#if 1
+  /* ax implementation maeks all labels a simple string */
+  return (ccp)pool_copy((uccp)p, atfmp->pool);
+#else
   struct label *lp = memo_new(atfmp->mlabels);
   lp->type = type;
   lp->level = level;
   lp->ptr = p;
   return lp;
+#endif
 }
 
 /* This routine is responsible for leaving a trailing space in line_label_buf
-   if it is needed in the line labels before the line number */
+ * if it is needed in the line labels before the line number
+ */
 void
 update_labels(struct node *current,enum e_tu_types transtype)
 {
-  struct label*ancestors[3] = { NULL , NULL, NULL };
+  const char*ancestors[3] = { NULL , NULL, NULL };
   unsigned char idbuf[1024],*idbufp, *idtmp;
   struct node *surfnode = NULL;
 
@@ -500,14 +504,14 @@ update_labels(struct node *current,enum e_tu_types transtype)
   *idbufp = '\0';
 
   if (!((Block*)current->user)->label
-      && ((Block*)current->user)->implicit)
+      && !((Block*)current->user)->implicit)
     {
+      Label *lp = ((Block*)current->user)->label = memo_new(atfmp->mlabels);
+      
       if (!*idbuf)
 	{
 	  static int xid = 0;
-	  char buf[10];
-	  sprintf(buf,"x%d",xid++);
-	  strcpy((char*)idbuf,buf);
+	  sprintf(idbuf,"x%d",xid++);
 	}
 #if 1
       atf_xprop(current, "label", (ccp)idbuf);

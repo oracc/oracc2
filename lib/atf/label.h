@@ -4,7 +4,7 @@
 
 typedef struct label
 {
-  char type;
+  char type; /* 'b' if ptr is block_token; 'n' if ptr is string */
   enum block_levels level;
   const void *ptr;
 } Label;

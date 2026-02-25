@@ -2,7 +2,6 @@
 #include <memo.h>
 #include <pool.h>
 #include "atf.h"
-#include "label.h"
 
 Atfm *atfmp;
 ATF *atfp;
@@ -42,7 +41,6 @@ atf_init(void)
   atfmp->mbibs = memo_init(sizeof(Bib),16);
   atfmp->mblocks = memo_init(sizeof(Block),256);
   atfmp->mkeys = memo_init(sizeof(Key),16);
-  atfmp->mlabels = memo_init(sizeof(Label),128);
   atfmp->mprotocols = memo_init(sizeof(Protocol),256);
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
   atfmp->pool = pool_init();

@@ -35,7 +35,6 @@ typedef struct atfm {
   Memo *mblocks;
   Memo *mgroups;
   Memo *mkeys;
-  Memo *mlabels;
   Memo *mlines;
   Memo *mprotocols;
   Memo *mxlinks;
@@ -131,7 +130,7 @@ typedef struct block {
   const char *subt;
   const char *flag;
   const char *text;
-  struct label *label;
+  const char *label;
   struct block_token *bt;
   int implicit;
   struct group *lines;
@@ -174,6 +173,9 @@ extern const char *curr_use_str;
 
 extern const char * const roman[];
 
+#define MAX_LINE_ID_BUF 1023
+#define MAX_IDBUF_LEN    127
+
 #define atf_xprop(xnp,xk,xv) atf_prop_kv(xnp,AP_ATTR,PG_XML,xk,xv)
 
 extern int atfparse(void);
@@ -207,5 +209,20 @@ extern void atf_set_tree(Tree *tp);
 extern void atf_term(void);
 extern void atf_wrapup(Wheret where);
 extern void atf_wrapup_buffer(void);
+
+unsigned const char*check_label(unsigned const char *lab,enum e_tu_types transtype,
+				unsigned const char *xid);
+void ncname_init(void);
+const char *newlabel(const char *);
+void update_labels(struct node *current,enum e_tu_types transtype);
+void label_segtab(const char *st,const unsigned char *tok);
+void update_mlabel(enum e_type type, unsigned const char *tok);
+const unsigned char *line_label(const unsigned char *tok,enum e_tu_types transtype,
+				const unsigned char *xid);
+void reset_labels(void);
+void label_term(void);
+void label_frag(struct node *current,unsigned const char *l);
+const unsigned char *label_from_line_id(const unsigned char *line_id);
+extern const char *label_to_id(const char *qualified_id, const char *label);
 
 #endif/*ATF_H_*/
