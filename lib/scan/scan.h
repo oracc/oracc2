@@ -57,7 +57,7 @@ typedef struct scanseg
 } Scanseg;
 
 extern void scan_init(void);
-extern void scan_pool(Pool *p);
+extern void set_scan_pool(Pool *p);
 extern void scan_term(void);
 
 typedef int (*scan_block_tester)(const unsigned char *p);

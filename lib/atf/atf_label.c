@@ -116,18 +116,27 @@ prepend_text_id(unsigned const char *s)
 {
   if (textid && s)
     {
-      unsigned char *new = malloc(xxstrlen(textid)+xxstrlen(s) + 10); /* 2 + '.' + 7 for digits */
-      register unsigned char *tmp = NULL;
-      
-      sprintf((char*)new,"%s.%s",textid,s);
-      tmp = (unsigned char *)strchr((char*)new,'.'); /* don't assume textid is a valid P/Q/X */
-      ++tmp;
-      while (*tmp)
-	if (!ncname[*tmp])
-	  *tmp++ = '_';
+      char new[strlen(textid)+strlen((ccp)s)+6];
+      strcpy(new, textid);
+      strcat(new, ".");
+      unsigned char *dest = (unsigned char *)strchr((char*)new,'.');
+      ++dest;
+      while (*s)
+	if (maybe_prime[*s]
+	    && (nprimes = scan_primes(s, &s)))
+	  {
+	    strcpy(dest, Primes[nprimes]);
+	    dest += strlen(Primes[nprimes]);
+	  }
+	else if (!ncname[*tmp])
+	  {
+	    *dest++ = '_';
+	    ++s;
+	  }
 	else
-	  ++tmp;
-      sprintf((char*)tmp,".%d", ++line_id);
+	  *dest++ = *s++;
+      *dest = '\0';
+      sprintf(dest,".%d", ++line_id);
       return new;
     }
   else

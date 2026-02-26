@@ -158,6 +158,9 @@ typedef struct lninfo
 
 extern Lninfo lninfo;
 
+extern const char *primes[];
+extern const char *Primes[];
+
 #define ATFF_MYLINES 0x01
 #define ATFF_AGROUPS 0x02
 #define ATFF_MATH 0x04
@@ -235,5 +238,7 @@ extern void label_frag(struct node *current,unsigned const char *l);
 extern const unsigned char *label_from_line_id(const unsigned char *line_id);
 extern const char *label_to_id(const char *qualified_id, const char *label);
 extern void reset_lninfo(void);
+
+extern int scan_primes(const char *s, const char **p);
 
 #endif/*ATF_H_*/

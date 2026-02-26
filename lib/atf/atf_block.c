@@ -1,4 +1,6 @@
 #include <oraccsys.h>
+#include <mesg.h>
+#include <scan.h>
 #include "atf.h"
 #include "atf_bld.h"
 #include "atf.tab.h"
@@ -8,10 +10,22 @@
 static void block_div(Mloc l, Block *bp, char *rest);
 static void block_hdr(Mloc l, Block *bp, char *rest);
 static void block_lev(Mloc l, Block *bp, char *rest);
+static char *scan_flags(const char *s, char *f);
+static int at_prime(unsigned char *s, unsigned char **p);
+static void atf_implicit(const char *n);
+static void m_types(const char *s, const char **typep, const char **subtp);
+static Node *ancestor_or_self_level(Node *np, Block_level b);
+static void set_block_curr(Block *bp);
+static char *obj_args(Mloc l, Block *bp, char *s, char flags[]);
+static char *srf_args(Mloc l, Block *bp, char *s, char flags[]);
+static char *col_args(Mloc l, Block *bp, char *s, char flags[]);
 
-static char *pull_flags(char *r, const char **flagsp);
-static void parse_rest(Block *bp, char *rest);
-static char *col_args(Mloc l, char *s);
+static char block_flags[128] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
+const char *primes[] = {"′","″","‴","⁗","⁗′","⁗″","⁗‴","⁗⁗"};
+const char *Primes[] = {"p", "P", "Pp", "PP", "PPp", "PPP", "PPPp", "PPPP" };
+
+#define MAX_FLAGS 5
+#define MAX_PRIMES 9 /* character count for normalized ' chars */
 
 int div_level;
 int header_id;
@@ -45,7 +59,7 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
 {
   Block *bp = memo_new(atfmp->mblocks);
   bp->bt = btp;
-  bp->literal = pool_copy(rest, atfmp->pool);
+  bp->literal = (ccp)pool_copy((uccp)rest, atfmp->pool);
 
   if ('=' == *rest)
     ++rest;
@@ -97,15 +111,13 @@ static void
 block_lev(Mloc l, Block *bp, char *rest)
 {
   char *s = rest;
-  int primes = 0;
-  int nflags = 0;
   char flags[MAX_FLAGS+1];
 
   while (isspace(*s))
     ++s;
 
   /* handle @obverse? etc */
-  if (block_flag[*s])
+  if (block_flags[(unsigned)*s])
     s = scan_flags(s, flags);
 
   switch (bp->bt->type)
@@ -124,7 +136,7 @@ block_lev(Mloc l, Block *bp, char *rest)
       if (*flags)
 	warning("flags not allowed after @column; should follow column number");
       if (*s)
-	s = col_args(l, bp, s);
+	s = col_args(l, bp, s, flags);
       else
 	warning("@column requires a column number");
       break;
@@ -137,21 +149,18 @@ block_lev(Mloc l, Block *bp, char *rest)
   while (isspace(*s))
     ++s;
   if (*s)
-    {
-      vwarning("bad character in block line at: %s",s);
-      return NULL;
-    }
+    mesg_vwarning(l.file, l.line, "bad character in block line at: %s",s);
 }
 
 static void
-block_div(Mloc l, Blocktok *btp, char *rest)
+block_div(Mloc l, Block *bp, char *rest)
 {
   unsigned char *tok = NULL, save = '\0';
 #define current abt->curr
   while (((Block*)current->user)->bt->type != B_DIVISION
 	 && ((Block*)current->user)->bt->type != B_TEXT)
     current = current->rent;
-  Node *np = atf_push(btp->name); /*appendChild(current,elem(tag,NULL,lnum,bp->type));*/
+  Node *np = atf_push(bp->bt->name); /*appendChild(current,elem(tag,NULL,lnum,bp->type));*/
   while (*rest && !isspace(*rest))
     ++rest;
   if (*rest)
@@ -217,13 +226,13 @@ block_div(Mloc l, Blocktok *btp, char *rest)
 	    label_segtab(cc(divtok),ntok);
 	}
     }
-  else if (!xstrcmp(btp->name,"variants")) 
+  else if (!xstrcmp(bp->bt->name,"variants")) 
     {
       /*AX: this is already taken care of at start of function */
       /*setName(current,e_variants);*/
       /*current = appendChild(current,elem(e_variant,NULL,lnum,bp->type));*/
     } 
-  else if (!xstrcmp(btp->name,"variant"))
+  else if (!xstrcmp(bp->bt->name,"variant"))
     {
       /* looks like ox removed the 'variant' then made @variants the
 	 parent and re-added it; with ax that probably isn't
@@ -237,7 +246,7 @@ block_div(Mloc l, Blocktok *btp, char *rest)
 }
 
 static void
-block_hdr(Mloc l, Blocktok *btp, char *rest)
+block_hdr(Mloc l, Block *bp, char *rest)
 {
   Node *np = atf_add("h");
 
@@ -249,7 +258,7 @@ block_hdr(Mloc l, Blocktok *btp, char *rest)
   last_tlit_h[lth_used++] = abt->curr;
   last_tlit_h_decay = 1;
 
-  atf_xprop(np, "level", (btp->name[1]=='1'?"1":(btp->name[1]=='2'?"2":"3")));
+  atf_xprop(np, "level", (bp->bt->name[1]=='1'?"1":(bp->bt->name[1]=='2'?"2":"3")));
   sprintf((char *)idbuf,"%s.h%d",textid,header_id++);
   atf_xprop(np, "xml_id", (ccp)pool_copy(idbuf, atfmp->pool));
   while (isspace(*rest))
@@ -266,7 +275,7 @@ block_hdr(Mloc l, Blocktok *btp, char *rest)
 void
 block_mls(Mloc l, Block *bp, char *rest)
 {
-  bp->text = pull_flags(rest, &bp->flag);
+  bp->literal = (ccp)pool_copy((uccp)rest, atfmp->pool);
   m_types(rest, &bp->type, &bp->subt);
   if (bp->type)
     {
@@ -313,39 +322,70 @@ pull_flags(char *r, const char **flagsp)
 void
 reset_lninfo(void)
 {
-  memset(&lninfo,'\0',sizeof(struct lno));
+  memset(&lninfo,'\0', sizeof(Lninfo));
   m_object_index = 0;
 }
-
-static char block_flags[128] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
-static char *primes[] = {"′","″","‴","⁗","⁗′","⁗″","⁗‴","⁗⁗"};
-static char *Primes[] = {"p", "P", "Pp", "PP", "PPp", "PPP", "PPPp", "PPPP" };
-
-#define MAX_FLAGS 5
-#define MAX_PRIMES 9 /* character count for normalized ' chars */
 
 static char *
 scan_flags(const char *s, char *f)
 {
   int len = 0;
-  while (len < MAX_FLAGS && block_flags[*s])
+  while (len < MAX_FLAGS && block_flags[(unsigned)*s])
     f[len++] = *s++;
-  if (block_flags[*s])
+  if (block_flags[(unsigned)*s])
     warning("ignoring excess block flags");
   f[len] = '\0';
-  return s;
+  return (char*)s;
+}
+
+static int
+at_prime(unsigned char *s,  unsigned char **p)
+{
+  switch (*s)
+    {
+    case '\'':
+      *p = ++s;
+      return 1;
+    case '"':
+      *p = ++s;
+      return 2;
+    case 0xe2:
+      switch (s[1])
+	{
+	case 0x80:
+	  switch (s[2])
+	    {
+	    case 0xb2:
+	      *p = s += 3;
+	      return 1;
+	    case 0xb3:
+	      *p = s += 3;
+	      return 2;
+	    case 0xb4:
+	      *p = s += 3;
+	      return 3;
+	    }
+	case 0x81:
+	  if (0x97 == s[3])
+	    {
+	      *p = s += 3;
+	      return 4;
+	    }
+	}
+    }
+  return 0;
 }
 
 /* lib/atf initially supports up to 2 quad-primes--hard to believe
    anyone could ever need more; primes are normalized to Unicode
    characters here */
-static char *
-scan_primes(const char *s, const char **p)
+int
+scan_primes(const char *s, const char **endp)
 {
   int len = 0;
   while (1)
     {
-      int nprimes = looking_at_prime(s, &s);
+      int nprimes = at_prime((ucp)s, (unsigned char **)&s);
       if (nprimes)
 	{
 	  if (len += nprimes >= MAX_PRIMES)
@@ -353,14 +393,13 @@ scan_primes(const char *s, const char **p)
 	      warning("ignoring excess primes");
 	      len = 8;
 	      break;
-	    }	    
+	    }
 	}
       else
 	break;
     }
-  if (len)
-    *p = primes[len];
-  return s;
+  *endp = s;
+  return len;
 }
 
 static void
@@ -494,26 +533,27 @@ set_block_curr(Block *bp)
 static char *
 obj_args(Mloc l, Block *bp, char *s, char flags[])
 {
+  const char *stype = NULL;
   if (strcmp(bp->bt->name, "object"))
     {
       bp->np->name = "object";
-      atf_xprop(bp->np, "type", bp->bt->name);
+      atf_xprop(bp->np, "type", stype = bp->bt->name);
     }
   else
     {
-      atf_xprop(bp->np, "type", scan_name(s, &s));
+      atf_xprop(bp->np, "type", stype = scan_name(NULL, s, &s));
       s = scan_flags(s, flags);
     }
   if (*flags)
-    bp->flag = pool_copy(flags, atfmp->pool);
+    bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
 
-  update_label(bp, stype);
+  update_labels(bp->np, etu_top);
 
   return s;
 }
 
 static char *
-srf_args(Mloc l, Block *bp, char *s, char flags)
+srf_args(Mloc l, Block *bp, char *s, char flags[])
 {
   const char *stype = NULL;
   if (strcmp(bp->bt->name, "surface"))
@@ -523,12 +563,12 @@ srf_args(Mloc l, Block *bp, char *s, char flags)
     }
   else
     {
-      atf_xprop(bp->np, "type", stype = scan_name(s, &s));
+      atf_xprop(bp->np, "type", stype = scan_name(NULL, s, &s));
       s = scan_flags(s, flags);
     }
   if (stype && !strcmp(stype, "face"))
     {
-      const char *face = scan_name(s, &s);
+      const char *face = scan_name(NULL, s, &s);
       if (strlen(face) != 1 || !islower(*face))
 	{
 	  warning("face must be a single lower case letter\n");
@@ -539,17 +579,17 @@ srf_args(Mloc l, Block *bp, char *s, char flags)
     }
 
   if (*flags)
-    bp->flag = pool_copy(flags, atfmp->pool);
+    bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
   
-  update_label(bp, stype);
+  update_labels(bp->np, etu_top);
   return s;  
 }
 
 static char *
-col_args(Mloc l, char *s)
+col_args(Mloc l, Block *bp, char *s, char flags[])
 {
   char colnum[5];
-  int len;
+  int len = 0;
   *colnum = '\0';
   while (len < 5 && isdigit(*s))
     colnum[len++] = *s++;
@@ -563,16 +603,18 @@ col_args(Mloc l, char *s)
       if (rnum < sizeof(roman))
 	rstr = roman[rnum];
       else
-	warning("column number %s too big to romanize", colnum);
+	mesg_vwarning(l.file, l.line, "column number %s too big to romanize", colnum);
       const char *cprimes = "";
-      s = scan_primes(s, &cprimes);
-      char clabel[strlen(rnum)+strlen(primes)+2];
+      int nprimes = scan_primes(s, (const char **)&s);
+      if (nprimes)
+	cprimes = primes[nprimes];
+      char clabel[strlen(rstr)+strlen(cprimes)+2];
       strcpy(clabel, rstr);
       if (*clabel)
 	strcat(clabel, " ");
       strcat(clabel, cprimes);
-      int nprimes = 0;
-      update_label(bp, pool_copy(clabel, atfmp->pool));
+      bp->label = (ccp)pool_copy((uccp)clabel, atfmp->pool);
+      update_labels(bp->np, etu_top);
     }
   return s;
 }
