@@ -129,7 +129,7 @@ typedef struct block {
   const char *type;
   const char *subt;
   const char *flag;
-  const char *text;
+  const char *literal;
   const char *label;
   struct block_token *bt;
   int implicit;
@@ -147,6 +147,16 @@ typedef struct line {
   Linet t;
   Node *gdl;
 } Line;
+
+typedef struct lninfo
+{
+  int colno;
+  int colprimes;
+  int lineno;
+  int lineprimes;
+} Lninfo;
+
+extern Lninfo lninfo;
 
 #define ATFF_MYLINES 0x01
 #define ATFF_AGROUPS 0x02
@@ -210,19 +220,20 @@ extern void atf_term(void);
 extern void atf_wrapup(Wheret where);
 extern void atf_wrapup_buffer(void);
 
-unsigned const char*check_label(unsigned const char *lab,enum e_tu_types transtype,
-				unsigned const char *xid);
-void ncname_init(void);
-const char *newlabel(const char *);
-void update_labels(struct node *current,enum e_tu_types transtype);
-void label_segtab(const char *st,const unsigned char *tok);
-void update_mlabel(Block_level type, unsigned const char *tok);
-const unsigned char *line_label(const unsigned char *tok,enum e_tu_types transtype,
+extern unsigned const char*check_label(unsigned const char *lab,enum e_tu_types transtype,
+				       unsigned const char *xid);
+extern void ncname_init(void);
+extern const char *newlabel(const char *);
+extern void update_labels(struct node *current,enum e_tu_types transtype);
+extern void label_segtab(const char *st,const unsigned char *tok);
+extern void update_mlabel(Block_level type, unsigned const char *tok);
+extern const unsigned char *line_label(const unsigned char *tok,enum e_tu_types transtype,
 				const unsigned char *xid);
-void reset_labels(void);
-void label_term(void);
-void label_frag(struct node *current,unsigned const char *l);
-const unsigned char *label_from_line_id(const unsigned char *line_id);
+extern void reset_labels(void);
+extern void label_term(void);
+extern void label_frag(struct node *current,unsigned const char *l);
+extern const unsigned char *label_from_line_id(const unsigned char *line_id);
 extern const char *label_to_id(const char *qualified_id, const char *label);
+extern void reset_lninfo(void);
 
 #endif/*ATF_H_*/

@@ -321,6 +321,8 @@ column_tok:
 
 heading_tok:		
 		Y_H1X
+		Y_H2X
+		Y_H3X
 	;
 
 %%
