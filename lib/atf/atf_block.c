@@ -89,6 +89,60 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
     }
 }
 
+/* bp is Block and rest is the remainder of the @-line.
+
+   (replacement for otf block.c:ntoken())
+ */
+static void
+block_lev(Mloc l, Block *bp, char *rest)
+{
+  char *s = rest;
+  int primes = 0;
+  int nflags = 0;
+  char flags[MAX_FLAGS+1];
+
+  while (isspace(*s))
+    ++s;
+
+  /* handle @obverse? etc */
+  if (block_flag[*s])
+    s = scan_flags(s, flags);
+
+  switch (bp->bt->type)
+    {
+    case B_OBJECT:
+      if (*flags && !strcmp(bp->bt->name, "object"))
+	warning("flags not allowed after @object; should follow object type arg");
+      s = obj_args(l, bp, s, flags);
+      break;
+    case B_SURFACE:
+      if (*flags && !strcmp(bp->bt->name, "surface"))
+	warning("flags not allowed after @surface; should follow surface type arg");
+      s = srf_args(l, bp, s, flags);
+      break;
+    case B_COLUMN:
+      if (*flags)
+	warning("flags not allowed after @column; should follow column number");
+      if (*s)
+	s = col_args(l, bp, s);
+      else
+	warning("@column requires a column number");
+      break;
+    default:
+      fprintf(stderr, "block_lev: internal error: unhandled block type\n");
+      break;
+    }
+  
+  /* Each case above needs to move 's' beyond the last permissible token for its type */
+  while (isspace(*s))
+    ++s;
+  if (*s)
+    {
+      vwarning("bad character in block line at: %s",s);
+      return NULL;
+    }
+}
+
 static void
 block_div(Mloc l, Blocktok *btp, char *rest)
 {
@@ -209,60 +263,6 @@ block_hdr(Mloc l, Blocktok *btp, char *rest)
 #endif
 }
 
-/* bp is Block and rest is the remainder of the @-line.
-
-   (replacement for otf block.c:ntoken())
- */
-static void
-block_lev(Mloc l, Block *bp, char *rest)
-{
-  char *s = rest;
-  int primes = 0;
-  int nflags = 0;
-  char flags[MAX_FLAGS+1];
-
-  while (isspace(*s))
-    ++s;
-
-  /* handle @obverse? etc */
-  if (block_flag[*s])
-    s = scan_flags(s, flags);
-
-  switch (bp->bt->type)
-    {
-    case B_OBJECT:
-      if (*flags && !strcmp(bp->bt->name, "object"))
-	warning("flags not allowed after @object; should follow object type arg");
-      s = obj_args(l, s, flags);
-      break;
-    case B_SURFACE:
-      if (*flags && !strcmp(bp->bt->name, "surface"))
-	warning("flags not allowed after @surface; should follow surface type arg");
-      s = srf_args(l, s, flags);
-      break;
-    case B_COLUMN:
-      if (*flags)
-	warning("flags not allowed after @column; should follow column number");
-      if (*s)
-	s = col_args(l, s);
-      else
-	warning("@column requires a column number");
-      break;
-    default:
-      fprintf(stderr, "block_lev: internal error: unhandled block type\n");
-      break;
-    }
-  
-  /* Each case above needs to move 's' beyond the last permissible token for its type */
-  while (isspace(*s))
-    ++s;
-  if (*s)
-    {
-      vwarning("bad character in block line at: %s",s);
-      return NULL;
-    }
-}
-
 void
 block_mls(Mloc l, Block *bp, char *rest)
 {
@@ -276,6 +276,7 @@ block_mls(Mloc l, Block *bp, char *rest)
     }
 }
 
+#if 0
 /* This routine assumes flags can only occur once on a block line
    which is probably true ... */
 static char *
@@ -307,6 +308,7 @@ pull_flags(char *r, const char **flagsp)
     }
   return rest;
 }
+#endif
 
 void
 reset_lninfo(void)
@@ -317,6 +319,7 @@ reset_lninfo(void)
 
 static char block_flags[128] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
 static char *primes[] = {"′","″","‴","⁗","⁗′","⁗″","⁗‴","⁗⁗"};
+static char *Primes[] = {"p", "P", "Pp", "PP", "PPp", "PPP", "PPPp", "PPPP" };
 
 #define MAX_FLAGS 5
 #define MAX_PRIMES 9 /* character count for normalized ' chars */
@@ -485,6 +488,63 @@ set_block_curr(Block *bp)
     }
 }
 
+/* As reimplemented primes are not supported on object or surface
+   tags; are they needed for @face a′ ? */
+
+static char *
+obj_args(Mloc l, Block *bp, char *s, char flags[])
+{
+  if (strcmp(bp->bt->name, "object"))
+    {
+      bp->np->name = "object";
+      atf_xprop(bp->np, "type", bp->bt->name);
+    }
+  else
+    {
+      atf_xprop(bp->np, "type", scan_name(s, &s));
+      s = scan_flags(s, flags);
+    }
+  if (*flags)
+    bp->flag = pool_copy(flags, atfmp->pool);
+
+  update_label(bp, stype);
+
+  return s;
+}
+
+static char *
+srf_args(Mloc l, Block *bp, char *s, char flags)
+{
+  const char *stype = NULL;
+  if (strcmp(bp->bt->name, "surface"))
+    {
+      bp->np->name = "surface";
+      atf_xprop(bp->np, "type", stype = bp->bt->name);
+    }
+  else
+    {
+      atf_xprop(bp->np, "type", stype = scan_name(s, &s));
+      s = scan_flags(s, flags);
+    }
+  if (stype && !strcmp(stype, "face"))
+    {
+      const char *face = scan_name(s, &s);
+      if (strlen(face) != 1 || !islower(*face))
+	{
+	  warning("face must be a single lower case letter\n");
+	  face = NULL;
+	}
+      if (face)
+	stype = bp->subt = face;
+    }
+
+  if (*flags)
+    bp->flag = pool_copy(flags, atfmp->pool);
+  
+  update_label(bp, stype);
+  return s;  
+}
+
 static char *
 col_args(Mloc l, char *s)
 {
@@ -505,39 +565,15 @@ col_args(Mloc l, char *s)
       else
 	warning("column number %s too big to romanize", colnum);
       const char *cprimes = "";
-      s = scan_primes(s, &primes);
+      s = scan_primes(s, &cprimes);
       char clabel[strlen(rnum)+strlen(primes)+2];
       strcpy(clabel, rstr);
       if (*clabel)
 	strcat(clabel, " ");
       strcat(clabel, cprimes);
+      int nprimes = 0;
       update_label(bp, pool_copy(clabel, atfmp->pool));
     }
   return s;
 }
 
-static char *
-obj_args(Mloc l, char *s)
-{
-  if (strcmp(bp->bt->name, "object"))
-    {
-      bp->np->name = "object";
-      atf_xprop(bp->np, "type", bp->bt->name);
-	}
-  else
-    atf_xprop(bp->np, "type", rest);
-}
-
-static char *
-srf_args(Mloc l, char *s)
-{
-  if (strcmp(bp->bt->name, "surface"))
-    {
-      bp->np->name = "surface";
-      atf_xprop(bp->np, "type", bp->bt->name);
-      atf_xprop(bp->np, "label", bp->bt->nano);
-      atf_xprop(bp->np, "xml:id", bp->bt->nano);
-    }
-  else
-    atf_xprop(bp->np, "type", rest);
-}

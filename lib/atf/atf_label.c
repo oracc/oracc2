@@ -420,7 +420,7 @@ newlabel(char type, enum block_levels level, const void *p)
  * if it is needed in the line labels before the line number
  */
 void
-update_labels(struct node *current,enum e_tu_types transtype)
+update_label(struct node *current,enum e_tu_types transtype)
 {
   const char*ancestors[3] = { NULL , NULL, NULL };
   unsigned char idbuf[1024],*idbufp, *idtmp;
