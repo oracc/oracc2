@@ -10,6 +10,7 @@ typedef enum block_levels {
 
 enum e_tu_types
 {
+  etu_none,
   etu_trans , etu_note , 
   etu_h1, etu_h2, etu_h3 ,
   etu_label , etu_unit , etu_span,

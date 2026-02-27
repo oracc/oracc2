@@ -184,7 +184,9 @@ key: 		HASH_KEY TEXT 	     { atf_bld_key(@1, $2); }
 /* composite or transliteration */
 blocks:		lines
 	|	cblocks
-	|	tblocks
+	|	objects
+	|	surfaces
+	|	columns
 	;
      
 cblocks:
@@ -205,11 +207,10 @@ milestone:
 		milestone_tok 	TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
-tblocks:
+objects:
 		object
-	|	tblocks object
+	|	objects object
 		;
-
 
 object: 	object_tok TEXT { atf_bld_block(@1, $1, $2); }
 	|	object_tok TEXT { atf_bld_block(@1, $1, $2); } lines

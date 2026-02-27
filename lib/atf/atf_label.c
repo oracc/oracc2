@@ -2,7 +2,7 @@
 #include "atf.h"
 #include "otf-defs.h"
 
-int line_id;
+int line_id, start_lnum;
 static Hash *my_label_table = NULL;
 static Hash *xid_to_label_table = NULL;
 static char m_label[1024];
@@ -11,20 +11,13 @@ int m_label_col_index = 0;
 unsigned char line_label_buf[1024];
 static unsigned char frag_buf[128];
 static enum block_levels frag_level = B_bl_top;
-static char ncname[256];
 static int complained_already = 0;
 extern unsigned char last_label_buf[128];
 char *label2 = NULL;
 
-void
-ncname_init(void)
-{
-  register int i;
-  memset(ncname,'\0',256);
-  for (i = 0; i < 128; ++i)
-    if (isalnum(i) || i == '_' || i == '.')
-      ncname[i] = 1;
-}
+unsigned char maybe_prime[256] = { ['\''] = 1, ['"'] = 1, [0xe2] = 1 };
+
+#include "ncname.c"
 
 void
 label_frag(struct node *current,unsigned const char *l)
@@ -121,14 +114,15 @@ prepend_text_id(unsigned const char *s)
       strcat(new, ".");
       unsigned char *dest = (unsigned char *)strchr((char*)new,'.');
       ++dest;
+      int nprimes = 0;
       while (*s)
 	if (maybe_prime[*s]
-	    && (nprimes = scan_primes(s, &s)))
+	    && (nprimes = scan_primes((ccp)s, (const char **)&s)))
 	  {
-	    strcpy(dest, Primes[nprimes]);
+	    strcpy((char*)dest, Primes[nprimes-1]);
 	    dest += strlen(Primes[nprimes]);
 	  }
-	else if (!ncname[*tmp])
+	else if (!ncname[*s])
 	  {
 	    *dest++ = '_';
 	    ++s;
@@ -136,8 +130,8 @@ prepend_text_id(unsigned const char *s)
 	else
 	  *dest++ = *s++;
       *dest = '\0';
-      sprintf(dest,".%d", ++line_id);
-      return new;
+      sprintf((char*)dest,".%d", ++line_id);
+      return (unsigned char *)strdup(new);
     }
   else
     return NULL;
@@ -441,12 +435,15 @@ update_label(struct node *current,enum e_tu_types transtype)
       break;
     case B_SURFACE:
       ancestors[1] = ((Block*)current->user)->label;
-      ancestors[0] = ((Block*)current->rent->user)->label;
+      if ('x' != *(((Block*)current->rent->user)->label))
+	ancestors[0] = ((Block*)current->rent->user)->label;
       break;
     case B_COLUMN:
-      ancestors[2] = ((Block*)current->user)->label;
-      ancestors[1] = ((Block*)current->rent->user)->label;
-      ancestors[0] = ((Block*)current->rent->rent->user)->label;
+	ancestors[2] = ((Block*)current->user)->label;
+      if ('x' != *(((Block*)current->rent->user)->label))
+	ancestors[1] = ((Block*)current->rent->user)->label;
+      if ('x' != *(((Block*)current->rent->rent->user)->label))
+	ancestors[0] = ((Block*)current->rent->rent->user)->label;
     default:
       /* can't happen */
       break;
@@ -480,37 +477,22 @@ update_label(struct node *current,enum e_tu_types transtype)
     --idbufp;
   *idbufp = '\0';
 
-  if (!((Block*)current->user)->label
-      && !((Block*)current->user)->implicit)
-    {
-      atf_xprop(current, "label", (ccp)idbuf);/*yes, idbuf--that has
-						just been set from
-						line_label_buf and
-						ws-truncated */
-      if (!*idbuf)
-	{
-	  static int xid = 0;
-	  sprintf((char*)idbuf,"x%d",xid++);
-	}
-
-      for (idbufp = idbuf; *idbufp; ++idbufp)
-	if (isspace(*idbufp))
-	  *idbufp = '.';
-
-      idtmp = prepend_text_id(idbuf);
-      if (idtmp)
-      	{
-	  const unsigned char *tmp2 = check_label(idbuf,transtype,idtmp);
-	                                            /*(unsigned char*)strdup((char*)idtmp));*/
-#if 1
-	  atf_xprop(current, "xml:id", (ccp)tmp2);
-#else
-	  setAttr(current,a_xml_id,tmp2);
-#endif
-	  free(idtmp);
-	}
-    }
+  /* yes, idbuf--that has just been set from line_label_buf and
+     ws-truncated */
+  atf_xprop(current, "label", (ccp)pool_copy(idbuf, atfmp->pool)); 
   
+  for (idbufp = idbuf; *idbufp; ++idbufp)
+    if (isspace(*idbufp))
+      *idbufp = '.';
+  
+  idtmp = prepend_text_id(idbuf);
+  if (idtmp)
+    {
+      const unsigned char *tmp2 = check_label(idbuf,transtype,idtmp);
+      atf_xprop(current, "xml:id", (ccp)tmp2);
+      free(idtmp);
+    }
+
   if (xxstrlen(line_label_buf) > 1000)
     {
       fprintf(stderr,"overfull line_label_buf = %d\n",(int)xxstrlen(line_label_buf));

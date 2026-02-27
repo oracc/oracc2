@@ -227,7 +227,7 @@ extern unsigned const char*check_label(unsigned const char *lab,enum e_tu_types 
 				       unsigned const char *xid);
 extern void ncname_init(void);
 extern const char *newlabel(const char *);
-extern void update_labels(struct node *current,enum e_tu_types transtype);
+extern void update_label(struct node *current,enum e_tu_types transtype);
 extern void label_segtab(const char *st,const unsigned char *tok);
 extern void update_mlabel(Block_level type, unsigned const char *tok);
 extern const unsigned char *line_label(const unsigned char *tok,enum e_tu_types transtype,

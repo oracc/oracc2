@@ -19,8 +19,9 @@ static void set_block_curr(Block *bp);
 static char *obj_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *srf_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *col_args(Mloc l, Block *bp, char *s, char flags[]);
+static const char *xid_block(void);
 
-static char block_flags[128] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
+static char block_flags[256] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
 const char *primes[] = {"′","″","‴","⁗","⁗′","⁗″","⁗‴","⁗⁗"};
 const char *Primes[] = {"p", "P", "Pp", "PP", "PPp", "PPP", "PPPp", "PPPP" };
 
@@ -285,40 +286,6 @@ block_mls(Mloc l, Block *bp, char *rest)
     }
 }
 
-#if 0
-/* This routine assumes flags can only occur once on a block line
-   which is probably true ... */
-static char *
-pull_flags(char *r, const char **flagsp)
-{
-  char *f = strpbrk(rest, "*!?");
-  if (f)
-    {
-      char fbuf[5], *fb = fbuf;
-      *fstart = rest;
-      while ('!' == *rest || '?' == *rest || '*' == *rest)
-	{
-	  *fb++ = *rest++;
-	  if (fb - fbuf > 3)
-	    {
-	      fprintf(stderr, "excessive block flags ignored\n");
-	      while ('!' == *rest || '?' == *rest || '*' == *rest)
-		++rest;
-	    }
-	}
-      *fb = '\0';
-      if (*rest)
-	{
-	  while (*rest)
-	    *fstart++ = *rest++;
-	  *fstart = '\0';
-	}
-      *flagsp = (ccp)pool_copy(fbuf, atfmp->pool);
-    }
-  return rest;
-}
-#endif
-
 void
 reset_lninfo(void)
 {
@@ -388,7 +355,8 @@ scan_primes(const char *s, const char **endp)
       int nprimes = at_prime((ucp)s, (unsigned char **)&s);
       if (nprimes)
 	{
-	  if (len += nprimes >= MAX_PRIMES)
+	  len += nprimes;
+	  if (len >= MAX_PRIMES)
 	    {
 	      warning("ignoring excess primes");
 	      len = 8;
@@ -528,7 +496,12 @@ set_block_curr(Block *bp)
 }
 
 /* As reimplemented primes are not supported on object or surface
-   tags; are they needed for @face a′ ? */
+ * tags; are they needed for @face a′ ?
+ *
+ * Each of the xxx_args routines must set bp->label to the independent
+ * label segment for the block; update_label computes the combined
+ * label for the block in context and sets it as a property on bp->np.
+ */
 
 static char *
 obj_args(Mloc l, Block *bp, char *s, char flags[])
@@ -547,7 +520,12 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
   if (*flags)
     bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
 
-  update_labels(bp->np, etu_top);
+  if (bp->bt->nano)
+    bp->label = (ccp)bp->bt->nano;
+  else
+    bp->label = xid_block();
+  
+  update_label(bp->np, etu_none);
 
   return s;
 }
@@ -580,8 +558,13 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
 
   if (*flags)
     bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
-  
-  update_labels(bp->np, etu_top);
+
+  if (bp->bt->nano)
+    bp->label = (ccp)bp->bt->nano;
+  else
+    bp->label = xid_block();
+
+  update_label(bp->np, etu_none);
   return s;  
 }
 
@@ -593,11 +576,15 @@ col_args(Mloc l, Block *bp, char *s, char flags[])
   *colnum = '\0';
   while (len < 5 && isdigit(*s))
     colnum[len++] = *s++;
-  if (len-- == 5)
-    warning("column number too long (max 4 digits), ignoring excess\n");
+  if (len == 5)
+    {
+      warning("column number too long (max 4 digits), ignoring excess\n");
+      --len;
+    }
   colnum[len] = '\0';
   if (strlen(colnum))
     {
+      atf_xprop(bp->np, "n", pool_copy(colnum, atfmp->pool));
       int rnum = atoi(colnum);
       const char *rstr = "";
       if (rnum < sizeof(roman))
@@ -607,15 +594,23 @@ col_args(Mloc l, Block *bp, char *s, char flags[])
       const char *cprimes = "";
       int nprimes = scan_primes(s, (const char **)&s);
       if (nprimes)
-	cprimes = primes[nprimes];
+	cprimes = primes[nprimes-1];
       char clabel[strlen(rstr)+strlen(cprimes)+2];
       strcpy(clabel, rstr);
-      if (*clabel)
-	strcat(clabel, " ");
-      strcat(clabel, cprimes);
+      if (*cprimes)
+	strcat(clabel, cprimes);
       bp->label = (ccp)pool_copy((uccp)clabel, atfmp->pool);
-      update_labels(bp->np, etu_top);
+      update_label(bp->np, etu_none);
     }
   return s;
+}
+
+static const char *
+xid_block(void)
+{
+  char idbuf[5];
+  static int xid = 0;
+  sprintf((char*)idbuf,"x%d",xid++);
+  return (ccp)pool_copy((uccp)idbuf, atfmp->pool);
 }
 
