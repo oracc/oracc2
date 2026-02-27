@@ -14,8 +14,6 @@ static char *scan_flags(const char *s, char *f);
 static int at_prime(unsigned char *s, unsigned char **p);
 static void atf_implicit(const char *n);
 static void m_types(const char *s, const char **typep, const char **subtp);
-static Node *ancestor_or_self_level(Node *np, Block_level b);
-static void set_block_curr(Block *bp);
 static char *obj_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *srf_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *col_args(Mloc l, Block *bp, char *s, char flags[]);
@@ -65,7 +63,7 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
   if ('=' == *rest)
     ++rest;
 
-  set_block_curr(bp);
+  set_block_curr(bp->bt->type);
 
   if (atfp->edoc == EDOC_TRANSLITERATION)
     bp->np = atf_push(bp->bt->name);
@@ -407,7 +405,7 @@ m_types(const char *s, const char **typep, const char **subtp)
 /* Find the ancestor-or-self which is a block token at the level of arg2;
  * if not found, set tree_curr to the first ancestor that wasn't a block.
  */
-static Node *
+Node *
 ancestor_or_self_level(Node *np, Block_level b)
 {
   while (1)
@@ -430,14 +428,14 @@ ancestor_or_self_level(Node *np, Block_level b)
 }
 
 /* Ensure that abt->curr is appropriate for attaching the new block */
-static void
-set_block_curr(Block *bp)
+void
+set_block_curr(Block_level b)
 {
   if (EDOC_COMPOSITE == atfp->edoc)
     tree_curr(node_ancestor_or_self(abt->curr, "composite"));
   else
     {
-      switch (bp->bt->type)
+      switch (b)
 	{
 	case B_OBJECT:
 	  tree_curr(abt->root->kids); /* add '->last' here? */
@@ -584,7 +582,7 @@ col_args(Mloc l, Block *bp, char *s, char flags[])
   colnum[len] = '\0';
   if (strlen(colnum))
     {
-      atf_xprop(bp->np, "n", pool_copy(colnum, atfmp->pool));
+      atf_xprop(bp->np, "n", (ccp)pool_copy((uccp)colnum, atfmp->pool));
       int rnum = atoi(colnum);
       const char *rstr = "";
       if (rnum < sizeof(roman))

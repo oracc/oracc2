@@ -182,11 +182,11 @@ key: 		HASH_KEY TEXT 	     { atf_bld_key(@1, $2); }
 	;
 		
 /* composite or transliteration */
-blocks:		lines
-	|	cblocks
+blocks:		cblocks
 	|	objects
 	|	surfaces
 	|	columns
+	|	lines
 	;
      
 cblocks:
@@ -257,7 +257,7 @@ line:
 	| 	LEM longtext		{ $$=$1; } /* MTS|NTS|BIL prereq */
 	|	l_link longtext		{ $$=$1; } /* MTS prereq */
 	|	COMMENT longtext	{ $$=$1; }
-	| 	DOLLAR longtext		{ $$=$1; }
+	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, (char*)longtext(NULL,NULL,NULL)); }
 	| 	bib
 	| 	note
 	|	heading

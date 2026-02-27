@@ -1,26 +1,28 @@
+#include <oraccsys.h>
+#include "atf.h"
+#include "atf_bld.h"
+#include "nonx.h"
+#include "otf-defs.h"
+
 void
-atf_dollar()
+atf_dollar(Mloc l, char *rest)
 {
-  if (transtype)
+  if (0/*transtype*/)
     {
-      lines = trans_dollar(lines);
+      /*lines = trans_dollar(lines);*/
     }
   else
     {
-      s = &lines[0][1];
+      Node *np;
+      Block_level nonx_attach = B_bl_top;
+      const char *dollar_label = NULL;
+      
+      char *s = rest;
       while (isspace(*s))
 	++s;
-      if (doctype == e_composite)
-	current = c_attach_point();
-      else if (current->level < OBJECT || current->level > COLUMN)
-	current = attach_point(COLUMN);
-      /* class nonx as MILESTONE because it is supposed to float */
-      tmp = elem(e_nonx,NULL,lnum,MILESTONE);
-      sprintf(line_id_insertp,"%d", ++line_id);
-      setAttr(tmp,a_xml_id,ucc(line_id_buf));
       if (*s == '@' && s[1] == '(')
 	{
-	  unsigned char *lstart;
+	  char *lstart;
 	  s += 2;
 	  lstart = s;
 	  while (*s && *s != ')')
@@ -28,26 +30,18 @@ atf_dollar()
 	  if (*s)
 	    {
 	      *s++ = '\0';
-	      setAttr(tmp,a_label,lstart);
-	      setAttr(tmp,a_silent,ucc("1"));
-	      check_label(lstart,0,pool_copy(ucc(line_id_buf)));
-#if 0
-	      while (*s)
-		++s;
-#endif
+	      dollar_label = (ccp)pool_copy((uccp)lstart, atfmp->pool);
 	    }
 	  else
 	    warning("label on $-line lacks closing ')'");
 	  while (isspace(*s))
 	    ++s;
 	}
-      else if (dollar_fifo)
-	dollar_add((const char*)getAttr(tmp,"xml:id"));
-      nonxp = parse_nonx(s);
+
+      Nonx *nonxp = parse_nonx(&l, (unsigned char*)s);
+      
       if (nonxp)
 	{
-	  appendAttr(tmp,attr(a_strict,
-			      nonxp->strict ? ucc("1") : ucc("0")));
 	  if (nonxp->strict || nonxp->scope)
 	    {
 	      if (nonxp->strict
@@ -58,8 +52,7 @@ atf_dollar()
 		  && !nonxp->ref)
 		{
 		  warning("strict $-lines must have scope and state indicators");
-		  ++lines;
-		  continue;
+		  return;
 		}
 	      else
 		switch (nonxp->scope->type)
@@ -68,7 +61,7 @@ atf_dollar()
 		    /* WATCHME: does this need to attach
 		       to <object> in the same way as surface
 		       nonx's need to attach to <surface>? */
-		    nonx_attach = TEXT;
+		    nonx_attach = B_TEXT;
 		    break;
 		  case x_surface:
 		    /* if we have:
@@ -79,10 +72,10 @@ atf_dollar()
 		       attached to <object> -- it's simpler
 		       just to attach it to <surface>
 		    */
-		    nonx_attach = SURFACE;
+		    nonx_attach = B_SURFACE;
 		    break;
 		  case x_column:
-		    nonx_attach = SURFACE;
+		    nonx_attach = B_SURFACE;
 		    if (nonxp->state)
 		      switch (nonxp->state->type)
 			{
@@ -133,54 +126,79 @@ atf_dollar()
 			    break;
 			  }
 		      }
-		    nonx_attach = COLUMN;
+		    nonx_attach = B_COLUMN;
 		    break;
 		  default:
-		    nonx_attach = COLUMN;
+		    nonx_attach = B_COLUMN;
 		    break;
 		  }
 	    }
 	  else
 	    {
-	      nonx_attach = COLUMN;
+	      nonx_attach = B_COLUMN;
 	    }
+
+	  if (nonx_attach == B_bl_top)
+	    nonx_attach = B_COLUMN;
+
+	  /* Defer Node creation and attaching until after we have typed the $-line */
+	  Node *np;
+	  set_block_curr(nonx_attach);
+	  if (atfp->edoc == EDOC_TRANSLITERATION)
+	    np = atf_push("nonx");
+	  else
+	    np = atf_add("nonx");
+
+	  sprintf(line_id_insertp,"%d", ++line_id);
+	  const char *xid (ccp)pool_copy((uccp)line_id_buf);
+	  atf_xprop(np, "xml:id", xid);
+	  atf_xprop(np, "strict", nonxp->strict ? ucc("1") : ucc("0"));
+
+	  if (dollar_label)
+	    {
+	      atf_xprop(np, "label", dollar_label);
+	      atf_xprop(np,"silent",ucc("1"));
+	      check_label(dollar_label,0,xid);
+	    }
+	  else if (dollar_fifo)
+	    dollar_add(xid);
+
 	  if (nonxp->ref)
 	    {
-	      appendAttr(tmp,attr(a_ref,ucc(nonxp->ref)));
+	      atf_xprop(np, "ref", ucc(nonxp->ref));
 	      switch (nonxp->scope->type)
 		{
 		case x_image:
-		  appendAttr(tmp,attr(a_type, ucc("image")));
-		  appendAttr(tmp,attr(a_alt, nonxp->literal));
+		  atf_xprop(np, "type", ucc("image"));
+		  atf_xprop(np, "alt", nonxp->literal));
 		  break;
 		case x_empty:
-		  appendAttr(tmp,attr(a_type, ucc("empty")));
+		  atf_xprop(np, "type", ucc("empty"));
 		  break;
 		default:
-		  appendAttr(tmp,attr(a_scope,
+		  atf_xprop(np, "scope",
 				      nonxp->scope ? ucc(nonxp->scope->str) 
-				      : ucc("impression")));
+				      : ucc("impression"));
 		  break;
 		}
 	    }
 	  else
 	    {
 	      if (nonxp->extent)
-		appendAttr(tmp,attr(a_extent,ucc(nonxp->extent->str)));
+		atf_xprop(np, "extent", ucc(nonxp->extent->str));
 	      else if (nonxp->number)
-		appendAttr(tmp,attr(a_extent,ucc(nonxp->number)));
+		atf_xprop(np, "extent", ucc(nonxp->number));
 	      else if (nonxp->strict)
 		warning("extent not found in strict $-line");
 	      if (nonxp->scope)
-		appendAttr(tmp,attr(a_scope,ucc(nonxp->scope->str)));
+		atf_xprop(np, "scope", ucc(nonxp->scope->str));
 	      else if (nonxp->strict)
-		appendAttr(tmp,attr(a_scope,ucc("line")));
+		atf_xprop(np, "scope", ucc("line"));
 	      if (nonxp->state)
-		appendAttr(tmp,attr(a_state,ucc(nonxp->state->str)));
+		atf_xprop(np, "state", ucc(nonxp->state->str));
 	      else
 		{
-		  appendAttr(tmp,attr(a_state,ucc("other")));
-		  nonx_attach = COLUMN;
+		  atf_xprop(np, "state", ucc("other"));
 		}
 	    }
 	  if (nonxp->link)
@@ -190,14 +208,9 @@ atf_dollar()
 	  else
 	    {
 	      if (*nonxp->flags)
-		appendAttr(tmp,attr(a_flags,ucc(nonxp->flags)));
-	      appendChild(tmp,textNode(*s == '(' ? (s+1) : s));
+		atf_xprop(np, "flags", ucc(nonxp->flags));
+	      np->text = (*s == '(' ? (s+1) : s);
 	    }
-	  if (doctype == e_composite)
-	    current = c_attach_point();
-	  else if (current->level != nonx_attach)
-	    current = attach_point(nonx_attach);
-	  appendChild(current,tmp);
 	}
     }
 }

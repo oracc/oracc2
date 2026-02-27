@@ -240,5 +240,8 @@ extern const char *label_to_id(const char *qualified_id, const char *label);
 extern void reset_lninfo(void);
 
 extern int scan_primes(const char *s, const char **p);
+extern Node *ancestor_or_self_level(Node *np, Block_level b);
+extern void set_block_curr(Block_level b);
+extern void atf_dollar(Mloc l, char *rest);
 
 #endif/*ATF_H_*/
