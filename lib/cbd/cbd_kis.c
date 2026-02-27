@@ -14,7 +14,18 @@
  * found in the Kis.
  */
 
-Efield hfields[128];
+Efield hfields[256] = {
+  ['p'] = EFLD_PERD, 
+  ['='] = EFLD_FORM, 
+  ['$'] = EFLD_NORM, 
+  ['^'] = EFLD_NMFM, 
+  ['~'] = EFLD_FMOF, 
+  ['/'] = EFLD_BASE, 
+  ['*'] = EFLD_STEM, 
+  ['+'] = EFLD_CONT, 
+  ['#'] = EFLD_MRF1, 
+  ['m'] = EFLD_MRF2
+};
 static Cbd *my_c;
 static Kis *my_k;
 static Hash *nmfm_e, *nmfm_s;
@@ -398,6 +409,7 @@ cbd_kis_wrapup_s(Cbd_fw_type t, Sense *sp)
     } 
 }
 
+#if 0
 void
 hfields_init(void)
 {
@@ -412,6 +424,7 @@ hfields_init(void)
   hfields['#'] = EFLD_MRF1;
   hfields['m'] = EFLD_MRF2;
 }
+#endif
 
 void
 cbd_kis(Cbd *c, Kis *k)
@@ -419,7 +432,7 @@ cbd_kis(Cbd *c, Kis *k)
   if (!c->kisnullmem)
     {
       c->kisnullmem = memo_init(sizeof(char *), 256);
-      hfields_init();
+      /*hfields_init();*/
     }
   my_c = c;
   if (k)
