@@ -13,7 +13,6 @@ atf_dollar(Mloc l, char *rest)
     }
   else
     {
-      Node *np;
       Block_level nonx_attach = B_bl_top;
       const char *dollar_label = NULL;
       
@@ -158,57 +157,57 @@ atf_dollar(Mloc l, char *rest)
 	    {
 	      atf_xprop(np, "label", dollar_label);
 	      atf_xprop(np,"silent",cc("1"));
-	      check_label((uccp)dollar_label,0,xid);
+	      check_label((uccp)dollar_label,0,(uccp)xid);
 	    }
 	  else if (dollar_fifo)
 	    dollar_add(xid);
 
 	  if (nonxp->ref)
 	    {
-	      atf_xprop(np, "ref", ucc(nonxp->ref));
+	      atf_xprop(np, "ref", cc(nonxp->ref));
 	      switch (nonxp->scope->type)
 		{
 		case x_image:
-		  atf_xprop(np, "type", ucc("image"));
-		  atf_xprop(np, "alt", nonxp->literal);
+		  atf_xprop(np, "type", cc("image"));
+		  atf_xprop(np, "alt", cc(nonxp->literal));
 		  break;
 		case x_empty:
-		  atf_xprop(np, "type", ucc("empty"));
+		  atf_xprop(np, "type", cc("empty"));
 		  break;
 		default:
 		  atf_xprop(np, "scope",
-				      nonxp->scope ? ucc(nonxp->scope->str) 
-				      : ucc("impression"));
+				      nonxp->scope ? cc(nonxp->scope->str) 
+				      : cc("impression"));
 		  break;
 		}
 	    }
 	  else
 	    {
 	      if (nonxp->extent)
-		atf_xprop(np, "extent", ucc(nonxp->extent->str));
+		atf_xprop(np, "extent", cc(nonxp->extent->str));
 	      else if (nonxp->number)
-		atf_xprop(np, "extent", ucc(nonxp->number));
+		atf_xprop(np, "extent", cc(nonxp->number));
 	      else if (nonxp->strict)
 		warning("extent not found in strict $-line");
 	      if (nonxp->scope)
-		atf_xprop(np, "scope", ucc(nonxp->scope->str));
+		atf_xprop(np, "scope", cc(nonxp->scope->str));
 	      else if (nonxp->strict)
-		atf_xprop(np, "scope", ucc("line"));
+		atf_xprop(np, "scope", cc("line"));
 	      if (nonxp->state)
-		atf_xprop(np, "state", ucc(nonxp->state->str));
+		atf_xprop(np, "state", cc(nonxp->state->str));
 	      else
 		{
-		  atf_xprop(np, "state", ucc("other"));
+		  atf_xprop(np, "state", cc("other"));
 		}
 	    }
 	  if (nonxp->link)
 	    {
-	      nonx_link_data(nonxp->link, tmp);
+	      /*nonx_link_data(nonxp->link, tmp)*/; /* this is commented out in atf_nonx.c for now */
 	    }
 	  else
 	    {
 	      if (*nonxp->flags)
-		atf_xprop(np, "flags", ucc(nonxp->flags));
+		atf_xprop(np, "flags", cc(nonxp->flags));
 	      np->text = (*s == '(' ? (s+1) : s);
 	    }
 	}
