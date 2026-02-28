@@ -161,6 +161,13 @@ extern Lninfo lninfo;
 extern const char *primes[];
 extern const char *Primes[];
 
+#define MAX_LINE_ID_BUF 1023
+#define MAX_IDBUF_LEN    127
+
+extern int line_id;
+extern char line_id_buf[MAX_LINE_ID_BUF+1];
+extern char *line_id_insertp;
+
 #define ATFF_MYLINES 0x01
 #define ATFF_AGROUPS 0x02
 #define ATFF_MATH 0x04
@@ -185,9 +192,6 @@ extern int in_preamble;
 extern const char *curr_use_str;
 
 extern const char * const roman[];
-
-#define MAX_LINE_ID_BUF 1023
-#define MAX_IDBUF_LEN    127
 
 #define atf_xprop(xnp,xk,xv) atf_prop_kv(xnp,AP_ATTR,PG_XML,xk,xv)
 

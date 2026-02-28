@@ -4,6 +4,7 @@
 #define xstrcpy(xa,xb) strcpy((char*)(xa),(ccp)(xb))
 #define xxstrlen(xs) strlen((ccp)xs)
 #define cc(xs) ((ccp)xs)
-#define uc(xs) ((uccp)xs)
+#define uc(xs) ((ucp)xs)
+#define ucc(xs) ((uccp)xs)
 #define textid (atfp->pqx)
 #endif/*OTF_DEFS_H*/

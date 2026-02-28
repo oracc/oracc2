@@ -150,15 +150,15 @@ atf_dollar(Mloc l, char *rest)
 	    np = atf_add("nonx");
 
 	  sprintf(line_id_insertp,"%d", ++line_id);
-	  const char *xid (ccp)pool_copy((uccp)line_id_buf);
+	  const char *xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool);
 	  atf_xprop(np, "xml:id", xid);
-	  atf_xprop(np, "strict", nonxp->strict ? ucc("1") : ucc("0"));
+	  atf_xprop(np, "strict", nonxp->strict ? cc("1") : cc("0"));
 
 	  if (dollar_label)
 	    {
 	      atf_xprop(np, "label", dollar_label);
-	      atf_xprop(np,"silent",ucc("1"));
-	      check_label(dollar_label,0,xid);
+	      atf_xprop(np,"silent",cc("1"));
+	      check_label((uccp)dollar_label,0,xid);
 	    }
 	  else if (dollar_fifo)
 	    dollar_add(xid);
@@ -170,7 +170,7 @@ atf_dollar(Mloc l, char *rest)
 		{
 		case x_image:
 		  atf_xprop(np, "type", ucc("image"));
-		  atf_xprop(np, "alt", nonxp->literal));
+		  atf_xprop(np, "alt", nonxp->literal);
 		  break;
 		case x_empty:
 		  atf_xprop(np, "type", ucc("empty"));
