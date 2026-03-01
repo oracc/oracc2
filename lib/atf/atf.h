@@ -248,4 +248,12 @@ extern Node *ancestor_or_self_level(Node *np, Block_level b);
 extern void set_block_curr(Block_level b);
 extern void atf_dollar(Mloc l, char *rest);
 
+extern void line_mts(unsigned char *lp);
+extern void line_bil(unsigned char *lp);
+extern void line_gus(unsigned char *lp);
+extern void line_nts(unsigned char *lp);
+extern void line_lgs(unsigned char *lp);
+extern char *compute_fragid(const char *qualid, const char *hlid);
+extern void line_var(unsigned char *lp);
+
 #endif/*ATF_H_*/
