@@ -3,6 +3,9 @@
 #include "otf-defs.h"
 
 int line_id, start_lnum;
+char line_id_buf[MAX_LINE_ID_BUF+1];
+char *line_id_insertp;
+
 static Hash *my_label_table = NULL;
 static Hash *xid_to_label_table = NULL;
 static char m_label[1024];

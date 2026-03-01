@@ -19,10 +19,6 @@ static char *srf_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *col_args(Mloc l, Block *bp, char *s, char flags[]);
 static const char *xid_block(void);
 
-int line_id;
-char line_id_buf[MAX_LINE_ID_BUF+1];
-char *line_id_insertp;
-
 static char block_flags[256] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
 const char *primes[] = {"′","″","‴","⁗","⁗′","⁗″","⁗‴","⁗⁗"};
 const char *Primes[] = {"p", "P", "Pp", "PP", "PPp", "PPP", "PPPp", "PPPP" };
@@ -37,7 +33,6 @@ Lninfo lninfo;
 static int m_object_index = 0;
 
 unsigned char idbuf[MAX_IDBUF_LEN+1];
-char line_id_buf[MAX_LINE_ID_BUF+1];
 
 Hash *last_tlit_h_hash = NULL;
 static struct node **last_tlit_h = NULL;

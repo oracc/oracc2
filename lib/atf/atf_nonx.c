@@ -7,12 +7,9 @@
 #include "pool.h"
 #include "mesg.h"
 #include "atf.h"
+#include "otf-defs.h"
 
 int no_strict_dollar;
-
-#define uc(s) (unsigned char *)(s)
-
-extern const char *textid;
 
 #if 0
 void

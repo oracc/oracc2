@@ -58,6 +58,9 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atfp = atfmp->atf;
   atfp->file = curratffile;
   atfp->pqx = pqx;
+  strcpy(line_id_buf, atfp->pqx);
+  strcat(line_id_buf, ".");
+  line_id_insertp = line_id_buf + strlen(line_id_buf);
   atfp->name = name;
   atfp->edoc = EDOC_TRANSLITERATION;
   Blocktok *btp = blocktok("transliteration", strlen("transliteration"));
