@@ -3,11 +3,33 @@
 #include "atf_bld.h"
 #include "otf-defs.h"
 
+int already_lemmed = 0;
+static int lg_mode = 0;
+int mylines = 0;
+
+struct lang_context *curr_lang_ctxt;
+struct lang_context *text_lang;
+
+/* offset used in calculation of word-ids.  In main text word-ids
+   add 1..n; in exemplar 1 they add 1001 .. n+1000; in exemplar 2
+   they add 2001 .. n+2000, etc. */
+int exemplar_offset = 0;
+int bil_offset = 0;
+
+Hash *last_tlit_h_hash = NULL;
+static struct node **last_tlit_h = NULL;
+static int lth_alloced = 0;
+static int lth_used = 0;
+static int last_tlit_h_decay = 0;
+
+static unsigned const char *lnstr(int number,int primes);
+
 void
 line_mts(unsigned char *lp)
 {
-  struct node *lnode = elem(e_l,NULL,lnum,LINE);
-  struct attr *ap,*xid;
+  struct node *lnode = atf_push("l");
+  /*struct attr *ap,*xid;*/
+  const char *xid, *label;
   unsigned char *tok = lp;
   unsigned char *end = lp+xxstrlen(lp);
   unsigned char *s = lp;
@@ -17,12 +39,10 @@ line_mts(unsigned char *lp)
   already_lemmed = 0;
   bil_offset = exemplar_offset = 0;
   curr_lang_ctxt = text_lang;
-  protocol_state = s_intra;
+  /*protocol_state = s_intra;*/
 
   while (*s && !isspace(*s))
-    {
-      ++s;
-    }
+    ++s;
   if (s[-1] != '.')
     {
       warning("malformed line number");
@@ -34,18 +54,21 @@ line_mts(unsigned char *lp)
       warning("empty line number");
     }
   s[-1] = '\0';
+
   sprintf(line_id_insertp,"%d", ++line_id);
+
   /* In lg_mode the line group carries the ID that is used for word ID bases--the code here
      adds an 'l' suffix to the <l> ID then removes it so the right ID base is used for words
   */
   if (lg_mode)
     {
       (void)strcat(line_id_buf,(const char *)"l");
-      set_tr_id(line_id_buf);
+      /*set_tr_id(line_id_buf);*//*re-expose when translations are reimplemented*/
     }
-  xid = attr(a_xml_id,ucc(line_id_buf));
+  atf_xprop(lnode, "xml:id", (xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));
   if (lg_mode)
     line_id_buf[strlen(line_id_buf)-1] = '\0';
+
   if (last_tlit_h_decay)
     {
       last_tlit_h_decay = 0;
@@ -55,41 +78,63 @@ line_mts(unsigned char *lp)
 	  memcpy(tmp,last_tlit_h,lth_used * sizeof(struct node *));
 	  if (!last_tlit_h_hash)
 	    last_tlit_h_hash = hash_create(3);
-	  hash_add(last_tlit_h_hash,(const unsigned char *)xid->valpair[1],tmp);
+	  hash_add(last_tlit_h_hash,(const unsigned char *)xid,tmp);
 	}
       lth_used = 0;
     }
-  appendAttr(lnode,xid);
+
+#if 0
+  /* probably not used now gx has native access to lib/gdl and lib/gvl */
   if (atf_cbd_err)
     {
       extern int cbd_err_line;
       cbd_err_line = atoi((char*)tok);
     }
+#endif
+
   if (!mylines)
     {
+#if 1
+      atf_xprop(lnode, "o", (ccp)pool_copy((uccp)tok, atfmp->pool));
+      atf_xprop(lnode, "n", (ccp)(tok = pool_copy((uccp)lnstr(lninfo.lineno,lninfo.lineprimes),
+						  atfmp->pool)));
+#else
       appendAttr(lnode,attr(a_o,tok));
       tok = (unsigned char*)lnstr(lninfo.lineno,lninfo.lineprimes);
       appendAttr(lnode,attr(a_n,tok));
+#endif
     }
   else
+#if 1
+    atf_xprop(lnode, "n", (ccp)pool_copy((uccp)tok, atfmp->pool));
+#else
     appendAttr(lnode,attr(a_n,tok));
-
-  curr_line_label = line_label(tok,0,(unsigned const char *)xid->valpair[1]);
+#endif
+  
+  curr_line_label = line_label(tok,0,(unsigned const char *)xid);
   if (curr_line_label)
     {
+#if 1
+      atf_xprop(lnode, "label", (label = (ccp)pool_copy((uccp)curr_line_label, atfmp->pool)));
+#else
       ap = attr(a_label,curr_line_label);
       appendAttr(lnode,ap);
+#endif
       extern char *label2;
       if (label2)
 	{
+#if 1
+	  atf_xprop(lnode, "label2", (ccp)pool_copy((uccp)label2, atfmp->pool));
+#else
 	  ap = attr(a_label2,(unsigned const char *)label2);
 	  appendAttr(lnode,ap);
+#endif
 	}
-      register_label(labtab,uc(xid->valpair[1]),uc(ap->valpair[1]));
-      free((char*)curr_line_label);
-      curr_line_label = ucc(ap->valpair[1]);
+      register_label(labtab,uc(xid),uc(label));
+      /*free((char*)curr_line_label);*//* lib/atf uses pool not strdup */
+      curr_line_label = ucc(label);
     }
-  appendChild(current,lnode);
+  /*appendChild(current,lnode);*/
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -98,7 +143,11 @@ line_mts(unsigned char *lp)
       if (*s == '|' && isspace(s[1]))
 	{
 	  s += 2;
+#if 1
+	  atf_xpush("spanall", "1");
+#else
 	  appendAttr(lnode,attr(a_spanall,(unsigned char *)"1"));
+#endif
 	}
       
       while (isspace(end[-1]) && end > s)
@@ -116,7 +165,7 @@ line_mts(unsigned char *lp)
 void
 line_bil(unsigned char *lp)
 {
-  struct node *lnode = elem(e_l,NULL,lnum,LINE);
+  struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   
@@ -144,7 +193,7 @@ line_bil(unsigned char *lp)
 void
 line_gus(unsigned char *lp)
 {
-  struct node *lnode = elem(e_l,NULL,lnum,LINE);
+  struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   
@@ -168,7 +217,7 @@ line_gus(unsigned char *lp)
 void
 line_nts(unsigned char *lp)
 {
-  struct node *lnode = elem(e_l,NULL,lnum,LINE);
+  struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   
@@ -194,7 +243,7 @@ line_lgs(unsigned char *lp)
 {
   extern int suppress_lem;
   suppress_lem = 1;
-  struct node *lnode = elem(e_l,NULL,lnum,LINE);
+  struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   appendAttr(lnode,attr(a_type,ucc("lgs")));
@@ -235,7 +284,7 @@ compute_fragid(const char *qualid, const char *hlid)
 void
 line_var(unsigned char *lp)
 {
-  struct node *lnode = elem(e_v,NULL,lnum,LINE);
+  struct node *lnode = atf_push("v");
   unsigned char *s = lp, *entry = lp;
   unsigned char *end = lp+xxstrlen(lp);
   unsigned char *n, *n_vbar;
@@ -314,5 +363,39 @@ line_var(unsigned char *lp)
 	  tlit_parse_inline(s, end, lnode, 1 + (1000 * exemplar_offset),
 			    WITH_WORD_LIST, uc(line_id_buf));
 	}
+    }
+}
+
+/*FIXME: test the array bounds and generate strings dynamically if 
+  the line numbers are out of range */
+static unsigned const char *
+lnstr(int number,int primes)
+{
+  if (primes)
+    {
+      if (primes > 4)
+	{
+	  vwarning("%d is too many primes: restructure using @fragment\n", primes);
+	  return ucc("");
+	}
+      else if (number > 500)
+	{
+	  vwarning("%d is too big!",number);
+	  return ucc("");
+	}
+      else
+	return ucc(lnstrsp[primes-1][number]);
+    }
+  else
+    {
+      if (number > 4999)
+	{
+	  /* vwarning("%d is too big!",number); */
+	  char buf[10];
+	  sprintf(buf,"%d",number);
+	  return pool_copy((unsigned char*)buf);
+	}
+      else
+	return ucc(lnstrs[number]);
     }
 }

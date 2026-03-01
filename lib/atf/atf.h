@@ -188,6 +188,7 @@ extern Group *curr_group;
 
 extern int atflineno;
 extern const char *atffile, *curratffile;
+extern unsigned const char *curr_line_label;
 extern int in_preamble;
 extern const char *curr_use_str;
 
@@ -255,5 +256,8 @@ extern void line_nts(unsigned char *lp);
 extern void line_lgs(unsigned char *lp);
 extern char *compute_fragid(const char *qualid, const char *hlid);
 extern void line_var(unsigned char *lp);
+
+extern void tlit_reinit_inline(void);
+extern void tlit_parse_inline(unsigned char *line, unsigned char *end, struct node*lnode, int word_id_base, unsigned char *line_id);
 
 #endif/*ATF_H_*/

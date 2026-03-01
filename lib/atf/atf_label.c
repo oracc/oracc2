@@ -18,6 +18,8 @@ static int complained_already = 0;
 extern unsigned char last_label_buf[128];
 char *label2 = NULL;
 
+unsigned const char *curr_line_label;
+
 unsigned char maybe_prime[256] = { ['\''] = 1, ['"'] = 1, [0xe2] = 1 };
 
 #include "ncname.c"
