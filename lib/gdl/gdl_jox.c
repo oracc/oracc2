@@ -93,6 +93,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
 			 || !strcmp(nodename, "g:r") || !strcmp(nodename, "g:t")
 			 ))
     {
+      gdlstate_t s = prop_get_state(np);
+      if (s)
+	gdlstate_props(np, s);
       Rats *r = rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO));
       if (1/*oflag*/)
 	joxer_eto(np->mloc, nodename, r, np->user ? (ccp)((gvl_g*)np->user)->orig : np->text);

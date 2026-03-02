@@ -141,4 +141,6 @@ extern void grx_xml(Node *np, const char *gdltag);
 extern unsigned char *gdlseq(unsigned char *s);
 extern unsigned char *gdlseq_oids(unsigned char *s, const char *j);
 
+extern void gdlstate_props(Node *np, gdlstate_t sp);
+
 #endif /*GDL_H_*/

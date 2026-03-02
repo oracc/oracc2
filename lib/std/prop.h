@@ -43,6 +43,8 @@ typedef struct prop Prop;
 struct node;
 
 extern gdlstate_t *prop_state(struct node *np, gdlstate_t *sp);
+extern gdlstate_t *prop_get_state(Node *np);
+
 extern Prop *prop_add(Memo *propmem, Prop *p, int ptype, int gtype);
 extern Prop *prop_add_kv(Memo *propmem, Memo *kevamem, Prop *p, int ptype, int gtype,
 			 const char *key, const char *value);

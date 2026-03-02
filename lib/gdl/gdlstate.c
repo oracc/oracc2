@@ -22,6 +22,10 @@ static char brackobuf[NBRACK*2];
 static char brackcbuf[NBRACK*2];
 
 const char *gs_str_f[NFLAGS] = { "?", "!", "*", "#", "f1", "f2", "f3", "f4", "+" };
+const char *gs_str_a[NFLAGS] = { "g:queried", "g:remarked",
+				 "g:collated", NULL,
+				 "g:uflag1", "g:uflag2", "g:uflag3", "g:uflag4",
+				 "g:plus" }; /* not sure what + flag is ? */
 const char *gs_str_o[NBRACK] = { "[#", "[", "(", "{", "<", "<<", "<(", "((", "((-", "//", "{{", "{(", "<(", ")" };
 const char *gs_str_c[NBRACK] = { "#]", "]", ")", "}", ">", ">>", ")>", "))", "))",  "))", "}}", ")}", ")>", ")" };
 
@@ -69,4 +73,12 @@ gdlstate_rawxml(FILE *fp, gdlstate_t sp)
     fprintf(fp, " o=\"%s\"", xmlify((uccp)brackobuf));
   if (*brackcbuf)
     fprintf(fp, " c=\"%s\"", xmlify((uccp)brackcbuf));
+}
+
+void
+gdlstate_props(Node *np, gdlstate_t sp)
+{
+  for (i = 0; i < NFLAGS; ++i)
+    if (gs_is(sp,gs_order_f[i]) && gs_str_a[i])
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, gs_str_a[i], "1");
 }

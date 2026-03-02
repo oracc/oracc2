@@ -27,6 +27,16 @@ prop_state(Node *np, gdlstate_t *sp)
   return &np->props->u.s;
 }
 
+gdlstate_t
+prop_get_state(Node *np)
+{
+  Prop *p;
+  for (p = np->props; p; p = p->next)
+    if (p->g == PU_GDLSTATE)
+      return p->u.s;
+  return gs_empty;
+}
+
 Prop *
 prop_add(Memo *propmem, Prop *p, int ptype, int gtype)
 {
