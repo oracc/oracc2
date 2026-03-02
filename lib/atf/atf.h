@@ -60,6 +60,7 @@ typedef struct atf {
   int nprotocols;
   int flags;
   Hash *lzr_sparse;
+  Hash *hlabmap;
   struct xlink **links;
   int nlinks;
   struct key **keys;
@@ -243,6 +244,9 @@ extern void label_frag(struct node *current,unsigned const char *l);
 extern const unsigned char *label_from_line_id(const unsigned char *line_id);
 extern const char *label_to_id(const char *qualified_id, const char *label);
 extern void reset_lninfo(void);
+
+extern const char * find_label(const char *l);
+extern void register_label(const char *xid, const char *lab);
 
 extern int scan_primes(const char *s, const char **p);
 extern Node *ancestor_or_self_level(Node *np, Block_level b);

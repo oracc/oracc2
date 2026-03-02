@@ -73,6 +73,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atf_xprop(np, "xml:lang", "sux");
   atf_input(l, LT_ANDLINE, atfp);
   in_preamble = 1;
+  atfp->hlabmap = hash_create(256);
   reset_labels();
   reset_lninfo();
 }

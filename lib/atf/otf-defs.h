@@ -1,5 +1,6 @@
 #ifndef OTF_DEFS_H_
 #define OTF_DEFS_H_
+#define xstrcat(xa,xb) strcat((char *)(xa),(ccp)(xb))
 #define xstrcmp(xa,xb) strcmp((ccp)(xa),(ccp)(xb))
 #define xstrcpy(xa,xb) strcpy((char*)(xa),(ccp)(xb))
 #define xxstrlen(xs) strlen((ccp)xs)

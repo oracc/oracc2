@@ -2,6 +2,9 @@
 #include "atf.h"
 #include "atf_bld.h"
 #include "otf-defs.h"
+#include "symbolattr.h"
+
+#include "linenums.c"
 
 int already_lemmed = 0;
 static int lg_mode = 0;
@@ -18,11 +21,12 @@ int bil_offset = 0;
 
 Hash *last_tlit_h_hash = NULL;
 static struct node **last_tlit_h = NULL;
-static int lth_alloced = 0;
+/*static int lth_alloced = 0;*/
 static int lth_used = 0;
 static int last_tlit_h_decay = 0;
 
-static unsigned const char *lnstr(int number,int primes);
+static unsigned const char *lnstr(Mloc *mp, int number,int primes);
+static unsigned char *map_uscore(const unsigned char *vbar);
 
 void
 line_mts(unsigned char *lp)
@@ -96,7 +100,7 @@ line_mts(unsigned char *lp)
     {
 #if 1
       atf_xprop(lnode, "o", (ccp)pool_copy((uccp)tok, atfmp->pool));
-      atf_xprop(lnode, "n", (ccp)(tok = pool_copy((uccp)lnstr(lninfo.lineno,lninfo.lineprimes),
+      atf_xprop(lnode, "n", (ccp)(tok = pool_copy((uccp)lnstr(NULL, lninfo.lineno,lninfo.lineprimes),
 						  atfmp->pool)));
 #else
       appendAttr(lnode,attr(a_o,tok));
@@ -130,7 +134,7 @@ line_mts(unsigned char *lp)
 	  appendAttr(lnode,ap);
 #endif
 	}
-      register_label(labtab,uc(xid),uc(label));
+      register_label(xid,label);
       /*free((char*)curr_line_label);*//* lib/atf uses pool not strdup */
       curr_line_label = ucc(label);
     }
@@ -144,7 +148,7 @@ line_mts(unsigned char *lp)
 	{
 	  s += 2;
 #if 1
-	  atf_xpush("spanall", "1");
+	  atf_xprop(lnode, "spanall", "1");
 #else
 	  appendAttr(lnode,attr(a_spanall,(unsigned char *)"1"));
 #endif
@@ -155,11 +159,11 @@ line_mts(unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode,1, WITH_WORD_LIST,uc(line_id_buf));
+	  tlit_parse_inline(s,end,lnode,1,uc(line_id_buf));
 	}
     }
   else
-    tlit_reinit_inline(WITH_WORD_LIST);
+    tlit_reinit_inline();
 }
 
 void
@@ -168,11 +172,10 @@ line_bil(unsigned char *lp)
   struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
-  
+
   already_lemmed = 0;
   note_initialize_line();
-  appendAttr(lnode,attr(a_type,ucc("bil")));
-  appendChild(current,lnode);
+  atf_xprop(lnode,"type","bil");
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -183,8 +186,8 @@ line_bil(unsigned char *lp)
 	{
 	  *end = '\0';
 	  tlit_parse_inline(s,end,lnode, 
-			    1 + (++exemplar_offset * 1000), 
-			    WITH_WORD_LIST, uc(line_id_buf));
+			    1 + (++exemplar_offset * 1000),
+			    uc(line_id_buf));
 	}
     }
 }
@@ -197,8 +200,7 @@ line_gus(unsigned char *lp)
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   
-  appendAttr(lnode,attr(a_type,ucc("gus")));
-  appendChild(current,lnode);
+  atf_xprop(lnode,"type","gus");
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -208,7 +210,7 @@ line_gus(unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode,1001, WITH_WORD_LIST,uc(line_id_buf));
+	  tlit_parse_inline(s,end,lnode,1001, uc(line_id_buf));
 	}
     }
 }
@@ -222,8 +224,7 @@ line_nts(unsigned char *lp)
   unsigned char *end = lp+xxstrlen(lp);
   
   already_lemmed = 0;
-  appendAttr(lnode,attr(a_type,ucc("nts")));
-  appendChild(current,lnode);
+  atf_xprop(lnode,"type","nts");
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -233,7 +234,7 @@ line_nts(unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode,2001, WITH_WORD_LIST,uc(line_id_buf));
+	  tlit_parse_inline(s,end,lnode,2001,uc(line_id_buf));
 	}
     }
 }
@@ -246,7 +247,7 @@ line_lgs(unsigned char *lp)
   struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
-  appendAttr(lnode,attr(a_type,ucc("lgs")));
+  atf_xprop(lnode,"type","lgs");
   while (isspace(*s))
     ++s;
   if (s < end)
@@ -256,10 +257,9 @@ line_lgs(unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode, 3001, NO_WORD_LIST,uc(line_id_buf));
+	  tlit_parse_inline(s,end,lnode, 3001,uc(line_id_buf));
 	}
     }  
-  appendChild(current,lnode);
   suppress_lem = 0;
 }
 
@@ -291,7 +291,7 @@ line_var(unsigned char *lp)
   unsigned char lab[128];
   struct symbolattr *sa = NULL;
   char *tmp = NULL;
-  struct attr *xid = NULL;
+  const char *xid = NULL;
 
   note_initialize_line();
 
@@ -303,15 +303,12 @@ line_var(unsigned char *lp)
   /* appendAttr(lnode,attr(a_type,ucc("var"))); */
 
   (void)sprintf(line_id_buf+strlen(line_id_buf),(const char *)"v%d", exemplar_offset);
-  set_tr_id(line_id_buf);
-  xid = attr(a_xml_id,ucc(line_id_buf));
+  /*set_tr_id(line_id_buf);*/
+  atf_xprop(lnode, "xml:id", (xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));
   tmp = line_id_buf + strlen(line_id_buf);
   while (tmp[-1] != 'v')
     --tmp;
   tmp[-1] = '\0';
-  appendAttr(lnode,xid);
-
-  appendChild(current,lnode);
 
   while (*s && !isspace(*s))
     ++s;
@@ -321,9 +318,9 @@ line_var(unsigned char *lp)
   n = entry;
   if ((n_vbar = (unsigned char*)strchr((char*)n,','))) /* used to be | but now , */
     *n_vbar++ = '\0';
-  appendAttr(lnode,attr(a_varnum,n));
+  atf_xprop(lnode,"varnum",(ccp)n);
 
-  if (doctype == e_score)
+  if (atfp->edoc == EDOC_SCORE)
     sa = symbolattr_get(textid, (const char*)n);
 
   if (sa)
@@ -335,19 +332,19 @@ line_var(unsigned char *lp)
 	  if (hlid)
 	    {
 	      char *tmp = compute_fragid(sa->qualified_id, hlid);
-	      appendAttr(lnode,attr(a_hlid,(const unsigned char *)hlid));
+	      atf_xprop(lnode,"hlid",(ccp)pool_copy((uccp)hlid, atfmp->pool));
 	      if (tmp)
-		appendAttr(lnode,attr(a_fragid,(const unsigned char *)tmp));
+		atf_xprop(lnode,"fragid",(ccp)pool_copy((uccp)tmp, atfmp->pool));
 	    }
 	}
-      appendAttr(lnode,attr(a_n,(const unsigned char *)sa->pname));
-      appendAttr(lnode,attr(a_p,(const unsigned char *)sa->qualified_id));
+      atf_xprop(lnode,"n",sa->pname);
+      atf_xprop(lnode,"p",sa->qualified_id);
     }
 
   sprintf((char*)lab, "%s [%s]", curr_line_label, n);
-  appendAttr(lnode,attr(a_label,lab));
+  atf_xprop(lnode,"label",(ccp)lab);
   if (n_vbar)
-    appendAttr(lnode,attr(a_ex_label,map_uscore(n_vbar)));
+    atf_xprop(lnode,"ex_label",(ccp)map_uscore(n_vbar));
 
   s[-1] = ':';
 
@@ -360,8 +357,7 @@ line_var(unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s, end, lnode, 1 + (1000 * exemplar_offset),
-			    WITH_WORD_LIST, uc(line_id_buf));
+	  tlit_parse_inline(s, end, lnode, 1 + (1000 * exemplar_offset), uc(line_id_buf));
 	}
     }
 }
@@ -369,18 +365,18 @@ line_var(unsigned char *lp)
 /*FIXME: test the array bounds and generate strings dynamically if 
   the line numbers are out of range */
 static unsigned const char *
-lnstr(int number,int primes)
+lnstr(Mloc *mp, int number,int primes)
 {
   if (primes)
     {
       if (primes > 4)
 	{
-	  vwarning("%d is too many primes: restructure using @fragment\n", primes);
+	  mesg_verr(mp, "%d is too many primes: restructure using @fragment\n", primes);
 	  return ucc("");
 	}
       else if (number > 500)
 	{
-	  vwarning("%d is too big!",number);
+	  mesg_verr(mp, "%d is too big!",number);
 	  return ucc("");
 	}
       else
@@ -393,9 +389,19 @@ lnstr(int number,int primes)
 	  /* vwarning("%d is too big!",number); */
 	  char buf[10];
 	  sprintf(buf,"%d",number);
-	  return pool_copy((unsigned char*)buf);
+	  return pool_copy((unsigned char*)buf, atfmp->pool);
 	}
       else
 	return ucc(lnstrs[number]);
     }
+}
+
+static unsigned char *
+map_uscore(const unsigned char *vbar)
+{
+  unsigned char *tmp = pool_copy(vbar, atfmp->pool), *s;
+  for (s = tmp; *s; ++s)
+    if (*s == '_')
+      *s = ' ';
+  return tmp;
 }

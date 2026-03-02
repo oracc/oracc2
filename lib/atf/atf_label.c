@@ -2,6 +2,8 @@
 #include "atf.h"
 #include "otf-defs.h"
 
+int saa_mode;
+
 int line_id, start_lnum;
 char line_id_buf[MAX_LINE_ID_BUF+1];
 char *line_id_insertp;
@@ -509,4 +511,38 @@ const unsigned char *
 label_from_line_id(const unsigned char *line_id)
 {
   return hash_find(xid_to_label_table,line_id);
+}
+
+void
+register_label(const char *xid, const char *lab)
+{
+  hash_add(atfp->hlabmap, (uccp)xid, (void*)lab);
+}
+
+const char *
+find_label(const char *l)
+{
+  const char *ret = hash_find(atfp->hlabmap, (uccp)l);
+  if (ret)
+    return ret;
+  
+  if (saa_mode)
+    {
+      char buf[strlen(l)+10];
+      if (*l >= '0' && *l <= '9')
+	xstrcpy(buf,"o ");
+      else
+	*buf = '\0';
+      xstrcat(buf,l);
+
+      /* try with a 'o ' prefix */
+      if ((ret = hash_find(atfp->hlabmap, (uccp)buf)))
+	return ret;
+      
+      /* try again with a ' suffix */
+      xstrcat(buf,"'"); /* may need to use prime instead */
+      if ((ret = hash_find(atfp->hlabmap, (uccp)buf)))
+	return ret;
+    }
+  return NULL;
 }
