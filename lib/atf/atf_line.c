@@ -9,7 +9,7 @@
 int already_lemmed = 0;
 static int lg_mode = 0;
 int mylines = 0;
-
+int suppress_lem = 0;
 struct lang_context *curr_lang_ctxt;
 struct lang_context *text_lang;
 
@@ -20,16 +20,16 @@ int exemplar_offset = 0;
 int bil_offset = 0;
 
 Hash *last_tlit_h_hash = NULL;
-static struct node **last_tlit_h = NULL;
+struct node **last_tlit_h = NULL;
 /*static int lth_alloced = 0;*/
-static int lth_used = 0;
-static int last_tlit_h_decay = 0;
+int lth_used = 0;
+int last_tlit_h_decay = 0;
 
 static unsigned const char *lnstr(Mloc *mp, int number,int primes);
 static unsigned char *map_uscore(const unsigned char *vbar);
 
 void
-line_mts(unsigned char *lp)
+line_mts(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
   /*struct attr *ap,*xid;*/
@@ -167,7 +167,7 @@ line_mts(unsigned char *lp)
 }
 
 void
-line_bil(unsigned char *lp)
+line_bil(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
@@ -194,7 +194,7 @@ line_bil(unsigned char *lp)
 
 /* gloss under stream */
 void
-line_gus(unsigned char *lp)
+line_gus(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
@@ -217,7 +217,7 @@ line_gus(unsigned char *lp)
 
 /* normalized transliteration stream */
 void
-line_nts(unsigned char *lp)
+line_nts(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
   unsigned char *s = lp+2;
@@ -240,7 +240,7 @@ line_nts(unsigned char *lp)
 }
 
 void
-line_lgs(unsigned char *lp)
+line_lgs(Mloc l, unsigned char *lp)
 {
   extern int suppress_lem;
   suppress_lem = 1;
@@ -271,10 +271,9 @@ compute_fragid(const char *qualid, const char *hlid)
     {
       for (n -= 5; n > 0; --n)
 	{
-	  extern Hash *label_table;
 	  char *fragid = malloc(strlen(qualid)+10);
 	  (void)sprintf(fragid, "%s.%d", qualid, n);
-	  if (hash_find(label_table, (const unsigned char *)fragid))
+	  if (hash_find(atfp->hlabmap, (const unsigned char *)fragid))
 	    return fragid;
 	}
     }
@@ -282,7 +281,7 @@ compute_fragid(const char *qualid, const char *hlid)
 }
 
 void
-line_var(unsigned char *lp)
+line_var(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("v");
   unsigned char *s = lp, *entry = lp;

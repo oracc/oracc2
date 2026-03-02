@@ -34,11 +34,11 @@ static int m_object_index = 0;
 
 unsigned char idbuf[MAX_IDBUF_LEN+1];
 
-Hash *last_tlit_h_hash = NULL;
-static struct node **last_tlit_h = NULL;
+extern Hash *last_tlit_h_hash;
+extern struct node **last_tlit_h;
 static int lth_alloced = 0;
-static int lth_used = 0;
-static int last_tlit_h_decay = 0;
+extern int lth_used;
+extern int last_tlit_h_decay;
 
 #define MAX_ROMAN 40
 const char * const roman[] = {

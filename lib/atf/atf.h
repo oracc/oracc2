@@ -165,6 +165,7 @@ extern const char *Primes[];
 #define MAX_LINE_ID_BUF 1023
 #define MAX_IDBUF_LEN    127
 
+extern int check_links;
 extern int line_id;
 extern char line_id_buf[MAX_LINE_ID_BUF+1];
 extern char *line_id_insertp;
@@ -253,13 +254,13 @@ extern Node *ancestor_or_self_level(Node *np, Block_level b);
 extern void set_block_curr(Block_level b);
 extern void atf_dollar(Mloc l, char *rest);
 
-extern void line_mts(unsigned char *lp);
-extern void line_bil(unsigned char *lp);
-extern void line_gus(unsigned char *lp);
-extern void line_nts(unsigned char *lp);
-extern void line_lgs(unsigned char *lp);
+extern void line_mts(Mloc l, unsigned char *lp);
+extern void line_bil(Mloc l, unsigned char *lp);
+extern void line_gus(Mloc l, unsigned char *lp);
+extern void line_nts(Mloc l, unsigned char *lp);
+extern void line_lgs(Mloc l, unsigned char *lp);
+extern void line_var(Mloc l, unsigned char *lp);
 extern char *compute_fragid(const char *qualid, const char *hlid);
-extern void line_var(unsigned char *lp);
 
 extern void tlit_reinit_inline(void);
 extern void tlit_parse_inline(unsigned char *line, unsigned char *end, struct node*lnode, int word_id_base, unsigned char *line_id);

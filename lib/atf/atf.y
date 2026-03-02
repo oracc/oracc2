@@ -236,7 +236,7 @@ column:		column_tok TEXT { atf_bld_block(@1, $1, $2); }
 	| 	column_tok TEXT { atf_bld_block(@1, $1, $2); } lines
 	;
 
-heading:	heading_tok longtext { atf_bld_heading(@1, $1, (ccp)longtext(NULL,NULL,NULL)); }
+heading:	heading_tok longtext { atf_bld_heading(@1, $1, (char*)longtext_get()); }
 	;
 
 lines:		line
@@ -248,12 +248,12 @@ lines:		line
  * as we build
  */
 line:
-		MTS longtext		{ $$=$1; }
-	| 	NTS longtext		{ $$=$1; } /* MTS prereq; singleton */
-	| 	LGS longtext		{ $$=$1; } /* MTS prereq; singleton */
-	| 	GUS longtext		{ $$=$1; } /* MTS prereq; singleton */
-	| 	BIL longtext		{ $$=$1; } /* MTS prereq */
-	| 	EXX longtext		{ $$=$1; } /* MTS prereq */
+		MTS longtext		{ $$=$1; line_mts(@1, longtext_get()); }
+	| 	NTS longtext		{ $$=$1; line_nts(@1, longtext_get()); } /* MTS prereq; singleton */
+	| 	LGS longtext		{ $$=$1; line_lgs(@1, longtext_get()); } /* MTS prereq; singleton */
+	| 	GUS longtext		{ $$=$1; line_gus(@1, longtext_get()); } /* MTS prereq; singleton */
+	| 	BIL longtext		{ $$=$1; line_bil(@1, longtext_get()); } /* MTS prereq */
+	| 	EXX longtext		{ $$=$1; line_var(@1, longtext_get()); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; } /* MTS|NTS|BIL prereq */
 	|	l_link longtext		{ $$=$1; } /* MTS prereq */
 	|	COMMENT longtext	{ $$=$1; }
