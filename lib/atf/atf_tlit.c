@@ -28,8 +28,9 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
   Node *kp;
   for (kp = np->kids; kp; kp = kp->next)
     {
-      sprintf(line_id_insertp, ".%d", word_id_base++);
-      gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", pool_copy(line_id_buf, atfmp->pool));
+      char buf[strlen(clid)+10];
+      sprintf(buf, "%s.%d", clid, word_id_base++);
+      gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", pool_copy(buf, atfmp->pool));
       gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
       if (kp->text)
 	gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "form", kp->text);

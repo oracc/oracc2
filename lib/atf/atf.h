@@ -169,6 +169,7 @@ extern int check_links;
 extern int line_id;
 extern char line_id_buf[MAX_LINE_ID_BUF+1];
 extern char *line_id_insertp;
+extern const char *clid;
 
 #define ATFF_MYLINES 0x01
 #define ATFF_AGROUPS 0x02

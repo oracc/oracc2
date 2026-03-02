@@ -12,6 +12,7 @@ int mylines = 0;
 int suppress_lem = 0;
 struct lang_context *curr_lang_ctxt;
 struct lang_context *text_lang;
+const char *clid;
 
 /* offset used in calculation of word-ids.  In main text word-ids
    add 1..n; in exemplar 1 they add 1001 .. n+1000; in exemplar 2
@@ -34,8 +35,7 @@ line_mts(Mloc l, unsigned char *lp)
   set_block_curr(B_LINE);
   
   struct node *lnode = atf_push("l");
-  /*struct attr *ap,*xid;*/
-  const char *xid, *label;
+  const char *label;
   unsigned char *tok = lp;
   unsigned char *end = lp+xxstrlen(lp);
   unsigned char *s = lp;
@@ -71,7 +71,7 @@ line_mts(Mloc l, unsigned char *lp)
       (void)strcat(line_id_buf,(const char *)"l");
       /*set_tr_id(line_id_buf);*//*re-expose when translations are reimplemented*/
     }
-  atf_xprop(lnode, "xml:id", (xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));
+  atf_xprop(lnode, "xml:id", (clid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));
   if (lg_mode)
     line_id_buf[strlen(line_id_buf)-1] = '\0';
 
@@ -84,7 +84,7 @@ line_mts(Mloc l, unsigned char *lp)
 	  memcpy(tmp,last_tlit_h,lth_used * sizeof(struct node *));
 	  if (!last_tlit_h_hash)
 	    last_tlit_h_hash = hash_create(3);
-	  hash_add(last_tlit_h_hash,(const unsigned char *)xid,tmp);
+	  hash_add(last_tlit_h_hash,(const unsigned char *)clid,tmp);
 	}
       lth_used = 0;
     }
@@ -117,7 +117,7 @@ line_mts(Mloc l, unsigned char *lp)
     appendAttr(lnode,attr(a_n,tok));
 #endif
   
-  curr_line_label = line_label(tok,0,(unsigned const char *)xid);
+  curr_line_label = line_label(tok,0,(unsigned const char *)clid);
   if (curr_line_label)
     {
 #if 1
@@ -136,7 +136,7 @@ line_mts(Mloc l, unsigned char *lp)
 	  appendAttr(lnode,ap);
 #endif
 	}
-      register_label(xid,label);
+      register_label(clid,label);
       /*free((char*)curr_line_label);*//* lib/atf uses pool not strdup */
       curr_line_label = ucc(label);
     }
@@ -292,7 +292,6 @@ line_var(Mloc l, unsigned char *lp)
   unsigned char lab[128];
   struct symbolattr *sa = NULL;
   char *tmp = NULL;
-  const char *xid = NULL;
 
   note_initialize_line();
 
@@ -305,7 +304,7 @@ line_var(Mloc l, unsigned char *lp)
 
   (void)sprintf(line_id_buf+strlen(line_id_buf),(const char *)"v%d", exemplar_offset);
   /*set_tr_id(line_id_buf);*/
-  atf_xprop(lnode, "xml:id", (xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));
+  atf_xprop(lnode, "xml:id", (clid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));
   tmp = line_id_buf + strlen(line_id_buf);
   while (tmp[-1] != 'v')
     --tmp;
