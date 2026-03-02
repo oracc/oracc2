@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <gdl.h>
 #include "atf.h"
 #include "atf_bld.h"
 #include "otf-defs.h"
@@ -15,7 +16,17 @@ tlit_reinit_inline(void)
 }
 
 void
-tlit_parse_inline(unsigned char *line, unsigned char *end, struct node*lnode, 
+tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id)
+{
+  while (isspace(*s))
+    ++s;
+  Tree *tp = gdlparse_string(np->mloc, (char*)s);
+  tree_graft(np, tp);
+  gdlparse_reset();
+}
+
+void
+xtlit_parse_inline(unsigned char *line, unsigned char *end, struct node*lnode, 
 		  int word_id_base, unsigned char *line_id)
 {
 #if 0

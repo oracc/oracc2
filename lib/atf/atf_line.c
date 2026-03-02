@@ -159,7 +159,7 @@ line_mts(Mloc l, unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode,1,uc(line_id_buf));
+	  tlit_parse_inline(lnode,(ccp)s,1,uc(line_id_buf));
 	}
     }
   else
@@ -185,7 +185,7 @@ line_bil(Mloc l, unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode, 
+	  tlit_parse_inline(lnode, (ccp)s,
 			    1 + (++exemplar_offset * 1000),
 			    uc(line_id_buf));
 	}
@@ -210,7 +210,7 @@ line_gus(Mloc l, unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode,1001, uc(line_id_buf));
+	  tlit_parse_inline(lnode, (ccp)s, 1001, uc(line_id_buf));
 	}
     }
 }
@@ -234,7 +234,7 @@ line_nts(Mloc l, unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode,2001,uc(line_id_buf));
+	  tlit_parse_inline(lnode, (ccp)s, 2001, uc(line_id_buf));
 	}
     }
 }
@@ -257,7 +257,7 @@ line_lgs(Mloc l, unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s,end,lnode, 3001,uc(line_id_buf));
+	  tlit_parse_inline(lnode, (ccp)s, 3001, uc(line_id_buf));
 	}
     }  
   suppress_lem = 0;
@@ -356,7 +356,7 @@ line_var(Mloc l, unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
-	  tlit_parse_inline(s, end, lnode, 1 + (1000 * exemplar_offset), uc(line_id_buf));
+	  tlit_parse_inline(lnode, (ccp)s, 1 + (1000 * exemplar_offset), uc(line_id_buf));
 	}
     }
 }

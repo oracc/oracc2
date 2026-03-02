@@ -263,6 +263,6 @@ extern void line_var(Mloc l, unsigned char *lp);
 extern char *compute_fragid(const char *qualid, const char *hlid);
 
 extern void tlit_reinit_inline(void);
-extern void tlit_parse_inline(unsigned char *line, unsigned char *end, struct node*lnode, int word_id_base, unsigned char *line_id);
+extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id);
 
 #endif/*ATF_H_*/
