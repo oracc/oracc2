@@ -1,0 +1,4 @@
+&P121212 = CBS 12345
+#project: epsd2
+#atf: lang %akk _%sux_
+#atf: use math

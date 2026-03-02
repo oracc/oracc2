@@ -1,0 +1,9 @@
+&P121212 = CBS 12345
+#project: epsd2
+#atf: lang %akk _%sux_
+#atf: use math
+#link: def A = dcclt:P121212 = A text
+#link: parallel dcclt:P121213 = Another text
+#link: source dcclt:P121214 = Yet another text
+#key: x = y
+

@@ -1,0 +1,5 @@
+&P121212 = CBS 12345
+@composite
+#project: epsd2
+
+@m=locator obverse
