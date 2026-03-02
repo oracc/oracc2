@@ -22,3 +22,12 @@ out and should currently be installed after installing Oracc II.
 
 - Core -- Oracc treats OSL, PCSL, CDLI, QCAT, and XCAT as required projects
 
+## Prerequisites
+
+Prerequisites are listed in text files in the `pkg/ directory.  Perl
+prerequisites are listed separately because the goal is for Oracc II
+not to depend on Perl for core functionality.
+
+The `msort' program is used in some Oracc I contexts but is being
+phased out in Oracc II so it is not installed by default.
+

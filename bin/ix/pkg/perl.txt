@@ -1,0 +1,8 @@
+perl
+cpanminus
+libcgi-pm-perl
+libfrontier-rpc-perl
+libxml-libxml-perl
+libxml-libxslt-perl
+libxml-perl
+libxmlrpc-core-c3-dev
