@@ -16,6 +16,33 @@ Mloc *xo_loc;
 const char *xfn = NULL;
 const char *file;
 
+const char **
+ax_jox_props(Prop *p)
+{
+  const char **ap = prop_ccpp(p, AP_ATTR, PG_XML);
+  const char **gp = prop_ccpp(p, GP_ATTRIBUTE, PG_GDL_INFO);
+  if (ap && gp)
+    {
+      int n_ap = 0, n_gp = 0;
+      for (n_ap = 0; ap[n_ap
+			]; ++n_ap)
+	;
+      for (n_gp = 0; gp[n_ap]; ++n_gp)
+	;
+      const char **newp = malloc(n_ap+n_gp+1 * sizeof(const char *));
+      memcpy(newp, ap, n_ap*sizeof(const char *));
+      memcpy(newp+n_ap, gp, n_gp*sizeof(const char *));
+      newp[n_ap+n_gp] = NULL;
+      free(ap);
+      free(gp);
+      return newp;
+    }
+  else if (ap)
+    return ap;
+  else
+    return gp;
+}
+
 static void
 ax_jox_node(Node *np, int oflag, int nflag)
 {
@@ -23,8 +50,7 @@ ax_jox_node(Node *np, int oflag, int nflag)
   int need_closer = 1;
   const char *nodename = np->name;
 
-  joxer_ea(np->mloc, nodename,
-	   rnvval_aa_ccpp(prop_ccpp(np->props, AP_ATTR, PG_XML)));
+  joxer_ea(np->mloc, nodename, rnvval_aa_ccpp(ax_jox_props(np->props)));
 
   if (np->text)
     {

@@ -18,10 +18,22 @@ tlit_reinit_inline(void)
 void
 tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id)
 {
+  extern int gdl_word_mode;
+  gdl_word_mode = 1;
+  gdl_unicode = 1;
   while (isspace(*s))
     ++s;
   Tree *tp = gdlparse_string(np->mloc, (char*)s);
   tree_graft(np, tp);
+  Node *kp;
+  for (kp = np->kids; kp; kp = kp->next)
+    {
+      sprintf(line_id_insertp, ".%d", word_id_base++);
+      gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", pool_copy(line_id_buf, atfmp->pool));
+      gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
+      if (kp->text)
+	gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "form", kp->text);
+    }
   gdlparse_reset();
 }
 

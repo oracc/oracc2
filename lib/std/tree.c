@@ -199,6 +199,19 @@ tree_graft(Node *np, Tree *tp)
     }
 }
 
+/* Graft the root of tree tp onto node np */
+void
+tree_graft_root(Node *np, Tree *tp)
+{
+  if (np->kids)
+    fprintf(stderr, "tree_graft: internal error: np->kids should be NULL\n");
+  else
+    {
+      np->kids = tp->root;
+      tree_ns_merge(np->tree, tp->ns_used);
+    }
+}
+
 Node *
 node_ancestor(Node *np, const char *name)
 {

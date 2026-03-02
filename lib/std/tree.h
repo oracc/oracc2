@@ -75,6 +75,7 @@ extern Node *kids_rem_last(Tree *tp);
 
 extern void tree_curr(Node *np);
 extern void tree_graft(Node *np, Tree *tp);
+extern void tree_graft_root(Node *np, Tree *tp);
 
 extern void tree_ns_default(Tree *tp, nscode ns);
 extern void tree_ns_merge(Tree *tp, nsrefs used);
