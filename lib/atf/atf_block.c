@@ -466,6 +466,7 @@ set_block_curr(Block_level b)
 	case B_H2:
 	case B_H3:
 	case B_MILESTONE:
+	case B_LINE:
 	  {
 	    Node *np = ancestor_or_self_level(abt->curr, B_COLUMN);
 	    if (!np)

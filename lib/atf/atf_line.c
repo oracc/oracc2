@@ -31,6 +31,8 @@ static unsigned char *map_uscore(const unsigned char *vbar);
 void
 line_mts(Mloc l, unsigned char *lp)
 {
+  set_block_curr(B_LINE);
+  
   struct node *lnode = atf_push("l");
   /*struct attr *ap,*xid;*/
   const char *xid, *label;

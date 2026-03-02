@@ -15,7 +15,10 @@ atfyacc(void)
 
   (void)tree_root(tp, NS_XTF, "xtf", 1, NULL);
 
+  longtext_set_sep(" ");
+  
   atf_set_tree(tp);
+
 #if 0
   if (m)
     atf_lex_init(m->file, m->line);

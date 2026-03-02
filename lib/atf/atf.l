@@ -18,7 +18,6 @@ int atfflextrace = 0;
 static int s_next;
 static int linktext;
 static char *xs;
-const char *initial_longtext;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 #define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
@@ -29,7 +28,7 @@ static void atf_user_action(void);
 #define atfsave atflval.text=atfpool(atftext)
 #define atfnorm atflval.text=atfnormpool(atftext)
 
-#define longsave initial_longtext=atfpool(atftext)
+#define longinit longtext_init(atfmp->pool,atftext)
 #define usesave curr_use_str=atfpool(atftext)
 
 #if 1
@@ -137,9 +136,9 @@ QID	{PROJECT}:{PQX}
 
 ^{LK_VBAR}  			{ BEGIN s_T; atfsave; return LNK_VBAR; }
 
-^[^ \t\n]+\.[ \t]+ 		{ BEGIN s_T; longsave; return MTS; }
+^[^ \t\n]+\.[ \t]+ 		{ BEGIN s_T; longinit; return MTS; }
 
-^[^ \t\n#]+:[ \t]+ 		{ BEGIN s_T; longsave; return EXX; }
+^[^ \t\n#]+:[ \t]+ 		{ BEGIN s_T; longinit; return EXX; }
 
 ^== 				{ BEGIN s_T; atfsave; return BIL; }
 

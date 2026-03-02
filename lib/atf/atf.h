@@ -265,4 +265,6 @@ extern char *compute_fragid(const char *qualid, const char *hlid);
 extern void tlit_reinit_inline(void);
 extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id);
 
+extern void set_block_curr(Block_level b);
+
 #endif/*ATF_H_*/
