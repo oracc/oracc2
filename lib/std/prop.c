@@ -5,7 +5,7 @@
 #include <prop.h>
 
 gdlstate_t *
-prop_state(Node *np, gdlstate_t *sp)
+prop_state(Node *np, gdlstate_t sp)
 {
   if (np->props)
     {
@@ -23,7 +23,7 @@ prop_state(Node *np, gdlstate_t *sp)
       np->props->g = PU_GDLSTATE;
     }
   if (sp)
-    np->props->u.s = *sp;
+    np->props->u.s = sp;
   return &np->props->u.s;
 }
 

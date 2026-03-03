@@ -14,8 +14,10 @@ extern void yyerror(const char *);
 extern const char *gdltext, *currgdlfile;
 extern int gdllineno, gdltrace;
 
+#if 0
 extern gdlstate_t gst; 	/* global gdl state */
 extern Node *lgp;   		/* last grapheme node pointer */
+#endif
 
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
@@ -135,23 +137,24 @@ delim:
 	| ':' 						{ ynp = gdl_delim(ytp, ":"); }
 	| '{'	      					{ gdl_balance_state(@1,'{',"{");
 	    						  gdl_push(ytp,"g:det");
-	  						  gs_on(gs_det|gs_det_o);
-	  						  gs_on(gs_g_semd_i); }
+	  						  ps_on(gs_det_o);
+	  						  rs_on(gs_det|gs_g_semd_i); }
 	| DET_SEME    					{ gdl_balance_state(@1,'{',"{");
 	    						  gdl_push(ytp,"g:det");
-	  						  gs_on(gs_det|gs_det_o);
-	  						  gs_on(gs_g_semd_e); }
+	  						  ps_on(gs_det_o);
+	  						  rs_on(gs_det|gs_g_semd_e); }
 	| DET_PHON      	      			{ gdl_balance_state(@1,'{',"{");
 	    						  gdl_push(ytp,"g:det"); 
-	  						  gs_on(gs_det|gs_det_o);
-	  						  gs_on(gs_g_phond); }
+	  						  ps_on(gs_det_o);
+	  						  rs_on(gs_det|gs_g_phond); }
 	| '}' 	 		  			{ if (!gdl_balance_state(@1,'}',"}"))
 	      						    gdl_pop(ytp,"g:det");
 	     						    /* set pst->det = SB_CL; lgp is last
 							       node with g content or equivalent, i.e.,
 							       where the closer state must be set */
-	    						    gdl_update_state(lgp, gs_det_c);
-							    gs_no(gs_det|gs_g_semd_e|gs_g_semd_i|gs_g_phond);
+	    						    /*gdl_update_state(lgp, gs_det_c);*/
+	      						    bit_set(*lst, gs_det_c);
+							    rs_no(gs_det|gs_g_semd_e|gs_g_semd_i|gs_g_phond);
 	  						  }
 	| ENHYPHEN 			       		{ ynp = gdl_delim(ytp, "--"); }
 	;
@@ -184,11 +187,11 @@ gflags:
 	;
 
 gflag:
-	  '*'						{ gdl_update_state(lgp, gs_f_star); }
-	| '#'						{ gdl_update_state(lgp, gs_f_hash); }
-	| '!'						{ gdl_update_state(lgp, gs_f_bang); }
-	| '?'						{ gdl_update_state(lgp, gs_f_query); }
-	| PLUS_FLAG    					{ gdl_update_state(lgp, gs_f_plus); }
+	  '*'						{ bit_set(*lst, gs_f_star); }
+	| '#'						{ bit_set(*lst, gs_f_hash); }
+	| '!'						{ bit_set(*lst, gs_f_bang); }
+	| '?'						{ bit_set(*lst, gs_f_query); }
+	| PLUS_FLAG    					{ bit_set(*lst, gs_f_plus); }
 	;
 
 simplexg:
@@ -353,15 +356,15 @@ breakc:
 	;
 
 glosso:
-	  L_cur_par		       	{ ynp = gdl_gloss_o(@1, ytp, L_cur_par, gs_glodoc_o, gdllval.text); }
-	| L_dbl_cur			{ ynp = gdl_gloss_o(@1, ytp, L_dbl_cur, gs_glolin_o, gdllval.text); }
-	| L_ang_par_s		       	{ ynp = gdl_gloss_o(@1, ytp, L_ang_par, gs_surro_o, gdllval.text); }
+		L_cur_par	{ ynp = gdl_gloss_o(@1, ytp, L_cur_par, gs_glodoc_o, gs_glodoc, gdllval.text); }
+	| 	L_dbl_cur	{ ynp = gdl_gloss_o(@1, ytp, L_dbl_cur, gs_glolin_o, gs_glolin, gdllval.text); }
+	| 	L_ang_par_s	{ ynp = gdl_gloss_o(@1, ytp, L_ang_par, gs_surro_o, gs_empty, gdllval.text); }
 	;
 
 glossc:
-	  R_cur_par		       	{ ynp = gdl_gloss_c(@1, ytp, R_cur_par, gs_glodoc_c, gdllval.text); }
-	| R_dbl_cur			{ ynp = gdl_gloss_c(@1, ytp, R_dbl_cur, gs_glolin_c, gdllval.text); }
-	| R_ang_par_s		       	{ ynp = gdl_gloss_c(@1, ytp, R_ang_par, gs_surro_c, gdllval.text); }
+	  R_cur_par		{ ynp = gdl_gloss_c(@1, ytp, R_cur_par, gs_glodoc_c, gs_glodoc, gdllval.text); }
+	| R_dbl_cur		{ ynp = gdl_gloss_c(@1, ytp, R_dbl_cur, gs_glolin_c, gs_glolin, gdllval.text); }
+	| R_ang_par_s		{ ynp = gdl_gloss_c(@1, ytp, R_ang_par, gs_surro_c, gs_empty, gdllval.text); }
 	;
 
 stateo:  

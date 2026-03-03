@@ -19,8 +19,28 @@ int curr_lang = 's';
 
 int deep_parse = 1;
 
+static int grapheme_id, wid_base;
+static char gdl_line_id[1024], gdl_word_id[1024];
+static char *gid_insertp;
+
+#if 1
+/* New 2026-03-03: state is now handled with three variables, pst,
+   lst, rst
+
+   pst (pending-state) is for openers only: it is zeroed-out after it
+   	is applied to a node
+
+   lst (last-state) is a pointer to the state property of the most
+   	recently seen node and is where closers are applied
+	
+   rst (running-state) is set by openers and unset by closers; it is
+   	applied to nodes in addition to pending-state
+ */
+gdlstate_t pst, *lst, rst;
+#else
 gdlstate_t gst; /* global gdl state */
 Node *lgp = NULL;   /* last grapheme node pointer */
+#endif
 
 int gdl_word_mode;
 
@@ -69,7 +89,8 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 {
   Node *c;
   for (c = w->kids; c; c = c->next)
-    fputs(c->text, wfp);
+    if (strcmp(c->name, "g:z"))
+      fputs(c->text, wfp);
 }
 
 /* This routine assumes root=gdl; kids=g:w+ */
@@ -155,6 +176,14 @@ gdl_literal(Mloc *m, char *s)
  ***********************************************************************/
 
 void
+gdl_set_ids(const char *lid, int wid)
+{
+  strcpy(gdl_line_id, lid);
+  strcat(gdl_line_id, ".");
+  wid_base = wid;
+}
+
+void
 gdl_gp_type(Tree *ytp, enum gdlpropvals p)
 {
   gdl_prop(ytp->curr, p, PG_GDL_GROUP);
@@ -174,9 +203,11 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   Node *np = NULL;
   np = tree_add(ytp, NS_GDL, name, ytp->curr->depth, NULL);
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
-  lgp = np;
-  prop_state(np, &gst);
-  gs_clear_openers();
+  /*lgp = np;*/
+  lst = prop_state(np, pst|rst);
+  sprintf(gid_insertp, "%d", grapheme_id++);
+  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+  pst = 0L;
   np->mloc = mloc_mloc(locp);
   return np;
 }
@@ -325,7 +356,11 @@ gdl_new_word(Tree *ytp)
 	tree_curr(l->rent);
       else
 	tree_curr(ytp->root);
-      return gdl_push(ytp, "g:w");
+      Node *wp = gdl_push(ytp, "g:w");
+      sprintf(gdl_word_id, "%s.%d", gdl_line_id, wid_base++);
+      gid_insertp = gdl_word_id+strlen(gdl_word_id);
+      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+      return wp;
     }
   return ytp->curr;
 }
@@ -469,12 +504,20 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
 
   if (g_literal_flag)
     {
+#if 1
+      bit_set(*lst, gs_force|gs_g_undefined);
+#else
       gdl_update_state(ret, gs_force|gs_g_undefined);
+#endif
       g_literal_flag = 0;
     }
   else if (g_logoforce_flag)
     {
+#if 1
+      bit_set(*lst, gs_force|gs_g_flogo1);
+#else
       gdl_update_state(ret, gs_force|gs_g_flogo1);
+#endif
       g_logoforce_flag = 0;
     }
   return ret;
@@ -534,32 +577,33 @@ gdl_punct(Mloc *locp, Tree *ytp, const char *data)
 }
 
 Node *
-gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data)
+gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, const char *data)
 {
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", tok, data);
   (void)gdl_balance_break(mlp, tok, data);
   ret = gdl_meta_node(ytp, "g:z", data);
-  gs_on(gs_o);
-  gs_on(gs_tok);
+  ps_on(gs_o);
+  rs_on(gs_run);
   return ret;
 }
 
 Node *
-gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data)
+gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, const char *data)
 {
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", tok, data);
   (void)gdl_balance_break(mlp, tok, data);
-  gs_no(gs_tok);
-  gdl_update_state(lgp, gs_c);
+  bit_set(*lst,gs_c);
+  rs_no(gs_run);
+  /*gdl_update_state(lgp, gs_c);*/
   return gdl_meta_node(ytp, "g:z", data);
 }
 
 /* If data is /{{[0-9]+:/ the digits are a stream code */
 Node *
-gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
+gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, const char *data)
 {
   int stream = -1;
   Node *ret = NULL;
@@ -577,14 +621,15 @@ gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
     }
   (void)gdl_balance_state(mlp, tok, data);
   gdl_push(ytp, "g:glo");
-  gs_on(gs_tok);
+  ps_on(gs_o);
+  rs_on(gs_run);
   ret = gdl_meta_node(ytp, "g:z", data);
   prop_node_add(ret, GP_STREAM, PG_GDL_STATE, (void*)(uintptr_t)stream, NULL);
   return ret;
 }
 
 Node *
-gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
+gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, const char *data)
 {
   Node *ret = NULL;
   if (gdltrace)
@@ -592,38 +637,44 @@ gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
   ret =  gdl_meta_node(ytp, "g:z", data);
   if (!gdl_balance_state(mlp, tok, data))
     gdl_pop(ytp, data);
-  gdl_update_state(lgp, gs_tok);
+  bit_set(*lst,gs_c);
+  rs_no(gs_run);
+  /*gdl_update_state(lgp, gs_tok);*/
   return ret;
 }
 Node *
-gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data)
+gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, const char *data)
 {
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", tok, data);
   (void)gdl_balance_state(mlp, tok, data);
   ret = gdl_meta_node(ytp, "g:z", data);
-  gs_on(gs_o);
-  gs_on(gs_tok);
+  ps_on(gs_o);
+  rs_on(gs_run);
   return ret;
 }
 
 Node *
-gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data)
+gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, const char *data)
 {
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
   (void)gdl_balance_state(mlp, tok, data);
-  gs_no(gs_tok);
-  gdl_update_state(lgp, gs_c);
+  bit_set(*lst,gs_c);
+  rs_no(gs_run);
+  /*gdl_update_state(lgp, gs_c);*/
   return ret;
 }
 
+#if 0
 void
 gdl_update_state(Node *np, gdlstate_t gs_tok)
 {
   bit_set(np->props->u.s, gs_tok);
   gs_clear_closers();
 }
+#endif
+

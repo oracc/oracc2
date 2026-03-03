@@ -76,12 +76,26 @@
 
 typedef unsigned long gdlstate_t;
 
+extern gdlstate_t pst, rst, *lst;
+
 extern gdlstate_t gs_order_f[];
 extern gdlstate_t gs_order_o[];
 extern gdlstate_t gs_order_c[];
 
 extern void gdlstate_rawxml(FILE *fp, gdlstate_t sp);
 
+#include <bits.h>
+
+#define gs_is(s,x) (bit_get((s),(x)))
+
+#define ps_on(x) (bit_set(pst,(x)))
+#define ps_no(x) (bit_off(pst,(x)))
+
+#define rs_on(x) (bit_set(rst,(x)))
+#define rs_no(x) (bit_off(rst,(x)))
+
+#if 0
+/* refactor obviates this */
 #define gs_o_mask (gs_damaged_o	\
 	|gs_lost_o  \
 	|gs_maybe_o \
@@ -107,14 +121,8 @@ extern void gdlstate_rawxml(FILE *fp, gdlstate_t sp);
 	|gs_superposed_c \
 	|gs_glolin_c \
 	|gs_glodoc_c)
-
-#include <bits.h>
-
-#define gs_is(s,x) (bit_get((s),(x)))
-#define gs_on(x) (bit_set(gst,(x)))
-#define gs_no(x) (bit_off(gst,(x)))
-
 #define gs_clear_openers()	gs_no(gs_o_mask)
 #define gs_clear_closers()	gs_no(gs_c_mask)
+#endif
 
 #endif/*GDLSTATE_H_*/
