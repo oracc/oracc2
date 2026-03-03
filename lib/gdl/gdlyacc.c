@@ -176,6 +176,7 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
   lgp = np;
   prop_state(np, &gst);
+  gs_clear_openers();
   np->mloc = mloc_mloc(locp);
   return np;
 }
@@ -533,24 +534,26 @@ gdl_punct(Mloc *locp, Tree *ytp, const char *data)
 }
 
 Node *
-gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
+gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data)
 {
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", tok, data);
   (void)gdl_balance_break(mlp, tok, data);
   ret = gdl_meta_node(ytp, "g:z", data);
+  gs_on(gs_o);
   gs_on(gs_tok);
   return ret;
 }
 
 Node *
-gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
+gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data)
 {
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", tok, data);
   (void)gdl_balance_break(mlp, tok, data);
-  gdl_update_state(lgp, gs_tok);
+  gs_no(gs_tok);
+  gdl_update_state(lgp, gs_c);
   return gdl_meta_node(ytp, "g:z", data);
 }
 
@@ -593,26 +596,28 @@ gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
   return ret;
 }
 Node *
-gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
+gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data)
 {
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", tok, data);
   (void)gdl_balance_state(mlp, tok, data);
   ret = gdl_meta_node(ytp, "g:z", data);
+  gs_on(gs_o);
   gs_on(gs_tok);
   return ret;
 }
 
 Node *
-gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data)
+gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data)
 {
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
   (void)gdl_balance_state(mlp, tok, data);
-  gdl_update_state(lgp, gs_tok);
+  gs_no(gs_tok);
+  gdl_update_state(lgp, gs_c);
   return ret;
 }
 
@@ -620,4 +625,5 @@ void
 gdl_update_state(Node *np, gdlstate_t gs_tok)
 {
   bit_set(np->props->u.s, gs_tok);
+  gs_clear_closers();
 }

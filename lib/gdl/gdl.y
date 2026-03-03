@@ -335,15 +335,21 @@ mod:
 	;
 
 breako:
-	  '['				{ ynp = gdl_break_o(@1, ytp, '[', gs_lost_o, gdllval.text); }
-	| L_uhs				{ ynp = gdl_break_o(@1, ytp, L_uhs, gs_damaged_o, gdllval.text); }
-	| L_lhs				{ ynp = gdl_break_o(@1, ytp, L_lhs, gs_damaged_o, gdllval.text); }
+		'['	       	{ ynp = gdl_break_o(@1, ytp, '[',
+						    gs_lost_o, gs_lost, gdllval.text); }
+	| 	L_uhs	       	{ ynp = gdl_break_o(@1, ytp, L_uhs,
+						    gs_damaged_o, gs_damaged, gdllval.text); }
+	| 	L_lhs	       	{ ynp = gdl_break_o(@1, ytp, L_lhs,
+						    gs_damaged_o, gs_damaged, gdllval.text); }
 	;
 
 breakc:
-	  ']'				{ ynp = gdl_break_c(@1, ytp, ']', gs_lost_c, gdllval.text); }
-	| R_uhs				{ ynp = gdl_break_c(@1, ytp, R_uhs, gs_damaged_c, gdllval.text); }
-	| R_lhs				{ ynp = gdl_break_c(@1, ytp, R_lhs, gs_damaged_c, gdllval.text); }
+		']'	       	{ ynp = gdl_break_c(@1, ytp, ']',
+						    gs_lost_c, gs_lost, gdllval.text); }
+	| 	R_uhs	       	{ ynp = gdl_break_c(@1, ytp, R_uhs,
+						    gs_damaged_c, gs_damaged, gdllval.text); }
+	| 	R_lhs	       	{ ynp = gdl_break_c(@1, ytp, R_lhs,
+						    gs_damaged_c, gs_damaged, gdllval.text); }
 	;
 
 glosso:
@@ -359,17 +365,25 @@ glossc:
 	;
 
 stateo:  
-	  '<'				{ ynp = gdl_state_o(@1, ytp, '<', gs_supplied_o, gdllval.text); }
-	| '('				{ ynp = gdl_state_o(@1, ytp, '(', gs_maybe_o, gdllval.text); }
-	| L_ang_par		       	{ ynp = gdl_state_o(@1, ytp, L_ang_par, gs_implied_o, gdllval.text); }
-	| L_dbl_ang		       	{ ynp = gdl_state_o(@1, ytp, L_dbl_ang, gs_excised_o, gdllval.text); }
+		'<'	        { ynp = gdl_state_o(@1, ytp, '<',
+							    gs_supplied_o, gs_supplied, gdllval.text); }
+	| 	'('	       	{ ynp = gdl_state_o(@1, ytp, '(',
+							    gs_maybe_o, gs_maybe, gdllval.text); }
+	| 	L_ang_par      	{ ynp = gdl_state_o(@1, ytp, L_ang_par,
+							    gs_implied_o, gs_implied, gdllval.text); }
+	| 	L_dbl_ang      	{ ynp = gdl_state_o(@1, ytp, L_dbl_ang,
+							    gs_excised_o, gs_excised, gdllval.text); }
 	;
 
 statec:
-	  '>'				{ ynp = gdl_state_c(@1, ytp, '>', gs_supplied_c, gdllval.text); }
-	| ')'				{ ynp = gdl_state_c(@1, ytp, ')', gs_maybe_c, gdllval.text); }
-	| R_ang_par		       	{ ynp = gdl_state_c(@1, ytp, R_ang_par, gs_implied_c, gdllval.text); }
-	| R_dbl_ang			{ ynp = gdl_state_c(@1, ytp, R_dbl_ang, gs_excised_c, gdllval.text); }
+		'>'	       	{ ynp = gdl_state_c(@1, ytp, '>',
+						    gs_supplied_c, gs_supplied, gdllval.text); }
+	| 	')'	      	{ ynp = gdl_state_c(@1, ytp, ')',
+						   gs_maybe_c, gs_maybe, gdllval.text); }
+	| 	R_ang_par      	{ ynp = gdl_state_c(@1, ytp, R_ang_par,
+						    gs_implied_c, gs_implied, gdllval.text); }
+	| 	R_dbl_ang	{ ynp = gdl_state_c(@1, ytp, R_dbl_ang,
+						    gs_excised_c, gs_excised,  gdllval.text); }
 	;
 %%
 

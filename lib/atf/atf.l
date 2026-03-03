@@ -86,6 +86,7 @@ QID	{PROJECT}:{PQX}
 
 ^"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
 <s_PRO>{PROJECT}/\n		{ BEGIN 0; atfsave; return PROJECT; }
+<s_PRO>[ \t]+			{ ; }
 
 ^"#atf:"			{ BEGIN s_ATFPRO; }
 <s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }

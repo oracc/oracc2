@@ -81,24 +81,40 @@ extern gdlstate_t gs_order_o[];
 extern gdlstate_t gs_order_c[];
 
 extern void gdlstate_rawxml(FILE *fp, gdlstate_t sp);
-			  
+
+#define gs_o_mask (gs_damaged_o	\
+	|gs_lost_o  \
+	|gs_maybe_o \
+	|gs_det_o \
+	|gs_supplied_o \
+	|gs_excised_o \
+	|gs_implied_o \
+	|gs_erased_o \
+	|gs_cancelled_o	\
+	|gs_superposed_o \
+	|gs_glolin_o \
+	|gs_glodoc_o)
+
+#define gs_c_mask (gs_damaged_c \
+	|gs_lost_c \
+	|gs_maybe_c \
+	|gs_det_c \
+	|gs_supplied_c \
+	|gs_excised_c \
+	|gs_implied_c \
+	|gs_erased_c \
+	|gs_cancelled_c \
+	|gs_superposed_c \
+	|gs_glolin_c \
+	|gs_glodoc_c)
+
 #include <bits.h>
 
 #define gs_is(s,x) (bit_get((s),(x)))
 #define gs_on(x) (bit_set(gst,(x)))
 #define gs_no(x) (bit_off(gst,(x)))
 
-#endif/*GDLSTATE_H_*/	  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
-			  
+#define gs_clear_openers()	gs_no(gs_o_mask)
+#define gs_clear_closers()	gs_no(gs_c_mask)
+
+#endif/*GDLSTATE_H_*/

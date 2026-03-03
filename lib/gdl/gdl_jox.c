@@ -20,6 +20,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
   int need_closer = 1;
   const char *nodename = np->name;
 
+  if (!strcmp(np->name, "g:z"))
+    return;
+  
   if (!strcmp(np->name, "g:l"))
     nodename = "g:s";
   else if (!strcmp(np->name, "g:gp"))
@@ -151,7 +154,7 @@ grx_jox_node(Node *np, int oflag, int nflag)
     grx_jox_node(np->next, 0, 1);
 }
 
-int
+void
 grx_jox(Node *np, const char *gdltag)
 {
   if (gdltag)
@@ -169,4 +172,13 @@ grx_jox(Node *np, const char *gdltag)
       if (gdltag)
 	joxer_ee(np->mloc, gdltag);
     }
+}
+
+/* This function gets passed the <l> node by ax; it needs to process
+   all children of <l> */
+int
+grx_jox_gdl(Node *np, Node *gdl)
+{
+  grx_jox_node(np->kids, 0, 1);
+  return 0;
 }

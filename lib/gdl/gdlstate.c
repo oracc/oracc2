@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
-#include <gdlstate.h>
 #include <xmlify.h>
+#include <tree.h>
+#include "gdl.h"
+#include "gdlstate.h"
 
 gdlstate_t gs_order_f[] = { gs_f_query, gs_f_bang, gs_f_star, gs_f_hash,
 			    gs_f_uf1, gs_f_uf2, gs_f_uf3, gs_f_uf4, gs_f_plus };
@@ -13,6 +15,10 @@ gdlstate_t gs_order_o[] = { gs_damaged_o, gs_lost_o, gs_maybe_o, gs_det_o, gs_su
 gdlstate_t gs_order_c[] = { gs_damaged_c, gs_lost_c, gs_maybe_c, gs_det_c, gs_supplied_c,
 			    gs_excised_c, gs_implied_c, gs_erased_c, gs_cancelled_c,
 			    gs_superposed_c, gs_glolin_c, gs_glodoc_c, gs_surro_c, gs_group_c };
+
+const char *gs_status[] = { NULL , NULL , "maybe" , NULL, "supplied" ,
+			    "excised" , "implied" , "erased", "cancelled" ,
+			    NULL , NULL , NULL , NULL , NULL };
 
 #define NFLAGS (sizeof(gs_order_f)/sizeof(gdlstate_t))
 #define NBRACK (sizeof(gs_order_o)/sizeof(gdlstate_t))
@@ -78,7 +84,33 @@ gdlstate_rawxml(FILE *fp, gdlstate_t sp)
 void
 gdlstate_props(Node *np, gdlstate_t sp)
 {
+  int i;
   for (i = 0; i < NFLAGS; ++i)
     if (gs_is(sp,gs_order_f[i]) && gs_str_a[i])
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, gs_str_a[i], "1");
+
+  const char *status = "ok";
+  if (gs_is(sp,gs_supplied))
+    status = "supplied";
+  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:status", status);
+
+  if (gs_is(sp, gs_damaged_o))
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:ho", "1");
+
+  if (gs_is(sp, gs_damaged_c))
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:hc", "1");
+
+  if (gs_is(sp, gs_damaged))
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:break", "damaged");
+  else if (gs_is(sp, gs_lost))
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:break", "missing");
+
+  gsraw_bracko(sp);
+  if (*brackobuf)
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:o", pool_copy(brackobuf, gdlpool));
+  
+  gsraw_brackc(sp);
+  if (*brackcbuf)
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:c", pool_copy(brackcbuf, gdlpool));
+  
 }

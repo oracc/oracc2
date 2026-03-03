@@ -84,12 +84,12 @@ extern void gdl_prop_kv(Node *ynp, int p, int g, const char *k, const char *v);
 extern void gdl_remove_q_error(Mloc m, Node *ynp);
 
 extern Node *gdl_nongraph(Mloc *locp, Tree *ytp, const char *data);
-extern Node *gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data);
+extern Node *gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
+extern Node *gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data);
 extern Node *gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_tok, const char *data);
+extern Node *gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, const char *data);
+extern Node *gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data);
+extern Node *gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
 extern void gdl_cell(Tree *ytp, const char *span);
 extern Node *gdl_delim(Tree *ytp, const char *data);
 extern void gdl_field(Tree *ytp, const char *ftype);
@@ -135,8 +135,9 @@ extern const char *gdlsig_str(Mloc *mp, unsigned char *atf, int frag_ok, int dee
 
 extern const unsigned char *gdl_first_s(Node *gdl);
 
-extern int grx_jox(Node *np, const char *gdltag);
-extern void grx_xml(Node *np, const char *gdltag);
+extern void grx_jox(Node *np, const char *gdltag);
+extern void grx_jox(Node *np, const char *gdltag);
+extern int grx_jox_gdl(Node *np, Node*gdl);
 
 extern unsigned char *gdlseq(unsigned char *s);
 extern unsigned char *gdlseq_oids(unsigned char *s, const char *j);

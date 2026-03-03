@@ -35,6 +35,7 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
       if (kp->text)
 	gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "form", kp->text);
     }
+  np->user = np->kids;
   gdlparse_reset();
 }
 

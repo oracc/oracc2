@@ -23,6 +23,6 @@ extern int ax_jox_note(Node *np, Note *bp);
 extern int ax_jox_protocol(Node *np, void *p);
 extern void ax_jox_block(Node *np, Block *p);
 
-extern int grx_jox(Node *np, const char *tag);
+extern int grx_jox_gdl(Node *np, Node *gdl);
 
 #endif/*AX_H_*/

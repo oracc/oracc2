@@ -34,7 +34,7 @@ prop_get_state(Node *np)
   for (p = np->props; p; p = p->next)
     if (p->g == PU_GDLSTATE)
       return p->u.s;
-  return gs_empty;
+  return 0L;
 }
 
 Prop *
