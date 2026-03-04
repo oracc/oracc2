@@ -6,6 +6,8 @@
 #include "gdl.h"
 #include "gdl.tab.h"
 
+int gdl_break_pending = 0, gdl_state_pending = 0;
+
 #define gdl_break_peek() stck_peek(break_stack)
 #define gdl_break_pop() stck_pop(break_stack)
 #define gdl_break_push(x) stck_push(break_stack,x)
@@ -139,11 +141,10 @@ gdl_balance_term(void)
 }
 
 static Gstck*
-gstck_new(int i, Node *np)
+gstck_new(int i)
 {
   Gstck *gp = memo_new(mgstck);
   gp->i = i;
-  gp->np = np;
   return gp;
 }
 
@@ -188,15 +189,24 @@ gdl_break_push(int tok)
 void
 gdl_break_node(Node *np)
 {
-  intptr_t p = gdl_break_peek(break_stack);
+  intptr_t p = gdl_break_peek();
   if (p > 0)
     gstck_np(p) = np;
   gdl_break_pending = 0;
 }
 
+void
+gdl_state_node(Node *np)
+{
+  intptr_t p = gdl_state_peek();
+  if (p > 0)
+    gstck_np(p) = np;
+  gdl_state_pending = 0;
+}
+
 /* return 0 on OK; 1 on error */
 intptr_t
-gdl_balance_break(Mloc mlp, int tok, Node *np)
+gdl_balance_break(Mloc mlp, int tok)
 {
   intptr_t ret = 0;
   /* if it's a closer, check the stack for a match */
@@ -226,7 +236,7 @@ gdl_balance_break(Mloc mlp, int tok, Node *np)
   else
     {
       /* for openers push the new opener on the stack */
-      gdl_break_push((intptr_t)gstck_new(tok, NULL));
+      gdl_break_push((intptr_t)gstck_new(tok));
       gdl_break_pending = 1;
     }
   return ret;
@@ -270,8 +280,8 @@ gdl_state_push(int tok)
 #endif
 
 /* return 0 on OK; 1 on error */
-int
-gdl_balance_state(Mloc mlp, int tok, Node *np)
+intptr_t
+gdl_balance_state(Mloc mlp, int tok)
 {
   int ret = 0;
   /* if it's a closer, check the stack for a match */
@@ -301,7 +311,8 @@ gdl_balance_state(Mloc mlp, int tok, Node *np)
   else
     {
       /* for openers push the new opener on the stack */
-      gdl_state_push((intptr_t)gstck_new(tok, np));
+      gdl_state_push((intptr_t)gstck_new(tok));
+      gdl_state_pending = 1;
     }
   return ret;
 }

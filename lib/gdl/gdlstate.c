@@ -107,10 +107,10 @@ gdlstate_props(Node *np, gdlstate_t sp)
 
   gsraw_bracko(sp);
   if (*brackobuf)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:o", pool_copy(brackobuf, gdlpool));
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:o", (ccp)pool_copy((uccp)brackobuf, gdlpool));
   
   gsraw_brackc(sp);
   if (*brackcbuf)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:c", pool_copy(brackcbuf, gdlpool));
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:c", (ccp)pool_copy((uccp)brackcbuf, gdlpool));
   
 }

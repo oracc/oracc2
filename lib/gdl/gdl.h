@@ -55,6 +55,8 @@ extern int gdltrace, gdl_legacy, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
+extern int gdl_break_pending, gdl_state_pending;
+
 extern List *c_dangling_gps;
 extern List *c_explicit_gps;
 extern List *c_implicit_gps;
@@ -109,8 +111,8 @@ extern unsigned char *gdl_unlegacy_str(Mloc *mloc, unsigned const char *gp);
 extern int gdl_legacy_check(Node *, unsigned const char *gp);
 extern void gdl_incr_qin(void);
 extern void gdl_decr_qin(void);
-extern int gdl_balance_break(Mloc mlp, int tok, Node *np);
-extern int gdl_balance_state(Mloc mlp, int tok, Node *np);
+extern intptr_t gdl_balance_break(Mloc mlp, int tok);
+extern intptr_t gdl_balance_state(Mloc mlp, int tok);
 extern void gdl_balance_init(void);
 extern void gdl_balance_term(void);
 extern void gdl_balance_flush(Mloc mlp);
@@ -144,5 +146,8 @@ extern unsigned char *gdlseq_oids(unsigned char *s, const char *j);
 
 extern void gdlstate_props(Node *np, gdlstate_t sp);
 extern void gdl_set_ids(const char *line_id, int widb);
+
+extern void gdl_break_node(Node *np);
+extern void gdl_state_node(Node *np);
 
 #endif /*GDL_H_*/

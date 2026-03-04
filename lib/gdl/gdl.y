@@ -135,19 +135,19 @@ delim:
         | '-' 						{ ynp = gdl_delim(ytp, "-"); }
 	| '+' 						{ ynp = gdl_delim(ytp, "+"); }
 	| ':' 						{ ynp = gdl_delim(ytp, ":"); }
-	| '{'	      					{ gdl_balance_state(@1,'{',"{");
+	| '{'	      					{ gdl_balance_state(@1,'{');
 	    						  gdl_push(ytp,"g:det");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_i); }
-	| DET_SEME    					{ gdl_balance_state(@1,'{',"{");
+	| DET_SEME    					{ gdl_balance_state(@1,'{');
 	    						  gdl_push(ytp,"g:det");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_e); }
-	| DET_PHON      	      			{ gdl_balance_state(@1,'{',"{");
+	| DET_PHON      	      			{ gdl_balance_state(@1,'{');
 	    						  gdl_push(ytp,"g:det"); 
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_phond); }
-	| '}' 	 		  			{ if (!gdl_balance_state(@1,'}',"}"))
+	| '}' 	 		  			{ if (!gdl_balance_state(@1,'}'))
 	      						    gdl_pop(ytp,"g:det");
 	     						    /* set pst->det = SB_CL; lgp is last
 							       node with g content or equivalent, i.e.,
@@ -238,9 +238,9 @@ cbit:
 							  gvl_simplexg(ynp); }
 	| gflag
 	| cdelim					{ }
-	| CLP			       			{ gdl_balance_state(@1,CLP,"(");
+	| CLP			       			{ gdl_balance_state(@1,CLP);
 	    					  	  gdl_push(ytp,"g:gp"); }
-	| CRP	     			    		{ if (!gdl_balance_state(@1,CRP,")"))
+	| CRP	     			    		{ if (!gdl_balance_state(@1,CRP))
 	      					    	   gdl_pop(ytp,"g:gp");  }
 	| QLP 						{ yrem=kids_rem_last(ytp);
 	    						  gdl_push(ytp,"g:q");

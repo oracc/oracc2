@@ -587,7 +587,7 @@ gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, co
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", tok, data);
-  (void)gdl_balance_break(mlp, tok, tree_curr(ytp));
+  (void)gdl_balance_break(mlp, tok);
   ret = gdl_meta_node(ytp, "g:z", data);
   ps_on(gs_o);
   rs_on(gs_run);
@@ -599,7 +599,7 @@ gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
 {
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", tok, data);
-  (void)gdl_balance_break(mlp, tok, NULL);
+  (void)gdl_balance_break(mlp, tok);
   bit_set(*lst,gs_c);
   rs_no(gs_run);
   /*gdl_update_state(lgp, gs_c);*/
@@ -624,7 +624,7 @@ gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, co
 	}
       data = "{{";
     }
-  (void)gdl_balance_state(mlp, tok, NULL);
+  (void)gdl_balance_state(mlp, tok);
   Node *np = gdl_push(ytp, "g:glo");
   ps_on(gs_o);
   rs_on(gs_run);
@@ -640,7 +640,7 @@ gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   if (gdltrace)
     fprintf(stderr, "gt: GLOSS/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
-  if (!gdl_balance_state(mlp, tok, NULL))
+  if (!gdl_balance_state(mlp, tok))
     gdl_pop(ytp, data);
   bit_set(*lst,gs_c);
   rs_no(gs_run);
@@ -653,7 +653,7 @@ gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, co
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", tok, data);
-  (void)gdl_balance_state(mlp, tok, tree_curr(ytp));
+  (void)gdl_balance_state(mlp, tok);
   ret = gdl_meta_node(ytp, "g:z", data);
   ps_on(gs_o);
   rs_on(gs_run);
@@ -667,7 +667,7 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
-  (void)gdl_balance_state(mlp, tok, NULL);
+  (void)gdl_balance_state(mlp, tok);
   bit_set(*lst,gs_c);
   rs_no(gs_run);
   /*gdl_update_state(lgp, gs_c);*/

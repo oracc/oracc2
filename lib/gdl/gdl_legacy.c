@@ -66,22 +66,22 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 		x[xlen++] = '*';
 	      break;
 	    case '[':
-	      gdl_balance_break(*mlp, '[', "[");
+	      gdl_balance_break(*mlp, '[');
 	      break;
 	    case ']':
-	      gdl_balance_break(*mlp, ']', "]");
+	      gdl_balance_break(*mlp, ']');
 	      break;
 	    case U_ulhsq:
-	      gdl_balance_break(*mlp, L_uhs, NULL);
+	      gdl_balance_break(*mlp, L_uhs);
 	      break;
 	    case U_urhsq:
-	      gdl_balance_break(*mlp, R_uhs, NULL);
+	      gdl_balance_break(*mlp, R_uhs);
 	      break;
 	    case U_llhsq:
-	      gdl_balance_break(*mlp, L_lhs, NULL);
+	      gdl_balance_break(*mlp, L_lhs);
 	      break;
 	    case U_lrhsq:
-	      gdl_balance_break(*mlp, R_lhs, NULL);
+	      gdl_balance_break(*mlp, R_lhs);
 	      break;
 	    case '#':
 	    case '?':
