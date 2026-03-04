@@ -205,7 +205,7 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
   /*lgp = np;*/
   lst = prop_state(np, pst|rst);
-  sprintf(gid_insertp, "%d", grapheme_id++);
+  sprintf(gid_insertp, ".%d", grapheme_id++);
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
@@ -357,9 +357,10 @@ gdl_new_word(Tree *ytp)
       else
 	tree_curr(ytp->root);
       Node *wp = gdl_push(ytp, "g:w");
-      sprintf(gdl_word_id, "%s.%d", gdl_line_id, wid_base++);
+      sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
       gid_insertp = gdl_word_id+strlen(gdl_word_id);
       gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+      grapheme_id = 0;
       return wp;
     }
   return ytp->curr;

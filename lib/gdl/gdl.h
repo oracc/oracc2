@@ -143,6 +143,6 @@ extern unsigned char *gdlseq(unsigned char *s);
 extern unsigned char *gdlseq_oids(unsigned char *s, const char *j);
 
 extern void gdlstate_props(Node *np, gdlstate_t sp);
-extern void gdl_set_grapheme_id(const char *word_id);
+extern void gdl_set_ids(const char *line_id, int widb);
 
 #endif /*GDL_H_*/
