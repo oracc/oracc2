@@ -1,6 +1,29 @@
 #include <stdlib.h>
+#include <memo.h>
 #include <mesg.h>
+#include <tree.h>
+#include <stck.h>
+#include "gdl.h"
 #include "gdl.tab.h"
+
+#define gdl_break_peek() stck_peek(break_stack)
+#define gdl_break_pop() stck_pop(break_stack)
+#define gdl_break_push(x) stck_push(break_stack,x)
+
+#define gdl_state_peek() stck_peek(state_stack)
+#define gdl_state_pop() stck_pop(state_stack)
+#define gdl_state_push(x) stck_push(state_stack,x)
+
+#define gstck_i(x) ((Gstck*)(x))->i
+#define gstck_np(x) ((Gstck*)(x))->np
+
+typedef struct gdlstack
+{
+  int i;
+  Node *np;
+} Gstck;
+
+static Memo *mgstck;
 
 static int o_c_map[] = 
   { '<',	'>',
@@ -48,9 +71,14 @@ static int c_of_o[END];
 static int o_of_c[END];
 static const char *s_of_oc[END];
 
+#if 1
+Stck *state_stack = NULL, *break_stack = NULL;
+#else
 int *state_stack = NULL, *break_stack = NULL;
 static int break_alloced = 0, state_alloced = 0;
 static int break_top = -1, state_top = -1;
+#endif
+
 #define OC_ALLOC	4
 
 void
@@ -60,7 +88,13 @@ gdl_balance_init(void)
 
   if (state_stack)
     {
+#if 1
+      stck_reset(break_stack);
+      stck_reset(state_stack);
+      memo_reset(mgstck);
+#else
       break_top = state_top = -1;
+#endif
       return;
     }
     
@@ -75,19 +109,45 @@ gdl_balance_init(void)
   for (i = 0; s_o_c_map[i].tok != -1; ++i)    
     s_of_oc[s_o_c_map[i].tok] = s_o_c_map[i].str;
 
+#if 1
+  break_stack = stck_init(OC_ALLOC);
+  state_stack = stck_init(OC_ALLOC);
+  if (!mgstck)
+    mgstck = memo_init(sizeof(Gstck), 16);
+#else
   break_stack = calloc((break_alloced = OC_ALLOC), sizeof(int));
   state_stack = calloc((state_alloced = OC_ALLOC), sizeof(int));
+#endif
 }
 
 void
 gdl_balance_term(void)
 {
+#if 1
+  stck_term(break_stack);
+  stck_term(state_stack);
+  memo_term(mgstck);
+  mgstck = NULL;
+#else
   free(break_stack);
   free(state_stack);
+#endif
   break_stack = state_stack = NULL;
+#if 0
   break_top = state_top = -1;
+#endif
 }
 
+static Gstck*
+gstck_new(int i, Node *np)
+{
+  Gstck *gp = memo_new(mgstck);
+  gp->i = i;
+  gp->np = np;
+  return gp;
+}
+
+#if 0
 static void
 gdl_break_extend(void)
 {
@@ -123,40 +183,55 @@ gdl_break_push(int tok)
     gdl_break_extend();
   break_stack[break_top] = tok;
 }
+#endif
+
+void
+gdl_break_node(Node *np)
+{
+  intptr_t p = gdl_break_peek(break_stack);
+  if (p > 0)
+    gstck_np(p) = np;
+  gdl_break_pending = 0;
+}
 
 /* return 0 on OK; 1 on error */
-int
-gdl_balance_break(Mloc mlp, int tok)
+intptr_t
+gdl_balance_break(Mloc mlp, int tok, Node *np)
 {
-  int ret = 0;
+  intptr_t ret = 0;
   /* if it's a closer, check the stack for a match */
   if (o_of_c[tok])
     {
+#if 1
+      intptr_t p = gdl_break_peek();
+#else
       int p = gdl_break_peek();
+#endif
       if (-1 == p)
 	{
 	  /* nothing on the stack, superfluous closer */
 	  mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);
-	  ret = 1;
+	  ret = -1;
 	}
-      else if (p != o_of_c[tok])
+      else if (gstck_i(p) != o_of_c[tok])
 	{
 	  /* mismatched opener/closer */
 	  mesg_verr(&mlp, "mismatched brackets: found closer '%s' but expected '%s'",
 		    s_of_oc[tok], s_of_oc[c_of_o[p]]);
-	  ret = 1;
+	  ret = -1;
 	}
       else
-	(void)gdl_break_pop();
+	ret = gdl_break_pop();
     }
   else
     {
       /* for openers push the new opener on the stack */
-      gdl_break_push(tok);
+      gdl_break_push((intptr_t)gstck_new(tok, NULL));
+      gdl_break_pending = 1;
     }
   return ret;
 }
-
+#if 0
 static void
 gdl_state_extend(void)
 {
@@ -192,16 +267,21 @@ gdl_state_push(int tok)
     gdl_state_extend();
   state_stack[state_top] = tok;
 }
+#endif
 
 /* return 0 on OK; 1 on error */
 int
-gdl_balance_state(Mloc mlp, int tok)
+gdl_balance_state(Mloc mlp, int tok, Node *np)
 {
   int ret = 0;
   /* if it's a closer, check the stack for a match */
   if (o_of_c[tok])
     {
+#if 1
+      intptr_t p = gdl_state_peek();
+#else
       int p = gdl_state_peek();
+#endif
       if (-1 == p)
 	{
 	  /* nothing on the stack, superfluous closer */
@@ -221,7 +301,7 @@ gdl_balance_state(Mloc mlp, int tok)
   else
     {
       /* for openers push the new opener on the stack */
-      gdl_state_push(tok);
+      gdl_state_push((intptr_t)gstck_new(tok, np));
     }
   return ret;
 }
@@ -234,5 +314,11 @@ gdl_balance_flush(Mloc mlp)
     mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[tok], tok);
   while ((tok = gdl_state_pop()) != -1)
     mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[tok], tok);
+#if 1
+  stck_reset(break_stack);
+  stck_reset(state_stack);
+  memo_reset(mgstck);
+#else
   break_top = state_top = -1;
+#endif
 }

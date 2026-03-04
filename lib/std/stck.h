@@ -3,19 +3,19 @@
 
 #include <stdint.h>
 
-struct stck
+typedef struct stck
 {
-  uintptr_t *stack;
+  intptr_t *stack;
   int alloced;
   int nalloc;
   int top;
-};
+} Stck;
 
-typedef struct stck Stck;
-
-extern uintptr_t stck_pop(Stck *s);
-extern void stck_push(Stck *s, uintptr_t tok);
+extern intptr_t stck_peek(Stck *s);
+extern intptr_t stck_pop(Stck *s);
+extern void stck_push(Stck *s, intptr_t tok);
 extern Stck *stck_init(int nalloc);
+extern void stck_reset(Stck *s);
 extern void stck_term(Stck *s);
 extern int stck_len(Stck *s);
 

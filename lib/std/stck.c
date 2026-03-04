@@ -7,7 +7,7 @@ stck_extend(Stck *s)
 {
   int t;
   s->alloced *= 2;
-  s->stack = realloc(s->stack, s->alloced * sizeof(uintptr_t));
+  s->stack = realloc(s->stack, s->alloced * sizeof(intptr_t));
   for (t = s->top; t < s->alloced; ++t)
     s->stack[t] = 0;
 }
@@ -18,7 +18,16 @@ stck_len(Stck *s)
   return s->top;
 }
 
-uintptr_t
+intptr_t
+stck_peek(Stck *s)
+{
+  if (s->top >= 0)
+    return s->stack[s->top];
+  else
+    return -1;
+}
+
+intptr_t
 stck_pop(Stck *s)
 {
   if (s->top >= 0)
@@ -28,7 +37,7 @@ stck_pop(Stck *s)
 }
 
 void
-stck_push(Stck *s, uintptr_t tok)
+stck_push(Stck *s, intptr_t tok)
 {
   if (++s->top == s->alloced)
     stck_extend(s);
@@ -40,9 +49,15 @@ stck_init(int nalloc)
 {
   Stck *s = calloc(1, sizeof(Stck));
   s->alloced = s->nalloc = nalloc;
-  s->stack = calloc(s->nalloc, sizeof(uintptr_t));
+  s->stack = calloc(s->nalloc, sizeof(intptr_t));
   s->top = -1;
   return s;
+}
+
+void
+stck_reset(Stck *s)
+{
+  s->top = -1;
 }
 
 void

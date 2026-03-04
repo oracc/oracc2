@@ -209,6 +209,10 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
+  if (gdl_break_pending)
+    gdl_break_node(np);
+  if (gdl_state_pending)
+    gdl_state_node(np);
   return np;
 }
 
@@ -583,7 +587,7 @@ gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, co
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", tok, data);
-  (void)gdl_balance_break(mlp, tok, data);
+  (void)gdl_balance_break(mlp, tok, tree_curr(ytp));
   ret = gdl_meta_node(ytp, "g:z", data);
   ps_on(gs_o);
   rs_on(gs_run);
@@ -595,7 +599,7 @@ gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
 {
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", tok, data);
-  (void)gdl_balance_break(mlp, tok, data);
+  (void)gdl_balance_break(mlp, tok, NULL);
   bit_set(*lst,gs_c);
   rs_no(gs_run);
   /*gdl_update_state(lgp, gs_c);*/
@@ -620,8 +624,8 @@ gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, co
 	}
       data = "{{";
     }
-  (void)gdl_balance_state(mlp, tok, data);
-  gdl_push(ytp, "g:glo");
+  (void)gdl_balance_state(mlp, tok, NULL);
+  Node *np = gdl_push(ytp, "g:glo");
   ps_on(gs_o);
   rs_on(gs_run);
   ret = gdl_meta_node(ytp, "g:z", data);
@@ -636,7 +640,7 @@ gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   if (gdltrace)
     fprintf(stderr, "gt: GLOSS/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
-  if (!gdl_balance_state(mlp, tok, data))
+  if (!gdl_balance_state(mlp, tok, NULL))
     gdl_pop(ytp, data);
   bit_set(*lst,gs_c);
   rs_no(gs_run);
@@ -649,7 +653,7 @@ gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, co
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", tok, data);
-  (void)gdl_balance_state(mlp, tok, data);
+  (void)gdl_balance_state(mlp, tok, tree_curr(ytp));
   ret = gdl_meta_node(ytp, "g:z", data);
   ps_on(gs_o);
   rs_on(gs_run);
@@ -663,7 +667,7 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
-  (void)gdl_balance_state(mlp, tok, data);
+  (void)gdl_balance_state(mlp, tok, NULL);
   bit_set(*lst,gs_c);
   rs_no(gs_run);
   /*gdl_update_state(lgp, gs_c);*/
