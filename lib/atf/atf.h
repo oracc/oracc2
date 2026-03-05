@@ -12,7 +12,7 @@ typedef enum prot { PROT_LZR_SPARSE ,  PROT_LZR_STOP , PROT_VERSION , PROT_ATF ,
 
 typedef enum atflt { LT_ANDLINE , LT_DOC , LT_LANG , LT_DOLLAR , LT_PROTOCOL, LT_XLINK ,
 		     LT_KEY , LT_BIB , LT_NOTE, LT_COMMENT , LT_BLOCK ,
-		     LINE_MTS , LINE_NTS , LINE_LGS, LINE_GUS ,
+		     LINE_MTS , LINE_NTS , LINE_LGS, LINE_GUS , LINE_BIL , LINE_EXX ,
 		     LINE_LEM , LINE_LINK , LINE_BLANK , LINE_TOP } Atflt;
 
 typedef enum atflt Linet;
@@ -146,7 +146,8 @@ typedef struct group {
 
 typedef struct line {
   Linet t;
-  Node *gdl;
+  Atfl *ap;
+  Node *np;
 } Line;
 
 typedef struct lninfo

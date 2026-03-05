@@ -29,12 +29,51 @@ int last_tlit_h_decay = 0;
 static unsigned const char *lnstr(Mloc *mp, int number,int primes);
 static unsigned char *map_uscore(const unsigned char *vbar);
 
+static void
+register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
+{
+  atf_input(l, lt, lp);
+  if (atfmp->llines)
+    {
+      if (lt == LINE_MTS && list_len(atfmp->llines))
+	{
+	  Group *gp = memo_new(atfmp->mgroups);
+	  gp->parent = abt->curr->user;
+	  gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
+	  list_free(atfmp->llines, NULL);
+	  atfmp->llines = list_create(LIST_SINGLE);
+	  if (gp->nlines > 1)
+	    atf_insert("lg");
+	}
+    }
+  else
+    {
+      if (lt == LINE_MTS)
+	atfmp->llines = list_create(LIST_SINGLE);
+      else
+	{
+	  warning("out of place line\n");
+	  return;
+	}
+    }
+
+  Line *linep = memo_new(atfmp->mlines);
+  linep->t = lt;
+  linep->np = np;
+  linep->ap = list_last(atfp->input);
+      
+  list_add(atfmp->llines, linep);
+}
+
 void
 line_mts(Mloc l, unsigned char *lp)
 {
   set_block_curr(B_LINE);
-  
+
   struct node *lnode = atf_push("l");
+
+  register_line(l, LINE_MTS, lnode, lp);
+
   const char *label;
   unsigned char *tok = lp;
   unsigned char *end = lp+xxstrlen(lp);
@@ -172,6 +211,9 @@ void
 line_bil(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
+
+  register_line(l, LINE_BIL, lnode, lp);
+
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
 
@@ -199,6 +241,9 @@ void
 line_gus(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
+
+  register_line(l, LINE_GUS, lnode, lp);
+  
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   
@@ -222,6 +267,9 @@ void
 line_nts(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
+
+  register_line(l, LINE_NTS, lnode, lp);
+  
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   
@@ -247,6 +295,9 @@ line_lgs(Mloc l, unsigned char *lp)
   extern int suppress_lem;
   suppress_lem = 1;
   struct node *lnode = atf_push("l");
+
+  register_line(l, LINE_LGS, lnode, lp);
+  
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   atf_xprop(lnode,"type","lgs");
@@ -286,6 +337,9 @@ void
 line_var(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("v");
+
+  register_line(l, LINE_EXX, lnode, lp);
+  
   unsigned char *s = lp, *entry = lp;
   unsigned char *end = lp+xxstrlen(lp);
   unsigned char *n, *n_vbar;

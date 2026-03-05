@@ -24,6 +24,13 @@ atf_add(const char *s)
 }
 
 Node *
+atf_insert(const char *s)
+{
+  Node *insp = tree_node(abt, NS_XTF, s, abt->curr->depth+1, NULL);
+  return node_insert(abt->curr, insp);
+}
+
+Node *
 atf_push(const char *s)
 {
   if (bld_trace)
