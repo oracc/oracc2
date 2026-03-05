@@ -16,15 +16,6 @@ int gdl_break_pending = 0, gdl_state_pending = 0;
 #define gdl_state_pop() stck_pop(state_stack)
 #define gdl_state_push(x) stck_push(state_stack,x)
 
-#define gstck_i(x) ((Gstck*)(x))->i
-#define gstck_np(x) ((Gstck*)(x))->np
-
-typedef struct gdlstack
-{
-  int i;
-  Node *np;
-} Gstck;
-
 static Memo *mgstck;
 
 static int o_c_map[] = 
@@ -226,8 +217,8 @@ gdl_balance_break(Mloc mlp, int tok)
       else if (gstck_i(p) != o_of_c[tok])
 	{
 	  /* mismatched opener/closer */
-	  mesg_verr(&mlp, "mismatched brackets: found closer '%s' but expected '%s'",
-		    s_of_oc[tok], s_of_oc[c_of_o[p]]);
+	  mesg_verr(&mlp, "mismatched brackets: found '%s' but expected '%s' to close '%s'",
+		    s_of_oc[tok], s_of_oc[c_of_o[gstck_i(p)]], s_of_oc[gstck_i(p)]);
 	  ret = -1;
 	}
       else
@@ -279,11 +270,11 @@ gdl_state_push(int tok)
 }
 #endif
 
-/* return 0 on OK; 1 on error */
+/* return 0 on OK; -1 on error; Gstck* as intptr_t on success */
 intptr_t
 gdl_balance_state(Mloc mlp, int tok)
 {
-  int ret = 0;
+  intptr_t ret = 0;
   /* if it's a closer, check the stack for a match */
   if (o_of_c[tok])
     {
@@ -296,17 +287,17 @@ gdl_balance_state(Mloc mlp, int tok)
 	{
 	  /* nothing on the stack, superfluous closer */
 	  mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);
-	  ret = 1;
+	  ret = -1;
 	}
-      else if (p != o_of_c[tok])
+      else if (gstck_i(p) != o_of_c[tok])
 	{
 	  /* mismatched opener/closer */
 	  mesg_verr(&mlp, "mismatched brackets: found closer '%s' but expected '%s'",
-		    s_of_oc[tok], s_of_oc[c_of_o[p]]);
-	  ret = 1;
+		    s_of_oc[tok], s_of_oc[c_of_o[gstck_i(p)]]);
+	  ret = -1;
 	}
       else
-	(void)gdl_state_pop();
+	ret = gdl_state_pop();
     }
   else
     {
@@ -320,11 +311,11 @@ gdl_balance_state(Mloc mlp, int tok)
 void
 gdl_balance_flush(Mloc mlp)
 {
-  int tok;
+  intptr_t tok;
   while ((tok = gdl_break_pop()) != -1)
-    mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[tok], tok);
+    mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
   while ((tok = gdl_state_pop()) != -1)
-    mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[tok], tok);
+    mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
 #if 1
   stck_reset(break_stack);
   stck_reset(state_stack);

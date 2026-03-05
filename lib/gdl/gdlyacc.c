@@ -37,9 +37,9 @@ static char *gid_insertp;
    	applied to nodes in addition to pending-state
  */
 gdlstate_t pst, *lst, rst;
+Node *lgp = NULL;   /* last grapheme node pointer */
 #else
 gdlstate_t gst; /* global gdl state */
-Node *lgp = NULL;   /* last grapheme node pointer */
 #endif
 
 int gdl_word_mode;
@@ -203,10 +203,11 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   Node *np = NULL;
   np = tree_add(ytp, NS_GDL, name, ytp->curr->depth, NULL);
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
-  /*lgp = np;*/
+  lgp = np;
   lst = prop_state(np, pst|rst);
   sprintf(gid_insertp, ".%d", grapheme_id++);
-  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+	      (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
   if (gdl_break_pending)
@@ -599,7 +600,14 @@ gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
 {
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", tok, data);
-  (void)gdl_balance_break(mlp, tok);
+  intptr_t st = gdl_balance_break(mlp, tok);
+  if (st > 0)
+    {
+      Node *np = gstck_np(st);
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
+      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+    }
   bit_set(*lst,gs_c);
   rs_no(gs_run);
   /*gdl_update_state(lgp, gs_c);*/
@@ -625,7 +633,7 @@ gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, co
       data = "{{";
     }
   (void)gdl_balance_state(mlp, tok);
-  Node *np = gdl_push(ytp, "g:glo");
+  (void)gdl_push(ytp, "g:glo");
   ps_on(gs_o);
   rs_on(gs_run);
   ret = gdl_meta_node(ytp, "g:z", data);
@@ -667,7 +675,14 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
-  (void)gdl_balance_state(mlp, tok);
+  intptr_t st = gdl_balance_state(mlp, tok);
+  if (st > 0)
+    {
+      Node *np = gstck_np(st);
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusStart", "1");
+      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
+    }
   bit_set(*lst,gs_c);
   rs_no(gs_run);
   /*gdl_update_state(lgp, gs_c);*/

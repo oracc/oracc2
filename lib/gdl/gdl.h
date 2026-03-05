@@ -40,6 +40,15 @@ enum gdlpropvals { GP_ATTRIBUTE, GP_IMPLICIT, GP_TRACKING,
 		   GP_SEXIFY, GP_STREAM , GP_INFO
 };
 
+#define gstck_i(x) ((Gstck*)(x))->i
+#define gstck_np(x) ((Gstck*)(x))->np
+
+typedef struct gdlstack
+{
+  int i;
+  Node *np;
+} Gstck;
+
 #if 0
 /* This may not be necessary given the emerging GDL/GVL architecture; see gvl_g in gvl.h */
 struct gdl_g {
