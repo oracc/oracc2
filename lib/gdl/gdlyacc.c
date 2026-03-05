@@ -606,7 +606,7 @@ gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
       Node *np = gstck_np(st);
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
       Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+      gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
     }
   bit_set(*lst,gs_c);
   rs_no(gs_run);
@@ -681,7 +681,7 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
       Node *np = gstck_np(st);
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusStart", "1");
       Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
+      gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
     }
   bit_set(*lst,gs_c);
   rs_no(gs_run);
