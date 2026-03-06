@@ -262,6 +262,8 @@ extern void line_gus(Mloc l, unsigned char *lp);
 extern void line_nts(Mloc l, unsigned char *lp);
 extern void line_lgs(Mloc l, unsigned char *lp);
 extern void line_var(Mloc l, unsigned char *lp);
+extern void tr_inter(Mloc l, unsigned char *lp);
+
 extern char *compute_fragid(const char *qualid, const char *hlid);
 
 extern void tlit_reinit_inline(void);

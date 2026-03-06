@@ -32,6 +32,7 @@ ATFLTYPE atflloc;
 			TAB EOL
 			VAR VERSION
 			ATF_LANG
+			TR_TYPE TR_LANG TR_PROJ TR_LABEL TR_TEXT TR_PAR TR_HDR TR_DOLLAR
 
 %token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
 			HASH_LEMMATIZER LZR_SPARSE LZR_STOP HASH_BIB HASH_PROBIB
@@ -40,7 +41,7 @@ ATFLTYPE atflloc;
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
 			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
 			COMMENT
-			MTS NTS LGS GUS LEM BIL EXX DOLLAR
+			MTS NTS LGS GUS LEM BIL EXX DOLLAR TR_INTER
 			Y_BAD
 			Y_BODY Y_BOTTOM Y_BULLA Y_CATCHLINE Y_CFRAGMENT Y_COLOPHON Y_COLUMN
 			Y_COMPOSITE Y_DATE Y_DIV Y_DOCKET Y_EDGE Y_END Y_ENDVARIANTS
@@ -54,7 +55,7 @@ ATFLTYPE atflloc;
 
 %nterm <i> 		doc sparse stype atfuse link_type
 			lines line l_link note bib
-			heading heading_tok
+			heading heading_tok tr.inter
 			
 %nterm <b>		object object_tok
 			surface surface_tok
@@ -62,20 +63,23 @@ ATFLTYPE atflloc;
 			division division_tok
 			milestone milestone_tok
 			
-%start atf
+%start atfs
 
 %%
 
-atf: 		amp
+atfs:		atf
+	|	atfs atf
+	;
+
+atf:		transliteration
+	|	translation
+	;
+
+transliteration:
+		amp
 	|	amp blocks
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); }
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks /* xcl */
-		;
-
-longtext:
-		TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
-        |      	TAB		{ $$ = longtext(atfmp->pool, $1, NULL); }
-        | 	longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
 		;
 
 amp: 		pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
@@ -257,10 +261,11 @@ line:
 	| 	LEM longtext		{ $$=$1; } /* MTS|NTS|BIL prereq */
 	|	l_link longtext		{ $$=$1; } /* MTS prereq */
 	|	COMMENT longtext	{ $$=$1; }
-	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, (char*)longtext(NULL,NULL,NULL)); }
+	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, (char*)longtext_get()); }
 	| 	bib
 	| 	note
 	|	heading
+	|	tr.inter
 	;
 
 l_link:		LNK_TOTO
@@ -325,6 +330,62 @@ heading_tok:
 		Y_H2X
 		Y_H3X
 	;
+
+translation:
+		tr.header tr.chunks
+		;
+
+tr.header:	Y_TRANSLATION TR_TYPE TR_LANG TR_PROJ
+		;
+
+tr.chunks:
+		tr.chunk
+	|	tr.chunks tr.chunk
+		;
+
+tr.chunk:
+		tr.label tr.trans
+	|	tr.metas tr.label tr.trans
+		;
+
+tr.metas:
+		tr.meta
+	|	tr.metas tr.meta
+		;
+
+tr.meta:
+		tr.hdr
+	|	tr.dollar
+		;
+
+tr.hdr: 	TR_HDR
+		;
+
+tr.dollar:	TR_DOLLAR
+		;
+
+tr.label:
+		TR_LABEL
+		;
+
+tr.trans:
+		tr.tran
+	|	tr.trans tr.tran
+		;
+
+tr.tran:
+		TR_TEXT
+	|	TR_PAR
+		;
+
+tr.inter:
+		TR_INTER { $$=$1; tr_inter(@1, (ucp)longtext_get()); }
+
+longtext:
+		TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
+        |      	TAB		{ $$ = longtext(atfmp->pool, $1, NULL); }
+        | 	longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
+		;
 
 %%
 

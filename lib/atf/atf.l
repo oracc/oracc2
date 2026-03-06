@@ -47,6 +47,7 @@ LK_PLUS "++"
 LK_VBAR "||"
 PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
+LANG	"[a-z]{3}(-[a-z-]+)?"
 	
 %x s_AMPl
 %x s_AMPr
@@ -57,6 +58,8 @@ QID	{PROJECT}:{PQX}
 %x s_LZR
 %s s_T
 %x s_WORD
+%x s_TRH
+%x s_TRA
 
 %%
 
@@ -72,7 +75,8 @@ QID	{PROJECT}:{PQX}
 <s_T>^[\t ]+.+/\n      		{ BEGIN 0; atfnorm; return TAB; }
 <s_T><<EOF>>			{ yyterminate(); }
 
-<s_WORD>[^ \t\n]+	     	{ BEGIN s_next; s_next=0; atfsave; return WORD; }
+<s_WORD>[^ \t\n]+	     	{ BEGIN s_next;
+				  int ret=(s_next==s_TRA?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
 
 ^"@composite"			{ (void)atf_block(atftext); return COMPOSITE; }
 ^"@score"		       	{ BEGIN s_SCO; (void)atf_block(atftext); return SCORE; }
@@ -129,6 +133,8 @@ QID	{PROJECT}:{PQX}
 
 ^"#lem:"  			{ BEGIN s_T; atfsave; return LEM; }
 
+^#tr(.[a-z-]+)?:		{ BEGIN s_T; longinit; return TR_INTER; }
+
 ^{LK_TOTO}  			{ BEGIN s_T; atfsave; return LNK_TOTO; }
 
 ^{LK_FROM}  			{ BEGIN s_T; atfsave; return LNK_FROM; }
@@ -152,6 +158,16 @@ QID	{PROJECT}:{PQX}
 .				{ mesg_vwarning(curratffile, atflineno,
 						"atf.l: unmatched character %c\n", *atftext); }
 
+<s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
+<s_TRH>{LANG}				{ atfsave; s_next=s_TRA; BEGIN s_WORD; return TR_LANG; }
+<s_TRA>@\([^\)\n]*\)			{ atfsave; return TR_LABEL; }
+<s_TRA>@label[^\n]*/\n			{ atfsave; return TR_LABEL; }
+<s_TRA>.*/\n\&				{ BEGIN 0; atfsave; return TR_PAR; }
+<s_TRA>.*				{ atfsave; return TR_TEXT; }
+<s_TRA>\n[ \t]*\n			{ atflval.text=""; return TR_PAR; }
+<s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
+<s_TRA>^@h				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
+
 %%
 
 static int
@@ -162,6 +178,8 @@ atf_block(const char *atcmd)
   Blocktok *bp = blocktok(atcmd, strlen(atcmd));
   if (bp)
     {
+      if (bp->bison == Y_TRANSLATION)
+	BEGIN s_TRH;
       atflval.b = bp;
       return bp->bison;
     }
