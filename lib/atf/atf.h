@@ -94,6 +94,21 @@ typedef struct bib {
   const char *text; /* although vacuous now, in future this will be a bridge to bx */
 } Bib;
 
+/* In the lib/atf implementation #lem lines are broken into segments
+ * on ';' and saved in a Lem structure which also has a pointer to the
+ * corresponding word node. Sparse lemmatization is handled by not
+ * adding word nodes to the list so #lem line processing doesn't have
+ * to think about sparse lem.
+ *
+ * The word list is transient--it is built from MTS and then rebuilt
+ * from NTS if NTS occurs. It is freed after #lem line has been
+ * processed.
+ */
+typedef struct lem {
+  unsigned char *lem;
+  Node *wrd;
+} Lem;
+
 /* This is used for the following protocols:
  *
  * #lemmatizer: do sparse <FIELDS>
