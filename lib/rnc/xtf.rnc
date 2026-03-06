@@ -1,7 +1,10 @@
 default namespace = "http://oracc.org/ns/xtf/1.0"
 namespace note = "http://oracc.org/ns/note/1.0"
+
 include "gdl-lib.rnc"
 include "xtr-lib.rnc"
+include "xcl-lib.rnc"
+
 start = xtf | doctype
 xtf = element xtf { proto.outer? , doctype? }
 doctype = score | translation | transliteration | composite | atf
@@ -80,7 +83,8 @@ transliteration =
     implicit?,
     haslinks?,
     maxcells?,
-    (proto.start? , (noteblock | object | nonobject | comments | sealing)*)
+    (proto.start? , (noteblock | object | nonobject | comments | sealing)*) ,
+    xcl?
   }
 n.attr = attribute n { text }
 n.attr.lc = attribute n { xsd:string { pattern="[a-z]" }}
@@ -99,7 +103,8 @@ composite =
     maxcells?,
     proto.start?,
     composite-content,
-    (referto, comments?)*
+    (referto, comments?)*,
+    xcl?
   }
 
 composite-attlist &=
@@ -352,7 +357,8 @@ score =
   element score {
     score-attlist, 
     proto.start? , (sigdef | noteblock?)* ,
-    (object | surface | column | milestone | \div | lg | comments | nonl)*
+    (object | surface | column | milestone | \div | lg | comments | nonl)*,
+    xcl?
   }
 score-attlist &=
   attribute xml:id { xsd:ID },
