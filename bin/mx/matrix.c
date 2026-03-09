@@ -119,6 +119,8 @@ main (int argc, char **argv)
   options (argc, argv, "abcdE:efklmo:prstvxX4");
   srcs_init ();
   gdlif_init();
+  atf2utf_init();
+  mesg_init();
   collate_init ((uccp)"unicode");
   scan_input (argc, argv);
   ++global_col0_maxwidth; /* ensure at least one space after widest col0 */

@@ -47,5 +47,5 @@ da94_cmp (const void *a, const void *b)
       if (diff)
 	return diff;
     }
-  return collate_cmp_graphemes ((*(Line**)a)->name, (*(Line**)b)->name);
+  return collate_cmp_graphemes_cc ((*(Line**)a)->name, (*(Line**)b)->name);
 }

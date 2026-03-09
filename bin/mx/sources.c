@@ -202,7 +202,7 @@ srcs_make_presence (void)
 static int
 da94_cmp (const void *a, const void *b)
 {
-  return collate_cmp_graphemes (((Srcs_array*)a)->name, ((Srcs_array*)b)->name);
+  return collate_cmp_graphemes_cc (((Srcs_array*)a)->name, ((Srcs_array*)b)->name);
 }
 
 static void
