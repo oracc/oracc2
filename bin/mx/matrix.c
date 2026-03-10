@@ -124,6 +124,10 @@ main (int argc, char **argv)
   atf2utf_init();
   mesg_init();
   collate_init ((uccp)"unicode");
+
+  if (wants_fn)
+    lines_init();
+      
   scan_input (argc, argv);
 
   if (wants_fn)
@@ -621,7 +625,7 @@ new_source (Block *bp, Uchar *lp)
 	  curr_line->name = (ucp)xstrdup ((ccp)lp);
 	  srcs_add_name (curr_line->name, curr_line);
 	  if (wants_fn)
-	    lines_have(curr_composite->name, curr_line->name);
+	    lines_have((char*)curr_composite->name, (char *)curr_line->name);
 	}
       if (do_aka_primary && curr_line->altsig && *curr_line->altsig)
 	{

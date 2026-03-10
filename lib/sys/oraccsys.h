@@ -87,6 +87,7 @@ extern unsigned char *utf8ify(unsigned int c);
 extern int cmpdigitp(const void *p1, const void *p2);
 extern int cmpstringp(const void *p1, const void *p2);
 extern int cmpu8normp(const void *p1, const void *p2);
+#define cmpgraphp collate_cmp_graphemes_cc
 
 extern uint32_t hex2int(char *hex);
 extern unsigned char *uhex2utf8(unsigned const char *uhex);

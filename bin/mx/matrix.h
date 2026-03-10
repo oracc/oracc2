@@ -130,6 +130,7 @@ struct SOURCE_COLUMN
 typedef struct SOURCE_COLUMN Source_column;
 
 #define EXIT_WARNING 1
+#undef warning
 #define warning(w) fprintf(stderr, "mx: %s\n", (w))
 
 /*struct FileLine { const char *f; long int l; };*/

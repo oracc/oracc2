@@ -29,7 +29,7 @@ void
 iterate (Process_functions *pf, List *base)
 {
   ipf = pf;
-  ipf->output_fn = output_fn;
+  ipf->output_fn = (ucp)output_fn;
   if ('\0' == *output_fn || !strcmp((const char *)output_fn, "-"))
     {
       ipf->output_fp = stdout;
@@ -91,7 +91,7 @@ process_block (void *vp)
 }
 
 static void
-process_composite ()
+process_composite (void)
 {
   iterate_line = iterate_block->composite;
   ipf->before_composite ();
@@ -118,7 +118,7 @@ process_composite_columns (void *vp)
 }
 
 static
-void process_reconstructed ()
+void process_reconstructed (void)
 {
   Line *saved_line = iterate_line;
   iterate_line = iterate_block->reconstructed;
@@ -173,6 +173,7 @@ process_source_columns (void *vp)
     ipf->between_source_columns ();
 }
 
+#if 0
 static Uchar *note_text = NULL;
 static int note_text_len = 0;
 
@@ -191,12 +192,12 @@ aggregate_note (Uchar *txt)
   strcat ((char *)note_text, (const char*)txt);
   strcat ((char *)note_text, "\n");
 }
-
 static void
-clear_aggregate_note ()
+clear_aggregate_note (void)
 {
   *note_text = 0;
 }
+#endif
 
 static void
 process_note (void *vp)
