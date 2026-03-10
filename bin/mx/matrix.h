@@ -155,4 +155,9 @@ extern Line **sort_sources (List *srcs);
 extern void kill_explicit_count (Uchar *s);
 extern int global_col0_maxwidth;
 extern int visible_width (Uchar *s);
+
+extern void lines_init(void);
+extern void lines_mode(const char *wfn);
+extern void lines_have(char *l, char *s);
+
 #endif /*!MATRIX_H_*/

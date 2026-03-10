@@ -2,6 +2,12 @@
 #include <uninorm.h>
 
 int
+cmpdigitp(const void *p1, const void *p2)
+{
+  return atoi(* (char * const *) p1) - atoi(* (char * const *) p2);
+}
+
+int
 cmpstringp(const void *p1, const void *p2)
 {
   return strcmp(* (char * const *) p1, * (char * const *) p2);

@@ -99,6 +99,8 @@ static Composite_column *corresponding_cmp_col (List *cp, int n);
 extern void gdlif_init(void);
 extern void gdlif_term(void);
 
+static const char *wants_fn;
+
 static void
 strip_trailing_white (Uchar *lp)
 {
@@ -116,13 +118,20 @@ int
 main (int argc, char **argv) 
 {
   setlocale(LC_ALL,ORACC_LOCALE);
-  options (argc, argv, "abcdE:efklmo:prstvxX4");
+  options (argc, argv, "abcdE:efklmo:prstvw:xX4");
   srcs_init ();
   gdlif_init();
   atf2utf_init();
   mesg_init();
   collate_init ((uccp)"unicode");
   scan_input (argc, argv);
+
+  if (wants_fn)
+    {
+      lines_mode(wants_fn);
+      exit(0);
+    }
+  
   ++global_col0_maxwidth; /* ensure at least one space after widest col0 */
 
   if (need_vars)
@@ -611,6 +620,8 @@ new_source (Block *bp, Uchar *lp)
 	{
 	  curr_line->name = (ucp)xstrdup ((ccp)lp);
 	  srcs_add_name (curr_line->name, curr_line);
+	  if (wants_fn)
+	    lines_have(curr_composite->name, curr_line->name);
 	}
       if (do_aka_primary && curr_line->altsig && *curr_line->altsig)
 	{
@@ -1523,7 +1534,7 @@ opts (int o, const char *c)
       do_minimal = TRUE;
       break;
     case 'o':
-      output_fn = xstrdup (c);
+      output_fn = c;
       break;
     case 'p':
       do_stdin = TRUE;
@@ -1539,6 +1550,9 @@ opts (int o, const char *c)
       break;
     case 'v':
       do_check = TRUE;
+      break;
+    case 'w':
+      wants_fn = c;
       break;
     case 'x':
       need_vars = do_expand = TRUE;
@@ -1580,7 +1594,7 @@ help (void)
   printf ("  v  verify matrix and exit (default)\n");
   printf ("  x  expand positive variants\n");
   printf ("  X  XML output (mtx namespace/vocabulary)\n");
-  printf ("  4  sf4 composite with variants\n");
+  /*  printf ("  4  sf4 composite with variants\n");*/
 }
 
 const char *prog = "matrix";
