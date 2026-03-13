@@ -26,14 +26,6 @@ ratts_kis_r(Kis_data k)
   return NULL;
 }
 
-Ratts *
-ratts_list2ratts(List *lp)
-{
-  Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
-  list_free(lp, NULL);
-  return r;
-}
-
 static void
 ratts_cbd_list(List *lp, Cbd *c, enum o_mode mode)
 {

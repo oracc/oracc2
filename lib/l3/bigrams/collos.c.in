@@ -34,7 +34,7 @@ collos_init(struct sigset *sp)
 }
 
 void
-collos_term()
+collos_term(void)
 {
   nl_free_context(collos_nlcp);
 }

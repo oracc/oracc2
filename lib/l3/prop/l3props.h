@@ -101,7 +101,13 @@ extern int props_add_prop(struct ilem_form *f, const unsigned char *group,
 			  const unsigned char *name, const unsigned char *value, 
 			  const char *ref, const char *xml_id, const char *pref,
 			  int ngram_id);
+extern void props_dump_jox(struct l3prop *props);
+
+#if 0
 extern void props_dump_props(struct ilem_form *f, FILE *fp);
+extern void props_dump_props_sub(struct l3prop*p, FILE *fp);
+#endif
+
 extern struct l3prop*props_find_prop(struct ilem_form *f, const unsigned char *name, const unsigned char *value);
 extern struct l3prop*props_find_prop_group(struct ilem_form *f, const unsigned char *group);
 
@@ -109,7 +115,6 @@ extern struct l3prop*props_add_prop_sub(struct l3prop*p, const unsigned char *gr
 			  const unsigned char *name, const unsigned char *value, 
 			  const char *ref, const char *xml_id, const char *pref,
 			  int ngram_id);
-extern void props_dump_props_sub(struct l3prop*p, FILE *fp);
 extern struct l3prop*props_find_prop_sub(struct l3prop*p, const unsigned char *name, const unsigned char *value);
 extern struct l3prop*props_find_prop_group_sub(struct l3prop*p, const unsigned char *group);
 

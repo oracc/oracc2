@@ -1,4 +1,7 @@
 #include <oraccsys.h>
+#include <rnvif.h>
+#include <rnvxml.h>
+#include <joxer.h>
 #include "ilem_form.h"
 #include "l3props.h"
 
@@ -115,6 +118,38 @@ props_add_prop(struct ilem_form *f, const unsigned char *group,
   return 0;
 }
 
+#if 1
+void
+props_dump_jox(struct l3prop *props)
+{
+  if (props)
+    {
+      joxer_ea(NULL, "props", NULL);
+      struct l3prop *p;
+      for (p = props; p; p = p->next)
+	{
+	  List *ap = list_create(LIST_SINGLE);
+	  joxer_attr(ap, "name", (ccp)p->name);
+	  if (p->group)
+	    joxer_attr(ap, "group", (ccp)p->group);
+	  if (p->value)
+	    joxer_attr(ap, "value", (ccp)p->value);
+	  joxer_attr_i(ap, "ngram", p->ngram_id);
+	  if (p->ref)
+	    joxer_attr(ap, "ref", p->ref);
+	  if (p->p)
+	    joxer_attr(ap, "p", p->p);
+#if 0
+	  if (p->xml_id)
+	    fprintf(fp," xml:id=\"%s\"",p->xml_id);
+#endif
+	  Ratts *ratts = ratts_list2ratts(ap);
+	  joxer_ea(NULL, "prop", ratts);
+	}
+      joxer_ee(NULL, "props");
+    }
+}
+#else
 void
 props_dump_props(struct ilem_form *f, FILE *fp)
 {
@@ -143,6 +178,35 @@ props_dump_props(struct ilem_form *f, FILE *fp)
       fputs("</props>",fp);
     }
 }
+void
+props_dump_props_sub(struct l3prop *props, FILE *fp)
+{
+  if (props)
+    {
+      struct l3prop *p;
+      fputs("<props>",fp);
+      for (p = props; p; p = p->next)
+	{
+	  fprintf(fp,"<prop name=\"%s\"\n",p->name);
+	  if (p->group)
+	    fprintf(fp," group=\"%s\"",p->group);
+	  if (p->value)
+	    fprintf(fp," value=\"%s\"",p->value);
+	  fprintf(fp," ngram=\"%d\"",p->ngram_id);
+	  if (p->ref)
+	    fprintf(fp," ref=\"%s\"",p->ref);
+	  if (p->p)
+	    fprintf(fp," p=\"%s\"",p->p);
+#if 0
+	  if (p->xml_id)
+	    fprintf(fp," xml:id=\"%s\"",p->xml_id);
+#endif
+	  fputs("/>",fp);
+	}
+      fputs("</props>",fp);
+    }
+}
+#endif
 
 struct l3prop*
 props_find_prop(struct ilem_form *f, const unsigned char *name, const unsigned char *value)
@@ -212,35 +276,6 @@ props_add_prop_sub(struct l3prop *props, const unsigned char *group,
     p->p = pref;
   p->next = props;
   return p;
-}
-
-void
-props_dump_props_sub(struct l3prop *props, FILE *fp)
-{
-  if (props)
-    {
-      struct l3prop *p;
-      fputs("<props>",fp);
-      for (p = props; p; p = p->next)
-	{
-	  fprintf(fp,"<prop name=\"%s\"\n",p->name);
-	  if (p->group)
-	    fprintf(fp," group=\"%s\"",p->group);
-	  if (p->value)
-	    fprintf(fp," value=\"%s\"",p->value);
-	  fprintf(fp," ngram=\"%d\"",p->ngram_id);
-	  if (p->ref)
-	    fprintf(fp," ref=\"%s\"",p->ref);
-	  if (p->p)
-	    fprintf(fp," p=\"%s\"",p->p);
-#if 0
-	  if (p->xml_id)
-	    fprintf(fp," xml:id=\"%s\"",p->xml_id);
-#endif
-	  fputs("/>",fp);
-	}
-      fputs("</props>",fp);
-    }
 }
 
 struct l3prop*

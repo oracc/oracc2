@@ -89,6 +89,14 @@ rnvval_free_atts(struct rnvval_atts *ratts)
   free(ratts);
 }
 
+Ratts *
+rnvval_aa_list(List *lp)
+{
+  Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
+  list_free(lp, NULL);
+  return r;
+}
+
 /* Attributes are passed to rnv validation in an rnvval_atts
    structure.  This routine creates an rnvval_atts structure from a
    lengthed list of char * where even numbered (from 0) are names and

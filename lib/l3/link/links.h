@@ -13,7 +13,7 @@ struct linkbase
   int nsets;
 };
 
-typedef void user_dump_func(FILE*,const void*);
+typedef void user_dump_func(const void*);
 
 struct linkset
 {
@@ -50,7 +50,7 @@ extern struct linkset *new_linkset(struct linkbase *lbp,const char *role,
 extern struct link *new_link(struct linkset *lsp, const char *role, 
 			     const char *title);
 extern void preallocate_links(struct linkset*lsp,int nlinks);
-extern void links_dump(FILE*fp,struct linkbase *lbp);
+extern void links_jox(struct linkbase *lbp);
 extern struct xcl_chunk_spec *links_chunks(struct linkbase *lbp, 
 					   int with_chunkified);
 extern struct xcl_chunk_spec *links_chunks_part(struct linkbase *lbp,
@@ -60,6 +60,8 @@ extern struct xcl_chunk_spec *links_chunks_part(struct linkbase *lbp,
 						int with_chunkified);
 extern void linkbase_free(struct linkbase *lbp);
 
+#if 0
 extern void links_serialize(FILE*fp,struct linkbase *lbp, int with_xml);
+#endif
 
 #endif /*_LINKS_H*/

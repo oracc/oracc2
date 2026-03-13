@@ -1,6 +1,7 @@
 #include <oraccsys.h>
+#include <rnvif.h>
 #include <joxer.h>
-#include <xmlify.h>
+#include <rnvxml.h>
 #include "xcl.h"
 #include "links.h"
 #include "form.h"
@@ -38,33 +39,19 @@ const char *xcl_d_type_str[] =
  * ON Form.
  */
 
-void
-xj_attr(List *lp, const char *name, const char *value)
-{
-  if (value && *value)
-    list_pair(lp,name, value);
-}
-
-void
-xj_attr_i(List *lp, const char *name, int value)
-{
-  if (value)
-    list_pair(lp,name, itoa(value));
-}
-
 static void
 xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 {
-  List *lp = list_create(LIST_SINGLE);
+  List *ap = list_create(LIST_SINGLE);
   if (!fp)
-    xj_attr(lp,"xml:id",lp->xml_id);
-  xj_attr_i(lp,"lnum",fp ? fp->lnum : lp->lnum);
-  xj_attr(lp,"ref",lp->ref);
-  xj_attr(lp,"ftype",lp->subtype);
+    joxer_attr(ap,"xml:id",lp->xml_id);
+  joxer_attr_i(ap,"lnum",fp ? fp->lnum : lp->lnum);
+  joxer_attr(ap,"ref",lp->ref);
+  joxer_attr(ap,"ftype",lp->subtype);
 
   if (lp->cof_head)
     {
-      xj_attr(lp, "cof-head", lp->cof_head->xml_id);
+      joxer_attr(ap, "cof-head", lp->cof_head->xml_id);
       if (fp)
 	fp->f2.sig = NULL;
       else if (lp->f)
@@ -72,37 +59,35 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
     }
   else if (lp->cof_tails)
     {
+      List *cp = list_create(LIST_SINGLE);
       struct xcl_l *tailp;
-      fputs(" cof-tails=\"", f_xcl);
       for (tailp = list_first(lp->cof_tails); tailp; tailp = list_next(lp->cof_tails))
-	{
-	  fputs(tailp->xml_id, f_xcl);
-	  if (tailp != list_last(lp->cof_tails))
-	    fputc(' ', f_xcl);
-	}
-      fputs("\"", f_xcl);
+	list_add(cp, (void*)tailp->xml_id);
+      const char *coftails = (ccp)list_concat(cp);
+      joxer_attr(ap, "cof-tails", coftails);
+      list_free(cp, NULL);
     }
 
   if (fp)
     {
-      xj_attr(lp,"inst",fp->sublem);
+      joxer_attr(ap,"inst",fp->sublem);
       if (BIT_ISSET(fp->f2.flags,FORM_FLAGS_INVALID)
 	  || BIT_ISSET(fp->f2.flags,FORM_FLAGS_PARTIAL)
 	  || BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM))
-	xj_attr(lp, "bad", "yes");
+	joxer_attr(ap, "bad", "yes");
       else
 	{
-	  xj_attr(lp,"sig",((const char*)fp->f2.sig));
-	  xj_attr(lp,"tail-sig",((const char*)fp->f2.tail_sig));
+	  joxer_attr(ap,"sig",((const char*)fp->f2.sig));
+	  joxer_attr(ap,"tail-sig",((const char*)fp->f2.tail_sig));
 	}
     }
   else
     {
-      xj_attr(lp,"inst",lp->inst);
+      joxer_attr(ap,"inst",lp->inst);
       if (lp->f)
 	{
 	  if (BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_INVALID))
-	    xj_attr(lp, "bad", "yes");
+	    joxer_attr(ap, "bad", "yes");
 	  else if (BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NOT_IN_SIGS))
 	    {
 	      extern const char *phase;
@@ -111,7 +96,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 	      phase = "sig";
 	      if (lp->f->f2.sig)
 		{
-		  xj_attr(lp,"newsig",(char *)lp->f->f2.sig);
+		  joxer_attr(ap,"newsig",(char *)lp->f->f2.sig);
 		  if (cbd_lem_sigs)
 		    mesg_vnotice((char*)lp->f->file,lp->f->lnum,"\t%s", lp->f->f2.sig);
 		}
@@ -120,7 +105,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
  #if 0
 		  /* You can't generate newsig for tail sigs; if the tail is new, make the whole
 		     COF new so that harvest creates the right members */
-		  xj_attr(lp,"newsig",(char *)lp->f->f2.tail_sig);
+		  joxer_attr(ap,"newsig",(char *)lp->f->f2.tail_sig);
 		  if (cbd_lem_sigs)
 		    mesg_vnotice((char*)lp->f->file,lp->f->lnum,"\t%s", lp->f->f2.tail_sig);
 #endif
@@ -129,36 +114,35 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 	    }
 	  else if (BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_PARTIAL)
 	      || BIT_ISSET(lp->f->f2.flags,FORM_FLAGS_NO_FORM))
-	    xj_attr(lp, "bad", "yes");
+	    joxer_attr(ap, "bad", "yes");
 	  else
 	    {
 	      if (BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NEW_BY_PROJ)
 		       || BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NEW_BY_LANG))
 		{
-		  xj_attr(lp,"exosig",(char *)lp->f->f2.sig);
-		  xj_attr(lp,"exoprj",(char *)lp->f->f2.exo_project);
-		  xj_attr(lp,"exolng",(char *)lp->f->f2.exo_lang);
+		  joxer_attr(ap,"exosig",(char *)lp->f->f2.sig);
+		  joxer_attr(ap,"exoprj",(char *)lp->f->f2.exo_project);
+		  joxer_attr(ap,"exolng",(char *)lp->f->f2.exo_lang);
 		}
 	      else
-		xj_attr(lp,"sig",(char *)lp->f->f2.sig);
-	      xj_attr(lp,"tail-sig",((const char*)lp->f->f2.tail_sig));
+		joxer_attr(ap,"sig",(char *)lp->f->f2.sig);
+	      joxer_attr(ap,"tail-sig",((const char*)lp->f->f2.tail_sig));
 	    }
 	}
     }
 
-  Ratts *ratts = ratts_list2ratts(lp);
-  joxer_ea(ilem_loc(fp), "xcl:l", ratts);
+  Ratts *ratts = ratts_list2ratts(ap);
+  joxer_eaa(ilem_mloc(fp), "xcl:l", ratts);
 
   if (lp->f)
     {
       form_serialize_jox(&lp->f->f2);
-      if (lp->f->props)
-	props_dump_jox(lp->f);
+      props_dump_jox(lp->f->props);
     }
 
-  ilem_para_dump(lp);
+  ilem_para_jox(lp);
 
-  joxer_ee(ilem_form(fp), "xcl:l");
+  joxer_ee(ilem_mloc(fp), "xcl:l");
 }
 
 static void
@@ -176,11 +160,11 @@ xj_serialize_one_l(struct xcl_l*lp)
 	  fp = fp->ambig;
 	}
       while (fp);
-      joxer_ee(p->np->mloc, "ll");
+      joxer_ee(lp->np->mloc, "ll");
     }
   else
     {
-      xj_serialize_one_l_sub(f_xcl, lp, NULL);
+      xj_serialize_one_l_sub(lp, NULL);
     }
 }
 
@@ -237,7 +221,7 @@ xj_serialize_m(const unsigned char *key,void*val)
 {
   if ('#' != *key)
     {
-      const char *r[3] = { "k", key, NULL };
+      const char *r[3] = { "k", (ccp)key, NULL };
       joxer_et(NULL, "m", rnvval_aa_ccpp(r), val);
     }
 }
@@ -262,7 +246,7 @@ xj_serialize_one_node(void *vp)
 	    unwrapping = 1;
 	  else
 	    {
-	      int skipped_any_phrases = 0;
+	      /*int skipped_any_phrases = 0;*/
 	      int set_cp_subtype = 0;
 	      while (cp->nchildren && singleton_phrase_children(cp, &phrase_index))
 		{
@@ -310,7 +294,7 @@ xj_serialize_one_node(void *vp)
 		      free(free_me);
 		      tmp.c->nchildren = tmp.c->children_alloced = 0;
 		      tmp.c->children = NULL;
-		      ++skipped_any_phrases;
+		      /*++skipped_any_phrases;*/
 		    }
 		  else
 		    break;
@@ -329,27 +313,27 @@ xj_serialize_one_node(void *vp)
 	{
 	skipping_phrase:
 	  {
-	    List *lp = list_create(LIST_SINGLE);
-	    xj_attr(lp,"type",xcl_c_type_str[cp->type]);
+	    List *ap = list_create(LIST_SINGLE);
+	    joxer_attr(ap,"type",xcl_c_type_str[cp->type]);
 	    if (cp->type == xcl_c_sentence)
-	      xj_attr(lp,"implicit","yes");
+	      joxer_attr(ap,"implicit","yes");
 	    if (cp->subtype && *cp->subtype)
 	      {
 		if (cp->type == xcl_c_sentence
 		    || cp->type == xcl_c_clause
 		    || cp->type == xcl_c_phrase)
-		  xj_attr(lp,"tag",cp->subtype);
+		  joxer_attr(ap,"tag",cp->subtype);
 		else
-		  xj_attr(lp,"subtype",cp->subtype);
+		  joxer_attr(ap,"subtype",cp->subtype);
 	      }
 	    if (cp->id)
-	      xj_attr(lp,"xml:id",cp->id);
-	    xj_attr(lp,"label",cp->label);
-	    xj_attr(lp,"ref",cp->ref);
-	    xj_attr_i(lp,"level",cp->level);
-	    list_pair(lp,"b",cp->bracketing_level);
+	      joxer_attr(ap,"xml:id",cp->id);
+	    joxer_attr(ap,"label",cp->label);
+	    joxer_attr(ap,"ref",cp->ref);
+	    joxer_attr_i(ap,"level",cp->level);
+	    joxer_attr_i(ap,"b",cp->bracketing_level);
 
-	    Ratts *ratts = ratts_list2ratts(lp);
+	    Ratts *ratts = ratts_list2ratts(ap);
 	    joxer_ea(NULL,"xcl:c", ratts);
 	    if (cp->meta && !mds_printed++)
 	      {
@@ -382,13 +366,13 @@ xj_serialize_one_node(void *vp)
       break;
     case xcl_node_d:
       {
-	List *lp = list_create(LIST_SINGLE);
-	list_pair(lp, "type", xcl_d_type_str[dp->type]);
+	List *ap = list_create(LIST_SINGLE);
+	list_pair(ap, "type", xcl_d_type_str[dp->type]);
 	if (dp->ref)
-	  list_pair(lp,"r",  dp->ref);
+	  list_pair(ap,"r",  dp->ref);
 	if (dp->subtype)
-	  list_pair(lp,"s",  dp->subtype);
-	Ratts *ratts = ratts_list2ratts(lp);	
+	  list_pair(ap,"s",  dp->subtype);
+	Ratts *ratts = ratts_list2ratts(ap);	
 	joxer_ec(NULL, "xcl:d", ratts);
       }
       break;
@@ -396,11 +380,11 @@ xj_serialize_one_node(void *vp)
 #if 0
       if (lp->f && lp->f->acount)
 	{
-	  list_pair(lp,"<", lp->xml_id, lp->ref);
+	  list_pair(ap,"<", lp->xml_id, lp->ref);
 	  need_ll = 1;
 	}
 #endif
-      xj_serialize_one_l(f_xcl,lp);
+      xj_serialize_one_l(lp);
 #if 0
       while (need_ll)
 	{
@@ -420,7 +404,7 @@ static void
 xj_serialize_one_psu(const unsigned char*psu)
 {
   const char *r[3] = { "lang" , psu_list_lang, NULL };
-  joxer_et(NULL, "psu", rnvval_aa_ccpp(r), psu);
+  joxer_et(NULL, "psu", rnvval_aa_ccpp(r), (ccp)psu);
 }
 
 static void
@@ -431,16 +415,15 @@ xj_serialize_psu_list(char *key,List *lp)
 }
 
 static void
-xj_serialize_psus(FILE *f_xcl,Hash*psus)
+xj_serialize_psus(Hash*psus)
 {
-  static_f_xcl = f_xcl;
   joxer_ea(NULL, "psus", NULL);
   hash_exec2(psus, (hash_exec2_func*)xj_serialize_psu_list);
   joxer_ee(NULL, "psus");
 }
 
 void
-xcl_jox(struct xcl_context *xc, FILE *f_xcl, int with_xml_decl)
+xcl_jox(struct xcl_context *xc, int with_xml_decl)
 {
   if (!xc || !xc->root)
     return;
@@ -452,27 +435,27 @@ xcl_jox(struct xcl_context *xc, FILE *f_xcl, int with_xml_decl)
     fprintf(f_xcl, "%s", XML_DECL);
 #endif
 
-  List *lp = list_create(LIST_SINGLE);
+  List *ap = list_create(LIST_SINGLE);
   if (xc->project)
-    list_pair(lp, "p", xc->project);
+    list_pair(ap, "p", xc->project);
   if (xc->textid)
-    list_pair(lp, "t", xc->textid);
+    list_pair(ap, "t", xc->textid);
   if (xc->file)
-    list_pair(lp, "f", xc->file);
+    list_pair(ap, "f", xc->file);
   if (xc->langs)
-    list_pair(lp, "l", xc->langs);
+    list_pair(ap, "l", xc->langs);
 
-  Ratts *ratts = ratts_list2ratts(lp);
+  Ratts *ratts = ratts_list2ratts(ap);
 
   joxer_ea(NULL, "xcl", ratts);
 
   if (xc->psus->key_count > 0)
-    xj_serialize_psus(f_xcl,xc->psus);
+    xj_serialize_psus(xc->psus);
   if (xcl_debug)
     xcl_debug_tree(f_log, xc->root);
-  xj_serialize_one_node(f_xcl,xc->root);
+  xj_serialize_one_node(xc->root);
   if (xc->linkbase)
-    xj_links_dump(f_xcl, xc->linkbase);
+    links_jox(xc->linkbase);
 
   joxer_ee(NULL, "xcl");
 }

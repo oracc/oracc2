@@ -1,4 +1,7 @@
 #include <oraccsys.h>
+#include <rnvif.h>
+#include <joxer.h>
+#include <rnvxml.h>
 #include "xcl.h"
 #include "ilem_para.h"
 #include "ilem_props.h"
@@ -469,6 +472,49 @@ ilem_para_boundaries(struct xcl_l*lp, struct xcl_context*xc)
     }
 }
 
+#if 1
+static void
+ilem_para_jox_one(struct ilem_para *p,const char *pos,struct xcl_l *lp)
+{
+  struct ilem_para *pp;
+  const char *r[3] = { "pos" , pos, NULL };
+  joxer_ea(lp->np->mloc, "xcl:para", rnvval_aa_ccpp(r));
+  for (pp = p; pp; pp = pp->next)
+    {
+      char *id = NULL;
+      if (pp->longval && *pp->longval == '@')
+	{
+	  id = hash_find(lp->xc->lpt_anchors,pp->longval+1);
+	  if (!id)
+	    vwarning2(lp->np->mloc->file, lp->np->mloc->line,
+		      "duplicate anchor ID %s",pp->longval+1);
+	}
+      List *ap = list_create(LIST_SINGLE);
+      joxer_attr(ap, "class", LPC_names[pp->class]);
+      joxer_attr(ap, "type", LPT_names[pp->type]);
+      joxer_attr(ap, "text", (ccp)pp->text);
+      joxer_attr(ap, "val", pp->longval ? (ccp)pp->longval : "");
+      joxer_attr_i(ap, "bracketing_level", pp->level);
+      if (id)
+	joxer_attr(ap, "ref", id);
+
+      Ratts *ratts = ratts_list2ratts(ap);
+      joxer_ec(lp->np->mloc, "xcl:p", ratts);
+    }
+  joxer_ee(lp->np->mloc, "xcl:para");
+}
+void
+ilem_para_dump(struct xcl_l *lp)
+{
+  if (lp)
+    {
+      if (lp->ante_para)
+	ilem_para_jox_one(lp->ante_para,"ante",lp);
+      if (lp->post_para)
+	ilem_para_jox_one(lp->post_para,"post",lp);
+    }
+}
+#else
 static void
 ilem_para_dump_one(FILE*fp,struct ilem_para *p,const char *pos,struct xcl_l *lp)
 {
@@ -496,7 +542,6 @@ ilem_para_dump_one(FILE*fp,struct ilem_para *p,const char *pos,struct xcl_l *lp)
     }
   fputs("</para>",fp);
 }
-
 void
 ilem_para_dump(FILE *fp, struct xcl_l *lp)
 {
@@ -508,7 +553,10 @@ ilem_para_dump(FILE *fp, struct xcl_l *lp)
 	ilem_para_dump_one(fp,lp->post_para,"post",lp);
     }
 }
+#endif
 
+/* These are used when serializing relemmatized ATF so they do not need joxing
+ */
 static void
 ilem_para_dump_text(FILE *fp, struct ilem_para *p)
 {

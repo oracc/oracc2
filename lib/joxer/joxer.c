@@ -40,6 +40,20 @@ extern int (*er_vprintf)(char *format,...);
 #endif
 
 void
+joxer_attr(List *ap, const char *name, const char *value)
+{
+  if (value && *value)
+    list_pair(ap,name, value);
+}
+
+void
+joxer_attr_i(List *ap, const char *name, int value)
+{
+  if (value)
+    list_pair(ap,name, itoa(value));
+}
+
+void
 joxer_set_inl(int i)
 {
   joxer_inl = i;

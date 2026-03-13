@@ -50,4 +50,7 @@ extern void jox_xml_inl(Mloc *mp, char *ch);
 
 extern void joxer_set_inl(int i);
 
+extern void joxer_attr(List *ap, const char *name, const char *value);
+extern void joxer_attr_i(List *ap, const char *name, int value);
+
 #endif/*JOXER_*/

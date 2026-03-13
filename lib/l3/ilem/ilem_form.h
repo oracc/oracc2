@@ -148,4 +148,6 @@ struct ilem_form
   struct lang_context *lang;
 };
 
+#define ilem_mloc(ilp) (mloc_file_line((ccp)(ilp)->f2.file, (ilp)->f2.lnum))
+
 #endif/*L2_FORM_H*/

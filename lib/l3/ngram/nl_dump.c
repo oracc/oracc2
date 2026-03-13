@@ -12,7 +12,7 @@ dump_cf_tts(struct CF *cfp)
   fprintf(dump_fp,"<cf bad=\"%d\" neg=\"%d\" wild=\"%d\">%s</cf>",
 	  cfp->bad, cfp->neg, cfp->wild,cfp->cf);
   if (cfp->f2)
-    form_serialize_form(dump_fp, cfp->f2);
+    form_serialize_jox(cfp->f2);
   if (cfp->preds)
     for (i = 0; cfp->preds[i]; ++i)
       fprintf(dump_fp,"<pred neg=\"%d\" attr=\"%s\" value=\"%s\"/>",
@@ -36,7 +36,7 @@ dump_nle(struct NLE*nlep)
   if (nlep->meta)
     dump_meta(nlep->meta);
   if (nlep->props)
-    props_dump_props_sub(nlep->props,dump_fp);
+    props_dump_jox(nlep->props);
   if (nlep->ncfs)
     {
       int i;
@@ -47,7 +47,7 @@ dump_nle(struct NLE*nlep)
 	  if (nlep->cfs[i])
 	    dump_cf_tts(nlep->cfs[i]);
 	  if (nlep->cfs[i]->props)
-	    props_dump_props_sub(nlep->cfs[i]->props,dump_fp);
+	    props_dump_jox(nlep->cfs[i]->props);
 
 	  fputs("</ct>",dump_fp);
 	}

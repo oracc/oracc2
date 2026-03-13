@@ -138,8 +138,12 @@ extern int form_extreme_alias(struct sig_context *scp, Form *fp, Form *ref_fp);
 extern void form_inherit(Form *inheritor_form, Form *from_form);
 extern void form_clear(Form*f);
 
+#if 1
+extern void form_serialize_jox(Form *f);
+#else
 extern void form_serialize_form(FILE *f_f2, Form *f);
 extern void form_serialize_form_2(FILE *f_f2, struct ilem_form *f);
+#endif
 
 extern unsigned char *form_cbd(Form *fp, Pool *p, int with_lang);
 
