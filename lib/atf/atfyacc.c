@@ -44,7 +44,10 @@ atf_init(void)
   atfmp->mbibs = memo_init(sizeof(Bib),16);
   atfmp->mblocks = memo_init(sizeof(Block),256);
   atfmp->mkeys = memo_init(sizeof(Key),16);
+  atfmp->milem_forms = memo_init(sizeof(struct ilem_form),1024);
+  atfmp->mlines = memo_init(sizeof(Line),256);
   atfmp->mprotocols = memo_init(sizeof(Protocol),256);
+  atfmp->mxis = memo_init(sizeof(struct xcl_ilem),1024);
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
   atfmp->pool = pool_init();
   atfp = atfmp->atf = calloc(1, sizeof(ATF));

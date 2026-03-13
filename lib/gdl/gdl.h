@@ -159,4 +159,6 @@ extern void gdl_set_ids(const char *line_id, int widb);
 extern void gdl_break_node(Node *np);
 extern void gdl_state_node(Node *np);
 
+extern List *gdl_get_word_list(void);
+
 #endif /*GDL_H_*/

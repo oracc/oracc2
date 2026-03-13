@@ -258,7 +258,7 @@ line:
 	| 	GUS longtext		{ $$=$1; line_gus(@1, longtext_get()); } /* MTS prereq; singleton */
 	| 	BIL longtext		{ $$=$1; line_bil(@1, longtext_get()); } /* MTS prereq */
 	| 	EXX longtext		{ $$=$1; line_var(@1, longtext_get()); } /* MTS prereq */
-	| 	LEM longtext		{ $$=$1; } /* MTS|NTS|BIL prereq */
+	| 	LEM longtext		{ $$=$1; line_lem(@1, longtext_get()); } /* MTS|NTS|BIL prereq */
 	|	l_link longtext		{ $$=$1; } /* MTS prereq */
 	|	COMMENT longtext	{ $$=$1; }
 	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, (char*)longtext_get()); }

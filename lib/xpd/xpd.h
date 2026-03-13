@@ -2,6 +2,7 @@
 #define XPD_H_
 
 #include "hash.h"
+#include "pool.h"
 struct xpd
 {
   const char *project;

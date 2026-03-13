@@ -251,6 +251,7 @@ lib/inl/inltok.c
 # .in derivatives
 mac-config.sh
 oraccenv.sh
+bin/ax/ax_prj.c
 bin/bx/bx_xslt.c
 bin/bx/bib_out_htm.c
 bin/bx/map-jrnser.xsl

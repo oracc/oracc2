@@ -34,9 +34,12 @@ typedef struct atfm {
   Memo *mbibs;
   Memo *mblocks;
   Memo *mgroups;
+  Memo *milem_forms;
   Memo *mkeys;
+  Memo *mlems;
   Memo *mlines;
   Memo *mprotocols;
+  Memo *mxis;
   Memo *mxlinks;
   Pool *pool;
   struct atf *atf;
@@ -61,6 +64,7 @@ typedef struct atf {
   int flags;
   Hash *lzr_sparse;
   Hash *hlabmap;
+  Hash *xmd;
   struct xlink **links;
   int nlinks;
   struct key **keys;
@@ -103,11 +107,10 @@ typedef struct bib {
  * The word list is transient--it is built from MTS and then rebuilt
  * from NTS if NTS occurs. It is freed after #lem line has been
  * processed.
+ *
+ * lem_single is defined in lib/l3/ilem/ilem_form.h
  */
-typedef struct lem {
-  unsigned char *lem;
-  Node *wrd;
-} Lem;
+#include <ilem_form.h>
 
 /* This is used for the following protocols:
  *
@@ -163,6 +166,8 @@ typedef struct line {
   Linet t;
   Atfl *ap;
   Node *np;
+  List *wl; /* list of words built during GDL parse; overloaded as
+	       list of lems when corresponding #lem line is read */
 } Line;
 
 typedef struct lninfo
@@ -172,6 +177,13 @@ typedef struct lninfo
   int lineno;
   int lineprimes;
 } Lninfo;
+
+struct xcl_ilem
+{
+  Node *w;
+  struct xcl_l *x;
+  struct ilem_form *i;
+};
 
 extern Lninfo lninfo;
 
@@ -186,6 +198,9 @@ extern int line_id;
 extern char line_id_buf[MAX_LINE_ID_BUF+1];
 extern char *line_id_insertp;
 extern const char *clid;
+
+extern Line *curr_line, *curr_lem_host;
+extern List *curr_words;
 
 #define ATFF_MYLINES 0x01
 #define ATFF_AGROUPS 0x02
@@ -278,6 +293,7 @@ extern void line_nts(Mloc l, unsigned char *lp);
 extern void line_lgs(Mloc l, unsigned char *lp);
 extern void line_var(Mloc l, unsigned char *lp);
 extern void tr_inter(Mloc l, unsigned char *lp);
+extern void line_lem(Mloc l, unsigned char *lp);
 
 extern char *compute_fragid(const char *qualid, const char *hlid);
 
@@ -285,5 +301,7 @@ extern void tlit_reinit_inline(void);
 extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id);
 
 extern void set_block_curr(Block_level b);
+
+extern struct xcl_ilem *atf_save_lem(Node *np, const char *lemstr);
 
 #endif/*ATF_H_*/

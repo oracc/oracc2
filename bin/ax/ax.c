@@ -13,8 +13,17 @@ int verbose;
 int status;
 int rnvtrace;
 
+int odt_serial = 0;
+
 extern int atfflextrace , atftrace, gdlflextrace, gdltrace;
 
+int bootstrap_mode = 0;
+int exit_status = 0;
+int lem_autolem = 0;
+int fuzzy_aliasing = 0;
+int lem_dynalem = 0, lem_props_yes = 0, lem_props_strict = 0, line_is_unit = 0;
+
+FILE *f_log;
 int check_mode = 0;
 int trace_mode = 0;
 int xml_output = 0;
@@ -26,9 +35,11 @@ ax_input(const char *f)
 {
   mesg_init();
   gdlparse_init();
+  Run *rp = run_init();
   Tree *tp = atf_read(f);
   if (tp)
     {
+      tp->root->next->user = ax_xcl(rp, tp->root->kids);
       if (xml_output)
 	ax_jox(tp);
       else
@@ -45,6 +56,8 @@ main(int argc, char **argv)
 {
   static int multifile = 0;
   extern int gdl_flex_debug, gdldebug; /* yydebug in gdl.y */
+
+  f_log = stderr;
   
   gdl_flex_debug = gdldebug = 0;
 

@@ -4,6 +4,8 @@
 #include "atf_bld.h"
 #include "otf-defs.h"
 
+List *curr_words;
+
 void
 tlit_reinit_inline(void)
 {
@@ -26,13 +28,7 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
   gdl_set_ids(clid, word_id_base);
   Tree *tp = gdlparse_string(np->mloc, (char*)s);
   tree_graft(np, tp);
-  Node *kp;
-  for (kp = np->kids; kp; kp = kp->next)
-    {
-      gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
-      if (kp->text)
-	gdl_prop_kv(kp, GP_ATTRIBUTE, PG_GDL_INFO, "form", kp->text);
-    }
+  curr_line->wl = gdl_get_word_list();
   np->user = np->kids;
   gdlparse_reset();
 }

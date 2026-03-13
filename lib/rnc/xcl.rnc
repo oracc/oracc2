@@ -1,4 +1,4 @@
-default namespace = "http://oracc.org/ns/xcl/1.0"
+namespace xcl = "http://oracc.org/ns/xcl/1.0"
 namespace xff = "http://oracc.org/ns/xff/1.0"
 namespace xl = "http://www.w3.org/1999/xlink"
 include "xcl-lib.rnc"

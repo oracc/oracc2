@@ -10,16 +10,6 @@
 #include <atf2utf.h>
 #include "sigs.h"
 
-extern const char *file;
-extern int lnum;
-
-/* This from ox's lemline.h */
-struct xcl_ilem
-{
-  struct xcl_l *x;
-  struct ilem_form *i;
-};
-
 extern int bootstrap_mode;
 extern int ngram_obey_lines;
 
@@ -45,6 +35,7 @@ static void alt_init(const unsigned char *lem);
 static unsigned char *alt_next(struct xcl_context *xc);
 static unsigned char *lem_end(unsigned char *lem);
 
+#if 0
 static const unsigned char *
 ilem_conv(struct xcl_l *l, const unsigned char *str)
 {
@@ -62,6 +53,7 @@ ilem_conv(struct xcl_l *l, const unsigned char *str)
     }
   return str;
 }
+#endif
 
 static char *
 make_inst(struct xcl_context *xc, struct ilem_form *ifp)
@@ -102,7 +94,9 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
   int newflag = 0;
   extern const char *phase;
   unsigned char *lemma = NULL;
+#if 0
   extern int lem_dynalem, use_ilem_conv;
+#endif
   
 #define LANGBUF_LEN 32
   char langbuf[LANGBUF_LEN+1];
@@ -158,7 +152,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	      if (langbufp - langbuf == LANGBUF_LEN)
 		{
 		  langbuf[LANGBUF_LEN] = '\0';
-		  vwarning2(file,lnum,"[91]: lang starting with '%s' is too long (MAX %d)",langbuf,LANGBUF_LEN);
+		  vwarning2(xi->w->mloc->file,xi->w->mloc->line,"[91]: lang starting with '%s' is too long (MAX %d)",langbuf,LANGBUF_LEN);
 		  phase = NULL;
 		  return;
 		}
@@ -171,7 +165,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 		++lemma;
 	      if (!*lemma)
 		{
-		  vwarning2(file,lnum,"[92]: lang starting with '%s' has no ':'",langbuf);
+		  vwarning2(xi->w->mloc->file,xi->w->mloc->line,"[92]: lang starting with '%s' has no ':'",langbuf);
 		  phase = NULL;
 		  return;
 		}
@@ -179,7 +173,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	}
       else
 	{
-	  vwarning2(file,lnum,"[96]: no lang set for form");
+	  vwarning2(xi->w->mloc->file,xi->w->mloc->line,"[96]: no lang set for form");
 	  phase = NULL;	  
 	  return;
 	}
@@ -192,7 +186,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	++lemma;
       if (':' != *lemma)
 	{
-	  vwarning2(file,lnum,"lang has no ':'");
+	  vwarning2(xi->w->mloc->file,xi->w->mloc->line,"lang has no ':'");
 	  return;
 	}
       ++lemma;
@@ -215,7 +209,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 
       lp = xcl_lemma(xc,NULL,master_formp->ref,master_formp,NULL,0);
       lp->inst = master_formp->literal;
-      lp->lnum = lnum;
+      lp->lnum = xi->w->mloc->line;
       lp->ante_para = ilem_para_parse(xc, lem, &lem,master_formp->lnum, ilem_para_pos_ante, lp);
       if (lem)
 	{
@@ -317,9 +311,11 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 		}
 	    }
 
+#if 0
 	  if (first_word && lem_dynalem)
 	    BIT_SET(iflags, FORM_FLAGS_PSU_STOP);
-	  
+#endif
+
 	  if (bootstrap_mode && !BIT_ISSET(iflags, FORM_FLAGS_LEM_NEW))
 	    BIT_SET(iflags, FORM_FLAGS_LEM_NEW);
 
@@ -386,6 +382,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	  if (check_cf((char*)lp->f->file, lp->f->lnum, (char*)curr_f->f2.cf))
 	    BIT_SET(curr_f->f2.flags, FORM_FLAGS_INVALID);
 
+#if 0
 	  if (use_ilem_conv && curr_f->lang)
 	    {
 	      curr_lang_ctxt = curr_f->lang;
@@ -395,6 +392,7 @@ ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_
 	      curr_f->f2.base = ilem_conv(lp,curr_f->f2.base);
 	      curr_f->f2.cont = ilem_conv(lp,curr_f->f2.cont);
 	    }
+#endif
 	  curr_f->sublem = make_inst(xc,curr_f);
 	}
     }

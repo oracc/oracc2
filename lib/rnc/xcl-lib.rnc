@@ -1,0 +1,109 @@
+namespace xcl = "http://oracc.org/ns/xcl/1.0"
+namespace xff = "http://oracc.org/ns/xff/1.0"
+namespace xl = "http://www.w3.org/1999/xlink"
+
+xcl=
+   element xcl:xcl {
+      attribute file { text },
+      attribute langs { text }?,
+      attribute project { text },
+      attribute textid { xsd:NCName },
+      xcl.c,
+      element xcl:linkbase {
+        element xcl:linkset {
+          attribute sig { text },
+          attribute xl:role { xsd:NCName },
+          attribute xl:title { text },
+          attribute xl:type { xsd:NCName },
+          attribute xml:id { xsd:NCName },
+          element xcl:link {
+            attribute xl:href { text },
+            attribute xl:role { xsd:NCName },
+            attribute xl:title { xsd:NCName },
+            attribute xl:type { xsd:NCName }
+          }+
+        }+
+      }?
+    }
+xcl.c =
+  element xcl:c {
+    attribute bracketing_level { xsd:integer },
+    attribute implicit { xsd:NCName }?,
+    attribute label { text }?,
+    attribute level { xsd:integer }?,
+    attribute ref { xsd:NCName }?,
+    attribute subtype { xsd:NCName }?,
+    attribute tag { text }?,
+    attribute type { xsd:NCName },
+    attribute xml:id { xsd:NCName },
+    element xcl:mds {
+      attribute xml:id { xsd:NCName },
+      element xcl:m {
+        attribute k { xsd:NCName },
+        text
+      }+
+    }?,
+    (xcl.c
+     | xcl.l
+     | element xcl:d {
+         attribute ref { text }?,
+         attribute subtype { xsd:NCName }?,
+         attribute type { xsd:NCName }
+       }
+     | element xcl:ll {
+         attribute xml:id { xsd:NCName },
+         xcl.l+
+       })*
+  }
+xcl.l =
+  element xcl:l {
+    attribute bad { xsd:NCName }?,
+    attribute cof-head { xsd:NCName }?,
+    attribute cof-tails { text }?,
+    attribute exolng { xsd:NCName }?,
+    attribute exoprj { text }?,
+    attribute exosig { text }?,
+    attribute ftype { xsd:NCName }?,
+    attribute inst { text },
+    attribute lnum { xsd:integer },
+    attribute newsig { text }?,
+    attribute ref { xsd:NCName },
+    attribute sig { text }?,
+    attribute tail-sig { text }?,
+    attribute xml:id { xsd:NCName }?,
+    element xff:f {
+      attribute aform { text }?,
+      attribute base { text }?,
+      attribute cf { text }?,
+      attribute cont { text }?,
+      attribute epos { text }?,
+      attribute form { text },
+      attribute gw { text }?,
+      attribute morph { text }?,
+      attribute norm { text }?,
+      attribute norm0 { text }?,
+      attribute pos { text }?,
+      attribute sense { text }?,
+      attribute stem { xsd:NCName }?,
+      attribute xml:lang { xsd:NCName }
+    },
+    element xcl:props {
+      element xcl:prop {
+        attribute group { xsd:NCName },
+        attribute name { xsd:NCName },
+        attribute ngram { xsd:integer },
+        attribute ref { xsd:NCName },
+        attribute value { xsd:NCName }?
+      }+
+    },
+    element xcl:para {
+      attribute pos { xsd:NCName },
+      element xcl:p {
+        attribute bracketing_level { xsd:integer },
+        attribute class { xsd:NCName },
+        attribute text { text },
+        attribute type { xsd:NCName },
+        attribute val { text }
+      }+
+    }?
+  }

@@ -1,5 +1,5 @@
 namespace g = "http://oracc.org/ns/gdl/1.0"
-g.meta = oid? , key? ,
+g.meta = oid? , key? , 
   break? , status.flags? , status.spans? , 
   paleography.attr? , linguistic.attr? , proximity.attr? ,
   opener? , closer? , hsqb_o?, hsqb_c? , emhyph? ,

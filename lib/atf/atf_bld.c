@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <xmd.h>
 #include "atf.h"
 #include "atf_bld.h"
 
@@ -253,6 +254,8 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
     case PROT_PROJECT:
       p->type = "project";
       p->u.str = (uccp)str;
+      xmd_init();
+      atfp->xmd = xmd_load(str, atfp->pqx);
       break;
     case PROT_ATF:
     case PROT_TOP:

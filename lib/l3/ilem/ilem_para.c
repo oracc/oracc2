@@ -392,7 +392,7 @@ map_boundary(enum ilem_para_type lpt_t)
 }
 
 static void
-process_boundaries(struct xcl_context*xc,struct ilem_para *p,int pos)
+process_boundaries(Mloc *mp, struct xcl_context*xc,struct ilem_para *p,int pos)
 {
   struct ilem_para *pp;
   for (pp = p; pp; pp = pp->next)
@@ -402,7 +402,7 @@ process_boundaries(struct xcl_context*xc,struct ilem_para *p,int pos)
 	  enum xcl_c_types xcl_t = map_boundary(pp->type);
 	  if (xcl_t != xcl_c_top)
 	    {
-	      xcl_insert_ub(xc, pos, xcl_t,pp->level);
+	      xcl_insert_ub(mp, xc, pos, xcl_t,pp->level);
 	      /* FIXME: if xc->curr->parent is NULL where are we supposed to put the annotation? */
 	      if (pp->next && pp->next->type == LPT_label
 		  && xc->curr->parent
@@ -463,9 +463,9 @@ ilem_para_boundaries(struct xcl_l*lp, struct xcl_context*xc)
   if (xc && lp)
     {
       if (lp->ante_para)
-	process_boundaries(xc,lp->ante_para,1);
+	process_boundaries(lp->np->mloc, xc,lp->ante_para,1);
       if (lp->post_para)
-	process_boundaries(xc,lp->post_para,0);
+	process_boundaries(lp->np->mloc, xc,lp->post_para,0);
     }
 }
 

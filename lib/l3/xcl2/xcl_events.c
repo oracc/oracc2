@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <ctype128.h>
 #include <string.h>
+#include <mesg.h>
 #include <form.h>
 #include <ilem_form.h>
 #include "xcl.h"
@@ -12,9 +13,6 @@
 #ifndef strdup
 char *strdup(const char *);
 #endif
-
-extern const char *file;
-extern int lnum;
 
 #define add_child xcl_add_child
 
@@ -434,7 +432,7 @@ xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref,
    complicated than this routine can handle at
    present */
 void
-xcl_insert_ub(struct xcl_context *xc, int nlem, enum xcl_c_types t, int bracketing_level)
+xcl_insert_ub(Mloc *mp, struct xcl_context *xc, int nlem, enum xcl_c_types t, int bracketing_level)
 {
   struct xcl_l *carry_over = NULL;
   if (nlem)
@@ -472,8 +470,7 @@ xcl_insert_ub(struct xcl_context *xc, int nlem, enum xcl_c_types t, int bracketi
 	    }
 	  else
 	    {
-	      extern int lnum;
-	      fprintf(stderr, "%s: %d: xcl_insert_ub: unhandled case\n", file, lnum);
+	      fprintf(stderr, "%s: %d: xcl_insert_ub: unhandled case\n", mp->file, mp->line);
 	    }
 	}
     }

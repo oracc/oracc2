@@ -47,7 +47,8 @@ typedef struct node {
   Tree *tree;
   struct prop *props;
   Mloc *mloc;
-  void *user;		/* data dependent on node prefix/prefix:name combination */
+  void *user;		/* data dependent on node prefix/prefix:name
+			   combination */
 } Node;
 
 typedef void (*nodehandler)(Node *np, void *user);

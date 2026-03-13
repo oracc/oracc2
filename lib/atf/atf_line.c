@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <gdl.h>
 #include "atf.h"
 #include "atf_bld.h"
 #include "otf-defs.h"
@@ -26,6 +27,8 @@ struct node **last_tlit_h = NULL;
 int lth_used = 0;
 int last_tlit_h_decay = 0;
 
+Line *curr_line, *curr_lem_host;
+
 static unsigned const char *lnstr(Mloc *mp, int number,int primes);
 static unsigned char *map_uscore(const unsigned char *vbar);
 
@@ -38,10 +41,10 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
       if (lt == LINE_MTS && list_len(atfmp->llines))
 	{
 	  Group *gp = memo_new(atfmp->mgroups);
-	  gp->parent = abt->curr->user;
 	  gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
 	  list_free(atfmp->llines, NULL);
 	  atfmp->llines = list_create(LIST_SINGLE);
+	  gp->parent = abt->curr->user;
 	  if (gp->nlines > 1)
 	    atf_insert("lg");
 	}
@@ -57,12 +60,12 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 	}
     }
 
-  Line *linep = memo_new(atfmp->mlines);
-  linep->t = lt;
-  linep->np = np;
-  linep->ap = list_last(atfp->input);
-      
-  list_add(atfmp->llines, linep);
+  curr_line = memo_new(atfmp->mlines);
+  curr_line->t = lt;
+  curr_line->np = np;
+  curr_line->ap = list_last(atfp->input);
+
+  list_add(atfmp->llines, curr_line);
 }
 
 void
@@ -73,6 +76,7 @@ line_mts(Mloc l, unsigned char *lp)
   struct node *lnode = atf_push("l");
 
   register_line(l, LINE_MTS, lnode, lp);
+  curr_lem_host = curr_line;
 
   const char *label;
   unsigned char *tok = lp;
@@ -201,6 +205,7 @@ line_mts(Mloc l, unsigned char *lp)
 	{
 	  *end = '\0';
 	  tlit_parse_inline(lnode,(ccp)s,1,uc(line_id_buf));
+	  curr_words = curr_line->wl = gdl_get_word_list();
 	}
     }
   else
@@ -213,6 +218,7 @@ line_bil(Mloc l, unsigned char *lp)
   struct node *lnode = atf_push("l");
 
   register_line(l, LINE_BIL, lnode, lp);
+  curr_lem_host = curr_line;
 
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
@@ -232,6 +238,7 @@ line_bil(Mloc l, unsigned char *lp)
 	  tlit_parse_inline(lnode, (ccp)s,
 			    1 + (++exemplar_offset * 1000),
 			    uc(line_id_buf));
+	  curr_words = curr_line->wl = gdl_get_word_list();
 	}
     }
 }
@@ -269,6 +276,7 @@ line_nts(Mloc l, unsigned char *lp)
   struct node *lnode = atf_push("l");
 
   register_line(l, LINE_NTS, lnode, lp);
+  curr_lem_host = curr_line;
   
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
@@ -285,6 +293,7 @@ line_nts(Mloc l, unsigned char *lp)
 	{
 	  *end = '\0';
 	  tlit_parse_inline(lnode, (ccp)s, 2001, uc(line_id_buf));
+	  curr_words = curr_line->wl = gdl_get_word_list();
 	}
     }
 }
@@ -414,6 +423,53 @@ line_var(Mloc l, unsigned char *lp)
 	  tlit_parse_inline(lnode, (ccp)s, 1 + (1000 * exemplar_offset), uc(line_id_buf));
 	}
     }
+}
+
+void
+line_lem(Mloc ml, unsigned char *l)
+{
+
+  List *llem = list_create(LIST_SINGLE);
+  while (*l)
+    {
+      list_add(llem, l);
+      while (*l && (*l != ';' || ('+' == l[-1] || '-' == l[-1] 
+                                  || (l[1] && !isspace(l[1])))))
+        ++l;
+      if (';' == *l)
+        {
+          *l++ = '\0';
+          while (isspace(*l))
+            ++l;
+          if ('\0' == *l)
+            warning("spurious ';' at end of #lem: line");
+          else if (';' == *l)
+            warning("empty lemmatization in #lem: line");
+        }
+    }
+
+  if (list_len(llem) != list_len(curr_lem_host->wl))
+    {
+      if (list_len(llem) > list_len(curr_lem_host->wl))
+        warning("too many lemmata");
+      else
+        warning("too few lemmata");      
+    }
+  else
+    {
+      Node *w;
+      uccp l;
+      for (w = list_first(curr_lem_host->wl), l = list_first(llem);
+	   w && l;
+	   w = list_next(curr_lem_host->wl), l = list_first(llem))
+	{
+	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "lem",
+		      (ccp)pool_copy((uccp)l, gdlpool));
+	  w->user = atf_save_lem(w,(ccp)l); /* should be safe because GDL doesn't put data in g:w->user */
+	}
+    }
+  list_free(curr_lem_host->wl, NULL);
+  curr_lem_host->wl = NULL; /* this is OK as long as we don't overload use of line->wl */
 }
 
 /*FIXME: test the array bounds and generate strings dynamically if 

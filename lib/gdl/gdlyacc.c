@@ -16,7 +16,6 @@ extern int gdltrace, gdllineno, gdl_legacy;
 extern void gdl_wrapup_buffer(void);
 extern void gdl_validate(Tree *tp);
 int curr_lang = 's';
-
 int deep_parse = 1;
 
 static int grapheme_id, wid_base;
@@ -52,12 +51,20 @@ List *c_dangling_gps = NULL;
 List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
 static Node *c_last_explicit_group_node = NULL;
+static const char *curr_word_lang = "sux";
+static List *wd_list;
 
 /***********************************************************************
  *
  * Functions for running gdl.y
  *
  ***********************************************************************/
+
+List *
+gdl_get_word_list(void)
+{
+  return wd_list;
+}
 
 void
 gdlparse_deep(Node *np, void *mptr)
@@ -93,19 +100,22 @@ gdl_wf_nodes(Node *w, FILE *wfp)
       fputs(c->text, wfp);
 }
 
-/* This routine assumes root=gdl; kids=g:w+ */
+/* This routine assumes it is processing one word-node at a time */
 void
-gdl_word_attr(Tree *tp)
+gdl_word_attr(Node *w)
 {
-  Node *w;
-  for (w = tp->root->kids; w; w = w->next)
+  char *wf_buf = NULL;
+  size_t wf_len = 0;
+  FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
+  gdl_wf_nodes(w, wf_fp);
+  fclose(wf_fp);
+  if (wf_buf)
     {
-      char *wf_buf = NULL;
-      size_t wf_len = 0;
-      FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
-      gdl_wf_nodes(w, wf_fp);
-      fclose(wf_fp);
-      gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
+      if (*wf_buf)
+	{
+	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);
+	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
+	}
       free(wf_buf);
     }
 }
@@ -119,6 +129,10 @@ gdlparse_string(Mloc *m, char *s)
   strcpy(s2, s);
   strcat(s2, "\n");
 
+  /* must come before gdl_set_tree() */
+  if (gdl_word_mode)
+    wd_list = list_create(LIST_SINGLE);
+  
   (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
 
   if (tp->root)
@@ -126,6 +140,7 @@ gdlparse_string(Mloc *m, char *s)
   
   gdl_setup_buffer(s2);
   gdl_set_tree(tp);
+
   if (m)
     gdl_lex_init(m->file, m->line);
   else
@@ -134,8 +149,9 @@ gdlparse_string(Mloc *m, char *s)
   gdl_wrapup_buffer();
   free(s2);
 
-  if (gdl_word_mode)
-    gdl_word_attr(tp);
+  Node *w;
+  for (w = list_first(wd_list); w; w = list_next(wd_list))
+    gdl_word_attr(w);
   
   if (deep_parse)
     tree_iterator(tp, m, gdlparse_deep, NULL);
@@ -362,6 +378,8 @@ gdl_new_word(Tree *ytp)
       else
 	tree_curr(ytp->root);
       Node *wp = gdl_push(ytp, "g:w");
+      /* IF FIELD NOT IN SPARSE LEM HASH */
+      list_add(wd_list, wp);
       sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
       gid_insertp = gdl_word_id+strlen(gdl_word_id);
       gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));

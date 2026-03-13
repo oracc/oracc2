@@ -32,6 +32,7 @@
  */
 
 #include <oraccsys.h>
+#include <atf.h>
 #include "ilem_props.h"
 
 int ilem_props_equals_flag = 0;
@@ -42,8 +43,6 @@ int ilem_props_status = 0;
  * they pass validation in ilem_props_look 
  */
 extern int lem_props_strict;
-
-extern const char *project;
 
 static char *plist = NULL;
 static int pline = 1;
@@ -260,8 +259,8 @@ static void
 ilem_props_load(void)
 {
   const char *lemprops = "00lib/lemprops.txt";
-  plist = malloc(strlen(oracc_builds()) + strlen(project) + strlen(lemprops) + 3);
-  sprintf(plist, "%s/%s/%s", oracc_builds(), project, lemprops);
+  plist = malloc(strlen(oracc_builds()) + strlen((ccp)atfp->project) + strlen(lemprops) + 3);
+  sprintf(plist, "%s/%s/%s", oracc_builds(), atfp->project, lemprops);
   if (!access(plist, R_OK))
     {
       unsigned char *f = loadfile((unsigned char *)plist, NULL);

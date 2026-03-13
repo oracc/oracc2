@@ -1,7 +1,8 @@
 #ifndef L2_FORM_H_
 #define L2_FORM_H_
 
-#include "form.h"
+#include <tree.h>
+#include <form.h>
 
 #define ILEM_FLAG_SPARSE_SKIP 0x20
 
@@ -47,16 +48,9 @@
 
 #define N_RESULT(r) ((r) & ~M_MASK)
 
-struct lem_instance
-{
-  const Uchar *file;
-  size_t line;
-  const Uchar *literal;
-  struct lem_single *lem;
-};
-
 struct lem_single
 {
+  Node *w;
   const Uchar *literal;
   Form f2;
   Unsigned32 explicit;

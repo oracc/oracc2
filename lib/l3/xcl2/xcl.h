@@ -1,5 +1,6 @@
 #ifndef _XCL_H
 #define _XCL_H
+#include <tree.h>
 #include <hash.h>
 
 struct xcl_c;
@@ -69,6 +70,7 @@ struct xcl_d
 
 struct xcl_l
 {
+  Node *np; /* source g:w node in document for this lemma */
   enum xcl_node_types node_type;
   const char *xml_id;
   int lnum;
@@ -104,7 +106,7 @@ union xcl_u
 
 struct NL_context;
 struct props_context;
-struct xcl_context
+typedef struct xcl_context
 {
   struct xcl_c *root;
   struct xcl_c *curr;
@@ -120,7 +122,7 @@ struct xcl_context
   Hash *psus;
   Hash *lpt_anchors;
   void *user;
-};
+} XCL;
 
 struct xcl_tok_tab
 {
@@ -200,7 +202,7 @@ extern const char *sysproj(const char *lang);
 
 extern struct xcl_l *xcl_head(union xcl_u *xu);
 
-extern void xcl_insert_ub(struct xcl_context *xc, int nlem, enum xcl_c_types t, int level);
+extern void xcl_insert_ub(Mloc *mp, struct xcl_context *xc, int nlem, enum xcl_c_types t, int level);
 extern void xcl_fix_context(struct xcl_context *xc, const unsigned char *discourse);
 extern void xcl_add_discourse(struct xcl_context *xc, const char *discourse);
 extern void xcl_add_child(struct xcl_c*p, void *c, enum xcl_node_types type);
