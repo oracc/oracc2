@@ -147,6 +147,9 @@ typedef void xcl_c_fnc(struct xcl_context *,struct xcl_c*);
 typedef void xcl_d_fnc(struct xcl_context *,struct xcl_d*);
 typedef void xcl_l_fnc(struct xcl_context *,struct xcl_l*);
 
+struct xclignore { const char *name; };
+extern struct xclignore *xclignore(register const char *str,register size_t len);
+
 extern int sparse_lem, sparse_skipping, xcl_load_mode, xcl_uid_max;
 extern int xcl_is_sparse_field(const char *f);
 extern void xcl_set_sparse_fields(const char *f);
@@ -208,5 +211,8 @@ extern void xcl_add_discourse(struct xcl_context *xc, const char *discourse);
 extern void xcl_add_child(struct xcl_c*p, void *c, enum xcl_node_types type);
 
 extern void sigs_dump_sigs(struct xcl_context *xcp, struct xcl_l *lp);
+
+extern void xcl_jox(void *ignored, struct xcl_context *xc);
+extern List *xcl_jox_xcl_ratts(XCL *xc);
 
 #endif /*_XCL_H*/

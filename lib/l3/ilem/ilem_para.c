@@ -504,7 +504,7 @@ ilem_para_jox_one(struct ilem_para *p,const char *pos,struct xcl_l *lp)
   joxer_ee(lp->np->mloc, "xcl:para");
 }
 void
-ilem_para_dump(struct xcl_l *lp)
+ilem_para_jox(struct xcl_l *lp)
 {
   if (lp)
     {

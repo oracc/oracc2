@@ -91,14 +91,16 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 	  else if (BIT_ISSET(lp->f->f2.flags, FORM_FLAGS_NOT_IN_SIGS))
 	    {
 	      extern const char *phase;
-	      extern int cbd_lem_sigs;
 	      const char *ophase = phase;
 	      phase = "sig";
 	      if (lp->f->f2.sig)
 		{
 		  joxer_attr(ap,"newsig",(char *)lp->f->f2.sig);
+#if 0
+		  extern int cbd_lem_sigs;
 		  if (cbd_lem_sigs)
 		    mesg_vnotice((char*)lp->f->file,lp->f->lnum,"\t%s", lp->f->f2.sig);
+#endif
 		}
 	      else if (lp->f->f2.tail_sig)
 		{
@@ -422,8 +424,23 @@ xj_serialize_psus(Hash*psus)
   joxer_ee(NULL, "psus");
 }
 
+List *
+xcl_jox_xcl_ratts(XCL *xc)
+{
+  List *ap = list_create(LIST_SINGLE);
+  if (xc->project)
+    list_pair(ap, "project", xc->project);
+  if (xc->textid)
+    list_pair(ap, "textid", xc->textid);
+  if (xc->file)
+    list_pair(ap, "file", xc->file);
+  if (xc->langs)
+    list_pair(ap, "line", xc->langs);
+  return ap;
+}
+
 void
-xcl_jox(struct xcl_context *xc, int with_xml_decl)
+xcl_jox(void *ignored, struct xcl_context *xc)
 {
   if (!xc || !xc->root)
     return;
@@ -435,19 +452,7 @@ xcl_jox(struct xcl_context *xc, int with_xml_decl)
     fprintf(f_xcl, "%s", XML_DECL);
 #endif
 
-  List *ap = list_create(LIST_SINGLE);
-  if (xc->project)
-    list_pair(ap, "p", xc->project);
-  if (xc->textid)
-    list_pair(ap, "t", xc->textid);
-  if (xc->file)
-    list_pair(ap, "f", xc->file);
-  if (xc->langs)
-    list_pair(ap, "l", xc->langs);
-
-  Ratts *ratts = ratts_list2ratts(ap);
-
-  joxer_ea(NULL, "xcl", ratts);
+  /*joxer_ea(NULL, "xcl:xcl", ratts);*/
 
   if (xc->psus->key_count > 0)
     xj_serialize_psus(xc->psus);
@@ -457,7 +462,7 @@ xcl_jox(struct xcl_context *xc, int with_xml_decl)
   if (xc->linkbase)
     links_jox(xc->linkbase);
 
-  joxer_ee(NULL, "xcl");
+  /*joxer_ee(NULL, "xcl:xcl");*/
 }
 
 #if 0

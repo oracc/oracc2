@@ -217,6 +217,8 @@ static Node *
 gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
 {
   Node *np = NULL;
+  if (ytp->curr && !ytp->curr->mloc)
+    ytp->curr->mloc = locp;
   np = tree_add(ytp, NS_GDL, name, ytp->curr->depth, NULL);
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
   lgp = np;

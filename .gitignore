@@ -247,6 +247,7 @@ lib/atf/blocktok.c
 lib/atf/nonxtok.c
 lib/frm/lang949.c
 lib/inl/inltok.c
+lib/xcl2/xclignore.c
 
 # .in derivatives
 mac-config.sh

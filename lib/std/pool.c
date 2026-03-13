@@ -24,8 +24,13 @@ pool_init(void)
 void
 pool_reset(struct pool *p)
 {
-  p->rover = p->base;
-  p->base->used = p->base->mem;
+  if (p)
+    {
+      p->rover = p->base;
+      p->base->used = p->base->mem;
+    }
+  else
+    p = pool_init();
 }
 
 void

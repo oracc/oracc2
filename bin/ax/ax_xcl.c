@@ -36,7 +36,8 @@ static void xtf2xcl_cells(struct xcl_context *xc, struct node*n);
 static void xtf2xcl_fields(struct xcl_context *xc, struct node*n);
 static void xtf2xcl_words(struct xcl_context *xc, struct node*n);
 
-#define propxid(x) prop_find_kv(x->props, "xml:id", NULL)->u.k->v
+static Prop *p = NULL;
+#define propxid(x) (p=prop_find_kv(x->props, "xml:id", NULL))?p->u.k->v:NULL
 
 void
 lem_init(void)
@@ -98,12 +99,11 @@ ax_xcl(struct run_context *run, struct node *text)
 static void
 xtf2xcl_block(struct xcl_context *xc, struct node*n)
 {
+  Blocktok *btp = blocktok(n->name, strlen(n->name));
   /* fprintf(stderr, "xtfxcl: process invoked\n"); */
-  if (!strcmp(n->name, "lg"))
-    xtf2xcl_group(xc, n);
-  else if (n->user)
+  if (btp)
     {
-      switch (((Block*)n->user)->bt->bison)
+      switch (btp->bison)
 	{
 	case Y_COMPOSITE:
 	case Y_SCORE:
@@ -127,7 +127,7 @@ xtf2xcl_block(struct xcl_context *xc, struct node*n)
 	  /* fix_context(xc,NULL); */
 	  {
 	    const char *ref = propxid(n);
-	    if (*ref)
+	    if (ref && *ref)
 	      xcl_discontinuity(xc, ref, xcl_d_column, NULL);
 	    /* no discontinuity emitted for implicit column breaks */
 	  }
@@ -142,10 +142,12 @@ xtf2xcl_block(struct xcl_context *xc, struct node*n)
 	  break;
 	}
     }
+  else if (!strcmp(n->name, "lg"))
+    xtf2xcl_group(xc, n);
+  else if (xclignore(n->name, strlen(n->name)))
+    ;
   else
-    {
-      fprintf(stderr, "xtf2xcl: unhandled node `%s'\n", n->name);
-    }
+    fprintf(stderr, "xtf2xcl: unhandled node `%s'\n", n->name);
  
   if (n->kids)
     {

@@ -6,7 +6,7 @@
 #include <pool.h>
 #include <prop.h>
 
-enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XMD ,
+enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XCL , NS_XMD ,
 	      NS_CFY, NS_HTM, NS_INL, NS_BIB, NS_LAST };
 typedef enum nscode nscode;
 typedef nscode nsrefs[NS_LAST];
@@ -77,6 +77,7 @@ extern Node *kids_rem_last(Tree *tp);
 extern void tree_curr(Node *np);
 extern void tree_graft(Node *np, Tree *tp);
 extern void tree_graft_root(Node *np, Tree *tp);
+extern void tree_root_append(Tree *tp, Node *np);
 
 extern void tree_ns_default(Tree *tp, nscode ns);
 extern void tree_ns_merge(Tree *tp, nsrefs used);

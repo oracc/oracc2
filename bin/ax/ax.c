@@ -1,6 +1,9 @@
 #include <oraccsys.h>
 #include <mesg.h>
 #include <tree.h>
+#include <joxer.h>
+#include <rnvif.h>
+#include <rnvxml.h>
 #include <xml.h>
 #include <atf.h>
 #include <gdl.h>
@@ -26,6 +29,7 @@ int lem_dynalem = 0, lem_props_yes = 0, lem_props_strict = 0, line_is_unit = 0;
 FILE *f_log;
 int check_mode = 0;
 int trace_mode = 0;
+int xcl_output = 0;
 int xml_output = 0;
 
 extern struct catinfo *ax_check (const char *str,size_t len);
@@ -39,11 +43,25 @@ ax_input(const char *f)
   Tree *tp = atf_read(f);
   if (tp)
     {
-      tp->root->next->user = ax_xcl(rp, tp->root->kids);
+      List *ap = NULL;
+      if (xcl_output)
+	{
+	  XCL *xp = ax_xcl(rp, tp->root->kids);
+	  tree_curr(tp->root->kids);
+	  Node *np = tree_add(tp, NS_XCL, "xcl:xcl", tp->root->kids->depth, tp->root->kids->mloc);
+	  np->user = xp;
+	  ap = xcl_jox_xcl_ratts(xp);
+	  const char **apcc = (const char **)list2array(ap);
+	  int i;
+	  for (i = 0; i < list_len(ap); i+=2)
+	    atf_xprop(np, apcc[i], apcc[i+1]);
+	}
+
       if (xml_output)
 	ax_jox(tp);
       else
 	ax_atf(atfmp->atf);
+
       atf_term();
       gdlparse_term();
       mesg_print(stderr);
@@ -61,7 +79,7 @@ main(int argc, char **argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "ctx");
+  options(argc, argv, "cltx");
 
   atfflextrace = atftrace = gdlflextrace = gdltrace = gdldebug = trace_mode;
 
@@ -92,6 +110,9 @@ opts(int opt, const char *arg)
     {
     case 'c':
       check_mode = 1;
+      break;
+    case 'l':
+      xcl_output = xml_output = 1;
       break;
     case 't':
       trace_mode = 1;

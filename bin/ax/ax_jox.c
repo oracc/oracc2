@@ -1,11 +1,10 @@
 #include <oraccsys.h>
-#include <joxer.h>
-#include <rnvif.h>
 #include <xmlify.h>
 #include <pool.h>
-#include <joxer.h>
 #include <xnn.h>
 #include <ns-xtf.h>
+#include <joxer.h>
+#include <rnvif.h>
 #include <rnvxml.h>
 #include <gt.h>
 #include <asl.h>
@@ -86,13 +85,9 @@ ax_jox_node(Node *np, int oflag, int nflag)
       for (npp = np->kids; npp; npp = npp->next)
 	ax_jox_node(npp, need_closer, 1);
     }
+
   joxer_ee(np->mloc, nodename);
 
-#if 0
-  /* traverse laterally along siblings */ /* not sure why gdl_jox needed this but ax_jox doesn't */
-  if (nflag && np->next)
-    ax_jox_node(np->next, 0, 1);
-#endif
 }
 
 void

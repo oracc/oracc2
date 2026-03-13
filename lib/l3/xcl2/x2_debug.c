@@ -8,10 +8,22 @@
 
 extern const char *xcl_c_type_str[];
 extern const char *xcl_d_type_str[];
-extern void x2_attr(FILE *f_dbg, const char *name, const char *value);
-extern void x2_attr_i(FILE *f_dbg, const char *name, int value);
 
 static FILE *static_f_dbg = NULL;
+
+static void
+x2_attr(FILE *f_xcl, const char *name, const char *value)
+{
+  if (value && *value)
+    fprintf(f_xcl, " %s=\"%s\"", name, xmlify((unsigned char *)value));
+}
+
+static void
+x2_attr_i(FILE *f_xcl, const char *name, int value)
+{
+  if (value)
+    fprintf(f_xcl, " %s=\"%d\"", name, value);
+}
 
 static void
 x2d_serialize_one_l_sub(FILE *f_dbg, struct xcl_l*lp, struct ilem_form *fp)

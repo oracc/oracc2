@@ -212,6 +212,26 @@ tree_graft_root(Node *np, Tree *tp)
     }
 }
 
+/* Append the node onto the tree root's kids */
+void
+tree_root_append(Tree *tp, Node *np)
+{
+  if (tp && tp->root)
+    {
+      if (tp->root->kids)
+	{
+	  np->rent = tp->root->last->rent;
+	  tp->root->last->next = np;
+	  tp->root->last = np;
+	}
+      else
+	{
+	  np->rent = tp->root;
+	  tp->root->last = tp->root->kids = np;
+	}
+    }
+}
+
 Node *
 node_ancestor(Node *np, const char *name)
 {
