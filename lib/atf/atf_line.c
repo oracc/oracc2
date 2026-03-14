@@ -45,8 +45,9 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 	  list_free(atfmp->llines, NULL);
 	  atfmp->llines = list_create(LIST_SINGLE);
 	  gp->parent = abt->curr->user;
-	  if (gp->nlines > 1)
-	    atf_insert("lg");
+	  /*if (gp->nlines > 1)*/
+	  Node *np = atf_insert("lg");
+	  np->user = gp;
 	}
     }
   else

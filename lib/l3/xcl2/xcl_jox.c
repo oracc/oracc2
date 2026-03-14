@@ -224,7 +224,7 @@ xj_serialize_m(const unsigned char *key,void*val)
   if ('#' != *key)
     {
       const char *r[3] = { "k", (ccp)key, NULL };
-      joxer_et(NULL, "m", rnvval_aa_ccpp(r), val);
+      joxer_et(NULL, "xcl:m", rnvval_aa_ccpp(r), val);
     }
 }
 
@@ -333,7 +333,7 @@ xj_serialize_one_node(void *vp)
 	    joxer_attr(ap,"label",cp->label);
 	    joxer_attr(ap,"ref",cp->ref);
 	    joxer_attr_i(ap,"level",cp->level);
-	    joxer_attr_i(ap,"b",cp->bracketing_level);
+	    joxer_attr_i(ap,"bracketing_level",cp->bracketing_level);
 
 	    Ratts *ratts = ratts_list2ratts(ap);
 	    joxer_ea(NULL,"xcl:c", ratts);
@@ -342,9 +342,9 @@ xj_serialize_one_node(void *vp)
 		const char *r[3] = { "xml:id",
 				     (char*)hash_find(cp->meta, (unsigned char *)"#xml:id"),
 				     NULL };
-		joxer_ea(NULL, "mds", rnvval_aa_ccpp(r));
+		joxer_ea(NULL, "xcl:mds", rnvval_aa_ccpp(r));
 		hash_exec2(cp->meta,xj_serialize_m);
-		joxer_ee(NULL, "mds");
+		joxer_ee(NULL, "xcl:mds");
 	      }
 	  }
 	}

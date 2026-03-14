@@ -4,7 +4,7 @@ namespace xl = "http://www.w3.org/1999/xlink"
 
 xcl=
    element xcl:xcl {
-      attribute file { text },
+      attribute file { text }?,
       attribute langs { text }?,
       attribute project { text },
       attribute textid { xsd:NCName },
