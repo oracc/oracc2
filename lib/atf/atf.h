@@ -160,6 +160,10 @@ typedef struct group {
   struct block *parent; /* this is a locator group */
   struct line **lines; /* these are gathered in atfmp->llines */
   int nlines;
+#if 0
+  /* if $-lines end up within a group this counter will be just the non-dollar lines */
+  int line_lines;
+#endif
 } Group; /* line-group */
 
 typedef struct line {
@@ -294,6 +298,10 @@ extern void line_lgs(Mloc l, unsigned char *lp);
 extern void line_var(Mloc l, unsigned char *lp);
 extern void tr_inter(Mloc l, unsigned char *lp);
 extern void line_lem(Mloc l, unsigned char *lp);
+extern void atf_group_wrapup(void);
+
+extern void atf_tlat_wrapup(void);
+extern void atf_tlit_wrapup(void);
 
 extern char *compute_fragid(const char *qualid, const char *hlid);
 

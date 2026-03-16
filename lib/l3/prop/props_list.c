@@ -14,11 +14,13 @@ static Pool *prop_pool;
 void
 xcl_props_init(void)
 {
+  props_run_init();
 }
 
 void
 xcl_props_term(void)
 {
+  props_run_term();
 }
 
 void

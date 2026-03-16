@@ -29,25 +29,55 @@ int last_tlit_h_decay = 0;
 
 Line *curr_line, *curr_lem_host;
 
+#if 0
+static int line_lines = 0;
+#endif
+
 static unsigned const char *lnstr(Mloc *mp, int number,int primes);
 static unsigned char *map_uscore(const unsigned char *vbar);
+
+void
+atf_line_lg(void)
+{
+  Node *np = node_ancestor_or_self(abt->curr, "lg");
+  if (np)
+    np = np->rent;
+  atf_push("lg");
+}
+
+void
+atf_group_wrapup(void)
+{
+  Group *gp = memo_new(atfmp->mgroups);
+  gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
+  gp->parent = abt->curr->user;
+#if 0
+  /* this is just the lines that contribute to an <lg>, excludes $-lines */
+  gp->line_lines = line_lines;
+#endif
+  list_free(atfmp->llines, NULL);
+  Node *np = node_ancestor_or_self(abt->curr, "lg");
+  np->user = gp;
+}
 
 static void
 register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 {
+#if 0
+  if (lt != LT_DOLLAR)
+    ++line_lines;
+#endif
+
   atf_input(l, lt, lp);
   if (atfmp->llines)
     {
       if (lt == LINE_MTS && list_len(atfmp->llines))
 	{
-	  Group *gp = memo_new(atfmp->mgroups);
-	  gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
-	  list_free(atfmp->llines, NULL);
+	  atf_group_wrapup();
+#if 0
+	  line_lines = 1;
+#endif
 	  atfmp->llines = list_create(LIST_SINGLE);
-	  gp->parent = abt->curr->user;
-	  /*if (gp->nlines > 1)*/
-	  Node *np = atf_insert("lg");
-	  np->user = gp;
 	}
     }
   else
@@ -73,6 +103,8 @@ void
 line_mts(Mloc l, unsigned char *lp)
 {
   set_block_curr(B_LINE);
+
+  atf_line_lg();
 
   struct node *lnode = atf_push("l");
 
@@ -304,6 +336,7 @@ line_lgs(Mloc l, unsigned char *lp)
 {
   extern int suppress_lem;
   suppress_lem = 1;
+
   struct node *lnode = atf_push("l");
 
   register_line(l, LINE_LGS, lnode, lp);

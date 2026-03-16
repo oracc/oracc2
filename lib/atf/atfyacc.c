@@ -43,6 +43,7 @@ atf_init(void)
   atfmp->matfls = memo_init(sizeof(Atfl),256);
   atfmp->mbibs = memo_init(sizeof(Bib),16);
   atfmp->mblocks = memo_init(sizeof(Block),256);
+  atfmp->mgroups = memo_init(sizeof(Group),256);
   atfmp->mkeys = memo_init(sizeof(Key),16);
   atfmp->milem_forms = memo_init(sizeof(struct ilem_form),1024);
   atfmp->mlines = memo_init(sizeof(Line),256);
@@ -67,6 +68,17 @@ atf_input(Mloc l, Atflt t, void *p)
 void
 atf_term(void)
 {
+}
+
+void
+atf_tlat_wrapup(void)
+{
+}
+
+void
+atf_tlit_wrapup(void)
+{
+  atf_group_wrapup();
 }
 
 void

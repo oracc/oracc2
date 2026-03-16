@@ -71,15 +71,15 @@ atfs:		atf
 	|	atfs atf
 	;
 
-atf:		transliteration
-	|	translation
+atf:		transliteration { atf_tlit_wrapup(); }
+	|	translation	{ atf_tlat_wrapup(); }
 	;
 
 transliteration:
 		amp
 	|	amp blocks
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); }
-	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks /* xcl */
+	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks
 		;
 
 amp: 		pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
