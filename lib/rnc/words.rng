@@ -107,6 +107,9 @@
       <attribute name="norm"/>
     </optional>
     <optional>
+      <attribute name="lem"/>
+    </optional>
+    <optional>
       <ref name="delim"/>
     </optional>
     <zeroOrMore>
