@@ -126,7 +126,7 @@ props_dump_jox(struct l3prop *props)
 {
   if (props)
     {
-      joxer_ea(NULL, "props", NULL);
+      joxer_ea(NULL, "xcl:props", NULL);
       struct l3prop *p;
       for (p = props; p; p = p->next)
 	{
@@ -146,9 +146,9 @@ props_dump_jox(struct l3prop *props)
 	    fprintf(fp," xml:id=\"%s\"",p->xml_id);
 #endif
 	  Ratts *ratts = ratts_list2ratts(ap);
-	  joxer_ea(NULL, "prop", ratts);
+	  joxer_ec(NULL, "xcl:prop", ratts);
 	}
-      joxer_ee(NULL, "props");
+      joxer_ee(NULL, "xcl:props");
     }
 }
 #else

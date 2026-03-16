@@ -134,7 +134,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
     }
 
   Ratts *ratts = ratts_list2ratts(ap);
-  joxer_eaa(ilem_mloc(fp), "xcl:l", ratts);
+  joxer_ea(NULL, "xcl:l", ratts); /*ilem_mloc(fp)*/
 
   if (lp->f)
     {
@@ -144,7 +144,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 
   ilem_para_jox(lp);
 
-  joxer_ee(ilem_mloc(fp), "xcl:l");
+  joxer_ee(NULL, "xcl:l"); /*ilem_mloc(fp)*/
 }
 
 static void

@@ -70,8 +70,8 @@ struct xcl_d
 
 struct xcl_l
 {
-  Node *np; /* source g:w node in document for this lemma */
   enum xcl_node_types node_type;
+  Node *np; /* source g:w node in document for this lemma */
   const char *xml_id;
   int lnum;
   const char *ref;
