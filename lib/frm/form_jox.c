@@ -16,6 +16,7 @@ untildify(Form *fp, const unsigned char *tilde)
   const char *m = (ccp)fp->morph;
   while (m != (ccp)tilde)
     *dst++ = *m++;
+  *dst = '\0';
   if (fp->cf)
     strcat(dst, (ccp)fp->cf);
   else

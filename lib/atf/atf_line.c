@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <gdl.h>
+#include <lng.h>
 #include "atf.h"
 #include "atf_bld.h"
 #include "otf-defs.h"
@@ -11,8 +12,12 @@ int already_lemmed = 0;
 static int lg_mode = 0;
 int mylines = 0;
 int suppress_lem = 0;
+
+#if 0
 struct lang_context *curr_lang_ctxt;
 struct lang_context *text_lang;
+#endif
+
 const char *clid;
 
 /* offset used in calculation of word-ids.  In main text word-ids

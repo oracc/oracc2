@@ -6,7 +6,7 @@ bin_SCRIPTS=atfmake.sh atftoks.sh
 
 data_DATA=Makefile.atf
 
-ax_SOURCES=ax.c ax_atf.c ax_run.c ax_prj.c ax_xcl.c ax_jox.c axjoxfnc.c
+ax_SOURCES=ax.c ax_atf.c ax_run.c ax_prj.c ax_xcl.c ax_lem.c ax_jox.c axjoxfnc.c
 ax_LDADD = $(xLDADD)
 ax_DEPENDENCIES = $(ax_LDADD)
 

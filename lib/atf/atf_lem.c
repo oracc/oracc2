@@ -26,10 +26,12 @@ atf_save_lem(Node *np, const char *lemstr)
   
   form->f2.owner = form;
   form->ref = (char*)propxid(np);
-
+  
   if (!form->ref || !form->ref[0])
     return NULL;
 
+  form->literal = (char*)pool_copy((uccp)lemstr, atfmp->pool);
+  
   const char *lang = proplng(np);
   if (lang)
     {
@@ -37,8 +39,10 @@ atf_save_lem(Node *np, const char *lemstr)
       form->f2.core = langcore_of(lang);
       if (strstr(lang,"949"))
 	  BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
+      form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
     }
-  const char *formstr = propfrm(np);
+
+  const char *formstr = propfrm(np);  
   if (BIT_ISSET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM))
     {
       form->f2.norm = (unsigned char *)formstr;

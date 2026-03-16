@@ -5,6 +5,7 @@
 #include <rnvif.h>
 #include <rnvxml.h>
 #include <xml.h>
+#include <lng.h>
 #include <atf.h>
 #include <gdl.h>
 #include "ax.h"
@@ -24,9 +25,11 @@ int bootstrap_mode = 0;
 int exit_status = 0;
 int lem_autolem = 0;
 int fuzzy_aliasing = 0;
-int lem_dynalem = 0, lem_props_yes = 0, lem_props_strict = 0, line_is_unit = 0;
+int harvest_notices, lem_dynalem = 0, lem_forms_raw = 0, lem_props_yes = 0,
+  lem_props_strict = 0, line_is_unit = 0, named_ents = 0, perform_dsa = 0,
+  warn_unlemmatized = 0;
 
-FILE *f_log;
+FILE *f_log, *f_unlemm;
 int check_mode = 0;
 int trace_mode = 0;
 int xcl_output = 0;
@@ -38,9 +41,13 @@ void
 ax_input(const char *f)
 {
   mesg_init();
+  langtag_init();
+  nl_init();
+  ngramify_init();
   gdlparse_init();
   Run *rp = run_init();
   Tree *tp = atf_read(f);
+  proj_init(rp, (ccp)atfp->project);
   if (tp)
     {
       List *ap = NULL;
@@ -50,6 +57,7 @@ ax_input(const char *f)
 	  tree_curr(tp->root->kids);
 	  Node *np = tree_add(tp, NS_XCL, "xcl:xcl", tp->root->kids->depth, tp->root->kids->mloc);
 	  np->user = xp;
+	  ax_lem(rp, xp);
 	  ap = xcl_jox_xcl_ratts(xp);
 	  const char **apcc = (const char **)list2array(ap);
 	  int i;

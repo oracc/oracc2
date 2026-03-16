@@ -42,6 +42,9 @@ extern void proj_default(struct run_context *r);
 
 extern int odt_serial, status, exit_status;
 
+extern int harvest_notices, lem_autolem, lem_dynalem, lem_forms_raw,
+  named_ents, perform_dsa, warn_unlemmatized;
+
 /* return -1 on error; 0 for done processing; 1 for descend into child
    nodes */
 typedef int (*axjoxfncp)(Node *np, void *vp);
@@ -57,6 +60,9 @@ extern void ax_parse(Node *np, char *data);
 extern void ax_gparse(Node *np, char *data);
 
 extern struct xcl_context *ax_xcl(struct run_context *run, struct node *text);
+extern void xcl_sentence_labels(struct xcl_context *xc, struct xcl_c *c);
+
+extern void ax_lem(struct run_context *run, XCL *xcp);
 
 extern void ax_atf(ATF*a);
 extern void ax_jox(Tree*tp);
