@@ -379,7 +379,7 @@ tr.tran:
 		;
 
 tr.inter:
-		TR_INTER { $$=$1; tr_inter(@1, (ucp)longtext_get()); }
+		TR_INTER 	{ $$=$1; tr_inter(@1, (ucp)longtext_get()); }
 
 longtext:
 		TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
