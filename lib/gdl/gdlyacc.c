@@ -19,7 +19,7 @@ int curr_lang = 's';
 int deep_parse = 1;
 
 static int grapheme_id, wid_base;
-static char gdl_line_id[1024], gdl_word_id[1024];
+static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
 
 #if 1
