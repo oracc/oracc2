@@ -1,17 +1,29 @@
 #include <oraccsys.h>
 #include "atf.h"
 
+#if 1
+#define ctr(p) atfxprop((p),"class","tr")
+#else
+#define xctr(p) if (p && !*(getAttr(p,a_class))) appendAttr((p),attr(a_class,ucc("tr")))
+#define yctr(p) appendAttr((p),attr(a_class,ucc("tr")))
+#define ctr(p) setAttr((p),a_class,ucc("tr"))
+#define setClass(n,c) appendAttr((n),attr(a_class,ucc((c))))
+#define getClass(n) getAttr((n),"class")
+#endif
+
 void
 atr_inter(Mloc l, unsigned char *s)
 {
 }
 
+/* This is passed @(i 1) or @label i 1 */
 void
 atr_label(Mloc l, unsigned char *s)
 {
-  if (lines[0][1] == '(')
+  if (s[1] == '(')
     {
-      unsigned char *t = lines[0]+2;
+      /* @(i 1) */
+      unsigned char *t = s+2;
       s = t;
       while (*s && ')' != *s)
 	++s;
@@ -20,7 +32,7 @@ atr_label(Mloc l, unsigned char *s)
 	  if (s - t)
 	    {
 	      *s = '\0';
-	      xstrcpy(label_buf,t);
+	      xstrcpy(label_buf,normalize_ws(t)));
 	    }
 	  else
 	    innerp = 1; /* @() */
@@ -34,68 +46,48 @@ atr_label(Mloc l, unsigned char *s)
 	{
 	  warning("unclosed ')' in label");
 	  start_lnum = -1;
-	  return lines+1;
+	  return;
 	}
-      ++s;
-      while (isspace(*s))
-	++s;
     }
   else
     {
-      Uchar *lp = NULL;
-      /* this is the label of @label */
-      if ('+' == save)
+      /* @label */
+      s += 6;
+      if ('+' == *s)
 	{
 	  multi_trans_line = 1;
+	  ++s;
 	}
-      lp = trans_rest_of_line(s);
-      if (!lp || strlen((char*)lp) > 127 || strchr((char*)lp,'@'))
-	{
-	  warning("suspicious @label line; add a blank line after it");
-	  xstrncpy(label_buf, lp, 127);
-	}
-      else
-	xstrcpy(label_buf,lp);
-      skip_blank_lines();
-      ++lines;
-      ++lnum;
-      s = *lines;
+      while (isspace(*s))
+	++s;
+      xstrcpy(label_buf, normalize_ws(s));
     }
 
   if (!innerp)
     {
+      curr_block = atr_push("xh:p");
+#if 0
       curr_block = appendChild(text,
 			       elem(e_xh_p,NULL,lnum,DIVISION));
       curr_block->lnum = start_lnum;
+#endif
       ctr(curr_block);
-      setAttr(curr_block,n_xh,(unsigned char *)nstab[n_xh].ns);
-      setAttr(curr_block,n_xtr,(unsigned char *)nstab[n_xtr].ns);
       /* FIXME: This is not subtle enough--some translation paras
 	 will be so long that they should be the #-target
 	 themselves, not an earlier para */
       if (next_trans_p_id > 3)
 	{
 	  sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id-3);
-	  appendAttr(curr_block,attr(a_xtr_cid,ucc(trans_p_idbuf)));
+	  atf_xprop(curr_block,"xtr:cid",trans_p_idbuf);
 	}
       sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
-      appendAttr(curr_block,attr(a_xml_id,ucc(trans_p_idbuf)));
+      atf_xprop(curr_block,"xml:id",trans_p_idbuf);
       trans_wid = 0;
-
-      if (NULL == lines[0])
-	{
-	  start_lnum = -1;
-	  return lines;
-	}
-	  
-      nlines = lines;
-      scan_multi_paras(2);
-
       labeled_labels(curr_block,label_buf);
       se_label(curr_block,cc(text_n),cc(label_buf));
       if (trans_parenned_labels)
 	parenify((char*)label_buf);
-      appendAttr(curr_block, attr(a_xtr_label,label_buf));
+      atf_xprop(curr_block, "xtr:label",label_buf);
       xstrcpy(last_label_buf,label_buf);
     }
 }
@@ -103,8 +95,7 @@ atr_label(Mloc l, unsigned char *s)
 void
 atr_hdr(Mloc l, unsigned char *s)
 {
-  curr_block = appendChild(text,
-			   elem(blocktokp->etype,NULL,lnum,DIVISION));
+  curr_block = atf_push("h");
   ctr(curr_block);
   if (lth_used == lth_alloced)
     {
@@ -113,17 +104,15 @@ atr_hdr(Mloc l, unsigned char *s)
     }
   last_trans_h[lth_used++] = curr_block;
   sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
-  /* return lines pointing at the blank line that
-     ended the para */
   nocellspan = 1;
-  lines = trans_para(lines,s,curr_block,0,0,NULL,1);
+  atr_para(s);
   nocellspan = 0;
 }
 
 void
 atr_dollar(Mloc l, unsigned char **lines)
 {
-  unsigned char *s = lines[0];
+  unsigned char *s = s;
   struct node *curr_block = appendChild(current_trans->tree,
 					elem(e_xh_p,NULL,lnum,DIVISION));
   setClass(curr_block,"dollar");
@@ -204,7 +193,7 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
   start_lnum = lnum;
   if (p == NULL)
     p = current_trans->tree;
-  if (s == lines[0] && *lines && lines[0][0] == '#')
+  if (s == s && *lines && s[0] == '#')
     is_comment = 1;
   if (*s == '|' && isspace(s[1]))
     {
@@ -256,7 +245,7 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
 	break; /* always break at a blank link */
       else
 	{
-	  if (need_lemm && sol == lines[0])
+	  if (need_lemm && sol == s)
 	    lem_save_line((const char *)sol);
 	  nchars += xxstrlen(sol);
 	  ++nchars;
@@ -455,7 +444,7 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
 }
 
 void
-trans_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords)
+atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords)
 {
   unsigned char *s = text, *start = text;
   int ocurly = 0, nested_curly = 0;

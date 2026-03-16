@@ -160,13 +160,13 @@ LANG	"[a-z]{3}(-[a-z-]+)?"
 
 <s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
 <s_TRH>{LANG}				{ atfsave; s_next=s_TRA; BEGIN s_WORD; return TR_LANG; }
-<s_TRA>@\([^\)\n]*\)			{ atfsave; return TR_LABEL; }
-<s_TRA>@label[^\n]*/\n			{ atfsave; return TR_LABEL; }
+<s_TRA>^@\([^\)\n]*\)			{ atfsave; return TR_LABEL; }
+<s_TRA>^@label[^\n]*/\n			{ atfsave; return TR_LABEL; }
 <s_TRA>.*/\n\&				{ BEGIN 0; atfsave; return TR_PAR; }
 <s_TRA>.*				{ atfsave; return TR_TEXT; }
 <s_TRA>\n[ \t]*\n			{ atflval.text=""; return TR_PAR; }
 <s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
-<s_TRA>^@h				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
+<s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
 
 %%
 

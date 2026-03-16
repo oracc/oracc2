@@ -358,14 +358,14 @@ tr.meta:
 	|	tr.dollar
 		;
 
-tr.hdr: 	TR_HDR
+tr.hdr: 	TR_HDR longtext		{ atr_hdr(@1, $1, (ucp)longtext_get()); }
 		;
 
-tr.dollar:	TR_DOLLAR
+tr.dollar:	TR_DOLLAR		{ atr_dollar(@1, (ucp)longtext_get()); }
 		;
 
 tr.label:
-		TR_LABEL
+		TR_LABEL		{ atr_label(@1, $1); }
 		;
 
 tr.trans:
@@ -374,17 +374,17 @@ tr.trans:
 		;
 
 tr.tran:
-		TR_TEXT
-	|	TR_PAR
+		TR_TEXT			{ atr_line(@1, $1); }
+	|	TR_PAR			{ atr_para(@1, $1); }
 		;
 
 tr.inter:
-		TR_INTER 	{ $$=$1; tr_inter(@1, (ucp)longtext_get()); }
+		TR_INTER 		{ $$=$1; atr_inter(@1, (ucp)longtext_get()); }
 
 longtext:
-		TEXT		{ $$ = longtext(atfmp->pool, $1, NULL); }
-        |      	TAB		{ $$ = longtext(atfmp->pool, $1, NULL); }
-        | 	longtext TAB	{ $$ = longtext(atfmp->pool, $1, $2); }
+		TEXT			{ $$ = longtext(atfmp->pool, $1, NULL); }
+        |      	TAB			{ $$ = longtext(atfmp->pool, $1, NULL); }
+        | 	longtext TAB		{ $$ = longtext(atfmp->pool, $1, $2); }
 		;
 
 %%
