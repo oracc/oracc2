@@ -10,10 +10,10 @@
 #include <asl.h>
 #include "ax.h"
 
-Mloc *xo_loc;
+extern Mloc *xo_loc;
 
 const char *xfn = NULL;
-const char *file;
+extern const char *file;
 
 const char **
 ax_jox_props(Prop *p)
