@@ -380,6 +380,7 @@ gdl_new_word(Tree *ytp)
       else
 	tree_curr(ytp->root);
       Node *wp = gdl_push(ytp, "g:w");
+      wp->mloc = mloc_file_line(currgdlfile, gdllineno);
       /* IF FIELD NOT IN SPARSE LEM HASH */
       list_add(wd_list, wp);
       sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
