@@ -107,7 +107,8 @@ line_mts(Mloc l, unsigned char *lp)
   atf_line_lg();
 
   struct node *lnode = atf_push("l");
-
+  lnode->mloc = mloc_mloc(&l);
+  
   register_line(l, LINE_MTS, lnode, lp);
   curr_lem_host = curr_line;
 
@@ -249,6 +250,7 @@ void
 line_bil(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
+  lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_BIL, lnode, lp);
   curr_lem_host = curr_line;
@@ -307,6 +309,7 @@ void
 line_nts(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("l");
+  lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_NTS, lnode, lp);
   curr_lem_host = curr_line;
@@ -338,6 +341,7 @@ line_lgs(Mloc l, unsigned char *lp)
   suppress_lem = 1;
 
   struct node *lnode = atf_push("l");
+  lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_LGS, lnode, lp);
   
@@ -380,6 +384,7 @@ void
 line_var(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_push("v");
+  lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_EXX, lnode, lp);
   
@@ -462,7 +467,6 @@ line_var(Mloc l, unsigned char *lp)
 void
 line_lem(Mloc ml, unsigned char *l)
 {
-
   List *llem = list_create(LIST_SINGLE);
   while (*l)
     {
