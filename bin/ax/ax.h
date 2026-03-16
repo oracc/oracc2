@@ -49,6 +49,7 @@ struct axjoxfnc
 {
   const char *name;
   axjoxfncp func;
+  int wrapper;
 };
 extern struct axjoxfnc *axjoxfnc(const char *, size_t);
 
@@ -61,6 +62,7 @@ extern void ax_atf(ATF*a);
 extern void ax_jox(Tree*tp);
 
 extern int ax_jox_bib(Node *np, Bib *bp);
+extern int ax_jox_lg(Node *np, Group *gp);
 extern int ax_jox_note(Node *np, Note *bp);
 extern int ax_jox_protocol(Node *np, void *p);
 extern void ax_jox_block(Node *np, Block *p);

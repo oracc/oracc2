@@ -14,6 +14,7 @@ extern Mloc *xo_loc;
 
 const char *xfn = NULL;
 extern const char *file;
+static void ax_jox_lines(Group *gp);
 
 const char **
 ax_jox_props(Prop *p)
@@ -48,8 +49,13 @@ ax_jox_node(Node *np, int oflag, int nflag)
   Node *npp;
   int need_closer = 1;
   const char *nodename = np->name;
+  struct axjoxfnc *ap = NULL;
 
-  joxer_ea(np->mloc, nodename, rnvval_aa_ccpp(ax_jox_props(np->props)));
+  if (np->user)
+    ap = axjoxfnc(nodename,strlen(nodename));
+
+  if (!ap || ap->wrapper)
+    joxer_ea(np->mloc, nodename, rnvval_aa_ccpp(ax_jox_props(np->props)));
 
   if (np->text)
     {
@@ -57,7 +63,6 @@ ax_jox_node(Node *np, int oflag, int nflag)
     }
   else if (np->user)
     {
-      struct axjoxfnc *ap = axjoxfnc(nodename,strlen(nodename));
       if (ap)
 	{
 	  if (ap->func(np, np->user) > 0)
@@ -86,7 +91,8 @@ ax_jox_node(Node *np, int oflag, int nflag)
 	ax_jox_node(npp, need_closer, 1);
     }
 
-  joxer_ee(np->mloc, nodename);
+  if (!ap || ap->wrapper)
+    joxer_ee(np->mloc, nodename);
 
 }
 
@@ -130,6 +136,32 @@ ax_jox_lang(Node *np, ATF *a)
   else
     sprintf(buf, "lang %s", a->lang);
   joxer_ch(np->mloc, buf);
+}
+
+int
+ax_jox_lg(Node *np, Group *gp)
+{
+  if (gp->nlines > 1)
+    {
+      joxer_ea(np->mloc, "lg", NULL);
+      ax_jox_lines(gp);
+    }
+  else
+    ax_jox_lines(gp);
+  return 0;
+}
+
+static void
+ax_jox_lines(Group *gp)
+{
+  int n;
+  for (n = 0; n < gp->nlines; ++n)
+    {
+      Node *np = gp->lines[n]->np;
+      joxer_ea(np->mloc, np->name, rnvval_aa_ccpp(ax_jox_props(np->props)));
+      grx_jox_gdl(np, np->user);
+      joxer_ee(np->mloc, np->name);
+    }
 }
 
 int

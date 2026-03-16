@@ -101,6 +101,7 @@ xtf2xcl_block(struct xcl_context *xc, struct node*n)
 {
   Blocktok *btp = blocktok(n->name, strlen(n->name));
   /* fprintf(stderr, "xtfxcl: process invoked\n"); */
+  int nokids = 0;
   if (btp)
     {
       switch (btp->bison)
@@ -143,13 +144,16 @@ xtf2xcl_block(struct xcl_context *xc, struct node*n)
 	}
     }
   else if (!strcmp(n->name, "lg"))
-    xtf2xcl_group(xc, n);
+    {
+      xtf2xcl_group(xc, n);
+      nokids = 1;
+    }
   else if (xclignore(n->name, strlen(n->name)))
     ;
   else
     fprintf(stderr, "xtf2xcl: unhandled node `%s'\n", n->name);
  
-  if (n->kids)
+  if (!nokids && n->kids)
     {
       Node *k;
       for (k = n->kids; k; k = k->next)

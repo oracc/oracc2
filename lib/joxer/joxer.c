@@ -49,8 +49,8 @@ joxer_attr(List *ap, const char *name, const char *value)
 void
 joxer_attr_i(List *ap, const char *name, int value)
 {
-  if (value >= 0)
-    list_pair(ap,name, itoa(value));
+  /* if (value >= 0) */
+  list_pair(ap,name, itoa(value));
 }
 
 void
