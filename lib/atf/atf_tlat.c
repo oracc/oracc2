@@ -1,8 +1,56 @@
 #include <oraccsys.h>
 #include "atf.h"
+#include "atf_bld.h"
+#include "otf-defs.h"
+
+Node *last_p;
+
+struct translation **translations = NULL;
+struct translation *current_trans;
+
+static int multi_trans_line;
+static char trans_p_idbuf[128];
+static int trans_wid;
+
+int max_trans_cols = 1;
+int need_alignment = 1;
+int nocellspan = 0;
+int trans_parenned_labels = 1;
+int trans_abbrevved_labels = 0;
+static char trans_id_base[32];
+static unsigned char last_xid[128];
+int start_lnum = -1;
+extern int next_trans_id;
+static int next_trans_p_id;
+extern int saa_mode;
+extern unsigned const char *curr_line_label;
+static unsigned char label_buf[128];
+static unsigned char last_label_buf[128];
+
+static int in_note = 0, last_label = 0;
+static int need_dir_rtl = 0;
+
+static char *tr_id_buf = NULL;
+
+static struct node **last_trans_h = NULL, *last_p;
+static int lth_alloced = 0;
+static int lth_used = 0;
+
+static void h_arefs(const unsigned char *aref);
+static void se_label(struct node *np, const char *n, const char *l);
+
+static const char *xid_prev(const char *x);
+static int xid_line(const char *x);
+static int xid_diff(const char *x1, const char *x2);
+
+extern void set_tr_id(const char *id); /* can this be static? */
+
+static List *tral;
 
 #if 1
-#define ctr(p) atfxprop((p),"class","tr")
+#define ctr(p) atf_xprop((p),"class","tr")
+#define setClass(n,c) atf_xprop((n),"class",c)
+#define getAttr(n,a) prop_find_kv((n), a)
 #else
 #define xctr(p) if (p && !*(getAttr(p,a_class))) appendAttr((p),attr(a_class,ucc("tr")))
 #define yctr(p) appendAttr((p),attr(a_class,ucc("tr")))
@@ -20,6 +68,9 @@ atr_inter(Mloc l, unsigned char *s)
 void
 atr_label(Mloc l, unsigned char *s)
 {
+  if (tral)
+    atr_para(tral);
+
   if (s[1] == '(')
     {
       /* @(i 1) */
@@ -66,11 +117,6 @@ atr_label(Mloc l, unsigned char *s)
   if (!innerp)
     {
       curr_block = atr_push("xh:p");
-#if 0
-      curr_block = appendChild(text,
-			       elem(e_xh_p,NULL,lnum,DIVISION));
-      curr_block->lnum = start_lnum;
-#endif
       ctr(curr_block);
       /* FIXME: This is not subtle enough--some translation paras
 	 will be so long that they should be the #-target
@@ -84,7 +130,7 @@ atr_label(Mloc l, unsigned char *s)
       atf_xprop(curr_block,"xml:id",trans_p_idbuf);
       trans_wid = 0;
       labeled_labels(curr_block,label_buf);
-      se_label(curr_block,cc(text_n),cc(label_buf));
+      se_label(curr_block,cc(atfp->name),cc(label_buf));
       if (trans_parenned_labels)
 	parenify((char*)label_buf);
       atf_xprop(curr_block, "xtr:label",label_buf);
@@ -93,9 +139,9 @@ atr_label(Mloc l, unsigned char *s)
 }
 
 void
-atr_hdr(Mloc l, unsigned char *s)
+atr_hdr(Mloc l, const char *h, unsigned char *s)
 {
-  curr_block = atf_push("h");
+  curr_block = atf_push(h);
   ctr(curr_block);
   if (lth_used == lth_alloced)
     {
@@ -105,16 +151,14 @@ atr_hdr(Mloc l, unsigned char *s)
   last_trans_h[lth_used++] = curr_block;
   sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
   nocellspan = 1;
-  atr_para(s);
+  atr_para(l, s);
   nocellspan = 0;
 }
 
 void
-atr_dollar(Mloc l, unsigned char **lines)
+atr_dollar(Mloc l, unsigned char *s)
 {
-  unsigned char *s = s;
-  struct node *curr_block = appendChild(current_trans->tree,
-					elem(e_xh_p,NULL,lnum,DIVISION));
+  struct node *curr_block = atf_push("xh:p");
   setClass(curr_block,"dollar");
   start_lnum = lnum;
   if (s[1] == '@' && s[2] == '(')
@@ -129,7 +173,7 @@ atr_dollar(Mloc l, unsigned char **lines)
       if (*s)
 	{
 	  labeled_labels(curr_block,label_buf);
-	  appendAttr(curr_block, attr(a_xtr_silent,ucc("1")));
+	  atf_xprop(curr_block, "xtr:silent","1");
 	}
       else
 	warning("label on $-line lacks closing ')'");
@@ -139,7 +183,7 @@ atr_dollar(Mloc l, unsigned char **lines)
       const char *dollar_id = dollar_get();
       if (dollar_id)
 	{
-	  setAttr(curr_block,a_xtr_ref,(unsigned char *)dollar_id);
+	  atf_xprop(curr_block,"xtr:ref",dollar_id);
 	  if (last_p && *last_xid)
 	    {
 	      int interval = xid_diff(dollar_id,(const char *)last_xid);
@@ -147,10 +191,10 @@ atr_dollar(Mloc l, unsigned char **lines)
 		{
 		  char buf[10];
 		  sprintf(buf,"%d",interval);
-		  setAttr(last_p,a_xtr_sref,getAttr(last_p,"xtr:ref"));
+		  atf_xprop(last_p,"xtr:sref",getAttr(last_p,"xtr:ref"));
 		  removeAttr(last_p, "xtr:ref");
-		  setAttr(last_p,a_xtr_eref,(unsigned char *)xid_prev(dollar_id));
-		  setAttr(last_p,a_xtr_rows,(unsigned char *)buf);
+		  atf_xprop(last_p,"xtr:eref",xid_prev(dollar_id));
+		  atf_xprop(last_p,"xtr:rows",buf);
 		}
 	      last_p = NULL;
 	    }
@@ -161,39 +205,64 @@ atr_dollar(Mloc l, unsigned char **lines)
     }
   else
     {
-      setAttr(curr_block,a_xtr_standalone,(unsigned char *)"1");
+      atf_xprop(curr_block,"xtr:standalone","1");
     }
-
-#if 0 /* $ does not work like headings */
-  if (lth_used == lth_alloced)
-    {
-      lth_alloced += 8;
-      last_trans_h = realloc(last_trans_h, lth_alloced * sizeof(struct node *));
-    }
-  last_trans_h[lth_used++] = curr_block;
-#endif
 
   ++s;
   while (isspace(*s))
     ++s;
-  (void)trans_inline(curr_block,s,NULL,0);
 
-  /* start_lnum = -1; */
-
-  return lines;
+  (void)atr_inline(curr_block,s,NULL,0);
 }
 
 void
-atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem, 
-	   int with_id, unsigned const char *label, int stop_at_lnum)
+atr_line(Mloc l, const char *s)
 {
-  int nchars = 0;
+  Mloc *m = mloc_mloc(&l);
+  m->user = (void*)s;
+  if (!tral)
+    tral = list_create(LIST_SINGLE);
+  list_add(tral, m);
+}
+
+void
+atr_para(Mloc l, unsigned char *s)
+{
+  static Node *p;
+  int with_id = 1;
+
+  const char *label = curr_line_label; /* was an arg; is it always set in oxx ? */
+  
+  if (s && strlen(s))
+    atr_line(l, s);
+
+  /* emulate oxx lines[] array */
+  int nlines = list_len(tral);
+  Mloc **mpp = (Mloc **)list2array(tral);
+
+  /* keep tral cleaned up */
+  list_free(tral, NULL);
+  tral = NULL;
+
+  unsigned char **lines = malloc((1+nlines)*sizeof(unsigned char *));
+  /* When para is a single string, the index into the para can be used
+     to find the line num of a token for error messages */
+  int *mloc_index = malloc((1+nlines)*sizeof(int));
+  int i, nchars;
+  for (nchars = i = 0; i < nlines; ++i)
+    {
+      lines[i] = mpp[i]->user;
+      mloc_index[i] = nchars;
+      nchars += strlen((ccp)lines[i]);
+    }
+  s = lines[0];
   unsigned char **start = lines,*sol = s,*text,*first_sol = s;
   int is_comment = 0, spanall = 0;
-  start_lnum = lnum;
+  start_lnum = mpp[0]->line;
+
   if (p == NULL)
     p = current_trans->tree;
-  if (s == s && *lines && s[0] == '#')
+  if (s == lines[0] && *lines && s[0] == '#')
     is_comment = 1;
   if (*s == '|' && isspace(s[1]))
     {
@@ -201,97 +270,53 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
       *s = ' ';
       s += 2;
     }
-  while (*lines)
+
+  for (i = 0; lines[i]; ++i)
     {
-      if (lnum > start_lnum && !isspace(*s))
-	{
-	  if (stop_at_lnum
-	      && (current_trans->etype == etu_interlinear 
-		  || current_trans->etype == etu_parallel))
-	    break; /* break at non-space sol after first line if parallel/interlinear */
-	  else if (*s == '&' || *s == '$' 
-		   || (*s == '#' && !is_comment))
-	    {
-	      notice("possible failure to end translation para with blank line (found `&' or '$')");
-	      goto stop;
-	    }
-	  else if (!stop_at_lnum && looks_like_lnum(s))
-	    {
-	      notice("possible failure to end translation para with blank line");
-	      goto stop;
-	    }
-	  else if (*s == '@')
-	    {
-	      /* break on a block token; keep processing otherwise */
-	      unsigned char *t = s+1, *e = s+1;
-	      char save;
-	      while (*e && !isspace(*e))
-		++e;
-	      save = *e;
-	      *e = '\0';
-	      if (blocktok((const char *)t,e-t))
-		{
-		  *e = save;
-		  break;
-		}
-	      else
-		*e = save;
-	      
-	    }
-	}
-      while (isspace(*s))
-	++s;
-      if (!*s)
-	break; /* always break at a blank link */
-      else
-	{
-	  if (need_lemm && sol == s)
-	    lem_save_line((const char *)sol);
-	  nchars += xxstrlen(sol);
-	  ++nchars;
-	  ++lines;
-	  ++lnum;
-	  s = sol = *lines;
-	}
+      nchars += xxstrlen(lines[i]);
+      ++nchars;
     }
+
   text = malloc(nchars+1);
   *text = '\0';
-  s = first_sol;
-  while (start < lines)
+
+  for (i = 0; lines[i]; ++i)
     {
-      xstrcat(text,s);
+      xstrcat(text,lines[i]);
       xstrcat(text,"\n");
-      ++start;
-      s = *start;
     }
   if (xxstrlen(text) > 0)
     text[xxstrlen(text)-1] = '\0';
+
+  int p_elem;
+  if (!strcmp(abt->curr->name, "xh:p"))
+    p_elem = 2;
+  else
+    p_elem = 1;
+  
   if (p_elem)
     {
-      p = appendChild(p,elem(p_elem == 2 ? e_xh_innerp : e_xh_p,NULL,lnum,DIVISION));
+      Node *p = atf_push(p_elem == 2 ? "xh:innerp" : "xh:p");
       if (spanall)
-	appendAttr(p,attr(a_xtr_spanall,(unsigned char *)"1"));
+	atf_xprop(p,"xtr:spanall",(unsigned char *)"1");
       if (with_id)
 	{
 	  sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
-	  appendAttr(p,attr(a_xml_id,ucc(trans_p_idbuf)));
+	  atf_xprop(p,"xml:id",ucc(trans_p_idbuf));
 	  trans_wid = 0;
 	  /* non-NULL label means caller is trans_inter;
 	     this is used for interlinear and parallel;
 	     only interlinear can use line_id_buf */
 	  if (label)
 	    {
-	      appendAttr(p,attr(a_xtr_label,label));
-	      se_label(p,cc(text_n),cc(label));
+	      atf_xprop(p,"xtr:label",label);
+	      se_label(p,cc(atfp->name),cc(label));
 	      if (current_trans->etype == etu_interlinear)
 		{
 		  if (tr_id_buf)
-		    appendAttr(p,attr(a_xtr_ref,ucc(tr_id_buf)));
+		    atf_xprop(p,"xtr:ref",ucc(tr_id_buf)));
 		  else
-		    appendAttr(p,attr(a_xtr_ref,ucc(line_id_buf)));
-
-		  setAttr(p,n_xh,(unsigned char *)nstab[n_xh].ns);
-		  setAttr(p,n_xtr,(unsigned char *)nstab[n_xtr].ns);
+		    atf_xprop(p,"xtr:ref",ucc(line_id_buf));
 
 		  h_arefs(ucc(line_id_buf));
 		}
@@ -299,12 +324,9 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
 		{
 		  const unsigned char *xid = check_label(label,etu_parallel,NULL);
 
-		  setAttr(p,n_xh,(unsigned char *)nstab[n_xh].ns);
-		  setAttr(p,n_xtr,(unsigned char *)nstab[n_xtr].ns);
-
 		  if (xid)
 		    {
-		      appendAttr(p,attr(a_xtr_ref,ucc(xid)));
+		      atf_xprop(p,"xtr:ref",xid);
 		      h_arefs(ucc(xid));
 		    }
 		  else
@@ -314,16 +336,14 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
 		}
 	    }
 	}
-      if (is_comment)
-	setAttr(p,a_class,ucc("tr-comment"));
-      else if (p_elem != 2)
-	ctr(p);
-    }
-  else if (label && last_trans_h)
-    h_arefs(ucc(line_id_buf));
-
+  
   if (is_comment)
-    appendChild(p,textNode(text));
+    atf_xprop(p,"class",ucc("tr-comment"));
+  else if (p_elem != 2)
+    ctr(p);
+  
+  if (is_comment)
+    atf_add(p,"xh:comment", text); /* FIXME */
   else if (strstr((const char *)text,"@&"))
     {
       int cols_this_para = 0;
@@ -342,13 +362,13 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
       while (*text)
 	{
 	  unsigned char *c = text, *resume;
-	  struct node *cc = appendChild(p,elem(e_xh_span,NULL,lnum,CELL));
+	  struct node *cc = atf_add(p,"xh:span");
 	  if (!in_note)
 	    {
 	      setClass(cc,"cell");
 	      if (need_dir_rtl)
-		appendAttr(cc,attr(a_dir,(uccp)"rtl"));
-	      appendAttr(cc,attr(a_xtr_span,ucc("1")));
+		atf_xprop(cc,"dir",(uccp)"rtl");
+	      atf_xprop(cc,"xtr:span",ucc("1"));
 	    }
 	  if (init_cell)
 	    {
@@ -367,39 +387,23 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
 	      spanbuf[i] = '\0';
 	      if (!*spanbuf) /* FIXME: @column in parallel trans */
 		strcpy(spanbuf,"1");
-	      setAttr(cc,a_xtr_span,ucc(spanbuf));
+	      atf_xprop(cc,"xtr:span",ucc(spanbuf));
 	      cols_this_para += atoi(spanbuf);
 	    }
 
 	  while (*text && ('@' != *text || '&' != text[1]))
 	    ++text;
 	  resume = text;
-#if 1
 	  if (*resume)
 	    init_cell = 1;
 
 	  else
 	    init_cell = 0;
-#else
-	  if (*resume)
-	    {
-	      resume += 2; /* skip @& */
-	      ++cols_this_para;
-	      if (isspace(*resume))
-		{
-		  while (isspace(*resume))
-		    ++resume;
-		  init_cell = 0;
-		}
-	      else
-		init_cell = 1;
-	    }
-#endif
 	  while (isspace(text[-1]))
 	    --text;
 	  *text = '\0';
 	  
-	  (void)trans_inline(cc,c,NULL,1);
+	  (void)atr_inline(cc,c,NULL,1);
 	  text = resume;
 	  if (init_cell)
 	    text += 2;
@@ -419,10 +423,10 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
 	      cc = appendChild(p,elem(e_xh_span,NULL,lnum,CELL));
 	      setClass(cc,"cell");
 	      if (need_dir_rtl)
-		appendAttr(cc,attr(a_dir,(uccp)"rtl"));
-	      appendAttr(cc,attr(a_xtr_span,ucc("1")));
+		atf_xprop(cc,a_dir,(uccp)"rtl");
+	      atf_xprop(cc,"xtr:span",ucc("1"));
 	    }
-	  (void)trans_inline(cc,text,NULL,1);
+	  (void)atr_inline(cc,text,NULL,1);
 	}
       else
 	{
@@ -431,21 +435,12 @@ atr_para(unsigned char **lines, unsigned char *s, struct node *p, int p_elem,
 	  removeLastChild(p);
 	}
     }
- stop:
-  if (lnum == start_lnum)
-    {
-      ++lnum;
-      ++lines;
-    }
-
-  /*start_lnum = -1;*/
-  
-  return lines;
 }
 
 void
 atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords)
 {
+#if 0
   unsigned char *s = text, *start = text;
   int ocurly = 0, nested_curly = 0;
 
@@ -682,4 +677,59 @@ atr_inline(struct node*parent,unsigned char *text,const char *until, int with_tr
 	textwords(parent,start,s);
     }
   return s;
+#endif
+}
+
+static void
+h_arefs(const unsigned char *aref)
+{
+  int i;
+  for (i = 0; i < lth_used; ++i)
+    {
+      const unsigned char *tlit_h = nth_tlit_hdr(aref,i);
+      if (tlit_h)
+	appendAttr(last_trans_h[i],attr(a_xtr_hdr_ref,tlit_h));
+      else
+	appendAttr(last_trans_h[i],attr(a_xtr_ref,aref));
+    }
+  lth_used = 0;
+}
+
+static void
+se_label(struct node *np, const char *n, const char *l)
+{
+  char buf[1024];
+  sprintf(buf,"%s, %s", n, l);
+  atf_xprop(np,"xtr:se_label",pool_copy((uccp)buf, atfmp->pool));
+}
+
+void
+set_tr_id(const char *id)
+{
+  if (id)
+    {
+      tr_id_buf = realloc(tr_id_buf, strlen(id) + 1);
+      strcpy(tr_id_buf, id);
+    }
+  else
+    {
+      if (tr_id_buf)
+	{
+	  free(tr_id_buf);
+	  tr_id_buf = NULL;
+	}
+    }
+}
+
+static const char *
+xid_prev(const char *x)
+{
+  static char idbuf[128], *idbufp;
+  strcpy(idbuf,x);
+  idbufp = idbuf+strlen(idbuf);
+  while (idbufp > idbuf && idbufp[-1] != '.')
+    --idbufp;
+  if (idbufp != idbuf)
+    sprintf(idbufp,"%d",atoi(idbufp)-1);
+  return idbuf;
 }

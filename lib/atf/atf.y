@@ -358,14 +358,14 @@ tr.meta:
 	|	tr.dollar
 		;
 
-tr.hdr: 	TR_HDR longtext		{ atr_hdr(@1, $1, (ucp)longtext_get()); }
+tr.hdr: 	TR_HDR longtext		{ atr_hdr(@1, $1+1, (ucp)longtext_get()); }
 		;
 
 tr.dollar:	TR_DOLLAR		{ atr_dollar(@1, (ucp)longtext_get()); }
 		;
 
 tr.label:
-		TR_LABEL		{ atr_label(@1, $1); }
+		TR_LABEL		{ atr_label(@1, (unsigned char *)$1); }
 		;
 
 tr.trans:

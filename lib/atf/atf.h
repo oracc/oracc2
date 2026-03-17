@@ -189,6 +189,16 @@ struct xcl_ilem
   struct ilem_form *i;
 };
 
+typedef struct translation
+{
+  const char    * type;
+  const unsigned char* id;
+  enum e_tu_types etype;
+  const char    * lang;
+  const char    * code;
+  struct node   * tree;
+} Translation;
+
 extern Lninfo lninfo;
 
 extern const char *primes[];
@@ -311,5 +321,13 @@ extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigne
 extern void set_block_curr(Block_level b);
 
 extern struct xcl_ilem *atf_save_lem(Node *np, const char *lemstr);
+
+extern void atr_inter(Mloc l, unsigned char *s);
+extern void atr_label(Mloc l, unsigned char *s);
+extern void atr_hdr(Mloc l, const char *h, unsigned char *s);
+extern void atr_dollar(Mloc l, unsigned char *s);
+extern void atr_line(Mloc l, const char *s);
+extern void atr_para(Mloc l, unsigned char *s);
+extern void atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords);
 
 #endif/*ATF_H_*/
