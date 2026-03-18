@@ -209,3 +209,15 @@ prop_ccpp(Prop *p, int ptype, int gtype)
   list_free(lp, NULL);
   return pp;
 }
+
+void
+prop_drop_kv(Prop *p, const char *key, const char *value)
+{
+  Prop *dropme = prop_find_kv(p, key, value);
+  if (dropme)
+    {
+      while (p->next != dropme)
+	p = p->next;
+      p->next = dropme->next;
+    }
+}

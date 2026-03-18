@@ -1,9 +1,8 @@
 #include <oraccsys.h>
+#include <mesg.h>
 #include "atf.h"
 #include "atf_bld.h"
 #include "otf-defs.h"
-
-Node *last_p;
 
 struct translation **translations = NULL;
 struct translation *current_trans;
@@ -11,7 +10,7 @@ struct translation *current_trans;
 static int multi_trans_line;
 static char trans_p_idbuf[128];
 static int trans_wid;
-
+static Prop *p;
 int max_trans_cols = 1;
 int need_alignment = 1;
 int nocellspan = 0;
@@ -32,7 +31,7 @@ static int need_dir_rtl = 0;
 
 static char *tr_id_buf = NULL;
 
-static struct node **last_trans_h = NULL, *last_p;
+static struct node **last_trans_h = NULL, *last_p, *curr_block_np;
 static int lth_alloced = 0;
 static int lth_used = 0;
 
@@ -44,13 +43,16 @@ static int xid_line(const char *x);
 static int xid_diff(const char *x1, const char *x2);
 
 extern void set_tr_id(const char *id); /* can this be static? */
+static void parenify(char *buf);
+static void labeled_labels(struct node *p, unsigned char *lab);
 
 static List *tral;
 
 #if 1
 #define ctr(p) atf_xprop((p),"class","tr")
 #define setClass(n,c) atf_xprop((n),"class",c)
-#define getAttr(n,a) prop_find_kv((n), a)
+#define getAttr(n,a) ((p=prop_find_kv(n->props, a, NULL))?p->u.k->v:NULL)
+#define removeAttr(n,a) prop_drop_kv(n->props, a, NULL)
 #else
 #define xctr(p) if (p && !*(getAttr(p,a_class))) appendAttr((p),attr(a_class,ucc("tr")))
 #define yctr(p) appendAttr((p),attr(a_class,ucc("tr")))
@@ -68,8 +70,9 @@ atr_inter(Mloc l, unsigned char *s)
 void
 atr_label(Mloc l, unsigned char *s)
 {
+  int innerp = 0;
   if (tral)
-    atr_para(tral);
+    atr_para(l, NULL);
 
   if (s[1] == '(')
     {
@@ -83,7 +86,7 @@ atr_label(Mloc l, unsigned char *s)
 	  if (s - t)
 	    {
 	      *s = '\0';
-	      xstrcpy(label_buf,normalize_ws(t)));
+	      xstrcpy(label_buf,normalize_ws(t));
 	    }
 	  else
 	    innerp = 1; /* @() */
@@ -116,24 +119,24 @@ atr_label(Mloc l, unsigned char *s)
 
   if (!innerp)
     {
-      curr_block = atr_push("xh:p");
-      ctr(curr_block);
+      curr_block_np = atf_push("xh:p");
+      ctr(curr_block_np);
       /* FIXME: This is not subtle enough--some translation paras
 	 will be so long that they should be the #-target
 	 themselves, not an earlier para */
       if (next_trans_p_id > 3)
 	{
 	  sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id-3);
-	  atf_xprop(curr_block,"xtr:cid",trans_p_idbuf);
+	  atf_xprop(curr_block_np,"xtr:cid",trans_p_idbuf);
 	}
       sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
-      atf_xprop(curr_block,"xml:id",trans_p_idbuf);
+      atf_xprop(curr_block_np,"xml:id",trans_p_idbuf);
       trans_wid = 0;
-      labeled_labels(curr_block,label_buf);
-      se_label(curr_block,cc(atfp->name),cc(label_buf));
+      labeled_labels(curr_block_np,label_buf);
+      se_label(curr_block_np,cc(atfp->name),cc(label_buf));
       if (trans_parenned_labels)
 	parenify((char*)label_buf);
-      atf_xprop(curr_block, "xtr:label",label_buf);
+      atf_xprop(curr_block_np, "xtr:label",(ccp)label_buf);
       xstrcpy(last_label_buf,label_buf);
     }
 }
@@ -141,14 +144,14 @@ atr_label(Mloc l, unsigned char *s)
 void
 atr_hdr(Mloc l, const char *h, unsigned char *s)
 {
-  curr_block = atf_push(h);
-  ctr(curr_block);
+  curr_block_np = atf_push(h);
+  ctr(curr_block_np);
   if (lth_used == lth_alloced)
     {
       lth_alloced += 8;
       last_trans_h = realloc(last_trans_h, lth_alloced * sizeof(struct node *));
     }
-  last_trans_h[lth_used++] = curr_block;
+  last_trans_h[lth_used++] = curr_block_np;
   sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
   nocellspan = 1;
   atr_para(l, s);
@@ -158,9 +161,9 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
 void
 atr_dollar(Mloc l, unsigned char *s)
 {
-  struct node *curr_block = atf_push("xh:p");
-  setClass(curr_block,"dollar");
-  start_lnum = lnum;
+  struct node *curr_block_np = atf_push("xh:p");
+  setClass(curr_block_np,"dollar");
+  start_lnum = l.line;
   if (s[1] == '@' && s[2] == '(')
     {
       unsigned char label_buf[128], *lp;
@@ -172,8 +175,8 @@ atr_dollar(Mloc l, unsigned char *s)
       *lp = '\0';
       if (*s)
 	{
-	  labeled_labels(curr_block,label_buf);
-	  atf_xprop(curr_block, "xtr:silent","1");
+	  labeled_labels(curr_block_np,label_buf);
+	  atf_xprop(curr_block_np, "xtr:silent","1");
 	}
       else
 	warning("label on $-line lacks closing ')'");
@@ -183,7 +186,7 @@ atr_dollar(Mloc l, unsigned char *s)
       const char *dollar_id = dollar_get();
       if (dollar_id)
 	{
-	  atf_xprop(curr_block,"xtr:ref",dollar_id);
+	  atf_xprop(curr_block_np,"xtr:ref",dollar_id);
 	  if (last_p && *last_xid)
 	    {
 	      int interval = xid_diff(dollar_id,(const char *)last_xid);
@@ -205,14 +208,14 @@ atr_dollar(Mloc l, unsigned char *s)
     }
   else
     {
-      atf_xprop(curr_block,"xtr:standalone","1");
+      atf_xprop(curr_block_np,"xtr:standalone","1");
     }
 
   ++s;
   while (isspace(*s))
     ++s;
 
-  (void)atr_inline(curr_block,s,NULL,0);
+  (void)atr_inline(curr_block_np,s,NULL,0);
 }
 
 void
@@ -231,10 +234,10 @@ atr_para(Mloc l, unsigned char *s)
   static Node *p;
   int with_id = 1;
 
-  const char *label = curr_line_label; /* was an arg; is it always set in oxx ? */
+  const char *label = (ccp)curr_line_label; /* was an arg; is it always set in oxx ? */
   
-  if (s && strlen(s))
-    atr_line(l, s);
+  if (s && strlen((ccp)s))
+    atr_line(l, (ccp)s);
 
   /* emulate oxx lines[] array */
   int nlines = list_len(tral);
@@ -298,11 +301,11 @@ atr_para(Mloc l, unsigned char *s)
     {
       Node *p = atf_push(p_elem == 2 ? "xh:innerp" : "xh:p");
       if (spanall)
-	atf_xprop(p,"xtr:spanall",(unsigned char *)"1");
+	atf_xprop(p,"xtr:spanall","1");
       if (with_id)
 	{
 	  sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
-	  atf_xprop(p,"xml:id",ucc(trans_p_idbuf));
+	  atf_xprop(p,"xml:id",trans_p_idbuf);
 	  trans_wid = 0;
 	  /* non-NULL label means caller is trans_inter;
 	     this is used for interlinear and parallel;
@@ -314,15 +317,15 @@ atr_para(Mloc l, unsigned char *s)
 	      if (current_trans->etype == etu_interlinear)
 		{
 		  if (tr_id_buf)
-		    atf_xprop(p,"xtr:ref",ucc(tr_id_buf)));
+		    atf_xprop(p,"xtr:ref",tr_id_buf);
 		  else
-		    atf_xprop(p,"xtr:ref",ucc(line_id_buf));
+		    atf_xprop(p,"xtr:ref",line_id_buf);
 
 		  h_arefs(ucc(line_id_buf));
 		}
 	      else
 		{
-		  const unsigned char *xid = check_label(label,etu_parallel,NULL);
+		  const char *xid = (ccp)check_label((uccp)label,etu_parallel,NULL);
 
 		  if (xid)
 		    {
@@ -331,19 +334,21 @@ atr_para(Mloc l, unsigned char *s)
 		    }
 		  else
 		    {
-		      vwarning("%s: label used in parallel translation is not in transliteration", label);
+		      vwarning("%s: label used in parallel translation is not in transliteration",
+			       label);
 		    }
 		}
 	    }
 	}
   
   if (is_comment)
-    atf_xprop(p,"class",ucc("tr-comment"));
+    atf_xprop(p,"class","tr-comment");
   else if (p_elem != 2)
     ctr(p);
   
   if (is_comment)
     atf_add(p,"xh:comment", text); /* FIXME */
+
   else if (strstr((const char *)text,"@&"))
     {
       int cols_this_para = 0;
@@ -362,13 +367,13 @@ atr_para(Mloc l, unsigned char *s)
       while (*text)
 	{
 	  unsigned char *c = text, *resume;
-	  struct node *cc = atf_add(p,"xh:span");
+	  struct node *cc = atf_add("xh:span");
 	  if (!in_note)
 	    {
 	      setClass(cc,"cell");
 	      if (need_dir_rtl)
-		atf_xprop(cc,"dir",(uccp)"rtl");
-	      atf_xprop(cc,"xtr:span",ucc("1"));
+		atf_xprop(cc,"dir","rtl");
+	      atf_xprop(cc,"xtr:span","1");
 	    }
 	  if (init_cell)
 	    {
@@ -387,10 +392,10 @@ atr_para(Mloc l, unsigned char *s)
 	      spanbuf[i] = '\0';
 	      if (!*spanbuf) /* FIXME: @column in parallel trans */
 		strcpy(spanbuf,"1");
-	      atf_xprop(cc,"xtr:span",ucc(spanbuf));
+	      atf_xprop(cc,"xtr:span",spanbuf);
 	      cols_this_para += atoi(spanbuf);
 	    }
-
+	  
 	  while (*text && ('@' != *text || '&' != text[1]))
 	    ++text;
 	  resume = text;
@@ -420,20 +425,21 @@ atr_para(Mloc l, unsigned char *s)
 	{
 	  if (!nocellspan)
 	    {
-	      cc = appendChild(p,elem(e_xh_span,NULL,lnum,CELL));
+	      cc = atf_push("xh:span");
 	      setClass(cc,"cell");
 	      if (need_dir_rtl)
-		atf_xprop(cc,a_dir,(uccp)"rtl");
-	      atf_xprop(cc,"xtr:span",ucc("1"));
+		atf_xprop(cc, "dir", "rtl");
+	      atf_xprop(cc,"xtr:span","1");
 	    }
 	  (void)atr_inline(cc,text,NULL,1);
 	}
       else
 	{
 	  /* unwind the spurious innerp node */
-	  p = p->parent;
-	  removeLastChild(p);
+	  p = p->rent;
+	  kids_rem_last(p->tree);
 	}
+    }
     }
 }
 
@@ -733,3 +739,199 @@ xid_prev(const char *x)
     sprintf(idbufp,"%d",atoi(idbufp)-1);
   return idbuf;
 }
+
+static void
+labeled_labels(struct node *p, unsigned char *lab)
+{
+  unsigned char *s = lab, *disp = lab, *eref = NULL;
+  const unsigned char *xid = NULL;
+  int sref = 0, overlap = 0;
+  unsigned const char *sref_xid = NULL;
+  int saved_start_lnum = start_lnum;
+  
+  while (*disp)
+    {
+      if (isspace(*disp) && disp[1] == '=' && isspace(disp[2]))
+	break;
+      else
+	++disp;
+    }
+  if (*disp)
+    {
+      unsigned char *end = disp, save = 0;
+      while (end > lab && isspace(end[-1]))
+	--end;
+      *end = '\0';
+      disp += 3;
+      while (isspace(*disp))
+	++disp;
+      end = disp;
+      while (*end && !isspace(*end))
+	++end;
+      if (isspace(*end))
+	{
+	  save = *end;
+	  *end = '\0';
+	}
+      setAttr(p,a_xtr_lab_start_label,pool_copy(disp));
+      setAttr(p,a_xtr_lab_start_lnum,pool_copy(lnum_of(disp)));
+      if (save)
+	*end = save;
+      s = end;
+    }
+
+  while (*s && (*s != '-' || (s == lab || !isspace(s[-1]) || !isspace(s[1]))))
+    ++s;
+
+  if (*s)
+    {
+      eref = s+1;
+      while (isspace(s[-1]))
+	--s;
+      *s = '\0';
+    }
+
+  start_lnum = p->lnum;
+  xid = check_label(lab,etu_labeled,NULL);
+  start_lnum = saved_start_lnum;
+
+  if (xid)
+    {
+      sref_xid = xid;
+      sref = int_of(xid);
+      if (*last_xid && !strcmp((const char*)last_xid, (const char *)xid))
+	overlap = 1;
+    repeat:
+      if (dollar_fifo)
+	{
+	  /* trap places where a translation line occurs but the
+	     next corresponding item in the transliteration is a
+	     $-line.  FIXME: what if the translation has a labeled
+	     $-line so the translation line matches up to it--is that
+	     taken care of by not including labeled dollar lines in the
+	     dollar fifo?		 
+	  */
+	  const char *doll_id = dollar_peek();
+	  if (doll_id)
+	    {
+	      /* doll_id should be later than the trans line */
+	      int interval = xid_diff((const char *)xid,doll_id);
+	      if (interval > 0)
+		{
+		  vwarning2(file,p->lnum,"expected $-line to match transliteration.\n\tTo have no corresponding $-line include a spacer in the translation:\n\t\t$ (SPACER)");
+		  /* flush the translit dollar line that has no
+		     counterpart in the translat */
+		  (void)dollar_get();
+		  goto repeat; /* trap multiple missing SPACERs */
+		}
+	    }
+	}
+      if (last_p && *last_xid)
+	{
+	  /* automatically provide sref/eref even when user only gives
+	     sref */
+	  int interval = xid_diff((const char*)xid,(const char *)last_xid);
+	  if (interval > 1 || (interval==0 && multi_trans_line))
+	    {
+	      char buf[10];
+	      sprintf(buf,"%d",interval);
+	      setAttr(last_p,a_xtr_sref,getAttr(last_p,"xtr:ref"));
+	      removeAttr(last_p, "xtr:ref");
+	      setAttr(last_p,a_xtr_eref,xid_prev((const char *)xid));
+	      setAttr(last_p,a_xtr_rows,buf);
+	    }
+	  else if (interval < 1)
+	    {
+	      vwarning2(file,p->lnum,"translation alignment out of order");
+	    }
+	}
+      else if (*last_xid && dollar_fifo)
+	{
+	  /* last item was a trans_dollar -- trap backtracking */
+	  int interval = xid_diff((const char*)xid,(const char *)last_xid);
+	  if (interval < 0)
+	    vwarning2(file,p->lnum,"preceding $-line incorrectly aligned");
+	}
+
+      if (eref)
+	setAttr(p,a_xtr_sref,xid);
+      else
+	setAttr(p,a_xtr_ref,xid);
+      if (!*getAttr(p,"xtr:lab-start-label"))
+	{
+	  setAttr(p,a_xtr_lab_start_label,pool_copy(lab));
+	  setAttr(p,a_xtr_lab_start_lnum,pool_copy(lnum_of(lab)));
+	}
+      if (overlap)
+	setAttr(p,a_xtr_overlap,(unsigned const char *)"1");
+      strcpy((char *)last_xid,(const char *)xid);
+      last_p = p;
+      h_arefs(xid);
+    }
+  else
+    {
+      *last_xid = '\0';
+      last_p = NULL;
+    }
+  
+  if (eref)
+    {
+      s = eref;
+      while (isspace(*s))
+	++s;
+      xid = check_label(s,etu_labeled,NULL);
+      if (xid)
+	{
+	  char buf[5];
+	  int interval = xid_diff((const char*)xid,(const char *)sref_xid);
+	  if (interval < 1)
+	    {
+	      vwarning2(file,p->lnum,"end of range comes before start of range");
+	      /* keep processing even though it will produce unsightly output */
+	    }
+	  else
+	    strcpy((char *)last_xid,(const char *)xid);
+	  sprintf(buf,"%d",1 + int_of(xid) - sref);
+	  setAttr(p,a_xtr_eref,xid);
+	  setAttr(p,a_xtr_lab_end_label,pool_copy(s));
+	  setAttr(p,a_xtr_lab_end_lnum,pool_copy(lnum_of(s)));
+	  setAttr(p,a_xtr_rows,ucc(buf));
+	  /* This attribute means that the start of this trans block
+	     overlaps with the end of the preceding one */
+	  if (overlap)
+	    setAttr(p,a_xtr_overlap,(unsigned const char *)"1");
+	}
+      else
+	*last_xid = '\0';
+      last_p = NULL;
+    }
+
+  if (trans_abbrevved_labels && *last_label_buf && xstrcmp(getClass(p),"dollar"))
+    {
+      unsigned char *prefix = label_prefix(lab);
+      if (prefix && !strncmp(cc(last_label_buf),cc(prefix),strlen(cc(prefix))))
+	{
+	  unsigned char *rendlabel = lab + strlen(cc(prefix));
+	  while (isspace(*rendlabel))
+	    ++rendlabel;
+	  setAttr(p,a_xtr_rend_label,rendlabel);
+	}
+    }
+}
+
+static void
+parenify(char *buf)
+{
+  char *tmp = malloc(strlen(buf)+3);
+  if (!tmp)
+    {
+      fputs("atf2xtf: out of core\n",stderr);
+      exit(2);
+    }
+  strcpy(tmp,"(");
+  strcat(tmp,buf);
+  strcat(tmp,")");
+  strcpy(buf,tmp);
+  free(tmp);
+}
+
