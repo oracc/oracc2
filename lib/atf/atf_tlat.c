@@ -11,6 +11,7 @@ static int multi_trans_line;
 static char trans_p_idbuf[128];
 static int trans_wid;
 static Prop *p;
+static Hash *last_tlit_h_hash = NULL;
 int max_trans_cols = 1;
 int need_alignment = 1;
 int nocellspan = 0;
@@ -26,7 +27,7 @@ extern unsigned const char *curr_line_label;
 static unsigned char label_buf[128];
 static unsigned char last_label_buf[128];
 
-static int in_note = 0, last_label = 0;
+static int in_note = 0/*, last_label = 0*/;
 static int need_dir_rtl = 0;
 
 static char *tr_id_buf = NULL;
@@ -45,6 +46,10 @@ static int xid_diff(const char *x1, const char *x2);
 extern void set_tr_id(const char *id); /* can this be static? */
 static void parenify(char *buf);
 static void labeled_labels(struct node *p, unsigned char *lab);
+static const unsigned char *nth_tlit_hdr(const unsigned char *id, int nth);
+static int int_of(unsigned const char *line_id);
+static unsigned char *label_prefix(unsigned char *lab);
+static unsigned char *lnum_of(unsigned char *l);
 
 static List *tral;
 
@@ -52,7 +57,9 @@ static List *tral;
 #define ctr(p) atf_xprop((p),"class","tr")
 #define setClass(n,c) atf_xprop((n),"class",c)
 #define getAttr(n,a) ((p=prop_find_kv(n->props, a, NULL))?p->u.k->v:NULL)
+#define getClass(n) getAttr((n),"class")
 #define removeAttr(n,a) prop_drop_kv(n->props, a, NULL)
+#define setAttr(n,a,v) atf_xprop((n),(a),(v))
 #else
 #define xctr(p) if (p && !*(getAttr(p,a_class))) appendAttr((p),attr(a_class,ucc("tr")))
 #define yctr(p) appendAttr((p),attr(a_class,ucc("tr")))
@@ -259,7 +266,7 @@ atr_para(Mloc l, unsigned char *s)
       nchars += strlen((ccp)lines[i]);
     }
   s = lines[0];
-  unsigned char **start = lines,*sol = s,*text,*first_sol = s;
+  unsigned char *text;
   int is_comment = 0, spanall = 0;
   start_lnum = mpp[0]->line;
 
@@ -334,8 +341,9 @@ atr_para(Mloc l, unsigned char *s)
 		    }
 		  else
 		    {
-		      vwarning("%s: label used in parallel translation is not in transliteration",
-			       label);
+		      vwarning2(l.file, l.line,
+				"%s: label used in parallel translation is not in transliteration",
+				label);
 		    }
 		}
 	    }
@@ -347,7 +355,10 @@ atr_para(Mloc l, unsigned char *s)
     ctr(p);
   
   if (is_comment)
-    atf_add(p,"xh:comment", text); /* FIXME */
+    {
+      Node *np = atf_add("xh:comment");
+      np->text = (ccp)text;
+    }
 
   else if (strstr((const char *)text,"@&"))
     {
@@ -694,11 +705,31 @@ h_arefs(const unsigned char *aref)
     {
       const unsigned char *tlit_h = nth_tlit_hdr(aref,i);
       if (tlit_h)
-	appendAttr(last_trans_h[i],attr(a_xtr_hdr_ref,tlit_h));
+	atf_xprop(last_trans_h[i],"xtr:hdr_ref",(ccp)tlit_h);
       else
-	appendAttr(last_trans_h[i],attr(a_xtr_ref,aref));
+	atf_xprop(last_trans_h[i],"xtr:ref",(ccp)aref);
     }
   lth_used = 0;
+}
+
+static const unsigned char *
+nth_tlit_hdr(const unsigned char *id, int nth)
+{
+  struct node **tmp_tlit_h = NULL;
+  if (id)
+    {
+      tmp_tlit_h = hash_find(last_tlit_h_hash, id);
+      if (tmp_tlit_h)
+	{
+	  int i;
+	  for (i = 0; i < nth; ++i)
+	    if (NULL == tmp_tlit_h[i])
+	      break;
+	  if (tmp_tlit_h[i])
+	    return (uccp)getAttr(tmp_tlit_h[i],"xml:id");
+	}
+    }
+  return NULL;
 }
 
 static void
@@ -706,7 +737,7 @@ se_label(struct node *np, const char *n, const char *l)
 {
   char buf[1024];
   sprintf(buf,"%s, %s", n, l);
-  atf_xprop(np,"xtr:se_label",pool_copy((uccp)buf, atfmp->pool));
+  atf_xprop(np,"xtr:se_label",(ccp)pool_copy((uccp)buf, atfmp->pool));
 }
 
 void
@@ -727,6 +758,34 @@ set_tr_id(const char *id)
     }
 }
 
+static int
+xid_line(const char *x)
+{
+  const char *start;
+  if (!x)
+    return 0;
+  start = x;
+  x += strlen(x);
+  while (x > start && x[-1] != '.')
+    --x;
+  if (isdigit(*x))
+    return atoi(x);
+  else
+    return 0;
+}
+
+/*WATCHME: this only works perfectly if the line id mechanism
+  increments the line id by 1 for each line_mts--the current
+  implementation may be good enough for extant uses */
+static int
+xid_diff(const char *x1, const char *x2)
+{
+  int i1,i2;
+  i1 = xid_line(x1);
+  i2 = xid_line(x2);
+  return i1-i2;
+}
+
 static const char *
 xid_prev(const char *x)
 {
@@ -741,7 +800,7 @@ xid_prev(const char *x)
 }
 
 static void
-labeled_labels(struct node *p, unsigned char *lab)
+labeled_labels(struct node *np, unsigned char *lab)
 {
   unsigned char *s = lab, *disp = lab, *eref = NULL;
   const unsigned char *xid = NULL;
@@ -773,8 +832,8 @@ labeled_labels(struct node *p, unsigned char *lab)
 	  save = *end;
 	  *end = '\0';
 	}
-      setAttr(p,a_xtr_lab_start_label,pool_copy(disp));
-      setAttr(p,a_xtr_lab_start_lnum,pool_copy(lnum_of(disp)));
+      setAttr(np,"xtr:lab_start_label",(ccp)pool_copy((uccp)disp, atfmp->pool));
+      setAttr(np,"xtr:lab_start_lnum",(ccp)pool_copy((uccp)lnum_of(disp), atfmp->pool));
       if (save)
 	*end = save;
       s = end;
@@ -791,7 +850,7 @@ labeled_labels(struct node *p, unsigned char *lab)
       *s = '\0';
     }
 
-  start_lnum = p->lnum;
+  start_lnum = np->mloc->line;
   xid = check_label(lab,etu_labeled,NULL);
   start_lnum = saved_start_lnum;
 
@@ -818,7 +877,7 @@ labeled_labels(struct node *p, unsigned char *lab)
 	      int interval = xid_diff((const char *)xid,doll_id);
 	      if (interval > 0)
 		{
-		  vwarning2(file,p->lnum,"expected $-line to match transliteration.\n\tTo have no corresponding $-line include a spacer in the translation:\n\t\t$ (SPACER)");
+		  vwarning2(np->mloc->file,np->mloc->line,"expected $-line to match transliteration.\n\tTo have no corresponding $-line include a spacer in the translation:\n\t\t$ (SPACER)");
 		  /* flush the translit dollar line that has no
 		     counterpart in the translat */
 		  (void)dollar_get();
@@ -835,14 +894,14 @@ labeled_labels(struct node *p, unsigned char *lab)
 	    {
 	      char buf[10];
 	      sprintf(buf,"%d",interval);
-	      setAttr(last_p,a_xtr_sref,getAttr(last_p,"xtr:ref"));
+	      setAttr(last_p,"xtr:sref",getAttr(last_p,"xtr:ref"));
 	      removeAttr(last_p, "xtr:ref");
-	      setAttr(last_p,a_xtr_eref,xid_prev((const char *)xid));
-	      setAttr(last_p,a_xtr_rows,buf);
+	      setAttr(last_p,"xtr:eref",xid_prev((const char *)xid));
+	      setAttr(last_p,"xtr:rows",buf);
 	    }
 	  else if (interval < 1)
 	    {
-	      vwarning2(file,p->lnum,"translation alignment out of order");
+	      vwarning2(np->mloc->file,np->mloc->line,"translation alignment out of order");
 	    }
 	}
       else if (*last_xid && dollar_fifo)
@@ -850,22 +909,22 @@ labeled_labels(struct node *p, unsigned char *lab)
 	  /* last item was a trans_dollar -- trap backtracking */
 	  int interval = xid_diff((const char*)xid,(const char *)last_xid);
 	  if (interval < 0)
-	    vwarning2(file,p->lnum,"preceding $-line incorrectly aligned");
+	    vwarning2(np->mloc->file,np->mloc->line,"preceding $-line incorrectly aligned");
 	}
 
       if (eref)
-	setAttr(p,a_xtr_sref,xid);
+	setAttr(np,"xtr:sref",(ccp)xid);
       else
-	setAttr(p,a_xtr_ref,xid);
-      if (!*getAttr(p,"xtr:lab-start-label"))
+	setAttr(np,"xtr:ref",(ccp)xid);
+      if (!*getAttr(np,"xtr:lab-start-label"))
 	{
-	  setAttr(p,a_xtr_lab_start_label,pool_copy(lab));
-	  setAttr(p,a_xtr_lab_start_lnum,pool_copy(lnum_of(lab)));
+	  setAttr(np,"xtr:lab_start_label",(ccp)pool_copy(lab, atfmp->pool));
+	  setAttr(np,"xtr:lab_start_lnum",(ccp)pool_copy(lnum_of(lab), atfmp->pool));
 	}
       if (overlap)
-	setAttr(p,a_xtr_overlap,(unsigned const char *)"1");
+	setAttr(np,"xtr:overlap","1");
       strcpy((char *)last_xid,(const char *)xid);
-      last_p = p;
+      last_p = np;
       h_arefs(xid);
     }
   else
@@ -886,27 +945,27 @@ labeled_labels(struct node *p, unsigned char *lab)
 	  int interval = xid_diff((const char*)xid,(const char *)sref_xid);
 	  if (interval < 1)
 	    {
-	      vwarning2(file,p->lnum,"end of range comes before start of range");
+	      vwarning2(np->mloc->file,np->mloc->line,"end of range comes before start of range");
 	      /* keep processing even though it will produce unsightly output */
 	    }
 	  else
 	    strcpy((char *)last_xid,(const char *)xid);
 	  sprintf(buf,"%d",1 + int_of(xid) - sref);
-	  setAttr(p,a_xtr_eref,xid);
-	  setAttr(p,a_xtr_lab_end_label,pool_copy(s));
-	  setAttr(p,a_xtr_lab_end_lnum,pool_copy(lnum_of(s)));
-	  setAttr(p,a_xtr_rows,ucc(buf));
+	  setAttr(np,"xtr:eref",(ccp)xid);
+	  setAttr(np,"xtr:lab_end_label",(ccp)pool_copy(s, atfmp->pool));
+	  setAttr(np,"xtr:lab_end_lnum",(ccp)pool_copy(lnum_of(s), atfmp->pool));
+	  setAttr(np,"xtr:rows",buf);
 	  /* This attribute means that the start of this trans block
 	     overlaps with the end of the preceding one */
 	  if (overlap)
-	    setAttr(p,a_xtr_overlap,(unsigned const char *)"1");
+	    setAttr(np,"xtr:overlap","1");
 	}
       else
 	*last_xid = '\0';
       last_p = NULL;
     }
 
-  if (trans_abbrevved_labels && *last_label_buf && xstrcmp(getClass(p),"dollar"))
+  if (trans_abbrevved_labels && *last_label_buf && xstrcmp(getClass(np),"dollar"))
     {
       unsigned char *prefix = label_prefix(lab);
       if (prefix && !strncmp(cc(last_label_buf),cc(prefix),strlen(cc(prefix))))
@@ -914,9 +973,49 @@ labeled_labels(struct node *p, unsigned char *lab)
 	  unsigned char *rendlabel = lab + strlen(cc(prefix));
 	  while (isspace(*rendlabel))
 	    ++rendlabel;
-	  setAttr(p,a_xtr_rend_label,rendlabel);
+	  setAttr(np,"xtr:rend_label",(ccp)rendlabel);
 	}
     }
+}
+
+static int
+int_of(unsigned const char *line_id)
+{
+  unsigned const char *s = line_id + xxstrlen(line_id);
+  while (s > line_id && s[-1] != '.')
+    --s;
+  return atoi(cc(s));
+}
+
+static unsigned char *
+label_prefix(unsigned char *lab)
+{
+  static unsigned char buf[128], *b;
+  xstrcpy(buf,lab);
+  b = buf+strlen(cc(buf));
+  while (b > buf && !isspace(b[-1]))
+    --b;
+  if (b > buf)
+    {
+      while (isspace(b[-1]))
+	--b;
+      b[1] = '\0';
+      return buf;
+    }
+  else
+    return NULL;
+}
+
+static unsigned char *
+lnum_of(unsigned char *l)
+{
+  static unsigned char buf[128];
+  unsigned char *l_end;
+  l_end = l+strlen((char*)l);
+  while (l_end > l && !isspace(l_end[-1]))
+    --l_end;
+  strcpy((char*)buf,(char*)l_end);
+  return buf;
 }
 
 static void
