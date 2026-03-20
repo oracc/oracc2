@@ -8,11 +8,13 @@
  * that are already known.
  */
 
+FILE *f_xml;
 int parser_status = 0;
 int verbose = 1;
 int bootstrap_mode, lem_autolem, lem_dynalem;
 int out_stdout;
-
+int rnvtrace, status;
+Mloc *xo_loc;
 struct cbd* curr_cbd;
 struct entry*curr_entry;
 const char *file, *efile, *errmsg_fn;

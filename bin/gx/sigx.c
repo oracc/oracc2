@@ -5,12 +5,13 @@
 
 /* This program does not use lib/cbd so it uses Form not Cform */
 
-FILE *f_log;
+FILE *f_log, *f_xml;
 const char *file;
 const char *project;
-int lnum, verbose, fuzzy_aliasing, lem_autolem, lem_dynalem, bootstrap_mode;
+int lnum, verbose, fuzzy_aliasing, lem_autolem, lem_dynalem, bootstrap_mode, rnvtrace, status;
 int bare_input = 0, neo_mode = 0, oid_mode = 1;
 
+Mloc *xo_loc;
 Hash *neo = NULL;
 Hash *sig = NULL;
 Pool *poo = NULL;

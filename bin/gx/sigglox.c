@@ -5,12 +5,15 @@
 /* Turn .sig into .glo: N.B. this program is standalone and does not
    use lib/cbd so it uses Form not CForm */
 
+FILE *f_xml;
+const char *file;
 const char *dir = "01bld";
 const char *project = NULL;
-
+int rnvtrace, status;
 Hash *cbds;
 Pool *p, *hp;
 Memo *mem_entries;
+Mloc *xo_loc;
 
 typedef struct entry
 {
