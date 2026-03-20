@@ -132,6 +132,7 @@ bin/xx/lem/lemx
 bin/xx/lem/ngmx
 bin/xx/lem/numtokx
 bin/xx/lem/postntokx
+bin/xx/numrange
 bin/xx/oraccopt
 bin/xx/osort/osort
 bin/xx/pct
@@ -267,6 +268,7 @@ bin/gx/sigx
 bin/ox/cbd-oid-tab.xsl
 bin/ox/oidx
 bin/px/p4-mk-cache.sh
+bin/px/p4-ood-div.xsl
 bin/px/pxlocalreset.sh
 bin/px/pxperms.sh
 bin/px/pxreset.sh
