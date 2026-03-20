@@ -415,6 +415,10 @@ ancestor_or_self_level(Node *np, Block_level b)
 	{
 	  if (!non_block)
 	    non_block = np;
+	  if (np->rent)
+	    np = np->rent;
+	  else
+	    break;
 	}
       else if (((Block*)np->user)->bt->type == b)
 	return np;
