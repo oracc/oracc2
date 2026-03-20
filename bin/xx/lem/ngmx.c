@@ -2,6 +2,7 @@
 #include "lng.h"
 #include "charsets.h"
 #include "ngram.h"
+#include "links.h"
 #include "sigs.h"
 
 #include "globals.c"
@@ -24,6 +25,11 @@ int bootstrap_mode, lem_autolem, verbose, lem_standalone, shadow_lem,
 extern const char *textid;
 const char *project, *lang;
 int pretty = 0, psu = 0, use_unicode = 0, lem_props_strict = 0;
+
+FILE *f_xml;
+int rnvtrace, status;
+Mloc *xo_loc;
+
 int
 main(int argc, char **argv)
 {
@@ -64,7 +70,7 @@ main(int argc, char **argv)
       xc->user = nlcp;
       xcl_map(xc,ngramify,NULL,NULL,NULL);
       /* x2_serialize(xc,stdout,1); */
-      links_serialize(stdout, xc->linkbase, 1);
+      links_jox(xc->linkbase);
       ngramify_term();
     }
 
@@ -108,4 +114,4 @@ const char *prog = "ngram";
 const char *usage_string = "ngram";
 int major_version = 0;
 int minor_version = 1;
-void help() {}
+void help(void) {}

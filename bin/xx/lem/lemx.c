@@ -43,6 +43,10 @@ int verbose = 0;
 
 extern int ng_debug;
 
+FILE *f_xml;
+int rnvtrace, status;
+Mloc *xo_loc;
+
 int
 main(int argc, char **argv)
 {
@@ -194,9 +198,9 @@ main(int argc, char **argv)
       if (outfp)
 	{
 	  if (links_only)
-	    x2_serialize_links_only(xcp, outfp);
+	    xcl_jox_links_only(xcp);
 	  else
-	    x2_serialize(xcp,outfp,1);
+	    xcl_jox(NULL, xcp);
 	  fclose(outfp);
 	}
       /*xcl_destroy(&xcp);*/
