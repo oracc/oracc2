@@ -1,5 +1,9 @@
 #include <oraccsys.h>
 
+const char *wp;
+char *pending_ws = NULL;
+int last_n = -1, start = -1, comma = 0, pending = 0, this_n;
+
 const char *
 getword(void)
 {
@@ -44,15 +48,49 @@ getword(void)
   return NULL;
 }
 
+void
+put_ws(void)
+{
+  fputs(pending_ws, stdout);
+  free(pending_ws);
+  pending_ws = NULL;
+}
+
+void
+putnum(int with_ws)
+{
+  if (start == -1)
+    return;
+  if (comma)
+    fputs(", ", stdout);
+  if (start == last_n)
+    printf("%d", start);
+  else
+    printf("%d-%d", start, last_n);
+  start = last_n = -1;
+  pending = 0;
+  comma = 1;
+  if (pending_ws)
+    {
+      if (with_ws)
+	{
+	  put_ws();
+	  comma = 0;
+	}
+      else
+	{
+	  free(pending_ws);
+	  pending_ws = NULL;
+	}
+    }
+}
+
 int
 main(int argc, char *const *argv)
 {
-  const char *wp;
-  int last_n = -1, start = -1, comma = 0, pending = 0;
-
   if (argv[1])
     freopen(argv[1], "r", stdin);
-  
+
   while ((wp = getword()))
     {
       if (isdigit(*wp))
@@ -61,64 +99,70 @@ main(int argc, char *const *argv)
 	  while (*np && isdigit(*np))
 	    ++np;
 	  if ('-' == *np)
-	    fprintf(stderr, "numrange: internal ranges not yet handled\n");
+	    {
+	      fprintf(stderr, "numrange: internal ranges not yet handled\n");
+	    }
 	  else if (!*np) /* number word */
 	    {
-	      int this_n = atoi(wp);
+	      this_n = atoi(wp);
 	      if (last_n >= 0)
 		{
 		  if (this_n - last_n == 1)
 		    last_n = this_n;
 		  else
 		    {
-		      if (comma)
-			fputs(", ", stdout);
-		      printf("%d-%d", start, last_n);
-		      last_n = this_n;
-		      comma = pending = 1;
+		      putnum(0);
 		      start = last_n = this_n;
+		      pending = 1;
+		      if (pending_ws)
+			{
+			  free(pending_ws);
+			  pending_ws = NULL;
+			}
 		    }
 		}
 	      else
 		{
 		  start = last_n = this_n;
 		  pending = 1;
+		  if (pending_ws)
+		    {
+		      if (!comma)
+			put_ws();
+		      free(pending_ws);
+		      pending_ws = NULL;
+		    }
 		}
 	    }
 	  else
 	    {
 	      if (pending)
-		{
-		  if (comma)
-		    fputs(", ", stdout);
-		  printf("%d-%d", start, last_n);
-		  start = last_n = -1;
-		  comma = 1;
-		  pending = 0;
-		}
+		putnum(0);
 	      fputs(wp, stdout);
-	      if ('\n' == *wp)
-		comma = 0;
+	      comma = 0;
 	    }
 	}
       else
 	{
 	  if (isspace(*wp))
 	    {
-#if 1
-	      if (!pending)
-		fputs(wp, stdout);
-#else
-	      if (start != last_n)
-		printf("%d-%d", start, last_n);
-	      else
-		printf("%d", start);
-	      pending = 0;
-	      start = last_n = -1;
-#endif
+	      if (pending_ws)
+		free(pending_ws);
+	      pending_ws = strdup(wp);
 	    }
 	  else
-	    fputs(wp, stdout);
+	    {
+	      if (pending)
+		putnum(1);
+	      else if (pending_ws)
+		put_ws();
+	      fputs(wp, stdout);
+	      comma = 0;
+	    }
 	}
     }
+  if (pending)
+    putnum(1);
+  else if (pending_ws)
+    put_ws();
 }
