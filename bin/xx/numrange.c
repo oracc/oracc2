@@ -96,23 +96,36 @@ main(int argc, char *const *argv)
       if (isdigit(*wp))
 	{
 	  const char *np = wp+1;
+	  int range_n = -1;
 	  while (*np && isdigit(*np))
 	    ++np;
 	  if ('-' == *np)
 	    {
+#if 1
+	      this_n = atoi(wp);
+	      range_n = atoi(++np);
+	      np += strlen(np);
+	    }
+	  if (!*np)
+#else
 	      fprintf(stderr, "numrange: internal ranges not yet handled\n");
 	    }
 	  else if (!*np) /* number word */
+#endif
 	    {
 	      this_n = atoi(wp);
 	      if (last_n >= 0)
 		{
 		  if (this_n - last_n == 1)
-		    last_n = this_n;
+		    last_n = range_n > 0 ? range_n : this_n;
 		  else
 		    {
 		      putnum(0);
-		      start = last_n = this_n;
+		      start = this_n;
+		      if (range_n > 0)
+			last_n = range_n;
+		      else
+			last_n = this_n;
 		      pending = 1;
 		      if (pending_ws)
 			{
