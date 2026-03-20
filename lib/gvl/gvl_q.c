@@ -51,6 +51,7 @@ gvl_q(Node *ynp)
   if (p && !(vq = hash_find(curr_sl->h,p)))
     {
       vq = memo_new(curr_sl->m);
+      vq->utype = N_U_GVL;
       vq->type = "q";
 
       /* This builds an orig version of vq */
@@ -125,6 +126,7 @@ gvl_q(Node *ynp)
   else if (!p)
     {
       vq = memo_new(curr_sl->m);
+      vq->utype = N_U_GVL;
       vq->orig = (uccp)ynp->text;
       vq->mess = gvl_vmess("%s unable to attempt canonicalization", ynp->text);
     }

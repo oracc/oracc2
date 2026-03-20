@@ -141,6 +141,7 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
 #endif
     
   ynp->user = gp = memo_new(curr_sl->m);
+  ynp->utype = N_U_GVL;
   gp->type = ynp->name + 2;
   ((gvl_g*)ynp->user)->c10e = pool_copy(c,curr_sl->p);
   if (strcmp((ccp)c, (ccp)o))

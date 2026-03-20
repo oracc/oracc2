@@ -47,6 +47,7 @@ typedef struct atfm {
 
 /* Data structure for ATF texts */
 typedef struct atf {
+  Usertype utype;
   struct atfm *man;
   const char *file;
   ccp pqx;
@@ -89,12 +90,14 @@ typedef struct xlink {
 
 /* Ported from otf/lib/key.[ch] */
 typedef struct key {
+  Usertype utype;
   const char *key;
   const char *val;
   const char *url;
 } Key;
 
 typedef struct bib {
+  Usertype utype;
   const char *text; /* although vacuous now, in future this will be a bridge to bx */
 } Bib;
 
@@ -145,6 +148,7 @@ typedef struct protocol {
 
 /* These are the possible child nodes in a block hierarchy */
 typedef struct block {
+  Usertype utype;
   const char *type;
   const char *subt;
   const char *flag;
@@ -157,6 +161,7 @@ typedef struct block {
 } Block;
 
 typedef struct group {
+  Usertype utype;
   struct block *parent; /* this is a locator group */
   struct line **lines; /* these are gathered in atfmp->llines */
   int nlines;

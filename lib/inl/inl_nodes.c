@@ -75,6 +75,7 @@ char *
 inl_wild(Scan *sp, struct inltok *itp, Tree *tp, char *s)
 {
   Scanseg *ssp = memo_new(inl_scanseg_m);
+  ssp->utype = N_U_SCANSEG;
   ssp->sp = sp;
   ssp->name = "langi";
   inl_span_node(sp, ssp, tp, s);
@@ -103,6 +104,7 @@ char *
 inl_span(Scan *sp, struct inltok *itp, Tree *tp, char *s)
 {
   Scanseg *ssp = memo_new(inl_scanseg_m);
+  ssp->utype = N_U_SCANSEG;
   ssp->sp = sp;
   ssp->name = itp->name;
 
@@ -160,6 +162,7 @@ static void
 inl_text_node(Scan *sp, Tree *tp, const char *text, int len)
 {
   Scanseg *ssp = memo_new(inl_scanseg_m);
+  ssp->utype = N_U_SCANSEG;
   ssp->sp = sp;
   ssp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
   ssp->name = NULL;

@@ -197,6 +197,7 @@ gvl_g *
 gvl_make_gp(unsigned const char *g, unsigned const char *mess)
 {
   gvl_g *gp = memo_new(curr_sl->m);
+  gp->utype = N_U_GVL;
   gp->orig = (uccp)pool_copy(g, curr_sl->p);
   gp->mess = mess;
   return gp;
@@ -213,6 +214,7 @@ gvl_validate(unsigned const char *g)
   else if ((oid = hash_find(curr_sl->sl,g)))
     {
       gp = memo_new(curr_sl->m);
+      gp->utype = N_U_GVL;
       gp->orig = (uccp)pool_copy(g, curr_sl->p);
       gp->sign = hash_find(curr_sl->sl, (uccp)oid);
       gp->oid = (ccp)pool_copy((uccp)oid, curr_sl->p);
@@ -319,6 +321,7 @@ gvl_compound(Node *ynp)
       if (!(cp = hash_find(curr_sl->h, c_orig)))
 	{
 	  cp = memo_new(curr_sl->m);
+	  cp->utype = N_U_GVL;
 	  cp->type = "c";
 	  cp->orig = pool_copy(c_orig, curr_sl->p);
 	  cp->c10e = pool_copy(gvl_c_c10e(ynp), curr_sl->p);

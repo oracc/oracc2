@@ -20,6 +20,7 @@ gvl_s(Node *ynp)
   unsigned const char *l = NULL;
 
   gp = memo_new(curr_sl->m);
+  gp->utype = N_U_GVL;
   
   gp->orig = (uccp)ynp->text;
   gp->type = ynp->name + 2;

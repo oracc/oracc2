@@ -65,18 +65,18 @@ treexml_o_cfy(Node *np, void *user)
   if (dp->c->need_style)
     {
       if (
-	  (!strcmp(dp->name, "object") && dp->c->c->grid.o && !dp_o_o)
-	  || (!strcmp(dp->name, "surface") && dp->c->c->grid.s && !dp_s_o)
-	  || (!strcmp(dp->name, "column") && dp->c->c->grid.c && !dp_c_o)
+	  (!strcmp(dp->div->name, "object") && dp->c->c->grid.o && !dp_o_o)
+	  || (!strcmp(dp->div->name, "surface") && dp->c->c->grid.s && !dp_s_o)
+	  || (!strcmp(dp->div->name, "column") && dp->c->c->grid.c && !dp_c_o)
 	  )
 	{
-	  fprintf(dp->c->o, "<div class=\"%s-flex\"", dp->name);
+	  fprintf(dp->c->o, "<div class=\"%s-flex\"", dp->div->name);
 	  const char *wrap = "";
-	  if (!strcmp(dp->name, "surface"))
+	  if (!strcmp(dp->div->name, "surface"))
 	    wrap = " flex-wrap: wrap;";
 	  fprintf(dp->c->o, " style=\"display: flex; align-items: flex-start;%s\"", wrap);
 	  fputs(">", dp->c->o);
-	  switch (*dp->name)
+	  switch (*dp->div->name)
 	    {
 	    case 'o': dp_o_o = 1; break;
 	    case 's': dp_s_o = 1; break;
@@ -93,13 +93,13 @@ treexml_c_cfy(Node *np, void *user)
 {
   Xmlhelper *xhp = user;
   Div *dp = np->user;
-  if (dp->b == XB_OBJ || dp->b == XB_SRF || dp->b == XB_COL)
+  if (dp->div->b == XB_OBJ || dp->div->b == XB_SRF || dp->div->b == XB_COL)
     {
-      if ((dp_c_o && strcmp(dp->name, "column"))
-	  || (!dp_c_o && dp_s_o && strcmp(dp->name, "surface"))
-	  || (!dp_c_o && !dp_s_o && dp_o_o && strcmp(dp->name, "object")))
+      if ((dp_c_o && strcmp(dp->div->name, "column"))
+	  || (!dp_c_o && dp_s_o && strcmp(dp->div->name, "surface"))
+	  || (!dp_c_o && !dp_s_o && dp_o_o && strcmp(dp->div->name, "object")))
 	{
-	  switch (*dp->name)
+	  switch (*dp->div->name)
 	    {
 	    case 'o': dp_s_o = 0; fprintf(dp->c->o, "</div><!--surface-flex-->"); break;
 	    case 's': dp_c_o = 0; fprintf(dp->c->o, "</div><!--column-flex-->");break;
@@ -109,14 +109,14 @@ treexml_c_cfy(Node *np, void *user)
     }
   fprintf(xhp->fp, "</%s>", np->name);
   if (!strcmp(np->name, "div"))
-    fprintf(xhp->fp, "<!--%s-->", dp->name);
+    fprintf(xhp->fp, "<!--%s-->", dp->div->name);
 }
 
 static void
 cfy_out_html_attr(Node *np, void *user)
 {
   Div *dp = np->user;
-  fprintf(dp->c->o, " class=\"%s\" n=\"%s\"", dp->name, dp->text);
+  fprintf(dp->c->o, " class=\"%s\" n=\"%s\"", dp->div->name, dp->text);
 }
 
 static void

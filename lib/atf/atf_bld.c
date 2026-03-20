@@ -90,6 +90,7 @@ void
 atf_bld_bib(Mloc l, const char *ltext)
 {
   Bib *b = memo_new(atfmp->mbibs);
+  b->utype = N_U_BIB;
   b->text = ltext;
   Node *np = atf_add("protocol");
   atf_xprop(np, "type", "bib");
@@ -142,7 +143,7 @@ abt_add_key_protocol(Mloc *lp, Key *kp)
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, "text");
   Node *np = atf_add("protocol");
-  np->user = kp;  
+  np->user = kp;
   if (!strcmp(kp->key, "after") || !strcmp(kp->key, "see"))
     {
       atf_xprop(np, "type", kp->key);
@@ -193,6 +194,7 @@ void
 atf_bld_note(Mloc l, const char *ltext)
 {
   Note *n = memo_new(atfmp->mbibs);
+  n->utype = N_U_NOTE;
   n->text = (uccp)ltext;
   n->xid = (ccp)pool_copy((uccp)note_create_id(), atfmp->pool);
   Node *np = atf_add("note:text");

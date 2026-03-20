@@ -56,6 +56,7 @@ void
 atf_bld_block(Mloc l, Blocktok *btp, char *rest)
 {
   Block *bp = memo_new(atfmp->mblocks);
+  bp->utype = N_U_BLOCK;
   bp->bt = btp;
   bp->literal = (ccp)pool_copy((uccp)rest, atfmp->pool);
 
@@ -402,27 +403,30 @@ m_types(const char *s, const char **typep, const char **subtp)
 }
 
 /* Find the ancestor-or-self which is a block token at the level of arg2;
- * if not found, set tree_curr to the first ancestor that wasn't a block.
+ * if not found, set tree_curr to the first ancestor-or-self that wasn't a block.
  */
 Node *
 ancestor_or_self_level(Node *np, Block_level b)
 {
+  Node *non_block = NULL;
   while (1)
     {
-      if (!np->user)
-	break;
-      if (((Block*)np->user)->bt->type == b)
+      if (!np->user || N_U_BLOCK != np->utype)
+	{
+	  if (!non_block)
+	    non_block = np;
+	}
+      else if (((Block*)np->user)->bt->type == b)
 	return np;
       else if (np->rent)
-	{
-	  np = np->rent;
-	  if (!blocktok(np->name, strlen(np->name)))
-	    break;
-	}
+	np = np->rent;
       else
 	break;
     }
-  tree_curr(np);
+  if (non_block)
+    tree_curr(non_block);
+  else
+    tree_curr(np);
   return NULL;
 }
 

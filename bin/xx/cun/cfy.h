@@ -265,7 +265,13 @@ typedef struct xtfbody
   const char *name;
   Xbtype b;
   Etype e;
-  /*const char *xid;*/ /*needed?*/
+} Xtfbody;
+extern struct xtfbody *xtfbody(register const char *str, register size_t len);
+
+typedef struct div
+{
+  Usertype utype;
+  Xtfbody *div;
   const char *text;
   struct elt *head;			/* use Elt not Heading so it can be passed to ch_elt_H */
   List *lines;
@@ -273,10 +279,7 @@ typedef struct xtfbody
 				 NULL-terminated arrays of Eltline* */
   Cfy *c;
   Grid g;
-  /*int o_o, s_o, c_o; *//* grid div open flags */
-} Xtfbody;
-typedef Xtfbody Div;
-extern struct xtfbody *xtfbody(register const char *str, register size_t len);
+} Div;
 
 typedef struct elt
 {

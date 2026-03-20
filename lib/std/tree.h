@@ -30,7 +30,22 @@ typedef struct tree {
 
 struct prop;
 
+typedef enum usertype { N_U_NODE=0 ,
+			N_U_ATF ,
+			N_U_BIB ,
+			N_U_BLOCK ,
+			N_U_CFYDIV ,
+			N_U_GROUP ,
+			N_U_GVL ,
+			N_U_ILEM ,
+			N_U_KEY ,
+			N_U_NOTE ,
+			N_U_SCANSEG ,
+			N_U_XCL ,
+			N_U_TOP } Usertype;
+
 typedef struct node {
+  Usertype utype;
   enum nscode ns;   	/* node namespace */
   const char *name;    	/* node name */
   const char *text; 	/* unparsed text-data when node comes from cat-style input */

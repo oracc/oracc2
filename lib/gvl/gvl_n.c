@@ -32,6 +32,7 @@ gvl_n(Node *ynp)
   if (!(nq = hash_find(curr_sl->h, p)))
     {
       nq = memo_new(curr_sl->m);
+      nq->utype = N_U_GVL;
       nq->type = "n";
       nq->c10e = nq->orig = (uccp)p; /* no c10e for numbers yet */
       hash_add(curr_sl->h, nq->orig, nq);
@@ -171,6 +172,7 @@ gvl_n_sexify(Node *ynp)
       else if (!strcmp(ynp->text, "00"))
 	{
 	  gvl_g*gp = memo_new(curr_sl->m);
+	  gp->utype = N_U_GVL;
 	  ynp->name = "g:n";
 	  gp->orig = (uccp)ynp->text;
 	  gp->type = ynp->name + 2;

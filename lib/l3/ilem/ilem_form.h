@@ -74,6 +74,7 @@ struct lem_single
 
 struct ilem_form
 {
+  Usertype utype;
   Form f2;
   char *xml_id;   /* unique identifier for this form within its forms file */
   char *literal;  /* associated literal lemmatization info (content of #lem line) */

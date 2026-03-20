@@ -48,6 +48,7 @@ typedef struct scan
 /* This is the type for individual scanned segments */
 typedef struct scanseg
 {
+  Usertype utype;
   Scan *sp;
   Node *np;
   Stype t;

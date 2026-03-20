@@ -54,6 +54,7 @@ ax_input(const char *f)
       if (xcl_output)
 	{
 	  XCL *xp = ax_xcl(rp, tp->root->kids);
+	  xp->utype = N_U_XCL;
 	  tree_curr(tp->root->kids);
 	  Node *np = tree_add(tp, NS_XCL, "xcl:xcl", tp->root->kids->depth, tp->root->kids->mloc);
 	  np->user = xp;

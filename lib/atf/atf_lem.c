@@ -22,6 +22,7 @@ atf_save_lem(Node *np, const char *lemstr)
 #endif
 {
   struct ilem_form *form = memo_new(atfmp->milem_forms);
+  form->utype = N_U_ILEM;
   extern int curr_cell;
   
   form->f2.owner = form;

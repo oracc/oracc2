@@ -108,6 +108,7 @@ struct NL_context;
 struct props_context;
 typedef struct xcl_context
 {
+  Usertype utype;
   struct xcl_c *root;
   struct xcl_c *curr;
   struct run_context *run;
@@ -183,7 +184,7 @@ extern struct xcl_tok_tab *xcltok(register const char *str,register size_t len);
 /*extern void xcl_serialize(struct xcl_context *xc, FILE *fp);*/
 extern void x2_serialize(struct xcl_context *xc, FILE *f_xcl, int with_xcl_decl);
 extern void xcl_serialize_form(struct ilem_form *f);
-extern void x2_serialize_links_only(struct xcl_context *xc,FILE *f_xcl);
+extern void xcl_jox_links_only(struct xcl_context *xc);
 
 extern void xcl_set_project_forms(struct sigset *f);
 extern void xcl_set_system_forms(const char *lang, struct sigset *forms);

@@ -110,7 +110,7 @@ load_template(const char *tf)
 	  depth = ntab;
 	}
       Node *np = tree_add(tp, NS_NONE, template_tags[depth], depth, NULL);
-      np->user = s;
+      np->user = s; /* Node:user is char* here */
     }
   return tp;
 }

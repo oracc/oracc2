@@ -465,11 +465,9 @@ xcl_jox(void *ignored, struct xcl_context *xc)
   /*joxer_ee(NULL, "xcl:xcl");*/
 }
 
-#if 0
 void
-x2_serialize_links_only(struct xcl_context *xc,FILE *f_xcl)
+xcl_jox_links_only(struct xcl_context *xc)
 {
   if (xc->linkbase)
-    links_dump(f_xcl, xc->linkbase);
+    links_jox(xc->linkbase);
 }
-#endif

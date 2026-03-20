@@ -29,9 +29,10 @@ cfy_body_init(Cfy *c, const char *name, const char **atts)
   tree_root(tp, NS_CFY, n, 0, NULL);
   tp->rootless = 1;
   Div *dp = memo_new(c->m_div);
+  dp->utype = N_U_CFYDIV;
   curr_div = dp;
   Xtfbody *xp = xtfbody(n, strlen(n));
-  *dp = *xp;
+  dp->div = xp;
   dp->c = c;
   tp->root->text = (ccp)pool_copy((uccp)findAttr(atts, "n"), c->p);
   tp->root->user = dp;
@@ -49,14 +50,15 @@ cfy_body(Cfy *c, Xtfbody *xp, const char **atts)
   ep->etype = xp->e;
 
   Div *dp = memo_new(c->m_div);
-  *dp = *xp;
+  dp->utype = N_U_CFYDIV;
+  dp->div = xp;
   dp->c = c;
   ep->data = dp;
 
   if (verbose)
-    fprintf(stderr, "cfy_body: called with div=%s\n", dp->name);
+    fprintf(stderr, "cfy_body: called with div=%s\n", dp->div->name);
   Div *tdp = c->body->curr->user;
-  while (xp->b <= tdp->b)
+  while (xp->b <= tdp->div->b)
     {
       (void)tree_pop(c->body);
       tdp = c->body->curr->user;
@@ -65,7 +67,7 @@ cfy_body(Cfy *c, Xtfbody *xp, const char **atts)
   /* This will be empty for <m> nodes but we will catch that on cfy_eH */
   dp->text = (ccp)pool_copy((uccp)findAttr(atts, "n"), c->p);
   np->user = dp;
-  if (xp->b > tdp->b)
+  if (xp->b > tdp->div->b)
     (void)tree_push(c->body);
 
   c->body->curr->user = dp;
@@ -83,7 +85,7 @@ cfybody_debug_attr(Node *np, void *user)
 {
   Xmlhelper *xhp = user;
   Div *dp = np->user;
-  fprintf(xhp->fp, " class=\"%s\" n=\"%s\"", dp->name, dp->text);
+  fprintf(xhp->fp, " class=\"%s\" n=\"%s\"", dp->div->name, dp->text);
 }
 
 void

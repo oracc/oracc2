@@ -19,7 +19,7 @@ int trans_parenned_labels = 1;
 int trans_abbrevved_labels = 0;
 static char trans_id_base[32];
 static unsigned char last_xid[128];
-int start_lnum = -1;
+extern int start_lnum;
 extern int next_trans_id;
 static int next_trans_p_id;
 extern int saa_mode;

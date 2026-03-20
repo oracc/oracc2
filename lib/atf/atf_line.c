@@ -54,6 +54,7 @@ void
 atf_group_wrapup(void)
 {
   Group *gp = memo_new(atfmp->mgroups);
+  gp->utype = N_U_GROUP;
   gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
   gp->parent = abt->curr->user;
 #if 0

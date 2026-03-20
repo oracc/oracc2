@@ -5,6 +5,7 @@
 #include "sll.h"
 
 struct gvl_g {
+  Usertype utype;
   const char *type;
   unsigned const char *orig; /* grapheme as passed for validation; for
 				a vq this is the vq as passed */

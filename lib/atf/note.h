@@ -9,6 +9,7 @@ enum note_status
 
 typedef struct note
 {
+  Usertype utype;
   const unsigned char *tag; 	/* the tag in a text, e.g., 1 in
 				   ^1^--this is optional */
   const unsigned char *mark; 	/* the note number in the text or run;

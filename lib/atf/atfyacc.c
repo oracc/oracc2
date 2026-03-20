@@ -52,6 +52,7 @@ atf_init(void)
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
   atfmp->pool = pool_init();
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
+  atfp->utype = N_U_ATF;
   atfp->man = atfmp;
   atfp->input = list_create(LIST_SINGLE);
 }
