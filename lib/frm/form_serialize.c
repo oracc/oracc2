@@ -129,7 +129,7 @@ form_serialize_form_2(FILE *f_f2, struct ilem_form *f)
       if (f->props)
 	{
 	  fputc('>',f_f2);
-	  props_dump_props(f,f_f2);
+	  props_dump_jox(f);
 	  fputs("</xff:f>",f_f2);
 	}
       else
