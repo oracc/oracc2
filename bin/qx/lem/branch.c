@@ -6,7 +6,7 @@ extern const char *xatf_name;
 extern int atf_line;
 
 void
-begin_branch ()
+begin_branch (void)
 {
   if (parallels_depth == 0)
     {
@@ -60,7 +60,7 @@ begin_branch ()
 }
 
 void
-end_branch ()
+end_branch (void)
 {
   if (!curr_node)
     return;

@@ -341,7 +341,7 @@ int major_version = 1, minor_version = 0;
 const char *usage_string = "[-b] [-i <index>] [-p <project>] [<keys>]";
 
 void
-help ()
+help (void)
 {
   printf("  -0  use zero-buffering for stdout\n");
   printf("  -b  brief output\n");

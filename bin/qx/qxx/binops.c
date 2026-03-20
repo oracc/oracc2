@@ -74,7 +74,7 @@ static struct Datum any(struct Datum *,struct Datum *);
 extern void debug_results(const char *label, struct Datum*);
 
 void
-binop_init()
+binop_init(void)
 {
   binop_tab[n_record]  = record;
   binop_tab[n_field]   = field;
@@ -690,7 +690,7 @@ binop_setup (struct Datum *leftargp, struct Datum *rightargp)
 	  _val += range_adjust
 
 static struct Datum
-binop_term ()
+binop_term (void)
 {
   if (op_invert)
     {

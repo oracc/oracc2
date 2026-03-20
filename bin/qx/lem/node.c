@@ -3,13 +3,13 @@
 #include "index.h"
 
 int start_column;
-struct node *curr_node;
+struct qnode *curr_node;
 Memo *node_mm;
 
-struct node *
-new_node ()
+struct qnode *
+new_node (void)
 {
-  struct node *np;
+  struct qnode *np;
   np = memo_new (node_mm);
   np->left = np->right = np->down = np->up = NULL;
   np->parallel_info = NULL;

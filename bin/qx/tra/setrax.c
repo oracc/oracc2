@@ -205,7 +205,7 @@ main (int argc, char **argv)
   indexed_mm = memo_init (sizeof (struct indexed), 256);
   parallels_mm = memo_init (sizeof (struct parallel), 256);
   grapheme_mm = memo_init (sizeof (struct grapheme), 256);
-  node_mm = memo_init (sizeof (struct node), 256);
+  node_mm = memo_init (sizeof (struct qnode), 256);
 
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
 		    sizeof(struct location16), DBI_ACCRETE);

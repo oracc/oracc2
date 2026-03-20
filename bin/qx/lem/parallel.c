@@ -8,7 +8,7 @@ static void push_parallel (void);
 static void pop_parallel (void);
 
 void
-begin_parallels ()
+begin_parallels (void)
 {
   push_parallel ();
   parallels_depth = 0;
@@ -31,7 +31,7 @@ begin_parallels ()
 }
 
 void
-end_parallels ()
+end_parallels (void)
 {
   if (curr_parallel->empty_branch_flag)
     start_column = curr_parallel->start_column;
@@ -50,7 +50,7 @@ static int parms_stack_len = 0;
 static int parms_stack_top = 0;
 
 static void
-push_parallel ()
+push_parallel (void)
 {
   if ((parms_stack_len+3) >= parms_stack_top)
     {
@@ -64,7 +64,7 @@ push_parallel ()
 }
 
 static void
-pop_parallel ()
+pop_parallel (void)
 {
   if (parms_stack_top)
     {

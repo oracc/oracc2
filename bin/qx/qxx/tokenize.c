@@ -113,7 +113,7 @@ se_boolean(struct token *t)
 }
 
 static void
-default_boolean()
+default_boolean(void)
 {
   struct token *curr_tok = NULL;
   curr_tok = add_token(se_and);

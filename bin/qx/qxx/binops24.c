@@ -90,7 +90,7 @@ xmask_logo(int x)
 }
 
 void
-binop24_init()
+binop24_init(void)
 {
   binop24_tab[n_record]  = record24;
   binop24_tab[n_field]   = field24;
@@ -745,7 +745,7 @@ binop24_setup (struct Datum *leftargp, struct Datum *rightargp)
 	  _val += range_adjust
 
 static struct Datum
-binop24_term ()
+binop24_term (void)
 {
   if (op_invert)
     {

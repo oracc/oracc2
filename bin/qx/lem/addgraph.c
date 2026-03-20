@@ -31,7 +31,7 @@ Dbi_tnode *last_find;
   
 /*******************************************************************/
 static void
-trie_init ()
+trie_init (void)
 {
   unsigned char *t_map_rover;
   
@@ -47,7 +47,7 @@ trie_init ()
 }
 
 static void
-trie_term ()
+trie_term (void)
 {
   free (trie_1);
   free (trie_2);

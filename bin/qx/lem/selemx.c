@@ -119,7 +119,7 @@ is_ns(const char *name, const char *uri)
 }
 
 static void
-do_boundary()
+do_boundary(void)
 {
   switch (pending_boundary)
     {
@@ -651,7 +651,7 @@ main (int argc, char **argv)
   indexed_mm = memo_init (sizeof (struct indexed), 256);
   parallels_mm = memo_init (sizeof (struct parallel), 256);
   grapheme_mm = memo_init (sizeof (struct grapheme), 256);
-  node_mm = memo_init (sizeof (struct node), 256);
+  node_mm = memo_init (sizeof (struct qnode), 256);
 
   /*  alias_check_date ("", TRUE); */
   dip = dbi_create (curr_index, index_dir, 10000, /* hash_create will adjust */
@@ -761,7 +761,7 @@ main (int argc, char **argv)
 /********************************************************************/
 
 void
-add_graphemes ()
+add_graphemes (void)
 {
   struct grapheme *gnp;
   for (gnp = grapheme_list_base; gnp; gnp = gnp->next)
@@ -848,7 +848,7 @@ int major_version = 5, minor_version = 0, verbose;
 const char *usage_string = "[-{acgpqsx}] <input>";
 
 void
-help()
+help(void)
 {
   ;
 }

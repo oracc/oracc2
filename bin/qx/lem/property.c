@@ -15,7 +15,7 @@ begin_property (int prop)
 }
 
 void
-end_property ()
+end_property (void)
 {
   curr_properties = pop_property ();
 }
@@ -36,7 +36,7 @@ push_property (Two_bytes props)
 }
 
 static Two_bytes
-pop_property ()
+pop_property (void)
 {
   return property_stack[--property_stack_top];
 }

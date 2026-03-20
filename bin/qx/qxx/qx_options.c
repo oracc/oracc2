@@ -112,7 +112,7 @@ const char *prog = "qx";
 int major_version = 1, minor_version = 0;
 const char *usage_string = " #<PROJ> !<IDX> %<LNG> [search terms]";
 void
-help ()
+help (void)
 {
   printf("  -c = show count of results\n");
   printf("  -d = output debugging information\n");

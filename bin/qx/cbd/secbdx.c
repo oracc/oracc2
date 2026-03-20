@@ -23,7 +23,7 @@ extern FILE *f_log;
 FILE *f_mangletab = NULL;
 FILE *signmap_err = NULL;
 
-extern struct node *curr_node;
+extern struct qnode *curr_node;
 extern void signmap_init(void);
 extern void signmap_term(Dbi_index *);
 
@@ -129,7 +129,9 @@ startElement(void *userData, const char *name, const char **atts)
 void
 endElement(void *userData, const char *name)
 {
+#if 0
   static int norm_count = 0;
+#endif
   struct sn_alias_tab *snap = NULL;
   if (*name == 'e' && !strcmp(name,"entry"))
     {
@@ -177,8 +179,10 @@ endElement(void *userData, const char *name)
       else
 	fprintf(stderr,"secbdx: indexed field %s=>%s not in statnames\n",name,name_alias);
 
+#if 0
       if (l8.unit_id == sn_n)
 	++norm_count;
+#endif
       if (l8.unit_id == sn_m || l8.unit_id == sn_n)
 	{
 	  begin_branch();
@@ -356,7 +360,7 @@ main(int argc, char **argv)
   indexed_mm = memo_init(sizeof (struct indexed), 256);
   parallels_mm = memo_init(sizeof (struct parallel), 256);
   grapheme_mm = memo_init(sizeof (struct grapheme), 256);
-  node_mm = memo_init(sizeof (struct node), 256);
+  node_mm = memo_init(sizeof (struct qnode), 256);
 
   /*  alias_check_date ("", TRUE); */
   dip = dbi_create(curr_index, index_dir, 10000, /* hash_create will adjust */
@@ -474,7 +478,7 @@ int major_version = 5, minor_version = 0, verbose;
 const char *usage_string = "[-{acgps}] <input>";
 
 void
-help()
+help(void)
 {
   printf("\n\tuse -p arg to give project and -l arg to give lang\n\n");
 }

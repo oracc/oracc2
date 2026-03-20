@@ -14,14 +14,15 @@
 
 struct indexed
 {
-  struct node *nodes;
+  struct qnode *nodes;
   struct indexed *next;
   int id;
 };
-struct node 
+
+struct qnode 
 {
-  struct node *left, *right;
-  struct node *down, *up;
+  struct qnode *left, *right;
+  struct qnode *down, *up;
   struct parallel *parallel_info;
   int boundary;
   Char *branch_name;
@@ -33,8 +34,8 @@ struct parallel
 {
   struct parallel *parent;
   struct parallel *child;
-  struct node *start_node;
-  struct node *curr_node;
+  struct qnode *start_node;
+  struct qnode *curr_node;
   int start_column;
   int end_column;
   int boundary;
@@ -44,12 +45,12 @@ struct parallel
 struct grapheme
 {
   Char *text;
-  struct node *node;
+  struct qnode *node;
   struct grapheme *next;
 };
 struct node_list 
 {
-  struct node *node;
+  struct qnode *node;
   struct node_list *next;
 };
 
@@ -69,7 +70,7 @@ extern struct grapheme *grapheme_list_base, *grapheme_list;
 extern int start_column;
 extern int word_id;
 extern struct indexed *curr_indexed;
-extern struct node *curr_node;
+extern struct qnode *curr_node;
 extern Four_bytes curr_line;
 extern Char *curr_text;
 extern Char **filelist;
@@ -90,7 +91,7 @@ extern void grapheme (const char *text);
 extern void grapheme_boundary (int btype);
 extern void begin_insert (void);
 extern void end_insert (void);
-extern struct node * new_node (void);
+extern struct qnode * new_node (void);
 extern void begin_parallels (void);
 extern void end_parallels (void);
 extern void begin_option (void);

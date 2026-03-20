@@ -166,7 +166,7 @@ alias_get_alias (char *orig_grapheme)
 }
 
 void
-alias_term ()
+alias_term (void)
 {
   if (initialized)
     {
@@ -203,7 +203,7 @@ alias_fast_init (const char *project, const char *index)
 }
 
 void
-alias_fast_term ()
+alias_fast_term (void)
 {
   hash_free (aliases, hash_xfree);
 }

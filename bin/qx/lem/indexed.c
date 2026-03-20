@@ -6,7 +6,7 @@ Memo *indexed_mm;
 static int indexed_id;
 
 void
-begin_indexed ()
+begin_indexed (void)
 {
   if (curr_indexed)
     {
@@ -26,7 +26,7 @@ begin_indexed ()
 }
 
 void
-end_indexed ()
+end_indexed (void)
 {
   struct grapheme *gnp;
   struct parallel *pp;
