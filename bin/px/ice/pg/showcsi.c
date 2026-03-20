@@ -18,5 +18,5 @@ main(int argc, char **argv)
   return 0;
 }
 const char *prog = "showcsi";
-void help() { }
-int options() { return 0; }
+void help(void) { }
+int options(void) { return 0; }

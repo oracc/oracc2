@@ -58,7 +58,7 @@ cmp_text(const void *a,const void *b)
 }
 
 void
-compress()
+compress(void)
 {
   struct item *insert,*rover;
   insert = rover = items;
@@ -85,7 +85,7 @@ compress()
 }
 
 void
-dump_items()
+dump_items(void)
 {
   int i;
   int words = items[0].word;
@@ -128,7 +128,7 @@ scan_item(struct item *ip, char *line)
 }
 
 void
-union_op()
+union_op(void)
 {
   int ch;
   int n = 0;

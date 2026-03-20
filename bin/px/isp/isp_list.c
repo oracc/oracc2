@@ -121,7 +121,7 @@ isp_try_list(Isp *ip, const char *dir)
       ip->lloc.type = "www";
       return 0;
     }
-  ip->errx = pool_copy((uccp)path, ip->p);
+  ip->errx = (ccp)pool_copy((uccp)path, ip->p);
   return 1;
 }
 

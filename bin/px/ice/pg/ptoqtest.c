@@ -38,5 +38,5 @@ main(int argc, char **argv)
 const char *prog = "ptoqtest";
 const char *usage_string = "ptoqtest";
 int opts(int argc, const char *arg) { return 0; }
-void help() {}
+void help(void) {}
 int major_version=1,minor_version=0;
