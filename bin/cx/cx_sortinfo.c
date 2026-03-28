@@ -215,7 +215,7 @@ cx_si_sortdata(Cx *c)
 
   for (r = 0; c->rr[r]; ++r)
     n += c->rr[r]->nlines;
-  fprintf(sifp, "#nmembers %ld\n", n);
+  fprintf(sifp, "#nmembers %ld\n", n-1);/*-1 because rr[0] is the field names*/
 
   Sis *sis = calloc(n+1, sizeof(Sis));
   
@@ -244,9 +244,8 @@ cx_si_sortdata(Cx *c)
 	{
 	  if (sis[n].f[j].type == FCELL_SORT)
 	    {
+	      fputc('\t', sifp);
 	      fprintf(sifp, "%ld=%ld", sis[n].f[j].sort, sis[n].f[j].u.index);
-	      if (c->rr[0]->maxcols - j > 1)
-		fputc('\t', sifp);
 	    }
 	}
       fputc('\n', sifp);

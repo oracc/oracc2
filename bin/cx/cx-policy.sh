@@ -19,7 +19,7 @@ nocat=$lxd/no-cat-data.lst
 cx-fields.sh
 
 # no-cat-data.lst is a list of approved IDs that are not in project 00cat
-${bin}/lx -p `oraccopt` -q $approved - $incat >$nocat
+${bin}/lx -p `oraccopt` -q $approved -? $incat >$nocat
 
 case $policy in
     auto|virtual)

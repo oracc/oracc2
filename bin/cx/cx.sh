@@ -5,6 +5,7 @@
 # be empty at this point--this just means there is no local catalogue
 # data.
 #
+set -x
 echo $0 $*
 bin="$ORACC/bin"
 projtype=`oraccopt . type`;
@@ -17,11 +18,29 @@ else
     fi
     ${bin}/cx-clean.sh 01bld/cat/*.tsv
     set 01bld/cat/*.tsv
+    proj=`oraccopt`
     if [ "$*" != "01bld/cat/*.tsv" ]; then
-	${bin}/cx 01bld/cat/local-[pqx].tsv 01bld/cat/outer-[pqx].tsv | \
-	    tee 01bld/cdlicat.xmd | ${bin}/xmlsplit
-	if [ -r 01bld/sortinfo.tab ]; then
-	    ${bin}/pgcsix 01bld/sortinfo.tab
+	set 01bld/cat/local-[pqx].tsv
+	if [ "$1" == "01bld/cat/local-[pqx].tsv" ]; then
+	    catlocal=""
+	else
+	    catlocal=$*
+	fi
+	set 01bld/cat/outer-[pqx].tsv
+	if [ "$1" == "01bld/cat/outer-[pqx].tsv" ]; then
+	    catouter=""
+	else
+	    catouter=$*
+	fi
+	if [ "$catlocal$catouter" != "" ]; then
+	    ${bin}/cx -p$proj $catlocal $catouter | \
+		tee 01bld/cdlicat.xmd | ${bin}/xmlsplit
+	    if [ -r 01bld/sortinfo.tab ]; then
+		${bin}/pgcsix 01bld/sortinfo.tab && mv 01bld/sortinfo.csi 02pub/
+	    fi
+	else
+	    echo $0: no "01bld/cat/local*.tsv or 01bld/cat/outer*.tsv"
+	    exit 1
 	fi
     else
 	if [ -s 01bld/lists/approved.lst ]; then

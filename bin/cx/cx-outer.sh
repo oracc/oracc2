@@ -1,10 +1,12 @@
 #!/bin/sh
 #
-# Take a list of IDs and group them by metadata project and
-# PQX-type. For each group, use rocox -ET to rewrite them according to
-# the template
+# Take a list of IDs and group them by metadata project and PQX-type.
+# The intent of this script is to take P/Q/X from cdli/qcat/xcat.
 #
-#set -x
+# For each group, grep them out of the outer catalogue and use
+# use rocox -ET to rewrite them according to the template
+#
+##set -x
 echo $0 $*
 tdir=01tmp/00cat/t
 rm -fr ${tdir} ; mkdir -p ${tdir}
@@ -50,7 +52,7 @@ function outer {
 	    if [ "${ocat}" = "auto" ]; then
 		head -1 01tmp/00cat/auto-x.tsv >$otsv
 	    elif [ "${ocat}" != "" ]; then
-		head -1 ${ORACC}/$qcat/01bld/cat/local-${pqx}.tsv >$otsv
+		head -1 ${ORACC}/$ocat/01bld/cat/local-${pqx}.tsv >$otsv
 	    else
 		ph=`basename $F .${PQX}`
 		p=`/bin/echo -n $ph | tr - /`
@@ -62,19 +64,21 @@ function outer {
 		if [ "${ocat}" = "auto" ]; then
 		    l=01tmp/00cat/auto-x.tsv
 		elif [ "${ocat}" != "" ]; then
-		    l=${ORACC}/$qcat/01bld/cat/local-${pqx}.tsv
+		    l=${ORACC}/$ocat/01bld/cat/local-${pqx}.tsv
 		else
 		    ph=`basename $f .${PQX}`
 		    p=`/bin/echo -n $ph | tr - /`
 		    l=${ORACC}/$p/01bld/cat/local-${pqx}.tsv
 		fi
 		if [ -s $l ]; then
+		    g=${tdir}/${p}-${pqx}.grep
+		    cut -d: -f2 $F | cut -d@ -f1 | sort >$g
 		    t=${tdir}/${p}-${pqx}.tsv
 		    head -1 $l >$t
-		    grep ^${PQX} $l >>$t
+		    grep -f $g $l >>$t
 		    T=`head -1 $otsv | tr '\t' +`
 		    rocox -EF -T$T $t >>$otsv
-		    rm -f $t
+		    # rm -f $t
 		fi
 	    fi
 	done
