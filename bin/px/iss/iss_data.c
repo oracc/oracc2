@@ -140,14 +140,17 @@ iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const c
   
   /* add the last zoom count to the master outline data */
   iso_master_n(ip, nzoom);
+
   iss_max(mfp, mdp, zoom, nzoom);
 
   dbi_flush(idp);
   dbi_flush(mdp);
+
   fclose(pfp);
   fclose(mfp);
-  tsv_term(tp);
 
+  tsv_term(tp);
+  
   if (iso_master(ip, mol))
     return 1;
 

@@ -121,7 +121,7 @@ isp_sort_sub(Isp *ip)
   char mold[strlen(ip->cache.use)+strlen(ip->list_name)+strlen("//zoom.mol0")];
   sprintf(mold, "%s/zoom.mol", ip->cache.sort);
   ip->cache.mol = (ccp)pool_copy((uccp)mold, ip->p);
-  
+
   if (ip->force)
     return iss_sort(ip);
   else
@@ -138,7 +138,25 @@ isp_sort_sub(Isp *ip)
 	}
       else if (iss_sort(ip))
 	{
-	  ip->err = "sort failed";
+	  if (ip->err)
+	    {
+	      if (ip->errx)
+		{
+		  char buf[strlen(ip->err)+strlen("sort failed: 0 ")+strlen(ip->errx)];
+		  strcpy(buf, "" /*"sort failed: "*/);
+		  sprintf(buf+strlen(buf), ip->err, ip->errx);
+		  ip->err = pool_copy((uccp)buf, ip->p);
+		  ip->errx = NULL;
+		}
+	      else
+		{
+		  char buf[strlen(ip->err)+strlen("sort failed: 0")];
+		  sprintf(buf, "sort failed: %s", ip->err);
+		  ip->err = pool_copy((uccp)buf, ip->p);
+		}
+	    }
+	  else
+	    ip->err = "sort failed";
 	  return 1;
 	}
     }

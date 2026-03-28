@@ -269,10 +269,10 @@ iss_sort(Isp *ip)
   if (des && !strchr(des, ',')) /* assumes field1,designation,field3 */
     *des = '\0';
   headfields = set_keys(heading_keys, &nheadfields);
-  
+
   if (!(items = pg_load(ip, &nitems)))
     return 1;
-  
+
   if (NULL == (pitems = pg_sort(ip, items, &nitems, perm_keys)))
     return 1;
 

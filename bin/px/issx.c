@@ -43,6 +43,8 @@ main(int argc, char **argv)
   if (isp_cache_sort(ip))
     goto error;
 
+  exit(1);
+  
   goto ok;
   
  error:
@@ -64,5 +66,5 @@ main(int argc, char **argv)
 }
 
 const char *prog = "issx";
-int major_version = 1, minor_version = 1, verbose = 0;
+int major_version = 1, minor_version = 1, verbose = 1;
 const char *usage_string = "[file]";

@@ -6,6 +6,13 @@ static const char *hclean(unsigned char *s);
 int
 iso_master(Isp *ip, const char *mol)
 {
+  if (!ip->iop)
+    {
+      ip->err = PX_ERROR_START "master outline %s requested for NULL outline data\n";
+      ip->errx = mol ? mol : "<null>";
+      return 1;
+    }
+
   static struct iso isos;
 
   memset(&isos, '\0', sizeof(struct iso));
@@ -33,14 +40,15 @@ iso_master(Isp *ip, const char *mol)
 	}	
 
       int zlev = 3;
-      if (!ip->iop->h3)
+
+      if (ip->iop && !ip->iop->h3)
 	{
 	  if (!ip->iop->h2)
 	    zlev = 1;
 	  else
 	    zlev = 2;
 	}
-	  
+
       fprintf(fp, "#%d/%d\n", ip->zmax, zlev);
       struct isoz *iz;
       for (iz = ip->iop; iz; iz = iz->next)
@@ -146,5 +154,6 @@ iso_master_h(Isp *ip, unsigned char *h)
 void
 iso_master_n(Isp *ip, int n)
 {
-  ip->iop->last->count = n;
+  if (ip->iop)
+    ip->iop->last->count = n;
 }

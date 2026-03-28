@@ -1,5 +1,5 @@
-/* Compile the sort info from sortinfo.tab into 
-   an optimized form for runtime use */
+/* Compile the sort info from sortinfo.tab into an optimized form for
+   runtime use */
 #include <oraccsys.h>
 #include "sortinfo.h"
 
