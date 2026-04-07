@@ -42,6 +42,8 @@
 #include <collate.h>
 #include "oracclocale.h"
 
+extern int cmpu8normp_qs(unsigned const char *p1, unsigned const char *p2);
+
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #else
@@ -1085,11 +1087,13 @@ keycompare (const struct line *a, const struct line *b)
 	      char savea = *lima, saveb = *limb;
 	      
 	      *lima = *limb = '\0';
-	      diff = collate_cmp_graphemes_cc (texta, textb);
+	      diff = collate_cmp_graphemes_cc ((unsigned const char *)texta, (unsigned const char *)textb);
 	      *lima = savea, *limb = saveb;
 	    }
 	  else
-	    diff = collate_cmp_graphemes_cc (texta, textb);
+	    {
+	      diff = collate_cmp_graphemes_cc ((unsigned const char *)texta, (unsigned const char *)textb);
+	    }
 	  
 	  if (diff)
 	    return key->reverse ? -diff : diff;
@@ -1103,12 +1107,20 @@ keycompare (const struct line *a, const struct line *b)
 	      char savea = *lima, saveb = *limb;
 
 	      *lima = *limb = '\0';
+#if 1
+	      diff = cmpu8normp_qs((unsigned const char *)texta, (unsigned const char *)textb);
+#else
 	      diff = collate_cmp_utf8 (texta, textb);
+#endif
 	      *lima = savea, *limb = saveb;
 	    }
 	  else
 	    {
+#if 1
+	      diff = cmpu8normp_qs((unsigned const char *)texta, (unsigned const char *)textb);
+#else
 	      diff = collate_cmp_utf8 (texta, textb);
+#endif
 	    }
 	}
       else if (key->numeric)
@@ -1254,7 +1266,7 @@ compare (register const struct line *a, register const struct line *b)
     diff = tmpa - tmpb;
   else if (utf8)
     {
-      diff = collate_cmp_utf8 (a->text, b->text);
+      diff = collate_cmp_utf8 ((unsigned const char *)a->text, (unsigned const char *)b->text);
     }
   else
     {
@@ -1460,33 +1472,35 @@ mergefps (FILE **fps, register int nfps, FILE *ofp)
 
       /* Check if we need to read more lines into core. */
       if (++cur[ord[0]] == lines[ord[0]].used)
-	if (fillbuf (&buffer[ord[0]], fps[ord[0]]))
-	  {
-	    findlines (&buffer[ord[0]], &lines[ord[0]]);
-	    cur[ord[0]] = 0;
-	  }
-	else
-	  {
-	    /* We reached EOF on fps[ord[0]]. */
-	    for (i = 1; i < nfps; ++i)
-	      if (ord[i] > ord[0])
-		--ord[i];
-	    --nfps;
-	    xfclose (fps[ord[0]]);
-	    free (buffer[ord[0]].buf);
-	    free ((char *) lines[ord[0]].lines);
-	    for (i = ord[0]; i < nfps; ++i)
-	      {
-		fps[i] = fps[i + 1];
-		buffer[i] = buffer[i + 1];
-		lines[i] = lines[i + 1];
-		cur[i] = cur[i + 1];
-	      }
-	    for (i = 0; i < nfps; ++i)
-	      ord[i] = ord[i + 1];
-	    continue;
-	  }
-
+	{
+	  if (fillbuf (&buffer[ord[0]], fps[ord[0]]))
+	    {
+	      findlines (&buffer[ord[0]], &lines[ord[0]]);
+	      cur[ord[0]] = 0;
+	    }
+	  else
+	    {
+	      /* We reached EOF on fps[ord[0]]. */
+	      for (i = 1; i < nfps; ++i)
+		if (ord[i] > ord[0])
+		  --ord[i];
+	      --nfps;
+	      xfclose (fps[ord[0]]);
+	      free (buffer[ord[0]].buf);
+	      free ((char *) lines[ord[0]].lines);
+	      for (i = ord[0]; i < nfps; ++i)
+		{
+		  fps[i] = fps[i + 1];
+		  buffer[i] = buffer[i + 1];
+		  lines[i] = lines[i + 1];
+		  cur[i] = cur[i + 1];
+		}
+	      for (i = 0; i < nfps; ++i)
+		ord[i] = ord[i + 1];
+	      continue;
+	    }
+	}
+      
       /* The new line just read in may be larger than other lines
 	 already in core; push it back in the queue until we encounter
 	 a line larger than it. */
@@ -1801,9 +1815,9 @@ main (int argc, char **argv)
   setlocale (LC_ALL, ORACC_LOCALE);
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
-  collate_init ("unicode");
+  collate_init ((const unsigned char *)"unicode");
 
-  parse_long_options (argc, argv, "sort", "psdsort", usage);
+  parse_long_options (argc, argv, "sort", "osort", usage);
 
   have_read_stdin = 0;
   inittables ();
@@ -2222,7 +2236,7 @@ but lacks following character offset"));
     error (SORT_FAILURE, errno, _("%s: write error"), outfile);
 
   if (have_read_stdin && fclose (stdin) == EOF)
-    error (SORT_FAILURE, errno, outfile);
+    error (SORT_FAILURE, errno,  _("%s: write error"), outfile);
   if (ferror (stdout) || fclose (stdout) == EOF)
     error (SORT_FAILURE, errno, _("%s: write error"), outfile);
 
@@ -2236,12 +2250,12 @@ const char *prog = "psdsort";
 int major_version = 1, minor_version = 0;
 const char *usage_string = "";
 void
-help ()
+help (void)
 {
   ;
 }
 int
 opts (int c, char *arg)
 {
-  ;
+  return 0;
 }

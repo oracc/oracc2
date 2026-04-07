@@ -392,6 +392,13 @@ gdl_new_word(Tree *ytp)
   return ytp->curr;
 }
 
+void
+gdl_set_word_id(const char *wid)
+{
+  strcpy(gdl_word_id, wid);
+  gid_insertp = gdl_word_id+strlen(gdl_word_id);
+}
+
 Node *
 gdl_delim(Tree *ytp, const char *data)
 {
