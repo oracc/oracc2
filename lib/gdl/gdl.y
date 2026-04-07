@@ -147,7 +147,7 @@ delim:
 	    						  gdl_push(ytp,"g:det"); 
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_phond); }
-	| '}' 	 		  			{ if (!gdl_balance_state(@1,'}'))
+	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}'))
 	      						    gdl_pop(ytp,"g:det");
 	     						    /* set pst->det = SB_CL; lgp is last
 							       node with g content or equivalent, i.e.,
@@ -240,8 +240,8 @@ cbit:
 	| cdelim					{ }
 	| CLP			       			{ gdl_balance_state(@1,CLP);
 	    					  	  gdl_push(ytp,"g:gp"); }
-	| CRP	     			    		{ if (!gdl_balance_state(@1,CRP))
-	      					    	   gdl_pop(ytp,"g:gp");  }
+	| CRP	     			    		{ if (-1 != gdl_balance_state(@1,CRP))
+	      					    	   gdl_pop(ytp,"g:gp"); }
 	| QLP 						{ yrem=kids_rem_last(ytp);
 	    						  gdl_push(ytp,"g:q");
 							  kids_add_node(ytp,yrem);
@@ -362,9 +362,9 @@ glosso:
 	;
 
 glossc:
-	  R_cur_par		{ ynp = gdl_gloss_c(@1, ytp, R_cur_par, gs_glodoc_c, gs_glodoc, gdllval.text); }
-	| R_dbl_cur		{ ynp = gdl_gloss_c(@1, ytp, R_dbl_cur, gs_glolin_c, gs_glolin, gdllval.text); }
-	| R_ang_par_s		{ ynp = gdl_gloss_c(@1, ytp, R_ang_par, gs_surro_c, gs_empty, gdllval.text); }
+		R_cur_par      	{ ynp = gdl_gloss_c(@1, ytp, R_cur_par, gs_glodoc_c, gs_glodoc, gdllval.text); }
+	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(@1, ytp, R_dbl_cur, gs_glolin_c, gs_glolin, gdllval.text); }
+	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(@1, ytp, R_ang_par, gs_surro_c, gs_empty, gdllval.text); }
 	;
 
 stateo:  

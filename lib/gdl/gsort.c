@@ -128,6 +128,8 @@ gsort_prep(Tree *tp)
 	      gs->n = list_len(lp);
 	      gs->i = (GS_item **)list2array(lp);
 	      list_free(lp, NULL);
+	      if (!gs->i)
+		fprintf(stderr, "gsort_prep: NULL result\n");
 	      gs->s = (uccp)tp->root->text;
 	      if ('|' == *gs->s && gs->i[0]->t == GST_NUM)
 		gsort_reset_c_type(gs);

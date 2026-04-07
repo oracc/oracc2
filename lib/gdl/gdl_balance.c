@@ -139,44 +139,6 @@ gstck_new(int i)
   return gp;
 }
 
-#if 0
-static void
-gdl_break_extend(void)
-{
-  int t;
-  break_alloced *= 2;
-  break_stack = realloc(break_stack, break_alloced * sizeof(int));
-  for (t = break_top; t < break_alloced; ++t)
-    break_stack[t] = 0;
-}
-
-static int
-gdl_break_peek(void)
-{
-  if (break_top >= 0)
-    return break_stack[break_top];
-  else
-    return -1;
-}
-
-static int
-gdl_break_pop(void)
-{
-  if (break_top >= 0)
-    return break_stack[break_top--];
-  else
-    return -1;
-}
-
-static void
-gdl_break_push(int tok)
-{
-  if (++break_top == break_alloced)
-    gdl_break_extend();
-  break_stack[break_top] = tok;
-}
-#endif
-
 void
 gdl_break_node(Node *np)
 {
@@ -203,12 +165,8 @@ gdl_balance_break(Mloc mlp, int tok)
   /* if it's a closer, check the stack for a match */
   if (o_of_c[tok])
     {
-#if 1
       intptr_t p = gdl_break_peek();
-#else
-      int p = gdl_break_peek();
-#endif
-      if (-1 == p)
+      if (-1 == gstck_i(p))
 	{
 	  /* nothing on the stack, superfluous closer */
 	  mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);
@@ -232,45 +190,8 @@ gdl_balance_break(Mloc mlp, int tok)
     }
   return ret;
 }
-#if 0
-static void
-gdl_state_extend(void)
-{
-  int t;
-  state_alloced *= 2;
-  state_stack = realloc(state_stack, state_alloced * sizeof(int));
-  for (t = state_top; t < state_alloced; ++t)
-    state_stack[t] = 0;
-}
 
-static int
-gdl_state_peek(void)
-{
-  if (state_top >= 0)
-    return state_stack[state_top];
-  else
-    return -1;
-}
-
-static int
-gdl_state_pop(void)
-{
-  if (state_top >= 0)
-    return state_stack[state_top--];
-  else
-    return -1;
-}
-
-static void
-gdl_state_push(int tok)
-{
-  if (++state_top == state_alloced)
-    gdl_state_extend();
-  state_stack[state_top] = tok;
-}
-#endif
-
-/* return 0 on OK; -1 on error; Gstck* as intptr_t on success */
+/* return -1 on error; Gstck* as intptr_t on success */
 intptr_t
 gdl_balance_state(Mloc mlp, int tok)
 {
@@ -278,12 +199,9 @@ gdl_balance_state(Mloc mlp, int tok)
   /* if it's a closer, check the stack for a match */
   if (o_of_c[tok])
     {
-#if 1
       intptr_t p = gdl_state_peek();
-#else
-      int p = gdl_state_peek();
-#endif
-      if (-1 == p)
+
+      if (-1 == gstck_i(p))
 	{
 	  /* nothing on the stack, superfluous closer */
 	  mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);

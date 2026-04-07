@@ -226,6 +226,7 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
 {
   Tree *tp = NULL;
   mesg_init();
+  gdl_auto_id();
   tp = gdlparse_string(locp, (char*)s);
   gdlparse_reset();
   return tp;

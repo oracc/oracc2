@@ -308,6 +308,8 @@ main(int argc, char **argv)
     gvl_setup(project, project, "900");
   else
     gvl_setup(project, project, "020"); /*FIXME*/
+
+  gdl_auto_id();
   gdlparse_init();
 
   if (gvl_script_type)

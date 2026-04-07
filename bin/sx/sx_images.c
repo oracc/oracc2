@@ -36,6 +36,8 @@ sx_images(struct sl_signlist *sl)
 	      sparse_flag = 1;
 	      ++imfile;
 	    }
+	  else if (!strcmp(sl->signlist, "01tmp/csl.asl"))
+	    sparse_flag = 1;
 	  if (access(imfile, R_OK))
 	    {
 	      char buf[strlen(oracc())+strlen("/lib/data/0")+strlen(imfile)];

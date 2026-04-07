@@ -22,6 +22,7 @@ gdl_one_off(const char *file, int line, const char *g, int voidsl)
 
   if (voidsl)
     gvl_setup(NULL,NULL,NULL);
+  gdl_auto_id();
   gdlparse_init();
   loc.file = file;
   loc.line = line;

@@ -473,6 +473,11 @@ gvl_valuqual(Node *vqnp)
 
   if (gvl_trace)
     fprintf(stderr, "gvl_valuqual: called\n");
+
+#if 0
+  if (strcmp(vqnp->name, "g:q") && !strcmp(vqnp->rent->name, "g:q"))
+    vqnp = vqnp->rent;
+#endif
   
   if ('q' == vqnp->name[2])
     {

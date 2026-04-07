@@ -95,7 +95,9 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUxX:?");
+  if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUxX:?"))
+    exit(1);
+  
   asltrace = asl_flex_debug = gdl_flex_debug = trace_mode;
   if (sortcode_output > 1)
     gsort_trace = 1;

@@ -393,6 +393,15 @@ gdl_new_word(Tree *ytp)
 }
 
 void
+gdl_auto_id(void)
+{
+  static char buf[16];
+  static int gid = 1;
+  sprintf(buf, "a%04d", gid++);
+  gdl_set_word_id(buf);
+}
+
+void
 gdl_set_word_id(const char *wid)
 {
   strcpy(gdl_word_id, wid);
@@ -675,8 +684,8 @@ gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   Node *ret = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: GLOSS/c: %d=%s\n", tok, data);
-  ret =  gdl_meta_node(ytp, "g:z", data);
-  if (!gdl_balance_state(mlp, tok))
+  ret = gdl_meta_node(ytp, "g:z", data);
+  if (-1 != gdl_balance_state(mlp, tok))
     gdl_pop(ytp, data);
   bit_set(*lst,gs_c);
   rs_no(gs_run);

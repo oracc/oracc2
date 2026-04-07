@@ -41,7 +41,8 @@ gvl_s(Node *ynp)
     {
       /* This is a barenum--we need to sexify and return the result */
       gvl_n_sexify(ynp);
-      return ynp->user;
+      /*2026-04-07: changes to GDL tree mean this should need to return kids->user not ->user*/
+      return ynp->kids->user;
     }
   else if ('N' == *gp->type)
     {
