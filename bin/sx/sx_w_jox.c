@@ -642,7 +642,7 @@ sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
 	{
 	  struct sl_token *tp = hash_find(sl->htoken, msp->s);
 	  joxer_eaaa(&msp->m, "sl:name", NULL);
-	  grx_jox(tp->gdl, "g:w");
+	  grx_jox(tp->gdl, NULL);
 	  joxer_eeaa(&msp->m, "sl:name");
 	}
       joxer_ee(&msp->m, "sl:aka");
@@ -804,7 +804,7 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_free(a, NULL);
 	      joxer_ea(&s->mloc, "sl:form", ratts);
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
-	      grx_jox(tp->gdl, "g:w");
+	      grx_jox(tp->gdl, NULL);
 	      joxer_eeaa(&s->mloc, "sl:name");
 	      in_form = 1;
 	    }
@@ -874,7 +874,7 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	      list_free(a, NULL);
 	      joxer_ea(&s->mloc, "sl:form", ratts);
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
-	      grx_jox(tp->gdl, "g:w");
+	      grx_jox(tp->gdl, NULL);
 	      joxer_eeaa(&s->mloc, "sl:name");
 	      if (s->u.f->aka && list_len(s->u.f->aka))
 		sx_w_jx_aka(f, sl, s->u.f->aka);
@@ -1260,7 +1260,7 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	  if (tp && tp->gdl)
 	    {
 	      joxer_eaaa(&s->mloc, "sl:name", NULL);
-	      grx_jox(tp->gdl, "g:w");
+	      grx_jox(tp->gdl, NULL);
 	      joxer_eeaa(&s->mloc, "sl:name");
 	    }
 	  if (s->u.s->aka && list_len(s->u.s->aka))
@@ -1378,7 +1378,7 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 #endif
 	  joxer_ea(&v->mloc, "sl:v", ratts);
 	  joxer_eaaa(&v->mloc, "sl:name", NULL);
-	  grx_jox(tp->gdl, "g:w");
+	  grx_jox(tp->gdl, NULL);
 	  joxer_eeaa(&v->mloc, "sl:name");
 
 	  if (v->lp)

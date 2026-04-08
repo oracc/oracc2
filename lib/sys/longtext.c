@@ -6,7 +6,8 @@ void
 longtext_init(Pool *p,char *s)
 {
   (void)longtext_sep(NULL,NULL,NULL,NULL);
-  (void)longtext_sep(p, s, NULL, NULL);
+  if (p && s)
+    (void)longtext_sep(p, s, NULL, NULL);
 }
 
 void

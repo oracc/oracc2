@@ -66,7 +66,7 @@ struct sl_signlist *parent_asl;
 int boot_mode = 0;
 int check_mode = 0;
 int trace_mode = 0;
-extern int asl_flex_debug, gdl_flex_debug, gdl_unicode;
+extern int asl_flex_debug, gdl_flex_debug, gdl_unicode, asldebug;
 
 char *idata_file = NULL;
 char *idata_type = NULL;
@@ -98,7 +98,7 @@ main(int argc, char * const*argv)
   if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUxX:?"))
     exit(1);
   
-  asltrace = asl_flex_debug = gdl_flex_debug = trace_mode;
+  asltrace = asl_flex_debug = asldebug = gdl_flex_debug = trace_mode;
   if (sortcode_output > 1)
     gsort_trace = 1;
 

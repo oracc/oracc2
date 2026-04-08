@@ -1,7 +1,7 @@
 %define api.prefix {asl}
 %file-prefix"asl"
 %locations
-%define parse.error detailed
+%define parse.error verbose
 %define parse.lac full
 
 %{
@@ -119,7 +119,7 @@ atlinkdef:
 	;
 
 atlistdef:
-	  LISTDEF LISTNAME longtext 	{ asl_bld_listdef(&@1, curr_asl, (ccp)$2, (ccp)longtext(NULL,NULL,NULL)); }
+	  LISTDEF LISTNAME longtext 	{ asl_bld_listdef(&@1, curr_asl, (ccp)$2, (ccp)longtext_get()); }
 	;
 
 atsysdef:
@@ -197,9 +197,9 @@ atlist:
 	| LIST LISTNUM LISTIMAGE
 		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, NULL, (uccp)$3, NULL); }
 	| LIST LISTNUM atftoken uniimg atftokens
-		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, (uccp)$3, (uccp)$4, (uccp)longtext(NULL,NULL,NULL)); }
+		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, NULL, (uccp)$3, (uccp)$4, (uccp)longtext_get()); }
 	| LIST LISTNUM atftoken uniimg atftokens OTFEAT
-		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, (uccp)$6, (uccp)$3, (uccp)$4, (uccp)longtext(NULL,NULL,NULL)); }
+		{ asl_bld_list(&@1, curr_asl, (ccp)$1, (uccp)$2, minus_flag, (uccp)$6, (uccp)$3, (uccp)$4, (uccp)longtext_get()); }
 	;
 
 atliga:
@@ -222,7 +222,7 @@ atlref:
 */
 
 atsref:
-	SREF atftoken GOESTO atftokens { (void)asl_bld_tle(&@1, curr_asl, (uccp)$2, (uccp)longtext(NULL,NULL,NULL), sx_tle_sref); }
+	SREF atftoken GOESTO atftokens { (void)asl_bld_tle(&@1, curr_asl, (uccp)$2, (uccp)longtext_get(), sx_tle_sref); }
 	;
 
 atform:
@@ -311,11 +311,11 @@ atuname:
         ;
 
 atunote:
-	  UNOTE longtext		{ asl_bld_unote(&@1, curr_asl, (uccp)longtext(NULL,NULL,NULL)); }
+	  UNOTE longtext       	{ asl_bld_unote(&@1, curr_asl, (uccp)longtext_get()); }
 	;
 
 atmeta:
-	  anynote longtext	{ asl_bld_note(&@1, curr_asl, (ccp)$1, (ccp)$2); }
+	   anynote longtext	{ asl_bld_note(&@1, curr_asl, (ccp)$1, (ccp)longtext_get()); }
         ;
 
 anynote:
