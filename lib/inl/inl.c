@@ -34,7 +34,7 @@ inl_rnv_bib(Node *np, Scanseg *sp)
 	atts[2] = NULL;
       r = rnvval_aa_ccpp(atts);
     }
-  char name[10];
+  char name[128];
   sprintf(name, "b:%s", np->name);
   rnvxml_ec(name, r);
 }
@@ -44,7 +44,7 @@ inl_rnv_inl(Node *np, Scanseg *sp)
 {
   Ratts *r = NULL;
 
-  char name[10] = { 'i', ':' , '\0' };
+  char name[128] = { 'i', ':' , '\0' };
 
   if ('#' == *np->name && sp)
     strcat(name, sp->name);
