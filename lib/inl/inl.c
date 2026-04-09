@@ -28,7 +28,10 @@ inl_rnv_bib(Node *np, Scanseg *sp)
   Ratts *r = NULL;
   if (sp)
     {
-      atts[4] = sp->attr;
+      if (sp->attr)
+	atts[3] = sp->attr;
+      else
+	atts[2] = NULL;
       r = rnvval_aa_ccpp(atts);
     }
   char name[10];
