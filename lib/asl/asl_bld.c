@@ -364,9 +364,6 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 	  tokp->gdl = tp->root;
 	  tokp->gdl->name = "g:w";
 	}
-      tokp->gdl->props = NULL;
-      if (tokp->gdl->kids)
-	tokp->gdl->kids->props = NULL;
       if (!tokp->gdl->mloc)
 	tokp->gdl->mloc = mloc_mloc(locp);
       gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);

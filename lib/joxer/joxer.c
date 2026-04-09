@@ -498,14 +498,18 @@ joxer_eto_vx(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   const char *xch = (ccp)xmlify((ucp)ch);
   joxer_mloc(mp);
   rnvval_ea(pname, rats);
-  rnvval_ch(xch);
-  rnvval_ee(pname);
+
   jox_xml_ea(pname, rats);
   /*fprintf(stderr, "calling jox_xml_ch from joxer_eto_vx\n");*/
   if (joxer_inl)
-    jox_xml_inl(mp, (char*)ch);
+    jox_xml_inl(mp, (char*)ch); /* does its own rnvval_xxx calls */
   else
-    jox_xml_ch(xch);
+    {
+      rnvval_ch(xch);
+      jox_xml_ch(xch);
+    }
+
+  rnvval_ee(pname);
   jox_xml_ee(pname);
   if (rats && ratts)
     {

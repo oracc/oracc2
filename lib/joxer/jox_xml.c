@@ -30,6 +30,9 @@ jox_xml_inl(Mloc *mp, char *ch)
       first = 0;
     }
   Tree *tp = inl(mp, ch);
+  /* inl() this puts the text to parse in tp->root->text but we don't
+     want to print that so NULL it out here */
+  tp->root->text = NULL;
   tree_xml(f_xml, tp);
 }
 

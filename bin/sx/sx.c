@@ -59,7 +59,7 @@ int validate = 1;
 
 extern int asl_raw_tokens; /* ask asl to produce list of @sign/@form/@v tokens */
 extern int ctrace;
-extern int no_image_data;
+extern int no_image_data, inl_rnv;
 
 struct sl_signlist *parent_asl;
 
@@ -91,14 +91,18 @@ main(int argc, char * const*argv)
   xo_loc = malloc(sizeof(Mloc));
   mesg_init();
   asl_flex_debug = gdl_flex_debug = 0;
-  gdl_unicode = 1;
+  gdl_unicode = inl_rnv = 1;
 
   gsort_init();
   
   if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUxX:?"))
     exit(1);
-  
-  asltrace = asl_flex_debug = asldebug = gdl_flex_debug = trace_mode;
+
+  if (trace_mode == 2)
+    rnvtrace = 1;
+  else
+    asltrace = asl_flex_debug = asldebug = gdl_flex_debug = trace_mode;
+
   if (sortcode_output > 1)
     gsort_trace = 1;
 
@@ -467,7 +471,7 @@ opts(int opt, const char *arg)
       sll_output = 1;
       break;
     case 't':
-      trace_mode = 1;
+      ++trace_mode;
       break;
     case 'U':
       unicode_from_parent = 1;

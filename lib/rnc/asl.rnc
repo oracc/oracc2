@@ -248,11 +248,11 @@ sl.ucun =
     attribute seq { text }? ,
     text
   }
-sl.inote = element sl:inote { text }
+sl.inote = element sl:inote { inli }
 sl.uage = element sl:uage { text }
 sl.uname = element sl:uname { text }
-sl.note = element sl:note { text }
-sl.lit = element sl:lit { text }
+sl.note = element sl:note { inli }
+sl.lit = element sl:lit { inli }
 sl.link =
   element sl:link {
     attribute name { text } ,
@@ -378,6 +378,13 @@ sl.scriptcode = element sl:code {
 
 sl.metrology = element sl:metrology { empty }
 
+oid = attribute oid { text }
+key = attribute key { text }
+sign_attr = attribute g:sign  { text }
+xid = attribute xml:id { xsd:NCName }
+
+xattr = (oid? , key? , sign_attr? , xid?)
+
 g.d =
   element g:d {
     attribute g:pos { xsd:NCName },
@@ -399,6 +406,7 @@ g.s =
     attribute g:role { xsd:NCName }?,
     attribute g:status { xsd:NCName }?,
     attribute g:utf8 { text }?,
+    xattr,
     (text | (g.b , mods+))
   }
 g.n =
@@ -422,6 +430,7 @@ g.c =
     attribute form { text },
     attribute g:status { xsd:NCName }?,
     attribute g:utf8 { text }?,
+    xattr,
     (mods
      | g.n
      | g.o
@@ -441,6 +450,7 @@ g.v =
     attribute g:delim { xsd:NMTOKEN }?,
     attribute g:status { xsd:NCName }?,
     attribute g:utf8 { text }?,
+    xattr,
     (text | (g.b , mods+))
   }
 mods     = modifier | allograph

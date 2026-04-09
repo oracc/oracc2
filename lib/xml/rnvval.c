@@ -32,6 +32,8 @@ rncfile_path(const char *r)
 {
   char *p = malloc(strlen(oracc_builds())+strlen("/lib/rnc/")+strlen(r)+5);
   sprintf(p, "%s/lib/rnc/%s.rnc", oracc_builds(), r);
+  if (rnvtrace)
+    fprintf(stderr, "rnvval: using %s\n", p);
   return p;
 }
 

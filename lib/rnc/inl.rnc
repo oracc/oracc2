@@ -1,7 +1,9 @@
 namespace i = "http://oracc.org/ns/inl/1.0"
 namespace b = "http://oracc.org/ns/bib/1.0"
 
-inl = element i:inl { text_node | span_node | bib_node }*
+inl = element i:inl { inli }*
+
+inli = (text_node | span_node | bib_node)*
 
 text_node = element i:text { text }
 span_node = element i:span {
@@ -10,7 +12,14 @@ span_node = element i:span {
 	       (text_node | span_node | bib_node)*
 	    }
 
-bib_node = element b:cite {
+bib_node = (bib_cite | bib_full)
+
+bib_cite = element b:cite {
+	 attribute key {text},
+	 attribute pp {text}?,
+	 attribute type { "foot" | "paren" | "no" }?
+}
+bib_full = element b:fullcite {
 	 attribute key {text},
 	 attribute pp {text}?,
 	 attribute type { "foot" | "paren" | "no" }?
