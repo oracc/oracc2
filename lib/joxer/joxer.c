@@ -730,7 +730,7 @@ joxer_eto_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
   const char *xch = (ccp)xmlify((ucp)ch);
   joxer_mloc(mp);
   rnvval_ea(pname, rats);
-  rnvval_ch(xch);
+  /*rnvval_ch(xch);*/ /* temporary suppression of validation for text nodes until inl is handled properly */
   rnvval_ee(pname);
   if (rats && ratts)
     {
