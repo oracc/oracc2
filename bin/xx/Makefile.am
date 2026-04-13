@@ -56,3 +56,7 @@ numrange_DEPENDENCIES = $(xLDADD)
 msort_SOURCES = msort.c
 msort_LDADD = $(xLDADD)
 msort_DEPENDENCIES = $(xLDADD)
+
+lm1_SOURCES = lm1.c
+lm1_LDADD = $(xLDADD)
+lm1_DEPENDENCIES = $(xLDADD)
