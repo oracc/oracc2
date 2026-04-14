@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "runexpat.h"
+#include <pool.h>
+#include <hash.h>
+#include <xml.h>
+#include <runexpat.h>
 
 extern int options(int, char**,const char*);
 extern int optind;
@@ -9,6 +12,7 @@ int verbose = 0;
 
 int nlines;
 int nmorph;
+int xcl_mode;
 FILE *outf;
 Hash *idmap;
 Pool *p;
@@ -18,7 +22,7 @@ morph(const char **atts)
 {
   if (nmorph++)
     fputs("; ", outf);
-  fputs(outf, findAttr(atts, "norm0"));
+  fputs(findAttr(atts, "norm0"), outf);
 }
 
 void
@@ -26,23 +30,25 @@ ei_sH(void *userData, const char *name, const char **atts)
 {
   if (!strcmp(name, "xcl"))
     xcl_mode = 1;
-  else if (strcmp(name, "l"))
+  else if (!strcmp(name, "l"))
     {
       /* use of @n assumes #lm1: context will be inherited from ATF */
       if (!xcl_mode)
-	curr_label = hash_add(idmap, pool_copy(getAttr(atts, "n"), p);
+	hash_add(idmap,
+		 pool_copy((unsigned const char *)findAttr(atts, "xml:id"), p),
+		 pool_copy((unsigned const char *)findAttr(atts, "n"), p));
     }
   else if (!strcmp(name, "xff:f"))
-    morph(curr_wid, atts);
+    morph(atts);
   else if (!strcmp(name, "d"))
     {
-      const char *type = getAttr("type");
+      const char *type = findAttr(atts, "type");
       if (!strcmp(type, "line-start"))
 	{
 	  if (nlines++)
 	    fputs("\n", outf);
-	  const char *lid = getAttr("ref");	  
-	  fprintf(outf, "%s\.\t", idmap(lid));
+	  const char *lid = findAttr(atts, "ref");	  
+	  fprintf(outf, "%s.\t", (const char*)hash_find(idmap, (unsigned const char *)lid));
 	  nmorph = 0;
 	}
     }
@@ -71,6 +77,8 @@ main(int argc, char **argv)
   idmap = hash_create(256);
   outf = stdout;
   expat_identity(argv[optind], NULL, stdout);
+  if (nlines++)
+    fputs("\n", outf);
 }
 
 int

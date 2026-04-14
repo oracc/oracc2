@@ -19,7 +19,7 @@ static const char *xcl_ns = "http://oracc.org/ns/xcl/1.0";
 static const char *xff_ns = "http://oracc.org/ns/xff/1.0";
 #endif
 
-int links_standalone = 0;
+extern int links_standalone;
 
 static const char *
 hashify(const char *ref)

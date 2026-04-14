@@ -3,7 +3,9 @@ include ../../oracc-am-rules.txt
 SUBDIRS=../../lib osort rnv tis wrapper lem fonts cun xml
 
 bin_PROGRAMS=concord dbix dbx xisdb tlitsig ivd2oiv cunhtmlx jsmapx \
-	oraccopt pqxpand pct numrange msort
+	oraccopt pqxpand pct numrange lm1
+
+#msort
 
 concord_SOURCES = concord.c
 concord_LDADD = $(xLDADD)
@@ -53,9 +55,9 @@ numrange_SOURCES = numrange.c
 numrange_LDADD = $(xLDADD)
 numrange_DEPENDENCIES = $(xLDADD)
 
-msort_SOURCES = msort.c
-msort_LDADD = $(xLDADD)
-msort_DEPENDENCIES = $(xLDADD)
+#msort_SOURCES = msort.c
+#msort_LDADD = $(xLDADD)
+#msort_DEPENDENCIES = $(xLDADD)
 
 lm1_SOURCES = lm1.c
 lm1_LDADD = $(xLDADD)
