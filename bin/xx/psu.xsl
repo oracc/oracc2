@@ -4,6 +4,8 @@
 	       xmlns:xl="http://www.w3.org/1999/xlink"
 	       >
 
+  <xsl:output method="text" encoding="utf-8"/>
+  
   <xsl:template match="xcl:linkset[@xl:role='psu']">
     <xsl:variable name="ref" select="substring-after(xcl:link[1]/@xl:href, '#')"/>
     <xsl:variable name="lem" select="id($ref)"/>

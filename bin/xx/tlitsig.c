@@ -75,7 +75,6 @@ do_one(char *s)
       else
 	mesg_print2(stderr, mp);
     }
-
   const char *sig = gdlsig(tp);
   if (backward)
     fprintf(stdout, "%s => %s\n", s, sig); /* tlitsig.plx format */
@@ -135,7 +134,7 @@ int
 main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
-  
+  gdl_set_word_id("w");  
   options(argc, argv, "abcdf:hinop:Prstvw");
 
   gdlxml_setup();
