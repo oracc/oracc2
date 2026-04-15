@@ -423,8 +423,10 @@ p.sansimg   { text-indent: -5px; margin-left: 5px; }
 /* New /tra/ project styling as used in
    https://build-oracc.museum.upenn.edu/dumuzisdream/Q000347 */
 
-td.tra-lm1 { color: #505050; padding: 5px; } /* this gives a slight indent; I like it */
+td.tra-lm1 { color: #505050; padding-top: 5px; padding-bottom: 5px; } /* this gives a slight indent; I like it */
 /*.tra-lm1::after { content: "" ; display: table-row; height: 10px; }*/
 td.tra-mtx { }
 td.tra-psu { padding-left: 20px; padding-top: 3px; font-size: 90%; color: silver; }
 td.tra-tr { }
+td.tra-lls { padding-left: 10px; padding-top: 3px; font-size: 90%; color: #71706E; }
+.tra-lls p { text-indent: -20px; margin-left: 20px; }

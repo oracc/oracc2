@@ -1,15 +1,13 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <oraccsys.h>
 #include <roco.h>
 #include <pool.h>
 #include <hash.h>
 #include <xml.h>
 #include <runexpat.h>
-#include <unidef.h>
 
-extern int options(int, char**,const char*);
-extern int optind;
+/*lls: extract lemmatization but use sense GWs instead of the actual
+  insts */
+
 int verbose = 0;
 
 int nlines;
@@ -17,97 +15,79 @@ int nmorph;
 int xcl_mode;
 FILE *outf;
 Hash *idmap;
-Hash *stems;
+Hash *sgw;
 Pool *p;
 
 const char *curr_lem;
 
-#if 0
-static const char *
-base_norm(const char *b)
-{
-  size_t l;
-  wchar_t *w = utf2wcs(b), &l;
-  wchar_t *n = malloc((l+1)*sizeof(wchar_t));
-  int i, dest;
-  for (dest = i = 0; i < l; ++i)
-    {
-      if (w[i] >= U_s0 && w[i] <= U_s9)
-	; /* drop sub nums */
-      else if (w[i] == U_s_x)
-	{
-	  ++i;
-	  /* drop qualifier */
-	  if ('('L == w[i])
-	    {
-	      while (i < l && ')'L != w[i])
-		++i;
-	    }
-	}
-      else
-	n[dest++] = w[i];
-    }
-  return (const char *)wcs2utf(n, l);
-}
-#endif
-
 static void
-load_stems(void)
+load_sgw(void)
 {
-  stems = hash_create(128);
-  Roco *r = roco_load1("@@ORACC@@/epsd2/02pub/stems.tsv");
+  sgw = hash_create(128);
+  Roco *r = roco_load1("@@ORACC@@/epsd2/02pub/sgw.tsv");
   int i;
-  for (i = 0; i < r->nlines; ++i)
-    hash_add(stems, r->rows[i][1], r->rows[i][3]);
-}
-
-static char *
-normify(const char *c, const char *b, const char *m, const char *e)
-{
-  const char *s = c;
-  if ('V' == *e && strchr(b, '-'))
+  for (i = 1; i < r->nlines; ++i)
     {
-      const char *s2 = hash_find(stems, (unsigned const char *)b);
-      if (s2)
-	s = s2;
-    }
-  char ret[1024];
-  const char *tilde = strchr(m, '~');
-  if (tilde)
-    {
-      if (tilde > m)
-	{
-	  int len = tilde-m;
-	  strncpy(ret, m, len);
-	  ret[len] = '\0';
-	}
+      char epos[strlen((ccp)r->rows[i][2])+2];
+      if (*(ccp)r->rows[i][2] != '-')
+	sprintf(epos, "'%s", (ccp)r->rows[i][2]);
       else
-	*ret = '\0';
-      strcat(ret, s);
-      strcat(ret, tilde+1);
+	*epos = '\0';
+
+      char cgpsgw[strlen((ccp)r->rows[i][0])+strlen((ccp)r->rows[i][3])+strlen((ccp)r->rows[i][2])+strlen("'//0")];
+      sprintf(cgpsgw, "%s//%s%s", (ccp)r->rows[i][0], (ccp)r->rows[i][3], epos);
+
+      char inst[strlen((ccp)r->rows[i][0])+strlen(epos)+strlen((ccp)r->rows[i][1])+2];
+      strcpy(inst, (ccp)r->rows[i][0]);
+      char *sqb = strchr(inst, '[');
+      if (sqb)
+	{
+	  ++sqb;
+	  strcpy(sqb, (ccp)r->rows[i][1]);
+	  strcat(sqb, "]");
+	  strcat(sqb, epos);	  
+	}
+      if (verbose)
+	fprintf(stderr, "hashing %s => %s\n", cgpsgw, inst);
+      hash_add(sgw, (uccp)pool_copy((uccp)cgpsgw, p), (ucp)pool_copy((uccp)inst, p));
     }
-  else
-    strcpy(ret, c);
-  return strdup(ret);
 }
 
 void
-morph(const char **atts)
+relem(const char **atts)
 {
   if (nmorph++)
     fputs("; ", outf);
   const char *m = findAttr(atts, "morph");
   const char *c = findAttr(atts, "cf");
   const char *p = findAttr(atts, "pos");
-  const char *e = findAttr(atts, "epos");
   if (*m)
     {
-      const char *b = findAttr(atts, "base");
-      if (*c && *b)
+      const char *g = findAttr(atts, "gw");
+      const char *s = findAttr(atts, "sense");
+      const char *e = findAttr(atts, "epos");
+      char key[strlen(c)+strlen(g)+strlen(p)+strlen(s)+strlen(e)+strlen("[]//'0")];
+      sprintf(key, "%s[%s]%s//%s", c, g, p, s);
+      if (verbose)
+	fprintf(stderr, "trying %s\n", key);
+      char *sg = hash_find(sgw, (uccp)key);
+      if (!sg)
 	{
-	  char *x = normify(c, b, m, e);
-	  fputs(x, outf);
-	  free(x);
+	  strcat(key, "'");
+	  strcat(key, e);
+	  if (verbose)
+	    fprintf(stderr, "trying %s\n", key);
+	  sg = hash_find(sgw, (uccp)key);
+	}
+      if (sg)
+	{
+	  fputs(sg, outf);
+	}
+      else
+	{
+	  if (strlen(p) != 2 || 'N' != p[1])
+	    fprintf(stderr, "%s: no sgw found\n", key);
+	  fprintf(outf, "%s[%s]", c, s);
 	}
       return;
     }
@@ -136,7 +116,7 @@ ei_sH(void *userData, const char *name, const char **atts)
 	curr_lem = findAttr(atts, "xml:id");
     }
   else if (!strcmp(name, "xff:f"))
-    morph(atts);
+    relem(atts);
   else if (!strcmp(name, "d"))
     {
       const char *type = findAttr(atts, "type");
@@ -168,10 +148,10 @@ expat_identity(const char *fname, const char *xml_id, FILE *outfp)
 int
 main(int argc, char **argv)
 {
-  load_stems();
+  p = pool_init();
+  load_sgw();
   options(argc, argv, "");
   runexpat_omit_rp_wrap();
-  p = pool_init();
   idmap = hash_create(256);
   outf = stdout;
   expat_identity(argv[optind], NULL, stdout);

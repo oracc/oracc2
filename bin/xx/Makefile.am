@@ -3,7 +3,7 @@ include ../../oracc-am-rules.txt
 SUBDIRS=../../lib osort rnv tis wrapper lem fonts cun xml
 
 bin_PROGRAMS=concord dbix dbx xisdb tlitsig ivd2oiv cunhtmlx jsmapx \
-	oraccopt pqxpand pct numrange lm1
+	oraccopt pqxpand pct numrange lm1 lls
 
 bin_SCRIPTS=psu.sh
 
@@ -66,3 +66,7 @@ numrange_DEPENDENCIES = $(xLDADD)
 lm1_SOURCES = lm1.c
 lm1_LDADD = $(xLDADD)
 lm1_DEPENDENCIES = $(xLDADD)
+
+lls_SOURCES = lls.c
+lls_LDADD = $(xLDADD)
+lls_DEPENDENCIES = $(xLDADD)
