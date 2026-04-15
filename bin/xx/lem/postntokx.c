@@ -64,9 +64,9 @@ cgp(const unsigned char *sig)
   if (end)
     {
       uchar buf[(end-sig)+1];
-      const uchar *s = sig;
+      uchar *s = (uchar *)sig;
       uchar *b = buf;
-      s = strchr(sig, '='); /* skip everything up to CF */
+      s = (uchar*)strchr((const char *)sig, '='); /* skip everything up to CF */
       if (s)
 	{
 	  ++s;
@@ -94,7 +94,7 @@ cgp(const unsigned char *sig)
 static void
 process_l(const char **atts)
 {
-  const char *square = NULL, *inst = NULL;;
+  const char *square = NULL;
   const char *sig = NULL;
   while (*atts)
     {
@@ -104,8 +104,10 @@ process_l(const char **atts)
 	sig = (char*)atts[1];
       else if (!strcmp(atts[0],"newsig"))
 	sig = (char*)atts[1];
+#if 0
       else if (!strcmp(atts[0],"inst"))
 	inst = (char*)atts[1];
+#endif
       atts += 2;
     }
 

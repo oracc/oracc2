@@ -34,6 +34,7 @@ int inplace = 0;
 int lem_autolem = 0;
 int lem_check = 0;
 int lem_dynalem = 0;
+int links_standalone = 0;
 int new_lem = 0;
 int pretty = 0;
 int psu = 0;

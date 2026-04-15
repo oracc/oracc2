@@ -24,7 +24,7 @@ tis_add(const char *r_id, long int s, int n, int l)
 }
 
 void
-tis_line()
+tis_line(void)
 {
   int ch, r_len = 0;
   int s = 0, n = 0, l = 0;
@@ -128,7 +128,7 @@ tis_find(const char *id)
 }
 
 void
-tis_term ()
+tis_term (void)
 {
   if (tis_dip)
     {
@@ -251,4 +251,4 @@ int minor_version = 0;
 const char *usage_string = " TIS_FILE [-x] [XML_ID]";
 int
 opts(int argc, const char *arg) { return 0;}
-void help() {}
+void help(void) {}

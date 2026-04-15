@@ -20,6 +20,8 @@ Hash *idmap;
 Hash *stems;
 Pool *p;
 
+const char *curr_lem;
+
 #if 0
 static const char *
 base_norm(const char *b)
@@ -52,8 +54,11 @@ base_norm(const char *b)
 static void
 load_stems(void)
 {
-  Roco *r = roco_load1("/home/stinney/orc/tra/stems/data.tsv");
-  stems = roco_hash_r(r);
+  stems = hash_create(128);
+  Roco *r = roco_load1("@@ORACC@@/epsd2/02pub/stems.tsv");
+  int i;
+  for (i = 0; i < r->nlines; ++i)
+    hash_add(stems, r->rows[i][1], r->rows[i][3]);
 }
 
 static char *
@@ -62,21 +67,27 @@ normify(const char *c, const char *b, const char *m, const char *e)
   const char *s = c;
   if ('V' == *e && strchr(b, '-'))
     {
-      const char *s = hash_find(stems, (unsigned const char *)b);
-      if (!s)
-	{
-	  fprintf(stderr, "stem: %s %s\n", c, b);
-	  s = c;
-	}
+      const char *s2 = hash_find(stems, (unsigned const char *)b);
+      if (s2)
+	s = s2;
     }
   char ret[1024];
   const char *tilde = strchr(m, '~');
-  if (tilde > m)
-    strncpy(ret, m, tilde-m);
+  if (tilde)
+    {
+      if (tilde > m)
+	{
+	  int len = tilde-m;
+	  strncpy(ret, m, len);
+	  ret[len] = '\0';
+	}
+      else
+	*ret = '\0';
+      strcat(ret, s);
+      strcat(ret, tilde+1);
+    }
   else
-    *ret = '\0';
-  strcat(ret, s);
-  strcat(ret, tilde+1);
+    strcpy(ret, c);
   return strdup(ret);
 }
 
@@ -87,6 +98,7 @@ morph(const char **atts)
     fputs("; ", outf);
   const char *m = findAttr(atts, "morph");
   const char *c = findAttr(atts, "cf");
+  const char *p = findAttr(atts, "pos");
   const char *e = findAttr(atts, "epos");
   if (*m)
     {
@@ -99,6 +111,12 @@ morph(const char **atts)
 	}
       return;
     }
+  else if (*c)
+    fputs(c, outf);
+  else if (*p)    
+    fputs(p, outf);
+  else
+    fprintf(stderr, "lm1: %s has nothing to output\n", curr_lem);
   fputs(c, outf);
 }
 
@@ -114,6 +132,8 @@ ei_sH(void *userData, const char *name, const char **atts)
 	hash_add(idmap,
 		 pool_copy((unsigned const char *)findAttr(atts, "xml:id"), p),
 		 pool_copy((unsigned const char *)findAttr(atts, "n"), p));
+      else
+	curr_lem = findAttr(atts, "xml:id");
     }
   else if (!strcmp(name, "xff:f"))
     morph(atts);

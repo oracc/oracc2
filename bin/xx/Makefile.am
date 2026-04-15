@@ -5,6 +5,10 @@ SUBDIRS=../../lib osort rnv tis wrapper lem fonts cun xml
 bin_PROGRAMS=concord dbix dbx xisdb tlitsig ivd2oiv cunhtmlx jsmapx \
 	oraccopt pqxpand pct numrange lm1
 
+bin_SCRIPTS=psu.sh
+
+scriptdata_DATA=*.xsl
+
 #msort
 
 concord_SOURCES = concord.c

@@ -4,7 +4,11 @@
 
 #include "globals.c"
 
-int verbose = 0;
+FILE *f_xml;
+int rnvtrace, status;
+Mloc *xo_loc;
+
+int verbose = 0, bootstrap_mode = 0, lem_dynalem = 0;
 
 #define XCL_LOCAL_NAME_OFFSET	27
 
@@ -438,7 +442,7 @@ const char *prog = "bigrams";
 int major_version = 1, minor_version = 0;
 const char *usage_string = "-p [project]";
 void
-help ()
+help (void)
 {
   printf("  -f [file]\n    Gives the name of the XTF file to process\n");
   printf("  -i [inputs project]\n    Gives the name of the project to harvest\n");
