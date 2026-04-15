@@ -151,7 +151,7 @@ gdlsig(Tree *tp)
 	    }
 	  else if (np->kids)
 	    gdlsig_descend(np, lp);
-	  if (np->next)
+	  if (np->next && !strcmp(np->name, "g:w"))
 	    list_add(lp, " ");
 	}
       sig = (const char *)list_concat(lp);
