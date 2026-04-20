@@ -13,9 +13,10 @@
 Mloc xo_loc;
 FILE *f_xml;
 const char *file;
-int verbose;
+int links_standalone;
 int status;
 int rnvtrace;
+int verbose;
 
 int odt_serial = 0;
 
