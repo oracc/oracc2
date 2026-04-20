@@ -71,9 +71,9 @@ function outer {
 		    l=${ORACC}/$p/01bld/cat/local-${pqx}.tsv
 		fi
 		if [ -s $l ]; then
-		    g=${tdir}/${p}-${pqx}.grep
+		    g=${tdir}/${ph}-${pqx}.grep
 		    cut -d: -f2 $F | cut -d@ -f1 | sort >$g
-		    t=${tdir}/${p}-${pqx}.tsv
+		    t=${tdir}/${ph}-${pqx}.tsv
 		    head -1 $l >$t
 		    grep -f $g $l >>$t
 		    T=`head -1 $otsv | tr '\t' +`

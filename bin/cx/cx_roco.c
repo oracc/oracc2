@@ -46,7 +46,8 @@ cx_langmask(Cx *c, Roco *r, int i)
 	  else
 	    l |= LM_MISC;
 	}
-      char buf[strlen(" langs=\"\"0")+9];
+      int len = strlen(" langs=\"\"0");
+      char buf[len+9];
       sprintf(buf, " langs=\"%08lx\"", l);
       return strdup(buf);
     }
@@ -82,7 +83,7 @@ cx_roco_row(Roco *r, int i, FILE *fp)
       else
 	{
 	  const char *s = fcp(r)[i][j].u.str;
-	  if (*s)
+	  if (s && *s)
 	    fprintf(fp, "<%s>%s</%s>", ctag, xmlify((uccp)s), ctag);
 	}
     }

@@ -62,6 +62,8 @@ cx_si_marshall(Roco *r)
    * We build an entire new matrix so we can emit both the full XMD
    * data with sort codes and the sortable subset that goes in
    * sortinfo.tab.
+   *
+   * This loop iterates over each cell in row[0].
    */
   for (i = 0; r->rows[0][i]; ++i)
     {
@@ -81,8 +83,9 @@ cx_si_marshall(Roco *r)
 	      fh = hash_create(1024);
 	      hash_add(typevals, (uccp)ktype, fh);
 	    }
+	  /* This loop iterates over each row */
 	  int j;
-	  for (j = 1; r->rows[j]; ++j)
+	  for (j = 1; j < r->nlines; ++j)
 	    {
 	      /* We are iterating over each value. For key types that
 	       * have a <val> list check to see if the value is known.
@@ -129,7 +132,7 @@ cx_si_marshall(Roco *r)
       else
 	{
 	  int j;
-	  for (j = 1; r->rows[j]; ++j)
+	  for (j = 1; j < r->nlines; ++j)
 	    {
 	      Fcell *fcp = &si_rows[j][i];
 	      fcp->type = FCELL_STRP;
