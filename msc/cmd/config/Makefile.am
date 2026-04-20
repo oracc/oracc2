@@ -1,2 +1,2 @@
 include ../../../oracc-am-rules.txt
-scriptdata_DATA=*.xsl
+scriptdata_DATA=mcc-subconfig.xsl

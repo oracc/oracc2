@@ -343,6 +343,7 @@ lib/xpd/xpd.xsl
 msc/adm/oadm
 msc/adm/oadmsudo
 msc/adm/oadmwrapper
+msc/cmds/config/mcc-subconfig.xsl
 msc/fonts/CuneiformClassic-final.def
 msc/fonts/Oracc-LAK.def
 msc/fonts/Oracc-NA-Outline.def

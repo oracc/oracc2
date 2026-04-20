@@ -95,7 +95,7 @@ void
 morph(const char **atts)
 {
   if (nmorph++)
-    fputs("; ", outf);
+    fputs(" ", outf); /* This is where we used to put the #lem:-style semi-colon */
   const char *m = findAttr(atts, "morph");
   const char *c = findAttr(atts, "cf");
   const char *p = findAttr(atts, "pos");
