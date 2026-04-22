@@ -8,7 +8,7 @@ bin_SCRIPTS=odo odo-cvs-checkout.sh odo-cvs-refresh.sh \
 	odo-build.sh odo-build-default.sh odo-ood.sh odo-merge.sh \
 	odo-catalog.sh odo-corpus.sh odo-signlist.sh odo-harvest.sh \
 	odo-gloss.sh odo-gloss-xml.sh odo-gloss-htm.sh odo-gloss-web.sh \
-	odo-gloss-htm-wrapup.sh odo-gloss-web-wrapup.sh \
+	odo-gloss-htm-wrapup.sh odo-gloss-web-wrapup.sh odo-subproject.sh \
 	odo-chown.sh odo-chmod.sh odo-sudo.sh makedeps.sh
 
 noinst_SCRIPTS=oracc-odo.sh oracc
