@@ -430,3 +430,7 @@ td.tra-psu { padding-left: 20px; padding-top: 3px; font-size: 90%; color: silver
 td.tra-tr { }
 td.tra-lls { padding-left: 10px; padding-top: 3px; font-size: 90%; color: #71706E; }
 .tra-lls p { text-indent: -20px; margin-left: 20px; }
+
+.lab { font-size: 70%; vertical-align: super; }
+.lab::before { content: "("; }
+.lab::after { content: ")"; }

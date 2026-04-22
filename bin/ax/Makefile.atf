@@ -4,7 +4,7 @@
 # Replaces o2-atf.sh and o2-xtf.sh
 #
 
-.PRECIOUS: %.xtf
+.PRECIOUS: %.xtf %.xtr
 
 default: ${pqx}.tok
 
@@ -14,7 +14,7 @@ clean:
 	@rm -f *.xtf *.tok
 
 %.xtf: %.atf
-	${ORACC}/bin/oxx -C ${atfargs} -x$@ $<
+	${ORACC}/bin/oxx -C ${atfargs} $< | xmlsplit
 
 %.tok: %.xtf
 	${ORACC}/bin/tokx -slg <$< >$@

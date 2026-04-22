@@ -18,5 +18,5 @@ if [ "${project}" = "" ]; then
     echo $0: must run in a project directory. Stop.
     exit 1
 else
-    cat 01tmp/00cat/*.tsv | cut -f1 | cut -d: -f2 | grep '^[PQX]' >01tmp/00cat.lst
+    cat 01tmp/00cat/*.tsv | cut -f1 | cut -d: -f2 | grep '^[PQX]' >01bld/lists/00cat.lst
 fi
