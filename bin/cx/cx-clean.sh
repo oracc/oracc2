@@ -2,7 +2,6 @@
 #
 # Remove cat files that are empty or only have a fields line
 #
-##set -x
 for a in $* ; do
     if [ -s $a ]; then
 	n=`wc -l $a`
