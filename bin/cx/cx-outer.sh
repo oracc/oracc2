@@ -8,6 +8,7 @@
 #
 ##set -x
 echo $0 $*
+echo mdir=$mdir
 tdir=01tmp/00cat/t
 rm -fr ${tdir} ; mkdir -p ${tdir}
 list=$1
@@ -43,8 +44,8 @@ function outer {
 		ocat=${omaster}
 	    fi
 	fi
-	ltsv=01bld/cat/local-${pqx}.tsv
-	otsv=01bld/cat/outer-${pqx}.tsv
+	ltsv=$mdir/local-${pqx}.tsv
+	otsv=$mdir/outer-${pqx}.tsv
 	# set $otsv line one to a reasonable output template
 	if [ -s $ltsv ]; then
 	    head -1 $ltsv >$otsv
@@ -52,11 +53,11 @@ function outer {
 	    if [ "${ocat}" = "auto" ]; then
 		head -1 01tmp/00cat/auto-x.tsv >$otsv
 	    elif [ "${ocat}" != "" ]; then
-		head -1 ${ORACC}/$ocat/01bld/cat/local-${pqx}.tsv >$otsv
+		head -1 ${ORACC}/$ocat/01bld/cat/union.tsv >$otsv
 	    else
 		ph=`basename $F .${PQX}`
 		p=`/bin/echo -n $ph | tr - /`
-		head -1 ${ORACC}/$p/01bld/cat/local-${pqx}.tsv >$otsv
+		head -1 ${ORACC}/$p/01bld/cat/union.tsv >$otsv
 	    fi
 	fi
 	for f in $*; do
@@ -64,11 +65,11 @@ function outer {
 		if [ "${ocat}" = "auto" ]; then
 		    l=01tmp/00cat/auto-x.tsv
 		elif [ "${ocat}" != "" ]; then
-		    l=${ORACC}/$ocat/01bld/cat/local-${pqx}.tsv
+		    l=${ORACC}/$ocat/01bld/cat/union.tsv
 		else
 		    ph=`basename $f .${PQX}`
 		    p=`/bin/echo -n $ph | tr - /`
-		    l=${ORACC}/$p/01bld/cat/local-${pqx}.tsv
+		    l=${ORACC}/$p/01bld/cat/union.tsv
 		fi
 		if [ -s $l ]; then
 		    g=${tdir}/${ph}-${pqx}.grep

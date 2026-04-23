@@ -20,21 +20,16 @@ bin="$ORACC/bin"
 bdir=01bld/cat
 cdir=01tmp/00cat
 ldir=01tmp/00cat/l
+mdir=01tmp/00cat/m
 
 # clean out old cat data
-rm -fr $$bdir $cdir $ldir ; mkdir -p $bdir $cdir $ldir
-if [ ! -d $bdir ]; then
-    echo $0: failed to make $bdir. Stop.
-    exit 1
-fi
-if [ ! -d $cdir ]; then
-    echo $0: failed to make cdir. Stop.
-    exit 1
-fi
-if [ ! -d $ldir ]; then
-    echo $0: failed to make $ldir. Stop.
-    exit 1
-fi
+rm -fr $bdir $cdir $ldir $mdir ; mkdir -p $bdir $cdir $ldir $mdir
+for d in $bdir $cdir $ldir $mdir ; do
+    if [ ! -d $d ]; then
+	echo $0: failed to make $d. Stop.
+	exit 1
+    fi
+done
 
 # copy .tsv data because we might reorder fields
 set 00cat/*.tsv
@@ -73,20 +68,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# set up 01bld/cat/local-[pqx].tsv
-${bin}/cx-local.sh
-
-# process 00lib/cat.d
-${bin}/cx-extra.sh
-
-# join local and cat.d
-${bin}/cx-all.sh
-
-# create 01bld/00cat.lst
+# create 01bld/00cat.lst from 01tmp/00cat/*.tsv, which only contains local data from 00cat
 ${bin}/cx-00cat-lst.sh
 
 # must do this after creating 00cat.lst
 ${bin}/cx-xcat.sh
-
-# Now 01bld/cat contains local-[pqx].tsv based on catalogue data
-# actually in the project

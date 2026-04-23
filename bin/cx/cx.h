@@ -32,8 +32,8 @@ typedef struct cx
   Pool *si_pool; /* pool exclusively for sortinfo */
   Pool *p; /* general purpose pool */
   struct xpd *cfg;
-  Roco *rr[7];
-  Fcell **sirr[7];
+  Roco *rr[10];
+  Fcell **sirr[10];
 } Cx;
 
 struct cx_xml_user

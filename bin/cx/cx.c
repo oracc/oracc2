@@ -57,7 +57,7 @@ cx_load(Cx *c, const char *cat)
 
 /* In oracc build context cx is invoked as
  *
- *   cx -b 01bld/00cat/local-[pqx].tsv 01bld/00cat/outer-[pqx].tsv
+ *   cx -b 01bld/00cat/outer-[pqx].tsv 01bld/00cat/local-[pqx].tsv 01bld/00cat/extra-[pqx].tsv 
  *
  * Otherwise cx expects a single catalogue as its input.
  */
@@ -80,7 +80,7 @@ main(int argc, char * const *argv)
 	{
 	  if (i > 6)
 	    {
-	      fprintf(stderr, "cx: too many input files (MAX=6). Stop.\n");
+	      fprintf(stderr, "cx: too many input files (MAX=9). Stop.\n");
 	      exit(1);
 	    }
 	  if ((c->rr[i] = roco_load1(argv[optind])))
@@ -101,9 +101,12 @@ main(int argc, char * const *argv)
 	    }
 	}
 
+      cx_keydata(c);
+      roco_field_indexes(c->rr[0]);
       for (i = 0; c->rr[i]; ++i)
 	{
-	  if (merge_fields || !strcmp(xpd_option(c->cfg, "cat-merge-periods"), "yes"))
+	  const char *catmerge = xpd_option(c->cfg, "cat-merge-periods");
+	  if (merge_fields || (catmerge && !strcmp(catmerge, "yes")))
 	    cx_merge_periods(c->rr[i]);
 	  cx_si_marshall(c->rr[i]);
 	}

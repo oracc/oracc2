@@ -24,7 +24,7 @@ static int cx_vhcmp(void *a, void*b)
   Fsort *fs_b = *(Fsort**)b;
   long c_a = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_a->cp->u.index));
   long c_b = (uintptr_t)hash_find(curr_vh, ipool_str(sip,fs_b->cp->u.index));
-#if 1
+#if 0
   fprintf(stderr, "s_a=%s/c_a=%ld; s_b=%s/c_b=%ld\n",
 	  ipool_str(sip,fs_a->cp->u.index), c_a,
 	  ipool_str(sip,fs_b->cp->u.index), c_b);
@@ -94,7 +94,7 @@ cx_si_marshall(Roco *r)
 	       */
 	      if (kp->hvals && !hash_find(kp->hvals, r->rows[j][i]))
 		{
-		  if (kp->closed)
+		  if (kp->closed && r->rows[j][i] && strlen(r->rows[j][i]))
 		    {
 		      fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
 			      r->rows[j][0],

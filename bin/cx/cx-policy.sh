@@ -6,8 +6,9 @@
 # Use project lists to figure out which cat data should come from
 # project and which can be drawn from other projects.
 #
-
+set -a
 echo $0 $*
+echo mdir=$mdir
 bin="$ORACC/bin"
 lxd=01bld/lists
 policy=`oraccopt . catalog-build-policy`
