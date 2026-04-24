@@ -37,7 +37,13 @@ cx_sc_from_file(Cx *c, const char *ktype)
 	  char **lp = (char**)loadfile_lines3((uccp)ok, &n, &m);
 	  int i;
 	  for (i = 0; lp[i]; ++i)
-	    hash_add(h, (uccp)lp[i], (void*)(uintptr_t)i);
+	    {
+	      char *t = strchr(lp[i], '\t');
+	      if (t)
+		hash_add(h, (uccp)++t, (void*)(uintptr_t)i);
+	      else
+		hash_add(h, (uccp)lp[i], (void*)(uintptr_t)i);
+	    }
 	}
       else
 	{
