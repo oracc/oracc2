@@ -5,7 +5,7 @@
 # cx-extra.sh into 01bld/cat.
 #
 echo $0 $*
-echo mdir=$mdir
+#echo mdir=$mdir
 set $ldir/*
 if [ "$1" != "$ldir/*" ]; then
     for c in $* ; do

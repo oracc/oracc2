@@ -6,9 +6,8 @@
 # For each group, grep them out of the outer catalogue and use
 # use rocox -ET to rewrite them according to the template
 #
-set -x
 echo $0 $*
-echo mdir=$mdir
+#echo mdir=$mdir
 tdir=01tmp/00cat/t
 rm -fr ${tdir} ; mkdir -p ${tdir}
 list=$1
@@ -22,7 +21,7 @@ function outer {
     pqx=$1
     shift
     PQX=`/bin/echo -n $pqx | tr pqx PQX`
-    echo pqx=$pqx PQX=$PQX rest=$*
+#    echo pqx=$pqx PQX=$PQX rest=$*
     for f in $* ; do
 	if [ -s $f ]; then
 	    F=$f

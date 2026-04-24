@@ -11,8 +11,9 @@
 # with just the IDs
 #
 echo $0 $*
-echo mdir=$mdir
+#echo mdir=$mdir
 bin=${ORACC}/bin
+xsl=${ORACC}/lib/scripts
 rm -fr 01tmp/00cat/cat.d ; mkdir -p 01tmp/00cat/cat.d
 if [ ! -d 01tmp/00cat/cat.d ]; then
     echo $0: failed to make 01tmp/00cat/cat.d. Stop.
@@ -29,8 +30,11 @@ fi
 set 00lib/cat.d/*.xml
 if [ "$1" != "00lib/cat.d/*.xml" ]; then
     for x in $* ; do
-	t=`basename $x .xml`.tsv 
-	xml2tsv $x >01tmp/00cat/cat.d/$t
+	childnodes=`xsltproc ${xsl}/cx-child-count.xsl $x`
+	if [ "$childnodes" != "0" ]; then
+	    t=`basename $x .xml`.tsv 
+	    xml2tsv $x >01tmp/00cat/cat.d/$t
+	fi
     done
 fi
 

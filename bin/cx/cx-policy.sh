@@ -8,7 +8,7 @@
 #
 set -a
 echo $0 $*
-echo mdir=$mdir
+#echo mdir=$mdir
 bin="$ORACC/bin"
 lxd=01bld/lists
 policy=`oraccopt . catalog-build-policy`
