@@ -36,6 +36,20 @@ static int cx_vhcmp(void *a, void*b)
     return 0;
 }
 
+/* compare by field order */
+static int cx_fldcmp(void *a, void*b)
+{
+  const char*fs_a = (*(const char***)a)[0];
+  const char*fs_b = (*(const char***)b)[0];
+  long c_a = (uintptr_t)hash_find(curr_vh, (uccp)fs_a);
+  long c_b = (uintptr_t)hash_find(curr_vh, (uccp)fs_b);
+  long ret = c_a - c_b;
+  if (ret)
+    return (ret > 0 ? 1 : -1);
+  else
+    return 0;
+}
+
 /* Turn the roco for the catalogue data into a matrix of structures
  * storing index into a pool and sort code
  */
@@ -96,18 +110,18 @@ cx_si_marshall(Roco *r)
 		{
 		  if (kp->closed && r->rows[j][i])
 		    {
-		      if (strlen(r->rows[j][i]))
+		      if (strlen((ccp)r->rows[j][i]))
 			fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
 				r->rows[j][0],
 				r->rows[0][i],
 				r->rows[j][i]);
 		      else
-			r->rows[j][i] = "unspecified";
+			r->rows[j][i] = (ucp)"unspecified";
 		    }
-		  if (strlen(r->rows[j][i]) && !hash_find(kp->hvals, r->rows[j][i]))
+		  if (strlen((ccp)r->rows[j][i]) && !hash_find(kp->hvals, r->rows[j][i]))
 		    {
 		      KD_val *vp = memo_new(c->k->mval);
-		      vp->v = r->rows[j][i];
+		      vp->v = (ccp)r->rows[j][i];
 		      list_add(kp->lvals, vp);
 		      hash_add(kp->hvals, (uccp)r->rows[j][i], "");
 		    }
@@ -172,17 +186,34 @@ cx_si_marshall(Roco *r)
 static void
 cx_si_fields(Cx *c)
 {
-  fprintf(sifp, "#nfields %d\n", c->k->nfields);
-  fprintf(sifp, "#nmapentries %d\n", c->k->nmapentries);
   int i;
+  int nmapentries = 0;
+  /* mp->fields is a list of all the fields that map to a sortable
+     type; we need to sort the lead entry of each mp->fields list
+     according to its position in the cat data */
+  const char **mp_arrays[c->k->nfields+1];
+  Hash *h_mphr = hash_create(10);
   for (i = 0; c->k->fields[i]; ++i)
     {
       KD_map *mp = hash_find(c->k->sortable, (uccp)c->k->fields[i]);
+      int nmp = 0;
+      mp_arrays[i] = (const char **)list2array_c(mp->fields, &nmp);
+      nmapentries += nmp;
+      hash_add(h_mphr, (uccp)mp_arrays[i][0], (void*)mp->hr);
+    }
+  mp_arrays[c->k->nfields] = NULL;
+  curr_vh = c->rr[0]->fields;
+  /* sort the arrays of mp->fields in database order via the first element of each */
+  qsort(mp_arrays, c->k->nfields, sizeof(const char **), (sort_cmp_func*)cx_fldcmp);
+  fprintf(sifp, "#nfields %d\n", c->k->nfields);
+  fprintf(sifp, "#nmapentries %d\n", nmapentries);
+  for (i = 0; mp_arrays[i]; ++i)
+    {
       fprintf(sifp, "#field ");
-      const char *f;
-      for (f = list_first(mp->fields); f; f = list_next(mp->fields))
-	fprintf(sifp, "%s ", f);
-      fprintf(sifp, "= %s\n", mp->hr);
+      int j;
+      for (j = 0; mp_arrays[i][j]; ++j)
+	fprintf(sifp, "%s ", mp_arrays[i][j]);
+      fprintf(sifp, "= %s\n", (ccp)hash_find(h_mphr, (uccp)mp_arrays[i][0]));
     }
 }
 
@@ -242,9 +273,9 @@ cx_si_sortdata(Cx *c)
   for (n = 0; n < s; ++n)
     {
       if (sis[n].l > 3000000)
-	fprintf(sifp, "Q%06ld\t", sis[n].l - 3000000);
+	fprintf(sifp, "Q%06ld", sis[n].l - 3000000);
       else
-	fprintf(sifp, "P%06ld\t", sis[n].l);
+	fprintf(sifp, "P%06ld", sis[n].l);
 
       int j;
       for (j = 0; j < c->rr[sis[n].r]->maxcols; ++j)
