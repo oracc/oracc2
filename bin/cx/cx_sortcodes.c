@@ -46,7 +46,7 @@ cx_sc_from_file(Cx *c, const char *ktype)
 	    }
 	}
       else
-	fprintf(stderr, "cx: %s: sort-codes files no longer work; use sort-order\n");
+	fprintf(stderr, "cx: %s: sort-codes files no longer work; use sort-order\n", ok);
 #if 0
       else
 	{
