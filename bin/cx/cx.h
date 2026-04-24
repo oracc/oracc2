@@ -59,7 +59,7 @@ typedef struct sis
 #define LM_MISC 0x80000000
 
 typedef const char * (*Repfunc)(const char *s);
-
+extern const char *arg_project;
 extern int merge_fields, sortinfo_only, verbose;
 
 struct merper { const char *name; const char *merge; };

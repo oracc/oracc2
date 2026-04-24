@@ -1,10 +1,7 @@
 #include <oraccsys.h>
 #include "cx.h"
 
-static const char *arg_project;
-#if 0
-int build_mode = 0;
-#endif
+const char *arg_project;
 int merge_fields = 0;
 int remap_only = 0;
 int sortinfo_only = 0;
@@ -75,97 +72,36 @@ main(int argc, char * const *argv)
     }
   ff_verbose = verbose;
   Cx *c = cx_init();
-#if 0
-  if (build_mode)
+  if (cx_load(c, argv[optind]))
     {
-      int i = 0;
-      while (argv[optind])
-	{
-	  if (i > 6)
-	    {
-	      fprintf(stderr, "cx: too many input files (MAX=9). Stop.\n");
-	      exit(1);
-	    }
-	  if ((c->rr[i] = roco_load1(argv[optind])))
-	    {
-	      c->rr[i]->user = c;
-	      if (cx_roco_id_index(c->rr[i]))
-		{
-		  fprintf(stderr, "cx: %s: no ID in row 1 column 1. Stop.\n", argv[optind]);
-		  exit(1);
-		}
-	      ++optind;
-	      ++i;
-	    }
-	  else
-	    {
-	      fprintf(stderr, "cx: failed to load %s. Stop.\n", argv[optind]);
-	      exit(1);
-	    }
-	}
-
-      cx_keydata(c);
-      roco_field_indexes(c->rr[0]);
-      for (i = 0; c->rr[i]; ++i)
-	{
-	  const char *catmerge = xpd_option(c->cfg, "cat-merge-periods");
-	  if (merge_fields || (catmerge && !strcmp(catmerge, "yes")))
-	    cx_merge_periods(c->rr[i]);
-	  cx_si_marshall(c->rr[i]);
-	}
-
-      for (i = 0; c->rr[i]; ++i)
-	c->sirr[i] = cx_si_marshall(c->rr[i]);
-
-      cx_sortinfo(c);
-      
-      fprintf(stdout, "<xmd-set project=\"%s\">", c->project);
-      for (i = 0; c->rr[i]; ++i)
-	{
-	  struct cx_xml_user xu = { c , c->sirr[i] };
-	  c->rr[i]->user = &xu;
-	  fprintf(stdout, "<xmd-set source=\"%s\">", c->rr[i]->file);
-	  roco_write_xml(stdout, c->rr[i]);
-	  fputs("</xmd-set>", stdout);
-	}
-      fputs("</xmd-set>", stdout);
+      fprintf(stderr, "cx: error loading catalogue. Stop.\n");
+      return 1;
     }
   else
     {
-#endif
-      if (cx_load(c, argv[optind]))
-	{
-	  fprintf(stderr, "cx: error loading catalogue. Stop.\n");
-	  return 1;
-	}
+      roco_field_indexes(c->rr[0]);
+      cx_keydata(c);
+      if (remap_only)
+	return cx_remap(c);
       else
 	{
-	  roco_field_indexes(c->rr[0]);
-	  cx_keydata(c);
-	  if (remap_only)
-	    return cx_remap(c);
-	  else
+	  const char *cmp = xpd_option(c->cfg, "cat-merge-periods");
+	  if (merge_fields || (cmp && !strcmp(cmp, "yes")))
+	    cx_merge_periods(c->rr[0]);
+	  c->sirr[0] = cx_si_marshall(c->rr[0]);
+	  cx_sortinfo(c);
+	  if (!sortinfo_only)
 	    {
-	      const char *cmp = xpd_option(c->cfg, "cat-merge-periods");
-	      if (merge_fields || (cmp && !strcmp(cmp, "yes")))
-		cx_merge_periods(c->rr[0]);
-	      c->sirr[0] = cx_si_marshall(c->rr[0]);
-	      cx_sortinfo(c);
-	      if (!sortinfo_only)
-		{
-		  struct cx_xml_user xu = { c , c->sirr[0] };
-		  c->rr[0]->user = &xu;
-		  fprintf(stdout, "<xmd-set project=\"%s\">", c->project);
-		  fprintf(stdout, "<xmd-set source=\"%s\">", c->rr[0]->file);
-		  roco_write_xml(stdout, c->rr[0]);
-		  fputs("</xmd-set>", stdout);
-		  fputs("</xmd-set>", stdout);
-		}
+	      struct cx_xml_user xu = { c , c->sirr[0] };
+	      c->rr[0]->user = &xu;
+	      fprintf(stdout, "<xmd-set project=\"%s\">", c->project);
+	      fprintf(stdout, "<xmd-set source=\"%s\">", c->rr[0]->file);
+	      roco_write_xml(stdout, c->rr[0]);
+	      fputs("</xmd-set>", stdout);
+	      fputs("</xmd-set>", stdout);
 	    }
 	}
-#if 0
     }
-#endif
   mesg_print(stderr);
 }
 
@@ -174,11 +110,6 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
-#if 0
-    case 'b':
-      build_mode = 1;
-      break;
-#endif
     case 'm':
       merge_fields = 1;
     case 'p':
