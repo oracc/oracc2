@@ -48,7 +48,7 @@ keydata_validate(Keydata *kp)
 char *
 keydata_find(const char *project)
 {
-  return findfile(project, "keydata.xml", "lib/data/keydata.xml");
+  return findfile_dir(project, "keydata.xml", "lib/data/keydata.xml", "00lib");
 }
 
 static void
@@ -105,12 +105,22 @@ kd_sH(void *userData, const char *name, const char **atts)
 	vp->r = NULL;
       else	
 	hash_add(curr_keyp->rvals, (uccp)vp->v, (void*)vp->r);
+      if (verbose)
+	fprintf(stderr, "kd_sH: adding %s to lvals %p listlen=%d\n",
+		vp->v, (void*)curr_keyp->lvals, list_len(curr_keyp->lvals));
       list_add(curr_keyp->lvals, vp);
       if (!curr_keyp->hvals)
 	curr_keyp->hvals = hash_create(1024);
       hash_add(curr_keyp->hvals, (uccp)vp->v, "");
     }
 #undef kp
+}
+
+static void
+kd_eH(void *userData, const char *name)
+{
+  if (!strcmp(name, "keys"))
+    curr_keyp = NULL;
 }
 
 static void
@@ -126,7 +136,7 @@ keydata_load(Keydata *kp)
 {
   const char *fns[2] = { NULL,NULL};
   fns[0] = kp->file;
-  runexpatNSuD(i_list, fns, kd_sH, NULL, NULL, kp);
+  runexpatNSuD(i_list, fns, kd_sH, kd_eH, NULL, kp);
   kp->fields = (char**)hash_keys2(kp->sortable, &kp->nfields);
   qsort(kp->fields, kp->nfields, sizeof(char*), cmpstringp);
   kp->nmapentries = kp->keytypes->key_count;
