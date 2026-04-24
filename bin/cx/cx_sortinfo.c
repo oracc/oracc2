@@ -104,9 +104,11 @@ cx_si_marshall(Roco *r)
 		      else
 			r->rows[j][i] = "unspecified";
 		    }
-		  if (strlen(r->rows[j][i]))
+		  if (strlen(r->rows[j][i]) && !hash_find(kp->hvals, r->rows[j][i]))
 		    {
-		      list_add(kp->lvals, r->rows[j][i]);
+		      KD_val *vp = memo_new(c->k->mval);
+		      vp->v = r->rows[j][i];
+		      list_add(kp->lvals, vp);
 		      hash_add(kp->hvals, (uccp)r->rows[j][i], "");
 		    }
 		}

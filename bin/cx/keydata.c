@@ -3,6 +3,7 @@
 #include "keydata.h"
 
 static KD_key *curr_keyp = NULL;
+KD_key *kper = NULL;
 
 Keydata *
 keydata_init(Cx *c, const char *file, Hash *hfields)
@@ -86,6 +87,8 @@ kd_sH(void *userData, const char *name, const char **atts)
 	keyp->closed = 1;
       keyp->method = (ccp)pattr("method");
       keyp->type = (ccp)pattr("type");
+      if (!strcmp(keyp->type, "periods"))
+	kper = keyp;
       keyp->remapto = (ccp)pattr("remap-to");
       keyp->queryable = atoi(findAttr(atts, "queryable"));
       keyp->remap = atoi(findAttr(atts, "remap"));

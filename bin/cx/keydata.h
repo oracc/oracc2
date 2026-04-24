@@ -58,4 +58,6 @@ extern void keydata_load(Keydata *kp);
 extern void keydata_term(Keydata *kp);
 extern int keydata_validate(Keydata *kp);
 
+extern KD_key *kper;
+
 #endif/*KEYDATA_H_*/
