@@ -69,12 +69,13 @@ cx_sortcodes(Cx *c, KD_key *kp, const char *ktype, const Fsort **vals)
 	{
 	  vh = hash_create(1024);
 	  int i;
-	  KD_val *vp;
+	  /*this must have been a bug from an aborted impl direction: KD_val*/ const char *vp; 
 	  for (i = 0, vp = list_first(kp->lvals); vp; vp = list_next(kp->lvals), ++i)
 	    {
 	      if (verbose)
-		fprintf(stderr, "cx_sortcodes: %s: add %s code %d\n", ktype, vp->v, i);
-	      hash_add(vh, (uccp)vp->v, (void*)(uintptr_t)i);
+		fprintf(stderr, "cx_sortcodes: %s: add %s code %d\n", ktype, vp/*->v*/, i);
+	      if (vp/*->v*/ && *vp/*->v*/)
+		hash_add(vh, (uccp)vp/*->v*/, (void*)(uintptr_t)i);
 	    }
 	}
     }

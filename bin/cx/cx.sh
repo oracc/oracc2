@@ -26,28 +26,27 @@ else
     if [ -s 01bld/lists/proxy-cat.lst ]; then
 	${bin}/cx-outer.sh 01bld/lists/proxy-cat.lst
     fi
-    m=01tmp/00cat/m
-    ${bin}/cx-clean.sh $m/*.tsv
-    set $m/*.tsv
+    ${bin}/cx-clean.sh $mdir/*.tsv
+    set $mdir/*.tsv
     proj=`oraccopt`
-    if [ "$*" != "$m/*.tsv" ]; then
+    if [ "$*" != "$mdir/*.tsv" ]; then
 	if [ "$2" = "" ]; then
 	    cp $1 01bld/cat/union.tsv
 	else
-	    set $m/extra-[pqx].tsv
-	    if [ "$1" == "$m/extra-[pqx].tsv" ]; then
+	    set $mdir/extra-[pqx].tsv
+	    if [ "$1" == "$mdir/extra-[pqx].tsv" ]; then
 		catextra=""
 	    else
 		catextra=$*
 	    fi
-	    set $m/local-[pqx].tsv
-	    if [ "$1" == "$m/local-[pqx].tsv" ]; then
+	    set $mdir/local-[pqx].tsv
+	    if [ "$1" == "$mdir/local-[pqx].tsv" ]; then
 		catlocal=""
 	    else
 		catlocal=$*
 	    fi
-	    set $m/outer-[pqx].tsv
-	    if [ "$1" == "$m/outer-[pqx].tsv" ]; then
+	    set $mdir/outer-[pqx].tsv
+	    if [ "$1" == "$mdir/outer-[pqx].tsv" ]; then
 		catouter=""
 	    else
 		catouter=$*

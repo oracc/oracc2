@@ -94,15 +94,17 @@ cx_si_marshall(Roco *r)
 	       */
 	      if (kp->hvals && !hash_find(kp->hvals, r->rows[j][i]))
 		{
-		  if (kp->closed && r->rows[j][i] && strlen(r->rows[j][i]))
+		  if (kp->closed && r->rows[j][i])
 		    {
-		      fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
-			      r->rows[j][0],
-			      r->rows[0][i],
-			      r->rows[j][i]);
-		      /* is it right to ignore these? */
+		      if (strlen(r->rows[j][i]))
+			fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
+				r->rows[j][0],
+				r->rows[0][i],
+				r->rows[j][i]);
+		      else
+			r->rows[j][i] = "unspecified";
 		    }
-		  else
+		  if (strlen(r->rows[j][i]))
 		    {
 		      list_add(kp->lvals, r->rows[j][i]);
 		      hash_add(kp->hvals, (uccp)r->rows[j][i], "");

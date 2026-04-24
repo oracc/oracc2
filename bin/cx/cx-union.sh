@@ -23,5 +23,8 @@ done
 sort -u -o $ui $ui
 ut=01tmp/00cat/unionbase.tsv
 echo id_text >idtext
-cat idtext $uf | tr '\n' '\t' >$ut
+cat idtext $uf | tr '\n' '\t' | sed 's/	$/\
+/' >$ut
 cat $ui >>$ut
+
+$bin/rocox -U $ut $* >01bld/cat/union.tsv

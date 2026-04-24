@@ -2,7 +2,9 @@
 #include "cx.h"
 
 static const char *arg_project;
+#if 0
 int build_mode = 0;
+#endif
 int merge_fields = 0;
 int remap_only = 0;
 int sortinfo_only = 0;
@@ -73,6 +75,7 @@ main(int argc, char * const *argv)
     }
   ff_verbose = verbose;
   Cx *c = cx_init();
+#if 0
   if (build_mode)
     {
       int i = 0;
@@ -129,6 +132,7 @@ main(int argc, char * const *argv)
     }
   else
     {
+#endif
       if (cx_load(c, argv[optind]))
 	{
 	  fprintf(stderr, "cx: error loading catalogue. Stop.\n");
@@ -159,7 +163,9 @@ main(int argc, char * const *argv)
 		}
 	    }
 	}
+#if 0
     }
+#endif
   mesg_print(stderr);
 }
 
@@ -168,9 +174,11 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+#if 0
     case 'b':
       build_mode = 1;
       break;
+#endif
     case 'm':
       merge_fields = 1;
     case 'p':
