@@ -83,7 +83,7 @@ roco_load(const char *file, int fieldsr1,
 	}
       if (ncol > r->maxcols)
 	r->maxcols = ncol;
-      r->rows[i] = calloc(ncol+1, sizeof(unsigned char *));
+      r->rows[i] = calloc(r->maxcols+1, sizeof(unsigned char *));
       int col;
       for (col = 0, s = r->lines[i]; *s; ++col)
 	{
@@ -97,9 +97,9 @@ roco_load(const char *file, int fieldsr1,
 	    *s++ = '\0';
 	}
 
-      while (col < ncol)
+      while (col < r->maxcols)
 	r->rows[i][col++] = (unsigned char *)"";
-	
+
       r->rows[i][col] = NULL;
     }
   
@@ -338,6 +338,36 @@ roco_join(FILE *fp, Roco *r, int i)
 }
 
 void
+roco_union(FILE *fp, Roco *r, List *u_list)
+{
+  Roco *jr;
+  int i, j;
+
+  /* outer iteration over each row via column 0 = ID */
+  for (i = 1; i < r->nlines; ++i)
+    {
+      /* middle iteration over each .tsv to be added to the union */
+      for (jr = list_first(u_list); jr; jr = list_next(u_list))
+	{
+	  unsigned char **row = hash_find(jr->hdata, r->rows[i][0]);
+	  if (row)
+	    {
+	      /* inner iteration over each column, overwriting previous data if any */
+	      for (j = 1; j < jr->maxcols; ++j)
+		{
+		  if (row[j])
+		    {
+		      unsigned int col = (uintptr_t)hash_find(r->fields, jr->rows[0][j]);
+		      if (col)
+			r->rows[i][col-1] = row[j];
+		    }
+		}
+	    }
+	}
+    }
+}
+
+void
 roco_write(FILE *fp, Roco *r)
 {
   size_t i;
@@ -352,7 +382,7 @@ roco_write(FILE *fp, Roco *r)
       else
 	{
 	  int j;
-	  for (j = 0; r->rows[i][j] != NULL; ++j)
+	  for (j = 0; j < r->maxcols && r->rows[i][j]; ++j)
 	    {
 	      if (j)
 		fputc('\t', fp);

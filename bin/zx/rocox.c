@@ -7,10 +7,12 @@ int fields_from_row1 = 0, fields_no_output = 0;
 int suppress_xmlify = 0;
 int template_add_empty = 0;
 int trtd_output = 0;
+int roco_union_mode = 0;
 int xml_output = 0;
 int verbose;
 
 const char *j_file;
+const char *roco_union_base = NULL;
 List *j_list, *z_list;
 
 const char *xmltag = NULL, *rowtag = NULL, *celtag = NULL, *class = NULL;
@@ -21,7 +23,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
 
-  options(argc, argv, "c:C:eEfFh::j:J:nor:R:stT:vx:Xz:?");
+  options(argc, argv, "c:C:eEfFh::j:J:nor:R:stT:uU:vx:Xz:?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
@@ -51,8 +53,39 @@ main(int argc, char *const *argv)
 	    fprintf(stderr, "rocox: ignoring empty joiner %s\n", j);
 	}
     }
+
+  if (roco_union_mode)
+    {
+      /* This takes filenames to add to the base on the command line
+	 and reads the base from stdin. The base must contain all the
+	 fields and all the IDs that can occur in the files to add to
+	 the union */
+      r_list = list_create(LIST_SINGLE);
+      int i;
+      for (i = optind; argv[i]; ++i)
+	{
+	  Roco *jr = roco_load(argv[i], 1, NULL, NULL, NULL, NULL);
+	  if (jr)
+	    {
+	      jr->hdata = roco_hash_r(jr);
+	      /*jr->joiner = 1;*/
+	      /*roco_empty_row(jr);*/
+	      list_add(r_list, jr);
+	    }
+	  else
+	    fprintf(stderr, "rocox: ignoring empty joiner %s\n", argv[i]);
+	}
+      r = roco_load(roco_union_base ? roco_union_base : "-", 1, xmltag, rowtag, celtag, class);
+      roco_field_indexes(r);
+      roco_union(stdout, r, r_list);
+      r_list = NULL;
+      roco_write(stdout, r);
+      return 0;
+    }
   
-  r = roco_load(argv[optind] ? argv[optind] : "-", fields_from_row1, xmltag, rowtag, celtag, class);
+  r = roco_load(argv[optind] ? argv[optind] : "-", fields_from_row1,
+		xmltag, rowtag, celtag, class);
+
   if (template_row)
     {
       roco_newline = 1;
@@ -160,6 +193,11 @@ opts(int opt, const char *arg)
       break;
     case 'T':
       template_row = arg;
+      break;
+    case 'U':
+      roco_union_base = arg;
+    case 'u':
+      roco_union_mode = 1;
       break;
     case 'v':
       verbose = 1;

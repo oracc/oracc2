@@ -66,6 +66,7 @@ extern void roco_hash_hash(Hash *h, Roco *r);
 extern Roco *roco_load(const char *file, int fieldsr1, const char *xtag, const char *rtag, const char *ctag, const char *class);
 extern void roco_row_format(FILE*fp, const unsigned char **row);
 extern Roco *roco_swap(Roco *r);
+extern void roco_union(FILE *fp, Roco *r, List *u_list);
 extern void roco_write(FILE *fp, Roco *r);
 extern void roco_write_trtd(FILE *fp, Roco *r);
 extern void roco_write_xml(FILE *fp, Roco *r);

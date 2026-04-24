@@ -5,6 +5,12 @@
 
 int line = 1;
 
+FILE *f_xml;
+const char *file;
+int rnvtrace;
+int status;
+Mloc *xo_loc;
+
 int
 main(int argc, char * const *argv)
 {
