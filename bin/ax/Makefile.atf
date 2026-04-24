@@ -14,10 +14,10 @@ clean:
 	@rm -f *.xtf *.tok
 
 %.xtf: %.atf
-	${ORACC}/bin/oxx -C ${atfargs} $< | xmlsplit
+	@${ORACC}/bin/oxx -C ${atfargs} $< | xmlsplit
 
 %.tok: %.xtf
-	${ORACC}/bin/tokx -slg <$< >$@
+	@${ORACC}/bin/tokx -slg <$< >$@
 
 %.txh: %.xtf
-	${ORACC}/bin/xtf2txh ${project}:${pqx}
+	@${ORACC}/bin/xtf2txh ${project}:${pqx}
