@@ -7,12 +7,12 @@ cx_sc_from_file(Cx *c, const char *ktype)
 {
   char *ok = NULL;
   Hash *h = NULL;
-  char f[strlen(ktype)+strlen("-sort-codes.lst0")];
-  sprintf(f, "%s-sort-codes.lst", ktype);
+  char f[strlen(ktype)+strlen("-sort-order.lst0")];
+  sprintf(f, "%s-sort-order.lst", ktype);
   if (!(ok = findfile_dir(c->project, f, NULL, "lib")))
     {
       char f2[strlen(f)+1];
-      sprintf(f2, "%s-sort-order.lst", ktype);
+      sprintf(f2, "%s-sort-codes.lst", ktype);
       if (!(ok = findfile_dir(c->project, f2, NULL, "lib")))
 	{
 	  char *od = oracc_data(f);
@@ -46,14 +46,20 @@ cx_sc_from_file(Cx *c, const char *ktype)
 	    }
 	}
       else
+	fprintf(stderr, "cx: %s: sort-codes files no longer work; use sort-order\n");
+#if 0
+      else
 	{
 	  Roco *r = roco_load1(ok);
 	  int i;
 	  for (i = 0; i < r->nlines; ++i)
-	    hash_add(h,
-		     (uccp)r->rows[i][0],
-		     (void*)(uintptr_t)strtoul((ccp)r->rows[i][1], NULL, 10));
+	    {
+	      hash_add(h,
+		       (uccp)r->rows[i][0],
+		       (void*)(uintptr_t)strtoul((ccp)r->rows[i][1], NULL, 10));
+	    }
 	}
+#endif
     }
 
   if (!h && !strcmp(ktype, "names"))
