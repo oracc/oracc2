@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+#set -x
 flds=`oraccopt . outline-special-sort-fields`
 if [ "$flds" != "" ]; then
     spec=1

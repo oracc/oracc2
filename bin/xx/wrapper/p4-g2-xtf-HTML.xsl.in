@@ -567,6 +567,12 @@
   </xsl:choose>
 </xsl:template>
 
+<xsl:template match="xtf:variants">
+  <xsl:for-each select="xtf:variant">
+    <xsl:apply-templates/>
+  </xsl:for-each>
+</xsl:template>
+
 <!-- 2021-06-27: is there any harm always emitting a spacer? -->
 <!-- 2024-09-09: wrap lg in tbody; this may make score-spacer
      unnecessary because we can css the tbody -->
@@ -1694,6 +1700,23 @@
     </xsl:if>
   </xsl:for-each>
   <xsl:text>} </xsl:text>
+</xsl:template>
+
+<xsl:template match="note:link[ancestor::xtf:variant]">
+  <!--discard note links in variants-->
+</xsl:template>
+
+<xsl:template match="note:text[ancestor::xtf:variant]">
+  <tr class="nonl varnote">
+    <xsl:if test="@xml:id">
+      <xsl:attribute name="xml:id">
+        <xsl:value-of select="@xml:id"/>
+      </xsl:attribute>
+    </xsl:if>
+    <td colspan="{1+ancestor::*[@cols]/@cols}" class="nonlbody">
+      <span class="noncl"><xsl:apply-templates/></span>
+    </td>
+  </tr>  
 </xsl:template>
 
 <!-- had commented this out: why? -->

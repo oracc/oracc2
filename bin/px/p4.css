@@ -434,3 +434,7 @@ td.tra-lls { padding-left: 10px; padding-top: 3px; font-size: 90%; color: #71706
 .lab { font-size: 70%; vertical-align: super; }
 .lab::before { content: "("; }
 .lab::after { content: ")"; }
+
+.varnote span { padding-left: 10px; }
+.varnote span::before { content: "("; }
+.varnote span::after { content: ")"; }
