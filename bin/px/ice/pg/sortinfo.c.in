@@ -206,8 +206,14 @@ si_load_tab(unsigned char *tab, size_t tabsize)
 				++s;
 			      if ('=' == *s++)
 				{
+				  int off = strtoul((const char *)s,NULL,10);
+				  if (off >= nstring)
+				    {
+				      fprintf(stderr, "pgcsix: pool offset %d greater than nstring. Stop\n", off);
+				      exit(1);
+				    }
 				  sip->pindex[jindex] 
-				    = offset_tab[strtoul((const char *)s,NULL,10)];
+				    = offset_tab[off];
 				  while (*s && !isspace(*s))
 				    ++s;
 				  ++s;

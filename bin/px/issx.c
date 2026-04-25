@@ -43,7 +43,7 @@ main(int argc, char **argv)
   if (isp_cache_sort(ip))
     goto error;
 
-  exit(1);
+  /*exit(1);*/
   
   goto ok;
   

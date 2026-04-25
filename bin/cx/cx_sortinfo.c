@@ -283,33 +283,11 @@ cx_si_sortdata(Cx *c)
 	  if (sis[n].f[j].type == FCELL_SORT)
 	    {
 	      fputc('\t', sifp);
-	      fprintf(sifp, "%ld=%ld", sis[n].f[j].sort, sis[n].f[j].u.index);
+	      fprintf(sifp, "%ld=%u", sis[n].f[j].sort, ipool_index(sip, sis[n].f[j].u.index));
 	    }
 	}
       fputc('\n', sifp);
     }
-  
-#if 0
-  for (r = 0; c->rr[r]; ++r)
-    {
-      int i;
-      for (i = 1; c->sirr[r][i]; ++i)
-	{
-	  fprintf(sifp, "%s\t", c->rr[r]->rows[i][0]);
-	  int j;
-	  for (j = 0; j < c->rr[0]->maxcols; ++j)
-	    {
-	      if (c->sirr[r][i][j].type == FCELL_SORT)
-		{
-		  fprintf(sifp, "%ld=%ld", c->sirr[r][i][j].sort, c->sirr[r][i][j].u.index);
-		  if (c->rr[0]->maxcols - j > 1)
-		    fputc('\t', sifp);
-		}
-	    }
-	  fputc('\n', sifp);
-	}
-    }
-#endif
 }
 
 static void

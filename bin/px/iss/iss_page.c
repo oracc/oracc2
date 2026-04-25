@@ -18,7 +18,10 @@ fmthdr(short sic_index)
     {
       u4*pindex = sip->pindex + (sicache[sic_index]->codes - sip->scodes);
       u4 poff = pindex[headfields[i]];
-      fprintf(stderr, "fmthdr: p4off = %ld\n", poff);
+#if 0
+      fprintf(stderr, "fmthdr: headfields[i]=%d; sic_index=%d; p4off = %ld\n",
+	      headfields[i], sic_index, poff);
+#endif
       sprintf(buf+strlen(buf),"%s\t", &sip->pool[poff]);
     }
   buf[strlen(buf)-1] = '\0';
