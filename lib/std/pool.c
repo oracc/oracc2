@@ -187,6 +187,34 @@ hpool_copy(register const unsigned char *s, Pool *p)
   return NULL;
 }
 
+int ipool_i_cmp(const void *s1, const void *s2)
+{
+  fprintf(stderr, "ipool_i_cmp: comparing %ld <=> %ld\n", *(size_t*)s1, *(size_t*)s2);
+  return *(size_t*)s1 - *(size_t*)s2;
+}
+
+unsigned int
+ipool_index(Pool *p, size_t off)
+{
+  size_t *i = bsearch(&off, p->index, p->nstr, sizeof(size_t), ipool_i_cmp);
+  if (i)
+    return i - p->index;
+  else
+    fprintf(stderr, "ipool_index: offset %ld not found in pool\n", off);
+  return 0;
+}
+
+void
+ipool_index_add(Pool *p, size_t off)
+{
+  if (p->nstr >= p->index_alloced)
+    {
+      p->index_alloced += 1024;
+      p->index = realloc(p->index, p->index_alloced * sizeof(size_t));
+    }
+  p->index[p->nstr++] = off;
+}
+
 size_t
 ipool_copy(register const unsigned char *s, Pool *p)
 {
@@ -202,9 +230,12 @@ ipool_copy(register const unsigned char *s, Pool *p)
 
   p->rover->last_begin = memcpy(p->rover->used, s, len);
   p->rover->used += len;
-  ++p->nstr;
   
-  return p->rover->last_begin - p->rover->mem;
+  size_t ret =  p->rover->last_begin - p->rover->mem;
+
+  ipool_index_add(p, ret);
+
+  return ret;
 }
 
 size_t

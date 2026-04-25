@@ -15,6 +15,8 @@ struct pool
   Pooltype type;
   Hash *h;
   size_t nstr;
+  size_t*index; /* ipool uses this to index pool offsets to the nstr value */
+  int index_alloced;
 };
 
 typedef struct pool Pool;
@@ -40,6 +42,7 @@ extern Pool* hpool_init(void);
 extern unsigned char *hpool_copy(const unsigned char *s, Pool*p);
 
 extern Pool *ipool_init(void);
+extern unsigned int ipool_index(Pool *p, size_t off);
 extern size_t ipool_copy(register const unsigned char *s, Pool *p);
 extern size_t ipool_len(Pool *p);
 extern void ipool_write(Pool *p, FILE *fp);
