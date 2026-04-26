@@ -1309,8 +1309,11 @@
       </xsl:when>
       <xsl:otherwise>
 	<!-- ><xsl:value-of select="concat(@n,' ',@l)" -->
-        <td class="enum"><xsl:value-of select="@varnum"
-	  		       /><sub><xsl:value-of select="@ex_label"/></sub><xsl:text>: </xsl:text></td>	
+        <td class="enum"><xsl:value-of select="@varnum"/>
+	<xsl:if test="string-length(@ex_label)>0">
+	  <sub><xsl:value-of select="@ex_label"/></sub>
+	</xsl:if>
+	<xsl:text>: </xsl:text></td>	
         <xsl:choose>
     	  <xsl:when test="xtf:c">
             <xsl:apply-templates>
