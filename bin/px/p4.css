@@ -438,3 +438,7 @@ td.tra-lls { padding-left: 10px; padding-top: 3px; font-size: 90%; color: #71706
 .varnote span { padding-left: 10px; }
 .varnote span::before { content: "("; }
 .varnote span::after { content: ")"; }
+
+span.gap { color: gray; padding-left: 5px; padding-right: 5px; }
+span.gap::before { content: "("; }
+span.gap::after { content: ")"; }
