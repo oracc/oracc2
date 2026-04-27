@@ -39,6 +39,7 @@ load_fmp_eH(void *userData, const char *name)
 void
 load_xml_sH(void *userData, const char *name, const char **atts)
 {
+  charData_retrieve(); /* xml2tsv discards text between elements */
   if (depth == 1)
     {
       ++rown;
