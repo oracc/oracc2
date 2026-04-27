@@ -382,27 +382,30 @@ roco_write(FILE *fp, Roco *r)
       else
 	{
 	  int j;
-	  for (j = 0; j < r->maxcols && r->rows[i][j]; ++j)
+	  for (j = 0; j < r->maxcols; ++j)
 	    {
 	      if (j)
 		fputc('\t', fp);
-	      if (r->linkcells)
+	      if (r->rows[i][j])
 		{
-		  Link *lp;
-		  for (lp = (Link*)r->rows[i][j]; lp; lp = lp->next)
+		  if (r->linkcells)
 		    {
-		      fputs((const char *)lp->data, fp);
-		      if (lp->next)
-			fputc('#', fp);
+		      Link *lp;
+		      for (lp = (Link*)r->rows[i][j]; lp; lp = lp->next)
+			{
+			  fputs((const char *)lp->data, fp);
+			  if (lp->next)
+			    fputc('#', fp);
+			}
+		    }
+		  else
+		    {
+		      if (*r->rows[i][j])
+			fputs((const char *)r->rows[i][j], fp);
 		    }
 		}
-	      else
-		{
-		  if (*r->rows[i][j])
-		    fputs((const char *)r->rows[i][j], fp);
-		}
 	    }
-
+	  
 	  if (r_list)
 	    roco_join(fp, r, i);
 
