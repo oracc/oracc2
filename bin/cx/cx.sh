@@ -32,21 +32,24 @@ else
     if [ "$*" != "$mdir/*.tsv" ]; then
 	if [ "$2" = "" ]; then
 	    cp $1 01bld/cat/union.tsv
+	    # doesn't matter which string we set here as long as we
+	    # register that there is a .tsv
+	    catouter=$1
 	else
 	    set $mdir/extra-[pqx].tsv
-	    if [ "$1" == "$mdir/extra-[pqx].tsv" ]; then
+	    if [ "$1" == "${mdir}/extra-[pqx].tsv" ]; then
 		catextra=""
 	    else
 		catextra=$*
 	    fi
 	    set $mdir/local-[pqx].tsv
-	    if [ "$1" == "$mdir/local-[pqx].tsv" ]; then
+	    if [ "$1" == "${mdir}/local-[pqx].tsv" ]; then
 		catlocal=""
 	    else
 		catlocal=$*
 	    fi
 	    set $mdir/outer-[pqx].tsv
-	    if [ "$1" == "$mdir/outer-[pqx].tsv" ]; then
+	    if [ "$1" == "${mdir}/outer-[pqx].tsv" ]; then
 		catouter=""
 	    else
 		catouter=$*
@@ -60,7 +63,7 @@ else
 		${bin}/pgcsix 01bld/sortinfo.tab && mv 01bld/sortinfo.csi 02pub/
 	    fi
 	else
-	    echo $0: no .tsv in $m
+	    echo $0: no .tsv in $mdir
 	    exit 1
 	fi
     else
