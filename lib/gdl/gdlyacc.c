@@ -96,7 +96,7 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 {
   Node *c;
   for (c = w->kids; c; c = c->next)
-    if (strcmp(c->name, "g:z"))
+    if (strcmp(c->name, "g:z") && strcmp(c->name, "g:x"))
       fputs(c->text, wfp);
 }
 
@@ -373,6 +373,7 @@ gdl_force_nonw(Node *w)
   *w = *w->kids;
   w->name = "g:nonw";
   w->rent = rent;
+  w->next = NULL;
 }
 
 /* New behaviour 20260212: SPACE resets node to next node of last

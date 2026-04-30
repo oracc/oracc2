@@ -13,6 +13,11 @@ static int lg_mode = 0;
 int mylines = 0;
 int suppress_lem = 0;
 
+Pool *etcsl_pool = NULL;
+Hash *etcsl_labels = NULL;
+const char *etcsl_lid = NULL;
+int lnum_labels;
+
 Hash *vreg;
 
 #if 0

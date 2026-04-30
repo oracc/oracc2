@@ -3,7 +3,7 @@
 #include <rnvxml.h>
 #include <gdl.h>
 #include <joxer.h>
-
+extern int trace_mode;
 /**This module requires rnvif setup to have been done first
  *
  * The implementation here is very preliminary--just enough to support
@@ -20,6 +20,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
   int need_closer = 1;
   const char *nodename = np->name;
 
+  if (trace_mode)
+    fprintf(stderr, "grx_jox_node: nodename=%s; text=%s; oflag=%d; nflag=%d\n", nodename, np->text, oflag, nflag);
+  
   if (!strcmp(np->name, "g:z"))
     return;
   
@@ -121,14 +124,22 @@ grx_jox_node(Node *np, int oflag, int nflag)
     {
       need_closer = 0;
     }
+  else if (!strcmp(np->name, "g:x") || !strcmp(np->name, "g:nonw"))
+    {
+      joxer_et(np->mloc, nodename,
+	       rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)),
+	       np->text);
+      need_closer = 0;
+      /*return;*/
+    }
   else
-    {      
+    {
       joxer_ea(np->mloc, nodename,
 	       rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
     }
 
   for (npp = np->kids; npp; npp = npp->next)
-    grx_jox_node(npp, need_closer, 1);
+    grx_jox_node(npp, need_closer, 0);
 
   switch (need_closer)
     {
