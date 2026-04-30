@@ -139,6 +139,9 @@ NOTEMARK	"^"[0-9]+"^"
 "{-"			{ gconst; GIN=0; return DET_SEME; }
 "}"			{ gconst; GIN=0; return yytext[0]; }
 
+"("[0-9+]:		{ gsave; GIN=0; return VARO; }
+:[0-9+]")"		{ gsave; GIN=0; return VARC; }
+
 %[-a-z0-9]+("/"[gn])?	{ gsave; return LANG; }
 _			{ gsave; return LANG_FLIP; }
 ,			{ return ','; }

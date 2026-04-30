@@ -149,6 +149,8 @@ LANG	"[a-z]{3}(-[a-z-]+)?"
 
 ^[^ \t\n#]+:[ \t]+ 		{ BEGIN s_T; longinit; return EXX; }
 
+^:[^:]+:[ \t]+			{ BEGIN s_T; longinit; return VAR; }
+
 ^== 				{ BEGIN s_T; atfsave; return BIL; }
 
 ^\#   				{ BEGIN s_T; return COMMENT; }

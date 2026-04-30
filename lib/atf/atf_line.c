@@ -411,6 +411,7 @@ v_register(const char *id)
     hash_add(vreg, (uccp)id, ++v);
 }
 
+/* This is called for both exemplar (^A: ) and variant (^:31v1.1: ) */
 void
 line_var(Mloc l, unsigned char *lp)
 {

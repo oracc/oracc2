@@ -36,7 +36,7 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; }
 
-%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS NOTEMARK CELLSPAN
+%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS NOTEMARK VARO VARC CELLSPAN
 		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD INDENT NEWLINE
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
 		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
@@ -321,6 +321,8 @@ meta:
 	| stateo
 	| INDENT       					{ ynp = gdl_nongraph(&@1, ytp, ";"); }
 	| NEWLINE	       				{ ynp = gdl_nongraph(&@1, ytp, "//"); }
+	| VARO
+	| VARC
 	| NOTEMARK
 		/* TODO: prob just add NOTEMARK as prop and keep a
 		list during line processing so it's easy to correlate
