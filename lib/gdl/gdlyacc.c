@@ -371,6 +371,9 @@ gdl_force_nonw(Node *w)
 {
   Node *rent = w->rent;
   *w = *w->kids;
+  const char *t = prop_find_kv(w->props, "g:type", NULL)->u.k->v;
+  prop_drop_kv(w->props, "g:type", NULL);
+  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", t);
   w->name = "g:nonw";
   w->rent = rent;
   w->next = NULL;
