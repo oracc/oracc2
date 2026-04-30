@@ -36,7 +36,7 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; }
 
-%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS NOTEMARK VARO VARC CELLSPAN
+%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS NOTEMARK VARO VARC VARI CELLSPAN
 		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD INDENT NEWLINE
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
 		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
@@ -110,9 +110,9 @@ plainseg:
 	;
 
 comment:
-	  L_inl_dol TEXT R_inl_dol
-	| L_inl_cmt TEXT R_inl_cmt
-	;
+		L_inl_dol TEXT R_inl_dol	        { gdl_nongraph(&@1, ytp, $2, "dollar"); }
+	| 	L_inl_cmt TEXT R_inl_cmt	        { gdl_nongraph(&@1, ytp, $2, "comment"); }
+		;
 
 space:
 	  SPACE						{ ynp = gdl_new_word(ytp);
@@ -203,14 +203,14 @@ simplexg:
 	;
 
 s:
-	  GRAPHEME					{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
-	| LISTNUM					{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
-	| NNUM						{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
-	| NUMBER					{ ynp = gdl_number(&@1, ytp, gdllval.text); }
-	| BARENUM					{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
-	| ZERO						{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
-	| PUNCT						{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
-	| ELLIPSIS					{ ynp = gdl_nongraph(&@1, ytp, gdllval.text); }
+		GRAPHEME				{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
+	| 	LISTNUM					{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
+	| 	NNUM					{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
+	| 	NUMBER					{ ynp = gdl_number(&@1, ytp, gdllval.text); }
+	| 	BARENUM					{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
+	| 	ZERO					{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
+	| 	PUNCT					{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
+	| 	ELLIPSIS		       		{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
 	;
 
 compound:
@@ -313,17 +313,18 @@ lang:
 	;
 
 meta:
-	  breakc
-	| breako
-	| glossc
-	| glosso
-	| statec
-	| stateo
-	| INDENT       					{ ynp = gdl_nongraph(&@1, ytp, ";"); }
-	| NEWLINE	       				{ ynp = gdl_nongraph(&@1, ytp, "//"); }
-	| VARO
-	| VARC
-	| NOTEMARK
+		breakc
+	| 	breako
+	| 	glossc
+	| 	glosso
+	| 	statec
+	| 	stateo
+	| 	INDENT       			{ ynp = gdl_nongraph(&@1, ytp, ";", "linebreak"); }
+	| 	NEWLINE	       			{ ynp = gdl_nongraph(&@1, ytp, "//", "newline"); }
+	| 	VARO				{ ynp = gdl_nongraph(&@1, ytp, $1, "varo"); }
+	| 	VARC				{ ynp = gdl_nongraph(&@1, ytp, $1, "varc"); }
+	| 	VARI				{ ynp = gdl_nongraph(&@1, ytp, $1, "vari"); }
+	| 	NOTEMARK
 		/* TODO: prob just add NOTEMARK as prop and keep a
 		list during line processing so it's easy to correlate
 		the marks with notes parsed in lib/atf */

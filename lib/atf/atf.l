@@ -116,10 +116,12 @@ LANG	"[a-z]{3}(-[a-z-]+)?"
 <s_LINK>\n	       		{ BEGIN 0; }
 
 ^"#bib:"			{ BEGIN s_T; return HASH_BIB; }
-^"#etcsl:"			{ BEGIN s_T; return HASH_ETCSL; }
 ^"#key:"			{ BEGIN s_T; return HASH_KEY; }
 ^"#note:"       		{ BEGIN s_T; return HASH_NOTE; }
 ^"#version:"			{ BEGIN s_T; return HASH_VERSION; }
+
+^"#etcsl:"/[ \t]+t     		{ BEGIN s_T; return HASH_ETCSL_T; }
+^"#etcsl:"/[ \t]+l     		{ BEGIN s_T; return HASH_ETCSL_L; }
 
 ^"#lemmatizer:"			{ BEGIN s_LZR; return HASH_LEMMATIZER; }
 

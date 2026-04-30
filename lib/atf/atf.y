@@ -30,11 +30,12 @@ ATFLTYPE atflloc;
 %token	<text>		PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
 			MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
 			TAB EOL
-			VAR VERSION
+			VERSION
 			ATF_LANG
 			TR_TYPE TR_LANG TR_PROJ TR_LABEL TR_TEXT TR_PAR TR_HDR TR_DOLLAR
 
-%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_ETCSL HASH_NOTE HASH_KEY
+%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
+			HASH_ETCSL_T HASH_ETCSL_L
 			HASH_LEMMATIZER LZR_SPARSE LZR_STOP HASH_BIB HASH_PROBIB
 			COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
 			ATF_MYLINES ATF_LINELABELS ATF_AGROUPS ATF_MATH ATF_UNICODE
@@ -42,7 +43,7 @@ ATFLTYPE atflloc;
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
 			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
 			COMMENT
-			MTS NTS LGS GUS LEM BIL EXX DOLLAR TR_INTER
+			MTS NTS LGS GUS LEM BIL EXX VAR DOLLAR TR_INTER
 			Y_BAD
 			Y_BODY Y_BOTTOM Y_BULLA Y_CATCHLINE Y_CFRAGMENT Y_COLOPHON Y_COLUMN
 			Y_COMPOSITE Y_DATE Y_DIV Y_DOCKET Y_EDGE Y_END Y_ENDVARIANTS
@@ -55,7 +56,7 @@ ATFLTYPE atflloc;
 %nterm <text>   	pqx name longtext
 
 %nterm <i> 		doc sparse stype atfuse link_type
-			lines line l_link note bib
+			lines line l_link note bib etcsl.line
 			heading heading_tok tr.inter
 			
 %nterm <b>		object object_tok
@@ -132,7 +133,7 @@ plk:      	protocol.start
 	| 	key
 		;
 
-protocol.start: project | atfpro | lemmatizer | version | probib | etcsl
+protocol.start: project | atfpro | lemmatizer | version | probib | etcsl.text
 
 lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 		{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
@@ -143,7 +144,10 @@ lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
 	;
 
-etcsl:		HASH_ETCSL TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
+etcsl.text:	HASH_ETCSL_T TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
+	;
+
+etcsl.line:	HASH_ETCSL_L TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
 	;
 
 probib: 	HASH_PROBIB longtext { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
@@ -263,12 +267,13 @@ line:
 	| 	GUS longtext		{ $$=$1; line_gus(@1, longtext_get()); } /* MTS prereq; singleton */
 	| 	BIL longtext		{ $$=$1; line_bil(@1, longtext_get()); } /* MTS prereq */
 	| 	EXX longtext		{ $$=$1; line_var(@1, longtext_get()); } /* MTS prereq */
+	| 	VAR longtext		{ $$=$1; line_var(@1, longtext_get()); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, longtext_get()); } /* MTS|NTS|BIL prereq */
 	|	l_link longtext		{ $$=$1; } /* MTS prereq */
 	|	COMMENT longtext	{ $$=$1; }
 	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, (char*)longtext_get()); }
 	| 	bib
-	| 	etcsl
+	| 	etcsl.line
 	| 	note
 	|	heading
 	|	tr.inter

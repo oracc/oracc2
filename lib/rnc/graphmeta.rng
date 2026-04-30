@@ -341,6 +341,9 @@
             <value>user</value>
             <value>dollar</value>
             <value>comment</value>
+            <value>varo</value>
+            <value>varc</value>
+            <value>vari</value>
           </choice>
         </attribute>
         <group>

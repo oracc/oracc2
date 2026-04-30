@@ -366,6 +366,15 @@ gdl_c_term(void)
     }
 }
 
+static void
+gdl_force_nonw(Node *w)
+{
+  Node *rent = w->rent;
+  *w = *w->kids;
+  w->name = "g:nonw";
+  w->rent = rent;
+}
+
 /* New behaviour 20260212: SPACE resets node to next node of last
    child of either the parent l-node or the tree root (for
    non-word-wrapped GDL */
@@ -375,6 +384,8 @@ gdl_new_word(Tree *ytp)
   if (gdl_word_mode)
     {
       Node *l = node_ancestor_or_self(ytp->curr, "g:w");
+      if (l && l->kids && !l->kids->next && !strcmp(l->kids->name, "g:x"))
+	gdl_force_nonw(l);
       if (l)
 	tree_curr(l->rent);
       else
@@ -595,11 +606,13 @@ gdl_listnum(Mloc *locp, Tree *ytp, const char *data)
 }
 
 Node *
-gdl_nongraph(Mloc *locp, Tree *ytp, const char *data)
+gdl_nongraph(Mloc *locp, Tree *ytp, const char *data, const char *type)
 {
   if (gdltrace)
     fprintf(stderr, "gt: NONGRAPH: %s\n", data);
-  return gdl_graph_node(locp, ytp, "g:x", data);
+  Node *i = gdl_graph_node(locp, ytp, "g:x", data);
+  gdl_prop_kv(i, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", type);
+  return i;
 }
 
 /* This is triggered by [0-9]/( so we know its a repetition number */

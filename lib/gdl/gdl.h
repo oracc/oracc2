@@ -94,7 +94,7 @@ extern void gdl_prop(Node *ynp, int p, int g);
 extern void gdl_prop_kv(Node *ynp, int p, int g, const char *k, const char *v);
 extern void gdl_remove_q_error(Mloc m, Node *ynp);
 
-extern Node *gdl_nongraph(Mloc *locp, Tree *ytp, const char *data);
+extern Node *gdl_nongraph(Mloc *locp, Tree *ytp, const char *data, const char *type);
 extern Node *gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
 extern Node *gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data);
 extern Node *gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);

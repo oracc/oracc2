@@ -139,7 +139,8 @@ NOTEMARK	"^"[0-9]+"^"
 "{-"			{ gconst; GIN=0; return DET_SEME; }
 "}"			{ gconst; GIN=0; return yytext[0]; }
 
-"("[0-9+]:		{ gsave; GIN=0; return VARO; }
+"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; return VARI; }
+"("[0-9]+:		{ gsave; GIN=0; return VARO; }
 :[0-9+]")"		{ gsave; GIN=0; return VARC; }
 
 %[-a-z0-9]+("/"[gn])?	{ gsave; return LANG; }
@@ -212,8 +213,8 @@ _			{ gsave; return LANG_FLIP; }
 "(#"			{ BEGIN TC; return L_inl_cmt; }
 <TC>"#)"       		{ BEGIN 0; return R_inl_cmt; }
 
-<TD>.+/"$)"   		{ gsave; return TEXT; }
-<TC>.+/"#)"   		{ gsave; return TEXT; }
+<TD>([^$]|\$[^)])*     	{ gsave; return TEXT; }
+<TC>([^#]|\#[^)])*   	{ gsave; return TEXT; }
 
 .			{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: unmatched character %c\n", *gdltext); }
 
