@@ -10,7 +10,7 @@
 typedef enum linkt { ELINK_DEF ,  ELINK_SOURCE , ELINK_PARALLEL , ELINK_TOP } Linkt;
 
 typedef enum prot { PROT_LZR_SPARSE ,  PROT_LZR_STOP , PROT_VERSION , PROT_ATF ,
-		    PROT_PROJECT , PROT_TOP } Prot;
+		    PROT_ETCSL , PROT_PROJECT , PROT_TOP } Prot;
 
 typedef enum atflt { LT_ANDLINE , LT_DOC , LT_LANG , LT_DOLLAR , LT_PROTOCOL, LT_XLINK ,
 		     LT_KEY , LT_BIB , LT_NOTE, LT_COMMENT , LT_BLOCK ,
@@ -230,6 +230,7 @@ extern List *curr_words;
 #define ATFF_LEGACY 0x10
 #define ATFF_LEXICAL 0x20
 #define ATFF_TOP 0x40
+#define ATFF_LINELABELS 0x80
 
 #define AP_ATTR 1	/* for props; GP_xxx is more complex but ATF
 			   may only need this and can use PG_XML as
@@ -336,5 +337,6 @@ extern void atr_dollar(Mloc l, unsigned char *s);
 extern void atr_line(Mloc l, const char *s);
 extern void atr_para(Mloc l, unsigned char *s);
 extern void atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords);
+extern void atr_finish_labels(void);
 
 #endif/*ATF_H_*/

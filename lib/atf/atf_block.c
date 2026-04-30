@@ -5,6 +5,7 @@
 #include "atf_bld.h"
 #include "atf.tab.h"
 #include "blocktok.h"
+#include "etcsl.h"
 #include "otf-defs.h"
 
 static void block_div(Mloc l, Block *bp, char *rest);

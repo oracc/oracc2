@@ -27,6 +27,8 @@ extern unsigned const char *curr_line_label;
 static unsigned char label_buf[128];
 static unsigned char last_label_buf[128];
 
+static Node *last_trans_node;
+
 static int in_note = 0/*, last_label = 0*/;
 static int need_dir_rtl = 0;
 
@@ -774,6 +776,27 @@ xid_line(const char *x)
     return 0;
 }
 
+static int
+xid_vchk(const char *x, int from, int to)
+{
+  extern Hash *vreg;
+  char buf[strlen(x)+1], *bufp;
+  int v = 0;
+  strcpy(buf, x);
+  if ((bufp = strchr(buf, '.')))
+    {
+      ++bufp;
+      while (from < to)
+	{
+	  sprintf(bufp, "%d", from++);
+	  void *vp = hash_find(vreg, (uccp)buf);
+	  if (vp)
+	    v += (uintptr_t)vp;
+	}
+    }
+  return v;
+}
+
 /*WATCHME: this only works perfectly if the line id mechanism
   increments the line id by 1 for each line_mts--the current
   implementation may be good enough for extant uses */
@@ -783,7 +806,8 @@ xid_diff(const char *x1, const char *x2)
   int i1,i2;
   i1 = xid_line(x1);
   i2 = xid_line(x2);
-  return i1-i2;
+  int v = xid_vchk(x2, i2, i1);
+  return (i1-i2)+v;
 }
 
 static const char *
@@ -807,6 +831,8 @@ labeled_labels(struct node *np, unsigned char *lab)
   int sref = 0, overlap = 0;
   unsigned const char *sref_xid = NULL;
   int saved_start_lnum = start_lnum;
+
+  last_trans_node = np;
   
   while (*disp)
     {
@@ -877,7 +903,10 @@ labeled_labels(struct node *np, unsigned char *lab)
 	      int interval = xid_diff((const char *)xid,doll_id);
 	      if (interval > 0)
 		{
-		  vwarning2(np->mloc->file,np->mloc->line,"expected $-line to match transliteration.\n\tTo have no corresponding $-line include a spacer in the translation:\n\t\t$ (SPACER)");
+		  vwarning2(np->mloc->file,np->mloc->line,
+			    "expected $-line to match transliteration.\n"
+			    "\tTo have no corresponding $-line include a spacer in the translation:\n"
+			    "\t\t$ (SPACER)");
 		  /* flush the translit dollar line that has no
 		     counterpart in the translat */
 		  (void)dollar_get();
@@ -976,6 +1005,44 @@ labeled_labels(struct node *np, unsigned char *lab)
 	  setAttr(np,"xtr:rend_label",(ccp)rendlabel);
 	}
     }
+}
+
+void
+atr_finish_labels(void)
+{
+  if (!last_trans_node)
+    return;
+
+  if (!*last_xid)
+    {
+      last_trans_node = NULL;
+      return;
+    }
+
+  char *xid = (char*)last_xid;
+  const char *refid = getAttr(last_trans_node, "xtr:sref");
+  if (!refid || !*refid)
+    refid = getAttr(last_trans_node, "xtr:ref");
+  if (*refid && strcmp(refid,xid))
+    {
+      char xxid[128], *xp;
+      strcpy(xxid, xid);
+      xp = strchr(xxid, '.');
+      if (xp)
+	{
+	  ++xp;
+	  int xi = atoi(xp);
+	  sprintf(xp, "%d", xi+1);
+	}
+      int interval = xid_diff((const char*)xxid,(const char *)last_xid);
+      char buf[10];
+      sprintf(buf,"%d",interval);
+      removeAttr(last_trans_node,"xtr:ref");
+      removeAttr(last_trans_node, "xtr:ref");
+      setAttr(last_trans_node,"xtr:sref",refid);
+      setAttr(last_trans_node,"xtr:eref",xid);
+      setAttr(last_trans_node,"xtr:rows",buf);
+    }    
 }
 
 static int

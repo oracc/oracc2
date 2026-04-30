@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <memo.h>
 #include <pool.h>
+#include "etcsl.h"
 #include "atf.h"
 
 Atfm *atfmp;
@@ -69,11 +70,19 @@ atf_input(Mloc l, Atflt t, void *p)
 void
 atf_term(void)
 {
+  if (etcsl_labels)
+    {
+      pool_term(etcsl_pool);
+      hash_free(etcsl_labels, NULL);
+      etcsl_labels = NULL;
+      etcsl_pool = NULL;
+    }
 }
 
 void
 atf_tlat_wrapup(void)
 {
+  atr_finish_labels();
 }
 
 void

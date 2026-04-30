@@ -95,6 +95,7 @@ LANG	"[a-z]{3}(-[a-z-]+)?"
 ^"#atf:"			{ BEGIN s_ATFPRO; }
 <s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
 <s_ATFPRO>"use mylines"		{ usesave; return ATF_MYLINES; }
+<s_ATFPRO>"use line-labels"    	{ usesave; return ATF_LINELABELS; }
 <s_ATFPRO>"use alignment-groups" { usesave; return ATF_AGROUPS; }
 <s_ATFPRO>"use math"	       	{ usesave; return ATF_MATH; }
 <s_ATFPRO>"use unicode"		{ usesave; return ATF_UNICODE; }
@@ -115,6 +116,7 @@ LANG	"[a-z]{3}(-[a-z-]+)?"
 <s_LINK>\n	       		{ BEGIN 0; }
 
 ^"#bib:"			{ BEGIN s_T; return HASH_BIB; }
+^"#etcsl:"			{ BEGIN s_T; return HASH_ETCSL; }
 ^"#key:"			{ BEGIN s_T; return HASH_KEY; }
 ^"#note:"       		{ BEGIN s_T; return HASH_NOTE; }
 ^"#version:"			{ BEGIN s_T; return HASH_VERSION; }

@@ -5,13 +5,15 @@
 #include "atf_bld.h"
 #include "otf-defs.h"
 #include "symbolattr.h"
-
+#include "etcsl.h"
 #include "linenums.c"
 
 int already_lemmed = 0;
 static int lg_mode = 0;
 int mylines = 0;
 int suppress_lem = 0;
+
+Hash *vreg;
 
 #if 0
 struct lang_context *curr_lang_ctxt;
@@ -155,6 +157,10 @@ line_mts(Mloc l, unsigned char *lp)
       /*set_tr_id(line_id_buf);*//*re-expose when translations are reimplemented*/
     }
   atf_xprop(lnode, "xml:id", (clid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));
+
+  if (etcsl_labels)
+    etcsl_lid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool);
+
   if (lg_mode)
     line_id_buf[strlen(line_id_buf)-1] = '\0';
 
@@ -386,6 +392,25 @@ compute_fragid(const char *qualid, const char *hlid)
   return NULL;
 }
 
+static void
+v_register(const char *id)
+{
+  if (!id)
+    {
+      hash_free(vreg, NULL);
+      vreg = NULL;
+      return;
+    }
+
+  if (!vreg)
+    vreg = hash_create(128);
+  char *v = hash_find(vreg, (uccp)id);
+  if (!v)
+    hash_add(vreg, pool_copy((uccp)id, atfmp->pool), (void*)(uintptr_t)1);
+  else
+    hash_add(vreg, (uccp)id, ++v);
+}
+
 void
 line_var(Mloc l, unsigned char *lp)
 {
@@ -410,6 +435,8 @@ line_var(Mloc l, unsigned char *lp)
   
   /* appendAttr(lnode,attr(a_type,ucc("var"))); */
 
+  v_register(line_id_buf);
+  
   (void)sprintf(line_id_buf+strlen(line_id_buf),(const char *)"v%d", exemplar_offset);
   /*set_tr_id(line_id_buf);*/
   atf_xprop(lnode, "xml:id", (clid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool)));

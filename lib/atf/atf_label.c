@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include "atf.h"
 #include "otf-defs.h"
+#include "etcsl.h"
 
 int saa_mode;
 
@@ -44,6 +45,9 @@ label_frag(struct node *current,unsigned const char *l)
 void
 label_segtab(const char *st, unsigned const char *tok)
 {
+  if (lnum_labels)
+    return;
+  
   static char div_labels[4][128];
   enum div_label_code { dlc_version , dlc_tablet , dlc_segment , dlc_top } dlc;
 
@@ -213,13 +217,6 @@ line_label(const unsigned char *tok,
     }
   if (check_label(label,transtype,xid))
     {
-#if 0
-      /* 20260123 does label2 have to be unique? Its role is not
-	 clearly defined except in the cunx; P4 should probably not
-	 use label2 for display without further evaluation. */
-      if (*m_label)
-	(void)check_label((unsigned const char *)label2,transtype,xid);
-#endif
       return label;
     }
   else
@@ -267,7 +264,12 @@ check_label(unsigned const char *lab,enum e_tu_types transtype,
       sprintf((char*)default_ret,"%s.1",xid);
       return default_ret;
     }
-  ok = hash_find(my_label_table,uc(lab));
+
+  if (etcsl_labels)
+    ok = hash_find(etcsl_labels,uc(lab));
+  else
+    ok = hash_find(my_label_table,uc(lab));
+
   if (transtype)
     {
       if (!ok)

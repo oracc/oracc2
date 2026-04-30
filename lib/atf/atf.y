@@ -34,10 +34,11 @@ ATFLTYPE atflloc;
 			ATF_LANG
 			TR_TYPE TR_LANG TR_PROJ TR_LABEL TR_TEXT TR_PAR TR_HDR TR_DOLLAR
 
-%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
+%token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_ETCSL HASH_NOTE HASH_KEY
 			HASH_LEMMATIZER LZR_SPARSE LZR_STOP HASH_BIB HASH_PROBIB
 			COMPOSITE SCORE MATRIX SYNOPTIC PARSED UNPARSED SWORD
-			ATF_MYLINES ATF_AGROUPS ATF_MATH ATF_UNICODE ATF_LEGACY ATF_LEXICAL
+			ATF_MYLINES ATF_LINELABELS ATF_AGROUPS ATF_MATH ATF_UNICODE
+			ATF_LEGACY ATF_LEXICAL
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
 			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
 			COMMENT
@@ -131,7 +132,7 @@ plk:      	protocol.start
 	| 	key
 		;
 
-protocol.start: project | atfpro | lemmatizer | version | probib
+protocol.start: project | atfpro | lemmatizer | version | probib | etcsl
 
 lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 		{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
@@ -140,6 +141,9 @@ lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 	;
 
 version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
+	;
+
+etcsl:		HASH_ETCSL TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
 	;
 
 probib: 	HASH_PROBIB longtext { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
@@ -162,12 +166,13 @@ atfpro:	       	ATF_LANG 	{ atf_lang(@1, atfp, $1); };
 	|	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, curr_use_str); }
 		;
 
-atfuse:		ATF_MYLINES { $$=ATFF_MYLINES; }
-	|	ATF_AGROUPS { $$=ATFF_AGROUPS; }
-	|	ATF_MATH    { $$=ATFF_MATH; }
-	|	ATF_UNICODE { $$=ATFF_UNICODE; }
-	|	ATF_LEGACY  { $$=ATFF_LEGACY; }
-	|	ATF_LEXICAL { $$=ATFF_LEXICAL; }
+atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
+	|	ATF_LINELABELS { $$=ATFF_LINELABELS; }
+	|	ATF_AGROUPS    { $$=ATFF_AGROUPS; }
+	|	ATF_MATH       { $$=ATFF_MATH; }
+	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
+	|	ATF_LEGACY     { $$=ATFF_LEGACY; }
+	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; }
 		;
 
 link:
@@ -263,6 +268,7 @@ line:
 	|	COMMENT longtext	{ $$=$1; }
 	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, (char*)longtext_get()); }
 	| 	bib
+	| 	etcsl
 	| 	note
 	|	heading
 	|	tr.inter

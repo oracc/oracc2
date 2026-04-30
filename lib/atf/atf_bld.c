@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <xmd.h>
+#include "etcsl.h"
 #include "atf.h"
 #include "atf_bld.h"
 
@@ -222,6 +223,15 @@ atf_bld_protocols(Mloc *lp, const char *scope)
   atf_xprop(np, "scope", scope);
 }
 
+static void
+etcsl_label(const char *l)
+{
+  l = strchr(l, '=') + 1;
+  hash_add(etcsl_labels,
+	   pool_copy((uccp)l, etcsl_pool),
+	   pool_copy((uccp)etcsl_lid, etcsl_pool));
+}
+
 void
 atf_bld_protocol(Mloc l, Prot pt, const char *str)
 {
@@ -258,6 +268,15 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
       p->u.str = (uccp)str;
       xmd_init();
       atfp->xmd = xmd_load(str, atfp->pqx);
+      break;
+    case PROT_ETCSL:
+      if ('t' == *str)
+	{
+	  etcsl_labels = hash_create(128);
+	  etcsl_pool = pool_init();
+	}
+      else
+	etcsl_label(str);
       break;
     case PROT_ATF:
     case PROT_TOP:
