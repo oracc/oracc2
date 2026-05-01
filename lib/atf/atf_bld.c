@@ -7,7 +7,7 @@
 static void atf_bld_protocols(Mloc *lp, const char *scope);
 int in_preamble;
 
-int bld_trace = 1;
+int bld_trace = 0;
 
 Tree *abt;
 
@@ -30,6 +30,18 @@ atf_insert(const char *s)
 {
   Node *insp = tree_node(abt, NS_XTF, s, abt->curr->depth+1, NULL);
   return node_insert(abt->curr, insp);
+}
+
+/* Create a node that is not added to the Tree; for use with ax lines
+   that are managed via a Group not via the Tree */
+Node *
+atf_node(const char *s)
+{
+  if (bld_trace)
+    fprintf(stderr, "bld: atf_node %s created with parent %s\n", s, abt->curr->name);
+  Node *np = tree_node(abt, NS_XTF, s, abt->curr->depth, NULL);
+  np->rent = abt->curr;
+  return np;
 }
 
 Node *

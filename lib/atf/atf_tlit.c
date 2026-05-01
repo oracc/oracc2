@@ -4,6 +4,16 @@
 #include "atf_bld.h"
 #include "otf-defs.h"
 
+/** N.B.: line_xxx nodes are not added to the tree--they are added to
+ *  Group which is hosted by an <lg> node.
+ *
+ *  line_xxx content is added to the line.
+ *
+ *  The bottom edge of the tree structure is a mixture of <lg> nodes
+ *  and <nonl> nodes; $-nodes are not permitted within a sequence of
+ *  lines that belongs to an <lg> (not currently enforced).
+ */
+
 List *curr_words;
 
 void

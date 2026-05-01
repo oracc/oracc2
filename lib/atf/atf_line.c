@@ -120,7 +120,7 @@ line_mts(Mloc l, unsigned char *lp)
      necessary */
   atf_line_lg();
 
-  struct node *lnode = atf_push("l");
+  struct node *lnode = atf_node("l");
   lnode->mloc = mloc_mloc(&l);
   
   register_line(l, LINE_MTS, lnode, lp);
@@ -184,53 +184,23 @@ line_mts(Mloc l, unsigned char *lp)
       lth_used = 0;
     }
 
-#if 0
-  /* probably not used now gx has native access to lib/gdl and lib/gvl */
-  if (atf_cbd_err)
-    {
-      extern int cbd_err_line;
-      cbd_err_line = atoi((char*)tok);
-    }
-#endif
-
   if (!mylines)
     {
-#if 1
       atf_xprop(lnode, "o", (ccp)pool_copy((uccp)tok, atfmp->pool));
       atf_xprop(lnode, "n", (ccp)(tok = pool_copy((uccp)lnstr(NULL, lninfo.lineno,lninfo.lineprimes),
 						  atfmp->pool)));
-#else
-      appendAttr(lnode,attr(a_o,tok));
-      tok = (unsigned char*)lnstr(lninfo.lineno,lninfo.lineprimes);
-      appendAttr(lnode,attr(a_n,tok));
-#endif
     }
   else
-#if 1
     atf_xprop(lnode, "n", (ccp)pool_copy((uccp)tok, atfmp->pool));
-#else
-    appendAttr(lnode,attr(a_n,tok));
-#endif
   
   curr_line_label = line_label(tok,0,(unsigned const char *)clid);
   if (curr_line_label)
     {
-#if 1
       atf_xprop(lnode, "label", (label = (ccp)pool_copy((uccp)curr_line_label, atfmp->pool)));
-#else
-      ap = attr(a_label,curr_line_label);
-      appendAttr(lnode,ap);
-#endif
       extern char *label2;
       if (label2)
-	{
-#if 1
-	  atf_xprop(lnode, "label2", (ccp)pool_copy((uccp)label2, atfmp->pool));
-#else
-	  ap = attr(a_label2,(unsigned const char *)label2);
-	  appendAttr(lnode,ap);
-#endif
-	}
+	atf_xprop(lnode, "label2", (ccp)pool_copy((uccp)label2, atfmp->pool));
+
       register_label(clid,label);
       /*free((char*)curr_line_label);*//* lib/atf uses pool not strdup */
       curr_line_label = ucc(label);
@@ -244,11 +214,7 @@ line_mts(Mloc l, unsigned char *lp)
       if (*s == '|' && isspace(s[1]))
 	{
 	  s += 2;
-#if 1
 	  atf_xprop(lnode, "spanall", "1");
-#else
-	  appendAttr(lnode,attr(a_spanall,(unsigned char *)"1"));
-#endif
 	}
       
       while (isspace(end[-1]) && end > s)
@@ -267,7 +233,7 @@ line_mts(Mloc l, unsigned char *lp)
 void
 line_bil(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_push("l");
+  struct node *lnode = atf_node("l");
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_BIL, lnode, lp);
@@ -300,7 +266,7 @@ line_bil(Mloc l, unsigned char *lp)
 void
 line_gus(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_push("l");
+  struct node *lnode = atf_node("l");
 
   register_line(l, LINE_GUS, lnode, lp);
   
@@ -326,7 +292,7 @@ line_gus(Mloc l, unsigned char *lp)
 void
 line_nts(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_push("l");
+  struct node *lnode = atf_node("l");
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_NTS, lnode, lp);
@@ -358,7 +324,7 @@ line_lgs(Mloc l, unsigned char *lp)
   extern int suppress_lem;
   suppress_lem = 1;
 
-  struct node *lnode = atf_push("l");
+  struct node *lnode = atf_node("l");
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_LGS, lnode, lp);
@@ -421,7 +387,7 @@ v_register(const char *id)
 void
 line_var(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_push("v");
+  struct node *lnode = atf_node("v");
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_EXX, lnode, lp);
@@ -460,7 +426,7 @@ line_var(Mloc l, unsigned char *lp)
   n = entry;
   if ((n_vbar = (unsigned char*)strchr((char*)n,','))) /* used to be | but now , */
     *n_vbar++ = '\0';
-  atf_xprop(lnode,"varnum",(ccp)n);
+  atf_xprop(lnode,"varnum",(ccp)pool_copy((uccp)entry, atfmp->pool));
 
   if (atfp->edoc == EDOC_SCORE)
     sa = symbolattr_get(textid, (const char*)n);
@@ -484,7 +450,7 @@ line_var(Mloc l, unsigned char *lp)
     }
 
   sprintf((char*)lab, "%s [%s]", curr_line_label, n);
-  atf_xprop(lnode,"label",(ccp)lab);
+  atf_xprop(lnode,"label",(ccp)pool_copy((uccp)lab, atfmp->pool));
   if (n_vbar)
     atf_xprop(lnode,"ex_label",(ccp)map_uscore(n_vbar));
 

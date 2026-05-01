@@ -148,6 +148,7 @@ ax_jox_lg(Node *np, Group *gp)
     {
       joxer_ea(np->mloc, "lg", NULL);
       ax_jox_lines(gp);
+      joxer_ee(np->mloc, "lg");
     }
   else
     ax_jox_lines(gp);
