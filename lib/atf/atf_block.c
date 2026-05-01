@@ -64,7 +64,8 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
   if ('=' == *rest)
     ++rest;
 
-  set_block_curr(bp->bt->type);
+  if (bp->bt->type != B_DIVISION)
+    set_block_curr(bp->bt->type);
 
   if (atfp->edoc == EDOC_TRANSLITERATION)
     bp->np = atf_push(bp->bt->name);
@@ -155,93 +156,106 @@ block_lev(Mloc l, Block *bp, char *rest)
 static void
 block_div(Mloc l, Block *bp, char *rest)
 {
-  unsigned char *tok = NULL, save = '\0';
 #define current abt->curr
+
+  char **toks = NULL;
+  char *tokx[] = { NULL , NULL , NULL };
+ if (rest)
+    toks = vec_from_str(rest, NULL, NULL);
+  else
+    toks = tokx;
+
+  const char *atname = bp->bt->name;
+  unsigned const char *divtok = (toks[0] ? pool_copy((uccp)toks[0], atfmp->pool) : NULL);
+  unsigned const char *ntok = (toks[1] ? pool_copy((uccp)toks[1], atfmp->pool) : NULL);
+
+  int i;
+  for (i = 0; toks[i]; ++i)
+    free(toks[i]);
+
+  if (!strcmp(abt->curr->name, "lg"))
+    {
+      atf_tlit_wrapup();
+      tree_pop(abt);
+    }
+  
   while (((Block*)current->user)->bt->type != B_DIVISION
 	 && ((Block*)current->user)->bt->type != B_TEXT)
     current = current->rent;
-  Node *np = atf_push(bp->bt->name); /*appendChild(current,elem(tag,NULL,lnum,bp->type));*/
-  while (*rest && !isspace(*rest))
-    ++rest;
-  if (*rest)
-    ++rest;
-  while (isspace(*rest))
-    ++rest;
-  if (*rest)
+  
+  if (!strcmp(atname, "end"))
     {
-      int segflag = 0;
-      int tabflag = 0;
-      int verflag = 0;
-      int non_label_div = 0;
-      unsigned char *divtok = NULL, *ntok = NULL;
-      ++div_level;
-      tok = (unsigned char *)rest;
-      while (*rest && !isspace(*rest))
-	++rest;
-      save = *rest;
-      *rest = '\0';
-      atf_xprop(np, "type", (ccp)(divtok = pool_copy((uccp)tok, atfmp->pool))); /*appendAttr(current, attr(a_type,tok));*/
-      if (!xstrcmp(tok,"segment"))
-	segflag = 1;
-      else if (!xstrcmp(tok,"tablet"))
-	tabflag = 1;
-      else if (!xstrcmp(tok,"version"))
-	verflag = 1;
-      else if (!xstrcmp(tok,"kirugu")
-	       || !xstrcmp(tok,"trailer")
-	       || !xstrcmp(tok,"jicgijal"))
-	non_label_div = 1;
-      else
-	/*divtok = pool_copy(tok)*/; /* divtok now set in atf_xprop call above */
-      *rest = save;
-      if (*rest)
+      if (((Block*)current->user)->bt->type == B_TEXT)
+	fprintf(stderr, "block_div: @end before @div\n");
+      else if (divtok)
 	{
-	  while (isspace(*rest))
-	    ++rest;
-	  tok = (unsigned char*)rest;
-	  rest = rest+xxstrlen(rest);
-	  while (isspace(rest[-1]))
-	    --rest;
-	  if (*rest)
-	    *rest = '\0';
-	  atf_xprop(np, "n", (ccp)(ntok = pool_copy(tok, atfmp->pool))); /*appendAttr(current,attr(a_n,tok));*/
+	  const char *type = prop_find_kv(abt->curr->props, "type", NULL)->u.k->v;
+	  if (!type)
+	    fprintf(stderr, "block_div: mismatched @end %s versus untyped @div\n", divtok);
+	  else if (strcmp(type, (ccp)divtok))
+	    fprintf(stderr, "block_div: mismatched @end %s versus @div %s\n", divtok, type);
+	  else
+	    (void)tree_pop(abt);
 	}
-      else
-	ntok = (unsigned char *)"";
-      if (verflag && xstrcmp(ntok,"0"))
-	{
-	  unsigned char *tokend = ntok;
-	  while (*tokend && !isspace(*tokend))
-	    ++tokend;
-	  *tokend = '\0';
-	  label_segtab("Ver.",ntok);
-	}
-      if (!non_label_div)
-	{
-	  if (segflag && xstrcmp(ntok,"0"))
-	    label_segtab("Seg.",ntok);
-	  else if (tabflag && xstrcmp(ntok,"0"))
-	    label_segtab("Tab.",ntok);
-	  else if (divtok)
-	    label_segtab(cc(divtok),ntok);
-	}
-    }
-  else if (!xstrcmp(bp->bt->name,"variants")) 
-    {
-      /*AX: this is already taken care of at start of function */
-      /*setName(current,e_variants);*/
-      /*current = appendChild(current,elem(e_variant,NULL,lnum,bp->type));*/
-    } 
-  else if (!xstrcmp(bp->bt->name,"variant"))
-    {
-      /* looks like ox removed the 'variant' then made @variants the
-	 parent and re-added it; with ax that probably isn't
-	 necessary; just check @variant has a parent @variants */
-      if (strcmp(np->rent->name, "variants"))
-	warning("orphan @variant");
     }
   else
-    warning("@div must give division type");
+    {
+      Node *np = atf_push(bp->bt->name); /*appendChild(current,elem(tag,NULL,lnum,bp->type));*/
+      np->user = bp;
+      if (divtok)
+	atf_xprop(np, "type", (ccp)divtok);
+      if (ntok)
+	atf_xprop(np, "n", (ccp)ntok);
+
+      if (divtok)
+	{
+	  int segflag = 0;
+	  int tabflag = 0;
+	  int verflag = 0;
+	  int non_label_div = 0;
+	  ++div_level;
+
+	  if (!xstrcmp(divtok,"segment"))
+	    segflag = 1;
+	  else if (!xstrcmp(divtok,"tablet"))
+	    tabflag = 1;
+	  else if (!xstrcmp(divtok,"version"))
+	    verflag = 1;
+	  else if (!xstrcmp(divtok,"kirugu")
+		   || !xstrcmp(divtok,"trailer")
+		   || !xstrcmp(divtok,"jicgijal"))
+	    non_label_div = 1;
+      
+	  if (verflag && xstrcmp(ntok,"0"))
+	    label_segtab("Ver.",ntok);
+      
+	  if (!non_label_div)
+	    {
+	      if (segflag && xstrcmp(ntok,"0"))
+		label_segtab("Seg.",ntok);
+	      else if (tabflag && xstrcmp(ntok,"0"))
+		label_segtab("Tab.",ntok);
+	      else if (divtok)
+		label_segtab(cc(divtok),ntok);
+	    }
+	}
+      else if (!xstrcmp(bp->bt->name,"variants")) 
+	{
+	  /*AX: this is already taken care of at start of function */
+	  /*setName(current,e_variants);*/
+	  /*current = appendChild(current,elem(e_variant,NULL,lnum,bp->type));*/
+	} 
+      else if (!xstrcmp(bp->bt->name,"variant"))
+	{
+	  /* looks like ox removed the 'variant' then made @variants the
+	     parent and re-added it; with ax that probably isn't
+	     necessary; just check @variant has a parent @variants */
+	  if (strcmp(np->rent->name, "variants"))
+	    warning("orphan @variant");
+	}
+      else
+	warning("@div must give division type");
+    }
 #undef current
 }
 
@@ -441,7 +455,13 @@ void
 set_block_curr(Block_level b)
 {
   if (EDOC_COMPOSITE == atfp->edoc)
-    tree_curr(node_ancestor_or_self(abt->curr, "composite"));
+    {
+      Node *np = node_ancestor_or_self(abt->curr, "div");
+      if (np)
+	tree_curr(np);
+      else
+	tree_curr(node_ancestor_or_self(abt->curr, "composite"));
+    }
   else
     {
       switch (b)

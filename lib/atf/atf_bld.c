@@ -84,8 +84,10 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   line_id_insertp = line_id_buf + strlen(line_id_buf);
   atfp->name = name;
   atfp->edoc = EDOC_TRANSLITERATION;
-  Blocktok *btp = blocktok("transliteration", strlen("transliteration"));
+  Block *bp = memo_new(atfmp->mblocks);
+  Blocktok *btp = bp->bt = blocktok("transliteration", strlen("transliteration"));
   Node *np = atf_push(btp->name);
+  np->user = bp;
   abt->root->mloc = np->mloc = mloc_mloc(&l);
   /*abt->root->user = atfmp->atf;*//*if we do this we need a handler for "xtf" in axjoxfnc*/
   /*np->user = btp;*/
@@ -116,7 +118,10 @@ atf_bld_doc(Mloc l)
 {
   if (atfp->edoc != EDOC_TRANSLITERATION)
     {
+      Block *bp = memo_new(atfmp->mblocks);
+      abt->curr->user = bp;
       abt->curr->name = (atfp->edoc == EDOC_COMPOSITE ? "composite" : "score");
+      bp->bt = blocktok(abt->curr->name, strlen(abt->curr->name));
       if (atfp->stype)
 	{
 	  atf_xprop(abt->curr, "score-type",

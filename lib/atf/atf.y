@@ -213,7 +213,7 @@ cblock:
 	|	milestone
 	;
 
-division:	division_tok TEXT { atf_bld_block(@1, $1, $2); }
+division:	division_tok    TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
 milestone:

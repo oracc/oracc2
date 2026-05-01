@@ -80,7 +80,7 @@ ax_jox_node(Node *np, int oflag, int nflag)
 	      ax_jox_block(np, np->user);
 	      /* Descend recursively into child nodes */
 	      for (npp = np->kids; npp; npp = npp->next)
-		ax_jox_node(npp, need_closer, 1);
+		ax_jox_node(npp, need_closer, 0);
 	    }
 	  else
 	    fprintf(stderr, "ax_jox_node: internal error: no handler for tag '%s'\n",
