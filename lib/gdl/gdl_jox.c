@@ -190,6 +190,7 @@ grx_jox(Node *np, const char *gdltag)
 int
 grx_jox_gdl(Node *np, Node *gdl)
 {
-  grx_jox_node(np->kids, 0, 1);
+  if (np && np->kids)
+    grx_jox_node(np->kids, 0, 1);
   return 0;
 }

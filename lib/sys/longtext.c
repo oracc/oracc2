@@ -2,10 +2,12 @@
 
 static const char *sep = "\n\t";
 
+static char *lt_last = NULL;
+
 void
 longtext_init(Pool *p,char *s)
 {
-  (void)longtext_sep(NULL,NULL,NULL,NULL);
+  lt_last = longtext_sep(NULL,NULL,NULL,NULL);
   if (p && s)
     (void)longtext_sep(p, s, NULL, NULL);
 }
@@ -15,11 +17,23 @@ longtext_set_sep(const char *s)
 {
   sep = s;
 }
+char *
+longtext_get(void)
+{
+  if (lt_last)
+    {
+      char *ret = lt_last;
+      lt_last = NULL;
+      return ret;
+    }
+  else
+    return longtext(NULL,NULL,NULL);
+}
 
 char *
 longtext_sep(Pool *p, char *t, char *a, const char *sep)
 {
-  static char *n;
+  static char *n = NULL;
   char *ret = NULL;
   if (n && !a)
     {

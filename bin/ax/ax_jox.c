@@ -11,7 +11,7 @@
 #include "ax.h"
 
 extern Mloc *xo_loc;
-
+extern int trace_mode;
 const char *xfn = NULL;
 extern const char *file;
 static void ax_jox_lines(Group *gp);
@@ -51,6 +51,9 @@ ax_jox_node(Node *np, int oflag, int nflag)
   const char *nodename = np->name;
   struct axjoxfnc *ap = NULL;
 
+  if (trace_mode)
+    fprintf(stderr, "ax_jox_node: nodename = %s\n", nodename);
+  
   if (np->user)
     ap = axjoxfnc(nodename,strlen(nodename));
 

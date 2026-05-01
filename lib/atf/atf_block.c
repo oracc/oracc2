@@ -377,6 +377,7 @@ atf_implicit(const char *n)
   bp->bt = blocktok(n, strlen(n));
   Node *np = atf_push(n);
   np->user = bp;
+  np->utype = N_U_BLOCK;
 
   if (!strcmp(n, "object"))
     atf_xprop(np, "type", "tablet");

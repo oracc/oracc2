@@ -49,15 +49,6 @@ static unsigned const char *lnstr(Mloc *mp, int number,int primes);
 static unsigned char *map_uscore(const unsigned char *vbar);
 
 void
-atf_line_lg(void)
-{
-  Node *np = node_ancestor_or_self(abt->curr, "lg");
-  if (np)
-    np = np->rent;
-  atf_push("lg");
-}
-
-void
 atf_group_wrapup(void)
 {
   Group *gp = memo_new(atfmp->mgroups);
@@ -69,8 +60,25 @@ atf_group_wrapup(void)
   gp->line_lines = line_lines;
 #endif
   list_free(atfmp->llines, NULL);
+  atfmp->llines = NULL;
   Node *np = node_ancestor_or_self(abt->curr, "lg");
   np->user = gp;
+  np->utype = N_U_GROUP;
+}
+
+/* Start a new line group; if we are already in a group, wrap the
+ * current group up first.
+ */
+void
+atf_line_lg(void)
+{
+  Node *np = node_ancestor_or_self(abt->curr, "lg");
+  if (np)
+    {
+      atf_group_wrapup();
+      tree_curr(np->rent);
+    }
+  atf_push("lg");
 }
 
 static void
@@ -82,18 +90,7 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 #endif
 
   atf_input(l, lt, lp);
-  if (atfmp->llines)
-    {
-      if (lt == LINE_MTS && list_len(atfmp->llines))
-	{
-	  atf_group_wrapup();
-#if 0
-	  line_lines = 1;
-#endif
-	  atfmp->llines = list_create(LIST_SINGLE);
-	}
-    }
-  else
+  if (!atfmp->llines)
     {
       if (lt == LINE_MTS)
 	atfmp->llines = list_create(LIST_SINGLE);
@@ -117,6 +114,8 @@ line_mts(Mloc l, unsigned char *lp)
 {
   set_block_curr(B_LINE);
 
+  /* Set the context to a lg, wrapping up the current lg if
+     necessary */
   atf_line_lg();
 
   struct node *lnode = atf_push("l");
