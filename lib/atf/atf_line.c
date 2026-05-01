@@ -73,11 +73,15 @@ void
 atf_line_lg(void)
 {
   Node *np = node_ancestor_or_self(abt->curr, "lg");
+  
   if (np)
     {
       atf_group_wrapup();
       tree_curr(np->rent);
     }
+  else
+    set_block_curr(B_LINE);
+
   atf_push("lg");
 }
 
@@ -112,8 +116,6 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 void
 line_mts(Mloc l, unsigned char *lp)
 {
-  set_block_curr(B_LINE);
-
   /* Set the context to a lg, wrapping up the current lg if
      necessary */
   atf_line_lg();
