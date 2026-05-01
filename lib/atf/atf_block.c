@@ -64,15 +64,19 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
   if ('=' == *rest)
     ++rest;
 
+  /* Take care not to create a div np in this routine because
+     block_div handles that and does div/end div checking */
   if (bp->bt->type != B_DIVISION)
-    set_block_curr(bp->bt->type);
+    {
+      set_block_curr(bp->bt->type);
 
-  if (atfp->edoc == EDOC_TRANSLITERATION)
-    bp->np = atf_push(bp->bt->name);
-  else
-    bp->np = atf_add(bp->bt->name);
+      if (atfp->edoc == EDOC_TRANSLITERATION)
+	bp->np = atf_push(bp->bt->name);
+      else
+	bp->np = atf_add(bp->bt->name);
+      bp->np->user = bp;
+    }
 
-  bp->np->user = bp;
   atf_input(l, LT_BLOCK, bp);
 
   switch (bp->bt->type)

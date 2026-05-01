@@ -44,10 +44,9 @@ ax_jox_props(Prop *p)
 }
 
 static void
-ax_jox_node(Node *np, int oflag, int nflag)
+ax_jox_node(Node *np)
 {
   Node *npp;
-  int need_closer = 1;
   const char *nodename = np->name;
   struct axjoxfnc *ap = NULL;
 
@@ -71,7 +70,7 @@ ax_jox_node(Node *np, int oflag, int nflag)
 	  if (ap->func(np, np->user) > 0)
 	    /* Descend recursively into child nodes */
 	    for (npp = np->kids; npp; npp = npp->next)
-	      ax_jox_node(npp, need_closer, 1);
+	      ax_jox_node(npp);
 	}
       else
 	{
@@ -80,7 +79,7 @@ ax_jox_node(Node *np, int oflag, int nflag)
 	      ax_jox_block(np, np->user);
 	      /* Descend recursively into child nodes */
 	      for (npp = np->kids; npp; npp = npp->next)
-		ax_jox_node(npp, need_closer, 0);
+		ax_jox_node(npp);
 	    }
 	  else
 	    fprintf(stderr, "ax_jox_node: internal error: no handler for tag '%s'\n",
@@ -91,7 +90,7 @@ ax_jox_node(Node *np, int oflag, int nflag)
     {
       /* Descend recursively into child nodes */
       for (npp = np->kids; npp; npp = npp->next)
-	ax_jox_node(npp, need_closer, 1);
+	ax_jox_node(npp);
     }
 
   if (!ap || ap->wrapper)
@@ -112,7 +111,7 @@ ax_jox(Tree *tp)
   xo_loc = malloc(sizeof(Mloc));
   xo_loc->file = file = tp->root->mloc->file;
   xo_loc->line = 1;
-  ax_jox_node(tp->root, 0, 1);
+  ax_jox_node(tp->root);
   joxer_term(xfp,NULL);
 }
 
