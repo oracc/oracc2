@@ -27,7 +27,7 @@ ATFLTYPE atflloc;
 
 %union { char *text; int i; Blocktok *b; }
 
-%token	<text>		PQX QID TEXT WORD DOC PROJECT ATFPRO LEMMATIZER LINK KEY
+%token	<text>		PQX QID TEXT WORD DOC PROJECT LINK KEY
 			MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
 			TAB EOL
 			VERSION
@@ -55,15 +55,18 @@ ATFLTYPE atflloc;
 
 %nterm <text>   	pqx name longtext
 
-%nterm <i> 		doc sparse stype atfuse link_type
+%nterm <i> 		sparse stype atfuse link_type
 			lines line l_link note bib etcsl.line
 			heading heading_tok tr.inter
+			milestone
 			
 %nterm <b>		object object_tok
 			surface surface_tok
 			column column_tok
-			division division_tok
-			milestone milestone_tok
+			milestone_tok
+			division
+			bdivision edivision vdivision
+			div_tok end_tok var_tok
 			
 %start atfs
 
@@ -74,15 +77,19 @@ atfs:		atf
 	;
 
 atf:		transliteration { atf_tlit_wrapup(); }
+	|	composite 	{ atf_tlit_wrapup(); }
+	|	score 		{ atf_tlit_wrapup(); }
 	|	translation	{ atf_tlat_wrapup(); }
 	;
 
 transliteration:
-		amp
-	|	amp blocks
-	| 	amp preamble { atf_wrapup(WH_PREAMBLE); }
-	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } blocks
+		amp preamble { atf_wrapup(WH_PREAMBLE); } tblocks
 		;
+
+composite:	amp atcomposite preamble { atf_wrapup(WH_PREAMBLE); } cblocks
+		;
+
+score:		amp atscore cblocks
 
 amp: 		pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
 		;
@@ -93,17 +100,17 @@ pqx: 		PQX
 name: 		TEXT
 		;
 
-/* This can be empty because of atf definition above */
 preamble:
 		plks
-	| 	doc plks
 	;
 
-doc:		COMPOSITE			{
-		    atfp->edoc = EDOC_COMPOSITE;
-		    atf_bld_doc(@1);
-		}
-	| 	SCORE stype sparse		{
+atcomposite:	COMPOSITE			{ atfp->edoc = EDOC_COMPOSITE;
+		    				  atf_bld_doc(@1); }
+	;
+
+		
+atscore:
+		SCORE stype sparse		{
 		    atfp->edoc = EDOC_SCORE;
 		    atfp->stype = $2; atfp->sparse = $3;
 		    atf_bld_doc(@1);
@@ -195,29 +202,33 @@ key: 		HASH_KEY TEXT 	     { atf_bld_key(@1, $2); }
 	;
 		
 /* composite or transliteration */
-blocks:		cblocks
-	|	objects
+tblocks:       	objects
 	|	surfaces
 	|	columns
 	|	lines
 	;
-     
-cblocks:
-		cblock
-	|	cblock lines
-	|	cblocks cblock lines
+
+cblocks:	cblock
+	|	cblocks cblock
+
+cblock: 	division
+	|	vdivision
+	|	line
 	;
 
-cblock:
-		division
-	|	milestone
+division:	bdivision cblocks edivision
+		;
+
+bdivision:	div_tok    TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
-division:	division_tok    TEXT { atf_bld_block(@1, $1, $2); }
+edivision:	end_tok    TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
-milestone:
-		milestone_tok 	TEXT { atf_bld_block(@1, $1, $2); }
+vdivision:	var_tok    TEXT { atf_bld_block(@1, $1, $2); }
+	;
+
+milestone:	milestone_tok 	TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
 objects:
@@ -277,6 +288,7 @@ line:
 	| 	note
 	|	heading
 	|	tr.inter
+	|	milestone
 	;
 
 l_link:		LNK_TOTO
@@ -285,12 +297,15 @@ l_link:		LNK_TOTO
 	|	LNK_VBAR
 	;
 
-division_tok:
-		Y_DIV 		{ $$=yylval.b; }
-	| 	Y_END 		{ $$=yylval.b; }
-	| 	Y_ENDVARIANTS 	{ $$=yylval.b; }
-	| 	Y_VARIANT 	{ $$=yylval.b; }
+div_tok:	Y_DIV 		{ $$=yylval.b; }
 	| 	Y_VARIANTS 	{ $$=yylval.b; }
+	;
+
+end_tok: 	Y_END 		{ $$=yylval.b; }
+	| 	Y_ENDVARIANTS 	{ $$=yylval.b; }
+	;
+
+var_tok:	Y_VARIANT 	{ $$=yylval.b; }
 	;
 
 milestone_tok:

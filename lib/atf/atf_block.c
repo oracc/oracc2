@@ -158,6 +158,17 @@ block_lev(Mloc l, Block *bp, char *rest)
 }
 
 static void
+new_variant(void)
+{
+  /* always initiate a new @variant */
+  Block *vp = memo_new(atfmp->mblocks);
+  vp->utype = N_U_BLOCK;
+  vp->bt = blocktok("variant", strlen("variant"));
+  vp->np = atf_push("variant");
+  vp->np->user = vp;
+}
+
+static void
 block_div(Mloc l, Block *bp, char *rest)
 {
 #define current abt->curr
@@ -182,6 +193,12 @@ block_div(Mloc l, Block *bp, char *rest)
       atf_tlit_wrapup();
       tree_pop(abt);
     }
+
+  if (!strcmp(bp->bt->name, "variant") && !strcmp(current->name, "variant"))
+    {
+      if (current->kids)
+	tree_pop(abt);
+    }
   
   while (((Block*)current->user)->bt->type != B_DIVISION
 	 && ((Block*)current->user)->bt->type != B_TEXT)
@@ -190,21 +207,23 @@ block_div(Mloc l, Block *bp, char *rest)
   if (!strcmp(atname, "end"))
     {
       if (((Block*)current->user)->bt->type == B_TEXT)
-	fprintf(stderr, "block_div: @end before @div\n");
+	mesg_verr(&l, "block_div: @end before @div\n");
       else if (divtok)
 	{
-	  const char *type = prop_find_kv(abt->curr->props, "type", NULL)->u.k->v;
-	  if (!type)
-	    fprintf(stderr, "block_div: mismatched @end %s versus untyped @div\n", divtok);
-	  else if (strcmp(type, (ccp)divtok))
-	    fprintf(stderr, "block_div: mismatched @end %s versus @div %s\n", divtok, type);
+	  const char *type = NULL;
+	  if (abt->curr->props)
+	    type = prop_find_kv(abt->curr->props, "type", NULL)->u.k->v;
+	  if (!type && strcmp(divtok, "variants"))
+	    mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
+	  else if (type && strcmp(type, (ccp)divtok))
+	    mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
 	  else
 	    (void)tree_pop(abt);
 	}
     }
   else
     {
-      Node *np = atf_push(bp->bt->name); /*appendChild(current,elem(tag,NULL,lnum,bp->type));*/
+      Node *np = atf_push(bp->bt->name);
       np->user = bp;
       if (divtok)
 	atf_xprop(np, "type", (ccp)divtok);
@@ -245,17 +264,25 @@ block_div(Mloc l, Block *bp, char *rest)
 	}
       else if (!xstrcmp(bp->bt->name,"variants")) 
 	{
-	  /*AX: this is already taken care of at start of function */
-	  /*setName(current,e_variants);*/
-	  /*current = appendChild(current,elem(e_variant,NULL,lnum,bp->type));*/
+	  if (!strcmp(((Block*)current->rent->user)->bt->name, "variants"))
+	    mesg_verr(&l, "nested @variants not allowed");
+	  else
+	    new_variant();
 	} 
       else if (!xstrcmp(bp->bt->name,"variant"))
 	{
-	  /* looks like ox removed the 'variant' then made @variants the
-	     parent and re-added it; with ax that probably isn't
-	     necessary; just check @variant has a parent @variants */
-	  if (strcmp(np->rent->name, "variants"))
-	    warning("orphan @variant");
+#if 0
+	  /* looks like ox removed the 'variant' then made @variants
+	     the parent and re-added it; for ax we require @variants
+	     ... @variant ... @variants */
+	  if (strcmp(current->rent->name, "variants"))
+	    mesg_verr(&l, "orphan @variant");
+	  else
+	    {
+	      /* Not sure if this happens/should be allowed */
+	      mesg_verr(&l, "div within @variant\n");
+	    }
+#endif
 	}
       else
 	warning("@div must give division type");
@@ -391,11 +418,11 @@ static void
 atf_implicit(const char *n)
 {
   Block *bp = memo_new(atfmp->mblocks);
+  bp->utype = N_U_BLOCK;
   bp->implicit = 1;
   bp->bt = blocktok(n, strlen(n));
   Node *np = atf_push(n);
   np->user = bp;
-  np->utype = N_U_BLOCK;
 
   if (!strcmp(n, "object"))
     atf_xprop(np, "type", "tablet");
@@ -426,12 +453,12 @@ m_types(const char *s, const char **typep, const char **subtp)
  * if not found, set tree_curr to the first ancestor-or-self that wasn't a block.
  */
 Node *
-ancestor_or_self_level(Node *np, Block_level b)
+ancestor_or_self_level_as(Node *np, Block_level b, int auto_set)
 {
   Node *non_block = NULL;
   while (1)
     {
-      if (!np->user || N_U_BLOCK != np->utype)
+      if (!np->user || N_U_BLOCK != ((Node*)(np->user))->utype)
 	{
 	  if (!non_block)
 	    non_block = np;
@@ -447,24 +474,34 @@ ancestor_or_self_level(Node *np, Block_level b)
       else
 	break;
     }
-  if (non_block)
-    tree_curr(non_block);
-  else
-    tree_curr(np);
+  if (auto_set)
+    {
+      if (non_block)
+	tree_curr(non_block);
+      else
+	tree_curr(np);
+    }
   return NULL;
+}
+
+Node *
+ancestor_or_self_level(Node *np, Block_level b)
+{
+  return ancestor_or_self_level_as(np, b, 1);
 }
 
 /* Ensure that abt->curr is appropriate for attaching the new block */
 void
 set_block_curr(Block_level b)
 {
-  if (EDOC_COMPOSITE == atfp->edoc)
+
+  if (EDOC_COMPOSITE == atfp->edoc || atfp->edoc == EDOC_SCORE)
     {
-      Node *np = node_ancestor_or_self(abt->curr, "div");
+      Node *np = ancestor_or_self_level_as(abt->curr, B_DIVISION, 0);
+      if (!np)
+	np = ancestor_or_self_level(abt->curr, B_TEXT);
       if (np)
 	tree_curr(np);
-      else
-	tree_curr(node_ancestor_or_self(abt->curr, "composite"));
     }
   else
     {

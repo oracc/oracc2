@@ -85,6 +85,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atfp->name = name;
   atfp->edoc = EDOC_TRANSLITERATION;
   Block *bp = memo_new(atfmp->mblocks);
+  bp->utype = N_U_BLOCK;
   Blocktok *btp = bp->bt = blocktok("transliteration", strlen("transliteration"));
   Node *np = atf_push(btp->name);
   np->user = bp;
@@ -119,6 +120,7 @@ atf_bld_doc(Mloc l)
   if (atfp->edoc != EDOC_TRANSLITERATION)
     {
       Block *bp = memo_new(atfmp->mblocks);
+      bp->utype = N_U_BLOCK;
       abt->curr->user = bp;
       abt->curr->name = (atfp->edoc == EDOC_COMPOSITE ? "composite" : "score");
       bp->bt = blocktok(abt->curr->name, strlen(abt->curr->name));
@@ -150,6 +152,7 @@ void
 atf_bld_implicit_block(void)
 {
   curr_block = memo_new(atfmp->mblocks);
+  curr_block->utype = N_U_BLOCK;
   /* for now curr_block->src == NULL means implicit */
   curr_group = memo_new(atfmp->mgroups);
   curr_block->lines = curr_group;

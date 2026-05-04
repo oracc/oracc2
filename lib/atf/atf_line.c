@@ -10,7 +10,7 @@
 
 int already_lemmed = 0;
 static int lg_mode = 0;
-int mylines = 0;
+int mylines = 1;
 int suppress_lem = 0;
 
 Pool *etcsl_pool = NULL;
@@ -51,19 +51,22 @@ static unsigned char *map_uscore(const unsigned char *vbar);
 void
 atf_group_wrapup(void)
 {
-  Group *gp = memo_new(atfmp->mgroups);
-  gp->utype = N_U_GROUP;
-  gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
-  gp->parent = abt->curr->user;
+  if (list_len(atfmp->llines))
+    {
+      Group *gp = memo_new(atfmp->mgroups);
+      gp->utype = N_U_GROUP;
+      gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
+      gp->parent = abt->curr->user;
 #if 0
-  /* this is just the lines that contribute to an <lg>, excludes $-lines */
-  gp->line_lines = line_lines;
+      /* this is just the lines that contribute to an <lg>, excludes $-lines */
+      gp->line_lines = line_lines;
 #endif
-  list_free(atfmp->llines, NULL);
-  atfmp->llines = NULL;
-  Node *np = node_ancestor_or_self(abt->curr, "lg");
-  np->user = gp;
-  np->utype = N_U_GROUP;
+      list_free(atfmp->llines, NULL);
+      atfmp->llines = NULL;
+      Node *np = node_ancestor_or_self(abt->curr, "lg");
+      np->user = gp;
+      np->utype = N_U_GROUP;
+    }
 }
 
 /* Start a new line group; if we are already in a group, wrap the

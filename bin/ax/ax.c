@@ -83,7 +83,7 @@ int
 main(int argc, char **argv)
 {
   static int multifile = 0;
-  extern int gdl_flex_debug, gdldebug; /* yydebug in gdl.y */
+  extern int gdl_flex_debug, gdldebug, atfdebug, atf_flex_debug; /* yydebug in gdl.y */
 
   f_log = stderr;
   
@@ -91,7 +91,10 @@ main(int argc, char **argv)
 
   options(argc, argv, "cltx");
 
-  atfflextrace = atftrace = gdlflextrace = gdltrace = gdldebug = trace_mode;
+  atf_flex_debug = atfflextrace = atftrace = atfdebug = trace_mode;
+
+  if (trace_mode > 1)
+    gdlflextrace = gdltrace = gdldebug = 1;
 
   gdlxml_setup();
   gvl_setup("osl", "osl","020");
