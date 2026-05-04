@@ -73,7 +73,7 @@ atf_group_wrapup(void)
  * current group up first.
  */
 void
-atf_line_lg(void)
+atf_line_lg(Mloc *mp)
 {
   Node *np = node_ancestor_or_self(abt->curr, "lg");
   
@@ -85,7 +85,7 @@ atf_line_lg(void)
   else
     set_block_curr(B_LINE);
 
-  atf_push("lg");
+  atf_push("lg", mp);
 }
 
 static void
@@ -121,9 +121,9 @@ line_mts(Mloc l, unsigned char *lp)
 {
   /* Set the context to a lg, wrapping up the current lg if
      necessary */
-  atf_line_lg();
+  atf_line_lg(&l);
 
-  struct node *lnode = atf_node("l");
+  struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
   
   register_line(l, LINE_MTS, lnode, lp);
@@ -236,7 +236,7 @@ line_mts(Mloc l, unsigned char *lp)
 void
 line_bil(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_node("l");
+  struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_BIL, lnode, lp);
@@ -269,7 +269,7 @@ line_bil(Mloc l, unsigned char *lp)
 void
 line_gus(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_node("l");
+  struct node *lnode = atf_node("l", &l);
 
   register_line(l, LINE_GUS, lnode, lp);
   
@@ -295,7 +295,7 @@ line_gus(Mloc l, unsigned char *lp)
 void
 line_nts(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_node("l");
+  struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_NTS, lnode, lp);
@@ -327,7 +327,7 @@ line_lgs(Mloc l, unsigned char *lp)
   extern int suppress_lem;
   suppress_lem = 1;
 
-  struct node *lnode = atf_node("l");
+  struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_LGS, lnode, lp);
@@ -390,7 +390,7 @@ v_register(const char *id)
 void
 line_var(Mloc l, unsigned char *lp)
 {
-  struct node *lnode = atf_node("v");
+  struct node *lnode = atf_node("v", &l);
   lnode->mloc = mloc_mloc(&l);
 
   register_line(l, LINE_EXX, lnode, lp);

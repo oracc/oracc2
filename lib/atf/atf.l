@@ -47,8 +47,16 @@ LK_PLUS "++"
 LK_VBAR "||"
 PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
-LANG	"[a-z]{3}(-[a-z-]+)?"
-	
+LANG	[a-z][a-z][a-z]?(-[-a-z]+)?
+
+			/* */
+TRA_CHR [@\"?\[\]\{\}]
+TRA_CMD (@[a-z0-9]+("["[^\]]+"]")?)|@\?|\?@|@\"|\"@|\{|\}|\^[0-9]+\^
+TRA_LAB ^@\([^)@]+\)
+TRA_PAR \n[ \t]*\n
+TRA_WHT [ \t\n]+
+TRA_WRD [^ \t\@\"\?\[\]\{\}]+
+
 %x s_AMPl
 %x s_AMPr
 %x s_SCO
@@ -166,11 +174,13 @@ LANG	"[a-z]{3}(-[a-z-]+)?"
 
 <s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
 <s_TRH>{LANG}				{ atfsave; s_next=s_TRA; BEGIN s_WORD; return TR_LANG; }
-<s_TRA>^@\([^\)\n]*\)			{ atfsave; return TR_LABEL; }
 <s_TRA>^@label[^\n]*/\n			{ atfsave; return TR_LABEL; }
-<s_TRA>.*/\n\&				{ BEGIN 0; atfsave; return TR_PAR; }
-<s_TRA>.*				{ atfsave; return TR_TEXT; }
-<s_TRA>\n[ \t]*\n			{ atflval.text=""; return TR_PAR; }
+<s_TRA>{TRA_LAB}			{ atfsave; return TR_LABEL; }
+<s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
+<s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }
+<s_TRA>{TRA_PAR}			{ atflval.text=""; return TR_PAR; }
+<s_TRA>{TRA_WHT}			{ atflval.text=""; return TR_TEXT; }
+<s_TRA>{TRA_WRD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
 <s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
 

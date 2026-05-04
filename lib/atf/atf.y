@@ -90,6 +90,7 @@ composite:	amp atcomposite preamble { atf_wrapup(WH_PREAMBLE); } cblocks
 		;
 
 score:		amp atscore cblocks
+		;
 
 amp: 		pqx '=' name { atf_bld_amp(@1, $1, (uccp)$3); }
 		;
@@ -361,7 +362,7 @@ translation:
 		tr.header tr.chunks
 		;
 
-tr.header:	Y_TRANSLATION TR_TYPE TR_LANG TR_PROJ
+tr.header:	Y_TRANSLATION TR_TYPE TR_LANG TR_PROJ TR_PAR
 		;
 
 tr.chunks:

@@ -144,9 +144,9 @@ atf_dollar(Mloc l, char *rest)
 	  Node *np;
 	  set_block_curr(nonx_attach);
 	  if (atfp->edoc == EDOC_TRANSLITERATION)
-	    np = atf_push("nonx");
+	    np = atf_push("nonx", &l);
 	  else
-	    np = atf_add("nonx");
+	    np = atf_add("nonx", &l);
 
 	  sprintf(line_id_insertp,"%d", ++line_id);
 	  const char *xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool);

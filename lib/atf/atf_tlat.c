@@ -128,7 +128,7 @@ atr_label(Mloc l, unsigned char *s)
 
   if (!innerp)
     {
-      curr_block_np = atf_push("xh:p");
+      curr_block_np = atf_push("xh:p", &l);
       ctr(curr_block_np);
       /* FIXME: This is not subtle enough--some translation paras
 	 will be so long that they should be the #-target
@@ -153,7 +153,7 @@ atr_label(Mloc l, unsigned char *s)
 void
 atr_hdr(Mloc l, const char *h, unsigned char *s)
 {
-  curr_block_np = atf_push(h);
+  curr_block_np = atf_push(h, &l);
   ctr(curr_block_np);
   if (lth_used == lth_alloced)
     {
@@ -170,7 +170,7 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
 void
 atr_dollar(Mloc l, unsigned char *s)
 {
-  struct node *curr_block_np = atf_push("xh:p");
+  struct node *curr_block_np = atf_push("xh:p", &l);
   setClass(curr_block_np,"dollar");
   start_lnum = l.line;
   if (s[1] == '@' && s[2] == '(')
@@ -308,7 +308,7 @@ atr_para(Mloc l, unsigned char *s)
   
   if (p_elem)
     {
-      Node *p = atf_push(p_elem == 2 ? "xh:innerp" : "xh:p");
+      Node *p = atf_push(p_elem == 2 ? "xh:innerp" : "xh:p", &l);
       if (spanall)
 	atf_xprop(p,"xtr:spanall","1");
       if (with_id)
@@ -358,7 +358,7 @@ atr_para(Mloc l, unsigned char *s)
   
   if (is_comment)
     {
-      Node *np = atf_add("xh:comment");
+      Node *np = atf_add("xh:comment", &l);
       np->text = (ccp)text;
     }
 
@@ -380,7 +380,7 @@ atr_para(Mloc l, unsigned char *s)
       while (*text)
 	{
 	  unsigned char *c = text, *resume;
-	  struct node *cc = atf_add("xh:span");
+	  struct node *cc = atf_add("xh:span", &l);
 	  if (!in_note)
 	    {
 	      setClass(cc,"cell");
@@ -438,7 +438,7 @@ atr_para(Mloc l, unsigned char *s)
 	{
 	  if (!nocellspan)
 	    {
-	      cc = atf_push("xh:span");
+	      cc = atf_push("xh:span", &l);
 	      setClass(cc,"cell");
 	      if (need_dir_rtl)
 		atf_xprop(cc, "dir", "rtl");
@@ -459,7 +459,9 @@ atr_para(Mloc l, unsigned char *s)
 void
 atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords)
 {
-#if 0
+#if 1
+  fprintf(stderr, "atr_inline received===\n%s\n", text);
+#else
   unsigned char *s = text, *start = text;
   int ocurly = 0, nested_curly = 0;
 
@@ -945,7 +947,8 @@ labeled_labels(struct node *np, unsigned char *lab)
 	setAttr(np,"xtr:sref",(ccp)xid);
       else
 	setAttr(np,"xtr:ref",(ccp)xid);
-      if (!*getAttr(np,"xtr:lab-start-label"))
+      const char *lsl = getAttr(np,"xtr:lab-start-label");
+      if (!lsl || !*lsl)
 	{
 	  setAttr(np,"xtr:lab_start_label",(ccp)pool_copy(lab, atfmp->pool));
 	  setAttr(np,"xtr:lab_start_lnum",(ccp)pool_copy(lnum_of(lab), atfmp->pool));

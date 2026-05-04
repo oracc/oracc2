@@ -71,9 +71,9 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
       set_block_curr(bp->bt->type);
 
       if (atfp->edoc == EDOC_TRANSLITERATION)
-	bp->np = atf_push(bp->bt->name);
+	bp->np = atf_push(bp->bt->name, &l);
       else
-	bp->np = atf_add(bp->bt->name);
+	bp->np = atf_add(bp->bt->name, &l);
       bp->np->user = bp;
     }
 
@@ -158,13 +158,13 @@ block_lev(Mloc l, Block *bp, char *rest)
 }
 
 static void
-new_variant(void)
+new_variant(Mloc *mp)
 {
   /* always initiate a new @variant */
   Block *vp = memo_new(atfmp->mblocks);
   vp->utype = N_U_BLOCK;
   vp->bt = blocktok("variant", strlen("variant"));
-  vp->np = atf_push("variant");
+  vp->np = atf_push("variant", mp);
   vp->np->user = vp;
 }
 
@@ -213,7 +213,7 @@ block_div(Mloc l, Block *bp, char *rest)
 	  const char *type = NULL;
 	  if (abt->curr->props)
 	    type = prop_find_kv(abt->curr->props, "type", NULL)->u.k->v;
-	  if (!type && strcmp(divtok, "variants"))
+	  if (!type && strcmp((ccp)divtok, "variants"))
 	    mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
 	  else if (type && strcmp(type, (ccp)divtok))
 	    mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
@@ -223,7 +223,7 @@ block_div(Mloc l, Block *bp, char *rest)
     }
   else
     {
-      Node *np = atf_push(bp->bt->name);
+      Node *np = atf_push(bp->bt->name, &l);
       np->user = bp;
       if (divtok)
 	atf_xprop(np, "type", (ccp)divtok);
@@ -267,7 +267,7 @@ block_div(Mloc l, Block *bp, char *rest)
 	  if (!strcmp(((Block*)current->rent->user)->bt->name, "variants"))
 	    mesg_verr(&l, "nested @variants not allowed");
 	  else
-	    new_variant();
+	    new_variant(&l);
 	} 
       else if (!xstrcmp(bp->bt->name,"variant"))
 	{
@@ -293,7 +293,7 @@ block_div(Mloc l, Block *bp, char *rest)
 static void
 block_hdr(Mloc l, Block *bp, char *rest)
 {
-  Node *np = atf_add("h");
+  Node *np = atf_add("h", &l);
 
   if ((lth_used+1) >= lth_alloced)
     {
@@ -421,7 +421,7 @@ atf_implicit(const char *n)
   bp->utype = N_U_BLOCK;
   bp->implicit = 1;
   bp->bt = blocktok(n, strlen(n));
-  Node *np = atf_push(n);
+  Node *np = atf_push(n, abt->curr->mloc);
   np->user = bp;
 
   if (!strcmp(n, "object"))
@@ -521,12 +521,16 @@ set_block_curr(Block_level b)
 	  break;
 	case B_COLUMN:
 	  {
-	    Node *np = ancestor_or_self_level(abt->curr, B_SURFACE);
+	    Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
 	    if (!np)
 	      {
-		Node *op = ancestor_or_self_level(abt->curr, B_OBJECT);
+		Node *op = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
 		if (!op)
-		  atf_implicit("object");
+		  {
+		    (void)ancestor_or_self_level_as(abt->curr, B_TEXT, 1);
+		    if (!op)
+		      atf_implicit("object");
+		  }
 		atf_implicit("surface");
 	      }
 	    else

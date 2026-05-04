@@ -18,11 +18,13 @@ atf_bld_tree(Tree*tp)
 }
 
 Node *
-atf_add(const char *s)
+atf_add(const char *s, Mloc *mp)
 {
   if (bld_trace)
     fprintf(stderr, "bld: atf_add %s to parent %s\n", s, abt->curr->name);
-  return tree_add(abt, NS_XTF, s, abt->root->depth+1, NULL);
+  Node *np = tree_add(abt, NS_XTF, s, abt->root->depth+1, NULL);
+  np->mloc = mloc_mloc(mp);
+  return np;
 }
 
 Node *
@@ -35,21 +37,23 @@ atf_insert(const char *s)
 /* Create a node that is not added to the Tree; for use with ax lines
    that are managed via a Group not via the Tree */
 Node *
-atf_node(const char *s)
+atf_node(const char *s, Mloc *mp)
 {
   if (bld_trace)
     fprintf(stderr, "bld: atf_node %s created with parent %s\n", s, abt->curr->name);
   Node *np = tree_node(abt, NS_XTF, s, abt->curr->depth, NULL);
+  np->mloc = mloc_mloc(mp);
   np->rent = abt->curr;
   return np;
 }
 
 Node *
-atf_push(const char *s)
+atf_push(const char *s, Mloc *mp)
 {
   if (bld_trace)
     fprintf(stderr, "bld: atf_push %s to parent %s\n", s, abt->curr->name);
-  tree_add(abt, NS_XTF, s, abt->curr->depth, NULL);
+  Node *np = tree_add(abt, NS_XTF, s, abt->curr->depth, NULL);
+  np->mloc = mloc_mloc(mp);
   return tree_push(abt);
 }
 
@@ -87,7 +91,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   Block *bp = memo_new(atfmp->mblocks);
   bp->utype = N_U_BLOCK;
   Blocktok *btp = bp->bt = blocktok("transliteration", strlen("transliteration"));
-  Node *np = atf_push(btp->name);
+  Node *np = atf_push(btp->name, &l);
   np->user = bp;
   abt->root->mloc = np->mloc = mloc_mloc(&l);
   /*abt->root->user = atfmp->atf;*//*if we do this we need a handler for "xtf" in axjoxfnc*/
@@ -108,7 +112,7 @@ atf_bld_bib(Mloc l, const char *ltext)
   Bib *b = memo_new(atfmp->mbibs);
   b->utype = N_U_BIB;
   b->text = ltext;
-  Node *np = atf_add("protocol");
+  Node *np = atf_add("protocol", &l);
   atf_xprop(np, "type", "bib");
   np->user = b;
   atf_input(l, LT_BIB, b);
@@ -163,7 +167,7 @@ abt_add_key_protocol(Mloc *lp, Key *kp)
 {
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, "text");
-  Node *np = atf_add("protocol");
+  Node *np = atf_add("protocol", lp);
   np->user = kp;
   if (!strcmp(kp->key, "after") || !strcmp(kp->key, "see"))
     {
@@ -185,7 +189,7 @@ abt_add_link_protocol(Mloc *lp, Xlink *p, const char *str)
 {
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, "text");
-  Node *np = atf_add("protocol");
+  Node *np = atf_add("protocol", lp);
   atf_xprop(np, "type", "link");
   np->text = str;
   /*np->user = lp;*/
@@ -218,7 +222,7 @@ atf_bld_note(Mloc l, const char *ltext)
   n->utype = N_U_NOTE;
   n->text = (uccp)ltext;
   n->xid = (ccp)pool_copy((uccp)note_create_id(), atfmp->pool);
-  Node *np = atf_add("note:text");
+  Node *np = atf_add("note:text", &l);
   atf_xprop(np, "xml:id", n->xid);
   atf_xprop(np, "note:mark", "1");/*place-holder*/
   np->user = n;
@@ -230,7 +234,7 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 {
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, scope);
-  Node *np = atf_add("protocol");
+  Node *np = atf_add("protocol", lp);
   atf_xprop(np, "type", p->type);
   np->text = str;
   /*np->user = p;*/
@@ -239,7 +243,7 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 static void
 atf_bld_protocols(Mloc *lp, const char *scope)
 {
-  Node *np = atf_push("protocols");
+  Node *np = atf_push("protocols", lp);
   atf_xprop(np, "scope", scope);
 }
 
