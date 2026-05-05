@@ -4,6 +4,8 @@
 #include "atf_bld.h"
 #include "otf-defs.h"
 
+extern int bld_trace;
+
 struct translation **ax_translations = NULL;
 struct translation *curr_trans;
 
@@ -70,6 +72,73 @@ static List *tral;
 #define getClass(n) getAttr((n),"class")
 #endif
 
+Node *
+atr_push(const char *s, Mloc *mp)
+{
+  if (bld_trace)
+    fprintf(stderr, "bld: atr_push %s to parent %s\n", s, curr_trans->tree->curr->name);
+  Node *np = tree_add(curr_trans->tree, NS_HTM, s, curr_trans->tree->curr->depth, NULL);
+  np->mloc = mloc_mloc(mp);
+  return tree_push(curr_trans->tree);
+}
+
+void
+atr_translation(void)
+{
+  *last_label_buf = '\0';
+  *last_xid = '\0';
+  current_trans = trans;
+  status = 0;
+  last_label = 0;
+  trans_wid = 0;
+
+  if (dollar_fifo)
+    dollar_reset();
+
+  /* trans_inter does not call the translation() routine, which is good
+     because we don't want to reinitialize the line notes in interlinear
+     translations */
+  note_initialize_line();
+  note_index = 1;
+
+  if (saa_mode)
+    need_alignment = 0;
+  else
+    need_alignment = 1;
+
+  unsigned char *id;
+  curr_trans->id = id = uc(getAttr(text,"xml:id"));
+  appendAttr(curr_trans->tree,attr("ref",id));
+  appendAttr(curr_trans->tree,attr("n", getAttr(text,"n")));
+  appendAttr(curr_trans->tree,attr("project", getAttr(text,"project")));
+  appendAttr(curr_trans->tree,attr("xml:lang",ucc(curr_trans->lang)));
+  if (langrtl(curr_trans->lang,strlen(curr_trans->lang)))
+    {
+      need_dir_rtl = 1;
+      appendAttr(trans->tree,attr(a_dir,ucc("rtl")));
+    }
+  else
+    need_dir_rtl = 0;
+  appendAttr(curr_trans->tree,attr("xtr:type",ucc(curr_trans->type)));
+  appendAttr(curr_trans->tree,attr("xtr_code",ucc(curr_trans->code)));
+  sprintf(trans_id_base,"%s_%s-%s",textid,curr_trans->code,curr_trans->lang);
+  if (trans_hash_add(trans_id_base))
+    {
+      warning("duplicate @translation will be ignored");
+      return;
+    }
+  appendAttr(curr_trans->tree,attr("xml:id",ucc(curr_trans_id_base)));
+  next_trans_p_id = 0;
+  (void)refattrs(NULL,NULL,NULL);
+  mapentry(NULL,NULL);
+
+#if 0
+  /* Catch the user if labeled translations are being used without mylines */
+  if ((tt->type == etu_labeled || tt->type == etu_parallel) && !mylines)
+    notice("#atf: use mylines recommended with labeled/parallel translations");
+#endif
+}
+
 void
 atr_inter(Mloc l, unsigned char *s)
 {
@@ -128,7 +197,7 @@ atr_label(Mloc l, unsigned char *s)
 
   if (!innerp)
     {
-      curr_block_np = atf_push("xh:p", &l);
+      curr_block_np = atr_push("xh:p", &l);
       ctr(curr_block_np);
       /* FIXME: This is not subtle enough--some translation paras
 	 will be so long that they should be the #-target
@@ -153,7 +222,7 @@ atr_label(Mloc l, unsigned char *s)
 void
 atr_hdr(Mloc l, const char *h, unsigned char *s)
 {
-  curr_block_np = atf_push(h, &l);
+  curr_block_np = atr_push(h, &l);
   ctr(curr_block_np);
   if (lth_used == lth_alloced)
     {
@@ -170,7 +239,7 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
 void
 atr_dollar(Mloc l, unsigned char *s)
 {
-  struct node *curr_block_np = atf_push("xh:p", &l);
+  struct node *curr_block_np = atr_push("xh:p", &l);
   setClass(curr_block_np,"dollar");
   start_lnum = l.line;
   if (s[1] == '@' && s[2] == '(')
@@ -305,7 +374,7 @@ atr_para(void)
   
   if (p_elem)
     {
-      Node *p = atf_push(p_elem == 2 ? "xh:innerp" : "xh:p", mpp[0]);
+      Node *p = atr_push(p_elem == 2 ? "xh:innerp" : "xh:p", mpp[0]);
       if (spanall)
 	atf_xprop(p,"xtr:spanall","1");
       if (with_id)
@@ -435,7 +504,7 @@ atr_para(void)
 	{
 	  if (!nocellspan)
 	    {
-	      cc = atf_push("xh:span", mpp[0]);
+	      cc = atr_push("xh:span", mpp[0]);
 	      setClass(cc,"cell");
 	      if (need_dir_rtl)
 		atf_xprop(cc, "dir", "rtl");

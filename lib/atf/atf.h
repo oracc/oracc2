@@ -342,5 +342,6 @@ extern void atr_text(Mloc l, const char *s);
 extern void atr_para(void);
 extern void atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords);
 extern void atr_finish_labels(void);
+extern void atr_translation(void);
 
 #endif/*ATF_H_*/
