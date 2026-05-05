@@ -1,3 +1,5 @@
+#include "sigs/sigs.h"
+#include "xcl2/xcl.h"
 #include "bigrams/bigrams.h"
 #include "dsa/cdlidate.h"
 #include "dsa/dsa.h"
@@ -10,7 +12,5 @@
 #include "prop/l3props.h"
 #include "psa/psa.h"
 #include "psus/psus.h"
-#include "sigs/sigs.h"
 #include "word/words.h"
-#include "xcl2/xcl.h"
 #include "xli/xli.h"

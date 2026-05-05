@@ -142,6 +142,20 @@ atf_bld_doc(Mloc l)
 }
 
 void
+atf_bld_tlat(Mloc l, const char *type, const char *lang, const char *code)
+{
+  ax_translations = memo_auto(2*sizeof(Translation*));
+  ax_translations[0] = memo_auto(sizeof(Translation));
+  ax_translations[1] = NULL;
+  curr_trans = ax_translations[0];
+  curr_trans->type = type;
+  curr_trans->lang = lang;
+  curr_trans->code = code;
+  curr_trans->tree = tree_init();
+  (void)tree_root(curr_trans->tree, NS_XTR, "xtr:translation", 1, NULL);
+}
+
+void
 atf_bld_group(Mloc l, Tree *tp)
 {
   

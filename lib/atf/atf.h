@@ -199,12 +199,15 @@ struct xcl_ilem
 typedef struct translation
 {
   const char    * type;
-  const unsigned char* id;
+  const unsigned char*id;
   enum e_tu_types etype;
   const char    * lang;
   const char    * code;
-  struct node   * tree;
+  Tree  *tree;
 } Translation;
+
+extern struct translation **ax_translations;
+extern struct translation *curr_trans;
 
 extern Lninfo lninfo;
 
@@ -269,6 +272,7 @@ extern void atf_bld_milestone(Mloc l, Blocktok *curr_blocktok);
 extern void atf_bld_mts(Mloc l, int linetype, const char *linetext);
 extern void atf_bld_note(Mloc l, const char *ltext);
 extern void atf_bld_protocol(Mloc l, Prot pt, const char *s);
+extern void atf_bld_tlat(Mloc l, const char *type, const char *lang, const char *code);
 extern void atf_bld_tree(Tree *tp);
 extern void atf_bld_xxx(Mloc l, int linetype, const char *linetext);
 extern void atf_clear_protocols(void);
@@ -334,8 +338,8 @@ extern void atr_inter(Mloc l, unsigned char *s);
 extern void atr_label(Mloc l, unsigned char *s);
 extern void atr_hdr(Mloc l, const char *h, unsigned char *s);
 extern void atr_dollar(Mloc l, unsigned char *s);
-extern void atr_line(Mloc l, const char *s);
-extern void atr_para(Mloc l, unsigned char *s);
+extern void atr_text(Mloc l, const char *s);
+extern void atr_para(void);
 extern void atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords);
 extern void atr_finish_labels(void);
 

@@ -82,6 +82,7 @@ atf_term(void)
 void
 atf_tlat_wrapup(void)
 {
+  atr_para();
   atr_finish_labels();
 }
 

@@ -111,6 +111,10 @@ ax_jox(Tree *tp)
   xo_loc = malloc(sizeof(Mloc));
   xo_loc->file = file = tp->root->mloc->file;
   xo_loc->line = 1;
+
+  if (curr_trans)
+    tree_root_append(tp, curr_trans->tree->root);
+ 
   ax_jox_node(tp->root);
   joxer_term(xfp,NULL);
 }

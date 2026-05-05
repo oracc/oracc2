@@ -362,7 +362,7 @@ translation:
 		tr.header tr.chunks
 		;
 
-tr.header:	Y_TRANSLATION TR_TYPE TR_LANG TR_PROJ TR_PAR
+tr.header:	Y_TRANSLATION TR_TYPE TR_LANG TR_PROJ TR_PAR { atf_bld_tlat(@1,$2,$3,$4); }
 		;
 
 tr.chunks:
@@ -401,8 +401,8 @@ tr.trans:
 		;
 
 tr.tran:
-		TR_TEXT			{ atr_line(@1, $1); }
-	|	TR_PAR			{ atr_para(@1, (ucp)$1); }
+		TR_TEXT			{ atr_text(@1, $1); }
+	|	TR_PAR			{ atr_para(); }
 		;
 
 tr.inter:

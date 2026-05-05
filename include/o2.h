@@ -8,7 +8,6 @@
 #define reset_mlabel	o2_reset_mlabel
 #define label_table	o2_label_table
 #define mylines	o2_mylines
-#define translations	o2_translations
 #define trans_parenned_labels	o2_trans_parenned_labels
 #define exemplar_offset	o2_exemplar_offset
 #define bil_offset	o2_bil_offset
@@ -52,7 +51,6 @@
 #define note_number_by_run	o2_note_number_by_run
 #define lnstrsp	o2_lnstrsp
 #define nocellspan	o2_nocellspan
-#define current_trans	o2_current_trans
 #define tlit_reinit_inline	o2_tlit_reinit_inline
 #define lninfo	o2_lninfo
 #define load_labels_init	o2_load_labels_init

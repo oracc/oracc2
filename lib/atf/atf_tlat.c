@@ -4,8 +4,8 @@
 #include "atf_bld.h"
 #include "otf-defs.h"
 
-struct translation **translations = NULL;
-struct translation *current_trans;
+struct translation **ax_translations = NULL;
+struct translation *curr_trans;
 
 static int multi_trans_line;
 static char trans_p_idbuf[128];
@@ -81,7 +81,7 @@ atr_label(Mloc l, unsigned char *s)
 {
   int innerp = 0;
   if (tral)
-    atr_para(l, NULL);
+    atr_para();
 
   if (s[1] == '(')
     {
@@ -163,7 +163,7 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
   last_trans_h[lth_used++] = curr_block_np;
   sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
   nocellspan = 1;
-  atr_para(l, s);
+  atr_para();
   nocellspan = 0;
 }
 
@@ -228,7 +228,7 @@ atr_dollar(Mloc l, unsigned char *s)
 }
 
 void
-atr_line(Mloc l, const char *s)
+atr_text(Mloc l, const char *s)
 {
   Mloc *m = mloc_mloc(&l);
   m->user = (void*)s;
@@ -238,16 +238,13 @@ atr_line(Mloc l, const char *s)
 }
 
 void
-atr_para(Mloc l, unsigned char *s)
+atr_para(void)
 {
   static Node *p;
   int with_id = 1;
 
   const char *label = (ccp)curr_line_label; /* was an arg; is it always set in oxx ? */
   
-  if (s && strlen((ccp)s))
-    atr_line(l, (ccp)s);
-
   /* emulate oxx lines[] array */
   int nlines = list_len(tral);
   Mloc **mpp = (Mloc **)list2array(tral);
@@ -267,13 +264,13 @@ atr_para(Mloc l, unsigned char *s)
       mloc_index[i] = nchars;
       nchars += strlen((ccp)lines[i]);
     }
-  s = lines[0];
+  unsigned char *s = lines[0];
   unsigned char *text;
   int is_comment = 0, spanall = 0;
   start_lnum = mpp[0]->line;
 
   if (p == NULL)
-    p = current_trans->tree;
+    p = curr_trans->tree->root;
   if (s == lines[0] && *lines && s[0] == '#')
     is_comment = 1;
   if (*s == '|' && isspace(s[1]))
@@ -308,7 +305,7 @@ atr_para(Mloc l, unsigned char *s)
   
   if (p_elem)
     {
-      Node *p = atf_push(p_elem == 2 ? "xh:innerp" : "xh:p", &l);
+      Node *p = atf_push(p_elem == 2 ? "xh:innerp" : "xh:p", mpp[0]);
       if (spanall)
 	atf_xprop(p,"xtr:spanall","1");
       if (with_id)
@@ -323,7 +320,7 @@ atr_para(Mloc l, unsigned char *s)
 	    {
 	      atf_xprop(p,"xtr:label",label);
 	      se_label(p,cc(atfp->name),cc(label));
-	      if (current_trans->etype == etu_interlinear)
+	      if (curr_trans->etype == etu_interlinear)
 		{
 		  if (tr_id_buf)
 		    atf_xprop(p,"xtr:ref",tr_id_buf);
@@ -343,7 +340,7 @@ atr_para(Mloc l, unsigned char *s)
 		    }
 		  else
 		    {
-		      vwarning2(l.file, l.line,
+		      mesg_verr(mpp[0],
 				"%s: label used in parallel translation is not in transliteration",
 				label);
 		    }
@@ -358,7 +355,7 @@ atr_para(Mloc l, unsigned char *s)
   
   if (is_comment)
     {
-      Node *np = atf_add("xh:comment", &l);
+      Node *np = atf_add("xh:comment", mpp[0]);
       np->text = (ccp)text;
     }
 
@@ -380,7 +377,7 @@ atr_para(Mloc l, unsigned char *s)
       while (*text)
 	{
 	  unsigned char *c = text, *resume;
-	  struct node *cc = atf_add("xh:span", &l);
+	  struct node *cc = atf_add("xh:span", mpp[0]);
 	  if (!in_note)
 	    {
 	      setClass(cc,"cell");
@@ -421,7 +418,7 @@ atr_para(Mloc l, unsigned char *s)
 	    --text;
 	  *text = '\0';
 	  
-	  (void)atr_inline(cc,c,NULL,1);
+	  (void)atr_inline(cc,text,NULL,1);
 	  text = resume;
 	  if (init_cell)
 	    text += 2;
@@ -438,7 +435,7 @@ atr_para(Mloc l, unsigned char *s)
 	{
 	  if (!nocellspan)
 	    {
-	      cc = atf_push("xh:span", &l);
+	      cc = atf_push("xh:span", mpp[0]);
 	      setClass(cc,"cell");
 	      if (need_dir_rtl)
 		atf_xprop(cc, "dir", "rtl");
