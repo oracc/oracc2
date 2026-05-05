@@ -8,6 +8,7 @@
 #include <lng.h>
 #include <atf.h>
 #include <gdl.h>
+#include <inl.h>
 #include "ax.h"
 
 Mloc xo_loc;
@@ -46,6 +47,7 @@ ax_input(const char *f)
   nl_init();
   ngramify_init();
   gdlparse_init();
+  inl_init();
   Run *rp = run_init();
   Tree *tp = atf_read(f);
   proj_init(rp, (ccp)atfp->project);
@@ -76,6 +78,7 @@ ax_input(const char *f)
       gdlparse_term();
       mesg_print(stderr);
       mesg_term();
+      inl_term();
     }
 }
 

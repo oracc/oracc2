@@ -1,5 +1,7 @@
 #include <oraccsys.h>
 #include <mesg.h>
+#include <lang.h>
+#include <inl.h>
 #include "atf.h"
 #include "atf_bld.h"
 #include "otf-defs.h"
@@ -55,6 +57,8 @@ static int int_of(unsigned const char *line_id);
 static unsigned char *label_prefix(unsigned char *lab);
 static unsigned char *lnum_of(unsigned char *l);
 
+static void atr_inline(Mloc *mp, struct node*parent,unsigned char *text);
+
 static List *tral;
 
 #if 1
@@ -64,6 +68,7 @@ static List *tral;
 #define getClass(n) getAttr((n),"class")
 #define removeAttr(n,a) prop_drop_kv(n->props, a, NULL)
 #define setAttr(n,a,v) atf_xprop((n),(a),(v))
+#define appendAttr(n,a,v) atf_xprop((n),(a),(v))
 #else
 #define xctr(p) if (p && !*(getAttr(p,a_class))) appendAttr((p),attr(a_class,ucc("tr")))
 #define yctr(p) appendAttr((p),attr(a_class,ucc("tr")))
@@ -85,11 +90,11 @@ atr_push(const char *s, Mloc *mp)
 void
 atr_translation(void)
 {
+  extern int status;
   *last_label_buf = '\0';
   *last_xid = '\0';
-  current_trans = trans;
   status = 0;
-  last_label = 0;
+  /*last_label = 0;*/
   trans_wid = 0;
 
   if (dollar_fifo)
@@ -106,31 +111,34 @@ atr_translation(void)
   else
     need_alignment = 1;
 
-  unsigned char *id;
-  curr_trans->id = id = uc(getAttr(text,"xml:id"));
-  appendAttr(curr_trans->tree,attr("ref",id));
-  appendAttr(curr_trans->tree,attr("n", getAttr(text,"n")));
-  appendAttr(curr_trans->tree,attr("project", getAttr(text,"project")));
-  appendAttr(curr_trans->tree,attr("xml:lang",ucc(curr_trans->lang)));
+  curr_trans->id = (uccp)atfp->pqx;
+  appendAttr(curr_trans->tree->root,"ref",(ccp)curr_trans->id);
+  appendAttr(curr_trans->tree->root,"n", (ccp)atfp->name);
+  appendAttr(curr_trans->tree->root,"project", (ccp)atfp->project);
+  appendAttr(curr_trans->tree->root,"xml:lang",curr_trans->lang);
   if (langrtl(curr_trans->lang,strlen(curr_trans->lang)))
     {
       need_dir_rtl = 1;
-      appendAttr(trans->tree,attr(a_dir,ucc("rtl")));
+      appendAttr(curr_trans->tree->root,"dir","rtl");
     }
   else
     need_dir_rtl = 0;
-  appendAttr(curr_trans->tree,attr("xtr:type",ucc(curr_trans->type)));
-  appendAttr(curr_trans->tree,attr("xtr_code",ucc(curr_trans->code)));
-  sprintf(trans_id_base,"%s_%s-%s",textid,curr_trans->code,curr_trans->lang);
+  appendAttr(curr_trans->tree->root,"xtr:type",(ccp)curr_trans->type);
+  appendAttr(curr_trans->tree->root,"xtr_code",(ccp)curr_trans->code);
+  sprintf(trans_id_base,"%s_%s-%s",curr_trans->id,curr_trans->code,curr_trans->lang);
+#if 0
   if (trans_hash_add(trans_id_base))
     {
       warning("duplicate @translation will be ignored");
       return;
     }
-  appendAttr(curr_trans->tree,attr("xml:id",ucc(curr_trans_id_base)));
+#endif
+  appendAttr(curr_trans->tree->root,"xml:id",(ccp)trans_id_base);
   next_trans_p_id = 0;
+#if 0
   (void)refattrs(NULL,NULL,NULL);
   mapentry(NULL,NULL);
+#endif
 
 #if 0
   /* Catch the user if labeled translations are being used without mylines */
@@ -293,7 +301,7 @@ atr_dollar(Mloc l, unsigned char *s)
   while (isspace(*s))
     ++s;
 
-  (void)atr_inline(curr_block_np,s,NULL,0);
+  (void)atr_inline(&l, curr_block_np,s);
 }
 
 void
@@ -306,10 +314,12 @@ atr_text(Mloc l, const char *s)
   list_add(tral, m);
 }
 
+/* In the lib/atf architecture the <xh:p> node is set up by atr_label
+   and this should only be called when processing a para of
+   translation */
 void
 atr_para(void)
 {
-  static Node *p;
   int with_id = 1;
 
   const char *label = (ccp)curr_line_label; /* was an arg; is it always set in oxx ? */
@@ -338,8 +348,6 @@ atr_para(void)
   int is_comment = 0, spanall = 0;
   start_lnum = mpp[0]->line;
 
-  if (p == NULL)
-    p = curr_trans->tree->root;
   if (s == lines[0] && *lines && s[0] == '#')
     is_comment = 1;
   if (*s == '|' && isspace(s[1]))
@@ -367,7 +375,7 @@ atr_para(void)
     text[xxstrlen(text)-1] = '\0';
 
   int p_elem;
-  if (!strcmp(abt->curr->name, "xh:p"))
+  if (!strcmp(curr_trans->tree->curr->name, "xh:p"))
     p_elem = 2;
   else
     p_elem = 1;
@@ -487,7 +495,7 @@ atr_para(void)
 	    --text;
 	  *text = '\0';
 	  
-	  (void)atr_inline(cc,text,NULL,1);
+	  (void)atr_inline(mpp[0],cc,text);
 	  text = resume;
 	  if (init_cell)
 	    text += 2;
@@ -510,7 +518,7 @@ atr_para(void)
 		atf_xprop(cc, "dir", "rtl");
 	      atf_xprop(cc,"xtr:span","1");
 	    }
-	  (void)atr_inline(cc,text,NULL,1);
+	  (void)atr_inline(mpp[0],cc,text);
 	}
       else
 	{
@@ -522,11 +530,15 @@ atr_para(void)
     }
 }
 
-void
-atr_inline(struct node*parent,unsigned char *text,const char *until, int with_trwords)
+static void
+atr_inline(Mloc *mp, struct node*parent,unsigned char *text)
 {
-#if 1
+#if 1  
   fprintf(stderr, "atr_inline received===\n%s\n", text);
+  char *ws = normalize_ws(text);
+  Tree *itp = inl(mp, ws);
+  tree_graft(parent, itp);
+  free(ws);
 #else
   unsigned char *s = text, *start = text;
   int ocurly = 0, nested_curly = 0;

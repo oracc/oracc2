@@ -21,6 +21,8 @@ typedef struct note
   enum note_status status;	/* registered and or referenced */
 } Note;
 
+extern int note_index;
+
 const char *note_create_id(void);
 
 extern void note_initialize(void);
