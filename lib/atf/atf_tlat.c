@@ -124,7 +124,7 @@ atr_translation(void)
   else
     need_dir_rtl = 0;
   appendAttr(curr_trans->tree->root,"xtr:type",(ccp)curr_trans->type);
-  appendAttr(curr_trans->tree->root,"xtr_code",(ccp)curr_trans->code);
+  appendAttr(curr_trans->tree->root,"xtr:code",(ccp)curr_trans->code);
   sprintf(trans_id_base,"%s_%s-%s",curr_trans->id,curr_trans->code,curr_trans->lang);
 #if 0
   if (trans_hash_add(trans_id_base))
@@ -382,7 +382,8 @@ atr_para(void)
   
   if (p_elem)
     {
-      Node *p = atr_push(p_elem == 2 ? "xh:innerp" : "xh:p", mpp[0]);
+      Node *p = curr_trans->tree->curr;
+      /*atr_push(p_elem == 2 ? "xh:innerp" : "xh:p", mpp[0]);*/
       if (spanall)
 	atf_xprop(p,"xtr:spanall","1");
       if (with_id)
@@ -522,9 +523,11 @@ atr_para(void)
 	}
       else
 	{
+#if 0
 	  /* unwind the spurious innerp node */
 	  p = p->rent;
 	  kids_rem_last(p->tree);
+#endif
 	}
     }
     }
@@ -533,7 +536,7 @@ atr_para(void)
 static void
 atr_inline(Mloc *mp, struct node*parent,unsigned char *text)
 {
-  fprintf(stderr, "atr_inline received===\n%s\n", text);
+  /*fprintf(stderr, "atr_inline received===\n%s\n", text);*/
   char *ws = normalize_ws(text);
   Tree *itp = inl(mp, ws);
   tree_graft(parent, itp);
@@ -699,8 +702,8 @@ labeled_labels(struct node *np, unsigned char *lab)
 	  save = *end;
 	  *end = '\0';
 	}
-      setAttr(np,"xtr:lab_start_label",(ccp)pool_copy((uccp)disp, atfmp->pool));
-      setAttr(np,"xtr:lab_start_lnum",(ccp)pool_copy((uccp)lnum_of(disp), atfmp->pool));
+      setAttr(np,"xtr:lab-start-label",(ccp)pool_copy((uccp)disp, atfmp->pool));
+      setAttr(np,"xtr:lab-start-lnum",(ccp)pool_copy((uccp)lnum_of(disp), atfmp->pool));
       if (save)
 	*end = save;
       s = end;
@@ -789,8 +792,8 @@ labeled_labels(struct node *np, unsigned char *lab)
       const char *lsl = getAttr(np,"xtr:lab-start-label");
       if (!lsl || !*lsl)
 	{
-	  setAttr(np,"xtr:lab_start_label",(ccp)pool_copy(lab, atfmp->pool));
-	  setAttr(np,"xtr:lab_start_lnum",(ccp)pool_copy(lnum_of(lab), atfmp->pool));
+	  setAttr(np,"xtr:lab-start-label",(ccp)pool_copy(lab, atfmp->pool));
+	  setAttr(np,"xtr:lab-start-lnum",(ccp)pool_copy(lnum_of(lab), atfmp->pool));
 	}
       if (overlap)
 	setAttr(np,"xtr:overlap","1");

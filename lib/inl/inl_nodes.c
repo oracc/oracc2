@@ -85,7 +85,7 @@ inl_wild(Scan *sp, struct inltok *itp, Tree *tp, char *s)
 static void
 inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext)
 {
-  ssp->np = tree_add(tp, NS_INL, "span", tp->curr->depth, NULL);
+  ssp->np = tree_add(tp, inl_ns, inl_span_str, tp->curr->depth, NULL);
   ssp->np->text = stext;
   if (!stext)
     ssp->np->name = "#";
@@ -164,7 +164,7 @@ inl_text_node(Scan *sp, Tree *tp, const char *text, int len)
   Scanseg *ssp = memo_new(inl_scanseg_m);
   ssp->utype = N_U_SCANSEG;
   ssp->sp = sp;
-  ssp->np = tree_add(tp, NS_INL, "text", tp->curr->depth, NULL);
+  ssp->np = tree_add(tp, inl_ns, inl_text_str, tp->curr->depth, NULL);
   ssp->name = NULL;
   char *tmp = (char*)pool_alloc(len+1, inl_scan_p);
   if (double_at_flag)
@@ -231,10 +231,7 @@ inl_nodes(Scan *sp, Node *np, char *s)
 		}
 	      else
 		{
-		  if (!*s)
-		    break;
-		  else
-		    ++s;
+		  break;
 		}
 	    }
 	  inl_text(sp, np->tree, t, at ? at-t : strlen(t));

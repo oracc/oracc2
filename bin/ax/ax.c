@@ -94,6 +94,8 @@ main(int argc, char **argv)
 
   options(argc, argv, "cltx");
 
+  inl_set_ns(NS_HTM);
+  
   atf_flex_debug = atfflextrace = atftrace = atfdebug = trace_mode;
 
   if (trace_mode > 1)

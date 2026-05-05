@@ -56,7 +56,7 @@ ax_jox_node(Node *np)
   if (np->user)
     ap = axjoxfnc(nodename,strlen(nodename));
 
-  if (!ap || ap->wrapper)
+  if ((!ap || ap->wrapper) && '-' != *nodename)
     joxer_ea(np->mloc, nodename, rnvval_aa_ccpp(ax_jox_props(np->props)));
 
   if (np->text)
@@ -93,7 +93,7 @@ ax_jox_node(Node *np)
 	ax_jox_node(npp);
     }
 
-  if (!ap || ap->wrapper)
+  if ((!ap || ap->wrapper) && '-' != *nodename)
     joxer_ee(np->mloc, nodename);
 
 }

@@ -22,6 +22,9 @@ struct inltok
 };
 extern struct inltok *inltok(register const char *str, register size_t len);
 
+extern const char *inl_span_str, *inl_text_str;
+extern enum nscode inl_ns;
+
 extern int inl_wild_mode;
 struct inl_self_tab { const char *name; };
 
@@ -35,5 +38,6 @@ extern void inl_init(void);
 extern void inl_term(void);
 extern char *inl_nodes(Scan *sp, Node *np, char *s);
 extern Tree *inl(Mloc *mp, char *s);
+extern void inl_set_ns(enum nscode ns);
 
 #endif/*INL_H_*/

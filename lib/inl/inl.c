@@ -11,14 +11,24 @@ Memo *inl_scan_m = NULL;
 Memo *inl_scanseg_m = NULL;
 Pool *inl_scan_p = NULL;
 
+enum nscode inl_ns = NS_INL;
+
 int inl_rnv;
 int inl_wild_mode;
 inl_self_func_p inl_self_func = NULL;
 
+const char *inl_text_str = "text";
+const char *inl_span_str = "span";
+
 void
-inl_self_set(inl_self_func_p f)
+inl_set_ns(enum nscode ns)
 {
-  inl_self_func = f;
+  inl_ns = ns;
+  if (inl_ns == NS_HTM)
+    {
+      inl_text_str = "-";
+      inl_span_str = "xh:span";
+    }
 }
 
 static void

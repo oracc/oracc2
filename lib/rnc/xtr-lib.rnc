@@ -36,7 +36,7 @@ trans-dollar =
      | (ref | refs | (unit,refs?))),
     new-labels? ,
     htext* ,
-    innerp*
+    (innerp* | innerp.model)
   }
 
 trans-note = 
@@ -59,7 +59,7 @@ trans-unit =
     new-labels? ,
     overlap? ,
     spanall? ,
-    (innerp+ | htext)
+    (innerp+ | innerp.model)
   }
 
 h = h1 | h2 | h3
@@ -69,7 +69,10 @@ h3 = element xh:h3 { h-model }
 
 h-model = (id? , ctr , ( ref | hdr-ref)? , new-labels? , htext)
 
-innerp = element xh:innerp { htext | (comment, text) }
+innerp = element xh:innerp { innerp.model }
+
+innerp.model = htext | (comment, text)
+
 htext = (text | trword | trcell | foreign | literal | xtr-notelink 
          | supplied | uncertain | rspan | bspan | ispan | sign
 	 | bispan | smaller | sc | gdlspan | sup | lab | cun 

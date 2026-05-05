@@ -6,7 +6,7 @@ include "xtr-lib.rnc"
 include "xcl-lib.rnc"
 
 start = xtf | doctype
-xtf = element xtf { proto.outer? , doctype? }
+xtf = element xtf { proto.outer? , doctype? , translation? }
 doctype = score | translation | transliteration | composite | atf
 atf = element atf { attribute xml:id   { xsd:ID } , text }
 

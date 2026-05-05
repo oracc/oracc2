@@ -85,6 +85,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next;
 				  int ret=(s_next==s_TRA?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
+<s_WORD>[ \t]+	       		{ ; }
 
 ^"@composite"			{ (void)atf_block(atftext); return COMPOSITE; }
 ^"@score"		       	{ BEGIN s_SCO; (void)atf_block(atftext); return SCORE; }
@@ -174,6 +175,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 <s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
 <s_TRH>{LANG}				{ atfsave; s_next=s_TRA; BEGIN s_WORD; return TR_LANG; }
+<s_TRH>{TRA_WHT}			{ ; }
 <s_TRA>^@label[^\n]*/\n			{ atfsave; return TR_LABEL; }
 <s_TRA>{TRA_LAB}			{ atfsave; return TR_LABEL; }
 <s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
