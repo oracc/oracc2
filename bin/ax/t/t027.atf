@@ -1,0 +1,9 @@
+&P121212 = CBS 12345
+@composite
+#project: epsd2
+
+@div trailer 
+
+1. a
+
+@end trailer

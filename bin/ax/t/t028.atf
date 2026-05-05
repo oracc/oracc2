@@ -1,0 +1,17 @@
+&P121212 = CBS 12345
+@composite
+#project: epsd2
+
+1. e
+
+@variants 
+
+1v1. a
+
+@variant
+
+1v2. ba
+
+@variant
+
+@end variants
