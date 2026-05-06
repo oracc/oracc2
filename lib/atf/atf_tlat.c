@@ -343,6 +343,7 @@ atr_para(void)
       mloc_index[i] = nchars;
       nchars += strlen((ccp)lines[i]);
     }
+  lines[i] = NULL;
   unsigned char *s = lines[0];
   unsigned char *text;
   int is_comment = 0, spanall = 0;

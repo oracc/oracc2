@@ -52,7 +52,7 @@ install-exec-local:
 	bison -vdt $<
 
 %.rng: %.rnc
-	./c2-rng.sh $< $@
+	$(top_srcdir)/lib/rnc/c2-rng.sh $< $@
 
 %.sh: %.sh.in
 	$(ORACCIFY) $<
@@ -67,10 +67,10 @@ install-exec-local:
 	$(ORACCIFY) $<
 
 %.xnn: %.rng
-	./c2-rng2xnn.sh $< $@
+	$(top_srcdir)/lib/rnc/c2-rng2xnn.sh $< $@
 
 %.c: %.xnn
-	./c2-xnn2c.plx $<
+	$(top_srcdir)/lib/rnc/c2-xnn2c.plx $<
 
 %.def: %.def.in
 	$(ORACCIFY) $<

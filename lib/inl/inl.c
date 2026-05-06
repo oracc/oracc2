@@ -21,6 +21,12 @@ const char *inl_text_str = "text";
 const char *inl_span_str = "span";
 
 void
+inl_self_set(inl_self_func_p f)
+{
+  inl_self_func = f;
+}
+
+void
 inl_set_ns(enum nscode ns)
 {
   inl_ns = ns;
@@ -174,7 +180,7 @@ inl_init(void)
   if (!inl_scan_m)
     {
       inl_scan_m = memo_init(sizeof(Scan), 256);
-      inl_scanseg_m = memo_init(sizeof(Scan), 1024);
+      inl_scanseg_m = memo_init(sizeof(Scanseg), 1024);
     }
   if (!inl_scan_p)
     inl_scan_p = pool_init();

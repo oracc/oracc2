@@ -90,7 +90,8 @@ inl_wild(Scan *sp, struct inltok *itp, Tree *tp, char *s)
   ssp->utype = N_U_SCANSEG;
   ssp->sp = sp;
   ssp->name = "langi";
-  inl_span_node(sp, ssp, tp, s);
+  ssp->attr = itp->attr;
+  inl_span_node(sp, ssp, tp, itp->text);
   return s + strlen(itp->text) + 1; /* s points at '@' of '@me' */
 }
 
