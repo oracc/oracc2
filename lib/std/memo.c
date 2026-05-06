@@ -40,6 +40,15 @@ memo_auto(size_t siz)
     }
 }
 
+void *
+memo_reauto(void *vp, size_t osiz, size_t nsiz)
+{
+  void *nvp = memo_auto(nsiz);
+  if (vp && osiz)
+    memcpy(nvp, vp, osiz);
+  return nvp;
+}
+
 const char *
 memo_dup(const char *s)
 {
