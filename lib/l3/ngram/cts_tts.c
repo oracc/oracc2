@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <memo.h>
 #include "ngram.h"
 #include "l3props.h"
 #include "sigs.h"
@@ -134,7 +135,7 @@ parse_cts_f2(struct CF *cfp, int tts_mode, char *s)
       *tmp = '\0';
       len = form_parse((unsigned char *)cfp->owner->owner->file, cfp->owner->lnum, 
 		     (unsigned char *)s, cfp->f2, NULL);
-      cfp->f2->pos = (const Uchar *)xstrdup((const char*)cfp->f2->pos);
+      cfp->f2->pos = (const Uchar *)memo_dup((const char*)cfp->f2->pos);
       *tmp = save;
     }
   if (cfp->f2 && cfp->f2->gw && !strcmp((const char*)cfp->f2->gw, "X"))

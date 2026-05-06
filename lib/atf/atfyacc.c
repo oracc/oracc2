@@ -106,8 +106,7 @@ atf_term(void)
 
   atf_lex_term();
   label_term();
-  ngramify_term();
-  nl_term();
+  lang_term();
   note_term();
   texttag_term();
   tree_term();  

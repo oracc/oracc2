@@ -372,7 +372,7 @@ struct sig const * const *
 sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp, 
 		    struct sigset *sp, int *nfinds)
 {
-  struct sig *candidates = NULL, *c = NULL, **res, **part;
+  struct sig *candidates = NULL, *c = NULL, **res = NULL, **part = NULL;
   int ncand = 0, pct_top = 0;
   int pass1 = 1, partial_ok = 0, pass_1_found_forms = 0, cof_pass_1 = 1;
   Form *f = &ifp->f2;
@@ -533,6 +533,8 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 	}
       res[dest] = NULL;
       *nfinds = dest;
+      if (res != part)
+	free(part);
       return (struct sig const * const *)res;
     }
   
@@ -542,6 +544,8 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
     {
       if (nfinds)
 	*nfinds = 0;
+      free(res);
+      free(part);
       return NULL;
     }
 
@@ -564,6 +568,8 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 	{
 	  pass_1_found_forms = pass1 = 0;
 	  free(res);
+	  free(part);
+	  res = part = NULL;
 	  candidates = NULL;
 	  goto top;
 	}
@@ -642,6 +648,7 @@ sigs_inst_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
     {
       /* lem_dynalem || (ncand == 0 and pass1 == 1) */
     }
+
   if (part && res != part)
     free(part);
 

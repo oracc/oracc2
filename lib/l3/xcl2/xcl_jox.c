@@ -135,6 +135,12 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 
   Ratts *ratts = ratts_list2ratts(ap);
   joxer_ea(NULL, "xcl:l", ratts); /*ilem_mloc(fp)*/
+  if (ratts)
+    {
+      free(ratts->atts);
+      free(ratts->qatts);
+      free(ratts);
+    }	  
 
   if (lp->f)
     {
@@ -224,7 +230,15 @@ xj_serialize_m(const unsigned char *key,void*val)
   if ('#' != *key)
     {
       const char *r[3] = { "k", (ccp)key, NULL };
-      joxer_et(NULL, "xcl:m", rnvval_aa_ccpp(r), val);
+
+      Ratts *ratts = NULL;
+      joxer_et(NULL, "xcl:m", (ratts = rnvval_aa_ccpp(r)), val);
+      if (ratts)
+	{
+	  free(ratts->atts);
+	  free(ratts->qatts);
+	  free(ratts);
+	}	  
     }
 }
 
@@ -337,12 +351,25 @@ xj_serialize_one_node(void *vp)
 
 	    Ratts *ratts = ratts_list2ratts(ap);
 	    joxer_ea(NULL,"xcl:c", ratts);
+	    if (ratts)
+	      {
+		free(ratts->atts);
+		free(ratts->qatts);
+		free(ratts);
+	      }	  
 	    if (cp->meta && !mds_printed++)
 	      {
 		const char *r[3] = { "xml:id",
 				     (char*)hash_find(cp->meta, (unsigned char *)"#xml:id"),
 				     NULL };
-		joxer_ea(NULL, "xcl:mds", rnvval_aa_ccpp(r));
+		Ratts  *ratts = NULL;
+		joxer_ea(NULL, "xcl:mds", (ratts = rnvval_aa_ccpp(r)));
+		if (ratts)
+		  {
+		    free(ratts->atts);
+		    free(ratts->qatts);
+		    free(ratts);
+		  }	  
 		hash_exec2(cp->meta,xj_serialize_m);
 		joxer_ee(NULL, "xcl:mds");
 	      }
@@ -374,8 +401,14 @@ xj_serialize_one_node(void *vp)
 	  list_pair(ap,"r",  dp->ref);
 	if (dp->subtype)
 	  list_pair(ap,"s",  dp->subtype);
-	Ratts *ratts = ratts_list2ratts(ap);	
+	Ratts *ratts = ratts_list2ratts(ap);
 	joxer_ec(NULL, "xcl:d", ratts);
+	if (ratts)
+	  {
+	    free(ratts->atts);
+	    free(ratts->qatts);
+	    free(ratts);
+	  }	  
       }
       break;
     case xcl_node_l:

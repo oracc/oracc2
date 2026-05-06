@@ -543,15 +543,18 @@ set_block_curr(Block_level b)
 	case B_MILESTONE:
 	case B_LINE:
 	  {
-	    Node *np = ancestor_or_self_level(abt->curr, B_COLUMN);
+	    Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
 	    if (!np)
 	      {
-		Node *sp = ancestor_or_self_level(abt->curr, B_SURFACE);
+		Node *sp = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
 		if (!sp)
 		  {
-		    Node *op = ancestor_or_self_level(abt->curr, B_OBJECT);
+		    Node *op = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
 		    if (!op)
-		      atf_implicit("object");
+		      {
+			tree_curr(abt->root->kids);
+			atf_implicit("object");
+		      }
 		    atf_implicit("surface");
 		  }
 		atf_implicit("column");

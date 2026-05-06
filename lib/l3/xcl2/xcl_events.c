@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <ctype128.h>
 #include <string.h>
+#include <memo.h>
 #include <mesg.h>
 #include <form.h>
 #include <ilem_form.h>
@@ -19,6 +20,9 @@ char *strdup(const char *);
 const char *default_discourse_level = "body";
 
 #define BLOCK_SIZE 2048
+
+/* This should be ported to memo.c ...
+ */
 
 struct mm
 {
@@ -596,3 +600,5 @@ xcl_fix_context(struct xcl_context *xc, const unsigned char *discourse)
 	xcl_chunk(xc, NULL, xcl_c_phrase);
     }
 }
+
+#undef calloc

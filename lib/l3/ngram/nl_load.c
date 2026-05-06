@@ -8,7 +8,7 @@
 #define CF_BLOCK_SIZE    16
 #define PRED_BLOCK_SIZE  16
 
-Memo *nl_context_mem;
+Memo *nl_context_mem = NULL;
 Memo *nl_mem;
 Memo *nle_mem;
 Memo *ngram_lines_mem;

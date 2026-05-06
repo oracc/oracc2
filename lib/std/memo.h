@@ -31,6 +31,7 @@ struct memo_str
 typedef struct memo_str Memo_str;
 
 extern void *memo_auto(size_t siz);
+extern const char *memo_dup(const char *s);
 extern void memo_list(void *vp);
 extern Memo * memo_init (int element_size, int elements_per_alloc);
 extern void memo_term(Memo *any);

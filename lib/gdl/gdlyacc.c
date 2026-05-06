@@ -52,7 +52,7 @@ List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
 static Node *c_last_explicit_group_node = NULL;
 static const char *curr_word_lang = "sux";
-static List *wd_list;
+static List *wd_list = NULL;
 
 /***********************************************************************
  *
@@ -173,11 +173,6 @@ gdlparse_reset(void)
 void
 gdlparse_term(void)
 {
-  if (wd_list)
-    {
-      list_free(wd_list, NULL);
-      wd_list = NULL;
-    }
   gdl_term();
 }
 

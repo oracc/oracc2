@@ -11,6 +11,7 @@
 #include <atf.h>
 #include <gdl.h>
 #include <inl.h>
+#include <l3props.h>
 #include "ax.h"
 
 Mloc xo_loc;
@@ -54,19 +55,21 @@ ax_input(const char *f)
   inl_init();
   Tree *tp = atf_read(f);
   proj_init(rp, (ccp)atfp->project);
+  XCL *xp = NULL;
+  List *ap = NULL;
+  const char **apcc = NULL;
   if (tp)
     {
-      List *ap = NULL;
       if (xcl_output)
 	{
-	  XCL *xp = ax_xcl(rp, tp->root->kids);
+	  xp = ax_xcl(rp, tp->root->kids);
 	  xp->utype = N_U_XCL;
 	  tree_curr(tp->root->kids);
 	  Node *np = tree_add(tp, NS_XCL, "xcl:xcl", tp->root->kids->depth, tp->root->kids->mloc);
 	  np->user = xp;
 	  ax_lem(rp, xp);
 	  ap = xcl_jox_xcl_ratts(xp);
-	  const char **apcc = (const char **)list2array(ap);
+	  apcc = (const char **)list2array(ap);
 	  int i;
 	  for (i = 0; i < list_len(ap); i+=2)
 	    atf_xprop(np, apcc[i], apcc[i+1]);
@@ -77,6 +80,13 @@ ax_input(const char *f)
       else
 	ax_atf(atfmp->atf);
 
+      if (xp)
+	{
+	  xcl_destroy(&xp);
+	  list_free(ap, NULL);
+	  free((char*)apcc);
+	}
+      
       atf_term();
       memo_auto(0);
       rnvval_term();
@@ -97,7 +107,12 @@ ax_full_term(void)
 {
   gvl_wrapup("osl");
   sll_term_t(sll_sl);
+  sig_context_term();
+  ngramify_term();
+  nl_term();
+  props_run_term();
   run_term(rp);
+  xcl_final_term();
 }
 
 int

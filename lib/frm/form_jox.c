@@ -22,7 +22,7 @@ untildify(Form *fp, const unsigned char *tilde)
   else
     strcat(dst, "X");
   strcat(dst, ++m);
-  return strdup(buf);
+  return memo_dup(buf);
 }
 
 static void
@@ -73,6 +73,12 @@ form_serialize_jox(Form *f)
   joxer_attr(ap,"rws",(char*)f->rws);
   Ratts *ratts = ratts_list2ratts(ap);
   joxer_ec(mloc_file_line((ccp)f->file, f->lnum), "xff:f", ratts);
+  if (ratts)
+    {
+      free(ratts->atts);
+      free(ratts->qatts);
+      free(ratts);
+    }	  
 }
 
 #if 0

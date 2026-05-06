@@ -2,6 +2,7 @@
 #include <ctype128.h>
 #include <xsystem.h>
 #include <pool.h>
+#include <memo.h>
 #include <mesg.h>
 #include <gvl.h>
 #include "lng.h"
@@ -13,33 +14,18 @@ struct lang_context *logo_lang = NULL;
 
 extern int verbose;
 
-static List *langmem;
-
-static void
-lang_free(struct lang_context *lp)
-{
-  free(lp);
-}
-
 void
 lang_term(void)
 {
-  list_free(langmem,(list_free_func*)lang_free);
-  langmem = NULL;
 }
 
 /* Could do gvl_setup here */
 struct lang_context *
 lang_load(struct proj_context *p, struct lang_tag *lt)
 {
-  struct lang_context *lp = calloc(1,sizeof(struct lang_context));
+  struct lang_context *lp = memo_auto(sizeof(struct lang_context));
   struct langcore *lcp = NULL;
   struct langmode *lmp = NULL;
-
-  if (!langmem)
-    langmem = list_create(LIST_SINGLE);
-
-  list_add(langmem, lp);
 
   if (!(lcp = lang_core(lt->lang,strlen(lt->lang))))
     return NULL;

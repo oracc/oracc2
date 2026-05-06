@@ -99,8 +99,10 @@ rnvval_free_atts(struct rnvval_atts *ratts)
 Ratts *
 rnvval_aa_list(List *lp)
 {
-  Ratts *r = rnvval_aa_ccpp((const char**)list2array(lp));
+  const char **c;
+  Ratts *r = rnvval_aa_ccpp((c = (const char**)list2array(lp)));
   list_free(lp, NULL);
+  free((char*)c);
   return r;
 }
 

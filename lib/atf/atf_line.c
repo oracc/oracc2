@@ -128,6 +128,11 @@ line_mts(Mloc l, unsigned char *lp)
   lnode->mloc = mloc_mloc(&l);
   
   register_line(l, LINE_MTS, lnode, lp);
+  if (curr_lem_host && curr_lem_host->wl)
+    {
+      list_free(curr_lem_host->wl, NULL);
+      curr_lem_host->wl = NULL;
+    }
   curr_lem_host = curr_line;
 
   const char *label;
@@ -518,6 +523,7 @@ line_lem(Mloc ml, unsigned char *l)
     }
   list_free(curr_lem_host->wl, NULL);
   curr_lem_host->wl = NULL; /* this is OK as long as we don't overload use of line->wl */
+  list_free(llem, NULL);
 }
 
 /*FIXME: test the array bounds and generate strings dynamically if 

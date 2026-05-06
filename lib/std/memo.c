@@ -40,6 +40,13 @@ memo_auto(size_t siz)
     }
 }
 
+const char *
+memo_dup(const char *s)
+{
+  char *m = memo_auto(strlen(s)+1);
+  return strcpy(m,s);
+}
+
 void
 memo_list(void*vp)
 {

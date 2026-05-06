@@ -147,6 +147,12 @@ props_dump_jox(struct l3prop *props)
 #endif
 	  Ratts *ratts = ratts_list2ratts(ap);
 	  joxer_ec(NULL, "xcl:prop", ratts);
+	  if (ratts)
+	    {
+	      free(ratts->atts);
+	      free(ratts->qatts);
+	      free(ratts);
+	    }	  
 	}
       joxer_ee(NULL, "xcl:props");
     }
