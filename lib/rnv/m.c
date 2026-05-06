@@ -38,11 +38,15 @@ void *m_alloc(int length,int size) {
 #else
 
 void m_free(void *p) {
-  free(p);
+  /*free(p);*/
 }
 
 void *m_alloc(int length,int size) {
+#if 1
+  void *p=memo_auto(length*size);
+#else
   void *p=calloc(length,size);
+#endif
   if(p==NULL) {
     (*er_printf)("failed to allocate %i bytes of memory\n",length*size);
     exit(1);

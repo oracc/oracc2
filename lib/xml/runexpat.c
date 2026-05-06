@@ -298,6 +298,7 @@ runexpat_term(struct runinfo *rip)
   free(rip->charData_buf);
   rip->charData_buf = NULL;
   rip->charData_buflen = 0;
+  pool_term(rip->pool);
   if (rip->filenames_list)
     {
       list_free(rip->filenames_list,NULL);

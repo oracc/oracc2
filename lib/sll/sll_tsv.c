@@ -14,6 +14,8 @@ extern const char *oraccd;
 extern Pool *sllpool;
 static Hash *h = NULL;
 
+static List *ltsv;
+
 Hash *
 sll_init_t(const char *project, const char *name)
 {
@@ -37,9 +39,13 @@ sll_init_t(const char *project, const char *name)
   sprintf(tsv_file, "%s/pub/%s/sl/sl.tsv", oraccd, project);
 
   tsv_data = slurp("sll", tsv_file, &fsiz);
+  if (!ltsv)
+    ltsv = list_create(LIST_SINGLE);
+  list_add(ltsv, tsv_data);
   if (tsv_data)
     {
-      sllpool = pool_init();
+      if (!sllpool)
+	sllpool = pool_init();
   
       if (sll_trace)
 	fprintf(stderr, "sll: slurped %s\n", tsv_file);
@@ -84,6 +90,7 @@ void
 sll_term_t(Hash *h)
 {
   hash_free(h, NULL);
+  list_free(ltsv, free);
   sll_term();
 }
 

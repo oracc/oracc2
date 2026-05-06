@@ -877,6 +877,12 @@ joxer_term(FILE *xfp, FILE *jfp)
       /*jw_object_c();*/
       jw_term();
     }
+  if (xgi_pool)
+    {
+      pool_term(xgi_pool);
+      xgi_pool = NULL;
+    }
+  rnvif_term();
   jox_xml_output(NULL);
   jox_jsn_output(NULL);
 }

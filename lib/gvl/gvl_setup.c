@@ -215,6 +215,7 @@ gvl_i_term(const char *name)
 	  hash_free(tmp->sl, NULL);
 	  hash_free(tmp->h, NULL);
 	  pool_term(tmp->p);
+	  memo_term(tmp->m);
 	  free(tmp);
 	  sl = next;
 	  ++found;

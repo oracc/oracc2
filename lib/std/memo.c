@@ -22,9 +22,21 @@ memo_init (int element_size, int elements_per_alloc)
 void *
 memo_auto(size_t siz)
 {
-  void *r = calloc(1, siz);
-  list_add(lmemo, r);
-  return r;
+  if (!siz)
+    {
+      if (lmemo)
+	{
+	  list_free(lmemo, free);
+	  lmemo = NULL;
+	}
+      return NULL;
+    }
+  else
+    {
+      void *r = calloc(1, siz);
+      list_add(lmemo, r);
+      return r;
+    }
 }
 
 void *
@@ -137,12 +149,6 @@ memo_term (Memo *any)
 	  free(mp);
 	}
       free(any);
-    }
-
-  if (lmemo)
-    {
-      list_free(lmemo, free);
-      lmemo = NULL;
     }
 }
 

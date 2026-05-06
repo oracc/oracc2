@@ -7,6 +7,8 @@
 Atfm *atfmp;
 ATF *atfp;
 
+extern void atflex_destroy(void);
+
 Tree *
 atfyacc(void)
 {
@@ -29,7 +31,7 @@ atfyacc(void)
 
   atfparse();
 
-  atf_wrapup_buffer();
+  atflex_destroy();
 
   return tp;
 }
@@ -77,6 +79,28 @@ atf_term(void)
       etcsl_labels = NULL;
       etcsl_pool = NULL;
     }
+  list_free(atfmp->lprotocols, NULL);
+  list_free(atfmp->llinks, NULL);
+  list_free(atfmp->lkeys, NULL);
+  memo_term(atfmp->matfls);
+  memo_term(atfmp->mbibs);
+  memo_term(atfmp->mblocks);
+  memo_term(atfmp->mgroups);
+  memo_term(atfmp->mkeys);
+  memo_term(atfmp->milem_forms);
+  memo_term(atfmp->mlines);
+  memo_term(atfmp->mprotocols);
+  memo_term(atfmp->mxis);
+  memo_term(atfmp->mxlinks);
+  pool_term(atfmp->pool);
+  list_free(atfp->input, NULL);
+  free(atfp);
+  atfp = NULL;
+  free(atfmp);
+  atfmp = NULL;
+
+  /* Clear all the tree data after every ATF read */
+  tree_term();
 }
 
 void

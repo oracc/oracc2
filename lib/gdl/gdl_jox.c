@@ -19,6 +19,8 @@ grx_jox_node(Node *np, int oflag, int nflag)
   Node *npp;
   int need_closer = 1;
   const char *nodename = np->name;
+  Ratts *r = NULL;
+  const char **p = NULL;
 
   if (trace_mode)
     fprintf(stderr, "grx_jox_node: nodename=%s; text=%s; oflag=%d; nflag=%d\n", nodename, np->text, oflag, nflag);
@@ -36,8 +38,20 @@ grx_jox_node(Node *np, int oflag, int nflag)
       if (joxer_mode != JOXER_XML)
 	joxer_ao("j:w");
       joxer_ea(np->mloc, nodename,
-	       rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
+	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))));
       need_closer = 3;
+      if (p)
+	{
+	  free(p);
+	  p = NULL;
+	}
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	  r = NULL;
+	}
     }
   else if (!strcmp(np->name, "g:d"))
     {
@@ -102,12 +116,24 @@ grx_jox_node(Node *np, int oflag, int nflag)
       gdlstate_t s = prop_get_state(np);
       if (s)
 	gdlstate_props(np, s);
-      Rats *r = rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO));
+      Rats *r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
       if (1/*oflag*/)
 	joxer_eto(np->mloc, nodename, r, np->user ? (ccp)((gvl_g*)np->user)->orig : np->text);
       else
 	joxer_et(np->mloc, nodename, r, np->user ? (ccp)((gvl_g*)np->user)->orig : np->text);
       need_closer = 0;
+      if (p)
+	{
+	  free(p);
+	  p = NULL;
+	}
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	  r = NULL;
+	}
     }
   else if (!strcmp(nodename, "g:s") || !strcmp(nodename, "g:v")
 	   || !strcmp(nodename, "g:c") || !strcmp(nodename, "g:g")
@@ -116,9 +142,21 @@ grx_jox_node(Node *np, int oflag, int nflag)
     {
       char jname[4]; strcpy(jname,nodename); *jname = 'j';
       joxer_ea(np->mloc, nodename,
-	       rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
+	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))));
       joxer_ao(jname);
       need_closer = 4;
+      if (p)
+	{
+	  free(p);
+	  p = NULL;
+	}
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	  r = NULL;
+	}
     }
   else if (!strcmp(np->name, "g:b"))
     {
@@ -127,15 +165,39 @@ grx_jox_node(Node *np, int oflag, int nflag)
   else if (!strcmp(np->name, "g:x") || !strcmp(np->name, "g:nonw"))
     {
       joxer_et(np->mloc, nodename,
-	       rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)),
+	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))),
 	       np->text);
       need_closer = 0;
+      if (p)
+	{
+	  free(p);
+	  p = NULL;
+	}
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	  r = NULL;
+	}
       /*return;*/
     }
   else
     {
       joxer_ea(np->mloc, nodename,
-	       rnvval_aa_ccpp(prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)));
+	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))));
+      if (p)
+	{
+	  free(p);
+	  p = NULL;
+	}
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	  r = NULL;
+	}
     }
 
   for (npp = np->kids; npp; npp = npp->next)

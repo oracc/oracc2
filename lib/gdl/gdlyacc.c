@@ -13,7 +13,7 @@
 
 extern const char *currgdlfile;
 extern int gdltrace, gdllineno, gdl_legacy;
-extern void gdl_wrapup_buffer(void);
+extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
 int curr_lang = 's';
 int deep_parse = 1;
@@ -84,7 +84,7 @@ gdlparse_deep(Node *np, void *mptr)
 	  else
 	    gdl_lex_init("<string>", 1);
 	  gdlparse();
-	  gdl_wrapup_buffer();
+	  gdllex_destroy();
 	  gp->deep = tp->root->kids;
 	}
     }
@@ -146,7 +146,7 @@ gdlparse_string(Mloc *m, char *s)
   else
     gdl_lex_init("<string>", 1);    
   gdlparse();
-  gdl_wrapup_buffer();
+  gdllex_destroy();
   free(s2);
 
   Node *w;

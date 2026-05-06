@@ -5,7 +5,9 @@
 #include <rnvif.h>
 #include <rnvxml.h>
 #include <xml.h>
+#include <gvl.h>
 #include <lng.h>
+#include <xmd.h>
 #include <atf.h>
 #include <gdl.h>
 #include <inl.h>
@@ -20,6 +22,8 @@ int rnvtrace;
 int verbose;
 
 int odt_serial = 0;
+
+static Run *rp;
 
 extern int atfflextrace , atftrace, gdlflextrace, gdltrace;
 
@@ -48,7 +52,6 @@ ax_input(const char *f)
   ngramify_init();
   gdlparse_init();
   inl_init();
-  Run *rp = run_init();
   Tree *tp = atf_read(f);
   proj_init(rp, (ccp)atfp->project);
   if (tp)
@@ -75,11 +78,26 @@ ax_input(const char *f)
 	ax_atf(atfmp->atf);
 
       atf_term();
+      memo_auto(0);
+      rnvval_term();
+      xmd_term();
+      inl_term();
       gdlparse_term();
       mesg_print(stderr);
       mesg_term();
       inl_term();
+      langtag_term();
     }
+}
+
+/* This is where major components like GVL/SLL and lemmatizer sig sets
+   get unloaded after all files have been processed. */
+static void
+ax_full_term(void)
+{
+  gvl_wrapup("osl");
+  sll_term_t(sll_sl);
+  run_term(rp);
 }
 
 int
@@ -101,6 +119,7 @@ main(int argc, char **argv)
   if (trace_mode > 1)
     gdlflextrace = gdltrace = gdldebug = 1;
 
+  rp = run_init();
   gdlxml_setup();
   gvl_setup("osl", "osl","020");
   nodeh_register(treexml_o_handlers, NS_XTF, treexml_o_generic);
@@ -119,6 +138,8 @@ main(int argc, char **argv)
     }
   else
     ax_input(NULL);
+
+  ax_full_term();
 }
 
 int

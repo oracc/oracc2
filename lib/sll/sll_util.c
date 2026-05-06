@@ -30,6 +30,7 @@ void
 sll_term(void)
 {
   pool_term(sllpool);
+  sllpool = NULL;
   sll_set_sl(NULL);
 }
 

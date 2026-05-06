@@ -201,7 +201,7 @@ inl_term(void)
       inl_scan_m = NULL;
       inl_scanseg_m = NULL;
     }
-  if (!inl_scan_p)
+  if (inl_scan_p)
     {
       pool_term(inl_scan_p);
       inl_scan_p = NULL;

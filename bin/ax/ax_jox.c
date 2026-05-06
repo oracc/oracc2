@@ -56,8 +56,18 @@ ax_jox_node(Node *np)
   if (np->user)
     ap = axjoxfnc(nodename,strlen(nodename));
 
+  Ratts *r = NULL;
+  const char **p = NULL;
   if ((!ap || ap->wrapper) && '-' != *nodename)
-    joxer_ea(np->mloc, nodename, rnvval_aa_ccpp(ax_jox_props(np->props)));
+    joxer_ea(np->mloc, nodename, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
+  if (p)
+    free(p);
+  if (r)
+    {
+      free(r->atts);
+      free(r->qatts);
+      free(r);
+    }
 
   if (np->text)
     {
@@ -165,7 +175,17 @@ ax_jox_lines(Group *gp)
   for (n = 0; n < gp->nlines; ++n)
     {
       Node *np = gp->lines[n]->np;
-      joxer_ea(np->mloc, np->name, rnvval_aa_ccpp(ax_jox_props(np->props)));
+      const char **p = NULL;
+      Ratts *r = NULL;
+      joxer_ea(np->mloc, np->name, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
+      if (p)
+	free(p);
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	}
       grx_jox_gdl(np, np->user);
       joxer_ee(np->mloc, np->name);
     }

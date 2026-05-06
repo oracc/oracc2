@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <memo.h>
 
 unsigned char *
 slurp(const char *caller, const char *fname, ssize_t *fsizep)

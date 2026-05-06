@@ -70,7 +70,8 @@ rnvval_init(struct xnn_data *xdp, const char *rncfile)
   for (i = 0; xdp->anames[i].pname; ++i)
     hash_add(rnv_qanames, (ucp)xdp->anames[i].pname, xdp->anames[i].qname);
 
-  rnv_pool = pool_init();
+  if (!rnv_pool)
+    rnv_pool = pool_init();
 }
 
 void
@@ -80,7 +81,11 @@ rnvval_term(void)
   rnv_qnames = NULL;
   hash_free(rnv_qnames, NULL);
   rnv_qanames = NULL;
-  pool_term(rnv_pool);
+  if (rnv_pool)
+    {
+      pool_term(rnv_pool);
+      rnv_pool = NULL;
+    }
 }
 
 void
