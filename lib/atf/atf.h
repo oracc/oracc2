@@ -280,6 +280,7 @@ extern void atf_init(void);
 extern void atf_input(Mloc l, Atflt t, void *p);
 extern void atf_lang(Mloc l, ATF *a, const char *atf_lang);
 extern void atf_lex_init(FILE *fp, const char *file);
+extern void atf_lex_term(void);
 extern void atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v);
 extern void atf_protocol(const char *p);
 extern Tree *atf_read(const char *);

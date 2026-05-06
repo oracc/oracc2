@@ -173,6 +173,11 @@ gdlparse_reset(void)
 void
 gdlparse_term(void)
 {
+  if (wd_list)
+    {
+      list_free(wd_list, NULL);
+      wd_list = NULL;
+    }
   gdl_term();
 }
 

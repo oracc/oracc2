@@ -17,7 +17,7 @@ const char *curratffile = NULL;
 int atfflextrace = 0;
 static int s_next;
 static int linktext;
-static char *xs;
+static char *xs, *atfbuf;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 #define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
@@ -218,13 +218,13 @@ void
 atf_lex_init(FILE *fp, const char *file)
 {
   static ssize_t fsize;
-  char *buf = (char*)slurp("atf", file, &fsize);
-  if (buf)
+  atfbuf = (char*)slurp("atf", file, &fsize);
+  if (atfbuf)
     {
       atffile = curratffile = file;
       atflineno = 1;
       /* slurp adds \n\0\0 but only counts \n in the returned fsize */
-      atf_scan_buffer(buf,fsize+2);
+      atf_scan_buffer(atfbuf,fsize+2);
     }
   else
     {
@@ -232,6 +232,14 @@ atf_lex_init(FILE *fp, const char *file)
       exit(1);
     }
 }
+
+void
+atf_lex_term(void)
+{
+    if (atfbuf)
+      free(atfbuf);
+}
+	
 
 static void
 atf_user_action(void)

@@ -56,8 +56,10 @@ gvl_setup(const char *project, const char *name, const char *script)
   if (!agvl_checkers)
     {
       agvl_checkers = 3;
-      gvl_checkers = calloc(agvl_checkers, sizeof(gvl_i*));
-      hgvl_checkers = hash_create(3);
+      if (!gvl_checkers)
+	gvl_checkers = calloc(agvl_checkers, sizeof(gvl_i*));
+      if (!hgvl_checkers)
+	hgvl_checkers = hash_create(3);
     }
   else if (script && (ret = hash_find(hgvl_checkers, (uccp)script)))
     {
@@ -128,6 +130,16 @@ gvl_wrapup(const char *name)
     gvl_i_term(name);
   if (!sl)
     sll_set_sl(NULL);
+  if (gvl_checkers)
+    {
+      free(gvl_checkers);
+      gvl_checkers = NULL;
+    }
+  if (hgvl_checkers)
+    {
+      hash_free(hgvl_checkers, NULL);
+      hgvl_checkers = NULL;
+    }
 }
 
 /* Don't error here; caller must decide if not finding the gvl is an error or not */

@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <o2.h>
 #include "atf.h"
 #include "note.h"
 

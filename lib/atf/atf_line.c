@@ -56,6 +56,7 @@ atf_group_wrapup(void)
       Group *gp = memo_new(atfmp->mgroups);
       gp->utype = N_U_GROUP;
       gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
+      memo_list(gp->lines);
       gp->parent = abt->curr->user;
 #if 0
       /* this is just the lines that contribute to an <lg>, excludes $-lines */

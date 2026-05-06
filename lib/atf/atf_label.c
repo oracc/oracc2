@@ -211,7 +211,7 @@ line_label(const unsigned char *tok,
     }
   else
     {
-      char *buf = malloc(xxstrlen(tok)+1);
+      char *buf = memo_auto(xxstrlen(tok)+1);
       strcpy(buf,(char*)tok);
       label = (unsigned char *)buf;
     }

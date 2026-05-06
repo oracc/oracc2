@@ -118,7 +118,7 @@ ax_jox(Tree *tp)
 
   jox_xml_output(xfp);
   joxer_init(&xtf_data, "xtf", 1, xfp, NULL);
-  xo_loc = malloc(sizeof(Mloc));
+  xo_loc = memo_auto(sizeof(Mloc));
   xo_loc->file = file = tp->root->mloc->file;
   xo_loc->line = 1;
 
@@ -127,6 +127,8 @@ ax_jox(Tree *tp)
  
   ax_jox_node(tp->root);
   joxer_term(xfp,NULL);
+
+  fclose(xfp);
 }
 
 /* handler functions for np->user and GDL */

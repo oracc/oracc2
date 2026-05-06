@@ -88,17 +88,16 @@ xmd_load(const char *project, const char *pq)
 {
   const char *fn = NULL;
   const char *fns[2];
-  char *tmp = NULL, *nproj, *npq;
+  char *nproj, *npq;
   
   if (!project && (strchr(pq,':')))
     {
-      tmp = malloc(strlen(pq)+1);
+      char tmp[strlen(pq)+1];
       strcpy(tmp,pq);
       nproj = npq = tmp;
       npq = strchr(npq, ':');
       *npq++ = '\0';
       fn = expand(nproj,npq,"xmd");
-      free(tmp);
     }
   else
     fn = expand(project,pq,"xmd");

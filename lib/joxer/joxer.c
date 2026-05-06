@@ -881,6 +881,8 @@ joxer_term(FILE *xfp, FILE *jfp)
     {
       pool_term(xgi_pool);
       xgi_pool = NULL;
+      list_free(xgi_stack, NULL);
+      xgi_stack = NULL;
     }
   rnvif_term();
   jox_xml_output(NULL);

@@ -30,7 +30,7 @@ static Pool *rnv_pool;
 static char *
 rncfile_path(const char *r)
 {
-  char *p = malloc(strlen(oracc_builds())+strlen("/lib/rnc/")+strlen(r)+5);
+  char *p = memo_auto(strlen(oracc_builds())+strlen("/lib/rnc/")+strlen(r)+5);
   sprintf(p, "%s/lib/rnc/%s.rnc", oracc_builds(), r);
   if (rnvtrace)
     fprintf(stderr, "rnvval: using %s\n", p);
@@ -79,7 +79,7 @@ rnvval_term(void)
 {
   hash_free(rnv_qnames, NULL);
   rnv_qnames = NULL;
-  hash_free(rnv_qnames, NULL);
+  hash_free(rnv_qanames, NULL);
   rnv_qanames = NULL;
   if (rnv_pool)
     {

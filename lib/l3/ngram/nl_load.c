@@ -423,6 +423,7 @@ nl_term(void)
       memo_term(ngram_lines_mem);
       memo_term(cf_mem);
       memo_term(pred_mem);
+      nl_context_mem = nl_mem = nle_mem = ngram_lines_mem = cf_mem = pred_mem = NULL;
     }
 }
 

@@ -172,7 +172,9 @@ atr_label(Mloc l, unsigned char *s)
 	  if (s - t)
 	    {
 	      *s = '\0';
-	      xstrcpy(label_buf,normalize_ws(t));
+	      char *n = normalize_ws(t);
+	      xstrcpy(label_buf, n);
+	      free(n);
 	    }
 	  else
 	    innerp = 1; /* @() */
@@ -364,17 +366,17 @@ atr_para(void)
       ++nchars;
     }
 
-  text = malloc(nchars+1);
+  text = memo_auto(nchars+1);
   *text = '\0';
 
   for (i = 0; lines[i]; ++i)
-    {
-      xstrcat(text,lines[i]);
-      /*xstrcat(text,"\n");*/
-    }
+    xstrcat(text,lines[i]);
+
   if (xxstrlen(text) > 0)
     text[xxstrlen(text)-1] = '\0';
 
+  free(lines);
+  
   int p_elem;
   if (!strcmp(curr_trans->tree->curr->name, "xh:p"))
     p_elem = 2;
@@ -427,111 +429,113 @@ atr_para(void)
 	    }
 	}
   
-  if (is_comment)
-    atf_xprop(p,"class","tr-comment");
-  else if (p_elem != 2)
-    ctr(p);
+      if (is_comment)
+	atf_xprop(p,"class","tr-comment");
+      else if (p_elem != 2)
+	ctr(p);
   
-  if (is_comment)
-    {
-      Node *np = atf_add("xh:comment", mpp[0]);
-      np->text = (ccp)text;
-    }
-
-  else if (strstr((const char *)text,"@&"))
-    {
-      int cols_this_para = 0;
-      int init_cell = 0;
-
-      while (isspace(*text))
-	++text;
-
-      if (text[0] == '@' && text[1] == '&')
-	text += 2;
-
-      init_cell = 1;
-
-      /* at the start of this loop, text points at either the span 
-	 digits following @& or at the text to process after @& */
-      while (*text)
+      if (is_comment)
 	{
-	  unsigned char *c = text, *resume;
-	  struct node *cc = atf_add("xh:span", mpp[0]);
-	  if (!in_note)
-	    {
-	      setClass(cc,"cell");
-	      if (need_dir_rtl)
-		atf_xprop(cc,"dir","rtl");
-	      atf_xprop(cc,"xtr:span","1");
-	    }
-	  if (init_cell)
-	    {
-	      char spanbuf[10];
-	      int i = 0;
-	      while (isdigit(*c))
-		{
-		  if (i < 9)
-		    spanbuf[i++] = *c++;
-		  else
-		    {
-		      warning("translation cell span too long (max 999999999");
-		      break;
-		    }
-		}
-	      spanbuf[i] = '\0';
-	      if (!*spanbuf) /* FIXME: @column in parallel trans */
-		strcpy(spanbuf,"1");
-	      atf_xprop(cc,"xtr:span",spanbuf);
-	      cols_this_para += atoi(spanbuf);
-	    }
-	  
-	  while (*text && ('@' != *text || '&' != text[1]))
-	    ++text;
-	  resume = text;
-	  if (*resume)
-	    init_cell = 1;
-
-	  else
-	    init_cell = 0;
-	  while (isspace(text[-1]))
-	    --text;
-	  *text = '\0';
-	  
-	  (void)atr_inline(mpp[0],cc,text);
-	  text = resume;
-	  if (init_cell)
-	    text += 2;
+	  Node *np = atf_add("xh:comment", mpp[0]);
+	  np->text = (ccp)text;
 	}
-      if (cols_this_para > max_trans_cols)
-	max_trans_cols = cols_this_para;
-    }
-  else
-    {
-      struct node *cc = p;
-      while (isspace(*text))
-	++text;
-      if (*text)
+
+      else if (strstr((const char *)text,"@&"))
 	{
-	  if (!nocellspan)
+	  int cols_this_para = 0;
+	  int init_cell = 0;
+
+	  while (isspace(*text))
+	    ++text;
+
+	  if (text[0] == '@' && text[1] == '&')
+	    text += 2;
+
+	  init_cell = 1;
+
+	  /* at the start of this loop, text points at either the span 
+	     digits following @& or at the text to process after @& */
+	  while (*text)
 	    {
-	      cc = atr_push("xh:span", mpp[0]);
-	      setClass(cc,"cell");
-	      if (need_dir_rtl)
-		atf_xprop(cc, "dir", "rtl");
-	      atf_xprop(cc,"xtr:span","1");
+	      unsigned char *c = text, *resume;
+	      struct node *cc = atf_add("xh:span", mpp[0]);
+	      if (!in_note)
+		{
+		  setClass(cc,"cell");
+		  if (need_dir_rtl)
+		    atf_xprop(cc,"dir","rtl");
+		  atf_xprop(cc,"xtr:span","1");
+		}
+	      if (init_cell)
+		{
+		  char spanbuf[10];
+		  int i = 0;
+		  while (isdigit(*c))
+		    {
+		      if (i < 9)
+			spanbuf[i++] = *c++;
+		      else
+			{
+			  warning("translation cell span too long (max 999999999");
+			  break;
+			}
+		    }
+		  spanbuf[i] = '\0';
+		  if (!*spanbuf) /* FIXME: @column in parallel trans */
+		    strcpy(spanbuf,"1");
+		  atf_xprop(cc,"xtr:span",spanbuf);
+		  cols_this_para += atoi(spanbuf);
+		}
+	  
+	      while (*text && ('@' != *text || '&' != text[1]))
+		++text;
+	      resume = text;
+	      if (*resume)
+		init_cell = 1;
+
+	      else
+		init_cell = 0;
+	      while (isspace(text[-1]))
+		--text;
+	      *text = '\0';
+	  
+	      (void)atr_inline(mpp[0],cc,text);
+	      text = resume;
+	      if (init_cell)
+		text += 2;
 	    }
-	  (void)atr_inline(mpp[0],cc,text);
+	  if (cols_this_para > max_trans_cols)
+	    max_trans_cols = cols_this_para;
 	}
       else
 	{
+	  struct node *cc = p;
+	  while (isspace(*text))
+	    ++text;
+	  if (*text)
+	    {
+	      if (!nocellspan)
+		{
+		  cc = atr_push("xh:span", mpp[0]);
+		  setClass(cc,"cell");
+		  if (need_dir_rtl)
+		    atf_xprop(cc, "dir", "rtl");
+		  atf_xprop(cc,"xtr:span","1");
+		}
+	      (void)atr_inline(mpp[0],cc,text);
+	    }
+	  else
+	    {
 #if 0
-	  /* unwind the spurious innerp node */
-	  p = p->rent;
-	  kids_rem_last(p->tree);
+	      /* unwind the spurious innerp node */
+	      p = p->rent;
+	      kids_rem_last(p->tree);
 #endif
+	    }
 	}
     }
-    }
+  free(mpp); /* WATCHME: I think these should be OK ... */
+  free(mloc_index);
 }
 
 static void
@@ -843,7 +847,10 @@ labeled_labels(struct node *np, unsigned char *lab)
       last_p = NULL;
     }
 
-  if (trans_abbrevved_labels && *last_label_buf && xstrcmp(getClass(np),"dollar"))
+  const char *c;
+  if (trans_abbrevved_labels && *last_label_buf
+      && (c=getClass(np))
+      && xstrcmp(c,"dollar"))
     {
       unsigned char *prefix = label_prefix(lab);
       if (prefix && !strncmp(cc(last_label_buf),cc(prefix),strlen(cc(prefix))))

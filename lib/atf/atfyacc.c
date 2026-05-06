@@ -1,7 +1,9 @@
 #include <oraccsys.h>
 #include <memo.h>
 #include <pool.h>
+#include <lang.h>
 #include "etcsl.h"
+#include "note.h"
 #include "atf.h"
 
 Atfm *atfmp;
@@ -93,14 +95,22 @@ atf_term(void)
   memo_term(atfmp->mxis);
   memo_term(atfmp->mxlinks);
   pool_term(atfmp->pool);
-  list_free(atfp->input, NULL);
-  free(atfp);
-  atfp = NULL;
   free(atfmp);
   atfmp = NULL;
 
-  /* Clear all the tree data after every ATF read */
-  tree_term();
+  list_free(atfp->input, NULL);
+  hash_free(atfp->hlabmap, NULL);
+  list_free(atfp->protocols, NULL);
+  free(atfp);
+  atfp = NULL;
+
+  atf_lex_term();
+  label_term();
+  ngramify_term();
+  nl_term();
+  note_term();
+  texttag_term();
+  tree_term();  
 }
 
 void

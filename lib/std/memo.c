@@ -15,7 +15,8 @@ memo_init (int element_size, int elements_per_alloc)
   any->mem_rover = any->mem_base = malloc(sizeof (struct memo_block));
   any->mem_rover->mem = calloc(any->elements_per_alloc, any->element_size);
   any->mem_rover->next = NULL;
-  lmemo = list_create(LIST_SINGLE);
+  if (!lmemo)
+    lmemo = list_create(LIST_SINGLE);
   return any;
 }
 
@@ -38,6 +39,12 @@ memo_auto(size_t siz)
       return r;
     }
 }
+
+void
+memo_list(void*vp)
+{
+  list_add(lmemo, vp);
+} 
 
 void *
 memo_new (Memo *any)
