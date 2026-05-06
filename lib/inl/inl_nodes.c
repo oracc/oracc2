@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <scan.h>
+#include <prop.h>
 #include "inl.h"
 
 static int double_at_flag = 0;
@@ -9,11 +10,22 @@ static void inl_text_node(Scan *sp, Tree *tp, const char *text, int len);
 
 #define INL_CMD_MAX 1023
 
+void
+inl_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
+{
+  if (ynp && v)
+    prop_node_add(ynp, ptype, gtype, k, v);
+  else if (!v)
+    mesg_vwarning(NULL, -1, "inl_prop passed NULL value for key %s", v);    
+  else
+    mesg_warning(NULL, -1, "inl_prop passed NULL ynp");
+}
+
 struct inltok *
 inl_command(Scan *sp, char *s)
 {
   int bmax = INL_CMD_MAX;
-  char buf[bmax+1];
+  char buf[INL_CMD_MAX+1];
   if (isalpha(s[1]))
     {
       char *t = s+1, *b = buf;
@@ -89,6 +101,9 @@ inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext)
   ssp->np->text = stext;
   if (!stext)
     ssp->np->name = "#";
+
+  if (ssp->attr)
+    inl_xprop(ssp->np, "class", ssp->attr);
   
   ssp->np->user = ssp;
   
@@ -120,7 +135,11 @@ inl_span(Scan *sp, struct inltok *itp, Tree *tp, char *s)
   if (itp->txt)
     {
       if (itp->term)
-	stext = scan_str_term(sp, itp->term, s, &s);
+	{
+	  stext = scan_str_term(sp, s, itp->term, &s);
+	  if (itp->attr)
+	    ssp->attr = itp->attr;
+	}
       else if ('{' == *s)
 	stext = scan_curly(sp, s, &s);
       else

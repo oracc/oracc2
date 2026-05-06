@@ -369,7 +369,7 @@ atr_para(void)
   for (i = 0; lines[i]; ++i)
     {
       xstrcat(text,lines[i]);
-      xstrcat(text,"\n");
+      /*xstrcat(text,"\n");*/
     }
   if (xxstrlen(text) > 0)
     text[xxstrlen(text)-1] = '\0';
@@ -537,10 +537,13 @@ static void
 atr_inline(Mloc *mp, struct node*parent,unsigned char *text)
 {
   /*fprintf(stderr, "atr_inline received===\n%s\n", text);*/
+  extern int inl_wild_mode;
+  inl_wild_mode = 1;
   char *ws = normalize_ws(text);
   Tree *itp = inl(mp, ws);
   tree_graft(parent, itp);
   free(ws);
+  inl_wild_mode = 0;
 }
 
 static void

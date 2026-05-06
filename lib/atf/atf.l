@@ -181,7 +181,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_PAR}			{ atflval.text=""; return TR_PAR; }
-<s_TRA>{TRA_WHT}			{ atflval.text=""; return TR_TEXT; }
+<s_TRA>{TRA_WHT}			{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_WRD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
 <s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
