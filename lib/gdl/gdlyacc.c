@@ -18,6 +18,8 @@ extern void gdl_validate(Tree *tp);
 int curr_lang = 's';
 int deep_parse = 1;
 
+int gdl_xmlids = 1;
+
 static int grapheme_id, wid_base;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
@@ -224,8 +226,9 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   lgp = np;
   lst = prop_state(np, pst|rst);
   sprintf(gid_insertp, ".%d", grapheme_id++);
-  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-	      (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+  if (gdl_xmlids)
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
   if (gdl_break_pending)
