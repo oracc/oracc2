@@ -120,9 +120,11 @@ re_block(struct pool *p)
     }
   else
     {
-      p->base->top += POOL_BLOCK_SIZE;
-      size_t nsiz = p->base->top - p->base->mem;
+      size_t nsiz = (p->base->top - p->base->mem) + POOL_BLOCK_SIZE;
+      size_t nuse = p->base->used - p->base->mem;
       p->base->mem = realloc(p->base->mem, nsiz);
+      p->base->top = p->base->mem + nsiz;
+      p->base->used = p->base->mem+nuse;
     }
   return p->base;
 }
