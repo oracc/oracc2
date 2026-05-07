@@ -5,6 +5,7 @@
 #include <oraccsys.h>
 #include <mesg.h>
 #include <pool.h>
+#include <hash.h>
 
 extern const char *catproj;
 extern const char *project;
@@ -18,7 +19,10 @@ const char *curratffile = "<file>";
 
 const char *curr_pqx;
 int curr_lem = 0;
+int dups = 0;
 int x_mode = 0;
+Hash *hseen = NULL;
+Pool *pseen = NULL;
 Hash *hdata = NULL;
 Pool *p = NULL;
 
@@ -84,17 +88,30 @@ pqx_init(const char *pqx)
   hdata = hash_create(5);
   p = pool_init();
   curr_pqx = (ccp)pool_copy((uccp)pqx, p);
+#if 0
+  if (!x_mode)
+    fprintf(stderr, "pqx_init: %s\n", curr_pqx);
+#endif
   curr_lem = 0;
 }
 
 static void
 pqx_term(void)
 {
-  const char *trs;
-  printf("%s:%s@%s\t%s\t%s\n", project, curr_pqx, catproj, curr_lem ? "#lem" : "", (trs = pqx_trs()));
+    /*fprintf(stderr, "pqx_term: %s\n", curr_pqx);*/
+  const char *trs = NULL;
+  if (hash_find(hseen, (uccp)curr_pqx))
+    fprintf(stderr, "atfdata: skipping duplicate PQX %s\n", curr_pqx);
+  else
+    {
+      if (!dups)
+        printf("%s:%s@%s\t%s\t%s\n",
+	       project, curr_pqx, catproj, curr_lem ? "#lem" : "", (trs = pqx_trs()));
+      hash_add(hseen, pool_copy((uccp)curr_pqx,pseen), (void*)(uintptr_t)1);
+    }
   hash_free(hdata, NULL);
   pool_term(p);
-  if (*trs)
+  if (trs && *trs)
     free((void*)trs);
 }
 
@@ -131,5 +148,11 @@ x_term(void)
       ++p; while (isspace(*p)) ++p;
       *e = '\0';
     }
-  printf("%s\t%s\tunknown\tunknown\n", curr_pqx, p);
+  if (hash_find(hseen, (uccp)curr_pqx))
+    fprintf(stderr, "atfdata: xcat: skipping duplicate %s\n", curr_pqx);
+  else
+    {
+      printf("%s\t%s\tunknown\tunknown\n", curr_pqx, p);
+      hash_add(hseen, (uccp)curr_pqx, "");
+    }
 }

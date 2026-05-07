@@ -1,16 +1,19 @@
 #include <oraccsys.h>
-
+#include <hash.h>
 const char *cat_mode;
 const char *catproj;
 const char *project;
+extern int dups; /* just check for duplicates, no other output */
 extern int x_mode; /* extract ID and NAME for X-IDs */
 extern int atfd_flex_debug, atfl_flex_debug;
+extern Hash *hseen;
+extern Pool *pseen;
 extern void atfdlex(void);
 
 int
 main(int argc, char **argv)
 {
-  options(argc, argv, "c:j:lp:xX");
+  options(argc, argv, "c:dj:lp:xX");
   if (!project)
     {
       fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
@@ -20,7 +23,17 @@ main(int argc, char **argv)
     catproj = project;
   else
     catproj = "cdli";
-      
+
+  if (argv[optind])
+    {
+      if (!freopen(argv[optind], "r", stdin))
+	{
+	  fprintf(stderr, "atfdata: unable to freopen %s. Stop.\n", argv[optind]);
+	  exit(1);
+	}
+    }
+  hseen = hash_create(128);
+  pseen = pool_init();
   atfd_flex_debug = 0;
   mesg_init();
   atfdlex();
@@ -35,6 +48,9 @@ opts(int c, const char *arg)
     {
     case 'c':
       cat_mode = arg;
+      break;
+    case 'd':
+      dups = 1;
       break;
     case 'j':
     case 'p':

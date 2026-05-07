@@ -18,5 +18,19 @@ if [ "${project}" = "" ]; then
     echo $0: must run in a project directory. Stop.
     exit 1
 else
-    cat 01tmp/00cat/l/*.tsv | cut -f1 | cut -d: -f2 | grep '^[PQX]' >01bld/lists/00cat.lst
+    c=01tmp/00cat/l/*.tsv
+    set $c
+    if [ "$1" != "$c" ]; then
+	cat $* | cut -f1 | cut -d: -f2 | grep '^[PQX]' | sort >01bld/lists/00cat.lst
+	sort -u 01bld/lists/00cat.lst >01tmp/00cat.lst
+	if [ $(diff -q 01bld/lists/00cat.lst 01tmp/00cat.lst >/dev/null 2>&1) ]; then
+	    echo $0: duplicate entries in catalogue:
+	    diff 01tmp/00cat.lst 01bld/lists/00cat.lst
+	    exit 1
+	else
+	    exit 0
+	fi
+    else
+	exit 0
+    fi
 fi

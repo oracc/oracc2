@@ -319,6 +319,8 @@ cx_si_sortdata(Cx *c)
     {
       if (sis[n].l > 3000000)
 	fprintf(sifp, "Q%06ld", sis[n].l - 3000000);
+      else if (sis[n].l > 2000000)
+	fprintf(sifp, "X%06ld", sis[n].l - 2000000);
       else
 	fprintf(sifp, "P%06ld", sis[n].l);
 

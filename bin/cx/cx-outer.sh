@@ -72,7 +72,7 @@ function outer {
 		fi
 		if [ -s $l ]; then
 		    g=${tdir}/${ph}-${pqx}.grep
-		    cut -d: -f2 $F | cut -d@ -f1 | sort >$g
+		    cut -d: -f2 $F | cut -d@ -f1 | sort | sed 's/^/^/' >$g
 		    t=${tdir}/${ph}-${pqx}.tsv
 		    head -1 $l >$t
 		    grep -f $g $l >>$t

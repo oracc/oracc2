@@ -65,11 +65,17 @@ cx_roco_row(Roco *r, int i, FILE *fp)
 			? (char **)r->rows[0] : NULL);
   const char *ctag = r->celtag;
   const char *lmattr = cx_langmask(r->user, r, i);
-  const char *xid = (ccp)r->rows[i][0];
+  char *xid = (char*)r->rows[i][0];
   if ('Q' == *xid)
     ftags[0] = "id_composite";
   else
     ftags[0] = "id_text";
+  if (strlen(xid) == 8)
+    {
+      *xid = 'X';
+      memmove(xid+1, xid+2, 7);
+      xid[7] = '\0';
+    }
   fprintf(fp, "<xmd xmlns=\"%s\" xmlns:xmd=\"%s\" xml:id=\"%s\" project=\"%s\"",
 	  NS_XMD, NS_XMD, xid, arg_project);
   if (lmattr)
