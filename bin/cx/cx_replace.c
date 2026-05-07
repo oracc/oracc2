@@ -4,7 +4,11 @@
 static const char *
 cx_merper_wrapper(const char *s)
 {
-  return (cx_merper(s, strlen(s)))->merge;
+  struct merper *mp = cx_merper(s, strlen(s));
+  if (mp)
+    return mp->merge;
+  else
+    return NULL;
 }
 
 void

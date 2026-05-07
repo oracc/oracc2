@@ -10,9 +10,9 @@
 
 echo $0 $*
 ldir=01bld/lists
-rm -fr $ldir ; mkdir -p $ldir
+#rm -fr $ldir ; mkdir -p $ldir
 if [ ! -d $ldir ]; then
-    echo $0: unable to create $ldir. Stop.
+    echo $0: $ldir is usually created by cx-marshall.sh. Stop.
     exit 1
 fi
 

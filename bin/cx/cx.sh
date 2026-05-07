@@ -5,7 +5,7 @@
 # be empty at this point--this just means there is no local catalogue
 # data.
 #
-#set -x
+set -x
 echo $0 $*
 set -a
 bin="$ORACC/bin"

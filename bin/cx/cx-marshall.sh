@@ -21,9 +21,10 @@ bdir=01bld/cat
 cdir=01tmp/00cat
 ldir=01tmp/00cat/l
 mdir=01tmp/00cat/m
+bldlists=01bld/lists
 
 # clean out old cat data
-rm -fr $bdir $cdir $ldir $mdir ; mkdir -p $bdir $cdir $ldir $mdir
+rm -fr $bdir $cdir $ldir $mdir $bldlists ; mkdir -p $bdir $cdir $ldir $mdir $bldlists
 for d in $bdir $cdir $ldir $mdir ; do
     if [ ! -d $d ]; then
 	echo $0: failed to make $d. Stop.

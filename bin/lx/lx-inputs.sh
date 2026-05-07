@@ -10,9 +10,9 @@
 echo $0 $*
 
 lxd=01bld/lists
-rm -fr $lxd ; mkdir -p $lxd
+#rm -fr $lxd ; mkdir -p $lxd
 if [ ! -d $lxd ]; then
-    echo $0: unable to create directory $lxd. Stop.
+    echo $0: no directory $lxd. Stop.
     exit 1
 fi
 
@@ -44,7 +44,9 @@ fi
 
 # 00atf data; do this after 00lib because then it can use $lxd/proxy.lst
 lx-atfdata.sh
-cut -f1 02pub/atf-data.tab | lx -cus -p $project -o $lxd/00atf.lst -
+if [ -r 02pub/atf-data.tab ]; then
+    cut -f1 02pub/atf-data.tab | lx -cus -p $project -o $lxd/00atf.lst -
+fi
 
 # umbrella and search lists
 #

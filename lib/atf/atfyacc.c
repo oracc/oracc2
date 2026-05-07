@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <memo.h>
 #include <pool.h>
+#include <o2.h>
 #include <lang.h>
 #include "etcsl.h"
 #include "note.h"
@@ -100,7 +101,7 @@ atf_term(void)
 
   list_free(atfp->input, NULL);
   hash_free(atfp->hlabmap, NULL);
-  list_free(atfp->protocols, NULL);
+  /*list_free(atfp->protocols, NULL);*/
   free(atfp);
   atfp = NULL;
 

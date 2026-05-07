@@ -35,7 +35,9 @@ $bin/lx-update-lists-bap.sh
 # build-outlined-policy
 $bin/lx-update-lists-bop.sh $out_outlined
 
-cp $have_atf $lxd/withatf
-lx $out_outlined - $have_atf >$lxd/sansatf
-cp $have_lem $lxd/withlem
-cp $sans_lem $lxd/sanslem
+if [ -r $have_atf ]; then
+    cp $have_atf $lxd/withatf
+    lx $out_outlined - $have_atf >$lxd/sansatf
+fi
+[ -r $have_lem ] && cp $have_lem $lxd/withlem
+[ -r $have_lem ] && cp $sans_lem $lxd/sanslem

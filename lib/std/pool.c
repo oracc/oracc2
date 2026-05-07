@@ -121,7 +121,8 @@ re_block(struct pool *p)
   else
     {
       p->base->top += POOL_BLOCK_SIZE;
-      p->base->mem = realloc(p->base->mem, p->base->top - p->base->mem);
+      size_t nsiz = p->base->top - p->base->mem;
+      p->base->mem = realloc(p->base->mem, nsiz);
     }
   return p->base;
 }
@@ -189,7 +190,7 @@ hpool_copy(register const unsigned char *s, Pool *p)
 
 int ipool_i_cmp(const void *s1, const void *s2)
 {
-  fprintf(stderr, "ipool_i_cmp: comparing %ld <=> %ld\n", *(size_t*)s1, *(size_t*)s2);
+  /*fprintf(stderr, "ipool_i_cmp: comparing %ld <=> %ld\n", *(size_t*)s1, *(size_t*)s2);*/
   return *(size_t*)s1 - *(size_t*)s2;
 }
 

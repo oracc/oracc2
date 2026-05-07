@@ -26,8 +26,8 @@ typedef struct note
 
 extern int note_index;
 
-const char *note_create_id(void);
-
+extern const char *note_create_id(void);
+extern void note_term(void);
 extern void note_initialize(void);
 extern void note_initialize_line(void);
 extern void note_initialize_text(void);

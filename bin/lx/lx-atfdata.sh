@@ -28,8 +28,8 @@ elif [ -r 00lib/search.lst ]; then
 elif [ -r 00lib/proxy.lst ]; then
     true
 else
-    >&2 echo $0: no atf files found in project $project. Stop.
-    exit 1
+    >&2 echo $0: no atf files found in project $project.
+    exit 0
 fi
 
 set $lxd/proxy*.lst

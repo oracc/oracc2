@@ -58,7 +58,9 @@ cx_si_marshall(Roco *r)
 {
   Cx *c = r->user;
   Hash *typevals = hash_create(128);
-  Fcell **si_rows = calloc((1+r->nlines), sizeof(Fcell **));
+  Fcell **si_rows = calloc((1+r->nlines), sizeof(Fcell *));
+
+  KD_key *knp = hash_find(c->k->hkeys, (uccp)"names");
 
   int i;
 
@@ -106,17 +108,20 @@ cx_si_marshall(Roco *r)
 	       * Unknown values in closed sets generate a diagnostic;
 	       * those in open sets get added silently to the set.
 	       */
-	      if (kp->hvals && !hash_find(kp->hvals, r->rows[j][i]))
+	      if (kp->hvals)
 		{
-		  if (kp->closed && r->rows[j][i])
+		  if (!*r->rows[j][i] || !hash_find(kp->hvals, r->rows[j][i]))
 		    {
-		      if (strlen((ccp)r->rows[j][i]))
-			fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
-				r->rows[j][0],
-				r->rows[0][i],
-				r->rows[j][i]);
-		      else
-			r->rows[j][i] = (ucp)"unspecified";
+		      if (kp->closed && r->rows[j][i])
+			{
+			  if (strlen((ccp)r->rows[j][i]))
+			    fprintf(stderr, "cx: %s: field %s has unknown value %s\n",
+				    r->rows[j][0],
+				    r->rows[0][i],
+				    r->rows[j][i]);
+			  else
+			    r->rows[j][i] = (ucp)"unspecified";
+			}
 		    }
 		  if (strlen((ccp)r->rows[j][i]) && !hash_find(kp->hvals, r->rows[j][i]))
 		    {

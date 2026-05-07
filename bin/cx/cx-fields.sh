@@ -54,9 +54,11 @@ if [ -s $cdir/local-x.tsv ]; then
 elif [ -s ${fxmaster} ]; then
     head -1 ${fxmaster} >$cdir/fields.x
 else
-    if $(grep -q :X 02pub/atf-data.tab); then
-	atfdatax -X >$cdir/fields.x
-    elif $(grep -q '&X' 00atf/*.atf); then
-	atfdatax -X >$cdir/fields.x
+    if [ -r 02pub/atf-data.tab ]; then
+	if $(grep -q :X 02pub/atf-data.tab); then
+	    atfdatax -X >$cdir/fields.x
+	    #    elif $(grep -q '&X' 00atf/*.atf); then
+	    #	atfdatax -X >$cdir/fields.x
+	fi
     fi
 fi
