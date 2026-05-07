@@ -60,6 +60,7 @@ int validate = 1;
 extern int asl_raw_tokens; /* ask asl to produce list of @sign/@form/@v tokens */
 extern int ctrace;
 extern int no_image_data, inl_rnv;
+extern int gdl_xmlids;
 
 struct sl_signlist *parent_asl;
 
@@ -92,6 +93,7 @@ main(int argc, char * const*argv)
   mesg_init();
   asl_flex_debug = gdl_flex_debug = 0;
   gdl_unicode = inl_rnv = 1;
+  gdl_xmlids = 0;
 
   gsort_init();
   

@@ -77,6 +77,7 @@ gdlsig_oidnode(Node *np)
 	  else
 	    return np;
 	  break;
+	case 'g':
 	case 'n':
 	  if (np->user && ((gvl_g*)np->user)->oid)
 	    return np;
