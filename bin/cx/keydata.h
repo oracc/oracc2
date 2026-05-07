@@ -38,6 +38,11 @@ typedef struct keydata
   Hash *needtype;	/* key is type referenced in keytype@type; val = "" */
   Hash *sortable;	/* key is field type; val = human-readable version of field type */
   Hash *hkeys;		/* key is 'type' attr; val = Key ptr */
+  Hash *hmap;		/* if a type is seen more than once each field
+			   with that type has a map entry that points
+			   to the first field defined with the type;
+			   all the data for fields with the same type
+			   is then indexed under the first field */
   Memo *mkey;
   Memo *mval;
   Memo *mmap;

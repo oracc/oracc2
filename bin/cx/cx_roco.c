@@ -29,7 +29,10 @@ cx_langmask(Cx *c, Roco *r, int i)
     {
       char *ls = strdup((ccp)r->rows[i][langfld]), *s = ls;
       while (*s)
-	*s = tolower(*s);
+	{
+	  *s = tolower(*s);
+	  ++s;
+	}
       char **ll = space_split(ls);
       size_t l = 0;
       int i;
@@ -85,6 +88,12 @@ cx_roco_row(Roco *r, int i, FILE *fp)
 		  ctag, fcp(r)[i][j].sort,
 		  xmlify(ipool_str(cxp(r)->si_pool,fcp(r)[i][j].u.index)),
 		  ctag);
+	}
+      else if (fcp(r)[i][j].type == FCELL_MAP)
+	{
+	  /* This was an empty value in a field that is being mapped
+	     to head field of a multi-field type; we don't output it
+	     in the XMD */
 	}
       else
 	{

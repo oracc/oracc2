@@ -60,7 +60,7 @@ cx_si_marshall(Roco *r)
   Hash *typevals = hash_create(128);
   Fcell **si_rows = calloc((1+r->nlines), sizeof(Fcell *));
 
-  KD_key *knp = hash_find(c->k->hkeys, (uccp)"names");
+  /*KD_key *knp = hash_find(c->k->hkeys, (uccp)"names");*/
 
   int i;
 
@@ -85,6 +85,12 @@ cx_si_marshall(Roco *r)
     {
       /* Only index fields that are sortable */
       const char *ktype = hash_find(c->k->keytypes,r->rows[0][i]);
+
+      const char *map_f = hash_find(c->k->hmap, r->rows[0][i]);
+      int map_i = -1;
+      if (map_f)
+	map_i = (uintptr_t)hash_find(r->fields, (uccp)map_f) - 1;
+
       if (ktype && hash_find(c->k->sortable,(uccp)ktype))
 	{
 	  KD_key *kp = hash_find(c->k->hkeys, (uccp)ktype);
@@ -122,6 +128,8 @@ cx_si_marshall(Roco *r)
 			  else
 			    r->rows[j][i] = (ucp)"unspecified";
 			}
+		      else
+			r->rows[j][i] = (ucp)"unspecified";
 		    }
 		  if (strlen((ccp)r->rows[j][i]) && !hash_find(kp->hvals, r->rows[j][i]))
 		    {
@@ -131,23 +139,41 @@ cx_si_marshall(Roco *r)
 		      hash_add(kp->hvals, (uccp)r->rows[j][i], "");
 		    }
 		}
+
+	      /* a mapped field may have been here before */
+	      if (si_rows[j][i].type)
+		continue;
 	      
 	      Fsort *fsp = hash_find(fh, r->rows[j][i]);
 	      Fcell *fcp = &si_rows[j][i];
+	      Fcell *map_fcp = NULL;
+
+	      /* If multiple fields map to the same type this code merges them in the sortinfo */
+	      if (map_i >= 0 && !*r->rows[j][map_i])
+		map_fcp = &si_rows[j][map_i];
+
 	      if (fsp)
 		{
 		  *fcp = *(Fcell*)list_first(fsp->cells);
 		  list_add(fsp->cells, fcp);
+		  if (map_fcp)
+		    list_add(fsp->cells, map_fcp);
 		}
 	      else
 		{
 		  size_t ix = ipool_copy(r->rows[j][i], c->si_pool);
-		  fcp->type = FCELL_SORT;
+		  fcp->type = (map_i>=0) ? FCELL_SORT : FCELL_SORT;
 		  fcp->u.index = ix;
 		  fsp = memo_new(c->msort);
 		  fsp->cp = fcp;
 		  fsp->cells = list_create(LIST_SINGLE);
 		  list_add(fsp->cells, fcp);
+		  if (map_fcp)
+		    {
+		      map_fcp->type = FCELL_SORT;
+		      map_fcp->u.index = ix;
+		      list_add(fsp->cells, map_fcp);
+		    }
 		  hash_add(fh, r->rows[j][i], fsp);
 		}
 	    }
@@ -275,6 +301,20 @@ cx_si_sortdata(Cx *c)
 
   qsort(sis, s, sizeof(Sis), siscmp);
 
+  int outputs[c->rr[0]->maxcols + 1];
+  int i;
+  Roco *R = c->rr[0];
+  for (i = 0; i < R->maxcols; ++i)
+    {
+      uccp f = R->rows[0][i];
+      const char *ktype = hash_find(c->k->keytypes,f);
+      const char *map_f = hash_find(c->k->hmap,f);
+      if (ktype && hash_find(c->k->sortable,(uccp)ktype) && !map_f)
+	outputs[i] = 1;
+      else
+	outputs[i] = 0;
+    }
+  
   for (n = 0; n < s; ++n)
     {
       if (sis[n].l > 3000000)
@@ -285,7 +325,7 @@ cx_si_sortdata(Cx *c)
       int j;
       for (j = 0; j < c->rr[sis[n].r]->maxcols; ++j)
 	{
-	  if (sis[n].f[j].type == FCELL_SORT)
+	  if (outputs[j]) /* && sis[n].f[j].type == FCELL_SORT)*/
 	    {
 	      fputc('\t', sifp);
 	      fprintf(sifp, "%ld=%u", sis[n].f[j].sort, ipool_index(sip, sis[n].f[j].u.index));

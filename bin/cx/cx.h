@@ -5,8 +5,10 @@
 #include <xpd.h>
 
 struct keydata;
-#define FCELL_STRP 0
-#define FCELL_SORT 1
+#define FCELL_STRP 1
+#define FCELL_SORT 2
+#define FCELL_MAP  3
+
 typedef struct fcell
 {
   int type;

@@ -16,6 +16,7 @@ keydata_init(Cx *c, const char *file, Hash *hfields)
   kp->needtype = hash_create(128);
   kp->sortable = hash_create(128);
   kp->hkeys = hash_create(128);
+  kp->hmap = hash_create(128);
   kp->mkey = memo_init(sizeof(KD_key), 256);
   kp->mval = memo_init(sizeof(KD_val), 256);
   kp->mmap = memo_init(sizeof(KD_map), 256);
@@ -32,6 +33,7 @@ keydata_term(Keydata *kp)
   hash_free(kp->needtype, NULL);
   hash_free(kp->sortable, NULL);
   hash_free(kp->hkeys, NULL);
+  hash_free(kp->hmap, NULL);
   memo_term(kp->mkey);
   memo_term(kp->mval);
   pool_term(kp->p);
@@ -64,9 +66,14 @@ kd_sH(void *userData, const char *name, const char **atts)
       const char *n = findAttr(atts, "n");
       if (*n && hash_find(kp->hfields, (uccp)n))
 	{
-	  uccp t;
-	  hash_add(kp->keytypes, pattr("n"), (void*)(t = pattr("type")));
-	  hash_add(kp->needtype, t, "");
+	  uccp n = pattr("n");
+	  uccp t = pattr("type");
+	  uccp x = hash_find(kp->needtype, t);
+	  hash_add(kp->keytypes, n, (void*)t);
+	  if (!x)
+	    hash_add(kp->needtype, t, (void*)n);
+	  else
+	    hash_add(kp->hmap, n, (void*)x);
 	}
     }
   else if (!strcmp(name, "type"))
@@ -110,7 +117,7 @@ kd_sH(void *userData, const char *name, const char **atts)
 	hash_add(curr_keyp->rvals, (uccp)vp->v, (void*)vp->r);
       if (verbose)
 	fprintf(stderr, "kd_sH: adding %s to lvals %p listlen=%d\n",
-		vp->v, (void*)curr_keyp->lvals, list_len(curr_keyp->lvals));
+		vp->v, (void*)curr_keyp->lvals, (int)list_len(curr_keyp->lvals));
       list_add(curr_keyp->lvals, vp);
       if (!curr_keyp->hvals)
 	curr_keyp->hvals = hash_create(1024);
