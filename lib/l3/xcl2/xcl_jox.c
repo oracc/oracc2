@@ -264,7 +264,7 @@ xj_serialize_one_node(void *vp)
 	    {
 	      /*int skipped_any_phrases = 0;*/
 	      int set_cp_subtype = 0;
-	      while (cp->nchildren && singleton_phrase_children(cp, &phrase_index))
+	      while (0) /*cp->nchildren && singleton_phrase_children(cp, &phrase_index))*/
 		{
 		  const char *phrase_subtype = cp->children[phrase_index].c->subtype;
 		  int skip_phrase = 0;

@@ -15,8 +15,6 @@
 char *strdup(const char *);
 #endif
 
-#define add_child xcl_add_child
-
 const char *default_discourse_level = "body";
 
 #define BLOCK_SIZE 2048
@@ -137,7 +135,10 @@ xcl_free_tree(void *vp)
 	    }
 	}
       if (cp->children)
-	free(cp->children);
+	{
+	  /*fprintf(stderr, "xcl_free_tree: free %p parent=%p\n", cp->children, cp);*/
+	  free(cp->children);
+	}
       break;
     case xcl_node_d:
       
@@ -197,8 +198,17 @@ xcl_add_child(struct xcl_c*p, void *c, enum xcl_node_types type)
   union xcl_u *up;
   if (p->nchildren == p->children_alloced)
     {
+#if 1
       p->children_alloced += 16;
-      p->children = realloc(p->children, p->children_alloced * sizeof(union xcl_u));
+      p->children = realloc(p->children, 
+			    p->children_alloced * sizeof(union xcl_u));
+      /*fprintf(stderr, "xcl_add_child: alloc %p parent=%p type=%d\n", p->children, p, p->node_type);*/
+#else      
+      size_t osiz = p->children_alloced;
+      p->children_alloced += 16;
+      p->children = memo_reauto(p->children, osiz,
+				p->children_alloced * sizeof(union xcl_u));
+#endif
     }
   up = &p->children[p->nchildren++];
   switch (type)
@@ -253,7 +263,7 @@ xcl_chunk(struct xcl_context *xc, const char *xml_id, enum xcl_c_types t)
   c->children = NULL;
   if (xc->curr)
     {
-      add_child(xc->curr, c, c->node_type);
+      xcl_add_child(xc->curr, c, c->node_type);
       c->level = xc->curr->level + 1;
     }
   else
@@ -344,7 +354,7 @@ xcl_discontinuity(struct xcl_context *xc, const char *ref, enum xcl_d_types t, c
   c->subtype = st;
   c->xc = xc;
   c->ref = ref;
-  add_child(xc->curr, c, c->node_type);
+  xcl_add_child(xc->curr, c, c->node_type);
   if (t == xcl_d_field_start)
     curr_xcl_field = c->subtype;
   else if (t == xcl_d_field_end)
@@ -360,7 +370,7 @@ xcl_discontinuity2(struct xcl_context *xc, const char *xid, const char *ref, enu
   c->xc = xc;
   c->xml_id = (char*)pool_copy((ucp)xid,xc->pool);
   c->ref = ref;
-  add_child(xc->curr, c, c->node_type);
+  xcl_add_child(xc->curr, c, c->node_type);
   if (t == xcl_d_field_start)
     curr_xcl_field = c->subtype;
 }
@@ -420,7 +430,7 @@ xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref,
       c->xc = xc;
       if (curr_subtype && strlen(curr_subtype))
 	c->subtype = (char*)pool_copy((ucp)curr_subtype,xc->pool);
-      add_child(xc->curr,c,c->node_type);
+      xcl_add_child(xc->curr,c,c->node_type);
 
       if (!xcl_load_mode)
 	{
@@ -490,7 +500,7 @@ xcl_insert_ub(Mloc *mp, struct xcl_context *xc, int nlem, enum xcl_c_types t, in
   xc->curr->subtype = "#auto";
   
   if (carry_over)
-    add_child(xc->curr,carry_over,carry_over->node_type);
+    xcl_add_child(xc->curr,carry_over,carry_over->node_type);
   
   /* Now clear the current chunk so that ilem_para parsing levels work correctly */
   /* xc->curr = xc->curr->parent; */
@@ -600,5 +610,3 @@ xcl_fix_context(struct xcl_context *xc, const unsigned char *discourse)
 	xcl_chunk(xc, NULL, xcl_c_phrase);
     }
 }
-
-#undef calloc
