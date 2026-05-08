@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <expat.h>
+#include <memo.h>
 #include "m.h"
 #include "s.h"
 #include "erbit.h"
@@ -236,6 +237,7 @@ static void usage(void) {(*er_printf)("usage: rnv {-[qnspc"
 "vh?]} schema.rnc {document.xml}\n");}
 
 int main(int argc,char **argv) {
+  lmemo_init();
   init();
 
   peipe=0; verbose=1; nexp=NEXP; rnck=0; f_log = stderr;

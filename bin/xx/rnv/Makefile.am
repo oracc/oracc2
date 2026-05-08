@@ -20,7 +20,7 @@ DEF=\
 WARN=-Wall -Wstrict-prototypes  -Wmissing-prototypes -Wcast-align
 OPT=-O -g
 
-AM_CFLAGS=${INC} ${DEF} ${WARN} ${OPT} @top_srcdir@/lib/liboracc2.la
+AM_CFLAGS=${INC} ${DEF} ${WARN} ${OPT} -I@top_srcdir@/lib/std -I@top_srcdir@/include @top_srcdir@/lib/liboracc2.la
 
 bin_PROGRAMS=rnv
 rnv_SOURCES=xcl.c
