@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <alias.h>
 #include <runexpat.h>
+#include <mesg.h>
 
 #include "../txt/fields.h"
 #include "property.h"
@@ -9,6 +10,12 @@
 #include "../txt/index.h"
 
 static struct est *estp;
+
+FILE *f_log;
+FILE *f_xml;
+Mloc xo_loc;
+int status, rnvtrace;
+const char *file;
 
 const char *xatf_name = NULL;
 

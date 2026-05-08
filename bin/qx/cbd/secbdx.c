@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <runexpat.h>
+#include <mesg.h>
 
 #include "alias.h"
 #include "fields.h"
@@ -10,6 +11,10 @@
 #include "../txt/index.h"
 
 FILE *f_log;
+FILE *f_xml;
+Mloc xo_loc;
+int status, rnvtrace;
+const char *file;
 
 const char *xatf_name = NULL;
 Hash *signmap = NULL;

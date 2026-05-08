@@ -67,7 +67,7 @@ if [ -s 02pub/csl.tok ]; then
     if [ -r 00lib/toklists.lst ]; then
 	l="-l00lib/toklists.lst"
     fi
-    tokex $l -p $project <02pub/csl.tok | tokix -n -p $project
+    tokexg $l -p $project <02pub/csl.tok | tokix -n -p $project
 fi
 
 chmod -R o+r 02pub

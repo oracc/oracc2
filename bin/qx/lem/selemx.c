@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <index.h>
 #include <alias.h>
+#include <mesg.h>
 
 #include "fields.h"
 #include "property.h"
@@ -12,6 +13,12 @@
 #include "types.h"
 #include "selib.h"
 #include "form.h"
+
+FILE *f_log;
+FILE *f_xml;
+Mloc xo_loc;
+int status, rnvtrace;
+const char *file;
 
 Hash *signmap;
 
