@@ -321,13 +321,14 @@ gdl_mod_wrap_q(Node *np)
 	    }
 
 	  const char *oid = NULL;
-	  if (c && (oid = (ccp)gvl_lookup(c)))
+	  if ((c && (oid = (ccp)gvl_lookup(c)))
+	      || (o && (oid = (ccp)gvl_lookup(o))))
 	    {
 	      if (gdl_orig_mode)
 		np->text = (ccp)o;
 	      else
-		np->text = (ccp)c;
-	      ng->c10e = c;
+		np->text = (ccp) (c ? c : o);
+	      ng->sign = ng->c10e = (c ? c : o);
 	      ng->orig = o;
 	      ng->oid = oid;
 	      np->user = ng;

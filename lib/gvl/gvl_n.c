@@ -87,8 +87,9 @@ gvl_n(Node *ynp)
     }
   else
     {
-      ynp->text = (ccp)nq->c10e;
-      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)nq->c10e);
+      /* This will change if we start c10e for g:n */
+      ynp->text = (ccp)nq->orig;
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)nq->orig);
     }
   ynp->user = nq;
 }
