@@ -6,23 +6,25 @@ tsv_output(Tsv *tp)
 {
   if ((tp->tsv_fp = fopen(tp->tsv_fn, "r")))
     {
-      int n = 0;
-      fseek(tp->tsv_fp, tp->data.seek, 0);
-      while (n++ < tp->data.len)
+      int i;
+      for (i = 0; i < tp->nkey; ++i)
 	{
-	  int ch = fgetc(tp->tsv_fp);
-	  if (ch == EOF)
+	  int n = 0;
+	  fseek(tp->tsv_fp, tp->data[i].seek, 0);
+	  while (n++ < tp->data[i].len)
 	    {
-	      /*fprintf(stderr, "xisdb: %s, seek=%ld, len=%d: ran out of bytes\n",
-		tis_file, t_info.seek, t_info.len);*/
-	      return 1;
-	    }
-	  else
-	    {
-	      if (ch == 0x0B || (' ' == ch && space_newlines))
-		fputc('\n', tp->out_fp);
+	      int ch = fgetc(tp->tsv_fp);
+	      if (ch == EOF)
+		{
+		  return 1;
+		}
 	      else
-		fputc(ch, tp->out_fp);
+		{
+		  if (ch == 0x0B || (' ' == ch && space_newlines))
+		    fputc('\n', tp->out_fp);
+		  else
+		    fputc(ch, tp->out_fp);
+		}
 	    }
 	}
       fclose(tp->tsv_fp);

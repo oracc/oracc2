@@ -18,17 +18,16 @@ main(int argc, char **argv)
 {
   program_values(prog, major_version, minor_version, usage_string, NULL);
   options(argc, argv, "d:fk:K::n:o:st:u");
+  const char *k1[2] = { arg_key , NULL };
 
-  if (keys_file)
+  if (keys_file || arg_key)
     {
-      size_t n;
-      const char **kk loadfile_lines3(keys_file, &n, NULL);
-      tsv_lookup(arg_tsv, arg_dir, arg_name, kk, n);
-    }
-  else if (arg_key)
-    {
-      /* look up key and dump results */
-      int res = tsv_one_off(arg_tsv, arg_dir, arg_name, arg_key);
+      const char **kk = k1;
+      size_t n = 1;
+      int res;
+      if (keys_file)
+	kk = (const char **)loadfile_lines3((uccp)keys_file, &n, NULL);
+      res = tsv_lookup(arg_tsv, arg_dir, arg_name, kk, n);
       exit(res);
     }
   else if (undbi)

@@ -87,9 +87,9 @@ install-exec-local:
 %.ofp: %.oin
 	${xxfont}/ttf2ofp.sh $*
 
-all.proto: *.c
-	cproto -e $(AM_CPPFLAGS) *.c >x.proto
-	mv x.proto all.proto
+#all.proto: *.c
+#	cproto -e $(AM_CPPFLAGS) *.c >x.proto
+#	mv x.proto all.proto
 
 xLDADD=$(top_srcdir)/lib/liboracc2.la 
 

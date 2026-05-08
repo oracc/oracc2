@@ -15,27 +15,12 @@ tdb_exists(Tsv *tp, const char *id)
 }
 
 int
-tdb_find(Tsv *tp, const char *id)
+tdb_find(Tsv *tp, const char *id, int i)
 {
   dbi_find(tp->dp, (Uchar*)id);
   if (tp->dp->nfound)
     {
-      Tsv_data *tip = dbi_detach_data(tp->dp, NULL);
-      tp->data = *tip;
-      return 0;
-    }
-  else
-    return 1;
-}
-
-int
-tdb_find_data(Tsv *tp, const char *id, int i)
-{
-  dbi_find(tp->dp, (Uchar*)id);
-  if (tp->dp->nfound)
-    {
-      Tsv_data *tip = dbi_detach_data(tp->dp, NULL);
-      tp->datas[i] = *tip;
+      tp->data[i] = *(Tsv_data*)(dbi_detach_data(tp->dp, NULL));
       return 0;
     }
   else
@@ -53,24 +38,17 @@ tdb_close(Tsv *tp)
 }
 
 int
-tdb_one_off(Tsv *tp, const char *id)
+tdb_lookup(Tsv *tp)
 {
   tdb_open(tp);
-  int ret = tdb_find(tp, id);
-  tdb_close(tp);
-  return ret;
-}
-
-int
-tdb_keys(Tsv *tp, const char **ids)
-{
-  tdb_open(tp);
-  int i;
-  for (i = 0; ids[i]; ++i)
+  int i, ret = 0;
+  for (i = 0; tp->keys[i]; ++i)
     {
-      int ret = tdb_find_data(tp, id, i);
-      if (!ret)
-	fprintf("tdb_keys: %s not found\n", ids[i]);
+      if (tdb_find(tp, tp->keys[i], i))
+	{
+	  fprintf(stderr, "tx: %s not found in %s\n", tp->keys[i], tp->tsv_fn);
+	  ++ret;
+	}
     }
   tdb_close(tp);
   return ret;
