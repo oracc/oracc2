@@ -10,6 +10,8 @@ tsv_output(Tsv *tp)
       for (i = 0; i < tp->nkey; ++i)
 	{
 	  int n = 0;
+	  if (i)
+	    fputc('\n', tp->out_fp);
 	  fseek(tp->tsv_fp, tp->data[i].seek, 0);
 	  while (n++ < tp->data[i].len)
 	    {
@@ -27,6 +29,8 @@ tsv_output(Tsv *tp)
 		}
 	    }
 	}
+      if (tp->nkey > 1)
+	fputc('\n', tp->out_fp);
       fclose(tp->tsv_fp);
     }
   return 0;
