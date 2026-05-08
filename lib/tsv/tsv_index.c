@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include "tsv.h"
 
+int full_record = 0;
 static int tdb_line(Tsv *tp);
 
 int
@@ -70,6 +71,9 @@ tdb_line(Tsv *tp)
   ++tdb_line;
 #endif
 
+  if (full_record)
+    s = ftell(tp->tsv_fp);
+
   while (EOF != (ch = fgetc(tp->tsv_fp)))
     {  
       if ('\n' == ch)
@@ -84,7 +88,8 @@ tdb_line(Tsv *tp)
 	      buf[len] = '\0';
 	      len = -1;
 	    }
-	  s = ftell(tp->tsv_fp);
+	  if (!full_record)
+	    s = ftell(tp->tsv_fp);
 	  key = n = l = 0;
 	}
       else if (' ' == ch)

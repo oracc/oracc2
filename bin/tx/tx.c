@@ -9,15 +9,23 @@ const char *usage_string = " [-t tsv] [-d dir] [-n name] [-k key]";
   
 const char *arg_dir, *arg_key, *arg_name, *arg_tsv;
 
+const char *keys_file;
+
 int ood_id, ood_pad, space_newlines, undbi;
 
 int
 main(int argc, char **argv)
 {
   program_values(prog, major_version, minor_version, usage_string, NULL);
-  options(argc, argv, "d:k:n:o:st:u");
+  options(argc, argv, "d:fk:K::n:o:st:u");
 
-  if (arg_key)
+  if (keys_file)
+    {
+      size_t n;
+      const char **kk loadfile_lines3(keys_file, &n, NULL);
+      tsv_lookup(arg_tsv, arg_dir, arg_name, kk, n);
+    }
+  else if (arg_key)
     {
       /* look up key and dump results */
       int res = tsv_one_off(arg_tsv, arg_dir, arg_name, arg_key);
@@ -56,13 +64,6 @@ main(int argc, char **argv)
   return 0;
 }
 
-/* More options:
- *
- * -i print key as first column
- * -f first line is fields
- * -t output_fn
- */
-
 int
 opts(int argc, const char *arg)
 {
@@ -70,6 +71,15 @@ opts(int argc, const char *arg)
     {
     case 'd':
       arg_dir = arg;
+      break;
+    case 'f':
+      full_record = 1;
+      break;
+    case 'K':
+      if (arg)
+	keys_file = arg;
+      else
+	keys_file = "-";
       break;
     case 'k':
       arg_key = arg;
