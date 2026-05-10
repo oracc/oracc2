@@ -45,6 +45,8 @@ extern int odt_serial, status, exit_status;
 extern int harvest_notices, lem_autolem, lem_dynalem, lem_forms_raw,
   named_ents, perform_dsa, warn_unlemmatized;
 
+extern char *trafile, *xtffile;
+
 /* return -1 on error; 0 for done processing; 1 for descend into child
    nodes */
 typedef int (*axjoxfncp)(Node *np, void *vp);
@@ -70,6 +72,7 @@ extern void ax_jox(Tree*tp);
 extern int ax_jox_bib(Node *np, Bib *bp);
 extern int ax_jox_lg(Node *np, Group *gp);
 extern int ax_jox_note(Node *np, Note *bp);
+extern int ax_outputs(char *xtf, char *tra);
 extern int ax_jox_protocol(Node *np, void *p);
 extern void ax_jox_block(Node *np, Block *p);
 

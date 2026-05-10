@@ -214,6 +214,34 @@ atf_wrapup_buffer(void)
   atf_delete_buffer(YY_CURRENT_BUFFER);
 }
 
+char *
+atf_set_file_line(char *a, size_t *n)
+{
+  char *s = a;
+  while (!isspace(*a)) /* we know this line is `##file ' */
+    ++a;
+  while (isspace(*a))
+    ++a;
+  curratffile = a;
+  while (*a && '\n' != *a)
+    ++a;
+  if (*a)
+    {
+      ++a;
+      while (*a && !isspace(*a))
+	++a;
+      while (isspace(*a))
+        ++a;
+      atflineno = (int)strtoul(a, NULL, 10);
+      while (*a && '\n' != *a)
+	++a;
+      ++a;
+      *n = (*n - (a - s));
+      return a;
+    }
+  return NULL;
+}
+
 void
 atf_lex_init(FILE *fp, const char *file)
 {
@@ -221,8 +249,11 @@ atf_lex_init(FILE *fp, const char *file)
   atfbuf = (char*)slurp("atf", file, &fsize);
   if (atfbuf)
     {
-      atffile = curratffile = file;
-      atflineno = 1;
+      if (!strncmp(atfbuf, "##file ", 7))
+        {
+	  if (!(atfbuf = atf_set_file_line(atfbuf, &fsize)))
+	    fprintf(stderr, "atf_lex_init: failed to set file/line in %s. Stop.\n", file);
+	}
       /* slurp adds \n\0\0 but only counts \n in the returned fsize */
       atf_scan_buffer(atfbuf,fsize+2);
     }

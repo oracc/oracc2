@@ -14,6 +14,8 @@
 #include <l3props.h>
 #include "ax.h"
 
+char *trafile, *xtffile;
+
 Mloc xo_loc;
 FILE *f_xml;
 const char *file;
@@ -25,6 +27,7 @@ int verbose;
 int odt_serial = 0;
 
 static Run *rp;
+const char *inputs_from_file = NULL;
 
 extern int atfflextrace , atftrace, gdlflextrace, gdltrace;
 
@@ -115,17 +118,126 @@ ax_full_term(void)
   xcl_final_term();
 }
 
-int
-main(int argc, char **argv)
+static int
+pqx_ok(const char *s)
 {
-  static int multifile = 0;
+  const char *t = s;
+  if ('P' == *s || 'Q' == *s || 'X' == *s)
+    {
+      ++s;
+      while (*s)
+	{
+	  if (isdigit(*s) && s - t < 8)
+	    ++s;
+	  else
+	    return 0;
+	}
+    }
+  return s - t == 7;
+}
+
+static char *
+atffile_of(const char *d)
+{
+  const char *pqx = strrchr(d, '/');
+  if (pqx && pqx_ok(++pqx))
+    {
+      char buf[strlen(d)+13];
+      sprintf(buf, "%s/%s.atf", d, pqx);
+      return strdup(buf);
+    }
+  else
+    {
+      fprintf(stderr, "ax: invalid ATF path `%s': must end with a valid PQX-id\n", d);
+      return NULL;
+    }
+}
+
+static char *
+trafile_of(const char *d)
+{
+  char buf[strlen(d)+strlen("/P123456_project-en.xtr0")];
+  sprintf(buf, "%s%s_project-en.xtr", d, strrchr(d, '/'));
+  return strdup(buf);
+}
+
+static char *
+xtffile_of(const char *d)
+{
+  char buf[strlen(d)+13];
+  sprintf(buf, "%s%s.xtf", d, strrchr(d, '/'));
+  return strdup(buf);
+}
+
+static void
+process_inputs(int argc, char * const *argv)
+{
+  if (inputs_from_file)
+    {
+      unsigned char **files = NULL, *fmem;
+      size_t nfiles = 0, i;
+      files = loadfile_lines3((uccp)inputs_from_file,&nfiles,&fmem);
+      for (i = 0; i < nfiles; ++i)
+	{
+	  char *s = NULL;
+	  for (s = (char*)files[i]; *s; ++s)
+	    if (!isspace(*s))
+	      break;
+	  if (*s)
+	    {
+	      int ret;
+	      atffile = atffile_of(s);
+	      if (atffile)
+		{
+		  xtffile = xtffile_of(s);
+		  trafile = trafile_of(s);
+		  if (verbose)
+		    fprintf(stderr,"%s => %s / %s\n",
+			    atffile, strrchr(xtffile,'/')+1, strrchr(trafile, '/')+1);
+		  if (!(ret = ax_outputs(xtffile, trafile)))
+		    ax_input(atffile);
+		  free((char*)atffile);
+		  free(trafile);
+		  free(xtffile);
+		  atffile = trafile = xtffile = /*cdtfile = */ NULL;
+		}
+	      else
+		ret = 1;
+	      
+	      if (ret)
+		{
+		  fprintf(stderr, "ax: error setting outputs. Stop.\n");
+		  break;
+		}
+	    }
+	}
+    }
+  else if (argv[optind])
+    {
+      static int multifile = 0;
+      int fnum = optind;
+      multifile = argv[fnum] && argv[fnum+1];
+      if (multifile && !check_mode)
+	printf("<xtf-multi>");
+      while (argv[fnum])
+	ax_input(argv[fnum++]);
+      if (multifile && !check_mode)
+	printf("</xtf-multi>");
+    }
+  else
+    ax_input(NULL);
+}
+
+int
+main(int argc, char * const*argv)
+{
   extern int gdl_flex_debug, gdldebug, atfdebug, atf_flex_debug; /* yydebug in gdl.y */
 
   f_log = stderr;
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "cltx");
+  options(argc, argv, "cI:ltvx");
 
   inl_set_ns(NS_HTM);
   
@@ -140,20 +252,8 @@ main(int argc, char **argv)
   nodeh_register(treexml_o_handlers, NS_XTF, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_XTF, treexml_c_generic);
 
-  if (argv[optind])
-    {
-      int fnum = optind;
-      multifile = argv[fnum] && argv[fnum+1];
-      if (multifile && !check_mode)
-	printf("<xtf-multi>");
-      while (argv[fnum])
-	ax_input(argv[fnum++]);
-      if (multifile && !check_mode)
-	printf("</xtf-multi>");
-    }
-  else
-    ax_input(NULL);
-
+  process_inputs(argc, argv);
+  
   ax_full_term();
 }
 
@@ -165,11 +265,17 @@ opts(int opt, const char *arg)
     case 'c':
       check_mode = 1;
       break;
+    case 'I':
+      inputs_from_file = optarg;
+      break;
     case 'l':
       xcl_output = xml_output = 1;
       break;
     case 't':
       trace_mode = 1;
+      break;
+    case 'v':
+      verbose = 1;
       break;
     case 'x':
       xml_output = 1;

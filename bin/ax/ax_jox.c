@@ -15,6 +15,80 @@ extern int trace_mode;
 const char *xfn = NULL;
 extern const char *file;
 static void ax_jox_lines(Group *gp);
+static void ax_jox_node(Node *np);
+
+static FILE *tra_fp, *xtf_fp;
+
+void
+ax_jox(Tree *tp)
+{
+  if (!xfn)
+    xfn = "ax.xml";
+
+  FILE *xfp = NULL;
+
+  xo_loc = memo_auto(sizeof(Mloc));
+  xo_loc->file = file = tp->root->mloc->file;
+  xo_loc->line = 1;
+
+  if (!xtf_fp && !tra_fp)
+    {
+      xfp = fopen(xfn, "w");
+      jox_xml_output(xfp);
+      joxer_init(&xtf_data, "xtf", 1, xfp, NULL);
+      ax_jox_node(tp->root);
+      joxer_term(xfp,NULL);
+      fclose(xfp);
+    }
+  else
+    {
+      if (curr_trans)
+	{
+	  if (tra_fp)
+	    {
+	      jox_xml_output(tra_fp);
+	      joxer_init(&xtf_data, "xtf", 1, tra_fp, NULL);
+	      ax_jox_node(curr_trans->tree->root);
+	      joxer_term(tra_fp, NULL);
+	      xfclose(trafile, tra_fp);
+	      tra_fp = NULL;
+	    }
+	  else
+	    tree_root_append(tp, curr_trans->tree->root);
+	}
+
+      if (xtf_fp)
+	{
+	  jox_xml_output(xtf_fp);
+	  joxer_init(&xtf_data, "xtf", 1, xtf_fp, NULL);
+	  ax_jox_node(tp->root);
+	  joxer_term(xtf_fp, NULL);
+	  xfclose(xtffile, xtf_fp);
+	  xtf_fp = NULL;
+	}
+    }
+}
+
+int
+ax_outputs(char *xtf, char *tra)
+{
+  int ret = 0;
+
+  if (xtf && (ret = xaccess(xtf, W_OK, 0)))
+    return ret;
+  
+  if (xtf && !(xtf_fp = xfopen(xtf, "w")))
+    return 1;
+
+  if (tra && !(tra_fp = xfopen(tra, "w")))
+    {
+      if (xtf_fp)
+	xfclose(xtf, xtf_fp);
+      return 1;
+    }
+
+  return 0;
+}
 
 const char **
 ax_jox_props(Prop *p)
@@ -106,29 +180,6 @@ ax_jox_node(Node *np)
   if ((!ap || ap->wrapper) && '-' != *nodename)
     joxer_ee(np->mloc, nodename);
 
-}
-
-void
-ax_jox(Tree *tp)
-{
-  if (!xfn)
-    xfn = "ax.xml";
-
-  FILE *xfp = fopen(xfn, "w");
-
-  jox_xml_output(xfp);
-  joxer_init(&xtf_data, "xtf", 1, xfp, NULL);
-  xo_loc = memo_auto(sizeof(Mloc));
-  xo_loc->file = file = tp->root->mloc->file;
-  xo_loc->line = 1;
-
-  if (curr_trans)
-    tree_root_append(tp, curr_trans->tree->root);
- 
-  ax_jox_node(tp->root);
-  joxer_term(xfp,NULL);
-
-  fclose(xfp);
 }
 
 /* handler functions for np->user and GDL */

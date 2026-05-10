@@ -85,7 +85,8 @@ ngramify_init(void)
       ng_match_log = fopen("01tmp/ng_match.log", "wb");
       if (NULL == ng_match_log && verbose)
 	{
-	  fprintf(stderr, "ngramify_init: couldn't open 01tmp/ng_match.log--no ngram match logging will be done.\n");
+	  if (verbose > 1)
+	    fprintf(stderr, "ngramify_init: couldn't open 01tmp/ng_match.log--no ngram match logging will be done.\n");
 	  ng_match_logging = 0;
 	}
     }
