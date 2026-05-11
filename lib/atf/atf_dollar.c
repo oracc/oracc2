@@ -74,7 +74,12 @@ atf_dollar(Mloc l, char *rest)
 		    nonx_attach = B_SURFACE;
 		    break;
 		  case x_column:
-		    nonx_attach = B_SURFACE;
+		    if (abt->curr->user
+			&& ((Node*)abt->curr->user)->utype == N_U_BLOCK
+			&& ((Block*)abt->curr->user)->bt->type == B_COLUMN)
+		      nonx_attach = B_COLUMN;
+		    else
+		      nonx_attach = B_SURFACE;
 		    if (nonxp->state)
 		      switch (nonxp->state->type)
 			{
@@ -140,14 +145,19 @@ atf_dollar(Mloc l, char *rest)
 	  if (nonx_attach == B_bl_top)
 	    nonx_attach = B_COLUMN;
 
-	  /* Defer Node creation and attaching until after we have typed the $-line */
+	  /* Defer Node creation and attaching until after we have
+	     determined the type of the $-line */
 	  Node *np;
 	  set_block_curr(nonx_attach);
+
+#if 1
+	    np = atf_add("nonx", &l);
+#else
 	  if (atfp->edoc == EDOC_TRANSLITERATION)
 	    np = atf_push("nonx", &l);
 	  else
 	    np = atf_add("nonx", &l);
-
+#endif
 	  sprintf(line_id_insertp,"%d", ++line_id);
 	  const char *xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool);
 	  atf_xprop(np, "xml:id", xid);

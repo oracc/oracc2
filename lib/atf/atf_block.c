@@ -566,8 +566,7 @@ set_block_curr(Block_level b)
 	default:
 	  /* other types may not need any reset of curr */
 	  break;
-	}
-	
+	}	
     }
 }
 

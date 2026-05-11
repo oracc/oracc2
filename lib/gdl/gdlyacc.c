@@ -98,7 +98,7 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 {
   Node *c;
   for (c = w->kids; c; c = c->next)
-    if (strcmp(c->name, "g:z") && strcmp(c->name, "g:x"))
+    if (strcmp(c->name, "g:z"))/* && strcmp(c->name, "g:x"))*/
       fputs(c->text, wfp);
 }
 
@@ -108,17 +108,18 @@ gdl_word_attr(Node *w)
 {
   char *wf_buf = NULL;
   size_t wf_len = 0;
+  /*  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);*/
   FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
   gdl_wf_nodes(w, wf_fp);
   fclose(wf_fp);
   if (wf_buf)
     {
       if (*wf_buf)
-	{
-	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);
-	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
-	}
+	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
+      else
+	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");
       free(wf_buf);
+      
     }
 }
 
@@ -399,11 +400,17 @@ gdl_new_word(Tree *ytp)
 	tree_curr(ytp->root);
       Node *wp = gdl_push(ytp, "g:w");
       wp->mloc = mloc_file_line(currgdlfile, gdllineno);
+      /* By definition, the word-lang is the one in effect when the
+	 word begins; logogram lang switches need to be handled
+	 carefully */
+      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);
+      
       /* IF FIELD NOT IN SPARSE LEM HASH */
       list_add(wd_list, wp);
       sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
       gid_insertp = gdl_word_id+strlen(gdl_word_id);
-      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		  (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
       grapheme_id = 0;
       return wp;
     }
@@ -593,6 +600,7 @@ gdl_lang(Tree *ytp, const char *data)
     curr_lang = 'n';
   else
     curr_lang = data[1];
+  curr_word_lang = data+1;
   return gdl_meta_node(ytp, "g:z", data);
 }
 
