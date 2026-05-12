@@ -514,7 +514,7 @@ set_block_curr(Block_level b)
 	  break;
 	case B_SURFACE:
 	  {
-	    Node *np = ancestor_or_self_level(abt->curr, B_OBJECT);
+	    Node *np = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
 	    if (!np)
 	      atf_implicit("object");
 	    else

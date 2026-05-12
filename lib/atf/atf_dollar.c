@@ -13,6 +13,8 @@ atf_dollar(Mloc l, char *rest)
     }
   else
     {
+      atf_group_wrapup();
+
       Block_level nonx_attach = B_bl_top;
       const char *dollar_label = NULL;
       

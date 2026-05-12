@@ -447,7 +447,8 @@ update_label(struct node *current,enum e_tu_types transtype)
       break;
     case B_SURFACE:
       ancestors[1] = ((Block*)current->user)->label;
-      if ('x' != *(((Block*)current->rent->user)->label))
+      if (((Block*)current->rent->user)->label
+	  && 'x' != *(((Block*)current->rent->user)->label))
 	ancestors[0] = ((Block*)current->rent->user)->label;
       break;
     case B_COLUMN:

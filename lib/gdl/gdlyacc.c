@@ -131,7 +131,7 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  if (!strcmp(c->text, "..."))
 	    fputc('x', wfp);
 	  else
-	    fprintf(stderr, "gdl_wf_nodes: unhandled g:x text %s\n", c->text);
+	    mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text %s\n", c->text);
 	}
       else if (!strcmp(c->name, "g:det"))
 	{

@@ -15,7 +15,7 @@ extern void atflex_destroy(void);
 Tree *
 atfyacc(void)
 {
-  curratffile = atffile;
+  /*curratffile = atffile;*/
 
   Tree *tp = tree_init();
 

@@ -227,17 +227,20 @@ atf_set_file_line(char *a, ssize_t *n)
     ++a;
   if (*a)
     {
-      ++a;
-      while (*a && !isspace(*a))
-	++a;
-      while (isspace(*a))
-        ++a;
-      atflineno = (int)strtoul(a, NULL, 10);
-      while (*a && '\n' != *a)
-	++a;
-      ++a;
-      *n = (*n - (a - s));
-      return a;
+      *a++ = '\0';
+      if (*a)
+        {
+          while (*a && !isspace(*a))
+	    ++a;
+          while (isspace(*a))
+            ++a;
+          atflineno = (int)strtoul(a, NULL, 10);
+          while (*a && '\n' != *a)
+	    ++a;
+          ++a;
+          *n = (*n - (a - s));
+          return a;
+       }
     }
   return NULL;
 }
@@ -257,6 +260,9 @@ atf_lex_init(FILE *fp, const char *file)
 	  else
 	    atflineno += 2;
 	}
+      else
+	curratffile = file;
+
       /* slurp adds \n\0\0 but only counts \n in the returned fsize */
       atf_scan_buffer(atfbuf,fsize+2);
     }
@@ -276,7 +282,6 @@ atf_lex_term(void)
       atfbuf_alloced = NULL;
     }
 }
-	
 
 static void
 atf_user_action(void)
