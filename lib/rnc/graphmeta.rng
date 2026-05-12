@@ -240,6 +240,9 @@
       <ref name="posn"/>
       <ref name="dtyp"/>
       <optional>
+        <ref name="dexp"/>
+      </optional>
+      <optional>
         <ref name="delim"/>
       </optional>
       <optional>
@@ -259,6 +262,14 @@
       <choice>
         <value>phonetic</value>
         <value>semantic</value>
+      </choice>
+    </attribute>
+  </define>
+  <define name="dexp">
+    <attribute name="g:char">
+      <choice>
+        <value>+</value>
+        <value>-</value>
       </choice>
     </attribute>
   </define>

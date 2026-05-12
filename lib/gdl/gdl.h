@@ -162,5 +162,6 @@ extern void gdl_state_node(Node *np);
 extern List *gdl_get_word_list(void);
 extern void gdl_set_word_id(const char *wid);
 extern void gdl_auto_id(void);
+extern void gdl_det_props(Node *d);
 
 #endif /*GDL_H_*/

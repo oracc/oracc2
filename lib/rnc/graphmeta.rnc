@@ -50,9 +50,10 @@ status.flags =
 
 gloss = det | glo
 posn = attribute g:pos { "pre" | "post" | "free" }
-det = element g:d { posn , dtyp , delim? , emhyph? , surroStart? , g.meta ,
+det = element g:d { posn , dtyp , dexp? , delim? , emhyph? , surroStart? , g.meta ,
                     (word.content*)}
 dtyp= attribute g:role { "phonetic" | "semantic" }
+dexp= attribute g:char { "+" | "-" }
 glo = element g:gloss { attribute g:type { "lang" | "text" } , surroEnd? , delim? , posn , words }
 
 status.spans =

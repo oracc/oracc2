@@ -454,6 +454,8 @@ gvl_simplexg(Node *ynp)
 
   if (!(gp = hash_find(curr_sl->h,g)))
     gp = gvl_s(ynp);
+  else if (!strcmp(ynp->name, "g:g"))
+    ynp->name = "g:s";
   
   /* it isn't an error for gp to be NULL because when we gvl_n_sexify
      in gvl_s the result ynp is a g:gp and doesn't have a gp node */

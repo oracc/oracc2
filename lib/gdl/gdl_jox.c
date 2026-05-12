@@ -22,6 +22,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
   Ratts *r = NULL;
   const char **p = NULL;
 
+  if (!strcmp(nodename, "g:det"))
+    nodename = "g:d";
+  
   if (trace_mode)
     fprintf(stderr, "grx_jox_node: nodename=%s; text=%s; oflag=%d; nflag=%d\n", nodename, np->text, oflag, nflag);
   

@@ -62,6 +62,33 @@ static List *wd_list = NULL;
  *
  ***********************************************************************/
 
+/* TODO: keep list of determinatives so we can validate pre/post
+ * determinatives w/r/t next node.
+ *
+ * @pos=pre && next && next->name == "g:d" = det w delim on both sides
+ * @pos=post && next && next->name != "g:d" = det w delim on neither side
+ *
+ */
+void
+gdl_det_props(Node *d)
+{
+  if (gs_is(rst, gs_g_phond))
+    {
+      gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:role", "phonetic");
+      gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:char", "+");
+    }
+  else
+    {
+      gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:role", "semantic");
+      if (gs_is(rst, gs_g_semd_e))
+	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:char", "-");
+    }
+  if (!d->prev || !strcmp(d->prev->name, "g:d"))
+    gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
+  else
+    gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "post");
+}
+
 List *
 gdl_get_word_list(void)
 {
@@ -105,6 +132,15 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	    fputc('x', wfp);
 	  else
 	    fprintf(stderr, "gdl_wf_nodes: unhandled g:x text %s\n", c->text);
+	}
+      else if (!strcmp(c->name, "g:det"))
+	{
+	  fputc('{', wfp);
+	  Prop *p = prop_find_kv(c->props, "g:char", NULL);
+	  if (p)
+	    fputs(p->u.k->v, wfp);
+	  gdl_wf_nodes(c, wfp);
+	  fputc('}', wfp);
 	}
       else if (strcmp(c->name, "g:z"))
 	fputs(c->text, wfp);
@@ -167,10 +203,21 @@ gdlparse_string(Mloc *m, char *s)
   Node *w;
   for (w = list_first(wd_list); w; w = list_next(wd_list))
     gdl_word_attr(w);
-  
-  if (deep_parse)
-    tree_iterator(tp, m, gdlparse_deep, NULL);
 
+  if (deep_parse)
+    {
+      if (gdl_word_mode)
+	{
+	  List *saved_wl = wd_list;
+	  wd_list = list_create(LIST_SINGLE);
+	  tree_iterator(tp, m, gdlparse_deep, NULL);
+	  list_free(wd_list, NULL);
+	  wd_list = saved_wl;
+	}
+      else
+	tree_iterator(tp, m, gdlparse_deep, NULL);
+    }
+  
   return tp;
 }
 
