@@ -85,6 +85,10 @@ void
 gdlstate_props(Node *np, gdlstate_t sp)
 {
   int i;
+
+  if ('r' == np->name[2] || 'R' == np->name[2])
+    np = np->rent;
+  
   for (i = 0; i < NFLAGS; ++i)
     if (gs_is(sp,gs_order_f[i]) && gs_str_a[i])
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, gs_str_a[i], "1");

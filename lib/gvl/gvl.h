@@ -131,4 +131,6 @@ extern const char *gvl_cuneify_tree(Tree *tp);
 extern unsigned char *gvl_ivs(const unsigned char*cunutf8, int * nivsp);
 extern uccp gvl_key(gvl_g *gbgp, Pool *p);
 
+extern void g_attr(Node *ynp, gvl_g *gp);
+
 #endif/*_GVL_H*/

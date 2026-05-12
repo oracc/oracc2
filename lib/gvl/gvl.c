@@ -317,7 +317,7 @@ gvl_compound(Node *ynp)
       unsigned char *c_orig = gvl_c_orig(ynp);
       if (!c_delim_sentinel)
 	mesg_verr(ynp->mloc, "unnecessary pipes on '%s'", c_orig);
-
+      
       if (!(cp = hash_find(curr_sl->h, c_orig)))
 	{
 	  cp = memo_new(curr_sl->m);
@@ -328,6 +328,8 @@ gvl_compound(Node *ynp)
 
 	  gvl_c(cp);
 
+	  if (cp->sign)
+	    g_attr(ynp, cp);
 #if 0
 	  /* temp? removal */
 	  hash_add(curr_sl->h, cp->orig, cp);
@@ -414,6 +416,26 @@ gvl_compound(Node *ynp)
 }
 
 void
+g_attr(Node *ynp, gvl_g *gp)
+{
+  if (gp->oid)
+    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "oid", (ccp)gp->oid);
+	  
+  gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:sign", (ccp)gp->sign);
+
+  gp->utf8 = gvl_cuneify(gp->sign);
+  if (gp->utf8)
+    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:utf8", (ccp)gp->utf8);
+      
+  gp->key = gvl_key(gp, gdlpool);
+  if (gp->key)
+    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "key", (ccp)gp->key);
+	  
+  if (ynp->kids)
+    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)gp->orig);	  
+}
+
+void
 gvl_simplexg(Node *ynp)
 {
   gvl_g *gp = NULL;
@@ -437,23 +459,7 @@ gvl_simplexg(Node *ynp)
       ynp->user = gp;
 
       if (gp->sign)
-	{
-	  if (gp->oid)
-	    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "oid", (ccp)gp->oid);
-	  
-	  gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:sign", (ccp)gp->sign);
-
-	  gp->utf8 = gvl_cuneify(gp->sign);
-	  if (gp->utf8)
-	    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:utf8", (ccp)gp->utf8);
-      
-	  gp->key = gvl_key(gp, gdlpool);
-	  if (gp->key)
-	    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "key", (ccp)gp->key);
-	  
-	  if (ynp->kids)
-	    gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)gp->orig);	  
-	}
+	g_attr(ynp, gp);	
     }
   if (gp->mess && !gvl_no_mesg_add)
     mesg_err(ynp->mloc, (ccp)gp->mess);
@@ -489,12 +495,34 @@ gvl_valuqual(Node *vqnp)
 	  || (vqnp->kids->text && !strcmp(vqnp->kids->text, "X")
 	      && vqnp->kids->next && ndig(vqnp->kids->next->text))
 	  ) /* gvl_s make n or N type g:n */
-	gvl_n(vqnp);
+	{
+	  gvl_n(vqnp);
+	  gvl_g *qgp = (gvl_g*)vqnp->user;
+	  if (qgp->oid)
+	    {
+	      if (qgp->sign)
+		{
+		  g_attr(vqnp, qgp);
+		  if (vqnp->kids)
+		    {
+		      Prop *xprop = prop_find_kv(vqnp->kids->props, "xml:id", NULL);
+		      if (xprop)
+			{
+			  prop_drop_kv(vqnp->kids->props, "xml:id", NULL);
+			  gdl_prop_kv(vqnp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", xprop->u.k->v);
+			}
+		    }
+		}
+	    }
+	}
       else
 	{
 	  gvl_q(vqnp);
-	  if (((gvl_g*)vqnp->user)->oid)
+	  gvl_g *qgp = (gvl_g*)vqnp->user;
+	  if (qgp->oid)
 	    {
+	      if (qgp->sign)
+		g_attr(vqnp, qgp);
 	      gvl_g *vp = vqnp->kids->user;
 	      gvl_g *qp = vqnp->kids->next->user;
 	      uccp v = vp->c10e ? vp->c10e : vp->orig;

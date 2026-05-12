@@ -42,9 +42,9 @@ ax_jox(Tree *tp)
     }
   else
     {
-      if (curr_trans)
+      if (tra_fp)
 	{
-	  if (tra_fp)
+	  if (curr_trans)
 	    {
 	      jox_xml_output(tra_fp);
 	      joxer_init(&xtf_data, "xtf", 1, tra_fp, NULL);
@@ -54,8 +54,14 @@ ax_jox(Tree *tp)
 	      tra_fp = NULL;
 	    }
 	  else
-	    tree_root_append(tp, curr_trans->tree->root);
+	    {
+	      xfclose(trafile, tra_fp);
+	      tra_fp = NULL;
+	      unlink(trafile);
+	    }
 	}
+      else if (curr_trans)
+	tree_root_append(tp, curr_trans->tree->root);
 
       if (xtf_fp)
 	{

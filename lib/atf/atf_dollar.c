@@ -54,13 +54,15 @@ atf_dollar(Mloc l, char *rest)
 		  return;
 		}
 	      else
+		/* The ox nonx_attach gave the parent type for the
+		   nonx attachment; because we use nonx_attach with
+		   set_block_curr we need to specify nonx_attach as
+		   one level down in the block structure compared to
+		   the ox implementation */
 		switch (nonxp->scope->type)
 		  {
 		  case x_object:
-		    /* WATCHME: does this need to attach
-		       to <object> in the same way as surface
-		       nonx's need to attach to <surface>? */
-		    nonx_attach = B_TEXT;
+		    nonx_attach = B_OBJECT;
 		    break;
 		  case x_surface:
 		    /* if we have:
@@ -74,12 +76,7 @@ atf_dollar(Mloc l, char *rest)
 		    nonx_attach = B_SURFACE;
 		    break;
 		  case x_column:
-		    if (abt->curr->user
-			&& ((Node*)abt->curr->user)->utype == N_U_BLOCK
-			&& ((Block*)abt->curr->user)->bt->type == B_COLUMN)
-		      nonx_attach = B_COLUMN;
-		    else
-		      nonx_attach = B_SURFACE;
+		    nonx_attach = B_LINE;
 		    if (nonxp->state)
 		      switch (nonxp->state->type)
 			{
@@ -130,20 +127,20 @@ atf_dollar(Mloc l, char *rest)
 			    break;
 			  }
 		      }
-		    nonx_attach = B_COLUMN;
+		    nonx_attach = B_LINE;
 		    break;
 		  default:
-		    nonx_attach = B_COLUMN;
+		    nonx_attach = B_LINE;
 		    break;
 		  }
 	    }
 	  else
 	    {
-	      nonx_attach = B_COLUMN;
+	      nonx_attach = B_LINE;
 	    }
 
 	  if (nonx_attach == B_bl_top)
-	    nonx_attach = B_COLUMN;
+	    nonx_attach = B_LINE;
 
 	  /* Defer Node creation and attaching until after we have
 	     determined the type of the $-line */

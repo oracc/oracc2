@@ -227,7 +227,7 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   lgp = np;
   lst = prop_state(np, pst|rst);
   sprintf(gid_insertp, ".%d", grapheme_id++);
-  if (gdl_xmlids)
+  /*  if (gdl_xmlids && 'r' != name[2] && 'R' != name[2])*/
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
 		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
@@ -666,9 +666,11 @@ gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", tok, data);
   intptr_t st = gdl_balance_break(mlp, tok);
-  if (st > 0)
+  if (gstck_i(st) > 0)
     {
       Node *np = gstck_np(st);
+      if ('r' == np->name[2])
+	np = np->rent;
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
       Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
       gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
