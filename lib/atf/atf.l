@@ -215,7 +215,7 @@ atf_wrapup_buffer(void)
 }
 
 char *
-atf_set_file_line(char *a, size_t *n)
+atf_set_file_line(char *a, ssize_t *n)
 {
   char *s = a;
   while (!isspace(*a)) /* we know this line is `##file ' */

@@ -159,6 +159,7 @@ typedef struct block {
   struct block_token *bt;
   int implicit;
   struct group *lines;
+  List *cmts; /* list of #-comments */
   Node *np;
 } Block;
 
@@ -179,6 +180,7 @@ typedef struct line {
   Node *np;
   List *wl; /* list of words built during GDL parse; overloaded as
 	       list of lems when corresponding #lem line is read */
+  List *cmts; /* list of #-comments */
 } Line;
 
 typedef struct lninfo
@@ -311,6 +313,7 @@ extern void register_label(const char *xid, const char *lab);
 extern int scan_primes(const char *s, const char **p);
 extern Node *ancestor_or_self_level(Node *np, Block_level b);
 extern void set_block_curr(Block_level b);
+extern void atf_comment(Mloc l, char *text);
 extern void atf_dollar(Mloc l, char *rest);
 
 extern void line_mts(Mloc l, unsigned char *lp);

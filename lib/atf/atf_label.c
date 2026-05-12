@@ -235,8 +235,11 @@ reset_labels(void)
   frag_level = B_bl_top;
   *m_label = '\0';
   hash_free(my_label_table,NULL);
+  if (my_label_table)
+    hash_free(my_label_table,NULL);
   my_label_table = hash_create(1024);
-  hash_free(xid_to_label_table,NULL);
+  if (xid_to_label_table)
+    hash_free(xid_to_label_table,NULL);
   xid_to_label_table = hash_create(1024);
   reset_mlabel();
 }
@@ -246,7 +249,7 @@ label_term(void)
 {
   hash_free(my_label_table,NULL);
   hash_free(xid_to_label_table,NULL);
-  my_label_table = NULL;
+  my_label_table = xid_to_label_table = NULL;
 }
 
 /* return NULL if label is duplicate or, for translation check, undefined

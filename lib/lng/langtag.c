@@ -100,13 +100,16 @@ void
 langtag_pool_term(void)
 {
   if (langtag_pool)
-    pool_term(langtag_pool);
+    {
+      pool_term(langtag_pool);
+      langtag_pool = NULL;
+    }
 }
 
 void
 langtag_term(void)
 {
-  pool_term(langtag_pool);
+  langtag_pool_term();
   if (langtag_hash)
     {
       hash_free(langtag_hash, hash_xfree);

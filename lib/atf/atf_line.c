@@ -113,7 +113,7 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 	atfmp->llines = list_create(LIST_SINGLE);
       else
 	{
-	  warning("out of place line\n");
+	  mesg_verr(&l, "out of place line\n");
 	  return;
 	}
     }
@@ -160,13 +160,13 @@ line_mts(Mloc l, unsigned char *lp)
     ++s;
   if (s[-1] != '.')
     {
-      warning("malformed line number");
-      warning("(line numbers must be <non-space><period><space>, e.g., `1. ')");
+      mesg_verr(&l, "malformed line number");
+      mesg_verr(&l, "(line numbers must be <non-space><period><space>, e.g., `1. ')");
       return;
     }
   else if (s == lp+1)
     {
-      warning("empty line number");
+      mesg_verr(&l, "empty line number");
     }
   s[-1] = '\0';
 
@@ -504,9 +504,9 @@ line_lem(Mloc ml, unsigned char *l)
           while (isspace(*l))
             ++l;
           if ('\0' == *l)
-            warning("spurious ';' at end of #lem: line");
+            mesg_verr(&ml, "spurious ';' at end of #lem: line");
           else if (';' == *l)
-            warning("empty lemmatization in #lem: line");
+            mesg_verr(&ml, "empty lemmatization in #lem: line");
         }
     }
 
@@ -559,7 +559,7 @@ lnstr(Mloc *mp, int number,int primes)
     {
       if (number > 4999)
 	{
-	  /* vwarning("%d is too big!",number); */
+	  /* mesg_verr(&l, "%d is too big!",number); */
 	  char buf[10];
 	  sprintf(buf,"%d",number);
 	  return pool_copy((unsigned char*)buf, atfmp->pool);

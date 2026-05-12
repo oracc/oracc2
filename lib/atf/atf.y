@@ -282,7 +282,7 @@ line:
 	| 	VAR longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
 	|	l_link longtext		{ $$=$1; } /* MTS prereq */
-	|	COMMENT longtext	{ $$=$1; }
+	|	COMMENT longtext	{ $$=$1; atf_comment(@1, longtext_get()); }
 	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, longtext_get()); }
 	| 	bib
 	| 	etcsl.line
