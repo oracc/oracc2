@@ -79,6 +79,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 <s_T>^[\t ]*/\n			{ ; }
 <s_T>^[^\t ][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
+<s_T>.*/\n[ \t]+\n		{ BEGIN 0; atfnorm; return TEXT; }
 <s_T>.*/\n[^ \t]+		{ BEGIN 0; atfnorm; return TEXT; }
 <s_T>^[\t ]+.+/\n      		{ BEGIN 0; atfnorm; return TAB; }
 <s_T><<EOF>>			{ yyterminate(); }

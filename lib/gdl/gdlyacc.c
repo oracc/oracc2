@@ -291,9 +291,9 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
 		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
-  if (gdl_break_pending && (('r' != np->name[2] && 'R' != np->name[2]) || !strcmp(np->text, "n")))
+  if (gdl_break_pending && (('r' != np->name[2] && 'R' != np->name[2])))
     gdl_break_node(np);
-  if (gdl_state_pending && 'r' != np->name[2] && 'R' != np->name[2] && strcmp(np->text, "n"))
+  if (gdl_state_pending && 'r' != np->name[2] && 'R' != np->name[2])
     gdl_state_node(np);
   return np;
 }
