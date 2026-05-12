@@ -241,7 +241,7 @@ gdl_grapheme_type(void)
 
   if (strlen(g) == 1
       && ('n' == *g || 'N' == *g))
-    return NUMBER;
+      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
   else if (isdigit(*g))
     {
       char *d = g+1;

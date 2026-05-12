@@ -17,7 +17,31 @@ extern const char *file;
 static void ax_jox_lines(Group *gp);
 static void ax_jox_node(Node *np);
 
-static FILE *tra_fp, *xtf_fp;
+static FILE *tra_fp, *xtf_fp, *atf_pi_fp;
+
+static int no_pi = 0;
+
+static void
+atf_file_pi(const char *file)
+{
+  if (!no_pi)
+    fprintf(atf_pi_fp,"<?atf-file %s?>",file);
+}
+
+static void
+atf_line_pi(Node *n)
+{
+  if (!no_pi)
+    {
+      fputs("<?atf-line ",atf_pi_fp);
+      fprintf(atf_pi_fp,"%d",n->mloc->line);
+      fputs("?>",atf_pi_fp);
+#if 0
+      if (pretty)
+	fputc('\n',f_xml);
+#endif
+    }
+}
 
 void
 ax_jox(Tree *tp)
@@ -35,6 +59,8 @@ ax_jox(Tree *tp)
     {
       xfp = fopen(xfn, "w");
       jox_xml_output(xfp);
+      atf_pi_fp = xfp;
+      atf_file_pi(file);
       joxer_init(&xtf_data, "xtf", 1, xfp, NULL);
       ax_jox_node(tp->root);
       joxer_term(xfp,NULL);
@@ -47,7 +73,9 @@ ax_jox(Tree *tp)
 	  if (curr_trans)
 	    {
 	      jox_xml_output(tra_fp);
+	      atf_file_pi(file);
 	      joxer_init(&xtf_data, "xtf", 1, tra_fp, NULL);
+	      atf_pi_fp = tra_fp;
 	      ax_jox_node(curr_trans->tree->root);
 	      joxer_term(tra_fp, NULL);
 	      xfclose(trafile, tra_fp);
@@ -66,6 +94,8 @@ ax_jox(Tree *tp)
       if (xtf_fp)
 	{
 	  jox_xml_output(xtf_fp);
+	  atf_pi_fp = xtf_fp;
+	  atf_file_pi(file);
 	  joxer_init(&xtf_data, "xtf", 1, xtf_fp, NULL);
 	  ax_jox_node(tp->root);
 	  joxer_term(xtf_fp, NULL);
@@ -104,8 +134,7 @@ ax_jox_props(Prop *p)
   if (ap && gp)
     {
       int n_ap = 0, n_gp = 0;
-      for (n_ap = 0; ap[n_ap
-			]; ++n_ap)
+      for (n_ap = 0; ap[n_ap]; ++n_ap)
 	;
       for (n_gp = 0; gp[n_ap]; ++n_gp)
 	;
@@ -129,6 +158,8 @@ ax_jox_node(Node *np)
   Node *npp;
   const char *nodename = np->name;
   struct axjoxfnc *ap = NULL;
+
+  atf_line_pi(np);
 
   if (trace_mode)
     fprintf(stderr, "ax_jox_node: nodename = %s\n", nodename);
@@ -205,6 +236,7 @@ ax_jox_block(Node *np, Block *p)
 void
 ax_jox_lang(Node *np, ATF *a)
 {
+  atf_line_pi(np);
   char buf[(a->altlang?strlen(a->altlang)+3:0)+strlen(a->lang)+2];
   if (a->altlang)
     sprintf(buf, "lang %s _%s_", a->lang, a->altlang);
@@ -234,6 +266,8 @@ ax_jox_lines(Group *gp)
   for (n = 0; n < gp->nlines; ++n)
     {
       Node *np = gp->lines[n]->np;
+      if (n)
+	atf_line_pi(np);
       const char **p = NULL;
       Ratts *r = NULL;
       joxer_ea(np->mloc, np->name, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
@@ -261,6 +295,7 @@ ax_jox_note(Node *np, Note *p)
 int
 ax_jox_protocol(Node *np, void *p)
 {
+  atf_line_pi(np);
   Prop*ptype = prop_find_kv(np->props, "type", NULL);
   if (ptype && !strcmp(ptype->u.k->v, "bib"))
     ax_jox_bib(np, p);

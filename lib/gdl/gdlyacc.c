@@ -291,9 +291,9 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
 		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
-  if (gdl_break_pending)
+  if (gdl_break_pending && (('r' != np->name[2] && 'R' != np->name[2]) || !strcmp(np->text, "n")))
     gdl_break_node(np);
-  if (gdl_state_pending)
+  if (gdl_state_pending && 'r' != np->name[2] && 'R' != np->name[2] && strcmp(np->text, "n"))
     gdl_state_node(np);
   return np;
 }
@@ -808,9 +808,11 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
     fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
   intptr_t st = gdl_balance_state(mlp, tok);
-  if (st > 0)
+  if (gstck_i(st) > 0)
     {
       Node *np = gstck_np(st);
+      if (!strcmp(np->rent->name, "g:n"))
+	np = np->rent;
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusStart", "1");
       Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
       gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);

@@ -142,6 +142,8 @@ gstck_new(int i)
 void
 gdl_break_node(Node *np)
 {
+  if ('r' == np->name[2] || 'R' == np->name[2])
+    np = np->rent;
   intptr_t p = gdl_break_peek();
   if (p > 0)
     gstck_np(p) = np;
@@ -151,10 +153,22 @@ gdl_break_node(Node *np)
 void
 gdl_state_node(Node *np)
 {
+#if 0
   intptr_t p = gdl_state_peek();
   if (p > 0)
     gstck_np(p) = np;
   gdl_state_pending = 0;
+#else
+  int i;
+  for (i = state_stack->top; i >= 0; --i)
+    {
+      intptr_t p = state_stack->stack[i];
+      if (gstck_np(p) == NULL)
+	gstck_np(p) = np;	  
+      else
+	break;
+    }
+#endif
 }
 
 /* return 0 on OK; 1 on error */
