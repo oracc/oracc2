@@ -165,7 +165,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^== 				{ BEGIN s_T; atfsave; return BIL; }
 
-^\#   				{ BEGIN s_T; return COMMENT; }
+^\#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
 [ \t\n]+       			{ ; }
 

@@ -107,11 +107,12 @@ gdlparse_deep(Node *np, void *mptr)
 	  Mloc *m = mptr;
 	  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
 	  gdl_setup_buffer((char*)pool_copy((ucp)gp->sign, gdlpool));
-	  gdl_set_tree(tp);
+	  /* do this before gdl_set_tree so that initial w-node gets the right line number */
 	  if (m)
 	    gdl_lex_init(m->file, m->line);
 	  else
 	    gdl_lex_init("<string>", 1);
+	  gdl_set_tree(tp);
 	  gdlparse();
 	  gdllex_destroy();
 	  gp->deep = tp->root->kids;
@@ -131,7 +132,7 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  if (!strcmp(c->text, "..."))
 	    fputc('x', wfp);
 	  else
-	    mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text %s\n", c->text);
+	    mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text `%s'\n", c->text);
 	}
       else if (!strcmp(c->name, "g:det"))
 	{
@@ -147,10 +148,32 @@ gdl_wf_nodes(Node *w, FILE *wfp)
     }
 }
 
+static void
+gdl_force_nonw(Node *w)
+{
+  Node *rent = w->rent;
+  *w = *w->kids;
+  const char *t = prop_find_kv(w->props, "g:type", NULL)->u.k->v;
+  prop_drop_kv(w->props, "g:type", NULL);
+  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", t);
+  w->name = "g:nonw";
+  w->rent = rent;
+  w->next = NULL;
+}
+
 /* This routine assumes it is processing one word-node at a time */
 void
 gdl_word_attr(Node *w)
 {
+  if (w && w->kids && !w->kids->next && !strcmp(w->kids->name, "g:x"))
+    {
+      if (strcmp(w->kids->text, "..."))
+	{
+	  gdl_force_nonw(w);
+	  return;
+	}
+    }
+
   char *wf_buf = NULL;
   size_t wf_len = 0;
   /*  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);*/
@@ -190,12 +213,15 @@ gdlparse_string(Mloc *m, char *s)
     tp->root->text = (ccp)pool_copy((uccp)s, gdlpool);
 
   gdl_setup_buffer(s2);
-  gdl_set_tree(tp);
-
+  
+  /* do this before gdl_set_tree so that initial w-node gets the right line number */
   if (m)
     gdl_lex_init(m->file, m->line);
   else
-    gdl_lex_init("<string>", 1);    
+    gdl_lex_init("<string>", 1);
+
+  gdl_set_tree(tp);
+
   gdlparse();
   gdllex_destroy();
   free(s2);
@@ -429,21 +455,6 @@ gdl_c_term(void)
     }
 }
 
-#if 0
-static void
-gdl_force_nonw(Node *w)
-{
-  Node *rent = w->rent;
-  *w = *w->kids;
-  const char *t = prop_find_kv(w->props, "g:type", NULL)->u.k->v;
-  prop_drop_kv(w->props, "g:type", NULL);
-  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", t);
-  w->name = "g:nonw";
-  w->rent = rent;
-  w->next = NULL;
-}
-#endif
-
 /* New behaviour 20260212: SPACE resets node to next node of last
    child of either the parent l-node or the tree root (for
    non-word-wrapped GDL */
@@ -453,12 +464,6 @@ gdl_new_word(Tree *ytp)
   if (gdl_word_mode)
     {
       Node *l = node_ancestor_or_self(ytp->curr, "g:w");
-      if (l && l->kids && !l->kids->next && !strcmp(l->kids->name, "g:x"))
-	{
-	  /*NO: ox sets g:w @form="x" and leaves this as a g:w */
-	  /*gdl_force_nonw(l);*/
-	  gdl_prop_kv(l, GP_ATTRIBUTE, PG_GDL_INFO, "form", "z");
-	}
       if (l)
 	tree_curr(l->rent);
       else

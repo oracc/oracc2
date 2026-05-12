@@ -308,6 +308,9 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
       xmd_init();
       atfp->xmd = xmd_load(str, atfp->pqx);
       break;
+    case PROT_COMMENT:
+      p->type = "comment";
+      break;
     case PROT_ETCSL:
       if ('t' == *str)
 	{

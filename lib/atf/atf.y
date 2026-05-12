@@ -42,7 +42,7 @@ ATFLTYPE atflloc;
 			ATF_LEGACY ATF_LEXICAL
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
 			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
-			COMMENT
+			PRO_COMMENT COMMENT
 			MTS NTS LGS GUS LEM BIL EXX VAR DOLLAR TR_INTER
 			Y_BAD
 			Y_BODY Y_BOTTOM Y_BULLA Y_CATCHLINE Y_CFRAGMENT Y_COLOPHON Y_COLUMN
@@ -56,7 +56,7 @@ ATFLTYPE atflloc;
 %nterm <text>   	pqx name longtext
 
 %nterm <i> 		sparse stype atfuse link_type
-			lines line l_link note bib etcsl.line
+			lines line l_link note bib etcsl.line proto.comment
 			heading heading_tok tr.inter
 			milestone
 			
@@ -83,10 +83,12 @@ atf:		transliteration { atf_tlit_wrapup(); }
 	;
 
 transliteration:
-		amp preamble { atf_wrapup(WH_PREAMBLE); } tblocks
+		amp preamble { atf_wrapup(WH_PREAMBLE); }
+	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } tblocks
 		;
 
-composite:	amp atcomposite preamble { atf_wrapup(WH_PREAMBLE); } cblocks
+composite:	amp atcomposite preamble { atf_wrapup(WH_PREAMBLE); }
+	| 	amp atcomposite preamble { atf_wrapup(WH_PREAMBLE); } cblocks
 		;
 
 score:		amp atscore cblocks
@@ -141,7 +143,7 @@ plk:      	protocol.start
 	| 	key
 		;
 
-protocol.start: project | atfpro | lemmatizer | version | probib | etcsl.text
+protocol.start: project | atfpro | proto.comment | lemmatizer | version | probib | etcsl.text
 
 lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 		{ atf_bld_protocol(@1, PROT_LZR_SPARSE, $3); }
@@ -164,6 +166,9 @@ probib: 	HASH_PROBIB longtext { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); 
 bib:		HASH_BIB longtext    { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
 
+proto.comment:
+		PRO_COMMENT longtext	{ $$=$1; atf_bld_protocol(@1, PROT_COMMENT, longtext_get()); }
+		;
 
 note:		HASH_NOTE longtext   { atf_bld_note(@1, (ccp)longtext(NULL,NULL,NULL)); }
 	;
