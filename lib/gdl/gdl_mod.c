@@ -107,6 +107,7 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
       if (np->user && ((gvl_g*)np->user)->orig)
 	{
 	  np->name = "g:b";
+	  np->props = NULL;
 	  list_add(op, (void*)((gvl_g*)np->user)->orig);
 	  if (!gdl_orig_mode && ((gvl_g*)np->user)->c10e)
 	    list_add(cp, (void*)((gvl_g*)np->user)->c10e);

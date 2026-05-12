@@ -291,8 +291,8 @@ gdl_user_action(void)
     BEGIN cvq_pop();
 #endif
 
-gdllloc.file = currgdlfile;
-  gdllloc.line = yylineno;
+  gdllloc.file = currgdlfile;
+  gdllloc.line = gdllineno;
 }
 
 void

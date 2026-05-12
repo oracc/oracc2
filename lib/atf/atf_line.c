@@ -51,22 +51,31 @@ static unsigned char *map_uscore(const unsigned char *vbar);
 void
 atf_group_wrapup(void)
 {
-  if (list_len(atfmp->llines))
+  if (atfmp->llines)
     {
-      Group *gp = memo_new(atfmp->mgroups);
-      gp->utype = N_U_GROUP;
-      gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
-      memo_list(gp->lines);
-      gp->parent = abt->curr->user;
+      if (list_len(atfmp->llines))
+	{
+	  Group *gp = memo_new(atfmp->mgroups);
+	  gp->utype = N_U_GROUP;
+	  gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
+	  memo_list(gp->lines);
+	  gp->parent = abt->curr->user;
 #if 0
-      /* this is just the lines that contribute to an <lg>, excludes $-lines */
-      gp->line_lines = line_lines;
+	  /* this is just the lines that contribute to an <lg>, excludes $-lines */
+	  gp->line_lines = line_lines;
 #endif
+	  Node *np = node_ancestor_or_self(abt->curr, "lg");
+	  np->user = gp;
+	  np->utype = N_U_GROUP;
+	}
+      else
+	{
+	  Node *np = node_ancestor_or_self(abt->curr, "lg");
+	  if (np)
+	    tree_curr(kids_rem_last(abt));
+	}
       list_free(atfmp->llines, NULL);
       atfmp->llines = NULL;
-      Node *np = node_ancestor_or_self(abt->curr, "lg");
-      np->user = gp;
-      np->utype = N_U_GROUP;
     }
 }
 
@@ -504,9 +513,9 @@ line_lem(Mloc ml, unsigned char *l)
   if (list_len(llem) != list_len(curr_lem_host->wl))
     {
       if (list_len(llem) > list_len(curr_lem_host->wl))
-        warning("too many lemmata");
+        mesg_verr(&ml, "too many lemmata");
       else
-        warning("too few lemmata");      
+        mesg_verr(&ml, "too few lemmata");      
     }
   else
     {

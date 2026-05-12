@@ -28,7 +28,7 @@ num      = xsd:string { pattern = "N|N\d+[ABCD]?" }
 s        = element g:s { g.form? , g.meta , (s.model | (sb , mods+)) }
 
 # Qualified graphemes
-q        = element g:q { g.form? , g.meta , (v|s|c) , (s|c|n) }
+q        = element g:q { g.form? , g.meta , (v|s|c) , (s|c|n|q) }
 
 # Numbers
 n.model  = r , (v|s|c|q|g)?

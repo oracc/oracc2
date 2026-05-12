@@ -17,7 +17,7 @@ const char *curratffile = NULL;
 int atfflextrace = 0;
 static int s_next;
 static int linktext;
-static char *xs, *atfbuf;
+static char *xs, *atfbuf, *atfbuf_alloced;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 #define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
@@ -249,10 +249,13 @@ atf_lex_init(FILE *fp, const char *file)
   atfbuf = (char*)slurp("atf", file, &fsize);
   if (atfbuf)
     {
+      atfbuf_alloced = atfbuf;
       if (!strncmp(atfbuf, "##file ", 7))
         {
 	  if (!(atfbuf = atf_set_file_line(atfbuf, &fsize)))
 	    fprintf(stderr, "atf_lex_init: failed to set file/line in %s. Stop.\n", file);
+	  else
+	    atflineno += 2;
 	}
       /* slurp adds \n\0\0 but only counts \n in the returned fsize */
       atf_scan_buffer(atfbuf,fsize+2);
@@ -267,8 +270,11 @@ atf_lex_init(FILE *fp, const char *file)
 void
 atf_lex_term(void)
 {
-    if (atfbuf)
-      free(atfbuf);
+  if (atfbuf_alloced)
+    {
+      free(atfbuf_alloced);
+      atfbuf_alloced = NULL;
+    }
 }
 	
 
@@ -279,5 +285,5 @@ atf_user_action(void)
     fprintf(stderr, "%s:%d: atflex: text=::%s::\n", curratffile, atflineno, atftext);
 
   atflloc.file = curratffile;
-  atflloc.line = yylineno;
+  atflloc.line = atflineno;
 }

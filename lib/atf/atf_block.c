@@ -56,6 +56,8 @@ const char * const roman[] = {
 void
 atf_bld_block(Mloc l, Blocktok *btp, char *rest)
 {
+  atf_group_wrapup();
+  
   Block *bp = memo_new(atfmp->mblocks);
   bp->utype = N_U_BLOCK;
   bp->bt = btp;

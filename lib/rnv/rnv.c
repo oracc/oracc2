@@ -22,7 +22,7 @@ void rnv_default_verror_handler(int erno,va_list ap) {
     case RNV_ER_AVAL: err("attribute %s^%s with invalid value \"%s\""); break;
     case RNV_ER_EMIS: err("incomplete content"); break;
     case RNV_ER_AMIS: err("missing attributes of %s^%s"); break;
-    case RNV_ER_UFIN: err("unfinished content of element %s^%s"); break;
+    case RNV_ER_UFIN: err("(rnv) unfinished content of element %s^%s"); break;
     case RNV_ER_TEXT: err("invalid data or text not allowed"); break;
     case RNV_ER_NOTX: err("text not allowed"); break;
     default: assert(0);

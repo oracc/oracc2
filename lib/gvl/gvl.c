@@ -418,6 +418,9 @@ gvl_compound(Node *ynp)
 void
 g_attr(Node *ynp, gvl_g *gp)
 {
+  if ('b' == ynp->name[2])
+    return;
+
   if (gp->oid)
     gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "oid", (ccp)gp->oid);
 	  

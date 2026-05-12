@@ -74,7 +74,7 @@ jox_verror_handler(int erno,va_list ap)
   else
     {
       const char *xphase = phase, *xm;
-      phase = "rnv";
+      phase = "rnv-jox";
       switch(erno)
 	{
 	case RNV_ER_ELEM: xvh_err("element %s^%s not allowed"); break;
@@ -87,9 +87,11 @@ jox_verror_handler(int erno,va_list ap)
 	case RNV_ER_NOTX: xvh_err("text not allowed"); break;
 	default: assert(0);
 	}
+#if 0
       xm = rnv_xmsg();
       mesg_append((char*)pool_copy((uccp)xm, xgi_pool));
       free((void*)xm);
+#endif
       phase = xphase;
     }
 }
@@ -823,18 +825,19 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
  
   if (val)
     {
+      rnvval_init_err(jox_verror_handler);
       rnvif_init();
       rnv_initialized = 1;
-      rnvval_init_err(jox_verror_handler);
       rnvval_init(xdp, rncbase);
       rnv_validate_start();
     }
   
   if (xml)
     {
+      if (!val)
+	rnvxml_init_err();
       if (!rnv_initialized++)
 	rnvif_init();
-      rnvxml_init_err();
       f_xml = xml;
       xml_xmlns_atts = xdp->nstab;
       xgi_pool = pool_init();

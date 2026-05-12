@@ -53,7 +53,7 @@ static void xgi_verror_handler(int erno,va_list ap)
 	case RNV_ER_AVAL: xvh_err("attribute %s^%s with invalid value \"%s\""); break;
 	case RNV_ER_EMIS: xvh_err("incomplete content"); break;
 	case RNV_ER_AMIS: xvh_err("missing attributes of %s^%s"); break;
-	case RNV_ER_UFIN: xvh_err("unfinished content of element %s^%s"); break;
+	case RNV_ER_UFIN: xvh_err("(xgi) unfinished content of element %s^%s"); break;
 	case RNV_ER_TEXT: xvh_err("invalid data or text not allowed"); break;
 	case RNV_ER_NOTX: xvh_err("text not allowed"); break;
 	default: assert(0);

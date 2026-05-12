@@ -125,6 +125,7 @@
         <ref name="s"/>
         <ref name="c"/>
         <ref name="n"/>
+        <ref name="q"/>
       </choice>
     </element>
   </define>

@@ -131,6 +131,11 @@ gvl_q(Node *ynp)
       vq->mess = gvl_vmess("%s unable to attempt canonicalization", ynp->text);
     }
   ynp->user = vq;
+  if (!strcmp(ynp->kids->next->name, "g:g"))
+    {
+      if (sll_has_sign_indicator(ynp->kids->next->text))
+	ynp->kids->next->name = "g:s";
+    }
   if (vq->orig)
     {
       ynp->text = (ccp)vq->orig;

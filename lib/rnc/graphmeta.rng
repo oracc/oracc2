@@ -356,7 +356,9 @@
               <value>word-linefrom</value>
             </choice>
           </attribute>
-          <ref name="status.spans"/>
+          <optional>
+            <ref name="status.spans"/>
+          </optional>
           <optional>
             <ref name="opener"/>
           </optional>

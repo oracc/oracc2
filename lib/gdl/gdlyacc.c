@@ -98,8 +98,17 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 {
   Node *c;
   for (c = w->kids; c; c = c->next)
-    if (strcmp(c->name, "g:z"))/* && strcmp(c->name, "g:x"))*/
-      fputs(c->text, wfp);
+    {
+      if (!strcmp(c->name, "g:x"))
+	{
+	  if (!strcmp(c->text, "..."))
+	    fputc('x', wfp);
+	  else
+	    fprintf(stderr, "gdl_wf_nodes: unhandled g:x text %s\n", c->text);
+	}
+      else if (strcmp(c->name, "g:z"))
+	fputs(c->text, wfp);
+    }
 }
 
 /* This routine assumes it is processing one word-node at a time */
@@ -116,11 +125,14 @@ gdl_word_attr(Node *w)
     {
       if (*wf_buf)
 	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
+      else if (w->kids && !strcmp(w->kids->name, "g:x"))
+	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
       else
 	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");
-      free(wf_buf);
-      
+      free(wf_buf);      
     }
+  if (w->next)
+    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");    
 }
 
 Tree *
@@ -140,7 +152,7 @@ gdlparse_string(Mloc *m, char *s)
 
   if (tp->root)
     tp->root->text = (ccp)pool_copy((uccp)s, gdlpool);
-  
+
   gdl_setup_buffer(s2);
   gdl_set_tree(tp);
 
@@ -370,6 +382,7 @@ gdl_c_term(void)
     }
 }
 
+#if 0
 static void
 gdl_force_nonw(Node *w)
 {
@@ -382,6 +395,7 @@ gdl_force_nonw(Node *w)
   w->rent = rent;
   w->next = NULL;
 }
+#endif
 
 /* New behaviour 20260212: SPACE resets node to next node of last
    child of either the parent l-node or the tree root (for
@@ -393,7 +407,11 @@ gdl_new_word(Tree *ytp)
     {
       Node *l = node_ancestor_or_self(ytp->curr, "g:w");
       if (l && l->kids && !l->kids->next && !strcmp(l->kids->name, "g:x"))
-	gdl_force_nonw(l);
+	{
+	  /*NO: ox sets g:w @form="x" and leaves this as a g:w */
+	  /*gdl_force_nonw(l);*/
+	  gdl_prop_kv(l, GP_ATTRIBUTE, PG_GDL_INFO, "form", "z");
+	}
       if (l)
 	tree_curr(l->rent);
       else
