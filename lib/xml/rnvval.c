@@ -15,6 +15,7 @@
 
 extern int status;
 extern int verbose;
+extern Mloc *xo_loc;
 
 extern int rnvtrace;
 extern int rnx_n_exp;
@@ -269,7 +270,7 @@ rnvval_ea(const char *pname, struct rnvval_atts *ratts)
     }
   if (rnvtrace)
     fprintf(stderr, "rnv-ea: %s\n", qname);
-  rnv_start_element(NULL,(char*)pool_copy((ucp)qname, rnv_pool),
+  rnv_start_element(xo_loc,(char*)pool_copy((ucp)qname, rnv_pool),
 		    ratts ? ratts->qatts : (const char**)qatts);
 }
 
@@ -289,6 +290,6 @@ void
 rnvval_ch(const char *ch)
 {
   if (rnvtrace)
-    fprintf(stderr, "rnv-ch: ::%s::\n", ch);
+    fprintf(xo_loc, "rnv-ch: ::%s::\n", ch);
   rnv_characters(NULL, ch, strlen(ch));
 }

@@ -510,6 +510,7 @@ gdl_delim(Tree *ytp, const char *data)
   if (gdltrace)
     fprintf(stderr, "gt: DELIM: %s\n", data);
   np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
+  np->mloc = ytp->curr->mloc;
   if (np->prev)
     gdl_prop_kv(np->prev, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
 
@@ -826,6 +827,54 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
   rs_no(gs_run);
   /*gdl_update_state(lgp, gs_c);*/
   return ret;
+}
+
+void
+gdl_clear_gg(Tree *ytp)
+{
+  while (!strcmp(ytp->curr->name, "g:gg"))
+    gdl_pop(ytp, "g:gg");
+}
+
+void
+gdl_group(Mloc mp, Node *lft, int type, Node *rt)
+{
+  Node *gp = NULL;
+  if (!lft)
+    {
+      /* lft was a g:gg; if it is a different type create a new g:gg */
+      const char *t = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
+      const char *lt = prop_find_kv(rt->tree->curr->props, "g:type", NULL)->u.k->v;
+      if (strcmp(t, lt))
+	{
+	  const char *pt = NULL;
+	  /* if there is a parent group that matches the incoming type pop the current group */
+	  if (!strcmp(rt->tree->curr->rent->name, "g:gg"))
+	    pt = prop_find_kv(rt->tree->curr->rent->props, "g:type", NULL)->u.k->v;
+	  if (pt && !strcmp(pt, t))
+	    {
+	      Node *r2 = kids_rem_last(rt->tree);
+	      gdl_pop(rt->tree, "g:gg");
+	      kids_add_node(rt->tree, r2);
+	    }
+	  else
+	    {
+	      /* otherwise push a new group */
+	      gp = node_group(rt->prev, rt->prev, rt);
+	      gp->name = "g:gg";
+	      gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", t);
+	      tree_curr(gp);
+	    }
+	}
+    }
+  else
+    {
+      gp = node_group(lft, lft, rt);
+      gp->name = "g:gg";
+      const char *v = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
+      gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", v);
+      tree_curr(gp);
+    }
 }
 
 #if 0

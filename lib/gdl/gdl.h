@@ -163,5 +163,7 @@ extern List *gdl_get_word_list(void);
 extern void gdl_set_word_id(const char *wid);
 extern void gdl_auto_id(void);
 extern void gdl_det_props(Node *d);
+extern void gdl_group(Mloc mp, Node *lft, int type, Node *rt);
+extern void gdl_clear_gg(Tree *ytp);
 
 #endif /*GDL_H_*/

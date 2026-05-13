@@ -48,7 +48,7 @@ static void xgi_verror_handler(int erno,va_list ap)
       phase = "rnv";
       switch(erno)
 	{
-	case RNV_ER_ELEM: xvh_err("element %s^%s not allowed"); break;
+	case RNV_ER_ELEM: xvh_err("(xgi) element %s^%s not allowed"); break;
 	case RNV_ER_AKEY: xvh_err("attribute %s^%s not allowed"); break;
 	case RNV_ER_AVAL: xvh_err("attribute %s^%s with invalid value \"%s\""); break;
 	case RNV_ER_EMIS: xvh_err("incomplete content"); break;

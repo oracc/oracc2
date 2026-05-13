@@ -17,7 +17,7 @@ void rnv_default_verror_handler(int erno,va_list ap) {
     drv_default_verror_handler(erno&~ERBIT_DRV,ap);
   } else {
     switch(erno) {
-    case RNV_ER_ELEM: err("element %s^%s not allowed"); break;
+    case RNV_ER_ELEM: err("(rnv) element %s^%s not allowed"); break;
     case RNV_ER_AKEY: err("attribute %s^%s not allowed"); break;
     case RNV_ER_AVAL: err("attribute %s^%s with invalid value \"%s\""); break;
     case RNV_ER_EMIS: err("incomplete content"); break;

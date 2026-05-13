@@ -34,7 +34,7 @@ GDLLTYPE gdllloc;
 
 %}
 
-%union { char *text; int i; }
+%union { char *text; int i; struct node *node; }
 
 %token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS NOTEMARK VARO VARC VARI CELLSPAN
 		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD INDENT NEWLINE
@@ -44,6 +44,7 @@ GDLLTYPE gdllloc;
 		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
 
 %token <i>	'*' '!' '?' '#' '<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
+		'/' '+' ':'
        	        L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur
 		L_dbl_par R_dbl_par L_dbl_par_c R_dbl_par_c eras_canc_pivot
 		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
@@ -52,6 +53,9 @@ GDLLTYPE gdllloc;
 		PLUS_FLAG UFLAG1 UFLAG2 UFLAG3 UFLAG4 SPACE EOL END
 
 %nterm <text> 	field lexfld cmods
+
+%nterm <node>   alternate ligatured reordered ggroup
+		grapheme scgrapheme compound simplexg valuqual	
 
 %start line
 
@@ -123,18 +127,16 @@ space:
 	;
 
 transliteration:
-	  delim
-	| grapheme
-	| lang
-        | meta
-	| alternative
+		delim					{ gdl_clear_gg(ytp); }
+	| 	grapheme
+	| 	lang
+        | 	meta
+	|	ggroup
 	;
 
 delim:
 	  '.' 						{ ynp = gdl_delim(ytp, "."); }
         | '-' 						{ ynp = gdl_delim(ytp, "-"); }
-	| '+' 						{ ynp = gdl_delim(ytp, "+"); }
-	| ':' 						{ ynp = gdl_delim(ytp, ":"); }
 	| '{'	      					{ gdl_balance_state(@1,'{');
 	    						  gdl_push(ytp,"g:det");
 	  						  ps_on(gs_det_o);
@@ -160,27 +162,42 @@ delim:
 	| ENHYPHEN 			       		{ ynp = gdl_delim(ytp, "--"); }
 	;
 
-alternative:
-	    grapheme '/' grapheme			/*TODO; what about GDL 1.0 [+:]-groups?*/
-	  | alternative '/' grapheme
-	  ;
-
 grapheme:
-	  scgrapheme
-	| valuqual
-	;
+		scgrapheme
+	| 	valuqual
+		;
+
+ggroup:		alternate			       	
+	| 	ligatured		       		
+	| 	reordered	       			
+		;
+
+alternate:
+		grapheme '/' grapheme			{ gdl_group(@1, $1, '/', $3); }
+	|	ggroup '/' grapheme			{ gdl_group(@2, NULL, '/', $3); }
+		;
+
+ligatured:
+		grapheme '+' grapheme			{ gdl_group(@1, $1, '+', $3); }
+	|	ggroup '+' grapheme			{ gdl_group(@2, NULL, '+', $3); }
+		;
+
+reordered:
+		grapheme ':' grapheme			{ gdl_group(@1, $1, ':', $3); }
+	|	ggroup ':' grapheme			{ gdl_group(@2, NULL, ':', $3); }
+		;
 
 scgrapheme:
-	  simplexg
-	| compound
-	;
+		simplexg
+	| 	compound
+		;
 
 maybegflags:
-	  gflags
-	| mods
-	| mods gflags
-	| /* empty */
-	;
+		gflags
+	| 	mods
+	| 	mods gflags
+	| 	/*empty */
+		;
 
 gflags:
 	  gflag
@@ -200,7 +217,8 @@ simplexg:
 	    						  /*should now be covered in gdl_graph_node*/
            					          if (gdl_legacy) gdl_unlegacy(ynp);
 							  if (ynp->kids) gdl_mod_wrap(ynp, 1);
-	    			  			  gvl_simplexg(ynp); }
+	    			  			  gvl_simplexg(ynp);
+	  						  $$ = ynp; }
 	;
 
 s:
@@ -218,7 +236,7 @@ compound:
 	  c cmaybemodflags         			{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
 	    						  gdl_modq_flush();
 							  gvl_compound(ycp);
-	    						  ynp = gdl_pop(ytp,"g:c");
+	    						  $$ = ynp = gdl_pop(ytp,"g:c");
 	  						  gdl_c_term(); }
 	;
 
@@ -288,7 +306,7 @@ valuqual:
 	  						   gvl_valuqual(ytp->curr);
 	  						   ynp = ytp->curr; }
 	qmaybemodflags					 { gdl_mod_wrap_q(ynp);
-							   ynp = gdl_pop(ytp,"g:q"); }
+							   $$ = ynp = gdl_pop(ytp,"g:q"); }
         ;
 
 q:
