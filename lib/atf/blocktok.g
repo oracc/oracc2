@@ -28,7 +28,7 @@ seal,	Y_SEAL, "seal", B_SURFACE, "Seal", "seal", NULL
 docket,	Y_DOCKET, "docket", B_SURFACE, "Docket", "docket", NULL
 column,	Y_COLUMN, NULL, B_COLUMN, NULL, NULL, NULL
 m,	Y_M, "", B_MILESTONE, NULL, NULL, NULL
-fragment,	Y_FRAGMENT, "fragment", B_MILESTONE, "Fragment", "Frag.", "frg"
+fragment,	Y_FRAGMENT, "fragment", B_FRAGMENT, "Fragment", "Frag.", "frg"
 cfragment,	Y_CFRAGMENT, "cfragment", B_MILESTONE, "Fragment", "Frag.", "frg"
 body,	Y_BODY, "body", B_MILESTONE, NULL, NULL, NULL
 colophon,	Y_COLOPHON, "colophon", B_MILESTONE, NULL, NULL, NULL

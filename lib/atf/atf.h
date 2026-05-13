@@ -58,6 +58,7 @@ typedef struct atf {
   enum doct stype;
   enum doct sparse;
   enum doct sword;
+  enum frg_types frag_type;
   uccp project;
   const char *lang;
   const char *altlang;

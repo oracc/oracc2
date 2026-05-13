@@ -17,6 +17,7 @@ static void atf_implicit(const char *n);
 static void m_types(const char *s, const char **typep, const char **subtp);
 static char *obj_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *srf_args(Mloc l, Block *bp, char *s, char flags[]);
+static char *frg_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *col_args(Mloc l, Block *bp, char *s, char flags[]);
 static const char *xid_block(void);
 
@@ -91,6 +92,10 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
       reset_lninfo();
       block_lev(l, bp, rest);
       break;
+    case B_FRAGMENT:
+      reset_lninfo();
+      block_lev(l, bp, rest);
+      break;
     case B_COLUMN:
       ++lninfo.colno;
       lninfo.lineno = lninfo.lineprimes = 0;
@@ -138,6 +143,16 @@ block_lev(Mloc l, Block *bp, char *rest)
       if (*flags && !strcmp(bp->bt->name, "surface"))
 	warning("flags not allowed after @surface; should follow surface type arg");
       s = srf_args(l, bp, s, flags);
+      break;
+    case B_FRAGMENT:
+      {
+	Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
+	if (!np)
+	  atfp->frag_type = F_SURFACE;
+	else
+	  atfp->frag_type = F_SUBSURF;
+	s = frg_args(l, bp, s, flags);
+      }
       break;
     case B_COLUMN:
       if (*flags)
@@ -539,6 +554,35 @@ set_block_curr(Block_level b)
 	      tree_curr(np);
 	  }  
 	  break;
+	case B_FRAGMENT:
+	  /**@fragment is either a surface-level tag or a sub-column
+	   * level one so fragments can be edited with all columns
+	   * grouped together or with their text content split
+	   * discontinuously over several columns. In other words, a
+	   * text can have:
+	  */
+	  /**@tablet
+	   * @fragment a
+	   * ...
+	   */
+	  /* or */
+	  /**@column 1
+	   * @fragment a
+	   * @fragment b
+	   * @column 2
+	   * @fragment a
+	   * @fragment b
+	   */
+	  if (atfp->fragtype == F_NONE || F_SURFACE)
+	    {
+	      Node *np = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
+	      if (!np)
+		atf_implicit("object");
+	      else
+		tree_curr(np);
+	      return; /* PREVENT FALL THROUGH */
+	    }
+	  /* FALLS THROUGH */
 	case B_H1:
 	case B_H2:
 	case B_H3:
@@ -642,6 +686,23 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
     bp->label = xid_block();
 
   update_label(bp->np, etu_none);
+  return s;  
+}
+
+static char *
+frg_args(Mloc l, Block *bp, char *s, char flags[])
+{
+  const char *face = scan_name(NULL, s, &s);
+  if (face)
+    bp->subt = face;
+
+  if (bp->bt->nano)
+    bp->label = (ccp)bp->bt->nano;
+  else
+    bp->label = xid_block();
+
+  update_label(bp->np, etu_none);
+
   return s;  
 }
 
