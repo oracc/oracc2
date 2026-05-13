@@ -143,8 +143,19 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  gdl_wf_nodes(c, wfp);
 	  fputc('}', wfp);
 	}
+      else if (!strcmp(c->name, "g:gg"))
+	gdl_wf_nodes(c, wfp);	
       else if (strcmp(c->name, "g:z"))
-	fputs(c->text, wfp);
+	{
+	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+	  fputs(c->text, wfp);
+	  if (d)
+	    {
+	      fputs(d->u.k->v, wfp);
+	      if (c->next && !strcmp(c->next->name, "g:d"))
+		c = c->next;
+	    }
+	}
     }
 }
 
@@ -833,13 +844,14 @@ void
 gdl_clear_gg(Tree *ytp)
 {
   while (!strcmp(ytp->curr->name, "g:gg"))
-    gdl_pop(ytp, "g:gg");
+    (void)gdl_pop(ytp, "g:gg");
 }
 
 void
 gdl_group(Mloc mp, Node *lft, int type, Node *rt)
 {
   Node *gp = NULL;
+  const char *delim = (type=='/'?"/":(type==':'?":":"+"));
   if (!lft)
     {
       /* lft was a g:gg; if it is a different type create a new g:gg */
@@ -854,6 +866,7 @@ gdl_group(Mloc mp, Node *lft, int type, Node *rt)
 	  if (pt && !strcmp(pt, t))
 	    {
 	      Node *r2 = kids_rem_last(rt->tree);
+	      gdl_prop_kv(r2->prev, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
 	      gdl_pop(rt->tree, "g:gg");
 	      kids_add_node(rt->tree, r2);
 	    }
@@ -863,9 +876,12 @@ gdl_group(Mloc mp, Node *lft, int type, Node *rt)
 	      gp = node_group(rt->prev, rt->prev, rt);
 	      gp->name = "g:gg";
 	      gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", t);
+	      gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
 	      tree_curr(gp);
 	    }
 	}
+      else
+	gdl_prop_kv(rt->prev, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
     }
   else
     {
@@ -873,6 +889,7 @@ gdl_group(Mloc mp, Node *lft, int type, Node *rt)
       gp->name = "g:gg";
       const char *v = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
       gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", v);
+      gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
       tree_curr(gp);
     }
 }

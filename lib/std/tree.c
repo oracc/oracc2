@@ -280,6 +280,11 @@ node_group(Node *rep, Node *first, Node *last)
 {
   Node *gp = tree_node(rep->tree, rep->ns, "g:gp", rep->depth, rep->mloc);
   gp->rent = rep->rent;
+  gp->rent->last = gp;
+
+  Node *r;
+  for (r = first; r; r = r->next)
+    r->rent = gp;
 
   if (first)
     {
