@@ -2,6 +2,8 @@
 . ${ORACC}/bin/odo-func.sh
 odo_odo $0 $*
 
+project=$odo_proj
+
 odo_gloss_sub () {
     t=$1 ; shift
     for a in $* ; do

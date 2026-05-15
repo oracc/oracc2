@@ -2,6 +2,8 @@
 #
 # Remove cat files that are empty or only have a fields line
 #
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
 for a in $* ; do
     if [ -s $a ]; then
 	n=`wc -l $a`

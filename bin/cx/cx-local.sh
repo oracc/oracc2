@@ -4,7 +4,9 @@
 # 01tmp/00cat/m/local-[pqx].tsv.  From there they get augmented by
 # cx-extra.sh into 01bld/cat.
 #
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 #echo mdir=$mdir
 set $ldir/*
 if [ "$1" != "$ldir/*" ]; then

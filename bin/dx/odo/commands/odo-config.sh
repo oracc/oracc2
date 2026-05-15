@@ -7,6 +7,10 @@
 #
 . ${ORACC}/bin/odo-func.sh
 odo_odo $0 $*
+odo_verbose $0 $1
+
+project=$odo_proj
+V=$odo_verb
 
 if [ ! -r 00lib/config.xml ]; then
     echo $0: must be run from a project directory
@@ -57,6 +61,6 @@ fi
 #
 # This phase must precede lx-lists.sh
 #
-${bin}/cx-marshall.sh
+${obin}/cx-marshall.sh
 
 exit 0

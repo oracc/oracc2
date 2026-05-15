@@ -9,7 +9,7 @@ odo_odo $0 $*
 
 lastmod ()
 {
-    ls -clt --time-style=long-iso $1 | cut --output-delimiter=T -d' ' -f6,7
+    ls -clt --time-style=long-iso $odo_proj | cut --output-delimiter=T -d' ' -f6,7
 }
 
 echo Status report for project $2 as of `date +%Y-%m-%dT%T%Z`:

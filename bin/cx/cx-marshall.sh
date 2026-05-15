@@ -12,8 +12,11 @@
 # separate files.
 #
 #set -x
+
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
+
 set -a
-echo $0 $*
 projtype=`oraccopt . type`
 
 bin="$ORACC/bin"

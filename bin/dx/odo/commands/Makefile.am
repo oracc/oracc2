@@ -5,4 +5,5 @@ bin_SCRIPTS=\
 	odo-catalog.sh		odo-gloss.sh		odo-portal.sh \
 	odo-check.sh		odo-harvest.sh		odo-signlist.sh \
 	odo-config.sh		odo-list.sh		odo-subproject.sh \
-	odo-corpus.sh		odo-log.sh		odo-update.sh
+	odo-corpus.sh		odo-log.sh		odo-update.sh \
+	odo-build.sh

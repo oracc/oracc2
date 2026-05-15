@@ -6,13 +6,14 @@
 # This script is run by odo after the CVS refresh but before any other
 # activity.
 #
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 # default to no-write-others
 umask 002
 
-V=$2
-
-project=$1
+project=$odo_proj
+V=$odo_verb
 
 if [ "$project" = "" ]; then
     echo $0: no project given. Stop.
@@ -38,9 +39,9 @@ else
     group=oradmin
 fi
 
-cd @@ORACC_BUILDS@@/$1
+cd @@ORACC_BUILDS@@/$project
 for dir in bld pub tmp xml www ; do
-    md=@@ORACC_BUILDS@@/$dir/$1
+    md=@@ORACC_BUILDS@@/$dir/$project
     mkdir $V -p $md
     chown -R $owner:$group $md
     chmod 2775 $md
@@ -57,8 +58,8 @@ if [ -d 01bld ]; then
     rm $V -fr 01bld
 fi
 
-ln $V -sf @@ORACC_BUILDS@@/bld/$1 01bld
-ln $V -sf @@ORACC_BUILDS@@/pub/$1 02pub
-ln $V -sf @@ORACC_BUILDS@@/tmp/$1 01tmp
-ln $V -sf @@ORACC_BUILDS@@/www/$1 02www
-ln $V -sf @@ORACC_BUILDS@@/xml/$1 02xml
+ln $V -sf @@ORACC_BUILDS@@/bld/$project 01bld
+ln $V -sf @@ORACC_BUILDS@@/pub/$project 02pub
+ln $V -sf @@ORACC_BUILDS@@/tmp/$project 01tmp
+ln $V -sf @@ORACC_BUILDS@@/www/$project 02www
+ln $V -sf @@ORACC_BUILDS@@/xml/$project 02xml

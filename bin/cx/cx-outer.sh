@@ -6,7 +6,9 @@
 # For each group, grep them out of the outer catalogue and use
 # use rocox -ET to rewrite them according to the template
 #
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 #echo mdir=$mdir
 tdir=01tmp/00cat/t
 rm -fr ${tdir} ; mkdir -p ${tdir}

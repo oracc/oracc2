@@ -6,8 +6,10 @@
 #
 # The first field is always id_text; cx automatically coerces this to
 # id_composite when generating XMD for a Q-ID
-echo $0 $*
-bin=${ORACC}/bin
+
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 tsv=$*
 uf=01tmp/union.f
 rm -f $uf
@@ -27,4 +29,4 @@ cat idtext $uf | tr '\n' '\t' | sed 's/	$/\
 /' >$ut
 cat $ui >>$ut
 
-$bin/rocox -U $ut $* >01bld/cat/union.tsv
+$obin/rocox -U $ut $* >01bld/cat/union.tsv

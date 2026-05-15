@@ -1,6 +1,7 @@
 #!/bin/bash
 
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 project=$1
 l=$2

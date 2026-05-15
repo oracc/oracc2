@@ -1,4 +1,6 @@
 #!/bin/sh
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 buildlex=`oraccopt . build-lex-data`
 echo $0: build-lex-data=$buildlex
 if [ "$buildlex" = "yes" ]; then

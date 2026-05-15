@@ -10,7 +10,9 @@
 # 01tmp/00cat/cat.d/*-[pqx].tsv generate a skeleton local-[pqx].tsv
 # with just the IDs
 #
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 #echo mdir=$mdir
 bin=${ORACC}/bin
 xsl=${ORACC}/lib/scripts

@@ -17,11 +17,6 @@ if [ "$1" = "-inherit" ]; then
     shift
 fi
 
-if [ "$1" = "" ]; then
-    echo $0: must give project name as arg1. Stop.
-    exit 1
-fi
-
 subname=$1 ; shift
 
 if [ "$1" = "" ]; then

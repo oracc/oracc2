@@ -1,6 +1,7 @@
 #!/bin/sh
 
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 # Do this late so that all the necessary support files have been built
 buildlex=`oraccopt . build-lex-data`

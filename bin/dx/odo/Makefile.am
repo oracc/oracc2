@@ -1,2 +1,1 @@
-subdirs=controller commands
-#tasks
+SUBDIRS=controller commands tasks

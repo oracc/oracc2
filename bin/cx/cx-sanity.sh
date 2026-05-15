@@ -7,6 +7,9 @@
 # This script must be run after cx-marshall.sh because it requires
 # .tsv with ID in column 1.
 #
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 set $bdir
 if [ "$1" != "${bdir}" ]; then
     # 1a) catalogues may not mix id_text and id_composite

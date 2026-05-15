@@ -12,7 +12,7 @@ o2=$1
 projtype=`oraccopt . type`
 asl=""
 
-# This block only for corpus projects which auto-create their sign list
+# This block is only for corpus projects which auto-create their sign list
 if [ "$projtype" = "corpus" ]; then
     aslauto=`oraccopt . asl-auto`
     if [ "$aslauto" = "yes" ]; then
@@ -44,7 +44,11 @@ fi
 if [ "$asl" != "" ]; then
     sx-bib.sh
     sxweb.sh
-#    tisdbi.sh # this is not used at the moment but remember it in a possible ePSD3 tok implementation
+    # this is not used at the moment but remember it in a possible
+    # ePSD3 tok implementation
+    
+    #    tisdbi.sh
+    
     if [ "$projtype" = "signlist" ]; then
 	odo-portal.sh
     fi

@@ -7,7 +7,9 @@
 # project and which can be drawn from other projects.
 #
 set -a
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 #echo mdir=$mdir
 bin="$ORACC/bin"
 lxd=01bld/lists

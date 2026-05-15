@@ -12,7 +12,9 @@
 # in lx-inputs.sh, so it is only intended to work with odo-corpus.sh
 # not o2-corpus.sh.
 #
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 project=`oraccopt`
 if [ "${project}" = "" ]; then
     echo $0: must run in a project directory. Stop.

@@ -11,6 +11,9 @@
 # For X-ids with no local-x.tsv, use the minimal field set ensured by
 # atfdatax.
 #
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 cdir=01bld/cat
 pmaster=`oraccopt . catalog-master-p`
 qmaster=`oraccopt . catalog-master-q`

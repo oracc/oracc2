@@ -1,5 +1,7 @@
 #!/bin/bash
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
+
 p=$1
 l=$2
 dwww=${ORACC_BUILDS}/$p/02www/cbd

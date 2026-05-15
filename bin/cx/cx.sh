@@ -6,7 +6,9 @@
 # data.
 #
 #set -x
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+
 set -a
 bin="$ORACC/bin"
 projtype=`oraccopt . type`;

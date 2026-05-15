@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/sh
 #
 # Update the local version of a repo.
 #
@@ -7,20 +7,26 @@
 # osh passes additional arguments to this script so it can be
 # configured in various ways.
 #
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
-u=$1
+u=$odo_user
 (cd @@ORACC_BUILDS@@/$u
  if [ -r .git ]; then
      me=`whoami`
-     echo $0: running as $me
-     echo $0: updating $u--cwd=`pwd`
+     odov $0: running as $me
+     odov $0: updating $u--cwd=`pwd`
      if [ "$ORACC_MODE" = "single" ]; then
-	 git pull
+	 if [ "$odo_verb" = "" ]; then
+	     git pull >/dev/null 2>&1
+	 else
+	     git pull
+	 fi
      else
 	 runuser -u oradmin git pull
      fi
      touch .oracc-git ; chmod 0644 .oracc-git
  else
-     echo $0: `pwd` is not a git repository "(no .git)."
+     odov $0: `pwd` is not a git repository "(no .git)."
  fi
  )
