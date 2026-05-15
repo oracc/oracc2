@@ -263,7 +263,7 @@ check_label(unsigned const char *lab,enum e_tu_types transtype,
   extern int start_lnum;
   if (!lab || !*lab)
     {
-      static unsigned char default_ret[10];
+      static unsigned char default_ret[64];
       sprintf((char*)default_ret,"%s.1",xid);
       return default_ret;
     }

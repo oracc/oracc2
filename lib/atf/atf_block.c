@@ -21,6 +21,8 @@ static char *frg_args(Mloc l, Block *bp, char *s, char flags[]);
 static char *col_args(Mloc l, Block *bp, char *s, char flags[]);
 static const char *xid_block(void);
 
+static Node *ancestor_or_self_level_as(Node *np, Block_level b, int auto_set);
+
 static char block_flags[256] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
 const char *primes[] = {"′","″","‴","⁗","⁗′","⁗″","⁗‴","⁗⁗"};
 const char *Primes[] = {"p", "P", "Pp", "PP", "PPp", "PPP", "PPPp", "PPPP" };
@@ -67,13 +69,25 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
   if ('=' == *rest)
     ++rest;
 
+  if (bp->bt->type == B_FRAGMENT)
+    {
+      Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
+      if (!np)
+	atfp->frag_type = F_SURFACE;
+      else
+	atfp->frag_type = F_SUBSURF;
+    }
+  
   /* Take care not to create a div np in this routine because
      block_div handles that and does div/end div checking */
   if (bp->bt->type != B_DIVISION)
     {
       set_block_curr(bp->bt->type);
 
-      if (atfp->edoc == EDOC_TRANSLITERATION)
+      if (bp->bt->type == B_MILESTONE
+	  || bp->bt->bison == Y_FRAGMENT)
+	bp->np = atf_add("m", &l);
+      else if (atfp->edoc == EDOC_TRANSLITERATION)
 	bp->np = atf_push(bp->bt->name, &l);
       else
 	bp->np = atf_add(bp->bt->name, &l);
@@ -145,14 +159,10 @@ block_lev(Mloc l, Block *bp, char *rest)
       s = srf_args(l, bp, s, flags);
       break;
     case B_FRAGMENT:
-      {
-	Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
-	if (!np)
-	  atfp->frag_type = F_SURFACE;
-	else
-	  atfp->frag_type = F_SUBSURF;
-	s = frg_args(l, bp, s, flags);
-      }
+      atf_xprop(bp->np, "type", "locator");
+      atf_xprop(bp->np, "subtype", "fragment");
+      s = frg_args(l, bp, s, flags);
+      bp->np->text = (ccp)pool_copy((uccp)s, atfmp->pool);
       break;
     case B_COLUMN:
       if (*flags)
@@ -469,7 +479,7 @@ m_types(const char *s, const char **typep, const char **subtp)
 /* Find the ancestor-or-self which is a block token at the level of arg2;
  * if not found, set tree_curr to the first ancestor-or-self that wasn't a block.
  */
-Node *
+static Node *
 ancestor_or_self_level_as(Node *np, Block_level b, int auto_set)
 {
   Node *non_block = NULL;
@@ -573,7 +583,8 @@ set_block_curr(Block_level b)
 	   * @fragment a
 	   * @fragment b
 	   */
-	  if (atfp->fragtype == F_NONE || F_SURFACE)
+
+	  if (atfp->frag_type == F_SURFACE)
 	    {
 	      Node *np = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
 	      if (!np)
@@ -696,13 +707,15 @@ frg_args(Mloc l, Block *bp, char *s, char flags[])
   if (face)
     bp->subt = face;
 
+#if 0
   if (bp->bt->nano)
     bp->label = (ccp)bp->bt->nano;
   else
     bp->label = xid_block();
 
   update_label(bp->np, etu_none);
-
+#endif
+  
   return s;  
 }
 

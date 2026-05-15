@@ -74,5 +74,7 @@ extern void scan_text(Scanseg *ssp, unsigned char *text_start,
 		      unsigned char **text_end, scan_block_tester f);
 extern int block_peek(Scan *sp, unsigned char *p, scan_block_tester f);
 extern char *scan_str_term(Scan *sp, const char *start, const char *match, char **endp);
+#define set_scan_pool scan_set_pool
+extern void scan_set_pool(Pool *p);
 
 #endif/*_SCAN_H*/

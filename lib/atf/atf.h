@@ -58,7 +58,7 @@ typedef struct atf {
   enum doct stype;
   enum doct sparse;
   enum doct sword;
-  enum frg_types frag_type;
+  enum e_frg_types frag_type;
   uccp project;
   const char *lang;
   const char *altlang;
@@ -146,8 +146,6 @@ typedef struct protocol {
 
 /* preliminary induction of note stuff from ox */
 #include "note.h"
-
-#include "blocktok.h"
 
 /* These are the possible child nodes in a block hierarchy */
 typedef struct block {

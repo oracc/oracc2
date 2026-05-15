@@ -3,6 +3,7 @@
 #include <pool.h>
 #include <o2.h>
 #include <lang.h>
+#include <scan.h>
 #include "etcsl.h"
 #include "note.h"
 #include "atf.h"
@@ -57,6 +58,7 @@ atf_init(void)
   atfmp->mxis = memo_init(sizeof(struct xcl_ilem),1024);
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
   atfmp->pool = pool_init();
+  scan_set_pool(atfmp->pool);
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;

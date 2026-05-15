@@ -65,6 +65,7 @@ axa_protocol(Mloc *mp, Protocol *p)
     case PROT_LZR_STOP:
       fprintf(axa_fp, "#lemmatizer: stop %d\n", p->u.stop);
       break;
+    case PROT_COMMENT:
     case PROT_ETCSL:
     case PROT_TOP:
       break;

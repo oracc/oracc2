@@ -9,7 +9,7 @@ typedef enum block_levels {
 } Block_level;
 
 /* a B_SUBSURF @fragment is one that is a surface sub @column */
-enum e_frg_types { B_NONE , B_SURFACE , B_SUBSURF };
+enum e_frg_types { F_NONE , F_SURFACE , F_SUBSURF };
 
 enum e_tu_types
 {

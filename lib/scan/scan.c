@@ -4,7 +4,7 @@
 Pool *scan_pool;
 
 void
-set_scan_pool(Pool *p)
+scan_set_pool(Pool *p)
 {
   scan_pool = p;
 }
