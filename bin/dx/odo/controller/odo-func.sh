@@ -1,11 +1,17 @@
 #!/bin/sh
 set -a
 
+odo_fail ()
+{
+    echo $*
+    odo_quit
+}
+
 odo_log ()
 {
     exec 1>&3
     exec 2>&4
-    cat $log
+    cat $odo_log
 }
 
 odo_odo ()

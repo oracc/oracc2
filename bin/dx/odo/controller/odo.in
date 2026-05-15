@@ -112,6 +112,12 @@ if [ "$1" = "-v" ]; then
     shift
     V="-v"
     verb=$V
+elif [ "$1" = "-V" ]; then
+    shift
+    V="-v"
+    verb=$V
+    setx=yes
+    set -x
 fi
 
 set -a
@@ -226,10 +232,12 @@ else
 	 set -a
 	 . @@ORACC@@/bin/oraccenv.sh
 	 obin=$bin
+	 odo_log=$log
 	 odo_odo=odo
+	 odo_proj=$project
+	 odo_setx=$setx
 	 odo_tmpd=$tmpdir
 	 odo_user=$user
-	 odo_proj=$project
 	 set +a
 	 if [ "$F" != "-f" ]; then
 	     $bin/odo-cvs-refresh.sh $user $*
@@ -254,7 +262,8 @@ else
 	 if [ "$command" != "config" ] && [ "$command" != "update" ]; then
 	     uscript=$bin/${user}-${command}.sh
 	     if [ -x $uscript ]; then
-		 $uscript $*
+		 $uscript $* || odo_quit
+		 odo_term
 	     else
 		 if [ "$command" = "catalogue" ]; then
 		     command=catalog
@@ -262,7 +271,7 @@ else
 		 script=$bin/odo-$command.sh
 		 odov echo $0 needs $script
 		 if [ -x $script ]; then
-		     $script $*
+		     $script $* || odo_quit
 		     odo_term
 		 else
 		     echo $0 did not find $script or $uscript
