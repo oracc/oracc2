@@ -79,10 +79,13 @@ ax_input(const char *f)
 	    atf_xprop(np, apcc[i], apcc[i+1]);
 	}
 
-      if (xml_output)
-	ax_jox(tp);
-      else
-	ax_atf(atfmp->atf);
+      if (!check_mode)
+	{
+	  if (xml_output)
+	    ax_jox(tp);
+	  else
+	    ax_atf(atfmp->atf);
+	}
 
       if (xp)
 	{
