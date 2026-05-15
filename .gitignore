@@ -258,7 +258,6 @@ bin/bx/bx_xslt.c
 bin/bx/bib_out_htm.c
 bin/bx/map-jrnser.xsl
 bin/dx/dxx/dx-install.sh
-bin/dx/odo/commands/odo-build.sh
 bin/dx/odo/tasks/odo-cvs-checkout.sh
 bin/dx/odo/tasks/odo-cvs-refresh.sh
 bin/dx/odo/tasks/odo-dir-links.sh
