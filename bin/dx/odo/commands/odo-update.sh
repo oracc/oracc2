@@ -1,7 +1,6 @@
 #!/bin/dash
-#
-
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 # update OIDs
 mcu-oids.sh $*

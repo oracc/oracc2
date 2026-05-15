@@ -1,5 +1,6 @@
 #!/bin/dash
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 odo_gloss_sub () {
     t=$1 ; shift
@@ -13,15 +14,14 @@ odo_gloss_sub () {
 ## Set the task
 ##
 taskorlang=0
-user=$1
-project=$2
-if [ "$3" = "" ]; then
+
+if [ "$1" = "" ]; then
     subcommand=all
     shift 2
 else
     for a in xml htm web all ; do
-	if [ "$3" = "$a" ]; then
-	    subcommand=$3
+	if [ "$1" = "$a" ]; then
+	    subcommand=$1
 	    break;
 	fi
     done

@@ -573,7 +573,11 @@ set_block_curr(Block_level b)
 	  */
 	  /**@tablet
 	   * @fragment a
-	   * ...
+	   * @column 1
+	   * @column 2
+	   * @fragment b
+	   * @column 1
+	   * @column 2
 	   */
 	  /* or */
 	  /**@column 1

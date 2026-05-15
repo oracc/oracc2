@@ -17,9 +17,10 @@
 char *trafile, *xtffile;
 
 Mloc xo_loc;
-FILE *f_xml;
+FILE *f_xml, *ok_no_ok_fp, *ok_no_no_fp;
 const char *file;
 int links_standalone;
+int ok_no_files = 0;
 int status;
 int rnvtrace;
 int verbose;
@@ -89,7 +90,16 @@ ax_input(const char *f)
 	  list_free(ap, NULL);
 	  free((char*)apcc);
 	}
+
+      if (ok_no_files)
+	fprintf(status ? ok_no_no_fp : ok_no_ok_fp, "%s\n", f);
       
+      if (status)
+	{
+	  exit_status = status;
+	  status = 0;
+	}
+
       atf_term();
       memo_auto(0);
       rnvval_term();
@@ -100,6 +110,7 @@ ax_input(const char *f)
       mesg_term();
       inl_term();
       langtag_term();
+      
     }
 }
 
@@ -237,7 +248,15 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "cI:ltvx");
+  options(argc, argv, "cgI:ltvx");
+
+  if (ok_no_files)
+    {
+      ok_no_ok_fp = xfopen("ax.ok", "w");
+      ok_no_no_fp = xfopen("ax.no", "w");
+      if (!ok_no_ok_fp || !ok_no_no_fp)
+	exit(1);
+    }
 
   inl_set_ns(NS_HTM);
   
@@ -255,6 +274,11 @@ main(int argc, char * const*argv)
   process_inputs(argc, argv);
   
   ax_full_term();
+  if (ok_no_files)
+    {
+      xfclose("ax.ok", ok_no_ok_fp);
+      xfclose("ax.no", ok_no_no_fp);
+    }
 }
 
 int
@@ -264,6 +288,9 @@ opts(int opt, const char *arg)
     {
     case 'c':
       check_mode = 1;
+      break;
+    case 'g':
+      ok_no_files = 1;
       break;
     case 'I':
       inputs_from_file = optarg;

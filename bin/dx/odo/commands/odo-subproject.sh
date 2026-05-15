@@ -4,15 +4,13 @@
 #
 # As usual, odo calls this script with 'user' and 'project' as first two args.
 #
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 libscripts="${ORACC}/lib/scripts"
 
-user=$1
-shift
-
-parent=$1
-shift
+user=$odo_user
+parent=$odo_proj
 
 if [ "$1" = "-inherit" ]; then
     inherit="1"

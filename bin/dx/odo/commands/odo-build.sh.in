@@ -8,12 +8,10 @@
 # additional arguments may be ignored depending on the selected
 # subcommand.
 #
-echo $0: $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 rm -f 01bld/cancel
-
-user=$1 ; shift
-project=$1 ; shift
 
 if [ "$1" = "" ]; then
     projtype=`oraccopt . type`

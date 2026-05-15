@@ -1,5 +1,7 @@
 #!/bin/dash
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
+
 # o2-lst.sh ## should be fully replaced by lx-lists.sh
 lx-lists.sh
 cx.sh

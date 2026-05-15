@@ -31,7 +31,12 @@ atfinstall -p $proj 00atf/*.atf
 
 # This is the new way of making .xtf and other derivatives of .atf files:
 # .xtf and .tok files are the default products.
-atfmake.sh
+##atfmake.sh
+
+# 20260515 atfmake.sh is too slow so we are trying a different way
+# with ax.  odo-atf.sh default action is to compile .atf to .xtf using
+# 01bld/lists/atfinstall.lst
+odo-atf.sh build $*
 
 # This is the new way of generating corpus statistics from .tok files.
 atftoks.sh

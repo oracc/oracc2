@@ -5,12 +5,8 @@
 #
 # It can also be run on its own with osh PROJECT config.
 #
-
-echo $0 $*
-
-project=$1
-V=$2
-bin=${ORACC}/bin
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 
 if [ ! -r 00lib/config.xml ]; then
     echo $0: must be run from a project directory
@@ -18,13 +14,13 @@ if [ ! -r 00lib/config.xml ]; then
 fi
 
 if [ -r 00lib/subconfig.xml ]; then
-    if [ "$V" != "" ]; then
+    if [ "$odo_verb" != "" ]; then
 	$0: creating 02xml/config.xml from 00lib/subconfig.xml
     fi
     xsltproc -o 02xml/config.xml $ORACC/lib/scripts/mcc-subconfig.xsl \
 	00lib/subconfig.xml
 else
-    cp $V 00lib/config.xml 02xml/config.xml
+    cp $odo_verb 00lib/config.xml 02xml/config.xml
 fi
 
 set 00lib/config-*.xml

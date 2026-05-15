@@ -19,11 +19,9 @@
 # neither of these scripts exists it is a bad command (which should be
 # caught earlier by osh).
 #
-# The command script is then called with $user and $project as the
-# first two arguments, and any additional arguments are also appended
-# to the script invocation.
+# odo_user and odo_proj are placed in the environment via set -a
+# before the command is called.
 #
-
 cmdok ()
 {
     command=$1
@@ -96,12 +94,28 @@ set_tmpdir ()
     fi
 }
 
-bin=@@ORACC_BUILDS@@/bin
+bin=/Users/stinney/orc/bin
+
+# Verbose can be set on the command-line or in a file .odov which must
+# contain exactly '-v'.
+if [ -r .odov ]; then
+    verb=`cat .odov`
+fi
+
+if [ "$1" = "-f" ]; then
+    shift
+    F="-f"
+    fast=$V
+fi
 
 if [ "$1" = "-v" ]; then
     shift
     V="-v"
+    verb=$V
 fi
+
+odo_verb=$verb
+. $bin/odo-func.sh
 
 # set defaults if fewer than three arguments
 # tmp => /tmp/$$
@@ -112,7 +126,7 @@ if [ -x $bin/odo-$1.sh ]; then
 	exec $bin/odo-log.sh
     fi
     # one-argument form, assume command
-    echo "$0: one-argument call detected with $*."
+    odov "$0: one-argument call detected with $*."
     set_tmpdir
     set $xtmp "." $*
 else
@@ -125,21 +139,21 @@ else
 		exit 1
 	    else
 		# one-argument form, assume command
-		echo "$0: one-argument call detected."
+		odov echo "$0: one-argument call detected."
 		set_tmpdir
 		set $xtmp "." $1
 	    fi
 	else
 	    # two-argument form: assume project and command;
 	    # will fail later if assumption is wrong
-	    echo "$0: two-argument call detected."
+	    odov echo "$0: two-argument call detected."
 	    set_tmpdir
 	    set $xtmp $1 $2
 	fi
     fi
 fi
 
-echo $0 called with arguments $*
+odov echo $0 adjusted arguments $*
 
 tmpdir=$1
 if [ "$tmpdir" = "-" ]; then
@@ -176,15 +190,15 @@ if [ "$command" = "" ]; then
 fi
 log="$tmpdir/odo.log"
 shift
-echo "$0: log=$log; user=$user; project=$project; command=$command"
-echo "$0: switching output to $log"
+odov "$0: log=$log; user=$user; project=$project; command=$command"
+odov "$0: switching output to $log"
 
 savedescriptors="1"
 exec 3>&1
 exec 4>&2
 exec >$log 2>&1
 if [ $command = "init" ]; then
-    cd @@ORACC_BUILDS@@
+    cd /Users/stinney/orc
     if [ ! -r $user ]; then
 	$bin/odo-cvs-checkout.sh $user $*
 	if [ $? != 0 ]; then
@@ -200,26 +214,38 @@ else
     if [ "$cmdtest" != "ok" ]; then
 	fail "bad command, could not find $uscript or $script"
     fi
-    projdir=@@ORACC_BUILDS@@/$project
+    if [ "$command" = "env" ]; then
+	F=-f
+    fi
+    projdir=/Users/stinney/orc/$project
     if [ -d $projdir ]; then
 	(cd $projdir
 	 /bin/echo -n $log >.odolog
-	 . $bin/odo-environment.sh
-	 $bin/odo-cvs-refresh.sh $user $*
-	 $bin/odo-dir-links.sh $project $V
-	 $bin/odo-config.sh $project $V
-	 if [ "${command}" = "config" ]; then
-	     exit $?
-	 fi
-	 if [ $? -eq 0 ]; then
-	     $bin/odo-update.sh $project $V
-	     if [ $? -eq 0 ]; then
-		 set_status done
-	     else
-		 fail "update command failed"
+	 set -a
+	 . /Users/stinney/orc/bin/oraccenv.sh
+	 obin=$bin
+	 odo_odo=odo
+	 odo_user=$user
+	 odo_proj=$project
+	 if [ "$F" != "-f" ]; then
+	     $bin/odo-cvs-refresh.sh $user $*
+	     if [ "$command" != "check" ]; then
+		 $bin/odo-dir-links.sh
+		 $bin/odo-config.sh
+		 if [ "${command}" = "config" ]; then
+		     exit $?
+		 fi
+		 if [ $? -eq 0 ]; then
+		     $bin/odo-update.sh $project $V
+		     if [ $? -eq 0 ]; then
+			 set_status done
+		     else
+			 fail "update command failed"
+		     fi
+		 else
+		     fail "config command failed"
+		 fi
 	     fi
-	 else
-	     fail "config command failed"
 	 fi
 	 if [ "$command" != "config" ] && [ "$command" != "update" ]; then
 	     uscript=$bin/${user}-${command}.sh
@@ -230,7 +256,7 @@ else
 		     command=catalog
 		 fi
 		 script=$bin/odo-$command.sh
-		 echo $0 needs $script
+		 odov echo $0 needs $script
 		 if [ -x $script ]; then
 		     $script $user $project $*
 		     exec 1>&3

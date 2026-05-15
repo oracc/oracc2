@@ -6,7 +6,8 @@
 # need to create the indices here unless this is working within the
 # old o2 system.
 #
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
 o2=$1
 projtype=`oraccopt . type`
 asl=""

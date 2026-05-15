@@ -4,6 +4,9 @@
 # mostly exists to have a vacuous exercise to carry out when testing
 # dx/osh/odo cycle.
 
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
+
 lastmod ()
 {
     ls -clt --time-style=long-iso $1 | cut --output-delimiter=T -d' ' -f6,7

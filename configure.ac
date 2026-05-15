@@ -110,6 +110,9 @@ AC_CONFIG_FILES([Makefile
 		 bin/dx/dxx/Makefile
 		 bin/dx/osh/Makefile
 		 bin/dx/odo/Makefile
+		 bin/dx/odo/controller/Makefile
+		 bin/dx/odo/commands/Makefile
+		 bin/dx/odo/tasks/Makefile
 		 bin/gx/Makefile
 		 bin/jx/Makefile
 		 bin/lx/Makefile
