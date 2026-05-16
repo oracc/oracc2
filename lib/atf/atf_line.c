@@ -77,6 +77,7 @@ atf_group_wrapup(void)
       list_free(atfmp->llines, NULL);
       atfmp->llines = NULL;
     }
+  curr_lem_host = NULL;
 }
 
 /* Start a new line group; if we are already in a group, wrap the
@@ -532,6 +533,7 @@ line_lem(Mloc ml, unsigned char *l)
     }
   list_free(curr_lem_host->wl, NULL);
   curr_lem_host->wl = NULL; /* this is OK as long as we don't overload use of line->wl */
+  curr_lem_host = NULL;
   list_free(llem, NULL);
 }
 

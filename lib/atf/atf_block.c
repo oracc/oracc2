@@ -137,7 +137,7 @@ static void
 block_lev(Mloc l, Block *bp, char *rest)
 {
   char *s = rest;
-  char flags[MAX_FLAGS+1];
+  char flags[MAX_FLAGS+1] = { '\0' };
 
   while (isspace(*s))
     ++s;

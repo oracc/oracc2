@@ -20,7 +20,7 @@ static int linktext;
 static char *xs, *atfbuf, *atfbuf_alloced;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
-#define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);
+#define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);atflval.text=atfpool(xs);free(xs);s=xs=NULL
 
 static int atf_block(const char *atcmd);
 static void atf_user_action(void);
