@@ -220,6 +220,7 @@ extern const char *Primes[];
 
 extern int check_links;
 extern int line_id;
+extern int line_trace;
 extern char line_id_buf[MAX_LINE_ID_BUF+1];
 extern char *line_id_insertp;
 extern const char *clid;
@@ -289,6 +290,7 @@ extern void atf_set_tree(Tree *tp);
 extern void atf_term(void);
 extern void atf_wrapup(Wheret where);
 extern void atf_wrapup_buffer(void);
+extern void atf_lex_line_trace(Mloc *mp);
 
 extern unsigned const char*check_label(unsigned const char *lab,enum e_tu_types transtype,
 				       unsigned const char *xid);

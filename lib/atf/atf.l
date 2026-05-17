@@ -293,3 +293,9 @@ atf_user_action(void)
   atflloc.file = curratffile;
   atflloc.line = atflineno;
 }
+
+void
+atf_lex_line_trace(Mloc *mp)
+{
+    fprintf(stderr, "#fileline: %s:%d\n", curratffile, mp->line);
+}

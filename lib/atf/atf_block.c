@@ -41,6 +41,7 @@ unsigned char idbuf[MAX_IDBUF_LEN+1];
 extern Hash *last_tlit_h_hash;
 extern struct node **last_tlit_h;
 static int lth_alloced = 0;
+extern int line_trace;
 extern int lth_used;
 extern int last_tlit_h_decay;
 
@@ -60,6 +61,9 @@ void
 atf_bld_block(Mloc l, Blocktok *btp, char *rest)
 {
   atf_group_wrapup();
+
+  if (line_trace)
+    atf_lex_line_trace(&l);
   
   Block *bp = memo_new(atfmp->mblocks);
   bp->utype = N_U_BLOCK;

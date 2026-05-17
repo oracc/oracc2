@@ -251,7 +251,7 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "cgI:ltvx");
+  options(argc, argv, "CDcgI:Lltvx");
 
   if (ok_no_files)
     {
@@ -292,14 +292,23 @@ opts(int opt, const char *arg)
     case 'c':
       check_mode = 1;
       break;
+    case 'C':
+      xcl_output = xml_output = 1;
+      break;
+    case 'D':
+      /* future use with morph analyzer */
+      break;
     case 'g':
       ok_no_files = 1;
       break;
     case 'I':
       inputs_from_file = optarg;
       break;
+    case 'L':
+      line_trace = 1;
+      break;
     case 'l':
-      xcl_output = xml_output = 1;
+      xcl_output = xml_output = 1;      
       break;
     case 't':
       trace_mode = 1;

@@ -10,6 +10,7 @@
 
 int already_lemmed = 0;
 static int lg_mode = 0;
+int line_trace = 0;
 int mylines = 1;
 int suppress_lem = 0;
 
@@ -106,6 +107,9 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
   if (lt != LT_DOLLAR)
     ++line_lines;
 #endif
+
+  if (line_trace)
+    atf_lex_line_trace(&l);
 
   atf_input(l, lt, lp);
   if (!atfmp->llines)
