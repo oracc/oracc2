@@ -1,0 +1,139 @@
+&P010716 = TSS 0045 = BS 181
+#project: epsd2/admin/ed3a
+#version: 0.1
+#atf: use unicode
+@tablet
+@obverse
+@column 1
+
+1. [... dumu-dumu]
+#lem: u; dumu[dependant]
+
+2. [lu₂]-lum#-[ma]
+#lem: Lu₂.lum.ma[00]PN
+
+3. [kinda₂]
+#lem: kinda[barber]
+
+4. [... ur-{d}nin?]-PA
+#lem: u; PN
+
+5. [... lu₂-e₂-zi?]
+#lem: u; Lu₂.e₂.zi[00]PN
+
+6. [a-zu₅?]
+#lem: azu[doctor]
+
+@column 2
+1. [x] 1(u@c)#? har-tu-[{d}]sud₃#
+#lem: u; n; Aradsud[0]PN
+
+2. 3(u@c) e₂-ki-ba maškim
+#lem: n; E₂.ki.ba[00]PN; maškim[an administrator]
+
+3. 1(u@c) 9(aš@c) sag-narₓ(LAK244)
+#lem: n; n; PN
+
+4. [x] la₂ 1(aš@c) ba-za₇
+#lem: u; lal[less]; n; Ba.za₇[00]PN
+
+5. [...] mes-[ki-na?]
+#lem: u; Mes.ki.na[00]PN
+
+6. lu₂-HAR
+#lem: lu₂.HAR[profession]
+
+@column 3
+1. 2(u@c) 9(aš@c) e₂-nu#!-kur-si#
+#lem: n; n; E₂.nu.kur.si[00]PN
+
+2. 2(u@c) 5(aš@c) lu₂-na-nam
+#lem: n; n; Lunanam[0]PN
+
+3. sukkal
+#lem: sukkal[secretary]
+
+4. 2(u@c) 9(aš@c) šubur
+#lem: n; n; Šubur[0]PN
+
+5. 2(u@c) 9(aš@c) AN#-URUDU-si#
+#lem: n; n; AN.URUDU.si[00]PN
+
+6. [sagi]
+#lem: šagia[cup-bearer]
+
+@column 4
+1. 2(u@c) NI-NI
+#lem: n; NI.NI[00]PN
+
+2. 1(u@c) 9(aš@c) dub-hul-tar
+#lem: n; n; Dub.hul.tar[00]PN
+
+3. agrig
+#lem: agrig[steward]
+
+4. [x] 1(u@c)#? 1(aš@c)#? nin-unken
+#lem: u; n; n; Nin.unken[00]PN
+
+5. 2(u@c) 5(aš@c) šubur
+#lem: n; n; Šubur[0]PN
+
+6. muhaldim
+#lem: muhaldim[cook]
+
+7. 1(u@c) 8(aš@c) DI-utu
+#lem: n; n; DI.utu[00]PN
+
+@column 5
+1. 2(u@c) {d}sud₃-ur-sag
+#lem: n; Sud₃.ur.sag[00]PN
+
+2. [1(u@c)?] 9(aš@c) ur-e₂-gal
+#lem: n; n; Uregal[0]PN
+
+3. 1(u@c) 9(aš@c) e₂-UD-nu-dib
+#lem: n; n; Eʾudnudab[0]PN
+
+4. lu₂-ad
+#lem: luʾad[an official]
+
+5. [x] 1(u@c)#? AK
+#lem: u; n; AK[0]PN
+
+@reverse
+@column 1
+1. nar
+#lem: nar[musician]
+
+2. 2(u@c) KA-zi-da
+#lem: n; KA.zi.da[00]PN
+
+3. munu₄
+#lem: munu[profession]
+
+4. 1(u@c) lugal-PA-du₁₀
+#lem: n; PN
+
+5. lu₂-di
+#lem: iludi[singer]
+
+6. 2(u@c) 3(aš@c) NI-NI
+#lem: n; n; NI.NI[00]PN
+
+7. sa-HAR
+#lem: sahur[profession]
+
+@column 2
+$ column blank
+@column 3
+$ column blank
+@column 4
+$ column blank
+@column 5
+1. [an-še₃-gu₂] 8(geš₂@c)#? [dumu]-dumu
+#lem: guʾanše[total]; n; dumu[dependant]
+
+2. [ša₃ e₂]-gal
+#lem: šag[heart]; egal[palace]
+
+

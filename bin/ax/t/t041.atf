@@ -1,0 +1,11 @@
+&P121212 = CBS 12345
+#project: epsd2
+#atf: use unicode
+
+@column 1
+
+1. a
+
+@column 2
+
+1. e
