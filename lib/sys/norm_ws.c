@@ -5,7 +5,7 @@ normalize_ws(const unsigned char *s)
 {
   while (isspace(*s))
     ++s;
-  
+
   char buf[strlen((ccp)s)+1], *b = buf;
   
   while (*s)
@@ -20,7 +20,7 @@ normalize_ws(const unsigned char *s)
       else
 	*b++ = *s++;
     }
-  while (isspace(b[-1]))
+  while (b > buf && isspace(b[-1]))
     --b;
   *b = '\0';
 
