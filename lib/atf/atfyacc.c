@@ -63,6 +63,7 @@ atf_init(void)
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;
   atfp->input = list_create(LIST_SINGLE);
+  
 }
 
 void
@@ -98,9 +99,11 @@ atf_term(void)
   memo_term(atfmp->mxis);
   memo_term(atfmp->mxlinks);
   pool_term(atfmp->pool);
+  lmemo_term();
   free(atfmp);
   atfmp = NULL;
 
+  free(atfp->protocols);
   list_free(atfp->input, NULL);
   hash_free(atfp->hlabmap, NULL);
   /*list_free(atfp->protocols, NULL);*/

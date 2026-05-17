@@ -104,7 +104,6 @@ ax_input(const char *f)
 	}
 
       atf_term();
-      memo_auto(0);
       rnvval_term();
       xmd_term();
       inl_term();

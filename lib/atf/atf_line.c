@@ -78,7 +78,15 @@ atf_group_wrapup(void)
       list_free(atfmp->llines, NULL);
       atfmp->llines = NULL;
     }
-  curr_lem_host = NULL;
+  if (curr_lem_host)
+    {
+      if (curr_lem_host->wl)
+	{
+	  list_free(curr_lem_host->wl, NULL);
+	  curr_lem_host->wl = NULL;
+	}
+      curr_lem_host = NULL;
+    }
 }
 
 /* Start a new line group; if we are already in a group, wrap the
@@ -535,9 +543,16 @@ line_lem(Mloc ml, unsigned char *l)
 	  w->user = atf_save_lem(w,(ccp)l); /* should be safe because GDL doesn't put data in g:w->user */
 	}
     }
-  list_free(curr_lem_host->wl, NULL);
-  curr_lem_host->wl = NULL; /* this is OK as long as we don't overload use of line->wl */
-  curr_lem_host = NULL;
+  /* This needs to be done here in case there are multiple lines that have associated #lem */
+  if (curr_lem_host)
+    {
+      if (curr_lem_host->wl)
+	{
+	  list_free(curr_lem_host->wl, NULL);
+	  curr_lem_host->wl = NULL;
+	}
+      curr_lem_host = NULL;
+    }
   list_free(llem, NULL);
 }
 

@@ -190,9 +190,9 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 %%
 
 static int
-atf_block(const char *atcmd)
+atf_block(const char *scanned_at)
 {
-  ++atcmd;
+  const char *atcmd = scanned_at + 1;
 
   Blocktok *bp = blocktok(atcmd, strlen(atcmd));
   if (bp)

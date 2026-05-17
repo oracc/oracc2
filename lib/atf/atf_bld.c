@@ -27,12 +27,14 @@ atf_add(const char *s, Mloc *mp)
   return np;
 }
 
+#if 0
 Node *
 atf_insert(const char *s)
 {
   Node *insp = tree_node(abt, NS_XTF, s, abt->curr->depth+1, NULL);
   return node_insert(abt->curr, insp);
 }
+#endif
 
 /* Create a node that is not added to the Tree; for use with ax lines
    that are managed via a Group not via the Tree */
@@ -80,6 +82,8 @@ atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
 void
 atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
 {
+  if (line_trace)
+    atf_lex_line_trace(&l);
   atfp = atfmp->atf;
   atfp->file = curratffile;
   atfp->pqx = pqx;
@@ -180,6 +184,8 @@ atf_bld_implicit_block(void)
 void
 abt_add_key_protocol(Mloc *lp, Key *kp)
 {
+  if (line_trace)
+    atf_lex_line_trace(lp);
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, "text");
   Node *np = atf_add("protocol", lp);
@@ -202,6 +208,8 @@ abt_add_key_protocol(Mloc *lp, Key *kp)
 static void
 abt_add_link_protocol(Mloc *lp, Xlink *p, const char *str)
 {
+  if (line_trace)
+    atf_lex_line_trace(lp);
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, "text");
   Node *np = atf_add("protocol", lp);
@@ -247,6 +255,8 @@ atf_bld_note(Mloc l, const char *ltext)
 static void
 abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 {
+  if (line_trace)
+    atf_lex_line_trace(lp);
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, scope);
   Node *np = atf_add("protocol", lp);
@@ -259,6 +269,7 @@ static void
 atf_bld_protocols(Mloc *lp, const char *scope)
 {
   Node *np = atf_push("protocols", lp);
+  
   atf_xprop(np, "scope", scope);
 }
 

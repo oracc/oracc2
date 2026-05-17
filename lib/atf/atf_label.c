@@ -197,16 +197,16 @@ line_label(const unsigned char *tok,
      does the label always get saved immediately as an attr? */
   if (*line_label_buf)
     {
-      label = malloc(xxstrlen(line_label_buf)+xxstrlen(tok)+2);
+      label = memo_auto(xxstrlen(line_label_buf)+xxstrlen(tok)+2);
       sprintf((char*)label,"%s%s",line_label_buf,(char*)tok);
     }
   else if (*m_label)
     {
-      label = malloc(xxstrlen(m_label)+xxstrlen(tok)+2);
+      label = memo_auto(xxstrlen(m_label)+xxstrlen(tok)+2);
       sprintf((char*)label,"%s%s",m_label,(char*)tok);
       if (label2)
 	free(label2);
-      label2 = malloc(xxstrlen(m_label2)+xxstrlen(tok)+2);
+      label2 = memo_auto(xxstrlen(m_label2)+xxstrlen(tok)+2);
       sprintf((char*)label2,"%s%s",m_label2,(char*)tok);
     }
   else
