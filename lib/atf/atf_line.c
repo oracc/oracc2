@@ -536,7 +536,7 @@ line_lem(Mloc ml, unsigned char *l)
       uccp l;
       for (w = list_first(curr_lem_host->wl), l = list_first(llem);
 	   w && l;
-	   w = list_next(curr_lem_host->wl), l = list_first(llem))
+	   w = list_next(curr_lem_host->wl), l = list_next(llem))
 	{
 	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "lem",
 		      (ccp)pool_copy((uccp)l, gdlpool));

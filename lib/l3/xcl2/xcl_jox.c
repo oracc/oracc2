@@ -468,7 +468,7 @@ xcl_jox_xcl_ratts(XCL *xc)
   if (xc->file)
     list_pair(ap, "file", xc->file);
   if (xc->langs)
-    list_pair(ap, "line", xc->langs);
+    list_pair(ap, "langs", xc->langs);
   return ap;
 }
 
