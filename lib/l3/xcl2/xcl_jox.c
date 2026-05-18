@@ -398,9 +398,9 @@ xj_serialize_one_node(void *vp)
 	List *ap = list_create(LIST_SINGLE);
 	list_pair(ap, "type", xcl_d_type_str[dp->type]);
 	if (dp->ref)
-	  list_pair(ap,"r",  dp->ref);
+	  list_pair(ap,"ref",  dp->ref);
 	if (dp->subtype)
-	  list_pair(ap,"s",  dp->subtype);
+	  list_pair(ap,"subtype",  dp->subtype);
 	Ratts *ratts = ratts_list2ratts(ap);
 	joxer_ec(dp->mp, "xcl:d", ratts);
 	if (ratts)
