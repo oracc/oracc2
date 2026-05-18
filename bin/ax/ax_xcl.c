@@ -5,6 +5,7 @@
 #include <prop.h>
 #include <ilem.h>
 #include <ilem_props.h>
+#include <xcl.h>
 #include <atf.h>
 #include "../../lib/atf/atf.tab.h"
 #include "ax.h"
@@ -97,9 +98,9 @@ ax_xcl(struct run_context *run, struct node *text)
  * non-NULL g:w->user is handled.
  */
 static void
-xtf2xcl_block(struct xcl_context *xc, struct node*n)
+xtf2xcl_block(struct xcl_context *xc, struct node*np)
 {
-  Blocktok *btp = blocktok(n->name, strlen(n->name));
+  Blocktok *btp = blocktok(np->name, strlen(np->name));
   /* fprintf(stderr, "xtfxcl: process invoked\n"); */
   int nokids = 0;
   if (btp)
@@ -118,16 +119,16 @@ xtf2xcl_block(struct xcl_context *xc, struct node*n)
 	case Y_OBJECT:
 	  /* fprintf(stderr, "xtfxcl: object found\n"); */
 	  /* fix_context(xc,NULL); */
-	  xcl_discontinuity(xc, propxid(n), xcl_d_object, NULL);
+	  xcl_discontinuity(xc, propxid(np), xcl_d_object, NULL);
 	  break;
 	case Y_SURFACE:
 	  /* fix_context(xc,NULL); */
-	  xcl_discontinuity(xc, propxid(n), xcl_d_surface, NULL);
+	  xcl_discontinuity(xc, propxid(np), xcl_d_surface, NULL);
 	  break;
 	case Y_COLUMN:
 	  /* fix_context(xc,NULL); */
 	  {
-	    const char *ref = propxid(n);
+	    const char *ref = propxid(np);
 	    if (ref && *ref)
 	      xcl_discontinuity(xc, ref, xcl_d_column, NULL);
 	    /* no discontinuity emitted for implicit column breaks */
@@ -135,40 +136,40 @@ xtf2xcl_block(struct xcl_context *xc, struct node*n)
 	  break;
 	case Y_M:
 #if 0
-	  if (!strcmp(n->name,"discourse"))
-	    xcl_fix_context(xc,getAttr(n,"subtype"));
+	  if (!strcmp(np->name,"discourse"))
+	    xcl_fix_context(xc,getAttr(np,"subtype"));
 #endif
 	  break;
 	default:
 	  break;
 	}
     }
-  else if (!strcmp(n->name, "lg"))
+  else if (!strcmp(np->name, "lg"))
     {
-      xtf2xcl_group(xc, n);
+      xtf2xcl_group(xc, np);
       nokids = 1;
     }
-  else if (xclignore(n->name, strlen(n->name)))
+  else if (xclignore(np->name, strlen(np->name)))
     ;
   else
-    fprintf(stderr, "xtf2xcl: unhandled node `%s'\n", n->name);
+    fprintf(stderr, "xtf2xcl: unhandled node `%s'\n", np->name);
  
-  if (!nokids && n->kids)
+  if (!nokids && np->kids)
     {
       Node *k;
-      for (k = n->kids; k; k = k->next)
+      for (k = np->kids; k; k = k->next)
 	xtf2xcl_block(xc,k);
     }
 }
 
 void
-xtf2xcl_group(XCL *xc, Node *n)
+xtf2xcl_group(XCL *xc, Node *np)
 {
   if (line_is_unit && xc->curr && xc->curr->parent)
-    xcl_insert_ub(n->mloc, xc, 0, xcl_c_sentence, 0);
+    xcl_insert_ub(np, xc, 0, xcl_c_sentence, 0);
   xcl_fix_context(xc,NULL);
-  xcl_discontinuity(xc, propxid(n), xcl_d_line_start, NULL);
-  Group *gp = n->user;
+  xcl_discontinuity(xc, propxid(np), xcl_d_line_start, NULL);
+  Group *gp = np->user;
   int i;
   for (i = 0; i < gp->nlines; ++i)
     switch (gp->lines[i]->t)
@@ -189,7 +190,7 @@ xtf2xcl_group(XCL *xc, Node *n)
 	xtf2xcl_line(xc, gp->lines[i]->np);
 	break;
       case LT_DOLLAR:
-	xcl_discontinuity(xc, propxid(n), xcl_d_nonw, NULL);
+	xcl_discontinuity(xc, propxid(np), xcl_d_nonw, NULL);
 	break;
       default:
 	break;
@@ -249,7 +250,7 @@ xtf2xcl_words(XCL *xc, Node *np)
     if (!strcmp(np->name, "g:w") || !strcmp(np->name, "n:w"))
       {
 	xcl_fix_context(xc,NULL);
-	ilem_parse(xc, np->user, first_word);
+	ilem_parse_n(np, xc, np->user, first_word);
 	first_word = 0;
       }
     else if (!strcmp(np->name, "g:nonw"))

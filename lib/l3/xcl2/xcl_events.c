@@ -245,10 +245,12 @@ xcl_chunk_id(const char *idbase, enum xcl_c_types t, struct xcl_context *xc)
 }
 
 void
-xcl_chunk(struct xcl_context *xc, const char *xml_id, enum xcl_c_types t)
+xcl_chunk_n(Node *np, struct xcl_context *xc, const char *xml_id, enum xcl_c_types t)
 {
   struct xcl_c *c = new_node(&c_mm_info);
   extern Hash *curr_meta;
+  if (np)
+    c->mp = np->mloc;
   c->node_type = xcl_node_c;
   c->type = t;
   if (xml_id)
@@ -345,9 +347,12 @@ xcl_hash_lemm_meta(const char *const*lmeta, const char *xml_id,
 }
 
 void
-xcl_discontinuity(struct xcl_context *xc, const char *ref, enum xcl_d_types t, const char *st)
+xcl_discontinuity_n(Node *np, struct xcl_context *xc, const char *ref,
+		    enum xcl_d_types t, const char *st)
 {
   struct xcl_d *c = new_node(&d_mm_info);
+  if (np)
+    c->mp = np->mloc;
   c->node_type = xcl_node_d;
   c->type = t;
   curr_subtype = (char*)st;
@@ -385,8 +390,9 @@ lemm_id(struct xcl_context *xc)
 }
 
 struct xcl_l *
-xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref, 
-	  struct ilem_form *fp, void *user, enum ll_types altflag)
+xcl_lemma_n(Node *np,
+	    struct xcl_context *xc, const char *xml_id, const char *ref, 
+	    struct ilem_form *fp, void *user, enum ll_types altflag)
 {
   static int ll_used[ll_top];
   
@@ -417,6 +423,8 @@ xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref,
   else
     {
       struct xcl_l *c = new_node(&l_mm_info);
+      if (np)
+	c->mp = np->mloc;
       c->node_type = xcl_node_l;
       if (xml_id)
 	c->xml_id = xml_id;
@@ -446,8 +454,9 @@ xcl_lemma(struct xcl_context *xc, const char *xml_id, const char *ref,
    complicated than this routine can handle at
    present */
 void
-xcl_insert_ub(Mloc *mp, struct xcl_context *xc, int nlem, enum xcl_c_types t, int bracketing_level)
+xcl_insert_ub(Node *np, struct xcl_context *xc, int nlem, enum xcl_c_types t, int bracketing_level)
 {
+  Mloc *mp = (np ? np->mloc : NULL);
   struct xcl_l *carry_over = NULL;
   if (nlem)
     {
@@ -515,7 +524,7 @@ xcl_unsentence(struct xcl_context *xc)
 }
 
 void
-xcl_add_discourse(struct xcl_context *xc, const char *discourse)
+xcl_add_discourse_n(Node *np, struct xcl_context *xc, const char *discourse)
 {
   xcl_chunk(xc,NULL,xcl_c_discourse);
   curr_xcl_discourse = xc->curr->subtype = discourse;
@@ -539,7 +548,7 @@ get_discourse_type(const char *d)
 }
 
 void
-xcl_fix_context(struct xcl_context *xc, const unsigned char *discourse)
+xcl_fix_context_n(Node *np, struct xcl_context *xc, const unsigned char *discourse)
 {
   if (discourse)
     {

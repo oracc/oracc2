@@ -147,6 +147,12 @@ struct xcl_chunk_spec
   const char *ref;
 };
 
+#define xcl_add_discourse(x,d) xcl_add_discourse_n(np,x,d)
+#define xcl_chunk(x,i,t) xcl_chunk_n(np,x,i,t)
+#define xcl_fix_context(x,d) xcl_fix_context_n(np,x,d)
+#define xcl_discontinuity(x,r,t,s) xcl_discontinuity_n(np,x,r,t,s)
+#define xcl_lemma(x,i,r,f,u,t) xcl_lemma_n(np,x,i,r,f,u,t)
+
 typedef void xcl_c_fnc(struct xcl_context *,struct xcl_c*);
 typedef void xcl_d_fnc(struct xcl_context *,struct xcl_d*);
 typedef void xcl_l_fnc(struct xcl_context *,struct xcl_l*);
@@ -163,7 +169,7 @@ extern struct xcl_context *text_xc;
 extern const char *xcl_project, *system_project;
 extern void xcl_anno(struct xcl_context *xc);
 extern struct sigset *xcl_cache(void);
-extern void xcl_chunk(struct xcl_context *xc, const char *xml_id, enum xcl_c_types t);
+extern void xcl_chunk_n(Node *np, struct xcl_context *xc, const char *xml_id, enum xcl_c_types t);
 extern void xcl_chunk_end(struct xcl_context *xc);
 extern const char *xcl_chunk_id(const char *idbase, enum xcl_c_types t, struct xcl_context *xc);
 extern void xcl_chunk_insert(struct xcl_c *curr_c, const char *xml_id, const char *ref,
@@ -176,10 +182,11 @@ extern struct xcl_context *xcl_create(void);
 extern Hash *xcl_create_meta(struct xcl_context *xc,const char *xml_id);
 extern void xcl_debug_tree(FILE *f, void *vp);
 extern void xcl_destroy(struct xcl_context **xc);
-extern void xcl_discontinuity(struct xcl_context *xc, const char *ref, enum xcl_d_types t, const char *st);
-extern struct xcl_l* xcl_lemma(struct xcl_context *xc, const char *xml_id, 
-			       const char *ref, struct ilem_form *fp, void *user,
-			       enum ll_types t);
+extern void xcl_discontinuity_n(Node *np, struct xcl_context *xc, const char *ref, enum xcl_d_types t, const char *st);
+extern struct xcl_l* xcl_lemma_n(Node *np,
+				 struct xcl_context *xc, const char *xml_id, 
+				 const char *ref, struct ilem_form *fp, void *user,
+				 enum ll_types t);
 extern struct xcl_context *xcl_load(const char *xcl_fn, int setup_formsets);
 extern void xcl_map(struct xcl_context *, xcl_c_fnc, xcl_c_fnc, xcl_d_fnc, xcl_l_fnc);
 extern struct xcl_tok_tab *xcltok(register const char *str,register size_t len);
@@ -209,9 +216,9 @@ extern const char *sysproj(const char *lang);
 
 extern struct xcl_l *xcl_head(union xcl_u *xu);
 
-extern void xcl_insert_ub(Mloc *mp, struct xcl_context *xc, int nlem, enum xcl_c_types t, int level);
-extern void xcl_fix_context(struct xcl_context *xc, const unsigned char *discourse);
-extern void xcl_add_discourse(struct xcl_context *xc, const char *discourse);
+extern void xcl_insert_ub(Node *np, struct xcl_context *xc, int nlem, enum xcl_c_types t, int level);
+extern void xcl_fix_context_n(Node *np, struct xcl_context *xc, const unsigned char *discourse);
+extern void xcl_add_discourse_n(Node *np, struct xcl_context *xc, const char *discourse);
 extern void xcl_add_child(struct xcl_c*p, void *c, enum xcl_node_types type);
 
 extern void sigs_dump_sigs(struct xcl_context *xcp, struct xcl_l *lp);

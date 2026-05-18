@@ -59,6 +59,7 @@ xcl_sH(void *userData, const char *name, const char **atts)
   /*static struct ilem_form *curr_form = NULL*//*shadows file-scoped static struct ilem_form*curr_form*/
   const char *vbar = strchr(name,EXPAT_NS_CHAR);
   struct xcl_context *xcp = userData;
+  Node *np = NULL;
 
   if (!strncmp("http://oracc.org/ns/xcl/1.0",name,vbar-name))
     {
@@ -183,6 +184,7 @@ xcl_eH(void *userData, const char *name)
 	{
 	  if (!in_ll)
 	    {
+	      Node *np = NULL;
 	      struct xcl_l *lp = xcl_lemma(xcp,
 					   curr_xml_id,
 					   curr_ref,
