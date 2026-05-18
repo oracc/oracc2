@@ -53,7 +53,7 @@ memo_reauto(void *vp, size_t osiz, size_t nsiz)
   return nvp;
 }
 
-const char *
+char *
 memo_dup(const char *s)
 {
   char *m = memo_auto(strlen(s)+1);

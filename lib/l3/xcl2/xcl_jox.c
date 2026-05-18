@@ -134,7 +134,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
     }
 
   Ratts *ratts = ratts_list2ratts(ap);
-  joxer_ea(NULL, "xcl:l", ratts); /*ilem_mloc(fp)*/
+  joxer_ea(lp->mp, "xcl:l", ratts); /*ilem_mloc(fp)*/
   if (ratts)
     {
       free(ratts->atts);
@@ -150,7 +150,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 
   ilem_para_jox(lp);
 
-  joxer_ee(NULL, "xcl:l"); /*ilem_mloc(fp)*/
+  joxer_ee(lp->mp, "xcl:l"); /*ilem_mloc(fp)*/
 }
 
 static void
@@ -350,7 +350,7 @@ xj_serialize_one_node(void *vp)
 	    joxer_attr_i(ap,"bracketing_level",cp->bracketing_level);
 
 	    Ratts *ratts = ratts_list2ratts(ap);
-	    joxer_ea(NULL,"xcl:c", ratts);
+	    joxer_ea(cp->mp,"xcl:c", ratts);
 	    if (ratts)
 	      {
 		free(ratts->atts);
@@ -391,7 +391,7 @@ xj_serialize_one_node(void *vp)
 	    }
 	}
       if (!unwrapping)
-	joxer_ee(NULL, "xcl:c");
+	joxer_ee(cp->mp, "xcl:c");
       break;
     case xcl_node_d:
       {
@@ -402,7 +402,7 @@ xj_serialize_one_node(void *vp)
 	if (dp->subtype)
 	  list_pair(ap,"s",  dp->subtype);
 	Ratts *ratts = ratts_list2ratts(ap);
-	joxer_ec(NULL, "xcl:d", ratts);
+	joxer_ec(dp->mp, "xcl:d", ratts);
 	if (ratts)
 	  {
 	    free(ratts->atts);

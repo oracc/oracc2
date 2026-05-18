@@ -34,7 +34,7 @@ extern void lmemo_init(void);
 extern void lmemo_term(void);
 extern void *memo_auto(size_t siz);
 extern void *memo_reauto(void *vp, size_t osiz, size_t nsiz);
-extern const char *memo_dup(const char *s);
+extern char *memo_dup(const char *s);
 extern void memo_list(void *vp);
 extern Memo * memo_init (int element_size, int elements_per_alloc);
 extern void memo_term(Memo *any);

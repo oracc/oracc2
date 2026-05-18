@@ -1,6 +1,7 @@
 &P010982 = WF 025  = EDATS no. 116 = WVDOG 143, 002
 #project: epsd2/admin/ed3a
+#atf: use unicode
 @obverse 
 @column 1 
-1. a
-#lem: a[water]
+1. e₂
+#lem: e[house]
