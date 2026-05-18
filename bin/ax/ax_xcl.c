@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <mesg.h>
 #include <prop.h>
+#include <lang.h>
 #include <ilem.h>
 #include <ilem_props.h>
 #include <xcl.h>
@@ -57,7 +58,7 @@ struct xcl_context *
 ax_xcl(struct run_context *run, struct node *text)
 {
   struct xcl_context *xc = xcl_create();
-  char *langs = NULL/*texttag_langs()*/;
+  char *langs = texttag_langs();
 
   int saved_status = status;
   int saved_exit_status = exit_status;

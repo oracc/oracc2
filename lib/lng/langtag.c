@@ -1,5 +1,7 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <ctype128.h>
+#include <vector.h>
 #include "lng.h"
 #include "pool.h"
 #include "hash.h"
@@ -12,7 +14,11 @@ struct lang_tag *default_langtag;
 static Hash *langtag_hash;
 static Hash *texttag_hash = NULL;
 static Hash *noscript_hash = NULL;
+
+#if 0
 static char *texttag_buf = NULL;
+#endif
+
 static Pool *langtag_pool;
 static void langtag_error(const char *file, int lnum, 
 			  const char *tag, const char *mess);
@@ -122,6 +128,7 @@ langtag_term(void)
   /*  free(default_langtag); */
 }
 
+#if 0
 static void
 texttag_cat(char *tag,void *ignored)
 {
@@ -129,6 +136,7 @@ texttag_cat(char *tag,void *ignored)
     strcat(texttag_buf," ");
   strcat(texttag_buf,tag);
 }
+#endif
 
 void
 texttag_init(void)
@@ -141,6 +149,17 @@ texttag_init(void)
 char *
 texttag_langs(void)
 {
+#if 1
+  int n;
+  char *tags = NULL;
+  if (texttag_hash->key_count)
+    {
+      const char **k = hash_keys2(texttag_hash,&n);
+      tags = vec_to_str((char**)k,n," ");
+      free(k);
+    }
+  return tags;
+#else
   if (texttag_hash->key_count)
     {
       texttag_buf = malloc(texttag_hash->key_count * 64);
@@ -150,6 +169,7 @@ texttag_langs(void)
     }
   else
     return NULL;
+#endif
 }
 
 char *

@@ -360,6 +360,14 @@ gdl_push(Tree *ytp, const char *s)
   return tree_push(ytp);
 }
 
+Node *
+gdl_push_l(Mloc *ml, Tree *ytp, const char *s)
+{
+  Node *np = gdl_push(ytp, s);
+  np->mloc = mloc_mloc(ml);
+  return np;
+}
+
 void
 gdl_prop(Node *ynp, int ptype, int gtype)
 {

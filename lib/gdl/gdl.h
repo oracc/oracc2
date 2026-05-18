@@ -90,6 +90,7 @@ extern void gdl_xml_handler(Node *np, void *xhp);
 
 extern Node *gdl_pop(Tree *ytp, const char *s);
 extern Node *gdl_push(Tree *ytp, const char *s);
+extern Node *gdl_push_l(Mloc *mlp, Tree *ytp, const char *s);
 extern void gdl_prop(Node *ynp, int p, int g);
 extern void gdl_prop_kv(Node *ynp, int p, int g, const char *k, const char *v);
 extern void gdl_remove_q_error(Mloc m, Node *ynp);

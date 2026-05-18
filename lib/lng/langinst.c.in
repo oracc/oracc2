@@ -110,6 +110,7 @@ lang_switch(struct lang_context *curr, const char *tag, int *taglenp,
 		  if (!curr || curr->core->sindex != lp->core->sindex)
 		    gvl_switch(lp->core->sindex);
 		}
+	      texttag_register(lp->fulltag);
 	    }
 	}
       else

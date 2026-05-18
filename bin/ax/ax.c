@@ -52,7 +52,6 @@ void
 ax_input(const char *f)
 {
   mesg_init();
-  langtag_init();
   nl_init();
   ngramify_init();
   gdlparse_init();
@@ -272,7 +271,9 @@ main(int argc, char * const*argv)
   gvl_setup("osl", "osl","020");
   nodeh_register(treexml_o_handlers, NS_XTF, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_XTF, treexml_c_generic);
-
+  langtag_init();
+  global_lang = lang_switch(NULL,"sux",NULL,NULL,0);
+  
   process_inputs(argc, argv);
   
   ax_full_term();
