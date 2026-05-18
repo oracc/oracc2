@@ -154,7 +154,9 @@ extern struct lang_context *lang_push(struct lang_context*);
 extern struct lang_context *lang_pop(void);
 extern void lang_reset(void);
 extern void langtag_inherit(struct lang_tag *to, struct lang_tag *from);
-extern void lang_term(void);
+
+#define lang_init lng_init
+#define lang_term lng_term
 
 extern void texttag_init(void);
 extern char *texttag_langs(void);

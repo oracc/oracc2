@@ -63,7 +63,8 @@ atf_init(void)
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;
   atfp->input = list_create(LIST_SINGLE);
-  
+  lang_init();
+  texttag_init();
 }
 
 void

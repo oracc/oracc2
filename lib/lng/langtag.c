@@ -123,25 +123,17 @@ langtag_term(void)
     }
 
   if (noscript_hash)
-    hash_free(noscript_hash, NULL);
+    {
+      hash_free(noscript_hash, NULL);
+      noscript_hash = NULL;
+    }
 
   /*  free(default_langtag); */
 }
 
-#if 0
-static void
-texttag_cat(char *tag,void *ignored)
-{
-  if (*texttag_buf)
-    strcat(texttag_buf," ");
-  strcat(texttag_buf,tag);
-}
-#endif
-
 void
 texttag_init(void)
 {
-  texttag_term();
   texttag_hash = hash_create(1);
 }
 
@@ -149,7 +141,6 @@ texttag_init(void)
 char *
 texttag_langs(void)
 {
-#if 1
   int n;
   char *tags = NULL;
   if (texttag_hash->key_count)
@@ -159,17 +150,6 @@ texttag_langs(void)
       free(k);
     }
   return tags;
-#else
-  if (texttag_hash->key_count)
-    {
-      texttag_buf = malloc(texttag_hash->key_count * 64);
-      *texttag_buf = '\0';
-      hash_exec2(texttag_hash,(hash_exec2_func*)texttag_cat);
-      return texttag_buf;
-    }
-  else
-    return NULL;
-#endif
 }
 
 char *
