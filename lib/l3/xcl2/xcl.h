@@ -45,6 +45,7 @@ struct xcl_c
   struct xcl_context *xc;
   Hash *meta;
   Hash *ancestor_meta;
+  Mloc *mp;
   int lnum;
   int nchildren;
   int children_alloced;
@@ -61,6 +62,7 @@ struct xcl_d
   struct xcl_context *xc;
   enum sb_status sb;
   const char *xml_id;
+  Mloc *mp;
   int lnum;
   const char *ref;
   const char *label;
@@ -82,6 +84,7 @@ struct xcl_l
   struct xcl_context *xc;
   struct ilem_form *f;
   struct xcl_l *cof_head;
+  Mloc *mp;
   List *cof_tails;
   int nth; 		/* index into parent's child array */
   int ro; 		/* used by the ngram processor */
