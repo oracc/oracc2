@@ -2,6 +2,8 @@
 #include <tree.h>
 #include <unidef.h>
 #include <gutil.h>
+#include <gdlstate.h>
+#include <bits.h>
 
 #include "sll.h"
 #include "gdl.h"
@@ -10,6 +12,7 @@
 extern const char *currgdlfile;
 extern int gdllineno;
 extern int gdl_corrq;
+static int gvl_corrq(Node *np);
 
 void
 gvl_q(Node *ynp)
@@ -18,7 +21,7 @@ gvl_q(Node *ynp)
   unsigned char *o = NULL, *p = NULL;
   unsigned const char *vo = NULL, *qo = NULL;
 
-  gdl_corrq = (prop_find_pg(ynp->kids->props,'!',PG_GDL_FLAGS)!=NULL);
+  gdl_corrq = gvl_corrq(ynp);
 
   if (gdl_corrq)
     {
@@ -133,7 +136,7 @@ gvl_q(Node *ynp)
   ynp->user = vq;
   if (!strcmp(ynp->kids->next->name, "g:g"))
     {
-      if (sll_has_sign_indicator(ynp->kids->next->text))
+      if (sll_has_sign_indicator((uccp)ynp->kids->next->text))
 	ynp->kids->next->name = "g:s";
     }
   if (vq->orig)
@@ -141,6 +144,13 @@ gvl_q(Node *ynp)
       ynp->text = (ccp)vq->orig;
       gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)vq->orig);
     }
+}
+
+static int
+gvl_corrq(Node *np)
+{
+  gdlstate_t gs = prop_get_state(np->kids);
+  return bit_get(gs, gs_f_bang);
 }
 
 static void

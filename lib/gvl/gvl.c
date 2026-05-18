@@ -524,7 +524,7 @@ gvl_valuqual(Node *vqnp)
 	{
 	  gvl_q(vqnp);
 	  gvl_g *qgp = (gvl_g*)vqnp->user;
-	  if (qgp->oid)
+	  if (qgp && qgp->oid)
 	    {
 	      if (qgp->sign)
 		g_attr(vqnp, qgp);
@@ -552,6 +552,11 @@ gvl_valuqual(Node *vqnp)
 	    {
 	      mesg_verr(vqnp->mloc, "failed to create grapheme structure from '%s'", vqnp->text);
 	    }
+	}
+      else
+	{
+	  vqnp->name = "g:gg";
+	  gdl_prop_kv(vqnp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "correction");
 	}
     }
 }
