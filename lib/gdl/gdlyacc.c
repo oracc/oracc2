@@ -144,7 +144,18 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  fputc('}', wfp);
 	}
       else if (!strcmp(c->name, "g:gg"))
-	gdl_wf_nodes(c, wfp);	
+	{
+	  Prop *p = prop_find_kv(c->props, "g:type", NULL);
+	  if (p)
+	    {
+	      if (!strcmp(p->u.k->v, "correction"))
+		fputs(c->kids->text, wfp);
+	      else
+		gdl_wf_nodes(c, wfp);
+	    }
+	  else
+	    gdl_wf_nodes(c, wfp);
+	}
       else if (strcmp(c->name, "g:z"))
 	{
 	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);

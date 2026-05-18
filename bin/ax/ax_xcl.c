@@ -150,10 +150,14 @@ xtf2xcl_block(struct xcl_context *xc, struct node*np)
       xtf2xcl_group(xc, np);
       nokids = 1;
     }
+  else if (!strcmp(np->name, "nonx"))
+    {
+      xcl_discontinuity(xc, propxid(np), xcl_d_nonx, NULL);
+    }
   else if (xclignore(np->name, strlen(np->name)))
     ;
   else
-    fprintf(stderr, "xtf2xcl: unhandled node `%s'\n", np->name);
+    mesg_verr(np->mloc, "xtf2xcl: unhandled node `%s'\n", np->name);
  
   if (!nokids && np->kids)
     {
