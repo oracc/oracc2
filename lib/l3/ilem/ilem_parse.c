@@ -88,7 +88,7 @@ check_cf(const char *f, size_t lnum, const char *cf)
    calling and pass the result as form arg if non-NULL; NULL arg means
    form is embedded in lemma */
 void
-ilem_parse(struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_word)
+ilem_parse_n(Node *np, struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi, int first_word)
 {
   unsigned char *lem;
   int newflag = 0;
