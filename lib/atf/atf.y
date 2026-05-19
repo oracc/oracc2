@@ -56,7 +56,7 @@ ATFLTYPE atflloc;
 %nterm <text>   	pqx name longtext
 
 %nterm <i> 		sparse stype atfuse link_type
-			lines line l_link note bib etcsl.line proto.comment
+			line l_link note bib etcsl.line proto.comment
 			heading heading_tok tr.inter
 			milestone
 			
@@ -110,7 +110,6 @@ preamble:
 atcomposite:	COMPOSITE			{ atfp->edoc = EDOC_COMPOSITE;
 		    				  atf_bld_doc(@1); }
 	;
-
 		
 atscore:
 		SCORE stype sparse		{
@@ -160,17 +159,17 @@ etcsl.text:	HASH_ETCSL_T TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
 etcsl.line:	HASH_ETCSL_L TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
 	;
 
-probib: 	HASH_PROBIB longtext { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
+probib: 	HASH_PROBIB longtext { atf_bld_bib(@1, longtext_get()); }
 		;
 
-bib:		HASH_BIB longtext    { atf_bld_bib(@1, (ccp)longtext(NULL,NULL,NULL)); }
+bib:		HASH_BIB longtext    { atf_bld_bib(@1, longtext_get()); }
 	;
 
 proto.comment:
 		PRO_COMMENT longtext	{ $$=$1; atf_bld_protocol(@1, PROT_COMMENT, longtext_get()); }
 		;
 
-note:		HASH_NOTE longtext   { atf_bld_note(@1, (ccp)longtext(NULL,NULL,NULL)); }
+note:		HASH_NOTE longtext   { line_note(@1, longtext_get()); }
 	;
 
 project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2;
@@ -206,14 +205,18 @@ link_type:	LINK_PARALLEL {$$=ELINK_PARALLEL;} | LINK_SOURCE {$$=ELINK_SOURCE;}
 
 key: 		HASH_KEY TEXT 	     { atf_bld_key(@1, $2); }
 	;
-		
-/* composite or transliteration */
-tblocks:       	objects
-	|	surfaces
-	|	columns
-	|	lines
+
+tblocks:	tblock
+	|	tblocks tblock
 	;
 
+
+tblock: 	object
+	|	surface
+	|	column
+	|	line
+		;
+		
 cblocks:	cblock
 	|	cblocks cblock
 
@@ -237,40 +240,16 @@ vdivision:	var_tok    TEXT { atf_bld_block(@1, $1, $2); }
 milestone:	milestone_tok 	TEXT { atf_bld_block(@1, $1, $2); }
 	;
 
-objects:
-		object
-	|	objects object
-		;
-
 object: 	object_tok TEXT { atf_bld_block(@1, $1, $2); }
-	|	object_tok TEXT { atf_bld_block(@1, $1, $2); } lines
-	|	object_tok TEXT { atf_bld_block(@1, $1, $2); } surfaces
-	|	object_tok TEXT { atf_bld_block(@1, $1, $2); } columns
 	;
 
-surfaces:	surface
-	|	surfaces surface
-	;
-
-surface:
-		surface_tok TEXT { atf_bld_block(@1, $1, $2); }
-	|	surface_tok TEXT { atf_bld_block(@1, $1, $2); } lines
-	|	surface_tok TEXT { atf_bld_block(@1, $1, $2); } columns
+surface:	surface_tok TEXT { atf_bld_block(@1, $1, $2); }
 		;
-
-columns:	column
-	|	columns column
-	;
 
 column:		column_tok TEXT { atf_bld_block(@1, $1, $2); }
-	| 	column_tok TEXT { atf_bld_block(@1, $1, $2); } lines
 	;
 
 heading:	heading_tok longtext { atf_bld_heading(@1, $1, longtext_get()); }
-	;
-
-lines:		line
-	|	lines line
 	;
 
 /* The grammar doesn't impose constraints on prerequisites, sequence,

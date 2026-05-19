@@ -20,7 +20,7 @@ int deep_parse = 1;
 
 int gdl_xmlids = 1;
 
-static int grapheme_id, wid_base;
+static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
 
@@ -158,29 +158,43 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	}
       else if (strcmp(c->name, "g:z"))
 	{
-	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-	  fputs(c->text, wfp);
-	  if (d)
+	  gdlstate_t s = prop_get_state(c);
+	  if (!gs_is(s,gs_excised))
 	    {
-	      fputs(d->u.k->v, wfp);
-	      if (c->next && !strcmp(c->next->name, "g:d"))
-		c = c->next;
+	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+	      fputs(c->text, wfp);
+	      if (d)
+		{
+		  fputs(d->u.k->v, wfp);
+		  if (c->next && !strcmp(c->next->name, "g:d"))
+		    c = c->next;
+		}
 	    }
+	  else
+	    ++word_excisions;
+	 
 	}
     }
 }
 
 static void
-gdl_force_nonw(Node *w)
+gdl_force_nonw(Node *w, const char *t)
 {
   Node *rent = w->rent;
   *w = *w->kids;
-  const char *t = prop_find_kv(w->props, "g:type", NULL)->u.k->v;
-  prop_drop_kv(w->props, "g:type", NULL);
   gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", t);
   w->name = "g:nonw";
   w->rent = rent;
   w->next = NULL;
+  ++nonw_found;
+}
+
+static void
+gdl_nonw_excised(Node *w)
+{
+  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", "excised");
+  w->name = "g:nonw";
+  ++nonw_found;
 }
 
 /* This routine assumes it is processing one word-node at a time */
@@ -191,13 +205,17 @@ gdl_word_attr(Node *w)
     {
       if (strcmp(w->kids->text, "..."))
 	{
-	  gdl_force_nonw(w);
+	  Prop *p = prop_find_kv(w->props, "g:type", NULL);
+	  if (p)
+	    prop_drop_kv(w->props, "g:type", NULL);
+	  gdl_force_nonw(w, p ? p->u.k->v : "comment");
 	  return;
 	}
     }
 
   char *wf_buf = NULL;
   size_t wf_len = 0;
+  word_excisions = 0;
   /*  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);*/
   FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
   gdl_wf_nodes(w, wf_fp);
@@ -209,11 +227,28 @@ gdl_word_attr(Node *w)
       else if (w->kids && !strcmp(w->kids->name, "g:x"))
 	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
       else
-	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");
+	{
+	  if (word_excisions)
+	    gdl_nonw_excised(w);
+	  else
+	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");
+	}
       free(wf_buf);      
     }
   if (w->next)
     gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");    
+}
+
+static List *
+gdl_rem_nonw(List *wds)
+{
+  List *lp = list_create(LIST_SINGLE);
+  Node *w;
+  for (w = list_first(wds); w; w = list_next(wds))
+    if (!strcmp(w->name, "g:w"))
+      list_add(lp, w);
+  list_free(wds, NULL);
+  return lp;
 }
 
 Tree *
@@ -249,8 +284,13 @@ gdlparse_string(Mloc *m, char *s)
   free(s2);
 
   Node *w;
+  nonw_found = 0;
+
   for (w = list_first(wd_list); w; w = list_next(wd_list))
     gdl_word_attr(w);
+
+  if (nonw_found)
+    wd_list = gdl_rem_nonw(wd_list);
 
   if (deep_parse)
     {

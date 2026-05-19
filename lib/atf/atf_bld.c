@@ -241,20 +241,6 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   atf_input(l, LT_XLINK, lp);
 }
 
-void
-atf_bld_note(Mloc l, const char *ltext)
-{
-  Note *n = memo_new(atfmp->mbibs);
-  n->utype = N_U_NOTE;
-  n->text = (uccp)ltext;
-  n->xid = (ccp)pool_copy((uccp)note_create_id(), atfmp->pool);
-  Node *np = atf_add("note:text", &l);
-  atf_xprop(np, "xml:id", n->xid);
-  atf_xprop(np, "note:mark", "1");/*place-holder*/
-  np->user = n;
-  atf_input(l, LT_NOTE, n);  
-}
-
 static void
 abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 {

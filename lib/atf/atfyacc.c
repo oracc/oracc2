@@ -54,6 +54,7 @@ atf_init(void)
   atfmp->mkeys = memo_init(sizeof(Key),16);
   atfmp->milem_forms = memo_init(sizeof(struct ilem_form),1024);
   atfmp->mlines = memo_init(sizeof(Line),256);
+  atfmp->mnotes = memo_init(sizeof(Note),32);
   atfmp->mprotocols = memo_init(sizeof(Protocol),256);
   atfmp->mxis = memo_init(sizeof(struct xcl_ilem),1024);
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
@@ -96,6 +97,7 @@ atf_term(void)
   memo_term(atfmp->mkeys);
   memo_term(atfmp->milem_forms);
   memo_term(atfmp->mlines);
+  memo_term(atfmp->mnotes);
   memo_term(atfmp->mprotocols);
   memo_term(atfmp->mxis);
   memo_term(atfmp->mxlinks);

@@ -248,7 +248,7 @@ ax_jox_lang(Node *np, ATF *a)
 int
 ax_jox_lg(Node *np, Group *gp)
 {
-  if (gp->nlines > 1)
+  if (gp->line_lines > 1)
     {
       joxer_ea(np->mloc, "lg", NULL);
       ax_jox_lines(gp);

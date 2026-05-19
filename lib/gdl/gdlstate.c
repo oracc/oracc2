@@ -96,6 +96,13 @@ gdlstate_props(Node *np, gdlstate_t sp)
   const char *status = "ok";
   if (gs_is(sp,gs_supplied))
     status = "supplied";
+  else if (gs_is(sp, gs_excised))
+    status = "excised";
+  else if (gs_is(sp, gs_maybe))
+    status = "maybe";
+  else if (gs_is(sp, gs_implied))
+    status = "implied";
+  
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:status", status);
 
   if (gs_is(sp, gs_damaged_o))

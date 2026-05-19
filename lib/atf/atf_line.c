@@ -42,9 +42,7 @@ int last_tlit_h_decay = 0;
 
 Line *curr_line, *curr_lem_host;
 
-#if 0
 static int line_lines = 0;
-#endif
 
 static unsigned const char *lnstr(Mloc *mp, int number,int primes);
 static unsigned char *map_uscore(const unsigned char *vbar);
@@ -61,10 +59,10 @@ atf_group_wrapup(void)
 	  gp->lines = (Line**)list2array_c(atfmp->llines, &gp->nlines);
 	  memo_list(gp->lines);
 	  gp->parent = abt->curr->user;
-#if 0
-	  /* this is just the lines that contribute to an <lg>, excludes $-lines */
+
+	  /* this is just the lines that contribute to an <lg>, excludes #note: */
 	  gp->line_lines = line_lines;
-#endif
+
 	  Node *np = node_ancestor_or_self(abt->curr, "lg");
 	  np->user = gp;
 	  np->utype = N_U_GROUP;
@@ -77,6 +75,7 @@ atf_group_wrapup(void)
 	}
       list_free(atfmp->llines, NULL);
       atfmp->llines = NULL;
+      line_lines = 0;
     }
   if (curr_lem_host)
     {
@@ -111,10 +110,8 @@ atf_line_lg(Mloc *mp)
 static void
 register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 {
-#if 0
-  if (lt != LT_DOLLAR)
+  if (lt != LT_NOTE)
     ++line_lines;
-#endif
 
   if (line_trace)
     atf_lex_line_trace(&l);
@@ -224,7 +221,7 @@ line_mts(Mloc l, unsigned char *lp)
   else
     atf_xprop(lnode, "n", (ccp)pool_copy((uccp)tok, atfmp->pool));
   
-  curr_line_label = line_label(tok,0,(unsigned const char *)clid);
+  curr_line_label = line_label(lnode->mloc,tok,0,(unsigned const char *)clid);
   if (curr_line_label)
     {
       atf_xprop(lnode, "label", (label = (ccp)pool_copy((uccp)curr_line_label, atfmp->pool)));
@@ -599,3 +596,19 @@ map_uscore(const unsigned char *vbar)
       *s = ' ';
   return tmp;
 }
+
+void
+line_note(Mloc l, const char *ltext)
+{
+  Note *n = memo_new(atfmp->mnotes);
+  n->utype = N_U_NOTE;
+  n->text = (uccp)ltext;
+  n->xid = (ccp)pool_copy((uccp)note_create_id(), atfmp->pool);
+  Node *np = atf_add("note:text", &l);
+  atf_xprop(np, "xml:id", n->xid);
+  atf_xprop(np, "note:mark", "1");/*place-holder*/
+  np->user = n;
+  register_line(l, LT_NOTE, np, ltext);
+  /*atf_input(l, LT_NOTE, n);*/  
+}
+

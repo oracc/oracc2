@@ -147,7 +147,7 @@ block_lev(Mloc l, Block *bp, char *rest)
     ++s;
 
   /* handle @obverse? etc */
-  if (block_flags[(unsigned)*s])
+  if (block_flags[(unsigned char)*s])
     s = scan_flags(s, flags);
 
   switch (bp->bt->type)
@@ -166,7 +166,11 @@ block_lev(Mloc l, Block *bp, char *rest)
       atf_xprop(bp->np, "type", "locator");
       atf_xprop(bp->np, "subtype", "fragment");
       s = frg_args(l, bp, s, flags);
-      bp->np->text = (ccp)pool_copy((uccp)s, atfmp->pool);
+      if (bp->subt)
+	{
+	  bp->np->text = (ccp)pool_copy((uccp)bp->subt, atfmp->pool);
+	  label_frag(bp->np, (uccp)bp->np->text);
+	}
       break;
     case B_COLUMN:
       if (*flags)
@@ -711,7 +715,7 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
 static char *
 frg_args(Mloc l, Block *bp, char *s, char flags[])
 {
-  const char *face = scan_name(NULL, s, &s);
+  const char *face = s/*scan_name(NULL, s, &s)*/;
   if (face)
     bp->subt = face;
 
@@ -724,7 +728,7 @@ frg_args(Mloc l, Block *bp, char *s, char flags[])
   update_label(bp->np, etu_none);
 #endif
   
-  return s;  
+  return s+strlen(s);  
 }
 
 static char *

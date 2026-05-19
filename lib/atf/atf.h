@@ -40,6 +40,7 @@ typedef struct atfm {
   Memo *mkeys;
   Memo *mlems;
   Memo *mlines;
+  Memo *mnotes;
   Memo *mprotocols;
   Memo *mxis;
   Memo *mxlinks;
@@ -167,10 +168,8 @@ typedef struct group {
   struct block *parent; /* this is a locator group */
   struct line **lines; /* these are gathered in atfmp->llines */
   int nlines;
-#if 0
-  /* if $-lines end up within a group this counter will be just the non-dollar lines */
+  /* if #note: end up within a group this counter will be just the non-note lines */
   int line_lines;
-#endif
 } Group; /* line-group */
 
 typedef struct line {
@@ -292,15 +291,13 @@ extern void atf_wrapup(Wheret where);
 extern void atf_wrapup_buffer(void);
 extern void atf_lex_line_trace(Mloc *mp);
 
-extern unsigned const char*check_label(unsigned const char *lab,enum e_tu_types transtype,
-				       unsigned const char *xid);
+extern unsigned const char*check_label(Mloc *mp,unsigned const char *lab,enum e_tu_types transtype, unsigned const char *xid);
 extern void ncname_init(void);
 extern const char *newlabel(const char *);
 extern void update_label(struct node *current,enum e_tu_types transtype);
 extern void label_segtab(const char *st,const unsigned char *tok);
 extern void update_mlabel(Block_level type, unsigned const char *tok);
-extern const unsigned char *line_label(const unsigned char *tok,enum e_tu_types transtype,
-				const unsigned char *xid);
+extern const unsigned char *line_label(Mloc *mp,const unsigned char *tok,enum e_tu_types transtype, const unsigned char *xid);
 extern void reset_labels(void);
 extern void label_term(void);
 extern void label_frag(struct node *current,unsigned const char *l);
@@ -325,6 +322,7 @@ extern void line_lgs(Mloc l, unsigned char *lp);
 extern void line_var(Mloc l, unsigned char *lp);
 extern void tr_inter(Mloc l, unsigned char *lp);
 extern void line_lem(Mloc l, unsigned char *lp);
+extern void line_note(Mloc l, const char *ltext);
 extern void atf_group_wrapup(void);
 
 extern void atf_tlat_wrapup(void);

@@ -16,7 +16,6 @@ char m_label2[1024];
 int m_label_col_index = 0;
 unsigned char line_label_buf[1024];
 static unsigned char frag_buf[128];
-static enum block_levels frag_level = B_bl_top;
 static int complained_already = 0;
 extern unsigned char last_label_buf[128];
 char *label2 = NULL;
@@ -31,15 +30,10 @@ void
 label_frag(struct node *current,unsigned const char *l)
 {
   xstrcpy(frag_buf,l);
-  /* this means that all fragments in the same text must occur at the same
-     level in the hierarchy */
-  if (frag_level == B_bl_top && current->depth && current->user)
-    frag_level = ((Block*)current->user)->bt->type;
-  if (frag_level == B_TEXT)
-    {
-      warning("@fragment must have previous object, surface or column");
-      frag_level = B_OBJECT;
-    }
+#if 0
+  if (atfp->frag_type == F_SUBSURF)
+    mesg_verr(node->mloc, "@fragment must have previous object, surface or column");
+#endif
 }
 
 void
@@ -188,8 +182,7 @@ update_mlabel(Block_level type, unsigned const char *tok)
 }
 
 const unsigned char *
-line_label(const unsigned char *tok,
-	   enum e_tu_types transtype,
+line_label(Mloc *mp, const unsigned char *tok, enum e_tu_types transtype,
 	   const unsigned char *xid)
 {
   const unsigned char *label = NULL;
@@ -215,7 +208,7 @@ line_label(const unsigned char *tok,
       strcpy(buf,(char*)tok);
       label = (unsigned char *)buf;
     }
-  if (check_label(label,transtype,xid))
+  if (check_label(mp,label,transtype,xid))
     {
       return label;
     }
@@ -232,7 +225,6 @@ reset_labels(void)
   complained_already = 0;
   *line_label_buf = '\0';
   *frag_buf = '\0';
-  frag_level = B_bl_top;
   *m_label = '\0';
   hash_free(my_label_table,NULL);
   if (my_label_table)
@@ -255,8 +247,8 @@ label_term(void)
 /* return NULL if label is duplicate or, for translation check, undefined
    id value if label is unique or, for translation check, defined */
 unsigned const char *
-check_label(unsigned const char *lab,enum e_tu_types transtype,
-	    unsigned const char *xid)
+check_label(Mloc *mp, unsigned const char *lab,
+	    enum e_tu_types transtype, unsigned const char *xid)
 {
   unsigned const char *hashdata = (xid ? xid : (unsigned const char *)"nowt"), *labelp;
   void *ok = NULL;
@@ -386,7 +378,7 @@ check_label(unsigned const char *lab,enum e_tu_types transtype,
 		    }
 		}
 	    }
-	  vwarning2(curratffile,start_lnum,"%s: translation uses undefined label",lab);
+	  mesg_verr(mp,"%s: translation uses undefined label",lab);
 	  return NULL;
 	}
     }
@@ -396,7 +388,7 @@ check_label(unsigned const char *lab,enum e_tu_types transtype,
 	{
 	  if (!complained_already/* || report_all_label_errors*/)
 	    {
-	      vwarning2(curratffile,start_lnum == -1 ? atflineno : start_lnum,
+	      mesg_verr(mp,
 			"%s: duplicate label (double obv/rev/col/line? One per text reported)",
 			lab);
 	      complained_already = 1;
@@ -469,7 +461,7 @@ update_label(struct node *current,enum e_tu_types transtype)
   if (ancestors[0])
     sprintf((char*)line_label_buf, "%s ", ancestors[0]);
   
-  if (*frag_buf && frag_level == B_OBJECT)
+  if (*frag_buf && atfp->frag_type == F_SURFACE)
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "frg.%s ", frag_buf);
 
   if (ancestors[1])
@@ -478,13 +470,8 @@ update_label(struct node *current,enum e_tu_types transtype)
   if (ancestors[2])
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "%s ", ancestors[2]);
 
-  if (*frag_buf && frag_level == B_COLUMN)
+  if (*frag_buf && atfp->frag_type == F_SUBSURF)
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "frg.%s ", frag_buf);
-
-#if 0 /* can't happen */
-  if (*frag_buf && frag_level == LINE)
-    sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "frg.%s ", frag_buf);
-#endif
 
   xstrcpy(idbuf,line_label_buf);
   idbufp = idbuf+xxstrlen(idbuf);
@@ -503,7 +490,7 @@ update_label(struct node *current,enum e_tu_types transtype)
   idtmp = prepend_text_id(idbuf);
   if (idtmp)
     {
-      const unsigned char *tmp2 = check_label(idbuf,transtype,idtmp);
+      const unsigned char *tmp2 = check_label(current->mloc,idbuf,transtype,idtmp);
       atf_xprop(current, "xml:id", (ccp)tmp2);
       free(idtmp);
     }

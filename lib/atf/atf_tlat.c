@@ -412,7 +412,7 @@ atr_para(void)
 		}
 	      else
 		{
-		  const char *xid = (ccp)check_label((uccp)label,etu_parallel,NULL);
+		  const char *xid = (ccp)check_label(p->mloc,(uccp)label,etu_parallel,NULL);
 
 		  if (xid)
 		    {
@@ -729,7 +729,7 @@ labeled_labels(struct node *np, unsigned char *lab)
     }
 
   start_lnum = np->mloc->line;
-  xid = check_label(lab,etu_labeled,NULL);
+  xid = check_label(np->mloc,lab,etu_labeled,NULL);
   start_lnum = saved_start_lnum;
 
   if (xid)
@@ -820,7 +820,7 @@ labeled_labels(struct node *np, unsigned char *lab)
       s = eref;
       while (isspace(*s))
 	++s;
-      xid = check_label(s,etu_labeled,NULL);
+      xid = check_label(np->mloc,s,etu_labeled,NULL);
       if (xid)
 	{
 	  char buf[5];

@@ -166,7 +166,7 @@ atf_dollar(Mloc l, char *rest)
 	    {
 	      atf_xprop(np, "label", dollar_label);
 	      atf_xprop(np,"silent",cc("1"));
-	      check_label((uccp)dollar_label,0,(uccp)xid);
+	      check_label(np->mloc,(uccp)dollar_label,0,(uccp)xid);
 	    }
 	  else if (dollar_fifo)
 	    dollar_add(xid);

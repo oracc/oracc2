@@ -164,10 +164,17 @@ delim:
 	| ENHYPHEN 			       		{ ynp = gdl_delim(ytp, "--"); }
 	;
 
+graphemes:	grapheme
+	|	ggroup
+	|	graphemes grapheme
+	|	graphemes ggroup
+	;
+
 grapheme:
 		scgrapheme
 	| 	valuqual
         | 	meta
+	|	gflag					{ $$ = lgp; }
 		;
 
 ggroup:		alternate			       	
@@ -196,16 +203,9 @@ scgrapheme:
 		;
 
 maybegflags:
-		gflags
-	| 	mods
-	| 	mods gflags
+		mods
 	| 	/*empty */
 		;
-
-gflags:
-	  gflag
-	| gflags gflag
-	;
 
 gflag:
 	  '*'						{ bit_set(*lst, gs_f_star); }
@@ -216,23 +216,21 @@ gflag:
 	;
 
 simplexg:
-	  s maybegflags	       			       	{ /*ynp->mloc = mloc_mloc(&@1);*/
-	    						  /*should now be covered in gdl_graph_node*/
-           					          if (gdl_legacy) gdl_unlegacy(ynp);
+	  s maybegflags	       			       	{ if (gdl_legacy) gdl_unlegacy(ynp);
 							  if (ynp->kids) gdl_mod_wrap(ynp, 1);
 	    			  			  gvl_simplexg(ynp);
 	  						  $$ = ynp; }
 	;
 
 s:
-		GRAPHEME				{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
-	| 	LISTNUM					{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
-	| 	NNUM					{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
-	| 	NUMBER					{ ynp = gdl_number(&@1, ytp, gdllval.text); }
-	| 	BARENUM					{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
-	| 	ZERO					{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
-	| 	PUNCT					{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
-	| 	ELLIPSIS		       		{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
+		GRAPHEME		{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
+	| 	LISTNUM			{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
+	| 	NNUM			{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
+	| 	NUMBER			{ ynp = gdl_number(&@1, ytp, gdllval.text); }
+	| 	BARENUM			{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
+	| 	ZERO			{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
+	| 	PUNCT			{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
+	| 	ELLIPSIS		{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
 	;
 
 compound:
@@ -294,9 +292,7 @@ cdelim:
 	;
 
 cmaybemodflags:
-	  gflags
-	| cmods
-	| cmods gflags
+		cmods
 	| /* empty */
 	;
 
@@ -319,14 +315,12 @@ q:
 	    						  gdl_push_l(&@1,ytp,"g:q");
 							  kids_add_node(ytp,yrem);
 							  gdl_incr_qin(); }
-	grapheme 	 	       			{ gdl_remove_q_error(@1, yrem); }
-	QRP { gdl_decr_qin(); }		      		
+	graphemes 	 	       			{ gdl_remove_q_error(@1, yrem); }		
+	QRP { gdl_decr_qin(); }
 	;
 
 qmaybemodflags:
-	  gflags
-	| mods
-	| mods gflags
+		mods
 	| /* empty */
 	;
 

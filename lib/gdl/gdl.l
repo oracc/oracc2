@@ -152,7 +152,7 @@ _			{ gsave; return LANG_FLIP; }
 
 {NOTEMARK}		{ gsave; return NOTEMARK; }
 
-<INITIAL,C>[!?]		{ gsave; return *yytext; }
+<INITIAL,C,Q>[!?]      	{ gsave; return *yytext; }
 <INITIAL,C>^[#"~=@^]	{ gsave; return gdl_lexfld[(int)*yytext]; }
 <INITIAL,C>[#"~=@^]   	{ gsave; if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { return *yytext; } }
 <INITIAL,C>"*"		{ /*"*/ gsave; if (GIN) { return(*yytext); } else { GIN=1; return(PUNCT); } }

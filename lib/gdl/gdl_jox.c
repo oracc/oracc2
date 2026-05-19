@@ -165,7 +165,8 @@ grx_jox_node(Node *np, int oflag, int nflag)
     {
       need_closer = 0;
     }
-  else if (!strcmp(np->name, "g:x") || !strcmp(np->name, "g:nonw"))
+  else if (!strcmp(np->name, "g:x")
+	   || (!strcmp(np->name, "g:nonw") && !np->kids))
     {
       joxer_et(np->mloc, nodename,
 	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))),
