@@ -21,6 +21,7 @@ extern Node *lgp;   		/* last grapheme node pointer */
 
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
+extern Node *lgp;
 /*int Q = 0;*/
 int gdl_bilingual = 0;
 int gdl_legacy = 0;
@@ -36,7 +37,7 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
-%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS NOTEMARK VARO VARC VARI CELLSPAN
+%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS VARO VARC VARI CELLSPAN
 		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD INDENT NEWLINE
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
 		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
@@ -52,10 +53,12 @@ GDLLTYPE gdllloc;
 		'{' DET_SEME DET_PHON '}'
 		PLUS_FLAG UFLAG1 UFLAG2 UFLAG3 UFLAG4 SPACE EOL END
 
+%token <node>	NOTEMARK
 %nterm <text> 	field lexfld cmods
 
-%nterm <node>   alternate ligatured reordered ggroup
-		grapheme scgrapheme compound simplexg valuqual	
+%nterm <node>   alternate ligatured reordered ggroup 
+		grapheme scgrapheme compound simplexg valuqual
+		meta breako breakc glosso glossc stateo statec
 
 %start line
 
@@ -130,7 +133,6 @@ transliteration:
 		delim					{ gdl_clear_gg(ytp); }
 	| 	grapheme
 	| 	lang
-        | 	meta
 	|	ggroup
 	;
 
@@ -151,20 +153,21 @@ delim:
 	  						  rs_on(gs_det|gs_g_phond); }
 	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}'))
 		  					    gdl_det_props(ytp->curr);
-	      						    gdl_pop(ytp,"g:det");
-	     						    /* set pst->det = SB_CL; lgp is last
-							       node with g content or equivalent, i.e.,
-							       where the closer state must be set */
-	    						    /*gdl_update_state(lgp, gs_det_c);*/
-	      						    bit_set(*lst, gs_det_c);
-							    rs_no(gs_det|gs_g_semd_e|gs_g_semd_i|gs_g_phond);
-	  						  }
+	      						  gdl_pop(ytp,"g:det");
+	     						  /* set pst->det = SB_CL; lgp is last
+							     node with g content or equivalent, i.e.,
+						             where the closer state must be set */
+	    						  /*gdl_update_state(lgp, gs_det_c);*/
+	      						  bit_set(*lst, gs_det_c);
+						          rs_no(gs_det|gs_g_semd_e|gs_g_semd_i|gs_g_phond);
+	  				       	        }
 	| ENHYPHEN 			       		{ ynp = gdl_delim(ytp, "--"); }
 	;
 
 grapheme:
 		scgrapheme
 	| 	valuqual
+        | 	meta
 		;
 
 ggroup:		alternate			       	
@@ -333,18 +336,18 @@ lang:
 	;
 
 meta:
-		breakc
-	| 	breako
-	| 	glossc
-	| 	glosso
-	| 	statec
-	| 	stateo
+		breakc				{ $$ = lgp; }
+	| 	breako				{ $$ = lgp; }
+	| 	glossc				{ $$ = lgp; }
+	| 	glosso				{ $$ = lgp; }
+	| 	statec				{ $$ = lgp; }
+	| 	stateo				{ $$ = lgp; }
 	| 	INDENT       			{ ynp = gdl_nongraph(&@1, ytp, ";", "linebreak"); }
 	| 	NEWLINE	       			{ ynp = gdl_nongraph(&@1, ytp, "//", "newline"); }
 	| 	VARO				{ ynp = gdl_nongraph(&@1, ytp, $1, "varo"); }
 	| 	VARC				{ ynp = gdl_nongraph(&@1, ytp, $1, "varc"); }
 	| 	VARI				{ ynp = gdl_nongraph(&@1, ytp, $1, "vari"); }
-	| 	NOTEMARK
+	| 	NOTEMARK		       	{ $$ = lgp; }
 		/* TODO: prob just add NOTEMARK as prop and keep a
 		list during line processing so it's easy to correlate
 		the marks with notes parsed in lib/atf */

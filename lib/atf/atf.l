@@ -258,8 +258,14 @@ atf_lex_init(FILE *fp, const char *file)
         {
 	  if (!(atfbuf = atf_set_file_line(atfbuf, &fsize)))
 	    fprintf(stderr, "atf_lex_init: failed to set file/line in %s. Stop.\n", file);
+#if 0
+	  /* This is wrong if we are reporting based on the file in
+	     ##file; if we introduce the option to report line numbers
+	     in the installed .atf we will need to make this
+	     adjustment */
 	  else
 	    atflineno += 2;
+#endif
 	}
       else
 	curratffile = file;

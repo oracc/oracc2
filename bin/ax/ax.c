@@ -311,7 +311,7 @@ opts(int opt, const char *arg)
       xcl_output = xml_output = 1;      
       break;
     case 't':
-      trace_mode = 1;
+      ++trace_mode;
       break;
     case 'V':
       val_flag = 1;

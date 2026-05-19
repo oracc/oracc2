@@ -159,13 +159,21 @@ gvl_s(Node *ynp)
 		}
 	      else
 		{
-		  if (!gvl_void_messages)
+		  /* don't warn about numbers/fractions because there
+		     may be a qualification coming up */
+		  unsigned const char *s = u;
+		  while (isdigit(*s) || '/' == *s)
+		    ++s;
+		  if (*s)
 		    {
-		      if (gvl_sans_report)
-			gp->mess = gvl_vmess("unknown sign/value: %s.", gp->orig);
-		      else
-			gp->mess = gvl_vmess("unknown sign/value: %s. To request adding it please visit:\n\t%s",
-					     gp->orig, report);
+		      if (!gvl_void_messages)
+			{
+			  if (gvl_sans_report)
+			    gp->mess = gvl_vmess("unknown sign/value: %s.", gp->orig);
+			  else
+			    gp->mess = gvl_vmess("unknown sign/value: %s. To request adding it please visit:\n\t%s",
+						 gp->orig, report);			  
+			}
 		    }
 		}
 	    }
