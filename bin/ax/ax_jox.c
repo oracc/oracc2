@@ -61,7 +61,7 @@ ax_jox(Tree *tp)
       jox_xml_output(xfp);
       atf_pi_fp = xfp;
       atf_file_pi(file);
-      joxer_init(&xtf_data, "xtf", 1, xfp, NULL);
+      joxer_init(&xtf_data, "xtf", val_flag, xfp, NULL);
       ax_jox_node(tp->root);
       joxer_term(xfp,NULL);
       fclose(xfp);
@@ -74,7 +74,7 @@ ax_jox(Tree *tp)
 	    {
 	      jox_xml_output(tra_fp);
 	      atf_file_pi(file);
-	      joxer_init(&xtf_data, "xtf", 1, tra_fp, NULL);
+	      joxer_init(&xtf_data, "xtf", val_flag, tra_fp, NULL);
 	      atf_pi_fp = tra_fp;
 	      ax_jox_node(curr_trans->tree->root);
 	      joxer_term(tra_fp, NULL);
@@ -96,7 +96,7 @@ ax_jox(Tree *tp)
 	  jox_xml_output(xtf_fp);
 	  atf_pi_fp = xtf_fp;
 	  atf_file_pi(file);
-	  joxer_init(&xtf_data, "xtf", 1, xtf_fp, NULL);
+	  joxer_init(&xtf_data, "xtf", val_flag, xtf_fp, NULL);
 	  ax_jox_node(tp->root);
 	  joxer_term(xtf_fp, NULL);
 	  xfclose(xtffile, xtf_fp);

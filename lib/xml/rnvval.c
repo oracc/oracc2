@@ -46,9 +46,23 @@ rnvval_init_err(void (*eh)(int erno,va_list ap))
 }
 
 void
-rnvval_init(struct xnn_data *xdp, const char *rncfile)
+rnvval_init_2(struct xnn_data *xdp)
 {
   int i;
+  rnv_qnames = hash_create(1024);
+  for (i = 0; xdp->enames[i].pname; ++i)
+    hash_add(rnv_qnames, (ucp)xdp->enames[i].pname, xdp->enames[i].qname);
+  rnv_qanames = hash_create(1024);
+  for (i = 0; xdp->anames[i].pname; ++i)
+    hash_add(rnv_qanames, (ucp)xdp->anames[i].pname, xdp->anames[i].qname);
+
+  if (!rnv_pool)
+    rnv_pool = pool_init();
+}
+
+void
+rnvval_init(struct xnn_data *xdp, const char *rncfile)
+{
   char *p = rncfile_path(rncfile);
   
   if (!access(p, R_OK)) /*!xaccess(rncfile, R_OK, 0)*/
@@ -64,15 +78,7 @@ rnvval_init(struct xnn_data *xdp, const char *rncfile)
       return;
     }
 
-  rnv_qnames = hash_create(1024);
-  for (i = 0; xdp->enames[i].pname; ++i)
-    hash_add(rnv_qnames, (ucp)xdp->enames[i].pname, xdp->enames[i].qname);
-  rnv_qanames = hash_create(1024);
-  for (i = 0; xdp->anames[i].pname; ++i)
-    hash_add(rnv_qanames, (ucp)xdp->anames[i].pname, xdp->anames[i].qname);
-
-  if (!rnv_pool)
-    rnv_pool = pool_init();
+  rnvval_init_2(xdp);
 }
 
 void

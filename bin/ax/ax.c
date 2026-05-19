@@ -15,6 +15,7 @@
 #include "ax.h"
 
 char *trafile, *xtffile;
+int val_flag = 0;
 
 Mloc xo_loc;
 FILE *f_xml, *ok_no_ok_fp, *ok_no_no_fp;
@@ -130,6 +131,7 @@ ax_full_term(void)
   xcl_final_term();
 }
 
+#if 0
 static int
 pqx_ok(const char *s)
 {
@@ -147,17 +149,14 @@ pqx_ok(const char *s)
     }
   return s - t == 7;
 }
+#endif
 
 static char *
 atffile_of(const char *d)
 {
-  const char *pqx = strrchr(d, '/');
-  if (pqx && pqx_ok(++pqx))
-    {
-      char buf[strlen(d)+13];
-      sprintf(buf, "%s/%s.atf", d, pqx);
-      return strdup(buf);
-    }
+  const char *fn = expand(NULL, d, "atf");
+  if (fn)
+    return strdup(fn);
   else
     {
       fprintf(stderr, "ax: invalid ATF path `%s': must end with a valid PQX-id\n", d);
@@ -168,17 +167,15 @@ atffile_of(const char *d)
 static char *
 trafile_of(const char *d)
 {
-  char buf[strlen(d)+strlen("/P123456_project-en.xtr0")];
-  sprintf(buf, "%s%s_project-en.xtr", d, strrchr(d, '/'));
-  return strdup(buf);
+  const char *fn = expand_xtr(NULL, d, "project", "en");
+  return strdup(fn);
 }
 
 static char *
 xtffile_of(const char *d)
 {
-  char buf[strlen(d)+13];
-  sprintf(buf, "%s%s.xtf", d, strrchr(d, '/'));
-  return strdup(buf);
+  const char *fn = expand(NULL, d, "xtf");
+  return strdup(fn);
 }
 
 static void
@@ -249,7 +246,7 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "CDcgI:Lltvx");
+  options(argc, argv, "ACDcgI:Lltvx");
 
   if (ok_no_files)
     {
@@ -289,6 +286,9 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'A':
+      amp_trace = 1;
+      break;
     case 'c':
       check_mode = 1;
       break;
@@ -312,6 +312,9 @@ opts(int opt, const char *arg)
       break;
     case 't':
       trace_mode = 1;
+      break;
+    case 'V':
+      val_flag = 1;
       break;
     case 'v':
       verbose = 1;

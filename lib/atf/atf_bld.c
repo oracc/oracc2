@@ -7,6 +7,7 @@
 static void atf_bld_protocols(Mloc *lp, const char *scope);
 int in_preamble;
 
+int amp_trace = 0;
 int bld_trace = 0;
 
 Tree *abt;
@@ -82,6 +83,8 @@ atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
 void
 atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
 {
+  if (amp_trace)
+    fprintf(stderr, "&%s\n", pqx);
   if (line_trace)
     atf_lex_line_trace(&l);
   atfp = atfmp->atf;

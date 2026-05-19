@@ -73,7 +73,7 @@ jox_verror_handler(int erno,va_list ap)
     }
   else
     {
-      const char *xphase = phase, *xm;
+      const char *xphase = phase;
       phase = "rnv-jox";
       switch(erno)
 	{
@@ -741,6 +741,125 @@ joxer_eto_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
     }
 }
 
+/*** joxer_x ***/
+static void
+joxer_ao_x(const char *name)
+{
+}
+
+static void
+joxer_ac_x(void)
+{
+}
+
+static void
+joxer_ch_x(Mloc *mp, const char *ch)
+{
+  joxer_mloc(mp);
+  const char *xch = (ccp)xmlify((ucp)ch);
+  jox_xml_ch(xch);
+}
+
+static void
+joxer_ea_x(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  jox_xml_ea(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_ee_x(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  jox_xml_ee(pname);
+}
+
+static void
+joxer_eaa_x(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  jox_xml_ea(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eea_x(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  jox_xml_ee(pname);
+}
+
+static void
+joxer_eaaa_x(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_mloc(mp);
+  jox_xml_ea(pname, rats);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eeaa_x(Mloc *mp, const char *pname)
+{
+  joxer_mloc(mp);
+  jox_xml_ee(pname);
+}
+
+static void
+joxer_ec_x(Mloc *mp, const char *pname, Rats *rats)
+{
+  joxer_ea_x(mp, pname, rats);
+  joxer_ee_x(mp, pname);
+}
+
+static void
+joxer_et_x(Mloc *mp, const char *pname, Rats *rats, const char *ch)
+{
+  const char *xch = (ccp)xmlify((ucp)ch);
+  joxer_mloc(mp);
+  jox_xml_ea(pname, rats);
+  jox_xml_ch(xch);
+  jox_xml_ee(pname);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
+static void
+joxer_eto_x(Mloc *mp, const char *pname, Rats *rats, const char *ch)
+{
+  const char *xch = (ccp)xmlify((ucp)ch);
+  joxer_mloc(mp);
+
+  jox_xml_ea(pname, rats);
+  /*fprintf(stderr, "calling jox_xml_ch from joxer_eto_x\n");*/
+  if (joxer_inl)
+    jox_xml_inl(mp, (char*)ch); /* does its own rnvval_xxx calls */
+  else
+    jox_xml_ch(xch);
+
+  jox_xml_ee(pname);
+  if (rats && ratts)
+    {
+      rnvval_free_atts(ratts);
+      ratts = NULL;
+    }
+}
+
 static void
 joxer_set_vx(void)
 {
@@ -798,8 +917,22 @@ joxer_set_xj(void)
 static void
 joxer_set_x(void)
 {
+  joxer_ch = joxer_ch_x;
+  joxer_ea = joxer_ea_x;
+  joxer_ee = joxer_ee_x;
+  joxer_eaa = joxer_eaa_x;
+  joxer_eea = joxer_eea_x;
+  joxer_eaaa = joxer_eaaa_x;
+  joxer_eeaa = joxer_eeaa_x;
+  joxer_ec = joxer_ec_x;
+  joxer_et = joxer_et_x;
+  joxer_eto = joxer_eto_x;
+  joxer_ao = joxer_ao_x;
+  joxer_ac = joxer_ac_x;
+#if 0
   fprintf(stderr, "joxer selection 'x' not yet implemented. Stop\n");
   exit(1);
+#endif
 }
 static void
 joxer_set_j(void)
@@ -826,6 +959,7 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
   if (val)
     {
       rnvval_init_err(jox_verror_handler);
+      rnvval_init(xdp, rncbase);
       rnvif_init();
       rnv_initialized = 1;
       rnvval_init(xdp, rncbase);
@@ -837,7 +971,10 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
       if (!val)
 	rnvxml_init_err();
       if (!rnv_initialized++)
-	rnvif_init();
+	{
+	  rnvif_init();
+	  rnvval_init_2(xdp);
+	}
       f_xml = xml;
       xml_xmlns_atts = xdp->nstab;
       xgi_pool = pool_init();

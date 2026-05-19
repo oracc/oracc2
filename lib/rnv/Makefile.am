@@ -5,6 +5,7 @@ SCM_H="<scm/scm.h>"
 
 # optional features
 M_STATIC=0
+
 M_FILL=0
 DSL_SCM=0
 DXL_EXC=0

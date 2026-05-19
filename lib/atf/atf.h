@@ -220,7 +220,7 @@ extern const char *Primes[];
 
 extern int check_links;
 extern int line_id;
-extern int line_trace;
+extern int amp_trace, line_trace;
 extern char line_id_buf[MAX_LINE_ID_BUF+1];
 extern char *line_id_insertp;
 extern const char *clid;

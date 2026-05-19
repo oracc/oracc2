@@ -221,7 +221,7 @@ line_label(const unsigned char *tok,
     }
   else
     {
-      free((void*)label);
+      /*free((void*)label);*//* don't free labels because they use memo_auto */
       return NULL;
     }
 }

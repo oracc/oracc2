@@ -41,6 +41,7 @@ extern void proj_default(struct run_context *r);
 /**PRJ**/
 
 extern int odt_serial, status, exit_status;
+extern int val_flag;
 
 extern int harvest_notices, lem_autolem, lem_dynalem, lem_forms_raw,
   named_ents, perform_dsa, warn_unlemmatized;

@@ -145,8 +145,12 @@ main(int argc, char *const *argv)
 			{
 			  if (verbose)
 			    fprintf(stderr, "atfinstall: writing to %s\n", o_fn);
+#if 1
+			  fprintf(list_fp, "%s:%s\n", project, pqx);
+#else
 			  fputs(o_dir, list_fp);
 			  fputc('\n', list_fp);
+#endif
 			  free(o_dir);
 			  fprintf(o, "##file %s\n##line %ld\n", efile, eline);
 			}

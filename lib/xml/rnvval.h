@@ -19,4 +19,6 @@ extern void rnvval_ch(const char *ch);
 extern void rnvval_ea(const char *pname, struct rnvval_atts *ratts);
 extern void rnvval_ee(const char *pname);
 
+extern void rnvval_init_2(struct xnn_data *xdp);
+
 #endif/*_RNVVAL_H*/
