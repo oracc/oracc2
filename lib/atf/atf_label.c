@@ -135,7 +135,10 @@ prepend_text_id(unsigned const char *s)
 	else
 	  *dest++ = *s++;
       *dest = '\0';
+#if 0
+      /* In O2 we make the line ID elsewhere so we can drop this and keep surface/column IDs cleaner */
       sprintf((char*)dest,".%d", ++line_id);
+#endif
       return (unsigned char *)strdup(new);
     }
   else

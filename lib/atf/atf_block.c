@@ -704,7 +704,7 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
   else
     {
       char *n = scan_name(NULL, s, &s);
-      if (n)
+      if (n && *n)
 	{
 	  atf_xprop(bp->np, "n", n);
 	  int len = strlen(bp->bt->name)+strlen(n)+2;

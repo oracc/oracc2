@@ -143,20 +143,20 @@ delim:
 	;
 
 det:	  '{'	      					{ gdl_balance_state(@1,'{');
-	      						  $$ = gdl_push_l(&@1,ytp,"g:det");
+	      						  $$ = ynp = gdl_push_l(&@1,ytp,"g:det");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_i); }
 	| DET_SEME    					{ gdl_balance_state(@1,'{');
-	    						  $$ = gdl_push_l(&@1,ytp,"g:det");
+	    						  $$ = ynp = gdl_push_l(&@1,ytp,"g:det");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_e); }
 	| DET_PHON      	      			{ gdl_balance_state(@1,'{');
-	    						  $$ = gdl_push_l(&@1,ytp,"g:det"); 
+	    						  $$ = ynp = gdl_push_l(&@1,ytp,"g:det"); 
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_phond); }
 	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}'))
 		  					    gdl_det_props(ytp->curr);
-	      						    gdl_pop(ytp,"g:det");
+	      						  ynp = gdl_pop(ytp,"g:det");
 	     						  /* set pst->det = SB_CL; lgp is last
 							     node with g content or equivalent, i.e.,
 						             where the closer state must be set */

@@ -2,8 +2,10 @@
 #project: epsd2/admin/ed3a
 #atf: use unicode
 
+@obverse
+@column 1
 1. e₂
 
 @translation labeled en project
-@label 1
+@label o i 1
 A house
