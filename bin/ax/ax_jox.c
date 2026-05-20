@@ -80,6 +80,7 @@ ax_jox(Tree *tp)
 	      joxer_term(tra_fp, NULL);
 	      xfclose(trafile, tra_fp);
 	      tra_fp = NULL;
+	      curr_trans = NULL;
 	    }
 	  else
 	    {
@@ -159,7 +160,8 @@ ax_jox_node(Node *np)
   const char *nodename = np->name;
   struct axjoxfnc *ap = NULL;
 
-  atf_line_pi(np);
+  if (np->name && strcmp(np->name, "-"))
+    atf_line_pi(np);
 
   if (trace_mode)
     fprintf(stderr, "ax_jox_node: nodename = %s\n", nodename);

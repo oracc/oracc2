@@ -346,7 +346,7 @@ translation:
 		tr.header tr.chunks
 		;
 
-tr.header:	Y_TRANSLATION TR_TYPE TR_LANG TR_PROJ TR_PAR { atf_bld_tlat(@1,$2,$3,$4); }
+tr.header:	Y_TRANSLATION TR_TYPE TR_LANG TR_PROJ { atf_bld_tlat(@1,$2,$3,$4); }
 		;
 
 tr.chunks:

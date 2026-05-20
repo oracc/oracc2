@@ -699,6 +699,17 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
       if (face)
 	stype = bp->subt = face;
     }
+  else
+    {
+      char *n = scan_name(NULL, s, &s);
+      if (n)
+	{
+	  atf_xprop(bp->np, "n", n);
+	  int len = strlen(bp->bt->name)+strlen(n)+2;
+	  bp->label = pool_alloc(len, atfmp->pool);
+	  sprintf(bp->label, "%s %s", bp->bt->name, n);
+	}
+    }
 
   if (*flags)
     bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);

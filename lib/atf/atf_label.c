@@ -491,7 +491,8 @@ update_label(struct node *current,enum e_tu_types transtype)
   if (idtmp)
     {
       const unsigned char *tmp2 = check_label(current->mloc,idbuf,transtype,idtmp);
-      atf_xprop(current, "xml:id", (ccp)tmp2);
+      if (tmp2)
+	atf_xprop(current, "xml:id", (ccp)tmp2);
       free(idtmp);
     }
 

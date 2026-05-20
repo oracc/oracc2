@@ -75,7 +75,7 @@ atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
   if (ynp && v)
     prop_node_add(ynp, ptype, gtype, k, v);
   else if (!v)
-    mesg_vwarning(curratffile, atflineno, "atf_prop passed NULL value for key %s", v);    
+    mesg_vwarning(curratffile, atflineno, "atf_prop passed NULL value for key %s", k);
   else
     mesg_warning(curratffile, atflineno, "atf_prop passed NULL ynp");
 }
@@ -159,7 +159,8 @@ atf_bld_tlat(Mloc l, const char *type, const char *lang, const char *code)
   curr_trans->lang = lang;
   curr_trans->code = code;
   curr_trans->tree = tree_init();
-  (void)tree_root(curr_trans->tree, NS_XTR, "xtr:translation", 1, NULL);
+  Node *r = tree_root(curr_trans->tree, NS_XTR, "xtr:translation", 1, NULL);
+  r->mloc = mloc_mloc(&l);
   atr_translation();
 }
 

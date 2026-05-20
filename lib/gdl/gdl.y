@@ -56,7 +56,7 @@ GDLLTYPE gdllloc;
 %token <node>	NOTEMARK
 %nterm <text> 	field lexfld cmods
 
-%nterm <node>   alternate ligatured reordered ggroup 
+%nterm <node>   alternate ligatured reordered ggroup det
 		grapheme scgrapheme compound simplexg valuqual
 		meta breako breakc glosso glossc stateo statec
 
@@ -137,23 +137,26 @@ transliteration:
 	;
 
 delim:
-	  '.' 						{ ynp = gdl_delim(ytp, "."); }
-        | '-' 						{ ynp = gdl_delim(ytp, "-"); }
-	| '{'	      					{ gdl_balance_state(@1,'{');
-	      						  gdl_push_l(&@1,ytp,"g:det");
+		'.' 				       	{ ynp = gdl_delim(ytp, "."); }
+        | 	'-' 			       		{ ynp = gdl_delim(ytp, "-"); }
+	| 	ENHYPHEN 	       	       		{ ynp = gdl_delim(ytp, "--"); }
+	;
+
+det:	  '{'	      					{ gdl_balance_state(@1,'{');
+	      						  $$ = gdl_push_l(&@1,ytp,"g:det");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_i); }
 	| DET_SEME    					{ gdl_balance_state(@1,'{');
-	    						  gdl_push_l(&@1,ytp,"g:det");
+	    						  $$ = gdl_push_l(&@1,ytp,"g:det");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_e); }
 	| DET_PHON      	      			{ gdl_balance_state(@1,'{');
-	    						  gdl_push_l(&@1,ytp,"g:det"); 
+	    						  $$ = gdl_push_l(&@1,ytp,"g:det"); 
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_phond); }
 	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}'))
 		  					    gdl_det_props(ytp->curr);
-	      						  gdl_pop(ytp,"g:det");
+	      						    gdl_pop(ytp,"g:det");
 	     						  /* set pst->det = SB_CL; lgp is last
 							     node with g content or equivalent, i.e.,
 						             where the closer state must be set */
@@ -161,7 +164,6 @@ delim:
 	      						  bit_set(*lst, gs_det_c);
 						          rs_no(gs_det|gs_g_semd_e|gs_g_semd_i|gs_g_phond);
 	  				       	        }
-	| ENHYPHEN 			       		{ ynp = gdl_delim(ytp, "--"); }
 	;
 
 graphemes:	grapheme
@@ -173,6 +175,7 @@ graphemes:	grapheme
 grapheme:
 		scgrapheme
 	| 	valuqual
+	|	det
         | 	meta
 	|	gflag					{ $$ = lgp; }
 		;

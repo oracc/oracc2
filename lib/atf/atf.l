@@ -64,7 +64,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 %x s_ATFPRO
 %x s_LINK
 %x s_LZR
-%s s_T
+%x s_T
 %x s_WORD
 %x s_TRH
 %x s_TRA
@@ -85,7 +85,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_T><<EOF>>			{ yyterminate(); }
 
 <s_WORD>[^ \t\n]+	     	{ BEGIN s_next;
-				  int ret=(s_next==s_TRA?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
+				  int ret=(s_next==s_TRH?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
 <s_WORD>[ \t]+	       		{ ; }
 
 ^"@composite"			{ (void)atf_block(atftext); return COMPOSITE; }
@@ -157,7 +157,9 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^{LK_VBAR}  			{ BEGIN s_T; atfsave; return LNK_VBAR; }
 
-^[^ \t\n]+\.[ \t]+ 		{ BEGIN s_T; longinit; return MTS; }
+^[^ \t\n]+\.[ \t]+        	{ BEGIN s_T; longinit; return MTS; }
+
+^[^ \t\n]+\./\n        		{ BEGIN s_T; longinit; return MTS; }
 
 ^[^ \t\n#]+:[ \t]+ 		{ BEGIN s_T; longinit; return EXX; }
 
@@ -175,8 +177,9 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 						"atf.l: unmatched character %c\n", *atftext); }
 
 <s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
-<s_TRH>{LANG}				{ atfsave; s_next=s_TRA; BEGIN s_WORD; return TR_LANG; }
-<s_TRH>{TRA_WHT}			{ ; }
+<s_TRH>{LANG}				{ atfsave; s_next=s_TRH; BEGIN s_WORD; return TR_LANG; }
+<s_TRH>[ \t]+				{ ; }
+<s_TRH>"\n"				{ BEGIN s_TRA; }
 <s_TRA>^@label[^\n]*/\n			{ atfsave; return TR_LABEL; }
 <s_TRA>{TRA_LAB}			{ atfsave; return TR_LABEL; }
 <s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }

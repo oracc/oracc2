@@ -74,8 +74,23 @@ atf_dollar(Mloc l, char *rest)
 		       the structure breaks if the nonx is
 		       attached to <object> -- it's simpler
 		       just to attach it to <surface>
+
+		       But in:
+		       
+		       @column 1
+		       $ (left edge)
+		       1.
+		       $ (reverse)
+		       2. 
+
+		       The dollar attaches under the column like a
+		       line--this emulates the oxx behaviour
 		    */
-		    nonx_attach = B_SURFACE;
+		    if (!strcmp(abt->curr->name, "column")
+			|| !strcmp(abt->curr->rent->name, "column"))
+		      nonx_attach = B_LINE;
+		    else
+		      nonx_attach = B_SURFACE;
 		    break;
 		  case x_column:
 		    nonx_attach = B_LINE;
