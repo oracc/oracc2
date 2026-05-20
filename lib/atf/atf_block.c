@@ -666,6 +666,8 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
 
   if (bp->bt->nano)
     bp->label = (ccp)bp->bt->nano;
+  else if (bp->bt->abbr)
+    bp->label = (ccp)bp->bt->abbr;
   else
     bp->label = xid_block();
   
@@ -714,10 +716,15 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
   if (*flags)
     bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
 
-  if (bp->bt->nano)
-    bp->label = (ccp)bp->bt->nano;
-  else
-    bp->label = xid_block();
+  if (!bp->label)
+    {
+      if (bp->bt->nano)
+	bp->label = (ccp)bp->bt->nano;
+      else if (bp->bt->abbr)
+	bp->label = (ccp)bp->bt->abbr;
+      else
+	bp->label = xid_block();
+    }
 
   update_label(bp->np, etu_none);
   return s;  
