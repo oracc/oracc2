@@ -205,12 +205,15 @@ xtf2xcl_group(XCL *xc, Node *np)
 void
 xtf2xcl_line(XCL *xc, Node *np)
 {
-  if (!strcmp(np->kids->name, "g:cell"))
-    xtf2xcl_cells(xc, np);
-  else if (!strcmp(np->kids->name, "g:field"))
-    xtf2xcl_fields(xc, np);
-  else
-    xtf2xcl_words(xc, np);
+  if (np->kids)
+    {
+      if (!strcmp(np->kids->name, "g:cell"))
+	xtf2xcl_cells(xc, np);
+      else if (!strcmp(np->kids->name, "g:field"))
+	xtf2xcl_fields(xc, np);
+      else
+	xtf2xcl_words(xc, np);
+    }
 }
 
 void

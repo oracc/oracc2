@@ -53,6 +53,7 @@ void
 ax_input(const char *f)
 {
   mesg_init();
+  form_init();
   nl_init();
   ngramify_init();
   gdlparse_init();
@@ -104,6 +105,7 @@ ax_input(const char *f)
 	}
 
       atf_term();
+      form_term();
       rnvval_term();
       xmd_term();
       inl_term();
@@ -111,8 +113,7 @@ ax_input(const char *f)
       mesg_print(stderr);
       mesg_term();
       inl_term();
-      langtag_term();
-      
+      langtag_term();      
     }
 }
 

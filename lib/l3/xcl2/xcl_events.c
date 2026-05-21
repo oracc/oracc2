@@ -424,7 +424,10 @@ xcl_lemma_n(Node *np,
     {
       struct xcl_l *c = new_node(&l_mm_info);
       if (np)
-	c->mp = np->mloc;
+	{
+	  c->np = np;
+	  c->mp = np->mloc;
+	}
       c->node_type = xcl_node_l;
       if (xml_id)
 	c->xml_id = xml_id;

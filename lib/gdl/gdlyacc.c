@@ -130,9 +130,20 @@ gdl_wf_nodes(Node *w, FILE *wfp)
       if (!strcmp(c->name, "g:x"))
 	{
 	  if (!strcmp(c->text, "..."))
-	    fputc('x', wfp);
+	    {
+	      fputc('x', wfp);
+	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+	      if (d)
+		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
+	    }
 	  else
-	    mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text `%s'\n", c->text);
+	    {
+	      Prop *p = prop_find_kv(c->props, "g:type", NULL);
+	      if (!p
+		  || (p->u.k->v && strcmp(p->u.k->v, "comment")
+		      && strcmp(p->u.k->v, "dollar")))
+		mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text `%s'\n", c->text);
+	    }
 	}
       else if (!strcmp(c->name, "g:det"))
 	{
@@ -142,6 +153,10 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	    fputs(p->u.k->v, wfp);
 	  gdl_wf_nodes(c, wfp);
 	  fputc('}', wfp);
+	  /* post-determinatives have g:delim on the g:det node */
+	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+	  if (d)
+	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
       else if (!strcmp(c->name, "g:gg"))
 	{
@@ -155,8 +170,11 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	    }
 	  else
 	    gdl_wf_nodes(c, wfp);
+	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+	  if (d)
+	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
-      else if (strcmp(c->name, "g:z"))
+      else if (strcmp(c->name, "g:d") && strcmp(c->name, "g:z"))
 	{
 	  gdlstate_t s = prop_get_state(c);
 	  if (!gs_is(s,gs_excised))
@@ -164,15 +182,12 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
 	      fputs(c->text, wfp);
 	      if (d)
-		{
-		  fputs(d->u.k->v, wfp);
-		  if (c->next && !strcmp(c->next->name, "g:d"))
-		    c = c->next;
-		}
+		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	    }
 	  else
-	    ++word_excisions;
-	 
+	    {
+	      ++word_excisions;
+	    }
 	}
     }
 }
@@ -581,8 +596,9 @@ gdl_delim(Tree *ytp, const char *data)
     fprintf(stderr, "gt: DELIM: %s\n", data);
   np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
   np->mloc = ytp->curr->mloc;
-  if (np->prev)
-    gdl_prop_kv(np->prev, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+  Node *d_attach = lgp ? lgp : np->prev;
+  if (d_attach)
+    gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
 
   if (c_processing)
     {

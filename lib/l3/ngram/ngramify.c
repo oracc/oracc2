@@ -10,7 +10,7 @@
 #include "l3props.h"
 
 int ng_debug = 0;
-static int ng_match_logging = 1;
+static int ng_match_logging = 0;
 int ngramify_per_lang = 0;
 int ngramify_disambiguating = 0;
 

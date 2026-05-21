@@ -156,6 +156,7 @@ det:	  '{'	      					{ gdl_balance_state(@1,'{');
 	  						  rs_on(gs_det|gs_g_phond); }
 	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}'))
 		  					    gdl_det_props(ytp->curr);
+		    					  lgp = ytp->curr;
 	      						  ynp = gdl_pop(ytp,"g:det");
 	     						  /* set pst->det = SB_CL; lgp is last
 							     node with g content or equivalent, i.e.,
@@ -248,7 +249,7 @@ c:
 	C_O 						{ ycp = gdl_push_l(&@1,ytp,"g:c");
 	    						  gdl_c_init(); }
 	cbits
-	C_C 						{ ynp = ycp; c_processing = 0; }
+	C_C 						{ lgp = ynp = ycp; c_processing = 0; }
         ;
 
 cbits:
@@ -275,6 +276,7 @@ cbit:
 	| QRP				      		{ gdl_decr_qin();
 	  						  ynp->mloc = mloc_mloc(&@1);
 	  						  gvl_valuqual(ytp->curr);
+							  lgp = ytp->curr;
 							  ynp = gdl_pop(ytp,"g:q");
 							}
 	| meta
@@ -307,7 +309,7 @@ cmods:
 valuqual:
 	q	    				       	 { ynp->mloc = mloc_mloc(&@1);
 	  						   gvl_valuqual(ytp->curr);
-	  						   ynp = ytp->curr; }
+	  						   lgp = ynp = ytp->curr; }
 	qmaybemodflags					 { gdl_mod_wrap_q(ynp);
 							   $$ = ynp = gdl_pop(ytp,"g:q"); }
         ;
