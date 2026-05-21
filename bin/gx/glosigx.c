@@ -8,14 +8,21 @@
  *
  * Use existing 02pub/lemm-*.sig files to save instance info for sigs
  * that are already known.
+ *
+ * With -g arg create 01bld/LANG/glo.sig.
+ *
  */
 
+extern struct map *qpnnames(register const char *str, register size_t len);
+
 FILE *f_xml;
+int glo_mode = 0;
 int parser_status = 0;
 int verbose = 1;
 int bootstrap_mode, lem_autolem, lem_dynalem;
 int out_stdout;
 int rnvtrace, status;
+Hash *hqlngs = NULL;
 Mloc *xo_loc;
 struct cbd* curr_cbd;
 struct entry*curr_entry;
@@ -145,6 +152,34 @@ cbd_sigs(Cbd *c)
       cbd_entry_sigs(ep);
 }
 
+static void
+qpn_sub(Lemsig *lp, const char *epos)
+{
+  struct map *m = qpnnames(epos, strlen(epos));
+  if (m)
+    {
+      const char *qlng = m->v;
+      FILE *qfp = hash_find(hqlngs, (uccp)qlng);
+      if (!qfp)
+	{
+	  char qfn[strlen(qlng)+strlen("01bld//glo.sig0")];
+	  sprintf(qfn, "01bld/%s/glo.sig", qlng);
+	  qfp = xfopen(qfn, "w");
+	  if (!qfp)
+	    {
+	      perror(qfn);
+	      exit(1);
+	    }
+	  else
+	    {
+	      hash_add(hqlngs, (uccp)qlng, qfp);
+	      fputs("@fields sig rank freq\n", qfp);
+	    }
+	}
+      fprintf(qfp, "%s\t%d\t%d\n", lp->sig, lp->rank, lp->freq);      
+    }
+}
+
 int
 main(int argc, char * const *argv)
 {
@@ -155,13 +190,15 @@ main(int argc, char * const *argv)
 
   common_init();
 
-  options(argc,argv,"s");
+  options(argc,argv,"gs");
   
   if (argv[optind])
     glos = (char**)argv+optind;
   else
     glos = glo_files();
-  lems = lem_files();
+
+  if (!glo_mode)
+    lems = lem_files();
     
   if (glos)
     {
@@ -250,32 +287,57 @@ main(int argc, char * const *argv)
 	    {
 	      int n;
 	      Lemsig **lsp = (Lemsig**)list2array_c(lp, &n);
-	      Hash *hlem = hash_find(csetp->lems, (uccp)langs[i]);
-	      if (hlem)
+	      if (glo_mode)
 		{
-		  int ii;
-		  for (ii = 0; lsp[ii]; ++ii)
+		  char fn[strlen(langs[i])+strlen("01bld/glo.sig0")];
+		  sprintf(fn, "01bld/%s/glo.sig", langs[i]);
+		  FILE *fp;
+		  if ((fp = xfopen(fn, "w")))
 		    {
-		      const char **r = hash_find(hlem, lsp[ii]->sig);
-		      if (r)
-			/* Don't set rank here; only do it from glossary */
-			lsp[ii]->freq = atoi(r[2]);
+		      int j;
+		      fputs("@fields sig rank freq\n", fp);
+		      for (j = 0; lsp[j]; ++j)
+			{
+			  fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
+			  char *sqb = strchr((ccp)lsp[j]->sig, '\'');
+			  if ('N' == sqb[2] && !isalnum(sqb[3]))
+			    {
+			      char epos[3] = { sqb[1], sqb[2], '\0' };
+			      qpn_sub(lsp[j], epos);
+			    }
+			}
+		      xfclose(fn, fp);
 		    }
 		}
-	      qsort(lsp, n, sizeof(Lemsig *), (sort_cmp_func*)lemsig_cmp);
-	      char fn[strlen(langs[i])+strlen("02pub/lemm-.sig0")];
-	      sprintf(fn, "02pub/lemm-%s.sig", langs[i]);
-	      FILE *fp;
-	      if ((fp = xfopen(fn, "w")))
-		{
-		  int j;
-		  fputs("@fields sig rank freq\n", fp);
-		  for (j = 0; lsp[j]; ++j)
-		    fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
-		  xfclose(fn, fp);
-		}
 	      else
-		fprintf(stderr, "glosigx: skipping output to %s\n", fn);
+		{
+		  Hash *hlem = hash_find(csetp->lems, (uccp)langs[i]);
+		  if (hlem)
+		    {
+		      int ii;
+		      for (ii = 0; lsp[ii]; ++ii)
+			{
+			  const char **r = hash_find(hlem, lsp[ii]->sig);
+			  if (r)
+			    /* Don't set rank here; only do it from glossary */
+			    lsp[ii]->freq = atoi(r[2]);
+			}
+		    }
+		  qsort(lsp, n, sizeof(Lemsig *), (sort_cmp_func*)lemsig_cmp);
+		  char fn[strlen(langs[i])+strlen("02pub/lemm-.sig0")];
+		  sprintf(fn, "02pub/lemm-%s.sig", langs[i]);
+		  FILE *fp;
+		  if ((fp = xfopen(fn, "w")))
+		    {
+		      int j;
+		      fputs("@fields sig rank freq\n", fp);
+		      for (j = 0; lsp[j]; ++j)
+			fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
+		      xfclose(fn, fp);
+		    }
+		  else
+		    fprintf(stderr, "glosigx: skipping output to %s\n", fn);
+		}
 	    }
 	}
     }
@@ -285,6 +347,9 @@ int opts(int och, const char *oarg)
 {
   switch (och)
     {
+    case 'g':
+      glo_mode = 1;
+      break;
     case 's':
       out_stdout = 1;
       break;
