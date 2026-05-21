@@ -1,10 +1,7 @@
 #!/bin/dash
-echo $0 $*
-user=$1
-proj=$2
-### o2-corpus.sh ###
-# o2-lst.sh ## should be fully replaced by lx-lists.sh and cx(-marshall).sh
-# lx-lists.sh ## this is done in odo-catalog.sh
+. ${ORACC}/bin/odo-func.sh
+odo_odo $0 $*
+
 odo-catalog.sh
 
 ## These two were in o2-cat but they belong in corpus really
@@ -27,24 +24,11 @@ glosigx -p $proj
 
 # TODO: need to handle .ods files either before this, or by installing
 # them and then doing ods2atf in Makefile.atf
-atfinstall -p $proj 00atf/*.atf
+atfinstall -p $odo_proj 00atf/*.atf
 
-# This is the new way of making .xtf and other derivatives of .atf files:
-# .xtf and .tok files are the default products.
-##atfmake.sh
-
-# 20260515 atfmake.sh is too slow so we are trying a different way
-# with ax.  odo-atf.sh default action is to compile .atf to .xtf using
-# 01bld/lists/atfinstall.lst
 odo-atf.sh build $*
 
-# This is the new way of generating corpus statistics from .tok files.
-atftoks.sh
-
-### should be obviated by atf-data.tab:
-### if [ -r 01bld/destfiles.lst ]; then
-###    o2-tr-lst.plx <01bld/destfiles.lst >01bld/lists/have-xtr.tab
-###fi
+odo-tok.sh
 
 ###
 ### This should all be obviated by atfdata.tab and tokfiles.lst
@@ -91,9 +75,8 @@ rm -fr 02www/inst
 
 # o2-xtf.sh handles data derived from .xtf--the actual .xtf are created via atfmake.sh
 o2-xtf.sh $*
-qindex.sh ${proj}
+qindex.sh $odo_proj
 o2-web-corpus.sh
 odo-signlist.sh
 o2-weblive.sh
 o2-finish.sh
-### end of o2-corpus.sh ###

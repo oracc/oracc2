@@ -120,8 +120,13 @@ elif [ "$1" = "-V" ]; then
     set -x
 fi
 
+if [ -r .gx ]; then
+    gx=1
+fi
+
 set -a
 odo_verb=$verb
+odo_gx = $gx
 . $bin/odo-func.sh
 set +a
 

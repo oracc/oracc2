@@ -1,12 +1,7 @@
 #!/bin/dash
 #
-# osh PROJECT build calls this script with the following arguments
-#
-# $1=user $2=project $3=subcommand $4 ...
-#
-# Where $4 ... are any additional arguments supplied to osh--these
-# additional arguments may be ignored depending on the selected
-# subcommand.
+# osh PROJECT build calls this script with odo_user and odo_proj set
+# in the environment.
 #
 . ${ORACC}/bin/odo-func.sh
 odo_odo $0 $*

@@ -5,6 +5,11 @@
 /* Turn .sig into .glo: N.B. this program is standalone and does not
    use lib/cbd so it uses Form not CForm */
 
+int parser_status = 0;
+struct cbd* curr_cbd;
+struct entry*curr_entry;
+const char *file, *efile, *errmsg_fn;
+
 FILE *f_xml;
 const char *file;
 const char *dir = "01bld";

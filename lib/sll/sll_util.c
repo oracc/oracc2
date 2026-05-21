@@ -332,11 +332,11 @@ sll_snames_of(unsigned const char *oids)
     {
       const char *xsave = NULL;
       xoid = x;      
-      while (*x && ' ' != *x && '.' != *x)
+      while (*x && !(strchr(".&%*:- ", *x)))
 	++x;
       if (*x)
 	{
-	  xsave = (*x == '.' ? "." : " ");
+	  xsave = (*x == ' ' ? " " : ".");
 	  *x++ = '\0';
 	}
       list_add(l,(void*)sll_lookup(xoid));

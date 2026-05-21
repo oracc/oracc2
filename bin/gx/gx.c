@@ -26,7 +26,7 @@ const char *out_dir = NULL;
 
 const char *jfn = NULL, *xfn = NULL;
 
-const char *kis_file = "02pub/tokl.kis";
+const char *kis_file = "02pub/tokl.tpc";
 
 extern int cbd_flex_debug;
 
@@ -213,7 +213,7 @@ io_run(void)
 
       if (keys)
 	{
-	  Kis *k = kis_load("02pub/tokl.kis");
+	  Kis *k = kis_load(kis_file);
 	  cbd_kis(curr_cbd, k);
 	}
 

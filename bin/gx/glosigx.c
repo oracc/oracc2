@@ -1,5 +1,7 @@
 #include <oraccsys.h>
 #include <cbd.h>
+#include <gdl.h>
+#include <gt.h>
 #include "gx.h"
 
 /* Read all the 00lib *.glo files and output 02pub/lemm-*.sig files.
@@ -49,7 +51,7 @@ static char **
 lem_files(void)
 {
   static glob_t gres;
-  if (!glob_pattern("02pubx/lemm-*.sig",&gres))
+  if (!glob_pattern("02pub/lemm-*.sig",&gres))
     return gres.gl_pathv;
   else
     return NULL;
@@ -179,18 +181,27 @@ main(int argc, char * const *argv)
       int i;
       if (verbose)
 	{
-	  fputs("02pubx/lemm-*.sig =", stdout);
+	  fputs("02pub/lemm-*.sig =", stdout);
 	  for (i = 0; lems[i]; ++i)
 	    printf(" %s", lems[i]);
 	  fputc('\n', stdout);
 	}
     }
   else
-    fprintf(stderr, "glosigx: no 02pubx/lemm-*.sig found.\n");
+    fprintf(stderr, "glosigx: no 02pub/lemm-*.sig found.\n");
 
   gdl_flex_debug = gdldebug = cbddebug = 0;
   cbd_flex_debug = 0;
-
+  
+  Hash *htokens = hash_create(1024);
+  Memo *mtokens = memo_init(sizeof(Gt), 1024);
+  gdl_unicode = 1;
+  gdl_init();
+  gsort_init();
+  gdl_set_word_id("w");
+  gt_config(htokens, mtokens);
+  gvl_setup("osl","osl","020");
+ 
   int i;
   for (i = 0; glos[i]; ++i)
     {
@@ -252,8 +263,8 @@ main(int argc, char * const *argv)
 		    }
 		}
 	      qsort(lsp, n, sizeof(Lemsig *), (sort_cmp_func*)lemsig_cmp);
-	      char fn[strlen(langs[i])+strlen("02pubx/lemm-.sig0")];
-	      sprintf(fn, "02pubx/lemm-%s.sig", langs[i]);
+	      char fn[strlen(langs[i])+strlen("02pub/lemm-.sig0")];
+	      sprintf(fn, "02pub/lemm-%s.sig", langs[i]);
 	      FILE *fp;
 	      if ((fp = xfopen(fn, "w")))
 		{
