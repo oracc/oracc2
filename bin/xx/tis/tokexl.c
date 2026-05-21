@@ -55,12 +55,16 @@ Pool *mpool;
 Hash *mhash;
 
 /* cbd_key in Cbd context needs more info than pr does so we have to
- * supply dummy args for the cbd_key handler API
+ * supply dummy args for the cbd_key handler API.
+ *
+ * Note that we coerce all the sigs to have the CLI arg project here.
  */
 static void
 pr(const char *k, int ignore1, int ignore2, void*ignore3)
 {
-  printf("%s\t%s\t%s\n", k, vido_new_id(vp,k), qid);
+  char nk[strlen(project)+strlen(k)];
+  sprintf(nk,"@%s%s", project, strchr(k, ':'));
+  printf("%s\t%s\t%s\n", nk, vido_new_id(vp,(ccp)pool_copy((uccp)nk,mpool)), qid);
 }
 
 #if 0
