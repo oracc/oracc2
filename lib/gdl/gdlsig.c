@@ -144,10 +144,11 @@ gdlsig(Tree *tp)
 	    list_add(lp, (char*)gdlsig_sep((char*)np->text));
 	  else if (!strcmp(np->name, "g:det"))
 	    {
-	      if (np->prev)
+	      Prop *d = prop_find_kv(np->props, "g:pos", NULL);
+	      if (d && !strcmp(d->u.k->v, "post"))
 		list_add(lp, ".");
 	      gdlsig_descend(np, lp);
-	      if (np->next)
+	      if (d && !strcmp(d->u.k->v, "pre"))
 		list_add(lp, ".");
 	    }
 	  else if (np->kids)
