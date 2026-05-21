@@ -90,13 +90,16 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       if (!tokp->gdl->mloc)
 	tokp->gdl->mloc = mloc_mloc(locp);
 
-      Node *np;
-      for (np = tokp->gdl; np; np = np->next)
+      if (!gdl_word_mode)
 	{
-	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "form", np->text);
-	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
+	  Node *np;
+	  for (np = tokp->gdl; np; np = np->next)
+	    {
+	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "form", np->text);
+	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
+	    }
 	}
-      
+
       tokp->gsh = gsort_prep(tp);
       tokp->gsig = gsig;
       tokp->deep = deep;

@@ -5,6 +5,8 @@
 #include "er.h"
 #include "m.h"
 
+#undef M_O2
+
 #ifndef M_STATIC
 #define M_STATIC 0
 #endif
@@ -38,13 +40,13 @@ void *m_alloc(int length,int size) {
 #else
 
 void m_free(void *p) {
-#if 0
+#ifndef M_O2
   free(p);
 #endif
 }
 
 void *m_alloc(int length,int size) {
-#if 0
+#ifndef M_O2
   void *p=calloc(length,size);
 #else
   extern void *memo_auto(size_t siz);

@@ -215,7 +215,7 @@ gdl_balance_state(Mloc mlp, int tok)
     {
       intptr_t p = gdl_state_peek();
 
-      if (-1 == gstck_i(p))
+      if (-1 == p) /* don't use gstck_i(p) here because -1 is a flag value from gdl_state_peek */
 	{
 	  /* nothing on the stack, superfluous closer */
 	  mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);

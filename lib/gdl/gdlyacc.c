@@ -900,7 +900,7 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
     fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
   ret =  gdl_meta_node(ytp, "g:z", data);
   intptr_t st = gdl_balance_state(mlp, tok);
-  if (gstck_i(st) > 0)
+  if (st > 0) /* st can be -1 if nothing on stack */
     {
       Node *np = gstck_np(st);
       if (!strcmp(np->rent->name, "g:n"))

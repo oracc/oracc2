@@ -183,7 +183,7 @@ char *ssnames[] = {
 <s_f>##[^ \t\n]+[ \t]*	  { ytdupn(2); xreturn(FMORPH2); }
 <s_f>#[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FMORPH); }
 <s_f>\*[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FSTEM); }
-<s_f>[^+$#*/\n][^ \t\n]*[ \t]* { ytdup(); xreturn(FFORM); }
+<s_f>[^+$#*/\n][^ \t\n]+[ \t]* { ytdup(); xreturn(FFORM); }
 <s_f>\n/"@"		  { BEGIN ss(0); xreturn(END_FORM); }
 <s_f>[ \t]+	   	  { /* empty */ }
 

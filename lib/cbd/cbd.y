@@ -304,7 +304,9 @@ forms:		form
 form:		atform formlang end_form
 
 atform:		FORM		{ curr_form = cbd_bld_form(@1, curr_entry); }
+
 end_form:	END_FORM	{ cbd_bld_form_setup(curr_entry, curr_form); curr_form = NULL; }
+
 formlang:	fform
 	|	fform flang
 	|	fform flang frws

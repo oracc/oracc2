@@ -266,6 +266,7 @@ gx_output(void)
 	      FILE *efp = xfopen(fn, "w");
 	      if (efp)
 		{
+		  rnvif_init();
 		  jox_xml_output(efp);
 		  joxer_init(&cbd_data, "cbd", 1, efp, NULL);
 		  o_jox_entry_sa(xep);
@@ -287,6 +288,7 @@ gx_output(void)
 	  FILE *jfp = jsn_output ? fopen(jfn, "w") : NULL;
 	  FILE *xfp = xml_output ? fopen(xfn, "w") : NULL;
 
+	  rnvif_init();
 	  if (xml_output)
 	    {
 	      jox_xml_output(xfp);
@@ -359,7 +361,8 @@ main(int argc, char **argv)
 
   io_run();
 
-  gx_output();
+  if (1)
+    gx_output();
   
   gx_term();
 
