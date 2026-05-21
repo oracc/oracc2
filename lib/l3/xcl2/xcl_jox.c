@@ -134,7 +134,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
     }
 
   Ratts *ratts = ratts_list2ratts(ap);
-  joxer_ea(lp->mp, "xcl:l", ratts); /*ilem_mloc(fp)*/
+  joxer_ea(lp->mp, "l", ratts); /*ilem_mloc(fp)*/
   if (ratts)
     {
       free(ratts->atts);
@@ -150,7 +150,7 @@ xj_serialize_one_l_sub(struct xcl_l*lp, struct ilem_form *fp)
 
   ilem_para_jox(lp);
 
-  joxer_ee(lp->mp, "xcl:l"); /*ilem_mloc(fp)*/
+  joxer_ee(lp->mp, "l"); /*ilem_mloc(fp)*/
 }
 
 static void
@@ -232,7 +232,7 @@ xj_serialize_m(const unsigned char *key,void*val)
       const char *r[3] = { "k", (ccp)key, NULL };
 
       Ratts *ratts = NULL;
-      joxer_et(NULL, "xcl:m", (ratts = rnvval_aa_ccpp(r)), val);
+      joxer_et(NULL, "m", (ratts = rnvval_aa_ccpp(r)), val);
       if (ratts)
 	{
 	  free(ratts->atts);
@@ -350,7 +350,7 @@ xj_serialize_one_node(void *vp)
 	    joxer_attr_i(ap,"bracketing_level",cp->bracketing_level);
 
 	    Ratts *ratts = ratts_list2ratts(ap);
-	    joxer_ea(cp->mp,"xcl:c", ratts);
+	    joxer_ea(cp->mp,"c", ratts);
 	    if (ratts)
 	      {
 		free(ratts->atts);
@@ -363,7 +363,7 @@ xj_serialize_one_node(void *vp)
 				     (char*)hash_find(cp->meta, (unsigned char *)"#xml:id"),
 				     NULL };
 		Ratts  *ratts = NULL;
-		joxer_ea(NULL, "xcl:mds", (ratts = rnvval_aa_ccpp(r)));
+		joxer_ea(NULL, "mds", (ratts = rnvval_aa_ccpp(r)));
 		if (ratts)
 		  {
 		    free(ratts->atts);
@@ -371,7 +371,7 @@ xj_serialize_one_node(void *vp)
 		    free(ratts);
 		  }	  
 		hash_exec2(cp->meta,xj_serialize_m);
-		joxer_ee(NULL, "xcl:mds");
+		joxer_ee(NULL, "mds");
 	      }
 	  }
 	}
@@ -391,7 +391,7 @@ xj_serialize_one_node(void *vp)
 	    }
 	}
       if (!unwrapping)
-	joxer_ee(cp->mp, "xcl:c");
+	joxer_ee(cp->mp, "c");
       break;
     case xcl_node_d:
       {
@@ -402,7 +402,7 @@ xj_serialize_one_node(void *vp)
 	if (dp->subtype)
 	  list_pair(ap,"subtype",  dp->subtype);
 	Ratts *ratts = ratts_list2ratts(ap);
-	joxer_ec(dp->mp, "xcl:d", ratts);
+	joxer_ec(dp->mp, "d", ratts);
 	if (ratts)
 	  {
 	    free(ratts->atts);
@@ -485,7 +485,7 @@ xcl_jox(void *ignored, struct xcl_context *xc)
     fprintf(f_xcl, "%s", XML_DECL);
 #endif
 
-  /*joxer_ea(NULL, "xcl:xcl", ratts);*/
+  /*joxer_ea(NULL, "xcl", ratts);*/
 
   if (xc->psus->key_count > 0)
     xj_serialize_psus(xc->psus);
@@ -495,7 +495,7 @@ xcl_jox(void *ignored, struct xcl_context *xc)
   if (xc->linkbase)
     links_jox(xc->linkbase);
 
-  /*joxer_ee(NULL, "xcl:xcl");*/
+  /*joxer_ee(NULL, "xcl");*/
 }
 
 void

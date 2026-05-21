@@ -179,8 +179,8 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  gdlstate_t s = prop_get_state(c);
 	  if (!gs_is(s,gs_excised))
 	    {
-	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
 	      fputs(c->text, wfp);
+	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
 	      if (d)
 		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	    }

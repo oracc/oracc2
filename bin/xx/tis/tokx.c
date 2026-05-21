@@ -9,15 +9,19 @@
  * this data is expanded by tokex, the token expander
  */
 
+const char *filelist = NULL;
+const char *infile = NULL;
 const char *outfile = NULL;
 const char *projproj = NULL;
-const char *infile = NULL;
+int dot_tok_files = 0;
 int run_multi = 0;
 int stdinput = 0;
 int tok_input_cbd = 0, tok_input_xtf = 1;
 int tok_data_g = 1, tok_data_l = 0, tok_data_m = 1;
 
 extern int tlw_want_LW;
+
+static void tokx_output(Trun *r, const char *outfile);
 
 XML_StartElementHandler tok_sHs[3], tok_sHp;
 XML_EndElementHandler tok_eHs[3], tok_eHp;
@@ -130,12 +134,25 @@ tokx_one(Trun *r, const char *QPQX)
 {
   char *fname[2];
   char *dot;
+  char *out = NULL;
   if ((dot = strchr(QPQX,'.')))
     *dot = '\0';
   fname[0] = expand(NULL, QPQX, "xtf");
   fname[1] = NULL;
+  if (dot_tok_files)
+    {
+      char tok[strlen(fname[0]+1)];
+      strcpy(tok, fname[0]);
+      char *dot = strrchr(tok, '.');
+      strcpy(dot, ".tok");
+      tokx_output(r, (out = strdup(tok)));
+      tlb_init(r, projproj, tok_input_xtf ? "xtf" : "cbd");
+      tlw_R(r);
+    }
   trun_file(r,fname[0]);
   runexpatNSuD(i_list, fname, tokx_sH, tokx_eH, NULL, r);
+  if (out)
+    fclose(r->o);
 }
 
 static void
@@ -182,18 +199,30 @@ tokx_input(Trun *r, const char *arginput)
     }
   else
     {
-      /* This means read a list of qualifed PQX entries from stdin and
-	 process each one */
+      /* This means read a list of qualifed PQX entries from stdin or
+	 filelist and process each one */
+      FILE *fl_fp = stdin;
+      if (filelist)
+	{
+	  if (!(fl_fp = fopen(filelist, "r")))
+	    {
+	      perror(filelist);
+	      exit(1);
+	    }
+	}
+
       static char pqx[QUALIFIED_PQX_MAX];
-      while (fgets(pqx,QUALIFIED_PQX_MAX,stdin))
+      while (fgets(pqx,QUALIFIED_PQX_MAX,fl_fp))
 	{
 	  pqx[strlen(pqx)-1] = '\0';
 	  tokx_one(r, pqx);
 	}
+      if (filelist)
+	fclose(fl_fp);
     }
 }
 
-void
+static void
 tokx_output(Trun *r, const char *outfile)
 {
   if (outfile)
@@ -213,13 +242,16 @@ main(int argc, char **argv)
 {
   Trun *r = NULL;
   
-  if (options(argc, argv, "cf:gGlLmo:p:s"))
+  if (options(argc, argv, "cF:f:gGlLmo:p:st"))
     exit(1);
 
   r = trun_init(run_multi);
-  tokx_output(r, outfile);
-  tlb_init(r, projproj, tok_input_xtf ? "xtf" : "cbd");
-  tlw_R(r);
+  if (!dot_tok_files)
+    {
+      tokx_output(r, outfile);
+      tlb_init(r, projproj, tok_input_xtf ? "xtf" : "cbd");
+      tlw_R(r);
+    }
 
   locf_init(r);
   tokf_init(r);
@@ -248,6 +280,9 @@ int opts(int arg, const char*str)
       tok_data_g = 1;
       tok_data_l = tok_data_m = 0;
       break;
+    case 'F':
+      filelist = str;
+      break;
     case 'f':
       infile = str;
       break;
@@ -274,6 +309,9 @@ int opts(int arg, const char*str)
     case 's':
       stdinput = 1;
       break;
+    case 't':
+      dot_tok_files = 1;
+      break;	     
     default:
       return 1;
     }

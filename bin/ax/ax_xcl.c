@@ -71,7 +71,7 @@ ax_xcl(struct run_context *run, struct node *text)
   free(langs);
   xc->project = (ccp)atfp->project;
   xc->textid = atfp->pqx;
-  xc->file = file;
+  xc->file = atfp->file;
   xc->sigs = sig_context_init();
   if (lem_props_yes)
     ilem_props_init();
@@ -173,7 +173,6 @@ xtf2xcl_group(XCL *xc, Node *np)
   if (line_is_unit && xc->curr && xc->curr->parent)
     xcl_insert_ub(np, xc, 0, xcl_c_sentence, 0);
   xcl_fix_context(xc,NULL);
-  xcl_discontinuity(xc, propxid(np), xcl_d_line_start, NULL);
   Group *gp = np->user;
   int i;
   for (i = 0; i < gp->nlines; ++i)
@@ -207,6 +206,7 @@ xtf2xcl_line(XCL *xc, Node *np)
 {
   if (np->kids)
     {
+      xcl_discontinuity(xc, propxid(np), xcl_d_line_start, NULL);
       if (!strcmp(np->kids->name, "g:cell"))
 	xtf2xcl_cells(xc, np);
       else if (!strcmp(np->kids->name, "g:field"))

@@ -27,7 +27,11 @@ mdir=01tmp/00cat/m
 bldlists=01bld/lists
 
 # clean out old cat data
-rm -fr $bdir $cdir $ldir $mdir $bldlists ; mkdir -p $bdir $cdir $ldir $mdir $bldlists
+# $bldlists -- cx should not be hosing all previously built lists
+if [ ! -d $bldlists ]; then
+    mkdir -p $bldlists
+fi
+rm -fr $bdir $cdir $ldir $mdir $bldlists/*cat* ; mkdir -p $bdir $cdir $ldir $mdir
 for d in $bdir $cdir $ldir $mdir ; do
     if [ ! -d $d ]; then
 	echo $0: failed to make $d. Stop.

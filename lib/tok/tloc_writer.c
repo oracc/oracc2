@@ -28,12 +28,15 @@ tlw_T(Trun *r)
     }
 }
 
-/* Write a L(ine) tloc line */
+/* Write a L(ine) tloc line
+ *
+ * 20260521 change L argument order from LINE_NUM LINE_ID LINE_LABEL to LINE_ID LINE_LABEL LINE_NUM
+ */
 void
 tlw_L(Trun *r)
 {
-  fprintf(r->o, "L\t%d\t%s\t%s\n",
-	  loch_line(r)->line_num, loch_line(r)->line_id, loch_line(r)->line_label);
+  fprintf(r->o, "L\t%s\t%s\t%d\n",
+	  loch_line(r)->line_id, loch_line(r)->line_label, loch_line(r)->line_num);
 }
 
 /* Write a W(ord) tloc line */

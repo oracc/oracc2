@@ -7,7 +7,7 @@ bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokix \
 
 #vidx
 
-bin_SCRIPTS=tisdbi.sh tisdiv.sh tok2tisl.sh tok2tis-csl.sh
+bin_SCRIPTS=tisdbi.sh tisdiv.sh tok2tisg.sh tok2tisl.sh tok2tis-csl.sh
 
 data_DATA=tis-[ht].html
 

@@ -10,11 +10,13 @@ if [ -r .ax ]; then
     g=-g
     blem=-l
     clem=-l
+    dflt=-l
     cklist=01bld/lists/atfinstall.lst
 else
     oxax=oxx
     blem=-CD
     clem=-m
+    dflt=-CD
 fi
 
 for a in $* ; do
@@ -35,6 +37,7 @@ for a in $* ; do
 	    shift
 	    cmd=check
 	    chk=-c
+	    dflt=
 	    ;;
 	dry)
 	    dry=yes
@@ -61,6 +64,7 @@ for a in $* ; do
 	val)
 	    shift
 	    val=-v
+	    dflt=
 	    ;;
 	*)
 	    if [ -r $a ]; then
@@ -72,17 +76,21 @@ for a in $* ; do
     esac
 done
 
+if [ "$dflt" != "" ]; then
+    lem=$dflt
+fi
+
 if [ "$dry" = "yes" ]; then
     echo $0: dry run requested for:
     if [ "$oxax" = "ax" ]; then
 	echo "${ORACC}/bin/ax $chk $val $lem $g -I$cklist"
     else
 	echo "${ORACC}/bin/oxx $chk $val $lem $*"
-    fi    
+    fi
 else
     if [ -d "00atf" ]; then
 	if [ "$oxax" = "ax" ]; then
-	    ${ORACC}/bin/ax $chk $val $lem $g -I01bld/lists/atfinstall.lst
+	    ${obin}/ax $chk $val $lem $g -I01bld/lists/atfinstall.lst
 	else
 	    batch=`oraccopt . atf-batch`
 	    if [ "$batch" = "yes" ]; then

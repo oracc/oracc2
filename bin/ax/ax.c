@@ -70,7 +70,7 @@ ax_input(const char *f)
 	  xp = ax_xcl(rp, tp->root->kids);
 	  xp->utype = N_U_XCL;
 	  tree_curr(tp->root->kids);
-	  Node *np = tree_add(tp, NS_XCL, "xcl:xcl", tp->root->kids->depth, tp->root->kids->mloc);
+	  Node *np = tree_add(tp, NS_XCL, "xcl", tp->root->kids->depth, tp->root->kids->mloc);
 	  np->user = xp;
 	  ax_lem(rp, xp);
 	  ap = xcl_jox_xcl_ratts(xp);
