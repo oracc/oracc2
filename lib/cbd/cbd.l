@@ -301,7 +301,6 @@ static int
 base_tok(void)
 {
   int ret_state = BASE_PRI;
-
   char *t = yytext;
   char *e = yytext + strlen(yytext);
 
@@ -327,6 +326,8 @@ base_tok(void)
 	  e[-1] = '\0';
 	  base_state = BASE_PRI;
 	}
+      else
+	  base_state = BASE_ALT;
     }
   else if ('%' == *t)
     {
@@ -351,7 +352,14 @@ base_tok(void)
     }
   else
     {
-      ret_state = base_state;
+      if (')' == e[-1] && BASE_ALT == base_state)
+	{
+	  e[-1] = '\0';
+	  ret_state = BASE_ALT;
+	  base_state = BASE_PRI;
+	}
+      else
+        ret_state = base_state;
     }
   yylval.text = (char*)pool_copy((ucp)t,csetp->pool);
   return ret_state;
