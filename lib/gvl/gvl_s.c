@@ -70,7 +70,7 @@ gvl_s(Node *ynp)
 	  gp->type = "n";
 	  ynp->name = "g:n";
 	  gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", ynp->text);
-	}	    
+	}
       gp->oid = (ccp)l;
       gp->sign = gvl_lookup(sll_tmp_key(l,""));
       gp->c10e = gp->orig;
@@ -96,6 +96,18 @@ gvl_s(Node *ynp)
 	  gp->c10e = gp->sign = l; /* we should really set gp->sign to, say, #q and store l in a prop */
 	  gp->mess = gvl_vmess("pseudo-signname %s must be qualified by one of %s",gp->orig,l);
 	  gp->oid = ""; /* use empty string to mean value is known but not resolved yet */
+	}
+      else if (('3' == *lg || '4' == *lg) && 0xc3 == lg[1] && 0x97 == lg[2])
+	{
+	  char v[strlen((ccp)gp->orig)+3];
+	  sprintf(v, "|%s|", gp->orig);
+	  if ((l = gvl_lookup(sll_tmp_key((uccp)v,""))))
+	    {
+	      gp->c10e = gp->sign = l;
+	      gp->oid = (ccp)gvl_lookup(l);
+	    }
+	  else if (!gvl_void_messages)
+	      gp->mess = gvl_vmess("unknown 3× or 4× sign: %s", gp->orig);
 	}
       else
 	{

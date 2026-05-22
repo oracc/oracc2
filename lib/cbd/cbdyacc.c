@@ -15,11 +15,19 @@ struct parts *curr_parts;
 List *cmt_queue = NULL;
 
 Cbds *csetp, cbdset;
+
 static void cbd_bld_set(void);
 
 Hash *cbds = NULL;
+static Hash *prefs = NULL;
 
 #define cmts(l) (l) = cmt_queue , cmt_queue = NULL;
+
+void
+cbd_set_prefs(Hash *h)
+{
+  prefs = h;
+}
 
 struct alias *
 cbd_bld_alias(YYLTYPE l, struct entry *e)
@@ -693,9 +701,28 @@ cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, unsigned char *val)
 void
 cbd_end_entry(YYLTYPE l)
 {
-  if (curr_entry->bases) cbd_no_form_bases(curr_entry);
+  if (curr_entry->bases)
+    cbd_no_form_bases(curr_entry);
   curr_entry->end_entry = cbd_bld_locator(l);
   cbd_oid_e(curr_entry);
+  if (!strncmp(curr_entry->lang, "sux", 3))
+    {
+      if (curr_entry->owner->hprefs)
+	curr_entry->pref = hash_find(curr_entry->owner->hprefs, curr_entry->cgp->tight);
+      if (!curr_entry->pref)
+	{
+	  if (curr_entry->bases)
+	    {
+	      List *o = list_first(curr_entry->bases);
+	      struct loctok *l = list_first(o);
+	      curr_entry->pref = l->tok;
+	    }
+	  else
+	    curr_entry->pref = curr_entry->cgp->cf; /* entry is bad if this happens */
+	}
+    }
+  else
+    curr_entry->pref = curr_entry->cgp->cf;
   curr_entry = NULL;
 }
 

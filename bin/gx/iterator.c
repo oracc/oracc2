@@ -12,8 +12,6 @@ iterate_entry_body(Entry *e)
     curr_fncs[if_dcfs](e);
   if (e->parts)
     curr_fncs[if_parts](e);
-  if (e->parts)
-    curr_fncs[if_parts](e);
   if (list_len(e->bases) && curr_fncs[if_bases])
     curr_fncs[if_bases](e);
   if (list_len(e->allows))

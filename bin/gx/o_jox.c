@@ -119,6 +119,8 @@ o_jox_entry_body(Entry *e)
   joxer_et(xo_loc, "gw", ratts, (ccp)e->cgp->gw);
   joxer_et(xo_loc, "pos", NULL, (ccp)e->cgp->pos);
   o_jox_xcpds(e);
+  if (e->pref)
+    joxer_et(xo_loc, "pref", NULL, e->pref);
   if (e->disc)
     f1(/* @disc */ e->disc);
 }

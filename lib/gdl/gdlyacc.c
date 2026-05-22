@@ -24,6 +24,8 @@ static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
 
+static unsigned const char *gdl_times_prefix;
+
 #if 1
 /* New 2026-03-03: state is now handled with three variables, pst,
    lst, rst
@@ -83,10 +85,20 @@ gdl_det_props(Node *d)
       if (gs_is(rst, gs_g_semd_e))
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:char", "-");
     }
-  if (!d->prev || !strcmp(d->prev->name, "g:d"))
-    gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
+  if (!d->prev)
+    {
+      gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
+    }
   else
-    gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "post");
+    {
+      if (!strcmp(d->prev->name, "g:d"))
+	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
+      else if (!strcmp(d->prev->name, "g:det"))
+	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos",
+		    prop_find_kv(d->prev->props, "g:pos", NULL)->u.k->v);
+      else
+	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "post");
+    }
 }
 
 List *
@@ -588,6 +600,13 @@ gdl_set_word_id(const char *wid)
   gid_insertp = gdl_word_id+strlen(gdl_word_id);
 }
 
+void
+gdl_prefix(unsigned const char *p)
+{
+  gdl_times_prefix = p;
+  ++c_delim_sentinel;
+}
+
 Node *
 gdl_delim(Tree *ytp, const char *data)
 {
@@ -702,6 +721,15 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   uccp gatf = NULL;
   Node *ret = NULL;
 
+  if (gdl_times_prefix)
+    {
+      char *xdata = (char*)pool_alloc(strlen((ccp)gdl_times_prefix)+strlen(data)+1, ytp->tm->pool);
+      strcpy(xdata, (ccp)gdl_times_prefix);
+      strcat(xdata, data);
+      data = xdata;
+      gdl_times_prefix = NULL;
+    }
+  
   if (ytp->curr->kids && 'R' == ytp->curr->kids->name[2])
     gname = "g:N";
   else
@@ -800,7 +828,7 @@ Node *
 gdl_punct(Mloc *locp, Tree *ytp, const char *data)
 {
   if (gdltrace)
-    fprintf(stderr, "gt: PUNCT: %s\n", data);
+    fprintf(stderr, "gt: PUNCT: %s\n",data);
   return gdl_graph_node(locp, ytp, "g:p", data);
 }
 

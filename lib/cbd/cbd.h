@@ -65,6 +65,7 @@ typedef struct cbd {
   Hash *hsenses;
   Hash *haliases;
   Hash *simple;
+  Hash *hprefs;
   char *i18nstr; 	/* content of the @i18n header tag */
   List *i18n;		/* list of i18n langs from @i18n tag in header */
   Memo *aliasmem;
@@ -169,6 +170,9 @@ typedef struct entry {
   Kis_data k;
   struct cgp *cgp;
   const char *lang;
+  unsigned const char *pref; /* preferred spelling: for sux from
+				02pub/preferred-bases.tab in proj or epsd2; for
+				non-sux the CF */
   Hash *b_pri;
   Hash *b_alt;
   Hash *b_sig;
@@ -445,5 +449,6 @@ extern void cbd_oid_e(Entry *e);
 extern void cbd_oid_s(Sense *s);
 
 extern void cbd_wrapup(void);
+extern void cbd_set_prefs(Hash *h);
 
 #endif/*CBD_H_*/

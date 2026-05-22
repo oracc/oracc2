@@ -50,6 +50,7 @@ do_one(char *s)
   if (-1 == saved_deep)
     saved_deep = gdlsig_depth_mode;
 
+  gdl_unicode = 1;
   gdlsig_depth_mode = arg_depth;
   
   if (s[strlen(s)-1] == '\n')

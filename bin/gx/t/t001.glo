@@ -1,0 +1,12 @@
+@project ucsl
+@lang    sux
+@name    ucsl/sux
+
+@entry šakanka [market] N
+@bases šakanka{+ka}
+@form  šakanka{+ka} /šakanka{+ka} #~,a
+@sense N market
+@sense N market price
+@equiv %akk mahīru
+@isslp 2014 N. Veldhuis, GMTR 6 292f. n.677.
+@end entry

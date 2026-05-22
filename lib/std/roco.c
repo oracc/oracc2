@@ -38,6 +38,7 @@ roco_destroy(Roco *r)
   for (i = 0; i < r->nlines; ++i)
     free(r->rows[i]);
   free(r->rows);
+  free(r->lines);
   free(r);
 }
 

@@ -60,7 +60,6 @@ extern unsigned char *slurp(const char *caller, const char *fname, ssize_t *fsiz
 extern List*cof_sigs(Cform *f2p, Pool *p);
 extern void psu_sigs(Entry *ep);
 extern void lemm_sigs(const char *fn);
-
+extern void pref_init(void);
 extern void gx_summaries(Cbd *c);
-
 #endif/*GX_H_*/

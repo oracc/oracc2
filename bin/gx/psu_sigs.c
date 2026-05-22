@@ -12,6 +12,18 @@ psu_permute(List *heads, Cgp *cp, int ffi, int nbytes)
   for (hff = list_first(heads); hff; hff = list_next(heads))
     for (sp = list_first(ce->senses); sp; sp = list_next(ce->senses))
       {
+#if 1
+	Cform *ff = malloc(nbytes);
+	Cform *ef = list_first(ce->forms);
+	memcpy(ff, hff, nbytes);
+	ff[ffi] = *ef;
+	ff[ffi].f.form = ff[ffi].f.base = ce->pref;
+	ff[ffi].f.cont = ff[ffi].f.stem = NULL;
+	ff[ffi].f.morph = (uccp)"~";
+	ff[ffi].f.sense = sp->mng;
+	ff[ffi].f.epos = sp->pos;
+	list_add(nheads, ff);	
+#else
 	Cform *fp;
 	for (fp = list_first(ce->forms); fp; fp = list_next(ce->forms))
 	  {
@@ -22,6 +34,7 @@ psu_permute(List *heads, Cgp *cp, int ffi, int nbytes)
 	    ff[ffi].f.epos = sp->pos;
 	    list_add(nheads, ff);
 	  }
+#endif
       }
   return nheads;
 }

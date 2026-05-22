@@ -16,7 +16,7 @@
 extern struct map *qpnnames(register const char *str, register size_t len);
 
 FILE *f_xml;
-int glo_mode = 0;
+int glo_mode = 0, quiet = 0;
 int parser_status = 0;
 int verbose = 1;
 int bootstrap_mode, lem_autolem, lem_dynalem;
@@ -162,6 +162,14 @@ qpn_sub(Lemsig *lp, const char *epos)
       FILE *qfp = hash_find(hqlngs, (uccp)qlng);
       if (!qfp)
 	{
+	  char d[strlen("01bld/0")+strlen(qlng)];
+	  strcpy(d, "01bld/");
+	  strcat(d, qlng);
+	  if (-1 == mkdir(d, 0700) && EEXIST != errno)
+	    {
+	      perror(qlng);
+	      exit(1);
+	    }
 	  char qfn[strlen(qlng)+strlen("01bld//glo.sig0")];
 	  sprintf(qfn, "01bld/%s/glo.sig", qlng);
 	  qfp = xfopen(qfn, "w");
@@ -190,7 +198,7 @@ main(int argc, char * const *argv)
 
   common_init();
 
-  options(argc,argv,"gs");
+  options(argc,argv,"gqs");
   
   if (argv[optind])
     glos = (char**)argv+optind;
@@ -212,7 +220,12 @@ main(int argc, char * const *argv)
 	}
     }
   else
-    fprintf(stderr, "glosigx: no 00lib/*.glo found.\n");
+    {
+      if (!quiet)
+	fprintf(stderr, "glosigx: no 00lib/*.glo found.\n");
+      if (glo_mode)
+	exit(0);
+    }
   if (lems)
     {
       int i;
@@ -224,14 +237,18 @@ main(int argc, char * const *argv)
 	  fputc('\n', stdout);
 	}
     }
-  else
+  else if (!glo_mode)
     fprintf(stderr, "glosigx: no 02pub/lemm-*.sig found.\n");
 
   gdl_flex_debug = gdldebug = cbddebug = 0;
   cbd_flex_debug = 0;
-  
+
   Hash *htokens = hash_create(1024);
   Memo *mtokens = memo_init(sizeof(Gt), 1024);
+
+  if (glo_mode)
+    hqlngs = hash_create(32);
+
   gdl_unicode = 1;
   gdl_init();
   gsort_init();
@@ -289,6 +306,14 @@ main(int argc, char * const *argv)
 	      Lemsig **lsp = (Lemsig**)list2array_c(lp, &n);
 	      if (glo_mode)
 		{
+		  char d[strlen("01bld/0")+strlen(langs[i])];
+		  strcpy(d, "01bld/");
+		  strcat(d, langs[i]);
+		  if (-1 == mkdir(d, 0700) && EEXIST != errno)
+		    {
+		      perror(langs[i]);
+		      exit(1);
+		    }
 		  char fn[strlen(langs[i])+strlen("01bld/glo.sig0")];
 		  sprintf(fn, "01bld/%s/glo.sig", langs[i]);
 		  FILE *fp;
@@ -349,6 +374,9 @@ int opts(int och, const char *oarg)
     {
     case 'g':
       glo_mode = 1;
+      break;
+    case 'q':
+      quiet = 1;
       break;
     case 's':
       out_stdout = 1;

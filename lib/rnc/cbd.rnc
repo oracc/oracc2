@@ -43,7 +43,7 @@ entry.attr = attribute n      { text }? ,
 	     attribute star   { text }? ,
 	     kis?
 
-entry_block = cgp? , gwls? , xcpd? , mod? , aliases? , (partss|psu.compound)? , discs?
+entry_block = cgp? , gwls? , xcpd? , mod? , aliases? , pref? , (partss|psu.compound)? , discs?
 
 gwl  = element gwl  { text } 
 gwls = element gwls { gwl+ }
@@ -66,9 +66,11 @@ aliases     = element aliases 	{ alias+ }
 
 alias       = element alias 	{ text }
 
-partss      = element partss { element parts { cgpstr+ }+ }
+partss      = element partss    { element parts { cgpstr+ }+ }
 
-cgpstr	    = element cgp    { text }
+pref	    = element pref      { text }
+
+cgpstr	    = element cgp       { text }
 
 discs       = element discs { element disc { disc.model } , element discl { disc.model }* }
 
