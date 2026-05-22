@@ -136,7 +136,7 @@ main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
   gdl_set_word_id("w");  
-  options(argc, argv, "abcdf:hinop:Prstvw");
+  options(argc, argv, "abcdf:hinop:PrstvwW");
 
   gdlxml_setup();
   if (!strcmp(project, "pcsl"))
@@ -215,6 +215,9 @@ opts(int opt, const char *arg)
       break;
     case 'v':
       validate = 1;
+      break;
+    case 'W':
+      gdl_word_mode = 1;
       break;
     case 'w':
       wrapper = 1;

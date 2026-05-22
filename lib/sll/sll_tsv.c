@@ -8,6 +8,7 @@
 #include <gutil.h>
 #include "sll.h"
 
+extern const char *file;
 extern int sll_trace;
 extern Hash *sll_sl;
 extern const char *oraccd;
@@ -38,6 +39,7 @@ sll_init_t(const char *project, const char *name)
   tsv_file = (char *)pool_alloc(strlen(oraccd)+strlen("/pub/sl/") + strlen(project) + strlen("/sl.tsv") + 1, sllpool);
   sprintf(tsv_file, "%s/pub/%s/sl/sl.tsv", oraccd, project);
 
+  const char *saved_file = file;
   tsv_data = slurp("sll", tsv_file, &fsiz);
   if (!ltsv)
     ltsv = list_create(LIST_SINGLE);
@@ -83,6 +85,7 @@ sll_init_t(const char *project, const char *name)
       fprintf(stderr, "sll_init_t: failed to load %s\n", tsv_file);
     }
 
+  file = saved_file;
   return sll_sl = h;
 }
 

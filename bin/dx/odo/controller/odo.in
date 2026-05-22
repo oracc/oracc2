@@ -126,7 +126,7 @@ fi
 
 set -a
 odo_verb=$verb
-odo_gx = $gx
+odo_gx=$gx
 . $bin/odo-func.sh
 set +a
 

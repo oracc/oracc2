@@ -22,7 +22,7 @@ static const char *project = NULL;
 static const char *prog = "gx";
 static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
 
-const char *out_dir = NULL;
+const char *out_dir = NULL, *merge_glo = NULL, *parent_glo = NULL;
 
 const char *jfn = NULL, *xfn = NULL;
 
@@ -161,7 +161,7 @@ io_init(void)
   if (!check && !output_file)
     output_file = "-";
 
-  input_io.fn = input_file;
+  file = input_io.fn = input_file;
   if (!efile)
     efile = errmsg_fn = input_file;
   if (!strcmp(input_file, "-"))
@@ -317,7 +317,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:i:o:chjJkK::l::p:rsStTxXv");
+  options(argc,argv,"A:I:O:i:o:chjJKk::l::m:P:p:rsStTxXv");
 
   if (status)
     {
@@ -433,10 +433,10 @@ int opts(int och, const char *oarg)
     case 'j':
       jsn_output = 1;
       break;
-    case 'k':
+    case 'K':
       keepgoing = 1;
       break;
-    case 'K':
+    case 'k':
       keys = 1;
       if (optarg)
 	kis_file = optarg;
@@ -447,10 +447,16 @@ int opts(int och, const char *oarg)
       else
 	log_file = "gx.log";
       break;
+    case 'm':
+      merge_glo = optarg;
+      break;
     case 'n':
       break;
     case 'o':
-      output_file = optarg;
+      xfn = output_file = optarg;
+      break;
+    case 'P':
+      parent_glo = optarg;
       break;
     case 'p':
       project = optarg;

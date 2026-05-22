@@ -93,29 +93,46 @@ gdlsig_oidnode(Node *np)
     return NULL;
 }
 
+static void
+gdlsig_one_node(Node *np, List *lp)
+{
+  Prop *p = NULL;
+  Node *oidnode = gdlsig_oidnode(np);
+  if (oidnode)
+    {
+      gdlsig_addoid(oidnode, lp);
+      if ((p = prop_find_kv(oidnode->props, "g:delim", NULL)))
+	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
+      /* g:q nodes have the (X) component returned as the oidnode but g:delim is on g:q */
+      else if (np && !strcmp(np->name, "g:q")
+	       && (p = prop_find_kv(np->props, "g:delim", NULL)))
+	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
+    }
+  else if (!strcmp(np->name, "g:det"))
+    {
+      Prop *d = prop_find_kv(np->props, "g:pos", NULL);
+      if (d && !strcmp(d->u.k->v, "post"))
+	list_add(lp, ".");
+      gdlsig_descend(np, lp);
+      if (d && !strcmp(d->u.k->v, "pre"))
+	list_add(lp, ".");
+      else if ((p = prop_find_kv(np->props, "g:delim", NULL)))
+	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
+    }
+  else if (np->kids)
+    {
+      gdlsig_descend(np, lp);
+      if ((p = prop_find_kv(np->props, "g:delim", NULL)))
+	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
+    }
+}
+
 void
 gdlsig_descend(Node *np, List *lp)
 {
   Node *npp;
   for (npp = np->kids; npp; npp = npp->next)
-    {
-      Prop *p = NULL;
-      Node *oidnode = gdlsig_oidnode(npp);
-      if (oidnode)
-	    {
-	      gdlsig_addoid(oidnode, lp);
-#if 1
-	      if ((p = prop_find_kv(oidnode->props, "g:delim", NULL)))
-		list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
-#endif
-	    }
-#if 0	      
-	  else if (!strcmp(np->name, "g:d"))
-	    list_add(lp, (char*)gdlsig_sep((char*)np->text));
-#endif
-      else
-	gdlsig_descend(npp, lp);
-    }
+    gdlsig_one_node(npp, lp);
 }
 
 const char *
@@ -147,41 +164,7 @@ gdlsig(Tree *tp)
       Node *np;
       for (np = tp->root->kids; np; np = np->next)
 	{
-	  Prop *p = NULL;
-	  Node *oidnode = gdlsig_oidnode(np);
-	  if (oidnode)
-	    {
-	      gdlsig_addoid(oidnode, lp);
-#if 1
-	      if ((p = prop_find_kv(oidnode->props, "g:delim", NULL)))
-		list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
-	      /* g:q nodes have the (X) component returned as the oidnode but g:delim is on g:q */
-	      else if (np && !strcmp(np->name, "g:q")
-		       && (p = prop_find_kv(np->props, "g:delim", NULL)))
-		list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
-#endif
-	    }
-#if 0	      
-	  else if (!strcmp(np->name, "g:d"))
-	    list_add(lp, (char*)gdlsig_sep((char*)np->text));
-#endif
-	  else if (!strcmp(np->name, "g:det"))
-	    {
-	      Prop *d = prop_find_kv(np->props, "g:pos", NULL);
-	      if (d && !strcmp(d->u.k->v, "post"))
-		list_add(lp, ".");
-	      gdlsig_descend(np, lp);
-	      if (d && !strcmp(d->u.k->v, "pre"))
-		list_add(lp, ".");
-	      else if ((p = prop_find_kv(np->props, "g:delim", NULL)))
-		list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
-	    }
-	  else if (np->kids)
-	    {
-	      gdlsig_descend(np, lp);
-	      if ((p = prop_find_kv(np->props, "g:delim", NULL)))
-		list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
-	    }
+	  gdlsig_one_node(np, lp);
 	  if (np->next && !strcmp(np->name, "g:w"))
 	    list_add(lp, " ");
 	}

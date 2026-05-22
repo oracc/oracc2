@@ -6,7 +6,7 @@
  */
 extern struct map *qpnnames(register const char *str, register size_t len);
 
-int lang_mode = 1, qpn_mode = 1, slicing = 0, tokl_mode = 0;
+int lang_list = 0, lang_mode = 1, qpn_mode = 1, slicing = 0, tokl_mode = 0;
 const char *sigfile = NULL;
 const char *tokl_hdr;
 Hash *hlang;
@@ -41,7 +41,10 @@ lang_init(const char *lang)
 	}
       hash_add(hlang, pool_copy((ucp)lang,p), fp);
       if (tokl_mode)
-	fputs(tokl_hdr, fp);
+	{
+	  fputs(tokl_hdr, fp);
+	  fputc('\n', fp);
+	}
       return fp;
     }
   else
@@ -68,13 +71,14 @@ main(int argc, char **argv)
   
   if (options(argc, argv, "lqst"))
     goto error;
-  if (!argv[optind])
+  if (!tokl_mode)
     {
-      sigfile = "01bld/project.sig";
+      if (!argv[optind])
+	sigfile = "01bld/project.sig";
+      else
+	sigfile = argv[optind];
     }
-  else
-    sigfile = argv[optind];
-
+  
   if (!strcmp(sigfile, "-"))
     fp = stdin;
   else if (!(fp = fopen(sigfile, "r")))
@@ -177,19 +181,16 @@ main(int argc, char **argv)
 	      FILE *fp = hash_find(hlang, (uccp)keys[i]);
 	      fclose(fp);
 	    }
-	  if (i)
-	    putchar(' ');
-	  fputs(keys[i++], stdout);
+	  printf("%s\n", keys[i++]);
 	}
     }
   if (qpn_mode)
     {
-      if (lang_mode)
-	putchar(' ');
       keys = hash_keys2(hqpn,&nkeys);
       if (nkeys)
 	{
-	  fputs("qpn ", stdout);
+	  if (lang_list)
+	    fputs("qpn\n", stdout);
 	  qsort(keys, nkeys, sizeof(const char *), cmpstringp);
 	  int i = 0;
 	  while (keys[i])
@@ -200,9 +201,7 @@ main(int argc, char **argv)
 				       keys[i]);
 		  fclose(fp);
 		}
-	      if (i)
-		putchar(' ');
-	      fputs(keys[i++], stdout);
+	      printf("%s\n", keys[i++]);
 	    }
 	}
     }
@@ -217,10 +216,13 @@ int opts(int c, const char *opt)
   switch (c)
     {
     case 'l':
+      lang_list = 1;
+      break;
+    case 'L':
       lang_mode = 1;
       qpn_mode = 0;
       break;
-    case 'q':
+    case 'Q':
       lang_mode = 0;
       qpn_mode = 1;
       break;

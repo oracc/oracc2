@@ -17,7 +17,7 @@ sensel, SENSEL, 0, s_s
 isslp, ISSLP, 0, s_text
 inote, INOTE, 0, s_text
 parts, PARTS, 0, s_cf
-bff,   BFF, 0, 0
+bff,   BFF, 0, s_text
 alias, ALIAS, 0, s_cf
 allow, ALLOW, 0, s_allow
 note,  NOTE, 0, s_text
@@ -27,7 +27,7 @@ oid,   OID, 0, s_word
 collo, COLLO, 0, s_text
 phon,  PHON, 0, 0
 root,  ROOT, 0, 0
-stems, STEMS, 0, 0
+stems, STEM, 0, s_text
 prop,  PROP, 0, 0
 proplist, PROPS, 0, s_word
 pl_coord, PL_COORD, 0, 0

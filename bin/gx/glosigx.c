@@ -16,9 +16,9 @@
 extern struct map *qpnnames(register const char *str, register size_t len);
 
 FILE *f_xml;
-int glo_mode = 0, quiet = 0;
+int glo_mode = 0, lang_list = 0, quiet = 0;
 int parser_status = 0;
-int verbose = 1;
+int verbose = 0;
 int bootstrap_mode, lem_autolem, lem_dynalem;
 int out_stdout;
 int rnvtrace, status;
@@ -198,7 +198,7 @@ main(int argc, char * const *argv)
 
   common_init();
 
-  options(argc,argv,"gqs");
+  options(argc,argv,"glqs");
   
   if (argv[optind])
     glos = (char**)argv+optind;
@@ -213,10 +213,10 @@ main(int argc, char * const *argv)
       int i;
       if (verbose)
 	{
-	  fputs("00lib/*.glo =", stdout);
+	  fputs("00lib/*.glo =", stderr);
 	  for (i = 0; glos[i]; ++i)
 	    printf(" %s", glos[i]);
-	  fputc('\n', stdout);
+	  fputc('\n', stderr);
 	}
     }
   else
@@ -231,10 +231,10 @@ main(int argc, char * const *argv)
       int i;
       if (verbose)
 	{
-	  fputs("02pub/lemm-*.sig =", stdout);
+	  fputs("02pub/lemm-*.sig =", stderr);
 	  for (i = 0; lems[i]; ++i)
 	    printf(" %s", lems[i]);
-	  fputc('\n', stdout);
+	  fputc('\n', stderr);
 	}
     }
   else if (!glo_mode)
@@ -255,7 +255,7 @@ main(int argc, char * const *argv)
   gdl_set_word_id("w");
   gt_config(htokens, mtokens);
   gvl_setup("osl","osl","020");
- 
+  pref_init();
   int i;
   for (i = 0; glos[i]; ++i)
     {
@@ -297,6 +297,14 @@ main(int argc, char * const *argv)
 	}
 
       const char **langs = hash_keys(csetp->hsiglangs);
+
+      if (lang_list)
+	{
+	  int i;
+	  for (i = 0; langs[i]; ++i)
+	    printf("%s\n", langs[i]);
+	}
+
       for (i = 0; langs[i]; ++i)
 	{
 	  List *lp = hash_find(csetp->hsiglangs, (uccp)langs[i]);
@@ -374,6 +382,9 @@ int opts(int och, const char *oarg)
     {
     case 'g':
       glo_mode = 1;
+      break;
+    case 'l':
+      lang_list = 1;
       break;
     case 'q':
       quiet = 1;

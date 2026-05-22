@@ -7,7 +7,7 @@ project=$odo_proj
 odo_gloss_sub () {
     t=$1 ; shift
     for a in $* ; do
-#	echo odo-gloss-$t.sh $project $a
+	echo odo-gloss-$t.sh $project $a
 	odo-gloss-$t.sh $project $a
     done
 }
@@ -65,14 +65,20 @@ fi
 ##
 ## execute the task(s) for each language
 ##
-echo "$0: task=$subcommand; glossaries($#)=$*"
+echo "$0: task=$subcommand; glossaries($#)=$*; gx=$gx"
+
+if [ "$gx" != "" ]; then
+    xml=gx
+else
+    xml=xml
+fi
 
 case $subcommand in
-    xml) 	odo_gloss_sub xml $* ;;
+    xml) 	odo_gloss_sub $xml $* ;;
     htm|html) 	odo_gloss_sub htm $* ;;
     web) 	odo_gloss_sub web $* ;;
     all)
-	odo_gloss_sub xml $* 
+	odo_gloss_sub $xml $* 
 	odo_gloss_sub htm $*
 	odo-gloss-htm-wrapup.sh
 	odo_gloss_sub web $* 

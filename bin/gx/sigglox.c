@@ -8,14 +8,18 @@
 int parser_status = 0;
 struct cbd* curr_cbd;
 struct entry*curr_entry;
-const char *file, *efile, *errmsg_fn;
+const char *efile, *errmsg_fn;
+size_t line = 0;
+const char *file;
 
 FILE *f_xml;
-const char *file;
+const char *all_sigs = NULL;
 const char *dir = "01bld";
+const char *file;
+const char *out_file = NULL;
 const char *project = NULL;
 int rnvtrace, status;
-Hash *cbds;
+Hash *cbds, *hsigs;
 Pool *p, *hp;
 Memo *mem_entries;
 Mloc *xo_loc;
@@ -28,6 +32,38 @@ typedef struct entry
   Hash *senses;
   const char *parts;
 } Entry;
+
+static void register_form(Form *fp);
+
+static void
+sgx_one_sig(unsigned const char *sig/*, const char *tid, const char *cnt*/)
+{
+  if (!hash_find(hsigs, sig))
+    {
+      hash_add(hsigs, sig, "");
+      static Form f;
+      memset(&f, '\0', sizeof(Form));
+      form_parse((uccp)file, line, pool_copy((uccp)sig,p), &f, NULL);
+      if (f.parts)
+	{
+	  unsigned char *s = (ucp)f.form;
+	  while (*s)
+	    if (' ' == *s)
+	      *s++ = '_';
+	    else
+	      ++s;
+	  fprintf(stderr, "f.parts form = %s\n", f.form);
+	}
+      register_form(&f);
+      
+      if (f.cof_id)
+	{
+	  int i;
+	  for (i = 0; f.parts[i]; ++i)
+	    register_form(f.parts[i]);
+	}
+    }
+}
 
 static void
 sgx_bases(FILE *fp, Hash *b)
@@ -84,8 +120,19 @@ static void
 sgx_lang(const char *l, Hash *h)
 {
   char fn[strlen(dir)+(2*strlen(l))+strlen("//.sgx0")];
-  sprintf(fn, "%s/%s/%s.sgx", dir, l, l);
-  FILE *fp = xfopen(fn, "w");
+  const char *fnp;
+  FILE *fp;
+  if (out_file)
+    {
+      fp = xfopen(out_file, "w");
+      fnp = out_file;
+    }
+  else
+    {
+      sprintf(fn, "%s/%s/%s.sgx", dir, l, l);
+      fp = xfopen(fn, "w");
+      fnp = fn;
+    }
   fprintf(fp, "@project %s\n@lang %s\n@name %s,%s\n\n", project, l, project, l);
   int n;
   const char **ee = hash_keys2(h, &n);
@@ -93,7 +140,7 @@ sgx_lang(const char *l, Hash *h)
   int i;
   for (i = 0; i < n; ++i)
     sgx_entry(fp, ee[i], hash_find(h, (uccp)ee[i]));
-  xfclose(fn,fp);
+  xfclose(fnp,fp);
 }
 
 static void
@@ -142,10 +189,11 @@ register_form(Form *fp)
 int
 main(int argc, char * const *argv)
 {
-  size_t line = 0;
-  const char *file;
   FILE *in_fp;
+  int tpc_mode = 0;
+  
   cbds = hash_create(10);
+  hsigs = hash_create(1024);
   form_init();
   mesg_init();
   p = pool_init();
@@ -154,7 +202,7 @@ main(int argc, char * const *argv)
   collate_set_tiles_i();
   mem_entries = memo_init(sizeof(Entry), 1024);
 
-  options(argc,argv,"d:p:");
+  options(argc,argv,"a:d:o:p:");
 
   if (argv[optind])
     {
@@ -162,6 +210,8 @@ main(int argc, char * const *argv)
       in_fp = xfopen(file, "r");
       if (!in_fp)
 	exit(1);
+      if (strstr(file, ".tpc"))
+	tpc_mode = 1;
     }
   else
     {
@@ -173,23 +223,53 @@ main(int argc, char * const *argv)
   while ((s = loadoneline(in_fp, NULL)))
     {
       ++line;
-      
-      if (line == 1 && !strncmp((ccp)s, "@fields", strlen("@fields")))
-	continue;
-      
-      static Form f;
-      memset(&f, '\0', sizeof(Form));
-      form_parse((uccp)file, line, pool_copy((uccp)s,p), &f, NULL);
-      register_form(&f);
 
-      if (f.cof_id)
+      if (tpc_mode)
 	{
-	  int i;
-	  for (i = 0; f.parts[i]; ++i)
-	    register_form(f.parts[i]);
+	  if ('t' == *s || strchr((ccp)s, 0x01))
+	    continue;
+	  const unsigned char *sig = (uccp)strchr((ccp)s, '\t') + 1;
+#if 0
+	  const char *tid = (ccp)s;
+	  s = strchr(s, '\t');
+	  s = strchr(++s, '\t');
+	  const char *cnt = strchr(++s, '\t');
+	  s = strchr(s, '\t');
+	  *s = '\0';
+#endif
+	  sgx_one_sig(sig/*, tid, cnt*/);
+	}
+      else
+	{
+	  if (line == 1 && !strncmp((ccp)s, "@fields", strlen("@fields")))
+	    continue;
+	  unsigned char *t = (ucp)strchr((ccp)s, '\t');
+	  if (t)
+	    *t = '\0';	  
+	  sgx_one_sig(s/*, "x", "0"*/);
 	}
     }
 
+  if (in_fp != stdin)
+    fclose(in_fp);
+  
+  if (all_sigs)
+    {
+      FILE *all_fp = xfopen(all_sigs, "r");
+      file = all_sigs;
+      line = 0;
+      while ((s = loadoneline(all_fp, NULL)))
+	{
+	  ++line;
+	  if (line == 1 && !strncmp((ccp)s, "@fields", strlen("@fields")))
+	    continue;
+	  unsigned char *t = (ucp)strchr((ccp)s, '\t');
+	  if (t)
+	    *t = '\0';	  
+	  sgx_one_sig(s/*, "x", "0"*/);
+	}
+    }
+  
   const char **langs = hash_keys(cbds);
   int i;
   for (i = 0; langs[i]; ++i)
@@ -205,8 +285,14 @@ opts(int argc, const char *arg)
 {
   switch (argc)
     {
+    case 'a':
+      all_sigs = arg;
+      break;
     case 'd':
       dir = arg;
+      break;
+    case 'o':
+      out_file = arg;
       break;
     case 'p':
       project = arg;

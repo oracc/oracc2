@@ -19,14 +19,14 @@ Cbds *csetp, cbdset;
 static void cbd_bld_set(void);
 
 Hash *cbds = NULL;
-static Hash *prefs = NULL;
+static Hash *hprefs = NULL;
 
 #define cmts(l) (l) = cmt_queue , cmt_queue = NULL;
 
 void
 cbd_set_prefs(Hash *h)
 {
-  prefs = h;
+  hprefs = h;
 }
 
 struct alias *
@@ -707,8 +707,8 @@ cbd_end_entry(YYLTYPE l)
   cbd_oid_e(curr_entry);
   if (!strncmp(curr_entry->lang, "sux", 3))
     {
-      if (curr_entry->owner->hprefs)
-	curr_entry->pref = hash_find(curr_entry->owner->hprefs, curr_entry->cgp->tight);
+      if (hprefs)
+	curr_entry->pref = hash_find(hprefs, curr_entry->cgp->tight);
       if (!curr_entry->pref)
 	{
 	  if (curr_entry->bases)

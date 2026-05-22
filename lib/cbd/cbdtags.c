@@ -116,11 +116,11 @@ static struct cbdtag cbdtags_wl[] =
     {"discl", EDISCL, 0, s_text},
     {""}, {""},
 #line 20 "cbdtags.g"
-    {"bff",   BFF, 0, 0},
+    {"bff",   BFF, 0, s_text},
 #line 28 "cbdtags.g"
     {"phon",  PHON, 0, 0},
 #line 30 "cbdtags.g"
-    {"stems", STEMS, 0, 0},
+    {"stems", STEM, 0, s_text},
 #line 16 "cbdtags.g"
     {"sensel", SENSEL, 0, s_s},
     {""}, {""},

@@ -69,7 +69,7 @@ extern int yylex(void);
 
 %token ENTRY END_ENTRY SENSES END_SENSES PROJECT NAME PROPS RELDEF
        ALIAS BASES FORM END_FORM MERGE PARTS RENAME WHY ALLOW PHON ROOT
-       STEM STEMS EDISC SDISC EDISCL SDISCL EOL CBD TRANSLANG GWL I18N
+       STEM EDISC SDISC EDISCL SDISCL EOL CBD TRANSLANG GWL I18N
        NOTEL BFF
 
 %token <text> '%'
@@ -179,13 +179,13 @@ entry: 		entry_block end_entry
 	;
 
 entry_block:    atentry
-	|	atentry aliases
-	| 	atentry aliases partses
-	| 	atentry aliases partses disc
+	|	atentry entryrels
+	| 	atentry entryrels partses
+	| 	atentry entryrels partses disc
 	|	atentry modentry
-	|	atentry modentry aliases
-	| 	atentry modentry aliases partses
-	| 	atentry modentry aliases partses disc
+	|	atentry modentry entryrels
+	| 	atentry modentry entryrels partses
+	| 	atentry modentry entryrels partses disc
 	| 	atentry partses
 	| 	atentry partses disc
 	| 	atentry disc
@@ -223,14 +223,24 @@ why:		WHY TEXTSPEC
 modentry: 	RENAME cgp { cbd_bld_edit_entry(curr_entry, '>'); } ;
 	| 	MERGE  cgp { cbd_bld_edit_entry(curr_entry, '|'); } ;
 
-aliases: 	alias
-	| 	aliases alias
+entryrels:	entryrel
+	|	entryrels entryrel
+	;
+
+entryrel:	alias
+	|	bff
+	;
 
 alias:  	atalias cgp 	{ cbd_bld_alias(@1,curr_entry); }
 	|	DCF TEXTSPEC 	{ cbd_bld_dcf(@1,curr_entry, (ucp)$1, (ucp)$2); }
 	;
 
 atalias:	ALIAS
+
+bff:  		atbff TEXTSPEC
+	;
+
+atbff:	BFF
 
 partses:	parts
 	| 	partses parts
@@ -294,7 +304,7 @@ stems:	atstem stemlist
 stemlist: stem
 	|	stemlist stem
 
-stem:		WORDSPEC { cbd_bld_stem(@1, curr_entry, (ucp)$1); }
+stem:		TEXTSPEC { cbd_bld_stem(@1, curr_entry, (ucp)$1); }
 
 atstem: 	STEM
 								

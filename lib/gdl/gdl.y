@@ -241,7 +241,8 @@ compound:
 	  c cmaybemodflags         			{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
 	    						  gdl_modq_flush();
 							  gvl_compound(ycp);
-	    						  $$ = ynp = gdl_pop(ytp,"g:c");
+							  $$ = ycp;
+	    						  ynp = gdl_pop(ytp,"g:c");
 	  						  gdl_c_term(); }
 	;
 
