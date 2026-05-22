@@ -46,7 +46,10 @@ cbd_cof_norm_sig(Cform *cfp)
 	*b++ = *s++;
     }
   *b = '\0';
+
+#if 0
   fprintf(stderr, "cbd_cof_norm_sig: %s => %s [%d]\n", cfp->f.norm, buf, index);
+#endif
 
   cofp->e = cfp->e;
   cofp->f = cfp;

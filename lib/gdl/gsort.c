@@ -234,8 +234,11 @@ gsort_node(Node *np, List *lp)
 	  gsort_node(npp, lp);
       }
       break;
+    case 'z':
+      /* meta node in GDL internals; ignore */
+      break;
     default:
-      fprintf(stderr, "[gsort] unhandled name in gsort_node %s\n", np->name);
+      mesg_verr(np->mloc, "[gsort] unhandled name in gsort_node %s\n", np->name);
       break;
     }
 }
