@@ -128,7 +128,7 @@ char *ssnames[] = {
 ^>>[ \t]*      	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(RENAME); }
 ^>[ \t]*       	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(MERGE); }
 ^@letter.*/\n   { /* ignore @letter */ }
-^@end[ \t]+entry[ \t]*/\n  { BEGIN ss(0); return(END_ENTRY); }
+<*>^@end[ \t]+entry[ \t]*/\n  { BEGIN ss(0); return(END_ENTRY); }
 ^@end[ \t]+senses[ \t]*/\n { BEGIN ss(0); return(END_SENSES); }
 ^@[a-z]+	{ if (set_ctp()) xreturn(yi(ctp->tok)); }
 ^@[a-z]+/[!*]+	{ if (set_ctp()) BEGIN ss(s_flag); }
@@ -165,12 +165,13 @@ char *ssnames[] = {
 	/* EQUIV TOKENIZER */
 
 <s_equiv>%[^ \t\n]+[ \t]*  { ksdup(yytext); BEGIN(s_text); xreturn(LANG); }
+<s_equiv>[^ \t\n]+[ \t]*  { ksdup(yytext); BEGIN(0); xreturn(TEXTSPEC); }
 <s_equiv>[ \t]+	    	   { /* empty */ }
 
 	/* BASES TOKENIZER */
 
 <s_b>[^ \t\n]+	{ return base_tok(); }
-<s_b>\n/"@"	{ BEGIN ss(0); base_state = BASE_PRI; }
+<s_b>\n/"@"	{ BEGIN ss(0); base_state = BASE_PRI; return BASE_END; }
 <s_b>[ \t]+	   	  { /* empty */ }
 
 	/* FORM TOKENIZER */
@@ -364,40 +365,6 @@ base_tok(void)
   yylval.text = (char*)pool_copy((ucp)t,csetp->pool);
   return ret_state;
 }
-
-#if 0
-void
-alt_wrapup(int clean)
-{
-  if (clean)
-    clean_alt_paren(); 
-  (void)pool_copy((ucp)unspace(b_alt_tok),csetp->pool);
-  free(b_alt_tok); 
-  b_alt_tok = NULL;
-}
-
-static void
-basesc(const char *type)
-{
-  yylloc.file=efile;
-  yylloc.line=yylineno; 
-  vyyerror(yylloc,"misplaced %s semi-colon\n", type, NULL);
-}
-
-static void
-baseco(const char *type)
-{
-  yylloc.file=efile;
-  yylloc.line=yylineno; 
-  vyyerror(yylloc,"misplaced %s comma\n", type, NULL);
-}
-
-static void
-clean_alt_paren(void)
-{
-  b_alt_tok[strlen(b_alt_tok)-1] = '\0';
-}
-#endif
        
 static char *
 unspace(char*s)

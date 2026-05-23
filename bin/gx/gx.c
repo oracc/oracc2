@@ -22,7 +22,7 @@ static const char *project = NULL;
 static const char *prog = "gx";
 static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
 
-const char *out_dir = NULL, *merge_glo = NULL, *parent_glo = NULL;
+const char *out_dir = NULL, *merge_glo = NULL, *parent_glo = NULL, *entry_lines_fn = NULL;
 
 const char *jfn = NULL, *xfn = NULL;
 
@@ -210,11 +210,10 @@ io_run(void)
       if (check)
 	validator(curr_cbd);
 
+      Kis *k = NULL;
       if (keys)
-	{
-	  Kis *k = kis_load(kis_file);
-	  cbd_kis(curr_cbd, k);
-	}
+	k = kis_load(kis_file);
+      cbd_kis(curr_cbd, k);
 
       break;
     default:
@@ -310,6 +309,30 @@ gx_output(void)
     gx_summaries(curr_cbd);
 }
 
+/* To use this simply run 'grep -n 00src/sux.glo >entry_lines.txt' and
+   then gx -E entry_lines.txt */
+static void
+set_entry_lines(void)
+{
+  unsigned char *mem;
+  size_t n;
+  int i;
+  unsigned char **ll = loadfile_lines3(entry_lines_fn, &n, &mem);
+  Hash *e = hash_create(4196);
+  for (i = 0; i < n; ++i)
+    {
+      unsigned char *num = ll[i];
+      unsigned char *cgp = strchr(ll[i], ':');
+      *cgp++ = '\0';
+      while (!isspace(*cgp))
+	++cgp;
+      while (isspace(*cgp))
+	++cgp;
+      hash_add(e, cgp, num);
+    }
+  cbd_set_entry_lines(e);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -317,8 +340,11 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:i:o:chjJKk::l::m:P:p:rsStTxXv");
+  options(argc,argv,"A:I:O:E:e:i:o:chjJKk::l::m:P:p:rsStTxXv");
 
+  if (entry_lines_fn)
+    set_entry_lines();
+  
   if (status)
     {
       fprintf(stderr, "gx: quitting after errors in option processing\n");
@@ -346,6 +372,7 @@ main(int argc, char **argv)
   
   gdl_flex_debug = gdldebug = cbd_flex_debug = cbddebug = trace_mode;
   gdl_word_mode = 1;
+  gdl_no_xml_ids = 1;
   
   cbdset_debug(trace_mode);
 
@@ -414,6 +441,9 @@ int opts(int och, const char *oarg)
       break;
     case 'd':
       cbddebug = 1; /* = tg2debug */
+      break;
+    case 'E':
+      entry_lines_fn = optarg;
       break;
     case 'e':
       efile = errmsg_fn = optarg;

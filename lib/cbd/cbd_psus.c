@@ -40,7 +40,7 @@ sanitize_cgp(const char *cfg)
 	    *bp++ = *s++;
 	  *bp = '\0';
 	  s = strchr(s, ']');
-	  while ('\'' != *s)
+	  while (*s && '\'' != *s)
 	    *bp++ = *s++;
 	  *bp = '\0';
 	  while (*s && !isspace(*s))

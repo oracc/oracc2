@@ -17,7 +17,7 @@ extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
 int curr_lang = 's';
 int deep_parse = 1;
-
+int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 
 static int grapheme_id, nonw_found, wid_base, word_excisions;
@@ -402,6 +402,7 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   lst = prop_state(np, pst|rst);
   sprintf(gid_insertp, ".%d", grapheme_id++);
   /*  if (gdl_xmlids && 'r' != name[2] && 'R' != name[2])*/
+  if (!gdl_no_xml_ids)
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
 		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
@@ -576,8 +577,9 @@ gdl_new_word(Tree *ytp)
       list_add(wd_list, wp);
       sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
       gid_insertp = gdl_word_id+strlen(gdl_word_id);
-      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-		  (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+      if (!gdl_no_xml_ids)
+	gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		    (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
       grapheme_id = 0;
       return wp;
     }
@@ -857,8 +859,11 @@ gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
       if ('r' == np->name[2])
 	np = np->rent;
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
-      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-      gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+      if (!gdl_no_xml_ids)
+	{
+	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+	  gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+	}
     }
   bit_set(*lst,gs_c);
   rs_no(gs_run);
@@ -934,8 +939,11 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
       if (!strcmp(np->rent->name, "g:n"))
 	np = np->rent;
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusStart", "1");
-      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-      gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
+      if (!gdl_no_xml_ids)
+	{
+	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+	  gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
+	}
     }
   bit_set(*lst,gs_c);
   rs_no(gs_run);

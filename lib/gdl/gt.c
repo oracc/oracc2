@@ -25,6 +25,36 @@ gt_gdl(Mloc *locp, unsigned char *s)
   return tp;
 }
 
+static int
+gt_bad_gsig(Mloc *locp, unsigned char *t, const char *s)
+{
+  int bad = 0;
+  if (strstr(s, ".."))
+    bad = 1;
+  else
+    {
+      const char *o = s+1;
+      while (*o)
+	{
+	  if ((o = strchr(o, 'o')))
+	    {
+	      if (isdigit(o[-1]))
+		{
+		  bad = 1;
+		  break;
+		}
+	      ++o;
+	    }
+	  else
+	    break;
+	}
+    }
+  if (bad)
+    mesg_verr(locp, "gt: token %s has bad sig %s\n", t, s);
+
+  return bad;
+}
+
 /* SL comment:
   *
  * All of the list entries in @listdef are processed here as literals;
@@ -64,6 +94,8 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	  gdlsig_depth_mode = -1;
 
 	  gsig = gdlsig(tp);
+	  if (gt_bad_gsig(locp, t, gsig))
+	    return NULL;
 	  sign = (ccp)sll_snames_of((uccp)gsig);
   
 	  gdlsig_depth_mode = 1;

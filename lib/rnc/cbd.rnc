@@ -93,7 +93,7 @@ bases 	    = element bases  { base+ }
 morphs      = element morphs { morph+ }
 morph        = element morph   { field_attr }
 
-morph2s     = element morphs { morph2+ }
+morph2s     = element morph2s { morph2+ }
 morph2      = element morph2  { field_attr }
 
 conts       = element conts  { cont+ }

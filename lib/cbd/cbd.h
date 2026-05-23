@@ -450,5 +450,6 @@ extern void cbd_oid_s(Sense *s);
 
 extern void cbd_wrapup(void);
 extern void cbd_set_prefs(Hash *h);
+extern void cbd_set_entry_lines(Hash *h);
 
 #endif/*CBD_H_*/

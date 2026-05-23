@@ -59,6 +59,7 @@ struct gdl_g {
 
 extern int c_processing;
 extern int gdl_corrq;
+extern int gdl_no_xml_ids;
 extern int curr_lang;
 extern int gdltrace, gdl_legacy, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
 extern int gdl_unicode;

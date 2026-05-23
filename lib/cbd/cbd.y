@@ -43,6 +43,7 @@ extern int yylex(void);
 %token	<text>		SENSE
 %token	<text>		SENSEL
 %token	<text>		LANG
+%token	<text>		BASE_END
 %token	<text>		BASE_PRI
 %token	<text>		BASE_ALT
 %token  <text> 		FFORM
@@ -215,7 +216,6 @@ begin_entry:  	entry_wrapper { curr_entry = cbd_bld_entry(@1,curr_cbd);
 	                        curr_meta = curr_entry->meta = cbd_bld_meta_create(curr_entry); } ;
 
 entry_wrapper:	 ENTRY
-	|	 error ENTRY  { yyerrok; }
 	;
 
 why:		WHY TEXTSPEC
@@ -251,6 +251,10 @@ parts:  	atparts cgplist { curr_parts->cgps = cgp_get_all(); }
 atparts: 	PARTS { curr_parts = cbd_bld_parts(@1,curr_entry); }
 
 end_entry:	END_ENTRY { cbd_end_entry(@1); }
+		    |	error END_ENTRY { mesg_print(stderr); mesg_init();
+    				    /* fprintf(stderr, "skipping to next @end entry\n"); */
+				    yyclearin; yyerrok; }
+		;
 
 lang_block: bases_block
 	    | bases_block forms
@@ -283,14 +287,18 @@ bases:	     atbases baselist
 
 atbases:     BASES
 		
-baselist:    base
-	     | baselist base
+baselist:    	base
+	| 	baselist base
+		;
 
-base: 	     base_pri
-	     | base_pri base_alt
+base: 	     	base_pri
+	| 	base_pri base_alt
+		;
 
-base_pri:	BASE_PRI          { cbd_bld_bases_pri(@1, curr_entry, NULL, (ucp)$1); }
+base_pri:	BASE_END	  { cbd_bld_bases_pri(@1, curr_entry, NULL, "\n"); }
+	|	BASE_PRI          { cbd_bld_bases_pri(@1, curr_entry, NULL, (ucp)$1); }
 	|	LANGSPEC BASE_PRI { cbd_bld_bases_pri(@1, curr_entry, (ucp)$1, (ucp)$2); }
+		;
 
 base_alt: 	BASE_ALT          { cbd_bld_bases_alt(@1, curr_entry, (ucp)$1); }
 	     |	base_alt BASE_ALT { cbd_bld_bases_alt(@1, curr_entry, (ucp)$2); }
@@ -443,8 +451,11 @@ anymeta: 	pleiades
         | 	notes
 		/*  REL GOES HERE */
 
-equiv: 		EQUIV LANG TEXTSPEC		{ cbd_bld_meta_add(@1,curr_entry, curr_meta, $1, "equiv",
+equiv: 		EQUIV TEXTSPEC			{ lyyerror(@1, "@equiv has no %LANG"); }
+	|	EQUIV LANG TEXTSPEC		{ cbd_bld_meta_add(@1,curr_entry, curr_meta, $1, "equiv",
 		    					   cbd_bld_equiv(curr_entry,(ucp)$2,(ucp)$3)); }
+		;
+
 isslp:		ISSLP TEXTSPEC			{ cbd_bld_meta_add(@1, curr_entry, curr_meta, $1, "isslp", (ucp)$2); }
 
 bib:		BIB TEXTSPEC			{ cbd_bld_meta_add(@1,curr_entry, curr_meta, $1, "bib", (ucp)$2); }

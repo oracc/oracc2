@@ -19,7 +19,7 @@ Cbds *csetp, cbdset;
 static void cbd_bld_set(void);
 
 Hash *cbds = NULL;
-static Hash *hprefs = NULL;
+static Hash *hprefs = NULL, *hentry_lines = NULL;
 
 #define cmts(l) (l) = cmt_queue , cmt_queue = NULL;
 
@@ -27,6 +27,12 @@ void
 cbd_set_prefs(Hash *h)
 {
   hprefs = h;
+}
+
+void
+cbd_set_entry_lines(Hash *h)
+{
+  hentry_lines = h;
 }
 
 struct alias *
@@ -81,12 +87,20 @@ cbd_bld_bases_pri(YYLTYPE l, struct entry *e, unsigned char *lang, unsigned char
 {
   if (p && strlen((ccp)p))
     {
-      struct loctok *ltp = cbd_bld_loctok(&l,e,p);
-      ltp->lang = (const char*)lang;
-      if (!e->bases)
-	e->bases = list_create(LIST_SINGLE);
-      list_add(e->bases, (curr_base_list = list_create(LIST_SINGLE)));
-      list_add(curr_base_list, ltp);
+      if ('\n' == *p)
+	{
+	  if (!list_len(e->bases))
+	    mesg_verr(&l, "empty @bases entry");
+	}
+      else
+	{
+	  struct loctok *ltp = cbd_bld_loctok(&l,e,p);
+	  ltp->lang = (const char*)lang;
+	  if (!e->bases)
+	    e->bases = list_create(LIST_SINGLE);
+	  list_add(e->bases, (curr_base_list = list_create(LIST_SINGLE)));
+	  list_add(curr_base_list, ltp);
+	}
     }
   else
     {
@@ -314,7 +328,7 @@ cbd_bld_edit_why(struct entry *e, char *why)
 {
   if (e->ed)
     e->ed->why = (ucp)why;
-  /* should error if #why: doesn't follow an edit and valid it's only after -@entry */
+  /* should error if @why: doesn't follow an edit and valid it's only after -@entry */
 }
 
 struct entry *
@@ -356,6 +370,19 @@ cbd_bld_entry_cgp(struct entry *e)
   if (!le)
     hash_add(e->owner->hletters, (c = pool_copy(c, csetp->pool)), (le = hash_create(1)));
   hash_add(le, e->cgp->tight, e);
+  if (hentry_lines)
+    {
+      const char *lnum = hash_find(hentry_lines, e->cgp->loose);
+      if (lnum)
+	{
+	  long l = strtoul(lnum, NULL, 10);
+	  if (l != e->l.line)
+	    fputc('!', stderr);
+	  fprintf(stderr, "%s hentry %ld == mloc %d\n", e->cgp->loose, l, e->l.line);
+	}
+      else
+	fprintf(stderr, "hentry: %s not found in hentry_lines\n", e->cgp->loose);
+    }
 }
 
 #if 0

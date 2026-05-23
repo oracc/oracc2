@@ -75,12 +75,15 @@ v_allow_2(struct entry *e)
 	  struct allow *ap = lp->data;
 	  unsigned char *sig = NULL;
 	  loc.line = ap->l.line; loc.file = (char*)ap->l.file;
-	  sig = hash_find(e->b_sig, ap->lsig);
-	  if (!sig)
-	    mesg_verr(&loc,"@allow left side %s is not a base", ap->lhs);
-	  sig = hash_find(e->b_sig, ap->rsig);
-	  if (!sig)
-	    mesg_verr(&loc,"@allow right side %s is not a base", ap->rhs);
+	  if (ap->lsig)
+	    {
+	      sig = hash_find(e->b_sig, ap->lsig);
+	      if (!sig)
+		mesg_verr(&loc,"@allow left side %s is not a base", ap->lhs);
+	      sig = hash_find(e->b_sig, ap->rsig);
+	      if (!sig)
+		mesg_verr(&loc,"@allow right side %s is not a base", ap->rhs);
+	    }
 	}
     }
 }
