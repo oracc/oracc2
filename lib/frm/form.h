@@ -151,4 +151,9 @@ extern void form_set_xcp(struct xcl_context *xcp);
 
 extern struct map *lang949(register const char *str, register size_t len);
 
+extern void normify_init(void);
+extern void normify_term(void);
+extern char *normify(const char *c, const char *b, const char *m, const char *e);
+extern void normify_form(Form *f, Pool *p);
+
 #endif/*FORM_H_*/

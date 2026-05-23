@@ -87,7 +87,8 @@ YY_BUFFER_STATE bp;
 
 char *ssnames[] = {
 "0",
-"s_b",
+"s_bp",
+"s_ba",
 "s_cf",
 "s_f",
 "s_flag",
@@ -106,7 +107,16 @@ char *ssnames[] = {
 
 %}
 
-%x s_b
+LANG %[^ \t\n]
+
+NPI  	[^\(;, \t\n][^ \t\n;,]*
+BASE 	{NPI}([ \t]+{NPI})*
+BPRI 	";"
+BALO 	[ \t]+"("
+BALM 	","
+
+%x s_bp
+%x s_ba
 %x s_cf
 %x s_f
 %x s_flag
@@ -165,28 +175,34 @@ char *ssnames[] = {
 	/* EQUIV TOKENIZER */
 
 <s_equiv>%[^ \t\n]+[ \t]*  { ksdup(yytext); BEGIN(s_text); xreturn(LANG); }
-<s_equiv>[^ \t\n]+[ \t]*  { ksdup(yytext); BEGIN(0); xreturn(TEXTSPEC); }
+<s_equiv>[^ \t\n]+[ \t]*   { ksdup(yytext); BEGIN(0); xreturn(TEXTSPEC); }
 <s_equiv>[ \t]+	    	   { /* empty */ }
 
 	/* BASES TOKENIZER */
 
-<s_b>[^ \t\n]+	{ return base_tok(); }
-<s_b>\n/"@"	{ BEGIN ss(0); base_state = BASE_PRI; return BASE_END; }
-<s_b>[ \t]+	   	  { /* empty */ }
+<s_bp,s_ba>{LANG}      	   { ytdup(); return LANGSPEC; }
+<s_bp,s_ba>[ \t]+      	   { ; }
+<s_bp>{BASE} 	   	   { ytdup(); return BASE_PRI; }
+<s_bp>{BPRI}      	   { BEGIN ss(s_bp); return BASE_PRC; }
+<s_bp>{BALO}     	   { BEGIN ss(s_ba); return BASE_ALO; }
+<s_ba>{BASE}		   { ytdup(); return BASE_ALT; }
+<s_ba>{BALM}		   { return BASE_ALM; }
+<s_ba>{BPRI}      	   { BEGIN ss(s_bp); return BASE_ALC; }
+<s_bp,s_ba>\n/"@"	   { BEGIN ss(0); return BASE_END; }
 
 	/* FORM TOKENIZER */
 
-<s_f>%[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FLANG); }
-<s_f>@[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FRWS); }
-<s_f>\/[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FBASE); }
-<s_f>\+[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FCONT); }
-<s_f>(\$[^ \t\n]+[ \t]*)+[ \t]*	  { ytdupn(1); xreturn(FNORM); }
-<s_f>##[^ \t\n]+[ \t]*	  { ytdupn(2); xreturn(FMORPH2); }
-<s_f>#[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FMORPH); }
-<s_f>\*[^ \t\n]+[ \t]*	  { ytdupn(1); xreturn(FSTEM); }
-<s_f>[^+$#*/\n][^ \t\n]+[ \t]* { ytdup(); xreturn(FFORM); }
-<s_f>\n/"@"		  { BEGIN ss(0); xreturn(END_FORM); }
-<s_f>[ \t]+	   	  { /* empty */ }
+<s_f>%[^ \t\n]+[ \t]*	  	{ ytdupn(1); xreturn(FLANG); }
+<s_f>@[^ \t\n]+[ \t]*	  	{ ytdupn(1); xreturn(FRWS); }
+<s_f>\/[^ \t\n]+[ \t]*	  	{ ytdupn(1); xreturn(FBASE); }
+<s_f>\+[^ \t\n]+[ \t]*	  	{ ytdupn(1); xreturn(FCONT); }
+<s_f>(\$[^ \t\n]+[ \t]*)+[ \t]* { ytdupn(1); xreturn(FNORM); }
+<s_f>##[^ \t\n]+[ \t]*	  	{ ytdupn(2); xreturn(FMORPH2); }
+<s_f>#[^ \t\n]+[ \t]*	  	{ ytdupn(1); xreturn(FMORPH); }
+<s_f>\*[^ \t\n]+[ \t]*	  	{ ytdupn(1); xreturn(FSTEM); }
+<s_f>[^+$#*/\n][^ \t\n]+[ \t]* 	{ ytdup(); xreturn(FFORM); }
+<s_f>\n/"@"		  	{ BEGIN ss(0); xreturn(END_FORM); }
+<s_f>[ \t]+	   	  	{ /* empty */ }
 
 	/* SENSE TOKENIZER */
 
@@ -194,7 +210,7 @@ char *ssnames[] = {
 <s_s>\[[^ \t\n\]]+\][ \t]* { ytdupn(1); return(yytext[0]); }
 <s_s>\[[^ \t\n]+[ \t]*     { ytdupn(1); return(yytext[0]); } /* error missing ']' */
 <s_s>[^ \t\n]+[ \t]*       { BEGIN ss(s_text); ytdup(); return(POS); }
-<s_s>[ \t]+	   	  { /* empty */ }
+<s_s>[ \t]+	   	   { /* empty */ }
 
 	/* INCLUDES TOKENIZER */
 
@@ -203,7 +219,7 @@ char *ssnames[] = {
 
 <s_flush>.*		  { BEGIN ss(0); }
 
-<<EOF>>			{ yyterminate(); }
+<<EOF>>			  { yyterminate(); }
 
 %%
 

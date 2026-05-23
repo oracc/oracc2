@@ -10,7 +10,7 @@ project, PROJECT, 0, s_word
 lang, LANG, 0, s_word
 name, NAME, 0, s_text
 entry, ENTRY, 0, s_cf
-bases, BASES, 0, s_b
+bases, BASES, 0, s_bp
 form,  FORM, 0, s_f
 sense, SENSE, 0, s_s
 sensel, SENSEL, 0, s_s

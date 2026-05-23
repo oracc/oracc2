@@ -166,7 +166,7 @@ gdlsig(Tree *tp)
 	{
 	  gdlsig_one_node(np, lp);
 	  if (np->next && !strcmp(np->name, "g:w"))
-	    list_add(lp, " ");
+	    list_add(lp, "_");
 	}
       sig = (const char *)list_concat(lp);
       list_free(lp, NULL);

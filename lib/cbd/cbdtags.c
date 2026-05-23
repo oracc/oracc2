@@ -134,7 +134,7 @@ static struct cbdtag cbdtags_wl[] =
 #line 31 "cbdtags.g"
     {"prop",  PROP, 0, 0},
 #line 13 "cbdtags.g"
-    {"bases", BASES, 0, s_b},
+    {"bases", BASES, 0, s_bp},
     {""}, {""}, {""},
 #line 10 "cbdtags.g"
     {"lang", LANG, 0, s_word},

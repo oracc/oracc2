@@ -327,6 +327,7 @@ bin/xx/wrapper/p4-g2-xtf-HTML.xsl
 bin/xx/wrapper/wrapper-links.sh
 bin/xx/wrapper/xsltx.c
 bin/zx/xmdx
+lib/frm/normify.c
 lib/gvl/oiv.c
 lib/l3/bigrams/bigrams.c
 lib/l3/bigrams/collos.c

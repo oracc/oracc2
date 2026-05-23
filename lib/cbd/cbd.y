@@ -43,9 +43,10 @@ extern int yylex(void);
 %token	<text>		SENSE
 %token	<text>		SENSEL
 %token	<text>		LANG
-%token	<text>		BASE_END
 %token	<text>		BASE_PRI
 %token	<text>		BASE_ALT
+%token	<text>		BASE_END
+%token	<text>		BASE_ERR
 %token  <text> 		FFORM
 %token  <text> 		FLANG
 %token  <text> 		FRWS
@@ -71,7 +72,7 @@ extern int yylex(void);
 %token ENTRY END_ENTRY SENSES END_SENSES PROJECT NAME PROPS RELDEF
        ALIAS BASES FORM END_FORM MERGE PARTS RENAME WHY ALLOW PHON ROOT
        STEM EDISC SDISC EDISCL SDISCL EOL CBD TRANSLANG GWL I18N
-       NOTEL BFF
+       NOTEL BFF BASE_PRC BASE_ALO BASE_ALM BASE_ALC
 
 %token <text> '%'
 %token <text> '#'
@@ -251,19 +252,20 @@ parts:  	atparts cgplist { curr_parts->cgps = cgp_get_all(); }
 atparts: 	PARTS { curr_parts = cbd_bld_parts(@1,curr_entry); }
 
 end_entry:	END_ENTRY { cbd_end_entry(@1); }
-		    |	error END_ENTRY { mesg_print(stderr); mesg_init();
-    				    /* fprintf(stderr, "skipping to next @end entry\n"); */
-				    yyclearin; yyerrok; }
+	|	error END_ENTRY { mesg_print(stderr); mesg_init();
+    				  /* fprintf(stderr, "skipping to next @end entry\n"); */
+				  yyclearin; yyerrok; }
 		;
 
 lang_block: bases_block
-	    | bases_block forms
-	    | forms
+	| 	bases_block forms
+	| 	forms
+		;
 
 bases_block: allows
-	     |	 allows bases_fields
-	     |	 bases_fields
-	;
+	|	allows bases_fields
+	|	bases_fields
+		;
 
 bases_fields: 	phon
 	|	phon root
@@ -275,11 +277,11 @@ bases_fields: 	phon
 	|	stems
 	|	stems bases
 	|	bases
-	;
+		;
 
-allows:	     allow
-	     | allows allow
-	;
+allows:	     	allow
+	| 	allows allow
+		;
 
 allow: 	     ALLOW WORDSPEC '=' WORDSPEC { cbd_bld_allow(@1,curr_entry,(ucp)$2,(ucp)$4); } 
 
@@ -291,17 +293,27 @@ baselist:    	base
 	| 	baselist base
 		;
 
-base: 	     	base_pri
-	| 	base_pri base_alt
+base: 	     	base_pris
+	| 	base_pris BASE_ALO base_alts
+	| 	base_pris BASE_ALO base_alts BASE_ALC
 		;
 
-base_pri:	BASE_END	  { cbd_bld_bases_pri(@1, curr_entry, NULL, "\n"); }
-	|	BASE_PRI          { cbd_bld_bases_pri(@1, curr_entry, NULL, (ucp)$1); }
-	|	LANGSPEC BASE_PRI { cbd_bld_bases_pri(@1, curr_entry, (ucp)$1, (ucp)$2); }
-		;
+base_pris:	base_pri
+	|	base_pris BASE_PRC base_pri
+	;
 
-base_alt: 	BASE_ALT          { cbd_bld_bases_alt(@1, curr_entry, (ucp)$1); }
-	     |	base_alt BASE_ALT { cbd_bld_bases_alt(@1, curr_entry, (ucp)$2); }
+base_alts:	base_alt
+	|	base_alts BASE_ALM base_alt
+	;
+
+base_pri:	BASE_PRI
+	|	LANGSPEC BASE_ALT
+	|	BASE_END
+	;
+
+base_alt:	BASE_ALT
+	|	BASE_END
+	;
 
 phon:		PHON TEXTSPEC { curr_entry->phon = cbd_bld_tag(@1, curr_entry, "phon", (ucp)$2); }
 
