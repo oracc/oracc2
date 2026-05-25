@@ -6,13 +6,16 @@
 
 #undef CHXDEBUG
 
+const char *file;
 const char *gvl_script_type = "gudea";
 
 int
 main(int argc, char **argv)
 {
   unsigned char *lp;
+#ifdef CHXDEBUG
   int l = 0;
+#endif
   setlocale(LC_ALL, ORACC_LOCALE);
   gvl_set_script(gvl_script_type);
   while ((lp = loadoneline(stdin, NULL)))
@@ -58,7 +61,7 @@ main(int argc, char **argv)
 			  strcpy(w1,(ccp)utf8ify(w[i+1]));
 			  strcpy(key,w0);
 			  strcpy(key+4,w1);
-			  char *ident = hash_find(gvl_curr_ivs,(uccp)key);
+			  unsigned char *ident = hash_find(gvl_curr_ivs,(uccp)key);
 			  if (ident)
 			    {
 			      if (*ident < 128)

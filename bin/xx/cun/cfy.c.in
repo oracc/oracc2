@@ -9,6 +9,8 @@
 
 #include "oracclocale.h"
 
+const char *file;
+
 #include "cfy.h"
 
 static char *crashbuf;
