@@ -321,8 +321,10 @@ o_jox_forms(void *e)
     o_jox_field(e, EFLD_NORM, hshary[EFLD_NORM], "norm");
   if (hshary[EFLD_BASE])
     o_jox_field(e, EFLD_BASE, hshary[EFLD_BASE], "base");
+#if 0
   if (hshary[EFLD_STEM])
     o_jox_field(e, EFLD_STEM, hshary[EFLD_STEM], "stem");
+#endif
   if (hshary[EFLD_CONT])
     o_jox_field(e, EFLD_CONT, hshary[EFLD_CONT], "cont");
   if (hshary[EFLD_MRF1])

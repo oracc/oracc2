@@ -195,7 +195,7 @@ io_run(void)
 
       /*rnvtgi_term();*/
 
-      if (parse_return || parser_status)
+      if (parse_return || parser_status || mesg_status())
 	{
 	  mesg_print(stderr);
 	  if (!keepgoing)
