@@ -113,8 +113,16 @@ cbd_bld_bases_alt(YYLTYPE l, struct entry *e, unsigned char *a)
 {
   if (a && strlen((ccp)a))
     {
-      if (curr_base_list)
-	list_add(curr_base_list, cbd_bld_loctok(&l,e,a));
+      if ('\n' == *a)
+	{
+	  if (!list_len(e->bases))
+	    mesg_verr(&l, "empty alernatives list in @bases");
+	}
+      else
+	{
+	  if (curr_base_list)
+	    list_add(curr_base_list, cbd_bld_loctok(&l,e,a));
+	}
     }
   else
     {
@@ -442,12 +450,17 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   cfp->f.cf = e->cgp->cf;
   cfp->f.gw = e->cgp->gw;
   cfp->f.pos = e->cgp->pos;
+  if (!cfp->f.norm && strncmp((ccp)cfp->f.lang, "sux", 3))
+    normify_form(&cfp->f, csetp->pool);
+  else if (!cfp->f.stem)
+    cfp->f.stem = (uccp)"B";
   char *uscore;
   while ((uscore = strchr((ccp)cfp->f.form, '_')))
     *uscore++ = '\0';
   cfp->t = gt_token(&cfp->l, (ucp)cfp->f.form, 0, NULL);
   if (cfp->f.base)
-    cfp->b = gt_token(&cfp->l, (ucp)cfp->f.base, 0, NULL);
+    if (!(cfp->b = gt_token(&cfp->l, (ucp)cfp->f.base, 0, NULL)))
+      mesg_verr(&cfp->l, "base %s generated bad sig %s\n", cfp->f.base, gdl_last_bad_sig);
   if (cfp->f.norm && ('(' == *cfp->f.norm || strstr((ccp)cfp->f.norm, "$(")))
     cbd_cof_register(cfp);
 }
