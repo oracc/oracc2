@@ -14,9 +14,10 @@ normify_init(Pool *p)
   for (i = 0; i < r->nlines; ++i)
     {
       hash_add(stems, r->rows[i][1], r->rows[i][3]);
-      unsigned char *cgpb = pool_alloc(strlen(r->rows[i][0])+strlen(r->rows[i][1])+2);
-      sprintf(cgbp, "%s%c%s", r->rows[i][0], 0x01, r->rows[i][1]);
-      hash_add(stems, cgbp, rows[i]);
+      unsigned char *cgpb = pool_alloc(strlen((ccp)r->rows[i][0])
+				       +strlen((ccp)r->rows[i][1])+2, p);
+      sprintf((char*)cgpb, "%s%c%s", r->rows[i][0], 0x01, r->rows[i][1]);
+      hash_add(stems, cgpb, r->rows[i]);
     }
 }
 
@@ -28,7 +29,7 @@ normify_term(void)
 }
 
 char *
-normify(const char *cgpb, const char *c, const char *b, const char *m, const char **stem)
+normify(const char *cgpb, const char *c, const char *b, const char *m, char **stem)
 {
   const char *s = c;
   if (/*'V' == *e && */strchr(b, '-'))
@@ -38,7 +39,7 @@ normify(const char *cgpb, const char *c, const char *b, const char *m, const cha
 	{
 	  s = r[3];
 	  if (stem)
-	    *stem = r[2];
+	    *stem = (char*)r[2];
 	}
     }
   char ret[1024];
@@ -65,11 +66,16 @@ void
 normify_form(Form *f, Pool *p)
 {
   char *stem = NULL;
-  char cgpb[strlen(f->cf)+strlen(f->gw)+strlen(f->pos)+strlen(f->base)+strlen("[]0")];
-  sprintf(cgbp, "%s[%s]%s%c%s", f->cf, f->gw, f->pos, 0x01, f->base);
-  char *n = normify(cgbp, (ccp)f->cf, (ccp)f->base, (ccp)f->morph, &stem);
+  char cgpb[strlen((ccp)f->cf)+strlen((ccp)f->gw)+strlen((ccp)f->pos)+strlen((ccp)f->base)+strlen("[]0")];
+  sprintf(cgpb, "%s[%s]%s%c%s", f->cf, f->gw, f->pos, 0x01, f->base);
+  char *n = normify(cgpb, (ccp)f->cf, (ccp)f->base, (ccp)f->morph, &stem);
   f->norm = pool_copy((uccp)n, p);
-  if (stem)
-    f->stem = stem;
+  if (!f->stem || '\0' == *f->stem)
+    {
+      if (stem)
+	f->stem = (uccp)stem;
+      else
+	f->stem = (uccp)"B";
+    }
   free(n);
 }
