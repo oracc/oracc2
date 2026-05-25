@@ -46,13 +46,13 @@ gdlsig_addoid(Node *np, List *lp)
       if (!strcmp(np->name, "g:c")
 	  && (gdlsig_depth_mode > 0
 	      || (gdlsig_depth_mode < 0 && !gp->oid)))
-	{
-	  gdlsig_descend(np, lp);
-	}
+	gdlsig_descend(np, lp);
       else if (gdlsig_depth_mode && gp->deep)
 	gdlsig_descend(gp->deep, lp);
       else if (gp->oid)
 	list_add(lp, (char*)gp->oid);
+      else if (!strcmp((ccp)gp->orig, "..."))
+	list_add(lp, (char*)"o0000601");
       else
 	list_add(lp, "q99");
     }
@@ -85,11 +85,18 @@ gdlsig_oidnode(Node *np)
 	case 'q':
 	  return np->kids ? np->kids->next : NULL;
 	  break;
+	case 'x':
+	  if (!strcmp(np->text, "..."))
+	    return np;
+	  else
+	    return NULL;
+	  break;
 	default:
 	  return NULL;
 	}
     }
   else
+    
     return NULL;
 }
 

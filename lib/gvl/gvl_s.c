@@ -153,12 +153,18 @@ gvl_s(Node *ynp)
       else
 	{
 	  unsigned char *u = gdl_unlegacy_str(ynp->mloc, gp->orig);
-	  if (strcmp((ccp)u,(ccp)gp->orig) && ((l = gvl_lookup(u))))
+	  if (strcmp((ccp)u,(ccp)gp->orig))
 	    {
-	      gp->oid = (ccp)l;
-	      gp->sign = gvl_lookup(sll_tmp_key(l,""));
-	      gp->c10e = u;
+	      gp->c10e = pool_copy(u, gdlpool);
+#if 0
+	      /* This currently assumes .atf but gvl* is used for other things as well */
 	      (void)gdl_legacy_check(ynp,u);
+#endif
+	      if ((l = gvl_lookup(u)))
+		{
+		  gp->oid = (ccp)l;
+		  gp->sign = gvl_lookup(sll_tmp_key(l,""));
+		}
 	    }
 	  else
 	    {

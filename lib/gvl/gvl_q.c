@@ -32,12 +32,14 @@ gvl_q(Node *ynp)
     }
 
   /* This builds a c10e version of vq */
-  if (!(vo = (uccp)ynp->kids->text))
-    if (ynp->kids->user)
-      {
-	if (!(vo = ((gvl_g*)(ynp->kids->user))->c10e))
+  if (ynp->kids->user)
+    vo = ((gvl_g*)(ynp->kids->user))->c10e;
+  if (!vo)
+    {
+      if (!(vo = (uccp)ynp->kids->text))
+	if (ynp->kids->user)
 	  vo = ((gvl_g*)(ynp->kids->user))->orig;
-      }
+    }
   if (!(qo = (uccp)ynp->kids->next->text))
     if (ynp->kids->next->user)
       {
@@ -342,6 +344,16 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	sprintf((char*)tmp2, "%s(%s)", "diš", qp->sign);
       else
 	sprintf((char*)tmp2, "%s(%s)", vp->orig, qp->sign);
+
+      if (!gvl_lookup(sll_tmp_key(tmp2, "qv"))
+	  && vp->c10e && strcmp((ccp)vp->orig, (ccp)vp->c10e))
+	{
+	  char xtmp[strlen((ccp)tmp2+1)];
+	  strcpy(xtmp, (char*)tmp2);
+	  sprintf((char*)tmp2, "%s(%s)", vp->c10e, qp->sign);
+	  if (!gvl_lookup(sll_tmp_key(tmp2, "qv")))
+	    strcpy((char*)tmp2, xtmp);
+	}
       
       /* tmp2 is now a vq with valid v and q components */
       if (gvl_lookup(sll_tmp_key(tmp2,"qv")))
