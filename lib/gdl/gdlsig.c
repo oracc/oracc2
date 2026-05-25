@@ -145,7 +145,8 @@ gdlsig_sep(const char *sep)
     case ':':
     case '+':
       return ".";
-      break;
+    case ' ':
+      return "_";
     default:
       if ((unsigned char)(*sep) > 127)
 	return "*";
@@ -165,8 +166,11 @@ gdlsig(Tree *tp)
       for (np = tp->root->kids; np; np = np->next)
 	{
 	  gdlsig_one_node(np, lp);
+#if 0
+	  /* This is taken care of in gdlsig_sep because of the g:delim */
 	  if (np->next && !strcmp(np->name, "g:w"))
 	    list_add(lp, "_");
+#endif
 	}
       sig = (const char *)list_concat(lp);
       list_free(lp, NULL);

@@ -7,6 +7,7 @@
  */
 
 static Gt_cfg gtcfg;
+const char *gdl_last_bad_sig = NULL;
 
 void
 gt_config(Hash *h, Memo *m)
@@ -29,7 +30,7 @@ static int
 gt_bad_gsig(Mloc *locp, unsigned char *t, const char *s)
 {
   int bad = 0;
-  if (strstr(s, ".."))
+  if (strstr(s, "..") || strchr(s,' '))
     bad = 1;
   else
     {
@@ -50,13 +51,15 @@ gt_bad_gsig(Mloc *locp, unsigned char *t, const char *s)
 	}
     }
   if (bad)
-    mesg_verr(locp, "gt: token %s has bad sig %s\n", t, s);
+    gdl_last_bad_sig = s;
+  else
+    gdl_last_bad_sig = NULL;
 
   return bad;
 }
 
 /* SL comment:
-  *
+ *
  * All of the list entries in @listdef are processed here as literals;
  * this means that when outputting <sl:name> we need to use
  * tokp->gdl->text if tokp->gdl->kids is NULL.

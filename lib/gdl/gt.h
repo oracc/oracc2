@@ -29,6 +29,8 @@ typedef struct gdl_token
   int priority;			/* in SL, used for registering nums */
 } Gt;
 
+extern const char *gdl_last_bad_sig;
+
 extern int gt_toks_gcmp(const void *a, const void *b);
 extern int gt_toks_ccmp(const void *a, const void *b);
 extern void gt_config(Hash *h, Memo *m);
