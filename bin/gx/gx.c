@@ -203,6 +203,8 @@ io_run(void)
 	      fprintf(stderr, "gx: exiting after syntax errors\n");
 	      exit(1);
 	    }
+	  else
+	    mesg_init();
 	}
 
       cbd_psus();
@@ -213,6 +215,7 @@ io_run(void)
       Kis *k = NULL;
       if (keys)
 	k = kis_load(kis_file);
+
       cbd_kis(curr_cbd, k);
 
       break;

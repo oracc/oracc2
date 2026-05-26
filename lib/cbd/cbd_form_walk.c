@@ -14,7 +14,7 @@
 
 /*Permute at the entry level yielding a list of every combination of
   Cform that this entry can possibly be attested with (many of these
-  will be unattested in the corpus */
+  will be unattested in the corpus) */
 static List *
 psu_permute_e(List *heads, Cgp *cp, int ffi, int nbytes)
 {
@@ -186,11 +186,11 @@ cbd_fw_psu_parts(Entry *ep, Parts *p, cbdfwfunc h)
 	  list_add(heads, ff);
 	}
     }
-
+  e_heads = s_heads = heads;
   for (++i, cp = list_next(p->cgps); cp; cp = list_next(p->cgps), ++i)
     {
-      e_heads = psu_permute_e(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
-      s_heads = psu_permute_s(heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
+      e_heads = psu_permute_e(e_heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
+      s_heads = psu_permute_s(s_heads, cp, i, (1+list_len(p->cgps)) * sizeof(Cform));
     }
 
   Cform *ff;

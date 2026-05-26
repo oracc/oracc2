@@ -2,6 +2,8 @@
 #include <roco.h>
 #include "cbd.h"
 
+static int kis_verbose = 1;
+
 /* cbd_kis.c: add Kis references to a Cbd by generating keys and
  * looking them up in the Kis.
  *
@@ -261,6 +263,8 @@ cbd_kis_key_h(const char *k, int context, int field, void *v)
 void
 cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
 {
+  if (kis_verbose)
+    fprintf(stderr, "cbd_kis: %s\n", f->e->cgp->tight);
   switch (t)
     {
     case CBD_FW_E:

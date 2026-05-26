@@ -68,12 +68,15 @@ sanitize_cgp(const char *cfg)
 void
 cbd_psus(void)
 {
+  static int psu_verbose = 1;
   Parts *p;
   for (p = list_first(csetp->parts); p; p = list_next(csetp->parts))
     {
       Cbd *pcbd = p->owner->owner;
       Cgp *cp;
       Hash *seen = hash_create(0);
+      if (psu_verbose)
+	fprintf(stderr, "cbd_psus: %s\n", p->owner->cgp->tight);
       for (cp = list_first(p->cgps); cp; cp = list_next(p->cgps))
 	{
 	  char *c = (char*)cp->tight, *m = NULL;
