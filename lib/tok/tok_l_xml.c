@@ -3,6 +3,7 @@
 #include <tok.h>
 
 const char *curr_ref;
+List *lwords = NULL;
 
 void
 tok_l_sH(void *userData, const char *name, const char **atts)
@@ -49,6 +50,20 @@ tok_l_sH(void *userData, const char *name, const char **atts)
 	  else if (!strcmp(type, "line-start"))
 	    fprintf(r->o, "L\t%s\n", findAttr(atts, "ref"));
 	}
+      else if (!strcmp(name, "link"))
+	{
+	  if (r->rs.in_psu)
+	    list_add(lwords, strdup(findAttr(atts, "wordref")));
+	}
+      else if (!strcmp(name, "linkset"))
+	{
+	  if (!strcmp(findAttr(atts, "xl:role"), "psu"))
+	    {
+	      r->rs.in_psu = 1;
+	      lwords = list_create(LIST_SINGLE);
+	      fprintf(r->o, "u\t%s\t", findAttr(atts, "psu"));
+	    }
+	}
     }
 }
 
@@ -65,5 +80,15 @@ tok_l_eH(void *userData, const char *name)
 	}
       else if (!strcmp(name, "xcl"))
 	r->rs.in_xcl = 0;
+      else if (!strcmp(name, "linkset") && r->rs.in_psu)
+	{
+	  ucp wds = list_join(lwords, "+");
+	  fputs((ccp)wds, r->o);
+	  fputc('\n', r->o);
+	  free(wds);
+	  list_free(lwords, free);
+	  lwords = NULL;
+	  r->rs.in_psu = 0;
+	}
     }
 }
