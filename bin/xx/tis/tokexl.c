@@ -103,9 +103,11 @@ toks_from_file(const char *fn, FILE *fp)
   size_t line = 0;
   while ((b = (char*)loadoneline(fp, NULL)))
     {
+      unsigned char *s;
+      char*w;
       ++line;
       
-      if ((b[0] != 'K' && b[0] != 'l') || b[1] != '\t')
+      if ((b[0] != 'K' && b[0] != 'l' && b[0] != 'u') || b[1] != '\t')
 	continue;
       
       if (b[strlen((ccp)b)-1] == '\n')
@@ -117,22 +119,34 @@ toks_from_file(const char *fn, FILE *fp)
 	    strcpy(period, (ccp)b+9);
 	  continue;
 	}
-      
-      unsigned char *s;
-      char*w;
-      w = (char*)b+2;
-      s = (ucp)strchr(w, '\t');  /* signature */
-      if (s)
+      else if ('l' == b[0])
 	{
-	  *s++ = '\0';
-	  char *tab = strchr((ccp)s, '\t');
-	  if (tab)
-	    *tab = '\0';
-	}
+	  w = (char*)b+2;
+	  s = (ucp)strchr(w, '\t');  /* signature */
+	  if (s)
+	    {
+	      *s++ = '\0';
+	      char *tab = strchr((ccp)s, '\t');
+	      if (tab)
+		*tab = '\0';
+	    }
 
-      /* ignore l entries for bad lemmatizations */
-      if (s[0] != '@')
-	continue;
+	  /* ignore l entries for bad lemmatizations */
+	  if (s[0] != '@')
+	    continue;
+	}
+      else
+	{
+	  s = (char*)b+2;
+	  w = (ucp)strchr(s, '\t');
+	  if (w)
+	    {
+	      *w++ = '\0';
+	      char *tab = strchr((ccp)w, '\t');
+	      if (tab)
+		*tab = '\0';
+	    }
+	}
       
       /* For l-tokens the word location is the project set on the command line */
       strcpy(qid, project);
@@ -148,7 +162,7 @@ toks_from_file(const char *fn, FILE *fp)
       cbd_key_cgp(&f, NULL, period);
       cbd_key_fields(&f, 'e', NULL);
       cbd_key_cgpse(&f, NULL, period);
-      cbd_key_fields(&f, 's', NULL);      
+      cbd_key_fields(&f, 's', NULL);
     }
 }
 
