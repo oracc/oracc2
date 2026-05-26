@@ -30,7 +30,7 @@ const char *kis_file = "02pub/tokl.tpc";
 
 extern int cbd_flex_debug;
 
-int jsn_output = 0, xml_output = 1;
+int cbd_with_all = 0, jsn_output = 0, xml_output = 1;
 
 const char *log_file;
 FILE *log_fp;
@@ -320,12 +320,12 @@ set_entry_lines(void)
   unsigned char *mem;
   size_t n;
   int i;
-  unsigned char **ll = loadfile_lines3(entry_lines_fn, &n, &mem);
+  unsigned char **ll = loadfile_lines3((uccp)entry_lines_fn, &n, &mem);
   Hash *e = hash_create(4196);
   for (i = 0; i < n; ++i)
     {
       unsigned char *num = ll[i];
-      unsigned char *cgp = strchr(ll[i], ':');
+      unsigned char *cgp = (ucp)strchr((ccp)ll[i], ':');
       *cgp++ = '\0';
       while (!isspace(*cgp))
 	++cgp;
@@ -511,6 +511,9 @@ int opts(int och, const char *oarg)
       break;
     case 'v':
       verbose = 1;
+      break;
+    case 'w':
+      cbd_with_all = 1;
       break;
     case 'X':
       jsn_output = 0;
