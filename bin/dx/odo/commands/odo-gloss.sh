@@ -19,7 +19,6 @@ taskorlang=0
 
 if [ "$1" = "" ]; then
     subcommand=all
-    shift 2
 else
     for a in xml htm web all ; do
 	if [ "$1" = "$a" ]; then
@@ -30,9 +29,8 @@ else
     if [ "$subcommand" = "" ]; then
 	subcommand="all"
 	taskorlang=1
-	shift 2
     else
-	shift 3
+	shift 1
     fi
 fi
 

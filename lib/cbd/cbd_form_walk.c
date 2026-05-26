@@ -12,9 +12,17 @@
  *  Void * -- the Cbd data structure from which the first arg was constructed
  */
 
-/*Permute at the entry level yielding a list of every combination of
-  Cform that this entry can possibly be attested with (many of these
-  will be unattested in the corpus) */
+#if 0
+/*2026-05-26 This scales badly for longer phrases generating 10s or
+ * 100s of thousands of permutations. So the kis have been refactored
+ * to pre-build compound form fields for PSUs so they should be able
+ * to be processed the same as any other form
+ */
+
+/*Permute at the entry level
+yielding a list of every combination of Cform that this entry can
+possibly be attested with (many of these will be unattested in the
+corpus) */
 static List *
 psu_permute_e(List *heads, Cgp *cp, int ffi, int nbytes)
 {
@@ -275,6 +283,7 @@ cbd_fw_psu(Entry *ep, cbdfwfunc h)
 
   h(&f, CBD_FW_EE, ep);
 }
+#endif
 
 static void
 cbd_fw_fields(List *forms, Cform *f, int context, void *vp, cbdfwfunc h)
@@ -358,8 +367,10 @@ cbd_form_walk(Cbd *c, cbdfwfunc h)
 {
   Entry *ep;
   for (ep = list_first(c->entries); ep; ep = list_next(c->entries))
+#if 0
     if (ep->parts)
       cbd_fw_psu(ep, h);
     else
+#endif
       cbd_fw_entry(ep, h);
 }
