@@ -24,6 +24,7 @@ struct linkset
   int used;
   int alloced;
   struct form form;
+  const char *psu; /* This is a psu-linkset-signature which is different from form->sig */
   struct linkset *next;
   void *user;
   user_dump_func *user_dump_function;
@@ -50,7 +51,7 @@ extern struct linkset *new_linkset(struct linkbase *lbp,const char *role,
 extern struct link *new_link(struct linkset *lsp, const char *role, 
 			     const char *title);
 extern void preallocate_links(struct linkset*lsp,int nlinks);
-extern void links_jox(struct linkbase *lbp);
+extern void links_jox(struct linkbase *lbp, Pool *p);
 extern struct xcl_chunk_spec *links_chunks(struct linkbase *lbp, 
 					   int with_chunkified);
 extern struct xcl_chunk_spec *links_chunks_part(struct linkbase *lbp,

@@ -156,4 +156,7 @@ extern void normify_term(void);
 extern char *normify(const char *cgpb, const char *c, const char *b, const char *m, char **stem);
 extern void normify_form(Form *f, Pool *p);
 
+extern void phrase_fields(Form *pf, Form **ff, Pool *p);
+extern unsigned char *phrase_sig(Pool *p, Form *fp);
+
 #endif/*FORM_H_*/

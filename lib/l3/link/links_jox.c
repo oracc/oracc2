@@ -19,7 +19,7 @@ static const char *xcl_ns = "http://oracc.org/ns/xcl/1.0";
 static const char *xff_ns = "http://oracc.org/ns/xff/1.0";
 #endif
 
-extern int links_standalone;
+extern int links_standalone, links_wordrefs;
 
 static const char *
 hashify(const char *ref)
@@ -39,6 +39,7 @@ linkset_jox(struct linkset *lsp)
     "xl:type", "extended",
     "xl:role", lsp->role,
     lsp->form.sig ? "sig" : NULL, (ccp)lsp->form.sig,
+    lsp->psu ? "psu" : NULL, (ccp)lsp->psu,
     NULL,
   };
   joxer_ea(NULL, "linkset", rnvval_aa_ccpp(r));
@@ -49,7 +50,7 @@ linkset_jox(struct linkset *lsp)
       joxer_attr(ap, "xl:type", "locator");
       joxer_attr(ap, "xl:href", hashify(lsp->links[i].lref));
       joxer_attr(ap, "xl:role", lsp->links[i].role);
-      if (links_standalone)
+      if (links_wordrefs)
 	joxer_attr(ap, "wordref", lsp->links[i].lp->ref);
       Ratts *ratts = ratts_list2ratts(ap);
       joxer_ea(NULL, "link", ratts);
@@ -65,14 +66,21 @@ linkset_jox(struct linkset *lsp)
 }
 
 void
-links_jox(struct linkbase *lbp)
+links_jox(struct linkbase *lbp, Pool *p)
 {
   struct linkset *lsp;
   if (lbp && lbp->first)
     {
       joxer_ea(NULL, "linkbase",NULL);
       for (lsp = lbp->first; lsp; lsp = lsp->next)
-	linkset_jox(lsp);
+	{
+	  if (lsp->form.parts)
+	    {
+	      phrase_fields(&lsp->form, lsp->form.parts, p);
+	      lsp->psu = (ccp)phrase_sig(p, &lsp->form);
+	    }
+	  linkset_jox(lsp);
+	}
       joxer_ee(NULL, "linkbase");
     }
 }

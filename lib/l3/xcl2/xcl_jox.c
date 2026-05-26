@@ -493,7 +493,7 @@ xcl_jox(void *ignored, struct xcl_context *xc)
     xcl_debug_tree(f_log, xc->root);
   xj_serialize_one_node(xc->root);
   if (xc->linkbase)
-    links_jox(xc->linkbase);
+    links_jox(xc->linkbase, xc->pool);
 
   /*joxer_ee(NULL, "xcl");*/
 }
@@ -502,5 +502,5 @@ void
 xcl_jox_links_only(struct xcl_context *xc)
 {
   if (xc->linkbase)
-    links_jox(xc->linkbase);
+    links_jox(xc->linkbase, xc->pool);
 }

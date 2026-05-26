@@ -256,6 +256,12 @@ form_sig(Pool *p, Form *fp)
   return ret;
 }
 
+unsigned char *
+phrase_sig(Pool *p, Form *fp)
+{
+  return sig_one(p, NULL, fp, 0);
+}
+
 #if 0
 static void
 append_sig_sans_form(unsigned char *buf,unsigned char *sig)

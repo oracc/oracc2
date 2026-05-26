@@ -20,7 +20,7 @@ int val_flag = 0;
 Mloc xo_loc;
 FILE *f_xml, *ok_no_ok_fp, *ok_no_no_fp;
 const char *file;
-int links_standalone;
+int links_standalone = 0, links_wordrefs = 1;
 int ok_no_files = 0;
 int status;
 int rnvtrace;

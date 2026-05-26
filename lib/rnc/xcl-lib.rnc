@@ -12,6 +12,7 @@ xcl=
       element xcl:linkbase {
         element xcl:linkset {
           attribute sig { text },
+          attribute psu { text }?,
           attribute xl:role { xsd:NCName },
           attribute xl:title { text },
           attribute xl:type { xsd:NCName },
@@ -20,7 +21,8 @@ xcl=
             attribute xl:href { text },
             attribute xl:role { xsd:NCName },
             attribute xl:title { xsd:NCName },
-            attribute xl:type { xsd:NCName }
+            attribute xl:type { xsd:NCName },
+            attribute wordref { xsd:NCName }?
           }+
         }+
       }?
