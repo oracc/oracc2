@@ -14,6 +14,8 @@ static List *curr_base_list = NULL;
 struct parts *curr_parts;
 List *cmt_queue = NULL;
 
+int cbd_dotforms = 0;
+
 Cbds *csetp, cbdset;
 
 static void cbd_bld_set(void);
@@ -752,11 +754,34 @@ cbd_bld_tag(YYLTYPE l, struct entry *e, const char *name, unsigned char *val)
   return tp;
 }
 
+static void
+cbd_add_dotforms(Entry *ep)
+{
+  List *lp = cbd_df_get(ep->cgp->loose);
+  if (lp)
+    {
+      Cform *cfp;
+      for (cfp = list_first(lp); cfp; cfp = list_next(lp))
+	{
+	  cfp->e = ep;
+	  cfp->l = ep->l;
+	  cbd_bld_form_setup(ep, cfp);
+	}
+    }
+}
+
 void
 cbd_end_entry(YYLTYPE l)
 {
+  /* load @forms from .forms file */
+  if (cbd_dotforms)
+    cbd_add_dotforms(curr_entry);
+
+  /* create basic @form for any base that does not occur as a @form
+     with absolute morph (i.e., #~) */
   if (curr_entry->bases)
     cbd_no_form_bases(curr_entry);
+  
   curr_entry->end_entry = cbd_bld_locator(l);
   if (!strncmp(curr_entry->lang, "sux", 3))
     {

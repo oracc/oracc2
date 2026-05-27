@@ -18,6 +18,7 @@
 
 int bootstrap_mode, lem_autolem, lem_dynalem;
 static int major_version = 1, minor_version = 0;
+static const char *dotforms_file = NULL;
 static const char *project = NULL;
 static const char *prog = "gx";
 static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i <FILE|-> -o <FILE|->";
@@ -344,7 +345,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:E:e:i:o:chjJKk::l::m:P:p:rsStTwxXv");
+  options(argc,argv,"A:I:O:E:e:f:i:o:chjJKk::l::m:P:p:rsStTwxXv");
 
   if (entry_lines_fn)
     set_entry_lines();
@@ -389,6 +390,12 @@ main(int argc, char **argv)
   if (!input_method)
     input_method = iomethod("cbd", 3);
 
+  if (dotforms_file)
+    if (gxdf_load(dotforms_file))
+      exit(1);
+    else
+      cbd_dotforms = 1;
+  
   io_run();
 
   if (1)
@@ -453,6 +460,7 @@ int opts(int och, const char *oarg)
       efile = errmsg_fn = optarg;
       break;
     case 'f':
+      dotforms_file = optarg;
       break;
     case 'g':
       break;

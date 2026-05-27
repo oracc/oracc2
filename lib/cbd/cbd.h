@@ -363,7 +363,7 @@ extern void cbd_key_cgp(Cform *f, Entry *e, const char *period);
 extern void cbd_key_cgpse(Cform *f, Sense *s, const char *period);
 extern void cbd_key_fields(Cform *f, int context, void *v);
 
-extern int base_comma;
+extern int base_comma, cbd_dotforms;
 extern Sense *curr_sense;
 extern const char *errmsg_fn;
 extern FILE *cbd_log_fp;
@@ -453,5 +453,10 @@ extern void cbd_oid_s(Sense *s);
 extern void cbd_wrapup(void);
 extern void cbd_set_prefs(Hash *h);
 extern void cbd_set_entry_lines(Hash *h);
+
+void cbd_df_free(void);
+int cbd_df_load(const char *fn);
+List *cbd_df_get(unsigned const char *cgp);
+List *cbd_df_unused(void);
 
 #endif/*CBD_H_*/
