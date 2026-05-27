@@ -3,6 +3,7 @@
 #include "../../px/pxdefs.h"
 #include "qx.h"
 
+const char *file;
 /* search engine interface for when it's called from wx */
 extern enum result_granularity res_gran;
 struct qxdata qd;
