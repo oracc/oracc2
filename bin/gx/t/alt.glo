@@ -1,0 +1,20 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry en tar [ask] V/t
+@parts en[cvne]N tar[cut]V/t
+@bases en₃ tar (en₃ tar)
+@sense V/t to ask
+@end entry
+
+@entry en [cvne] N
+@bases en₃
+@sense N (compound verb nominal element)
+@end entry
+
+@entry tar [cut] V/t
+@bases tar
+@sense V/t to cut
+@end entry
+

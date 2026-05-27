@@ -1,0 +1,25 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry a [water] N
+@bases a 
+@form a /a #~
+@sense N water
+@end entry
+
+@entry* a im šeŋ [rainwater] N
+@parts a[water]N im[rain]N šeŋ[rain]V/i
+@sense N rainwater
+@end entry
+
+@entry im [rain] N
+@bases im
+@sense N rain, rain storm
+@end entry
+
+@entry šeŋ [rain] V/i
+@bases šeŋ₃
+@sense V/i to rain
+@end entry
+

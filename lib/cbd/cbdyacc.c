@@ -473,7 +473,16 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   char *uscore;
   while ((uscore = strchr((ccp)cfp->f.form, '_')))
     *uscore++ = '\0';
-  cfp->t = gt_token(&cfp->l, (ucp)cfp->f.form, 0, NULL);
+  unsigned const char *bslash = (uccp)strchr((ccp)cfp->f.form, '\\');
+  unsigned char *ftok = (ucp)cfp->f.form;
+  if (bslash)
+    {
+      int len = bslash - cfp->f.form;
+      ftok = pool_alloc(len+1, csetp->pool);
+      strncpy((char*)ftok, (char*)cfp->f.form, len);
+      ftok[len] = '\0';
+    }
+  cfp->t = gt_token(&cfp->l, ftok, 0, NULL);
   if (cfp->f.base)
     if (!(cfp->b = gt_token(&cfp->l, (ucp)cfp->f.base, 0, NULL)))
       mesg_verr(&cfp->l, "base %s generated bad sig %s\n", cfp->f.base, gdl_last_bad_sig);

@@ -63,8 +63,11 @@ cbd_df_parse(unsigned char *e, unsigned char *f, const char *fn, int i)
 	  while (*f && !isspace(*f))
 	    ++f;
 	  if (*f)
-	    while (isspace(*f))
-	      ++f;
+	    {
+	      *f++ = '\0';
+	      while (isspace(*f))
+		++f;
+	    }
 	}
     }
     
@@ -134,6 +137,7 @@ cbd_df_load(const char *fn)
   return 1;
 }
 
+/* This is not right yet so it's not being used */
 void
 cbd_df_free(void)
 {

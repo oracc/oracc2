@@ -189,7 +189,13 @@ io_run(void)
     case iome_cbd:
       if (cbd_l_init(&input_io))
 	exit(1);
+
       curr_cbd = cbd_bld_cbd();
+
+      if (dotforms_file)
+	if (cbd_df_load(dotforms_file))
+	  exit(1);
+  
       curr_cbd->file = input_io.fn;
       phase = "syn";
       parse_return = cbdparse();
@@ -390,15 +396,23 @@ main(int argc, char **argv)
   if (!input_method)
     input_method = iomethod("cbd", 3);
 
-  if (dotforms_file)
-    if (cbd_df_load(dotforms_file))
-      exit(1);
-  
   io_run();
 
   if (1)
     gx_output();
-  
+
+  if (dotforms_file)
+    {
+      List *lp = cbd_df_unused();
+      if (list_len(lp))
+	{
+	  const char *cgp;
+	  for (cgp = list_first(lp); cgp; cgp = list_next(lp))
+	    fprintf(stderr, "%s: %s not found in glossary\n", dotforms_file, cgp);
+	}
+      /*cbd_df_free();*/
+    }
+      
   gx_term();
 
   return 1;

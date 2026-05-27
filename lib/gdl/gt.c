@@ -30,14 +30,14 @@ static int
 gt_bad_gsig(Mloc *locp, unsigned char *t, const char *s)
 {
   int bad = 0;
-  if (strstr(s, "..") || strchr(s,' '))
+  if (strstr(s, "..") || strchr(s, ' '))
     bad = 1;
   else
     {
       const char *o = s+1;
       while (*o)
 	{
-	  if ((o = strchr(o, 'o')))
+	  if ((o = strpbrk(o, "oq")))
 	    {
 	      if (isdigit(o[-1]))
 		{

@@ -1,0 +1,44 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry a [water] N
+@bases a 
+@form a /a #~
+@sense N water
+@end entry
+
+@entry* a šaga šu dug [beget] V/t
+@parts a[water]N šag[heart]N šu[hand]N dug[speak]V/t
+@sense V/t to beget, father
+@end entry
+
+@entry dug [speak] V/t
+@bases da; da-g·a (da-ga); de₂; du; du-g·a; du-q·a; dug; dug-ga; dug₄ (dag₅, du₁₁); du₁₀; du₁₁-du₁₁ (dug₄-dug₄); du₁₁-du₁₁{+du-du}; du₁₂; du₁₂-du₁₂; du₃; du₇; du₈; du₉-du₉; e; su-ga; ti; tu; {+da}dug₄ (da-k·a); {+du-ug}dug₄; {+du}dug₄ (du-k·a)
+@sense V/t to speak, talk, say
+@sense V/t to order
+@sense V/t to do, perform
+@sense V/t to negotiate
+@end entry
+
+@entry šag [heart] N
+@bases {+ša₂-ga}šag₄; {kuš}šag₄; {tug₂}šag₄; {urud}šag₄; {uzu}šag₄; {ŋeš}šag₄; {ŋeš}šag₄-šag₄; ša; šag₃; šag₄ (ša₃); šag₄-ga; šag₄-šag₄; šak; ša₃-ga-ni
+@sense N heart
+@sense N inner body, womb, belly, intestines
+@sense N in, inside, center, interior, middle
+@sense N weft
+@sense N content
+@equiv %akk libbu
+@end entry
+
+@entry šu [hand] N
+@bases sum₅; {kuš}šu; {tug₂}šu; {ŋeš}šu; šu; šu-be-a-am₆; šu-x; šu{+šu} (šu-šu); šu{kug-babbar}; šu{kug-sig₁₇}; šu{zabar}; šu₁₂ (šud₃); šu₂ (šuš₂)
+@sense N hand
+@sense N talon, claw
+@sense N paw
+@sense N favor
+@sense N a cloth
+@sense N strength
+@sense N bunch
+@end entry
+

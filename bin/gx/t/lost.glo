@@ -1,0 +1,16 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
++@entry hutul [wrap] V/t
+@bases hu-tu-ul
+@sense V/t to wrap up, to bandage
+@equiv hadālu
+@inote Added from MC AS 27 #182; not in Attinger AK; needs attestations
+@isslp 2007 M. Civil Early Semitic Loanwords #182
+@end entry
+
+@entry hutulum [shovel] N
+@bases hu-tu-lum
+@sense N shovel
+@end entry

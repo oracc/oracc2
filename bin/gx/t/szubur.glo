@@ -1,0 +1,10 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry ŠUBUR [~equids] AJ
+@bases ŠUBUR; ŠUBUR-ŠUBUR
+@form ŠUBUR /ŠUBUR #~
+@form ŠUBUR-ŠUBUR %sux /ŠUBUR-ŠUBUR #X
+@sense AJ (a term describing equids)
+@end entry
