@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include "pool.h"
 #include "lng.h"
 #include "charsets.h"
 #include "ngram.h"
@@ -24,17 +25,18 @@ int bootstrap_mode, lem_autolem, verbose, lem_standalone, shadow_lem,
   ignore_plus, slow_lem_utf8, lem_dynalem, links_standalone;
 extern const char *textid;
 const char *project, *lang;
-int pretty = 0, psu = 0, use_unicode = 0, lem_props_strict = 0;
+int pretty = 0, psu = 0, use_unicode = 0, lem_props_strict = 0, links_wordrefs, links_standalone;
 
 FILE *f_xml;
 int rnvtrace, status;
 Mloc *xo_loc;
+Pool *p;
 
 int
 main(int argc, char **argv)
 {
   struct sigset *sp = NULL;
-  extern int psus_sig_check, links_standalone;
+  extern int psus_sig_check;
 
   links_standalone = 1;
   psus_sig_check = 0;
@@ -42,7 +44,7 @@ main(int argc, char **argv)
   (void)sig_context_init();
   sp = sig_new_context_free_sigset();
 
-  pool_init();
+  p = pool_init();
   
   f_log = stderr;
   nl_init();
@@ -70,7 +72,7 @@ main(int argc, char **argv)
       xc->user = nlcp;
       xcl_map(xc,ngramify,NULL,NULL,NULL);
       /* x2_serialize(xc,stdout,1); */
-      links_jox(xc->linkbase);
+      links_jox(xc->linkbase, p);
       ngramify_term();
     }
 

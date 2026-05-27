@@ -9,7 +9,7 @@
 
 #include "globals.c"
 
-extern int links_standalone;
+int links_wordrefs, links_standalone;
 extern void dsa_exec(struct xcl_context *xc);
 extern void psa_exec(struct xcl_context *xc);
 
