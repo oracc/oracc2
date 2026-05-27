@@ -391,10 +391,8 @@ main(int argc, char **argv)
     input_method = iomethod("cbd", 3);
 
   if (dotforms_file)
-    if (gxdf_load(dotforms_file))
+    if (cbd_df_load(dotforms_file))
       exit(1);
-    else
-      cbd_dotforms = 1;
   
   io_run();
 

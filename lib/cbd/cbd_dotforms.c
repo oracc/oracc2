@@ -6,6 +6,7 @@
 static unsigned char *fmem = NULL;
 static Hash *hcbd_df;
 static Hash *hcbd_df_seen;
+static int df_status = 0;
 
 static Cform *
 cbd_df_parse(unsigned char *e, unsigned char *f, const char *fn, int i)
@@ -80,7 +81,10 @@ cbd_df_load_one(unsigned char *f, const char *fn, int i)
       while (preform > f && isspace(preform[-1]))
 	--preform;
       if (preform == f)
-	fprintf(stderr, "%s:%d: dot form line has no CF [GW] POS\n", fn, i);
+	{
+	  fprintf(stderr, "%s:%d: dot form line has no CF [GW] POS\n", fn, i);
+	  ++df_status;
+	}
       else
 	*preform = '\0';
       while (*pstform && !isspace(*pstform))
@@ -97,10 +101,16 @@ cbd_df_load_one(unsigned char *f, const char *fn, int i)
 	    list_add(lp, cfp);
 	}
       else
-	fprintf(stderr, "%s:%d: dot form line has no form data\n", fn, i);
+	{
+	  fprintf(stderr, "%s:%d: dot form line has no form data\n", fn, i);
+	  ++df_status;
+	}
     }
   else
-    fprintf(stderr, "%s:%d: no @form in dot forms line\n", fn, i);
+    {
+      fprintf(stderr, "%s:%d: no @form in dot forms line\n", fn, i);
+      ++df_status;
+    }
 }
 
 int
@@ -117,7 +127,9 @@ cbd_df_load(const char *fn)
       int i;
       for (i = 0; i < n; ++i)
 	cbd_df_load_one(dotforms[i], fn, i);
-      return 0;
+      if (!df_status)
+	cbd_dotforms = 1;
+      return df_status;
     }
   return 1;
 }
