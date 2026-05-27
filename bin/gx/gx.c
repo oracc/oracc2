@@ -57,7 +57,7 @@ const char *efile = NULL;
 
 /* Hash *cbds = NULL; */ /* defined in nss/cbd/cbdyacc.c */
 
-int check = 0;
+int check = 1;
 int keys = 0;
 int trace_mode = 0;
 int rnvtrace = 0;
