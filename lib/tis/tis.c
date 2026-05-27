@@ -128,6 +128,10 @@ tis_dump(FILE *fp, Tisp tp, char **kk)
       /* Retrieve the is data first */
       struct tis_n_is *tnis = hash_find(tp, (uccp)k);
 
+#if 0
+      /*20260526: still working this out--lang is currently not on tid
+	or in sig so leave it sig for a minute */
+      
       /* Lang is prepended to key as %sl:o0036652 or %akk-x-stdbab-949:--remove it in the
 	 .tis output because we are prepending it to the ID */
       if ('%' == *k)
@@ -137,7 +141,7 @@ tis_dump(FILE *fp, Tisp tp, char **kk)
 	  *colon++ = '\0';
 	  k = colon;
 	}
-      
+#endif 
       fputs(k, fp);
       fputc('\t', fp);
       const char *tk = tis_id_key(tnis->n, (const char **)tnis->is);

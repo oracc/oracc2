@@ -63,7 +63,7 @@ static void
 pr(const char *k, int ignore1, int ignore2, void*ignore3)
 {
   char nk[strlen(project)+strlen(k)];
-  sprintf(nk,"@%s%s", project, strchr(k, ':'));
+  sprintf(nk,"@%s%s", project, strchr(k, '%'));
   printf("%s\t%s\t%s\n", nk, vido_new_id(vp,(ccp)pool_copy((uccp)nk,mpool)), qid);
 }
 

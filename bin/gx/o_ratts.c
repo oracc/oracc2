@@ -147,7 +147,7 @@ ratts_form(Field *f, int c, enum o_mode mode)
   list_pair(lp, "xml:id", f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.form);
   if (c >= 0)
-    list_pair(lp, "c", itoa(c));
+    list_pair(lp, "c", pool_copy((uccp)itoa(c), csetp->pool));
   ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);
 }

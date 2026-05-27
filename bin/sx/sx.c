@@ -97,7 +97,7 @@ main(int argc, char * const*argv)
 
   gsort_init();
   
-  if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUxX:?"))
+  if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUvVxX:?"))
     exit(1);
 
   if (trace_mode == 2)
@@ -487,10 +487,10 @@ opts(int opt, const char *arg)
       xml_output = 1;
       break;
     case 'v':
-      validate = 1;
+      verbose = 1;
       break;
     case 'V':
-      validate = 0;
+      validate = 1;
       break;
     case '?':
       help();

@@ -489,7 +489,7 @@ includec(void)
 }
 #endif
 
-void
+int
 cbd_l_init(Iome_io *ip)
 {
   if (!ip->use_stdio)
@@ -498,7 +498,10 @@ cbd_l_init(Iome_io *ip)
       efile = (char*)ip->fn;
       if ((ip->fp = xfopen(efile, "r")))
 	yyrestart(ip->fp);
+      else
+	return 1;
     }
+  return 0;
 }
 void
 cbd_l_term(void)

@@ -98,6 +98,7 @@ mesg_remove_error(const char *file, int line, const char *str)
 	  if (errnum == line && strstr(err, str))
 	    {
 	      list_delete(mesg_list, lnp, NULL);
+	      mesg_status_ignore_one();
 	      return 1;
 	    }
 	  else if (errnum < line)
@@ -106,6 +107,7 @@ mesg_remove_error(const char *file, int line, const char *str)
       else if (mesg_no_loc && strstr(err, str))
 	{
 	  list_delete(mesg_list, lnp, NULL);
+	  mesg_status_ignore_one();
 	  return 1;
 	}
       else

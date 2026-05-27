@@ -178,7 +178,7 @@ io_init(void)
 static void
 io_run(void)
 {
-  extern void cbd_l_init(Iome_io  *ip);
+  extern int cbd_l_init(Iome_io  *ip);
   extern void cbd_l_term(void);
   
   int parse_return = 0;
@@ -186,7 +186,8 @@ io_run(void)
   switch (input_method->type)
     {
     case iome_cbd:
-      cbd_l_init(&input_io);
+      if (cbd_l_init(&input_io))
+	exit(1);
       curr_cbd = cbd_bld_cbd();
       curr_cbd->file = input_io.fn;
       phase = "syn";
@@ -343,7 +344,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:E:e:i:o:chjJKk::l::m:P:p:rsStTxXv");
+  options(argc,argv,"A:I:O:E:e:i:o:chjJKk::l::m:P:p:rsStTwxXv");
 
   if (entry_lines_fn)
     set_entry_lines();

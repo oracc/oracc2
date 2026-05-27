@@ -39,7 +39,10 @@ lang_init(const char *lang)
 	  perror(lang_fn);
 	  exit(1);
 	}
-      hash_add(hlang, pool_copy((ucp)lang,p), fp);
+      if (!strncmp(lang, "qpn", 3))
+	hash_add(hqpn, pool_copy((ucp)lang,p), fp);
+      else
+	hash_add(hlang, pool_copy((ucp)lang,p), fp);
       if (tokl_mode)
 	{
 	  fputs(tokl_hdr, fp);
@@ -154,14 +157,14 @@ main(int argc, char **argv)
 		      const char *lang = m->v;
 		      if (slicing)
 			{
-			  if (!(slice_fp = hash_find(hlang, (ucp)lang)))
+			  if (!(slice_fp = hash_find(hqpn, (ucp)lang)))
 			    slice_fp = lang_init(lang);
 			  fputs(orig,slice_fp);
 			  fputc('\n',slice_fp);
 			}
 		      else
 			{
-			  if (!hash_find(hlang, (ucp)lang))
+			  if (!hash_find(hqpn, (ucp)lang))
 			    (void)lang_init(lang);
 			}
 		    }

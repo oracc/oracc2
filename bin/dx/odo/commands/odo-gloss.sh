@@ -35,9 +35,12 @@ else
 fi
 
 ##
-## Set the languages
+## Set the languages; 20260526: this code serves to validate the tasks
+## and languages requested but does not currently restrict the
+## processing to, e.g., a single language because the args are ignored
+## in the odo_gloss_sub scripts.
 ##
-siglangx=`siglangx`
+siglangx=`siglangx -l | tr '\n' ' '`
 if [ "$1" = "" ]; then
     set $siglangx
 else

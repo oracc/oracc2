@@ -76,7 +76,7 @@ set_status ()
 {
     if [ "$tmpdir" != "" ]; then
 	if [ -d $tmpdir ]; then
-	    if [ "$V" = "-v" ]; then
+	    if [ "$odo_verb" = "-v" ]; then
 		echo $0 writing status $1 to $tmpdir/status
 	    fi
 	    printf "$1" >$tmpdir/status;
@@ -105,7 +105,7 @@ fi
 if [ "$1" = "-f" ]; then
     shift
     F="-f"
-    fast=$V
+    fast=$F
 fi
 
 if [ "$1" = "-v" ]; then
@@ -120,13 +120,14 @@ elif [ "$1" = "-V" ]; then
     set -x
 fi
 
+set -a
 if [ -r .gx ]; then
     gx=1
 fi
-
-set -a
 odo_verb=$verb
 odo_gx=$gx
+V=
+verb=
 . $bin/odo-func.sh
 set +a
 

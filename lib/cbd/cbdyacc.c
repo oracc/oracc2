@@ -450,7 +450,7 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   cfp->f.cf = e->cgp->cf;
   cfp->f.gw = e->cgp->gw;
   cfp->f.pos = e->cgp->pos;
-  if (!cfp->f.norm && strncmp((ccp)cfp->f.lang, "sux", 3))
+  if (!cfp->f.norm && !strncmp((ccp)cfp->f.lang, "sux", 3))
     normify_form(&cfp->f, csetp->pool);
   else if (!cfp->f.stem)
     cfp->f.stem = (uccp)"B";
