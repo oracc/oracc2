@@ -9,7 +9,7 @@
 #include "cbd.h"
 #include "cbd.tab.h"
 
-extern int bang, star;
+extern int bang, star, base_comma;
 static List *curr_base_list = NULL;
 struct parts *curr_parts;
 List *cmt_queue = NULL;
@@ -120,6 +120,17 @@ cbd_bld_bases_alt(YYLTYPE l, struct entry *e, unsigned char *a)
 	}
       else
 	{
+	  /* 20260527: new lexer leaves the closing ')' on the alt but
+	     we need to leave ')' on the token if it was followed by
+	     ',' */
+	  if (!base_comma)
+	    {
+	      int n = strlen((ccp)a);
+	      if (')' == a[n-1])
+		a[n-1] = '\0';
+	    }
+	  else
+	    base_comma = 0;
 	  if (curr_base_list)
 	    list_add(curr_base_list, cbd_bld_loctok(&l,e,a));
 	}
@@ -378,6 +389,8 @@ cbd_bld_entry_cgp(struct entry *e)
   if (!le)
     hash_add(e->owner->hletters, (c = pool_copy(c, csetp->pool)), (le = hash_create(1)));
   hash_add(le, e->cgp->tight, e);
+  cbd_oid_e(curr_entry);
+  cbd_field_id(curr_entry);
   if (hentry_lines)
     {
       const char *lnum = hash_find(hentry_lines, e->cgp->loose);
@@ -444,6 +457,7 @@ void
 cbd_bld_form_setup(struct entry *e, Cform* cfp)
 {
   cfp->f.project = e->owner->project;
+  cfp->f.id = cbd_field_id(e);
   if (!cfp->f.lang)
     cfp->f.lang = (ucp)e->lang;
   cfp->f.core = langcore_of((ccp)cfp->f.lang);
@@ -744,7 +758,6 @@ cbd_end_entry(YYLTYPE l)
   if (curr_entry->bases)
     cbd_no_form_bases(curr_entry);
   curr_entry->end_entry = cbd_bld_locator(l);
-  cbd_oid_e(curr_entry);
   if (!strncmp(curr_entry->lang, "sux", 3))
     {
       if (hprefs)

@@ -4,7 +4,7 @@
 
 static Hash *prefs;
 static Roco *prefs_roco;
-static const char *prefs_fn;
+static char *prefs_fn;
 
 static char *
 prefs_file()

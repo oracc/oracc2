@@ -3,6 +3,7 @@
 
 /* cbd_key.c: generate keys from Cform structures */
 
+#define BUF_INCR 1024
 static char *buf = NULL;
 static int buf_alloced = 0;
 
@@ -145,9 +146,9 @@ void
 cbd_key_cgp(Cform *f, Entry *e, const char *period)
 {
   int len = cbd_key_form_len(f) + 3; /* ^A^A\0 */
-  if (buf_alloced <= len)
+  while (buf_alloced <= len)
     {
-      buf_alloced = len * 2;
+      buf_alloced += BUF_INCR;
       buf = realloc(buf, buf_alloced);
     }
   sprintf(buf, "%%%s:%s[%s]%s%c%c", f->f.lang, f->f.cf, f->f.gw, f->f.pos, 1, 1);

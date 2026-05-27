@@ -130,6 +130,8 @@ mesg_append(const char *a)
 void
 mesg_add(char *e)
 {
+  if (!mesg_list)
+    mesg_init();
   list_add(mesg_list, e);
   ++mesg__status;
 }

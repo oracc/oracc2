@@ -30,8 +30,10 @@ static int after_s_pos = 0;
 static int after_s_renmrg = 0;
 extern char *efile;
 
+#if 0
 static int base_state = BASE_PRI;
 static int base_tok(void);
+#endif
 
 int bang, star;
 extern List *cmt_queue;
@@ -185,7 +187,8 @@ BALM 	","
 <s_bp>{BASE} 	   	   { ytdup(); return BASE_PRI; }
 <s_bp>{BPRI}      	   { BEGIN ss(s_bp); return BASE_PRC; }
 <s_bp>{BALO}     	   { BEGIN ss(s_ba); return BASE_ALO; }
-<s_ba>{BASE}		   { ytdup(); return BASE_ALT; }
+<s_ba>{BASE}/,		   { ytdup(); base_comma = 1; return BASE_ALT; }
+<s_ba>{BASE}		   { ytdup(); base_comma = 0; return BASE_ALT; }
 <s_ba>{BALM}		   { return BASE_ALM; }
 <s_ba>{BPRI}      	   { BEGIN ss(s_bp); return BASE_ALC; }
 <s_bp,s_ba>\n/"@"	   { BEGIN ss(0); return BASE_END; }
@@ -314,6 +317,7 @@ tg_set_flags(char *f)
   return ctp != NULL;
 }
 
+#if 0
 static int
 base_tok(void)
 {
@@ -381,7 +385,8 @@ base_tok(void)
   yylval.text = (char*)pool_copy((ucp)t,csetp->pool);
   return ret_state;
 }
-       
+#endif
+
 static char *
 unspace(char*s)
 {

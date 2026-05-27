@@ -197,6 +197,7 @@ typedef struct entry {
   struct tag *phon;
   struct tag *root;
   struct tag *disc;
+  int idcounter;
   int rank;
   int usage;
   int compound;
@@ -362,6 +363,7 @@ extern void cbd_key_cgp(Cform *f, Entry *e, const char *period);
 extern void cbd_key_cgpse(Cform *f, Sense *s, const char *period);
 extern void cbd_key_fields(Cform *f, int context, void *v);
 
+extern int base_comma;
 extern Sense *curr_sense;
 extern const char *errmsg_fn;
 extern FILE *cbd_log_fp;

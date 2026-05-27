@@ -56,6 +56,7 @@ typedef struct form
   const Uchar *file;
   int lnum;
   Unsigned32 flags;
+  const char *id;
   
   /* If this f2 is a structure within an ilem this pointer is to the enclosing ilem.
      Note that many f2s are not within ilems, so this pointer will often be null.

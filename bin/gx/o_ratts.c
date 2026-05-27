@@ -3,6 +3,8 @@
 #include <rnvxml.h>
 #include "gx.h"
 
+extern int sense_context;
+
 void
 ratts_kis(List *lp, Kis_data k)
 {
@@ -144,7 +146,7 @@ Ratts *
 ratts_form(Field *f, int c, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);
-  list_pair(lp, "xml:id", f->id);
+  list_pair(lp, (sense_context ? "ref" : "xml:id"), f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.form);
   if (c >= 0)
     list_pair(lp, "c", pool_copy((uccp)itoa(c), csetp->pool));
@@ -156,7 +158,7 @@ Ratts *
 ratts_norm(Field *f, enum o_mode mode)
 {
   List *lp = list_create(LIST_SINGLE);
-  list_pair(lp, "xml:id", f->id);
+  list_pair(lp, (sense_context ? "ref" : "xml:id"), f->id);
   list_pair(lp, "n", ((Cform*)f->data)->f.norm);
   ratts_kis(lp, f->k);
   return ratts_list2ratts(lp);

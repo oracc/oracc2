@@ -15,7 +15,7 @@ pos  = element pos  { text }
 epos = element epos { text }
 
 base  = element base { field_attr ,
-		       cbd.text
+      		       cbd.text?
 		     }
 
 field_attr =  attribute cbd:id { text },

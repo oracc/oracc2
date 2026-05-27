@@ -2,7 +2,7 @@
 #include <roco.h>
 #include "cbd.h"
 
-static int kis_verbose = 1;
+static int kis_verbose = 0;
 
 /* cbd_kis.c: add Kis references to a Cbd by generating keys and
  * looking them up in the Kis.
@@ -65,7 +65,7 @@ kis_data_ye_kis(const char *k)
 
 /** Kis data is saved in a wrapper structure, Field, which has members
  *  for ID and user data as well as the Kis being saved. Each key
- *  only has one Field data structure; the has contains all the keys
+ *  only has one Field data structure; this contains all the keys
  *  for a given type, e.g., BASE, CONT, etc., so when these are
  *  reduced to an array we have an array with type Field **
  */
@@ -73,6 +73,16 @@ kis_data_ye_kis(const char *k)
 const char *
 cbd_field_id(Entry *ep)
 {
+#if 1
+  static char id[32];
+  if (ep)
+    {
+      (void)sprintf(id, "%s.%d", ep->oid, ep->idcounter++);
+      return (ccp)pool_copy((uccp)id, csetp->pool);
+    }
+  else
+    abort(); /* 20260527 ep is required arg */
+#else
   static char id[32], *ins = NULL;
   static int n = 0;
   if (ep)
@@ -87,6 +97,7 @@ cbd_field_id(Entry *ep)
       sprintf(ins, "%d", n++);
       return (ccp)pool_copy((uccp)id, csetp->pool);
     }
+#endif
 }
 
 void
@@ -95,9 +106,13 @@ cbd_field_ids(Field **ffp)
   int i;
   for (i = 0; ffp[i]; ++i)
     {
-      ffp[i]->id = cbd_field_id(NULL);
+      /* \x01= is diagnostic for a FORM key; it should not be possible
+	 for a FORM not to have an @id because that is set in
+	 cbd_bld_form */
       if (strstr(ffp[i]->k[1], "\x01="))
-	((Cform*)ffp[i]->data)->f.user = (void*)ffp[i]->id;
+	ffp[i]->id = ((Cform*)ffp[i]->data)->f.id;
+      else
+	ffp[i]->id = cbd_field_id(((Cform*)ffp[i]->data)->e);
     }
 }
 
@@ -270,7 +285,7 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
     case CBD_FW_E:
       cbd_key_cgp(f, v, NULL);
       nmfm_e = hash_create(10);
-      cbd_field_id(v); /* do this early because we do sense wrapup before entry wrapup */
+      cbd_field_id(v);
       break;
     case CBD_FW_EF:
       cbd_key_fields(f, 'e', v);
@@ -283,7 +298,7 @@ cbd_kis_fw_h(Cform *f, Cbd_fw_type t, void *v)
       {
 	/* This is a safe place to make a sig for the sense/form combo */
 	Field *fp = memo_new(csetp->fieldsmem);
-	fp->id = cbd_field_id(NULL);
+	fp->id = cbd_field_id(((Cform*)v)->e);
 	fp->data = form_sig(csetp->pool, &f->f);
 	fp->k = kis_data((char*)fp->data);
 	hash_add(((Cform*)v)->s->hsigs, (uccp)fp->data, fp);

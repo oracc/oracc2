@@ -8,7 +8,7 @@
 #include "gx.h"
 #include "o_jox_fncs.c"
 
-static int sense_context;
+int sense_context;
 
 locator *xo_loc;
 extern void iterator(struct cbd *c, iterator_fnc fncs[]);
@@ -206,7 +206,7 @@ o_jox_nmfms(Field *f, Hash *hnmfm)
 	  List *lp = list_create(LIST_SINGLE);
 	  list_pair(lp, "n", nfp[i]->form->f.form);
 	  list_pair(lp, "cbd:id", f->id);
-	  list_pair(lp, "ref", nfp[i]->form->f.user);
+	  list_pair(lp, "ref", nfp[i]->form->f.id);
 	  if (nmfmf->k[0])
 	    ratts_kis(lp, nmfmf->k);
 	  Ratts *ratts = ratts_list2ratts(lp);
@@ -266,7 +266,7 @@ o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 		joxer_ea(xo_loc, tag,
 			 ef==EFLD_FORM ? ratts_form(f[i], (t ? t->c : -1), O_XML)
 			 : ratts_field(f[i], ((Cform*)f[i]->data)->f.base, O_XML));
-		if (t)
+		if (t && !sense_context)
 		  {
 		    joxer_et(xo_loc,"s", NULL, (ccp)t->sign);
 		    joxer_ea(xo_loc,"t", NULL);

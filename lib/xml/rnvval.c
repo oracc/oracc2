@@ -240,7 +240,7 @@ rnvval_aa_ccpp(const char **a)
 	    }
 	  else
 	    {
-	      fprintf(stderr,
+	      mesg_verr(xo_loc,
 		      "rnvval: %s has NULL value in rnvval_aa_ccpp; returning NULL\n",
 		      a[nargs]);
 	      free(atts);

@@ -19,6 +19,8 @@ static struct meta *curr_meta;
 struct sense *curr_sense;
 static struct pleiades *curr_pleiades;
 
+int base_comma;
+
 extern int parser_status;
 extern int yydebug;
 
@@ -307,12 +309,12 @@ base_alts:	base_alt
 	;
 
 base_pri:	BASE_PRI 	  { cbd_bld_bases_pri(@1, curr_entry, NULL, (ucp)$1); }
-	|	LANGSPEC BASE_PRI { cbd_bld_bases_pri(@1, curr_entry, $1, (ucp)$2); }
-	|	BASE_END          { cbd_bld_bases_pri(@1, curr_entry, NULL, "\n"); }
+	|	LANGSPEC BASE_PRI { cbd_bld_bases_pri(@1, curr_entry, (ucp)$1, (ucp)$2); }
+	|	BASE_END          { cbd_bld_bases_pri(@1, curr_entry, NULL, (ucp)"\n"); }
 	;
 
 base_alt:	BASE_ALT  { cbd_bld_bases_alt(@1, curr_entry, (ucp)$1); }
-	|	BASE_END  { cbd_bld_bases_alt(@1, curr_entry, "\n"); }
+	|	BASE_END  { cbd_bld_bases_alt(@1, curr_entry, (ucp)"\n"); }
 	;
 
 phon:		PHON TEXTSPEC { curr_entry->phon = cbd_bld_tag(@1, curr_entry, "phon", (ucp)$2); }
