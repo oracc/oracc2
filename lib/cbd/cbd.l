@@ -147,6 +147,7 @@ BALM 	","
 <s_flag>[!*]+	{ tg_set_flags(yytext) ; BEGIN ss(ctp->ss); set_after(); xreturn(yi(ctp->tok)); }
 ^@[A-Z]+	{ if (set_rws()) xreturn(DCF); } 
 <s_sol>@[a-z]+	{ BEGIN ss(0); if (set_ctp()) xreturn(yi(ctp->tok)); }
+<s_sol>@[a-z]+/[!*]+	{ if (set_ctp()) BEGIN ss(s_flag); }
 [ \t]+       	{ /* empty */ }
 \n		{ BEGIN ss(0); }
 

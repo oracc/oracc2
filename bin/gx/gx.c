@@ -18,6 +18,8 @@
 
 int bootstrap_mode, lem_autolem, lem_dynalem;
 static int major_version = 1, minor_version = 0;
+extern FILE *bases_fp;
+static const char *bases_file;
 static const char *dotforms_file = NULL;
 static const char *project = NULL;
 static const char *prog = "gx";
@@ -351,7 +353,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:E:e:f:i:o:chjJKk::l::m:P:p:rsStTwxXv");
+  options(argc,argv,"A:I:O:b:E:e:f:i:o:chjJKk::l::m:P:p:rsStTwxXv");
 
   if (entry_lines_fn)
     set_entry_lines();
@@ -375,6 +377,12 @@ main(int argc, char **argv)
       if (log_fp)
 	cbd_log(log_fp);
       else
+	exit(1);
+    }
+
+  if (bases_file)
+    {
+      if (!(bases_fp = xfopen(bases_file, "w")))
 	exit(1);
     }
   
@@ -458,6 +466,7 @@ int opts(int och, const char *oarg)
     case 'a':
       break;
     case 'b':
+      bases_file = optarg;
       break;
     case 'c':
       check = 1;

@@ -10,6 +10,8 @@ static void v_props(const char *p);
 #define f2(a,b)
 #define f3(a,b,c)
 
+FILE *bases_fp = NULL;
+
 static int bases_done = 0;
 
 static YYLTYPE loc;
@@ -136,6 +138,8 @@ v_bases(struct entry *e)
 	    {
 	      pri_sig = (ccp)pool_copy((ucp)sig, csetp->pool);
 	      hash_add(e->b_pri, pri, (ucp)pri_sig);
+	      if (bases_fp)
+		fprintf(bases_fp, "%s\t%s\t%s\n", e->cgp->tight, pri_sig, pri);
 	      hash_add(e->b_sig, (ucp)pri_sig, pri);
 	    }
 	  /*free((char *)sig);*/ /* CHECK ME! */
