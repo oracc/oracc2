@@ -1,0 +1,8 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry mul [star] N
+@bases mul-mul; mulₓ(|AN.AN|)
+@sense N star
+@end entry

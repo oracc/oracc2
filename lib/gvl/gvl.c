@@ -295,6 +295,18 @@ gvl_c_explicit_gp(Node *gp)
   gp->text = (ccp)pool_copy(gp_orig, curr_sl->p);
 }
 
+static Node *
+gvl_next_nonz(Node *np)
+{
+  while (np->next)
+    {
+      np = np->next;
+      if (np->next && !strcmp(np->next->name, "g:z"))
+	np = np->next;
+    }
+  return np;
+}
+
 void
 gvl_compound(Node *ynp)
 {
@@ -378,10 +390,8 @@ gvl_compound(Node *ynp)
 		 gp->next; but for multi-delim groups this has to be set to the
 		 next node of the last delim that is the same kind as gp->text */
 	      const char *d = gp->text;
-	      Node *last = gp->next;
+	      Node *last = gvl_next_nonz(gp);
 	      /* Don't generate implicit groups when there is a parse error */
-	      while (last && !strcmp(last->name, "g:z"))
-		last = last->next;
 	      if (last)
 		{
 		  while (1)
@@ -389,8 +399,11 @@ gvl_compound(Node *ynp)
 		      if (last->next && !strcmp(last->next->name, "g:d")
 			  && (!strcmp(last->next->text, d) || !strcmp(last->next->text, "×")))
 			{
-			  if (last->next->next)
-			    last = last->next->next; /* now last is the RHS of the next delim */
+			  Node *nxt = gvl_next_nonz(last);
+			  if (nxt)
+			    nxt = gvl_next_nonz(nxt);
+			  if (nxt)
+			    last = nxt; /* now last is the RHS of the next delim */
 			  else
 			    break; /* this can only happen if there's a parse error
 				      that has left delim with no RHS; we will already

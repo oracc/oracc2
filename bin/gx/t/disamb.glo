@@ -1,0 +1,9 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry a [water] N
+@bases a
+@form a\ak /a #~
+@sense N water
+@end entry

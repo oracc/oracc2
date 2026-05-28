@@ -1,0 +1,10 @@
+@project epsd2
+@lang sux
+@name epsd2/sux
+
+@entry a [water] N
+@bases a
+@form a /a #~
++@sense N water
+@sense N semen
+@end entry
