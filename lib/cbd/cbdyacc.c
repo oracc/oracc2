@@ -175,7 +175,9 @@ cbd_bld_cbd(void)
   c->reldefs = list_create(LIST_SINGLE);
   c->haliases = hash_create(16);
   c->hentries = hash_create(1024);
+#if 0
   c->hsenses = hash_create(1024);
+#endif
   c->l.file = (char *)file;
   c->l.line = 1;
   return c;
@@ -822,7 +824,10 @@ cbd_end_sense(void)
   char *brack = strchr(buf, ']');
   sprintf(brack, "//%s]%s'%s", curr_sense->mng, curr_sense->owner->cgp->pos, curr_sense->pos);
   curr_sense->cgspe = pool_copy((uccp)buf, csetp->pool);
+#if 0
+  /* This creates a global hash of senses; why do it? */
   hash_add(curr_sense->owner->owner->hsenses, curr_sense->cgspe, curr_entry);
+#endif
   cbd_oid_s(curr_sense);
   #if 0  
   fprintf(stderr, "cbd_end_sense: added %s to hash\n", buf);

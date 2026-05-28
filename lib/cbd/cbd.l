@@ -507,9 +507,10 @@ cbd_l_init(const char *fn)
   if (fn && '-' != *fn)
     {
       errmsg_fn = fn;
-      efile = (char*)fn;
+      file = efile = (char*)fn;
       if ((fp = xfopen(efile, "r")))
 	{
+	  cbdlineno = 0;
 	  yyrestart(fp);
 	  return fp;
         }

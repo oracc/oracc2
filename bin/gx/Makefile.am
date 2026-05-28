@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 bin_PROGRAMS=siglangx sigx sigglox glosigx gx
 
-bin_SCRIPTS=sigglo.sh
+bin_SCRIPTS=sigglo.sh gxcmp.sh
 
 gx_SOURCES=common.c gx.c o_glo.c o_jox.c o_jsn.c validate.c iterator.c o_ratts.c \
 	gx_summaries.c prefbase.c

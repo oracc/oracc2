@@ -142,20 +142,28 @@ gx_cbd_load(const char *fn)
   phase = "syn";
   parse_return = cbdparse();
   cbd_l_term(fn, fp);
-  return curr_cbd;
+  if (parse_return || parser_status || mesg_status())
+    {
+      mesg_print(stderr);
+      return NULL;
+    }
+  else
+    return curr_cbd;
 }
 
-static void
+static int
 gx_cmp(const char *fn_a, const char *fn_b)
 {
   if (fn_a && fn_b)
     {
       Cbd *cpa = gx_cbd_load(fn_a);
       Cbd *cpb = gx_cbd_load(fn_b);
-      cbd_cmp(cpa, cpb);
+      if (cpa && cpb)
+	return cbd_cmp(cpa, cpb);
     }
   else
     fprintf(stderr, "gx: must give two .glo to compare with -C option\n");
+  return 1;
 }
 
 static void
@@ -399,6 +407,15 @@ main(int argc, char **argv)
   status = 0;
   options(argc,argv,"A:I:O:b:E:e:f:G:gi:o:CchjJKk::l::m:P:p:rsStTwxXv");
 
+  gdl_flex_debug = gdldebug = cbd_flex_debug = cbddebug = trace_mode;
+  gdl_word_mode = 1;
+  gdl_no_xml_ids = 1;
+  
+  cbdset_debug(trace_mode);
+
+  mesg_init();
+  
+  gx_init();
   if (entry_lines_fn)
     set_entry_lines();
   
@@ -410,8 +427,9 @@ main(int argc, char **argv)
 
   if (cmp_mode)
     {
-      gx_cmp(argv[optind], argv[optind+1]);
-      exit(0);
+      int ret = gx_cmp(argv[optind], argv[optind+1]);
+      gx_term();
+      exit(ret);
     }
 
   if (out_dir)
@@ -439,16 +457,6 @@ main(int argc, char **argv)
   if (argv[optind] && !input_file)
     input_file = argv[optind];
   
-  gdl_flex_debug = gdldebug = cbd_flex_debug = cbddebug = trace_mode;
-  gdl_word_mode = 1;
-  gdl_no_xml_ids = 1;
-  
-  cbdset_debug(trace_mode);
-
-  mesg_init();
-  
-  gx_init();
-
   io_init();
 
   if (!input_method)
@@ -470,7 +478,7 @@ main(int argc, char **argv)
 	}
       /*cbd_df_free();*/
     }
-      
+
   gx_term();
 
   return 1;
