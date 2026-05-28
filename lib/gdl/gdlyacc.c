@@ -608,9 +608,12 @@ gdl_set_word_id(const char *wid)
 }
 
 void
-gdl_prefix(unsigned const char *p)
+gdl_prefix(Tree *ytp, unsigned const char *p)
 {
-  gdl_times_prefix = p;
+  Node *np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
+  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "repeated");
+  np->mloc = ytp->curr->mloc;
+  np->text = p;
   ++c_delim_sentinel;
 }
 
@@ -620,11 +623,22 @@ gdl_delim(Tree *ytp, const char *data)
   Node *np = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: DELIM: %s\n", data);
+  /* GDL lang handling needs to switch to lib/lng */
+  if ('.' == *data && !c_processing && 's' == curr_lang)
+    {
+      mesg_verr(ytp->curr->mloc, "period only legal in compounds, logograms, and ...");
+      data = "-";
+    }
   np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
   np->mloc = ytp->curr->mloc;
+  np->text = data;
   Node *d_attach = lgp ? lgp : np->prev;
   if (d_attach)
-    gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+    {
+      gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+      if (!strcmp(np->rent->name, "g:gp") && '.' == *data)
+	gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:sigdelim", "+");	
+    }
 
   if (c_processing)
     {
@@ -684,7 +698,6 @@ gdl_delim(Tree *ytp, const char *data)
 	    }
 	}
     }
-  np->text = data;
   return np;
 }
 
@@ -727,15 +740,6 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   const char *gname = NULL;
   uccp gatf = NULL;
   Node *ret = NULL;
-
-  if (gdl_times_prefix)
-    {
-      char *xdata = (char*)pool_alloc(strlen((ccp)gdl_times_prefix)+strlen(data)+1, ytp->tm->pool);
-      strcpy(xdata, (ccp)gdl_times_prefix);
-      strcat(xdata, data);
-      data = xdata;
-      gdl_times_prefix = NULL;
-    }
   
   if (ytp->curr->kids && 'R' == ytp->curr->kids->name[2])
     gname = "g:N";

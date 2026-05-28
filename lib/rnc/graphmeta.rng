@@ -171,6 +171,9 @@
   </define>
   <define name="delim">
     <attribute name="g:delim"/>
+    <optional>
+      <attribute name="g:sigdelim"/>
+    </optional>
   </define>
   <define name="varnum">
     <optional>

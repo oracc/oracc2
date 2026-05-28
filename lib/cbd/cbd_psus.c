@@ -46,6 +46,13 @@ sanitize_cgp(const char *cfg)
 	  while (*s && !isspace(*s))
 	    ++s;
 	}
+      else if ((x = strchr(s, '\'')))
+	{
+	  while (s < x)
+	    *bp++ = *s++;
+	  *bp = '\0';
+	  s += strlen(s);
+	}
       else
 	{
 	  while (*s)
@@ -62,13 +69,13 @@ sanitize_cgp(const char *cfg)
  *
  * n in @parts, e.g., n ŋal[be]V/it--these are currently just ignored when checking
  *
- * //SENSE in @parts CGP; this is currently stripped out in checking but should use SENSE_GW
+ * //SENSE in @parts CGP; this is currently stripped out in checking but should use SENSE_GW; similarly for EPOS
  *
  */
 void
 cbd_psus(void)
 {
-  static int psu_verbose = 1;
+  static int psu_verbose = 0;
   Parts *p;
   for (p = list_first(csetp->parts); p; p = list_next(csetp->parts))
     {
@@ -82,7 +89,8 @@ cbd_psus(void)
 	  char *c = (char*)cp->tight, *m = NULL;
 	  if (('n' == c[0] && ' ' == c[1])
 	      || strstr(c, " n ")
-	      || strstr(c, "//"))
+	      || strstr(c, "//")
+	      || strchr(c, '\''))
 	    c = m = sanitize_cgp(c);
 	  Entry *ep = hash_find(pcbd->hentries, (uccp)c);
 	  if (ep)

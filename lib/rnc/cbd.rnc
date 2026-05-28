@@ -43,7 +43,7 @@ entry.attr = attribute n      { text }? ,
 	     attribute star   { text }? ,
 	     kis?
 
-entry_block = cgp? , gwls? , xcpd? , mod? , aliases? , pref? , (partss|psu.compound)? , discs?
+entry_block = cgp? , gwls? , xcpd? , mod? , aliases? , pref? , (partss|psu.compound)* , discs?
 
 gwl  = element gwl  { text } 
 gwls = element gwls { gwl+ }

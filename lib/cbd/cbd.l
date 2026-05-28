@@ -136,7 +136,7 @@ BALM 	","
 
 	/* OUTER LEVEL TOKENIZER */
 
-^[-+]		{ BEGIN ss(s_sol); 	 return(yytext[0]); }
+^[-+]		{ BEGIN ss(s_sol); return(yytext[0]); }
 ^>>[ \t]*      	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(RENAME); }
 ^>[ \t]*       	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(MERGE); }
 ^@letter.*/\n   { /* ignore @letter */ }
@@ -205,6 +205,7 @@ BALM 	","
 <s_f>\*[^ \t\n]+[ \t]*	  	{ ytdupn(1); xreturn(FSTEM); }
 <s_f>[^+$#*/ \t\n][^ \t\n]*[ \t]* 	{ ytdup(); xreturn(FFORM); }
 <s_f>\n/"@"		  	{ BEGIN ss(0); xreturn(END_FORM); }
+<s_f>\n/[-+]		  	{ BEGIN ss(0); xreturn(END_FORM); }
 <s_f>[ \t]+	   	  	{ /* empty */ }
 
 	/* SENSE TOKENIZER */
@@ -221,6 +222,10 @@ BALM 	","
 <s_incl>[^ \t\n]+   	  { includeo(yytext); }
 
 <s_flush>.*		  { BEGIN ss(0); }
+
+.	       	 	  { mesg_vwarning(errmsg_fn, cbdlineno,
+		       			  "cbd.l: unmatched character %c\n",
+					  *cbdtext); }
 
 <<EOF>>			  { yyterminate(); }
 

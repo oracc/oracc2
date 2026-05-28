@@ -423,6 +423,7 @@ v_senses(struct entry *e)
     {
       struct sense *sp = (struct sense*)(lp->data);
 
+#if 0
       if (sp->ed)
 	{
 	  switch (sp->ed->type)
@@ -437,7 +438,8 @@ v_senses(struct entry *e)
 	      break;
 	    }
 	}
-      
+#endif
+
       f0(/* @sense */ );
       if (sp->lng)
 	{ f1(/* % */ sp->lng); }

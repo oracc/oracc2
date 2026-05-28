@@ -461,6 +461,7 @@ int opts(int och, const char *oarg)
       break;
     case 'c':
       check = 1;
+      xml_output = jsn_output = 0;
       break;
     case 'd':
       cbddebug = 1; /* = tg2debug */

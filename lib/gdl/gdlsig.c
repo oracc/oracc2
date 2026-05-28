@@ -48,7 +48,17 @@ gdlsig_addoid(Node *np, List *lp)
 	      || (gdlsig_depth_mode < 0 && !gp->oid)))
 	gdlsig_descend(np, lp);
       else if (gdlsig_depth_mode && gp->deep)
-	gdlsig_descend(gp->deep, lp);
+	{
+	   /* |3×AN| traps */
+	  if (gp->deep->kids
+	      && !strcmp(gp->deep->kids->name, "g:d"))
+	    list_add(lp, (char*)((gvl_g*)gp->deep->user)->oid);
+	  else if (gp->deep->kids && (!strcmp(gp->deep->kids->name, "g:c")
+				      && !strcmp(gp->deep->kids->kids->name, "g:d")))
+	    list_add(lp, (char*)((gvl_g*)gp->deep->kids->user)->oid);
+	  else
+	    gdlsig_descend(gp->deep, lp);
+	}
       else if (gp->oid)
 	list_add(lp, (char*)gp->oid);
       else if (!strcmp((ccp)gp->orig, "..."))
@@ -96,7 +106,6 @@ gdlsig_oidnode(Node *np)
 	}
     }
   else
-    
     return NULL;
 }
 
@@ -108,7 +117,9 @@ gdlsig_one_node(Node *np, List *lp)
   if (oidnode)
     {
       gdlsig_addoid(oidnode, lp);
-      if ((p = prop_find_kv(oidnode->props, "g:delim", NULL)))
+      if ((p = prop_find_kv(oidnode->props, "g:sigdelim", NULL)))
+	list_add(lp, (char*)p->u.k->v);
+      else if ((p = prop_find_kv(oidnode->props, "g:delim", NULL)))
 	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
       /* g:q nodes have the (X) component returned as the oidnode but g:delim is on g:q */
       else if (np && !strcmp(np->name, "g:q")
@@ -129,7 +140,9 @@ gdlsig_one_node(Node *np, List *lp)
   else if (np->kids)
     {
       gdlsig_descend(np, lp);
-      if ((p = prop_find_kv(np->props, "g:delim", NULL)))
+      if ((p = prop_find_kv(np->props, "g:sigdelim", NULL)))
+	list_add(lp, (char*)p->u.k->v);
+      else if ((p = prop_find_kv(np->props, "g:delim", NULL)))
 	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
     }
 }

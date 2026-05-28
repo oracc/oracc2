@@ -380,6 +380,8 @@ gvl_compound(Node *ynp)
 	      const char *d = gp->text;
 	      Node *last = gp->next;
 	      /* Don't generate implicit groups when there is a parse error */
+	      while (last && !strcmp(last->name, "g:z"))
+		last = last->next;
 	      if (last)
 		{
 		  while (1)

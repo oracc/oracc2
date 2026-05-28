@@ -285,16 +285,16 @@ cbit:
 	;
 
 cdelim:
-	  C_PERIOD					{ ynp = gdl_delim(ytp, "."); }
-	| C_ABOVE					{ ynp = gdl_delim(ytp, "&"); }
-	| C_COLON					{ ynp = gdl_delim(ytp, ":"); }
-	| C_CROSSING					{ ynp = gdl_delim(ytp, "%"); }
-	| C_OPPOSING					{ ynp = gdl_delim(ytp, "@"); }
-	| C_PLUS					{ ynp = gdl_delim(ytp, "+"); }
-	| C_TIMES					{ ynp = gdl_delim(ytp, "×"); }
-	| C_3TIMES					{ gdl_prefix("3×"); }
-	| C_4TIMES					{ gdl_prefix("4×"); }
-	| C_CIRCLE					{ ynp = gdl_delim(ytp, "∘"); }
+		C_PERIOD	       			{ ynp = gdl_delim(ytp, "."); }
+	| 	C_ABOVE					{ ynp = gdl_delim(ytp, "&"); }
+	| 	C_COLON					{ ynp = gdl_delim(ytp, ":"); }
+	| 	C_CROSSING     				{ ynp = gdl_delim(ytp, "%"); }
+	| 	C_OPPOSING     				{ ynp = gdl_delim(ytp, "@"); }
+	| 	C_PLUS					{ ynp = gdl_delim(ytp, "+"); }
+	| 	C_TIMES					{ ynp = gdl_delim(ytp, "×"); }
+	| 	C_3TIMES			       	{ gdl_prefix(ytp, "3"); }
+	| 	C_4TIMES		       		{ gdl_prefix(ytp, "4"); }
+	| 	C_CIRCLE	       			{ ynp = gdl_delim(ytp, "∘"); }
 	;
 
 cmaybemodflags:
