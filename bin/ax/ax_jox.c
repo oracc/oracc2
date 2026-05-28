@@ -109,11 +109,6 @@ ax_jox(Tree *tp)
 int
 ax_outputs(char *xtf, char *tra)
 {
-  int ret = 0;
-
-  if (xtf && (ret = xaccess(xtf, W_OK, 0)))
-    return ret;
-  
   if (xtf && !(xtf_fp = xfopen(xtf, "w")))
     return 1;
 
