@@ -26,6 +26,7 @@ static struct ifnc_map imap[] = {
   { if_end_entry , (iterator_fnc)o_glo_end_entry },
   { if_entry , (iterator_fnc)o_glo_entry },
   { if_forms , (iterator_fnc)o_glo_forms },
+  { if_norms , NULL },
   { if_meta , (iterator_fnc)o_glo_meta },
   { if_parts , (iterator_fnc)o_glo_parts },
   { if_phon , (iterator_fnc)o_glo_phon },

@@ -16,8 +16,9 @@
 #include <kis.h>
 #include "gx.h"
 
-int bootstrap_mode, lem_autolem, lem_dynalem;
+int bootstrap_mode, cmp_mode = 0, lem_autolem, lem_dynalem;
 static int major_version = 1, minor_version = 0;
+int parse_return = 0;  
 extern FILE *bases_fp;
 static const char *bases_file;
 static const char *dotforms_file = NULL;
@@ -27,13 +28,13 @@ static const char *usage_string = "[OPTIONS] [-I input-type] [-O output-type] -i
 
 const char *out_dir = NULL, *merge_glo = NULL, *parent_glo = NULL, *entry_lines_fn = NULL;
 
-const char *jfn = NULL, *xfn = NULL;
+const char *gfn = NULL, *jfn = NULL, *xfn = NULL;
 
 const char *kis_file = "02pub/tokl.tpc";
 
 extern int cbd_flex_debug;
 
-int cbd_with_all = 0, jsn_output = 0, xml_output = 1;
+int cbd_with_all = 0, glo_output = 0, jsn_output = 0, xml_output = 1;
 
 const char *log_file;
 FILE *log_fp;
@@ -124,6 +125,39 @@ gx_init(void)
   with_textid = 0;
 }
 
+static Cbd *
+gx_cbd_load(const char *fn)
+{
+  FILE *fp;
+  if (!(fp = cbd_l_init(fn)))
+    exit(1);
+
+  curr_cbd = cbd_bld_cbd();
+
+  if (dotforms_file)
+    if (cbd_df_load(dotforms_file))
+      exit(1);
+  
+  curr_cbd->file = fn;
+  phase = "syn";
+  parse_return = cbdparse();
+  cbd_l_term(fn, fp);
+  return curr_cbd;
+}
+
+static void
+gx_cmp(const char *fn_a, const char *fn_b)
+{
+  if (fn_a && fn_b)
+    {
+      Cbd *cpa = gx_cbd_load(fn_a);
+      Cbd *cpb = gx_cbd_load(fn_b);
+      cbd_cmp(cpa, cpb);
+    }
+  else
+    fprintf(stderr, "gx: must give two .glo to compare with -C option\n");
+}
+
 static void
 gx_term(void)
 {
@@ -180,16 +214,11 @@ io_init(void)
 
 static void
 io_run(void)
-{
-  extern int cbd_l_init(Iome_io  *ip);
-  extern void cbd_l_term(void);
-  
-  int parse_return = 0;
-  
+{  
   switch (input_method->type)
     {
     case iome_cbd:
-      if (cbd_l_init(&input_io))
+      if (!(input_io.fp = cbd_l_init(input_io.fn)))
 	exit(1);
 
       curr_cbd = cbd_bld_cbd();
@@ -201,7 +230,7 @@ io_run(void)
       curr_cbd->file = input_io.fn;
       phase = "syn";
       parse_return = cbdparse();
-      cbd_l_term();
+      cbd_l_term(input_io.fn, input_io.fp);
 
       /*rnvtgi_term();*/
 
@@ -316,6 +345,21 @@ gx_output(void)
 	      joxer_term(xfp,NULL);
 	    }
 	}
+      else if (glo_output)
+	{
+	  if (!gfn)
+	    gfn = "cbd.glo";
+	  if ('-' != *gfn)
+	    {
+	      FILE *gfp = freopen(gfn, "w", stdout);
+	      if (!gfp)
+		{
+		  fprintf(stderr, "gx: freopen %s as stdout failed. Stop.\n", gfn);
+		  exit(1);
+		}
+	    }
+	  o_glo(curr_cbd);
+	}
     }
 
   if (summaries)
@@ -353,7 +397,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:b:E:e:f:i:o:chjJKk::l::m:P:p:rsStTwxXv");
+  options(argc,argv,"A:I:O:b:E:e:f:G:gi:o:CchjJKk::l::m:P:p:rsStTwxXv");
 
   if (entry_lines_fn)
     set_entry_lines();
@@ -362,6 +406,12 @@ main(int argc, char **argv)
     {
       fprintf(stderr, "gx: quitting after errors in option processing\n");
       exit(1);
+    }
+
+  if (cmp_mode)
+    {
+      gx_cmp(argv[optind], argv[optind+1]);
+      exit(0);
     }
 
   if (out_dir)
@@ -468,6 +518,9 @@ int opts(int och, const char *oarg)
     case 'b':
       bases_file = optarg;
       break;
+    case 'C':
+      cmp_mode = 1;
+      break;
     case 'c':
       check = 1;
       xml_output = jsn_output = 0;
@@ -484,7 +537,13 @@ int opts(int och, const char *oarg)
     case 'f':
       dotforms_file = optarg;
       break;
+    case 'G':
+      glo_output = 1;
+      gfn = optarg;
+      jsn_output = xml_output = 0;
+      break;
     case 'g':
+      glo_output = 1;
       break;
     case 'h':
       usage();

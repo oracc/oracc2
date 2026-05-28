@@ -500,23 +500,27 @@ includec(void)
 }
 #endif
 
-int
-cbd_l_init(Iome_io *ip)
+FILE *
+cbd_l_init(const char *fn)
 {
-  if (!ip->use_stdio)
+  FILE *fp = NULL;
+  if (fn && '-' != *fn)
     {
-      errmsg_fn = ip->fn;
-      efile = (char*)ip->fn;
-      if ((ip->fp = xfopen(efile, "r")))
-	yyrestart(ip->fp);
-      else
-	return 1;
+      errmsg_fn = fn;
+      efile = (char*)fn;
+      if ((fp = xfopen(efile, "r")))
+	{
+	  yyrestart(fp);
+	  return fp;
+        }
     }
-  return 0;
+  return NULL;
 }
+
 void
-cbd_l_term(void)
+cbd_l_term(const char *fn, FILE *fp)
 {
-  
+    if (fp)
+      xfclose(fn, fp);
 }
 

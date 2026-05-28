@@ -22,11 +22,13 @@ extern const char *out_dir;
 
 extern FILE *f_xml, *log_fp;
 
-enum o_mode { O_JSN , O_XML, O_XML_SUM };
+enum o_mode { O_NONE , O_GLO , O_JSN , O_XML, O_XML_SUM };
 
 #if 0
 extern void o_tg2(struct cbd*c);
 #endif
+
+extern void o_glo(struct cbd*c);
 
 extern void o_jox(struct cbd*c);
 extern void o_jox_sa(void);

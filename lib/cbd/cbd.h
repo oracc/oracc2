@@ -459,4 +459,8 @@ int cbd_df_load(const char *fn);
 List *cbd_df_get(unsigned const char *cgp);
 List *cbd_df_unused(void);
 
+extern FILE* cbd_l_init(const char *fn);
+extern void cbd_l_term(const char *fn, FILE *fp);
+extern int cbd_cmp(Cbd *cpa, Cbd *cpb);
+
 #endif/*CBD_H_*/

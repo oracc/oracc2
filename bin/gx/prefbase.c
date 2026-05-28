@@ -7,7 +7,7 @@ static Roco *prefs_roco;
 static char *prefs_fn;
 
 static char *
-prefs_file()
+prefs_file(void)
 {
   const char *epsd_bases = "/pub/epsd2/preferred-bases.tab";
   char fn[strlen(oracc())+strlen(epsd_bases)+1];
@@ -17,7 +17,7 @@ prefs_file()
 }
 
 void
-pref_init()
+pref_init(void)
 {
   prefs_roco = roco_load1(prefs_file());
   prefs = roco_hash(prefs_roco);
