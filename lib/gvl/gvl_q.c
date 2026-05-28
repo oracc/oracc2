@@ -338,21 +338,36 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
     }
   else
     {
-      unsigned char *tmp2 = malloc(strlen((ccp)vp->orig) + strlen((ccp)qp->sign) + 3);
+      unsigned char *tmp2 = NULL;
 
       if ('p' == *vp->type && '*' == *vp->orig)
-	sprintf((char*)tmp2, "%s(%s)", "diš", qp->sign);
+	{
+	  int len = snprintf(NULL, 0, "%s(%s)", "diš", qp->sign);
+	  tmp2 = malloc(len+1);
+	  sprintf((char*)tmp2, "%s(%s)", "diš", qp->sign);
+	}
       else
-	sprintf((char*)tmp2, "%s(%s)", vp->orig, qp->sign);
+	{
+	  int len = snprintf((char*)tmp2, 0, "%s(%s)", vp->orig, qp->sign);
+	  tmp2 = malloc(len+1);
+	  sprintf((char*)tmp2, "%s(%s)", vp->orig, qp->sign);
+	}
 
       if (!gvl_lookup(sll_tmp_key(tmp2, "qv"))
 	  && vp->c10e && strcmp((ccp)vp->orig, (ccp)vp->c10e))
 	{
 	  char xtmp[strlen((ccp)tmp2+1)];
 	  strcpy(xtmp, (char*)tmp2);
+	  free(tmp2);
+	  int len = snprintf((char*)tmp2, 0, "%s(%s)", vp->c10e, qp->sign);
+	  tmp2 = malloc(len+1);
 	  sprintf((char*)tmp2, "%s(%s)", vp->c10e, qp->sign);
 	  if (!gvl_lookup(sll_tmp_key(tmp2, "qv")))
-	    strcpy((char*)tmp2, xtmp);
+	    {
+	      free(tmp2);
+	      tmp2 = malloc(strlen(xtmp)+1);
+	      strcpy((char*)tmp2, xtmp);
+	    }
 	}
       
       /* tmp2 is now a vq with valid v and q components */
