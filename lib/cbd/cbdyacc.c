@@ -773,7 +773,7 @@ cbd_add_dotforms(Entry *ep)
       for (cfp = list_first(lp); cfp; cfp = list_next(lp))
 	{
 	  cfp->e = ep;
-	  cfp->l = ep->l;
+	  /*cfp->l = ep->l;*/ /*NO: set this to the dotforms file/line on parse*/
 	  cbd_bld_form_setup(ep, cfp);
 	}
     }

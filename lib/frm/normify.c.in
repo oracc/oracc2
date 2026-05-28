@@ -62,20 +62,24 @@ normify(const char *cgpb, const char *c, const char *b, const char *m, char **st
   return strdup(ret);
 }
 
+/* Only normify forms if they have base/morph */
 void
 normify_form(Form *f, Pool *p)
 {
-  char *stem = NULL;
-  char cgpb[strlen((ccp)f->cf)+strlen((ccp)f->gw)+strlen((ccp)f->pos)+strlen((ccp)f->base)+strlen("[]0")];
-  sprintf(cgpb, "%s[%s]%s%c%s", f->cf, f->gw, f->pos, 0x01, f->base);
-  char *n = normify(cgpb, (ccp)f->cf, (ccp)f->base, (ccp)f->morph, &stem);
-  f->norm = pool_copy((uccp)n, p);
-  if (!f->stem || '\0' == *f->stem)
+  if (f->base && f->morph)
     {
-      if (stem)
-	f->stem = (uccp)stem;
-      else
-	f->stem = (uccp)"B";
+      char *stem = NULL;
+      char cgpb[strlen((ccp)f->cf)+strlen((ccp)f->gw)+strlen((ccp)f->pos)+strlen((ccp)f->base)+strlen("[]0")];
+      sprintf(cgpb, "%s[%s]%s%c%s", f->cf, f->gw, f->pos, 0x01, f->base);
+      char *n = normify(cgpb, (ccp)f->cf, (ccp)f->base, (ccp)f->morph, &stem);
+      f->norm = pool_copy((uccp)n, p);
+      if (!f->stem || '\0' == *f->stem)
+	{
+	  if (stem)
+	    f->stem = (uccp)stem;
+	  else
+	    f->stem = (uccp)"B";
+	}
+      free(n);
     }
-  free(n);
 }

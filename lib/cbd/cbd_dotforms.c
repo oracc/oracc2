@@ -14,7 +14,8 @@ cbd_df_parse(unsigned char *e, unsigned char *f, const char *fn, int i)
   Cform *cfp;
   cfp = memo_new(csetp->cformsmem);
   cfp->f.file = (ucp)fn;
-  cfp->f.lnum = i;
+  cfp->l.file = fn;
+  cfp->l.line = cfp->f.lnum = i;
   cfp->f.form = f;
   while (*f && !isspace(*f))
     ++f;
