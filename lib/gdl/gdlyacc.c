@@ -566,11 +566,22 @@ gdl_new_word(Tree *ytp)
 {
   if (gdl_word_mode)
     {
-      Node *l = node_ancestor_or_self(ytp->curr, "g:w");
-      if (l)
-	tree_curr(l->rent);
-      else
-	tree_curr(ytp->root);
+      /* If there is a g:field ancestor, attach to that */
+      Node *l = node_ancestor_or_self(ytp->curr, "g:field");
+
+      /* Else if there is a g:cell ancestor, attach to that */
+      if (!l)
+	l = node_ancestor_or_self(ytp->curr, "g:cell");
+
+      /* Else if there is a g:w ancestor, attach to the parent of that node */
+      if (!l)
+	{
+	  l = node_ancestor_or_self(ytp->curr, "g:w");
+	  if (l)
+	    tree_curr(l->rent);
+	  else
+	    tree_curr(ytp->root);
+	}
       Node *wp = gdl_push(ytp, "g:w");
       wp->mloc = mloc_file_line(currgdlfile, gdllineno);
       /* By definition, the word-lang is the one in effect when the
@@ -701,12 +712,21 @@ gdl_delim(Tree *ytp, const char *data)
   return np;
 }
 
-void
+Node *
 gdl_field(Tree *ytp, const char *ftype)
 {
   Node *fp = NULL;
   Node *ancestor = NULL;
 
+  /* Remove the parent g:w if there is one (extra credit: keep the
+     node around to use after the field) */
+  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w"))
+    {
+      tree_curr(ytp->curr->rent);
+      (void)kids_rem_last(ytp);
+      (void)list_pop(wd_list);
+    }
+  
   if ('!' == *ftype)
     ++ftype;
   if (gdltrace)
@@ -729,8 +749,9 @@ gdl_field(Tree *ytp, const char *ftype)
   else
     tree_curr(ancestor->rent);
   fp = tree_add(ytp, NS_GDL, "g:field", ytp->root->depth+1, NULL);
-  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "field", (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
   tree_curr(fp);
+  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "field", (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
+  return tree_push(ytp);
 }
 
 Node *

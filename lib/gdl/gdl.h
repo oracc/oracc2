@@ -106,7 +106,7 @@ extern Node *gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate
 extern Node *gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
 extern void gdl_cell(Tree *ytp, const char *span);
 extern Node *gdl_delim(Tree *ytp, const char *data);
-extern void gdl_field(Tree *ytp, const char *ftype);
+extern Node *gdl_field(Tree *ytp, const char *ftype);
 extern Node *gdl_graph(Mloc *locp, Tree *ytp, const char *data);
 extern Node *gdl_lang(Tree *ytp, const char *data);
 extern const char *gdl_lexfld_name(const char *lftok);

@@ -94,10 +94,10 @@ typedseg:
 	;
 
 field:
-	  ','					    	{ gdl_field(ytp,"default"); }
-	| ',' FTYPE				    	{ gdl_field(ytp,$2); }
-	| FTYPE					    	{ gdl_field(ytp,$1); }
-        | lexfld				    	{ gdl_field(ytp,gdl_lexfld_name($1)); }
+	  ','					    	{ ynp = gdl_field(ytp,"default"); }
+	| ',' FTYPE				    	{ ynp = gdl_field(ytp,$2); }
+	| FTYPE					    	{ ynp = gdl_field(ytp,$1); }
+        | lexfld				    	{ ynp = gdl_field(ytp,gdl_lexfld_name($1)); }
         ;
 
 lexfld:
