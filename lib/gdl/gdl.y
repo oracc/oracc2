@@ -192,7 +192,7 @@ alternate:
 		;
 
 ligatured:
-		grapheme '+' grapheme			{ gdl_group(@1, $1, '+', $3); }
+		grapheme '+' grapheme     		{ gdl_group(@1, $1, '+', $3); }
 	|	ggroup '+' grapheme			{ gdl_group(@2, NULL, '+', $3); }
 		;
 
@@ -227,14 +227,14 @@ simplexg:
 	;
 
 s:
-		GRAPHEME		{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
-	| 	LISTNUM			{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
-	| 	NNUM			{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
-	| 	NUMBER			{ ynp = gdl_number(&@1, ytp, gdllval.text); }
-	| 	BARENUM			{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
-	| 	ZERO			{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
-	| 	PUNCT			{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
-	| 	ELLIPSIS		{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
+		GRAPHEME			{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
+	| 	LISTNUM				{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
+	| 	NNUM				{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
+	| 	NUMBER				{ ynp = gdl_number(&@1, ytp, gdllval.text); }
+	| 	BARENUM				{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
+	| 	ZERO				{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
+	| 	PUNCT				{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
+	| 	ELLIPSIS			{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
 	;
 
 compound:
@@ -312,7 +312,8 @@ valuqual:
 	  						   gvl_valuqual(ytp->curr);
 	  						   lgp = ynp = ytp->curr; }
 	qmaybemodflags					 { gdl_mod_wrap_q(ynp);
-							   $$ = ynp = gdl_pop(ytp,"g:q"); }
+	    						   $$ = lgp;
+							   ynp = gdl_pop(ytp,"g:q"); }
         ;
 
 q:

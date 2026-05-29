@@ -1044,6 +1044,8 @@ gdl_group(Mloc mp, Node *lft, int type, Node *rt)
       const char *v = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
       gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", v);
       gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
+      /*20260529: need to make sure gp is under word so set curr to lft->rent*/
+      tree_curr(gp->rent);
       /*tree_curr(gp);*/ /* attach point remains unchanged after group insertion */
     }
 }
