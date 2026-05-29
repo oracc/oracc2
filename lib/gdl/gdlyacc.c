@@ -982,7 +982,10 @@ gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
       if (!gdl_no_xml_ids)
 	{
 	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-	  gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
+	  if (idp)
+	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
+	  else
+	    mesg_verr(&mlp, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
 	}
     }
   bit_set(*lst,gs_c);
