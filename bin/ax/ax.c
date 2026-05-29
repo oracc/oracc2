@@ -202,8 +202,8 @@ process_inputs(int argc, char * const *argv)
 		  xtffile = xtffile_of(s);
 		  trafile = trafile_of(s);
 		  if (verbose)
-		    fprintf(stderr,"%s => %s / %s\n",
-			    atffile, strrchr(xtffile,'/')+1, strrchr(trafile, '/')+1);
+		    fprintf(stderr,"%s\n", /*  => %s / %s */
+			    atffile/*, strrchr(xtffile,'/')+1, strrchr(trafile, '/')+1*/);
 		  if (!(ret = ax_outputs(xtffile, trafile)))
 		    ax_input(atffile);
 		  free((char*)atffile);
