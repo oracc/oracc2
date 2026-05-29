@@ -578,10 +578,14 @@ gdl_new_word(Tree *ytp)
 	{
 	  l = node_ancestor_or_self(ytp->curr, "g:w");
 	  if (l)
-	    tree_curr(l->rent);
+	    l = l->rent;
 	  else
-	    tree_curr(ytp->root);
+	    l = ytp->root;
 	}
+
+      /* Now l is the node where the g:w should attach */
+      tree_curr(l);
+
       Node *wp = gdl_push(ytp, "g:w");
       wp->mloc = mloc_file_line(currgdlfile, gdllineno);
       /* By definition, the word-lang is the one in effect when the
