@@ -105,6 +105,7 @@ atf_term(void)
   lmemo_term();
   free(atfmp);
   atfmp = NULL;
+  curr_line = NULL;
 
   free(atfp->protocols);
   list_free(atfp->input, NULL);
