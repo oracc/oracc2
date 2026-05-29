@@ -111,6 +111,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atfp->hlabmap = hash_create(256);
   reset_labels();
   reset_lninfo();
+  atf_block_xid();
 }
 
 void

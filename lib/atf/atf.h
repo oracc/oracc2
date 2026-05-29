@@ -334,6 +334,7 @@ extern void tlit_reinit_inline(void);
 extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id);
 
 extern void set_block_curr(Block_level b);
+extern void atf_block_xid(void);
 
 extern struct xcl_ilem *atf_save_lem(Node *np, const char *lemstr);
 

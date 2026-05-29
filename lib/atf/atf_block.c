@@ -23,6 +23,8 @@ static const char *xid_block(void);
 
 static Node *ancestor_or_self_level_as(Node *np, Block_level b, int auto_set);
 
+static int xid = 0;
+
 static char block_flags[256] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
 const char *primes[] = {"′","″","‴","⁗","⁗′","⁗″","⁗‴","⁗⁗"};
 const char *Primes[] = {"p", "P", "Pp", "PP", "PPp", "PPP", "PPPp", "PPPP" };
@@ -54,6 +56,12 @@ const char * const roman[] = {
   "xxxi", "xxxii", "xxxiii", "xxxiv", "xxxv", "xxxvi", "xxxvii", "xxxviii", "xxxix", 
   "xl"
 };
+
+void
+atf_block_xid(void)
+{
+  xid = 0;
+}
 
 /* Do generic setup for @-block token and then pass control to
    block-level/type specific handlers */
@@ -103,6 +111,7 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
   switch (bp->bt->type)
     {
     case B_OBJECT:
+      xid_block();
       reset_lninfo();
       block_lev(l, bp, rest);
       break;
@@ -790,7 +799,6 @@ static const char *
 xid_block(void)
 {
   char idbuf[5];
-  static int xid = 0;
   sprintf((char*)idbuf,"x%d",xid++);
   return (ccp)pool_copy((uccp)idbuf, atfmp->pool);
 }
