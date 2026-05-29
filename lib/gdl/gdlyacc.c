@@ -1009,29 +1009,44 @@ gdl_group(Mloc mp, Node *lft, int type, Node *rt)
   if (!lft)
     {
       /* lft was a g:gg; if it is a different type create a new g:gg */
+
+      /* First identify the preceding group: rt will have been added
+	 as the following-sibling of the current g:gg node */
+      Node *preceding_gg = rt->prev;
+      if (strcmp(preceding_gg->name, "g:gg"))
+	{
+	  mesg_verr(&mp, "gdl_group called with no g:gg as curr or curr->kids");
+	  return;
+	}
+
       const char *t = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
-      const char *lt = prop_find_kv(rt->tree->curr->props, "g:type", NULL)->u.k->v;
+      const char *lt = prop_find_kv(preceding_gg->props, "g:type", NULL)->u.k->v;
       if (strcmp(t, lt))
 	{
 	  const char *pt = NULL;
-	  /* if there is a parent group that matches the incoming type pop the current group */
-	  if (!strcmp(rt->tree->curr->rent->name, "g:gg"))
-	    pt = prop_find_kv(rt->tree->curr->rent->props, "g:type", NULL)->u.k->v;
-	  if (pt && !strcmp(pt, t))
+	  if (!strcmp(t, lt))
 	    {
+	      /* Remove rt from position under g:w */
 	      Node *r2 = kids_rem_last(rt->tree);
-	      gdl_prop_kv(r2->prev, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
-	      gdl_pop(rt->tree, "g:gg");
+	      /* Set the last grapheme of preceding group to have the same right delim */
+	      gdl_prop_kv(r2->prev->last, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
+	      /* Set curr temporarily to the g:gg */
+	      tree_curr(preceding_gg);
+	      /* Add the detached r2 (formerly rt) to the group */
 	      kids_add_node(rt->tree, r2);
+	      /* reset curr to the parent g:w node */
+	      tree_curr(preceding_gg->rent);
 	    }
 	  else
 	    {
-	      /* otherwise push a new group */
+	      /* otherwise push a new group; rt->prev here is the
+		 preceding g:gg which has a different type from this
+		 one */
 	      gp = node_group(rt->prev, rt->prev, rt);
 	      gp->name = "g:gg";
 	      gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", t);
 	      gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
-	      tree_curr(gp);
+	      tree_curr(gp->rent);
 	    }
 	}
       else
