@@ -616,6 +616,12 @@ gdl_auto_id(void)
 }
 
 void
+gdl_set_word_lang(const char *l)
+{
+  curr_word_lang = l;
+}
+
+void
 gdl_set_word_id(const char *wid)
 {
   strcpy(gdl_word_id, wid);

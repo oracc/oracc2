@@ -44,6 +44,8 @@ gdl_init(void)
   gdl_modq_init();
   
   gdlpool = pool_init();
+
+  gdl_set_word_lang("sux");
 }
 
 void
