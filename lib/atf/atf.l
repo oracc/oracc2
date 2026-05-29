@@ -99,7 +99,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_SCO>\n	       		{ BEGIN 0; }
 
 ^"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
-<s_PRO>{PROJECT}/\n		{ BEGIN 0; atfsave; return PROJECT; }
+<s_PRO>{PROJECT}/[ \t]*\n      	{ BEGIN 0; atfsave; return PROJECT; }
 <s_PRO>[ \t]+			{ ; }
 
 ^"#atf:"			{ BEGIN s_ATFPRO; }
