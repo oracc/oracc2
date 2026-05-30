@@ -165,6 +165,7 @@ extern void gdl_break_node(Node *np);
 extern void gdl_state_node(Node *np);
 
 extern List *gdl_get_word_list(void);
+extern void gdl_set_lang(struct lang_context *l);
 extern void gdl_set_word_lang(const char *l);
 extern void gdl_set_word_id(const char *wid);
 extern void gdl_auto_id(void);

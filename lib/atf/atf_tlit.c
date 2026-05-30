@@ -40,6 +40,7 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
     line_lang = text_lang;
   else
     line_lang = global_lang;
+  gdl_set_lang(line_lang);
   gdl_set_ids(clid, word_id_base);
   Tree *tp = gdlparse_string(np->mloc, (char*)s);
   tree_graft(np, tp);

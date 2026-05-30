@@ -254,6 +254,7 @@ ilem_parse_n(Node *np, struct xcl_context *xc, struct xcl_ilem /*ilem_form*/ *xi
 	    }
 	  lp->f->type = "cof-tail";
 	  lp->cof_head = master_lp;
+	  lp->f->lang = master_lp->f->lang;
 	  list_add(lp->cof_head->cof_tails, lp);
 
 	  ++master_formp->mcount;
