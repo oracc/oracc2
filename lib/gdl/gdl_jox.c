@@ -6,9 +6,6 @@
 extern int trace_mode;
 /**This module requires rnvif setup to have been done first
  *
- * The implementation here is very preliminary--just enough to support
- * the GDL that occurs in OSL.
- *
  * oflag gives an opener status [not currently used; probably needs deprecating]
  *
  * nflag is 0 for no processing of np->next; 1 for do processing of np->next
@@ -145,6 +142,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
 	   || !strcmp(nodename, "g:n"))
     /* singleton with kids, i.e., g:b and mods */
     {
+      gdlstate_t s = prop_get_state(np);
+      if (s)
+	gdlstate_props(np, s);
       char jname[4]; strcpy(jname,nodename); *jname = 'j';
       joxer_ea(np->mloc, nodename,
 	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))));
