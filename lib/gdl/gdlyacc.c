@@ -154,19 +154,24 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	    {
 	      Prop *p = prop_find_kv(c->props, "g:type", NULL);
 	      if (!p
-		  || (p->u.k->v && strcmp(p->u.k->v, "comment")
-		      && strcmp(p->u.k->v, "dollar")))
+		  || (p->u.k->v
+		      && strcmp(p->u.k->v, "comment")
+		      && strcmp(p->u.k->v, "dollar")
+		      && strcmp(p->u.k->v, "linebreak")))
 		mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text `%s'\n", c->text);
 	    }
 	}
       else if (!strcmp(c->name, "g:det"))
 	{
-	  fputc('{', wfp);
+	  gdlstate_t s = prop_get_state(c->kids);
+	  if (!gs_is(s,gs_excised))
+	    fputc('{', wfp);
 	  Prop *p = prop_find_kv(c->props, "g:char", NULL);
 	  if (p)
 	    fputs(p->u.k->v, wfp);
 	  gdl_wf_nodes(c, wfp);
-	  fputc('}', wfp);
+	  if (!gs_is(s,gs_excised))
+	    fputc('}', wfp);
 	  /* post-determinatives have g:delim on the g:det node */
 	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
 	  if (d)
