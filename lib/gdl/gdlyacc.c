@@ -250,6 +250,30 @@ gdl_nonw_punct(Node *w)
   ++nonw_found;
 }
 
+/* Return 0 if any g:v or g:s children are not excised */
+static int
+gdl_word_is_excised(Node *w)
+{
+  Node *n = w;
+  int ret = 1;
+  for (n = n->kids; n; n = n->next)
+    {
+      if (strlen(n->name) == 3 && ('s' == n->name[2] || 'v' == n->name[2]))
+	{
+	  if (n->props)
+	    {
+	      gdlstate_t s = prop_get_state(n);
+	      if (!gs_is(s,gs_excised))
+		return 0;
+	    }
+	}
+      if (n->kids)
+	if (!(ret = gdl_word_is_excised(n)))
+	  return 0;
+    }
+  return ret;
+}
+
 /* This routine assumes it is processing one word-node at a time and
    is called in the context of the list of words, i.e., after an
    entire line of ATF has been scanned. */
@@ -290,6 +314,8 @@ gdl_word_attr(Node *w)
 	  return;
 	}
     }
+  else if (gdl_word_is_excised(w))
+    gdl_nonw_excised(w);
 
   char *wf_buf = NULL;
   size_t wf_len = 0;
@@ -306,9 +332,12 @@ gdl_word_attr(Node *w)
 	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
       else
 	{
+#if 0
+	  /* This should be unnecessary now we do gdl_word_is_excised above */
 	  if (word_excisions)
 	    gdl_nonw_excised(w);
 	  else
+#endif
 	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");
 	}
       free(wf_buf);      
