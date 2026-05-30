@@ -10,6 +10,8 @@
 #define propfrm(x) prop_find_kv(x->props, "form", NULL)->u.k->v
 
 /* Port of otf/atf/lem_save_form:
+ *
+ * Create an xcl_ilem structure out of a Node *g:w.
  */
 /* This routine should not set anything but FORM at the f2 level;
    that is the job of ilem_parse */
@@ -42,6 +44,8 @@ atf_save_lem(Node *np, const char *lemstr)
 	  BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
       form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
     }
+  else if (((struct lang_context *)np->user)->utype == N_U_LANG)
+    form->lang = np->user;
 
   const char *formstr = propfrm(np);  
   if (BIT_ISSET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM))

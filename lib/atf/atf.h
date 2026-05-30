@@ -254,6 +254,8 @@ extern const char *curr_use_str;
 
 extern const char * const roman[];
 
+extern struct lang_context *global_lang, *text_lang, *line_lang;
+
 #define atf_xprop(xnp,xk,xv) atf_prop_kv(xnp,AP_ATTR,PG_XML,xk,xv)
 
 extern int atfparse(void);

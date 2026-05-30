@@ -5,6 +5,7 @@
 #include <hash.h>
 #endif
 
+#include <tree.h>
 #include <list.h>
 
 #undef C
@@ -81,6 +82,7 @@ struct lang_tag
  */
 struct lang_context
 {
+  Usertype utype;		/* These can be attached to g:w->user so must have a utype first */
   struct langcore *core; 	/* original core language data, i.e., defaults */
   struct lang_tag *tag;
   const char *altlang;		/* alternate lang if different from default */

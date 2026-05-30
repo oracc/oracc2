@@ -73,6 +73,8 @@ extern List *c_implicit_gps;
 
 extern Pool *gdlpool;
 
+extern struct lang_context *gdl_lang_context;
+
 extern void gdl_init(void);
 extern void gdl_term(void);
 
@@ -108,7 +110,7 @@ extern void gdl_cell(Tree *ytp, const char *span);
 extern Node *gdl_delim(Tree *ytp, const char *data);
 extern Node *gdl_field(Tree *ytp, const char *ftype);
 extern Node *gdl_graph(Mloc *locp, Tree *ytp, const char *data);
-extern Node *gdl_lang(Tree *ytp, const char *data);
+extern Node *gdl_lang(Mloc *locp, Tree *ytp, const char *data);
 extern const char *gdl_lexfld_name(const char *lftok);
 extern void gdl_lexfld_init(void);
 extern Node *gdl_mod(Tree *ytp, const char *data);

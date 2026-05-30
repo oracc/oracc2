@@ -3,6 +3,7 @@
 #include <string.h>
 #include <tree.h>
 #include <prop.h>
+#include <lang.h>
 #include <ctype128.h>
 #include <atf2utf.h>
 #include <sll.h>
@@ -19,6 +20,8 @@ int curr_lang = 's';
 int deep_parse = 1;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
+
+struct lang_context *gdl_lang_context;
 
 Node *gdl_post_det_gp_attach;
 
@@ -663,6 +666,7 @@ gdl_new_word(Tree *ytp)
 
       Node *wp = gdl_push(ytp, "g:w");
       wp->mloc = mloc_file_line(currgdlfile, gdllineno);
+      wp->user = gdl_lang_context;
       /* By definition, the word-lang is the one in effect when the
 	 word begins; logogram lang switches need to be handled
 	 carefully */
@@ -688,6 +692,12 @@ gdl_auto_id(void)
   static int gid = 1;
   sprintf(buf, "a%04d", gid++);
   gdl_set_word_id(buf);
+}
+
+void
+gdl_set_lang(struct lang_context *l)
+{
+  gdl_lang_context = l;
 }
 
 void
@@ -894,7 +904,7 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
 }
 
 Node *
-gdl_lang(Tree *ytp, const char *data)
+gdl_lang(Mloc *mp, Tree *ytp, const char *data)
 {
   if (gdltrace)
     fprintf(stderr, "gt: LANG: %s\n", data);
@@ -903,6 +913,7 @@ gdl_lang(Tree *ytp, const char *data)
   else
     curr_lang = data[1];
   curr_word_lang = data+1;
+  gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mp->file, mp->line);
   return gdl_meta_node(ytp, "g:z", data);
 }
 

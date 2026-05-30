@@ -15,6 +15,7 @@
  */
 
 List *curr_words;
+struct lang_context *line_lang = NULL;
 
 void
 tlit_reinit_inline(void)
@@ -35,6 +36,10 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
   gdl_unicode = 1;
   while (isspace(*s))
     ++s;
+  if (text_lang)
+    line_lang = text_lang;
+  else
+    line_lang = global_lang;
   gdl_set_ids(clid, word_id_base);
   Tree *tp = gdlparse_string(np->mloc, (char*)s);
   tree_graft(np, tp);
@@ -48,7 +53,6 @@ xtlit_parse_inline(unsigned char *line, unsigned char *end, struct node*lnode,
 		  int word_id_base, unsigned char *line_id)
 {
 #if 0
-  /*struct lang_context *line_lang = NULL;*/
 
   if (verbose > 1)
     fprintf(stderr, "%d\n", lnum);
@@ -59,13 +63,6 @@ xtlit_parse_inline(unsigned char *line, unsigned char *end, struct node*lnode,
   tokenize_reinit();
   nfields = 0;
   curr_field = NULL;
-
-#if 0
-  if (text_lang)
-    line_lang = text_lang;
-  else
-    line_lang = global_lang;
-#endif
   
   if (!use_unicode)
     ascii_check(line);

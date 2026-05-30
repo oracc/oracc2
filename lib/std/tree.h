@@ -42,6 +42,7 @@ typedef enum usertype { N_U_NODE=0 ,
 			N_U_NOTE ,
 			N_U_SCANSEG ,
 			N_U_XCL ,
+			N_U_LANG ,
 			N_U_TOP } Usertype;
 
 typedef struct node {

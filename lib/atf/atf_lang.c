@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <lang.h>
 #include "atf.h"
 #include "atf_bld.h"
 
@@ -9,7 +10,7 @@ atf_lang(Mloc ml, ATF *a, const char *atf_lang)
   char lbuf[strlen(atf_lang)], *l = lbuf;
   strcpy(l, atf_lang+4);
   unsigned char *uscore, *altlang = NULL;
-  /*int uscore_logo = 0;*/
+  int uscore_logo = 0;
   while (isspace(*l))
     ++l;
       
@@ -45,7 +46,6 @@ atf_lang(Mloc ml, ATF *a, const char *atf_lang)
   np->user = atfp;
   atf_input(ml, LT_LANG, a);
   
-#if 0
   char *atsign;
   if ((atsign = strchr(l,'@')))
     {
@@ -54,11 +54,11 @@ atf_lang(Mloc ml, ATF *a, const char *atf_lang)
     }
   if (*l)
     {
-      if (!(text_lang = lang_switch(NULL, (char*)l, NULL, file, lnum)))
+      if (!(text_lang = lang_switch(NULL, (char*)l, NULL, ml.file, ml.line)))
 	curr_lang_ctxt = text_lang = global_lang;
       if (altlang)
 	{
-	  struct lang_context *tmp = lang_switch(NULL,(const char*)altlang,NULL,file,lnum);
+	  struct lang_context *tmp = lang_switch(NULL,(const char*)altlang,NULL,ml.file,ml.line);
 	  if (tmp)
 	    text_lang->altlang = (char*)altlang;
 	}
@@ -67,5 +67,4 @@ atf_lang(Mloc ml, ATF *a, const char *atf_lang)
     }
   else
     warning("atf protocol without argument");
-#endif
 }

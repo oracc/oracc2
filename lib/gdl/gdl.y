@@ -338,8 +338,9 @@ qmaybemodflags:
 	;
 
 lang:
-	  LANG						{ ynp = gdl_lang(ytp, gdllval.text); }
-	| LANG_FLIP					/*TODO; ALSO #atf: lang akk _%s_ vel sim*/
+		LANG						{ ynp = gdl_lang(&@1, ytp,
+										 gdllval.text); }
+	| 	LANG_FLIP					/*TODO; ALSO #atf: lang akk _%s_ vel sim*/
 	;
 
 meta:

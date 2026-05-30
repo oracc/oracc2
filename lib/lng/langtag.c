@@ -368,7 +368,8 @@ langtag_create(struct lang_context *base, const char *tag,
 	fwhost = base->core->name;
       else
 	fwhost = NULL;
-      *taglenp = percent + taglen;
+      if (taglenp)
+	*taglenp = percent + taglen;
       return NULL;
     }
 
