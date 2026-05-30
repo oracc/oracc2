@@ -318,7 +318,12 @@ opts(int opt, const char *arg)
       val_flag = 1;
       break;
     case 'v':
-      verbose = 1;
+      ++verbose;
+      if (verbose > 1)
+	{
+	  extern int l3verbose;
+	  l3verbose = 1;
+	}
       break;
     case 'x':
       xml_output = 1;
