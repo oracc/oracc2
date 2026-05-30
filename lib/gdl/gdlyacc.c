@@ -24,7 +24,9 @@ static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
 
+#if 0
 static unsigned const char *gdl_times_prefix;
+#endif
 
 #if 1
 /* New 2026-03-03: state is now handled with three variables, pst,
@@ -186,7 +188,7 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  if (d)
 	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
-      else if (strcmp(c->name, "g:d") && strcmp(c->name, "g:z"))
+      else if (strcmp(c->name, "g:d") && strcmp(c->name, "g:z") && strcmp(c->name, "g:p"))
 	{
 	  gdlstate_t s = prop_get_state(c);
 	  if (!gs_is(s,gs_excised))
@@ -229,18 +231,51 @@ gdl_nonw_excised(Node *w)
   ++nonw_found;
 }
 
-/* This routine assumes it is processing one word-node at a time */
+static void
+gdl_nonw_punct(Node *w)
+{
+  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", "punct");
+  w->name = "g:nonw";
+  ++nonw_found;
+}
+
+/* This routine assumes it is processing one word-node at a time and
+   is called in the context of the list of words, i.e., after an
+   entire line of ATF has been scanned. */
 void
 gdl_word_attr(Node *w)
 {
-  if (w && w->kids && !w->kids->next && !strcmp(w->kids->name, "g:x"))
+  if (w && w->kids && !w->kids->next
+      && (!strcmp(w->kids->name, "g:x")
+	  || !strcmp(w->kids->name, "g:p")))
     {
       if (strcmp(w->kids->text, "..."))
 	{
-	  Prop *p = prop_find_kv(w->props, "g:type", NULL);
-	  if (p)
-	    prop_drop_kv(w->props, "g:type", NULL);
-	  gdl_force_nonw(w, p ? p->u.k->v : "comment");
+	  if ('p' == w->kids->name[2])
+	    {
+	      Prop *p = prop_find_kv(w->props, "g:type", NULL);
+	      if (p)
+		prop_drop_kv(w->props, "g:type", NULL);
+	      gdl_nonw_punct(w);
+	    }
+	  else if ('/' == *w->kids->text || ';' == *w->kids->text)
+	    {
+	      /* promote the g:x child to the g:w spot */
+	      Node *gx = w->kids;
+	      w->name = gx->name;
+	      w->props = gx->props;
+	      w->kids = NULL; /* orphan the original g:x node; these
+				 are not numerous so it's not too
+				 wasteful */
+	      ++nonw_found; /* trigger gdl_rem_nonw */
+	    }
+	  else
+	    {
+	      Prop *p = prop_find_kv(w->props, "g:type", NULL);
+	      if (p)
+		prop_drop_kv(w->props, "g:type", NULL);
+	      gdl_force_nonw(w, p ? p->u.k->v : "comment");
+	    }
 	  return;
 	}
     }
@@ -634,7 +669,7 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
   Node *np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "repeated");
   np->mloc = ytp->curr->mloc;
-  np->text = p;
+  np->text = (ccp)p;
   ++c_delim_sentinel;
 }
 

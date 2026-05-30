@@ -170,9 +170,13 @@ grx_jox_node(Node *np, int oflag, int nflag)
   else if (!strcmp(np->name, "g:x")
 	   || (!strcmp(np->name, "g:nonw") && !np->kids))
     {
-      joxer_et(np->mloc, nodename,
-	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))),
-	       np->text);
+      if (np->text)
+	joxer_et(np->mloc, nodename,
+		 (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))),
+		 np->text);
+      else
+	joxer_ec(np->mloc, nodename,
+		 (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))));
       need_closer = 0;
       if (p)
 	{

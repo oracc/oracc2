@@ -16,7 +16,8 @@ jox_xml_output(FILE *fp)
 void
 jox_xml_ch(const char *ch)
 {
-  fputs(ch,f_xml);
+  if (ch)
+    fputs(ch,f_xml);
 }
 
 void
