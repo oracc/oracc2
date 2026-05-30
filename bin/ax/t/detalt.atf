@@ -1,0 +1,6 @@
+##file 00atf/P10b.atf
+##line 58069
+&P106923 = BM Messenger 044 
+#project: epsd2/admin/ur3
+#atf: use unicode
+1. {ki}:še₃
