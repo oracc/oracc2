@@ -20,6 +20,8 @@ int deep_parse = 1;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 
+Node *gdl_post_det_gp_attach;
+
 static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
@@ -163,7 +165,11 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	}
       else if (!strcmp(c->name, "g:det"))
 	{
-	  gdlstate_t s = prop_get_state(c->kids);
+	  gdlstate_t s = 0L;
+	  if (c->kids)
+	    s = prop_get_state(c->kids);
+	  else
+	    mesg_verr(c->mloc, "gdl_wf_nodes: found a g:det with no ->kids");
 	  if (!gs_is(s,gs_excised))
 	    fputc('{', wfp);
 	  Prop *p = prop_find_kv(c->props, "g:char", NULL);
@@ -1094,7 +1100,18 @@ gdl_group(Mloc mp, Node *lft, int type, Node *rt)
       gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", v);
       gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
       /*20260529: need to make sure gp is under word so set curr to lft->rent*/
-      tree_curr(gp->rent);
+      /*20260530: but if rt = g:det set a flag to reset the attach
+	point after '}' but make g:det the current attach point */
+      if (!strcmp(rt->name, "g:det"))
+	{
+	  gdl_post_det_gp_attach = gp;
+	  tree_curr(rt);
+	}
+      else
+	{
+	  gdl_post_det_gp_attach = NULL;
+	  tree_curr(gp->rent);
+	}
       /*tree_curr(gp);*/ /* attach point remains unchanged after group insertion */
     }
 }

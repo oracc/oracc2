@@ -18,6 +18,7 @@ extern int gdllineno, gdltrace;
 extern gdlstate_t gst; 	/* global gdl state */
 extern Node *lgp;   		/* last grapheme node pointer */
 #endif
+extern Node *gdl_post_det_gp_attach;
 
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
@@ -156,6 +157,11 @@ det:	  '{'	      					{ gdl_balance_state(@1,'{');
 	  						  rs_on(gs_det|gs_g_phond); }
 	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}'))
 		  					    gdl_det_props(ytp->curr);
+		    					  if (gdl_post_det_gp_attach)
+							    {
+								tree_curr(gdl_post_det_gp_attach);
+								gdl_post_det_gp_attach = NULL;
+							    }
 							  $$ = lgp = ytp->curr;
 	      						  ynp = gdl_pop(ytp,"g:det");
 	     						  /* set pst->det = SB_CL; lgp is last
