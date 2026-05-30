@@ -14,3 +14,4 @@
 #include "psus/psus.h"
 #include "word/words.h"
 #include "xli/xli.h"
+extern int l3verbose;

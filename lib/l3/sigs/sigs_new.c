@@ -95,7 +95,7 @@ sigs_form_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 
   if (candidates)
     {
-      if (verbose)
+      if (l3verbose)
 	fprintf(stderr,
 		"sigs_new.c: %d result%s for %s in %s:%s\n",
 		candidates->count,
@@ -113,12 +113,12 @@ sigs_form_in_sigset(struct xcl_context *xcp, struct ilem_form *ifp,
 	      c->f2p->rank = c->rank;
 	    }
 	  res[ncand++] = c;
-	  if (verbose)
+	  if (l3verbose)
 	    fprintf(stderr,"\t%s\n",c->sig);
 	}
       res[ncand] = NULL;
     }
-  else if (verbose)
+  else if (l3verbose)
     fprintf(stderr,"sigs_new.c: no results for %s in %s:%s\n", f->form, sp->project,sp->lang);
 
   /* zero_word_pct(res, ncand); */ /* do we need this here ? res has a different type than in sigs_context */

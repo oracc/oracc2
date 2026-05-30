@@ -18,7 +18,7 @@ struct props_user
 };
 
 extern const char *project;
-extern int verbose;
+extern int l3verbose;
 static Hash *props_loaded = NULL;
 
 static void props_warning(const char *mess, const char *cause);
@@ -69,11 +69,11 @@ props_init(struct xcl_context *xc, const char *name)
 	  props->nlcps[i] = props_load_lang(props->langs[i]);
 	  props->nlcps[i]->action = nlcp_action_props;
 	  props->nlcps[i]->func = props_ngram_match;
-	  if (verbose)
+	  if (l3verbose)
 	    {
 	      fprintf(stderr,"loaded %s props for lang %s from file %s\n", 
 		      name, props->langs[i]->lang->name,buf);
-	      if (verbose > 1)
+	      if (l3verbose > 1)
 		{
 		  char fname[128];
 		  FILE *fp;

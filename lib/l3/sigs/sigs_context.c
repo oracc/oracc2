@@ -105,7 +105,7 @@ sig_context_register(struct sig_context *scp,
 	      scp->aliases = sas_asa_load(buf);
 	      if (scp->aliases)
 		{
-		  if (verbose)
+		  if (l3verbose)
 		    fprintf(stderr,"ox: using aliases %s\n",scp->aliases_file);
 		}
 	      else
@@ -178,7 +178,7 @@ sig_context_register(struct sig_context *scp,
     {
       if (!hash_find(scp->known_bad,fname))
 	{
-	  if (verbose)
+	  if (l3verbose)
 	    fprintf(stderr,"sig_context: ignoring duplicate data source `%s'\n", fname);
 	  hash_add(scp->known_bad,pool_copy(fname,scp->pool),&bad);
 	}
@@ -550,7 +550,7 @@ sig_load_set(struct sig_context*scp, struct sigset *sp)
 	  bigrams_init(sp);
 	  collos_init(sp);
 	}
-      if (verbose)
+      if (l3verbose)
 	fprintf(stderr,"sig_context: loaded sigs from %s\n", sp->file);
     }
   return 0;
@@ -634,7 +634,7 @@ sig_context_langs(struct sig_context *scp, const char *langs)
 		;
 	      else
 		sigs_allow_project_lem = 0;		
-	      if (verbose)
+	      if (l3verbose)
 		fprintf(stderr,"sigs_context: lang=%s; projects=%s\n",langp[i],proj); /*; sigs_allow_project_lem==%d,sigs_allow_project_lem */
 	      projtmp = malloc(strlen(proj)+1);
 	      strcpy(projtmp,proj);
@@ -648,7 +648,7 @@ sig_context_langs(struct sig_context *scp, const char *langs)
 	    }
 	  else
 	    {
-	      if (verbose)
+	      if (l3verbose)
 		fprintf(stderr,"sigs_context: lang=%s not in config; using only %s\n", langp[i],scp->xpd->project);
 	      sig_context_register(scp, scp->xpd->project, langp[i], 1);
 	    }

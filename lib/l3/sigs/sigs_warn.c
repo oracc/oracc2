@@ -4,6 +4,8 @@
 #include "ilem_form.h"
 #include "xcl.h"
 
+int l3verbose = 0;
+
 char *
 err_sig(struct ilem_form *fp)
 {
@@ -171,13 +173,13 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
   if (!look)
     return;
 
-  if (nfinds > 1 || verbose 
+  if (nfinds > 1 || l3verbose 
       || BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM) 
       || BIT_ISSET(fp->f2.flags,FORM_FLAGS_PARTIAL))
     {
       if (look->type == sig_look_new)
 	{
-	  if (verbose)
+	  if (l3verbose)
 	    {
 	      const char *es = (nfinds == 1 ? "" : "es");
 	      vwarning2(fp->file,fp->lnum,
@@ -217,8 +219,8 @@ sigs_warn(struct xcl_context *xcp, struct xcl_l *l,
 	  || (nfinds > 1 
 	      && !BIT_ISSET(fp->f2.flags,FORM_FLAGS_NO_FORM)
 	      && !(look->type == sig_look_new))
-	  || verbose > 1
-	  || (verbose && look->type == sig_look_new)
+	  || l3verbose > 1
+	  || (l3verbose && look->type == sig_look_new)
 	  ))
     {
       int i, max_show;

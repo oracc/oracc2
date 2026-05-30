@@ -349,7 +349,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	    ifp->lang->defsigs = sp;
 	}
 
-      if (verbose)
+      if (l3verbose)
 	fprintf(stderr, "trying sig_set %s:%s\n", sp->project, sp->lang);
       
       if ((sigs_found = look_cache.test(xcp,ifp,sp,&nfinds)))
@@ -378,7 +378,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	    BIT_SET(l->f->f2.flags, FORM_FLAGS_NOT_IN_SIGS);
 	}
 
-      if (verbose)
+      if (l3verbose)
 	fprintf(stderr, "sigs_found after cache = %p\n", (void*) sigs_found);
 
 #if 0      
@@ -796,7 +796,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
       if (nfinds && strcmp((const char *)sp->file, "cache"))
 	{
 	  sigs_state_save(sp, ifp, sigs_found, nfinds);
-	  if (verbose)
+	  if (l3verbose)
 	    fprintf(stderr, "saving %s\n", sigs_found[0]->sig);
 	}
 
@@ -806,7 +806,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	  && !BIT_ISSET(ifp->f2.flags, FORM_FLAGS_NO_FORM)
 	  )
 	{
-	  if (verbose)
+	  if (l3verbose)
 	    fprintf(stderr, "breaking with nfinds=1 and not PARTIAL or NO_FORM\n");
 	  break;
 	}
@@ -822,7 +822,7 @@ sigs_lookup_sub_sub(struct xcl_context *xcp, struct xcl_l *l,
 	}
       else
 	{
-	  if (verbose)
+	  if (l3verbose)
 	    {
 	      fprintf(stderr, "PARTIAL = %d; NO_FORM=%d\n",
 		      BIT_ISSET(ifp->f2.flags, FORM_FLAGS_PARTIAL),

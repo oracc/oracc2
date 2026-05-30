@@ -6,7 +6,7 @@
 
 static struct NL_context *collos_nlcp = NULL;
 extern const char *project;
-extern int verbose;
+extern int l3verbose;
 
 void
 collos_init(struct sigset *sp)
@@ -16,10 +16,10 @@ collos_init(struct sigset *sp)
   if (!xaccess(buf,R_OK,0))
     {
       collos_nlcp = nl_load_file(sp, collos_nlcp, buf, nlcp_action_rewrite, (const char*)sp->lang);
-      if (verbose)
+      if (l3verbose)
 	fprintf(stderr,"loaded collos %s\n", buf);
     }
-  else if (verbose)
+  else if (l3verbose)
     {
       fprintf(stderr,"no file %s\n", buf);
     }

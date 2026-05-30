@@ -8,7 +8,7 @@
 #include "words.h"
 
 extern int lem_dynalem;
-extern int verbose;
+extern int l3verbose;
 extern const char *xcl_project;
 extern int wordset_debug;
 
@@ -332,7 +332,7 @@ cof_ok(struct ilem_form *ifp, Form *f2p, int force_sense)
       if (!cfnorm_ok(&m->f2, f2p->parts[i])
 	  || !f2_test(&m->f2, f2p->parts[i]))
 	{
-	  if (verbose)
+	  if (l3verbose)
 	    mesg_vnotice(ifp->file, ifp->lnum, "cof_ok: no match to %s", ifp->literal);
 	  if (sense_null)
 	    m->f2.sense = NULL;
@@ -351,7 +351,7 @@ cof_ok(struct ilem_form *ifp, Form *f2p, int force_sense)
       BIT_CLEAR(m->f2.flags,FORM_FLAGS_COF_INVALID);
     }
 
-  if (verbose)
+  if (l3verbose)
     mesg_vnotice(ifp->file, ifp->lnum, "cof_ok: found match to %s", ifp->literal);
   return 1;
 }

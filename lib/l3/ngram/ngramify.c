@@ -20,7 +20,7 @@ static FILE *ng_match_log = NULL;
 
 static List *ngramify_mem = NULL;
 
-extern int verbose;
+extern int l3verbose;
 static int ngram_id = -1;
 static struct ML *match_list = NULL;
 static int wild_reset;
@@ -83,9 +83,9 @@ ngramify_init(void)
   if (ng_match_logging && !ng_match_log)
     {
       ng_match_log = fopen("01tmp/ng_match.log", "wb");
-      if (NULL == ng_match_log && verbose)
+      if (NULL == ng_match_log && l3verbose)
 	{
-	  if (verbose > 1)
+	  if (l3verbose > 1)
 	    fprintf(stderr, "ngramify_init: couldn't open 01tmp/ng_match.log--no ngram match logging will be done.\n");
 	  ng_match_logging = 0;
 	}
@@ -263,7 +263,7 @@ ngramify(struct xcl_context *xcp, struct xcl_c*cp)
 		{
 		  psu_sense = (ucp)clnodes[i].l->f->psu_sense;
 		  psu_lnum = clnodes[i].l->f->lnum;
-		  if (verbose)
+		  if (l3verbose)
 		    fprintf(stderr, "psu_sense = %s\n", psu_sense);
 		}
 	    }

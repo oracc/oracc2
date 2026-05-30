@@ -123,7 +123,7 @@ links_psu(struct xcl_context *xc, struct ML *mlp)
 			"psu: %s[%s]%s: compound FORM %s not found",
 			e->cf,e->gw,e->pos,e->form);
 	    }
-	  else if (verbose)
+	  else if (l3verbose)
 	    {
 	      Form *e = mlp->matches[0].psu_form;
 	      vwarning2((const char *)e->file, e->lnum, 

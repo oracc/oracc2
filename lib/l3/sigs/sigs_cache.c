@@ -83,7 +83,7 @@ sigs_cache_add(struct ilem_form *ifp, struct sig const *const *sigs)
   if (!ifp->sp->cache)
     sigs_cache_init(ifp->sp);
 
-  if (verbose)
+  if (l3verbose)
     fprintf(stderr, "sigs_cache: adding %s to cache\n", ifp->f2.form);
 
   sigs_load_one_sig(ifp->sp->owner, ifp->sp->cache, sigs[0]->sig, 0, ifp, 0);
@@ -108,7 +108,7 @@ sigs_cache_find(struct sigset *sp, struct ilem_form *fp)
 {
   struct sig const * const *ret = NULL;
 
-  if (verbose)
+  if (l3verbose)
     fprintf(stderr, "sigs_cache: looking for %s in cache ... ", fp->f2.form);
 
   if (sp && sp->cache)
@@ -116,13 +116,13 @@ sigs_cache_find(struct sigset *sp, struct ilem_form *fp)
       if ((BIT_ISSET(fp->f2.flags, FORM_FLAGS_LEM_BY_NORM) && fp->f2.norm && (ret = hash_find(sp->cache->norms,fp->f2.norm)))
 	  || (fp->f2.form && (ret = hash_find(sp->cache->forms,fp->f2.form))))
 	{
-	  if (verbose)
+	  if (l3verbose)
 	    fprintf(stderr, "found\n");
 	  return ret;
 	}
     }
 
-  if (verbose)
+  if (l3verbose)
     fprintf(stderr, "not found\n");
   return NULL;
 }

@@ -5,7 +5,7 @@
 #include "xli.h"
 #include "xli_sux.c"
 
-extern int verbose;
+extern int l3verbose;
 int xli_debug = 0;
 
 struct xli xli_data[] = 
@@ -33,7 +33,7 @@ xli_init_external(struct xli*xlip)
   pid_t nPid;
   int pipeto[2];
   int pipefrom[2];
-  if (verbose)
+  if (l3verbose)
     xli_debug = 1;
   if (pipe(pipeto))
     {

@@ -90,7 +90,7 @@ struct siglook
 
 extern struct siglook look_cache;
 
-extern int verbose, qpn_mode;
+extern int l3verbose, qpn_mode;
 
 extern struct siglook global_sig_look_struct;
 extern struct sig_context *global_scp;
