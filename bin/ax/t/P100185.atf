@@ -1,0 +1,15 @@
+##file 00atf/P10a.atf
+##line 6753
+&P100185 = AAS 207 
+#project: epsd2/admin/ur3
+#atf: use unicode
+@object tag 
+@obverse 
+$ blank space 
+# seal impression 
+@reverse 
+$ blank space 
+# seal impression 
+@seal 1 
+$ (no linguistic content)  
+

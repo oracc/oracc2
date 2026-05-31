@@ -1,0 +1,15 @@
+&P100001 = AAS 013
+#project: epsd2/admin/ur3
+#atf: use unicode
+
+1. ak / mu 
+#lem: ak[do]; mu[year]
+
+2. ak // mu 
+#lem: ak[do]; mu[year]
+
+3. ak ; mu 
+#lem: ak[do]; mu[year]
+
+4. ba;-ti
+#lem: teŋ[near]

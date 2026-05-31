@@ -45,7 +45,7 @@ atf_save_lem(Node *np, const char *lemstr)
       form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
     }
   else if (((struct lang_context *)np->user)->utype == N_U_LANG)
-    form->lang = np->user;
+    form->lang = (struct lang_context*)np->user;
 
   const char *formstr = propfrm(np);  
   if (BIT_ISSET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM))
