@@ -95,14 +95,14 @@ langtag_init(void)
     }
 }
 
-void
+static void
 langtag_pool_init(void)
 {
   if (!langtag_pool)
     langtag_pool = pool_init();
 }
 
-void
+static void
 langtag_pool_term(void)
 {
   if (langtag_pool)
@@ -115,7 +115,11 @@ langtag_pool_term(void)
 void
 langtag_term(void)
 {
-  langtag_pool_term();
+  if (langtag_pool)
+    {
+      pool_term(langtag_pool);
+      langtag_pool = NULL;
+    }
   if (langtag_hash)
     {
       hash_free(langtag_hash, hash_xfree);

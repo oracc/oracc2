@@ -58,6 +58,7 @@ ax_input(const char *f)
   ngramify_init();
   gdlparse_init();
   inl_init();
+  lng_init();
   Tree *tp = atf_read(f);
   proj_init(rp, (ccp)atfp->project);
   XCL *xp = NULL;
@@ -113,7 +114,6 @@ ax_input(const char *f)
       mesg_print(stderr);
       mesg_term();
       inl_term();
-      langtag_term();      
     }
 }
 
@@ -130,6 +130,7 @@ ax_full_term(void)
   props_run_term();
   run_term(rp);
   xcl_final_term();
+  lng_term();
 }
 
 #if 0
