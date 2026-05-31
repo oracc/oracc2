@@ -106,6 +106,7 @@ atf_term(void)
   free(atfmp);
   atfmp = NULL;
   curr_line = NULL;
+  text_lang = NULL;
 
   free(atfp->protocols);
   list_free(atfp->input, NULL);

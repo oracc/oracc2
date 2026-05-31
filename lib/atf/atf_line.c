@@ -105,6 +105,8 @@ atf_line_lg(Mloc *mp)
     set_block_curr(B_LINE);
 
   atf_push("lg", mp);
+
+  line_lang = text_lang;
 }
 
 static void

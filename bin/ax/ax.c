@@ -270,11 +270,16 @@ main(int argc, char * const*argv)
   nodeh_register(treexml_o_handlers, NS_XTF, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_XTF, treexml_c_generic);
   langtag_init();
-  global_lang = lang_switch(NULL,"sux",NULL,NULL,0);
+
+  /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
+  struct lang_context *x = lang_switch(NULL,"sux",NULL,NULL,0);
+  global_lang = calloc(1, sizeof(struct lang_context));
+  *global_lang = *x;
   
   process_inputs(argc, argv);
   
   ax_full_term();
+  free(global_lang);
   if (ok_no_files)
     {
       xfclose("ax.ok", ok_no_ok_fp);
