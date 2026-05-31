@@ -91,28 +91,9 @@ langtag_init(void)
       langtag_hash = hash_create(1);
       default_langtag = langtag_create(NULL,"sux",NULL,NULL,0);
       noscript_hash = hash_create(1);
-      texttag_init();
+      texttag_hash = hash_create(1);
     }
 }
-
-#if 0
-static void
-langtag_pool_init(void)
-{
-  if (!langtag_pool)
-    langtag_pool = pool_init();
-}
-
-static void
-langtag_pool_term(void)
-{
-  if (langtag_pool)
-    {
-      pool_term(langtag_pool);
-      langtag_pool = NULL;
-    }
-}
-#endif
 
 void
 langtag_term(void)
@@ -134,13 +115,11 @@ langtag_term(void)
       noscript_hash = NULL;
     }
 
-  /*  free(default_langtag); */
-}
-
-void
-texttag_init(void)
-{
-  texttag_hash = hash_create(1);
+  if (texttag_hash)
+    {
+      hash_free(texttag_hash,NULL);
+      texttag_hash = NULL;
+    }
 }
 
 /* Caller is responsible for freeing this */
@@ -196,16 +175,6 @@ texttag_register(const char *tag)
       if (!hash_find(texttag_hash, (unsigned char *)tmp))
 	hash_add(texttag_hash, (unsigned char *)tmp, &defined);
       /* NEED TO FREE tmp SOMEHOW */
-    }
-}
-
-void
-texttag_term(void)
-{
-  if (texttag_hash)
-    {
-      hash_free(texttag_hash,NULL);
-      texttag_hash = NULL;
     }
 }
 

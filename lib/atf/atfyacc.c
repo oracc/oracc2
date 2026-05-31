@@ -64,8 +64,7 @@ atf_init(void)
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;
   atfp->input = list_create(LIST_SINGLE);
-  lang_init();
-  texttag_init();
+  /* lang_init() and lang_term() must now be called by ax or equivalent before/after the entire run */
 }
 
 void
@@ -117,9 +116,7 @@ atf_term(void)
 
   atf_lex_term();
   label_term();
-  lang_term();
   note_term();
-  texttag_term();
   tree_term();  
 }
 
