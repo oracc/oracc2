@@ -139,13 +139,13 @@ find_lang(const char *sig, char **endp)
 	    *endp = (char*)c;
 	  strncpy(buf, p, c-p);
 	  buf[c-p] = '\0';
-	  langtag_pool_init();
+	  lang_init();
 	  struct lang_tag *ltp = langtag_parse(buf, NULL, -1);
 	  if (ltp)
 	    free(ltp);
 	  else
 	    fprintf(stderr, "sigmap: malformed language tag (%s)\n", buf);
-	  langtag_pool_term();
+	  lang_term();
 	}
       else
 	fprintf(stderr, "sigmap: lang too long (%s)\n", p);
