@@ -666,10 +666,11 @@ gdl_new_word(Tree *ytp)
 
       Node *wp = gdl_push(ytp, "g:w");
       wp->mloc = mloc_file_line(currgdlfile, gdllineno);
-      wp->user = gdl_lang_context;
+
       /* By definition, the word-lang is the one in effect when the
 	 word begins; logogram lang switches need to be handled
 	 carefully */
+      assert(curr_word_lang != NULL);
       gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);
       
       /* IF FIELD NOT IN SPARSE LEM HASH */
