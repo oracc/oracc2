@@ -45,7 +45,7 @@ gdl_init(void)
   
   gdlpool = pool_init();
 
-  gdl_set_word_lang("sux");
+  gdl_set_lang(NULL, "sux", NULL);
 }
 
 void

@@ -3,15 +3,17 @@
 #include <memo.h>
 #include <pool.h>
 #include <oraccsys.h>
+#include <lng.h>
 #include "gdl.h"
 #include "gvl.h"
 #include "unidef.h"
 
 extern int gvl_strict;
 extern int gvl_trace;
-extern int curr_lang;
 
 static const char *report = "https://oracc.museum.upenn.edu/osl/reportingnewvalues/";
+
+extern struct lang_context *gdl_lang_context;
 
 gvl_g *
 gvl_s(Node *ynp)
@@ -58,10 +60,14 @@ gvl_s(Node *ynp)
       ynp->name = "g:n";
     }
 #endif
-  
+
+#if 1
+  if (!bit_get(gdl_lang_context->core->features, LF_SAC))
+    return gp;
+#else
   if ('a' != curr_lang && 's' != curr_lang && (curr_lang < '0' || curr_lang > '9'))
     return gp;
-  
+#endif
   if ((l = gvl_lookup(gp->orig)))
     {
       /* best case: g is a known sign or value; only n or N can have type 'R' here */

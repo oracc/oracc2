@@ -16,7 +16,7 @@ extern const char *currgdlfile;
 extern int gdltrace, gdllineno, gdl_legacy;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
-int curr_lang = 's';
+/*int curr_lang = 's';*//* not sure how this was ever supposed to be useful; use word_lang_tag instead */
 int deep_parse = 1;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
@@ -62,7 +62,7 @@ List *c_dangling_gps = NULL;
 List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
 static Node *c_last_explicit_group_node = NULL;
-static const char *curr_word_lang = "sux";
+static const char *word_lang_tag = "sux";
 static List *wd_list = NULL;
 
 /***********************************************************************
@@ -278,8 +278,11 @@ gdl_word_is_excised(Node *w)
 }
 
 /* This routine assumes it is processing one word-node at a time and
-   is called in the context of the list of words, i.e., after an
-   entire line of ATF has been scanned. */
+ * is called in the context of the list of words, i.e., after an
+ * entire line of ATF has been scanned.
+ *
+ * NOTE: GDL is not allowed to set w->user !
+ */
 void
 gdl_word_attr(Node *w)
 {
@@ -323,7 +326,7 @@ gdl_word_attr(Node *w)
   char *wf_buf = NULL;
   size_t wf_len = 0;
   word_excisions = 0;
-  /*  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);*/
+  /*  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);*/
   FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
   gdl_wf_nodes(w, wf_fp);
   fclose(wf_fp);
@@ -670,8 +673,8 @@ gdl_new_word(Tree *ytp)
       /* By definition, the word-lang is the one in effect when the
 	 word begins; logogram lang switches need to be handled
 	 carefully */
-      assert(curr_word_lang != NULL);
-      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", curr_word_lang);
+      assert(word_lang_tag != NULL);
+      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       
       /* IF FIELD NOT IN SPARSE LEM HASH */
       list_add(wd_list, wp);
@@ -695,16 +698,24 @@ gdl_auto_id(void)
   gdl_set_word_id(buf);
 }
 
+#if 0
 void
 gdl_set_lang(struct lang_context *l)
 {
   gdl_lang_context = l;
 }
+#endif
 
 void
-gdl_set_word_lang(const char *l)
+gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt)
 {
-  curr_word_lang = l;
+  if (!tag)
+    {
+      fprintf(stderr, "gdl_set_lang: internal error: called with null tag argument\n");
+      return;
+    }
+  word_lang_tag = tag;
+  gdl_lang_context = lang_switch(ctxt, tag, NULL, mp ? mp->file : NULL, mp ? mp->line : 0);
 }
 
 void
@@ -731,7 +742,7 @@ gdl_delim(Tree *ytp, const char *data)
   if (gdltrace)
     fprintf(stderr, "gt: DELIM: %s\n", data);
   /* GDL lang handling needs to switch to lib/lng */
-  if ('.' == *data && !c_processing && 's' == curr_lang)
+  if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux)
     {
       mesg_verr(ytp->curr->mloc, "period only legal in compounds, logograms, and ...");
       data = "-";
@@ -904,17 +915,14 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   return ret;
 }
 
+/* %akk/n probably not handled properly yet */
 Node *
 gdl_lang(Mloc *mp, Tree *ytp, const char *data)
 {
   if (gdltrace)
     fprintf(stderr, "gt: LANG: %s\n", data);
-  if (strstr(data, "/n"))
-    curr_lang = 'n';
-  else
-    curr_lang = data[1];
-  curr_word_lang = data+1;
   gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mp->file, mp->line);
+  word_lang_tag = gdl_lang_context->fulltag;
   return gdl_meta_node(ytp, "g:z", data);
 }
 

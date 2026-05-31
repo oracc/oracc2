@@ -610,7 +610,7 @@ line_note(Mloc l, const char *ltext)
   atf_xprop(np, "xml:id", n->xid);
   atf_xprop(np, "note:mark", "1");/*place-holder*/
   np->user = n;
-  register_line(l, LT_NOTE, np, ltext);
+  register_line(l, LT_NOTE, np, (ucp)ltext);
   /*atf_input(l, LT_NOTE, n);*/  
 }
 

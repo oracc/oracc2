@@ -12,16 +12,18 @@
 #include <pool.h>
 #include <hash.h>
 #include <tree.h>
+#include <lang.h>
 
 #include "gdl.h"
 #include "gvl.h"
+
+extern struct lang_context *gdl_lang_context;
 
 int gvl_no_mesg_add = 0;
 int gvl_sans_report = 0;
 int gvl_trace = 0;
 int gvl_strict = 0;
 extern int c_delim_sentinel;
-extern int curr_lang;
 
 gvl_lookup_ptr gvl_lookup = gvl_lookup_sl;
 
@@ -459,7 +461,8 @@ gvl_simplexg(Node *ynp)
   gvl_g *gp = NULL;
   unsigned const char *g = NULL;
 
-  if (!ynp || !ynp->text || ynp->name[2] == 'x' || !strcmp(ynp->name, "g:gp") || 'n' == curr_lang)
+  if (!ynp || !ynp->text || ynp->name[2] == 'x' || !strcmp(ynp->name, "g:gp")
+      || /*'n' == curr_lang*/ gdl_lang_context->mode != m_graphemic)
     return;
 
   g = (uccp)ynp->text;

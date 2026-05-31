@@ -16,7 +16,6 @@ extern Mloc gdllloc;
 const char *gdlfile = "<stdin>";
 const char *currgdlfile = NULL;
 extern int gdl_lexfld[];
-extern int curr_lang;
 extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 int gdlflextrace = 0;
 int g_literal_flag = 0, g_logoforce_flag = 0;
@@ -303,7 +302,6 @@ gdl_lex_init(const char *file, int line)
   cvq_top = -1;
   currgdlfile = gdlfile = file;
   gdllineno = line;
-  curr_lang = 's';
 }
 
 void
