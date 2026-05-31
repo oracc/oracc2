@@ -95,6 +95,7 @@ langtag_init(void)
     }
 }
 
+#if 0
 static void
 langtag_pool_init(void)
 {
@@ -111,6 +112,7 @@ langtag_pool_term(void)
       langtag_pool = NULL;
     }
 }
+#endif
 
 void
 langtag_term(void)
@@ -216,7 +218,7 @@ langtag_parse(const char *tag, const char *file, int lnum)
 
   if (!tag || !*tag)
     {
-      langtag_error(file,lnum,tag,"malformed language tag");
+      langtag_error(file,lnum,tag,"malformed language tag has no content");
       return NULL;
     }
   else
