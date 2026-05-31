@@ -53,12 +53,12 @@ void
 ax_input(const char *f)
 {
   mesg_init();
+  lng_init();
   form_init();
   nl_init();
   ngramify_init();
   gdlparse_init();
   inl_init();
-  lng_init();
   Tree *tp = atf_read(f);
   proj_init(rp, (ccp)atfp->project);
   XCL *xp = NULL;
