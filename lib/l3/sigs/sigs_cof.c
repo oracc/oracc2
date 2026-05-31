@@ -51,11 +51,7 @@ set_cof_ptrs(struct xcl_l *l, struct xcl_l *tail, int nth)
   struct ilem_form *ifps;
   ifps = memo_new_array(ifp_struct_mem, (1+l->f->fcount));
   tail->f->fcount = l->f->fcount;
-#if 1
   tail->f->finds = malloc((1+l->f->fcount) * sizeof(struct ilem_form *));
-#else
-  tail->f->finds = memo_new_array(ifp_mem, l->f->fcount);
-#endif
   for (i = 0; i < l->f->fcount; ++i)
     {
       tail->f->sp = l->f->sp;

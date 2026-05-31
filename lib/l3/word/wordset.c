@@ -130,7 +130,7 @@ w2_create_set(const Uchar *word_set)
     ++set->nkeys;
   getkey(NULL);
 
-  set->keys = memo_new_array(mb_w2_keys,set->nkeys);
+  set->keys = memo_new_array(mb_w2_keys,set->nkeys + 1);
 
   while ((k = getkey(word_set)))
     {
