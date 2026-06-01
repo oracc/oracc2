@@ -151,9 +151,6 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  if (!strcmp(c->text, "..."))
 	    {
 	      fputc('x', wfp);
-	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-	      if (d)
-		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	    }
 	  else
 	    {
@@ -165,6 +162,9 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 		      && strcmp(p->u.k->v, "linebreak")))
 		mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text `%s'\n", c->text);
 	    }
+	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+	  if (d)
+	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
       else if (!strcmp(c->name, "g:det"))
 	{
