@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <mesg.h>
 #include <scan.h>
+#include "gdl.h"
 #include "atf.h"
 #include "atf_bld.h"
 #include "atf.tab.h"
@@ -193,7 +194,28 @@ block_lev(Mloc l, Block *bp, char *rest)
       fprintf(stderr, "block_lev: internal error: unhandled block type\n");
       break;
     }
-  
+
+  if (bp->flag)
+    {
+      const char *f = bp->flag;
+      while (*f)
+	switch (*f++)
+	  {
+	  case '?':
+	    atf_xprop(bp->np, "g:queried", "1");
+	    break;
+	  case '!':
+	    atf_xprop(bp->np, "g:remarked", "1");
+	    break;
+	  case '*':
+	    atf_xprop(bp->np, "g:collated", "1");
+	    break;
+	  default:
+	    mesg_vwarning(l.file, l.line, "bad flag in block line at: %s",f[-1]);
+	    break;
+	  }
+    }
+
   /* Each case above needs to move 's' beyond the last permissible token for its type */
   while (isspace(*s))
     ++s;
@@ -701,14 +723,30 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
     }
   if (stype && !strcmp(stype, "face"))
     {
+      while (isspace(*s))
+	++s;
       const char *face = scan_name(NULL, s, &s);
       if (strlen(face) != 1 || !islower(*face))
 	{
 	  mesg_verr(&l, "face must be a single lower case letter\n");
 	  face = NULL;
 	}
+      else
+	s = scan_flags(l, s, flags);
+
       if (face)
-	stype = bp->subt = face;
+	{
+	  bp->subt = face;
+	  char *n = (char *)pool_alloc(strlen(stype)+strlen(bp->subt)+2, atfmp->pool);
+	  sprintf(n, "%s %s", stype, face);
+	  bp->label = n;
+	  atf_xprop(bp->np, "n", n);
+	}
+      else
+	{
+	  atf_xprop(bp->np, "n", stype);
+	  bp->label = stype;
+	}
     }
   else
     {
@@ -792,6 +830,9 @@ col_args(Mloc l, Block *bp, char *s, char flags[])
       bp->label = (ccp)pool_copy((uccp)clabel, atfmp->pool);
       update_label(bp->np, etu_none);
     }
+  s = scan_flags(l, s, flags);
+  if (*flags)
+    bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
   return s;
 }
 
