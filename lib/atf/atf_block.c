@@ -11,7 +11,7 @@
 static void block_div(Mloc l, Block *bp, char *rest);
 static void block_hdr(Mloc l, Block *bp, char *rest);
 static void block_lev(Mloc l, Block *bp, char *rest);
-static char *scan_flags(const char *s, char *f);
+static char *scan_flags(Mloc l, const char *s, char *f);
 static int at_prime(unsigned char *s, unsigned char **p);
 static void atf_implicit(const char *n);
 static void m_types(const char *s, const char **typep, const char **subtp);
@@ -157,18 +157,18 @@ block_lev(Mloc l, Block *bp, char *rest)
 
   /* handle @obverse? etc */
   if (block_flags[(unsigned char)*s])
-    s = scan_flags(s, flags);
+    s = scan_flags(l, s, flags);
 
   switch (bp->bt->type)
     {
     case B_OBJECT:
       if (*flags && !strcmp(bp->bt->name, "object"))
-	warning("flags not allowed after @object; should follow object type arg");
+	mesg_verr(&l, "flags not allowed after @object; should follow object type arg");
       s = obj_args(l, bp, s, flags);
       break;
     case B_SURFACE:
       if (*flags && !strcmp(bp->bt->name, "surface"))
-	warning("flags not allowed after @surface; should follow surface type arg");
+	mesg_verr(&l, "flags not allowed after @surface; should follow surface type arg");
       s = srf_args(l, bp, s, flags);
       break;
     case B_FRAGMENT:
@@ -183,11 +183,11 @@ block_lev(Mloc l, Block *bp, char *rest)
       break;
     case B_COLUMN:
       if (*flags)
-	warning("flags not allowed after @column; should follow column number");
+	mesg_verr(&l, "flags not allowed after @column; should follow column number");
       if (*s)
 	s = col_args(l, bp, s, flags);
       else
-	warning("@column requires a column number");
+	mesg_verr(&l, "@column requires a column number");
       break;
     default:
       fprintf(stderr, "block_lev: internal error: unhandled block type\n");
@@ -329,7 +329,7 @@ block_div(Mloc l, Block *bp, char *rest)
 #endif
 	}
       else
-	warning("@div must give division type");
+	mesg_verr(&l, "@div must give division type");
     }
 #undef current
 }
@@ -382,13 +382,13 @@ reset_lninfo(void)
 }
 
 static char *
-scan_flags(const char *s, char *f)
+scan_flags(Mloc l, const char *s, char *f)
 {
   int len = 0;
   while (len < MAX_FLAGS && block_flags[(unsigned)*s])
     f[len++] = *s++;
   if (block_flags[(unsigned)*s])
-    warning("ignoring excess block flags");
+    mesg_verr(&l, "ignoring excess block flags");
   f[len] = '\0';
   return (char*)s;
 }
@@ -668,7 +668,7 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
   else
     {
       atf_xprop(bp->np, "type", stype = scan_name(NULL, s, &s));
-      s = scan_flags(s, flags);
+      s = scan_flags(l, s, flags);
     }
   if (*flags)
     bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
@@ -697,14 +697,14 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
   else
     {
       atf_xprop(bp->np, "type", stype = scan_name(NULL, s, &s));
-      s = scan_flags(s, flags);
+      s = scan_flags(l, s, flags);
     }
   if (stype && !strcmp(stype, "face"))
     {
       const char *face = scan_name(NULL, s, &s);
       if (strlen(face) != 1 || !islower(*face))
 	{
-	  warning("face must be a single lower case letter\n");
+	  mesg_verr(&l, "face must be a single lower case letter\n");
 	  face = NULL;
 	}
       if (face)
@@ -717,8 +717,8 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
 	{
 	  atf_xprop(bp->np, "n", n);
 	  int len = strlen(bp->bt->name)+strlen(n)+2;
-	  bp->label = pool_alloc(len, atfmp->pool);
-	  sprintf(bp->label, "%s %s", bp->bt->name, n);
+	  bp->label = (ccp)pool_alloc(len, atfmp->pool);
+	  sprintf((char*)bp->label, "%s %s", bp->bt->name, n);
 	}
     }
 
@@ -768,7 +768,7 @@ col_args(Mloc l, Block *bp, char *s, char flags[])
     colnum[len++] = *s++;
   if (len == 5)
     {
-      warning("column number too long (max 4 digits), ignoring excess\n");
+      mesg_verr(&l, "column number too long (max 4 digits), ignoring excess\n");
       --len;
     }
   colnum[len] = '\0';

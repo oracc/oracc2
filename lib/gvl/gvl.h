@@ -133,4 +133,6 @@ extern uccp gvl_key(gvl_g *gbgp, Pool *p);
 
 extern void g_attr(Node *ynp, gvl_g *gp);
 
+extern int gvl_corrq(Node *np);
+
 #endif/*_GVL_H*/

@@ -4,6 +4,7 @@
 #include <string.h>
 #include "xmd.h"
 
+int xmd_ignore_missing;
 static Hash *xmd_vals = NULL;
 static int in_cat_data;
 static Pool * xmd_pool = NULL;
@@ -102,9 +103,14 @@ xmd_load(const char *project, const char *pq)
   else
     fn = expand(project,pq,"xmd");
 
-  fns[0] = fn;
-  fns[1] = NULL;
-  in_cat_data = 0;
-  runexpat(i_list, fns, xmd_sH, xmd_eH);
+  if (!access(fn, R_OK))
+    { 
+      fns[0] = fn;
+      fns[1] = NULL;
+      in_cat_data = 0;
+      runexpat(i_list, fns, xmd_sH, xmd_eH);
+    }
+  else if (!xmd_ignore_missing)
+    fprintf(stderr, "xmd_load: no such file %s. Proceeding without it\n", fn);
   return xmd_vals;
 }

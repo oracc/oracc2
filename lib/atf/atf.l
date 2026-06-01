@@ -125,7 +125,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_LINK>[ \t]			{ ; }
 <s_LINK>\n	       		{ BEGIN 0; }
 
-^"#bib:"			{ BEGIN s_T; return HASH_BIB; }
+^"#bib:"			{ BEGIN s_T; return in_preamble ? HASH_PROBIB : HASH_BIB; }
 ^"#key:"			{ BEGIN s_T; return HASH_KEY; }
 ^"#note:"       		{ BEGIN s_T; return HASH_NOTE; }
 ^"#version:"			{ BEGIN s_T; return HASH_VERSION; }

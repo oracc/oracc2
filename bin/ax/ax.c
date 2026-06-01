@@ -14,6 +14,8 @@
 #include <l3props.h>
 #include "ax.h"
 
+extern int xmd_ignore_missing;
+
 char *trafile, *xtffile;
 int val_flag = 0;
 
@@ -52,6 +54,7 @@ extern struct catinfo *ax_check (const char *str,size_t len);
 void
 ax_input(const char *f)
 {
+  xmd_ignore_missing = 1;
   mesg_init();
   lng_init();
   form_init();

@@ -340,6 +340,9 @@ gvl_compound(Node *ynp)
 	  cp->orig = pool_copy(c_orig, curr_sl->p);
 	  cp->c10e = pool_copy(gvl_c_c10e(ynp), curr_sl->p);
 
+	  if (ynp->prev)
+	    gdl_corrq = gvl_corrq(ynp->prev);
+
 	  gvl_c(cp);
 
 	  if (cp->sign)

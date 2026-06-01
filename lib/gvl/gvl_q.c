@@ -12,7 +12,6 @@
 extern const char *currgdlfile;
 extern int gdllineno;
 extern int gdl_corrq;
-static int gvl_corrq(Node *np);
 
 void
 gvl_q(Node *ynp)
@@ -21,7 +20,7 @@ gvl_q(Node *ynp)
   unsigned char *o = NULL, *p = NULL;
   unsigned const char *vo = NULL, *qo = NULL;
 
-  gdl_corrq = gvl_corrq(ynp);
+  gdl_corrq = gvl_corrq(ynp->kids);
 
   if (gdl_corrq)
     {
@@ -148,10 +147,10 @@ gvl_q(Node *ynp)
     }
 }
 
-static int
+int
 gvl_corrq(Node *np)
 {
-  gdlstate_t gs = prop_get_state(np->kids);
+  gdlstate_t gs = prop_get_state(np);
   return bit_get(gs, gs_f_bang);
 }
 
