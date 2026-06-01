@@ -9,6 +9,23 @@
 #include "lng.h"
 #include "form.h"
 
+static Memo *pformsmem = NULL;
+static Memo *pformspmem = NULL;
+
+void
+form_psu_init(void)
+{
+  pformsmem = memo_init(sizeof(Form), 128);
+  pformspmem = memo_init(sizeof(Form*), 128);
+}
+
+void
+form_psu_term(void)
+{
+  memo_term(pformsmem);
+  memo_term(pformspmem);
+}
+
 /* Simple parsing for PSUs
  */
 int
@@ -67,14 +84,15 @@ form_parse_psu(const Uchar *file, size_t line, Uchar *lp, struct form *formp)
       psu_parts[n] = NULL;
 
       /* Everything is marshalled, now fill in the Form */
-      formp->parts = memo_new_array(formspmem, n);
-      Form *fmem = memo_new_array(formsmem, n);
+      formp->parts = memo_new_array(pformspmem, n+1);
+      Form *fmem = memo_new_array(pformsmem, n);
       int i;
       for (i = 0; i < n; ++i)
 	{
 	  formp->parts[i] = &fmem[i];
 	  form_parse(file, line, (ucp)psu_parts[i], formp->parts[i], NULL);
 	}
+      formp->parts[i] = NULL;
       /*form_parse(file, line, (ucp)psu_cfgw, formp, NULL);*/
       formp->psu_ngram = (ucp)psu_ngram;
       formp->form = (uccp)psu_form;

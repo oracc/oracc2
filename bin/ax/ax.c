@@ -106,7 +106,6 @@ ax_input(const char *f)
 	}
 
       atf_term();
-      form_term();
       rnvval_term();
       xmd_term();
       inl_term();
@@ -127,6 +126,7 @@ ax_full_term(void)
   sig_context_term();
   ngramify_term();
   nl_term();
+  form_term();
   props_run_term();
   run_term(rp);
   xcl_final_term();

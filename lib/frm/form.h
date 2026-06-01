@@ -120,11 +120,16 @@ typedef struct form
 #include "sigs.h"
 struct sig_context; /* need this because of interweave of form.h/sigs.h includes */
 
+#if 0
 extern Memo *formsmem;
 extern Memo *formspmem;
+#endif
 
 extern void form_init(void);
 extern void form_term(void);
+
+extern void form_psu_init(void);
+extern void form_psu_term(void);
 
 extern int form_parse(const Uchar *file, size_t line, Uchar *lp, Form *formp, Uchar **psu_sense);
 extern int form_parse_psu(const Uchar *file, size_t line, Uchar *lp, struct form *formp);

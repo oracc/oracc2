@@ -9,8 +9,8 @@
 #include "lng.h"
 #include "form.h"
 
-Memo *formsmem = NULL;
-Memo *formspmem = NULL;
+static Memo *formsmem = NULL;
+static Memo *formspmem = NULL;
 
 #define Uchar unsigned char
 
@@ -37,6 +37,7 @@ form_init(void)
   form_pool = pool_init();
   formsmem = memo_init(sizeof(Form), 128);
   formspmem = memo_init(sizeof(Form*), 128);
+  form_psu_init();
 }
 
 void
@@ -44,6 +45,8 @@ form_term(void)
 {
   pool_term(form_pool);
   memo_term(formsmem);
+  memo_term(formspmem);
+  form_psu_term();
 }
 
 Uchar *
