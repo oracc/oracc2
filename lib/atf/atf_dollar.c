@@ -153,7 +153,10 @@ atf_dollar(Mloc l, char *rest)
 	    }
 	  else
 	    {
-	      nonx_attach = B_LINE;
+	      if (abt->curr->user && N_U_BLOCK == ((Block*)abt->curr->user)->utype)
+		nonx_attach = ((Block*)abt->curr->user)->bt->type+1;
+	      else
+		nonx_attach = B_LINE;
 	    }
 
 	  if (nonx_attach == B_bl_top)

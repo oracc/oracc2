@@ -144,7 +144,7 @@ parse_nonx(Mloc *mp, unsigned char *l)
       if (')' == end[-1])
 	{
 	  *--end = '\0';
-	  /*parenc = end;*/
+	  nx.literal = (ucp)strdup((ccp)l);
 	}
       else
 	{
@@ -222,7 +222,7 @@ parse_nonx(Mloc *mp, unsigned char *l)
 	      else
 		nx.number = n;
 	    }
-	  else 
+	  else if (*np) /* only all-digit tokens are considered numbers here */
 	    {
 	      *np = '\0';
 	      nx.number = n;
