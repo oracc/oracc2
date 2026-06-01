@@ -253,7 +253,7 @@ gdl_nonw_punct(Node *w)
   ++nonw_found;
 }
 
-/* Return 0 if any g:v, g:s, or g:x children are not excised */
+/* Return 0 if any g:l, g:s, g:v, or g:x children are not excised */
 static int
 gdl_word_is_excised(Node *w)
 {
@@ -261,7 +261,8 @@ gdl_word_is_excised(Node *w)
   int ret = 1;
   for (n = n->kids; n; n = n->next)
     {
-      if (strlen(n->name) == 3 && ('s' == n->name[2] || 'v' == n->name[2] || 'x' == n->name[2]))
+      if (strlen(n->name) == 3
+	  && ('l' == n->name[2] || 's' == n->name[2] || 'v' == n->name[2] || 'x' == n->name[2]))
 	{
 	  if (n->props)
 	    {
