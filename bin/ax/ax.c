@@ -45,6 +45,7 @@ int harvest_notices, lem_dynalem = 0, lem_forms_raw = 0, lem_props_yes = 0,
 
 FILE *f_log, *f_unlemm;
 int check_mode = 0;
+int lem_mode = 0;
 int trace_mode = 0;
 int xcl_output = 0;
 int xml_output = 0;
@@ -69,7 +70,7 @@ ax_input(const char *f)
   const char **apcc = NULL;
   if (tp)
     {
-      if (xcl_output)
+      if (lem_mode)
 	{
 	  xp = ax_xcl(rp, tp->root->kids);
 	  xp->utype = N_U_XCL;
@@ -77,11 +78,14 @@ ax_input(const char *f)
 	  Node *np = tree_add(tp, NS_XCL, "xcl", tp->root->kids->depth, tp->root->kids->mloc);
 	  np->user = xp;
 	  ax_lem(rp, xp);
-	  ap = xcl_jox_xcl_ratts(xp);
-	  apcc = (const char **)list2array(ap);
-	  int i;
-	  for (i = 0; i < list_len(ap); i+=2)
-	    atf_xprop(np, apcc[i], apcc[i+1]);
+	  if (xcl_output)
+	    {
+	      ap = xcl_jox_xcl_ratts(xp);
+	      apcc = (const char **)list2array(ap);
+	      int i;
+	      for (i = 0; i < list_len(ap); i+=2)
+		atf_xprop(np, apcc[i], apcc[i+1]);
+	    }
 	}
 
       if (!check_mode)
@@ -199,28 +203,35 @@ process_inputs(int argc, char * const *argv)
 	      break;
 	  if (*s)
 	    {
-	      int ret;
+	      int ret = 0;
 	      atffile = atffile_of(s);
 	      if (atffile)
 		{
-		  xtffile = xtffile_of(s);
-		  trafile = trafile_of(s);
-		  if (verbose)
-		    fprintf(stderr,"%s\n", /*  => %s / %s */
-			    s/*, strrchr(xtffile,'/')+1, strrchr(trafile, '/')+1*/);
-		  if (!(ret = ax_outputs(xtffile, trafile)))
+		  if (check_mode)
 		    ax_input(atffile);
-		  free((char*)atffile);
-		  free(trafile);
-		  free(xtffile);
-		  atffile = trafile = xtffile = /*cdtfile = */ NULL;
+		  else
+		    {
+		      xtffile = xtffile_of(s);
+		      trafile = trafile_of(s);
+		      if (verbose)
+			fprintf(stderr,"%s\n",s);
+		      if (!(ret = ax_outputs(xtffile, trafile)))
+			ax_input(atffile);
+		      free((char*)atffile);
+		      free(trafile);
+		      free(xtffile);
+		      atffile = trafile = xtffile = /*cdtfile = */ NULL;
+		    }
 		}
 	      else
 		ret = 1;
 	      
 	      if (ret)
 		{
-		  fprintf(stderr, "ax: error setting outputs. Stop.\n");
+		  if (!atffile)
+		    fprintf(stderr, "ax: error setting atf file from %s. Stop.\n", files[i]);
+		  else
+		    fprintf(stderr, "ax: error setting outputs. Stop.\n");
 		  break;
 		}
 	    }
@@ -252,6 +263,10 @@ main(int argc, char * const*argv)
   gdl_flex_debug = gdldebug = 0;
 
   options(argc, argv, "ACDcgI:Lltvx");
+
+  /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
+  if (check_mode)
+    xml_output = xcl_output = 0;
 
   if (ok_no_files)
     {
@@ -318,7 +333,7 @@ opts(int opt, const char *arg)
       line_trace = 1;
       break;
     case 'l':
-      xcl_output = xml_output = 1;      
+      lem_mode = xcl_output = xml_output = 1;
       break;
     case 't':
       ++trace_mode;
