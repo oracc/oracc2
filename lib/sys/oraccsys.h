@@ -134,6 +134,6 @@ extern int xmkdirs(const char *dir);
 extern const char *opts_prog(void);
 
 extern void show_current_memory (FILE *fp, unsigned long *virtual_mem, unsigned long *physical_mem);
-extern int linux;
+extern int i_am_linux;
 
 #endif/*ORACCSYS_H_*/
