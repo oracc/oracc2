@@ -19,7 +19,6 @@ struct lang_context *
 lang_load(struct proj_context *p, struct lang_tag *lt)
 {
   struct lang_context *lp = memo_auto(sizeof(struct lang_context));
-  lp->utype = N_U_LANG;
   struct langcore *lcp = NULL;
   struct langmode *lmp = NULL;
 

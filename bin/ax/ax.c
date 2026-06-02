@@ -38,6 +38,7 @@ extern int atfflextrace , atftrace, gdlflextrace, gdltrace;
 int bootstrap_mode = 0;
 int exit_status = 0;
 int lem_autolem = 0;
+int memuse_mode = 0;
 int fuzzy_aliasing = 0;
 int harvest_notices, lem_dynalem = 0, lem_forms_raw = 0, lem_props_yes = 0,
   lem_props_strict = 0, line_is_unit = 0, named_ents = 0, perform_dsa = 0,
@@ -218,13 +219,13 @@ process_inputs(int argc, char * const *argv)
 		      if (!(ret = ax_outputs(xtffile, trafile)))
 			ax_input(atffile);
 		      fflush(stdout); /* in case flex did some default output */
-		      if (verbose && linux)
-			show_current_memory(stderr, NULL, NULL);
 		      free((char*)atffile);
 		      free(trafile);
 		      free(xtffile);
 		      atffile = trafile = xtffile = /*cdtfile = */ NULL;
 		    }
+		  if (memuse_mode)
+		    show_current_memory(stderr, NULL, NULL);
 		}
 	      else
 		ret = 1;
@@ -265,7 +266,7 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "ACDcgI:Lltvx");
+  options(argc, argv, "ACDcgI:Llmtvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
   if (check_mode)
@@ -337,6 +338,10 @@ opts(int opt, const char *arg)
       break;
     case 'l':
       lem_mode = xcl_output = xml_output = 1;
+      break;
+    case 'm':
+      if (i_am_linux)
+	memuse_mode = 1;
       break;
     case 't':
       ++trace_mode;

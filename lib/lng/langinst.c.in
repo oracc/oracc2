@@ -14,11 +14,6 @@ struct lang_context *logo_lang = NULL;
 
 extern int verbose;
 
-void
-lang_term(void)
-{
-}
-
 /* Could do gvl_setup here */
 struct lang_context *
 lang_load(struct proj_context *p, struct lang_tag *lt)

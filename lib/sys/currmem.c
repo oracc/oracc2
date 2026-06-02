@@ -2,9 +2,9 @@
 #include <unistd.h>
 
 #ifdef linux
-int linux = 1;
+int i_am_linux = 1;
 #else
-int linux = 0;
+int i_am_linux = 0;
 #endif
 
 void
