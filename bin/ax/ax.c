@@ -218,6 +218,8 @@ process_inputs(int argc, char * const *argv)
 		      if (!(ret = ax_outputs(xtffile, trafile)))
 			ax_input(atffile);
 		      fflush(stdout); /* in case flex did some default output */
+		      if (verbose && linux)
+			show_current_memory(stderr, NULL, NULL);
 		      free((char*)atffile);
 		      free(trafile);
 		      free(xtffile);

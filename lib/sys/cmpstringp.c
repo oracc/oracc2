@@ -35,8 +35,8 @@ int
 cmpu8normp_qs(unsigned const char *p1, unsigned const char *p2)
 {
   int c;
-  int res = u8_normcmp(p1, strlen(p1),
-		       p2, strlen(p2),
+  int res = u8_normcmp(p1, strlen((ccp)p1),
+		       p2, strlen((ccp)p2),
 		       UNINORM_NFD, &c);
   if (res == -1)
     {
