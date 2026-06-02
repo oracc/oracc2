@@ -8,6 +8,7 @@
 #include <xnn.h>
 #include <ns-gdl.h>
 #include <gdl.h>
+#include <lng.h>
 #include <ns-asl.h>
 #include <rnvif.h>
 #include <rnvxml.h>
@@ -264,7 +265,7 @@ main(int argc, char **argv)
   setlocale(LC_ALL, ORACC_LOCALE);
 
   options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
-  
+  lang_init();
   gdl_flex_debug = gdldebug = trace_mode;
   
   if (gdl_one_off_mode)
@@ -353,6 +354,7 @@ main(int argc, char **argv)
     }
 
   gdlparse_term();
+  lang_term();
 
   return 0;
 }

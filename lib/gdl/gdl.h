@@ -66,6 +66,7 @@ extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
 extern int gdl_break_pending, gdl_state_pending;
+extern gdlstate_t *lst;
 
 extern List *c_dangling_gps;
 extern List *c_explicit_gps;

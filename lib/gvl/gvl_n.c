@@ -25,6 +25,12 @@ gvl_n(Node *ynp)
   ynp->name = "g:n";
   ynp->kids->name = "g:r";
 
+  /* reset state: copy lst (which points to last grapheme in g:n),
+     zero lst, and create a new lst which belongs to the g:n node */
+  gdlstate_t nst = *lst;
+  *lst = (gdlstate_t)0;
+  lst = prop_state(ynp, nst);
+
   /* WATCHME: is this coercion to g:s or g:v really safe? */
   if (strcmp(ynp->kids->next->name, "g:c"))
     ynp->kids->next->name = ((sll_has_sign_indicator((uccp)ynp->kids->next->text) ? "g:s" : "g:v"));

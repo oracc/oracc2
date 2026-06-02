@@ -30,6 +30,13 @@ gvl_q(Node *ynp)
       return;
     }
 
+  /* reset state: copy lst (which points to last grapheme in the g:q
+     sequence), zero lst, and create a new lst which belongs to the
+     g:n node */
+  gdlstate_t nst = *lst;
+  *lst = (gdlstate_t)0;
+  lst = prop_state(ynp, nst);
+
   /* This builds a c10e version of vq */
   if (ynp->kids->user)
     vo = ((gvl_g*)(ynp->kids->user))->c10e;

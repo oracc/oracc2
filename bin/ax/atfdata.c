@@ -2,6 +2,7 @@
 #include <hash.h>
 const char *cat_mode;
 const char *catproj;
+const char *file;
 const char *project;
 extern int dups; /* just check for duplicates, no other output */
 extern int x_mode; /* extract ID and NAME for X-IDs */

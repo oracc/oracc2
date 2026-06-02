@@ -324,7 +324,13 @@ gvl_compound(Node *ynp)
      child of g:c node */
   if (!strcmp(ynp->name, "g:b"))
     ynp = ynp->rent;
-  
+
+  /* reset state: copy lst (which points to last grapheme in g:n),
+     zero lst, and create a new lst which belongs to the g:n node */
+  gdlstate_t nst = *lst;
+  *lst = (gdlstate_t)0;
+  lst = prop_state(ynp, nst);
+
   if (!strcmp(ynp->name, "g:c"))
     {
       gvl_g *cp = NULL;

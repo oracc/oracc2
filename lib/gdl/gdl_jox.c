@@ -194,6 +194,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
     }
   else
     {
+      gdlstate_t s = prop_get_state(np);
+      if (s)
+	gdlstate_props(np, s);
       joxer_ea(np->mloc, nodename,
 	       (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))));
       if (p)
