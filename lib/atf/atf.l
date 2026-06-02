@@ -48,6 +48,7 @@ LK_VBAR "||"
 PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
 LANG	[a-z][a-z][a-z]?(-[-a-z]+)?
+use	"use"[ \t]+			
 
 			/* */
 TRA_CHR [@\"?\[\]\{\}]
@@ -104,14 +105,14 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^"#atf:"			{ BEGIN s_ATFPRO; }
 <s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
-<s_ATFPRO>"use mylines"		{ usesave; return ATF_MYLINES; }
-<s_ATFPRO>"use line-labels"    	{ usesave; return ATF_LINELABELS; }
-<s_ATFPRO>"use alignment-groups" { usesave; return ATF_AGROUPS; }
-<s_ATFPRO>"use math"	       	{ usesave; return ATF_MATH; }
-<s_ATFPRO>"use unicode"		{ usesave; return ATF_UNICODE; }
-<s_ATFPRO>"use legacy"		{ usesave; return ATF_LEGACY; }
-<s_ATFPRO>"use cuneiform"      	{ ; } /* no longer useful; cuneify is default */
-<s_ATFPRO>"use lemconv"		{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
+<s_ATFPRO>{use}mylines		{ usesave; return ATF_MYLINES; }
+<s_ATFPRO>{use}line-labels    	{ usesave; return ATF_LINELABELS; }
+<s_ATFPRO>{use}alignment-groups { usesave; return ATF_AGROUPS; }
+<s_ATFPRO>{use}math	       	{ usesave; return ATF_MATH; }
+<s_ATFPRO>{use}unicode		{ usesave; return ATF_UNICODE; }
+<s_ATFPRO>{use}legacy		{ usesave; return ATF_LEGACY; }
+<s_ATFPRO>{use}cuneiform      	{ ; } /* no longer useful; cuneify is default */
+<s_ATFPRO>{use}lemconv		{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
 <s_ATFPRO>[ \t]			{ ; }
 <s_ATFPRO>\n	       		{ BEGIN 0; }
 
@@ -173,7 +174,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 <<EOF>>				{ yyterminate(); }
 
-.				{ mesg_vwarning(curratffile, atflineno,
+<*>.				{ mesg_vwarning(curratffile, atflineno,
 						"atf.l: unmatched character %c\n", *atftext); }
 
 <s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }

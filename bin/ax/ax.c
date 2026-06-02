@@ -217,6 +217,7 @@ process_inputs(int argc, char * const *argv)
 			fprintf(stderr,"%s\n",s);
 		      if (!(ret = ax_outputs(xtffile, trafile)))
 			ax_input(atffile);
+		      fflush(stdout); /* in case flex did some default output */
 		      free((char*)atffile);
 		      free(trafile);
 		      free(xtffile);

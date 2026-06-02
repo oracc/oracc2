@@ -689,7 +689,17 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
     }
   else
     {
-      atf_xprop(bp->np, "type", stype = scan_name(NULL, s, &s));
+      stype = scan_name(NULL, s, &s);
+      while (isspace(*s))
+	++s;
+      if (isalpha(*s))
+	{
+	  const char *stype2 = scan_name(NULL, s, &s);
+	  char *buf = (char*)pool_alloc(strlen(stype)+strlen(stype2) + 2, atfmp->pool);
+	  sprintf(buf, "%s %s", stype, stype2);
+	  stype = (ccp)buf;
+	}
+      atf_xprop(bp->np, "type", stype);
       s = scan_flags(l, s, flags);
     }
   if (*flags)

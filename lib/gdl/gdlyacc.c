@@ -20,6 +20,7 @@ extern void gdl_validate(Tree *tp);
 int deep_parse = 1;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
+static int gdl_excision_type = 'e';
 
 struct lang_context *gdl_lang_context;
 
@@ -240,7 +241,8 @@ gdl_force_nonw(Node *w, const char *t)
 static void
 gdl_nonw_excised(Node *w)
 {
-  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", "excised");
+  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", ('e' == gdl_excision_type) ? "excised" : "comment");
+  gdl_excision_type = 'e';
   w->name = "g:nonw";
   ++nonw_found;
 }
@@ -262,7 +264,7 @@ gdl_word_is_excised(Node *w)
   for (n = n->kids; n; n = n->next)
     {
       if (strlen(n->name) == 3
-	  && ('l' == n->name[2] || 's' == n->name[2] || 'v' == n->name[2] || 'x' == n->name[2]))
+	  && ('l' == n->name[2] || 's' == n->name[2] || 'v' == n->name[2]))
 	{
 	  if (n->props)
 	    {
@@ -270,6 +272,14 @@ gdl_word_is_excised(Node *w)
 	      if (!gs_is(s,gs_excised))
 		return 0;
 	    }
+	}
+      else if (!strcmp(n->name, "g:x"))
+	{
+	  Prop *p = prop_find_kv(n->props, "g:type", NULL);
+	  if (p && (!strcmp(p->u.k->v, "dollar") || !strcmp(p->u.k->v, "comment")))
+	    gdl_excision_type = 'c';
+	  else
+	    return 0;
 	}
       if (n->kids)
 	if (!(ret = gdl_word_is_excised(n)))
@@ -345,7 +355,8 @@ gdl_word_attr(Node *w)
 	    gdl_nonw_excised(w);
 	  else
 #endif
-	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");
+	    /* we are now ignoring ($...$) and (#...#) in gdl_word_is_excised() */
+	    /*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
 	}
       free(wf_buf);      
     }

@@ -338,8 +338,8 @@ atf_bld_atf_protocol(Mloc l, const char *str)
   Protocol *p = memo_new(atfmp->mprotocols);
   p->t = PROT_ATF;
   p->type = "atf";
-  p->u.str = (uccp)str;
-  abt_add_protocol(&l, p, "text", str);
+  p->u.str = (uccp)normalize_ws(str);
+  abt_add_protocol(&l, p, "text", p->u.str);
   atf_input(l, LT_PROTOCOL, p);
 }
 
