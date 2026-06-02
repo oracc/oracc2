@@ -6,6 +6,7 @@
 #include <mesg.h>
 #include <pool.h>
 #include <sll.h>
+#include "gdlstate.h"
 
 /* test */
 
@@ -36,6 +37,7 @@ int term = 0;
 #define yyterminate() return (term = !term) ? END : YY_NULL
 
 static void gdl_closers(void);
+static void gdl_lex_flag(unsigned const char *f);
 
 /* Simple stack for nesting of compounds and valuquals */
 #define CVQ_MAX 6
@@ -63,6 +65,8 @@ L_UHS		"\xe2\xb8\xa2"
 R_UHS		"\xe2\xb8\xa3"
 L_LHS		"\xe2\xb8\xa4"
 R_LHS		"\xe2\xb8\xa5"
+
+UFLAG	"\xe2\x80"[\xa0\xa1\xa2\xa3]
 
 NOTEMARK	"^"[0-9]+"^"
 
@@ -152,10 +156,10 @@ _			{ gsave; return LANG_FLIP; }
 
 {NOTEMARK}		{ gsave; return NOTEMARK; }
 
-<INITIAL,C,Q>[!?]      	{ gsave; return *yytext; }
+<INITIAL,C,Q>[!?]      	{ gdl_lex_flag((uccp)yytext); }
 <INITIAL,C>^[#"~=@^]	{ gsave; return gdl_lexfld[(int)*yytext]; }
-<INITIAL,C>[#"~=@^]   	{ gsave; if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { return *yytext; } }
-<INITIAL,C>"*"		{ /*"*/ gsave; if (GIN) { return(*yytext); } else { GIN=1; return(PUNCT); } }
+<INITIAL,C>[#"~=@^]   	{ gsave; if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+<INITIAL,C>"*"		{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
 
 ":"/[ \t\n\(]  		{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":."			{ /*"*/ GIN=1; gsave; return PUNCT; }
@@ -178,6 +182,8 @@ _			{ gsave; return LANG_FLIP; }
 {GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(); }
 
 {M}			{ GIN=1; gsave; return MOD; }
+
+{UFLAG}			{ gdl_lex_flag((uccp)yytext); }
 
 [#"=@^]/{G} 		{ gsave;
 			  if (gdl_lexical) {
@@ -357,4 +363,56 @@ cvq_reset(void)
 {
   cvq_top = -1;
   BEGIN 0;
+}
+
+/* 20260602: Flags are no longer passed to the parser; they are
+   recorded here in the state property pointer of the last grapheme seen */
+static void
+gdl_lex_flag(unsigned const char *f)
+{
+  if (gdlflextrace)
+      fprintf(stderr, "gdl_lex_flag: arg f=%s\n", f);
+  if (!lst)
+      {
+        mesg_vwarning(gdlfile, gdllineno, "misplaced flag `%s'; no grapheme state to set", f);
+	return;
+      }
+  switch (*f)
+    {
+    case '!':
+	bit_set(*lst, gs_f_bang);
+	break;
+    case '?':
+	bit_set(*lst, gs_f_query);
+	break;
+    case '#':
+	bit_set(*lst, gs_f_hash);
+	break;
+    case '*':
+	bit_set(*lst, gs_f_star);
+	break;
+    case 0xe2:
+	switch (f[2])
+	    {
+	    case 0xa0:
+		bit_set(*lst, gs_f_uf1);
+		break;
+	    case 0xa1:
+		bit_set(*lst, gs_f_uf2);
+		break;
+	    case 0xa2:
+		bit_set(*lst, gs_f_uf3);
+		break;
+	    case 0xa3:
+		bit_set(*lst, gs_f_uf4);
+		break;
+	    default:
+		/*can't happen*/
+		break;
+	    }
+	break;
+    default:
+	mesg_vwarning(gdlfile, gdllineno, "lex field `%c' needs a space before it", *f);
+	break;
+    }
 }

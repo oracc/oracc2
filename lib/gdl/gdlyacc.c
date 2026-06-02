@@ -255,23 +255,26 @@ gdl_nonw_punct(Node *w)
   ++nonw_found;
 }
 
-/* Return 0 if any g:l, g:s, g:v, or g:x children are not excised */
+/* Return 0 if any g:l, g:n, g:s, g:v, or g:x children are not excised */
 static int
 gdl_word_is_excised(Node *w)
 {
   Node *n = w;
   int ret = 1;
+  int skip_kids = 0;
   for (n = n->kids; n; n = n->next)
     {
       if (strlen(n->name) == 3
-	  && ('l' == n->name[2] || 's' == n->name[2] || 'v' == n->name[2]))
+	  && ('l' == n->name[2] || 's' == n->name[2] || 'v' == n->name[2] || 'n' == n->name[2] || 'q' == n->name[2]))
 	{
 	  if (n->props)
 	    {
 	      gdlstate_t s = prop_get_state(n);
 	      if (!gs_is(s,gs_excised))
 		return 0;
-	    }
+	      else
+		skip_kids = 1;
+	    }	  
 	}
       else if (!strcmp(n->name, "g:x"))
 	{
@@ -281,9 +284,14 @@ gdl_word_is_excised(Node *w)
 	  else
 	    return 0;
 	}
-      if (n->kids)
-	if (!(ret = gdl_word_is_excised(n)))
-	  return 0;
+      if (skip_kids)
+	skip_kids = 0;
+      else
+	{
+	  if (n->kids)	
+	    if (!(ret = gdl_word_is_excised(n)))
+	      return 0;
+	}
     }
   return ret;
 }
@@ -505,9 +513,11 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
 		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
-  if (gdl_break_pending && (('r' != np->name[2] && 'R' != np->name[2])))
+  /* 20260602: now that we are lifting state from g:r/g:v up to g:n we
+     let break/state apply to g:r nodes */
+  if (gdl_break_pending/* && (('r' != np->name[2] && 'R' != np->name[2]))*/)
     gdl_break_node(np);
-  if (gdl_state_pending && 'r' != np->name[2] && 'R' != np->name[2])
+  if (gdl_state_pending/* && 'r' != np->name[2] && 'R' != np->name[2]*/)
     gdl_state_node(np);
   return np;
 }

@@ -522,11 +522,11 @@ gvl_valuqual(Node *vqnp)
       vqnp->mloc = vqnp->kids->mloc;
       
       if ('R' == vqnp->kids->name[2]
-	  || 'n' == vqnp->kids->name[2]
 	  || 'N' == vqnp->kids->name[2]
 	  || (vqnp->kids->text && !strcmp(vqnp->kids->text, "X")
 	      && vqnp->kids->next && ndig(vqnp->kids->next->text))
-	  ) /* gvl_s make n or N type g:n */
+	  || ('n' == vqnp->kids->name[2] && !vqnp->kids->kids)
+	  ) /* gvl_s make n or N type g:n; but parsed 'g:n', e.g., 1(diš), stays as a g:q, not a further g:n parse */
 	{
 	  gvl_n(vqnp);
 	  gvl_g *qgp = (gvl_g*)vqnp->user;

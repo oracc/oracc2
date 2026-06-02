@@ -26,10 +26,16 @@ gvl_n(Node *ynp)
   ynp->kids->name = "g:r";
 
   /* reset state: copy lst (which points to last grapheme in g:n),
-     zero lst, and create a new lst which belongs to the g:n node */
+     zero lst, and create a new lst which belongs to the g:n node; OR
+     this with the g:r node state */
+  gdlstate_t *rstp = prop_state(ynp->kids, 0L);
+  gdlstate_t rst = *rstp;
+  *rstp = 0L;
+  
   gdlstate_t nst = *lst;
   *lst = (gdlstate_t)0;
-  lst = prop_state(ynp, nst);
+
+  lst = prop_state(ynp, rst|nst);
 
   /* WATCHME: is this coercion to g:s or g:v really safe? */
   if (strcmp(ynp->kids->next->name, "g:c"))

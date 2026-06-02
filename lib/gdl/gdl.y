@@ -45,16 +45,19 @@ GDLLTYPE gdllloc;
 		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
 		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
 
-%token <i>	'*' '!' '?' '#' '<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
+%token <i>	'<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
 		'/' '+' ':'
        	        L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur
 		L_dbl_par R_dbl_par L_dbl_par_c R_dbl_par_c eras_canc_pivot
 		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
 		L_uhs R_uhs L_lhs R_lhs LANG_FLIP
 		'{' DET_SEME DET_PHON '}'
-		PLUS_FLAG UFLAG1 UFLAG2 UFLAG3 UFLAG4 SPACE EOL END
+		PLUS_FLAG SPACE EOL END
 
+		/* '*' '!' '?' '#' UFLAG1 UFLAG2 UFLAG3 UFLAG4 : now attached to lst in lexer */
+			
 %token <node>	NOTEMARK
+
 %nterm <text> 	field lexfld cmods
 
 %nterm <node>   alternate ligatured reordered ggroup det
@@ -184,7 +187,6 @@ grapheme:
 	| 	valuqual
 	|	det
         | 	meta
-	|	gflag					{ $$ = lgp; }
 		;
 
 ggroup:		alternate			       	
@@ -216,14 +218,6 @@ maybegflags:
 		mods
 	| 	/*empty */
 		;
-
-gflag:
-	  '*'						{ bit_set(*lst, gs_f_star); }
-	| '#'						{ bit_set(*lst, gs_f_hash); }
-	| '!'						{ bit_set(*lst, gs_f_bang); }
-	| '?'						{ bit_set(*lst, gs_f_query); }
-	| PLUS_FLAG    					{ bit_set(*lst, gs_f_plus); }
-	;
 
 simplexg:
 	  s maybegflags	       			       	{ if (gdl_legacy) gdl_unlegacy(ynp);
@@ -268,7 +262,7 @@ cbit:
 	s	       			       		{ /*ynp->mloc = mloc_mloc(&@1);*/
 	  						  if (gdl_legacy) gdl_unlegacy(ynp);
 							  gvl_simplexg(ynp); }
-	| gflag
+	/*	| gflag */
 	| cdelim					{ }
 	| CLP			       			{ gdl_balance_state(@1,CLP);
 	    					  	  gdl_push_l(&@1,ytp,"g:gp"); }
@@ -298,8 +292,8 @@ cdelim:
 	| 	C_OPPOSING     				{ ynp = gdl_delim(ytp, "@"); }
 	| 	C_PLUS					{ ynp = gdl_delim(ytp, "+"); }
 	| 	C_TIMES					{ ynp = gdl_delim(ytp, "×"); }
-	| 	C_3TIMES			       	{ gdl_prefix(ytp, "3"); }
-	| 	C_4TIMES		       		{ gdl_prefix(ytp, "4"); }
+	| 	C_3TIMES			       	{ gdl_prefix(ytp, (uccp)"3"); }
+	| 	C_4TIMES		       		{ gdl_prefix(ytp, (uccp)"4"); }
 	| 	C_CIRCLE	       			{ ynp = gdl_delim(ytp, "∘"); }
 	;
 

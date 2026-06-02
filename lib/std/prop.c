@@ -22,6 +22,9 @@ prop_state(Node *np, gdlstate_t sp)
       np->props = memo_new(np->tree->tm->prop_mem);
       np->props->g = PU_GDLSTATE;
     }
+  /* preserve this behaviour in future: if sp == 0 don't reset
+     np->props->u.s; this means prop_state is safe as a getter for the
+     state pointer */
   if (sp)
     np->props->u.s = sp;
   return &np->props->u.s;
