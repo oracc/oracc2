@@ -60,9 +60,9 @@ GDLLTYPE gdllloc;
 
 %nterm <text> 	field lexfld cmods
 
-%nterm <node>   alternate ligatured reordered ggroup det
+%nterm <node>   alternate ligatured reordered ggroup detgloss det gloss
 		grapheme scgrapheme compound simplexg valuqual
-		meta breako breakc glosso glossc stateo statec
+		glosso glossc meta
 
 %start line
 
@@ -146,6 +146,11 @@ delim:
 	| 	ENHYPHEN 	       	       		{ ynp = gdl_delim(ytp, "--"); }
 	;
 
+detgloss:
+		det
+	|	gloss
+	;
+
 det:	  '{'	      					{ gdl_balance_state(@1,'{');
 	      						  $$ = ynp = gdl_push_l(&@1,ytp,"g:det");
 	  						  ps_on(gs_det_o);
@@ -176,6 +181,10 @@ det:	  '{'	      					{ gdl_balance_state(@1,'{');
 	  				       	        }
 	;
 
+gloss:		glosso
+	|	glossc
+	;
+
 graphemes:	grapheme
 	|	ggroup
 	|	graphemes grapheme
@@ -185,8 +194,7 @@ graphemes:	grapheme
 grapheme:
 		scgrapheme
 	| 	valuqual
-	|	det
-        | 	meta
+	|	detgloss
 		;
 
 ggroup:		alternate			       	
@@ -337,14 +345,7 @@ lang:
 	| 	LANG_FLIP					/*TODO; ALSO #atf: lang akk _%s_ vel sim*/
 	;
 
-meta:
-		breakc				{ $$ = lgp; }
-	| 	breako				{ $$ = lgp; }
-	| 	glossc				{ $$ = lgp; }
-	| 	glosso				{ $$ = lgp; }
-	| 	statec				{ $$ = lgp; }
-	| 	stateo				{ $$ = lgp; }
-	| 	INDENT       			{ ynp = gdl_nongraph(&@1, ytp, ";", "linebreak"); }
+meta: 		INDENT       			{ ynp = gdl_nongraph(&@1, ytp, ";", "linebreak"); }
 	| 	NEWLINE	       			{ ynp = gdl_nongraph(&@1, ytp, "//", "newline"); }
 	| 	VARO				{ ynp = gdl_nongraph(&@1, ytp, $1, "varo"); }
 	| 	VARC				{ ynp = gdl_nongraph(&@1, ytp, $1, "varc"); }
@@ -365,57 +366,18 @@ mod:
 	  						  mnp = gdl_mod(ytp, gdllval.text); }
 	;
 
-breako:
-		'['	       	{ ynp = gdl_break_o(@1, ytp, '[',
-						    gs_lost_o, gs_lost, gdllval.text); }
-	| 	L_uhs	       	{ ynp = gdl_break_o(@1, ytp, L_uhs,
-						    gs_damaged_o, gs_damaged, gdllval.text); }
-	| 	L_lhs	       	{ ynp = gdl_break_o(@1, ytp, L_lhs,
-						    gs_damaged_o, gs_damaged, gdllval.text); }
-	;
-
-breakc:
-		']'	       	{ ynp = gdl_break_c(@1, ytp, ']',
-						    gs_lost_c, gs_lost, gdllval.text); }
-	| 	R_uhs	       	{ ynp = gdl_break_c(@1, ytp, R_uhs,
-						    gs_damaged_c, gs_damaged, gdllval.text); }
-	| 	R_lhs	       	{ ynp = gdl_break_c(@1, ytp, R_lhs,
-						    gs_damaged_c, gs_damaged, gdllval.text); }
-	;
-
 glosso:
-		L_cur_par	{ ynp = gdl_gloss_o(@1, ytp, L_cur_par, gs_glodoc_o, gs_glodoc, gdllval.text); }
-	| 	L_dbl_cur	{ ynp = gdl_gloss_o(@1, ytp, L_dbl_cur, gs_glolin_o, gs_glolin, gdllval.text); }
-	| 	L_ang_par_s	{ ynp = gdl_gloss_o(@1, ytp, L_ang_par, gs_surro_o, gs_empty, gdllval.text); }
+		L_cur_par	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_cur_par); }
+	| 	L_dbl_cur	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_dbl_cur); }
+	| 	L_ang_par_s	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_ang_par); }
 	;
 
 glossc:
-		R_cur_par      	{ ynp = gdl_gloss_c(@1, ytp, R_cur_par, gs_glodoc_c, gs_glodoc, gdllval.text); }
-	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(@1, ytp, R_dbl_cur, gs_glolin_c, gs_glolin, gdllval.text); }
-	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(@1, ytp, R_ang_par, gs_surro_c, gs_empty, gdllval.text); }
+		R_cur_par      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_L_cur_par); }
+	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_L_dbl_cur); }
+	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_L_ang_par); }
 	;
 
-stateo:  
-		'<'	        { ynp = gdl_state_o(@1, ytp, '<',
-							    gs_supplied_o, gs_supplied, gdllval.text); }
-	| 	'('	       	{ ynp = gdl_state_o(@1, ytp, '(',
-							    gs_maybe_o, gs_maybe, gdllval.text); }
-	| 	L_ang_par      	{ ynp = gdl_state_o(@1, ytp, L_ang_par,
-							    gs_implied_o, gs_implied, gdllval.text); }
-	| 	L_dbl_ang      	{ ynp = gdl_state_o(@1, ytp, L_dbl_ang,
-							    gs_excised_o, gs_excised, gdllval.text); }
-	;
-
-statec:
-		'>'	       	{ ynp = gdl_state_c(@1, ytp, '>',
-						    gs_supplied_c, gs_supplied, gdllval.text); }
-	| 	')'	      	{ ynp = gdl_state_c(@1, ytp, ')',
-						   gs_maybe_c, gs_maybe, gdllval.text); }
-	| 	R_ang_par      	{ ynp = gdl_state_c(@1, ytp, R_ang_par,
-						    gs_implied_c, gs_implied, gdllval.text); }
-	| 	R_dbl_ang	{ ynp = gdl_state_c(@1, ytp, R_dbl_ang,
-						    gs_excised_c, gs_excised,  gdllval.text); }
-	;
 %%
 
 void

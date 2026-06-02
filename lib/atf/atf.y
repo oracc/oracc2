@@ -330,6 +330,7 @@ surface_tok:
 	| 	Y_SEAL	        { $$=yylval.b; }
 	| 	Y_SIDE	     	{ $$=yylval.b; }
 	| 	Y_SURFACE       { $$=yylval.b; }
+	| 	Y_TOP	     	{ $$=yylval.b; }
 	;
 
 column_tok:
@@ -390,7 +391,7 @@ tr.tran:
 		;
 
 tr.inter:
-		TR_INTER 		{ $$=$1; atr_inter(@1, (ucp)longtext_get()); }
+		TR_INTER longtext      	{ $$=$1; atr_inter(@1, (ucp)longtext_get()); }
 
 longtext:
 		TEXT			{ $$ = longtext(atfmp->pool, $1, NULL); }

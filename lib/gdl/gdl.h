@@ -16,21 +16,33 @@
 #define ccp const char *
 #endif
 
-#if 0
-enum bracket {
+typedef enum bracket_e {
+  e_L_none,
   e_L_squ, e_R_squ,
   e_L_cur, e_R_cur,
   e_L_par, e_R_par,
+  e_L_cur_par, e_R_cur_par,
   e_L_ang, e_R_ang,
   e_L_dbl_ang, e_R_dbl_ang,
   e_L_dbl_cur, e_R_dbl_cur,
   e_L_ang_par, e_R_ang_par,
+  e_L_ang_par_s, e_R_ang_par_s,
   e_L_uhs , e_R_uhs,
   e_L_lhs , e_R_lhs,
   e_L_inl_dol , e_R_inl_dol,
-  e_L_inl_cmt , e_R_inl_cmt
-};
-#endif
+  e_L_inl_cmt , e_R_inl_cmt,
+  e_L_top
+} Bracket_e;
+
+typedef struct bracket
+{
+  int tok;
+  gdlstate_t oc;
+  gdlstate_t s;
+  const char *str;
+} Bracket;
+
+extern Bracket bracket_data[];
 
 enum gdlpropvals { GP_ATTRIBUTE, GP_IMPLICIT, GP_TRACKING,
 		   GP_DET_SEME , GP_DET_SEMI, GP_DET_PHON,
@@ -101,12 +113,15 @@ extern void gdl_prop_kv(Node *ynp, int p, int g, const char *k, const char *v);
 extern void gdl_remove_q_error(Mloc m, Node *ynp);
 
 extern Node *gdl_nongraph(Mloc *locp, Tree *ytp, const char *data, const char *type);
-extern Node *gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_tok, const char *data);
-extern Node *gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_tok, const char *data);
+
+extern void gdl_break_o(Bracket_e bt);
+extern void gdl_break_c(Bracket_e bt);
+extern void gdl_state_o(Bracket_e bt);
+extern void gdl_state_c(Bracket_e bt);
+
+extern Node *gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
+extern Node *gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
+
 extern void gdl_cell(Tree *ytp, const char *span);
 extern Node *gdl_delim(Tree *ytp, const char *data);
 extern Node *gdl_field(Tree *ytp, const char *ftype);

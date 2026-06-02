@@ -203,7 +203,7 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  if (d)
 	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
-      else if (strcmp(c->name, "g:d") && strcmp(c->name, "g:z") && strcmp(c->name, "g:p"))
+      else if (strcmp(c->name, "g:d") /*&& strcmp(c->name, "g:z")*/ && strcmp(c->name, "g:p"))
 	{
 	  gdlstate_t s = prop_get_state(c);
 	  if (!gs_is(s,gs_excised))
@@ -522,6 +522,7 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   return np;
 }
 
+#if 0
 static Node *
 gdl_meta_node(Tree *ytp, const char *name, const char *data)
 {
@@ -530,6 +531,7 @@ gdl_meta_node(Tree *ytp, const char *name, const char *data)
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
   return np;
 }
+#endif
 
 Node *
 gdl_pop(Tree *ytp, const char *s)
@@ -945,7 +947,7 @@ gdl_lang(Mloc *mp, Tree *ytp, const char *data)
     fprintf(stderr, "gt: LANG: %s\n", data);
   gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mp->file, mp->line);
   word_lang_tag = gdl_lang_context->fulltag;
-  return gdl_meta_node(ytp, "g:z", data);
+  return NULL; /*gdl_meta_node(ytp, "g:z", data);*/
 }
 
 Node *
@@ -989,144 +991,6 @@ gdl_punct(Mloc *locp, Tree *ytp, const char *data)
   if (gdltrace)
     fprintf(stderr, "gt: PUNCT: %s\n",data);
   return gdl_graph_node(locp, ytp, "g:p", data);
-}
-
-Node *
-gdl_break_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, const char *data)
-{
-  Node *ret = NULL;
-  if (gdltrace)
-    fprintf(stderr, "gt: BREAK/o: %d=%s\n", tok, data);
-  (void)gdl_balance_break(mlp, tok);
-  ret = gdl_meta_node(ytp, "g:z", data);
-  ps_on(gs_o);
-  rs_on(gs_run);
-  return ret;
-}
-
-Node *
-gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, const char *data)
-{
-  if (gdltrace)
-    fprintf(stderr, "gt: BREAK/c: %d=%s\n", tok, data);
-  intptr_t st = gdl_balance_break(mlp, tok);
-  if (gstck_i(st) > 0)
-    {
-      Node *np = gstck_np(st);
-      if ('r' == np->name[2])
-	np = np->rent;
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
-      if (!gdl_no_xml_ids)
-	{
-	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-	  if (!idp)
-	    {
-	      if (np->kids)
-		{
-		  idp = prop_find_kv(np->kids->props, "xml:id", NULL);
-		  if (!idp)
-		    {
-		      if (np->kids->text)
-			mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'\n", np->kids->text);
-		      else
-			mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np or np->kids\n");
-		    }
-		  else
-		    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
-		}
-	      else
-		mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np type %s\n", np->name);
-	    }
-	  else
-	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
-	}
-    }
-  bit_set(*lst,gs_c);
-  rs_no(gs_run);
-  return gdl_meta_node(ytp, "g:z", data);
-}
-
-/* If data is /{{[0-9]+:/ the digits are a stream code */
-Node *
-gdl_gloss_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, const char *data)
-{
-  int stream = -1;
-  Node *ret = NULL;
-  if (gdltrace)
-    fprintf(stderr, "gt: GLOSS/o: %d=%s\n", tok, data);
-  if (tok == L_cur_par && data[2])
-    {
-      stream = atoi(data+2);
-      if (stream <= 0 || stream > 99)
-	{
-	  mesg_vwarning(currgdlfile, gdllineno, "stream out of range in '%s'", data);
-	  stream = -1;
-	}
-      data = "{{";
-    }
-  (void)gdl_balance_state(mlp, tok);
-  (void)gdl_push(ytp, "g:glo");
-  ps_on(gs_o);
-  rs_on(gs_run);
-  ret = gdl_meta_node(ytp, "g:z", data);
-  prop_node_add(ret, GP_STREAM, PG_GDL_STATE, (void*)(uintptr_t)stream, NULL);
-  return ret;
-}
-
-Node *
-gdl_gloss_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, const char *data)
-{
-  Node *ret = NULL;
-  if (gdltrace)
-    fprintf(stderr, "gt: GLOSS/c: %d=%s\n", tok, data);
-  ret = gdl_meta_node(ytp, "g:z", data);
-  if (-1 != gdl_balance_state(mlp, tok))
-    gdl_pop(ytp, data);
-  bit_set(*lst,gs_c);
-  rs_no(gs_run);
-  /*gdl_update_state(lgp, gs_tok);*/
-  return ret;
-}
-Node *
-gdl_state_o(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_o, gdlstate_t gs_run, const char *data)
-{
-  Node *ret = NULL;
-  if (gdltrace)
-    fprintf(stderr, "gt: STATE/o: %d=%s\n", tok, data);
-  (void)gdl_balance_state(mlp, tok);
-  ret = gdl_meta_node(ytp, "g:z", data);
-  ps_on(gs_o);
-  rs_on(gs_run);
-  return ret;
-}
-
-Node *
-gdl_state_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, const char *data)
-{
-  Node *ret = NULL;
-  if (gdltrace)
-    fprintf(stderr, "gt: STATE/c: %d=%s\n", tok, data);
-  ret =  gdl_meta_node(ytp, "g:z", data);
-  intptr_t st = gdl_balance_state(mlp, tok);
-  if (st > 0) /* st can be -1 if nothing on stack */
-    {
-      Node *np = gstck_np(st);
-      if (!strcmp(np->rent->name, "g:n"))
-	np = np->rent;
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusStart", "1");
-      if (!gdl_no_xml_ids)
-	{
-	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-	  if (idp)
-	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
-	  else
-	    mesg_verr(&mlp, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
-	}
-    }
-  bit_set(*lst,gs_c);
-  rs_no(gs_run);
-  /*gdl_update_state(lgp, gs_c);*/
-  return ret;
 }
 
 void
@@ -1205,12 +1069,44 @@ gdl_group(Mloc mp, Node *lft, int type, Node *rt)
     }
 }
 
-#if 0
-void
-gdl_update_state(Node *np, gdlstate_t gs_tok)
+/* If data is /{{[0-9]+:/ the digits are a stream code */
+Node*
+gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
 {
-  bit_set(np->props->u.s, gs_tok);
-  gs_clear_closers();
+  Bracket *bp = &bracket_data[bt];
+  int stream = -1;
+  Node *ret = NULL;
+  if (gdltrace)
+    fprintf(stderr, "gt: GLOSS/o: %d=%s\n", bt, bp->str);
+  if (bp->tok == L_cur_par && data[2])
+    {
+      stream = atoi(data+2);
+      if (stream <= 0 || stream > 99)
+	{
+	  mesg_vwarning(currgdlfile, gdllineno, "stream out of range in '%s'", data);
+	  stream = -1;
+	}
+      data = "{{";
+    }
+  (void)gdl_balance_state(*mlp, bp->tok);
+  ret = gdl_push(ytp, "g:glo");
+  ps_on(bp->oc);
+  rs_on(bp->s);
+  prop_node_add(ret, GP_STREAM, PG_GDL_STATE, (void*)(uintptr_t)stream, NULL);
+  return ret;
 }
-#endif
 
+Node *
+gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
+{
+  Bracket *bp = &bracket_data[bt];
+  Node *ret = NULL;
+  if (gdltrace)
+    fprintf(stderr, "gt: GLOSS/c: %d=%s\n", bt, bp->str);
+  /*ret = gdl_meta_node(ytp, "g:z", data);*/
+  if (-1 != gdl_balance_state(*mlp, bp->tok))
+    ret = gdl_pop(ytp, data);
+  bit_set(*lst,bp->oc);
+  rs_no(bp->s);
+  return ret;
+}

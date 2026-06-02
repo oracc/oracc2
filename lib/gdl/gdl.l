@@ -6,6 +6,7 @@
 #include <mesg.h>
 #include <pool.h>
 #include <sll.h>
+#include "gdl.h"
 #include "gdlstate.h"
 
 /* test */
@@ -118,30 +119,30 @@ NOTEMARK	"^"[0-9]+"^"
 <Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv");
 			  cvq_reset(); }
 
-<INITIAL,C>"<("		{ gconst; GIN=0; return L_ang_par; }
-<INITIAL,C>")>"	       	{ gconst; GIN=0; return R_ang_par; }
-<INITIAL,C>"<<"		{ gconst; GIN=0; return L_dbl_ang; }
-<INITIAL,C>">>"		{ gconst; GIN=0; return R_dbl_ang; }
-<INITIAL,C>"<"		{ gconst; GIN=0; return '<'; }
-<INITIAL,C>">"		{ gconst; GIN=0; return '>'; }
-<INITIAL,C>"["		{ gconst; GIN=0; return yytext[0]; }
-<INITIAL,C>"]"		{ gconst; GIN=0; return yytext[0]; }
-<INITIAL,C>{L_UHS}	{ gsave; GIN=0; return L_uhs; }
-<INITIAL,C>{R_UHS}	{ gsave; GIN=0; return R_uhs; }
-<INITIAL,C>{L_LHS}	{ gsave; GIN=0; return L_lhs; }
-<INITIAL,C>{R_LHS}	{ gsave; GIN=0; return R_lhs; }
+<INITIAL,C>"<("		{ GIN=0; gdl_state_o(e_L_ang_par); }
+<INITIAL,C>")>"	       	{ GIN=0; gdl_state_c(e_R_ang_par); }
+<INITIAL,C>"<<"		{ GIN=0; gdl_state_o(e_L_dbl_ang); }
+<INITIAL,C>">>"		{ GIN=0; gdl_state_c(e_R_dbl_ang); }
+<INITIAL,C>"<"		{ GIN=0; gdl_state_o(e_L_ang); }
+<INITIAL,C>">"		{ GIN=0; gdl_state_c(e_R_ang); }
+<INITIAL,C>"["		{ GIN=0; gdl_break_o(e_L_squ); }
+<INITIAL,C>"]"		{ GIN=0; gdl_break_c(e_R_squ); }
+<INITIAL,C>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
+<INITIAL,C>{R_UHS}	{ GIN=0; gdl_break_c(e_R_uhs); }
+<INITIAL,C>{L_LHS}	{ GIN=0; gdl_break_o(e_L_lhs); }
+<INITIAL,C>{R_LHS}	{ GIN=0; gdl_break_c(e_R_lhs); }
 
-"{{"[0-9+]:	       	{ gconst; GIN=0; return L_dbl_cur; }
-"{{"			{ gconst; GIN=0; return L_dbl_cur; }
-"}}"			{ gconst; GIN=0; return R_dbl_cur; }
-"{("			{ gconst; GIN=0; return L_cur_par; }
-")}"			{ gconst; GIN=0; return R_cur_par; }
-"("			{ gconst; if (GIN) { GIN=0; return QLP; } else { return yytext[0]; } }
-")"			{ gconst; GIN=0; return yytext[0]; }
-"{"			{ gconst; GIN=0; return yytext[0]; }
-"{+"			{ gconst; GIN=0; return DET_PHON; }
-"{-"			{ gconst; GIN=0; return DET_SEME; }
-"}"			{ gconst; GIN=0; return yytext[0]; }
+"{{"[0-9+]:	       	{ gconst; GIN=0; return e_L_dbl_cur; }
+"{{"			{ gconst; GIN=0; return e_L_dbl_cur; }
+"}}"			{ gconst; GIN=0; return e_R_dbl_cur; }
+"{("			{ gconst; GIN=0; return e_L_cur_par; }
+")}"			{ gconst; GIN=0; return e_R_cur_par; }
+"("			{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
+")"			{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
+"{"			{ GIN=0; return '{'; }
+"{+"			{ GIN=0; return DET_PHON; }
+"{-"			{ GIN=0; return DET_SEME; }
+"}"			{ GIN=0; return '}'; }
 
 "("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; return VARI; }
 "("[0-9]+:		{ gsave; GIN=0; return VARO; }
@@ -190,7 +191,7 @@ _			{ gsave; return LANG_FLIP; }
 		       	    mesg_vwarning(currgdlfile, gdllineno,
 			  	       	  "no space after %c field\n", *yytext);
 			    return gdl_lexfld[(int)*yytext]; }
-			  else { return *yytext; } }
+			  else { gdl_lex_flag((uccp)yytext); } }
 
 "..."			{ GIN=0; gsave; return ELLIPSIS; }
 "--"			{ GIN=0; return ENHYPHEN; }
@@ -363,56 +364,4 @@ cvq_reset(void)
 {
   cvq_top = -1;
   BEGIN 0;
-}
-
-/* 20260602: Flags are no longer passed to the parser; they are
-   recorded here in the state property pointer of the last grapheme seen */
-static void
-gdl_lex_flag(unsigned const char *f)
-{
-  if (gdlflextrace)
-      fprintf(stderr, "gdl_lex_flag: arg f=%s\n", f);
-  if (!lst)
-      {
-        mesg_vwarning(gdlfile, gdllineno, "misplaced flag `%s'; no grapheme state to set", f);
-	return;
-      }
-  switch (*f)
-    {
-    case '!':
-	bit_set(*lst, gs_f_bang);
-	break;
-    case '?':
-	bit_set(*lst, gs_f_query);
-	break;
-    case '#':
-	bit_set(*lst, gs_f_hash);
-	break;
-    case '*':
-	bit_set(*lst, gs_f_star);
-	break;
-    case 0xe2:
-	switch (f[2])
-	    {
-	    case 0xa0:
-		bit_set(*lst, gs_f_uf1);
-		break;
-	    case 0xa1:
-		bit_set(*lst, gs_f_uf2);
-		break;
-	    case 0xa2:
-		bit_set(*lst, gs_f_uf3);
-		break;
-	    case 0xa3:
-		bit_set(*lst, gs_f_uf4);
-		break;
-	    default:
-		/*can't happen*/
-		break;
-	    }
-	break;
-    default:
-	mesg_vwarning(gdlfile, gdllineno, "lex field `%c' needs a space before it", *f);
-	break;
-    }
 }
