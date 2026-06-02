@@ -281,7 +281,7 @@ gdl_word_is_excised(Node *w)
 	  Prop *p = prop_find_kv(n->props, "g:type", NULL);
 	  if (p && (!strcmp(p->u.k->v, "dollar") || !strcmp(p->u.k->v, "comment")))
 	    gdl_excision_type = 'c';
-	  else
+	  else if (strcmp(p->u.k->v, "linebreak"))
 	    return 0;
 	}
       if (skip_kids)
@@ -1019,12 +1019,30 @@ gdl_break_c(Mloc mlp, Tree *ytp, int tok, gdlstate_t gs_c, gdlstate_t gs_run, co
       if (!gdl_no_xml_ids)
 	{
 	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-	  gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+	  if (!idp)
+	    {
+	      if (np->kids)
+		{
+		  idp = prop_find_kv(np->kids->props, "xml:id", NULL);
+		  if (!idp)
+		    {
+		      if (np->kids->text)
+			mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'\n", np->kids->text);
+		      else
+			mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np or np->kids\n");
+		    }
+		  else
+		    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+		}
+	      else
+		mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np type %s\n", np->name);
+	    }
+	  else
+	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 	}
     }
   bit_set(*lst,gs_c);
   rs_no(gs_run);
-  /*gdl_update_state(lgp, gs_c);*/
   return gdl_meta_node(ytp, "g:z", data);
 }
 
