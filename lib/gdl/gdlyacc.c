@@ -1001,14 +1001,14 @@ gdl_clear_gg(Tree *ytp)
 }
 
 void
-gdl_group(Mloc mp, Node *lft, int type, Node *rt)
+gdl_group(Mloc mp, int type)
 {
   Node *gp = NULL;
   const char *delim = (type=='/'?"/":(type==':'?":":"+"));
-  if (!lft)
-    {
+    if (!lft)
+      {
       /* lft was a g:gg; if it is a different type create a new g:gg */
-
+      
       /* First identify the preceding group: rt will have been added
 	 as the following-sibling of the current g:gg node */
       Node *preceding_gg = rt->prev;

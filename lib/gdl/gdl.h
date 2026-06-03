@@ -22,6 +22,9 @@ typedef enum bracket_e {
   e_L_cur, e_R_cur,
   e_L_par, e_R_par,
   e_L_cur_par, e_R_cur_par,
+  e_L_par_par, e_R_par_par,
+  e_L_par_exp_p, e_R_par_exp_p,
+  e_L_par_exp_m, e_R_par_exp_m,
   e_L_ang, e_R_ang,
   e_L_dbl_ang, e_R_dbl_ang,
   e_L_dbl_cur, e_R_dbl_cur,
@@ -31,6 +34,7 @@ typedef enum bracket_e {
   e_L_lhs , e_R_lhs,
   e_L_inl_dol , e_R_inl_dol,
   e_L_inl_cmt , e_R_inl_cmt,
+  e_L_var, e_R_var, e_LR_var,
   e_L_top
 } Bracket_e;
 
@@ -180,12 +184,21 @@ extern void gdl_set_ids(const char *line_id, int widb);
 extern void gdl_break_node(Node *np);
 extern void gdl_state_node(Node *np);
 
+extern void gdl_lex_flag(unsigned const char *f);
+
 extern List *gdl_get_word_list(void);
 extern void gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt);
 extern void gdl_set_word_id(const char *wid);
 extern void gdl_auto_id(void);
 extern void gdl_det_props(Node *d);
-extern void gdl_group(Mloc mp, Node *lft, int type, Node *rt);
+extern void gdl_group(Mloc mp, int type);
 extern void gdl_clear_gg(Tree *ytp);
+
+extern void gdl_indent(void);
+extern void gdl_note_mark(const char *n);
+extern void gdl_var_mark(Bracket_e type, const char *v);
+
+extern void gdl_lang_tag(const char *v);
+extern void gdl_lang_flip(void);
 
 #endif /*GDL_H_*/

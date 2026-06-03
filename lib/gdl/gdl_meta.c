@@ -4,11 +4,10 @@
 #include <tree.h>
 #include "gdl.h"
 #include "gdlstate.h"
+#define GDLLTYPE Mloc
 #include "gdl.tab.h"
 
-extern Mloc gdllloc;
-#define mlp gdllloc
-
+extern Node *lgp;   		/* last grapheme node pointer */
 extern int gdllineno, gdltrace, gdlflextrace;
 extern const char *currgdlfile, *gdlfile;
 
@@ -42,7 +41,7 @@ Bracket bracket_data[] = {
 
 /* 20260602: Flags are no longer passed to the parser; they are
    recorded here in the state property pointer of the last grapheme seen */
-static void
+void
 gdl_lex_flag(unsigned const char *f)
 {
   if (gdlflextrace)
@@ -98,11 +97,10 @@ gdl_break_o(Bracket_e bt)
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", bt, bp->str);
-  (void)gdl_balance_break(mlp, bp->tok);
+  (void)gdl_balance_break(gdllloc, bp->tok);
   /*ret = gdl_meta_node(ytp, "g:z", data);*/
-  ps_on(gs_o);
-  rs_on(gs_run);
-  return ret;
+  ps_on(bp->oc);
+  rs_on(bp->s);
 }
 
 void
@@ -111,7 +109,7 @@ gdl_break_c(Bracket_e bt)
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", bt, bp->str);
-  intptr_t st = gdl_balance_break(mlp, bp->tok);
+  intptr_t st = gdl_balance_break(gdllloc, bp->tok);
   if (gstck_i(st) > 0)
     {
       Node *np = gstck_np(st);
@@ -129,22 +127,22 @@ gdl_break_c(Bracket_e bt)
 		  if (!idp)
 		    {
 		      if (np->kids->text)
-			mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'\n", np->kids->text);
+			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'\n", np->kids->text);
 		      else
-			mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np or np->kids\n");
+			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids\n");
 		    }
 		  else
 		    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 		}
 	      else
-		mesg_verr(&mlp, "gdl_break_c: strange: no xml:id on np type %s\n", np->name);
+		mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np type %s\n", np->name);
 	    }
 	  else
 	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 	}
     }
-  bit_set(*lst,gs_c);
-  rs_no(gs_run);
+  bit_set(*lst,bp->oc);
+  rs_no(bp->s);
 }
 
 void
@@ -153,11 +151,10 @@ gdl_state_o(Bracket_e bt)
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", bt, bp->str);
-  (void)gdl_balance_state(mlp, bp->tok);
+  (void)gdl_balance_state(gdllloc, bp->tok);
   /*ret = gdl_meta_node(ytp, "g:z", data);*/
-  ps_on(gs_o);
-  rs_on(gs_run);
-  return ret;
+  ps_on(bp->oc);
+  rs_on(bp->s);
 }
 
 void
@@ -167,7 +164,7 @@ gdl_state_c(Bracket_e bt)
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", bt, bp->str);
   /*ret =  gdl_meta_node(ytp, "g:z", data);*/
-  intptr_t st = gdl_balance_state(mlp, bp->tok);
+  intptr_t st = gdl_balance_state(gdllloc, bp->tok);
   if (st > 0) /* st can be -1 if nothing on stack */
     {
       Node *np = gstck_np(st);
@@ -180,13 +177,45 @@ gdl_state_c(Bracket_e bt)
 	  if (idp)
 	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
 	  else
-	    mesg_verr(&mlp, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
+	    mesg_verr(&gdllloc, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
 	}
     }
-  bit_set(*lst,gs_c);
-  rs_no(gs_run);
-  /*gdl_update_state(lgp, gs_c);*/
-  return ret;
+  bit_set(*lst,bp->oc);
+  rs_no(bp->s);
 }
 
-#undef mlp
+void
+gdl_indent(void)
+{
+}
+
+void
+gdl_note_mark(const char *n)
+{
+}
+
+void
+gdl_var_mark(Bracket_e type, const char *v)
+{
+}
+
+#if 0
+meta: 		INDENT       			{ ynp = gdl_nongraph(&@1, ytp, ";", "linebreak"); }
+	| 	NEWLINE	       			{ ynp = gdl_nongraph(&@1, ytp, "//", "newline"); }
+	| 	VARO				{ ynp = gdl_nongraph(&@1, ytp, $1, "varo"); }
+	| 	VARC				{ ynp = gdl_nongraph(&@1, ytp, $1, "varc"); }
+	| 	VARI				{ ynp = gdl_nongraph(&@1, ytp, $1, "vari"); }
+	| 	NOTEMARK		       	{ $$ = lgp; }
+		/* TODO: prob just add NOTEMARK as prop and keep a
+		list during line processing so it's easy to correlate
+		the marks with notes parsed in lib/atf */
+	;
+
+
+lang:
+		LANG				       	{ ynp = gdl_lang(&@1, ytp,
+					       				 gdllval.text); }
+	| 	LANG_FLIP	       			/*TODO; ALSO #atf: lang akk _%s_ vel sim*/
+	;
+
+#endif

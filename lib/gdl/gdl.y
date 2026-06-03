@@ -38,8 +38,8 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
-%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS VARO VARC VARI CELLSPAN
-		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD INDENT NEWLINE
+%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS CELLSPAN
+		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD NEWLINE
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
 		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
 		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
@@ -60,65 +60,58 @@ GDLLTYPE gdllloc;
 
 %nterm <text> 	field lexfld cmods
 
-%nterm <node>   alternate ligatured reordered ggroup detgloss det gloss
+%nterm <node>   detgloss det gloss
 		grapheme scgrapheme compound simplexg valuqual
-		glosso glossc meta
+		glosso glossc
 
 %start line
 
 %%
 
 line:
-	lineparts
-	| line lineparts
-      	;
+		linepart
+	|	line linepart
+		;
 
-lineparts:
-	  cell
-	| typedseg
-	| plainseg
-	;
+linepart:	cell
+	| 	field
+	|	segment
+		;
 
 cell:
-	cellspec anyseg
-	;
+		cellspec
+		;
 
 cellspec:
-	'&'					    	{ gdl_cell(ytp,"1"); }
-	| CELLSPAN				    	{ gdl_cell(ytp,$1); }
-	;				
-					
-anyseg:
-	typedseg
-	| plainseg
-	;
+		'&'			       	    	{ gdl_cell(ytp,"1"); }
+	| 	CELLSPAN			      	{ gdl_cell(ytp,$1); }
+		;
 
-typedseg:
-	field plainseg
-	;
 
+/* Field delim is ',' and FTYPE is !yn or the like; technically, !yn
+   does not need a preceding comma with this grammar.*/
 field:
-	  ','					    	{ ynp = gdl_field(ytp,"default"); }
-	| ',' FTYPE				    	{ ynp = gdl_field(ytp,$2); }
-	| FTYPE					    	{ ynp = gdl_field(ytp,$1); }
-        | lexfld				    	{ ynp = gdl_field(ytp,gdl_lexfld_name($1)); }
-        ;
+		',' 		       	    		{ ynp = gdl_field(ytp,"default"); }
+	| 	FTYPE		       		    	{ ynp = gdl_field(ytp,$1); }
+        | 	lexfld				    	{ ynp = gdl_field(ytp,gdl_lexfld_name($1)); }
+		;
 
 lexfld:
-	  LF_AT
-	| LF_CARET
-	| LF_EQUALS
-	| LF_HASH
-	| LF_QUOTE
-	| LF_TILDE
-	| LF_VBAR
-	;
+		LF_AT
+	| 	LF_CARET
+	| 	LF_EQUALS
+	| 	LF_HASH
+	| 	LF_QUOTE
+	| 	LF_TILDE
+	| 	LF_VBAR
+		;
 
-plainseg:
-	  comment
-	| space
-	| transliteration
-	;
+segment:
+		comment
+	| 	space
+	| 	newline
+	| 	transliteration
+		;
 
 comment:
 		L_inl_dol TEXT R_inl_dol	        { gdl_nongraph(&@1, ytp, $2, "dollar"); }
@@ -133,17 +126,22 @@ space:
 	| END						{ gdl_balance_flush(@1); }
 	;
 
+/* This is // meaning a new line in the cuneiform, not a '\n' character */
+newline:	NEWLINE	        			{ gdl_nongraph(&@1, ytp, "//", "newline"); }
+	;
+
 transliteration:
 		delim					{ gdl_clear_gg(ytp); }
 	| 	grapheme
-	| 	lang
-	|	ggroup
 	;
 
 delim:
 		'.' 				       	{ ynp = gdl_delim(ytp, "."); }
         | 	'-' 			       		{ ynp = gdl_delim(ytp, "-"); }
 	| 	ENHYPHEN 	       	       		{ ynp = gdl_delim(ytp, "--"); }
+	|	'/'					{ gdl_group(@1, '/'); }
+	|	':'					{ gdl_group(@1, ':'); }
+	|	'+'					{ gdl_group(@1, '+'); }
 	;
 
 detgloss:
@@ -186,35 +184,13 @@ gloss:		glosso
 	;
 
 graphemes:	grapheme
-	|	ggroup
 	|	graphemes grapheme
-	|	graphemes ggroup
 	;
 
 grapheme:
 		scgrapheme
 	| 	valuqual
 	|	detgloss
-		;
-
-ggroup:		alternate			       	
-	| 	ligatured		       		
-	| 	reordered	       			
-		;
-
-alternate:
-		grapheme '/' grapheme			{ gdl_group(@1, $1, '/', $3); }
-	|	ggroup '/' grapheme			{ gdl_group(@2, NULL, '/', $3); }
-		;
-
-ligatured:
-		grapheme '+' grapheme     		{ gdl_group(@1, $1, '+', $3); }
-	|	ggroup '+' grapheme			{ gdl_group(@2, NULL, '+', $3); }
-		;
-
-reordered:
-		grapheme ':' grapheme			{ gdl_group(@1, $1, ':', $3); }
-	|	ggroup ':' grapheme			{ gdl_group(@2, NULL, ':', $3); }
 		;
 
 scgrapheme:
@@ -227,12 +203,11 @@ maybegflags:
 	| 	/*empty */
 		;
 
-simplexg:
-	  s maybegflags	       			       	{ if (gdl_legacy) gdl_unlegacy(ynp);
-							  if (ynp->kids) gdl_mod_wrap(ynp, 1);
-	    			  			  gvl_simplexg(ynp);
-	  						  $$ = ynp; }
-	;
+simplexg:	s maybegflags	       	       	 { if (gdl_legacy) gdl_unlegacy(ynp);
+		    		                   if (ynp->kids) gdl_mod_wrap(ynp, 1);
+						   gvl_simplexg(ynp);
+						   $$ = ynp; }
+		;
 
 s:
 		GRAPHEME			{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
@@ -270,7 +245,6 @@ cbit:
 	s	       			       		{ /*ynp->mloc = mloc_mloc(&@1);*/
 	  						  if (gdl_legacy) gdl_unlegacy(ynp);
 							  gvl_simplexg(ynp); }
-	/*	| gflag */
 	| cdelim					{ }
 	| CLP			       			{ gdl_balance_state(@1,CLP);
 	    					  	  gdl_push_l(&@1,ytp,"g:gp"); }
@@ -288,7 +262,6 @@ cbit:
 							  lgp = ytp->curr;
 							  ynp = gdl_pop(ytp,"g:q");
 							}
-	| meta
 	| mod						{ gdl_modq_add(mnp); mnp = NULL; };
 	;
 
@@ -331,29 +304,12 @@ q:
 							  kids_add_node(ytp,yrem);
 							  gdl_incr_qin(); }
 	graphemes 	 	       			{ gdl_remove_q_error(@1, yrem); }		
-	QRP { gdl_decr_qin(); }
+	QRP 						{ gdl_decr_qin(); }
 	;
 
 qmaybemodflags:
 		mods
 	| /* empty */
-	;
-
-lang:
-		LANG						{ ynp = gdl_lang(&@1, ytp,
-										 gdllval.text); }
-	| 	LANG_FLIP					/*TODO; ALSO #atf: lang akk _%s_ vel sim*/
-	;
-
-meta: 		INDENT       			{ ynp = gdl_nongraph(&@1, ytp, ";", "linebreak"); }
-	| 	NEWLINE	       			{ ynp = gdl_nongraph(&@1, ytp, "//", "newline"); }
-	| 	VARO				{ ynp = gdl_nongraph(&@1, ytp, $1, "varo"); }
-	| 	VARC				{ ynp = gdl_nongraph(&@1, ytp, $1, "varc"); }
-	| 	VARI				{ ynp = gdl_nongraph(&@1, ytp, $1, "vari"); }
-	| 	NOTEMARK		       	{ $$ = lgp; }
-		/* TODO: prob just add NOTEMARK as prop and keep a
-		list during line processing so it's easy to correlate
-		the marks with notes parsed in lib/atf */
 	;
 
 mods:

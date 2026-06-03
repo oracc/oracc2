@@ -37,8 +37,7 @@ static int SIN = 0; /* left context is space */
 int term = 0;
 #define yyterminate() return (term = !term) ? END : YY_NULL
 
-static void gdl_closers(void);
-static void gdl_lex_flag(unsigned const char *f);
+static void gdl_lex_closers(void);
 
 /* Simple stack for nesting of compounds and valuquals */
 #define CVQ_MAX 6
@@ -79,14 +78,17 @@ NOTEMARK	"^"[0-9]+"^"
 
 %%
 
-<C>"|"/[ \t]   		{ BEGIN cvq_pop(); CIN=0; return C_C; }
-<C>"|"			{ BEGIN cvq_pop(); CIN=0; return C_C; }
-"|"/[ \t]	       	{ /*"*/ gsave; return gdl_lexfld[(int)*yytext]; }
-"|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
-
 [=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(currgdlfile,gdllineno,
 						"non-Unicode accent codes %s",gdltext); }}
 
+{G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(); }
+{G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
+{GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(); }
+
+"|"/[ \t]	       	{ /*"*/ gsave; return gdl_lexfld[(int)*yytext]; }
+"|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
+<C>"|"/[ \t]   		{ BEGIN cvq_pop(); CIN=0; return C_C; }
+<C>"|"			{ BEGIN cvq_pop(); CIN=0; return C_C; }
 <C>"\xe2\x88\x98"	{ GIN=0; return C_CIRCLE; }
 <C>{NNUM}/{M} 		{ GIN=1; gsave; return NNUM; }
 <C>{NNUM} 		{ GIN=1; gsave; return NNUM; }
@@ -112,55 +114,10 @@ NOTEMARK	"^"[0-9]+"^"
 <C>[ \t]+	       	{ CIN=GIN=0; mesg_vwarning(currgdlfile,gdllineno,"missing '|' in compound");
 			  cvq_reset(); }
 
-"\xc3\x97"	       	{ return C_TIMES; }
-
 <Q>")"/[}>]	       	{ return QRP; }
 <Q>")"			{ return QRP; }
 <Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv");
 			  cvq_reset(); }
-
-<INITIAL,C>"<("		{ GIN=0; gdl_state_o(e_L_ang_par); }
-<INITIAL,C>")>"	       	{ GIN=0; gdl_state_c(e_R_ang_par); }
-<INITIAL,C>"<<"		{ GIN=0; gdl_state_o(e_L_dbl_ang); }
-<INITIAL,C>">>"		{ GIN=0; gdl_state_c(e_R_dbl_ang); }
-<INITIAL,C>"<"		{ GIN=0; gdl_state_o(e_L_ang); }
-<INITIAL,C>">"		{ GIN=0; gdl_state_c(e_R_ang); }
-<INITIAL,C>"["		{ GIN=0; gdl_break_o(e_L_squ); }
-<INITIAL,C>"]"		{ GIN=0; gdl_break_c(e_R_squ); }
-<INITIAL,C>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
-<INITIAL,C>{R_UHS}	{ GIN=0; gdl_break_c(e_R_uhs); }
-<INITIAL,C>{L_LHS}	{ GIN=0; gdl_break_o(e_L_lhs); }
-<INITIAL,C>{R_LHS}	{ GIN=0; gdl_break_c(e_R_lhs); }
-
-"{{"[0-9+]:	       	{ gconst; GIN=0; return e_L_dbl_cur; }
-"{{"			{ gconst; GIN=0; return e_L_dbl_cur; }
-"}}"			{ gconst; GIN=0; return e_R_dbl_cur; }
-"{("			{ gconst; GIN=0; return e_L_cur_par; }
-")}"			{ gconst; GIN=0; return e_R_cur_par; }
-"("			{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
-")"			{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
-"{"			{ GIN=0; return '{'; }
-"{+"			{ GIN=0; return DET_PHON; }
-"{-"			{ GIN=0; return DET_SEME; }
-"}"			{ GIN=0; return '}'; }
-
-"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; return VARI; }
-"("[0-9]+:		{ gsave; GIN=0; return VARO; }
-:[0-9+]")"		{ gsave; GIN=0; return VARC; }
-
-%[-a-z0-9]+("/"[gn])?	{ gsave; return LANG; }
-_			{ gsave; return LANG_FLIP; }
-,			{ return ','; }
-&[0-9]+			{ gsave; return CELLSPAN; }
-&			{ return '&'; }
-![a-z]+			{ gsave; return FTYPE; }
-
-{NOTEMARK}		{ gsave; return NOTEMARK; }
-
-<INITIAL,C,Q>[!?]      	{ gdl_lex_flag((uccp)yytext); }
-<INITIAL,C>^[#"~=@^]	{ gsave; return gdl_lexfld[(int)*yytext]; }
-<INITIAL,C>[#"~=@^]   	{ gsave; if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
-<INITIAL,C>"*"		{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
 
 ":"/[ \t\n\(]  		{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":."			{ /*"*/ GIN=1; gsave; return PUNCT; }
@@ -178,41 +135,41 @@ _			{ gsave; return LANG_FLIP; }
 
 [0-9]+(\/[0-9]+)?	{ GIN=1; gsave; return !strncmp(gdllval.text,"00",2) ? ZERO : BARENUM; }
 
-{G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(); }
-{G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
-{GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(); }
-
 {M}			{ GIN=1; gsave; return MOD; }
 
-{UFLAG}			{ gdl_lex_flag((uccp)yytext); }
+	/* Determinatives and glosses */
 
-[#"=@^]/{G} 		{ gsave;
-			  if (gdl_lexical) {
-		       	    mesg_vwarning(currgdlfile, gdllineno,
-			  	       	  "no space after %c field\n", *yytext);
-			    return gdl_lexfld[(int)*yytext]; }
-			  else { gdl_lex_flag((uccp)yytext); } }
+"{{"[0-9+]:	       	{ gconst; GIN=0; return e_L_dbl_cur; }
+"{{"			{ gconst; GIN=0; return e_L_dbl_cur; }
+"}}"			{ gconst; GIN=0; return e_R_dbl_cur; }
+"{("			{ gconst; GIN=0; return e_L_cur_par; }
+")}"			{ gconst; GIN=0; return e_R_cur_par; }
+"(("			{ gconst; GIN=0; return e_L_par_par; }
+"))"			{ gconst; GIN=0; return e_R_par_par; }
+"{"			{ GIN=0; return '{'; }
+"{+"			{ GIN=0; return DET_PHON; }
+"{-"			{ GIN=0; return DET_SEME; }
+"}"			{ GIN=0; return '}'; }
+
+,			{ return ','; }
+&[0-9]+			{ gsave; return CELLSPAN; }
+&			{ return '&'; }
+![a-z]+			{ gsave; return FTYPE; }
+
+	/* Delimiters */
 
 "..."			{ GIN=0; gsave; return ELLIPSIS; }
 "--"			{ GIN=0; return ENHYPHEN; }
 [-+:.]     		{ GIN=0; return gdltext[0]; }
 
-"/"/{G}			{ return '/'; }
+"/"/{G}			{ return '/'; } /* alternation */
 
-~~/{G}			{ g_logoforce_flag = 1; }
-"~"/{G}			{ if (gdl_lexical) { gsave; mesg_vwarning(currgdlfile, gdllineno,
-			   "no space after ~ field; use ~~ for logogram force with atf: use lexical\n");
-			    return gdl_lexfld[(int)*yytext];
-			   } else { g_logoforce_flag = 1; } }
-"$"/{G}			{ g_literal_flag = 1; }
-
-";"			{ return INDENT; }
 "//"			{ return NEWLINE; }
 
 [ \t]+/[#"~=@^]	       	{ GIN=0; SIN=1; gsave; return SPACE; }
 [ \t]+			{ GIN=0; gsave; return SPACE; }
 
-\n			{ gdl_closers(); return gdltext[0]; }
+	/* Inline comment/dollar */
 
 "($"			{ BEGIN TD; return L_inl_dol; }
 <TD>"$)"	       	{ BEGIN 0; return R_inl_dol; }
@@ -223,14 +180,77 @@ _			{ gsave; return LANG_FLIP; }
 <TD>([^$]|\$[^)])*     	{ gsave; return TEXT; }
 <TC>([^#]|\#[^)])*   	{ gsave; return TEXT; }
 
+	/* Anything in this section either does not return a token or
+ 	   only does so in some circumstances */
+
+"("			{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
+")"			{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
+
+<INITIAL,C>"<("		{ GIN=0; gdl_state_o(e_L_ang_par); }
+<INITIAL,C>")>"	       	{ GIN=0; gdl_state_c(e_R_ang_par); }
+<INITIAL,C>"<<"		{ GIN=0; gdl_state_o(e_L_dbl_ang); }
+<INITIAL,C>">>"		{ GIN=0; gdl_state_c(e_R_dbl_ang); }
+<INITIAL,C>"<"		{ GIN=0; gdl_state_o(e_L_ang); }
+<INITIAL,C>">"		{ GIN=0; gdl_state_c(e_R_ang); }
+<INITIAL,C>"["		{ GIN=0; gdl_break_o(e_L_squ); }
+<INITIAL,C>"]"		{ GIN=0; gdl_break_c(e_R_squ); }
+<INITIAL,C>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
+<INITIAL,C>{R_UHS}	{ GIN=0; gdl_break_c(e_R_uhs); }
+<INITIAL,C>{L_LHS}	{ GIN=0; gdl_break_o(e_L_lhs); }
+<INITIAL,C>{R_LHS}	{ GIN=0; gdl_break_c(e_R_lhs); }
+
+	/* The meta-delimiter ';' == indented line */
+<INITIAL,C>";"	       	{ GIN=0; gdl_indent(); }
+
+	/* Sign state force characters */
+~~/{G}			{ g_logoforce_flag = 1; }
+"~"/{G}			{ if (gdl_lexical) { gsave; mesg_vwarning(currgdlfile, gdllineno,
+			   "no space after ~ field; use ~~ for logogram force with atf: use lexical\n");
+			    return gdl_lexfld[(int)*yytext];
+			   } else { g_logoforce_flag = 1; } }
+"$"/{G}			{ g_literal_flag = 1; }
+
+	/* Grapheme meta flags, sometimes doubling as lex field shorthands */
+<INITIAL,C,Q>[!?]      	{ gdl_lex_flag((uccp)yytext); }
+<INITIAL,C>"*"		{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
+<INITIAL,C>^[#"~=@^]	{ return gdl_lexfld[(int)*yytext]; }
+"#"			{ if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+<C>"#"			{ gdl_lex_flag((uccp)yytext); }
+[:"~=@^]   		{ if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+[#"=@^]/{G} 		{ if (gdl_lexical) {
+		       	    mesg_vwarning(currgdlfile, gdllineno,
+			  	       	  "no space after %c field\n", *yytext);
+			    return gdl_lexfld[(int)*yytext]; }
+			  else { gdl_lex_flag((uccp)yytext); } }
+
+{UFLAG}			{ gdl_lex_flag((uccp)yytext); }
+
+	/* Language shifts */
+%[-a-z0-9]+("/"[gn])?	{ gsave; gdl_lang_tag(yytext); }
+_			{ gsave; gdl_lang_flip(); }
+
+	/* Note marks */
+{NOTEMARK}		{ gdl_note_mark(gdltext); }
+
+	/* Inline variation note marks */
+"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; gdl_var_mark(e_LR_var, yytext); }
+"("[0-9]+:		{ gsave; GIN=0; gdl_var_mark(e_L_var, yytext); }
+:[0-9+]")"		{ gsave; GIN=0; gdl_var_mark(e_R_var, yytext); }
+
+	/* General administrative rules */
+
+\n			{ gdl_lex_closers(); return '\n'; }
+
+"\xc3\x97"	       	{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: misplaced ×\n"); }
+
 .			{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: unmatched character %c\n", *gdltext); }
 
-<<EOF>>			{ gdl_closers(); yyterminate(); }
+<<EOF>>			{ gdl_lex_closers(); gdl_balance_flush(gdllloc); yyterminate(); }
 
 %%
 
 static void
-gdl_closers(void)
+gdl_lex_closers(void)
 {
   if (CIN)
     mesg_vwarning(currgdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
