@@ -16,7 +16,7 @@ extern int gdllineno, gdltrace;
 
 #if 0
 extern gdlstate_t gst; 	/* global gdl state */
-extern Node *lgp;   		/* last grapheme node pointer */
+extern Node *lgp;      	/* last grapheme node pointer */
 #endif
 extern Node *gdl_post_det_gp_attach;
 
@@ -122,7 +122,7 @@ space:
 	  SPACE						{ ynp = gdl_new_word(ytp);
 	    						  /*gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
 	      						    "literal", gdllval.text); */ }
-	| '\n'						{ gdl_balance_flush(@1); }
+	| '\n'						{ gdl_line_wrapup(@1); }
 	| END						{ gdl_balance_flush(@1); }
 	;
 
@@ -131,7 +131,7 @@ newline:	NEWLINE	        			{ gdl_nongraph(&@1, ytp, "//", "newline"); }
 	;
 
 transliteration:
-		delim					{ gdl_clear_gg(ytp); }
+		delim
 	| 	grapheme
 	;
 

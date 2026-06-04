@@ -5,6 +5,9 @@
 #include "gdl.h"
 #include "gdlstate.h"
 
+/* Set to 0 to get [# ... #] half-bracket indicators and 1 to omit them */
+static int gs_brack_start = 1;
+
 gdlstate_t gs_order_f[] = { gs_f_query, gs_f_bang, gs_f_star, gs_f_hash,
 			    gs_f_uf1, gs_f_uf2, gs_f_uf3, gs_f_uf4, gs_f_plus };
 
@@ -35,7 +38,27 @@ const char *gs_str_a[NFLAGS] = { "g:queried", "g:remarked",
 const char *gs_str_o[NBRACK] = { "[#", "[", "(", "{", "<", "<<", "<(", "((", "((-", "//", "{{", "{(", "<(", ")" };
 const char *gs_str_c[NBRACK] = { "#]", "]", ")", "}", ">", ">>", ")>", "))", "))",  "))", "}}", ")}", ")>", ")" };
 
-void
+static void
+gs_bracko(gdlstate_t sp)
+{
+  int i;
+  *brackobuf = '\0';
+  for (i = gs_brack_start; i < NBRACK; ++i)
+    if (gs_is(sp,gs_order_o[i]))
+      strcat(brackobuf, gs_str_o[i]);
+}
+
+static void
+gs_brackc(gdlstate_t sp)
+{
+  int i;
+  *brackcbuf = '\0';
+  for (i = NBRACK-1; i >= gs_brack_start; --i)
+    if (gs_is(sp,gs_order_c[i]))
+      strcat(brackcbuf, gs_str_c[i]);
+}
+
+static void
 gsraw_flags(gdlstate_t sp)
 {
   int i;
@@ -45,34 +68,15 @@ gsraw_flags(gdlstate_t sp)
       strcat(flagbuf, gs_str_f[i]);
 }
 
-void
-gsraw_bracko(gdlstate_t sp)
-{
-  int i;
-  *brackobuf = '\0';
-  for (i = 0; i < NBRACK; ++i)
-    if (gs_is(sp,gs_order_o[i]))
-      strcat(brackobuf, gs_str_o[i]);
-}
-
-void
-gsraw_brackc(gdlstate_t sp)
-{
-  int i;
-  *brackcbuf = '\0';
-  for (i = NBRACK-1; i >= 0; --i)
-    if (gs_is(sp,gs_order_c[i]))
-      strcat(brackcbuf, gs_str_c[i]);
-}
-
 /* Simple routine to dump out gdlstate when printing raw XML, i.e.,
    the simple form that reflects the internal storage structure */
 void
 gdlstate_rawxml(FILE *fp, gdlstate_t sp)
 {
+  gs_brack_start = 0;
   gsraw_flags(sp);
-  gsraw_bracko(sp);
-  gsraw_brackc(sp);
+  gs_bracko(sp);
+  gs_brackc(sp);
   if (*flagbuf)
     fprintf(fp, " flags=\"%s\"", flagbuf);
   if (*brackobuf)
@@ -98,7 +102,7 @@ gdlstate_props(Node *np, gdlstate_t sp)
     status = "supplied";
   else if (gs_is(sp, gs_excised))
     {
-      canary = 1;
+      /*canary = 1;*/
       status = "excised";
     }
   else if (gs_is(sp, gs_maybe))
@@ -121,11 +125,11 @@ gdlstate_props(Node *np, gdlstate_t sp)
   else if (gs_is(sp, gs_lost))
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:break", "missing");
 
-  gsraw_bracko(sp);
+  gs_bracko(sp);
   if (*brackobuf)
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:o", (ccp)pool_copy((uccp)brackobuf, gdlpool));
   
-  gsraw_brackc(sp);
+  gs_brackc(sp);
   if (*brackcbuf)
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:c", (ccp)pool_copy((uccp)brackcbuf, gdlpool));
   

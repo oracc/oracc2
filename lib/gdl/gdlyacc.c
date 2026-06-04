@@ -12,6 +12,8 @@
 #include "gdl.h"
 #include "gvl.h"
 
+extern struct lang_context *gdl_lang_context;
+extern const char *word_lang_tag;
 extern const char *currgdlfile;
 extern int gdltrace, gdllineno, gdl_legacy;
 extern void gdllex_destroy(void);
@@ -21,8 +23,6 @@ int deep_parse = 1;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 static int gdl_excision_type = 'e';
-
-struct lang_context *gdl_lang_context;
 
 Node *gdl_post_det_gp_attach;
 
@@ -46,8 +46,13 @@ static unsigned const char *gdl_times_prefix;
 	
    rst (running-state) is set by openers and unset by closers; it is
    	applied to nodes in addition to pending-state
+
+   2026-06-04: with meta rewrite we now keep state pointer dst to the
+        state of the last grapheme that had gs_damaged set so that
+        gdl_delim can add gs_damaged_c easily
+
  */
-gdlstate_t pst, *lst, rst;
+gdlstate_t pst, *lst, rst, *dst;
 Node *lgp = NULL;   /* last grapheme node pointer */
 #else
 gdlstate_t gst; /* global gdl state */
@@ -63,7 +68,6 @@ List *c_dangling_gps = NULL;
 List *c_explicit_gps = NULL;
 List *c_implicit_gps = NULL;
 static Node *c_last_explicit_group_node = NULL;
-static const char *word_lang_tag = "sux";
 static List *wd_list = NULL;
 
 /***********************************************************************
@@ -305,71 +309,75 @@ gdl_word_is_excised(Node *w)
 void
 gdl_word_attr(Node *w)
 {
-  if (w && w->kids && !w->kids->next
-      && (!strcmp(w->kids->name, "g:x")
-	  || !strcmp(w->kids->name, "g:p")))
+  if (w && w->kids)
     {
-      if (strcmp(w->kids->text, "..."))
+      if ( !w->kids->next
+	   && (!strcmp(w->kids->name, "g:x")
+	       || !strcmp(w->kids->name, "g:p")))
 	{
-	  if ('p' == w->kids->name[2])
+	  if (strcmp(w->kids->text, "..."))
 	    {
-	      Prop *p = prop_find_kv(w->props, "g:type", NULL);
-	      if (p)
-		prop_drop_kv(w->props, "g:type", NULL);
-	      gdl_nonw_punct(w);
+	      if ('p' == w->kids->name[2])
+		{
+		  Prop *p = prop_find_kv(w->props, "g:type", NULL);
+		  if (p)
+		    prop_drop_kv(w->props, "g:type", NULL);
+		  gdl_nonw_punct(w);
+		}
+	      else if ('/' == *w->kids->text || ';' == *w->kids->text)
+		{
+		  /* promote the g:x child to the g:w spot */
+		  Node *gx = w->kids;
+		  w->name = gx->name;
+		  w->props = gx->props;
+		  w->kids = NULL; /* orphan the original g:x node; these
+				     are not numerous so it's not too
+				     wasteful */
+		  ++nonw_found; /* trigger gdl_rem_nonw */
+		}
+	      else
+		{
+		  Prop *p = prop_find_kv(w->props, "g:type", NULL);
+		  if (p)
+		    prop_drop_kv(w->props, "g:type", NULL);
+		  gdl_force_nonw(w, p ? p->u.k->v : "comment");
+		}
+	      return;
 	    }
-	  else if ('/' == *w->kids->text || ';' == *w->kids->text)
-	    {
-	      /* promote the g:x child to the g:w spot */
-	      Node *gx = w->kids;
-	      w->name = gx->name;
-	      w->props = gx->props;
-	      w->kids = NULL; /* orphan the original g:x node; these
-				 are not numerous so it's not too
-				 wasteful */
-	      ++nonw_found; /* trigger gdl_rem_nonw */
-	    }
-	  else
-	    {
-	      Prop *p = prop_find_kv(w->props, "g:type", NULL);
-	      if (p)
-		prop_drop_kv(w->props, "g:type", NULL);
-	      gdl_force_nonw(w, p ? p->u.k->v : "comment");
-	    }
-	  return;
 	}
-    }
-  else if (gdl_word_is_excised(w))
-    gdl_nonw_excised(w);
+      else if (gdl_word_is_excised(w))
+	gdl_nonw_excised(w);
 
-  char *wf_buf = NULL;
-  size_t wf_len = 0;
-  word_excisions = 0;
-  /*  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);*/
-  FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
-  gdl_wf_nodes(w, wf_fp);
-  fclose(wf_fp);
-  if (wf_buf)
-    {
-      if (*wf_buf)
-	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
-      else if (w->kids && !strcmp(w->kids->name, "g:x"))
-	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
-      else
+      char *wf_buf = NULL;
+      size_t wf_len = 0;
+      word_excisions = 0;
+      FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
+      gdl_wf_nodes(w, wf_fp);
+      fclose(wf_fp);
+      if (wf_buf)
 	{
-#if 0
-	  /* This should be unnecessary now we do gdl_word_is_excised above */
-	  if (word_excisions)
-	    gdl_nonw_excised(w);
+	  if (*wf_buf)
+	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
+	  else if (w->kids && !strcmp(w->kids->name, "g:x"))
+	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
 	  else
+	    {
+#if 0
+	      /* This should be unnecessary now we do gdl_word_is_excised above */
+	      if (word_excisions)
+		gdl_nonw_excised(w);
+	      else
 #endif
-	    /* we are now ignoring ($...$) and (#...#) in gdl_word_is_excised() */
-	    /*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
+		/* we are now ignoring ($...$) and (#...#) in gdl_word_is_excised() */
+		/*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
+		}
+	  free(wf_buf);      
 	}
-      free(wf_buf);      
+      if (w->next)
+	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");
     }
-  if (w->next)
-    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");    
+  else
+    w->name = "g:empty";
 }
 
 static List *
@@ -671,44 +679,49 @@ gdl_new_word(Tree *ytp)
 {
   if (gdl_word_mode)
     {
-      /* If there is a g:field ancestor, attach to that */
-      Node *l = node_ancestor_or_self(ytp->curr, "g:field");
-
-      /* Else if there is a g:cell ancestor, attach to that */
-      if (!l)
-	l = node_ancestor_or_self(ytp->curr, "g:cell");
-
-      /* Else if there is a g:w ancestor, attach to the parent of that node */
-      if (!l)
+      if (ytp->curr->kids)
 	{
-	  l = node_ancestor_or_self(ytp->curr, "g:w");
-	  if (l)
-	    l = l->rent;
-	  else
-	    l = ytp->root;
-	}
+	  /* If there is a g:field ancestor, attach to that */
+	  Node *l = node_ancestor_or_self(ytp->curr, "g:field");
 
-      /* Now l is the node where the g:w should attach */
-      tree_curr(l);
+	  /* Else if there is a g:cell ancestor, attach to that */
+	  if (!l)
+	    l = node_ancestor_or_self(ytp->curr, "g:cell");
 
-      Node *wp = gdl_push(ytp, "g:w");
-      wp->mloc = mloc_file_line(currgdlfile, gdllineno);
+	  /* Else if there is a g:w ancestor, attach to the parent of that node */
+	  if (!l)
+	    {
+	      l = node_ancestor_or_self(ytp->curr, "g:w");
+	      if (l)
+		l = l->rent;
+	      else
+		l = ytp->root;
+	    }
 
-      /* By definition, the word-lang is the one in effect when the
-	 word begins; logogram lang switches need to be handled
-	 carefully */
-      assert(word_lang_tag != NULL);
-      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+	  /* Now l is the node where the g:w should attach */
+	  tree_curr(l);
+
+	  Node *wp = gdl_push(ytp, "g:w");
+	  wp->mloc = mloc_file_line(currgdlfile, gdllineno);
+
+	  /* By definition, the word-lang is the one in effect when the
+	     word begins; logogram lang switches need to be handled
+	     carefully */
+	  assert(word_lang_tag != NULL);
+	  gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       
-      /* IF FIELD NOT IN SPARSE LEM HASH */
-      list_add(wd_list, wp);
-      sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
-      gid_insertp = gdl_word_id+strlen(gdl_word_id);
-      if (!gdl_no_xml_ids)
-	gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-		    (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
-      grapheme_id = 0;
-      return wp;
+	  /* IF FIELD NOT IN SPARSE LEM HASH */
+	  list_add(wd_list, wp);
+	  sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
+	  gid_insertp = gdl_word_id+strlen(gdl_word_id);
+	  if (!gdl_no_xml_ids)
+	    gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+			(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+	  grapheme_id = 0;
+	  return wp;
+	}
+      else
+	return ytp->curr; /* reuse empty word */
     }
   return ytp->curr;
 }
@@ -721,14 +734,6 @@ gdl_auto_id(void)
   sprintf(buf, "a%04d", gid++);
   gdl_set_word_id(buf);
 }
-
-#if 0
-void
-gdl_set_lang(struct lang_context *l)
-{
-  gdl_lang_context = l;
-}
-#endif
 
 void
 gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt)
@@ -757,21 +762,25 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
   np->mloc = ytp->curr->mloc;
   np->text = (ccp)p;
   ++c_delim_sentinel;
-    }
-  
+}
+
 Node *
 gdl_delim(Tree *ytp, const char *data)
 {
   Node *np = NULL;
+
   if (gdltrace)
     fprintf(stderr, "gt: DELIM: %s\n", data);
 
+  /* Deferred clean-ups done by gdl_delim */
   if (gdl_group_attach)
     {
       tree_curr(gdl_group_attach->rent);
       gdl_group_attach = NULL;
     }
 
+  gdl_hc(0);
+  
   /* GDL lang handling needs to switch to lib/lng */
     if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux)
       {
@@ -946,17 +955,6 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   return ret;
 }
 
-/* %akk/n probably not handled properly yet */
-Node *
-gdl_lang(Mloc *mp, Tree *ytp, const char *data)
-{
-  if (gdltrace)
-    fprintf(stderr, "gt: LANG: %s\n", data);
-  gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mp->file, mp->line);
-  word_lang_tag = gdl_lang_context->fulltag;
-  return NULL; /*gdl_meta_node(ytp, "g:z", data);*/
-}
-
 Node *
 gdl_nnum(Mloc *locp, Tree *ytp, const char *data)
 {
@@ -1047,4 +1045,18 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
   return ret;
+}
+
+void
+gdl_line_wrapup(Mloc m)
+{
+  if (lst)
+    {
+      gdl_hc(1);
+      lst = NULL;
+    }
+  gdl_lex_closers();
+  gdl_balance_flush(m);
+  pst = rst = 0L;
+  lgp = NULL;
 }

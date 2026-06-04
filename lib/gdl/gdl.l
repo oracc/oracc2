@@ -37,8 +37,6 @@ static int SIN = 0; /* left context is space */
 int term = 0;
 #define yyterminate() return (term = !term) ? END : YY_NULL
 
-static void gdl_lex_closers(void);
-
 /* Simple stack for nesting of compounds and valuquals */
 #define CVQ_MAX 6
 static int cvq_stack[CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
@@ -239,21 +237,21 @@ _			{ gsave; gdl_lang_flip(); }
 
 	/* General administrative rules */
 
-\n			{ gdl_lex_closers(); return '\n'; }
+\n			{ return '\n'; }
 
 "\xc3\x97"	       	{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: misplaced ×\n"); }
 
 .			{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: unmatched character %c\n", *gdltext); }
 
-<<EOF>>			{ gdl_lex_closers(); gdl_balance_flush(gdllloc); yyterminate(); }
+<<EOF>>			{ gdl_line_wrapup(gdllloc); yyterminate(); }
 
 %%
 
-static void
+void
 gdl_lex_closers(void)
 {
   if (CIN)
-    mesg_vwarning(currgdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
+      mesg_vwarning(currgdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
   else if (QIN)
     mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv (discovered at end of line)");
   GIN=CIN=QIN=0;

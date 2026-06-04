@@ -82,7 +82,7 @@ extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
 extern int gdl_break_pending, gdl_state_pending;
-extern gdlstate_t *lst;
+extern gdlstate_t *lst, *dst;
 
 extern List *c_dangling_gps;
 extern List *c_explicit_gps;
@@ -133,7 +133,6 @@ extern void gdl_cell(Tree *ytp, const char *span);
 extern Node *gdl_delim(Tree *ytp, const char *data);
 extern Node *gdl_field(Tree *ytp, const char *ftype);
 extern Node *gdl_graph(Mloc *locp, Tree *ytp, const char *data);
-extern Node *gdl_lang(Mloc *locp, Tree *ytp, const char *data);
 extern const char *gdl_lexfld_name(const char *lftok);
 extern void gdl_lexfld_init(void);
 extern Node *gdl_mod(Tree *ytp, const char *data);
@@ -203,5 +202,9 @@ extern void gdl_var_mark(Bracket_e type, const char *v);
 
 extern void gdl_lang_tag(const char *v);
 extern void gdl_lang_flip(void);
+
+extern void gdl_hc(int force);
+extern void gdl_lex_closers(void);
+extern void gdl_line_wrapup(Mloc m);
 
 #endif /*GDL_H_*/

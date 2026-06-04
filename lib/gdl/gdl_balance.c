@@ -248,11 +248,7 @@ gdl_balance_flush(Mloc mlp)
     mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
   while ((tok = gdl_state_pop()) != -1)
     mesg_verr(&mlp, "unclosed opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
-#if 1
   stck_reset(break_stack);
   stck_reset(state_stack);
   memo_reset(mgstck);
-#else
-  break_top = state_top = -1;
-#endif
 }

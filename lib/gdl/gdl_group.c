@@ -43,6 +43,8 @@ gdl_group(Mloc mp, int type)
 {
   int same_type = 0;
 
+  gdl_hc(0);
+
   /* Ensure the attach point is correct and remember if the new group
      is the same as the last group if there is one */
   if (gdl_group_attach && !(same_type = gdl_group_type(gdl_group_attach, type)))
@@ -63,6 +65,7 @@ gdl_group(Mloc mp, int type)
 	  gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", v);
 	  gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
 #if 1
+	  tree_curr(gp);
 	  gdl_group_attach = gp;
 #else
 	  /* this shouldn't be necessary any more */

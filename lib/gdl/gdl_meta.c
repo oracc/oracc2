@@ -2,12 +2,17 @@
 #include <memo.h>
 #include <mesg.h>
 #include <tree.h>
+#include <lng.h>
 #include "gdl.h"
 #include "gdlstate.h"
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
 
-extern Node *lgp;   		/* last grapheme node pointer */
+struct lang_context *gdl_lang_context;
+const char *word_lang_tag = "sux";
+
+extern Node *lgp; /* last grapheme node pointer */
+
 extern int gdllineno, gdltrace, gdlflextrace;
 extern const char *currgdlfile, *gdlfile;
 
@@ -60,7 +65,13 @@ gdl_lex_flag(unsigned const char *f)
 	bit_set(*lst, gs_f_query);
 	break;
     case '#':
-	bit_set(*lst, gs_f_hash);
+	bit_set(*lst, gs_f_hash|gs_damaged);
+	if (!bit_get(rst, gs_damaged))
+	  {
+	    rs_on(gs_damaged);
+	    bit_set(*lst, gs_f_hash|gs_damaged_o);	    
+	  }
+	dst = lst;
 	break;
     case '*':
 	bit_set(*lst, gs_f_star);
@@ -88,6 +99,19 @@ gdl_lex_flag(unsigned const char *f)
     default:
 	mesg_vwarning(gdlfile, gdllineno, "lex field `%c' needs a space before it", *f);
 	break;
+    }
+}
+
+void
+gdl_hc(int force)
+{
+  if (dst && (force || !bit_get(*lst, gs_damaged)))
+    {
+      bit_set(*dst, gs_damaged_c);
+      if (dst != lst)
+	bit_off(*lst, gs_damaged);
+      rs_no(gs_damaged);
+      dst = NULL;
     }
 }
 
@@ -230,6 +254,22 @@ gdl_var_mark(Bracket_e type, const char *v)
     }
   if (!lgp_guard(s))
     gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, m, v);
+}
+
+/* TODO: check lang patterns include trailing /n or /g */
+void
+gdl_lang_tag(const char *data)
+{
+  if (gdltrace)
+    fprintf(stderr, "gt: LANG: %s\n", data);
+  gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, gdllloc.file, gdllloc.line);
+  word_lang_tag = gdl_lang_context->fulltag;
+}
+
+/* _..._ -- TO DO */
+void
+gdl_lang_flip(void)
+{
 }
 
 #if 0
