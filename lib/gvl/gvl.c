@@ -325,11 +325,17 @@ gvl_compound(Node *ynp)
   if (!strcmp(ynp->name, "g:b"))
     ynp = ynp->rent;
 
-  /* reset state: copy lst (which points to last grapheme in g:n),
-     zero lst, and create a new lst which belongs to the g:n node */
-  gdlstate_t nst = *lst;
-  *lst = (gdlstate_t)0;
-  lst = prop_state(ynp, nst);
+  /* This can only be done if lst is non-NULL: when we do gdlparse
+     followed by gdlparse_deep, the latter does not process meta
+     tokens so it never sets lst */
+  if (lst)
+    {
+      /* reset state: copy lst (which points to last grapheme in g:n),
+	 zero lst, and create a new lst which belongs to the g:n node */
+      gdlstate_t nst = *lst;
+      *lst = (gdlstate_t)0;
+      lst = prop_state(ynp, nst);
+    }
 
   if (!strcmp(ynp->name, "g:c"))
     {

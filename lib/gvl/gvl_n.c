@@ -7,6 +7,8 @@
 #include "gdl.h"
 #include "gvl.h"
 
+extern const char *gdl_pending_varo;
+
 void
 gvl_n(Node *ynp)
 {
@@ -25,18 +27,25 @@ gvl_n(Node *ynp)
   ynp->name = "g:n";
   ynp->kids->name = "g:r";
 
-  /* reset state: copy lst (which points to last grapheme in g:n),
-     zero lst, and create a new lst which belongs to the g:n node; OR
-     this with the g:r node state */
-  gdlstate_t *rstp = prop_state(ynp->kids, 0L);
-  gdlstate_t rst = *rstp;
-  *rstp = 0L;
+  if (gdl_pending_varo)
+    {
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:varo", gdl_pending_varo);
+      gdl_pending_varo = NULL;
+    }
+
+  if (lst)
+    {
+      /* reset state: copy lst (which points to last grapheme in g:n),
+	 zero lst, and create a new lst which belongs to the g:n node; OR
+	 this with the g:r node state */
+      gdlstate_t *rstp = prop_state(ynp->kids, 0L);
+      gdlstate_t rst = *rstp;
+      *rstp = 0L;  
+      gdlstate_t nst = *lst;
+      *lst = (gdlstate_t)0;
+      lst = prop_state(ynp, rst|nst);
+    }
   
-  gdlstate_t nst = *lst;
-  *lst = (gdlstate_t)0;
-
-  lst = prop_state(ynp, rst|nst);
-
   /* WATCHME: is this coercion to g:s or g:v really safe? */
   if (strcmp(ynp->kids->next->name, "g:c"))
     ynp->kids->next->name = ((sll_has_sign_indicator((uccp)ynp->kids->next->text) ? "g:s" : "g:v"));

@@ -50,6 +50,9 @@
       <ref name="utf8"/>
     </optional>
     <optional>
+      <ref name="newline"/>
+    </optional>
+    <optional>
       <ref name="delim"/>
     </optional>
     <optional>
@@ -174,6 +177,11 @@
     <optional>
       <attribute name="g:sigdelim"/>
     </optional>
+  </define>
+  <define name="newline">
+    <attribute name="g:newline">
+      <value>;</value>
+    </attribute>
   </define>
   <define name="varnum">
     <optional>

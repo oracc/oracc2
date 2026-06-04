@@ -162,7 +162,7 @@ NOTEMARK	"^"[0-9]+"^"
 
 "/"/{G}			{ return '/'; } /* alternation */
 
-"//"			{ return NEWLINE; }
+"//"			{ return LINEBREAK; }
 
 [ \t]+/[#"~=@^]	       	{ GIN=0; SIN=1; gsave; return SPACE; }
 [ \t]+			{ GIN=0; gsave; return SPACE; }
@@ -231,9 +231,9 @@ _			{ gsave; gdl_lang_flip(); }
 {NOTEMARK}		{ gdl_note_mark(gdltext); }
 
 	/* Inline variation note marks */
-"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; gdl_var_mark(e_LR_var, yytext); }
-"("[0-9]+:		{ gsave; GIN=0; gdl_var_mark(e_L_var, yytext); }
-:[0-9+]")"		{ gsave; GIN=0; gdl_var_mark(e_R_var, yytext); }
+"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; gdl_var_mark(e_LR_var, gdllval.text); }
+"("[0-9]+:		{ gsave; GIN=0; gdl_var_mark(e_L_var, gdllval.text); }
+:[0-9+]")"		{ gsave; GIN=0; gdl_var_mark(e_R_var, gdllval.text); }
 
 	/* General administrative rules */
 

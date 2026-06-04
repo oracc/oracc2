@@ -198,7 +198,7 @@ extern void gdl_clear_gg(Tree *ytp);
 
 extern void gdl_indent(void);
 extern void gdl_note_mark(const char *n);
-extern void gdl_var_mark(Bracket_e type, const char *v);
+extern void gdl_var_mark(Bracket_e type, char *v);
 
 extern void gdl_lang_tag(const char *v);
 extern void gdl_lang_flip(void);
@@ -206,5 +206,7 @@ extern void gdl_lang_flip(void);
 extern void gdl_hc(int force);
 extern void gdl_lex_closers(void);
 extern void gdl_line_wrapup(Mloc m);
+
+extern Tree *gdl_get_tree(void);
 
 #endif /*GDL_H_*/

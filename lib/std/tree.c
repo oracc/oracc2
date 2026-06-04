@@ -268,6 +268,24 @@ node_insert(Node *rent, Node *nkid)
   return nkid;
 }
 
+/* Make prev the prev of curr and adjust rent->kids if necessary
+ */
+Node *
+node_before(Node *curr, Node *newn)
+{
+  newn->rent = curr->rent;
+  if (curr->prev)
+    {
+      curr->prev->next = newn;
+      newn->prev = curr->prev;
+    }
+  else
+    curr->rent->kids = newn;
+  curr->prev = newn;
+  newn->next = curr;
+  return newn;
+}
+
 /**node_group creates a new group node.  The node replaces the arg
  * 'rep'; the new node has the nodes from 'first' to 'last' as its
  * kids. Some structure fields are inherited from rep; 'name' is set

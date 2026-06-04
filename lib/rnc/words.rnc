@@ -46,6 +46,7 @@ word.attributes =
     attribute norm  { text }? ,
     attribute lem   { text }? ,
     delim? ,
+    newline? ,
     syntax.attributes*
 
 nonword = 

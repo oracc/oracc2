@@ -100,6 +100,7 @@ extern void tree_ns_merge(Tree *tp, nsrefs used);
 
 extern Node *node_ancestor(Node *np, const char *name);
 extern Node *node_ancestor_or_self(Node *np, const char *name);
+extern Node *node_before(Node *curr, Node *newn);
 extern Node *node_insert(Node *rent, Node *nkid);
 extern Node *node_last(Node *np);
 extern void node_replace(Node *from, Node *to);

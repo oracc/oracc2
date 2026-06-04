@@ -14,7 +14,7 @@
 
 extern struct lang_context *gdl_lang_context;
 extern const char *word_lang_tag;
-extern const char *currgdlfile;
+extern const char *currgdlfile, *gdl_pending_varo;
 extern int gdltrace, gdllineno, gdl_legacy;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
@@ -521,6 +521,12 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
 		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
   pst = 0L;
   np->mloc = mloc_mloc(locp);
+  /* For r-nodes, leave gdl_pending_varo set and let g:n take it later */
+  if (gdl_pending_varo && (('r' != np->name[2] && 'R' != np->name[2])))
+    {
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:varo", gdl_pending_varo);
+      gdl_pending_varo = NULL;
+    }
   /* 20260602: now that we are lifting state from g:r/g:v up to g:n we
      let break/state apply to g:r nodes */
   if (gdl_break_pending/* && (('r' != np->name[2] && 'R' != np->name[2]))*/)
@@ -679,49 +685,52 @@ gdl_new_word(Tree *ytp)
 {
   if (gdl_word_mode)
     {
-      if (ytp->curr->kids)
+      /* reuse empty words */
+      if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
 	{
-	  /* If there is a g:field ancestor, attach to that */
-	  Node *l = node_ancestor_or_self(ytp->curr, "g:field");
-
-	  /* Else if there is a g:cell ancestor, attach to that */
-	  if (!l)
-	    l = node_ancestor_or_self(ytp->curr, "g:cell");
-
-	  /* Else if there is a g:w ancestor, attach to the parent of that node */
-	  if (!l)
-	    {
-	      l = node_ancestor_or_self(ytp->curr, "g:w");
-	      if (l)
-		l = l->rent;
-	      else
-		l = ytp->root;
-	    }
-
-	  /* Now l is the node where the g:w should attach */
-	  tree_curr(l);
-
-	  Node *wp = gdl_push(ytp, "g:w");
-	  wp->mloc = mloc_file_line(currgdlfile, gdllineno);
-
-	  /* By definition, the word-lang is the one in effect when the
-	     word begins; logogram lang switches need to be handled
-	     carefully */
 	  assert(word_lang_tag != NULL);
-	  gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
-      
-	  /* IF FIELD NOT IN SPARSE LEM HASH */
-	  list_add(wd_list, wp);
-	  sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
-	  gid_insertp = gdl_word_id+strlen(gdl_word_id);
-	  if (!gdl_no_xml_ids)
-	    gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-			(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
-	  grapheme_id = 0;
-	  return wp;
+	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+	  return ytp->curr;
 	}
-      else
-	return ytp->curr; /* reuse empty word */
+      
+      /* If there is a g:field ancestor, attach to that */
+      Node *l = node_ancestor_or_self(ytp->curr, "g:field");
+
+      /* Else if there is a g:cell ancestor, attach to that */
+      if (!l)
+	l = node_ancestor_or_self(ytp->curr, "g:cell");
+
+      /* Else if there is a g:w ancestor, attach to the parent of that node */
+      if (!l)
+	{
+	  l = node_ancestor_or_self(ytp->curr, "g:w");
+	  if (l)
+	    l = l->rent;
+	  else
+	    l = ytp->root;
+	}
+
+      /* Now l is the node where the g:w should attach */
+      tree_curr(l);
+
+      Node *wp = gdl_push(ytp, "g:w");
+      wp->mloc = mloc_file_line(currgdlfile, gdllineno);
+
+      /* By definition, the word-lang is the one in effect when the
+	 word begins; logogram lang switches need to be handled
+	 carefully */
+      assert(word_lang_tag != NULL);
+      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      
+      /* IF FIELD NOT IN SPARSE LEM HASH */
+      list_add(wd_list, wp);
+      sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
+      gid_insertp = gdl_word_id+strlen(gdl_word_id);
+      if (!gdl_no_xml_ids)
+	gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		    (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+      grapheme_id = 0;
+      return wp;
     }
   return ytp->curr;
 }

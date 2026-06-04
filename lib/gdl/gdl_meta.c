@@ -9,6 +9,7 @@
 #include "gdl.tab.h"
 
 struct lang_context *gdl_lang_context;
+const char *gdl_pending_varo = NULL;
 const char *word_lang_tag = "sux";
 
 extern Node *lgp; /* last grapheme node pointer */
@@ -19,11 +20,11 @@ extern const char *currgdlfile, *gdlfile;
 Bracket bracket_data[] = {
   [e_L_squ] = { '[', gs_lost_o, gs_lost, "[" },
   [e_L_uhs] = { L_uhs, gs_damaged_o, gs_damaged, "⸢" },
-  [e_L_lhs] = { L_lhs, gs_damaged_o, gs_damaged, "" },
+  [e_L_lhs] = { L_lhs, gs_damaged_o, gs_damaged, "⸤" },
 
   [e_R_squ] = { ']', gs_lost_c, gs_lost, "]" },
   [e_R_uhs] = { R_uhs, gs_damaged_c, gs_damaged, "⸣" },
-  [e_R_lhs] = { R_lhs, gs_damaged_c, gs_damaged, "" },
+  [e_R_lhs] = { R_lhs, gs_damaged_c, gs_damaged, "⸥" },
 
   [e_L_cur_par] = { L_cur_par, gs_glodoc_o, gs_glodoc, "{(" },
   [e_L_dbl_cur] = { L_dbl_cur, gs_glolin_o, gs_glolin, "{{" },
@@ -219,8 +220,15 @@ lgp_guard(const char *s)
 void
 gdl_indent(void)
 {
-  if (!lgp_guard("';' = indent"))
-    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:indent", ";");      
+  if (!lgp_guard("';' = newline"))
+    {
+      /* if the is a ; e put the g:newline on the word; if it's a;-e
+	 put it on the grapheme */
+      if (lgp->rent != lgp->tree->curr)
+	gdl_prop_kv(lgp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "g:newline", ";");
+      else
+	gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:newline", ";");
+    }
 }
 
 void
@@ -231,29 +239,30 @@ gdl_note_mark(const char *n)
 }
 
 void
-gdl_var_mark(Bracket_e type, const char *v)
+gdl_var_mark(Bracket_e type, char *v)
 {
-  const char *s = NULL;
-  const char *m = NULL;
-  switch (type)
+  if (e_L_var == type)
     {
-    case e_L_var:
-      m = "g:var-L";
-      s = "(: = left var mark";
-      break;
-    case e_R_var:
-      m = "g:var-R";
-      s = ":) = right var mark";
-      break;
-    case e_LR_var:
-      m = "g:var-LR";
-      s = "(::) = left+right var mark";
-      break;
-    default:
-      break;
+      v[strlen(v)-1] = '\0';
+      gdl_pending_varo = v+1;
     }
-  if (!lgp_guard(s))
-    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, m, v);
+  else if (e_R_var == type)
+    {
+      v[strlen(v)-1] = '\0';
+      if (!lgp_guard(":) = right var mark"))
+	gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:varc", v+1);
+    }
+  else
+    {
+      v = v+1;
+      char *x = strchr(v, ':');
+      *x = '\0';
+      Tree *gtp = gdl_get_tree();
+      Node *vari = tree_node(gtp, NS_GDL, "g:nonw", gtp->curr->depth+1, NULL);
+      gdl_prop_kv(vari, GP_ATTRIBUTE, PG_GDL_INFO, "type", "vari");
+      vari->text = v;
+      (void)node_before(gtp->curr, vari);
+    }
 }
 
 /* TODO: check lang patterns include trailing /n or /g */

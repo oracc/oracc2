@@ -18,6 +18,7 @@ extern int gdllineno, gdltrace;
 extern gdlstate_t gst; 	/* global gdl state */
 extern Node *lgp;      	/* last grapheme node pointer */
 #endif
+
 extern Node *gdl_post_det_gp_attach;
 
 static Tree *ytp;
@@ -39,7 +40,7 @@ GDLLTYPE gdllloc;
 %union { char *text; int i; struct node *node; }
 
 %token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS CELLSPAN
-		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD NEWLINE
+		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
 		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
 		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
@@ -109,7 +110,7 @@ lexfld:
 segment:
 		comment
 	| 	space
-	| 	newline
+	| 	linebreak
 	| 	transliteration
 		;
 
@@ -126,8 +127,7 @@ space:
 	| END						{ gdl_balance_flush(@1); }
 	;
 
-/* This is // meaning a new line in the cuneiform, not a '\n' character */
-newline:	NEWLINE	        			{ gdl_nongraph(&@1, ytp, "//", "newline"); }
+linebreak:	LINEBREAK	      			{ gdl_nongraph(&@1, ytp, "//", "linebreak"); }
 	;
 
 transliteration:
@@ -335,6 +335,13 @@ glossc:
 	;
 
 %%
+
+	/* We need this to give gdl_meta access to the tree when there is no lgp set */
+Tree *
+gdl_get_tree(void)
+{
+  return ytp;
+}
 
 void
 gdl_set_tree(Tree *tp)

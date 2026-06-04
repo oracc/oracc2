@@ -112,6 +112,9 @@
     <optional>
       <ref name="delim"/>
     </optional>
+    <optional>
+      <ref name="newline"/>
+    </optional>
     <zeroOrMore>
       <ref name="syntax.attributes"/>
     </zeroOrMore>
