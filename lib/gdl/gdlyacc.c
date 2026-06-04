@@ -757,17 +757,24 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
   np->mloc = ytp->curr->mloc;
   np->text = (ccp)p;
   ++c_delim_sentinel;
-}
-
+    }
+  
 Node *
 gdl_delim(Tree *ytp, const char *data)
 {
   Node *np = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: DELIM: %s\n", data);
-  /* GDL lang handling needs to switch to lib/lng */
-  if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux)
+
+  if (gdl_group_attach)
     {
+      tree_curr(gdl_group_attach->rent);
+      gdl_group_attach = NULL;
+    }
+
+  /* GDL lang handling needs to switch to lib/lng */
+    if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux)
+      {
       mesg_verr(ytp->curr->mloc, "period only legal in compounds, logograms, and ...");
       data = "-";
     }
@@ -998,75 +1005,6 @@ gdl_clear_gg(Tree *ytp)
 {
   while (!strcmp(ytp->curr->name, "g:gg"))
     (void)gdl_pop(ytp, "g:gg");
-}
-
-void
-gdl_group(Mloc mp, int type)
-{
-  Node *gp = NULL;
-  const char *delim = (type=='/'?"/":(type==':'?":":"+"));
-    if (!lft)
-      {
-      /* lft was a g:gg; if it is a different type create a new g:gg */
-      
-      /* First identify the preceding group: rt will have been added
-	 as the following-sibling of the current g:gg node */
-      Node *preceding_gg = rt->prev;
-      if (strcmp(preceding_gg->name, "g:gg"))
-	{
-	  mesg_verr(&mp, "gdl_group called with no g:gg as curr or curr->kids");
-	  return;
-	}
-
-      const char *t = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
-      const char *lt = prop_find_kv(preceding_gg->props, "g:type", NULL)->u.k->v;
-      if (!strcmp(t, lt))
-	{
-	  /* Remove rt from position under g:w */
-	  Node *r2 = kids_rem_last(rt->tree);
-	  /* Set the last grapheme of preceding group to have the same right delim */
-	  gdl_prop_kv(r2->prev->last, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
-	  /* Set curr temporarily to the g:gg */
-	  tree_curr(preceding_gg);
-	  /* Add the detached r2 (formerly rt) to the group */
-	  kids_add_node(rt->tree, r2);
-	  /* reset curr to the parent g:w node */
-	  tree_curr(preceding_gg->rent);
-	}
-      else
-	{
-	  /* otherwise push a new group; rt->prev here is the
-	     preceding g:gg which has a different type from this
-	     one */
-	  gp = node_group(rt->prev, rt->prev, rt);
-	  gp->name = "g:gg";
-	  gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", t);
-	  gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
-	  tree_curr(gp->rent);
-	}
-    }
-  else
-    {
-      gp = node_group(lft, lft, rt);
-      gp->name = "g:gg";
-      const char *v = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
-      gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", v);
-      gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
-      /*20260529: need to make sure gp is under word so set curr to lft->rent*/
-      /*20260530: but if rt = g:det set a flag to reset the attach
-	point after '}' but make g:det the current attach point */
-      if (!strcmp(rt->name, "g:det"))
-	{
-	  gdl_post_det_gp_attach = gp;
-	  tree_curr(rt);
-	}
-      else
-	{
-	  gdl_post_det_gp_attach = NULL;
-	  tree_curr(gp->rent);
-	}
-      /*tree_curr(gp);*/ /* attach point remains unchanged after group insertion */
-    }
 }
 
 /* If data is /{{[0-9]+:/ the digits are a stream code */

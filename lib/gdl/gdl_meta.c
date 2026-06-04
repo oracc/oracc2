@@ -98,7 +98,6 @@ gdl_break_o(Bracket_e bt)
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", bt, bp->str);
   (void)gdl_balance_break(gdllloc, bp->tok);
-  /*ret = gdl_meta_node(ytp, "g:z", data);*/
   ps_on(bp->oc);
   rs_on(bp->s);
 }
@@ -152,7 +151,6 @@ gdl_state_o(Bracket_e bt)
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", bt, bp->str);
   (void)gdl_balance_state(gdllloc, bp->tok);
-  /*ret = gdl_meta_node(ytp, "g:z", data);*/
   ps_on(bp->oc);
   rs_on(bp->s);
 }
@@ -163,7 +161,6 @@ gdl_state_c(Bracket_e bt)
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", bt, bp->str);
-  /*ret =  gdl_meta_node(ytp, "g:z", data);*/
   intptr_t st = gdl_balance_state(gdllloc, bp->tok);
   if (st > 0) /* st can be -1 if nothing on stack */
     {
@@ -184,33 +181,58 @@ gdl_state_c(Bracket_e bt)
   rs_no(bp->s);
 }
 
+int
+lgp_guard(const char *s)
+{
+  if (!lgp)
+    {
+      mesg_verr(&gdllloc, "can't apply %s because last-grapheme-pointer is NULL", s);
+      return 1;
+    }
+  return 0;
+}
+
 void
 gdl_indent(void)
 {
+  if (!lgp_guard("';' = indent"))
+    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:indent", ";");      
 }
 
 void
 gdl_note_mark(const char *n)
 {
+  if (!lgp_guard("^...^ = note mark"))
+    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:notemark", n);    
 }
 
 void
 gdl_var_mark(Bracket_e type, const char *v)
 {
+  const char *s = NULL;
+  const char *m = NULL;
+  switch (type)
+    {
+    case e_L_var:
+      m = "g:var-L";
+      s = "(: = left var mark";
+      break;
+    case e_R_var:
+      m = "g:var-R";
+      s = ":) = right var mark";
+      break;
+    case e_LR_var:
+      m = "g:var-LR";
+      s = "(::) = left+right var mark";
+      break;
+    default:
+      break;
+    }
+  if (!lgp_guard(s))
+    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, m, v);
 }
 
 #if 0
-meta: 		INDENT       			{ ynp = gdl_nongraph(&@1, ytp, ";", "linebreak"); }
-	| 	NEWLINE	       			{ ynp = gdl_nongraph(&@1, ytp, "//", "newline"); }
-	| 	VARO				{ ynp = gdl_nongraph(&@1, ytp, $1, "varo"); }
-	| 	VARC				{ ynp = gdl_nongraph(&@1, ytp, $1, "varc"); }
-	| 	VARI				{ ynp = gdl_nongraph(&@1, ytp, $1, "vari"); }
-	| 	NOTEMARK		       	{ $$ = lgp; }
-		/* TODO: prob just add NOTEMARK as prop and keep a
-		list during line processing so it's easy to correlate
-		the marks with notes parsed in lib/atf */
-	;
-
 
 lang:
 		LANG				       	{ ynp = gdl_lang(&@1, ytp,

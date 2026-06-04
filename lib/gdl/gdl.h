@@ -90,6 +90,9 @@ extern List *c_implicit_gps;
 
 extern Pool *gdlpool;
 
+extern Node *gdl_group_attach;
+extern Node *lgp;   		/* last grapheme node pointer */
+
 extern struct lang_context *gdl_lang_context;
 
 extern void gdl_init(void);
