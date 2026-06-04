@@ -24,7 +24,7 @@ int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 static int gdl_excision_type = 'e';
 
-Node *gdl_post_det_gp_attach;
+Node *gdl_post_det_gp_attach, *gdl_recycled_word;
 
 static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
@@ -632,6 +632,13 @@ gdl_cell(Tree *ytp, const char *span)
   if (gdltrace)
     fprintf(stderr, "gt: CELL with SPAN = %s\n", span);
 
+  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+    {
+      tree_curr(ytp->curr->rent);
+      gdl_recycled_word = kids_rem_last(ytp);
+      /*(void)list_pop(wd_list);*/
+    }
+
   if (!(ancestor = node_ancestor_or_self(ytp->curr, "g:cell")))
     {
       cp = tree_node(ytp, NS_GDL, "g:cell", ytp->root->depth+1, NULL);
@@ -685,9 +692,28 @@ gdl_new_word(Tree *ytp)
 {
   if (gdl_word_mode)
     {
-      /* reuse empty words */
-      if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+      /* we are going to reset the attach point so it's enough to NULL
+	 out group attach here */
+      if (gdl_group_attach)
+	gdl_group_attach = NULL;
+
+      if (gdl_recycled_word)
 	{
+	  /* This is a word that is being recycled when starting a new
+	     cell or field so we know either of those is the parent */
+	  Node *w = gdl_recycled_word;
+	  gdl_recycled_word = NULL;
+	  w->prev = w->next = NULL;
+	  assert(word_lang_tag != NULL);
+	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+	  w->rent = ytp->curr;
+	  ytp->curr->last = ytp->curr->kids = w;
+	  tree_curr(w);
+	  return ytp->curr;
+	}
+      else if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+	{
+	  /* reuse empty words */
 	  assert(word_lang_tag != NULL);
 	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
 	  return ytp->curr;
@@ -876,11 +902,11 @@ gdl_field(Tree *ytp, const char *ftype)
 
   /* Remove the parent g:w if there is one (extra credit: keep the
      node around to use after the field) */
-  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w"))
+  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
-      (void)kids_rem_last(ytp);
-      (void)list_pop(wd_list);
+      gdl_recycled_word = kids_rem_last(ytp);
+      /*(void)list_pop(wd_list);*/
     }
   
   if ('!' == *ftype)
@@ -1059,6 +1085,12 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
 void
 gdl_line_wrapup(Mloc m)
 {
+  /* Line ends with ',' or '&' and no following text */
+  if (gdl_recycled_word)
+    {
+      gdl_recycled_word = NULL;
+      (void)list_pop(wd_list);
+    }
   if (lst)
     {
       gdl_hc(1);
@@ -1067,5 +1099,5 @@ gdl_line_wrapup(Mloc m)
   gdl_lex_closers();
   gdl_balance_flush(m);
   pst = rst = 0L;
-  lgp = NULL;
+  gdl_group_attach = lgp = NULL;
 }

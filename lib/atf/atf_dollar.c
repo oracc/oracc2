@@ -4,6 +4,24 @@
 #include "nonx.h"
 #include "otf-defs.h"
 
+static int
+prior_frag(Node *np)
+{
+  Node *lp;
+  for (lp = np->last; lp; lp = np->prev)
+    {
+      if (!strcmp(lp->name, "m"))
+	{
+	  Prop *subt = prop_find_kv(lp->props, "subtype", NULL);
+	  if (subt && !strcmp(subt->u.k->v, "fragment"))
+	    return 1;
+	  else
+	    break;
+	}
+    }
+  return 0;
+}
+
 void
 atf_dollar(Mloc l, char *rest)
 {
@@ -93,7 +111,10 @@ atf_dollar(Mloc l, char *rest)
 		      nonx_attach = B_SURFACE;
 		    break;
 		  case x_column:
-		    nonx_attach = B_LINE;
+		    if (prior_frag(abt->curr))
+		      nonx_attach = B_SURFACE;
+		    else
+		      nonx_attach = B_LINE;
 		    if (nonxp->state)
 		      switch (nonxp->state->type)
 			{

@@ -227,9 +227,9 @@ xtf2xcl_cells(XCL *xc, Node *np)
 	{
 	  if (!strcmp(np->kids->name, "g:field"))
 	    xtf2xcl_fields(xc, np);
+	  else
+	    xtf2xcl_words(xc, np);
 	}
-      else
-	xtf2xcl_words(xc, np);
       xc->curr = curr;
       xcl_discontinuity(xc, NULL, xcl_d_cell_end, NULL);      
     }

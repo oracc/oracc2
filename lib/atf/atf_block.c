@@ -590,14 +590,18 @@ set_block_curr(Block_level b)
 	    Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
 	    if (!np)
 	      {
-		Node *op = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
-		if (!op)
+		Node *fp = ancestor_or_self_level_as(abt->curr, B_FRAGMENT, 0);
+		if (!fp)
 		  {
-		    (void)ancestor_or_self_level_as(abt->curr, B_TEXT, 1);
+		    Node *op = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
 		    if (!op)
-		      atf_implicit("object");
+		      {
+			(void)ancestor_or_self_level_as(abt->curr, B_TEXT, 1);
+			if (!op)
+			  atf_implicit("object");
+		      }
+		    atf_implicit("surface");
 		  }
-		atf_implicit("surface");
 	      }
 	    else
 	      tree_curr(np);
@@ -646,16 +650,20 @@ set_block_curr(Block_level b)
 	    Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
 	    if (!np)
 	      {
-		Node *sp = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
-		if (!sp)
+		Node *fp = ancestor_or_self_level_as(abt->curr, B_FRAGMENT, 0);
+		if (!fp)
 		  {
-		    Node *op = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
-		    if (!op)
+		    Node *sp = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
+		    if (!sp)
 		      {
-			tree_curr(abt->root->kids);
-			atf_implicit("object");
+			Node *op = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
+			if (!op)
+			  {
+			    tree_curr(abt->root->kids);
+			    atf_implicit("object");
+			  }
+			atf_implicit("surface");
 		      }
-		    atf_implicit("surface");
 		  }
 		atf_implicit("column");
 	      }

@@ -208,14 +208,14 @@ process_inputs(int argc, char * const *argv)
 	      atffile = atffile_of(s);
 	      if (atffile)
 		{
+		  if (verbose)
+		    fprintf(stderr,"%s\n",s);
 		  if (check_mode)
 		    ax_input(atffile);
 		  else
 		    {
 		      xtffile = xtffile_of(s);
 		      trafile = trafile_of(s);
-		      if (verbose)
-			fprintf(stderr,"%s\n",s);
 		      if (!(ret = ax_outputs(xtffile, trafile)))
 			ax_input(atffile);
 		      fflush(stdout); /* in case flex did some default output */

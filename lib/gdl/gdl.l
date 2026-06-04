@@ -142,8 +142,8 @@ NOTEMARK	"^"[0-9]+"^"
 "}}"			{ gconst; GIN=0; return e_R_dbl_cur; }
 "{("			{ gconst; GIN=0; return e_L_cur_par; }
 ")}"			{ gconst; GIN=0; return e_R_cur_par; }
-"(("			{ gconst; GIN=0; return e_L_par_par; }
-"))"			{ gconst; GIN=0; return e_R_par_par; }
+"(x("			{ gconst; GIN=0; return e_L_par_par; }
+")x)"			{ gconst; GIN=0; return e_R_par_par; }
 "{"			{ GIN=0; return '{'; }
 "{+"			{ GIN=0; return DET_PHON; }
 "{-"			{ GIN=0; return DET_SEME; }

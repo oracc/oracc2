@@ -384,6 +384,7 @@ kids_add_node(Tree *tp, Node *np)
     }
 }
 
+/* Remove and return the last node in the tree */
 Node *
 kids_rem_last(Tree *tp)
 {
