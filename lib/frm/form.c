@@ -30,23 +30,31 @@ static Uchar *field_end(Uchar *lp);
 
 #define cc(x) ((const char *)(x))
 
-static struct pool *form_pool;
+static struct pool *form_pool = NULL;
 void
 form_init(void)
 {
-  form_pool = pool_init();
-  formsmem = memo_init(sizeof(Form), 128);
-  formspmem = memo_init(sizeof(Form*), 128);
-  form_psu_init();
+  if (!form_pool)
+    {
+      form_pool = pool_init();
+      formsmem = memo_init(sizeof(Form), 128);
+      formspmem = memo_init(sizeof(Form*), 128);
+      form_psu_init();
+    }
 }
 
 void
 form_term(void)
 {
-  pool_term(form_pool);
-  memo_term(formsmem);
-  memo_term(formspmem);
-  form_psu_term();
+  if (form_pool)
+    {
+      pool_term(form_pool);
+      memo_term(formsmem);
+      memo_term(formspmem);
+      form_psu_term();
+      form_pool = NULL;
+      formsmem = formspmem = NULL;
+    }
 }
 
 Uchar *

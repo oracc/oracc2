@@ -132,6 +132,7 @@ ax_full_term(void)
   gvl_wrapup("osl");
   sll_term_t(sll_sl);
   sig_context_term();
+  utf2wcs(NULL,NULL);
   ngramify_term();
   nl_term();
   form_term();
@@ -211,7 +212,11 @@ process_inputs(int argc, char * const *argv)
 		  if (verbose)
 		    fprintf(stderr,"%s\n",s);
 		  if (check_mode)
-		    ax_input(atffile);
+		    {
+		      ax_input(atffile);
+		      fflush(stdout); /* in case flex did some default output */
+		      free((char*)atffile);
+		    }
 		  else
 		    {
 		      xtffile = xtffile_of(s);
@@ -240,6 +245,8 @@ process_inputs(int argc, char * const *argv)
 		}
 	    }
 	}
+      free(files);
+      free(fmem);
     }
   else if (argv[optind])
     {

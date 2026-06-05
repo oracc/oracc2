@@ -42,7 +42,8 @@ linkset_jox(struct linkset *lsp)
     lsp->psu ? "psu" : NULL, (ccp)lsp->psu,
     NULL,
   };
-  joxer_ea(NULL, "linkset", rnvval_aa_ccpp(r));
+  Ratts *rx = NULL;
+  joxer_ea(NULL, "linkset", rx = rnvval_aa_ccpp(r));
   for (i = 0; i < lsp->used; ++i)
     {
       List *ap = list_create(LIST_SINGLE);
@@ -57,6 +58,18 @@ linkset_jox(struct linkset *lsp)
       if (links_standalone)
 	form_serialize_jox(&lsp->links[i].lp->f->f2);
       joxer_ee(NULL, "link");
+      if (ratts)
+	{
+	  free(ratts->atts);
+	  free(ratts->qatts);
+	  free(ratts);
+	}
+    }
+  if (rx)
+    {
+      free(rx->atts);
+      free(rx->qatts);
+      free(rx);
     }
 
   if (lsp->user_dump_function)
