@@ -1,0 +1,17 @@
+##file 00atf/P12a.atf
+##line 29934
+&P120723 = NATN 028 
+#project: epsd2/admin/ur3
+#atf: use unicode
+@tablet 
+@obverse 
+2. [...] 6(aš) gur 
+@reverse 
+1. 1(barig) 4(ban₂) še-ba lugal-šu-da-ri₂ iti 5(diš)-am₃ 
+#lem: n; n; šeba[grain-ration]; Lugal.šu.da.ri₂[00]PN; itud[month]; n
+@fragment a 
+$ beginning of column broken 
+1'. [...]-x 
+#lem: u
+$ rest of column broken 
+

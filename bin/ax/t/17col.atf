@@ -1,0 +1,20 @@
+&P506493 = Nisaba 34, 0093 (RBC 00101)
+#project: epsd2/admin/ur3
+#atf: use unicode 
+@tablet 
+@obverse 
+
+@column 1 
+1. a 
+
+@column 2 
+1. e
+
+@reverse
+
+@column 1 
+1. a 
+
+@column 2 
+1. e
+

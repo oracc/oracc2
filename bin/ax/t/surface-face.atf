@@ -1,0 +1,11 @@
+&P273426 = UET 2, supp 51  
+#project: epsd2/admin/ed3a
+#atf: use unicode 
+@object sealing 
+@surface face a 
+$ blank space 
+# seal impression 
+@seal 1  
+1. amaₓ(ENGUR)-bara₂-si# 
+#lem: PN
+

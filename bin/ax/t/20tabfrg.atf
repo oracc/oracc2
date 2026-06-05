@@ -1,0 +1,25 @@
+&P500140 = SMEA 53, 085, 16 
+#project: epsd2/admin/ur3 
+#atf: use unicode 
+#atf: lang sux 
+@object fragment A 
+@obverse 
+1. PA-lugal sanga-ni 
+#lem: X; X
+2. x-x-ti-e 
+#lem: u
+@reverse 
+1. x-x 
+#lem: u
+2. u₄ 1(diš)-še₂ x 
+#lem: ud[day]; n; u
+@object fragment B 
+@obverse 
+1. ,!yn mu us₂-sa UR₄ x 
+#lem: mu[year]; us[follow]; X; u
+@reverse 
+1. x-x 
+#lem: u
+2. x-x
+#lem: u
+

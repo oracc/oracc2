@@ -1,0 +1,9 @@
+&P121212 = CBS 12345
+#project: epsd2
+#atf: use unicode
+
+1. a (1::1) e
+
+2. (1:a:1)
+
+3. (1:a-e:1)

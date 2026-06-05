@@ -1,0 +1,29 @@
+##file 00atf/P11b.atf
+##line 187956
+&P119696 = MVN 17 079
+#project: epsd2/admin/ur3
+#atf: use unicode
+
+@obverse
+
+@column 1
+
+1'. 2(u) [...] sila₃
+#lem: n; u; sila[a unit of capacity]
+
+@column 2
+
+1'. [...] udu# 1(diš) sila₃#
+#lem: u; udu[sheep]; n; sila[a unit of capacity]
+
+@reverse
+
+@column 1
+
+1'. 2(gešʾu)+[...]
+#lem: n
+
+@column 2
+
+1. a₂-na-[mu]
+#lem: Anaŋu[0]PN

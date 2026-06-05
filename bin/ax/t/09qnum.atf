@@ -1,0 +1,10 @@
+&P121212 = CBS 12345
+#project: epsd2
+#atf: use unicode
+
+# This example exposes a bug when (( ... )) = ((some variant have)) is
+# enabled; gdl probably needs to implement a paren stack to figure out
+# when to return two ) tokens and when to return one )) token
+
+1. 2/3(|NINDA₂×(ŠE.2(AŠ))|)
+ 

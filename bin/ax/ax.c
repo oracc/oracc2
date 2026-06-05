@@ -337,6 +337,8 @@ opts(int opt, const char *arg)
       line_trace = 1;
       break;
     case 'l':
+      if (lem_mode)
+	l3verbose = 1; /* say -ll to get lem tracing */
       lem_mode = xcl_output = xml_output = 1;
       break;
     case 'm':

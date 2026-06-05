@@ -1,0 +1,19 @@
+##file 00atf/P13a.atf
+##line 30140
+&P130491 = Sumer 32 097 08
+#project: epsd2/admin/ur3
+#atf: use unicode
+
+@obverse
+
+@fragment A
+
+@column 1
+
+1'. x
+
+@fragment B
+
+@column 4
+
+1. x
