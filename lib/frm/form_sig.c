@@ -22,7 +22,6 @@ int form_cbd_sux_norm = 0;
 extern char *strdup(const char *);
 #endif
 
-
 static int
 cbd_cof_len(Form *fp)
 {

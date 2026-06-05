@@ -15,15 +15,22 @@ static Memo *pformspmem = NULL;
 void
 form_psu_init(void)
 {
-  pformsmem = memo_init(sizeof(Form), 128);
-  pformspmem = memo_init(sizeof(Form*), 128);
+  if (!pformsmem)
+    {
+      pformsmem = memo_init(sizeof(Form), 128);
+      pformspmem = memo_init(sizeof(Form*), 128);
+    }
 }
 
 void
 form_psu_term(void)
 {
-  memo_term(pformsmem);
-  memo_term(pformspmem);
+  if (pformsmem)
+    {
+      memo_term(pformsmem);
+      memo_term(pformspmem);
+      pformsmem = pformspmem = NULL;
+    }
 }
 
 /* Simple parsing for PSUs
