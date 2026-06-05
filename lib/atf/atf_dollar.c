@@ -8,7 +8,9 @@ static int
 prior_frag(Node *np)
 {
   Node *lp;
-  for (lp = np->last; lp; lp = np->prev)
+  if (!strcmp(np->name, "column"))
+    np = np->rent;
+  for (lp = np->last; lp; lp = lp->prev)
     {
       if (!strcmp(lp->name, "m"))
 	{

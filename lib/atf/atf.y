@@ -52,6 +52,7 @@ ATFLTYPE atflloc;
 			Y_PRISM Y_REFERTO Y_REVERSE Y_RIGHT Y_SCORE Y_SEAL Y_SEALINGS Y_SIDE
 			Y_SIGNATURE Y_SPAN Y_SUMMARY Y_SURFACE Y_TABLET Y_TOP Y_TRANSLATION
 			Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
+			Y_OBJFRAG Y_SRFFRAG Y_COLFRAG
 
 %nterm <text>   	pqx name longtext
 
@@ -316,6 +317,7 @@ object_tok:
 	| 	Y_OBJECT  	{ $$=yylval.b; }
 	| 	Y_PRISM  	{ $$=yylval.b; }
 	| 	Y_TABLET  	{ $$=yylval.b; }
+	|	Y_OBJFRAG 	{ $$=yylval.b; }
 	;
 
 surface_tok:
@@ -331,10 +333,12 @@ surface_tok:
 	| 	Y_SIDE	     	{ $$=yylval.b; }
 	| 	Y_SURFACE       { $$=yylval.b; }
 	| 	Y_TOP	     	{ $$=yylval.b; }
+	|	Y_SRFFRAG 	{ $$=yylval.b; }
 	;
 
 column_tok:
 		Y_COLUMN     	{ $$=yylval.b; }
+	|	Y_COLFRAG 	{ $$=yylval.b; }
 	;
 
 heading_tok:		

@@ -1,4 +1,4 @@
-default namespace = "http://oracc.org/ns/xtf/1.0"
+default namespace = "http://oracc.org/ns/xtf/2.0"
 namespace note = "http://oracc.org/ns/note/1.0"
 
 include "gdl-lib.rnc"
@@ -123,18 +123,27 @@ object =
      |(attribute type { user.object } , n.attr) 
     ) ,
     status.flags,
-    (m.fragment | surface | sealing | comments | nonx | noteblock)*
+    (object.frag | surface | sealing | comments | nonx | noteblock)*
   }
 known.object =    xsd:string { pattern="tablet|envelope|prism|bulla" }
 user.object =     xsd:string { pattern="object" }
 nonobject = nonx
+
+object.frag = element fragment {
+    attribute xml:id   { xsd:ID },
+    attribute label    { text },
+    (proto.inter |surface | column | nonx | m | comments)*,
+    primes?,
+    status.flags,
+    noteblock*    
+  }
 
 surface =
   element surface { 
     (implicit 
      | (attribute xml:id   { xsd:ID },
         attribute label    { text })),
-    (proto.inter | column | nonx | m | comments)* ,
+    (surface.frag | proto.inter | column | nonx | m | comments)* ,
     (  attribute type { known.surface }
      |(attribute type { face.surface } , n.attr.lc)
      |(attribute type { edge.surface } , n.attr.lc?)
@@ -155,6 +164,15 @@ user.surface = xsd:string { pattern="surface" }
 docket.surface = xsd:string { pattern="docket" }
 seal.surface = xsd:string { pattern="seal" }
 
+surface.frag = element fragment {
+    attribute xml:id   { xsd:ID },
+    attribute label    { text },
+    (proto.inter | column | nonx | m | comments)*,
+    primes?,
+    status.flags,
+    noteblock*    
+  }
+
 sealing =
   element sealing {
     attribute xml:id { xsd:ID },
@@ -169,11 +187,20 @@ column =
     (implicit
      | (attribute xml:id   { xsd:ID },
         attribute label    { text })),
-    (milestone | hdr | lg | l | nonl | nonx | comments | proto.inter)*,
+    (column.frag | milestone | hdr | lg | l | nonl | nonx | comments | proto.inter)*,
     attribute n { text },
     attribute o { text }?,
     primes?,
     status.flags
+  }
+
+column.frag = element fragment {
+    attribute xml:id   { xsd:ID },
+    attribute label    { text },
+    (proto.inter | milestone | hdr | lg | l | nonl | nonx | comments)*,
+    primes?,
+    status.flags,
+    noteblock*    
   }
 
 primes = 

@@ -196,6 +196,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 static int
 atf_block(const char *scanned_at)
 {
+  static Blocktok *last_bp = NULL;
   const char *atcmd = scanned_at + 1;
 
   Blocktok *bp = blocktok(atcmd, strlen(atcmd));
@@ -203,11 +204,23 @@ atf_block(const char *scanned_at)
     {
       if (bp->bison == Y_TRANSLATION)
 	BEGIN s_TRH;
+      Blocktok *xbp = bp;
+      if (bp->bison == Y_FRAGMENT && last_bp)
+	{
+	  if (last_bp->type == B_OBJECT)
+	    bp = blocktok("objfrag", 7);
+	  else if (last_bp->type == B_SURFACE)
+	    bp = blocktok("srffrag", 7);
+	  else if (last_bp->type == B_COLUMN)
+	    bp = blocktok("colfrag", 7);
+        }
       atflval.b = bp;
+      last_bp = xbp;
       return bp->bison;
     }
   else
     {
+      last_bp = NULL;
       fprintf(stderr, "atf: bad at-command @%s\n", atcmd);
       return Y_BAD;
     }

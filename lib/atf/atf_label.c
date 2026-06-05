@@ -446,6 +446,25 @@ update_label(struct node *current,enum e_tu_types transtype)
 	  && 'x' != *(((Block*)current->rent->user)->label))
 	ancestors[0] = ((Block*)current->rent->user)->label;
       break;
+    case B_SRFFRAG:
+      {
+	atfp->frag_type = F_SURFACE;
+	if (((Block*)current->rent->user)->bt->type == B_OBJECT)
+	  {
+	  }
+	else if (((Block*)current->rent->user)->bt->type == B_SURFACE)
+	  {
+	    ancestors[0] = ((Block*)current->rent->user)->label;
+	    strcpy((char*)frag_buf, ((Block*)current->user)->subt);
+	  }
+	else if (((Block*)current->rent->user)->bt->type == B_COLUMN)
+	  {
+	  }
+	else
+	  {
+	  }
+      }
+      break;
     case B_COLUMN:
       ancestors[2] = ((Block*)current->user)->label;
       if (((Block*)current->rent->user)->label

@@ -112,15 +112,18 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
   switch (bp->bt->type)
     {
     case B_OBJECT:
+    case B_OBJFRAG:
       xid_block();
       reset_lninfo();
       block_lev(l, bp, rest);
       break;
     case B_SURFACE:
+    case B_SRFFRAG:
       reset_lninfo();
       block_lev(l, bp, rest);
       break;
     case B_FRAGMENT:
+    case B_COLFRAG:
       reset_lninfo();
       block_lev(l, bp, rest);
       break;
@@ -180,6 +183,18 @@ block_lev(Mloc l, Block *bp, char *rest)
 	{
 	  bp->np->text = (ccp)pool_copy((uccp)bp->subt, atfmp->pool);
 	  label_frag(bp->np, (uccp)bp->np->text);
+	}
+      break;
+    case B_OBJFRAG:
+    case B_SRFFRAG:
+    case B_COLFRAG:
+      bp->np->name = "fragment";
+      s = frg_args(l, bp, s, flags);
+      if (bp->subt)
+	{
+	  bp->subt = (ccp)pool_copy((uccp)bp->subt, atfmp->pool);
+	  atf_xprop(bp->np, "n", bp->subt);
+	  label_frag(bp->np, (uccp)bp->subt);
 	}
       break;
     case B_COLUMN:
@@ -580,18 +595,22 @@ set_block_curr(Block_level b)
 	  {
 	    Node *np = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
 	    if (!np)
-	      atf_implicit("object");
+	      {
+		Node *fp = ancestor_or_self_level_as(abt->curr, B_OBJFRAG, 0);
+		if (fp)
+		  atf_implicit("object");
+	      }
 	    else
 	      tree_curr(np);
 	  }
 	  break;
 	case B_COLUMN:
 	  {
-	    Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
-	    if (!np)
+	    Node *fp = ancestor_or_self_level_as(abt->curr, B_SRFFRAG, 0);
+	    if (!fp)
 	      {
-		Node *fp = ancestor_or_self_level_as(abt->curr, B_FRAGMENT, 0);
-		if (!fp)
+		Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
+		if (!np)
 		  {
 		    Node *op = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
 		    if (!op)
@@ -604,8 +623,15 @@ set_block_curr(Block_level b)
 		  }
 	      }
 	    else
-	      tree_curr(np);
+	      tree_curr(fp);
 	  }  
+	  break;
+	case B_SRFFRAG:
+	  {
+	    Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
+	    if (np)
+	      tree_curr(np);
+	  }
 	  break;
 	case B_FRAGMENT:
 	  /**@fragment is either a surface-level tag or a sub-column
@@ -650,7 +676,7 @@ set_block_curr(Block_level b)
 	    Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
 	    if (!np)
 	      {
-		Node *fp = ancestor_or_self_level_as(abt->curr, B_FRAGMENT, 0);
+		Node *fp = ancestor_or_self_level_as(abt->curr, B_COLFRAG, 0);
 		if (!fp)
 		  {
 		    Node *sp = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
@@ -807,9 +833,9 @@ frg_args(Mloc l, Block *bp, char *s, char flags[])
     bp->label = (ccp)bp->bt->nano;
   else
     bp->label = xid_block();
+#endif
 
   update_label(bp->np, etu_none);
-#endif
   
   return s+strlen(s);  
 }

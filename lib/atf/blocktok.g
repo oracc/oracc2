@@ -29,6 +29,9 @@ docket,	Y_DOCKET, "docket", B_SURFACE, "Docket", "docket", NULL
 column,	Y_COLUMN, NULL, B_COLUMN, NULL, NULL, NULL
 m,	Y_M, "", B_MILESTONE, NULL, NULL, NULL
 fragment,	Y_FRAGMENT, "fragment", B_FRAGMENT, "Fragment", "Frag.", "frg"
+objfrag,	Y_OBJFRAG, "fragment", B_OBJFRAG, "Fragment", "Frag.", "frg"
+srffrag,	Y_SRFFRAG, "fragment", B_SRFFRAG, "Fragment", "Frag.", "frg"
+colfrag,	Y_COLFRAG, "fragment", B_COLFRAG, "Fragment", "Frag.", "frg"
 cfragment,	Y_CFRAGMENT, "cfragment", B_MILESTONE, "Fragment", "Frag.", "frg"
 body,	Y_BODY, "body", B_MILESTONE, NULL, NULL, NULL
 colophon,	Y_COLOPHON, "colophon", B_MILESTONE, NULL, NULL, NULL
