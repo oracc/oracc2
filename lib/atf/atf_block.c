@@ -597,8 +597,10 @@ set_block_curr(Block_level b)
 	    if (!np)
 	      {
 		Node *fp = ancestor_or_self_level_as(abt->curr, B_OBJFRAG, 0);
-		if (fp)
+		if (!fp)
 		  atf_implicit("object");
+		else
+		  tree_curr(fp);
 	      }
 	    else
 	      tree_curr(np);
@@ -621,6 +623,8 @@ set_block_curr(Block_level b)
 		      }
 		    atf_implicit("surface");
 		  }
+		else
+		  tree_curr(np);
 	      }
 	    else
 	      tree_curr(fp);
@@ -699,6 +703,7 @@ set_block_curr(Block_level b)
 	  break;
 	default:
 	  /* other types may not need any reset of curr */
+	  mesg_verr(abt->curr->mloc, "set_block_curr: reached default on value %d", b);
 	  break;
 	}	
     }
@@ -729,9 +734,19 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
       if (isalpha(*s))
 	{
 	  const char *stype2 = scan_name(NULL, s, &s);
-	  char *buf = (char*)pool_alloc(strlen(stype)+strlen(stype2) + 2, atfmp->pool);
-	  sprintf(buf, "%s %s", stype, stype2);
-	  stype = (ccp)buf;
+	  if (!strcmp(stype, "fragment"))
+	    {
+	      bp->subt = stype2;
+	      bp->np->name = "fragment";
+	      atf_xprop(bp->np, "n", bp->subt);
+	      bp->label = bp->subt;
+	    }
+	  else
+	    {
+	      char *buf = (char*)pool_alloc(strlen(stype)+strlen(stype2) + 2, atfmp->pool);
+	      sprintf(buf, "%s %s", stype, stype2);
+	      stype = (ccp)buf;
+	    }
 	}
       atf_xprop(bp->np, "type", stype);
       s = scan_flags(l, s, flags);
@@ -739,12 +754,15 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
   if (*flags)
     bp->flag = (ccp)pool_copy((uccp)flags, atfmp->pool);
 
-  if (bp->bt->nano)
-    bp->label = (ccp)bp->bt->nano;
-  else if (bp->bt->abbr)
-    bp->label = (ccp)bp->bt->abbr;
-  else
-    bp->label = xid_block();
+  if (!bp->label)
+    {
+      if (bp->bt->nano)
+	bp->label = (ccp)bp->bt->nano;
+      else if (bp->bt->abbr)
+	bp->label = (ccp)bp->bt->abbr;
+      else
+	bp->label = xid_block();
+    }
   
   update_label(bp->np, etu_none);
 

@@ -4,6 +4,8 @@
 #include "atf.h"
 #include "atf_bld.h"
 
+extern void atf_bp_reset(void);
+
 static void atf_bld_protocols(Mloc *lp, const char *scope);
 int in_preamble;
 
@@ -112,6 +114,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   reset_labels();
   reset_lninfo();
   atf_block_xid();
+  atf_bp_reset();
   text_lang = global_lang;
 }
 

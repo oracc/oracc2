@@ -63,7 +63,7 @@ atf_dollar(Mloc l, char *rest)
       
       if (nonxp)
 	{
-	  if (nonxp->strict || nonxp->scope)
+	  if (nonxp->strict/* || nonxp->scope*/)
 	    {
 	      if (nonxp->strict
 		  && (!nonxp->extent || nonxp->extent->class != x_rule)

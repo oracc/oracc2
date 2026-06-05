@@ -438,7 +438,14 @@ update_label(struct node *current,enum e_tu_types transtype)
   switch (((Block*)current->user)->bt->type)
     {
     case B_OBJECT:
-      ancestors[0] = ((Block*)current->user)->label;
+      if (!strcmp(current->name, "fragment"))
+	{
+	  strcpy((char*)frag_buf, "frg.");
+	  strcat((char*)frag_buf, ((Block*)current->user)->subt);
+	  ancestors[0] = frag_buf;
+	}
+      else
+	ancestors[0] = ((Block*)current->user)->label;
       break;
     case B_SURFACE:
       ancestors[1] = ((Block*)current->user)->label;

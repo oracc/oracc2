@@ -193,10 +193,17 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 %%
 
+static Blocktok *last_bp = NULL;
+static Blocktok *last_fragp = NULL;
+void
+atf_bp_reset(void)
+{
+  last_fragp = last_bp = NULL;
+}
+
 static int
 atf_block(const char *scanned_at)
 {
-  static Blocktok *last_bp = NULL;
   const char *atcmd = scanned_at + 1;
 
   Blocktok *bp = blocktok(atcmd, strlen(atcmd));
@@ -204,18 +211,34 @@ atf_block(const char *scanned_at)
     {
       if (bp->bison == Y_TRANSLATION)
 	BEGIN s_TRH;
-      Blocktok *xbp = bp;
-      if (bp->bison == Y_FRAGMENT && last_bp)
+      if (bp->bison == Y_FRAGMENT)
 	{
-	  if (last_bp->type == B_OBJECT)
-	    bp = blocktok("objfrag", 7);
-	  else if (last_bp->type == B_SURFACE)
-	    bp = blocktok("srffrag", 7);
-	  else if (last_bp->type == B_COLUMN)
-	    bp = blocktok("colfrag", 7);
+          if (last_bp)
+	    {
+	      if (last_bp->type == B_OBJECT)
+	        bp = blocktok("objfrag", 7);
+	      else if (last_bp->type == B_SURFACE)
+	        bp = blocktok("srffrag", 7);
+	      else if (last_bp->type == B_COLUMN)
+	        bp = blocktok("colfrag", 7);
+	      else
+	        bp = blocktok("srffrag", 7);
+	    }
+	  else
+            bp = blocktok("srffrag", 7);
+
+	  if (last_fragp)
+	    {
+	      if (last_fragp->type == B_OBJFRAG && bp->type == B_SRFFRAG)
+	        mesg_verr(&atflloc, "text mixes object-level and surface-level @fragment");
+	      else
+		bp = last_fragp;
+	    }
+	  last_fragp = bp;
         }
+      else
+	last_bp = bp;
       atflval.b = bp;
-      last_bp = xbp;
       return bp->bison;
     }
   else
