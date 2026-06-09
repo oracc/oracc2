@@ -196,16 +196,22 @@ gdl_wf_nodes(Node *w, FILE *wfp)
       else if (!strcmp(c->name, "g:gg"))
 	{
 	  Prop *p = prop_find_kv(c->props, "g:type", NULL);
+	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
 	  if (p)
 	    {
 	      if (!strcmp(p->u.k->v, "correction"))
 		fputs(c->kids->text, wfp);
+	      else if (!strcmp(p->u.k->v, "alternation"))
+		{
+		  fputs(c->kids->text, wfp);
+		  d = prop_find_kv(c->last->props, "g:delim", NULL);
+		}
 	      else
 		gdl_wf_nodes(c, wfp);
 	    }
 	  else
 	    gdl_wf_nodes(c, wfp);
-	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+
 	  if (d)
 	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
