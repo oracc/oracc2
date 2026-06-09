@@ -9,7 +9,7 @@
 # live without it.
 #
 
-#set -x
+set -x
 set -a
 echo $0 $*
 bin=${ORACC}/bin
@@ -28,7 +28,7 @@ sans_lem="$lxd/sans-lem.lst"
 have_xtf="$lxd/have-xtf.lst"
 out_approved="$lxd/approved.lst"
 out_outlined="$lxd/outlined.lst"
-
+    
 # build-approved-policy
 $bin/lx-update-lists-bap.sh
 

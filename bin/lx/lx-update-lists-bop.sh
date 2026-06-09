@@ -4,8 +4,12 @@
 #
 
 #set -x
-echo $0 $project
+echo $0 $*
 opt=`oraccopt . build-outlined-policy`
+
+if [ "$opt" = "" ]; then
+    opt=`oraccopt . build-approved-policy`
+fi
 
 case $opt in
     approved)
@@ -36,7 +40,7 @@ case $opt in
 	    exit 1
 	fi
 	;;
-    catalog)
+    catalog|catalogue)
 	cp $lxd/cat-ids.lst $out_outlined	
 	;;
     *)

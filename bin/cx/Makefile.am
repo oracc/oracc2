@@ -8,7 +8,7 @@ bin_SCRIPTS=cx.sh cx-marshall.sh cx-00cat-lst.sh cx-sanity.sh cx-local.sh cx-xca
 scriptdata_DATA=*.xsl
 
 cx_SOURCES=cx.c cx_roco.c cx_keydata.c keydata.c cx_sortinfo.c \
-	cx_remap.c cx_sortcodes.c cx_merper.c cx_replace.c
+	cx_remap.c cx_sortcodes.c cx_merper.c cx_replace.c cx_uniq.c
 
 cx_LDADD = $(xLDADD)
 cx_DEPENDENCIES = $(cx_LDADD)

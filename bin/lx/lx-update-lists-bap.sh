@@ -3,7 +3,7 @@
 # Implement o2-lst.plx update_lists() build-approved-policy
 #
 #set -x
-echo $0 $project
+echo $0 $*
 opt=`oraccopt . build-approved-policy`
 
 case $opt in
@@ -11,7 +11,7 @@ case $opt in
 	lx -q -o${out_approved} -p${project} ${have_atf} \
 	   -? $lxd/not-approved.lst +? $lxd/add-approved.lst
 	;;
-    catalog)
+    catalog|catalogue)
 	lx -q -o${out_approved} -p${project} ${cat_ids} \
 	   -? $lxd/not-approved.lst +? $lxd/add-approved.lst
 	;;

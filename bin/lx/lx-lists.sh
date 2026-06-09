@@ -6,7 +6,7 @@
 # This script and those it calls should be a complete replacement for
 # o2-lst.sh
 
-#set -x
+set -x
 
 echo $0 $*
 ldir=01bld/lists
@@ -58,7 +58,9 @@ lx-update-lists.sh
 #lx-outlined-list.sh
 
 #o2-lst.plx #6: lemindex_list
-grep '#lem' ${ORACC}/$project/02pub/atf-data.tab | cut -d@ -f1 >$lxd/lemindex.lst
+if [ -r 02pub/atf-data.tab ]; then
+    grep '#lem' ${ORACC}/$project/02pub/atf-data.tab | cut -d@ -f1 >$lxd/lemindex.lst
+fi
 
 #if [ -r 01bld/lists/proxy.lst ]; then
 #    lx -qous -p `oraccopt` 01bld/lists/proxy.lst >01bld/lists/outlined.lst

@@ -10,4 +10,8 @@
 # While we're at it, we remap tabs in the .csv to spaces because we
 # are turning the .csv into .tsv.
 (cd 00src ;
-tr '	' '  ' <cdli.csv | csvformat -T -M '' | tr '\n\r' '     ' | tr '' '\n' >cdli.tsv )
+tr '	' '  ' <cdli.csv | csvformat -T -M '' | tr '\n\003\r' '     ' | tr '' '\n' >cdli.tsv )
+
+#
+# Consider tr -d '\001-008\010-\037' or the like
+#

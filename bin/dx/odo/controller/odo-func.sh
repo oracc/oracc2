@@ -51,6 +51,25 @@ odo_term ()
     exit $?
 }
 
+if [ "$LAST_TS" = "" ]; then
+    LAST_TS=$EPOCHSECONDS
+fi
+
+odo_time() {
+
+    local message=$1
+    local current_ts=$EPOCHSECONDS
+    
+    # Calculate difference in seconds
+    local elapsed=$((current_ts - LAST_TS))
+    
+    # Print human-readable date along with elapsed time
+    printf "odo_time: [%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
+    
+    # Update the tracking variable for the next call
+    LAST_TS=$current_ts
+}
+
 odo_verbose ()
 {
     if [ "$odo_verb" = "" ]; then

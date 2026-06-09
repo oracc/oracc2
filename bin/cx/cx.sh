@@ -17,23 +17,28 @@ mdir=01tmp/00cat/m
 if [ ${projtype} = "ood" ]; then
     ${bin}/cx 02pub/data.xml
 else
+    odo_time "cx-policy.sh begins"
     ${bin}/cx-policy.sh
 
     # set up $mdir/local-[pqx].tsv
+    odo_time "cx-local.sh begins"
     ${bin}/cx-local.sh
 
     # process 00lib/cat.d into $mdir/extra-[pqx].tsv
+    odo_time "cx-extra.sh begins"
     ${bin}/cx-extra.sh
 
     if [ -s 01bld/lists/proxy-cat.lst ]; then
+	odo_time "cx-outer.sh begins"
 	${bin}/cx-outer.sh 01bld/lists/proxy-cat.lst
     fi
+    odo_time "cx-clean.sh begins"
     ${bin}/cx-clean.sh $mdir/*.tsv
     set $mdir/*.tsv
     proj=`oraccopt`
     if [ "$*" != "$mdir/*.tsv" ]; then
 	if [ "$2" = "" ]; then
-	    cp $1 01bld/cat/union.tsv
+	    cx -u $1 >01bld/cat/union.tsv
 	    # doesn't matter which string we set here as long as we
 	    # register that there is a .tsv
 	    catouter=$1

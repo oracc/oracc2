@@ -75,5 +75,6 @@ extern int cx_roco_field_index(Roco *r, const char *fld);
 extern void cx_merge_periods(Roco *r);
 extern void cx_replace(Roco *r, const char *field, Repfunc repfunc);
 extern Fcell **cx_si_marshall(Roco *r);
+extern int cx_uniq(const char *fn);
 
 #endif/*CX_H_*/

@@ -5,6 +5,7 @@ const char *arg_project;
 int merge_fields = 0;
 int remap_only = 0;
 int sortinfo_only = 0;
+int uniq_only = 0;
 int verbose = 0;
 
 
@@ -64,12 +65,16 @@ cx_load(Cx *c, const char *cat)
 int
 main(int argc, char * const *argv)
 {
-  options(argc, argv, "bmp:rsvt:");
-  if (!arg_project)
+  options(argc, argv, "bmp:rsvt:u");
+  if (!arg_project && !uniq_only)
     {
       fprintf(stderr, "cx: must give project with -p [PROJECT]. Stop.\n");
       return 1;
     }
+
+  if (uniq_only)
+    return cx_uniq(argv[optind]);
+
   ff_verbose = verbose;
   Cx *c = cx_init();
   if (cx_load(c, argv[optind]))
@@ -120,6 +125,9 @@ opts(int opt, const char *arg)
       break;
     case 's':
       sortinfo_only = 1;
+      break;
+    case 'u':
+      uniq_only = 1;
       break;
     case 'v':
       ++verbose;
