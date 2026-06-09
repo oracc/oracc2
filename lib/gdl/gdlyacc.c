@@ -24,6 +24,8 @@ int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 static int gdl_excision_type = 'e';
 
+int gdl_wf_c10e = 0;
+
 Node *gdl_post_det_gp_attach, *gdl_recycled_word;
 
 static int grapheme_id, nonw_found, wid_base, word_excisions;
@@ -212,9 +214,17 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  gdlstate_t s = prop_get_state(c);
 	  if (!gs_is(s,gs_excised))
 	    {
+	      /* 20260609 if c->user and c->user->orig are non-NULL
+		 use the original transliteration in the word form
+		 because that is what lemm-xxx.sig match against; set
+		 gdl_wf_c10e=1 to force word forms to be
+		 canonicalized */
 	      if (c->text)
 		{
-		  fputs(c->text, wfp);
+		  const char *t = c->text;
+		  if (!gdl_wf_c10e && c->user && ((gvl_g*)c->user)->orig)
+		    t = (ccp)((gvl_g*)c->user)->orig;
+		  fputs(t, wfp);
 		  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
 		  if (d)
 		    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);

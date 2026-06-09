@@ -97,7 +97,7 @@ form_parse_cof(const Uchar *file, size_t line, Uchar *lp, struct form *formp,
       lp = ampamp;
       ampamp = (unsigned char *)strstr((char*)lp,"&&");
     }
-  formp->parts = memo_new_array(formsmem, list_len(cofs)+1);
+  formp->parts = memo_new_array(formspmem, list_len(cofs)+1);
 
   /* Parse the head in the top-level form structure */
   form = list_first(cofs);
