@@ -637,6 +637,20 @@ set_block_curr(Block_level b)
 	      tree_curr(np);
 	  }
 	  break;
+	case B_OBJFRAG:
+	  {
+	    Node *np = ancestor_or_self_level_as(abt->curr, B_OBJECT, 0);
+	    if (np)
+	      tree_curr(np);
+	  }
+	  break;
+	case B_COLFRAG:
+	  {
+	    Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
+	    if (np)
+	      tree_curr(np);
+	  }
+	  break;
 	case B_FRAGMENT:
 	  /**@fragment is either a surface-level tag or a sub-column
 	   * level one so fragments can be edited with all columns
@@ -703,6 +717,7 @@ set_block_curr(Block_level b)
 	  break;
 	default:
 	  /* other types may not need any reset of curr */
+	  phase = "atfblock";
 	  mesg_verr(abt->curr->mloc, "set_block_curr: reached default on value %d", b);
 	  break;
 	}	
