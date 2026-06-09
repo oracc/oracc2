@@ -9,6 +9,8 @@
 . ${ORACC}/bin/odo-func.sh
 odov $0 $*
 
+#set -x
+
 #echo mdir=$mdir
 tdir=01tmp/00cat/t
 rm -fr ${tdir} ; mkdir -p ${tdir}

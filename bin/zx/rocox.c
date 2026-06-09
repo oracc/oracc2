@@ -95,7 +95,13 @@ main(int argc, char *const *argv)
       while (*e++)
 	if (e[-1] == '+')
 	  e[-1] = '\t';
-      char **v = vec_from_str(t, NULL, NULL);
+      size_t n;
+      char **v = vec_from_str(t, NULL, &n);
+      if (n != r->maxcols)
+	{
+	  fprintf(stderr, "rocox: template has %d columns but roco has %d columns\n", (int)n, r->maxcols);
+	  exit(1);
+	}
       roco_format = roco_row_template(r, v, template_add_empty);
       if (verbose)
 	fprintf(stderr, "rocox: template_row => roco_format `%s'\n", roco_format);
