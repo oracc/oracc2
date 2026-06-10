@@ -30,3 +30,4 @@ cat idtext $uf | tr '\n' '\t' | sed 's/	$/\
 cat $ui >>$ut
 
 $obin/rocox -U $ut $* >01bld/cat/union.tsv
+tx -f -t 01bld/cat/union.tsv
