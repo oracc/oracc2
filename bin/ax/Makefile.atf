@@ -1,0 +1,23 @@
+#
+# Makefile to build derivatives of .atf, .xtf, etc.
+#
+# Replaces o2-atf.sh and o2-xtf.sh
+#
+
+.PRECIOUS: %.xtf %.xtr
+
+default: ${pqx}.tok
+
+txh: ${pqx}.txh
+
+clean:
+	@rm -f *.xtf *.tok
+
+%.xtf: %.atf
+	@${ORACC}/bin/oxx -C ${atfargs} $< | xmlsplit
+
+%.tok: %.xtf
+	@${ORACC}/bin/tokx -slg <$< >$@
+
+%.txh: %.xtf
+	@${ORACC}/bin/xtf2txh ${project}:${pqx}
