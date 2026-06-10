@@ -1,5 +1,7 @@
 #include <oraccsys.h>
 #include <hash.h>
+#include <roco.h>
+
 #include "atfdata.h"
 const char *cat_mode;
 const char *catproj;
@@ -20,6 +22,8 @@ extern Pool *pseen;
 extern void atfdlex(void);
 extern void atfilex(void);
 
+static Roco *rdups;
+
 static void
 atfdata_init(void)
 {
@@ -34,10 +38,30 @@ atfdata_term(void)
   pool_term(pseen);
 }
 
+static int
+atf_load_dups(const char *tab)
+{
+  rdups = roco_load1(tab);
+  roco_hash(rdups);
+  int i;
+  for (i = 0; i < rdups->nlines; ++i)
+    {
+      int j;
+      for (j = 0; rdups->rows[i][j]; ++j)
+	;
+      if (j > 1)
+	rdups->rows[i][1] = rdups->rows[i][j]; /* force the last relocation into slot 2 of the table */
+    }
+  return 0;
+}
+
 void
 atf_fix_dup(char *pqx)
 {
   /* copy new pqx to buf pqx */
+  unsigned char **r = hash_find(rdups->hdata, (uccp)pqx);
+  if (r)
+    strcpy(pqx, (ccp)r[1]);
 }
 
 int
@@ -71,6 +95,9 @@ main(int argc, char **argv)
   atfi_flex_debug = 0;
   mesg_init();
 
+  if (fix_dups_tab)
+    atf_load_dups(fix_dups_tab);
+  
   if (inputs_file)
     {
       if ('-' == *inputs_file && argv[optind])
