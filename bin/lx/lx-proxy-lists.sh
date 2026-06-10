@@ -3,9 +3,12 @@
 # Implement o2-lst.plx proxy_lists()
 #
 
+. ${ORACC}/bin/odo-func.sh
+odovv $0 $*
+
 #set -x
 lxd=01bld/lists
-echo $0 $*
+
 project=`oraccopt`
 
 if [ -s $lxd/proxy.lst ]; then

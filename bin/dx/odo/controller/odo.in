@@ -120,8 +120,6 @@ elif [ "$1" = "-V" ]; then
     set -x
 fi
 
-isogmt -s >.odo_ts
-
 if [ -r .gx ]; then
     gx=1
 fi
@@ -212,6 +210,8 @@ savedescriptors="1"
 exec 3>&1
 exec 4>&2
 exec >$log 2>&1
+isogmt -s >.odo_ts
+odo_time oracc $command begins
 if [ $command = "init" ]; then
     cd @@ORACC_BUILDS@@
     if [ ! -r $user ]; then

@@ -6,9 +6,12 @@
 # This script and those it calls should be a complete replacement for
 # o2-lst.sh
 
-set -x
+#set -x
 
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odov $0 $*
+odo_time lx-lists.sh begins
+
 ldir=01bld/lists
 #rm -fr $ldir ; mkdir -p $ldir
 if [ ! -d $ldir ]; then

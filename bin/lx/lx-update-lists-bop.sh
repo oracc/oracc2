@@ -4,7 +4,10 @@
 #
 
 #set -x
-echo $0 $*
+
+. ${ORACC}/bin/odo-func.sh
+odovv $0 $*
+
 opt=`oraccopt . build-outlined-policy`
 
 if [ "$opt" = "" ]; then
