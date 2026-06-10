@@ -51,23 +51,19 @@ odo_term ()
     exit $?
 }
 
-if [ "$LAST_TS" = "" ]; then
-    LAST_TS=$EPOCHSECONDS
-fi
-
 odo_time() {
 
-    local message=$1
-    local current_ts=$EPOCHSECONDS
-    
-    # Calculate difference in seconds
-    local elapsed=$((current_ts - LAST_TS))
-    
-    # Print human-readable date along with elapsed time
-    printf "odo_time: [%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
-    
-    # Update the tracking variable for the next call
-    LAST_TS=$current_ts
+    if [ -r .odo_ts ]; then
+	local message="$*"
+	local current_ts=`isogmt -s`
+	local start_ts=`cat .odo_ts`
+	
+	# Calculate difference in seconds
+	local elapsed=$((current_ts - start_ts))
+	
+	# Print human-readable date along with elapsed time
+	printf "odo_time: [%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
+    fi
 }
 
 odo_verbose ()

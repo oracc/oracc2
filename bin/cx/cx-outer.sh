@@ -79,9 +79,12 @@ function outer {
 		    cut -d: -f2 $F | cut -d@ -f1 | sort | sed 's/^/^/' >$g
 		    t=${tdir}/${ph}-${pqx}.tsv
 		    head -1 $l >$t
+		    odo_time cx-outer.sh 'outer()' $g grep begins
 		    grep -f $g $l >>$t
+		    odo_time cx-outer.sh 'outer()' rocox $otsv begins
 		    T=`head -1 $otsv | tr '\t' +`
 		    rocox -EF -T$T $t >>$otsv
+		    odo_time cx-outer.sh 'outer()' returns
 		    # rm -f $t
 		fi
 	    fi

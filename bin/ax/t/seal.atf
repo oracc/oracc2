@@ -1,0 +1,33 @@
+&P506505 = Nisaba 34, 0147 (RBC 00158)
+#project: epsd2/admin/ur3
+#atf: use unicode 
+@tablet 
+@obverse 
+1. 2(u) la₂ 1(diš@t) guruš# u₄ 1(diš)#-[še₃] 
+#lem: n; lal[less]; n; ŋuruš[young adult male]; ud[day]; n
+2. ki-su₇ ušurₓ(|LAL₂.TUG₂|)-e-nu#-[me-te-zu] 
+#lem: kisur[barren land]; Ušurₓ.e.nu.me.te.zu[00]FN
+3. u₃ ki-su₇ u₂-du#-lu₂-sag₁₀ 
+#lem: u[and]CNJ; kisur[barren land]; U₂.du.lu₂.sag₁₀[00]FN
+4. še bala-a 
+#lem: še[barley]; bala[turn]
+@reverse 
+1. ugula ur-{d}saman₄ 
+#lem: ugula[overseer]; UrSamanak[0]PN
+2. kišib₃ u₃-ma-ni 
+#lem: kišib[cylinder seal]; Umani[0]PN
+3. iti nesag 
+#lem: itud[month]; Ezemnesaŋ[1]MN
+# some text moved to next line 
+4. ,!yn mu [us₂?-sa?] ur-bi₂-lum#[{ki} ba-hul] 
+#lem: mu[year]; us[follow]; Urbilum[1]SN; hulu[bad]
+@seal 1 
+1. u₃-ma-[ni] 
+#lem: Umani[0]PN
+2. dub#-sar# 
+#lem: dubsar[scribe]
+3. dumu ur#-{geš#}gigir# 
+#lem: dumu[child]; Urgigirak[0]PN
+$ (according to Mayr) 
+$ (dumu nam#-ha#-ni# in edition)
+

@@ -3,7 +3,7 @@ include ../../../oracc-am-rules.txt
 bin_PROGRAMS=cdliperiodx cdlixtfx imgp4
 
 bin_SCRIPTS = cdli-field-tab.sh cdli-period+.sh cdli-period-lists.sh \
-	cdli-csv2tsv.sh cdli-00src-00cat.sh cdli-img2oracc.sh
+	cdli-csv2tsv.sh cdli-00src-00cat.sh cdli-img2oracc.sh cdli-dups.sh
 
 noinst_SCRIPTS = cdli-cat.sh cdli-img.sh
 

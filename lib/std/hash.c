@@ -130,6 +130,8 @@ hash_exists(Hash *htab, const unsigned char *key)
 void *
 hash_find (Hash *htab, const unsigned char *key)
 {
+  assert(htab != NULL);
+  assert(key != NULL);
   static Hash_element *ret = NULL;
   int ok = 0;
   ret = _hash_lookup(htab, key, NULL);

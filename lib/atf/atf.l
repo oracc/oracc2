@@ -74,9 +74,10 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^({BOM3}|{BOM2})?"&"         	{ BEGIN s_AMPl; }
 <s_AMPl>{PQX}			{ atfsave; return r(PQX); }
-<s_AMPl>=	       		{ BEGIN s_AMPr; return r('='); }
+<s_AMPl>[ \t]+=	       		{ BEGIN s_AMPr; return r('='); }
+<s_AMPl>[ \t]+/[^=]    		{ mesg_verr(&atflloc, "no '=' in &-line");
+				  BEGIN s_AMPr; return r('='); }
 <s_AMPr>[^\n]+      		{ BEGIN 0; atfnorm; return r(TEXT); }
-<s_AMPl>[ \t]+	       		{ ; }
 
 <s_T>^[\t ]*/\n			{ ; }
 <s_T>^[^\t ][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }

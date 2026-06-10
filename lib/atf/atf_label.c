@@ -229,7 +229,6 @@ reset_labels(void)
   *line_label_buf = '\0';
   *frag_buf = '\0';
   *m_label = '\0';
-  hash_free(my_label_table,NULL);
   if (my_label_table)
     hash_free(my_label_table,NULL);
   my_label_table = hash_create(1024);
@@ -242,8 +241,10 @@ reset_labels(void)
 void
 label_term(void)
 {
-  hash_free(my_label_table,NULL);
-  hash_free(xid_to_label_table,NULL);
+  if (my_label_table)
+    hash_free(my_label_table,NULL);
+  if (xid_to_label_table)
+    hash_free(xid_to_label_table,NULL);
   my_label_table = xid_to_label_table = NULL;
 }
 

@@ -120,7 +120,8 @@ elif [ "$1" = "-V" ]; then
     set -x
 fi
 
-set -a
+isogmt -s >.odo_ts
+
 if [ -r .gx ]; then
     gx=1
 fi
