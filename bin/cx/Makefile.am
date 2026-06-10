@@ -5,6 +5,8 @@ bin_PROGRAMS=cx
 bin_SCRIPTS=cx.sh cx-marshall.sh cx-00cat-lst.sh cx-sanity.sh cx-local.sh cx-xcat.sh \
 	cx-extra.sh cx-policy.sh cx-outer.sh cx-clean.sh cx-fields.sh cx-union.sh
 
+data_DATA=keydata.xml
+
 scriptdata_DATA=*.xsl
 
 cx_SOURCES=cx.c cx_roco.c cx_keydata.c keydata.c cx_sortinfo.c \

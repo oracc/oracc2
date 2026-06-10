@@ -9,9 +9,12 @@
 # live without it.
 #
 
-set -x
+#set -x
+
+. ${ORACC}/bin/odo-func.sh
+odovv $0 $*
+
 set -a
-echo $0 $*
 bin=${ORACC}/bin
 
 project=`oraccopt`

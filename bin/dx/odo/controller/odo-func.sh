@@ -63,6 +63,7 @@ odo_time() {
 	
 	# Print human-readable date along with elapsed time
 	printf "odo_time: [%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
+	>&4 printf "odo_time: [%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
     fi
 }
 
@@ -79,6 +80,13 @@ odo_verbose ()
 odov ()
 {
     if [ "$odo_verb" = "-v" ]; then
+	echo $*
+    fi
+}
+
+odovv ()
+{
+    if [ "$odo_verb" = "-vv" ]; then
 	echo $*
     fi
 }

@@ -1,5 +1,6 @@
 #!/bin/dash
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odovv $0 $*
 if [ -r 02pub/atf-data.tab ]; then
     mkdir -p 01bld/lxlists
     if [ -d 01bld/lxlists ]; then

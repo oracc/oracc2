@@ -7,7 +7,9 @@
 #
 
 #set -x
-echo $0 $*
+
+. ${ORACC}/bin/odo-func.sh
+odovv echo $0 $*
 
 lxd=01bld/lists
 #rm -fr $lxd ; mkdir -p $lxd

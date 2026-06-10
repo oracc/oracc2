@@ -3,7 +3,10 @@
 # Implement o2-lst.plx update_lists() build-approved-policy
 #
 #set -x
-echo $0 $*
+
+. ${ORACC}/bin/odo-func.sh
+odovv $0 $*
+
 opt=`oraccopt . build-approved-policy`
 
 case $opt in

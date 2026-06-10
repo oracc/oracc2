@@ -2,7 +2,8 @@
 
 #set -x
 
-echo $0 $*
+. ${ORACC}/bin/odo-func.sh
+odovv $0 $*
 
 lxd=01bld/lists
 project=`oraccopt`
@@ -28,7 +29,10 @@ elif [ -r 00lib/search.lst ]; then
 elif [ -r 00lib/proxy.lst ]; then
     true
 else
-    >&2 echo $0: no atf files found in project $project.
+    t=`oraccopt . type`
+    if [ "$t" = "corpus" ]; then
+	>&2 echo $0: no atf files found in project $project.
+    fi
     exit 0
 fi
 
