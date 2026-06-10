@@ -8,6 +8,7 @@
 #include <ns-gdl.h>
 #include <gdl.h>
 #include <gvl.h>
+#include <lng.h>
 
 /* Tool to produce gdl signatures from transliteration */
 
@@ -143,6 +144,7 @@ main(int argc, char **argv)
     gvl_setup(project, project, "900");
   else
     gvl_setup(project, project, "020"); /*FIXME*/
+  lang_init();
   gdlparse_init();
   
   if (argv[optind])
@@ -160,6 +162,7 @@ main(int argc, char **argv)
     }
 
   gdlparse_term();
+  lang_term();
   return 0;
 }
 
