@@ -13,7 +13,6 @@ int splitting = 0;
 static void pqx(void);
 extern const char *curratffile;
 
-const char *curr_pqx;
 extern Hash *hseen;
 extern Pool *pseen;
 

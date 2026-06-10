@@ -14,7 +14,6 @@ int fix_dups_mode; /* fix dups using the table fix_dups_tab */
 int fixing = 0; /* set to 1 for second pass when fixing actually happens */
 int identity_mode;
 int need_project = 1;
-int x_mode; /* extract ID and NAME for X-IDs */
 extern int atfd_flex_debug, atfl_flex_debug, atfi_flex_debug;
 extern Hash *hseen;
 extern Pool *pseen;
