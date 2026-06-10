@@ -1,0 +1,3 @@
+#!/bin/sh
+cd @@ORACC@@/cdli ; sudo @@ORACC@@/orc xmdmanager2.plx
+#cd @@ORACC@@/cdli ; sudo @@ORACC@@/bin/orc oracc catalogue
