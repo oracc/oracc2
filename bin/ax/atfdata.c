@@ -60,7 +60,7 @@ atf_fix_dup(char *pqx)
 {
   /* copy new pqx to buf pqx */
   unsigned char **r = hash_find(rdups->hdata, (uccp)pqx);
-  if (r)
+  if (r && r[1])
     strcpy(pqx, (ccp)r[1]);
 }
 
