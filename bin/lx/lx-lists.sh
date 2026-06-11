@@ -10,7 +10,7 @@
 
 . ${ORACC}/bin/odo-func.sh
 odov $0 $*
-odo_time lx-lists.sh begins
+odo_time lists
 
 ldir=01bld/lists
 #rm -fr $ldir ; mkdir -p $ldir

@@ -15,24 +15,21 @@ projtype=`oraccopt . type`;
 ldir=01tmp/00cat/l
 mdir=01tmp/00cat/m
 if [ ${projtype} = "ood" ]; then
+    odo_time "ood catalogue ..."
     ${bin}/cx 02pub/data.xml
 else
-    odo_time "cx-policy.sh begins"
+    odo_time "catalogue ..."
     ${bin}/cx-policy.sh
 
     # set up $mdir/local-[pqx].tsv
-    odo_time "cx-local.sh begins"
     ${bin}/cx-local.sh
 
     # process 00lib/cat.d into $mdir/extra-[pqx].tsv
-    odo_time "cx-extra.sh begins"
     ${bin}/cx-extra.sh
 
     if [ -s 01bld/lists/proxy-cat.lst ]; then
-	odo_time "cx-outer.sh begins"
 	${bin}/cx-outer.sh 01bld/lists/proxy-cat.lst
     fi
-    odo_time "cx-clean.sh begins"
     ${bin}/cx-clean.sh $mdir/*.tsv
     set $mdir/*.tsv
     proj=`oraccopt`
@@ -64,6 +61,7 @@ else
 	    cx-union.sh $catouter $catlocal $catextra
 	fi
 	if [ "$catlocal$catouter$catextra" != "" ]; then
+	    odo_time "catalogue installing from 01bld/cat/union.tsv"
 	    ${bin}/cx -p$proj 01bld/cat/union.tsv | \
 		tee 01bld/cdlicat.xmd | ${bin}/xmlsplit
 	    if [ -r 01bld/sortinfo.tab ]; then

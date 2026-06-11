@@ -9,7 +9,7 @@
 #
 . ${ORACC}/bin/odo-func.sh
 odo_odo $0 $*
-
+echo $0 called with odo_user=$odo_user
 u=$odo_user
 (cd @@ORACC_BUILDS@@/$u
  if [ -r .git ]; then

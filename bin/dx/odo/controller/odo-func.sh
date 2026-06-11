@@ -9,8 +9,10 @@ odo_fail ()
 
 odo_log ()
 {
+    odo_time build completed.
     exec 1>&3
     exec 2>&4
+    clear
     cat $odo_log
 }
 

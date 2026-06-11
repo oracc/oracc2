@@ -2,4 +2,4 @@ include ../../oracc-am-rules.txt
 
 scriptdata_DATA=*.xsl
 
-bin_SCRIPTS=proj-from-conf.sh
+bin_SCRIPTS=proj-from-conf.sh type-from-conf.sh

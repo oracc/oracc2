@@ -22,6 +22,7 @@
 # odo_user and odo_proj are placed in the environment via set -a
 # before the command is called.
 #
+#set -x
 cmdok ()
 {
     command=$1
@@ -211,7 +212,7 @@ exec 3>&1
 exec 4>&2
 exec >$log 2>&1
 isogmt -s >.odo_ts
-odo_time oracc $command begins
+odo_time oracc $command
 if [ $command = "init" ]; then
     cd @@ORACC_BUILDS@@
     if [ ! -r $user ]; then
@@ -225,6 +226,9 @@ if [ $command = "init" ]; then
 	fail "$user already exists"
     fi
 else
+    if [ "$command" = "catalogue" ]; then
+	command=catalog
+    fi
     cmdok $command
     if [ "$cmdtest" != "ok" ]; then
 	fail "bad command, could not find $uscript or $script"
@@ -246,43 +250,49 @@ else
 	 odo_tmpd=$tmpdir
 	 odo_user=$user
 	 set +a
-	 if [ "$F" != "-f" ]; then
-	     $bin/odo-cvs-refresh.sh $user $*
-	     if [ "$command" != "check" ]; then
-		 $bin/odo-dir-links.sh || odo_quit $0
-		 $bin/odo-config.sh $*
-		 if [ "${command}" = "config" ]; then
-		     odo_term
-		 fi
-		 if [ $? -eq 0 ]; then
-		     $bin/odo-update.sh $project $V
-		     if [ $? -eq 0 ]; then
-			 set_status done
-		     else
-			 fail "update command failed"
+	 if [ $command = "reset" ]; then
+	     odo-reset.sh
+	     set_status done
+	     odo_term
+	 else
+	     if [ "$F" != "-f" ]; then
+		 odo_time odo-cvs-refresh.sh $user $*
+		 $bin/odo-cvs-refresh.sh $user $*
+		 if [ "$command" != "check" ]; then
+		     odo_time odo-config.sh
+		     $bin/odo-config.sh $*
+		     if [ "${command}" = "config" ]; then
+			 odo_term
 		     fi
-		 else
-		     fail "config command failed"
+		     if [ $? -eq 0 ]; then
+			 odo_time odo-update.sh
+			 $bin/odo-update.sh $project $V
+			 if [ $? -eq 0 ]; then
+			     set_status done
+			 else
+			     fail "update command failed"
+			 fi
+		     else
+			 fail "config command failed"
+		     fi
 		 fi
 	     fi
-	 fi
-	 if [ "$command" != "config" ] && [ "$command" != "update" ]; then
-	     uscript=$bin/${user}-${command}.sh
-	     if [ -x $uscript ]; then
-		 $uscript $* || odo_quit
-		 odo_term
-	     else
-		 if [ "$command" = "catalogue" ]; then
-		     command=catalog
-		 fi
-		 script=$bin/odo-$command.sh
-		 odov echo $0 needs $script
-		 if [ -x $script ]; then
-		     $script $* || odo_quit
+	     if [ "$command" != "config" ] && [ "$command" != "update" ]; then
+		 uscript=$bin/${user}-${command}.sh
+		 if [ -x $uscript ]; then
+		     $uscript $* || odo_quit
 		     odo_term
 		 else
-		     echo $0 did not find $script or $uscript
-		     fail "no command $uscript or $script"
+		     script=$bin/odo-$command.sh
+		     odo_time $script
+		     odov echo $0 needs $script
+		     if [ -x $script ]; then
+			 $script $* || odo_quit
+			 odo_term
+		     else
+			 echo $0 did not find $script or $uscript
+			 fail "no command $uscript or $script"
+		     fi
 		 fi
 	     fi
 	 fi
