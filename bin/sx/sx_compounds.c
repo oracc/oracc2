@@ -47,7 +47,7 @@ sx_compounds(struct sl_signlist *sl)
       struct sl_token *tokp;
       sxc_nth = 0;
       sl->curr_inst = ip;
-      tokp = hash_find(sl->htoken, s->name);
+      tokp = tokfind(sl->htoken, s->name);
 
 #if 0
       sx_compound(sl, tokp->gdl, (ccp)s->name);

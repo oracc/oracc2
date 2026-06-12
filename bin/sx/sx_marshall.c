@@ -492,7 +492,7 @@ sx_marshall(struct sl_signlist *sl)
     fprintf(stderr, "===sorted tokens===\n");
   for (i = 0; i < nkeys; ++i)
     {
-      struct sl_token *tp = hash_find(sl->htoken, (ucp)keys[i]);
+      struct sl_token *tp = tokfind(sl->htoken, (ucp)keys[i]);
       /* tp->gdl is a g:w node that wraps the grapheme; the first
 	 grapheme node is tp->gdl->kids */
 #ifdef UseGt
@@ -530,7 +530,7 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       int j;
       sl->signs[i] = hash_find(sl->hsentry, (ucp)keys[i]);
-      tp = hash_find(sl->htoken, sl->signs[i]->name);
+      tp = tokfind(sl->htoken, sl->signs[i]->name);
 #ifdef UseGt
       sl->signs[i]->sort = tp->c;
 #else
@@ -611,7 +611,7 @@ sx_marshall(struct sl_signlist *sl)
     {
       struct sl_token *tp = NULL;
       sl->forms[i] = hash_find(sl->hfentry, (ucp)keys[i]);
-      tp = hash_find(sl->htoken, (ucp)keys[i]);
+      tp = tokfind(sl->htoken, (ucp)keys[i]);
 #ifdef UseGt
       sl->forms[i]->sort = tp->c;
 #else
@@ -719,7 +719,7 @@ sx_marshall(struct sl_signlist *sl)
     {
       struct sl_token *tp = NULL;
       sl->lists[i] = hash_find(sl->hlentry, (ucp)keys[i]);
-      tp = hash_find(sl->htoken, (ucp)keys[i]);
+      tp = tokfind(sl->htoken, (ucp)keys[i]);
 #ifdef UseGt
       sl->lists[i]->sort = tp->c;
 #else
@@ -773,7 +773,7 @@ sx_marshall(struct sl_signlist *sl)
     {
       struct sl_token *tp = NULL;
       sl->values[i] = hash_find(sl->hventry, (ucp)keys[i]);
-      tp = hash_find(sl->htoken, (ucp)keys[i]);
+      tp = tokfind(sl->htoken, (ucp)keys[i]);
 #ifdef UseGt
       sl->values[i]->sort = tp->c;
 #else

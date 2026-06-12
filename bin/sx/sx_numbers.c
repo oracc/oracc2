@@ -76,7 +76,7 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
 	      vname = (vi->type == 's' ? vi->u.s->name : vi->u.f->name);
 	    }
 	}
-      struct sl_token *vtp = hash_find(sl->htoken, vname);
+      struct sl_token *vtp = tokfind(sl->htoken, vname);
       if (vtp && vtp->gdl && vtp->gdl->kids)
 	{
 	  /* gdl is g:w; we want its first child to see if it's g:c */
@@ -107,7 +107,7 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
   if (!strcmp(stok, "LAGAB"))
     stok = "LAGAB~a";
   
-  struct sl_token *set_tok = hash_find(sl->htoken, (uccp)stok);
+  struct sl_token *set_tok = tokfind(sl->htoken, (uccp)stok);
 #ifdef UseGt
   if (set_tok)
     np->setsort = set_tok->c;

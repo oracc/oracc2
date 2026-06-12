@@ -249,7 +249,7 @@ sx_unicode(struct sl_signlist *sl)
 
 	      if (multi)
 		{
-		  /*struct sl_token *tp = hash_find(sl->htoken, name);*/
+		  /*struct sl_token *tp = tokfind(sl->htoken, name);*/
 		  if (trace_mangling)
 		    {
 		      if (Up->useq)

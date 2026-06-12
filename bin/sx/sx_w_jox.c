@@ -224,7 +224,7 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
   for (i = 0; i < nkeys; ++i)
     {
       List *lp = hash_find(sl->homophones, (uccp)keys[i]);
-      struct sl_token *tp = hash_find(sl->htoken, (uccp)keys[i]);
+      struct sl_token *tp = tokfind(sl->htoken, (uccp)keys[i]);
 
       /* Some values, e.g., 1/3(|NINDA₂×(ŠE.AŠ)|), do not have a lowercased base */
       if (!tp)
@@ -248,7 +248,7 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
       struct sl_split_value *spv;
       for (spv = list_first(lp); spv; spv = list_next(lp))
 	{
-	  struct sl_token *vp = hash_find(sl->htoken, (uccp)spv->v);
+	  struct sl_token *vp = tokfind(sl->htoken, (uccp)spv->v);
 	  char vsort[32];
 #ifdef UseGt
 	  if (vp)
@@ -658,7 +658,7 @@ sx_w_jx_aka(struct sx_functions *f, struct sl_signlist *sl, List *a)
       joxer_ea(&msp->m, "sl:aka", ratts);
       if (!msp->user) /* AKA has literal flag stored in user */
 	{
-	  struct sl_token *tp = hash_find(sl->htoken, msp->s);
+	  struct sl_token *tp = tokfind(sl->htoken, msp->s);
 	  joxer_eaaa(&msp->m, "sl:name", NULL);
 	  grx_jox(tp->gdl, NULL);
 	  joxer_eeaa(&msp->m, "sl:name");
@@ -783,7 +783,7 @@ sx_w_jx_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
 	  char scode[32];
 	  struct sl_token *tp = NULL;
 	  (void)sprintf(scode, "%d", s->u.f->sort);
-	  tp = hash_find(sl->htoken, s->u.f->name);
+	  tp = tokfind(sl->htoken, s->u.f->name);
 
 	  if (s->u.f->compoundonly)
 	    {
@@ -1278,7 +1278,7 @@ sx_w_jx_sign(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, 
       if (s->type == 's' && s->valid)
 	{
 	  struct sl_token *tp = NULL;
-	  tp = hash_find(sl->htoken, s->u.s->name);
+	  tp = tokfind(sl->htoken, s->u.s->name);
 	  ratts = x_tle_atts(sl, s);
 	  joxer_ea(&s->mloc, (in_sign = x_tle_tag(s->u.s->type)), ratts);	  
 	  if (s->u.s->smap)
@@ -1335,7 +1335,7 @@ sx_w_jx_value(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *v,
 	  char scode[32];
 	  struct sl_token *tp = NULL;
 	  (void)sprintf(scode, "%d", v->u.v->sort);
-	  tp = hash_find(sl->htoken, v->u.v->name);
+	  tp = tokfind(sl->htoken, v->u.v->name);
 
 	  struct rnvval_atts *ratts = NULL;
 	  List *a = list_create(LIST_SINGLE);

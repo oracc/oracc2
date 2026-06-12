@@ -15,7 +15,7 @@ sx_sortcodes(struct sl_signlist *sl)
 			    && (!s->U.urev || strcmp(s->U.urev,"0")) && s->inst->valid))
 	if (s->oid)
 	  {
-	    struct sl_token *tp = hash_find(sl->htoken, s->name);
+	    struct sl_token *tp = tokfind(sl->htoken, s->name);
 #ifdef UseGt
 	    printf("%s\t%d\n", s->oid, tp->c);
 #else
@@ -33,7 +33,7 @@ sx_sortcodes(struct sl_signlist *sl)
 	    {
 	      if (f->oid && ip->valid)
 		{
-		  struct sl_token *tp = hash_find(sl->htoken, f->name);
+		  struct sl_token *tp = tokfind(sl->htoken, f->name);
 #ifdef UseGt
 		  printf("%s\t%d\n", f->oid, tp->c);
 #else

@@ -217,7 +217,7 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 			  struct sl_unicode *u = (ip->type == 's' ? &ip->u.s->U : &ip->u.f->sign->U);
 			  if (!u)
 			    u = &ip->u.f->U;
-			  struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
+			  struct sl_token *tp = tokfind(sl->htoken, (uccp)ldp->names[j]);
 			  sx_list_row(f, sl, (uccp)ldp->names[j], ip, tp, u, lp, NULL);
 			}
 		    }
@@ -243,7 +243,7 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 			}
 		      else
 			mesg_verr(NULL, "untyped @list or @lref");
-		      struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
+		      struct sl_token *tp = tokfind(sl->htoken, (uccp)ldp->names[j]);
 		      sx_list_row(f, sl, (uccp)ldp->names[j], ip, tp, NULL, lp, note);
 		      /*fprintf(f, "%s\t\t%d\t0\t\t\t\t\t%s\n", ldp->names[j], tp->s, note);*/
 		    }
@@ -252,7 +252,7 @@ sx_list_dump(FILE *f, struct sl_signlist *sl)
 		{
 		  if (list_warnings)
 		    mesg_verr(&sl->mloc, "list entry %s missing (no @list or @lref)", ldp->names[j]);
-		  struct sl_token *tp = hash_find(sl->htoken, (uccp)ldp->names[j]);
+		  struct sl_token *tp = tokfind(sl->htoken, (uccp)ldp->names[j]);
 		  sx_list_row(f, sl, (uccp)ldp->names[j], NULL, tp, NULL, lp, NULL);
 		  /*fprintf(f, "%s\t\t%d\t0\t\t\t\t\t[Omitted]\n", ldp->names[j], tp->s);*/
 		}
