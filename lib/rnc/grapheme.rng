@@ -145,7 +145,7 @@
   <define name="r">
     <element name="g:r">
       <data type="string">
-        <param name="pattern">[nN]\+[0-9]+|[nN]|[0-9]+|[n1-9]+/[n1-9]</param>
+        <param name="pattern">[nN]\+[0-9]+|[nN]|[0-9]+|[nN1-9]+/[nN1-9]</param>
       </data>
     </element>
   </define>
@@ -345,6 +345,7 @@
         <value>:</value>
         <value>:'</value>
         <value>:"</value>
+        <value>:&amp;quot;</value>
         <value>:.</value>
         <value>::</value>
         <value>|</value>

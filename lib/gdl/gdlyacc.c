@@ -812,7 +812,17 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "repeated");
   np->mloc = ytp->curr->mloc;
   np->text = (ccp)p;
-  ++c_delim_sentinel;
+  if (c_processing)
+    {
+      ++c_delim_sentinel;
+      if (!strcmp(np->rent->name, "g:gp"))
+	{
+	  if (!c_explicit_gps)
+	    c_explicit_gps = list_create(LIST_SINGLE);
+	  list_add(c_explicit_gps, np->rent);
+	  c_last_explicit_group_node = np->rent;
+	}
+    }
 }
 
 Node *

@@ -35,7 +35,7 @@ n.model  = r , (v|s|c|q|g)?
 
 r        = element g:r {
              xsd:string {
-	       pattern = "[nN]\+[0-9]+|[nN]|[0-9]+|[n1-9]+/[n1-9]" } }
+	       pattern = "[nN]\+[0-9]+|[nN]|[0-9]+|[nN1-9]+/[nN1-9]" } }
 
 n        = element g:n { g.form? , g.meta , sexified?, n.model , mods* }
 sexified = attribute sexified { text }
@@ -86,7 +86,7 @@ o.binary =
 
 # Punctuation
 p.model =
-    attribute g:type { "*"|":"|":'"|':"'|":."|"::"|"|"|"/"|":r:"|"·" } , 
+    attribute g:type { "*"|":"|":'"|':"'|":&quot;"|":."|"::"|"|"|"/"|":r:"|"·" } , 
     g.meta , 
     (v|q|s|n|c|text)?
 

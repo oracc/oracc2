@@ -91,7 +91,7 @@ treexml_o_bib(Node *np, void *user)
   Xmlhelper *xhp = user;
 
   if (inl_rnv)
-    inl_rnv_bib(np, user);
+    inl_rnv_bib(np, xhp->user);
   else
     {
       fprintf(xhp->fp, "<b:%s", np->name);
@@ -118,7 +118,7 @@ treexml_o_inl(Node *np, void *user)
   Xmlhelper *xhp = user;
 
   if (inl_rnv)
-    inl_rnv_inl(np, user);
+    inl_rnv_inl(np, xhp->user);
   else
     {
       if (np->name && '#' != *np->name)

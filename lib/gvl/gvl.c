@@ -428,6 +428,14 @@ gvl_compound(Node *ynp)
 				      that has left delim with no RHS; we will already
 				      have complained about that */
 			}
+		      else if (last->next && last->next->next
+			       && !strcmp(last->next->next->name, "g:d")
+			       && (last->next->next->text
+				   && (!strcmp(last->next->next->text, d)
+				       || !strcmp(last->next->next->text, "×"))))
+			{
+			  last = last->next->next; /* now last is the next g:d */
+			}
 		      else
 			break;
 		    }
