@@ -7,10 +7,17 @@
 #include <signlist.h>
 #include <sx.h>
 
+/* If this is set some form of instance or key data has been loaded */
+#define SXDATA sl->m_idata
+
 Hash *oids;
 Hash *oid_sort_keys;
 Hash *oid_warned = NULL;
 static struct sl_signlist *cmpsl = NULL;
+
+#ifndef UseGt
+static int via_tok_cmp(const void *a, const void *b);
+#endif
 
 int sx_show_tokens = 0;
 
@@ -227,6 +234,7 @@ static int signs_inst_cmp(const void *a, const void *b)
     return 0;
 }
 
+#ifndef UseGt
 static int toks_cmp(const void *a, const void *b)
 {
 #if 1
@@ -242,6 +250,7 @@ static int toks_cmp(const void *a, const void *b)
   return collate_cmp_graphemes((ucp)&t_a, (ucp)&t_b);
 #endif
 }
+#endif
 
 static int values_cmp(const void *a, const void *b)
 {
@@ -255,14 +264,20 @@ static int values_cmp(const void *a, const void *b)
     return 0;
 }
 
+#ifndef UseGt
 int via_tok_cmp(const void *a, const void *b)
 {
   const char *cc1 = (*(char**)a);
   const char *cc2 = (*(char**)b);
   struct sl_token *t1 = hash_find(cmpsl->htoken, (uccp)cc1);
   struct sl_token *t2 = hash_find(cmpsl->htoken, (uccp)cc2);
+#ifdef UseGt
+  int a1 = t1->c;
+  int b1 = t2->c;
+#else
   int a1 = t1->s;
   int b1 = t2->s;
+#endif
   if (a1 < b1)
     return -1;
   else if (a1 > b1)
@@ -270,6 +285,7 @@ int via_tok_cmp(const void *a, const void *b)
   else
     return 0;
 }
+#endif
 
 /* NOTE: oidindexes stores index+1 so that 0 return from hash_find means not-in-hash */
 static void
@@ -464,8 +480,13 @@ sx_marshall(struct sl_signlist *sl)
   /* Sort the tokens and set the token sort codes */
   cmpsl = sl;
   keys = hash_keys2(sl->htoken, &nkeys);
+#ifdef UseGt
+  if (nkeys > 1)
+    qsort(keys, nkeys, sizeof(char*), (cmp_fnc_t)gt_toks_gcmp);
+#else
   if (nkeys > 1)
     qsort(keys, nkeys, sizeof(char*), (cmp_fnc_t)toks_cmp);
+#endif
   sl->tokens = malloc((nkeys+1) * sizeof(struct sl_token *));
   if (sx_show_tokens)
     fprintf(stderr, "===sorted tokens===\n");
@@ -474,14 +495,25 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = hash_find(sl->htoken, (ucp)keys[i]);
       /* tp->gdl is a g:w node that wraps the grapheme; the first
 	 grapheme node is tp->gdl->kids */
+#ifdef UseGt
+      if (tp->gdl && tp->gdl->kids && !strcmp(tp->gdl->kids->name, "g:n"))
+	tp->c = i+1;
+      else
+	tp->c = i+1;
+#else
       if (tp->gdl && tp->gdl->kids && !strcmp(tp->gdl->kids->name, "g:n"))
 	tp->s = i+1;
       else
 	tp->s = i+1;
+#endif
       sl->tokens[i] = tp;
       if (sx_show_tokens)
 	{
+#ifdef UseGt
+	  fprintf(stderr, "%d\t", tp->c);
+#else
 	  fprintf(stderr, "%d\t", tp->s);
+#endif
 	  gsort_show(tp->gsh);
 	}
     }
@@ -499,8 +531,11 @@ sx_marshall(struct sl_signlist *sl)
       int j;
       sl->signs[i] = hash_find(sl->hsentry, (ucp)keys[i]);
       tp = hash_find(sl->htoken, sl->signs[i]->name);
+#ifdef UseGt
+      sl->signs[i]->sort = tp->c;
+#else
       sl->signs[i]->sort = tp->s;
-
+#endif
       if (sl->signs[i]->smap)
 	list_add(smap_list, sl->signs[i]);
 
@@ -577,7 +612,11 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       sl->forms[i] = hash_find(sl->hfentry, (ucp)keys[i]);
       tp = hash_find(sl->htoken, (ucp)keys[i]);
+#ifdef UseGt
+      sl->forms[i]->sort = tp->c;
+#else
       sl->forms[i]->sort = tp->s;
+#endif
       if (!(sl->forms[i]->oid = hash_find(oids, sl->forms[i]->name)))
 	{
 	  if (sl->forms[i]->aka)
@@ -681,7 +720,11 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       sl->lists[i] = hash_find(sl->hlentry, (ucp)keys[i]);
       tp = hash_find(sl->htoken, (ucp)keys[i]);
+#ifdef UseGt
+      sl->lists[i]->sort = tp->c;
+#else
       sl->lists[i]->sort = tp->s;
+#endif
     }
   /* Sort the lists */
   qsort(sl->lists, sl->nlists, sizeof(struct sl_list*), (cmp_fnc_t)lists_cmp);
@@ -731,7 +774,11 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       sl->values[i] = hash_find(sl->hventry, (ucp)keys[i]);
       tp = hash_find(sl->htoken, (ucp)keys[i]);
+#ifdef UseGt
+      sl->values[i]->sort = tp->c;
+#else
       sl->values[i]->sort = tp->s;
+#endif
       /* Sort fowners if there are any */
       if (sl->values[i]->fowners)
 	{
@@ -834,10 +881,13 @@ sx_marshall(struct sl_signlist *sl)
   for (i = 0; i < sl->nsigns; ++i)
     {
       struct sl_sign *sp = sl->signs[i];
-      if ('s' == sp->inst->type)
-	sx_idata_sign(sl, sp);
-      if ('s' == sp->inst->type)
-	sx_ldata_sign_inst(sl, sp->inst);
+      if (SXDATA)
+	{
+	  if ('s' == sp->inst->type)
+	    sx_idata_sign(sl, sp);
+	  if ('s' == sp->inst->type)
+	    sx_ldata_sign_inst(sl, sp->inst);
+	}
       if (sp->hlentry)
 	{
 	  int nslsts, j;
@@ -857,8 +907,11 @@ sx_marshall(struct sl_signlist *sl)
 	  for (j = 0; j < sp->nvalues; ++j)
 	    {
 	      sp->values[j] = hash_find(sp->hventry, (uccp)svals[j]);
-	      sx_idata_value_inst(sl, sp->values[j]);
-	      sx_ldata_value_inst(sl, sp->values[j]);
+	      if (SXDATA)
+		{
+		  sx_idata_value_inst(sl, sp->values[j]);
+		  sx_ldata_value_inst(sl, sp->values[j]);
+		}
 	    }
 	  qsort(sp->values, sp->nvalues, sizeof(void*), (cmp_fnc_t)values_inst_cmp);
 	}
@@ -872,7 +925,8 @@ sx_marshall(struct sl_signlist *sl)
 	    {
 	      struct sl_inst *fp;
 	      fp = sp->forms[j] = hash_find(sp->hfentry, (uccp)sfrms[j]);
-	      sx_idata_form_inst(sl, fp);
+	      if (SXDATA)
+		sx_idata_form_inst(sl, fp);
 	      if (fp->lv && fp->lv->hlentry)
 		{
 		  int nslsts, m;
@@ -900,10 +954,13 @@ sx_marshall(struct sl_signlist *sl)
 			      sp->forms[j]->u.f->sign->name, sp->forms[j]->u.f->name);
 		  fp->lv->nvalues = l;
 		  qsort(fp->lv->values, fp->lv->nvalues, sizeof(void*), (cmp_fnc_t)values_inst_cmp);
-		  for (k = 0; fp->lv->values[k]; ++k)
+		  if (SXDATA)
 		    {
-		      sx_idata_value_inst(sl, fp->lv->values[k]);
-		      sx_ldata_value_inst(sl, fp->lv->values[k]);
+		      for (k = 0; fp->lv->values[k]; ++k)
+			{
+			  sx_idata_value_inst(sl, fp->lv->values[k]);
+			  sx_ldata_value_inst(sl, fp->lv->values[k]);
+			}
 		    }
 		}
 	    }
@@ -949,7 +1006,8 @@ sx_marshall(struct sl_signlist *sl)
     sx_unicode_p(sl);  
 #endif
 
-  sx_kdata_useq(sl);  
+  if (SXDATA)
+    sx_kdata_useq(sl);  
 
   /* This is the merge processing that is done when creating a subsl */
   if (sxconfig.merge)
@@ -957,7 +1015,8 @@ sx_marshall(struct sl_signlist *sl)
   
   sx_images(sl);
 
-  sx_idata_ctotals(sl);
+  if (SXDATA)
+    sx_idata_ctotals(sl);
   
   /*collate_term();*/
 }

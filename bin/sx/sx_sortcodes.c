@@ -16,7 +16,11 @@ sx_sortcodes(struct sl_signlist *sl)
 	if (s->oid)
 	  {
 	    struct sl_token *tp = hash_find(sl->htoken, s->name);
+#ifdef UseGt
+	    printf("%s\t%d\n", s->oid, tp->c);
+#else
 	    printf("%s\t%d\n", s->oid, tp->s);
+#endif
 	  }
     }
   for (i = 0; i < sl->nforms; ++i)
@@ -30,7 +34,11 @@ sx_sortcodes(struct sl_signlist *sl)
 	      if (f->oid && ip->valid)
 		{
 		  struct sl_token *tp = hash_find(sl->htoken, f->name);
+#ifdef UseGt
+		  printf("%s\t%d\n", f->oid, tp->c);
+#else
 		  printf("%s\t%d\n", f->oid, tp->s);
+#endif
 		  break;
 		}
 	    }

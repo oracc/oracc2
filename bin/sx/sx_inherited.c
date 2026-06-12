@@ -83,7 +83,8 @@ sx_inherited(struct sl_signlist *sl)
 			{
 			  /* In @sign A @v a and @sign E @v a₆ @form A we have to reject inheritance */
 			  const unsigned char *sb = NULL;
-			  if (!(sb = hash_find(sl->forms[i]->sign->hvbases, (uccp)keys[j])))
+			  if (sl->forms[i]->sign->hvbases
+			      && !(sb = hash_find(sl->forms[i]->sign->hvbases, (uccp)keys[j])))
 			    {
 			      b = hash_find(form_inst->parent_s->u.s->hvbases, (uccp)keys[j]);
 			      if (itrace)
@@ -163,7 +164,7 @@ sx_inherited(struct sl_signlist *sl)
 	      for (k = 0; k < nkeys; ++k)
 		{
 		  const unsigned char *sb = NULL;
-		  if ((sb = hash_find(sl->forms[i]->sign->hvbases, (uccp)keys[k])))
+		  if (sl->forms[i]->sign->hvbases && (sb = hash_find(sl->forms[i]->sign->hvbases, (uccp)keys[k])))
 		    {
 		      const unsigned char *fb = hash_find(form_inst->lv->hvbases, (uccp)keys[k]);
 		      /* @sign A @v a and @form A @v a₆ */

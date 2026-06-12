@@ -159,11 +159,14 @@ static void
 gsort_node(Node *np, List *lp)
 {
   static int pending_r = 0;
+
+  if (!strcmp(np->name, "g:w") || !strcmp(np->name, "g:nonw"))
+    np = np->kids;
   
   /* Ignore determinatives for now; should probably ensure that forms
      with determinative sort in constant order */
   if (!strcmp(np->name, "g:det"))
-    return;
+    np = np->next;
 
   switch (np->name[2])
     {

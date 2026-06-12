@@ -117,6 +117,7 @@ gx_init(void)
   gdl_init();
   gsort_init();
   gt_config(htokens, mtokens);
+  gt_load_oids("sl");
   gvl_setup("osl","osl","020");
   lng_init();
   curr_lang_ctxt = global_lang = lang_switch(NULL,"sux",NULL,NULL,0);

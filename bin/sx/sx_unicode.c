@@ -762,7 +762,11 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
   list_free(xseq, NULL);
   
   u = hash_keys2(uneeds, &nu);
+#ifdef UseGt
+  qsort(u, nu, sizeof(const char *), gt_toks_ccmp);
+#else
   qsort(u, nu, sizeof(const char *), via_tok_cmp);
+#endif
   for (i = 0; u[i]; ++i)
     fprintf(f, "need\t%s\n", u[i]);
 }

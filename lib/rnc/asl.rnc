@@ -3,6 +3,10 @@ namespace n = "http://oracc.org/ns/norm/1.0"
 namespace sl = "http://oracc.org/ns/sl/1.0"
 
 include "inl.rnc"
+include "gdl-lib.rnc"
+
+noteref = empty
+noteauto = empty
 
 start =
   element sl:signlist {
@@ -205,42 +209,7 @@ sl.smap    = element sl:smap { attribute oid { xsd:NCName } , text }
 
 sl.name =
   element sl:name {
-    (text
-     | element g:nonw {
-         attribute type { xsd:NCName },
-         attribute xml:lang { xsd:NCName },
-         element g:p {
-           attribute g:status { xsd:NCName },
-           attribute g:type { text },
-           attribute g:utf8 { text }
-         }
-       }
-     | element g:w {
-         attribute form { text },
-         attribute xml:lang { xsd:NCName },
-         (g.t | g.g | g.s | element g:p { text })?,
-         g.d?,
-         (g.c | g.n)?,
-         element g:q {
-           attribute form { text },
-           attribute g:delim { xsd:NMTOKEN }?,
-           attribute g:status { xsd:NCName }?,
-           attribute g:utf8 { text }?,
-           g.v,
-           g.s
-         }?,
-         g.v*
-       }
-     | element n:w {
-         attribute form { xsd:NCName },
-         attribute g:delim { text }?,
-         attribute xml:lang { xsd:NCName },
-         element n:s {
-           attribute g:delim { xsd:NMTOKEN }?,
-           xsd:NCName
-         }+,
-         g.d?
-       })+
+    text | nonword | word | normword
   }
 sl.ucun =
   element sl:ucun {
@@ -378,96 +347,3 @@ sl.scriptcode = element sl:code {
 
 sl.metrology = element sl:metrology { empty }
 
-oid = attribute oid { text }
-key = attribute key { text }
-sign_attr = attribute g:sign  { text }
-xid = attribute xml:id { xsd:NCName }
-
-xattr = (oid? , key? , sign_attr? , xid?)
-
-g.d =
-  element g:d {
-    attribute g:pos { xsd:NCName },
-    attribute g:role { xsd:NCName },
-    (g.g | g.v)
-  }
-g.g =
-  element g:g {
-    implicit?,
-    attribute g:type { xsd:NCName }?,
-    ( g.s | g.n )+
-  }
-g.s =
-  element g:s {
-    attribute form { text }?,
-    attribute g:accented { text }?,
-    attribute g:delim { text }?,
-    attribute g:logolang { xsd:NCName }?,
-    attribute g:role { xsd:NCName }?,
-    attribute g:status { xsd:NCName }?,
-    attribute g:utf8 { text }?,
-    xattr,
-    (text | (g.b , mods+))
-  }
-g.n =
-  element g:n {
-  (
-    (attribute form { "n" | "N" })
-  |
-    (attribute form { text },
-    attribute sexified { text }?,
-    attribute g:status { xsd:NCName }?,
-    attribute g:utf8 { text }?,
-    element g:r { attribute form { text }? , text },
-    (g.s | g.v)?,
-    mods*,
-    (g.c | mods)?,
-    mods*)
-  )
-  }
-g.c =
-  element g:c {
-    attribute form { text },
-    attribute g:status { xsd:NCName }?,
-    attribute g:utf8 { text }?,
-    xattr,
-    (mods
-     | g.n
-     | g.o
-     | g.s
-     | g.g.c)+ ,
-    mods*
-  }
-
-g.g.c = element g:g { implicit? , ctype?, ((g.g.c , (mods)*) | g.o | g.n | g.s)+ }
-
-ctype = attribute g:type { "c" }
-
-g.v =
-  element g:v {
-    attribute form { text }?,
-    attribute g:accented { xsd:NCName }?,
-    attribute g:delim { xsd:NMTOKEN }?,
-    attribute g:status { xsd:NCName }?,
-    attribute g:utf8 { text }?,
-    xattr,
-    (text | (g.b , mods+))
-  }
-mods     = modifier | allograph
-
-modifier = element g:m { xsd:string { pattern = "[a-z]|[0-9]{1,3}" } }
-
-allograph= element g:a { xsd:string { pattern = "[a-wyz0-9]+" } 
-			| xsd:string { pattern = "[\+\-]" } }
-
-g.b = element g:b { text }
-g.o =
-  element g:o {
-    attribute g:type { xsd:NCName },
-    text
-  }
-
-implicit = attribute implicit { "1" }
-
-# This is a new addition for printing the text value of GDL literals
-g.t = element g:t { text }

@@ -1,4 +1,7 @@
 #include <oraccsys.h>
+#include <hash.h>
+#include <memo.h>
+#include <oid.h>
 #include "gdl.h"
 #include "gt.h"
 
@@ -8,6 +11,54 @@
 
 static Gt_cfg gtcfg;
 const char *gdl_last_bad_sig = NULL;
+
+static Hash *h_gt;
+static Memo *m_gt;
+static Pool *p_gt;
+
+static Hash *gt_oids = NULL;
+
+Gt *
+gt_get_token(uccp n)
+{
+  return hash_find(gtcfg.h, n);
+}
+
+void
+gt_set_oids(Hash *o)
+{
+  gt_oids = o;
+}
+
+void
+gt_load_oids(const char *dom)
+{
+  gt_oids = oid_domain_hash(NULL, "oid", dom);
+}
+
+void
+gt_init(void)
+{
+  if (!h_gt)
+    {
+      h_gt = hash_create(2048);
+      m_gt = memo_init(sizeof(Gt), 512);
+      p_gt = pool_init();
+      gt_config(h_gt, m_gt);
+    }
+}
+void
+gt_term(void)
+{
+  if (h_gt)
+    {
+      gtcfg.h = NULL;
+      gtcfg.m = NULL;
+      hash_free(h_gt, NULL);
+      memo_term(m_gt);
+      pool_term(p_gt);
+    }
+}
 
 void
 gt_config(Hash *h, Memo *m)
@@ -99,7 +150,8 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	  gsig = gdlsig(tp);
 	  if (gt_bad_gsig(locp, t, gsig))
 	    return NULL;
-	  sign = (ccp)sll_snames_of((uccp)gsig);
+
+	  sign = (ccp)gt_snames_of((uccp)gsig);
   
 	  gdlsig_depth_mode = 1;
 	  deep = gdlsig(tp);
@@ -115,13 +167,17 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       tokp->priority = 100;
       if (gdl_word_mode)
 	{
-	  tokp->gdl = tp->root->kids;
+	  if (tp->root->kids)
+	    tokp->gdl = tp->root->kids;
+	  else
+	    tokp->gdl = tp->root; /* SX uses g:gdl sans kids for list-num literals */
 	}
       else
 	{
 	  tokp->gdl = tp->root;
 	  tokp->gdl->name = "g:w";
 	}
+
       if (!tokp->gdl->mloc)
 	tokp->gdl->mloc = mloc_mloc(locp);
 
@@ -139,7 +195,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       tokp->gsig = gsig;
       tokp->deep = deep;
       tokp->sign = sign;
-      tokp->user = user;
+      tokp->oid_ip = (struct sl_inst *)user;
       hash_add(gtcfg.h, t, tokp);
     }
   return tokp;
@@ -184,4 +240,40 @@ gt_codes(void)
   qsort(t, n, sizeof(Gt *), gt_toks_vcmp);
   for (i = 0; i < n; ++i)
     t[i]->c = i;
+}
+
+unsigned char *
+gt_snames_of(unsigned const char *oids)
+{
+  List *l = list_create(LIST_SINGLE);
+  unsigned char *xoids = (ucp)pool_copy((uccp)oids,p_gt), *x, *ret;
+  x = xoids;
+  while (x)
+    {
+      unsigned char *o = (ucp)strchr((ccp)x+1, 'o');
+      unsigned char delim = '\0';
+      if (o)
+	{
+	  delim = o[-1];
+	  o[-1] = '\0';
+	  if (!delim)
+	    fprintf(stderr, "gt_names_of: bad delim in %s\n", oids);
+	}
+      if ('q' == *x)
+	list_add(l, "X");
+      else
+	{
+	  ucp sgn = hash_find(gt_oids, x);
+	  if (sgn)
+	    list_add(l,sgn);
+	  else
+	    list_add(l,"Y"); /* this should not be able to happen */
+	}
+      if (delim)
+	list_add(l, '_' == delim ? " " : ".");
+      x = o;
+    }
+  ret = list_join(l, "");
+  list_free(l,NULL);
+  return ret;
 }

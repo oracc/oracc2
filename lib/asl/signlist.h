@@ -9,6 +9,13 @@
 #include <mesg.h>
 #include <gsort.h>
 
+#define UseGt
+
+#ifdef UseGt
+#include <gt.h>
+#define sl_token gdl_token
+#endif
+
 struct sl_inst;
 struct sl_listdef;
 
@@ -158,6 +165,7 @@ struct sl_signlist
   Mloc eloc;
 };
 
+#ifndef UseGt
 struct sl_token
 {
   const unsigned char *t;	/* sign/form/value/base/list name token */
@@ -171,6 +179,7 @@ struct sl_token
   int s;			/* sort code for token */
   int priority;			/* for registering nums */
 };
+#endif
 
 struct sl_liga
 {

@@ -36,7 +36,7 @@ gdl_init(void)
     return;
 
   atf2utf_init();
-  
+
   gdl_balance_init();
 
   gdl_lexfld_init();

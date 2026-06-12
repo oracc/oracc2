@@ -74,7 +74,6 @@ extern const char *gvl_script_type;
 extern const char *mergers;
 
 int oid_char_cmp(const void *a, const void *b);
-extern int via_tok_cmp(const void *a, const void *b);
 
 extern int cmpstringp(const void *p1, const void *p2);
 

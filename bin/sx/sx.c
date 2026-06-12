@@ -5,10 +5,12 @@
 #include <tree.h>
 #include <help.h>
 #include <json.h>
+#include <lng.h>
 #include <xml.h>
 #include <asl.h>
 #include <ns-asl.h>
 #include <gdl.h>
+#include <gt.h>
 #include <joxer.h>
 #include <rnvif.h>
 #include <rnvxml.h>
@@ -60,7 +62,6 @@ int validate = 1;
 extern int asl_raw_tokens; /* ask asl to produce list of @sign/@form/@v tokens */
 extern int ctrace;
 extern int no_image_data, inl_rnv;
-extern int gdl_xmlids;
 
 struct sl_signlist *parent_asl;
 
@@ -92,9 +93,8 @@ main(int argc, char * const*argv)
   xo_loc = malloc(sizeof(Mloc));
   mesg_init();
   asl_flex_debug = gdl_flex_debug = 0;
-  gdl_unicode = inl_rnv = 1;
-  gdl_xmlids = 0;
-
+  gdl_unicode = inl_rnv = gdl_no_xml_ids = gdl_word_mode = 1;
+  gt_init();
   gsort_init();
   
   if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUvVxX:?"))
@@ -188,6 +188,7 @@ main(int argc, char * const*argv)
   nodeh_register(treexml_o_handlers, NS_SL, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_SL, treexml_c_generic);
 
+  lang_init();
   gdl_init();
   asl_init(&sxconfig);
   sl = aslyacc(file);
@@ -339,13 +340,15 @@ main(int argc, char * const*argv)
 
 	  jox_jsn_output(jfp);
 	  jox_xml_output(xfp);
-	  joxer_init(&asl_data, "asl", validate, xfp, jfp);	  
+	  joxer_init(&asl_data, "asl", validate, xfp, jfp);
 	  sx_walk(sx_w_jox_init(), sl);
 	  joxer_term(xfp,jfp);
 	}
     }
-  
+
+  gt_term();
   gdl_term();
+  lang_term();
   asl_term();
   asl_bld_term(sl);
 

@@ -179,7 +179,11 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 	    {
 	      struct sl_number *np = &sl->numbers[j];
 	      char sort[10];
+#ifdef UseGt
+	      sprintf(sort, "%d", np->t->c);
+#else
 	      sprintf(sort, "%d", np->t->s);
+#endif
 	      if (np->sset)
 		ratts = rnvval_aa("x",
 				  "n", np->t->t,
@@ -227,7 +231,11 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 	continue;
 
       char ssort[32];
+#ifdef UseGt
+      sprintf(ssort,"%d",tp->c);
+#else
       sprintf(ssort,"%d",tp->s);
+#endif
       ratts = rnvval_aa("x",
 			"xml:id", hash_find(sl->homophone_ids, (uccp)keys[i]),
 			"n", keys[i],
@@ -242,10 +250,17 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 	{
 	  struct sl_token *vp = hash_find(sl->htoken, (uccp)spv->v);
 	  char vsort[32];
+#ifdef UseGt
+	  if (vp)
+	    sprintf(vsort, "%d", vp->c);
+	  else
+	    *vsort = '\0';
+#else
 	  if (vp)
 	    sprintf(vsort, "%d", vp->s);
 	  else
 	    *vsort = '\0';
+#endif
 	  char ssort[32];
 	  if (spv->oid)
 	    sprintf(ssort, "%d", (int)(uintptr_t)hash_find(oid_sort_keys, (uccp)spv->oid));
@@ -524,20 +539,23 @@ sx_w_jx_cpd_elt(const char *name, const char **oids)
 static void
 sx_w_jx_cpds(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *ip)
 {
-  struct sl_compound_digest *cdp = hash_find(ip->u.s->hcompounds, (uccp)"#digest_by_oid");
-  if (cdp)
+  if (ip->u.s->hcompounds)
     {
-      char icnt[12];
-      sprintf(icnt, "%ld", ip->u.s->ctotal);
-      ratts = rnvval_aa("x", "icnt", icnt, NULL);
-      joxer_eaa(NULL, "sl:cpds", ratts);
-      sx_w_jx_cpd_elt("sl:memb", cdp->memb);
-      sx_w_jx_cpd_elt("sl:init", cdp->initial);
-      sx_w_jx_cpd_elt("sl:medl", cdp->medial);
-      sx_w_jx_cpd_elt("sl:finl", cdp->final);
-      sx_w_jx_cpd_elt("sl:ctnr", cdp->container);
-      sx_w_jx_cpd_elt("sl:ctnd", cdp->contained);
-      joxer_eea(NULL, "sl:cpds");
+      struct sl_compound_digest *cdp = hash_find(ip->u.s->hcompounds, (uccp)"#digest_by_oid");
+      if (cdp)
+	{
+	  char icnt[12];
+	  sprintf(icnt, "%ld", ip->u.s->ctotal);
+	  ratts = rnvval_aa("x", "icnt", icnt, NULL);
+	  joxer_eaa(NULL, "sl:cpds", ratts);
+	  sx_w_jx_cpd_elt("sl:memb", cdp->memb);
+	  sx_w_jx_cpd_elt("sl:init", cdp->initial);
+	  sx_w_jx_cpd_elt("sl:medl", cdp->medial);
+	  sx_w_jx_cpd_elt("sl:finl", cdp->final);
+	  sx_w_jx_cpd_elt("sl:ctnr", cdp->container);
+	  sx_w_jx_cpd_elt("sl:ctnd", cdp->contained);
+	  joxer_eea(NULL, "sl:cpds");
+	}
     }
 }
 
@@ -657,7 +675,12 @@ sx_w_jx_glyfs(struct sx_functions *f, struct sl_signlist *sl, List *a)
   joxer_ao("j:glyfs");
   for (ip = list_first(a); ip; ip = list_next(a))
     {
-      static char s[10]; sprintf(s, "%d", ip->u.g->t->s);
+      static char s[10];
+#ifdef UseGt
+      sprintf(s, "%d", ip->u.g->t->c);
+#else
+      sprintf(s, "%d", ip->u.g->t->s);
+#endif
       List *a = list_create(LIST_SINGLE);
       list_add(a, "n");
       list_add(a, (void*)xmlify((uccp)ip->u.g->nam));
@@ -1103,9 +1126,15 @@ x_cdp_refs(struct sl_signlist *sl, struct sl_inst *s)
   struct sl_compound_digest *cdp = NULL;
 
   if (s->type == 's')
-    cdp = hash_find(s->u.s->hcompounds, (uccp)"#digest_by_oid");
+    {
+      if (s->u.s->hcompounds)
+	cdp = hash_find(s->u.s->hcompounds, (uccp)"#digest_by_oid");
+    }
   else if (s->type == 'f')
-    cdp = hash_find(s->u.f->sign->hcompounds, (uccp)"#digest_by_oid");
+    {
+      if (s->u.f->sign->hcompounds)
+	cdp = hash_find(s->u.f->sign->hcompounds, (uccp)"#digest_by_oid");
+    }
   if (cdp)
     {
       unsigned char *oids;

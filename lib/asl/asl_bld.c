@@ -7,6 +7,7 @@
 #include <gutil.h>
 #include <sll.h>
 #include <gdl.h>
+#include <gt.h>
 #include <oid.h>
 #include <asl.tab.h>
 #include "signlist.h"
@@ -155,6 +156,7 @@ asl_bld_init(void)
 
   /* Preload the current set of SL oids */
   oids = oid_domain_hash(NULL, "oid", "sl");
+  gt_set_oids(oids);
 
   (void)gvl_setup(NULL, NULL, NULL);
   gvl_set_lookup_ptr(asl_oid_lookup);
@@ -221,6 +223,7 @@ asl_bld_singleton_string(Mloc *locp, const unsigned char *t, const char *tag, un
     }
 }
 
+#if 0
 static Tree *
 asl_bld_gdl(Mloc *locp, unsigned char *s)
 {
@@ -231,6 +234,7 @@ asl_bld_gdl(Mloc *locp, unsigned char *s)
   gdlparse_reset();
   return tp;
 }
+#endif
 
 static uccp
 reset_num_n(struct sl_signlist *sl, const unsigned char *n, const unsigned char *asif)
@@ -321,11 +325,11 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
 struct sl_token *
 asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 {
-#if 0
+#ifdef UseGt
   /* Future use of GDL token interface derived from the ASL/SX token stuff */
-  Gt *tokp = gt_token(locp, gtcfg, t, literal || asl_literal, sl->curr_inst);
-  asl_literal = 0;
-  return gt;  
+  Gt *tokp = gt_token(locp, t, literal || asl_literal_flag, sl->curr_inst);
+  asl_literal_flag = 0;
+  return tokp;
 #else
   struct sl_token *tokp = NULL;
   
@@ -1926,7 +1930,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   else if (sl->curr_sign)
     {
       unsigned const char *b = NULL;
-      if (!minus_flag && (b = hash_find(sl->curr_sign->hvbases, base)))
+      if (!minus_flag && sl->curr_sign->hvbases && (b = hash_find(sl->curr_sign->hvbases, base)))
 	{
 	  mesg_verr(locp, "sign %s values %s and %s have the same base %s\n", sl->curr_sign->name, b, n, base);
 	  return;

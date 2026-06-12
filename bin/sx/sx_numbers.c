@@ -45,7 +45,11 @@ nums_cmp(const void *a, const void *b)
   if (strcmp((ccp)n1->rep, (ccp)n2->rep))
     return nums_rep_cmp(n1->rep, n2->rep);
 
+#ifdef UseGt
+  return n1->t->c - n2->t->c;
+#else
   return n1->t->s - n2->t->s;
+#endif
 }
 
 static void
@@ -104,10 +108,17 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
     stok = "LAGAB~a";
   
   struct sl_token *set_tok = hash_find(sl->htoken, (uccp)stok);
+#ifdef UseGt
+  if (set_tok)
+    np->setsort = set_tok->c;
+  else
+    fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);
+#else
   if (set_tok)
     np->setsort = set_tok->s;
   else
     fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);
+#endif
 
   if (!hash_find(numsets, np->set))
     hash_add(numsets, np->set, "");

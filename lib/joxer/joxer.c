@@ -729,7 +729,7 @@ joxer_et_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
 static void
 joxer_eto_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
 {
-  const char *xch = (ccp)xmlify((ucp)ch);
+  /*const char *xch = (ccp)xmlify((ucp)ch);*/
   joxer_mloc(mp);
   rnvval_ea(pname, rats);
   /*rnvval_ch(xch);*/ /* temporary suppression of validation for text nodes until inl is handled properly */
@@ -959,7 +959,6 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
   if (val)
     {
       rnvval_init_err(jox_verror_handler);
-      rnvval_init(xdp, rncbase);
       rnvif_init();
       rnv_initialized = 1;
       rnvval_init(xdp, rncbase);

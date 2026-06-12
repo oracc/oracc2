@@ -163,7 +163,7 @@ sx_w_a_form(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *s, e
   static int in_form = 0;
   if (sx_pos_inst == p)
     {
-      struct tis_data *tip;
+      struct tis_data *tip = NULL;
       if (sl->h_kdata && (!(tip = hash_find(sl->h_kdata,s->key))))
 	return;
 
@@ -245,7 +245,7 @@ sx_w_a_qvs(struct sx_functions *f, struct sl_signlist *sl, struct sl_inst *vi, e
   if (!identity_mode && sx_pos_inst == p)
     {
       const unsigned char *pname;
-      const char *poid, *qvm;
+      const char *poid, *qvm = NULL;
       if (vi->parent_f)
 	{
 	  pname = vi->parent_f->u.f->name;
