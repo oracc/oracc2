@@ -88,7 +88,7 @@ o.binary =
 p.model =
     attribute g:type { "*"|":"|":'"|':"'|":."|"::"|"|"|"/"|":r:"|"·" } , 
     g.meta , 
-    (v|q|s|n|c)?
+    (v|q|s|n|c|text)?
 
 gimplicit = attribute implicit { "1" }
 

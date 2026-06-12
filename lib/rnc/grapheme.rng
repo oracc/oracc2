@@ -361,6 +361,7 @@
         <ref name="s"/>
         <ref name="n"/>
         <ref name="c"/>
+        <text/>
       </choice>
     </optional>
   </define>

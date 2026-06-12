@@ -854,7 +854,8 @@ gdl_delim(Tree *ytp, const char *data)
       ++c_delim_sentinel;
       if (strcmp(np->rent->name, "g:gp")) /* implicit group */
 	{
-	  if ('.' != *data && '%' != *data && '-' != *data && ':' != *data && '+' != *data)
+	  if ('.' != *data && (!c_last_implicit_delim || '%' != *data)
+	      && '-' != *data && ':' != *data && '+' != *data)
 	    {
 	      /* c_last_implicit_delim avoids adding successive delims
 		 of the same kind to the implicit group list. So,
@@ -1046,7 +1047,9 @@ gdl_punct(Mloc *locp, Tree *ytp, const char *data)
 {
   if (gdltrace)
     fprintf(stderr, "gt: PUNCT: %s\n",data);
-  return gdl_graph_node(locp, ytp, "g:p", data);
+  Node *p =  gdl_graph_node(locp, ytp, "g:p", data);
+  gdl_prop_kv(p, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", data);
+  return p;
 }
 
 void

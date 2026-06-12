@@ -69,7 +69,7 @@ inl_rnv_inl(Node *np, Scanseg *sp)
   
   if (sp)
     {
-      if (sp->name && sp->attr)
+      if (sp->name && *sp->name && sp->attr)
 	{
 	  const char *atts[5] = { "tag" , NULL, "att" , NULL , NULL };
 	  atts[2] = sp->name;
