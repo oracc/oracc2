@@ -51,11 +51,13 @@ allograph= element g:a { xsd:string { pattern = "[a-z0-9]+" }
 formvar = element g:f { xsd:string { pattern = "[a-z0-9]+" } }
 
 # Compounds
-c.model  = (compound , (o.join , compound)+) | unary | binary | ternary | (g , mods+)
+c.model  = (compound , (o.join , compound)+) | unary | binary | ternary | (g , mods*)
 
 c.b	 = element g:b { c.model }
 
-c        = element g:c { g.form? , g.meta , (c.b | c.model) , mods* }
+c.g	 = element g:g { c.model }
+
+c        = element g:c { g.form? , g.meta , (c.b | c.g | c.model) , mods* }
 
 g        = element g:g { gimplicit? , g.meta , c.model , mods* , g.type? }
 
@@ -71,7 +73,7 @@ binary   = single , o.binary , single
 
 ternary   = single , o.binary , single , o.binary , single
 
-o.join   = element g:o { attribute g:type { "beside" | "joining" | "reordered" } }
+o.join   = element g:o { attribute g:type { "above" | "beside" | "joining" | "reordered" } }
 
 o.unary  = element g:o { attribute g:type { "repeated" } , xsd:integer }
 

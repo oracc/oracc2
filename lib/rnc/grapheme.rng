@@ -216,14 +216,19 @@
       <ref name="ternary"/>
       <group>
         <ref name="g"/>
-        <oneOrMore>
+        <zeroOrMore>
           <ref name="mods"/>
-        </oneOrMore>
+        </zeroOrMore>
       </group>
     </choice>
   </define>
   <define name="c.b">
     <element name="g:b">
+      <ref name="c.model"/>
+    </element>
+  </define>
+  <define name="c.g">
+    <element name="g:g">
       <ref name="c.model"/>
     </element>
   </define>
@@ -235,6 +240,7 @@
       <ref name="g.meta"/>
       <choice>
         <ref name="c.b"/>
+        <ref name="c.g"/>
         <ref name="c.model"/>
       </choice>
       <zeroOrMore>
@@ -303,6 +309,7 @@
     <element name="g:o">
       <attribute name="g:type">
         <choice>
+          <value>above</value>
           <value>beside</value>
           <value>joining</value>
           <value>reordered</value>

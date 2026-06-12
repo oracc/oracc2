@@ -272,6 +272,9 @@ gvl_c_implicit_gp(Node *dlm, Node *last)
   else
     first = dlm->prev;
 
+  if (!strcmp(last->name, "g:d"))
+    last = last->next;
+
   Node *gp = node_group(dlm, first, last);
   gp->name = "g:gp";
 
@@ -411,12 +414,13 @@ gvl_compound(Node *ynp)
 	      /* Don't generate implicit groups when there is a parse error */
 	      if (last)
 		{
+		  int plusone = 0;
 		  while (1)
 		    {
 		      if (last->next && !strcmp(last->next->name, "g:d")
 			  && (!strcmp(last->next->text, d) || !strcmp(last->next->text, "×")))
 			{
-			  Node *nxt = last->next->next;
+			  Node *nxt = last->next;
 			  if (nxt)
 			    last = nxt; /* now last is the RHS of the next delim */
 			  else
@@ -431,6 +435,8 @@ gvl_compound(Node *ynp)
 	      if ((gp->prev && gp->prev->prev) || (last && last->next))
 		gvl_c_implicit_gp(gp, last);
 	    }
+	  list_free(c_implicit_gps, NULL);
+	  c_implicit_gps = NULL;
 	}
 
       if (c_explicit_gps)

@@ -89,6 +89,8 @@ main(int argc, char * const*argv)
 {
   struct sl_signlist *sl;
   FILE *sllout = stdout;
+
+  signals(argc, argv);
   
   xo_loc = malloc(sizeof(Mloc));
   mesg_init();

@@ -176,3 +176,35 @@ xstrdup (const char * c)
     (void)strcpy (tmp, c);
   return tmp;
 }
+
+static char *crashbuf;
+
+static void 
+clean_exit_on_sig(int sig_num)
+{
+  (void)write(STDERR_FILENO, crashbuf, strlen(crashbuf));
+  exit(128+sig_num);
+}
+
+void
+signals(int argc, char **argv)
+{
+  int i, len;
+  for (i = 0, len = 0; i < argc; ++i)
+    len += strlen(argv[i]);
+  crashbuf = malloc(len + argc + 128);
+  sprintf(crashbuf, "%s: emergency stop, program crash. Invoked with:\n\t", argv[0]);
+  for (i = 1; i < argc; ++i)
+    {
+      if (i)
+	strcat(crashbuf, " ");
+      strcat(crashbuf, argv[i]);
+    }
+  strcat(crashbuf, "\n");
+  signal(SIGINT  , clean_exit_on_sig);
+  signal(SIGABRT , clean_exit_on_sig);
+  signal(SIGILL  , clean_exit_on_sig);
+  signal(SIGFPE  , clean_exit_on_sig);
+  signal(SIGSEGV , clean_exit_on_sig);
+  signal(SIGTERM , clean_exit_on_sig);
+}

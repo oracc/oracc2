@@ -854,7 +854,7 @@ gdl_delim(Tree *ytp, const char *data)
       ++c_delim_sentinel;
       if (strcmp(np->rent->name, "g:gp")) /* implicit group */
 	{
-	  if ('.' != *data && '-' != *data && ':' != *data && '+' != *data)
+	  if ('.' != *data && '%' != *data && '-' != *data && ':' != *data && '+' != *data)
 	    {
 	      /* c_last_implicit_delim avoids adding successive delims
 		 of the same kind to the implicit group list. So,
