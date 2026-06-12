@@ -209,7 +209,7 @@ sl.smap    = element sl:smap { attribute oid { xsd:NCName } , text }
 
 sl.name =
   element sl:name {
-    text | nonword | word | normword
+    text | nonword | word | normword | t
   }
 sl.ucun =
   element sl:ucun {
