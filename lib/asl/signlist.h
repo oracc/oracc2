@@ -14,6 +14,9 @@
 #ifdef UseGt
 #include <gt.h>
 #define sl_token gdl_token
+#define tokfind(h,n) gt_get_token(n)
+#else
+#define tokfind(h,n) hash_find(h,n)
 #endif
 
 struct sl_inst;

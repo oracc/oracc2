@@ -479,11 +479,12 @@ sx_marshall(struct sl_signlist *sl)
   
   /* Sort the tokens and set the token sort codes */
   cmpsl = sl;
-  keys = hash_keys2(sl->htoken, &nkeys);
 #ifdef UseGt
+  keys = hash_keys2(gt_get_hash(), &nkeys);
   if (nkeys > 1)
     qsort(keys, nkeys, sizeof(char*), (cmp_fnc_t)gt_toks_gcmp);
 #else
+  keys = hash_keys2(sl->htoken, &nkeys);
   if (nkeys > 1)
     qsort(keys, nkeys, sizeof(char*), (cmp_fnc_t)toks_cmp);
 #endif

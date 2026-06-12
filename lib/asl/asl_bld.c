@@ -105,7 +105,9 @@ struct sl_signlist *
 asl_bld_init(void)
 {
   struct sl_signlist *sl = calloc(1, sizeof(struct sl_signlist));
+#ifndef UseGt
   sl->htoken = hash_create(4192);
+#endif
   sl->hkeys = hash_create(4192);
   sl->linkdefs = hash_create(3);
   sl->listdefs = hash_create(7);
@@ -169,7 +171,9 @@ asl_bld_term(struct sl_signlist *sl)
 {
   if (sl)
     {
+#ifndef UseGt
       hash_free(sl->htoken, NULL);
+#endif
       hash_free(sl->listdefs, free);
       hash_free(sl->sysdefs, free);
       hash_free(sl->hsentry, NULL);
@@ -327,13 +331,13 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 {
 #ifdef UseGt
   /* Future use of GDL token interface derived from the ASL/SX token stuff */
-  Gt *tokp = gt_token(locp, t, literal || asl_literal_flag, sl->curr_inst);
+  Gt *tokp = gt_token(locp, t, (literal>0) || asl_literal_flag, sl->curr_inst);
   asl_literal_flag = 0;
   return tokp;
 #else
   struct sl_token *tokp = NULL;
   
-  if (!(tokp = hash_find(sl->htoken, t)))
+  if (!(tokp = tokfind(sl->htoken, t)))
     {
       Tree *tp;
       const char *gsig = NULL, *deep = NULL;
@@ -404,7 +408,7 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
 #endif
 
   /* get the group sign */
-  tokp = hash_find(sl->htoken, s->name);
+  tokp = tokfind(sl->htoken, s->name);
   if ((group = pool_copy(gdl_first_s(tokp->gdl), sl->p)))
     {
       /* get the letter from the group sign */
@@ -925,7 +929,7 @@ asl_bld_glyf(Mloc *locp, struct sl_signlist *sl, const char *nam, const unsigned
 	gp->oid = oid;
 	if (add_glyf_token(locp, sl, nam))
 	  {
-	    if (!(gp->t = hash_find(sl->htoken, (uccp)nam)))
+	    if (!(gp->t = tokfind(sl->htoken, (uccp)nam)))
 	      gp->t = asl_bld_token(locp, sl, (ucp)gp->nam, 0);
 	    struct sl_inst *i = new_inst(sl);
 	    i->type = 'g';
@@ -1899,11 +1903,11 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
   else
     base = g_base_of(n);
 
-  struct sl_token *tp = hash_find(sl->htoken,base);
+  struct sl_token *tp = tokfind(sl->htoken,base);
   if (!tp)
     {
       base = pool_copy(base, sl->p);
-      (void)asl_bld_token(locp, sl, (ucp)base, -1); /* guarantee that every base has a sort value */
+      (void)asl_bld_token(locp, sl, (ucp)base, atf_flag ? 1 : -1); /* guarantee that every base has a sort value */
     }
   else
     base = tp->t;
@@ -1949,7 +1953,7 @@ asl_bld_value(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
     }
 
   tp = asl_bld_token(locp, sl, (ucp)n, 0);
-  if (!sl->curr_invalid)
+  if (tp && !sl->curr_invalid)
     asl_bld_num(locp, sl, (ucp)n, tp, 3);
   
   if (strlen((ccp)n) > 3)

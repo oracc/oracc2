@@ -407,7 +407,7 @@ gvl_compound(Node *ynp)
 		 gp->next; but for multi-delim groups this has to be set to the
 		 next node of the last delim that is the same kind as gp->text */
 	      const char *d = gp->text;
-	      Node *last = gvl_next_nonz(gp);
+	      Node *last = gp->next;
 	      /* Don't generate implicit groups when there is a parse error */
 	      if (last)
 		{
@@ -416,9 +416,7 @@ gvl_compound(Node *ynp)
 		      if (last->next && !strcmp(last->next->name, "g:d")
 			  && (!strcmp(last->next->text, d) || !strcmp(last->next->text, "×")))
 			{
-			  Node *nxt = gvl_next_nonz(last);
-			  if (nxt)
-			    nxt = gvl_next_nonz(nxt);
+			  Node *nxt = last->next->next;
 			  if (nxt)
 			    last = nxt; /* now last is the RHS of the next delim */
 			  else

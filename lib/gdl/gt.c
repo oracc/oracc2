@@ -18,6 +18,12 @@ static Pool *p_gt;
 
 static Hash *gt_oids = NULL;
 
+Hash *
+gt_get_hash(void)
+{
+  return gtcfg.h;
+}
+
 Gt *
 gt_get_token(uccp n)
 {
@@ -170,7 +176,11 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	  if (tp->root->kids)
 	    tokp->gdl = tp->root->kids;
 	  else
-	    tokp->gdl = tp->root; /* SX uses g:gdl sans kids for list-num literals */
+	    {
+	      /* SX uses g:gdl sans kids for list-num literals */
+	      tp->root->name = "g:t";
+	      tokp->gdl = tp->root;
+	    }
 	}
       else
 	{

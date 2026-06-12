@@ -271,7 +271,8 @@ rnvval_ea(const char *pname, struct rnvval_atts *ratts)
   char *qatts[] = { NULL };
   if (!(qname = hash_find(rnv_qnames, (ucp)pname)))
     {
-      fprintf(stderr, "rnvval: internal error: pname %s not found in qname table\n", pname);
+      fprintf(stderr, "%s:%d: (rnvval) internal error: pname %s not found in qname table\n",
+	      xo_loc->file, xo_loc->line, pname);
       return;
     }
   if (rnvtrace)

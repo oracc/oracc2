@@ -41,6 +41,7 @@ extern void gt_term(void);
 extern unsigned char *gt_snames_of(unsigned const char *oids);
 extern void gt_set_oids(Hash *o);
 extern void gt_load_oids(const char *dom);
+extern Hash *gt_get_hash(void);
 extern Gt *gt_get_token(uccp n);
 
 #endif/*GT_H_*/

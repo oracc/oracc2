@@ -77,12 +77,6 @@ int oid_char_cmp(const void *a, const void *b);
 
 extern int cmpstringp(const void *p1, const void *p2);
 
-#ifdef UseGt
-#define tokfind(h,n) gt_get_token(n)
-#else
-#define tokfind(h,n) hash_find(h,n)
-#endif
-
 #if 0
 extern void sx_xml(struct sl_signlist *sl);
 extern void sx_xml_init(void);
