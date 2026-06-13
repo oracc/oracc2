@@ -19,6 +19,9 @@ imgp4_SOURCES=imgp4.c
 imgp4_LDADD = $(xLDADD)
 imgp4_DEPENDENCIES = $(xLDADD)
 
+all: cdli-csv2tsv.sh cdli-00src-00cat.sh cdli-build.sh
+	@echo To build CDLI say \'make cdli\'
+
 cdli=${ORACC}/cdli
 
 ${cdli}/00src/cdli.tsv: ${cdli}/00src/cdli.csv

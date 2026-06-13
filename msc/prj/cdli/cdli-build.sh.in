@@ -1,3 +1,6 @@
 #!/bin/sh
-(cd @@ORACC@@/cdli ; sudo @@ORACC@@/bin/orc xmdmanager2.plx)
-#cd @@ORACC@@/cdli ; sudo @@ORACC@@/bin/orc oracc catalogue
+#(cd @@ORACC@@/cdli ; sudo @@ORACC@@/bin/orc xmdmanager2.plx)
+(cd @@ORACC@@/cdli
+ sudo @@ORACC@@/bin/orc oracc catalogue
+ sudo @@ORACC@@/bin/cxvec.sh
+)
