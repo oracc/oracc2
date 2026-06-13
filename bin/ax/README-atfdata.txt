@@ -6,11 +6,11 @@ Two main functionalities: creating atfdata.tab and editing sets of .atf files.
 
 To create atfdata.tab (done by build process):
 
-   atfdatax >[TABFILE]
+   atfdatax -p PROJECT >[TABFILE]
 
 To suppress output except for errors:
 
-   atfdatax -n
+   atfdatax -n -p PROJECT
 
 === DUPLICATES ===
 

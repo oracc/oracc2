@@ -135,10 +135,13 @@ atfdata_inputs(int argc, char *const*argv)
 	}
       ret = (ccp*)loadfile_lines3((uccp)inputs_file,NULL,NULL);
     }
-  else if (dups_mode || fix_dups_mode || identity_mode)
+  else /* if (dry || dups_mode || fix_dups_mode || identity_mode) */
+    /* With the change to default to 00atf/ it is now necessary to give '-' as the file name to read stdin */
     ret = (ccp*)atf_files();
+#if 0
   else
     ret = xatfs;
+#endif
   return ret;
 }
 
