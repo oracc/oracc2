@@ -55,6 +55,8 @@ struct oiv_data
   const char *oivs;
 };
 
+extern int gvl_do_setup;
+
 #define QFIX (q_fixed ? (ccp)q_fixed : "")
 
 extern int gvl_sans_report;

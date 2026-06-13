@@ -80,7 +80,7 @@ const char *ldata_http = NULL; /* http portion of lemma data URL's--if NULL use 
 
 const char *missing_lists = NULL;
 
-const char *jfn = NULL, *xfn = NULL;
+const char *jfn = NULL, *xfn = NULL, *sll_outfile = NULL;
 
 const char *gvl_script_type = NULL;
 
@@ -99,7 +99,7 @@ main(int argc, char * const*argv)
   gt_init();
   gsort_init();
   
-  if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQsStTuUvVxX:?"))
+  if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQs::StTuUvVxX:?"))
     exit(1);
 
   if (trace_mode == 2)
@@ -146,16 +146,18 @@ main(int argc, char * const*argv)
   if (boot_mode)
     {
       sll_output = 1;
+      gvl_do_setup = 0;
       file = "00lib/osl.asl";
       if (!freopen(file, "r", stdin))
 	{
 	  fprintf(stderr, "sx: unable to read from %s\n", file);
 	  exit(1);
 	}
-      const char *outfile = "02pub/sl/sl.tsv"; /* FIXME: should be @@ORACC@@/osl ... */
-      if (!(sllout = fopen(outfile, "w")))
+      if (!sll_outfile)
+	sll_outfile = "02pub/sl/sl.tsv"; /* FIXME: should be @@ORACC@@/osl ... */
+      if (!(sllout = fopen(sll_outfile, "w")))
 	{
-	  fprintf(stderr, "sx: unable to write to %s\n", outfile);
+	  fprintf(stderr, "sx: unable to write to %s\n", sll_outfile);
 	  exit(1);
 	}
     }
@@ -329,7 +331,14 @@ main(int argc, char * const*argv)
 	sx_walk(sx_w_asl_init(stdout, "-"), sl);
 
       if (sll_output)
-	sx_s_sll(sllout, sl);
+	{
+	  if (sll_outfile && !(sllout = fopen(sll_outfile, "w")))
+	    {
+	      fprintf(stderr, "sx: unable to write to %s\n", sll_outfile);
+	    }
+	  else
+	    sx_s_sll(sllout, sl);
+	}
 
       if (!sll_output && (validate || xml_output || jsn_output))
 	{
@@ -476,6 +485,8 @@ opts(int opt, const char *arg)
       break;
     case 's':
       sll_output = 1;
+      if (arg)
+	sll_outfile = arg;
       break;
     case 't':
       ++trace_mode;

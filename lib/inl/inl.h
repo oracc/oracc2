@@ -34,7 +34,7 @@ extern Pool *inl_scan_p;
 extern inl_handler inl_bib_h;
 extern inl_handler inl_gdl_h;
 extern void inl_self_set(inl_self_func_p f);
-extern void inl_init(void);
+extern void inl_init(int v_only);
 extern void inl_term(void);
 extern char *inl_nodes(Scan *sp, Node *np, char *s);
 extern Tree *inl(Mloc *mp, char *s);

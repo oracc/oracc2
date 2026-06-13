@@ -12,6 +12,7 @@
 #include "sll.h"
 #include "gvl.h"
 
+int gvl_do_setup = 1;
 int gvl_void_messages; /* when non-zero only complain about structural
 			  issues not about unknown signs and other
 			  things that are OK if we are parsing a sign
@@ -49,6 +50,7 @@ gvl_switch(int sindex)
 gvl_i*
 gvl_setup(const char *project, const char *name, const char *script)
 {
+
   gvl_i *ret = NULL;
   Hash *h = NULL;
   const char *l = NULL;
@@ -107,8 +109,11 @@ gvl_setup(const char *project, const char *name, const char *script)
       gvl_void_messages = 1;
     }
 
-  gvl_checkers[ret->sindex] = ret;
-  hash_add(hgvl_checkers, (uccp)ret->script, ret);
+  if (ret)
+    {
+      gvl_checkers[ret->sindex] = ret;
+      hash_add(hgvl_checkers, (uccp)ret->script, ret);
+    }
   return ret;
 }
 

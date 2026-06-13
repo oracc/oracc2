@@ -43,14 +43,15 @@ if [ "$asl" != "" ]; then
     # check signlist
     sx -c $asl
     if [ $? -eq 0 ]; then
-	sx -s $asl >02pub/sl/sl.tsv
+	sx -s02pub/sl/sl.tsv $asl
 	slix 02pub/sl/sl.tsv
 	# This needs to be configurable so that OSL could find $ORACC/cdli/01tmp/csl.kis, e.g.
 	if [ -r 01tmp/csl.kis ]; then
 	    tis=-I$asldomain:01tmp/csl.kis
 	fi
-	echo "$0: sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl"
-	sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml -J 02pub/sl.json $asl
+	# -J 02pub/sl.json
+	echo "$0: sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml $asl"
+	sx -dscripts,LISTS $tis $Larg $Lurl -X 02xml/sl.xml $asl
 	mv -f sx-lists.out 02pub/lists.tsv
 	if [ -r 02xml/csldist.xml ]; then
 	    xsltproc -o 02xml/sl.xml $ORACC/lib/scripts/csldist.xsl 02xml/sl.xml

@@ -63,7 +63,7 @@ ax_input(const char *f)
   nl_init();
   ngramify_init();
   gdlparse_init();
-  inl_init();
+  inl_init(0);
   Tree *tp = atf_read(f);
   proj_init(rp, (ccp)atfp->project);
   XCL *xp = NULL;

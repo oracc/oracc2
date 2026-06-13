@@ -27,7 +27,7 @@ jox_xml_inl(Mloc *mp, char *ch)
   if (first)
     {
       scan_init();
-      inl_init();
+      inl_init(f_xml ? 0 : 1);
       first = 0;
     }
   Tree *tp = inl(mp, ch);

@@ -3,6 +3,8 @@
 #include <tree.h>
 #include "xml.h"
 
+int treexml_no_output = 0;
+
 struct ns_key_val {
   const char *prefix; const char *url;
 } ns_key_val[] = {
@@ -39,7 +41,11 @@ tree_ns_xml_print(Tree *tp, FILE *fp)
 void
 treexml_o_generic(Node *np, void *user)
 {
+  if (treexml_no_output)
+    return;
+
   Xmlhelper *xhp = user;
+  
   fprintf(xhp->fp, "<%s", np->name);
 
   if (!np->rent)
@@ -61,6 +67,9 @@ treexml_o_generic(Node *np, void *user)
 void
 treexml_c_generic(Node *np, void *user)
 {
+  if (treexml_no_output)
+    return;
+
   Xmlhelper *xhp = user;
   fprintf(xhp->fp, "</%s>", np->name);
 }

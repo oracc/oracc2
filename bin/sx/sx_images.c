@@ -96,6 +96,7 @@ sx_images(struct sl_signlist *sl)
 			fprintf(stderr, "%s:%d: %s: unknown @-command in image map\n", imfile, i+1, mr->rows[i][0]);
 		      break;
 		    case '#':
+		    case 0:
 		      break;
 		    default:
 		      {

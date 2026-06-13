@@ -86,6 +86,36 @@ inl_rnv_inl(Node *np, Scanseg *sp)
 }
 
 static void
+inl_rnv_inl_v(Node *np, Scanseg *sp)
+{
+  Ratts *r = NULL;
+
+  char name[128] = { 'i', ':' , '\0' };
+
+  if ('#' == *np->name && sp)
+    strcat(name, sp->name);
+  else
+    strcat(name, np->name);
+  
+  if (sp)
+    {
+      if (sp->name && *sp->name && sp->attr)
+	{
+	  const char *atts[5] = { "tag" , NULL, "att" , NULL , NULL };
+	  atts[2] = sp->name;
+	  atts[4] = sp->attr;
+	  r = rnvval_aa_ccpp(atts);
+	}
+    }
+
+  if (name[2])
+    rnvval_ea(name, r);
+
+  if ((!sp || !sp->name) && np->text)
+    rnvval_ch((ccp)xmlify((uccp)np->text));
+}
+
+static void
 treexml_o_bib(Node *np, void *user)
 {
   Xmlhelper *xhp = user;
@@ -174,8 +204,29 @@ treexml_c_inl(Node *np, void *user)
     }
 }
 
+static void
+treexml_o_inl_v(Node *np, void *user)
+{
+  Xmlhelper *xhp = user;
+
+  inl_rnv_inl_v(np, xhp->user);
+}
+
 void
-inl_init(void)
+treexml_c_inl_v(Node *np, void *user)
+{
+  /*Xmlhelper *xhp = user;*/
+  if ('#' != *np->name)
+    {
+      char name[10] = { 'i', ':' , '\0' };
+      strcat(name, np->name);
+      if (inl_rnv)
+	rnvval_ee(name);
+    }
+}
+
+void
+inl_init(int v_only)
 {
   if (!inl_scan_m)
     {
@@ -185,10 +236,23 @@ inl_init(void)
   if (!inl_scan_p)
     inl_scan_p = pool_init();
 
-  nodeh_register(treexml_o_handlers, NS_BIB, treexml_o_bib);
-  nodeh_register(treexml_c_handlers, NS_BIB, treexml_c_bib);
-  nodeh_register(treexml_o_handlers, NS_INL, treexml_o_inl);
-  nodeh_register(treexml_c_handlers, NS_INL, treexml_c_inl);
+  if (v_only)
+    {
+      treexml_no_output = 1;
+      nodeh_register(treexml_o_handlers, NS_GDL, NULL);
+      nodeh_register(treexml_c_handlers, NS_GDL, NULL);
+      nodeh_register(treexml_o_handlers, NS_BIB, treexml_o_bib);
+      nodeh_register(treexml_c_handlers, NS_BIB, treexml_c_bib);
+      nodeh_register(treexml_o_handlers, NS_INL, treexml_o_inl_v);
+      nodeh_register(treexml_c_handlers, NS_INL, treexml_c_inl_v);
+    }
+  else
+    {
+      nodeh_register(treexml_o_handlers, NS_BIB, treexml_o_bib);
+      nodeh_register(treexml_c_handlers, NS_BIB, treexml_c_bib);
+      nodeh_register(treexml_o_handlers, NS_INL, treexml_o_inl);
+      nodeh_register(treexml_c_handlers, NS_INL, treexml_c_inl);
+    }
 }
 
 void

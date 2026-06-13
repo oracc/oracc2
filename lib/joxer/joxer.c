@@ -231,9 +231,14 @@ joxer_eto_vxj(Mloc *mp, const char *pname, Rats *rats, const char *ch)
 {
   const char *xch = (ccp)xmlify((ucp)ch);
   joxer_mloc(mp);
-  rnvval_ea(pname, rats);
-  rnvval_ch(xch);
-  rnvval_ee(pname);
+  if (joxer_inl)
+    jox_xml_inl(mp, (char*)ch); /* does its own rnvval_xxx calls */
+  else
+    {
+      rnvval_ea(pname, rats);
+      rnvval_ch(xch);
+      rnvval_ee(pname);
+    }
   jox_xml_ea(pname, rats);
   /*fprintf(stderr, "calling jox_xml_ch from joxer_eto_vxj\n");*/
   jox_xml_ch(xch);
@@ -729,10 +734,13 @@ joxer_et_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
 static void
 joxer_eto_v(Mloc *mp, const char *pname, Rats *rats, const char *ch)
 {
-  /*const char *xch = (ccp)xmlify((ucp)ch);*/
+  const char *xch = (ccp)xmlify((ucp)ch);
   joxer_mloc(mp);
   rnvval_ea(pname, rats);
-  /*rnvval_ch(xch);*/ /* temporary suppression of validation for text nodes until inl is handled properly */
+  if (joxer_inl)
+    jox_xml_inl(mp, (char*)ch); /* does its own rnvval_xxx calls */
+  else
+    rnvval_ch(xch);
   rnvval_ee(pname);
   if (rats && ratts)
     {

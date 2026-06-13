@@ -187,7 +187,7 @@ clean_exit_on_sig(int sig_num)
 }
 
 void
-signals(int argc, char **argv)
+signals(int argc, char * const*argv)
 {
   int i, len;
   for (i = 0, len = 0; i < argc; ++i)

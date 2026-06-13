@@ -136,6 +136,6 @@ extern const char *opts_prog(void);
 extern void show_current_memory (FILE *fp, unsigned long *virtual_mem, unsigned long *physical_mem);
 extern int i_am_linux;
 
-extern void signals(int argc, char **argv);
+extern void signals(int argc, char * const*argv);
 
 #endif/*ORACCSYS_H_*/
