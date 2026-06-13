@@ -14,7 +14,7 @@ int all_00atf = 0;
 const char *cat_mode;
 const char *catproj;
 const char *file;
-const char *fix_dups_tab;
+const char *fix_dups_tab, *drops_lst;
 const char *inputs_file = NULL;
 const char *output_dir, *split_dir;
 const char *project;
@@ -46,20 +46,33 @@ atfdata_term(void)
   pool_term(pseen);
 }
 
+static void
+atf_load_drops(const char *lst)
+{
+  unsigned char **d = loadfile_lines3((uccp)lst, NULL, NULL);
+  int i;
+  for (i = 0; d[i]; ++i)
+    hash_add(hseen, d[i], (void*)(uintptr_t)1);
+}
+
 static int
 atf_load_dups(const char *tab)
 {
   rdups = roco_load1(tab);
-  roco_hash(rdups);
   int i;
   for (i = 0; i < rdups->nlines; ++i)
     {
       int j;
-      for (j = 0; rdups->rows[i][j]; ++j)
+      for (j = 0; rdups->rows[i][j] && *rdups->rows[i][j]; ++j)
 	;
-      if (j > 1)
-	rdups->rows[i][1] = rdups->rows[i][j]; /* force the last relocation into slot 2 of the table */
+      if (j > 2)
+	{
+	  fprintf(stderr, "atf_load_dups: j=%d; [0]=%s; [1]=%s; [j-1]=%s\n", j,
+		  rdups->rows[i][1], rdups->rows[i][1], rdups->rows[i][j-1]);
+	  rdups->rows[i][1] = rdups->rows[i][j-1]; /* force the last relocation into slot 2 of the table */
+	}
     }
+  roco_hash(rdups);
   return 0;
 }
 
@@ -77,9 +90,11 @@ void
 atf_fix_dup(char *pqx)
 {
   /* copy new pqx to buf pqx */
-  unsigned char **r = hash_find(rdups->hdata, (uccp)pqx);
-  if (r && r[1])
-    strcpy(pqx, (ccp)r[1]);
+  unsigned char *r = hash_find(rdups->hdata, (uccp)pqx);
+  if (r)
+    fprintf(stderr, "atf_fix_dup: passed %s; found %s\n", pqx, r);
+  if (r && *r)
+    strcpy(pqx, (ccp)r);
 }
 
 const char **
@@ -120,6 +135,8 @@ atfdata_inputs(int argc, char *const*argv)
 	}
       ret = (ccp*)loadfile_lines3((uccp)inputs_file,NULL,NULL);
     }
+  else if (dups_mode || fix_dups_mode || identity_mode)
+    ret = (ccp*)atf_files();
   else
     ret = xatfs;
   return ret;
@@ -128,6 +145,17 @@ atfdata_inputs(int argc, char *const*argv)
 void
 atfdata_outputs(void)
 {
+  if (!output_dir)
+    {
+      if (fix_dups_mode)
+	output_dir = "atfd_fix.d";
+      else if (split_dups || identity_mode)
+	output_dir = "atfdata.d";
+    }
+
+  if (split_dups && !split_dir)
+    split_dir = "atfd_split.d";
+
   if (output_dir)
     {
       if (xmkdirs(output_dir))
@@ -150,7 +178,7 @@ int
 main(int argc, char * const*argv)
 {
   const char **atfs = NULL;
-  options(argc, argv, "ac:dDf:iI::j:lO:p:S:xX");
+  options(argc, argv, "ac:dD:f:iI::j:lO:p:S::xX");
 
   extern int gdl_flex_debug, gdldebug, atfdebug, atf_flex_debug; /* yydebug in gdl.y */
 
@@ -172,6 +200,10 @@ main(int argc, char * const*argv)
     atf_load_dups(fix_dups_tab);
   
   atfdata_init();
+
+  if (drops_lst)
+    atf_load_drops(drops_lst);
+  
   atfd_flex_debug = 0;
   atfi_flex_debug = 0;
   mesg_init();
@@ -251,8 +283,9 @@ opts(int c, const char *arg)
       cat_mode = arg;
       break;
     case 'D':
-      need_project = 0;
       split_dups = 1;
+      if (arg)
+	drops_lst = arg;
     case 'd':
       need_project = 0;
       dups_mode = 1;

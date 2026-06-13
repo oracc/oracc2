@@ -14,7 +14,7 @@ if [ "$1" = "" ]; then
 fi
 d=`isogmt`
 for a in `cat $1`; do
-    >&2 echo $0: lookup up https://cdli.earth/$a
+    >&2 echo $0: looking up https://cdli.earth/$a
     curl -sI -L https://cdli.earth/$a | grep ^location: | cut -d/ -f5 | \
 	tr -d '\r' | tr '\n' '\t' | sed 's/	$/\n/' >dups-$d.tsv
 done

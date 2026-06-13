@@ -47,7 +47,7 @@ pqx(void)
     ++t;
   if (hash_find(hseen, (uccp)pqx))
     {
-      fprintf(stderr, "duplicate PQX %s\n", pqx);
+      fprintf(stderr, "dropping PQX %s\n", pqx);
       if (split_dups && !splitting)
         {
           splitting = 1;
@@ -73,38 +73,39 @@ pqx(void)
 FILE *
 atfi_input(const char *fn)
 {
-  if (fn)
+  if (fn && strcmp(fn, "-"))
     {
-      if (!strcmp(fn, "-"))
-	return stdin;
-      else
+      FILE *fp = xfopen(fn, "r");
+      if (fp)
         {
-          FILE *fp = xfopen(fn, "r");
-          if (fp)
-            {
-              curr_file = fn;
-	      yyin = fp;
-	      yylineno = 1;
-	    }
-          return fp;
-	}
+          curr_file = fn;
+          yyin = fp;
+          yylineno = 1;
+        }
+      return fp;
     }
+  return stdin;
 }
 
 FILE *
 atfi_output(const char *fn, const char *odir)
 {
-  char *outfn = malloc(strlen(fn)+strlen(odir)+2);
-  char *s = strrchr(fn, '/');
-  if (s)
-    ++s;
+  if (fn && strcmp(fn, "-"))
+    {
+      char *outfn = malloc(strlen(fn)+strlen(odir)+2);
+      char *s = strrchr(fn, '/');
+      if (s)
+	  ++s;
+      else
+	  s = (char*)fn;
+      sprintf(outfn, "%s/%s", odir, s);
+      FILE *fp;
+      if (!(fp = xfopen(outfn, "w")))
+	  free(outfn);
+      return outfp = fp;
+    }
   else
-    s = (char*)fn;
-  sprintf(outfn, "%s/%s", odir, s);
-  FILE *fp;
-  if (!(fp = xfopen(outfn, "w")))
-    free(outfn);
-  return fp;
+    return outfp = stdout;
 }
 
 FILE *
