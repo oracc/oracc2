@@ -9,7 +9,7 @@ const char *curr_file = "<file>";
 int curr_line = 0;
 const char *curr_pqx;
 
-int all_00atf = 0;
+int all_00atf = 0, dry = 0;
 
 const char *cat_mode;
 const char *catproj;
@@ -178,7 +178,7 @@ int
 main(int argc, char * const*argv)
 {
   const char **atfs = NULL;
-  options(argc, argv, "ac:dD:f:iI::j:lO:p:S::xX");
+  options(argc, argv, "ac:dD:f:iI::j:lnO:p:S::xX");
 
   extern int gdl_flex_debug, gdldebug, atfdebug, atf_flex_debug; /* yydebug in gdl.y */
 
@@ -300,6 +300,9 @@ opts(int c, const char *arg)
       break;
     case 'i':
       identity_mode = 1;
+      break;
+    case 'n':
+      dry = 1;
       break;
     case 'O':
       output_dir = arg;

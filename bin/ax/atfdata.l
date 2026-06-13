@@ -126,7 +126,7 @@ pqx_term(void)
     fprintf(stderr, "%s:%d: skipping duplicate PQX %s\n", curr_file, curr_line, curr_pqx);
   else
     {
-      if (!dups)
+      if (!dups && !dry)
         printf("%s:%s@%s\t%s\t%s\n",
 	       project, curr_pqx, catproj, curr_lem ? "#lem" : "", (trs = pqx_trs()));
       if ('P' == *curr_pqx)
@@ -185,7 +185,8 @@ x_term(void)
     fprintf(stderr, "atfdata: xcat: skipping duplicate %s\n", curr_pqx);
   else
     {
-      printf("%s\t%s\tunknown\tunknown\n", curr_pqx, p);
+      if (!dry)
+        printf("%s\t%s\tunknown\tunknown\n", curr_pqx, p);
       hash_add(hseen, (uccp)curr_pqx, "");
     }
 }

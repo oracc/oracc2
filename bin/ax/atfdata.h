@@ -1,6 +1,6 @@
 #ifndef ATFDATA_H_
 #define ATFDATA_H_
-extern int split_dups, fix_dups_mode;
+extern int split_dups, fix_dups_mode, dry;
 extern int x_mode; /* extract ID and NAME for X-IDs */
 extern FILE *keepfp, *outfp, *splitfp;
 extern const char *curr_pqx;
