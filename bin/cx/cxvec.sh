@@ -1,3 +1,4 @@
 #!/bin/sh
-catids=
-cxvec 01bld/lists/cat-ids.lst >02pub/catpnums.vec
+catpnums=02pub/catpnums.vec
+cxvec 01bld/lists/cat-ids.lst >$catpnums
+chmod o+r $catpnums

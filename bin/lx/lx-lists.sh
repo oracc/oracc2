@@ -44,7 +44,7 @@ fi
 #o2-lst.plx #2': cat-ids.lst is redundantly created in o2-lst.sh and
 #o2-lst.plx so we separate that out during cx implementation
 if [ -s $lxd/00cat.lst ]; then
-    cut -d@ -f1 $lxd/00cat.lst | cut -d: -f2 | grep '^[PQX]' >$lxd/cat-ids.lst
+    cut -d@ -f1 $lxd/00cat.lst | cut -d: -f2 | grep '^[PQX]' | sort -u >$lxd/cat-ids.lst
 fi
 
 #o2-lst.plx #3: proxy_lists
