@@ -6,6 +6,8 @@
 #include <mesg.h>
 #include <pool.h>
 #include <hash.h>
+#include "atfdata.h"
+#include "atf_cdli.h"
 
 extern const char *catproj;
 extern const char *project;
@@ -15,9 +17,6 @@ static void pqx(void);
 static void tr(void);
 static void pqx_term(void);
 static void x_term(void);
-const char *curratffile = "<file>";
-
-const char *curr_pqx;
 int curr_lem = 0;
 int dups = 0;
 int x_mode = 0;
@@ -69,6 +68,28 @@ TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 
 %%
 
+FILE *
+atfd_input(const char *fn)
+{
+  if (fn)
+    {
+      if (!strcmp(fn, "-"))
+	return stdin;
+      else
+        {
+          FILE *fp = xfopen(fn, "r");
+          if (fp)
+            {
+              curr_file = fn;
+	      yyin = fp;
+	      yylineno = 1;
+	    }
+          return fp;
+	}
+    }
+  return NULL;
+}
+
 static const char *
 pqx_trs(void)
 {
@@ -88,6 +109,7 @@ pqx_init(const char *pqx)
   hdata = hash_create(5);
   p = pool_init();
   curr_pqx = (ccp)pool_copy((uccp)pqx, p);
+  curr_line = yylineno;
 #if 0
   if (!x_mode)
     fprintf(stderr, "pqx_init: %s\n", curr_pqx);
@@ -101,18 +123,29 @@ pqx_term(void)
     /*fprintf(stderr, "pqx_term: %s\n", curr_pqx);*/
   const char *trs = NULL;
   if (hash_find(hseen, (uccp)curr_pqx))
-    fprintf(stderr, "atfdata: skipping duplicate PQX %s\n", curr_pqx);
+    fprintf(stderr, "%s:%d: skipping duplicate PQX %s\n", curr_file, curr_line, curr_pqx);
   else
     {
       if (!dups)
         printf("%s:%s@%s\t%s\t%s\n",
 	       project, curr_pqx, catproj, curr_lem ? "#lem" : "", (trs = pqx_trs()));
+      if ('P' == *curr_pqx)
+        atf_cdli_check(curr_pqx);
       hash_add(hseen, pool_copy((uccp)curr_pqx,pseen), (void*)(uintptr_t)1);
     }
-  hash_free(hdata, NULL);
-  pool_term(p);
+  curr_pqx = NULL;
+  if (hdata)
+    {
+      hash_free(hdata, NULL);
+      hdata = NULL;
+      pool_term(p);
+      p = NULL;
+    }
   if (trs && *trs)
-    free((void*)trs);
+    {
+      free((void*)trs);
+      trs = NULL;
+    }
 }
 
 static void

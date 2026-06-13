@@ -10,7 +10,7 @@ ax_SOURCES=ax.c ax_atf.c ax_run.c ax_prj.c ax_xcl.c ax_lem.c ax_jox.c axjoxfnc.c
 ax_LDADD = $(xLDADD)
 ax_DEPENDENCIES = $(ax_LDADD)
 
-atfdatax_SOURCES=atfdata.c atfdata.lex.c atfidentity.lex.c
+atfdatax_SOURCES=atfdata.c atfdata.lex.c atfidentity.lex.c atf_cdli.c
 atfdatax_LDADD = $(xLDADD)
 atfdatax_DEPENDENCIES = $(atfdatax_xLDADD)
 

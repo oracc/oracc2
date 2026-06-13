@@ -3,6 +3,14 @@
 #include <roco.h>
 
 #include "atfdata.h"
+#include "atf_cdli.h"
+
+const char *curr_file = "<file>";
+int curr_line = 0;
+const char *curr_pqx;
+
+int all_00atf = 0;
+
 const char *cat_mode;
 const char *catproj;
 const char *file;
@@ -55,6 +63,16 @@ atf_load_dups(const char *tab)
   return 0;
 }
 
+static char **
+atf_files(void)
+{
+  static glob_t gres;
+  if (!glob_pattern("00atf/*.atf",&gres))
+    return gres.gl_pathv;
+  else
+    return NULL;
+}
+
 void
 atf_fix_dup(char *pqx)
 {
@@ -64,41 +82,26 @@ atf_fix_dup(char *pqx)
     strcpy(pqx, (ccp)r[1]);
 }
 
-int
-main(int argc, char **argv)
+const char **
+atfdata_inputs(int argc, char *const*argv)
 {
-  options(argc, argv, "c:dDf:iI::j:lO:p:S:xX");
-
-  extern int gdl_flex_debug, gdldebug, atfdebug, atf_flex_debug; /* yydebug in gdl.y */
-
-  if (!project && need_project)
-    {
-      fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
-      exit(1);
-    }
-
-  if (cat_mode && (!strcmp(cat_mode, "local") || !strcmp(cat_mode, "custom")))
-    catproj = project;
-  else
-    catproj = "cdli";
-
+  static const char *xatfs[2] = { "-" , 0 };
+  const char **ret = NULL;
   if (argv[optind])
     {
-      if (!freopen(argv[optind], "r", stdin))
+      xatfs[0] = argv[optind];
+      ret = xatfs;
+    }
+  else if (all_00atf)
+    {
+      if (inputs_file)
 	{
-	  fprintf(stderr, "atfdata: unable to freopen %s. Stop.\n", argv[optind]);
+	  fprintf(stderr, "atfdata: no sense using -a (all-00atf) with -I (inputs-file)\n");
 	  exit(1);
 	}
+      ret = (ccp*)atf_files();
     }
-  atfdata_init();
-  atfd_flex_debug = 0;
-  atfi_flex_debug = 0;
-  mesg_init();
-
-  if (fix_dups_tab)
-    atf_load_dups(fix_dups_tab);
-  
-  if (inputs_file)
+  else if (inputs_file)
     {
       if ('-' == *inputs_file && argv[optind])
 	{
@@ -115,8 +118,16 @@ main(int argc, char **argv)
 	  fprintf(stderr, "atfdata: must give -O <output_dir> when using -I <inputs_file>\n");
 	  exit(1);
 	}
-    }  
+      ret = (ccp*)loadfile_lines3((uccp)inputs_file,NULL,NULL);
+    }
+  else
+    ret = xatfs;
+  return ret;
+}
 
+void
+atfdata_outputs(void)
+{
   if (output_dir)
     {
       if (xmkdirs(output_dir))
@@ -133,24 +144,54 @@ main(int argc, char **argv)
 	  exit(1);
 	}
     }
+}
+
+int
+main(int argc, char * const*argv)
+{
+  const char **atfs = NULL;
+  options(argc, argv, "ac:dDf:iI::j:lO:p:S:xX");
+
+  extern int gdl_flex_debug, gdldebug, atfdebug, atf_flex_debug; /* yydebug in gdl.y */
+
+  if (!project && need_project)
+    {
+      fprintf(stderr, "%s: must give project on command line. Stop.\n", argv[0]);
+      exit(1);
+    }
+
+  if (cat_mode && (!strcmp(cat_mode, "local") || !strcmp(cat_mode, "custom")))
+    catproj = project;
+  else
+    catproj = "cdli";
+
+  atfs = atfdata_inputs(argc, argv);
+  atfdata_outputs();
+
+  if (fix_dups_tab)
+    atf_load_dups(fix_dups_tab);
   
+  atfdata_init();
+  atfd_flex_debug = 0;
+  atfi_flex_debug = 0;
+  mesg_init();
+
   if (dups_mode || fix_dups_mode || identity_mode)
     {
-      if (inputs_file)
+      int i;
+      if (dups_mode)
 	{
-	  const char **atffiles = (ccp*)loadfile_lines3((uccp)inputs_file,NULL,NULL);
-	  int i;
-	  for (i = 0; atffiles[i]; ++i)
+	  for (i = 0; atfs[i]; ++i)
 	    {
-	      FILE *fp = atfi_input(atffiles[i]);
+	      FILE *fp = atfi_input(atfs[i]);
 	      if (fp)
 		{
-		  /*fprintf(stderr, "atfdata: input: %s\n", atffiles[i]);*/
+		  /*fprintf(stderr, "atfdata: input: %s\n", atfs[i]);*/
 		  if (identity_mode || split_dups)
 		    {
-		      keepfp = outfp = atfi_output(atffiles[i], output_dir);
+		      keepfp = outfp = atfi_output(atfs[i], output_dir);
 		      if (split_dups)
-			splitfp = atfi_split(atffiles[i], split_dir);
+			splitfp = atfi_split(atfs[i], split_dir);
 		    }
 		  else
 		    outfp = NULL; /* no output when outfp == NULL */
@@ -160,18 +201,18 @@ main(int argc, char **argv)
 		    fclose(outfp);
 		}
 	    }
-	  if (fix_dups_mode)
+	}
+      else if (fix_dups_mode)
+	{
+	  fixing = 1;
+	  for (i = 0; atfs[i]; ++i)
 	    {
-	      fixing = 1;
-	      for (i = 0; atffiles[i]; ++i)
-		{
-		  FILE *fp = atfi_input(atffiles[i]);
-		  FILE *outfp = atfi_output(atffiles[i], output_dir);
-		  atfilex();
-		  fclose(fp);
-		  if (outfp)
-		    fclose(outfp);
-		}
+	      FILE *fp = atfi_input(atfs[i]);
+	      FILE *outfp = atfi_output(atfs[i], output_dir);
+	      atfilex();
+	      fclose(fp);
+	      if (outfp)
+		fclose(outfp);
 	    }
 	}
       else
@@ -183,7 +224,15 @@ main(int argc, char **argv)
     }
   else
     {
-      atfdlex();
+      atf_cdli_init();
+      int i;
+      for (i = 0; atfs[i]; ++i)
+	{
+	  FILE *fp = atfd_input(atfs[i]);
+	  atfdlex();
+	  fclose(fp);
+	}
+      atf_cdli_term();
     }
   mesg_print(stderr);
   atfdata_term();
@@ -195,6 +244,9 @@ opts(int c, const char *arg)
 {
   switch (c)
     {
+    case 'a':
+      all_00atf = 1;
+      break;
     case 'c':
       cat_mode = arg;
       break;

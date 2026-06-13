@@ -73,10 +73,22 @@ pqx(void)
 FILE *
 atfi_input(const char *fn)
 {
-  FILE *fp = xfopen(fn, "r");
-  if (fp)
-    yyin = fp;
-  return fp;
+  if (fn)
+    {
+      if (!strcmp(fn, "-"))
+	return stdin;
+      else
+        {
+          FILE *fp = xfopen(fn, "r");
+          if (fp)
+            {
+              curr_file = fn;
+	      yyin = fp;
+	      yylineno = 1;
+	    }
+          return fp;
+	}
+    }
 }
 
 FILE *
