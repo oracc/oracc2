@@ -113,6 +113,8 @@ gx_init(void)
 
   Hash *htokens = hash_create(1024);
   Memo *mtokens = memo_init(sizeof(Gt), 1024);
+  lng_init();
+  gt_init();
   gdl_unicode = 1;
   gdl_init();
   gsort_init();
