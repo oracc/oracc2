@@ -164,9 +164,12 @@ gsort_node(Node *np, List *lp)
     np = np->kids;
   
   /* Ignore determinatives for now; should probably ensure that forms
-     with determinative sort in constant order */
-  if (!strcmp(np->name, "g:det"))
+     with determinative sort in constant order; need to use a while
+     for, e.g., {u₂}{+a}aški */
+  while (np && !strcmp(np->name, "g:det"))
     np = np->next;
+  if (!np) /* this means the word ended with a determinative */
+    return;
 
   switch (np->name[2])
     {

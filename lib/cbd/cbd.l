@@ -50,6 +50,7 @@ static void alt_wrapup(int clean);
 static void clean_alt_paren(void);
 #endif
 
+static void cs_not(void);
 static int set_rws(void);
 static int set_ctp(void);
 static void set_after(void);
@@ -137,8 +138,9 @@ BALM 	","
 	/* OUTER LEVEL TOKENIZER */
 
 ^[-+]		{ BEGIN ss(s_sol); return(yytext[0]); }
-^>>[ \t]*      	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(RENAME); }
-^>[ \t]*       	{ after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(MERGE); }
+^=>[^\n]*/\n  { ytdup(); return(NEWSENSE); }	
+^>>[ \t]*      	{ if (curr_sense) { cs_not(); } else { after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(RENAME); } }
+^>[ \t]*       	{ if (curr_sense) { cs_not(); } else {after_s_gw=s_pos; after_s_pos=0; BEGIN ss(s_cf); return(MERGE); } }
 ^@letter.*/\n   { /* ignore @letter */ }
 <*>^@end[ \t]+entry[ \t]*/\n  { BEGIN ss(0); return(END_ENTRY); }
 ^@end[ \t]+senses[ \t]*/\n { BEGIN ss(0); return(END_SENSES); }
@@ -192,7 +194,7 @@ BALM 	","
 <s_ba>{BASE}		   { ytdup(); base_comma = 0; return BASE_ALT; }
 <s_ba>{BALM}		   { return BASE_ALM; }
 <s_ba>{BPRI}      	   { BEGIN ss(s_bp); return BASE_ALC; }
-<s_bp,s_ba>\n/"@"	   { BEGIN ss(0); return BASE_END; }
+<s_bp,s_ba>\n/[-\+]?"@"	   { BEGIN ss(0); return BASE_END; }
 
 	/* FORM TOKENIZER */
 
@@ -279,6 +281,13 @@ set_rws(void)
       vyyerror(yylloc,"unknown RWS %s\n",atname, NULL);
       return 0;
     }
+}
+
+static void
+cs_not(void)
+{
+    BEGIN ss(s_flush); yylloc.file=efile; yylloc.line=yylineno;
+    vyyerror(yylloc,"simple %s not allowed after @sense (say '=>@sense ...')\n",yytext, NULL);
 }
 
 static int

@@ -43,7 +43,9 @@ extern int yylex(void);
 %token  <text> 		URLSPEC
 %token	<text>		DCF
 %token	<text>		SENSE
+%token	<text>		NEWSENSE
 %token	<text>		SENSEL
+%token	<text>		NEWSENSEL
 %token	<text>		LANG
 %token	<text>		BASE_PRI
 %token	<text>		BASE_ALT
@@ -190,6 +192,7 @@ entry_block:    atentry
 	|	atentry modentry entryrels
 	| 	atentry modentry entryrels partses
 	| 	atentry modentry entryrels partses disc
+	|	atentry modentry partses
 	| 	atentry partses
 	| 	atentry partses disc
 	| 	atentry disc
@@ -402,6 +405,9 @@ sensemeta:    senseline
 
 senseline:	senseline_en
 	|	senseline_en senseline_trs
+	|	NEWSENSE
+	|	NEWSENSEL
+		;
 		
 senseline_en:	atsense pos mng
 	|	atsense sid pos mng
@@ -432,9 +438,13 @@ atsense:      	ssense
 	|	'-' ssense	{ cbd_bld_edit_sense(curr_entry, '-'); }
 
 atsensel:      	SENSEL 		{ curr_sense = cbd_bld_sensel(@1, curr_entry); }
+		;
 
-ssense:		SENSE 		{ curr_sense = cbd_bld_sense(@1, curr_entry); 
-		    		  if (curr_entry->begin_senses) { curr_meta = curr_sense->meta = cbd_bld_meta_create(curr_entry); } }
+ssense:		SENSE 		{ curr_sense = cbd_bld_sense(@1, curr_entry);
+		    		  if (curr_entry->begin_senses) {
+				      curr_meta = curr_sense->meta = cbd_bld_meta_create(curr_entry); } }
+		;
+
 slang:		'%'    	{ curr_sense->lng = (ucp)$1; }
 
 sid:		'#' 	{ curr_sense->sid = (ccp)$1; }

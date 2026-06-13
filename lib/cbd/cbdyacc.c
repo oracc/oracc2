@@ -813,6 +813,7 @@ cbd_end_entry(YYLTYPE l)
   else
     curr_entry->pref = curr_entry->cgp->cf;
   curr_entry = NULL;
+  curr_sense = NULL;
 }
 
 void

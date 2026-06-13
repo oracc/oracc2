@@ -161,21 +161,24 @@ kis_data_debug(Kis_data kdp)
 static void
 norm_nmfm_hash(Hash *nmfm_hash, Cform *c)
 {
-  Hash *hp = hash_find(nmfm_hash, c->f.norm);
-  if (!hp)
-    hash_add(nmfm_hash, c->f.norm, (hp = hash_create(10)));
-  if (!hash_find(hp, c->f.form))
+  if (c->f.norm)
     {
-      NmFm *np = memo_new(csetp->nmfmsmem);
-      np->form = c;
-      hash_add(hp, c->f.form, np);
-      if (cbd_log_fp)
-	fprintf(cbd_log_fp, "norm_nmfm_hash: indexing form %s for norm %s\n",
+      Hash *hp = hash_find(nmfm_hash, c->f.norm);
+      if (!hp)
+	hash_add(nmfm_hash, c->f.norm, (hp = hash_create(10)));
+      if (!hash_find(hp, c->f.form))
+	{
+	  NmFm *np = memo_new(csetp->nmfmsmem);
+	  np->form = c;
+	  hash_add(hp, c->f.form, np);
+	  if (cbd_log_fp)
+	    fprintf(cbd_log_fp, "norm_nmfm_hash: indexing form %s for norm %s\n",
+		    c->f.form, c->f.norm);
+	}
+      else if (cbd_log_fp)
+	fprintf(cbd_log_fp, "norm_nmfm_hash: form %s already known for norm %s\n",
 		c->f.form, c->f.norm);
     }
-  else if (cbd_log_fp)
-    fprintf(cbd_log_fp, "norm_nmfm_hash: form %s already known for norm %s\n",
-	    c->f.form, c->f.norm);
 }
 
 /* On entry NmFm only has ->form set; add the key from $NORM=FORM */
@@ -200,26 +203,29 @@ cbd_nmfm_wrap(Hash *nmfm_hash, Field **f)
   int i;
   for (i = 0; f[i]; ++i)
     {
-      Hash *lp = hash_find(nmfm_hash, (uccp)((Cform*)f[i]->data)->f.norm);
-      if (lp && lp->key_count)
+      if (((Cform*)f[i]->data)->f.norm)
 	{
-	  List *nmfm_list = list_create(LIST_SINGLE);
-	  const char **kk = hash_keys(lp);
-	  int j;
-	  for (j = 0; kk[j]; ++j)
+	  Hash *lp = hash_find(nmfm_hash, (uccp)((Cform*)f[i]->data)->f.norm);
+	  if (lp && lp->key_count)
 	    {
-	      NmFm *nfp = hash_find(lp, (uccp)kk[j]);
-	      /*if (!nfp->nmfmk)*/
-		list_add(nmfm_list, norm_nmfm_data(f[i]->k[1], nfp));
+	      List *nmfm_list = list_create(LIST_SINGLE);
+	      const char **kk = hash_keys(lp);
+	      int j;
+	      for (j = 0; kk[j]; ++j)
+		{
+		  NmFm *nfp = hash_find(lp, (uccp)kk[j]);
+		  /*if (!nfp->nmfmk)*/
+		  list_add(nmfm_list, norm_nmfm_data(f[i]->k[1], nfp));
+		}
+	      f[i]->user = list2array(nmfm_list);
+	      if (cbd_log_fp)
+		fprintf(cbd_log_fp, "cbd_nmfm_wrap key %s has f->user = %p\n",
+			f[i]->k[1], f[i]->user);
 	    }
-	  f[i]->user = list2array(nmfm_list);
-	  if (cbd_log_fp)
-	    fprintf(cbd_log_fp, "cbd_nmfm_wrap key %s has f->user = %p\n",
-		    f[i]->k[1], f[i]->user);
+	  else
+	    fprintf(stderr, "cbd_nmfm_wrap: internal error: %s not found or empty list in nmfm_hash\n",
+		    ((Cform*)f[i]->data)->f.norm);
 	}
-      else
-	fprintf(stderr, "cbd_nmfm_wrap: internal error: %s not found or empty list in nmfm_hash\n",
-		((Cform*)f[i]->data)->f.norm);
     }
   /*hash_free(nmfm_hash, NULL);*/
 }

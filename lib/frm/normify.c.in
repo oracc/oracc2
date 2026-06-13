@@ -34,12 +34,15 @@ normify(const char *cgpb, const char *c, const char *b, const char *m, char **st
   const char *s = c;
   if (/*'V' == *e && */strchr(b, '-'))
     {
-      const char **r = hash_find(stems, (unsigned const char *)cgpb);
-      if (r)
+      if (stems)
 	{
-	  s = r[3];
-	  if (stem)
-	    *stem = (char*)r[2];
+	  const char **r = hash_find(stems, (unsigned const char *)cgpb);
+	  if (r)
+	    {
+	      s = r[3];
+	      if (stem)
+		*stem = (char*)r[2];
+	    }
 	}
     }
   char ret[1024];
