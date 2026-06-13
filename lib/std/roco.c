@@ -128,7 +128,7 @@ roco_hash(Roco *r)
 {
   Hash *h = hash_create(r->nlines/2);
   roco_hash_hash(h, r);
-  return h;
+  return r->hdata = h;
 }
 
 static void
@@ -168,7 +168,7 @@ roco_hash_r(Roco *r)
 {
   Hash *h = hash_create(r->nlines/2);
   roco_hash_hash_r(h, r);
-  return h;
+  return r->hdata = h;
 }
 
 Hash *
