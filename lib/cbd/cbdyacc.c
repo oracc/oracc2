@@ -83,6 +83,19 @@ cbd_bld_allow(YYLTYPE l, struct entry *e, unsigned char *lhs, unsigned char *rhs
     }
 }
 
+static char cbdsignindicator[256] = {
+  ['A'] = 1,
+  ['E'] = 1,
+  ['I'] = 1,
+  ['U'] = 1,
+  ['F'] = 1,
+  ['N'] = 1,
+  ['O'] = 1,
+  ['P'] = 1,
+  ['S'] = 1,
+  ['X'] = 1
+};
+
 /* At parse time we just save the bases in a list of lists */
 void
 cbd_bld_bases_pri(YYLTYPE l, struct entry *e, unsigned char *lang, unsigned char *p)
@@ -96,12 +109,30 @@ cbd_bld_bases_pri(YYLTYPE l, struct entry *e, unsigned char *lang, unsigned char
 	}
       else
 	{
-	  struct loctok *ltp = cbd_bld_loctok(&l,e,p);
-	  ltp->lang = (const char*)lang;
-	  if (!e->bases)
-	    e->bases = list_create(LIST_SINGLE);
-	  list_add(e->bases, (curr_base_list = list_create(LIST_SINGLE)));
-	  list_add(curr_base_list, ltp);
+	  /* trap missing space before alt base */
+	  unsigned char *paren = (ucp)strchr((ccp)p, '(');
+	  if (paren)
+	    {
+	      ++paren;
+	      while (')' != *paren)
+		{
+		  if (cbdsignindicator[*paren])
+		    goto POK;
+		  else
+		    ++paren;
+		}
+	      if (')' == *paren)
+		mesg_verr(&l, "missing space before '(' of alt base '%s'", p);
+	    }
+	POK:
+	  {
+	    struct loctok *ltp = cbd_bld_loctok(&l,e,p);
+	    ltp->lang = (const char*)lang;
+	    if (!e->bases)
+	      e->bases = list_create(LIST_SINGLE);
+	    list_add(e->bases, (curr_base_list = list_create(LIST_SINGLE)));
+	    list_add(curr_base_list, ltp);
+	  }
 	}
     }
   else
@@ -386,6 +417,7 @@ cbd_bld_entry_cgp(struct entry *e)
   e->cgp = cgp_get_one();
   e->cgp->owner = e;
   hash_add(e->owner->hentries, e->cgp->tight, e);
+  /*fprintf(stderr, "bld_entry: added %s to %p\n", e->cgp->tight, e->owner->hentries);*/
   wchar_t w[2] = { *e->cgp->tight < 128 ? (wchar_t)toupper(*e->cgp->tight) :
 		   towupper(utf1char(e->cgp->tight, NULL)), L'\0' };
   const unsigned char *c = wcs2utf(w, 1);
@@ -460,6 +492,7 @@ cbd_bld_form(YYLTYPE l, struct entry *e)
 void
 cbd_bld_form_setup(struct entry *e, Cform* cfp)
 {
+  list_add(e->forms, cfp);
   cfp->f.project = e->owner->project;
   cfp->f.id = cbd_field_id(e);
   if (!cfp->f.lang)

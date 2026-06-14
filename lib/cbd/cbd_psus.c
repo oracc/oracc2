@@ -92,11 +92,16 @@ cbd_psus(void)
 	      || strstr(c, "//")
 	      || strchr(c, '\''))
 	    c = m = sanitize_cgp(c);
+	  /*fprintf(stderr, "cbd_psus: need %s in %p ...", c, pcbd->hentries);*/
 	  Entry *ep = hash_find(pcbd->hentries, (uccp)c);
 	  if (ep)
-	    cp->owner = ep;
+	    {
+	      /*fprintf(stderr, "ok\n");*/
+	      cp->owner = ep;
+	    }
 	  else
 	    {
+	      /*fprintf(stderr, "nope\n");*/
 	      if ((ep = xcbd_find(ep,(uccp)c,pcbd)))
 		cp->owner = ep;
 	      else

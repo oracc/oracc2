@@ -50,6 +50,7 @@ static void alt_wrapup(int clean);
 static void clean_alt_paren(void);
 #endif
 
+static void badpri(void);
 static void cs_not(void);
 static int set_rws(void);
 static int set_ctp(void);
@@ -188,7 +189,8 @@ BALM 	","
 <s_bp,s_ba>{LANG}      	   { ytdup(); return LANGSPEC; }
 <s_bp,s_ba>[ \t]+      	   { ; }
 <s_bp>{BASE} 	   	   { ytdup(); return BASE_PRI; }
-<s_bp>{BPRI}      	   { BEGIN ss(s_bp); return BASE_PRC; }
+<s_bp>{BPRI}/[ \t]     	   { BEGIN ss(s_bp); return BASE_PRC; }
+<s_bp>{BPRI}     	   { badpri(); BEGIN ss(s_bp); return BASE_PRC; }
 <s_bp>{BALO}     	   { BEGIN ss(s_ba); return BASE_ALO; }
 <s_ba>{BASE}/,		   { ytdup(); base_comma = 1; return BASE_ALT; }
 <s_ba>{BASE}		   { ytdup(); base_comma = 0; return BASE_ALT; }
@@ -233,6 +235,12 @@ BALM 	","
 <<EOF>>			  { yyterminate(); }
 
 %%
+
+static void
+badpri(void)
+{
+    lyyerror(yylloc,"missing space after ';' in @bases");
+}
 
 static void
 set_after(void)
@@ -331,76 +339,6 @@ tg_set_flags(char *f)
     }
   return ctp != NULL;
 }
-
-#if 0
-static int
-base_tok(void)
-{
-  int ret_state = BASE_PRI;
-  char *t = yytext;
-  char *e = yytext + strlen(yytext);
-
-  if ('(' == *t)
-    {
-      ++t;
-      ret_state = BASE_ALT;
-      if (';' == e[-1])
-	{
-	  if (')' == e[-2])
-	    e[-2] = '\0';
-	  else
-	    e[-1] = '\0';
-	  base_state = BASE_PRI;
-	}
-      else if (',' == e[-1])
-	{
-	  e[-1] = '\0';
-	  base_state = BASE_ALT;
-	}
-      else if (')' == e[-1])
-	{
-	  e[-1] = '\0';
-	  base_state = BASE_PRI;
-	}
-      else
-	  base_state = BASE_ALT;
-    }
-  else if ('%' == *t)
-    {
-      ret_state = LANGSPEC;
-      ++t;
-    }
-  else if (';' == e[-1])
-    {
-      if (')' == e[-2] && BASE_ALT == base_state)
-	{
-	  ret_state = BASE_ALT;
-	  e[-2] = '\0';
-	}
-      else
-	e[-1] = '\0';
-      base_state = BASE_PRI;
-    }
-  else if (',' == e[-1])
-    {
-      e[-1] = '\0';
-      ret_state = base_state = BASE_ALT;
-    }
-  else
-    {
-      if (')' == e[-1] && BASE_ALT == base_state)
-	{
-	  e[-1] = '\0';
-	  ret_state = BASE_ALT;
-	  base_state = BASE_PRI;
-	}
-      else
-        ret_state = base_state;
-    }
-  yylval.text = (char*)pool_copy((ucp)t,csetp->pool);
-  return ret_state;
-}
-#endif
 
 static char *
 unspace(char*s)

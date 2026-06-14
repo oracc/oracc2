@@ -509,10 +509,11 @@ gvl_simplexg(Node *ynp)
       ynp->user = gp;
 
       if (gp->sign)
-	g_attr(ynp, gp);	
+	g_attr(ynp, gp);
+
+      if (gp->mess && !gvl_no_mesg_add)
+	mesg_err(ynp->mloc, (ccp)gp->mess);
     }
-  if (gp->mess && !gvl_no_mesg_add)
-    mesg_err(ynp->mloc, (ccp)gp->mess);
 }
 
 static int
