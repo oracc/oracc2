@@ -211,6 +211,7 @@ cbd_bld_cbd(void)
   c->reldefs = list_create(LIST_SINGLE);
   c->haliases = hash_create(16);
   c->hentries = hash_create(1024);
+  c->hfutures = hash_create(10); /* for >> renames in entries */
 #if 0
   c->hsenses = hash_create(1024);
 #endif
@@ -359,6 +360,8 @@ cbd_bld_edit(struct entry *e, char ctxt, char type)
     case '>':
       ed->type = (ctxt == 'e' ? REN_E : REN_S);
       ed->target = cgp_get_one();
+      if (REN_E == ed->type)
+	hash_add(e->owner->hfutures, ed->target->loose, e);
       break;
     case '|':
       ed->type = (ctxt == 'e' ? MRG_E : MRG_S);
@@ -522,7 +525,8 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
       strncpy((char*)ftok, (char*)cfp->f.form, len);
       ftok[len] = '\0';
     }
-  cfp->t = gt_token(&cfp->l, ftok, 0, NULL);
+  if (!(cfp->t = gt_token(&cfp->l, ftok, 0, NULL)))
+    mesg_verr(&cfp->l, "form %s generated bad sig %s\n", ftok, gdl_last_bad_sig);
   if (cfp->f.base)
     if (!(cfp->b = gt_token(&cfp->l, (ucp)cfp->f.base, 0, NULL)))
       mesg_verr(&cfp->l, "base %s generated bad sig %s\n", cfp->f.base, gdl_last_bad_sig);

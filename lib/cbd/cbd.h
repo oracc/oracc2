@@ -62,6 +62,7 @@ typedef struct cbd {
   List *propss;
   List *reldefs;
   Hash *hentries;
+  Hash *hfutures; 	/* rename like >>e [water] N creates a cgp->loose hash to its entry */
   Hash *hsenses;
   Hash *haliases;
   Hash *simple;

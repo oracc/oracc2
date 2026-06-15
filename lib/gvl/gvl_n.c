@@ -191,8 +191,9 @@ gvl_n_sexify(Node *ynp)
 	  prop_drop_kv(top->props, "xml:id", NULL);
 	  /* update the ynp data with the sexified data */
 	  node_replace(top, ynp);
+	  lgp = ynp; /* set lgp to that g:delim will be put on the g:gg */
 
-	  /* and transfer g:r props to g:n props */
+	  /* transfer g:r props to g:n props */
 	  prop_merge(top->kids->props, top->kids->kids->props);
 	  prop_drop_kv(top->kids->kids->props, "xml:id", NULL);
 	}

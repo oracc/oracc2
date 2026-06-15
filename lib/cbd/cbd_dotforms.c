@@ -169,12 +169,13 @@ cbd_df_unused(void)
   int i;
   List *lp = list_create(LIST_SINGLE);
   for (i = 0; keys[i]; ++i)
-    if (!hash_exists(hcbd_df_seen, (uccp)keys[i]))
+    if (!hash_exists(hcbd_df_seen, (uccp)keys[i])
+	&& !hash_exists(curr_cbd->hfutures, (uccp)keys[i]))
       {
 	List *lcp = hash_find(hcbd_df, (uccp)keys[i]);
 	Cform *cp = list_first(lcp);
-	cp->f.sig = keys[i];
-	list_add(lp, cp); /* this is a hack but a harmless one */
+	cp->f.sig = (unsigned char*)keys[i];  /* this is a hack but a harmless one */
+	list_add(lp, cp);
       }
   return lp;
 }

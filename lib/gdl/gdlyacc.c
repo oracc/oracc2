@@ -206,6 +206,8 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 		  fputs(c->kids->text, wfp);
 		  d = prop_find_kv(c->last->props, "g:delim", NULL);
 		}
+	      else if (!strcmp(p->u.k->v, "diszless"))
+		fputs(c->text, wfp);
 	      else
 		gdl_wf_nodes(c, wfp);
 	    }
@@ -1000,20 +1002,12 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
 
   if (g_literal_flag)
     {
-#if 1
       bit_set(*lst, gs_force|gs_g_undefined);
-#else
-      gdl_update_state(ret, gs_force|gs_g_undefined);
-#endif
       g_literal_flag = 0;
     }
   else if (g_logoforce_flag)
     {
-#if 1
       bit_set(*lst, gs_force|gs_g_flogo1);
-#else
-      gdl_update_state(ret, gs_force|gs_g_flogo1);
-#endif
       g_logoforce_flag = 0;
     }
   return ret;
