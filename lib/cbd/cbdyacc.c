@@ -113,6 +113,11 @@ cbd_bld_bases_pri(YYLTYPE l, struct entry *e, unsigned char *lang, unsigned char
 	  unsigned char *paren = (ucp)strchr((ccp)p, '(');
 	  if (paren)
 	    {
+	      if (paren > p)
+		{
+		  if (isdigit(paren[-1])) /* allow 1(diš) */
+		    goto POK;
+		}
 	      ++paren;
 	      while (')' != *paren)
 		{

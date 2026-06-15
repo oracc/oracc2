@@ -211,6 +211,8 @@ grx_jox_node(Node *np, int oflag, int nflag)
 	  free(r);
 	  r = NULL;
 	}
+      if (!strcmp(np->name, "g:gg") && prop_find_kv(np->props, "g:type", "diszless"))
+	joxer_eto(np->mloc, "g:t", NULL, np->text);
     }
 
   for (npp = np->kids; npp; npp = npp->next)

@@ -17,7 +17,7 @@ main(int argc, char * const *argv)
   options(argc, argv, "?");
   mesg_init();
   scan_init();
-  inl_init();
+  inl_init(0);
 
   Tree *tp;
   if (argv[optind])

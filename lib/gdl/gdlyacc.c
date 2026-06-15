@@ -533,8 +533,10 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   sprintf(gid_insertp, ".%d", grapheme_id++);
   /*  if (gdl_xmlids && 'r' != name[2] && 'R' != name[2])*/
   if (!gdl_no_xml_ids)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-		(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+    {
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		  (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+    }
   pst = 0L;
   np->mloc = mloc_mloc(locp);
   /* For r-nodes, leave gdl_pending_varo set and let g:n take it later */

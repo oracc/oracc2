@@ -238,7 +238,7 @@ o_jox_field(void *e, Efield ef, Field **f, const char *tag)
 {
   if (!f || !f[0])
     return;
-  
+
   xo_loc = &((Cform*)f[0]->data)->l;
   if (!xo_loc->file)
     fprintf(stderr, "o_jox_field: NULL file in xo_loc\n");

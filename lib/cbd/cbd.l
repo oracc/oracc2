@@ -457,7 +457,7 @@ cbd_l_init(const char *fn)
       file = efile = (char*)fn;
       if ((fp = xfopen(efile, "r")))
 	{
-	  cbdlineno = 0;
+	  cbdlineno = 1;
 	  yyrestart(fp);
 	  return fp;
         }

@@ -181,7 +181,7 @@ init_er()
 }
 
 static void
-init(void)
+xrnvif_init(void)
 {
   if(!initialized) 
     {
@@ -194,6 +194,11 @@ init(void)
       drv_add_dtl(DXL_URL,&dxl_equal,&dxl_allows);
       drv_add_dtl(DSL_URL,&dsl_equal,&dsl_allows);
       windup();
+    }
+  else
+    {
+      rnl_verror_handler = xrnl_verror_handler;
+      rnv_verror_handler = xrnv_verror_handler;
     }
 }
 
@@ -291,7 +296,7 @@ rnv_validate_finish(void)
 void
 rnvif_init()
 {
-  init();
+  xrnvif_init();
   verbose = 1; nexp = 0; rnck=0;
 }
 

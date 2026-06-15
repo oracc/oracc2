@@ -122,6 +122,8 @@ cbd_df_load(const char *fn)
 {
   size_t n;
 
+  fn = strdup(fn);
+
   hcbd_df = hash_create(1024);
   hcbd_df_seen = hash_create(1024);
   
@@ -153,10 +155,10 @@ cbd_df_get(unsigned const char *cgp)
   if (lp)
     hash_add(hcbd_df_seen,
 	     hash_exists(hcbd_df, cgp),
-	     ""); 			/* hash_exists returns the
-					   hash table key which we
-				           know is non-volatile memory
-	       				 */
+	     ""); 	       	/* hash_exists returns the
+				   hash table key which we
+				   know is non-volatile memory
+				*/
   return lp;
 }
 
@@ -168,6 +170,11 @@ cbd_df_unused(void)
   List *lp = list_create(LIST_SINGLE);
   for (i = 0; keys[i]; ++i)
     if (!hash_exists(hcbd_df_seen, (uccp)keys[i]))
-      list_add(lp, (void*)keys[i]);
+      {
+	List *lcp = hash_find(hcbd_df, (uccp)keys[i]);
+	Cform *cp = list_first(lcp);
+	cp->f.sig = keys[i];
+	list_add(lp, cp); /* this is a hack but a harmless one */
+      }
   return lp;
 }

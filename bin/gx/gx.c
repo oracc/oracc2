@@ -259,7 +259,10 @@ io_run(void)
       cbd_psus();
 
       if (check)
-	validator(curr_cbd);
+	{
+	  validator(curr_cbd);
+	  mesg_print(stderr);
+	}
 
       Kis *k = NULL;
       if (keys)
@@ -474,13 +477,15 @@ main(int argc, char **argv)
       List *lp = cbd_df_unused();
       if (list_len(lp))
 	{
-	  const char *cgp;
-	  for (cgp = list_first(lp); cgp; cgp = list_next(lp))
-	    fprintf(stderr, "%s: %s not found in glossary\n", dotforms_file, cgp);
+	  Cform *cp;
+	  for (cp = list_first(lp); cp; cp = list_next(lp))
+	    mesg_verr(NULL, "%s:%d: %s not found in glossary", cp->f.file, cp->f.lnum, cp->f.sig);
 	}
       /*cbd_df_free();*/
     }
 
+  mesg_print(stderr);
+  
   gx_term();
 
   return 1;
