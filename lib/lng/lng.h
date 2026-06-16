@@ -34,6 +34,7 @@ enum langcode
 #define LF_LOGO 0x008
 #define LF_PC   0x010
 #define LF_PE   0x020
+#define LF_UOF  0x040 /* Unique Orthographic Form */
 
 struct langcore
 {
@@ -166,6 +167,7 @@ extern void texttag_register(const char *tag);
 extern void texttag_term(void);
 extern char *tag_no_script(const char *tag);
 
+extern const char *langtag_atf(const char *atf, const char *file, int lnum);
 extern struct lang_tag *langtag_parse(const char *tag, const char *file, int lnum);
 
 extern const char *fwhost;

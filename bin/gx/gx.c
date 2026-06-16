@@ -410,7 +410,7 @@ main(int argc, char **argv)
   extern int gdl_flex_debug, gdldebug;
   program_values(prog, major_version, minor_version, usage_string, NULL);
   status = 0;
-  options(argc,argv,"A:I:O:b:E:e:f:G:gi:o:CchjJKk::l::m:P:p:rsStTwxXv");
+  options(argc,argv,"A:I:O:b:E:e:f:G:gi:o:CchjJKk::l::m:P:p:RrsStTwxXv");
 
   gdl_flex_debug = gdldebug = cbd_flex_debug = cbddebug = trace_mode;
   gdl_word_mode = 1;
@@ -598,6 +598,9 @@ int opts(int och, const char *oarg)
       break;
     case 'p':
       project = optarg;
+      break;
+    case 'R':
+      dupform_reverse = 1;
       break;
     case 'r':
       rnvtrace = 1;

@@ -4,7 +4,7 @@
 %}
 struct langcore;
 %%
-sux, "020", -1, "akk", m_sign, m_lang, c_sux, LF_BASE|LF_SAC
+sux, "020", -1, "akk", m_sign, m_lang, c_sux, LF_BASE|LF_SAC|LF_UOF
 akk, "020", -1, "sux", m_logo, m_lang, c_akk, LF_NORM|LF_SAC
 arc, "124", -1, "akk", m_sign, m_lang, c_arc, LF_NORM
 egy, "050", -1, "", m_sign, m_lang, c_egy, 

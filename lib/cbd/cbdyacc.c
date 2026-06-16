@@ -5,6 +5,7 @@
 #include <hash.h>
 #include <mesg.h>
 #include <lng.h>
+#include <bits.h>
 #include <gt.h>
 #include "cbd.h"
 #include "cbd.tab.h"
@@ -15,6 +16,9 @@ struct parts *curr_parts;
 List *cmt_queue = NULL;
 
 int cbd_dotforms = 0;
+int dupform_reverse = 0; /* report the first instance not the
+			    duplicate; useful for stepping through
+			    epsd2/sux.forms rather than sux.glo */
 
 Cbds *csetp, cbdset;
 
@@ -398,6 +402,7 @@ cbd_bld_entry(YYLTYPE l, struct cbd* c)
 {
   struct entry *e = memo_new(c->entrymem);
   e->aliases = list_create(LIST_SINGLE);
+  e->hforms = hash_create(128);
   e->forms = list_create(LIST_SINGLE);
   e->senses = list_create(LIST_SINGLE);
   e->owner = c;
@@ -500,12 +505,28 @@ cbd_bld_form(YYLTYPE l, struct entry *e)
 void
 cbd_bld_form_setup(struct entry *e, Cform* cfp)
 {
-  list_add(e->forms, cfp);
-  cfp->f.project = e->owner->project;
-  cfp->f.id = cbd_field_id(e);
   if (!cfp->f.lang)
     cfp->f.lang = (ucp)e->lang;
   cfp->f.core = langcore_of((ccp)cfp->f.lang);
+  if (!cfp->f.core)
+    {
+      const char *atftag = langtag_atf(cfp->f.lang, cfp->l.file, cfp->l.line);
+      if (!atftag)
+	atftag = "sux";
+      cfp->f.core = langcore_of(atftag);
+    }
+  if (bit_get(cfp->f.core->features, LF_UOF))
+    {
+      Cform *dup = NULL;
+      if (cfp->f.form && (dup = hash_find(e->hforms, cfp->f.form)))
+	mesg_verr(dupform_reverse ? &dup->l : &cfp->l,
+		  "entry %s has duplicate form %s\n", e->cgp->tight, cfp->f.form);
+      else
+	hash_add(e->hforms, cfp->f.form, cfp);
+    }
+  list_add(e->forms, cfp);
+  cfp->f.project = e->owner->project;
+  cfp->f.id = cbd_field_id(e);
   cfp->f.cf = e->cgp->cf;
   cfp->f.gw = e->cgp->gw;
   cfp->f.pos = e->cgp->pos;
@@ -854,6 +875,7 @@ cbd_end_entry(YYLTYPE l)
     }
   else
     curr_entry->pref = curr_entry->cgp->cf;
+  hash_free(curr_entry->hforms, NULL);
   curr_entry = NULL;
   curr_sense = NULL;
 }

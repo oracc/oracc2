@@ -102,6 +102,76 @@ allowed(struct entry *e, unsigned char *a, unsigned char *b)
   return 0;
 }
 
+unsigned char *
+core_reduce(unsigned char *pri)
+{
+  unsigned char buf[strlen((ccp)pri)];
+  unsigned char *b = buf, *p = pri;
+  while (*p)
+    {
+      if ('{' == *p)
+	{
+	  ++p;
+	  int ncurly = 1;
+	  while (*p)
+	    {
+	      if ('{' == *p)
+		{
+		  ++p;
+		  ++ncurly;
+		}
+	      else if ('}' == *p && --ncurly == 0)
+		{
+		  ++p;
+		  break;
+		}
+	      else
+		++p;
+	    }
+	  if (*p && '{' != *p)
+	    *b++ = *p++;
+	}
+      else
+	*b++ = *p++;
+    }
+  *b = '\0';
+  return (unsigned char*)strdup((ccp)buf);
+}
+
+static void
+core_check(Hash *hpri, Hash *hsig, List *lcore)
+{
+  struct loctok *tok;
+  for (tok = list_first(lcore); tok; tok = list_next(lcore))
+    {
+      unsigned char *pri = tok->tok, *tmp;
+      unsigned char buf[strlen((ccp)pri)]; /* we know that there is at
+					 least one '{' so strlen(pri)
+					 is safe */
+      strcpy((char*)buf, (ccp)(tmp = core_reduce(pri)));
+      free(tmp);
+      const char *status;
+      const char*coresig = NULL;
+      if (hash_find(hpri, buf))
+	status = "known";
+      else
+	{
+	  status = "unknown";
+	  coresig = gdlsig_str(&tok->l,buf,1,1);
+	}
+      if (coresig)
+	{
+	  const unsigned char *should = hash_find(hsig, (uccp)coresig);
+	  if (should && strcmp(should, buf))
+	    mesg_verr(&tok->l, "core of base %s should be %s\n", pri, should);
+	  else
+	    ; /* should be OK for the core of a determined base not to occur as a non-determined base */
+	}
+      else
+	fprintf(stderr, "core_check: reduced %s to %s base %s\n", pri, status, buf);
+    }
+}
+
 static void
 v_bases(struct entry *e)
 {
@@ -109,7 +179,9 @@ v_bases(struct entry *e)
 
   const char *entry_phase = phase;
   phase = "bases";
-  
+
+  Hash *hcore = hash_create(10);
+  List *lcorecheck = list_create(LIST_SINGLE);
   e->b_pri = hash_create(1);
   e->b_alt = hash_create(1);
   e->b_sig = hash_create(1);
@@ -123,7 +195,6 @@ v_bases(struct entry *e)
       unsigned char *pri;
       
       pri = ltp->tok;
-
       if ((sig = gdlsig_str(&ltp->l,pri,1,1)))
 	{
 	  unsigned char *known_sig = NULL;
@@ -141,12 +212,22 @@ v_bases(struct entry *e)
 	      if (bases_fp)
 		fprintf(bases_fp, "%s\t%s\t%s\n", e->cgp->tight, pri_sig, pri);
 	      hash_add(e->b_sig, (ucp)pri_sig, pri);
+	      if (strchr((ccp)pri, '{'))
+		{
+		  unsigned char *tmp = core_reduce(pri);
+		  const char *sig = gdlsig_str(&ltp->l,tmp,1,1);
+		  hash_add(hcore, pool_copy((uccp)sig, csetp->pool), pool_copy(tmp, csetp->pool));
+		  free(tmp);
+		  list_add(lcorecheck, ltp);
+		}
+	      else
+		hash_add(hcore, (uccp)pri_sig, pri);
 	    }
 	  /*free((char *)sig);*/ /* CHECK ME! */
 	}
       else
 	mesg_verr(&ltp->l,"gdlsig_str failed on %s", pri);
-  
+
       /* Additional list members are alt bases */
       if (list_len(bp) > 1)
 	{
@@ -169,6 +250,11 @@ v_bases(struct entry *e)
 	}
     }
 
+  if (list_len(lcorecheck))
+    core_check(e->b_pri, hcore, lcorecheck);
+  list_free(lcorecheck, NULL);
+  hash_free(hcore, NULL);
+  hcore = NULL;
   phase = entry_phase;
   
   v_allow_2(e);

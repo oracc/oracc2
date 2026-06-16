@@ -22,8 +22,6 @@ static char *texttag_buf = NULL;
 static Pool *langtag_pool;
 static void langtag_error(const char *file, int lnum, 
 			  const char *tag, const char *mess);
-static const char *langtag_atf(const char *atf,
-			       const char *file, int lnum);
 
 void
 lng_init(void)
@@ -264,7 +262,7 @@ langtag_error(const char *file, int lnum, const char *tag, const char *mess)
     mesg_vwarning("",0,"%s: %s\n", tag, mess);
 }
 
-static const char *
+const char *
 langtag_atf(const char *atf, const char *file, int lnum)
 {
   struct langatf *atf_lang = NULL;

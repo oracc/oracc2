@@ -181,13 +181,14 @@ typedef struct entry {
   List *allows; /* struct allow * */
   List *aliases;
   Hash *stems;
+  Hash *hforms; /* For sux forms must be unique by orthographic form,
+		   not necessarily the case for other langs */
   List *dcfs;
   Hash *hdcfs;
-  List *parts; /* list of struct parts * */
+  List *parts; /* list of struct parts* */
   List *bases; /* list of base components in @bases; list data is
 		  another list, first element is pri, rest are alt
-		  pri/alt data are struct loctok
-	        */
+		  pri/alt data are struct loctok */
   List *forms;
   List *senses;
   Mloc *begin_senses;
@@ -364,7 +365,7 @@ extern void cbd_key_cgp(Cform *f, Entry *e, const char *period);
 extern void cbd_key_cgpse(Cform *f, Sense *s, const char *period);
 extern void cbd_key_fields(Cform *f, int context, void *v);
 
-extern int base_comma, cbd_dotforms;
+extern int base_comma, cbd_dotforms, dupform_reverse;
 extern Sense *curr_sense;
 extern const char *errmsg_fn;
 extern FILE *cbd_log_fp;
