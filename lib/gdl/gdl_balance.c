@@ -180,7 +180,7 @@ gdl_balance_break(Mloc mlp, int tok)
   if (o_of_c[tok])
     {
       intptr_t p = gdl_break_peek();
-      if (-1 == gstck_i(p))
+      if (-1 == p)
 	{
 	  /* nothing on the stack, superfluous closer */
 	  mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);

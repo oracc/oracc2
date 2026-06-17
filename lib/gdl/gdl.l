@@ -17,6 +17,7 @@
 extern Mloc gdllloc;
 const char *gdlfile = "<stdin>";
 const char *currgdlfile = NULL;
+extern const char *gdl_lexnames[];
 extern int gdl_lexfld[];
 extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 int gdlflextrace = 0;
@@ -83,7 +84,7 @@ NOTEMARK	"^"[0-9]+"^"
 {G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
 {GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(); }
 
-"|"/[ \t]	       	{ /*"*/ gsave; return gdl_lexfld[(int)*yytext]; }
+"|"/[ \t]	       	{ /*"*/ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
 <C>"|"/[ \t]   		{ BEGIN cvq_pop(); CIN=0; return C_C; }
 <C>"|"			{ BEGIN cvq_pop(); CIN=0; return C_C; }
@@ -204,7 +205,7 @@ NOTEMARK	"^"[0-9]+"^"
 ~~/{G}			{ g_logoforce_flag = 1; }
 "~"/{G}			{ if (gdl_lexical) { gsave; mesg_vwarning(currgdlfile, gdllineno,
 			   "no space after ~ field; use ~~ for logogram force with atf: use lexical\n");
-			    return gdl_lexfld[(int)*yytext];
+			     gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext];
 			   } else { g_logoforce_flag = 1; } }
 "$"/{G}			{ g_literal_flag = 1; }
 
@@ -212,9 +213,13 @@ NOTEMARK	"^"[0-9]+"^"
 <INITIAL,C,Q>[!?]      	{ gdl_lex_flag((uccp)yytext); }
 <INITIAL,C>"*"		{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
 <INITIAL,C>^[#"~=@^]	{ return gdl_lexfld[(int)*yytext]; }
-"#"			{ if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+"#"			{ if (SIN) { SIN=0;
+				        gdllval.text=(char*)gdl_lexnames[(int)*yytext];
+			  		return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
 <C>"#"			{ gdl_lex_flag((uccp)yytext); }
-[:"~=@^]   		{ if (SIN) { SIN=0; return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+[:"~=@^]   		{ if (SIN) { SIN=0;
+					gdllval.text=(char*)gdl_lexnames[(int)*yytext];
+					return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
 [#"=@^]/{G} 		{ if (gdl_lexical) {
 		       	    mesg_vwarning(currgdlfile, gdllineno,
 			  	       	  "no space after %c field\n", *yytext);

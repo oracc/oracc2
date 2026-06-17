@@ -3,6 +3,17 @@
 #include "gdl.tab.h"
 
 int gdl_lexfld[128];
+
+const char *gdl_lexnames[256] = {
+  ['='] = "!cs",
+  ['#'] = "!sv",
+  ['"'] = "!pr",
+  ['~'] = "!sg",
+  ['|'] = "!sn",
+  ['^'] = "!wp",
+  ['@'] = "!cs",
+};
+
 extern const char *currgdlfile;
 extern int gdllineno;
 void

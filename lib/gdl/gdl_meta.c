@@ -134,7 +134,7 @@ gdl_break_c(Bracket_e bt)
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", bt, bp->str);
   intptr_t st = gdl_balance_break(gdllloc, bp->tok);
-  if (gstck_i(st) > 0)
+  if (st > 0)
     {
       Node *np = gstck_np(st);
       if ('r' == np->name[2])

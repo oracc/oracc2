@@ -10,7 +10,7 @@ extern int yylex(void);
 extern void yyerror(const char *);
 extern const char *atftext, *curratffile;
 extern int atflineno, atftrace;
-extern int gdl_unicode;
+extern int gdl_unicode, gdl_lexical;
 
 static Tree *ytp;
 
@@ -41,9 +41,9 @@ ATFLTYPE atflloc;
 			ATF_MYLINES ATF_LINELABELS ATF_AGROUPS ATF_MATH ATF_UNICODE
 			ATF_LEGACY ATF_LEXICAL
 			LINK_DEF LINK_PARALLEL LINK_SOURCE
-			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
 			PRO_COMMENT COMMENT
 			MTS NTS LGS GUS LEM BIL EXX VAR DOLLAR TR_INTER
+			LNK_TOTO LNK_FROM LNK_PLUS LNK_VBAR
 			Y_BAD
 			Y_BODY Y_BOTTOM Y_BULLA Y_CATCHLINE Y_CFRAGMENT Y_COLOPHON Y_COLUMN
 			Y_COMPOSITE Y_DATE Y_DIV Y_DOCKET Y_EDGE Y_END Y_ENDVARIANTS
@@ -180,7 +180,7 @@ project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2;
 		;
 
 atfpro:	       	ATF_LANG 	{ atf_lang(@1, atfp, $1); };
-	|	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, curr_use_str); }
+		    |	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, curr_use_str); }
 		;
 
 atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
@@ -189,7 +189,7 @@ atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
 	|	ATF_MATH       { $$=ATFF_MATH; }
 	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
 	|	ATF_LEGACY     { $$=ATFF_LEGACY; }
-	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; }
+	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; gdl_lexical = 1; }
 		;
 
 link:
@@ -266,7 +266,7 @@ line:
 	| 	EXX longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
 	| 	VAR longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
-	|	l_link longtext		{ $$=$1; } /* MTS prereq */
+	|	l_link longtext		{ $$=$1; (void)longtext_get(); } /* MTS prereq */
 	|	COMMENT longtext	{ $$=$1; atf_comment(@1, longtext_get()); }
 	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, longtext_get()); }
 	| 	bib
@@ -277,10 +277,10 @@ line:
 	|	milestone
 	;
 
-l_link:		LNK_TOTO
-	|	LNK_FROM
-	|	LNK_PLUS
-	|	LNK_VBAR
+l_link:		LNK_TOTO		{ }
+	|	LNK_FROM		{ }
+	|	LNK_PLUS		{ }
+	|	LNK_VBAR		{ }
 	;
 
 div_tok:	Y_DIV 		{ $$=yylval.b; }

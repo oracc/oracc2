@@ -94,17 +94,17 @@ cellspec:
 field:
 		',' 		       	    		{ ynp = gdl_field(ytp,"default"); }
 	| 	FTYPE		       		    	{ ynp = gdl_field(ytp,$1); }
-        | 	lexfld				    	{ ynp = gdl_field(ytp,gdl_lexfld_name($1)); }
+        | 	lexfld				    	{ ynp = gdl_field(ytp,$1); }
 		;
 
 lexfld:
-		LF_AT
-	| 	LF_CARET
-	| 	LF_EQUALS
-	| 	LF_HASH
-	| 	LF_QUOTE
-	| 	LF_TILDE
-	| 	LF_VBAR
+		LF_AT		{ $$ = $1; }
+	| 	LF_CARET	{ $$ = $1; }
+	| 	LF_EQUALS	{ $$ = $1; }
+	| 	LF_HASH		{ $$ = $1; }
+	| 	LF_QUOTE	{ $$ = $1; }
+	| 	LF_TILDE	{ $$ = $1; }
+	| 	LF_VBAR		{ $$ = $1; }
 		;
 
 segment:

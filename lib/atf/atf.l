@@ -54,8 +54,8 @@ use	"use"[ \t]+
 TRA_CHR [@\"?\[\]\{\}]
 TRA_CMD (@[a-z0-9]+("["[^\]]+"]")?)|@\?|\?@|@\"|\"@|\{|\}|\^[0-9]+\^
 TRA_LAB ^@\([^)@]+\)
-TRA_PAR \n[ \t]*\n
-TRA_WHT [ \t\n]+
+TRA_PAR [\n\r]+[ \t]*[\n\r]+
+TRA_WHT [ \t\n\r]+
 TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 %x s_AMPl
@@ -77,16 +77,16 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_AMPl>[ \t]+=	       		{ BEGIN s_AMPr; return r('='); }
 <s_AMPl>[ \t]+/[^=]    		{ mesg_verr(&atflloc, "no '=' in &-line");
 				  BEGIN s_AMPr; return r('='); }
-<s_AMPr>[^\n]+      		{ BEGIN 0; atfnorm; return r(TEXT); }
+<s_AMPr>[^\n\r]+      		{ BEGIN 0; atfnorm; return r(TEXT); }
 
-<s_T>^[\t ]*/\n			{ ; }
-<s_T>^[^\t ][^\n]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
-<s_T>.*/\n[ \t]+\n		{ BEGIN 0; atfnorm; return TEXT; }
-<s_T>.*/\n[^ \t]+		{ BEGIN 0; atfnorm; return TEXT; }
-<s_T>^[\t ]+.+/\n      		{ BEGIN 0; atfnorm; return TAB; }
+<s_T>^[\t ]*/[\n\r]	       	{ ; }
+<s_T>^[^\t ][^\n\r]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
+<s_T>.*/\r?\n[ \t]+[\r\n]    	{ BEGIN 0; atfnorm; return TEXT; }
+<s_T>.*/\r?\n[^ \t]+		{ BEGIN 0; atfnorm; return TEXT; }
+<s_T>^[\t ]+.+/[\r\n]  		{ BEGIN 0; atfnorm; return TAB; }
 <s_T><<EOF>>			{ yyterminate(); }
 
-<s_WORD>[^ \t\n]+	     	{ BEGIN s_next;
+<s_WORD>[^ \t\n\r]+	     	{ BEGIN s_next;
 				  int ret=(s_next==s_TRH?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
 <s_WORD>[ \t]+	       		{ ; }
 
@@ -98,26 +98,27 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_SCO>"unparsed"	       	{ return UNPARSED; }
 <s_SCO>"word"			{ return SWORD; }
 <s_SCO>[ \t]			{ ; }
-<s_SCO>\n	       		{ BEGIN 0; }
+<s_SCO>[\n\r]	       		{ BEGIN 0; }
 
 ^"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
-<s_PRO>{PROJECT}/[ \t]*\n      	{ BEGIN 0; atfsave; return PROJECT; }
+<s_PRO>{PROJECT}/[ \t]*[\n\r]   { BEGIN 0; atfsave; return PROJECT; }
 <s_PRO>[ \t]+			{ ; }
 
 ^"#atf:"			{ BEGIN s_ATFPRO; }
-<s_ATFPRO>lang.*/\n	       	{ atfsave; return ATF_LANG; }
+<s_ATFPRO>lang.*/[\n\r]	       	{ atfsave; return ATF_LANG; }
 <s_ATFPRO>{use}mylines		{ usesave; return ATF_MYLINES; }
 <s_ATFPRO>{use}line-labels    	{ usesave; return ATF_LINELABELS; }
 <s_ATFPRO>{use}alignment-groups { usesave; return ATF_AGROUPS; }
 <s_ATFPRO>{use}math	       	{ usesave; return ATF_MATH; }
 <s_ATFPRO>{use}unicode		{ usesave; return ATF_UNICODE; }
 <s_ATFPRO>{use}legacy		{ usesave; return ATF_LEGACY; }
+<s_ATFPRO>{use}lexical		{ usesave; return ATF_LEXICAL; }
 <s_ATFPRO>{use}cuneiform      	{ ; } /* no longer useful; cuneify is default */
 <s_ATFPRO>{use}lemconv		{ fprintf(stderr, "lemconv is not implemented\n"); }/* ever used?*/
 <s_ATFPRO>[ \t]			{ ; }
-<s_ATFPRO>\n	       		{ BEGIN 0; }
+<s_ATFPRO>[\n\r]       		{ BEGIN 0; }
 
-^"#link"	       		{ linktext = 0; BEGIN s_LINK; return HASH_LINK; }
+^"#link:"	       		{ linktext = 0; BEGIN s_LINK; return HASH_LINK; }
 <s_LINK>"def"			{ s_next=s_LINK; BEGIN s_WORD; return LINK_DEF; }
 <s_LINK>"parallel"		{ return LINK_PARALLEL; }
 <s_LINK>"source"		{ return LINK_SOURCE; }
@@ -125,7 +126,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_LINK>=			{ if (linktext==2) BEGIN s_T; else if (linktext==1) BEGIN s_WORD;
 				  linktext = 0; return '='; }
 <s_LINK>[ \t]			{ ; }
-<s_LINK>\n	       		{ BEGIN 0; }
+<s_LINK>[\n\r]	       		{ BEGIN 0; }
 
 ^"#bib:"			{ BEGIN s_T; return in_preamble ? HASH_PROBIB : HASH_BIB; }
 ^"#key:"			{ BEGIN s_T; return HASH_KEY; }
@@ -141,7 +142,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_LZR>[ \t]+			{ ; }
 <s_LZR>"sparse"			{ BEGIN s_T; return LZR_SPARSE; }
 <s_LZR>"stop"			{ BEGIN s_WORD; return LZR_SPARSE; }
-<s_LZR>\n	       		{ BEGIN 0; }
+<s_LZR>[\n\r]	       		{ BEGIN 0; }
 
 ^@([a-z][a-z0-9]*) 		{ BEGIN s_T; return atf_block(atftext); }
 
@@ -151,19 +152,19 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^#tr(.[a-z-]+)?:		{ BEGIN s_T; longinit; return TR_INTER; }
 
-^{LK_TOTO}  			{ BEGIN s_T; atfsave; return LNK_TOTO; }
+^{LK_TOTO}  			{ BEGIN s_T; longinit; return LNK_TOTO; }
 
-^{LK_FROM}  			{ BEGIN s_T; atfsave; return LNK_FROM; }
+^{LK_FROM}  			{ BEGIN s_T; longinit; return LNK_FROM; }
 
-^{LK_PLUS}  			{ BEGIN s_T; atfsave; return LNK_PLUS; }
+^{LK_PLUS}  			{ BEGIN s_T; longinit; return LNK_PLUS; }
 
-^{LK_VBAR}  			{ BEGIN s_T; atfsave; return LNK_VBAR; }
+^{LK_VBAR}  			{ BEGIN s_T; longinit; return LNK_VBAR; }
 
-^[^ \t\n]+\.[ \t]+        	{ BEGIN s_T; longinit; return MTS; }
+^[^ \t\n\r]+\.[ \t]+        	{ BEGIN s_T; longinit; return MTS; }
 
-^[^ \t\n]+\./\n        		{ BEGIN s_T; longinit; return MTS; }
+^[^ \t\n\r]+\./[\n\r]   	{ BEGIN s_T; longinit; return MTS; }
 
-^[^ \t\n#]+:[ \t]+ 		{ BEGIN s_T; longinit; return EXX; }
+^[^ \t\n\r#]+:[ \t]+ 		{ BEGIN s_T; longinit; return EXX; }
 
 ^:[^:]+:[ \t]+			{ BEGIN s_T; longinit; return VAR; }
 
@@ -171,18 +172,20 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^\#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
-[ \t\n]+       			{ ; }
+[ \t\r\n]+     			{ ; }
 
-<<EOF>>				{ yyterminate(); }
+<*>\r				{ }
 
 <*>.				{ mesg_vwarning(curratffile, atflineno,
 						"atf.l: unmatched character %c\n", *atftext); }
+
+<<EOF>>				{ yyterminate(); }
 
 <s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
 <s_TRH>{LANG}				{ atfsave; s_next=s_TRH; BEGIN s_WORD; return TR_LANG; }
 <s_TRH>[ \t]+				{ ; }
 <s_TRH>"\n"				{ BEGIN s_TRA; }
-<s_TRA>^@label[^\n]*/\n			{ atfsave; return TR_LABEL; }
+<s_TRA>^@label[^\n\r]*/[\n\r]	       	{ atfsave; return TR_LABEL; }
 <s_TRA>{TRA_LAB}			{ atfsave; return TR_LABEL; }
 <s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }

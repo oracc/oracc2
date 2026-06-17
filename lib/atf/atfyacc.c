@@ -10,7 +10,7 @@
 
 Atfm *atfmp;
 ATF *atfp;
-
+extern int gdl_lexical;
 extern void atflex_destroy(void);
 
 Tree *
@@ -63,6 +63,7 @@ atf_init(void)
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;
+  gdl_lexical = 0;
   atfp->input = list_create(LIST_SINGLE);
   /* lang_init() and lang_term() must now be called by ax or equivalent before/after the entire run */
 }
