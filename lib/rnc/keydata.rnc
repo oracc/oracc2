@@ -5,19 +5,24 @@ start =
     element not-indexed {
       element field {
         attribute n { xsd:NCName }
-      }+
+      }*
+    }?,
+    element inherited {
+      element field {
+        attribute n { xsd:NCName }
+      }*
     }?,
     element keytypes {
       element keytype {
         attribute n { xsd:NCName },
         attribute type { xsd:NCName }
       }+
-    },
+    }?,
     element sortable {
-      element type {
-        attribute hr { text },
-        attribute n { xsd:NCName }
-      }+
+      (element field { sortable.atts }
+      |
+       element type { sortable.atts }
+      )*
     },
     element keys {
       attribute class { xsd:NCName },
@@ -26,10 +31,14 @@ start =
       attribute remap { xsd:integer },
       attribute remap-to { xsd:NCName }?,
       attribute reorder { xsd:integer },
-      attribute type { xsd:NCName },
+      (attribute field { xsd:NCName } | attribute type { xsd:NCName }),
       element val {
         attribute n { text },
         attribute remap { xsd:NCName }?
       }*
     }+
   }
+
+sortable.atts =
+        attribute hr { text },
+        attribute n { xsd:NCName }
