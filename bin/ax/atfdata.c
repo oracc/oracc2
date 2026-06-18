@@ -100,12 +100,13 @@ atf_fix_dup(char *pqx)
 const char **
 atfdata_inputs(int argc, char *const*argv)
 {
+#if 0
   static const char *xatfs[2] = { "-" , 0 };
+#endif
   const char **ret = NULL;
   if (argv[optind])
     {
-      xatfs[0] = argv[optind];
-      ret = xatfs;
+      ret = (ccp*)argv[optind];
     }
   else if (all_00atf)
     {
