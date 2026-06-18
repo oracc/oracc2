@@ -128,6 +128,7 @@ extern Node *gdl_nongraph(Mloc *locp, Tree *ytp, const char *data, const char *t
 
 extern void gdl_break_o(Bracket_e bt);
 extern void gdl_break_c(Bracket_e bt);
+extern void gdl_break_h_l(void);
 extern void gdl_break_o_l(Bracket_e bt);
 extern void gdl_break_c_l(Bracket_e bt);
 extern void gdl_state_o(Bracket_e bt);

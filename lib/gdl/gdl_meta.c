@@ -174,6 +174,11 @@ gdl_break_c(Bracket_e bt)
  * way they manage the state variables.
  */
 void
+gdl_break_h_l(void)
+{
+}
+
+void
 gdl_break_o_l(Bracket_e bt)
 {
   Bracket *bp = &bracket_data[bt];

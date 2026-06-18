@@ -7,6 +7,7 @@
 #include <gutil.h>
 #include "gdl.h"
 #include "gvl.h"
+#define GDLLTYPE Mloc
 #include "gdl.tab.h"
 
 #define G_C10E_MIXED_CASE 0x02
@@ -15,6 +16,8 @@
 static Hash *legacy_reported_h = NULL;
 extern const char *curr_pqx;
 extern int curr_pqx_line;
+
+static void gdl_legacy_brackets(char *b);
 
 /* Legacy bracketing
  * =================
@@ -30,27 +33,25 @@ extern int curr_pqx_line;
  * non-bracket characters, so the only conditions we need to consider
  * are []⸢⸣⸤⸥ occurring within a grapheme.
  *
- * The following rules are applied depending on the
- * legacy-grapheme-bracketing-state (lgbs: 0=initial; 1=medial, i.e.,
- * after a bracket has been seen) and the previous/current/next
+ * The following rules are applied to the previous/current/next
  * grapheme extant or pending states (pgst/curr/ngst: [=currently open
  * square; #=currently open half):
  *
- *   type      lgbs  	pgst 	curr 	ngst
- *   
- * [ e_L_squ   0	
- * [ e_L_squ   1	
- * ] e_R_squ   0	
- * ] e_R_squ   1	
- * ⸢ e_L_uhs   0	
- * ⸢ e_L_uhs   1	
- * ⸣ e_R_uhs   0	
- * ⸣ e_R_uhs   1	
- * ⸤ e_L_lhs   0	
- * ⸤ e_L_lhs   1	
- * ⸥ e_R_lhs   0	
- * ⸥ e_R_lhs   1	
+ *     type    		pgst 	curr 	ngst
+ *   c ^...]...   	c]      #       -
+ *   c ^...⸣...   	c⸢      #       -
+ *   c ^...⸥...   	c⸥      #       -
+ *   o ...[...$		o[      #	o
+ *   o ^...⸢...   	o⸢      #       -
+ *   o ^...⸤...   	o⸥      #       -
+ *   h ...[...]...	-       #	-
  *
+ *   o=opener; c=closer; h=hash
+ *
+ *   More than one of these conditions can occur in a single grapheme.
+ *   In combinations of c/o and h, the h is irrelevant because the c/o
+ *   already set curr's break state to h.  If both c and o occur, both
+ *   rules are applied, to the pgst and ngst respectively.
  */
 
 unsigned char *
@@ -64,6 +65,7 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 
   if ((w = utf2wcs(g, &len)))
     {
+      char brackets[len], *b = brackets;
       wchar_t *x = malloc(3*len*sizeof(wchar_t));
       wchar_t cued_sub_23 = 0;
       size_t xlen = 0;
@@ -103,22 +105,22 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 		x[xlen++] = '*';
 	      break;
 	    case '[':
-	      gdl_break_o_l(e_L_squ);
+	      *b++ = '[';
 	      break;
 	    case ']':
-	      gdl_break_c_l(e_R_squ);
+	      *b++ = ']';
 	      break;
 	    case U_ulhsq:
-	      gdl_break_o_l(e_L_uhs);
+	      *b++ = 'L';
 	      break;
 	    case U_urhsq:
-	      gdl_break_c_l(e_R_uhs);
+	      *b++ = 'R';
 	      break;
 	    case U_llhsq:
-	      gdl_break_o_l(e_L_lhs);
+	      *b++ = 'l';
 	      break;
 	    case U_lrhsq:
-	      gdl_break_c_l(e_R_lhs);
+	      *b++ = 'r';
 	      break;
 	    case '#':
 	    case '?':
@@ -223,9 +225,195 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 	}
       ret = wcs2utf(x,xlen);
       free(x);
+      *b = '\0';
+      if (brackets[0])
+	gdl_legacy_brackets(brackets);
     }
   return ret;
 }
+
+/* In legacy-bracketed graphemes there are three state variables that
+ * must be handled at different times:
+ *
+ * last-grapheme-state
+ * curr-grapheme-state
+ * next-grapheme-state
+ *
+ * The first, last-grapheme-state, is the same as non-legacy
+ * processing because it only affects closure states and they can be
+ * applied directly to the last grapheme state on lgp.
+ *
+ * The other two need careful handling because they require a
+ * double-pending structure: curr-grapheme-state needs to be applied
+ * after the current grapheme is created; next-grapheme-state has to
+ * be applied when the following grapheme is created.
+ *
+ * The argument is a simple char array where [] are lft/rt square; LR
+ * are lft/rt upper-half-square; lr are lft/rt lower-half-square.
+ *
+ * Any adjacent open/close pair must match: [], ⸢⸣, ⸤⸥; it's easy to
+ * check these and report errors, so we do that first.
+ *
+ * Any brackets at all automatically mean that the curr-grapheme-state
+ * pending has to be set to hash-damage.
+ *
+ * If the arg array starts with a closer, that has to be put back on
+ * last-grapheme-state.
+ *
+ * If the arg array ends with an opener, then the next-grapheme-state
+ * pending (the double-pending) has to be set to the opener.
+ */
+
+static void
+gdl_legacy_brackets(char *b)
+{
+  char *s = b;
+  /* Check for paired opener-closer and if they are matched reduce to
+   * '--'; error and abort if they are mismatched
+   */
+  while (*s)
+    {
+      if ('[' == *s)
+	{
+	  if (']' == s[1])
+	    {
+	      *s = s[1] = '-';
+	      s += 2;
+	    }
+	  else if ('R' == s[1] || 'r' == s[1])
+	    {
+	      mesg_verr(&gdllloc, "mismatched bracketing ignored (reported once per grapheme)");
+	      return;
+	    }
+	  else
+	    ++s;
+	}
+      else if ('L' == *s)
+	{
+	  if ('R' == s[1])
+	    {
+	      *s = s[1] = '-';
+	      s += 2;
+	    }
+	  else if (']' == s[1] || 'r' == s[1])
+	    {
+	      mesg_verr(&gdllloc, "mismatched bracketing ignored (reported once per grapheme)");
+	      return;
+	    }
+	  else
+	    ++s;
+	}
+      else if ('l' == *s)
+	{
+	  if ('r' == s[1])
+	    {
+	      *s = s[1] = '-';
+	      s += 2;
+	    }
+	  else if (']' == s[1] || 'R' == s[1])
+	    {
+	      mesg_verr(&gdllloc, "mismatched bracketing ignored (reported once per grapheme)");
+	      return;
+	    }
+	  else
+	    ++s;
+	}
+      else
+	++s;
+    }
+
+  
+  /* If the remaining brackets have two openers or two closers in a
+   * row that is also an error * If there are matching opener/closers
+   * they must be nested around the previous set; this is also an error
+   */
+  s = b;
+  while (*s)
+    {
+      if ('[' == *s || 'L' == *s || 'l' == *s)
+	{
+	  char *n = s+1;
+	  while (*n && '-' == *n)
+	    ++n;
+	  if (*n)
+	    {
+	      if ('[' == *n || 'L' == *n || 'l' == *n)
+		{
+		  mesg_verr(&gdllloc, "double-opener; bracketing ignored (reported once per grapheme)");
+		  return;
+		}
+	      else if (']' == *n || 'R' == *n || 'r' == *n)
+		{
+		  mesg_verr(&gdllloc, "nested pairs; bracketing ignored (reported once per grapheme)");
+		  return;
+		} 
+	    }
+	  else
+	    ++s;
+	}
+      else if (']' == *s || 'R' == *s || 'r' == *s)
+	{
+	  char *n = s+1;
+	  while (*n && '-' == *n)
+	    ++n;
+	  if (*n)
+	    {
+	      if (']' == *n || 'R' == *n || 'r' == *n)
+		{
+		  mesg_verr(&gdllloc, "double-closer; bracketing ignored (reported once per grapheme)");
+		  return;
+		}
+	    }
+	  else
+	    ++s;
+	}
+      else
+	++s;
+    }
+
+  /* always set up the current-pending as if a #-flag (hash) follows
+   * the current grapheme */
+  gdl_break_h_l();
+
+  s = b;
+  while (*s && '-' == *s)
+    ++s;
+
+  /* if the first bracket is a closer apply that to the last grapheme */
+  if (']' == *s || 'R' == *s || 'r' == *s)
+    {
+      gdl_break_c_l(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+      ++s; /* point at char after closer */
+    }
+  else
+    s = b;
+
+  char *t = b + strlen(b);
+  while (t > b && '-' == t[-1])
+    --t;
+
+  if ('[' == *t || 'L' == *t || 'l' == *t)
+    {
+      gdl_break_o_l('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs));
+      if (t > s)
+	--t; /* point at char before opener */
+    }
+
+  /* check if there were any unused brackets between the closer, if
+     any, and the opener */
+  while (s <= t)
+    {
+      if ('-' != *s)
+	{
+	  mesg_verr(&gdllloc, "unused brackets between closer and opener");
+	  return;
+	}
+    }
+}
+
+#if 0
+/* 20260618: no longer used now that unlegacy is handled completely in
+   the lexer maw and not deferred until after the grammar sees it */
 
 /* if gdl_legacy is set (normally via #atf: use legacy) this routine
    stores the value of np->text in a property named 'legacy' and
@@ -256,6 +444,7 @@ gdl_unlegacy(Node *np)
   else
     mesg_verr(np->mloc, "gdl_unlegacy failed to convert %s\n", np->text);
 }
+#endif
 
 int
 gdl_legacy_check(Node *ynp, unsigned const char *t)
