@@ -1,0 +1,48 @@
+#include <oraccsys.h>
+#include "atfdata.h"
+#include "atf_cdli.h"
+
+static unsigned char *catvec;
+static size_t max_cat_id;
+
+void
+atf_cdli_init(void)
+{
+  size_t vecsize;
+  catvec = loadfile((unsigned const char *)"@@ORACC@@/lib/data/catpnums.vec",&vecsize);
+  max_cat_id = vecsize * 8;
+}
+
+void
+atf_cdli_term(void)
+{
+  free(catvec);
+  catvec = NULL;
+}
+
+void
+atf_cdli_check(const char *pqx)
+{
+  long p = strtoul(pqx+1,NULL,10);
+
+  /* issue this as a notice so it doesn't affect error status */
+  if (p > max_cat_id)
+    mesg_vnotice(curr_file, curr_line, "%s > max %ld in Oracc version of CDLI catalogue", pqx, max_cat_id);
+  else if (!bit_get(catvec[p/8],(1<<(p%8))))
+    mesg_vnotice(curr_file, curr_line, "%s not in Oracc version of CDLI catalogue", pqx);
+}
+
+#if 0
+void
+catvec_dump()
+{
+  int i;
+  for (i = 0; i < max_cat_id; ++i)
+    {
+      int v = i/8;
+      int b = (1<<(i%8));
+      if (BIT_ISSET(catvec[v],b))
+	fprintf(stderr,"P%06d\n",i);
+    }
+}
+#endif
