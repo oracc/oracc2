@@ -203,7 +203,7 @@ maybegflags:
 	| 	/*empty */
 		;
 
-simplexg:	s maybegflags	       	       	 { if (gdl_legacy) gdl_unlegacy(ynp);
+simplexg:	s maybegflags	       	       	 { /*if (gdl_legacy) gdl_unlegacy(ynp);*/
 		    		                   if (ynp->kids) gdl_mod_wrap(ynp, 1);
 						   gvl_simplexg(ynp);
 						   $$ = ynp; }
@@ -243,7 +243,7 @@ cbits:
 
 cbit:
 	s	       			       		{ /*ynp->mloc = mloc_mloc(&@1);*/
-	  						  if (gdl_legacy) gdl_unlegacy(ynp);
+	  						  /*if (gdl_legacy) gdl_unlegacy(ynp);*/
 							  gvl_simplexg(ynp); }
 	| cdelim					{ }
 	| CLP			       			{ gdl_balance_state(@1,CLP);
@@ -275,7 +275,7 @@ cdelim:
 	| 	C_TIMES					{ ynp = gdl_delim(ytp, "×"); }
 	| 	C_3TIMES			       	{ gdl_prefix(ytp, (uccp)"3"); }
 	| 	C_4TIMES		       		{ gdl_prefix(ytp, (uccp)"4"); }
-	| 	C_CIRCLE	       			{ ynp = gdl_delim(ytp, "∘"); }
+	| 	C_CIRCLE	       			{ ynp = gdl_delim(ytp, "∘"); } /* for PC */
 	;
 
 cmaybemodflags:

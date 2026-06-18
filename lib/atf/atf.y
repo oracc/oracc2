@@ -188,7 +188,7 @@ atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
 	|	ATF_AGROUPS    { $$=ATFF_AGROUPS; }
 	|	ATF_MATH       { $$=ATFF_MATH; }
 	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
-	|	ATF_LEGACY     { $$=ATFF_LEGACY; }
+	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; gdl_legacy_lexer(1); }
 	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; gdl_lexical = 1; }
 		;
 

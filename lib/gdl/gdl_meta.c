@@ -169,6 +169,63 @@ gdl_break_c(Bracket_e bt)
   rs_no(bp->s);
 }
 
+/* These routines with suffixed _l are called by gdl_unlegacy when
+ * []⸢⸣⸤⸥ are encountered; they differ from the above routines in the
+ * way they manage the state variables.
+ */
+void
+gdl_break_o_l(Bracket_e bt)
+{
+  Bracket *bp = &bracket_data[bt];
+  if (gdltrace)
+    fprintf(stderr, "gt: BREAK/o: %d=%s\n", bt, bp->str);
+  (void)gdl_balance_break(gdllloc, bp->tok);
+  ps_on(bp->oc);
+  rs_on(bp->s);
+}
+
+void
+gdl_break_c_l(Bracket_e bt)
+{
+  Bracket *bp = &bracket_data[bt];
+  if (gdltrace)
+    fprintf(stderr, "gt: BREAK/c: %d=%s\n", bt, bp->str);
+  intptr_t st = gdl_balance_break(gdllloc, bp->tok);
+  if (st > 0)
+    {
+      Node *np = gstck_np(st);
+      if ('r' == np->name[2])
+	np = np->rent;
+      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
+      if (!gdl_no_xml_ids)
+	{
+	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+	  if (!idp)
+	    {
+	      if (np->kids)
+		{
+		  idp = prop_find_kv(np->kids->props, "xml:id", NULL);
+		  if (!idp)
+		    {
+		      if (np->kids->text)
+			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'\n", np->kids->text);
+		      else
+			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids\n");
+		    }
+		  else
+		    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+		}
+	      else
+		mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np type %s\n", np->name);
+	    }
+	  else
+	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+	}
+    }
+  bit_set(*lst,bp->oc);
+  rs_no(bp->s);
+}
+
 void
 gdl_state_o(Bracket_e bt)
 {

@@ -16,6 +16,43 @@ static Hash *legacy_reported_h = NULL;
 extern const char *curr_pqx;
 extern int curr_pqx_line;
 
+/* Legacy bracketing
+ * =================
+ *
+ * ATF does not allow square and half-brackets to occur within
+ * graphemes. If the protocol #atf: use legacy is given this rule is
+ * bent and the input is preprocessed so that the internal bracketing
+ * is handled as if it were the equivalent external bracketing, and
+ * the cleaned input is passed to the parser.  The parser, gdl.y, does
+ * not care about square and half brackets.
+ *
+ * The lexer is configured to ensure that graphemes begin and end with
+ * non-bracket characters, so the only conditions we need to consider
+ * are []⸢⸣⸤⸥ occurring within a grapheme.
+ *
+ * The following rules are applied depending on the
+ * legacy-grapheme-bracketing-state (lgbs: 0=initial; 1=medial, i.e.,
+ * after a bracket has been seen) and the previous/current/next
+ * grapheme extant or pending states (pgst/curr/ngst: [=currently open
+ * square; #=currently open half):
+ *
+ *   type      lgbs  	pgst 	curr 	ngst
+ *   
+ * [ e_L_squ   0	
+ * [ e_L_squ   1	
+ * ] e_R_squ   0	
+ * ] e_R_squ   1	
+ * ⸢ e_L_uhs   0	
+ * ⸢ e_L_uhs   1	
+ * ⸣ e_R_uhs   0	
+ * ⸣ e_R_uhs   1	
+ * ⸤ e_L_lhs   0	
+ * ⸤ e_L_lhs   1	
+ * ⸥ e_R_lhs   0	
+ * ⸥ e_R_lhs   1	
+ *
+ */
+
 unsigned char *
 gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 {
@@ -66,22 +103,22 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 		x[xlen++] = '*';
 	      break;
 	    case '[':
-	      gdl_balance_break(*mlp, '[');
+	      gdl_break_o_l(e_L_squ);
 	      break;
 	    case ']':
-	      gdl_balance_break(*mlp, ']');
+	      gdl_break_c_l(e_R_squ);
 	      break;
 	    case U_ulhsq:
-	      gdl_balance_break(*mlp, L_uhs);
+	      gdl_break_o_l(e_L_uhs);
 	      break;
 	    case U_urhsq:
-	      gdl_balance_break(*mlp, R_uhs);
+	      gdl_break_c_l(e_R_uhs);
 	      break;
 	    case U_llhsq:
-	      gdl_balance_break(*mlp, L_lhs);
+	      gdl_break_o_l(e_L_lhs);
 	      break;
 	    case U_lrhsq:
-	      gdl_balance_break(*mlp, R_lhs);
+	      gdl_break_c_l(e_R_lhs);
 	      break;
 	    case '#':
 	    case '?':

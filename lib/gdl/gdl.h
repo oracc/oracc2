@@ -65,6 +65,11 @@ typedef struct gdlstack
   Node *np;
 } Gstck;
 
+/* function pointer type for switching gdl_grapheme_type between
+   legacy and strict without impacting performance for strict-mode
+   data */
+typedef int (*gdl_grapheme_type_p)(void);
+
 #if 0
 /* This may not be necessary given the emerging GDL/GVL architecture; see gvl_g in gvl.h */
 struct gdl_g {
@@ -123,6 +128,8 @@ extern Node *gdl_nongraph(Mloc *locp, Tree *ytp, const char *data, const char *t
 
 extern void gdl_break_o(Bracket_e bt);
 extern void gdl_break_c(Bracket_e bt);
+extern void gdl_break_o_l(Bracket_e bt);
+extern void gdl_break_c_l(Bracket_e bt);
 extern void gdl_state_o(Bracket_e bt);
 extern void gdl_state_c(Bracket_e bt);
 
@@ -145,6 +152,7 @@ extern Node *gdl_barenum(Mloc *locp, Tree *ytp, const char *data);
 extern void gdl_unlegacy(Node *np);
 extern unsigned char *gdl_unlegacy_str(Mloc *mloc, unsigned const char *gp);
 extern int gdl_legacy_check(Node *, unsigned const char *gp);
+extern void gdl_legacy_lexer(int legacy);
 extern void gdl_incr_qin(void);
 extern void gdl_decr_qin(void);
 extern intptr_t gdl_balance_break(Mloc mlp, int tok);

@@ -23,10 +23,13 @@ extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 int gdlflextrace = 0;
 int g_literal_flag = 0, g_logoforce_flag = 0;
 
+static gdl_grapheme_type_p gdl_grapheme_type;
+
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
 static void gdl_user_action(void);
-static int gdl_grapheme_type(void);
+static int gdl_grapheme_type_l(void);
+static int gdl_grapheme_type_s(void);
 static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
 static int GIN = 0; /* 1 if in grapheme */
 static int QIN = 0; /* non-zero if in a(BA) qualifier */
@@ -263,8 +266,48 @@ gdl_lex_closers(void)
   cvq_reset();
 }
 
+/* Public function to call with (0) arg at start of text and with (1)
+   arg when #atf: use legacy is encountered */
+void
+gdl_legacy_lexer(int legacy)
+{
+  if (legacy)
+    gdl_grapheme_type = gdl_grapheme_type_l;
+  else
+    gdl_grapheme_type = gdl_grapheme_type_s;
+}	
+
+/* Version of gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
 int
-gdl_grapheme_type(void)
+gdl_grapheme_type_s(void)
+{
+  char *g = gdltext;
+  gsaveg(g);
+
+  if (strlen(g) == 1
+      && ('n' == *g || 'N' == *g))
+      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
+  else if (isdigit(*g))
+    {
+      char *d = g+1;
+      while (*d && isdigit(*d))
+        ++d;
+      if (*d == '(')
+        return NUMBER;
+      else if (!strncmp(g, "00", 2))
+	return ZERO;
+      else
+	return BARENUM;
+    }
+  else if (sll_is_signlist(g))
+    return LISTNUM;
+  else
+    return GRAPHEME;
+}
+
+/* Version of gdl_grapheme_type for use when atf: use legacy is set */
+int
+gdl_grapheme_type_l(void)
 {
   char *g = gdltext;
   gsaveg(g);
