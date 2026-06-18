@@ -106,7 +106,7 @@ atfdata_inputs(int argc, char *const*argv)
   const char **ret = NULL;
   if (argv[optind])
     {
-      ret = (ccp*)argv[optind];
+      ret = (ccp*)argv+optind;
     }
   else if (all_00atf)
     {
