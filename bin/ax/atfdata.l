@@ -83,6 +83,8 @@ atfd_input(const char *fn)
               curr_file = fn;
 	      yyin = fp;
 	      yylineno = 1;
+	      yyrestart(fp);
+	      BEGIN(0);
 	    }
           return fp;
 	}
