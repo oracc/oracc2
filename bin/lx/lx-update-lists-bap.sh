@@ -11,11 +11,11 @@ opt=`oraccopt . build-approved-policy`
 
 case $opt in
     ""|atf)
-	lx -q -o${out_approved} -p${project} ${have_atf} \
+	lx -q -o${out_approved} -p${project} -- ${have_atf} \
 	   -? $lxd/not-approved.lst +? $lxd/add-approved.lst
 	;;
     catalog|catalogue)
-	lx -q -o${out_approved} -p${project} ${cat_ids} \
+	lx -q -o${out_approved} -p${project} -- ${cat_ids} \
 	   -? $lxd/not-approved.lst +? $lxd/add-approved.lst
 	;;
     search|umbrella)

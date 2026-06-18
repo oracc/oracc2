@@ -16,12 +16,12 @@ fi
 
 case $opt in
     approved)
-	lx -zq -p$project -o$out_outlined $out_approved \
+	lx -zq -p$project -o$out_outlined -- $out_approved \
 	   -? $lxd/not-outlined.lst +? $lxd/add-outlined.lst \
 	   +? $lxd/proxy-atf.lst
     ;;
     ""|atf)
-	lx -q -p$project -o$out_outlined $have_atf \
+	lx -q -p$project -o$out_outlined -- $have_atf \
 	   -? $lxd/not-outlined.lst +? $lxd/add-outlined.lst \
 	   +? $lxd/proxy-atf.lst
 	;;
@@ -33,7 +33,7 @@ case $opt in
 		PQX=':Q'
 	    fi
 	    grep $PQX $out_approved | \
-		lx -p$project -o$out_outlined - \
+		lx -p$project -o$out_outlined -- - \
 		   -? $lxd/not-outlined.lst +? $lxd/add-outlined.lst
 	fi
 	;;
