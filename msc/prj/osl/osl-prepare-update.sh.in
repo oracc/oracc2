@@ -8,4 +8,5 @@ if [ "${ORACC_MODE}" = "multi" ]; then
 else
     echo ORACC_MODE $ORACC_MODE = single
 fi
-(cd @@ORACC@@/osl ; sx -b ; slix 02pub/sl/sl.tsv)
+bin=@@ORACC@@/bin
+(cd @@ORACC@@/osl ; ${bin}/sx -b ; ${bin}/slix 02pub/sl/sl.tsv)
