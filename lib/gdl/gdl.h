@@ -47,6 +47,7 @@ typedef struct bracket
 } Bracket;
 
 extern Bracket bracket_data[];
+extern Bracket_e gdl_legacy_bracket;
 
 enum gdlpropvals { GP_ATTRIBUTE, GP_IMPLICIT, GP_TRACKING,
 		   GP_DET_SEME , GP_DET_SEMI, GP_DET_PHON,
@@ -70,6 +71,12 @@ typedef struct gdlstack
    data */
 typedef int (*gdl_grapheme_type_p)(void);
 
+/* same for gdl_delim which needs to process future state */
+typedef Node *(*gdl_delim_p)(Tree *ytp, const char *data);
+extern gdl_delim_p gdl_delim;
+extern Node *gdl_delim_l(Tree *ytp, const char *data);
+extern Node *gdl_delim_s(Tree *ytp, const char *data);
+
 #if 0
 /* This may not be necessary given the emerging GDL/GVL architecture; see gvl_g in gvl.h */
 struct gdl_g {
@@ -82,7 +89,7 @@ extern int c_processing;
 extern int gdl_corrq;
 extern int gdl_no_xml_ids;
 extern int curr_lang;
-extern int gdltrace, gdl_legacy, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
+extern int gdltrace, gdl_legacy, gdl_legacy_hash, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
@@ -138,7 +145,6 @@ extern Node *gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
 extern Node *gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
 
 extern void gdl_cell(Tree *ytp, const char *span);
-extern Node *gdl_delim(Tree *ytp, const char *data);
 extern Node *gdl_field(Tree *ytp, const char *ftype);
 extern Node *gdl_graph(Mloc *locp, Tree *ytp, const char *data);
 extern const char *gdl_lexfld_name(const char *lftok);

@@ -5,6 +5,7 @@
 
 %{
 #include <oraccsys.h>
+#include <gdl.h>
 #include "atf.h"
 extern int yylex(void);
 extern void yyerror(const char *);

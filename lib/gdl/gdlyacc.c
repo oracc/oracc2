@@ -15,7 +15,7 @@
 extern struct lang_context *gdl_lang_context;
 extern const char *word_lang_tag;
 extern const char *currgdlfile, *gdl_pending_varo;
-extern int gdltrace, gdllineno, gdl_legacy;
+extern int gdltrace, gdllineno, gdl_legacy, gdl_legacy_hash;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
 /*int curr_lang = 's';*//* not sure how this was ever supposed to be useful; use word_lang_tag instead */
@@ -27,6 +27,10 @@ static int gdl_excision_type = 'e';
 int gdl_wf_c10e = 0;
 
 Node *gdl_post_det_gp_attach, *gdl_recycled_word;
+
+gdl_delim_p gdl_delim;
+Node *gdl_delim_l(Tree *ytp, const char *data);
+Node *gdl_delim_s(Tree *ytp, const char *data);
 
 static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
@@ -53,9 +57,16 @@ static unsigned const char *gdl_times_prefix;
         state of the last grapheme that had gs_damaged set so that
         gdl_delim can add gs_damaged_c easily
 
+   2026-06-18: gdl_legacy reimplementation gdl_break_o_l sets
+        gdl_legacy_bracket which is applied to the grapheme after the
+        grapheme which has legacy bracketing. So, in "ba[d-da" the '['
+        opener can't be on rst because then it would apply to "bad";
+        it goes on fst which is in turn applied to "da"
+
  */
 gdlstate_t pst, *lst, rst, *dst;
 Node *lgp = NULL;   /* last grapheme node pointer */
+Bracket_e gdl_legacy_bracket;
 #else
 gdlstate_t gst; /* global gdl state */
 #endif
@@ -830,7 +841,24 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
 }
 
 Node *
-gdl_delim(Tree *ytp, const char *data)
+gdl_delim_l(Tree *ytp, const char *data)
+{
+  if (gdl_legacy_hash)
+    {
+      gdl_lex_flag("#");
+      gdl_legacy_hash = 0;
+    }
+  if (gdl_legacy_bracket)
+    {
+      gdl_break_o(gdl_legacy_bracket);
+      gdl_legacy_bracket = e_L_none;
+    }
+
+  gdl_delim_s(ytp, data);
+}
+
+Node *
+gdl_delim_s(Tree *ytp, const char *data)
 {
   Node *np = NULL;
 

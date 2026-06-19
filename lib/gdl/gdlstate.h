@@ -94,4 +94,7 @@ extern void gdlstate_rawxml(FILE *fp, gdlstate_t sp);
 #define rs_on(x) (bit_set(rst,(x)))
 #define rs_no(x) (bit_off(rst,(x)))
 
+#define fs_on(x) (bit_set(fst,(x)))
+#define fs_no(x) (bit_off(fst,(x)))
+
 #endif/*GDLSTATE_H_*/

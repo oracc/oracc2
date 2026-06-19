@@ -53,10 +53,13 @@ gdl_mod(Tree *ytp, const char *data)
       np->text = (ccp)pool_copy((uccp)ytp->curr->text,gdlpool);
       np->mloc = np->rent->mloc;
       /*np->name = "g:b";*/
+#if 0
+      /*20260618: gdl_legacy now done in lexer: do we need to pass mods through it?*/
       /* This is done in a Bison rule which this node-copy won't be
 	 processed by, so we have to unlegacy here */
       if (gdl_legacy)
 	gdl_unlegacy(np);
+#endif
     }
   np = tree_add(ytp, NS_GDL, n, ytp->curr->depth+1, NULL);
   np->text = (ccp)pool_copy((uccp)data,gdlpool);

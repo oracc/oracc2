@@ -17,6 +17,8 @@ static Hash *legacy_reported_h = NULL;
 extern const char *curr_pqx;
 extern int curr_pqx_line;
 
+int gdl_legacy_hash;
+
 static void gdl_legacy_brackets(char *b);
 
 /* Legacy bracketing
@@ -373,7 +375,7 @@ gdl_legacy_brackets(char *b)
 
   /* always set up the current-pending as if a #-flag (hash) follows
    * the current grapheme */
-  gdl_break_h_l();
+  gdl_legacy_hash = 1;
 
   s = b;
   while (*s && '-' == *s)
@@ -382,7 +384,7 @@ gdl_legacy_brackets(char *b)
   /* if the first bracket is a closer apply that to the last grapheme */
   if (']' == *s || 'R' == *s || 'r' == *s)
     {
-      gdl_break_c_l(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+      gdl_break_c(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
       ++s; /* point at char after closer */
     }
   else
@@ -392,9 +394,10 @@ gdl_legacy_brackets(char *b)
   while (t > b && '-' == t[-1])
     --t;
 
+  /* If the last bracket is a closer, save that for future use */
   if ('[' == *t || 'L' == *t || 'l' == *t)
     {
-      gdl_break_o_l('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs));
+      gdl_legacy_bracket = ('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs));
       if (t > s)
 	--t; /* point at char before opener */
     }
@@ -408,6 +411,7 @@ gdl_legacy_brackets(char *b)
 	  mesg_verr(&gdllloc, "unused brackets between closer and opener");
 	  return;
 	}
+      ++s;
     }
 }
 

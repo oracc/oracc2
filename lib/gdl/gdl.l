@@ -272,9 +272,15 @@ void
 gdl_legacy_lexer(int legacy)
 {
   if (legacy)
-    gdl_grapheme_type = gdl_grapheme_type_l;
+    {
+      gdl_grapheme_type = gdl_grapheme_type_l;
+      gdl_delim = gdl_delim_l;
+    }
   else
-    gdl_grapheme_type = gdl_grapheme_type_s;
+    {
+      gdl_grapheme_type = gdl_grapheme_type_s;
+      gdl_delim = gdl_delim_s;
+    }
 }	
 
 /* Version of gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */

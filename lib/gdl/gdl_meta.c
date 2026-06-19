@@ -169,26 +169,7 @@ gdl_break_c(Bracket_e bt)
   rs_no(bp->s);
 }
 
-/* These routines with suffixed _l are called by gdl_unlegacy when
- * []⸢⸣⸤⸥ are encountered; they differ from the above routines in the
- * way they manage the state variables.
- */
-void
-gdl_break_h_l(void)
-{
-}
-
-void
-gdl_break_o_l(Bracket_e bt)
-{
-  Bracket *bp = &bracket_data[bt];
-  if (gdltrace)
-    fprintf(stderr, "gt: BREAK/o: %d=%s\n", bt, bp->str);
-  (void)gdl_balance_break(gdllloc, bp->tok);
-  ps_on(bp->oc);
-  rs_on(bp->s);
-}
-
+#if 0
 void
 gdl_break_c_l(Bracket_e bt)
 {
@@ -230,6 +211,7 @@ gdl_break_c_l(Bracket_e bt)
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
 }
+#endif
 
 void
 gdl_state_o(Bracket_e bt)

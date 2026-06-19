@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <xmd.h>
+#include <gdl.h>
 #include "etcsl.h"
 #include "atf.h"
 #include "atf_bld.h"
