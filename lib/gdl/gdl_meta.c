@@ -47,6 +47,19 @@ Bracket bracket_data[] = {
 
 /* 20260602: Flags are no longer passed to the parser; they are
    recorded here in the state property pointer of the last grapheme seen */
+
+void
+gdl_lex_hash(gdlstate_t *st)
+{
+  bit_set(*st, gs_f_hash|gs_damaged);
+  if (!bit_get(rst, gs_damaged))
+    {
+      rs_on(gs_damaged);
+      bit_set(*st, gs_f_hash|gs_damaged_o);
+    }
+  dst = st;
+}
+
 void
 gdl_lex_flag(unsigned const char *f)
 {
@@ -66,14 +79,8 @@ gdl_lex_flag(unsigned const char *f)
 	bit_set(*lst, gs_f_query);
 	break;
     case '#':
-	bit_set(*lst, gs_f_hash|gs_damaged);
-	if (!bit_get(rst, gs_damaged))
-	  {
-	    rs_on(gs_damaged);
-	    bit_set(*lst, gs_f_hash|gs_damaged_o);	    
-	  }
-	dst = lst;
-	break;
+      gdl_lex_hash(lst);
+      break;
     case '*':
 	bit_set(*lst, gs_f_star);
 	break;
@@ -122,9 +129,15 @@ gdl_break_o(Bracket_e bt)
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", bt, bp->str);
-  (void)gdl_balance_break(gdllloc, bp->tok);
   ps_on(bp->oc);
   rs_on(bp->s);
+#if 1
+  gdl_break_push((intptr_t)gstck_new(bp->tok));
+  /* tell graph_node that it needs to note its node on the break stack */
+  gdl_break_pending = 1;
+#else
+  (void)gdl_balance_break(gdllloc, bp->tok);
+#endif
 }
 
 void
@@ -133,7 +146,7 @@ gdl_break_c(Bracket_e bt)
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", bt, bp->str);
-  intptr_t st = gdl_balance_break(gdllloc, bp->tok);
+  intptr_t st = gdl_balance_break_c(gdllloc, bp->tok);
   if (st > 0)
     {
       Node *np = gstck_np(st);
@@ -168,50 +181,6 @@ gdl_break_c(Bracket_e bt)
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
 }
-
-#if 0
-void
-gdl_break_c_l(Bracket_e bt)
-{
-  Bracket *bp = &bracket_data[bt];
-  if (gdltrace)
-    fprintf(stderr, "gt: BREAK/c: %d=%s\n", bt, bp->str);
-  intptr_t st = gdl_balance_break(gdllloc, bp->tok);
-  if (st > 0)
-    {
-      Node *np = gstck_np(st);
-      if ('r' == np->name[2])
-	np = np->rent;
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
-      if (!gdl_no_xml_ids)
-	{
-	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-	  if (!idp)
-	    {
-	      if (np->kids)
-		{
-		  idp = prop_find_kv(np->kids->props, "xml:id", NULL);
-		  if (!idp)
-		    {
-		      if (np->kids->text)
-			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'\n", np->kids->text);
-		      else
-			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids\n");
-		    }
-		  else
-		    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
-		}
-	      else
-		mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np type %s\n", np->name);
-	    }
-	  else
-	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
-	}
-    }
-  bit_set(*lst,bp->oc);
-  rs_no(bp->s);
-}
-#endif
 
 void
 gdl_state_o(Bracket_e bt)

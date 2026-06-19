@@ -10,7 +10,7 @@ int gdl_break_pending = 0, gdl_state_pending = 0;
 
 #define gdl_break_peek() stck_peek(break_stack)
 #define gdl_break_pop() stck_pop(break_stack)
-#define gdl_break_push(x) stck_push(break_stack,x)
+/* push is in gdl.h */
 
 #define gdl_state_peek() stck_peek(state_stack)
 #define gdl_state_pop() stck_pop(state_stack)
@@ -131,7 +131,7 @@ gdl_balance_term(void)
 #endif
 }
 
-static Gstck*
+Gstck*
 gstck_new(int i)
 {
   Gstck *gp = memo_new(mgstck);
@@ -173,7 +173,7 @@ gdl_state_node(Node *np)
 
 /* return 0 on OK; 1 on error */
 intptr_t
-gdl_balance_break(Mloc mlp, int tok)
+gdl_balance_break_c(Mloc mlp, int tok)
 {
   intptr_t ret = 0;
   /* if it's a closer, check the stack for a match */
@@ -198,9 +198,13 @@ gdl_balance_break(Mloc mlp, int tok)
     }
   else
     {
+#if 1
+      fprintf(stderr, "gdl_balance_break_c: internal error: called with tok=%c\n", tok);
+#else
       /* for openers push the new opener on the stack */
       gdl_break_push((intptr_t)gstck_new(tok));
       gdl_break_pending = 1;
+#endif
     }
   return ret;
 }

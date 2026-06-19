@@ -4,6 +4,7 @@
 #include <pool.h>
 #include <tree.h>
 #include <hash.h>
+#include <stck.h>
 #include <sll.h>
 #include "gvl.h"
 #include "gsort.h"
@@ -46,8 +47,12 @@ typedef struct bracket
   const char *str;
 } Bracket;
 
+#define GLP_O1	0x01
+#define GLP_O2	0x02
+#define GLP_C	0x04
+
 extern Bracket bracket_data[];
-extern Bracket_e gdl_legacy_bracket;
+extern Bracket_e gdl_legacy_o, gdl_legacy_c;
 
 enum gdlpropvals { GP_ATTRIBUTE, GP_IMPLICIT, GP_TRACKING,
 		   GP_DET_SEME , GP_DET_SEMI, GP_DET_PHON,
@@ -72,10 +77,20 @@ typedef struct gdlstack
 typedef int (*gdl_grapheme_type_p)(void);
 
 /* same for gdl_delim which needs to process future state */
-typedef Node *(*gdl_delim_p)(Tree *ytp, const char *data);
+typedef Node *(*gdl_delim_p)(Tree *, const char *);
 extern gdl_delim_p gdl_delim;
 extern Node *gdl_delim_l(Tree *ytp, const char *data);
 extern Node *gdl_delim_s(Tree *ytp, const char *data);
+
+/* and for gdl_graph_node */
+typedef Node *(*gdl_graph_node_p)(Mloc *, Tree *, const char *, const char *);
+extern gdl_graph_node_p gdl_graph_node;
+extern Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
+extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
+
+#define gdl_break_push(x) stck_push(break_stack,x)
+extern Stck *break_stack;
+extern Gstck*gstck_new(int i);
 
 #if 0
 /* This may not be necessary given the emerging GDL/GVL architecture; see gvl_g in gvl.h */
@@ -92,6 +107,8 @@ extern int curr_lang;
 extern int gdltrace, gdl_legacy, gdl_legacy_hash, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
+
+extern const unsigned char *gdl_legacy_prop;
 
 extern int gdl_break_pending, gdl_state_pending;
 extern gdlstate_t *lst, *dst;
@@ -162,7 +179,7 @@ extern int gdl_legacy_check(Node *, unsigned const char *gp);
 extern void gdl_legacy_lexer(int legacy);
 extern void gdl_incr_qin(void);
 extern void gdl_decr_qin(void);
-extern intptr_t gdl_balance_break(Mloc mlp, int tok);
+extern intptr_t gdl_balance_break_c(Mloc mlp, int tok);
 extern intptr_t gdl_balance_state(Mloc mlp, int tok);
 extern void gdl_balance_init(void);
 extern void gdl_balance_term(void);
@@ -202,6 +219,7 @@ extern void gdl_break_node(Node *np);
 extern void gdl_state_node(Node *np);
 
 extern void gdl_lex_flag(unsigned const char *f);
+extern void gdl_lex_hash(gdlstate_t *st);
 
 extern List *gdl_get_word_list(void);
 extern void gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt);

@@ -275,11 +275,13 @@ gdl_legacy_lexer(int legacy)
     {
       gdl_grapheme_type = gdl_grapheme_type_l;
       gdl_delim = gdl_delim_l;
+      gdl_graph_node = gdl_graph_node_l;
     }
   else
     {
       gdl_grapheme_type = gdl_grapheme_type_s;
       gdl_delim = gdl_delim_s;
+      gdl_graph_node = gdl_graph_node_s;
     }
 }	
 
@@ -315,9 +317,12 @@ gdl_grapheme_type_s(void)
 int
 gdl_grapheme_type_l(void)
 {
-  char *g = gdltext;
+  char *l = gdltext;
+  char *g = gdl_unlegacy_str(&gdllloc, l);
   gsaveg(g);
 
+  if (strcmp(g,l))
+    gdl_legacy_prop = (uccp)l;
   if (strlen(g) == 1
       && ('n' == *g || 'N' == *g))
       return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/

@@ -17,7 +17,8 @@ static Hash *legacy_reported_h = NULL;
 extern const char *curr_pqx;
 extern int curr_pqx_line;
 
-int gdl_legacy_hash;
+int gdl_legacy_hash, gdl_legacy_pending;
+const unsigned char *gdl_legacy_prop;
 
 static void gdl_legacy_brackets(char *b);
 
@@ -323,11 +324,12 @@ gdl_legacy_brackets(char *b)
       else
 	++s;
     }
-
   
   /* If the remaining brackets have two openers or two closers in a
-   * row that is also an error * If there are matching opener/closers
-   * they must be nested around the previous set; this is also an error
+   * row that is also an error.
+   *
+   * If there are matching opener/closers they were nested around
+   * the previous set; this is another error.
    */
   s = b;
   while (*s)
@@ -384,34 +386,63 @@ gdl_legacy_brackets(char *b)
   /* if the first bracket is a closer apply that to the last grapheme */
   if (']' == *s || 'R' == *s || 'r' == *s)
     {
-      gdl_break_c(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+      if (bit_get(gdl_legacy_pending, GLP_O1)) /* this should be true by the time we meet this ']' */
+	{
+	  /* This is b[a a]n so we clear the opener and ignore the closer */
+	  gdl_legacy_pending = 0;
+	  gdl_legacy_o = e_L_none;
+	}
+      else
+	{
+	  /* This is ba a]n and we know ba can't be b[a so we can put
+	     the closer directly on lst */
+	  gdl_break_c(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+#if 0
+	  gdl_legacy_c = (']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+	  bit_set(gdl_legacy_pending, GLP_C);
+#endif
+	}
       ++s; /* point at char after closer */
     }
   else
-    s = b;
+    s = NULL;
 
   char *t = b + strlen(b);
   while (t > b && '-' == t[-1])
     --t;
+  /* now t[-1] is a bracket unless t == b */
+  if (t > b)
+    --t;
 
-  /* If the last bracket is a closer, save that for future use */
+  /* If the last bracket is an opener, save that for future use; it
+     doesn't belong with the grapheme it's in the middle of, but just
+     before the following grapheme */
   if ('[' == *t || 'L' == *t || 'l' == *t)
     {
-      gdl_legacy_bracket = ('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs));
-      if (t > s)
+      gdl_legacy_o = ('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs));
+      /* This is a decay; the first gdl_graph_node_l will reset
+	 gdl_legacy_pending to GLP_01; the second one will actually
+	 invoke gdl_break_o */
+      bit_set(gdl_legacy_pending, GLP_O2);
+      if (t > b)
 	--t; /* point at char before opener */
     }
+  else
+    t = NULL;
 
   /* check if there were any unused brackets between the closer, if
      any, and the opener */
-  while (s <= t)
+  if (s && t)
     {
-      if ('-' != *s)
+      while (s <= t)
 	{
-	  mesg_verr(&gdllloc, "unused brackets between closer and opener");
-	  return;
+	  if ('-' != *s)
+	    {
+	      mesg_verr(&gdllloc, "unused brackets between closer and opener");
+	      return;
+	    }
+	  ++s;
 	}
-      ++s;
     }
 }
 

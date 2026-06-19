@@ -15,7 +15,7 @@
 extern struct lang_context *gdl_lang_context;
 extern const char *word_lang_tag;
 extern const char *currgdlfile, *gdl_pending_varo;
-extern int gdltrace, gdllineno, gdl_legacy, gdl_legacy_hash;
+extern int gdltrace, gdllineno, gdl_legacy, gdl_legacy_hash, gdl_legacy_pending;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
 /*int curr_lang = 's';*//* not sure how this was ever supposed to be useful; use word_lang_tag instead */
@@ -31,6 +31,10 @@ Node *gdl_post_det_gp_attach, *gdl_recycled_word;
 gdl_delim_p gdl_delim;
 Node *gdl_delim_l(Tree *ytp, const char *data);
 Node *gdl_delim_s(Tree *ytp, const char *data);
+
+gdl_graph_node_p gdl_graph_node;
+Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
+Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
 
 static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
@@ -58,7 +62,7 @@ static unsigned const char *gdl_times_prefix;
         gdl_delim can add gs_damaged_c easily
 
    2026-06-18: gdl_legacy reimplementation gdl_break_o_l sets
-        gdl_legacy_bracket which is applied to the grapheme after the
+        gdl_legacy_o which is applied to the grapheme after the
         grapheme which has legacy bracketing. So, in "ba[d-da" the '['
         opener can't be on rst because then it would apply to "bad";
         it goes on fst which is in turn applied to "da"
@@ -66,7 +70,7 @@ static unsigned const char *gdl_times_prefix;
  */
 gdlstate_t pst, *lst, rst, *dst;
 Node *lgp = NULL;   /* last grapheme node pointer */
-Bracket_e gdl_legacy_bracket;
+Bracket_e gdl_legacy_o, gdl_legacy_c;
 #else
 gdlstate_t gst; /* global gdl state */
 #endif
@@ -533,8 +537,8 @@ gdl_node_type(Node *np, enum gdlpropvals p)
 }
 #endif
 
-static Node *
-gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
+Node *
+gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data)
 {
   Node *np = NULL;
   if (ytp->curr && !ytp->curr->mloc)
@@ -561,9 +565,38 @@ gdl_graph_node(Mloc *locp, Tree *ytp, const char *name, const char *data)
   /* 20260602: now that we are lifting state from g:r/g:v up to g:n we
      let break/state apply to g:r nodes */
   if (gdl_break_pending/* && (('r' != np->name[2] && 'R' != np->name[2]))*/)
-    gdl_break_node(np);
+    {
+      gdl_break_node(np);
+    }
   if (gdl_state_pending/* && 'r' != np->name[2] && 'R' != np->name[2]*/)
     gdl_state_node(np);
+  return np;
+}
+
+Node *
+gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data)
+{
+  if (gdl_legacy_pending)
+    {
+      if (bit_get(gdl_legacy_pending, GLP_O2))
+	{
+	  /* Don't apply opener to the first grapheme because that is 'ba' in 'b[a ab' */
+	  bit_off(gdl_legacy_pending, GLP_O2);
+	  bit_set(gdl_legacy_pending, GLP_O1);
+	}
+      else if (bit_get(gdl_legacy_pending, GLP_O2))
+	gdl_break_o(gdl_legacy_o); /* Now we are on the following grapheme, ab in 'b[a ab' */
+    }
+
+  Node *np = gdl_graph_node_s(locp, ytp, name, data);
+
+  /* In legacy mode this behaves as though b]ad were ] bad# */
+  if (gdl_legacy_hash)
+    {
+      gdl_lex_hash(lst);
+      gdl_legacy_hash = 0;
+    }
+
   return np;
 }
 
@@ -721,6 +754,14 @@ gdl_c_term(void)
 Node *
 gdl_new_word(Tree *ytp)
 {
+  Node *retnode = NULL;
+#if 0
+  if (gdl_legacy_hash)
+    {
+      gdl_lex_flag("#");
+      gdl_legacy_hash = 0;
+    }
+#endif
   if (gdl_word_mode)
     {
       /* we are going to reset the attach point so it's enough to NULL
@@ -740,14 +781,14 @@ gdl_new_word(Tree *ytp)
 	  w->rent = ytp->curr;
 	  ytp->curr->last = ytp->curr->kids = w;
 	  tree_curr(w);
-	  return ytp->curr;
+	  retnode = ytp->curr;
 	}
       else if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
 	{
 	  /* reuse empty words */
 	  assert(word_lang_tag != NULL);
 	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
-	  return ytp->curr;
+	  retnode = ytp->curr;
 	}
       
       /* If there is a g:field ancestor, attach to that */
@@ -787,9 +828,22 @@ gdl_new_word(Tree *ytp)
 	gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
 		    (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
       grapheme_id = 0;
-      return wp;
+
+      retnode = wp;
     }
-  return ytp->curr;
+
+#if 0
+  if (gdl_legacy_pending)
+    {
+      if (bit_get(gdl_legacy_pending, GLP_O))
+	{
+	  gdl_break_o(gdl_legacy_o);
+	  gdl_legacy_o = e_L_none;
+	}
+    }
+#endif
+
+  return retnode;
 }
 
 void
@@ -843,18 +897,27 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
 Node *
 gdl_delim_l(Tree *ytp, const char *data)
 {
+#if 0
   if (gdl_legacy_hash)
     {
       gdl_lex_flag("#");
       gdl_legacy_hash = 0;
     }
-  if (gdl_legacy_bracket)
-    {
-      gdl_break_o(gdl_legacy_bracket);
-      gdl_legacy_bracket = e_L_none;
-    }
+#endif
 
-  gdl_delim_s(ytp, data);
+  return gdl_delim_s(ytp, data);
+
+#if 0
+  /* In legacy mode this is executed to make b[ad- behave like bad-[ */
+  if (gdl_legacy_pending)
+    {
+      if (bit_get(gdl_legacy_pending, GLP_O))
+	{
+	  gdl_break_o(gdl_legacy_o);
+	  gdl_legacy_o = e_L_none;
+	}
+    }
+#endif
 }
 
 Node *
@@ -1144,11 +1207,29 @@ gdl_line_wrapup(Mloc m)
       gdl_recycled_word = NULL;
       (void)list_pop(wd_list);
     }
+
+#if 0
+  if (gdl_legacy_hash)
+    {
+      gdl_lex_flag("#");
+      gdl_legacy_hash = 0;
+    }
+  if (gdl_legacy_pending)
+    {
+      if (bit_get(gdl_legacy_pending, GLP_O))
+	{
+	  gdl_break_o(gdl_legacy_o);
+	  gdl_legacy_o = e_L_none;
+	}
+    }
+#endif
+
   if (lst)
     {
       gdl_hc(1);
       lst = NULL;
     }
+
   gdl_lex_closers();
   gdl_balance_flush(m);
   pst = rst = 0L;
