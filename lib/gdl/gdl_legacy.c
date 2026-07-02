@@ -397,10 +397,6 @@ gdl_legacy_brackets(char *b)
 	  /* This is ba a]n and we know ba can't be b[a so we can put
 	     the closer directly on lst */
 	  gdl_break_c(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
-#if 0
-	  gdl_legacy_c = (']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
-	  bit_set(gdl_legacy_pending, GLP_C);
-#endif
 	}
       ++s; /* point at char after closer */
     }
@@ -419,7 +415,7 @@ gdl_legacy_brackets(char *b)
      before the following grapheme */
   if ('[' == *t || 'L' == *t || 'l' == *t)
     {
-      gdl_legacy_o = ('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs));
+      gdl_legacy_o = e_L_squ /*('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs))*/;
       /* This is a decay; the first gdl_graph_node_l will reset
 	 gdl_legacy_pending to GLP_01; the second one will actually
 	 invoke gdl_break_o */

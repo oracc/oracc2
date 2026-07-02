@@ -267,6 +267,8 @@ main(int argc, char **argv)
   options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
   lang_init();
   gdl_flex_debug = gdldebug = trace_mode;
+
+  gdl_legacy_lexer(gdl_legacy);
   
   if (gdl_one_off_mode)
     {

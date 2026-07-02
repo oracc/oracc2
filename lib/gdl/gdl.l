@@ -231,9 +231,9 @@ NOTEMARK	"^"[0-9]+"^"
 
 {UFLAG}			{ gdl_lex_flag((uccp)yytext); }
 
-	/* Language shifts */
-%[-a-z0-9]+("/"[gn])?	{ gsave; gdl_lang_tag(yytext); }
-_			{ gsave; gdl_lang_flip(); }
+	/* Language shifts; ignore following whitespace after %-tag */
+%[-a-z0-9]+("/"[gn])?[ \t]*	{ gdl_lang_tag(yytext); }
+_				{ gdl_lang_flip(); }
 
 	/* Note marks */
 {NOTEMARK}		{ gdl_note_mark(gdltext); }

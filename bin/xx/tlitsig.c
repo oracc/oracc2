@@ -137,6 +137,7 @@ main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
   gdl_set_word_id("w");  
+  gdl_legacy_lexer(0);
   options(argc, argv, "abcdf:hinop:PrstvwW");
 
   gdlxml_setup();

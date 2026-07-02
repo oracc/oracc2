@@ -14,7 +14,7 @@ const char *word_lang_tag = "sux";
 
 extern Node *lgp; /* last grapheme node pointer */
 
-extern int gdllineno, gdltrace, gdlflextrace;
+extern int gdllineno, gdltrace, gdlflextrace, gdl_legacy_pending;
 extern const char *currgdlfile, *gdlfile;
 
 Bracket bracket_data[] = {
@@ -129,8 +129,12 @@ gdl_break_o(Bracket_e bt)
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/o: %d=%s\n", bt, bp->str);
+
   ps_on(bp->oc);
   rs_on(bp->s);
+  if (bp->s == gs_lost)
+    rs_no(gs_damaged);
+
 #if 1
   gdl_break_push((intptr_t)gstck_new(bp->tok));
   /* tell graph_node that it needs to note its node on the break stack */
@@ -178,6 +182,8 @@ gdl_break_c(Bracket_e bt)
 	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 	}
     }
+  if (gdl_legacy_pending)
+    gdl_legacy_pending = 0;
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
 }

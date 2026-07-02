@@ -342,75 +342,82 @@ gdl_word_is_excised(Node *w)
 void
 gdl_word_attr(Node *w)
 {
-  if (w && w->kids)
+  if (w)
     {
-      if ( !w->kids->next
-	   && (!strcmp(w->kids->name, "g:x")
-	       || !strcmp(w->kids->name, "g:p")))
+      if (w->kids)
 	{
-	  if (strcmp(w->kids->text, "..."))
+	  if ( !w->kids->next
+	       && (!strcmp(w->kids->name, "g:x")
+		   || !strcmp(w->kids->name, "g:p")))
 	    {
-	      if ('p' == w->kids->name[2])
+	      if (strcmp(w->kids->text, "..."))
 		{
-		  Prop *p = prop_find_kv(w->props, "g:type", NULL);
-		  if (p)
-		    prop_drop_kv(w->props, "g:type", NULL);
-		  gdl_nonw_punct(w);
+		  if ('p' == w->kids->name[2])
+		    {
+		      Prop *p = prop_find_kv(w->props, "g:type", NULL);
+		      if (p)
+			prop_drop_kv(w->props, "g:type", NULL);
+		      gdl_nonw_punct(w);
+		    }
+		  else if ('/' == *w->kids->text || ';' == *w->kids->text)
+		    {
+		      /* promote the g:x child to the g:w spot */
+		      Node *gx = w->kids;
+		      w->name = gx->name;
+		      w->props = gx->props;
+		      w->kids = NULL; /* orphan the original g:x node; these
+					 are not numerous so it's not too
+					 wasteful */
+		      ++nonw_found; /* trigger gdl_rem_nonw */
+		    }
+		  else
+		    {
+		      Prop *p = prop_find_kv(w->props, "g:type", NULL);
+		      if (p)
+			prop_drop_kv(w->props, "g:type", NULL);
+		      gdl_force_nonw(w, p ? p->u.k->v : "comment");
+		    }
+		  return;
 		}
-	      else if ('/' == *w->kids->text || ';' == *w->kids->text)
-		{
-		  /* promote the g:x child to the g:w spot */
-		  Node *gx = w->kids;
-		  w->name = gx->name;
-		  w->props = gx->props;
-		  w->kids = NULL; /* orphan the original g:x node; these
-				     are not numerous so it's not too
-				     wasteful */
-		  ++nonw_found; /* trigger gdl_rem_nonw */
-		}
-	      else
-		{
-		  Prop *p = prop_find_kv(w->props, "g:type", NULL);
-		  if (p)
-		    prop_drop_kv(w->props, "g:type", NULL);
-		  gdl_force_nonw(w, p ? p->u.k->v : "comment");
-		}
-	      return;
 	    }
-	}
-      else if (gdl_word_is_excised(w))
-	gdl_nonw_excised(w);
+	  else if (gdl_word_is_excised(w))
+	    gdl_nonw_excised(w);
 
-      char *wf_buf = NULL;
-      size_t wf_len = 0;
-      word_excisions = 0;
-      FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
-      gdl_wf_nodes(w, wf_fp);
-      fclose(wf_fp);
-      if (wf_buf)
-	{
-	  if (*wf_buf)
-	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
-	  else if (w->kids && !strcmp(w->kids->name, "g:x"))
-	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
-	  else
+	  char *wf_buf = NULL;
+	  size_t wf_len = 0;
+	  word_excisions = 0;
+	  FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
+	  gdl_wf_nodes(w, wf_fp);
+	  fclose(wf_fp);
+	  if (wf_buf)
 	    {
-#if 0
-	      /* This should be unnecessary now we do gdl_word_is_excised above */
-	      if (word_excisions)
-		gdl_nonw_excised(w);
+	      if (*wf_buf)
+		gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)wf_buf, gdlpool));
+	      else if (w->kids && !strcmp(w->kids->name, "g:x"))
+		gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
 	      else
+		{
+#if 0
+		  /* This should be unnecessary now we do gdl_word_is_excised above */
+		  if (word_excisions)
+		    gdl_nonw_excised(w);
+		  else
 #endif
-		/* we are now ignoring ($...$) and (#...#) in gdl_word_is_excised() */
-		/*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
-		}
-	  free(wf_buf);      
+		    /* we are now ignoring ($...$) and (#...#) in gdl_word_is_excised() */
+		    /*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
+		    }
+	      free(wf_buf);      
+	    }
+	  if (w->next)
+	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");
 	}
-      if (w->next)
-	gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");
+      else
+	{
+	  /* this will get the empty word removed later */
+	  w->name = "g:empty";
+	  ++nonw_found;
+	}
     }
-  else
-    w->name = "g:empty";
 }
 
 static List *
@@ -585,7 +592,10 @@ gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data)
 	  bit_set(gdl_legacy_pending, GLP_O1);
 	}
       else if (bit_get(gdl_legacy_pending, GLP_O1))
-	gdl_break_o(gdl_legacy_o); /* Now we are on the following grapheme, ab in 'b[a ab' */
+	{
+	  gdl_break_o(gdl_legacy_o); /* Now we are on the following grapheme, ab in 'b[a ab' */
+	  gdl_legacy_pending = 0;
+	}
     }
 
   Node *np = gdl_graph_node_s(locp, ytp, name, data);
