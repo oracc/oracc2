@@ -584,7 +584,7 @@ gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data)
 	  bit_off(gdl_legacy_pending, GLP_O2);
 	  bit_set(gdl_legacy_pending, GLP_O1);
 	}
-      else if (bit_get(gdl_legacy_pending, GLP_O2))
+      else if (bit_get(gdl_legacy_pending, GLP_O1))
 	gdl_break_o(gdl_legacy_o); /* Now we are on the following grapheme, ab in 'b[a ab' */
     }
 
