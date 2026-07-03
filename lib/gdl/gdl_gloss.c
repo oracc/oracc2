@@ -68,15 +68,21 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
     }
     
   ret = gdl_push(ytp, "g:gloss");
-
+  
   /* We keep a stack of gloss containers and use it to set word parents in gdl_new_word */
   if (!glosstck)
     glosstck = stck_init(3);
   stck_push(glosstck, (intptr_t)ret);
+
+  /* For now we always start a new word at start of g:gloss--it is
+     conceivable that we may need to introduce discontinuous word
+     structures across glosses */
   ps_on(bp->oc);
   rs_on(bp->s);
   prop_node_add(ret, GP_STREAM, PG_GDL_STATE, (void*)(uintptr_t)stream, NULL);
-  return ret;
+
+  Node *wret = gdl_new_word(ytp);
+  return wret;
 }
 
 Node *

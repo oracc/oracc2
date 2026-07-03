@@ -174,7 +174,7 @@ prop_find_kv(Prop *p, const char *key, const char *value)
     return NULL;
   while (p)
     {
-      if (p->g > 0 && p->g < PU_VOIDSTAR)
+      if (p->g > 0 && p->g < PU_VOIDSTAR && p->g != PG_GDL_STATE)
 	{
 	  if (p->u.k
 	      && p->u.k->k
