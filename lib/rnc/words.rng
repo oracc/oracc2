@@ -115,6 +115,9 @@
     <optional>
       <ref name="newline"/>
     </optional>
+    <optional>
+      <ref name="stream.attributes"/>
+    </optional>
     <zeroOrMore>
       <ref name="syntax.attributes"/>
     </zeroOrMore>

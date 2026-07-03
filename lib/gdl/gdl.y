@@ -48,7 +48,7 @@ GDLLTYPE gdllloc;
 
 %token <i>	'<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
 		'/' '+' ':'
-       	        L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur
+       	        L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur L_par_par R_par_par
 		L_dbl_par R_dbl_par L_dbl_par_c R_dbl_par_c eras_canc_pivot
 		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
 		L_uhs R_uhs L_lhs R_lhs LANG_FLIP
@@ -329,9 +329,9 @@ glosso:
 	;
 
 glossc:
-		R_cur_par      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_L_cur_par); }
-	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_L_dbl_cur); }
-	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_L_ang_par); }
+		R_cur_par      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_cur_par); }
+	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_dbl_cur); }
+	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_ang_par); }
 	;
 
 %%

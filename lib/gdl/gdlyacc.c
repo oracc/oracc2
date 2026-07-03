@@ -14,11 +14,8 @@
 
 extern struct lang_context *gdl_lang_context;
 extern const char *word_lang_tag;
-extern const char *currgdlfile, *gdl_pending_varo;
-extern int gdltrace, gdllineno, gdl_legacy, gdl_legacy_hash, gdl_legacy_pending;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
-/*int curr_lang = 's';*//* not sure how this was ever supposed to be useful; use word_lang_tag instead */
 int deep_parse = 1;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
@@ -40,11 +37,6 @@ static int grapheme_id, nonw_found, wid_base, word_excisions;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
 
-#if 0
-static unsigned const char *gdl_times_prefix;
-#endif
-
-#if 1
 /* New 2026-03-03: state is now handled with three variables, pst,
    lst, rst
 
@@ -61,19 +53,10 @@ static unsigned const char *gdl_times_prefix;
         state of the last grapheme that had gs_damaged set so that
         gdl_delim can add gs_damaged_c easily
 
-   2026-06-18: gdl_legacy reimplementation gdl_break_o_l sets
-        gdl_legacy_o which is applied to the grapheme after the
-        grapheme which has legacy bracketing. So, in "ba[d-da" the '['
-        opener can't be on rst because then it would apply to "bad";
-        it goes on fst which is in turn applied to "da"
-
  */
 gdlstate_t pst, *lst, rst, *dst;
 Node *lgp = NULL;   /* last grapheme node pointer */
 Bracket_e gdl_legacy_o, gdl_legacy_c;
-#else
-gdlstate_t gst; /* global gdl state */
-#endif
 
 int gdl_word_mode;
 
@@ -544,6 +527,13 @@ gdl_node_type(Node *np, enum gdlpropvals p)
 }
 #endif
 
+const char *
+gdl_grapheme_id(void)
+{
+  sprintf(gid_insertp, ".%d", grapheme_id++);
+  return gdl_word_id;
+}
+
 Node *
 gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data)
 {
@@ -554,10 +544,10 @@ gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data)
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
   lgp = np;
   lst = prop_state(np, pst|rst);
-  sprintf(gid_insertp, ".%d", grapheme_id++);
   /*  if (gdl_xmlids && 'r' != name[2] && 'R' != name[2])*/
   if (!gdl_no_xml_ids)
     {
+      sprintf(gid_insertp, ".%d", grapheme_id++);
       gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
 		  (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
     }
@@ -765,13 +755,6 @@ Node *
 gdl_new_word(Tree *ytp)
 {
   Node *retnode = NULL;
-#if 0
-  if (gdl_legacy_hash)
-    {
-      gdl_lex_flag("#");
-      gdl_legacy_hash = 0;
-    }
-#endif
   if (gdl_word_mode)
     {
       /* we are going to reset the attach point so it's enough to NULL
@@ -800,9 +783,13 @@ gdl_new_word(Tree *ytp)
 	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
 	  retnode = ytp->curr;
 	}
+
+      /* If there is an active gloss, attach to that */
+      Node *l = gdl_gloss_curr();
       
       /* If there is a g:field ancestor, attach to that */
-      Node *l = node_ancestor_or_self(ytp->curr, "g:field");
+      if (!l)
+	l = node_ancestor_or_self(ytp->curr, "g:field");
 
       /* Else if there is a g:cell ancestor, attach to that */
       if (!l)
@@ -841,18 +828,6 @@ gdl_new_word(Tree *ytp)
 
       retnode = wp;
     }
-
-#if 0
-  if (gdl_legacy_pending)
-    {
-      if (bit_get(gdl_legacy_pending, GLP_O))
-	{
-	  gdl_break_o(gdl_legacy_o);
-	  gdl_legacy_o = e_L_none;
-	}
-    }
-#endif
-
   return retnode;
 }
 
@@ -1038,7 +1013,6 @@ gdl_field(Tree *ytp, const char *ftype)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
-      /*(void)list_pop(wd_list);*/
     }
   
   if ('!' == *ftype)
@@ -1166,48 +1140,6 @@ gdl_clear_gg(Tree *ytp)
     (void)gdl_pop(ytp, "g:gg");
 }
 
-/* If data is /{{[0-9]+:/ the digits are a stream code */
-Node*
-gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
-{
-  Bracket *bp = &bracket_data[bt];
-  int stream = -1;
-  Node *ret = NULL;
-  if (gdltrace)
-    fprintf(stderr, "gt: GLOSS/o: %d=%s\n", bt, bp->str);
-  if (bp->tok == L_cur_par && data[2])
-    {
-      stream = atoi(data+2);
-      if (stream <= 0 || stream > 99)
-	{
-	  mesg_vwarning(currgdlfile, gdllineno, "stream out of range in '%s'", data);
-	  stream = -1;
-	}
-      data = "{{";
-    }
-  (void)gdl_balance_state(*mlp, bp->tok);
-  ret = gdl_push(ytp, "g:glo");
-  ps_on(bp->oc);
-  rs_on(bp->s);
-  prop_node_add(ret, GP_STREAM, PG_GDL_STATE, (void*)(uintptr_t)stream, NULL);
-  return ret;
-}
-
-Node *
-gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
-{
-  Bracket *bp = &bracket_data[bt];
-  Node *ret = NULL;
-  if (gdltrace)
-    fprintf(stderr, "gt: GLOSS/c: %d=%s\n", bt, bp->str);
-  /*ret = gdl_meta_node(ytp, "g:z", data);*/
-  if (-1 != gdl_balance_state(*mlp, bp->tok))
-    ret = gdl_pop(ytp, data);
-  bit_set(*lst,bp->oc);
-  rs_no(bp->s);
-  return ret;
-}
-
 void
 gdl_line_wrapup(Mloc m)
 {
@@ -1217,22 +1149,6 @@ gdl_line_wrapup(Mloc m)
       gdl_recycled_word = NULL;
       (void)list_pop(wd_list);
     }
-
-#if 0
-  if (gdl_legacy_hash)
-    {
-      gdl_lex_flag("#");
-      gdl_legacy_hash = 0;
-    }
-  if (gdl_legacy_pending)
-    {
-      if (bit_get(gdl_legacy_pending, GLP_O))
-	{
-	  gdl_break_o(gdl_legacy_o);
-	  gdl_legacy_o = e_L_none;
-	}
-    }
-#endif
 
   if (lst)
     {

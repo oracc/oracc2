@@ -47,6 +47,7 @@ word.attributes =
     attribute lem   { text }? ,
     delim? ,
     newline? ,
+    stream.attributes?,
     syntax.attributes*
 
 nonword = 

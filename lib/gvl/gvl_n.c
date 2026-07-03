@@ -135,9 +135,15 @@ gvl_n_sexify(Node *ynp)
 
       top = tree_root(ntp, NS_GDL, "g:gg", 1, ynp->mloc);
       gdl_prop_kv(top, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "diszless");
+      
 
       if (sexnum > 0)
 	{
+	  gdl_prop_kv(top, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		      (ccp)pool_copy((uccp)gdl_grapheme_id(), gdlpool));
+
+	  int gnx = gdl_no_xml_ids;
+	  gdl_no_xml_ids = 1;
 	  char *lnp = NULL;
 	  /* sexify the decimal number */
 	  unsigned char *snum = sexify(sexnum, "d");
@@ -196,6 +202,7 @@ gvl_n_sexify(Node *ynp)
 	  /* transfer g:r props to g:n props */
 	  prop_merge(top->kids->props, top->kids->kids->props);
 	  prop_drop_kv(top->kids->kids->props, "xml:id", NULL);
+	  gdl_no_xml_ids = gnx;
 	}
       else if (!strcmp(ynp->text, "00"))
 	{

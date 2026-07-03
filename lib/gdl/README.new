@@ -1,0 +1,31 @@
+NEW CONVENTIONS IN GDL
+======================
+
+[todo: space-suppression etc., implemented for cuneify]
+
+possible explicit grouping:
+
+"(+"			{ gconst; GIN=0; return e_L_par_exp_p; }
+"+)"			{ gconst; GIN=0; return e_R_par_exp_p; }
+"(-"			{ gconst; GIN=0; return e_L_par_exp_m; }
+"-)"			{ gconst; GIN=0; return e_R_par_exp_m; }
+
+
+a/e₄(A) always means (a) / (e₄(A))
+
+a:e₄(A) always means (a) : (e₄(A))
+
+a+e₄(A) always means (a) + (e₄(A))
+
+reimplementation: slash-colon-plus (scpgroup) stack
+
+treat / : + as triggers to make a group containing the last grapheme
+and make it the new parent
+
+leave the group as parent until a delimiter that doesn't match the
+current scp group is found
+
+when the non-match is found, pop the scpgroup; if the new delim is an
+scpgroup, create a new group that has the previous scpgroup as its
+left component
+

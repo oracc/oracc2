@@ -6,13 +6,12 @@ rncdata_DATA=*.rnc
 
 librnc_la_SOURCES=asl.c gdl.c xtf.c numsys.c cbd.c cbd_summaries.c inl.c
 
-asl.c: asl.rng grapheme.rng graphmeta.rng words.rng inl.rng
+asl.c: asl.rng grapheme.rng graphmeta.rng words.rng inl.rng stream.rng
 
-cbd.c: cbd.rng cbd-lib.rng grapheme.rng graphmeta.rng words.rng
+cbd.c: cbd.rng cbd-lib.rng grapheme.rng graphmeta.rng words.rng stream.rng
 
-cbd_summaries.c: cbd_summaries.rng cbd-lib.rng grapheme.rng graphmeta.rng words.rng
+cbd_summaries.c: cbd_summaries.rng cbd-lib.rng grapheme.rng graphmeta.rng words.rng stream.rng
 
-gdl.c: grapheme.rng graphmeta.rng words.rng
+gdl.c: grapheme.rng graphmeta.rng words.rng stream.rng
 
-xtf.c: xtf.rng grapheme.rng graphmeta.rng words.rng xcl.rng xcl-lib.rng xtr-lib.rng
-
+xtf.c: xtf.rng grapheme.rng graphmeta.rng words.rng xcl.rng xcl-lib.rng xtr-lib.rng stream.rng

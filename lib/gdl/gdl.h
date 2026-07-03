@@ -92,6 +92,9 @@ extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const cha
 extern Stck *break_stack;
 extern Gstck*gstck_new(int i);
 
+extern const char *currgdlfile, *gdl_pending_varo;
+extern int gdltrace, gdllineno, gdl_legacy, gdl_legacy_hash, gdl_legacy_pending;
+
 #if 0
 /* This may not be necessary given the emerging GDL/GVL architecture; see gvl_g in gvl.h */
 struct gdl_g {
@@ -240,6 +243,9 @@ extern void gdl_hc(int force);
 extern void gdl_lex_closers(void);
 extern void gdl_line_wrapup(Mloc m);
 
+extern const char *gdl_grapheme_id(void);
 extern Tree *gdl_get_tree(void);
+
+extern Node *gdl_gloss_curr(void);
 
 #endif /*GDL_H_*/

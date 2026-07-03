@@ -107,7 +107,7 @@ gdl_xml_o(Node *np, void *user)
 	  else
 	    {
 	      fprintf(xhp->fp, "<prop g=\"%d\" p=\"%d\"", p->g, p->p);
-	      if (p->g < PU_VOIDSTAR)
+	      if (p->g < PU_VOIDSTAR && p->g != PG_GDL_STATE)
 		{
 		  if (p->u.k)
 		    fprintf(xhp->fp, " k=\"%s\" v=\"%s\"", p->u.k->k, xmlify((uccp)p->u.k->v));

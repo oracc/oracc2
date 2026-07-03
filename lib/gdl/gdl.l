@@ -141,13 +141,13 @@ NOTEMARK	"^"[0-9]+"^"
 
 	/* Determinatives and glosses */
 
-"{{"[0-9+]:	       	{ gconst; GIN=0; return e_L_dbl_cur; }
-"{{"			{ gconst; GIN=0; return e_L_dbl_cur; }
-"}}"			{ gconst; GIN=0; return e_R_dbl_cur; }
-"{("			{ gconst; GIN=0; return e_L_cur_par; }
-")}"			{ gconst; GIN=0; return e_R_cur_par; }
-"(x("			{ gconst; GIN=0; return e_L_par_par; }
-")x)"			{ gconst; GIN=0; return e_R_par_par; }
+"{{"[0-9+]:	       	{ gconst; GIN=0; return L_dbl_cur; }
+"{{"			{ gconst; GIN=0; return L_dbl_cur; }
+"}}"			{ gconst; GIN=0; return R_dbl_cur; }
+"{("			{ gconst; GIN=0; return L_cur_par; }
+")}"			{ gconst; GIN=0; return R_cur_par; }
+"(x("			{ gconst; GIN=0; return L_par_par; }
+")x)"			{ gconst; GIN=0; return R_par_par; }
 "{"			{ GIN=0; return '{'; }
 "{+"			{ GIN=0; return DET_PHON; }
 "{-"			{ GIN=0; return DET_SEME; }
@@ -318,7 +318,7 @@ int
 gdl_grapheme_type_l(void)
 {
   char *l = gdltext;
-  char *g = gdl_unlegacy_str(&gdllloc, l);
+  char *g = (char*)gdl_unlegacy_str(&gdllloc, (uccp)l);
   gsaveg(g);
 
   if (strcmp(g,l))
