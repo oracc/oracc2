@@ -154,9 +154,9 @@ NOTEMARK	"^"[0-9]+"^"
 "}"			{ GIN=0; return '}'; }
 
 ,			{ return ','; }
-&[0-9]+[ \t]*  		{ gsave; return CELLSPAN; }
-&[ \t]*			{ return '&'; }
-![a-z]+[ \t]*	       	{ gsave; return FTYPE; }
+&[0-9]+  		{ gsave; return CELLSPAN; }
+&			{ return '&'; }
+![a-z]+	       		{ gsave; return FTYPE; }
 
 	/* Delimiters */
 
@@ -232,7 +232,7 @@ NOTEMARK	"^"[0-9]+"^"
 {UFLAG}			{ gdl_lex_flag((uccp)yytext); }
 
 	/* Language shifts; ignore following whitespace after %-tag */
-%[-a-z0-9]+("/"[gn])?[ \t]*	{ gdl_lang_tag(yytext); }
+%[-a-z0-9]+("/"[gn])?		{ gdl_lang_tag(yytext); }
 _				{ gdl_lang_flip(); }
 
 	/* Note marks */

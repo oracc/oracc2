@@ -84,6 +84,25 @@ static List *wd_list = NULL;
  *
  */
 void
+gdl_gloss_props(Node *d)
+{
+  if (!d->prev)
+    {
+      gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
+    }
+  else
+    {
+      if (!strcmp(d->prev->name, "g:d"))
+	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
+      else if (!strcmp(d->prev->name, "g:det"))
+	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos",
+		    prop_find_kv(d->prev->props, "g:pos", NULL)->u.k->v);
+      else
+	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "post");
+    }
+}
+
+void
 gdl_det_props(Node *d)
 {
   if (gs_is(rst, gs_g_phond))
@@ -773,8 +792,8 @@ gdl_new_word(Tree *ytp)
 	  Node *w = gdl_recycled_word;
 	  gdl_recycled_word = NULL;
 	  w->prev = w->next = NULL;
+	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
 	  assert(word_lang_tag != NULL);
-	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
 	  w->rent = ytp->curr;
 	  ytp->curr->last = ytp->curr->kids = w;
 	  tree_curr(w);

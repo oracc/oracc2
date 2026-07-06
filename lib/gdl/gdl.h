@@ -247,5 +247,6 @@ extern const char *gdl_grapheme_id(void);
 extern Tree *gdl_get_tree(void);
 
 extern Node *gdl_gloss_curr(void);
+extern void gdl_gloss_props(Node *d);
 
 #endif /*GDL_H_*/

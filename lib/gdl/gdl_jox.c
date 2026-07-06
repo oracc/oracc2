@@ -23,6 +23,8 @@ grx_jox_node(Node *np, int oflag, int nflag)
     nodename = "g:d";
   else if (!strcmp(nodename, "g:field"))
     nodename = "f";
+  else if (!strcmp(nodename, "g:cell"))
+    nodename = "c";
   
   if (trace_mode)
     fprintf(stderr, "grx_jox_node: nodename=%s; text=%s; oflag=%d; nflag=%d\n", nodename, np->text, oflag, nflag);

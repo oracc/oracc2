@@ -68,6 +68,9 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
     }
     
   ret = gdl_push(ytp, "g:gloss");
+  gdl_prop_kv(ret, GP_ATTRIBUTE, PG_GDL_INFO, "g:type",
+	      bt == e_L_cur_par ? "text" : (bt == e_L_dbl_cur ? "lang" : "surro"));
+  gdl_gloss_props(ret);
   
   /* We keep a stack of gloss containers and use it to set word parents in gdl_new_word */
   if (!glosstck)

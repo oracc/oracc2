@@ -201,7 +201,11 @@ gvl_n_sexify(Node *ynp)
 
 	  /* transfer g:r props to g:n props */
 	  prop_merge(top->kids->props, top->kids->kids->props);
+#if 1
+	  top->kids->kids->props = NULL;
+#else
 	  prop_drop_kv(top->kids->kids->props, "xml:id", NULL);
+#endif
 	  gdl_no_xml_ids = gnx;
 	}
       else if (!strcmp(ynp->text, "00"))
