@@ -215,7 +215,8 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  if (d)
 	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
-      else if (strcmp(c->name, "g:d") /*&& strcmp(c->name, "g:z")*/ && strcmp(c->name, "g:p"))
+      else if (strcmp(c->name, "g:d") /*&& strcmp(c->name, "g:z")*/
+	       && strcmp(c->name, "g:p") && strcmp(c->name, "g:gloss"))
 	{
 	  gdlstate_t s = prop_get_state(c);
 	  if (!gs_is(s,gs_excised))
@@ -231,9 +232,12 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 		  if (!gdl_wf_c10e && c->user && ((gvl_g*)c->user)->orig)
 		    t = (ccp)((gvl_g*)c->user)->orig;
 		  fputs(t, wfp);
-		  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-		  if (d)
-		    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
+		  if (c->next)
+		    {
+		      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+		      if (d)
+			fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
+		    }
 		}
 	      else
 		mesg_verr(c->mloc, "NULL text in %s node\n", c->name);

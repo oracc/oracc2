@@ -95,17 +95,24 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
 
   if (-1 != gdl_balance_state(*mlp, bp->tok))
     {
-      ret = gdl_pop(ytp, data);
+      /*ret = gdl_pop(ytp, data);*/
       /* We don't need to do anything with this popped container
 	 because we access it via stck_peek in gdl_new_word */
-      stck_pop(glosstck);
+      ret = (Node *)stck_pop(glosstck);
       if (glosstck->top < 0)
 	{
 	  stck_term(glosstck);
 	  glosstck = NULL;
 	}
+      if (ret)
+	ret = ret->rent;
+      else
+	ret = gdl_pop(ytp, data);
     }
+  else
+    ret = gdl_pop(ytp, data);
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
+  tree_curr(ret);
   return ret;
 }
