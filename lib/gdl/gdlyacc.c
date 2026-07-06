@@ -787,50 +787,53 @@ gdl_new_word(Tree *ytp)
 	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
 	  retnode = ytp->curr;
 	}
-
-      /* If there is an active gloss, attach to that */
-      Node *l = gdl_gloss_curr();
-      
-      /* If there is a g:field ancestor, attach to that */
-      if (!l)
-	l = node_ancestor_or_self(ytp->curr, "g:field");
-
-      /* Else if there is a g:cell ancestor, attach to that */
-      if (!l)
-	l = node_ancestor_or_self(ytp->curr, "g:cell");
-
-      /* Else if there is a g:w ancestor, attach to the parent of that node */
-      if (!l)
+      else
 	{
-	  l = node_ancestor_or_self(ytp->curr, "g:w");
-	  if (l)
-	    l = l->rent;
-	  else
-	    l = ytp->root;
-	}
-
-      /* Now l is the node where the g:w should attach */
-      tree_curr(l);
-
-      Node *wp = gdl_push(ytp, "g:w");
-      wp->mloc = mloc_file_line(currgdlfile, gdllineno);
-
-      /* By definition, the word-lang is the one in effect when the
-	 word begins; logogram lang switches need to be handled
-	 carefully */
-      assert(word_lang_tag != NULL);
-      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+	  /* The tree needs a new g:w node */
+	  /* If there is an active gloss, attach to that */
+	  Node *l = gdl_gloss_curr();
       
-      /* IF FIELD NOT IN SPARSE LEM HASH */
-      list_add(wd_list, wp);
-      sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
-      gid_insertp = gdl_word_id+strlen(gdl_word_id);
-      if (!gdl_no_xml_ids)
-	gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-		    (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
-      grapheme_id = 0;
+	  /* If there is a g:field ancestor, attach to that */
+	  if (!l)
+	    l = node_ancestor_or_self(ytp->curr, "g:field");
 
-      retnode = wp;
+	  /* Else if there is a g:cell ancestor, attach to that */
+	  if (!l)
+	    l = node_ancestor_or_self(ytp->curr, "g:cell");
+
+	  /* Else if there is a g:w ancestor, attach to the parent of that node */
+	  if (!l)
+	    {
+	      l = node_ancestor_or_self(ytp->curr, "g:w");
+	      if (l)
+		l = l->rent;
+	      else
+		l = ytp->root;
+	    }
+
+	  /* Now l is the node where the g:w should attach */
+	  tree_curr(l);
+
+	  Node *wp = gdl_push(ytp, "g:w");
+	  wp->mloc = mloc_file_line(currgdlfile, gdllineno);
+
+	  /* By definition, the word-lang is the one in effect when the
+	     word begins; logogram lang switches need to be handled
+	     carefully */
+	  assert(word_lang_tag != NULL);
+	  gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      
+	  /* IF FIELD NOT IN SPARSE LEM HASH */
+	  list_add(wd_list, wp);
+	  sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
+	  gid_insertp = gdl_word_id+strlen(gdl_word_id);
+	  if (!gdl_no_xml_ids)
+	    gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+			(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+	  grapheme_id = 0;
+
+	  retnode = wp;
+	}
     }
   return retnode;
 }

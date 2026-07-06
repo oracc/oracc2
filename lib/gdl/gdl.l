@@ -154,9 +154,9 @@ NOTEMARK	"^"[0-9]+"^"
 "}"			{ GIN=0; return '}'; }
 
 ,			{ return ','; }
-&[0-9]+			{ gsave; return CELLSPAN; }
-&			{ return '&'; }
-![a-z]+			{ gsave; return FTYPE; }
+&[0-9]+[ \t]*  		{ gsave; return CELLSPAN; }
+&[ \t]*			{ return '&'; }
+![a-z]+[ \t]*	       	{ gsave; return FTYPE; }
 
 	/* Delimiters */
 
