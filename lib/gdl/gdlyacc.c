@@ -790,10 +790,11 @@ gdl_new_word(Tree *ytp)
       else
 	{
 	  /* The tree needs a new g:w node */
+
 	  /* If there is an active gloss, attach to that */
 	  Node *l = gdl_gloss_curr();
       
-	  /* If there is a g:field ancestor, attach to that */
+	  /* Else if there is a g:field ancestor, attach to that */
 	  if (!l)
 	    l = node_ancestor_or_self(ytp->curr, "g:field");
 
