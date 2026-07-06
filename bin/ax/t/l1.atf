@@ -1,0 +1,8 @@
+&P412005 = CUSAS 11, 357 
+#project: epsd2/admin/ed3a
+#atf: use legacy
+
+1. b[a a]n
+2. b[a]d
+3. [ba a]n
+# 4. b[a an] ## see l2.atf

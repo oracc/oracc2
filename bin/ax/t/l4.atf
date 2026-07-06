@@ -1,0 +1,15 @@
+&P255527 = UM 29-13-596 + N 4188
+#project: obel
+#atf: use unicode
+#atf: use legacy
+#atf: use math
+
+6. x %s lu₂
+#lem: u; lu[person]
+
+7. [...]-ŋu₁₀#? %s u₁₈-lu %e ma-al-la-ŋ[u₁₀-n]e & %ob da-al-ha-ku li-bi  q[e₂-er-bi ...]
+#lem: u; ulu[south wind]; mal[be]V/i/ma-al+-la=l.a#~;a,ŋu.ne; dalhu[troubled]AJ$dalhāku; libbu[interior]; qerbu[centre]N$qerbī; u
+
+8. %s ki-ru-gu₂ %s [13-kam-ma] & {(10)}
+#lem: kirugu[a division notation in certain literary compositions]; n; u
+
