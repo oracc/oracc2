@@ -142,20 +142,17 @@ atf_wrapup(Wheret where)
       if (list_len(atfmp->lkeys))
 	{
 	  atfp->keys = (Key**)list2array_c(atfmp->lkeys, &atfp->nkeys);
-	  list_free(atfmp->lkeys, NULL);
-	  atfmp->lkeys = NULL;
+	  list_reset(atfmp->lkeys);
 	}
       if (list_len(atfmp->llinks))
 	{
 	  atfp->links = (Xlink**)list2array_c(atfmp->llinks, &atfp->nlinks);
-	  list_free(atfmp->llinks, NULL);
-	  atfmp->llinks = NULL;
+	  list_reset(atfmp->llinks);
 	}
       if (list_len(atfmp->lprotocols))
 	{
 	  atfp->protocols = (Protocol**)list2array_c(atfmp->lprotocols, &atfp->nprotocols);
-	  list_free(atfmp->lprotocols, NULL);
-	  atfmp->lprotocols = NULL;
+	  list_reset(atfmp->lprotocols);
 	}
       atf_clear_protocols();
       in_preamble = 0;
@@ -165,8 +162,8 @@ atf_wrapup(Wheret where)
       if (list_len(atfmp->llines))
 	{
 	  curr_group->lines = (Line**)list2array_c(atfmp->llines, &curr_group->nlines);
-	  list_free(atfmp->llinks, NULL);
-	  atfmp->llinks = NULL;
+	  list_free(atfmp->llines, NULL);
+	  atfmp->llines = NULL;
 	}
     }
 }

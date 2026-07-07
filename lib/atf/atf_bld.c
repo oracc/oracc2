@@ -320,6 +320,8 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
       p->type = "comment";
       break;
     case PROT_ETCSL:
+      p->type = "etcsl";
+      p->u.str = (uccp)str;
       if ('t' == *str)
 	{
 	  etcsl_labels = hash_create(128);
@@ -343,7 +345,7 @@ atf_bld_atf_protocol(Mloc l, const char *str)
   Protocol *p = memo_new(atfmp->mprotocols);
   p->t = PROT_ATF;
   p->type = "atf";
-  char *tmp = (uccp)normalize_ws((uccp)str);
+  char *tmp = (char*)normalize_ws((uccp)str);
   p->u.str = pool_copy((uccp)tmp, atfmp->pool);
   free(tmp);
   abt_add_protocol(&l, p, "text", (ccp)p->u.str);
