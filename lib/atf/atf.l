@@ -160,13 +160,13 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^{LK_VBAR}  			{ BEGIN s_T; longinit; return LNK_VBAR; }
 
-^[^ \t\n\r]+\.[ \t]+        	{ BEGIN s_T; longinit; return MTS; }
+^[^ #@$\t\n\r]+\.[ \t]+        	{ BEGIN s_T; longinit; return MTS; }
 
-^[^ \t\n\r]+\./[\n\r]   	{ BEGIN s_T; longinit; return MTS; }
+^[^ #@$\t\n\r]+\./[\n\r]   	{ BEGIN s_T; longinit; return MTS; }
 
-^[^ \t\n\r#]+:[ \t]+ 		{ BEGIN s_T; longinit; return EXX; }
+^[^ #@$\t\n\r#]+:[ \t]+        	{ BEGIN s_T; longinit; return EXX; }
 
-^:[^:]+:[ \t]+			{ BEGIN s_T; longinit; return VAR; }
+^:[^:#@$]+:[ \t]+	       	{ BEGIN s_T; longinit; return VAR; }
 
 ^== 				{ BEGIN s_T; atfsave; return BIL; }
 
