@@ -152,7 +152,7 @@ gdl_balance_break_c(Mloc mlp, int tok)
       if (-1 == p)
 	{
 	  /* nothing on the stack, superfluous closer */
-	  if (gdl_legacy_pending && gdl_legacy_o == o_of_c[tok])
+	  if (gdl_legacy_pending && bracket_data[gdl_legacy_o].tok == o_of_c[tok])
 	    {
 	      gdl_legacy_pending = 0;
 	      gdl_legacy_o = 0;
