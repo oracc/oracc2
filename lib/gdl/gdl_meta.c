@@ -144,6 +144,9 @@ gdl_break_o(Bracket_e bt)
 #endif
 }
 
+/* 20260707: return -1 from gdl_balance_break_c means return
+ * immediately; used for b[a] in legacy mode.
+ */
 void
 gdl_break_c(Bracket_e bt)
 {
@@ -182,10 +185,13 @@ gdl_break_c(Bracket_e bt)
 	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 	}
     }
-  if (gdl_legacy_pending)
-    gdl_legacy_pending = 0;
-  bit_set(*lst,bp->oc);
-  rs_no(bp->s);
+  else if (st == 0)
+    {
+      if (gdl_legacy_pending)
+	gdl_legacy_pending = 0;
+      bit_set(*lst,bp->oc);
+      rs_no(bp->s);
+    }
 }
 
 void

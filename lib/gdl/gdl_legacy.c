@@ -5,8 +5,9 @@
 #include <oraccsys.h>
 #include <unidef.h>
 #include <gutil.h>
+#include <gvl.h>
 #include "gdl.h"
-#include "gvl.h"
+#include "gdlstate.h"
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
 
@@ -390,13 +391,31 @@ gdl_legacy_brackets(char *b)
 	{
 	  /* This is b[a a]n so we clear the opener and ignore the closer */
 	  gdl_legacy_pending = 0;
-	  gdl_legacy_o = e_L_none;
+	  gdl_legacy_o = 0;
 	}
       else
 	{
-	  /* This is ba a]n and we know ba can't be b[a so we can put
-	     the closer directly on lst */
-	  gdl_break_c(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+	  /* The way [ba is handled is that the [ is put on the
+	   * bracket stack and then when the grapheme it belongs to is
+	   * found that node is pushed into the stack structure.
+	   *
+	   * This means that if there is an opener on the bracket
+	   * stack but its np is NULL, we are dealing with [b]a rather
+	   * than [ba a]n.  For [b]a, pop the opener from the bracket
+	   * stack and ignore the closer.
+	   */
+	  intptr_t p = gdl_break_peek();
+	  if (p > 0 && !gstck_np(p))
+	    {
+	      gdl_break_pop();
+	      rs_no(gs_lost);
+	    }
+	  else
+	    {
+	      /* This is ba a]n and we know ba can't be b[a so we can put
+		 the closer directly on lst */
+	      gdl_break_c(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+	    }
 	}
       ++s; /* point at char after closer */
     }
@@ -415,7 +434,7 @@ gdl_legacy_brackets(char *b)
      before the following grapheme */
   if ('[' == *t || 'L' == *t || 'l' == *t)
     {
-      gdl_legacy_o = e_L_squ /*('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs))*/;
+      gdl_legacy_o = '[' /*('[' == *t ? e_L_squ : ('L' == *t ? e_L_uhs : e_L_lhs))*/;
       /* This is a decay; the first gdl_graph_node_l will reset
 	 gdl_legacy_pending to GLP_01; the second one will actually
 	 invoke gdl_break_o */
@@ -441,41 +460,6 @@ gdl_legacy_brackets(char *b)
 	}
     }
 }
-
-#if 0
-/* 20260618: no longer used now that unlegacy is handled completely in
-   the lexer maw and not deferred until after the grammar sees it */
-
-/* if gdl_legacy is set (normally via #atf: use legacy) this routine
-   stores the value of np->text in a property named 'legacy' and
-   replaces np->text with a cleaned version without the brackets. This
-   means that GVL never sees legacy bracketed data */
-void
-gdl_unlegacy(Node *np)
-{
-  unsigned char *res = NULL;
-  
-  /* While this is only called from gdl on 's' nodes, np can only have
-     kids if it is a sign+mod in which case the sign has already been
-     through gdl_unlegacy */
-  if (np->kids && np->kids->props && prop_find_kv(np->kids->props, "legacy", NULL))
-    {
-      np->text = np->kids->text;
-      return;
-    }
-
-  if ((res = gdl_unlegacy_str(np->mloc, (uccp)np->text)))
-    {
-      if (strcmp(np->text, (ccp)res))
-	{
-	  prop_node_add(np, GP_TRACKING, PG_GDL_INFO, "legacy", np->text);
-	  np->text = (ccp)pool_copy(res, np->tree->tm->pool);
-	}
-    }
-  else
-    mesg_verr(np->mloc, "gdl_unlegacy failed to convert %s\n", np->text);
-}
-#endif
 
 int
 gdl_legacy_check(Node *ynp, unsigned const char *t)

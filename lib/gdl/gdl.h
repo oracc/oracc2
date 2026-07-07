@@ -88,7 +88,10 @@ extern gdl_graph_node_p gdl_graph_node;
 extern Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
 extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
 
+#define gdl_break_peek() stck_peek(break_stack)
+#define gdl_break_pop() stck_pop(break_stack)
 #define gdl_break_push(x) stck_push(break_stack,x)
+
 extern Stck *break_stack;
 extern Gstck*gstck_new(int i);
 

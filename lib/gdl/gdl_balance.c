@@ -4,13 +4,12 @@
 #include <tree.h>
 #include <stck.h>
 #include "gdl.h"
+#include "gdlstate.h"
 #include "gdl.tab.h"
 
 int gdl_break_pending = 0, gdl_state_pending = 0;
 
-#define gdl_break_peek() stck_peek(break_stack)
-#define gdl_break_pop() stck_pop(break_stack)
-/* push is in gdl.h */
+/* gdl_break_XXX() are in gdl.h */
 
 #define gdl_state_peek() stck_peek(state_stack)
 #define gdl_state_pop() stck_pop(state_stack)
@@ -64,13 +63,7 @@ static int c_of_o[END];
 static int o_of_c[END];
 static const char *s_of_oc[END];
 
-#if 1
 Stck *state_stack = NULL, *break_stack = NULL;
-#else
-int *state_stack = NULL, *break_stack = NULL;
-static int break_alloced = 0, state_alloced = 0;
-static int break_top = -1, state_top = -1;
-#endif
 
 #define OC_ALLOC	4
 
@@ -81,13 +74,9 @@ gdl_balance_init(void)
 
   if (state_stack)
     {
-#if 1
       stck_reset(break_stack);
       stck_reset(state_stack);
       memo_reset(mgstck);
-#else
-      break_top = state_top = -1;
-#endif
       return;
     }
     
@@ -102,33 +91,20 @@ gdl_balance_init(void)
   for (i = 0; s_o_c_map[i].tok != -1; ++i)    
     s_of_oc[s_o_c_map[i].tok] = s_o_c_map[i].str;
 
-#if 1
   break_stack = stck_init(OC_ALLOC);
   state_stack = stck_init(OC_ALLOC);
   if (!mgstck)
     mgstck = memo_init(sizeof(Gstck), 16);
-#else
-  break_stack = calloc((break_alloced = OC_ALLOC), sizeof(int));
-  state_stack = calloc((state_alloced = OC_ALLOC), sizeof(int));
-#endif
 }
 
 void
 gdl_balance_term(void)
 {
-#if 1
   stck_term(break_stack);
   stck_term(state_stack);
   memo_term(mgstck);
   mgstck = NULL;
-#else
-  free(break_stack);
-  free(state_stack);
-#endif
   break_stack = state_stack = NULL;
-#if 0
-  break_top = state_top = -1;
-#endif
 }
 
 Gstck*
@@ -153,12 +129,6 @@ gdl_break_node(Node *np)
 void
 gdl_state_node(Node *np)
 {
-#if 0
-  intptr_t p = gdl_state_peek();
-  if (p > 0)
-    gstck_np(p) = np;
-  gdl_state_pending = 0;
-#else
   int i;
   for (i = state_stack->top; i >= 0; --i)
     {
@@ -168,7 +138,6 @@ gdl_state_node(Node *np)
       else
 	break;
     }
-#endif
 }
 
 /* return 0 on OK; 1 on error */
@@ -183,7 +152,16 @@ gdl_balance_break_c(Mloc mlp, int tok)
       if (-1 == p)
 	{
 	  /* nothing on the stack, superfluous closer */
-	  mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);
+	  if (gdl_legacy_pending && gdl_legacy_o == o_of_c[tok])
+	    {
+	      gdl_legacy_pending = 0;
+	      gdl_legacy_o = 0;
+	      rs_no(gs_damaged|gs_lost);
+	    }
+	  else
+	    {
+	      mesg_verr(&mlp, "unopened closer '%s'", s_of_oc[tok]);
+	    }
 	  ret = -1;
 	}
       else if (gstck_i(p) != o_of_c[tok])
@@ -198,13 +176,7 @@ gdl_balance_break_c(Mloc mlp, int tok)
     }
   else
     {
-#if 1
       fprintf(stderr, "gdl_balance_break_c: internal error: called with tok=%c\n", tok);
-#else
-      /* for openers push the new opener on the stack */
-      gdl_break_push((intptr_t)gstck_new(tok));
-      gdl_break_pending = 1;
-#endif
     }
   return ret;
 }
