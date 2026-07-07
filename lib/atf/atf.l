@@ -172,15 +172,6 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^\#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
-[ \t\r\n]+     			{ ; }
-
-<*>\r				{ }
-
-<*>.				{ mesg_vwarning(curratffile, atflineno,
-						"atf.l: unmatched character %c\n", *atftext); }
-
-<<EOF>>				{ yyterminate(); }
-
 <s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
 <s_TRH>{LANG}				{ atfsave; s_next=s_TRH; BEGIN s_WORD; return TR_LANG; }
 <s_TRH>[ \t]+				{ ; }
@@ -194,6 +185,15 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_TRA>{TRA_WRD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
 <s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
+
+[ \t\r\n]+     			{ ; }
+
+<*>\r				{ }
+
+<*>.				{ fprintf(stderr,"%s:%d: atf.l: unmatched character '%c'\n",
+					  curratffile, atflineno,*atftext); }
+
+<<EOF>>				{ yyterminate(); }
 
 %%
 
@@ -338,7 +338,7 @@ static void
 atf_user_action(void)
 {
   if (atfflextrace)
-    fprintf(stderr, "%s:%d: atflex: text=::%s::\n", curratffile, atflineno, atftext);
+      fprintf(stderr, "%s:%d: atflex: text=::%s:: start=%d\n", curratffile, atflineno, atftext, YY_START);
 
   atflloc.file = curratffile;
   atflloc.line = atflineno;
