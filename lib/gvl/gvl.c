@@ -570,7 +570,7 @@ gvl_valuqual(Node *vqnp)
 	{
 	  gvl_q(vqnp);
 	  gvl_g *qgp = (gvl_g*)vqnp->user;
-	  if (qgp && qgp->oid)
+	  if (qgp && 'q' == *qgp->type && qgp->oid)
 	    {
 	      if (qgp->sign)
 		g_attr(vqnp, qgp);

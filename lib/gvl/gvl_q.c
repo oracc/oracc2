@@ -145,7 +145,26 @@ gvl_q(Node *ynp)
       vq->mess = gvl_vmess("%s unable to attempt canonicalization", ynp->text);
     }
   ynp->user = vq;
-  if (!strcmp(ynp->kids->next->name, "g:g"))
+  if (!strcmp(ynp->kids->name, "g:p"))
+    {
+      /* rewrite this from g:q->g:p.g:s to g:p->g:s */
+      ynp->name = "g:p";
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", (ccp)ynp->kids->text);
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "oid", (ccp)((gvl_g*)ynp->kids->next->user)->oid);
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "spoid", (ccp)((gvl_g*)ynp->kids->user)->oid);
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "spform", (ccp)((gvl_g*)ynp->kids->user)->sign);
+      char *pkey = pool_alloc(strlen((ccp)ynp->kids->text)+19, curr_sl->p);
+      gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "key", pkey);
+      sprintf(pkey, "%s.%s.%s",
+	      (ccp)((gvl_g*)ynp->kids->user)->oid,
+	      (ccp)((gvl_g*)ynp->kids->next->user)->oid,
+	      (ccp)ynp->kids->text);
+      vq->type = "p";
+      vq->sp_oid = ((gvl_g*)ynp->kids->user)->oid;
+      ynp->kids = ynp->kids->next;
+      ynp->kids->next = NULL;
+    }
+  else if (!strcmp(ynp->kids->next->name, "g:g"))
     {
       if (sll_has_sign_indicator((uccp)ynp->kids->next->text))
 	ynp->kids->next->name = "g:s";
