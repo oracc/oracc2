@@ -269,7 +269,7 @@ line_bil(Mloc l, unsigned char *lp)
   register_line(l, LINE_BIL, lnode, lp);
   curr_lem_host = curr_line;
 
-  unsigned char *s = lp+2;
+  unsigned char *s = lp;
   unsigned char *end = lp+xxstrlen(lp);
 
   already_lemmed = 0;
