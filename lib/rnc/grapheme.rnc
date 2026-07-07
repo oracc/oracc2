@@ -87,7 +87,7 @@ o.binary =
 # Punctuation
 p.model =
     attribute g:type { "*"|":"|":'"|':"'|":&quot;"|":."|"::"|"|"|"/"|":r:"|"·" } , 
-    g.meta , 
+    g.form? , g.meta , 
     (v|q|s|n|c|text)?
 
 gimplicit = attribute implicit { "1" }

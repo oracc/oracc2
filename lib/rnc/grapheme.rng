@@ -354,6 +354,9 @@
         <value>·</value>
       </choice>
     </attribute>
+    <optional>
+      <ref name="g.form"/>
+    </optional>
     <ref name="g.meta"/>
     <optional>
       <choice>

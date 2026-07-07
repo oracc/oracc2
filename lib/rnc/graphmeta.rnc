@@ -1,5 +1,5 @@
 namespace g = "http://oracc.org/ns/gdl/1.0"
-g.meta = oid? , key? , 
+g.meta = oid? , spoid? , spform? , key? , 
   break? , status.flags? , status.spans? , 
   paleography.attr? , linguistic.attr? , proximity.attr? ,
   opener? , closer? , hsqb_o?, hsqb_c? , emhyph? ,
@@ -23,6 +23,9 @@ surroStart = attribute g:surroStart { "1" }
 surroEnd = attribute g:surroEnd { xsd:IDREF }
 statusStart = attribute g:statusStart { "1" }
 statusEnd = attribute g:statusEnd { xsd:IDREF }
+
+spoid = attribute spoid { xsd:IDREF }
+spform = attribute spform { text }
 
 break = attribute g:break  { "damaged" | "missing" }
 opener = attribute g:o     { text }
