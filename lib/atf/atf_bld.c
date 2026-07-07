@@ -5,6 +5,8 @@
 #include "atf.h"
 #include "atf_bld.h"
 
+static int etcsl_error_reported;
+
 extern void atf_bp_reset(void);
 
 static void atf_bld_protocols(Mloc *lp, const char *scope);
@@ -326,9 +328,12 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
 	{
 	  etcsl_labels = hash_create(128);
 	  etcsl_pool = pool_init();
+	  etcsl_error_reported = 0;
 	}
-      else
+      else if (etcsl_labels)
 	etcsl_label(str);
+      else if (!etcsl_error_reported++)
+	mesg_warning(curratffile, atflineno, "etcsl: line-id used without etcsl: text-id");
       break;
     case PROT_ATF:
     case PROT_TOP:

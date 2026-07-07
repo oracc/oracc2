@@ -638,12 +638,15 @@ xid_vchk(const char *x, int from, int to)
   if ((bufp = strchr(buf, '.')))
     {
       ++bufp;
-      while (from < to)
+      if (vreg)
 	{
-	  sprintf(bufp, "%d", from++);
-	  void *vp = hash_find(vreg, (uccp)buf);
-	  if (vp)
-	    v += (uintptr_t)vp;
+	  while (from < to)
+	    {
+	      sprintf(bufp, "%d", from++);
+	      void *vp = hash_find(vreg, (uccp)buf);
+	      if (vp)
+		v += (uintptr_t)vp;
+	    }
 	}
     }
   return v;
