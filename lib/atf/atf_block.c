@@ -646,7 +646,7 @@ set_block_curr(Block_level b)
 	  break;
 	case B_COLFRAG:
 	  {
-	    Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
+	    Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
 	    if (np)
 	      tree_curr(np);
 	  }
@@ -691,11 +691,11 @@ set_block_curr(Block_level b)
 	case B_MILESTONE:
 	case B_LINE:
 	  {
-	    Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
-	    if (!np)
+	    Node *fp = ancestor_or_self_level_as(abt->curr, B_COLFRAG, 0);
+	    if (!fp)
 	      {
-		Node *fp = ancestor_or_self_level_as(abt->curr, B_COLFRAG, 0);
-		if (!fp)
+		Node *np = ancestor_or_self_level_as(abt->curr, B_COLUMN, 0);
+		if (!np)
 		  {
 		    Node *sp = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
 		    if (!sp)
@@ -712,7 +712,7 @@ set_block_curr(Block_level b)
 		atf_implicit("column");
 	      }
 	    else
-	      tree_curr(np);
+	      tree_curr(fp);
 	  }
 	  break;
 	default:
