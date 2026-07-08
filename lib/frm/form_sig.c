@@ -122,7 +122,7 @@ sig_one(Pool *p, struct ilem_form *ifp, Form *fp, int tail)
      make them easier to use outside the lemmatizer; require setting
      xxcp using form_set_xcp(struct xcl_context*) to set up
      xli_ilem */
-  if (ifp && lem_extended)
+  if (xxcp && ifp && lem_extended)
     xli_ilem(xxcp, ifp, fp);
   
   if (strstr((const char *)fp->lang, "-949"))
