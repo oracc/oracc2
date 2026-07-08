@@ -443,7 +443,7 @@ update_label(struct node *current,enum e_tu_types transtype)
 	{
 	  strcpy((char*)frag_buf, "frg.");
 	  strcat((char*)frag_buf, ((Block*)current->user)->subt);
-	  ancestors[0] = frag_buf;
+	  ancestors[0] = (ccp)frag_buf;
 	}
       else
 	ancestors[0] = ((Block*)current->user)->label;
@@ -473,6 +473,9 @@ update_label(struct node *current,enum e_tu_types transtype)
 	  }
       }
       break;
+    case B_COLFRAG:
+      strcpy((char*)frag_buf, ((Block*)current->user)->subt);
+      /* FALLS THROUGH */
     case B_COLUMN:
       ancestors[2] = ((Block*)current->user)->label;
       if (((Block*)current->rent->user)->label
@@ -491,7 +494,7 @@ update_label(struct node *current,enum e_tu_types transtype)
   if (ancestors[0])
     sprintf((char*)line_label_buf, "%s ", ancestors[0]);
   
-  if (*frag_buf && atfp->frag_type == F_SURFACE)
+  if (*frag_buf && ((Block*)current->user)->bt->type != B_COLFRAG /* atfp->frag_type == F_SURFACE */)
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "frg.%s ", frag_buf);
 
   if (ancestors[1])
@@ -500,9 +503,11 @@ update_label(struct node *current,enum e_tu_types transtype)
   if (ancestors[2])
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "%s ", ancestors[2]);
 
-  if (*frag_buf && atfp->frag_type == F_SUBSURF)
+  if (*frag_buf && ((Block*)current->user)->bt->type == B_COLFRAG /*atfp->frag_type == F_SUBSURF*/)
     sprintf((char*)line_label_buf+xxstrlen(line_label_buf), "frg.%s ", frag_buf);
 
+  *frag_buf = '\0';
+  
   xstrcpy(idbuf,line_label_buf);
   idbufp = idbuf+xxstrlen(idbuf);
   while (idbufp > idbuf && isspace(idbufp[-1]))
