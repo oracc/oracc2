@@ -3,13 +3,14 @@
 #define _MAX_LINE 2048
 static char *line, linebuf[_MAX_LINE];
 
+const char *prefix;
 int r_access = 0;
 int verbose = 0;
 
 int
 main(int argc, char**argv)
 {
-  options(argc, argv, "r");
+  options(argc, argv, "p:r");
   setvbuf(stdout, NULL, _IONBF, 0);
   if (argv[optind+1])
     {
@@ -37,7 +38,11 @@ main(int argc, char**argv)
 		  if (verbose)
 		    fprintf(stderr, "pqxpand: %s\n", fn);
 		  if (!r_access || !access(fn, R_OK))
-		    puts(fn);
+		    {
+		      if (prefix)
+			printf("%s ", prefix);
+		      puts(fn);
+		    }
 		}
 	      else
 		fprintf(stderr,"pqxpand only works on qualified IDs, ignoring %s\n", line);
@@ -56,4 +61,18 @@ const char *prog = "pqxpand";
 int major_version = 1, minor_version = 0;
 const char *usage_string = "pqxpand EXTENSION";
 void help (void) { }
-int opts(int arg,const char*str){ if ('r' == arg) r_access = 1; return 0; }
+int
+opts(int arg,const char*str)
+{
+  switch (arg)
+    {
+    case 'p':
+      prefix = strdup(str);
+      return 0;
+    case 'r':
+      r_access = 1;
+      return 0;
+    default:
+      return 1;
+    }
+}
