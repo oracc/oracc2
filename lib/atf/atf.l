@@ -133,7 +133,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 ^"#note:"       		{ BEGIN s_T; return HASH_NOTE; }
 ^"#version:"			{ BEGIN s_T; return HASH_VERSION; }
 
-^"#etcsl:"/[ \t]+t     		{ BEGIN s_T; return HASH_ETCSL_T; }
+^"#etcsl:"/[ \t]+t     		{ BEGIN s_T; return in_preamble ? HASH_ETCSL_T : HASH_ETCSL_L; }
 ^"#etcsl:"/[ \t]+l     		{ BEGIN s_T; return HASH_ETCSL_L; }
 
 ^"#lemmatizer:"			{ BEGIN s_LZR; return HASH_LEMMATIZER; }

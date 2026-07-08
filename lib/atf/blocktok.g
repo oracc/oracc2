@@ -52,9 +52,6 @@ label,	Y_LABEL, NULL, B_TR_LABEL, NULL, NULL, NULL
 unit,	Y_UNIT, NULL, B_TR_UNIT,  NULL, NULL, NULL
 span,	Y_SPAN,  NULL, B_TR_SPAN,  NULL, NULL, NULL
 note,	Y_NOTE,   NULL, B_TR_NOTE,  NULL, NULL, NULL
-h1x,	Y_H1X,        NULL, B_H1,       NULL, NULL, NULL
-h2x,	Y_H2X,        NULL, B_H2,       NULL, NULL, NULL
-h3x,	Y_H3X,        NULL, B_H3,       NULL, NULL, NULL
 h1,	Y_H1,    NULL, B_TR_H1,    NULL, NULL, NULL
 h2,	Y_H2,    NULL, B_TR_H2,    NULL, NULL, NULL
 h3,	Y_H3,    NULL, B_TR_H3,    NULL, NULL, NULL
