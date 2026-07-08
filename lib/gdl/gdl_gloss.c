@@ -17,6 +17,7 @@
  * be processed naturally with tools like the ngrammer.
  */
 
+extern const char *word_lang_tag;
 extern Node *gdl_recycled_word;
 static Stck *glosstck;
 
@@ -75,6 +76,10 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   /* We keep a stack of gloss containers and use it to set word parents in gdl_new_word */
   if (!glosstck)
     glosstck = stck_init(3);
+
+  /* track word_lang_tag on entry to the gloss in np->user */
+  ret->utype = N_U_STR;
+  ret->user = word_lang_tag;
   stck_push(glosstck, (intptr_t)ret);
 
   /* For now we always start a new word at start of g:gloss--it is
@@ -102,6 +107,10 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
       /* We don't need to do anything with this popped container
 	 because we access it via stck_peek in gdl_new_word */
       ret = (Node *)stck_pop(glosstck);
+      word_lang_tag = ret->user;
+      ret->utype = N_U_NODE;
+      ret->user = NULL;
+
       if (glosstck->top < 0)
 	{
 	  stck_term(glosstck);
