@@ -155,7 +155,7 @@ ax_jox_node(Node *np)
   const char *nodename = np->name;
   struct axjoxfnc *ap = NULL;
 
-  if (np->name && strcmp(np->name, "-"))
+  if (np->name && strcmp(np->name, "-") && np->mloc)
     atf_line_pi(np);
 
   if (trace_mode)
