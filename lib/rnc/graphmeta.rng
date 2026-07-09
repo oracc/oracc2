@@ -249,6 +249,7 @@
     <choice>
       <ref name="det"/>
       <ref name="glo"/>
+      <ref name="sur"/>
     </choice>
   </define>
   <define name="posn">
@@ -314,6 +315,20 @@
       </optional>
       <ref name="posn"/>
       <ref name="words"/>
+    </element>
+  </define>
+  <define name="sur">
+    <element name="g:sur">
+      <attribute name="xml:id">
+        <data type="ID"/>
+      </attribute>
+      <choice>
+        <ref name="s"/>
+        <ref name="c"/>
+        <ref name="n"/>
+        <ref name="punct"/>
+        <ref name="group"/>
+      </choice>
     </element>
   </define>
   <define name="status.spans">

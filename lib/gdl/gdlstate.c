@@ -13,11 +13,11 @@ gdlstate_t gs_order_f[] = { gs_f_query, gs_f_bang, gs_f_star, gs_f_hash,
 
 gdlstate_t gs_order_o[] = { gs_damaged_o, gs_lost_o, gs_maybe_o, gs_det_o, gs_supplied_o,
 			    gs_excised_o, gs_implied_o, gs_erased_o, gs_cancelled_o,
-			    gs_superposed_o, gs_glolin_o, gs_glodoc_o, gs_surro_o, gs_group_o };
+			    gs_superposed_o, gs_glolin_o, gs_glodoc_o, gs_group_o };
 
 gdlstate_t gs_order_c[] = { gs_damaged_c, gs_lost_c, gs_maybe_c, gs_det_c, gs_supplied_c,
 			    gs_excised_c, gs_implied_c, gs_erased_c, gs_cancelled_c,
-			    gs_superposed_c, gs_glolin_c, gs_glodoc_c, gs_surro_c, gs_group_c };
+			    gs_superposed_c, gs_glolin_c, gs_glodoc_c, gs_group_c };
 
 const char *gs_status[] = { NULL , NULL , "maybe" , NULL, "supplied" ,
 			    "excised" , "implied" , "erased", "cancelled" ,
@@ -35,8 +35,8 @@ const char *gs_str_a[NFLAGS] = { "g:queried", "g:remarked",
 				 "g:collated", NULL,
 				 "g:uflag1", "g:uflag2", "g:uflag3", "g:uflag4",
 				 "g:plus" }; /* not sure what + flag is ? */
-const char *gs_str_o[NBRACK] = { "[#", "[", "(", "{", "<", "<<", "<(", "((", "((-", "//", "{{", "{(", "<(", ")" };
-const char *gs_str_c[NBRACK] = { "#]", "]", ")", "}", ">", ">>", ")>", "))", "))",  "))", "}}", ")}", ")>", ")" };
+const char *gs_str_o[NBRACK] = { "[#", "[", "(", "{", "<", "<<", "<(", "((", "((-", "//", "{{", "{(", ")" };
+const char *gs_str_c[NBRACK] = { "#]", "]", ")", "}", ">", ">>", ")>", "))", "))",  "))", "}}", ")}", ")" };
 
 static void
 gs_bracko(gdlstate_t sp)
@@ -108,7 +108,11 @@ gdlstate_props(Node *np, gdlstate_t sp)
   else if (gs_is(sp, gs_maybe))
     status = "maybe";
   else if (gs_is(sp, gs_implied))
-    status = "implied";
+    {
+      status = "implied";
+      if (gs_is(sp, gs_surro))
+	gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:sur", "1");
+    }  
   
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:status", status);
   if (canary)

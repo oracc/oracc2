@@ -54,13 +54,15 @@ status.flags =
   attribute g:uflag3 { xsd:boolean } ? ,
   attribute g:uflag4 { xsd:boolean } ? 
 
-gloss = det | glo
+gloss = det | glo | sur
 posn = attribute g:pos { "pre" | "post" | "free" }
 det = element g:d { posn , dtyp , dexp? , delim? , emhyph? , surroStart? , g.meta ,
                     (word.content*)}
 dtyp= attribute g:role { "phonetic" | "semantic" }
 dexp= attribute g:char { "+" | "-" }
 glo = element g:gloss { attribute g:type { "lang" | "text" } , surroEnd? , delim? , posn , words }
+
+sur = element g:sur { attribute xml:id { xsd:ID } , (s | c | n | punct | group) }
 
 status.spans =
   attribute g:status {

@@ -79,7 +79,7 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
 
   /* track word_lang_tag on entry to the gloss in np->user */
   ret->utype = N_U_STR;
-  ret->user = word_lang_tag;
+  ret->user = (void*)word_lang_tag;
   stck_push(glosstck, (intptr_t)ret);
 
   /* For now we always start a new word at start of g:gloss--it is
@@ -127,4 +127,77 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   rs_no(bp->s);
   tree_curr(ret);
   return ret;
+}
+
+/* Surrogates
+ *
+ * A surrogate is a sign or sign group that stands in for one or more
+ * signs or words: the most common forms are MIN or |KI.MIN| used to
+ * mean "ditto" in lexical texts.
+ *
+ * In ATF surrogates have the form: MIN<(a)> where 'a' is the text for
+ * which MIN is a surrogate.
+ *
+ * This syntax is similar to that of implied text, i.e., <(...)> used
+ * especially in liturgies where blank spaces are used to imply
+ * repetition of the above text.
+ *
+ * The defining difference between a surrogate and an implied sequence
+ * is that a sign, compound or group followed directly by '<(' with no
+ * intervening delimiter is a surrogate.  All other combinations are
+ * parsed as implied sequences of signs.  This means that {d}<(namma)>
+ * is not a surrogate, but AN<({d}namma)> is a surrogate.
+ *
+ * Surrogates are lumped together with glosses in the GDL schema and
+ * the implementation in ax is very different from that of ox--the
+ * latter has actually been broken for several years because
+ * multi-word surrogates are not treated specially as a result of
+ * changes in the code which had unintended consequences.
+ *
+ * In ax, the head signs of the surrogate are wrapped in <g:sur>.
+ * This has an xml:id which is used as the @ref for the sequence of
+ * signs which are implied by the surrogate.  Surrogacy is a state,
+ * identical to the 'implied' state.  There is no distinction in ax
+ * between grapheme-level surrogates and word-level surrogates.
+ * 
+ */
+
+/* Called when <( is found; return 1 if the last grapheme pointer is
+ * NULL or meets the conditions for a surrogate
+ *
+ * Need to watch whether simply wrapping lgp is good enough--if lgp is
+ * in a group may need to wrap parent group in g:sur.
+ *
+ */
+void
+gdl_surro(void)
+{
+  if (lgp)
+    {
+      if (!strcmp(lgp->name, "g:gg")
+	  || (strlen(lgp->name) == 3
+	      && ((lgp->name[2] == 's' || lgp->name[2] == 'c')
+		  || (lgp->name[2] == 'g' && sll_has_sign_indicator((uccp)lgp->text)))))
+	{
+	  if (!prop_find_kv(lgp->props, "g:delim", NULL))
+	    {
+	      Node *np = tree_node(lgp->tree, lgp->ns, "g:sur", lgp->depth, lgp->mloc);
+	      Prop *xidp = prop_find_kv(lgp->props, "xml:id", NULL);
+	      curr_sur_id = (char*)pool_alloc(strlen(xidp->u.k->v)+5, gdlpool);
+	      sprintf((char*)curr_sur_id, "%s.sur", xidp->u.k->v);
+	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", curr_sur_id);
+	      if (lgp->rent->kids == lgp)
+		lgp->rent->kids = np;
+	      np->kids = lgp;
+	      np->rent = lgp->rent;
+	      np->prev = lgp->prev;
+	      np->next = lgp->next;
+	      tree_curr(lgp->rent);
+	      lgp->last = np;
+	      lgp->rent = np;
+	      lgp->prev = lgp->next = NULL;
+	      rs_on(gs_surro);
+	    }
+	}
+    }
 }

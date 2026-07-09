@@ -95,7 +95,7 @@ extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const cha
 extern Stck *break_stack;
 extern Gstck*gstck_new(int i);
 
-extern const char *currgdlfile, *gdl_pending_varo;
+extern const char *currgdlfile, *gdl_pending_varo, *curr_sur_id;
 extern int gdltrace, gdllineno, gdl_legacy, gdl_legacy_hash, gdl_legacy_pending;
 
 #if 0
@@ -251,5 +251,6 @@ extern Tree *gdl_get_tree(void);
 
 extern Node *gdl_gloss_curr(void);
 extern void gdl_gloss_props(Node *d);
+extern void gdl_surro(void);
 
 #endif /*GDL_H_*/

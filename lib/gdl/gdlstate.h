@@ -66,8 +66,8 @@
 #define gs_g_undefined	0x0080000000000000
 #define gs_force	0x0100000000000000
 
-#define gs_surro_o	0x0200000000000000
-#define gs_surro_c	0x0400000000000000
+#define gs_surro	0x0200000000000000
+#define gs_reserved0	0x0400000000000000
 #define gs_group_o	0x0800000000000000
 #define gs_group_c	0x1000000000000000
 #define gs_reserved1	0x2000000000000000

@@ -163,6 +163,18 @@ gdlparse_deep(Node *np, void *mptr)
     }
 }
 
+static
+Prop *
+gdl_wf_deep_delim(Node *c)
+{
+  while (c && strcmp(c->name, "g:w"))
+    c = c->last;
+  if (c)
+    return prop_find_kv(c->last->props, "g:delim", NULL);
+  else
+    return NULL;
+}
+
 /* Print the ->text value of each of the child nodes of a g:w */
 void
 gdl_wf_nodes(Node *w, FILE *wfp)
@@ -172,23 +184,29 @@ gdl_wf_nodes(Node *w, FILE *wfp)
     {
       if (!strcmp(c->name, "g:x"))
 	{
+	  int no_post_x_delim = 0;
+	  Prop *p = prop_find_kv(c->props, "g:type", NULL);
 	  if (!strcmp(c->text, "..."))
 	    {
 	      fputc('x', wfp);
 	    }
 	  else
 	    {
-	      Prop *p = prop_find_kv(c->props, "g:type", NULL);
 	      if (!p
 		  || (p->u.k->v
 		      && strcmp(p->u.k->v, "comment")
 		      && strcmp(p->u.k->v, "dollar")
 		      && strcmp(p->u.k->v, "linebreak")))
 		mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text `%s'\n", c->text);
+	      else if (p && (!strcmp(p->u.k->v, "comment") || !strcmp(p->u.k->v, "dollar")))
+		no_post_x_delim = 1;
 	    }
-	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-	  if (d)
-	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
+	  if (!no_post_x_delim)
+	    {
+	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
+	      if (d)
+		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
+	    }
 	}
       else if (!strcmp(c->name, "g:det"))
 	{
@@ -231,6 +249,9 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  else
 	    gdl_wf_nodes(c, wfp);
 
+	  if (!d && c->last)
+	    d = prop_find_kv(c->last->props, "g:delim", NULL);
+
 	  if (d)
 	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 	}
@@ -254,11 +275,11 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 		  if (c->next)
 		    {
 		      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-		      if (d)
+		      if (d || (d = gdl_wf_deep_delim(c->next)))
 			fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
 		    }
 		}
-	      else
+	      else if (strcmp(c->name, "g:sur"))
 		mesg_verr(c->mloc, "NULL text in %s node\n", c->name);
 	    }
 	  else

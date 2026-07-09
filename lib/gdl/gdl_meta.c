@@ -8,6 +8,8 @@
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
 
+const char *curr_sur_id = NULL;
+
 struct lang_context *gdl_lang_context;
 const char *gdl_pending_varo = NULL;
 const char *word_lang_tag = "sux";
@@ -28,11 +30,9 @@ Bracket bracket_data[] = {
 
   [e_L_cur_par] = { L_cur_par, gs_glodoc_o, gs_glodoc, "{(" },
   [e_L_dbl_cur] = { L_dbl_cur, gs_glolin_o, gs_glolin, "{{" },
-  [e_L_ang_par_s] = { L_ang_par_s, gs_surro_o, gs_empty, "<(=" },
 
   [e_R_cur_par] = { R_cur_par, gs_glodoc_c, gs_glodoc, ")}" },
   [e_R_dbl_cur] =  {R_dbl_cur, gs_glolin_c, gs_glolin, "}}" },
-  [e_R_ang_par_s] = { R_ang_par_s, gs_surro_c, gs_empty, ")>" },
 
   [e_L_ang] = { '<', gs_supplied_o, gs_supplied, "<" },
   [e_L_par] = { '(', gs_maybe_o, gs_maybe, "(" },
@@ -197,6 +197,8 @@ gdl_break_c(Bracket_e bt)
 void
 gdl_state_o(Bracket_e bt)
 {
+  if (bt == e_L_ang_par)
+    gdl_surro();
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", bt, bp->str);
@@ -229,6 +231,7 @@ gdl_state_c(Bracket_e bt)
     }
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
+  curr_sur_id = NULL;
 }
 
 int
