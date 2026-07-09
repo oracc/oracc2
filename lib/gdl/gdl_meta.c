@@ -231,7 +231,11 @@ gdl_state_c(Bracket_e bt)
     }
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
-  curr_sur_id = NULL;
+  if (curr_sur_id)
+    {
+      curr_sur_id = NULL;
+      rs_no(gs_surro);
+    }
 }
 
 int
