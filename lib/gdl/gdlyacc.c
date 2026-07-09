@@ -588,6 +588,10 @@ gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data)
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
   lgp = np;
   lst = prop_state(np, pst|rst);
+
+  if (gs_is(rst, gs_surro))
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:sur", curr_sur_id);
+
   /*  if (gdl_xmlids && 'r' != name[2] && 'R' != name[2])*/
   if (!gdl_no_xml_ids)
     {

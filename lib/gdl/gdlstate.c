@@ -110,8 +110,6 @@ gdlstate_props(Node *np, gdlstate_t sp)
   else if (gs_is(sp, gs_implied))
     {
       status = "implied";
-      if (gs_is(sp, gs_surro))
-	gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:sur", "1");
     }  
   
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:status", status);
