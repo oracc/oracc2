@@ -14,7 +14,7 @@
  *  and <nonl> nodes; $-nodes are not permitted within a sequence of
  *  lines that belongs to an <lg> (not currently enforced).
  */
-
+extern int atfflextrace;
 List *curr_words;
 struct lang_context *line_lang = NULL;
 
@@ -32,6 +32,8 @@ tlit_reinit_inline(void)
 void
 tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id)
 {
+  if (atfflextrace)
+    fprintf(stderr, "tlit_parse_inline: begin: %s\n", s);
   extern int gdl_word_mode;
   gdl_word_mode = 1;
   gdl_unicode = 1;
@@ -48,4 +50,6 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
   curr_line->wl = gdl_get_word_list();
   np->user = np->kids;
   gdlparse_reset();
+  if (atfflextrace)
+    fprintf(stderr, "tlit_parse_inline: end: %s\n", s);
 }

@@ -161,6 +161,10 @@ gvl_s(Node *ynp)
 	  unsigned char *u = gdl_unlegacy_str(ynp->mloc, gp->orig);
 	  if (strcmp((ccp)u,(ccp)gp->orig))
 	    {
+	      extern int gdl_legacy_accented;
+	      if (!gdl_legacy && gdl_legacy_accented)
+		mesg_verr(ynp->mloc, "must have #atf: use legacy when using accents like %s",
+			  gp->orig);
 	      gp->c10e = pool_copy(u, gdlpool);
 #if 0
 	      /* This currently assumes .atf but gvl* is used for other things as well */

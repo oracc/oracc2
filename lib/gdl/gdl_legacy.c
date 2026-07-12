@@ -14,6 +14,7 @@
 #define G_C10E_MIXED_CASE 0x02
 #define G_C10E_FINAL_SUBX 0x04
 
+int gdl_legacy_accented = 0;
 static Hash *legacy_reported_h = NULL;
 extern const char *curr_pqx;
 extern int curr_pqx_line;
@@ -210,7 +211,13 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
 	}
 
       if (cued_sub_23)
-	x[xlen++] = cued_sub_23;
+	{
+	  x[xlen++] = cued_sub_23;
+	  gdl_legacy_accented = 1;
+	}
+      else
+	gdl_legacy_accented = 0;
+
       x[xlen] = 0;
 
       if (found_l && found_u && !suppress_case_check)

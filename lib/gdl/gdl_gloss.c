@@ -163,7 +163,7 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
  */
 
 /* Called when <( is found; return 1 if the last grapheme pointer is
- * NULL or meets the conditions for a surrogate
+ * NULL or meets the conditions for a surrogate.
  *
  * Need to watch whether simply wrapping lgp is good enough--if lgp is
  * in a group may need to wrap parent group in g:sur.
@@ -172,7 +172,9 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
 void
 gdl_surro(void)
 {
-  if (lgp)
+  /* last grapheme pointer must be non-null and tree->curr cannot be a
+     newly minted g:w (i.e., a g:w with no ->kids */
+  if (lgp && (strcmp(lgp->tree->curr->name, "g:w") || lgp->tree->curr->kids))
     {
       if (!strcmp(lgp->name, "g:gg")
 	  || (strlen(lgp->name) == 3
@@ -183,8 +185,18 @@ gdl_surro(void)
 	    {
 	      Node *np = tree_node(lgp->tree, lgp->ns, "g:sur", lgp->depth, lgp->mloc);
 	      Prop *xidp = prop_find_kv(lgp->props, "xml:id", NULL);
-	      curr_sur_id = (char*)pool_alloc(strlen(xidp->u.k->v)+5, gdlpool);
-	      sprintf((char*)curr_sur_id, "%s.sur", xidp->u.k->v);
+	      if (!xidp && lgp->kids)
+		prop_find_kv(lgp->kids->props, "xml:id", NULL);
+	      if (xidp)
+		{
+		  curr_sur_id = (char*)pool_alloc(strlen(xidp->u.k->v)+5, gdlpool);
+		  sprintf((char*)curr_sur_id, "%s.sur", xidp->u.k->v);
+		}
+	      else
+		{
+		  mesg_verr(lgp->mloc, "no xml:id on %s node or first child", lgp->text);
+		  curr_sur_id = "BAD_SUR_ID";
+		}
 	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", curr_sur_id);
 	      if (lgp->rent->kids == lgp)
 		lgp->rent->kids = np;

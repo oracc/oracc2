@@ -468,6 +468,8 @@ gdlparse_string(Mloc *m, char *s)
   strcpy(s2, s);
   strcat(s2, "\n");
 
+  gdl_group_attach = lgp = NULL;
+
   /* must come before gdl_set_tree() */
   if (gdl_word_mode)
     wd_list = list_create(LIST_SINGLE);
