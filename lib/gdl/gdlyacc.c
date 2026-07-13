@@ -775,8 +775,8 @@ gdl_c_init(void)
   c_processing = 1;
 }
 
-void
-gdl_c_term(void)
+Node *
+gdl_c_term(Tree *ytp)
 {
   c_implicit_times_reset = c_processing = 0;
   c_last_explicit_group_node = NULL;
@@ -796,6 +796,9 @@ gdl_c_term(void)
       list_free(c_implicit_gps, NULL);
       c_implicit_gps = NULL;
     }
+  if (!strcmp(ytp->curr->name, "g:sur"))
+    tree_curr(ytp->curr->rent);
+  return ytp->curr;
 }
 
 /* New behaviour 20260212: SPACE resets node to next node of last

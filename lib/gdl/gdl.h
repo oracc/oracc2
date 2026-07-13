@@ -205,7 +205,7 @@ extern void gdlsig_node(Node *np, void *user);
 extern void gdl_update_state(Node *np, gdlstate_t gs_tok);
 
 extern void gdl_c_init(void);
-extern void gdl_c_term(void);
+extern Node* gdl_c_term(Tree*);
 
 extern const char *gdlsig_str(Mloc *mp, unsigned char *atf, int frag_ok, int deep);
 

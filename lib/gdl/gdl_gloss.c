@@ -186,7 +186,7 @@ gdl_surro(void)
 	      Node *np = tree_node(lgp->tree, lgp->ns, "g:sur", lgp->depth, lgp->mloc);
 	      Prop *xidp = prop_find_kv(lgp->props, "xml:id", NULL);
 	      if (!xidp && lgp->kids)
-		prop_find_kv(lgp->kids->props, "xml:id", NULL);
+		xidp = prop_find_kv(lgp->kids->props, "xml:id", NULL);
 	      if (xidp)
 		{
 		  curr_sur_id = (char*)pool_alloc(strlen(xidp->u.k->v)+5, gdlpool);
@@ -198,16 +198,37 @@ gdl_surro(void)
 		  curr_sur_id = "BAD_SUR_ID";
 		}
 	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id", curr_sur_id);
+
 	      if (lgp->rent->kids == lgp)
 		lgp->rent->kids = np;
+	      else
+		lgp->prev->next = np;
+	      lgp->rent->last = np;
+
+	      /* in |KI.MIN|<(...)> the parser is waiting for possible
+	       * mods after closing '|' so we have a dance here
+	       * because in the code below the lexer is changing the
+	       * tree curr and then the termination of the compound
+	       * changes it again; it works for now simply to change
+	       * tree curr to the g:sur node rather than the g:w
+	       * node
+	       */
+	      if (lgp->name[2] != 'c')
+		tree_curr(lgp->rent);
+	      else
+		tree_curr(np);
+
 	      np->kids = lgp;
 	      np->rent = lgp->rent;
 	      np->prev = lgp->prev;
 	      np->next = lgp->next;
-	      tree_curr(lgp->rent);
+#if 1
+	      lgp = np;
+#else
 	      lgp->last = np;
 	      lgp->rent = np;
 	      lgp->prev = lgp->next = NULL;
+#endif
 	      rs_on(gs_surro);
 	    }
 	}

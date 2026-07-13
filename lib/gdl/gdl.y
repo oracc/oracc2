@@ -226,7 +226,7 @@ compound:
 							  gvl_compound(ycp);
 							  $$ = ycp;
 	    						  ynp = gdl_pop(ytp,"g:c");
-	  						  gdl_c_term(); }
+							  ynp = gdl_c_term(ytp); }
 	;
 
 c:
