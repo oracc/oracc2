@@ -11,7 +11,10 @@
       <ref name="g"/>
       <ref name="nongrapheme"/>
       <ref name="punct"/>
-      <ref name="gsurro"/>
+      <choice>
+        <ref name="gsurro"/>
+        <ref name="gsur"/>
+      </choice>
       <ref name="t"/>
     </choice>
   </define>

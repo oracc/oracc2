@@ -93,6 +93,9 @@
     <optional>
       <ref name="accented"/>
     </optional>
+    <optional>
+      <ref name="surref"/>
+    </optional>
   </define>
   <define name="oid">
     <attribute name="oid"/>
@@ -140,6 +143,11 @@
   </define>
   <define name="statusEnd">
     <attribute name="g:statusEnd">
+      <data type="IDREF"/>
+    </attribute>
+  </define>
+  <define name="surref">
+    <attribute name="g:sur">
       <data type="IDREF"/>
     </attribute>
   </define>
@@ -249,7 +257,7 @@
     <choice>
       <ref name="det"/>
       <ref name="glo"/>
-      <ref name="sur"/>
+      <ref name="gsur"/>
     </choice>
   </define>
   <define name="posn">
@@ -317,7 +325,7 @@
       <ref name="words"/>
     </element>
   </define>
-  <define name="sur">
+  <define name="gsur">
     <element name="g:sur">
       <attribute name="xml:id">
         <data type="ID"/>
