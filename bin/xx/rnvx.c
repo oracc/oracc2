@@ -17,7 +17,7 @@ int
 main(int argc, char * const*argv)
 {
   
-  options(argc, argv, "qt:");
+  options(argc, argv, "PqSt:");
   if (!type)
     {
       fprintf(stderr, "rnvx: must give RNC type on command line with -t TYPE. Stop.\n");
@@ -47,15 +47,23 @@ void help (void) { }
 int
 opts(int arg,const char*str)
 {
+  extern int rnvc_use_posix_spawn;
   switch (arg)
     {
+    case 'P':
+      rnvc_use_posix_spawn = 1;
+      break;
     case 'q':
       qnames = 1;
-      return 0;
+      break;
+    case 'S':
+      rnvc_use_posix_spawn = 0; /* use system() */
+      break;
     case 't':
       type = str;
-      return 0;
+      break;
     default:
       return 1;
     }
+  return 0;
 }
