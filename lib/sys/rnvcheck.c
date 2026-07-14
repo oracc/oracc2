@@ -59,21 +59,12 @@ rnv_check(const char *rnc, const char *xml)
       rnvbin = strdup(rnvbuf);
     }
 
-  List *argsl = list_create(LIST_SINGLE);
-  list_add(argsl, rnvbin);
-  if (!rnvc_use_posix_spawn)
-    list_add(argsl, " ");
-  list_add(argsl, (void*)rncfn);
-  if (!rnvc_use_posix_spawn)
-    list_add(argsl, " ");
-  list_add(argsl, (void*)xml);
-
   int status = 0;
   if (rnvc_use_posix_spawn)
     {
       extern char**environ;
       pid_t pid = 0;
-      char *const *args = (char *const *)list2array(argsl);
+      char *const args[] = { rnvbin, rncfn, (char*)xml, NULL };
       status = posix_spawnp(&pid, rnvbin, NULL, NULL, args, environ);
 
       if (status == 0)
@@ -83,6 +74,12 @@ rnv_check(const char *rnc, const char *xml)
     }
   else
     {
+      List *argsl = list_create(LIST_SINGLE);
+      list_add(argsl, rnvbin);
+      list_add(argsl, " ");
+      list_add(argsl, (void*)rncfn);
+      list_add(argsl, " ");
+      list_add(argsl, (void*)xml);
       unsigned char *syscmd = list_concat(argsl);
       status = system((ccp)syscmd);
       free(syscmd);
