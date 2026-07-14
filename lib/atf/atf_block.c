@@ -635,6 +635,8 @@ set_block_curr(Block_level b)
 	    Node *np = ancestor_or_self_level_as(abt->curr, B_SURFACE, 0);
 	    if (np)
 	      tree_curr(np);
+	    else
+	      atf_implicit("object");
 	  }
 	  break;
 	case B_OBJFRAG:
@@ -813,9 +815,8 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
 
       if (face)
 	{
-	  bp->subt = face;
-	  char *n = (char *)pool_alloc(strlen(stype)+strlen(bp->subt)+2, atfmp->pool);
-	  sprintf(n, "%s %s", stype, face);
+	  char *n = (char *)pool_copy(face, atfmp->pool);
+	  bp->subt = n;
 	  bp->label = n;
 	  atf_xprop(bp->np, "n", n);
 	}

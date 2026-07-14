@@ -126,7 +126,7 @@ object =
     status.flags,
     (object.frag | surface | sealing | comments | nonx | noteblock)*
   }
-known.object =    xsd:string { pattern="tablet|envelope|prism|bulla" }
+known.object =    xsd:string { pattern="tablet|envelope|prism|bulla|cylinder" }
 user.object =     xsd:string { pattern="object" }
 nonobject = nonx
 
