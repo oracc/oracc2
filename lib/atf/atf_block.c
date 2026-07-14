@@ -708,8 +708,8 @@ set_block_curr(Block_level b)
 			  }
 			atf_implicit("surface");
 		      }
+		    atf_implicit("column");
 		  }
-		atf_implicit("column");
 	      }
 	    else
 	      tree_curr(fp);
