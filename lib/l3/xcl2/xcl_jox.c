@@ -461,6 +461,8 @@ List *
 xcl_jox_xcl_ratts(XCL *xc)
 {
   List *ap = list_create(LIST_SINGLE);
+  list_pair(ap, "xmlns", "http://oracc.org/ns/xcl/1.0");
+  list_pair(ap, "xmlns:xff", "http://oracc.org/ns/xff/1.0");
   if (xc->project)
     list_pair(ap, "project", xc->project);
   if (xc->textid)
