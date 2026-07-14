@@ -9,6 +9,7 @@
 #include "xmlify.h"
 
 extern const char *file;
+static int errlnum;
 
 static int bracketing_level = 0;
 
@@ -58,6 +59,8 @@ add_lp(struct ilem_para **lpp, enum ilem_para_class c, enum ilem_para_type t,
        unsigned const char *text, int level)
 {
   struct ilem_para *lp = *lpp;
+  Hash *linkset_defs = NULL; /* future: add linkset when t=LPT_linkset_def, but this will need to be non-func-local */
+  
   if (lp)
     {
       while (lp->next)
@@ -73,6 +76,13 @@ add_lp(struct ilem_para **lpp, enum ilem_para_class c, enum ilem_para_type t,
 
   lp->class = c;
   lp->type = t;
+
+  if (lp->type == LPT_linkset_member)
+    {
+      if (!linkset_defs || !hash_find(linkset_defs, text))
+	vwarning2(file, errlnum, "undefined linkset %s", text);
+    }
+  
   lp->text = text;
   if (longprop_val)
     {
@@ -157,6 +167,8 @@ ilem_para_parse(struct xcl_context *xc, unsigned const char *s, unsigned char **
 {
   unsigned char *c = pool_copy(s,xc->pool);
   struct ilem_para *lp = NULL;
+
+  errlnum = err_lnum; /* lazy because there are so many calls to add_lp */
 
   while (*c)
     {
@@ -405,7 +417,7 @@ process_boundaries(Node *np, struct xcl_context*xc,struct ilem_para *p,int pos)
 	  enum xcl_c_types xcl_t = map_boundary(pp->type);
 	  if (xcl_t != xcl_c_top)
 	    {
-	      xcl_insert_ub(np->mloc, xc, pos, xcl_t,pp->level);
+	      xcl_insert_ub(np, xc, pos, xcl_t,pp->level);
 	      /* FIXME: if xc->curr->parent is NULL where are we supposed to put the annotation? */
 	      if (pp->next && pp->next->type == LPT_label
 		  && xc->curr->parent

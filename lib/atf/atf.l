@@ -83,6 +83,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_T>^[^\t ][^\n\r]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
 <s_T>.*/\r?\n[ \t]+[\r\n]    	{ BEGIN 0; atfnorm; return TEXT; }
 <s_T>.*/\r?\n[^ \t]+		{ BEGIN 0; atfnorm; return TEXT; }
+<s_T>.*/\r?\n	       		{ BEGIN 0; atfnorm; return TEXT; }
 <s_T>^[\t ]+.+/[\r\n]  		{ BEGIN 0; atfnorm; return TAB; }
 <s_T><<EOF>>			{ yyterminate(); }
 
@@ -291,10 +292,10 @@ atf_set_file_line(char *a, ssize_t *n)
 }
 
 void
-atf_lex_init(FILE *fp, const char *file)
+atf_lex_init(FILE *fp, const char *argfile)
 {
   static ssize_t fsize;
-  atfbuf = (char*)slurp("atf", file, &fsize);
+  atfbuf = (char*)slurp("atf", argfile, &fsize);
   if (atfbuf)
     {
       atfbuf_alloced = atfbuf;
@@ -312,7 +313,7 @@ atf_lex_init(FILE *fp, const char *file)
 #endif
 	}
       else
-	curratffile = file;
+        file = curratffile = argfile;
 
       /* slurp adds \n\0\0 but only counts \n in the returned fsize */
       atf_scan_buffer(atfbuf,fsize+2);

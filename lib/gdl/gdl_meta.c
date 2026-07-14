@@ -267,7 +267,12 @@ void
 gdl_note_mark(const char *n)
 {
   if (!lgp_guard("^...^ = note mark"))
-    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:notemark", n);    
+    {
+      char *nn = (char*)pool_alloc(strlen(n-1), gdlpool);
+      strncpy(nn, n+1, strlen(n-2));
+      nn[strlen(n)-2] = '\0';
+      gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:notemark", nn);
+    }
 }
 
 void

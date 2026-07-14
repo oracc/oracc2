@@ -96,6 +96,9 @@
     <optional>
       <ref name="surref"/>
     </optional>
+    <optional>
+      <ref name="gnotemark"/>
+    </optional>
   </define>
   <define name="oid">
     <attribute name="oid"/>
@@ -150,6 +153,9 @@
     <attribute name="g:sur">
       <data type="IDREF"/>
     </attribute>
+  </define>
+  <define name="gnotemark">
+    <attribute name="g:notemark"/>
   </define>
   <define name="spoid">
     <attribute name="spoid">
@@ -472,6 +478,9 @@
       </optional>
       <optional>
         <ref name="status.flags"/>
+      </optional>
+      <optional>
+        <ref name="newline"/>
       </optional>
     </element>
   </define>

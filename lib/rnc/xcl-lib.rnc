@@ -77,7 +77,7 @@ xcl.l =
     attribute exosig { text }?,
     attribute ftype { xsd:NCName }?,
     attribute inst { text },
-    attribute lnum { xsd:integer },
+    attribute lnum { xsd:integer }?,
     attribute newsig { text }?,
     attribute ref { xsd:NCName },
     attribute sig { text }?,

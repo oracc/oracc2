@@ -118,8 +118,12 @@ gstck_new(int i)
 void
 gdl_break_node(Node *np)
 {
+#if 0
+  /* Now that break is handled in lex we need to let this go on the
+     g:[rR] and then move it up to g:n later if necessary */
   if ('r' == np->name[2] || 'R' == np->name[2])
     np = np->rent;
+#endif
   intptr_t p = gdl_break_peek();
   if (p > 0)
     gstck_np(p) = np;

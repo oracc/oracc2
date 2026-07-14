@@ -120,6 +120,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atf_bp_reset();
   text_lang = global_lang;
   gdl_legacy_lexer(0);
+  line_id = 0; /* we say ++line_id when using this */
 }
 
 void

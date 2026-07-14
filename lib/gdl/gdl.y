@@ -56,7 +56,7 @@ GDLLTYPE gdllloc;
 		PLUS_FLAG SPACE EOL END
 
 		/* '*' '!' '?' '#' UFLAG1 UFLAG2 UFLAG3 UFLAG4 : now attached to lst in lexer */
-			
+
 %token <node>	NOTEMARK
 
 %nterm <text> 	field lexfld cmods

@@ -9,7 +9,7 @@ g.meta = oid? , spoid? , spform? , key? ,
   damageStart? , damageEnd? ,
   surroStart? , surroEnd? ,
   statusStart? , statusEnd? ,
-  accented? , surref?
+  accented? , surref? , gnotemark?
 
 oid = attribute oid { text }
 key = attribute key { text }
@@ -24,6 +24,8 @@ surroEnd = attribute g:surroEnd { xsd:IDREF }
 statusStart = attribute g:statusStart { "1" }
 statusEnd = attribute g:statusEnd { xsd:IDREF }
 surref = attribute g:sur { xsd:IDREF }
+
+gnotemark = attribute g:notemark { text }
 
 spoid = attribute spoid { xsd:IDREF }
 spform = attribute spform { text }
@@ -95,5 +97,5 @@ nongrapheme =
     damageStart? , damageEnd? , emhyph? ,
     surroStart? , surroEnd? ,
     statusStart? , statusEnd? ,
-    status.flags?
+    status.flags? , newline?
     }

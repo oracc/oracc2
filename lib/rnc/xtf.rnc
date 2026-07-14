@@ -133,6 +133,7 @@ nonobject = nonx
 object.frag = element fragment {
     attribute xml:id   { xsd:ID },
     attribute label    { text },
+    attribute n { text }?,
     (proto.inter |surface | column | nonx | m | comments)*,
     primes?,
     status.flags,
@@ -168,6 +169,7 @@ seal.surface = xsd:string { pattern="seal" }
 surface.frag = element fragment {
     attribute xml:id   { xsd:ID },
     attribute label    { text },
+    attribute n { text }?,
     (proto.inter | column | nonx | m | comments)*,
     primes?,
     status.flags,
@@ -198,6 +200,7 @@ column =
 column.frag = element fragment {
     attribute xml:id   { xsd:ID },
     attribute label    { text },
+    attribute n { text }?,
     (proto.inter | milestone | hdr | lg | l | nonl | nonx | comments)*,
     primes?,
     status.flags,
@@ -234,6 +237,7 @@ m.discourse = element m {
 m.fragment = element m { 
   attribute type { "locator" },
   attribute subtype { "fragment" }?,
+  attribute n { text }?,
   text
 }
 
