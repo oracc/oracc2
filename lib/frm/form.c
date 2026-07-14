@@ -507,7 +507,18 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 		      formp->morph2 = lp;
 		    }
 		  else
-		    formp->morph = lp;
+		    {
+		      formp->morph = lp;
+		      const char *tilde = (ccp)strchr((ccp)formp->morph, '~');
+		      if (tilde)
+			{
+			  if (tilde[1] && !strchr(";,!", tilde[1]))
+			    mesg_vwarning((char*)file,line,"#-morphology lacks any of ';,!' after tilde ('~') in %s",
+					  formp->morph);
+			}
+		      else
+			mesg_vwarning((char*)file,line,"#-morphology lacks tilde ('~') in %s", formp->morph);
+		    }
 		  break;
 		case '*':
 		  formp->stem = lp;
@@ -522,7 +533,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 		case '\t':
 		case 0:
 		  goto break_switch_loop;
-		default:		  
+		default:
 		  mesg_vwarning((char*)file,line,"%s: parse error at '%c'", err_lp, field);
 		  ++ret;
 		  goto ret;
