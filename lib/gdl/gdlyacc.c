@@ -296,6 +296,7 @@ gdl_force_nonw(Node *w, const char *t)
   Node *rent = w->rent;
   *w = *w->kids;
   gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", t);
+  prop_drop_kv(w->props, "g:type", NULL);
   w->name = "g:nonw";
   w->rent = rent;
   w->next = NULL;
@@ -306,6 +307,7 @@ static void
 gdl_nonw_excised(Node *w)
 {
   gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", ('e' == gdl_excision_type) ? "excised" : "comment");
+  prop_drop_kv(w->props, "g:type", NULL);
   gdl_excision_type = 'e';
   w->name = "g:nonw";
   ++nonw_found;
@@ -315,6 +317,7 @@ static void
 gdl_nonw_punct(Node *w)
 {
   gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", "punct");
+  prop_drop_kv(w->props, "g:type", NULL);
   w->name = "g:nonw";
   ++nonw_found;
 }
@@ -980,24 +983,26 @@ gdl_delim_s(Tree *ytp, const char *data)
   gdl_hc(0);
   
   /* GDL lang handling needs to switch to lib/lng */
-    if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux)
+  if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux)
       {
       mesg_verr(ytp->curr->mloc, "period only legal in compounds, logograms, and ...");
       data = "-";
     }
-  np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
-  np->mloc = ytp->curr->mloc;
-  np->text = data;
-  Node *d_attach = lgp ? lgp : np->prev;
-  if (d_attach)
-    {
-      gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
-      if (!strcmp(np->rent->name, "g:gp") && '.' == *data)
-	gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:sigdelim", "+");	
-    }
+
 
   if (c_processing)
     {
+      np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
+      np->mloc = ytp->curr->mloc;
+      np->text = data;
+
+      Node *d_attach = lgp ? lgp : np->prev;
+      if (d_attach)
+	{
+	  gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+	  if (!strcmp(np->rent->name, "g:gp") && '.' == *data)
+	    gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:sigdelim", "+");	
+	}
       ++c_delim_sentinel;
       if (strcmp(np->rent->name, "g:gp")) /* implicit group */
 	{
@@ -1055,6 +1060,20 @@ gdl_delim_s(Tree *ytp, const char *data)
 	    }
 	}
     }
+  else
+    {
+      if (lgp)
+	{
+	  np = lgp;
+	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+	}
+      else
+	{
+	  np = ytp->curr;
+	  mesg_verr(np->mloc, "orphan delimiter '%s'", data);
+	}
+    }
+
   return np;
 }
 
@@ -1083,7 +1102,7 @@ gdl_field(Tree *ytp, const char *ftype)
       
       fp = tree_node(ytp, NS_GDL, "g:field", ytp->root->depth+1, NULL);
       gdl_prop(fp, GP_IMPLICIT, PG_GDL_INFO);
-      gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "field", "default");
+      gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type", "default");
 
       /* NB: This assumes GDL parser will never be embedded in another grammar */
       if (!cellp)
@@ -1095,7 +1114,7 @@ gdl_field(Tree *ytp, const char *ftype)
     tree_curr(ancestor->rent);
   fp = tree_add(ytp, NS_GDL, "g:field", ytp->root->depth+1, NULL);
   tree_curr(fp);
-  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "field", (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
+  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type", (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
   return tree_push(ytp);
 }
 
@@ -1200,11 +1219,20 @@ gdl_clear_gg(Tree *ytp)
 void
 gdl_line_wrapup(Mloc m)
 {
+  Tree *ytp = gdl_get_tree();
+  
   /* Line ends with ',' or '&' and no following text */
   if (gdl_recycled_word)
     {
       gdl_recycled_word = NULL;
       (void)list_pop(wd_list);
+    }
+
+  /* We haven't done gdl_word_attr yet so the empty word is g:w not g:empty */
+  if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+    {
+      tree_curr(ytp->curr->rent);
+      (void)kids_rem_last(ytp);
     }
 
   if (lst)

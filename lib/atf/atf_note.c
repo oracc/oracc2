@@ -217,7 +217,7 @@ note_parse_tlit(struct node *parent, int current_level, unsigned char **lines)
 		    if (lastCchild && lastCchild->etype == e_c)
 		      {
 			/* the attach point is either the cell or its
-			   chield field if there is one */
+			   child field if there is one */
 			struct node *cField = lastChild(lastCchild);
 			if (cField->etype == e_f)
 			  lastC = cField;
