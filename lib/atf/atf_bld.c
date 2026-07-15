@@ -257,8 +257,14 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 {
   if (line_trace)
     atf_lex_line_trace(lp);
-  if (strcmp(abt->curr->name, "protocols"))
+  if (strcmp(abt->curr->name, "protocols") && !strcmp(scope, "text"))
     atf_bld_protocols(lp, scope);
+  if (!in_preamble)
+    {
+      if (atfmp->llines)
+	atf_group_wrapup();
+      set_block_curr(B_LINE);
+    }
   Node *np = atf_add("protocol", lp);
   atf_xprop(np, "type", p->type);
   np->text = str;
@@ -269,7 +275,6 @@ static void
 atf_bld_protocols(Mloc *lp, const char *scope)
 {
   Node *np = atf_push("protocols", lp);
-  
   atf_xprop(np, "scope", scope);
 }
 

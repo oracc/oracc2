@@ -71,7 +71,7 @@ atf_group_wrapup(void)
 	{
 	  Node *np = node_ancestor_or_self(abt->curr, "lg");
 	  if (np)
-	    tree_curr(kids_rem_last(abt));
+	    tree_curr(kids_rem_last(abt)); /* HOW CAN THIS MAKE SENSE ??? */
 	}
       list_free(atfmp->llines, NULL);
       atfmp->llines = NULL;
@@ -121,6 +121,13 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
   atf_input(l, lt, lp);
   if (!atfmp->llines)
     {
+#if 1
+      /* 2026-07-14 new lg approach makes #bib:, #etcsl:, #note:
+       * external to lg and only groups line-type and #lem:. Subject
+       * to further review.
+       */
+      atfmp->llines = list_create(LIST_SINGLE);
+#else
       if (lt == LINE_MTS)
 	atfmp->llines = list_create(LIST_SINGLE);
       else
@@ -128,6 +135,7 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
 	  mesg_verr(&l, "out of place line\n");
 	  return;
 	}
+#endif
     }
 
   curr_line = memo_new(atfmp->mlines);

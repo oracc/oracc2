@@ -141,6 +141,9 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
     case B_H3:
       block_hdr(l, bp, rest);
       break;
+    case B_MILESTONE:
+      FIXME
+      break;
     default:
       break;
     }
@@ -712,6 +715,8 @@ set_block_curr(Block_level b)
 		      }
 		    atf_implicit("column");
 		  }
+		else
+		  tree_curr(np);
 	      }
 	    else
 	      tree_curr(fp);

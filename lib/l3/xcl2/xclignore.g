@@ -8,3 +8,4 @@ struct xclignore;
 %%
 protocols
 protocol
+note:text
