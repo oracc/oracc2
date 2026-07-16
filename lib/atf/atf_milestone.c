@@ -2,11 +2,39 @@
 #include "block.h"
 #include "atf.h"
 
-static struct node *milestone(unsigned char *l,struct block_token*bp);
+int m_trace = 1;
 
-static struct node *
-atf_milestone(unsigned char *l,struct block_token*bp)
+void
+atf_milestone(Block *bp, char *rest)
 {
+#if 1
+  char **toks = NULL;
+  char *tokx[] = { NULL };
+ if (rest)
+    toks = vec_from_str(rest, NULL, NULL);
+ else
+   toks = tokx;
+
+ if (m_trace)
+   {
+     int i;
+     fprintf(stderr, "%s:%d: MILESTONE %s", bp->np->mloc->file, bp->np->mloc->line, bp->bt->name);
+     for (i = 0; toks[i]; ++i)
+       fprintf(stderr, "::%s", toks[i]);
+     fputc('\n', stderr);
+   }
+ if (toks[0] && !strcmp(toks[0], "locator"))
+   {
+   }
+ else if (mdiscourse(bp->bt->name, strlen(bp->bt->name)))
+   {
+     atf_xprop(bp->np, "type", "discourse");
+     atf_xprop(bp->np, "subtype", bp->bt->name);
+   }
+ else
+   fprintf(stderr, "%s:%d: unhandled MILESTONE %s",
+	   bp->np->mloc->file, bp->np->mloc->line, bp->bt->name);
+#else
   unsigned char *type = l+1;
   unsigned char *subtype = NULL, *m_div_n = NULL;
   struct node *m = elem(e_m,NULL,lnum,MILESTONE);
@@ -188,4 +216,5 @@ atf_milestone(unsigned char *l,struct block_token*bp)
   if (*l)
     appendChild(m,cdata(l));
   return m;
+#endif
 }

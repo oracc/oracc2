@@ -218,7 +218,9 @@ atf_block(const char *scanned_at)
 	BEGIN s_TRH;
       if (bp->bison == Y_FRAGMENT)
 	{
-          if (last_bp)
+          if (atfp->edoc == EDOC_COMPOSITE || atfp->edoc == EDOC_SCORE)
+	     bp = blocktok("cfragment", 9); /* c[omposite]fragment */
+          else if (last_bp)
 	    {
 	      if (last_bp->type == B_OBJECT)
 	        bp = blocktok("objfrag", 7);

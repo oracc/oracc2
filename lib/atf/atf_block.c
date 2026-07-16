@@ -98,7 +98,8 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
       set_block_curr(bp->bt->type);
 
       if (bp->bt->type == B_MILESTONE
-	  || bp->bt->bison == Y_FRAGMENT)
+	  /* no longer return Y_FRAGMENT, see atf.l:atf_block */
+	  /*|| bp->bt->bison == Y_FRAGMENT*/)
 	bp->np = atf_add("m", &l);
       else if (atfp->edoc == EDOC_TRANSLITERATION)
 	bp->np = atf_push(bp->bt->name, &l);
@@ -142,7 +143,7 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
       block_hdr(l, bp, rest);
       break;
     case B_MILESTONE:
-      FIXME
+      atf_milestone(bp, rest);
       break;
     default:
       break;
@@ -820,7 +821,7 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
 
       if (face)
 	{
-	  char *n = (char *)pool_copy(face, atfmp->pool);
+	  char *n = (char *)pool_copy((uccp)face, atfmp->pool);
 	  bp->subt = n;
 	  bp->label = n;
 	  atf_xprop(bp->np, "n", n);

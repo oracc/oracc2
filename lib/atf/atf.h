@@ -340,13 +340,16 @@ extern void atf_block_xid(void);
 
 extern struct xcl_ilem *atf_save_lem(Node *np, const char *lemstr);
 
+extern void atf_milestone(Block *bp, char *rest);
+extern struct map *mdiscourse(const char *str, size_t len);
+
+extern void atr_dollar(Mloc l, unsigned char *s);
+extern void atr_finish_labels(void);
+extern void atr_hdr(Mloc l, const char *h, unsigned char *s);
 extern void atr_inter(Mloc l, unsigned char *s);
 extern void atr_label(Mloc l, unsigned char *s);
-extern void atr_hdr(Mloc l, const char *h, unsigned char *s);
-extern void atr_dollar(Mloc l, unsigned char *s);
-extern void atr_text(Mloc l, const char *s);
 extern void atr_para(void);
-extern void atr_finish_labels(void);
+extern void atr_text(Mloc l, const char *s);
 extern void atr_translation(void);
 
 #endif/*ATF_H_*/

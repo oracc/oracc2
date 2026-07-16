@@ -298,10 +298,10 @@ var_tok:	Y_VARIANT 	{ $$=yylval.b; }
 milestone_tok:
 		Y_BODY		{ $$=yylval.b; }
 	| 	Y_CATCHLINE	{ $$=yylval.b; }
-	/*	| 	Y_CFRAGMENT	{ $$=yylval.b; } */ /* Pretty sure nobody used this so it's deprecated until proven necessary */
+	| 	Y_CFRAGMENT	{ $$=yylval.b; } /* @fragment in @composite or @score */
 	| 	Y_COLOPHON      { $$=yylval.b; }
 	| 	Y_DATE	        { $$=yylval.b; }
-	| 	Y_FRAGMENT      { $$=yylval.b; }
+/* 	| 	Y_FRAGMENT      { $$=yylval.b; } */ /* never returned by lexer */
 	| 	Y_INCLUDE       { $$=yylval.b; }
 	| 	Y_LINECOUNT	{ $$=yylval.b; }
 	| 	Y_M	        { $$=yylval.b; }
