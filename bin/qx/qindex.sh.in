@@ -17,7 +17,7 @@ fi
 
 cd ${ORACC}/$project
 echo qindex `pwd`
-if [ -r 01bld/cdlicat.xmd ]; then
+if [ -s 01bld/cdlicat.xmd ]; then
     mkdir -p 02pub/cat
     echo qindex qcatx $project 01bld/cdlicat.xmd
     qcatx -p $project -s <01bld/cdlicat.xmd
@@ -28,9 +28,9 @@ elif [ -s 01bld/cdlicat.xmd.gz ]; then
 fi
 
 (cd 01bld/lists ;
- if [ -r xtfindex.lst ]; then
+ if [ -s xtfindex.lst ]; then
      lx -u xtfindex.lst +? lemindex.lst >txtindex.lst
- elif [ -r lemindex.lst ]; then
+ elif [ -s lemindex.lst ]; then
      lx -u lemindex.lst > txtindex.lst
  fi
  )
@@ -39,7 +39,7 @@ fi
 if [ -d 02pub/txt ]; then
     rm -fr 02pub/txt
 fi
-if [ -r 01bld/lists/txtindex.lst ]; then
+if [ -s 01bld/lists/txtindex.lst ]; then
     mkdir -p 02pub/lem
     mkdir -p 02pub/tra
     echo qindex qlemx $project 01bld/lists/txtindex.lst
@@ -64,7 +64,7 @@ fi
 # Signlist stats use a tok output file which is in 02pub/csl.tok; this
 # line recreates the 02pub/tok index from it.
 if [ -s 02pub/csl.tok ]; then
-    if [ -r 00lib/toklists.lst ]; then
+    if [ -s 00lib/toklists.lst ]; then
 	l="-l00lib/toklists.lst"
     fi
     tokexg $l -p $project <02pub/csl.tok | tokix -n -p $project

@@ -9,7 +9,7 @@
 #set -x
 
 . ${ORACC}/bin/odo-func.sh
-odovv echo $0 $*
+odov echo $0 $*
 
 lxd=01bld/lists
 #rm -fr $lxd ; mkdir -p $lxd
@@ -47,7 +47,7 @@ fi
 # 00atf data; do this after 00lib because then it can use $lxd/proxy.lst
 lx-atfdata.sh
 if [ -r 02pub/atf-data.tab ]; then
-    cut -f1 02pub/atf-data.tab | lx -cus -p $project -o $lxd/00atf.lst -
+    cut -f1 02pub/atf-data.tab | lx -zcus -p $project -o $lxd/00atf.lst -
 fi
 
 # umbrella and search lists

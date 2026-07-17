@@ -40,27 +40,37 @@ fi
 ## processing to, e.g., a single language because the args are ignored
 ## in the odo_gloss_sub scripts.
 ##
-siglangx=`siglangx -l | tr '\n' ' '`
-if [ "$1" = "" ]; then
-    set $siglangx
-else
-    for g; do
-	found=0
-	for a in $siglangx ; do
-	    if [ "$g" = "$a" ]; then
-		found=1
-		break
+if [ -s 01bld/project.sig ]; then
+    siglangx=`siglangx -l | tr '\n' ' '`
+#    if [ "$1" = "" ]; then
+#	set $siglangx
+#    else
+	for g; do
+	    found=0
+	    for a in $siglangx ; do
+		if [ "$g" = "$a" ]; then
+		    found=1
+		    break
+		fi
+	    done
+	    if [ $found -eq 0 ]; then
+		if [ $taskorlang -eq 1 ]; then
+		    echo "$0: $g is not a glossary task or a $project language. Stop."
+		else
+		    echo "$0: $g is not a $project language. Stop."
+		fi
+		exit 1
 	    fi
 	done
-	if [ $found -eq 0 ]; then
-	    if [ $taskorlang -eq 1 ]; then
-		echo "$0: $g is not a glossary task or a $project language. Stop."
-	    else
-		echo "$0: $g is not a $project language. Stop."
-	    fi
-	    exit 1
-	fi
-    done
+#    fi
+else
+    set 02pub/lemm-*.sig
+    if [ "$1" != "02pub/lemm-*.sig" ]; then
+	siglemmx=`echo $* | tr ' ' '\n' | cut -d- -f2 | cut -d. -f1`
+	set $siglemmx
+    else
+	set ""
+    fi
 fi
 
 ##

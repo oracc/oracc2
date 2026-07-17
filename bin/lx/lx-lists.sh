@@ -28,7 +28,7 @@ lxd=01bld/lists
 lx-atfsources.sh
 
 # o2-lst.plx #2: create_have_atf for  non-umbrella
-if [ -r 02pub/atf-data.tab ]; then
+if [ -s 02pub/atf-data.tab ]; then
 
    cut -f1 02pub/atf-data.tab | \
        lx -q -p $project - >$lxd/have-atf.lst
@@ -38,6 +38,10 @@ if [ -r 02pub/atf-data.tab ]; then
 
    grep -v '#lem' 02pub/atf-data.tab | cut -f1 | \
        lx -qz -p $project - >$lxd/sans-lem.lst
+
+else
+
+    touch $lxd/have-atf.lst
 
 fi
 

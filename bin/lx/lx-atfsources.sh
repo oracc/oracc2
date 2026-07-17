@@ -1,6 +1,6 @@
 #!/bin/dash
 . ${ORACC}/bin/odo-func.sh
-odovv $0 $*
+odov $0 $*
 if [ -r 02pub/atf-data.tab ]; then
     mkdir -p 01bld/lxlists
     if [ -d 01bld/lxlists ]; then
@@ -10,6 +10,9 @@ if [ -r 02pub/atf-data.tab ]; then
 		ods2atf.sh $a
 	    done
 	fi
-	ls -1 00atf/*.atf >01bld/lxlists/atfsources.lst
+	set 00atf/*.atf
+	if [ "$1" != "00atf/*.atf" ]; then
+	    ls -1 00atf/*.atf >01bld/lxlists/atfsources.lst
+	fi
     fi
 fi

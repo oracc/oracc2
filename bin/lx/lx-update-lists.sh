@@ -12,7 +12,7 @@
 #set -x
 
 . ${ORACC}/bin/odo-func.sh
-odovv $0 $*
+odov $0 $*
 
 set -a
 bin=${ORACC}/bin
@@ -40,7 +40,9 @@ $bin/lx-update-lists-bop.sh $out_outlined
 
 if [ -r $have_atf ]; then
     cp $have_atf $lxd/withatf
-    lx $out_outlined - $have_atf >$lxd/sansatf
+    if [ -s $out_outlined ]; then
+	lx $out_outlined - $have_atf >$lxd/sansatf
+    fi
 fi
 [ -r $have_lem ] && cp $have_lem $lxd/withlem
 [ -r $have_lem ] && cp $sans_lem $lxd/sanslem

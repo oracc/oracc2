@@ -3,7 +3,7 @@
 #set -x
 
 . ${ORACC}/bin/odo-func.sh
-odovv $0 $*
+odov $0 $*
 
 lxd=01bld/lists
 project=`oraccopt`
@@ -33,7 +33,7 @@ else
     if [ "$t" = "corpus" ]; then
 	>&2 echo $0: no atf files found in project $project.
     fi
-    exit 0
+#    exit 0
 fi
 
 set $lxd/proxy*.lst
@@ -52,6 +52,10 @@ if [ "$1" != "$lxd/proxy*.lst" ]; then
 	    exit 1
 	fi
     fi
+fi
+
+if [ ! -r 02pub/atf-data.tab ]; then
+    touch 02pub/atf-data.tab
 fi
 
 chmod o+r 02pub/atf-data.tab

@@ -240,6 +240,13 @@ main(int argc, char * const *argv)
   else if (!glo_mode)
     fprintf(stderr, "glosigx: no 02pub/lemm-*.sig found.\n");
 
+  if (!glos && !lems)
+    {
+      if (!quiet)
+	fprintf(stderr, "glosigx: nothing to do--no 00lib/*.glo or 02pub/lemm-*.sig. Stop.\n");
+      exit(0);
+    }
+  
   gdl_flex_debug = gdldebug = cbddebug = 0;
   cbd_flex_debug = 0;
 

@@ -6,7 +6,7 @@
 #set -x
 
 . ${ORACC}/bin/odo-func.sh
-odovv $0 $*
+odov $0 $*
 
 opt=`oraccopt . build-outlined-policy`
 
@@ -16,12 +16,12 @@ fi
 
 case $opt in
     approved)
-	lx -zq -p$project -o$out_outlined -- $out_approved \
+	lx -qz -p$project -o$out_outlined -- $out_approved \
 	   -? $lxd/not-outlined.lst +? $lxd/add-outlined.lst \
 	   +? $lxd/proxy-atf.lst
     ;;
-    ""|atf)
-	lx -q -p$project -o$out_outlined -- $have_atf \
+    atf)
+	lx -qz -p$project -o$out_outlined -- $have_atf \
 	   -? $lxd/not-outlined.lst +? $lxd/add-outlined.lst \
 	   +? $lxd/proxy-atf.lst
 	;;
@@ -47,5 +47,7 @@ case $opt in
 	cp $lxd/cat-ids.lst $out_outlined	
 	;;
     *)
+	echo $0: no build-outlined-policy set in 00lib/config.xml--pager will fail
+	exit 1
 	;;
 esac

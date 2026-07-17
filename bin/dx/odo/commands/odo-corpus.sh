@@ -20,15 +20,19 @@ odo-catalog.sh
 ###o2-atf.sh
 
 # This is the new way of updating 02pub/lemm-*.sig
-glosigx -p $proj
+glosigx $proj
 
-# TODO: need to handle .ods files either before this, or by installing
-# them and then doing ods2atf in Makefile.atf
-atfinstall -p $odo_proj 00atf/*.atf
+# .ods files are handled in lx-atfsources.sh so make sure that is
+# always called before atfinstall
 
-odo-atf.sh build $*
-
-odo-tok.sh
+set 00atf/*.atf
+if [ "$1" != "00atf/*.atf" ]; then
+    atfinstall -p $odo_proj 00atf/*.atf
+    odo-atf.sh build $*
+    odo-tok.sh
+else
+    echo $0: no 00atf/*.atf to pass to atfinstall.
+fi
 
 #o2-glo.sh
 odo-gloss.sh xml

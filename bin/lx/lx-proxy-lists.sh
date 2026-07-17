@@ -4,7 +4,7 @@
 #
 
 . ${ORACC}/bin/odo-func.sh
-odovv $0 $*
+odov $0 $*
 
 #set -x
 lxd=01bld/lists

@@ -71,6 +71,7 @@ odo_time() {
 
 odo_verbose ()
 {
+    echo odo_verbose $*
     if [ "$odo_verb" = "" ]; then
 	if [ "$2" = "-v" ]; then
        	    export odo_verb=-v

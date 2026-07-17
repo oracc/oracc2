@@ -124,6 +124,8 @@ fi
 if [ -r .gx ]; then
     gx=1
 fi
+
+set -a
 odo_verb=$verb
 odo_gx=$gx
 V=
@@ -223,7 +225,7 @@ if [ $command = "init" ]; then
 	    set_status done
 	fi
     else
-	fail "$user already exists"
+	fail "$user already exists; use oracc config to complete setup"
     fi
 else
     if [ "$command" = "catalogue" ]; then

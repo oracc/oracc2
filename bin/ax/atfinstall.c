@@ -103,6 +103,11 @@ main(int argc, char *const *argv)
   while (argv[optind])
     {
       FILE *a = xfopen(argv[optind], "r");
+      if (!a)
+	{
+	  ++optind;
+	  continue;
+	}
       efile = argv[optind];
       eline = 0;
       size_t n;

@@ -17,6 +17,8 @@ if [ ! -r 00lib/config.xml ]; then
     exit 1
 fi
 
+odo-dir-links.sh
+
 if [ -r 00lib/subconfig.xml ]; then
     if [ "$odo_verb" != "" ]; then
 	$0: creating 02xml/config.xml from 00lib/subconfig.xml

@@ -22,7 +22,9 @@ nocat=$lxd/no-cat-data.lst
 cx-fields.sh
 
 # no-cat-data.lst is a list of approved IDs that are not in project 00cat
-${bin}/lx -p `oraccopt` -q $approved -? $incat >$nocat
+if [ -s $approved ]; then
+    ${bin}/lx -p `oraccopt` -q $approved -? $incat >$nocat
+fi
 
 case $policy in
     auto|virtual)
@@ -49,7 +51,7 @@ case $policy in
 	fi
     ;;
     *)
-	echo $0: unknown catalog-build-policy '$policy'. Stop.
+	echo $0: unknown catalog-build-policy \'$policy\'. Stop.
 	exit 1
 	;;
 esac

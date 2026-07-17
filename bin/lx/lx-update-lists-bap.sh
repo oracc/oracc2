@@ -5,13 +5,13 @@
 #set -x
 
 . ${ORACC}/bin/odo-func.sh
-odovv $0 $*
+odov $0 $*
 
 opt=`oraccopt . build-approved-policy`
 
 case $opt in
     ""|atf)
-	lx -q -o${out_approved} -p${project} -- ${have_atf} \
+	lx -qz -o${out_approved} -p${project} -- ${have_atf} \
 	   -? $lxd/not-approved.lst +? $lxd/add-approved.lst
 	;;
     catalog|catalogue)
