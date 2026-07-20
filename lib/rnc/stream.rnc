@@ -1,0 +1,9 @@
+# The stream attributes are defined in a separate module so it can be
+# included in XTF and XCL schemas iwith identical definition
+
+namespace s = "http://oracc.org/ns/stream/1.0"
+
+stream.attributes =
+	(attribute s:str { xsd:string { pattern = "S[0-9]" } },
+         attribute s:sub { xsd:string { pattern = "[0-9]" } }?
+	)
