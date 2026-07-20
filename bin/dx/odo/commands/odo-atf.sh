@@ -95,11 +95,11 @@ else
 	    batch=`oraccopt . atf-batch`
 	    if [ "$batch" = "yes" ]; then
 		for a in 01bld/atf-batch-*.lst ; do
-		    $oxax $args $g -I$a
+		    ${obin}/oxx $lem $g -I$a | xmlsplit
 		done
 	    else
 		files=`find 00atf -maxdepth 1 -type f | grep '.\(ods\|.atf\)$' | grep -v ods.atf`
-		$oxax $args $files
+		${obin}/oxx $lem $files | xmlsplit
 	    fi
 	fi
     fi
