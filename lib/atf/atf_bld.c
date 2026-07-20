@@ -120,6 +120,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atf_bp_reset();
   text_lang = global_lang;
   gdl_legacy_lexer(0);
+  gdl_set_lzr_sparse(NULL);
   line_id = 0; /* we say ++line_id when using this */
 }
 
@@ -303,7 +304,7 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
 	p->type = "lemmatizer";
 	char *dup = strdup(str);
 	char **ff = vec_from_str(dup, NULL, NULL);
-	atfp->lzr_sparse = p->u.sparse = hash_create(0);
+	gdl_set_lzr_sparse(atfp->lzr_sparse = p->u.sparse = hash_create(0));
 	int i;
 	for (i = 0; ff[i]; ++i)
 	  {
