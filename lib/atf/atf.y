@@ -267,7 +267,7 @@ line:
 	| 	EXX longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
 	| 	VAR longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
-	|	l_link longtext		{ $$=$1; (void)longtext_get(); } /* MTS prereq */
+	|	l_link longtext		{ $$=$1; atf_bld_protocol(@1, PROT_LINK, longtext_get()); } /* MTS prereq */
 	|	COMMENT longtext	{ $$=$1; atf_comment(@1, longtext_get()); }
 	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, longtext_get()); }
 	| 	bib
@@ -278,10 +278,10 @@ line:
 	|	milestone
 	;
 
-l_link:		LNK_TOTO		{ }
-	|	LNK_FROM		{ }
-	|	LNK_PLUS		{ }
-	|	LNK_VBAR		{ }
+l_link:		LNK_TOTO
+	|	LNK_FROM
+	|	LNK_PLUS
+	|	LNK_VBAR
 	;
 
 div_tok:	Y_DIV 		{ $$=yylval.b; }

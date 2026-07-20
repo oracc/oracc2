@@ -9,3 +9,5 @@ XML translation output
 @h1 in ATF check XML
 
 intra-line protocols not appearing in XML
+
+@colophon should support @colophon, @colophon 1, @colophon 2, etc.

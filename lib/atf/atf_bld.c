@@ -328,6 +328,9 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
     case PROT_COMMENT:
       p->type = "comment";
       break;
+    case PROT_LINK:
+      p->type = "link";
+      break;
     case PROT_ETCSL:
       p->type = "etcsl";
       p->u.str = (uccp)str;
