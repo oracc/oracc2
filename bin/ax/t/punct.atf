@@ -1,0 +1,7 @@
+&P256324 = UM 29-15-570 (Nanna O)
+#project: obel
+#atf: use unicode
+#atf: use math
+
+5. *(U) a
+#lem: a[water]

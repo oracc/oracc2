@@ -1,0 +1,20 @@
+&P135552 = TCNU 706 
+#project: epsd2/admin/ur3 
+#atf: use unicode 
+#atf: lang sux 
+@tablet 
+@obverse 
+@column 1' 
+@fragment a
+$ beginning of column broken 
+1'. dumu
+@fragment b
+$ middle of column broken 
+1'. tur
+@reverse 
+@column 1'
+@fragment a
+$ beginning of column broken 
+$ 2 lines missing
+3. a
+

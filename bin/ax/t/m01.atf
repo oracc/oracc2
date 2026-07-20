@@ -1,0 +1,14 @@
+&Q002022 = Abisare 1 [E4.2.6.1]
+@composite
+#project: epsd2/royal
+#atf: use unicode
+#atf: use mylines
+#was Q021147
+@m column 1
+1'.        [e₂]-kur#-ra# he₂-du₇
+#lem: Ekur[1]TN; hedu[ornament]
+
+@m column 2
+1'.        geštu₂# mah#
+#lem: ŋeštug[ear]; mah[great]
+

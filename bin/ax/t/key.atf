@@ -1,0 +1,15 @@
+&P256324 = UM 29-15-570 (Nanna O)
+#project: obel
+#atf: use unicode
+#atf: use math
+#etcsl: text-id=c.4.13.15
+#key: after http://etcsl.orinst.ox.ac.uk/cgi-bin/etcsl.cgi?text=c.4.13.15&display=Crit&charenc=gcirc#
+
+#Q000684 = A hymn to Nanna (Nanna O)
+@obverse
+@column 1
+$ 4 lines missing
+5. [...] X NE#
+#lem: u; u; u
+#etcsl: line-id=A.5
+

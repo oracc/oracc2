@@ -71,8 +71,8 @@ atf_milestone(Block *bp, char *rest)
 			       (uccp)(btokp->nano ? btokp->nano : (sub_n ? sub_n : subtype)));
 		 break;
 	       case B_COLUMN:
-		 update_mlabel(B_COLUMN, (uccp)toks[2]);
-		 text = toks[3];
+		 update_mlabel(B_COLUMN, (uccp)(sub_n = toks[++bt_index]));
+		 text = toks[++bt_index];
 		 break;
 	       case B_DIVISION:
 		 type = "division";

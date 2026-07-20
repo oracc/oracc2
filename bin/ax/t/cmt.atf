@@ -1,0 +1,322 @@
+&P227379 = O.0053
+#project: obel
+#atf: use unicode
+#atf: use math
+##** O.53 (Limet Akkadica 117, 20)
+@obverse
+1. [...] x# dam %es me-e [...]
+#lem: u; u; dam[spouse]N; meʾe[I]IP; u
+
+#tr: ... the spouse, I ...
+
+2. [...] ama gal {d}nin-lil₂# [...]
+#lem: u; ama[mother]N; gal[(to be) big, great]V/i; Ninlil[1]DN; u
+
+#tr: ... great mother Ninlil
+
+3. [...] %es ga-ša-an %eg ki-[...]
+#lem: u; gašan[lady]N; u
+
+#tr: ... lady of ...
+
+4. [{d}a-ru]-ru# nin₉ %es {d}mu-ul#-[lil₂-la₂ ...]
+#lem: Aruru[1]DN; nin[sister]N; Mullil[1]DN; u
+
+#tr: Aruru the sister of Mullil
+
+5. [...] x# x# x# %es ga-ša-an %eg ki [...]
+#lem: u; u; u; u; gašan[lady]N; ki[place]N; u
+
+#tr: ... the lady of ...
+
+6. [...] kug-ŋu₁₀ %es ga-ša-an %eg ma#-[...]
+#lem: u; kug[(to be) pure, holy]V/i; gašan[lady]N; u
+
+#tr: My pure ... the lady of ...
+
+7. [...] x#-e %es ga-ša-an-an#-[na ...]
+#lem: u; u; Gašanana[1]DN; u
+
+#tr: ... Gašanana ...
+
+8. [%es uru₂] %eg nibru#{ki} dur-an-ki [...]
+#lem: uru[city]N; Nibru[1]SN; Durankik[1]TN; u
+
+#tr: The city Nippur, the Duranki ...
+
+9. [%es še-eb %eg e₂]-kur? ba-pe-el-la# [...]
+#lem: šeb[brick]N; Ekur[1]TN; pel[defile]V/t; u
+
+#tr: [The brickwork of the] Ekur being defiled [...]
+
+10. [ki-ur₃] ki gal %es ba-i-ra [...]
+#lem: Kiʾur[1]TN; ki[place]N; gal[(to be) big, great]V/i; ir[to bring]V/t; u
+
+#tr: The Kiʾur, the great place, being pillaged [...]
+
+11. [... {ŋeš}]kuŋ₅ an-ne₂ us₂?# [...]
+#lem: u; kuŋ[stair]; an[sky, heaven]N; us[side, edge]N; u
+
+#tr: The staircase that touches heaven ...
+
+12. e₂-mah šu hul-bi?# [...]
+#lem: Emah[]TN; šu[hand]N; hulu[(to be) bad, evil]V/i; u
+
+#tr: The Emah destroyed ...
+
+#rather kisal-mah?
+
+13. ka₂ silim-ma ki u₆!(IGI) di ga-ba-[...]
+#lem: kan[gate, door]N; silim[(to be) healthy]V/i; ki[place]N; u[admiration]N; did[lawsuit, trial]N; u
+
+#tr: I want to ... The Gate of Well-being, a place of admiration.
+
+14. hur-saŋ-galam-ma šu pe-el x# [...]
+#lem: Hursaŋgalama[1]TN; šu[hand]N; pel[to defile]V/t; u; u
+
+#tr: The Hursaŋgalama, defiled ...
+
+15. ka₂ gal ki ku₃ ba-hul?# [...]
+#lem: kan[gate, door]N; gal[(to be) big, great]V/i; ki[place]N; kug[(to be) pure, holy]V/i; hulu[(to be) bad, evil]V/i; u
+
+#tr: The Great Gate, the holy place that is destroyed ...
+
+16. ka₂ še nu-ku₅! še im-[...]
+#lem: kan[gate, door]N; še[barley]N; kud[to separate, cut off]V/t; še[barley]N; u
+
+#tr: At the Gate where No Grain is Cut, grain is being [cut]
+
+17. %es ma-mu-šu₂-a %eg šu ba-[...]
+#lem: Mamušua[chapel of Ninlil in Nippur]TN; šu[hand]N; u
+
+#tr: The Mamušuʾa ...
+
+18. %es ma %eg e₂-gal mah sag₂ im-ma-[...]
+#lem: ma[house]; egal[palace]N; mah[(to be) great]V/i; sag[to scatter, disperse]V/t; u
+
+#tr: The house, the great palace that is scattered ...
+
+19. du₆-kug ki ku₃ {d}a-nun#-[na ...]
+#lem: dukug[a cultic and cosmic place]N; ki[place]N; kug[(to be) pure, holy]V/i; Anunak[1]DN; u
+
+#tr: The Holy Hill, the holy place of the Anuna ...
+
+20. ša₃-e₂-lugam-ma {d}en?-[...]
+#lem: Šagelugama[]TN; u
+
+#tr: The Šagelugama of ...
+
+21. eš₃ mah-e bur# [...]
+#lem: eš[shrine]N; mah[(to be) great]V/i; bur[(stone) bowl]N; u
+
+#tr: The great shrine ...
+
+22. unu₂ mah-e [...]
+#lem: unu[dwelling]N; mah[(to be) great]V/i; u
+
+#tr: The great dining room ...
+
+23. e₂? za₃ {ŋeš}[...]
+#lem: e[house]N; zag[side]N; u
+
+#tr: ...
+24. %es an-ne₂-ma?#-[ra ...]
+#lem: Anemara[]TN; u
+
+#tr: The @Anemara (temple), ...
+
+25. %eg aš-te ki?# [sikil ...]
+#lem: Ašte[]TN; ki[place]; sikil[pure]; u
+
+#tr: The @Ašte temple, the pure place ...
+
+26. x# x# [...]
+#lem: u; u; u
+
+$ rest of obverse broken
+@reverse
+$ beginning of reverse broken
+1'. nibru{ki} [...]
+#lem: Nibru[1]SN; u
+
+#tr: Nippur, ...
+
+2'. e₂-kur e₂#? [...]
+#lem: Ekur[1]TN; e[house]N; u
+
+#tr: The Ekur, the house of ...
+
+3'. ki-ur₃ ki gal# [...]
+#lem: Kiʾur[1]TN; ki[place]N; gal[(to be) big, great]V/i; u
+
+#tr: The Kiʾur, the great place ...
+
+4'. ka₂ mah x# [...]
+#lem: kan[gate, door]N; mah[(to be) great]V/i; u; u
+
+#tr: The magnificent gate, ...
+
+5'. ka₂? silim?-ma#? [...]
+#lem: kan[gate]; silim[healthy]; u
+
+#tr: The Gate of Well-being ...
+
+6'. hur-saŋ-galam-ma# [...]
+#lem: Hursaŋgalama[1]TN; u
+
+#tr: The Hursaŋgalama (temple) ...
+
+7'. abula ki ku₃ še#?-er#?-[ka-an ...]
+#lem: abula[gate]N; ki[place]N; kug[(to be) pure, holy]V/i; šerkan[ornament]N; X
+
+#tr: The great gate, the pure place, ornament ....
+
+8'. ka₂# še nu-ku₅ še? um?-[...]
+#lem: kan[gate, door]N; še[barley]N; kud[to separate, cut off]V/t; še[barley]N; u
+
+#tr: At the Gate where No Barley is Cut barley ...
+9'. %es ma-mu#-šu₂-a %eg x# e₂ še-er#?-[ka-an ...]
+#lem: Mamušua[chapel of Ninlil in Nippur]TN; u; e[house]N; šerkan[ornament]N; u
+
+#tr: The Mamušuʾa chapel ... the house that is an ornament ...
+
+10'. %es še?-eb? %eg <e₂>-gal?-mah ki-[tuš ...]
+#lem: šeb[brick]N; Egalmah[1]TN; kituš[dwelling place]N; u
+
+#tr: The brickwork of the Egalmah, the dwelling place ...
+
+11'. ki ku₃ ki? mah? nibru?[{ki} ...]
+#lem: ki[place]N; kug[(to be) pure, holy]V/i; ki[place]N; mah[(to be) great]V/i; Nibru[1]SN; u
+
+#tr: The pure place, the great place, Nippur ...
+
+12'. ša₃-e₂-lugam-ma x# x# [...]
+#lem: Šagelugama[1]TN; u; u; u
+
+#tr: The Šagelugama ...
+
+13'. eš₃ mah-e x# [...]
+#lem: eš[shrine]N; mah[(to be) great]V/i; u; u
+
+#tr: The magnificent shrine ...
+
+14'. unu₂# mah-e [...] x# [...]
+#lem: unu[dwelling]N; mah[(to be) great]V/i; u; u; u
+
+#tr: The great dining hall ...
+
+15'. tul₂#? za₃ {ŋeš}kiri₆ [...] x# [...]
+#lem: tul[public fountain]N; zag[side]N; kiri[(fruit) plantation, orchard]N; u; u; u
+
+#tr: The Fountain Next to the Orchard ....
+16'. x# x# x# aš-te ki sikil mu AN-x# [...]
+#lem: u; u; u; Ašte[]TN; ki[place]; sikil[pure]; u; u; u
+
+#tr: ... the Ašte, the pure place ...
+
+17'. AN x x nu-te-ŋa₂ e₂ nam-mu [...]
+#lem: u; u; u; u; u; u; u
+
+18'. e₂?-ŋu₁₀ ŋi₆-par₃ inim-ŋu₁₀ mu-un-x#-[...]
+#lem: e[house]N; ŋipar[cloister]N; inim[word]N; u
+
+#tr: At my house, the @Gipar, my word ...
+
+19'. %es ma-ra %eg e₂-ŋu₁₀ a-ba in-ga-ba?-[...]
+#lem: meʾe[I]IP; e[house]N; aba[who?, which?]QP; u
+
+#tr: For me, who, also having ... my house ...?
+
+20'. %es ma-ra uru₂?-ŋu₁₀ %eg a-ba in-ga-ba?-[...]
+#lem: meʾe[I]IP; uru[city]N; aba[who?, which?]QP; u
+
+#tr: For me, who, also having ... my city ...?
+
+21'. ka₂-ŋu₁₀ a-ba in-ga-ba-pe-la# [...]
+#lem: X; aba[who?, which?]QP; pel[defile]V/t; u
+
+#tr: Who, having also defiled my gate ...
+
+22'. x#-ŋu₁₀ a-ba in-ga-ba-si₃-ga-bi? [...]
+#lem: u; aba[who?, which?]QP; sig[flatten]V/t; u
+
+#tr: Who, having also flattened my ...
+
+23'. x# a-ga? x a-ba %es in-ga-ba-i-ra-bi? %eg [...]
+#lem: u; u; u; aba[who?, which?]QP; ir[plunder]; u
+
+#tr: Who, also having plundered ...
+
+24'. %es [a]-še#-er-ŋu₁₀ %eg a-ba in-ga-ba-il?-ŋa₂-bi? [...]
+#lem: ašer[lament]N; aba[who?, which?]QP; X; u
+
+#tr: Who, having also ... my lament ...
+
+25'. [i]-si?#-iš?-ŋu₁₀ a-ba in-ga-ba-gul-la-bi? [...]
+#lem: isiš[tears]N; aba[who?, which?]QP; gul[destroy]V/t; u
+
+#tr: Who, having also destroyed my sorrow ...
+
+26'. [...] x# buluŋ₃?-ŋu₁₀ a-ba in-ga-ba-bu-ra x# x# [...]
+#lem: u; u; X; aba[who?, which?]QP; bur[tear]V/t; u; u; u
+
+#tr: Who, having also torn out my ...
+@top
+1. x# gudu₄ šu nu-luh?-ha?-ni %es i-bi₂-bi %eg ba-te-[...]
+#lem: u; gudug[a priest]N; šu[hand]N; luh[to clean, wash, refine]V/t; ibi[eye]N; u
+
+#tr: @Gudu priests who hands are not clean, their eyes ...
+
+2. [en] mah ŋi₆-par₃-ra til₃-la tu{mušen}-gin₇# [...]
+#lem: gal[(to be) big, great]V/i; mah[(to be) great]V/i; ŋipar[cloister]N; til[to live (of a single person)]V/i; tum[dove]; u
+
+#tr: The great lord, living in the @gipar, like a dove ...
+
+3. x# ki IGI ma-du₃-a mu KA iš? x# [...]
+#lem: u; u; u; u; u; u; u; u; u
+
+4. x# lul-la ma-du₃-a AN %es me-e [...]
+#lem: u; u; u; u; u; u
+
+@left
+1. [...]-e nar? x en KI?
+#lem: u; u; u; u; u
+
+2. [...] aš-te %eg la#?-ra?#-ag
+#lem: u; Ašte[]TN; Larag[1]SN
+
+#tr: The Ašte temple of Larag
+
+3. [...] er₂-šem₅-ma {d}x#-[...]
+#lem: u; eršemak[a song]N; u
+
+##** Edin 09.405-3 (BL 8ter)
+##  -- Collated from CDLI photo
+##Square-shaped tablet, which looks a lot like a scribal exercise tablet. The doxology to ##Nisaba is not written on the bottom edge, but after a double dividing-line at the end of the reverse. Almost certainly not a lament.
+## NV This is the end of SP 1; see Wilcke in Studies Pettinato
+##@obverse
+##1. e₂-gi₄-a x# [(x) (x)]
+##2. e₂# ma₂-šu₂-a AK [x (x)]
+##3. u₄-da ŋir₂-su{ki}-ka
+##4. a# ki-am₃ ib₂-AK
+##5. dumu#-munus ŋir₂-su{ki}-ka
+##6. eŋ₃#?-LU-na lu₂# ba-an-nu₂
+##7. x# DU-na UŠ ba#?-ni-in-su₃
+##8. {d}ba-u₂ ga-ša-an-ŋu₁₀
+##9. nin#? ni₂ mah!-ka
+##10. x# x# x# ma-ab-us₂-e
+##11. egi₂#?-e#? e₂ ad-da-na-ka
+##12. he₂#-en-til₃
+##13. [x]-ni tug₂-da!-ni-še₃-am₃
+##  NOTE it is possible that the sign read as da is a₂ or ama₅.
+##14. x#-an-ze₂-eŋ₃-ŋa₂ he₂-til₃
+##end of obverse
+##@reverse
+##1. [x]-an-ze₂#-eŋ₃-ŋa₂ he₂-til₃#
+##2. x#-e-ni ze₂-eŋ₃
+##3. x#-e e-ze₂-eŋ₃
+##4. e#-e nu-e-ze₂-eŋ₃
+##5. ŋa₂-e# šu-za nu-ub-tag#-ge
+##$ double ruling
+##{d}nisaba za₃-mi₂
+

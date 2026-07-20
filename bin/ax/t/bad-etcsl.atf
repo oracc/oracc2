@@ -1,0 +1,16 @@
+&P135552 = TCNU 706 
+#project: epsd2/admin/ur3 
+#atf: use unicode 
+#atf: lang sux 
+#etcsl: text-id=c.4.08.08
+
+@tablet 
+
+@reverse
+
+$ 1 line traces
+#etcsl: line-id=B.B.1
+
+1. a
+#etcsl: line-id=B.B.2
+
