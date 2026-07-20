@@ -33,15 +33,15 @@ objfrag,	Y_OBJFRAG, "fragment", B_OBJFRAG, "Fragment", "Frag.", "frg"
 srffrag,	Y_SRFFRAG, "fragment", B_SRFFRAG, "Fragment", "Frag.", "frg"
 colfrag,	Y_COLFRAG, "fragment", B_COLFRAG, "Fragment", "Frag.", "frg"
 cfragment,	Y_CFRAGMENT, "cfragment", B_MILESTONE, "Fragment", "Frag.", "frg"
-body,	Y_BODY, "body", B_MILESTONE, NULL, NULL, NULL
-colophon,	Y_COLOPHON, "colophon", B_MILESTONE, NULL, NULL, NULL
-catchline,	Y_CATCHLINE, "catchline", B_MILESTONE, NULL, NULL, NULL
-date,	Y_DATE, "date", B_MILESTONE, NULL, NULL, NULL
-sealings,	Y_SEALINGS, "sealers", B_MILESTONE, NULL, NULL, NULL
-linecount,	Y_LINECOUNT, "linecount", B_MILESTONE, NULL, NULL, NULL
-summary,	Y_SUMMARY, "summary", B_MILESTONE, NULL, NULL, NULL
-signature,	Y_SIGNATURE, "signature", B_MILESTONE, NULL, NULL, NULL
-witnesses,	Y_WITNESSES, "witnesses", B_MILESTONE, NULL, NULL, NULL
+body,	Y_BODY, "body", B_DISCOURSE, NULL, NULL, NULL
+colophon,	Y_COLOPHON, "colophon", B_DISCOURSE, NULL, NULL, NULL
+catchline,	Y_CATCHLINE, "catchline", B_DISCOURSE, NULL, NULL, NULL
+date,	Y_DATE, "date", B_DISCOURSE, NULL, NULL, NULL
+sealings,	Y_SEALINGS, "sealers", B_DISCOURSE, NULL, NULL, NULL
+linecount,	Y_LINECOUNT, "linecount", B_DISCOURSE, NULL, NULL, NULL
+summary,	Y_SUMMARY, "summary", B_DISCOURSE, NULL, NULL, NULL
+signature,	Y_SIGNATURE, "signature", B_DISCOURSE, NULL, NULL, NULL
+witnesses,	Y_WITNESSES, "witnesses", B_DISCOURSE, NULL, NULL, NULL
 include,	Y_INCLUDE,"include",B_MILESTONE, NULL, NULL, NULL
 referto,	Y_REFERTO,"referto",B_MILESTONE, NULL, NULL, NULL
 div,	Y_DIV, "div", B_DIVISION, NULL, NULL, NULL

@@ -32,145 +32,144 @@ atf_milestone(Block *bp, char *rest)
    }
  if (toks[0])
    {
+     int bt_index = -1;
      if (!strcmp(toks[0], "locator"))
+       bt_index = 1;
+     else
+       bt_index = 0;
+
+     if (toks[bt_index])
        {
-	 if (toks[1])
+	 Blocktok *btokp = blocktok(toks[bt_index],strlen(toks[bt_index]));
+	 if (btokp)
 	   {
-	     type = "locator";
 	     const char *sub_n = NULL;
-	     Blocktok *btokp = blocktok(toks[1],strlen(toks[1]));
-	     if (btokp)
+	     type = "locator";
+	     subtype = btokp->name;
+	     switch (btokp->type)
 	       {
-		 subtype = btokp->name;
-		 switch (btokp->bison)
-		   {
-		   case B_OBJECT:
-		     if (toks[2])
-		       {
-			 sub_n = toks[2];
-			 text = toks[3];
-		       }
-		     m_label_col_index = 0;
-		     if (strcmp(subtype,"tablet") || sub_n)
-		       update_mlabel(B_OBJECT, (uccp)(sub_n ? sub_n : type));
-		     m_object_index = m_label_col_index;
-		     break;
-		   case B_SURFACE:
-		     if (toks[2])
-		       {
-			 sub_n = toks[2];
-			 text = toks[3];
-		       }
-		     if (!m_object_index)
-		       m_label_col_index = 0;
-		     update_mlabel(B_SURFACE,
-				   (uccp)(btokp->nano ? btokp->nano : (sub_n ? sub_n : subtype)));
-		     break;
-		   case B_COLUMN:
-		     update_mlabel(B_COLUMN, (uccp)toks[2]);
-		     text = toks[3];
-		     break;
-		   default:
-		     break;
-		   }
-	       }
-	     else
-	       {
-		 char *tmp = vec_to_str(&toks[2], vec_len(&toks[2]), " ");
-		 subtype = (ccp)pool_copy((uccp)tmp, atfmp->pool);
-		 m_label_col_index = 0;
-		 free(tmp);
-		 update_mlabel(B_SURFACE, (uccp)subtype);
-	       }
-	   }
-	 else
-	   mesg_verr(bp->np->mloc, "@m locator incomplete (needs locator info)");
-       }
-     else if (!strcmp(toks[0], "division"))
-       {
-	 type = "division";
-	 m_label_col_index = 0;
-	 if (toks[1])
-	   {
-	     subtype = toks[1];
-	     char *div = NULL;
-	     if (!strcmp(toks[1],"segment"))
-	       div = "Seg";
-	     /*sprintf((char*)buf,"Seg.%s,",toks[2]);*/
-	     else if (!strcmp(toks[1],"paragraph"))
-	       div = "Par";
-	     /*sprintf((char*)buf,"Par.%s,",toks[2]);*/
-	     else if (!strcmp(toks[1],"exemplar"))
-	       div = "Ex";
-	     /*sprintf((char*)buf,"Ex.%s,",toks[2]);*/
-	     if (div)
-	       {
+	       case B_OBJECT:
 		 if (toks[2])
 		   {
-		     char buf[strlen(div)+strlen(toks[2])+3];
-		     sprintf(buf, "%s.%s,", div, toks[2]);
-		     m_div_n = (ccp)pool_copy((uccp)buf, atfmp->pool);
-		     update_mlabel(B_SURFACE, (uccp)m_div_n);
+		     sub_n = toks[2];
+		     text = toks[3];
+		   }
+		 m_label_col_index = 0;
+		 if (strcmp(subtype,"tablet") || sub_n)
+		   update_mlabel(B_OBJECT, (uccp)(sub_n ? sub_n : type));
+		 m_object_index = m_label_col_index;
+		 break;
+	       case B_SURFACE:
+		 if (toks[2])
+		   {
+		     sub_n = toks[2];
+		     text = toks[3];
+		   }
+		 if (!m_object_index)
+		   m_label_col_index = 0;
+		 update_mlabel(B_SURFACE,
+			       (uccp)(btokp->nano ? btokp->nano : (sub_n ? sub_n : subtype)));
+		 break;
+	       case B_COLUMN:
+		 update_mlabel(B_COLUMN, (uccp)toks[2]);
+		 text = toks[3];
+		 break;
+	       case B_DIVISION:
+		 type = "division";
+		 m_label_col_index = 0;
+		 ++bt_index;
+		 if (toks[bt_index])
+		   {
+		     subtype = toks[bt_index];
+		     char *div = NULL;
+		     if (!strcmp(toks[bt_index],"segment"))
+		       div = "Seg";
+		     else if (!strcmp(toks[bt_index],"paragraph"))
+		       div = "Par";
+		     else if (!strcmp(toks[bt_index],"exemplar"))
+		       div = "Ex";
+		     if (div)
+		       {
+			 ++bt_index;
+			 if (toks[bt_index])
+			   {
+			     char buf[strlen(div)+strlen(toks[bt_index])+3];
+			     sprintf(buf, "%s.%s,", div, toks[bt_index]);
+			     m_div_n = (ccp)pool_copy((uccp)buf, atfmp->pool);
+			     update_mlabel(B_SURFACE, (uccp)m_div_n);
+			   }
+			 else
+			   mesg_verr(bp->np->mloc, "@division type incomplete (needs section info)");
+		       }
+		     else
+		       {
+			 char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
+			 m_div_n = (ccp)pool_copy((uccp)tmp, atfmp->pool);
+			 free(tmp);
+			 update_mlabel(B_SURFACE, (uccp)m_div_n);
+			 subtype = NULL;
+		       }
 		   }
 		 else
-		   mesg_verr(bp->np->mloc, "@division type incomplete (needs section info)");
-	       }
-	     else
-	       {
-		 char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
-		 m_div_n = (ccp)pool_copy((uccp)tmp, atfmp->pool);
-		 free(tmp);
-		 update_mlabel(B_SURFACE, (uccp)m_div_n);
-		 subtype = NULL;
+		   mesg_verr(bp->np->mloc, "@division incomplete (needs division info)");
+		 break;
+	       case B_DISCOURSE:
+		 type = "discourse";
+		 curr_discourse = subtype = bp->bt->name;
+		 if (!strcmp(subtype,"body"))
+		   {
+		     extern const char *default_discourse_level;
+		     default_discourse_level = "preamble";
+		   }
+		 break;
+	       case B_MILESTONE:
+		 if (!strcmp("fragment",bp->bt->name) || !strcmp("cfragment",bp->bt->name))
+		   {
+		     if (toks[0])
+		       {
+			 type = "locator";
+			 subtype = "fragment";
+			 if (atfp->edoc == EDOC_COMPOSITE)
+			   {
+			     label_frag(bp->np,(uccp)toks[0]);
+			     update_label(bp->np,etu_none);
+			   }
+			 else
+			   {
+			     char *buf = (char*)pool_alloc(strlen(toks[0])+strlen("frg.0"), atfmp->pool);
+			     strcpy(buf,"frg.");
+			     strcat(buf,toks[0]);
+			     m_div_n = buf;
+			     if ('c' == *bp->bt->name)
+			       update_mlabel(B_OBJECT,(uccp)buf);
+			     else
+			       update_mlabel(B_SURFACE,(uccp)buf);
+			   }
+		       }
+		     else
+		       mesg_verr(bp->np->mloc, "@fragment/@cfragment must have frag indicator");
+		   }
+		 else
+		   mesg_verr(bp->np->mloc, "unhandled MILESTONE %s", bp->bt->name);
+		 break;
+	       default:
+		 mesg_verr(bp->np->mloc, "unhandled milestone block type %s", bp->bt->name);
+		 break;
 	       }
 	   }
 	 else
-	   mesg_verr(bp->np->mloc, "@division incomplete (needs division info)");
-       }
-     else if (mdiscourse(bp->bt->name, strlen(bp->bt->name)))
-       {
-	 type = "discourse";
-	 curr_discourse = subtype = bp->bt->name;
-	 if (!strcmp(subtype,"body"))
 	   {
-	     extern const char *default_discourse_level;
-	     default_discourse_level = "preamble";
-	   }
-       }
-#if 0
-	 /* @textdesc and @textname were defined in oxx but are not
-	    valid types in xtf.rnc so they have probably never been
-	    used and therefore are probably not needed */
-     else if (!strcmp(toks[0], "textdesc"))
-       {
-	 type = "textdesc";
-	 if (toks[1])
-	   {
-	     if (strcmp(toks_n, "-"))
-	       {
-		 unsigned char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
-		 m_div_n = pool_copy(tmp, atfmp->pool);
-		 free(tmp);
-	       }
-	   }
-	 else
-	   mesg_verr(bp->np->mloc, "@textdesc incomplete (needs text description)");
-       }
-     else if (!strcmp(toks[0], "textname"))
-       {
-	 type = "textname";
-	 if (toks[1])
-	   {
-	     unsigned char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
-	     m_div_n = pool_copy(tmp, atfmp->pool);
+	     char *tmp = vec_to_str(&toks[bt_index], vec_len(&toks[bt_index]), " ");
+	     subtype = (ccp)pool_copy((uccp)tmp, atfmp->pool);
+	     m_label_col_index = 0;
 	     free(tmp);
+	     update_mlabel(B_SURFACE, (uccp)subtype);
 	   }
-	 else
-	   mesg_verr(bp->np->mloc, "@textname incomplete (needs text name)");
        }
-#endif
      else
-       mesg_verr(bp->np->mloc, "unhandled MILESTONE %s", bp->bt->name);
+       {
+	   mesg_verr(bp->np->mloc, "@m locator incomplete (needs locator info)");
+       }
    }
 
  if (type)
@@ -371,3 +370,36 @@ atf_milestone(Block *bp, char *rest)
   return m;
 #endif
 }
+
+#if 0
+	 /* @textdesc and @textname were defined in oxx but are not
+	    valid types in xtf.rnc so they have probably never been
+	    used and therefore are probably not needed */
+     else if (!strcmp(toks[0], "textdesc"))
+       {
+	 type = "textdesc";
+	 if (toks[1])
+	   {
+	     if (strcmp(toks_n, "-"))
+	       {
+		 unsigned char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
+		 m_div_n = pool_copy(tmp, atfmp->pool);
+		 free(tmp);
+	       }
+	   }
+	 else
+	   mesg_verr(bp->np->mloc, "@textdesc incomplete (needs text description)");
+       }
+     else if (!strcmp(toks[0], "textname"))
+       {
+	 type = "textname";
+	 if (toks[1])
+	   {
+	     unsigned char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
+	     m_div_n = pool_copy(tmp, atfmp->pool);
+	     free(tmp);
+	   }
+	 else
+	   mesg_verr(bp->np->mloc, "@textname incomplete (needs text name)");
+       }
+#endif
