@@ -252,5 +252,6 @@ extern Tree *gdl_get_tree(void);
 extern Node *gdl_gloss_curr(void);
 extern void gdl_gloss_props(Node *d);
 extern void gdl_surro(void);
+extern void gdl_set_lzr_sparse(Hash *l);
 
 #endif /*GDL_H_*/

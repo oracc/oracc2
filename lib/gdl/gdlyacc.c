@@ -12,6 +12,9 @@
 #include "gdl.h"
 #include "gvl.h"
 
+static Hash *lzr_sparse = NULL;
+const char *curr_field = NULL;
+
 extern struct lang_context *gdl_lang_context;
 extern const char *word_lang_tag;
 extern void gdllex_destroy(void);
@@ -877,7 +880,8 @@ gdl_new_word(Tree *ytp)
 	  gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       
 	  /* IF FIELD NOT IN SPARSE LEM HASH */
-	  list_add(wd_list, wp);
+	  if (!lzr_sparse || hash_find(lzr_sparse, (uccp)curr_field))
+	    list_add(wd_list, wp);
 	  sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
 	  gid_insertp = gdl_word_id+strlen(gdl_word_id);
 	  if (!gdl_no_xml_ids)
@@ -1114,7 +1118,8 @@ gdl_field(Tree *ytp, const char *ftype)
     tree_curr(ancestor->rent);
   fp = tree_add(ytp, NS_GDL, "g:field", ytp->root->depth+1, NULL);
   tree_curr(fp);
-  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type", (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
+  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type",
+	      curr_field = (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
   return tree_push(ytp);
 }
 
@@ -1244,5 +1249,12 @@ gdl_line_wrapup(Mloc m)
   gdl_lex_closers();
   gdl_balance_flush(m);
   pst = rst = 0L;
+  curr_field = NULL;
   gdl_group_attach = lgp = NULL;
+}
+
+void
+gdl_set_lzr_sparse(Hash *l)
+{
+  lzr_sparse = l;
 }
