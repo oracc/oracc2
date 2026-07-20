@@ -4,6 +4,11 @@
 #atf: use unicode
 #atf: use mylines
 #was Q021147
+
+@m=locator obverse
+$ broken
+1'. [mu pa₃]-da#
+
 @m column 1
 1'.        [e₂]-kur#-ra# he₂-du₇
 #lem: Ekur[1]TN; hedu[ornament]
@@ -12,3 +17,10 @@
 1'.        geštu₂# mah#
 #lem: ŋeštug[ear]; mah[great]
 
+@m reverse
+1. e₂ {d}en#-[lil₂]-ka
+
+@m colophon
+# Akkadian
+
+2'. %a la

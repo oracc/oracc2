@@ -152,7 +152,7 @@ reset_mlabel(void)
   m_label_col_index = 0;
   if (label2)
     {
-      free(label2);
+      /*free(label2);*//*not now we use memo_auto*/
       label2 = NULL;
     }
 }
@@ -200,8 +200,11 @@ line_label(Mloc *mp, const unsigned char *tok, enum e_tu_types transtype,
     {
       label = memo_auto(xxstrlen(m_label)+xxstrlen(tok)+2);
       sprintf((char*)label,"%s%s",m_label,(char*)tok);
+#if 0
+      /* Don't free this now we use memo_auto */
       if (label2)
 	free(label2);
+#endif
       label2 = memo_auto(xxstrlen(m_label2)+xxstrlen(tok)+2);
       sprintf((char*)label2,"%s%s",m_label2,(char*)tok);
     }

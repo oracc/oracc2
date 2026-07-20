@@ -13,7 +13,7 @@ void
 atf_milestone(Block *bp, char *rest)
 {
 #if 1
-  const char *type = NULL, *subtype = NULL, *text = NULL, *m_div_n = NULL;
+  const char *type = NULL, *subtype = NULL, *text = NULL, *m_n = NULL;
   extern int m_label_col_index;
   char **toks = NULL;
   char *tokx[] = { NULL };
@@ -60,19 +60,14 @@ atf_milestone(Block *bp, char *rest)
 		 m_object_index = m_label_col_index;
 		 break;
 	       case B_SURFACE:
-		 if (toks[2])
-		   {
-		     sub_n = toks[2];
-		     text = toks[3];
-		   }
-		 if (!m_object_index)
-		   m_label_col_index = 0;
+		 if (toks[++bt_index])
+		   text = sub_n = toks[bt_index];
+		 reset_mlabel();
 		 update_mlabel(B_SURFACE,
 			       (uccp)(btokp->nano ? btokp->nano : (sub_n ? sub_n : subtype)));
 		 break;
 	       case B_COLUMN:
-		 update_mlabel(B_COLUMN, (uccp)(sub_n = toks[++bt_index]));
-		 text = toks[++bt_index];
+		 update_mlabel(B_COLUMN, (uccp)(text = toks[++bt_index]));
 		 break;
 	       case B_DIVISION:
 		 type = "division";
@@ -95,8 +90,8 @@ atf_milestone(Block *bp, char *rest)
 			   {
 			     char buf[strlen(div)+strlen(toks[bt_index])+3];
 			     sprintf(buf, "%s.%s,", div, toks[bt_index]);
-			     m_div_n = (ccp)pool_copy((uccp)buf, atfmp->pool);
-			     update_mlabel(B_SURFACE, (uccp)m_div_n);
+			     m_n = (ccp)pool_copy((uccp)buf, atfmp->pool);
+			     update_mlabel(B_SURFACE, (uccp)m_n);
 			   }
 			 else
 			   mesg_verr(bp->np->mloc, "@division type incomplete (needs section info)");
@@ -104,9 +99,9 @@ atf_milestone(Block *bp, char *rest)
 		     else
 		       {
 			 char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
-			 m_div_n = (ccp)pool_copy((uccp)tmp, atfmp->pool);
+			 m_n = (ccp)pool_copy((uccp)tmp, atfmp->pool);
 			 free(tmp);
-			 update_mlabel(B_SURFACE, (uccp)m_div_n);
+			 update_mlabel(B_SURFACE, (uccp)m_n);
 			 subtype = NULL;
 		       }
 		   }
@@ -115,7 +110,7 @@ atf_milestone(Block *bp, char *rest)
 		 break;
 	       case B_DISCOURSE:
 		 type = "discourse";
-		 curr_discourse = subtype = bp->bt->name;
+		 curr_discourse = subtype = btokp->name;
 		 if (!strcmp(subtype,"body"))
 		   {
 		     extern const char *default_discourse_level;
@@ -139,7 +134,7 @@ atf_milestone(Block *bp, char *rest)
 			     char *buf = (char*)pool_alloc(strlen(toks[0])+strlen("frg.0"), atfmp->pool);
 			     strcpy(buf,"frg.");
 			     strcat(buf,toks[0]);
-			     m_div_n = buf;
+			     m_n = buf;
 			     if ('c' == *bp->bt->name)
 			       update_mlabel(B_OBJECT,(uccp)buf);
 			     else
@@ -177,10 +172,10 @@ atf_milestone(Block *bp, char *rest)
      atf_xprop(bp->np, "type", type);
      if (subtype)
        atf_xprop(bp->np, "subtype", subtype);
-     if (m_div_n)
+     if (m_n)
        {
-	 atf_xprop(bp->np, "n", (ccp)pool_copy((uccp)m_div_n, atfmp->pool));
-	 m_div_n = NULL;
+	 atf_xprop(bp->np, "n", (ccp)pool_copy((uccp)m_n, atfmp->pool));
+	 m_n = NULL;
        }
    }
  if (text)

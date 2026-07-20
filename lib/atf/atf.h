@@ -301,6 +301,7 @@ extern void label_segtab(const char *st,const unsigned char *tok);
 extern void update_mlabel(Block_level type, unsigned const char *tok);
 extern const unsigned char *line_label(Mloc *mp,const unsigned char *tok,enum e_tu_types transtype, const unsigned char *xid);
 extern void reset_labels(void);
+extern void reset_mlabel(void);
 extern void label_term(void);
 extern void label_frag(struct node *current,unsigned const char *l);
 extern const unsigned char *label_from_line_id(const unsigned char *line_id);
