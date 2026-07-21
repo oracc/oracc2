@@ -418,6 +418,7 @@ main(int argc, char **argv)
   
   cbdset_debug(trace_mode);
 
+  lng_init();
   mesg_init();
   
   gx_init();
@@ -485,7 +486,7 @@ main(int argc, char **argv)
     }
 
   mesg_print(stderr);
-  
+  lng_term();
   gx_term();
 
   return 1;

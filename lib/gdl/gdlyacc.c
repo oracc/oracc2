@@ -89,13 +89,15 @@ static List *wd_list = NULL;
 void
 gdl_gloss_props(Node *d)
 {
+  /* FIXME: test more but this block is now the same as in gdl_det_props to choose pre/post */
   if (!d->prev)
     {
       gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
     }
   else
     {
-      if (!strcmp(d->prev->name, "g:d"))
+      Prop *pd = prop_find_kv(d->prev->props, "g:delim", NULL);
+      if (pd)
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
       else if (!strcmp(d->prev->name, "g:det"))
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos",
@@ -125,7 +127,9 @@ gdl_det_props(Node *d)
     }
   else
     {
-      if (!strcmp(d->prev->name, "g:d"))
+      /* we know d->prev is non-NULL */
+      Prop *pd = prop_find_kv(d->prev->props, "g:delim", NULL);
+      if (pd)
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
       else if (!strcmp(d->prev->name, "g:det"))
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos",

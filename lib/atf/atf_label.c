@@ -72,7 +72,7 @@ label_segtab(const char *st, unsigned const char *tok)
 	sp = "";
       else
 	sp = " ";
-      sprintf(div_labels[dlc],"%s%s%s%s",st,sp,tok,*tok?",":"");
+      sprintf(div_labels[dlc],"%s%s%s%s",st,sp,tok,(tok&&*tok)?",":"");
       if (dlc < dlc_top)
 	{
 	  if (div_labels[0][0])

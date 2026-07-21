@@ -35,6 +35,8 @@ gdl_init(void)
   if (gdl_initted++)
     return;
 
+  gdl_legacy_lexer(0);
+
   atf2utf_init();
 
   gdl_balance_init();

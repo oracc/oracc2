@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <cbd.h>
 #include <gdl.h>
+#include <lng.h>
 #include <gt.h>
 #include "gx.h"
 
@@ -256,10 +257,13 @@ main(int argc, char * const *argv)
   if (glo_mode)
     hqlngs = hash_create(32);
 
-  gdl_unicode = 1;
+  lng_init();
+  gdl_word_mode = gdl_unicode = 1;
   gdl_init();
   gsort_init();
   gdl_set_word_id("w");
+  gt_init();
+  gt_load_oids("sux");
   gt_config(htokens, mtokens);
   gvl_setup("osl","osl","020");
   pref_init();

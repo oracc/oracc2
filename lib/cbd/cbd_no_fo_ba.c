@@ -44,7 +44,7 @@ cbd_no_form_bases(Entry *ep)
     {
       if (fp->f.base)
 	{
-	  if (fp->f.morph && !strcmp((ccp)fp->f.morph, "~"))
+	  /*if (fp->f.morph && !strcmp((ccp)fp->f.morph, "~"))*/
 	    hash_add(fb, fp->f.base, "");
 	  if (!fp->f.norm)
 	    cbd_auto_norm(&fp->f);
