@@ -12,3 +12,43 @@ NEW PSU IMPLEMENTATION
 * form/sense-specific sigs derived from @form belonging to @psu entries
 
 * specific sigs have psu-form derived from @form and gw-only or gw-sense dependent on @parts spec
+
+* 3 types of PSUs depending on origin:
+  PSU_PART = from @parts
+  PSU_FORM = from @form in a glossary
+  PSU_INST = from corpus
+
+* 2 overall parts to a PSU:
+
+  PSU_KEY::PSU_PARTS
+
+  PSU_KEY => '{' CODE PARTS += PSU_CGP '}'
+  CODE => '-' | '+' | '=' where '-' == PSU_PART; '+' == PSU_FORM; '=' == PSU_INST
+  PARTS => CGP CGP+
+  PSU_PARTS => SIG '++' SIG ('++' SIG)*
+
+* PSU_PARTS can be empty if all elements in @parts are simple CGP
+
+* if PSU_PARTS is non-empty it must always have a PART for each CGP in PARTS
+
+* SIG can be sparse:
+
+  ** For PSU_PART, SIG has any elements given in the @parts spec,
+     allowable constraints are on SENSE, EPOS, BASE, MORPH
+
+  ** For PSU_FORM, SIG has any elements given in the @parts spec, plus
+     the FORM.  Each FORM is used with the CGP of each PARTS CGP to
+     create a FCGP, i.e., a CGP with the form prepended separated by
+     '=' in the usual way.  Each list of PARTS is then searched for a
+     matching FCGP--this is how multiple @parts with different
+     ordering of constituents works.  For a @form to match one of the
+     @parts, all of the elements of the @form must match one of the
+     @parts specs in order and with no omissions or additions.  Once
+     the list of FCGPs is determined, the LANG of each FCGP is also
+     supplied for each PSU_PARTS SIG. Thus, each SIG of PSU_FORM
+     PSU_PARTS contains the members given in the @parts, plus FORM and
+     LANG.
+
+  ** For PSU_INST, SIG is the entire instance signature as pointed to
+     in the linkset entry for the PSU match.
+
