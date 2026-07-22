@@ -1,0 +1,14 @@
+NEW PSU IMPLEMENTATION
+======================
+
+* should be compatible with previous implementation
+
+* support both generic and form/sense-specific matching
+
+* generic sig derived from @parts and may include sense but usually doesn't
+
+* generic sig has ** for psu-form and gw-only or gw-sense dependent on @parts spec
+
+* form/sense-specific sigs derived from @form belonging to @psu entries
+
+* specific sigs have psu-form derived from @form and gw-only or gw-sense dependent on @parts spec

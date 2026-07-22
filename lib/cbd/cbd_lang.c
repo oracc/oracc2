@@ -6,9 +6,10 @@
 void
 cbd_sig_add_one(const unsigned char *s, int rank)
 {
-  if ('{' == *s)
-    s = (uccp)strstr((ccp)s, "}::");
-  uccp lng = (uccp)strchr((ccp)s, '%');
+  uccp t = s;
+  if ('{' == *t)
+    t = (uccp)strstr((ccp)s, "}::");
+  uccp lng = (uccp)strchr((ccp)t, '%');
   ++lng;
   uccp col = (uccp)strchr((ccp)lng, ':');
   int len = col - lng;
