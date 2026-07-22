@@ -168,6 +168,7 @@ gsort_node(Node *np, List *lp)
      for, e.g., {u₂}{+a}aški */
   while (np && !strcmp(np->name, "g:det"))
     np = np->next;
+
   if (!np) /* this means the word ended with a determinative */
     return;
 
