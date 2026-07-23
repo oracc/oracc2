@@ -213,7 +213,7 @@ form_sig_sub(Pool *p, Form *fp)
     {
       struct ilem_form *ifp = fp->owner;
 
-      if (bit_get(fp->flags, FORM_FLAGS_IS_PSU))
+      if (bit_get(fp->flags, FORM_FLAGS_PSU_BITS))
 	ret = form_psu_sig(p, fp);
       else if (fp->parts) /* COF */
 	{

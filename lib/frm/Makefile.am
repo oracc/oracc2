@@ -3,4 +3,4 @@ include ../../oracc-am-rules.txt
 noinst_LTLIBRARIES=libfrm.la
 
 libfrm_la_SOURCES=form.c form_jox.c form_alias.c lang949.c phrase.c \
-	form_flags.c form_inherit.c form_sig.c form_psu.c normify.c
+	form_inherit.c form_sig.c form_psu.c normify.c

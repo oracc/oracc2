@@ -705,7 +705,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
     }
 
   if (formp->cf && strchr((char*)formp->cf,' '))
-    bit_set(formp->flags, FORM_FLAGS_IS_PSU);
+    bit_set(formp->flags, FORM_FLAGS_PSU_INST);
   phase = saved_phase;
 
   return (ret < 0) ? -1 : (lp - orig_lp);

@@ -106,7 +106,7 @@ form_parse_psu(const Uchar *file, size_t line, Uchar *lp, struct form *formp)
       formp->project = formp->parts[0]->project;
       formp->lang = formp->parts[0]->lang;
       formp->core = formp->parts[0]->core;
-      bit_set(formp->flags, FORM_FLAGS_IS_PSU);
+      bit_set(formp->flags, FORM_FLAGS_PSU_INST);
     }
 
 #if 0
