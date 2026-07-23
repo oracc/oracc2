@@ -12,14 +12,24 @@ cbd_sig_add_one(const unsigned char *s, int rank)
   uccp lng = (uccp)strchr((ccp)t, '%');
   ++lng;
   uccp col = (uccp)strchr((ccp)lng, ':');
-  int len = col - lng;
-  char buf[len+1];
-  strncpy(buf, (ccp)lng, len);
-  buf[len] = '\0';
-  List *lp = hash_find(csetp->hsiglangs, (uccp)buf);
+  char *xlng;
+  if (col)
+    {
+      int len = col - lng;
+      char buf[len+1];
+      strncpy(buf, (ccp)lng, len);
+      buf[len] = '\0';
+      xlng = strdup(buf);
+    }
+  else
+    xlng = strdup((ccp)curr_cbd->lang);
+  
+  List *lp = hash_find(csetp->hsiglangs, (uccp)xlng);
   if (!lp)
-    hash_add(csetp->hsiglangs, pool_copy((uccp)buf, csetp->pool), (lp = list_create(LIST_SINGLE)));
+    hash_add(csetp->hsiglangs, pool_copy((uccp)xlng, csetp->pool), (lp = list_create(LIST_SINGLE)));
 
+  free(xlng);
+  
   Lemsig *lsp = memo_new(csetp->lsigmem);
   lsp->key = lsp->sig = s;
   if (t != s)

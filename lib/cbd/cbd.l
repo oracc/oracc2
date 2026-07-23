@@ -162,7 +162,6 @@ BALM 	","
 
 	/* CF-GW-POS TOKENIZER */
 
-<s_cf>n[ \t]	   	   { xreturn(CGP_N); }
 <s_cf>[^\[\] \t\n][^\[\]\n]*[^\[\] \t\n]        { ytdup(); xreturn(CF); }
 <s_cf>[^\[\] \t\n]         { ytdup(); xreturn(CF); }
 <s_cf>"["      	   	   { BEGIN ss(s_gw); xreturn(yytext[yyleng-1]); }
