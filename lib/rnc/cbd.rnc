@@ -3,6 +3,7 @@ namespace cbd = "http://oracc.org/ns/cbd/2.0"
 
 include "cbd-lib.rnc"
 include "gdl-lib.rnc"
+include "stream.rnc"
 
 start = cbd | entry_sa
 

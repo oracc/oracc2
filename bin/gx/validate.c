@@ -167,8 +167,10 @@ core_check(Hash *hpri, Hash *hsig, List *lcore)
 	  else
 	    ; /* should be OK for the core of a determined base not to occur as a non-determined base */
 	}
+#if 0
       else
 	fprintf(stderr, "core_check: reduced %s to %s base %s\n", pri, status, buf);
+#endif
     }
 }
 

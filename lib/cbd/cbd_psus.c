@@ -99,9 +99,12 @@ cbd_psus(void)
 	  p->f.parts[i] = memo_new(csetp->formsmem);
 	  form_parse((uccp)p->l.file, p->l.line, (ucp)cp->tight, p->f.parts[i], NULL);
 	  p->f.parts[i]->project = pcbd->project;
-	  cp->loose = cp->tight = NULL;
-	  /* reset all cgp fields */
-	  cgp_init(cp, (ucp)p->f.parts[i]->cf, (ucp)p->f.parts[i]->gw, (ucp)p->f.parts[i]->pos);
+	  if (strcmp(cp->loose, "n"))
+	    {
+	      cp->loose = cp->tight = NULL;
+	      /* reset all cgp fields */	  
+	      cgp_init(cp, (ucp)p->f.parts[i]->cf, (ucp)p->f.parts[i]->gw, (ucp)p->f.parts[i]->pos);
+	    }
 	  Entry *ep = hash_find(pcbd->hentries, (uccp)cp->tight);
 	  if (ep)
 	    cp->owner = ep;
@@ -213,7 +216,7 @@ cpf_try_parts(Parts *p, List *ffs)
       else
 	break;
     }
-  if (NULL != p->f.parts[i]) /* success */
+  if (NULL != p->f.parts[i]) /* success if p->f.parts[i] == NULL */
     {
       list_free(fok, NULL);
       fok = NULL;
@@ -232,10 +235,12 @@ cpf_try_form(Cform *f)
   list_vec_sep_str = lvecstr;
 
   Parts *p;
-  List *fok;
+  List *fok = NULL;
   for (p = list_first(f->e->parts); p; p = list_next(f->e->parts))
     {
-      if ((fok = cpf_try_parts(p, ffs)))
+      if (!p->f.parts)
+	mesg_verr(&f->l, "NULL p->f.parts");
+      else if ((fok = cpf_try_parts(p, ffs)))
 	break;
     }
 
@@ -343,6 +348,8 @@ cbd_psu_sig_parts(FILE *bufp, Form *fp)
 List *
 cbd_psu_sigs(Form *fp)
 {
+  if (!fp->parts)
+    return NULL;
 
 #if 0
   int corgi = 1;

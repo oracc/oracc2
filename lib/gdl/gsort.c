@@ -243,6 +243,8 @@ gsort_node(Node *np, List *lp)
       break;
     case 'z':
       /* meta node in GDL internals; ignore */
+    case 'B':
+      /* occurs when _0 is given in cbd @form; what else can leave this? */
       break;
     default:
       mesg_verr(np->mloc, "[gsort] unhandled name in gsort_node %s\n", np->name);

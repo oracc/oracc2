@@ -13,7 +13,7 @@
 @form a /a
 @form a *b
 @form a +0
-@form a #~
+@form a#~
 @form a $a
 @form a /a *b
 @form a /a *b +0

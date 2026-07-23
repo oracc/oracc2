@@ -32,6 +32,7 @@ extern int yylex(void);
 
 %token	ENDOF  0
 %token  <text> 		CF
+%token  <text> 		CGP_N
 %token  <text> 		GW
 %token  <text> 		LANGSPEC
 %token  <text> 		POS
@@ -148,7 +149,8 @@ ati18n:		I18N TEXTSPEC	  { curr_cbd->i18nstr = yylval.text; }
 cgplist: cgp
 	 | cgplist cgp
 
-cgp:    CF '[' GW ']' POS { cgp_save((ucp)$1, (ucp)$3, (ucp)$5); } ;
+cgp:    	CGP_N { cgp_n(); }
+	|	CF '[' GW ']' POS { cgp_save((ucp)$1, (ucp)$3, (ucp)$5); } ;
 	|	CF '[' GW ']' EOL { lyyerror(@1, "expected POS but found end of line"); }
 	|	CF '[' GW EOL { lyyerror(@1, "missing ']' (and maybe POS) after GW"); }
 	|	CF ']' POS { lyyerror(@1, "missing '[' before GW"); }

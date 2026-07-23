@@ -36,6 +36,17 @@ cgp_get_one(void)
 }
 
 void
+cgp_n(void)
+{
+  struct cgp *c = memo_new(curr_cbd->cgpmem);
+  c->cf = c->gw = (uccp)"";
+  c->pos = c->tight = c->loose = (uccp)"n";  
+  if (!cgplist)
+    cgplist = list_create(LIST_SINGLE);
+  list_add(cgplist, c);
+}
+
+void
 cgp_save(unsigned char *cf, unsigned char *gw, unsigned char *pos)
 {
   struct cgp *c = memo_new(curr_cbd->cgpmem);
@@ -59,7 +70,6 @@ const unsigned char *
 cgp_str(struct cgp *cp, int loose)
 {
   char *tmp = NULL;
-  unsigned char*tmp2;
 
   if (!cp)
     return NULL;
@@ -77,5 +87,5 @@ cgp_str(struct cgp *cp, int loose)
     sprintf(tmp, "%s [%s] %s", cp->cf, cp->gw, cp->pos);
   else
     sprintf(tmp, "%s[%s]%s", cp->cf, cp->gw, cp->pos);
-  return tmp;
+  return (uccp)tmp;
 }

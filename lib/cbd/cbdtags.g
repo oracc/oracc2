@@ -16,7 +16,7 @@ sense, SENSE, 0, s_s
 sensel, SENSEL, 0, s_s
 isslp, ISSLP, 0, s_text
 inote, INOTE, 0, s_text
-parts, PARTS, 0, s_cf
+parts, PARTS, 0, s_pcf
 bff,   BFF, 0, s_text
 alias, ALIAS, 0, s_cf
 allow, ALLOW, 0, s_allow

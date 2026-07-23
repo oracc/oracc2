@@ -393,6 +393,7 @@ extern unsigned char *cbd_form_sig(struct entry *e, Form *f2p);
 extern struct cbdtag *cbdtags(const char *str, size_t len);
 extern List *cgp_get_all(void);
 extern struct cgp*cgp_get_one(void);
+extern void cgp_n(void);
 extern void cgp_save(unsigned char *cf, unsigned char *gw, unsigned char *pos);
 extern struct loctok *loctok(YYLTYPE *lp, struct entry *e, unsigned char *tok);
 

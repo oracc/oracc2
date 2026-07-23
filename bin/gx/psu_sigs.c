@@ -157,13 +157,16 @@ psu_sigs(Entry *ep)
   for (cfp = list_first(ep->forms); cfp; cfp = list_next(ep->forms))
     {
       List *sigs = cbd_psu_sigs(&cfp->f);
-      char *sig;
-      int psu_sense_rank = 1;
-      for (sig = list_first(sigs); sig; sig = list_next(sigs))
-	if (out_stdout)
-	  fprintf(stdout, "%s\n", sig);
-	else
-	  cbd_sig_add_one((uccp)sig, psu_sense_rank-- ? 1 : 0);
+      if (sigs)
+	{
+	  char *sig;
+	  int psu_sense_rank = 1;
+	  for (sig = list_first(sigs); sig; sig = list_next(sigs))
+	    if (out_stdout)
+	      fprintf(stdout, "%s\n", sig);
+	    else
+	      cbd_sig_add_one((uccp)sig, psu_sense_rank-- ? 1 : 0);
+	}
     }
 #else
   List *sigs = list_create(LIST_SINGLE);

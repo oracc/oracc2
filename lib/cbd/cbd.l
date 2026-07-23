@@ -99,6 +99,7 @@ char *ssnames[] = {
 "s_flush",
 "s_gw",
 "s_incl",
+"s_pcf",
 "s_pos",
 "s_sol",
 "s_s",
@@ -127,6 +128,7 @@ BALM 	","
 %x s_flush
 %x s_gw
 %x s_incl
+%x s_pcf
 %x s_pos
 %x s_sol
 %x s_s
@@ -160,6 +162,7 @@ BALM 	","
 
 	/* CF-GW-POS TOKENIZER */
 
+<s_cf>n[ \t]	   	   { xreturn(CGP_N); }
 <s_cf>[^\[\] \t\n][^\[\]\n]*[^\[\] \t\n]        { ytdup(); xreturn(CF); }
 <s_cf>[^\[\] \t\n]         { ytdup(); xreturn(CF); }
 <s_cf>"["      	   	   { BEGIN ss(s_gw); xreturn(yytext[yyleng-1]); }
@@ -169,7 +172,12 @@ BALM 	","
 <s_pos>[^ \t\n]+[ \t]*	   { BEGIN ss(after_s_pos); ytdup(); xreturn(POS); }
 <s_pos>[ \t]*/\n	   { BEGIN ss(0); }
 <s_gw>\n		   { BEGIN ss(0); xreturn(EOL); }
-<s_cf,s_gw,s_pos>[ \t]+	   { /* empty */ }
+<s_cf,s_gw,s_pos,s_pcf>[ \t]+	   { /* empty */ }
+
+	/* s_pcf is used for parsing CGP after @parts */
+<s_pcf>n/[ \t\n]       	   { xreturn(CGP_N); }
+<s_pcf>[^\[\] \t\n]+/\[    { ytdup(); xreturn(CF); }
+<s_pcf>"["    	   	   { BEGIN ss(s_gw); xreturn(yytext[yyleng-1]); }
 
 	/* ALLOW TOKENIZER */
 
@@ -260,7 +268,7 @@ set_after(void)
 	after_s_pos = 0;
         break;
       case PARTS:
-	after_s_pos = s_cf;
+	after_s_pos = s_pcf;
         break;
       default:
         break;
@@ -319,7 +327,8 @@ set_ctp(void)
 	{
 	  
 	}
-      BEGIN ss(ctp->ss); set_after();
+      BEGIN ss(ctp->ss);
+      set_after();
     }
   return 1;
 }

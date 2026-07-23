@@ -513,6 +513,7 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
       const char *atftag = langtag_atf((ccp)cfp->f.lang, cfp->l.file, cfp->l.line);
       if (!atftag)
 	atftag = "sux";
+      cfp->f.lang = (uccp)atftag;
       cfp->f.core = langcore_of(atftag);
     }
   if (bit_get(cfp->f.core->features, LF_UOF))

@@ -162,7 +162,7 @@ static struct cbdtag cbdtags_wl[] =
 #line 41 "cbdtags.g"
     {"i18n",  I18N, 0, 0},
 #line 19 "cbdtags.g"
-    {"parts", PARTS, 0, s_cf},
+    {"parts", PARTS, 0, s_pcf},
     {""}, {""}, {""},
 #line 14 "cbdtags.g"
     {"form",  FORM, 0, s_f},

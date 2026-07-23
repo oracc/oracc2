@@ -37,6 +37,9 @@ cbd_auto_norm(Form *fp)
 void
 cbd_no_form_bases(Entry *ep)
 {
+  if (ep->parts)
+    return;
+
   /* index the bases that occur in @form with morph=#~ */
   Hash *fb = hash_create(5);
   Cform *fp;
@@ -59,7 +62,23 @@ cbd_no_form_bases(Entry *ep)
       List *bp = ((List *)(outer->data));
       List_node *inner = bp->first;
       struct loctok *ltp = (struct loctok *)inner->data;
+#if 0
+      char *trytok = (char*)ltp->tok;
+      if (ep->parts)
+	{
+	  trytok = memo_dup((ccp)ltp->tok);
+	  char *t = trytok;
+	  while (*t)
+	    {
+	      if (' ' == *t)
+		*t = '_';
+	      ++t;
+	    }	  
+	}
+      if (!hash_find(fb, (uccp)trytok))
+#else
       if (!hash_find(fb, ltp->tok))
+#endif
 	{
 	  Cform *nfbf = cbd_bld_form(ep->l, ep);
 	  BIT_SET(nfbf->f.flags, FORM_FLAGS_IMPLICIT);
