@@ -494,7 +494,6 @@ cbd_bld_form(YYLTYPE l, struct entry *e)
   cfp->f.file = (ucp)l.file;
   cfp->f.lnum = l.line;
   cmts(cfp->f.user);
-  list_add(e->forms, cfp);
   if (bang || e->rank)
     {
       bang = 0;
@@ -531,13 +530,17 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   cfp->f.cf = e->cgp->cf;
   cfp->f.gw = e->cgp->gw;
   cfp->f.pos = e->cgp->pos;
+  cfp->f.user = e; /* set form->user to entry that this form belongs to */
   if (!cfp->f.norm && !strncmp((ccp)cfp->f.lang, "sux", 3))
     normify_form(&cfp->f, csetp->pool);
   else if (!cfp->f.stem)
     cfp->f.stem = (uccp)"B";
+#if 0
+  /* leave _ in place for cbd_psus to deal with */
   char *uscore;
   while ((uscore = strchr((ccp)cfp->f.form, '_')))
     *uscore++ = '\0';
+#endif
   unsigned const char *bslash = (uccp)strchr((ccp)cfp->f.form, '\\');
   unsigned char *ftok = (ucp)cfp->f.form;
   if (bslash)
@@ -555,9 +558,9 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   if (cfp->f.norm && ('(' == *cfp->f.norm || strstr((ccp)cfp->f.norm, "$(")))
     cbd_cof_register(cfp);
 
-  cfp->fcgp = pool_alloc(strlen(cfp->f.form)+strlen(e->cgp->tight)+2,csetp->pool);
-  sprintf(cfp->fcgp, "%s=%s", cfp->f.form, cfp->cgp->tight);
-  hash_add(curr_cbd->hfcgps, cfp->fcgp, cfp);
+  cfp->fcgp = (ccp)pool_alloc(strlen((ccp)cfp->f.form)+strlen((ccp)e->cgp->tight)+2,csetp->pool);
+  sprintf((char*)cfp->fcgp, "%s=%s", cfp->f.form, (ccp)e->cgp->tight);
+  hash_add(curr_cbd->hfcgps, (uccp)cfp->fcgp, cfp);
 }
 
 void
@@ -709,7 +712,7 @@ cbd_bld_parts(YYLTYPE l, struct entry *e)
   list_add(csetp->parts, pp); /* global registry of @parts */
   pp->l = l;
   pp->owner = e;
-  pp->type = FORM_FLAGS_PSU_PART;
+  pp->psu_type = FORM_FLAGS_PSU_PART;
   cmts(pp->l.user);
   return pp;
 }
@@ -777,6 +780,8 @@ cbd_bld_sense(YYLTYPE l, struct entry *e)
 	 don't see how that can be useful */
       sp->rank = 2;
     }
+  else if (list_len(e->senses) == 1)
+    sp->rank = 1;
   return sp;
 }
 

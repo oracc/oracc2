@@ -340,6 +340,7 @@ struct cbdtag {
 typedef struct lemsig
 {
   unsigned const char *sig;
+  unsigned const char *key; /* for PSU this is just the PSU_KEY; otherwise == sig */
   int rank;
   int freq;
 } Lemsig;
@@ -446,6 +447,8 @@ extern unsigned const char *cgp_entry_str(struct entry *e, int spread);
 extern const unsigned char *cgp_str(struct cgp *cp, int spread);
 extern void cgp_entry(struct cgp *c, struct entry *e);
 extern void cbd_psus(void);
+extern void cbd_psu_forms(void);
+extern List *cbd_psu_sigs(Form *fp);
 extern void cgp_set_pool(Pool *p);
 
 extern void cbd_form_walk(Cbd *c, cbdfwfunc h);

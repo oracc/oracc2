@@ -80,7 +80,7 @@ unsigned char *list_to_str2(List *l, const char *sep);
 #define list_push	list_add
 #define list_len(lp)	((lp) == NULL ? 0 : (lp)->count)
 #define list_at_beginning(lp) ((lp)->rover == (lp)->first)
-extern const char *vec_sep_str;
+extern const char *list_vec_sep_str;
 extern const void **list2array(List *l);
 extern const void **list2array_c(List *l, int *n);
 #define list2chars(l) (const char **)list2array((l))

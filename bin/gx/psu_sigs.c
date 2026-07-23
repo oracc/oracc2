@@ -2,6 +2,7 @@
 #include <cbd.h>
 #include "gx.h"
 
+#if 0
 static List *
 psu_permute(List *heads, Cgp *cp, int ffi, int nbytes)
 {
@@ -146,20 +147,36 @@ psu_parts_sigs(List *sigs, Entry *ep, Parts *p)
     }
 }
 
+#endif
+
 void
 psu_sigs(Entry *ep)
 {
+#if 1
+  Cform *cfp;
+  for (cfp = list_first(ep->forms); cfp; cfp = list_next(ep->forms))
+    {
+      List *sigs = cbd_psu_sigs(&cfp->f);
+      char *sig;
+      int psu_sense_rank = 1;
+      for (sig = list_first(sigs); sig; sig = list_next(sigs))
+	if (out_stdout)
+	  fprintf(stdout, "%s\n", sig);
+	else
+	  cbd_sig_add_one((uccp)sig, psu_sense_rank-- ? 1 : 0);
+    }
+#else
   List *sigs = list_create(LIST_SINGLE);
   Parts *p;
 
   for (p = list_first(ep->parts); p; p = list_next(ep->parts))
     if (p->owner)
       psu_parts_sigs(sigs, ep, p);
-
   char *sig;
   for (sig = list_first(sigs); sig; sig = list_next(sigs))
     if (out_stdout)
       fprintf(stdout, "%s\n", sig);
     else
       cbd_sig_add_one((uccp)sig, 0);
+#endif
 }

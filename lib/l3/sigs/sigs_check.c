@@ -305,8 +305,8 @@ f2_test_no_sense(Form *f, Form *f2)
 static int
 psu_bit_ok(Form *f1, Form *f2)
 {
-  return BIT_ISSET(f1->flags, FORM_FLAGS_IS_PSU)
-    == BIT_ISSET(f2->flags, FORM_FLAGS_IS_PSU);
+  return BIT_ISSET(f1->flags, FORM_FLAGS_PSU_BITS)
+    == BIT_ISSET(f2->flags, FORM_FLAGS_PSU_BITS);
 }
 
 /* We check COFs by first obeying only SENSE; if the calling 

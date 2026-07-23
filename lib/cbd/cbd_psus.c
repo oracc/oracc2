@@ -1,8 +1,6 @@
 #include <oraccsys.h>
 #include "cbd.h"
 
-/* ON OUTPUT CREATE A BLOCK OF ALL PSU DATA FOR EACH PSU SENSE */
-
 static Entry *
 xcbd_find(Entry *ep, unsigned const char *cgp, Cbd *x)
 {
@@ -89,7 +87,7 @@ cbd_psus(void)
       Hash *seen = hash_create(0);
       if (psu_verbose)
 	fprintf(stderr, "cbd_psus: %s\n", p->owner->cgp->tight);
-      p->f.parts = memo_array_new(csetp->formspmem, list_len(p->cgps));
+      p->f.parts = memo_new_array(csetp->formspmem, list_len(p->cgps)+1);
       /* Each Cgp here is actually a signature broken into CF,
 	 GW//SENSE, POS-etc.  This is already reassembled by cgp_save
 	 as cgp->tight using pool_copy so we can safeley split it
@@ -98,9 +96,12 @@ cbd_psus(void)
       for (i = 0, cp = list_first(p->cgps); cp; cp = list_next(p->cgps), ++i)
 #if 1
 	{
-	  form_parse(p->mloc->file, p->mloc->line, cp->tight, p->f.parts[i], NULL);
+	  p->f.parts[i] = memo_new(csetp->formsmem);
+	  form_parse((uccp)p->l.file, p->l.line, (ucp)cp->tight, p->f.parts[i], NULL);
+	  p->f.parts[i]->project = pcbd->project;
 	  cp->loose = cp->tight = NULL;
-	  cgp_init(cp, form[i].cf, form[i].gw, form[i].pos); /* reset all cgp fields */
+	  /* reset all cgp fields */
+	  cgp_init(cp, (ucp)p->f.parts[i]->cf, (ucp)p->f.parts[i]->gw, (ucp)p->f.parts[i]->pos);
 	  Entry *ep = hash_find(pcbd->hentries, (uccp)cp->tight);
 	  if (ep)
 	    cp->owner = ep;
@@ -118,14 +119,14 @@ cbd_psus(void)
 	    }
 	  if (cp->owner)
 	    {
-	      if (!hash_find(seen, (uccp)c))
+	      if (!hash_find(seen, (uccp)cp->tight))
 		{
 		  psu_index(cp->owner, p->owner); /* index the current part
 						     as occurring in the
 						     current PSU */
 		  /* if a part occurs more than once in a PSU only index
 		     it once to avoid faffing with uniqing later */
-		  hash_add(seen, (uccp)c, "");
+		  hash_add(seen, (uccp)cp->tight, "");
 		}
 	    }
 	  else
@@ -137,9 +138,11 @@ cbd_psus(void)
       if (!cgp_fails)
 	{
 	  bit_set(p->f.flags, FORM_FLAGS_PSU_PART);
+	  p->f.project = p->owner->owner->project;
 	  p->f.cf = p->owner->cgp->cf;
 	  p->f.gw = p->owner->cgp->gw;
 	  p->f.pos = p->owner->cgp->pos;
+	  p->f.user = p->owner; /* set form->user to entry that this form belongs to */
 	}
       else
 	p->f.parts = NULL;
@@ -202,9 +205,9 @@ cpf_try_parts(Parts *p, List *ffs)
   for (i = 0, f = list_first(ffs), c = list_first(p->cgps);
        f && c; ++i, f = list_next(ffs), c = list_next(p->cgps))
     {
-      char fcgp[strlen(f)+strlen(c->tight)+2];
+      char fcgp[strlen(f)+strlen((ccp)c->tight)+2];
       sprintf(fcgp, "%s=%s", f, c->tight);
-      Cform *ok = hash_find(p->owner->owner->hfcgps, fcgp);
+      Cform *ok = hash_find(p->owner->owner->hfcgps, (uccp)fcgp);
       if (ok)
 	list_add(fok, ok);
       else
@@ -212,7 +215,7 @@ cpf_try_parts(Parts *p, List *ffs)
     }
   if (NULL != p->f.parts[i]) /* success */
     {
-      list_free(fok);
+      list_free(fok, NULL);
       fok = NULL;
     }
   return fok;
@@ -221,11 +224,11 @@ cpf_try_parts(Parts *p, List *ffs)
 static int
 cpf_try_form(Cform *f)
 {
-  char buf[strlen(f->f.form)+1];
-  strcpy(buf, f->f.form);
-  char *lvecstr = list_vec_sep_str;
+  char buf[strlen((ccp)f->f.form)+1];
+  strcpy(buf, (ccp)f->f.form);
+  const char *lvecstr = list_vec_sep_str;
   list_vec_sep_str = "_";
-  char **ffs = list_from_str(buf);
+  List *ffs = list_from_str(buf, NULL, LIST_SINGLE);
   list_vec_sep_str = lvecstr;
 
   Parts *p;
@@ -238,18 +241,20 @@ cpf_try_form(Cform *f)
 
   if (fok)
     {
-      /* forms sequence matches @parts: set up f->f as a form with parts and with PSU_FLAGS_PSU_FORM set */
+      /* forms sequence matches @parts: set up f->f as a form with parts
+	 and with PSU_FLAGS_PSU_FORM set */
       bit_set(f->f.flags, FORM_FLAGS_PSU_FORM);
       f->f.parts = memo_new_array(csetp->formspmem, list_len(fok)+1);
       int i;
-      Form *okf, *pf;
-      for (i = 0, okf = list_first(fok); okf; okf = list_next(okf))
+      Cform *okf;
+      for (i = 0, okf = list_first(fok); okf; okf = list_next(fok), ++i)
 	{
+	  f->f.parts[i] = memo_new(csetp->formsmem);
 	  *f->f.parts[i] = *p->f.parts[i];
 	  f->f.parts[i]->form = okf->f.form;
 	  f->f.parts[i]->lang = okf->f.lang;
-	  list_free(fok, NULL);
 	}
+      list_free(fok, NULL);
     }
 
   return p != NULL;
@@ -262,41 +267,109 @@ cbd_psu_forms(void)
   for (e = list_first(csetp->ewithparts); e; e = list_next(csetp->ewithparts))
     {
       Cform *f;
-      List *pforms = list_create(LIST_SINGLE); /* list of forms that belong to @parts */
+      /*List *pforms = list_create(LIST_SINGLE);*/ /* list of forms that belong to @parts */
       int i;
       for (i = 0, f = list_first(e->forms); f; f = list_next(e->forms), ++i)
 	{
 	  if (!cpf_try_form(f))
-	    mesg_verr(f->mloc, "form %s does not match any @parts spec", f->f.form);
+	    mesg_verr(&f->l, "form %s does not match any @parts spec", f->f.form);
 	}
     }
 }
 
-static unsigned char *
-cfp_corgi(Form *fp)
+static void
+cbd_psu_sig_key(FILE *bufp, Form *fp, uccp sense)
 {
-  
-}
-
-unsigned char *
-cbd_psu_sig(Form *fp)
-{
-  int corgi = 1;
+  fputc('{', bufp);
   int i;
   for (i = 0; fp->parts[i]; ++i)
     {
-      if (!fp->sense && !fp->morph)
-	{
-	  corgi = 0;
-	  break;
-	}
+      if (i)
+	fputc(' ', bufp);
+      fprintf(bufp, "%s[%s]%s", fp->parts[i]->cf, fp->parts[i]->gw, fp->parts[i]->pos);
     }
-  unsigned char *sig = form_sig(csetp->pool, fp);
-  if (corgi)
+  if (sense)
+    fprintf(bufp, " += %s[%s//%s]%s}::", fp->cf, fp->gw, sense, fp->pos);
+  else
+    fprintf(bufp, " += %s[%s]%s}::", fp->cf, fp->gw, fp->pos);
+}
+
+static void
+cbd_psu_sig_one_part(FILE *bufp, Form *fp)
+{
+  fprintf(bufp,"@%s%%%s:%s=%s[%s",fp->project,fp->lang,fp->form,fp->cf,fp->gw);
+
+  if (fp->sense)
+    fprintf(bufp, "//%s", fp->sense);
+
+  fprintf(bufp, "]%s", fp->pos);
+  if (fp->epos)
+    fprintf(bufp, "'%s", fp->epos);
+
+  if (fp->norm)
+    fprintf(bufp,"$%s",fp->norm);
+
+  if (fp->base)
+    fprintf(bufp,"/%s",fp->base);
+
+  if (fp->cont && *fp->cont)
+    fprintf(bufp,"+%s",fp->cont);
+
+  if (fp->morph)
+    fprintf(bufp,"#%s",fp->morph);
+
+  if (fp->morph2)
+    fprintf(bufp,"##%s",fp->morph2);
+
+  if (fp->stem)
+    fprintf(bufp,"*%s",fp->stem);
+
+  if (fp->rws)
+    fprintf(bufp,"@%s",fp->rws);
+}
+
+static void
+cbd_psu_sig_parts(FILE *bufp, Form *fp)
+{
+  int i;
+  for (i = 0; fp->parts[i]; ++i)
     {
-      char *tail = strstr(sig, "}::");
-      tail += 3;
-      *tail = '\0';
+      if (i)
+	fputs("++", bufp);
+      cbd_psu_sig_one_part(bufp, fp->parts[i]);
     }
-  return sig;
+}
+
+List *
+cbd_psu_sigs(Form *fp)
+{
+
+#if 0
+  int corgi = 1;
+  int i;
+  for (i = 0; fp->parts[i]; ++i)
+    if (!fp->sense && !fp->morph)
+      {
+	corgi = 0;
+	break;
+      }
+#endif
+
+  List *lsigs = list_create(LIST_SINGLE);
+  Entry *ep = fp->user;
+  Sense *sp;
+  for (sp = list_first(ep->senses); sp; sp = list_next(ep->senses))
+    {
+      char *sig_buf = NULL;
+      size_t sig_len = 0;
+      FILE *sig_fp = open_memstream(&sig_buf, &sig_len);
+      cbd_psu_sig_key(sig_fp, fp, sp->sgw ? sp->sgw : sp->mng);
+      /*if (!corgi)*/
+	cbd_psu_sig_parts(sig_fp, fp);
+      fclose(sig_fp);
+      memo_list(sig_buf);
+      list_add(lsigs, sig_buf);
+    }
+
+  return lsigs;
 }

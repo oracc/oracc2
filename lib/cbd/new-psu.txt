@@ -51,3 +51,12 @@ NEW PSU IMPLEMENTATION
 
   ** For PSU_INST, SIG is the entire instance signature as pointed to
      in the linkset entry for the PSU match.
+
+* How PSU SENSE Works
+
+PSUs can have multiple senses in the glossary but because all matching
+is done on the PSU_KEY, which has no SENSE component, there is no way
+of selecting a PSU SENSE automatically; PSU SENSEs must be given
+manually in the corpus lemmatization using the += notation on the
+lemmatization of the PSU head.
+

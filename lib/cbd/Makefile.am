@@ -11,4 +11,5 @@ cbd.tab.c cbd.tab.h: cbd.y cbd.l
 
 cbd.lex.c: cbd.l cbd.tab.h
 	flex -d -B -DYY_NO_INPUT -o $@ cbd.l
+	indent cbd.lex.c
 	grep '#define s_' cbd.lex.c >startstates.h

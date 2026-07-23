@@ -21,7 +21,13 @@ cbd_sig_add_one(const unsigned char *s, int rank)
     hash_add(csetp->hsiglangs, pool_copy((uccp)buf, csetp->pool), (lp = list_create(LIST_SINGLE)));
 
   Lemsig *lsp = memo_new(csetp->lsigmem);
-  lsp->sig = s;
+  lsp->key = lsp->sig = s;
+  if (t != s)
+    {
+      lsp->key = (uccp)memo_dup((ccp)lsp->sig);
+      char *k = strstr((ccp)lsp->key, "}::");
+      k[1] = '\0';
+    }
   if (rank)
     lsp->rank = rank;
   list_add(lp, lsp);

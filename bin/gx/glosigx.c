@@ -19,6 +19,7 @@ extern struct map *qpnnames(register const char *str, register size_t len);
 FILE *f_xml;
 int glo_mode = 0, lang_list = 0, quiet = 0;
 int parser_status = 0;
+int psu_output_only = 0;
 int verbose = 0;
 int bootstrap_mode, lem_autolem, lem_dynalem;
 int out_stdout;
@@ -149,7 +150,7 @@ cbd_sigs(Cbd *c)
   for (ep = list_first(c->entries); ep; ep = list_next(c->entries))
     if (ep->parts)
       psu_sigs(ep);
-    else
+    else if (!psu_output_only)
       cbd_entry_sigs(ep);
 }
 
@@ -199,8 +200,8 @@ main(int argc, char * const *argv)
 
   common_init();
 
-  options(argc,argv,"glqs");
-  
+  options(argc,argv,"glpqs");
+
   if (argv[optind])
     glos = (char**)argv+optind;
   else
@@ -292,6 +293,7 @@ main(int argc, char * const *argv)
 	    }
 	  xfclose(file, glofp);
 	  cbd_psus();
+	  cbd_psu_forms();
 	  cbd_sigs(c);
 	}
       mesg_print(stderr);
@@ -344,7 +346,7 @@ main(int argc, char * const *argv)
 			{
 			  fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
 			  char *sqb = strchr((ccp)lsp[j]->sig, '\'');
-			  if ('N' == sqb[2] && !isalnum(sqb[3]))
+			  if (sqb && strlen(sqb)>2 && 'N' == sqb[2] && !isalnum(sqb[3]))
 			    {
 			      char epos[3] = { sqb[1], sqb[2], '\0' };
 			      qpn_sub(lsp[j], epos);
@@ -355,7 +357,9 @@ main(int argc, char * const *argv)
 		}
 	      else
 		{
-		  Hash *hlem = hash_find(csetp->lems, (uccp)langs[i]);
+		  Hash *hlem = NULL;
+		  if (csetp->lems)
+		    hash_find(csetp->lems, (uccp)langs[i]);
 		  if (hlem)
 		    {
 		      int ii;
@@ -396,6 +400,9 @@ int opts(int och, const char *oarg)
       break;
     case 'l':
       lang_list = 1;
+      break;
+    case 'p':
+      psu_output_only = 1;
       break;
     case 'q':
       quiet = 1;
