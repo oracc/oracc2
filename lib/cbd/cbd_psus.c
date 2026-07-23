@@ -1,6 +1,17 @@
 #include <oraccsys.h>
 #include "cbd.h"
 
+static Cgp n_cgp = {
+  .cf=(uccp)"" , .gw=(uccp)"", .pos=(uccp)"n",
+  .tight=(uccp)"n", .loose=(uccp)"n" 
+};
+
+static Entry n_entry = {
+  .l = { .file="<builtin>", .line=1 },
+  .oid = "o0040000",
+  .cgp = &n_cgp
+};
+
 static Entry *
 xcbd_find(Entry *ep, unsigned const char *cgp, Cbd *x)
 {
@@ -94,12 +105,11 @@ cbd_psus(void)
 	 using form_parse */
       int i;
       for (i = 0, cp = list_first(p->cgps); cp; cp = list_next(p->cgps), ++i)
-#if 1
 	{
 	  p->f.parts[i] = memo_new(csetp->formsmem);
 	  form_parse((uccp)p->l.file, p->l.line, (ucp)cp->tight, p->f.parts[i], NULL);
 	  p->f.parts[i]->project = pcbd->project;
-	  if (strcmp(cp->loose, "n"))
+	  if (strcmp((ccp)cp->loose, "n"))
 	    {
 	      cp->loose = cp->tight = NULL;
 	      /* reset all cgp fields */	  
@@ -110,7 +120,9 @@ cbd_psus(void)
 	    cp->owner = ep;
 	  else
 	    {
-	      if ((ep = xcbd_find(ep,(uccp)cp->tight,pcbd)))
+	      if (!strcmp((ccp)cp->tight, "n"))
+		cp->owner = &n_entry;
+	      else if ((ep = xcbd_find(ep,(uccp)cp->tight,pcbd)))
 		cp->owner = ep;
 	      else
 		{
@@ -150,49 +162,6 @@ cbd_psus(void)
       else
 	p->f.parts = NULL;
     }
-#else
-  {
-    char *c = (char*)cp->tight, *m = NULL;
-    if (('n' == c[0] && ' ' == c[1])
-	|| strstr(c, " n ")
-	|| strstr(c, "//")
-	|| strchr(c, '\''))
-      c = m = sanitize_cgp(c);
-    /*fprintf(stderr, "cbd_psus: need %s in %p ...", c, pcbd->hentries);*/
-    Entry *ep = hash_find(pcbd->hentries, (uccp)c);
-    if (ep)
-      {
-	/*fprintf(stderr, "ok\n");*/
-	cp->owner = ep;
-      }
-    else
-      {
-	/*fprintf(stderr, "nope\n");*/
-	if ((ep = xcbd_find(ep,(uccp)c,pcbd)))
-	  cp->owner = ep;
-	else
-	  {
-	    mesg_verr(&p->l, "part %s not found in any glossary", cp->tight);
-	    p->owner = NULL; /* flag value to indicate that no
-				future processing of @parts
-				should be done */
-	  }
-      }
-    if (cp->owner && !hash_find(seen, (uccp)c))
-      {
-	psu_index(cp->owner, p->owner); /* index the current part
-					   as occurring in the
-					   current PSU */
-	/* if a part occurs more than once in a PSU only index
-	   it once to avoid faffing with uniqing later */
-	hash_add(seen, (uccp)c, "");
-      }
-    if (m)
-      free(m);
-  }
-  hash_free(seen, NULL);  
-}
-#endif
 }
 
 static List *
@@ -291,7 +260,10 @@ cbd_psu_sig_key(FILE *bufp, Form *fp, uccp sense)
     {
       if (i)
 	fputc(' ', bufp);
-      fprintf(bufp, "%s[%s]%s", fp->parts[i]->cf, fp->parts[i]->gw, fp->parts[i]->pos);
+      if (!strcmp((ccp)fp->parts[i]->pos, "n"))
+	fputc('n', bufp);
+      else
+	fprintf(bufp, "%s[%s]%s", fp->parts[i]->cf, fp->parts[i]->gw, fp->parts[i]->pos);
     }
   if (sense)
     fprintf(bufp, " += %s[%s//%s]%s}::", fp->cf, fp->gw, sense, fp->pos);
@@ -302,35 +274,43 @@ cbd_psu_sig_key(FILE *bufp, Form *fp, uccp sense)
 static void
 cbd_psu_sig_one_part(FILE *bufp, Form *fp)
 {
-  fprintf(bufp,"@%s%%%s:%s=%s[%s",fp->project,fp->lang,fp->form,fp->cf,fp->gw);
+  if (!strcmp((ccp)fp->pos, "n"))
+    fputc('n', bufp);
+  else
+    {
+      if (fp->lang)
+	fprintf(bufp,"@%s%%%s:%s=%s[%s",fp->project,fp->lang,fp->form,fp->cf,fp->gw);
+      else
+	fprintf(bufp,"@%s%%=%s[%s",fp->project,fp->cf,fp->gw);
 
-  if (fp->sense)
-    fprintf(bufp, "//%s", fp->sense);
+      if (fp->sense)
+	fprintf(bufp, "//%s", fp->sense);
 
-  fprintf(bufp, "]%s", fp->pos);
-  if (fp->epos)
-    fprintf(bufp, "'%s", fp->epos);
+      fprintf(bufp, "]%s", fp->pos);
+      if (fp->epos)
+	fprintf(bufp, "'%s", fp->epos);
 
-  if (fp->norm)
-    fprintf(bufp,"$%s",fp->norm);
+      if (fp->norm)
+	fprintf(bufp,"$%s",fp->norm);
 
-  if (fp->base)
-    fprintf(bufp,"/%s",fp->base);
+      if (fp->base)
+	fprintf(bufp,"/%s",fp->base);
 
-  if (fp->cont && *fp->cont)
-    fprintf(bufp,"+%s",fp->cont);
+      if (fp->cont && *fp->cont)
+	fprintf(bufp,"+%s",fp->cont);
 
-  if (fp->morph)
-    fprintf(bufp,"#%s",fp->morph);
+      if (fp->morph)
+	fprintf(bufp,"#%s",fp->morph);
 
-  if (fp->morph2)
-    fprintf(bufp,"##%s",fp->morph2);
+      if (fp->morph2)
+	fprintf(bufp,"##%s",fp->morph2);
 
-  if (fp->stem)
-    fprintf(bufp,"*%s",fp->stem);
+      if (fp->stem)
+	fprintf(bufp,"*%s",fp->stem);
 
-  if (fp->rws)
-    fprintf(bufp,"@%s",fp->rws);
+      if (fp->rws)
+	fprintf(bufp,"@%s",fp->rws);
+    }
 }
 
 static void

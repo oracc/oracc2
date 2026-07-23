@@ -59,7 +59,7 @@ psu.compound = element compound { cpd+ }
 cpd = element cpd {
     attribute primary { "1" }?,
     attribute partsig { text },
-    attribute ref { text },
+    attribute ref { text }?,
     cgp
     }
 

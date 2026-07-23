@@ -138,7 +138,8 @@ ratts_cpd(Cgp *c, enum o_mode mode)
   if (c->primary)
     list_pair(lp, "primary", 1);
   list_pair(lp, "partsig", c->tight);
-  list_pair(lp, "ref", c->owner->oid);
+  if (c->owner)
+    list_pair(lp, "ref", c->owner->oid);
   return ratts_list2ratts(lp);
 }
 
