@@ -32,10 +32,13 @@ typedef struct cbdset
   Hash *hsiglangs;
   int ntails;
   List *parts;
+  List *ewithparts; /* entries with parts */
   Hash *hpsus; /* index of psu-parts to psus they occur in */
   Memo *cbdmem;
   Memo *cofmem;
-  Memo *cformsmem;
+  Memo *formsmem; 	/* type Form */
+  Memo *formspmem; 	/* type Form* */
+  Memo *cformsmem;	/* type Cform */
   Memo *fieldsmem;
   Memo *lsigmem;
   Memo *nmfmsmem;
@@ -65,6 +68,7 @@ typedef struct cbd {
   Hash *hfutures; 	/* rename like >>e [water] N creates a cgp->loose hash to its entry */
   Hash *hsenses;
   Hash *haliases;
+  Hash *hfcgps;
   Hash *simple;
   Hash *hprefs;
   char *i18nstr; 	/* content of the @i18n header tag */
@@ -150,6 +154,7 @@ typedef enum efield {
 typedef struct cform {
   Mloc l;
   const char *id;
+  const char *fcgp;
   struct entry *e;
   struct sense *s;
   struct gdl_token *t; /* form token */
@@ -254,8 +259,10 @@ struct alias {
 
 typedef struct parts {
   Mloc l;
-  List *cgps; /* list_free(cgps,NULL) when freeing cbd */
   Entry *owner;
+  List *cgps; 	/* list_free(cgps,NULL) when freeing cbd */
+  Unsigned32 psu_type; /* any of FORM_FLAGS_PSU_BITS in form.h */
+  Form f;	/* the @parts as a Form with f.parts being the CGPs */
 } Parts;
 
 typedef struct sense {

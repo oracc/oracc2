@@ -34,7 +34,7 @@ NEW PSU IMPLEMENTATION
 * SIG can be sparse:
 
   ** For PSU_PART, SIG has any elements given in the @parts spec,
-     allowable constraints are on SENSE, EPOS, BASE, MORPH
+     allowable constraints are on SENSE, EPOS, BASE, MORPH, NORM, STEM
 
   ** For PSU_FORM, SIG has any elements given in the @parts spec, plus
      the FORM.  Each FORM is used with the CGP of each PARTS CGP to
@@ -51,4 +51,3 @@ NEW PSU IMPLEMENTATION
 
   ** For PSU_INST, SIG is the entire instance signature as pointed to
      in the linkset entry for the PSU match.
-

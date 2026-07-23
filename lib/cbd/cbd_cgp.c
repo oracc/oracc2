@@ -72,12 +72,10 @@ cgp_str(struct cgp *cp, int loose)
   if (!loose && cp->tight)
     return cp->tight;
   
-  tmp =  malloc(3+(loose*2)+strlen((ccp)cp->cf)+strlen((ccp)cp->gw)+strlen((ccp)cp->pos));
+  tmp = (char*)pool_alloc(3+(loose*2)+strlen((ccp)cp->cf)+strlen((ccp)cp->gw)+strlen((ccp)cp->pos), cgp_pool);
   if (loose)
     sprintf(tmp, "%s [%s] %s", cp->cf, cp->gw, cp->pos);
   else
     sprintf(tmp, "%s[%s]%s", cp->cf, cp->gw, cp->pos);
-  tmp2 = pool_copy((ucp)tmp, cgp_pool);
-  free(tmp);
-  return tmp2;
+  return tmp;
 }

@@ -215,6 +215,7 @@ cbd_bld_cbd(void)
   c->reldefs = list_create(LIST_SINGLE);
   c->haliases = hash_create(16);
   c->hentries = hash_create(1024);
+  c->hfcgps = hash_create(1024);
   c->hfutures = hash_create(10); /* for >> renames in entries */
 #if 0
   c->hsenses = hash_create(1024);
@@ -510,7 +511,7 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
   cfp->f.core = langcore_of((ccp)cfp->f.lang);
   if (!cfp->f.core)
     {
-      const char *atftag = langtag_atf(cfp->f.lang, cfp->l.file, cfp->l.line);
+      const char *atftag = langtag_atf((ccp)cfp->f.lang, cfp->l.file, cfp->l.line);
       if (!atftag)
 	atftag = "sux";
       cfp->f.core = langcore_of(atftag);
@@ -553,6 +554,10 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
       mesg_verr(&cfp->l, "base %s generated bad sig %s\n", cfp->f.base, gdl_last_bad_sig);
   if (cfp->f.norm && ('(' == *cfp->f.norm || strstr((ccp)cfp->f.norm, "$(")))
     cbd_cof_register(cfp);
+
+  cfp->fcgp = pool_alloc(strlen(cfp->f.form)+strlen(e->cgp->tight)+2,csetp->pool);
+  sprintf(cfp->fcgp, "%s=%s", cfp->f.form, cfp->cgp->tight);
+  hash_add(curr_cbd->hfcgps, cfp->fcgp, cfp);
 }
 
 void
@@ -696,11 +701,15 @@ cbd_bld_parts(YYLTYPE l, struct entry *e)
 {
   struct parts *pp = memo_new(e->owner->partsmem);
   if (!e->parts)
-    e->parts = list_create(LIST_SINGLE);
+    {
+      e->parts = list_create(LIST_SINGLE);
+      list_add(csetp->ewithparts, e);
+    }
   list_add(e->parts, pp);
   list_add(csetp->parts, pp); /* global registry of @parts */
   pp->l = l;
   pp->owner = e;
+  pp->type = FORM_FLAGS_PSU_PART;
   cmts(pp->l.user);
   return pp;
 }
@@ -794,10 +803,13 @@ cbd_bld_set(void)
   csetp->hgdl = hash_create(1024);
   csetp->lngs = hash_create(8);
   csetp->parts = list_create(LIST_SINGLE);
+  csetp->ewithparts = list_create(LIST_SINGLE);
   csetp->hpsus = hash_create(1024);
   csetp->hsiglangs = hash_create(8);
   csetp->cbdmem = memo_init(sizeof(Cbd), 8);
   csetp->cofmem = memo_init(sizeof(Cof), 16);
+  csetp->formsmem = memo_init(sizeof(Form), 512);
+  csetp->formspmem = memo_init(sizeof(Form*), 512);
   csetp->cformsmem = memo_init(sizeof(Cform), 512);
   csetp->fieldsmem = memo_init(sizeof(Field), 512);
   csetp->lsigmem = memo_init(sizeof(struct lemsig), 1024);
