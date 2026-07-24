@@ -358,7 +358,9 @@ gdl_legacy_brackets(char *b)
 		{
 		  mesg_verr(&gdllloc, "nested pairs; bracketing ignored (reported once per grapheme)");
 		  return;
-		} 
+		}
+	      else
+		++s;
 	    }
 	  else
 	    ++s;
@@ -375,6 +377,8 @@ gdl_legacy_brackets(char *b)
 		  mesg_verr(&gdllloc, "double-closer; bracketing ignored (reported once per grapheme)");
 		  return;
 		}
+	      else
+		++s;
 	    }
 	  else
 	    ++s;
