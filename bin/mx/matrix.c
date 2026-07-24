@@ -10,7 +10,11 @@ int lnum;
 int status;
 const char *curr_filename;
 
-FILE *f_log;
+int bootstrap_mode, fuzzy_aliasing, lem_autolem, lem_dynalem;
+Mloc *xo_loc;
+const char *file;
+FILE *f_log, *f_xml;
+int rnvtrace, verbose;
 
 #define MTX_ISDELIM(c) ((c)=='-'||(c)=='.'||(c)==' '||(c)=='\t'||(c)=='\n')
 

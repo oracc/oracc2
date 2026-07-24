@@ -16,6 +16,7 @@ FILE *f_xml;
 Mloc xo_loc;
 int status, rnvtrace;
 const char *file;
+int bootstrap_mode, fuzzy_aliasing, lem_autolem, lem_dynalem;
 
 const char *xatf_name = NULL;
 

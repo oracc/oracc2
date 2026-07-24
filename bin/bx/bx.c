@@ -27,6 +27,7 @@ extern int optind;
 
 const char *bibsfile = NULL; /* file of paths to .bib files */
 const char *cite_type = NULL;
+const char *file;
 int overwrite = 0, verbose = 0;
 
 int
