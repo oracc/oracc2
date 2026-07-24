@@ -25,7 +25,16 @@ errormode(void)
 }
 
 static FILE *
-listfile(void)
+listfile_bld(void)
+{
+  char buf[strlen(oracc())+strlen(project)+strlen("//bld/lists/atfinstall.lst0")];
+  sprintf(buf, "%s/bld/%s/lists/atfinstall.lst", oracc(), project);
+  list_fn = strdup(buf);
+  return xfopen(buf, "w");
+}
+
+static FILE *
+listfile_01bld(void)
 {
   char buf[strlen(oracc())+strlen(project)+strlen("//01bld/lists/atfinstall.lst0")];
   sprintf(buf, "%s/%s/01bld/lists/atfinstall.lst", oracc(), project);
@@ -96,8 +105,8 @@ main(int argc, char *const *argv)
     }
   program_values(prog, 1, 0, "atfinstall -p [PROJECT] [-v]", NULL);
 
-  FILE *list_fp = listfile();
-  if (!list_fp)
+  FILE *list_fp = listfile_bld();
+  if (!list_fp && !(list_fp = listfile_01bld()))
     return error_mode;
 
   while (argv[optind])

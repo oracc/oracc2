@@ -39,7 +39,6 @@ else
     group=oradmin
 fi
 
-cd @@ORACC_BUILDS@@/$project
 for dir in bld pub tmp xml www ; do
     md=@@ORACC_BUILDS@@/$dir/$project
     mkdir $V -p $md
@@ -47,6 +46,7 @@ for dir in bld pub tmp xml www ; do
     chmod 2775 $md
 done
 
+cd $odo_projdir
 mkdir -p 01log
 rm $V -f 01bld 01tmp 02pub 02www 02xml
 

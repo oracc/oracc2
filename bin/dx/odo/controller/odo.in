@@ -238,7 +238,11 @@ else
     if [ "$command" = "env" ]; then
 	F=-f
     fi
-    projdir=@@ORACC_BUILDS@@/$project
+    if [ -r 00lib/config.xml ]; then
+	projdir=`pwd`
+    else
+	projdir=@@ORACC_BUILDS@@/$project
+    fi
     if [ -d $projdir ]; then
 	(cd $projdir
 	 /bin/echo -n $log >.odolog
@@ -248,12 +252,18 @@ else
 	 odo_log=$log
 	 odo_odo=odo
 	 odo_proj=$project
+	 odo_projdir=$projdir
 	 odo_setx=$setx
 	 odo_tmpd=$tmpdir
 	 odo_user=$user
 	 set +a
 	 if [ $command = "reset" ]; then
 	     odo-reset.sh
+	     set_status done
+	     odo_term
+	 elif [ $command = "config" ]; then
+	     odo_time odo-config.sh
+	     $bin/odo-config.sh $*
 	     set_status done
 	     odo_term
 	 else
@@ -263,9 +273,6 @@ else
 		 if [ "$command" != "check" ]; then
 		     odo_time odo-config.sh
 		     $bin/odo-config.sh $*
-		     if [ "${command}" = "config" ]; then
-			 odo_term
-		     fi
 		     if [ $? -eq 0 ]; then
 			 odo_time odo-update.sh
 			 $bin/odo-update.sh $project $V

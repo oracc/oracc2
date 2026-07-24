@@ -31,7 +31,7 @@ for a in $sorts ; do
 done
 
 # If we processed a special mode also precompute a default mode based on txtindex.lst
-if [ "$spec" = "1" ]; then
+if [ "$spec" = "1" ] && [ -s 01bld/lists/txtindex.lst ]; then
     flds=`oraccopt . outline-default-sort-fields`
     if [ "$flds" != "" ]; then
 	perm=`/bin/echo -n $flds | tr -cd ,`	
