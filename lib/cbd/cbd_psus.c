@@ -142,10 +142,12 @@ cpf_try_parts(Parts *p, List *ffs)
   for (i = 0, f = list_first(ffs), c = list_first(p->cgps);
        f && c; ++i, f = list_next(ffs), c = list_next(p->cgps))
     {
+      if (!strcmp(f, "tu₂"))
+	fprintf(stderr, "found tu₂\n");
       if (!f[1])
 	{
 	  if ('0' == *f)
-	    ++zeroes;
+	    ++zeroes; /* allow i to reach the end of p->f.parts */
 	  else if ('n' == *f)
 	    {
 	      /* This should check we are matching against 'n' in @parts */
@@ -167,7 +169,7 @@ cpf_try_parts(Parts *p, List *ffs)
 	    break;
 	}
     }
-  if (NULL != p->f.parts[i+zeroes]) /* success if p->f.parts[i] == NULL */
+  if (NULL != p->f.parts[i]) /* success if p->f.parts[i] == NULL */
     {
       list_free(fok, NULL);
       fok = NULL;
