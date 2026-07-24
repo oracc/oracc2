@@ -177,6 +177,7 @@ BALM 	","
 <s_pcf>n/[ \t\n]       	   { xreturn(CGP_N); }
 <s_pcf>[^\[\] \t\n]+/\[    { ytdup(); xreturn(CF); }
 <s_pcf>"["    	   	   { BEGIN ss(s_gw); xreturn(yytext[yyleng-1]); }
+<s_pcf>\n    	   	   { BEGIN ss(0); }
 
 	/* ALLOW TOKENIZER */
 

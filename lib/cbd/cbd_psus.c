@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <gt.h>
 #include "cbd.h"
 
 static Cgp n_cgp = {
@@ -10,6 +11,12 @@ static Entry n_entry = {
   .l = { .file="<builtin>", .line=1 },
   .oid = "o0040000",
   .cgp = &n_cgp
+};
+
+static Cform n_cform = {
+  .l = { .file="<builtin>", .line=1 },
+  .e = &n_entry,
+  .f = { .form = (uccp)"n", .pos = (uccp)"n" } 
 };
 
 static Entry *
@@ -32,49 +39,6 @@ psu_index(Entry *part, Entry *psu)
     hash_add(csetp->hpsus, part->cgp->tight, (lp = list_create(LIST_SINGLE)));
   list_add(lp, psu);
 }
-
-#if 0
-static char *
-sanitize_cgp(const char *cfg)
-{
-  char buf[strlen(cfg)], *bp = buf;
-  const char *s = cfg, *x;
-  *bp = '\0';
-  while (*s)
-    {
-      while (' ' == *s)
-	++s;
-      if ('n' == s[0] && ' ' == s[1])
-	s += 2;
-      else if ((x = strstr(s, "//")))
-	{
-	  while (s < x)
-	    *bp++ = *s++;
-	  *bp = '\0';
-	  s = strchr(s, ']');
-	  while (*s && '\'' != *s)
-	    *bp++ = *s++;
-	  *bp = '\0';
-	  while (*s && !isspace(*s))
-	    ++s;
-	}
-      else if ((x = strchr(s, '\'')))
-	{
-	  while (s < x)
-	    *bp++ = *s++;
-	  *bp = '\0';
-	  s += strlen(s);
-	}
-      else
-	{
-	  while (*s)
-	    *bp++ = *s++;
-	  *bp = '\0';
-	}
-    }
-  return strdup(buf);
-}
-#endif
 
 /* validate @parts, linking each cgp to its Entry.
  *
@@ -173,19 +137,34 @@ cpf_try_parts(Parts *p, List *ffs)
      we have a successful match */
   char *f;
   Cgp *c;
+  int zeroes = 0;
   int i;
   for (i = 0, f = list_first(ffs), c = list_first(p->cgps);
        f && c; ++i, f = list_next(ffs), c = list_next(p->cgps))
     {
-      char fcgp[strlen(f)+strlen((ccp)c->tight)+2];
-      sprintf(fcgp, "%s=%s", f, c->tight);
-      Cform *ok = hash_find(p->owner->owner->hfcgps, (uccp)fcgp);
-      if (ok)
-	list_add(fok, ok);
+      if (!f[1])
+	{
+	  if ('0' == *f)
+	    ++zeroes;
+	  else if ('n' == *f)
+	    {
+	      if (!n_cform.t)
+		n_cform.t = gt_token(&n_cform.l, (ucp)memo_dup((ccp)n_cform.f.pos), 0, NULL);
+	      list_add(fok, &n_cform);
+	    }
+	}
       else
-	break;
+	{
+	  char fcgp[strlen(f)+strlen((ccp)c->tight)+2];
+	  sprintf(fcgp, "%s=%s", f, c->tight);
+	  Cform *ok = hash_find(p->owner->owner->hfcgps, (uccp)fcgp);
+	  if (ok)
+	    list_add(fok, ok);
+	  else
+	    break;
+	}
     }
-  if (NULL != p->f.parts[i]) /* success if p->f.parts[i] == NULL */
+  if (NULL != p->f.parts[i+zeroes]) /* success if p->f.parts[i] == NULL */
     {
       list_free(fok, NULL);
       fok = NULL;
