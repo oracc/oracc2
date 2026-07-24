@@ -148,6 +148,7 @@ cpf_try_parts(Parts *p, List *ffs)
 	    ++zeroes;
 	  else if ('n' == *f)
 	    {
+	      /* This should check we are matching against 'n' in @parts */
 	      if (!n_cform.t)
 		n_cform.t = gt_token(&n_cform.l, (ucp)memo_dup((ccp)n_cform.f.pos), 0, NULL);
 	      list_add(fok, &n_cform);
@@ -160,6 +161,8 @@ cpf_try_parts(Parts *p, List *ffs)
 	  Cform *ok = hash_find(p->owner->owner->hfcgps, (uccp)fcgp);
 	  if (ok)
 	    list_add(fok, ok);
+	  else if ('n' == *p->f.parts[i]->pos && isdigit(*f) && strchr(f, '('))
+	    list_add(fok, &n_cform);
 	  else
 	    break;
 	}
