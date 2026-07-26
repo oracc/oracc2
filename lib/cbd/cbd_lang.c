@@ -6,9 +6,28 @@
 void
 cbd_sig_add_one(const unsigned char *s, int rank)
 {
+  Hash *h = csetp->hsiglangs;
   uccp t = s;
   if ('{' == *t)
-    t = (uccp)strstr((ccp)s, "}::");
+    {
+      t = (uccp)strstr((ccp)s, "}::");
+      h = csetp->hpsulangs;
+    }
+  else if ('-' == *t)
+    {
+      ++t;
+      h = csetp->hpsungms;
+    }
+  else if ('*' == *t)
+    {
+      ++t;
+      h = csetp->hmwelangs;
+    }
+  else if ('+' == *t)
+    {
+      ++t;
+      h = csetp->hmwengms;
+    }
   uccp lng = (uccp)strchr((ccp)t, '%');
   ++lng;
   uccp col = (uccp)strchr((ccp)lng, ':');
@@ -26,7 +45,9 @@ cbd_sig_add_one(const unsigned char *s, int rank)
   
   List *lp = hash_find(csetp->hsiglangs, (uccp)xlng);
   if (!lp)
-    hash_add(csetp->hsiglangs, pool_copy((uccp)xlng, csetp->pool), (lp = list_create(LIST_SINGLE)));
+    hash_add(csetp->hsiglangs,
+	     pool_copy((uccp)xlng, csetp->pool),
+	     (lp = list_create(LIST_SINGLE)));
 
   free(xlng);
   

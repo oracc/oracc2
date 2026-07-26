@@ -60,3 +60,36 @@ of selecting a PSU SENSE automatically; PSU SENSEs must be given
 manually in the corpus lemmatization using the += notation on the
 lemmatization of the PSU head.
 
+
+XXX
+
+====
+
+* @entry with a CF that has spaces is a PSU
+
+* @entry* is an MWE (formerly a 'usage')
+
+* in @parts the argument line is an ngram that can be used to match the PSU via the ngrammer
+
+* glosigx/gx validates @parts only via the CGSPE (most elements of most @parts will be CGP)
+
+* gx/glosigx outputs @parts lines to either psus-LANG.ngm or mwes-LANG.ngm
+
+* the output format is NGRAM += PSU_CGSPE
+
+* the lemmer/ngrammer selects candidate PSU/MWE matches using the
+  NGRAM; manual disambiguation of SENSE/EPOS is available via += in
+  the GW part of the head noun of a PSU
+
+* @form is optional for PSU/MWE; if given, signatures are written to
+  psus-LANG.sig which can be used for secondary disambiguation and
+  glossary validation
+
+* PSU/MWE lemmatization occurs in the following sequence
+
+  1) lemmatization of single constituents
+  2) selection of candidate PSU/MWE including use of +=SENSE on PSU head in corpus
+  3) disambiguation of PSU/MWE via .sig if available
+  4) disambiguation of PSU/MWE via SENSE rank if applicable
+  5) output PSU/MWE linkset
+

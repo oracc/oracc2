@@ -17,10 +17,11 @@ psu_sigs_list(List *sigs)
 void
 psu_sigs(Entry *ep)
 {
-#if 1
+  psu_ngms;
   Parts *p;
   for (p = list_first(ep->parts); p; p = list_next(ep->parts))
     {
+      /* refactor as cbd_psu_ngms() */
       List *sigs = cbd_psu_sigs(&p->f);
       if (sigs)
 	psu_sigs_list(sigs);
@@ -33,18 +34,4 @@ psu_sigs(Entry *ep)
       if (sigs)
 	psu_sigs_list(sigs);
     }
-#else
-  List *sigs = list_create(LIST_SINGLE);
-  Parts *p;
-
-  for (p = list_first(ep->parts); p; p = list_next(ep->parts))
-    if (p->owner)
-      psu_parts_sigs(sigs, ep, p);
-  char *sig;
-  for (sig = list_first(sigs); sig; sig = list_next(sigs))
-    if (out_stdout)
-      fprintf(stdout, "%s\n", sig);
-    else
-      cbd_sig_add_one((uccp)sig, 0);
-#endif
 }

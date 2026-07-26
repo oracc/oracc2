@@ -265,7 +265,8 @@ cbd_psu_sig_one_part(FILE *bufp, Form *fp)
       if (fp->lang)
 	fprintf(bufp,"@%s%%%s:%s=%s[%s",fp->project,fp->lang,fp->form,fp->cf,fp->gw);
       else
-	fprintf(bufp,"@%s%%=%s[%s",fp->project,fp->cf,fp->gw);
+	fprintf(bufp,"@%s%%%s:=%s[%s",
+		fp->project, ((Entry *)fp->user)->owner->lang,fp->cf,fp->gw);
 
       if (fp->sense)
 	fprintf(bufp, "//%s", fp->sense);

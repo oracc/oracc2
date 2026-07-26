@@ -30,6 +30,10 @@ typedef struct cbdset
   Hash **cof_tails;
   Hash *hgdl;
   Hash *hsiglangs;
+  Hash *hpsulangs;
+  Hash *hpsungms;
+  Hash *hmwelangs;
+  Hash *hmwengms;
   int ntails;
   List *parts;
   List *ewithparts; /* entries with parts */
