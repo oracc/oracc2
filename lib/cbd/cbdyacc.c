@@ -551,6 +551,7 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
       strncpy((char*)ftok, (char*)cfp->f.form, len);
       ftok[len] = '\0';
     }
+  gdl_set_lang(&cfp->l, (ccp)cfp->f.lang, NULL);
   if (!(cfp->t = gt_token(&cfp->l, ftok, 0, NULL)))
     mesg_verr(&cfp->l, "form %s generated bad sig %s\n", ftok, gdl_last_bad_sig);
   if (cfp->f.base)
@@ -558,6 +559,7 @@ cbd_bld_form_setup(struct entry *e, Cform* cfp)
       mesg_verr(&cfp->l, "base %s generated bad sig %s\n", cfp->f.base, gdl_last_bad_sig);
   if (cfp->f.norm && ('(' == *cfp->f.norm || strstr((ccp)cfp->f.norm, "$(")))
     cbd_cof_register(cfp);
+
 
   cfp->fcgp = (ccp)pool_alloc(strlen((ccp)cfp->f.form)+strlen((ccp)e->cgp->tight)+2,csetp->pool);
   sprintf((char*)cfp->fcgp, "%s=%s", cfp->f.form, (ccp)e->cgp->tight);
