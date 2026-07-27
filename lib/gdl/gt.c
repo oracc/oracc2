@@ -136,7 +136,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
     return NULL;
 
   unsigned char *xt = NULL;
-  if (strchr((ccp)t, '_'))
+  if (!literal && strchr((ccp)t, '_'))
     {
       xt = (ucp)strdup((char*)t);
       unsigned char *x = xt;

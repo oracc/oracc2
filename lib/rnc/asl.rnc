@@ -4,6 +4,7 @@ namespace sl = "http://oracc.org/ns/sl/1.0"
 
 include "inl.rnc"
 include "gdl-lib.rnc"
+include "stream.rnc"
 
 noteref = empty
 noteauto = empty
