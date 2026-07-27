@@ -45,10 +45,10 @@ cbd_no_form_bases(Entry *ep)
   Cform *fp;
   for (fp = list_first(ep->forms); fp; fp = list_next(ep->forms))
     {
-      if (fp->f.base)
+      if (fp->f.form)
 	{
 	  /*if (fp->f.morph && !strcmp((ccp)fp->f.morph, "~"))*/
-	    hash_add(fb, fp->f.base, "");
+	  hash_add(fb, fp->f.form, "");
 	  if (!fp->f.norm)
 	    cbd_auto_norm(&fp->f);
 	}

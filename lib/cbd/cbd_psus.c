@@ -153,8 +153,10 @@ cpf_try_parts(Parts *p, List *ffs)
   for (i = 0, f = list_first(ffs), c = list_first(p->cgps);
        f && c; ++i, f = list_next(ffs), c = list_next(p->cgps))
     {
+#if 0
       if (!strcmp(f, "tu₂"))
 	fprintf(stderr, "found tu₂\n");
+#endif
       if (!f[1] && ('0' == *f || 'n' == *f))
 	{
 	  if ('0' == *f)

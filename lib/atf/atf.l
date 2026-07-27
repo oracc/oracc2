@@ -85,7 +85,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_T>.*/\r?\n[^ \t]+		{ BEGIN 0; atfnorm; return TEXT; }
 <s_T>.*/\r?\n	       		{ BEGIN 0; atfnorm; return TEXT; }
 <s_T>^[\t ]+.+/[\r\n]  		{ BEGIN 0; atfnorm; return TAB; }
-<s_T><<EOF>>			{ yyterminate(); }
+<s_T><<EOF>>			{ return TEXT; }
 
 <s_WORD>[^ \t\n\r]+	     	{ BEGIN s_next;
 				  int ret=(s_next==s_TRH?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
