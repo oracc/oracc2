@@ -4,30 +4,13 @@
 /* Routines to manage data divided by lang rather than glossary */
 
 void
-cbd_sig_add_one(const unsigned char *s, int rank)
+cbd_sig_add_one(const unsigned char *s, int rank, MWE_type mtype)
 {
-  Hash *h = csetp->hsiglangs;
   uccp t = s;
+
   if ('{' == *t)
-    {
-      t = (uccp)strstr((ccp)s, "}::");
-      h = csetp->hpsulangs;
-    }
-  else if ('-' == *t)
-    {
-      ++t;
-      h = csetp->hpsungms;
-    }
-  else if ('*' == *t)
-    {
-      ++t;
-      h = csetp->hmwelangs;
-    }
-  else if ('+' == *t)
-    {
-      ++t;
-      h = csetp->hmwengms;
-    }
+    t = (uccp)strstr((ccp)s, "}::");
+
   uccp lng = (uccp)strchr((ccp)t, '%');
   ++lng;
   uccp col = (uccp)strchr((ccp)lng, ':');
@@ -43,9 +26,9 @@ cbd_sig_add_one(const unsigned char *s, int rank)
   else
     xlng = strdup((ccp)curr_cbd->lang);
   
-  List *lp = hash_find(csetp->hsiglangs, (uccp)xlng);
+  List *lp = hash_find(csetp->hhm[mtype], (uccp)xlng);
   if (!lp)
-    hash_add(csetp->hsiglangs,
+    hash_add(csetp->hhm[mtype],
 	     pool_copy((uccp)xlng, csetp->pool),
 	     (lp = list_create(LIST_SINGLE)));
 
@@ -65,9 +48,9 @@ cbd_sig_add_one(const unsigned char *s, int rank)
 }
 
 void
-cbd_sig_add_list(List *lp)
+cbd_sig_add_list(List *lp, MWE_type mtype)
 {
   const unsigned char *s;
   for (s = list_first(lp); s; s = list_next(lp))
-    cbd_sig_add_one(s, 0);
+    cbd_sig_add_one(s, 0, mtype);
 }

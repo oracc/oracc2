@@ -126,7 +126,7 @@ cbd_entry_sigs(Entry *ep)
 		    fprintf(stdout, "%s\n", s);
 		}
 	      else
-		cbd_sig_add_list(csigl);
+		cbd_sig_add_list(csigl, M_SIMPLE);
 	    }
 	  else
 	    {
@@ -137,7 +137,7 @@ cbd_entry_sigs(Entry *ep)
 	      if (out_stdout)
 		fprintf(stdout, "%s\n", sig);
 	      else
-		cbd_sig_add_one((uccp)sig, sp->rank | fp->f.rank);
+		cbd_sig_add_one((uccp)sig, sp->rank | fp->f.rank, M_SIMPLE);
 	    }
 	}
     }
@@ -309,7 +309,7 @@ main(int argc, char * const *argv)
 	    lemm_sigs(lems[i]);
 	}
 
-      const char **langs = hash_keys(csetp->hsiglangs);
+      const char **langs = hash_keys(csetp->hhm[M_SIMPLE]);
 
       if (lang_list)
 	{
@@ -320,7 +320,7 @@ main(int argc, char * const *argv)
 
       for (i = 0; langs[i]; ++i)
 	{
-	  List *lp = hash_find(csetp->hsiglangs, (uccp)langs[i]);
+	  List *lp = hash_find(csetp->hhm[M_SIMPLE], (uccp)langs[i]);
 	  if (list_len(lp))
 	    {
 	      int n;

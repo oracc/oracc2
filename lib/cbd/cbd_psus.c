@@ -68,8 +68,12 @@ cbd_psus(void)
 	 as cgp->tight using pool_copy so we can safeley split it
 	 using form_parse */
       int i;
+
+      List *ngmbits = list_create(LIST_SINGLE);
+      
       for (i = 0, cp = list_first(p->cgps); cp; cp = list_next(p->cgps), ++i)
 	{
+	  list_add(ngmbits, memo_dup(cp->tight));
 	  p->f.parts[i] = memo_new(csetp->formsmem);
 	  form_parse((uccp)p->l.file, p->l.line, (ucp)cp->tight, p->f.parts[i], NULL);
 	  p->f.parts[i]->project = pcbd->project;
@@ -122,9 +126,16 @@ cbd_psus(void)
 	  p->f.gw = p->owner->cgp->gw;
 	  p->f.pos = p->owner->cgp->pos;
 	  p->f.user = p->owner; /* set form->user to entry that this form belongs to */
+	  unsigned char *ngm = list_to_str(ngmbits);
+	  p->ngram = (uccp)memo_dup((ccp)ngm);
+	  free(ngm);
 	}
       else
-	p->f.parts = NULL;
+	{
+	  p->f.parts = NULL;
+	}
+      list_free(ngmbits, NULL);
+      ngmbits = NULL;
     }
 }
 
@@ -137,7 +148,7 @@ cpf_try_parts(Parts *p, List *ffs)
      we have a successful match */
   char *f;
   Cgp *c;
-  int zeroes = 0;
+  /*int zeroes = 0;*/
   int i;
   for (i = 0, f = list_first(ffs), c = list_first(p->cgps);
        f && c; ++i, f = list_next(ffs), c = list_next(p->cgps))
@@ -147,7 +158,7 @@ cpf_try_parts(Parts *p, List *ffs)
       if (!f[1])
 	{
 	  if ('0' == *f)
-	    ++zeroes; /* allow i to reach the end of p->f.parts */
+	    /*++zeroes*/; /* allow i to reach the end of p->f.parts */
 	  else if ('n' == *f)
 	    {
 	      /* This should check we are matching against 'n' in @parts */

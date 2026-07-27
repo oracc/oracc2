@@ -120,7 +120,7 @@ o_jox_entry_body(Entry *e)
   joxer_et(xo_loc, "pos", NULL, (ccp)e->cgp->pos);
   o_jox_xcpds(e);
   if (e->pref)
-    joxer_et(xo_loc, "pref", NULL, e->pref);
+    joxer_et(xo_loc, "pref", NULL, (ccp)e->pref);
   if (e->disc)
     f1(/* @disc */ e->disc);
 }
@@ -404,6 +404,9 @@ o_jox_parts(Entry *e)
     {
       Parts *p = (Parts*)lp->data;
       joxer_ea(xo_loc,"compound",NULL);
+      if (p->ngram)
+	joxer_et(xo_loc, "ngram", NULL, (ccp)p->ngram);
+       
       if (p->cgps && list_len(p->cgps))
 	{
 	  Cgp *cp;

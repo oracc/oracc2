@@ -20,6 +20,9 @@
 #define ucp unsigned char *
 #endif
 
+typedef enum mwe_type { M_SIMPLE, M_MWE_NGM, M_MWE_SIG ,
+			M_PSU_NGM , M_PSU_SIG , M_TOP } MWE_type;
+  
 typedef struct cbdset
 {
   List *lcbds;
@@ -29,11 +32,7 @@ typedef struct cbdset
   Hash *cof_heads;
   Hash **cof_tails;
   Hash *hgdl;
-  Hash *hsiglangs;
-  Hash *hpsulangs;
-  Hash *hpsungms;
-  Hash *hmwelangs;
-  Hash *hmwengms;
+  Hash *hhm[M_TOP]; /* Array of Hashes for all sigs and multi-word sigs/ngms */
   int ntails;
   List *parts;
   List *ewithparts; /* entries with parts */
@@ -263,6 +262,7 @@ struct alias {
 
 typedef struct parts {
   Mloc l;
+  unsigned const char *ngram;
   Entry *owner;
   List *cgps; 	/* list_free(cgps,NULL) when freeing cbd */
   Unsigned32 psu_type; /* any of FORM_FLAGS_PSU_BITS in form.h */
@@ -444,8 +444,8 @@ extern void cbd_psu_register(Entry *ep, Parts *pp);
 extern void cbd_end_entry(YYLTYPE l);
 extern void cbd_end_sense(void);
 
-extern void cbd_sig_add_one(const unsigned char *s, int rank);
-extern void cbd_sig_add_list(List *lp);
+extern void cbd_sig_add_one(const unsigned char *s, int rank, MWE_type mtype);
+extern void cbd_sig_add_list(List *lp, MWE_type mtype);
 
 extern void cgp_init(struct cgp *c, unsigned char *cf, unsigned char *gw, unsigned char *pos);
 extern unsigned const char *cgp_entry_str(struct entry *e, int spread);

@@ -811,11 +811,9 @@ cbd_bld_set(void)
   csetp->parts = list_create(LIST_SINGLE);
   csetp->ewithparts = list_create(LIST_SINGLE);
   csetp->hpsus = hash_create(1024);
-  csetp->hsiglangs = hash_create(8);
-  csetp->hpsulangs = hash_create(8);
-  csetp->hpsungms = hash_create(8);
-  csetp->hmwelangs = hash_create(8);
-  csetp->hmwengms = hash_create(8);
+  MWE_type mt;
+  for (mt = M_SIMPLE; mt < M_TOP; ++mt)
+    csetp->hhm[mt] = hash_create(8);
   csetp->cbdmem = memo_init(sizeof(Cbd), 8);
   csetp->cofmem = memo_init(sizeof(Cof), 16);
   csetp->formsmem = memo_init(sizeof(Form), 512);

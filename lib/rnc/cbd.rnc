@@ -55,7 +55,8 @@ mod         = element mod { attribute type   { text } ,
 	      	      	    attribute target { text } ,
 	      	      	    attribute why    { text }? }
 
-psu.compound = element compound { cpd+ }
+psu.compound = element compound { ngram? , cpd+ }
+ngram = element ngram { text }
 cpd = element cpd {
     attribute primary { "1" }?,
     attribute partsig { text },
