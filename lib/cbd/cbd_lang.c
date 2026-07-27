@@ -33,18 +33,23 @@ cbd_sig_add_one(const unsigned char *s, int rank, MWE_type mtype)
 	     (lp = list_create(LIST_SINGLE)));
 
   free(xlng);
-  
-  Lemsig *lsp = memo_new(csetp->lsigmem);
-  lsp->key = lsp->sig = s;
-  if (t != s)
+
+  if (mtype == M_SIMPLE || mtype == M_PSU_SIG || mtype == M_MWE_SIG)
     {
-      lsp->key = (uccp)memo_dup((ccp)lsp->sig);
-      char *k = strstr((ccp)lsp->key, "}::");
-      k[1] = '\0';
+      Lemsig *lsp = memo_new(csetp->lsigmem);
+      lsp->key = lsp->sig = s;
+      if (t != s)
+	{
+	  lsp->key = (uccp)memo_dup((ccp)lsp->sig);
+	  char *k = strstr((ccp)lsp->key, "}::");
+	  k[1] = '\0';
+	}
+      if (rank)
+	lsp->rank = rank;
+      list_add(lp, lsp);
     }
-  if (rank)
-    lsp->rank = rank;
-  list_add(lp, lsp);
+  else
+    list_add(lp, s);
 }
 
 void

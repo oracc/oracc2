@@ -10,6 +10,12 @@
 @sense N semen
 @end entry
 
+@entry* a a [~water] N
+@parts a[water]N a[water]N
+@form a_a
+@sense N watery water
+@end entry
+
 @entry a dug [to demolish] V/t
 @parts a[water]N dug[speak]V/t#~;a
 @form a_mu-dug₄

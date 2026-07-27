@@ -73,7 +73,7 @@ cbd_psus(void)
       
       for (i = 0, cp = list_first(p->cgps); cp; cp = list_next(p->cgps), ++i)
 	{
-	  list_add(ngmbits, memo_dup(cp->tight));
+	  list_add(ngmbits, memo_dup((ccp)cp->tight));
 	  p->f.parts[i] = memo_new(csetp->formsmem);
 	  form_parse((uccp)p->l.file, p->l.line, (ucp)cp->tight, p->f.parts[i], NULL);
 	  p->f.parts[i]->project = pcbd->project;
@@ -155,11 +155,11 @@ cpf_try_parts(Parts *p, List *ffs)
     {
       if (!strcmp(f, "tu₂"))
 	fprintf(stderr, "found tu₂\n");
-      if (!f[1])
+      if (!f[1] && ('0' == *f || 'n' == *f))
 	{
 	  if ('0' == *f)
 	    /*++zeroes*/; /* allow i to reach the end of p->f.parts */
-	  else if ('n' == *f)
+	  else
 	    {
 	      /* This should check we are matching against 'n' in @parts */
 	      if (!n_cform.t)

@@ -190,6 +190,127 @@ qpn_sub(Lemsig *lp, const char *epos)
     }
 }
 
+void
+gs_out_m(MWE_type mt, const char *pre, const char *ext)
+{
+  const char **langs = hash_keys(csetp->hhm[mt]);
+  int i;
+  for (i = 0; langs[i]; ++i)
+    {
+      List *lp = hash_find(csetp->hhm[mt], (uccp)langs[i]);
+      if (list_len(lp))
+	{
+	  char fn[strlen("02pub/-.0")+strlen(pre)+strlen(ext)+strlen(langs[i])];
+	  sprintf(fn, "02pub/%s-%s.%s", pre, langs[i], ext);
+	  FILE *fp = NULL;
+	  if ((fp = xfopen(fn, "w")))
+	    {
+	      if (mt == M_PSU_SIG || mt == M_MWE_SIG)
+		{
+		  fputs("@fields sig rank freq\n", fp);
+		  int n, j;
+		  Lemsig **lsp = (Lemsig**)list2array_c(lp, &n);
+		  for (j = 0; lsp[j]; ++j)
+		    fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
+
+		}
+	      else
+		{
+		  const char *ngm;
+		  for (ngm = list_first(lp); ngm; ngm = list_next(lp))
+		    fprintf(fp, "%s\n", ngm);
+		}
+	      xfclose(fn, fp);
+	    }
+	}
+    }
+}
+
+void
+gs_out_simple(void)
+{
+  const char **langs = hash_keys(csetp->hhm[M_SIMPLE]);
+
+  int i;
+  if (lang_list)
+    {
+      for (i = 0; langs[i]; ++i)
+	printf("%s\n", langs[i]);
+    }
+
+  for (i = 0; langs[i]; ++i)
+    {
+      List *lp = hash_find(csetp->hhm[M_SIMPLE], (uccp)langs[i]);
+      if (list_len(lp))
+	{
+	  int n;
+	  Lemsig **lsp = (Lemsig**)list2array_c(lp, &n);
+	  if (glo_mode)
+	    {
+	      char d[strlen("01bld/0")+strlen(langs[i])];
+	      strcpy(d, "01bld/");
+	      strcat(d, langs[i]);
+	      if (-1 == mkdir(d, 0700) && EEXIST != errno)
+		{
+		  perror(langs[i]);
+		  exit(1);
+		}
+	      char fn[strlen(langs[i])+strlen("01bld/glo.sig0")];
+	      sprintf(fn, "01bld/%s/glo.sig", langs[i]);
+	      FILE *fp;
+	      if ((fp = xfopen(fn, "w")))
+		{
+		  int j;
+		  fputs("@fields sig rank freq\n", fp);
+		  for (j = 0; lsp[j]; ++j)
+		    {
+		      fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
+		      char *sqb = strchr((ccp)lsp[j]->sig, '\'');
+		      if (sqb && strlen(sqb)>2 && 'N' == sqb[2] && !isalnum(sqb[3]))
+			{
+			  char epos[3] = { sqb[1], sqb[2], '\0' };
+			  qpn_sub(lsp[j], epos);
+			}
+		    }
+		  xfclose(fn, fp);
+		}
+	    }
+	  else
+	    {
+	      Hash *hlem = NULL;
+	      if (csetp->lems)
+		hash_find(csetp->lems, (uccp)langs[i]);
+	      if (hlem)
+		{
+		  int ii;
+		  for (ii = 0; lsp[ii]; ++ii)
+		    {
+		      const char **r = hash_find(hlem, lsp[ii]->sig);
+		      if (r)
+			/* Don't set rank here; only do it from glossary */
+			lsp[ii]->freq = atoi(r[2]);
+		    }
+		}
+	      qsort(lsp, n, sizeof(Lemsig *), (sort_cmp_func*)lemsig_cmp);
+	      char fn[strlen(langs[i])+strlen("02pub/lemm-.sig0")];
+	      sprintf(fn, "02pub/lemm-%s.sig", langs[i]);
+	      FILE *fp;
+	      if ((fp = xfopen(fn, "w")))
+		{
+		  int j;
+		  fputs("@fields sig rank freq\n", fp);
+		  for (j = 0; lsp[j]; ++j)
+		    fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
+		  xfclose(fn, fp);
+		}
+	      else
+		fprintf(stderr, "glosigx: skipping output to %s\n", fn);
+	    }
+	}
+    }
+}
+
+
 int
 main(int argc, char * const *argv)
 {
@@ -308,86 +429,11 @@ main(int argc, char * const *argv)
 	  for (i = 0; lems[i]; ++i)
 	    lemm_sigs(lems[i]);
 	}
-
-      const char **langs = hash_keys(csetp->hhm[M_SIMPLE]);
-
-      if (lang_list)
-	{
-	  int i;
-	  for (i = 0; langs[i]; ++i)
-	    printf("%s\n", langs[i]);
-	}
-
-      for (i = 0; langs[i]; ++i)
-	{
-	  List *lp = hash_find(csetp->hhm[M_SIMPLE], (uccp)langs[i]);
-	  if (list_len(lp))
-	    {
-	      int n;
-	      Lemsig **lsp = (Lemsig**)list2array_c(lp, &n);
-	      if (glo_mode)
-		{
-		  char d[strlen("01bld/0")+strlen(langs[i])];
-		  strcpy(d, "01bld/");
-		  strcat(d, langs[i]);
-		  if (-1 == mkdir(d, 0700) && EEXIST != errno)
-		    {
-		      perror(langs[i]);
-		      exit(1);
-		    }
-		  char fn[strlen(langs[i])+strlen("01bld/glo.sig0")];
-		  sprintf(fn, "01bld/%s/glo.sig", langs[i]);
-		  FILE *fp;
-		  if ((fp = xfopen(fn, "w")))
-		    {
-		      int j;
-		      fputs("@fields sig rank freq\n", fp);
-		      for (j = 0; lsp[j]; ++j)
-			{
-			  fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
-			  char *sqb = strchr((ccp)lsp[j]->sig, '\'');
-			  if (sqb && strlen(sqb)>2 && 'N' == sqb[2] && !isalnum(sqb[3]))
-			    {
-			      char epos[3] = { sqb[1], sqb[2], '\0' };
-			      qpn_sub(lsp[j], epos);
-			    }
-			}
-		      xfclose(fn, fp);
-		    }
-		}
-	      else
-		{
-		  Hash *hlem = NULL;
-		  if (csetp->lems)
-		    hash_find(csetp->lems, (uccp)langs[i]);
-		  if (hlem)
-		    {
-		      int ii;
-		      for (ii = 0; lsp[ii]; ++ii)
-			{
-			  const char **r = hash_find(hlem, lsp[ii]->sig);
-			  if (r)
-			    /* Don't set rank here; only do it from glossary */
-			    lsp[ii]->freq = atoi(r[2]);
-			}
-		    }
-		  qsort(lsp, n, sizeof(Lemsig *), (sort_cmp_func*)lemsig_cmp);
-		  char fn[strlen(langs[i])+strlen("02pub/lemm-.sig0")];
-		  sprintf(fn, "02pub/lemm-%s.sig", langs[i]);
-		  FILE *fp;
-		  if ((fp = xfopen(fn, "w")))
-		    {
-		      int j;
-		      fputs("@fields sig rank freq\n", fp);
-		      for (j = 0; lsp[j]; ++j)
-			fprintf(fp, "%s\t%d\t%d\n", lsp[j]->sig, lsp[j]->rank, lsp[j]->freq);
-		      xfclose(fn, fp);
-		    }
-		  else
-		    fprintf(stderr, "glosigx: skipping output to %s\n", fn);
-		}
-	    }
-	}
+      gs_out_simple();
+      gs_out_m(M_PSU_NGM, "psus", "ngm");
+      gs_out_m(M_PSU_SIG, "psus", "sig");
+      gs_out_m(M_MWE_NGM, "mwes", "ngm");
+      gs_out_m(M_MWE_SIG, "mwes", "sig");
     }
 }
 
