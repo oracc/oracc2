@@ -512,7 +512,7 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 		      const char *tilde = (ccp)strchr((ccp)formp->morph, '~');
 		      if (tilde)
 			{
-			  if (tilde[1] && !strchr(";,!", tilde[1]))
+			  if (tilde[1] && !strchr(";,!*", tilde[1])) /* allow '*' because #~*B is legal */
 			    mesg_vwarning((char*)file,line,"#-morphology lacks any of ';,!' after tilde ('~') in %s",
 					  formp->morph);
 			}
