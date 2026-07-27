@@ -352,5 +352,7 @@ extern void atr_label(Mloc l, unsigned char *s);
 extern void atr_para(void);
 extern void atr_text(Mloc l, const char *s);
 extern void atr_translation(void);
+extern void atr_unit(Mloc l, unsigned char *s);
+extern void atr_span(Mloc l, unsigned char *s);
 
 #endif/*ATF_H_*/

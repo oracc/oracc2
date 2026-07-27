@@ -2,7 +2,7 @@
 #include "block.h"
 #include "atf.h"
 
-int m_trace = 1;
+int m_trace = 0;
 static int m_object_index = 0;
 const char *curr_discourse;
 

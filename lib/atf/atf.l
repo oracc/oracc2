@@ -16,7 +16,7 @@ const char *curratffile = NULL;
 
 int atfflextrace = 0;
 static int s_next;
-static int linktext;
+static int linktext, tra_text;
 static char *xs, *atfbuf, *atfbuf_alloced;
 
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
@@ -173,16 +173,18 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^\#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
-<s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; return TR_TYPE; }
+<s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; tra_text=0; return TR_TYPE; }
 <s_TRH>{LANG}				{ atfsave; s_next=s_TRH; BEGIN s_WORD; return TR_LANG; }
 <s_TRH>[ \t]+				{ ; }
 <s_TRH>"\n"				{ BEGIN s_TRA; }
-<s_TRA>^@label[^\n\r]*/[\n\r]	       	{ atfsave; return TR_LABEL; }
-<s_TRA>{TRA_LAB}			{ atfsave; return TR_LABEL; }
+<s_TRA>^@label[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_LABEL; }
+<s_TRA>^@unit[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=0; return TR_UNIT; }
+<s_TRA>^@span[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_SPAN; }
+<s_TRA>{TRA_LAB}			{ atfsave; tra_text=1; return TR_LABEL; }
 <s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_PAR}			{ atflval.text=""; return TR_PAR; }
-<s_TRA>{TRA_WHT}			{ atfsave; return TR_TEXT; }
+<s_TRA>{TRA_WHT}			{ if (tra_text) { atfsave; return TR_TEXT; } }
 <s_TRA>{TRA_WRD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
 <s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }

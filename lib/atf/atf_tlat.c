@@ -152,6 +152,16 @@ atr_inter(Mloc l, unsigned char *s)
 {
 }
 
+void
+atr_span(Mloc l, unsigned char *s)
+{
+}
+
+void
+atr_unit(Mloc l, unsigned char *s)
+{
+}
+
 /* This is passed @(i 1) or @label i 1 */
 void
 atr_label(Mloc l, unsigned char *s)

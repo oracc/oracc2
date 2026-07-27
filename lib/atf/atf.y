@@ -33,7 +33,8 @@ ATFLTYPE atflloc;
 			TAB EOL
 			VERSION
 			ATF_LANG
-			TR_TYPE TR_LANG TR_PROJ TR_LABEL TR_TEXT TR_PAR TR_HDR TR_DOLLAR
+			TR_TYPE TR_LANG TR_PROJ TR_LABEL TR_UNIT TR_SPAN
+			TR_TEXT TR_PAR TR_HDR TR_DOLLAR
 
 %token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
 			HASH_ETCSL_T HASH_ETCSL_L
@@ -361,8 +362,8 @@ tr.chunks:
 		;
 
 tr.chunk:
-		tr.label tr.trans
-	|	tr.metas tr.label tr.trans
+		tr.align tr.trans
+	|	tr.metas tr.align tr.trans
 		;
 
 tr.metas:
@@ -381,8 +382,18 @@ tr.hdr: 	TR_HDR longtext		{ atr_hdr(@1, $1+1, (ucp)longtext_get()); }
 tr.dollar:	TR_DOLLAR		{ atr_dollar(@1, (ucp)longtext_get()); }
 		;
 
-tr.label:
-		TR_LABEL		{ atr_label(@1, (unsigned char *)$1); }
+tr.align:
+		tr.label
+	|	tr.unit tr.span
+		;
+
+tr.label:	TR_LABEL		{ atr_label(@1, (ucp)$1); }
+		;
+
+tr.unit:	TR_UNIT 		{ atr_unit(@1, (ucp)$1); }
+		;
+
+tr.span:	TR_SPAN			{ atr_span(@1, (ucp)$1); }
 		;
 
 tr.trans:
