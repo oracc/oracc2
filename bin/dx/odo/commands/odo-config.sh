@@ -26,26 +26,26 @@ if [ -r 00lib/subconfig.xml ]; then
     xsltproc -o 02xml/config.xml $ORACC/lib/scripts/mcc-subconfig.xsl \
 	00lib/subconfig.xml
 else
-    cp $odo_verb 00lib/config.xml 02xml/config.xml
+    $odo_sudo cp $odo_verb 00lib/config.xml 02xml/config.xml
 fi
 
 set 00lib/config-*.xml
 
 if [ "$1" != "00lib/config-*.xml" ]; then
-    cp $V 00lib/config-*.xml 02xml/
+    $odo_sudo cp $V 00lib/config-*.xml 02xml/
 fi
 
 if [ -r 00lib/pll.xml ]; then
-    cp $V 00lib/pll.xml 02xml/
+    $odo_sudo cp $V 00lib/pll.xml 02xml/
 fi
 
-cp $V 02xml/config.xml 02www
+$odo_sudo cp $V 02xml/config.xml 02www
 
-chmod $V -f o+r 02xml/config.xml 02www/config.xml
+$odo_sudo chmod $V -f o+r 02xml/config.xml 02www/config.xml
 
 if [ -r 00lib/names.xml ]; then
-    cp $V 00lib/names.xml 02pub
-    chmod $V o+r 02pub/names.xml
+    $odo_sudo cp $V 00lib/names.xml 02pub
+    $odo_sudo chmod $V o+r 02pub/names.xml
 fi
 
 # project-config is built in here even though it is controlled for
