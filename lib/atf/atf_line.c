@@ -109,10 +109,10 @@ atf_line_lg(Mloc *mp)
   line_lang = text_lang;
 }
 
-static void
-register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
+void
+line_register(Mloc l, Linet lt, Node *np, unsigned char *lp)
 {
-  if (lt != LT_NOTE)
+  if (lt >= LINE_MTS)
     ++line_lines;
 
   if (line_trace)
@@ -121,10 +121,12 @@ register_line(Mloc l, Linet lt, Node *np, unsigned char *lp)
   atf_input(l, lt, lp);
   if (!atfmp->llines)
     {
-#if 1
+#if 0
       /* 2026-07-14 new lg approach makes #bib:, #etcsl:, #note:
        * external to lg and only groups line-type and #lem:. Subject
        * to further review.
+       *
+       * 2026-07-28 try again ...
        */
       atfmp->llines = list_create(LIST_SINGLE);
 #else
@@ -156,7 +158,7 @@ line_mts(Mloc l, unsigned char *lp)
   struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
   
-  register_line(l, LINE_MTS, lnode, lp);
+  line_register(l, LINE_MTS, lnode, lp);
   if (curr_lem_host && curr_lem_host->wl)
     {
       list_free(curr_lem_host->wl, NULL);
@@ -274,7 +276,12 @@ line_bil(Mloc l, unsigned char *lp)
   struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
 
-  register_line(l, LINE_BIL, lnode, lp);
+  line_register(l, LINE_BIL, lnode, lp);
+  if (curr_lem_host && curr_lem_host->wl)
+    {
+      list_free(curr_lem_host->wl, NULL);
+      curr_lem_host->wl = NULL;
+    }
   curr_lem_host = curr_line;
 
   unsigned char *s = lp;
@@ -306,7 +313,7 @@ line_gus(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_node("l", &l);
 
-  register_line(l, LINE_GUS, lnode, lp);
+  line_register(l, LINE_GUS, lnode, lp);
   
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
@@ -333,7 +340,7 @@ line_nts(Mloc l, unsigned char *lp)
   struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
 
-  register_line(l, LINE_NTS, lnode, lp);
+  line_register(l, LINE_NTS, lnode, lp);
   curr_lem_host = curr_line;
   
   unsigned char *s = lp+2;
@@ -365,7 +372,7 @@ line_lgs(Mloc l, unsigned char *lp)
   struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
 
-  register_line(l, LINE_LGS, lnode, lp);
+  line_register(l, LINE_LGS, lnode, lp);
   
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
@@ -428,8 +435,14 @@ line_var(Mloc l, unsigned char *lp)
   struct node *lnode = atf_node("v", &l);
   lnode->mloc = mloc_mloc(&l);
 
-  register_line(l, LINE_EXX, lnode, lp);
-  
+  line_register(l, LINE_EXX, lnode, lp);
+  if (curr_lem_host && curr_lem_host->wl)
+    {
+      list_free(curr_lem_host->wl, NULL);
+      curr_lem_host->wl = NULL;
+    }
+  curr_lem_host = curr_line;
+
   unsigned char *s = lp, *entry = lp;
   unsigned char *end = lp+xxstrlen(lp);
   unsigned char *n, *n_vbar;
@@ -614,11 +627,20 @@ line_note(Mloc l, const char *ltext)
   n->utype = N_U_NOTE;
   n->text = (uccp)ltext;
   n->xid = (ccp)pool_copy((uccp)note_create_id(), atfmp->pool);
-  Node *np = atf_add("note:text", &l);
+
+  Node *np = NULL;
+  if (atfmp->llines)
+    {
+      np = atf_node("note:text", &l);
+      line_register(l, LT_NOTE, np, (ucp)ltext);
+    }
+  else
+    {
+      np = atf_add("note:text", &l);
+    }
   atf_xprop(np, "xml:id", n->xid);
   atf_xprop(np, "note:mark", "1");/*place-holder*/
   np->user = n;
-  register_line(l, LT_NOTE, np, (ucp)ltext);
   /*atf_input(l, LT_NOTE, n);*/  
 }
 

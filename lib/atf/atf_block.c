@@ -24,6 +24,7 @@ static const char *xid_block(void);
 
 static Node *ancestor_or_self_level_as(Node *np, Block_level b, int auto_set);
 
+Stck *div_stck;
 static int xid = 0;
 
 static char block_flags[256] = { ['?'] = 1, ['!'] = 1 , ['*'] = 1 };
@@ -289,27 +290,42 @@ block_div(Mloc l, Block *bp, char *rest)
 	 && ((Block*)current->user)->bt->type != B_TEXT)
     current = current->rent;
   
-  if (!strcmp(atname, "end"))
+  if (!strcmp(atname, "end") || !strcmp(atname, "endvariants"))
     {
-      if (((Block*)current->user)->bt->type == B_TEXT)
+      /*if (((Block*)current->user)->bt->type == B_TEXT)*/
+      if (!div_stck)
 	mesg_verr(&l, "block_div: @end before @div\n");
-      else if (divtok)
+      else
 	{
-	  const char *type = NULL;
-	  if (abt->curr->props)
-	    type = prop_find_kv(abt->curr->props, "type", NULL)->u.k->v;
-	  if (!type && strcmp((ccp)divtok, "variants"))
-	    mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
-	  else if (type && strcmp(type, (ccp)divtok))
-	    mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
-	  else
-	    (void)tree_pop(abt);
+	  (void)stck_pop(div_stck);
+	  if (stck_peek(div_stck) < 0)
+	    {
+	      stck_term(div_stck);
+	      div_stck = NULL;
+	    }
+	  if (divtok)
+	    {
+	      if (!div_stck)
+		div_stck = stck_init(8);
+	      const char *type = NULL;
+	      if (abt->curr->props)
+		type = prop_find_kv(abt->curr->props, "type", NULL)->u.k->v;
+	      if (!type && strcmp((ccp)divtok, "variants"))
+		mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
+	      else if (type && strcmp(type, (ccp)divtok))
+		mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
+	      else
+		(void)tree_pop(abt);
+	    }
 	}
     }
   else
     {
       Node *np = atf_push(bp->bt->name, &l);
       np->user = bp;
+      if (!div_stck)
+	div_stck = stck_init(8);
+      stck_push(div_stck, (intptr_t)np);
       if (divtok)
 	atf_xprop(np, "type", (ccp)divtok);
       if (ntok)

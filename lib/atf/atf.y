@@ -33,7 +33,7 @@ ATFLTYPE atflloc;
 			TAB EOL
 			VERSION
 			ATF_LANG
-			TR_TYPE TR_LANG TR_PROJ TR_LABEL TR_UNIT TR_SPAN
+			TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
 			TR_TEXT TR_PAR TR_HDR TR_DOLLAR
 
 %token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
@@ -61,7 +61,7 @@ ATFLTYPE atflloc;
 %nterm <i> 		sparse stype atfuse link_type
 			line l_link note bib etcsl.line proto.comment
 			heading heading_tok tr.inter
-			milestone
+			milestone comment dollar
 			
 %nterm <b>		object object_tok
 			surface surface_tok
@@ -156,33 +156,41 @@ lemmatizer:	HASH_LEMMATIZER LZR_SPARSE TEXT
 version:	HASH_VERSION TEXT    { atf_bld_protocol(@1, PROT_VERSION, $2); }
 	;
 
-etcsl.text:	HASH_ETCSL_T TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
+etcsl.text:	HASH_ETCSL_T TEXT      	{ atf_bld_protocol(@1, PROT_ETCSL, $2); }
 	;
 
-etcsl.line:	HASH_ETCSL_L TEXT      { atf_bld_protocol(@1, PROT_ETCSL, $2); }
+etcsl.line:	HASH_ETCSL_L TEXT      	{ atf_bld_protocol(@1, PROT_ETCSL, $2); }
 	;
 
-probib: 	HASH_PROBIB longtext { atf_bld_bib(@1, longtext_get()); }
+probib: 	HASH_PROBIB longtext 	{ atf_bld_bib(@1, longtext_get()); }
 		;
 
-bib:		HASH_BIB longtext    { atf_bld_bib(@1, longtext_get()); }
+bib:		HASH_BIB longtext    	{ atf_bld_bib(@1, longtext_get()); }
 	;
 
 proto.comment:
 		PRO_COMMENT longtext	{ $$=$1; atf_bld_protocol(@1, PROT_COMMENT, longtext_get()); }
 		;
 
-note:		HASH_NOTE longtext   { line_note(@1, longtext_get()); }
+comment:
+		COMMENT longtext	{ atf_comment(@1, longtext_get()); }
+		;
+
+dollar:
+		DOLLAR longtext		{ atf_dollar(@1, longtext_get()); }
+		;
+
+note:		HASH_NOTE longtext   	{ line_note(@1, longtext_get()); }
 	;
 
-project:	HASH_PROJECT PROJECT { atfp->project = (uccp)$2;
-		    		       atf_xprop(ytp->root->kids,"project",$2);
-				       atf_bld_protocol(@1, PROT_PROJECT, $2);
+project:	HASH_PROJECT PROJECT 	{ atfp->project = (uccp)$2;
+					  atf_xprop(ytp->root->kids,"project",$2);
+				          atf_bld_protocol(@1, PROT_PROJECT, $2);
 		}
 		;
 
 atfpro:	       	ATF_LANG 	{ atf_lang(@1, atfp, $1); };
-		    |	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, curr_use_str); }
+	|	atfuse		{ atfp->flags |= $1; atf_bld_atf_protocol(@1, curr_use_str); }
 		;
 
 atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
@@ -217,6 +225,8 @@ tblocks:	tblock
 tblock: 	object
 	|	surface
 	|	column
+	|	milestone
+	|	heading
 	|	line
 		;
 		
@@ -225,6 +235,8 @@ cblocks:	cblock
 
 cblock: 	division
 	|	vdivision
+	|	milestone
+	|	heading
 	|	line
 	;
 
@@ -268,15 +280,19 @@ line:
 	| 	EXX longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
 	| 	VAR longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
-	|	l_link longtext		{ $$=$1; atf_bld_protocol(@1, PROT_LINK, longtext_get()); } /* MTS prereq */
-	|	COMMENT longtext	{ $$=$1; atf_comment(@1, longtext_get()); }
-	| 	DOLLAR longtext		{ $$=$1; atf_dollar(@1, longtext_get()); }
-	| 	bib
+		/* l_link, etcsl.line, and tr.inter all require a line group */
+	|	l_link longtext		{ $$=$1; atf_bld_protocol(@1, PROT_LINK, longtext_get()); }
 	| 	etcsl.line
-	| 	note
-	|	heading
 	|	tr.inter
-	|	milestone
+		/* bib, comment, and note are attached to line group
+		   if there is one or at the current block level */
+	| 	bib
+	|	comment
+	| 	note
+		/* dollar is attached to line group unless it parses with a
+		   column/surface/object scope in which case it ends any
+		   current group and is attached at the appropriate level */
+	|	dollar
 	;
 
 l_link:		LNK_TOTO
@@ -376,7 +392,7 @@ tr.meta:
 	|	tr.dollar
 		;
 
-tr.hdr: 	TR_HDR longtext		{ atr_hdr(@1, $1+1, (ucp)longtext_get()); }
+tr.hdr: 	TR_HDR longtext       	{ atr_hdr(@1, $1+1, (ucp)longtext_get()); }
 		;
 
 tr.dollar:	TR_DOLLAR		{ atr_dollar(@1, (ucp)longtext_get()); }
@@ -408,6 +424,7 @@ tr.tran:
 
 tr.inter:
 		TR_INTER longtext      	{ $$=$1; atr_inter(@1, (ucp)longtext_get()); }
+		;
 
 longtext:
 		TEXT			{ $$ = longtext(atfmp->pool, $1, NULL); }
@@ -427,5 +444,11 @@ atf_set_tree(Tree *tp)
 void
 atferror(const char *e)
 {
-  mesg_vwarning(curratffile, atflineno, "atf: %s\n", e);
+  extern Stck *div_stck;
+  Node *np = NULL;
+
+  if (strstr(e, "unexpected end of file") && ((intptr_t)(np = (Node*)stck_peek(div_stck)) != -1))
+    mesg_verr(np->mloc, "atf: unclosed @division\n");
+  else
+    mesg_vwarning(curratffile, atflineno, "atf: %s\n", e);
 }

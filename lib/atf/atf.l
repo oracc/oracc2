@@ -67,7 +67,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 %x s_LZR
 %x s_T
 %x s_WORD
-%x s_TRH
+%x s_TRD
 %x s_TRA
 
 %%
@@ -81,14 +81,14 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 <s_T>^[\t ]*/[\n\r]	       	{ ; }
 <s_T>^[^\t ][^\n\r]*           	{ BEGIN s_next; s_next=0; atfnorm; return r(TEXT); }
-<s_T>.*/\r?\n[ \t]+[\r\n]    	{ BEGIN 0; atfnorm; return TEXT; }
-<s_T>.*/\r?\n[^ \t]+		{ BEGIN 0; atfnorm; return TEXT; }
-<s_T>.*/\r?\n	       		{ BEGIN 0; atfnorm; return TEXT; }
-<s_T>^[\t ]+.+/[\r\n]  		{ BEGIN 0; atfnorm; return TAB; }
+<s_T>.*/\r?\n[ \t]+[\r\n]    	{ BEGIN s_next; s_next=0; atfnorm; return TEXT; }
+<s_T>.*/\r?\n[^ \t]+		{ BEGIN s_next; s_next=0; atfnorm; return TEXT; }
+<s_T>.*/\r?\n	       		{ BEGIN s_next; s_next=0; atfnorm; return TEXT; }
+<s_T>^[\t ]+.+/[\r\n]  		{ BEGIN s_next; s_next=0; atfnorm; return TAB; }
 <s_T><<EOF>>			{ return TEXT; }
 
 <s_WORD>[^ \t\n\r]+	     	{ BEGIN s_next;
-				  int ret=(s_next==s_TRH?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
+				  int ret=(s_next==s_TRD?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
 <s_WORD>[ \t]+	       		{ ; }
 
 ^"@composite"			{ (void)atf_block(atftext); return COMPOSITE; }
@@ -173,21 +173,21 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 
 ^\#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
-<s_TRH>("labeled"|"parallel"|"unitary")	{ atfsave; tra_text=0; return TR_TYPE; }
-<s_TRH>{LANG}				{ atfsave; s_next=s_TRH; BEGIN s_WORD; return TR_LANG; }
-<s_TRH>[ \t]+				{ ; }
-<s_TRH>"\n"				{ BEGIN s_TRA; }
+<s_TRD>("labeled"|"parallel"|"unitary")	{ atfsave; tra_text=0; return TR_TYPE; }
+<s_TRD>{LANG}				{ atfsave; s_next=s_TRD; BEGIN s_WORD; return TR_LANG; }
+<s_TRD>[ \t]+				{ ; }
+<s_TRD>"\n"				{ BEGIN s_TRA; }
+<s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
 <s_TRA>^@label[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_LABEL; }
 <s_TRA>^@unit[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=0; return TR_UNIT; }
 <s_TRA>^@span[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_SPAN; }
 <s_TRA>{TRA_LAB}			{ atfsave; tra_text=1; return TR_LABEL; }
 <s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }
-<s_TRA>{TRA_PAR}			{ atflval.text=""; return TR_PAR; }
+<s_TRA>{TRA_PAR}			{ if (tra_text) { atflval.text=""; return TR_PAR; } }
 <s_TRA>{TRA_WHT}			{ if (tra_text) { atfsave; return TR_TEXT; } }
 <s_TRA>{TRA_WRD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
-<s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
 
 [ \t\r\n]+     			{ ; }
 
@@ -217,7 +217,7 @@ atf_block(const char *scanned_at)
   if (bp)
     {
       if (bp->bison == Y_TRANSLATION)
-	BEGIN s_TRH;
+	BEGIN s_TRD;
       if (bp->bison == Y_FRAGMENT)
 	{
           if (atfp->edoc == EDOC_COMPOSITE || atfp->edoc == EDOC_SCORE)
@@ -348,7 +348,7 @@ static void
 atf_user_action(void)
 {
   if (atfflextrace)
-      fprintf(stderr, "%s:%d: atflex: text=::%s:: start=%d\n", curratffile, atflineno, atftext, YY_START);
+      fprintf(stderr, "%s:%d: atflex: text=::%s:: start=%d; tra_text=%d\n", curratffile, atflineno, atftext, YY_START, tra_text);
 
   atflloc.file = curratffile;
   atflloc.line = atflineno;

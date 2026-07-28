@@ -12,10 +12,12 @@ typedef enum linkt { ELINK_DEF ,  ELINK_SOURCE , ELINK_PARALLEL , ELINK_TOP } Li
 typedef enum prot { PROT_LZR_SPARSE ,  PROT_LZR_STOP , PROT_VERSION , PROT_ATF ,
 		    PROT_ETCSL , PROT_PROJECT , PROT_COMMENT , PROT_LINK, PROT_TOP } Prot;
 
+/* enum >= LINE_MTS are counted to determine whether or not the line
+   should be wrapped in <lg> */
 typedef enum atflt { LT_ANDLINE , LT_DOC , LT_LANG , LT_DOLLAR , LT_PROTOCOL, LT_XLINK ,
-		     LT_KEY , LT_BIB , LT_NOTE, LT_COMMENT , LT_BLOCK ,
+		     LT_KEY , LT_BIB , LT_NOTE, LT_COMMENT , LT_BLOCK , LINE_BLANK ,
 		     LINE_MTS , LINE_NTS , LINE_LGS, LINE_GUS , LINE_BIL , LINE_EXX ,
-		     LINE_LEM , LINE_LINK , LINE_BLANK , LINE_TOP } Atflt;
+		     LINE_LEM , LINE_LINK , LT_INTER , LINE_TOP } Atflt;
 
 typedef enum atflt Linet;
 
@@ -326,6 +328,8 @@ extern void line_var(Mloc l, unsigned char *lp);
 extern void tr_inter(Mloc l, unsigned char *lp);
 extern void line_lem(Mloc l, unsigned char *lp);
 extern void line_note(Mloc l, const char *ltext);
+extern void line_register(Mloc l, Linet lt, Node *np, unsigned char *lp);
+
 extern void atf_group_wrapup(void);
 
 extern void atf_tlat_wrapup(void);

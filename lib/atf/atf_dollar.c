@@ -33,7 +33,7 @@ atf_dollar(Mloc l, char *rest)
     }
   else
     {
-      atf_group_wrapup();
+      /*atf_group_wrapup();*/
 
       Block_level nonx_attach = B_bl_top;
       const char *dollar_label = NULL;
@@ -97,8 +97,8 @@ atf_dollar(Mloc l, char *rest)
 
 		       But in:
 		       
-		       @column 1
-		       $ (left edge)
+		       @column 3
+		       $ (bottom edge)
 		       1.
 		       $ (reverse)
 		       2. 
@@ -188,16 +188,29 @@ atf_dollar(Mloc l, char *rest)
 	  /* Defer Node creation and attaching until after we have
 	     determined the type of the $-line */
 	  Node *np;
-	  set_block_curr(nonx_attach);
 
-#if 1
-	    np = atf_add("nonx", &l);
-#else
+	  if (atfmp->llines && nonx_attach == B_LINE)
+	    {
+	      np = atf_node("protocol", &l);
+	      line_register(l, LT_DOLLAR, np, (ucp)rest);
+	    }
+	  else
+	    {
+	      if (atfmp->llines)
+		atf_group_wrapup();
+
+	      set_block_curr(nonx_attach);
+	      np = atf_add("protocol", &l);
+	      np = atf_add("nonx", &l);
+	    }
+
+#if 0
 	  if (atfp->edoc == EDOC_TRANSLITERATION)
 	    np = atf_push("nonx", &l);
 	  else
 	    np = atf_add("nonx", &l);
 #endif
+
 	  sprintf(line_id_insertp,"%d", ++line_id);
 	  const char *xid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool);
 	  atf_xprop(np, "xml:id", xid);

@@ -10,6 +10,8 @@ static int etcsl_error_reported;
 extern void atf_bp_reset(void);
 
 static void atf_bld_protocols(Mloc *lp, const char *scope);
+static unsigned char *proto_line(Protocol *p, const char *str);
+
 int in_preamble;
 
 int amp_trace = 0;
@@ -127,13 +129,22 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
 void
 atf_bld_bib(Mloc l, const char *ltext)
 {
+  Node *np = NULL;
   Bib *b = memo_new(atfmp->mbibs);
   b->utype = N_U_BIB;
   b->text = ltext;
-  Node *np = atf_add("protocol", &l);
+  if (atfmp->llines)
+    {
+      np = atf_node("protocol", &l);
+      line_register(l, LT_PROTOCOL, np, (ucp)ltext);
+    }
+  else
+    {
+      np = atf_add("protocol", &l);
+      atf_input(l, LT_BIB, b);
+    }
   atf_xprop(np, "type", "bib");
   np->user = b;
-  atf_input(l, LT_BIB, b);
 }
 
 void
@@ -253,23 +264,43 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   atf_input(l, LT_XLINK, lp);
 }
 
+static unsigned char *
+proto_line(Protocol *p, const char *str)
+{
+  const char *proto = (p->t == PROT_ETCSL ? "#etcsl: " : "#");
+  char buf[strlen(proto)+strlen(str)+1];
+  sprintf(buf, "%s%s", proto, str);
+  return (uchar*)memo_dup(buf);
+}
+
 static void
 abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 {
+  Node *np = NULL;
   if (line_trace)
     atf_lex_line_trace(lp);
-  if (strcmp(abt->curr->name, "protocols") && !strcmp(scope, "text"))
-    atf_bld_protocols(lp, scope);
-  if (!in_preamble)
+
+  if (in_preamble)
+    {
+      if (strcmp(abt->curr->name, "protocols") && !strcmp(scope, "text"))
+	atf_bld_protocols(lp, scope);
+      np = atf_add("protocol", lp);
+    }
+  else
     {
       if (atfmp->llines)
-	atf_group_wrapup();
-      set_block_curr(B_LINE);
+	{
+	  np = atf_node("protocol", lp);
+	  line_register(*lp, LT_PROTOCOL, np, proto_line(p, str));
+	}
+      else
+	{
+	  set_block_curr(B_LINE);
+	  np = atf_add("protocol", lp);
+	}
     }
-  Node *np = atf_add("protocol", lp);
   atf_xprop(np, "type", p->type);
   np->text = str;
-  /*np->user = p;*/
 }
 
 static void

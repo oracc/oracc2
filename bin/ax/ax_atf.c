@@ -67,6 +67,7 @@ axa_protocol(Mloc *mp, Protocol *p)
       break;
     case PROT_COMMENT:
     case PROT_ETCSL:
+    case PROT_LINK:
     case PROT_TOP:
       break;
     }

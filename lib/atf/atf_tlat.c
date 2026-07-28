@@ -150,6 +150,12 @@ atr_translation(void)
 void
 atr_inter(Mloc l, unsigned char *s)
 {
+  Node *np = atf_node("tr", &l);
+  line_register(l, LT_INTER, np, s);
+  /* extract xml:lang from s or set to "en" if none */
+  /* add ref to current translatable line (LINE_MTS or LINE_BIL) */
+  /* process contents as inline */
+  /* set np->user to the inline result */
 }
 
 void
@@ -344,6 +350,9 @@ atr_para(void)
   list_free(tral, NULL);
   tral = NULL;
 
+  if (!mpp)
+    return;
+  
   unsigned char **lines = malloc((1+nlines)*sizeof(unsigned char *));
   /* When para is a single string, the index into the para can be used
      to find the line num of a token for error messages */
@@ -580,7 +589,7 @@ static const unsigned char *
 nth_tlit_hdr(const unsigned char *id, int nth)
 {
   struct node **tmp_tlit_h = NULL;
-  if (id)
+  if (id && last_tlit_h_hash)
     {
       tmp_tlit_h = hash_find(last_tlit_h_hash, id);
       if (tmp_tlit_h)
