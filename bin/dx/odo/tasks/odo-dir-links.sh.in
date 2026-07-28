@@ -9,6 +9,8 @@
 . ${ORACC}/bin/odo-func.sh
 odo_odo $0 $*
 
+set -x
+
 # default to no-write-others
 umask 002
 
@@ -43,7 +45,7 @@ for dir in bld pub tmp xml www ; do
     md=@@ORACC_BUILDS@@/$dir/$project
     mkdir $V -p $md
     $odo_sudo chown -R $owner:$group $md
-    $odo_sudo chmod -R 2775 $md
+    $odo_sudo find $md -type d -exec chmod 2775 '{}' '+'
 done
 
 cd $odo_projdir
