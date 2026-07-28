@@ -177,7 +177,7 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_TRD>{LANG}				{ atfsave; s_next=s_TRD; BEGIN s_WORD; return TR_LANG; }
 <s_TRD>[ \t]+				{ ; }
 <s_TRD>"\n"				{ BEGIN s_TRA; }
-<s_TRA>^@h[123]				{ atfsave; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
+<s_TRA>^@h[123]				{ atfsave; tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
 <s_TRA>^@label[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_LABEL; }
 <s_TRA>^@unit[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=0; return TR_UNIT; }
 <s_TRA>^@span[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_SPAN; }
@@ -186,8 +186,8 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_PAR}			{ if (tra_text) { atflval.text=""; return TR_PAR; } }
 <s_TRA>{TRA_WHT}			{ if (tra_text) { atfsave; return TR_TEXT; } }
-<s_TRA>{TRA_WRD}	       		{ atfsave; return TR_TEXT; }
-<s_TRA>^"$"  				{ s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
+<s_TRA>{TRA_WRD}	       		{ if (tra_text) { atfsave; return TR_TEXT; } }
+<s_TRA>^"$"  				{ tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
 
 [ \t\r\n]+     			{ ; }
 

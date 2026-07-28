@@ -8,7 +8,7 @@
 static struct treemem *tmem = NULL;
 
 void
-treemem_init(void)
+tmem_init(void)
 {
   tmem = calloc(1, sizeof(struct treemem));
   tmem->tree_mem = memo_init(sizeof(Tree), 1024);
@@ -38,7 +38,7 @@ tree_init(void)
 {
   Tree *tp = NULL;
   if (!tmem)
-    treemem_init();
+    tmem_init();
   tp = memo_new(tmem->tree_mem);
   tp->tm = tmem;
   return tp;

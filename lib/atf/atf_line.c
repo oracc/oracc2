@@ -66,12 +66,17 @@ atf_group_wrapup(void)
 	  Node *np = node_ancestor_or_self(abt->curr, "lg");
 	  np->user = gp;
 	  np->utype = N_U_GROUP;
+	  tree_curr(np->rent);
 	}
       else
 	{
 	  Node *np = node_ancestor_or_self(abt->curr, "lg");
 	  if (np)
-	    tree_curr(kids_rem_last(abt)); /* HOW CAN THIS MAKE SENSE ??? */
+	    {
+	      Node *rent = np->rent;
+	      kids_rem_last(abt);
+	      tree_curr(rent);
+	    }
 	}
       list_free(atfmp->llines, NULL);
       atfmp->llines = NULL;

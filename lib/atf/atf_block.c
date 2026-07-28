@@ -274,11 +274,16 @@ block_div(Mloc l, Block *bp, char *rest)
   for (i = 0; toks[i]; ++i)
     free(toks[i]);
 
+#if 1
+  if (atfmp->llines)
+    atf_group_wrapup();
+#else
   if (!strcmp(abt->curr->name, "lg"))
     {
       atf_tlit_wrapup();
       tree_pop(abt);
     }
+#endif
 
   if (!strcmp(bp->bt->name, "variant") && !strcmp(current->name, "variant"))
     {
@@ -297,26 +302,30 @@ block_div(Mloc l, Block *bp, char *rest)
 	mesg_verr(&l, "block_div: @end before @div\n");
       else
 	{
-	  (void)stck_pop(div_stck);
-	  if (stck_peek(div_stck) < 0)
+	  Node *bnode = (Node*)stck_pop(div_stck);
+	  if ((intptr_t)bnode > 0)
 	    {
-	      stck_term(div_stck);
-	      div_stck = NULL;
+	      if (stck_peek(div_stck) < 0)
+		{
+		  stck_term(div_stck);
+		  div_stck = NULL;
+		}
+	      if (divtok)
+		{
+		  const char *type = NULL;
+		  if (bnode->props)
+		    type = prop_find_kv(bnode->props, "type", NULL)->u.k->v;
+		  if (!type && strcmp((ccp)divtok, "endvariants"))
+		    mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
+		  else if (type && strcmp(type, (ccp)divtok))
+		    mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
+		  else
+		    (void)tree_pop(abt);
+		}
 	    }
-	  if (divtok)
-	    {
-	      if (!div_stck)
-		div_stck = stck_init(8);
-	      const char *type = NULL;
-	      if (abt->curr->props)
-		type = prop_find_kv(abt->curr->props, "type", NULL)->u.k->v;
-	      if (!type && strcmp((ccp)divtok, "variants"))
-		mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
-	      else if (type && strcmp(type, (ccp)divtok))
-		mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
-	      else
-		(void)tree_pop(abt);
-	    }
+	  else
+	    mesg_verr(&l, "superfluous @end");
+	    
 	}
     }
   else
@@ -325,7 +334,8 @@ block_div(Mloc l, Block *bp, char *rest)
       np->user = bp;
       if (!div_stck)
 	div_stck = stck_init(8);
-      stck_push(div_stck, (intptr_t)np);
+      if (strcmp(bp->bt->name, "variant"))
+	stck_push(div_stck, (intptr_t)np);
       if (divtok)
 	atf_xprop(np, "type", (ccp)divtok);
       if (ntok)
@@ -380,7 +390,8 @@ block_div(Mloc l, Block *bp, char *rest)
 	    mesg_verr(&l, "orphan @variant");
 	  else
 	    {
-	      /* Not sure if this happens/should be allowed */
+	      /* Not sure if this happens/should be allowed [20260728:
+		 yes it can happen with @div proverb] */
 	      mesg_verr(&l, "div within @variant\n");
 	    }
 #endif
