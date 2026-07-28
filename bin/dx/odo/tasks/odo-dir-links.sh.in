@@ -42,8 +42,8 @@ fi
 for dir in bld pub tmp xml www ; do
     md=@@ORACC_BUILDS@@/$dir/$project
     mkdir $V -p $md
-    chown -R $owner:$group $md
-    chmod 2775 $md
+    $odo_sudo chown -R $owner:$group $md
+    $odo_sudo chmod 2775 $md
 done
 
 cd $odo_projdir

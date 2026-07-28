@@ -256,6 +256,9 @@ else
 	 odo_setx=$setx
 	 odo_tmpd=$tmpdir
 	 odo_user=$user
+	 if [ "$ORACC_MODE" = "multi" ]; then
+	     odo_sudo=sudo
+	 fi
 	 set +a
 	 if [ $command = "reset" ]; then
 	     odo-reset.sh
