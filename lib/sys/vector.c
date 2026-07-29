@@ -68,7 +68,10 @@ vec_from_str (char * str, char *(*tok)(const char *), size_t *vecsize_p)
   while (t)
     {
       if (count >= alloc)
-	tmp = realloc(tmp, (alloc*=2)*sizeof(char*));
+	{
+	  alloc *= 2;
+	  tmp = realloc(tmp, alloc*sizeof(char*));
+	}
       tmp[count++] = strdup(t);
       t = strtok(NULL, vec_sep_str);
     }
