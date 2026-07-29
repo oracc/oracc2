@@ -275,9 +275,13 @@ block_div(Mloc l, Block *bp, char *rest)
   unsigned const char *divtok = (toks[0] ? pool_copy((uccp)toks[0], atfmp->pool) : NULL);
   unsigned const char *ntok = (toks[1] ? pool_copy((uccp)toks[1], atfmp->pool) : NULL);
 
-  int i;
-  for (i = 0; toks[i]; ++i)
-    free(toks[i]);
+  if (vsiz)
+    {
+      int i;
+      for (i = 0; toks[i]; ++i)
+	free(toks[i]);
+      free(toks);
+    }
 
 #if 1
   if (atfmp->llines)
