@@ -9,7 +9,7 @@
 . ${ORACC}/bin/odo-func.sh
 odo_odo $0 $*
 
-set -x
+#set -x
 
 # default to no-write-others
 umask 002

@@ -58,11 +58,22 @@ vec_to_str (char **vec, size_t count, char *sep)
 
 const char *vec_sep_str = "\t\n ";
 char **
-vec_from_str (char * str, char *(*tok)(char *), size_t *vecsize_p)
+vec_from_str (char * str, char *(*tok)(const char *), size_t *vecsize_p)
 {
   extern char *strdup(const char *);
-  char **tmp = NULL;
+  int alloc = 4;
+  char **tmp = malloc(alloc*sizeof(char*));
   size_t count = 0;
+  char *t = strtok(str, vec_sep_str);
+  while (t)
+    {
+      if (count > alloc)
+	tmp = realloc(tmp, (alloc*=2)*sizeof(char*));
+      tmp[count++] = strdup(t);
+      t = strtok(NULL, vec_sep_str);
+    }
+  tmp[count] = NULL;
+#if 0
   do
     {
       char *t;
@@ -78,6 +89,7 @@ vec_from_str (char * str, char *(*tok)(char *), size_t *vecsize_p)
         str = NULL;
     }
   while (NULL != tmp[count++]);
+#endif
   if (NULL != vecsize_p)
     *vecsize_p = count - 1; /* leave the NULL out of the count */
   return tmp;

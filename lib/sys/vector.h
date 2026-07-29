@@ -7,7 +7,7 @@ extern const char *vec_sep_str;
 
 extern char **vec_copy (size_t vecc, char **vecv, size_t *vecc_p);
 extern char **vec_find (char **vec, char *str);
-extern char **vec_from_str (char * str, char *(*tok)(char *), size_t *vecsize_p);
+extern char **vec_from_str (char * str, char *(*tok)(const char *), size_t *vecsize_p);
 extern char *vec_to_str (char **vec, size_t count, char *sep);
 extern void vec_sep_push (const char *);
 extern void vec_sep_pop (void);

@@ -3,6 +3,9 @@
 char *
 normalize_ws(const unsigned char *s)
 {
+  if (!s || '\0' == *s)
+    return strdup("");
+
   while (isspace(*s))
     ++s;
 
