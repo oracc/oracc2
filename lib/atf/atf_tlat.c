@@ -78,6 +78,16 @@ static List *tral;
 #endif
 
 Node *
+atr_add(const char *s, Mloc *mp)
+{
+  if (bld_trace)
+    fprintf(stderr, "bld: atr_push %s to parent %s\n", s, curr_trans->tree->curr->name);
+  Node *np = tree_add(curr_trans->tree, NS_HTM, s, curr_trans->tree->curr->depth, NULL);
+  np->mloc = mloc_mloc(mp);
+  return np;
+}
+
+Node *
 atr_push(const char *s, Mloc *mp)
 {
   if (bld_trace)
@@ -260,6 +270,14 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
   nocellspan = 1;
   atr_para();
   nocellspan = 0;
+}
+
+void
+atr_comment(Mloc l, unsigned char *s)
+{
+  struct node *np = atr_add("xh:p", &l);
+  setClass(np,"comment");
+  np->text = (ccp)s;
 }
 
 void

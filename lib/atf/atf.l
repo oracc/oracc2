@@ -56,7 +56,7 @@ TRA_CMD (@[a-z0-9]+("["[^\]]+"]")?)|@\?|\?@|@\"|\"@|\{|\}|\^[0-9]+\^
 TRA_LAB ^@\([^)@]+\)
 TRA_PAR [\n\r]+[ \t]*[\n\r]+
 TRA_WHT [ \t\n\r]+
-TRA_WRD [^ \t\@\"\?\[\]\{\}]+
+TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 
 %x s_AMPl
 %x s_AMPr
@@ -181,13 +181,14 @@ TRA_WRD [^ \t\@\"\?\[\]\{\}]+
 <s_TRA>^@label[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_LABEL; }
 <s_TRA>^@unit[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=0; return TR_UNIT; }
 <s_TRA>^@span[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_SPAN; }
+<s_TRA>^"$"  				{ tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
+<s_TRA>^"#"[^ \t\n\r]*/[ \t\n\r]   	{ tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_COMMENT; }
 <s_TRA>{TRA_LAB}			{ atfsave; tra_text=1; return TR_LABEL; }
 <s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }
 <s_TRA>{TRA_PAR}			{ if (tra_text) { atflval.text=""; return TR_PAR; } }
 <s_TRA>{TRA_WHT}			{ if (tra_text) { atfsave; return TR_TEXT; } }
 <s_TRA>{TRA_WRD}	       		{ if (tra_text) { atfsave; return TR_TEXT; } }
-<s_TRA>^"$"  				{ tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
 
 [ \t\r\n]+     			{ ; }
 

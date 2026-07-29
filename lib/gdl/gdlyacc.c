@@ -268,6 +268,7 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 	  gdlstate_t s = prop_get_state(c);
 	  if (!gs_is(s,gs_excised))
 	    {
+	      gdlstate_t n = c->next ? prop_get_state(c->next) : 0L;
 	      /* 20260609 if c->user and c->user->orig are non-NULL
 		 use the original transliteration in the word form
 		 because that is what lemm-xxx.sig match against; set
@@ -282,8 +283,10 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 		  if (c->next)
 		    {
 		      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-		      if (d || (d = gdl_wf_deep_delim(c->next)))
-			fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
+		      if ((!gs_is(n, gs_excised) || c->next->next) && (d || (d = gdl_wf_deep_delim(c->next))))
+			{
+			  fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
+			}
 		    }
 		}
 	      else if (strcmp(c->name, "g:sur"))

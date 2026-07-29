@@ -385,14 +385,25 @@ block_div(Mloc l, Block *bp, char *rest)
 	}
       else if (!xstrcmp(bp->bt->name,"variants")) 
 	{
+#if 0
 	  if (!strcmp(((Block*)current->rent->user)->bt->name, "variants"))
 	    mesg_verr(&l, "nested @variants not allowed");
 	  else
+#endif
 	    new_variant(&l);
 	} 
       else if (!xstrcmp(bp->bt->name,"variant"))
 	{
-#if 0
+#if 1
+	  Node *vars = node_ancestor_or_self(current, "variants");
+	  if (!vars)
+	    mesg_verr(&l, "orphan @variant");
+	  else
+	    {
+	      tree_curr(vars);
+	      new_variant(&l);
+	    }
+#else
 	  /* looks like ox removed the 'variant' then made @variants
 	     the parent and re-added it; for ax we require @variants
 	     ... @variant ... @variants */

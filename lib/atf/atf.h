@@ -348,6 +348,7 @@ extern struct xcl_ilem *atf_save_lem(Node *np, const char *lemstr);
 extern void atf_milestone(Block *bp, char *rest);
 extern struct map *mdiscourse(const char *str, size_t len);
 
+extern void atr_comment(Mloc l, unsigned char *s);
 extern void atr_dollar(Mloc l, unsigned char *s);
 extern void atr_finish_labels(void);
 extern void atr_hdr(Mloc l, const char *h, unsigned char *s);

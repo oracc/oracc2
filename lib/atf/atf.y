@@ -34,7 +34,7 @@ ATFLTYPE atflloc;
 			VERSION
 			ATF_LANG
 			TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
-			TR_TEXT TR_PAR TR_HDR TR_DOLLAR
+			TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
 
 %token  <i>		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
 			HASH_ETCSL_T HASH_ETCSL_L
@@ -379,23 +379,22 @@ tr.chunks:
 
 tr.chunk:
 		tr.align tr.trans
-	|	tr.metas tr.align tr.trans
-		;
-
-tr.metas:
-		tr.meta
-	|	tr.metas tr.meta
+	|	tr.meta
 		;
 
 tr.meta:
 		tr.hdr
+	|	tr.comment
 	|	tr.dollar
 		;
 
 tr.hdr: 	TR_HDR longtext       	{ atr_hdr(@1, $1+1, (ucp)longtext_get()); }
 		;
 
-tr.dollar:	TR_DOLLAR		{ atr_dollar(@1, (ucp)longtext_get()); }
+tr.comment:	TR_COMMENT longtext    	{ atr_comment(@1, (ucp)longtext_get()); }
+		;
+
+tr.dollar:	TR_DOLLAR longtext     	{ atr_dollar(@1, (ucp)longtext_get()); }
 		;
 
 tr.align:
