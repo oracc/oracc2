@@ -11,14 +11,14 @@ enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XCL , NS_XMD , N
 typedef enum nscode nscode;
 typedef nscode nsrefs[NS_LAST];
 
-struct treemem
+typedef struct treemem
 {
   Memo *tree_mem;
   Memo *node_mem;
   Pool *pool;
   Memo *prop_mem;
   Memo *keva_mem;
-};
+} Treemem;
 
 typedef struct tree {
   struct treemem *tm;
@@ -73,7 +73,7 @@ typedef nodehandler nodehandlers[NS_LAST];
 extern void nodeh_register(nodehandlers nh, nscode c, nodehandler fnc);
 
 extern Tree *tree_init(void);
-extern void tree_term(void);
+extern void tree_term(Tree *tp);
 extern Node *tree_pop(Tree *tp);
 extern Node *tree_push(Tree *tp);
 extern Node *tree_add(Tree *tp, nscode ns, const char *name, int depth, Mloc *loc);

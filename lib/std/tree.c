@@ -5,49 +5,44 @@
 #include "memo.h"
 #include "tree.h"
 
-static struct treemem *tmem = NULL;
-
-void
+Treemem *
 tmem_init(void)
 {
-  tmem = calloc(1, sizeof(struct treemem));
+  Treemem *tmem = calloc(1, sizeof(struct treemem));
   tmem->tree_mem = memo_init(sizeof(Tree), 1024);
   tmem->node_mem = memo_init(sizeof(Node), 1024);
   tmem->prop_mem = memo_init(sizeof(Prop), 1024);
   tmem->keva_mem = memo_init(sizeof(Keva), 1024);
   tmem->pool = pool_init();
+  return tmem;
 }
 
 void
-tmem_term(void)
+tmem_term(Treemem *tmem)
 {
   if (tmem)
     {
-      memo_term(tmem->tree_mem);
       memo_term(tmem->node_mem);
       memo_term(tmem->prop_mem);
       memo_term(tmem->keva_mem);
       pool_term(tmem->pool);
       free(tmem);
-      tmem = NULL;
     }
 }
 
 Tree *
 tree_init(void)
 {
-  Tree *tp = NULL;
-  if (!tmem)
-    tmem_init();
-  tp = memo_new(tmem->tree_mem);
-  tp->tm = tmem;
+  Tree *tp = calloc(1, sizeof(Tree));
+  tp->tm = tmem_init();
   return tp;
 }
 
 void
-tree_term(void)
+tree_term(Tree *tp)
 {
-  tmem_term();
+  tmem_term(tp->tm);
+  free(tp);
 }
 
 Node *

@@ -35,7 +35,8 @@ gdl_one_off(const char *file, int line, const char *g, int voidsl)
   if (tp && tp->root && tp->root->kids)
     res = strdup(tp->root->kids->text);
   gdlparse_term();
-  tree_term();
+  if (tp)
+    tree_term(tp);
   if (voidsl)
     gvl_wrapup(NULL);
   return res;

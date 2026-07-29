@@ -12,6 +12,7 @@ Atfm *atfmp;
 ATF *atfp;
 extern int gdl_lexical;
 extern void atflex_destroy(void);
+extern Tree *abt;
 
 Tree *
 atfyacc(void)
@@ -118,7 +119,7 @@ atf_term(void)
   atf_lex_term();
   label_term();
   note_term();
-  tree_term();  
+  tree_term(abt);
 }
 
 void

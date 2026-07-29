@@ -82,7 +82,7 @@ cbd_no_form_bases(Entry *ep)
 	{
 	  Cform *nfbf = cbd_bld_form(ep->l, ep);
 	  BIT_SET(nfbf->f.flags, FORM_FLAGS_IMPLICIT);
-	  nfbf->f.lang = (uccp)(ltp->lang ? ltp->lang : "sux");
+	  nfbf->f.lang = (uccp)(ltp->lang ? ltp->lang : (ccp)curr_cbd->lang);
 	  nfbf->f.form = nfbf->f.base = ltp->tok;
 	  nfbf->f.morph = (uccp)"~";
 	  cbd_bld_form_setup(ep, nfbf);
