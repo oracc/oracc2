@@ -262,8 +262,9 @@ block_div(Mloc l, Block *bp, char *rest)
   char **toks = NULL;
   char *tokx[] = { NULL , NULL , NULL };
   size_t vsiz = 0;
-  if (rest)
+  if (rest && strlen(rest))
     {
+      fprintf(stderr, "block_div: rest=%s\n", rest);
       toks = vec_from_str(strdup(rest), NULL, &vsiz);
       if (vsiz <= 0)
 	fprintf(stderr, "vec_from_str: no tokens in %s\n", rest);

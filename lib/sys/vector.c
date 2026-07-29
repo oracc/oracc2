@@ -62,36 +62,19 @@ vec_from_str (char * str, char *(*tok)(const char *), size_t *vecsize_p)
 {
   extern char *strdup(const char *);
   int alloc = 4;
-  char **tmp = malloc(alloc*sizeof(char*));
+  char **tmp = calloc(alloc, sizeof(char*));
   size_t count = 0;
   char *t = strtok(str, vec_sep_str);
   while (t)
     {
-      if (count > alloc)
+      if (count >= alloc)
 	tmp = realloc(tmp, (alloc*=2)*sizeof(char*));
       tmp[count++] = strdup(t);
       t = strtok(NULL, vec_sep_str);
     }
   tmp[count] = NULL;
-#if 0
-  do
-    {
-      char *t;
-      tmp = realloc (tmp, (count + 1) * sizeof (char *));
-      /* when str is exhausted this will add the required NULL to tmp 
-	 automatically */
-      t  = (NULL == tok) ? strtok (str, vec_sep_str) : tok (str);
-      if (t)
-	tmp[count] = strdup(t);
-      else
-	tmp[count] = NULL;
-      if (count == 0)
-        str = NULL;
-    }
-  while (NULL != tmp[count++]);
-#endif
   if (NULL != vecsize_p)
-    *vecsize_p = count - 1; /* leave the NULL out of the count */
+    *vecsize_p = count;
   return tmp;
 }
 
