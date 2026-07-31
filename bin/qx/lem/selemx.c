@@ -627,6 +627,7 @@ main (int argc, char **argv)
 
   setlocale(LC_ALL,ORACC_LOCALE);
   form_init();
+  form_validate_morph = 0;
   f2_mem = memo_init(sizeof(Form), 128);
 
   options (argc, argv, "2ac:gp:qsx:v");
