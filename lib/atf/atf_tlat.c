@@ -276,7 +276,7 @@ void
 atr_comment(Mloc l, unsigned char *s)
 {
   struct node *np = atr_add("xh:p", &l);
-  setClass(np,"comment");
+  setClass(np,"xtr comment");
   np->text = (ccp)s;
 }
 
@@ -284,7 +284,7 @@ void
 atr_dollar(Mloc l, unsigned char *s)
 {
   struct node *curr_block_np = atr_push("xh:p", &l);
-  setClass(curr_block_np,"dollar");
+  setClass(curr_block_np,"xtr dollar");
   start_lnum = l.line;
   if (s[1] == '@' && s[2] == '(')
     {
@@ -338,6 +338,7 @@ atr_dollar(Mloc l, unsigned char *s)
     ++s;
 
   (void)atr_inline(&l, curr_block_np,s);
+  (void)tree_pop(curr_trans->tree);
 }
 
 void
