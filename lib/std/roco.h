@@ -51,6 +51,7 @@ extern Hash *roco_hash_r_f(Roco *r, Roco_hash_key f);
 extern const char *roco_colorder;
 extern const char *roco_format;
 extern int roco_html_ns, roco_esp_ns, roco_ood_ns, roco_xmd_ns;
+extern int roco_check_ncol;
 extern int roco_newline;
 extern int roco_no_void_xml;
 extern int roco_swap_axes;

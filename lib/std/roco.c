@@ -12,10 +12,11 @@ List *r_list;
 
 const char *roco_colorder = NULL;
 const char *roco_format = NULL;
-int roco_swap_axes = 0;
-int roco_newline = 0;
-int roco_xmlify = 1;
 int roco_allow_empty = 0;
+int roco_check_ncol = 0;
+int roco_newline = 0;
+int roco_swap_axes = 0;
+int roco_xmlify = 1;
 
 Roco *
 roco_create(int rows, int cols)
@@ -83,7 +84,11 @@ roco_load(const char *file, int fieldsr1,
 	  ++s;
 	}
       if (ncol > r->maxcols)
-	r->maxcols = ncol;
+	{
+	  if (i && roco_check_ncol)
+	    fprintf(stderr, "roco: row %d has %d columns which is more than %d in row 1\n", i, ncol, r->maxcols);
+	  r->maxcols = ncol;
+	}
       r->rows[i] = calloc(r->maxcols+1, sizeof(unsigned char *));
       int col;
       for (col = 0, s = r->lines[i]; *s; ++col)
