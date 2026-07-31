@@ -13,6 +13,7 @@
 extern Mloc *xo_loc;
 extern int trace_mode;
 const char *xfn = NULL;
+const char *tfn = NULL;
 extern const char *file;
 static void ax_jox_lines(Group *gp);
 static void ax_jox_node(Node *np);
@@ -44,10 +45,27 @@ atf_line_pi(Node *n)
 }
 
 void
+ax_jox_tra(void)
+{
+  jox_xml_output(tra_fp);
+  atf_file_pi(file);
+  joxer_init(&xtf_data, "xtf", val_flag, tra_fp, NULL);
+  atf_pi_fp = tra_fp;
+  ax_jox_node(curr_trans->tree->root);
+  joxer_term(tra_fp, NULL);
+  xfclose(trafile, tra_fp);
+  tra_fp = NULL;
+  curr_trans = NULL;
+}
+
+void
 ax_jox(Tree *tp)
 {
   if (!xfn)
-    xfn = "ax.xml";
+    {
+      xfn = "ax.xml";
+      trafile = "ax.xtr";
+    }
 
   FILE *xfp = NULL;
 
@@ -58,6 +76,12 @@ ax_jox(Tree *tp)
   if (!xtf_fp && !tra_fp)
     {
       xfp = fopen(xfn, "w");
+      tra_fp = xfopen(trafile, "w");
+      if (!xfp || !tra_fp)
+	{
+	  fprintf(stderr, "ax: failed to open either or both of %s and %s. Stop.\n", xfn, trafile);
+	  exit(1);
+	}
       jox_xml_output(xfp);
       atf_pi_fp = xfp;
       atf_file_pi(file);
@@ -65,6 +89,8 @@ ax_jox(Tree *tp)
       ax_jox_node(tp->root);
       joxer_term(xfp,NULL);
       fclose(xfp);
+      if (curr_trans)
+	ax_jox_tra();
     }
   else
     {
@@ -72,15 +98,7 @@ ax_jox(Tree *tp)
 	{
 	  if (curr_trans)
 	    {
-	      jox_xml_output(tra_fp);
-	      atf_file_pi(file);
-	      joxer_init(&xtf_data, "xtf", val_flag, tra_fp, NULL);
-	      atf_pi_fp = tra_fp;
-	      ax_jox_node(curr_trans->tree->root);
-	      joxer_term(tra_fp, NULL);
-	      xfclose(trafile, tra_fp);
-	      tra_fp = NULL;
-	      curr_trans = NULL;
+	      ax_jox_tra();
 	    }
 	  else
 	    {
@@ -276,7 +294,10 @@ ax_jox_lines(Group *gp)
 	  free(r->qatts);
 	  free(r);
 	}
-      grx_jox_gdl(np, np->user);
+      if (np->user)
+	grx_jox_gdl(np, np->user);
+      else if (np->text)
+	joxer_ch(np->mloc, np->text);
       joxer_ee(np->mloc, np->name);
     }
 }
