@@ -61,10 +61,12 @@ set $ldir/*.tsv
 if [ "$1" != "$ldir/*.tsv" ]; then
     for t in $* ; do
 	id=`head -1 $t | grep ^id_`
-	if [ "${id}" = "" ]; then
+	if [ "${id}" != "" ]; then
 	    id=`head -1 $t | tr '\t' '\n' | grep ^id_ | tr -d '\n'`
-	    ${bin}/rocox -z $id $t >$t.z
+	    ${bin}/rocox -z $id <$t >$t.z
 	    mv $t.z $t
+	else
+	    odo_fail "$0: no id_text or id_composite found in $t. Stop."
 	fi
     done
 fi
@@ -72,7 +74,7 @@ fi
 # ensure basic requirements are met
 ${bin}/cx-sanity.sh
 if [ $? -ne 0 ]; then
-    echo $0: failed catalague sanity checks. Stop.
+    echo $0: failed catalogue sanity checks. Stop.
     exit 1
 fi
 
