@@ -23,7 +23,7 @@ main(int argc, char *const *argv)
 {
   Roco *r = NULL, *s = NULL;
 
-  options(argc, argv, "c:C:eEfFh::j:J:nor:R:stT:uU:vx:Xz:?");
+  options(argc, argv, "c:C:eEfFh::j:J:Nnor:R:stT:uU:vx:Xz:?");
 
   if (!xmltag || suppress_xmlify)
     xmlify = xmlify_not;
@@ -175,7 +175,10 @@ opts(int opt, const char *arg)
 	j_list = list_create(LIST_SINGLE);
       list_add(j_list, (void*)arg);
       break;
-    case 'n':      
+    case 'N':
+      roco_check_ncol = 1;
+      break;
+    case 'n':
       roco_newline = 1;
       break;
     case 'o':
