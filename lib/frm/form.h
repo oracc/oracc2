@@ -129,6 +129,8 @@ extern Memo *formsmem;
 extern Memo *formspmem;
 #endif
 
+extern int form_validate_morph;
+
 extern void form_init(void);
 extern void form_term(void);
 

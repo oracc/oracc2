@@ -12,6 +12,8 @@
 static Memo *formsmem = NULL;
 static Memo *formspmem = NULL;
 
+int form_validate_morph = 1;
+
 #define Uchar unsigned char
 
 #if 1
@@ -509,15 +511,18 @@ form_parse(const Uchar *file, size_t line, Uchar *lp, struct form *formp, Uchar 
 		  else
 		    {
 		      formp->morph = lp;
-		      const char *tilde = (ccp)strchr((ccp)formp->morph, '~');
-		      if (tilde)
+		      if (form_validate_morph)
 			{
-			  if (tilde[1] && !strchr(";,!*", tilde[1])) /* allow '*' because #~*B is legal */
-			    mesg_vwarning((char*)file,line,"#-morphology lacks any of ';,!' after tilde ('~') in %s",
-					  formp->morph);
+			  const char *tilde = (ccp)strchr((ccp)formp->morph, '~');
+			  if (tilde)
+			    {
+			      if (tilde[1] && !strchr(";,!*", tilde[1])) /* allow '*' because #~*B is legal */
+				mesg_vwarning((char*)file,line,"#-morphology lacks any of ';,!' after tilde ('~') in %s",
+					      formp->morph);
+			    }
+			  else if (!strchr((ccp)formp->morph, 'X'))
+			    mesg_vwarning((char*)file,line,"#-morphology lacks tilde ('~') in %s", formp->morph);
 			}
-		      else if (!strchr((ccp)formp->morph, 'X'))
-			mesg_vwarning((char*)file,line,"#-morphology lacks tilde ('~') in %s", formp->morph);
 		    }
 		  break;
 		case '*':
