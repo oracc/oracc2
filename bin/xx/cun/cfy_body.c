@@ -75,9 +75,9 @@ cfy_body(Cfy *c, Xtfbody *xp, const char **atts)
 }
 
 void
-cfy_body_term(void)
+cfy_body_term(Tree *tp)
 {
-  tree_term();
+  tree_term(tp);
 }
 
 void

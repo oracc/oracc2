@@ -472,7 +472,7 @@ extern char *cfy_class_key(const char *fnt, const char *otf, const char *mag, co
 
 extern Div *cfy_body(Cfy *c, Xtfbody *xp, const char **atts);
 extern Tree *cfy_body_init(Cfy *c, const char *name, const char **atts);
-extern void cfy_body_term(void);
+extern void cfy_body_term(Tree *tp);
 extern void cfy_body_debug(Cfy *c);
 extern void cfy_body_lines(Cfy *c);
 
