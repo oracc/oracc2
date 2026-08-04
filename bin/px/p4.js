@@ -646,7 +646,7 @@ function showblock(project,item,blockid) {
 }
 
 function showcdli(PQ) {
-    var url = 'http://cdli.ucla.edu/'+PQ;
+    var url = 'https://cdli.earth/'+PQ;
     popup(url,'exemplarWindow',700,800,100,350);
 }
 
