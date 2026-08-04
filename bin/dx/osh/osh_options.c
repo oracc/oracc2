@@ -3,6 +3,8 @@
 #include <dx.h>
 #include <osh.h>
 
+#include <unistd.h>
+
 static int badchar(char *s);
 
 /**osh_options parses any command line options and fills an array with
@@ -147,7 +149,7 @@ opts(int opt, const char *arg)
 }
 
 void
-help()
+help(void)
 {
 }
 
@@ -163,7 +165,7 @@ badchar(char *s)
     ['-']=1,['_']=1,['/']=1
   };
   while (*s)
-    if (*s < 128 && !good[(unsigned char)*s++])
+    if (*(unsigned char*)s < 128 && !good[(unsigned char)*s++])
       return 1;
   return 0;
 }

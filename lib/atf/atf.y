@@ -238,6 +238,9 @@ cblock: 	division
 	|	milestone
 	|	heading
 	|	line
+	|	error line { mesg_print(stderr); mesg_init();
+		    /* fprintf(stderr, "skipping to next line\n"); */
+		    yyclearin; yyerrok; }
 	;
 
 division:	bdivision cblocks edivision

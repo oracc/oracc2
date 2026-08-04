@@ -39,7 +39,7 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
-%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS CELLSPAN
+%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS CELLSPAN IGNORE
 		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
 		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
@@ -218,6 +218,7 @@ s:
 	| 	ZERO				{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
 	| 	PUNCT				{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
 	| 	ELLIPSIS			{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
+	|	IGNORE				{ ; }
 	;
 
 compound:

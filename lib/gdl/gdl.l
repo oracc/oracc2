@@ -319,6 +319,8 @@ gdl_grapheme_type_l(void)
 {
   char *l = gdltext;
   char *g = (char*)gdl_unlegacy_str(&gdllloc, (uccp)l);
+  if (g)
+    {
   gsaveg(g);
 
   if (strcmp(g,l))
@@ -342,6 +344,11 @@ gdl_grapheme_type_l(void)
     return LISTNUM;
   else
     return GRAPHEME;
+    }
+  else
+    {
+       return IGNORE;
+    }
 }
 
 void

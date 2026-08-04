@@ -49,7 +49,9 @@ PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
 LANG	[a-z][a-z][a-z]?(-[-a-z]+)?
 use	"use"[ \t]+			
-
+NOD 	[^ \t\n\r.]
+NON 	[^ \t\n\r]
+WHT 	[ \t\n\r]
 			/* */
 TRA_CHR [@\"?\[\]\{\}]
 TRA_CMD (@[a-z0-9]+("["[^\]]+"]")?)|@\?|\?@|@\"|\"@|\{|\}|\^[0-9]+\^
@@ -69,6 +71,7 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 %x s_WORD
 %x s_TRD
 %x s_TRA
+%x s_IGNORE
 
 %%
 
@@ -193,6 +196,11 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 [ \t\r\n]+     			{ ; }
 
 <*>\r				{ }
+
+<s_IGNORE>[\r\n]		{ BEGIN 0; }
+^[a-zA-Z].*$        		{ BEGIN s_IGNORE; mesg_verr(&atflloc, "unknown start of line: %s", yytext); }
+^[0-9]{NOD}*{WHT}+.*$           { BEGIN s_IGNORE; mesg_verr(&atflloc, "bad line number: %s", yytext); }
+^[0-9]{NOD}*"."{NON}.*$         { BEGIN s_IGNORE; mesg_verr(&atflloc, "junk after line number: %s", yytext); }
 
 <*>.				{ fprintf(stderr,"%s:%d: atf.l: unmatched character '%c'\n",
 					  curratffile, atflineno,*atftext); }

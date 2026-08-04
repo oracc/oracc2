@@ -157,33 +157,38 @@ gdl_break_c(Bracket_e bt)
   if (st > 0)
     {
       Node *np = gstck_np(st);
-      if ('r' == np->name[2])
-	np = np->rent;
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
-      if (!gdl_no_xml_ids)
+      if (np)
 	{
-	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-	  if (!idp)
+	  if ('r' == np->name[2])
+	    np = np->rent;
+	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
+	  if (!gdl_no_xml_ids)
 	    {
-	      if (np->kids)
+	      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+	      if (!idp)
 		{
-		  idp = prop_find_kv(np->kids->props, "xml:id", NULL);
-		  if (!idp)
+		  if (np->kids)
 		    {
-		      if (np->kids->text)
-			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'\n", np->kids->text);
+		      idp = prop_find_kv(np->kids->props, "xml:id", NULL);
+		      if (!idp)
+			{
+			  if (np->kids->text)
+			    mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'", np->kids->text);
+			  else
+			    mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids");
+			}
 		      else
-			mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids\n");
+			gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 		    }
 		  else
-		    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
+		    mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np type %s", np->name);
 		}
 	      else
-		mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np type %s\n", np->name);
+		gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 	    }
-	  else
-	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 	}
+      else
+	mesg_verr(&gdllloc, "gdl_break_c: no opener in stack when trying to balance closer");
     }
   else if (st == 0)
     {
