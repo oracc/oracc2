@@ -259,6 +259,7 @@ bin/ax/ax_prj.c
 bin/bx/bx_xslt.c
 bin/bx/bib_out_htm.c
 bin/bx/map-jrnser.xsl
+bin/dx/odox-install.sh
 bin/dx/dxx/dx-install.sh
 bin/dx/odo/tasks/odo-cvs-checkout.sh
 bin/dx/odo/tasks/odo-cvs-refresh.sh

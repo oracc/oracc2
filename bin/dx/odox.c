@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/errno.h>
+
+const char *envp[] =
+  {
+    "ORACC", "/Users/stinney/orc",
+    "CANARY", "tweet",
+    NULL
+  };
+
+int
+main(int argc, char *const *argv)
+{
+  extern char **environ;
+  int i;
+  for (i = 0; envp[i]; i+=2)
+    setenv(envp[i], envp[i+1], 0);
+  if (execve("/Users/stinney/orc/bin/odo", argv+1, environ))
+    fprintf(stderr, "odox: execve failed: %s\n", strerror(errno));
+  return 1;
+}

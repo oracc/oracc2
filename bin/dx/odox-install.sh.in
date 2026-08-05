@@ -1,0 +1,7 @@
+#!/bin/sh
+##chmod go-rw @@ORACC@@/bin
+sudo chown oradmin:oradmin odox
+sudo chmod go-rw odox
+sudo chmod ug+s odox
+sudo rm -f @@ORACC@@/bin/odox
+sudo cp -fa odox @@ORACC@@/bin
