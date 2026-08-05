@@ -366,6 +366,8 @@ msc/prj/osl/osl-sx-slix.sh
 msc/prj/osl/osl-user-page.sh
 msc/prj/osl/osl-user-site.sh
 msc/prj/osl/oracc_builds.c
+msc/sys/proj-from-conf.sh
+msc/sys/type-from-conf.sh
 msc/tex/o25/fonts25.tex
 msc/tex/o25/mk-oracctex.sh
 msc/tex/o25/oracctex
