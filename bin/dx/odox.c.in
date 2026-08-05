@@ -18,7 +18,7 @@ main(int argc, char *const *argv)
   int i;
   for (i = 0; envp[i]; i+=2)
     setenv(envp[i], envp[i+1], 0);
-  if (execve("@@ORACC@@/bin/odo", argv+1, environ))
+  if (execve("@@ORACC@@/bin/odo", argv, environ))
     fprintf(stderr, "odox: execve failed: %s\n", strerror(errno));
   return 1;
 }
