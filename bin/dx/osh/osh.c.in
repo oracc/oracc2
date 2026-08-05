@@ -3,6 +3,7 @@
 
 const char *progname = NULL;
 int ssh_mode = 0;
+int odo_builtins = 0;
 int verbose = 0;
 
 static void showargs(int argc, char **argv, Job *jp);
@@ -32,7 +33,7 @@ main(int argc, char **argv)
 	    {
 	      if (verbose)
 		fprintf(stderr, "%s: project=%s; initial command=%s\n", progname, j.project, j.cmd1);
-	      if (oip->type == OSH_BUILTIN)
+	      if (oip->type == OSH_BUILTIN && !odo_builtins)
 		{
 		  if (!strcmp(oip->arg, "$log"))
 		    {

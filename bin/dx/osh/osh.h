@@ -15,6 +15,7 @@ struct osh_info
 typedef struct job
 {
   char **cmdv;
+  int cmdc;
   char *cmd;
   char *cmd1;
   char *user;
@@ -28,9 +29,12 @@ typedef struct job
   pid_t pid;
   char status[6];    /* run done error */
   int time;
+  int verbose;
+  int odo_builtins;
 } Job;
 
 extern const char *progname;
+extern int odo_builtins;
 extern int ssh_mode;
 extern int verbose;
 

@@ -6,13 +6,17 @@
 #include <unistd.h>
 
 static int badchar(char *s);
+static int check_args(char **av);
+static void copy_argv(char **dst, char * const *av);
+static int count_args(char *s, char * const *av);
+static Job *j;
 
 /**osh_options parses any command line options and fills an array with
    the commands to be executed.  When called from ssh these commands
    are all in a single string, which is split here at any whitespace.
 
-   Unlike a real shell, there are is no expansion or escaping.  All
-   osh handles commands like 'rimanum build all' or 'dcclt/nineveh
+   Unlike a real shell, there is no expansion or escaping.  All
+   osh handles is commands like 'rimanum build all' or 'dcclt/nineveh
    check links'.
 
    Command tokens are validated to ensure they contain only characters
@@ -25,109 +29,62 @@ char **
 osh_options(int argc, char **argv, Job *jp)
 {
   char **av = NULL;
-  if (!options(argc, argv, "cv"))
+  int ac = argc, ssh_mode = 0;
+  if (argc == 2 && strchr(argv[optind], ' '))
     {
-      if (argv[optind] && *argv[optind])
+      ssh_mode = 1;
+      ac = count_args(argv[1], argv);
+      av = malloc((ac+2)*sizeof(char *));
+      av[0] = argv[0];
+      copy_argv(av+1, argv);
+    }
+  else
+    av = argv;
+  j = jp;
+  if (!options(ac, av, "ov"))
+    {
+      if (av[optind])
 	{
-	  int sp, i;
-	  if (ssh_mode)
-	    {
-	      char *s = argv[optind];
-	      if (verbose)
-		fprintf(stderr, "%s: passed arguments: %s\n", argv[0], s);
-	      sp = 1;
-	      while (*s)
-		{
-		  if (isspace(*s))
-		    {
-		      ++sp;
-		      while (isspace(*s))
-			++s;
-		    }
-		  else
-		    ++s;
-		}
-	    }
-	  else
-	    {
-	      sp = (argc - optind) + 1;
-	    }
-	  av = malloc((sp+1+verbose)*sizeof(char *));
-	  if (ssh_mode)
-	    {
-	      char *s = argv[optind];
-	      i = 0;
-	      while (*s)
-		{
-		  av[i++] = s;
-		  while (*s && !isspace(*s))
-		    ++s;
-		  if (*s)
-		    {
-		      *s++ = '\0';
-		      while (isspace(*s))
-			++s;
-		    }
-		}
-	      av[sp] = NULL;
-	      if (av[0] && !strcmp(av[0], "-v"))
-		{
-		  if (av[1])
-		    {
-		      jp->project = strdup(av[1]);
-		      if (av[2])
-			jp->cmd1 = strdup(av[2u]);
-		    }
-		}
-	      else
-		{
-		  if (av[0])
-		    {
-		      jp->project = strdup(av[0]);
-		      if (av[1])
-			jp->cmd1 = strdup(av[1]);
-		    }
-		}
-	    }
-	  else
-	    {
-	      i = 0;
-	      if (verbose)
-		av[i++] = "-v";
-	      jp->project = strdup(argv[optind]);
-	      if ((optind+1) < argc)
-		jp->cmd1 = strdup(argv[++optind]);
-	      while (argv[optind])
-		av[i++] = argv[optind++];
-	      av[i] = NULL;
-	    }
-	  if (!jp->project || !jp->cmd1) /*(!av[0+verbose] || !av[1+verbose])*/
-	    {
-	      fprintf(stderr, "%s: request must contain at least a project and a command\n", progname);
-	      free(av);
-	      av = NULL;
-	      exit(1);
-	    }
-	  int len = 0;
-	  for (i = 0; av[i]; ++i)
-	    if (badchar(av[i]))
-	      {
-		fprintf(stderr, "%s: bad character in command token\n", argv[0]);
-		free(av);
-		av = NULL;
-		break;
-	      }
-	    else
-	      len += strlen(av[i])+1;
-
+	  int x = optind;
+	  jp->project = strdup(av[x++]);
+	  if (av[x])
+	    jp->cmd1 = strdup(av[x]);
+	}
+      if (!jp->project || !jp->cmd1) /*(!av[0+verbose] || !av[1+verbose])*/
+	{
+	  fprintf(stderr, "%s: request must contain at least a project and a command\n", progname);
+	  free(av);
+	  av = NULL;
+	  exit(1);
+	}
+      int len = check_args(av);
+      if (len > 0)
+	{
 	  /* Set up the job cmd vector and cmd string members */
 	  jp->cmd = malloc(len+1);
 	  *jp->cmd = '\0';
-	  jp->cmdv = av;
+	  jp->cmdc = argc - optind;
+	  jp->cmdv = malloc((jp->cmdc+1)*sizeof(char*));
+	  if (jp->verbose)
+	    jp->cmdv[0] = "-v";
+	  memcpy(jp->cmdv+jp->verbose, &av[optind], (jp->cmdc+1) * sizeof(char*));
+	  int i;
 	  for (i = 0; av[i]; ++i)
 	    strcat(strcat(jp->cmd, av[i]), " ");
 	  jp->cmd[strlen(jp->cmd)-1] = '\0';
 	}
+      else
+	{
+	  if (ssh_mode)
+	    free(av);
+	  av = NULL;
+	}
+    }
+  else
+    {
+      if (ssh_mode)
+	free(av);
+      av = NULL;
     }
   return av;
 }
@@ -137,11 +94,11 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
-    case 'c':
-      ssh_mode = 1;
+    case 'o':
+      j->odo_builtins = 1;
       break;
     case 'v':
-      verbose = 1;
+      j->verbose = 1;
       break;
     default:
       return 1;
@@ -169,4 +126,61 @@ badchar(char *s)
     if (*(unsigned char*)s < 128 && !good[(unsigned char)*s++])
       return 1;
   return 0;
+}
+
+static int
+check_args(char **av)
+{
+  int len = -1, i;
+  for (i = optind; av[i]; ++i)
+    if (badchar(av[i]))
+      {
+	fprintf(stderr, "%s: bad character in command token\n", av[0]);
+	free(av);
+	av = NULL;
+	break;
+      }
+    else
+      len += strlen(av[i])+1;
+  return len;
+}
+
+static void
+copy_argv(char **dst, char * const*argv)
+{
+  char *s = memo_dup(argv[optind]);
+  int i = 0;
+  while (*s)
+    {
+      dst[i++] = s;
+      while (*s && !isspace(*s))
+	++s;
+      if (*s)
+	{
+	  *s++ = '\0';
+	  while (isspace(*s))
+	    ++s;
+	}
+    }
+  dst[i] = NULL;
+}
+
+static int
+count_args(char *s, char *const *argv)
+{
+  if (verbose)
+    fprintf(stderr, "%s: ssh: passed arguments: %s\n", argv[0], s);
+  int sp = 1;
+  while (*s)
+    {
+      if (isspace(*s))
+	{
+	  ++sp;
+	  while (isspace(*s))
+	    ++s;
+	}
+      else
+	++s;
+    }
+  return sp;
 }
