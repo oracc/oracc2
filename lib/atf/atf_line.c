@@ -414,23 +414,29 @@ compute_fragid(const char *qualid, const char *hlid)
   return NULL;
 }
 
-static void
+void
 v_register(const char *id)
 {
   if (!id)
     {
-      hash_free(vreg, NULL);
-      vreg = NULL;
+      if (vreg)
+	{
+	  hash_free(vreg, NULL);
+	  vreg = NULL;
+	}
       return;
     }
 
   if (!vreg)
     vreg = hash_create(128);
-  char *v = hash_find(vreg, (uccp)id);
+  uintptr_t v = (uintptr_t)hash_find(vreg, (uccp)id);
   if (!v)
     hash_add(vreg, pool_copy((uccp)id, atfmp->pool), (void*)(uintptr_t)1);
   else
-    hash_add(vreg, (uccp)id, ++v);
+    {
+      fprintf(stderr, "adding to vreg id=%s; v => %lu\n", id, v+1);
+      hash_add(vreg, hash_exists(vreg, (uccp)id), (void*)++v);
+    }
 }
 
 /* This is called for both exemplar (^A: ) and variant (^:31v1.1: ) */
@@ -529,6 +535,12 @@ line_var(Mloc l, unsigned char *lp)
 void
 line_lem(Mloc ml, unsigned char *l)
 {
+  if (!curr_lem_host)
+    {
+      mesg_verr(&ml, "#lem: line with no preceding transliteration line");
+      return;
+    }
+
   List *llem = list_create(LIST_SINGLE);
   while (*l)
     {

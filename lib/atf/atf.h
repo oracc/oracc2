@@ -294,6 +294,7 @@ extern void atf_term(void);
 extern void atf_wrapup(Wheret where);
 extern void atf_wrapup_buffer(void);
 extern void atf_lex_line_trace(Mloc *mp);
+extern void v_register(const char *id);
 
 extern unsigned const char*check_label(Mloc *mp,unsigned const char *lab,enum e_tu_types transtype, unsigned const char *xid);
 extern void ncname_init(void);

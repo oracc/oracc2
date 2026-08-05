@@ -7,6 +7,7 @@
 #include "otf-defs.h"
 
 extern int bld_trace;
+extern Mloc atflloc;
 
 struct translation **ax_translations = NULL;
 struct translation *curr_trans;
@@ -670,7 +671,7 @@ static int
 xid_vchk(const char *x, int from, int to)
 {
   extern Hash *vreg;
-  char buf[strlen(x)+1], *bufp;
+  char buf[strlen(x)+10], *bufp;
   int v = 0;
   strcpy(buf, x);
   if ((bufp = strchr(buf, '.')))
@@ -682,6 +683,9 @@ xid_vchk(const char *x, int from, int to)
 	    {
 	      sprintf(bufp, "%d", from++);
 	      void *vp = hash_find(vreg, (uccp)buf);
+#if 0
+	      fprintf(stderr, "xid_vchk: x=%s; buf=%s; file=%s; line=%d; vp=%p\n", x, buf, atflloc.file, atflloc.line, vp);
+#endif
 	      if (vp)
 		v += (uintptr_t)vp;
 	    }
