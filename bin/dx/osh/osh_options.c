@@ -95,8 +95,8 @@ osh_options(int argc, char **argv, Job *jp)
 	      if (verbose)
 		av[i++] = "-v";
 	      jp->project = strdup(argv[optind]);
-	      if (optind < argc)
-		jp->cmd1 = strdup(argv[optind+1]);
+	      if ((optind+1) < argc)
+		jp->cmd1 = strdup(argv[++optind]);
 	      while (argv[optind])
 		av[i++] = argv[optind++];
 	      av[i] = NULL;
@@ -106,6 +106,7 @@ osh_options(int argc, char **argv, Job *jp)
 	      fprintf(stderr, "%s: request must contain at least a project and a command\n", progname);
 	      free(av);
 	      av = NULL;
+	      exit(1);
 	    }
 	  int len = 0;
 	  for (i = 0; av[i]; ++i)
