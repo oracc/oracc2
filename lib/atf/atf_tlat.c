@@ -54,7 +54,7 @@ extern void set_tr_id(const char *id); /* can this be static? */
 static void parenify(char *buf);
 static void labeled_labels(struct node *p, unsigned char *lab);
 static const unsigned char *nth_tlit_hdr(const unsigned char *id, int nth);
-static int int_of(unsigned const char *line_id);
+static int int_of(unsigned const char *line_idp);
 static unsigned char *label_prefix(unsigned char *lab);
 static unsigned char *lnum_of(unsigned char *l);
 
@@ -947,10 +947,10 @@ atr_finish_labels(void)
 }
 
 static int
-int_of(unsigned const char *line_id)
+int_of(unsigned const char *line_idp)
 {
-  unsigned const char *s = line_id + xxstrlen(line_id);
-  while (s > line_id && s[-1] != '.')
+  unsigned const char *s = line_idp + xxstrlen(line_idp);
+  while (s > line_idp && s[-1] != '.')
     --s;
   return atoi(cc(s));
 }

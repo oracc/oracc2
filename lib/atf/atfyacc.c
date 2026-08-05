@@ -87,6 +87,7 @@ atf_term(void)
       hash_free(etcsl_labels, NULL);
       etcsl_labels = NULL;
       etcsl_pool = NULL;
+      etcsl_lid = NULL;
     }
   list_free(atfmp->lprotocols, NULL);
   list_free(atfmp->llinks, NULL);

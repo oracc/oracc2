@@ -419,7 +419,7 @@ newlabel(char type, enum block_levels level, const void *p)
 #endif
 {
 #if 1
-  /* ax implementation maeks all labels a simple string */
+  /* ax implementation makes all labels a simple string */
   return (ccp)pool_copy((uccp)p, atfmp->pool);
 #else
   struct label *lp = memo_new(atfmp->mlabels);
@@ -542,9 +542,9 @@ update_label(struct node *current,enum e_tu_types transtype)
 }
 
 const unsigned char *
-label_from_line_id(const unsigned char *line_id)
+label_from_line_id(const unsigned char *line_idp)
 {
-  return hash_find(xid_to_label_table,line_id);
+  return hash_find(xid_to_label_table,line_idp);
 }
 
 void
