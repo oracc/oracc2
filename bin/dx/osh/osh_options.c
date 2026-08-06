@@ -64,7 +64,7 @@ osh_options(int argc, char **argv, Job *jp)
 	  jp->cmd = malloc(len+1);
 	  *jp->cmd = '\0';
 	  jp->cmdc = argc - optind;
-	  jp->cmdv = malloc((jp->cmdc+1)*sizeof(char*));
+	  jp->cmdv = malloc((jp->cmdc+jp->verbose+1)*sizeof(char*));
 	  if (jp->verbose)
 	    jp->cmdv[0] = "-v";
 	  memcpy(jp->cmdv+jp->verbose, &av[optind], (jp->cmdc+1) * sizeof(char*));
