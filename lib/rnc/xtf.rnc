@@ -123,6 +123,7 @@ object =
     ( attribute type { known.object }
      |(attribute type { user.object } , n.attr) 
     ) ,
+    attribute n { text }?,
     status.flags,
     (object.frag | surface | sealing | comments | nonx | noteblock)*
   }

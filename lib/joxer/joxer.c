@@ -43,7 +43,7 @@ void
 joxer_attr(List *ap, const char *name, const char *value)
 {
   if (value && *value)
-    list_pair(ap,name, value);
+    list_pair(ap, name, value);
 }
 
 void

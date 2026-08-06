@@ -268,7 +268,10 @@ check_label(Mloc *mp, unsigned const char *lab,
     }
 
   if (etcsl_labels)
-    ok = hash_find(etcsl_labels,uc(lab));
+    {
+      if (!(ok = hash_find(etcsl_labels,uc(lab))))
+	ok = hash_find(my_label_table,uc(lab));
+    }      
   else
     ok = hash_find(my_label_table,uc(lab));
 

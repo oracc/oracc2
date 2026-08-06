@@ -814,7 +814,15 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
   if (strcmp(bp->bt->name, "object"))
     {
       bp->np->name = "object";
-      atf_xprop(bp->np, "type", stype = bp->bt->name);
+      const char *stype = scan_name(NULL, s, &s);
+      const char *stype2 = (s&&*s)?scan_name(NULL, s, &s):NULL;
+      atf_xprop(bp->np, "type", stype);
+      if (stype2)
+	{
+	  bp->subt = stype2;
+	  atf_xprop(bp->np, "n", bp->subt);
+	  bp->label = bp->subt;
+	}
     }
   else
     {
@@ -826,16 +834,21 @@ obj_args(Mloc l, Block *bp, char *s, char flags[])
 	  const char *stype2 = scan_name(NULL, s, &s);
 	  if (!strcmp(stype, "fragment"))
 	    {
-	      bp->subt = stype2;
+	      if (stype2)
+		bp->subt = stype2;
 	      bp->np->name = "fragment";
 	      atf_xprop(bp->np, "n", bp->subt);
 	      bp->label = bp->subt;
 	    }
 	  else
 	    {
-	      char *buf = (char*)pool_alloc(strlen(stype)+strlen(stype2) + 2, atfmp->pool);
-	      sprintf(buf, "%s %s", stype, stype2);
-	      stype = (ccp)buf;
+	      atf_xprop(bp->np, "type", stype);
+	      if (stype2)
+		{
+		  bp->subt = stype2;
+		  atf_xprop(bp->np, "n", bp->subt);
+		  bp->label = bp->subt;
+		}
 	    }
 	}
       atf_xprop(bp->np, "type", stype);

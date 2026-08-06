@@ -115,7 +115,7 @@ xcl.l =
         attribute class { xsd:NCName },
         attribute text { text },
         attribute type { xsd:NCName },
-        attribute val { text }
+        attribute val { text }?
       }+
     }?
   }
