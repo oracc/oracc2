@@ -304,12 +304,15 @@ static void
 gdl_force_nonw(Node *w, const char *t)
 {
   Node *rent = w->rent;
+  Node *prev = w->prev;
+  Node *next = w->next;
   *w = *w->kids;
   gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "type", t);
   prop_drop_kv(w->props, "g:type", NULL);
   w->name = "g:nonw";
   w->rent = rent;
-  w->next = NULL;
+  w->prev = prev;
+  w->next = next;
   ++nonw_found;
 }
 

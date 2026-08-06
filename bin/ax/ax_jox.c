@@ -10,6 +10,9 @@
 #include <asl.h>
 #include "ax.h"
 
+const char *static_trafile = "ax.xtr";
+const char *static_xmlfile = "ax.xml";
+
 extern Mloc *xo_loc;
 extern int trace_mode;
 const char *xfn = NULL;
@@ -63,8 +66,8 @@ ax_jox(Tree *tp)
 {
   if (!xfn)
     {
-      xfn = "ax.xml";
-      trafile = "ax.xtr";
+      xfn = static_xmlfile;
+      trafile = (char*)static_trafile;
     }
 
   FILE *xfp = NULL;

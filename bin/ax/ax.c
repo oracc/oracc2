@@ -225,7 +225,8 @@ process_inputs(int argc, char * const *argv)
 			ax_input(atffile);
 		      fflush(stdout); /* in case flex did some default output */
 		      free((char*)atffile);
-		      free(trafile);
+		      if (trafile != static_trafile)
+			free(trafile);
 		      free(xtffile);
 		      atffile = trafile = xtffile = /*cdtfile = */ NULL;
 		    }

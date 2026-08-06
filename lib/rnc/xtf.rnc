@@ -300,6 +300,7 @@ l =
     attribute n { text },
     attribute o { text }?,
     attribute label { text }?,
+    attribute label2 { text }?,
     attribute spanall { "1" }?,
     (cell+ | f+ | (ag | l.inner)*) 
   }
@@ -328,7 +329,7 @@ lg = element lg {
     | (l,(bil|var|notetext|cmt)*)
     ),
   proto.inter*,
-  (var|notetext|cmt)*
+  (var|notetext|nonx|cmt)*
 }
 bil = element l { attribute type { "bil" } , l.inner* }
 nts = element l { attribute type { "nts" } , (ag | l.inner)* }

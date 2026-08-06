@@ -199,7 +199,7 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 
 <s_IGNORE>[\r\n]		{ BEGIN 0; }
 ^[0-9A-Za-z.]+{NOD}+{WHT}+.*$  	{ BEGIN s_IGNORE; mesg_verr(&atflloc, "bad line number: %s", yytext); }
-^([^ #@$\t\n\r]+\.)+[^ \t]+   	{ BEGIN s_IGNORE; mesg_verr(&atflloc, "junk after line number: %s", yytext); }
+^([^ #@$\t\n\r]+\.)+[^ \t\n\r]+ { BEGIN s_IGNORE; mesg_verr(&atflloc, "junk after line number: %s", yytext); }
 
 <*>.				{ fprintf(stderr,"%s:%d: atf.l: unmatched character '%c'\n",
 					  curratffile, atflineno,*atftext); }

@@ -35,6 +35,9 @@ extern struct proj_context *curr_project;
    proj_context */
 extern Hash *known_projects;
 
+extern const char *static_trafile;
+extern const char *static_xmlfile;
+
 extern void proj_init(struct run_context *runp, const char *project);
 extern void proj_term(struct proj_context *);
 extern void proj_default(struct run_context *r);

@@ -193,6 +193,10 @@ xtf2xcl_group(XCL *xc, Node *np)
       case LINE_BIL:
 	xtf2xcl_line(xc, gp->lines[i]->np);
 	break;
+      case LINE_EXX:
+	/* This should go in a separate stream */
+	xtf2xcl_line(xc, gp->lines[i]->np);
+	break;
       case LT_DOLLAR:
 	xcl_discontinuity(xc, propxid(np), xcl_d_nonw, NULL);
 	break;

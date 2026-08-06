@@ -434,7 +434,7 @@ v_register(const char *id)
     hash_add(vreg, pool_copy((uccp)id, atfmp->pool), (void*)(uintptr_t)1);
   else
     {
-      fprintf(stderr, "adding to vreg id=%s; v => %lu\n", id, v+1);
+      /*fprintf(stderr, "adding to vreg id=%s; v => %lu\n", id, v+1);*/
       hash_add(vreg, hash_exists(vreg, (uccp)id), (void*)++v);
     }
 }

@@ -271,7 +271,6 @@ block_div(Mloc l, Block *bp, char *rest)
   else
     toks = tokx;
 
-  const char *atname = bp->bt->name;
   unsigned const char *divtok = (toks[0] ? pool_copy((uccp)toks[0], atfmp->pool) : NULL);
   unsigned const char *ntok = (toks[1] ? pool_copy((uccp)toks[1], atfmp->pool) : NULL);
 
@@ -304,7 +303,7 @@ block_div(Mloc l, Block *bp, char *rest)
 	 && ((Block*)current->user)->bt->type != B_TEXT)
     current = current->rent;
   
-  if (!strcmp(atname, "end") || !strcmp(atname, "endvariants"))
+  if (bp->bt->bison == Y_END || bp->bt->bison == Y_ENDVARIANTS)
     {
       /*if (((Block*)current->user)->bt->type == B_TEXT)*/
       if (!div_stck)
@@ -314,27 +313,48 @@ block_div(Mloc l, Block *bp, char *rest)
 	  Node *bnode = (Node*)stck_pop(div_stck);
 	  if ((intptr_t)bnode > 0)
 	    {
+	      const char *type = NULL;
+	      if (bnode->props)
+		type = prop_find_kv(bnode->props, "type", NULL)->u.k->v;
 	      if (stck_peek(div_stck) < 0)
 		{
 		  stck_term(div_stck);
 		  div_stck = NULL;
 		}
-	      if (divtok)
+	      if (bp->bt->bison == Y_END)
 		{
-		  const char *type = NULL;
-		  if (bnode->props)
-		    type = prop_find_kv(bnode->props, "type", NULL)->u.k->v;
-		  if (!type && strcmp((ccp)divtok, "endvariants"))
-		    mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
-		  else if (type && strcmp(type, (ccp)divtok))
-		    mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
+		  if (divtok)
+		    {
+		      if (!type)
+			mesg_verr(&l, "mismatched @end %s versus untyped @div\n", divtok);
+		      else if (type && strcmp(type, (ccp)divtok))
+			mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
+		      else
+			(void)tree_pop(abt);
+		    }
 		  else
-		    (void)tree_pop(abt);
+		    {
+		      if (type)
+			mesg_verr(&l, "mismatched @end versus @div %s\n", divtok, type);
+		      else
+			(void)tree_pop(abt);
+		    }
+		}
+	      else
+		{
+		  if (strcmp(bnode->name, "variants"))
+		    mesg_verr(&l, "mismatched @endvariants versus @div %s\n", type);
+		  else
+		    {
+		      /* We are in <variant> */
+		      (void)tree_pop(abt);
+		      /* We are in <variants> */
+		      (void)tree_pop(abt);
+		    }
 		}
 	    }
 	  else
 	    mesg_verr(&l, "superfluous @end");
-	    
 	}
     }
   else

@@ -191,7 +191,7 @@ atf_dollar(Mloc l, char *rest)
 
 	  if (atfmp->llines && nonx_attach == B_LINE)
 	    {
-	      np = atf_node("protocol", &l);
+	      np = atf_node("nonx", &l);
 	      line_register(l, LT_DOLLAR, np, (ucp)rest);
 	    }
 	  else
@@ -200,7 +200,6 @@ atf_dollar(Mloc l, char *rest)
 		atf_group_wrapup();
 
 	      set_block_curr(nonx_attach);
-	      np = atf_add("protocol", &l);
 	      np = atf_add("nonx", &l);
 	    }
 
