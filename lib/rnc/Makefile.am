@@ -15,3 +15,5 @@ cbd_summaries.c: cbd_summaries.rng cbd-lib.rng grapheme.rng graphmeta.rng words.
 gdl.c: grapheme.rng graphmeta.rng words.rng stream.rng
 
 xtf.c: xtf.rng grapheme.rng graphmeta.rng words.rng xcl.rng xcl-lib.rng xtr-lib.rng stream.rng
+
+xtr.c: xtr.rng grapheme.rng graphmeta.rng words.rng stream.rng

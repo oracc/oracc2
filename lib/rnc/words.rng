@@ -365,4 +365,29 @@
       </oneOrMore>
     </element>
   </define>
+  <define name="surro">
+    <element name="surro">
+      <ref name="l.inner"/>
+    </element>
+  </define>
+  <define name="words" combine="choice">
+    <optional>
+      <ref name="surro"/>
+    </optional>
+  </define>
+  <define name="word" combine="choice">
+    <optional>
+      <ref name="surro"/>
+    </optional>
+  </define>
+  <define name="l.inner">
+    <zeroOrMore>
+      <choice>
+        <ref name="surro"/>
+        <ref name="normword"/>
+        <ref name="words"/>
+        <ref name="glo"/>
+      </choice>
+    </zeroOrMore>
+  </define>
 </grammar>

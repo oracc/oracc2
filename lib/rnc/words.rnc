@@ -133,3 +133,10 @@ normgroup =
     g.meta ,
     (normgroup | normseg)+
   }
+
+surro = element surro { l.inner }
+words |= surro?
+## this causes a 'bad path in start pattern' in gdl.rnc where word is in the start; how to deal with that?
+## word |= surro?
+
+l.inner = (surro | normword | words | glo)*

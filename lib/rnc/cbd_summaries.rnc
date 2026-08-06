@@ -4,6 +4,7 @@ namespace dc = "http://dublincore.org/documents/2003/06/02/dces/"
 
 include "cbd-lib.rnc"
 include "gdl-lib.rnc"
+include "stream.rnc"
 
 start =
   element articles {

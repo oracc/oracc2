@@ -306,8 +306,6 @@ l =
     (cell+ | f+ | (ag | l.inner)*) 
   }
 
-l.inner = (surro | normword | words | glo)*
-
 cell = element c { span? , (f+ | l.inner) }
 span = attribute span { xsd:nonNegativeInteger }
 
@@ -350,10 +348,6 @@ ag = element ag {
   attribute form { text }?,
   l.inner*
 }
-
-surro = element surro { l.inner }
-words |= surro?
-word |= surro?
 
 composite-content = 
   (noteblock? | milestone | \include | \div | variants | hdr | lg | l | comments | nonl | nonx | proto.inter)*

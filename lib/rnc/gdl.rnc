@@ -1,7 +1,10 @@
 namespace g = "http://oracc.org/ns/gdl/1.0"
-start = gx
 include "gdl-lib.rnc"
-gx = gdl | word
+include "stream.rnc"
+
+start = gdl|word
+
 gdl = element g:gdl { grapheme+ }
+
 noteref = empty
 noteauto = empty

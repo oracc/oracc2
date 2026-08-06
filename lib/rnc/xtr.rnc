@@ -1,0 +1,8 @@
+include "xtr-lib.rnc"
+include "gdl-lib.rnc"
+include "stream.rnc"
+
+start = translation
+
+noteauto = empty
+noteref = empty
