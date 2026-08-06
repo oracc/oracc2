@@ -69,8 +69,8 @@ osh_options(int argc, char **argv, Job *jp)
 	    jp->cmdv[0] = "-v";
 	  memcpy(jp->cmdv+jp->verbose, &av[optind], (jp->cmdc+1) * sizeof(char*));
 	  int i;
-	  for (i = 0; av[i]; ++i)
-	    strcat(strcat(jp->cmd, av[i]), " ");
+	  for (i = 0; jp->cmdv[i]; ++i)
+	    strcat(strcat(jp->cmd, jp->cmdv[i]), " ");
 	  jp->cmd[strlen(jp->cmd)-1] = '\0';
 	}
       else
