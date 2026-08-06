@@ -68,9 +68,35 @@ rnv_check(const char *rnc, const char *xml)
       status = posix_spawnp(&pid, rnvbin, NULL, NULL, args, environ);
 
       if (status == 0)
-        waitpid(pid, &status, 0);
+	{
+	  waitpid(pid, &status, 0);
+	  if (WIFEXITED(status))
+	    {
+	      if (WEXITSTATUS(status))
+		fprintf(stderr, "rnvcheck: %s exited with status==%d\n", xml, WEXITSTATUS(status));
+	      return WEXITSTATUS(status);
+	    }
+	  else if (WIFSIGNALED(status))
+	    {
+	      fprintf(stderr, "rnvcheck: terminated with signal %d\n", WTERMSIG(status));
+	      return -1;
+	    }
+	  else if (WIFSTOPPED(status))
+	    {
+	      fprintf(stderr, "rnvcheck: stopped with signal %d\n", WSTOPSIG(status));
+	      return -1;
+	    }
+	  else
+	    {
+	      fprintf(stderr, "rnvcheck: failed with unknown status\n");
+	      return -1;
+	    }
+	}
       else
-        perror("posix_spawn failed");
+	{
+	  perror("posix_spawn failed");
+	  return -1;
+	}
     }
   else
     {
@@ -83,22 +109,21 @@ rnv_check(const char *rnc, const char *xml)
       unsigned char *syscmd = list_concat(argsl);
       status = system((ccp)syscmd);
       free(syscmd);
-    }
 
-  if (status)
-    {
-      int xstatus = WEXITSTATUS(status);
-      if (xstatus > 1)
-	return xstatus;
-      else
+      if (status)
 	{
-	  fprintf(stderr,
-		  "rnv_check: failed system call: %s %s %s\n",
-		  rnvbin, rnc, xml);
-	  return -1;
+	  int xstatus = WEXITSTATUS(status);
+	  if (xstatus > 1)
+	    return xstatus;
+	  else
+	    {
+	      fprintf(stderr,
+		      "rnv_check: failed system call: %s %s %s\n",
+		      rnvbin, rnc, xml);
+	      return -1;
+	    }
 	}
-      
+      else
+	return 0;
     }
-  else
-    return 0;
 }
