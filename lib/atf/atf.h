@@ -356,6 +356,7 @@ extern void atr_hdr(Mloc l, const char *h, unsigned char *s);
 extern void atr_inter(Mloc l, unsigned char *s);
 extern void atr_label(Mloc l, unsigned char *s);
 extern void atr_para(void);
+extern Node *atr_pop(void);
 extern void atr_text(Mloc l, const char *s);
 extern void atr_translation(void);
 extern void atr_unit(Mloc l, unsigned char *s);

@@ -82,10 +82,16 @@ Node *
 atr_add(const char *s, Mloc *mp)
 {
   if (bld_trace)
-    fprintf(stderr, "bld: atr_push %s to parent %s\n", s, curr_trans->tree->curr->name);
+    fprintf(stderr, "bld: atr_add %s to parent %s\n", s, curr_trans->tree->curr->name);
   Node *np = tree_add(curr_trans->tree, NS_HTM, s, curr_trans->tree->curr->depth, NULL);
   np->mloc = mloc_mloc(mp);
   return np;
+}
+
+Node *
+atr_pop(void)
+{
+  return tree_pop(curr_trans->tree);
 }
 
 Node *
@@ -144,7 +150,7 @@ atr_translation(void)
       return;
     }
 #endif
-  appendAttr(curr_trans->tree->root,"xml:id",(ccp)trans_id_base);
+  appendAttr(curr_trans->tree->root,"xml:id",(ccp)pool_copy((uccp)trans_id_base, atfmp->pool));
   next_trans_p_id = 0;
 #if 0
   (void)refattrs(NULL,NULL,NULL);
@@ -187,6 +193,9 @@ atr_label(Mloc l, unsigned char *s)
   if (tral)
     atr_para();
 
+  tree_curr(curr_trans->tree->root);  
+  curr_block_np = curr_trans->tree->curr;
+  
   if (s[1] == '(')
     {
       /* @(i 1) */
@@ -245,7 +254,7 @@ atr_label(Mloc l, unsigned char *s)
 	  atf_xprop(curr_block_np,"xtr:cid",trans_p_idbuf);
 	}
       sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
-      atf_xprop(curr_block_np,"xml:id",trans_p_idbuf);
+      atf_xprop(curr_block_np,"xml:id",(ccp)pool_copy((uccp)trans_p_idbuf, atfmp->pool));
       trans_wid = 0;
       labeled_labels(curr_block_np,label_buf);
       se_label(curr_block_np,cc(atfp->name),cc(label_buf));
@@ -271,11 +280,13 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
   nocellspan = 1;
   atr_para();
   nocellspan = 0;
+  curr_block_np = atr_pop();
 }
 
 void
 atr_comment(Mloc l, unsigned char *s)
 {
+  tree_curr(curr_trans->tree->root);
   struct node *np = atr_add("xh:p", &l);
   setClass(np,"xtr comment");
   np->text = (ccp)s;
@@ -431,7 +442,7 @@ atr_para(void)
       if (with_id)
 	{
 	  sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
-	  atf_xprop(p,"xml:id",trans_p_idbuf);
+	  atf_xprop(p,"xml:id", (ccp)pool_copy((uccp)trans_p_idbuf, atfmp->pool));
 	  trans_wid = 0;
 	  /* non-NULL label means caller is trans_inter;
 	     this is used for interlinear and parallel;
