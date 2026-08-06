@@ -2,9 +2,6 @@
 #include <osh.h>
 
 const char *progname = NULL;
-int ssh_mode = 0;
-int odo_builtins = 0;
-int verbose = 0;
 
 static void showargs(int argc, char **argv, Job *jp);
 
@@ -31,16 +28,37 @@ main(int argc, char **argv)
 	  struct osh_info *oip = osh_commands(j.cmd1, strlen(j.cmd1));
 	  if (oip)
 	    {
-	      if (verbose)
+	      if (j.verbose)
 		fprintf(stderr, "%s: project=%s; initial command=%s\n", progname, j.project, j.cmd1);
-	      if (oip->type == OSH_BUILTIN && !odo_builtins)
+	      if (j.cmd_only)
+		{
+		  if (oip->type == OSH_BUILTIN)
+		    {
+		      if (!j.odo_builtins)
+			fprintf(stderr,
+				"%s: executing built-in cmd=%s arg=%s\n",
+				progname, oip->cmd, oip->arg);
+		      else
+			fprintf(stderr,
+				"%s: executing built-in under odo:\n"
+				"\t%s %s\n", progname, oip->cmd, oip->arg ? oip->arg : "");
+		    }
+		  else
+		    {
+		      fprintf(stderr,
+			      "%s: executing odo command under dx:\n"
+			      "\t%s\n", progname, j.cmd);
+		    }
+		  exit(0);
+		}
+
+	      if (oip->type == OSH_BUILTIN && !j.odo_builtins)
 		{
 		  if (!strcmp(oip->arg, "$log"))
 		    {
 		      if (!(oip->arg = osh_log(&j)))
 			goto error;
 		    }
-		      
 
 		  /* On success osh has been replaced by the builtin;
 		     builtins all echo machine state data using, e.g.,

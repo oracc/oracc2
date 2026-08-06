@@ -41,7 +41,7 @@ osh_options(int argc, char **argv, Job *jp)
   else
     av = argv;
   j = jp;
-  if (!options(ac, av, "ov"))
+  if (!options(ac, av, "cov"))
     {
       if (av[optind])
 	{
@@ -94,6 +94,9 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'c':
+      j->cmd_only = 1;
+      break;
     case 'o':
       j->odo_builtins = 1;
       break;
@@ -168,7 +171,7 @@ copy_argv(char **dst, char * const*argv)
 static int
 count_args(char *s, char *const *argv)
 {
-  if (verbose)
+  if (j->verbose)
     fprintf(stderr, "%s: ssh: passed arguments: %s\n", argv[0], s);
   int sp = 1;
   while (*s)

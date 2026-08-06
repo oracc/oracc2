@@ -8,7 +8,7 @@ osh_exec(const char *cmd, const char *arg, Job *jp)
   av[0] = cmd;
   av[1] = (arg && *arg) ? arg : NULL;
   av[2] = NULL;
-  if (verbose)
+  if (jp->verbose)
     fprintf(stderr, "%s: exec %s %s\n", progname, cmd, arg);
   osh_cleanup(jp);
   execv(cmd, (char *const*)av);

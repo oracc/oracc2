@@ -29,14 +29,12 @@ typedef struct job
   pid_t pid;
   char status[6];    /* run done error */
   int time;
+  int cmd_only;
   int verbose;
   int odo_builtins;
 } Job;
 
 extern const char *progname;
-extern int odo_builtins;
-extern int ssh_mode;
-extern int verbose;
 
 extern char **osh_options(int argc, char **argv, Job *jp);
 extern int osh_dcx(char **optv, Job *jp);

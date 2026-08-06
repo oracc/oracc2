@@ -47,7 +47,7 @@ osh_status(Job *jp)
       if (n >= 0)
 	{
 	  jp->status[n] = '\0';
-	  if (verbose)
+	  if (jp->verbose)
 	    fprintf(stderr, "osh[%d]: read %s and found status '%s'\n", jp->pid, jp->statusfile, jp->status);
 	}
       else

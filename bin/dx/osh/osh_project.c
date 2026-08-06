@@ -39,7 +39,7 @@ osh_project(char **optv, Job *jp)
       if (oradmintrue < 0)
 	goto error;
       
-      if (verbose)
+      if (jp->verbose)
 	fprintf(stderr, "%s: user %s%s requesting %s in project %s\n",
 		progname,
 		rname,
@@ -111,7 +111,7 @@ osh_project(char **optv, Job *jp)
 	  fprintf(stderr, "%s: failed to change directory to %s\n", progname, projectworkdir);
 	  goto error;
 	}
-      if (verbose)
+      if (jp->verbose)
 	fprintf(stderr, "%s: current working directory is now %s\n", progname, projectworkdir);
     }
   else
@@ -141,7 +141,7 @@ oradmin_group(void)
   gid_t dummy[1];
   int i, n = getgroups(0, dummy);
   gid_t glist[n];
-  if ((n == getgroups(n, glist)))
+  if ((n = getgroups(n, glist)))
     {
       for (i = 0; i < n; ++i)
 	{

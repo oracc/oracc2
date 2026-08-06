@@ -13,7 +13,7 @@ osh_dcx(char **optv, struct job *jp)
   int sock, rval;
   char buf[1024], *dcxtmp;
 
-  if (verbose)
+  if (jp->verbose)
     fprintf(stderr, "%s: dcx: trying to connect to %s\n", progname, DX_SERVER_NAME);
 
   if ((sock = dx_connect(DX_SERVER_NAME, &dcxtmp)) < 0)
@@ -21,11 +21,11 @@ osh_dcx(char **optv, struct job *jp)
       perror("Error connecting stream socket (dx not running?)");
       goto error;
     }
-  else if (verbose)
+  else if (jp->verbose)
     fprintf(stderr, "%s: dcx[%d]: connection successful\n", progname, sock);
 
   /* Send the request */
-  if (verbose)
+  if (jp->verbose)
     fprintf(stderr, "%s: dcx[%d]: sending %s\n", progname, sock, jp->cmd);
   if (write(sock, jp->cmd, strlen(jp->cmd)) < 0)
     {
@@ -41,14 +41,14 @@ osh_dcx(char **optv, struct job *jp)
 	    perror("Error reading back message from dx");
 	  else if (rval == 0)
 	    {
-	      if (verbose)
+	      if (jp->verbose)
 		fprintf(stderr, "%s: dcx[%d]: ending connection\n", progname, sock);
 	    }
 	  else
 	    {
 	      if ('\n' == buf[strlen(buf)-1])
 		buf[strlen(buf)-1] = '\0';
-	      if (verbose)
+	      if (jp->verbose)
 		fprintf(stderr, "%s: dcx[%d]: received '%s'\n", progname, sock, buf);
 	      char *p = strstr(buf, "::");
 	      if (p)
@@ -62,7 +62,7 @@ osh_dcx(char **optv, struct job *jp)
 		  jp->statusfile = strdup(buf);
 		  p[-1] = '\0';
 		  jp->tmp = strdup(buf);
-		  if (verbose)
+		  if (jp->verbose)
 		    fprintf(stderr, "jp->sesh = %s; jp->tmp=%s\n"
 			    	"  jp->log=%s;\n  jp->statusfile=%s\n",
 			    jp->sesh, jp->tmp, jp->log, jp->statusfile);
