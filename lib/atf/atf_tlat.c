@@ -78,6 +78,27 @@ static List *tral;
 #define getClass(n) getAttr((n),"class")
 #endif
 
+static void
+setrows(Node *np, int r)
+{
+  static char *rr[] = { "1" , "2", "3", "4", "5", "6", "7", "8", "9" , "10" };
+  if (r < 1)
+    return;
+  const char *rp = NULL;
+  if (r < 10)
+    rp = rr[r - 1];
+  else if (r < 100000)
+    {
+      char buf[10];
+      sprintf(buf, "%d", r);
+      rp = memo_dup(buf);
+    }
+  else
+    ; /* absurd row count */
+  if (rp)
+    setAttr(np, "xtr:rows", rp);
+}
+
 Node *
 atr_add(const char *s, Mloc *mp)
 {
@@ -288,7 +309,7 @@ atr_comment(Mloc l, unsigned char *s)
 {
   tree_curr(curr_trans->tree->root);
   struct node *np = atr_add("xh:p", &l);
-  setClass(np,"xtr comment");
+  setClass(np,"tr comment");
   np->text = (ccp)s;
 }
 
@@ -296,7 +317,7 @@ void
 atr_dollar(Mloc l, unsigned char *s)
 {
   struct node *curr_block_np = atr_push("xh:p", &l);
-  setClass(curr_block_np,"xtr dollar");
+  setClass(curr_block_np,"tr dollar");
   start_lnum = l.line;
   if (s[1] == '@' && s[2] == '(')
     {
@@ -326,12 +347,16 @@ atr_dollar(Mloc l, unsigned char *s)
 	      int interval = xid_diff(dollar_id,(const char *)last_xid);
 	      if (interval > 1)
 		{
+#if 1
+		  setrows(last_p, interval);
+#else
 		  char buf[10];
-		  sprintf(buf,"%d",interval);
+		  sprintf(buf,"%d",interval||1);
+		  atf_xprop(last_p,"xtr:rows",buf);
+#endif
 		  atf_xprop(last_p,"xtr:sref",getAttr(last_p,"xtr:ref"));
 		  removeAttr(last_p, "xtr:ref");
 		  atf_xprop(last_p,"xtr:eref",xid_prev(dollar_id));
-		  atf_xprop(last_p,"xtr:rows",buf);
 		}
 	      last_p = NULL;
 	    }
@@ -829,12 +854,16 @@ labeled_labels(struct node *np, unsigned char *lab)
 	  int interval = xid_diff((const char*)xid,(const char *)last_xid);
 	  if (interval > 1 || (interval==0 && multi_trans_line))
 	    {
+#if 1
+	      setrows(last_p, interval);
+#else
 	      char buf[10];
-	      sprintf(buf,"%d",interval);
+	      sprintf(buf,"%d",interval||1);
+	      setAttr(last_p,"xtr:rows",buf);
+#endif
 	      setAttr(last_p,"xtr:sref",getAttr(last_p,"xtr:ref"));
 	      removeAttr(last_p, "xtr:ref");
 	      setAttr(last_p,"xtr:eref",xid_prev((const char *)xid));
-	      setAttr(last_p,"xtr:rows",buf);
 	    }
 	  else if (interval < 1)
 	    {
@@ -879,7 +908,6 @@ labeled_labels(struct node *np, unsigned char *lab)
       xid = check_label(np->mloc,s,etu_labeled,NULL);
       if (xid)
 	{
-	  char buf[5];
 	  int interval = xid_diff((const char*)xid,(const char *)sref_xid);
 	  if (interval < 1)
 	    {
@@ -888,11 +916,11 @@ labeled_labels(struct node *np, unsigned char *lab)
 	    }
 	  else
 	    strcpy((char *)last_xid,(const char *)xid);
-	  sprintf(buf,"%d",1 + int_of(xid) - sref);
+	  /*sprintf(buf,"%d",1 + int_of(xid) - sref);*/
 	  setAttr(np,"xtr:eref",(ccp)xid);
 	  setAttr(np,"xtr:lab_end_label",(ccp)pool_copy(s, atfmp->pool));
 	  setAttr(np,"xtr:lab_end_lnum",(ccp)pool_copy(lnum_of(s), atfmp->pool));
-	  setAttr(np,"xtr:rows",buf);
+	  /* setAttr(np,"xtr:rows",buf); */ setrows(np, 1 + int_of(xid) - sref);
 	  /* This attribute means that the start of this trans block
 	     overlaps with the end of the preceding one */
 	  if (overlap)
@@ -947,13 +975,17 @@ atr_finish_labels(void)
 	  sprintf(xp, "%d", xi+1);
 	}
       int interval = xid_diff((const char*)xxid,(const char *)last_xid);
+#if 1
+      setrows(last_trans_node, interval);
       char buf[10];
       sprintf(buf,"%d",interval);
+      setAttr(last_trans_node,"xtr:rows",buf);
+#endif
+      
       removeAttr(last_trans_node,"xtr:ref");
       removeAttr(last_trans_node, "xtr:ref");
       setAttr(last_trans_node,"xtr:sref",refid);
       setAttr(last_trans_node,"xtr:eref",xid);
-      setAttr(last_trans_node,"xtr:rows",buf);
     }    
 }
 

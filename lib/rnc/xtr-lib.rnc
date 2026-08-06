@@ -24,13 +24,13 @@ ctr = attribute class { "tr" }
 
 trans-comment =
   element xh:p {
-    attribute class { "tr-comment" },
+    attribute class { "tr comment" },
     htext*
   }
 
 trans-dollar =
   element xh:p {
-    attribute class { "dollar" },
+    attribute class { "tr dollar" },
     silent?,
     (standalone
      | (ref | refs | (unit,refs?))),
