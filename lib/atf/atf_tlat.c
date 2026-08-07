@@ -62,21 +62,22 @@ static void atr_inline(Mloc *mp, struct node*parent,unsigned char *text);
 
 static List *tral;
 
-#if 1
-#define ctr(p) atf_xprop((p),"class","tr")
-#define setClass(n,c) atf_xprop((n),"class",c)
+#define ctr(p) fsetclass((p),"tr")
+#define setClass(n,c) fsetclass((n),c)
 #define getAttr(n,a) ((p=prop_find_kv(n->props, a, NULL))?p->u.k->v:NULL)
 #define getClass(n) getAttr((n),"class")
 #define removeAttr(n,a) prop_drop_kv(n->props, a, NULL)
 #define setAttr(n,a,v) atf_xprop((n),(a),(v))
 #define appendAttr(n,a,v) atf_xprop((n),(a),(v))
-#else
-#define xctr(p) if (p && !*(getAttr(p,a_class))) appendAttr((p),attr(a_class,ucc("tr")))
-#define yctr(p) appendAttr((p),attr(a_class,ucc("tr")))
-#define ctr(p) setAttr((p),a_class,ucc("tr"))
-#define setClass(n,c) appendAttr((n),attr(a_class,ucc((c))))
-#define getClass(n) getAttr((n),"class")
-#endif
+
+static void
+fsetclass(Node *np, const char *c)
+{
+  if (!strcmp(np->name, "xtr:translation"))
+    /*mesg_verr(np->mloc, "trapped attempt to add class to translation")*/;
+  else
+    atf_xprop(np, "class", c);
+}
 
 static void
 setrows(Node *np, int r)
@@ -289,6 +290,18 @@ atr_label(Mloc l, unsigned char *s)
 void
 atr_hdr(Mloc l, const char *h, unsigned char *s)
 {
+  if (tral)
+    atr_para();
+
+  if ('1' == h[1])
+    h = "xh:h1";
+  else if ('2' == h[1])
+    h = "xh:h2";
+  else if ('3' == h[1])
+    h = "xh:h3";
+  else
+    mesg_verr(&l, "bad header %s: use @h1, @h2, or @h3", h);
+  tree_curr(curr_trans->tree->root);
   curr_block_np = atr_push(h, &l);
   ctr(curr_block_np);
   if (lth_used == lth_alloced)
@@ -307,6 +320,9 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
 void
 atr_comment(Mloc l, unsigned char *s)
 {
+  if (tral)
+    atr_para();
+
   tree_curr(curr_trans->tree->root);
   struct node *np = atr_add("xh:p", &l);
   setClass(np,"tr comment");
@@ -316,6 +332,10 @@ atr_comment(Mloc l, unsigned char *s)
 void
 atr_dollar(Mloc l, unsigned char *s)
 {
+  if (tral)
+    atr_para();
+
+  tree_curr(curr_trans->tree->root);
   struct node *curr_block_np = atr_push("xh:p", &l);
   setClass(curr_block_np,"tr dollar");
   start_lnum = l.line;
@@ -505,9 +525,11 @@ atr_para(void)
 	}
   
       if (is_comment)
-	atf_xprop(p,"class","tr-comment");
+	fsetclass(p,"tr-comment");
       else if (p_elem != 2)
-	ctr(p);
+	{
+	  ctr(p);
+	}
   
       if (is_comment)
 	{
