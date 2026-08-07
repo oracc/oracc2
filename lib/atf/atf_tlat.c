@@ -468,7 +468,7 @@ atr_para(void)
     xstrcat(text,lines[i]);
 
   if (xxstrlen(text) > 0)
-    text[xxstrlen(text)-1] = '\0';
+    text[xxstrlen(text)] = '\0';
 
   free(lines);
   
