@@ -54,7 +54,8 @@ typedef struct scanseg
   Stype t;
   Sterm term;
   const char *name; /* this is where the result of scan_name is put */
-  const char *attr; /* this is the result of scan_quare */
+  const char *attr; /* this is the result of scan_square */
+  void *user;	/* for lib/inl the inltok is stored here */
 } Scanseg;
 
 extern void scan_init(void);
