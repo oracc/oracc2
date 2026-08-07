@@ -150,7 +150,7 @@ ax_outputs(char *xtf, char *tra)
 const char **
 ax_jox_props(Prop *p)
 {
-  const char **ap = prop_ccpp(p, AP_ATTR, PG_XML);
+  const char **ap = prop_ccpp(p, -1, PG_XML);
   const char **gp = prop_ccpp(p, GP_ATTRIBUTE, PG_GDL_INFO);
   if (ap && gp)
     {
