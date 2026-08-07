@@ -198,7 +198,7 @@ prop_ccpp(Prop *p, int ptype, int gtype)
     {
       while (p)
 	{
-	  if (p->p == ptype && p->g == gtype)
+	  if ((ptype == -1 || p->p == ptype) && p->g == gtype)
 	    {
 	      list_add(lp, (void*)p->u.k->k);
 	      list_add(lp, (void*)p->u.k->v);
