@@ -2,7 +2,7 @@
 pid=`ps -ax -o pid,command | grep /dx$ | sed 's/^ //' | cut -d' ' -f1` 
 if [ "$pid" != "" ]; then
     echo $0: killing PID $pid.
-    kill $pid
+    sudo kill $pid
 else
     echo $0: no PID found for dx.
     if [ -r /tmp/oracc-daemon-dx ]; then

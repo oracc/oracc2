@@ -3,14 +3,12 @@
 const char *progname = NULL;
 int verbose = 1;
 
-int
-main(int argc, char **argv)
+static void
+dx_server(void)
 {
   int sock, msgsock, rval;
   char buf[1024];
 
-  progname = argv[0];
-  dx_signal();
   dx_prechecks();
   sock = dx_listen(DX_SERVER_NAME);
 
@@ -49,4 +47,29 @@ main(int argc, char **argv)
 
   close(sock);
   unlink(DX_SERVER_NAME);
+}
+
+static void
+dx_tester(int argc, char *const *argv)
+{
+  char *sesh_id;
+  dx_session(&sesh_id);
+}
+
+int
+main(int argc, char * const *argv)
+{
+  progname = argv[0];
+  dx_signal();
+  if (argv[1])
+    dx_tester(argc, argv);
+  else
+    {
+      if (-1 == daemon(1,1))
+	{
+	  perror("failed to make dx a daemon");
+	  exit(1);
+	}
+      dx_server();
+    }
 }

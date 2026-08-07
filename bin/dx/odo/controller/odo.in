@@ -60,11 +60,11 @@ fail ()
 	fi
     fi
     set_status error
-    if [ ! "$tmpdir" = "" ]; then
-       if [ -d $tmpdir ]; then
-	   rm -fr $tmpdir
-       fi
-    fi
+    # if [ ! "$tmpdir" = "" ]; then
+    #     if [ -d $tmpdir ]; then
+    # 	rm -fr $tmpdir
+    #     fi
+    # fi
     exit 1;
 }
 
@@ -193,7 +193,7 @@ if [ "$project" = "." ]; then
     fi
 elif [ "$project" = "" ]; then
     fail "empty project argument"
-elif [ ! -r 00lib/config.xml ]; then
+elif [ ! -r @@ORACC_BUILDS@@/$project/00lib/config.xml ]; then
     fail "project $project does not have a 00lib/config.xml"
 fi
 

@@ -16,7 +16,7 @@ dx_session(char **sesh_id)
   if (tmpdir)
     {
       tmpdir = strdup(tmpdir);
-      chmod(tmpdir, 02750);
+      chmod(tmpdir, 02755);
       char *basename = tmpdir+strlen(tmpdir);
       while (basename > tmpdir && '/' != basename[-1])
 	--basename;
