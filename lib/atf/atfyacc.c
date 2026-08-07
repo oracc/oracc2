@@ -60,6 +60,7 @@ atf_init(void)
   atfmp->mxis = memo_init(sizeof(struct xcl_ilem),1024);
   atfmp->mxlinks = memo_init(sizeof(Xlink),16);
   atfmp->pool = pool_init();
+  inl_set_pool(atfmp->pool);
   scan_set_pool(atfmp->pool);
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
   atfp->utype = N_U_ATF;
