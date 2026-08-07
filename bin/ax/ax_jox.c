@@ -50,21 +50,26 @@ atf_line_pi(Node *n)
 void
 ax_jox_tra(void)
 {
-  jox_xml_output(tra_fp);
-  atf_file_pi(file);
-  joxer_init(&xtf_data, "xtf", val_flag, tra_fp, NULL);
-  atf_pi_fp = tra_fp;
-  ax_jox_node(curr_trans->tree->root);
-  joxer_term(tra_fp, NULL);
-  xfclose(trafile, tra_fp);
-  tra_fp = NULL;
+  if (!tra_fp)
+    tra_fp = xfopen(trafile, "w");
+  if (tra_fp)
+    {
+      jox_xml_output(tra_fp);
+      atf_pi_fp = tra_fp;
+      atf_file_pi(file);
+      joxer_init(&xtf_data, "xtf", val_flag, tra_fp, NULL);
+      ax_jox_node(curr_trans->tree->root);
+      joxer_term(tra_fp, NULL);
+      xfclose(trafile, tra_fp);
+      tra_fp = NULL;
+    }
   curr_trans = NULL;
 }
 
 void
 ax_jox(Tree *tp)
 {
-  if (!xfn)
+  if (!xtf_fp && !xfn)
     {
       xfn = static_xmlfile;
       trafile = (char*)static_trafile;
@@ -76,13 +81,12 @@ ax_jox(Tree *tp)
   xo_loc->file = file = tp->root->mloc->file;
   xo_loc->line = 1;
 
-  if (!xtf_fp && !tra_fp)
+  if (!xtf_fp)
     {
-      xfp = fopen(xfn, "w");
-      tra_fp = xfopen(trafile, "w");
-      if (!xfp || !tra_fp)
+      
+      if (!(xfp = fopen(xfn, "w")))
 	{
-	  fprintf(stderr, "ax: failed to open either or both of %s and %s. Stop.\n", xfn, trafile);
+	  fprintf(stderr, "ax: failed to open XML output %s. Stop.\n", xfn);
 	  exit(1);
 	}
       jox_xml_output(xfp);
@@ -92,14 +96,14 @@ ax_jox(Tree *tp)
       ax_jox_node(tp->root);
       joxer_term(xfp,NULL);
       fclose(xfp);
-      if (curr_trans)
+      if (curr_trans && curr_trans->tree->root->kids)
 	ax_jox_tra();
     }
   else
     {
       if (tra_fp)
 	{
-	  if (curr_trans)
+	  if (curr_trans && curr_trans->tree->root->kids)
 	    {
 	      ax_jox_tra();
 	    }
