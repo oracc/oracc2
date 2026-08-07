@@ -3,7 +3,7 @@
 #include "inl.h"
 
 void
-inl_gdl_h(Scan *sp, Scanseg *ssp, char *s)
+inl_gdl_h(Scan *sp, Scanseg *ssp, Tree *tp, char *s)
 {
   ssp->np = tree_add(sp->tree, NS_GDL, "gdl", sp->tree->curr->depth, NULL);
 

@@ -3,12 +3,19 @@
 #include <prop.h>
 #include "inl.h"
 
+static Pool *inl_pool;
+
 static int double_at_flag = 0;
 int suppress_empty_text_nodes = 1;
-static void inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext);
 static void inl_text_node(Scan *sp, Tree *tp, const char *text, int len);
 
 #define INL_CMD_MAX 1023
+
+void
+inl_set_pool(Pool *p)
+{
+  inl_pool = p;
+}
 
 void
 inl_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
@@ -95,7 +102,7 @@ inl_wild(Scan *sp, struct inltok *itp, Tree *tp, char *s)
   return s + strlen(itp->text) + 1; /* s points at '@' of '@me' */
 }
 
-static void
+void
 inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext)
 {
   ssp->np = tree_add(tp, inl_ns, inl_span_str, tp->curr->depth, NULL);
@@ -105,6 +112,8 @@ inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext)
 
   if (ssp->attr)
     inl_xprop(ssp->np, "class", ssp->attr);
+  else
+    inl_xprop(ssp->np, "class", ssp->name);
   
   ssp->np->user = ssp;
   
@@ -123,13 +132,13 @@ inl_span(Scan *sp, struct inltok *itp, Tree *tp, char *s)
   ssp->utype = N_U_SCANSEG;
   ssp->sp = sp;
   ssp->name = itp->name;
+  ssp->user = itp;
 
   if (itp->tag)
-    {
-      ssp->name = itp->tag;
+    ssp->name = itp->tag;
+  if (itp->attr)
       ssp->attr = itp->attr;
-    }
-  else if ('[' == *s)
+  if ('[' == *s)
     scan_square(ssp, (uchar*)s, (uchar**)&s);
 
   char *stext = NULL;
@@ -149,7 +158,7 @@ inl_span(Scan *sp, struct inltok *itp, Tree *tp, char *s)
 
   if (itp->h)
     {
-      itp->h(sp, ssp, stext);
+      itp->h(sp, ssp, tp, stext);
       ssp->np->user = ssp;
     }
   else
@@ -209,8 +218,9 @@ inl_text(Scan *sp, Tree *tp, const char *text, int len)
 } 
 
 char *
-inl_nodes(Scan *sp, Node *np, char *s)
+inl_nodes(Scan *sp, Node *np, char *ss)
 {
+  char *s = pool_copy(ss, inl_pool);
   while (*s)
     {
       struct inltok *itp = NULL;

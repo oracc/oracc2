@@ -5,7 +5,7 @@
 
 typedef enum inl_nym { INL_NO , INL_YES , INL_MAY , INL_TOK } inl_nym;
 
-typedef void (inl_handler)(Scan *sp, Scanseg *ssp, char *text);
+typedef void (inl_handler)(Scan *sp, Scanseg *ssp, Tree *tp, char *text);
 typedef int (*inl_self_func_p)(const char *name);
 
 struct inltok
@@ -22,6 +22,8 @@ struct inltok
 };
 extern struct inltok *inltok(register const char *str, register size_t len);
 
+#define INL_ATTR 2 /* for properties; AP_ATTR in atf.h is 1--might need to centralize this */
+
 extern const char *inl_span_str, *inl_text_str;
 extern enum nscode inl_ns;
 
@@ -32,16 +34,17 @@ extern inl_self_func_p inl_self_func;
 extern Memo *inl_scanseg_m;
 extern Pool *inl_scan_p;
 extern inl_handler inl_bib_h;
+extern inl_handler inl_etcsl_h;
 extern inl_handler inl_gdl_h;
 extern void inl_self_set(inl_self_func_p f);
 extern void inl_init(int v_only);
 extern void inl_term(void);
+extern void inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext);
 extern char *inl_nodes(Scan *sp, Node *np, char *s);
 extern Tree *inl(Mloc *mp, char *s);
 extern void inl_set_ns(enum nscode ns);
 extern void inl_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v);
 
-#define INL_ATTR 1
 #define inl_xprop(xnp,xk,xv) inl_prop_kv(xnp,INL_ATTR,PG_XML,xk,xv)
 
 #endif/*INL_H_*/
