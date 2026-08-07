@@ -32,11 +32,18 @@ main(int argc, char * const*argv)
     }
   else
     {
-      while ((line = fgets(linebuf,_MAX_LINE,stdin)))
-	{
-	  line[strlen(line)-1] = '\0';
-	  rnv_check(rncfn, expand(NULL, line, type));
-	}
+      if (!strcmp(type, "xtr"))
+	while ((line = fgets(linebuf,_MAX_LINE,stdin)))
+	  {
+	    line[strlen(line)-1] = '\0';
+	    rnv_check(rncfn, expand_xtr(NULL, line, "project", "en"));
+	  }
+      else
+	while ((line = fgets(linebuf,_MAX_LINE,stdin)))
+	  {
+	    line[strlen(line)-1] = '\0';
+	    rnv_check(rncfn, expand(NULL, line, type));
+	  }
     }
 }
 
