@@ -57,15 +57,15 @@ odo_time() {
 
     if [ -r .odo_ts ]; then
 	local message="$*"
-	local current_ts=`isogmt -s`
+	local current_ts=`$bin/isogmt -s`
 	local start_ts=`cat .odo_ts`
 	
 	# Calculate difference in seconds
 	local elapsed=$((current_ts - start_ts))
 	
 	# Print human-readable date along with elapsed time
-	printf "odo_time: [%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
-	>&4 printf "odo_time: [%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
+	printf "[%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
+	>&4 printf "[%s] (+%ds) %s\n" "$(date '+%Y-%m-%d %H:%M:%S')" "$elapsed" "$message"
     fi
 }
 

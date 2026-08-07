@@ -185,25 +185,29 @@ fi
 
 shift
 project=$1
-if [ "$project" = "." ]; then
-    if [ -r 00lib/config.xml ]; then
-	set_project
-    else
-	fail "you can only use 'odo .' in a project directory"
+shift
+command=$1
+
+if [ "$command" = "" ]; then
+    fail "empty command argument"
+fi
+
+if [ "$command" != "init" ]; then
+    if [ "$project" = "." ]; then
+	if [ -r 00lib/config.xml ]; then
+	    set_project
+	else
+	    fail "you can only use 'odo .' in a project directory"
+	fi
+    elif [ "$project" = "" ]; then
+	fail "empty project argument"
+    elif [ ! -r @@ORACC_BUILDS@@/$project/00lib/config.xml ]; then
+	fail "project $project does not have a 00lib/config.xml"
     fi
-elif [ "$project" = "" ]; then
-    fail "empty project argument"
-elif [ ! -r @@ORACC_BUILDS@@/$project/00lib/config.xml ]; then
-    fail "project $project does not have a 00lib/config.xml"
 fi
 
 user=`/bin/echo -n $project | cut -d/ -f1`
 
-shift
-command=$1
-if [ "$command" = "" ]; then
-    fail "empty command argument"
-fi
 log="$tmpdir/odo.log"
 shift
 odov "$0: log=$log; user=$user; project=$project; command=$command"
@@ -213,7 +217,7 @@ savedescriptors="1"
 exec 3>&1
 exec 4>&2
 exec >$log 2>&1
-isogmt -s >.odo_ts
+$bin/isogmt -s >.odo_ts
 odo_time oracc $command
 if [ $command = "init" ]; then
     cd @@ORACC_BUILDS@@

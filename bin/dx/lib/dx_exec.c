@@ -111,7 +111,10 @@ dx_exec(char **keys, int nkeys, char **err, char *tmpdir)
       else
 	setbuf(stdout, NULL);
 
-      if (execve(name/*path*/, (char *const *)argv, NULL)) /* (char *const *)envp */
+      extern char **environ;
+      setenv("TERM", "dumb", 0);
+      
+      if (execve(name/*path*/, (char *const *)argv, environ)) /* (char *const *)envp */
 	{
 	  fprintf(stderr, "exec failed: path=%s\n%s\n", path, strerror(errno));
 	  *err = "exec failed";
