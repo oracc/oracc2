@@ -1,7 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include <oraccsys.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <memo.h>
@@ -64,7 +62,7 @@ slurp(const char *caller, const char *fname, ssize_t *fsizep)
     }
   else
     {
-      fprintf(stderr, "%s: %s: open failed\n",caller,fname);
+      xperror("%s: %s: open failed",caller,fname);
       free(ftext);
       return NULL;
     }

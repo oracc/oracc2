@@ -48,7 +48,7 @@ rnv_check(const char *rnc, const char *xml)
   if (access(xml, R_OK))
     {
       xperror("rnv_check: %s", xml);
-      fputc('\n', stderr);
+      /*fputc('\n', stderr);*/
       return -1;
     }
 
