@@ -611,6 +611,7 @@ atr_para(void)
 	    ++text;
 	  if (*text)
 	    {
+	      atr_push("xh:innerp", mpp[0]);
 	      if (!nocellspan)
 		{
 		  cc = atr_push("xh:span", mpp[0]);
@@ -620,6 +621,9 @@ atr_para(void)
 		  atf_xprop(cc,"xtr:span","1");
 		}
 	      (void)atr_inline(mpp[0],cc,text);
+	      if (!nocellspan)
+		atr_pop(); /* pop the cc node */
+	      atr_pop(); /* pop the innerp node */
 	    }
 	  else
 	    {
@@ -869,6 +873,16 @@ labeled_labels(struct node *np, unsigned char *lab)
 		}
 	    }
 	}
+
+      const char *lsl = getAttr(np,"xtr:lab-start-label");
+      if (!lsl || !*lsl)
+	{
+	  setAttr(np,"xtr:lab-start-label",(ccp)pool_copy(lab, atfmp->pool));
+	  setAttr(np,"xtr:lab-start-lnum",(ccp)pool_copy(lnum_of(lab), atfmp->pool));
+	}
+      if (overlap)
+	setAttr(np,"xtr:overlap","1");
+
       if (last_p && *last_xid)
 	{
 	  /* automatically provide sref/eref even when user only gives
@@ -904,14 +918,6 @@ labeled_labels(struct node *np, unsigned char *lab)
 	setAttr(np,"xtr:sref",(ccp)xid);
       else
 	setAttr(np,"xtr:ref",(ccp)xid);
-      const char *lsl = getAttr(np,"xtr:lab-start-label");
-      if (!lsl || !*lsl)
-	{
-	  setAttr(np,"xtr:lab-start-label",(ccp)pool_copy(lab, atfmp->pool));
-	  setAttr(np,"xtr:lab-start-lnum",(ccp)pool_copy(lnum_of(lab), atfmp->pool));
-	}
-      if (overlap)
-	setAttr(np,"xtr:overlap","1");
       strcpy((char *)last_xid,(const char *)xid);
       last_p = np;
       h_arefs(xid);
@@ -972,6 +978,7 @@ labeled_labels(struct node *np, unsigned char *lab)
 void
 atr_finish_labels(void)
 {
+  extern const char *clid;
   if (!last_trans_node)
     return;
 
@@ -981,14 +988,13 @@ atr_finish_labels(void)
       return;
     }
 
-  char *xid = (char*)last_xid;
   const char *refid = getAttr(last_trans_node, "xtr:sref");
   if (!refid || !*refid)
     refid = getAttr(last_trans_node, "xtr:ref");
-  if (*refid && strcmp(refid,xid))
+  if (*refid && strcmp(refid,clid))
     {
       char xxid[128], *xp;
-      strcpy(xxid, xid);
+      strcpy(xxid, clid);
       xp = strchr(xxid, '.');
       if (xp)
 	{
@@ -1007,7 +1013,7 @@ atr_finish_labels(void)
       removeAttr(last_trans_node,"xtr:ref");
       removeAttr(last_trans_node, "xtr:ref");
       setAttr(last_trans_node,"xtr:sref",refid);
-      setAttr(last_trans_node,"xtr:eref",xid);
+      setAttr(last_trans_node,"xtr:eref",clid);
     }    
 }
 

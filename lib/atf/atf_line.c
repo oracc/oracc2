@@ -26,7 +26,7 @@ struct lang_context *curr_lang_ctxt;
 struct lang_context *text_lang;
 #endif
 
-const char *clid;
+const char *clid; /* current line ID */
 
 /* offset used in calculation of word-ids.  In main text word-ids
    add 1..n; in exemplar 1 they add 1001 .. n+1000; in exemplar 2

@@ -116,6 +116,7 @@ inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext)
     inl_xprop(ssp->np, "class", ssp->name);
   
   ssp->np->user = ssp;
+  ssp->np->utype = N_U_SCANSEG;
   
   if (ssp->np->text)
     {
@@ -160,6 +161,7 @@ inl_span(Scan *sp, struct inltok *itp, Tree *tp, char *s)
     {
       itp->h(sp, ssp, tp, stext);
       ssp->np->user = ssp;
+      ssp->np->utype = N_U_SCANSEG;
     }
   else
     {
@@ -191,7 +193,6 @@ static void
 inl_text_node(Scan *sp, Tree *tp, const char *text, int len)
 {
   Scanseg *ssp = memo_new(inl_scanseg_m);
-  ssp->utype = N_U_SCANSEG;
   ssp->sp = sp;
   ssp->np = tree_add(tp, inl_ns, inl_text_str, tp->curr->depth, NULL);
   ssp->name = NULL;
@@ -205,6 +206,7 @@ inl_text_node(Scan *sp, Tree *tp, const char *text, int len)
     }
   ssp->np->text = tmp;
   ssp->np->user = ssp;
+  ssp->np->utype = N_U_SCANSEG;
 }
 
 void

@@ -202,7 +202,12 @@ ax_jox_node(Node *np)
       free(r);
     }
 
-  if (np->text)
+  if (N_U_SCANSEG == np->utype && np->kids)
+    {
+      for (npp = np->kids; npp; npp = npp->next)
+	ax_jox_node(npp);
+    }
+  else if (np->text)
     {
       joxer_ch(np->mloc, np->text);
     }

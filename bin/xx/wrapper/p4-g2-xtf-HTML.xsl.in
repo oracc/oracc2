@@ -83,6 +83,9 @@
 
 <xsl:variable name="PQ-id">
   <xsl:choose>
+    <xsl:when test="/xtf:xtf">
+      <xsl:value-of select="/*/*/@xml:id"/>
+    </xsl:when>
     <xsl:when test="not(/*/@xml:id) and /*/@ref">
       <xsl:value-of select="/*/@ref"/>
     </xsl:when>
