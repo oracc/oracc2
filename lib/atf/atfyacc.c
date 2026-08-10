@@ -4,6 +4,7 @@
 #include <o2.h>
 #include <lang.h>
 #include <scan.h>
+#include <inl.h>
 #include "etcsl.h"
 #include "note.h"
 #include "atf.h"
