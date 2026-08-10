@@ -8,6 +8,9 @@
 /* Set to 0 to get [# ... #] half-bracket indicators and 1 to omit them */
 static int gs_brack_start = 1;
 
+static gdlstate_t s_atfo = gs_det_o|gs_glolin_o|gs_glodoc_o;
+static gdlstate_t s_atfc = gs_det_c|gs_glolin_c|gs_glodoc_c;
+
 gdlstate_t gs_order_f[] = { gs_f_query, gs_f_bang, gs_f_star, gs_f_hash,
 			    gs_f_uf1, gs_f_uf2, gs_f_uf3, gs_f_uf4, gs_f_plus };
 
@@ -29,6 +32,8 @@ const char *gs_status[] = { NULL , NULL , "maybe" , NULL, "supplied" ,
 static char flagbuf[NFLAGS/2 + (NFLAGS*3) + 1];
 static char brackobuf[NBRACK*2];
 static char brackcbuf[NBRACK*2];
+static char brackobufa[NBRACK*2];
+static char brackcbufa[NBRACK*2];
 
 const char *gs_str_f[NFLAGS] = { "?", "!", "*", "#", "f1", "f2", "f3", "f4", "+" };
 const char *gs_str_a[NFLAGS] = { "g:queried", "g:remarked",
@@ -42,20 +47,30 @@ static void
 gs_bracko(gdlstate_t sp)
 {
   int i;
-  *brackobuf = '\0';
+  *brackobuf = *brackobufa = '\0';
   for (i = gs_brack_start; i < NBRACK; ++i)
     if (gs_is(sp,gs_order_o[i]))
-      strcat(brackobuf, gs_str_o[i]);
+      {
+	if (gs_is(s_atfo,gs_order_o[i]))
+	  strcat(brackobufa, gs_str_o[i]);
+	else
+	  strcat(brackobuf, gs_str_o[i]);
+      }
 }
 
 static void
 gs_brackc(gdlstate_t sp)
 {
   int i;
-  *brackcbuf = '\0';
+  *brackcbuf = *brackcbufa = '\0';
   for (i = NBRACK-1; i >= gs_brack_start; --i)
     if (gs_is(sp,gs_order_c[i]))
-      strcat(brackcbuf, gs_str_c[i]);
+      {
+	if (gs_is(s_atfc,gs_order_c[i]))
+	  strcat(brackcbufa, gs_str_c[i]);
+	else
+	  strcat(brackcbuf, gs_str_c[i]);
+      }
 }
 
 static void
@@ -134,5 +149,9 @@ gdlstate_props(Node *np, gdlstate_t sp)
   gs_brackc(sp);
   if (*brackcbuf)
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:c", (ccp)pool_copy((uccp)brackcbuf, gdlpool));
-  
+
+  if (*brackobufa)
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "atf:o", (ccp)pool_copy((uccp)brackobufa, gdlpool));
+  if (*brackcbufa)
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "atf:c", (ccp)pool_copy((uccp)brackcbufa, gdlpool));
 }

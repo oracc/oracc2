@@ -20,6 +20,7 @@ my %ns = (
     xml=>'http://www.w3.org/XML/1998/namespace',
     );
 my %zns = (
+    a  =>'http://oracc.org/ns/atf/1.0',
     c  =>'http://oracc.org/ns/cbd/2.0',
     g  =>'http://oracc.org/ns/gdl/1.0',
     n  =>'http://oracc.org/ns/norm/1.0',

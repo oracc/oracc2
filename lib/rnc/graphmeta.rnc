@@ -1,8 +1,9 @@
 namespace g = "http://oracc.org/ns/gdl/1.0"
+namespace atf = "http://oracc.org/ns/atf/1.0"
 g.meta = oid? , spoid? , spform? , key? , 
   break? , status.flags? , status.spans? , 
   paleography.attr? , linguistic.attr? , proximity.attr? ,
-  opener? , closer? , hsqb_o?, hsqb_c? , emhyph? ,
+  opener* , closer* , hsqb_o?, hsqb_c? , emhyph? ,
   varnum? , sign_attr? , utf8? , newline? , delim? ,
   attribute xml:id { xsd:ID }? ,
   breakStart? , breakEnd? ,
@@ -31,8 +32,8 @@ spoid = attribute spoid { xsd:IDREF }
 spform = attribute spform { text }
 
 break = attribute g:break  { "damaged" | "missing" }
-opener = attribute g:o     { text }
-closer = attribute g:c     { text }
+opener = (attribute g:o     { text } | attribute atf:o { text })
+closer = (attribute g:c     { text } | attribute atf:c { text })
 hsqb_o = attribute g:ho    { "1" }
 hsqb_c = attribute g:hc    { "1" }
 emhyph = attribute g:em    { "1" }

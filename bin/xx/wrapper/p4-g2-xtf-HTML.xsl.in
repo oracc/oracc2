@@ -2,7 +2,7 @@
 
 <!--
 
- XSL Stylesheet to produce XHTML version of XTF2 texts.
+ XSL Stylesheet to produce XHTML version of XTF-2- [for now xtf1] texts.
 
  Steve Tinney 2010-09-30, part of Oracc.
 
@@ -27,7 +27,7 @@
   exclude-result-prefixes="xcl xff xtf gdl md xtr norm xpd"
   extension-element-prefixes="exsl">
 
-<xsl:import href="xtf1-HTML.xsl"/>
+<!--<xsl:import href="xtf1-HTML.xsl"/>-->
 <xsl:import href="p4-g2-gdl-HTML.xsl"/>
 
 <xsl:include href="html-standard.xsl"/>

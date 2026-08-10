@@ -174,7 +174,7 @@
 
 <xsl:template match="g:s">
   <!-- This is needed because TIN.TIR{KI} renders as TIN.TIR.KI but there is no @g:delim on the g:s -->
-  <xsl:if test="ancestor::g:d/@g:pos = 'post'">.</xsl:if>
+  <xsl:if test="ancestor::g:d/@g:pos = 'post'"><span x="998">.</span></xsl:if>
   <xsl:call-template name="render-o"/>
   <xsl:choose>
     <xsl:when test="ancestor::g:d and ancestor::g:q">
@@ -204,14 +204,12 @@
   <!-- This is necessary for {KUR}TIN.TIR -> KUR.TIN.TIR because no @g:delim on these nodes -->
   <xsl:if test="not(ancestor::g:q) and ancestor::g:d 
 		and not(ancestor::g:d/@g:pos = 'post')"
-		>.</xsl:if>
+		><span x="999">.</span></xsl:if>
 </xsl:template>
 
 <xsl:template match="g:d">
   <xsl:call-template name="render-o"/>
-  <xsl:for-each select="*">
-    <xsl:apply-templates select="."/>
-  </xsl:for-each>
+  <xsl:apply-templates select="*"/>
   <xsl:call-template name="render-flags"/>
   <xsl:call-template name="render-c"/>
   <xsl:if test="local-name(following::*[1])='d'">
