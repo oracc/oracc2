@@ -282,7 +282,7 @@ atr_label(Mloc l, unsigned char *s)
       se_label(curr_block_np,cc(atfp->name),cc(label_buf));
       if (trans_parenned_labels)
 	parenify((char*)label_buf);
-      atf_xprop(curr_block_np, "xtr:label",(ccp)label_buf);
+      atf_xprop(curr_block_np, "xtr:label",(ccp)pool_copy((uccp)label_buf, atfmp->pool));
       xstrcpy(last_label_buf,label_buf);
     }
 }
@@ -494,7 +494,7 @@ atr_para(void)
 	     only interlinear can use line_id_buf */
 	  if (label)
 	    {
-	      atf_xprop(p,"xtr:label",label);
+	      atf_xprop(p,"xtr:label",cc(pool_copy((uccp)label, atfmp->pool)));
 	      se_label(p,cc(atfp->name),cc(label));
 	      if (curr_trans->etype == etu_interlinear)
 		{
@@ -1007,7 +1007,7 @@ atr_finish_labels(void)
       setrows(last_trans_node, interval);
       char buf[10];
       sprintf(buf,"%d",interval);
-      setAttr(last_trans_node,"xtr:rows",buf);
+      setAttr(last_trans_node,"xtr:rows",pool_copy((uccp)buf, atfmp->pool));
 #endif
       
       removeAttr(last_trans_node,"xtr:ref");

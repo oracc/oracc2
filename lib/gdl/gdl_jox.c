@@ -172,6 +172,9 @@ grx_jox_node(Node *np, int oflag, int nflag)
   else if (!strcmp(np->name, "g:x")
 	   || (!strcmp(np->name, "g:nonw") && !np->kids))
     {
+      gdlstate_t s = prop_get_state(np);
+      if (s)
+	gdlstate_props(np, s);
       if (np->text)
 	joxer_et(np->mloc, nodename,
 		 (r = rnvval_aa_ccpp((p = prop_ccpp(np->props, GP_ATTRIBUTE, PG_GDL_INFO)))),
