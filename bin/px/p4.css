@@ -320,6 +320,10 @@ td>span.lnuml { padding-right: 1em; color: #777; text-align: left; font-size: 70
 
 tr.score-spacer td { padding-bottom: 1em; }
 
+tr.after td { border-bottom: 1px solid green; padding-bottom: .5em; }
+
+tr.after + tr td { padding-top: .5em; }
+
 tr.e { font-size: 90%; }
 
 tr.p1 td { width: 60%; }

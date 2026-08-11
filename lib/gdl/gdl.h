@@ -116,7 +116,7 @@ extern int gdl_flex_debug, gdldebug;
 
 extern const unsigned char *gdl_legacy_prop;
 
-extern int gdl_break_pending, gdl_state_pending;
+extern int gdl_break_pending, gdl_state_pending, gdl_cell_count;
 extern gdlstate_t *lst, *dst;
 
 extern List *c_dangling_gps;

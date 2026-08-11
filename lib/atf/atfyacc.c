@@ -130,12 +130,18 @@ atf_tlat_wrapup(void)
 {
   atr_para();
   atr_finish_labels();
+  char rbuf[10];
+  sprintf(rbuf, "%d", max_trans_cols);
+  atf_xprop(curr_trans->tree->root,"xtr:cols",memo_dup(rbuf));
 }
 
 void
 atf_tlit_wrapup(void)
 {
   atf_group_wrapup();
+  char rbuf[10];
+  sprintf(rbuf, "%d", 1+atf_cell_count);
+  atf_xprop(abt->root,"cols",memo_dup(rbuf));
 }
 
 void

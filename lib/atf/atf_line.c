@@ -10,6 +10,7 @@
 
 int already_lemmed = 0;
 static int lg_mode = 0;
+int atf_cell_count = 0;
 int line_trace = 0;
 int mylines = 1;
 int suppress_lem = 0;
@@ -267,8 +268,13 @@ line_mts(Mloc l, unsigned char *lp)
       if (end > s)
 	{
 	  *end = '\0';
+	  gdl_cell_count = 0;
 	  tlit_parse_inline(lnode,(ccp)s,1,uc(line_id_buf));
 	  curr_words = curr_line->wl = gdl_get_word_list();
+	  /* gdl_cell_count is the number of times gdl_cell was
+	     called, i.e., one less than the number of columns */
+	  if (gdl_cell_count > atf_cell_count)
+	    atf_cell_count = gdl_cell_count;
 	}
     }
   else

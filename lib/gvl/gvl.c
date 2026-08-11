@@ -300,6 +300,7 @@ gvl_c_explicit_gp(Node *gp)
   gp->text = (ccp)pool_copy(gp_orig, curr_sl->p);
 }
 
+#if 0
 static Node *
 gvl_next_nonz(Node *np)
 {
@@ -311,6 +312,7 @@ gvl_next_nonz(Node *np)
     }
   return np;
 }
+#endif
 
 void
 gvl_compound(Node *ynp)
@@ -414,7 +416,6 @@ gvl_compound(Node *ynp)
 	      /* Don't generate implicit groups when there is a parse error */
 	      if (last)
 		{
-		  int plusone = 0;
 		  while (1)
 		    {
 		      if (last->next && !strcmp(last->next->name, "g:d")
@@ -482,6 +483,12 @@ g_attr(Node *ynp, gvl_g *gp)
     gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)gp->orig);	  
 }
 
+const char *gvl_name_from_type[256] = {
+  ['n'] = "g:n",
+  ['p'] = "g:p",
+  ['s'] = "g:s",
+  ['v'] = "g:v"
+};
 void
 gvl_simplexg(Node *ynp)
 {
@@ -500,7 +507,13 @@ gvl_simplexg(Node *ynp)
   if (!(gp = hash_find(curr_sl->h,g)))
     gp = gvl_s(ynp);
   else if (!strcmp(ynp->name, "g:g"))
-    ynp->name = "g:s";
+    {
+      if (!(ynp->name = gvl_name_from_type[*(unsigned char*)gp->type]))
+	{
+	  fprintf(stderr, "gvl_simplexg: internal error: type %s not in gvl_name_from_type\n", gp->type);
+	  ynp->name = "g:s";
+	}
+    }
   
   /* it isn't an error for gp to be NULL because when we gvl_n_sexify
      in gvl_s the result ynp is a g:gp and doesn't have a gp node */

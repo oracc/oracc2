@@ -120,7 +120,7 @@ comment:
 		;
 
 space:
-	  SPACE						{ ynp = gdl_new_word(ytp);
+	  SPACE						{ gdl_hc(0); ynp = gdl_new_word(ytp);
 	    						  /*gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
 	      						    "literal", gdllval.text); */ }
 	| '\n'						{ gdl_line_wrapup(@1); }

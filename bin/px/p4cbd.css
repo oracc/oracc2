@@ -48,7 +48,7 @@ span.ih2 { font-size: 110%; font-style: italic; padding-right: 1em; }
 
 span.ih3 { font-weight: bold; padding-right: 1em; }
 
-span.sux { font-family: arial, sans-serif; }
+span.sux,span.sux-x-emesal { font-family: arial, sans-serif; }
 
 p.cpd { font-size: smaller; margin-left: 40px; text-indent: -35px }
 

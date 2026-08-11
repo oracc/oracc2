@@ -217,12 +217,12 @@ NOTEMARK	"^"[0-9]+"^"
 <INITIAL,C>"*"		{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
 <INITIAL,C>^[#"~=@^]	{ return gdl_lexfld[(int)*yytext]; }
 "#"			{ if (SIN) { SIN=0;
-				        gdllval.text=(char*)gdl_lexnames[(int)*yytext];
-			  		return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
+			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
 <C>"#"			{ gdl_lex_flag((uccp)yytext); }
 [:"~=@^]   		{ if (SIN) { SIN=0;
-					gdllval.text=(char*)gdl_lexnames[(int)*yytext];
-					return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
+				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
 [#"=@^]/{G} 		{ if (gdl_lexical) {
 		       	    mesg_vwarning(currgdlfile, gdllineno,
 			  	       	  "no space after %c field\n", *yytext);

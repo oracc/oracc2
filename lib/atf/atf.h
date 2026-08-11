@@ -225,6 +225,7 @@ extern int amp_trace, line_trace;
 extern char line_id_buf[MAX_LINE_ID_BUF+1];
 extern char *line_id_insertp;
 extern const char *clid;
+extern int atf_cell_count, max_trans_cols;
 
 extern Line *curr_line, *curr_lem_host;
 extern List *curr_words;
@@ -361,5 +362,6 @@ extern void atr_text(Mloc l, const char *s);
 extern void atr_translation(void);
 extern void atr_unit(Mloc l, unsigned char *s);
 extern void atr_span(Mloc l, unsigned char *s);
+extern void atr_translation_wrapup(void);
 
 #endif/*ATF_H_*/

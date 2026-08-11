@@ -1758,8 +1758,8 @@
   <!--<xsl:message>key-after <xsl:value-of select="local-name()"/></xsl:message>-->
   <xsl:variable name="key-after" select="xtf:protocols/xtf:protocol[@type='after' or @type='see']"/>
   <xsl:for-each select="$key-after">
-    <tr class="noncolumn">
-      <td/><td colspan="{ancestor::*[@cols][1]/@cols}"
+    <tr class="noncolumn after">
+      <td/><td colspan="{10}"
       ><xsl:text>(</xsl:text><xsl:value-of select="@type"/><xsl:text> </xsl:text
       ><xsl:apply-templates
       /><xsl:if test="string-length(@url)>0"

@@ -20,6 +20,7 @@ extern const char *word_lang_tag;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
 int deep_parse = 1;
+int gdl_cell_count;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 static int gdl_excision_type = 'e';
@@ -757,6 +758,8 @@ gdl_cell(Tree *ytp, const char *span)
   Node *cp = NULL;
   Node *ancestor = NULL;
 
+  ++gdl_cell_count;
+  
   if ('&' == *span)
     ++span;
   if (gdltrace)
@@ -1013,7 +1016,8 @@ gdl_delim_s(Tree *ytp, const char *data)
       Node *d_attach = lgp ? lgp : np->prev;
       if (d_attach)
 	{
-	  gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+	  /* 2026-08-11: don't use g:delim inside compounds because delims are in <g:o> nodes*/
+	  /*gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);*/
 	  if (!strcmp(np->rent->name, "g:gp") && '.' == *data)
 	    gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:sigdelim", "+");	
 	}
