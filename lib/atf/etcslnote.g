@@ -10,3 +10,5 @@ cite
 ed
 inc
 misc
+text
+doc
