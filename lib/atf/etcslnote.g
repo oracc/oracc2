@@ -3,12 +3,11 @@
 %}
 struct map;
 %%
-ms
 cf
-eq
 cite
-ed
+doc
+eq
 inc
 misc
+ms
 text
-doc

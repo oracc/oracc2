@@ -141,7 +141,7 @@ atf_tlit_wrapup(void)
   atf_group_wrapup();
   char rbuf[10];
   sprintf(rbuf, "%d", 1+atf_cell_count);
-  atf_xprop(abt->root,"cols",memo_dup(rbuf));
+  atf_xprop(abt->root->kids,"cols",memo_dup(rbuf));
 }
 
 void
