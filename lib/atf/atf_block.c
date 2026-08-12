@@ -8,6 +8,12 @@
 #include "blocktok.h"
 #include "otf-defs.h"
 
+static int segflag = 0;
+static int tabflag = 0;
+static int verflag = 0;
+static int non_label_div = 0;
+
+
 static void block_div(Mloc l, Block *bp, char *rest);
 static void block_hdr(Mloc l, Block *bp, char *rest);
 static void block_lev(Mloc l, Block *bp, char *rest);
@@ -330,7 +336,11 @@ block_div(Mloc l, Block *bp, char *rest)
 		      else if (type && strcmp(type, (ccp)divtok))
 			mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
 		      else
-			(void)tree_pop(abt);
+			{
+			  if (!strcmp(divtok, "version"))
+			    verflag = 0;
+			  (void)tree_pop(abt);
+			}
 		    }
 		  else
 		    {
@@ -372,10 +382,6 @@ block_div(Mloc l, Block *bp, char *rest)
 
       if (divtok)
 	{
-	  int segflag = 0;
-	  int tabflag = 0;
-	  int verflag = 0;
-	  int non_label_div = 0;
 	  ++div_level;
 
 	  if (!xstrcmp(divtok,"segment"))
