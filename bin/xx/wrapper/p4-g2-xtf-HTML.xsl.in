@@ -236,8 +236,10 @@
 </xsl:template>
 
 <xsl:template match="xtf:div">
-  <xsl:if test="not(@type='segment') or not(@n='0')">
+  <!--  <xsl:if test="not(@type='segment') or not(@n='0')">-->
+  <xsl:if test="not(contains(',kirugu,', @type))">
     <tr class="h1">
+      <td/>
       <td colspan="{ancestor::*[@cols][1]/@cols}">
 	<xsl:variable name="itype">
 	  <xsl:call-template name="init-cap">
@@ -249,10 +251,11 @@
 	    <xsl:value-of select="concat(' ',@n)"/>
 	  </xsl:if>
 	</xsl:variable>
-	<span class="div"><xsl:value-of select="concat($itype,$n)"/></span>
+	<span class="seendiv"><xsl:value-of select="concat($itype,$n)"/></span>
       </td>
     </tr>
   </xsl:if>
+<!--  </xsl:if>-->
   <xsl:apply-templates/>
 </xsl:template>
 
