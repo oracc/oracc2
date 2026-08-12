@@ -324,6 +324,8 @@ tr.after td { border-bottom: 1px solid green; padding-bottom: .5em; }
 
 tr.after + tr td { padding-top: .5em; }
 
+tr.h1 td { font-weight: bold; padding-top: .25em; padding-bottom: .5em; }
+
 tr.e { font-size: 90%; }
 
 tr.p1 td { width: 60%; }
