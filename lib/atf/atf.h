@@ -362,6 +362,7 @@ extern void atr_text(Mloc l, const char *s);
 extern void atr_translation(void);
 extern void atr_unit(Mloc l, unsigned char *s);
 extern void atr_span(Mloc l, unsigned char *s);
-extern void atr_translation_wrapup(void);
+
+extern struct map *etcslnote(register const char*str, register size_t len);
 
 #endif/*ATF_H_*/

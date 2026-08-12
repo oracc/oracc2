@@ -190,6 +190,7 @@ cbdrws.c
 cbdtags.c
 cgiopts.c
 cx_merper.c
+etcslnote.c
 fontname.c
 iomethod.c
 idactions.c

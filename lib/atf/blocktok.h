@@ -34,6 +34,5 @@ typedef struct block_token
   const char *nano;
 } Blocktok;
 
-extern struct block_token *blocktok(register const char*str,
-				    register size_t len);
+extern struct block_token *blocktok(register const char*str, register size_t len);
 #endif /*_BLOCKTOK_H*/

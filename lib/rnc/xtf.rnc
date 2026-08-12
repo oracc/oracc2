@@ -273,6 +273,11 @@ nonx-attlist =
     attribute ref    { "none" },
     attribute type   { "empty" })
   |
+   (attribute strict { "0" },
+    attribute ref    { xsd:IDREF }?,
+    attribute type   { "etcsl" },
+    attribute subt   { "ms"|"cf"|"eq"|"cite"|"ed"|"inc"|"misc" })
+  |
    (attribute type   { "image" },
     attribute strict { "0" },
     attribute ref    { xsd:string {
