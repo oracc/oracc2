@@ -31,12 +31,18 @@
     <optional>
       <ref name="proximity.attr"/>
     </optional>
-    <zeroOrMore>
+    <optional>
       <ref name="opener"/>
-    </zeroOrMore>
-    <zeroOrMore>
+    </optional>
+    <optional>
       <ref name="closer"/>
-    </zeroOrMore>
+    </optional>
+    <optional>
+      <ref name="atfo"/>
+    </optional>
+    <optional>
+      <ref name="atfc"/>
+    </optional>
     <optional>
       <ref name="hsqb_o"/>
     </optional>
@@ -60,6 +66,9 @@
     </optional>
     <optional>
       <ref name="delim"/>
+    </optional>
+    <optional>
+      <ref name="sigdel"/>
     </optional>
     <optional>
       <attribute name="xml:id">
@@ -174,16 +183,16 @@
     </attribute>
   </define>
   <define name="opener">
-    <choice>
-      <attribute name="g:o"/>
-      <attribute name="atf:o"/>
-    </choice>
+    <attribute name="g:o"/>
   </define>
   <define name="closer">
-    <choice>
-      <attribute name="g:c"/>
-      <attribute name="atf:c"/>
-    </choice>
+    <attribute name="g:c"/>
+  </define>
+  <define name="atfo">
+    <attribute name="atf:o"/>
+  </define>
+  <define name="atfc">
+    <attribute name="atf:c"/>
   </define>
   <define name="hsqb_o">
     <attribute name="g:ho">
@@ -208,9 +217,9 @@
   </define>
   <define name="delim">
     <attribute name="g:delim"/>
-    <optional>
-      <attribute name="g:sigdelim"/>
-    </optional>
+  </define>
+  <define name="sigdel">
+    <attribute name="g:sigdelim"/>
   </define>
   <define name="newline">
     <attribute name="g:newline">
@@ -454,6 +463,12 @@
         <attribute name="xml:id">
           <data type="ID"/>
         </attribute>
+      </optional>
+      <optional>
+        <ref name="atfo"/>
+      </optional>
+      <optional>
+        <ref name="atfc"/>
       </optional>
       <optional>
         <ref name="breakStart"/>

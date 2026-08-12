@@ -276,7 +276,7 @@ nonx-attlist =
    (attribute strict { "0" },
     attribute ref    { xsd:IDREF }?,
     attribute type   { "etcsl" },
-    attribute subt   { "ms"|"cf"|"eq"|"cite"|"ed"|"inc"|"misc" })
+    attribute subt   { "cf"|"cite"|"doc"|"eq"|"inc"|"misc"|"ms"|"text" })
   |
    (attribute type   { "image" },
     attribute strict { "0" },
