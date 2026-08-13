@@ -139,6 +139,7 @@ void
 atf_tlit_wrapup(void)
 {
   atf_group_wrapup();
+  label_segtab(NULL,NULL);
   char rbuf[10];
   sprintf(rbuf, "%d", 1+atf_cell_count);
   atf_xprop(abt->root->kids,"cols",memo_dup(rbuf));

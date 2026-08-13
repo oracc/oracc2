@@ -8,6 +8,7 @@
 #include "blocktok.h"
 #include "otf-defs.h"
 
+static int kirflag = 0;
 static int segflag = 0;
 static int tabflag = 0;
 static int verflag = 0;
@@ -337,7 +338,13 @@ block_div(Mloc l, Block *bp, char *rest)
 			mesg_verr(&l, "mismatched @end %s versus @div %s\n", divtok, type);
 		      else
 			{
-			  if (!strcmp(divtok, "version"))
+			  if (!strcmp((ccp)divtok, "kirugu"))
+			    kirflag = 0;
+			  else if (!strcmp((ccp)divtok, "segment"))
+			    segflag = 0;
+			  else if (!strcmp((ccp)divtok, "tablet"))
+			    tabflag = 0;
+			  else if (!strcmp((ccp)divtok, "version"))
 			    verflag = 0;
 			  (void)tree_pop(abt);
 			}
@@ -383,15 +390,28 @@ block_div(Mloc l, Block *bp, char *rest)
       if (divtok)
 	{
 	  ++div_level;
-
+#if 1
+	  if (!xstrcmp(divtok,"segment"))
+	    label_segtab("Seg.",ntok);
+	  else if (!xstrcmp(divtok,"kirugu"))
+	    label_segtab("Kir.",ntok);
+	  else if (!xstrcmp(divtok,"tablet"))
+	    label_segtab("Tab.",ntok);
+	  else if (!xstrcmp(divtok,"version"))
+	    label_segtab("Ver.",ntok);
+	  /* else?? */
+	  non_label_div = 0;
+#else
 	  if (!xstrcmp(divtok,"segment"))
 	    segflag = 1;
+	  else if (!xstrcmp(divtok,"kirugu"))
+	    kirflag = 1;
 	  else if (!xstrcmp(divtok,"tablet"))
 	    tabflag = 1;
 	  else if (!xstrcmp(divtok,"version"))
 	    verflag = 1;
-	  else if (!xstrcmp(divtok,"kirugu")
-		   || !xstrcmp(divtok,"trailer")
+	  else if (/*!xstrcmp(divtok,"kirugu")
+		     ||*/ !xstrcmp(divtok,"trailer")
 		   || !xstrcmp(divtok,"jicgijal"))
 	    non_label_div = 1;
       
@@ -402,11 +422,15 @@ block_div(Mloc l, Block *bp, char *rest)
 	    {
 	      if (segflag && xstrcmp(ntok,"0"))
 		label_segtab("Seg.",ntok);
+	      else if (kirflag && xstrcmp(ntok,"0"))
+		label_segtab("Kir.",ntok);
 	      else if (tabflag && xstrcmp(ntok,"0"))
 		label_segtab("Tab.",ntok);
 	      else if (divtok)
 		label_segtab(cc(divtok),ntok);
+	      non_label_div = 0;
 	    }
+#endif
 	}
       else if (!xstrcmp(bp->bt->name,"variants")) 
 	{

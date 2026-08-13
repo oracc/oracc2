@@ -42,8 +42,8 @@ label_segtab(const char *st, unsigned const char *tok)
   if (lnum_labels)
     return;
   
-  static char div_labels[4][128];
-  enum div_label_code { dlc_version , dlc_tablet , dlc_segment , dlc_top } dlc;
+  enum div_label_code { dlc_version , dlc_tablet , dlc_segment , dlc_kirugu, dlc_top } dlc;
+  static char div_labels[dlc_top][128];
 
   if (!st)
     {
@@ -63,9 +63,17 @@ label_segtab(const char *st, unsigned const char *tok)
 	  div_labels[1][0] = div_labels[2][0] = div_labels[3][0] = '\0';
 	}
       else if (!strcmp(st,"Tab."))
-	dlc = dlc_tablet;
+	{
+	  dlc = dlc_tablet;
+	  div_labels[dlc_segment][0] = div_labels[dlc_kirugu][0] = '\0';
+	}
       else if (!strcmp(st,"Seg."))
-	dlc = dlc_segment;
+	{
+	  dlc = dlc_segment;
+	  div_labels[dlc_kirugu][0] = '\0';
+	}
+      else if (!strcmp(st,"Kir."))
+	dlc = dlc_kirugu;
       else
 	dlc = dlc_top;
       if (st && st[strlen(st)-1] == '.')
@@ -75,21 +83,27 @@ label_segtab(const char *st, unsigned const char *tok)
       sprintf(div_labels[dlc],"%s%s%s%s",st,sp,tok,(tok&&*tok)?",":"");
       if (dlc < dlc_top)
 	{
-	  if (div_labels[0][0])
-	    strcpy((char*)line_label_buf,div_labels[0]);
+	  if (div_labels[dlc_version][0])
+	    strcpy((char*)line_label_buf,div_labels[dlc_version]);
 	  else
 	    *line_label_buf = '\0';
-	  if (div_labels[1][0])
+	  if (div_labels[dlc_tablet][0])
 	    {
 	      if (*line_label_buf)
 		strcat((char*)line_label_buf," ");
-	      sprintf((char*)line_label_buf+strlen((char*)line_label_buf), "%s", div_labels[1]);
+	      sprintf((char*)line_label_buf+strlen((char*)line_label_buf), "%s", div_labels[dlc_tablet]);
 	    }
-	  if (div_labels[2][0])
+	  if (div_labels[dlc_segment][0])
 	    {
 	      if (*line_label_buf)
 		strcat((char*)line_label_buf," ");
-	      sprintf((char*)line_label_buf+strlen((char*)line_label_buf), "%s", div_labels[2]);
+	      sprintf((char*)line_label_buf+strlen((char*)line_label_buf), "%s", div_labels[dlc_segment]);
+	    }
+	  if (div_labels[dlc_kirugu][0])
+	    {
+	      if (*line_label_buf)
+		strcat((char*)line_label_buf," ");
+	      sprintf((char*)line_label_buf+strlen((char*)line_label_buf), "%s", div_labels[dlc_kirugu]);
 	    }
 	  m_label_col_index = 0;
 	}
