@@ -237,7 +237,7 @@
 
 <xsl:template match="xtf:div">
   <!--  <xsl:if test="not(@type='segment') or not(@n='0')">-->
-  <xsl:if test="not(contains(',kirugu,', @type))">
+  <xsl:if test="not(contains(',ŋišgiŋal,kirugu,trailer,', concat(',',@type,',')))">
     <tr class="h1">
       <td/>
       <td colspan="{ancestor::*[@cols][1]/@cols}">
@@ -1212,7 +1212,7 @@
 	      <xsl:attribute name="data-bloc"><xsl:value-of select="@score-block-ref"/></xsl:attribute>
 	    </xsl:if>
 	    <xsl:choose>
-	      <xsl:when test="@label2x"> <!-- should main display ever use label2 ? -->
+	      <xsl:when test="@label2"> <!-- should main display ever use label2 ? For ETCSL, yes; what are implications for rinap etc.? -->
 		<span class="label-two">
 		  <xsl:value-of select="@label2"/>
 		</span>
