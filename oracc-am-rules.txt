@@ -67,7 +67,7 @@ install-exec-local:
 	$(ORACCIFY) $<
 
 %.xnn: %.rng
-	$(top_srcdir)/lib/rnc/c2-rng2xnn.sh $< $@
+	$(top_srcdir)/lib/rnc/c2-rng2xnn.sh $(top_srcdir) $< $@
 
 %.c: %.xnn
 	$(top_srcdir)/lib/rnc/c2-xnn2c.plx $<
