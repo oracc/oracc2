@@ -20,6 +20,7 @@ int tok_input_cbd = 0, tok_input_xtf = 1;
 int tok_data_g = 1, tok_data_l = 0, tok_data_m = 1;
 
 const char *file;
+int fuzzy_aliasing = 0;
 int bootstrap_mode, lem_autolem, verbose, lem_standalone, shadow_lem,
   ignore_plus, slow_lem_utf8, lem_dynalem, links_standalone;
 FILE *f_log, *f_xml;
