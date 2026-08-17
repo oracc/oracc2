@@ -145,14 +145,14 @@ isp_sort_sub(Isp *ip)
 		  char buf[strlen(ip->err)+strlen("sort failed: 0 ")+strlen(ip->errx)];
 		  strcpy(buf, "" /*"sort failed: "*/);
 		  sprintf(buf+strlen(buf), ip->err, ip->errx);
-		  ip->err = pool_copy((uccp)buf, ip->p);
+		  ip->err = (ccp)pool_copy((uccp)buf, ip->p);
 		  ip->errx = NULL;
 		}
 	      else
 		{
 		  char buf[strlen(ip->err)+strlen("sort failed: 0")];
 		  sprintf(buf, "sort failed: %s", ip->err);
-		  ip->err = pool_copy((uccp)buf, ip->p);
+		  ip->err = (ccp)pool_copy((uccp)buf, ip->p);
 		}
 	    }
 	  else

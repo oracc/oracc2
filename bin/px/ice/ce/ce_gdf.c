@@ -120,7 +120,7 @@ gdfprinter(void)
 static void
 gdfprinter2(Hash *fields)
 {
-  static int nth = 0;
+  /*static int nth = 0;*/
   int i;
   const char *designation = NULL;
 #if 0
@@ -135,7 +135,7 @@ gdfprinter2(Hash *fields)
       fputs("<ce:group>", stdout);
     }
 
-  ++nth;
+  /*++nth;*/
 
   const char *pqx = hash_find(fields, (ucp)"o:id");
 

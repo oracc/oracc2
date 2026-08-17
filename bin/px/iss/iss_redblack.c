@@ -68,12 +68,12 @@ struct RB_ENTRY(node) RB_ENTRY(_null)={&RB_ENTRY(_null), &RB_ENTRY(_null), &RB_E
 
 #if defined(USE_SBRK)
 
-static struct RB_ENTRY(node) *RB_ENTRY(_alloc)();
+static struct RB_ENTRY(node) *RB_ENTRY(_alloc)(void);
 static void RB_ENTRY(_free)(struct RB_ENTRY(node) *);
 
 #else
 
-static struct RB_ENTRY(node) *RB_ENTRY(_alloc)() {return (struct RB_ENTRY(node) *) malloc(sizeof(struct RB_ENTRY(node)));}
+static struct RB_ENTRY(node) *RB_ENTRY(_alloc)(void) {return (struct RB_ENTRY(node) *) malloc(sizeof(struct RB_ENTRY(node)));}
 static void RB_ENTRY(_free)(struct RB_ENTRY(node) *x) {free(x);}
 
 #endif
@@ -298,7 +298,7 @@ RB_ENTRY(_traverse)(int insert, const RB_ENTRY(data_t) *key, struct RB_ENTRY(tre
 	struct RB_ENTRY(node) *x,*y,*z;
 	int cmp;
 	int found=0;
-	int cmpmods();
+	int cmpmods(void);
 
 	y=RBNULL; /* points to the parent of x */
 	x=rbinfo->rb_root;

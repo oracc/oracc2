@@ -1,3 +1,6 @@
+#include "px.h"
+#include "iss/iss.h"
+
 /* cbditem.c */
 extern void summary(const char *ref);
 extern void ei_sH(void *userData, const char *name, const char **atts);

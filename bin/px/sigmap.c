@@ -160,7 +160,7 @@ unweb_sig(const char *sig)
 {
   wchar_t *wsig = NULL;
   size_t nwchar = 0, i;
-  char *dsig = '%' == *sig ? CGI_decode_url(sig) : sig;
+  const char *dsig = '%' == *sig ? CGI_decode_url(sig) : sig;
   wsig = malloc((strlen(dsig)+1) * sizeof(wchar_t));
   if ((nwchar = mbstowcs(wsig, dsig, strlen(dsig)+1)) == (size_t)-1)
     fprintf(stderr, "mbstowcs failed\n");

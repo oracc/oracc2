@@ -195,7 +195,7 @@ alldigit(const char *s)
 void
 xmdprinter2(const char *pq)
 {
-  static int nth = 0;
+  /*static int nth = 0;*/
   extern int in_group;
 
   if ('#' == *pq)
@@ -214,7 +214,7 @@ xmdprinter2(const char *pq)
       const char *designation = NULL;
       /*const char *icon = NULL, *icon_alt;*/
 
-      ++nth;
+      /*++nth;*/
       xmd_init();
 
 #if 1
@@ -268,7 +268,8 @@ xmdprinter2(const char *pq)
 	  pqx = pq;
 	}
 #endif
-      char anchor[strlen("<a href=.javascript://. onclick=.act_iref(event). data-iref=.P123456.0>")];
+      int len = strlen("<a href=.javascript://. onclick=.act_iref(event). data-iref=.P123456.0>");
+      char anchor[len];
       sprintf(anchor, "<a href=\"javascript://\" onclick=\"act_iref(event)\" data-iref=\"%s\">", textid);
       
       if (!in_group)

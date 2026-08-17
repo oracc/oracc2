@@ -638,7 +638,7 @@ ce_xtf_sH(void *userData, const char *name, const char **atts)
 	      *s++ = '/';
 	    else
 	      ++s;
-	  fprintf(ce_out_fp, "<ce:heading>%s</ce:heading>", ce_h(h));
+	  fprintf(ce_out_fp, "<ce:heading>%s</ce:heading>", ce_h((ccp)h));
 	}
 
       /* if it is xtf:l(g) we may not have dumped ce:data yet;
@@ -973,7 +973,7 @@ const char *prog = "ce_xtf";
 int major_version = 1, minor_version = 0, verbose;
 const char *usage_string = " [-c ID] -p <PROJECT> -i <INDEX> [-x]";
 void
-help ()
+help (void)
 {
   printf("  -c = read an ID from arg (default is stdin)\n");
   printf("  -i = specify index\n");

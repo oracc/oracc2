@@ -258,7 +258,7 @@ isp_create_xsl(Isp *ip)
 {
   List *args = isp_xtf_xsl_args(ip, "/bin/ispxsl.sh");
   list_add(args, " ");
-  list_add(args, ip->itemdata.type);
+  list_add(args, (void*)ip->itemdata.type);
   return isp_xtf_xsl_sys(ip, args);
 }
 
@@ -543,7 +543,7 @@ int
 isp_item_img(Isp *ip)
 {
   char oic[strlen(ip->oracc)+strlen(ip->project)+strlen("//P123456.img0")];
-  sprintf(oic, "%s/%s/.oic", ip->oracc, ip->project, ip->itemdata.item);
+  sprintf(oic, "%s/%s/%s.oic", ip->oracc, ip->project, ip->itemdata.item);
   char img[strlen(ip->cache.sys)+strlen("/img/P123/P123456.img0")];
   ip->itemdata.oic = !access(oic, R_OK);
   if (ip->itemdata.oic)

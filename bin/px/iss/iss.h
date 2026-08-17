@@ -34,7 +34,14 @@ extern int nsortfields;
 
 extern int iso_master(Isp *ip, const char *mol);
 extern int iso_zoutline(Isp *ip);
+extern int iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max, const char *mol);
 
-#include "all.proto"
+extern int iss_data(Isp *ip, struct page *p);
+extern int iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max, const char *mol);
+extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
+extern struct item **pg_sort(Isp *ip, struct item*items, int *nitems, const char *sortkeys);
+extern int iss_texts(Isp *ip, struct page *p);
+
+#include "../px.proto"
 
 #endif/*ISS_H_*/
