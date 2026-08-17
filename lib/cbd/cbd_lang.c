@@ -49,7 +49,7 @@ cbd_sig_add_one(const unsigned char *s, int rank, MWE_type mtype)
       list_add(lp, lsp);
     }
   else
-    list_add(lp, s);
+    list_add(lp, (void*)s);
 }
 
 void

@@ -1,7 +1,5 @@
 include ../../../oracc-am-rules.txt
 
-SUBDIRS=../../../lib 
-
 bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokix \
 	tokpctg tokpctl cbdex cbdikey tokpg tokexg tokexl tokval
 

@@ -1,6 +1,6 @@
 include ../../oracc-am-rules.txt
 
-SUBDIRS=../../lib sxweb
+SUBDIRS=sxweb
 
 bin_PROGRAMS=sx slix slx csldist
 

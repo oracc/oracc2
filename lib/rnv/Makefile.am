@@ -18,7 +18,7 @@ DEF=\
 -DRNV_VERSION="\"${VERSION}\"" \
 -DARX_VERSION="\"${VERSION}\"" \
 -DRVP_VERSION="\"${VERSION}\""
-WARN=-Wall -Wstrict-prototypes  -Wmissing-prototypes -Wcast-align
+WARN=-Wall -Wstrict-prototypes  -Wmissing-prototypes -Wcast-align -Wno-unused-but-set-variable -Wno-unused-variable -Wno-empty-body
 OPT=-O -g
 
 override CFLAGS=

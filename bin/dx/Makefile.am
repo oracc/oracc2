@@ -1,8 +1,6 @@
 include ../../oracc-am-rules.txt
 
-#SUBDIRS=lib dxx osh odo
-
-SUBDIRS=odo
+SUBDIRS=lib dxx osh odo
 
 bin_PROGRAMS=odox
 noinst_SCRIPTS=odox-install.sh

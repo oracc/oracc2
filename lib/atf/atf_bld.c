@@ -317,7 +317,7 @@ etcsl_label(const char *l)
   l = strchr(l, '=') + 1;
   hash_add(etcsl_labels,
 	   pool_copy((uccp)l, etcsl_pool),
-	   (uccp)etcsl_lid /*pool_copy((uccp)etcsl_lid, etcsl_pool)*/);
+	   (void*)etcsl_lid /*pool_copy((uccp)etcsl_lid, etcsl_pool)*/);
 }
 
 void

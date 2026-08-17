@@ -125,7 +125,7 @@ cdlidate_w3c(struct cdlidate*dp)
 	}
       else 
 	{
-	  if (dp->day)
+	  if (*dp->day)
 	    sprintf(buf+strlen(buf),"-00-%s",dp->day);
 	  else
 	    strcat(buf,"-00-00");

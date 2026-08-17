@@ -123,6 +123,8 @@ typedef unsigned char Uchar;
 #ifdef Oracc
 #define Uchar unsigned char
 #define Boolean int
+#include <stdlib.h>
+#include <string.h>
 #include <collate.h>
 #include <xmlify.h>
 #endif
@@ -260,59 +262,31 @@ int xml_output = 0;
 
 int sepchar = ' ';
 
-#if (MicrosoftC | MetawareC | LattVer3 | defined(linux))
-int main (int, char *[]);
-char *allocate (unsigned int);
-TREEPTR buildindex (TREEPTR, TREEPTRPTR, LINENUM *, int *, int);
-void closefiles (void);
-TREEPTR drotate (TREEPTR, TREEPTR, TREEPTR);
-void error (char *, int);
-void fileerror (char *, char *);
-void flistadd (char *, int, FLIST *);
-void getargs (int, char *[]);
-LINENUM *getlinenum (Uchar *, LINENUM *, int);
-int getword (Uchar *, int);
-void helpscreen (int);
-void concord_index (void);
-LNUMPTR lnuminit (LINENUM *);
-void memerror (int);
-TREEPTR numtsearch (TREEPTR, unsigned int);
-void numtadd (TREEPTR);
-void numtree (TREEPTR);
-TREEPTR splay (TREEPTR);
-TREEPTR srotate (TREEPTR, TREEPTR);
-TREEPTR treebuild (TREEPTR, Uchar *, LINENUM *);
-void treeout (WTELEMPTR);
-void treeprint (TREEPTR);
-TREEPTR treesearch (TREEPTR, Uchar *);
-int type (int);
-#else
-int main ();
-char *allocate ();
-TREEPTR buildindex ();
-void closefiles ();
-TREEPTR drotate ();
-void error ();
-void fileerror ();
-void flistadd ();
-void getargs ();
-LINENUM *getlinenum ();
-int getword ();
-void helpscreen ();
-void concord_index ();
-LNUMPTR lnuminit ();
-void memerror ();
-TREEPTR numtsearch ();
-void numtadd ();
-void numtree ();
-TREEPTR splay ();
-TREEPTR srotate ();
-TREEPTR treebuild ();
-void treeout ();
-void treeprint ();
-TREEPTR treesearch ();
-int type ();
-#endif
+extern int main (int, char * const*);
+extern char *allocate (unsigned int);
+extern TREEPTR buildindex (TREEPTR, TREEPTRPTR, LINENUM *, int *, int);
+extern void closefiles (void);
+extern TREEPTR drotate (TREEPTR, TREEPTR, TREEPTR);
+extern void error (char *, int);
+extern void fileerror (char *, char *);
+extern void flistadd (char *, int, FLIST *);
+extern void getargs (int, char * const *);
+extern LINENUM *getlinenum (Uchar *, LINENUM *, int);
+extern int getword (Uchar *, int);
+extern void helpscreen (int);
+extern void concord_index (void);
+extern LNUMPTR lnuminit (LINENUM *);
+extern void memerror (int);
+extern TREEPTR numtsearch (TREEPTR, unsigned int);
+extern void numtadd (TREEPTR);
+extern void numtree (TREEPTR);
+extern TREEPTR splay (TREEPTR);
+extern TREEPTR srotate (TREEPTR, TREEPTR);
+extern TREEPTR treebuild (TREEPTR, Uchar *, LINENUM *);
+extern void treeout (WTELEMPTR);
+extern void treeprint (TREEPTR);
+extern TREEPTR treesearch (TREEPTR, Uchar *);
+extern int type (int);
 
 #ifdef linux
 #undef strcmp
@@ -334,14 +308,15 @@ extern char *filedir ();
 
 #if BellC||GCC
 #define ltoa itoa
-extern char *strlwr (), *strupr ();
+extern char *strlwr (char*);
+extern char *strupr (char*);
 #endif
 
 #if CI_C86
 extern long atoi ();
 extern char *malloc ();
 extern FILE *fopen ();
-extern char *strchr (), *strrchr (), *strlwr (), *strupr ();
+extern char *strchr (), *strrchr (), *), *strupr ();
 #endif
 
 FILE *Infile, *Outfile, *Reffile;
@@ -356,9 +331,7 @@ Uchar Linebuf[LINESIZE], Errmsg[100];
 TREEPTR Numptree;
 
 int
-main (argc, argv)		/* word frequency count and assorted indexes */
-     int argc;
-     char *argv[];
+main (int argc, char *const *argv)		/* word frequency count and assorted indexes */
 {
   BLOCKPTR tempptr, blkptr;
 
@@ -393,8 +366,7 @@ main (argc, argv)		/* word frequency count and assorted indexes */
 }
 
 char *
-allocate (s)
-     unsigned int s;
+allocate (unsigned int s)
 {
   char *p;
   unsigned int len;
@@ -424,11 +396,7 @@ allocate (s)
 }
 
 TREEPTR
-buildindex (p0, p1p, lp, wcntptr, exclflag)
-     TREEPTR p0;
-     TREEPTRPTR p1p;
-     LINENUM *lp;
-     int *wcntptr, exclflag;
+buildindex (TREEPTR p0, TREEPTRPTR p1p, LINENUM *lp, int *wcntptr, int exclflag)
 {
   Uchar word[MAXWORD];
   int t, type = 0;
@@ -459,9 +427,9 @@ buildindex (p0, p1p, lp, wcntptr, exclflag)
 #endif
 	    {
 	      if (Docase == 1)
-		strlwr (word);
+		strlwr ((char*)word);
 	      else if (Docase == 2)
-		strupr (word);
+		strupr ((char*)word);
 	    }
 	  if (type > 2
 	      || strcmp ((*p1p = splay (treesearch (*p1p, word)))->WTNODE.
@@ -485,7 +453,7 @@ buildindex (p0, p1p, lp, wcntptr, exclflag)
 }
 
 void
-closefiles ()
+closefiles (void)
 {
   if (Infile != NULL && Infile != stdin)
     fclose (Infile);
@@ -496,8 +464,7 @@ closefiles ()
 }
 
 TREEPTR
-drotate (p, pv, pw)		/* a double splay rotation */
-     TREEPTR p, pv, pw;
+drotate (TREEPTR p, TREEPTR pv, TREEPTR pw)		/* a double splay rotation */
 {
   int type = 0;
 
@@ -591,9 +558,7 @@ drotate (p, pv, pw)		/* a double splay rotation */
 }
 
 void
-error (msg, niceflag)		/* print an error and quit */
-     char *msg;
-     int niceflag;
+error (char *msg, int niceflag)		/* print an error and quit */
 {
   if (niceflag)
     closefiles ();
@@ -604,18 +569,14 @@ error (msg, niceflag)		/* print an error and quit */
 }
 
 void
-fileerror (ftypep, fnamep)
-     char *ftypep, *fnamep;
+fileerror (char *ftypep, char *fnamep)
 {
   sprintf ((char *) Errmsg, "Invalid %s file:  %s", ftypep, fnamep);
   error ((char *) Errmsg, 1);
 }
 
 void
-flistadd (fnamep, dtype, flistp)	/* build lists of files */
-     char *fnamep;
-     int dtype;
-     FLIST *flistp;
+flistadd (char *fnamep, int dtype, FLIST *flistp)	/* build lists of files */
 {
   char *s;
   FNODEPTR fnop, fnop2;
@@ -716,9 +677,7 @@ flistadd (fnamep, dtype, flistp)	/* build lists of files */
 }
 
 void
-getargs (argc, argv)		/* get arguments */
-     int argc;
-     char *argv[];
+getargs (int argc, char *const *argv)		/* get arguments */
 {
   char *s, t;
   int df = IEFOFF, filecount = 0;
@@ -842,10 +801,7 @@ getargs (argc, argv)		/* get arguments */
 }
 
 LINENUM *
-getlinenum (w, lp, lim)		/* look for a line number of form "10. " or "10 " */
-     Uchar *w;
-     LINENUM *lp;
-     int lim;
+getlinenum (Uchar *w, LINENUM *lp, int lim)   /* look for a line number of form "10. " or "10 " */
 {
   int c, t;
   Uchar *w0 = NULL;
@@ -897,9 +853,7 @@ getlinenum (w, lp, lim)		/* look for a line number of form "10. " or "10 " */
 }
 
 int
-getword (w, lim)		/* get next word from input */
-     Uchar *w;
-     int lim;
+getword (Uchar *w, int lim)		/* get next word from input */
 {
   int c, t;
 
@@ -923,8 +877,7 @@ getword (w, lim)		/* get next word from input */
 }
 
 void
-helpscreen (val)
-     int val;
+helpscreen (int val)
 {
   printf
     ("     CONCORDANCE PROGRAM (1986) by Walter Mebane and Bernard Tiffany\n");
@@ -982,7 +935,7 @@ helpscreen (val)
 }
 
 void
-concord_index ()		/* do the indexing */
+concord_index (void)		/* do the indexing */
 {
   int tdoindex, tlinemode;
   FILE *tmpfile;
@@ -1076,8 +1029,7 @@ concord_index ()		/* do the indexing */
 }
 
 LNUMPTR
-lnuminit (lp)
-     LINENUM *lp;
+lnuminit (LINENUM *lp)
 {
   LNUMPTR p1;
 
@@ -1099,15 +1051,13 @@ lnuminit (lp)
         (Linemode == 2  ? lstrcmp(s.strnum,p->strnum) : s.numnum != p->numnum)
 
 void
-memerror (niceflag)
-     int niceflag;
+memerror (int niceflag)
 {
   error ("Out of memory.", niceflag);
 }
 
 void
-numtadd (wp)			/* add a new entry to the number tree */
-     TREEPTR wp;
+numtadd (TREEPTR wp)			/* add a new entry to the number tree */
 {
   unsigned int n = 0;
   TREEPTR p, p0;
@@ -1146,8 +1096,7 @@ numtadd (wp)			/* add a new entry to the number tree */
 }
 
 void
-numtree (wp)			/* make a tree ordered by word counts */
-     TREEPTR wp;
+numtree (TREEPTR wp)			/* make a tree ordered by word counts */
 {
   /*TREEPTR np = NULL; */
 
@@ -1161,9 +1110,7 @@ numtree (wp)			/* make a tree ordered by word counts */
 }
 
 TREEPTR
-numtsearch (p, n)		/* return node p at or just above number n */
-     TREEPTR p;
-     unsigned int n;
+numtsearch (TREEPTR p, unsigned int n) 	/* return node p at or just above number n */
 {
   unsigned int n0;
   TREEPTR p0 = NULL;
@@ -1180,8 +1127,7 @@ numtsearch (p, n)		/* return node p at or just above number n */
 }
 
 TREEPTR
-splay (p)			/* make p the root via splay steps */
-     TREEPTR p;
+splay (TREEPTR p)			/* make p the root via splay steps */
 {
   TREEPTR pv, pw;
 
@@ -1199,8 +1145,7 @@ splay (p)			/* make p the root via splay steps */
 }
 
 TREEPTR
-srotate (p, pv)			/* a single splay rotation */
-     TREEPTR p, pv;
+srotate (TREEPTR p, TREEPTR pv)			/* a single splay rotation */
 {
   if (p == pv->left)
     {
@@ -1229,10 +1174,7 @@ srotate (p, pv)			/* a single splay rotation */
 }
 
 TREEPTR
-treebuild (p, w, lp)		/* install w at or below p */
-     TREEPTR p;
-     Uchar *w;
-     LINENUM *lp;
+treebuild (TREEPTR p, Uchar *w, LINENUM *lp)		/* install w at or below p */
 {
   int cond = 0;
   TREEPTR p0;
@@ -1293,8 +1235,7 @@ IEFJUMPPOINT:
 }
 
 void
-treeout (wp)			/* output a tree element */
-     WTELEMPTR wp;
+treeout (WTELEMPTR wp)			/* output a tree element */
 {
   Uchar numbuf[NUMSIZE], *nb;
   int linelen, numlen;
@@ -1386,8 +1327,7 @@ treeout (wp)			/* output a tree element */
 }
 
 void
-treeprint (p)			/* print tree p recursively */
-     TREEPTR p;
+treeprint (TREEPTR p)			/* print tree p recursively */
 {
   if (p != NULL)
     {
@@ -1407,9 +1347,7 @@ treeprint (p)			/* print tree p recursively */
 }
 
 TREEPTR
-treesearch (p, w)		/* return node p at or just above w */
-     TREEPTR p;
-     Uchar *w;
+treesearch (TREEPTR p, Uchar *w)		/* return node p at or just above w */
 {
   int cond;
   TREEPTR p0 = NULL;
@@ -1426,8 +1364,7 @@ treesearch (p, w)		/* return node p at or just above w */
 }
 
 int
-type (c)			/* return type of character */
-     int c;
+type (int c)			/* return type of character */
 {
 /* Stupid *CBELL */
 #if BellC
@@ -1447,8 +1384,7 @@ type (c)			/* return type of character */
 #if (BellC | CI_C86 | defined(linux))
 
 char *
-strlwr (s)
-     char *s;
+strlwr (char *s)
 {
   register char *p;
   p = s;
@@ -1461,8 +1397,7 @@ strlwr (s)
 }
 
 char *
-strupr (s)
-     char *s;
+strupr (char *s)
 {
   register char *p;
   p = s;
@@ -1507,7 +1442,7 @@ const char *prog = "concord";
 int major_version = 1, minor_version = 0;
 const char *usage_string = "[-abciknt] <files>";
 void
-help ()
+help (void)
 {
   helpscreen (0);
 }

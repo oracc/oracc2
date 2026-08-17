@@ -137,8 +137,8 @@ toks_from_file(const char *fn, FILE *fp)
 	}
       else
 	{
-	  s = (char*)b+2;
-	  w = (ucp)strchr(s, '\t');
+	  s = (ucp)b+2;
+	  w = (char*)strchr((ccp)s, '\t');
 	  if (w)
 	    {
 	      *w++ = '\0';

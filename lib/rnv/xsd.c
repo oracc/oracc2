@@ -791,7 +791,7 @@ int xsd_equal(char *typ,char *val,char *s,int n) {
   return 0;
 }
 
-void xsd_test() {
+void xsd_test(void) {
   rx_init();
 
   assert(toklenn("",0)==0);

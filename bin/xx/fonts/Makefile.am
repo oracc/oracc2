@@ -1,4 +1,3 @@
-SUBDIRS=../../../lib
 include ../../../oracc-am-rules.txt
 
 bin_PROGRAMS=ofpx oin2lig

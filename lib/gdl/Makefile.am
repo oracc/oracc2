@@ -10,3 +10,5 @@ libgdl_la_SOURCES = gdl.tab.c gdl.lex.c gdlyacc.c gdl.c gdlxml.c \
 gdl.tab.c gdl.tab.h: gdl.y gdl.l
 
 gdl.lex.c: gdl.l gdl.tab.h
+	flex -d -B -DYY_NO_INPUT -o $@ $<
+	indent $@

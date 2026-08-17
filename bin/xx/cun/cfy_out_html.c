@@ -235,7 +235,8 @@ ch_foot(Cfy *c)
 static void
 ch_d_o(Cfy *c)
 {
-  char format_options[strlen(" cfy-boxed cfy-ruled cfy-crule0")];
+  int len = strlen(" cfy-boxed cfy-ruled cfy-crule0");
+  char format_options[len];
   *format_options = '\0';
   if (c->c->rbox.e)
     strcat(format_options, " cfy-boxed");

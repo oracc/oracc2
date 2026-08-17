@@ -13,15 +13,15 @@ siglangx_SOURCES=siglangx.c qpnnames.c
 siglangx_LDADD = $(xLDADD)
 siglangx_DEPENDENCIES = $(siglangx_LDADD)
 
-sigx_SOURCES=sigx.c ../../lib/liboracc2.la
+sigx_SOURCES=sigx.c
 sigx_LDADD = $(xLDADD)
 sigx_DEPENDENCIES = $(sigx_LDADD)
 
-sigglox_SOURCES=sigglox.c ../../lib/liboracc2.la
+sigglox_SOURCES=sigglox.c
 sigglox_LDADD = $(xLDADD)
 sigglox_DEPENDENCIES = $(sigglox_LDADD)
 
 glosigx_SOURCES=common.c glosigx.c cof_sigs.c psu_sigs.c lemm_sig.c \
-	qpnnames.c prefbase.c ../../lib/liboracc2.la
+	qpnnames.c prefbase.c
 glosigx_LDADD = $(xLDADD)
 glosigx_DEPENDENCIES = $(glosigx_LDADD)

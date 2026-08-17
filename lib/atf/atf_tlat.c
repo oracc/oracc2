@@ -67,7 +67,7 @@ static List *tral;
 #define getAttr(n,a) ((p=prop_find_kv(n->props, a, NULL))?p->u.k->v:NULL)
 #define getClass(n) getAttr((n),"class")
 #define removeAttr(n,a) prop_drop_kv(n->props, a, NULL)
-#define setAttr(n,a,v) atf_xprop((n),(a),(v))
+#define setAttr(n,a,v) atf_xprop((n),(a),(ccp)(v))
 #define appendAttr(n,a,v) atf_xprop((n),(a),(v))
 
 static void

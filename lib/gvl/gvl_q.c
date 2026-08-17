@@ -153,7 +153,7 @@ gvl_q(Node *ynp)
       gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "oid", (ccp)((gvl_g*)ynp->kids->next->user)->oid);
       gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "spoid", (ccp)((gvl_g*)ynp->kids->user)->oid);
       gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "spform", (ccp)((gvl_g*)ynp->kids->user)->sign);
-      char *pkey = pool_alloc(strlen((ccp)ynp->kids->text)+19, curr_sl->p);
+      char *pkey = (char*)pool_alloc(strlen((ccp)ynp->kids->text)+19, curr_sl->p);
       gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "key", pkey);
       sprintf(pkey, "%s.%s.%s",
 	      (ccp)((gvl_g*)ynp->kids->user)->oid,

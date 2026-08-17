@@ -73,7 +73,7 @@ int s_ntab(char *s,int len,char *tab[],int size) {
   }
 }
 
-void s_test() {
+void s_test(void) {
   assert(s_cmpn("","",0)==0);
   assert(s_cmpn("/xyz","/xyz",4)==0);
   assert(s_cmpn("xyz","yz",2)<0);

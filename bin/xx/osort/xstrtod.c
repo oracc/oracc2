@@ -38,10 +38,7 @@ double strtod ();
    non-zero and don't modify *RESULT upon any failure.  */
 
 int
-xstrtod (str, ptr, result)
-     const char *str;
-     const char **ptr;
-     double *result;
+xstrtod (const char *str, const char **ptr, double *result)
 {
   double val;
   char *terminator;

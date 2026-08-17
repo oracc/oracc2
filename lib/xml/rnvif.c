@@ -99,7 +99,7 @@ rnv_xmsg(void)
 }
 
 static void
-print_error_text()
+print_error_text(void)
 {
   if (mytext && *mytext)
     {
@@ -174,7 +174,7 @@ rnv_set_verror_handler(void (*rnv_eh)(int erno,va_list ap))
 }
 
 static void
-init_er()
+init_er(void)
 {
   xrnl_verror_handler = &verror_handler_rnl;
   xrnv_verror_handler = &verror_handler_rnv;
@@ -294,20 +294,20 @@ rnv_validate_finish(void)
 }
 
 void
-rnvif_init()
+rnvif_init(void)
 {
   xrnvif_init();
   verbose = 1; nexp = 0; rnck=0;
 }
 
 void
-rnv_reinit()
+rnv_reinit(void)
 {
   clear();
 }
 
 void
-rnvif_term()
+rnvif_term(void)
 {
   /*extern void rn_term(void);*/
   clear();

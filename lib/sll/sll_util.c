@@ -339,12 +339,12 @@ sll_snames_of(unsigned const char *oids)
 	  xsave = (*x == '_' ? " " : ".");
 	  *x++ = '\0';
 	}
-      if (!strcmp(xoid, "q99"))
+      if (!strcmp((ccp)xoid, "q99"))
 	list_add(l, "X");
       else
 	list_add(l,(void*)sll_lookup(xoid));
       if (xsave)
-	list_add(l, xsave);
+	list_add(l, (void*)xsave);
     }
   ret = list_join(l, "");
   list_free(l,NULL);

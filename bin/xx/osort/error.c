@@ -17,11 +17,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu>.  */
 
+#define STDC
+#define HAVE_STERROR
+#define HAVE_VPRINTF 1
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-
-#include <stdio.h>
 
 #if HAVE_VPRINTF || HAVE_DOPRNT || _LIBC
 # if __STDC__
@@ -38,6 +40,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #if STDC_HEADERS || _LIBC
 # include <stdlib.h>
+# include <stdio.h>
 # include <string.h>
 #else
 void exit ();
@@ -73,7 +76,7 @@ extern char *program_name;
 
 # if HAVE_STRERROR
 #  ifndef strerror		/* On some systems, strerror is a macro */
-char *strerror ();
+char *strerror (int errnum);
 #  endif
 # else
 static char *
@@ -101,11 +104,7 @@ void
 #if defined(VA_START) && __STDC__
 error (int status, int errnum, const char *message, ...)
 #else
-error (status, errnum, message, va_alist)
-     int status;
-     int errnum;
-     char *message;
-     va_dcl
+error (int status, int errnum, char *message, ...)
 #endif
 {
 #ifdef VA_START

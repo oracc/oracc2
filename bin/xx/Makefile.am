@@ -1,6 +1,6 @@
 include ../../oracc-am-rules.txt
 
-SUBDIRS=../../lib osort rnv tis wrapper lem fonts cun xml
+SUBDIRS=osort rnv tis wrapper lem fonts cun xml
 
 bin_PROGRAMS=concord dbix dbx xisdb tlitsig ivd2oiv cunhtmlx jsmapx rnvx \
 	oraccopt pqxpand pct numrange lm1 lls labeltable etcsl isogmt

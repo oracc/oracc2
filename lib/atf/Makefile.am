@@ -11,3 +11,5 @@ libatf_la_SOURCES = atf.tab.c atf.lex.c atfyacc.c atftree.c atf.c \
 atf.tab.c atf.tab.h: atf.y atf.l
 
 atf.lex.c: atf.l atf.tab.h
+	flex -d -B -DYY_NO_INPUT -o $@ $<
+	indent $@

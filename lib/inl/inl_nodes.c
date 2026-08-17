@@ -222,7 +222,7 @@ inl_text(Scan *sp, Tree *tp, const char *text, int len)
 char *
 inl_nodes(Scan *sp, Node *np, char *ss)
 {
-  char *s = pool_copy(ss, inl_pool);
+  char *s = (char*)pool_copy((uccp)ss, inl_pool);
   while (*s)
     {
       struct inltok *itp = NULL;
