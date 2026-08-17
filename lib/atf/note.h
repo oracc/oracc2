@@ -1,7 +1,7 @@
 #ifndef NOTE_H_
 #define NOTE_H_
 
-#include <o2.h>
+#include <oracc2.h>
 #include <tree.h>
 
 enum note_status

@@ -1,7 +1,7 @@
 #ifndef ATF_H_
 #define ATF_H_
 
-#include "o2.h"
+#include <oracc2.h>
 
 #include "cat.h"
 

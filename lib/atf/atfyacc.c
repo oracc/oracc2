@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include <memo.h>
 #include <pool.h>
-#include <o2.h>
+#include <oracc2.h>
 #include <lang.h>
 #include <scan.h>
 #include <inl.h>
