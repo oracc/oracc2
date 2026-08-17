@@ -2,6 +2,9 @@
 #include "xftable.h"
 #include "iss/iss.h"
 
+struct content_opts;
+struct page;
+
 /* cbditem.c */
 extern void summary(const char *ref);
 extern void ei_sH(void *userData, const char *name, const char **atts);
@@ -106,3 +109,238 @@ extern int xslt_parse_xslmem(Xslt *xp);
 extern int xslt_transform(Xslt *xp);
 extern int xslt_output(Xslt *xp);
 extern Xslt *xslt_one_off(const char *xml, const char *xmlstr, const char *xsl, const char *xslstr, const char *out, const char **params);
+/* iso_master.c */
+extern int iso_master(Isp *ip, const char *mol);
+extern void iso_master_h(Isp *ip, unsigned char *h);
+extern void iso_master_n(Isp *ip, int n);
+/* iso_pagezoom.c */
+extern int iso_page_zoom(Isp *ip);
+/* iso_zoutline.c */
+extern int iso_zoutline(Isp *ip);
+/* isp_outline.c */
+/* dotless.c */
+extern const char *dotless(const char *i);
+/* isp_adhoc.c */
+extern int isp_adhoc(Isp *ip);
+/* isp_cache.c */
+extern int isp_cache_sys(Isp *ip);
+extern int isp_cache_project(Isp *ip);
+extern int isp_cache_sub(Isp *ip);
+extern int isp_cache_list(Isp *ip);
+extern int isp_cache_page(Isp *ip);
+/* isp_config.c */
+extern int isp_config(Isp *ip);
+extern int isp_config_perm(Isp *ip);
+/* isp_dbx.c */
+extern const void *isp_dbx_one_off(Isp *ip, const char *proj, const char *dir, const char *name, const char *key, Unsigned32 *n);
+/* isp_glos.c */
+extern const char *isp_glos_letter_id(Isp *ip);
+extern int isp_glos_pmax(Isp *ip);
+extern int isp_glos_gxis(Isp *ip);
+extern int isp_glos_list(Isp *ip);
+extern int isp_glos_menu(Isp *ip);
+extern int isp_glos_glid(Isp *ip);
+extern int isp_glos_data(Isp *ip);
+extern const char *isp_glos_etm(Isp *ip);
+extern int isp_glos_entry(Isp *ip);
+extern int isp_glos_item(Isp *ip);
+/* isp_hilited.c */
+extern const char *isp_hilited(Isp *ip);
+/* isp_htmd.c */
+extern void isp_htmd(Isp *ip);
+/* isp_init.c */
+extern Isp *isp_init(void);
+extern void isp_term(Isp *ip);
+/* isp_item.c */
+extern void isp_item_undump(char *k, struct isp_itemdata *idp);
+extern int isp_item_load(Isp *ip);
+extern const char *first_lang(const char **a, const char **b);
+extern int isp_item_xsl(Isp *ip);
+extern int isp_item_xtf(Isp *ip);
+extern int isp_item_set(Isp *ip);
+extern int isp_item_cfy(Isp *ip);
+extern int isp_item_img(Isp *ip);
+/* isp_list.c */
+extern void isp_list_cemd(Isp *ip);
+extern int isp_list_create(Isp *ip);
+extern int isp_list_dbx(Isp *ip);
+extern int isp_try_bld_list(Isp *ip);
+extern int isp_try_www_list(Isp *ip);
+extern void isp_list_type(Isp *ip);
+extern int isp_list_method(Isp *ip);
+/* isp_page.c */
+extern int set_item_max(Isp *ip);
+extern int create_page_div(Isp *ip);
+extern int isp_page_data(Isp *ip);
+/* isp_show.c */
+extern void isp_argv(FILE *fp, Isp *ip);
+extern int cmpstringp(const void *p1, const void *p2);
+extern void isp_environment(FILE *fp, Isp *ip);
+extern void isp_show(FILE *fp, Isp *ip);
+/* isp_sort.c */
+extern const char *isp_set_perm(const char *str);
+extern int isp_cache_sort(Isp *ip);
+/* isp_srch_tmp.c */
+extern int isp_srch_tmp(Isp *ip);
+/* isp_srch.c */
+extern int isp_srch_fixup(Isp *ip);
+extern int isp_srch_bar(Isp *ip);
+extern int isp_srch_count(Isp *ip);
+extern int isp_srchdata(Isp *ip);
+/* isp_tis.c */
+extern int isp_tis_list(Isp *ip);
+/* isp_tmp.c */
+extern void isp_tmp_dir(Isp *ip);
+/* isp_xis.c */
+extern int isp_xis_list(Isp *ip);
+/* isp_xmd.c */
+extern const char *isp_xmd_outline(Isp *ip);
+/* isp_xtl_list.c */
+extern int isp_xtl_list(Isp *ip);
+extern int isp_is_xtl(Isp *ip);
+/* nth_line.c */
+extern char *nth_line(Isp *ip, const char *file, int lnum, int more);
+/* iss_data.c */
+extern int iss_data(Isp *ip, struct page *p);
+extern int iss_data_sub(Isp *ip, struct page *p, const char *sort, const char *tsv, const char *max, const char *mol);
+/* iss_page.c */
+extern struct page *pg_page(Isp *ip, struct item **pitems, int nitems);
+/* iss_sicache.c */
+extern int sic_cmp(const void *a, const void *b, const void *c);
+extern int sic_id_cmp(const void *a, const void *b);
+extern int sic_pd_cmp(const void *a, const void *b);
+extern void pd_sort_cache(void);
+extern struct si_cache **make_cache(Isp *ip, struct item **items, int nitems, int *sicsize);
+/* iss_sk_lookup.c */
+/* iss_sort.c */
+extern struct item **pg_sort(Isp *ip, struct item *items, int *nitems, const char *sortkeys);
+/* iss_sortinfo.c */
+extern struct sortinfo *si_load_csi(Isp *ip);
+/* iss_texts.c */
+extern int iss_texts(Isp *ip, struct page *p);
+/* iss.c */
+extern struct item *pg_load(Isp *ip, int *nitems);
+extern const char *iss_perm(Isp *ip, const char *sort_keys, int nkeys);
+extern int iss_sort(Isp *ip);
+/* atactions.c */
+extern struct atactionstab *atactions(register const char *str, size_t len);
+/* p4ceselect.c */
+/* p4controls.c */
+/* p4debug.c */
+/* p4debugdiv.c */
+/* p4dropdown.c */
+/* p4error.c */
+/* p4footer.c */
+/* p4full.c */
+/* p4head.c */
+/* p4html.c */
+/* p4icons.c */
+/* p4itemglo.c */
+/* p4itemxsl.c */
+/* p4itemxtf.c */
+/* p4nosrch.c */
+/* p4noxtf.c */
+/* p4pager.c */
+/* p4plus.c */
+/* p4search.c */
+/* p4select.c */
+/* p4unknown.c */
+/* pui_123.c */
+extern int pui_123(Isp *ip, const char *perm, const char *cfg, FILE *fp);
+/* pui_at.c */
+extern void pui_at_cfy_fam(Isp *ip, FILE *fp);
+extern void pui_at_pager_class(Isp *ip, FILE *fp);
+extern void pui_at_pager_data(Isp *ip, FILE *fp);
+extern void pui_at_onload(Isp *ip, FILE *fp);
+extern void pui_at_ceid(Isp *ip, FILE *fp);
+extern void pui_at_translations(Isp *ip, FILE *fp);
+extern void pui_at_current_page(Isp *ip, FILE *fp);
+extern void pui_at_active_pages(Isp *ip, FILE *fp);
+extern void pui_at_page_label(Isp *ip, FILE *fp);
+extern void pui_at_active_items(Isp *ip, FILE *fp);
+extern void pui_at_item_label(Isp *ip, FILE *fp);
+extern void pui_at_item_index(Isp *ip, FILE *fp);
+extern void pui_at_item_index_nth(Isp *ip, FILE *fp);
+extern void pui_at_item_index_typ(Isp *ip, FILE *fp);
+extern void pui_at_srch_results(Isp *ip, FILE *fp);
+extern void pui_at_srch_results_matches(Isp *ip, FILE *fp);
+extern void pui_at_tmax(Isp *ip, FILE *fp);
+extern void pui_at_tmax_texts(Isp *ip, FILE *fp);
+extern void pui_at_srchterm(Isp *ip, FILE *fp);
+extern void pui_at_environment(Isp *ip, FILE *fp);
+extern void pui_at_error_log(Isp *ip, FILE *fp);
+extern void pui_at_error(Isp *ip, FILE *fp);
+extern void pui_at_invocation(Isp *ip, FILE *fp);
+extern void pui_at_status(Isp *ip, FILE *fp);
+extern void pui_at_title(Isp *ip, FILE *fp);
+extern void pui_at_project(Isp *ip, FILE *fp);
+extern void pui_at_generator(Isp *ip, FILE *fp);
+extern void pui_at_item_qpqx(Isp *ip, FILE *fp);
+extern void pui_at_menu(Isp *ip, FILE *fp);
+extern void pui_at_content(Isp *ip, FILE *fp);
+extern void pui_at_item_meta(Isp *ip, FILE *fp);
+extern void pui_at_item_data(Isp *ip, FILE *fp);
+extern void pui_at_item_xslt(Isp *ip, FILE *fp);
+extern void pui_at_xslt_class(Isp *ip, FILE *fp);
+extern void pui_at_article(Isp *ip, FILE *fp);
+extern void pui_at_select_ce(Isp *ip, FILE *fp);
+extern void pui_at_select_sort(Isp *ip, FILE *fp);
+extern void pui_at_select_trans(Isp *ip, FILE *fp);
+extern void pui_at_what_not(Isp *ip, FILE *fp);
+extern void pui_at_cuneify_bar(Isp *ip, FILE *fp);
+extern void pui_at_item_img(Isp *ip, FILE *fp);
+extern void pui_at_item_cfy(Isp *ip, FILE *fp);
+/* pui_output.c */
+extern int pui_output(Isp *ip, FILE *fp, const char *s);
+extern const char *pui_filetext(const char *file);
+/* puifiles.c */
+extern struct puifilestab *puifiles(register const char *str, size_t len);
+/* px_return.c */
+extern int px_return_file(Isp *ip, const char *form, const char *file);
+extern int px_return(Isp *ip);
+/* pxr_find.c */
+extern char *pxr_find_www_file(const char *project, const char *dir, const char *basename, const char *ext);
+extern char *pxr_find_gent(const char *project, const char *glos, const char *oid, const char *form);
+extern char *pxr_find_glos(const char *project, const char *glos, const char *form);
+extern char *pxr_find_pqx_file(const char *project, const char *pqid, const char *ext);
+extern char *pxr_find_pqx_xtr(const char *project, const char *pqid, const char *code, const char *lang);
+/* pxr_pqx.c */
+extern int pxr_pqx(Isp *ip);
+/* pxr_pxid.c */
+extern int pxr_item_defaults(Isp *ip);
+extern int pxr_pqx(Isp *ip);
+extern int pxr_item_pathneeds(Isp *ip);
+extern int pxr_item_outputs(Isp *ip);
+/* what.c */
+extern int what(Isp *ip);
+/* what_adhoc.c */
+extern int what_adhoc(Isp *ip);
+/* what_content.c */
+extern int what_content(Isp *ip, struct content_opts *cop, const char *input);
+extern struct content_opts *what_content_init(void);
+/* what_cuneify.c */
+extern int what_cuneify(Isp *ip);
+/* what_html.c */
+extern int what_html(Isp *ip);
+/* what_not.c */
+extern int what_not(Isp *ip, const char *no);
+/* what_pdf.c */
+extern int what_pdf(Isp *ip);
+/* what_proofing.c */
+extern int what_proofing(Isp *ip);
+/* what_score.c */
+extern int what_score(Isp *ip);
+/* what_searchbar.c */
+extern int what_searchbar(Isp *ip);
+/* what_sig.c */
+extern int what_sig(Isp *ip);
+/* what_statistics.c */
+extern int what_statistics(Isp *ip);
+/* what_tei.c */
+extern int what_tei(Isp *ip);
+/* what_text.c */
+extern int what_text(Isp *ip);
+/* what_wrapper.c */
+extern int what_wrapper(Isp *ip);
+/* whatfuncs.c */
+extern struct whatfuncstab *whatfuncs(register const char *str, register size_t len);

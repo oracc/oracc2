@@ -1,6 +1,8 @@
 #ifndef XFT_H_
 #define XFT_H_
 
+struct frag;
+
 typedef struct xft
 {
   const char **atts;

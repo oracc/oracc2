@@ -62,7 +62,7 @@
 #define RB_LULAST 8		/* Last key in index */
 
 /* For rbwalk - pinched from search.h */
-typedef enum
+typedef enum visit
 {
   preorder,
   postorder,
@@ -131,6 +131,18 @@ RB_STATIC void RB_ENTRY(closelist)(RBLIST *);
 /* Some useful macros */
 #define rbmin(rbinfo) RB_ENTRY(lookup)(RB_LUFIRST, NULL, (rbinfo))
 #define rbmax(rbinfo) RB_ENTRY(lookup)(RB_LULAST, NULL, (rbinfo))
+
+/* iss_redblack.c */
+extern struct rbtree *rbinit(int (*cmp)(const void *, const void *, const void *), const void *config);
+extern void rbdestroy(struct rbtree *rbinfo);
+extern const void *rbsearch(const void *key, struct rbtree *rbinfo);
+extern const void *rbfind(const void *key, struct rbtree *rbinfo);
+extern const void *rbdelete(const void *key, struct rbtree *rbinfo);
+extern void rbwalk(const struct rbtree *rbinfo, void (*action)(const void *, const VISIT, const int, void *), void *arg);
+extern struct rblists *rbopenlist(const struct rbtree *rbinfo);
+extern const void *rbreadlist(struct rblists *rblistp);
+extern void rbcloselist(struct rblists *rblistp);
+extern const void *rblookup(int mode, const void *key, struct rbtree *rbinfo);
 
 #define _REDBLACK_H
 #endif /* _REDBLACK_H */

@@ -6,6 +6,10 @@
 #include "../pxdefs.h"
 #include "what.h"
 
+#define printStart whtPrintStart
+#define printEnd whtPrintEnd
+#define printText whtPrintText
+
 struct what_frag
 {
   int nesting;
