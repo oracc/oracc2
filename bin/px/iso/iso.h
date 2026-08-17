@@ -26,6 +26,6 @@ struct isoz
 
 #include "../isp/isp.h"
 
-#include "all.proto"
+#include "../px.proto"
 
 #endif/*ISO_H_*/
