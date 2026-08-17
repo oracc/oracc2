@@ -76,6 +76,6 @@ extern FILE *f_mangletab;
 
 extern const char *se_curr_project, *curr_index, *cbd_lang, *textid;
 
-#include "all.proto"
+#include "qxx.proto"
 
 #endif/*QX_H_*/
