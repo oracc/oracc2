@@ -11,10 +11,6 @@ cgibin_PROGRAMS=wx
 
 p4url_LIB=p4url.c qsoption.c urlkeys.c p4url_vec.c p4url_eval.c p4url_validate.c
 
-#noinst_PROGRAMS=p4url
-#p4url_SOURCES=mp4url.c px.c $(p4url_LIB)
-#p4url_LDADD=ccgi/libccgi.la $(xLDADD)
-
 # content_test
 # content_test_SOURCES=content_test.c content.c runexpat.c
 # content_test_LDADD=ccgi/libccgi.la -lexpat
@@ -23,7 +19,7 @@ wx_SOURCES=wx.c wx_log.c or_builtins.c or_stable_uris.c \
 	selections.c builtins.c or_response.c or_common.c xmlrpc.c \
 	or_gdf.c or_pqx.c pqx_map.c pqx_h_tab.c ncname.c p3.c listdir.c \
 	sl.c content.c xff.c oid.c oai.c wx_dbxlib.c px.c \
-	p4projects.c cfy.c util.c $(p4url_LIB)
+	cfy.c util.c $(p4url_LIB)
 
 wx_LDADD=ccgi/libccgi.la $(xLDADD)
 
