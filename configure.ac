@@ -88,6 +88,7 @@ AC_CONFIG_FILES([Makefile
                  lib/lng/Makefile
                  lib/ofp/Makefile
                  lib/oid/Makefile
+                 lib/opt/Makefile
                  lib/rnc/Makefile
                  lib/rnv/Makefile
                  lib/sas/Makefile

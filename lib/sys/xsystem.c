@@ -104,7 +104,10 @@ xmkdir (const char *path, mode_t mode, Boolean quit)
 void
 xperror (const char *fmt,...)
 {
+#if 0
   extern const char *opts_prog(void);
+#endif
+
   char buf[1024];
   if (NULL != fmt)
     {
@@ -118,12 +121,14 @@ xperror (const char *fmt,...)
   (void) sprintf (buf+strlen(buf), "%s%s", 
 		  *buf ? ": " : "system error: ", strerror(errno));
 
+#if 0
   if (opts_prog())
     {
       fputs(opts_prog(), stderr);
       fputs(": ", stderr);
     }
-  
+#endif
+
   fprintf(stderr, "%s", buf);
   if ('\n' != buf[strlen(buf)-1])
     fputc('\n', stderr);
