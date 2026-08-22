@@ -57,6 +57,7 @@ bin/px/t/xsrv
 bin/ax/ax
 bin/ax/atfdatax
 bin/ax/atfinstall
+bin/ax/atfsigs
 bin/ax/linknormx
 bin/bx/bx
 bin/bx/bibx

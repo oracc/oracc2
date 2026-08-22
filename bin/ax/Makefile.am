@@ -1,6 +1,6 @@
 include ../../oracc-am-rules.txt
 
-bin_PROGRAMS=ax atfdatax atfinstall
+bin_PROGRAMS=ax atfdatax atfinstall atfsigs
 
 bin_SCRIPTS=atfmake.sh atftoks.sh
 
@@ -21,4 +21,8 @@ atfidentity.lex.c: atfidentity.l
 atfinstall_SOURCES=atfinstall.c
 atfinstall_LDADD = $(xLDADD)
 atfinstall_DEPENDENCIES = $(atfinstall_xLDADD)
+
+atfsigs_SOURCES=atfsigs.c
+atfsigs_LDADD = $(xLDADD)
+atfsigs_DEPENDENCIES = $(atfsigs_xLDADD)
 
