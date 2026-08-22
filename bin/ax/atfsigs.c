@@ -2,6 +2,7 @@
 #include <hash.h>
 #include <list.h>
 #include <pool.h>
+#include <form.h>
 
 /* atfsig: read argv[1]=.tok file and argv[2]=.atf file and merge the
  * signatures from the tok file into the ATF.
@@ -52,10 +53,47 @@ sigs_L(unsigned char *s)
   return siglists[curr_line];
 }
 
+#define form_char(fp,c,v) fprintf(fp,"\t%s%s",c,(v?v:""))
+void
+form_serialize_tab(FILE *f_f2, Form *f)
+{
+  form_char(f_f2,"%",(char*)f->lang);
+  form_char(f_f2,":",(char*)f->form);
+  form_char(f_f2,"",(char*)f->cf);
+  form_char(f_f2,"",(char*)f->gw);
+  form_char(f_f2,"",(char*)f->sense);
+  form_char(f_f2,"",(char*)f->pos);
+  form_char(f_f2,"",(char*)f->epos);
+  form_char(f_f2,"$",(char*)f->norm);
+  form_char(f_f2,"/",(char*)f->base);
+  form_char(f_f2,"+",(char*)f->cont);
+  form_char(f_f2,"*",(char*)f->stem);
+  form_char(f_f2,"#",(char*)f->morph);
+  form_char(f_f2,"##",(char*)f->morph2);
+  /*form_char(f_f2,"rws",(char*)f->rws);*/
+}
+
 void
 sigs_out(void *vp)
 {
-  fputs("#sig:\t", sigsfp); fputs((ccp)vp, sigsfp); fputc('\n', sigsfp);
+  Form f2;
+  memset(&f2,'\0',sizeof(Form));
+  char *wid = vp;
+  char *sig = strchr(wid, '\t');
+  *sig++ = '\0';
+  char *tab = strchr(sig, '\t');
+  if (tab)
+    *tab = '\0';
+  if ('@' == *sig)
+    {
+      form_parse((uccp)"<tok>", 0, (ucp)sig, &f2, NULL);
+      fprintf(sigsfp, "#sig:\t%s\t", wid); form_serialize_tab(sigsfp, &f2);
+    }
+  else
+    {
+      fprintf(sigsfp, "#sig:\t%s\t%s", wid, sig);
+    }
+  fputc('\n', sigsfp);
 }
 
 int
