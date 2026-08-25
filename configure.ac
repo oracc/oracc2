@@ -144,6 +144,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/sx/Makefile
 		 bin/sx/sxweb/Makefile
 		 bin/tx/Makefile
+		 bin/vx/Makefile
 		 bin/wx/Makefile
 		 bin/wx/ccgi/Makefile
 		 bin/xx/Makefile

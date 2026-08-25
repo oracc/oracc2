@@ -9,10 +9,12 @@ struct ns_key_val {
   const char *prefix; const char *url;
 } ns_key_val[] = {
   { "", "" } ,
+  { "a" , "http://oracc.org/ns/atf/1.0" } ,
   { "c" , "http://oracc.org/ns/cbd/1.0" } ,
   { "g" , "http://oracc.org/ns/gdl/1.0" } ,
   { "s" , "http://oracc.org/ns/sl/1.0" } ,
   { "x" , "http://oracc.org/ns/xtf/1.0" } ,
+  { "xcl" , "http://oracc.org/ns/xcl/1.0" } ,
   { "m" , "http://oracc.org/ns/xmd/1.0" } ,
   { "cfy" , "http://oracc.org/ns/cfy/1.0" } ,
   { "h" , "http://www.w3.org/1999/xhtml" } ,

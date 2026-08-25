@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-/*#include "pool.h"*/
 #include "memo.h"
 #include "tree.h"
 

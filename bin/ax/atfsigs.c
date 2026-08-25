@@ -12,6 +12,9 @@ Hash *L;
 Pool *p;
 int curr_line = 0;
 int L_max = 0;
+int oconll = 0;
+const char *tokfn = NULL;
+const char *atffn = NULL;
 List *curr_list = NULL;
 List **siglists = NULL;
 FILE *sigsfp = NULL;
@@ -53,12 +56,13 @@ sigs_L(unsigned char *s)
   return siglists[curr_line];
 }
 
-#define form_char(fp,c,v) fprintf(fp,"\t%s%s",c,(v?v:""))
+#define form_char(fp,c,v) fprintf(fp,"\t%s%s",c,((!oconll&&v)?v:""))
+
 void
 form_serialize_tab(FILE *f_f2, Form *f)
 {
-  form_char(f_f2,"%",(char*)f->lang);
   form_char(f_f2,":",(char*)f->form);
+  form_char(f_f2,"%",(char*)f->lang);
   form_char(f_f2,"",(char*)f->cf);
   form_char(f_f2,"",(char*)f->gw);
   form_char(f_f2,"",(char*)f->sense);
@@ -115,7 +119,8 @@ main(int argc, char *const *argv)
   L = hash_create(1024);
   p = pool_init();
   sigsfp = stdout;
-  FILE *tokfp = xfopen(argv[1], "r");
+  tokfn = argv[1];
+  FILE *tokfp = xfopen(tokfn, "r");
   if (tokfp)
     {
       unsigned char *s;

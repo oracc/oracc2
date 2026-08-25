@@ -96,6 +96,7 @@ cbd_entry_sigs(Entry *ep)
 
 	  f.f.base = fp->f.base;
 	  f.f.morph = fp->f.morph;
+	  f.f.morph2 = fp->f.morph2;
 	  f.f.stem = fp->f.stem;
 	  f.f.cont = fp->f.cont;
 	  f.f.norm = fp->f.norm;

@@ -214,6 +214,7 @@ gc.c
 gw.c
 na.c
 nc.c
+nsdata.c
 nwmap.c
 numword.c
 ofpdefs.c

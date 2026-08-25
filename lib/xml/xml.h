@@ -15,6 +15,12 @@ struct xmlhelper {
   void *user;
 };
 
+typedef struct nsdata {
+  const char *name;
+  const char *equiv;
+  nscode code;
+} NSdata;
+
 extern int xml_printing, xml_validating;
 
 typedef struct xmlhelper Xmlhelper;
@@ -38,5 +44,7 @@ extern void xml_attr(const char **atts, FILE *fp);
 extern void node_xml(FILE *fp, Node *np);
 extern void tree_xml(FILE *fp, Tree *tp);
 extern void tree_xml_rnv(FILE *fp, Tree *tp, struct xnn_data *xdp, const char *rncbase);
+
+extern struct nsdata *nsdata (register const char *str, size_t len);
 
 #endif /* XML_H_ */
