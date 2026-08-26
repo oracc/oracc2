@@ -4,4 +4,5 @@
 void
 vx_identity(Tree *tp, FILE *fp)
 {
+  tree_xml(fp, tp);
 }

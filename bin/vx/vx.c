@@ -6,10 +6,12 @@ int identity_mode = 1;
 int
 main(int argc, char *const *argv)
 {
+  mesg_init();
   options(argc, argv, "I");
   Tree *tp = vx_load(argv[optind]);
   if (identity_mode)
     vx_identity(tp, stdout);
+  mesg_print(stderr);
 }
 
 int

@@ -24,7 +24,7 @@ vx_xtf_init(void)
       struct xnn_xname *xp = xtf_enames;
       int i;
       for (i = 0; xp[i].pname; ++i)
-	hash_add(xtf_a, (uccp)xp[i].pname, xp[i].qname);
+	hash_add(xtf_e, (uccp)xp[i].pname, xp[i].qname);
     }
 }
 
