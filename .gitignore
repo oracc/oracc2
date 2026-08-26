@@ -116,6 +116,7 @@ bin/px/isp/ispsortx
 bin/px/isp/isp-ce-HTML.xsl
 bin/tx/tidtextx
 bin/tx/tunquotex
+bin/vx/vx
 bin/wx/wx
 bin/wx/p4url
 bin/xx/concord
