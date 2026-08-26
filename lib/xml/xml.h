@@ -46,5 +46,6 @@ extern void tree_xml(FILE *fp, Tree *tp);
 extern void tree_xml_rnv(FILE *fp, Tree *tp, struct xnn_data *xdp, const char *rncbase);
 
 extern struct nsdata *nsdata (register const char *str, size_t len);
+extern void nsdata_set_key_data(NSdata **np);
 
 #endif /* XML_H_ */

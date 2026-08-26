@@ -12,49 +12,13 @@
 
 static int runexpat_no_rp_wrap = 0;
 
-#define BUFLEN 8192 /*16384*/
 
 List *runinfo_stack = NULL;
 
 XML_CommentHandler runexpatCommentHandler;
 
-struct runinfo 
-{
-  void *list;
-  List *filenames_list;
-  char input_buf[BUFLEN+1];
-  int input_len;
-  FILE *source;
-  char *fname;
-  const char **todo;
-  int charData_buflen;
-  int charData_bufused;
-  int more_sources;
-  XML_Char *charData_buf;
-  int this_one_is_done;
-  enum isource from;
-  Pool *pool;
-  XML_Parser parser;
-  int stop; /* set to 1 when runexpat_stop is used to exit XML
-	       processing from within a handler */
-};
-
 struct runinfo *curr_rip;
 const char *curr_fname = NULL;
-
-/*static int verbose = 0;*/
-/*extern int verbose;*/
-
-#if 0
-static char input_buf[BUFLEN+1];
-static FILE *source = NULL;
-static int charData_buflen = 0;
-static int charData_bufused = 0;
-static int more_sources = 0;
-static XML_Char *charData_buf = NULL;
-static int this_one_is_done;
-static List *filenames_list = NULL;
-#endif
 
 static void charHandler(void *userData, const XML_Char *data, int len);
 static void fail(XML_Parser parser, struct runinfo *rip);
@@ -323,7 +287,7 @@ get_input(struct runinfo *rip)
   if (!rip->source)
     return NULL;
 
-  nread = fread(rip->input_buf, 1, BUFLEN, rip->source);
+  nread = fread(rip->input_buf, 1, RUNEXPAT_BUFLEN, rip->source);
   if (ferror(rip->source))
     {
       fprintf(stderr,"read error\n");

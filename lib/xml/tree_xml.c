@@ -5,23 +5,7 @@
 
 int treexml_no_output = 0;
 
-struct ns_key_val {
-  const char *prefix; const char *url;
-} ns_key_val[] = {
-  { "", "" } ,
-  { "a" , "http://oracc.org/ns/atf/1.0" } ,
-  { "c" , "http://oracc.org/ns/cbd/1.0" } ,
-  { "g" , "http://oracc.org/ns/gdl/1.0" } ,
-  { "s" , "http://oracc.org/ns/sl/1.0" } ,
-  { "x" , "http://oracc.org/ns/xtf/1.0" } ,
-  { "xcl" , "http://oracc.org/ns/xcl/1.0" } ,
-  { "m" , "http://oracc.org/ns/xmd/1.0" } ,
-  { "cfy" , "http://oracc.org/ns/cfy/1.0" } ,
-  { "h" , "http://www.w3.org/1999/xhtml" } ,
-  { "i" , "http://oracc.org/ns/inl/1.0" } ,
-  { "b" , "http://oracc.org/ns/bib/1.0" } ,
-  { NULL , NULL } 
-};
+NSdata *ns_key_val[NS_LAST];
 
 nodehandlers treexml_o_handlers;
 nodehandlers treexml_p_handlers;
@@ -33,11 +17,12 @@ void
 tree_ns_xml_print(Tree *tp, FILE *fp)
 {
   enum nscode nsx = NS_NONE+1;
+  nsdata_set_key_data(ns_key_val);
   if (tp->ns_used[0])
-    fprintf(fp, " xmlns=\"%s\"", ns_key_val[tp->ns_used[0]].url);
+    fprintf(fp, " xmlns=\"%s\"", ns_key_val[tp->ns_used[0]]->equiv);
   for (; nsx < NS_LAST; ++nsx)
     if (tp->ns_used[nsx])
-      fprintf(fp, " xmlns:%s=\"%s\"", ns_key_val[nsx].prefix, ns_key_val[nsx].url);
+      fprintf(fp, " xmlns:%s=\"%s\"", ns_key_val[nsx]->name, ns_key_val[nsx]->equiv);
 }
 
 void
@@ -47,21 +32,28 @@ treexml_o_generic(Node *np, void *user)
     return;
 
   Xmlhelper *xhp = user;
+
+  if ('#' == *np->name)
+    fputs(np->text, xhp->fp);
+  else
+    {
+      fprintf(xhp->fp, "<%s", np->name);
+
+      if (!np->rent)
+	tree_ns_xml_print(np->tree, xhp->fp);
+
+      if (treexml_a_handlers[np->ns] && user)
+	treexml_a_handlers[np->ns](np, user);
+      
+      fputc('>', xhp->fp);
+    }
   
-  fprintf(xhp->fp, "<%s", np->name);
-
-  if (!np->rent)
-    tree_ns_xml_print(np->tree, xhp->fp);
-
-  if (treexml_a_handlers[np->ns] && user)
-    treexml_a_handlers[np->ns](np, user);
-
-  fputc('>', xhp->fp);
-
   if (treexml_u_handlers[np->ns] && user)
     treexml_u_handlers[np->ns](np, user);
+#if 0
   else if (np->text)
     fprintf(xhp->fp, "<text>%s</text>", xmlify((uccp)np->text));
+#endif
 }
 
 /* no generic output for parsed nodes */
@@ -72,8 +64,11 @@ treexml_c_generic(Node *np, void *user)
   if (treexml_no_output)
     return;
 
-  Xmlhelper *xhp = user;
-  fprintf(xhp->fp, "</%s>", np->name);
+  if ('#' != *np->name)
+    {
+      Xmlhelper *xhp = user;
+      fprintf(xhp->fp, "</%s>", np->name);
+    }
 }
 
 void

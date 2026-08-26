@@ -1,10 +1,38 @@
 #ifndef _RUNEXPAT_H
 #define _RUNEXPAT_H
-#include "expat.h"
+
+#include <expat.h>
+#include <list.h>
+#include <pool.h>
+
 enum isource { i_stdin , i_names , i_list };
+
+#define RUNEXPAT_BUFLEN 8192 /*16384*/
+
+struct runinfo 
+{
+  void *list;
+  List *filenames_list;
+  char input_buf[RUNEXPAT_BUFLEN+1];
+  int input_len;
+  FILE *source;
+  char *fname;
+  const char **todo;
+  int charData_buflen;
+  int charData_bufused;
+  int more_sources;
+  XML_Char *charData_buf;
+  int this_one_is_done;
+  enum isource from;
+  Pool *pool;
+  XML_Parser parser;
+  int stop; /* set to 1 when runexpat_stop is used to exit XML
+	       processing from within a handler */
+};
 
 extern const char *pi_file;
 extern int pi_line;
+extern struct runinfo *curr_rip;
 
 #define  runexpat(from,list,sH,eH) runexpatNSuD(from,list,sH,eH,NULL,NULL)
 #define  runexpatNS(from,list,sH,eH,ns) runexpatNSuD(from,list,sH,eH,ns,NULL)
