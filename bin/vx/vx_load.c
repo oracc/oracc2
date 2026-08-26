@@ -1,15 +1,8 @@
 #include <oraccsys.h>
 #include "vx.h"
 
-void
-vx_char(Tree *tp, const char *c)
-{
-  Node *np = tree_add(tp, NS_NONE, "#", tp->curr->depth+1, tree_mloc(tp, pi_file, pi_line));
-  np->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
-}
-
 static const char *
-vx_name(Tree *tp, const char *nam, nscode *codep)
+vx_name(Hash *xtf_h, Tree *tp, const char *nam, nscode *codep)
 {
   *codep = NS_NONE;
   char name[strlen(nam)+1]; strcpy(name,nam);
@@ -34,7 +27,7 @@ vx_name(Tree *tp, const char *nam, nscode *codep)
       char pnam[strlen(nam)+1];
       sprintf(pnam, "%s:%s", ns->equiv, ln);
       *codep = ns->code;
-      xtfname = (ccp)hash_exists(xtf_e, (uccp)pnam);
+      xtfname = (ccp)hash_exists(xtf_h, (uccp)pnam);
       if (!xtfname)
 	{
 	  fprintf(stderr, "vx: xml error: %s not known in XTF schema\n", pnam);
@@ -43,7 +36,7 @@ vx_name(Tree *tp, const char *nam, nscode *codep)
     }
   else
     {
-      xtfname = (ccp)hash_exists(xtf_e, (uccp)ln);
+      xtfname = (ccp)hash_exists(xtf_h, (uccp)ln);
       if (!xtfname)
 	{
 	  fprintf(stderr, "vx: xml error: %s not known in XTF schema\n", ln);
@@ -53,20 +46,40 @@ vx_name(Tree *tp, const char *nam, nscode *codep)
   return xtfname;
 }
 
-static void
+void
+vx_attr(Node *np, const char **atts)
+{
+  int i;
+  for (i = 0; atts[i]; i += 2)
+    {
+      nscode nsc;
+      const char *aname = vx_name(xtf_a, np->tree, atts[i], &nsc);
+      prop_node_add(np, PROP_ANY, PG_XML, aname,
+		    (ccp)hpool_copy((uccp)atts[i+1], np->tree->tm->pooh));
+    }
+}
+
+void
+vx_char(Tree *tp, const char *c)
+{
+  Node *np = tree_add(tp, NS_NONE, "#", tp->curr->depth+1, tree_mloc(tp, pi_file, pi_line));
+  np->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
+}
+
+static Node *
 vx_push(Tree *tp, const char *nam)
 {
   nscode nsc;
-  const char *xtfname = vx_name(tp, nam, &nsc);
+  const char *xtfname = vx_name(xtf_e, tp, nam, &nsc);
   (void)tree_add(tp, nsc, xtfname, tp->curr->depth+1, tree_mloc(tp, pi_file, pi_line));
-  (void)tree_push(tp);
+  return tree_push(tp);
 }
 
 static void
 vx_root(Tree *tp, const char *nam)
 {
   nscode nsc;
-  const char *xtfname = vx_name(tp, nam, &nsc);
+  const char *xtfname = vx_name(xtf_e, tp, nam, &nsc);
   tree_root(tp, nsc, xtfname, 0, tree_mloc(tp, pi_file, pi_line));
 }
 
@@ -76,7 +89,9 @@ vx_sH(void *vp, const char *name, const char **atts)
   char *c = charData_retrieve();
   if (*c)
     vx_char(vp, c);
-  vx_push(vp, name);
+  Node *ep = vx_push(vp, name);
+  if (atts[0])
+    vx_attr(ep, atts);
 }
 
 static void
@@ -92,6 +107,8 @@ static void
 vx_sH_root(void *vp, const char *name, const char **atts)
 {
   vx_root(vp, name);
+  if (atts[0])
+    vx_attr(((Tree*)vp)->root, atts);
   XML_SetElementHandler(curr_rip->parser, vx_sH, vx_eH);  
 }
 

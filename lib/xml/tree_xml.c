@@ -25,6 +25,25 @@ tree_ns_xml_print(Tree *tp, FILE *fp)
       fprintf(fp, " xmlns:%s=\"%s\"", ns_key_val[nsx]->name, ns_key_val[nsx]->equiv);
 }
 
+static void
+treexml_keqv(const char *k, const char *v, void *user)
+{
+  Xmlhelper *xhp = user;
+  fprintf(xhp->fp, " %s=\"%s\"", k, xmlify((uccp)v));
+}
+
+static void
+treexml_props(Node *np, void *user)
+{
+  Prop *p = np->props;
+  while (p)
+    {
+      if (p->g == PG_XML)
+	treexml_keqv(p->u.k->k,p->u.k->v,user);
+      p = p->next;
+    }
+}
+
 void
 treexml_o_generic(Node *np, void *user)
 {
@@ -44,6 +63,8 @@ treexml_o_generic(Node *np, void *user)
 
       if (treexml_a_handlers[np->ns] && user)
 	treexml_a_handlers[np->ns](np, user);
+      else
+	treexml_props(np, user);
       
       fputc('>', xhp->fp);
     }

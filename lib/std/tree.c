@@ -14,6 +14,7 @@ tmem_init(void)
   tmem->keva_mem = memo_init(sizeof(Keva), 1024);
   tmem->mloc_mem = memo_init(sizeof(Mloc), 1024);
   tmem->pool = pool_init();
+  tmem->pooh = hpool_init();
   return tmem;
 }
 
@@ -27,6 +28,7 @@ tmem_term(Treemem *tmem)
       memo_term(tmem->keva_mem);
       memo_term(tmem->mloc_mem);
       pool_term(tmem->pool);
+      pool_term(tmem->pooh);
       free(tmem);
     }
 }

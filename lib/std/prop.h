@@ -24,6 +24,8 @@ enum propgroup
     PG_LAST
   };
 
+#define PROP_ANY	999
+
 struct prop
 {
   int p; 		/* property type */

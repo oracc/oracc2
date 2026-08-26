@@ -19,6 +19,7 @@ typedef struct treemem
   Memo *keva_mem;
   Memo *mloc_mem;
   Pool *pool;
+  Pool *pooh;
 } Treemem;
 
 typedef struct tree {
