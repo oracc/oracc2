@@ -12,6 +12,7 @@ tmem_init(void)
   tmem->node_mem = memo_init(sizeof(Node), 1024);
   tmem->prop_mem = memo_init(sizeof(Prop), 1024);
   tmem->keva_mem = memo_init(sizeof(Keva), 1024);
+  tmem->mloc_mem = memo_init(sizeof(Mloc), 1024);
   tmem->pool = pool_init();
   return tmem;
 }
@@ -24,6 +25,7 @@ tmem_term(Treemem *tmem)
       memo_term(tmem->node_mem);
       memo_term(tmem->prop_mem);
       memo_term(tmem->keva_mem);
+      memo_term(tmem->mloc_mem);
       pool_term(tmem->pool);
       free(tmem);
     }
@@ -42,6 +44,21 @@ tree_term(Tree *tp)
 {
   tmem_term(tp->tm);
   free(tp);
+}
+
+Mloc *
+tree_mloc(Tree *tp, const char *file, int line)
+{
+  static const char *f = NULL;
+  static int l = -1;
+  static Mloc *mp = NULL;
+  if ((!f || strcmp(f, file)) || l != line)
+    {
+      mp = memo_new(tp->tm->mloc_mem);
+      mp->file = file;
+      mp->line = line;
+    }
+  return mp;
 }
 
 Node *
@@ -132,10 +149,14 @@ tree_pop(Tree *tp)
     return tp->curr = tp->curr->rent;
   else
     {
-      if (tp->curr->mloc)
-	mesg_vwarning(tp->curr->mloc->file, tp->curr->mloc->line, "internal error: attempt to pop node with no parent\n");
-      else
-	fprintf(stderr, "internal error in tree_pop\n");
+      /* 20260826: caller doesn't have to worry about calling tree_pop on tp->root any more */
+      if (tp->curr != tp->root)
+	{
+	  if (tp->curr->mloc)
+	    mesg_vwarning(tp->curr->mloc->file, tp->curr->mloc->line, "internal error: attempt to pop node with no parent\n");
+	  else
+	    fprintf(stderr, "internal error in tree_pop\n");
+	}
       return tp->curr;
     }
 }

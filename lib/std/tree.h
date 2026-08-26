@@ -15,9 +15,10 @@ typedef struct treemem
 {
   Memo *tree_mem;
   Memo *node_mem;
-  Pool *pool;
   Memo *prop_mem;
   Memo *keva_mem;
+  Memo *mloc_mem;
+  Pool *pool;
 } Treemem;
 
 typedef struct tree {
@@ -77,6 +78,7 @@ extern void tree_term(Tree *tp);
 extern Node *tree_pop(Tree *tp);
 extern Node *tree_push(Tree *tp);
 extern Node *tree_add(Tree *tp, nscode ns, const char *name, int depth, Mloc *loc);
+extern Mloc *tree_mloc(Tree *tp, const char *file, int line);
 extern Node *tree_node(Tree *tp, nscode ns, const char *name, int depth, Mloc *loc);
 extern Node *tree_root(Tree *tp, nscode ns, const char *name, int depth, Mloc *loc);
 extern void tree_iterator(Tree *tp, void *user,
