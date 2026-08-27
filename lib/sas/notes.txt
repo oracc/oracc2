@@ -58,7 +58,7 @@ of map-from aliases:
 Environment constraints are entered after an alias list, one per line.
 Each constraint may give a list of graphemes which must (not) come
 before the alias and/or a list of graphemes which must (not) come
-before the alias.  If both pre and post lists are given, then both
+after the alias.  If both pre and post lists are given, then both
 must be satisfied, they are not alternates.  Lists may contain more
 than one grapheme: the list is split on hyphens and matched
 sequentially, working right-to-left for pre lists and left to right

@@ -83,6 +83,13 @@ tree_ns_default(Tree *tp, nscode ns)
   tp->ns_used[0] = ns;
 }
 
+/* This is needed by vx_load for any NS that occurs only on attributes */
+void
+tree_ns_declare(Tree *tp, nscode c)
+{
+  tp->ns_used[c] = c;
+}
+
 void
 tree_ns_merge(Tree *tp, nsrefs used)
 {

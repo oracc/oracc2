@@ -16,7 +16,14 @@ vx_xtf_init(void)
       struct xnn_xname *xp = xtf_anames;
       int i;
       for (i = 0; xp[i].pname; ++i)
-	hash_add(xtf_a, (uccp)xp[i].pname, xp[i].qname);
+	{
+	  hash_add(xtf_a, (uccp)xp[i].pname, xp[i].qname);
+	  hash_add(xtf_a, (uccp)xp[i].qname, xp[i].pname);
+	}
+      hash_add(xtf_a, (uccp)"xml:id", "http://www.w3.org/XML/1998/namespace:id");
+      hash_add(xtf_a, (uccp)"http://www.w3.org/XML/1998/namespace:id", "xml:id");
+      hash_add(xtf_a, (uccp)"xml:lang", "http://www.w3.org/XML/1998/namespace:lang");
+      hash_add(xtf_a, (uccp)"http://www.w3.org/XML/1998/namespace:lang", "xml:lang");
     }
   if (!xtf_e)
     {
@@ -24,7 +31,10 @@ vx_xtf_init(void)
       struct xnn_xname *xp = xtf_enames;
       int i;
       for (i = 0; xp[i].pname; ++i)
-	hash_add(xtf_e, (uccp)xp[i].pname, xp[i].qname);
+	{
+	  hash_add(xtf_e, (uccp)xp[i].pname, xp[i].qname);
+	  hash_add(xtf_e, (uccp)xp[i].qname, xp[i].pname);
+	}
     }
 }
 

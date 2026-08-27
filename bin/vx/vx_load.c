@@ -1,46 +1,70 @@
 #include <oraccsys.h>
 #include "vx.h"
 
+static Hash *seen_h = NULL;
+
 static const char *
-vx_name(Hash *xtf_h, Tree *tp, const char *nam, nscode *codep)
+vx_name(Hash *xtf_h, Tree *tp, const char *name, nscode *codep)
 {
   *codep = NS_NONE;
-  char name[strlen(nam)+1]; strcpy(name,nam);
   const char *xtfname = NULL;
   NSdata *ns = NULL;
-  char *ns_url = name;
-  char *ln = strchr(name, '|');
+  const char *ns_url = name;
+  const char *ln = strrchr(name, ':');
   if (ln)
     {
-      *ln++ = '\0';
-      ns = nsdata(ns_url, strlen(ns_url));
+      int len = ln - ns_url;
+      char ns_buf[len];
+      strncpy(ns_buf, ns_url, len);
+      ns_buf[len] = '\0';
+      ns = nsdata(ns_buf, ln - ns_url);
       if (!ns)
-	fprintf(stderr, "vx: internal error: no NSdata for %s\n", ns_url);
-      *codep = ns->code;
-    }
-  else
-    {
-      ns_url = NULL;
-    }
-  if (ns)
-    {
-      char pnam[strlen(nam)+1];
-      sprintf(pnam, "%s:%s", ns->equiv, ln);
-      *codep = ns->code;
-      xtfname = (ccp)hash_exists(xtf_h, (uccp)pnam);
-      if (!xtfname)
 	{
-	  fprintf(stderr, "vx: xml error: %s not known in XTF schema\n", pnam);
-	  xtfname = (ccp)pool_copy((uccp)pnam, tp->tm->pool);
+	  if (!hash_find(seen_h, (uccp)ns_buf))
+	    {
+	      fprintf(stderr, "%s:%ld: (vx) xml error: no NSdata for %s\n",
+		      runexpat_file(), runexpat_lnum(), ns_buf);
+	      hash_add(seen_h, pool_copy((uccp)ns_url, tp->tm->pooh), "");
+	    }
+	  goto bad_ns_url;
+	}
+      else
+	{
+#if 1
+	  xtfname = (ccp)hash_find(xtf_h, (uccp)name);
+#else
+	  char pnam[strlen(name)+2];
+	  sprintf(pnam, "%s:%s", ns->equiv, ln);
+	  xtfname = (ccp)hash_exists(xtf_h, (uccp)pnam);
+#endif
+	  *codep = ns->code;
+	  if (!xtfname)
+	    {
+	      if (!(xtfname = (ccp)hash_exists(seen_h, (uccp)name)))
+		{
+		  fprintf(stderr, "%s:%ld: (vx) xml error: %s not known in XTF schema\n",
+			  runexpat_file(), runexpat_lnum(), ++ln);
+		  xtfname = (ccp)pool_copy((uccp)name, tp->tm->pooh);
+		  hash_add(seen_h, (uccp)xtfname, "");
+		}
+	    }
 	}
     }
   else
     {
+      ln = ns_url;
+      ns_url = NULL;
       xtfname = (ccp)hash_exists(xtf_h, (uccp)ln);
       if (!xtfname)
 	{
-	  fprintf(stderr, "vx: xml error: %s not known in XTF schema\n", ln);
-	  xtfname = (ccp)pool_copy((uccp)ln, tp->tm->pool);
+	bad_ns_url:
+	  if (!(xtfname = (ccp)hash_exists(seen_h, (uccp)ln)))
+	    {
+	      xtfname = (ccp)pool_copy((uccp)ln, tp->tm->pooh);
+	      fprintf(stderr, "%s:%ld: (vx) xml error: %s not known in XTF schema\n",
+		      runexpat_file(), runexpat_lnum(), ln);
+	      hash_add(seen_h, (uccp)xtfname, "");
+	    }
 	}
     }
   return xtfname;
@@ -119,8 +143,12 @@ vx_load(const char *fn)
   fnlist[0] = fn;
   fnlist[1] = NULL;
   vx_xtf_init();
+  seen_h = hash_create(100);
   Tree *tp = tree_init();
+  tree_ns_default(tp, NS_XTF);
+  tree_ns_declare(tp, NS_ATF);
   runexpat_omit_rp_wrap();
-  runexpatNSuD(i_list, fnlist, vx_sH_root, vx_eH, "|", tp);
+  runexpatNSuD(i_list, fnlist, vx_sH_root, vx_eH, ":", tp);
+  hash_free(seen_h, NULL);
   return tp;
 }

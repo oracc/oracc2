@@ -7,7 +7,7 @@
 #include <prop.h>
 
 enum nscode { NS_NONE=0 , NS_CBD , NS_GDL , NS_SL , NS_XTF , NS_XCL , NS_XMD , NS_XTR ,
-	      NS_CFY, NS_HTM, NS_INL, NS_BIB, NS_ATF, NS_LAST };
+	      NS_CFY, NS_HTM, NS_INL, NS_BIB, NS_ATF , NS_XML , NS_XFF , NS_LAST };
 typedef enum nscode nscode;
 typedef nscode nsrefs[NS_LAST];
 
@@ -101,6 +101,7 @@ extern void tree_root_append(Tree *tp, Node *np);
 
 extern void tree_ns_default(Tree *tp, nscode ns);
 extern void tree_ns_merge(Tree *tp, nsrefs used);
+extern void tree_ns_declare(Tree *tp, nscode c);
 
 extern Node *node_ancestor(Node *np, const char *name);
 extern Node *node_ancestor_or_self(Node *np, const char *name);
