@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <xmlify.h>
 #include <pool.h>
+#include <tree.h>
 #include <xnn.h>
 #include <ns-xtf.h>
 #include <joxer.h>
@@ -191,15 +192,18 @@ ax_jox_node(Node *np)
 
   Ratts *r = NULL;
   const char **p = NULL;
-  if ((!ap || ap->wrapper) && '-' != *nodename)
-    joxer_ea(np->mloc, nodename, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
-  if (p)
-    free(p);
-  if (r)
+  if (!ap || ap->wrapper)
     {
-      free(r->atts);
-      free(r->qatts);
-      free(r);
+      if ('-' != *nodename)
+	joxer_ea(np->mloc, nodename, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
+      if (p)
+	free(p);
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	}
     }
 
   if (N_U_SCANSEG == np->utype && np->kids)
@@ -211,7 +215,7 @@ ax_jox_node(Node *np)
     {
       joxer_ch(np->mloc, np->text);
     }
-  else if (np->user)
+  else if (np->user && np->utype != N_U_XLEM)
     {
       if (ap)
 	{
@@ -293,24 +297,34 @@ ax_jox_lines(Group *gp)
   for (n = 0; n < gp->nlines; ++n)
     {
       Node *np = gp->lines[n]->np;
-      if (n)
-	atf_line_pi(np);
-      const char **p = NULL;
-      Ratts *r = NULL;
-      joxer_ea(np->mloc, np->name, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
-      if (p)
-	free(p);
-      if (r)
+      if (np->kids)
 	{
-	  free(r->atts);
-	  free(r->qatts);
-	  free(r);
+	  if (N_U_GVL == np->kids->utype)
+	    grx_jox_gdl(np, np->user);
+	  else
+	    ax_jox_node(np);
+#if 0
+	  else if (np->text)
+	    joxer_ch(np->mloc, np->text);
+#endif
 	}
-      if (np->user)
-	grx_jox_gdl(np, np->user);
-      else if (np->text)
-	joxer_ch(np->mloc, np->text);
-      joxer_ee(np->mloc, np->name);
+      else
+	{
+	  if (n)
+	    atf_line_pi(np);
+	  const char **p = NULL;
+	  Ratts *r = NULL;
+	  joxer_ea(np->mloc, np->name, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
+	  if (p)
+	    free(p);
+	  if (r)
+	    {
+	      free(r->atts);
+	      free(r->qatts);
+	      free(r);
+	    }
+	  joxer_ee(np->mloc, np->name);
+	}
     }
 }
 

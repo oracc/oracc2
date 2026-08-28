@@ -48,7 +48,10 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
   Tree *tp = gdlparse_string(np->mloc, (char*)s);
   tree_graft(np, tp);
   curr_line->wl = gdl_get_word_list();
+#if 0
   np->user = np->kids;
+  np->utype = N_U_NODE;
+#endif
   gdlparse_reset();
   if (atfflextrace)
     fprintf(stderr, "tlit_parse_inline: end: %s\n", s);

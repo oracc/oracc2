@@ -583,7 +583,7 @@ line_lem(Mloc ml, unsigned char *l)
 	{
 	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "lem",
 		      (ccp)pool_copy((uccp)l, gdlpool));
-	  w->user = atf_save_lem(w,(ccp)l); /* should be safe because GDL doesn't put data in g:w->user */
+	  atf_save_lem(w,(ccp)l); /* should be safe because GDL doesn't put data in g:w->user */
 	}
     }
   /* This needs to be done here in case there are multiple lines that have associated #lem */
@@ -664,6 +664,7 @@ line_note(Mloc l, const char *ltext)
   atf_xprop(np, "xml:id", n->xid);
   atf_xprop(np, "note:mark", "1");/*place-holder*/
   np->user = n;
+  np->utype = N_U_NOTE;
   /*atf_input(l, LT_NOTE, n);*/  
 }
 

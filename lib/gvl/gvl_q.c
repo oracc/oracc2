@@ -145,6 +145,7 @@ gvl_q(Node *ynp)
       vq->mess = gvl_vmess("%s unable to attempt canonicalization", ynp->text);
     }
   ynp->user = vq;
+  ynp->utype = N_U_GVL;
   if (!strcmp(ynp->kids->name, "g:p"))
     {
       /* rewrite this from g:q->g:p.g:s to g:p->g:s */

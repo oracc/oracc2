@@ -113,6 +113,7 @@ gvl_n(Node *ynp)
       gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)nq->orig);
     }
   ynp->user = nq;
+  ynp->utype = N_U_GVL;
 }
 
 void
@@ -221,6 +222,7 @@ gvl_n_sexify(Node *ynp)
 	    gp->sign = gp->orig;
 	  gp->c10e = gp->orig;
 	  ynp->user = gp;
+	  ynp->utype = N_U_GVL;
 	}      
       else
 	{

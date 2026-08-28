@@ -74,10 +74,10 @@ ax_input(const char *f)
       if (lem_mode)
 	{
 	  xp = ax_xcl(rp, tp->root->kids);
-	  xp->utype = N_U_XCL;
 	  tree_curr(tp->root->kids);
 	  Node *np = tree_add(tp, NS_XCL, "xcl", tp->root->kids->depth, tp->root->kids->mloc);
 	  np->user = xp;
+	  np->utype = N_U_XCL;
 	  ax_lem(rp, xp);
 	  if (xcl_output)
 	    {

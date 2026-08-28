@@ -385,6 +385,7 @@ gvl_compound(Node *ynp)
 	cp->c10e = cp->orig;
 
       ynp->user = cp;
+      ynp->utype = N_U_GVL;
       if (gdl_orig_mode)
 	{
 	  ynp->text = (ccp)cp->orig;
@@ -520,6 +521,7 @@ gvl_simplexg(Node *ynp)
   if (gp)
     {
       ynp->user = gp;
+      ynp->utype = N_U_GVL;
 
       if (gp->sign)
 	g_attr(ynp, gp);

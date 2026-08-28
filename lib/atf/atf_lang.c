@@ -43,7 +43,8 @@ atf_lang(Mloc ml, ATF *a, const char *atf_lang)
   a->altlang = (ccp)pool_copy((uccp)altlang, atfmp->pool);
   Node *np = atf_add("protocol", &ml);
   atf_xprop(np, "type", "atf");
-  np->user = atfp;
+  np->user = a;
+  np->utype = N_U_ATF;
   atf_input(ml, LT_LANG, a);
   
   char *atsign;

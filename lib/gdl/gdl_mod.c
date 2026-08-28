@@ -139,11 +139,6 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
   c = list_concat(cp);
   o = list_concat(op);
 
-#if 0
-  if (!(gp = hash_find(curr_sl->h,(uccp)c))
-      && !(gp = hash_find(curr_sl->h,(uccp)o)))
-#endif
-    
   ynp->user = gp = memo_new(curr_sl->m);
   ynp->utype = N_U_GVL;
   gp->type = ynp->name + 2;

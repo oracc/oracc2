@@ -24,6 +24,7 @@ ax_gparse(Node *np, char *data)
   Tree *tp = NULL;
   char *s = data;
   np->user = s; /* Node:user is char* here */
+  np->utype = N_U_STR;
   while (*s && !isspace(*s))
     ++s;
   if (s > data && (s[-1] == '.' || s[-1] == ':'))

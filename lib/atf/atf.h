@@ -193,6 +193,7 @@ typedef struct lninfo
 
 struct xcl_ilem
 {
+  Usertype utype;
   Node *w;
   struct xcl_l *x;
   struct ilem_form *i;
@@ -345,7 +346,7 @@ extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigne
 extern void set_block_curr(Block_level b);
 extern void atf_block_xid(void);
 
-extern struct xcl_ilem *atf_save_lem(Node *np, const char *lemstr);
+extern void atf_save_lem(Node *np, const char *lemstr);
 
 extern void atf_milestone(Block *bp, char *rest);
 extern struct map *mdiscourse(const char *str, size_t len);

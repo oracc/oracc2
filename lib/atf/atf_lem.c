@@ -15,7 +15,7 @@
  */
 /* This routine should not set anything but FORM at the f2 level;
    that is the job of ilem_parse */
-struct xcl_ilem*
+void
 atf_save_lem(Node *np, const char *lemstr)
 #if 0
   const char *ref, const char *lang, 
@@ -31,7 +31,7 @@ atf_save_lem(Node *np, const char *lemstr)
   form->ref = (char*)propxid(np);
   
   if (!form->ref || !form->ref[0])
-    return NULL;
+    return;
 
   form->literal = (char*)pool_copy((uccp)lemstr, atfmp->pool);
   
@@ -80,8 +80,9 @@ atf_save_lem(Node *np, const char *lemstr)
 #endif
   
   struct xcl_ilem *xip = memo_new(atfmp->mxis);
+  xip->utype = N_U_XLEM;
+  np->user = xip;
+  np->utype = N_U_XLEM;
   xip->w = np;
   xip->i = form;
-
-  return xip;
 }

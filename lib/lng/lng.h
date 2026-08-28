@@ -170,6 +170,8 @@ extern char *tag_no_script(const char *tag);
 extern const char *langtag_atf(const char *atf, const char *file, int lnum);
 extern struct lang_tag *langtag_parse(const char *tag, const char *file, int lnum);
 
+extern const char *iso639(const char *l);
+
 extern const char *fwhost;
 
 #endif /*LANG_H_*/

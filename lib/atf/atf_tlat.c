@@ -190,11 +190,30 @@ void
 atr_inter(Mloc l, unsigned char *s)
 {
   Node *np = atf_node("tr", &l);
-  line_register(l, LT_INTER, np, s);
+  
   /* extract xml:lang from s or set to "en" if none */
+  char *t = strchr((ccp)s, ':'); *t = '\0';
+  char *lng = strchr((ccp)s, '.');
+  if (lng < t)
+    {
+      ++lng;
+#if 0
+      const char *i639 = iso639(lng);
+      if (!i639)
+	mesg_verr(&l, "language `%s' not found in ISO-639 table", lng);
+#endif
+      setAttr(np, "xml:lang", lng);
+    }
+  else
+    lng = NULL;
+  ++t;
+  while (isspace(*t))
+    ++t;
+  
   /* add ref to current translatable line (LINE_MTS or LINE_BIL) */
-  /* process contents as inline */
-  /* set np->user to the inline result */
+  line_register(l, LT_INTER, np, (ucp)t);
+  /* process contents as inline setting using the new np as the parent */
+  atr_inline(&l, np, (ucp)t);
 }
 
 void
@@ -394,7 +413,7 @@ atr_dollar(Mloc l, unsigned char *s)
   while (isspace(*s))
     ++s;
 
-  (void)atr_inline(&l, curr_block_np,s);
+  atr_inline(&l, curr_block_np, s);
   (void)tree_pop(curr_trans->tree);
 }
 
@@ -596,7 +615,7 @@ atr_para(void)
 		--text;
 	      *text = '\0';
 	  
-	      (void)atr_inline(mpp[0],cc,text);
+	      atr_inline(mpp[0],cc,text);
 	      text = resume;
 	      if (init_cell)
 		text += 2;
@@ -620,7 +639,7 @@ atr_para(void)
 		    atf_xprop(cc, "dir", "rtl");
 		  atf_xprop(cc,"xtr:span","1");
 		}
-	      (void)atr_inline(mpp[0],cc,text);
+	      atr_inline(mpp[0],cc,text);
 	      if (!nocellspan)
 		atr_pop(); /* pop the cc node */
 	      atr_pop(); /* pop the innerp node */
