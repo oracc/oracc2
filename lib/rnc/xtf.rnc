@@ -309,7 +309,7 @@ l =
     attribute label2 { text }?,
     attribute spanall { "1" }?,
     (cell+ | f+ | (ag | l.inner)*) 
-  }
+  } , tr?
 
 cell = element c { span? , (f+ | l.inner) }
 span = attribute span { xsd:nonNegativeInteger }
@@ -325,18 +325,20 @@ lg = element lg {
   attribute xml:id { xsd:ID }?,
   maxcells?,
   attribute n { text }?,
-  (   (l,gus?,nts)
-    | (l,gus?,nts?,(proto.link?,bil+)+)
-    | (l,gus?,lgs) 
-    | (l,gus?,nts,lgs) 
-    | (l,gus?, (e | comments)*)
-    | (l,(bil|var|notetext|cmt)*)
-    ),
+  l , gus? , nts? , proto.link? ,
+  (bil | e | var )*,
+  # (   (l,gus?,nts)
+  #   | (l,gus?,nts?,(proto.link?,bil+)+)
+  #   | (l,gus?,lgs) 
+  #   | (l,gus?,nts,lgs) 
+  #   | (l,gus?, (e | comments)*)
+  #   | (l,(bil|var|notetext|cmt)*)
+  #   ),
   proto.inter*,
   (var|notetext|nonx|cmt)*
 }
-bil = element l { attribute type { "bil" } , l.inner* }
-nts = element l { attribute type { "nts" } , (ag | l.inner)* }
+bil = element l { attribute type { "bil" } , l.inner* }, tr?
+nts = element l { attribute type { "nts" } , (ag | l.inner)* }, tr?
 lgs = element l { attribute type { "lgs" } , grapheme* }
 gus = element l { attribute type { "gus" } , l.inner* }
 var = element v { 
@@ -345,7 +347,9 @@ var = element v {
   attribute ex_label { text }? ,
   e-attlist , 
   (cell+ | f+ | (ag | l.inner)*)
-}
+} , tr?
+
+tr = element tr { innerp.model }
 
 # alignment groups
 ag = element ag { 
