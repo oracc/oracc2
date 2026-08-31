@@ -79,6 +79,7 @@ typedef struct atf {
   struct group *lines; /* attach point for #- and $-lines that occur before first MTS */
   Tree *body; /* probable implementation of document hierarchy */
   List *input; /* list of parsed structures/strings in document order for identity output */
+  int itr; /* flag for ATF with interlinear translation */
 } ATF;
 
 typedef struct atfl {

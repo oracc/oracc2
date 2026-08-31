@@ -14,7 +14,6 @@ static int tabflag = 0;
 static int verflag = 0;
 static int non_label_div = 0;
 
-
 static void block_div(Mloc l, Block *bp, char *rest);
 static void block_hdr(Mloc l, Block *bp, char *rest);
 static void block_lev(Mloc l, Block *bp, char *rest);

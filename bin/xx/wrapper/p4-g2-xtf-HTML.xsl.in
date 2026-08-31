@@ -845,6 +845,10 @@
  -->
 </xsl:template>
 
+<xsl:template match="xtf:itr">
+  <tr class="itr"><xsl:apply-templates/></tr>
+</xsl:template>
+
 <xsl:template match="xtf:l">
   <xsl:param name="maxcols" select="0"/>
   <xsl:variable name="href">

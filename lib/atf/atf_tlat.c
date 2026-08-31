@@ -189,8 +189,14 @@ atr_translation(void)
 void
 atr_inter(Mloc l, unsigned char *s)
 {
-  Node *np = atf_node("tr", &l);
-  
+  if (!atfp->itr)
+    {
+      atf_xprop(abt->root->kids,"itr","1");
+      ++atfp->itr;
+    }
+
+  Node *np = atf_node("itr", &l);
+
   /* extract xml:lang from s or set to "en" if none */
   char *t = strchr((ccp)s, ':'); *t = '\0';
   char *lng = strchr((ccp)s, '.');
