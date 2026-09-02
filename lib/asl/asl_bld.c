@@ -332,58 +332,16 @@ asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 #ifdef UseGt
   /* Future use of GDL token interface derived from the ASL/SX token stuff */
   Gt *tokp = gt_token(locp, t, (literal>0) || asl_literal_flag, sl->curr_inst);
+  if (!tokp)
+    fprintf(stderr, "asl_bld_token: %s -> NULL\n", t);
+#if 0
+  else
+    fprintf(stderr, "asl_bld_token: %s -> %p\n", t, (void*)tokp);
+#endif
   asl_literal_flag = 0;
   return tokp;
 #else
-  struct sl_token *tokp = NULL;
-  
-  if (!(tokp = tokfind(sl->htoken, t)))
-    {
-      Tree *tp;
-      const char *gsig = NULL, *deep = NULL;
-      extern int asl_literal_flag;
-      tokp = memo_new(sl->m_tokens);
-      tokp->t = t;
-      if (literal > 0 || asl_literal_flag)
-	tp = gdl_literal(locp, (char*)t);
-      else
-	{
-	  extern int gdlsig_depth_mode;
-	  tp = asl_bld_gdl(locp, t);
-	  /* deep? or a special mode for unicode rendering? */
-	  gdlsig_depth_mode = -1;
-	  gsig = gdlsig(tp);
-	  gdlsig_depth_mode = 1;
-	  deep = gdlsig(tp);
-	  if (deep)
-	    {
-	      if (!strchr(deep, '.'))
-		{
-		  free((void*)deep);
-		  deep = NULL;
-		}
-	    }		
-	}
-      tokp->priority = 100;
-      if (tp->root->kids && !strcmp(tp->root->kids->name, "g:w"))
-	tokp->gdl = tp->root->kids;
-      else
-	{
-	  tokp->gdl = tp->root;
-	  tokp->gdl->name = "g:w";
-	}
-      if (!tokp->gdl->mloc)
-	tokp->gdl->mloc = mloc_mloc(locp);
-      gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "form", tokp->gdl->text);
-      gdl_prop_kv(tokp->gdl, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
-      tokp->gsh = gsort_prep(tp);
-      tokp->gsig = gsig;
-      tokp->deep = deep;
-      tokp->oid_ip = sl->curr_inst;
-      hash_add(sl->htoken, t, tokp);
-    }
-  asl_literal_flag = 0;
-  return tokp;
+  /* cut out the old code but keep the UseGt stubs for a bit longer */
 #endif
 }
 
@@ -408,7 +366,9 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
 #endif
 
   /* get the group sign */
-  tokp = tokfind(sl->htoken, s->name);
+  if (!(tokp = tokfind(sl->htoken, s->name)))
+    return; /* we will have errored on this earlier */
+
   if ((group = pool_copy(gdl_first_s(tokp->gdl), sl->p)))
     {
       /* get the letter from the group sign */
@@ -604,7 +564,7 @@ asl_register_sign(Mloc *locp, struct sl_signlist *sl, struct sl_sign *s)
       list_add(gslist, s->inst);			/* AB3: list of signs in group,
 					   		   data member is struct sl_inst* */ /* WHAT ABOUT @comp ? */
 
-      /* set the sign's pointer to it's letter data */
+      /* set the sign's pointer to its letter data */
       s->letter = lp;
     }
   else

@@ -170,6 +170,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	  gsig = gdlsig(tp);
 	  if (gt_bad_gsig(locp, t, gsig))
 	    {
+	      fprintf(stderr, "gt_bad_gsig: %s => bad sig %s\n", t, gsig);
 	      if (xt)
 		free(xt);
 	      return NULL;

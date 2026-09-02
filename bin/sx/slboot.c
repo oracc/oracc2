@@ -7,7 +7,7 @@ static void show_atcmd(unsigned char *cmd, unsigned char *arg);
 static void un_eol_sp(unsigned char *eol);
 
 static Pool *p = NULL;
-int verbose = 1;
+int verbose = 0;
 
 static unsigned char *
 get_arg(unsigned char *cmd, int len)
@@ -31,7 +31,7 @@ show_atcmd(unsigned char *cmd, unsigned char *arg)
 static void
 show_hash(const unsigned char *k, void *v)
 {
-  fprintf(stderr, "%s\t%s\n", k, (char*)v);
+  fprintf(stdout, "%s\t%s\n", k, (char*)v);
 }
 
 static void
@@ -78,6 +78,8 @@ slboot(const char *asl)
 		  else
 		    {
 		      int len = strlen((ccp)v);
+		      if ('?' == v[len-1])
+			v[--len] = '\0';
 		      if (len > 3 && v[len-1] == 0x93 && v[len-2] == 0x82 && v[len-3] == 0xE2)
 			{
 			  /* SUB_X needs to be registered with its
@@ -109,7 +111,10 @@ slboot(const char *asl)
 		  if (!(oid = hash_find(oids, sign)))
 		    pending_no_oid = lnum;
 		  else
-		    hash_add(bsl, oid, sign);
+		    {
+		      hash_add(bsl, oid, sign);
+		      hash_add(bsl, sign, oid);
+		    }
 		}
 	      else if ('a' == *lp && !strncmp((ccp)lp, "aka", 3) && isspace(lp[3]))
 		{
@@ -120,7 +125,11 @@ slboot(const char *asl)
 			fprintf(stderr, "%s:%d: sign `%s'/ aka `%s' has no OID\n",
 				asl, pending_no_oid, sign, aka);
 		      else
-			hash_add(bsl, oid, sign);
+			{
+			  hash_add(bsl, oid, sign);
+			  hash_add(bsl, sign, oid);
+			  hash_add(bsl, aka, oid);
+			}
 		    }
 		}
 	      else if ('d' == *lp && !strncmp((ccp)lp, "domain", 6) && isspace(lp[6]))

@@ -154,7 +154,7 @@ main(int argc, char * const*argv)
 	  exit(1);
 	}
       if (!sll_outfile)
-	sll_outfile = "02pub/sl/sl.tsv"; /* FIXME: should be @@ORACC@@/osl ... */
+	sll_outfile = "02pub/sl/nsl.tsv"; /* FIXME: should be @@ORACC@@/osl ... */
       if (!(sllout = fopen(sll_outfile, "w")))
 	{
 	  fprintf(stderr, "sx: unable to write to %s\n", sll_outfile);

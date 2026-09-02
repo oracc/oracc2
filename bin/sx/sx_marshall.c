@@ -531,7 +531,9 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       int j;
       sl->signs[i] = hash_find(sl->hsentry, (ucp)keys[i]);
-      tp = tokfind(sl->htoken, sl->signs[i]->name);
+      if (!(tp = tokfind(sl->htoken, sl->signs[i]->name)))
+	continue;
+
 #ifdef UseGt
       sl->signs[i]->sort = tp->c;
 #else

@@ -49,7 +49,7 @@ gdlsig_addoid(Node *np, List *lp)
 	gdlsig_descend(np, lp);
       else if (gdlsig_depth_mode && gp->deep)
 	{
-	   /* |3×AN| traps */
+	  /* |3×AN| traps */
 	  if (gp->deep->kids
 	      && !strcmp(gp->deep->kids->name, "g:d"))
 	    list_add(lp, (char*)((gvl_g*)gp->deep->user)->oid);
@@ -126,6 +126,10 @@ gdlsig_one_node(Node *np, List *lp)
 	       && (p = prop_find_kv(np->props, "g:delim", NULL)))
 	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
     }
+  else if (!strcmp(np->name, "g:d"))
+    {
+      list_add(lp, (char*)gdlsig_sep((char*)np->text));
+    }
   else if (!strcmp(np->name, "g:det"))
     {
       Prop *d = prop_find_kv(np->props, "g:pos", NULL);
@@ -136,7 +140,7 @@ gdlsig_one_node(Node *np, List *lp)
 	list_add(lp, ".");
       else if ((p = prop_find_kv(np->props, "g:delim", NULL)))
 	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
-    }
+    }    
   else if (np->kids)
     {
       gdlsig_descend(np, lp);
@@ -167,6 +171,9 @@ gdlsig_sep(const char *sep)
       return ".";
     case ' ':
       return "_";
+    case '3':
+    case '4':
+      return "×";
     default:
       if ((unsigned char)(*sep) > 127)
 	return "*";
