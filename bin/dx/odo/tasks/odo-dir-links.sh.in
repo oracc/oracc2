@@ -22,14 +22,18 @@ if [ "$project" = "" ]; then
     exit 1
 fi
 
-if [ ! -r 00lib/config.xml ]; then
+if [ -r 0lib/subconfig.xml ]; then
+    sub="sub"
+fi
+
+if [ ! -r 00lib/${sub}config.xml ] ; then
     echo $0: no 00lib/config.xml for project $project. Stop.
     exit 1
 fi
 
 confproj=`proj-from-conf.sh`
 if [ "$confproj" != "$project" ]; then
-    echo $0: config.xml@n $confproj does not match given project $project. Stop.
+    echo $0: ${sub}config.xml@n $confproj does not match given project $project. Stop.
     exit 1
 fi
 
@@ -50,15 +54,17 @@ done
 
 cd $odo_projdir
 mkdir -p 01log
-rm $V -f 01bld 01tmp 02pub 02www 02xml
+rm $V -fr 01bld 01tmp 02pub 02www 02xml
 
-# In Oracc version one there was a rogue script that occasionally
-# created 01bld as a directory not a link; this probably no longer
-# exists but this check is retained just in case.
-if [ -d 01bld ]; then
-    echo $0: removing 01bld directory to recreate it as a link.
-    rm $V -fr 01bld
-fi
+### 2026-08-31: is there any reason not to -fr in the line above? In
+### which case the below is redundant
+## In Oracc version one there was a rogue script that occasionally
+## created 01bld as a directory not a link; this probably no longer
+## exists but this check is retained just in case.
+#if [ -d 01bld ]; then
+#    echo $0: removing 01bld directory to recreate it as a link.
+#    rm $V -fr 01bld
+#fi
 
 ln $V -sf @@ORACC_BUILDS@@/bld/$project 01bld
 ln $V -sf @@ORACC_BUILDS@@/pub/$project 02pub

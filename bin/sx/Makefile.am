@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 SUBDIRS=sxweb
 
-bin_PROGRAMS=sx slix slx csldist
+bin_PROGRAMS=sx slix slx csldist slboot
 
 bin_SCRIPTS=\
 	sxcmp.sh sxnorm.sh sxclean.sh \
@@ -38,3 +38,7 @@ slix_DEPENDENCIES = $(xLDADD)
 csldist_SOURCES=csldist.c
 csldist_LDADD = $(xLDADD) 
 csldist_DEPENDENCIES = $(xLDADD)
+
+slboot_SOURCES=slboot.c
+slboot_LDADD = $(xLDADD) 
+slboot_DEPENDENCIES = $(xLDADD)

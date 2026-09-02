@@ -264,7 +264,7 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
   struct sl_token *htp = hash_find(sl->hnums, n);
   if (!htp && !gvl_looks_like_sname(n))
     htp = hash_find(sl->hnums, g_uc(n));
-  if (!htp || htp->priority > priority)
+  if ((!htp || htp->priority > priority) && tokp)
     {
       tokp->priority = priority;
       if (tokp->gdl && tokp->gdl->kids && !strcmp(tokp->gdl->kids->name, "g:n"))
@@ -1386,7 +1386,8 @@ asl_bld_sign_sub(Mloc *locp, struct sl_signlist *sl, const unsigned char *n,
       s->name = n;
       s->inst = i;
       i->type = 's';
-      s->deep = tp->deep;
+      if (tp)
+	s->deep = tp->deep;
       i->mloc = *locp;
       i->valid = (Boolean)!minus_flag;
       i->query = (Boolean)query;

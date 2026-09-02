@@ -12,7 +12,13 @@ odo_verbose $0 $1
 project=$odo_proj
 V=$odo_verb
 
-if [ ! -r 00lib/config.xml ]; then
+#set -x
+if [ -r 00lib/subconfig.xml ]; then
+    echo $0: found 00lib/subconfig.xml
+    sub="sub"
+fi
+
+if [ ! -r 00lib/${sub}config.xml ]; then
     echo $0: must be run from a project directory
     exit 1
 fi

@@ -57,7 +57,7 @@ odo_time() {
 
     if [ -r .odo_ts ]; then
 	local message="$*"
-	local current_ts=`$bin/isogmt -s`
+	local current_ts=`$obin/isogmt -s`
 	local start_ts=`cat .odo_ts`
 	
 	# Calculate difference in seconds

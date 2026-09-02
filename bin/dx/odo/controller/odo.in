@@ -22,7 +22,6 @@
 # odo_user and odo_proj are placed in the environment via set -a
 # before the command is called.
 #
-#set -x
 cmdok ()
 {
     command=$1
@@ -70,7 +69,7 @@ fail ()
 
 set_project()
 {
-    project=`xmllint -xpath '/*/@n' 00lib/config.xml | cut -d= -f2 | tr -d '"'`
+    project=`xmllint -xpath '/*/@n' 00lib/$1config.xml | cut -d= -f2 | tr -d '"'`
 }
 
 set_status ()
@@ -95,6 +94,7 @@ set_tmpdir ()
     fi
 }
 
+#set -x
 bin=@@ORACC_BUILDS@@/bin
 
 # Verbose can be set on the command-line or in a file .odov which must
@@ -125,7 +125,12 @@ if [ -r .gx ]; then
     gx=1
 fi
 
+if [ -r 00lib/subconfig.xml ]; then
+    sub="sub"
+fi
+
 set -a
+odo_sub=$sub
 odo_verb=$verb
 odo_gx=$gx
 V=
@@ -196,13 +201,20 @@ if [ "$command" != "init" ]; then
     if [ "$project" = "." ]; then
 	if [ -r 00lib/config.xml ]; then
 	    set_project
+	elif [ -r 00lib/subconfig.xml ]; then
+	    set_project sub
 	else
 	    fail "you can only use 'odo .' in a project directory"
 	fi
     elif [ "$project" = "" ]; then
 	fail "empty project argument"
-    elif [ ! -r @@ORACC_BUILDS@@/$project/00lib/config.xml ]; then
-	fail "project $project does not have a 00lib/config.xml"
+    else
+	if [ -r @@ORACC_BUILDS@@/$project/00lib/subconfig.xml ]; then
+	    sub="sub"
+	fi
+	if [ ! -r @@ORACC_BUILDS@@/$project/00lib/${sub}config.xml ]; then
+	    fail "project $project does not have a 00lib/(sub)config.xml"
+	fi
     fi
 fi
 
@@ -242,10 +254,14 @@ else
     if [ "$command" = "env" ]; then
 	F=-f
     fi
-    if [ -r 00lib/config.xml ]; then
+    if [ -r 00lib/${odo_sub}config.xml ]; then
 	projdir=`pwd`
     else
-	projdir=@@ORACC_BUILDS@@/$project
+	if [ "$project" = "" ]; then
+	    fail "no config.xml/subconfig.xml and project not set either"
+	else
+	    projdir=@@ORACC_BUILDS@@/$project
+	fi
     fi
     if [ -d $projdir ]; then
 	(cd $projdir
