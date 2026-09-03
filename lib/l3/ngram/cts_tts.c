@@ -135,7 +135,7 @@ parse_cts_f2(struct CF *cfp, int tts_mode, char *s)
       *tmp = '\0';
       len = form_parse((unsigned char *)cfp->owner->owner->file, cfp->owner->lnum, 
 		     (unsigned char *)s, cfp->f2, NULL);
-      cfp->f2->pos = (const Uchar *)memo_dup((const char*)cfp->f2->pos);
+      cfp->f2->pos = (const Uchar *)strdup((const char*)cfp->f2->pos); /* FIXME; need better than strdup but memo_dup is no good because it is freed at end of each ATF */
       *tmp = save;
     }
   if (cfp->f2 && cfp->f2->gw && !strcmp((const char*)cfp->f2->gw, "X"))
