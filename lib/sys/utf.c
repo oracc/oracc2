@@ -8,6 +8,55 @@
 #include <errno.h>
 #include "oraccsys.h"
 
+/* Return non-zero len if the possibly multi-byte character at s is
+ * valid UTF-8
+ */
+int
+u_valid_char(unsigned const char *g)
+{
+  if (*g <= 127)
+    return 1;
+  else
+    {
+      size_t len = mbtowc(NULL,(const char *)g,6);
+      if (len > 0)
+	return len;
+      else
+	return 0;
+    }
+}
+
+/* Return the length of the spanned segment that is valid UTF-8
+ */
+int
+u_valid_span(unsigned const char *beg, unsigned const char *end)
+{
+  unsigned const char *s = beg;
+  while (s < end)
+    {
+      int ok = u_valid_char(s);
+      if (ok)
+	s += ok;
+      else
+	return s - beg;
+    }
+  return s - beg;
+}
+
+/* Return -1 if the string is valid UTF-8; if it not, return the
+ * length of the initial substring that is valid (i.e., return the
+ * index of the first invalid character
+ */
+int
+u_valid_str(unsigned const char *str)
+{
+  int ok = u_valid_span(str, str+strlen((ccp)str));
+  if (ok == strlen((ccp)str))
+    return -1;
+  else
+    return ok;
+}
+
 void
 u_upper(unsigned char *s, int n)
 {
@@ -23,10 +72,10 @@ u_upper(unsigned char *s, int n)
 	{
 	  size_t len;
 	  wchar_t wc = utf1char(s, &len);
-	  wchar_t lc = towlower(wc);
-	  if (wc != lc)
+	  wchar_t uc = towupper(wc);
+	  if (wc != uc)
 	    {
-	      unsigned char *utf8 = utf8ify(lc);
+	      unsigned char *utf8 = utf8ify(uc);
 	      memcpy(s,utf8,strlen((ccp)utf8));
 	    }
 	}

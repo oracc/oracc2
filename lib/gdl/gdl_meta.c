@@ -223,17 +223,23 @@ gdl_state_c(Bracket_e bt)
   if (st > 0) /* st can be -1 if nothing on stack */
     {
       Node *np = gstck_np(st);
-      if (!strcmp(np->rent->name, "g:n"))
-	np = np->rent;
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusStart", "1");
-      if (!gdl_no_xml_ids)
+      if (np)
 	{
-	  Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
-	  if (idp)
-	    gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
-	  else
-	    mesg_verr(&gdllloc, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
+	  if (!strcmp(np->rent->name, "g:n"))
+	    np = np->rent;
+	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusStart", "1");
+	  
+	  if (!gdl_no_xml_ids)
+	    {
+	      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+	      if (idp)
+		gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
+	      else
+		mesg_verr(&gdllloc, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
+	    }
 	}
+      else
+	mesg_verr(&gdllloc, "internal error: corrupt bracket stack");
     }
   bit_set(*lst,bp->oc);
   rs_no(bp->s);

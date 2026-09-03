@@ -67,6 +67,10 @@ extern char *oracc_rnc(const char *fname);
 extern const char *oracc_var (void);
 extern const char *projectify(const char *path, const char **projp);
 
+extern int u_valid_char(unsigned const char *g);
+extern int u_valid_span(unsigned const char *beg, unsigned const char *end);
+extern int u_valid_str(unsigned const char *str);
+
 extern void u_upper(unsigned char *s, int n);
 extern int u_charbytes(const unsigned char *g);
 extern const unsigned char *utf_lcase(const unsigned char *s);

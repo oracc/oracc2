@@ -54,7 +54,7 @@ atf_dollar(Mloc l, char *rest)
 	      dollar_label = (ccp)pool_copy((uccp)lstart, atfmp->pool);
 	    }
 	  else
-	    warning("label on $-line lacks closing ')'");
+	    mesg_verr(&l, "label on $-line lacks closing ')'");
 	  while (isspace(*s))
 	    ++s;
 	}
@@ -72,7 +72,7 @@ atf_dollar(Mloc l, char *rest)
 					&& !nonxp->state))
 		  && !nonxp->ref)
 		{
-		  warning("strict $-lines must have scope and state indicators");
+		  mesg_verr(&l, "strict $-lines must have scope and state indicators");
 		  return;
 		}
 	      else
@@ -250,7 +250,7 @@ atf_dollar(Mloc l, char *rest)
 	      else if (nonxp->number)
 		atf_xprop(np, "extent", cc(nonxp->number));
 	      else if (nonxp->strict)
-		warning("extent not found in strict $-line");
+		mesg_verr(&l, "extent not found in strict $-line");
 	      if (nonxp->scope)
 		atf_xprop(np, "scope", cc(nonxp->scope->str));
 	      else if (nonxp->strict)
