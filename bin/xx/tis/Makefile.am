@@ -1,6 +1,6 @@
 include ../../../oracc-am-rules.txt
 
-bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokix \
+bin_PROGRAMS=tisdiv tisify tok2tis tokx tokexp tokix toksigs \
 	tokpctg tokpctl cbdex cbdikey tokpg tokexg tokexl tokval
 
 #vidx
@@ -16,6 +16,10 @@ tisdiv_DEPENDENCIES = $(xLDADD)
 tisify_SOURCES = tisify.c
 tisify_LDADD = $(xLDADD)
 tisify_DEPENDENCIES = $(xLDADD)
+
+toksigs_SOURCES = toksigs.c
+toksigs_LDADD = $(xLDADD)
+toksigs_DEPENDENCIES = $(xLDADD)
 
 tok2tis_SOURCES = tok2tis.c
 tok2tis_LDADD = $(xLDADD)

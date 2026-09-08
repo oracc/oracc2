@@ -77,9 +77,11 @@ tlb_L(Trun *r, int num, const char *id, const char *lab)
 	  else
 	    tlb_error("line found before text is set");
 	}
-      loch_line(r)->line_num = num;
-      loch_line(r)->line_id = tlb_dup(id);
-      loch_line(r)->line_label = tlb_dup(lab);
+      const char *la_id = loch_line(r)->line_id = tlb_dup(id);
+      labl_atfl *la = memo_new(r->l_a_m);
+      la->labl = loch_line(r)->line_label = tlb_dup(lab);
+      la->atfl = loch_line(r)->line_num = num;
+      hash_add(r->l_a_h, (uccp)la_id, la);
       loch_line(r)->t = loch_text(r);
       loch_line(r)->wlocs = list_create(LIST_DOUBLE);
     }

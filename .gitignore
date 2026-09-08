@@ -153,6 +153,7 @@ bin/xx/tis/tokpct
 bin/xx/tis/tokpctg
 bin/xx/tis/tokpctl
 bin/xx/tis/tokpg
+bin/xx/tis/toksigs
 bin/xx/tis/tokval
 bin/xx/tis/tokx
 bin/xx/tis/vidx

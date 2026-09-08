@@ -4,6 +4,8 @@
 #include "loch.h"
 #include "gsig.h"
 
+typedef struct labl_atfl { const char *labl; int atfl; } labl_atfl;
+
 /* state variables used during processing GDL input; note that
    per-word state has to be in struct trun_word. */
 struct trun_gdl_state
@@ -53,6 +55,8 @@ typedef struct trun
   Memo *w_m;
   Memo *c_m;
   Memo *a_m;
+  Hash *l_a_h; /* labl_atf hash by xtf:l@xml:id of a labl_atfl structure */
+  Memo *l_a_m; /* labl_atf memo */
   Pool *p;
   struct trun_gdl_state rs;
   struct trun_word *rw;

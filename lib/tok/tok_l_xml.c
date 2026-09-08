@@ -19,12 +19,14 @@ tok_l_sH(void *userData, const char *name, const char **atts)
     {
       if (!strcmp(name, "l"))
 	{
+	  const char *inst = findAttr(atts, "inst");
 	  const char *sig = findAttr(atts, "sig");
 	  if (!*sig)
 	    sig = findAttr(atts, "exosig");
 	  if (*sig)
-	    fprintf(r->o, "l\t%s\t%s\t%s\t%s\n",
-		    findAttr(atts, "ref"), sig, findAttr(atts, "exo_proj"), findAttr(atts, "exo_lang"));
+	    fprintf(r->o, "l\t%s\t%s\t%s\t%s\t%s\n",
+		    findAttr(atts, "ref"), sig, inst,
+		    findAttr(atts, "exo_proj"), findAttr(atts, "exo_lang"));
 	  else
 	    curr_ref = strdup(findAttr(atts, "ref"));
 	}
@@ -48,7 +50,14 @@ tok_l_sH(void *userData, const char *name, const char **atts)
 	  else if (!strcmp(type, "field-end"))
 	    fprintf(r->o, "D.eof\t%s\n", subtype);
 	  else if (!strcmp(type, "line-start"))
-	    fprintf(r->o, "L\t%s\n", findAttr(atts, "ref"));
+	    {
+	      const char *ref = findAttr(atts, "ref");
+	      labl_atfl *la = hash_find(r->l_a_h, (uccp)ref);
+	      if (la)
+		fprintf(r->o, "L\t%s\t%s\t%d\n", ref, la->labl, la->atfl);
+	      else
+		fprintf(r->o, "L\t%s\n", ref);
+	    }
 	}
       else if (!strcmp(name, "link"))
 	{

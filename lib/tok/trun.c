@@ -15,6 +15,8 @@ trun_init(int multi)
   r->t_m = memo_init(sizeof(Tloc), r->multi ? 128 : 1);
   r->l_m = memo_init(sizeof(Lloc), r->multi ? 1024 : 1);
   r->w_m = memo_init(sizeof(Wloc), r->multi ? 1024 : 1);
+  r->l_a_m = memo_init(sizeof(labl_atfl), 1024);
+  r->l_a_h = hash_create(1024);
   r->p = hpool_init();
   return r;
 }

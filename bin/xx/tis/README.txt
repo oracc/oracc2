@@ -185,4 +185,3 @@ Secondary tokens from the signature are secondary to the SENSE token not to the 
 
 The secondary OID and KEY are combined and uniqueness is ensured by
 embedding the type into the string suffix of the OID.
-
