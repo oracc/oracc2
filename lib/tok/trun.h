@@ -49,7 +49,6 @@ typedef struct trun_word
 /* This should be allocated for each input */
 typedef struct trun
 {
-  int multi;
   Memo *t_m;
   Memo *l_m;
   Memo *w_m;
@@ -62,6 +61,8 @@ typedef struct trun
   struct trun_word *rw;
   struct loch *l;
   FILE *o; 		/* output for run */
+  int multi;
+  int md; /* read .xmd for text; default = 1, tokx -M sets 0 */
 } Trun;
 
 #endif/*TRUN_H_*/

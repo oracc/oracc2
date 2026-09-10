@@ -18,6 +18,7 @@ int run_multi = 0;
 int stdinput = 0;
 int tok_input_cbd = 0, tok_input_xtf = 1;
 int tok_data_g = 1, tok_data_l = 0, tok_data_m = 1;
+int no_tok_data_m = 0;
 
 const char *file;
 int fuzzy_aliasing = 0;
@@ -250,10 +251,18 @@ main(int argc, char **argv)
 {
   Trun *r = NULL;
   
-  if (options(argc, argv, "cF:f:gGlLmo:p:st"))
+  if (options(argc, argv, "cF:f:gGlLMmo:p:st"))
     exit(1);
 
   r = trun_init(run_multi);
+  if (no_tok_data_m)
+    {
+      tok_data_m = 0;
+      r->md = 0;
+    }
+  else
+    r->md = 1;
+  
   if (!dot_tok_files)
     {
       tokx_output(r, outfile);
@@ -304,6 +313,9 @@ int opts(int arg, const char*str)
       tok_data_g = 0;
     case 'l':
       tok_data_l = 1;
+      break;
+    case 'M':
+      no_tok_data_m = 1;
       break;
     case 'm':
       tok_data_m = 1;

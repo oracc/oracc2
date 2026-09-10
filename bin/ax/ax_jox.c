@@ -84,8 +84,9 @@ ax_jox(Tree *tp)
 
   if (!xtf_fp)
     {
-      
-      if (!(xfp = fopen(xfn, "w")))
+      if (xml_to_stdout)
+	xfp = stdout;
+      else if (!(xfp = fopen(xfn, "w")))
 	{
 	  fprintf(stderr, "ax: failed to open XML output %s. Stop.\n", xfn);
 	  exit(1);

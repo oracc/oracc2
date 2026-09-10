@@ -19,7 +19,8 @@ tloc_xtf_sH(void *userData, const char *name, const char **atts)
       r->rs.printing = 1;
       r->rs.in_xcl = 0;
 
-      mds_xmd(r, loch_text(r)->text_project, loch_text(r)->text_id);
+      if (r->md)
+	mds_xmd(r, loch_text(r)->text_project, loch_text(r)->text_id);
 
       tlw_T(r);
       if (tlw_want_LW)

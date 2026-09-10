@@ -10,11 +10,12 @@
 
 int sentence_boundaries = 0;
 
+Hash *hinst;
 Pool *p;
-char *curr_labl = 0;
-char *curr_atfl = 0;
-char *curr_atff = 0;
-int conllo = 0;
+char *curr_labl = NULL;
+char *curr_atfl = NULL, *last_atfl = "";
+char *curr_atff = NULL;
+int conllo = 0, toks_stdin;
 const char *tokfn = NULL;
 FILE *sigsfp = NULL;
 
@@ -51,6 +52,13 @@ L_args(unsigned char *s)
   *curr_atfl++ = '\0';
   curr_labl = (char*)pool_copy((uccp)curr_labl, p);
   curr_atfl = (char*)pool_copy((uccp)curr_atfl, p);
+  if (strcmp(curr_atfl, last_atfl))
+    {
+      if (hinst)
+	hash_free(hinst, NULL);
+      hinst = hash_create(128);
+      last_atfl = curr_atfl;
+    }
 }
 
 #define form_char(fp,c,v) fprintf(fp,"\t%s%s",c,((!conllo&&v)?v:""))
@@ -76,13 +84,13 @@ form_serialize_tab(FILE *f_f2, Form *f)
 }
 
 void
-sb_out(const char *inst)
+sb_out(const char *inst, int nth)
 {
-  fprintf(sigsfp, "%s\t%s\t%s\n", curr_atff, curr_atfl, inst);
+  fprintf(sigsfp, "%s\t%s/%d\t%s\n", curr_atff, curr_atfl, nth, inst);
 }
 
 void
-sebo(Form *f, const char *inst)
+sebo(Form *f, const char *inst, int nth)
 {
   if (f->pos && 'V' == *f->pos)
     {      
@@ -93,15 +101,43 @@ sebo(Form *f, const char *inst)
 	      const char *c = strchr((ccp)f->morph, ';');
 	      if (c)
 		{
-		  ++c;
-		  if ('*' == *c)
-		    ++c;
-		  if ('a' != *c && !strchr(c, ','))
-		    sb_out(inst);
+		  int len = strlen(c);
+		  if (!strcmp(&c[len-2], "am")
+		      && (';' == c[len-3] || '.' == c[len-3]))
+		    {
+		      fprintf(stderr, "%s:%s: sentence boundary at copula %s\n",
+			      curr_atff, curr_atfl, f->form);
+		      sb_out(inst, nth);
+		    }
+		  else
+		    {
+		      ++c;
+		      if (!strstr(c, ".a") && !strstr(c, ".*a") && !strchr(c, ','))
+			sb_out(inst, nth);
+		    }
+		}
+	      else
+		{
+		  if (!strncmp((ccp)f->morph, "nu:", 3))
+		    fprintf(stderr, "%s:%s: sentence boundary at nu:~ form %s\n",
+			    curr_atff, curr_atfl, f->form);
+		  sb_out(inst, nth);
 		}
 	    }
 	  else if (strchr((ccp)f->morph, '!'))
-	    sb_out(inst);
+	    sb_out(inst, nth);
+	  else
+	    {
+	      /* check for ",am" or ",ak.am" etc */
+	      int len = strlen((ccp)f->morph);
+	      if (!strcmp((ccp)&f->morph[len-2], "am")
+		  && (';' == f->morph[len-3] || '.' == f->morph[len-3]))
+		{
+		  fprintf(stderr, "%s:%s: sentence boundary at copula %s\n",
+			  curr_atff, curr_atfl, f->form);
+		  sb_out(inst, nth);
+		}
+	    }
 	}
     }
 }
@@ -129,7 +165,13 @@ sigs_out(char *l)
     {
       form_parse((uccp)"<tok>", 0, (ucp)sig, &f2, NULL);
       if (sentence_boundaries)
-	sebo(&f2, inst);
+	{
+	  int nth;
+	  if (!(nth = (uintptr_t)hash_find(hinst, (uccp)inst)))
+	    inst = (char*)pool_copy((uccp)inst,p);
+	  hash_add(hinst, (uccp)inst, (void*)(uintptr_t)++nth);
+	  sebo(&f2, inst, nth);
+	}
       else
 	{
 	  fprintf(sigsfp, "%s\t%s\t%s\t%s\t%s", curr_atff, curr_atfl, inst, f2.project, wid);
@@ -142,12 +184,16 @@ sigs_out(char *l)
 int
 main(int argc, char *const *argv)
 {
-  options(argc, argv, "s");
+  options(argc, argv, "sS");
   sigsfp = stdout;
   tokfn = argv[optind];
   int xcl = 0;
   p = pool_init();
-  FILE *tokfp = xfopen(tokfn, "r");
+  FILE *tokfp = NULL;
+  if (toks_stdin)
+    tokfp = stdin;
+  else
+    tokfp = xfopen(tokfn, "r");
   if (tokfp)
     {
       unsigned char *s;
@@ -164,6 +210,8 @@ main(int argc, char *const *argv)
 	}
       xfclose(argv[1], tokfp);
     }
+  if (hinst)
+    hash_free(hinst, NULL);
 }
 
 int
@@ -172,6 +220,9 @@ opts(int argc, const char *optarg)
   switch (argc)
     {
     case 's':
+      toks_stdin = 1;
+      break;
+    case 'S':
       sentence_boundaries = 1;
       break;
     default:

@@ -27,6 +27,7 @@ int ok_no_files = 0;
 int status;
 int rnvtrace;
 int verbose;
+int xml_to_stdout = 0;
 
 int odt_serial = 0;
 
@@ -274,7 +275,7 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "ACDcgI:Llmtvx");
+  options(argc, argv, "ACDcgI:Llmstvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
   if (check_mode)
@@ -357,6 +358,9 @@ opts(int opt, const char *arg)
     case 'm':
       if (i_am_linux)
 	memuse_mode = 1;
+      break;
+    case 's':
+      xml_to_stdout = 1;
       break;
     case 't':
       ++trace_mode;
