@@ -190,6 +190,8 @@ ax_jox_node(Node *np)
   
   if (np->user)
     ap = axjoxfnc(nodename,strlen(nodename));
+  else if (np->ns == NS_GDL && !strcmp(np->name, "g:det"))
+    nodename = "g:d";
 
   Ratts *r = NULL;
   const char **p = NULL;
