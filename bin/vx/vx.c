@@ -10,6 +10,11 @@ main(int argc, char *const *argv)
 {
   mesg_init();
   options(argc, argv, "CIt:");
+  if (conllo_mode)
+    {
+      vx_attr_p = vx_attr_xmlid;
+      xmlid_h = hash_create(1024);
+    }
   Tree *tp = vx_load(argv[optind]);
   if (identity_mode)
     vx_identity(tp, stdout);

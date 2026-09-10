@@ -1,7 +1,10 @@
 #include <oraccsys.h>
 #include "vx.h"
 
+vx_attr_fnc vx_attr_p = vx_attr;
+
 static Hash *seen_h = NULL;
+Hash *xmlid_h = NULL;
 
 static const char *
 vx_name(Hash *xtf_h, Tree *tp, const char *name, nscode *codep)
@@ -84,10 +87,31 @@ vx_attr(Node *np, const char **atts)
 }
 
 void
+vx_attr_xmlid(Node *np, const char **atts)
+{
+  int i;
+  for (i = 0; atts[i]; i += 2)
+    {
+      nscode nsc;
+      const char *aname = vx_name(xtf_a, np->tree, atts[i], &nsc);
+      const char *aval;
+      prop_node_add(np, PROP_ANY, PG_XML, aname,
+		    aval = (ccp)hpool_copy((uccp)atts[i+1], np->tree->tm->pooh));
+      if (!strcmp(aname, "xml:id"))
+	hash_add(xmlid_h, (uccp)aval, np);
+    }
+}
+
+void
 vx_char(Tree *tp, const char *c)
 {
+#if 1
+  /* This is definitely OK for gdl; need to keep an eye on it for other NS */
+  tp->curr->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
+#else
   Node *np = tree_add(tp, NS_NONE, "#", tp->curr->depth+1, tree_mloc(tp, pi_file, pi_line));
   np->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
+#endif
 }
 
 static Node *
@@ -115,7 +139,7 @@ vx_sH(void *vp, const char *name, const char **atts)
     vx_char(vp, c);
   Node *ep = vx_push(vp, name);
   if (atts[0])
-    vx_attr(ep, atts);
+    vx_attr_p(ep, atts);
 }
 
 static void
@@ -150,5 +174,17 @@ vx_load(const char *fn)
   runexpat_omit_rp_wrap();
   runexpatNSuD(i_list, fnlist, vx_sH_root, vx_eH, ":", tp);
   hash_free(seen_h, NULL);
+  if (translation_fn)
+    {
+      fnlist[0] = translation_fn;
+      Tree *tr_tp = tree_init();
+      tree_ns_default(tr_tp, NS_XTF);
+      tree_ns_declare(tr_tp, NS_ATF);
+      seen_h = hash_create(100);
+      runexpatNSuD(i_list, fnlist, vx_sH_root, vx_eH, ":", tr_tp);
+      hash_free(seen_h, NULL);
+      tree_root_append(tp, tr_tp->root);
+      tree_ns_merge(tp, tr_tp->ns_used);
+    }
   return tp;
 }

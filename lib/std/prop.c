@@ -170,7 +170,7 @@ prop_find_pg(Prop *p, int ptype, int gtype)
 Prop*
 prop_find_kv(Prop *p, const char *key, const char *value)
 {
-  if (!key)
+  if (!p || !key)
     return NULL;
   while (p)
     {

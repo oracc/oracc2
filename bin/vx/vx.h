@@ -20,7 +20,13 @@ typedef struct vxsel
   List *l; /* list of Node * to add matches to; may not be NULL */
 } Vxsel;
 
-extern Hash *xtf_a, *xtf_e;
+typedef void (*vx_attr_fnc)(Node *np, const char **atts);
+extern vx_attr_fnc vx_attr_p;
+
+extern Hash *xtf_a, *xtf_e, *xmlid_h;
+extern const char *translation_fn;
+extern void vx_attr(Node *np, const char **atts);
+extern void vx_attr_xmlid(Node *np, const char **atts);
 
 extern List *vx_tags(Node *np, const char *tag);
 extern List *vx_tags_by_attr(Node *np, const char *tag, const char *attr, const char *value, int match);
@@ -31,5 +37,8 @@ extern void vx_conllo(Tree *tp, FILE *fp);
 extern void vx_identity(Tree *tp, FILE *fp);
 extern void vx_selector(Node *, Vxsel*);
 extern void vx_xtf_init(void);
+extern void vx_atf_node(Node *np, FILE *fp);
+extern void vx_cun_node(Node *np, FILE *fp);
+extern void vx_tra_node(Node *np, FILE *fp);
 
 #endif/*VX_H_*/

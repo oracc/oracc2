@@ -8,11 +8,11 @@ vx_component(Tree *tp, const char *name)
   if (!strcmp(tp->root->name, name)) /* normally xtf */
     return tp->root;
 
-  if (tp->root->next && !strcmp(tp->root->next->name, name)) /* translation lives here */
-    return tp->root->next;
-
   if (!strcmp(tp->root->kids->name, name)) /* composite, transliteration */
     return tp->root->kids;
+
+  if (tp->root->kids->next && !strcmp(tp->root->kids->next->name, name)) /* translation lives here */
+    return tp->root->kids->next;
 
   if (tp->root->kids->last && !strcmp(tp->root->kids->last->name, name)) /* XCL */
     return tp->root->kids->last;

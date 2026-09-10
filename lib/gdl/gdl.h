@@ -254,4 +254,6 @@ extern void gdl_gloss_props(Node *d);
 extern void gdl_surro(void);
 extern void gdl_set_lzr_sparse(Hash *l);
 
+extern void gdl_atf_node(Node *np, FILE *fp);
+
 #endif /*GDL_H_*/

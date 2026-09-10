@@ -14,7 +14,7 @@ translation =
       "interlinear" | "parallel" | "labeled" | "unitary" 
     },
     attribute xtr:cols { xsd:nonNegativeInteger }?,
-    (trans-unit | trans-note | trans-dollar | trans-comment | h)*,
+    (trans-unit | trans-div | trans-note | trans-dollar | trans-comment | h)*,
     map?
   }
 
@@ -48,6 +48,16 @@ trans-note =
     (element xh:p { ctr , htext } 
      | trans-comment)*
   }
+
+trans-div =
+    element xh:div {
+      attribute data-unit { text }, 
+      attribute data-flabel { text }, 
+      attribute data-tlabel { text }?, 
+      attribute data-fref { text }, 
+      attribute data-tref { text }?,
+      innerp*
+    }
 
 trans-unit = 
   element xh:p {
