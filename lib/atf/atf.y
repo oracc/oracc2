@@ -421,7 +421,7 @@ tr.trans:
 
 tr.tran:
 		TR_TEXT			{ atr_text(@1, $1); }
-	|	TR_PAR			{ atr_para(); atr_pop(); }
+	|	TR_PAR			{ atr_para(); /*atr_pop();*/ }
 		;
 
 tr.inter:

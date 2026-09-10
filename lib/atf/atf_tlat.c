@@ -32,7 +32,7 @@ extern unsigned const char *curr_line_label;
 static unsigned char label_buf[128];
 static unsigned char last_label_buf[128];
 
-static Node *last_trans_node;
+static Node *last_trans_node, *unit_node;
 
 static int in_note = 0/*, last_label = 0*/;
 static int need_dir_rtl = 0;
@@ -121,8 +121,7 @@ atr_push(const char *s, Mloc *mp)
 {
   if (bld_trace)
     fprintf(stderr, "bld: atr_push %s to parent %s\n", s, curr_trans->tree->curr->name);
-  Node *np = tree_add(curr_trans->tree, NS_HTM, s, curr_trans->tree->curr->depth, NULL);
-  np->mloc = mloc_mloc(mp);
+  (void)tree_add(curr_trans->tree, NS_HTM, s, curr_trans->tree->curr->depth, NULL);
   return tree_push(curr_trans->tree);
 }
 
@@ -135,6 +134,7 @@ atr_translation(void)
   status = 0;
   /*last_label = 0;*/
   trans_wid = 0;
+  unit_node = NULL;
 
   if (dollar_fifo)
     dollar_reset();
@@ -225,11 +225,67 @@ atr_inter(Mloc l, unsigned char *s)
 void
 atr_span(Mloc l, unsigned char *s)
 {
+  char *from = NULL, *to = NULL;
+  while (*s && !isspace(*s))
+    ++s;
+  while (isspace(*s))
+    ++s;
+  if (*s)
+    {
+      from = (char*)s;
+      if ((to = strstr((ccp)from, " - ")))
+	{
+	  *to = '\0';
+	  to += 3;
+	}
+      const char *fref = (ccp)check_label(&l,(uccp)from,etu_unitary,NULL);
+      const char *tref = NULL;
+      if (fref)
+	h_arefs(ucc(fref));
+      else
+	mesg_verr(&l, "%s: label used in @span is not in transliteration", from);
+      atf_xprop(unit_node, "data-flabel", (ccp)from);
+      if (to)
+	{
+	  atf_xprop(unit_node, "data-tlabel", (ccp)to);
+	  tref = (ccp)check_label(&l,(uccp)to,etu_parallel,NULL);
+	  if (tref)
+	    h_arefs(ucc(tref));
+	  else
+	    mesg_verr(&l, "%s: label used in @span is not in transliteration", to);
+	}
+      atf_xprop(unit_node,"data-fref",fref);
+      if (tref)
+	atf_xprop(unit_node,"data-tref",tref);
+    }
+  else
+    mesg_verr(&l, "no range found in @span");
 }
 
 void
 atr_unit(Mloc l, unsigned char *s)
 {
+  if (unit_node)
+    atr_pop();
+  unit_node = atr_push("xh:div", &l);
+  while (*s && !isspace(*s))
+    ++s;
+  while (isspace(*s))
+    ++s;
+  if (*s)
+    {
+      unsigned char *u = s;
+      while (isdigit(*s))
+	++s;
+      while (isspace(*s))
+	++s;
+      if (*s)
+	mesg_verr(&l, "junk after unit number %s", u);
+      else
+	atf_xprop(unit_node, "data-unit", (ccp)u);
+    }
+  else
+    mesg_verr(&l, "no unit number found in @unit");
 }
 
 /* This is passed @(i 1) or @label i 1 */
