@@ -1,6 +1,6 @@
 include ../../../oracc-am-rules.txt
 
-bin_PROGRAMS=bgmx ngmx lemx postntokx numtokx wid2err wid2lem
+bin_PROGRAMS=bgmx ngmx lemx postntokx numtokx wid2err wid2lem lemsb
 
 bgmx_SOURCES=bgmx.c
 bgmx_LDADD=$(xLDADD)
@@ -23,3 +23,5 @@ wid2err_LDADD=$(xLDADD)
 wid2lem_SOURCES=wid2lem.c
 wid2lem_LDADD=$(xLDADD)
 
+lemsb_SOURCES=lemsb.c
+lemsb_LDADD=$(xLDADD)

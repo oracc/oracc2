@@ -8,6 +8,8 @@
  * tab-delimited format
  */
 
+int sentence_boundaries = 0;
+
 Pool *p;
 char *curr_labl = 0;
 char *curr_atfl = 0;
@@ -74,6 +76,37 @@ form_serialize_tab(FILE *f_f2, Form *f)
 }
 
 void
+sb_out(const char *inst)
+{
+  fprintf(sigsfp, "%s\t%s\t%s\n", curr_atff, curr_atfl, inst);
+}
+
+void
+sebo(Form *f, const char *inst)
+{
+  if (f->pos && 'V' == *f->pos)
+    {      
+      if (f->morph)
+	{
+	  if (strchr((ccp)f->morph, ':'))
+	    {
+	      const char *c = strchr((ccp)f->morph, ';');
+	      if (c)
+		{
+		  ++c;
+		  if ('*' == *c)
+		    ++c;
+		  if ('a' != *c && !strchr(c, ','))
+		    sb_out(inst);
+		}
+	    }
+	  else if (strchr((ccp)f->morph, '!'))
+	    sb_out(inst);
+	}
+    }
+}
+
+void
 sigs_out(char *l)
 {
   Form f2;
@@ -95,17 +128,23 @@ sigs_out(char *l)
   if ('@' == *sig)
     {
       form_parse((uccp)"<tok>", 0, (ucp)sig, &f2, NULL);
-      fprintf(sigsfp, "%s\t%s\t%s\t%s\t%s", curr_atff, curr_atfl, inst, f2.project, wid);
-      form_serialize_tab(sigsfp, &f2);
-      fputc('\n', sigsfp);
+      if (sentence_boundaries)
+	sebo(&f2, inst);
+      else
+	{
+	  fprintf(sigsfp, "%s\t%s\t%s\t%s\t%s", curr_atff, curr_atfl, inst, f2.project, wid);
+	  form_serialize_tab(sigsfp, &f2);
+	  fputc('\n', sigsfp);
+	}
     }
 }
 
 int
 main(int argc, char *const *argv)
 {
+  options(argc, argv, "s");
   sigsfp = stdout;
-  tokfn = argv[1];
+  tokfn = argv[optind];
   int xcl = 0;
   p = pool_init();
   FILE *tokfp = xfopen(tokfn, "r");
@@ -126,3 +165,18 @@ main(int argc, char *const *argv)
       xfclose(argv[1], tokfp);
     }
 }
+
+int
+opts(int argc, const char *optarg)
+{
+  switch (argc)
+    {
+    case 's':
+      sentence_boundaries = 1;
+      break;
+    default:
+      return 1;
+    }
+  return 0;
+}
+void help(void){}
