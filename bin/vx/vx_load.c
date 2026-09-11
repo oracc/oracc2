@@ -134,10 +134,26 @@ vx_root(Tree *tp, const char *nam)
 static void
 vx_sH(void *vp, const char *name, const char **atts)
 {
+  static int wordindex = 0;
   char *c = charData_retrieve();
   if (*c)
     vx_char(vp, c);
   Node *ep = vx_push(vp, name);
+  const char *colon = strrchr(name, ':');
+  if (colon)
+    ++colon;
+  else
+    colon = name;
+  if (!strcmp(colon, "l"))
+    wordindex = 0;
+  else if (!strcmp(colon, "w"))
+    {
+      prop_node_add(ep, PROP_ANY, PG_ATF, "atfl",
+		    (ccp)hpool_copy((uccp)itoa(pi_line), ep->tree->tm->pooh));
+      prop_node_add(ep, PROP_ANY, PG_ATF, "atfw",
+		    (ccp)hpool_copy((uccp)itoa(++wordindex), ep->tree->tm->pooh));
+    }
+
   if (atts[0])
     vx_attr_p(ep, atts);
 }
@@ -155,6 +171,8 @@ static void
 vx_sH_root(void *vp, const char *name, const char **atts)
 {
   vx_root(vp, name);
+  prop_node_add(((Tree*)vp)->root, PROP_ANY, PG_ATF, "atff",
+		(ccp)pool_copy((uccp)pi_file, ((Tree*)vp)->tm->pool));
   if (atts[0])
     vx_attr(((Tree*)vp)->root, atts);
   XML_SetElementHandler(curr_rip->parser, vx_sH, vx_eH);  

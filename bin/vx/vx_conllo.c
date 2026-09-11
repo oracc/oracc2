@@ -46,6 +46,7 @@ vxc_words(Conll_sent *s, List *wl)
       char *bs = strchr(w->c.FORM, '\\'); if (bs) *bs = '\0';
       w->c.UPOS = vx_att(xff, "epos");
       w->c.XPOS = w->c.FEATS = w->c.HEAD = w->c.DEPREL = w->c.DEPS = "_";
+      w->p.LANG = vx_att(xff, "xml:lang");
       w->p.CF = vx_att(xff, "cf");
       w->p.GW = vx_att(xff, "gw");
       w->p.SENSE = vx_att(xff, "sense");
@@ -56,13 +57,25 @@ vxc_words(Conll_sent *s, List *wl)
       w->p.M1 = vx_att(xff, "morph");
       w->p.M2 = vx_att(xff, "morph2");
       w->p.STEM = vx_att(xff, "stem");
+      w->p.NORM = vx_att(xff, "norm");
       char cgp[strlen(w->p.CF)+strlen(w->p.GW)+strlen(w->p.POS)+strlen("[]0")];
       sprintf(cgp, "%s[%s]%s", w->p.CF, w->p.GW, w->p.POS);
       w->c.LEMMA = vx_epsd_cft(cgp);
-      w->p.OID = vx_epsd_cft(cgp);
-      w->p.LEMMAC = vx_epsd_cft(w->c.LEMMA);
+      w->p.OID = vx_epsd_oid(cgp);
+      char cgspe[strlen(cgp)+strlen(w->p.SENSE)+strlen(w->p.EPOS)+strlen("//'0")];
+      sprintf(cgspe, "%s[%s//%s]%s'%s", w->p.CF, w->p.GW, w->p.SENSE, w->p.POS, w->p.EPOS);
+      w->p.SENSEID = vx_epsd_sid(cgspe);
+      w->p.LEMMAC = vx_epsd_ucun(w->c.LEMMA);
       w->p.FORMC = vx_epsd_ucun(w->c.FORM);
       w->p.BASEC = vx_epsd_ucun(w->p.BASE);
+      w->ref = vx_att(lp, "ref");
+      w->lp = lp;
+      w->wp = hash_find(xmlid_h, (uccp)w->ref);
+      w->atfl = vx_att(w->wp, "atfl");
+      w->atfw = vx_att(w->wp, "atfw");
+      w->wid = vx_att(w->wp, "xml:id");
+      w->lid = vx_att(w->wp->rent, "xml:id");
+      w->lbl = vx_att(w->wp->rent, "label");
     }
 }
 
@@ -87,10 +100,13 @@ vxc_sentences(Conll_doc *d, Node **snp, Node **tnp)
       node_iterator(snp[i], cunp, (nodehandler)vxc_cun, NULL);
       fclose(cunp);
 
-      s_words = 0;
-      FILE *trap = open_memstream(&s->tren, &ignored);
-      node_iterator(tnp[i], trap, (nodehandler)vxc_tra, NULL);
-      fclose(trap);
+      if (tnp && tnp[i])
+	{
+	  s_words = 0;
+	  FILE *trap = open_memstream(&s->tren, &ignored);
+	  node_iterator(tnp[i], trap, (nodehandler)vxc_tra, NULL);
+	  fclose(trap);
+	}
 
       vxc_words(s, w);
     }
@@ -152,6 +168,8 @@ vxc_doc(Conll_run *r, Tree *tp)
       const char *id = (ccp)pool_copy((uccp)vx_att(tlit, "xml:id"), r->pool);
       const char *nm = (ccp)pool_copy((uccp)vx_att(tlit, "n"), r->pool);
       Conll_doc *d = conll_doc(r, id, nm, nsent);
+      d->atff = vx_att(tp->root, "atff");
+      d->project = vx_att(tlit, "project");
       vxc_sentences(d, snodes, tnodes);
     }
 }

@@ -19,6 +19,8 @@ typedef struct conll_doc
 {
   const char *doc_id;
   const char *doc_nm;
+  const char *atff;
+  const char *project;
   struct conll_sent *sents;
   int nsents;
   int sindex;
@@ -83,6 +85,14 @@ typedef struct conll_word
   struct conll_core c;
   struct conll_plus p;
   struct conll_run *run;
+  Node *lp;
+  Node *wp;
+  const char *ref;
+  const char *atfl;
+  const char *atfw;
+  const char *wid;
+  const char *lid;
+  const char *lbl;
 } Conll_word;
 
 extern Conll_run *conll_init(void);

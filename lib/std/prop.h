@@ -18,6 +18,7 @@ enum propgroup
     PG_GDL_GROUP,
     PG_GDL_STATE,
     PG_GVL_INFO,
+    PG_ATF,
     PG_XML,
     PG_XNS,
     PU_VOIDSTAR,     /* PG_XXX > PG_VOIDSTAR use u.v */

@@ -11,7 +11,7 @@
   " "									\
   "ORACC:OID ORACC:SENSEID ORACC:FORMC ORACC:LEMMAC ORACC:BASEC ORACC:WORDID" \
   " "									\
-  "ORACC:LINEID ORACC:LINELABEL"
+  "ORACC:LINEID ORACC:LINELABEL ORACC:ATFLW"
 
 Conll_run *
 conll_init(void)
@@ -69,7 +69,7 @@ void
 conll_dump_oracc(Conll_word *w, FILE *fp)
 {
 #define cdo(f) fputc('\t',fp);fputs(w->p.f?w->p.f:"_",fp)
-  cdo(PROJECT);
+#define cdw(f) fputc('\t',fp);fputs(w->f?w->f:"_",fp)
   cdo(LANG);
   cdo(CF);
   cdo(GW);
@@ -90,6 +90,13 @@ conll_dump_oracc(Conll_word *w, FILE *fp)
   cdo(WORDID);
   cdo(LINEID);
   cdo(LINELABEL);
+  cdw(wid);
+  cdw(lid);
+  cdw(lbl);
+  if (w->atfl)
+    fprintf(fp, "\t%s/%s", w->atfl, w->atfw);
+  else
+    fputs("\t_", fp);
 }
 
 void
@@ -119,6 +126,10 @@ conll_dump(Conll_run *r, FILE *fp)
     {
       fprintf(fp, "# newdoc id = %s\n", d->doc_id);
       fprintf(fp, "# docname = %s\n", d->doc_nm);
+      if (d->atff)
+	fprintf(fp, "# atffile = %s\n", d->atff);
+      if (d->project)
+	fprintf(fp, "# project = http://oracc.org/%s\n", d->project);
       int i;
       for (i = 0; i < d->nsents; ++i)
 	{
