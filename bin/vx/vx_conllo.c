@@ -1,13 +1,9 @@
 #include <oraccsys.h>
 #include <gdl.h>
 #include "vx.h"
+#include "conll.h"
 
 Node **tnodes;
-
-static void
-vxc_header(Tree *tp, FILE *fp)
-{
-}
 
 static void
 vxc_atf(Node *np, FILE *fp)
@@ -37,62 +33,134 @@ vxc_tra(Node *np, FILE *fp)
   vx_tra_node(np, fp);
 }
 
-static void
-vxc_sentences(Tree *tp, FILE *fp)
+void
+vxc_words(Conll_sent *s, List *wl)
+{
+  Node *lp;
+  for (lp = list_first(wl); lp; lp = list_next(wl))
+    {
+      Conll_word *w = conll_word(s);
+      Node *xff = lp->kids;
+      w->c.ID = (ccp)pool_copy((uccp)itoa(s->windex), s->run->pool);
+      w->c.FORM = vx_att(xff, "form");
+      char *bs = strchr(w->c.FORM, '\\'); if (bs) *bs = '\0';
+      w->c.UPOS = vx_att(xff, "epos");
+      w->c.XPOS = w->c.FEATS = w->c.HEAD = w->c.DEPREL = w->c.DEPS = "_";
+      w->p.CF = vx_att(xff, "cf");
+      w->p.GW = vx_att(xff, "gw");
+      w->p.SENSE = vx_att(xff, "sense");
+      w->p.POS = vx_att(xff, "pos");
+      w->p.EPOS = vx_att(xff, "epos");
+      w->p.BASE = vx_att(xff, "base");
+      w->p.CONT = vx_att(xff, "cont");
+      w->p.M1 = vx_att(xff, "morph");
+      w->p.M2 = vx_att(xff, "morph2");
+      w->p.STEM = vx_att(xff, "stem");
+      char cgp[strlen(w->p.CF)+strlen(w->p.GW)+strlen(w->p.POS)+strlen("[]0")];
+      sprintf(cgp, "%s[%s]%s", w->p.CF, w->p.GW, w->p.POS);
+      w->c.LEMMA = vx_epsd_cft(cgp);
+      w->p.OID = vx_epsd_cft(cgp);
+      w->p.LEMMAC = vx_epsd_cft(w->c.LEMMA);
+      w->p.FORMC = vx_epsd_ucun(w->c.FORM);
+      w->p.BASEC = vx_epsd_ucun(w->p.BASE);
+    }
+}
+
+void
+vxc_sentences(Conll_doc *d, Node **snp, Node **tnp)
 {
   extern int s_words;
+  int i;
+  for (i = 0; i < d->nsents; ++i)
+    {
+      List *w = vx_tags(snp[i], "xcl:l");
+      Conll_sent *s = conll_sent(d, list_len(w));
+      size_t ignored;
+
+      s_words = 0;
+      FILE *atfp = open_memstream(&s->text, &ignored);
+      node_iterator(snp[i], atfp, (nodehandler)vxc_atf, NULL);
+      fclose(atfp);
+
+      s_words = 0;
+      FILE *cunp = open_memstream(&s->xsux, &ignored);
+      node_iterator(snp[i], cunp, (nodehandler)vxc_cun, NULL);
+      fclose(cunp);
+
+      s_words = 0;
+      FILE *trap = open_memstream(&s->tren, &ignored);
+      node_iterator(tnp[i], trap, (nodehandler)vxc_tra, NULL);
+      fclose(trap);
+
+      vxc_words(s, w);
+    }
+}
+
+static Node **
+vxc_snodes(Tree *tp, int *nsp)
+{
   Node *xcl = vx_component(tp, "xcl:xcl");
   if (xcl)
     {
       List *s = vx_tags_by_attr(xcl, "xcl:c", "type", "sentence", 0);
-      if (list_len(s))
+      if (s)
 	{
-	  size_t n_sent = list_len(s);
-	  Node **snodes = list2array(s);
-	  int i;
-	  for (i = 0; snodes[i]; ++i)
-	    {
-	      Node *sp = snodes[i];
-	      char *atf_buf, *cun_buf, *tra_buf;
-	      size_t atf_len, cun_len, tra_len;
-
-	      s_words = 0;
-	      FILE *atfp = open_memstream(&atf_buf, &atf_len);
-	      node_iterator(sp, atfp, (nodehandler)vxc_atf, NULL);
-	      fclose(atfp);
-	      fprintf(stderr, "%s\n", atf_buf);
-
-	      s_words = 0;
-	      FILE *cunp = open_memstream(&cun_buf, &cun_len);
-	      node_iterator(sp, cunp, (nodehandler)vxc_cun, NULL);
-	      fclose(cunp);
-	      fprintf(stderr, "%s\n", cun_buf);
-
-	      s_words = 0;
-	      FILE *trap = open_memstream(&tra_buf, &tra_len);
-	      node_iterator(tnodes[i], trap, (nodehandler)vxc_tra, NULL);
-	      fclose(trap);
-	      fprintf(stderr, "%s\n", tra_buf);
-	    }
+	  *nsp = list_len(s);
+	  return (Node**)list2array(s);
 	}
+      else
+	{
+	  *nsp = 0;
+	  return NULL;
+	}      
     }
+  return NULL;
 }
 
 Node **
-vxc_translations(Tree *tp)
+vxc_tnodes(Tree *tp, int *ntp)
 {
    Node *tra = vx_component(tp, "xtr:translation");
-   List *divs = vx_tags_by_attr(tra, "xh:div", "data-unit", NULL, 0);
-   if (list_len(divs))
-     return (Node**)list2array(divs);
-   else
-     return NULL;
+   if (tra)
+     {
+       List *divs = vx_tags_by_attr(tra, "xh:div", "data-unit", NULL, 0);
+       if (list_len(divs))
+	 {
+	   *ntp = list_len(divs);
+	   return (Node**)list2array(divs);
+	 }
+       else
+	 {
+	   *ntp = 0;
+	   return NULL;
+	 }
+     }
+   return NULL;
+}
+
+void
+vxc_doc(Conll_run *r, Tree *tp)
+{
+  int nsent, ntran;
+  Node *tlit = vx_component(tp, "composite");
+  if (!tlit)
+    tlit = vx_component(tp, "transliteration");
+  if (tlit)
+    {
+      Node **snodes = vxc_snodes(tp, &nsent);
+      Node **tnodes = vxc_tnodes(tp, &ntran);
+      const char *id = (ccp)pool_copy((uccp)vx_att(tlit, "xml:id"), r->pool);
+      const char *nm = (ccp)pool_copy((uccp)vx_att(tlit, "n"), r->pool);
+      Conll_doc *d = conll_doc(r, id, nm, nsent);
+      vxc_sentences(d, snodes, tnodes);
+    }
 }
 
 void
 vx_conllo(Tree *tp, FILE *fp)
 {
-  vxc_header(tp, fp);
-  tnodes = vxc_translations(tp);
-  vxc_sentences(tp, fp);
+  Conll_run *r = conll_init();
+  vx_epsd_init();
+  vxc_doc(r, tp);
+  conll_dump(r, fp);
 }

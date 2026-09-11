@@ -123,7 +123,7 @@ roco_hash_hash(Hash *h, Roco *r)
 	  if (!strcmp((ccp)r->rows[i][0], ".include"))
 	    roco_hash_hash(h, roco_load1((ccp)r->rows[i][1]));      
 	  else
-	    hash_add(h, r->rows[i][0], r->rows[i][1]);
+	    hash_add(h, r->rows[i][r->hash_key_col], r->rows[i][1]);
 	}
     }
 }
