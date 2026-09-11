@@ -302,7 +302,7 @@ ax_jox_lines(Group *gp)
       Node *np = gp->lines[n]->np;
       if (np->kids)
 	{
-	  if (N_U_GVL == np->kids->utype)
+	  if (NS_GDL == np->kids->ns)
 	    grx_jox_gdl(np, np->user);
 	  else
 	    ax_jox_node(np);
