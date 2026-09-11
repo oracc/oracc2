@@ -11,12 +11,11 @@ typedef struct conll_run
   Memo *m_doc;
   Memo *m_sent;
   Memo *m_word;
-  Pool *pool;
-  Pool *pooh;
 } Conll_run;
 
 typedef struct conll_doc
 {
+  Tree *tree;
   const char *doc_id;
   const char *doc_nm;
   const char *atff;
@@ -37,7 +36,7 @@ typedef struct conll_sent
   struct conll_word *words;
   int nwords;
   int windex;
-  struct conll_run *run;
+  struct conll_doc *doc;
 } Conll_sent;
 
 typedef struct conll_core
@@ -51,7 +50,7 @@ typedef struct conll_core
   const char *HEAD;
   const char *DEPREL;
   const char *DEPS;
-  Keva **MISC;
+  const char *MISC;
 } Conll_core;
 
 typedef struct conll_plus
@@ -84,19 +83,22 @@ typedef struct conll_word
 {
   struct conll_core c;
   struct conll_plus p;
-  struct conll_run *run;
+  struct conll_sent *sent;
   Node *lp;
   Node *wp;
+  List *lmisc;
   const char *ref;
   const char *atfl;
   const char *atfw;
   const char *wid;
   const char *lid;
   const char *lbl;
+  const char *dis;
 } Conll_word;
 
 extern Conll_run *conll_init(void);
 extern Conll_doc *conll_doc(Conll_run *r, const char *id, const char *nm, int nsents);
+extern void conll_misc(Conll_word *w, const char *key, const char *val);
 extern Conll_sent *conll_sent(Conll_doc *d, size_t nwords);
 extern Conll_word *conll_word(Conll_sent *s);
 

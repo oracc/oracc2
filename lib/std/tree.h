@@ -30,6 +30,10 @@ typedef struct tree {
   int rootless; /* non-zero means don't print root node */
 } Tree;
 
+#define tm_keva(t_p) t_p->tm->keva_mem
+#define tm_pooh(t_p) t_p->tm->pooh
+#define tm_pool(t_p) t_p->tm->pool
+
 struct prop;
 
 typedef enum usertype { N_U_NODE=0 ,

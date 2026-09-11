@@ -21,8 +21,6 @@ conll_init(void)
   r->m_doc = memo_init(sizeof(Conll_doc), 8);
   r->m_sent = memo_init(sizeof(Conll_doc), 128);
   r->m_word = memo_init(sizeof(Conll_word), 256);
-  r->pool = pool_init();
-  r->pooh = hpool_init();
   return r;
 }
 
@@ -50,10 +48,10 @@ Conll_sent *
 conll_sent(Conll_doc *d, size_t nwords)
 {
   Conll_sent *s = &d->sents[d->sindex++];
-  s->sent_id = (ccp)pool_copy((uccp)itoa(d->sindex), d->run->pool);
+  s->sent_id = (ccp)pool_copy((uccp)itoa(d->sindex), tm_pool(d->tree));
   s->nwords = nwords;
   s->words = memo_new_array(d->run->m_word, s->nwords);
-  s->run = d->run;
+  s->doc = d;
   return s;
 }
 
@@ -61,8 +59,16 @@ Conll_word *
 conll_word(Conll_sent *s)
 {
   Conll_word *w = &s->words[s->windex++];
-  w->run = s->run;
+  w->sent = s;
   return w;
+}
+
+void
+conll_misc(Conll_word *w, const char *key, const char *val)
+{
+  if (!w->lmisc)
+    w->lmisc = list_create(LIST_SINGLE);
+  list_add(w->lmisc, keva_create(tm_keva(w->sent->doc->tree), key, val));
 }
 
 void
@@ -100,8 +106,16 @@ conll_dump_oracc(Conll_word *w, FILE *fp)
 }
 
 void
-conll_dump_misc(Keva **kp, FILE *fp)
+conll_dump_misc(List *lp, FILE *fp)
 {
+  Keva *k, *first;
+  for (k = first = list_first(lp); k; k = list_next(lp))
+    {
+      const char *sp = " ";
+      if (k == first)
+	sp = "\t";
+      fprintf(fp, "%s%s=%s", sp, k->k, k->v);
+    }
 }
 
 void
@@ -109,8 +123,9 @@ conll_dump_word(Conll_word *w, FILE *fp)
 {
   fprintf(fp, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
 	  w->c.ID, w->c.FORM, w->c.LEMMA, w->c.UPOS, w->c.XPOS, w->c.FEATS, w->c.HEAD, w->c.DEPREL, w->c.DEPS);
-  if (w->c.MISC)
-    conll_dump_misc(w->c.MISC, fp);
+
+  if (w->lmisc && list_len(w->lmisc))
+    conll_dump_misc(w->lmisc, fp);
   else
     fputs("\t_", fp);
   conll_dump_oracc(w, fp);

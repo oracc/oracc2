@@ -43,6 +43,16 @@ vx_epsd_oid(const char *cgp)
 }
 
 const char *
+vx_epsd_dis(const char *cgp)
+{
+  const char **r = hash_find(h_cft, (uccp)cgp);
+  if (r)
+    return r[3];
+  else
+    return "_";
+}
+
+const char *
 vx_epsd_sid(const char *cgspe)
 {
   const char **r = hash_find(h_sid, (uccp)cgspe);

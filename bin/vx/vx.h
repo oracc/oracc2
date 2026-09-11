@@ -42,6 +42,7 @@ extern void vx_cun_node(Node *np, FILE *fp);
 extern void vx_tra_node(Node *np, FILE *fp);
 extern void vx_epsd_init(void);
 extern const char *vx_epsd_cft(const char *cgp);
+extern const char *vx_epsd_dis(const char *cgp);
 extern const char *vx_epsd_oid(const char *cgp);
 extern const char *vx_epsd_sid(const char *cgspe);
 extern const char *vx_epsd_sgw(const char *cgspe);

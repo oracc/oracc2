@@ -41,7 +41,7 @@ vxc_words(Conll_sent *s, List *wl)
     {
       Conll_word *w = conll_word(s);
       Node *xff = lp->kids;
-      w->c.ID = (ccp)pool_copy((uccp)itoa(s->windex), s->run->pool);
+      w->c.ID = (ccp)pool_copy((uccp)itoa(s->windex), tm_pool(s->doc->tree));
       w->c.FORM = vx_att(xff, "form");
       char *bs = strchr(w->c.FORM, '\\'); if (bs) *bs = '\0';
       w->c.UPOS = vx_att(xff, "epos");
@@ -61,6 +61,8 @@ vxc_words(Conll_sent *s, List *wl)
       char cgp[strlen(w->p.CF)+strlen(w->p.GW)+strlen(w->p.POS)+strlen("[]0")];
       sprintf(cgp, "%s[%s]%s", w->p.CF, w->p.GW, w->p.POS);
       w->c.LEMMA = vx_epsd_cft(cgp);
+      w->dis = vx_epsd_dis(cgp);
+      conll_misc(w, "LId", w->dis);
       w->p.OID = vx_epsd_oid(cgp);
       char cgspe[strlen(cgp)+strlen(w->p.SENSE)+strlen(w->p.EPOS)+strlen("//'0")];
       sprintf(cgspe, "%s[%s//%s]%s'%s", w->p.CF, w->p.GW, w->p.SENSE, w->p.POS, w->p.EPOS);
@@ -165,9 +167,10 @@ vxc_doc(Conll_run *r, Tree *tp)
     {
       Node **snodes = vxc_snodes(tp, &nsent);
       Node **tnodes = vxc_tnodes(tp, &ntran);
-      const char *id = (ccp)pool_copy((uccp)vx_att(tlit, "xml:id"), r->pool);
-      const char *nm = (ccp)pool_copy((uccp)vx_att(tlit, "n"), r->pool);
+      const char *id = (ccp)pool_copy((uccp)vx_att(tlit, "xml:id"), tm_pool(tp));
+      const char *nm = (ccp)pool_copy((uccp)vx_att(tlit, "n"), tm_pool(tp));
       Conll_doc *d = conll_doc(r, id, nm, nsent);
+      d->tree = tp;
       d->atff = vx_att(tp->root, "atff");
       d->project = vx_att(tlit, "project");
       vxc_sentences(d, snodes, tnodes);
