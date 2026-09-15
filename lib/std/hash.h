@@ -74,6 +74,7 @@ extern long HashAccesses, HashCollisions;
 	    > (htab)->max_load_factor) \
 	  _hash_expand(htab)
 
+extern void hash_acc (Hash *htab, const unsigned char *key, uintptr_t data);
 extern  void hash_add (Hash *htab, const unsigned char *key, void *data);
 extern  Hash *hash_create (Unsigned32 count);
 extern  void hash_exec (Hash *htab, void (*fnc)(void *));

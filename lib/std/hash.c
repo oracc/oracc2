@@ -56,6 +56,27 @@ hash_add (Hash *htab, const unsigned char *key, void *data)
     _hash_expand (htab);
 }
 
+/* Hash accumulator: adds 'add' to data in form of uintptr_t */
+void
+hash_acc (Hash *htab, const unsigned char *key, uintptr_t data)
+{
+  Hash_element *q, **p = NULL;
+
+  q = _hash_lookup (htab, key, &p);
+  if (q != NULL)
+    {
+      q->data = (void*)((uintptr_t)q->data+data);
+      return;
+    }
+  *p = malloc (sizeof (Hash_element));
+  (*p)->key = key;
+  (*p)->data = (void*)data;
+  (*p)->next = NULL;
+
+  if (++htab->key_count / MUL (htab->segment_count, SEGMENT_SIZE) > htab->max_load_factor)
+    _hash_expand (htab);
+}
+
 #if HASH_STATISTICS
 long HashAccesses, HashCollisions;
 #endif
