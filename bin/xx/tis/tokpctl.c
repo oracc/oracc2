@@ -22,7 +22,7 @@ typedef struct sembister
 
 static Triple* ctrl_a_split(Triple *tp, char *s);
 static double pct(double amount, double total);
-static void print_pct(size_t total, int amount);
+static double print_pct(size_t total, int amount);
 static void print_row(char **row);
 
 Hash *wcounts, *scounts;
@@ -78,15 +78,18 @@ main(int argc, char *const *argv)
       /* replace column one's char* with a Triple* */
       r->rows[i][0] = (void*)ctrl_a_split(&t[i], (char*)r->rows[i][0]);
       r->rows[i][2] = (void*)(uintptr_t)atoi((ccp)r->rows[i][2]);
-      if (!t[i].dat)
+      if (t[i].ent && !t[i].dat)
+	hash_acc(wcounts, t[i].ent, (uintptr_t)r->rows[i][2]);
+      else if (t[i].sns && !t[i].dat)
+	hash_acc(scounts, t[i].sns, (uintptr_t)r->rows[i][2]);
+      else
 	{
-	  if (!t[i].sns)
-	    hash_acc(wcounts, t[i].ent, (uintptr_t)r->rows[i][2]);
-	  else
-	    hash_acc(scounts, t[i].sns, (uintptr_t)r->rows[i][2]);
+#if 0
+	  /* we don't calculate percentages for any row where dat is non-NULL */
+	  if (!t[i].ent && !t[i].sns)
+	    ++sig_count/* += (uintptr_t)r->rows[i][2]*/;
+#endif
 	}
-      else if (!t[i].ent && !t[i].sns)
-	++sig_count/* += (uintptr_t)r->rows[i][2]*/;
     }
 
   for (int i = 0; i < r->nlines; ++i)
@@ -111,7 +114,8 @@ ctrl_a_split(Triple *tp, char *s)
 	  if (*s)
 	    {
 	      *s++ = '\0';
-	      tp->dat = (uccp)s;
+	      if (*s)
+		tp->dat = (uccp)s;
 	    }
 	}
       else
@@ -124,12 +128,15 @@ ctrl_a_split(Triple *tp, char *s)
   return tp;
 }
 
-static void
+static double
 print_pct(size_t total, int amount)
 {
   double p = 0.0;
-  p = pct(amount, total);
-  fprintf(out_fp, "\t%g", p);
+  if (total)
+    fprintf(out_fp, "\t%.2g", p = pct(amount, total));
+  else
+    fputs("\t_", out_fp);
+  return p;
 }
 
 static double
@@ -152,8 +159,10 @@ print_row(char **row)
 #define rt_sns() (((Triple*)row[0])->sns)
 #define rt_dat() (((Triple*)row[0])->dat)
   size_t total;
+  int type;
   if (rt_ent())
     {
+      type = 1;
       if (rt_dat())
 	{
 	  fprintf(out_fp, "%s\x1\x1%s\t%s\t%ld", rt_ent(), rt_dat(), row[1], (uintptr_t)row[2]);
@@ -166,6 +175,7 @@ print_row(char **row)
     }
   else if (rt_sns())
     {
+      type = 2;
       if (rt_dat())
 	{
 	  fprintf(out_fp, "%s\x1%s\t%s\t%ld", rt_sns(), rt_dat(), row[1], (uintptr_t)row[2]);
@@ -178,10 +188,20 @@ print_row(char **row)
     }
   else
     {
+      type = 3;
       fprintf(out_fp, "%s\t%s\t%ld", rt_dat(), row[1], (uintptr_t)row[2]);
-      total = sig_count;
+      total = 0;
     }
-  print_pct((uintptr_t)row[2], total);
+  double p = print_pct(total,(uintptr_t)row[2]);
+  if (type == 1 || type == 2)
+    fprintf(stderr, "print_pct: %s %s %ccounts total=%ld; row[2] = %ld; %c = %.02g\n",
+	    type==1?"entry":"sense",
+	    type==1?rt_ent():rt_sns(),
+	    type==1?'w':'s',
+	    total,
+	    (uintptr_t)row[2],
+	    '%',
+	    p);
   fputc('\n', out_fp);
 }
 
