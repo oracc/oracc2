@@ -35,7 +35,7 @@ main(int argc, char * const*argv)
 {
   const char *file;
   FILE *in_fp;
-  options(argc,argv,"d:lno:p:");
+  options(argc,argv,"d:glno:p:");
 
   if (!curr_project && !index_dir)
     {
@@ -149,6 +149,9 @@ opts(int argc, const char *arg)
     {
     case 'd':
       index_dir = arg;
+      break;
+    case 'g':
+      curr_index = "tokg";
       break;
     case 'l':
       curr_index = "tokl";

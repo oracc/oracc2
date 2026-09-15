@@ -5,5 +5,4 @@
 # TOKENID TOKEN COUNT PERCENT
 #
 p=`oraccopt`
-tokexl -s $l -p$p | tee 02pub/l.tkx | tokix -p$p | \
-    tee 02pub/l.tix | tokpctl
+tokexl -s $l -p$p | tee 02pub/l.tkx | tokix -l -p$p | tee 02pub/l.tix | tokpctl
