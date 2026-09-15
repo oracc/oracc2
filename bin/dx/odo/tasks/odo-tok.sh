@@ -12,7 +12,7 @@ cut -f1 02pub/atf-data.tab | cut -d@ -f1 | pqxpand tok >$tok
 # These token lists contain all the project data including proxied
 # data
 mkdir -p 02pub/tokl
-cat $tok | ${bin}/tok2tisl.sh >02pub/tokl.tpc
+cat $tok | ${bin}/tok2tisl.sh >02pub/l.tpc
 
 mkdir -p 02pub/tokg
-cat $tok | ${bin}/tok2tisg.sh >02pub/tokg.tpc
+cat $tok | ${bin}/tok2tisg.sh >02pub/g.tpc
