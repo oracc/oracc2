@@ -267,12 +267,11 @@ grx_jox(Node *np, const char *gdltag)
     }
 }
 
-/* This function gets passed the <l> node by ax; it needs to process
-   all children of <l> */
+/* Caller ax uses this for any node that has ns=NS_GDL */
 int
 grx_jox_gdl(Node *np, Node *gdl)
 {
-  if (np && np->kids)
-    grx_jox_node(np->kids, 0, 1);
+  if (np)
+    grx_jox_node(np, 0, 0);
   return 0;
 }
