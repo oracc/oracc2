@@ -1,6 +1,8 @@
 #include <oraccsys.h>
 #include "vx.h"
 
+vx_simples_fnc vx_simples_p = vxa_simples;
+
 int s_words;
 
 char simples[128] =
@@ -18,6 +20,19 @@ char simples[128] =
     ['v'] = 1,
     ['x'] = 1
   };
+
+void
+vxa_simples(Node *np, FILE *fp)
+{
+  vxa_openers(np, fp);
+  if (np->text)
+    fputs(np->text, fp);
+  Node *mp;
+  for (mp = np->kids; mp; mp = mp->next)
+    vx_atf_node(mp, fp);
+  vxa_closers(np, fp);
+  vxa_g_delim(np, fp);
+}
 
 void
 vxa_openers(Node *np, FILE *fp)
@@ -65,14 +80,7 @@ vx_atf_node(Node *np, FILE *fp)
     } 
   else if ('g' == np->name[0] && simples[(int)np->name[2]] && !np->name[3])
     {
-      vxa_openers(np, fp);
-      if (np->text)
-	fputs(np->text, fp);
-      Node *mp;
-      for (mp = np->kids; mp; mp = mp->next)
-	vx_atf_node(mp, fp);
-      vxa_closers(np, fp);
-      vxa_g_delim(np, fp);
+      vx_simples_p(np, fp);
     }
   else if (!strcmp(np->name, "g:x")
 	   || (!strcmp(np->name, "g:nonw") && !np->kids))

@@ -20,6 +20,14 @@ typedef struct vxsel
   List *l; /* list of Node * to add matches to; may not be NULL */
 } Vxsel;
 
+typedef enum omode
+  {
+    OM_NONE , OM_CATF , OM_CONLLO , OM_IDENTITY
+  } Omode;
+
+typedef void (*vx_simples_fnc)(Node *np, FILE *fp);
+extern vx_simples_fnc vx_simples_p;
+
 typedef void (*vx_attr_fnc)(Node *np, const char **atts);
 extern vx_attr_fnc vx_attr_p;
 
@@ -47,5 +55,13 @@ extern const char *vx_epsd_oid(const char *cgp);
 extern const char *vx_epsd_sid(const char *cgspe);
 extern const char *vx_epsd_sgw(const char *cgspe);
 extern const char *vx_epsd_ucun(const char *tlit);
+
+extern void vxa_openers(Node *np, FILE *fp);
+extern void vxa_closers(Node *np, FILE *fp);
+extern void vxa_g_delim(Node *np, FILE *fp);
+extern void vxa_simples(Node *np, FILE *fp);
+
+extern void vx_catf(Tree *tp, FILE *fp);
+unsigned char *utf2atf(const unsigned char *src);
 
 #endif/*VX_H_*/

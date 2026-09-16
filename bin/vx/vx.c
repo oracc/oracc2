@@ -1,25 +1,46 @@
 #include <oraccsys.h>
 #include "vx.h"
 
-int conllo_mode = 0;
-int identity_mode = 1;
+Omode output_mode = 0;
 const char *translation_fn = NULL;
 
 int
 main(int argc, char *const *argv)
 {
   mesg_init();
-  options(argc, argv, "CIt:");
-  if (conllo_mode)
+  options(argc, argv, "CIOt:");
+
+  if (!output_mode)
+    output_mode = OM_IDENTITY;
+
+  /* Pre-load setup */
+  switch (output_mode)
     {
+    case OM_CONLLO:
       vx_attr_p = vx_attr_xmlid;
       xmlid_h = hash_create(1024);
+      break;
+    default:
+      ;
     }
+
   Tree *tp = vx_load(argv[optind]);
-  if (identity_mode)
-    vx_identity(tp, stdout);
-  else if (conllo_mode)
-    vx_conllo(tp, stdout);
+
+  switch (output_mode)
+    {
+    case OM_CATF:
+      vx_catf(tp, stdout);
+      break;
+    case OM_IDENTITY:
+      vx_identity(tp, stdout);
+      break;
+    case OM_CONLLO:
+      vx_conllo(tp, stdout);
+      break;
+    default:
+      fprintf(stderr, "vx: no output method for output_mode = %d\n", output_mode);
+      break;
+    }
   mesg_print(stderr);
 }
 
@@ -29,11 +50,13 @@ opts(int opt, const char *arg)
   switch (opt)
     {
     case 'C':
-      conllo_mode = 1;
-      identity_mode = 0;
+      output_mode = OM_CATF;
+      break;
+    case 'O':
+      output_mode = OM_CONLLO;
       break;
     case 'I':
-      identity_mode = 1;
+      output_mode = OM_IDENTITY;
       break;
     case 't':
       translation_fn = arg;
