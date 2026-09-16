@@ -99,40 +99,6 @@ cbd_key_fields(Cform *f, int context, void *v)
   fpr('/',base);
   fpr('+',cont);
   fpr('*',stem);
-  if (f->f.oform)
-    {
-      sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
-      cbdact(buf, context, '~', v);
-    }
-  else
-    fpr('=',form);
-  fpr('$',norm);
-  if (f->f.form && f->f.norm)
-    {
-      sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
-      cbdact(buf, context, '^', v);
-    }
-  fpr('#',morph);
-  fpr('/',base);
-  fpr('+',cont);
-  fpr('*',stem);
-  if (f->f.oform)
-    {
-      sprintf(insert, "=%s~~%s", f->f.form, f->f.oform);
-      cbdact(buf, context, '~', v);
-    }
-  else
-    fpr('=',form);
-  fpr('$',norm);
-  if (f->f.form && f->f.norm)
-    {
-      sprintf(insert, "$%s=%s", f->f.norm, f->f.form);
-      cbdact(buf, context, '^', v);
-    }
-  fpr('#',morph);
-  fpr('/',base);
-  fpr('+',cont);
-  fpr('*',stem);
   if (f->f.morph2)
     {
       sprintf(insert, "m%s", f->f.morph2);

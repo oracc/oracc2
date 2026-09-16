@@ -246,6 +246,7 @@ tok_g_eH(void *userData, const char *name)
 	      r->rw->in_c = 0;
 	      gsb_c_last(r->rw);
 	      r->rw->wgp_c_index = -1;
+	      (void)charData_retrieve();
 	      break;
 	    case 'd':
 	      r->rw->role = '\0';
@@ -259,6 +260,7 @@ tok_g_eH(void *userData, const char *name)
 	      break;
 	    case 'q':
 	      r->rw->in_q = 0;
+	      (void)charData_retrieve();
 	      break;
 	    case 's':
 	      if (!r->rw->in_n && !r->rw->in_q)

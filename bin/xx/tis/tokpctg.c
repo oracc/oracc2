@@ -89,14 +89,18 @@ main(int argc, char *const *argv)
   int i;
   for (i = 0; k[i]; ++i)
     {
-      int count = (uintptr_t)hash_find(sem, (uccp)k[i]);
-      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
+      unsigned int count = (uintptr_t)hash_find(sem, (uccp)k[i]);
+      double pc = pct((double)count,(double)total);
+      if (pc == (unsigned int)pc)
+	printf("%s\t%s\t%d\t%u\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, (unsigned int)pc);
+      else
+	printf("%s\t%s\t%d\t%.2f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pc);
     }
   
   k = hash_keys(bis);
   for (i = 0; k[i]; ++i)
     {
-      int count = (uintptr_t)hash_find(bis, (uccp)k[i]);
+      unsigned int count = (uintptr_t)hash_find(bis, (uccp)k[i]);
       char parent[strlen(k[i])+1], *e;
       strcpy(parent,k[i]);
       /* The parent consists of the first segment */
@@ -104,13 +108,17 @@ main(int argc, char *const *argv)
       if (*e)
 	strcpy(e,"..");
       int pcount = (uintptr_t)hash_find(sem, (uccp)parent);
-      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)pcount));
+      double pc = pct((double)count,(double)pcount);
+      if (pc == (unsigned int)pc)
+	printf("%s\t%s\t%d\t%u\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, (unsigned int)pc);
+      else
+	printf("%s\t%s\t%d\t%.2f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pc);
     }
   
   k = hash_keys(ter);
   for (i = 0; k[i]; ++i)
     {
-      int count = (uintptr_t)hash_find(ter, (uccp)k[i]);
+      unsigned int count = (uintptr_t)hash_find(ter, (uccp)k[i]);
       char parent[strlen(k[i])+1], *e;
       strcpy(parent,k[i]);
       /* The parent consists of all but the final segment of a secondary key */
@@ -124,7 +132,13 @@ main(int argc, char *const *argv)
 	pcount = (uintptr_t)hash_find(bis, (uccp)parent);
 
       if (pcount)
-	printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct(count,pcount));
+	{
+	  double pc = pct((double)count,(double)pcount);
+	  if (pc == (unsigned int)pc)
+	    printf("%s\t%s\t%d\t%u\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, (unsigned int)pc);
+	  else
+	  printf("%s\t%s\t%d\t%.2f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pc);
+	}
       else
 	fprintf(stderr, "token %s should have parent %s but doesn't\n", k[i], parent);
     }
@@ -133,14 +147,22 @@ main(int argc, char *const *argv)
   for (i = 0; k[i]; ++i)
     {
       int count = (uintptr_t)hash_find(mrg, (uccp)k[i]);
-      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
+      double pc = pct((double)count,(double)total);
+      if (pc == (unsigned int)pc)
+	printf("%s\t%s\t%d\t%u\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, (unsigned int)pc);
+      else
+      printf("%s\t%s\t%d\t%.2f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pc);
     }
 
   k = hash_keys(frm);
   for (i = 0; k[i]; ++i)
     {
       int count = (uintptr_t)hash_find(frm, (uccp)k[i]);
-      printf("%s\t%s\t%d\t%.3g\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pct((double)count,(double)total));
+      double pc = pct((double)count,(double)total);
+      if (pc == (unsigned int)pc)
+	printf("%s\t%s\t%d\t%u\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, (unsigned int)pc);
+      else
+	printf("%s\t%s\t%d\t%.2f\n", (char*)hash_find(tid,(uccp)k[i]), k[i], count, pc);
     }
 
 }

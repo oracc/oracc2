@@ -133,7 +133,13 @@ print_pct(size_t total, int amount)
 {
   double p = 0.0;
   if (total)
-    fprintf(out_fp, "\t%.2g", p = pct(amount, total));
+    {
+      p = pct(amount, total);
+      if (p == (unsigned int)p)
+	fprintf(out_fp, "\t%u", (int)p);
+      else
+	fprintf(out_fp, "\t%.02f", p);
+    }
   else
     fputs("\t_", out_fp);
   return p;
@@ -159,10 +165,15 @@ print_row(char **row)
 #define rt_sns() (((Triple*)row[0])->sns)
 #define rt_dat() (((Triple*)row[0])->dat)
   size_t total;
+#if 0
   int type;
+#endif
+  
   if (rt_ent())
     {
+#if 0
       type = 1;
+#endif
       if (rt_dat())
 	{
 	  fprintf(out_fp, "%s\x1\x1%s\t%s\t%ld", rt_ent(), rt_dat(), row[1], (uintptr_t)row[2]);
@@ -175,7 +186,9 @@ print_row(char **row)
     }
   else if (rt_sns())
     {
+#if 0
       type = 2;
+#endif
       if (rt_dat())
 	{
 	  fprintf(out_fp, "%s\x1%s\t%s\t%ld", rt_sns(), rt_dat(), row[1], (uintptr_t)row[2]);
@@ -188,10 +201,15 @@ print_row(char **row)
     }
   else
     {
+#if 0
       type = 3;
+#endif
       fprintf(out_fp, "%s\t%s\t%ld", rt_dat(), row[1], (uintptr_t)row[2]);
       total = 0;
     }
+#if 1
+  (void)print_pct(total,(uintptr_t)row[2]);
+#else
   double p = print_pct(total,(uintptr_t)row[2]);
   if (type == 1 || type == 2)
     fprintf(stderr, "print_pct: %s %s %ccounts total=%ld; row[2] = %ld; %c = %.02g\n",
@@ -202,6 +220,7 @@ print_row(char **row)
 	    (uintptr_t)row[2],
 	    '%',
 	    p);
+#endif
   fputc('\n', out_fp);
 }
 

@@ -67,35 +67,6 @@ pr(const char *k, int ignore1, int ignore2, void*ignore3)
   printf("%s\t%s\t%s\n", nk, vido_new_id(vp,(ccp)pool_copy((uccp)nk,mpool)), qid);
 }
 
-#if 0
-static void
-pr_sig_fields(char *t, const char *qid, Vido *vp)
-{
-  char *insert = t + strlen(t);
-  sprintf(insert, "%s", period);
-  pr(t, vp, qid);
-#define fpr(c,x) if(f.x){sprintf(insert,"%c%s",c,f.x); pr(t,vp,qid);}
-  if (f.oform)
-    {
-      sprintf(insert, "=%s~~%s", f.form, f.oform);
-      pr(t,vp,qid);
-    }
-  else
-    fpr('=',form);
-  fpr('$',norm);
-  fpr('#',morph);
-  fpr('/',base);
-  fpr('+',cont);
-  fpr('*',cont);
-  if (f.morph2)
-    {
-      sprintf(insert, "##%s", f.morph2);
-      pr(t,vp,qid);
-    }
-#undef fpr
-}
-#endif
-
 static void
 toks_from_file(const char *fn, FILE *fp)
 {
