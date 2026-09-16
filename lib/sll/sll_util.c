@@ -327,6 +327,8 @@ sll_snames_of(unsigned const char *oids)
 {
   List *l = list_create(LIST_SINGLE);
   unsigned char *xoids = (ucp)pool_copy((uccp)oids,sllpool), *xoid, *x, *ret;
+  if (!xoids)
+    return "[UNKNOWN]";
   x = xoids;
   while (*x)
     {
