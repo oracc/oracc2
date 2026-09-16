@@ -22,6 +22,7 @@ int val_flag = 0;
 Mloc xo_loc;
 FILE *f_xml, *ok_no_ok_fp, *ok_no_no_fp;
 const char *file;
+int force = 0;
 int links_standalone = 0, links_wordrefs = 1;
 int ok_no_files = 0;
 int status;
@@ -275,7 +276,7 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "ACDcgI:Llmstvx");
+  options(argc, argv, "ACDcfgI:Llmstvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
   if (check_mode)
@@ -335,6 +336,9 @@ opts(int opt, const char *arg)
       break;
     case 'D':
       /* future use with morph analyzer */
+      break;
+    case 'f':
+      force = 1;
       break;
     case 'g':
       ok_no_files = 1;

@@ -48,6 +48,13 @@ atf_line_pi(Node *n)
     }
 }
 
+int
+ax_gdl_jox(Node *np)
+{
+  grx_jox_gdl(np, np->user);
+  return 0;
+}
+
 void
 ax_jox_tra(void)
 {
@@ -175,6 +182,14 @@ ax_jox_props(Prop *p)
     return gp;
 }
 
+/* This routine is a dispatcher for handling the current node.  If
+ * there is an axjoxfunc, control is delegated to that function, which
+ * must then also handle child nodes or return 1 to indicate child
+ * node handling should be done by ax_jox_node; if the Node ns ==
+ * NS_GDL, grx_jox_gdl is called via the wrapper ax_gdl_jox, which
+ * also handles child nodes.  Otherwise, processing is handled within
+ * the routine.
+ */
 static void
 ax_jox_node(Node *np)
 {
@@ -182,7 +197,7 @@ ax_jox_node(Node *np)
   const char *nodename = np->name;
   struct axjoxfnc *ap = NULL;
 
-  if (np->name && strcmp(np->name, "-") && np->mloc)
+  if (np->name && strcmp(np->name, "-") && np->mloc && strcmp(np->name, "lg"))
     atf_line_pi(np);
 
   if (trace_mode)
@@ -190,8 +205,8 @@ ax_jox_node(Node *np)
   
   if (np->user)
     ap = axjoxfnc(nodename,strlen(nodename));
-  else if (np->ns == NS_GDL && !strcmp(np->name, "g:det"))
-    nodename = "g:d";
+  if (!ap && NS_GDL == np->ns)
+    ap = axjoxfnc("_gdl_", 5);
 
   Ratts *r = NULL;
   const char **p = NULL;
@@ -208,7 +223,6 @@ ax_jox_node(Node *np)
 	  free(r);
 	}
     }
-
   if (N_U_SCANSEG == np->utype && np->kids)
     {
       for (npp = np->kids; npp; npp = npp->next)
@@ -218,12 +232,12 @@ ax_jox_node(Node *np)
     {
       joxer_ch(np->mloc, np->text);
     }
-  else if (np->user && np->utype != N_U_XLEM)
+  else if ((ap || np->user) && np->utype != N_U_XLEM)
     {
       if (ap)
 	{
 	  if (ap->func(np, np->user) > 0)
-	    /* Descend recursively into child nodes */
+	    /* Descend recursively into child nodes on a return value != 0*/
 	    for (npp = np->kids; npp; npp = npp->next)
 	      ax_jox_node(npp);
 	}
@@ -250,7 +264,6 @@ ax_jox_node(Node *np)
 
   if ((!ap || ap->wrapper) && '-' != *nodename)
     joxer_ee(np->mloc, nodename);
-
 }
 
 /* handler functions for np->user and GDL */
@@ -302,14 +315,7 @@ ax_jox_lines(Group *gp)
       Node *np = gp->lines[n]->np;
       if (np->kids)
 	{
-	  if (NS_GDL == np->kids->ns)
-	    grx_jox_gdl(np, np->user);
-	  else
-	    ax_jox_node(np);
-#if 0
-	  else if (np->text)
-	    joxer_ch(np->mloc, np->text);
-#endif
+	  ax_jox_node(np);
 	}
       else
 	{

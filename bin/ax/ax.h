@@ -81,5 +81,6 @@ extern int ax_jox_protocol(Node *np, void *p);
 extern void ax_jox_block(Node *np, Block *p);
 
 extern int grx_jox_gdl(Node *np, Node *gdl);
+extern int ax_gdl_jox(Node *np);
 
 #endif/*AX_H_*/
