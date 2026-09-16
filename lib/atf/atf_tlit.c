@@ -36,7 +36,7 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
     fprintf(stderr, "tlit_parse_inline: begin: %s\n", s);
   extern int gdl_word_mode;
   gdl_word_mode = 1;
-  gdl_unicode = 1;
+  gdl_unicode = (atf_use_ascii() ? 0 : 1);
   while (isspace(*s))
     ++s;
   if (text_lang)

@@ -114,6 +114,7 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 <s_ATFPRO>{use}line-labels    	{ usesave; return ATF_LINELABELS; }
 <s_ATFPRO>{use}alignment-groups { usesave; return ATF_AGROUPS; }
 <s_ATFPRO>{use}math	       	{ usesave; return ATF_MATH; }
+<s_ATFPRO>{use}ascii		{ usesave; return ATF_ASCII; }
 <s_ATFPRO>{use}unicode		{ usesave; return ATF_UNICODE; }
 <s_ATFPRO>{use}legacy		{ usesave; return ATF_LEGACY; }
 <s_ATFPRO>{use}lexical		{ usesave; return ATF_LEXICAL; }

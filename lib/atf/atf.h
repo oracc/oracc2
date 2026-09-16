@@ -240,6 +240,10 @@ extern List *curr_words;
 #define ATFF_LEXICAL 0x20
 #define ATFF_TOP 0x40
 #define ATFF_LINELABELS 0x80
+#define ATFF_ASCII 0x100
+
+#define atf_use_ascii() (atfp->flags&ATFF_ASCII)
+#define atf_use_unicode() (atfp->flags&ATFF_UNICODE)
 
 #define AP_ATTR 1	/* for props; GP_xxx is more complex but ATF
 			   may only need this and can use PG_XML as
