@@ -215,6 +215,9 @@
   <define name="utf8">
     <attribute name="g:utf8"/>
   </define>
+  <define name="atfc">
+    <attribute name="atf:c"/>
+  </define>
   <define name="delim">
     <attribute name="g:delim"/>
   </define>

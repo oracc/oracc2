@@ -1144,7 +1144,7 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   const char *gname = NULL;
   uccp gatf = NULL;
   Node *ret = NULL;
-  
+
   if (ytp->curr->kids && 'R' == ytp->curr->kids->name[2])
     gname = "g:N";
   else
@@ -1168,7 +1168,7 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   /* If gatf is to be included in XML output then GP_ATTRIBUTE is
      okay--otherwise some other prop-group will be needed */
   if (gatf)
-    gdl_prop_kv(ret, GP_ATTRIBUTE, PG_GDL_INFO, "atf", (ccp)gatf);
+    gdl_prop_kv(ret, GP_ATTRIBUTE, PG_GDL_INFO, "atf:c", (ccp)gatf);
 
   if (g_literal_flag)
     {

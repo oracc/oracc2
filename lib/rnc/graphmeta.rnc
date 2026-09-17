@@ -42,6 +42,7 @@ hsqb_c = attribute g:hc    { "1" }
 emhyph = attribute g:em    { "1" }
 sign_attr = attribute g:sign  { text }
 utf8   = attribute g:utf8  { text }
+atfc   = attribute atf:c  { text }
 
 delim  = attribute g:delim { text }
 sigdel = attribute g:sigdelim { text }
