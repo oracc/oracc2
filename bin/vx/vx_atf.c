@@ -29,7 +29,7 @@ vxa_simples(Node *np, FILE *fp)
     fputs(np->text, fp);
   Node *mp;
   for (mp = np->kids; mp; mp = mp->next)
-    vx_atf_node(mp, fp);
+    vx_atf_gdl_node(mp, fp);
   vxa_closers(np, fp);
   vxa_g_delim(np, fp);
 }
@@ -55,7 +55,32 @@ vxa_g_delim(Node *np, FILE *fp)
 }
 
 void
-vx_atf_node(Node *np, FILE *fp)
+vxa_status_flags(Node *np, FILE *fp)
+{
+  const char *gc = (vxa_prop_val(np, "g:collated") ? "*" : "");
+  const char *gq = (vxa_prop_val(np, "g:queried")  ? "?" : "");
+  const char *gr = (vxa_prop_val(np, "g:remarked") ? "!" : "");
+  const char *gu1 = vxa_prop_val(np, "g:uflag1");
+  const char *gu2 = vxa_prop_val(np, "g:uflag2");
+  const char *gu3 = vxa_prop_val(np, "g:uflag3");
+  const char *gu4 = vxa_prop_val(np, "g:uflag4");
+  if (gu1 || gu2 || gu3 || gu4)
+    fprintf(stderr, "vxa_status_flag: no output defined for user flags.\n");
+  fprintf(fp, "%s%s%s", gc, gr, gq);
+}
+
+const char *
+vxa_prop_val(Node *np, const char *aname)
+{
+  Prop *a = prop_find_kv(np->props, aname, NULL);
+  if (a)
+    return a->u.k->v;
+  else
+    return NULL;
+}
+
+void
+vx_atf_gdl_node(Node *np, FILE *fp)
 {
   Node *npp;
   const char *nodename = np->name;
@@ -65,7 +90,7 @@ vx_atf_node(Node *np, FILE *fp)
       if (s_words++)
 	fputc(' ', fp);
       for (npp = np->kids; npp; npp = npp->next)
-	vx_atf_node(npp, fp);
+	vx_atf_gdl_node(npp, fp);
     }
   else if (!strcmp(np->name, "g:c"))
     {
@@ -73,7 +98,7 @@ vx_atf_node(Node *np, FILE *fp)
       vxa_openers(np, fp);
       fputc('|', fp);
       for (cp = np->kids; cp; cp = cp->next)
-	vx_atf_node(cp, fp);
+	vx_atf_gdl_node(cp, fp);
       fputc('|', fp);      
       vxa_closers(np, fp);
       vxa_g_delim(np, fp);
@@ -99,7 +124,7 @@ vx_atf_node(Node *np, FILE *fp)
 	      Node *mp;
 	      vxa_openers(np, fp);
 	      for (mp = np->kids; mp; mp = mp->next)
-		vx_atf_node(mp, fp);
+		vx_atf_gdl_node(mp, fp);
 	      vxa_closers(np, fp);
 	      vxa_g_delim(np, fp);
 	    }
@@ -107,7 +132,7 @@ vx_atf_node(Node *np, FILE *fp)
       else
 	{
 	  for (npp = np->kids; npp; npp = npp->next)
-	    vx_atf_node(npp, fp);
+	    vx_atf_gdl_node(npp, fp);
 	}
     }
 }

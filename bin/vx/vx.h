@@ -45,7 +45,8 @@ extern void vx_conllo(Tree *tp, FILE *fp);
 extern void vx_identity(Tree *tp, FILE *fp);
 extern void vx_selector(Node *, Vxsel*);
 extern void vx_xtf_init(void);
-extern void vx_atf_node(Node *np, FILE *fp);
+extern void vx_atf_gdl_node(Node *np, FILE *fp);
+extern void vx_atf_xtf_node(Node *np, FILE *fp);
 extern void vx_cun_node(Node *np, FILE *fp);
 extern void vx_tra_node(Node *np, FILE *fp);
 extern void vx_epsd_init(void);
@@ -60,6 +61,33 @@ extern void vxa_openers(Node *np, FILE *fp);
 extern void vxa_closers(Node *np, FILE *fp);
 extern void vxa_g_delim(Node *np, FILE *fp);
 extern void vxa_simples(Node *np, FILE *fp);
+
+extern const char *vxa_prop_val(Node *np, const char *aname);
+extern void vxa_status_flags(Node *np, FILE *fp);
+
+typedef struct CATF_helper
+{
+  FILE *outfp;
+  Node *start;
+} CATF_helper;
+
+typedef void (vx_catf_fnc)(Node *np, CATF_helper *chp);
+
+typedef struct vxcfnctab
+{
+  const char *name;
+  vx_catf_fnc *fnc;
+} Vxcfnctab;
+
+extern struct vxcfnctab *vxcfnctab (register const char *str, size_t len);
+extern vx_catf_fnc vxc_composite;
+extern vx_catf_fnc vxc_transliteration;
+extern vx_catf_fnc vxc_protocols;
+extern vx_catf_fnc vxc_protocol;
+extern vx_catf_fnc vxc_obj_sur;
+extern vx_catf_fnc vxc_column;
+extern vx_catf_fnc vxc_l;
+extern vx_catf_fnc vxc_xcl;
 
 extern void vx_catf(Tree *tp, FILE *fp);
 unsigned char *utf2atf(const unsigned char *src);

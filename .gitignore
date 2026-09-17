@@ -238,6 +238,7 @@ statnames.c
 subtok.c
 tokflags.c
 urlkeys.c
+vxcfnctab.c
 whatfuncs.c
 msc/prj/cdli/periods.c
 bin/ax/ax_check.c

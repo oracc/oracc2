@@ -12,7 +12,7 @@ vxc_atf(Node *np, FILE *fp)
     {
       const char *ref = vx_att(np, "ref");
       Node *gdl_np = hash_find(xmlid_h, (uccp)ref);
-      vx_atf_node(gdl_np, fp);
+      vx_atf_gdl_node(gdl_np, fp);
     }
 }
 
