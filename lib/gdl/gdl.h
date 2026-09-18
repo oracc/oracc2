@@ -129,6 +129,9 @@ extern Pool *gdlpool;
 extern Node *gdl_group_attach;
 extern Node *lgp;   		/* last grapheme node pointer */
 
+typedef void (*gdlr_text_fnc)(Node *np, FILE *fp);
+extern gdlr_text_fnc gdl_text_p;
+
 extern struct lang_context *gdl_lang_context;
 
 extern void gdl_init(void);
