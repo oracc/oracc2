@@ -14,17 +14,17 @@
 
 static Hash *lzr_sparse = NULL;
 const char *curr_field = NULL;
-
 extern struct lang_context *gdl_lang_context;
 extern const char *word_lang_tag;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
 int deep_parse = 1;
+int gdl_ascii = 0;
 int gdl_cell_count;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 static int gdl_excision_type = 'e';
-
+static int gdl_atf = 0;
 int gdl_wf_c10e = 0;
 
 Node *gdl_post_det_gp_attach, *gdl_recycled_word;
@@ -280,7 +280,55 @@ gdl_wf_nodes(Node *w, FILE *wfp)
 		  const char *t = c->text;
 		  if (!gdl_wf_c10e && c->user && ((gvl_g*)c->user)->orig)
 		    t = (ccp)((gvl_g*)c->user)->orig;
-		  fputs(t, wfp);
+		  if (gdl_atf)
+		    {
+		      Prop *p = prop_find_kv(c->props, "atf:ascii", NULL);
+		      if (p)
+			t = p->u.k->v;
+		      if ('c' == c->name[2])
+			{
+			  fputc('|', wfp);
+			  Node *k;
+			  for (k = c->kids; k; k = k->next)
+			    {
+			      if ('m' == k->name[2])
+				fputc('@', wfp);
+			      else if ('f' == k->name[2])
+				fputc('~', wfp);
+			      if ((p = prop_find_kv(k->props, "atf:ascii", NULL)))
+				fputs(p->u.k->v, wfp);
+			      else if ('d' == k->name[2])
+				{
+				  if (((unsigned)k->text[0]) > 127)
+				    fputc('x', wfp);
+				  else
+				    fputs(k->text, wfp);
+				}
+			      else
+				fputs(k->text, wfp);
+			    }
+			  fputc('|', wfp);
+			}
+		      else
+			{
+			  fputs(t, wfp);
+			  if (c->kids)
+			    {
+			      /* skip g:b node and output mods */
+			      Node *k;
+			      for (k = c->kids->next; k; k = k->next)
+				{
+				  if ('m' == k->name[2])
+				    fputc('@', wfp);
+				  else
+				    fputc('~', wfp);
+				  fputs(k->text, wfp);
+				}
+			    }
+			}
+		    }
+		  else
+		    fputs(t, wfp);
 		  if (c->next)
 		    {
 		      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
@@ -451,6 +499,20 @@ gdl_word_attr(Node *w)
 		    /*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
 		    }
 	      free(wf_buf);      
+	    }
+	  if (gdl_ascii)
+	    {
+	      char *af_buf = NULL;
+	      size_t af_len = 0;
+	      word_excisions = 0;
+	      gdl_atf = 1;
+	      FILE *af_fp = open_memstream(&af_buf, &af_len);
+	      gdl_wf_nodes(w, af_fp);
+	      fclose(af_fp);
+	      gdl_atf = 0;
+	      if (af_buf && *af_buf)
+		gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "atf:form",
+			    (ccp)pool_copy((uccp)af_buf, gdlpool));
 	    }
 	  if (w->next)
 	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");
@@ -1167,8 +1229,8 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
 
   /* If gatf is to be included in XML output then GP_ATTRIBUTE is
      okay--otherwise some other prop-group will be needed */
-  if (gatf)
-    gdl_prop_kv(ret, GP_ATTRIBUTE, PG_GDL_INFO, "atf:c", (ccp)gatf);
+  if (gdl_ascii && gatf)
+    gdl_prop_kv(ret, GP_ATTRIBUTE, PG_GDL_INFO, "atf:ascii", (ccp)gatf);
 
   if (g_literal_flag)
     {

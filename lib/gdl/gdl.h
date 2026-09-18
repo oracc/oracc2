@@ -111,6 +111,7 @@ extern int gdl_corrq;
 extern int gdl_no_xml_ids;
 extern int curr_lang;
 extern int gdltrace, gdl_legacy, gdl_legacy_hash, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
+extern int gdl_ascii;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
 
