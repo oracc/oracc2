@@ -205,12 +205,13 @@ ax_jox_node(Node *np)
   
   if (np->user)
     ap = axjoxfnc(nodename,strlen(nodename));
+
   if (!ap && NS_GDL == np->ns)
     ap = axjoxfnc("_gdl_", 5);
 
   Ratts *r = NULL;
   const char **p = NULL;
-  if (!ap || ap->wrapper)
+  if (!ap || ap->wrapper || np->utype == N_U_XLEM) /* N_U_XLEM is a g:w with LEM info */
     {
       if ('-' != *nodename)
 	joxer_ea(np->mloc, nodename, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
@@ -223,16 +224,7 @@ ax_jox_node(Node *np)
 	  free(r);
 	}
     }
-  if (N_U_SCANSEG == np->utype && np->kids)
-    {
-      for (npp = np->kids; npp; npp = npp->next)
-	ax_jox_node(npp);
-    }
-  else if (np->text)
-    {
-      joxer_ch(np->mloc, np->text);
-    }
-  else if ((ap || np->user) && np->utype != N_U_XLEM)
+  if ((ap || np->user) && np->utype != N_U_XLEM)
     {
       if (ap)
 	{
@@ -255,6 +247,15 @@ ax_jox_node(Node *np)
 		    nodename);
 	}
     }
+  else if (N_U_SCANSEG == np->utype && np->kids)
+    {
+      for (npp = np->kids; npp; npp = npp->next)
+	ax_jox_node(npp);
+    }
+  else if (np->text)
+    {
+      joxer_ch(np->mloc, np->text);
+    }
   else
     {
       /* Descend recursively into child nodes */
@@ -262,7 +263,7 @@ ax_jox_node(Node *np)
 	ax_jox_node(npp);
     }
 
-  if ((!ap || ap->wrapper) && '-' != *nodename)
+  if ((!ap || ap->wrapper || np->utype == N_U_XLEM) && '-' != *nodename)
     joxer_ee(np->mloc, nodename);
 }
 
@@ -332,6 +333,8 @@ ax_jox_lines(Group *gp)
 	      free(r->qatts);
 	      free(r);
 	    }
+	  if (np->text)
+	    joxer_ch(np->mloc, np->text);
 	  joxer_ee(np->mloc, np->name);
 	}
     }
@@ -350,10 +353,13 @@ ax_jox_protocol(Node *np, void *p)
 {
   atf_line_pi(np);
   Prop*ptype = prop_find_kv(np->props, "type", NULL);
-  if (ptype && !strcmp(ptype->u.k->v, "bib"))
-    ax_jox_bib(np, p);
-  else if (ptype)
-    ax_jox_lang(np, p);
+  if (ptype)
+    {
+      if (!strcmp(ptype->u.k->v, "bib"))
+	ax_jox_bib(np, p);
+      else if (strcmp(ptype->u.k->v, "after"))
+	ax_jox_lang(np, p);
+    }
   return 0;
 }
 
