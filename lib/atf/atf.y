@@ -182,7 +182,7 @@ dollar:
 		;
 
 note:		HASH_NOTE longtext   	{ line_note(@1, longtext_get()); }
-	;
+		;
 
 project:	HASH_PROJECT PROJECT 	{ atfp->project = (uccp)$2;
 					  atf_xprop(ytp->root->kids,"project",$2);
@@ -198,7 +198,7 @@ atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
 	|	ATF_LINELABELS { $$=ATFF_LINELABELS; }
 	|	ATF_AGROUPS    { $$=ATFF_AGROUPS; }
 	|	ATF_MATH       { $$=ATFF_MATH; }
-	|	ATF_ASCII      { $$=ATFF_ASCII; }
+	|	ATF_ASCII      { gdl_ascii = 1; $$=ATFF_ASCII; }
 	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
 	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; gdl_legacy_lexer(1); }
 	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; gdl_lexical = 1; }
