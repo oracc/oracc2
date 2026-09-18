@@ -5,7 +5,7 @@ g.meta = oid? , spoid? , spform? , key? ,
   break? , status.flags? , status.spans? , 
   paleography.attr? , linguistic.attr? , proximity.attr? ,
   opener? , closer? , atfo? , atfc?, hsqb_o? , hsqb_c? , emhyph? ,
-  varnum? , sign_attr? , utf8? , newline? , delim? , sigdel? ,
+  varnum? , sign_attr? , utf8? , atfascii? , newline? , delim? , sigdel? ,
   attribute xml:id { xsd:ID }? ,
   breakStart? , breakEnd? ,
   damageStart? , damageEnd? ,
@@ -42,7 +42,7 @@ hsqb_c = attribute g:hc    { "1" }
 emhyph = attribute g:em    { "1" }
 sign_attr = attribute g:sign  { text }
 utf8   = attribute g:utf8  { text }
-atfc   = attribute atf:c  { text }
+atfascii = attribute atf:ascii { text }
 
 delim  = attribute g:delim { text }
 sigdel = attribute g:sigdelim { text }

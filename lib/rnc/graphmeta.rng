@@ -62,6 +62,9 @@
       <ref name="utf8"/>
     </optional>
     <optional>
+      <ref name="atfascii"/>
+    </optional>
+    <optional>
       <ref name="newline"/>
     </optional>
     <optional>
@@ -215,8 +218,8 @@
   <define name="utf8">
     <attribute name="g:utf8"/>
   </define>
-  <define name="atfc">
-    <attribute name="atf:c"/>
+  <define name="atfascii">
+    <attribute name="atf:ascii"/>
   </define>
   <define name="delim">
     <attribute name="g:delim"/>
