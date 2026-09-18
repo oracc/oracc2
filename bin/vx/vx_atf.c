@@ -30,6 +30,7 @@ vxa_simples(Node *np, FILE *fp)
   Node *mp;
   for (mp = np->kids; mp; mp = mp->next)
     vx_atf_gdl_node(mp, fp);
+  vxa_status_flags(np, fp);
   vxa_closers(np, fp);
   vxa_g_delim(np, fp);
 }
@@ -37,14 +38,35 @@ vxa_simples(Node *np, FILE *fp)
 void
 vxa_openers(Node *np, FILE *fp)
 {
+#if 1
+  const char *o = vxa_prop_val(np, "g:o");
+  const char *ao = vxa_prop_val(np, "atf:o");
+  if (o)
+    fputs(o, fp);
+  if (ao)
+    fputs(ao, fp);
+#else
   if ('d' == np->name[2])
-    fputc('{', fp);  
+    fputc('{', fp);
+#endif
 }
 void
 vxa_closers(Node *np, FILE *fp)
 {
+#if 1
+  const char *c = vxa_prop_val(np, "g:c");
+  const char *ac = vxa_prop_val(np, "atf:c");
+  const char *h = vxa_prop_val(np, "g:break");
+  if (h && 'd' == *h)
+    fputc('#', fp);
+  if (ac)
+    fputs(ac, fp);
+  if (c)
+    fputs(c, fp);
+#else  
   if ('d' == np->name[2])
     fputc('}', fp);
+#endif
 }
 void
 vxa_g_delim(Node *np, FILE *fp)

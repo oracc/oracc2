@@ -14,5 +14,10 @@ protocol,	(vx_catf_fnc*)vxc_protocol
 object,		(vx_catf_fnc*)vxc_obj_sur
 surface,	(vx_catf_fnc*)vxc_obj_sur
 column,		(vx_catf_fnc*)vxc_column
-l,			(vx_catf_fnc*)vxc_l
+l,		(vx_catf_fnc*)vxc_l
 xcl:xcl,	(vx_catf_fnc*)vxc_xcl
+nonx,		(vx_catf_fnc*)vxc_nonx
+variants,	(vx_catf_fnc*)vxc_variants
+variant,	(vx_catf_fnc*)vxc_variant
+lg,		(vx_catf_fnc*)vxc_lg
+v,		(vx_catf_fnc*)vxc_v

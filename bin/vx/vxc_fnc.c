@@ -55,6 +55,37 @@ vxc_div(Node *np, CATF_helper *chp)
 }
 
 void
+vxc_variants(Node *np, CATF_helper *chp)
+{
+  fprintf(chp->outfp, "@variants\n");
+  vxc_kids(np, chp);
+  fprintf(chp->outfp, "@endvariants\n");
+}
+
+void
+vxc_variant(Node *np, CATF_helper *chp)
+{
+  fprintf(chp->outfp, "@variant\n");
+  vxc_kids(np, chp);
+}
+
+void
+vxc_nonx(Node *np, CATF_helper *chp)
+{
+  const char *strict = vxa_prop_val(np, "strict");
+  if ('0' == *strict)
+    fprintf(chp->outfp, "$ (%s)\n", np->text);
+  else
+    fprintf(chp->outfp, "$ %s\n", np->text);
+}
+
+void
+vxc_lg(Node *np, CATF_helper *chp)
+{
+  vxc_kids(np, chp);
+}
+
+void
 vxc_transliteration(Node *np, CATF_helper *chp)
 {
   vxc_andline(np, chp->outfp);
@@ -132,6 +163,15 @@ vxc_l(Node *np, CATF_helper *chp)
 {
   const char *n = vxa_prop_val(np, "n");      
   fprintf(chp->outfp, "%s. ", n);
+  vxc_kids(np, chp);
+  fputc('\n', chp->outfp);
+}
+
+void
+vxc_v(Node *np, CATF_helper *chp)
+{
+  const char *n = vxa_prop_val(np, "varnum");      
+  fprintf(chp->outfp, "%s: ", n);
   vxc_kids(np, chp);
   fputc('\n', chp->outfp);
 }
