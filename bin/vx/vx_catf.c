@@ -6,6 +6,7 @@
 static Hash *h_catf = NULL;
 static Hash *h_catf_sn = NULL;
 static Roco *r_catf = NULL;
+const char *file;
 
 void
 vxc_simples(Node *np, FILE *fp)
@@ -17,13 +18,28 @@ vxc_simples(Node *np, FILE *fp)
 	fputs(np->text, fp);
       else
 	{
-	  const char *catf = hash_find(h_catf, (uccp)np->text);
-	  if (catf)
-	    fputs(catf, fp);
+	  if (sll_has_sign_indicator((uccp)np->text))
+	    {
+	      const char *catf = hash_find(h_catf_sn, (uccp)np->text);
+	      if (!catf)
+		{
+		  uccp lc = utf_lcase((uccp)np->text);
+		  if (!(catf = hash_find(h_catf_sn, (uccp)lc)))
+		    {
+		      mesg_verr(np->mloc, "sign %s not found in C-ATF map\n", np->text);
+		      catf = (ccp)utf2atf((uccp)np->text);
+		    }
+		}
+	      fputs(catf, fp);
+	    }
 	  else
 	    {
-	      mesg_verr(np->mloc, "text %s not in C-ATF map\n", np->text);
-	      catf = (ccp)utf2atf((uccp)np->text);
+	      const char *catf = hash_find(h_catf, (uccp)np->text);
+	      if (!catf)
+		{
+		  mesg_verr(np->mloc, "text %s not in C-ATF map\n", np->text);
+		  catf = (ccp)utf2atf((uccp)np->text);
+		}
 	      fputs(catf, fp);
 	    }
 	}
