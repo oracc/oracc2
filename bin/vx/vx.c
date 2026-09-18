@@ -7,6 +7,7 @@ const char *translation_fn = NULL;
 int
 main(int argc, char *const *argv)
 {
+  setlocale(LC_ALL,ORACC_LOCALE);
   mesg_init();
   options(argc, argv, "CIOt:");
 

@@ -15,7 +15,10 @@ utf2atf(const unsigned char *src)
       FILE *ap = open_memstream(&apmem, &aplen);
       int i;
       for (i = 0; i < mylen; ++i)
-	fputs(wcs2atf_w(wc[i]), ap);
+	if (wc[i] < 128)
+	  fputc(wc[i], ap);
+	else
+	  fputs(wcs2atf_w(wc[i]), ap);
       fclose(ap);
       return (ucp)apmem;
     }
@@ -67,6 +70,12 @@ wcs2atf_w(wchar_t w)
       break;
     case 0x2093: /*U_s_x*/
       a = "x";
+      break;
+    case 0x014b: /*U_eng */
+      a = "g";
+      break;
+    case 0x014a: /*U_ENG */
+      a = "G";
       break;
     case 0x1e2b: /*U_heth */
       a = "h";

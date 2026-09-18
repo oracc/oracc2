@@ -18,7 +18,8 @@ vxc_simples(Node *np, FILE *fp)
       else
 	{
 	  mesg_verr(np->mloc, "text %s not in C-ATF map\n", np->text);
-	  
+	  catf = utf2atf(np->text);
+	  fputs(catf, fp);
 	}
     }
   Node *mp;
@@ -41,6 +42,7 @@ vx_catf(Tree *tp, FILE *fp)
 {
   static CATF_helper ch;
   ch.outfp = fp;
+  vx_simples_p = vxc_simples;
   if (tp->root)
     {
       vxc_load_map();
@@ -60,7 +62,7 @@ vx_catf(Tree *tp, FILE *fp)
 			start->name);
 	    }
 	}
-      else
+      if (vp)
 	{
 	  ch.start = start;
 	  vp->fnc(start, &ch);

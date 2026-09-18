@@ -7,15 +7,15 @@ vxc_kids(Node *np, CATF_helper *chp)
   Node *kp;
   for (kp = np->kids; kp; kp = kp->next)
     {
-      if (NS_GDL == np->ns)
-	vx_atf_gdl_node(np, chp->outfp);
+      if (NS_GDL == kp->ns)
+	vx_atf_gdl_node(kp, chp->outfp);
       else
 	{
-	  Vxcfnctab *vp = vxcfnctab(np->name, strlen(np->name));
+	  Vxcfnctab *vp = vxcfnctab(kp->name, strlen(kp->name));
 	  if (vp)
-	    vp->fnc(np, chp);
+	    vp->fnc(kp, chp);
 	  else
-	    fprintf(stderr, "vxc: node %s not handled by vxcfnctab\n", np->name);
+	    fprintf(stderr, "vxc: node %s not handled by vxcfnctab\n", kp->name);
 	}
     }
 }
@@ -42,24 +42,57 @@ vxc_composite(Node *np, CATF_helper *chp)
   vxc_andline(np, chp->outfp);
   vxc_kids(np, chp);
 }
+
+void
+vxc_div(Node *np, CATF_helper *chp)
+{
+  char *type = strdup(vxa_prop_val(np, "type"));
+  const char *n = vxa_prop_val(np, "n");
+  fprintf(chp->outfp, "@div %s %s\n", type, n);
+  vxc_kids(np, chp);
+  fprintf(chp->outfp, "@end %s\n", type);
+  free(type);
+}
+
 void
 vxc_transliteration(Node *np, CATF_helper *chp)
 {
   vxc_andline(np, chp->outfp);
   vxc_kids(np, chp);
 }
+
 void
 vxc_protocols(Node *np, CATF_helper *chp)
 {
   vxc_kids(np, chp);
   vxc_credit(chp->start, chp->outfp);
 }
+
 void
 vxc_protocol(Node *np, CATF_helper *chp)
 {
   const char *type = vxa_prop_val(np, "type");
   if (type)
-    fprintf(chp->outfp, "#%s: %s\n", type, np->text);
+    {
+      if (np->text)
+	{
+	  if (!strstr(np->text, "math")) /* C-ATF doesn't allow use math */
+	    {
+	      if (strstr(np->text, "unicode"))
+		fprintf(chp->outfp, "#%s: use ascii\n", type);
+	      else
+		fprintf(chp->outfp, "#%s: %s\n", type, np->text);
+	    }
+	}
+      else
+	{
+	  if (!strcmp(type, "after"))
+	    {
+	      const char *url = vxa_prop_val(np, "url");
+	      fprintf(chp->outfp, "#key: after %s\n", url);
+	    }
+	}
+    }
   else
     fprintf(stderr, "vxc: no @type on protocol\n");
 }
@@ -76,8 +109,8 @@ vxc_obj_sur(Node *np, CATF_helper *chp)
       fprintf(chp->outfp, " %s", n);
       vxa_status_flags(np, chp->outfp);
       fputc('\n', chp->outfp);
-      vxc_kids(np, chp);
     }
+  vxc_kids(np, chp);
 }
 
 void
@@ -90,14 +123,14 @@ vxc_column(Node *np, CATF_helper *chp)
       fprintf(chp->outfp, "@column %s", n);
       vxa_status_flags(np, chp->outfp);
       fputc('\n', chp->outfp);
-      vxc_kids(np, chp);
     }
-	      
+  vxc_kids(np, chp);
 }
+
 void
 vxc_l(Node *np, CATF_helper *chp)
 {
-  const char *n = vxa_prop_val(np, "type");      
+  const char *n = vxa_prop_val(np, "n");      
   fprintf(chp->outfp, "%s. ", n);
   vxc_kids(np, chp);
   fputc('\n', chp->outfp);

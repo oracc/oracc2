@@ -81,6 +81,7 @@ typedef struct vxcfnctab
 
 extern struct vxcfnctab *vxcfnctab (register const char *str, size_t len);
 extern vx_catf_fnc vxc_composite;
+extern vx_catf_fnc vxc_div;
 extern vx_catf_fnc vxc_transliteration;
 extern vx_catf_fnc vxc_protocols;
 extern vx_catf_fnc vxc_protocol;
