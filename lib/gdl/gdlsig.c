@@ -51,10 +51,10 @@ gdlsig_addoid(Node *np, List *lp)
 	{
 	  /* |3×AN| traps */
 	  if (gp->deep->kids
-	      && !strcmp(gp->deep->kids->name, "g:d"))
+	      && !strcmp(gp->deep->kids->name, "g:o"))
 	    list_add(lp, (char*)((gvl_g*)gp->deep->user)->oid);
 	  else if (gp->deep->kids && (!strcmp(gp->deep->kids->name, "g:c")
-				      && !strcmp(gp->deep->kids->kids->name, "g:d")))
+				      && !strcmp(gp->deep->kids->kids->name, "g:o")))
 	    list_add(lp, (char*)((gvl_g*)gp->deep->kids->user)->oid);
 	  else
 	    gdlsig_descend(gp->deep, lp);

@@ -69,7 +69,7 @@ gdl_group(Mloc mp, int type)
 	  gdl_group_attach = gp;
 #else
 	  /* this shouldn't be necessary any more */
-	  if (!strcmp(rt->name, "g:det"))
+	  if (!strcmp(rt->name, "g:d"))
 	    {
 	      gdl_post_det_gp_attach = gp;
 	      tree_curr(rt);

@@ -272,7 +272,7 @@ gvl_c_implicit_gp(Node *dlm, Node *last)
   else
     first = dlm->prev;
 
-  if (!strcmp(last->name, "g:d"))
+  if (!strcmp(last->name, "g:o"))
     last = last->next;
 
   Node *gp = node_group(dlm, first, last);
@@ -419,7 +419,7 @@ gvl_compound(Node *ynp)
 		{
 		  while (1)
 		    {
-		      if (last->next && !strcmp(last->next->name, "g:d")
+		      if (last->next && !strcmp(last->next->name, "g:o")
 			  && (!strcmp(last->next->text, d) || !strcmp(last->next->text, "×")))
 			{
 			  Node *nxt = last->next;
@@ -431,7 +431,7 @@ gvl_compound(Node *ynp)
 				      have complained about that */
 			}
 		      else if (last->next && last->next->next
-			       && !strcmp(last->next->next->name, "g:d")
+			       && !strcmp(last->next->next->name, "g:o")
 			       && (last->next->next->text
 				   && (!strcmp(last->next->next->text, d)
 				       || !strcmp(last->next->next->text, "×"))))

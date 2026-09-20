@@ -100,7 +100,7 @@ gdl_gloss_props(Node *d)
       Prop *pd = prop_find_kv(d->prev->props, "g:delim", NULL);
       if (pd)
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
-      else if (!strcmp(d->prev->name, "g:det"))
+      else if (!strcmp(d->prev->name, "g:d"))
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos",
 		    prop_find_kv(d->prev->props, "g:pos", NULL)->u.k->v);
       else
@@ -132,7 +132,7 @@ gdl_det_props(Node *d)
       Prop *pd = prop_find_kv(d->prev->props, "g:delim", NULL);
       if (pd)
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos", "pre");
-      else if (!strcmp(d->prev->name, "g:det"))
+      else if (!strcmp(d->prev->name, "g:d"))
 	gdl_prop_kv(d, GP_ATTRIBUTE, PG_GDL_INFO, "g:pos",
 		    prop_find_kv(d->prev->props, "g:pos", NULL)->u.k->v);
       else
@@ -668,9 +668,9 @@ gdl_cell(Tree *ytp, const char *span)
       /*(void)list_pop(wd_list);*/
     }
 
-  if (!(ancestor = node_ancestor_or_self(ytp->curr, "g:cell")))
+  if (!(ancestor = node_ancestor_or_self(ytp->curr, "c")))
     {
-      cp = tree_node(ytp, NS_GDL, "g:cell", ytp->root->depth+1, NULL);
+      cp = tree_node(ytp, NS_GDL, "c", ytp->root->depth+1, NULL);
       gdl_prop(cp, GP_IMPLICIT, PG_GDL_INFO);
       gdl_prop_kv(cp, GP_ATTRIBUTE, PG_GDL_INFO, "span", "1");
       /* NB: This assumes GDL parser will never be embedded in another grammar */
@@ -679,7 +679,7 @@ gdl_cell(Tree *ytp, const char *span)
     }
   else
     tree_curr(ancestor->rent);
-  cp = tree_add(ytp, NS_GDL, "g:cell", ytp->root->depth+1, NULL);
+  cp = tree_add(ytp, NS_GDL, "c", ytp->root->depth+1, NULL);
   gdl_prop_kv(cp, GP_ATTRIBUTE, PG_GDL_INFO, "span", (ccp)pool_copy((uccp)span, ytp->tm->pool));
   tree_curr(cp);
 }
@@ -758,13 +758,13 @@ gdl_new_word(Tree *ytp)
 	  /* If there is an active gloss, attach to that */
 	  Node *l = gdl_gloss_curr();
       
-	  /* Else if there is a g:field ancestor, attach to that */
+	  /* Else if there is a f ancestor, attach to that */
 	  if (!l)
-	    l = node_ancestor_or_self(ytp->curr, "g:field");
+	    l = node_ancestor_or_self(ytp->curr, "f");
 
-	  /* Else if there is a g:cell ancestor, attach to that */
+	  /* Else if there is a c ancestor, attach to that */
 	  if (!l)
-	    l = node_ancestor_or_self(ytp->curr, "g:cell");
+	    l = node_ancestor_or_self(ytp->curr, "c");
 
 	  /* Else if there is a g:w ancestor, attach to the parent of that node */
 	  if (!l)
@@ -835,7 +835,7 @@ gdl_set_word_id(const char *wid)
 void
 gdl_prefix(Tree *ytp, unsigned const char *p)
 {
-  Node *np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
+  Node *np = tree_add(ytp, NS_GDL, "g:o", ytp->curr->depth, NULL);
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "repeated");
   np->mloc = ytp->curr->mloc;
   np->text = (ccp)p;
@@ -905,7 +905,7 @@ gdl_delim_s(Tree *ytp, const char *data)
 
   if (c_processing)
     {
-      np = tree_add(ytp, NS_GDL, "g:d", ytp->curr->depth, NULL);
+      np = tree_add(ytp, NS_GDL, "g:o", ytp->curr->depth, NULL);
       np->mloc = ytp->curr->mloc;
       np->text = data;
 
@@ -1010,11 +1010,11 @@ gdl_field(Tree *ytp, const char *ftype)
   if (gdltrace)
     fprintf(stderr, "gt: FIELD with TYPE = %s\n", ftype);
 
-  if (!(ancestor = node_ancestor_or_self(ytp->curr, "g:field")))
+  if (!(ancestor = node_ancestor_or_self(ytp->curr, "f")))
     {
-      Node *cellp = node_ancestor_or_self(ytp->curr, "g:cell");
+      Node *cellp = node_ancestor_or_self(ytp->curr, "c");
       
-      fp = tree_node(ytp, NS_GDL, "g:field", ytp->root->depth+1, NULL);
+      fp = tree_node(ytp, NS_GDL, "f", ytp->root->depth+1, NULL);
       gdl_prop(fp, GP_IMPLICIT, PG_GDL_INFO);
       gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type", "default");
 
@@ -1026,7 +1026,7 @@ gdl_field(Tree *ytp, const char *ftype)
     }
   else
     tree_curr(ancestor->rent);
-  fp = tree_add(ytp, NS_GDL, "g:field", ytp->root->depth+1, NULL);
+  fp = tree_add(ytp, NS_GDL, "f", ytp->root->depth+1, NULL);
   tree_curr(fp);
   gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type",
 	      curr_field = (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
