@@ -8,7 +8,19 @@
 #include <gutil.h>
 #include "sll.h"
 
-static int signindicator[256];
+static int signindicator[256] =
+  {
+    ['A'] = 1,
+    ['E'] = 1,
+    ['I'] = 1,
+    ['U'] = 1,
+    ['F'] = 1,
+    ['N'] = 1,
+    ['O'] = 1,
+    ['P'] = 1,
+    ['S'] = 1,
+    ['X'] = 1
+  };
 
 int sll_raw_output = 0;
 int sll_trace = 0;
@@ -117,17 +129,7 @@ sll_ext_check(unsigned const char *k, enum sll_t t)
 void
 sll_init_si(void)
 {
-  if (!signindicator['A'])
-    signindicator['A'] = 
-      signindicator['E'] = 
-      signindicator['I'] = 
-      signindicator['U'] = 
-      signindicator['F'] = 
-      signindicator['N'] = 
-      signindicator['O'] = 
-      signindicator['P'] = 
-      signindicator['S'] = 
-      signindicator['X'] = 1;
+  return;
 }
 
 void
@@ -328,7 +330,7 @@ sll_snames_of(unsigned const char *oids)
   List *l = list_create(LIST_SINGLE);
   unsigned char *xoids = (ucp)pool_copy((uccp)oids,sllpool), *xoid, *x, *ret;
   if (!xoids)
-    return "[UNKNOWN]";
+    return (ucp)"[UNKNOWN]";
   x = xoids;
   while (*x)
     {
