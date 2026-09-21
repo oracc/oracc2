@@ -20,7 +20,14 @@ grf(a)(Node *np, FILE *fp)
 int
 grf(b)(Node *np, FILE *fp)
 {
-  gr_funcs[0](np, fp);
+  if (np->kids)
+    {
+      Node *k;
+      for (k = np->kids->next; k; k = k->next)
+	gr_node(k, fp);
+    }
+  else
+    gr_funcs[0](np, fp);
   return 0;
 }
 
@@ -38,7 +45,9 @@ grf(c)(Node *np, FILE *fp)
     }
   else
     {
-      gr_node(np, fp);
+      Node *k;
+      for (k = np->kids; k; k = k->next)
+	gr_node(k, fp);
       fputc('|', fp);
     }  
   return 0;
@@ -57,7 +66,7 @@ grf(d)(Node *np, FILE *fp)
   Prop *p = prop_find_kv(np->props, "g:char", NULL);
   if (p)
     fputs(p->u.k->v, fp);
-  gr_node(np, fp);
+  gr_funcs[0](np, fp);
   if (!gs_is(s,gs_excised))
     fputc('}', fp);
   return 0;
@@ -83,10 +92,10 @@ grf(g)(Node *np, FILE *fp)
       else if (!strcmp(p->u.k->v, "diszless"))
 	fputs(np->text, fp);
       else
-	gr_node(np, fp);
+	gr_funcs[0](np, fp);
     }
   else
-    gr_node(np, fp);
+    gr_funcs[0](np, fp);    
   return 0;
 }
 
@@ -134,7 +143,8 @@ grf(q)(Node *np, FILE *fp)
 {
   gr_node(np->kids, fp);
   fputc('(', fp);
-  gr_node(np->kids, fp);
+  gr_node(np->kids->next, fp);
+  fputc(')', fp);
   return 0;
 }
 
@@ -156,7 +166,7 @@ grf(s)(Node *np, FILE *fp)
     }
   else
     {
-      gr_node(np, fp);
+      gr_funcs[0](np, fp);
     }
   return 0;
 }
@@ -179,7 +189,7 @@ grf(v)(Node *np, FILE *fp)
     }
   else
     {
-      gr_node(np, fp);
+      gr_funcs[0](np, fp);
     }
   return 0;
 }

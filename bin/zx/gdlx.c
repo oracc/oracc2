@@ -67,6 +67,8 @@ test_identity(char *s, Tree *t)
     {
       if (t->root->kids->text)
 	res = t->root->kids->text;
+      else if (!strcmp(t->root->kids->name, "g:w"))
+	res = prop_val(t->root->kids->props, "form", NULL);
       else
 	printf("%s\t(null)\n", s);
     }
