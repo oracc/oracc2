@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <gdl.h>
 #include "vx.h"
 
 static void
@@ -8,7 +9,7 @@ vxc_kids(Node *np, CATF_helper *chp)
   for (kp = np->kids; kp; kp = kp->next)
     {
       if (NS_GDL == kp->ns)
-	vx_atf_gdl_node(kp, chp->outfp);
+	(void)gdl_output(kp, chp->outfp);
       else
 	{
 	  Vxcfnctab *vp = vxcfnctab(kp->name, strlen(kp->name));
@@ -23,16 +24,16 @@ vxc_kids(Node *np, CATF_helper *chp)
 void
 vxc_andline(Node *np, FILE *fp)
 {
-  const char *pqx = vxa_prop_val(np, "xml:id");
-  const char *n = vxa_prop_val(np, "n");
+  const char *pqx = prop_val(np, "xml:id");
+  const char *n = prop_val(np, "n");
   fprintf(fp, "&%s = %s\n", pqx, n);
 }
 
 void
 vxc_credit(Node *np, FILE *fp)
 {
-  const char *project = vxa_prop_val(np, "project");
-  const char *pqx = vxa_prop_val(np, "xml:id");
+  const char *project = prop_val(np, "project");
+  const char *pqx = prop_val(np, "xml:id");
   fprintf(fp, "#catforigin: after http://oracc.org/%s/%s\n", project, pqx);
 }
 
@@ -46,8 +47,8 @@ vxc_composite(Node *np, CATF_helper *chp)
 void
 vxc_div(Node *np, CATF_helper *chp)
 {
-  char *type = strdup(vxa_prop_val(np, "type"));
-  const char *n = vxa_prop_val(np, "n");
+  char *type = strdup(prop_val(np, "type"));
+  const char *n = prop_val(np, "n");
   fprintf(chp->outfp, "@div %s %s\n", type, n);
   vxc_kids(np, chp);
   fprintf(chp->outfp, "@end %s\n", type);
@@ -72,7 +73,7 @@ vxc_variant(Node *np, CATF_helper *chp)
 void
 vxc_nonx(Node *np, CATF_helper *chp)
 {
-  const char *strict = vxa_prop_val(np, "strict");
+  const char *strict = prop_val(np, "strict");
   if ('0' == *strict)
     fprintf(chp->outfp, "$ (%s)\n", np->text);
   else
@@ -102,25 +103,28 @@ vxc_protocols(Node *np, CATF_helper *chp)
 void
 vxc_protocol(Node *np, CATF_helper *chp)
 {
-  const char *type = vxa_prop_val(np, "type");
+  const char *type = prop_val(np, "type");
   if (type)
     {
-      if (np->text)
+      if (strcmp(type, "etcsl"))
 	{
-	  if (!strstr(np->text, "math")) /* C-ATF doesn't allow use math */
+	  if (np->text)
 	    {
-	      if (strstr(np->text, "unicode"))
-		fprintf(chp->outfp, "#%s: use ascii\n", type);
-	      else
-		fprintf(chp->outfp, "#%s: %s\n", type, np->text);
+	      if (!strstr(np->text, "math")) /* C-ATF doesn't allow use math */
+		{
+		  if (strstr(np->text, "unicode"))
+		    fprintf(chp->outfp, "#%s: use ascii\n", type);
+		  else
+		    fprintf(chp->outfp, "#%s: %s\n", type, np->text);
+		}
 	    }
-	}
-      else
-	{
-	  if (!strcmp(type, "after"))
+	  else
 	    {
-	      const char *url = vxa_prop_val(np, "url");
-	      fprintf(chp->outfp, "#key: after %s\n", url);
+	      if (!strcmp(type, "after"))
+		{
+		  const char *url = prop_val(np, "url");
+		  fprintf(chp->outfp, "#key: after %s\n", url);
+		}
 	    }
 	}
     }
@@ -131,14 +135,14 @@ vxc_protocol(Node *np, CATF_helper *chp)
 void
 vxc_obj_sur(Node *np, CATF_helper *chp)
 {
-  const char *implicit = vxa_prop_val(np, "implicit");
+  const char *implicit = prop_val(np, "implicit");
   if (!implicit || '1' != *implicit)
     {
-      const char *type = vxa_prop_val(np, "type");
-      const char *n = vxa_prop_val(np, "type");
+      const char *type = prop_val(np, "type");
+      const char *n = prop_val(np, "type");
       fprintf(chp->outfp, "@%s", type);
       fprintf(chp->outfp, " %s", n);
-      vxa_status_flags(np, chp->outfp);
+      (void)gdlr_vx_flags(np, chp->outfp);
       fputc('\n', chp->outfp);
     }
   vxc_kids(np, chp);
@@ -147,12 +151,12 @@ vxc_obj_sur(Node *np, CATF_helper *chp)
 void
 vxc_column(Node *np, CATF_helper *chp)
 {
-  const char *implicit = vxa_prop_val(np, "implicit");
+  const char *implicit = prop_val(np, "implicit");
   if (!implicit || '1' != *implicit)
     {
-      const char *n = vxa_prop_val(np, "type");      
+      const char *n = prop_val(np, "type");      
       fprintf(chp->outfp, "@column %s", n);
-      vxa_status_flags(np, chp->outfp);
+      (void)gdlr_vx_flags(np, chp->outfp);
       fputc('\n', chp->outfp);
     }
   vxc_kids(np, chp);
@@ -161,7 +165,7 @@ vxc_column(Node *np, CATF_helper *chp)
 void
 vxc_l(Node *np, CATF_helper *chp)
 {
-  const char *n = vxa_prop_val(np, "n");      
+  const char *n = prop_val(np, "n");      
   fprintf(chp->outfp, "%s. ", n);
   vxc_kids(np, chp);
   fputc('\n', chp->outfp);
@@ -170,7 +174,7 @@ vxc_l(Node *np, CATF_helper *chp)
 void
 vxc_v(Node *np, CATF_helper *chp)
 {
-  const char *n = vxa_prop_val(np, "varnum");      
+  const char *n = prop_val(np, "varnum");      
   fprintf(chp->outfp, "%s: ", n);
   vxc_kids(np, chp);
   fputc('\n', chp->outfp);

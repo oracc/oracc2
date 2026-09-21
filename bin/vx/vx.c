@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include "vx.h"
 
+int s_words;
 Omode output_mode = 0;
 const char *translation_fn = NULL;
 

@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <gdl.h>
 #include "vx.h"
 
 vx_attr_fnc vx_attr_p = vx_attr;
@@ -156,6 +157,22 @@ vx_sH(void *vp, const char *name, const char **atts)
 
   if (atts[0])
     vx_attr_p(ep, atts);
+
+  if (!strcmp(colon, "o"))
+    {
+      const char *type = prop_val(ep, "type");
+      if (type)
+	{
+	  struct map *mp = g_o_type(type, strlen(type));
+	  if (mp)
+	    ep->text = mp->v;
+	  else
+	    fprintf(stderr, "vx_load: g:o @type %s not in g_o_type.g\n", type);
+	}
+      else
+	ep->text = "-";
+    }
+
 }
 
 static void

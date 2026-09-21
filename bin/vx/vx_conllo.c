@@ -5,15 +5,16 @@
 
 Node **tnodes;
 
-static void
-vxc_atf(Node *np, FILE *fp)
+static unsigned char *
+vxc_atf(Node *np)
 {
   if (!strcmp(np->name, "xcl:l"))
     {
       const char *ref = vx_att(np, "ref");
       Node *gdl_np = hash_find(xmlid_h, (uccp)ref);
-      vx_atf_gdl_node(gdl_np, fp);
+      return gdl_render(gdl_np, vx_oatf_config);
     }
+  return NULL;
 }
 
 static void
@@ -90,13 +91,16 @@ vxc_sentences(Conll_doc *d, Node **snp, Node **tnp)
     {
       List *w = vx_tags(snp[i], "xcl:l");
       Conll_sent *s = conll_sent(d, list_len(w));
-      size_t ignored;
 
       s_words = 0;
+#if 1
+      s->text = (char*)vxc_atf(snp[i]);
+#else
       FILE *atfp = open_memstream(&s->text, &ignored);
       node_iterator(snp[i], atfp, (nodehandler)vxc_atf, NULL);
       fclose(atfp);
-
+#endif
+      size_t ignored;
       s_words = 0;
       FILE *cunp = open_memstream(&s->xsux, &ignored);
       node_iterator(snp[i], cunp, (nodehandler)vxc_cun, NULL);
@@ -182,6 +186,7 @@ vx_conllo(Tree *tp, FILE *fp)
 {
   Conll_run *r = conll_init();
   vx_epsd_init();
+  vx_oatf_init();
   vxc_doc(r, tp);
   conll_dump(r, fp);
 }

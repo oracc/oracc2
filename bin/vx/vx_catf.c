@@ -3,6 +3,8 @@
 #include <roco.h>
 #include "vx.h"
 
+GDLR_config *vx_catf_config;
+
 static Hash *h_catf = NULL;
 static Hash *h_catf_sn = NULL;
 static Roco *r_catf = NULL;
@@ -43,6 +45,7 @@ gdlr_catf_text(Node *np, FILE *fp)
 	    }
 	}
     }
+  return 0;
 }
 
 static void
@@ -78,6 +81,15 @@ vxc_load_map(void)
 }
 
 void
+vx_catf_init(void)
+{
+  vx_catf_config = gdl_render_setup_vx(GDLR_VX_CATF, gdlr_catf_text);
+  (*vx_catf_config)[2] = gdlr_vxc_openers;
+  (*vx_catf_config)[3] = gdlr_vxc_closers;
+  (*vx_catf_config)[4] = gdlr_vx_flags;
+}
+
+void
 vx_catf(Tree *tp, FILE *fp)
 {
   static CATF_helper ch;
@@ -104,9 +116,8 @@ vx_catf(Tree *tp, FILE *fp)
       if (vp)
 	{
 	  vxc_load_map();
-	  gdl_render_setup_vx(GDLR_VX_CATF, gdlr_catf_text);
-	  gr_funcs = *c;
-
+	  vx_catf_init();
+	  gr_funcs = *vx_catf_config;
 	  ch.start = start;
 	  vp->fnc(start, &ch);
 	}

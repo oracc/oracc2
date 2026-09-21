@@ -132,7 +132,7 @@ gdlr_c10e_text(Node *c, FILE *fp)
 int
 gdlr_ascii_text(Node *c, FILE *fp)
 {
-  const char *t = prop_val(c->props, "atf:ascii");
+  const char *t = prop_val(c, "atf:ascii");
   fputs(t ? t : c->text, fp);
   return 0;
 }

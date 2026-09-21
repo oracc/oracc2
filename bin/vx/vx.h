@@ -96,6 +96,8 @@ extern vx_catf_fnc vxc_v;
 extern vx_catf_fnc vxc_xcl;
 
 extern void vx_catf(Tree *tp, FILE *fp);
+extern void vx_catf_init(void);
+extern void vx_oatf_init(void);
 unsigned char *utf2atf(const unsigned char *src);
 
 #endif/*VX_H_*/

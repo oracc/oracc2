@@ -190,10 +190,11 @@ prop_find_kv(Prop *p, const char *key, const char *value)
 
 /* Caller can use value==NULL to match key only */
 const char *
-prop_val(Prop *p, const char *key)
+prop_val(Node *np, const char *key)
 {
-  if (!p || !key)
+  if (!np || !np->props || !key)
     return NULL;
+  Prop *p = np->props;
   while (p)
     {
       if (p->g > 0 && p->g < PU_VOIDSTAR && p->g != PG_GDL_STATE)

@@ -65,7 +65,9 @@ grf(d)(Node *np, FILE *fp)
   Prop *p = prop_find_kv(np->props, "g:char", NULL);
   if (p)
     fputs(p->u.k->v, fp);
-  gdlr_text(np, fp);
+  Node *k;
+  for (k = np->kids; k; k = k->next)
+    gdlr_node(k, fp);
   if (!gs_is(s,gs_excised))
     fputc('}', fp);
   return 0;

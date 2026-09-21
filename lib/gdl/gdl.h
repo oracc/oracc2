@@ -150,16 +150,27 @@ extern int gdlr_ascii_text(Node *c, FILE *fp);
 extern gdlr_node_fnc *gr_funcs;
 extern gdlr_node_fnc gr_wf_fncs[128];
 extern GDLR_config *gdlr_clone_fncs(GDLR_config *f);
+extern int gdlr_vx_flags(Node *np, FILE *fp);
+extern GDLR_config *vx_oatf_config;
 #define gdlr_node gr_funcs[0]
-#define gdlr_text gr_funcs[0]
+#define gdlr_text gr_funcs[1]
+#define gdlr_openers gr_funcs[2]
+#define gdlr_closers gr_funcs[3]
+#define gdlr_flags gr_funcs[4]
 
 extern void gdl_render_setup_wf(void);
+extern GDLR_config *gdl_render_setup_vx(int gdl_vx_mode, gdlr_node_fnc textfunc);
 
 extern GDLR_config *gdlr_wfa_config, *gdlr_wfc_config, *gdlr_wfo_config;
 extern void gdlr_ascii_funcs(GDLR_config *cp);
 
+extern int gdlr_vxc_openers(Node *np, FILE *fp);
+extern int gdlr_vxc_closers(Node *np, FILE *fp);
+extern int gdlr_vx_flags(Node *np, FILE *fp);
+
 extern struct lang_context *gdl_lang_context;
 extern unsigned char *gdl_render(Node *np, GDLR_config *gc);
+extern void gdl_output(Node *np, FILE *fp);
 
 extern void gdl_init(void);
 extern void gdl_term(void);
@@ -289,5 +300,7 @@ extern void gdl_atf_node(Node *np, FILE *fp);
 
 extern int gr_node_vx(Node *np, FILE *fp);
 extern int gr_node_wf(Node *np, FILE *fp);
+
+extern struct map *g_o_type (register const char *str, size_t len);
 
 #endif /*GDL_H_*/
