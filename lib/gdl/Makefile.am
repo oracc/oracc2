@@ -2,10 +2,11 @@ include ../../oracc-am-rules.txt
 
 noinst_LTLIBRARIES=libgdl.la
 
-libgdl_la_SOURCES = gdl.tab.c gdl.lex.c gdlyacc.c gdl.c gdlxml.c \
+libgdl_la_SOURCES = gdl.tab.c gdl.lex.c gr_wf.c gdlyacc.c gdl.c gdlxml.c \
 	gdl_balance.c gdl_legacy.c gdl_lexfld.c gdl_mod.c gdlstate.c \
 	gdlsig.c gdl_rnv.c gdl_one_off.c gdl_jox.c gdl_gloss.c \
-	gdlseq.c gsort.c gt.c gdl_meta.c gdl_group.c gdlstream.c
+	gdlseq.c gsort.c gt.c gdl_meta.c gdl_group.c gdlstream.c gdl_render.c
+
 
 gdl.tab.c gdl.tab.h: gdl.y gdl.l
 

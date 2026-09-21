@@ -129,10 +129,18 @@ extern Pool *gdlpool;
 extern Node *gdl_group_attach;
 extern Node *lgp;   		/* last grapheme node pointer */
 
+#if 0
 typedef void (*gdlr_text_fnc)(Node *np, FILE *fp);
-extern gdlr_text_fnc gdl_text_p;
+#endif
 
+typedef unsigned int GDLR_config;
+extern GDLR_config gdlr_wfa_config, gdlr_wfo_config;
+typedef int (*gdlr_node_fnc)(Node *np, FILE *fp);
+extern int gdlr_gdl_text(Node *c, FILE *fp);
+extern int gdlr_atf_text(Node *c, FILE *fp);
+extern gdlr_node_fnc *gr_funcs;
 extern struct lang_context *gdl_lang_context;
+extern unsigned char *gdl_render(Node *np, GDLR_config gc);
 
 extern void gdl_init(void);
 extern void gdl_term(void);
@@ -259,5 +267,7 @@ extern void gdl_surro(void);
 extern void gdl_set_lzr_sparse(Hash *l);
 
 extern void gdl_atf_node(Node *np, FILE *fp);
+
+extern int gr_node(Node *np, FILE *fp);
 
 #endif /*GDL_H_*/

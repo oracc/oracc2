@@ -1,164 +1,157 @@
 #include <oraccsys.h>
 #include "gdl.h"
+#include "gdlstate.h"
 
-gdlr_text_fnc gdl_text_p;
+int gdl_word_excisions;
+int gdl_wf_c10e = 0;
 
-unsigned char *
-gdl_render(Node *np)
+/* gdl_render handles several different calling cases, and is passed two kinds of input.
+ *
+ * INPUTS
+ * ======
+ *
+ * gdl_render is (1) called when processing GDL/GVL in which case the
+ * inputs is the XML tree that has been built during reading ATF,
+ * including state set in gs_state.  When called in this mode
+ * bracketing is by default omitted because the uses are to set
+ * grapheme value attributes that omit the graphemic metadata.
+ *
+ * gdl_render is (2) called when processing a GDL tree that has been
+ * created by reading XTF output.  In this mode no gs_state is used,
+ * and bracketing must be handled via the attribute properties.
+ *
+ * OUTPUTS
+ * =======
+ *
+ * Grapheme @form attributes on graphemes:
+ *
+ *       These can select between the original input, canonicalized,
+ *       or ascii versions
+ *
+ * Word @form
+ *
+ *       This is used for lemmatization matching and needs to use the
+ *	 original input and also excise any text in <<...>>
+ *
+ * ATF output
+ *
+ * 	 When called vx and other programs that render XTF back to
+ *	 ATF, excised text must be included, but the grapheme text
+ *	 choices may involve canonicalization or rendering as ASCII
+ *	 ATF/C-ATF 
+ */
+
+#if 0
+      if (c->text)
+	{
+	  gdlr_text_p(c);
+	}
+      ...
+      else if (strcmp(c->name, "g:sur"))
+	mesg_verr(c->mloc, "NULL text in %s node\n", c->name);
+#endif
+
+static Prop *
+gdl_wf_deep_delim(Node *c)
 {
-  Node *c;
-  for (c = w->kids; c; c = c->next)
+  while (c && strcmp(c->name, "g:w"))
+    c = c->last;
+  if (c)
+    return prop_find_kv(c->last->props, "g:delim", NULL);
+  else
+    return NULL;
+}
+
+int
+gr_node(Node *np, FILE *fp)
+{
+  gdlstate_t s = prop_get_state(np);
+  if (!gs_is(s,gs_excised))
     {
-      if (!strcmp(c->name, "g:x"))
+      gdlstate_t n = np->next ? prop_get_state(np->next) : 0L;
+      if ('g' == np->name[0])
 	{
-	  int no_post_x_delim = 0;
-	  Prop *p = prop_find_kv(c->props, "g:type", NULL);
-	  if (!strcmp(c->text, "..."))
+	  if (gr_funcs[np->name[3] ? 3 : 2](np, fp))
 	    {
-	      fputc('x', wfp);
-	    }
-	  else
-	    {
-	      if (!p
-		  || (p->u.k->v
-		      && strcmp(p->u.k->v, "comment")
-		      && strcmp(p->u.k->v, "dollar")
-		      && strcmp(p->u.k->v, "linebreak")))
-		mesg_verr(w->mloc, "gdl_wf_nodes: unhandled g:x text `%s'\n", c->text);
-	      else if (p && (!strcmp(p->u.k->v, "comment") || !strcmp(p->u.k->v, "dollar")))
-		no_post_x_delim = 1;
-	    }
-	  if (!no_post_x_delim)
-	    {
-	      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-	      if (d)
-		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
-	    }
-	}
-      else if (!strcmp(c->name, "g:det"))
-	{
-	  gdlstate_t s = 0L;
-	  if (c->kids)
-	    s = prop_get_state(c->kids);
-	  else
-	    mesg_verr(c->mloc, "gdl_wf_nodes: found a g:det with no ->kids");
-	  if (!gs_is(s,gs_excised))
-	    fputc('{', wfp);
-	  Prop *p = prop_find_kv(c->props, "g:char", NULL);
-	  if (p)
-	    fputs(p->u.k->v, wfp);
-	  gdl_wf_nodes(c, wfp);
-	  if (!gs_is(s,gs_excised))
-	    fputc('}', wfp);
-	  /* post-determinatives have g:delim on the g:det node */
-	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-	  if (d)
-	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
-	}
-      else if (!strcmp(c->name, "g:gg"))
-	{
-	  Prop *p = prop_find_kv(c->props, "g:type", NULL);
-	  Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-	  if (p)
-	    {
-	      if (!strcmp(p->u.k->v, "correction"))
-		fputs(c->kids->text, wfp);
-	      else if (!strcmp(p->u.k->v, "alternation"))
+	      if (np->next)
 		{
-		  fputs(c->kids->text, wfp);
-		  d = prop_find_kv(c->last->props, "g:delim", NULL);
+		  Prop *d = prop_find_kv(np->props, "g:delim", NULL);
+		  if ((!gs_is(n, gs_excised) || np->next->next)
+		      && (d || (d = gdl_wf_deep_delim(np->next))))
+		    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, fp);
 		}
-	      else if (!strcmp(p->u.k->v, "diszless"))
-		fputs(c->text, wfp);
-	      else
-		gdl_wf_nodes(c, wfp);
-	    }
-	  else
-	    gdl_wf_nodes(c, wfp);
-
-	  if (!d && c->last)
-	    d = prop_find_kv(c->last->props, "g:delim", NULL);
-
-	  if (d)
-	    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
-	}
-      else if (strcmp(c->name, "g:d") /*&& strcmp(c->name, "g:z")*/
-	       && strcmp(c->name, "g:p") && strcmp(c->name, "g:gloss"))
-	{
-	  gdlstate_t s = prop_get_state(c);
-	  if (!gs_is(s,gs_excised))
-	    {
-	      gdlstate_t n = c->next ? prop_get_state(c->next) : 0L;
-	      /* 20260609 if c->user and c->user->orig are non-NULL
-		 use the original transliteration in the word form
-		 because that is what lemm-xxx.sig match against; set
-		 gdl_wf_c10e=1 to force word forms to be
-		 canonicalized */
-	      if (c->text)
-		{
-		  gdlr_text_p(c);
-		  if (c->next)
-		    {
-		      Prop *d = prop_find_kv(c->props, "g:delim", NULL);
-		      if ((!gs_is(n, gs_excised) || c->next->next) && (d || (d = gdl_wf_deep_delim(c->next))))
-			{
-			  fputs(':' == *d->u.k->v ? "-" : d->u.k->v, wfp);
-			}
-		    }
-		}
-	      else if (strcmp(c->name, "g:sur"))
-		mesg_verr(c->mloc, "NULL text in %s node\n", c->name);
-	    }
-	  else
-	    {
-	      ++word_excisions;
 	    }
 	}
     }
+  else
+    {
+      ++gdl_word_excisions;
+    }
+  return 0;
 }
 
 void
-gdlr_gdl_text(Node *c)
+gdl_render_setup(int gdl_mode_opts)
+{
+  
+}
+
+unsigned char *
+gdl_render(Node *np, GDLR_config c)
+{
+  char *wf_buf = NULL;
+  size_t wf_len = 0;
+  gdl_word_excisions = 0;
+  FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
+  gr_node(np, wf_fp);
+  fclose(wf_fp);
+  return (ucp)wf_buf;
+}
+
+int
+gdlr_gdl_text(Node *c, FILE *fp)
 {
   const char *t = c->text;
   if (!gdl_wf_c10e && c->user && ((gvl_g*)c->user)->orig)
     t = (ccp)((gvl_g*)c->user)->orig;
-  fputs(t, wfp);
+  fputs(t, fp);
+  return 0;
 }
 
-void
-gdlr_atf_text(Node *c)
+int
+gdlr_atf_text(Node *c, FILE *fp)
 {
+  const char *t;
   Prop *p = prop_find_kv(c->props, "atf:ascii", NULL);
   if (p)
     t = p->u.k->v;
   if ('c' == c->name[2])
     {
-      fputc('|', wfp);
+      fputc('|', fp);
       Node *k;
       for (k = c->kids; k; k = k->next)
 	{
 	  if ('m' == k->name[2])
-	    fputc('@', wfp);
+	    fputc('@', fp);
 	  else if ('f' == k->name[2])
-	    fputc('~', wfp);
+	    fputc('~', fp);
 	  if ((p = prop_find_kv(k->props, "atf:ascii", NULL)))
-	    fputs(p->u.k->v, wfp);
+	    fputs(p->u.k->v, fp);
 	  else if ('d' == k->name[2])
 	    {
 	      if (((unsigned)k->text[0]) > 127)
-		fputc('x', wfp);
+		fputc('x', fp);
 	      else
-		fputs(k->text, wfp);
+		fputs(k->text, fp);
 	    }
 	  else
-	    fputs(k->text, wfp);
+	    fputs(k->text, fp);
 	}
-      fputc('|', wfp);
+      fputc('|', fp);
     }
   else
     {
-      fputs(t, wfp);
+      fputs(t, fp);
       if (c->kids)
 	{
 	  /* skip g:b node and output mods */
@@ -166,11 +159,12 @@ gdlr_atf_text(Node *c)
 	  for (k = c->kids->next; k; k = k->next)
 	    {
 	      if ('m' == k->name[2])
-		fputc('@', wfp);
+		fputc('@', fp);
 	      else
-		fputc('~', wfp);
-	      fputs(k->text, wfp);
+		fputc('~', fp);
+	      fputs(k->text, fp);
 	    }
 	}
     }
+  return 0;
 }

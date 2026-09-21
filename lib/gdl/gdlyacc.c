@@ -24,8 +24,7 @@ int gdl_cell_count;
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
 static int gdl_excision_type = 'e';
-static int gdl_atf = 0;
-int gdl_wf_c10e = 0;
+/*static int gdl_atf = 0;*/
 
 Node *gdl_post_det_gp_attach, *gdl_recycled_word;
 
@@ -37,7 +36,7 @@ gdl_graph_node_p gdl_graph_node;
 Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
 Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
 
-static int grapheme_id, nonw_found, wid_base, word_excisions;
+static int grapheme_id, nonw_found, wid_base/*, word_excisions*/;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
 
@@ -171,18 +170,6 @@ gdlparse_deep(Node *np, void *mptr)
     }
 }
 
-static
-Prop *
-gdl_wf_deep_delim(Node *c)
-{
-  while (c && strcmp(c->name, "g:w"))
-    c = c->last;
-  if (c)
-    return prop_find_kv(c->last->props, "g:delim", NULL);
-  else
-    return NULL;
-}
-
 static void
 gdl_force_nonw(Node *w, const char *t)
 {
@@ -309,12 +296,8 @@ gdl_word_attr(Node *w)
 	  else if (gdl_word_is_excised(w))
 	    gdl_nonw_excised(w);
 
-	  char *wf_buf = NULL;
-	  size_t wf_len = 0;
-	  word_excisions = 0;
-	  FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
-	  gdl_wf_nodes(w, wf_fp);
-	  fclose(wf_fp);
+	  unsigned char *wf_buf = gdl_render(w, gdlr_wfo_config);
+
 	  if (wf_buf)
 	    {
 	      if (*wf_buf)
@@ -336,14 +319,7 @@ gdl_word_attr(Node *w)
 	    }
 	  if (gdl_ascii)
 	    {
-	      char *af_buf = NULL;
-	      size_t af_len = 0;
-	      word_excisions = 0;
-	      gdl_atf = 1;
-	      FILE *af_fp = open_memstream(&af_buf, &af_len);
-	      gdl_wf_nodes(w, af_fp);
-	      fclose(af_fp);
-	      gdl_atf = 0;
+	      unsigned char *af_buf = gdl_render(w, gdlr_wfa_config);
 	      if (af_buf && *af_buf)
 		gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "atf:form",
 			    (ccp)pool_copy((uccp)af_buf, gdlpool));
