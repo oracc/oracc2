@@ -60,6 +60,6 @@ extern Prop*prop_find_pg(Prop *p, int ptype, int gtype);
 extern Prop*prop_find_kv(Prop *p, const char *key, const char *value);
 extern const char **prop_ccpp(Prop *p, int ptype, int gtype);
 extern void prop_drop_kv(Prop *p, const char *key, const char *value);
-extern const char *prop_val(Prop *p, const char *key, const char *value);
+extern const char *prop_val(Prop *p, const char *key);
 
 #endif/*PROP_H_*/

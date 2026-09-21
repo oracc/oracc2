@@ -190,7 +190,7 @@ prop_find_kv(Prop *p, const char *key, const char *value)
 
 /* Caller can use value==NULL to match key only */
 const char *
-prop_val(Prop *p, const char *key, const char *value)
+prop_val(Prop *p, const char *key)
 {
   if (!p || !key)
     return NULL;
@@ -200,9 +200,7 @@ prop_val(Prop *p, const char *key, const char *value)
 	{
 	  if (p->u.k
 	      && p->u.k->k
-	      && !strcmp(p->u.k->k, key)
-	      && (NULL == value
-		  || (p->u.k->v && !strcmp(p->u.k->v, value))))
+	      && !strcmp(p->u.k->k, key))
 	    return p->u.k->v;
 	}
       p = p->next;

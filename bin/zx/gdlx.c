@@ -68,7 +68,12 @@ test_identity(char *s, Tree *t)
       if (t->root->kids->text)
 	res = t->root->kids->text;
       else if (!strcmp(t->root->kids->name, "g:w"))
-	res = prop_val(t->root->kids->props, "form", NULL);
+	{
+	  if (gdl_ascii)
+	    res = prop_val(t->root->kids->props, "atf:form", NULL);
+	  if (!res)
+	    res = prop_val(t->root->kids->props, "form", NULL);
+	}
       else
 	printf("%s\t(null)\n", s);
     }
@@ -373,6 +378,7 @@ opts(int opt, const char *arg)
       break;
     case 'a':
       gdl_unicode = 0; /* defaults to 1; 0 forces atf2utf */
+      gdl_ascii = 1;
       break;
     case 'b':
       bare_mode = 1;
