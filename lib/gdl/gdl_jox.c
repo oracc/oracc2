@@ -19,12 +19,7 @@ grx_jox_node(Node *np, int oflag, int nflag)
   Ratts *r = NULL;
   const char **p = NULL;
 
-#if 0
-  if (!strcmp(nodename, "g:det"))
-    nodename = "g:d";
-  else
-#endif
-    if (!strcmp(nodename, "g:field"))
+  if (!strcmp(nodename, "g:field"))
     nodename = "f";
   else if (!strcmp(nodename, "g:cell"))
     nodename = "c";
@@ -60,7 +55,7 @@ grx_jox_node(Node *np, int oflag, int nflag)
 	  r = NULL;
 	}
     }
-  else if (!strcmp(np->name, "g:d"))
+  else if (!strcmp(np->name, "g:o"))
     {
       const char *type = NULL;
       char text[2];

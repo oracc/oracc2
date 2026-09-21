@@ -36,7 +36,7 @@ gdl_graph_node_p gdl_graph_node;
 Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
 Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
 
-static int grapheme_id, nonw_found, wid_base/*, word_excisions*/;
+static int grapheme_id, nonw_found, wid_base;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
 
@@ -296,6 +296,7 @@ gdl_word_attr(Node *w)
 	  else if (gdl_word_is_excised(w))
 	    gdl_nonw_excised(w);
 
+	  /* How to handle C10E word forms? Always create them? */
 	  unsigned char *wf_buf = gdl_render(w, gdlr_wfo_config);
 
 	  if (wf_buf)
@@ -306,16 +307,10 @@ gdl_word_attr(Node *w)
 		gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "x");
 	      else
 		{
-#if 0
-		  /* This should be unnecessary now we do gdl_word_is_excised above */
-		  if (word_excisions)
-		    gdl_nonw_excised(w);
-		  else
-#endif
-		    /* we are now ignoring ($...$) and (#...#) in gdl_word_is_excised() */
-		    /*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
-		    }
-	      free(wf_buf);      
+		  /* we are now ignoring ($...$) and (#...#) in gdl_word_is_excised() */
+		  /*gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "form", "XYZZY");*/
+		}
+	      free(wf_buf);
 	    }
 	  if (gdl_ascii)
 	    {
@@ -1022,6 +1017,7 @@ gdl_graph(Mloc *locp, Tree *ytp, const char *data)
   else
     gname = "g:g";
 
+  /* Don't ascify unless gdl_unicode is 0 and the data is not "00~" */
   if (!gdl_unicode && ('0' != data[0] || '0' != data[1] || (data[2] && '~' != data[2])))
     {
       uccp guni = atf2utf(locp,(uccp)data,0);

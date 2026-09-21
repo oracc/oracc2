@@ -2,6 +2,8 @@
 #include "gdl.h"
 #include "gdlstate.h"
 
+GDLR_config *gdlr_wfa_config, *gdlr_wfc_config, *gdlr_wfo_config;
+
 int gdl_word_excisions;
 int gdl_wf_c10e = 0;
 gdlr_node_fnc *gr_funcs;
@@ -52,121 +54,85 @@ gdlr_node_fnc *gr_funcs;
 	mesg_verr(c->mloc, "NULL text in %s node\n", c->name);
 #endif
 
-static Prop *
-gdl_wf_deep_delim(Node *c)
+GDLR_config *
+gdlr_clone_fncs(GDLR_config *f)
 {
-  while (c && strcmp(c->name, "g:w"))
-    c = c->last;
-  if (c)
-    return prop_find_kv(c->last->props, "g:delim", NULL);
-  else
-    return NULL;
+  GDLR_config *cp = calloc(1, sizeof(GDLR_config));
+  memcpy(cp, f, sizeof(GDLR_config));
+  return cp;
 }
 
-int
-gr_node(Node *np, FILE *fp)
+/* This should only be called by gdl_render_setup_vx; see gr_vx for vx
+   setup */
+static GDLR_config *
+gdl_render_init(int gdl_mode_opts)
 {
-  gdlstate_t s = prop_get_state(np);
-  if (!gs_is(s,gs_excised))
+  GDLR_config *cp = NULL;
+  if (bit_get(gdl_mode_opts, GDLR_WF_INPUT))
+    cp = gdlr_clone_fncs(&gr_wf_fncs);
+    
+  if (bit_get(gdl_mode_opts, GDLR_TEXT_ASCII))
     {
-      gdlstate_t n = np->next ? prop_get_state(np->next) : 0L;
-      if ('g' == np->name[0])
-	{
-	  if (gr_funcs[np->name[3] ? np->name[3] : np->name[2]](np, fp))
-	    {
-	      if (np->next)
-		{
-		  Prop *d = prop_find_kv(np->props, "g:delim", NULL);
-		  if ((!gs_is(n, gs_excised) || np->next->next)
-		      && (d || (d = gdl_wf_deep_delim(np->next))))
-		    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, fp);
-		}
-	    }
-	}
+      (*cp)[0] = gdlr_ascii_text;
+      gdlr_ascii_funcs(cp);
     }
+  else if (bit_get(gdl_mode_opts, GDLR_TEXT_C10E))
+    (*cp)[0] = gdlr_c10e_text;
   else
-    {
-      ++gdl_word_excisions;
-    }
-  return 0;
+    (*cp)[0] = gdlr_orig_text;
+
+  return cp;
 }
 
 void
-gdl_render_setup(GDLR_config gdl_mode_opts)
+gdl_render_setup_wf(void)
 {
-  gr_funcs = gr_wf_fncs;
+  gdlr_wfa_config = gdl_render_init(GDLR_WF_INPUT|GDLR_TEXT_ASCII);
+  gdlr_wfc_config = gdl_render_init(GDLR_WF_INPUT|GDLR_TEXT_C10E);
+  gdlr_wfo_config = gdl_render_init(GDLR_WF_INPUT|GDLR_TEXT_ORIG);
 }
 
 unsigned char *
-gdl_render(Node *np, GDLR_config c)
+gdl_render(Node *np, GDLR_config *c)
 {
-  gdl_render_setup(c);
+  /*gdl_render_setup(c);*/
+  gr_funcs = *c;
   char *wf_buf = NULL;
   size_t wf_len = 0;
   gdl_word_excisions = 0;
   FILE *wf_fp = open_memstream(&wf_buf, &wf_len);
-  gr_node(np, wf_fp);
+  gdlr_node(np, wf_fp);
   fclose(wf_fp);
   return (ucp)wf_buf;
 }
 
+void
+gdl_output(Node *np, FILE *fp)
+{
+  gdlr_node(np, fp);
+}
+
 int
-gdlr_gdl_text(Node *c, FILE *fp)
+gdlr_orig_text(Node *c, FILE *fp)
 {
   const char *t = c->text;
-  if (!gdl_wf_c10e && c->user && ((gvl_g*)c->user)->orig)
+  if (c->user && ((gvl_g*)c->user)->orig)
     t = (ccp)((gvl_g*)c->user)->orig;
   fputs(t, fp);
   return 0;
 }
 
 int
-gdlr_atf_text(Node *c, FILE *fp)
+gdlr_c10e_text(Node *c, FILE *fp)
 {
-  const char *t;
-  Prop *p = prop_find_kv(c->props, "atf:ascii", NULL);
-  if (p)
-    t = p->u.k->v;
-  if ('c' == c->name[2])
-    {
-      fputc('|', fp);
-      Node *k;
-      for (k = c->kids; k; k = k->next)
-	{
-	  if ('m' == k->name[2])
-	    fputc('@', fp);
-	  else if ('f' == k->name[2])
-	    fputc('~', fp);
-	  if ((p = prop_find_kv(k->props, "atf:ascii", NULL)))
-	    fputs(p->u.k->v, fp);
-	  else if ('d' == k->name[2])
-	    {
-	      if (((unsigned)k->text[0]) > 127)
-		fputc('x', fp);
-	      else
-		fputs(k->text, fp);
-	    }
-	  else
-	    fputs(k->text, fp);
-	}
-      fputc('|', fp);
-    }
-  else
-    {
-      fputs(t, fp);
-      if (c->kids)
-	{
-	  /* skip g:b node and output mods */
-	  Node *k;
-	  for (k = c->kids->next; k; k = k->next)
-	    {
-	      if ('m' == k->name[2])
-		fputc('@', fp);
-	      else
-		fputc('~', fp);
-	      fputs(k->text, fp);
-	    }
-	}
-    }
+  fputs(c->text, fp);
+  return 0;
+}
+
+int
+gdlr_ascii_text(Node *c, FILE *fp)
+{
+  const char *t = prop_val(c->props, "atf:ascii");
+  fputs(t ? t : c->text, fp);
   return 0;
 }

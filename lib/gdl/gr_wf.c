@@ -2,10 +2,9 @@
 #include "gdl.h"
 #include "gdlstate.h"
 
+extern int gdl_word_excisions;
+
 /* Functions and accessor array for gr_wf_funcs */
-
-GDLR_config gdlr_wfa_config, gdlr_wfo_config;
-
 #define grf(x) gr_wf_##x
 
 int
@@ -24,10 +23,10 @@ grf(b)(Node *np, FILE *fp)
     {
       Node *k;
       for (k = np->kids->next; k; k = k->next)
-	gr_node(k, fp);
+	gdlr_node(k, fp);
     }
   else
-    gr_funcs[0](np, fp);
+    gdlr_text(np, fp);
   return 0;
 }
 
@@ -37,17 +36,17 @@ grf(c)(Node *np, FILE *fp)
   fputc('|', fp);
   if (np->kids && !strcmp(np->kids->name, "g:b"))
     {
-      gr_node(np->kids, fp);
+      gdlr_node(np->kids, fp);
       fputc('|', fp);
       Node *k;
       for (k = np->kids->next; k; k = k->next)
-	gr_node(k, fp);
+	gdlr_node(k, fp);
     }
   else
     {
       Node *k;
       for (k = np->kids; k; k = k->next)
-	gr_node(k, fp);
+	gdlr_node(k, fp);
       fputc('|', fp);
     }  
   return 0;
@@ -66,7 +65,7 @@ grf(d)(Node *np, FILE *fp)
   Prop *p = prop_find_kv(np->props, "g:char", NULL);
   if (p)
     fputs(p->u.k->v, fp);
-  gr_funcs[0](np, fp);
+  gdlr_text(np, fp);
   if (!gs_is(s,gs_excised))
     fputc('}', fp);
   return 0;
@@ -92,10 +91,10 @@ grf(g)(Node *np, FILE *fp)
       else if (!strcmp(p->u.k->v, "diszless"))
 	fputs(np->text, fp);
       else
-	gr_funcs[0](np, fp);
+	gdlr_text(np, fp);
     }
   else
-    gr_funcs[0](np, fp);    
+    gdlr_text(np, fp);    
   return 0;
 }
 
@@ -117,9 +116,9 @@ grf(m)(Node *np, FILE *fp)
 int
 grf(n)(Node *np, FILE *fp)
 {
-  gr_node(np->kids, fp);
+  gdlr_node(np->kids, fp);
   fputc('(', fp);
-  gr_node(np->kids->next, fp);
+  gdlr_node(np->kids->next, fp);
   fputc(')', fp);
   return 0;
 }
@@ -128,6 +127,16 @@ int
 grf(o)(Node *np, FILE *fp)
 {
   fputs(np->text, fp);
+  return 0;
+}
+
+int
+grf(o_a)(Node *np, FILE *fp)
+{
+  if ((unsigned int)*np->text > 127)
+    fputc('x', fp);
+  else
+    fputs(np->text, fp);
   return 0;
 }
 
@@ -141,9 +150,9 @@ grf(p)(Node *np, FILE *fp)
 int
 grf(q)(Node *np, FILE *fp)
 {
-  gr_node(np->kids, fp);
+  gdlr_node(np->kids, fp);
   fputc('(', fp);
-  gr_node(np->kids->next, fp);
+  gdlr_node(np->kids->next, fp);
   fputc(')', fp);
   return 0;
 }
@@ -162,11 +171,11 @@ grf(s)(Node *np, FILE *fp)
     {
       Node *k;
       for (k = np->kids; k; k = k->next)
-	gr_node(k, fp);
+	gdlr_node(k, fp);
     }
   else
     {
-      gr_funcs[0](np, fp);
+      gdlr_text(np, fp);
     }
   return 0;
 }
@@ -185,11 +194,11 @@ grf(v)(Node *np, FILE *fp)
     {
       Node *k;
       for (k = np->kids; k; k = k->next)
-	gr_node(k, fp);
+	gdlr_node(k, fp);
     }
   else
     {
-      gr_funcs[0](np, fp);
+      gdlr_text(np, fp);
     }
   return 0;
 }
@@ -199,7 +208,7 @@ grf(w)(Node *np, FILE *fp)
 {
   Node *k;
   for (k = np->kids; k; k = k->next)
-    gr_node(k, fp);  
+    gdlr_node(k, fp);  
   return 0;
 }
 
@@ -226,9 +235,55 @@ grf(x)(Node *np, FILE *fp)
   return 0;
 }
 
+void
+gdlr_ascii_funcs(GDLR_config *cp)
+{
+  (*cp)['o'] = gr_wf_o_a;
+}
+
+static Prop *
+gdl_wf_deep_delim(Node *c)
+{
+  while (c && strcmp(c->name, "g:w"))
+    c = c->last;
+  if (c)
+    return prop_find_kv(c->last->props, "g:delim", NULL);
+  else
+    return NULL;
+}
+
+int
+gr_node_wf(Node *np, FILE *fp)
+{
+  gdlstate_t s = prop_get_state(np);
+  if (!gs_is(s,gs_excised))
+    {
+      gdlstate_t n = np->next ? prop_get_state(np->next) : 0L;
+      if ('g' == np->name[0])
+	{
+	  if (gr_funcs[np->name[3] ? np->name[3] : np->name[2]](np, fp))
+	    {
+	      if (np->next)
+		{
+		  Prop *d = prop_find_kv(np->props, "g:delim", NULL);
+		  if ((!gs_is(n, gs_excised) || np->next->next)
+		      && (d || (d = gdl_wf_deep_delim(np->next))))
+		    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, fp);
+		}
+	    }
+	}
+    }
+  else
+    {
+      ++gdl_word_excisions;
+    }
+  return 0;
+}
+
 gdlr_node_fnc grf(fncs)[128] =
   {
-    [0] = gdlr_gdl_text,
+    [0] = gr_node_wf,
+    [1] = gdlr_orig_text,
     ['a'] = grf(a),
     ['b'] = grf(b),
     ['c'] = grf(c),
