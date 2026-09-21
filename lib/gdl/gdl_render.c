@@ -4,6 +4,7 @@
 
 int gdl_word_excisions;
 int gdl_wf_c10e = 0;
+gdlr_node_fnc *gr_funcs;
 
 /* gdl_render handles several different calling cases, and is passed two kinds of input.
  *
@@ -71,7 +72,7 @@ gr_node(Node *np, FILE *fp)
       gdlstate_t n = np->next ? prop_get_state(np->next) : 0L;
       if ('g' == np->name[0])
 	{
-	  if (gr_funcs[np->name[3] ? 3 : 2](np, fp))
+	  if (gr_funcs[np->name[3] ? np->name[3] : np->name[2]](np, fp))
 	    {
 	      if (np->next)
 		{
@@ -91,14 +92,15 @@ gr_node(Node *np, FILE *fp)
 }
 
 void
-gdl_render_setup(int gdl_mode_opts)
+gdl_render_setup(GDLR_config gdl_mode_opts)
 {
-  
+  gr_funcs = gr_wf_fncs;
 }
 
 unsigned char *
 gdl_render(Node *np, GDLR_config c)
 {
+  gdl_render_setup(c);
   char *wf_buf = NULL;
   size_t wf_len = 0;
   gdl_word_excisions = 0;

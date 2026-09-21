@@ -2,6 +2,8 @@
 #include "gdl.h"
 #include "gdlstate.h"
 
+/* Functions and accessor array for gr_wf_funcs */
+
 GDLR_config gdlr_wfa_config, gdlr_wfo_config;
 
 #define grf(x) gr_wf_##x
@@ -233,5 +235,6 @@ gdlr_node_fnc grf(fncs)[128] =
     ['s'] = grf(s),
     ['t'] = grf(t),
     ['v'] = grf(v),
+    ['w'] = grf(w),
     ['x'] = grf(x)
   };

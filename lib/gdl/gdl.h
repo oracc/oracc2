@@ -139,6 +139,7 @@ typedef int (*gdlr_node_fnc)(Node *np, FILE *fp);
 extern int gdlr_gdl_text(Node *c, FILE *fp);
 extern int gdlr_atf_text(Node *c, FILE *fp);
 extern gdlr_node_fnc *gr_funcs;
+extern gdlr_node_fnc gr_wf_fncs[128];
 extern struct lang_context *gdl_lang_context;
 extern unsigned char *gdl_render(Node *np, GDLR_config gc);
 
