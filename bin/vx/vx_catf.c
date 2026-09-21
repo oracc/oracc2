@@ -8,10 +8,9 @@ static Hash *h_catf_sn = NULL;
 static Roco *r_catf = NULL;
 const char *file;
 
-void
-vxc_simples(Node *np, FILE *fp)
+int
+gdlr_catf_text(Node *np, FILE *fp)
 {
-  vxa_openers(np, fp);
   if (np->text)
     {
       if ('.' == *np->text || 'X' == *np->text || ('d' == *np->text && !np->text[1]))
@@ -44,12 +43,6 @@ vxc_simples(Node *np, FILE *fp)
 	    }
 	}
     }
-  Node *mp;
-  for (mp = np->kids; mp; mp = mp->next)
-    vx_atf_gdl_node(mp, fp);
-  vxa_status_flags(np, fp);
-  vxa_closers(np, fp);
-  vxa_g_delim(np, fp);
 }
 
 static void
@@ -89,10 +82,9 @@ vx_catf(Tree *tp, FILE *fp)
 {
   static CATF_helper ch;
   ch.outfp = fp;
-  vx_simples_p = vxc_simples;
+
   if (tp->root)
     {
-      vxc_load_map();
       Node *start = tp->root;
       Vxcfnctab *vp = vxcfnctab(start->name, strlen(start->name));
       if (!vp)
@@ -111,6 +103,10 @@ vx_catf(Tree *tp, FILE *fp)
 	}
       if (vp)
 	{
+	  vxc_load_map();
+	  gdl_render_setup_vx(GDLR_VX_CATF, gdlr_catf_text);
+	  gr_funcs = *c;
+
 	  ch.start = start;
 	  vp->fnc(start, &ch);
 	}
