@@ -279,6 +279,7 @@ block_div(Mloc l, Block *bp, char *rest)
 
   unsigned const char *divtok = (toks[0] ? pool_copy((uccp)toks[0], atfmp->pool) : NULL);
   unsigned const char *ntok = (toks[1] ? pool_copy((uccp)toks[1], atfmp->pool) : NULL);
+  char *xtok = (toks[1] && toks[2] ? vec_to_str(&toks[2], vsiz-2, " ") : NULL);
 
   if (vsiz)
     {
@@ -385,6 +386,8 @@ block_div(Mloc l, Block *bp, char *rest)
 	atf_xprop(np, "type", (ccp)divtok);
       if (ntok)
 	atf_xprop(np, "n", (ccp)ntok);
+      if (xtok)
+	atf_xprop(np, "subt", (ccp)xtok);
 
       if (divtok)
 	{
