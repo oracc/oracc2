@@ -352,6 +352,7 @@ var = element v {
 } , tr?
 
 tr = element itr { innerp.model }
+itr = attribute itr { "0" | "1" }
 
 # alignment groups
 ag = element ag { 
