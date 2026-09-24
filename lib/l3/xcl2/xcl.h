@@ -122,6 +122,7 @@ typedef struct xcl_context
   const char *textid;
   const char *file;
   struct linkbase *linkbase;
+  int line_is_unit;
   Pool *pool;
   Hash *psus;
   Hash *lpt_anchors;

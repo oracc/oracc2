@@ -471,6 +471,8 @@ xcl_jox_xcl_ratts(XCL *xc)
     list_pair(ap, "file", xc->file);
   if (xc->langs)
     list_pair(ap, "langs", xc->langs);
+  if (xc->line_is_unit)
+    list_pair(ap, "line-is-unit", "1");
   return ap;
 }
 
