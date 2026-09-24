@@ -16,6 +16,7 @@ typedef struct conll_run
 typedef struct conll_doc
 {
   Tree *tree;
+  Node *start;
   const char *doc_id;
   const char *doc_nm;
   const char *atff;

@@ -6,15 +6,20 @@
 Node **tnodes;
 
 static unsigned char *
-vxc_atf(Node *np)
+vxc_atf(List *w)
 {
-  if (!strcmp(np->name, "xcl:l"))
+  List *wl = list_create(LIST_SINGLE);
+  Node *np;
+  for (np = list_first(w); np; np = list_next(w))
     {
-      const char *ref = vx_att(np, "ref");
-      Node *gdl_np = hash_find(xmlid_h, (uccp)ref);
-      return gdl_render(gdl_np, vx_oatf_config);
+      if (!strcmp(np->name, "xcl:l"))
+	{
+	  const char *ref = vx_att(np, "ref");
+	  Node *gdl_np = hash_find(xmlid_h, (uccp)ref);
+	  list_add(wl, gdl_render(gdl_np, vx_oatf_config));
+	}
     }
-  return NULL;
+  return list_join(wl, "");
 }
 
 static void
@@ -59,18 +64,26 @@ vxc_words(Conll_sent *s, List *wl)
       w->p.M2 = vx_att(xff, "morph2");
       w->p.STEM = vx_att(xff, "stem");
       w->p.NORM = vx_att(xff, "norm");
-      char cgp[strlen(w->p.CF)+strlen(w->p.GW)+strlen(w->p.POS)+strlen("[]0")];
-      sprintf(cgp, "%s[%s]%s", w->p.CF, w->p.GW, w->p.POS);
-      w->c.LEMMA = vx_epsd_cft(cgp);
-      w->dis = vx_epsd_dis(cgp);
-      conll_misc(w, "LId", w->dis);
-      w->p.OID = vx_epsd_oid(cgp);
-      char cgspe[strlen(cgp)+strlen(w->p.SENSE)+strlen(w->p.EPOS)+strlen("//'0")];
-      sprintf(cgspe, "%s[%s//%s]%s'%s", w->p.CF, w->p.GW, w->p.SENSE, w->p.POS, w->p.EPOS);
-      w->p.SENSEID = vx_epsd_sid(cgspe);
-      w->p.LEMMAC = vx_epsd_ucun(w->c.LEMMA);
-      w->p.FORMC = vx_epsd_ucun(w->c.FORM);
-      w->p.BASEC = vx_epsd_ucun(w->p.BASE);
+      if (w->p.CF)
+	{
+	  char cgp[strlen(w->p.CF)+strlen(w->p.GW)+strlen(w->p.POS)+strlen("[]0")];
+	  sprintf(cgp, "%s[%s]%s", w->p.CF, w->p.GW, w->p.POS);
+	  w->c.LEMMA = vx_epsd_cft(cgp);
+	  w->dis = vx_epsd_dis(cgp);
+	  conll_misc(w, "LId", w->dis);
+	  w->p.OID = vx_epsd_oid(cgp);
+	  char cgspe[strlen(cgp)+strlen(w->p.SENSE)+strlen(w->p.EPOS)+strlen("//'0")];
+	  sprintf(cgspe, "%s[%s//%s]%s'%s", w->p.CF, w->p.GW, w->p.SENSE, w->p.POS, w->p.EPOS);
+	  w->p.SENSEID = vx_epsd_sid(cgspe);
+	  w->p.LEMMAC = vx_epsd_ucun(w->c.LEMMA);
+	  w->p.FORMC = vx_epsd_ucun(w->c.FORM);
+	  w->p.BASEC = vx_epsd_ucun(w->p.BASE);
+	}
+      else
+	{
+	  w->c.LEMMA = "_";
+	  w->c.UPOS = "X";
+	}
       w->ref = vx_att(lp, "ref");
       w->lp = lp;
       w->wp = hash_find(xmlid_h, (uccp)w->ref);
@@ -94,7 +107,7 @@ vxc_sentences(Conll_doc *d, Node **snp, Node **tnp)
 
       s_words = 0;
 #if 1
-      s->text = (char*)vxc_atf(snp[i]);
+      s->text = (char*)vxc_atf(w);
 #else
       FILE *atfp = open_memstream(&s->text, &ignored);
       node_iterator(snp[i], atfp, (nodehandler)vxc_atf, NULL);
@@ -175,6 +188,7 @@ vxc_doc(Conll_run *r, Tree *tp)
       const char *nm = (ccp)pool_copy((uccp)vx_att(tlit, "n"), tm_pool(tp));
       Conll_doc *d = conll_doc(r, id, nm, nsent);
       d->tree = tp;
+      d->start = tlit;
       d->atff = vx_att(tp->root, "atff");
       d->project = vx_att(tlit, "project");
       vxc_sentences(d, snodes, tnodes);

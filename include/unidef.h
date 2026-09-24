@@ -66,10 +66,14 @@
 
 #define U_rplus 0x207a
 #define U_rminus 0x207b
+
 #define U_ulhsq 0x2e22
 #define U_urhsq 0x2e23
 #define U_llhsq 0x2e24
 #define U_lrhsq 0x2e25
+
+#define U_ulhsq_u8str "\xE2\xB8\xA2"
+#define U_urhsq_u8str "\xE2\xB8\xA3"
 
 #define U_s_x_u8str "\xE2\x82\x93"
 #define U_X_u8str "\xC3\x97"

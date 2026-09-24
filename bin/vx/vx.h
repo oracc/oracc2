@@ -25,8 +25,7 @@ typedef enum omode
     OM_NONE , OM_CATF , OM_CONLLO , OM_IDENTITY
   } Omode;
 
-typedef void (*vx_simples_fnc)(Node *np, FILE *fp);
-extern vx_simples_fnc vx_simples_p;
+extern int blank_lines;
 
 typedef void (*vx_attr_fnc)(Node *np, const char **atts);
 extern vx_attr_fnc vx_attr_p;

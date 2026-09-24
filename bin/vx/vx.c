@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include "vx.h"
 
-int s_words;
+int blank_lines = 0, s_words = 0;
 Omode output_mode = 0;
 const char *translation_fn = NULL;
 
@@ -10,7 +10,7 @@ main(int argc, char *const *argv)
 {
   setlocale(LC_ALL,ORACC_LOCALE);
   mesg_init();
-  options(argc, argv, "CIOt:");
+  options(argc, argv, "bCIOt:");
 
   if (!output_mode)
     output_mode = OM_IDENTITY;
@@ -51,6 +51,9 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+    case 'b':
+      blank_lines = 1;
+      break;
     case 'C':
       output_mode = OM_CATF;
       break;

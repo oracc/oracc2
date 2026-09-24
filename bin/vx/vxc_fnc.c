@@ -47,6 +47,8 @@ vxc_composite(Node *np, CATF_helper *chp)
 void
 vxc_div(Node *np, CATF_helper *chp)
 {
+  if (blank_lines)
+    fputc('\n', chp->outfp);
   char *type = strdup(prop_val(np, "type"));
   const char *n = prop_val(np, "n");
   fprintf(chp->outfp, "@div %s %s\n", type, n);
@@ -58,6 +60,8 @@ vxc_div(Node *np, CATF_helper *chp)
 void
 vxc_variants(Node *np, CATF_helper *chp)
 {
+  if (blank_lines)
+    fputc('\n', chp->outfp);
   fprintf(chp->outfp, "@variants\n");
   vxc_kids(np, chp);
   fprintf(chp->outfp, "@endvariants\n");
@@ -135,6 +139,8 @@ vxc_protocol(Node *np, CATF_helper *chp)
 void
 vxc_obj_sur(Node *np, CATF_helper *chp)
 {
+  if (blank_lines)
+    fputc('\n', chp->outfp);
   const char *implicit = prop_val(np, "implicit");
   if (!implicit || '1' != *implicit)
     {
@@ -151,6 +157,8 @@ vxc_obj_sur(Node *np, CATF_helper *chp)
 void
 vxc_column(Node *np, CATF_helper *chp)
 {
+  if (blank_lines)
+    fputc('\n', chp->outfp);
   const char *implicit = prop_val(np, "implicit");
   if (!implicit || '1' != *implicit)
     {
@@ -163,21 +171,43 @@ vxc_column(Node *np, CATF_helper *chp)
 }
 
 void
+vxc_lem(Node *np, CATF_helper *chp)
+{
+  if (np->kids && prop_val(np->kids, "lem"))
+    {
+      fprintf(chp->outfp, "#lem: ");
+      Node *k;
+      for (k = np->kids; k; k = k->next)
+	{
+	  const char *lem = prop_val(k, "lem");
+	  fputs(lem ? lem : "-", chp->outfp);
+	  if (k->next)
+	    fputs("; ", chp->outfp);
+	}
+      fputc('\n', chp->outfp);
+    }
+}
+
+void
 vxc_l(Node *np, CATF_helper *chp)
 {
-  const char *n = prop_val(np, "n");      
+  if (blank_lines)
+    fputc('\n', chp->outfp);
+  const char *n = prop_val(np, "n");
   fprintf(chp->outfp, "%s. ", n);
   vxc_kids(np, chp);
-  fputc('\n', chp->outfp);
+  fputc('\n', chp->outfp);  
+  vxc_lem(np, chp);
 }
 
 void
 vxc_v(Node *np, CATF_helper *chp)
 {
-  const char *n = prop_val(np, "varnum");      
+  const char *n = prop_val(np, "varnum");
   fprintf(chp->outfp, "%s: ", n);
   vxc_kids(np, chp);
   fputc('\n', chp->outfp);
+  vxc_lem(np, chp);
 }
 
 void

@@ -135,6 +135,7 @@ conll_dump_word(Conll_word *w, FILE *fp)
 void
 conll_dump(Conll_run *r, FILE *fp)
 {
+  int missing_xcl_warnings = 0;
   fprintf(fp, "# global.columns = %s\n", r->global_columns);
   Conll_doc *d;
   for (d = list_first(r->docs); d; d = list_next(r->docs))
@@ -145,13 +146,25 @@ conll_dump(Conll_run *r, FILE *fp)
 	fprintf(fp, "# atffile = %s\n", d->atff);
       if (d->project)
 	fprintf(fp, "# project = http://oracc.org/%s\n", d->project);
+      Node *xcl = vx_component(d->tree, "xcl:xcl");
+      if (xcl)
+	{
+	  const char *line_is_unit = prop_val(xcl, "line-is-unit");
+	  if (line_is_unit)
+	    fputs("# conllo_mode = lines\n", fp);
+	  else if (!missing_xcl_warnings++)
+	    fputs("# conllo_mode = sentences\n", fp);
+	}
+      else
+	fprintf(stderr, "vx: no xcl found in %s\n", d->atff);
       int i;
       for (i = 0; i < d->nsents; ++i)
 	{
 	  Conll_sent *s = &d->sents[i];
 	  fprintf(fp, "# sent_id = %s.s%s\n", d->doc_id, s->sent_id);
 	  fprintf(fp, "# text = %s\n", s->text);
-	  fprintf(fp, "# text_en = %s\n", s->tren);
+	  if (s->tren)
+	    fprintf(fp, "# text_en = %s\n", s->tren);
 	  fprintf(fp, "# xsux = %s\n", s->xsux);
 	  int j;
 	  for (j = 0; j < s->nwords; ++j)
