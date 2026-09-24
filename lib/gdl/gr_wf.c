@@ -263,15 +263,13 @@ gr_node_wf(Node *np, FILE *fp)
       gdlstate_t n = np->next ? prop_get_state(np->next) : 0L;
       if ('g' == np->name[0])
 	{
-	  if (gr_funcs[np->name[3] ? np->name[3] : np->name[2]](np, fp))
+	  (void)gr_funcs[np->name[3] ? np->name[3] : np->name[2]](np, fp);
+	  if (np->next)
 	    {
-	      if (np->next)
-		{
-		  Prop *d = prop_find_kv(np->props, "g:delim", NULL);
-		  if ((!gs_is(n, gs_excised) || np->next->next)
-		      && (d || (d = gdl_wf_deep_delim(np->next))))
-		    fputs(':' == *d->u.k->v ? "-" : d->u.k->v, fp);
-		}
+	      Prop *d = prop_find_kv(np->props, "g:delim", NULL);
+	      if ((!gs_is(n, gs_excised) || np->next->next)
+		  && (d || (d = gdl_wf_deep_delim(np->next))))
+		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, fp);
 	    }
 	}
     }

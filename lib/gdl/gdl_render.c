@@ -62,24 +62,25 @@ gdlr_clone_fncs(GDLR_config *f)
   return cp;
 }
 
-/* This should only be called by gdl_render_setup_vx; see gr_vx for vx
+/* This should only be called by gdl_render_setup_wf; see gr_vx for vx
    setup */
 static GDLR_config *
 gdl_render_init(int gdl_mode_opts)
 {
   GDLR_config *cp = NULL;
-  if (bit_get(gdl_mode_opts, GDLR_WF_INPUT))
-    cp = gdlr_clone_fncs(&gr_wf_fncs);
+
+  cp = gdlr_clone_fncs(&gr_wf_fncs);
+  /* (*cp)[0] is statically initialized to gr_node_wf */
     
   if (bit_get(gdl_mode_opts, GDLR_TEXT_ASCII))
     {
-      (*cp)[0] = gdlr_ascii_text;
+      (*cp)[1] = gdlr_ascii_text;
       gdlr_ascii_funcs(cp);
     }
   else if (bit_get(gdl_mode_opts, GDLR_TEXT_C10E))
-    (*cp)[0] = gdlr_c10e_text;
+    (*cp)[1] = gdlr_c10e_text;
   else
-    (*cp)[0] = gdlr_orig_text;
+    (*cp)[1] = gdlr_orig_text;
 
   return cp;
 }
