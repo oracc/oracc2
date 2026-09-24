@@ -21,3 +21,4 @@ variants,	(vx_catf_fnc*)vxc_variants
 variant,	(vx_catf_fnc*)vxc_variant
 lg,		(vx_catf_fnc*)vxc_lg
 v,		(vx_catf_fnc*)vxc_v
+itr,		(vx_catf_fnc*)vxc_itr

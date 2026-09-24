@@ -94,6 +94,7 @@ extern vx_catf_fnc vxc_variants;
 extern vx_catf_fnc vxc_variant;
 extern vx_catf_fnc vxc_v;
 extern vx_catf_fnc vxc_xcl;
+extern vx_catf_fnc vxc_itr;
 
 extern void vx_catf(Tree *tp, FILE *fp);
 extern void vx_catf_init(void);

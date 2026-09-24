@@ -185,3 +185,38 @@ vxc_xcl(Node *np, CATF_helper *chp)
 {
   /* do nothing; just a stopper */
 }
+
+void
+vxc_itr_node(Node *np, CATF_helper *chp)
+{
+  fprintf(stderr, "itr: np->name = %s\n", np->name);
+  if ('-' == *np->name)
+    fputs(np->text, chp->outfp);
+  else
+    {
+      const char *tag = prop_val(np, "class");
+      if (!tag)
+	tag = np->name;
+      fprintf(chp->outfp, "@%s{", tag);
+      Node *k;
+      for (k = np->kids; k; k = k->next)
+	vxc_itr_node(k, chp);
+      fputc('}', chp->outfp);
+    }
+}
+
+void
+vxc_itr(Node *np, CATF_helper *chp)
+{
+  const char *xlang = prop_val(np, "xml:lang");
+  if (xlang)
+    fprintf(chp->outfp, "#tr.%s: ", xlang);
+  else
+    fputs("tr: ", chp->outfp);
+
+  Node *k;
+  for (k = np->kids; k; k = k->next)
+    vxc_itr_node(k, chp);
+
+  fputc('\n', chp->outfp);
+}

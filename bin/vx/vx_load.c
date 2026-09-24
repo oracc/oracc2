@@ -2,6 +2,8 @@
 #include <gdl.h>
 #include "vx.h"
 
+int mixed_content = 0;
+
 vx_attr_fnc vx_attr_p = vx_attr;
 
 static Hash *seen_h = NULL;
@@ -107,8 +109,13 @@ void
 vx_char(Tree *tp, const char *c)
 {
 #if 1
-  /* This is definitely OK for gdl; need to keep an eye on it for other NS */
-  tp->curr->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
+  if (mixed_content)
+    {
+      Node *np = tree_add(tp, NS_NONE, "-", tp->curr->depth+1, tree_mloc(tp, pi_file, pi_line));
+      np->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
+    }
+  else
+    tp->curr->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
 #else
   Node *np = tree_add(tp, NS_NONE, "#", tp->curr->depth+1, tree_mloc(tp, pi_file, pi_line));
   np->text = (ccp)pool_copy((uccp)c, tp->tm->pool);
@@ -154,6 +161,8 @@ vx_sH(void *vp, const char *name, const char **atts)
       prop_node_add(ep, PROP_ANY, PG_ATF, "atfw",
 		    (ccp)hpool_copy((uccp)itoa(++wordindex), ep->tree->tm->pooh));
     }
+  if (!strcmp(colon, "itr"))
+    mixed_content = 1;
 
   if (atts[0])
     vx_attr_p(ep, atts);
@@ -172,7 +181,6 @@ vx_sH(void *vp, const char *name, const char **atts)
       else
 	ep->text = "-";
     }
-
 }
 
 static void
@@ -182,6 +190,13 @@ vx_eH(void *vp, const char *name)
   if (*c)
     vx_char(vp, c);
   tree_pop(vp);
+  const char *colon = strrchr(name, ':');
+  if (colon)
+    ++colon;
+  else
+    colon = name;
+  if (!strcmp(colon, "itr"))
+    mixed_content = 0;
 }
 
 static void
