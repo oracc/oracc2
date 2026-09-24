@@ -76,6 +76,7 @@ ax_input(const char *f)
       if (lem_mode)
 	{
 	  xp = ax_xcl(rp, tp->root->kids);
+	  xp->line_is_unit = line_is_unit;
 	  tree_curr(tp->root->kids);
 	  Node *np = tree_add(tp, NS_XCL, "xcl", tp->root->kids->depth, tp->root->kids->mloc);
 	  np->user = xp;
@@ -276,7 +277,7 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "ACDcfgI:Llmstvx");
+  options(argc, argv, "ACDcfgI:Llmstuvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
   if (check_mode)
@@ -368,6 +369,9 @@ opts(int opt, const char *arg)
       break;
     case 't':
       ++trace_mode;
+      break;
+    case 'u':
+      ++line_is_unit;
       break;
     case 'V':
       val_flag = 1;
