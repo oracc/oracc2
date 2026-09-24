@@ -121,7 +121,8 @@ atr_push(const char *s, Mloc *mp)
 {
   if (bld_trace)
     fprintf(stderr, "bld: atr_push %s to parent %s\n", s, curr_trans->tree->curr->name);
-  (void)tree_add(curr_trans->tree, NS_HTM, s, curr_trans->tree->curr->depth, NULL);
+  Node *np = tree_add(curr_trans->tree, NS_HTM, s, curr_trans->tree->curr->depth, NULL);
+  np->mloc = mloc_mloc(mp);
   return tree_push(curr_trans->tree);
 }
 

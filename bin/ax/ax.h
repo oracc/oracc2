@@ -79,8 +79,9 @@ extern int ax_jox_note(Node *np, Note *bp);
 extern int ax_outputs(char *xtf, char *tra);
 extern int ax_jox_protocol(Node *np, void *p);
 extern void ax_jox_block(Node *np, Block *p);
-
+extern const char **ax_jox_props(Prop *p);
 extern int grx_jox_gdl(Node *np, Node *gdl);
-extern int ax_gdl_jox(Node *np);
+extern int ax_gdl_jox(Node *np, void *vp);
+extern int ax_htm_jox(Node *np, void *vp);
 
 #endif/*AX_H_*/

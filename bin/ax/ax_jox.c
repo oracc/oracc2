@@ -49,9 +49,42 @@ atf_line_pi(Node *n)
 }
 
 int
-ax_gdl_jox(Node *np)
+ax_gdl_jox(Node *np, void *vp)
 {
   grx_jox_gdl(np, np->user);
+  return 0;
+}
+
+static void
+ax_htm_node(Node *np, void *ignored)
+{
+  if ('-' == *np->name)
+    joxer_ch(np->mloc, np->text);
+  else
+    {
+      Ratts *r = NULL;
+      const char **p = NULL;
+      joxer_ea(np->mloc, np->name, (r = rnvval_aa_ccpp((p = ax_jox_props(np->props)))));
+      if (p)
+	free(p);
+      if (r)
+	{
+	  free(r->atts);
+	  free(r->qatts);
+	  free(r);
+	}
+      Node *k;
+      for (k = np->kids; k; k = k->next)
+	ax_htm_node(k, ignored);
+      joxer_ee(np->mloc, np->name);
+    }
+}
+
+int
+ax_htm_jox(Node *np, void *fp)
+{
+  ax_htm_node(np, fp);
+
   return 0;
 }
 
@@ -209,6 +242,9 @@ ax_jox_node(Node *np)
   if (!ap && NS_GDL == np->ns)
     ap = axjoxfnc("_gdl_", 5);
 
+  else if (!ap && NS_HTM == np->ns)
+    ap = axjoxfnc("_htm_", 5);
+
   Ratts *r = NULL;
   const char **p = NULL;
   if (!ap || ap->wrapper || np->utype == N_U_XLEM) /* N_U_XLEM is a g:w with LEM info */
@@ -247,11 +283,14 @@ ax_jox_node(Node *np)
 		    nodename);
 	}
     }
+#if 0
+  /* This is handled by ax_htm_jox */
   else if (N_U_SCANSEG == np->utype && np->kids)
     {
       for (npp = np->kids; npp; npp = npp->next)
 	ax_jox_node(npp);
     }
+#endif
   else if (np->text)
     {
       joxer_ch(np->mloc, np->text);
