@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <gdl.h>
+#include <lng.h>
 #include <roco.h>
 #include "vx.h"
 
@@ -15,7 +16,7 @@ gdlr_catf_text(Node *np, FILE *fp)
 {
   if (np->text)
     {
-      if ('.' == *np->text || 'X' == *np->text || ('d' == *np->text && !np->text[1]))
+      if ('.' == *np->text || 'X' == *np->text || 'x' == *np->text || ('d' == *np->text && !np->text[1]))
 	fputs(np->text, fp);
       else
 	{
@@ -83,10 +84,14 @@ vxc_load_map(void)
 void
 vx_catf_init(void)
 {
+  vxc_load_map();
   vx_catf_config = gdl_render_setup_vx(GDLR_VX_CATF, gdlr_catf_text);
   (*vx_catf_config)[2] = gdlr_vxc_openers;
   (*vx_catf_config)[3] = gdlr_vxc_closers;
   (*vx_catf_config)[4] = gdlr_vx_flags;
+  extern int gdl_no_xml_ids;
+  lng_init();
+  gdl_init();
 }
 
 void
@@ -115,7 +120,6 @@ vx_catf(Tree *tp, FILE *fp)
 	}
       if (vp)
 	{
-	  vxc_load_map();
 	  vx_catf_init();
 	  gr_funcs = *vx_catf_config;
 	  ch.start = start;

@@ -2,6 +2,7 @@
 #define VX_H_
 #include <hash.h>
 #include <tree.h>
+#include <gdl.h>
 #include <xml.h>
 #include <runexpat.h>
 
@@ -22,8 +23,10 @@ typedef struct vxsel
 
 typedef enum omode
   {
-    OM_NONE , OM_CATF , OM_CONLLO , OM_IDENTITY
+    OM_NONE , OM_OATF , OM_CATF , OM_CONLLO , OM_IDENTITY
   } Omode;
+
+extern Omode conllo_text;
 
 extern int blank_lines;
 
@@ -99,5 +102,7 @@ extern void vx_catf(Tree *tp, FILE *fp);
 extern void vx_catf_init(void);
 extern void vx_oatf_init(void);
 unsigned char *utf2atf(const unsigned char *src);
+
+extern GDLR_config *vx_catf_config;
 
 #endif/*VX_H_*/

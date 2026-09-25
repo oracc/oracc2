@@ -16,7 +16,10 @@ vxc_atf(List *w)
 	{
 	  const char *ref = vx_att(np, "ref");
 	  Node *gdl_np = hash_find(xmlid_h, (uccp)ref);
-	  list_add(wl, gdl_render(gdl_np, vx_oatf_config));
+	  if (conllo_text == OM_CATF)
+	    list_add(wl, gdl_render(gdl_np, vx_catf_config));
+	  else
+	    list_add(wl, gdl_render(gdl_np, vx_oatf_config));
 	}
     }
   return list_join(wl, "");
@@ -70,7 +73,6 @@ vxc_words(Conll_sent *s, List *wl)
 	  sprintf(cgp, "%s[%s]%s", w->p.CF, w->p.GW, w->p.POS);
 	  w->c.LEMMA = vx_epsd_cft(cgp);
 	  w->dis = vx_epsd_dis(cgp);
-	  conll_misc(w, "LId", w->dis);
 	  w->p.OID = vx_epsd_oid(cgp);
 	  char cgspe[strlen(cgp)+strlen(w->p.SENSE)+strlen(w->p.EPOS)+strlen("//'0")];
 	  sprintf(cgspe, "%s[%s//%s]%s'%s", w->p.CF, w->p.GW, w->p.SENSE, w->p.POS, w->p.EPOS);
@@ -92,6 +94,31 @@ vxc_words(Conll_sent *s, List *wl)
       w->wid = vx_att(w->wp, "xml:id");
       w->lid = vx_att(w->wp->rent, "xml:id");
       w->lbl = vx_att(w->wp->rent, "label");
+      /* Defer C-ATF of requisite fields until after the ePSD-related
+       * data has been setup because that needs to be in O-ATF
+       */
+      if (conllo_text == OM_CATF)
+	{
+	  w->c.FORM = (ccp)gdl_render_str((uccp)w->c.FORM, vx_catf_config);
+	  if ('_' != *w->c.LEMMA)
+	    {
+	      w->c.LEMMA = (ccp)gdl_render_str((uccp)w->c.LEMMA, vx_catf_config);
+	      if (w->dis && '_' != *w->dis)
+		{
+		  const char *dis = strrchr(w->dis, '-');
+		  char buf[strlen(w->c.LEMMA)+strlen(w->dis)+1];
+		  strcpy(buf, w->c.LEMMA);
+		  if (dis)
+		    strcat(buf, dis);
+		  w->dis = (ccp)pool_copy((uccp)buf, tm_pool(s->doc->tree));
+		  conll_misc(w, "LId", w->dis);
+		}
+	    }
+	  if (w->p.BASE)
+	    w->p.BASE = (ccp)gdl_render_str((uccp)w->p.BASE, vx_catf_config);
+	}
+      else if (w->dis)
+	conll_misc(w, "LId", w->dis);
     }
 }
 
@@ -200,7 +227,10 @@ vx_conllo(Tree *tp, FILE *fp)
 {
   Conll_run *r = conll_init();
   vx_epsd_init();
-  vx_oatf_init();
+  if (conllo_text == OM_CATF)
+    vx_catf_init();
+  else
+    vx_oatf_init();
   vxc_doc(r, tp);
   conll_dump(r, fp);
 }

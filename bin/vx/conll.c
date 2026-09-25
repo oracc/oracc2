@@ -157,6 +157,10 @@ conll_dump(Conll_run *r, FILE *fp)
 	}
       else
 	fprintf(stderr, "vx: no xcl found in %s\n", d->atff);
+      if (conllo_text == OM_CATF)
+	fputs("# conllo_text = C-ATF\n", fp);
+      else
+	fputs("# conllo_text = O-ATF\n", fp);
       int i;
       for (i = 0; i < d->nsents; ++i)
 	{

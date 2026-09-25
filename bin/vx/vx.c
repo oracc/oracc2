@@ -2,15 +2,18 @@
 #include "vx.h"
 
 int blank_lines = 0, s_words = 0;
+Omode conllo_text = 0;
 Omode output_mode = 0;
 const char *translation_fn = NULL;
 
 int
 main(int argc, char *const *argv)
 {
-  setlocale(LC_ALL,ORACC_LOCALE);
+  gdl_flex_debug = gdldebug = 0;
+  gdl_unicode = 1;
+  setlocale(LC_ALL, ORACC_LOCALE);
   mesg_init();
-  options(argc, argv, "bCIOt:");
+  options(argc, argv, "bcCIOt:");
 
   if (!output_mode)
     output_mode = OM_IDENTITY;
@@ -54,8 +57,14 @@ opts(int opt, const char *arg)
     case 'b':
       blank_lines = 1;
       break;
+    case 'c':
+      conllo_text = OM_CATF;
+      break;
     case 'C':
       output_mode = OM_CATF;
+      break;
+    case 'o':
+      conllo_text = OM_OATF;
       break;
     case 'O':
       output_mode = OM_CONLLO;
