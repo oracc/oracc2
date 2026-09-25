@@ -136,12 +136,12 @@ gvl_n_sexify(Node *ynp)
 
       top = tree_root(ntp, NS_GDL, "g:gg", 1, ynp->mloc);
       gdl_prop_kv(top, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "diszless");
-      
 
       if (sexnum > 0)
 	{
-	  gdl_prop_kv(top, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-		      (ccp)pool_copy((uccp)gdl_grapheme_id(), gdlpool));
+	  if (!gdl_no_xml_ids)
+	    gdl_prop_kv(top, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+			(ccp)pool_copy((uccp)gdl_grapheme_id(), gdlpool));
 
 	  int gnx = gdl_no_xml_ids;
 	  gdl_no_xml_ids = 1;
