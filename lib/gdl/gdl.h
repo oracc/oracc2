@@ -170,6 +170,7 @@ extern int gdlr_vx_flags(Node *np, FILE *fp);
 
 extern struct lang_context *gdl_lang_context;
 extern unsigned char *gdl_render(Node *np, GDLR_config *gc);
+extern unsigned char *gdl_render_str(unsigned const char *s, GDLR_config *c);
 extern void gdl_output(Node *np, FILE *fp);
 
 extern void gdl_init(void);
