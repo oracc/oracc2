@@ -70,9 +70,9 @@ test_identity(char *s, Tree *t)
       else if (!strcmp(t->root->kids->name, "g:w"))
 	{
 	  if (gdl_ascii)
-	    res = prop_val(t->root->kids->props, "atf:form", NULL);
+	    res = prop_val(t->root->kids->props, "atf:form");
 	  if (!res)
-	    res = prop_val(t->root->kids->props, "form", NULL);
+	    res = prop_val(t->root->kids->props, "form");
 	}
       else
 	printf("%s\t(null)\n", s);

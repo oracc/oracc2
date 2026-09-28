@@ -156,6 +156,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/xx/tis/Makefile
 		 bin/xx/xml/Makefile
 		 bin/xx/wrapper/Makefile
+		 bin/yx/Makefile
 		 bin/zx/Makefile
 		 msc/Makefile
 		 msc/adm/Makefile
