@@ -96,6 +96,19 @@ atf_group_wrapup(void)
 
 /* Start a new line group; if we are already in a group, wrap the
  * current group up first.
+ *
+ * This is different from ox's lg because this lg here is an internal
+ * wrapper around all line groups which is unwrapped on output unless
+ * it is needed because of bilinguals etc.
+ *
+ * The output routines need to promote the xml:id of the child MTS
+ * line to be the lg xml:id and replace the child lines with the
+ * lg_mode ID's that ox used (e.g., with a suffixed ell 'l').
+ *
+ * Although lg_mode is referenced in the code at the time of this
+ * comment (20260929) it is never set and cannot work because of the
+ * ax wrapper-dropped-on-output approach.  Its functionally needs to
+ * be replicated in ax_jox vel sim.
  */
 void
 atf_line_lg(Mloc *mp)
@@ -243,6 +256,7 @@ line_mts(Mloc l, unsigned char *lp)
   if (curr_line_label)
     {
       atf_xprop(lnode, "label", (label = (ccp)pool_copy((uccp)curr_line_label, atfmp->pool)));
+      list_add(atfmp->label_xmlid, keva_create(tm_keva(abt), label, clid));
       extern char *label2;
       if (label2)
 	atf_xprop(lnode, "label2", (ccp)pool_copy((uccp)label2, atfmp->pool));

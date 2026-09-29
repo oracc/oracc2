@@ -16,7 +16,7 @@
 
 extern int xmd_ignore_missing;
 
-char *trafile, *xtffile;
+char *tlxfile, *trafile, *xtffile;
 int val_flag = 0;
 
 Mloc xo_loc;
@@ -54,6 +54,7 @@ int xcl_output = 0;
 int xml_output = 0;
 
 extern struct catinfo *ax_check (const char *str,size_t len);
+static void ax_label_xmlid(List *lp);
 
 void
 ax_input(const char *f)
@@ -95,7 +96,11 @@ ax_input(const char *f)
       if (!check_mode)
 	{
 	  if (xml_output)
-	    ax_jox(tp);
+	    {
+	      ax_jox(tp);
+	      if (list_len(atfmp->label_xmlid))
+		ax_label_xmlid(atfmp->label_xmlid);
+	    }
 	  else
 	    ax_atf(atfmp->atf);
 	}
@@ -125,6 +130,19 @@ ax_input(const char *f)
       mesg_term();
       inl_term();
     }
+}
+
+static void
+ax_label_xmlid(List *lp)
+{
+  FILE *fp = xfopen(tlxfile, "w");
+  if (fp)
+    {
+      Keva *lxp;
+      for (lxp = list_first(lp); lxp; lxp = list_next(lp))
+	fprintf(fp, "%s\t%s\n", lxp->k, lxp->v);
+    }
+  xfclose(tlxfile, fp);
 }
 
 /* This is where major components like GVL/SLL and lemmatizer sig sets
@@ -192,6 +210,13 @@ xtffile_of(const char *d)
   return strdup(fn);
 }
 
+static char *
+tlxfile_of(const char *d)
+{
+  const char *fn = expand(NULL, d, "tlx");
+  return strdup(fn);
+}
+
 static void
 process_inputs(int argc, char * const *argv)
 {
@@ -224,14 +249,16 @@ process_inputs(int argc, char * const *argv)
 		    {
 		      xtffile = xtffile_of(s);
 		      trafile = trafile_of(s);
+		      tlxfile = tlxfile_of(s);
 		      if (!(ret = ax_outputs(xtffile, trafile)))
 			ax_input(atffile);
 		      fflush(stdout); /* in case flex did some default output */
 		      free((char*)atffile);
 		      if (trafile != static_trafile)
 			free(trafile);
+		      free(tlxfile);
 		      free(xtffile);
-		      atffile = trafile = xtffile = /*cdtfile = */ NULL;
+		      atffile = tlxfile = trafile = xtffile = /*cdtfile = */ NULL;
 		    }
 		  if (memuse_mode)
 		    show_current_memory(stderr, NULL, NULL);
@@ -260,7 +287,10 @@ process_inputs(int argc, char * const *argv)
       if (multifile && !check_mode)
 	printf("<xtf-multi>");
       while (argv[fnum])
-	ax_input(argv[fnum++]);
+	{
+	  tlxfile = "ax.tlx";
+	  ax_input(argv[fnum++]);
+	}
       if (multifile && !check_mode)
 	printf("</xtf-multi>");
     }

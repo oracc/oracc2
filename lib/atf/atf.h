@@ -34,6 +34,7 @@ typedef struct atfm {
   List *llinks;
   List *llines;
   List *lkeys;
+  List *label_xmlid;
   Memo *matfls;
   Memo *mbibs;
   Memo *mblocks;
