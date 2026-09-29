@@ -153,6 +153,7 @@ AC_CONFIG_FILES([Makefile
 		 bin/xx/lem/Makefile
 		 bin/xx/osort/Makefile
 		 bin/xx/rnv/Makefile
+		 bin/xx/sco/Makefile
 		 bin/xx/tis/Makefile
 		 bin/xx/xml/Makefile
 		 bin/xx/wrapper/Makefile

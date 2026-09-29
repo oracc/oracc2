@@ -140,6 +140,7 @@ bin/xx/osort/osort
 bin/xx/pct
 bin/xx/pqxpand
 bin/xx/rnv/rnv
+bin/xx/sco/scox
 bin/xx/tis/cbdex
 bin/xx/tis/cbdikey
 bin/xx/tis/tisdiv
@@ -169,6 +170,7 @@ bin/xx/wrapper/xtf2prf
 bin/xx/wrapper/xtf2tei
 bin/xx/wrapper/xtf2txh
 bin/xx/wrapper/xsltx
+bin/yx/smax
 bin/zx/catx
 bin/zx/expat-identity
 bin/zx/gdlx
