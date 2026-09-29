@@ -13,11 +13,12 @@ extern const char *catproj;
 extern const char *project;
 
 static void lem(void);
+static void lnk(void);
 static void pqx(void);
 static void tr(void);
 static void pqx_term(void);
 static void x_term(void);
-int curr_lem = 0;
+int curr_lem = 0, curr_link = 0;
 int dups = 0;
 int x_mode = 0;
 Hash *hseen = NULL;
@@ -29,6 +30,7 @@ Pool *p = NULL;
 
 BOM3	"\xef\xbb\xbf"
 BOM2	"\xfe\xff"
+LINK   (">>"|"<<"|"++"|"||"|"#link:")
 PQX	[PQX][0-9]{6}
 TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 
@@ -59,6 +61,8 @@ TRA	"@translation"[ \t]+[^ \t]+[ \t]+
 ^"#tr:"  		{ atfdtext="en"; if (!x_mode) tr(); }
 
 ^"#lem:"  		{ BEGIN(DROP); if (!x_mode) lem(); }
+
+^{LINK}     		{ BEGIN(DROP); if (!x_mode) lnk(); }
 
 \n			{ }
 
@@ -116,7 +120,7 @@ pqx_init(const char *pqx)
   if (!x_mode)
     fprintf(stderr, "pqx_init: %s\n", curr_pqx);
 #endif
-  curr_lem = 0;
+  curr_lem = curr_link = 0;
 }
 
 static void
@@ -129,8 +133,11 @@ pqx_term(void)
   else
     {
       if (!dups && !dry)
-        printf("%s:%s@%s\t%s\t%s\n",
-	       project, curr_pqx, catproj, curr_lem ? "#lem" : "", (trs = pqx_trs()));
+        printf("%s:%s@%s\t%s\t%s\t%s\n",
+	       project, curr_pqx, catproj,
+	       curr_lem ? "#lem" : "",
+	       (trs = pqx_trs()),
+	       curr_link ? "#lnk" : "");
       if ('P' == *curr_pqx)
         atf_cdli_check(curr_pqx);
       hash_add(hseen, pool_copy((uccp)curr_pqx,pseen), (void*)(uintptr_t)1);
@@ -154,6 +161,12 @@ static void
 lem(void)
 {
   ++curr_lem;
+}
+
+static void
+lnk(void)
+{
+  ++curr_link;
 }
 
 static void
