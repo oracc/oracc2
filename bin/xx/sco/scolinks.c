@@ -22,6 +22,15 @@ Hash *symdefs = NULL;
 Pool *p = NULL;
 
 void
+hash_hash_add(Hash *h, const char *k, void *kk)
+{
+  Hash *hh = hash_find(h, k);
+  if (!hh)
+    hash_add(h, k, (hh = hash_create(128)));
+  hash_add(hh, kk, "");
+}
+
+void
 qid_prj_pqx(const char *qid, const char **prj, const char **pqx)
 {
   char *fn = strdup(qid), *colon;
@@ -99,11 +108,14 @@ pp_pll(const char **atts)
       sprintf(pending, "%s=%s:%s", text, prj, pqx);
       hash_add(seen, pool_copy((uccp)pending, p), "");
 
-      char pref[strlen(prj)+strlen(pqx)+2];
+      char pref[strlen(prj)+strlen(pqx)+2], *prefp;
       sprintf(pref, "%s:%s", prj, pqx);
       const char *p_pref = (ccp)pool_copy((uccp)pref, p);
       hash_add(seen, (uccp)p_pref, (void*)text);
       hash_add(seen, (uccp)text, (void*)p_pref);
+
+      hash_hash_add(prefs, text, p_pref);
+      hash_hash_add(prefs, p_pref, text);
 
       char pok[strlen(text)+strlen(pref)+3];
       sprintf(pok, "%s->%s", text, pref);
@@ -163,7 +175,7 @@ pp_ref(char type, const char **atts)
 	    {
 	    case '>':
 	      {
-		/* SREFS */
+		hash_hash_add(srefs, symdef, fref);
 		char sok[strlen(fref)+strlen(tref)+3];
 		sprintf(sok, "%s->%s", fref, tref);
 		hash_add(sources_ok, pool_copy((uccp)sok, p), "");
@@ -171,7 +183,8 @@ pp_ref(char type, const char **atts)
 	      break;
 	    case '|':
 	      {
-		/* PREFS */
+		hash_hash_add(prefs, symdef, fref);
+		hash_hash_add(prefs, fref, symdef); 
 		char pok[strlen(fref)+strlen(tref)+3];
 		sprintf(pok, "%s->%s", fref, tref);
 		hash_add(parallels_ok, pool_copy((uccp)pok, p), "");		
@@ -179,7 +192,7 @@ pp_ref(char type, const char **atts)
 	      break;
 	    case '<':
 	      {
-		/* SREFS */
+		hash_hash_add(srefs, fref, symdef);
 		char sok[strlen(fref)+strlen(tref)+3];
 		sprintf(sok, "%s->%s", tref, fref);
 		hash_add(sources_ok, pool_copy((uccp)sok, p), "");		
@@ -208,9 +221,11 @@ pp_src(const char **atts)
       sprintf(pending, "%s:%s=%s", prj, pqx, text);
       hash_add(seen, pool_copy((uccp)pending, p), "");
 
-      char sref[strlen(prj)+strlen(pqx)+2];
+      char sref[strlen(prj)+strlen(pqx)+2], *srefp;
       sprintf(sref, "%s:%s", prj, pqx);
-      hash_add(seen, pool_copy((uccp)sref, p), (void*)text);
+      hash_add(seen, (srefp = pool_copy((uccp)sref, p)), (void*)text);
+
+      hash_hash_add(srefs, srefp, text);
 
       char sok[strlen(text)+strlen(sref)+3];
       sprintf(sok, "%s->%s", text, sref);
