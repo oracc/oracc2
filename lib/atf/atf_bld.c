@@ -232,7 +232,7 @@ abt_add_key_protocol(Mloc *lp, Key *kp)
     }
 }
 
-static void
+static Node *
 abt_add_link_protocol(Mloc *lp, Xlink *p, const char *str)
 {
   if (line_trace)
@@ -242,6 +242,7 @@ abt_add_link_protocol(Mloc *lp, Xlink *p, const char *str)
   Node *np = atf_add("protocol", lp);
   atf_xprop(np, "type", "link");
   np->text = str;
+  return np;
   /*np->user = lp;*/
 }
 
@@ -261,7 +262,12 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
     sprintf(str, "%s %s = %s = %s", ltstr, (ccp)siglum, qid, (ccp)name);
   else
     sprintf(str, "%s %s = %s", ltstr, qid, (ccp)name);
-  abt_add_link_protocol(&l, lp, (ccp)pool_copy((uccp)str, atfmp->pool));
+  Node *p = abt_add_link_protocol(&l, lp, (ccp)pool_copy((uccp)str, atfmp->pool));
+  atf_xprop(p, "subt", ltstr);
+  if (siglum)
+    atf_xprop(p, "sig", (ccp)siglum);
+  atf_xprop(p, "qid", qid);
+  atf_xprop(p, "name", (ccp)name);
   atf_input(l, LT_XLINK, lp);
 }
 
@@ -301,6 +307,55 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 	}
     }
   atf_xprop(np, "type", p->type);
+  if ('l' == *p->type && !strcmp(p->type, "link"))
+    {
+      char *x = memo_dup(str);
+      const char *subt = NULL;
+      if ('>' == *x)
+	subt = "to";
+      else if ('<' == *x)
+	subt = "from";
+      else if ('|' == *x)
+	subt = "parallel";
+      else if ('+' == *x)
+	subt = "plus";
+      else
+	{
+	  mesg_verr(lp, "unhandled link ref type '%c'", *x);
+	  subt = "unknown";
+	}
+
+      atf_xprop(np, "subt", subt);
+      x += 2;
+      while (isspace(*x))
+	++x;
+      
+      int ndigits = 0;      
+      if (isdigit(x[1]) && ('P' == *x || 'Q' == *x || 'X' == *x))
+	{
+	  char *y = x+2;
+	  ndigits = 1;
+	  while (isdigit(*y))
+	    {
+	      ++ndigits;
+	      ++y;
+	    }
+	}
+      if (6 == ndigits)
+	atf_xprop(np, "qid", x);
+      else
+	atf_xprop(np, "sig", x);
+      while (*x && !isspace(*x))
+	++x;
+      if (*x)
+	*x++ = '\0';
+      if (x)
+	{
+	  while (isspace(*x))
+	    ++x;
+	  atf_xprop(np, "label", x);
+	}
+    }
   np->text = str;
 }
 

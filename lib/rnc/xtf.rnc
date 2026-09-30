@@ -47,7 +47,22 @@ proto.lem    = element protocol { attribute type { "lem" }    , text }
 proto.psu    = element protocol { attribute type { "psu" }    , text }
 proto.lemmatizer
              = element protocol { attribute type { "lemmatizer" }, text }
-proto.link   = element protocol { attribute type { "link" }   , text }
+proto.link   = (
+	       element protocol {  link.atype, link.adef , link.asig , link.aqid? , link.aname , text }
+	     | element protocol {  link.atype, link.asource , link.asig? , link.aqid? , link.aname , text } 
+	     | element protocol {  link.atype, link.aparallel , link.asig? , link.aqid? , link.aname , text } 
+	     | element protocol {  link.atype, link.aref , (link.asig | link.aqid) , link.alabel , text }
+	     )
+link.atype 	= attribute type  { "link" }
+link.adef 	= attribute subt  { "def" }
+link.asource 	= attribute subt  { "source" }
+link.aparallel 	= attribute subt  { "parallel" }
+link.aref	= attribute subt  { "to" | "from" | "parallel" | "plus" }
+link.asig	= attribute sig   { text }
+link.aqid	= attribute qid   { text }
+link.alabel	= attribute label { text }
+link.aname	= attribute name  { text }
+
 proto.project= element protocol { attribute type { "project" }, text }
 proto.syntax = element protocol { attribute type { "syntax" } , text }
 proto.var    = element protocol { attribute type { "var" }    , text }
