@@ -1,10 +1,6 @@
 #include <oraccsys.h>
 #include <runexpat.h>
 
-#undef strdup
-extern char *strdup(const char *);
-extern FILE *f_log;
-
 static const char *current_PQ = NULL;
 static FILE *tab = NULL;
 

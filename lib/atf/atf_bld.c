@@ -312,17 +312,17 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
       char *x = memo_dup(str);
       const char *subt = NULL;
       if ('>' == *x)
-	subt = "to";
+	subt = ">";
       else if ('<' == *x)
-	subt = "from";
+	subt = "<";
       else if ('|' == *x)
-	subt = "parallel";
+	subt = "|";
       else if ('+' == *x)
-	subt = "plus";
+	subt = "+";
       else
 	{
 	  mesg_verr(lp, "unhandled link ref type '%c'", *x);
-	  subt = "unknown";
+	  subt = "-";
 	}
 
       atf_xprop(np, "subt", subt);
