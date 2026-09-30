@@ -4,6 +4,7 @@
 
 const char *current_proj = NULL;
 const char *current_pqid = NULL;
+char *last_lid = NULL;
 const char *output_fn = NULL;
 FILE *outfp = NULL;
 int stdin_input = 0;
@@ -113,6 +114,84 @@ pp_pll(const char **atts)
 void
 pp_ref(char type, const char **atts)
 {
+  const char *qid = findAttr(atts, "qid");
+  const char *sig = findAttr(atts, "sig");
+  const char *label = (ccp)pool_copy((uccp)findAttr(atts, "label"), p);
+  const char *symdef = NULL;
+  const char *symprj = NULL, *sympqx = NULL;
+  if (qid && *qid)
+    {
+      char *colon = strchr(qid, ':');
+      if (colon)
+	{
+	  qid_prj_pqx(qid, &symprj, &sympqx);
+	}
+      else
+	{
+	  symprj = "cdli";
+	  sympqx = qid;
+	}
+    }
+  else if (sig && *sig && (symdef = hash_find(defs, (uccp)sig)))
+    {
+      qid_prj_pqx(symdef, &symprj, &sympqx);
+    }
+  if (symprj)
+    {
+      char xlink[strlen(symprj)+strlen(sympqx)+strlen(label)+3];
+      sprintf(xlink, "%s:%s~%s", symprj, sympqx, label);
+
+      char fref_buf[strlen(current_proj)+strlen(current_pqid)+2], *fref;
+      sprintf(fref_buf, "%s:%s", current_proj, current_pqid);
+      fref = (char*)pool_copy((uccp)fref_buf, p);
+
+      char tref_buf[strlen(symprj)+strlen(sympqx)+2], *tref;
+      sprintf(tref_buf, "%s:%s", symprj, sympqx);
+      tref = (char*)pool_copy((uccp)tref_buf, p);
+
+      const char *xlx = NULL;
+      
+      if ((xlx = hash_find(linkindex, (uccp)xlink)))
+	{
+	  
+	}
+      else
+	{
+	  const char *pending = NULL;
+	  const char *symdef = hash_find(defs, (uccp)sig);
+	  switch (type)
+	    {
+	    case '>':
+	      {
+		/* SREFS */
+		char sok[strlen(fref)+strlen(tref)+3];
+		sprintf(sok, "%s->%s", fref, tref);
+		hash_add(sources_ok, pool_copy((uccp)sok, p), "");
+	      }
+	      break;
+	    case '|':
+	      {
+		/* PREFS */
+		char pok[strlen(fref)+strlen(tref)+3];
+		sprintf(pok, "%s->%s", fref, tref);
+		hash_add(parallels_ok, pool_copy((uccp)pok, p), "");		
+	      }
+	      break;
+	    case '<':
+	      {
+		/* SREFS */
+		char sok[strlen(fref)+strlen(tref)+3];
+		sprintf(sok, "%s->%s", tref, fref);
+		hash_add(sources_ok, pool_copy((uccp)sok, p), "");		
+	      }
+	      break;
+	    case '+':
+	      fprintf(stderr, "scolinks: pp_ref: don't know how to handle '++'\n");
+	      break;
+	    }
+	  hash_add(seen, (uccp)pending, "");
+	}
+    }
 }
 
 void
@@ -184,6 +263,11 @@ sH(void *userData, const char *name, const char **atts)
       const char *type = findAttr(atts, "type");
       if (type && !strcmp(type, "link"))
 	process_protocol(atts);
+    }
+  else if ('l' == *name)
+    {
+      if (!name[1] || !strcmp(name, "lg"))
+	last_lid = (char*)pool_copy((uccp)get_xml_id(atts), p);
     }
 }
 
