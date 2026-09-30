@@ -8,29 +8,106 @@ const char *output_fn = NULL;
 FILE *outfp = NULL;
 int stdin_input = 0;
 
-/* load the .tlx file from PROJECT, PQX args into the HASH arg */
+Hash *badatf = NULL;
+Hash *defs = NULL;
+Hash *indexed = NULL;
+Hash *linkindex = NULL;
+Hash *prefs = NULL;
+Hash *parallels_ok = NULL;
+Hash *seen = NULL;
+Hash *sources_ok = NULL;
+Hash *srefs = NULL;
+Hash *symdefs = NULL;
+Pool *p = NULL;
+
 void
-index_text(const char *project, const char *pqx, Hash *links, Pool *p)
+qid_prj_pqx(const char *qid, const char **prj, const char **pqx)
 {
-  const char *tlxfile = expand(project, pqx, ".tlx");
-  Roco *r = roco_load1(tlxfile);
-  int i;
-  for (i = 0; i < r->nlines; ++i)
+  char *fn = strdup(qid), *colon;
+  colon = strchr(fn, ':');
+  if (colon)
     {
-      char buf[strlen(project)+strlen(pqx)+strlen((ccp)r->rows[i][0])+3];
-      sprintf(buf, "%s:%s~%s", project, pqx, r->rows[i][0]);
-      hash_add(links, pool_copy((uccp)buf, p), r->rows[i][1]);
+      *prj = fn;
+      *colon++ = '\0';
+      *pqx = colon;
+    }
+  else
+    {
+      fprintf(stderr, "scolinks: QID must be specified as PROJECT:PQX. Stop.\n");
+      exit(1);
+    }
+}
+
+/* load the .tlx file text arg into the HASH arg */
+void
+index_text(const char *text, Hash *links, Pool *p, const char **prj, const char **pqx)
+{
+  const char *tlxfile = expand(NULL, text, ".tlx");
+  if (!access(tlxfile, R_OK))
+    {
+      qid_prj_pqx(text, prj, pqx);
+      Roco *r = roco_load1(tlxfile);
+      int i;
+      for (i = 0; i < r->nlines; ++i)
+	{
+	  char buf[strlen(*prj)+strlen(*pqx)+strlen((ccp)r->rows[i][0])+3];
+	  sprintf(buf, "%s:%s~%s", *prj, *pqx, r->rows[i][0]);
+	  hash_add(links, pool_copy((uccp)buf, p), r->rows[i][1]);
+	}
+      hash_add(indexed, (uccp)text, "");
+    }
+  else
+    {
+      hash_add(badatf, (uccp)text, "");
     }
 }
 
 void
 pp_def(const char **atts)
 {
+  /* variable names match harvest-links.plx process_protocol / def */
+  const char *sym = (ccp)pool_copy((uccp)findAttr(atts, "sig"), p);
+  const char *text = (ccp)pool_copy((uccp)findAttr(atts, "qid"), p);
+  if (text && *text)
+    {
+      const char *prj = NULL;
+      const char *pqx = NULL;
+      index_text(text, linkindex, p, &prj, &pqx);
+      hash_add(defs, (uccp)sym, (void*)text);
+      char symkey[strlen(current_proj)+strlen(current_pqid)+strlen(pqx)+3];
+      sprintf(symkey, "%s:%s:%s", current_proj, current_pqid, pqx);
+      hash_add(symdefs, pool_copy((uccp)symkey, p), (void*)sym);
+      /* TODO: harvest-links.plx checked if PQID matched current text,
+	 i.e., if "$prj:pqx" == "current_proj:current_pqid */
+    }
 }
 
 void
 pp_pll(const char **atts)
 {
+  const char *text = (ccp)pool_copy((uccp)findAttr(atts, "qid"), p);
+  if (text && *text)
+    {
+      const char *prj = NULL;
+      const char *pqx = NULL;
+      qid_prj_pqx(text, &prj, &pqx);
+
+      char pending[strlen(prj)+strlen(pqx)+strlen(text)+3];
+      sprintf(pending, "%s:%s=%s", prj, pqx, text);
+      hash_add(seen, pool_copy((uccp)pending, p), "");
+      sprintf(pending, "%s=%s:%s", text, prj, pqx);
+      hash_add(seen, pool_copy((uccp)pending, p), "");
+
+      char pref[strlen(prj)+strlen(pqx)+2];
+      sprintf(pref, "%s:%s", prj, pqx);
+      const char *p_pref = (ccp)pool_copy((uccp)pref, p);
+      hash_add(seen, (uccp)p_pref, (void*)text);
+      hash_add(seen, (uccp)text, (void*)p_pref);
+
+      char pok[strlen(text)+strlen(pref)+3];
+      sprintf(pok, "%s->%s", text, pref);
+      hash_add(parallels_ok, pool_copy((uccp)pok, p), "");
+    }
 }
 
 void
@@ -41,6 +118,25 @@ pp_ref(char type, const char **atts)
 void
 pp_src(const char **atts)
 {
+  const char *text = (ccp)pool_copy((uccp)findAttr(atts, "qid"), p);
+  if (text && *text)
+    {
+      const char *prj = NULL;
+      const char *pqx = NULL;
+      qid_prj_pqx(text, &prj, &pqx);
+
+      char pending[strlen(prj)+strlen(pqx)+strlen(text)+3];
+      sprintf(pending, "%s:%s=%s", prj, pqx, text);
+      hash_add(seen, pool_copy((uccp)pending, p), "");
+
+      char sref[strlen(prj)+strlen(pqx)+2];
+      sprintf(sref, "%s:%s", prj, pqx);
+      hash_add(seen, pool_copy((uccp)sref, p), (void*)text);
+
+      char sok[strlen(text)+strlen(sref)+3];
+      sprintf(sok, "%s->%s", text, sref);
+      hash_add(sources_ok, pool_copy((uccp)sok, p), "");
+    }
 }
 
 void
@@ -129,6 +225,18 @@ main(int argc, char **argv)
       fprintf(stderr, "scolinks: unable to write to %s. Stop.\n", output_fn);
       exit(1);
     }
+
+  badatf = hash_create(128);
+  defs = hash_create(128);
+  indexed = hash_create(128);
+  linkindex = hash_create(1024);
+  parallels_ok = hash_create(128);
+  prefs = hash_create(128);
+  seen = hash_create(128);
+  sources_ok = hash_create(128);
+  srefs = hash_create(128);
+  symdefs = hash_create(128);
+  p = pool_init();
 
   if (stdin_input)
     {
