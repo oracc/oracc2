@@ -2,8 +2,10 @@
 #include <roco.h>
 #include <runexpat.h>
 
+const char *arg_project = NULL;
 const char *current_proj = NULL;
 const char *current_pqid = NULL;
+const char *curr_text = NULL;
 char *last_lid = NULL;
 const char *output_fn = NULL;
 FILE *outfp = NULL;
@@ -85,8 +87,8 @@ pp_def(const char **atts)
       const char *pqx = NULL;
       index_text(text, linkindex, p, &prj, &pqx);
       hash_add(defs, (uccp)sym, (void*)text);
-      char symkey[strlen(current_proj)+strlen(current_pqid)+strlen(pqx)+3];
-      sprintf(symkey, "%s:%s:%s", current_proj, current_pqid, pqx);
+      char symkey[strlen(curr_text)+strlen(pqx)+3];
+      sprintf(symkey, "%s:%s", curr_text, pqx);
       hash_add(symdefs, pool_copy((uccp)symkey, p), (void*)sym);
       /* TODO: harvest-links.plx checked if PQID matched current text,
 	 i.e., if "$prj:pqx" == "current_proj:current_pqid */
@@ -103,10 +105,10 @@ pp_pll(const char **atts)
       const char *pqx = NULL;
       qid_prj_pqx(text, &prj, &pqx);
 
-      char pending[strlen(prj)+strlen(pqx)+strlen(text)+3];
-      sprintf(pending, "%s:%s=%s", prj, pqx, text);
+      char pending[strlen(curr_text)+strlen(text)+3];
+      sprintf(pending, "%s=%s", curr_text, text);
       hash_add(seen, pool_copy((uccp)pending, p), "");
-      sprintf(pending, "%s=%s:%s", text, prj, pqx);
+      sprintf(pending, "%s=%s", text, curr_text);
       hash_add(seen, pool_copy((uccp)pending, p), "");
 
       char pref[strlen(prj)+strlen(pqx)+2], *prefp;
@@ -152,7 +154,8 @@ pp_ref(char type, const char **atts)
   if (symprj) /* =~ if ($defs{$sym}) in harvest-links.plx */
     {
 #if 0
-      /* This was defined in harvest-links.plx but the resultant flag string was never used */
+      /* This was defined in harvest-links.plx but the resultant flag
+	 string was never used */
       char *flags = "";
       if ('?' == label[strlen(label)-1])
 	{
@@ -167,9 +170,7 @@ pp_ref(char type, const char **atts)
       char xlink[strlen(symprj)+strlen(sympqx)+strlen(label)+3];
       sprintf(xlink, "%s:%s~%s", symprj, sympqx, label);
 
-      char fref_buf[strlen(current_proj)+strlen(current_pqid)+2], *fref;
-      sprintf(fref_buf, "%s:%s", current_proj, current_pqid);
-      fref = (char*)pool_copy((uccp)fref_buf, p);
+      const char *fref = curr_text;
 
       char tref_buf[strlen(symprj)+strlen(sympqx)+2], *tref;
       sprintf(tref_buf, "%s:%s", symprj, sympqx);
@@ -318,10 +319,14 @@ void
 pp_xml_begin(void)
 {
   fputs("<linkbase>", outfp);
+  if (arg_project)
+    fprintf(outfp, "<project n=\"%s\">", arg_project);
 }
 void
 pp_xml_end(void)
 {
+  if (arg_project)
+    fputs("</project>", outfp);
   fputs("</linkbase>", outfp);
 }
 
@@ -352,6 +357,40 @@ process_protocol(const char **atts)
 }
 
 void
+process_incref(const char *name, const char **atts)
+{
+  const char *ref = findAttr(atts, "ref");
+  if ('i' == *name)
+    {
+      char pending[strlen(curr_text)+strlen(ref)+2];
+      sprintf(pending, "%s=%s", curr_text, ref);
+      hash_add(seen, pool_copy((uccp)pending, p), "");
+
+      hash_hash_add(srefs, curr_text, ref);
+
+      char sok[strlen(curr_text)+strlen(ref)+2];
+      sprintf(sok, "%s->%s", ref, curr_text);
+      hash_add(sources_ok, pool_copy((uccp)sok, p), "");
+    }
+  else
+    {
+      char pending[strlen(curr_text)+strlen(ref)+2];
+      sprintf(pending, "%s=%s", curr_text, ref);
+      hash_add(seen, pool_copy((uccp)pending, p), "");
+
+      sprintf(pending, "%s=%s", ref, curr_text);
+      hash_add(seen, pool_copy((uccp)pending, p), "");
+
+      hash_hash_add(prefs, curr_text, ref);
+      hash_hash_add(prefs, ref, curr_text);
+      
+      char pok[strlen(curr_text)+strlen(ref)+2];
+      sprintf(pok, "%s->%s", ref, curr_text);
+      hash_add(parallels_ok, pool_copy((uccp)pok, p), "");
+    }    
+}
+
+void
 sH(void *userData, const char *name, const char **atts)
 {
   if (!strcmp(name, "protocol"))
@@ -369,6 +408,9 @@ sH(void *userData, const char *name, const char **atts)
 	    in_lg = 1;
 	}
     }
+  else if (('i' == *name && !strcmp(name, "include"))
+	   || ('r' == *name && !strcmp(name, "referto")))
+    process_incref(name, atts);
 }
 
 void
@@ -379,6 +421,13 @@ eH(void *userData, const char *name)
 }
 
 void
+set_curr_text(void)
+{
+  char buf[strlen(current_proj)+strlen(current_pqid)+2];
+  sprintf(buf, "%s:%s", current_proj, current_pqid);
+  curr_text = memo_dup(buf);
+}
+void
 proj_pqid(const char *str)
 {
   char *fn = strdup(str), *colon;
@@ -388,6 +437,7 @@ proj_pqid(const char *str)
       current_proj = fn;
       *colon++ = '\0';
       current_pqid = colon;
+      set_curr_text();
     }
   else
     {
@@ -431,6 +481,7 @@ main(int argc, char **argv)
 	  fprintf(stderr, "scolinks: must give -p [PROJECT] -i [PQID] with -s option. Stop.\n");
 	  exit(1);
 	}
+      set_curr_text();
       pp_xml_begin();
       runexpat(i_stdin, NULL, sH, eH);
       pp_xml_end();
@@ -468,7 +519,7 @@ opts(int arg,const char*str)
     {
     case 'i': current_pqid = str; break;
     case 'o': output_fn = str; break;
-    case 'p': current_proj = str; break;
+    case 'p': arg_project = current_proj = str; break;
     case 's': stdin_input = 1; break;
     default: return 1; break;
     }
