@@ -8,6 +8,7 @@ char *last_lid = NULL;
 const char *output_fn = NULL;
 FILE *outfp = NULL;
 int stdin_input = 0;
+int in_lg = 0;
 
 Hash *badatf = NULL;
 Hash *defs = NULL;
@@ -22,12 +23,12 @@ Hash *symdefs = NULL;
 Pool *p = NULL;
 
 void
-hash_hash_add(Hash *h, const char *k, void *kk)
+hash_hash_add(Hash *h, const char *k, const char *kk)
 {
-  Hash *hh = hash_find(h, k);
+  Hash *hh = hash_find(h, (uccp)k);
   if (!hh)
-    hash_add(h, k, (hh = hash_create(128)));
-  hash_add(hh, kk, "");
+    hash_add(h, (uccp)k, (hh = hash_create(128)));
+  hash_add(hh, (uccp)kk, "");
 }
 
 void
@@ -110,12 +111,12 @@ pp_pll(const char **atts)
 
       char pref[strlen(prj)+strlen(pqx)+2], *prefp;
       sprintf(pref, "%s:%s", prj, pqx);
-      const char *p_pref = (ccp)pool_copy((uccp)pref, p);
-      hash_add(seen, (uccp)p_pref, (void*)text);
-      hash_add(seen, (uccp)text, (void*)p_pref);
+      prefp = (char*)pool_copy((uccp)pref, p);
+      hash_add(seen, (uccp)prefp, (void*)text);
+      hash_add(seen, (uccp)text, (void*)prefp);
 
-      hash_hash_add(prefs, text, p_pref);
-      hash_hash_add(prefs, p_pref, text);
+      hash_hash_add(prefs, text, prefp);
+      hash_hash_add(prefs, prefp, text);
 
       char pok[strlen(text)+strlen(pref)+3];
       sprintf(pok, "%s->%s", text, pref);
@@ -148,8 +149,21 @@ pp_ref(char type, const char **atts)
     {
       qid_prj_pqx(symdef, &symprj, &sympqx);
     }
-  if (symprj)
+  if (symprj) /* =~ if ($defs{$sym}) in harvest-links.plx */
     {
+#if 0
+      /* This was defined in harvest-links.plx but the resultant flag string was never used */
+      char *flags = "";
+      if ('?' == label[strlen(label)-1])
+	{
+	  flags = "?";
+	  char *end = (char*)(label+strlen(label));
+	  *--end = '\0';
+	  while (end > label && isspace(end[-1]))
+	    *--end = '\0';
+	}
+#endif
+
       char xlink[strlen(symprj)+strlen(sympqx)+strlen(label)+3];
       sprintf(xlink, "%s:%s~%s", symprj, sympqx, label);
 
@@ -165,7 +179,57 @@ pp_ref(char type, const char **atts)
       
       if ((xlx = hash_find(linkindex, (uccp)xlink)))
 	{
-	  
+	  const char *lid = last_lid;
+	  if ('<' == type)
+	    {
+	      type = '>';
+	      symdef = tref;
+	      const char *tmp = fref;
+	      fref = tref;
+	      tref = (char*)tmp;
+	      tmp = lid;
+	      lid = xlx;
+	      xlx = tmp;	      
+	    }
+	  /* harvest-links.plx did $xlx/$lid =~ s,^.*?/,, but why? */
+
+	  /* for rel we factored out '<' above */
+	  fprintf(outfp, "<link rel=\"%s\">", type=='>'?"goesto":"parallels");
+	  fprintf(outfp, "<from ref=\"%s\" line=\"%s\"/>", fref, lid);
+	  fprintf(outfp, "<to ref=\"%s\" line=\"%s\"/>", tref, xlx);
+	  fputs("</link>", outfp);
+
+	  if ('>' == type)
+	    {
+		char pend[strlen(symdef)+strlen(fref)+2];
+		sprintf(pend, "%s=%s\n", symdef, fref);
+		hash_add(seen, pool_copy((uccp)pend, p), "");
+		hash_hash_add(srefs, tref, fref);
+
+		char sok[strlen(fref)+strlen(tref)+3];
+		sprintf(sok, "%s->%s", fref, tref);
+		hash_add(sources_ok, pool_copy((uccp)sok, p), "");
+	    }
+	  else if ('+' == type)
+	    {
+	      /* unhandled case for now */
+	    }
+	  else
+	    {
+		char pend[strlen(symdef)+strlen(fref)+2];
+		sprintf(pend, "%s=%s\n", fref, symdef);
+		hash_add(seen, pool_copy((uccp)pend, p), "");
+
+		sprintf(pend, "%s=%s\n", symdef, fref);
+		hash_add(seen, pool_copy((uccp)pend, p), "");
+
+		hash_hash_add(prefs, symdef, fref);
+		hash_hash_add(prefs, fref, symdef);
+
+		char pok[strlen(fref)+strlen(tref)+3];
+		sprintf(pok, "%s->%s", fref, tref);
+		hash_add(parallels_ok, pool_copy((uccp)pok, p), "");		
+	    }
 	}
       else
 	{
@@ -175,6 +239,10 @@ pp_ref(char type, const char **atts)
 	    {
 	    case '>':
 	      {
+		char pend[strlen(symdef)+strlen(fref)+2];
+		sprintf(pend, "%s=%s\n", symdef, fref);
+		pending = (ccp)pool_copy((uccp)pend, p);
+
 		hash_hash_add(srefs, symdef, fref);
 		char sok[strlen(fref)+strlen(tref)+3];
 		sprintf(sok, "%s->%s", fref, tref);
@@ -183,8 +251,17 @@ pp_ref(char type, const char **atts)
 	      break;
 	    case '|':
 	      {
+		char pend[strlen(symdef)+strlen(fref)+2];
+		sprintf(pend, "%s=%s\n", fref, symdef);
+		pending = (ccp)pool_copy((uccp)pend, p);
+		hash_add(seen, (uccp)pending, "");
+
+		sprintf(pend, "%s=%s\n", symdef, fref);
+		pending = (ccp)pool_copy((uccp)pend, p);
+
 		hash_hash_add(prefs, symdef, fref);
 		hash_hash_add(prefs, fref, symdef); 
+
 		char pok[strlen(fref)+strlen(tref)+3];
 		sprintf(pok, "%s->%s", fref, tref);
 		hash_add(parallels_ok, pool_copy((uccp)pok, p), "");		
@@ -192,6 +269,10 @@ pp_ref(char type, const char **atts)
 	      break;
 	    case '<':
 	      {
+		char pend[strlen(symdef)+strlen(fref)+2];
+		sprintf(pend, "%s=%s\n", fref, symdef);
+		pending = (ccp)pool_copy((uccp)pend, p);
+
 		hash_hash_add(srefs, fref, symdef);
 		char sok[strlen(fref)+strlen(tref)+3];
 		sprintf(sok, "%s->%s", tref, fref);
@@ -223,7 +304,7 @@ pp_src(const char **atts)
 
       char sref[strlen(prj)+strlen(pqx)+2], *srefp;
       sprintf(sref, "%s:%s", prj, pqx);
-      hash_add(seen, (srefp = pool_copy((uccp)sref, p)), (void*)text);
+      hash_add(seen, (uccp)(srefp = (char*)pool_copy((uccp)sref, p)), (void*)text);
 
       hash_hash_add(srefs, srefp, text);
 
@@ -281,14 +362,20 @@ sH(void *userData, const char *name, const char **atts)
     }
   else if ('l' == *name)
     {
-      if (!name[1] || !strcmp(name, "lg"))
-	last_lid = (char*)pool_copy((uccp)get_xml_id(atts), p);
+      if ((!name[1] && !in_lg) || !strcmp(name, "lg"))
+	{
+	  last_lid = (char*)pool_copy((uccp)get_xml_id(atts), p);
+	  if (name[1])
+	    in_lg = 1;
+	}
     }
 }
 
 void
 eH(void *userData, const char *name)
 {
+  if (!strcmp(name, "lg"))
+    in_lg = 0;
 }
 
 void
