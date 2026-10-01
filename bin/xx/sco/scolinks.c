@@ -16,6 +16,7 @@ Hash *badatf = NULL;
 Hash *defs = NULL;
 Hash *indexed = NULL;
 Hash *linkindex = NULL;
+Hash *pending = NULL;
 Hash *prefs = NULL;
 Hash *parallels_ok = NULL;
 Hash *seen = NULL;
@@ -90,8 +91,14 @@ pp_def(const char **atts)
       char symkey[strlen(curr_text)+strlen(pqx)+3];
       sprintf(symkey, "%s:%s", curr_text, pqx);
       hash_add(symdefs, pool_copy((uccp)symkey, p), (void*)sym);
-      /* TODO: harvest-links.plx checked if PQID matched current text,
-	 i.e., if "$prj:pqx" == "current_proj:current_pqid */
+      if (!strcmp(curr_text, text))
+	fprintf(stderr, "scolinks: text %s refers to itself in #link: def\n", curr_text);
+      else
+	{
+	  char pend[strlen(curr_text)+strlen(text)+2];
+	  sprintf(pend, "%s=%s", curr_text, text);
+	  hash_add(pending, pool_copy((uccp)pend, p), "");
+	}
     }
 }
 
@@ -316,15 +323,68 @@ pp_src(const char **atts)
 }
 
 void
+pp_pending(void)
+{
+  const char **k = hash_keys(pending);
+  int i;
+  for (i = 0; k[i]; ++i)
+    {
+      if (!hash_find(seen, (uccp)k[i]))
+	{
+	  char *to = memo_dup(k[i]);
+	  char *from = strchr(to, '=');
+	  *from++ = '\0';
+	  hash_hash_add(srefs, to, from);
+	}
+    }
+}
+
+void
+pp_srefs(void)
+{
+}
+
+void
+pp_pref_r(const char *r)
+{
+  fprintf(outfp, "<r ref=\"%s\"/>", r);
+}
+
+void
+pp_prefs_one(const char *k, Hash *h)
+{
+  fprintf(outfp, "<refs type=\"parallel\" ref=\"%s\">", k);
+  hash_sort_exec(h, NULL, pp_pref_r);
+  fputs("</refs>", outfp);
+}
+
+void
+pp_prefs(void)
+{
+  hash_sort_exec2(prefs, NULL, pp_pref_one);
+}
+
+/* unlike harvest-links.plx this only handles the post-fileset-outputs */
+void
+process_project(void)
+{
+  pp_pending();
+  pp_srefs();
+  pp_prefs();
+}
+
+void
 pp_xml_begin(void)
 {
   fputs("<linkbase>", outfp);
   if (arg_project)
     fprintf(outfp, "<project n=\"%s\">", arg_project);
 }
+
 void
 pp_xml_end(void)
 {
+  process_project();
   if (arg_project)
     fputs("</project>", outfp);
   fputs("</linkbase>", outfp);
@@ -427,6 +487,7 @@ set_curr_text(void)
   sprintf(buf, "%s:%s", current_proj, current_pqid);
   curr_text = memo_dup(buf);
 }
+
 void
 proj_pqid(const char *str)
 {
@@ -467,6 +528,7 @@ main(int argc, char **argv)
   indexed = hash_create(128);
   linkindex = hash_create(1024);
   parallels_ok = hash_create(128);
+  pending = hash_create(128);
   prefs = hash_create(128);
   seen = hash_create(128);
   sources_ok = hash_create(128);
