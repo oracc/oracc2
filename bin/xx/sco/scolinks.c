@@ -9,8 +9,9 @@ const char *curr_text = NULL;
 char *last_lid = NULL;
 const char *output_fn = NULL;
 FILE *outfp = NULL;
-int stdin_input = 0;
+int auto_ex = 0;
 int in_lg = 0;
+int stdin_input = 0;
 
 Hash *badatf = NULL;
 Hash *defs = NULL;
@@ -24,6 +25,35 @@ Hash *sources_ok = NULL;
 Hash *srefs = NULL;
 Hash *symdefs = NULL;
 Pool *p = NULL;
+
+void
+hash_sort_exec(Hash *h, hash_exec_func fnc)
+{
+  int nhk;
+  const char **hk = hash_keys2(h, &nhk);
+  qsort(hk,nhk,sizeof(const char *), cmpstringp);
+  int i;
+  for (i = 0; i < nhk; ++i)
+    fnc(hash_find(h, (uccp)hk[i]));
+}
+
+void
+hash_sort_exec2(Hash *h, hash_exec_func fnc)
+{
+  int nhk;
+  const char **hk = hash_keys2(h, &nhk);
+  qsort(hk, nhk, sizeof(const char *), cmpstringp);
+
+}
+
+void
+hash_sort_user_key(Hash *h, hash_exec_func fnc, void *k)
+{
+  int nhk;
+  const char **hk = hash_keys2(h, &nhk);
+  qsort(hk,nhk,sizeof(const char *), cmpstringp);
+
+}
 
 void
 hash_hash_add(Hash *h, const char *k, const char *kk)
@@ -340,8 +370,51 @@ pp_pending(void)
 }
 
 void
+pp_sref_r(const char *r, const char *k)
+{
+  char *xsym = strchr(r,':')+1;
+  char symbuf[strlen(xsym)+strlen(current_proj)+2];
+  sprintf(symbuf, "%s:%s", current_proj, xsym);
+  char *sym = (char*)pool_copy((uccp)symbuf, p);
+
+  char *exsym1 = memo_dup(sym);
+  char *exsym2 = strchr(exsym1,':');
+  *exsym2++ = '\0';
+  char *exk = strchr(k,':')+1;
+  char exsym[strlen(exsym1)+strlen(exk)+strlen(exsym2)+3];
+  sprintf(exsym, "%s:%s:%s", exsym1, exk, exsym2);
+
+  char *ex = hash_find(symdefs, (uccp)exsym);
+  if (!ex)
+    {
+      char exx[7];
+      sprintf(exx, "EX%03d", ++auto_ex);
+      ex = exx;
+    }
+  char buf[strlen(ex)+strlen(" sig=''0")];
+  sprintf(buf, " sig=\"%s\"", ex);
+  char *sigattr = (char*)pool_copy((uccp)buf, p);
+
+  char sok[strlen(k)+strlen(r)+3];
+  sprintf(sok, "%s->%s", k, r);
+  char *linksno = hash_find(sources_ok, (uccp)sok) ? "" : " links=\"no\"";
+
+  fprintf(outfp, "<r ref=\"%s\"%s%s/>", r, sigattr, linksno);
+}
+
+void
+pp_srefs_one(const char *k, Hash *h)
+{
+  fprintf(outfp, "<refs type=\"sources\" ref=\"%s\">", k);
+  auto_ex = 0;
+  hash_sort_user_key(h, (hash_exec_func*)pp_sref_r, (void*)k);
+  fputs("</refs>", outfp);
+}
+
+void
 pp_srefs(void)
 {
+  hash_sort_exec2(srefs, (hash_exec_func*)pp_srefs_one);
 }
 
 void
@@ -354,14 +427,14 @@ void
 pp_prefs_one(const char *k, Hash *h)
 {
   fprintf(outfp, "<refs type=\"parallel\" ref=\"%s\">", k);
-  hash_sort_exec(h, NULL, pp_pref_r);
+  hash_sort_exec(h, (hash_exec_func*)pp_pref_r);
   fputs("</refs>", outfp);
 }
 
 void
 pp_prefs(void)
 {
-  hash_sort_exec2(prefs, NULL, pp_pref_one);
+  hash_sort_exec2(prefs, (hash_exec_func*)pp_prefs_one);
 }
 
 /* unlike harvest-links.plx this only handles the post-fileset-outputs */
