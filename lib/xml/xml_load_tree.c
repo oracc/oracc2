@@ -4,6 +4,7 @@
 
 static void xlt_attr(Node *np, const char **atts);
 static void xlt_attr_xmlid(Node *np, const char **atts);
+static List *xlt_tags_by_attr_sub(Node *np, const char *tag, Hash *hash, const char *attr, const char *value, int match);
 
 static xlt_attr_fnc xlt_attr_p = xlt_attr;
 static Hash *xmlid_h = NULL;
@@ -105,7 +106,13 @@ xml_load_tree(const char *fn, int with_xmlid)
 List *
 xlt_tags(Node *np, const char *tag)
 {
-  return xlt_tags_by_attr(np, tag, NULL, NULL, 0);
+  return xlt_tags_by_attr_sub(np, tag, NULL, NULL, NULL, 0);
+}
+
+List *
+xlt_tags_hash(Node *np, Hash *tags)
+{
+  return xlt_tags_by_attr_sub(np, NULL, tags, NULL, NULL, 0);
 }
 
 const char *
@@ -123,16 +130,25 @@ xlt_att(Node *np, const char *att)
 static void
 xlt_selector(Node *np, XLT_sel *vp)
 {
-  if (vp->tag && strcmp(np->name, vp->tag))
-    return;
-  const char *v = NULL;
-  if (vp->att && !(v = xlt_att(np, vp->att)))
-    return;
-  if (vp->val && v
-      && ((!vp->match && strcmp(v, vp->val))
-	  || (vp->match && !strstr(v, vp->val))))
-    return;
-  list_add(vp->l, np);
+  if (vp->tags)
+    {
+      if (hash_find(vp->tags, (uccp)np->name))
+	list_add(vp->l, np);
+      return;
+    }
+  else
+    {
+      if (vp->tag && strcmp(np->name, vp->tag))
+	return;
+      const char *v = NULL;
+      if (vp->att && !(v = xlt_att(np, vp->att)))
+	return;
+      if (vp->val && v
+	  && ((!vp->match && strcmp(v, vp->val))
+	      || (vp->match && !strstr(v, vp->val))))
+	return;
+      list_add(vp->l, np);
+    }
 }
 
 List *
@@ -140,6 +156,24 @@ xlt_tags_by_attr(Node *np, const char *tag, const char *attr, const char *value,
 {
   XLT_sel *vp = calloc(1, sizeof(XLT_sel));
   vp->tag = tag;
+  vp->att = attr;
+  vp->val = value;
+  vp->match = match;
+  vp->l = list_create(LIST_SINGLE);
+  node_iterator(np, vp, (nodehandler)xlt_selector, NULL);
+  List *lp = vp->l;
+  free(vp);
+  return lp;
+}
+
+static List *
+xlt_tags_by_attr_sub(Node *np, const char *tag, Hash *hash, const char *attr, const char *value, int match)
+{
+  XLT_sel *vp = calloc(1, sizeof(XLT_sel));
+  if (hash)
+    vp->tags = hash;
+  else
+    vp->tag = tag;
   vp->att = attr;
   vp->val = value;
   vp->match = match;

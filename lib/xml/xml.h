@@ -23,6 +23,7 @@ typedef struct nsdata {
 
 typedef struct xltsel
 {
+  Hash *tags; 	   /* hash of tag names */
   const char *tag; /* tag name, may be NULL */
   const char *att; /* att name, may be NULL */
   const char *val; /* att value, may be NULL */
@@ -60,6 +61,7 @@ extern void nsdata_set_key_data(NSdata **np);
 
 extern Tree *xml_load_tree(const char *fn, int with_xmlid);
 extern List *xlt_tags(Node *np, const char *tag);
+extern List *xlt_tags_hash(Node *np, Hash *tags);
 extern const char *xlt_att(Node *np, const char *att);
 extern List *xlt_tags_by_attr(Node *np, const char *tag, const char *attr, const char *value, int match);
 
