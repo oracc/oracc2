@@ -8,6 +8,7 @@ const char *current_pqid = NULL;
 const char *curr_text = NULL;
 char *last_lid = NULL;
 const char *output_fn = NULL;
+const char *qid_fn = NULL;
 FILE *outfp = NULL;
 int auto_ex = 0;
 int in_lg = 0;
@@ -583,9 +584,10 @@ proj_pqid(const char *str)
 int
 main(int argc, char **argv)
 {
+  FILE *infp;
   char PQ[512];
   const char *fname[2] = { NULL, NULL };
-  options(argc, argv, "i:o:p:s");
+  options(argc, argv, "i:o:p:q:s");
   if (output_fn)
     outfp = freopen(output_fn, "w", stdout);
   else
@@ -596,6 +598,7 @@ main(int argc, char **argv)
       exit(1);
     }
 
+  lmemo_init();
   badatf = hash_create(128);
   defs = hash_create(128);
   indexed = hash_create(128);
@@ -632,6 +635,16 @@ main(int argc, char **argv)
   else
     {
       pp_xml_begin();
+      if (qid_fn)
+	{
+	  if (!(infp = freopen(qid_fn, "r", stdin)))
+	    {
+	      fprintf(stderr, "scolinks: unable to read qid file %s. Stop.\n", qid_fn);
+	      exit(1);
+	    }
+	}
+      else
+	infp = stdin;
       while (fgets(PQ,512,stdin))
 	{
 	  proj_pqid(PQ);
@@ -655,6 +668,7 @@ opts(int arg,const char*str)
     case 'i': current_pqid = str; break;
     case 'o': output_fn = str; break;
     case 'p': arg_project = current_proj = str; break;
+    case 'q': qid_fn = str; break;
     case 's': stdin_input = 1; break;
     default: return 1; break;
     }

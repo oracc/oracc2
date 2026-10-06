@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <xmd.h>
 #include <gdl.h>
+#include <lng.h>
 #include "etcsl.h"
 #include "atf.h"
 #include "atf_bld.h"
@@ -113,6 +114,9 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atf_xprop(np, "xml:id", atfmp->atf->pqx);
   atf_xprop(np, "n", (ccp)atfmp->atf->name);
   atf_xprop(np, "xml:lang", "sux");
+  text_lang = global_lang;
+  (void)lang_switch(NULL,"sux",NULL,NULL,0);
+  gvl_setup("osl", "osl", "020");
   atf_input(l, LT_ANDLINE, atfp);
   in_preamble = 1;
   atfp->hlabmap = hash_create(256);
@@ -121,7 +125,6 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   v_register(NULL);
   atf_block_xid();
   atf_bp_reset();
-  text_lang = global_lang;
   gdl_legacy_lexer(0);
   gdl_set_lzr_sparse(NULL);
   line_id = 0; /* we say ++line_id when using this */

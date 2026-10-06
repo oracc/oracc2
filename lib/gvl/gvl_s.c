@@ -62,7 +62,7 @@ gvl_s(Node *ynp)
 #endif
 
 #if 1
-  if (!bit_get(gdl_lang_context->core->features, LF_SAC))
+  if (!bit_get(gdl_lang_context->core->features, LF_PC|LF_SAC))
     return gp;
 #else
   if ('a' != curr_lang && 's' != curr_lang && (curr_lang < '0' || curr_lang > '9'))
@@ -118,7 +118,9 @@ gvl_s(Node *ynp)
       else
 	{
 	  if (!gdl_legacy_check(ynp, gp->orig))
-	    if (!gvl_void_messages)
+	    if (!gvl_void_messages
+		&& (!ynp->next
+		    || (strcmp(ynp->next->name, "g:a") && strcmp(ynp->next->name, "g:m"))))
 	      gp->mess = gvl_vmess("unknown sign name: %s", gp->orig);
 	}
     }
@@ -194,7 +196,10 @@ gvl_s(Node *ynp)
 		    ++s;
 		  if (*s)
 		    {
-		      if (!gvl_void_messages)
+		      if (!gvl_void_messages
+			  && (!ynp->next
+			      || (strcmp(ynp->next->name, "g:a")
+				  && strcmp(ynp->next->name, "g:m"))))
 			{
 			  if (gvl_sans_report)
 			    gp->mess = gvl_vmess("unknown sign/value: %s.", gp->orig);

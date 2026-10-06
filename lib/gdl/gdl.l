@@ -50,6 +50,9 @@ static int cvq_push(int);
 static void cvq_reset(void);
 /* LISTNUM		([A-Z][A-Z]+[0-9]+[A-Z0-9a-z_'"/+*]*) */
 /* NUMGRAPH	[0-9XNn]+(\/[0-9])?\(({GRAPHEME}|{COMPOUND})\) */
+
+/* The weird definition of M as "~"[a-z0-9][a-wyz0-9]* is to simplify
+ parsing of ASCII mode where 'x' is TIMES */
 %}
 
 	     	/* 20260519 remove '*' because it conflicts with collated flag */
@@ -58,7 +61,7 @@ B		("["|"]"|\xe2\xb8[\xa2-\xa5])
 S		\xe2\xb8[^\xa2-\xa5]|([0-9][a-wyz]*)
 G		([a-ru-zA-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[stST],?|{S}|\xc3[^\x97]|\xe2[^\xb8\x88])+
 CG		([A-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[ST],?|{S}|\xc3[^\x97]|\xe2[^\xb8\x88])+
-M		("@"([a-wyz]+[0-9]*|45|90|180|270)|"~"[a-z0-9]+|"\\"[a-z]*[0-9]+)
+M		("@"([a-wyz]+[0-9]*|45|90|180|270)|"~"[a-z0-9][a-wyz0-9]*|"\\"[a-z]*[0-9]+)
 NNUM		([N][0-9][0-9]?[ACF]?)
 GRAPHEME 	({G}|"15")
 FRACTION	[0-9]\/[0-9]

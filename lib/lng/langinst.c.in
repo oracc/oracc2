@@ -94,7 +94,7 @@ lang_switch(struct lang_context *curr, const char *tag, int *taglenp,
 		}
 	      if (*script && !strcmp(script+1, lp->core->script))
 		*script = '\0';
-	      if (script)
+	      if (*script)
 		{
 		  /* This is not ideal but at least it means that
 		     %akk-949 will switch off validation */

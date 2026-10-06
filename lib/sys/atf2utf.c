@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sll.h>
 #include "atf2utf.h"
 
 /**atf2utf
@@ -98,10 +99,10 @@ atf2utf(Mloc *locp, register const unsigned char *s, int rx)
   int slflag = 0;
   enum a2u_state state = a2u_none;
 
-#if 0
+#if 1
   /* This could be reimplemented using sll_is_signlist if necessary */
   if (isupper(s[1]) && strlen((char*)s) > 3)
-    slflag = is_signlist(s);
+    slflag = (NULL != sll_is_signlist((ccp)s));
   else if (*s == 'N' && isdigit(s[1]))
     slflag = 1;
 #endif
@@ -167,8 +168,11 @@ atf2utf(Mloc *locp, register const unsigned char *s, int rx)
 	case ':':
 	case '-':
 	  *t++ = *s++;
-#if 0
-	  if (isupper(s[1]) && strlen((char*)s)>3 && is_signlist(s))
+#if 1
+	  if (isupper(s[1])
+	      && ((strlen((char*)s)>3 && sll_is_signlist((ccp)s))
+		  || ('N' == *s && isdigit(s[1])))
+	      )
 	    {
 	      while (t-buf<1020 && (isupper(*s) || isdigit(*s)))
 		*t++ = *s++;

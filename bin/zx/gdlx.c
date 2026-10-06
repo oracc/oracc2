@@ -70,9 +70,9 @@ test_identity(char *s, Tree *t)
       else if (!strcmp(t->root->kids->name, "g:w"))
 	{
 	  if (gdl_ascii)
-	    res = prop_val(t->root->kids->props, "atf:form");
+	    res = prop_val(t->root->kids, "atf:form");
 	  if (!res)
-	    res = prop_val(t->root->kids->props, "form");
+	    res = prop_val(t->root->kids, "form");
 	}
       else
 	printf("%s\t(null)\n", s);
@@ -314,13 +314,21 @@ main(int argc, char **argv)
 #endif
   else
     gdlxml_setup();
+  lmemo_init();
+  lang_init();
+  gdl_auto_id();
+  gdlparse_init();
   if (!strcmp(project, "pcsl"))
-    gvl_setup(project, project, "900");
+    {
+#if 0
+      (void)lang_switch(NULL,"qpc",NULL,NULL,0);
+      gvl_setup(project, project, "900");
+#endif
+      gdl_set_lang(NULL, "qpc", NULL);
+    }
   else
     gvl_setup(project, project, "020"); /*FIXME*/
 
-  gdl_auto_id();
-  gdlparse_init();
 
   if (gvl_script_type)
     gvl_set_script(gvl_script_type);

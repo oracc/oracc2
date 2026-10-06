@@ -23,6 +23,16 @@ gvl_n(Node *ynp)
   p = (ucp)pool_alloc(strlen(nnp->kids->text) + strlen(nnp->kids->next->text) + 3, curr_sl->p);
   sprintf((char*)p, "%s(%s)", nnp->kids->text, nnp->kids->next->text);
 
+  if (ynp->kids && ynp->kids->next && N_U_GVL == ynp->kids->next->utype)
+    {
+      const char *m = (ccp)((gvl_g*)ynp->kids->next->user)->mess;
+      if (m && strstr(m, "unknown sign name"))
+	{
+	  ((gvl_g*)ynp->kids->next->user)->mess = NULL;
+	  mesg_remove_error(ynp->kids->next->mloc->file, ynp->kids->next->mloc->line, "unknown sign name");
+	}
+    }
+  
   /* make sure these are all fixed even if the num is in the hash */
   ynp->name = "g:n";
   ynp->kids->name = "g:r";

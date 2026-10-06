@@ -3,6 +3,7 @@
 #include <mesg.h>
 #include <list.h>
 #include <tree.h>
+#include <unidef.h>
 #include "gdl.h"
 
 static List *modq;
@@ -14,7 +15,15 @@ gdl_mod(Tree *ytp, const char *data)
   Node *np = NULL;
   const char *n = NULL;
   int mpushed = 0;
+  int times_pending = 0;
 
+  if (!gdl_unicode && !strcmp(ytp->curr->name, "g:c") && 'x' == data[strlen(data)-1])
+    {
+      times_pending = 1;
+      char *d = (char*)data;
+      d[strlen(d)-1] = '\0';
+    }
+  
   /* if we have )@c we need to add to the extant parent and not push;
      this may also need to test for g:q nodes but it may be that all
      g:q nodes that exhibit this behaviour are actually g:n nodes and
@@ -52,6 +61,18 @@ gdl_mod(Tree *ytp, const char *data)
       np = tree_add(ytp, NS_GDL, ytp->curr->name, ytp->curr->depth+1, NULL);
       np->text = (ccp)pool_copy((uccp)ytp->curr->text,gdlpool);
       np->mloc = np->rent->mloc;
+      if (N_U_GVL == np->rent->utype)
+	{
+	  const char *m = (ccp)((gvl_g*)np->rent->user)->mess;
+	  if (m && strstr(m, "unknown sign name"))
+	    {
+	      ((gvl_g*)np->rent->user)->mess = NULL;
+	      if (!mesg_remove_error(np->rent->mloc->file, np->rent->mloc->line,
+				     "unknown sign name"))
+		mesg_remove_error(np->rent->mloc->file, np->rent->mloc->line,
+				  "unknown sign/value");
+	    }
+	}
       /*np->name = "g:b";*/
 #if 0
       /*20260618: gdl_legacy now done in lexer: do we need to pass mods through it?*/
@@ -68,6 +89,15 @@ gdl_mod(Tree *ytp, const char *data)
   if (mpushed)
     tree_pop(ytp);
 
+  if (times_pending)
+    {
+      extern int c_delim_sentinel;
+      Node *op = tree_add(ytp, NS_GDL, "g:o", ytp->curr->depth+1, NULL);
+      op->text = U_X_u8str;
+      gdl_prop_kv(op, GP_ATTRIBUTE, PG_GDL_INFO, "atf:ascii", (ccp)"x");
+      c_delim_sentinel = 1;
+    }
+  
   /* return the node that wraps the mod */
   return np;
 }
