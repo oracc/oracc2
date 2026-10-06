@@ -15,7 +15,8 @@ xlt_attr(Node *np, const char **atts)
   int i;
   for (i = 0; atts[i]; i += 2)
     {
-      prop_node_add(np, PROP_ANY, PG_XML, atts[i],
+      prop_node_add(np, PROP_ANY, PG_XML,
+		    (ccp)hpool_copy((uccp)atts[i], np->tree->tm->pooh),
 		    (ccp)hpool_copy((uccp)atts[i+1], np->tree->tm->pooh));
     }
 }
@@ -27,7 +28,8 @@ xlt_attr_xmlid(Node *np, const char **atts)
   for (i = 0; atts[i]; i += 2)
     {
       const char *aval;
-      prop_node_add(np, PROP_ANY, PG_XML, atts[i],
+      prop_node_add(np, PROP_ANY, PG_XML,
+		    (ccp)hpool_copy((uccp)atts[i], np->tree->tm->pooh),
 		    aval = (ccp)hpool_copy((uccp)atts[i+1], np->tree->tm->pooh));
       if (!strcmp(atts[i], "xml:id"))
 	hash_add(xmlid_h, (uccp)aval, np);
@@ -43,14 +45,14 @@ xlt_char(Tree *tp, const char *c)
 static Node *
 xlt_push(Tree *tp, const char *nam)
 {
-  (void)tree_add(tp, NS_NONE, nam, tp->curr->depth+1, NULL);
+  (void)tree_add(tp, NS_NONE, (ccp)pool_copy((uccp)nam, tm_pool(tp)), tp->curr->depth+1, NULL);
   return tree_push(tp);
 }
 
 static void
 xlt_root(Tree *tp, const char *nam)
 {
-  tree_root(tp, NS_NONE, nam, 0, NULL);
+  tree_root(tp, NS_NONE, (ccp)pool_copy((uccp)nam, tm_pool(tp)), 0, NULL);
 }
 
 static void
