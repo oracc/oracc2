@@ -858,7 +858,7 @@ gdl_delim_s(Tree *ytp, const char *data)
     fprintf(stderr, "gt: DELIM: %s\n", data);
 
   /* Deferred clean-ups done by gdl_delim */
-  if (gdl_group_attach)
+  if (gdl_group_attach && !c_processing)
     {
       tree_curr(gdl_group_attach->rent);
       gdl_group_attach = NULL;
