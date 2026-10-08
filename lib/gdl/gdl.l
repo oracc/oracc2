@@ -218,7 +218,7 @@ NOTEMARK	"^"[0-9]+"^"
 	/* Grapheme meta flags, sometimes doubling as lex field shorthands */
 <INITIAL,C,Q>[!?]      	{ gdl_lex_flag((uccp)yytext); }
 <INITIAL,C>"*"		{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
-<INITIAL,C>^[#"~=@^]	{ return gdl_lexfld[(int)*yytext]; }
+<INITIAL,C>^[#"~=@^]	{ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "#"			{ if (SIN) { SIN=0;
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
@@ -229,6 +229,7 @@ NOTEMARK	"^"[0-9]+"^"
 [#"=@^]/{G} 		{ if (gdl_lexical) {
 		       	    mesg_vwarning(currgdlfile, gdllineno,
 			  	       	  "no space after %c field\n", *yytext);
+	       	     	    gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 			    return gdl_lexfld[(int)*yytext]; }
 			  else { gdl_lex_flag((uccp)yytext); } }
 

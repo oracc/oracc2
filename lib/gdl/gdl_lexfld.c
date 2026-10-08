@@ -2,30 +2,32 @@
 #include <stdio.h>
 #include "gdl.tab.h"
 
-int gdl_lexfld[128];
-
-const char *gdl_lexnames[256] = {
-  ['='] = "!cs",
-  ['#'] = "!sv",
+const char *gdl_lexnames[128] = {
   ['"'] = "!pr",
-  ['~'] = "!sg",
-  ['|'] = "!sn",
-  ['^'] = "!wp",
+  ['#'] = "!sv",
+  ['='] = "!eq",
   ['@'] = "!cs",
+  ['^'] = "!wp",
+  ['|'] = "!sn",
+  ['~'] = "!sg",
 };
 
+int gdl_lexfld[128] = {
+  ['"'] = LF_QUOTE,
+  ['#'] = LF_HASH,
+  ['='] = LF_EQUALS,
+  ['@'] = LF_AT,
+  ['^'] = LF_CARET, 
+  ['|'] = LF_VBAR,
+  ['~'] = LF_TILDE,
+};
+
+#if 0
 extern const char *currgdlfile;
 extern int gdllineno;
 void
 gdl_lexfld_init(void)
 {
-  gdl_lexfld['@'] = LF_AT;
-  gdl_lexfld['^'] = LF_CARET;
-  gdl_lexfld['='] = LF_EQUALS;
-  gdl_lexfld['#'] = LF_HASH;
-  gdl_lexfld['"'] = LF_QUOTE;
-  gdl_lexfld['~'] = LF_TILDE;
-  gdl_lexfld['|'] = LF_VBAR;
 }
 
 const char *
@@ -87,3 +89,4 @@ gdl_lexfld_name(const char *lftok)
     }
   return fld;
 }
+#endif

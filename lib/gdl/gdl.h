@@ -213,8 +213,6 @@ extern Node *gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
 extern void gdl_cell(Tree *ytp, const char *span);
 extern Node *gdl_field(Tree *ytp, const char *ftype);
 extern Node *gdl_graph(Mloc *locp, Tree *ytp, const char *data);
-extern const char *gdl_lexfld_name(const char *lftok);
-extern void gdl_lexfld_init(void);
 extern Node *gdl_mod(Tree *ytp, const char *data);
 extern Node *gdl_punct(Mloc *locp, Tree *ytp, const char *data);
 extern Node *gdl_listnum(Mloc *locp, Tree *ytp, const char *data);
