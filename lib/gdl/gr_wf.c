@@ -175,7 +175,14 @@ grf(p)(Node *np, FILE *fp)
 	}
     }
   else
-    ; /* not output in word form */
+    {
+      /* need to put a @type on g:gp if it's not supposed to be output on word form */
+      fputc('(', fp);
+      Node *k;
+      for (k = np->kids; k; k = k->next)
+	gdlr_node(k, fp);
+      fputc(')', fp);
+    }
   return 0;
 }
 
