@@ -9,4 +9,4 @@ else
     echo ORACC_MODE $ORACC_MODE = single
 fi
 bin=@@ORACC@@/bin
-(cd @@ORACC@@/osl ; ${bin}/sx -b ; ${bin}/slix 02pub/sl/sl.tsv)
+(cd @@ORACC@@/osl ; ${bin}/sx -b && mv 02pub/sl/nsl.tsv 02pub/sl/sl.tsv ; ${bin}/slix 02pub/sl/sl.tsv)
