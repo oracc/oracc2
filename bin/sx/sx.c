@@ -8,6 +8,7 @@
 #include <lng.h>
 #include <xml.h>
 #include <asl.h>
+#include <inl.h>
 #include <ns-asl.h>
 #include <gdl.h>
 #include <gt.h>
@@ -89,6 +90,7 @@ main(int argc, char * const*argv)
 {
   struct sl_signlist *sl;
   FILE *sllout = stdout;
+  Pool *inl_pool;
 
   signals(argc, argv);
   
@@ -98,6 +100,7 @@ main(int argc, char * const*argv)
   gdl_unicode = inl_rnv = gdl_no_xml_ids = gdl_word_mode = 1;
   gt_init();
   gsort_init();
+  inl_set_pool(inl_pool = pool_init());
   
   if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQs::StTuUvVxX:?"))
     exit(1);

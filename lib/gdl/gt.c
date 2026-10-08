@@ -146,7 +146,8 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	    *x = ' ';
 	  ++x;
 	}
-      t = xt;
+      t = strdup(xt);
+      free(xt);
     }
   
   Gt *tokp = NULL;
@@ -171,8 +172,6 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	  if (gt_bad_gsig(locp, t, gsig))
 	    {
 	      fprintf(stderr, "gt_bad_gsig: %s => bad sig %s\n", t, gsig);
-	      if (xt)
-		free(xt);
 	      return NULL;
 	    }
 
@@ -227,8 +226,6 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       tokp->oid_ip = (struct sl_inst *)user;
       hash_add(gtcfg.h, t, tokp);
     }
-  if (xt)
-    free(xt);
   return tokp;
 }
 

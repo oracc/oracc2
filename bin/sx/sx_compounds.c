@@ -11,7 +11,7 @@ const char *last_g;
 
 enum sxc_type { sxc_initial, sxc_medial, sxc_final, sxc_container, sxc_contained };
 
-/* g:d text=× sets this to 1; it is reset to 0 by g:s unless a g:gp
+/* g:o text=× sets this to 1; it is reset to 0 by g:s unless a g:gp
    sets it to 2 in which case g:gp sets it to 0 at the end of the
    (...) */
 int sxc_container_active = 0;
@@ -371,12 +371,12 @@ sx_compound_node(Node *np, struct sl_signlist *sl, const char *sname, int depth)
 	  /* don't process g:l/g:s kids because we have mods from s->text
 	     and we don't currently index @g etc (might one day) */
 	}
-      else if (!strcmp(np->name, "g:d"))
+      else if (!strcmp(np->name, "g:o"))
 	{
 	  if (!strcmp(np->text, U_X_u8str))
 	    {
 	      if (ctrace)
-		fprintf(stderr, "ctrace: g:d %s\n", np->text);
+		fprintf(stderr, "ctrace: g:o %s\n", np->text);
 	      if (last_g)
 		{
 		  sx_compound_data(sl, last_g, sname, sxc_container);
