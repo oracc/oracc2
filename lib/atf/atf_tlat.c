@@ -201,7 +201,7 @@ atr_inter(Mloc l, unsigned char *s)
   /* extract xml:lang from s or set to "en" if none */
   char *t = strchr((ccp)s, ':'); *t = '\0';
   char *lng = strchr((ccp)s, '.');
-  if (lng < t)
+  if (lng && lng < t)
     {
       ++lng;
 #if 0
@@ -212,7 +212,8 @@ atr_inter(Mloc l, unsigned char *s)
       setAttr(np, "xml:lang", lng);
     }
   else
-    lng = NULL;
+    setAttr(np, "xml:lang", "en");
+  /*lng = NULL;*/
   ++t;
   while (isspace(*t))
     ++t;
@@ -729,7 +730,10 @@ atr_inline(Mloc *mp, struct node*parent,unsigned char *text)
   inl_wild_mode = 1;
   char *ws = normalize_ws(text);
   Tree *itp = inl(mp, ws);
-  tree_graft(parent, itp);
+  if (itp)
+    tree_graft(parent, itp);
+  else
+    parent->text = "";
   free(ws);
   inl_wild_mode = 0;
 }

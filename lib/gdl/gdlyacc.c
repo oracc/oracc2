@@ -760,7 +760,7 @@ gdl_new_word(Tree *ytp)
 	  gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       
 	  /* IF FIELD NOT IN SPARSE LEM HASH */
-	  if (!lzr_sparse || hash_find(lzr_sparse, (uccp)curr_field))
+	  if (!lzr_sparse || !curr_field || hash_find(lzr_sparse, (uccp)curr_field))
 	    list_add(wd_list, wp);
 	  sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
 	  gid_insertp = gdl_word_id+strlen(gdl_word_id);
