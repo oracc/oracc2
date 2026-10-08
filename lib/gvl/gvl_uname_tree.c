@@ -149,7 +149,7 @@ gvl_uname_node(Node *np, List *lp)
 	      list_add(lp, gvl_uname_ascii(np->text, bspace, nhyphen));
 	    break;
 	  }
-	case 'd':
+	case 'o':
 	  {
 	    const char *d = NULL;
 	    switch (*((unsigned char *)np->text))

@@ -126,11 +126,11 @@ gdlsig_one_node(Node *np, List *lp)
 	       && (p = prop_find_kv(np->props, "g:delim", NULL)))
 	list_add(lp, (char*)gdlsig_sep((char*)p->u.k->v));
     }
-  else if (!strcmp(np->name, "g:d"))
+  else if (!strcmp(np->name, "g:o"))
     {
       list_add(lp, (char*)gdlsig_sep((char*)np->text));
     }
-  else if (!strcmp(np->name, "g:det"))
+  else if (!strcmp(np->name, "g:d"))
     {
       Prop *d = prop_find_kv(np->props, "g:pos", NULL);
       if (d && !strcmp(d->u.k->v, "post"))

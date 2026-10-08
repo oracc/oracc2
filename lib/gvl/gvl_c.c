@@ -126,7 +126,7 @@ gvl_c_node_text(List *lp, Node *np, int lc)
     case 'f':
       /* graphetic forms are not added here */
       break;
-    case 'd':
+    case 'o':
       list_add(lp, (void*)np->text);
       if ('3' == *np->text || '4' == *np->text)
 	list_add(lp, (void*)"×");

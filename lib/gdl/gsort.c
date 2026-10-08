@@ -166,7 +166,7 @@ gsort_node(Node *np, List *lp)
   /* Ignore determinatives for now; should probably ensure that forms
      with determinative sort in constant order; need to use a while
      for, e.g., {u₂}{+a}aški */
-  while (np && !strcmp(np->name, "g:det"))
+  while (np && !strcmp(np->name, "g:d"))
     np = np->next;
 
   if (!np) /* this means the word ended with a determinative */
@@ -207,7 +207,7 @@ gsort_node(Node *np, List *lp)
 	    gsort_node(npp, lp);
       }
       break;
-    case 'd':
+    case 'o':
       /* For d = '3×' store the multiplier and don't add the TIMES */
       if (*(uccp)np->text < 128 && isdigit(*np->text))
 	pending_r = atoi(np->text);
