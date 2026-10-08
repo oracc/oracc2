@@ -8,6 +8,15 @@
 
 static List *modq;
 
+static void
+gdl_mod_form(Node *np, const char *f, const char *m)
+{
+  char buf[strlen(f)+strlen(m)+1];
+  strcpy(buf, f);
+  strcat(buf, m);
+  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)pool_copy((uccp)buf, gdlpool));
+}
+
 /* Mod nodes attached to the current grapheme ynp */
 Node *
 gdl_mod(Tree *ytp, const char *data)
@@ -23,6 +32,10 @@ gdl_mod(Tree *ytp, const char *data)
       char *d = (char*)data;
       d[strlen(d)-1] = '\0';
     }
+
+  Prop *form = prop_find_kv(ytp->curr->props, "form", NULL);
+  if (form)
+    gdl_mod_form(ytp->curr, form->u.k->v, data);
   
   /* if we have )@c we need to add to the extant parent and not push;
      this may also need to test for g:q nodes but it may be that all
@@ -82,6 +95,7 @@ gdl_mod(Tree *ytp, const char *data)
 	gdl_unlegacy(np);
 #endif
     }
+
   np = tree_add(ytp, NS_GDL, n, ytp->curr->depth+1, NULL);
   np->text = (ccp)pool_copy((uccp)data,gdlpool);
   np->mloc = np->rent->mloc;

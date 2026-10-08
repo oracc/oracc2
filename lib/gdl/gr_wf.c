@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <unidef.h>
 #include "gdl.h"
 #include "gdlstate.h"
 
@@ -92,6 +93,12 @@ grf(g)(Node *np, FILE *fp)
 	fputs(np->kids->text, fp);
       else if (!strcmp(p->u.k->v, "diszless"))
 	fputs(np->text, fp);
+      else if (!strcmp(p->u.k->v, "reordering") || !strcmp(p->u.k->v, "c"))
+	{
+	  Node *k;
+	  for (k = np->kids; k; k = k->next)
+	    gdlr_node(k, fp);
+	}
       else
 	gdlr_text(np, fp);
     }
@@ -100,13 +107,15 @@ grf(g)(Node *np, FILE *fp)
   return 0;
 }
 
-/* l is used for g:gloss */
+/* G is used for g:gloss */
 int
-grf(l)(Node *np, FILE *fp)
+grf(G)(Node *np, FILE *fp)
 {
   /* not output in word form */  
   return 0;
 }
+
+/* grf(l) is g:l==list handled by grf(s) */
 
 int
 grf(m)(Node *np, FILE *fp)
@@ -122,6 +131,12 @@ grf(n)(Node *np, FILE *fp)
   fputc('(', fp);
   gdlr_node(np->kids->next, fp);
   fputc(')', fp);
+  if (np->kids->next->next) /* modifiers after closing paren */
+    {
+      Node *n;
+      for (n = np->kids->next->next; n; n = n->next)
+	gdlr_node(n, fp);
+    }
   return 0;
 }
 
@@ -129,6 +144,8 @@ int
 grf(o)(Node *np, FILE *fp)
 {
   fputs(np->text, fp);
+  if ('3' == *np->text || '4' == *np->text)
+    fputs(U_X_u8str, fp);
   return 0;
 }
 
@@ -139,13 +156,26 @@ grf(o_a)(Node *np, FILE *fp)
     fputc('x', fp);
   else
     fputs(np->text, fp);
+  if ('3' == *np->text || '4' == *np->text)
+    fputc('x', fp);
   return 0;
 }
 
 int
 grf(p)(Node *np, FILE *fp)
 {
-  /* not output in word form */
+  Prop *p = prop_find_kv(np->props, "g:type", NULL);
+  if (p)
+    {
+      if (!strcmp(p->u.k->v, "c"))
+	{
+	  Node *k;
+	  for (k = np->kids; k; k = k->next)
+	    gdlr_node(k, fp);
+	}
+    }
+  else
+    ; /* not output in word form */
   return 0;
 }
 
@@ -263,7 +293,19 @@ gr_node_wf(Node *np, FILE *fp)
       gdlstate_t n = np->next ? prop_get_state(np->next) : 0L;
       if ('g' == np->name[0])
 	{
-	  (void)gr_funcs[np->name[3] ? np->name[3] : np->name[2]](np, fp);
+	  if (!np->name[3])
+	    (void)gr_funcs[(int)np->name[2]](np, fp);
+	  else
+	    {
+	      if (!strcmp(np->name, "g:gloss"))
+		(void)gr_funcs['G'](np, fp);
+	      else if (strlen(np->name) == 4 && ('g' == np->name[3] || 'p' == np->name[3]))
+		(void)gr_funcs[(int)np->name[3]](np, fp); /* g:gg | g:gp */
+	      else if (!strcmp(np->name, "g:nonw"))
+		; /* no-op in word-form */
+	      else
+		mesg_verr(np->mloc, "gr_node_wf: unhandled g: node %s", np->name);
+	    }
 	  if (np->next)
 	    {
 	      Prop *d = prop_find_kv(np->props, "g:delim", NULL);
@@ -290,8 +332,10 @@ gdlr_node_fnc grf(fncs)[128] =
     ['d'] = grf(d),
     ['f'] = grf(f),
     ['g'] = grf(g),
-    ['l'] = grf(l),
+    ['G'] = grf(G), /* g:gloss */
+    ['l'] = grf(s), /* g:l is internal gdl for list-names, serialized as g:s */
     ['m'] = grf(m),
+    ['M'] = grf(m),
     ['n'] = grf(n),
     ['o'] = grf(o),
     ['p'] = grf(p),
