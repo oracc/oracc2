@@ -689,7 +689,7 @@ gdl_c_term(Tree *ytp)
 
 /* New behaviour 20260212: SPACE resets node to next node of last
    child of either the parent l-node or the tree root (for
-   non-word-wrapped GDL */
+   non-word-wrapped GDL) */
 Node *
 gdl_new_word(Tree *ytp)
 {
@@ -714,6 +714,9 @@ gdl_new_word(Tree *ytp)
 	  ytp->curr->last = ytp->curr->kids = w;
 	  tree_curr(w);
 	  retnode = ytp->curr;
+	  /* IF FIELD NOT IN SPARSE LEM HASH */
+	  if (!lzr_sparse || (curr_field && hash_find(lzr_sparse, (uccp)curr_field)))
+	    list_add(wd_list, w);
 	}
       else if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
 	{
@@ -721,6 +724,11 @@ gdl_new_word(Tree *ytp)
 	  assert(word_lang_tag != NULL);
 	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
 	  retnode = ytp->curr;
+	  /* If this is an empty word followed by a field it may have
+	     been added to wd_list before the field code changed;
+	     check it's valid, and if it isn't then remove it */
+	  if (lzr_sparse && curr_field && !hash_find(lzr_sparse, (uccp)curr_field))
+	    (void)list_pop(wd_list);
 	}
       else
 	{
@@ -968,18 +976,27 @@ gdl_field(Tree *ytp, const char *ftype)
   Node *fp = NULL;
   Node *ancestor = NULL;
 
+  if ('!' == *ftype)
+    ++ftype;
+  if (gdltrace)
+    fprintf(stderr, "gt: FIELD with TYPE = %s\n", ftype);
+  curr_field = (ccp)pool_copy((uccp)ftype, ytp->tm->pool);
+  
   /* Remove the parent g:w if there is one (extra credit: keep the
      node around to use after the field) */
   if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
-    }
 
-  if ('!' == *ftype)
-    ++ftype;
-  if (gdltrace)
-    fprintf(stderr, "gt: FIELD with TYPE = %s\n", ftype);
+      /* This is an empty word followed by a field code that may have
+	 been been added to wd_list before the field code changed;
+	 check it's valid, and if it isn't then remove it */
+      if (list_len(wd_list)
+	  && gdl_recycled_word == (void*)wd_list->last->data
+	  && lzr_sparse && !hash_find(lzr_sparse, (uccp)curr_field))
+	(void)list_pop(wd_list);      
+    }
 
   if (!(ancestor = node_ancestor_or_self(ytp->curr, "f")))
     {
@@ -999,8 +1016,7 @@ gdl_field(Tree *ytp, const char *ftype)
     tree_curr(ancestor->rent);
   fp = tree_add(ytp, NS_GDL, "f", ytp->root->depth+1, NULL);
   tree_curr(fp);
-  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type",
-	      curr_field = (ccp)pool_copy((uccp)ftype, ytp->tm->pool));
+  gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type", curr_field);
   return tree_push(ytp);
 }
 

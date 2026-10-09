@@ -211,9 +211,9 @@ xtf2xcl_line(XCL *xc, Node *np)
   if (np->kids)
     {
       xcl_discontinuity(xc, propxid(np), xcl_d_line_start, NULL);
-      if (!strcmp(np->kids->name, "g:cell"))
+      if (!strcmp(np->kids->name, "c"))
 	xtf2xcl_cells(xc, np);
-      else if (!strcmp(np->kids->name, "g:field"))
+      else if (!strcmp(np->kids->name, "f"))
 	xtf2xcl_fields(xc, np);
       else
 	xtf2xcl_words(xc, np);
