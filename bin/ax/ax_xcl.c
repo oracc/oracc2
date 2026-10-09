@@ -170,6 +170,8 @@ xtf2xcl_block(struct xcl_context *xc, struct node*np)
 void
 xtf2xcl_group(XCL *xc, Node *np)
 {
+  if (!np->user || N_U_GROUP != np->utype)
+    return;
   if (line_is_unit && xc->curr && xc->curr->parent)
     xcl_insert_ub(np, xc, 0, xcl_c_sentence, 0);
   xcl_fix_context(xc,NULL);

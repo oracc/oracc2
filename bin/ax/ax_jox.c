@@ -396,7 +396,8 @@ ax_jox_protocol(Node *np, void *p)
     {
       if (!strcmp(ptype->u.k->v, "bib"))
 	ax_jox_bib(np, p);
-      else if (strcmp(ptype->u.k->v, "after"))
+      /*strcmp(ptype->u.k->v, "after") && strcmp(ptype->u.k->v, "see")*/
+      else if (!strcmp(ptype->u.k->v, "lang"))
 	ax_jox_lang(np, p);
     }
   return 0;

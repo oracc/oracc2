@@ -57,6 +57,19 @@ extern struct catinfo *ax_check (const char *str,size_t len);
 static void ax_label_xmlid(List *lp);
 
 void
+ax_input_term(void)
+{
+  atf_term();
+  rnvval_term();
+  xmd_term();
+  inl_term();
+  gdlparse_term();
+  mesg_print(stderr);
+  mesg_term();
+  inl_term();
+}
+
+void
 ax_input(const char *f)
 {
   xmd_ignore_missing = 1;
@@ -68,6 +81,12 @@ ax_input(const char *f)
   gdlparse_init();
   inl_init(0);
   Tree *tp = atf_read(f);
+  if (!atfp->project)
+    {
+      ax_input_term();
+      fprintf(stderr, "ax: no #project in %s. Skipping file.\n", f);
+      return;
+    }
   proj_init(rp, (ccp)atfp->project);
   XCL *xp = NULL;
   List *ap = NULL;
@@ -120,15 +139,7 @@ ax_input(const char *f)
 	  exit_status = status;
 	  status = 0;
 	}
-
-      atf_term();
-      rnvval_term();
-      xmd_term();
-      inl_term();
-      gdlparse_term();
-      mesg_print(stderr);
-      mesg_term();
-      inl_term();
+      ax_input_term();
     }
 }
 
