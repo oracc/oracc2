@@ -216,8 +216,13 @@ parse_nonx(Mloc *mp, unsigned char *l)
 	      *np = '\0';
 	      if (np[-1] == '-')
 		{
-		  mesg_verr(mp, "%s: malformed extent in $-line",n);
-		  return NULL;
+		  if (nx.strict)
+		    {
+		      mesg_verr(mp, "%s: malformed extent in $-line",n);
+		      return NULL;
+		    }
+		  else
+		    nx.number = 0;
 		}
 	      else
 		nx.number = n;
@@ -421,6 +426,9 @@ parse_nonx(Mloc *mp, unsigned char *l)
       mesg_notice(mp->file, mp->line, "$-line meets strict criteria; remove parens");
       nx.strict = -1;
     }
+  else if (!nx.strict && !nx.state)
+    nx.extent = 0;
+
   return &nx;
 }
 
