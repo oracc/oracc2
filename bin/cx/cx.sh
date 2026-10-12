@@ -63,7 +63,7 @@ else
 	if [ "$catlocal$catouter$catextra" != "" ]; then
 	    odo_time "catalogue installing from 01bld/cat/union.tsv"
 	    ${bin}/cx -p$proj 01bld/cat/union.tsv | \
-		tee 01bld/cdlicat.xmd | ${bin}/xmlsplit
+		tee 01bld/cdlicat.xmd | ${bin}/xmlsplit -v
 	    if [ -r 01bld/sortinfo.tab ]; then
 		${bin}/pgcsix 01bld/sortinfo.tab && mv 01bld/sortinfo.csi 02pub/
 	    fi

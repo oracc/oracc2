@@ -64,7 +64,7 @@ set $ldir/*.tsv
 if [ "$1" != "$ldir/*.tsv" ]; then
     for t in $* ; do
 	id=`head -1 $t | grep ^id_`
-	if [ "${id}" = "" ]; then
+	if [ "${id}" != "" ]; then
 	    id=`head -1 $t | tr '\t' '\n' | grep ^id_ | tr -d '\n'`
 	    ${bin}/rocox -z $id <$t >$t.z
 	    mv $t.z $t

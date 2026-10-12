@@ -9,7 +9,14 @@
 static void
 cx_roco_outer_dest(Roco *r, int i, FILE *fp)
 {
-  char *dest = expand(((struct cx_xml_user *)r->user)->c->project, (ccp)r->rows[i][0], "xmd");
+  char *dest_pqx = (char*)r->rows[i][0];
+  if ('P' == *dest_pqx && '2' == dest_pqx[1] && strlen(dest_pqx) > 7)
+    {
+      char buf[8];
+      sprintf(buf, "X%s", dest_pqx+2);
+      dest_pqx = memo_dup(buf);
+    }
+  char *dest = expand(((struct cx_xml_user *)r->user)->c->project, dest_pqx, "xmd");
   fprintf(fp, "<?destfile %s?>\n", dest);
 }
 

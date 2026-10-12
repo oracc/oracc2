@@ -25,6 +25,7 @@ int xmlsplit_filelist = 0;
 #define PI_BUF_LEN 1023
 char pi_buf[PI_BUF_LEN+1];
 char atf_file_buf[1024];
+char *input;
 char *changed_list = NULL;
 char dest_file_buf[1024];
 char ibuf[16384], obuf[16384];
@@ -289,7 +290,7 @@ int
 main(int argc, char **argv)
 {
   register int c;
-  options(argc,argv,"c:dfuv");
+  options(argc,argv,"c:dfi:uv");
   *dest_file_buf = '\0';
   if (changed_list)
     {
@@ -305,11 +306,18 @@ main(int argc, char **argv)
       filelist_fp = fopen("01bld/destfiles.lst","w");
       if (NULL == filelist_fp)
 	{
-	  fprintf(stderr,"xmlsplit: unable to open change list 01bld/destfile.lst\n");
+	  fprintf(stderr,"xmlsplit: unable to open xmlsplit file list 01bld/destfile.lst\n");
 	  exit(1);
 	}
     }
   *atf_file_buf = '\0';
+
+  if (input && !freopen(input, "r", stdin))
+    {
+      fprintf(stderr, "xmlsplit: unable to read %s for input\n", input);
+      exit(1);
+    }
+    
   setvbuf(stdin,ibuf,_IOFBF,16384);
   while (EOF != (c = getchar()))
     {
@@ -364,6 +372,10 @@ main(int argc, char **argv)
 	  append_char(c);
 	}
     }
+
+  if (xtf_used)
+    cmp_n_dump(dest_file_buf);
+
   if (verbose)
     fprintf(stderr,"xmlsplit: %d files processed; %d updated\n",count,changed);
   if (changefile)
@@ -386,6 +398,9 @@ opts(int argc, char *arg)
       break;
     case 'f':
       xmlsplit_filelist = 1;
+      break;
+    case 'i':
+      input = arg;
       break;
     case 'u':
       update = 1;

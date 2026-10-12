@@ -102,6 +102,7 @@ main(int argc, char * const *argv)
 	      fprintf(stdout, "<xmd-set project=\"%s\">", c->project);
 	      fprintf(stdout, "<xmd-set source=\"%s\">", c->rr[0]->file);
 	      roco_write_xml(stdout, c->rr[0]);
+	      fputs("<?destfile #close?>\n", stdout);
 	      fputs("</xmd-set>", stdout);
 	      fputs("</xmd-set>", stdout);
 	    }
