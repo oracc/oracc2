@@ -49,7 +49,7 @@ PROJECT [a-z][a-z0-9/]+
 QID	{PROJECT}:{PQX}
 LANG	[a-z][a-z][a-z]?(-[-a-z]+)?
 use	"use"[ \t]+			
-NOD 	[^ \t\n\r.]
+NOD 	[^ \t\n\r.:]
 NON 	[^ \t\n\r]
 WHT 	[ \t\n\r]
 			/* */
@@ -169,7 +169,9 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 
 ^[^ #@$\t\n\r]+\./[\n\r]   	{ BEGIN s_T; longinit; return MTS; }
 
-^[^ #@$\t\n\r#]+:[ \t]+        	{ BEGIN s_T; longinit; return EXX; }
+^[^ #@$\t\n\r]+:[ \t]+        	{ BEGIN s_T; longinit; return EXX; }
+
+^[^ #@$\t\n\r]+:/[\n\r]        	{ BEGIN s_T; longinit; return EXX; }
 
 ^:[^:#@$]+:[ \t]+	       	{ BEGIN s_T; longinit; return VAR; }
 
@@ -199,7 +201,7 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 <*>\r				{ }
 
 <s_IGNORE>[\r\n]		{ BEGIN 0; }
-^[0-9A-Za-z.]+{NOD}+{WHT}+.*$  	{ BEGIN s_IGNORE; mesg_verr(&atflloc, "bad line number: %s", yytext); }
+^[0-9A-Za-z.:]+{NOD}+{WHT}+.*$ 	{ BEGIN s_IGNORE; mesg_verr(&atflloc, "bad line number: %s", yytext); }
 ^([^ #@$\t\n\r]+\.)+[^ \t\n\r]+ { BEGIN s_IGNORE; mesg_verr(&atflloc, "junk after line number: %s", yytext); }
 
 <*>.				{ fprintf(stderr,"%s:%d: atf.l: unmatched character '%c'\n",
