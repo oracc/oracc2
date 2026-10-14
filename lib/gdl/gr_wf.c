@@ -111,7 +111,9 @@ grf(g)(Node *np, FILE *fp)
 int
 grf(G)(Node *np, FILE *fp)
 {
-  /* not output in word form */  
+  Node *k;
+  for (k = np->kids; k; k = k->next)
+    gdlr_node(k, fp);  
   return 0;
 }
 

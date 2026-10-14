@@ -66,6 +66,7 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
+      gdl_pop_wd_list(gdl_recycled_word);
     }
     
   ret = gdl_push(ytp, "g:gloss");
@@ -126,6 +127,8 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
   tree_curr(ret);
+  if (strcmp(ret->name, "g:w"))
+    ret = gdl_new_word(ytp);
   return ret;
 }
 

@@ -146,8 +146,8 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	    *x = ' ';
 	  ++x;
 	}
-      t = strdup(xt);
-      free(xt);
+      t = (unsigned char *)strdup((char*)xt);
+      free((char*)xt);
     }
   
   Gt *tokp = NULL;

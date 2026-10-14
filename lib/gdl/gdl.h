@@ -158,6 +158,7 @@ extern GDLR_config *vx_oatf_config;
 #define gdlr_closers gr_funcs[3]
 #define gdlr_flags gr_funcs[4]
 
+extern void gdl_pop_wd_list(void *vp);
 extern void gdl_render_setup_wf(void);
 extern GDLR_config *gdl_render_setup_vx(int gdl_vx_mode, gdlr_node_fnc textfunc);
 

@@ -79,6 +79,13 @@ static List *wd_list = NULL;
  *
  ***********************************************************************/
 
+void
+gdl_pop_wd_list(void *vp)
+{
+  if (!vp || vp  == (void*)wd_list->last->data)
+    list_pop(wd_list);  
+}
+
 /* TODO: keep list of determinatives so we can validate pre/post
  * determinatives w/r/t next node.
  *
@@ -994,7 +1001,7 @@ gdl_field(Tree *ytp, const char *ftype)
 	 check it's valid, and if it isn't then remove it */
       if (list_len(wd_list)
 	  && gdl_recycled_word == (void*)wd_list->last->data
-	  && lzr_sparse && !hash_find(lzr_sparse, (uccp)curr_field))
+	  && (!lzr_sparse || !hash_find(lzr_sparse, (uccp)curr_field)))
 	(void)list_pop(wd_list);      
     }
 
@@ -1128,7 +1135,8 @@ gdl_line_wrapup(Mloc m)
   if (gdl_recycled_word)
     {
       gdl_recycled_word = NULL;
-      (void)list_pop(wd_list);
+      if (gdl_recycled_word == (void*)wd_list->last->data)
+	(void)list_pop(wd_list);
     }
 
   /* We haven't done gdl_word_attr yet so the empty word is g:w not g:empty */

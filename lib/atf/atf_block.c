@@ -931,12 +931,19 @@ srf_args(Mloc l, Block *bp, char *s, char flags[])
       else
 	s = scan_flags(l, s, flags);
 
+      const char *fprimes = "";
+      int nprimes = scan_primes(s, (const char **)&s);
+      if (nprimes)
+	fprimes = primes[nprimes-1];
+
       if (face)
 	{
-	  char *n = (char *)pool_copy((uccp)face, atfmp->pool);
-	  bp->subt = n;
-	  bp->label = n;
-	  atf_xprop(bp->np, "n", n);
+	  char flabel[strlen(face)+strlen(fprimes)+2];
+	  strcpy(flabel, face);
+	  if (*fprimes)
+	    strcat(flabel, fprimes);
+	  bp->subt = bp->label = (ccp)pool_copy((uccp)flabel, atfmp->pool);
+	  atf_xprop(bp->np, "n", bp->label);
 	}
       else
 	{
