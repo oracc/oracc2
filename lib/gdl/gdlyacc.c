@@ -864,6 +864,21 @@ gdl_delim_l(Tree *ytp, const char *data)
 #endif
 }
 
+/* return 1 if np is a number -- either a g:n or a g:gg with g:type=diszless */
+static int
+gdl_num_context(Node *np)
+{
+  if (!strcmp(np->name, "g:n"))
+    return 1;
+  if (!strcmp(np->name, "g:gg"))
+    {
+      const char *t = prop_val(np, "g:type");
+      if (t && !strcmp(t, "diszless"))
+	return 1;
+    }
+  return 0;
+}
+
 Node *
 gdl_delim_s(Tree *ytp, const char *data)
 {
@@ -882,12 +897,11 @@ gdl_delim_s(Tree *ytp, const char *data)
   gdl_hc(0);
   
   /* GDL lang handling needs to switch to lib/lng */
-  if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux)
+  if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux && !gdl_num_context(ytp->curr->last))
       {
       mesg_verr(ytp->curr->mloc, "period only legal in compounds, logograms, and ...");
       data = "-";
     }
-
 
   if (c_processing)
     {
@@ -1001,7 +1015,7 @@ gdl_field(Tree *ytp, const char *ftype)
 	 check it's valid, and if it isn't then remove it */
       if (list_len(wd_list)
 	  && gdl_recycled_word == (void*)wd_list->last->data
-	  && (!lzr_sparse || !hash_find(lzr_sparse, (uccp)curr_field)))
+	  /*&& (!lzr_sparse || !hash_find(lzr_sparse, (uccp)curr_field))*/)
 	(void)list_pop(wd_list);      
     }
 

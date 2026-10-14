@@ -159,7 +159,7 @@ NOTEMARK	"^"[0-9]+"^"
 ,			{ return ','; }
 &[0-9]+  		{ gsave; return CELLSPAN; }
 &			{ return '&'; }
-![a-z]+	       		{ gsave; return FTYPE; }
+![a-z]+        		{ gsave; return FTYPE; }
 
 	/* Delimiters */
 
