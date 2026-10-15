@@ -5,11 +5,19 @@
 
 static Pool *inl_pool;
 
+static int inl_translation = 0;
+
 static int double_at_flag = 0;
 int suppress_empty_text_nodes = 1;
 static void inl_text_node(Scan *sp, Tree *tp, const char *text, int len);
 
 #define INL_CMD_MAX 1023
+
+void
+inl_set_translation(int x)
+{
+  inl_translation = x;
+}
 
 void
 inl_set_pool(Pool *p)
@@ -153,7 +161,7 @@ inl_span(Scan *sp, struct inltok *itp, Tree *tp, char *s)
 	}
       else if ('{' == *s)
 	stext = scan_curly(sp, s, &s);
-      else
+      else if (!inl_translation) /* in translation @kur-plant means that kur is non-English */
 	mesg_verr(&sp->mp, "missing {...} content after %s\n", ssp->name);
     }
 

@@ -1,5 +1,5 @@
-#ifndef _RUNEXPAT_H
-#define _RUNEXPAT_H
+#ifndef RUNEXPAT_H_
+#define RUNEXPAT_H_
 
 #include <expat.h>
 #include <list.h>
@@ -63,4 +63,4 @@ extern XML_CommentHandler runexpatCommentHandler;
 
 extern void runexpat_stop(void);
 
-#endif /*_RUNEXPAT_H*/
+#endif /*RUNEXPAT_H_*/

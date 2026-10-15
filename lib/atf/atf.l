@@ -75,7 +75,7 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 
 %%
 
-^({BOM3}|{BOM2})?"&"         	{ BEGIN s_AMPl; }
+^({BOM3}|{BOM2})?"&"  		{ BEGIN s_AMPl; s_next = 0; }
 <s_AMPl>{PQX}			{ atfsave; return r(PQX); }
 <s_AMPl>[ \t]+=	       		{ BEGIN s_AMPr; return r('='); }
 <s_AMPl>[ \t]+/[^=]    		{ mesg_verr(&atflloc, "no '=' in &-line");
@@ -177,7 +177,7 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 
 ^== 				{ BEGIN s_T; atfsave; return BIL; }
 
-^\#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
+^#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
 <s_TRD>("labeled"|"parallel"|"unitary")	{ atfsave; tra_text=0; return TR_TYPE; }
 <s_TRD>{LANG}				{ atfsave; s_next=s_TRD; BEGIN s_WORD; return TR_LANG; }

@@ -167,7 +167,7 @@ NOTEMARK	"^"[0-9]+"^"
 "--"			{ GIN=0; return ENHYPHEN; }
 [-+:.]     		{ GIN=0; return gdltext[0]; }
 
-"/"/{G}			{ return '/'; } /* alternation */
+"/"/("|"|{G})	       	{ return '/'; } /* alternation */
 
 "//"			{ return LINEBREAK; }
 

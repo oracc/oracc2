@@ -13,6 +13,9 @@
 #include <inl.h>
 #include <l3props.h>
 #include "ax.h"
+#include "ax_reader.h"
+
+struct atf_files atf_files;
 
 extern int xmd_ignore_missing;
 
@@ -25,6 +28,7 @@ const char *file;
 int force = 0;
 int links_standalone = 0, links_wordrefs = 1;
 int ok_no_files = 0;
+const char *project = NULL;
 int status;
 int rnvtrace;
 int verbose;
@@ -70,7 +74,7 @@ ax_input_term(void)
 }
 
 void
-ax_input(const char *f)
+ax_input(const char *atf, size_t len)
 {
   xmd_ignore_missing = 1;
   mesg_init();
@@ -80,11 +84,11 @@ ax_input(const char *f)
   ngramify_init();
   gdlparse_init();
   inl_init(0);
-  Tree *tp = atf_read(f);
+  Tree *tp = atf_read_atf(atf, len);
   if (!atfp->project)
     {
       ax_input_term();
-      fprintf(stderr, "ax: no #project in %s. Skipping file.\n", f);
+      fprintf(stderr, "ax: no #project in %s. Skipping ATF for this text.\n", atfp->pqx);
       return;
     }
   proj_init(rp, (ccp)atfp->project);
@@ -132,7 +136,7 @@ ax_input(const char *f)
 	}
 
       if (ok_no_files)
-	fprintf(status ? ok_no_no_fp : ok_no_ok_fp, "%s\n", f);
+	fprintf(status ? ok_no_no_fp : ok_no_ok_fp, "%s\n", atf_files.atf);
       
       if (status)
 	{
@@ -174,139 +178,14 @@ ax_full_term(void)
   lng_term();
 }
 
-#if 0
-static int
-pqx_ok(const char *s)
+static char * const*
+ax_atf_files(void)
 {
-  const char *t = s;
-  if ('P' == *s || 'Q' == *s || 'X' == *s)
-    {
-      ++s;
-      while (*s)
-	{
-	  if (isdigit(*s) && s - t < 8)
-	    ++s;
-	  else
-	    return 0;
-	}
-    }
-  return s - t == 7;
-}
-#endif
-
-static char *
-atffile_of(const char *d)
-{
-  const char *fn = expand(NULL, d, "atf");
-  if (fn)
-    return strdup(fn);
+  static glob_t gres;
+  if (!glob_pattern("00atf/*.atf",&gres))
+    return gres.gl_pathv;
   else
-    {
-      fprintf(stderr, "ax: invalid ATF path `%s': must end with a valid PQX-id\n", d);
-      return NULL;
-    }
-}
-
-static char *
-trafile_of(const char *d)
-{
-  const char *fn = expand_xtr(NULL, d, "project", "en");
-  return strdup(fn);
-}
-
-static char *
-xtffile_of(const char *d)
-{
-  const char *fn = expand(NULL, d, "xtf");
-  return strdup(fn);
-}
-
-static char *
-tlxfile_of(const char *d)
-{
-  const char *fn = expand(NULL, d, "tlx");
-  return strdup(fn);
-}
-
-static void
-process_inputs(int argc, char * const *argv)
-{
-  if (inputs_from_file)
-    {
-      unsigned char **files = NULL, *fmem;
-      size_t nfiles = 0, i;
-      files = loadfile_lines3((uccp)inputs_from_file,&nfiles,&fmem);
-      for (i = 0; i < nfiles; ++i)
-	{
-	  char *s = NULL;
-	  for (s = (char*)files[i]; *s; ++s)
-	    if (!isspace(*s))
-	      break;
-	  if (*s)
-	    {
-	      int ret = 0;
-	      atffile = atffile_of(s);
-	      if (atffile)
-		{
-		  if (verbose)
-		    fprintf(stderr,"%s\n",s);
-		  if (check_mode)
-		    {
-		      ax_input(atffile);
-		      fflush(stdout); /* in case flex did some default output */
-		      free((char*)atffile);
-		    }
-		  else
-		    {
-		      xtffile = xtffile_of(s);
-		      trafile = trafile_of(s);
-		      tlxfile = tlxfile_of(s);
-		      if (!(ret = ax_outputs(xtffile, trafile)))
-			ax_input(atffile);
-		      fflush(stdout); /* in case flex did some default output */
-		      free((char*)atffile);
-		      if (trafile != static_trafile)
-			free(trafile);
-		      free(tlxfile);
-		      free(xtffile);
-		      atffile = tlxfile = trafile = xtffile = /*cdtfile = */ NULL;
-		    }
-		  if (memuse_mode)
-		    show_current_memory(stderr, NULL, NULL);
-		}
-	      else
-		ret = 1;
-	      
-	      if (ret)
-		{
-		  if (!atffile)
-		    fprintf(stderr, "ax: error setting atf file from %s. Stop.\n", files[i]);
-		  else
-		    fprintf(stderr, "ax: error setting outputs. Stop.\n");
-		  break;
-		}
-	    }
-	}
-      free(files);
-      free(fmem);
-    }
-  else if (argv[optind])
-    {
-      static int multifile = 0;
-      int fnum = optind;
-      multifile = argv[fnum] && argv[fnum+1];
-      if (multifile && !check_mode)
-	printf("<xtf-multi>");
-      while (argv[fnum])
-	{
-	  tlxfile = "ax.tlx";
-	  ax_input(argv[fnum++]);
-	}
-      if (multifile && !check_mode)
-	printf("</xtf-multi>");
-    }
-  else
-    ax_input(NULL);
+    return NULL;
 }
 
 int
@@ -350,11 +229,18 @@ main(int argc, char * const*argv)
   struct lang_context *x = lang_switch(NULL,"sux",NULL,NULL,0);
   global_lang = calloc(1, sizeof(struct lang_context));
   *global_lang = *x;
-  
-  process_inputs(argc, argv);
+
+  char * const*files = NULL;
+  if (argv[optind])
+    files = argv+optind;
+  else
+    files = ax_atf_files();
+
+  ax_read(project, axr_files, (void*)files);
   
   ax_full_term();
   free(global_lang);
+
   if (ok_no_files)
     {
       xfclose("ax.ok", ok_no_ok_fp);
@@ -404,6 +290,9 @@ opts(int opt, const char *arg)
     case 'm':
       if (i_am_linux)
 	memuse_mode = 1;
+      break;
+    case 'p':
+      project = optarg;
       break;
     case 's':
       xml_to_stdout = 1;

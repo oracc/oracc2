@@ -232,6 +232,8 @@ gdl_state_c(Bracket_e bt)
 	  if (!gdl_no_xml_ids)
 	    {
 	      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);
+	      if (!idp && !strcmp(np->rent->name, "g:gg"))
+		idp = prop_find_kv(np->rent->props, "xml:id", NULL);
 	      if (idp)
 		gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
 	      else

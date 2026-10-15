@@ -181,7 +181,7 @@ gdl_surro(void)
     {
       if (!strcmp(lgp->name, "g:gg")
 	  || (strlen(lgp->name) == 3
-	      && ((lgp->name[2] == 's' || lgp->name[2] == 'c')
+	      && ((lgp->name[2] == 's' || lgp->name[2] == 'c' || lgp->name[2] == 'B' || lgp->name[2] == 'n')
 		  || (lgp->name[2] == 'g' && sll_has_sign_indicator((uccp)lgp->text)))))
 	{
 	  if (!prop_find_kv(lgp->props, "g:delim", NULL))

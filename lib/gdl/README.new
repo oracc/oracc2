@@ -29,3 +29,19 @@ when the non-match is found, pop the scpgroup; if the new delim is an
 scpgroup, create a new group that has the previous scpgroup as its
 left component
 
+SURROGATES:
+===========
+
+Surrogates are constructs such as MIN<(mu-u)>.
+
+oxx g:surro is no longer used and surrogates are no longer implemented
+as containers.  Instead, the head grapheme or group of a surrogate is
+wrapped in <g:sur> and the contents of <(...)> are given status
+"implied", exactly the same as when <(...)> is used for implied text
+without a surrogate. Graphemes within <(...)> are also given a @g:sur
+attribute which points to the ID of the g:sur grapheme/group.
+
+In oxx multi-word surrogates were not handled correctly--the first
+word was wrapped in g:surro and remaining words were not. In ax the
+new approach fixes this neatly.
+

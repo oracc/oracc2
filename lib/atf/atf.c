@@ -8,6 +8,7 @@
 
 #include "atf.h"
 #include "atf.tab.h"
+extern void atf_scan_buffer(const char *base, size_t len);
 
 int atftrace = 1;
 extern int gdl_legacy, gdl_lexical, gdl_unicode;
@@ -24,3 +25,10 @@ atf_read(const char *file)
   return atfyacc();
 }
 
+Tree *
+atf_read_atf(const char *atf, size_t len)
+{
+  atf_scan_buffer(atf, len);
+  atf_init();
+  return atfyacc();
+}

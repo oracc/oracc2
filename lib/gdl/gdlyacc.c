@@ -611,6 +611,26 @@ gdl_remove_q_error(Mloc m, Node *ynp)
     }
 }
 
+static void
+gdl_unword(Tree *ytp)
+{
+  /* Remove the parent g:w if there is one (extra credit: keep the
+     node around to use after the field) */
+  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+    {
+      tree_curr(ytp->curr->rent);
+      gdl_recycled_word = kids_rem_last(ytp);
+
+      /* This is an empty word followed by a field code that may have
+	 been been added to wd_list before the field code changed;
+	 check it's valid, and if it isn't then remove it */
+      if (list_len(wd_list)
+	  && gdl_recycled_word == (void*)wd_list->last->data
+	  /*&& (!lzr_sparse || !hash_find(lzr_sparse, (uccp)curr_field))*/)
+	(void)list_pop(wd_list);      
+    }
+}
+
 /***********************************************************************
  *
  * Tree-building routines called from gdl.y
@@ -632,6 +652,8 @@ gdl_cell(Tree *ytp, const char *span)
   Node *cp = NULL;
   Node *ancestor = NULL;
 
+  gdl_unword(ytp);
+  
   ++gdl_cell_count;
   
   if ('&' == *span)
@@ -661,6 +683,7 @@ gdl_cell(Tree *ytp, const char *span)
   gdl_prop_kv(cp, GP_ATTRIBUTE, PG_GDL_INFO, "span", (ccp)pool_copy((uccp)span, ytp->tm->pool));
   tree_curr(cp);
 }
+
 void
 gdl_c_init(void)
 {
@@ -1003,22 +1026,8 @@ gdl_field(Tree *ytp, const char *ftype)
     fprintf(stderr, "gt: FIELD with TYPE = %s\n", ftype);
   curr_field = (ccp)pool_copy((uccp)ftype, ytp->tm->pool);
   
-  /* Remove the parent g:w if there is one (extra credit: keep the
-     node around to use after the field) */
-  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
-    {
-      tree_curr(ytp->curr->rent);
-      gdl_recycled_word = kids_rem_last(ytp);
-
-      /* This is an empty word followed by a field code that may have
-	 been been added to wd_list before the field code changed;
-	 check it's valid, and if it isn't then remove it */
-      if (list_len(wd_list)
-	  && gdl_recycled_word == (void*)wd_list->last->data
-	  /*&& (!lzr_sparse || !hash_find(lzr_sparse, (uccp)curr_field))*/)
-	(void)list_pop(wd_list);      
-    }
-
+  gdl_unword(ytp);
+  
   if (!(ancestor = node_ancestor_or_self(ytp->curr, "f")))
     {
       Node *cellp = node_ancestor_or_self(ytp->curr, "c");

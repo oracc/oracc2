@@ -91,17 +91,17 @@ ax_htm_jox(Node *np, void *fp)
 void
 ax_jox_tra(void)
 {
-  if (!tra_fp)
-    tra_fp = xfopen(trafile, "w");
-  if (tra_fp)
+  if (!atf_files.tra_fp)
+    atf_files.tra_fp = xfopen(atf_files.tra, "w");
+  if (atf_files.tra_fp)
     {
-      jox_xml_output(tra_fp);
-      atf_pi_fp = tra_fp;
+      jox_xml_output(atf_files.tra_fp);
+      atf_pi_fp = atf_files.tra_fp;
       atf_file_pi(file);
       joxer_init(&xtf_data, "xtf", val_flag, tra_fp, NULL);
       ax_jox_node(curr_trans->tree->root);
-      joxer_term(tra_fp, NULL);
-      xfclose(trafile, tra_fp);
+      joxer_term(atf_files.tra_fp, NULL);
+      xfclose(trafile, atf_files.tra_fp);
       tra_fp = NULL;
     }
   curr_trans = NULL;
@@ -110,34 +110,32 @@ ax_jox_tra(void)
 void
 ax_jox(Tree *tp)
 {
-  if (!xtf_fp && !xfn)
+  if (!atf_files.xtf_fp && !atf_files.xtf)
     {
-      xfn = static_xmlfile;
-      trafile = (char*)static_trafile;
+      atf_files.xtf = static_xmlfile;
+      atf_files.tra = (char*)static_trafile;
     }
-
-  FILE *xfp = NULL;
 
   xo_loc = memo_auto(sizeof(Mloc));
   xo_loc->file = file = tp->root->mloc->file;
   xo_loc->line = 1;
 
-  if (!xtf_fp)
+  if (!atf_files.xtf_fp)
     {
       if (xml_to_stdout)
-	xfp = stdout;
-      else if (!(xfp = fopen(xfn, "w")))
+	atf_files.xtf_fp = stdout;
+      else if (!(atf_files.xtf_fp = fopen(atf_files.xtf, "w")))
 	{
-	  fprintf(stderr, "ax: failed to open XML output %s. Stop.\n", xfn);
+	  fprintf(stderr, "ax: failed to open XML output %s. Stop.\n", atf_files.xtf);
 	  exit(1);
 	}
-      jox_xml_output(xfp);
-      atf_pi_fp = xfp;
+      jox_xml_output(atf_files.xtf_fp);
+      atf_pi_fp = atf_files.xtf_fp;
       atf_file_pi(file);
-      joxer_init(&xtf_data, "xtf", val_flag, xfp, NULL);
+      joxer_init(&xtf_data, "xtf", val_flag, atf_files.xtf_fp, NULL);
       ax_jox_node(tp->root);
-      joxer_term(xfp,NULL);
-      fclose(xfp);
+      joxer_term(atf_files.xtf_fp,NULL);
+      fclose(atf_files.xtf_fp);
       if (curr_trans && curr_trans->tree->root->kids)
 	ax_jox_tra();
     }
@@ -151,7 +149,7 @@ ax_jox(Tree *tp)
 	    }
 	  else
 	    {
-	      xfclose(trafile, tra_fp);
+	      xfclose(trafile, atf_files.tra_fp);
 	      tra_fp = NULL;
 	      unlink(trafile);
 	    }
@@ -161,28 +159,28 @@ ax_jox(Tree *tp)
 
       if (xtf_fp)
 	{
-	  jox_xml_output(xtf_fp);
-	  atf_pi_fp = xtf_fp;
+	  jox_xml_output(atf_files.xtf_fp);
+	  atf_pi_fp = atf_files.xtf_fp;
 	  atf_file_pi(file);
-	  joxer_init(&xtf_data, "xtf", val_flag, xtf_fp, NULL);
+	  joxer_init(&xtf_data, "xtf", val_flag, atf_files.xtf_fp, NULL);
 	  ax_jox_node(tp->root);
-	  joxer_term(xtf_fp, NULL);
-	  xfclose(xtffile, xtf_fp);
+	  joxer_term(atf_files.xtf_fp, NULL);
+	  xfclose(xtffile, atf_files.xtf_fp);
 	  xtf_fp = NULL;
 	}
     }
 }
 
 int
-ax_outputs(char *xtf, char *tra)
+ax_outputs(void)
 {
-  if (xtf && !(xtf_fp = xfopen(xtf, "w")))
+  if (atf_files.xtf && !(atf_files.xtf_fp = xfopen(atf_files.xtf, "w")))
     return 1;
 
-  if (tra && !(tra_fp = xfopen(tra, "w")))
+  if (atf_files.tra && !(atf_files.tra_fp = xfopen(atf_files.tra, "w")))
     {
-      if (xtf_fp)
-	xfclose(xtf, xtf_fp);
+      if (atf_files.xtf_fp)
+	xfclose(atf_files.xtf, atf_files.xtf_fp);
       return 1;
     }
 

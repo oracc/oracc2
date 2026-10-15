@@ -24,7 +24,7 @@ struct proj_context
 {
   char *name;			/* project name, e.g., saao/saa01 */
   struct xpd *xpd;
-  Hash *langs;		/* languages used in project; keys are
+  Hash *langs;			/* languages used in project; keys are
 				   langtags values are lang_context */
   int tried_qpn;	   	/* did we already try PNs for this project? */
   struct run_context *owner;
@@ -43,8 +43,20 @@ extern void proj_term(struct proj_context *);
 extern void proj_default(struct run_context *r);
 /**PRJ**/
 
+struct atf_files
+{
+  const char *atf;
+  const char *tlx;
+  const char *tra;
+  const char *xtf;
+  FILE *atf_fp, *tlx_fp, *tra_fp, *xtf_fp;
+};
+extern struct atf_files atf_files;
+
 extern int odt_serial, status, exit_status;
 extern int val_flag, xml_to_stdout;
+
+extern int check_mode;
 
 extern int harvest_notices, lem_autolem, lem_dynalem, lem_forms_raw,
   named_ents, perform_dsa, warn_unlemmatized;
@@ -65,6 +77,9 @@ extern struct axjoxfnc *axjoxfnc(const char *, size_t);
 extern void ax_parse(Node *np, char *data);
 extern void ax_gparse(Node *np, char *data);
 
+extern void ax_files(const char *prj, const char *pqx);
+extern void ax_input(const char *atf, size_t len);
+
 extern struct xcl_context *ax_xcl(struct run_context *run, struct node *text);
 extern void xcl_sentence_labels(struct xcl_context *xc, struct xcl_c *c);
 
@@ -76,7 +91,7 @@ extern void ax_jox(Tree*tp);
 extern int ax_jox_bib(Node *np, Bib *bp);
 extern int ax_jox_lg(Node *np, Group *gp);
 extern int ax_jox_note(Node *np, Note *bp);
-extern int ax_outputs(char *xtf, char *tra);
+extern int ax_outputs(void);
 extern int ax_jox_protocol(Node *np, void *p);
 extern void ax_jox_block(Node *np, Block *p);
 extern const char **ax_jox_props(Prop *p);

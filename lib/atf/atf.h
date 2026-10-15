@@ -297,6 +297,7 @@ extern void atf_lex_term(void);
 extern void atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v);
 extern void atf_protocol(const char *p);
 extern Tree *atf_read(const char *);
+extern Tree *atf_read_atf(const char *atf, size_t len);
 extern void atf_set_tree(Tree *tp);
 extern void atf_term(void);
 extern void atf_wrapup(Wheret where);

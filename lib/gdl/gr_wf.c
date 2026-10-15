@@ -310,7 +310,7 @@ gr_node_wf(Node *np, FILE *fp)
 		(void)gr_funcs['G'](np, fp);
 	      else if (strlen(np->name) == 4 && ('g' == np->name[3] || 'p' == np->name[3]))
 		(void)gr_funcs[(int)np->name[3]](np, fp); /* g:gg | g:gp */
-	      else if (!strcmp(np->name, "g:nonw"))
+	      else if (!strcmp(np->name, "g:nonw") || !strcmp(np->name, "g:sur"))
 		; /* no-op in word-form */
 	      else
 		mesg_verr(np->mloc, "gr_node_wf: unhandled g: node %s", np->name);
