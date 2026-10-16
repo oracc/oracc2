@@ -44,7 +44,7 @@ ax_read(const char *proj, enum axr_source from, void *list)
   axr_set_input(rip);
   if (axr_get_input(rip))
     {
-      ssize_t curr_file_line = 1;
+      extern ssize_t last_atflineno;
       for (;;)
 	{
 	  if (rip->stop)
@@ -53,9 +53,8 @@ ax_read(const char *proj, enum axr_source from, void *list)
 	    {
 	      if (!check_mode)
 		ax_files(proj, axr_pqx(atf));
-	      atf_set_lineno(curr_file_line);
+	      atf_set_lineno(last_atflineno);
 	      ax_input(atf, rip->atf_len);
-	      curr_file_line = atf_get_lineno();
 	    }
 	  else
 	    break;

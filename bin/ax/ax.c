@@ -105,7 +105,7 @@ ax_input(char *atf, size_t len)
   
   if (!atfp->project)
     {
-      fprintf(stderr, "ax: no #project in %s. Skipping ATF for this text.\n", atfp->pqx);
+      mesg_verr(tp->root->mloc, "no #project in %s. Skipping ATF for this text.\n", atfp->pqx);
       ax_input_term();
       return;
     }

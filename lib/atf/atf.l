@@ -311,7 +311,7 @@ atf_get_lineno(void)
 void
 atf_set_lineno(ssize_t n)
 {
-    atflineno = n;
+    atfset_lineno(n);
 }
 
 void
@@ -319,6 +319,7 @@ atf_set_file(const char *f)
 {
     curratffile = f;
     last_atflineno = atflineno = 1;
+    atfset_lineno(1);
 }
 
 char *
