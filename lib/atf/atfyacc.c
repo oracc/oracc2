@@ -18,6 +18,7 @@ extern Tree *abt;
 Tree *
 atfyacc(void)
 {
+  extern int last_atflineno;
   /*curratffile = atffile;*/
 
   Tree *tp = tree_init();
@@ -36,6 +37,8 @@ atfyacc(void)
 #endif
 
   atfparse();
+
+  last_atflineno = atflineno;
 
   atflex_destroy();
 

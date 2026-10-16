@@ -315,7 +315,7 @@ gr_node_wf(Node *np, FILE *fp)
 	      else
 		mesg_verr(np->mloc, "gr_node_wf: unhandled g: node %s", np->name);
 	    }
-	  if (np->next)
+	  if (np->next && 'w' != np->name[2]) /* cheat for g:w */
 	    {
 	      Prop *d = prop_find_kv(np->props, "g:delim", NULL);
 	      if ((!gs_is(n, gs_excised) || np->next->next)
@@ -336,6 +336,7 @@ gdlr_node_fnc grf(fncs)[128] =
     [0] = gr_node_wf,
     [1] = gdlr_orig_text,
     ['a'] = grf(a),
+    ['A'] = grf(a),
     ['b'] = grf(b),
     ['c'] = grf(c),
     ['d'] = grf(d),

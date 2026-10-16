@@ -74,7 +74,7 @@ ax_input_term(void)
 }
 
 void
-ax_input(const char *atf, size_t len)
+ax_input(char *atf, size_t len)
 {
   xmd_ignore_missing = 1;
   mesg_init();
@@ -85,18 +85,28 @@ ax_input(const char *atf, size_t len)
   gdlparse_init();
   inl_init(0);
 
-#if 0
-  while ('\n' != *atf && '\r' != *atf)
-    fputc(*atf++, stderr);
-  fputc('\n', stderr);
-  return;
-#endif
+  char *amp = atf;
+  if (verbose)
+    {
+      fprintf(stderr, "%ld\t", len);
+      while ('\n' != *atf && '\r' != *atf)
+	fputc(*atf++, stderr);
+      fputc('\n', stderr);
+    }
 
-  Tree *tp = atf_read_atf(atf, len+2);
+  Tree *tp = atf_read_atf(amp, len+2);
+
+  if (!atfp)
+    return;
+  else
+
+  if (!tp)
+    return;
+  
   if (!atfp->project)
     {
-      ax_input_term();
       fprintf(stderr, "ax: no #project in %s. Skipping ATF for this text.\n", atfp->pqx);
+      ax_input_term();
       return;
     }
   proj_init(rp, (ccp)atfp->project);

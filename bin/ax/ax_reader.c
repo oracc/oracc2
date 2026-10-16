@@ -44,6 +44,7 @@ ax_read(const char *proj, enum axr_source from, void *list)
   axr_set_input(rip);
   if (axr_get_input(rip))
     {
+      ssize_t curr_file_line = 1;
       for (;;)
 	{
 	  if (rip->stop)
@@ -52,7 +53,9 @@ ax_read(const char *proj, enum axr_source from, void *list)
 	    {
 	      if (!check_mode)
 		ax_files(proj, axr_pqx(atf));
-	      ax_input(atf, rip->input_len);
+	      atf_set_lineno(curr_file_line);
+	      ax_input(atf, rip->atf_len);
+	      curr_file_line = atf_get_lineno();
 	    }
 	  else
 	    break;
@@ -117,8 +120,9 @@ axr_get_atf(struct axrinfo *rip)
   else if (rip->end_ptr)
     {
       rip->amp_ptr = rip->end_ptr;
-      rip->amp_ptr[-1] = '\n';
-      rip->amp_ptr[0] = '&';
+      rip->amp_ptr[0] = rip->save0;
+      rip->amp_ptr[1] = rip->save1;
+      rip->save0 = rip->save1 = '\0';
     }
   else
     {
@@ -142,15 +146,22 @@ axr_get_atf(struct axrinfo *rip)
       rip->end_ptr = axr_amp_line(rip, (uccp)rip->amp_ptr+1);
       if (rip->end_ptr)
 	{
-	  rip->end_ptr[-1] = rip->end_ptr[0] = '\0';
+	  rip->save0 = rip->end_ptr[0];
+	  rip->save1 = rip->end_ptr[1];
+	  rip->end_ptr[0] = rip->end_ptr[1] = '\0';
+	  rip->atf_len = rip->end_ptr - rip->amp_ptr;
 	  return rip->amp_ptr;
 	}
       else
 	{
 	  if (rip->this_one_is_done)
 	    {
-	      /* the input buffer contains the entire final ATF chunk of the file; leave end_ptr == NULL */
-#if 0
+	      /* the input buffer contains the entire final ATF chunk
+		 of the file; leave end_ptr == NULL */
+#if 1
+	      rip->input_buf[rip->input_len+1] = '\0';
+	      rip->atf_len = strlen(rip->amp_ptr);
+#else
 	      rip->end_ptr = rip->input_buf + rip->input_len;
 	      rip->end_ptr[1] = '\0';
 #endif
@@ -199,7 +210,7 @@ axr_grow_input(struct axrinfo *rip)
 static int
 axr_read_input(struct axrinfo *rip)
 {
-  size_t nread = fread(rip->input_buf, 1, rip->input_buf_alloced-2, rip->source);
+  size_t nread = fread(rip->input_buf, 1, rip->input_buf_alloced-3, rip->source);
   if (ferror(rip->source))
     {
 #if 1
@@ -209,10 +220,14 @@ axr_read_input(struct axrinfo *rip)
 #endif
       return 0;
     }
+  if ((rip->this_one_is_done = feof(rip->source)))
+    {
+      fclose(rip->source);
+      if ('\n' != rip->input_buf[nread-1])
+	rip->input_buf[nread++] = '\n';
+    }
   rip->input_buf[nread] = rip->input_buf[nread+1] = '\0';
   rip->input_len = nread;
-  if ((rip->this_one_is_done = feof(rip->source)))
-    fclose(rip->source);
   return 1;
 }
 
@@ -245,6 +260,7 @@ axr_set_input(struct axrinfo *rip)
       rip->more_sources = 0;
       rip->source = stdin;
       rip->fname = (char*)pool_copy((ucp)"<stdin>", rip->pool);
+      atf_set_file(rip->fname);
     }
   else if (rip->from == axr_files)
     {
@@ -262,6 +278,7 @@ axr_set_input(struct axrinfo *rip)
 		fprintf(stderr,"ax_reader: open failed on %s\n",fname_buf);
 	      rip->more_sources = feof(stdin);
 	      rip->fname = (char *)pool_copy((ucp)fname_buf, rip->pool);
+	      atf_set_file(rip->fname);
 	    }
 	  else
 	    {
@@ -293,6 +310,7 @@ axr_set_input(struct axrinfo *rip)
 	  else
 	    {
 	      rip->fname = (char *)pool_copy((ucp)*rip->todo, rip->pool);
+	      atf_set_file(rip->fname);
 	      if (verbose)
 		fprintf(stderr, "ax_reader: opened %s\n", rip->fname);
 	    }

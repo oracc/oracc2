@@ -23,6 +23,9 @@ struct axrinfo
 
   char *amp_ptr; /* pointer to current &-line in input_buf */
   char *end_ptr; /* pointer to next &-line in input_buf */
+  size_t atf_len;/* length of atf text without the two NULL bytes Flex requires */
+  char save0;
+  char save1;
   
   int stop; /* set to 1 when atf_stop is used to exit atf */
 };

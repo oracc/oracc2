@@ -78,7 +78,7 @@ extern void ax_parse(Node *np, char *data);
 extern void ax_gparse(Node *np, char *data);
 
 extern void ax_files(const char *prj, const char *pqx);
-extern void ax_input(const char *atf, size_t len);
+extern void ax_input(char *atf, size_t len);
 
 extern struct xcl_context *ax_xcl(struct run_context *run, struct node *text);
 extern void xcl_sentence_labels(struct xcl_context *xc, struct xcl_c *c);

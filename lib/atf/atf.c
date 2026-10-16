@@ -25,14 +25,3 @@ atf_read(const char *file)
   return atfyacc();
 }
 
-Tree *
-atf_read_atf(const char *atf, size_t len)
-{
-  if (!atf_scan_buffer(atf, len))
-    {
-      fprintf(stderr, "atf_read_atf: atf_scan_buffer failed\n");
-      return NULL;
-    }
-  atf_init();
-  return atfyacc();
-}

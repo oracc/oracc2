@@ -13,8 +13,9 @@
 extern Mloc atflloc;
 const char *atffile = "<stdin>";
 const char *curratffile = NULL;
+static int last_unmatched_line = 0;
 
-int atfflextrace = 0;
+int atfflextrace = 0, last_atflineno;
 static int s_next;
 static int linktext, tra_text;
 static char *xs, *atfbuf, *atfbuf_alloced;
@@ -204,8 +205,13 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 ^[0-9A-Za-z.:]+{NOD}+{WHT}+.*$ 	{ BEGIN s_IGNORE; mesg_verr(&atflloc, "bad line number: %s", yytext); }
 ^([^ #@$\t\n\r]+\.)+[^ \t\n\r]+ { BEGIN s_IGNORE; mesg_verr(&atflloc, "junk after line number: %s", yytext); }
 
-<*>.				{ fprintf(stderr,"%s:%d: atf.l: unmatched character '%c'\n",
-					  curratffile, atflineno,*atftext); }
+<*>.				{ if (last_unmatched_line != atflineno)
+				    {
+					fprintf(stderr,"%s:%d: atf.l: unmatched character '%c' (state=%d)\n",
+					  	curratffile, atflineno, *atftext, YY_START);
+					last_unmatched_line = atflineno;
+				    }
+				}
 
 <<EOF>>				{ yyterminate(); }
 
@@ -274,10 +280,45 @@ atf_block(const char *scanned_at)
     }
 }
 
+Tree *
+atf_read_atf(char *atf, size_t len)
+{
+  YY_BUFFER_STATE atf_buffer;
+  if (!(atf_buffer = atf_scan_buffer(atf, len)))
+    {
+      fprintf(stderr, "atf_read_atf: atf_scan_buffer failed\n");
+      return NULL;
+    }
+  yy_start = s_next = 0;
+  atf_init();
+  Tree *tp = atfyacc();
+  atf_wrapup_buffer();
+  return tp;
+}
+
 void
 atf_wrapup_buffer(void)
 {
   atf_delete_buffer(YY_CURRENT_BUFFER);
+}
+
+ssize_t
+atf_get_lineno(void)
+{
+    return last_atflineno;
+}
+
+void
+atf_set_lineno(ssize_t n)
+{
+    atflineno = n;
+}
+
+void
+atf_set_file(const char *f)
+{
+    curratffile = f;
+    last_atflineno = atflineno = 1;
 }
 
 char *
