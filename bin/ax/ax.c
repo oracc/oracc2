@@ -84,6 +84,12 @@ ax_input(const char *atf, size_t len)
   ngramify_init();
   gdlparse_init();
   inl_init(0);
+
+  while ('\n' != *atf)
+    fputc(*atf++, stderr);
+  fputc(*atf, stderr);
+  return;
+  
   Tree *tp = atf_read_atf(atf, len);
   if (!atfp->project)
     {
@@ -236,7 +242,7 @@ main(int argc, char * const*argv)
   else
     files = ax_atf_files();
 
-  ax_read(project, axr_files, (void*)files);
+  ax_read(project, axr_list, (void*)files);
   
   ax_full_term();
   free(global_lang);

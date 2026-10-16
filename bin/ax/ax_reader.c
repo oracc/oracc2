@@ -2,7 +2,11 @@
 #include "ax.h"
 #include "ax_reader.h"
 
-static char *axr_get_input(struct axrinfo *rip);
+static int axr_backup_input(long n);
+static char *axr_get_atf(struct axrinfo *rip);
+static int axr_get_input(struct axrinfo *rip);
+static int axr_grow_input(struct axrinfo *rip);
+static int axr_read_input(struct axrinfo *rip);
 static void axr_set_input(struct axrinfo *rip);
 static const char *axr_pqx(const char *atf);
 
@@ -33,20 +37,25 @@ ax_read(const char *proj, enum axr_source from, void *list)
   rip->from = from;
   rip->list = list;
   rip->pool = pool_init();
-
+  rip->input_buf_alloced = AXR_BUFLEN;
+  rip->input_buf = malloc(rip->input_buf_alloced);
   axr_set_input(rip);
-  for (;;)
+  if (axr_get_input(rip))
     {
-      if (rip->stop || NULL == (atf = axr_get_input(rip)))
-	break;
-      if (!check_mode)
-	ax_files(proj, axr_pqx(atf));
-      ax_input(atf, rip->input_len);
-      
+      for (;;)
+	{
+	  if (rip->stop)
+	    break;
+	  else if ((atf = axr_get_atf(rip)))
+	    {
+	      if (!check_mode)
+		ax_files(proj, axr_pqx(atf));
+	      ax_input(atf, rip->input_len);
+	    }
+	}
     }
   /*axr_term(rip);*/
   pool_term(rip->pool);
-  free(rip);
 }
 
 void
@@ -72,11 +81,141 @@ axr_term(struct axrinfo *rip)
 }
 
 static char *
+axr_amp_line(struct axrinfo *rip, unsigned const char *p)
+{
+  while ((p = (uccp)strchr((ccp)p, '&')))
+    {
+      /* find preceding '\n' followed by optional BOM */
+      unsigned const char *b = p;
+      while (b > (uccp)rip->input_buf && '\n' != b[-1])
+	--b;
+      if (p == b
+	  || p - b == 1
+	  || (p - b == 2 && 0xfe == b[1] && 0xff == b[2])
+	  || (p - b == 3 && 0xef == b[1] && 0xbb == b[2] && 0xbf == b[3]))
+	return (char*)p;
+      else
+	++p; /* this '&' was not at SOL */
+    }
+  return NULL;
+}
+
+
+/* axr_set_input and axr_get_input must be called before this is invoked */
+static char *
+axr_get_atf(struct axrinfo *rip)
+{
+ amp_init:
+  if (!rip->amp_ptr)
+    {
+      rip->amp_ptr = axr_amp_line(rip, (uccp)rip->input_buf);
+    }
+  else if (rip->end_ptr)
+    {
+      rip->amp_ptr = rip->end_ptr;
+      rip->amp_ptr[-1] = '\n';
+      rip->amp_ptr[0] = '&';
+    }
+  else
+    {
+      if (rip->this_one_is_done)
+	{
+	  if (!axr_get_input(rip))
+	    return NULL;
+	  rip->amp_ptr = NULL;
+	  goto amp_init;
+	}
+      else
+	{
+	  /* if end_ptr is NULL but file is not finished there is something wrong */
+	  fprintf(stderr, "axr_get_atf: internal error: end_ptr==NULL but file is not finished\n");
+	  return NULL;
+	}
+    }
+ amp_cont:
+  if (rip->amp_ptr)
+    {
+      rip->end_ptr = axr_amp_line(rip, (uccp)rip->amp_ptr+1);
+      if (rip->end_ptr)
+	{
+	  rip->end_ptr[-1] = rip->end_ptr[0] = '\0';
+	  return rip->amp_ptr;
+	}
+      else
+	{
+	  if (rip->this_one_is_done)
+	    {
+	      /* the input buffer contains the entire final ATF chunk of the file; leave end_ptr == NULL */
+#if 0
+	      rip->end_ptr = rip->input_buf + rip->input_len;
+	      rip->end_ptr[1] = '\0';
+#endif
+	      return rip->amp_ptr;
+	    }
+	  else if (rip->amp_ptr == rip->input_buf)
+	    {
+	      /* the input buffer is not big enough to hold this ATF chunk */
+	      axr_backup_input(- rip->input_len);
+	      if (axr_grow_input(rip)) /* this does a new axr_get_input() */
+		goto amp_init;
+	    }
+	  else
+	    {
+	      if (!axr_backup_input(- strlen(rip->amp_ptr)))
+		{
+		  if (axr_get_input(rip))
+		    {
+		      rip->amp_ptr = axr_amp_line(rip, (uccp)rip->input_buf);
+		      goto amp_cont;
+		    }
+		}
+	    }
+	}
+    }
+  return NULL;
+}
+
+/* Back up the file position indicator to the last ATF text in
+   input_buf because it may be incomplete */
+static int
+axr_backup_input(long n)
+{
+  return fseek(rip->source, n, SEEK_CUR);
+}
+
+static int
+axr_grow_input(struct axrinfo *rip)
+{
+  rip->input_buf_alloced *= 2;
+  rip->input_buf = realloc(rip->input_buf, rip->input_buf_alloced);
+  rip->amp_ptr = rip->end_ptr = 0;
+  return axr_read_input(rip);
+}
+
+static int
+axr_read_input(struct axrinfo *rip)
+{
+  size_t nread = fread(rip->input_buf, 1, rip->input_buf_alloced-2, rip->source);
+  if (ferror(rip->source))
+    {
+#if 1
+      perror(rip->fname);
+#else
+      fprintf(stderr,"ax_reader: read error on %s\n", rip->fname);
+#endif
+      return 0;
+    }
+  rip->input_buf[nread] = rip->input_buf[nread+1] = '\0';
+  rip->input_len = nread;
+  if ((rip->this_one_is_done = feof(rip->source)))
+    fclose(rip->source);
+  return 1;
+}
+
+/* if there is more input to work on return 1; otherwise return 0 */
+static int
 axr_get_input(struct axrinfo *rip)
 {
-  size_t nread = 0;
-  char *inputp;
-
   if (rip->this_one_is_done)
     {
       if (rip->more_sources)
@@ -86,24 +225,12 @@ axr_get_input(struct axrinfo *rip)
     }
 
   if (!rip->source)
-    return NULL;
+    return 0;
 
-  nread = fread(rip->input_buf, 1, AXR_BUFLEN, rip->source);
-  if (ferror(rip->source))
-    {
-      fprintf(stderr,"read error\n");
-      exit(-1);
-    }
-  rip->input_buf[nread] = '\0';
-  inputp = rip->input_buf;
+  if (!axr_read_input(rip))
+    return 0;
 
-  nread -= inputp - rip->input_buf;
-  rip->input_len = nread;
-
-  if ((rip->this_one_is_done = feof(rip->source)))
-    fclose(rip->source);
-
-  return inputp;
+  return rip->input_len ? 1 : 0;
 }
 
 static void
@@ -158,9 +285,12 @@ axr_set_input(struct axrinfo *rip)
       while (rip->more_sources)
 	{
 	  if (NULL == (rip->source = fopen(*rip->todo,"r"))/* && verbose*/)
-	    fprintf(stderr,"runexpat: open failed on %s\n",*rip->todo);
+	    fprintf(stderr,"ax_reader: open failed on %s\n",*rip->todo);
 	  else
-	    rip->fname = (char *)pool_copy((ucp)*rip->todo, rip->pool);
+	    {
+	      rip->fname = (char *)pool_copy((ucp)*rip->todo, rip->pool);
+	      fprintf(stderr, "ax_reader: opened %s\n", rip->fname);
+	    }
 	  rip->more_sources = (NULL != *++rip->todo);
 	  if (!rip->more_sources)
 	    rip->todo = NULL;
