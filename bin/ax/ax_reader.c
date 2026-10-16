@@ -2,6 +2,8 @@
 #include "ax.h"
 #include "ax_reader.h"
 
+extern int verbose;
+
 static int axr_backup_input(long n);
 static char *axr_get_atf(struct axrinfo *rip);
 static int axr_get_input(struct axrinfo *rip);
@@ -52,6 +54,8 @@ ax_read(const char *proj, enum axr_source from, void *list)
 		ax_files(proj, axr_pqx(atf));
 	      ax_input(atf, rip->input_len);
 	    }
+	  else
+	    break;
 	}
     }
   /*axr_term(rip);*/
@@ -91,8 +95,8 @@ axr_amp_line(struct axrinfo *rip, unsigned const char *p)
 	--b;
       if (p == b
 	  || p - b == 1
-	  || (p - b == 2 && 0xfe == b[1] && 0xff == b[2])
-	  || (p - b == 3 && 0xef == b[1] && 0xbb == b[2] && 0xbf == b[3]))
+	  || (p - b == 2 && 0xfe == b[0] && 0xff == b[1])
+	  || (p - b == 3 && 0xef == b[0] && 0xbb == b[1] && 0xbf == b[2]))
 	return (char*)p;
       else
 	++p; /* this '&' was not at SOL */
@@ -289,7 +293,8 @@ axr_set_input(struct axrinfo *rip)
 	  else
 	    {
 	      rip->fname = (char *)pool_copy((ucp)*rip->todo, rip->pool);
-	      fprintf(stderr, "ax_reader: opened %s\n", rip->fname);
+	      if (verbose)
+		fprintf(stderr, "ax_reader: opened %s\n", rip->fname);
 	    }
 	  rip->more_sources = (NULL != *++rip->todo);
 	  if (!rip->more_sources)

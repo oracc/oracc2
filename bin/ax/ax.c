@@ -85,9 +85,9 @@ ax_input(const char *atf, size_t len)
   gdlparse_init();
   inl_init(0);
 
-  while ('\n' != *atf)
+  while ('\n' != *atf && '\r' != *atf)
     fputc(*atf++, stderr);
-  fputc(*atf, stderr);
+  fputc('\n', stderr);
   return;
   
   Tree *tp = atf_read_atf(atf, len);
