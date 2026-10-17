@@ -11,19 +11,13 @@
 #include <asl.h>
 #include "ax.h"
 
-const char *static_trafile = "ax.xtr";
-const char *static_xmlfile = "ax.xml";
-
 extern Mloc *xo_loc;
 extern int trace_mode;
-const char *xfn = NULL;
-const char *tfn = NULL;
 extern const char *file;
 static void ax_jox_lines(Group *gp);
 static void ax_jox_node(Node *np);
 
-static FILE *tra_fp, *xtf_fp, *atf_pi_fp;
-
+static FILE *atf_pi_fp;
 static int no_pi = 0;
 
 static void
@@ -98,11 +92,11 @@ ax_jox_tra(void)
       jox_xml_output(atf_files.tra_fp);
       atf_pi_fp = atf_files.tra_fp;
       atf_file_pi(file);
-      joxer_init(&xtf_data, "xtf", val_flag, tra_fp, NULL);
+      joxer_init(&xtf_data, "xtf", val_flag, atf_files.tra_fp, NULL);
       ax_jox_node(curr_trans->tree->root);
       joxer_term(atf_files.tra_fp, NULL);
       xfclose(trafile, atf_files.tra_fp);
-      tra_fp = NULL;
+      atf_files.tra_fp = NULL;
     }
   curr_trans = NULL;
 }
@@ -110,12 +104,6 @@ ax_jox_tra(void)
 void
 ax_jox(Tree *tp)
 {
-  if (!atf_files.xtf_fp && !atf_files.xtf)
-    {
-      atf_files.xtf = static_xmlfile;
-      atf_files.tra = (char*)static_trafile;
-    }
-
   xo_loc = memo_auto(sizeof(Mloc));
   xo_loc->file = file = tp->root->mloc->file;
   xo_loc->line = 1;
@@ -141,7 +129,7 @@ ax_jox(Tree *tp)
     }
   else
     {
-      if (tra_fp)
+      if (atf_files.tra_fp)
 	{
 	  if (curr_trans && curr_trans->tree->root->kids)
 	    {
@@ -149,15 +137,15 @@ ax_jox(Tree *tp)
 	    }
 	  else
 	    {
-	      xfclose(trafile, atf_files.tra_fp);
-	      tra_fp = NULL;
+	      xfclose(atf_files.tra, atf_files.tra_fp);
+	      atf_files.tra_fp = NULL;
 	      unlink(trafile);
 	    }
 	}
       else if (curr_trans)
 	tree_root_append(tp, curr_trans->tree->root);
 
-      if (xtf_fp)
+      if (atf_files.xtf_fp)
 	{
 	  jox_xml_output(atf_files.xtf_fp);
 	  atf_pi_fp = atf_files.xtf_fp;
@@ -165,8 +153,8 @@ ax_jox(Tree *tp)
 	  joxer_init(&xtf_data, "xtf", val_flag, atf_files.xtf_fp, NULL);
 	  ax_jox_node(tp->root);
 	  joxer_term(atf_files.xtf_fp, NULL);
-	  xfclose(xtffile, atf_files.xtf_fp);
-	  xtf_fp = NULL;
+	  xfclose(atf_files.xtf, atf_files.xtf_fp);
+	  atf_files.xtf_fp = NULL;
 	}
     }
 }

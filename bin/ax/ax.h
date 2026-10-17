@@ -35,9 +35,6 @@ extern struct proj_context *curr_project;
    proj_context */
 extern Hash *known_projects;
 
-extern const char *static_trafile;
-extern const char *static_xmlfile;
-
 extern void proj_init(struct run_context *runp, const char *project);
 extern void proj_term(struct proj_context *);
 extern void proj_default(struct run_context *r);
@@ -78,6 +75,7 @@ extern void ax_parse(Node *np, char *data);
 extern void ax_gparse(Node *np, char *data);
 
 extern void ax_files(const char *prj, const char *pqx);
+extern void ax_files_static(void);
 extern void ax_input(char *atf, size_t len);
 
 extern struct xcl_context *ax_xcl(struct run_context *run, struct node *text);

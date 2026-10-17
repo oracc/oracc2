@@ -168,14 +168,14 @@ ax_input(char *atf, size_t len)
 static void
 ax_label_xmlid(List *lp)
 {
-  FILE *fp = xfopen(tlxfile, "w");
+  FILE *fp = xfopen(atf_files.tlx, "w");
   if (fp)
     {
       Keva *lxp;
       for (lxp = list_first(lp); lxp; lxp = list_next(lp))
 	fprintf(fp, "%s\t%s\n", lxp->k, lxp->v);
     }
-  xfclose(tlxfile, fp);
+  xfclose(atf_files.tlx, fp);
 }
 
 /* This is where major components like GVL/SLL and lemmatizer sig sets

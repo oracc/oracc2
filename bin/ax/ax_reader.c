@@ -51,8 +51,10 @@ ax_read(const char *proj, enum axr_source from, void *list)
 	    break;
 	  else if ((atf = axr_get_atf(rip)))
 	    {
-	      if (!check_mode)
+	      if (!check_mode && proj)
 		ax_files(proj, axr_pqx(atf));
+	      else
+		ax_files_static();
 	      atf_set_lineno(last_atflineno);
 	      ax_input(atf, rip->atf_len);
 	    }

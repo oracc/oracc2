@@ -316,7 +316,7 @@ gdl_var_mark(Bracket_e type, char *v)
     }
 }
 
-/* TODO: check lang patterns include trailing /n or /g */
+/* TODO: check lang patterns include trailing /a, /m, /n or /g */
 void
 gdl_lang_tag(const char *data)
 {
