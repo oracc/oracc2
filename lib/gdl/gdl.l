@@ -80,6 +80,8 @@ NOTEMARK	"^"[0-9]+"^"
 %s S
 %x TC
 %x TD
+%x st_ALP
+%x st_NRM
 
 %%
 
@@ -236,7 +238,7 @@ NOTEMARK	"^"[0-9]+"^"
 {UFLAG}			{ gdl_lex_flag((uccp)yytext); }
 
 	/* Language shifts; ignore following whitespace after %-tag */
-%[-a-z0-9]+("/"[agmn])?[ \t]*   { gdl_lang_tag(yytext); }
+%[-a-z0-9]+("/"[agmn])?[ \t]*   { BEGIN gdl_lang_tag(yytext); }
 _				{ gdl_lang_flip(); }
 
 	/* Note marks */

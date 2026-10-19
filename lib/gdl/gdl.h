@@ -158,6 +158,8 @@ extern GDLR_config *vx_oatf_config;
 #define gdlr_closers gr_funcs[3]
 #define gdlr_flags gr_funcs[4]
 
+extern struct mapi *scripttok(const char *k, int len);
+
 extern void gdl_pop_wd_list(void *vp);
 extern void gdl_render_setup_wf(void);
 extern GDLR_config *gdl_render_setup_vx(int gdl_vx_mode, gdlr_node_fnc textfunc);
@@ -281,7 +283,7 @@ extern void gdl_indent(void);
 extern void gdl_note_mark(const char *n);
 extern void gdl_var_mark(Bracket_e type, char *v);
 
-extern void gdl_lang_tag(const char *v);
+extern int gdl_lang_tag(const char *v);
 extern void gdl_lang_flip(void);
 
 extern void gdl_hc(int force);

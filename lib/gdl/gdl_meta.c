@@ -317,7 +317,7 @@ gdl_var_mark(Bracket_e type, char *v)
 }
 
 /* TODO: check lang patterns include trailing /a, /m, /n or /g */
-void
+int
 gdl_lang_tag(const char *data)
 {
   if (gdltrace)
@@ -327,6 +327,14 @@ gdl_lang_tag(const char *data)
   Tree*tp = gdl_get_tree();
   if (!strcmp(tp->curr->name, "g:w"))
     gdl_prop_kv(tp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+  struct mapi *st = scripttok(gdl_lang_context->tag->script, 3);
+  if (st)
+    return st->v;
+  else
+    {
+      fprintf(stderr, "gdl_lang_tag: unknown script %s\n", gdl_lang_context->tag->script);
+      return 0;
+    }
 }
 
 /* _..._ -- TO DO */
