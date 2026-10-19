@@ -30,6 +30,12 @@ struct map
   const char *v;
 };
 
+struct mapi
+{
+  const char *name;
+  int v;
+};
+
 #define _MAX_PATH 1024
 
 #ifndef ccp
