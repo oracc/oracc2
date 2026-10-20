@@ -12,6 +12,8 @@
 #include "gdl.h"
 #include "gvl.h"
 
+#include "lex_st_enum.h"
+
 static Hash *lzr_sparse = NULL;
 const char *curr_field = NULL;
 extern struct lang_context *gdl_lang_context;
@@ -39,6 +41,8 @@ Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data
 static int grapheme_id, nonw_found, wid_base;
 static char gdl_line_id[1024], gdl_word_id[2048];
 static char *gid_insertp;
+
+#define wordnode(w_)	(strlen(w_->name)==3&&'w'==(w_->name[2]))
 
 /* New 2026-03-03: state is now handled with three variables, pst,
    lst, rst
@@ -345,7 +349,7 @@ gdl_rem_nonw(List *wds)
   List *lp = list_create(LIST_SINGLE);
   Node *w;
   for (w = list_first(wds); w; w = list_next(wds))
-    if (!strcmp(w->name, "g:w"))
+    if (wordnode(w))
       list_add(lp, w);
   list_free(wds, NULL);
   return lp;
@@ -542,17 +546,6 @@ gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data)
   return np;
 }
 
-#if 0
-static Node *
-gdl_meta_node(Tree *ytp, const char *name, const char *data)
-{
-  Node *np = NULL;
-  np = tree_add(ytp, NS_GDL, name, ytp->curr->depth, NULL);
-  np->text = (ccp)pool_copy((uccp)data,gdlpool);
-  return np;
-}
-#endif
-
 Node *
 gdl_pop(Tree *ytp, const char *s)
 {
@@ -617,7 +610,7 @@ gdl_unword(Tree *ytp)
 {
   /* Remove the parent g:w if there is one (extra credit: keep the
      node around to use after the field) */
-  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+  if (gdl_word_mode && wordnode(ytp->curr) && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
@@ -662,7 +655,7 @@ gdl_cell(Tree *ytp, const char *span)
   if (gdltrace)
     fprintf(stderr, "gt: CELL with SPAN = %s\n", span);
 
-  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+  if (gdl_word_mode && wordnode(ytp->curr) && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
@@ -749,7 +742,7 @@ gdl_new_word(Tree *ytp)
 	  if (!lzr_sparse || (curr_field && hash_find(lzr_sparse, (uccp)curr_field)))
 	    list_add(wd_list, w);
 	}
-      else if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+      else if (wordnode(ytp->curr) && !ytp->curr->kids)
 	{
 	  /* reuse empty words */
 	  assert(word_lang_tag != NULL);
@@ -780,6 +773,8 @@ gdl_new_word(Tree *ytp)
 	  if (!l)
 	    {
 	      l = node_ancestor_or_self(ytp->curr, "g:w");
+	      if (!l)
+		l = node_ancestor_or_self(ytp->curr, "g:n");
 	      if (l)
 		l = l->rent;
 	      else
@@ -789,7 +784,7 @@ gdl_new_word(Tree *ytp)
 	  /* Now l is the node where the g:w should attach */
 	  tree_curr(l);
 
-	  Node *wp = gdl_push(ytp, "g:w");
+	  Node *wp = gdl_push(ytp, gdl_lang_context->tag->script == stc_SAC ? "g:w" : "n:w");
 	  wp->mloc = mloc_file_line(currgdlfile, gdllineno);
 
 	  /* By definition, the word-lang is the one in effect when the
@@ -865,45 +860,8 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
 Node *
 gdl_delim_l(Tree *ytp, const char *data)
 {
-#if 0
-  if (gdl_legacy_hash)
-    {
-      gdl_lex_flag("#");
-      gdl_legacy_hash = 0;
-    }
-#endif
-
   return gdl_delim_s(ytp, data);
-
-#if 0
-  /* In legacy mode this is executed to make b[ad- behave like bad-[ */
-  if (gdl_legacy_pending)
-    {
-      if (bit_get(gdl_legacy_pending, GLP_O))
-	{
-	  gdl_break_o(gdl_legacy_o);
-	  gdl_legacy_o = e_L_none;
-	}
-    }
-#endif
 }
-
-#if 0
-/* return 1 if np is a number -- either a g:n or a g:gg with g:type=diszless */
-static int
-gdl_num_context(Node *np)
-{
-  if (!strcmp(np->name, "g:n"))
-    return 1;
-  if (!strcmp(np->name, "g:gg"))
-    {
-      const char *t = prop_val(np, "g:type");
-      if (t && !strcmp(t, "diszless"))
-	return 1;
-    }
-  return 0;
-}
-#endif
 
 Node *
 gdl_delim_s(Tree *ytp, const char *data)
@@ -1055,6 +1013,50 @@ gdl_field(Tree *ytp, const char *ftype)
   tree_curr(fp);
   gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type", curr_field);
   return tree_push(ytp);
+}
+
+Node *
+gdl_normseg(Mloc *locp, Tree *ytp, const char *data)
+{
+  Node *ret = NULL;
+
+#if 0
+  /* Do we ever have ascii norm? I doubt it ... */
+  /* Don't ascify unless gdl_unicode is 0 and the data is not "00~" */
+  if (!gdl_unicode && ('0' != data[0] || '0' != data[1] || (data[2] && '~' != data[2])))
+    {
+      uccp guni = atf2utf(locp,(uccp)data,0);
+      if (strcmp((ccp)guni,(ccp)data))
+	{
+	  gatf = (uccp)data;
+	  data = (ccp)pool_copy(guni,ytp->tm->pool);
+	}
+    }
+#endif
+
+  if (gdltrace)
+    fprintf(stderr, "gt: NORMSEG[%s]: %s\n", "n:s", data);
+
+  ret = gdl_graph_node(locp, ytp, "n:s", data);
+
+#if 0
+  /* If gatf is to be included in XML output then GP_ATTRIBUTE is
+     okay--otherwise some other prop-group will be needed */
+  if (gdl_ascii && gatf)
+    gdl_prop_kv(ret, GP_ATTRIBUTE, PG_GDL_INFO, "atf:ascii", (ccp)gatf);
+
+  if (g_literal_flag)
+    {
+      bit_set(*lst, gs_force|gs_g_undefined);
+      g_literal_flag = 0;
+    }
+  else if (g_logoforce_flag)
+    {
+      bit_set(*lst, gs_force|gs_g_flogo1);
+      g_logoforce_flag = 0;
+    }
+#endif
+  return ret;
 }
 
 Node *

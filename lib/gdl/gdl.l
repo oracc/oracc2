@@ -80,8 +80,8 @@ NOTEMARK	"^"[0-9]+"^"
 %s S
 %x TC
 %x TD
-%x st_ALP
-%x st_NRM
+%x A
+%x N
 
 %%
 
@@ -163,6 +163,14 @@ NOTEMARK	"^"[0-9]+"^"
 &			{ return '&'; }
 ![a-z]+        		{ gsave; return FTYPE; }
 
+	/* Normalized text scanning */
+
+<N>{G}			{ gsave; return NORMSEG; }
+
+	/* Alphabetic text scanning */
+
+<A>.			{ mesg_vwarning(currgdlfile,gdllineno,"alphabetic input not yet implemented"); }
+
 	/* Delimiters */
 
 "..."			{ GIN=0; gsave; return ELLIPSIS; }
@@ -190,21 +198,21 @@ NOTEMARK	"^"[0-9]+"^"
 	/* Anything in this section either does not return a token or
  	   only does so in some circumstances */
 
-"("			{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
-")"			{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
+<INITIAL,N>"("		{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
+<INITIAL,N>")"		{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
 
-<INITIAL,C>"<("		{ GIN=0; gdl_state_o(e_L_ang_par); }
-<INITIAL,C>")>"	       	{ GIN=0; gdl_state_c(e_R_ang_par); }
-<INITIAL,C>"<<"		{ GIN=0; gdl_state_o(e_L_dbl_ang); }
-<INITIAL,C>">>"		{ GIN=0; gdl_state_c(e_R_dbl_ang); }
-<INITIAL,C>"<"		{ GIN=0; gdl_state_o(e_L_ang); }
-<INITIAL,C>">"		{ GIN=0; gdl_state_c(e_R_ang); }
-<INITIAL,C>"["		{ GIN=0; gdl_break_o(e_L_squ); }
-<INITIAL,C>"]"		{ GIN=0; gdl_break_c(e_R_squ); }
-<INITIAL,C>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
-<INITIAL,C>{R_UHS}	{ GIN=0; gdl_break_c(e_R_uhs); }
-<INITIAL,C>{L_LHS}	{ GIN=0; gdl_break_o(e_L_lhs); }
-<INITIAL,C>{R_LHS}	{ GIN=0; gdl_break_c(e_R_lhs); }
+<INITIAL,C,N>"<("	{ GIN=0; gdl_state_o(e_L_ang_par); }
+<INITIAL,C,N>")>"	{ GIN=0; gdl_state_c(e_R_ang_par); }
+<INITIAL,C,N>"<<"	{ GIN=0; gdl_state_o(e_L_dbl_ang); }
+<INITIAL,C,N>">>"	{ GIN=0; gdl_state_c(e_R_dbl_ang); }
+<INITIAL,C,N>"<"	{ GIN=0; gdl_state_o(e_L_ang); }
+<INITIAL,C,N>">"	{ GIN=0; gdl_state_c(e_R_ang); }
+<INITIAL,C,N>"["	{ GIN=0; gdl_break_o(e_L_squ); }
+<INITIAL,C,N>"]"	{ GIN=0; gdl_break_c(e_R_squ); }
+<INITIAL,C,N>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
+<INITIAL,C,N>{R_UHS}	{ GIN=0; gdl_break_c(e_R_uhs); }
+<INITIAL,C,N>{L_LHS}	{ GIN=0; gdl_break_o(e_L_lhs); }
+<INITIAL,C,N>{R_LHS}	{ GIN=0; gdl_break_c(e_R_lhs); }
 
 	/* The meta-delimiter ';' == indented line */
 <INITIAL,C>";"	       	{ GIN=0; gdl_indent(); }
@@ -218,17 +226,17 @@ NOTEMARK	"^"[0-9]+"^"
 "$"/{G}			{ g_literal_flag = 1; }
 
 	/* Grapheme meta flags, sometimes doubling as lex field shorthands */
-<INITIAL,C,Q>[!?]      	{ gdl_lex_flag((uccp)yytext); }
-<INITIAL,C>"*"		{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
+<INITIAL,C,Q,N>[!?]     { gdl_lex_flag((uccp)yytext); }
+<INITIAL,C,N>"*"       	{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
 <INITIAL,C>^[#"~=@^]	{ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "#"			{ if (SIN) { SIN=0;
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
-<C>"#"			{ gdl_lex_flag((uccp)yytext); }
+<C,N>"#"	       	{ gdl_lex_flag((uccp)yytext); }
 [:"~=@^]   		{ if (SIN) { SIN=0;
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
-[#"=@^]/{G} 		{ if (gdl_lexical) {
+<INITIAL,N>[#"=@^]/{G} 	{ if (gdl_lexical) {
 		       	    mesg_vwarning(currgdlfile, gdllineno,
 			  	       	  "no space after %c field\n", *yytext);
 	       	     	    gdllval.text=(char*)gdl_lexnames[(int)*yytext];
@@ -238,8 +246,8 @@ NOTEMARK	"^"[0-9]+"^"
 {UFLAG}			{ gdl_lex_flag((uccp)yytext); }
 
 	/* Language shifts; ignore following whitespace after %-tag */
-%[-a-z0-9]+("/"[agmn])?[ \t]*   { BEGIN gdl_lang_tag(yytext); }
-_				{ gdl_lang_flip(); }
+<INITIAL,N>%[-a-z0-9]+("/"[gn])?[ \t]*   { BEGIN gdl_lang_tag(yytext); }
+_			                 { gdl_lang_flip(); }
 
 	/* Note marks */
 {NOTEMARK}		{ gdl_note_mark(gdltext); }

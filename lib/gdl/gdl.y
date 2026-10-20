@@ -39,7 +39,7 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
-%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS CELLSPAN IGNORE
+%token	<text> 	FTYPE LANG TEXT ENHYPHEN ELLIPSIS CELLSPAN IGNORE NORMSEG
 		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
 		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
 		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
@@ -133,6 +133,7 @@ linebreak:	LINEBREAK	      			{ gdl_nongraph(&@1, ytp, "//", "linebreak"); }
 transliteration:
 		delim
 	| 	grapheme
+	| 	normseg
 	;
 
 delim:
@@ -142,6 +143,9 @@ delim:
 	|	'/'					{ gdl_group(@1, '/'); }
 	|	':'					{ gdl_group(@1, ':'); }
 	|	'+'					{ gdl_group(@1, '+'); }
+	;
+
+normseg:	NORMSEG					{ ynp = gdl_normseg(&@1, ytp, gdllval.text); }
 	;
 
 detgloss:

@@ -17,4 +17,4 @@ gdl.lex.c: gdl.l gdl.tab.h
 scripttok.c: scripttok.g lex_st_defs.h
 
 lex_st_defs.h: gdl.lex.c
-	grep '^#define st_' gdl.lex.c >$@
+	grep '^#define [AN] ' gdl.lex.c >$@
