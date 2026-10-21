@@ -35,7 +35,7 @@ grx_jox_node(Node *np, int oflag, int nflag)
   else if (!strcmp(np->name, "g:gp"))
     nodename = "g:g";
   
-  if (!strcmp(nodename, "g:w"))
+  if (!strcmp(nodename, "g:w") || !strcmp(nodename, "n:w"))
     {
       if (joxer_mode != JOXER_XML)
 	joxer_ao("j:w");
@@ -113,6 +113,7 @@ grx_jox_node(Node *np, int oflag, int nflag)
 			 || !strcmp(nodename, "g:b") || !strcmp(nodename, "g:m")
 			 || !strcmp(nodename, "g:a") || !strcmp(nodename, "g:p")
 			 || !strcmp(nodename, "g:r") || !strcmp(nodename, "g:t")
+			 || !strcmp(nodename, "n:s")
 			 ))
     {
       gdlstate_t s = prop_get_state(np);

@@ -325,7 +325,7 @@ gdl_lang_tag(const char *data)
   gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, gdllloc.file, gdllloc.line);
   word_lang_tag = gdl_lang_context->fulltag;
   Tree*tp = gdl_get_tree();
-  if (!strcmp(tp->curr->name, "g:w"))
+  if (!strcmp(tp->curr->name, "g:w") || !strcmp(tp->curr->name, "n:w"))
     gdl_prop_kv(tp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
   struct mapi *st = scripttok(gdl_lang_context->tag->script, 3);
   if (st)

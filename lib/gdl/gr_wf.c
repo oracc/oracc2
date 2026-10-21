@@ -323,6 +323,10 @@ gr_node_wf(Node *np, FILE *fp)
 		fputs(':' == *d->u.k->v ? "-" : d->u.k->v, fp);
 	    }
 	}
+      else if ('n' == np->name[0])
+	{
+	  (void)gr_funcs[(int)np->name[2]](np, fp);
+	}
     }
   else
     {

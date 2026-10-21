@@ -181,8 +181,8 @@ NOTEMARK	"^"[0-9]+"^"
 
 "//"			{ return LINEBREAK; }
 
-[ \t]+/[#"~=@^]	       	{ GIN=0; SIN=1; gsave; return SPACE; }
-[ \t]+			{ GIN=0; gsave; return SPACE; }
+<INITIAL,N>[ \t]+/[#"~=@^]    	{ GIN=0; SIN=1; gsave; return SPACE; }
+<INITIAL,N>[ \t]+	       	{ GIN=0; gsave; return SPACE; }
 
 	/* Inline comment/dollar */
 
@@ -259,7 +259,7 @@ _			                 { gdl_lang_flip(); }
 
 	/* General administrative rules */
 
-\n			{ return '\n'; }
+<INITIAL,N>\n  		{ return '\n'; }
 
 "\xc3\x97"	       	{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: misplaced ×\n"); }
 
