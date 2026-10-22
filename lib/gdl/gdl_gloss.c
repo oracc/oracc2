@@ -62,7 +62,7 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   (void)gdl_balance_state(*mlp, bp->tok);
 
   /* if the current word is empty unwind it because it means the {{/{( is at SOL */
-  if (gdl_word_mode && !strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+  if (gdl_word_mode && (!strcmp(ytp->curr->name, "g:w")||!strcmp(ytp->curr->name, "g:w")) && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
@@ -127,7 +127,7 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
   tree_curr(ret);
-  if (strcmp(ret->name, "g:w"))
+  if (strcmp(ret->name, "g:w") && strcmp(ret->name, "n:w"))
     ret = gdl_new_word(ytp);
   return ret;
 }
@@ -176,8 +176,9 @@ void
 gdl_surro(void)
 {
   /* last grapheme pointer must be non-null and tree->curr cannot be a
-     newly minted g:w (i.e., a g:w with no ->kids */
-  if (lgp && (strcmp(lgp->tree->curr->name, "g:w") || lgp->tree->curr->kids))
+     newly minted g:w/n:w (i.e., a g:w with no ->kids */
+  if (lgp && ((strcmp(lgp->tree->curr->name, "g:w")&&strcmp(lgp->tree->curr->name, "n:w"))
+	       || lgp->tree->curr->kids))
     {
       if (!strcmp(lgp->name, "g:gg")
 	  || (strlen(lgp->name) == 3
@@ -213,7 +214,7 @@ gdl_surro(void)
 	       * because in the code below the lexer is changing the
 	       * tree curr and then the termination of the compound
 	       * changes it again; it works for now simply to change
-	       * tree curr to the g:sur node rather than the g:w
+	       * tree curr to the g:sur node rather than the g:w/n:w
 	       * node
 	       */
 	      if (lgp->name[2] != 'c')

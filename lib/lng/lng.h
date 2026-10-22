@@ -140,6 +140,8 @@ extern struct langatf *lang_atf(register const char *str, register size_t len);
 extern void lng_init(void);
 extern void lng_term(void);
 
+extern void langinst_init(void);
+extern void langinst_term(void);
 extern void langtag_init(void);
 extern void langtag_term(void);
 

@@ -230,7 +230,7 @@ main(int argc, char * const*argv)
     }
 
   inl_set_ns(NS_HTM);
-  
+
   atf_flex_debug = atfflextrace = atftrace = atfdebug = trace_mode;
 
   if (trace_mode > 1)
@@ -241,7 +241,7 @@ main(int argc, char * const*argv)
   gvl_setup("osl", "osl","020");
   nodeh_register(treexml_o_handlers, NS_XTF, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_XTF, treexml_c_generic);
-  langtag_init();
+  lang_init();
 
   /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
   struct lang_context *x = lang_switch(NULL,"sux",NULL,NULL,0);

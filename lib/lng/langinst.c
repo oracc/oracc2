@@ -12,13 +12,32 @@ struct lang_context *text_lang = NULL;
 struct lang_context *curr_lang_ctxt = NULL;
 struct lang_context *logo_lang = NULL;
 
+static Hash *langctxt_hash;
+
 extern int verbose;
+
+void
+langinst_init(void)
+{
+  langctxt_hash = hash_create(128);
+}
+
+void
+langinst_term(void)
+{
+  hash_free(langctxt_hash, NULL);
+}
 
 /* Could do gvl_setup here */
 struct lang_context *
 lang_load(struct proj_context *p, struct lang_tag *lt)
 {
-  struct lang_context *lp = memo_auto(sizeof(struct lang_context));
+  struct lang_context *lp = hash_find(langctxt_hash, (uccp)lt->tag);
+
+  if (lp)
+    return lp;
+
+  hash_add(langctxt_hash, (uccp)lt->tag, lp = memo_auto(sizeof(struct lang_context)));
   struct langcore *lcp = NULL;
   struct langmode *lmp = NULL;
 

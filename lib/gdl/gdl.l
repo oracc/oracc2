@@ -24,6 +24,7 @@ int gdlflextrace = 0;
 int g_literal_flag = 0, g_logoforce_flag = 0;
 
 static gdl_grapheme_type_p gdl_grapheme_type;
+static int last_unmatched_line = 0;
 
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
@@ -198,15 +199,15 @@ NOTEMARK	"^"[0-9]+"^"
 	/* Anything in this section either does not return a token or
  	   only does so in some circumstances */
 
-<INITIAL,N>"("		{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
-<INITIAL,N>")"		{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
+<INITIAL,N,Q>"("	{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
+<INITIAL,N,Q>")"	{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
 
 <INITIAL,C,N>"<("	{ GIN=0; gdl_state_o(e_L_ang_par); }
-<INITIAL,C,N>")>"	{ GIN=0; gdl_state_c(e_R_ang_par); }
+<INITIAL,C,N>")>"	{ GIN=0; BEGIN gdl_state_c(e_R_ang_par); }
 <INITIAL,C,N>"<<"	{ GIN=0; gdl_state_o(e_L_dbl_ang); }
-<INITIAL,C,N>">>"	{ GIN=0; gdl_state_c(e_R_dbl_ang); }
+<INITIAL,C,N>">>"	{ GIN=0; BEGIN gdl_state_c(e_R_dbl_ang); }
 <INITIAL,C,N>"<"	{ GIN=0; gdl_state_o(e_L_ang); }
-<INITIAL,C,N>">"	{ GIN=0; gdl_state_c(e_R_ang); }
+<INITIAL,C,N>">"	{ GIN=0; BEGIN gdl_state_c(e_R_ang); }
 <INITIAL,C,N>"["	{ GIN=0; gdl_break_o(e_L_squ); }
 <INITIAL,C,N>"]"	{ GIN=0; gdl_break_c(e_R_squ); }
 <INITIAL,C,N>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
@@ -263,7 +264,14 @@ _			                 { gdl_lang_flip(); }
 
 "\xc3\x97"	       	{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: misplaced ×\n"); }
 
-.			{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: unmatched character %c\n", *gdltext); }
+<*>.			{ if (last_unmatched_line != gdllineno)
+			    {
+				mesg_vwarning(currgdlfile, gdllineno,
+			  		      "gdl.l: unmatched character %c in state %d\n",
+					       *gdltext, YY_START);
+			       	last_unmatched_line = gdllineno;
+			    }
+			}
 
 <<EOF>>			{ gdl_line_wrapup(gdllloc); yyterminate(); }
 

@@ -63,7 +63,7 @@ static int c_of_o[END];
 static int o_of_c[END];
 static const char *s_of_oc[END];
 
-Stck *state_stack = NULL, *break_stack = NULL;
+Stck *state_stack = NULL, *break_stack = NULL, *lang_stack = NULL;
 
 #define OC_ALLOC	4
 
@@ -76,6 +76,7 @@ gdl_balance_init(void)
     {
       stck_reset(break_stack);
       stck_reset(state_stack);
+      stck_reset(lang_stack);
       memo_reset(mgstck);
       return;
     }
@@ -93,6 +94,7 @@ gdl_balance_init(void)
 
   break_stack = stck_init(OC_ALLOC);
   state_stack = stck_init(OC_ALLOC);
+  lang_stack = stck_init(OC_ALLOC);
   if (!mgstck)
     mgstck = memo_init(sizeof(Gstck), 16);
 }
@@ -102,9 +104,10 @@ gdl_balance_term(void)
 {
   stck_term(break_stack);
   stck_term(state_stack);
+  stck_term(lang_stack);
   memo_term(mgstck);
   mgstck = NULL;
-  break_stack = state_stack = NULL;
+  break_stack = state_stack = lang_stack = NULL;
 }
 
 Gstck*
@@ -209,13 +212,17 @@ gdl_balance_state(Mloc mlp, int tok)
 	  ret = -1;
 	}
       else
-	ret = gdl_state_pop();
+	{
+	  ret = gdl_state_pop();
+	  gdl_lang_context = (struct lang_context*)stck_pop(lang_stack);
+	}
     }
   else
     {
       /* for openers push the new opener on the stack */
       gdl_state_push((intptr_t)gstck_new(tok));
       gdl_state_pending = 1;
+      stck_push(lang_stack, (intptr_t)gdl_lang_context);
     }
   return ret;
 }
@@ -230,5 +237,6 @@ gdl_balance_flush(Mloc mlp)
     mesg_verr(&mlp, "unclosed state opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
   stck_reset(break_stack);
   stck_reset(state_stack);
+  stck_reset(lang_stack);
   memo_reset(mgstck);
 }

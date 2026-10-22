@@ -208,7 +208,7 @@ extern void gdl_break_h_l(void);
 extern void gdl_break_o_l(Bracket_e bt);
 extern void gdl_break_c_l(Bracket_e bt);
 extern void gdl_state_o(Bracket_e bt);
-extern void gdl_state_c(Bracket_e bt);
+extern int gdl_state_c(Bracket_e bt);
 
 extern Node *gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
 extern Node *gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);

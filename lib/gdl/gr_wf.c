@@ -56,6 +56,11 @@ grf(c)(Node *np, FILE *fp)
 int
 grf(d)(Node *np, FILE *fp)
 {
+  /* Determinatives within normalized words are not included in the
+     n:w/@form */
+  if (*np->rent->name == 'n')
+    return 0;
+
   gdlstate_t s = 0L;
   if (np->kids)
     s = prop_get_state(np->kids);

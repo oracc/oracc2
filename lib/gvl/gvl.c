@@ -497,7 +497,7 @@ gvl_simplexg(Node *ynp)
   unsigned const char *g = NULL;
 
   if (!ynp || !ynp->text || ynp->name[2] == 'x' || !strcmp(ynp->name, "g:gp")
-      || /*'n' == curr_lang*/ gdl_lang_context->mode != m_graphemic)
+      || /*'n' == curr_lang*/ /* gdl_lang_context->mode != m_graphemic */ 'g' != *ynp->name)
     return;
 
   g = (uccp)ynp->text;

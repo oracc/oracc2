@@ -11,7 +11,7 @@
 
 const char *curr_sur_id = NULL;
 
-struct lang_context *gdl_lang_context;
+struct lang_context *gdl_lang_context, *gdl_global_context;
 const char *gdl_pending_varo = NULL;
 const char *word_lang_tag = "sux";
 
@@ -214,7 +214,7 @@ gdl_state_o(Bracket_e bt)
   rs_on(bp->s);
 }
 
-void
+int
 gdl_state_c(Bracket_e bt)
 {
   Bracket *bp = &bracket_data[bt];
@@ -251,6 +251,7 @@ gdl_state_c(Bracket_e bt)
       curr_sur_id = NULL;
       rs_no(gs_surro);
     }
+  return gdl_lang_context->tag->scode;
 }
 
 int

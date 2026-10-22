@@ -16,7 +16,7 @@
 
 static Hash *lzr_sparse = NULL;
 const char *curr_field = NULL;
-extern struct lang_context *gdl_lang_context;
+extern struct lang_context *gdl_lang_context, *gdl_global_context;
 extern const char *word_lang_tag;
 extern void gdllex_destroy(void);
 extern void gdl_validate(Tree *tp);
@@ -828,6 +828,8 @@ gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt)
     }
   word_lang_tag = tag;
   gdl_lang_context = lang_switch(ctxt, tag, NULL, mp ? mp->file : NULL, mp ? mp->line : 0);
+  if (!gdl_global_context)
+    gdl_global_context = gdl_lang_context;
 }
 
 void

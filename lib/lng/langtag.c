@@ -26,13 +26,15 @@ static void langtag_error(const char *file, int lnum,
 void
 lng_init(void)
 {
+  langinst_init();
   langtag_init();
 }
 
 void
 lng_term(void)
 {
-  langtag_term();
+  langinst_term();
+  langtag_term();  
 }
 
 static int
@@ -85,7 +87,7 @@ langtag_init(void)
 {
   if (NULL == langtag_pool)
     {
-      langtag_pool = pool_init();
+      langtag_pool = hpool_init();
       langtag_hash = hash_create(1);
       default_langtag = langtag_create(NULL,"sux",NULL,NULL,0);
       noscript_hash = hash_create(1);
@@ -98,7 +100,7 @@ langtag_term(void)
 {
   if (langtag_pool)
     {
-      pool_term(langtag_pool);
+      hpool_term(langtag_pool);
       langtag_pool = NULL;
     }
   if (langtag_hash)
@@ -305,7 +307,7 @@ langtag_compose(struct lang_tag *def, const char *lang,
     sprintf(buf+strlen(buf),"-%s",x);
   else if (def->x)
     sprintf(buf+strlen(buf),"-%s",def->x);
-  return (char *)pool_copy((unsigned char *)buf,langtag_pool);
+  return (char *)hpool_copy((unsigned char *)buf,langtag_pool);
 }
 
 struct lang_tag *

@@ -30,7 +30,7 @@ int verbose = 0;
 int status;
 int rnvtrace;
 
-extern int gdl_flex_debug, gdldebug, gdl_orig_mode, gdl_unicode;
+extern int gdl_flex_debug, gdldebug, gdlflextrace, gdl_orig_mode, gdl_unicode;
 
 int bare_mode = 0;
 int check_mode = 0;
@@ -274,6 +274,8 @@ main(int argc, char **argv)
   options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
   lang_init();
   gdl_flex_debug = gdldebug = trace_mode;
+  if (trace_mode > 1)
+    gdlflextrace = 1;
 
   gdl_legacy_lexer(gdl_legacy);
   
@@ -452,7 +454,7 @@ opts(int opt, const char *arg)
       signatures = 1;
       break;
     case 't':
-      trace_mode = 1;
+      ++trace_mode;
       break;
     case 'u': /* uptranslate to canonicalized version */
       gdl_c10e_mode = 1;
