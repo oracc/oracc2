@@ -59,7 +59,7 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
       /*data = (bp->tok == L_dbl_cur ? "{{" : "{(");*/ /* data
 	probably doesn't need to be used after this */
     }
-  (void)gdl_balance_state(*mlp, bp->tok);
+  (void)gdl_balance_state(*mlp, bp->tok,gdl_lex_state());
 
   /* if the current word is empty unwind it because it means the {{/{( is at SOL */
   if (gdl_word_mode && (!strcmp(ytp->curr->name, "g:w")||!strcmp(ytp->curr->name, "g:w")) && !ytp->curr->kids)
@@ -102,7 +102,7 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   if (gdltrace)
     fprintf(stderr, "gt: GLOSS/c: %d=%s\n", bt, bp->str);
 
-  if (-1 != gdl_balance_state(*mlp, bp->tok))
+  if (-1 != gdl_balance_state(*mlp, bp->tok, -1))
     {
       /*ret = gdl_pop(ytp, data);*/
       /* We don't need to do anything with this popped container

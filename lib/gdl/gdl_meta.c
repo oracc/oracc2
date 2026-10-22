@@ -202,14 +202,14 @@ gdl_break_c(Bracket_e bt)
 }
 
 void
-gdl_state_o(Bracket_e bt)
+gdl_state_o(Bracket_e bt, int state)
 {
   if (bt == e_L_ang_par)
     gdl_surro();
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", bt, bp->str);
-  (void)gdl_balance_state(gdllloc, bp->tok);
+  (void)gdl_balance_state(gdllloc, bp->tok, state);
   ps_on(bp->oc);
   rs_on(bp->s);
 }
@@ -218,11 +218,14 @@ int
 gdl_state_c(Bracket_e bt)
 {
   Bracket *bp = &bracket_data[bt];
+  Lstck *lp = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", bt, bp->str);
-  intptr_t st = gdl_balance_state(gdllloc, bp->tok);
+  intptr_t st = gdl_balance_state(gdllloc, bp->tok, -1);
   if (st > 0) /* st can be -1 if nothing on stack */
     {
+      lp = (Lstck*)stck_pop(lang_stack);
+      gdl_lang_context = lp->lang;
       Node *np = gstck_np(st);
       if (np)
 	{
@@ -244,6 +247,8 @@ gdl_state_c(Bracket_e bt)
       else
 	mesg_verr(&gdllloc, "internal error: corrupt bracket stack");
     }
+  else
+    gdl_lang_context = gdl_global_context;
   bit_set(*lst,bp->oc);
   rs_no(bp->s);
   if (curr_sur_id)
@@ -251,7 +256,7 @@ gdl_state_c(Bracket_e bt)
       curr_sur_id = NULL;
       rs_no(gs_surro);
     }
-  return gdl_lang_context->tag->scode;
+  return lp ? lp->state : 0;
 }
 
 int

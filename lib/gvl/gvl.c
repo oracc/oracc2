@@ -14,7 +14,9 @@
 #include <tree.h>
 #include <lang.h>
 
-#include "gdl.h"
+#include <gdl.h>
+#include <gdlstate.h>
+
 #include "gvl.h"
 
 extern struct lang_context *gdl_lang_context;
@@ -335,11 +337,14 @@ gvl_compound(Node *ynp)
      tokens so it never sets lst */
   if (lst)
     {
-      /* reset state: copy lst (which points to last grapheme in g:n),
-	 zero lst, and create a new lst which belongs to the g:n node */
+      /* gvl_compound is called after the closing '|' so reset lst to
+       * the g:c node's state property without modifying it
+       */
+#if 0
       gdlstate_t nst = *lst;
       *lst = (gdlstate_t)0;
-      lst = prop_state(ynp, nst);
+#endif
+      lst = prop_state(ynp, 0L);
     }
 
   if (!strcmp(ynp->name, "g:c"))

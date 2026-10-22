@@ -199,14 +199,14 @@ NOTEMARK	"^"[0-9]+"^"
 	/* Anything in this section either does not return a token or
  	   only does so in some circumstances */
 
-<INITIAL,N,Q>"("	{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par); } }
+<INITIAL,N,Q>"("	{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par,YY_START); } }
 <INITIAL,N,Q>")"	{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
 
-<INITIAL,C,N>"<("	{ GIN=0; gdl_state_o(e_L_ang_par); }
+<INITIAL,C,N>"<("	{ GIN=0; gdl_state_o(e_L_ang_par,YY_START); }
 <INITIAL,C,N>")>"	{ GIN=0; BEGIN gdl_state_c(e_R_ang_par); }
-<INITIAL,C,N>"<<"	{ GIN=0; gdl_state_o(e_L_dbl_ang); }
+<INITIAL,C,N>"<<"	{ GIN=0; gdl_state_o(e_L_dbl_ang,YY_START); }
 <INITIAL,C,N>">>"	{ GIN=0; BEGIN gdl_state_c(e_R_dbl_ang); }
-<INITIAL,C,N>"<"	{ GIN=0; gdl_state_o(e_L_ang); }
+<INITIAL,C,N>"<"	{ GIN=0; gdl_state_o(e_L_ang,YY_START); }
 <INITIAL,C,N>">"	{ GIN=0; BEGIN gdl_state_c(e_R_ang); }
 <INITIAL,C,N>"["	{ GIN=0; gdl_break_o(e_L_squ); }
 <INITIAL,C,N>"]"	{ GIN=0; gdl_break_c(e_R_squ); }
@@ -276,6 +276,12 @@ _			                 { gdl_lang_flip(); }
 <<EOF>>			{ gdl_line_wrapup(gdllloc); yyterminate(); }
 
 %%
+
+int
+gdl_lex_state(void)
+{
+  return YY_START;
+}
 
 void
 gdl_lex_closers(void)

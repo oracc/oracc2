@@ -15,7 +15,7 @@ int gdl_break_pending = 0, gdl_state_pending = 0;
 #define gdl_state_pop() stck_pop(state_stack)
 #define gdl_state_push(x) stck_push(state_stack,x)
 
-static Memo *mgstck;
+static Memo *mgstck, *mlstck;
 
 static int o_c_map[] = 
   { '<',	'>',
@@ -97,6 +97,8 @@ gdl_balance_init(void)
   lang_stack = stck_init(OC_ALLOC);
   if (!mgstck)
     mgstck = memo_init(sizeof(Gstck), 16);
+  if (!mlstck)
+    mlstck = memo_init(sizeof(Lstck), 16);
 }
 
 void
@@ -105,8 +107,8 @@ gdl_balance_term(void)
   stck_term(break_stack);
   stck_term(state_stack);
   stck_term(lang_stack);
-  memo_term(mgstck);
-  mgstck = NULL;
+  memo_term(mgstck); mgstck = NULL;
+  memo_term(mlstck); mlstck = NULL;
   break_stack = state_stack = lang_stack = NULL;
 }
 
@@ -190,7 +192,7 @@ gdl_balance_break_c(Mloc mlp, int tok)
 
 /* return -1 on error; Gstck* as intptr_t on success */
 intptr_t
-gdl_balance_state(Mloc mlp, int tok)
+gdl_balance_state(Mloc mlp, int tok, int state)
 {
   intptr_t ret = 0;
   /* if it's a closer, check the stack for a match */
@@ -214,7 +216,7 @@ gdl_balance_state(Mloc mlp, int tok)
       else
 	{
 	  ret = gdl_state_pop();
-	  gdl_lang_context = (struct lang_context*)stck_pop(lang_stack);
+	  /* don't pop lang_stack here: we do that in gdl_state_c so we can return state to the lexer */
 	}
     }
   else
@@ -222,7 +224,10 @@ gdl_balance_state(Mloc mlp, int tok)
       /* for openers push the new opener on the stack */
       gdl_state_push((intptr_t)gstck_new(tok));
       gdl_state_pending = 1;
-      stck_push(lang_stack, (intptr_t)gdl_lang_context);
+      Lstck *lp = memo_new(mlstck);
+      lp->lang = gdl_lang_context;
+      lp->state = state;
+      stck_push(lang_stack, (intptr_t)lp);
     }
   return ret;
 }

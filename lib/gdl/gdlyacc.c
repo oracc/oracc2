@@ -679,10 +679,24 @@ gdl_cell(Tree *ytp, const char *span)
 }
 
 void
-gdl_c_init(void)
+gdl_c_init(Node *ycp)
 {
   c_delim_sentinel = 0;
   c_processing = 1;
+  lgp = ycp;
+  lst = prop_state(ycp, pst|rst);
+  pst = 0L;
+  if (!gdl_no_xml_ids)
+    {
+      sprintf(gid_insertp, ".%d", grapheme_id++);
+      gdl_prop_kv(ycp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		  (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+    }
+  if (gdl_break_pending)
+    gdl_break_node(ycp);
+  if (gdl_state_pending)
+    gdl_state_node(ycp);
+
 }
 
 Node *

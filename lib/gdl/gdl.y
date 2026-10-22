@@ -153,19 +153,19 @@ detgloss:
 	|	gloss
 	;
 
-det:	  '{'	      					{ gdl_balance_state(@1,'{');
+det:	  '{'	      					{ gdl_balance_state(@1,'{',gdl_lex_state());
 	      						  $$ = ynp = gdl_push_l(&@1,ytp,"g:d");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_i); }
-	| DET_SEME    					{ gdl_balance_state(@1,'{');
+	| DET_SEME    					{ gdl_balance_state(@1,'{',gdl_lex_state());
 	    						  $$ = ynp = gdl_push_l(&@1,ytp,"g:d");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_e); }
-	| DET_PHON      	      			{ gdl_balance_state(@1,'{');
+	| DET_PHON      	      			{ gdl_balance_state(@1,'{',gdl_lex_state());
 	    						  $$ = ynp = gdl_push_l(&@1,ytp,"g:d"); 
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_phond); }
-	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}'))
+	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}',gdl_lex_state()))
 		  					    gdl_det_props(ytp->curr);
 		    					  if (gdl_post_det_gp_attach)
 							    {
@@ -236,9 +236,9 @@ compound:
 
 c:
 	C_O 						{ ycp = gdl_push_l(&@1,ytp,"g:c");
-	    						  gdl_c_init(); }
+	    						  gdl_c_init(ycp); }
 	cbits
-	C_C 						{ lgp = ynp = ycp; c_processing = 0; }
+	C_C 						{ lgp = ynp = ycp; lst = prop_state(ycp,0L); c_processing = 0; }
         ;
 
 cbits:
@@ -251,9 +251,9 @@ cbit:
 	  						  /*if (gdl_legacy) gdl_unlegacy(ynp);*/
 							  gvl_simplexg(ynp); }
 	| cdelim					{ }
-	| CLP			       			{ gdl_balance_state(@1,CLP);
+	| CLP			       			{ gdl_balance_state(@1,CLP,gdl_lex_state());
 	    					  	  gdl_push_l(&@1,ytp,"g:gp"); }
-	| CRP	     			    		{ if (-1 != gdl_balance_state(@1,CRP))
+	| CRP	     			    		{ if (-1 != gdl_balance_state(@1,CRP,gdl_lex_state()))
 	      					    	   gdl_pop(ytp,"g:gp"); }
 	| QLP 						{ yrem=kids_rem_last(ytp);
 	    						  gdl_push_l(&@1,ytp,"g:q");

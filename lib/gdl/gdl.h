@@ -71,6 +71,12 @@ typedef struct gdlstack
   Node *np;
 } Gstck;
 
+typedef struct lcstack
+{
+  struct lang_context *lang;
+  int state;
+} Lstck;
+
 /* function pointer type for switching gdl_grapheme_type between
    legacy and strict without impacting performance for strict-mode
    data */
@@ -92,7 +98,7 @@ extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const cha
 #define gdl_break_pop() stck_pop(break_stack)
 #define gdl_break_push(x) stck_push(break_stack,x)
 
-extern Stck *break_stack;
+extern Stck *break_stack, *lang_stack;
 extern Gstck*gstck_new(int i);
 
 extern const char *currgdlfile, *gdl_pending_varo, *curr_sur_id;
@@ -207,7 +213,7 @@ extern void gdl_break_c(Bracket_e bt);
 extern void gdl_break_h_l(void);
 extern void gdl_break_o_l(Bracket_e bt);
 extern void gdl_break_c_l(Bracket_e bt);
-extern void gdl_state_o(Bracket_e bt);
+extern void gdl_state_o(Bracket_e bt, int state);
 extern int gdl_state_c(Bracket_e bt);
 
 extern Node *gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
@@ -231,7 +237,7 @@ extern void gdl_legacy_lexer(int legacy);
 extern void gdl_incr_qin(void);
 extern void gdl_decr_qin(void);
 extern intptr_t gdl_balance_break_c(Mloc mlp, int tok);
-extern intptr_t gdl_balance_state(Mloc mlp, int tok);
+extern intptr_t gdl_balance_state(Mloc mlp, int tok, int state);
 extern void gdl_balance_init(void);
 extern void gdl_balance_term(void);
 extern void gdl_balance_flush(Mloc mlp);
@@ -249,7 +255,7 @@ extern const char *gdlsig(Tree*tp);
 extern void gdlsig_node(Node *np, void *user);
 extern void gdl_update_state(Node *np, gdlstate_t gs_tok);
 
-extern void gdl_c_init(void);
+extern void gdl_c_init(Node *ycp);
 extern Node* gdl_c_term(Tree*);
 
 extern const char *gdlsig_str(Mloc *mp, unsigned char *atf, int frag_ok, int deep);
@@ -271,6 +277,7 @@ extern void gdl_state_node(Node *np);
 
 extern void gdl_lex_flag(unsigned const char *f);
 extern void gdl_lex_hash(gdlstate_t *st);
+extern int gdl_lex_state(void);
 
 extern List *gdl_get_word_list(void);
 extern void gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt);
