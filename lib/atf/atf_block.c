@@ -826,6 +826,7 @@ set_block_curr(Block_level b)
 	  /* other types may not need any reset of curr */
 	  phase = "atfblock";
 	  mesg_verr(abt->curr->mloc, "set_block_curr: reached default on value %d", b);
+	  phase = NULL;
 	  break;
 	}	
     }

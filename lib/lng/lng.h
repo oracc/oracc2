@@ -70,6 +70,7 @@ struct lang_tag
   char *region;
   char *variant;
   char *x;
+  int scode;
 };
 
 /* A lang_context is the combination of core language data and information

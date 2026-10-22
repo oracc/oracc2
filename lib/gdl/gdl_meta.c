@@ -7,6 +7,7 @@
 #include "gdlstate.h"
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
+#include "lex_st_enum.h"
 
 const char *curr_sur_id = NULL;
 
@@ -320,21 +321,31 @@ gdl_var_mark(Bracket_e type, char *v)
 int
 gdl_lang_tag(const char *data)
 {
+  int ret = 0;
   if (gdltrace)
     fprintf(stderr, "gt: LANG: %s\n", data);
   gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, gdllloc.file, gdllloc.line);
   word_lang_tag = gdl_lang_context->fulltag;
   Tree*tp = gdl_get_tree();
-  if (!strcmp(tp->curr->name, "g:w") || !strcmp(tp->curr->name, "n:w"))
-    gdl_prop_kv(tp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
-  struct mapi *st = scripttok(gdl_lang_context->tag->script, 3);
+  struct mapi *st = scripttok(gdl_lang_context->tag->script
+			      ? gdl_lang_context->tag->script
+			      : gdl_lang_context->core->script, 3);
   if (st)
-    return st->v;
+    {
+      gdl_lang_context->tag->scode = st->v;
+      ret = st->v;
+    }
   else
     {
       fprintf(stderr, "gdl_lang_tag: unknown script %s\n", gdl_lang_context->tag->script);
-      return 0;
     }
+  if (!strcmp(tp->curr->name, "g:w") || !strcmp(tp->curr->name, "n:w"))
+    {
+      gdl_prop_kv(tp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      if (gdl_lang_context->tag->scode != stc_SAC)
+	tp->curr->name = "n:w";
+    }
+  return ret;
 }
 
 /* _..._ -- TO DO */

@@ -784,7 +784,7 @@ gdl_new_word(Tree *ytp)
 	  /* Now l is the node where the g:w should attach */
 	  tree_curr(l);
 
-	  Node *wp = gdl_push(ytp, gdl_lang_context->tag->script == stc_SAC ? "g:w" : "n:w");
+	  Node *wp = gdl_push(ytp, gdl_lang_context->tag->scode == stc_SAC ? "g:w" : "n:w");
 	  wp->mloc = mloc_file_line(currgdlfile, gdllineno);
 
 	  /* By definition, the word-lang is the one in effect when the

@@ -355,6 +355,7 @@ gdlr_node_fnc grf(fncs)[128] =
     ['p'] = grf(p),
     ['q'] = grf(q),
     ['r'] = grf(r),
+    ['R'] = grf(r),
     ['s'] = grf(s),
     ['t'] = grf(t),
     ['v'] = grf(v),
