@@ -121,7 +121,7 @@ atf_line_lg(Mloc *mp)
       tree_curr(np->rent);
     }
   else
-    set_block_curr(B_LINE);
+    set_block_curr(mp, B_LINE);
 
   atf_push("lg", mp);
 

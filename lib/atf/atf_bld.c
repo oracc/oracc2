@@ -128,6 +128,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   gdl_legacy_lexer(0);
   gdl_set_lzr_sparse(NULL);
   line_id = 0; /* we say ++line_id when using this */
+  curr_block = NULL;
 }
 
 void
@@ -305,7 +306,7 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 	}
       else
 	{
-	  set_block_curr(B_LINE);
+	  set_block_curr(lp, B_LINE);
 	  np = atf_add("protocol", lp);
 	}
     }

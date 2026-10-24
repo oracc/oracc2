@@ -199,7 +199,7 @@ atf_dollar(Mloc l, char *rest)
 	      if (atfmp->llines)
 		atf_group_wrapup();
 
-	      set_block_curr(nonx_attach);
+	      set_block_curr(&l, nonx_attach);
 	      np = atf_add("nonx", &l);
 	    }
 

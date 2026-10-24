@@ -330,7 +330,6 @@ extern void register_label(const char *xid, const char *lab);
 
 extern int scan_primes(const char *s, const char **p);
 extern Node *ancestor_or_self_level(Node *np, Block_level b);
-extern void set_block_curr(Block_level b);
 extern void atf_comment(Mloc l, char *text);
 extern void atf_dollar(Mloc l, char *rest);
 
@@ -355,7 +354,7 @@ extern char *compute_fragid(const char *qualid, const char *hlid);
 extern void tlit_reinit_inline(void);
 extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id);
 
-extern void set_block_curr(Block_level b);
+extern void set_block_curr(Mloc *l, Block_level b);
 extern void atf_block_xid(void);
 
 extern void atf_save_lem(Node *np, const char *lemstr);

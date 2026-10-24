@@ -101,7 +101,7 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
      block_div handles that and does div/end div checking */
   if (bp->bt->type != B_DIVISION)
     {
-      set_block_curr(bp->bt->type);
+      set_block_curr(&l,bp->bt->type);
 
       if (bp->bt->type == B_MILESTONE
 	  /* no longer return Y_FRAGMENT, see atf.l:atf_block */
@@ -112,6 +112,7 @@ atf_bld_block(Mloc l, Blocktok *btp, char *rest)
       else
 	bp->np = atf_add(bp->bt->name, &l);
       bp->np->user = bp;
+      curr_block = bp;
     }
 
   atf_input(l, LT_BLOCK, bp);
@@ -676,7 +677,7 @@ ancestor_or_self_level(Node *np, Block_level b)
 
 /* Ensure that abt->curr is appropriate for attaching the new block */
 void
-set_block_curr(Block_level b)
+set_block_curr(Mloc *l, Block_level b)
 {
 
   if (EDOC_COMPOSITE == atfp->edoc || atfp->edoc == EDOC_SCORE)
@@ -822,10 +823,16 @@ set_block_curr(Block_level b)
 	      tree_curr(fp);
 	  }
 	  break;
+	case B_DISCOURSE:
+	  if (curr_block)
+	    tree_curr(curr_block->np->rent);
+	  else
+	    mesg_verr(l, "set_block_curr: B_DISCOURSE found as top-level block. Strange.");
+	  break;
 	default:
 	  /* other types may not need any reset of curr */
 	  phase = "atfblock";
-	  mesg_verr(abt->curr->mloc, "set_block_curr: reached default on value %d", b);
+	  mesg_verr(l, "set_block_curr: reached default on value %d", b);
 	  phase = NULL;
 	  break;
 	}	
