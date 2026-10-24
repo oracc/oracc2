@@ -224,10 +224,14 @@ gdl_balance_state(Mloc mlp, int tok, int state)
       /* for openers push the new opener on the stack */
       gdl_state_push((intptr_t)gstck_new(tok));
       gdl_state_pending = 1;
-      Lstck *lp = memo_new(mlstck);
-      lp->lang = gdl_lang_context;
-      lp->state = state;
-      stck_push(lang_stack, (intptr_t)lp);
+      if (CLP != tok)
+	{
+	  /* (...) inside |...| doesn't use lang_stack */
+	  Lstck *lp = memo_new(mlstck);
+	  lp->lang = gdl_lang_context;
+	  lp->state = state;
+	  stck_push(lang_stack, (intptr_t)lp);
+	}
     }
   return ret;
 }

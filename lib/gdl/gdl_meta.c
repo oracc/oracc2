@@ -257,6 +257,9 @@ gdl_state_c(Bracket_e bt)
       curr_sur_id = NULL;
       rs_no(gs_surro);
     }
+#if 0
+  fprintf(stderr, "gdl_state_c: returning %d\n", lp ? lp->state : 0);
+#endif
   return lp ? lp->state : 0;
 }
 
