@@ -98,7 +98,7 @@ axr_amp_line(struct axrinfo *rip, unsigned const char *p)
       while (b > (uccp)rip->input_buf && '\n' != b[-1])
 	--b;
       if (p == b
-	  || p - b == 1
+	  /*|| p - b == 1*/
 	  || (p - b == 2 && 0xfe == b[0] && 0xff == b[1])
 	  || (p - b == 3 && 0xef == b[0] && 0xbb == b[1] && 0xbf == b[2]))
 	return (char*)p;

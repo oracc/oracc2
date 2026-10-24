@@ -164,6 +164,7 @@ gdl_break_c(Bracket_e bt)
 	    np = np->rent;
 	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakStart", "1");
 	  bit_set(*lst,bp->oc);
+	  rs_no(bp->s);
 	  if (!gdl_no_xml_ids)
 	    {
 	      Prop *idp = prop_find_kv(np->props, "xml:id", NULL);

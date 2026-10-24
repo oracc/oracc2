@@ -255,16 +255,16 @@ atf_block(const char *scanned_at)
 
 	  if (last_fragp)
 	    {
-#if 1
 	      if (last_fragp->type != bp->type)
-	        mesg_verr(&atflloc, "text mixes @fragment at different levels (missing @column?)");
-#else
-	      if (last_fragp->type == B_OBJFRAG && bp->type == B_SRFFRAG)
-	        mesg_verr(&atflloc, "text mixes object-level and surface-level @fragment");
-#endif
+		  mesg_verr(&atflloc, "text mixes @fragment at different levels (last=%d!=curr=%d: missing @column?)", last_fragp->type, bp->type);
 	      else
-		bp = last_fragp;
+		{
+		    /*mesg_verr(&atflloc, "@fragment level == %d", bp->type);*/
+ 	 	  bp = last_fragp;
+		}
 	    }
+	  else
+	      /*mesg_verr(&atflloc, "@fragment level == %d", bp->type)*/;
 	  last_fragp = bp;
         }
       else

@@ -127,12 +127,12 @@ NOTEMARK	"^"[0-9]+"^"
 <Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv");
 			  cvq_reset(); }
 
-":"/[ \t\n\(]  		{ /*"*/ GIN=1; gsave; return PUNCT; }
+":"/[ \t\n\(\]]        	{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":."			{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":'"			{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":\""			{ /*"*/ GIN=1; gsave; return PUNCT; }
 "::"      		{ /*"*/ GIN=1; gsave; return PUNCT; }
-"/"/[ \t\n\(]		{ /*"*/ GIN=1; gsave; return PUNCT; }
+"/"/[ \t\n\(\]]		{ /*"*/ GIN=1; gsave; return PUNCT; }
 
 {L}			{ gsave; return LISTNUM; }
 
@@ -174,9 +174,10 @@ NOTEMARK	"^"[0-9]+"^"
 
 	/* Delimiters */
 
-"..."			{ GIN=0; gsave; return ELLIPSIS; }
-"--"			{ GIN=0; return ENHYPHEN; }
-[-+:.]     		{ GIN=0; return gdltext[0]; }
+<INITIAL,N>"..."       	{ GIN=0; gsave; return ELLIPSIS; }
+<INITIAL,N>"--"	       	{ GIN=0; return ENHYPHEN; }
+<INITIAL,N>-		{ GIN=0; return gdltext[0]; }
+[+:.]     		{ GIN=0; return gdltext[0]; }
 
 "/"/("|"|{G})	       	{ return '/'; } /* alternation */
 
@@ -229,12 +230,12 @@ NOTEMARK	"^"[0-9]+"^"
 	/* Grapheme meta flags, sometimes doubling as lex field shorthands */
 <INITIAL,C,Q,N>[!?]     { gdl_lex_flag((uccp)yytext); }
 <INITIAL,C,N>"*"       	{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
-<INITIAL,C>^[#"~=@^]	{ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
+<INITIAL,C,N>^[#"~=@^]	{ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "#"			{ if (SIN) { SIN=0;
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
 <C,N>"#"	       	{ gdl_lex_flag((uccp)yytext); }
-[:"~=@^]   		{ if (SIN) { SIN=0;
+<INITIAL,C,N>[:"~=@^]   { if (SIN) { SIN=0;
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
 <INITIAL,N>[#"=@^]/{G} 	{ if (gdl_lexical) {

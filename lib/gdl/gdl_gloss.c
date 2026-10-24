@@ -176,9 +176,14 @@ void
 gdl_surro(void)
 {
   /* last grapheme pointer must be non-null and tree->curr cannot be a
-     newly minted g:w/n:w (i.e., a g:w with no ->kids */
-  if (lgp && ((strcmp(lgp->tree->curr->name, "g:w")&&strcmp(lgp->tree->curr->name, "n:w"))
-	       || lgp->tree->curr->kids))
+   * newly minted g:w/n:w (i.e., a g:w with no ->kids;
+   *
+   * 2026-10-23: test for lgp=g:c now that g:c handling has changed
+   */
+  if (lgp
+      && strcmp(lgp->name, "g:c")
+      && ((strcmp(lgp->tree->curr->name, "g:w")&&strcmp(lgp->tree->curr->name, "n:w"))
+	  || lgp->tree->curr->kids))
     {
       if (!strcmp(lgp->name, "g:gg")
 	  || (strlen(lgp->name) == 3
