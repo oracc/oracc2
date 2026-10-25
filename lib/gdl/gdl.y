@@ -14,11 +14,6 @@ extern void yyerror(const char *);
 extern const char *gdltext, *currgdlfile;
 extern int gdllineno, gdltrace;
 
-#if 0
-extern gdlstate_t gst; 	/* global gdl state */
-extern Node *lgp;      	/* last grapheme node pointer */
-#endif
-
 extern Node *gdl_post_det_gp_attach;
 
 static Tree *ytp;
@@ -53,7 +48,7 @@ GDLLTYPE gdllloc;
 		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
 		L_uhs R_uhs L_lhs R_lhs LANG_FLIP
 		'{' DET_SEME DET_PHON '}'
-		PLUS_FLAG SPACE EOL END
+		PLUS_FLAG SPACE END
 
 		/* '*' '!' '?' '#' UFLAG1 UFLAG2 UFLAG3 UFLAG4 : now attached to lst in lexer */
 
@@ -91,6 +86,7 @@ cellspec:
 
 /* Field delim is ',' and FTYPE is !yn or the like; technically, !yn
    does not need a preceding comma with this grammar.*/
+
 field:
 		',' 		       	    		{ ynp = gdl_field(ytp,"default"); }
 	| 	FTYPE		       		    	{ ynp = gdl_field(ytp,$1); }

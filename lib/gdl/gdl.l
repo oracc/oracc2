@@ -9,8 +9,6 @@
 #include "gdl.h"
 #include "gdlstate.h"
 
-/* test */
-
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
 #define YY_USER_ACTION gdl_user_action();
@@ -278,106 +276,22 @@ _			                 { gdl_lang_flip(); }
 
 %%
 
-int
-gdl_lex_state(void)
+static void
+gdl_user_action(void)
 {
-  return YY_START;
+  if (gdlflextrace)
+    fprintf(stderr, "%s:%d: gdllex: YY_START=%d; text=::%s:: GIN=%d; CIN=%d; QIN=%d; SIN=%d\n",
+		  gdlfile, gdllineno, YY_START, gdltext, GIN, CIN, QIN, SIN);
+
+  gdllloc.file = currgdlfile;
+  gdllloc.line = gdllineno;
 }
 
-void
-gdl_lex_closers(void)
+static void
+gdl_l_lex_init(const char *file, int line)
 {
-  if (CIN)
-      mesg_vwarning(currgdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
-  else if (QIN)
-    mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv (discovered at end of line)");
-  GIN=CIN=QIN=0;
-  cvq_reset();
-}
-
-/* Public function to call with (0) arg at start of text and with (1)
-   arg when #atf: use legacy is encountered */
-void
-gdl_legacy_lexer(int legacy)
-{
-  if (legacy)
-    {
-      gdl_grapheme_type = gdl_grapheme_type_l;
-      gdl_delim = gdl_delim_l;
-      gdl_graph_node = gdl_graph_node_l;
-    }
-  else
-    {
-      gdl_grapheme_type = gdl_grapheme_type_s;
-      gdl_delim = gdl_delim_s;
-      gdl_graph_node = gdl_graph_node_s;
-    }
-}	
-
-/* Version of gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
-int
-gdl_grapheme_type_s(void)
-{
-  char *g = gdltext;
-  gsaveg(g);
-
-  if (strlen(g) == 1
-      && ('n' == *g || 'N' == *g))
-      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
-  else if (isdigit(*g))
-    {
-      char *d = g+1;
-      while (*d && isdigit(*d))
-        ++d;
-      if (*d == '(')
-        return NUMBER;
-      else if (!strncmp(g, "00", 2))
-	return ZERO;
-      else
-	return BARENUM;
-    }
-  else if (sll_is_signlist(g))
-    return LISTNUM;
-  else
-    return GRAPHEME;
-}
-
-/* Version of gdl_grapheme_type for use when atf: use legacy is set */
-int
-gdl_grapheme_type_l(void)
-{
-  char *l = gdltext;
-  char *g = (char*)gdl_unlegacy_str(&gdllloc, (uccp)l);
-  if (g)
-    {
-  gsaveg(g);
-
-  if (strcmp(g,l))
-    gdl_legacy_prop = (uccp)l;
-  if (strlen(g) == 1
-      && ('n' == *g || 'N' == *g))
-      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
-  else if (isdigit(*g))
-    {
-      char *d = g+1;
-      while (*d && isdigit(*d))
-        ++d;
-      if (*d == '(')
-        return NUMBER;
-      else if (!strncmp(g, "00", 2))
-	return ZERO;
-      else
-	return BARENUM;
-    }
-  else if (sll_is_signlist(g))
-    return LISTNUM;
-  else
-    return GRAPHEME;
-    }
-  else
-    {
-       return IGNORE;
-    }
+  currgdlfile = gdlfile = file;
+  gdllineno = line;
 }
 
 void
@@ -392,89 +306,4 @@ gdl_wrapup_buffer(void)
   gdl_delete_buffer(YY_CURRENT_BUFFER);
 }
 
-static void
-gdl_user_action(void)
-{
-  if (gdlflextrace)
-    fprintf(stderr, "%s:%d: gdllex: YY_START=%d; text=::%s:: GIN=%d; CIN=%d; QIN=%d; SIN=%d\n",
-		  gdlfile, gdllineno, YY_START, gdltext, GIN, CIN, QIN, SIN);
-
-#if 1
- /*  SIN=0; */
-#else
-  if (SIN)
-    {
-      BEGIN cvq_push(S);
-      SIN=0;
-    }
-  else
-    BEGIN cvq_pop();
-#endif
-
-  gdllloc.file = currgdlfile;
-  gdllloc.line = gdllineno;
-}
-
-void
-gdl_lex_init(const char *file, int line)
-{
-  CIN = GIN = QIN = 0;
-  cvq_top = -1;
-  currgdlfile = gdlfile = file;
-  gdllineno = line;
-}
-
-void
-gdl_decr_qin(void)
-{
-  if (--QIN < 0)
-    { /* underflow condition */
-      QIN = 0;
-      BEGIN 0;
-    }
-  else
-    {
-      BEGIN cvq_pop();
-    }
-  if (gdlflextrace)
-    fprintf(stderr, "gdl_decr_qin: QIN=%d; new state=%d\n", QIN, YY_START);
-}
-
-void
-gdl_incr_qin(void)
-{
-  ++QIN;
-  BEGIN cvq_push(Q);
-  if (gdlflextrace)
-    fprintf(stderr, "gdl_incr_qin: QIN=%d; new state=%d\n", QIN, YY_START);
-}
-
-int
-cvq_push(int s)
-{
-  if (++cvq_top < CVQ_MAX)
-    {
-      cvq_stack[cvq_top] = YY_START;
-      return s;
-    }
-  else
-    fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", currgdlfile, gdllineno, CVQ_MAX);
-  return 0;
-}
-
-int
-cvq_pop(void)
-{
-  if (cvq_top >= 0)
-    return cvq_stack[cvq_top--];
-  else
-    fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", currgdlfile, gdllineno);
-   return 0;
-}
-
-void
-cvq_reset(void)
-{
-  cvq_top = -1;
-  BEGIN 0;
-}
+#include "gdl-l-funcs.c"

@@ -29,13 +29,6 @@ atfyacc(void)
   
   atf_set_tree(tp);
 
-#if 0
-  if (m)
-    atf_lex_init(m->file, m->line);
-  else
-    atf_lex_init("<string>", 1);
-#endif
-
   atfparse();
 
   last_atflineno = atflineno;

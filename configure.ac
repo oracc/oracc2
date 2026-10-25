@@ -58,6 +58,7 @@ AC_CONFIG_FILES([Makefile
                  lib/Makefile
                  lib/asl/Makefile
                  lib/atf/Makefile
+                 lib/atfgdl/Makefile
                  lib/cat/Makefile
                  lib/cbd/Makefile
                  lib/chr/Makefile

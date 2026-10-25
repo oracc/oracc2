@@ -23,7 +23,6 @@ const char *curr_use_str;
 #define ATFLTYPE Mloc
 #define yylineno atflineno
 ATFLTYPE atflloc;
-
 %}
 
 %union { char *text; int i; Blocktok *b; }
@@ -60,9 +59,9 @@ ATFLTYPE atflloc;
 %nterm <text>   	pqx name longtext
 
 %nterm <i> 		sparse stype atfuse link_type
-			line l_link note bib etcsl.line proto.comment
+			atf.line l_link note bib etcsl.line proto.comment
 			heading heading_tok tr.inter
-			milestone comment dollar
+			milestone atf.comment dollar
 			
 %nterm <b>		object object_tok
 			surface surface_tok
@@ -80,13 +79,13 @@ atfs:		atf
 	|	atfs atf
 	;
 
-atf:		transliteration { atf_tlit_wrapup(); }
+atf:		atf.transliteration { atf_tlit_wrapup(); }
 	|	composite 	{ atf_tlit_wrapup(); }
 	|	score 		{ atf_tlit_wrapup(); }
 	|	translation	{ atf_tlat_wrapup(); }
 	;
 
-transliteration:
+atf.transliteration:
 		amp preamble { atf_wrapup(WH_PREAMBLE); }
 	| 	amp preamble { atf_wrapup(WH_PREAMBLE); } tblocks
 		;
@@ -173,7 +172,7 @@ proto.comment:
 		PRO_COMMENT longtext	{ $$=$1; atf_bld_protocol(@1, PROT_COMMENT, longtext_get()); }
 		;
 
-comment:
+atf.comment:
 		COMMENT longtext	{ atf_comment(@1, longtext_get()); }
 		;
 
@@ -223,24 +222,24 @@ tblocks:	tblock
 	|	tblocks tblock
 	;
 
-
 tblock: 	object
 	|	surface
 	|	column
 	|	milestone
 	|	heading
-	|	line
+	|	atf.line
 		;
 		
 cblocks:	cblock
 	|	cblocks cblock
+		;
 
 cblock: 	division
 	|	vdivision
 	|	milestone
 	|	heading
-	|	line
-	|	error line { mesg_print(stderr); mesg_init();
+	|	atf.line
+	|	error atf.line { mesg_print(stderr); mesg_init();
 		    /* fprintf(stderr, "skipping to next line\n"); */
 		    yyclearin; yyerrok; }
 	;
@@ -276,7 +275,8 @@ heading:	heading_tok longtext { atf_bld_heading(@1, $1, longtext_get()); }
  * or repetition of line types--that has to be handled by validating
  * as we build
  */
-line:
+
+atf.line:
 		MTS longtext		{ $$=$1; line_mts(@1, (ucp)longtext_get()); }
 	| 	NTS longtext		{ $$=$1; line_nts(@1, (ucp)longtext_get()); } /* MTS prereq; singleton */
 	| 	LGS longtext		{ $$=$1; line_lgs(@1, (ucp)longtext_get()); } /* MTS prereq; singleton */
@@ -292,7 +292,7 @@ line:
 		/* bib, comment, and note are attached to line group
 		   if there is one or at the current block level */
 	| 	bib
-	|	comment
+	|	atf.comment
 	| 	note
 		/* dollar is attached to line group unless it parses with a
 		   column/surface/object scope in which case it ends any
