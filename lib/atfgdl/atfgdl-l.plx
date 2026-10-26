@@ -16,6 +16,9 @@ my @defs = ();
 my @starts = ();
 my @pat = ();
 
+my $saw_MTS = 0;
+my $saw_EXX = 0;
+
 my $afh;
 my $gfh;
 
@@ -37,7 +40,7 @@ print @starts;
 
 print "\n%%\n";
 
-while (<$afh>) { last if /ATFGDL STOPS HERE/; print fix($_); }
+while (<$afh>) { last if /ATFGDL STOPS HERE/; my $f = fix($_); print $f if $f }
 while (<$gfh>) { last if /^%%/; print fix($_); }
 
 print "\n%%\n";
@@ -61,13 +64,34 @@ sub fix {
     $t =~ s/(?:atf|gdl)_scan_buffer/ag_scan_buffer/g;
     $t =~ s/(?:atf|gdl)set_lineno/agset_lineno/g;
     $t =~ s/(?:atf|gdl)text/agtext/g;
+    if (/return (?:BIL|EXX|MTS|VAR)/) {
+	if (/MTS/) {
+	    if (!$saw_MTS++) {
+		$t =~ s/\\\./\\.\//;
+		$t =~ s/t\]/t\\n\\r]/;
+	    } else {
+		$t = undef;
+	    }
+	} elsif (/EXX/) {
+	    if (!$saw_EXX++) {
+		$t =~ s/:\[/:\/\[/;
+		$t =~ s/\]\+(\s)/\\n\\r]+$1/;
+	    } else {
+		$t = undef;
+	    }
+	}
+	$t =~ s/BEGIN s_T; longinit/BEGIN ag_line_save(agtext)/
+			       if $t;
+
+    }
     $t;
 }
 
 sub fix_and_print {
     open(F,$_[0]) || die;
     while (<F>) {
-	print fix($_);
+	my $f = fix($_);
+	print $f if $f;
     }
     close(F);    
 }

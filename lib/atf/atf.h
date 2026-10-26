@@ -333,12 +333,33 @@ extern Node *ancestor_or_self_level(Node *np, Block_level b);
 extern void atf_comment(Mloc l, char *text);
 extern void atf_dollar(Mloc l, char *rest);
 
+extern const char *clid;
+extern int exemplar_offset;
+extern int bil_offset;
+extern Hash *last_tlit_h_hash;
+extern struct node **last_tlit_h;
+extern int lth_used;
+extern int last_tlit_h_decay;
+extern Line *curr_line, *curr_lem_host;
+extern int line_lines;
+extern unsigned const char *lnstr(Mloc *mp, int number,int primes);
+extern unsigned char *map_uscore(const unsigned char *vbar);
+
+extern int lg_mode;
+extern int mylines;
+extern Pool *etcsl_pool;
+extern Hash *etcsl_labels;
+extern const char *etcsl_lid;
+
+#ifndef ATFGDL
 extern void line_mts(Mloc l, unsigned char *lp);
 extern void line_bil(Mloc l, unsigned char *lp);
 extern void line_gus(Mloc l, unsigned char *lp);
 extern void line_nts(Mloc l, unsigned char *lp);
 extern void line_lgs(Mloc l, unsigned char *lp);
 extern void line_var(Mloc l, unsigned char *lp);
+#endif
+
 extern void tr_inter(Mloc l, unsigned char *lp);
 extern void line_lem(Mloc l, unsigned char *lp);
 extern void line_note(Mloc l, const char *ltext);
@@ -351,7 +372,9 @@ extern void atf_tlit_wrapup(void);
 
 extern char *compute_fragid(const char *qualid, const char *hlid);
 
+#if 0
 extern void tlit_reinit_inline(void);
+#endif
 extern void tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id);
 
 extern void set_block_curr(Mloc *l, Block_level b);

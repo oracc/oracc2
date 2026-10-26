@@ -76,6 +76,7 @@ sub atfgdl_header {
 #include <gdl.h>
 #include <gdlstate.h>
 #include <atf.h>
+#include "ag.h"
 extern const char *agtext, *curragfile;
 extern int aglineno, agtrace;
 extern int gdl_unicode, gdl_lexical;
@@ -103,6 +104,8 @@ int gdl_legacy = 0;
 int gdl_lexical = 0;
 int gdl_unicode = 0;
 
+#define alo(xxx) ag_line_o_##xxx
+#define alc(xxx) ag_line_c_##xxx
 %}
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
@@ -116,7 +119,7 @@ sub atfgdl_middle {
 
 %%
 
-atfgdl: atfs | line
+atfgdl: atfs | gdl.line
 
 EOF
 }
@@ -134,6 +137,15 @@ sub get_par {
     while ($i <= $#x) {
 	$x[$i] =~ s/\sTEXT\s/ / if $rem_TEXT;
 	$x[$i] =~ s/(?:atf|gdl)lval/aglval/g;
+	if ($x[$i] =~ /(MTS|NTS|LGS|GUS|BIL|EXX|VAR) longtext/) {
+	    my $base = "$1";
+	    my $lbase = "\L$base";
+	    $lbase = 'var' if $lbase eq 'exx';
+	    $x[$i] =~ s/\slongtext\s+/ {alo($lbase)(@1);} gdl.line /;
+	    $x[$i] =~ s/, \(ucp\)longtext_get\(\)//;
+	    $x[$i] =~ s/line_${base}/alc($lbase)/;
+	    $x[$i] =~ s/; line_${lbase}/; alc($lbase)/;
+	}
 	push @p, $x[$i];
 	last if !defined($x[$i+1]) || $x[$i+1] =~ /^\s*$/;
 	++$i;

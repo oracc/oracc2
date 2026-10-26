@@ -49,6 +49,8 @@ int g_literal_flag = 0, g_logoforce_flag = 0;
 
 static gdl_grapheme_type_p gdl_grapheme_type;
 
+extern Pool *ag_hpool;
+
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
 static int gdl_grapheme_type_l(void);
@@ -71,6 +73,12 @@ static int cvq_top = -1;
 static int cvq_pop(void);
 static int cvq_push(int);
 static void cvq_reset(void);
+
+#if 0
+static int ag_gdl_init(void);
+#endif
+
+static int ag_line_save(const char *t);
 %}
 PQX	([PQX][0-9]{6})
 BOM3	("\xef\xbb\xbf")
@@ -222,15 +230,13 @@ NOTEMARK	"^"[0-9]+"^"
 
 ^{LK_VBAR}  			{ BEGIN s_T; longinit; return LNK_VBAR; }
 
-^[^ #@$\t\n\r]+\.[ \t]+        	{ BEGIN s_T; longinit; return MTS; }
+^[^ #@$\t\n\r]+\./[ \t\n\r]+        	{ BEGIN ag_line_save(agtext); return MTS; }
 
-^[^ #@$\t\n\r]+\./[\n\r]   	{ BEGIN s_T; longinit; return MTS; }
 
-^[^ #@$\t\n\r]+:[ \t]+        	{ BEGIN s_T; longinit; return EXX; }
+^[^ #@$\t\n\r]+:/[ \t\n\r]+        	{ BEGIN ag_line_save(agtext); return EXX; }
 
-^[^ #@$\t\n\r]+:/[\n\r]        	{ BEGIN s_T; longinit; return EXX; }
 
-^:[^:#@$]+:[ \t]+	       	{ BEGIN s_T; longinit; return VAR; }
+^:[^:#@$]+:[ \t]+	       	{ BEGIN ag_line_save(agtext); return VAR; }
 
 ^== 				{ BEGIN s_T; atfsave; return BIL; }
 
@@ -462,6 +468,23 @@ ag_l_lex_init(const char *file, int line)
   curragfile = agfile = file;
   aglineno = line;
 }
+
+static int
+ag_line_save(const char *t)
+{
+  extern const char *curr_line_tok;
+  curr_line_tok = (ccp)hpool_copy((uccp)t, ag_hpool);
+  return 0;
+}
+
+#if 0
+static int
+ag_gdl_init(void)
+{
+  gdl_new_word(gdl_get_tree());
+  return 0;
+}
+#endif
 static Blocktok *last_bp = NULL;
 static Blocktok *last_fragp = NULL;
 void

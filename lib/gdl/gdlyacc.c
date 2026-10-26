@@ -356,6 +356,22 @@ gdl_rem_nonw(List *wds)
 }
 
 Tree *
+gdlparse_atfgdl(Mloc *m, Tree *atftp, Node *rootnode)
+{
+  Tree *tp = tree_init_mem(atftp->tm);
+#if 1
+  tp->root = tp->curr = rootnode;
+#else
+  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
+#endif
+  gdl_group_attach = lgp = NULL;
+  wd_list = list_create(LIST_SINGLE);
+  gdl_lex_init(m->file, m->line);
+  gdl_set_tree(tp);
+  return tp;
+}
+
+Tree *
 gdlparse_string(Mloc *m, char *s)
 {
   Tree *tp = tree_init();

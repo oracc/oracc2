@@ -60,13 +60,16 @@ GDLLTYPE gdllloc;
 		grapheme scgrapheme compound simplexg valuqual
 		glosso glossc
 
-%start line
+%start gdl.line
 
 %%
 
-line:
+gdl.line: lineparts
+	;
+
+lineparts:
 		linepart
-	|	line linepart
+	|	lineparts linepart
 		;
 
 linepart:	cell

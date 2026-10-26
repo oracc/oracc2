@@ -9,6 +9,7 @@
 #include <gdl.h>
 #include <gdlstate.h>
 #include <atf.h>
+#include "ag.h"
 extern const char *agtext, *curragfile;
 extern int aglineno, agtrace;
 extern int gdl_unicode, gdl_lexical;
@@ -36,6 +37,8 @@ int gdl_legacy = 0;
 int gdl_lexical = 0;
 int gdl_unicode = 0;
 
+#define alo(xxx) ag_line_o_##xxx
+#define alc(xxx) ag_line_c_##xxx
 %}
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
@@ -88,18 +91,6 @@ int gdl_unicode = 0;
 		'{' DET_SEME DET_PHON '}'
 		PLUS_FLAG SPACE END
 
-%nterm	<i>		sparse stype atfuse link_type
-		atf.line l_link note bib etcsl.line proto.comment
-		heading heading_tok tr.inter
-		milestone atf.comment dollar
-
-%nterm	<text>		pqx name longtext
-		field lexfld cmods
-
-%nterm	<node>		detgloss det gloss
-		grapheme scgrapheme compound simplexg valuqual
-		glosso glossc
-
 %nterm	<b>		object object_tok
 		surface surface_tok
 		column column_tok
@@ -108,11 +99,23 @@ int gdl_unicode = 0;
 		bdivision edivision vdivision
 		div_tok end_tok var_tok
 
+%nterm	<node>		detgloss det gloss
+		grapheme scgrapheme compound simplexg valuqual
+		glosso glossc
+
+%nterm	<text>		pqx name longtext
+		field lexfld cmods
+
+%nterm	<i>		sparse stype atfuse link_type
+		atf.line l_link note bib etcsl.line proto.comment
+		heading heading_tok tr.inter
+		milestone atf.comment dollar
+
 %start atfgdl
 
 %%
 
-atfgdl: atfs | line
+atfgdl: atfs | gdl.line
 
 atfs:		atf
 	|	atfs atf
@@ -311,13 +314,13 @@ heading:	heading_tok longtext { atf_bld_heading(@1, $1, longtext_get()); }
 	;
 
 atf.line:
-		MTS longtext		{ $$=$1; line_mts(@1, (ucp)longtext_get()); }
-	| 	NTS longtext		{ $$=$1; line_nts(@1, (ucp)longtext_get()); } /* MTS prereq; singleton */
-	| 	LGS longtext		{ $$=$1; line_lgs(@1, (ucp)longtext_get()); } /* MTS prereq; singleton */
-	| 	GUS longtext		{ $$=$1; line_gus(@1, (ucp)longtext_get()); } /* MTS prereq; singleton */
-	| 	BIL longtext		{ $$=$1; line_bil(@1, (ucp)longtext_get()); } /* MTS prereq */
-	| 	EXX longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
-	| 	VAR longtext		{ $$=$1; line_var(@1, (ucp)longtext_get()); } /* MTS prereq */
+		MTS {alo(mts)(@1);} gdl.line { $$=$1; alc(mts)(@1); }
+	| 	NTS {alo(nts)(@1);} gdl.line { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
+	| 	LGS {alo(lgs)(@1);} gdl.line { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
+	| 	GUS {alo(gus)(@1);} gdl.line { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
+	| 	BIL {alo(bil)(@1);} gdl.line { $$=$1; alc(bil)(@1); } /* MTS prereq */
+	| 	EXX {alo(var)(@1);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
+	| 	VAR {alo(var)(@1);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
 		/* l_link, etcsl.line, and tr.inter all require a line group */
 	|	l_link longtext		{ $$=$1; atf_bld_protocol(@1, PROT_LINK, longtext_get()); }
@@ -470,9 +473,12 @@ longtext:
         | 	longtext TAB		{ $$ = longtext(atfmp->pool, $1, $2); }
 		;
 
-line:
+gdl.line: lineparts
+	;
+
+lineparts:
 		linepart
-	|	line linepart
+	|	lineparts linepart
 		;
 
 linepart:	cell

@@ -18,16 +18,16 @@ extern int atfflextrace;
 List *curr_words;
 struct lang_context *line_lang = NULL;
 
+#if 0
 void
 tlit_reinit_inline(void)
 {
-#if 0
   /* not sure what reinit will look like with the lib/atf implementation */
   mutex_state = square_bracket = notoken;
   g_reinit();
   in_g_surro = w_sparse_lem = 0;
-#endif
 }
+#endif
 
 void
 tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id)
@@ -48,10 +48,6 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
   Tree *tp = gdlparse_string(np->mloc, (char*)s);
   tree_graft(np, tp);
   curr_line->wl = gdl_get_word_list();
-#if 0
-  np->user = np->kids;
-  np->utype = N_U_NODE;
-#endif
   gdlparse_reset();
   if (atfflextrace)
     fprintf(stderr, "tlit_parse_inline: end: %s\n", s);

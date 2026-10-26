@@ -190,6 +190,7 @@ extern Tree*gdl_literal(Mloc *m, char *s);
 extern void gdl_prefix(Tree *ytp, unsigned const char *p);
 extern void gdl_setup_buffer(char *buf);
 extern void gdl_set_tree(Tree *tp);
+extern Tree *gdlparse_atfgdl(Mloc *m, Tree *atftp, Node *rootnode);
 extern Tree *gdlparse_string(Mloc *m, char *s);
 extern void gdlparse_init(void);
 extern void gdlparse_reset(void);

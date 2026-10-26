@@ -3,21 +3,17 @@
 #include <lng.h>
 #include "atf.h"
 #include "atf_bld.h"
+#include "atf_line.h"
 #include "otf-defs.h"
 #include "symbolattr.h"
 #include "etcsl.h"
 #include "linenums.c"
 
 int already_lemmed = 0;
-static int lg_mode = 0;
 int atf_cell_count = 0;
 int line_trace = 0;
-int mylines = 1;
 int suppress_lem = 0;
 
-Pool *etcsl_pool = NULL;
-Hash *etcsl_labels = NULL;
-const char *etcsl_lid = NULL;
 int lnum_labels;
 
 Hash *vreg;
@@ -26,27 +22,6 @@ Hash *vreg;
 struct lang_context *curr_lang_ctxt;
 struct lang_context *text_lang;
 #endif
-
-const char *clid; /* current line ID */
-
-/* offset used in calculation of word-ids.  In main text word-ids
-   add 1..n; in exemplar 1 they add 1001 .. n+1000; in exemplar 2
-   they add 2001 .. n+2000, etc. */
-int exemplar_offset = 0;
-int bil_offset = 0;
-
-Hash *last_tlit_h_hash = NULL;
-struct node **last_tlit_h = NULL;
-/*static int lth_alloced = 0;*/
-int lth_used = 0;
-int last_tlit_h_decay = 0;
-
-Line *curr_line, *curr_lem_host;
-
-static int line_lines = 0;
-
-static unsigned const char *lnstr(Mloc *mp, int number,int primes);
-static unsigned char *map_uscore(const unsigned char *vbar);
 
 void
 atf_group_wrapup(void)
@@ -137,18 +112,12 @@ line_register(Mloc l, Linet lt, Node *np, unsigned char *lp)
   if (line_trace)
     atf_lex_line_trace(&l);
 
+#ifndef ATFGDL
   atf_input(l, lt, lp);
+#endif
+
   if (!atfmp->llines)
     {
-#if 0
-      /* 2026-07-14 new lg approach makes #bib:, #etcsl:, #note:
-       * external to lg and only groups line-type and #lem:. Subject
-       * to further review.
-       *
-       * 2026-07-28 try again ...
-       */
-      atfmp->llines = list_create(LIST_SINGLE);
-#else
       if (lt == LINE_MTS)
 	atfmp->llines = list_create(LIST_SINGLE);
       else
@@ -156,7 +125,6 @@ line_register(Mloc l, Linet lt, Node *np, unsigned char *lp)
 	  mesg_verr(&l, "out of place line\n");
 	  return;
 	}
-#endif
     }
 
   curr_line = memo_new(atfmp->mlines);
@@ -174,21 +142,30 @@ line_mts(Mloc l, unsigned char *lp)
      necessary */
   atf_line_lg(&l);
 
+#if 1
+  atf_line_node(LINE_MTS);
+#else
   struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
-  
   line_register(l, LINE_MTS, lnode, lp);
+#endif
+
+#if 1
+  atf_line_host();
+#else
   if (curr_lem_host && curr_lem_host->wl)
     {
       list_free(curr_lem_host->wl, NULL);
       curr_lem_host->wl = NULL;
     }
   curr_lem_host = curr_line;
+#endif
 
-  const char *label;
+#ifndef ATFGDL
   unsigned char *tok = lp;
   unsigned char *end = lp+xxstrlen(lp);
   unsigned char *s = lp;
+#endif
 
   ++lninfo.lineno;
 
@@ -197,6 +174,7 @@ line_mts(Mloc l, unsigned char *lp)
   curr_lang_ctxt = text_lang;
   /*protocol_state = s_intra;*/
 
+#ifndef ATFGDL
   while (*s && !isspace(*s))
     ++s;
   if (s[-1] != '.')
@@ -210,7 +188,12 @@ line_mts(Mloc l, unsigned char *lp)
       mesg_verr(&l, "empty line number");
     }
   s[-1] = '\0';
+#endif
 
+
+#if 1
+  atf_line_id()
+#else
   sprintf(line_id_insertp,"%d", ++line_id);
 
   /* In lg_mode the line group carries the ID that is used for word ID bases--the code here
@@ -251,10 +234,15 @@ line_mts(Mloc l, unsigned char *lp)
     }
   else
     atf_xprop(lnode, "n", (ccp)pool_copy((uccp)tok, atfmp->pool));
-  
+#endif
+
+#if 1
+  atf_line_label();
+#else
   curr_line_label = line_label(lnode->mloc,tok,0,(unsigned const char *)clid);
   if (curr_line_label)
     {
+      const char *label;
       atf_xprop(lnode, "label", (label = (ccp)pool_copy((uccp)curr_line_label, atfmp->pool)));
       list_add(atfmp->label_xmlid, keva_create(tm_keva(abt), label, clid));
       extern char *label2;
@@ -262,9 +250,11 @@ line_mts(Mloc l, unsigned char *lp)
 	atf_xprop(lnode, "label2", (ccp)pool_copy((uccp)label2, atfmp->pool));
 
       register_label(clid,label);
-      /*free((char*)curr_line_label);*//* lib/atf uses pool not strdup */
       curr_line_label = ucc(label);
     }
+#endif
+
+#ifndef ATFGDL
   /*appendChild(current,lnode);*/
   while (*s && isspace(*s))
     ++s;
@@ -284,15 +274,18 @@ line_mts(Mloc l, unsigned char *lp)
 	  *end = '\0';
 	  gdl_cell_count = 0;
 	  tlit_parse_inline(lnode,(ccp)s,1,uc(line_id_buf));
-	  curr_words = curr_line->wl = gdl_get_word_list();
+	  curr_words = curr_line->wl;
 	  /* gdl_cell_count is the number of times gdl_cell was
 	     called, i.e., one less than the number of columns */
 	  if (gdl_cell_count > atf_cell_count)
 	    atf_cell_count = gdl_cell_count;
 	}
     }
+#endif
+#if 0
   else
     tlit_reinit_inline();
+#endif
 }
 
 void
@@ -300,8 +293,8 @@ line_bil(Mloc l, unsigned char *lp)
 {
   struct node *lnode = atf_node("l", &l);
   lnode->mloc = mloc_mloc(&l);
-
   line_register(l, LINE_BIL, lnode, lp);
+
   if (curr_lem_host && curr_lem_host->wl)
     {
       list_free(curr_lem_host->wl, NULL);
@@ -611,50 +604,6 @@ line_lem(Mloc ml, unsigned char *l)
       curr_lem_host = NULL;
     }
   list_free(llem, NULL);
-}
-
-/*FIXME: test the array bounds and generate strings dynamically if 
-  the line numbers are out of range */
-static unsigned const char *
-lnstr(Mloc *mp, int number,int primes)
-{
-  if (primes)
-    {
-      if (primes > 4)
-	{
-	  mesg_verr(mp, "%d is too many primes: restructure using @fragment\n", primes);
-	  return ucc("");
-	}
-      else if (number > 500)
-	{
-	  mesg_verr(mp, "%d is too big!",number);
-	  return ucc("");
-	}
-      else
-	return ucc(lnstrsp[primes-1][number]);
-    }
-  else
-    {
-      if (number > 4999)
-	{
-	  /* mesg_verr(&l, "%d is too big!",number); */
-	  char buf[10];
-	  sprintf(buf,"%d",number);
-	  return pool_copy((unsigned char*)buf, atfmp->pool);
-	}
-      else
-	return ucc(lnstrs[number]);
-    }
-}
-
-static unsigned char *
-map_uscore(const unsigned char *vbar)
-{
-  unsigned char *tmp = pool_copy(vbar, atfmp->pool), *s;
-  for (s = tmp; *s; ++s)
-    if (*s == '_')
-      *s = ' ';
-  return tmp;
 }
 
 void

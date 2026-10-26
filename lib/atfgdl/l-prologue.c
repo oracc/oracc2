@@ -45,6 +45,8 @@ int g_literal_flag = 0, g_logoforce_flag = 0;
 
 static gdl_grapheme_type_p gdl_grapheme_type;
 
+extern Pool *ag_hpool;
+
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
 static int gdl_grapheme_type_l(void);
@@ -67,3 +69,9 @@ static int cvq_top = -1;
 static int cvq_pop(void);
 static int cvq_push(int);
 static void cvq_reset(void);
+
+#if 0
+static int ag_gdl_init(void);
+#endif
+
+static int ag_line_save(const char *t);

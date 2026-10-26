@@ -41,10 +41,20 @@ tree_init(void)
   return tp;
 }
 
+Tree *
+tree_init_mem(Treemem *tmp)
+{
+  Tree *tp = calloc(1, sizeof(Tree));
+  tp->tm = tmp;
+  tp->memless = 1;
+  return tp;
+}
+
 void
 tree_term(Tree *tp)
 {
-  tmem_term(tp->tm);
+  if (!tp->memless)
+    tmem_term(tp->tm);
   free(tp);
 }
 

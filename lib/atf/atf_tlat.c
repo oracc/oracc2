@@ -16,7 +16,6 @@ static int multi_trans_line;
 static char trans_p_idbuf[128];
 static int trans_wid;
 static Prop *p;
-static Hash *last_tlit_h_hash = NULL;
 int max_trans_cols = 1;
 int need_alignment = 1;
 int nocellspan = 0;
@@ -40,8 +39,10 @@ static int need_dir_rtl = 0;
 static char *tr_id_buf = NULL;
 
 static struct node **last_trans_h = NULL, *last_p, *curr_block_np;
-static int lth_alloced = 0;
-static int lth_used = 0;
+
+static Hash *tlat_last_tlit_h_hash = NULL;
+static int tlat_lth_alloced = 0;
+static int tlat_lth_used = 0;
 
 static void h_arefs(const unsigned char *aref);
 static void se_label(struct node *np, const char *n, const char *l);
@@ -387,12 +388,12 @@ atr_hdr(Mloc l, const char *h, unsigned char *s)
   tree_curr(curr_trans->tree->root);
   curr_block_np = atr_push(h, &l);
   ctr(curr_block_np);
-  if (lth_used == lth_alloced)
+  if (tlat_lth_used == tlat_lth_alloced)
     {
-      lth_alloced += 8;
-      last_trans_h = realloc(last_trans_h, lth_alloced * sizeof(struct node *));
+      tlat_lth_alloced += 8;
+      last_trans_h = realloc(last_trans_h, tlat_lth_alloced * sizeof(struct node *));
     }
-  last_trans_h[lth_used++] = curr_block_np;
+  last_trans_h[tlat_lth_used++] = curr_block_np;
   sprintf(trans_p_idbuf,"%s.%d",trans_id_base,next_trans_p_id++);
   nocellspan = 1;
   atr_para();
@@ -744,7 +745,7 @@ static void
 h_arefs(const unsigned char *aref)
 {
   int i;
-  for (i = 0; i < lth_used; ++i)
+  for (i = 0; i < tlat_lth_used; ++i)
     {
       const unsigned char *tlit_h = nth_tlit_hdr(aref,i);
       if (tlit_h)
@@ -752,16 +753,16 @@ h_arefs(const unsigned char *aref)
       else
 	atf_xprop(last_trans_h[i],"xtr:ref",(ccp)aref);
     }
-  lth_used = 0;
+  tlat_lth_used = 0;
 }
 
 static const unsigned char *
 nth_tlit_hdr(const unsigned char *id, int nth)
 {
   struct node **tmp_tlit_h = NULL;
-  if (id && last_tlit_h_hash)
+  if (id && tlat_last_tlit_h_hash)
     {
-      tmp_tlit_h = hash_find(last_tlit_h_hash, id);
+      tmp_tlit_h = hash_find(tlat_last_tlit_h_hash, id);
       if (tmp_tlit_h)
 	{
 	  int i;
