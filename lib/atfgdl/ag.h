@@ -3,6 +3,13 @@
 
 extern const char *curr_line_text;
 
+extern void ag_wrapup_buffer(void);
+extern ssize_t ag_get_lineno(void);
+extern void ag_set_lineno(ssize_t n);
+extern void ag_set_file(const char *f);
+extern char* ag_set_file_line(char *f, ssize_t *n);
+extern Tree *ag_read_atf(char *atf, size_t len);
+
 extern void ag_line_o_mts(Mloc l);
 extern void ag_line_o_nts(Mloc l);
 extern void ag_line_o_gus(Mloc l);
@@ -17,4 +24,3 @@ extern void ag_line_c_bil(Mloc l);
 extern void ag_line_c_lgs(Mloc l);
 
 #endif/*AG_H_*/
-

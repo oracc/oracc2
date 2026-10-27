@@ -8,6 +8,7 @@
 #include <atf.h>
 #include <gdl.h>
 #include <gdlstate.h>
+#include "ag.h"
 
 #define AGLTYPE Mloc
 #include "ag.tab.h"
@@ -25,7 +26,7 @@ static char *xs;
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 #define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);aglval.text=atfpool(xs);free(xs);s=xs=NULL
 
-static int atf_block(const char *atcmd);
+static int ag_block(const char *atcmd);
 static void ag_user_action(void);
 
 #define atfsave aglval.text=atfpool(agtext)
@@ -47,14 +48,14 @@ extern int gdl_lexfld[];
 extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 int g_literal_flag = 0, g_logoforce_flag = 0;
 
-static gdl_grapheme_type_p gdl_grapheme_type;
+static gdl_grapheme_type_p ag_gdl_grapheme_type;
 
 extern Pool *ag_hpool;
 
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
-static int gdl_grapheme_type_l(void);
-static int gdl_grapheme_type_s(void);
+static int ag_gdl_grapheme_type_l(void);
+static int ag_gdl_grapheme_type_s(void);
 static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
 static int GIN = 0; /* 1 if in grapheme */
 static int QIN = 0; /* non-zero if in a(BA) qualifier */
@@ -159,8 +160,8 @@ NOTEMARK	"^"[0-9]+"^"
 				  int ret=(s_next==s_TRD?TR_PROJ:WORD); s_next=0; atfsave; return ret; }
 <s_WORD>[ \t]+	       		{ ; }
 
-^"@composite"			{ (void)atf_block(agtext); return COMPOSITE; }
-^"@score"		       	{ BEGIN s_SCO; (void)atf_block(agtext); return SCORE; }
+^"@composite"			{ (void)ag_block(agtext); return COMPOSITE; }
+^"@score"		       	{ BEGIN s_SCO; (void)ag_block(agtext); return SCORE; }
 <s_SCO>"matrix"			{ return MATRIX; }
 <s_SCO>"synoptic"	       	{ return SYNOPTIC; }
 <s_SCO>"parsed"			{ return PARSED; }
@@ -214,7 +215,7 @@ NOTEMARK	"^"[0-9]+"^"
 <s_LZR>"stop"			{ BEGIN s_WORD; return LZR_SPARSE; }
 <s_LZR>[\n\r]	       		{ BEGIN 0; }
 
-^@([a-z][a-z0-9]*) 		{ BEGIN s_T; return atf_block(agtext); }
+^@([a-z][a-z0-9]*) 		{ BEGIN s_T; return ag_block(agtext); }
 
 ^"$"  				{ BEGIN s_T; atfsave; return DOLLAR; }
 
@@ -263,9 +264,9 @@ NOTEMARK	"^"[0-9]+"^"
 [=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(currgdlfile,aglineno,
 						"non-Unicode accent codes %s",agtext); }}
 
-{G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(); }
-{G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
-{GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(); }
+{G}({G}|{B})*{G}	{ GIN=1; return ag_gdl_grapheme_type(); }
+{G}({G}|{B})*/{M}	{ GIN=1; return ag_gdl_grapheme_type(); }
+{GRAPHEME} 		{ GIN=1; return ag_gdl_grapheme_type(); }
 
 "|"/[ \t]	       	{ /*"*/ aglval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
@@ -274,9 +275,9 @@ NOTEMARK	"^"[0-9]+"^"
 <C>"\xe2\x88\x98"	{ GIN=0; return C_CIRCLE; }
 <C>{NNUM}/{M} 		{ GIN=1; gsave; return NNUM; }
 <C>{NNUM} 		{ GIN=1; gsave; return NNUM; }
-<C>{CG}			{ GIN=1; return gdl_grapheme_type(); }
-<C>{CG}({CG}|{B})*{CG}	{ GIN=1; return gdl_grapheme_type(); }
-<C>{CG}({CG}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
+<C>{CG}			{ GIN=1; return ag_gdl_grapheme_type(); }
+<C>{CG}({CG}|{B})*{CG}	{ GIN=1; return ag_gdl_grapheme_type(); }
+<C>{CG}({CG}|{B})*/{M}	{ GIN=1; return ag_gdl_grapheme_type(); }
 <C>{M}			{ GIN=1; gsave; return MOD; }
 <C>[0-9nN]+(\/[0-9]+)?/"("	{ GIN=1; gsave; return NUMBER; }
 <C>"."			{ GIN=0; return C_PERIOD; }
@@ -488,13 +489,13 @@ ag_gdl_init(void)
 static Blocktok *last_bp = NULL;
 static Blocktok *last_fragp = NULL;
 void
-atf_bp_reset(void)
+ag_bp_reset(void)
 {
   last_fragp = last_bp = NULL;
 }
 
 static int
-atf_block(const char *scanned_at)
+ag_block(const char *scanned_at)
 {
   const char *atcmd = scanned_at + 1;
 
@@ -549,41 +550,41 @@ atf_block(const char *scanned_at)
 }
 
 Tree *
-atf_read_atf(char *atf, size_t len)
+ag_read_atf(char *atf, size_t len)
 {
   YY_BUFFER_STATE atf_buffer;
   if (!(atf_buffer = ag_scan_buffer(atf, len)))
     {
-      fprintf(stderr, "atf_read_atf: ag_scan_buffer failed\n");
+      fprintf(stderr, "ag_read_atf: ag_scan_buffer failed\n");
       return NULL;
     }
   yy_start = s_next = 0;
   atf_init();
   Tree *tp = atfyacc();
-  atf_wrapup_buffer();
+  ag_wrapup_buffer();
   return tp;
 }
 
 void
-atf_wrapup_buffer(void)
+ag_wrapup_buffer(void)
 {
   ag_delete_buffer(YY_CURRENT_BUFFER);
 }
 
 ssize_t
-atf_get_lineno(void)
+ag_get_lineno(void)
 {
     return last_aglineno;
 }
 
 void
-atf_set_lineno(ssize_t n)
+ag_set_lineno(ssize_t n)
 {
     agset_lineno(n);
 }
 
 void
-atf_set_file(const char *f)
+ag_set_file(const char *f)
 {
     curratffile = f;
     last_aglineno = aglineno = 1;
@@ -591,7 +592,7 @@ atf_set_file(const char *f)
 }
 
 char *
-atf_set_file_line(char *a, ssize_t *n)
+ag_set_file_line(char *a, ssize_t *n)
 {
   char *s = a;
   while (!isspace(*a)) /* we know this line is `##file ' */
@@ -621,13 +622,13 @@ atf_set_file_line(char *a, ssize_t *n)
   return NULL;
 }
 int
-gdl_lex_state(void)
+ag_gdl_lex_state(void)
 {
   return YY_START;
 }
 
 void
-gdl_lex_closers(void)
+ag_gdl_lex_closers(void)
 {
   if (CIN)
       mesg_vwarning(currgdlfile,aglineno,"missing '|' in compound (discovered at end of line)");
@@ -640,25 +641,25 @@ gdl_lex_closers(void)
 /* Public function to call with (0) arg at start of text and with (1)
    arg when #atf: use legacy is encountered */
 void
-gdl_legacy_lexer(int legacy)
+ag_gdl_legacy_lexer(int legacy)
 {
   if (legacy)
     {
-      gdl_grapheme_type = gdl_grapheme_type_l;
+      ag_gdl_grapheme_type = ag_gdl_grapheme_type_l;
       gdl_delim = gdl_delim_l;
       gdl_graph_node = gdl_graph_node_l;
     }
   else
     {
-      gdl_grapheme_type = gdl_grapheme_type_s;
+      ag_gdl_grapheme_type = ag_gdl_grapheme_type_s;
       gdl_delim = gdl_delim_s;
       gdl_graph_node = gdl_graph_node_s;
     }
 }	
 
-/* Version of gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
+/* Version of ag_gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
 int
-gdl_grapheme_type_s(void)
+ag_gdl_grapheme_type_s(void)
 {
   char *g = agtext;
   gsaveg(g);
@@ -684,9 +685,9 @@ gdl_grapheme_type_s(void)
     return GRAPHEME;
 }
 
-/* Version of gdl_grapheme_type for use when atf: use legacy is set */
+/* Version of ag_gdl_grapheme_type for use when atf: use legacy is set */
 int
-gdl_grapheme_type_l(void)
+ag_gdl_grapheme_type_l(void)
 {
   char *l = agtext;
   char *g = (char*)gdl_unlegacy_str(&aglloc, (uccp)l);

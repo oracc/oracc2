@@ -10,6 +10,7 @@
 #include <xmd.h>
 #include <atf.h>
 #include <gdl.h>
+#include <../../lib/atfgdl/ag.h>
 #include <inl.h>
 #include <l3props.h>
 #include "ax.h"
@@ -51,6 +52,7 @@ int harvest_notices, lem_dynalem = 0, lem_forms_raw = 0, lem_props_yes = 0,
   warn_unlemmatized = 0;
 
 FILE *f_log, *f_unlemm;
+int ag = 0;
 int check_mode = 0;
 int lem_mode = 0;
 int trace_mode = 0;
@@ -94,7 +96,7 @@ ax_input(char *atf, size_t len)
       fputc('\n', stderr);
     }
 
-  Tree *tp = atf_read_atf(amp, len+2);
+  Tree *tp = ag ? ag_read_atf(amp, len+2) : atf_read_atf(amp, len+2);
 
   if (!atfp)
     return;

@@ -8,7 +8,7 @@ data_DATA=Makefile.atf
 
 ax_SOURCES=ax.c ax_atf.c ax_run.c ax_prj.c ax_xcl.c ax_lem.c ax_jox.c axjoxfnc.c \
 	ax_files.c ax_reader.c
-ax_LDADD = $(xLDADD)
+ax_LDADD = $(xLDADD) $(top_srcdir)/lib/atfgdl/libatfgdl.la 
 ax_DEPENDENCIES = $(ax_LDADD)
 
 atfdatax_SOURCES=atfdata.c atfdata.lex.c atfidentity.lex.c atf_cdli.c

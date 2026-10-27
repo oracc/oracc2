@@ -4,6 +4,7 @@
 #include <atf.h>
 #include <gdl.h>
 #include <gdlstate.h>
+#include "ag.h"
 
 #define AGLTYPE Mloc
 #include "ag.tab.h"
@@ -21,7 +22,7 @@ static char *xs;
 #define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
 #define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);aglval.text=atfpool(xs);free(xs);s=xs=NULL
 
-static int atf_block(const char *atcmd);
+static int ag_block(const char *atcmd);
 static void ag_user_action(void);
 
 #define atfsave aglval.text=atfpool(agtext)
@@ -43,14 +44,14 @@ extern int gdl_lexfld[];
 extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 int g_literal_flag = 0, g_logoforce_flag = 0;
 
-static gdl_grapheme_type_p gdl_grapheme_type;
+static gdl_grapheme_type_p ag_gdl_grapheme_type;
 
 extern Pool *ag_hpool;
 
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
-static int gdl_grapheme_type_l(void);
-static int gdl_grapheme_type_s(void);
+static int ag_gdl_grapheme_type_l(void);
+static int ag_gdl_grapheme_type_s(void);
 static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
 static int GIN = 0; /* 1 if in grapheme */
 static int QIN = 0; /* non-zero if in a(BA) qualifier */

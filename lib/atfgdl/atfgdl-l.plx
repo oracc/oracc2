@@ -55,7 +55,7 @@ fix_and_print('../gdl/gdl-l-funcs.c');
 
 sub fix {
     my $t = shift;
-    $t =~ s/(?:atf|yy)_delete/ag_delete/g;
+    $t =~ s/(?:atf|yy)_(block|bp_reset|delete|get_|read_atf|set_|wrapup_buffer)/ag_$1/g;
     $t =~ s/(?:atf|gdl)flextrace/agflextrace/g;
     $t =~ s/(?:atf|gdl)_l_lex_init/ag_l_lex_init/g;
     $t =~ s/(?:atf|gdl)lloc/aglloc/g;
@@ -64,6 +64,7 @@ sub fix {
     $t =~ s/(?:atf|gdl)_scan_buffer/ag_scan_buffer/g;
     $t =~ s/(?:atf|gdl)set_lineno/agset_lineno/g;
     $t =~ s/(?:atf|gdl)text/agtext/g;
+    $t =~ s/gdl_(lex_state|lex_closers|legacy_lexer|grapheme_type|gdl_lex_init|gdl_decr|gdl_incr)/ag_gdl_$1/g;
     if (/return (?:BIL|EXX|MTS|VAR)/) {
 	if (/MTS/) {
 	    if (!$saw_MTS++) {
