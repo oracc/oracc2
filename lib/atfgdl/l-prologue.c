@@ -42,11 +42,7 @@ static void ag_user_action(void);
 extern const char *gdl_lexnames[];
 extern int gdl_lexfld[];
 extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
-int g_literal_flag = 0, g_logoforce_flag = 0;
-
 static gdl_grapheme_type_p ag_gdl_grapheme_type;
-
-extern Pool *ag_hpool;
 
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
@@ -60,8 +56,7 @@ static int SIN = 0; /* left context is space */
 #define gconst aglval.text=agtext
 #define gsave  aglval.text=gdlsave(agtext)
 #define gsaveg(garg)  aglval.text=gdlsave((garg))
-int term = 0;
-#define yyterminate() return (term = !term) ? END : YY_NULL
+#define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
 
 /* Simple stack for nesting of compounds and valuquals */
 #define CVQ_MAX 6
@@ -73,6 +68,5 @@ static void cvq_reset(void);
 
 #if 0
 static int ag_gdl_init(void);
-#endif
-
 static int ag_line_save(const char *t);
+#endif

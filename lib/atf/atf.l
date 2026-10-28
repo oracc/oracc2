@@ -32,6 +32,8 @@ static void atf_user_action(void);
 #define longinit longtext_init(atfmp->pool,atftext)
 #define usesave curr_use_str=atfpool(atftext)
 
+#define atf_yyterminate() return (atf_term_flag = !atf_term_flag) ? ATF_END : YY_NULL
+
 #if 1
 #define r(x) x
 #else
@@ -197,11 +199,13 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 <s_TRA>{TRA_WHT}			{ if (tra_text) { atfsave; return TR_TEXT; } }
 <s_TRA>{TRA_WRD}	       		{ if (tra_text) { atfsave; return TR_TEXT; } }
 
-	/* ATFGDL STOPS HERE */
-
 [ \t\r\n]+     			{ ; }
 
 <*>\r				{ }
+
+<A><<EOF>>	       		{ yyterminate(); return ATF_END; }
+
+	/* ATFGDL STOPS HERE */
 
 <s_IGNORE>[\r\n]		{ BEGIN 0; }
 ^[0-9A-Za-z.:]+{NOD}+{WHT}+.*$ 	{ BEGIN s_IGNORE; mesg_verr(&atflloc, "bad line number: %s", yytext); }
@@ -214,8 +218,6 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 					last_unmatched_line = atflineno;
 				    }
 				}
-
-<<EOF>>				{ yyterminate(); }
 
 %%
 
@@ -233,6 +235,22 @@ void
 atf_lex_line_trace(Mloc *mp)
 {
     fprintf(stderr, "#fileline: %s:%d\n", curratffile, mp->line);
+}
+
+Tree *
+atf_read_atf(char *atf, size_t len)
+{
+  YY_BUFFER_STATE atf_buffer;
+  if (!(atf_buffer = atf_scan_buffer(atf, len)))
+    {
+      fprintf(stderr, "atf_read_atf: atf_scan_buffer failed\n");
+      return NULL;
+    }
+  yy_start = s_next = 0;
+  atf_init();
+  Tree *tp = atfyacc();
+  atf_wrapup_buffer();
+  return tp;
 }
 
 #include "atf-l-funcs.c"

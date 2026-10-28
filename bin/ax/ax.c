@@ -196,6 +196,7 @@ ax_full_term(void)
   run_term(rp);
   xcl_final_term();
   lng_term();
+  lnstr_term();
 }
 
 static char * const*
@@ -217,7 +218,7 @@ main(int argc, char * const*argv)
   
   gdl_flex_debug = gdldebug = 0;
 
-  options(argc, argv, "ACDcfgI:Llmstuvx");
+  options(argc, argv, "ACDcfgGI:Llmstuvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
   if (check_mode)
@@ -244,7 +245,8 @@ main(int argc, char * const*argv)
   nodeh_register(treexml_o_handlers, NS_XTF, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_XTF, treexml_c_generic);
   lang_init();
-
+  lnstr_init();
+  
   /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
   struct lang_context *x = lang_switch(NULL,"sux",NULL,NULL,0);
   global_lang = calloc(1, sizeof(struct lang_context));
@@ -290,6 +292,9 @@ opts(int opt, const char *arg)
       break;
     case 'g':
       ok_no_files = 1;
+      break;
+    case 'G':
+      ag = 1;
       break;
     case 'I':
       inputs_from_file = optarg;

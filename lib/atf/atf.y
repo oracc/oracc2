@@ -15,10 +15,6 @@ extern int gdl_unicode, gdl_lexical;
 
 static Tree *ytp;
 
-Block *curr_block;
-Group *curr_group;
-const char *curr_use_str;
-
 #define ATFLTYPE_IS_DECLARED 1
 #define ATFLTYPE Mloc
 #define yylineno atflineno
@@ -54,7 +50,7 @@ ATFLTYPE atflloc;
 			Y_PRISM Y_REFERTO Y_REVERSE Y_RIGHT Y_SCORE Y_SEAL Y_SEALINGS Y_SIDE
 			Y_SIGNATURE Y_SPAN Y_SUMMARY Y_SURFACE Y_TABLET Y_TOP Y_TRANSLATION
 			Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
-			Y_OBJFRAG Y_SRFFRAG Y_COLFRAG
+			Y_OBJFRAG Y_SRFFRAG Y_COLFRAG ATF_END
 
 %nterm <text>   	pqx name longtext
 
@@ -83,6 +79,7 @@ atf:		atf.transliteration { atf_tlit_wrapup(); }
 	|	composite 	{ atf_tlit_wrapup(); }
 	|	score 		{ atf_tlit_wrapup(); }
 	|	translation	{ atf_tlat_wrapup(); }
+	|	ATF_END
 	;
 
 atf.transliteration:

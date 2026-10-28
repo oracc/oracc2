@@ -8,6 +8,7 @@
 
 unsigned char *curr_line_tok;
 static Tree *curr_gdl_tree = NULL;
+Hash *ag_hpool = NULL;
 
 void
 ag_gdl_handoff(Mloc *mp, Node *lnode)
@@ -21,9 +22,9 @@ ag_gdl_handoff(Mloc *mp, Node *lnode)
   gdl_set_ids(clid, 1);
   curr_gdl_tree = gdlparse_atfgdl(mp, abt, lnode);
 }
- 
+
 void
-ag_line_o_mts(Mloc l)
+ag_line_o_mts(Mloc l, const char *to)
 {
   unsigned char *tok = curr_line_tok;
   unsigned char *lp = NULL; /* for compatibility with old atf.l routines */

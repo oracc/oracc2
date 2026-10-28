@@ -2,7 +2,7 @@ include ../../oracc-am-rules.txt
 
 noinst_LTLIBRARIES=libatfgdl.la
 
-libatfgdl_la_SOURCES = ag.tab.c ag.lex.c ag_line.c
+libatfgdl_la_SOURCES = ag.c ag.tab.c ag.lex.c ag_line.c
 
 ag.tab.c ag.tab.h: atfgdl.y atfgdl.l
 	bison -vdt $< >$@

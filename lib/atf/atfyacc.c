@@ -1,7 +1,6 @@
 #include <oraccsys.h>
 #include <memo.h>
 #include <pool.h>
-#include <oracc2.h>
 #include <lang.h>
 #include <scan.h>
 #include <inl.h>
@@ -12,31 +11,7 @@
 Atfm *atfmp;
 ATF *atfp;
 extern int gdl_lexical;
-extern void atflex_destroy(void);
 extern Tree *abt;
-
-Tree *
-atfyacc(void)
-{
-  extern int last_atflineno;
-  /*curratffile = atffile;*/
-
-  Tree *tp = tree_init();
-
-  (void)tree_root(tp, NS_XTF, "xtf", 1, NULL);
-
-  longtext_set_sep(" ");
-  
-  atf_set_tree(tp);
-
-  atfparse();
-
-  last_atflineno = atflineno;
-
-  atflex_destroy();
-
-  return tp;
-}
 
 void
 atf_init(void)
@@ -116,7 +91,7 @@ atf_term(void)
   free(atfp);
   atfp = NULL;
 
-  atf_lex_term();
+  /*atf_lex_term();*/
   label_term();
   note_term();
   tree_term(abt);

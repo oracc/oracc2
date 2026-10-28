@@ -1194,30 +1194,34 @@ void
 gdl_line_wrapup(Mloc m)
 {
   Tree *ytp = gdl_get_tree();
-  
-  /* Line ends with ',' or '&' and no following text */
-  if (gdl_recycled_word)
+
+  if (ytp)
     {
-      gdl_recycled_word = NULL;
-      if (gdl_recycled_word == (void*)wd_list->last->data)
-	(void)list_pop(wd_list);
+      /* Line ends with ',' or '&' and no following text */
+      if (gdl_recycled_word)
+	{
+	  gdl_recycled_word = NULL;
+	  if (gdl_recycled_word == (void*)wd_list->last->data)
+	    (void)list_pop(wd_list);
+	}
+
+      /* We haven't done gdl_word_attr yet so the empty word is g:w not g:empty */
+      if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+	{
+	  tree_curr(ytp->curr->rent);
+	  (void)kids_rem_last(ytp);
+	}
+
+      if (lst)
+	{
+	  gdl_hc(1);
+	  lst = NULL;
+	}
+
+      gdl_lex_closers();
+      gdl_balance_flush(m);
     }
 
-  /* We haven't done gdl_word_attr yet so the empty word is g:w not g:empty */
-  if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
-    {
-      tree_curr(ytp->curr->rent);
-      (void)kids_rem_last(ytp);
-    }
-
-  if (lst)
-    {
-      gdl_hc(1);
-      lst = NULL;
-    }
-
-  gdl_lex_closers();
-  gdl_balance_flush(m);
   pst = rst = 0L;
   curr_field = NULL;
   gdl_group_attach = lgp = NULL;

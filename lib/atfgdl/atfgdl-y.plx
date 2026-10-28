@@ -85,10 +85,6 @@ static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
 extern Node *lgp;
 
-Block *curr_block;
-Group *curr_group;
-const char *curr_use_str;
-
 #define AGLTYPE_IS_DECLARED 1
 #define AGLTYPE Mloc
 #define yylineno aglineno
@@ -98,11 +94,6 @@ extern int aglex(void);
 extern void yyerror(const char *);
 
 extern Node *gdl_post_det_gp_attach;
-
-int gdl_bilingual = 0;
-int gdl_legacy = 0;
-int gdl_lexical = 0;
-int gdl_unicode = 0;
 
 #define alo(xxx) ag_line_o_##xxx
 #define alc(xxx) ag_line_c_##xxx
@@ -141,12 +132,12 @@ sub get_par {
 	    my $base = "$1";
 	    my $lbase = "\L$base";
 	    $lbase = 'var' if $lbase eq 'exx';
-	    $x[$i] =~ s/\slongtext\s+/ {alo($lbase)(@1);} gdl.line /;
+	    $x[$i] =~ s/\slongtext\s+/ {alo($lbase)(@1,agtext);} gdl.line /;
 	    $x[$i] =~ s/, \(ucp\)longtext_get\(\)//;
 	    $x[$i] =~ s/line_${base}/alc($lbase)/;
 	    $x[$i] =~ s/; line_${lbase}/; alc($lbase)/;
 	}
-	push @p, $x[$i];
+	push @p, $x[$i] unless $x[$i] =~ /^\s+END\s*$/;
 	last if !defined($x[$i+1]) || $x[$i+1] =~ /^\s*$/;
 	++$i;
     }

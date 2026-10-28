@@ -7,7 +7,6 @@
 #include "otf-defs.h"
 #include "symbolattr.h"
 #include "etcsl.h"
-#include "linenums.c"
 
 int already_lemmed = 0;
 int atf_cell_count = 0;
@@ -192,7 +191,7 @@ line_mts(Mloc l, unsigned char *lp)
 
 
 #if 1
-  atf_line_id()
+  atf_line_id();
 #else
   sprintf(line_id_insertp,"%d", ++line_id);
 

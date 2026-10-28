@@ -1,12 +1,18 @@
 void
-atf_set_tree(Tree *tp)
+ag_init(void)
+{
+
+}
+
+void
+ag_set_tree(Tree *tp)
 {
   ytp = tp;
   atf_bld_tree(tp);
 }
 
 void
-atferror(const char *e)
+agerror(const char *e)
 {
   extern Stck *div_stck;
   Node *np = NULL;

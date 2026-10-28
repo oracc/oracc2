@@ -120,6 +120,11 @@ extern int gdltrace, gdl_legacy, gdl_legacy_hash, gdl_orig_mode, gdl_word_mode, 
 extern int gdl_ascii;
 extern int gdl_unicode;
 extern int gdl_flex_debug, gdldebug;
+extern int gdl_bilingual;
+extern int gdl_legacy;
+extern int gdl_lexical;
+extern int gdl_term_flag;
+extern int g_literal_flag, g_logoforce_flag;
 
 extern const unsigned char *gdl_legacy_prop;
 

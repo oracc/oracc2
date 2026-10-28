@@ -19,7 +19,6 @@ extern const char *gdl_lexnames[];
 extern int gdl_lexfld[];
 extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 int gdlflextrace = 0;
-int g_literal_flag = 0, g_logoforce_flag = 0;
 
 static gdl_grapheme_type_p gdl_grapheme_type;
 static int last_unmatched_line = 0;
@@ -37,8 +36,7 @@ static int SIN = 0; /* left context is space */
 #define gconst gdllval.text=gdltext
 #define gsave  gdllval.text=gdlsave(gdltext)
 #define gsaveg(garg)  gdllval.text=gdlsave((garg))
-int term = 0;
-#define yyterminate() return (term = !term) ? END : YY_NULL
+#define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
 
 /* Simple stack for nesting of compounds and valuquals */
 #define CVQ_MAX 6
@@ -79,7 +77,6 @@ NOTEMARK	"^"[0-9]+"^"
 %s S
 %x TC
 %x TD
-%x A
 %x N
 
 %%
@@ -272,7 +269,7 @@ _			                 { gdl_lang_flip(); }
 			    }
 			}
 
-<<EOF>>			{ gdl_line_wrapup(gdllloc); yyterminate(); }
+<<EOF>>			{ gdl_line_wrapup(gdllloc); gdl_yyterminate(); }
 
 %%
 

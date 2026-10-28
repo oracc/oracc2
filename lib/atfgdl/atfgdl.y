@@ -18,10 +18,6 @@ static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
 extern Node *lgp;
 
-Block *curr_block;
-Group *curr_group;
-const char *curr_use_str;
-
 #define AGLTYPE_IS_DECLARED 1
 #define AGLTYPE Mloc
 #define yylineno aglineno
@@ -32,34 +28,11 @@ extern void yyerror(const char *);
 
 extern Node *gdl_post_det_gp_attach;
 
-int gdl_bilingual = 0;
-int gdl_legacy = 0;
-int gdl_lexical = 0;
-int gdl_unicode = 0;
-
 #define alo(xxx) ag_line_o_##xxx
 #define alc(xxx) ag_line_c_##xxx
 %}
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
-
-%token	<node>
-		NOTEMARK
-
-%token	<text>
-		PQX QID TEXT WORD DOC PROJECT LINK KEY
-		MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
-		TAB EOL
-		VERSION
-		ATF_LANG
-		TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
-		TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
-		FTYPE LANG ENHYPHEN ELLIPSIS CELLSPAN IGNORE NORMSEG
-		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
-		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
-		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
-		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
-		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
 
 %token	<i>
 		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
@@ -81,7 +54,7 @@ int gdl_unicode = 0;
 		Y_PRISM Y_REFERTO Y_REVERSE Y_RIGHT Y_SCORE Y_SEAL Y_SEALINGS Y_SIDE
 		Y_SIGNATURE Y_SPAN Y_SUMMARY Y_SURFACE Y_TABLET Y_TOP Y_TRANSLATION
 		Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
-		Y_OBJFRAG Y_SRFFRAG Y_COLFRAG
+		Y_OBJFRAG Y_SRFFRAG Y_COLFRAG ATF_END
 		'<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
 		'/' '+' ':'
 		L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur L_par_par R_par_par
@@ -91,6 +64,36 @@ int gdl_unicode = 0;
 		'{' DET_SEME DET_PHON '}'
 		PLUS_FLAG SPACE END
 
+%token	<node>
+		NOTEMARK
+
+%token	<text>
+		PQX QID TEXT WORD DOC PROJECT LINK KEY
+		MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
+		TAB EOL
+		VERSION
+		ATF_LANG
+		TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
+		TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
+		FTYPE LANG ENHYPHEN ELLIPSIS CELLSPAN IGNORE NORMSEG
+		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
+		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
+		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
+		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
+		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
+
+%nterm	<text>		pqx name longtext
+		field lexfld cmods
+
+%nterm	<node>		detgloss det gloss
+		grapheme scgrapheme compound simplexg valuqual
+		glosso glossc
+
+%nterm	<i>		sparse stype atfuse link_type
+		atf.line l_link note bib etcsl.line proto.comment
+		heading heading_tok tr.inter
+		milestone atf.comment dollar
+
 %nterm	<b>		object object_tok
 		surface surface_tok
 		column column_tok
@@ -98,18 +101,6 @@ int gdl_unicode = 0;
 		division
 		bdivision edivision vdivision
 		div_tok end_tok var_tok
-
-%nterm	<node>		detgloss det gloss
-		grapheme scgrapheme compound simplexg valuqual
-		glosso glossc
-
-%nterm	<text>		pqx name longtext
-		field lexfld cmods
-
-%nterm	<i>		sparse stype atfuse link_type
-		atf.line l_link note bib etcsl.line proto.comment
-		heading heading_tok tr.inter
-		milestone atf.comment dollar
 
 %start atfgdl
 
@@ -125,6 +116,7 @@ atf:		atf.transliteration { atf_tlit_wrapup(); }
 	|	composite 	{ atf_tlit_wrapup(); }
 	|	score 		{ atf_tlit_wrapup(); }
 	|	translation	{ atf_tlat_wrapup(); }
+	|	ATF_END
 	;
 
 atf.transliteration:
@@ -314,13 +306,13 @@ heading:	heading_tok longtext { atf_bld_heading(@1, $1, longtext_get()); }
 	;
 
 atf.line:
-		MTS {alo(mts)(@1);} gdl.line { $$=$1; alc(mts)(@1); }
-	| 	NTS {alo(nts)(@1);} gdl.line { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
-	| 	LGS {alo(lgs)(@1);} gdl.line { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
-	| 	GUS {alo(gus)(@1);} gdl.line { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
-	| 	BIL {alo(bil)(@1);} gdl.line { $$=$1; alc(bil)(@1); } /* MTS prereq */
-	| 	EXX {alo(var)(@1);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
-	| 	VAR {alo(var)(@1);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
+		MTS {alo(mts)(@1,agtext);} gdl.line { $$=$1; alc(mts)(@1); }
+	| 	NTS {alo(nts)(@1,agtext);} gdl.line { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
+	| 	LGS {alo(lgs)(@1,agtext);} gdl.line { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
+	| 	GUS {alo(gus)(@1,agtext);} gdl.line { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
+	| 	BIL {alo(bil)(@1,agtext);} gdl.line { $$=$1; alc(bil)(@1); } /* MTS prereq */
+	| 	EXX {alo(var)(@1,agtext);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
+	| 	VAR {alo(var)(@1,agtext);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
 		/* l_link, etcsl.line, and tr.inter all require a line group */
 	|	l_link longtext		{ $$=$1; atf_bld_protocol(@1, PROT_LINK, longtext_get()); }
@@ -745,14 +737,20 @@ glossc:
 
 %%
 void
-atf_set_tree(Tree *tp)
+ag_init(void)
+{
+
+}
+
+void
+ag_set_tree(Tree *tp)
 {
   ytp = tp;
   atf_bld_tree(tp);
 }
 
 void
-atferror(const char *e)
+agerror(const char *e)
 {
   extern Stck *div_stck;
   Node *np = NULL;

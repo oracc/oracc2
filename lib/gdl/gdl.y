@@ -20,10 +20,6 @@ static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
 extern Node *lgp;
 /*int Q = 0;*/
-int gdl_bilingual = 0;
-int gdl_legacy = 0;
-int gdl_lexical = 0;
-int gdl_unicode = 0;
 
 #define GDLLTYPE_IS_DECLARED 1
 #define GDLLTYPE Mloc

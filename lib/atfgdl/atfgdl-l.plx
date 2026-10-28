@@ -22,7 +22,7 @@ my $saw_EXX = 0;
 my $afh;
 my $gfh;
 
-load_pro('../atf/atf.l');
+load_pro('../atf/atf.l'); push @starts, "%x A\n";
 load_pro('../gdl/gdl.l');
 
 print <<EOF;
@@ -40,7 +40,7 @@ print @starts;
 
 print "\n%%\n";
 
-while (<$afh>) { last if /ATFGDL STOPS HERE/; my $f = fix($_); print $f if $f }
+while (<$afh>) { last if /ATFGDL STOPS HERE/; my $a = fix_a($_); my $f = fix($a); print $f if $f }
 while (<$gfh>) { last if /^%%/; print fix($_); }
 
 print "\n%%\n";
@@ -53,8 +53,26 @@ fix_and_print('../gdl/gdl-l-funcs.c');
 
 ################################################################################
 
-sub fix {
+sub fix_a {
+    return $_[0] if $_[0] =~ /^\s*$/;
+    
     my $t = shift;
+    
+    if ($t =~ /^\^/) {
+	$t =~ s/^/<INITIAL,A>/;
+    } elsif ($t !~ /^</ && $t !~ /^\s/) {
+	$t =~ s/^/<A>/;
+    }
+    $t =~ s/next\s*=\s*0/next = A/g;
+    $t =~ s/BEGIN 0/BEGIN A/g;
+    $t;
+}
+
+sub fix {
+    return $_[0] if $_[0] =~ /^\s*$/;
+    
+    my $t = shift;
+    
     $t =~ s/(?:atf|yy)_(block|bp_reset|delete|get_|read_atf|set_|wrapup_buffer)/ag_$1/g;
     $t =~ s/(?:atf|gdl)flextrace/agflextrace/g;
     $t =~ s/(?:atf|gdl)_l_lex_init/ag_l_lex_init/g;
@@ -64,7 +82,7 @@ sub fix {
     $t =~ s/(?:atf|gdl)_scan_buffer/ag_scan_buffer/g;
     $t =~ s/(?:atf|gdl)set_lineno/agset_lineno/g;
     $t =~ s/(?:atf|gdl)text/agtext/g;
-    $t =~ s/gdl_(lex_state|lex_closers|legacy_lexer|grapheme_type|gdl_lex_init|gdl_decr|gdl_incr)/ag_gdl_$1/g;
+    $t =~ s/gdl_(lex_state|lex_closers|legacy_lexer|grapheme_type|lex_init|decr|incr)/ag_gdl_$1/g;
     if (/return (?:BIL|EXX|MTS|VAR)/) {
 	if (/MTS/) {
 	    if (!$saw_MTS++) {
@@ -81,9 +99,7 @@ sub fix {
 		$t = undef;
 	    }
 	}
-	$t =~ s/BEGIN s_T; longinit/BEGIN ag_line_save(agtext)/
-			       if $t;
-
+	$t =~ s/BEGIN s_T; longinit// if $t;
     }
     $t;
 }

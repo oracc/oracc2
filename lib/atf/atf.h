@@ -1,7 +1,7 @@
 #ifndef ATF_H_
 #define ATF_H_
 
-#include <oracc2.h>
+/*#include <oracc2.h>*/
 
 #include "cat.h"
 
@@ -343,6 +343,10 @@ extern int last_tlit_h_decay;
 extern Line *curr_line, *curr_lem_host;
 extern int line_lines;
 extern unsigned const char *lnstr(Mloc *mp, int number,int primes);
+extern unsigned const char *lnstr_tok(char *t);
+extern void lnstr_init(void);
+extern void lnstr_term(void);
+extern int atf_term_flag;
 extern unsigned char *map_uscore(const unsigned char *vbar);
 
 extern int lg_mode;
