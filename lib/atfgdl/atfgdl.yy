@@ -34,7 +34,30 @@ extern Node *gdl_post_det_gp_attach;
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
 
+%token	<text>
+		FTYPE LANG ENHYPHEN ELLIPSIS CELLSPAN IGNORE NORMSEG
+		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
+		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
+		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
+		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
+		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
+		PQX QID TEXT WORD DOC PROJECT LINK KEY
+		MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
+		TAB EOL
+		VERSION
+		ATF_LANG
+		TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
+		TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
+
 %token	<i>
+		'<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
+		'/' '+' ':'
+		L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur L_par_par R_par_par
+		L_dbl_par R_dbl_par L_dbl_par_c R_dbl_par_c eras_canc_pivot
+		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
+		L_uhs R_uhs L_lhs R_lhs LANG_FLIP
+		'{' DET_SEME DET_PHON '}'
+		PLUS_FLAG SPACE END
 		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
 		HASH_ETCSL_T HASH_ETCSL_L
 		HASH_LEMMATIZER LZR_SPARSE LZR_STOP HASH_BIB HASH_PROBIB
@@ -55,32 +78,9 @@ extern Node *gdl_post_det_gp_attach;
 		Y_SIGNATURE Y_SPAN Y_SUMMARY Y_SURFACE Y_TABLET Y_TOP Y_TRANSLATION
 		Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
 		Y_OBJFRAG Y_SRFFRAG Y_COLFRAG ATF_END
-		'<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
-		'/' '+' ':'
-		L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur L_par_par R_par_par
-		L_dbl_par R_dbl_par L_dbl_par_c R_dbl_par_c eras_canc_pivot
-		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
-		L_uhs R_uhs L_lhs R_lhs LANG_FLIP
-		'{' DET_SEME DET_PHON '}'
-		PLUS_FLAG SPACE END
 
 %token	<node>
 		NOTEMARK
-
-%token	<text>
-		PQX QID TEXT WORD DOC PROJECT LINK KEY
-		MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
-		TAB EOL
-		VERSION
-		ATF_LANG
-		TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
-		TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
-		FTYPE LANG ENHYPHEN ELLIPSIS CELLSPAN IGNORE NORMSEG
-		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
-		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
-		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
-		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
-		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
 
 %nterm	<text>		pqx name longtext
 		field lexfld cmods
