@@ -1,6 +1,6 @@
 #include <oraccsys.h>
 #include "atf.h"
-#include "atf.tab.h"
+
 extern int atf_scan_buffer(const char *base, size_t len);
 extern void atflex_destroy(void);
 

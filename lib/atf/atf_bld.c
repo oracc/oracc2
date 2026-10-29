@@ -5,6 +5,7 @@
 #include "etcsl.h"
 #include "atf.h"
 #include "atf_bld.h"
+#include "../atfgdl/ag.h"
 
 static int etcsl_error_reported;
 
@@ -125,7 +126,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   v_register(NULL);
   atf_block_xid();
   atf_bp_reset();
-  gdl_legacy_lexer(0);
+  ag_gdl_legacy_lexer(0);
   gdl_set_lzr_sparse(NULL);
   line_id = 0; /* we say ++line_id when using this */
   curr_block = NULL;

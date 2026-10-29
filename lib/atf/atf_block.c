@@ -4,7 +4,6 @@
 #include "gdl.h"
 #include "atf.h"
 #include "atf_bld.h"
-#include "atf.tab.h"
 #include "blocktok.h"
 #include "otf-defs.h"
 
@@ -311,7 +310,7 @@ block_div(Mloc l, Block *bp, char *rest)
 	 && ((Block*)current->user)->bt->type != B_TEXT)
     current = current->rent;
   
-  if (bp->bt->bison == Y_END || bp->bt->bison == Y_ENDVARIANTS)
+  if (!strcmp(bp->bt->name,"end") || !strcmp(bp->bt->name,"endvariants"))
     {
       /*if (((Block*)current->user)->bt->type == B_TEXT)*/
       if (!div_stck)
@@ -329,7 +328,7 @@ block_div(Mloc l, Block *bp, char *rest)
 		  stck_term(div_stck);
 		  div_stck = NULL;
 		}
-	      if (bp->bt->bison == Y_END)
+	      if (!bp->bt->name[4]) /* "end" */
 		{
 		  if (divtok)
 		    {
