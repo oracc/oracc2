@@ -255,7 +255,7 @@ bin/bx/bnm_tab.c
 bin/px/ice/pg/periodmap.c
 bin/px/pxargs.c
 bin/xx/cun/perfnt.c
-lib/atf/blocktok.c
+lib/atfgdl/blocktok.c
 lib/atf/nonxtok.c
 lib/frm/lang949.c
 lib/inl/inltok.c
