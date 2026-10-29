@@ -135,12 +135,12 @@ extern void gdl_remove_q_error(Mloc m, Node *ynp);
 extern Node *gdl_nongraph(Mloc *locp, Tree *ytp, const char *data, const char *type);
 
 extern void gdl_break_o(Bracket_e bt);
-extern void gdl_break_c(Bracket_e bt);
+extern void gdl_break_c(Mloc *mlp, Bracket_e bt);
 extern void gdl_break_h_l(void);
 extern void gdl_break_o_l(Bracket_e bt);
-extern void gdl_break_c_l(Bracket_e bt);
-extern void gdl_state_o(Bracket_e bt, int state);
-extern int gdl_state_c(Bracket_e bt);
+extern void gdl_break_c_l(Mloc *mlp, Bracket_e bt);
+extern void gdl_state_o(Mloc *mlp, Bracket_e bt, int state);
+extern int gdl_state_c(Mloc *mlp, Bracket_e bt);
 
 extern Node *gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
 extern Node *gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt);
@@ -161,11 +161,11 @@ extern unsigned char *gdl_unlegacy_str(Mloc *mloc, unsigned const char *gp);
 extern int gdl_legacy_check(Node *, unsigned const char *gp);
 extern void gdl_incr_qin(void);
 extern void gdl_decr_qin(void);
-extern intptr_t gdl_balance_break_c(Mloc mlp, int tok);
-extern intptr_t gdl_balance_state(Mloc mlp, int tok, int state);
+extern intptr_t gdl_balance_break_c(Mloc *mlp, int tok);
+extern intptr_t gdl_balance_state(Mloc *mlp, int tok, int state);
 extern void gdl_balance_init(void);
 extern void gdl_balance_term(void);
-extern void gdl_balance_flush(Mloc mlp);
+extern void gdl_balance_flush(Mloc *mlp);
 extern void gdl_gp_type(Tree *ytp, enum gdlpropvals p);
 extern const char *gdl_mod_cat(Node *np);
 extern void gdl_modq_add(Node *np);
@@ -208,11 +208,11 @@ extern void gdl_det_props(Node *d);
 extern void gdl_group(Mloc mp, int type);
 extern void gdl_clear_gg(Tree *ytp);
 
-extern void gdl_indent(void);
-extern void gdl_note_mark(const char *n);
-extern void gdl_var_mark(Bracket_e type, char *v);
+extern void gdl_indent(Mloc *mlp);
+extern void gdl_note_mark(Mloc *mlp, const char *n);
+extern void gdl_var_mark(Mloc *mlp, Bracket_e type, char *v);
 
-extern int gdl_lang_tag(const char *v);
+extern int gdl_lang_tag(Mloc *mlp, const char *v);
 extern void gdl_lang_flip(void);
 
 extern void gdl_hc(int force);
@@ -239,6 +239,9 @@ extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const cha
 
 extern void gdl_word_attr(Node *w);
 extern List *gdl_rem_nonw(List *wds);
+
+extern void gdl_create_tree(Treemem *tmp, Pool *p);
+extern void gdl_destroy_tree(void);
 
 extern int gdlflextrace, gdl_word_mode;
 extern int gdl_no_xml_ids, gdl_xmlids;

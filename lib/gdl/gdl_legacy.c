@@ -8,7 +8,7 @@
 #include <gvl.h>
 #include "gdllib.h"
 #define GDLLTYPE Mloc
-#include "gdl.tab.h"
+#include "gdltokens.h"
 
 #define G_C10E_MIXED_CASE 0x02
 #define G_C10E_FINAL_SUBX 0x04
@@ -19,7 +19,7 @@ extern int curr_pqx_line;
 
 static Hash *legacy_reported_h = NULL;
 
-static void gdl_legacy_brackets(char *b);
+static void gdl_legacy_brackets(Mloc *mlp, char *b);
 
 /* Legacy bracketing
  * =================
@@ -235,7 +235,7 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
       free(x);
       *b = '\0';
       if (brackets[0])
-	gdl_legacy_brackets(brackets);
+	gdl_legacy_brackets(mlp, brackets);
     }
   return ret;
 }
@@ -273,7 +273,7 @@ gdl_unlegacy_str(Mloc *mlp, unsigned const char *g)
  */
 
 static void
-gdl_legacy_brackets(char *b)
+gdl_legacy_brackets(Mloc *mlp, char *b)
 {
   char *s = b;
   /* Check for paired opener-closer and if they are matched reduce to
@@ -290,7 +290,7 @@ gdl_legacy_brackets(char *b)
 	    }
 	  else if ('R' == s[1] || 'r' == s[1])
 	    {
-	      mesg_verr(&gdllloc, "mismatched bracketing ignored (reported once per grapheme)");
+	      mesg_verr(mlp, "mismatched bracketing ignored (reported once per grapheme)");
 	      return;
 	    }
 	  else
@@ -305,7 +305,7 @@ gdl_legacy_brackets(char *b)
 	    }
 	  else if (']' == s[1] || 'r' == s[1])
 	    {
-	      mesg_verr(&gdllloc, "mismatched bracketing ignored (reported once per grapheme)");
+	      mesg_verr(mlp, "mismatched bracketing ignored (reported once per grapheme)");
 	      return;
 	    }
 	  else
@@ -320,7 +320,7 @@ gdl_legacy_brackets(char *b)
 	    }
 	  else if (']' == s[1] || 'R' == s[1])
 	    {
-	      mesg_verr(&gdllloc, "mismatched bracketing ignored (reported once per grapheme)");
+	      mesg_verr(mlp, "mismatched bracketing ignored (reported once per grapheme)");
 	      return;
 	    }
 	  else
@@ -348,12 +348,12 @@ gdl_legacy_brackets(char *b)
 	    {
 	      if ('[' == *n || 'L' == *n || 'l' == *n)
 		{
-		  mesg_verr(&gdllloc, "double-opener; bracketing ignored (reported once per grapheme)");
+		  mesg_verr(mlp, "double-opener; bracketing ignored (reported once per grapheme)");
 		  return;
 		}
 	      else if (']' == *n || 'R' == *n || 'r' == *n)
 		{
-		  mesg_verr(&gdllloc, "nested pairs; bracketing ignored (reported once per grapheme)");
+		  mesg_verr(mlp, "nested pairs; bracketing ignored (reported once per grapheme)");
 		  return;
 		}
 	      else
@@ -371,7 +371,7 @@ gdl_legacy_brackets(char *b)
 	    {
 	      if (']' == *n || 'R' == *n || 'r' == *n)
 		{
-		  mesg_verr(&gdllloc, "double-closer; bracketing ignored (reported once per grapheme)");
+		  mesg_verr(mlp, "double-closer; bracketing ignored (reported once per grapheme)");
 		  return;
 		}
 	      else
@@ -422,7 +422,7 @@ gdl_legacy_brackets(char *b)
 	    {
 	      /* This is ba a]n and we know ba can't be b[a so we can put
 		 the closer directly on lst */
-	      gdl_break_c(']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
+	      gdl_break_c(mlp, ']' == *s ? e_R_squ : ('R' == *s ? e_R_uhs : e_R_lhs));
 	    }
 	}
       ++s; /* point at char after closer */
@@ -461,7 +461,7 @@ gdl_legacy_brackets(char *b)
 	{
 	  if ('-' != *s)
 	    {
-	      mesg_verr(&gdllloc, "unused brackets between closer and opener");
+	      mesg_verr(mlp, "unused brackets between closer and opener");
 	      return;
 	    }
 	  ++s;
@@ -491,19 +491,11 @@ gdl_legacy_check(Node *ynp, unsigned const char *t)
     {
       if (!hash_find(legacy_reported_h, (uccp)curr_pqx))
 	{
-#if 0
-	  unsigned char *res = gdl_unlegacy_str(ynp->mloc, t);
-	  if (strcmp((ccp)res, (ccp)t))
-	    {
-#endif
-	      Mloc m = *ynp->mloc;
-	      m.line = curr_pqx_line;
-	      mesg_verr(&m, "Text %s needs '#atf: use legacy'", curr_pqx);
-	      hash_add(legacy_reported_h, (uccp)curr_pqx, "");
-	      need_legacy = 1;
-#if 0
-	    }
-#endif
+	  Mloc m = *ynp->mloc;
+	  m.line = curr_pqx_line;
+	  mesg_verr(&m, "Text %s needs '#atf: use legacy'", curr_pqx);
+	  hash_add(legacy_reported_h, (uccp)curr_pqx, "");
+	  need_legacy = 1;
 	}
       else
 	need_legacy = 1;

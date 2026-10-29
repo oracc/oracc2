@@ -1,5 +1,7 @@
 #include <oraccsys.h>
+#include <stck.h>
 #include "gdllib.h"
+#include "gdltokens.h"
 
 /* multiple gdl instances share this */
 int gdlflextrace = 0;
@@ -25,8 +27,8 @@ int gdl_lexfld[128] = {
 };
 
 gdl_grapheme_type_p gdl_grapheme_type;
-static int gdl_grapheme_type_l(char **cp);
-static int gdl_grapheme_type_s(char **cp);
+static int gdl_grapheme_type_l(Mloc *mp, char *gt, char **cp);
+static int gdl_grapheme_type_s(Mloc *mp, char *g, char **cp);
 
 gdl_delim_p gdl_delim;
 gdl_graph_node_p gdl_graph_node;
@@ -58,9 +60,8 @@ gdl_legacy_lexer(int legacy)
 
 /* Version of gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
 static int
-gdl_grapheme_type_s(char **cp)
+gdl_grapheme_type_s(Mloc *mp, char *g, char **cp)
 {
-  char *g = gdltext;
   *cp = gdlsave(g);
 
   if (strlen(g) == 1
@@ -86,10 +87,10 @@ gdl_grapheme_type_s(char **cp)
 
 /* Version of gdl_grapheme_type for use when atf: use legacy is set */
 static int
-gdl_grapheme_type_l(char **cp)
+gdl_grapheme_type_l(Mloc *mp, char *gt, char **cp)
 {
-  char *l = gdltext;
-  char *g = (char*)gdl_unlegacy_str((Mloc*)&gdllloc, (uccp)l);
+  char *l = gt;
+  char *g = (char*)gdl_unlegacy_str(mp, (uccp)l);
   if (g)
     {
       *cp = gdlsave(g);
@@ -314,3 +315,54 @@ gdl_rem_nonw(List *wds)
   list_free(wds, NULL);
   return lp;
 }
+
+Stck *GDL_stack = NULL;
+Tree *tcurr;
+
+void
+gdl_create_tree(Treemem *tmp, Pool *p)
+{
+  tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
+  tcurr->user = calloc(1, sizeof(GDL));
+  gdlpool = p;
+  word_lang_tag = "sux";
+  if (!GDL_stack)
+    GDL_stack = stck_init(3);
+  stck_push(GDL_stack, (intptr_t)tcurr);
+}
+
+/* This destroys tcurr which should be the last tree on GDL_stack */
+void
+gdl_destroy_tree(void)
+{
+  Tree *tp = (Tree*)stck_peek(GDL_stack);
+  if (tp && tp == tcurr)
+    {
+      stck_pop(GDL_stack);
+      if (wd_list)
+	list_free(wd_list, NULL);
+      if (c_dangling_gps)
+	list_free(c_dangling_gps, NULL);
+      if (c_explicit_gps)
+	list_free(c_explicit_gps, NULL);
+      if (c_implicit_gps)
+	list_free(c_implicit_gps, NULL);
+      if (modq)
+	list_free(modq, NULL);
+      if (break_stack)
+	stck_term(break_stack);
+      if (lang_stack)
+	stck_term(lang_stack);
+      if (state_stack)
+	stck_term(state_stack);
+      if (sstck)
+	stck_term(sstck);
+      if (mgstck)
+	memo_term(mgstck);
+      if (mlstck)
+	memo_term(mlstck);
+    }
+  else
+    abort();
+}
+

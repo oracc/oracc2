@@ -77,9 +77,9 @@ NOTEMARK	"^"[0-9]+"^"
 [=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(currgdlfile,gdllineno,
 						"non-Unicode accent codes %s",gdltext); }}
 
-{G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
-{G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
-{GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
+{G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(&gdllloc, gdltext, &gdllval.text); }
+{G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(&gdllloc, gdltext, &gdllval.text); }
+{GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(&gdllloc, gdltext, &gdllval.text); }
 
 "|"/[ \t]	       	{ /*"*/ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
@@ -88,10 +88,10 @@ NOTEMARK	"^"[0-9]+"^"
 <C>"\xe2\x88\x98"	{ GIN=0; return C_CIRCLE; }
 <C>{NNUM}/{M} 		{ GIN=1; gsave; return NNUM; }
 <C>{NNUM} 		{ GIN=1; gsave; return NNUM; }
-<C>{CG}			{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
-<C>{CG}({CG}|{B})*{CG}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
-<C>{CG}({CG}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
-<C>{M}			{ GIN=1; gsave; return MOD; }
+<C>{CG}			{ GIN=1; return gdl_grapheme_type(&gdllloc, gdltext, &gdllval.text); }
+<C>{CG}({CG}|{B})*{CG}	{ GIN=1; return gdl_grapheme_type(&gdllloc, gdltext, &gdllval.text); }
+<C>{CG}({CG}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(&gdllloc, gdltext, &gdllval.text); }
+<C>{M}			{ GIN=1; gsave; return GMOD; }
 <C>[0-9nN]+(\/[0-9]+)?/"("	{ GIN=1; gsave; return NUMBER; }
 <C>"."			{ GIN=0; return C_PERIOD; }
 <C>"+"			{ GIN=0; return C_PLUS; }
@@ -131,7 +131,7 @@ NOTEMARK	"^"[0-9]+"^"
 
 [0-9]+(\/[0-9]+)?	{ GIN=1; gsave; return !strncmp(gdllval.text,"00",2) ? ZERO : BARENUM; }
 
-{M}			{ GIN=1; gsave; return MOD; }
+{M}			{ GIN=1; gsave; return GMOD; }
 
 	/* Determinatives and glosses */
 
@@ -188,24 +188,24 @@ NOTEMARK	"^"[0-9]+"^"
 	/* Anything in this section either does not return a token or
  	   only does so in some circumstances */
 
-<INITIAL,N,Q>"("	{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par,YY_START); } }
-<INITIAL,N,Q>")"	{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
+<INITIAL,N,Q>"("	{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(&gdllloc, e_L_par,YY_START); } }
+<INITIAL,N,Q>")"	{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(&gdllloc, e_R_par); } }
 
-<INITIAL,C,N>"<("	{ GIN=0; gdl_state_o(e_L_ang_par,YY_START); }
-<INITIAL,C,N>")>"	{ GIN=0; BEGIN gdl_state_c(e_R_ang_par); }
-<INITIAL,C,N>"<<"	{ GIN=0; gdl_state_o(e_L_dbl_ang,YY_START); }
-<INITIAL,C,N>">>"	{ GIN=0; BEGIN gdl_state_c(e_R_dbl_ang); }
-<INITIAL,C,N>"<"	{ GIN=0; gdl_state_o(e_L_ang,YY_START); }
-<INITIAL,C,N>">"	{ GIN=0; BEGIN gdl_state_c(e_R_ang); }
+<INITIAL,C,N>"<("	{ GIN=0; gdl_state_o(&gdllloc, e_L_ang_par,YY_START); }
+<INITIAL,C,N>")>"	{ GIN=0; BEGIN gdl_state_c(&gdllloc, e_R_ang_par); }
+<INITIAL,C,N>"<<"	{ GIN=0; gdl_state_o(&gdllloc, e_L_dbl_ang,YY_START); }
+<INITIAL,C,N>">>"	{ GIN=0; BEGIN gdl_state_c(&gdllloc, e_R_dbl_ang); }
+<INITIAL,C,N>"<"	{ GIN=0; gdl_state_o(&gdllloc, e_L_ang,YY_START); }
+<INITIAL,C,N>">"	{ GIN=0; BEGIN gdl_state_c(&gdllloc, e_R_ang); }
 <INITIAL,C,N>"["	{ GIN=0; gdl_break_o(e_L_squ); }
-<INITIAL,C,N>"]"	{ GIN=0; gdl_break_c(e_R_squ); }
+<INITIAL,C,N>"]"	{ GIN=0; gdl_break_c(&gdllloc, e_R_squ); }
 <INITIAL,C,N>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
-<INITIAL,C,N>{R_UHS}	{ GIN=0; gdl_break_c(e_R_uhs); }
+<INITIAL,C,N>{R_UHS}	{ GIN=0; gdl_break_c(&gdllloc, e_R_uhs); }
 <INITIAL,C,N>{L_LHS}	{ GIN=0; gdl_break_o(e_L_lhs); }
-<INITIAL,C,N>{R_LHS}	{ GIN=0; gdl_break_c(e_R_lhs); }
+<INITIAL,C,N>{R_LHS}	{ GIN=0; gdl_break_c(&gdllloc, e_R_lhs); }
 
 	/* The meta-delimiter ';' == indented line */
-<INITIAL,C>";"	       	{ GIN=0; gdl_indent(); }
+<INITIAL,C>";"	       	{ GIN=0; gdl_indent(&gdllloc); }
 
 	/* Sign state force characters */
 ~~/{G}			{ g_logoforce_flag = 1; }
@@ -236,16 +236,16 @@ NOTEMARK	"^"[0-9]+"^"
 {UFLAG}			{ gdl_lex_flag(&gdllloc,(uccp)yytext); }
 
 	/* Language shifts; ignore following whitespace after %-tag */
-<INITIAL,N>%[-a-z0-9]+("/"[gn])?[ \t]*   { BEGIN gdl_lang_tag(yytext); }
+<INITIAL,N>%[-a-z0-9]+("/"[gn])?[ \t]*   { BEGIN gdl_lang_tag(&gdllloc, yytext); }
 _			                 { gdl_lang_flip(); }
 
 	/* Note marks */
-{NOTEMARK}		{ gdl_note_mark(gdltext); }
+{NOTEMARK}		{ gdl_note_mark(&gdllloc, gdltext); }
 
 	/* Inline variation note marks */
-"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; gdl_var_mark(e_LR_var, gdllval.text); }
-"("[0-9]+:		{ gsave; GIN=0; gdl_var_mark(e_L_var, gdllval.text); }
-:[0-9+]")"		{ gsave; GIN=0; gdl_var_mark(e_R_var, gdllval.text); }
+"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; gdl_var_mark(&gdllloc, e_LR_var, gdllval.text); }
+"("[0-9]+:		{ gsave; GIN=0; gdl_var_mark(&gdllloc, e_L_var, gdllval.text); }
+:[0-9+]")"		{ gsave; GIN=0; gdl_var_mark(&gdllloc, e_R_var, gdllval.text); }
 
 	/* General administrative rules */
 

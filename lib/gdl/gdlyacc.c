@@ -837,7 +837,7 @@ gdl_line_wrapup(Mloc m)
 	}
 
       gdl_lex_closers();
-      gdl_balance_flush(m);
+      gdl_balance_flush(&m);
     }
 
   pst = rst = 0L;

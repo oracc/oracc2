@@ -5,7 +5,7 @@
 #include <lng.h>
 #include "gdllib.h"
 #define GDLLTYPE Mloc
-#include "gdl.tab.h"
+#include "gdltokens.h"
 #include "lex_st_enum.h"
 
 struct lang_context *gdl_global_context;
@@ -126,25 +126,21 @@ gdl_break_o(Bracket_e bt)
   if (bp->s == gs_lost)
     rs_no(gs_damaged);
 
-#if 1
   gdl_break_push((intptr_t)gstck_new(bp->tok));
   /* tell graph_node that it needs to note its node on the break stack */
   gdl_break_pending = 1;
-#else
-  (void)gdl_balance_break(gdllloc, bp->tok);
-#endif
 }
 
 /* 20260707: return -1 from gdl_balance_break_c means return
  * immediately; used for b[a] in legacy mode.
  */
 void
-gdl_break_c(Bracket_e bt)
+gdl_break_c(Mloc *mlp, Bracket_e bt)
 {
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: BREAK/c: %d=%s\n", bt, bp->str);
-  intptr_t st = gdl_balance_break_c(gdllloc, bp->tok);
+  intptr_t st = gdl_balance_break_c(mlp, bp->tok);
   if (st > 0)
     {
       Node *np = gstck_np(st);
@@ -166,22 +162,22 @@ gdl_break_c(Bracket_e bt)
 		      if (!idp)
 			{
 			  if (np->kids->text)
-			    mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'", np->kids->text);
+			    mesg_verr(mlp, "gdl_break_c: strange: no xml:id on np or np->kids near `%s'", np->kids->text);
 			  else
-			    mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np or np->kids");
+			    mesg_verr(mlp, "gdl_break_c: strange: no xml:id on np or np->kids");
 			}
 		      else
 			gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 		    }
 		  else
-		    mesg_verr(&gdllloc, "gdl_break_c: strange: no xml:id on np type %s", np->name);
+		    mesg_verr(mlp, "gdl_break_c: strange: no xml:id on np type %s", np->name);
 		}
 	      else
 		gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:breakEnd", idp->u.k->v);
 	    }
 	}
       else
-	mesg_verr(&gdllloc, "gdl_break_c: no opener in stack when trying to balance closer");
+	mesg_verr(mlp, "gdl_break_c: no opener in stack when trying to balance closer");
     }
   else if (st == 0)
     {
@@ -193,26 +189,26 @@ gdl_break_c(Bracket_e bt)
 }
 
 void
-gdl_state_o(Bracket_e bt, int state)
+gdl_state_o(Mloc *mlp, Bracket_e bt, int state)
 {
   if (bt == e_L_ang_par)
     gdl_surro();
   Bracket *bp = &bracket_data[bt];
   if (gdltrace)
     fprintf(stderr, "gt: STATE/o: %d=%s\n", bt, bp->str);
-  (void)gdl_balance_state(gdllloc, bp->tok, state);
+  (void)gdl_balance_state(mlp, bp->tok, state);
   ps_on(bp->oc);
   rs_on(bp->s);
 }
 
 int
-gdl_state_c(Bracket_e bt)
+gdl_state_c(Mloc *mlp, Bracket_e bt)
 {
   Bracket *bp = &bracket_data[bt];
   Lstck *lp = NULL;
   if (gdltrace)
     fprintf(stderr, "gt: STATE/c: %d=%s\n", bt, bp->str);
-  intptr_t st = gdl_balance_state(gdllloc, bp->tok, -1);
+  intptr_t st = gdl_balance_state(mlp, bp->tok, -1);
   if (st > 0) /* st can be -1 if nothing on stack */
     {
       lp = (Lstck*)stck_pop(lang_stack);
@@ -232,11 +228,11 @@ gdl_state_c(Bracket_e bt)
 	      if (idp)
 		gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:statusEnd", idp->u.k->v);
 	      else
-		mesg_verr(&gdllloc, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
+		mesg_verr(mlp, "could not set g:statusEnd--no xml:id on %s node\n", np->name);
 	    }
 	}
       else
-	mesg_verr(&gdllloc, "internal error: corrupt bracket stack");
+	mesg_verr(mlp, "internal error: corrupt bracket stack");
     }
   else
     gdl_lang_context = gdl_global_context;
@@ -254,20 +250,20 @@ gdl_state_c(Bracket_e bt)
 }
 
 int
-lgp_guard(const char *s)
+lgp_guard(Mloc *mlp, const char *s)
 {
   if (!lgp)
     {
-      mesg_verr(&gdllloc, "can't apply %s because last-grapheme-pointer is NULL", s);
+      mesg_verr(mlp, "can't apply %s because last-grapheme-pointer is NULL", s);
       return 1;
     }
   return 0;
 }
 
 void
-gdl_indent(void)
+gdl_indent(Mloc *mlp)
 {
-  if (!lgp_guard("';' = newline"))
+  if (!lgp_guard(mlp, "';' = newline"))
     {
       /* if the is a ; e put the g:newline on the word; if it's a;-e
 	 put it on the grapheme */
@@ -279,9 +275,9 @@ gdl_indent(void)
 }
 
 void
-gdl_note_mark(const char *n)
+gdl_note_mark(Mloc *mlp, const char *n)
 {
-  if (!lgp_guard("^...^ = note mark"))
+  if (!lgp_guard(mlp, "^...^ = note mark"))
     {
       char *nn = (char*)pool_alloc(strlen(n-1), gdlpool);
       strncpy(nn, n+1, strlen(n-2));
@@ -291,7 +287,7 @@ gdl_note_mark(const char *n)
 }
 
 void
-gdl_var_mark(Bracket_e type, char *v)
+gdl_var_mark(Mloc *mlp, Bracket_e type, char *v)
 {
   if (e_L_var == type)
     {
@@ -301,7 +297,7 @@ gdl_var_mark(Bracket_e type, char *v)
   else if (e_R_var == type)
     {
       v[strlen(v)-1] = '\0';
-      if (!lgp_guard(":) = right var mark"))
+      if (!lgp_guard(mlp, ":) = right var mark"))
 	gdl_prop_kv(lgp, GP_ATTRIBUTE, PG_GDL_INFO, "g:varc", v+1);
     }
   else
@@ -319,12 +315,12 @@ gdl_var_mark(Bracket_e type, char *v)
 
 /* TODO: check lang patterns include trailing /a, /m, /n or /g */
 int
-gdl_lang_tag(const char *data)
+gdl_lang_tag(Mloc *mlp, const char *data)
 {
   int ret = 0;
   if (gdltrace)
     fprintf(stderr, "gt: LANG: %s\n", data);
-  gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, gdllloc.file, gdllloc.line);
+  gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mlp->file, mlp->line);
   word_lang_tag = gdl_lang_context->fulltag;
   Tree*tp = gdl_get_tree();
   struct mapi *st = scripttok(gdl_lang_context->tag->script

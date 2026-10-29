@@ -78,7 +78,7 @@ typedef struct lcstack
 /* function pointer type for switching gdl_grapheme_type between
    legacy and strict without impacting performance for strict-mode
    data */
-typedef int (*gdl_grapheme_type_p)(char **cp);
+typedef int (*gdl_grapheme_type_p)(Mloc *mp, char *g, char **cp);
 
 /* same for gdl_delim which needs to process future state */
 typedef Node *(*gdl_delim_p)(Tree *, const char *);
