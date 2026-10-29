@@ -20,14 +20,9 @@ extern int gdl_lexfld[];
 extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 int gdlflextrace = 0;
 
-static gdl_grapheme_type_p gdl_grapheme_type;
 static int last_unmatched_line = 0;
 
-extern Pool *gdlpool;
-#define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
 static void gdl_user_action(void);
-static int gdl_grapheme_type_l(void);
-static int gdl_grapheme_type_s(void);
 static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
 static int GIN = 0; /* 1 if in grapheme */
 static int QIN = 0; /* non-zero if in a(BA) qualifier */
@@ -35,7 +30,6 @@ static int SIN = 0; /* left context is space */
 
 #define gconst gdllval.text=gdltext
 #define gsave  gdllval.text=gdlsave(gdltext)
-#define gsaveg(garg)  gdllval.text=gdlsave((garg))
 #define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
 
 /* Simple stack for nesting of compounds and valuquals */

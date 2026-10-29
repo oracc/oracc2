@@ -6,7 +6,7 @@
 #include <hash.h>
 #include <stck.h>
 #include <sll.h>
-#include "gvl.h"
+#include <gvl.h>
 #include "gsort.h"
 
 #ifndef uccp
@@ -81,6 +81,7 @@ typedef struct lcstack
    legacy and strict without impacting performance for strict-mode
    data */
 typedef int (*gdl_grapheme_type_p)(void);
+extern gdl_grapheme_type_p gdl_grapheme_type;
 
 /* same for gdl_delim which needs to process future state */
 typedef Node *(*gdl_delim_p)(Tree *, const char *);
@@ -111,6 +112,8 @@ struct gdl_g {
   const char *flags;	/* instance data */
 };
 #endif
+
+extern char *gdltext;
 
 extern int c_processing;
 extern int gdl_corrq;
@@ -170,6 +173,9 @@ extern GDLR_config *vx_oatf_config;
 #define gdlr_flags gr_funcs[4]
 
 extern struct mapi *scripttok(const char *k, int len);
+
+extern Pool *gdlpool;
+#define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
 
 extern void gdl_pop_wd_list(void *vp);
 extern void gdl_render_setup_wf(void);
@@ -239,7 +245,6 @@ extern Node *gdl_barenum(Mloc *locp, Tree *ytp, const char *data);
 extern void gdl_unlegacy(Node *np);
 extern unsigned char *gdl_unlegacy_str(Mloc *mloc, unsigned const char *gp);
 extern int gdl_legacy_check(Node *, unsigned const char *gp);
-extern void gdl_legacy_lexer(int legacy);
 extern void gdl_incr_qin(void);
 extern void gdl_decr_qin(void);
 extern intptr_t gdl_balance_break_c(Mloc mlp, int tok);
@@ -310,7 +315,12 @@ extern Tree *gdl_get_tree(void);
 extern Node *gdl_gloss_curr(void);
 extern void gdl_gloss_props(Node *d);
 extern void gdl_surro(void);
+
 extern void gdl_set_lzr_sparse(Hash *l);
+
+#if 0
+extern void gdl_legacy_lexer(int legacy);
+#endif
 
 extern void gdl_atf_node(Node *np, FILE *fp);
 

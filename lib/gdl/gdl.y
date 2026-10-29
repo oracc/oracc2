@@ -11,7 +11,7 @@
 #include "gdlstate.h"
 extern int gdllex(void);
 extern void yyerror(const char *);
-extern const char *gdltext, *currgdlfile;
+extern const char *currgdlfile;
 extern int gdllineno, gdltrace;
 
 extern Node *gdl_post_det_gp_attach;

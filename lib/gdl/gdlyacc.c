@@ -7,7 +7,6 @@
 #include <ctype128.h>
 #include <atf2utf.h>
 #include <sll.h>
-#include "gdl.tab.h"
 #include "gdlstate.h"
 #include "gdl.h"
 #include "gvl.h"
@@ -175,7 +174,7 @@ gdlparse_deep(Node *np, void *mptr)
 	  else
 	    gdl_lex_init("<string>", 1);
 	  gdl_set_tree(tp);
-	  gdlparse();
+	  /*gdlparse();*/
 	  gdllex_destroy();
 	  gp->deep = tp->root->kids;
 	}
@@ -401,7 +400,7 @@ gdlparse_string(Mloc *m, char *s)
 
   gdl_set_tree(tp);
 
-  gdlparse();
+  /*gdlparse();*/
   gdllex_destroy();
   free(s2);
 

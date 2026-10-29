@@ -7,9 +7,8 @@
 #include <memo.h>
 #include <tree.h>
 #include <atf2utf.h>
-
+#include "../atfgdl/ag.h"
 #include "gdl.h"
-#include "gdl.tab.h"
 
 Pool *gdlpool;
 
@@ -34,8 +33,6 @@ gdl_init(void)
 {
   if (gdl_initted++)
     return;
-
-  gdl_legacy_lexer(0);
 
   atf2utf_init();
 
