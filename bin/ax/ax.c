@@ -40,7 +40,7 @@ int odt_serial = 0;
 static Run *rp;
 const char *inputs_from_file = NULL;
 
-extern int atfflextrace , atftrace, gdlflextrace, gdltrace;
+extern int agflextrace , agtrace;
 
 int bootstrap_mode = 0;
 int exit_status = 0;
@@ -52,7 +52,7 @@ int harvest_notices, lem_dynalem = 0, lem_forms_raw = 0, lem_props_yes = 0,
   warn_unlemmatized = 0;
 
 FILE *f_log, *f_unlemm;
-int ag = 0;
+int ag = 1;
 int check_mode = 0;
 int lem_mode = 0;
 int trace_mode = 0;
@@ -96,7 +96,7 @@ ax_input(char *atf, size_t len)
       fputc('\n', stderr);
     }
 
-  Tree *tp = ag ? ag_read_atf(amp, len+2) : atf_read_atf(amp, len+2);
+  Tree *tp = ag_read_atf(amp, len+2);
 
   if (!atfp)
     return;
@@ -212,12 +212,11 @@ ax_atf_files(void)
 int
 main(int argc, char * const*argv)
 {
-  extern int gdl_flex_debug, gdldebug, atfdebug, atf_flex_debug; /* yydebug in gdl.y */
+  extern int agdebug, ag_flex_debug; /* yydebug in gdl.y */
 
   f_log = stderr;
-  
-  gdl_flex_debug = gdldebug = 0;
 
+  gdl_flex_debug = gdldebug = 0;
   options(argc, argv, "ACDcfgGI:Llmstuvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
@@ -234,10 +233,13 @@ main(int argc, char * const*argv)
 
   inl_set_ns(NS_HTM);
 
-  atf_flex_debug = atfflextrace = atftrace = atfdebug = trace_mode;
+  ag_flex_debug = agflextrace = agtrace = agdebug = trace_mode;
 
   if (trace_mode > 1)
-    gdlflextrace = gdltrace = gdldebug = 1;
+    agflextrace = agtrace = agdebug = 1;
+
+  gdl_word_mode = 1;
+  ag_gdl_legacy_lexer(0);
 
   rp = run_init();
   gdlxml_setup();

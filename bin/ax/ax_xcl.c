@@ -8,7 +8,7 @@
 #include <ilem_props.h>
 #include <xcl.h>
 #include <atf.h>
-#include "../../lib/atf/atf.tab.h"
+#include "../../lib/atfgdl/ag.tab.h"
 #include "ax.h"
 
 #define cc(x) (ccp)(x)
