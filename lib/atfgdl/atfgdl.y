@@ -116,7 +116,6 @@ atf:		atf.transliteration { atf_tlit_wrapup(); }
 	|	composite 	{ atf_tlit_wrapup(); }
 	|	score 		{ atf_tlit_wrapup(); }
 	|	translation	{ atf_tlat_wrapup(); }
-	|	ATF_END
 	;
 
 atf.transliteration:
@@ -142,6 +141,7 @@ name: 		TEXT
 
 preamble:
 		plks
+	|	ATF_END
 	;
 
 atcomposite:	COMPOSITE			{ atfp->edoc = EDOC_COMPOSITE;
@@ -233,7 +233,7 @@ atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
 	|	ATF_MATH       { $$=ATFF_MATH; }
 	|	ATF_ASCII      { gdl_ascii = 1; $$=ATFF_ASCII; }
 	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
-	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; gdl_legacy_lexer(1); }
+	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; ag_gdl_legacy_lexer(1); }
 	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; gdl_lexical = 1; }
 		;
 
@@ -262,6 +262,7 @@ tblock: 	object
 	|	milestone
 	|	heading
 	|	atf.line
+	|	ATF_END
 		;
 
 cblocks:	cblock

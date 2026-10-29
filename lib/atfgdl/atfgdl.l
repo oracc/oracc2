@@ -10,6 +10,9 @@
 #include <gdlstate.h>
 #include "ag.h"
 
+static int ag_gdl_grapheme_type_l(void);
+static int ag_gdl_grapheme_type_s(void);
+
 #define AGLTYPE Mloc
 #include "ag.tab.h"
 #define YY_USER_ACTION ag_user_action();
@@ -28,6 +31,8 @@ static char *xs;
 
 static int ag_block(const char *atcmd);
 static void ag_user_action(void);
+static int ag_gdl_grapheme_type_l(void);
+static int ag_gdl_grapheme_type_s(void);
 
 #define atfsave aglval.text=atfpool(agtext)
 #define atfnorm aglval.text=atfnormpool(agtext)
@@ -50,16 +55,17 @@ static gdl_grapheme_type_p ag_gdl_grapheme_type;
 
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
-static int ag_gdl_grapheme_type_l(void);
-static int ag_gdl_grapheme_type_s(void);
 static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
 static int GIN = 0; /* 1 if in grapheme */
 static int QIN = 0; /* non-zero if in a(BA) qualifier */
 static int SIN = 0; /* left context is space */
 
+int atf_term_flag = 0;
+
 #define gconst aglval.text=agtext
 #define gsave  aglval.text=gdlsave(agtext)
 #define gsaveg(garg)  aglval.text=gdlsave((garg))
+#define atf_yyterminate() return (atf_term_flag = !atf_term_flag) ? ATF_END : YY_NULL
 #define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
 
 /* Simple stack for nesting of compounds and valuquals */
@@ -225,13 +231,11 @@ NOTEMARK	"^"[0-9]+"^"
 
 <INITIAL,A>^{LK_VBAR}  			{ BEGIN s_T; longinit; return LNK_VBAR; }
 
-<INITIAL,A>^[^ #@$\t\n\r]+\./[ \t\n\r]+        	{ ; return MTS; }
+<INITIAL,A>^[^ #@$\t\n\r]+\./[ \t\n\r]+        	{ BEGIN 0; return MTS; }
 
+<INITIAL,A>^[^ #@$\t\n\r]+:/[ \t\n\r]+        	{ BEGIN 0; return EXX; }
 
-<INITIAL,A>^[^ #@$\t\n\r]+:/[ \t\n\r]+        	{ ; return EXX; }
-
-
-<INITIAL,A>^:[^:#@$]+:[ \t]+	       	{ ; return VAR; }
+<INITIAL,A>^:[^:#@$]+:[ \t]+	       	{ BEGIN 0; return VAR; }
 
 <INITIAL,A>^== 				{ BEGIN s_T; atfsave; return BIL; }
 
@@ -258,7 +262,7 @@ NOTEMARK	"^"[0-9]+"^"
 
 <*>\r				{ }
 
-<A><<EOF>>	       		{ yyterminate(); return ATF_END; }
+<A><<EOF>>	       		{ atf_yyterminate(); }
 
 
 [=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(currgdlfile,aglineno,
@@ -641,91 +645,6 @@ ag_gdl_lex_closers(void)
   cvq_reset();
 }
 
-/* Public function to call with (0) arg at start of text and with (1)
-   arg when #atf: use legacy is encountered */
-void
-ag_gdl_legacy_lexer(int legacy)
-{
-  if (legacy)
-    {
-      ag_gdl_grapheme_type = ag_gdl_grapheme_type_l;
-      gdl_delim = gdl_delim_l;
-      gdl_graph_node = gdl_graph_node_l;
-    }
-  else
-    {
-      ag_gdl_grapheme_type = ag_gdl_grapheme_type_s;
-      gdl_delim = gdl_delim_s;
-      gdl_graph_node = gdl_graph_node_s;
-    }
-}	
-
-/* Version of ag_gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
-int
-ag_gdl_grapheme_type_s(void)
-{
-  char *g = agtext;
-  gsaveg(g);
-
-  if (strlen(g) == 1
-      && ('n' == *g || 'N' == *g))
-      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
-  else if (isdigit(*g))
-    {
-      char *d = g+1;
-      while (*d && isdigit(*d))
-        ++d;
-      if (*d == '(')
-        return NUMBER;
-      else if (!strncmp(g, "00", 2))
-	return ZERO;
-      else
-	return BARENUM;
-    }
-  else if (sll_is_signlist(g))
-    return LISTNUM;
-  else
-    return GRAPHEME;
-}
-
-/* Version of ag_gdl_grapheme_type for use when atf: use legacy is set */
-int
-ag_gdl_grapheme_type_l(void)
-{
-  char *l = agtext;
-  char *g = (char*)gdl_unlegacy_str(&aglloc, (uccp)l);
-  if (g)
-    {
-  gsaveg(g);
-
-  if (strcmp(g,l))
-    gdl_legacy_prop = (uccp)l;
-  if (strlen(g) == 1
-      && ('n' == *g || 'N' == *g))
-      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
-  else if (isdigit(*g))
-    {
-      char *d = g+1;
-      while (*d && isdigit(*d))
-        ++d;
-      if (*d == '(')
-        return NUMBER;
-      else if (!strncmp(g, "00", 2))
-	return ZERO;
-      else
-	return BARENUM;
-    }
-  else if (sll_is_signlist(g))
-    return LISTNUM;
-  else
-    return GRAPHEME;
-    }
-  else
-    {
-       return IGNORE;
-    }
-}
-
 void
 ag_gdl_lex_init(const char *file, int line)
 {
@@ -787,4 +706,89 @@ cvq_reset(void)
 {
   cvq_top = -1;
   BEGIN 0;
+}
+
+/* Public function to call with (0) arg at start of text and with (1)
+   arg when #atf: use legacy is encountered */
+void
+ag_gdl_legacy_lexer(int legacy)
+{
+  if (legacy)
+    {
+      ag_gdl_grapheme_type = ag_gdl_grapheme_type_l;
+      gdl_delim = gdl_delim_l;
+      gdl_graph_node = gdl_graph_node_l;
+    }
+  else
+    {
+      ag_gdl_grapheme_type = ag_gdl_grapheme_type_s;
+      gdl_delim = gdl_delim_s;
+      gdl_graph_node = gdl_graph_node_s;
+    }
+}
+
+/* Version of ag_gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
+static int
+ag_gdl_grapheme_type_s(void)
+{
+  char *g = agtext;
+  gsaveg(g);
+
+  if (strlen(g) == 1
+      && ('n' == *g || 'N' == *g))
+      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
+  else if (isdigit(*g))
+    {
+      char *d = g+1;
+      while (*d && isdigit(*d))
+        ++d;
+      if (*d == '(')
+        return NUMBER;
+      else if (!strncmp(g, "00", 2))
+	return ZERO;
+      else
+	return BARENUM;
+    }
+  else if (sll_is_signlist(g))
+    return LISTNUM;
+  else
+    return GRAPHEME;
+}
+
+/* Version of ag_gdl_grapheme_type for use when atf: use legacy is set */
+static int
+ag_gdl_grapheme_type_l(void)
+{
+  char *l = agtext;
+  char *g = (char*)gdl_unlegacy_str(&aglloc, (uccp)l);
+  if (g)
+    {
+  gsaveg(g);
+
+  if (strcmp(g,l))
+    gdl_legacy_prop = (uccp)l;
+  if (strlen(g) == 1
+      && ('n' == *g || 'N' == *g))
+      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
+  else if (isdigit(*g))
+    {
+      char *d = g+1;
+      while (*d && isdigit(*d))
+        ++d;
+      if (*d == '(')
+        return NUMBER;
+      else if (!strncmp(g, "00", 2))
+	return ZERO;
+      else
+	return BARENUM;
+    }
+  else if (sll_is_signlist(g))
+    return LISTNUM;
+  else
+    return GRAPHEME;
+    }
+  else
+    {
+       return IGNORE;
+    }
 }

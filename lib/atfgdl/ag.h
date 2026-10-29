@@ -2,7 +2,6 @@
 #define AG_H_
 
 extern const char *curr_line_text;
-
 extern void ag_wrapup_buffer(void);
 extern ssize_t ag_get_lineno(void);
 extern Tree *ag_read_atf(char *atf, size_t len);
@@ -26,5 +25,6 @@ extern void ag_line_c_bil(Mloc l);
 extern void ag_line_c_lgs(Mloc l);
 
 extern int aglineno;
+extern void ag_gdl_legacy_lexer(int legacy);
 
 #endif/*AG_H_*/

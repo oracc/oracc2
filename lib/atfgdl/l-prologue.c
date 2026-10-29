@@ -46,8 +46,6 @@ static gdl_grapheme_type_p ag_gdl_grapheme_type;
 
 extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
-static int ag_gdl_grapheme_type_l(void);
-static int ag_gdl_grapheme_type_s(void);
 static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
 static int GIN = 0; /* 1 if in grapheme */
 static int QIN = 0; /* non-zero if in a(BA) qualifier */

@@ -24,9 +24,8 @@ ag_gdl_handoff(Mloc *mp, Node *lnode)
 }
 
 void
-ag_line_o_mts(Mloc l, const char *to)
+ag_line_o_mts(Mloc l, const char *tok)
 {
-  unsigned char *tok = curr_line_tok;
   unsigned char *lp = NULL; /* for compatibility with old atf.l routines */
   atf_line_node(LINE_MTS);
   atf_line_host();

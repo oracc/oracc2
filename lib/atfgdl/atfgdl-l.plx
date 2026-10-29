@@ -99,7 +99,7 @@ sub fix {
 		$t = undef;
 	    }
 	}
-	$t =~ s/BEGIN s_T; longinit// if $t;
+	$t =~ s/BEGIN s_T; longinit/BEGIN 0/ if $t;
     }
     $t;
 }
