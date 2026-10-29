@@ -29,6 +29,7 @@ typedef struct tree {
   nsrefs ns_used;
   int rootless; /* non-zero means don't print root node */
   int memless; /* don't free tm because it was passed in on init from another tree */
+  void *user;
 } Tree;
 
 #define tm_keva(t_p) t_p->tm->keva_mem

@@ -13,8 +13,10 @@ ag.lex.c: atfgdl.l ag.tab.h
 
 blocktok.c: blocktok.g ag.tab.h
 
-# atfgdl.l: ../atf/atf.l ../gdl/gdl.l atfgdl-l.plx l-prologue.c l-funcs.c
-# 	./atfgdl-l.plx >$@
+atlgdl.l: atfgdl.ll ../gdl/gdl.l atfgdl-l.plx l-prologue.c l-funcs.c
+	./atfgdl-l.plx >$@
 
-# atfgdl.y: ../atf/atf.y ../gdl/gdl.y atfgdl-y.plx y-funcs.c
-# 	./atfgdl-y.plx >$@
+atfgdl.y: atfgdl.yy ./gdl/gdl.y atfgdl-y.plx y-funcs.c
+	./atfgdl-y.plx >$@
+
+#../atf/atf.y

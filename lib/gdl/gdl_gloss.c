@@ -1,8 +1,7 @@
 #include <oraccsys.h>
 #include <stck.h>
 #include "gdl.tab.h"
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
 #include "gdlstream.h"
 
 /* Glosses {{ ... }} and {( ... )} host separate word streams and must
@@ -16,10 +15,6 @@
  * in XCL glosses are pulled into their respective streams so they can
  * be processed naturally with tools like the ngrammer.
  */
-
-extern const char *word_lang_tag;
-extern Node *gdl_recycled_word;
-static Stck *glosstck;
 
 Node *
 gdl_gloss_curr(void)
@@ -53,7 +48,7 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
       stream = atoi(data+2);
       if (stream <= 0 || stream > 99)
 	{
-	  mesg_vwarning(currgdlfile, gdllineno, "stream out of range in '%s'", data);
+	  mesg_verr(mlp, "stream out of range in '%s'", data);
 	  stream = 0;
 	}
       /*data = (bp->tok == L_dbl_cur ? "{{" : "{(");*/ /* data

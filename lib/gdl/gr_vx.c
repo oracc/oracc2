@@ -1,6 +1,7 @@
 #include <oraccsys.h>
 #include <unidef.h>
-#include "gdl.h"
+#include "gdllib.h"
+#include "gdlr.h"
 
 int
 gr_node_vx(Node *np, FILE *fp)

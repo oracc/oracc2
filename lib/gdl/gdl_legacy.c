@@ -6,21 +6,18 @@
 #include <unidef.h>
 #include <gutil.h>
 #include <gvl.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
 
 #define G_C10E_MIXED_CASE 0x02
 #define G_C10E_FINAL_SUBX 0x04
 
-int gdl_legacy_accented = 0;
-static Hash *legacy_reported_h = NULL;
+/* ax/ATF only */
 extern const char *curr_pqx;
 extern int curr_pqx_line;
 
-int gdl_legacy_hash, gdl_legacy_pending;
-const unsigned char *gdl_legacy_prop;
+static Hash *legacy_reported_h = NULL;
 
 static void gdl_legacy_brackets(char *b);
 

@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include <unidef.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
+#include "gdlr.h"
 
 extern int gdl_word_excisions;
 

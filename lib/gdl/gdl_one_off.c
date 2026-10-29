@@ -1,4 +1,5 @@
-#include <gdl.h>
+#include "gdllib.h"
+#include "gdlparse.h"
 /* This routine does single-shot processing of a single grapheme;
  * don't use it if you need access to error messages or if you need to
  * process multiple graphemes.

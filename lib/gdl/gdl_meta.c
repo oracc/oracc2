@@ -3,22 +3,12 @@
 #include <mesg.h>
 #include <tree.h>
 #include <lng.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
 #include "lex_st_enum.h"
 
-const char *curr_sur_id = NULL;
-
-struct lang_context *gdl_lang_context, *gdl_global_context;
-const char *gdl_pending_varo = NULL;
-const char *word_lang_tag = "sux";
-
-extern Node *lgp; /* last grapheme node pointer */
-
-extern int gdllineno, gdltrace, gdlflextrace, gdl_legacy_pending;
-extern const char *currgdlfile, *gdlfile;
+struct lang_context *gdl_global_context;
 
 Bracket bracket_data[] = {
   [e_L_squ] = { '[', gs_lost_o, gs_lost, "[" },
@@ -62,13 +52,13 @@ gdl_lex_hash(gdlstate_t *st)
 }
 
 void
-gdl_lex_flag(unsigned const char *f)
+gdl_lex_flag(Mloc *mlp, unsigned const char *f)
 {
   if (gdlflextrace)
       fprintf(stderr, "gdl_lex_flag: arg f=%s\n", f);
   if (!lst)
       {
-        mesg_vwarning(gdlfile, gdllineno, "misplaced flag `%s'; no grapheme state to set", f);
+        mesg_verr(mlp, "misplaced flag `%s'; no grapheme state to set", f);
 	return;
       }
   switch (*f)
@@ -106,7 +96,7 @@ gdl_lex_flag(unsigned const char *f)
 	    }
 	break;
     default:
-	mesg_vwarning(gdlfile, gdllineno, "lex field `%c' needs a space before it", *f);
+	mesg_verr(mlp, "lex field `%c' needs a space before it", *f);
 	break;
     }
 }
@@ -365,11 +355,7 @@ gdl_lang_flip(void)
 }
 
 #if 0
-
 lang:
-		LANG				       	{ ynp = gdl_lang(&@1, ytp,
-					       				 gdllval.text); }
 	| 	LANG_FLIP	       			/*TODO; ALSO #atf: lang akk _%s_ vel sim*/
 	;
-
 #endif

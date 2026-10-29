@@ -26,5 +26,6 @@ extern void ag_line_c_lgs(Mloc l);
 
 extern int aglineno;
 extern void ag_gdl_legacy_lexer(int legacy);
+extern Tree *ag_gdlparse(Mloc *m, Tree *atftp, Node *rootnode);
 
 #endif/*AG_H_*/

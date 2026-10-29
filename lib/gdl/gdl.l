@@ -6,8 +6,7 @@
 #include <mesg.h>
 #include <pool.h>
 #include <sll.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
 
 #define GDLLTYPE Mloc
 #include "gdl.tab.h"
@@ -15,10 +14,9 @@
 extern Mloc gdllloc;
 const char *gdlfile = "<stdin>";
 const char *currgdlfile = NULL;
+
 extern const char *gdl_lexnames[];
 extern int gdl_lexfld[];
-extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
-int gdlflextrace = 0;
 
 static int last_unmatched_line = 0;
 
@@ -30,6 +28,7 @@ static int SIN = 0; /* left context is space */
 
 #define gconst gdllval.text=gdltext
 #define gsave  gdllval.text=gdlsave(gdltext)
+static int gdl_term_flag;
 #define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
 
 /* Simple stack for nesting of compounds and valuquals */
@@ -78,9 +77,9 @@ NOTEMARK	"^"[0-9]+"^"
 [=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(currgdlfile,gdllineno,
 						"non-Unicode accent codes %s",gdltext); }}
 
-{G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(); }
-{G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
-{GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(); }
+{G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
+{G}({G}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
+{GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
 
 "|"/[ \t]	       	{ /*"*/ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
@@ -89,9 +88,9 @@ NOTEMARK	"^"[0-9]+"^"
 <C>"\xe2\x88\x98"	{ GIN=0; return C_CIRCLE; }
 <C>{NNUM}/{M} 		{ GIN=1; gsave; return NNUM; }
 <C>{NNUM} 		{ GIN=1; gsave; return NNUM; }
-<C>{CG}			{ GIN=1; return gdl_grapheme_type(); }
-<C>{CG}({CG}|{B})*{CG}	{ GIN=1; return gdl_grapheme_type(); }
-<C>{CG}({CG}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(); }
+<C>{CG}			{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
+<C>{CG}({CG}|{B})*{CG}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
+<C>{CG}({CG}|{B})*/{M}	{ GIN=1; return gdl_grapheme_type(&gdllval.text); }
 <C>{M}			{ GIN=1; gsave; return MOD; }
 <C>[0-9nN]+(\/[0-9]+)?/"("	{ GIN=1; gsave; return NUMBER; }
 <C>"."			{ GIN=0; return C_PERIOD; }
@@ -217,24 +216,24 @@ NOTEMARK	"^"[0-9]+"^"
 "$"/{G}			{ g_literal_flag = 1; }
 
 	/* Grapheme meta flags, sometimes doubling as lex field shorthands */
-<INITIAL,C,Q,N>[!?]     { gdl_lex_flag((uccp)yytext); }
-<INITIAL,C,N>"*"       	{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
+<INITIAL,C,Q,N>[!?]     { gdl_lex_flag(&gdllloc,(uccp)yytext); }
+<INITIAL,C,N>"*"       	{ /*"*/ if (GIN) { gdl_lex_flag(&gdllloc,(uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
 <INITIAL,C,N>^[#"~=@^]	{ gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
 "#"			{ if (SIN) { SIN=0;
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
-			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
-<C,N>"#"	       	{ gdl_lex_flag((uccp)yytext); }
+			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag(&gdllloc,(uccp)yytext); } }
+<C,N>"#"	       	{ gdl_lex_flag(&gdllloc,(uccp)yytext); }
 <INITIAL,C,N>[:"~=@^]   { if (SIN) { SIN=0;
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
-				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
+				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag(&gdllloc,(uccp)yytext); } }
 <INITIAL,N>[#"=@^]/{G} 	{ if (gdl_lexical) {
 		       	    mesg_vwarning(currgdlfile, gdllineno,
 			  	       	  "no space after %c field\n", *yytext);
 	       	     	    gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 			    return gdl_lexfld[(int)*yytext]; }
-			  else { gdl_lex_flag((uccp)yytext); } }
+			  else { gdl_lex_flag(&gdllloc,(uccp)yytext); } }
 
-{UFLAG}			{ gdl_lex_flag((uccp)yytext); }
+{UFLAG}			{ gdl_lex_flag(&gdllloc,(uccp)yytext); }
 
 	/* Language shifts; ignore following whitespace after %-tag */
 <INITIAL,N>%[-a-z0-9]+("/"[gn])?[ \t]*   { BEGIN gdl_lang_tag(yytext); }

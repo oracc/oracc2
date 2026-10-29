@@ -4,9 +4,7 @@
 #include <list.h>
 #include <tree.h>
 #include <unidef.h>
-#include "gdl.h"
-
-static List *modq;
+#include "gdllib.h"
 
 static void
 gdl_mod_form(Node *np, const char *f, const char *m)
@@ -86,14 +84,6 @@ gdl_mod(Tree *ytp, const char *data)
 				  "unknown sign/value");
 	    }
 	}
-      /*np->name = "g:b";*/
-#if 0
-      /*20260618: gdl_legacy now done in lexer: do we need to pass mods through it?*/
-      /* This is done in a Bison rule which this node-copy won't be
-	 processed by, so we have to unlegacy here */
-      if (gdl_legacy)
-	gdl_unlegacy(np);
-#endif
     }
 
   np = tree_add(ytp, NS_GDL, n, ytp->curr->depth+1, NULL);
@@ -105,7 +95,6 @@ gdl_mod(Tree *ytp, const char *data)
 
   if (times_pending)
     {
-      extern int c_delim_sentinel;
       Node *op = tree_add(ytp, NS_GDL, "g:o", ytp->curr->depth+1, NULL);
       op->text = U_X_u8str;
       gdl_prop_kv(op, GP_ATTRIBUTE, PG_GDL_INFO, "atf:ascii", (ccp)"x");
@@ -243,12 +232,6 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
 	}
       ynp->rent->user = ng;
     }
-#if 0
-  else if (ynp->rent->name[2] == 'q')
-    {
-      fprintf(stderr, "gdl_mod_wrap with ynp->rent == %s\n", ynp->rent->name);
-    }
-#endif  
 }
 
 void
@@ -264,28 +247,21 @@ gdl_modq_flush(void)
   Node *curr = NULL;
   for (curr = list_first(modq); curr; curr = list_next(modq))
     {
-#if 0
-      if ('c' != curr->name[2]) /* this test is spurious */
+      if (curr != last)
 	{
-#endif
-	  if (curr != last)
+	  last = curr;
+	  if ('n' == curr->rent->name[2])
+	    gdl_mod_wrap_q(curr->rent);
+	  /* Don't gdl_mod_wrap when curr->rent is compound or group */
+	  else if ('c' != curr->rent->name[2] && strcmp(curr->rent->name, "g:gp"))
+	    (void)gdl_mod_wrap(curr->rent, 0);
+	  else if (curr->prev && !strcmp(curr->prev->name, "g:gp"))
 	    {
-	      last = curr;
-	      if ('n' == curr->rent->name[2])
-		gdl_mod_wrap_q(curr->rent);
-	      /* Don't gdl_mod_wrap when curr->rent is compound or group */
-	      else if ('c' != curr->rent->name[2] && strcmp(curr->rent->name, "g:gp"))
-		(void)gdl_mod_wrap(curr->rent, 0);
-	      else if (curr->prev && !strcmp(curr->prev->name, "g:gp"))
-		{
-		  if (!c_dangling_gps)
-		    c_dangling_gps = list_create(LIST_SINGLE);
-		  list_add(c_dangling_gps, curr->prev);
-		}		    
-	    }
-#if 0
+	      if (!c_dangling_gps)
+		c_dangling_gps = list_create(LIST_SINGLE);
+	      list_add(c_dangling_gps, curr->prev);
+	    }		    
 	}
-#endif
     }
   list_reset(modq);
 }
@@ -375,10 +351,6 @@ gdl_mod_wrap_q(Node *np)
 	      ng->orig = o;
 	      ng->oid = oid;
 	      np->user = ng;
-#if 0	      
-	      ((gvl_g*)np->user)->c10e = c;
-	      ((gvl_g*)np->user)->orig = o;
-#endif
 	    }
 	  else
 	    {

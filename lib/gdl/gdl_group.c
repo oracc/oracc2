@@ -3,8 +3,7 @@
 #include <string.h>
 #include <tree.h>
 #include <prop.h>
-#include "gdlstate.h"
-#include "gdl.h"
+#include "gdllib.h"
 
 /**gdl_group is called to handle +:/ groups.  When called, there must
  * be a preceding grapheme, and if the grapheme which may be a group
@@ -25,8 +24,6 @@
  * resetting curr to group->rent.
  *
  */
-
-Node *gdl_group_attach = NULL;
 
 static int
 gdl_group_type(Node *np, int type)
@@ -64,22 +61,8 @@ gdl_group(Mloc mp, int type)
 	  const char *v = (type == '/' ? "alternation" : (type == ':' ? "reordering" : "ligature"));
 	  gdl_prop_kv(gp, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", v);
 	  gdl_prop_kv(gp->kids, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", delim);
-#if 1
 	  tree_curr(gp);
 	  gdl_group_attach = gp;
-#else
-	  /* this shouldn't be necessary any more */
-	  if (!strcmp(rt->name, "g:d"))
-	    {
-	      gdl_post_det_gp_attach = gp;
-	      tree_curr(rt);
-	    }
-	  else
-	    {
-	      gdl_post_det_gp_attach = NULL;
-	      tree_curr(gp->rent);
-	    }
-#endif
 	}
     }
 }

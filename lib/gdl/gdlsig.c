@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tree.h"
-#include "gdl.h"
+#include "gdllib.h"
+#include "gdlparse.h"
 
 /* 0 = shallow, -1 = mid, 1 = deep, 2 = atoms
  *

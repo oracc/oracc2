@@ -26,19 +26,22 @@ static int s_next;
 static int linktext, tra_text;
 static char *xs;
 
-#define atfpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
-#define atfnormpool(s) xs=(char*)normalize_ws((uccp)s);aglval.text=atfpool(xs);free(xs);s=xs=NULL
+#define agpool(s) (char*)pool_copy((const unsigned char*)(s),atfmp->pool);
+#define agnormpool(s) xs=(char*)normalize_ws((uccp)s);aglval.text=agpool(xs);free(xs);s=xs=NULL
 
 static int ag_block(const char *atcmd);
 static void ag_user_action(void);
 static int ag_gdl_grapheme_type_l(void);
 static int ag_gdl_grapheme_type_s(void);
 
-#define atfsave aglval.text=atfpool(agtext)
-#define atfnorm aglval.text=atfnormpool(agtext)
+#define agsave aglval.text=agpool(agtext)
+#define agnorm aglval.text=agnormpool(agtext)
 
 #define longinit longtext_init(atfmp->pool,agtext)
-#define usesave curr_use_str=atfpool(agtext)
+#define usesave curr_use_str=agpool(agtext)
+
+int atf_term_flag = 0;
+#define atf_yyterminate() return (atf_term_flag = !atf_term_flag) ? ATF_END : YY_NULL
 
 #if 1
 #define r(x) x
@@ -46,41 +49,9 @@ static int ag_gdl_grapheme_type_s(void);
 #define r(x) fprintf(stderr, "returning %d\n", x),x
 #endif
 
-/* test */
-
-extern const char *gdl_lexnames[];
-extern int gdl_lexfld[];
-extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
-static gdl_grapheme_type_p ag_gdl_grapheme_type;
-
-extern Pool *gdlpool;
-#define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
-static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
-static int GIN = 0; /* 1 if in grapheme */
-static int QIN = 0; /* non-zero if in a(BA) qualifier */
-static int SIN = 0; /* left context is space */
-
-int atf_term_flag = 0;
-
-#define gconst aglval.text=agtext
-#define gsave  aglval.text=gdlsave(agtext)
-#define gsaveg(garg)  aglval.text=gdlsave((garg))
-#define atf_yyterminate() return (atf_term_flag = !atf_term_flag) ? ATF_END : YY_NULL
-#define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
-
-/* Simple stack for nesting of compounds and valuquals */
-#define CVQ_MAX 6
-static int cvq_stack[CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
-static int cvq_top = -1;
-static int cvq_pop(void);
-static int cvq_push(int);
-static void cvq_reset(void);
-
-#if 0
-static int ag_gdl_init(void);
-static int ag_line_save(const char *t);
-#endif
+			/* GDLPROLOGUE */
 %}
+
 PQX	([PQX][0-9]{6})
 BOM3	("\xef\xbb\xbf")
 BOM2	("\xfe\xff")
@@ -102,22 +73,8 @@ TRA_LAB ^@\([^)@]+\)
 TRA_PAR [\n\r]+[ \t]*[\n\r]+
 TRA_WHT [ \t\n\r]+
 TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
-	     	/* 20260519 remove '*' because it conflicts with collated flag */
-L		([A-Z][A-Z]+[0-9][0-9][0-9]+[A-Z0-9a-z_'"/+^]*(′|″)*){M}*
-B		("["|"]"|\xe2\xb8[\xa2-\xa5])
-S		\xe2\xb8[^\xa2-\xa5]|([0-9][a-wyz]*)
-G		([a-ru-zA-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[stST],?|{S}|\xc3[^\x97]|\xe2[^\xb8\x88])+
-CG		([A-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[ST],?|{S}|\xc3[^\x97]|\xe2[^\xb8\x88])+
-M		("@"([a-wyz]+[0-9]*|45|90|180|270)|"~"[a-z0-9][a-wyz0-9]*|"\\"[a-z]*[0-9]+)
-NNUM		([N][0-9][0-9]?[ACF]?)
-GRAPHEME 	({G}|"15")
-FRACTION	[0-9]\/[0-9]
-L_UHS		"\xe2\xb8\xa2"
-R_UHS		"\xe2\xb8\xa3"
-L_LHS		"\xe2\xb8\xa4"
-R_LHS		"\xe2\xb8\xa5"
-UFLAG	"\xe2\x80"[\xa0\xa1\xa2\xa3]
-NOTEMARK	"^"[0-9]+"^"
+
+			/* GDLPATDEF */
 
 %x s_AMPl
 %x s_AMPr
@@ -139,10 +96,11 @@ NOTEMARK	"^"[0-9]+"^"
 %x TD
 %x N
 
+			/* GDLSTARTS */
 %%
 
 <INITIAL,A>^({BOM3}|{BOM2})?"&"  		{ BEGIN s_AMPl; s_next = A; }
-<s_AMPl>{PQX}			{ atfsave; return r(PQX); }
+<s_AMPl>{PQX}			{ agsave; return r(PQX); }
 <s_AMPl>[ \t]+=	       		{ BEGIN s_AMPr; return r('='); }
 <s_AMPl>[ \t]+/[^=]    		{ mesg_verr(&aglloc, "no '=' in &-line");
 				  BEGIN s_AMPr; return r('='); }
@@ -157,7 +115,7 @@ NOTEMARK	"^"[0-9]+"^"
 <s_T><<EOF>>			{ return TEXT; }
 
 <s_WORD>[^ \t\n\r]+	     	{ BEGIN s_next;
-				  int ret=(s_next==s_TRD?TR_PROJ:WORD); s_next = A; atfsave; return ret; }
+				  int ret=(s_next==s_TRD?TR_PROJ:WORD); s_next = A; agsave; return ret; }
 <s_WORD>[ \t]+	       		{ ; }
 
 <INITIAL,A>^"@composite"			{ (void)ag_block(agtext); return COMPOSITE; }
@@ -171,11 +129,11 @@ NOTEMARK	"^"[0-9]+"^"
 <s_SCO>[\n\r]	       		{ BEGIN A; }
 
 <INITIAL,A>^"#project:"			{ BEGIN s_PRO; return HASH_PROJECT; }
-<s_PRO>{PROJECT}/[ \t]*[\n\r]   { BEGIN A; atfsave; return PROJECT; }
+<s_PRO>{PROJECT}/[ \t]*[\n\r]   { BEGIN A; agsave; return PROJECT; }
 <s_PRO>[ \t]+			{ ; }
 
 <INITIAL,A>^"#atf:"			{ BEGIN s_ATFPRO; }
-<s_ATFPRO>lang.*/[\n\r]	       	{ atfsave; return ATF_LANG; }
+<s_ATFPRO>lang.*/[\n\r]	       	{ agsave; return ATF_LANG; }
 <s_ATFPRO>{use}mylines		{ usesave; return ATF_MYLINES; }
 <s_ATFPRO>{use}line-labels    	{ usesave; return ATF_LINELABELS; }
 <s_ATFPRO>{use}alignment-groups { usesave; return ATF_AGROUPS; }
@@ -193,7 +151,7 @@ NOTEMARK	"^"[0-9]+"^"
 <s_LINK>"def"			{ s_next=s_LINK; BEGIN s_WORD; return LINK_DEF; }
 <s_LINK>"parallel"		{ return LINK_PARALLEL; }
 <s_LINK>"source"		{ return LINK_SOURCE; }
-<s_LINK>{QID}			{ linktext = 2; atfsave; return QID; }
+<s_LINK>{QID}			{ linktext = 2; agsave; return QID; }
 <s_LINK>=			{ if (linktext==2) BEGIN s_T; else if (linktext==1) BEGIN s_WORD;
 				  linktext = 0; return '='; }
 <s_LINK>[ \t]			{ ; }
@@ -217,9 +175,9 @@ NOTEMARK	"^"[0-9]+"^"
 
 <INITIAL,A>^@([a-z][a-z0-9]*) 		{ BEGIN s_T; return ag_block(agtext); }
 
-<INITIAL,A>^"$"  				{ BEGIN s_T; atfsave; return DOLLAR; }
+<INITIAL,A>^"$"  			{ BEGIN s_T; agsave; return DOLLAR; }
 
-<INITIAL,A>^"#lem:"  			{ BEGIN s_T; atfsave; return LEM; }
+<INITIAL,A>^"#lem:"  			{ BEGIN s_T; agsave; return LEM; }
 
 <INITIAL,A>^#tr(.[a-z-]+)?:		{ BEGIN s_T; longinit; return TR_INTER; }
 
@@ -237,26 +195,26 @@ NOTEMARK	"^"[0-9]+"^"
 
 <INITIAL,A>^:[^:#@$]+:[ \t]+	       	{ BEGIN 0; return VAR; }
 
-<INITIAL,A>^== 				{ BEGIN s_T; atfsave; return BIL; }
+<INITIAL,A>^== 				{ BEGIN s_T; agsave; return BIL; }
 
 <INITIAL,A>^#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
-<s_TRD>("labeled"|"parallel"|"unitary")	{ atfsave; tra_text=0; return TR_TYPE; }
-<s_TRD>{LANG}				{ atfsave; s_next=s_TRD; BEGIN s_WORD; return TR_LANG; }
+<s_TRD>("labeled"|"parallel"|"unitary")	{ agsave; tra_text=0; return TR_TYPE; }
+<s_TRD>{LANG}				{ agsave; s_next=s_TRD; BEGIN s_WORD; return TR_LANG; }
 <s_TRD>[ \t]+				{ ; }
 <s_TRD>"\n"				{ BEGIN s_TRA; }
-<s_TRA>^@h[123]				{ atfsave; tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
-<s_TRA>^@label[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_LABEL; }
-<s_TRA>^@unit[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=0; return TR_UNIT; }
-<s_TRA>^@span[^\n\r]*/[\n\r]	       	{ atfsave; tra_text=1; return TR_SPAN; }
+<s_TRA>^@h[123]				{ agsave; tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_HDR; }
+<s_TRA>^@label[^\n\r]*/[\n\r]	       	{ agsave; tra_text=1; return TR_LABEL; }
+<s_TRA>^@unit[^\n\r]*/[\n\r]	       	{ agsave; tra_text=0; return TR_UNIT; }
+<s_TRA>^@span[^\n\r]*/[\n\r]	       	{ agsave; tra_text=1; return TR_SPAN; }
 <s_TRA>^"$"  				{ tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_DOLLAR; }
 <s_TRA>^"#"[^ \t\n\r]*/[ \t\n\r]   	{ tra_text=0; s_next=s_TRA; BEGIN s_T; longinit; return TR_COMMENT; }
-<s_TRA>{TRA_LAB}			{ atfsave; tra_text=1; return TR_LABEL; }
-<s_TRA>{TRA_CHR}       			{ atfsave; return TR_TEXT; }
-<s_TRA>{TRA_CMD}	       		{ atfsave; return TR_TEXT; }
+<s_TRA>{TRA_LAB}			{ agsave; tra_text=1; return TR_LABEL; }
+<s_TRA>{TRA_CHR}       			{ agsave; return TR_TEXT; }
+<s_TRA>{TRA_CMD}	       		{ agsave; return TR_TEXT; }
 <s_TRA>{TRA_PAR}			{ if (tra_text) { aglval.text=""; return TR_PAR; } }
-<s_TRA>{TRA_WHT}			{ if (tra_text) { atfsave; return TR_TEXT; } }
-<s_TRA>{TRA_WRD}	       		{ if (tra_text) { atfsave; return TR_TEXT; } }
+<s_TRA>{TRA_WHT}			{ if (tra_text) { agsave; return TR_TEXT; } }
+<s_TRA>{TRA_WRD}	       		{ if (tra_text) { agsave; return TR_TEXT; } }
 
 <A>[ \t\r\n]+     			{ ; }
 
@@ -264,197 +222,7 @@ NOTEMARK	"^"[0-9]+"^"
 
 <A><<EOF>>	       		{ atf_yyterminate(); }
 
-
-[=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(currgdlfile,aglineno,
-						"non-Unicode accent codes %s",agtext); }}
-
-{G}({G}|{B})*{G}	{ GIN=1; return ag_gdl_grapheme_type(); }
-{G}({G}|{B})*/{M}	{ GIN=1; return ag_gdl_grapheme_type(); }
-{GRAPHEME} 		{ GIN=1; return ag_gdl_grapheme_type(); }
-
-"|"/[ \t]	       	{ /*"*/ aglval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
-"|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
-<C>"|"/[ \t]   		{ BEGIN cvq_pop(); CIN=0; return C_C; }
-<C>"|"			{ BEGIN cvq_pop(); CIN=0; return C_C; }
-<C>"\xe2\x88\x98"	{ GIN=0; return C_CIRCLE; }
-<C>{NNUM}/{M} 		{ GIN=1; gsave; return NNUM; }
-<C>{NNUM} 		{ GIN=1; gsave; return NNUM; }
-<C>{CG}			{ GIN=1; return ag_gdl_grapheme_type(); }
-<C>{CG}({CG}|{B})*{CG}	{ GIN=1; return ag_gdl_grapheme_type(); }
-<C>{CG}({CG}|{B})*/{M}	{ GIN=1; return ag_gdl_grapheme_type(); }
-<C>{M}			{ GIN=1; gsave; return MOD; }
-<C>[0-9nN]+(\/[0-9]+)?/"("	{ GIN=1; gsave; return NUMBER; }
-<C>"."			{ GIN=0; return C_PERIOD; }
-<C>"+"			{ GIN=0; return C_PLUS; }
-<C>":"/"("	       	{ GIN=0; return C_COLON; }
-<C>":"			{ GIN=0; return C_COLON; }
-<C>"&"			{ GIN=0; return C_ABOVE; }
-<C>"%"			{ GIN=0; return C_CROSSING; }
-<C>@/[^a-z0-9]+		{ GIN=0; return C_OPPOSING; }
-<C>"4\xc3\x97"		{ GIN=0; return C_4TIMES; }
-<C>"3\xc3\x97"		{ GIN=0; return C_3TIMES; }
-<C>"\xc3\x97"	       	{ GIN=0; return C_TIMES; }
-<C>"x"	       		{ GIN=0; return C_TIMES; }
-<C>[a-wyz]    		{ GIN=0; mesg_vwarning(currgdlfile,aglineno,"lowercase graphemes not allowed in |...|"); }
-<C>"("			{ return GIN ? QLP : CLP; }
-<C>")"			{ return CRP; }
-<C>[ \t]+	       	{ CIN=GIN=0; mesg_vwarning(currgdlfile,aglineno,"missing '|' in compound");
-			  cvq_reset(); }
-
-<Q>")"/[}>]	       	{ return QRP; }
-<Q>")"			{ return QRP; }
-<Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(currgdlfile,aglineno,"missing ')' in qv");
-			  cvq_reset(); }
-
-":"/[ \t\n\(\]]        	{ /*"*/ GIN=1; gsave; return PUNCT; }
-":."			{ /*"*/ GIN=1; gsave; return PUNCT; }
-":'"			{ /*"*/ GIN=1; gsave; return PUNCT; }
-":\""			{ /*"*/ GIN=1; gsave; return PUNCT; }
-"::"      		{ /*"*/ GIN=1; gsave; return PUNCT; }
-"/"/[ \t\n\(\]]		{ /*"*/ GIN=1; gsave; return PUNCT; }
-
-{L}			{ gsave; return LISTNUM; }
-
-[0-9nN]+(\/[0-9]+)?/"("	{ GIN=1; gsave; return NUMBER; }
-
-{NNUM}/{M}	       	{ GIN=1; gsave; return NNUM; }
-{NNUM} 			{ GIN=1; gsave; return NNUM; }
-
-[0-9]+(\/[0-9]+)?	{ GIN=1; gsave; return !strncmp(aglval.text,"00",2) ? ZERO : BARENUM; }
-
-{M}			{ GIN=1; gsave; return MOD; }
-
-	/* Determinatives and glosses */
-
-"{{"[0-9+]:	       	{ gconst; GIN=0; return L_dbl_cur; }
-"{{"			{ gconst; GIN=0; return L_dbl_cur; }
-"}}"			{ gconst; GIN=0; return R_dbl_cur; }
-"{("			{ gconst; GIN=0; return L_cur_par; }
-")}"			{ gconst; GIN=0; return R_cur_par; }
-"(x("			{ gconst; GIN=0; return L_par_par; }
-")x)"			{ gconst; GIN=0; return R_par_par; }
-"{"			{ GIN=0; return '{'; }
-"{+"			{ GIN=0; return DET_PHON; }
-"{-"			{ GIN=0; return DET_SEME; }
-"}"			{ GIN=0; return '}'; }
-
-,			{ return ','; }
-&[0-9]+  		{ gsave; return CELLSPAN; }
-&			{ return '&'; }
-![a-z]+        		{ gsave; return FTYPE; }
-
-	/* Normalized text scanning */
-
-<N>{G}			{ gsave; return NORMSEG; }
-
-	/* Alphabetic text scanning */
-
-<A>.			{ mesg_vwarning(currgdlfile,aglineno,"alphabetic input not yet implemented"); }
-
-	/* Delimiters */
-
-<INITIAL,N>"..."       	{ GIN=0; gsave; return ELLIPSIS; }
-<INITIAL,N>"--"	       	{ GIN=0; return ENHYPHEN; }
-<INITIAL,N>-		{ GIN=0; return agtext[0]; }
-[+:.]     		{ GIN=0; return agtext[0]; }
-
-"/"/("|"|{G})	       	{ return '/'; } /* alternation */
-
-"//"			{ return LINEBREAK; }
-
-<INITIAL,N>[ \t]+/[#"~=@^]    	{ GIN=0; SIN=1; gsave; return SPACE; }
-<INITIAL,N>[ \t]+	       	{ GIN=0; gsave; return SPACE; }
-
-	/* Inline comment/dollar */
-
-"($"			{ BEGIN TD; return L_inl_dol; }
-<TD>"$)"	       	{ BEGIN 0; return R_inl_dol; }
-
-"(#"			{ BEGIN TC; return L_inl_cmt; }
-<TC>"#)"       		{ BEGIN 0; return R_inl_cmt; }
-
-<TD>([^$]|\$[^)])*     	{ gsave; return TEXT; }
-<TC>([^#]|\#[^)])*   	{ gsave; return TEXT; }
-
-	/* Anything in this section either does not return a token or
- 	   only does so in some circumstances */
-
-<INITIAL,N,Q>"("	{ if (GIN) { GIN=0; return QLP; } else { gdl_state_o(e_L_par,YY_START); } }
-<INITIAL,N,Q>")"	{ GIN=0; if (QIN) { return QRP; } else { gdl_state_c(e_R_par); } }
-
-<INITIAL,C,N>"<("	{ GIN=0; gdl_state_o(e_L_ang_par,YY_START); }
-<INITIAL,C,N>")>"	{ GIN=0; BEGIN gdl_state_c(e_R_ang_par); }
-<INITIAL,C,N>"<<"	{ GIN=0; gdl_state_o(e_L_dbl_ang,YY_START); }
-<INITIAL,C,N>">>"	{ GIN=0; BEGIN gdl_state_c(e_R_dbl_ang); }
-<INITIAL,C,N>"<"	{ GIN=0; gdl_state_o(e_L_ang,YY_START); }
-<INITIAL,C,N>">"	{ GIN=0; BEGIN gdl_state_c(e_R_ang); }
-<INITIAL,C,N>"["	{ GIN=0; gdl_break_o(e_L_squ); }
-<INITIAL,C,N>"]"	{ GIN=0; gdl_break_c(e_R_squ); }
-<INITIAL,C,N>{L_UHS}	{ GIN=0; gdl_break_o(e_L_uhs); }
-<INITIAL,C,N>{R_UHS}	{ GIN=0; gdl_break_c(e_R_uhs); }
-<INITIAL,C,N>{L_LHS}	{ GIN=0; gdl_break_o(e_L_lhs); }
-<INITIAL,C,N>{R_LHS}	{ GIN=0; gdl_break_c(e_R_lhs); }
-
-	/* The meta-delimiter ';' == indented line */
-<INITIAL,C>";"	       	{ GIN=0; gdl_indent(); }
-
-	/* Sign state force characters */
-~~/{G}			{ g_logoforce_flag = 1; }
-"~"/{G}			{ if (gdl_lexical) { gsave; mesg_vwarning(currgdlfile, aglineno,
-			   "no space after ~ field; use ~~ for logogram force with atf: use lexical\n");
-			     aglval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext];
-			   } else { g_logoforce_flag = 1; } }
-"$"/{G}			{ g_literal_flag = 1; }
-
-	/* Grapheme meta flags, sometimes doubling as lex field shorthands */
-<INITIAL,C,Q,N>[!?]     { gdl_lex_flag((uccp)yytext); }
-<INITIAL,C,N>"*"       	{ /*"*/ if (GIN) { gdl_lex_flag((uccp)yytext); } else { GIN=1; gsave; return(PUNCT); } }
-<INITIAL,C,N>^[#"~=@^]	{ aglval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
-"#"			{ if (SIN) { SIN=0;
-				     aglval.text=(char*)gdl_lexnames[(int)*yytext];
-			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
-<C,N>"#"	       	{ gdl_lex_flag((uccp)yytext); }
-<INITIAL,C,N>[:"~=@^]   { if (SIN) { SIN=0;
-				     aglval.text=(char*)gdl_lexnames[(int)*yytext];
-				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag((uccp)yytext); } }
-<INITIAL,N>[#"=@^]/{G} 	{ if (gdl_lexical) {
-		       	    mesg_vwarning(currgdlfile, aglineno,
-			  	       	  "no space after %c field\n", *yytext);
-	       	     	    aglval.text=(char*)gdl_lexnames[(int)*yytext];
-			    return gdl_lexfld[(int)*yytext]; }
-			  else { gdl_lex_flag((uccp)yytext); } }
-
-{UFLAG}			{ gdl_lex_flag((uccp)yytext); }
-
-	/* Language shifts; ignore following whitespace after %-tag */
-<INITIAL,N>%[-a-z0-9]+("/"[gn])?[ \t]*   { BEGIN gdl_lang_tag(yytext); }
-_			                 { gdl_lang_flip(); }
-
-	/* Note marks */
-{NOTEMARK}		{ gdl_note_mark(agtext); }
-
-	/* Inline variation note marks */
-"("[0-9]+::[0-9]+")"   	{ gsave; GIN=0; gdl_var_mark(e_LR_var, aglval.text); }
-"("[0-9]+:		{ gsave; GIN=0; gdl_var_mark(e_L_var, aglval.text); }
-:[0-9+]")"		{ gsave; GIN=0; gdl_var_mark(e_R_var, aglval.text); }
-
-	/* General administrative rules */
-
-<INITIAL,N>\n  		{ return '\n'; }
-
-"\xc3\x97"	       	{ mesg_vwarning(currgdlfile, aglineno, "gdl.l: misplaced ×\n"); }
-
-<*>.			{ if (last_unmatched_line != aglineno)
-			    {
-				mesg_vwarning(currgdlfile, aglineno,
-			  		      "gdl.l: unmatched character %c in state %d\n",
-					       *agtext, YY_START);
-			       	last_unmatched_line = aglineno;
-			    }
-			}
-
-<<EOF>>			{ gdl_line_wrapup(aglloc); gdl_yyterminate(); }
-
+				/* GDLLEXER */
 
 %%
 static void

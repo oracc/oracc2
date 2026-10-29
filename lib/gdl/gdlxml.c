@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tree.h"
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
+#include "gdlx.h"
 #include "xml.h"
 #include "rnvxml.h"
 

@@ -7,10 +7,8 @@
 #include <memo.h>
 #include <tree.h>
 #include <atf2utf.h>
-#include "../atfgdl/ag.h"
-#include "gdl.h"
-
-Pool *gdlpool;
+#include "gdllib.h"
+#include "gdlr.h"
 
 /* These only get set when reading ATF but they are used in GDL
    messages so they are declared here which means that programs using
@@ -18,15 +16,8 @@ Pool *gdlpool;
 char *curr_pqx = NULL;
 int curr_pqx_line = 0;
 
-/* set to 1 when a vq has !, e.g., a!(BA) */
-int gdl_corrq = 0;
-
 int gdl_initted = 0;
 int gdltrace = 0;
-
-/* If this is non-zero we use orig graphemes in reconstituting
-   compounds rather than c10e */
-int gdl_orig_mode = 0;
 
 void
 gdl_init(void)
@@ -61,7 +52,6 @@ gdl_term(void)
       gdl_modq_term();
     }
 }
-
 
 static Node *
 gdl_first_s_sub(Node *np)

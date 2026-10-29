@@ -1,6 +1,6 @@
 #include <oraccsys.h>
 #include <stck.h>
-#include "gdl.h"
+#include "gdllib.h"
 #include "gdlstream.h"
 
 /* A stream is a composite of two numbers, the main stream and the
@@ -11,7 +11,6 @@
  * is 43.
  */
 
-static Stck *sstck = NULL;
 static char *stckstr[] = { "0" , "1" , "2" , "3" , "4" ,
 			   "5" , "6" , "7" , "8" , "9" };
 

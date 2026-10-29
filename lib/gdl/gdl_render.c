@@ -1,6 +1,7 @@
 #include <oraccsys.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
+#include "gdlr.h"
+#include "gdlparse.h"
 
 GDLR_config *gdlr_wfa_config, *gdlr_wfc_config, *gdlr_wfo_config;
 

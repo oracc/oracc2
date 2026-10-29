@@ -7,19 +7,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mesg.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
+
 extern int gdllex(void);
 extern void yyerror(const char *);
 extern const char *currgdlfile;
 extern int gdllineno, gdltrace;
 
-extern Node *gdl_post_det_gp_attach;
-
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
-extern Node *lgp;
-/*int Q = 0;*/
 
 #define GDLLTYPE_IS_DECLARED 1
 #define GDLLTYPE Mloc
@@ -202,8 +198,7 @@ maybegflags:
 	| 	/*empty */
 		;
 
-simplexg:	s maybegflags	       	       	 { /*if (gdl_legacy) gdl_unlegacy(ynp);*/
-		    		                   if (ynp->kids) gdl_mod_wrap(ynp, 1);
+simplexg:	s maybegflags	       	       	 { if (ynp->kids) gdl_mod_wrap(ynp, 1);
 						   gvl_simplexg(ynp);
 						   $$ = ynp; }
 		;
@@ -221,12 +216,12 @@ s:
 	;
 
 compound:
-	  c cmaybemodflags         			{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
-	    						  gdl_modq_flush();
-							  gvl_compound(ycp);
-							  $$ = ycp;
-	    						  ynp = gdl_pop(ytp,"g:c");
-							  ynp = gdl_c_term(ytp); }
+		c cmaybemodflags       		{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
+	    			       		  gdl_modq_flush();
+				       		  gvl_compound(ycp);
+				       		  $$ = ycp;
+	    			       		  ynp = gdl_pop(ytp,"g:c");
+				       		  ynp = gdl_c_term(ytp); }
 	;
 
 c:

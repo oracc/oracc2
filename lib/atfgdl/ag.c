@@ -33,3 +33,21 @@ agyacc(void)
 
   return tp;
 }
+
+/* In ag we don't call a separate gdl parser instance, we just set up
+   the gdl tree builder to use the current ATF tree */
+Tree *
+ag_gdlparse(Mloc *m, Tree *atftp, Node *rootnode)
+{
+  Tree *tp = tree_init_mem(atftp->tm);
+#if 1
+  tp->root = tp->curr = rootnode;
+#else
+  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
+#endif
+  gdl_group_attach = lgp = NULL;
+  wd_list = list_create(LIST_SINGLE);
+  gdl_lex_init(m->file, m->line);
+  gdl_set_tree(tp);
+  return tp;
+}

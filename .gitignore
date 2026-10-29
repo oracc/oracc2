@@ -232,6 +232,7 @@ progtab.c
 propmask.c
 qpnnames.c
 qsoption.c
+scripttok.c
 selections.c
 setoks.c
 sll_signlist.c

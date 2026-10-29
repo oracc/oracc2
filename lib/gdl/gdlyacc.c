@@ -7,74 +7,25 @@
 #include <ctype128.h>
 #include <atf2utf.h>
 #include <sll.h>
-#include "gdlstate.h"
-#include "gdl.h"
+#include "gdllib.h"
+#include "gdlr.h"
 #include "gvl.h"
 
 #include "lex_st_enum.h"
 
-static Hash *lzr_sparse = NULL;
-const char *curr_field = NULL;
-extern struct lang_context *gdl_lang_context, *gdl_global_context;
-extern const char *word_lang_tag;
-extern void gdllex_destroy(void);
-extern void gdl_validate(Tree *tp);
-int deep_parse = 1;
-int gdl_ascii = 0;
-int gdl_cell_count;
+/* This is application-global and doesn't vary by GDL instance */
+extern struct lang_context *gdl_global_context;
+
+/* These are specific to gdl.l so they can't go in gdllib.h and are
+   not for use outside of gdl.l/gdl.y */
+extern const char *gdlfile;
+extern int gdllineno;
+
 int gdl_no_xml_ids = 0;
 int gdl_xmlids = 1;
+
+static Hash *lzr_sparse = NULL;
 static int gdl_excision_type = 'e';
-/*static int gdl_atf = 0;*/
-
-Node *gdl_post_det_gp_attach, *gdl_recycled_word;
-
-gdl_delim_p gdl_delim;
-Node *gdl_delim_l(Tree *ytp, const char *data);
-Node *gdl_delim_s(Tree *ytp, const char *data);
-
-gdl_graph_node_p gdl_graph_node;
-Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
-Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
-
-static int grapheme_id, nonw_found, wid_base;
-static char gdl_line_id[1024], gdl_word_id[2048];
-static char *gid_insertp;
-
-#define wordnode(w_)	(strlen(w_->name)==3&&'w'==(w_->name[2]))
-
-/* New 2026-03-03: state is now handled with three variables, pst,
-   lst, rst
-
-   pst (pending-state) is for openers only: it is zeroed-out after it
-   	is applied to a node
-
-   lst (last-state) is a pointer to the state property of the most
-   	recently seen node and is where closers are applied
-	
-   rst (running-state) is set by openers and unset by closers; it is
-   	applied to nodes in addition to pending-state
-
-   2026-06-04: with meta rewrite we now keep state pointer dst to the
-        state of the last grapheme that had gs_damaged set so that
-        gdl_delim can add gs_damaged_c easily
-
- */
-gdlstate_t pst, *lst, rst, *dst;
-Node *lgp = NULL;   /* last grapheme node pointer */
-Bracket_e gdl_legacy_o, gdl_legacy_c;
-
-int gdl_word_mode;
-
-const char *c_last_implicit_delim = NULL;
-int c_delim_sentinel;
-int c_implicit_times_reset;
-int c_processing;
-List *c_dangling_gps = NULL;
-List *c_explicit_gps = NULL;
-List *c_implicit_gps = NULL;
-static Node *c_last_explicit_group_node = NULL;
-static List *wd_list = NULL;
 
 /***********************************************************************
  *
@@ -154,31 +105,6 @@ List *
 gdl_get_word_list(void)
 {
   return wd_list;
-}
-
-void
-gdlparse_deep(Node *np, void *mptr)
-{
-  if (np->user)
-    {
-      gvl_g *gp = np->user;
-      if (gp->orig && '|' != *gp->orig && gp->sign && '|' == *gp->sign)
-	{
-	  Tree *tp = tree_init();
-	  Mloc *m = mptr;
-	  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
-	  gdl_setup_buffer((char*)pool_copy((ucp)gp->sign, gdlpool));
-	  /* do this before gdl_set_tree so that initial w-node gets the right line number */
-	  if (m)
-	    gdl_lex_init(m->file, m->line);
-	  else
-	    gdl_lex_init("<string>", 1);
-	  gdl_set_tree(tp);
-	  /*gdlparse();*/
-	  gdllex_destroy();
-	  gp->deep = tp->root->kids;
-	}
-    }
 }
 
 static void
@@ -342,111 +268,6 @@ gdl_word_attr(Node *w)
     }
 }
 
-static List *
-gdl_rem_nonw(List *wds)
-{
-  List *lp = list_create(LIST_SINGLE);
-  Node *w;
-  for (w = list_first(wds); w; w = list_next(wds))
-    if (wordnode(w))
-      list_add(lp, w);
-  list_free(wds, NULL);
-  return lp;
-}
-
-Tree *
-gdlparse_atfgdl(Mloc *m, Tree *atftp, Node *rootnode)
-{
-  Tree *tp = tree_init_mem(atftp->tm);
-#if 1
-  tp->root = tp->curr = rootnode;
-#else
-  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
-#endif
-  gdl_group_attach = lgp = NULL;
-  wd_list = list_create(LIST_SINGLE);
-  gdl_lex_init(m->file, m->line);
-  gdl_set_tree(tp);
-  return tp;
-}
-
-Tree *
-gdlparse_string(Mloc *m, char *s)
-{
-  Tree *tp = tree_init();
-  char *s2 = malloc(strlen(s)+2);
-
-  strcpy(s2, s);
-  strcat(s2, "\n");
-
-  gdl_group_attach = lgp = NULL;
-
-  /* must come before gdl_set_tree() */
-  if (gdl_word_mode)
-    wd_list = list_create(LIST_SINGLE);
-  
-  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
-
-  if (tp->root)
-    tp->root->text = (ccp)pool_copy((uccp)s, gdlpool);
-
-  gdl_setup_buffer(s2);
-  
-  /* do this before gdl_set_tree so that initial w-node gets the right line number */
-  if (m)
-    gdl_lex_init(m->file, m->line);
-  else
-    gdl_lex_init("<string>", 1);
-
-  gdl_set_tree(tp);
-
-  /*gdlparse();*/
-  gdllex_destroy();
-  free(s2);
-
-  Node *w;
-  nonw_found = 0;
-
-  for (w = list_first(wd_list); w; w = list_next(wd_list))
-    gdl_word_attr(w);
-
-  if (nonw_found)
-    wd_list = gdl_rem_nonw(wd_list);
-
-  if (deep_parse)
-    {
-      if (gdl_word_mode)
-	{
-	  List *saved_wl = wd_list;
-	  wd_list = list_create(LIST_SINGLE);
-	  tree_iterator(tp, m, gdlparse_deep, NULL);
-	  list_free(wd_list, NULL);
-	  wd_list = saved_wl;
-	}
-      else
-	tree_iterator(tp, m, gdlparse_deep, NULL);
-    }
-  
-  return tp;
-}
-
-void
-gdlparse_init(void)
-{
-  gdl_init();
-}
-
-void
-gdlparse_reset(void)
-{
-}
-
-void
-gdlparse_term(void)
-{
-  gdl_term();
-}
-
 Tree*
 gdl_literal(Mloc *m, char *s)
 {
@@ -476,89 +297,11 @@ gdl_gp_type(Tree *ytp, enum gdlpropvals p)
   gdl_prop(ytp->curr, p, PG_GDL_GROUP);
 }
 
-#if 0
-void
-gdl_node_type(Node *np, enum gdlpropvals p)
-{
-  gdl_prop(np, p, PG_GDL_GROUP);
-}
-#endif
-
 const char *
 gdl_grapheme_id(void)
 {
   sprintf(gid_insertp, ".%d", grapheme_id++);
   return gdl_word_id;
-}
-
-Node *
-gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data)
-{
-  Node *np = NULL;
-  if (ytp->curr && !ytp->curr->mloc)
-    ytp->curr->mloc = locp;
-  np = tree_add(ytp, NS_GDL, name, ytp->curr->depth, NULL);
-  np->text = (ccp)pool_copy((uccp)data,gdlpool);
-  lgp = np;
-  lst = prop_state(np, pst|rst);
-
-  if (gs_is(rst, gs_surro))
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:sur", curr_sur_id);
-
-  /*  if (gdl_xmlids && 'r' != name[2] && 'R' != name[2])*/
-  if (!gdl_no_xml_ids)
-    {
-      sprintf(gid_insertp, ".%d", grapheme_id++);
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-		  (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
-    }
-  pst = 0L;
-  np->mloc = mloc_mloc(locp);
-  /* For r-nodes, leave gdl_pending_varo set and let g:n take it later */
-  if (gdl_pending_varo && (('r' != np->name[2] && 'R' != np->name[2])))
-    {
-      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:varo", gdl_pending_varo);
-      gdl_pending_varo = NULL;
-    }
-  /* 20260602: now that we are lifting state from g:r/g:v up to g:n we
-     let break/state apply to g:r nodes */
-  if (gdl_break_pending/* && (('r' != np->name[2] && 'R' != np->name[2]))*/)
-    {
-      gdl_break_node(np);
-    }
-  if (gdl_state_pending/* && 'r' != np->name[2] && 'R' != np->name[2]*/)
-    gdl_state_node(np);
-  return np;
-}
-
-Node *
-gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data)
-{
-  if (gdl_legacy_pending)
-    {
-      if (bit_get(gdl_legacy_pending, GLP_O2))
-	{
-	  /* Don't apply opener to the first grapheme because that is 'ba' in 'b[a ab' */
-	  bit_off(gdl_legacy_pending, GLP_O2);
-	  bit_set(gdl_legacy_pending, GLP_O1);
-	}
-      else if (bit_get(gdl_legacy_pending, GLP_O1))
-	{
-	  gdl_break_o(gdl_legacy_o); /* Now we are on the following grapheme, ab in 'b[a ab' */
-	  gdl_legacy_pending = 0;
-	}
-    }
-
-  Node *np = gdl_graph_node_s(locp, ytp, name, data);
-
-  /* In legacy mode this behaves as though b]ad were ] bad# */
-  if (gdl_legacy_hash)
-    {
-      gdl_lex_hash(lst);
-      gdl_legacy_hash = 0;
-    }
-
-  return np;
 }
 
 Node *
@@ -591,7 +334,7 @@ gdl_prop(Node *ynp, int ptype, int gtype)
   if (ynp)
     ynp->props = prop_add(ynp->tree->tm->prop_mem, ynp->props, ptype, gtype);
   else
-    mesg_warning(currgdlfile, gdllineno, "gdl_prop passed NULL ynp");
+    mesg_warning(gdlfile, gdllineno, "gdl_prop passed NULL ynp");
 }
 
 void
@@ -600,9 +343,9 @@ gdl_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
   if (ynp && v)
     prop_node_add(ynp, ptype, gtype, k, v);
   else if (!v)
-    mesg_vwarning(currgdlfile, gdllineno, "gdl_prop passed NULL value for key %s", k);
+    mesg_vwarning(gdlfile, gdllineno, "gdl_prop passed NULL value for key %s", k);
   else
-    mesg_warning(currgdlfile, gdllineno, "gdl_prop passed NULL ynp");
+    mesg_warning(gdlfile, gdllineno, "gdl_prop passed NULL ynp");
 }
 
 void
@@ -711,7 +454,6 @@ gdl_c_init(Node *ycp)
     gdl_break_node(ycp);
   if (gdl_state_pending)
     gdl_state_node(ycp);
-
 }
 
 Node *
@@ -814,7 +556,7 @@ gdl_new_word(Tree *ytp)
 	  tree_curr(l);
 
 	  Node *wp = gdl_push(ytp, gdl_lang_context->tag->scode == stc_SAC ? "g:w" : "n:w");
-	  wp->mloc = mloc_file_line(currgdlfile, gdllineno);
+	  wp->mloc = mloc_file_line(gdlfile, gdllineno);
 
 	  /* By definition, the word-lang is the one in effect when the
 	     word begins; logogram lang switches need to be handled
@@ -886,128 +628,6 @@ gdl_prefix(Tree *ytp, unsigned const char *p)
 	  c_last_explicit_group_node = np->rent;
 	}
     }
-}
-
-Node *
-gdl_delim_l(Tree *ytp, const char *data)
-{
-  return gdl_delim_s(ytp, data);
-}
-
-Node *
-gdl_delim_s(Tree *ytp, const char *data)
-{
-  Node *np = NULL;
-
-  if (gdltrace)
-    fprintf(stderr, "gt: DELIM: %s\n", data);
-
-  /* Deferred clean-ups done by gdl_delim */
-  if (gdl_group_attach && !c_processing)
-    {
-      tree_curr(gdl_group_attach->rent);
-      gdl_group_attach = NULL;
-    }
-
-  gdl_hc(0);
-  
-  /* GDL lang handling needs to switch to lib/lng */
-
-#if 0
-  /* This is an ePSD rule but not a widespread rule in the field */
-  if ('.' == *data && !c_processing && gdl_lang_context->core->code == c_sux && !gdl_num_context(ytp->curr->last))
-    {
-      mesg_verr(ytp->curr->mloc, "period only legal in compounds, logograms, and ...");
-      data = "-";
-    }
-#endif
-
-  if (c_processing)
-    {
-      np = tree_add(ytp, NS_GDL, "g:o", ytp->curr->depth, NULL);
-      np->mloc = ytp->curr->mloc;
-      np->text = data;
-
-      Node *d_attach = lgp ? lgp : np->prev;
-      if (d_attach)
-	{
-	  /* 2026-08-11: don't use g:delim inside compounds because delims are in <g:o> nodes*/
-	  /*gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);*/
-	  if (!strcmp(np->rent->name, "g:gp") && '.' == *data)
-	    gdl_prop_kv(d_attach, GP_ATTRIBUTE, PG_GDL_INFO, "g:sigdelim", "+");	
-	}
-      ++c_delim_sentinel;
-      if (strcmp(np->rent->name, "g:gp")) /* implicit group */
-	{
-	  if ('.' != *data && (!c_last_implicit_delim || '%' != *data)
-	      && '-' != *data && ':' != *data && '+' != *data)
-	    {
-	      /* c_last_implicit_delim avoids adding successive delims
-		 of the same kind to the implicit group list. So,
-		 |AŠ&AŠ&AŠ| will only generate one implicit group node
-		 to process.  During processing, the group collects
-		 all following DELIM+ARG sequences so that AŠ&AŠ&AŠ
-		 become the children of the group.  If this is the
-		 entire sign no group will be generated because the
-		 prev/next ptrs of the first/last elements will be
-		 NULL. but in |ŠU₂.AŠ&AŠ&AŠ| a single implicit group
-		 will be created for the AŠ sequence. */
-	      if (!c_last_implicit_delim || strcmp(c_last_implicit_delim, data))
-		{
-		  if (!c_implicit_gps)
-		    c_implicit_gps = list_create(LIST_SINGLE);
-		  list_add(c_implicit_gps, np);
-		  c_last_implicit_delim = data;
-		}
-	      else if (c_last_implicit_delim && !strcmp(c_last_implicit_delim, "×"))
-		{
-		  /* If this is a second × sign reset the last list
-		     entry to point to this so in GU×DIM×KUR the
-		     DIM×KUR will be grouped.  Need to check PCSL/OSL
-		     to see if deeper × nesting needs to be handled */
-		  if (!c_implicit_times_reset)
-		    {
-		      c_implicit_times_reset = 1;
-		      if (c_implicit_gps)
-			(void)list_pop(c_implicit_gps);
-		      if (!c_implicit_gps)
-			c_implicit_gps = list_create(LIST_SINGLE);			
-		      list_add(c_implicit_gps, np);
-		    }
-		}
-	    }
-	  else
-	    c_last_implicit_delim = NULL;
-	}
-      else /* explicit group */
-	{
-	  if ('.' != *data && '-' != *data && ':' != *data && '+' != *data)
-	    {
-	      if (!c_last_explicit_group_node || c_last_explicit_group_node != np->rent)
-		{
-		  if (!c_explicit_gps)
-		    c_explicit_gps = list_create(LIST_SINGLE);
-		  list_add(c_explicit_gps, np->rent);
-		  c_last_explicit_group_node = np->rent;
-		}
-	    }
-	}
-    }
-  else
-    {
-      if (lgp)
-	{
-	  np = lgp;
-	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
-	}
-      else
-	{
-	  np = ytp->curr;
-	  mesg_verr(np->mloc, "orphan delimiter '%s'", data);
-	}
-    }
-
-  return np;
 }
 
 Node *
@@ -1093,7 +713,6 @@ gdl_normseg(Mloc *locp, Tree *ytp, const char *data)
 Node *
 gdl_graph(Mloc *locp, Tree *ytp, const char *data)
 {
-  extern int g_literal_flag, g_logoforce_flag;
   const char *gname = NULL;
   uccp gatf = NULL;
   Node *ret = NULL;

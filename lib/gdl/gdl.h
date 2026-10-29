@@ -51,8 +51,7 @@ typedef struct bracket
 #define GLP_O2	0x02
 #define GLP_C	0x04
 
-extern Bracket bracket_data[];
-extern Bracket_e gdl_legacy_o, gdl_legacy_c;
+extern Bracket bracket_data[]; /* safe because r/o */
 
 enum gdlpropvals { GP_ATTRIBUTE, GP_IMPLICIT, GP_TRACKING,
 		   GP_DET_SEME , GP_DET_SEMI, GP_DET_PHON,
@@ -62,14 +61,13 @@ enum gdlpropvals { GP_ATTRIBUTE, GP_IMPLICIT, GP_TRACKING,
 		   GP_SEXIFY, GP_STREAM , GP_INFO
 };
 
-#define gstck_i(x) ((Gstck*)(x))->i
-#define gstck_np(x) ((Gstck*)(x))->np
-
 typedef struct gdlstack
 {
   int i;
   Node *np;
 } Gstck;
+#define gstck_i(x) ((Gstck*)(x))->i
+#define gstck_np(x) ((Gstck*)(x))->np
 
 typedef struct lcstack
 {
@@ -81,26 +79,26 @@ typedef struct lcstack
    legacy and strict without impacting performance for strict-mode
    data */
 typedef int (*gdl_grapheme_type_p)(void);
-extern gdl_grapheme_type_p gdl_grapheme_type;
 
 /* same for gdl_delim which needs to process future state */
 typedef Node *(*gdl_delim_p)(Tree *, const char *);
-extern gdl_delim_p gdl_delim;
-extern Node *gdl_delim_l(Tree *ytp, const char *data);
-extern Node *gdl_delim_s(Tree *ytp, const char *data);
 
 /* and for gdl_graph_node */
 typedef Node *(*gdl_graph_node_p)(Mloc *, Tree *, const char *, const char *);
 extern gdl_graph_node_p gdl_graph_node;
+
+extern gdl_grapheme_type_p gdl_grapheme_type;
+extern Bracket_e gdl_legacy_o, gdl_legacy_c;
+extern gdl_delim_p gdl_delim;
+
+extern Node *gdl_delim_l(Tree *ytp, const char *data);
+extern Node *gdl_delim_s(Tree *ytp, const char *data);
 extern Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
 extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
 
 #define gdl_break_peek() stck_peek(break_stack)
 #define gdl_break_pop() stck_pop(break_stack)
 #define gdl_break_push(x) stck_push(break_stack,x)
-
-extern Stck *break_stack, *lang_stack;
-extern Gstck*gstck_new(int i);
 
 extern const char *currgdlfile, *gdl_pending_varo, *curr_sur_id;
 extern int gdltrace, gdllineno, gdl_legacy, gdl_legacy_hash, gdl_legacy_pending;
@@ -112,86 +110,46 @@ struct gdl_g {
   const char *flags;	/* instance data */
 };
 #endif
+extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
 
-extern char *gdltext;
+typedef struct GDL {
+  Node *gdl_group_attach;
+  Node *lgp;   		/* last grapheme node pointer */
+  Pool *gdlpool;
+  int c_processing;
+  int gdl_corrq;
+  int curr_lang;
+  int gdl_ascii;
+  int gdl_bilingual;
+  int gdl_legacy;
+  int gdl_unicode;
+  int gdl_lexical;
+  int g_literal_flag;
+  int g_logoforce_flag;
+  const unsigned char *gdl_legacy_prop;
+  int gdl_break_pending;
+  int gdl_state_pending;
+  int gdl_cell_count;
+  gdlstate_t *lst;
+  gdlstate_t *dst;
+  gdlstate_t *pst;
+  gdlstate_t *rst;
+  List *c_dangling_gps;
+  List *c_explicit_gps;
+  List *c_implicit_gps;
+  Stck *break_stack;
+  Stck *lang_stack;
+  Stck *sstck;
+} GDL;
 
-extern int c_processing;
-extern int gdl_corrq;
-extern int gdl_no_xml_ids;
-extern int curr_lang;
-extern int gdltrace, gdl_legacy, gdl_legacy_hash, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
-extern int gdl_ascii;
-extern int gdl_unicode;
-extern int gdl_flex_debug, gdldebug;
-extern int gdl_bilingual;
-extern int gdl_legacy;
-extern int gdl_lexical;
-extern int gdl_term_flag;
-extern int g_literal_flag, g_logoforce_flag;
-
-extern const unsigned char *gdl_legacy_prop;
-
-extern int gdl_break_pending, gdl_state_pending, gdl_cell_count;
-extern gdlstate_t *lst, *dst;
-
-extern List *c_dangling_gps;
-extern List *c_explicit_gps;
-extern List *c_implicit_gps;
-
-extern Pool *gdlpool;
-
-extern Node *gdl_group_attach;
-extern Node *lgp;   		/* last grapheme node pointer */
-
-#if 0
-typedef void (*gdlr_text_fnc)(Node *np, FILE *fp);
-#endif
-
-#define GDLR_WF_INPUT 	0x0001
-#define GDLR_VX_INPUT 	0x0002
-#define GDLR_TEXT_ASCII 0x0004
-#define GDLR_TEXT_C10E	0x0008
-#define GDLR_TEXT_ORIG	0x0010
-#define GDLR_VX_CATF	0x0020
-#define GDLR_VX_OATF	0x0040
-#define GDLR_VX_IDENTITY 0x0080
-
-typedef int (*gdlr_node_fnc)(Node *np, FILE *fp);
-typedef gdlr_node_fnc GDLR_config[128];
-extern int gdlr_orig_text(Node *c, FILE *fp);
-extern int gdlr_c10e_text(Node *c, FILE *fp);
-extern int gdlr_ascii_text(Node *c, FILE *fp);
-extern gdlr_node_fnc *gr_funcs;
-extern gdlr_node_fnc gr_wf_fncs[128];
-extern GDLR_config *gdlr_clone_fncs(GDLR_config *f);
-extern int gdlr_vx_flags(Node *np, FILE *fp);
-extern GDLR_config *vx_oatf_config;
-#define gdlr_node gr_funcs[0]
-#define gdlr_text gr_funcs[1]
-#define gdlr_openers gr_funcs[2]
-#define gdlr_closers gr_funcs[3]
-#define gdlr_flags gr_funcs[4]
-
-extern struct mapi *scripttok(const char *k, int len);
-
-extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
 
-extern void gdl_pop_wd_list(void *vp);
-extern void gdl_render_setup_wf(void);
-extern GDLR_config *gdl_render_setup_vx(int gdl_vx_mode, gdlr_node_fnc textfunc);
-
-extern GDLR_config *gdlr_wfa_config, *gdlr_wfc_config, *gdlr_wfo_config;
-extern void gdlr_ascii_funcs(GDLR_config *cp);
-
-extern int gdlr_vxc_openers(Node *np, FILE *fp);
-extern int gdlr_vxc_closers(Node *np, FILE *fp);
-extern int gdlr_vx_flags(Node *np, FILE *fp);
-
+extern struct mapi *scripttok(const char *k, int len);
 extern struct lang_context *gdl_lang_context;
-extern unsigned char *gdl_render(Node *np, GDLR_config *gc);
-extern unsigned char *gdl_render_str(unsigned const char *s, GDLR_config *c);
-extern void gdl_output(Node *np, FILE *fp);
+
+extern Gstck*gstck_new(int i);
+
+extern void gdl_pop_wd_list(void *vp);
 
 extern void gdl_init(void);
 extern void gdl_term(void);
@@ -201,11 +159,6 @@ extern Tree*gdl_literal(Mloc *m, char *s);
 extern void gdl_prefix(Tree *ytp, unsigned const char *p);
 extern void gdl_setup_buffer(char *buf);
 extern void gdl_set_tree(Tree *tp);
-extern Tree *gdlparse_atfgdl(Mloc *m, Tree *atftp, Node *rootnode);
-extern Tree *gdlparse_string(Mloc *m, char *s);
-extern void gdlparse_init(void);
-extern void gdlparse_reset(void);
-extern void gdlparse_term(void);
 
 extern void gdlxml_setup(void);
 extern void gdlxml_rnv_setup(void);
@@ -273,10 +226,6 @@ extern const char *gdlsig_str(Mloc *mp, unsigned char *atf, int frag_ok, int dee
 
 extern const unsigned char *gdl_first_s(Node *gdl);
 
-extern void grx_jox(Node *np, const char *gdltag);
-extern void grx_jox(Node *np, const char *gdltag);
-extern int grx_jox_gdl(Node *np, Node*gdl);
-
 extern unsigned char *gdlseq(unsigned char *s);
 extern unsigned char *gdlseq_oids(unsigned char *s, const char *j);
 
@@ -317,16 +266,6 @@ extern void gdl_gloss_props(Node *d);
 extern void gdl_surro(void);
 
 extern void gdl_set_lzr_sparse(Hash *l);
-
-#if 0
 extern void gdl_legacy_lexer(int legacy);
-#endif
-
-extern void gdl_atf_node(Node *np, FILE *fp);
-
-extern int gr_node_vx(Node *np, FILE *fp);
-extern int gr_node_wf(Node *np, FILE *fp);
-
-extern struct map *g_o_type (register const char *str, size_t len);
 
 #endif /*GDL_H_*/

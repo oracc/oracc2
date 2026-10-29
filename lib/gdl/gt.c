@@ -2,11 +2,14 @@
 #include <hash.h>
 #include <memo.h>
 #include <oid.h>
-#include "gdl.h"
+#include "gdllib.h"
+#include "gdlparse.h"
 #include "gt.h"
 
 /* gt -- GDL Tokens: an interface to the GDL library for applications
- * including gx and sx
+ * including gx and sx; it's OK for things to be global/file-static in
+ * gt because it's always used with gdlparse_string to process one
+ * grapheme at a time.
  */
 
 static Gt_cfg gtcfg;

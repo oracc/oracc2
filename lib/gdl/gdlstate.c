@@ -2,8 +2,7 @@
 #include <string.h>
 #include <xmlify.h>
 #include <tree.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
 
 /* Set to 0 to get [# ... #] half-bracket indicators and 1 to omit them */
 static int gs_brack_start = 1;

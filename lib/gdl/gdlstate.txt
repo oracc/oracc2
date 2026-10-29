@@ -1,0 +1,18 @@
+/* New 2026-03-03: state is now handled with three variables, pst,
+   lst, rst
+
+   pst (pending-state) is for openers only: it is zeroed-out after it
+   	is applied to a node
+
+   lst (last-state) is a pointer to the state property of the most
+   	recently seen node and is where closers are applied
+	
+   rst (running-state) is set by openers and unset by closers; it is
+   	applied to nodes in addition to pending-state
+
+   2026-06-04: with meta rewrite we now keep state pointer dst to the
+        state of the last grapheme that had gs_damaged set so that
+        gdl_delim can add gs_damaged_c easily
+
+ */
+gdlstate_t pst, *lst, rst, *dst;

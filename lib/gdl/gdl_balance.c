@@ -3,19 +3,8 @@
 #include <mesg.h>
 #include <tree.h>
 #include <stck.h>
-#include "gdl.h"
-#include "gdlstate.h"
+#include "gdllib.h"
 #include "gdl.tab.h"
-
-int gdl_break_pending = 0, gdl_state_pending = 0;
-
-/* gdl_break_XXX() are in gdl.h */
-
-#define gdl_state_peek() stck_peek(state_stack)
-#define gdl_state_pop() stck_pop(state_stack)
-#define gdl_state_push(x) stck_push(state_stack,x)
-
-static Memo *mgstck, *mlstck;
 
 static int o_c_map[] = 
   { '<',	'>',
@@ -62,8 +51,6 @@ static struct s_o_c { int tok; const char *str; } s_o_c_map[] =
 static int c_of_o[END];
 static int o_of_c[END];
 static const char *s_of_oc[END];
-
-Stck *state_stack = NULL, *break_stack = NULL, *lang_stack = NULL;
 
 #define OC_ALLOC	4
 
