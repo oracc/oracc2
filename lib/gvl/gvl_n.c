@@ -1,13 +1,7 @@
-#include <stdlib.h>
-#include <tree.h>
-#include <mesg.h>
 #include <oraccsys.h>
-
-#include "sll.h"
-#include "gdl.h"
+#include <sll.h>
+#include <gdllib.h>
 #include "gvl.h"
-
-extern const char *gdl_pending_varo;
 
 void
 gvl_n(Node *ynp)
@@ -49,11 +43,11 @@ gvl_n(Node *ynp)
 	 zero lst, and create a new lst which belongs to the g:n node; OR
 	 this with the g:r node state */
       gdlstate_t *rstp = prop_state(ynp->kids, 0L);
-      gdlstate_t rst = *rstp;
+      gdlstate_t rstx = *rstp;
       *rstp = 0L;  
       gdlstate_t nst = *lst;
       *lst = (gdlstate_t)0;
-      lst = prop_state(ynp, rst|nst);
+      lst = prop_state(ynp, rstx|nst);
     }
   
   /* WATCHME: is this coercion to g:s or g:v really safe? */

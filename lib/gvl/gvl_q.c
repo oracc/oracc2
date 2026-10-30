@@ -2,16 +2,12 @@
 #include <tree.h>
 #include <unidef.h>
 #include <gutil.h>
-#include <gdlstate.h>
+#include <gdllib.h>
 #include <bits.h>
 
-#include "sll.h"
-#include "gdl.h"
+#include <sll.h>
+#include <gdllib.h>
 #include "gvl.h"
-
-extern const char *currgdlfile;
-extern int gdllineno;
-extern int gdl_corrq;
 
 void
 gvl_q(Node *ynp)
@@ -84,7 +80,7 @@ gvl_q(Node *ynp)
 	}
       vq->orig = (uccp)o;
 
-      if (gvl_q_c10e(ynp->kids->user, ynp->kids->next->user, vq) > 0)
+      if (gvl_q_c10e(ynp, ynp->kids->user, ynp->kids->next->user, vq) > 0)
 	{
 	  const char *vs = NULL;
 	  const char *qs = NULL;
@@ -291,7 +287,7 @@ gvl_common_oids(const char *o1, const char *o2)
 }
 
 int
-gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
+gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 {
   int v_bad = 0, q_bad = 0, ret = 1;
   unsigned char *q_fixed = NULL;
@@ -584,15 +580,15 @@ gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq)
 		      else if ('c' == *vp->type)
 			{
 			  if ('c' == *qp->type)
-			    mesg_vwarning(currgdlfile, gdllineno, "gvl: [vq] double compound not allowed in qualifier %s(%s)\n",
+			    mesg_verr(np->mloc, "gvl: [vq] double compound not allowed in qualifier %s(%s)\n",
 					  vp->orig, qp->orig);
 			  else
-			    mesg_vwarning(currgdlfile, gdllineno, "gvl: [vq] compound has bad qualifier %s(%s)\n",
+			    mesg_verr(np->mloc, "gvl: [vq] compound has bad qualifier %s(%s)\n",
 					  vp->orig, qp->orig);
 			}
 		      else
 			{
-			  mesg_vwarning(currgdlfile, gdllineno, "gvl: [vq] unhandled case for input %s(%s)\n",
+			  mesg_verr(np->mloc, "gvl: [vq] unhandled case for input %s(%s)\n",
 					vp->orig, qp->orig);
 			}
 		    }

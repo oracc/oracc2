@@ -3,6 +3,7 @@
 
 #include <hash.h>
 #include <memo.h>
+#include <gsort.h>
 
 /* context-free Grapheme sequence of a grapheme or words data type shared by gx and sx
  */

@@ -16,7 +16,7 @@ blocktok.c: blocktok.g ag.tab.h
 atlgdl.l: atfgdl.ll ../gdl/gdl.l atfgdl-l.plx l-prologue.c l-funcs.c
 	./atfgdl-l.plx >$@
 
-atfgdl.y: atfgdl.yy ./gdl/gdl.y atfgdl-y.plx y-funcs.c
+atfgdl.y: atfgdl.yy ../gdl/gdl.y atfgdl-y.plx y-funcs.c
 	./atfgdl-y.plx >$@
 
 #../atf/atf.y

@@ -118,7 +118,6 @@ extern void gdl_term(void);
 extern void gdl_lex_init(const char *file, int line);
 extern Tree*gdl_literal(Mloc *m, char *s);
 extern void gdl_prefix(Tree *ytp, unsigned const char *p);
-extern void gdl_setup_buffer(char *buf);
 extern void gdl_set_tree(Tree *tp);
 
 extern void gdlxml_setup(void);
@@ -175,7 +174,6 @@ extern void gdl_modq_init(void);
 extern void gdl_modq_term(void);
 extern void gdl_mod_wrap(Node *np, int sub_simplexg);
 extern void gdl_mod_wrap_q(Node *np);
-extern char *gdl_one_off(const char *file, int line, const char *g, int voidsl);
 extern const char *gdlsig(Tree*tp);
 extern void gdlsig_node(Node *np, void *user);
 extern void gdl_update_state(Node *np, gdlstate_t gs_tok);
@@ -240,7 +238,7 @@ extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const cha
 extern void gdl_word_attr(Node *w);
 extern List *gdl_rem_nonw(List *wds);
 
-extern void gdl_create_tree(Treemem *tmp, Pool *p);
+extern void gdl_create_tree(Tree *tp, Treemem *tmp, Pool *p);
 extern void gdl_destroy_tree(void);
 
 extern int gdlflextrace, gdl_word_mode;

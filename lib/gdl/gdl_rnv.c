@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <tree.h>
 #include <rnvxml.h>
-#include <gdl.h>
+#include <gdltype.h>
 
 /**This module requires rnvif setup to have been done first
  *

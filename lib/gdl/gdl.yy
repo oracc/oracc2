@@ -324,8 +324,7 @@ void
 gdl_set_tree(Tree *tp)
 {
   ytp = tp;
-  if (gdl_word_mode)
-    ynp = gdl_new_word(ytp);
+  ynp = gdl_new_word(ytp);
 }
 
 void

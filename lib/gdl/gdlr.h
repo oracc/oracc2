@@ -27,7 +27,7 @@ extern GDLR_config *vx_oatf_config;
 
 extern void gdl_render_setup_wf(void);
 extern GDLR_config *gdl_render_setup_vx(int gdl_vx_mode, gdlr_node_fnc textfunc);
-extern GDLR_config *gdlr_wfa_config, *gdlr_wfc_config, *gdlr_wfo_config;
+extern GDLR_config gdlr_wfa_config, gdlr_wfc_config, gdlr_wfo_config;
 extern void gdlr_ascii_funcs(GDLR_config *cp);
 extern int gdlr_vxc_openers(Node *np, FILE *fp);
 extern int gdlr_vxc_closers(Node *np, FILE *fp);

@@ -66,7 +66,9 @@ int
 gdlr_vxc_openers(Node *np, FILE *fp)
 {
   const char *o = prop_val(np, "g:o");
+#if 0
   const char *ao = prop_val(np, "atf:o");
+#endif
   if (o)
     fputs(o, fp);
 
@@ -82,7 +84,9 @@ int
 gdlr_vxo_openers(Node *np, FILE *fp)
 {
   const char *o = prop_val(np, "g:o");
+#if 0
   const char *ao = prop_val(np, "atf:o");
+#endif
   const char *ho = prop_val(np, "g:ho");
   if (o)
     fputs(o, fp);
@@ -101,7 +105,9 @@ int
 gdlr_vxc_closers(Node *np, FILE *fp)
 {
   const char *c = prop_val(np, "g:c");
+#if 0
   const char *ac = prop_val(np, "atf:c");
+#endif  
   const char *h = prop_val(np, "g:break");
 
   if (h && 'd' == *h)
@@ -121,7 +127,9 @@ int
 gdlr_vxo_closers(Node *np, FILE *fp)
 {
   const char *c = prop_val(np, "g:c");
+#if 0
   const char *ac = prop_val(np, "atf:c");
+#endif
   const char *h = prop_val(np, "g:break");
   const char *hc = prop_val(np, "g:hc");
 

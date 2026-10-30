@@ -25,13 +25,9 @@ gdl_init(void)
   if (gdl_initted++)
     return;
 
-  atf2utf_init();
-
   gdl_balance_init();
 
   gdl_modq_init();
-
-  gdl_render_setup_wf();
 
   gdlpool = pool_init();
 

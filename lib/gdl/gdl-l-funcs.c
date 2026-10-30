@@ -8,9 +8,9 @@ void
 gdl_lex_closers(void)
 {
   if (CIN)
-      mesg_vwarning(currgdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
+      mesg_vwarning(gdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
   else if (QIN)
-    mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv (discovered at end of line)");
+    mesg_vwarning(gdlfile,gdllineno,"missing ')' in qv (discovered at end of line)");
   GIN=CIN=QIN=0;
   cvq_reset();
 }
@@ -57,7 +57,7 @@ cvq_push(int s)
       return s;
     }
   else
-    fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", currgdlfile, gdllineno, CVQ_MAX);
+    fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", gdlfile, gdllineno, CVQ_MAX);
   return 0;
 }
 
@@ -67,7 +67,7 @@ cvq_pop(void)
   if (cvq_top >= 0)
     return cvq_stack[cvq_top--];
   else
-    fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", currgdlfile, gdllineno);
+    fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", gdlfile, gdllineno);
    return 0;
 }
 

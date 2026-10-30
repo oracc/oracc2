@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <gdl.h>
+#include <gdllib.h>
 #include <lng.h>
 #include "atf.h"
 #include "atf_bld.h"
@@ -160,8 +160,8 @@ line_mts(Mloc l, unsigned char *lp)
   curr_lem_host = curr_line;
 #endif
 
-#ifndef ATFGDL
   unsigned char *tok = lp;
+#ifndef ATFGDL
   unsigned char *end = lp+xxstrlen(lp);
   unsigned char *s = lp;
 #endif
@@ -588,7 +588,7 @@ line_lem(Mloc ml, unsigned char *l)
 	   w = list_next(curr_lem_host->wl), l = list_next(llem))
 	{
 	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "lem",
-		      (ccp)pool_copy((uccp)l, gdlpool));
+		      (ccp)pool_copy((uccp)l, atfmp->pool));
 	  atf_save_lem(w,(ccp)l); /* should be safe because GDL doesn't put data in g:w->user */
 	}
     }

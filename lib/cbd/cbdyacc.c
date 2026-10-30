@@ -6,6 +6,7 @@
 #include <mesg.h>
 #include <lng.h>
 #include <bits.h>
+#include <gdllib.h>
 #include <gt.h>
 #include "cbd.h"
 #include "cbd.tab.h"

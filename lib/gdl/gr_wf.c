@@ -281,12 +281,13 @@ grf(x)(Node *np, FILE *fp)
   return 0;
 }
 
+#if 0
 void
 gdlr_ascii_funcs(GDLR_config *cp)
 {
-  (*cp)['o'] = gr_wf_o_a;
+  (*cp)['o'] = ;
 }
-
+#endif
 static Prop *
 gdl_wf_deep_delim(Node *c)
 {
@@ -340,7 +341,64 @@ gr_node_wf(Node *np, FILE *fp)
   return 0;
 }
 
-gdlr_node_fnc grf(fncs)[128] =
+/*gdlr_node_fnc grf(fncs)[128] =*/
+GDLR_config gdlr_wfa_config =
+  {
+    [0] = gr_node_wf,
+    [1] = gdlr_orig_text,
+    ['a'] = grf(a),
+    ['A'] = grf(a),
+    ['b'] = grf(b),
+    ['c'] = grf(c),
+    ['d'] = grf(d),
+    ['f'] = grf(f),
+    ['g'] = grf(g),
+    ['G'] = grf(G), /* g:gloss */
+    ['l'] = grf(s), /* g:l is internal gdl for list-names, serialized as g:s */
+    ['m'] = grf(m),
+    ['M'] = grf(m),
+    ['n'] = grf(n),
+    ['o'] = gr_wf_o_a,
+    ['p'] = grf(p),
+    ['q'] = grf(q),
+    ['r'] = grf(r),
+    ['R'] = grf(r),
+    ['s'] = grf(s),
+    ['t'] = grf(t),
+    ['v'] = grf(v),
+    ['w'] = grf(w),
+    ['x'] = grf(x)
+  };
+
+GDLR_config gdlr_wfc_config =
+  {
+    [0] = gr_node_wf,
+    [1] = gdlr_c10e_text,
+    ['a'] = grf(a),
+    ['A'] = grf(a),
+    ['b'] = grf(b),
+    ['c'] = grf(c),
+    ['d'] = grf(d),
+    ['f'] = grf(f),
+    ['g'] = grf(g),
+    ['G'] = grf(G), /* g:gloss */
+    ['l'] = grf(s), /* g:l is internal gdl for list-names, serialized as g:s */
+    ['m'] = grf(m),
+    ['M'] = grf(m),
+    ['n'] = grf(n),
+    ['o'] = grf(o),
+    ['p'] = grf(p),
+    ['q'] = grf(q),
+    ['r'] = grf(r),
+    ['R'] = grf(r),
+    ['s'] = grf(s),
+    ['t'] = grf(t),
+    ['v'] = grf(v),
+    ['w'] = grf(w),
+    ['x'] = grf(x)
+  };
+
+GDLR_config gdlr_wfo_config =
   {
     [0] = gr_node_wf,
     [1] = gdlr_orig_text,

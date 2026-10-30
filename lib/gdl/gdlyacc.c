@@ -234,7 +234,7 @@ gdl_word_attr(Node *w)
 	    gdl_nonw_excised(w);
 
 	  /* How to handle C10E word forms? Always create them? */
-	  unsigned char *wf_buf = gdl_render(w, gdlr_wfo_config);
+	  unsigned char *wf_buf = gdl_render(w, &gdlr_wfo_config);
 
 	  if (wf_buf)
 	    {
@@ -251,7 +251,7 @@ gdl_word_attr(Node *w)
 	    }
 	  if (gdl_ascii)
 	    {
-	      unsigned char *af_buf = gdl_render(w, gdlr_wfa_config);
+	      unsigned char *af_buf = gdl_render(w, &gdlr_wfa_config);
 	      if (af_buf && *af_buf)
 		gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "atf:form",
 			    (ccp)pool_copy((uccp)af_buf, gdlpool));

@@ -1,7 +1,7 @@
 #include <oraccsys.h>
 #include <mesg.h>
 #include <scan.h>
-#include "gdl.h"
+#include "gdllib.h"
 #include "atf.h"
 #include "atf_bld.h"
 #include "blocktok.h"

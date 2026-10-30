@@ -5,7 +5,8 @@
 #include <wchar.h>
 #include <wctype.h>
 #include <locale.h>
-#include <gdl.h>
+#include <gdllib.h>
+#include <gdlparse.h>
 
 #include <oraccsys.h>
 #include <pool.h>
@@ -187,8 +188,8 @@ sll_esp_header(const char *v, const char *ext)
   if (ext)
     {
       ep = sllext(ext, strlen(ext));
-      vcat = (char*)pool_alloc(strlen(v) + strlen(ep->pre) + strlen(ep->pst) + 1, sllpool);
-      (void)sprintf(vcat, "%s%s%s", ep->pre, v, ep->pst);
+      vcat = (char*)pool_alloc(strlen(v) + strlen(ep->pre) + strlen(ep->post) + 1, sllpool);
+      (void)sprintf(vcat, "%s%s%s", ep->pre, v, ep->post);
     }
   else if (v)
     vcat = (char*)v;
@@ -308,8 +309,8 @@ sll_html_header(void)
 	ext = "signlist";
 #endif
       struct sllext *ep = sllext(ext, strlen(ext));
-      vcat = (char*)pool_alloc(strlen(ep->pre)+strlen(ep->pst)+strlen(wgrapheme)+1, sllpool);
-      sprintf(vcat, "%s%s%s", ep->pre, wgrapheme, ep->pst);
+      vcat = (char*)pool_alloc(strlen(ep->pre)+strlen(ep->post)+strlen(wgrapheme)+1, sllpool);
+      sprintf(vcat, "%s%s%s", ep->pre, wgrapheme, ep->post);
     }
   
   printf("Content-type: text/html; charset=utf-8\n\n");

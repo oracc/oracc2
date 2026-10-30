@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <gdl.h>
+#include <gdllib.h>
 
 uccp
 gvl_key(gvl_g *gbgp, Pool *p)

@@ -13,7 +13,6 @@
 #define YY_USER_ACTION gdl_user_action();
 extern Mloc gdllloc;
 const char *gdlfile = "<stdin>";
-const char *currgdlfile = NULL;
 
 extern const char *gdl_lexnames[];
 extern int gdl_lexfld[];
@@ -71,10 +70,11 @@ NOTEMARK	"^"[0-9]+"^"
 %x TC
 %x TD
 %x N
+%x ALPHA
 
 %%
 
-[=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(currgdlfile,gdllineno,
+[=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(gdlfile,gdllineno,
 						"non-Unicode accent codes %s",gdltext); }}
 
 {G}({G}|{B})*{G}	{ GIN=1; return gdl_grapheme_type(&gdllloc, gdltext, &gdllval.text); }
@@ -104,15 +104,15 @@ NOTEMARK	"^"[0-9]+"^"
 <C>"3\xc3\x97"		{ GIN=0; return C_3TIMES; }
 <C>"\xc3\x97"	       	{ GIN=0; return C_TIMES; }
 <C>"x"	       		{ GIN=0; return C_TIMES; }
-<C>[a-wyz]    		{ GIN=0; mesg_vwarning(currgdlfile,gdllineno,"lowercase graphemes not allowed in |...|"); }
+<C>[a-wyz]    		{ GIN=0; mesg_vwarning(gdlfile,gdllineno,"lowercase graphemes not allowed in |...|"); }
 <C>"("			{ return GIN ? QLP : CLP; }
 <C>")"			{ return CRP; }
-<C>[ \t]+	       	{ CIN=GIN=0; mesg_vwarning(currgdlfile,gdllineno,"missing '|' in compound");
+<C>[ \t]+	       	{ CIN=GIN=0; mesg_vwarning(gdlfile,gdllineno,"missing '|' in compound");
 			  cvq_reset(); }
 
 <Q>")"/[}>]	       	{ return QRP; }
 <Q>")"			{ return QRP; }
-<Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(currgdlfile,gdllineno,"missing ')' in qv");
+<Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(gdlfile,gdllineno,"missing ')' in qv");
 			  cvq_reset(); }
 
 ":"/[ \t\n\(\]]        	{ /*"*/ GIN=1; gsave; return PUNCT; }
@@ -158,7 +158,7 @@ NOTEMARK	"^"[0-9]+"^"
 
 	/* Alphabetic text scanning */
 
-<A>.			{ mesg_vwarning(currgdlfile,gdllineno,"alphabetic input not yet implemented"); }
+<ALPHA>.       		{ mesg_vwarning(gdlfile,gdllineno,"alphabetic input not yet implemented"); }
 
 	/* Delimiters */
 
@@ -209,7 +209,7 @@ NOTEMARK	"^"[0-9]+"^"
 
 	/* Sign state force characters */
 ~~/{G}			{ g_logoforce_flag = 1; }
-"~"/{G}			{ if (gdl_lexical) { gsave; mesg_vwarning(currgdlfile, gdllineno,
+"~"/{G}			{ if (gdl_lexical) { gsave; mesg_vwarning(gdlfile, gdllineno,
 			   "no space after ~ field; use ~~ for logogram force with atf: use lexical\n");
 			     gdllval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext];
 			   } else { g_logoforce_flag = 1; } }
@@ -227,7 +227,7 @@ NOTEMARK	"^"[0-9]+"^"
 				     gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag(&gdllloc,(uccp)yytext); } }
 <INITIAL,N>[#"=@^]/{G} 	{ if (gdl_lexical) {
-		       	    mesg_vwarning(currgdlfile, gdllineno,
+		       	    mesg_vwarning(gdlfile, gdllineno,
 			  	       	  "no space after %c field\n", *yytext);
 	       	     	    gdllval.text=(char*)gdl_lexnames[(int)*yytext];
 			    return gdl_lexfld[(int)*yytext]; }
@@ -251,11 +251,11 @@ _			                 { gdl_lang_flip(); }
 
 <INITIAL,N>\n  		{ return '\n'; }
 
-"\xc3\x97"	       	{ mesg_vwarning(currgdlfile, gdllineno, "gdl.l: misplaced ×\n"); }
+"\xc3\x97"	       	{ mesg_vwarning(gdlfile, gdllineno, "gdl.l: misplaced ×\n"); }
 
 <*>.			{ if (last_unmatched_line != gdllineno)
 			    {
-				mesg_vwarning(currgdlfile, gdllineno,
+				mesg_vwarning(gdlfile, gdllineno,
 			  		      "gdl.l: unmatched character %c in state %d\n",
 					       *gdltext, YY_START);
 			       	last_unmatched_line = gdllineno;
@@ -273,21 +273,20 @@ gdl_user_action(void)
     fprintf(stderr, "%s:%d: gdllex: YY_START=%d; text=::%s:: GIN=%d; CIN=%d; QIN=%d; SIN=%d\n",
 		  gdlfile, gdllineno, YY_START, gdltext, GIN, CIN, QIN, SIN);
 
-  gdllloc.file = currgdlfile;
   gdllloc.line = gdllineno;
 }
 
 static void
 gdl_l_lex_init(const char *file, int line)
 {
-  currgdlfile = gdlfile = file;
+  gdllloc.file = gdlfile = file;
   gdllineno = line;
 }
 
 void
-gdl_setup_buffer(char *buf)
+gdl_setup_buffer(char *buf, int len)
 {
-  (void)gdl_scan_string(buf);
+  (void)gdl_scan_buffer(buf, len);
 }
 
 void

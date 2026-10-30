@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <tree.h>
 #include <rnvxml.h>
-#include <gdl.h>
+#include <gdltype.h>
+#include <gdllib.h>
 #include <joxer.h>
+
 extern int trace_mode;
+
 /**This module requires rnvif setup to have been done first
  *
  * oflag gives an opener status [not currently used; probably needs deprecating]

@@ -46,7 +46,7 @@
 	}								\
       lth_used = 0;							\
     }									\
-  atf_xprop(lnode, "n", (ccp)(tok = (ucp)lnstr_tok(tok)))
+  atf_xprop(lnode, "n", (ccp)(tok = (ucp)lnstr_tok((char*)tok)))
 
 #define atf_line_label()						\
   curr_line_label = line_label(lnode->mloc,tok,0,(unsigned const char *)clid); \

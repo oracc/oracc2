@@ -320,10 +320,14 @@ Stck *GDL_stack = NULL;
 Tree *tcurr;
 
 void
-gdl_create_tree(Treemem *tmp, Pool *p)
+gdl_create_tree(Tree *tp, Treemem *tmp, Pool *p)
 {
-  tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
-  tcurr->user = calloc(1, sizeof(GDL));
+  if (!tp)
+    {
+      tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
+      tcurr->user = calloc(1, sizeof(GDL));
+      (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
+    }
   gdlpool = p;
   word_lang_tag = "sux";
   if (!GDL_stack)

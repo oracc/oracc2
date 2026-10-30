@@ -1,6 +1,6 @@
 #ifndef GSORT_H_
 #define GSORT_H_
-
+#include <tree.h>
 struct GS_mods
 {
   char type;

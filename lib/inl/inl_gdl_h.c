@@ -1,5 +1,6 @@
 #include <oraccsys.h>
-#include <gdl.h>
+#include <gdllib.h>
+#include <gdlparse.h>
 #include "inl.h"
 
 void

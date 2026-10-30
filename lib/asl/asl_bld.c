@@ -6,7 +6,7 @@
 #include <unidef.h>
 #include <gutil.h>
 #include <sll.h>
-#include <gdl.h>
+#include <gdllib.h>
 #include <gt.h>
 #include <oid.h>
 #include <asl.tab.h>

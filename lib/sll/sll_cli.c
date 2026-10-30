@@ -10,7 +10,8 @@
 #include <pool.h>
 #include <dbi.h>
 #include <gutil.h>
-#include <gdl.h>
+#include <gdllib.h>
+#include <gdlparse.h>
 #include "sll.h"
 
 /*int sll_cli_error_token = 0;*/

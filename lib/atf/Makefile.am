@@ -1,5 +1,7 @@
 include ../../oracc-am-rules.txt
 
+AM_CFLAGS := -DATFGDL
+
 noinst_LTLIBRARIES=libatf.la
 
 libatf_la_SOURCES = atfyacc.c atftree.c atf.c \

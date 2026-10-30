@@ -14,8 +14,7 @@
 #include <tree.h>
 #include <lang.h>
 
-#include <gdl.h>
-#include <gdlstate.h>
+#include <gdllib.h>
 
 #include "gvl.h"
 
@@ -25,7 +24,6 @@ int gvl_no_mesg_add = 0;
 int gvl_sans_report = 0;
 int gvl_trace = 0;
 int gvl_strict = 0;
-extern int c_delim_sentinel;
 
 gvl_lookup_ptr gvl_lookup = gvl_lookup_sl;
 
@@ -319,8 +317,6 @@ gvl_next_nonz(Node *np)
 void
 gvl_compound(Node *ynp)
 {
-  extern int gdl_orig_mode;
-  
   if (!ynp || !ynp->kids)
     return;
 

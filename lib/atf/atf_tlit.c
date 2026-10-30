@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <gdl.h>
+#include <gdllib.h>
 #include <lng.h>
 #include "atf.h"
 #include "atf_bld.h"
@@ -18,20 +18,10 @@ extern int atfflextrace;
 List *curr_words;
 struct lang_context *line_lang = NULL;
 
-#if 0
-void
-tlit_reinit_inline(void)
-{
-  /* not sure what reinit will look like with the lib/atf implementation */
-  mutex_state = square_bracket = notoken;
-  g_reinit();
-  in_g_surro = w_sparse_lem = 0;
-}
-#endif
-
 void
 tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line_id)
 {
+#ifndef ATFGDL
   if (atfflextrace)
     fprintf(stderr, "tlit_parse_inline: begin: %s\n", s);
   extern int gdl_word_mode;
@@ -51,4 +41,5 @@ tlit_parse_inline(Node *np, const char *s, int word_id_base, unsigned char *line
   gdlparse_reset();
   if (atfflextrace)
     fprintf(stderr, "tlit_parse_inline: end: %s\n", s);
+#endif
 }

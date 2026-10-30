@@ -111,7 +111,7 @@ unsigned char *gvl_c_c10e(Node *ynp);
 extern gvl_g *gvl_s(Node *ynp);
 
 extern void gvl_q(Node *ynp);
-extern int gvl_q_c10e(gvl_g *vp, gvl_g *qp, gvl_g *vq);
+extern int gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq);
 
 extern void gvl_n(Node *ynp);
 extern void gvl_n_sexify(Node *ynp);

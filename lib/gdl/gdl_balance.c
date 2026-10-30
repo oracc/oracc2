@@ -67,7 +67,7 @@ gdl_balance_init(void)
       memo_reset(mgstck);
       return;
     }
-    
+
   for (i = 0; o_c_map[i] > 0; ++i)
     {
       if (i%2)

@@ -5,7 +5,7 @@
 #include <memo.h>
 #include <gutil.h>
 #include <collate.h>
-#include "gdl.h"
+#include "gdltype.h"
 #include "gsort.h"
 
 /**

@@ -1,5 +1,5 @@
 #include <oraccsys.h>
-#include <gdl.h>
+#include <gdllib.h>
 #include <lng.h>
 #include "atf.h"
 #include "atf_bld.h"

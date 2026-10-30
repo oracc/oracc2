@@ -15,7 +15,7 @@ struct sllext
 {
   const char *name;
   const char *pre;
-  const char *pst;
+  const char *post;
   enum sll_t type;
   sll_get_fnc *fnc;
 };

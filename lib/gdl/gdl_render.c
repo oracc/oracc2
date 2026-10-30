@@ -3,8 +3,6 @@
 #include "gdlr.h"
 #include "gdlparse.h"
 
-GDLR_config *gdlr_wfa_config, *gdlr_wfc_config, *gdlr_wfo_config;
-
 int gdl_word_excisions;
 int gdl_wf_c10e = 0;
 gdlr_node_fnc *gr_funcs;
@@ -53,7 +51,6 @@ gdlr_node_fnc *gr_funcs;
       ...
       else if (strcmp(c->name, "g:sur"))
 	mesg_verr(c->mloc, "NULL text in %s node\n", c->name);
-#endif
 
 GDLR_config *
 gdlr_clone_fncs(GDLR_config *f)
@@ -85,7 +82,9 @@ gdl_render_init(int gdl_mode_opts)
 
   return cp;
 }
+#endif
 
+#if 0
 void
 gdl_render_setup_wf(void)
 {
@@ -93,12 +92,13 @@ gdl_render_setup_wf(void)
   gdlr_wfc_config = gdl_render_init(GDLR_WF_INPUT|GDLR_TEXT_C10E);
   gdlr_wfo_config = gdl_render_init(GDLR_WF_INPUT|GDLR_TEXT_ORIG);
 }
+#endif
 
 unsigned char *
 gdl_render(Node *np, GDLR_config *c)
 {
   /*gdl_render_setup(c);*/
-  gr_funcs = *c;
+  gr_funcs = c[0];
   char *wf_buf = NULL;
   size_t wf_len = 0;
   gdl_word_excisions = 0;
