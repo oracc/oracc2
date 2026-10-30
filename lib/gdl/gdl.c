@@ -29,8 +29,6 @@ gdl_init(void)
 
   gdl_balance_init();
 
-  /*gdl_lexfld_init();*/
-
   gdl_modq_init();
 
   gdl_render_setup_wf();
