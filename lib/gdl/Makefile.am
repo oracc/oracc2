@@ -5,7 +5,7 @@ noinst_LTLIBRARIES=libgdl.la
 libgdl_la_SOURCES = gdl.tab.c gdl.lex.c gdlparse.c gdlsig.c gdlyacc.c gdl_one_off.c \
 	gdl.c gdl_globals.c gdl_balance.c gdl_legacy.c gdl_mod.c gdlstate.c \
 	gdl_gloss.c gdlstream.c gdl_meta.c gdl_group.c \
-	gsort.c gt.c \
+	gsort.c gt.c gdlseq.c \
 	gdl_render.c gr_wf.c gr_vx.c scripttok.c \
 	gdl_rnv.c gdl_jox.c gdlxml.c
 

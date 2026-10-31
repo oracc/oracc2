@@ -368,7 +368,7 @@ gdl_unword(Tree *ytp)
 {
   /* Remove the parent g:w if there is one (extra credit: keep the
      node around to use after the field) */
-  if (gdl_word_mode && wordnode(ytp->curr) && !ytp->curr->kids)
+  if (wordnode(ytp->curr) && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
@@ -413,7 +413,7 @@ gdl_cell(Tree *ytp, const char *span)
   if (gdltrace)
     fprintf(stderr, "gt: CELL with SPAN = %s\n", span);
 
-  if (gdl_word_mode && wordnode(ytp->curr) && !ytp->curr->kids)
+  if (wordnode(ytp->curr) && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);
@@ -489,93 +489,90 @@ Node *
 gdl_new_word(Tree *ytp)
 {
   Node *retnode = NULL;
-  if (gdl_word_mode)
+  /* we are going to reset the attach point so it's enough to NULL
+     out group attach here */
+  if (gdl_group_attach)
+    gdl_group_attach = NULL;
+
+  if (gdl_recycled_word)
     {
-      /* we are going to reset the attach point so it's enough to NULL
-	 out group attach here */
-      if (gdl_group_attach)
-	gdl_group_attach = NULL;
+      /* This is a word that is being recycled when starting a new
+	 cell or field so we know either of those is the parent */
+      Node *w = gdl_recycled_word;
+      gdl_recycled_word = NULL;
+      w->prev = w->next = NULL;
+      gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      assert(word_lang_tag != NULL);
+      w->rent = ytp->curr;
+      ytp->curr->last = ytp->curr->kids = w;
+      tree_curr(w);
+      retnode = ytp->curr;
+      /* IF FIELD NOT IN SPARSE LEM HASH */
+      if (!lzr_sparse || (curr_field && hash_find(lzr_sparse, (uccp)curr_field)))
+	list_add(wd_list, w);
+    }
+  else if (wordnode(ytp->curr) && !ytp->curr->kids)
+    {
+      /* reuse empty words */
+      assert(word_lang_tag != NULL);
+      gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      retnode = ytp->curr;
+      /* If this is an empty word followed by a field it may have
+	 been added to wd_list before the field code changed;
+	 check it's valid, and if it isn't then remove it */
+      if (lzr_sparse && curr_field && !hash_find(lzr_sparse, (uccp)curr_field))
+	(void)list_pop(wd_list);
+    }
+  else
+    {
+      /* The tree needs a new g:w node */
 
-      if (gdl_recycled_word)
-	{
-	  /* This is a word that is being recycled when starting a new
-	     cell or field so we know either of those is the parent */
-	  Node *w = gdl_recycled_word;
-	  gdl_recycled_word = NULL;
-	  w->prev = w->next = NULL;
-	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
-	  assert(word_lang_tag != NULL);
-	  w->rent = ytp->curr;
-	  ytp->curr->last = ytp->curr->kids = w;
-	  tree_curr(w);
-	  retnode = ytp->curr;
-	  /* IF FIELD NOT IN SPARSE LEM HASH */
-	  if (!lzr_sparse || (curr_field && hash_find(lzr_sparse, (uccp)curr_field)))
-	    list_add(wd_list, w);
-	}
-      else if (wordnode(ytp->curr) && !ytp->curr->kids)
-	{
-	  /* reuse empty words */
-	  assert(word_lang_tag != NULL);
-	  gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
-	  retnode = ytp->curr;
-	  /* If this is an empty word followed by a field it may have
-	     been added to wd_list before the field code changed;
-	     check it's valid, and if it isn't then remove it */
-	  if (lzr_sparse && curr_field && !hash_find(lzr_sparse, (uccp)curr_field))
-	    (void)list_pop(wd_list);
-	}
-      else
-	{
-	  /* The tree needs a new g:w node */
-
-	  /* If there is an active gloss, attach to that */
-	  Node *l = gdl_gloss_curr();
+      /* If there is an active gloss, attach to that */
+      Node *l = gdl_gloss_curr();
       
-	  /* Else if there is a f ancestor, attach to that */
+      /* Else if there is a f ancestor, attach to that */
+      if (!l)
+	l = node_ancestor_or_self(ytp->curr, "f");
+
+      /* Else if there is a c ancestor, attach to that */
+      if (!l)
+	l = node_ancestor_or_self(ytp->curr, "c");
+
+      /* Else if there is a g:w ancestor, attach to the parent of that node */
+      if (!l)
+	{
+	  l = node_ancestor_or_self(ytp->curr, "g:w");
 	  if (!l)
-	    l = node_ancestor_or_self(ytp->curr, "f");
-
-	  /* Else if there is a c ancestor, attach to that */
-	  if (!l)
-	    l = node_ancestor_or_self(ytp->curr, "c");
-
-	  /* Else if there is a g:w ancestor, attach to the parent of that node */
-	  if (!l)
-	    {
-	      l = node_ancestor_or_self(ytp->curr, "g:w");
-	      if (!l)
-		l = node_ancestor_or_self(ytp->curr, "g:n");
-	      if (l)
-		l = l->rent;
-	      else
-		l = ytp->root;
-	    }
-
-	  /* Now l is the node where the g:w should attach */
-	  tree_curr(l);
-
-	  Node *wp = gdl_push(ytp, gdl_lang_context->tag->scode == stc_SAC ? "g:w" : "n:w");
-	  wp->mloc = mloc_file_line(gdlfile, gdllineno);
-
-	  /* By definition, the word-lang is the one in effect when the
-	     word begins; logogram lang switches need to be handled
-	     carefully */
-	  assert(word_lang_tag != NULL);
-	  gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
-      
-	  /* IF FIELD NOT IN SPARSE LEM HASH */
-	  if (!lzr_sparse || (curr_field && hash_find(lzr_sparse, (uccp)curr_field)))
-	    list_add(wd_list, wp);
-	  sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
-	  gid_insertp = gdl_word_id+strlen(gdl_word_id);
-	  if (!gdl_no_xml_ids)
-	    gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
-			(ccp)pool_copy((uccp)gdl_word_id, gdlpool));
-	  grapheme_id = 0;
-
-	  retnode = wp;
+	    l = node_ancestor_or_self(ytp->curr, "g:n");
+	  if (l)
+	    l = l->rent;
+	  else
+	    l = ytp->root;
 	}
+
+      /* Now l is the node where the g:w should attach */
+      tree_curr(l);
+
+      Node *wp = gdl_push(ytp, gdl_lang_context->tag->scode == stc_SAC ? "g:w" : "n:w");
+      wp->mloc = mloc_file_line(gdlfile, gdllineno);
+
+      /* By definition, the word-lang is the one in effect when the
+	 word begins; logogram lang switches need to be handled
+	 carefully */
+      assert(word_lang_tag != NULL);
+      gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      
+      /* IF FIELD NOT IN SPARSE LEM HASH */
+      if (!lzr_sparse || (curr_field && hash_find(lzr_sparse, (uccp)curr_field)))
+	list_add(wd_list, wp);
+      sprintf(gdl_word_id, "%s%d", gdl_line_id, wid_base++);
+      gid_insertp = gdl_word_id+strlen(gdl_word_id);
+      if (!gdl_no_xml_ids)
+	gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:id",
+		    (ccp)pool_copy((uccp)gdl_word_id, gdlpool));
+      grapheme_id = 0;
+
+      retnode = wp;
     }
   return retnode;
 }
@@ -811,9 +808,9 @@ gdl_clear_gg(Tree *ytp)
 void
 gdl_line_wrapup(Mloc m)
 {
-  Tree *ytp = gdl_get_tree();
+  /*Tree *ytp = gdl_get_tree();*/
 
-  if (ytp)
+  if (tcurr)
     {
       /* Line ends with ',' or '&' and no following text */
       if (gdl_recycled_word)
@@ -824,10 +821,10 @@ gdl_line_wrapup(Mloc m)
 	}
 
       /* We haven't done gdl_word_attr yet so the empty word is g:w not g:empty */
-      if (!strcmp(ytp->curr->name, "g:w") && !ytp->curr->kids)
+      if (!strcmp(tcurr->curr->name, "g:w") && !tcurr->curr->kids)
 	{
-	  tree_curr(ytp->curr->rent);
-	  (void)kids_rem_last(ytp);
+	  tree_curr(tcurr->curr->rent);
+	  (void)kids_rem_last(tcurr);
 	}
 
       if (lst)

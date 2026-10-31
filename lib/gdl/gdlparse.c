@@ -5,6 +5,93 @@
 
 extern void gdllex_destroy(void);
 
+Stck *GDL_stack = NULL;
+Tree *tcurr;
+
+Tree *
+gdl_create_tree(Treemem *tmp, Pool *p, const char *lang)
+{
+  if (!tp)
+    {
+      tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
+      tcurr->user = calloc(1, sizeof(GDL));
+      (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
+    }
+  if (p)
+    gdlpool = p;
+  else
+    gdlpool = 
+  if (lang)
+    word_lang_tag = lang;
+}
+
+void
+gdl_push_tree(Tree *tp)
+{
+  stck_push(GDL_stack, (intptr_t)tp);
+}
+
+Tree *
+gdl_pop_tree(void)
+{
+  intptr_t ptr = stck_pop(GDL_stack, (intptr_t)tp);
+  if (-1 == ptr)
+    return NULL;
+  else
+    return (Tree*)ptr;
+}
+
+/* This destroys tcurr which should be the last tree on GDL_stack */
+void
+gdl_destroy_tree(void)
+{
+  Tree *tp = (Tree*)stck_peek(GDL_stack);
+  if (tp && tp == tcurr)
+    {
+      stck_pop(GDL_stack);
+      if (wd_list)
+	list_free(wd_list, NULL);
+      if (c_dangling_gps)
+	list_free(c_dangling_gps, NULL);
+      if (c_explicit_gps)
+	list_free(c_explicit_gps, NULL);
+      if (c_implicit_gps)
+	list_free(c_implicit_gps, NULL);
+      if (modq)
+	list_free(modq, NULL);
+      if (break_stack)
+	stck_term(break_stack);
+      if (lang_stack)
+	stck_term(lang_stack);
+      if (state_stack)
+	stck_term(state_stack);
+      if (sstck)
+	stck_term(sstck);
+      if (mgstck)
+	memo_term(mgstck);
+      if (mlstck)
+	memo_term(mlstck);
+    }
+  else
+    abort();
+}
+
+void
+gdl_stack_init(void)
+{
+  if (!GDL_stack)
+    GDL_stack = stck_init(3);
+}
+void
+gdl_stack_term(void)
+{
+  if (GDL_stack)
+    {
+      stck_term(GDL_stack);
+      GDL_stack = NULL;
+    }
+}
+
 static char *
 gdlbuffer(const char *s)
 {
@@ -35,7 +122,7 @@ gdlparse_deep(Node *np, void *mptr)
 	    gdl_lex_init(m->file, m->line);
 	  else
 	    gdl_lex_init("<string>", 1);
-	  gdl_set_tree(tp);
+	  /*gdl_set_tree(tp);*/
 	  gdlparse();
 	  gdllex_destroy();
 	  free(s2);
@@ -44,37 +131,29 @@ gdlparse_deep(Node *np, void *mptr)
     }
 }
 
-Tree *
+/* The parser's working tree, tcurr, must be set before calling this
+   routine */
+void
 gdlparse_string(Mloc *m, char *s)
 {
+  assert(tcurr != NULL);
+  tcurr->root->text = (ccp)pool_copy((uccp)s, gdlpool);
   char *s2 = gdlbuffer(s);
   
   gdl_group_attach = lgp = NULL;
 
-  /* must come before gdl_set_tree() */
-  if (gdl_word_mode)
-    wd_list = list_create(LIST_SINGLE);
+  wd_list = list_create(LIST_SINGLE);
 
-  Pool *p = pool_init();
-  gdl_create_tree(NULL, NULL, p);
-  
-  if (tcurr->root)
-    tcurr->root->text = (ccp)pool_copy((uccp)s, gdlpool);
-
-  /* do this before gdl_set_tree so that initial w-node gets the right line number */
   if (m)
     gdl_lex_init(m->file, m->line);
   else
     gdl_lex_init("<string>", 1);
-
-  gdl_set_tree(tcurr);
 
   gdlparse();
     
   gdllex_destroy();
 
   free(s2);
-  pool_term(p);
 
   Node *w;
   nonw_found = 0;
@@ -93,14 +172,15 @@ gdlparse_string(Mloc *m, char *s)
       list_free(wd_list, NULL);
       wd_list = saved_wl;
     }
-  
-  return tcurr;
 }
 
+/* These may be redundant now; they are intended for init/term every
+   time the parser is called; see gdllib_init/term for init/term
+   before/after all calls to the parser */
 void
 gdlparse_init(void)
 {
-  gdl_init();
+  
 }
 
 void
@@ -111,5 +191,5 @@ gdlparse_reset(void)
 void
 gdlparse_term(void)
 {
-  gdl_term();
+  
 }

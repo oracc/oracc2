@@ -1,11 +1,10 @@
 #include <stdlib.h>
 #include <tree.h>
 #include <list.h>
-
+#include <gdllib.h>
 #include "sll.h"
 #include "gvl.h"
 
-extern int gdl_corrq;
 extern int gvl_strict;
 
 static unsigned char *gvl_c_form(Node *ynp, void (*fnc)(Node *np, void *user));

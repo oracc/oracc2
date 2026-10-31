@@ -11,10 +11,15 @@
 
 extern int gdllex(void);
 extern void yyerror(const char *);
-extern const char *currgdlfile;
+extern const char *gdlfile;
 extern int gdllineno, gdltrace;
 
+#if 1
+#define ytp tcurr
+#else
 static Tree *ytp;
+#endif
+
 static Node *ynp, *yrem, *ycp, *mnp;
 
 #define GDLLTYPE_IS_DECLARED 1
@@ -38,7 +43,7 @@ GDLLTYPE gdllloc;
 
 %%
 
-gdl.line: lineparts
+gdl.line: { ynp = gdl_new_word(tcurr); } lineparts
 	;
 
 lineparts:
@@ -313,6 +318,7 @@ glossc:
 
 %%
 
+#if 0
 	/* We need this to give gdl_meta access to the tree when there is no lgp set */
 Tree *
 gdl_get_tree(void)
@@ -326,9 +332,10 @@ gdl_set_tree(Tree *tp)
   ytp = tp;
   ynp = gdl_new_word(ytp);
 }
+#endif
 
 void
 gdlerror(const char *e)
 {
-  mesg_vwarning(currgdlfile, gdllineno, "gdl: %s\n", e);
+  mesg_vwarning(gdlfile, gdllineno, "gdl: %s\n", e);
 }

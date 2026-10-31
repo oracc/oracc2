@@ -166,65 +166,70 @@ extern gdlstate_t gs_order_f[];
 extern gdlstate_t gs_order_o[];
 extern gdlstate_t gs_order_c[];
 
+/* GDL was created 20261028 to remove almost all globals from GDL to
+   support atfgdl; all the member names end in '_' so they can be
+   manipulated directly or via the old global variable names which
+   don't end in '_' and for which getter #defines are given in
+   gdllib.h */
 typedef struct GDL {
-  Pool *gdlpool;
-  Node *c_last_explicit_group_node;
-  Node *gdl_group_attach;
-  Node *lgp;   		/* last grapheme node pointer */
-  Node *gdl_post_det_gp_attach;
-  Node *gdl_recycled_word;
-  int c_processing;
-  int gdl_corrq;/* set to 1 when a vq has !, e.g., a!(BA) */
-  int curr_lang;
-  int deep_parse;
-  int gdl_ascii;
-  int gdl_bilingual;
-  int gdl_legacy;
-  int gdl_unicode;
-  int gdl_lexical;
-  int g_literal_flag;
-  int g_logoforce_flag;
-  int gdl_orig_mode;/* If this is non-zero we use orig graphemes in
+  Pool *gdlpool_;
+  Node *c_last_explicit_group_node_;
+  Node *gdl_group_attach_;
+  Node *lgp_;   		/* last grapheme node pointer */
+  Node *gdl_post_det_gp_attach_;
+  Node *gdl_recycled_word_;
+  int c_processing_;
+  int gdl_corrq_;/* set to 1 when a vq has !, e.g., a!(BA) */
+  int curr_lang_;
+  int deep_parse_;
+  int gdl_ascii_;
+  int gdl_bilingual_;
+  int gdl_legacy_;
+  int gdl_unicode_;
+  int gdl_lexical_;
+  int g_literal_flag_;
+  int g_logoforce_flag_;
+  int gdl_orig_mode_;/* If this is non-zero we use orig graphemes in
 		       reconstituting compounds rather than c10e */
-  const unsigned char *gdl_legacy_prop;
-  int gdl_break_pending;
-  int gdl_legacy_accented;
-  int gdl_legacy_hash;
-  int gdl_legacy_pending;
-  int gdl_state_pending;
-  int gdl_cell_count;
-  int nonw_found;
-  Bracket_e gdl_legacy_o;
-  Bracket_e gdl_legacy_c;
-  gdlstate_t *lst;
-  gdlstate_t *dst;
-  gdlstate_t pst;
-  gdlstate_t rst;
-  int grapheme_id;
-  int wid_base;
-  char gdl_line_id[1024];
-  char gdl_word_id[2048];
-  char *gid_insertp;
-  const char *gdl_pending_varo;
-  const char *curr_field;
-  const char *curr_sur_id;
-  const char *word_lang_tag; /* initialized to "sux" by convention */
-  List *wd_list;
-  List *c_dangling_gps;
-  List *c_explicit_gps;
-  List *c_implicit_gps;
-  List *modq;
-  const char *c_last_implicit_delim;
-  int c_delim_sentinel;
-  int c_implicit_times_reset;
-  Stck *break_stack;
-  Stck *glosstck;
-  Stck *lang_stack;
-  Stck *state_stack;
-  Stck *sstck;
-  Memo *mgstck;
-  Memo *mlstck;
-  struct lang_context *gdl_lang_context;
+  const unsigned char *gdl_legacy_prop_;
+  int gdl_break_pending_;
+  int gdl_legacy_accented_;
+  int gdl_legacy_hash_;
+  int gdl_legacy_pending_;
+  int gdl_state_pending_;
+  int gdl_cell_count_;
+  int nonw_found_;
+  Bracket_e gdl_legacy_o_;
+  Bracket_e gdl_legacy_c_;
+  gdlstate_t *lst_;
+  gdlstate_t *dst_;
+  gdlstate_t pst_;
+  gdlstate_t rst_;
+  int grapheme_id_;
+  int wid_base_;
+  char gdl_line_id_[1024];
+  char gdl_word_id_[2048];
+  char *gid_insertp_;
+  const char *gdl_pending_varo_;
+  const char *curr_field_;
+  const char *curr_sur_id_;
+  const char *word_lang_tag_; /* initialized to "sux" by convention */
+  List *wd_list_;
+  List *c_dangling_gps_;
+  List *c_explicit_gps_;
+  List *c_implicit_gps_;
+  List *modq_;
+  const char *c_last_implicit_delim_;
+  int c_delim_sentinel_;
+  int c_implicit_times_reset_;
+  Stck *break_stack_;
+  Stck *glosstck_;
+  Stck *lang_stack_;
+  Stck *state_stack_;
+  Stck *sstck_;
+  Memo *mgstck_;
+  Memo *mlstck_;
+  struct lang_context *gdl_lang_context_;
 } GDL;
 
 #endif /*GDLTYPE_H_*/

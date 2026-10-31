@@ -7,7 +7,8 @@
 #include <xml.h>
 #include <xnn.h>
 #include <ns-gdl.h>
-#include <gdl.h>
+#include <gdllib.h>
+#include <gdlparse.h>
 #include <lng.h>
 #include <ns-asl.h>
 #include <rnvif.h>
@@ -30,7 +31,7 @@ int verbose = 0;
 int status;
 int rnvtrace;
 
-extern int gdl_flex_debug, gdldebug, gdlflextrace, gdl_orig_mode, gdl_unicode;
+extern int gdl_flex_debug, gdldebug, gdlflextrace;
 
 int bare_mode = 0;
 int check_mode = 0;
@@ -469,7 +470,7 @@ opts(int opt, const char *arg)
       wrapper = 1;
       break;
     case 'W':
-      gdl_word_mode = 1;
+      /* Word mode is now the default and there is no variable */
       break;
     default:
       return 1;

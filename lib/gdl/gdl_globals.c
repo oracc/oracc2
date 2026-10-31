@@ -5,6 +5,7 @@
 
 /* multiple gdl instances share this */
 int gdlflextrace = 0;
+static int gdl_initted = 0;
 
 const char *gdl_lexnames[128] = {
   ['"'] = "!pr",
@@ -316,57 +317,29 @@ gdl_rem_nonw(List *wds)
   return lp;
 }
 
-Stck *GDL_stack = NULL;
-Tree *tcurr;
-
+/* Call these before the first call to gdlparse_string (init) and
+   after the last call (term) */
 void
-gdl_create_tree(Tree *tp, Treemem *tmp, Pool *p)
+gdllib_init(void)
 {
-  if (!tp)
-    {
-      tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
-      tcurr->user = calloc(1, sizeof(GDL));
-      (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
-    }
-  gdlpool = p;
-  word_lang_tag = "sux";
-  if (!GDL_stack)
-    GDL_stack = stck_init(3);
-  stck_push(GDL_stack, (intptr_t)tcurr);
+  if (gdl_initted++)
+    return;
+
+  gdl_balance_init();
+
+  gdl_modq_init();
+
+  gdl_stack_init();
 }
 
-/* This destroys tcurr which should be the last tree on GDL_stack */
 void
-gdl_destroy_tree(void)
+gdllib_term(void)
 {
-  Tree *tp = (Tree*)stck_peek(GDL_stack);
-  if (tp && tp == tcurr)
+  if (gdl_initted)
     {
-      stck_pop(GDL_stack);
-      if (wd_list)
-	list_free(wd_list, NULL);
-      if (c_dangling_gps)
-	list_free(c_dangling_gps, NULL);
-      if (c_explicit_gps)
-	list_free(c_explicit_gps, NULL);
-      if (c_implicit_gps)
-	list_free(c_implicit_gps, NULL);
-      if (modq)
-	list_free(modq, NULL);
-      if (break_stack)
-	stck_term(break_stack);
-      if (lang_stack)
-	stck_term(lang_stack);
-      if (state_stack)
-	stck_term(state_stack);
-      if (sstck)
-	stck_term(sstck);
-      if (mgstck)
-	memo_term(mgstck);
-      if (mlstck)
-	memo_term(mlstck);
+      gdl_initted = 0;
+      gdl_balance_term();
+      gdl_modq_term();
+      gdl_stack_term();
     }
-  else
-    abort();
 }
-

@@ -16,36 +16,7 @@
 char *curr_pqx = NULL;
 int curr_pqx_line = 0;
 
-int gdl_initted = 0;
 int gdltrace = 0;
-
-void
-gdl_init(void)
-{
-  if (gdl_initted++)
-    return;
-
-  gdl_balance_init();
-
-  gdl_modq_init();
-
-  gdlpool = pool_init();
-
-  gdl_set_lang(NULL, "sux", NULL);
-}
-
-void
-gdl_term(void)
-{
-  if (gdl_initted)
-    {
-      pool_term(gdlpool);
-      gdlpool = NULL;
-      gdl_initted = 0;
-      gdl_balance_term();
-      gdl_modq_term();
-    }
-}
 
 static Node *
 gdl_first_s_sub(Node *np)

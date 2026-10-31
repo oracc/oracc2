@@ -9,6 +9,7 @@
 #include "lex_st_enum.h"
 
 struct lang_context *gdl_global_context;
+struct lang_context *gdl_lang_context;
 
 Bracket bracket_data[] = {
   [e_L_squ] = { '[', gs_lost_o, gs_lost, "[" },
@@ -305,11 +306,11 @@ gdl_var_mark(Mloc *mlp, Bracket_e type, char *v)
       v = v+1;
       char *x = strchr(v, ':');
       *x = '\0';
-      Tree *gtp = gdl_get_tree();
-      Node *vari = tree_node(gtp, NS_GDL, "g:nonw", gtp->curr->depth+1, NULL);
+      /*Tree *gtp = gdl_get_tree();*/
+      Node *vari = tree_node(tcurr, NS_GDL, "g:nonw", tcurr->curr->depth+1, NULL);
       gdl_prop_kv(vari, GP_ATTRIBUTE, PG_GDL_INFO, "type", "vari");
       vari->text = v;
-      (void)node_before(gtp->curr, vari);
+      (void)node_before(tcurr->curr, vari);
     }
 }
 
@@ -322,7 +323,7 @@ gdl_lang_tag(Mloc *mlp, const char *data)
     fprintf(stderr, "gt: LANG: %s\n", data);
   gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mlp->file, mlp->line);
   word_lang_tag = gdl_lang_context->fulltag;
-  Tree*tp = gdl_get_tree();
+  /*Tree*tp = gdl_get_tree();*/
   struct mapi *st = scripttok(gdl_lang_context->tag->script
 			      ? gdl_lang_context->tag->script
 			      : gdl_lang_context->core->script, 3);
@@ -335,9 +336,9 @@ gdl_lang_tag(Mloc *mlp, const char *data)
     {
       fprintf(stderr, "gdl_lang_tag: unknown script %s\n", gdl_lang_context->tag->script);
     }
-  if (!strcmp(tp->curr->name, "g:w") || !strcmp(tp->curr->name, "n:w"))
+  if (!strcmp(tcurr->curr->name, "g:w") || !strcmp(tcurr->curr->name, "n:w"))
     {
-      gdl_prop_kv(tp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      gdl_prop_kv(tcurr->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       if (gdl_lang_context->tag->scode != stc_SAC)
 	tp->curr->name = "n:w";
     }

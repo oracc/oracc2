@@ -57,7 +57,7 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
   (void)gdl_balance_state(mlp, bp->tok,gdl_lex_state());
 
   /* if the current word is empty unwind it because it means the {{/{( is at SOL */
-  if (gdl_word_mode && (!strcmp(ytp->curr->name, "g:w")||!strcmp(ytp->curr->name, "g:w")) && !ytp->curr->kids)
+  if (wordnode(ytp->curr) && !ytp->curr->kids)
     {
       tree_curr(ytp->curr->rent);
       gdl_recycled_word = kids_rem_last(ytp);

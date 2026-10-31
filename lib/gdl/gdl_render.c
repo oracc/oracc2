@@ -112,7 +112,6 @@ unsigned char *
 gdl_render_str(unsigned const char *s, GDLR_config *c)
 {
   gdl_no_xml_ids = 1;
-  gdl_word_mode = 1;
   Tree *tp = gdlparse_string(NULL, (char*)s);
   unsigned char *ret = NULL;
   if (tp)
