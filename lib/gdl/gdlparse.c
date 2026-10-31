@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <lng.h>
 #include "gdl.tab.h"
 #include "gdllib.h"
 #include "gdllex.h"
@@ -8,21 +9,27 @@ extern void gdllex_destroy(void);
 Stck *GDL_stack = NULL;
 Tree *tcurr;
 
-Tree *
+/* Require a pool to be set here and eventually freed by caller */
+void
 gdl_create_tree(Treemem *tmp, Pool *p, const char *lang)
 {
-  if (!tp)
-    {
-      tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
-      tcurr->user = calloc(1, sizeof(GDL));
-      (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
-    }
-  if (p)
-    gdlpool = p;
-  else
-    gdlpool = 
+  assert(p != NULL);
+  tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
+  tcurr->user = calloc(1, sizeof(GDL));
+  (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
+  gdlpool = p;
   if (lang)
     word_lang_tag = lang;
+  else
+    word_lang_tag = "sux";
+  /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
+  struct lang_context *x = lang_switch(NULL,word_lang_tag,NULL,NULL,0);
+  if (!global_lang)
+    {
+      global_lang = calloc(1, sizeof(struct lang_context));
+      *global_lang = *x;
+    }
+  gdl_lang_context = global_lang;
 }
 
 void
@@ -34,7 +41,7 @@ gdl_push_tree(Tree *tp)
 Tree *
 gdl_pop_tree(void)
 {
-  intptr_t ptr = stck_pop(GDL_stack, (intptr_t)tp);
+  intptr_t ptr = stck_pop(GDL_stack);
   if (-1 == ptr)
     return NULL;
   else
@@ -98,8 +105,10 @@ gdlbuffer(const char *s)
   int len = strlen(s);
   char *s2 = malloc(len+4);
   strcpy(s2, s);
+#if 0  
   if ('\n' != s2[len-1])
     s2[len++] = '\n';
+#endif
   s2[len] = s2[len+1] = '\0';
   gdl_setup_buffer(s2, len);
   return s2;
@@ -180,7 +189,6 @@ gdlparse_string(Mloc *m, char *s)
 void
 gdlparse_init(void)
 {
-  
 }
 
 void
@@ -191,5 +199,4 @@ gdlparse_reset(void)
 void
 gdlparse_term(void)
 {
-  
 }

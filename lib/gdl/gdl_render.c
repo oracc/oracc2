@@ -112,11 +112,11 @@ unsigned char *
 gdl_render_str(unsigned const char *s, GDLR_config *c)
 {
   gdl_no_xml_ids = 1;
-  Tree *tp = gdlparse_string(NULL, (char*)s);
+  gdlparse_string(NULL, (char*)s);
   unsigned char *ret = NULL;
-  if (tp)
+  if (tcurr)
     {
-      ret = gdl_render(tp->root->kids, c);
+      ret = gdl_render(tcurr->root->kids, c);
     }
   return ret;
 }

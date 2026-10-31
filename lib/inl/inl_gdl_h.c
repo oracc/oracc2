@@ -14,8 +14,8 @@ inl_gdl_h(Scan *sp, Scanseg *ssp, Tree *tp, char *s)
   else
     strcpy(buf, s);
     
-  Tree *gtp = gdlparse_string(&sp->mp, buf);
-  tree_graft(ssp->np, gtp);
+  gdlparse_string(&sp->mp, buf);
+  tree_graft(ssp->np, tcurr);
   
   gdlparse_reset();  
 }

@@ -253,6 +253,7 @@ main(int argc, char * const*argv)
   struct lang_context *x = lang_switch(NULL,"sux",NULL,NULL,0);
   global_lang = calloc(1, sizeof(struct lang_context));
   *global_lang = *x;
+  gdl_global_lang = global_lang;
 
   char * const*files = NULL;
   if (argv[optind])

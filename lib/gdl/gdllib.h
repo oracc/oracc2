@@ -242,7 +242,7 @@ extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const cha
 extern void gdl_word_attr(Node *w);
 extern List *gdl_rem_nonw(List *wds);
 
-extern void gdl_create_tree(Tree *tp, Treemem *tmp, Pool *p);
+extern void gdl_create_tree(Treemem *tmp, Pool *p, const char *lang);
 extern void gdl_destroy_tree(void);
 
 extern int gdlflextrace, gdl_word_mode;

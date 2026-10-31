@@ -340,7 +340,7 @@ gdl_lang_tag(Mloc *mlp, const char *data)
     {
       gdl_prop_kv(tcurr->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       if (gdl_lang_context->tag->scode != stc_SAC)
-	tp->curr->name = "n:w";
+	tcurr->curr->name = "n:w";
     }
   return ret;
 }

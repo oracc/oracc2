@@ -31,6 +31,8 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
+%token <i> '\n'
+
 ###gdltokens.y###
 
 %nterm <text> 	field lexfld cmods

@@ -31,6 +31,8 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
+%token <i> 'n'
+
 %token <text> FTYPE	258
 %token <text> LANG	259
 %token <text> TEXT	260

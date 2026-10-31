@@ -23,6 +23,11 @@ static Mloc ml;
 Hash *keyhash = NULL;
 Pool *keypool = NULL;
 
+const char *gdlx_lang = "sux";
+Pool *gdlx_pool = NULL;
+int gdlx_ascii;
+int gdlx_legacy;
+
 Mloc xo_loc;
 FILE *f_xml;
 const char *file;
@@ -103,8 +108,10 @@ do_one(char *s)
     }
   ++ml.line;
   mesg_init();
-  tp = gdlparse_string(&ml, s);
+  gdlparse_string(&ml, s);
 
+  tp = tcurr;
+  
   if (cuneify_mode)
     {
       const unsigned char *ucun = (uccp)gvl_cuneify_tree(tp), *ivs;
@@ -265,21 +272,51 @@ do_many(const char *fn)
     fprintf(stderr, "gdlx: file %s can't be read\n", fn);
 }
 
+/* Initialization and parser preparation sequence is important:
+ *
+ * options() cannot set gdllib.h #define variables
+ *
+ * lang initialization must come before gdl_create_tree()
+ *
+ * gdl_create_tree() must come before setting gdllib.h #defines
+ *
+ */
+
 int
 main(int argc, char **argv)
 {
   gdl_flex_debug = gdldebug = 0;
-  gdl_unicode = 1;
-  setlocale(LC_ALL, ORACC_LOCALE);
-
+  
+  /* options() must not set any variables that are defined in gdllib.h
+   * so gdlx_XXX versions are set instead
+   */
   options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
+
   lang_init();
+  langtag_init();
+
+  /* After gdl_create_tree we can set options */
+  gdl_create_tree(NULL, gdlx_pool = pool_init(), gdlx_lang);
+
   gdl_flex_debug = gdldebug = trace_mode;
   if (trace_mode > 1)
     gdlflextrace = 1;
 
+  if (gdlx_ascii)
+    {
+      gdl_unicode = 0; /* defaults to 1; 0 forces atf2utf */
+      gdl_ascii = 1;
+    }
+  else
+    gdl_unicode = 1;
+
+  gdl_legacy = gdlx_legacy;
+
+  setlocale(LC_ALL, ORACC_LOCALE);
+
   gdl_legacy_lexer(gdl_legacy);
-  
+
+#if 0
   if (gdl_one_off_mode)
     {
       if (argv[optind])
@@ -301,6 +338,7 @@ main(int argc, char **argv)
 	  return 1;
 	}
     }
+#endif
 
   if (ns_output)
     {
@@ -317,21 +355,17 @@ main(int argc, char **argv)
 #endif
   else
     gdlxml_setup();
+
   lmemo_init();
   lang_init();
+
   gdl_auto_id();
-  gdlparse_init();
+  gdllib_init();
+
   if (!strcmp(project, "pcsl"))
-    {
-#if 0
-      (void)lang_switch(NULL,"qpc",NULL,NULL,0);
-      gvl_setup(project, project, "900");
-#endif
-      gdl_set_lang(NULL, "qpc", NULL);
-    }
+    gdl_set_lang(NULL, "qpc", NULL);
   else
     gvl_setup(project, project, "020"); /*FIXME*/
-
 
   if (gvl_script_type)
     gvl_set_script(gvl_script_type);
@@ -388,8 +422,7 @@ opts(int opt, const char *arg)
       gdl_one_off_mode = 1;
       break;
     case 'a':
-      gdl_unicode = 0; /* defaults to 1; 0 forces atf2utf */
-      gdl_ascii = 1;
+      gdlx_ascii = 1;
       break;
     case 'b':
       bare_mode = 1;
@@ -429,7 +462,10 @@ opts(int opt, const char *arg)
       key = atoi(optarg);
       break;
     case 'l':
-      gdl_legacy = 1;
+      gdlx_legacy = 1;
+      break;
+    case 'L':
+      gdlx_lang = optarg;
       break;
     case 'n':
       ns_output = 1;

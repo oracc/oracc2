@@ -74,6 +74,7 @@ sll_lookup(unsigned const char *key)
     return sll_lookup_d(sll_db, key);
 }
 
+#if 0
 List *
 sll_resolve(unsigned const char *g, const char *e, struct sllext *ep)
 {
@@ -96,6 +97,7 @@ sll_resolve(unsigned const char *g, const char *e, struct sllext *ep)
       return NULL;
     }
 }
+#endif
 
 unsigned const char *
 sll_ext_check(unsigned const char *k, enum sll_t t)

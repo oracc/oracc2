@@ -76,14 +76,12 @@ gt_config(Hash *h, Memo *m)
   gtcfg.m = m;
 }
 
-static Tree *
+static void
 gt_gdl(Mloc *locp, unsigned char *s)
 {
-  Tree *tp = NULL;
   mesg_init();
-  tp = gdlparse_string(locp, (char*)s);
+  gdlparse_string(locp, (char*)s);
   gdlparse_reset();
-  return tp;
 }
 
 static int
@@ -166,7 +164,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       else
 	{
 	  extern int gdlsig_depth_mode;
-	  tp = gt_gdl(locp, t);
+	  gt_gdl(locp, t);
 
 	  /* deep? or a special mode for unicode rendering? */
 	  gdlsig_depth_mode = -1;

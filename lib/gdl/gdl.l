@@ -286,7 +286,7 @@ gdl_l_lex_init(const char *file, int line)
 void
 gdl_setup_buffer(char *buf, int len)
 {
-  (void)gdl_scan_buffer(buf, len);
+  (void)gdl_scan_buffer(buf, len+2);
 }
 
 void

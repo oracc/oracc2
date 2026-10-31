@@ -31,9 +31,9 @@ gdlsig_str(Mloc *mp, unsigned char *atf, int frag_ok, int deep)
   
   gdlsig_depth_mode = deep;
   gdlparse_reset();
-  tp = gdlparse_string(mp, (char*)atf);
-  if (tp)
-    sig = gdlsig(tp);
+  gdlparse_string(mp, (char*)atf);
+  if (tcurr)
+    sig = gdlsig(tcurr);
   gdlsig_depth_mode = saved_deep; 
   return sig;
 }
