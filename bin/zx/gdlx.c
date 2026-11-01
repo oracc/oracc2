@@ -18,15 +18,14 @@
 
 /* test harness for gvl/gdl libraries */
 
+GDL *gp = NULL;
+
 static Mloc ml;
 
 Hash *keyhash = NULL;
 Pool *keypool = NULL;
 
-const char *gdlx_lang = "sux";
 Pool *gdlx_pool = NULL;
-int gdlx_ascii;
-int gdlx_legacy;
 
 Mloc xo_loc;
 FILE *f_xml;
@@ -285,60 +284,23 @@ do_many(const char *fn)
 int
 main(int argc, char **argv)
 {
+  setlocale(LC_ALL, ORACC_LOCALE);
+    
   gdl_flex_debug = gdldebug = 0;
-  
-  /* options() must not set any variables that are defined in gdllib.h
-   * so gdlx_XXX versions are set instead
-   */
+  gp = gdl_GDL();
   options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
 
-  lang_init();
-  langtag_init();
+  gdllib_init();
+  gdl_auto_id();
 
-  /* After gdl_create_tree we can set options */
-  gdl_create_tree(NULL, gdlx_pool = pool_init(), gdlx_lang);
+  gdl_create_tree(NULL, gdlx_pool = pool_init(), gp->word_lang_tag_);
 
   gdl_flex_debug = gdldebug = trace_mode;
   if (trace_mode > 1)
     gdlflextrace = 1;
 
-  if (gdlx_ascii)
-    {
-      gdl_unicode = 0; /* defaults to 1; 0 forces atf2utf */
-      gdl_ascii = 1;
-    }
-  else
-    gdl_unicode = 1;
-
-  gdl_legacy = gdlx_legacy;
-
-  setlocale(LC_ALL, ORACC_LOCALE);
 
   gdl_legacy_lexer(gdl_legacy);
-
-#if 0
-  if (gdl_one_off_mode)
-    {
-      if (argv[optind])
-	{
-	  char *res = gdl_one_off("<cli>",1,argv[optind], 1);
-	  if (res)
-	    {
-	      printf("%s\t%s\n", argv[optind], res);
-	    }
-	  else
-	    {
-	      fprintf(stderr, "gdlx: one-off mode returned NULL\n");
-	    }
-	  return 0;
-	}
-      else
-	{
-	  fprintf(stderr, "gdlx: -1 (one-off mode) requires a grapheme on the command line\n");
-	  return 1;
-	}
-    }
-#endif
 
   if (ns_output)
     {
@@ -355,12 +317,6 @@ main(int argc, char **argv)
 #endif
   else
     gdlxml_setup();
-
-  lmemo_init();
-  lang_init();
-
-  gdl_auto_id();
-  gdllib_init();
 
   if (!strcmp(project, "pcsl"))
     gdl_set_lang(NULL, "qpc", NULL);
@@ -407,8 +363,7 @@ main(int argc, char **argv)
       gsort_term();
     }
 
-  gdlparse_term();
-  lang_term();
+  gdllib_term();
 
   return 0;
 }
@@ -422,7 +377,8 @@ opts(int opt, const char *arg)
       gdl_one_off_mode = 1;
       break;
     case 'a':
-      gdlx_ascii = 1;
+      gp->gdl_ascii_ = 1;
+      gp->gdl_unicode_ = 0;
       break;
     case 'b':
       bare_mode = 1;
@@ -462,10 +418,10 @@ opts(int opt, const char *arg)
       key = atoi(optarg);
       break;
     case 'l':
-      gdlx_legacy = 1;
+      gp->gdl_legacy_ = 1;
       break;
     case 'L':
-      gdlx_lang = optarg;
+      gp->word_lang_tag_ = optarg;
       break;
     case 'n':
       ns_output = 1;
