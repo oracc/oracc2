@@ -248,4 +248,6 @@ extern void gdl_destroy_tree(void);
 extern int gdlflextrace, gdl_word_mode;
 extern int gdl_no_xml_ids, gdl_xmlids;
 
+extern GDL*gdl_GDL(void);
+
 #endif/*GDLLIB_H*/

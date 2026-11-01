@@ -1,7 +1,10 @@
 #include <oraccsys.h>
 #include <stck.h>
+#include <lng.h>
 #include "gdllib.h"
 #include "gdltokens.h"
+
+static GDL GDL_defaults = { .gdl_unicode_ = 1, .word_lang_tag_ = "sux" };
 
 /* multiple gdl instances share this */
 int gdlflextrace = 0;
@@ -325,6 +328,11 @@ gdllib_init(void)
   if (gdl_initted++)
     return;
 
+  lang_init();
+  langtag_init();
+
+  lmemo_init();
+
   gdl_balance_init();
 
   gdl_modq_init();
@@ -341,5 +349,15 @@ gdllib_term(void)
       gdl_balance_term();
       gdl_modq_term();
       gdl_stack_term();
+      lang_term();
+      langtag_term();
     }
+}
+
+GDL*
+gdl_GDL(void)
+{
+  GDL *gp = calloc(1, sizeof(GDL));
+  *gp = GDL_defaults;
+  return gp;
 }
