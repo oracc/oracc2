@@ -241,6 +241,12 @@ gdl_modq_init(void)
 }
 
 void
+gdl_modq_reset(void)
+{
+  list_reset(modq);
+}
+
+void
 gdl_modq_flush(void)
 {
   Node *last = NULL;
@@ -263,7 +269,7 @@ gdl_modq_flush(void)
 	    }		    
 	}
     }
-  list_reset(modq);
+  gdl_modq_reset();
 }
 
 void

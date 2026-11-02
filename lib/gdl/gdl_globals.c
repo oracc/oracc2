@@ -4,7 +4,7 @@
 #include "gdllib.h"
 #include "gdltokens.h"
 
-static GDL GDL_defaults = { .gdl_unicode_ = 1, .word_lang_tag_ = "sux" };
+static GDL GDL_defaults = { .deep_parse_ = 1, .gdl_unicode_ = 1, .word_lang_tag_ = "sux" };
 
 /* multiple gdl instances share this */
 int gdlflextrace = 0;
@@ -332,10 +332,6 @@ gdllib_init(void)
   langtag_init();
 
   lmemo_init();
-
-  gdl_balance_init();
-
-  gdl_modq_init();
 }
 
 void
@@ -344,8 +340,6 @@ gdllib_term(void)
   if (gdl_initted)
     {
       gdl_initted = 0;
-      gdl_balance_term();
-      gdl_modq_term();
       lang_term();
       langtag_term();
     }
@@ -360,7 +354,7 @@ gdl_GDL(void)
 }
 
 void
-gdl_free_GDL(GDL *gp)
+gdl_GDL_free(GDL *gp)
 {
   if (gp->wd_list_)
     list_free(gp->wd_list_, NULL);

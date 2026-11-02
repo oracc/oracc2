@@ -569,7 +569,7 @@ gdl_new_word(Tree *ytp)
 }
 
 void
-gdl_auto_id(void)
+gdl_auto_ids(void)
 {
   static char buf[16];
   static int gid = 1;

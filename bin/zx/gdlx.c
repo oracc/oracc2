@@ -105,6 +105,11 @@ do_one(char *s)
       saved_deep = gdlsig_depth_mode;
       gdlsig_depth_mode = 1;
     }
+  if (ml.line)
+    gdlparse_reset();
+  else
+    gdlparse_init(gp);
+  
   ++ml.line;
   mesg_init();
   gdlparse_string(&ml, s);
@@ -221,8 +226,7 @@ do_many(const char *fn)
   if ('-' == *fn)
     {
       fp = stdin;
-      ml.file = "<stdin>";
-      ml.line = 1;
+      fn = "<stdin>";
     }
   else
     fp = fopen(fn, "r");
@@ -230,7 +234,7 @@ do_many(const char *fn)
     {
       char buf[1024], *s, *orig_s;
       ml.file = fn;
-      ml.line = 1;
+      ml.line = 0;
       if (wrapper)
 	printf("<gdlx>");
       while ((s = fgets(buf, 1024, fp)))
@@ -289,8 +293,8 @@ main(int argc, char **argv)
   gdl_flex_debug = gdldebug = 0;
   gp = gdl_GDL();
   options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
-  gp->auto_id_ = 1;
-  gp->pool = pool_init();
+  gp->gdl_auto_id_ = 1;
+  gp->gdlpool_ = pool_init();
 
   gdllib_init();
 
@@ -333,7 +337,7 @@ main(int argc, char **argv)
   if (argv[optind])
     {
       ml.file = "<argv1>";
-      ml.line = 1;
+      ml.line = 0;
       do_one(argv[optind]);
     }
   else if (fname)

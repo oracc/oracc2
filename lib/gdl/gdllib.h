@@ -37,6 +37,7 @@ extern Tree *tcurr;
 #define g_literal_flag	(tcurrG->g_literal_flag_)
 #define g_logoforce_flag	(tcurrG->g_logoforce_flag_)
 #define gdl_ascii	(tcurrG->gdl_ascii_)
+#define gdl_auto_id	(tcurrG->gdl_auto_id_)
 #define gdl_bilingual	(tcurrG->gdl_bilingual_)
 #define gdl_break_pending	(tcurrG->gdl_break_pending_)
 #define gdl_cell_count	(tcurrG->gdl_cell_count_)
@@ -163,6 +164,7 @@ extern void gdl_decr_qin(void);
 extern intptr_t gdl_balance_break_c(Mloc *mlp, int tok);
 extern intptr_t gdl_balance_state(Mloc *mlp, int tok, int state);
 extern void gdl_balance_init(void);
+extern void gdl_balance_reset(void);
 extern void gdl_balance_term(void);
 extern void gdl_balance_flush(Mloc *mlp);
 extern void gdl_gp_type(Tree *ytp, enum gdlpropvals p);
@@ -171,6 +173,7 @@ extern void gdl_modq_add(Node *np);
 extern Node *gdl_mod_cmod(Mloc *locp, Node *np, Node *mnp, const char *m);
 extern void gdl_modq_flush(void);
 extern void gdl_modq_init(void);
+extern void gdl_modq_reset(void);
 extern void gdl_modq_term(void);
 extern void gdl_mod_wrap(Node *np, int sub_simplexg);
 extern void gdl_mod_wrap_q(Node *np);
@@ -201,7 +204,7 @@ extern int gdl_lex_state(void);
 extern List *gdl_get_word_list(void);
 extern void gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt);
 extern void gdl_set_word_id(const char *wid);
-extern void gdl_auto_id(void);
+extern void gdl_auto_ids(void);
 extern void gdl_det_props(Node *d);
 extern void gdl_group(Mloc mp, int type);
 extern void gdl_clear_gg(Tree *ytp);
@@ -245,5 +248,6 @@ extern int gdlflextrace, gdl_word_mode;
 extern int gdl_no_xml_ids, gdl_xmlids;
 
 extern GDL*gdl_GDL(void);
+extern void gdl_GDL_free(GDL*gp);
 
 #endif/*GDLLIB_H*/

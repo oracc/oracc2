@@ -89,6 +89,15 @@ gdl_balance_init(void)
 }
 
 void
+gdl_balance_reset(void)
+{
+  stck_reset(break_stack);
+  stck_reset(state_stack);
+  stck_reset(lang_stack);
+  memo_reset(mgstck);
+}
+
+void
 gdl_balance_term(void)
 {
   stck_term(break_stack);
@@ -231,8 +240,5 @@ gdl_balance_flush(Mloc *mlp)
     mesg_verr(mlp, "unclosed break opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
   while ((tok = gdl_state_pop()) != -1)
     mesg_verr(mlp, "unclosed state opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
-  stck_reset(break_stack);
-  stck_reset(state_stack);
-  stck_reset(lang_stack);
-  memo_reset(mgstck);
+  gdl_balance_reset();
 }

@@ -88,12 +88,16 @@ gdlparse_string(Mloc *m, char *s)
     gdl_lex_init(m->file, m->line);
   else
     gdl_lex_init("<string>", 1);
+
   gdl_legacy_lexer(gdl_legacy);
+  if (gdl_auto_id)
+    gdl_auto_ids();
+  
   char *s2 = gdlbuffer(s);
 
   gdl_group_attach = lgp = NULL;
-  wd_list = list_create(LIST_SINGLE);
 
+  wd_list = list_create(LIST_SINGLE);
   gdlparse();
 
   gdllex_destroy();
@@ -110,13 +114,8 @@ gdlparse_string(Mloc *m, char *s)
     wd_list = gdl_rem_nonw(wd_list);
 
   if (deep_parse)
-    {
-      List *saved_wl = wd_list;
-      wd_list = list_create(LIST_SINGLE);
-      tree_iterator(tcurr, m, gdlparse_deep, NULL);
-      list_free(wd_list, NULL);
-      wd_list = saved_wl;
-    }
+    tree_iterator(tcurr, m, gdlparse_deep, NULL);
+
   return tcurr;
 }
 
@@ -128,20 +127,31 @@ gdlparse_deep(Node *np, void *mptr)
       gvl_g *gp = np->user;
       if (gp->orig && '|' != *gp->orig && gp->sign && '|' == *gp->sign)
 	{
-	  Tree *tp = tree_init();
-	  Mloc *m = mptr;
-	  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
+	  Tree *xcurr = tcurr;
+	  tcurr = tree_init_mem(xcurr->tm);
+	  tcurr->user = gdl_GDL();
+	  *((GDL*)tcurr->user) = *((GDL*)xcurr->user);
+
+	  /* This is where we reset GDL members as necessary */
+	  
+	  (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
 	  char *s2 = gdlbuffer((ccp)gp->sign);
+	  
 	  /* do this before gdl_set_tree so that initial w-node gets the right line number */
+	  Mloc *m = mptr;
 	  if (m)
 	    gdl_lex_init(m->file, m->line);
 	  else
 	    gdl_lex_init("<string>", 1);
-	  /*gdl_set_tree(tp);*/
+
+	  wd_list = list_create(LIST_SINGLE);
 	  gdlparse();
 	  gdllex_destroy();
 	  free(s2);
-	  gp->deep = tp->root->kids;
+	  gp->deep = tcurr->root->kids;
+	  gdl_GDL_free(tcurr->user);
+	  tree_term(tcurr);
+	  tcurr = xcurr;
 	}
     }
 }
@@ -151,7 +161,7 @@ gdlparse_init(GDL *gp)
 {
   assert(gp != NULL);
   tcurr = tree_init();
-  tcurr->user = calloc(1, sizeof(GDL));
+  tcurr->user = gp;
   (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
   /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
   struct lang_context *x = lang_switch(NULL,word_lang_tag,NULL,NULL,0);
@@ -161,6 +171,8 @@ gdlparse_init(GDL *gp)
       *global_lang = *x;
     }
   gdl_lang_context = global_lang;
+  gdl_balance_init();
+  gdl_modq_init();
 }
 
 void
@@ -170,6 +182,7 @@ gdlparse_reset(void)
   tree_term(tcurr);
   tcurr = tree_init();
   tcurr->user = gp;
+  gdl_balance_reset();
 }
 
 void
@@ -177,6 +190,8 @@ gdlparse_term(void)
 {
   free(tcurr->user);
   tree_term(tcurr);
+  gdl_balance_term();
+  gdl_modq_term();
 }
 
 void
