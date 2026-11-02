@@ -19,6 +19,18 @@ tmem_init(void)
 }
 
 void
+tmem_reset(Treemem *tmem)
+{
+  memo_reset(tmem->tree_mem);
+  memo_reset(tmem->node_mem);
+  memo_reset(tmem->prop_mem);
+  memo_reset(tmem->keva_mem);
+  memo_reset(tmem->mloc_mem);
+  pool_reset(tmem->pool);
+  hpool_reset(tmem->pooh);
+}
+
+void
 tmem_term(Treemem *tmem)
 {
   if (tmem)

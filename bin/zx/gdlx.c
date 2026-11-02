@@ -289,18 +289,14 @@ main(int argc, char **argv)
   gdl_flex_debug = gdldebug = 0;
   gp = gdl_GDL();
   options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
+  gp->auto_id_ = 1;
+  gp->pool = pool_init();
 
   gdllib_init();
-  gdl_auto_id();
-
-  gdl_create_tree(NULL, gdlx_pool = pool_init(), gp->word_lang_tag_);
 
   gdl_flex_debug = gdldebug = trace_mode;
   if (trace_mode > 1)
     gdlflextrace = 1;
-
-
-  gdl_legacy_lexer(gdl_legacy);
 
   if (ns_output)
     {

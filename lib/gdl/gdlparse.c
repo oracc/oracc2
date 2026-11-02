@@ -4,99 +4,65 @@
 #include "gdllib.h"
 #include "gdllex.h"
 
-extern void gdllex_destroy(void);
+/* GDL parser tree management
+ * ==========================
+ *
+ * GDL tree processing works on a global tree, tcurr.
+ *
+ * (1) One tree life-cycle is used by applications that use
+ * gdlparse_string directly.  These need to do:
+ *
+ * gdllib_init() -- prepares the GDL library
+ *
+ * gdl_GDL() -- gets a GDL structure
+ *
+ * [[ set the GDL structure options as needed ]]
+ *
+ * gdlparse_init(GDL*) -- sets up tcurr
+ *
+ * Tree *tp = gdlparse_string(m, s) -- parses string and returns the Tree
+ *
+ * [[ do whatever is needed with the parse results ]]
+ *
+ * [[ gdlparse_reset(tp) -- gdlparse_string() -- repeat parse ]]
+ *
+ * gdlparse_term(tp) -- release all memory used by parser and GDL
+ *
+ * (2) The other tree life-cycle is used by applications that embed
+ * GDL parsing in another parser--at present this is only done by ax.
+ *
+ * In this case the sequence is:
+ *
+ * gdllib_init() -- start of run
+ *
+ * gdl_GDL() -- start of ATF text, i.e., &-line; save the GDL* in the ATF Tree's user mem
+ *
+ * [[ set GDL opts from ATF protocols ]]
+ *
+ * gdlparse_start(LINE-NODE-IN-ATF_TREE) -- sets tcurr to ATF_TREE and
+ * 					    ensures tcurr->curr is a line-node
+ *
+ * gdlparse_stop() -- sets tcurr=NULL and ensures ATF_TREE->curr is the start line-node
+ *  
+ * gdl_GDL_reset(gp) -- free all GDL resources at end of ATF text
+ *
+ * ATF inline text can include GDL parsing--this is done by using tree
+ * life-cycle (1) within the current life-cycle (2) framework.
+ *
+ */
 
-Stck *GDL_stack = NULL;
 Tree *tcurr;
 
-/* Require a pool to be set here and eventually freed by caller */
-void
-gdl_create_tree(Treemem *tmp, Pool *p, const char *lang)
-{
-  assert(p != NULL);
-  tcurr = (tmp ? tree_init_mem(tmp) : tree_init());
-  tcurr->user = calloc(1, sizeof(GDL));
-  (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
-  gdlpool = p;
-  if (lang)
-    word_lang_tag = lang;
-  else
-    word_lang_tag = "sux";
-  /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
-  struct lang_context *x = lang_switch(NULL,word_lang_tag,NULL,NULL,0);
-  if (!global_lang)
-    {
-      global_lang = calloc(1, sizeof(struct lang_context));
-      *global_lang = *x;
-    }
-  gdl_lang_context = global_lang;
-}
+extern void gdllex_destroy(void);
+static void gdlparse_deep(Node *np, void *mptr);
 
-void
-gdl_push_tree(Tree *tp)
+Tree*
+gdl_literal(Mloc *m, char *s)
 {
-  stck_push(GDL_stack, (intptr_t)tp);
-}
-
-Tree *
-gdl_pop_tree(void)
-{
-  intptr_t ptr = stck_pop(GDL_stack);
-  if (-1 == ptr)
-    return NULL;
-  else
-    return (Tree*)ptr;
-}
-
-/* This destroys tcurr which should be the last tree on GDL_stack */
-void
-gdl_destroy_tree(void)
-{
-  Tree *tp = (Tree*)stck_peek(GDL_stack);
-  if (tp && tp == tcurr)
-    {
-      stck_pop(GDL_stack);
-      if (wd_list)
-	list_free(wd_list, NULL);
-      if (c_dangling_gps)
-	list_free(c_dangling_gps, NULL);
-      if (c_explicit_gps)
-	list_free(c_explicit_gps, NULL);
-      if (c_implicit_gps)
-	list_free(c_implicit_gps, NULL);
-      if (modq)
-	list_free(modq, NULL);
-      if (break_stack)
-	stck_term(break_stack);
-      if (lang_stack)
-	stck_term(lang_stack);
-      if (state_stack)
-	stck_term(state_stack);
-      if (sstck)
-	stck_term(sstck);
-      if (mgstck)
-	memo_term(mgstck);
-      if (mlstck)
-	memo_term(mlstck);
-    }
-  else
-    abort();
-}
-
-void
-gdl_stack_init(void)
-{
-  if (!GDL_stack)
-    GDL_stack = stck_init(3);
-}
-void
-gdl_stack_term(void)
-{
-  if (GDL_stack)
-    {
-      stck_term(GDL_stack);
-      GDL_stack = NULL;
-    }
+  Tree *tp = tree_init();
+  (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
+  tp->root->text = s;
+  return tp;
 }
 
 static char *
@@ -114,7 +80,47 @@ gdlbuffer(const char *s)
   return s2;
 }
 
-void
+Tree *
+gdlparse_string(Mloc *m, char *s)
+{
+  tcurr->root->text = (ccp)pool_copy((uccp)s, gdlpool);
+  if (m)
+    gdl_lex_init(m->file, m->line);
+  else
+    gdl_lex_init("<string>", 1);
+  gdl_legacy_lexer(gdl_legacy);
+  char *s2 = gdlbuffer(s);
+
+  gdl_group_attach = lgp = NULL;
+  wd_list = list_create(LIST_SINGLE);
+
+  gdlparse();
+
+  gdllex_destroy();
+
+  free(s2);
+
+  Node *w;
+  nonw_found = 0;
+
+  for (w = list_first(wd_list); w; w = list_next(wd_list))
+    gdl_word_attr(w);
+
+  if (nonw_found)
+    wd_list = gdl_rem_nonw(wd_list);
+
+  if (deep_parse)
+    {
+      List *saved_wl = wd_list;
+      wd_list = list_create(LIST_SINGLE);
+      tree_iterator(tcurr, m, gdlparse_deep, NULL);
+      list_free(wd_list, NULL);
+      wd_list = saved_wl;
+    }
+  return tcurr;
+}
+
+static void
 gdlparse_deep(Node *np, void *mptr)
 {
   if (np->user)
@@ -140,63 +146,81 @@ gdlparse_deep(Node *np, void *mptr)
     }
 }
 
-/* The parser's working tree, tcurr, must be set before calling this
-   routine */
 void
-gdlparse_string(Mloc *m, char *s)
+gdlparse_init(GDL *gp)
 {
-  assert(tcurr != NULL);
-  tcurr->root->text = (ccp)pool_copy((uccp)s, gdlpool);
-  char *s2 = gdlbuffer(s);
-  
-  gdl_group_attach = lgp = NULL;
-
-  wd_list = list_create(LIST_SINGLE);
-
-  if (m)
-    gdl_lex_init(m->file, m->line);
-  else
-    gdl_lex_init("<string>", 1);
-
-  gdlparse();
-    
-  gdllex_destroy();
-
-  free(s2);
-
-  Node *w;
-  nonw_found = 0;
-
-  for (w = list_first(wd_list); w; w = list_next(wd_list))
-    gdl_word_attr(w);
-
-  if (nonw_found)
-    wd_list = gdl_rem_nonw(wd_list);
-
-  if (deep_parse)
+  assert(gp != NULL);
+  tcurr = tree_init();
+  tcurr->user = calloc(1, sizeof(GDL));
+  (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
+  /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
+  struct lang_context *x = lang_switch(NULL,word_lang_tag,NULL,NULL,0);
+  if (!global_lang)
     {
-      List *saved_wl = wd_list;
-      wd_list = list_create(LIST_SINGLE);
-      tree_iterator(tcurr, m, gdlparse_deep, NULL);
-      list_free(wd_list, NULL);
-      wd_list = saved_wl;
+      global_lang = calloc(1, sizeof(struct lang_context));
+      *global_lang = *x;
     }
-}
-
-/* These may be redundant now; they are intended for init/term every
-   time the parser is called; see gdllib_init/term for init/term
-   before/after all calls to the parser */
-void
-gdlparse_init(void)
-{
+  gdl_lang_context = global_lang;
 }
 
 void
 gdlparse_reset(void)
 {
+  GDL *gp = tcurr->user;
+  tree_term(tcurr);
+  tcurr = tree_init();
+  tcurr->user = gp;
 }
 
 void
 gdlparse_term(void)
 {
+  free(tcurr->user);
+  tree_term(tcurr);
 }
+
+void
+gdlparse_start(Tree *tp)
+{
+  tcurr = tp;
+}
+
+void
+gdlparse_stop(void)
+{
+  tcurr = NULL;
+}
+
+#if 0
+Stck *GDL_stack = NULL;
+void
+gdl_push_tree(Tree *tp)
+{
+  stck_push(GDL_stack, (intptr_t)tp);
+}
+Tree *
+gdl_pop_tree(void)
+{
+  intptr_t ptr = stck_pop(GDL_stack);
+  if (-1 == ptr)
+    return NULL;
+  else
+    return (Tree*)ptr;
+}
+void
+gdl_stack_init(void)
+{
+  if (!GDL_stack)
+    GDL_stack = stck_init(3);
+}
+
+void
+gdl_stack_term(void)
+{
+  if (GDL_stack)
+    {
+      stck_term(GDL_stack);
+      GDL_stack = NULL;
+    }
+}
+#endif

@@ -34,6 +34,7 @@ struct pool_block
 
 extern Pool* pool_init(void);
 extern void pool_reset(Pool*);
+extern void hpool_reset(Pool*);
 extern void pool_term(Pool*);
 extern unsigned char *pool_alloc(size_t len, Pool *p);
 extern unsigned char *pool_copy(const unsigned char *s, Pool*p);

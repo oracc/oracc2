@@ -183,6 +183,7 @@ typedef struct GDL {
   int curr_lang_;
   int deep_parse_;
   int gdl_ascii_;
+  int gdl_auto_id_;
   int gdl_bilingual_;
   int gdl_legacy_;
   int gdl_unicode_;

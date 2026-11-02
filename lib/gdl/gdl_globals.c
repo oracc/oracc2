@@ -336,8 +336,6 @@ gdllib_init(void)
   gdl_balance_init();
 
   gdl_modq_init();
-
-  gdl_stack_init();
 }
 
 void
@@ -348,7 +346,6 @@ gdllib_term(void)
       gdl_initted = 0;
       gdl_balance_term();
       gdl_modq_term();
-      gdl_stack_term();
       lang_term();
       langtag_term();
     }
@@ -360,4 +357,31 @@ gdl_GDL(void)
   GDL *gp = calloc(1, sizeof(GDL));
   *gp = GDL_defaults;
   return gp;
+}
+
+void
+gdl_free_GDL(GDL *gp)
+{
+  if (gp->wd_list_)
+    list_free(gp->wd_list_, NULL);
+  if (gp->c_dangling_gps_)
+    list_free(gp->c_dangling_gps_, NULL);
+  if (gp->c_explicit_gps_)
+    list_free(gp->c_explicit_gps_, NULL);
+  if (gp->c_implicit_gps_)
+    list_free(gp->c_implicit_gps_, NULL);
+  if (gp->modq_)
+    list_free(gp->modq_, NULL);
+  if (gp->break_stack_)
+    stck_term(gp->break_stack_);
+  if (gp->lang_stack_)
+    stck_term(gp->lang_stack_);
+  if (gp->state_stack_)
+    stck_term(gp->state_stack_);
+  if (gp->sstck_)
+    stck_term(gp->sstck_);
+  if (gp->mgstck_)
+    memo_term(gp->mgstck_);
+  if (gp->mlstck_)
+    memo_term(gp->mlstck_);
 }

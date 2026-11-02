@@ -174,6 +174,17 @@ pool_copy(register const unsigned char *s, Pool *p)
   return p->rover->last_begin;
 }
 
+void
+hpool_reset(Pool *hp)
+{
+  if (hp)
+    {
+      if (hp->h)
+	hash_free(hp->h, NULL);
+      hp->h = hash_create(2048);
+    }
+}
+
 unsigned char *
 hpool_copy(register const unsigned char *s, Pool *p)
 {

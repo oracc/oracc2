@@ -114,10 +114,6 @@ extern void gdl_pop_wd_list(void *vp);
 
 extern void gdllib_init(void);
 extern void gdllib_term(void);
-extern void gdlparse_init(void);
-extern void gdlparse_term(void);
-extern void gdl_stack_init(void);
-extern void gdl_stack_term(void);
 
 extern void gdl_lex_init(const char *file, int line);
 extern Tree*gdl_literal(Mloc *m, char *s);

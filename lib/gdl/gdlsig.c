@@ -25,7 +25,6 @@ const char *gdlsig_sep(const char *sep);
 const char *
 gdlsig_str(Mloc *mp, unsigned char *atf, int frag_ok, int deep)
 {
-  Tree *tp = NULL;
   int saved_deep = gdlsig_depth_mode;
   const char *sig = NULL;
   
