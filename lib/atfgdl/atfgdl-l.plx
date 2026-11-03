@@ -25,6 +25,7 @@ while (<G>) {
     last if /^%%$/;
 }
 while (<G>) {
+    s/gdllval/aglval/g;    
     print;
     last if /^%%$/;
 }

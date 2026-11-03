@@ -6,8 +6,7 @@
 #include <mesg.h>
 #include <pool.h>
 #include <atf.h>
-#include <gdl.h>
-#include <gdlstate.h>
+#include <gdllib.h>
 #include "ag.h"
 
 		/* ATFPROLOGUE */
@@ -17,7 +16,6 @@
 #define YY_USER_ACTION ag_user_action();
 extern Mloc agloc;
 const char *agfile = "<stdin>";
-const char *curragfile = NULL;
 static int last_unmatched_line = 0;
 
 int agflextrace = 0, last_aglineno;
@@ -272,16 +270,16 @@ static void
 ag_user_action(void)
 {
   if (agflextrace)
-      fprintf(stderr, "%s:%d: aglex: text=::%s:: start=%d; tra_text=%d\n", curragfile, aglineno, agtext, YY_START, tra_text);
+      fprintf(stderr, "%s:%d: aglex: text=::%s:: start=%d; tra_text=%d\n", agfile, aglineno, agtext, YY_START, tra_text);
 
-  aglloc.file = curragfile;
+  aglloc.file = agfile;
   aglloc.line = aglineno;
 }
 
 static void
 ag_l_lex_init(const char *file, int line)
 {
-  curragfile = agfile = file;
+  agfile = file;
   aglineno = line;
 }
 
@@ -297,7 +295,7 @@ ag_read_atf(char *atf, size_t len)
   yy_start = s_next = 0;
   atf_init(); /* this really is atf_init--initialize the ATF structure for the build */
   Tree *tp = agyacc();
-  ag_wrapup_buffer();
+  ag_delete_buffer(ag_buffer);
   return tp;
 }
 
@@ -362,12 +360,6 @@ ag_block(const char *scanned_at)
       fprintf(stderr, "atf: bad at-command @%s\n", atcmd);
       return Y_BAD;
     }
-}
-
-void
-ag_wrapup_buffer(void)
-{
-  ag_delete_buffer(YY_CURRENT_BUFFER);
 }
 
 ssize_t

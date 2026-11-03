@@ -30,16 +30,12 @@ int gdl_lexfld[128] = {
   ['~'] = LF_TILDE,
 };
 
-gdl_grapheme_type_p gdl_grapheme_type;
 static int gdl_grapheme_type_l(Mloc *mp, char *gt, char **cp);
 static int gdl_grapheme_type_s(Mloc *mp, char *g, char **cp);
 
-gdl_delim_p gdl_delim;
-gdl_graph_node_p gdl_graph_node;
 Node *gdl_delim_l(Tree *ytp, const char *data);
 Node *gdl_delim_s(Tree *ytp, const char *data);
 
-gdl_graph_node_p gdl_graph_node;
 Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
 Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
 

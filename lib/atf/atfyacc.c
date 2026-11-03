@@ -38,18 +38,22 @@ atf_init(void)
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;
+  GDL *gp = gdl_GDL();
+  gdlparse_start(abt);
   gdl_lexical = 0;
-  atfp->input = list_create(LIST_SINGLE);
+  /*atfp->input = list_create(LIST_SINGLE);*/
   /* lang_init() and lang_term() must now be called by ax or equivalent before/after the entire run */
 }
 
 void
 atf_input(Mloc l, Atflt t, void *p)
 {
+#if 0
   Atfl a = { l , t , p };
   Atfl*ap = memo_new(atfmp->matfls);
   *ap = a;
   list_add(atfp->input, ap);
+#endif
 }
 
 void
@@ -85,9 +89,13 @@ atf_term(void)
   text_lang = NULL;
 
   free(atfp->protocols);
+
+#if 0
   list_free(atfp->input, NULL);
+  list_free(atfp->protocols, NULL);
+#endif
+
   hash_free(atfp->hlabmap, NULL);
-  /*list_free(atfp->protocols, NULL);*/
   free(atfp);
   atfp = NULL;
 

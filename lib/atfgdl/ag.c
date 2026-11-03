@@ -2,15 +2,13 @@
 #include <mesg.h>
 #include <pool.h>
 #include <atf.h>
-#include <gdl.h>
-#include <gdlstate.h>
+#include <gdllib.h>
 #include "ag.h"
 #include "ag.tab.h"
 extern int ag_scan_buffer(const char *base, size_t len);
 extern void aglex_destroy(void);
 
 int agtrace = 1;
-extern int gdl_legacy, gdl_lexical, gdl_unicode;
 
 Tree *
 agyacc(void)

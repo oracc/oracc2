@@ -39,12 +39,13 @@
  *
  * [[ set GDL opts from ATF protocols ]]
  *
- * gdlparse_start(LINE-NODE-IN-ATF_TREE) -- sets tcurr to ATF_TREE and
- * 					    ensures tcurr->curr is a line-node
+ * gdlparse_start(Tree *tp,GDL*) -- sets tcurr to ATF_TREE with ->user = GDL*
  *
- * gdlparse_stop() -- sets tcurr=NULL and ensures ATF_TREE->curr is the start line-node
- *  
+ * gdlparse_line(ATF_LINE_NODE)
+ *
  * gdl_GDL_reset(gp) -- free all GDL resources at end of ATF text
+ *
+ * gdlparse_stop() -- sets tcurr=NULL
  *
  * ATF inline text can include GDL parsing--this is done by using tree
  * life-cycle (1) within the current life-cycle (2) framework.

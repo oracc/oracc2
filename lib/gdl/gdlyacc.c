@@ -529,6 +529,10 @@ gdl_new_word(Tree *ytp)
       if (!l)
 	l = node_ancestor_or_self(ytp->curr, "c");
 
+      /* Else if there is a l (line) ancestor, attach to that */
+      if (!l)
+      	l = node_ancestor_or_self(ytp->curr, "l");
+
       /* Else if there is a g:w ancestor, attach to the parent of that node */
       if (!l)
 	{

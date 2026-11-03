@@ -231,6 +231,9 @@ typedef struct GDL {
   Memo *mgstck_;
   Memo *mlstck_;
   struct lang_context *gdl_lang_context_;
+  gdl_delim_p gdl_delim_;
+  gdl_graph_node_p gdl_graph_node_;
+  gdl_grapheme_type_p gdl_grapheme_type_;
 } GDL;
 
 #endif /*GDLTYPE_H_*/

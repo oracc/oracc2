@@ -34,6 +34,7 @@ while (<G>) {
 }
 while (<G>) {
     last if /^%%$/;
+    s/gdllval/aglval/g;
     print;
 }
 close(G);

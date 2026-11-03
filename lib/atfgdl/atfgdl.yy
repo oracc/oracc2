@@ -6,8 +6,7 @@
 %{
 #include <oraccsys.h>
 #include <mesg.h>
-#include <gdl.h>
-#include <gdlstate.h>
+#include <gdllib.h>
 #include <atf.h>
 #include "ag.h"
 extern const char *agtext, *agfile;
@@ -15,7 +14,6 @@ extern int aglineno, agtrace;
 
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
-extern Node *lgp;
 
 #define AGLTYPE_IS_DECLARED 1
 #define AGLTYPE Mloc

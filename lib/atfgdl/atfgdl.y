@@ -6,8 +6,7 @@
 %{
 #include <oraccsys.h>
 #include <mesg.h>
-#include <gdl.h>
-#include <gdlstate.h>
+#include <gdllib.h>
 #include <atf.h>
 #include "ag.h"
 extern const char *agtext, *agfile;
@@ -15,7 +14,6 @@ extern int aglineno, agtrace;
 
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
-extern Node *lgp;
 
 #define AGLTYPE_IS_DECLARED 1
 #define AGLTYPE Mloc
@@ -584,7 +582,7 @@ comment:
 space:
 	  SPACE						{ gdl_hc(0); ynp = gdl_new_word(ytp);
 	    						  /*gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
-	      						    "literal", gdllval.text); */ }
+	      						    "literal", aglval.text); */ }
 	| 'n'						{ gdl_line_wrapup(@1); }
 	| END						{ gdl_balance_flush(&@1); }
 	;
@@ -607,7 +605,7 @@ delim:
 	|	'+'					{ gdl_group(@1, '+'); }
 	;
 
-normseg:	NORMSEG					{ ynp = gdl_normseg(&@1, ytp, gdllval.text); }
+normseg:	NORMSEG					{ ynp = gdl_normseg(&@1, ytp, aglval.text); }
 	;
 
 detgloss:
@@ -675,14 +673,14 @@ simplexg:	s maybegflags	       	       	 { if (ynp->kids) gdl_mod_wrap(ynp, 1);
 		;
 
 s:
-		GRAPHEME			{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
-	| 	LISTNUM				{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
-	| 	NNUM				{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
-	| 	NUMBER				{ ynp = gdl_number(&@1, ytp, gdllval.text); }
-	| 	BARENUM				{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
-	| 	ZERO				{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
-	| 	PUNCT				{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
-	| 	ELLIPSIS			{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
+		GRAPHEME			{ ynp = gdl_graph(&@1, ytp, aglval.text); }
+	| 	LISTNUM				{ ynp = gdl_listnum(&@1, ytp, aglval.text); }
+	| 	NNUM				{ ynp = gdl_nnum(&@1, ytp, aglval.text); }
+	| 	NUMBER				{ ynp = gdl_number(&@1, ytp, aglval.text); }
+	| 	BARENUM				{ ynp = gdl_barenum(&@1, ytp, aglval.text); }
+	| 	ZERO				{ ynp = gdl_graph(&@1, ytp, aglval.text); } /* 00 or 00~a etc */
+	| 	PUNCT				{ ynp = gdl_punct(&@1, ytp, aglval.text); }
+	| 	ELLIPSIS			{ ynp = gdl_nongraph(&@1, ytp, aglval.text, "ellipsis"); }
 	|	IGNORE				{ ; }
 	;
 
@@ -785,19 +783,19 @@ mods:
 
 mod:
 	  GMOD						{ ynp->mloc = mloc_mloc(&@1);
-	  						  mnp = gdl_mod(ytp, gdllval.text); }
+	  						  mnp = gdl_mod(ytp, aglval.text); }
 	;
 
 glosso:
-		L_cur_par	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_cur_par); }
-	| 	L_dbl_cur	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_dbl_cur); }
-	| 	L_ang_par_s	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_ang_par); }
+		L_cur_par	{ ynp = gdl_gloss_o(&@1, ytp, aglval.text, e_L_cur_par); }
+	| 	L_dbl_cur	{ ynp = gdl_gloss_o(&@1, ytp, aglval.text, e_L_dbl_cur); }
+	| 	L_ang_par_s	{ ynp = gdl_gloss_o(&@1, ytp, aglval.text, e_L_ang_par); }
 	;
 
 glossc:
-		R_cur_par      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_cur_par); }
-	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_dbl_cur); }
-	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_ang_par); }
+		R_cur_par      	{ ynp = gdl_gloss_c(&@1, ytp, aglval.text, e_R_cur_par); }
+	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(&@1, ytp, aglval.text, e_R_dbl_cur); }
+	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(&@1, ytp, aglval.text, e_R_ang_par); }
 	;
 
 
@@ -827,55 +825,3 @@ agerror(const char *e)
   else
     mesg_vwarning(curratffile, atflineno, "atf: %s\n", e);
 }
-static void
-ag_user_action(void)
-{
-  if (agflextrace)
-      fprintf(stderr, "%s:%d: aglex: text=::%s:: start=%d; tra_text=%d\n", curragfile, aglineno, agtext, YY_START, tra_text);
-
-  aglloc.file = curragfile;
-  aglloc.line = aglineno;
-}
-
-static void
-ag_l_lex_init(const char *file, int line)
-{
-  curragfile = agfile = file;
-  aglineno = line;
-}
-
-#if 0
-static int
-ag_line_save(const char *t)
-{
-  extern const char *curr_line_tok;
-  curr_line_tok = (ccp)hpool_copy((uccp)t, ag_hpool);
-  return 0;
-}
-#endif
-
-#if 0
-static int
-ag_gdl_init(void)
-{
-  gdl_new_word(gdl_get_tree());
-  return 0;
-}
-#endif
-
-Tree *
-ag_read_atf(char *atf, size_t len)
-{
-  YY_BUFFER_STATE ag_buffer;
-  if (!(ag_buffer = ag_scan_buffer(atf, len)))
-    {
-      fprintf(stderr, "ag_read_atf: ag_scan_buffer failed\n");
-      return NULL;
-    }
-  yy_start = s_next = 0;
-  atf_init(); /* this really is atf_init--initialize the ATF structure for the build */
-  Tree *tp = agyacc();
-  ag_wrapup_buffer();
-  return tp;
-}
-

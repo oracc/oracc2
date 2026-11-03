@@ -77,6 +77,9 @@ extern Tree *tcurr;
 #define wd_list	(tcurrG->wd_list_)
 #define wid_base	(tcurrG->wid_base_)
 #define word_lang_tag	(tcurrG->word_lang_tag_)
+#define gdl_delim (tcurrG->gdl_delim_)
+#define gdl_graph_node (tcurrG->gdl_graph_node_)
+#define gdl_grapheme_type (tcurrG->gdl_grapheme_type_)
 
 /* Funcs and defines that are safe when an application hosts multiple
    gdl instances given the above tcurrG definitions */
@@ -101,10 +104,6 @@ extern Tree *tcurr;
 #define fs_no(x) (bit_off(fst,(x)))
 
 #define wordnode(w_)	(strlen(w_->name)==3&&'w'==(w_->name[2]))
-
-extern gdl_grapheme_type_p gdl_grapheme_type;
-extern gdl_delim_p gdl_delim;
-extern gdl_graph_node_p gdl_graph_node;
 
 extern struct mapi *scripttok(const char *k, int len);
 extern struct lang_context *gdl_lang_context;
@@ -230,9 +229,6 @@ extern void gdl_surro(void);
 extern void gdl_set_lzr_sparse(Hash *l);
 extern void gdl_legacy_lexer(int legacy);
 
-extern gdl_graph_node_p gdl_graph_node;
-extern gdl_grapheme_type_p gdl_grapheme_type;
-extern gdl_delim_p gdl_delim;
 extern Node *gdl_delim_l(Tree *ytp, const char *data);
 extern Node *gdl_delim_s(Tree *ytp, const char *data);
 extern Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
