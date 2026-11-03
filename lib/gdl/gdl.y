@@ -31,8 +31,6 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
-%token <i> 'n'
-
 %token <text> FTYPE	258
 %token <text> LANG	259
 %token <text> TEXT	260
@@ -107,17 +105,26 @@ GDLLTYPE gdllloc;
 %token <i> END	329
 %token <node> NOTEMARK	330
 
-%nterm <text> 	field lexfld cmods
+%nterm <text> 	field
+%nterm <text>   lexfld
+%nterm <text>	cmods
 
-%nterm <node>   detgloss det gloss
-		grapheme scgrapheme compound simplexg valuqual
-		glosso glossc
+%nterm <node>   detgloss
+%nterm <node>	det
+%nterm <node>	gloss
+%nterm <node>	grapheme
+%nterm <node>	scgrapheme
+%nterm <node>	compound
+%nterm <node>	simplexg
+%nterm <node>	valuqual
+%nterm <node>	glosso
+%nterm <node>  	glossc
 
-%start gdl.line
+%start gdl
 
 %%
 
-gdl.line: { ynp = gdl_new_word(tcurr); } lineparts
+gdl: { ynp = gdl_new_word(tcurr); } lineparts
 	;
 
 lineparts:

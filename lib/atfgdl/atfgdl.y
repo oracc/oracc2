@@ -10,9 +10,8 @@
 #include <gdlstate.h>
 #include <atf.h>
 #include "ag.h"
-extern const char *agtext, *curragfile;
+extern const char *agtext, *agfile;
 extern int aglineno, agtrace;
-extern int gdl_unicode, gdl_lexical;
 
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
@@ -26,13 +25,107 @@ AGLTYPE aglloc;
 extern int aglex(void);
 extern void yyerror(const char *);
 
-extern Node *gdl_post_det_gp_attach;
-
 #define alo(xxx) ag_line_o_##xxx
 #define alc(xxx) ag_line_c_##xxx
 %}
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
+
+%token <text> FTYPE	258
+%token <text> LANG	259
+%token <text> TEXT	260
+%token <text> ENHYPHEN	261
+%token <text> ELLIPSIS	262
+%token <text> CELLSPAN	263
+%token <text> IGNORE	264
+%token <text> NORMSEG	265
+%token <text> GRAPHEME	266
+%token <text> NNUM	267
+%token <text> NUMBER	268
+%token <text> BARENUM	269
+%token <text> ZERO	270
+%token <text> LISTNUM	271
+%token <text> PUNCT	272
+%token <text> GMOD	273
+%token <text> LINEBREAK	274
+%token <text> C_O	275
+%token <text> C_C	276
+%token <text> C_PERIOD	277
+%token <text> C_ABOVE	278
+%token <text> C_CROSSING	279
+%token <text> C_OPPOSING	280
+%token <text> C_COLON	281
+%token <text> C_PLUS	282
+%token <text> C_TIMES	283
+%token <text> C_4TIMES	284
+%token <text> C_3TIMES	285
+%token <text> CMOD	286
+%token <text> C_CIRCLE	287
+%token <text> L_inl_dol	288
+%token <text> R_inl_dol	289
+%token <text> L_inl_cmt	290
+%token <text> R_inl_cmt	291
+%token <text> LF_AT	292
+%token <text> LF_CARET	293
+%token <text> LF_EQUALS	294
+%token <text> LF_HASH	295
+%token <text> LF_QUOTE	296
+%token <text> LF_TILDE	297
+%token <text> LF_VBAR	298
+%token <i> CLP	299
+%token <i> CRP	300
+%token <i> QLP	301
+%token <i> QRP	302
+%token <i> L_dbl_ang	303
+%token <i> R_dbl_ang	304
+%token <i> L_dbl_cur	305
+%token <i> R_dbl_cur	306
+%token <i> L_par_par	307
+%token <i> R_par_par	308
+%token <i> L_dbl_par	309
+%token <i> R_dbl_par	310
+%token <i> L_dbl_par_c	311
+%token <i> R_dbl_par_c	312
+%token <i> eras_canc_pivot	313
+%token <i> L_ang_par	314
+%token <i> R_ang_par	315
+%token <i> L_ang_par_s	316
+%token <i> R_ang_par_s	317
+%token <i> L_cur_par	318
+%token <i> R_cur_par	319
+%token <i> L_uhs	320
+%token <i> R_uhs	321
+%token <i> L_lhs	322
+%token <i> R_lhs	323
+%token <i> LANG_FLIP	324
+%token <i> DET_SEME	325
+%token <i> DET_PHON	326
+%token <i> PLUS_FLAG	327
+%token <i> SPACE	328
+%token <i> END	329
+%token <node> NOTEMARK	330
+%nterm <text> 	field
+%nterm <text>   lexfld
+%nterm <text>	cmods
+%nterm <node>   detgloss
+%nterm <node>	det
+%nterm <node>	gloss
+%nterm <node>	grapheme
+%nterm <node>	scgrapheme
+%nterm <node>	compound
+%nterm <node>	simplexg
+%nterm <node>	valuqual
+%nterm <node>	glosso
+%nterm <node>  	glossc
+
+%token	<text>
+		PQX QID WORD DOC PROJECT LINK KEY
+		MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
+		TAB EOL
+		VERSION
+		ATF_LANG
+		TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
+		TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
 
 %token	<i>
 		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
@@ -55,39 +148,8 @@ extern Node *gdl_post_det_gp_attach;
 		Y_SIGNATURE Y_SPAN Y_SUMMARY Y_SURFACE Y_TABLET Y_TOP Y_TRANSLATION
 		Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
 		Y_OBJFRAG Y_SRFFRAG Y_COLFRAG ATF_END
-		'<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
-		'/' '+' ':'
-		L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur L_par_par R_par_par
-		L_dbl_par R_dbl_par L_dbl_par_c R_dbl_par_c eras_canc_pivot
-		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
-		L_uhs R_uhs L_lhs R_lhs LANG_FLIP
-		'{' DET_SEME DET_PHON '}'
-		PLUS_FLAG SPACE END
-
-%token	<node>
-		NOTEMARK
-
-%token	<text>
-		PQX QID TEXT WORD DOC PROJECT LINK KEY
-		MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
-		TAB EOL
-		VERSION
-		ATF_LANG
-		TR_TYPE TR_LANG TR_PROJ TR_HEAD TR_LABEL TR_UNIT TR_SPAN
-		TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
-		FTYPE LANG ENHYPHEN ELLIPSIS CELLSPAN IGNORE NORMSEG
-		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
-		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
-		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
-		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
-		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
 
 %nterm	<text>		pqx name longtext
-		field lexfld cmods
-
-%nterm	<node>		detgloss det gloss
-		grapheme scgrapheme compound simplexg valuqual
-		glosso glossc
 
 %nterm	<i>		sparse stype atfuse link_type
 		atf.line l_link note bib etcsl.line proto.comment
@@ -102,11 +164,9 @@ extern Node *gdl_post_det_gp_attach;
 		bdivision edivision vdivision
 		div_tok end_tok var_tok
 
-%start atfgdl
+%start atfs
 
 %%
-
-atfgdl: atfs | gdl.line
 
 atfs:		atf
 	|	atfs atf
@@ -307,13 +367,13 @@ heading:	heading_tok longtext { atf_bld_heading(@1, $1, longtext_get()); }
 	;
 
 atf.line:
-		MTS {alo(mts)(@1,agtext);} gdl.line { $$=$1; alc(mts)(@1); }
-	| 	NTS {alo(nts)(@1,agtext);} gdl.line { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
-	| 	LGS {alo(lgs)(@1,agtext);} gdl.line { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
-	| 	GUS {alo(gus)(@1,agtext);} gdl.line { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
-	| 	BIL {alo(bil)(@1,agtext);} gdl.line { $$=$1; alc(bil)(@1); } /* MTS prereq */
-	| 	EXX {alo(var)(@1,agtext);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
-	| 	VAR {alo(var)(@1,agtext);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
+		MTS {alo(mts)(@1,agtext);} gdl { $$=$1; alc(mts)(@1); }
+	| 	NTS {alo(nts)(@1,agtext);} gdl { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
+	| 	LGS {alo(lgs)(@1,agtext);} gdl { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
+	| 	GUS {alo(gus)(@1,agtext);} gdl { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
+	| 	BIL {alo(bil)(@1,agtext);} gdl { $$=$1; alc(bil)(@1); } /* MTS prereq */
+	| 	EXX {alo(var)(@1,agtext);} gdl { $$=$1; alc(var)(@1); } /* MTS prereq */
+	| 	VAR {alo(var)(@1,agtext);} gdl { $$=$1; alc(var)(@1); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
 		/* l_link, etcsl.line, and tr.inter all require a line group */
 	|	l_link longtext		{ $$=$1; atf_bld_protocol(@1, PROT_LINK, longtext_get()); }
@@ -466,7 +526,8 @@ longtext:
         | 	longtext TAB		{ $$ = longtext(atfmp->pool, $1, $2); }
 		;
 
-gdl.line: lineparts
+
+gdl: { ynp = gdl_new_word(tcurr); } lineparts
 	;
 
 lineparts:
@@ -487,6 +548,10 @@ cellspec:
 		'&'			       	    	{ gdl_cell(ytp,"1"); }
 	| 	CELLSPAN			      	{ gdl_cell(ytp,$1); }
 		;
+
+
+/* Field delim is ',' and FTYPE is !yn or the like; technically, !yn
+   does not need a preceding comma with this grammar.*/
 
 field:
 		',' 		       	    		{ ynp = gdl_field(ytp,"default"); }
@@ -512,16 +577,16 @@ segment:
 		;
 
 comment:
-		L_inl_dol R_inl_dol	        { gdl_nongraph(&@1, ytp, $2, "dollar"); }
-	| 	L_inl_cmt R_inl_cmt	        { gdl_nongraph(&@1, ytp, $2, "comment"); }
+		L_inl_dol TEXT R_inl_dol	        { gdl_nongraph(&@1, ytp, $2, "dollar"); }
+	| 	L_inl_cmt TEXT R_inl_cmt	        { gdl_nongraph(&@1, ytp, $2, "comment"); }
 		;
 
 space:
 	  SPACE						{ gdl_hc(0); ynp = gdl_new_word(ytp);
 	    						  /*gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
-	      						    "literal", aglval.text); */ }
-	| '\n'						{ gdl_line_wrapup(@1); }
-	| END						{ gdl_balance_flush(@1); }
+	      						    "literal", gdllval.text); */ }
+	| 'n'						{ gdl_line_wrapup(@1); }
+	| END						{ gdl_balance_flush(&@1); }
 	;
 
 linebreak:	LINEBREAK	      			{ gdl_nongraph(&@1, ytp, "//", "linebreak"); }
@@ -542,7 +607,7 @@ delim:
 	|	'+'					{ gdl_group(@1, '+'); }
 	;
 
-normseg:	NORMSEG					{ ynp = gdl_normseg(&@1, ytp, aglval.text); }
+normseg:	NORMSEG					{ ynp = gdl_normseg(&@1, ytp, gdllval.text); }
 	;
 
 detgloss:
@@ -550,19 +615,19 @@ detgloss:
 	|	gloss
 	;
 
-det:	  '{'	      					{ gdl_balance_state(@1,'{',gdl_lex_state());
+det:	  '{'	      					{ gdl_balance_state(&@1,'{',gdl_lex_state());
 	      						  $$ = ynp = gdl_push_l(&@1,ytp,"g:d");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_i); }
-	| DET_SEME    					{ gdl_balance_state(@1,'{',gdl_lex_state());
+	| DET_SEME    					{ gdl_balance_state(&@1,'{',gdl_lex_state());
 	    						  $$ = ynp = gdl_push_l(&@1,ytp,"g:d");
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_semd_e); }
-	| DET_PHON      	      			{ gdl_balance_state(@1,'{',gdl_lex_state());
+	| DET_PHON      	      			{ gdl_balance_state(&@1,'{',gdl_lex_state());
 	    						  $$ = ynp = gdl_push_l(&@1,ytp,"g:d"); 
 	  						  ps_on(gs_det_o);
 	  						  rs_on(gs_det|gs_g_phond); }
-	| '}' 	 		  			{ if (-1 != gdl_balance_state(@1,'}',gdl_lex_state()))
+	| '}' 	 		  			{ if (-1 != gdl_balance_state(&@1,'}',gdl_lex_state()))
 		  					    gdl_det_props(ytp->curr);
 		    					  if (gdl_post_det_gp_attach)
 							    {
@@ -604,31 +669,30 @@ maybegflags:
 	| 	/*empty */
 		;
 
-simplexg:	s maybegflags	       	       	 { /*if (gdl_legacy) gdl_unlegacy(ynp);*/
-		    		                   if (ynp->kids) gdl_mod_wrap(ynp, 1);
+simplexg:	s maybegflags	       	       	 { if (ynp->kids) gdl_mod_wrap(ynp, 1);
 						   gvl_simplexg(ynp);
 						   $$ = ynp; }
 		;
 
 s:
-		GRAPHEME			{ ynp = gdl_graph(&@1, ytp, aglval.text); }
-	| 	LISTNUM				{ ynp = gdl_listnum(&@1, ytp, aglval.text); }
-	| 	NNUM				{ ynp = gdl_nnum(&@1, ytp, aglval.text); }
-	| 	NUMBER				{ ynp = gdl_number(&@1, ytp, aglval.text); }
-	| 	BARENUM				{ ynp = gdl_barenum(&@1, ytp, aglval.text); }
-	| 	ZERO				{ ynp = gdl_graph(&@1, ytp, aglval.text); } /* 00 or 00~a etc */
-	| 	PUNCT				{ ynp = gdl_punct(&@1, ytp, aglval.text); }
-	| 	ELLIPSIS			{ ynp = gdl_nongraph(&@1, ytp, aglval.text, "ellipsis"); }
+		GRAPHEME			{ ynp = gdl_graph(&@1, ytp, gdllval.text); }
+	| 	LISTNUM				{ ynp = gdl_listnum(&@1, ytp, gdllval.text); }
+	| 	NNUM				{ ynp = gdl_nnum(&@1, ytp, gdllval.text); }
+	| 	NUMBER				{ ynp = gdl_number(&@1, ytp, gdllval.text); }
+	| 	BARENUM				{ ynp = gdl_barenum(&@1, ytp, gdllval.text); }
+	| 	ZERO				{ ynp = gdl_graph(&@1, ytp, gdllval.text); } /* 00 or 00~a etc */
+	| 	PUNCT				{ ynp = gdl_punct(&@1, ytp, gdllval.text); }
+	| 	ELLIPSIS			{ ynp = gdl_nongraph(&@1, ytp, gdllval.text, "ellipsis"); }
 	|	IGNORE				{ ; }
 	;
 
 compound:
-	  c cmaybemodflags         			{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
-	    						  gdl_modq_flush();
-							  gvl_compound(ycp);
-							  $$ = ycp;
-	    						  ynp = gdl_pop(ytp,"g:c");
-							  ynp = gdl_c_term(ytp); }
+		c cmaybemodflags       		{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
+	    			       		  gdl_modq_flush();
+				       		  gvl_compound(ycp);
+				       		  $$ = ycp;
+	    			       		  ynp = gdl_pop(ytp,"g:c");
+				       		  ynp = gdl_c_term(ytp); }
 	;
 
 c:
@@ -648,9 +712,9 @@ cbit:
 	  						  /*if (gdl_legacy) gdl_unlegacy(ynp);*/
 							  gvl_simplexg(ynp); }
 	| cdelim					{ }
-	| CLP			       			{ gdl_balance_state(@1,CLP,gdl_lex_state());
+	| CLP			       			{ gdl_balance_state(&@1,CLP,gdl_lex_state());
 	    					  	  gdl_push_l(&@1,ytp,"g:gp"); }
-	| CRP	     			    		{ if (-1 != gdl_balance_state(@1,CRP,gdl_lex_state()))
+	| CRP	     			    		{ if (-1 != gdl_balance_state(&@1,CRP,gdl_lex_state()))
 	      					    	   gdl_pop(ytp,"g:gp"); }
 	| QLP 						{ yrem=kids_rem_last(ytp);
 	    						  gdl_push_l(&@1,ytp,"g:q");
@@ -686,8 +750,8 @@ cmaybemodflags:
 	;
 
 cmods:
-	  MOD						{ mnp = gdl_mod_cmod(&@1, ynp, NULL, $1); }
-	| cmods MOD					{ (void)gdl_mod_cmod(&@1, ynp, mnp, $1); }
+	  GMOD						{ mnp = gdl_mod_cmod(&@1, ynp, NULL, $1); }
+	| cmods GMOD					{ (void)gdl_mod_cmod(&@1, ynp, mnp, $1); }
 	;
 
 valuqual:
@@ -720,21 +784,22 @@ mods:
         ;
 
 mod:
-	  MOD						{ ynp->mloc = mloc_mloc(&@1);
-	  						  mnp = gdl_mod(ytp, aglval.text); }
+	  GMOD						{ ynp->mloc = mloc_mloc(&@1);
+	  						  mnp = gdl_mod(ytp, gdllval.text); }
 	;
 
 glosso:
-		L_cur_par	{ ynp = gdl_gloss_o(&@1, ytp, aglval.text, e_L_cur_par); }
-	| 	L_dbl_cur	{ ynp = gdl_gloss_o(&@1, ytp, aglval.text, e_L_dbl_cur); }
-	| 	L_ang_par_s	{ ynp = gdl_gloss_o(&@1, ytp, aglval.text, e_L_ang_par); }
+		L_cur_par	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_cur_par); }
+	| 	L_dbl_cur	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_dbl_cur); }
+	| 	L_ang_par_s	{ ynp = gdl_gloss_o(&@1, ytp, gdllval.text, e_L_ang_par); }
 	;
 
 glossc:
-		R_cur_par      	{ ynp = gdl_gloss_c(&@1, ytp, aglval.text, e_R_cur_par); }
-	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(&@1, ytp, aglval.text, e_R_dbl_cur); }
-	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(&@1, ytp, aglval.text, e_R_ang_par); }
+		R_cur_par      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_cur_par); }
+	| 	R_dbl_cur      	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_dbl_cur); }
+	| 	R_ang_par_s    	{ ynp = gdl_gloss_c(&@1, ytp, gdllval.text, e_R_ang_par); }
 	;
+
 
 %%
 void
@@ -762,3 +827,55 @@ agerror(const char *e)
   else
     mesg_vwarning(curratffile, atflineno, "atf: %s\n", e);
 }
+static void
+ag_user_action(void)
+{
+  if (agflextrace)
+      fprintf(stderr, "%s:%d: aglex: text=::%s:: start=%d; tra_text=%d\n", curragfile, aglineno, agtext, YY_START, tra_text);
+
+  aglloc.file = curragfile;
+  aglloc.line = aglineno;
+}
+
+static void
+ag_l_lex_init(const char *file, int line)
+{
+  curragfile = agfile = file;
+  aglineno = line;
+}
+
+#if 0
+static int
+ag_line_save(const char *t)
+{
+  extern const char *curr_line_tok;
+  curr_line_tok = (ccp)hpool_copy((uccp)t, ag_hpool);
+  return 0;
+}
+#endif
+
+#if 0
+static int
+ag_gdl_init(void)
+{
+  gdl_new_word(gdl_get_tree());
+  return 0;
+}
+#endif
+
+Tree *
+ag_read_atf(char *atf, size_t len)
+{
+  YY_BUFFER_STATE ag_buffer;
+  if (!(ag_buffer = ag_scan_buffer(atf, len)))
+    {
+      fprintf(stderr, "ag_read_atf: ag_scan_buffer failed\n");
+      return NULL;
+    }
+  yy_start = s_next = 0;
+  atf_init(); /* this really is atf_init--initialize the ATF structure for the build */
+  Tree *tp = agyacc();
+  ag_wrapup_buffer();
+  return tp;
+}
+

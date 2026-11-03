@@ -10,8 +10,7 @@
 #include <gdlstate.h>
 #include "ag.h"
 
-static int ag_gdl_grapheme_type_l(void);
-static int ag_gdl_grapheme_type_s(void);
+		/* ATFPROLOGUE */
 
 #define AGLTYPE Mloc
 #include "ag.tab.h"
@@ -49,8 +48,31 @@ int atf_term_flag = 0;
 #define r(x) fprintf(stderr, "returning %d\n", x),x
 #endif
 
-			/* GDLPROLOGUE */
+		/* GDLPROLOGUE */
+
+extern const char *gdl_lexnames[];
+extern int gdl_lexfld[];
+#define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
+static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
+static int GIN = 0; /* 1 if in grapheme */
+static int QIN = 0; /* non-zero if in a(BA) qualifier */
+static int SIN = 0; /* left context is space */
+
+#define gconst aglval.text=agtext
+#define gsave  aglval.text=gdlsave(agtext)
+#define gsaveg(garg)  aglval.text=gdlsave((garg))
+#define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
+
+/* Simple stack for nesting of compounds and valuquals */
+#define CVQ_MAX 6
+static int cvq_stack[CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
+static int cvq_top = -1;
+static int cvq_pop(void);
+static int cvq_push(int);
+static void cvq_reset(void);
+
 %}
+			/* ATFPATDEF */
 
 PQX	([PQX][0-9]{6})
 BOM3	("\xef\xbb\xbf")
@@ -76,6 +98,27 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 
 			/* GDLPATDEF */
 
+	     	/* 20260519 remove '*' because it conflicts with collated flag */
+L		([A-Z][A-Z]+[0-9][0-9][0-9]+[A-Z0-9a-z_'"/+^]*(′|″)*){M}*
+B		("["|"]"|\xe2\xb8[\xa2-\xa5])
+S		\xe2\xb8[^\xa2-\xa5]|([0-9][a-wyz]*)
+G		([a-ru-zA-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[stST],?|{S}|\xc3[^\x97]|\xe2[^\xb8\x88])+
+CG		([A-RU-Z'\x80-\xc2\xc4-\xe1\xe3-\xff]|[ST],?|{S}|\xc3[^\x97]|\xe2[^\xb8\x88])+
+M		("@"([a-wyz]+[0-9]*|45|90|180|270)|"~"[a-z0-9][a-wyz0-9]*|"\\"[a-z]*[0-9]+)
+NNUM		([N][0-9][0-9]?[ACF]?)
+GRAPHEME 	({G}|"15")
+FRACTION	[0-9]\/[0-9]
+
+L_UHS		"\xe2\xb8\xa2"
+R_UHS		"\xe2\xb8\xa3"
+L_LHS		"\xe2\xb8\xa4"
+R_LHS		"\xe2\xb8\xa5"
+
+UFLAG	"\xe2\x80"[\xa0\xa1\xa2\xa3]
+
+NOTEMARK	"^"[0-9]+"^"
+
+			/* ATFSTARTS */
 %x s_AMPl
 %x s_AMPr
 %x s_SCO
@@ -89,14 +132,14 @@ TRA_WRD [^ \n\r\t\@\"\?\[\]\{\}]+
 %x s_TRA
 %x s_IGNORE
 %x A
+			/* GDLSTARTS */
 %x C
 %s Q
 %s S
 %x TC
 %x TD
 %x N
-
-			/* GDLSTARTS */
+%x ALPHA
 %%
 
 <INITIAL,A>^({BOM3}|{BOM2})?"&"  		{ BEGIN s_AMPl; s_next = A; }
@@ -241,25 +284,6 @@ ag_l_lex_init(const char *file, int line)
   curragfile = agfile = file;
   aglineno = line;
 }
-
-#if 0
-static int
-ag_line_save(const char *t)
-{
-  extern const char *curr_line_tok;
-  curr_line_tok = (ccp)hpool_copy((uccp)t, ag_hpool);
-  return 0;
-}
-#endif
-
-#if 0
-static int
-ag_gdl_init(void)
-{
-  gdl_new_word(gdl_get_tree());
-  return 0;
-}
-#endif
 
 Tree *
 ag_read_atf(char *atf, size_t len)

@@ -10,9 +10,8 @@
 #include <gdlstate.h>
 #include <atf.h>
 #include "ag.h"
-extern const char *agtext, *curragfile;
+extern const char *agtext, *agfile;
 extern int aglineno, agtrace;
-extern int gdl_unicode, gdl_lexical;
 
 static Tree *ytp;
 static Node *ynp, *yrem, *ycp, *mnp;
@@ -26,22 +25,16 @@ AGLTYPE aglloc;
 extern int aglex(void);
 extern void yyerror(const char *);
 
-extern Node *gdl_post_det_gp_attach;
-
 #define alo(xxx) ag_line_o_##xxx
 #define alc(xxx) ag_line_c_##xxx
 %}
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
 
+	/* GDLTOK */
+
 %token	<text>
-		FTYPE LANG ENHYPHEN ELLIPSIS CELLSPAN IGNORE NORMSEG
-		GRAPHEME NNUM NUMBER BARENUM ZERO LISTNUM PUNCT MOD LINEBREAK
-		C_O C_C C_PERIOD C_ABOVE C_CROSSING C_OPPOSING C_COLON C_PLUS
-		C_TIMES C_4TIMES C_3TIMES CMOD C_CIRCLE
-		L_inl_dol R_inl_dol L_inl_cmt R_inl_cmt
-		',' LF_AT LF_CARET LF_EQUALS LF_HASH LF_QUOTE LF_TILDE LF_VBAR
-		PQX QID TEXT WORD DOC PROJECT LINK KEY
+		PQX QID WORD DOC PROJECT LINK KEY
 		MILESTONE OBJECT SURFACE COLUMN DIVISION GROUP
 		TAB EOL
 		VERSION
@@ -50,14 +43,6 @@ extern Node *gdl_post_det_gp_attach;
 		TR_TEXT TR_PAR TR_HDR TR_COMMENT TR_DOLLAR
 
 %token	<i>
-		'<' '>' '[' ']' '(' ')' CLP CRP QLP QRP
-		'/' '+' ':'
-		L_dbl_ang R_dbl_ang L_dbl_cur R_dbl_cur L_par_par R_par_par
-		L_dbl_par R_dbl_par L_dbl_par_c R_dbl_par_c eras_canc_pivot
-		L_ang_par R_ang_par L_ang_par_s R_ang_par_s L_cur_par R_cur_par
-		L_uhs R_uhs L_lhs R_lhs LANG_FLIP
-		'{' DET_SEME DET_PHON '}'
-		PLUS_FLAG SPACE END
 		HASH_PROJECT HASH_LINK HASH_VERSION HASH_NOTE HASH_KEY
 		HASH_ETCSL_T HASH_ETCSL_L
 		HASH_LEMMATIZER LZR_SPARSE LZR_STOP HASH_BIB HASH_PROBIB
@@ -79,15 +64,7 @@ extern Node *gdl_post_det_gp_attach;
 		Y_TRANSLITERATION Y_TRANSTYPE Y_UNIT Y_VARIANT Y_VARIANTS Y_WITNESSES
 		Y_OBJFRAG Y_SRFFRAG Y_COLFRAG ATF_END
 
-%token	<node>
-		NOTEMARK
-
 %nterm	<text>		pqx name longtext
-		field lexfld cmods
-
-%nterm	<node>		detgloss det gloss
-		grapheme scgrapheme compound simplexg valuqual
-		glosso glossc
 
 %nterm	<i>		sparse stype atfuse link_type
 		atf.line l_link note bib etcsl.line proto.comment
@@ -102,11 +79,9 @@ extern Node *gdl_post_det_gp_attach;
 		bdivision edivision vdivision
 		div_tok end_tok var_tok
 
-%start atfgdl
+%start atfs
 
 %%
-
-atfgdl: atfs | gdl.line
 
 atfs:		atf
 	|	atfs atf
@@ -307,13 +282,13 @@ heading:	heading_tok longtext { atf_bld_heading(@1, $1, longtext_get()); }
 	;
 
 atf.line:
-		MTS {alo(mts)(@1,agtext);} gdl.line { $$=$1; alc(mts)(@1); }
-	| 	NTS {alo(nts)(@1,agtext);} gdl.line { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
-	| 	LGS {alo(lgs)(@1,agtext);} gdl.line { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
-	| 	GUS {alo(gus)(@1,agtext);} gdl.line { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
-	| 	BIL {alo(bil)(@1,agtext);} gdl.line { $$=$1; alc(bil)(@1); } /* MTS prereq */
-	| 	EXX {alo(var)(@1,agtext);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
-	| 	VAR {alo(var)(@1,agtext);} gdl.line { $$=$1; alc(var)(@1); } /* MTS prereq */
+		MTS {alo(mts)(@1,agtext);} gdl { $$=$1; alc(mts)(@1); }
+	| 	NTS {alo(nts)(@1,agtext);} gdl { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
+	| 	LGS {alo(lgs)(@1,agtext);} gdl { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
+	| 	GUS {alo(gus)(@1,agtext);} gdl { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
+	| 	BIL {alo(bil)(@1,agtext);} gdl { $$=$1; alc(bil)(@1); } /* MTS prereq */
+	| 	EXX {alo(var)(@1,agtext);} gdl { $$=$1; alc(var)(@1); } /* MTS prereq */
+	| 	VAR {alo(var)(@1,agtext);} gdl { $$=$1; alc(var)(@1); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */
 		/* l_link, etcsl.line, and tr.inter all require a line group */
 	|	l_link longtext		{ $$=$1; atf_bld_protocol(@1, PROT_LINK, longtext_get()); }

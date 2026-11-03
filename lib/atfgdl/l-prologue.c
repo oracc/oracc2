@@ -2,8 +2,7 @@
 #include <mesg.h>
 #include <pool.h>
 #include <atf.h>
-#include <gdl.h>
-#include <gdlstate.h>
+#include <gdllib.h>
 #include "ag.h"
 
 #define AGLTYPE Mloc
@@ -11,7 +10,6 @@
 #define YY_USER_ACTION ag_user_action();
 extern Mloc agloc;
 const char *agfile = "<stdin>";
-const char *curragfile = NULL;
 static int last_unmatched_line = 0;
 
 int agflextrace = 0, last_aglineno;
@@ -37,14 +35,8 @@ static void ag_user_action(void);
 #define r(x) fprintf(stderr, "returning %d\n", x),x
 #endif
 
-/* test */
-
 extern const char *gdl_lexnames[];
 extern int gdl_lexfld[];
-extern int gdl_bilingual, gdl_legacy, gdl_lexical, gdl_unicode;
-static gdl_grapheme_type_p ag_gdl_grapheme_type;
-
-extern Pool *gdlpool;
 #define gdlsave(s) (char*)pool_copy((const unsigned char*)(s),gdlpool);
 static int CIN = 0; /* 1 if in compound */ /* update: this is probably no longer necessary */
 static int GIN = 0; /* 1 if in grapheme */
@@ -63,8 +55,3 @@ static int cvq_top = -1;
 static int cvq_pop(void);
 static int cvq_push(int);
 static void cvq_reset(void);
-
-#if 0
-static int ag_gdl_init(void);
-static int ag_line_save(const char *t);
-#endif
