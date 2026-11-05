@@ -30,6 +30,7 @@ void
 ag_line_o_mts(Mloc l, const char *tok)
 {
   unsigned char *lp = NULL; /* for compatibility with old atf.l routines */
+  atf_line_lg(&l);
   atf_line_node(LINE_MTS);
   atf_line_host();
   atf_line_id();

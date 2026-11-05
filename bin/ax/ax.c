@@ -193,7 +193,6 @@ ax_full_term(void)
   props_run_term();
   run_term(rp);
   xcl_final_term();
-  lng_term();
   lnstr_term();
   gdllib_term();
 }

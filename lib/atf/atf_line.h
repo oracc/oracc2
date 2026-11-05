@@ -1,8 +1,10 @@
 #ifndef ATF_LINE_H_
 #define ATF_LINE_H_
 
+extern void atf_line_lg(Mloc *mp);
+
 #define atf_line_node(ltype)			\
-  struct node *lnode = atf_node("l", &l);	\
+  struct node *lnode = atf_push("l", &l);	\
   lnode->mloc = mloc_mloc(&l);			\
   line_register(l, ltype, lnode, lp)
 
