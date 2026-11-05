@@ -1,6 +1,8 @@
 #ifndef AG_H_
 #define AG_H_
 
+#include <tree.h>
+
 extern const char *curr_line_text;
 extern void ag_wrapup_buffer(void);
 extern ssize_t ag_get_lineno(void);
@@ -26,6 +28,8 @@ extern void ag_line_c_lgs(Mloc l);
 
 extern int aglineno;
 extern void ag_gdl_legacy_lexer(int legacy);
-extern Tree *ag_gdlparse(Mloc *m, Tree *atftp, Node *rootnode);
+
+extern void ag_gdl_decr_qin(void);
+extern void ag_gdl_incr_qin(void);
 
 #endif/*AG_H_*/

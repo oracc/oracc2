@@ -9,8 +9,8 @@
 #include <lng.h>
 #include <xmd.h>
 #include <atf.h>
-#include <gdl.h>
-#include <../../lib/atfgdl/ag.h>
+#include <gdllib.h>
+#include <ag.h>
 #include <inl.h>
 #include <l3props.h>
 #include "ax.h"
@@ -69,7 +69,6 @@ ax_input_term(void)
   rnvval_term();
   xmd_term();
   inl_term();
-  gdlparse_term();
   mesg_print(stderr);
   mesg_term();
   inl_term();
@@ -80,11 +79,10 @@ ax_input(char *atf, size_t len)
 {
   xmd_ignore_missing = 1;
   mesg_init();
-  lng_init();
   form_init();
   nl_init();
+  gdllib_init();
   ngramify_init();
-  gdlparse_init();
   inl_init(0);
 
   char *amp = atf;
@@ -197,6 +195,7 @@ ax_full_term(void)
   xcl_final_term();
   lng_term();
   lnstr_term();
+  gdllib_term();
 }
 
 static char * const*
@@ -217,7 +216,7 @@ main(int argc, char * const*argv)
   f_log = stderr;
 
   gdl_flex_debug = gdldebug = 0;
-  options(argc, argv, "ACDcfgGI:Llmstuvx");
+  options(argc, argv, "ACDcfgGI:lmstuvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
   if (check_mode)
@@ -238,9 +237,6 @@ main(int argc, char * const*argv)
   if (trace_mode > 1)
     agflextrace = agtrace = agdebug = 1;
 
-  gdl_word_mode = 1;
-  ag_gdl_legacy_lexer(0);
-
   rp = run_init();
   gdlxml_setup();
   gvl_setup("osl", "osl","020");
@@ -253,7 +249,6 @@ main(int argc, char * const*argv)
   struct lang_context *x = lang_switch(NULL,"sux",NULL,NULL,0);
   global_lang = calloc(1, sizeof(struct lang_context));
   *global_lang = *x;
-  gdl_global_lang = global_lang;
 
   char * const*files = NULL;
   if (argv[optind])
@@ -302,9 +297,11 @@ opts(int opt, const char *arg)
     case 'I':
       inputs_from_file = optarg;
       break;
+#if 0
     case 'L':
       line_trace = 1;
       break;
+#endif
     case 'l':
       if (lem_mode++)
 	{

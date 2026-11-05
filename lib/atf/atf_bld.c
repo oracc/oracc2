@@ -7,9 +7,11 @@
 #include "atf_bld.h"
 #include "../atfgdl/ag.h"
 
+extern Mloc aglloc;
+
 static int etcsl_error_reported;
 
-extern void atf_bp_reset(void);
+extern void ag_bp_reset(void);
 
 static void atf_bld_protocols(Mloc *lp, const char *scope);
 static unsigned char *proto_line(Protocol *p, const char *str);
@@ -75,7 +77,7 @@ atf_prop(Node *ynp, int ptype, int gtype)
   if (ynp)
     ynp->props = prop_add(ynp->tree->tm->prop_mem, ynp->props, ptype, gtype);
   else
-    mesg_warning(curratffile, atflineno, "atf_prop passed NULL ynp");
+    mesg_verr(&aglloc, "atf_prop passed NULL ynp");
 }
 
 void
@@ -84,9 +86,9 @@ atf_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v)
   if (ynp && v)
     prop_node_add(ynp, ptype, gtype, k, v);
   else if (!v)
-    mesg_vwarning(curratffile, atflineno, "atf_prop passed NULL value for key %s", k);
+    mesg_verr(&aglloc, "atf_prop passed NULL value for key %s", k);
   else
-    mesg_warning(curratffile, atflineno, "atf_prop passed NULL ynp");
+    mesg_verr(&aglloc, "atf_prop passed NULL ynp");
 }
 
 void
@@ -94,10 +96,12 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
 {
   if (amp_trace)
     fprintf(stderr, "&%s\n", pqx);
+#if 0
   if (line_trace)
     atf_lex_line_trace(&l);
+#endif
   atfp = atfmp->atf;
-  atfp->file = curratffile;
+  atfp->file = aglloc.file;
   atfp->pqx = pqx;
   strcpy(line_id_buf, atfp->pqx);
   strcat(line_id_buf, ".");
@@ -125,8 +129,8 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   reset_lninfo();
   v_register(NULL);
   atf_block_xid();
-  atf_bp_reset();
-  ag_gdl_legacy_lexer(0);
+  ag_bp_reset();
+  gdl_legacy_lexer(0);
   gdl_set_lzr_sparse(NULL);
   line_id = 0; /* we say ++line_id when using this */
   curr_block = NULL;
@@ -216,8 +220,10 @@ atf_bld_implicit_block(void)
 void
 abt_add_key_protocol(Mloc *lp, Key *kp)
 {
+#if 0
   if (line_trace)
     atf_lex_line_trace(lp);
+#endif
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, "text");
   Node *np = atf_add("protocol", lp);
@@ -240,8 +246,10 @@ abt_add_key_protocol(Mloc *lp, Key *kp)
 static Node *
 abt_add_link_protocol(Mloc *lp, Xlink *p, const char *str)
 {
+#if 0
   if (line_trace)
     atf_lex_line_trace(lp);
+#endif
   if (strcmp(abt->curr->name, "protocols"))
     atf_bld_protocols(lp, "text");
   Node *np = atf_add("protocol", lp);
@@ -289,9 +297,10 @@ static void
 abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
 {
   Node *np = NULL;
+#if 0
   if (line_trace)
     atf_lex_line_trace(lp);
-
+#endif
   if (in_preamble)
     {
       if (strcmp(abt->curr->name, "protocols") && !strcmp(scope, "text"))
@@ -435,7 +444,7 @@ atf_bld_protocol(Mloc l, Prot pt, const char *str)
       else if (etcsl_labels)
 	etcsl_label(str);
       else if (!etcsl_error_reported++)
-	mesg_warning(curratffile, atflineno, "etcsl: line-id used without etcsl: text-id");
+	mesg_verr(&l, "etcsl: line-id used without etcsl: text-id");
       break;
     case PROT_ATF:
     case PROT_TOP:

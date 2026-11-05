@@ -30,9 +30,6 @@ int gdl_lexfld[128] = {
   ['~'] = LF_TILDE,
 };
 
-static int gdl_grapheme_type_l(Mloc *mp, char *gt, char **cp);
-static int gdl_grapheme_type_s(Mloc *mp, char *g, char **cp);
-
 Node *gdl_delim_l(Tree *ytp, const char *data);
 Node *gdl_delim_s(Tree *ytp, const char *data);
 
@@ -59,7 +56,7 @@ gdl_legacy_lexer(int legacy)
 }	
 
 /* Version of gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
-static int
+int
 gdl_grapheme_type_s(Mloc *mp, char *g, char **cp)
 {
   *cp = gdlsave(g);
@@ -86,7 +83,7 @@ gdl_grapheme_type_s(Mloc *mp, char *g, char **cp)
 }
 
 /* Version of gdl_grapheme_type for use when atf: use legacy is set */
-static int
+int
 gdl_grapheme_type_l(Mloc *mp, char *gt, char **cp)
 {
   char *l = gt;

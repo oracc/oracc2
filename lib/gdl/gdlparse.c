@@ -45,10 +45,11 @@
  *
  * gdl_GDL_reset(gp) -- free all GDL resources at end of ATF text
  *
- * gdlparse_stop() -- sets tcurr=NULL
+ * gdlparse_stop() -- sets tcurr=NULL; note that gdlparse_term() must not be used in (2)
  *
  * ATF inline text can include GDL parsing--this is done by using tree
  * life-cycle (1) within the current life-cycle (2) framework.
+ *
  *
  */
 
@@ -99,6 +100,8 @@ gdlparse_string(Mloc *m, char *s)
   gdl_group_attach = lgp = NULL;
 
   wd_list = list_create(LIST_SINGLE);
+  gdl_new_word(tcurr);
+
   gdlparse();
 
   gdllex_destroy();
@@ -137,7 +140,7 @@ gdlparse_deep(Node *np, void *mptr)
 	  
 	  (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
 	  char *s2 = gdlbuffer((ccp)gp->sign);
-	  
+
 	  /* do this before gdl_set_tree so that initial w-node gets the right line number */
 	  Mloc *m = mptr;
 	  if (m)
@@ -196,14 +199,19 @@ gdlparse_term(void)
 }
 
 void
-gdlparse_start(Tree *tp)
+gdlparse_start(Tree *tp, GDL *gp)
 {
   tcurr = tp;
+  tcurr->user = gp;
+  gdl_lang_context = global_lang;
+  gdl_balance_init();
+  gdl_modq_init();
 }
 
 void
 gdlparse_stop(void)
 {
+  gdl_GDL_free(tcurr->user);
   tcurr = NULL;
 }
 

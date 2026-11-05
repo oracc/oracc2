@@ -3,8 +3,11 @@
 #include <pool.h>
 #include <atf.h>
 #include <gdllib.h>
+#include <gdlparse.h>
 #include "ag.h"
 #include "ag.tab.h"
+
+extern Tree *abt;
 extern int ag_scan_buffer(const char *base, size_t len);
 extern void aglex_destroy(void);
 
@@ -23,8 +26,14 @@ agyacc(void)
   
   ag_set_tree(tp);
 
+  GDL *gp = gdl_GDL();
+  gdlparse_start(abt, gp);
+  gdl_lexical = 0;
+  gdlpool = atfmp->pool;
   agparse();
 
+  gdlparse_stop();
+  
   last_aglineno = aglineno;
 
   aglex_destroy();
@@ -32,6 +41,7 @@ agyacc(void)
   return tp;
 }
 
+#if 0
 /* In ag we don't call a separate gdl parser instance, we just set up
    the gdl tree builder to use the current ATF tree */
 Tree *
@@ -46,6 +56,7 @@ ag_gdlparse(Mloc *m, Tree *atftp, Node *rootnode)
   gdl_group_attach = lgp = NULL;
   wd_list = list_create(LIST_SINGLE);
   gdl_lex_init(m->file, m->line);
-  gdl_set_tree(tp);
+  /*gdl_set_tree(tp);*/
   return tp;
 }
+#endif

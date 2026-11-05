@@ -256,8 +256,8 @@ extern Atfm *atfmp;
 extern Block *curr_block;
 extern Group *curr_group;
 
-extern int atflineno;
-extern const char *atffile, *curratffile;
+extern int aglineno;
+extern const char *agfile;
 extern unsigned const char *curr_line_label;
 extern int in_preamble;
 extern const char *curr_use_str;
@@ -302,13 +302,15 @@ extern void atf_set_tree(Tree *tp);
 extern void atf_term(void);
 extern void atf_wrapup(Wheret where);
 extern void atf_wrapup_buffer(void);
-extern void atf_lex_line_trace(Mloc *mp);
 extern void v_register(const char *id);
 
+#if 0
+extern void atf_lex_line_trace(Mloc *mp);
 extern ssize_t atf_get_lineno(void);
 extern void atf_set_lineno(ssize_t n);
 extern void atf_set_file(const char *f);
 extern void atf_wrapup_buffer(void);
+#endif
 
 extern unsigned const char*check_label(Mloc *mp,unsigned const char *lab,enum e_tu_types transtype, unsigned const char *xid);
 extern void ncname_init(void);

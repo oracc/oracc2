@@ -233,6 +233,8 @@ extern Node *gdl_delim_l(Tree *ytp, const char *data);
 extern Node *gdl_delim_s(Tree *ytp, const char *data);
 extern Node *gdl_graph_node_l(Mloc *locp, Tree *ytp, const char *name, const char *data);
 extern Node *gdl_graph_node_s(Mloc *locp, Tree *ytp, const char *name, const char *data);
+extern int gdl_grapheme_type_l(Mloc *mp, char *gt, char **cp);
+extern int gdl_grapheme_type_s(Mloc *mp, char *g, char **cp);
 
 extern void gdl_word_attr(Node *w);
 extern List *gdl_rem_nonw(List *wds);

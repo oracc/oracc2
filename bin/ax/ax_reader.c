@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <ag.h>
 #include "ax.h"
 #include "ax_reader.h"
 
@@ -44,7 +45,7 @@ ax_read(const char *proj, enum axr_source from, void *list)
   axr_set_input(rip);
   if (axr_get_input(rip))
     {
-      extern ssize_t last_atflineno;
+      extern ssize_t last_aglineno;
       for (;;)
 	{
 	  if (rip->stop)
@@ -55,7 +56,7 @@ ax_read(const char *proj, enum axr_source from, void *list)
 		ax_files(proj, axr_pqx(atf));
 	      else
 		ax_files_static();
-	      atf_set_lineno(last_atflineno);
+	      ag_set_lineno(last_aglineno);
 	      ax_input(atf, rip->atf_len);
 	    }
 	  else
@@ -261,7 +262,7 @@ axr_set_input(struct axrinfo *rip)
       rip->more_sources = 0;
       rip->source = stdin;
       rip->fname = (char*)pool_copy((ucp)"<stdin>", rip->pool);
-      atf_set_file(rip->fname);
+      ag_set_file(rip->fname);
     }
   else if (rip->from == axr_files)
     {
@@ -279,7 +280,7 @@ axr_set_input(struct axrinfo *rip)
 		fprintf(stderr,"ax_reader: open failed on %s\n",fname_buf);
 	      rip->more_sources = feof(stdin);
 	      rip->fname = (char *)pool_copy((ucp)fname_buf, rip->pool);
-	      atf_set_file(rip->fname);
+	      ag_set_file(rip->fname);
 	    }
 	  else
 	    {
@@ -311,7 +312,7 @@ axr_set_input(struct axrinfo *rip)
 	  else
 	    {
 	      rip->fname = (char *)pool_copy((ucp)*rip->todo, rip->pool);
-	      atf_set_file(rip->fname);
+	      ag_set_file(rip->fname);
 	      if (verbose)
 		fprintf(stderr, "ax_reader: opened %s\n", rip->fname);
 	    }

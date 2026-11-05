@@ -291,7 +291,7 @@ atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
 	|	ATF_MATH       { $$=ATFF_MATH; }
 	|	ATF_ASCII      { gdl_ascii = 1; $$=ATFF_ASCII; }
 	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
-	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; ag_gdl_legacy_lexer(1); }
+	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; gdl_legacy_lexer(1); }
 	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; gdl_lexical = 1; }
 		;
 
@@ -525,7 +525,7 @@ longtext:
 		;
 
 
-gdl: { ynp = gdl_new_word(tcurr); } lineparts
+gdl: lineparts
 	;
 
 lineparts:
@@ -718,9 +718,9 @@ cbit:
 	    						  gdl_push_l(&@1,ytp,"g:q");
 							  kids_add_node(ytp,yrem);
 							  gdl_remove_q_error(@1, yrem);
-  							  gdl_incr_qin();
+  							  ag_gdl_incr_qin();
 							}
-	| QRP				      		{ gdl_decr_qin();
+	| QRP				      		{ ag_gdl_decr_qin();
 	  						  ynp->mloc = mloc_mloc(&@1);
 	  						  gvl_valuqual(ytp->curr);
 							  lgp = ytp->curr;
@@ -766,9 +766,9 @@ q:
 	QLP 						{ yrem=kids_rem_last(ytp);
 	    						  gdl_push_l(&@1,ytp,"g:q");
 							  kids_add_node(ytp,yrem);
-							  gdl_incr_qin(); }
+							  ag_gdl_incr_qin(); }
 	graphemes 	 	       			{ gdl_remove_q_error(@1, yrem); }		
-	QRP 						{ gdl_decr_qin(); }
+	QRP 						{ ag_gdl_decr_qin(); }
 	;
 
 qmaybemodflags:
@@ -823,5 +823,5 @@ agerror(const char *e)
       && div_stck && ((intptr_t)(np = (Node*)stck_peek(div_stck)) != -1))
     mesg_verr(np->mloc, "atf: unclosed @division\n");
   else
-    mesg_vwarning(curratffile, atflineno, "atf: %s\n", e);
+    mesg_vwarning(agfile, aglineno, "atf: %s\n", e);
 }

@@ -7,6 +7,7 @@
 #include <joxer.h>
 #include <rnvif.h>
 #include <rnvxml.h>
+#include <gdltype.h>
 #include <gt.h>
 #include <asl.h>
 #include "ax.h"

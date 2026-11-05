@@ -35,6 +35,8 @@ while (<G>) {
 while (<G>) {
     last if /^%%$/;
     s/gdllval/aglval/g;
+    s/gdl_(de|in)cr_q/ag_gdl_$1cr_q/g;
+    s/gdl_set_ynp/ag_gdl_set_ynp/g;
     print;
 }
 close(G);

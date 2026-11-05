@@ -28,8 +28,6 @@ static char *xs;
 
 static int ag_block(const char *atcmd);
 static void ag_user_action(void);
-static int ag_gdl_grapheme_type_l(void);
-static int ag_gdl_grapheme_type_s(void);
 
 #define agsave aglval.text=agpool(agtext)
 #define agnorm aglval.text=agnormpool(agtext)
@@ -59,7 +57,8 @@ static int SIN = 0; /* left context is space */
 #define gconst aglval.text=agtext
 #define gsave  aglval.text=gdlsave(agtext)
 #define gsaveg(garg)  aglval.text=gdlsave((garg))
-#define gdl_yyterminate() return (gdl_term_flag = !gdl_term_flag) ? END : YY_NULL
+int ag_term_flag = 0;
+#define gdl_yyterminate() return (ag_term_flag = !ag_term_flag) ? END : YY_NULL
 
 /* Simple stack for nesting of compounds and valuquals */
 #define CVQ_MAX 6
@@ -145,14 +144,14 @@ NOTEMARK	"^"[0-9]+"^"
 <s_AMPl>[ \t]+=	       		{ BEGIN s_AMPr; return r('='); }
 <s_AMPl>[ \t]+/[^=]    		{ mesg_verr(&aglloc, "no '=' in &-line");
 				  BEGIN s_AMPr; return r('='); }
-<s_AMPr>[^\n\r]+      		{ BEGIN A; atfnorm; return r(TEXT); }
+<s_AMPr>[^\n\r]+      		{ BEGIN A; agnorm; return r(TEXT); }
 
 <s_T>^[\t ]*/[\n\r]	       	{ ; }
-<s_T>^[^\t ][^\n\r]*           	{ BEGIN s_next; s_next = A; atfnorm; return r(TEXT); }
-<s_T>.*/\r?\n[ \t]+[\r\n]    	{ BEGIN s_next; s_next = A; atfnorm; return TEXT; }
-<s_T>.*/\r?\n[^ \t]+		{ BEGIN s_next; s_next = A; atfnorm; return TEXT; }
-<s_T>.*/\r?\n	       		{ BEGIN s_next; s_next = A; atfnorm; return TEXT; }
-<s_T>^[\t ]+.+/[\r\n]  		{ BEGIN s_next; s_next = A; atfnorm; return TAB; }
+<s_T>^[^\t ][^\n\r]*           	{ BEGIN s_next; s_next = A; agnorm; return r(TEXT); }
+<s_T>.*/\r?\n[ \t]+[\r\n]    	{ BEGIN s_next; s_next = A; agnorm; return TEXT; }
+<s_T>.*/\r?\n[^ \t]+		{ BEGIN s_next; s_next = A; agnorm; return TEXT; }
+<s_T>.*/\r?\n	       		{ BEGIN s_next; s_next = A; agnorm; return TEXT; }
+<s_T>^[\t ]+.+/[\r\n]  		{ BEGIN s_next; s_next = A; agnorm; return TAB; }
 <s_T><<EOF>>			{ return TEXT; }
 
 <s_WORD>[^ \t\n\r]+	     	{ BEGIN s_next;
@@ -295,7 +294,7 @@ ag_read_atf(char *atf, size_t len)
   yy_start = s_next = 0;
   atf_init(); /* this really is atf_init--initialize the ATF structure for the build */
   Tree *tp = agyacc();
-  ag_delete_buffer(ag_buffer);
+  /*ag_delete_buffer(ag_buffer);*/
   return tp;
 }
 
@@ -377,7 +376,7 @@ ag_set_lineno(ssize_t n)
 void
 ag_set_file(const char *f)
 {
-    curratffile = f;
+    agfile = f;
     last_aglineno = aglineno = 1;
     agset_lineno(1);
 }
@@ -390,7 +389,7 @@ ag_set_file_line(char *a, ssize_t *n)
     ++a;
   while (isspace(*a))
     ++a;
-  curratffile = a;
+  agfile = a;
   while (*a && '\n' != *a)
     ++a;
   if (*a)
@@ -422,9 +421,9 @@ void
 ag_gdl_lex_closers(void)
 {
   if (CIN)
-      mesg_vwarning(currgdlfile,aglineno,"missing '|' in compound (discovered at end of line)");
+      mesg_vwarning(agfile,aglineno,"missing '|' in compound (discovered at end of line)");
   else if (QIN)
-    mesg_vwarning(currgdlfile,aglineno,"missing ')' in qv (discovered at end of line)");
+    mesg_vwarning(agfile,aglineno,"missing ')' in qv (discovered at end of line)");
   GIN=CIN=QIN=0;
   cvq_reset();
 }
@@ -471,7 +470,7 @@ cvq_push(int s)
       return s;
     }
   else
-    fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", currgdlfile, aglineno, CVQ_MAX);
+    fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", agfile, aglineno, CVQ_MAX);
   return 0;
 }
 
@@ -481,7 +480,7 @@ cvq_pop(void)
   if (cvq_top >= 0)
     return cvq_stack[cvq_top--];
   else
-    fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", currgdlfile, aglineno);
+    fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", agfile, aglineno);
    return 0;
 }
 
@@ -492,6 +491,15 @@ cvq_reset(void)
   BEGIN 0;
 }
 
+#if 0
+void
+ag_lex_line_trace(Mloc *mp)
+{
+    fprintf(stderr, "#fileline: %s:%d\n", curratffile, mp->line);
+}
+#endif
+
+#if 0
 /* Public function to call with (0) arg at start of text and with (1)
    arg when #atf: use legacy is encountered */
 void
@@ -499,13 +507,13 @@ ag_gdl_legacy_lexer(int legacy)
 {
   if (legacy)
     {
-      ag_gdl_grapheme_type = ag_gdl_grapheme_type_l;
+      gdl_grapheme_type = gdl_grapheme_type_l;
       gdl_delim = gdl_delim_l;
       gdl_graph_node = gdl_graph_node_l;
     }
   else
     {
-      ag_gdl_grapheme_type = ag_gdl_grapheme_type_s;
+      gdl_grapheme_type = gdl_grapheme_type_s;
       gdl_delim = gdl_delim_s;
       gdl_graph_node = gdl_graph_node_s;
     }
@@ -576,3 +584,4 @@ ag_gdl_grapheme_type_l(void)
        return IGNORE;
     }
 }
+#endif

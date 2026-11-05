@@ -124,7 +124,7 @@ GDLLTYPE gdllloc;
 
 %%
 
-gdl: { ynp = gdl_new_word(tcurr); } lineparts
+gdl: lineparts
 	;
 
 lineparts:
@@ -398,22 +398,6 @@ glossc:
 	;
 
 %%
-
-#if 0
-	/* We need this to give gdl_meta access to the tree when there is no lgp set */
-Tree *
-gdl_get_tree(void)
-{
-  return ytp;
-}
-
-void
-gdl_set_tree(Tree *tp)
-{
-  ytp = tp;
-  ynp = gdl_new_word(ytp);
-}
-#endif
 
 void
 gdlerror(const char *e)

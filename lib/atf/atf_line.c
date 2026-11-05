@@ -10,14 +10,18 @@
 
 int already_lemmed = 0;
 int atf_cell_count = 0;
+#if 0
 int line_trace = 0;
+#endif
 int suppress_lem = 0;
 
 int lnum_labels;
 
 Hash *vreg;
 
-#if 0
+#if 1
+struct lang_context *line_lang = NULL;
+#else
 struct lang_context *curr_lang_ctxt;
 struct lang_context *text_lang;
 #endif
@@ -107,14 +111,10 @@ line_register(Mloc l, Linet lt, Node *np, unsigned char *lp)
 {
   if (lt >= LINE_MTS)
     ++line_lines;
-
+#if 0
   if (line_trace)
     atf_lex_line_trace(&l);
-
-#ifndef ATFGDL
-  atf_input(l, lt, lp);
 #endif
-
   if (!atfmp->llines)
     {
       if (lt == LINE_MTS)
@@ -129,7 +129,9 @@ line_register(Mloc l, Linet lt, Node *np, unsigned char *lp)
   curr_line = memo_new(atfmp->mlines);
   curr_line->t = lt;
   curr_line->np = np;
+#if 0
   curr_line->ap = list_last(atfp->input);
+#endif
 
   list_add(atfmp->llines, curr_line);
 }
@@ -160,11 +162,7 @@ line_mts(Mloc l, unsigned char *lp)
   curr_lem_host = curr_line;
 #endif
 
-  unsigned char *tok = lp;
-#ifndef ATFGDL
-  unsigned char *end = lp+xxstrlen(lp);
-  unsigned char *s = lp;
-#endif
+  const char *tok = (ccp)lp;
 
   ++lninfo.lineno;
 
@@ -172,23 +170,6 @@ line_mts(Mloc l, unsigned char *lp)
   bil_offset = exemplar_offset = 0;
   curr_lang_ctxt = text_lang;
   /*protocol_state = s_intra;*/
-
-#ifndef ATFGDL
-  while (*s && !isspace(*s))
-    ++s;
-  if (s[-1] != '.')
-    {
-      mesg_verr(&l, "malformed line number");
-      mesg_verr(&l, "(line numbers must be <non-space><period><space>, e.g., `1. ')");
-      return;
-    }
-  else if (s == lp+1)
-    {
-      mesg_verr(&l, "empty line number");
-    }
-  s[-1] = '\0';
-#endif
-
 
 #if 1
   atf_line_id();
@@ -252,39 +233,6 @@ line_mts(Mloc l, unsigned char *lp)
       curr_line_label = ucc(label);
     }
 #endif
-
-#ifndef ATFGDL
-  /*appendChild(current,lnode);*/
-  while (*s && isspace(*s))
-    ++s;
-  if (s < end)
-    {
-      /* a leading |<SPACE> means span all cells */
-      if (*s == '|' && isspace(s[1]))
-	{
-	  s += 2;
-	  atf_xprop(lnode, "spanall", "1");
-	}
-      
-      while (isspace(end[-1]) && end > s)
-	--end;
-      if (end > s)
-	{
-	  *end = '\0';
-	  gdl_cell_count = 0;
-	  tlit_parse_inline(lnode,(ccp)s,1,uc(line_id_buf));
-	  curr_words = curr_line->wl;
-	  /* gdl_cell_count is the number of times gdl_cell was
-	     called, i.e., one less than the number of columns */
-	  if (gdl_cell_count > atf_cell_count)
-	    atf_cell_count = gdl_cell_count;
-	}
-    }
-#endif
-#if 0
-  else
-    tlit_reinit_inline();
-#endif
 }
 
 void
@@ -307,6 +255,7 @@ line_bil(Mloc l, unsigned char *lp)
   already_lemmed = 0;
   note_initialize_line();
   atf_xprop(lnode,"type","bil");
+#if 0
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -322,6 +271,7 @@ line_bil(Mloc l, unsigned char *lp)
 	  curr_words = curr_line->wl = gdl_get_word_list();
 	}
     }
+#endif
 }
 
 /* gloss under stream */
@@ -334,8 +284,10 @@ line_gus(Mloc l, unsigned char *lp)
   
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
-  
+
   atf_xprop(lnode,"type","gus");
+
+#if 0
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -348,6 +300,7 @@ line_gus(Mloc l, unsigned char *lp)
 	  tlit_parse_inline(lnode, (ccp)s, 1001, uc(line_id_buf));
 	}
     }
+#endif
 }
 
 /* normalized transliteration stream */
@@ -365,6 +318,8 @@ line_nts(Mloc l, unsigned char *lp)
   
   already_lemmed = 0;
   atf_xprop(lnode,"type","nts");
+
+#if 0
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -378,6 +333,7 @@ line_nts(Mloc l, unsigned char *lp)
 	  curr_words = curr_line->wl = gdl_get_word_list();
 	}
     }
+#endif
 }
 
 void
@@ -394,6 +350,7 @@ line_lgs(Mloc l, unsigned char *lp)
   unsigned char *s = lp+2;
   unsigned char *end = lp+xxstrlen(lp);
   atf_xprop(lnode,"type","lgs");
+#if 0
   while (isspace(*s))
     ++s;
   if (s < end)
@@ -405,7 +362,8 @@ line_lgs(Mloc l, unsigned char *lp)
 	  *end = '\0';
 	  tlit_parse_inline(lnode, (ccp)s, 3001, uc(line_id_buf));
 	}
-    }  
+    }
+#endif
   suppress_lem = 0;
 }
 
@@ -528,6 +486,7 @@ line_var(Mloc l, unsigned char *lp)
   if (n_vbar)
     atf_xprop(lnode,"ex_label",(ccp)map_uscore(n_vbar));
 
+#if 0
   s[-1] = ':';
 
   while (*s && isspace(*s))
@@ -542,6 +501,7 @@ line_var(Mloc l, unsigned char *lp)
 	  tlit_parse_inline(lnode, (ccp)s, 1 + (1000 * exemplar_offset), uc(line_id_buf));
 	}
     }
+#endif
 }
 
 void

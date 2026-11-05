@@ -25,9 +25,13 @@ while (<G>) {
     last if /^%%$/;
 }
 while (<G>) {
-    s/gdllval/aglval/g;    
-    print;
     last if /^%%$/;
+    s/gdlfile/agfile/g;
+    s/gdllineno/aglineno/g;
+    s/gdllloc/aglloc/g;
+    s/gdllval/aglval/g;
+    s/gdltext/agtext/g;
+    print;
 }
 close(G);
 while (<L>) {

@@ -3,6 +3,8 @@
 #include <pool.h>
 #include <lang.h>
 #include <scan.h>
+#include <gdllib.h>
+#include <gdlparse.h>
 #include <inl.h>
 #include "etcsl.h"
 #include "note.h"
@@ -10,7 +12,6 @@
 
 Atfm *atfmp;
 ATF *atfp;
-extern int gdl_lexical;
 extern Tree *abt;
 
 void
@@ -38,9 +39,6 @@ atf_init(void)
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;
-  GDL *gp = gdl_GDL();
-  gdlparse_start(abt);
-  gdl_lexical = 0;
   /*atfp->input = list_create(LIST_SINGLE);*/
   /* lang_init() and lang_term() must now be called by ax or equivalent before/after the entire run */
 }

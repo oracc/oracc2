@@ -206,7 +206,7 @@ atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
 	|	ATF_MATH       { $$=ATFF_MATH; }
 	|	ATF_ASCII      { gdl_ascii = 1; $$=ATFF_ASCII; }
 	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
-	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; ag_gdl_legacy_lexer(1); }
+	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; gdl_legacy_lexer(1); }
 	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; gdl_lexical = 1; }
 		;
 
@@ -465,5 +465,5 @@ agerror(const char *e)
       && div_stck && ((intptr_t)(np = (Node*)stck_peek(div_stck)) != -1))
     mesg_verr(np->mloc, "atf: unclosed @division\n");
   else
-    mesg_vwarning(curratffile, atflineno, "atf: %s\n", e);
+    mesg_vwarning(agfile, aglineno, "atf: %s\n", e);
 }
