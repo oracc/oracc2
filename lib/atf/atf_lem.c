@@ -35,17 +35,20 @@ atf_save_lem(Node *np, const char *lemstr)
 
   form->literal = (char*)pool_copy((uccp)lemstr, atfmp->pool);
   
-  const char *lang = proplng(np);
-  if (lang)
+  if (np->user && ((Node *)np->user)->utype == N_U_LANG)
+    form->lang = np->user;
+  else
     {
-      form->f2.lang = (unsigned char*)lang;
-      form->f2.core = langcore_of(lang);
-      if (strstr(lang,"949"))
-	  BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
+      const char *lang = proplng(np);
+      if (lang)
+	{
+	  form->f2.lang = (unsigned char*)lang;
+	  form->f2.core = langcore_of(lang);
+	  if (strstr(lang,"949"))
+	    BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
       form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
+	}
     }
-  else if (((struct lang_context *)np->user)->utype == N_U_LANG)
-    form->lang = (struct lang_context*)np->user;
 
   Prop *p = prop_find_kv(np->props, "form", NULL);
   const char *formstr = p ? p->u.k->v : "";

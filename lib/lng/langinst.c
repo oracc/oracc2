@@ -13,19 +13,29 @@ struct lang_context *curr_lang_ctxt = NULL;
 struct lang_context *logo_lang = NULL;
 
 static Hash *langctxt_hash;
-
+static Memo *langctxt_memo;
 extern int verbose;
 
 void
 langinst_init(void)
 {
-  langctxt_hash = hash_create(128);
+  if (!langctxt_hash)
+    {
+      langctxt_hash = hash_create(128);
+      langctxt_memo = memo_init(sizeof(struct lang_context), 8);
+    }
 }
 
 void
 langinst_term(void)
 {
-  hash_free(langctxt_hash, NULL);
+  if (langctxt_hash)
+    {
+      hash_free(langctxt_hash, NULL);
+      langctxt_hash = NULL;
+      memo_term(langctxt_memo);
+      langctxt_memo = NULL;
+    }  
 }
 
 /* Could do gvl_setup here */
@@ -35,15 +45,19 @@ lang_load(struct proj_context *p, struct lang_tag *lt)
   struct lang_context *lp = hash_find(langctxt_hash, (uccp)lt->tag);
 
   if (lp)
-    return lp;
+    {
+      assert(lp->core != NULL);
+      return lp;
+    }
 
-  hash_add(langctxt_hash, (uccp)lt->tag, lp = memo_auto(sizeof(struct lang_context)));
+  hash_add(langctxt_hash, (uccp)lt->tag, lp = memo_new(langctxt_memo));
   struct langcore *lcp = NULL;
   struct langmode *lmp = NULL;
 
   if (!(lcp = lang_core(lt->lang,strlen(lt->lang))))
     return NULL;
 
+  lp->utype = N_U_LANG;
   lp->tag = lt;
   lp->owner = p;
   lp->core = lcp;

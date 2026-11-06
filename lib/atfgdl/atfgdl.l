@@ -18,7 +18,7 @@ extern Mloc agloc;
 const char *agfile = "<stdin>";
 static int last_unmatched_line = 0;
 
-int agflextrace = 0, last_aglineno;
+int agflextrace = 0, last_aglineno = 1;
 static int s_next;
 static int linktext, tra_text;
 static char *xs;

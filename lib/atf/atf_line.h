@@ -8,12 +8,15 @@ extern void atf_line_lg(Mloc *mp);
   lnode->mloc = mloc_mloc(&l);			\
   line_register(l, ltype, lnode, lp)
 
-#define atf_line_host() \
+#define atf_free_wd_list() \
   if (curr_lem_host && curr_lem_host->wl)   \
     {					    \
       list_free(curr_lem_host->wl, NULL);   \
-      curr_lem_host->wl = NULL;		    \
+      wd_list = curr_lem_host->wl = NULL;   \
     }					    \
+
+#define atf_line_host() \
+  atf_free_wd_list() \
   curr_lem_host = curr_line
 
 #define atf_line_id() \

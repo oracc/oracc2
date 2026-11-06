@@ -7,7 +7,7 @@
 #include <gdllib.h>
 
 unsigned char *curr_line_tok;
-static Tree *curr_gdl_tree = NULL;
+/*static Tree *curr_gdl_tree = NULL;*/
 Hash *ag_hpool = NULL;
 
 void
@@ -42,7 +42,7 @@ ag_line_o_mts(Mloc l, const char *tok)
 void
 ag_line_c_mts(Mloc l)
 {
-  if  (curr_gdl_tree)
+  /*  if  (curr_gdl_tree) */
     {
       Node *w;
       nonw_found = 0;
@@ -59,7 +59,7 @@ ag_line_c_mts(Mloc l)
       if (gdl_cell_count > atf_cell_count)
 	atf_cell_count = gdl_cell_count;
       /* possibly some gdl break/state wrapup? */
-      free(curr_gdl_tree);
+      /*      free(curr_gdl_tree); */
     }
 }
 

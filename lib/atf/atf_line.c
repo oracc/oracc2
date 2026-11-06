@@ -63,11 +63,7 @@ atf_group_wrapup(void)
     }
   if (curr_lem_host)
     {
-      if (curr_lem_host->wl)
-	{
-	  list_free(curr_lem_host->wl, NULL);
-	  curr_lem_host->wl = NULL;
-	}
+      atf_free_wd_list();
       curr_lem_host = NULL;
     }
 }
@@ -245,7 +241,7 @@ line_bil(Mloc l, unsigned char *lp)
   if (curr_lem_host && curr_lem_host->wl)
     {
       list_free(curr_lem_host->wl, NULL);
-      curr_lem_host->wl = NULL;
+      wd_list = curr_lem_host->wl = NULL;
     }
   curr_lem_host = curr_line;
 
@@ -549,17 +545,13 @@ line_lem(Mloc ml, unsigned char *l)
 	{
 	  gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "lem",
 		      (ccp)pool_copy((uccp)l, atfmp->pool));
-	  atf_save_lem(w,(ccp)l); /* should be safe because GDL doesn't put data in g:w->user */
+	  atf_save_lem(w,(ccp)l);
 	}
     }
   /* This needs to be done here in case there are multiple lines that have associated #lem */
   if (curr_lem_host)
     {
-      if (curr_lem_host->wl)
-	{
-	  list_free(curr_lem_host->wl, NULL);
-	  curr_lem_host->wl = NULL;
-	}
+      atf_free_wd_list();
       curr_lem_host = NULL;
     }
   list_free(llem, NULL);

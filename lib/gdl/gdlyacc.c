@@ -492,8 +492,9 @@ gdl_new_word(Tree *ytp)
       Node *w = gdl_recycled_word;
       gdl_recycled_word = NULL;
       w->prev = w->next = NULL;
-      gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       assert(word_lang_tag != NULL);
+      gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      w->user = gdl_lang_context;
       w->rent = ytp->curr;
       ytp->curr->last = ytp->curr->kids = w;
       tree_curr(w);
@@ -556,6 +557,7 @@ gdl_new_word(Tree *ytp)
 	 carefully */
       assert(word_lang_tag != NULL);
       gdl_prop_kv(wp, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      wp->user = gdl_lang_context;
       
       /* IF FIELD NOT IN SPARSE LEM HASH */
       if (!lzr_sparse || (curr_field && hash_find(lzr_sparse, (uccp)curr_field)))
@@ -591,8 +593,10 @@ gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt)
     }
   word_lang_tag = tag;
   gdl_lang_context = lang_switch(ctxt, tag, NULL, mp ? mp->file : NULL, mp ? mp->line : 0);
+#if 0
   if (!gdl_global_context)
     gdl_global_context = gdl_lang_context;
+#endif
 }
 
 void
