@@ -413,16 +413,28 @@ gdl_cell(Tree *ytp, const char *span)
 
   if (!(ancestor = node_ancestor_or_self(ytp->curr, "c")))
     {
-      cp = tree_node(ytp, NS_GDL, "c", ytp->root->depth+1, NULL);
+      ancestor = node_ancestor_or_self(ytp->curr, "l");
+
+      if (!ancestor)
+	{
+	  if (!strcmp(ytp->root->name, "g:gdl"))
+	    ancestor = ytp->root;
+	  else
+	    {
+	      mesg_verr(ytp->curr->mloc, "internal error: misplaced attempt to insert field node via gdl_field");
+	      ancestor = ytp->root->kids;
+	    }
+	}
+
+      cp = tree_node(ytp, NS_GDL, "c", ancestor->depth+1, NULL);
       gdl_prop(cp, GP_IMPLICIT, PG_GDL_INFO);
       gdl_prop_kv(cp, GP_ATTRIBUTE, PG_GDL_INFO, "span", "1");
-      /* NB: This assumes GDL parser will never be embedded in another grammar */
-      (void)node_insert(ytp->root, cp);
-      tree_curr(ytp->root);
+      (void)node_insert(ancestor, cp);
+      tree_curr(ancestor);
     }
   else
     tree_curr(ancestor->rent);
-  cp = tree_add(ytp, NS_GDL, "c", ytp->root->depth+1, NULL);
+  cp = tree_add(ytp, NS_GDL, "c", ancestor->depth+1, NULL);
   gdl_prop_kv(cp, GP_ATTRIBUTE, PG_GDL_INFO, "span", (ccp)pool_copy((uccp)span, ytp->tm->pool));
   tree_curr(cp);
 }
@@ -644,13 +656,24 @@ gdl_field(Tree *ytp, const char *ftype)
     {
       Node *cellp = node_ancestor_or_self(ytp->curr, "c");
       
+      if (!cellp)
+	cellp = node_ancestor_or_self(ytp->curr, "l");
+
+      if (!cellp)
+	{
+	  if (!strcmp(ytp->root->name, "g:gdl"))
+	    cellp = ytp->root;
+	  else
+	    {
+	      mesg_verr(ytp->curr->mloc, "internal error: misplaced attempt to insert field node via gdl_field");
+	      cellp = ytp->root->kids;
+	    }
+	}
+
       fp = tree_node(ytp, NS_GDL, "f", ytp->root->depth+1, NULL);
       gdl_prop(fp, GP_IMPLICIT, PG_GDL_INFO);
       gdl_prop_kv(fp, GP_ATTRIBUTE, PG_GDL_INFO, "type", "default");
 
-      /* NB: This assumes GDL parser will never be embedded in another grammar */
-      if (!cellp)
-	cellp = ytp->root;
       (void)node_insert(cellp, fp);
       tree_curr(cellp);
     }
