@@ -4,6 +4,8 @@
 #include <tree.h>
 #include "gdllib.h"
 
+static Pool *brackhpool;
+
 /* Set to 0 to get [# ... #] half-bracket indicators and 1 to omit them */
 static int gs_brack_start = 1;
 
@@ -100,9 +102,15 @@ gdlstate_rawxml(FILE *fp, gdlstate_t sp)
 }
 
 void
+gdlstate_props_pool(Pool *p)
+{
+  brackhpool = p;
+}
+
+void
 gdlstate_props(Node *np, gdlstate_t sp)
 {
-  int i, canary = 0;
+  int i/*, canary = 0*/;
 
   if (!strcmp(np->rent->name, "g:n"))
     np = np->rent;
@@ -127,8 +135,11 @@ gdlstate_props(Node *np, gdlstate_t sp)
     }  
   
   gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:status", status);
+
+#if 0
   if (canary)
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "canary", "g:n");
+#endif
 
   if (gs_is(sp, gs_damaged_o))
     gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:ho", "1");
@@ -143,14 +154,14 @@ gdlstate_props(Node *np, gdlstate_t sp)
 
   gs_bracko(sp);
   if (*brackobuf)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:o", (ccp)pool_copy((uccp)brackobuf, gdlpool));
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:o", (ccp)pool_copy((uccp)brackobuf, brackhpool));
   
   gs_brackc(sp);
   if (*brackcbuf)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:c", (ccp)pool_copy((uccp)brackcbuf, gdlpool));
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:c", (ccp)pool_copy((uccp)brackcbuf, brackhpool));
 
   if (*brackobufa)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "atf:o", (ccp)pool_copy((uccp)brackobufa, gdlpool));
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "atf:o", (ccp)pool_copy((uccp)brackobufa, brackhpool));
   if (*brackcbufa)
-    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "atf:c", (ccp)pool_copy((uccp)brackcbufa, gdlpool));
+    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "atf:c", (ccp)pool_copy((uccp)brackcbufa, brackhpool));
 }

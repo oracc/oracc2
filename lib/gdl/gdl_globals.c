@@ -9,6 +9,7 @@ static GDL GDL_defaults = { .deep_parse_ = 1, .gdl_unicode_ = 1, .word_lang_tag_
 /* multiple gdl instances share this */
 int gdlflextrace = 0;
 static int gdl_initted = 0;
+static Pool *gdllib_hpool;
 
 const char *gdl_lexnames[128] = {
   ['"'] = "!pr",
@@ -318,12 +319,13 @@ gdl_rem_nonw(List *wds)
 void
 gdllib_init(void)
 {
+  extern void gdlstate_props_pool(Pool *p);
   if (gdl_initted++)
     return;
 
   lang_init();
   langtag_init();
-
+  gdlstate_props_pool((gdllib_hpool = hpool_init()));
   lmemo_init();
 }
 
@@ -335,6 +337,8 @@ gdllib_term(void)
       gdl_initted = 0;
       lang_term();
       langtag_term();
+      pool_term(gdllib_hpool);
+      gdllib_hpool = NULL;
     }
 }
 
