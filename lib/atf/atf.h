@@ -369,7 +369,7 @@ extern void line_var(Mloc l, unsigned char *lp);
 extern void tr_inter(Mloc l, unsigned char *lp);
 extern void line_lem(Mloc l, unsigned char *lp);
 extern void line_note(Mloc l, const char *ltext);
-extern void line_register(Mloc l, Linet lt, Node *np, unsigned char *lp);
+extern void line_register(Mloc l, Linet lt, Node *np);
 
 extern void atf_group_wrapup(void);
 

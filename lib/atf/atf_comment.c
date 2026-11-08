@@ -30,7 +30,7 @@ etcsl_comment(Mloc l, char *text)
   if (atfmp->llines)
     {
       np = atf_node("nonx", &l);
-      line_register(l, LT_DOLLAR, np, (ucp)text);
+      line_register(l, LT_DOLLAR, np);
     }
   else
     np = atf_add("nonx", &l);

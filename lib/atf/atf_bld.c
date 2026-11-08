@@ -14,7 +14,10 @@ static int etcsl_error_reported;
 extern void ag_bp_reset(void);
 
 static void atf_bld_protocols(Mloc *lp, const char *scope);
+
+#if 0
 static unsigned char *proto_line(Protocol *p, const char *str);
+#endif
 
 int in_preamble;
 
@@ -146,7 +149,7 @@ atf_bld_bib(Mloc l, const char *ltext)
   if (atfmp->llines)
     {
       np = atf_node("protocol", &l);
-      line_register(l, LT_PROTOCOL, np, (ucp)ltext);
+      line_register(l, LT_PROTOCOL, np);
     }
   else
     {
@@ -284,6 +287,7 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   atf_input(l, LT_XLINK, lp);
 }
 
+#if 0
 static unsigned char *
 proto_line(Protocol *p, const char *str)
 {
@@ -292,6 +296,7 @@ proto_line(Protocol *p, const char *str)
   sprintf(buf, "%s%s", proto, str);
   return (uchar*)memo_dup(buf);
 }
+#endif
 
 static void
 abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
@@ -312,7 +317,7 @@ abt_add_protocol(Mloc *lp, Protocol *p, const char *scope, const char *str)
       if (atfmp->llines)
 	{
 	  np = atf_node("protocol", lp);
-	  line_register(*lp, LT_PROTOCOL, np, proto_line(p, str));
+	  line_register(*lp, LT_PROTOCOL, np);
 	}
       else
 	{

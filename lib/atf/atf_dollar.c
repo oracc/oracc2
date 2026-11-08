@@ -192,7 +192,7 @@ atf_dollar(Mloc l, char *rest)
 	  if (atfmp->llines && nonx_attach == B_LINE)
 	    {
 	      np = atf_node("nonx", &l);
-	      line_register(l, LT_DOLLAR, np, (ucp)rest);
+	      line_register(l, LT_DOLLAR, np);
 	    }
 	  else
 	    {

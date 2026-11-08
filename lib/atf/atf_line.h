@@ -6,7 +6,7 @@ extern void atf_line_lg(Mloc *mp);
 #define atf_line_node(ltype)			\
   struct node *lnode = atf_push("l", &l);	\
   lnode->mloc = mloc_mloc(&l);			\
-  line_register(l, ltype, lnode, lp)
+  line_register(l, ltype, lnode)
 
 #define atf_free_wd_list() \
   if (curr_lem_host && curr_lem_host->wl)   \
@@ -67,5 +67,12 @@ extern void atf_line_lg(Mloc *mp);
       register_label(clid,label);					\
       curr_line_label = ucc(label);					\
     }
+
+#define atf_lg_guard() \
+  Node *lg = node_ancestor_or_self(abt->curr, "lg");	\
+  if (!lg)						\
+    mesg_verr(&l, "misplaced line type: need a '<LINE>. ' first");	\
+  else									\
+    tree_curr(lg)
 
 #endif/*ATF_LINE_H_*/

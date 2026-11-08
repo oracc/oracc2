@@ -46,7 +46,7 @@ atf_save_lem(Node *np, const char *lemstr)
 	  form->f2.core = langcore_of(lang);
 	  if (strstr(lang,"949"))
 	    BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
-      form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
+	  form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
 	}
     }
 

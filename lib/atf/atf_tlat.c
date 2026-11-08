@@ -220,7 +220,7 @@ atr_inter(Mloc l, unsigned char *s)
     ++t;
   
   /* add ref to current translatable line (LINE_MTS or LINE_BIL) */
-  line_register(l, LT_INTER, np, (ucp)t);
+  line_register(l, LT_INTER, np);
   /* process contents as inline setting using the new np as the parent */
   atr_inline(&l, np, (ucp)t);
 }

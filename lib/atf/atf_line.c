@@ -8,9 +8,9 @@
 #include "symbolattr.h"
 #include "etcsl.h"
 
-int already_lemmed = 0;
 int atf_cell_count = 0;
 #if 0
+int already_lemmed = 0;
 int line_trace = 0;
 #endif
 int suppress_lem = 0;
@@ -103,7 +103,7 @@ atf_line_lg(Mloc *mp)
 }
 
 void
-line_register(Mloc l, Linet lt, Node *np, unsigned char *lp)
+line_register(Mloc l, Linet lt, Node *np)
 {
   if (lt >= LINE_MTS)
     ++line_lines;
@@ -131,6 +131,33 @@ line_register(Mloc l, Linet lt, Node *np, unsigned char *lp)
 
   list_add(atfmp->llines, curr_line);
 }
+
+void
+v_register(const char *id)
+{
+  if (!id)
+    {
+      if (vreg)
+	{
+	  hash_free(vreg, NULL);
+	  vreg = NULL;
+	}
+      return;
+    }
+
+  if (!vreg)
+    vreg = hash_create(128);
+  uintptr_t v = (uintptr_t)hash_find(vreg, (uccp)id);
+  if (!v)
+    hash_add(vreg, pool_copy((uccp)id, atfmp->pool), (void*)(uintptr_t)1);
+  else
+    {
+      /*fprintf(stderr, "adding to vreg id=%s; v => %lu\n", id, v+1);*/
+      hash_add(vreg, hash_exists(vreg, (uccp)id), (void*)++v);
+    }
+}
+
+#if 0
 
 void
 line_mts(Mloc l, unsigned char *lp)
@@ -231,6 +258,7 @@ line_mts(Mloc l, unsigned char *lp)
 #endif
 }
 
+#if 0
 void
 line_bil(Mloc l, unsigned char *lp)
 {
@@ -251,7 +279,6 @@ line_bil(Mloc l, unsigned char *lp)
   already_lemmed = 0;
   note_initialize_line();
   atf_xprop(lnode,"type","bil");
-#if 0
   while (*s && isspace(*s))
     ++s;
   if (s < end)
@@ -380,31 +407,6 @@ compute_fragid(const char *qualid, const char *hlid)
   return NULL;
 }
 
-void
-v_register(const char *id)
-{
-  if (!id)
-    {
-      if (vreg)
-	{
-	  hash_free(vreg, NULL);
-	  vreg = NULL;
-	}
-      return;
-    }
-
-  if (!vreg)
-    vreg = hash_create(128);
-  uintptr_t v = (uintptr_t)hash_find(vreg, (uccp)id);
-  if (!v)
-    hash_add(vreg, pool_copy((uccp)id, atfmp->pool), (void*)(uintptr_t)1);
-  else
-    {
-      /*fprintf(stderr, "adding to vreg id=%s; v => %lu\n", id, v+1);*/
-      hash_add(vreg, hash_exists(vreg, (uccp)id), (void*)++v);
-    }
-}
-
 /* This is called for both exemplar (^A: ) and variant (^:31v1.1: ) */
 void
 line_var(Mloc l, unsigned char *lp)
@@ -500,6 +502,8 @@ line_var(Mloc l, unsigned char *lp)
 #endif
 }
 
+#endif
+
 void
 line_lem(Mloc ml, unsigned char *l)
 {
@@ -569,7 +573,7 @@ line_note(Mloc l, const char *ltext)
   if (atfmp->llines)
     {
       np = atf_node("note:text", &l);
-      line_register(l, LT_NOTE, np, (ucp)ltext);
+      line_register(l, LT_NOTE, np);
     }
   else
     {
