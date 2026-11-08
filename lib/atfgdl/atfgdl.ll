@@ -229,15 +229,15 @@ NOTEMARK	"^"[0-9]+"^"
 
 <INITIAL,A>^{LK_VBAR}  			{ BEGIN s_T; longinit; return LNK_VBAR; }
 
-<INITIAL,A>^[^ #@$\t\n\r]+\./[ \t\n\r]+        	{ BEGIN 0; return MTS; }
+<INITIAL,A>^[^ #@$\t\n\r]+\./[ \t\n\r]+	{ BEGIN 0; return MTS; }
 
-<INITIAL,A>^[^ #@$\t\n\r]+:/[ \t\n\r]+        	{ BEGIN 0; return EXX; }
+<INITIAL,A>^[^ #@$\t\n\r]+:/[ \t\n\r]+	{ BEGIN 0; return EXX; }
 
 <INITIAL,A>^:[^:#@$]+:[ \t]+	       	{ BEGIN 0; return VAR; }
 
-<INITIAL,A>^== 				{ BEGIN s_T; agsave; return BIL; }
+<INITIAL,A>^== 				{ BEGIN 0; return BIL; }
 
-<INITIAL,A>^#   				{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
+<INITIAL,A>^#   		       	{ BEGIN s_T; return in_preamble ? PRO_COMMENT : COMMENT; }
 
 <s_TRD>("labeled"|"parallel"|"unitary")	{ agsave; tra_text=0; return TR_TYPE; }
 <s_TRD>{LANG}				{ agsave; s_next=s_TRD; BEGIN s_WORD; return TR_LANG; }

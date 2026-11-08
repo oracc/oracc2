@@ -6,8 +6,8 @@
 #include <otf-defs.h>
 #include <gdllib.h>
 
+int already_lemmed = 0;
 unsigned char *curr_line_tok;
-/*static Tree *curr_gdl_tree = NULL;*/
 Hash *ag_hpool = NULL;
 
 void
@@ -22,14 +22,11 @@ ag_gdl_handoff(Mloc *mp, Node *lnode)
   gdl_set_ids(clid, 1);
 
   wd_list = list_create(LIST_SINGLE);
-
-  /*curr_gdl_tree = gdlparse_atfgdl(mp, abt, lnode);*/
 }
 
 void
 ag_line_o_mts(Mloc l, const char *tok)
 {
-  unsigned char *lp = NULL; /* for compatibility with old atf.l routines */
   atf_line_lg(&l);
   atf_line_node(LINE_MTS);
   atf_line_host();
@@ -40,27 +37,52 @@ ag_line_o_mts(Mloc l, const char *tok)
 }
 
 void
+ag_line_o_bil(Mloc l)
+{
+  atf_lg_guard();
+  atf_line_node(LINE_BIL);
+  atf_line_host();
+  already_lemmed = 0;
+  note_initialize_line();
+  atf_xprop(lnode,"type", "bil");
+  ag_gdl_handoff(lnode->mloc, lnode);
+}
+
+#define ag_common_c() \
+  Node *w;	      \
+  nonw_found = 0;						\
+  for (w = list_first(wd_list); w; w = list_next(wd_list))	\
+    gdl_word_attr(w);						\
+  if (nonw_found)						\
+    wd_list = gdl_rem_nonw(wd_list);				\
+  curr_line->wl = gdl_get_word_list();				\
+  if (gdl_cell_count > atf_cell_count)				\
+    atf_cell_count = gdl_cell_count
+
+void
 ag_line_c_mts(Mloc l)
 {
-  /*  if  (curr_gdl_tree) */
-    {
-      Node *w;
-      nonw_found = 0;
+  Node *w;
+  nonw_found = 0;
 
-      for (w = list_first(wd_list); w; w = list_next(wd_list))
-	gdl_word_attr(w);
+  for (w = list_first(wd_list); w; w = list_next(wd_list))
+    gdl_word_attr(w);
 
-      if (nonw_found)
-	wd_list = gdl_rem_nonw(wd_list);
+  if (nonw_found)
+    wd_list = gdl_rem_nonw(wd_list);
 
-      /*curr_words = */curr_line->wl = gdl_get_word_list();
-      /* gdl_cell_count is the number of times gdl_cell was
-	 called, i.e., one less than the number of columns */
-      if (gdl_cell_count > atf_cell_count)
-	atf_cell_count = gdl_cell_count;
-      /* possibly some gdl break/state wrapup? */
-      /*      free(curr_gdl_tree); */
-    }
+  curr_line->wl = gdl_get_word_list();
+  /* gdl_cell_count is the number of times gdl_cell was
+     called, i.e., one less than the number of columns */
+  if (gdl_cell_count > atf_cell_count)
+    atf_cell_count = gdl_cell_count;
+  /* possibly some gdl break/state wrapup? */
+}
+
+void
+ag_line_c_bil(Mloc l)
+{
+  ag_common_c();
 }
 
 void
@@ -75,11 +97,6 @@ ag_line_o_gus(Mloc l)
 
 void
 ag_line_o_var(Mloc l)
-{
-}
-
-void
-ag_line_o_bil(Mloc l)
 {
 }
 
@@ -100,11 +117,6 @@ ag_line_c_gus(Mloc l)
 
 void
 ag_line_c_var(Mloc l)
-{
-}
-
-void
-ag_line_c_bil(Mloc l)
 {
 }
 
