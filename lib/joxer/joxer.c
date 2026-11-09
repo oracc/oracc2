@@ -1033,6 +1033,7 @@ joxer_term(FILE *xfp, FILE *jfp)
       xgi_stack = NULL;
     }
   rnvif_term();
+  rnvval_term();
   jox_xml_output(NULL);
   jox_jsn_output(NULL);
 }
