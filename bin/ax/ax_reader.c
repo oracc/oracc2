@@ -65,6 +65,7 @@ ax_read(const char *proj, enum axr_source from, void *list)
     }
   /*axr_term(rip);*/
   pool_term(rip->pool);
+  free(rip->input_buf);
 }
 
 void
