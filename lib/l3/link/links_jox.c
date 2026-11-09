@@ -26,7 +26,7 @@ hashify(const char *ref)
 {
   char buf[strlen(ref)+2];
   sprintf(buf, "#%s", ref);
-  return strdup(buf);
+  return memo_dup(buf);
 }
 
 void

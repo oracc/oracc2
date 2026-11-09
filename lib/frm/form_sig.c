@@ -365,5 +365,5 @@ form_psu_sig(Pool *p, Form *fp)
   else
     sprintf((char*)psu_buf,"{%s}::",fp->psu_ngram);
 
-  return (ucp)strdup((ccp)psu_buf);
+  return (ucp)memo_dup((ccp)psu_buf);
 }
