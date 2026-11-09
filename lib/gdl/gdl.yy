@@ -41,11 +41,11 @@ GDLLTYPE gdllloc;
 		grapheme scgrapheme compound simplexg valuqual
 		glosso glossc
 
-%start gdl.line
+%start gdl
 
 %%
 
-gdl.line: { ynp = gdl_new_word(tcurr); } lineparts
+gdl: lineparts
 	;
 
 lineparts:
