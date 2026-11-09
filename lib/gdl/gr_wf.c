@@ -104,11 +104,24 @@ grf(g)(Node *np, FILE *fp)
 	  for (k = np->kids; k; k = k->next)
 	    gdlr_node(k, fp);
 	}
-      else
+      else if (np->text)
 	gdlr_text(np, fp);
+      else
+	{
+	  Node *k;
+	  for (k = np->kids; k; k = k->next)
+	    gdlr_node(k, fp);
+	}
     }
+  else if (np->text)
+    gdlr_text(np, fp);
   else
-    gdlr_text(np, fp);    
+    {
+      Node *k;
+      for (k = np->kids; k; k = k->next)
+	gdlr_node(k, fp);
+    }
+
   return 0;
 }
 
