@@ -29,6 +29,7 @@ extern void yyerror(const char *);
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
 
+%token <i> 'n'
 %token <text> FTYPE	258
 %token <text> LANG	259
 %token <text> TEXT	260
@@ -583,7 +584,7 @@ space:
 	  SPACE						{ gdl_hc(0); ynp = gdl_new_word(ytp);
 	    						  /*gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
 	      						    "literal", aglval.text); */ }
-	| '\n'						{ gdl_line_wrapup(@1); }
+	| 'n'						{ gdl_line_wrapup(@1); }
 	| END						{ gdl_balance_flush(&@1); }
 	;
 

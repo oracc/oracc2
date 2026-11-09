@@ -31,6 +31,8 @@ GDLLTYPE gdllloc;
 
 %union { char *text; int i; struct node *node; }
 
+%token <i> 'n'
+
 %token <text> FTYPE	258
 %token <text> LANG	259
 %token <text> TEXT	260
@@ -182,7 +184,7 @@ space:
 	  SPACE						{ gdl_hc(0); ynp = gdl_new_word(ytp);
 	    						  /*gdl_prop_kv(ynp, GP_ATTRIBUTE, PG_GDL_INFO,
 	      						    "literal", gdllval.text); */ }
-	| '\n'						{ gdl_line_wrapup(@1); }
+	| 'n'						{ gdl_line_wrapup(@1); }
 	| END						{ gdl_balance_flush(&@1); }
 	;
 
@@ -398,6 +400,22 @@ glossc:
 	;
 
 %%
+
+#if 0
+	/* We need this to give gdl_meta access to the tree when there is no lgp set */
+Tree *
+gdl_get_tree(void)
+{
+  return ytp;
+}
+
+void
+gdl_set_tree(Tree *tp)
+{
+  ytp = tp;
+  ynp = gdl_new_word(ytp);
+}
+#endif
 
 void
 gdlerror(const char *e)

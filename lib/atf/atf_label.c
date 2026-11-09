@@ -275,7 +275,7 @@ check_label(Mloc *mp, unsigned const char *lab,
 {
   unsigned const char *hashdata = (xid ? xid : (unsigned const char *)"nowt"), *labelp;
   void *ok = NULL;
-  extern int start_lnum;
+  /*extern int start_lnum;*/
   if (!lab || !*lab)
     {
       static unsigned char default_ret[64];

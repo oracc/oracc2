@@ -272,6 +272,10 @@ destfile(void)
     }
   else
     {
+      if (outfile)
+	fclose(outfile);
+      outfile = NULL;
+      output_ok = 0;
       xtf_used = 0;
     }
 }
