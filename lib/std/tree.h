@@ -13,7 +13,6 @@ typedef nscode nsrefs[NS_LAST];
 
 typedef struct treemem
 {
-  Memo *tree_mem;
   Memo *node_mem;
   Memo *prop_mem;
   Memo *keva_mem;

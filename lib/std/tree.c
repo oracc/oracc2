@@ -8,7 +8,6 @@ Treemem *
 tmem_init(void)
 {
   Treemem *tmem = calloc(1, sizeof(struct treemem));
-  tmem->tree_mem = memo_init(sizeof(Tree), 1024);
   tmem->node_mem = memo_init(sizeof(Node), 1024);
   tmem->prop_mem = memo_init(sizeof(Prop), 1024);
   tmem->keva_mem = memo_init(sizeof(Keva), 1024);
@@ -21,7 +20,6 @@ tmem_init(void)
 void
 tmem_reset(Treemem *tmem)
 {
-  memo_reset(tmem->tree_mem);
   memo_reset(tmem->node_mem);
   memo_reset(tmem->prop_mem);
   memo_reset(tmem->keva_mem);
