@@ -1,6 +1,6 @@
 #ifndef POOL_H_
 #define POOL_H_ 1
-#define POOL_BLOCK_SIZE        (8192*8)
+#define POOL_BLOCK_SIZE        8192
 #define POOL_OWN_BLOCK_CUTOFF 	128
 
 #include <stdlib.h>

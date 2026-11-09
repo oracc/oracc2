@@ -17,6 +17,19 @@ tmem_init(void)
   return tmem;
 }
 
+Treemem *
+tmem_init_mini(void)
+{
+  Treemem *tmem = calloc(1, sizeof(struct treemem));
+  tmem->node_mem = memo_init(sizeof(Node), 128);
+  tmem->prop_mem = memo_init(sizeof(Prop), 128);
+  tmem->keva_mem = memo_init(sizeof(Keva), 128);
+  tmem->mloc_mem = memo_init(sizeof(Mloc), 128);
+  tmem->pool = pool_init();
+  tmem->pooh = hpool_init();
+  return tmem;
+}
+
 void
 tmem_reset(Treemem *tmem)
 {
@@ -48,6 +61,14 @@ tree_init(void)
 {
   Tree *tp = calloc(1, sizeof(Tree));
   tp->tm = tmem_init();
+  return tp;
+}
+
+Tree *
+tree_init_mini(void)
+{
+  Tree *tp = calloc(1, sizeof(Tree));
+  tp->tm = tmem_init_mini();
   return tp;
 }
 

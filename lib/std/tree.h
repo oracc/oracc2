@@ -81,6 +81,7 @@ typedef nodehandler nodehandlers[NS_LAST];
 extern void nodeh_register(nodehandlers nh, nscode c, nodehandler fnc);
 
 extern Tree *tree_init(void);
+extern Tree *tree_init_mini(void);
 extern Tree *tree_init_mem(Treemem *tmp);
 extern void tree_reset(Tree *tp);
 extern void tree_term(Tree *tp);

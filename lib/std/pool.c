@@ -181,7 +181,7 @@ hpool_reset(Pool *hp)
     {
       if (hp->h)
 	hash_free(hp->h, NULL);
-      hp->h = hash_create(2048);
+      hp->h = hash_create(1024);
     }
 }
 
@@ -286,7 +286,7 @@ Pool *
 hpool_init(void)
 {
   Pool *p = pool_init();
-  p->h = hash_create(2048);
+  p->h = hash_create(1024);
   return p;
 }
 

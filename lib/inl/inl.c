@@ -283,7 +283,7 @@ inl(Mloc *mp, char *s)
   Tree *tp = NULL;
   if (s && *s)
     {
-      tp = tree_init();
+      memo_list(tp = tree_init_mini());
       /*tree_ns_default(tp, NS_INL);*/
       tree_root(tp, NS_INL, "inl", 0, NULL);
       tp->rootless = 1;
