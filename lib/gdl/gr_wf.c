@@ -116,9 +116,11 @@ grf(g)(Node *np, FILE *fp)
 int
 grf(G)(Node *np, FILE *fp)
 {
+#if 0
   Node *k;
   for (k = np->kids; k; k = k->next)
-    gdlr_node(k, fp);  
+    gdlr_node(k, fp);
+#endif
   return 0;
 }
 
@@ -288,6 +290,7 @@ gdlr_ascii_funcs(GDLR_config *cp)
   (*cp)['o'] = ;
 }
 #endif
+
 static Prop *
 gdl_wf_deep_delim(Node *c)
 {
@@ -321,7 +324,8 @@ gr_node_wf(Node *np, FILE *fp)
 	      else
 		mesg_verr(np->mloc, "gr_node_wf: unhandled g: node %s", np->name);
 	    }
-	  if (np->next && 'w' != np->name[2]) /* cheat for g:w */
+	  if ((np->next && 'w' != np->name[2]) /* cheat for g:w */
+	      || (!np->next && !strcmp(np->rent->name, "g:gg")))
 	    {
 	      Prop *d = prop_find_kv(np->props, "g:delim", NULL);
 	      if ((!gs_is(n, gs_excised) || np->next->next)
