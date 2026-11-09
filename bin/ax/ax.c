@@ -162,7 +162,7 @@ ax_input(char *atf, size_t len)
 	  status = 0;
 	}
       ax_input_term();
-      tree_free(tp);
+      tp = NULL; /* abt is tree_term()ed in atf_term */
       if (memuse_mode)
 	{
 	  fprintf(stderr, "%s processing complete\n", P);

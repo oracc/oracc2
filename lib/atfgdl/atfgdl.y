@@ -29,7 +29,7 @@ extern void yyerror(const char *);
 
 %union { char *text; int i; struct node *node; Blocktok *b; }
 
-%token <i> 'n'
+%token <i> '\n'
 %token <text> FTYPE	258
 %token <text> LANG	259
 %token <text> TEXT	260

@@ -101,6 +101,7 @@ atf_term(void)
   label_term();
   note_term();
   tree_term(abt);
+  abt = NULL;
 }
 
 void
