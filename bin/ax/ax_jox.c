@@ -125,6 +125,7 @@ ax_jox(Tree *tp)
       ax_jox_node(tp->root);
       joxer_term(atf_files.xtf_fp,NULL);
       fclose(atf_files.xtf_fp);
+      atf_files.xtf_fp = NULL;
       if (curr_trans && curr_trans->tree->root->kids)
 	ax_jox_tra();
     }
@@ -169,7 +170,10 @@ ax_outputs(void)
   if (atf_files.tra && !(atf_files.tra_fp = xfopen(atf_files.tra, "w")))
     {
       if (atf_files.xtf_fp)
-	xfclose(atf_files.xtf, atf_files.xtf_fp);
+	{
+	  xfclose(atf_files.xtf, atf_files.xtf_fp);
+	  atf_files.xtf_fp = NULL;
+	}
       return 1;
     }
 

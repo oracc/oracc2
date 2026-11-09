@@ -66,9 +66,7 @@ void
 ax_input_term(void)
 {
   atf_term();
-  rnvval_term();
   xmd_term();
-  inl_term();
   mesg_print(stderr);
   mesg_term();
   inl_term();
@@ -194,6 +192,7 @@ ax_full_term(void)
   run_term(rp);
   xcl_final_term();
   lnstr_term();
+  rnvval_term();
   gdllib_term();
 }
 
