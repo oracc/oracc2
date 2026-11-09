@@ -75,6 +75,7 @@ ax_input_term(void)
 void
 ax_input(char *atf, size_t len)
 {
+  static char P[8];
   xmd_ignore_missing = 1;
   mesg_init();
   form_init();
@@ -96,9 +97,7 @@ ax_input(char *atf, size_t len)
 
   if (!atfp)
     return;
-  else
-
-  if (!tp)
+  else if (!tp)
     return;
   
   if (!atfp->project)
@@ -107,6 +106,9 @@ ax_input(char *atf, size_t len)
       ax_input_term();
       return;
     }
+  else
+    strcpy(P, atfp->pqx);
+
   proj_init(rp, (ccp)atfp->project);
   XCL *xp = NULL;
   List *ap = NULL;
@@ -160,6 +162,11 @@ ax_input(char *atf, size_t len)
 	  status = 0;
 	}
       ax_input_term();
+      if (memuse_mode)
+	{
+	  fprintf(stderr, "%s processing complete\n", P);
+	  currmem(stderr);
+	}
     }
 }
 
@@ -311,8 +318,7 @@ opts(int opt, const char *arg)
        lem_mode = xcl_output = xml_output = 1;
       break;
     case 'm':
-      if (i_am_linux)
-	memuse_mode = 1;
+      memuse_mode = 1;
       break;
     case 'p':
       project = optarg;
