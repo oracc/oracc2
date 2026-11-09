@@ -32,10 +32,12 @@ currmem_linux(FILE *fp)
   vm = (vm_pages * page_size_bytes) / (1024 * 1024);
   rss = (rss_pages * page_size_bytes) / (1024 * 1024);
 
+#if 0
   if (vm_arg)
     *vm_arg = vm;
   if (rss_arg)
     *rss_arg = rss;
+#endif
 
   if (fp)
     fprintf(fp, "Current Memory:  Virtual=%lu MB; Physical RAM (RSS): %lu MB\n", vm, rss);
