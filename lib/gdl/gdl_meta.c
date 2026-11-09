@@ -339,6 +339,7 @@ gdl_lang_tag(Mloc *mlp, const char *data)
   if (!strcmp(tcurr->curr->name, "g:w") || !strcmp(tcurr->curr->name, "n:w"))
     {
       gdl_prop_kv(tcurr->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
+      tcurr->curr->user = gdl_lang_context;
       if (gdl_lang_context->tag->scode != stc_SAC)
 	tcurr->curr->name = "n:w";
     }

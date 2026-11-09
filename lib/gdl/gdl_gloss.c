@@ -1,5 +1,6 @@
 #include <oraccsys.h>
 #include <stck.h>
+#include <lng.h>
 #include "gdl.tab.h"
 #include "gdllib.h"
 #include "gdlstream.h"
@@ -74,8 +75,13 @@ gdl_gloss_o(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
     glosstck = stck_init(3);
 
   /* track word_lang_tag on entry to the gloss in np->user */
+  /* 20261109: lang context is now already in ret->user so leave that as it is */
+#if 1
+  ret->user = (void*)gdl_lang_context;
+#else
   ret->utype = N_U_STR;
   ret->user = (void*)word_lang_tag;
+#endif
   stck_push(glosstck, (intptr_t)ret);
 
   /* For now we always start a new word at start of g:gloss--it is
@@ -103,9 +109,12 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
       /* We don't need to do anything with this popped container
 	 because we access it via stck_peek in gdl_new_word */
       ret = (Node *)stck_pop(glosstck);
-      word_lang_tag = ret->user;
+      gdl_lang_context = ret->user;
+      word_lang_tag = gdl_lang_context->fulltag;
+#if 0
       ret->utype = N_U_NODE;
       ret->user = NULL;
+#endif
 
       if (glosstck->top < 0)
 	{
@@ -176,7 +185,7 @@ gdl_surro(void)
    * 2026-10-23: test for lgp=g:c now that g:c handling has changed
    */
   if (lgp
-      && strcmp(lgp->name, "g:c")
+      /*&& strcmp(lgp->name, "g:c")*/
       && ((strcmp(lgp->tree->curr->name, "g:w")&&strcmp(lgp->tree->curr->name, "n:w"))
 	  || lgp->tree->curr->kids))
     {

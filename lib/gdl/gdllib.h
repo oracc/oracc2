@@ -9,6 +9,8 @@
 /* Definitions and variables that don't need to be local to the GDL
    parser instance */
 
+extern const char *gdlfile;
+extern int gdllineno;
 extern int gdl_no_xml_ids;
 extern int gdltrace, gdl_legacy, gdl_legacy_hash, gdl_orig_mode, gdl_word_mode, gvl_no_mesg_add;
 extern int gdl_flex_debug, gdldebug;

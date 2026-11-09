@@ -521,6 +521,7 @@ gdl_new_word(Tree *ytp)
       assert(word_lang_tag != NULL);
       gdl_prop_kv(ytp->curr, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", word_lang_tag);
       retnode = ytp->curr;
+      retnode->user = gdl_lang_context;
       /* If this is an empty word followed by a field it may have
 	 been added to wd_list before the field code changed;
 	 check it's valid, and if it isn't then remove it */
