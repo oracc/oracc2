@@ -68,6 +68,7 @@ atf_term(void)
   list_free(atfmp->lprotocols, NULL);
   list_free(atfmp->llinks, NULL);
   list_free(atfmp->lkeys, NULL);
+  list_free(atfmp->label_xmlid, NULL);
   memo_term(atfmp->matfls);
   memo_term(atfmp->mbibs);
   memo_term(atfmp->mblocks);
@@ -132,17 +133,17 @@ atf_wrapup(Wheret where)
       if (list_len(atfmp->lkeys))
 	{
 	  atfp->keys = (Key**)list2array_c(atfmp->lkeys, &atfp->nkeys);
-	  list_reset(atfmp->lkeys);
+	  atfmp->lkeys = list_reset(atfmp->lkeys);
 	}
       if (list_len(atfmp->llinks))
 	{
 	  atfp->links = (Xlink**)list2array_c(atfmp->llinks, &atfp->nlinks);
-	  list_reset(atfmp->llinks);
+	  atfmp->llinks = list_reset(atfmp->llinks);
 	}
       if (list_len(atfmp->lprotocols))
 	{
 	  atfp->protocols = (Protocol**)list2array_c(atfmp->lprotocols, &atfp->nprotocols);
-	  list_reset(atfmp->lprotocols);
+	  atfmp->lprotocols = list_reset(atfmp->lprotocols);
 	}
       atf_clear_protocols();
       in_preamble = 0;

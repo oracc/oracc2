@@ -103,12 +103,15 @@ list_add_list(List *lp1,List*lp2)
   return lp1;
 }
 
+/* 20261109: for as long as it has existed this function has been a
+   memleak; it's still a memleak when the list data is allocated
+   memory but that might not ever happen in the O2 codebase */
 List *
 list_reset(List *lp)
 {
-  lp->count = 0;
-  lp->first = lp->last = NULL;
-  return lp;
+  List_types_e t = lp->type;
+  list_free(lp, NULL);
+  return list_create(t);
 }
 
 List *

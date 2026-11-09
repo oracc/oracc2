@@ -243,7 +243,7 @@ gdl_modq_init(void)
 void
 gdl_modq_reset(void)
 {
-  list_reset(modq);
+  modq = list_reset(modq);
 }
 
 void
@@ -276,6 +276,7 @@ void
 gdl_modq_term(void)
 {
   list_free(modq, NULL);
+  modq = NULL;
 }
 
 void

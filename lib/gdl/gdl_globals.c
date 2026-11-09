@@ -383,4 +383,5 @@ gdl_GDL_free(GDL *gp)
     memo_term(gp->mgstck_);
   if (gp->mlstck_)
     memo_term(gp->mlstck_);
+  free(gp);
 }
