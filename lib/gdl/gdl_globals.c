@@ -220,7 +220,15 @@ gdl_delim_s(Tree *ytp, const char *data)
       if (lgp)
 	{
 	  np = lgp;
-	  gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
+	  int put_delim = 1;
+	  if (!strcmp(np->name, "g:x"))
+	    {
+	      Prop *p = prop_find_kv(np->props, "g:type", NULL);
+	      if (p && (!strcmp(p->u.k->v, "dollar") || !strcmp(p->u.k->v, "comment")))
+		put_delim = 0;
+	    }
+	  if (put_delim)
+	    gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", (ccp)data);
 	}
       else
 	{
