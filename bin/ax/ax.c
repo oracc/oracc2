@@ -202,6 +202,7 @@ ax_full_term(void)
   lnstr_term();
   rnvval_term();
   gdllib_term();
+  wcs2utf(NULL, 0);
 }
 
 static char * const*
