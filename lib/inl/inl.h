@@ -43,6 +43,7 @@ extern void inl_term(void);
 extern void inl_span_node(Scan *sp, Scanseg *ssp, Tree *tp, const char *stext);
 extern char *inl_nodes(Scan *sp, Node *np, char *s);
 extern Tree *inl(Mloc *mp, char *s);
+extern Tree *inl_tm(Mloc *mp, Treemem *tm, char *s);
 extern void inl_set_ns(enum nscode ns);
 extern void inl_prop_kv(Node *ynp, int ptype, int gtype, const char *k, const char *v);
 extern void inl_set_translation(int x);

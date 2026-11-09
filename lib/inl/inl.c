@@ -272,6 +272,17 @@ inl_term(void)
     }
 }
 
+#define inl_setup()					\
+  tree_root(tp, NS_INL, "inl", 0, NULL);		\
+  tp->rootless = 1;					\
+  tp->root->text = s;					\
+  Scan *sp = memo_new(inl_scan_m);			\
+  sp->data = (ccp)pool_copy((uccp)s, inl_scan_p);	\
+  sp->tree = tp;					\
+  sp->mp = *mp;						\
+  (void)inl_nodes(sp, tp->root, (char*)tp->root->text)
+
+
 /* scan an inline string and return a Tree whose children are the
  * parsed components of the string
  *
@@ -283,16 +294,20 @@ inl(Mloc *mp, char *s)
   Tree *tp = NULL;
   if (s && *s)
     {
-      memo_list(tp = tree_init_mini());
-      /*tree_ns_default(tp, NS_INL);*/
-      tree_root(tp, NS_INL, "inl", 0, NULL);
-      tp->rootless = 1;
-      tp->root->text = s;
-      Scan *sp = memo_new(inl_scan_m);
-      sp->data = (ccp)pool_copy((uccp)s, inl_scan_p);
-      sp->tree = tp;
-      sp->mp = *mp;
-      (void)inl_nodes(sp, tp->root, (char*)tp->root->text);
+      tp = tree_init_mini();
+      inl_setup();
+    }
+  return tp;
+}
+
+Tree *
+inl_tm(Mloc *mp, Treemem *tm, char *s)
+{
+  Tree *tp = NULL;
+  if (s && *s)
+    {
+      tp = tree_init_mem(tm);
+      inl_setup();
     }
   return tp;
 }

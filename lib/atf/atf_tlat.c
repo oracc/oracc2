@@ -731,7 +731,8 @@ atr_inline(Mloc *mp, struct node*parent,unsigned char *text)
   inl_wild_mode = 1;
   char *ws = normalize_ws(text);
   inl_set_translation(1);
-  Tree *itp = inl(mp, ws);
+  Tree *itp = inl_tm(mp, abt->tm, ws);
+  memo_list(itp);
   inl_set_translation(0);
   if (itp)
     tree_graft(parent, itp);
