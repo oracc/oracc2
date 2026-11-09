@@ -36,7 +36,8 @@ static void ag_user_action(void);
 #define usesave curr_use_str=agpool(agtext)
 
 int atf_term_flag = 0;
-#define atf_yyterminate() return (atf_term_flag = !atf_term_flag) ? ATF_END : YY_NULL
+#define xatf_yyterminate() return (atf_term_flag = !atf_term_flag) ? ATF_END : YY_NULL
+#define atf_yyterminate() BEGIN A; return YY_NULL
 
 #if 1
 #define r(x) x
@@ -260,7 +261,7 @@ NOTEMARK	"^"[0-9]+"^"
 
 <*>\r				{ }
 
-<A><<EOF>>	       		{ atf_yyterminate(); }
+<A,s_TRA><<EOF>>	       		{ atf_yyterminate(); }
 
 
 [=^][aeiuAEIU]		{ if (gdl_unicode) { mesg_vwarning(agfile,aglineno,
@@ -453,6 +454,10 @@ _			                 { gdl_lang_flip(); }
 
 <<EOF>>			{ gdl_line_wrapup(aglloc); gdl_yyterminate(); }
 
+
+<INITIAL,N>\n/[ \t]    	{ return SPACE; }
+
+<INITIAL,N>\n/[^ \t]	{ BEGIN A; return '\n'; }
 
 %%
 static void

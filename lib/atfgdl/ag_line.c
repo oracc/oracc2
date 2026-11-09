@@ -22,6 +22,7 @@ ag_gdl_handoff(Mloc *mp, Node *lnode)
   gdl_set_ids(clid, 1);
 
   wd_list = list_create(LIST_SINGLE);
+  gdl_new_word(abt);
 }
 
 void

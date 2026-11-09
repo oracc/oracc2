@@ -202,7 +202,7 @@ const unsigned char *
 line_label(Mloc *mp, const unsigned char *tok, enum e_tu_types transtype,
 	   const unsigned char *xid)
 {
-  const unsigned char *label = NULL;
+  unsigned char *label = NULL;
   /* FIXME: these mallocs/strdups are probably unnecessary; 
      does the label always get saved immediately as an attr? */
   if (*line_label_buf)
@@ -228,6 +228,8 @@ line_label(Mloc *mp, const unsigned char *tok, enum e_tu_types transtype,
       strcpy(buf,(char*)tok);
       label = (unsigned char *)buf;
     }
+  if ('.' == label[strlen(label)-1])
+    label[strlen(label)-1] = '\0';
   if (check_label(mp,label,transtype,xid))
     {
       return label;
