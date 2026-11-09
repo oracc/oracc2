@@ -35,11 +35,20 @@ GDLLTYPE gdllloc;
 
 ###gdltokens.y###
 
-%nterm <text> 	field lexfld cmods
+%nterm <text> 	field
+%nterm <text>   lexfld
+%nterm <text>	cmods
 
-%nterm <node>   detgloss det gloss
-		grapheme scgrapheme compound simplexg valuqual
-		glosso glossc
+%nterm <node>   detgloss
+%nterm <node>	det
+%nterm <node>	gloss
+%nterm <node>	grapheme
+%nterm <node>	scgrapheme
+%nterm <node>	compound
+%nterm <node>	simplexg
+%nterm <node>	valuqual
+%nterm <node>	glosso
+%nterm <node>  	glossc
 
 %start gdl
 
