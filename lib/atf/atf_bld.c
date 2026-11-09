@@ -104,7 +104,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
     atf_lex_line_trace(&l);
 #endif
   atfp = atfmp->atf;
-  atfp->file = aglloc.file;
+  file = gdlfile = atfp->file = aglloc.file;
   atfp->pqx = pqx;
   strcpy(line_id_buf, atfp->pqx);
   strcat(line_id_buf, ".");

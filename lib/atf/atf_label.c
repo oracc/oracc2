@@ -228,8 +228,8 @@ line_label(Mloc *mp, const unsigned char *tok, enum e_tu_types transtype,
       strcpy(buf,(char*)tok);
       label = (unsigned char *)buf;
     }
-  if ('.' == label[strlen(label)-1])
-    label[strlen(label)-1] = '\0';
+  if ('.' == label[strlen((ccp)label)-1])
+    label[strlen((ccp)label)-1] = '\0';
   if (check_label(mp,label,transtype,xid))
     {
       return label;

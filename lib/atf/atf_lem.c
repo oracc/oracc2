@@ -36,19 +36,25 @@ atf_save_lem(Node *np, const char *lemstr)
   form->literal = (char*)pool_copy((uccp)lemstr, atfmp->pool);
   
   if (np->user && ((Node *)np->user)->utype == N_U_LANG)
-    form->lang = np->user;
+    {
+      form->lang = np->user;
+    }
   else
     {
       const char *lang = proplng(np);
       if (lang)
+	form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
+      else
 	{
-	  form->f2.lang = (unsigned char*)lang;
-	  form->f2.core = langcore_of(lang);
-	  if (strstr(lang,"949"))
-	    BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
-	  form->lang = lang_switch(NULL, lang, NULL, np->mloc->file, np->mloc->line);
+	  mesg_verr(np->mloc, "internal error: no LANG set for atf_save_lem");
+	  form->lang = global_lang;
 	}
     }
+
+  form->f2.lang = (uccp)form->lang->fulltag;
+  form->f2.core = form->lang->core;
+  if (strstr(form->lang->script,"949"))
+    BIT_SET(form->f2.flags,FORM_FLAGS_LEM_BY_NORM);
 
   Prop *p = prop_find_kv(np->props, "form", NULL);
   const char *formstr = p ? p->u.k->v : "";
