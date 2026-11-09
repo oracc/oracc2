@@ -979,7 +979,8 @@ joxer_init(struct xnn_data *xdp, const char *rncbase, int val, FILE *xml, FILE *
 	{
 	  if (!val)
 	    rnvxml_init_err();
-	  rnvif_init();
+	  if (val)
+	    rnvif_init();
 	  rnvval_init_2(xdp);
 	}
       f_xml = xml;
