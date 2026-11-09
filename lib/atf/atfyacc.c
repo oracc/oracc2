@@ -87,6 +87,7 @@ atf_term(void)
   curr_line = NULL;
   text_lang = NULL;
 
+  free(atfp->links);
   free(atfp->protocols);
 
 #if 0

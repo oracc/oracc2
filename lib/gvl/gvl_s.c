@@ -146,11 +146,13 @@ gvl_s(Node *ynp)
       const unsigned char *gq = gvl_lookup(sll_tmp_key(gp->orig,"q"));
       if (gq)
 	{
+	  char *gqo = NULL;
 	  if ('o' == *gq)
-	    gq = sll_snames_of(gq);
-
-	  gp->mess = gvl_vmess("value %s must be qualified with one of %s", gp->orig, gq);
+	    gqo = (char*)sll_snames_of(gq);
+	  gp->mess = gvl_vmess("value %s must be qualified with one of %s", gp->orig, gqo ? gqo : (char*)gq);
 	  gp->oid = ""; /* use empty string to mean value is known but not resolved yet */
+	  if (gqo)
+	    free(gqo);
 	}
       else if (*gp->orig == '*' && !gp->orig[1])
 	{
