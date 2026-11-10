@@ -627,8 +627,12 @@ sig_context_langs(struct sig_context *scp, const char *langs)
 	    proj = xpd_lang(scp->xpd,langp[i]);
 	  else
 	    {
+#if 1
+	      proj = ".";
+#else	      
 	      fprintf(stderr, "sigs_context: can't continue with no project set\n");
 	      exit(1);
+#endif
 	    }
 	  if (proj)
 	    {
