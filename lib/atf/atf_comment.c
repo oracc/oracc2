@@ -61,7 +61,7 @@ atf_comment(Mloc l, char *text)
 	  if (!curr_line->cmts)
 	    {
 	      curr_line->cmts = list_create(LIST_SINGLE);
-	      memo_list(curr_line->cmts);
+	      memo_list_list(curr_line->cmts);
 	    }
 	  list_add(curr_line->cmts, text);
 	}
@@ -71,7 +71,7 @@ atf_comment(Mloc l, char *text)
 	  if (!bp->cmts)
 	    {
 	      bp->cmts = list_create(LIST_SINGLE);
-	      memo_list(bp->cmts);
+	      memo_list_list(bp->cmts);
 	    }
 	  list_add(bp->cmts, text);
 	}

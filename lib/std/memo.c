@@ -3,6 +3,7 @@
 #include "memo.h"
 
 static List *lmemo = NULL;
+static List *llmemo = NULL;
 static Memo *memostr = NULL;
 
 Memo *
@@ -23,7 +24,10 @@ void
 lmemo_init(void)
 {
   if (!lmemo)
-    lmemo = list_create(LIST_SINGLE);
+    {
+      lmemo = list_create(LIST_SINGLE);
+      llmemo = list_create(LIST_SINGLE);
+    }
 }
 
 void
@@ -33,6 +37,14 @@ lmemo_term(void)
     {
       list_free(lmemo, free);
       lmemo = NULL;
+    }
+  if (llmemo)
+    {
+      List *l;
+      for (l = list_first(llmemo); l; l = list_next(llmemo))
+	list_free(l, NULL);
+      list_free(llmemo, NULL);
+      llmemo = NULL;
     }
 }
 
@@ -64,6 +76,12 @@ void
 memo_list(void*vp)
 {
   list_add(lmemo, vp);
+} 
+
+void
+memo_list_list(List *vp)
+{
+  list_add(llmemo, vp);
 } 
 
 void *

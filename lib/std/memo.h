@@ -36,6 +36,7 @@ extern void *memo_auto(size_t siz);
 extern void *memo_reauto(void *vp, size_t osiz, size_t nsiz);
 extern char *memo_dup(const char *s);
 extern void memo_list(void *vp);
+extern void memo_list_list(List *vp);
 extern Memo * memo_init (int element_size, int elements_per_alloc);
 extern void memo_term(Memo *any);
 extern void *memo_merge(Memo *any, size_t *bytes);

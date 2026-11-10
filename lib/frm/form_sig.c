@@ -202,7 +202,7 @@ sig_one(Pool *p, struct ilem_form *ifp, Form *fp, int tail)
   if (fp->rws)
     sprintf((char*)(buf+strlen((char*)buf)),"@%s",fp->rws);
 
-  return (unsigned char *)strdup((char*)buf);
+  return (unsigned char *)memo_dup((char*)buf);
 }
 
 unsigned char *
@@ -250,7 +250,7 @@ form_sig(Pool *p, Form *fp)
   if (res)
     {
       ret = pool_copy(res, p);
-      free(res);
+      /*free(res);*/
     }
   return ret;
 }

@@ -193,7 +193,7 @@ atf_bld_tlat(Mloc l, const char *type, const char *lang, const char *code)
   curr_trans->type = type;
   curr_trans->lang = lang;
   curr_trans->code = code;
-  curr_trans->tree = tree_init();
+  curr_trans->tree = tree_init_mem(abt->tm);
   Node *r = tree_root(curr_trans->tree, NS_XTR, "xtr:translation", 1, NULL);
   r->mloc = mloc_mloc(&l);
   atr_translation();

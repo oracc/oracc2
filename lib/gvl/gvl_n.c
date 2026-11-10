@@ -134,10 +134,11 @@ gvl_n_sexify(Node *ynp)
   if (!(nq = hash_find(curr_sl->h, p)))
     {
 #endif
-      Tree *ntp = tree_init();
+      Tree *ntp = tree_init_mem(ynp->tree->tm);
       Node *top = NULL;
       int sexnum = atoi(ynp->text);
 
+      memo_list(ntp);
       top = tree_root(ntp, NS_GDL, "g:gg", 1, ynp->mloc);
       gdl_prop_kv(top, GP_ATTRIBUTE, PG_GDL_INFO, "g:type", "diszless");
 
