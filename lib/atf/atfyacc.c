@@ -57,6 +57,9 @@ atf_input(Mloc l, Atflt t, void *p)
 void
 atf_term(void)
 {
+  if (amp_trace)
+    fprintf(stderr, "atf_term: called on %s\n", atfp->pqx);
+
   if (etcsl_labels)
     {
       pool_term(etcsl_pool);

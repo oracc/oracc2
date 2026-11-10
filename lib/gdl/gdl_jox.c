@@ -104,10 +104,12 @@ grx_jox_node(Node *np, int oflag, int nflag)
 	}
       if (type)
 	{
+	  struct rnvval_atts *r;
 	  if (*text)
-	    joxer_eto(np->mloc, "g:o", rnvval_aa("x", "g:type", type, NULL), text);
+	    joxer_eto(np->mloc, "g:o", r = rnvval_aa("x", "g:type", type, NULL), text);
 	  else
-	    joxer_ec(np->mloc, "g:o", rnvval_aa("x", "g:type", type, NULL));
+	    joxer_ec(np->mloc, "g:o", r = rnvval_aa("x", "g:type", type, NULL));
+	  rnvval_free_atts(r);
 	}
       else
 	return; /* don't go any further because we don't want to process np->next */

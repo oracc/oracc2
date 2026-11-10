@@ -190,6 +190,8 @@ gvl_n_sexify(Node *ynp)
 	      gdl_pop(ntp, "g:q");
 	      free(tmp);
 	    }
+
+	  list_free(sl, NULL);
 	  
 	  /* on the singleton or group set a property that this has been
 	     sexified and record the original number in the text field */
