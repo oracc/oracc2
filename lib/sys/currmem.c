@@ -72,6 +72,30 @@ currmem_macos(FILE *fp)
 	       mach_error_string (result));
     }
 }
+
+uint64_t
+currbytes_macos(void)
+{
+  task_vm_info_data_t vm_info;
+  mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
+
+  /* Request virtual memory info for the current Mach task */
+  kern_return_t result = task_info (mach_task_self (),
+				    TASK_VM_INFO,
+				    (task_info_t) & vm_info,
+				    &count);
+  
+  if (result == KERN_SUCCESS)
+    {
+      return vm_info.phys_footprint;
+    }
+  else
+    {
+      fprintf (stderr, "Error retrieving task info: %s\n",
+	       mach_error_string (result));
+      return (uint64_t)0;
+    }
+}
 #endif
 
 #if 0

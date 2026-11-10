@@ -193,6 +193,7 @@ ax_full_term(void)
   sll_term_t(sll_sl);
   sig_context_term();
   utf2wcs(NULL,NULL);
+  wcs2utf(NULL, 0);
   ngramify_term();
   nl_term();
   form_term();
@@ -202,8 +203,9 @@ ax_full_term(void)
   lnstr_term();
   rnvval_term();
   gdllib_term();
-  wcs2utf(NULL, 0);
-  sig_context_term();
+#if defined(__APPLE__) && defined(__MACH__)
+  fprintf(stderr, "phys: after ax_full_term: %llu\n", currbytes());
+#endif
 }
 
 static char * const*

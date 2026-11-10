@@ -230,11 +230,18 @@ sig_context_term(void)
       memo_term(global_scp->mb_f2s);
       memo_term(global_scp->mb_f2ps);
       memo_term(global_scp->mb_ilem_forms);
+#if defined(__APPLE__) && defined(__MACH__)
+      fprintf(stderr, "phys: before memo_term mb_sigs: %llu\n", currbytes());
+#endif
       memo_term(global_scp->mb_sigs);
+#if defined(__APPLE__) && defined(__MACH__)
+      fprintf(stderr, "phys: after memo_term mb_sigs: %llu\n", currbytes());
+#endif
       memo_term(global_scp->mb_sigsets);
       w2_term();
       sigs_cof_term();
       free(global_scp);
+      global_scp = NULL;
       collos_term();
     }
 }
