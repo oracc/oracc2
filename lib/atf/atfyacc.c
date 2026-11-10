@@ -99,6 +99,8 @@ atf_term(void)
   free(atfp);
   atfp = NULL;
 
+  ngramify_term();
+  
   /*atf_lex_term();*/
   label_term();
   note_term();

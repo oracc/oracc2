@@ -391,7 +391,10 @@ nl_load_file(struct sigset *sp,
   for (i = init_line; i < nlines; ++i)
     {
       if (ngram_lines[i] && *ngram_lines[i])
-	nl_process_one_line(nlp, ngram_lines[i], NULL);
+	{
+	  Form *ignored_psu = nl_process_one_line(nlp, ngram_lines[i], NULL);
+	  free(ignored_psu);
+	}
     }
   free(fmem);
   free(ngram_lines);
