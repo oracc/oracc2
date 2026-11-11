@@ -53,6 +53,7 @@ int harvest_notices, lem_dynalem = 0, lem_forms_raw = 0, lem_props_yes = 0,
 
 FILE *f_log, *f_unlemm;
 int ag = 1;
+int cdli_mode = 0;
 int check_mode = 0;
 int lem_mode = 0;
 int trace_mode = 0;
@@ -232,6 +233,13 @@ main(int argc, char * const*argv)
   if (check_mode)
     xml_output = xcl_output = 0;
 
+  if (cdli_mode)
+    {
+      gdl_CDLI();
+      system_project = "cdli";
+      gvl_sans_report = 1;
+    }
+  
   if (ok_no_files)
     {
       ok_no_ok_fp = xfopen("ax.ok", "w");
@@ -290,7 +298,7 @@ opts(int opt, const char *arg)
       check_mode = 1;
       break;
     case 'C':
-      xcl_output = xml_output = 1;
+      cdli_mode = 1;
       break;
     case 'D':
       /* future use with morph analyzer */
