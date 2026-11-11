@@ -62,7 +62,7 @@ gvl_s(Node *ynp)
 #endif
 
 #if 1
-  if (!bit_get(gdl_lang_context->core->features, LF_PC|LF_SAC))
+  if (gdl_lang_context && !bit_get(gdl_lang_context->core->features, LF_PC|LF_SAC))
     return gp;
 #else
   if ('a' != curr_lang && 's' != curr_lang && (curr_lang < '0' || curr_lang > '9'))
