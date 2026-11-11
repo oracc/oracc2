@@ -63,12 +63,11 @@ int ag_term_flag = 0;
 
 /* Simple stack for nesting of compounds and valuquals */
 #define AG_CVQ_MAX 6
-static int ag_cvq_stack[AG_CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
+static int ag_cvq_stack[AG_CVQ_MAX+1] = { 0, 0, 0, 0, 0, 0 };
 static int ag_cvq_top = -1;
 static int ag_cvq_pop(void);
 static int ag_cvq_push(int);
 static void ag_cvq_reset(void);
-static void ag_gdl_lex_closers(void);
 
 %}
 			/* ATFPATDEF */
@@ -613,7 +612,7 @@ ag_gdl_lex_state(void)
   return YY_START;
 }
 
-static void
+void
 ag_gdl_lex_closers(void)
 {
   if (CIN)

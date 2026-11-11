@@ -272,7 +272,7 @@ gvl_c_implicit_gp(Node *dlm, Node *last)
   else
     first = dlm->prev;
 
-  if (!strcmp(last->name, "g:o"))
+  if (last && !strcmp(last->name, "g:o"))
     last = last->next;
 
   Node *gp = node_group(dlm, first, last);

@@ -57,7 +57,10 @@ cvq_push(int s)
       return s;
     }
   else
-    fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", gdlfile, gdllineno, CVQ_MAX);
+    {
+      fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", gdlfile, gdllineno, CVQ_MAX);
+      --cvq_top;
+    }
   return 0;
 }
 
@@ -67,7 +70,10 @@ cvq_pop(void)
   if (cvq_top >= 0)
     return cvq_stack[cvq_top--];
   else
-    fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", gdlfile, gdllineno);
+    {
+      fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", gdlfile, gdllineno);
+      cvq_top = 0;
+    }
    return 0;
 }
 

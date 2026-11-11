@@ -58,7 +58,8 @@ ag_line_o_bil(Mloc l)
     wd_list = gdl_rem_nonw(wd_list);				\
   curr_line->wl = gdl_get_word_list();				\
   if (gdl_cell_count > atf_cell_count)				\
-    atf_cell_count = gdl_cell_count
+    atf_cell_count = gdl_cell_count;				\
+  ag_gdl_lex_closers()
 
 void
 ag_line_c_mts(Mloc l)
