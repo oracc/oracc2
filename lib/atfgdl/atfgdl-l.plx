@@ -31,6 +31,8 @@ while (<G>) {
     s/gdllloc/aglloc/g;
     s/gdllval/aglval/g;
     s/gdltext/agtext/g;
+    s/gdl_lex_closers/ag_gdl_lex_closers/g;
+    s/cvq_/ag_cvq_/g;
     print;
 }
 close(G);

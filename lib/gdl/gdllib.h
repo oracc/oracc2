@@ -218,7 +218,6 @@ extern int gdl_lang_tag(Mloc *mlp, const char *v);
 extern void gdl_lang_flip(void);
 
 extern void gdl_hc(int force);
-extern void gdl_lex_closers(void);
 extern void gdl_line_wrapup(Mloc m);
 
 extern const char *gdl_grapheme_id(void);

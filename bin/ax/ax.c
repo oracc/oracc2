@@ -54,7 +54,7 @@ int harvest_notices, lem_dynalem = 0, lem_forms_raw = 0, lem_props_yes = 0,
 FILE *f_log, *f_unlemm;
 int ag = 1;
 int cdli_mode = 0;
-int check_mode = 0;
+int check_mode = 1;
 int lem_mode = 0;
 int trace_mode = 0;
 int xcl_output = 0;

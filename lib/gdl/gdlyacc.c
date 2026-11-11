@@ -857,7 +857,7 @@ gdl_line_wrapup(Mloc m)
 	  lst = NULL;
 	}
 
-      gdl_lex_closers();
+      /*gdl_lex_closers();*/
       gdl_balance_flush(&m);
     }
 

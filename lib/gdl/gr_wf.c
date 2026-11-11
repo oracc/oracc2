@@ -309,7 +309,7 @@ gdl_wf_deep_delim(Node *c)
 {
   while (c && strcmp(c->name, "g:w"))
     c = c->last;
-  if (c)
+  if (c && c->last)
     return prop_find_kv(c->last->props, "g:delim", NULL);
   else
     return NULL;
@@ -338,7 +338,7 @@ gr_node_wf(Node *np, FILE *fp)
 		mesg_verr(np->mloc, "gr_node_wf: unhandled g: node %s", np->name);
 	    }
 	  if ((np->next && 'w' != np->name[2]) /* cheat for g:w */
-	      || (!np->next && !strcmp(np->rent->name, "g:gg")))
+	      || (!np->next && np->rent && !strcmp(np->rent->name, "g:gg")))
 	    {
 	      Prop *d = prop_find_kv(np->props, "g:delim", NULL);
 	      if ((!gs_is(n, gs_excised) || np->next->next)
@@ -366,6 +366,7 @@ GDLR_config gdlr_wfa_config =
     ['a'] = grf(a),
     ['A'] = grf(a),
     ['b'] = grf(b),
+    ['B'] = grf(b),
     ['c'] = grf(c),
     ['d'] = grf(d),
     ['f'] = grf(f),
@@ -394,6 +395,7 @@ GDLR_config gdlr_wfc_config =
     ['a'] = grf(a),
     ['A'] = grf(a),
     ['b'] = grf(b),
+    ['B'] = grf(b),
     ['c'] = grf(c),
     ['d'] = grf(d),
     ['f'] = grf(f),
@@ -422,6 +424,7 @@ GDLR_config gdlr_wfo_config =
     ['a'] = grf(a),
     ['A'] = grf(a),
     ['b'] = grf(b),
+    ['B'] = grf(b),
     ['c'] = grf(c),
     ['d'] = grf(d),
     ['f'] = grf(f),

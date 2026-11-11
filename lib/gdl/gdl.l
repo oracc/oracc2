@@ -32,6 +32,7 @@ static int gdl_term_flag;
 
 /* Simple stack for nesting of compounds and valuquals */
 #define CVQ_MAX 6
+static void gdl_lex_closers(void);
 static int cvq_stack[CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
 static int cvq_top = -1;
 static int cvq_pop(void);
@@ -262,7 +263,7 @@ _			                 { gdl_lang_flip(); }
 			    }
 			}
 
-<<EOF>>			{ gdl_line_wrapup(gdllloc); gdl_yyterminate(); }
+<<EOF>>			{ gdl_lex_closers(); gdl_line_wrapup(gdllloc); gdl_yyterminate(); }
 
 %%
 

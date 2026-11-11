@@ -8,7 +8,7 @@ void
 gdl_lex_closers(void)
 {
   if (CIN)
-      mesg_vwarning(gdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
+    mesg_vwarning(gdlfile,gdllineno,"missing '|' in compound (discovered at end of line)");
   else if (QIN)
     mesg_vwarning(gdlfile,gdllineno,"missing ')' in qv (discovered at end of line)");
   GIN=CIN=QIN=0;

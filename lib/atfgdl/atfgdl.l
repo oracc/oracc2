@@ -62,12 +62,13 @@ int ag_term_flag = 0;
 #define gdl_yyterminate() return (ag_term_flag = !ag_term_flag) ? END : YY_NULL
 
 /* Simple stack for nesting of compounds and valuquals */
-#define CVQ_MAX 6
-static int cvq_stack[CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
-static int cvq_top = -1;
-static int cvq_pop(void);
-static int cvq_push(int);
-static void cvq_reset(void);
+#define AG_CVQ_MAX 6
+static int ag_cvq_stack[AG_CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
+static int ag_cvq_top = -1;
+static int ag_cvq_pop(void);
+static int ag_cvq_push(int);
+static void ag_cvq_reset(void);
+static void ag_gdl_lex_closers(void);
 
 %}
 			/* ATFPATDEF */
@@ -272,9 +273,9 @@ NOTEMARK	"^"[0-9]+"^"
 {GRAPHEME} 		{ GIN=1; return gdl_grapheme_type(&aglloc, agtext, &aglval.text); }
 
 "|"/[ \t]	       	{ /*"*/ aglval.text=(char*)gdl_lexnames[(int)*yytext]; return gdl_lexfld[(int)*yytext]; }
-"|"			{ BEGIN cvq_push(C); GIN=0; CIN=1; return C_O; }
-<C>"|"/[ \t]   		{ BEGIN cvq_pop(); CIN=0; return C_C; }
-<C>"|"			{ BEGIN cvq_pop(); CIN=0; return C_C; }
+"|"			{ BEGIN ag_cvq_push(C); GIN=0; CIN=1; return C_O; }
+<C>"|"/[ \t]   		{ BEGIN ag_cvq_pop(); CIN=0; return C_C; }
+<C>"|"			{ BEGIN ag_cvq_pop(); CIN=0; return C_C; }
 <C>"\xe2\x88\x98"	{ GIN=0; return C_CIRCLE; }
 <C>{NNUM}/{M} 		{ GIN=1; gsave; return NNUM; }
 <C>{NNUM} 		{ GIN=1; gsave; return NNUM; }
@@ -298,12 +299,12 @@ NOTEMARK	"^"[0-9]+"^"
 <C>"("			{ return GIN ? QLP : CLP; }
 <C>")"			{ return CRP; }
 <C>[ \t]+	       	{ CIN=GIN=0; mesg_vwarning(agfile,aglineno,"missing '|' in compound");
-			  cvq_reset(); }
+			  ag_cvq_reset(); }
 
 <Q>")"/[}>]	       	{ return QRP; }
 <Q>")"			{ return QRP; }
 <Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(agfile,aglineno,"missing ')' in qv");
-			  cvq_reset(); }
+			  ag_cvq_reset(); }
 
 ":"/[ \t\n\(\]]        	{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":."			{ /*"*/ GIN=1; gsave; return PUNCT; }
@@ -452,7 +453,7 @@ _			                 { gdl_lang_flip(); }
 			    }
 			}
 
-<<EOF>>			{ gdl_line_wrapup(aglloc); gdl_yyterminate(); }
+<<EOF>>			{ ag_gdl_lex_closers(); gdl_line_wrapup(aglloc); gdl_yyterminate(); }
 
 
 <INITIAL,N>\n/[ \t]    	{ return SPACE; }
@@ -612,7 +613,7 @@ ag_gdl_lex_state(void)
   return YY_START;
 }
 
-void
+static void
 ag_gdl_lex_closers(void)
 {
   if (CIN)
@@ -620,14 +621,14 @@ ag_gdl_lex_closers(void)
   else if (QIN)
     mesg_vwarning(agfile,aglineno,"missing ')' in qv (discovered at end of line)");
   GIN=CIN=QIN=0;
-  cvq_reset();
+  ag_cvq_reset();
 }
 
 void
 ag_gdl_lex_init(const char *file, int line)
 {
   CIN = GIN = QIN = 0;
-  cvq_top = -1;
+  ag_cvq_top = -1;
   ag_l_lex_init(file, line);
 }
 
@@ -641,7 +642,7 @@ ag_gdl_decr_qin(void)
     }
   else
     {
-      BEGIN cvq_pop();
+      BEGIN ag_cvq_pop();
     }
   if (agflextrace)
     fprintf(stderr, "ag_gdl_decr_qin: QIN=%d; new state=%d\n", QIN, YY_START);
@@ -651,38 +652,38 @@ void
 ag_gdl_incr_qin(void)
 {
   ++QIN;
-  BEGIN cvq_push(Q);
+  BEGIN ag_cvq_push(Q);
   if (agflextrace)
     fprintf(stderr, "ag_gdl_incr_qin: QIN=%d; new state=%d\n", QIN, YY_START);
 }
 
-int
-cvq_push(int s)
+static int
+ag_cvq_push(int s)
 {
-  if (++cvq_top < CVQ_MAX)
+  if (++ag_cvq_top < AG_CVQ_MAX)
     {
-      cvq_stack[cvq_top] = YY_START;
+      ag_cvq_stack[ag_cvq_top] = YY_START;
       return s;
     }
   else
-    fprintf(stderr, "%s:%d: cvq_push: cvq stack overflow (CVQ_MAX=%d)\n", agfile, aglineno, CVQ_MAX);
+    fprintf(stderr, "%s:%d: ag_cvq_push: cvq stack overflow (AG_CVQ_MAX=%d)\n", agfile, aglineno, AG_CVQ_MAX);
   return 0;
 }
 
-int
-cvq_pop(void)
+static int
+ag_cvq_pop(void)
 {
-  if (cvq_top >= 0)
-    return cvq_stack[cvq_top--];
+  if (ag_cvq_top >= 0)
+    return ag_cvq_stack[ag_cvq_top--];
   else
-    fprintf(stderr, "%s:%d: cvq_pop: cvq stack underflow\n", agfile, aglineno);
+    fprintf(stderr, "%s:%d: ag_cvq_pop: cvq stack underflow\n", agfile, aglineno);
    return 0;
 }
 
-void
-cvq_reset(void)
+static void
+ag_cvq_reset(void)
 {
-  cvq_top = -1;
+  ag_cvq_top = -1;
   BEGIN 0;
 }
 
