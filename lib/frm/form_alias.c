@@ -26,7 +26,7 @@ form_alias(struct sig_context *scp, Form *fp, Form *ref_fp)
       if (strcmp((char*)fp->form,(char*)aform))
 	{
 	  fp->oform = fp->form;
-	  fp->form = pool_copy(aform,scp->pool);
+	  fp->form = pool_copy(aform,scp->tpool);
 	  ret = 1;
 	  if (l3verbose > 1)
 	    fprintf(stderr,"aliased form %s => fp->form %s\n",fp->oform,fp->form);
@@ -44,7 +44,7 @@ form_extreme_alias(struct sig_context *scp, Form *fp, Form *ref_fp)
     return 0;
 
   fp->oform = fp->form;
-  fp->form = pool_copy(ref_fp->form,scp->pool);
+  fp->form = pool_copy(ref_fp->form,scp->tpool);
 
   if (l3verbose > 1)
     fprintf(stderr,"extreme aliased form %s => fp->form %s\n",fp->oform,fp->form);

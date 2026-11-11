@@ -562,6 +562,10 @@ gdl_new_word(Tree *ytp)
       /* Now l is the node where the g:w should attach */
       tree_curr(l);
 
+      /* Until we track down how gdl_lang_context can ever be NULL */
+      if (!gdl_lang_context)
+	gdl_lang_context = text_lang;
+
       Node *wp = gdl_push(ytp, gdl_lang_context->tag->scode == stc_SAC ? "g:w" : "n:w");
       wp->mloc = mloc_file_line(gdlfile, gdllineno);
 
@@ -605,11 +609,8 @@ gdl_set_lang(Mloc *mp, const char *tag, struct lang_context *ctxt)
       return;
     }
   word_lang_tag = tag;
-  gdl_lang_context = lang_switch(ctxt, tag, NULL, mp ? mp->file : NULL, mp ? mp->line : 0);
-#if 0
-  if (!gdl_global_context)
-    gdl_global_context = gdl_lang_context;
-#endif
+  if (!(gdl_lang_context = lang_switch(ctxt, tag, NULL, mp ? mp->file : NULL, mp ? mp->line : 0)))
+    gdl_lang_context = text_lang;
 }
 
 void
@@ -839,7 +840,7 @@ gdl_line_wrapup(Mloc m)
       if (gdl_recycled_word)
 	{
 	  gdl_recycled_word = NULL;
-	  if (gdl_recycled_word == (void*)wd_list->last->data)
+	  if (wd_list->last && gdl_recycled_word == (void*)wd_list->last->data)
 	    (void)list_pop(wd_list);
 	}
 

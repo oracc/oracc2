@@ -109,12 +109,9 @@ gdl_gloss_c(Mloc *mlp, Tree *ytp, const char *data, Bracket_e bt)
       /* We don't need to do anything with this popped container
 	 because we access it via stck_peek in gdl_new_word */
       ret = (Node *)stck_pop(glosstck);
-      gdl_lang_context = ret->user;
+      if (!(gdl_lang_context = ret->user))
+	gdl_lang_context = text_lang;
       word_lang_tag = gdl_lang_context->fulltag;
-#if 0
-      ret->utype = N_U_NODE;
-      ret->user = NULL;
-#endif
 
       if (glosstck->top < 0)
 	{

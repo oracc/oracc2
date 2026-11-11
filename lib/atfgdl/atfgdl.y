@@ -290,8 +290,8 @@ atfuse:		ATF_MYLINES    { $$=ATFF_MYLINES; }
 	|	ATF_LINELABELS { $$=ATFF_LINELABELS; }
 	|	ATF_AGROUPS    { $$=ATFF_AGROUPS; }
 	|	ATF_MATH       { $$=ATFF_MATH; }
-	|	ATF_ASCII      { gdl_ascii = 1; $$=ATFF_ASCII; }
-	|	ATF_UNICODE    { $$=ATFF_UNICODE; }
+	|	ATF_ASCII      { bit_off(atfp->flags, ATFF_UNICODE); $$=ATFF_ASCII; }
+	|	ATF_UNICODE    { bit_off(atfp->flags, ATFF_ASCII); $$=ATFF_UNICODE; }
 	|	ATF_LEGACY     { $$=ATFF_LEGACY; gdl_legacy = 1; gdl_legacy_lexer(1); }
 	|	ATF_LEXICAL    { $$=ATFF_LEXICAL; gdl_lexical = 1; }
 		;

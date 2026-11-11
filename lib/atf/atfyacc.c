@@ -39,6 +39,8 @@ atf_init(void)
   atfp = atfmp->atf = calloc(1, sizeof(ATF));
   atfp->utype = N_U_ATF;
   atfp->man = atfmp;
+  if (system_project)
+    atfp->project = (uccp)system_project;
   /*atfp->input = list_create(LIST_SINGLE);*/
   /* lang_init() and lang_term() must now be called by ax or equivalent before/after the entire run */
 }
@@ -103,6 +105,8 @@ atf_term(void)
   atfp = NULL;
 
   ngramify_term();
+
+  sig_context_reset();
   
   /*atf_lex_term();*/
   label_term();

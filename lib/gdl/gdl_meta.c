@@ -213,7 +213,8 @@ gdl_state_c(Mloc *mlp, Bracket_e bt)
   if (st > 0) /* st can be -1 if nothing on stack */
     {
       lp = (Lstck*)stck_pop(lang_stack);
-      gdl_lang_context = lp->lang;
+      if (!(gdl_lang_context = lp->lang))
+	gdl_lang_context = text_lang;
       Node *np = gstck_np(st);
       if (np)
 	{
@@ -321,7 +322,8 @@ gdl_lang_tag(Mloc *mlp, const char *data)
   int ret = 0;
   if (gdltrace)
     fprintf(stderr, "gt: LANG: %s\n", data);
-  gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mlp->file, mlp->line);
+  if (!(gdl_lang_context = lang_switch(gdl_lang_context, data, NULL, mlp->file, mlp->line)))
+    gdl_lang_context = text_lang;
   word_lang_tag = gdl_lang_context->fulltag;
   /*Tree*tp = gdl_get_tree();*/
   struct mapi *st = scripttok(gdl_lang_context->tag->script

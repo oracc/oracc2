@@ -4,7 +4,11 @@
 #include "gdllib.h"
 #include "gdltokens.h"
 
-static GDL GDL_defaults = { .deep_parse_ = 1, .gdl_unicode_ = 1, .word_lang_tag_ = "sux" };
+static GDL GDL_defaults = { .deep_parse_ = 0, .gdl_unicode_ = 1, .word_lang_tag_ = "sux" };
+
+static GDL CDLI_defaults = { .deep_parse_ = 0, .gdl_ascii_ = 1, .gdl_unicode_ = 0, .word_lang_tag_ = "sux" };
+
+static GDL *GDL_default_p = &GDL_defaults;
 
 /* multiple gdl instances share this */
 int gdlflextrace = 0;
@@ -350,11 +354,17 @@ gdllib_term(void)
     }
 }
 
+void
+gdl_CDLI(void)
+{
+  GDL_default_p = &CDLI_defaults;
+}
+
 GDL*
 gdl_GDL(void)
 {
   GDL *gp = calloc(1, sizeof(GDL));
-  *gp = GDL_defaults;
+  *gp = *GDL_default_p;
   return gp;
 }
 

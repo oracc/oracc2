@@ -26,8 +26,14 @@ agyacc(void)
   
   ag_set_tree(tp);
 
-  GDL *gp = gdl_GDL();
+  GDL *gp = gdl_GDL(); /* sets gdl_unicode or in CDLI mode gdl_ascii */
   gdlparse_start(abt, gp);
+
+  if (gdl_unicode)
+    atfp->flags = ATFF_UNICODE;
+  else
+    atfp->flags = ATFF_ASCII;
+
   gdl_lexical = 0;
   gdlpool = atfmp->pool;
   agparse();

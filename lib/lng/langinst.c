@@ -45,10 +45,7 @@ lang_load(struct proj_context *p, struct lang_tag *lt)
   struct lang_context *lp = hash_find(langctxt_hash, (uccp)lt->tag);
 
   if (lp)
-    {
-      assert(lp->core != NULL);
-      return lp;
-    }
+    return lp->core ? lp : NULL;
 
   hash_add(langctxt_hash, (uccp)lt->tag, lp = memo_new(langctxt_memo));
   struct langcore *lcp = NULL;

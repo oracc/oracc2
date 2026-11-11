@@ -13,7 +13,6 @@ Hash *ag_hpool = NULL;
 void
 ag_gdl_handoff(Mloc *mp, Node *lnode)
 {
-  gdl_unicode = (atf_use_ascii() ? 0 : 1);
   if (text_lang)
     line_lang = text_lang;
   else
