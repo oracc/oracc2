@@ -265,7 +265,7 @@ setup_ilem_finds(struct sig_context *scp, struct ilem_form *ip,
 	  ip->finds[i]->f2.owner = ip->finds[i];
 	  form_parse(sigs[i]->set ? sigs[i]->set->file : (const unsigned char *)"cache", 
 		   sigs[i]->lnum, 
-		   pool_copy(sigs[i]->sig,scp->pool),
+		   pool_copy(sigs[i]->sig,scp->tpool),
 		   &ip->finds[i]->f2,NULL);
 	  ip->finds[i]->f2.sig = (Uchar*)sigs[i]->sig;
 	  ip->finds[i]->literal = (char*)sigs[i]->literal;
@@ -999,7 +999,7 @@ sigs_lookup(struct xcl_context *xcp, struct xcl_l *l, struct siglook *look)
     return;
 
   if (!l->f)
-    setup_ilem_form(xcp->sigs,l,pool_copy((Uchar *)l->inst,xcp->pool));
+    setup_ilem_form(xcp->sigs,l,pool_copy((Uchar *)l->inst,global_scp->tpool));
 
   if (l->f->ambig)
     {

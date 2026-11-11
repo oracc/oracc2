@@ -10,7 +10,8 @@ struct ilem_form;
 
 struct sig_context
 {
-  Pool *pool;
+  Pool *ppool; /* persistent pool, not reset after each ATF */
+  Pool *tpool; /* temporary pool, reset after each ATF */
   struct xpd *xpd;
   Hash *known_bad;/* avoid giving lots of warnings for 
 			    one file */
@@ -96,6 +97,7 @@ extern struct siglook global_sig_look_struct;
 extern struct sig_context *global_scp;
 
 extern struct sig_context *sig_context_init(void);
+extern void sig_context_reset(void);
 extern void sig_context_term(void);
 extern List *sig_context_register(struct sig_context *scp, 
 				  const char *project, 

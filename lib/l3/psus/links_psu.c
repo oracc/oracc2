@@ -81,7 +81,7 @@ links_psu(struct xcl_context *xc, struct ML *mlp)
       tmp = (ucp)psu_inst((char*)lsp->form.sig);
       if (tmp)
 	{
-	  lp->inst = (ccp)pool_copy(tmp,global_scp->pool);
+	  lp->inst = (ccp)pool_copy(tmp,global_scp->tpool);
 	  free(tmp);
 	}
       lp->f = memo_new(global_scp->mb_ilem_forms);
