@@ -385,7 +385,7 @@ void
 mloc_init(void)
 {
   if (!mloc_mem)
-    mloc_mem = memo_init(1024, sizeof(Mloc));
+    mloc_mem = memo_init(sizeof(Mloc), 1024);
 }
 
 void

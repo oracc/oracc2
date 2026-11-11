@@ -292,7 +292,7 @@ opts(int opt, const char *arg)
   switch (opt)
     {
     case 'A':
-      amp_trace = 1;
+      ++amp_trace;
       break;
     case 'c':
       check_mode = 1;
