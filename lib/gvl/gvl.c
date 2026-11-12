@@ -509,7 +509,7 @@ gvl_simplexg(Node *ynp)
   if (!(gp = hash_find(curr_sl->h,g)))
     {
       gp = gvl_s(ynp);
-      hash_add(curr_sl->h,g,gp);
+      hash_add(curr_sl->h,gp->orig,gp);
     }
   else if (!strcmp(ynp->name, "g:g"))
     {

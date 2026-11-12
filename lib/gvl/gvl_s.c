@@ -24,7 +24,7 @@ gvl_s(Node *ynp)
   gp = memo_new(curr_sl->m);
   gp->utype = N_U_GVL;
   
-  gp->orig = (uccp)ynp->text;
+  gp->orig = pool_copy((uccp)ynp->text, curr_sl->p);
   gp->type = ynp->name + 2;
   if ('g' == *gp->type)
     {
