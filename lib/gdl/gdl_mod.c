@@ -123,7 +123,6 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
 {
   List *op = NULL, *cp = NULL;
   Node *np = NULL;
-  unsigned char *o = NULL, *c = NULL;
   gvl_g*gp = NULL;
 
   if (NULL == ynp->kids)
@@ -169,30 +168,37 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
 	    }
 	}
     }
-  c = list_concat(cp);
-  o = list_concat(op);
 
-  ynp->user = gp = memo_new(curr_sl->m);
-  ynp->utype = N_U_GVL;
-  gp->type = ynp->name + 2;
-  ((gvl_g*)ynp->user)->c10e = pool_copy(c,curr_sl->p);
-  if (strcmp((ccp)c, (ccp)o))
-    ((gvl_g*)ynp->user)->orig = pool_copy(o,curr_sl->p);
-  else
-    ((gvl_g*)ynp->user)->orig = ((gvl_g*)ynp->user)->c10e;
-  if (gvl_lookup(c) && !gdl_orig_mode)
-    ynp->text = (ccp)((gvl_g*)ynp->user)->c10e;
-  else
-    ynp->text = (ccp)((gvl_g*)ynp->user)->orig;
+  {
+    unsigned char *o = NULL, *c = NULL;
 
-  if ((gp->oid = (ccp)gvl_lookup(c)))
-    gp->sign = gp->c10e;
-  else if ((gp->oid = (ccp)gvl_lookup(o)))
-    gp->sign = gp->orig;
+    c = list_concat(cp);
+    o = list_concat(op);
+
+    ynp->user = gp = memo_new(curr_sl->m);
+    ynp->utype = N_U_GVL;
+    gp->type = ynp->name + 2;
+    ((gvl_g*)ynp->user)->c10e = pool_copy(c,curr_sl->p);
+    if (strcmp((ccp)c, (ccp)o))
+      ((gvl_g*)ynp->user)->orig = pool_copy(o,curr_sl->p);
+    else
+      ((gvl_g*)ynp->user)->orig = ((gvl_g*)ynp->user)->c10e;
+    if (gvl_lookup(c) && !gdl_orig_mode)
+      ynp->text = (ccp)((gvl_g*)ynp->user)->c10e;
+    else
+      ynp->text = (ccp)((gvl_g*)ynp->user)->orig;
   
-  list_free(cp, NULL);
-  list_free(op, NULL);
+    if ((gp->oid = (ccp)gvl_lookup(c)))
+      gp->sign = gp->c10e;
+    else if ((gp->oid = (ccp)gvl_lookup(o)))
+      gp->sign = gp->orig;
+  
+    list_free(cp, NULL);
+    list_free(op, NULL);
 
+    free(c);
+    free(o);
+  }
   /* For valuqal type q gdl_mod_wrap_q attaches the mods to the top
      level; if gdl_mod_wrap is being called on a sign that is a child
      of g:n we need to update the top-level here; note ynp->rent->name can be 'f' */
@@ -202,33 +208,35 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
       /*gvl_g *rg = ynp->rent->user;*/
       gvl_g *gg = ynp->user;
 
+      unsigned char *o2 = NULL, *c2 = NULL;
+      
       const char *r = ynp->rent->kids->text;
-      o = pool_alloc(strlen(r) + strlen((ccp)gg->orig) + 3, curr_sl->p);
-      sprintf((char*)o, "%s(%s)", r, gg->orig);
-      c = pool_alloc(strlen(r) + strlen((ccp)gg->c10e) + 3, curr_sl->p);
-      sprintf((char*)c, "%s(%s)", r, gg->orig);
+      o2 = pool_alloc(strlen(r) + strlen((ccp)gg->orig) + 3, curr_sl->p);
+      sprintf((char*)o2, "%s(%s)", r, gg->orig);
+      c2 = pool_alloc(strlen(r) + strlen((ccp)gg->c10e) + 3, curr_sl->p);
+      sprintf((char*)c2, "%s(%s)", r, gg->orig);
 
-      ng->orig = o;
-      if (gvl_lookup(c))
+      ng->orig = o2;
+      if (gvl_lookup(c2))
 	{
 	  if (gdl_orig_mode)
 	    {
-	      ynp->rent->text = (ccp)o;
-	      gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)o);
+	      ynp->rent->text = (ccp)o2;
+	      gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)o2);
 	    }
 	  else
 	    {
-	      ynp->rent->text = (ccp)c;
-	      gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)c);
+	      ynp->rent->text = (ccp)c2;
+	      gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)c2);
 	    }
-	  ng->c10e = c;
+	  ng->c10e = c2;
 	}
       else
 	{
 	  ng->mess = gvl_vmess("unknown sign name: %s", ng->orig);
-	  ynp->rent->text = (ccp)o;
-	  gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)o);
-	  ng->c10e = o;
+	  ynp->rent->text = (ccp)o2;
+	  gdl_prop_kv(ynp->rent, GP_ATTRIBUTE, PG_GDL_INFO, "form", (ccp)o2);
+	  ng->c10e = o2;
 	}
       ynp->rent->user = ng;
     }

@@ -111,6 +111,7 @@ atf_term(void)
   /*atf_lex_term();*/
   label_term();
   note_term();
+  gdl_legacy_check(NULL,NULL);
   tree_term(abt);
   abt = NULL;
   curr_lem_host = NULL;

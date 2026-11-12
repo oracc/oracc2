@@ -45,7 +45,7 @@ g_base_of(const unsigned char *v)
   unsigned char *b = g_strip_subdig(v), *ret = NULL;
   if (b)
     {
-      ret = (ucp)strdup((ccp)g_lc(b));
+      ret = (ucp)memo_dup((ccp)g_lc(b));
       free((char*)b);
     }
   return ret;

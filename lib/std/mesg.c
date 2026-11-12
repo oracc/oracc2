@@ -335,6 +335,7 @@ mesg_print2(FILE *fp, List *mlist)
 		fputs(mesg_prefix_string, fp);
 	      fputs(mp[i], fp);
 	    }
+	  free(mp);
 	}
       list_free(mlist, NULL);
       mlist = NULL;

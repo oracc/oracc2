@@ -251,6 +251,7 @@ gvl_oid_set(gvl_g *gp)
       strcat(ret, k[i]);
     }
   hash_free(u, NULL);
+  free(k);
   return ret;
 }
 
@@ -259,7 +260,7 @@ gvl_common_oids(const char *o1, const char *o2)
 {
   List *c = list_create(LIST_SINGLE);
   const char *target, *test, *ret = NULL;
-  char *srch;
+  char *srch, *stok;
   if (strlen(o1) > strlen(o2))
     {
       target = o1;
@@ -270,19 +271,19 @@ gvl_common_oids(const char *o1, const char *o2)
       target = o2;
       srch = strdup(o1);
     }
-  while ((test = strtok(srch, " ")))
+  stok = srch;
+  while ((test = strtok(stok, " ")))
     {
       if (strstr(target, test))
 	list_add(c, (void*)test);
-      if (srch)
-	srch = NULL;
+      if (stok)
+	stok = NULL;
     }
-  free(srch);
 
   if (list_len(c))
     ret = (ccp)list_join(c, " ");
   list_free(c, NULL);
-
+  free(srch);
   return ret;  
 }
 
@@ -355,8 +356,12 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	    vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s",
 				 qp->orig, vp->orig, sll_snames_of(tmp2), QFIX);
 	  else if (!strchr((ccp)qp->orig,'X'))
-	    vq->mess = gvl_vmess("[vq]: q %s unknown: %s known as %s%s",
-				 qp->orig, vp->orig, sll_snames_of(vp->sign), QFIX);
+	    {
+	      char *tmp3 = sll_snames_of(vp->sign);
+	      vq->mess = gvl_vmess("[vq]: q %s unknown: %s known as %s%s",
+				   qp->orig, vp->orig, tmp3, QFIX);
+	      free(tmp3);
+	    }
 	}
       else
 	gdl_corrq = 0;
@@ -430,7 +435,7 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 		  voids = gvl_oid_set(vp);
 		  qoids = gvl_oid_set(qp);
 		  common = gvl_common_oids(voids, qoids);
-			
+		  memo_list(common);			
 		  if (!common)
 		    {
 		      vq->mess = gvl_vmess("[vq] %s(%s): value and qualifier are different signs (%s vs %s)%s",
@@ -544,8 +549,12 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 			    {
 			      unsigned const char *q_for_v = gvl_lookup(sll_tmp_key(vp->orig, "q"));
 			      if (q_for_v)
-				vq->mess = gvl_vmess("[vq] %s(%s): unknown. Known for %s: %s%s",
-						     vp->orig, qp->orig, vp->orig, sll_snames_of(q_for_v), QFIX);
+				{
+				  char *tmp4 = sll_snames_of(q_for_v);
+				  vq->mess = gvl_vmess("[vq] %s(%s): unknown. Known for %s: %s%s",
+						       vp->orig, qp->orig, vp->orig, tmp4, QFIX);
+				  free(tmp4);
+				}
 			      else
 				vq->mess = gvl_vmess("[vq] %s(%s): %s is %s not %s%s",
 						     vp->orig, qp->orig, vp->orig, vp->sign, qp->orig, QFIX);

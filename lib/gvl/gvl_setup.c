@@ -19,7 +19,12 @@ int gvl_void_messages; /* when non-zero only complain about structural
 			  list */
 
 static gvl_i *gvl_i_init_h(const char *name, Hash *h);
+#if 1
+static void   gvl_i_term(gvl_i*);
+#else
 static void   gvl_i_term(const char *name);
+#endif
+
 static gvl_i *sl = NULL; /* sl is always the head of the list of signlist datasets, not necessarily the current one */
 gvl_i *curr_sl = NULL; /* the sl that should be used for look up */
 
@@ -87,7 +92,7 @@ gvl_setup(const char *project, const char *name, const char *script)
 	{
 	  ret = gvl_i_init_h(name, h);
 	  ret->script = script;
-	  ret->sindex = ++ngvl_checkers;
+	  ret->sindex = ngvl_checkers++;
 	  sll_set_sl(ret->sl);
 	  langcore_set_sindex(script, ret->sindex);
 #if 0
@@ -126,17 +131,22 @@ gvl_set_lookup_ptr(gvl_lookup_ptr p)
 void
 gvl_wrapup(const char *name)
 {
+#if 0
   if (!name)
     {
       gvl_i_term("voidsl");
       gvl_void_messages = 0;
     }
   else
+#else
     {
       int i;
       for (i = 0; i < ngvl_checkers; ++i)
-	gvl_i_term(gvl_checkers[i]->n);
+	if (gvl_checkers[i])
+	  gvl_i_term(gvl_checkers[i]);
+      sl = NULL;
     }
+#endif
   if (!sl)
     sll_set_sl(NULL);
   if (gvl_checkers)
@@ -223,6 +233,17 @@ gvl_i_init_h(const char *name, Hash *h)
   return p;  
 }
 
+#if 1
+void
+gvl_i_term(gvl_i *tmp)
+{
+  hash_free(tmp->sl, NULL);
+  hash_free(tmp->h, NULL);
+  pool_term(tmp->p);
+  memo_term(tmp->m);
+  free(tmp);
+}
+#else
 void
 gvl_i_term(const char *name)
 {
@@ -249,3 +270,4 @@ gvl_i_term(const char *name)
   if (!found)
     fprintf(stderr, "gvl_i named '%s' not found during gvl_i_term\n", name);
 }
+#endif

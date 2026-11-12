@@ -255,6 +255,7 @@ gdl_word_attr(Node *w)
 	      if (af_buf && *af_buf)
 		gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "atf:form",
 			    (ccp)pool_copy((uccp)af_buf, gdlpool));
+	      free(af_buf);
 	    }
 	  if (w->next)
 	    gdl_prop_kv(w, GP_ATTRIBUTE, PG_GDL_INFO, "g:delim", " ");

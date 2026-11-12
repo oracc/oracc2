@@ -144,7 +144,7 @@ parse_nonx(Mloc *mp, unsigned char *l)
       if (')' == end[-1])
 	{
 	  *--end = '\0';
-	  nx.literal = (ucp)strdup((ccp)l);
+	  nx.literal = (ucp)memo_dup((ccp)l);
 	}
       else
 	{

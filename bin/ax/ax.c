@@ -284,8 +284,6 @@ main(int argc, char * const*argv)
       xfclose("ax.ok", ok_no_ok_fp);
       xfclose("ax.no", ok_no_no_fp);
     }
-
-  sleep(5);
 }
 
 int

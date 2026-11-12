@@ -35,7 +35,8 @@ const char *correctedg = NULL;
 void
 sll_init(void)
 {
-  sllpool = pool_init();
+  if (!sllpool)
+    sllpool = pool_init();
 }
 
 void
