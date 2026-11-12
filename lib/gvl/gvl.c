@@ -507,7 +507,10 @@ gvl_simplexg(Node *ynp)
     fprintf(stderr, "gvl_simplexg: called with g=%s\n", g);
 
   if (!(gp = hash_find(curr_sl->h,g)))
-    gp = gvl_s(ynp);
+    {
+      gp = gvl_s(ynp);
+      hash_add(curr_sl->h,g,gp);
+    }
   else if (!strcmp(ynp->name, "g:g"))
     {
       if (!(ynp->name = gvl_name_from_type[*(unsigned char*)gp->type]))

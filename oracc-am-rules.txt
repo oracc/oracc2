@@ -3,7 +3,7 @@ override CFLAGS=
 ASAN_CFLAGS=-O1 -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
 ASAN_LFLAGS=-fsanitize=address 
 
-AM_CFLAGS=-pedantic -Wall -g -Wno-deprecated-declarations -O0
+AM_CFLAGS=-pedantic -Wall -g -Wno-deprecated-declarations
 ## ${ASAN_CFLAGS}
 
 ACLOCAL_AMFLAGS=-I m4 -Wno-portability

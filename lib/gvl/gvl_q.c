@@ -353,8 +353,12 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	  /* If the q is unknown, report known q for v */
 	  unsigned const char *tmp2 = gvl_lookup(sll_tmp_key(vp->orig, "q"));
 	  if (tmp2)
-	    vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s",
-				 qp->orig, vp->orig, sll_snames_of(tmp2), QFIX);
+	    {
+	      char *tmp3 = sll_snames_of(tmp2);
+	      vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s",
+				   qp->orig, vp->orig, tmp3, QFIX);
+	      free(tmp3);
+	    }
 	  else if (!strchr((ccp)qp->orig,'X'))
 	    {
 	      char *tmp3 = sll_snames_of(vp->sign);
