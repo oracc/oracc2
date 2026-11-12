@@ -63,7 +63,7 @@ int ag_term_flag = 0;
 
 /* Simple stack for nesting of compounds and valuquals */
 #define AG_CVQ_MAX 6
-static int ag_cvq_stack[AG_CVQ_MAX+1] = { 0, 0, 0, 0, 0, 0 };
+static int ag_cvq_stack[AG_CVQ_MAX] = { 0, 0, 0, 0, 0, 0 };
 static int ag_cvq_top = -1;
 static int ag_cvq_pop(void);
 static int ag_cvq_push(int);
@@ -487,6 +487,7 @@ ag_read_atf(char *atf, size_t len)
       return NULL;
     }
   yy_start = s_next = 0;
+  ag_set_lineno(last_aglineno);
   atf_init(); /* this really is atf_init--initialize the ATF structure for the build */
   Tree *tp = agyacc();
   /*ag_delete_buffer(ag_buffer);*/
@@ -672,7 +673,12 @@ ag_cvq_push(int s)
 static int
 ag_cvq_pop(void)
 {
-  if (ag_cvq_top >= 0)
+  if (ag_cvq_top >= AG_CVQ_MAX)
+    {
+      fprintf(stderr, "%s:%d: ag_cvq_pop: cvq stack overflow\n", agfile, aglineno);
+      ag_cvq_top = 0;
+    }
+  else if (ag_cvq_top >= 0)
     return ag_cvq_stack[ag_cvq_top--];
   else
     fprintf(stderr, "%s:%d: ag_cvq_pop: cvq stack underflow\n", agfile, aglineno);
@@ -691,92 +697,5 @@ void
 ag_lex_line_trace(Mloc *mp)
 {
     fprintf(stderr, "#fileline: %s:%d\n", curratffile, mp->line);
-}
-#endif
-
-#if 0
-/* Public function to call with (0) arg at start of text and with (1)
-   arg when #atf: use legacy is encountered */
-void
-ag_gdl_legacy_lexer(int legacy)
-{
-  if (legacy)
-    {
-      gdl_grapheme_type = gdl_grapheme_type_l;
-      gdl_delim = gdl_delim_l;
-      gdl_graph_node = gdl_graph_node_l;
-    }
-  else
-    {
-      gdl_grapheme_type = gdl_grapheme_type_s;
-      gdl_delim = gdl_delim_s;
-      gdl_graph_node = gdl_graph_node_s;
-    }
-}
-
-/* Version of ag_gdl_grapheme_type for use when atf mode is strict, i.e., non-legacy */
-static int
-ag_gdl_grapheme_type_s(void)
-{
-  char *g = agtext;
-  gsaveg(g);
-
-  if (strlen(g) == 1
-      && ('n' == *g || 'N' == *g))
-      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
-  else if (isdigit(*g))
-    {
-      char *d = g+1;
-      while (*d && isdigit(*d))
-        ++d;
-      if (*d == '(')
-        return NUMBER;
-      else if (!strncmp(g, "00", 2))
-	return ZERO;
-      else
-	return BARENUM;
-    }
-  else if (sll_is_signlist(g))
-    return LISTNUM;
-  else
-    return GRAPHEME;
-}
-
-/* Version of ag_gdl_grapheme_type for use when atf: use legacy is set */
-static int
-ag_gdl_grapheme_type_l(void)
-{
-  char *l = agtext;
-  char *g = (char*)gdl_unlegacy_str(&aglloc, (uccp)l);
-  if (g)
-    {
-  gsaveg(g);
-
-  if (strcmp(g,l))
-    gdl_legacy_prop = (uccp)l;
-  if (strlen(g) == 1
-      && ('n' == *g || 'N' == *g))
-      return GRAPHEME /*NUMBER*/; /*20260512: oxx treats n as <g:v>n</g:v>*/
-  else if (isdigit(*g))
-    {
-      char *d = g+1;
-      while (*d && isdigit(*d))
-        ++d;
-      if (*d == '(')
-        return NUMBER;
-      else if (!strncmp(g, "00", 2))
-	return ZERO;
-      else
-	return BARENUM;
-    }
-  else if (sll_is_signlist(g))
-    return LISTNUM;
-  else
-    return GRAPHEME;
-    }
-  else
-    {
-       return IGNORE;
-    }
 }
 #endif

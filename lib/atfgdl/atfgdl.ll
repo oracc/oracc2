@@ -297,6 +297,7 @@ ag_read_atf(char *atf, size_t len)
       return NULL;
     }
   yy_start = s_next = 0;
+  ag_set_lineno(last_aglineno);
   atf_init(); /* this really is atf_init--initialize the ATF structure for the build */
   Tree *tp = agyacc();
   /*ag_delete_buffer(ag_buffer);*/
@@ -482,7 +483,12 @@ ag_cvq_push(int s)
 static int
 ag_cvq_pop(void)
 {
-  if (ag_cvq_top >= 0)
+  if (ag_cvq_top >= AG_CVQ_MAX)
+    {
+      fprintf(stderr, "%s:%d: ag_cvq_pop: cvq stack overflow\n", agfile, aglineno);
+      ag_cvq_top = 0;
+    }
+  else if (ag_cvq_top >= 0)
     return ag_cvq_stack[ag_cvq_top--];
   else
     fprintf(stderr, "%s:%d: ag_cvq_pop: cvq stack underflow\n", agfile, aglineno);

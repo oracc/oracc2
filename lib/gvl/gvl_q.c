@@ -381,7 +381,7 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
       if (!gvl_lookup(sll_tmp_key(tmp2, "qv"))
 	  && vp->c10e && strcmp((ccp)vp->orig, (ccp)vp->c10e))
 	{
-	  char xtmp[strlen((ccp)tmp2+1)];
+	  char xtmp[strlen((ccp)tmp2)+1];
 	  strcpy(xtmp, (char*)tmp2);
 	  free(tmp2);
 	  int len = snprintf((char*)tmp2, 0, "%s(%s)", vp->c10e, qp->sign);

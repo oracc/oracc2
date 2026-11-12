@@ -1,6 +1,6 @@
 UP=../..
 override CFLAGS= 
-AM_CFLAGS=-pedantic -Wall -g -O0
+AM_CFLAGS=-pedantic -Wall -g -O1 -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wno-deprecated-declarations
 ACLOCAL_AMFLAGS=-I m4 -Wno-portability
 
 LD_GDBM=${ORACC_HOMEBREW}
@@ -93,7 +93,7 @@ install-exec-local:
 
 xLDADD=$(top_srcdir)/lib/liboracc2.la 
 
-AM_LDFLAGS=${ORACC_HOMEBREW} -lunistring -lgdbm
+AM_LDFLAGS=${ORACC_HOMEBREW} -lunistring -lgdbm -fsanitize=address 
 
 AM_CPPFLAGS=\
 	-I/usr/local/include \

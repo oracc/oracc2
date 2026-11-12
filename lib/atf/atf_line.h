@@ -19,9 +19,8 @@ extern void atf_line_lg(Mloc *mp);
   atf_free_wd_list() \
   curr_lem_host = curr_line
 
-#define atf_line_id() \
-  sprintf(line_id_insertp,"%d", ++line_id);				\
-									\
+#define atf_line_id()							\
+  atf_set_line_id(&l);							\
   /* In lg_mode the line group carries the ID that is used for word ID bases--the code here \
      adds an 'l' suffix to the <l> ID then removes it so the right ID base is used for words \
   */									\
@@ -31,13 +30,13 @@ extern void atf_line_lg(Mloc *mp);
       /*set_tr_id(line_id_buf);*//*re-expose when translations are reimplemented*/ \
     }									\
   atf_xprop(lnode, "xml:id", (clid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool))); \
-									\
+  									\
   if (etcsl_labels)							\
     etcsl_lid = (ccp)pool_copy((uccp)line_id_buf, atfmp->pool);		\
-									\
+  									\
   if (lg_mode)								\
     line_id_buf[strlen(line_id_buf)-1] = '\0';				\
-									\
+  									\
   if (last_tlit_h_decay)						\
     {									\
       last_tlit_h_decay = 0;						\

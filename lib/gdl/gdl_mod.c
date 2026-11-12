@@ -195,8 +195,8 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
 
   /* For valuqal type q gdl_mod_wrap_q attaches the mods to the top
      level; if gdl_mod_wrap is being called on a sign that is a child
-     of g:n we need to update the top-level here */
-  if (ynp->rent->name[2] == 'n')
+     of g:n we need to update the top-level here; note ynp->rent->name can be 'f' */
+  if (ynp->rent->name[1] && ynp->rent->name[2] == 'n')
     {
       gvl_g *ng = memo_new(curr_sl->m); /* update in a new gvl_g */
       /*gvl_g *rg = ynp->rent->user;*/

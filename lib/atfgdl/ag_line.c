@@ -5,6 +5,7 @@
 #include <atf_line.h>
 #include <otf-defs.h>
 #include <gdllib.h>
+#include "ag.h"
 
 int already_lemmed = 0;
 unsigned char *curr_line_tok;
@@ -98,7 +99,7 @@ ag_line_o_gus(Mloc l)
 }
 
 void
-ag_line_o_var(Mloc l)
+ag_line_o_var(Mloc l, const char *tok)
 {
 }
 

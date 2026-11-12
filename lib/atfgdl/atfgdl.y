@@ -367,10 +367,10 @@ heading:	heading_tok longtext { atf_bld_heading(@1, $1, longtext_get()); }
 
 atf.line:
 		MTS {alo(mts)(@1,agtext);} gdl { $$=$1; alc(mts)(@1); }
-	| 	NTS {alo(nts)(@1,agtext);} gdl { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
-	| 	LGS {alo(lgs)(@1,agtext);} gdl { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
-	| 	GUS {alo(gus)(@1,agtext);} gdl { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
-	| 	BIL {alo(bil)(@1,agtext);} gdl { $$=$1; alc(bil)(@1); } /* MTS prereq */
+	| 	NTS {alo(nts)(@1);} gdl { $$=$1; alc(nts)(@1); } /* MTS prereq; singleton */
+	| 	LGS {alo(lgs)(@1);} gdl { $$=$1; alc(lgs)(@1); } /* MTS prereq; singleton */
+	| 	GUS {alo(gus)(@1);} gdl { $$=$1; alc(gus)(@1); } /* MTS prereq; singleton */
+	| 	BIL {alo(bil)(@1);} gdl { $$=$1; alc(bil)(@1); } /* MTS prereq */
 	| 	EXX {alo(var)(@1,agtext);} gdl { $$=$1; alc(var)(@1); } /* MTS prereq */
 	| 	VAR {alo(var)(@1,agtext);} gdl { $$=$1; alc(var)(@1); } /* MTS prereq */
 	| 	LEM longtext		{ $$=$1; line_lem(@1, (ucp)longtext_get()); } /* MTS|NTS|BIL prereq */

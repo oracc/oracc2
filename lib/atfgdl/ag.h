@@ -14,11 +14,11 @@ extern void ag_set_tree(Tree *tp);
 extern Tree *agyacc(void);
 
 extern void ag_line_o_mts(Mloc l, const char *t);
-extern void ag_line_o_nts(Mloc l, const char *t);
-extern void ag_line_o_gus(Mloc l, const char *t);
+extern void ag_line_o_nts(Mloc l);
+extern void ag_line_o_gus(Mloc l);
 extern void ag_line_o_var(Mloc l, const char *t);
-extern void ag_line_o_bil(Mloc l, const char *t);
-extern void ag_line_o_lgs(Mloc l, const char *t);
+extern void ag_line_o_bil(Mloc l);
+extern void ag_line_o_lgs(Mloc l);
 extern void ag_line_c_mts(Mloc l);
 extern void ag_line_c_nts(Mloc l);
 extern void ag_line_c_gus(Mloc l);
@@ -31,5 +31,6 @@ extern void ag_gdl_legacy_lexer(int legacy);
 
 extern void ag_gdl_decr_qin(void);
 extern void ag_gdl_incr_qin(void);
+extern void ag_gdl_lex_closers(void);
 
 #endif/*AG_H_*/

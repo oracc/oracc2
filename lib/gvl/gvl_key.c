@@ -6,7 +6,7 @@ gvl_key(gvl_g *gbgp, Pool *p)
 {
   if (gbgp && gbgp->oid)
     {
-      char buf[strlen((ccp)gbgp->orig)+14];
+      char buf[max(strlen((ccp)gbgp->orig),strlen((ccp)gbgp->oid))+14];
       sprintf(buf, "%s.%s;fvp", gbgp->oid, gbgp->orig);
       const unsigned char *fvp = gvl_lookup((uccp)buf);
       if (!fvp)
@@ -27,7 +27,7 @@ gvl_key(gvl_g *gbgp, Pool *p)
         }
       else
         {
-          char key[strlen((ccp)gbgp->orig)+14];
+          char key[max(strlen((ccp)gbgp->orig),strlen((ccp)gbgp->oid))+14];
           if (gbgp->type)
             sprintf(key, "%s..%s", gbgp->oid, (*gbgp->type=='v' ? (ccp)gbgp->orig : ""));
           else

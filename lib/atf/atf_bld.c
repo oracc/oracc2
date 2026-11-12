@@ -273,11 +273,12 @@ atf_bld_link(Mloc l, Linkt lt, const unsigned char *siglum, const char *qid,
   lp->name = name;
   list_add(atfmp->llinks, lp);
   const char *ltstr = (lt==ELINK_DEF?"def":(lt==ELINK_SOURCE?"source":"parallel"));
-  char str[strlen(ltstr)+(siglum?strlen((ccp)siglum):0)+strlen(qid)+strlen((ccp)name)+4];
+  int len = strlen(ltstr)+(siglum?strlen((ccp)siglum):0)+strlen(qid)+strlen((ccp)name)+4;
+  char str[len];
   if (siglum)
-    sprintf(str, "%s %s = %s = %s", ltstr, (ccp)siglum, qid, (ccp)name);
+    snprintf(str, len, "%s %s = %s = %s", ltstr, (ccp)siglum, qid, (ccp)name);
   else
-    sprintf(str, "%s %s = %s", ltstr, qid, (ccp)name);
+    snprintf(str, len, "%s %s = %s", ltstr, qid, (ccp)name);
   Node *p = abt_add_link_protocol(&l, lp, (ccp)pool_copy((uccp)str, atfmp->pool));
   atf_xprop(p, "subt", ltstr);
   if (siglum)

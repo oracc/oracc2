@@ -56,7 +56,6 @@ ax_read(const char *proj, enum axr_source from, void *list)
 		ax_files(proj, axr_pqx(atf));
 	      else
 		ax_files_static();
-	      ag_set_lineno(last_aglineno);
 	      ax_input(atf, rip->atf_len);
 	    }
 	  else

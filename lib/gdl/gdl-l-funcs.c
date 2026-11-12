@@ -67,7 +67,12 @@ cvq_push(int s)
 int
 cvq_pop(void)
 {
-  if (cvq_top >= 0)
+  if (cvq_top >= CVQ_MAX)
+    {
+      fprintf(stderr, "%s:%d: cvq_pop: cvq stack overflow\n", gdlfile, gdllineno);
+      cvq_top = 0;
+    }
+  else if (cvq_top >= 0)
     return cvq_stack[cvq_top--];
   else
     {

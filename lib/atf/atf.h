@@ -406,4 +406,6 @@ extern void atr_span(Mloc l, unsigned char *s);
 
 extern struct map *etcslnote(register const char*str, register size_t len);
 
+extern void atf_set_line_id(Mloc *mp);
+
 #endif/*ATF_H_*/
