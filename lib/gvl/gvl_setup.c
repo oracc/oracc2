@@ -132,7 +132,11 @@ gvl_wrapup(const char *name)
       gvl_void_messages = 0;
     }
   else
-    gvl_i_term(name);
+    {
+      int i;
+      for (i = 0; i < ngvl_checkers; ++i)
+	gvl_i_term(gvl_checkers[i]->n);
+    }
   if (!sl)
     sll_set_sl(NULL);
   if (gvl_checkers)

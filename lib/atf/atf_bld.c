@@ -124,7 +124,7 @@ atf_bld_amp(Mloc l, const char *pqx, unsigned const char *name)
   atf_xprop(np, "xml:lang", "sux");
   gdl_lang_context = text_lang = global_lang;
   (void)lang_switch(NULL,"sux",NULL,NULL,0);
-  gvl_setup("osl", "osl", "020");
+  /*gvl_setup("osl", "osl", "020");*/ /* done in ax.c */
   atf_input(l, LT_ANDLINE, atfp);
   in_preamble = 1;
   atfp->hlabmap = hash_create(256);
