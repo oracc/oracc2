@@ -70,7 +70,7 @@ atf_group_wrapup(void)
 	      tree_curr(rent);
 	    }
 	}
-      list_free(atfmp->llines, NULL);
+      /*list_free(atfmp->llines, NULL);*/
       atfmp->llines = NULL;
       line_lines = 0;
     }
@@ -127,7 +127,10 @@ line_register(Mloc l, Linet lt, Node *np)
   if (!atfmp->llines)
     {
       if (lt == LINE_MTS)
-	atfmp->llines = list_create(LIST_SINGLE);
+	{
+	  atfmp->llines = list_create(LIST_SINGLE);
+	  list_add(atfmp->lllines, atfmp->llines);
+	}
       else
 	{
 	  mesg_verr(&l, "out of place line\n");

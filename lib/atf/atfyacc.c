@@ -22,6 +22,7 @@ atf_init(void)
   atfmp->llinks = list_create(LIST_SINGLE);
   atfmp->lkeys = list_create(LIST_SINGLE);
   atfmp->label_xmlid = list_create(LIST_SINGLE);
+  atfmp->lllines = list_create(LIST_SINGLE);
   atfmp->matfls = memo_init(sizeof(Atfl),256);
   atfmp->mbibs = memo_init(sizeof(Bib),16);
   atfmp->mblocks = memo_init(sizeof(Block),256);
@@ -87,6 +88,12 @@ atf_term(void)
   memo_term(atfmp->mxlinks);
   pool_term(atfmp->pool);
   lmemo_term();
+
+  List *lp;
+  for (lp = list_first(atfmp->lllines); lp; lp = list_next(atfmp->lllines))
+    list_free(lp, NULL);
+  list_free(atfmp->lllines, NULL);
+
   free(atfmp);
   atfmp = NULL;
   curr_line = NULL;
@@ -167,7 +174,7 @@ atf_wrapup(Wheret where)
 	{
 	  if (list_len(atfmp->llines))
 	    curr_group->lines = (Line**)list2array_c(atfmp->llines, &curr_group->nlines);
-	  list_free(atfmp->llines, NULL);
+	  /*list_free(atfmp->llines, NULL);*/
 	  atfmp->llines = NULL;
 	}
     }

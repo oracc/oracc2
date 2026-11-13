@@ -33,6 +33,7 @@ typedef struct atfm {
   List *lprotocols; /* repeatedly reset to array */
   List *llinks;
   List *llines;
+  List *lllines;
   List *lkeys;
   List *label_xmlid;
   Memo *matfls;

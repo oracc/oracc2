@@ -191,7 +191,7 @@ atr_translation(void)
 void
 atr_inter(Mloc l, unsigned char *s)
 {
-  if (!s || !*s || !strchr(s, ':'))
+  if (!s || !*s || !strchr((ccp)s, ':'))
     return;
 
   if (!atfp->itr)
