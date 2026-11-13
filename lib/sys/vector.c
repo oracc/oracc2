@@ -45,7 +45,7 @@ vec_to_str (char **vec, size_t count, char *sep)
 
   for (i = 0, len = 0; i < count; ++i)
     len += strlen (vec[i]) + sep_len;
-  tmp = malloc (len + 1);
+  tmp = malloc(len + 1);
   *tmp = '\0';
   for (i = 0, len = 0; i < count; ++i)
     {
@@ -63,6 +63,7 @@ vec_from_str (char * str, char *(*tok)(const char *), size_t *vecsize_p)
   extern char *strdup(const char *);
   int alloc = 4;
   char **tmp = calloc(alloc+1, sizeof(char*));
+  /*memo_list(tmp);*/
   size_t count = 0;
   char *t = strtok(str, vec_sep_str);
   while (t)
@@ -72,7 +73,7 @@ vec_from_str (char * str, char *(*tok)(const char *), size_t *vecsize_p)
 	  alloc *= 2;
 	  tmp = realloc(tmp, (1+alloc)*sizeof(char*));
 	}
-      tmp[count++] = strdup(t);
+      tmp[count++] = /*memo_dup*/strdup(t);
       t = strtok(NULL, vec_sep_str);
     }
   tmp[count] = NULL;

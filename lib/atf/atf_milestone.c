@@ -12,7 +12,6 @@ const char *curr_discourse;
 void
 atf_milestone(Block *bp, char *rest)
 {
-#if 1
   const char *type = NULL, *subtype = NULL, *text = NULL, *m_n = NULL;
   extern int m_label_col_index;
   char **toks = NULL;
@@ -30,8 +29,16 @@ atf_milestone(Block *bp, char *rest)
        fprintf(stderr, "::%s", toks[i]);
      fputc('\n', stderr);
    }
+
  if (toks[0])
    {
+     int i;
+     for (i = 0; toks[i]; ++i)
+       {
+	 char *t = (char*)pool_copy((uccp)toks[i], atfmp->pool);
+	 free(toks[i]);
+	 toks[i] = t;
+       }
      int bt_index = -1;
      if (!strcmp(toks[0], "locator"))
        bt_index = 1;
@@ -165,6 +172,7 @@ atf_milestone(Block *bp, char *rest)
        {
 	   mesg_verr(bp->np->mloc, "@m locator incomplete (needs locator info)");
        }
+     free(toks);
    }
 
  if (type)
@@ -180,221 +188,4 @@ atf_milestone(Block *bp, char *rest)
    }
  if (text)
    bp->np->text = (ccp)pool_copy((uccp)text, atfmp->pool);
-
-#else
-  unsigned char *type = l+1;
-  unsigned char *subtype = NULL, *m_div_n = NULL;
-  struct node *m = elem(e_m,NULL,lnum,MILESTONE);
-  extern int m_label_col_index;
-  if (type[0] == 'm' && type[1] == '\0')
-    {
-      struct block_token *blocktokp;
-      unsigned char *sub_n = NULL;
-      type += 2; /* skip 'm=' */
-      l = type;
-      while (*l && !isspace(*l))
-	++l;
-      if (*l)
-	*l++ = '\0';
-      while (isspace(*l))
-	++l;
-      if (*l)
-	sub_n = l;
-      blocktokp = blocktok(cc(type),xxstrlen(type));
-      if (blocktokp)
-	{
-	  switch (blocktokp->etype)
-	    {
-	    case e_object:
-	      subtype = type;
-	      type = uc("locator");
-	      m_label_col_index = 0;
-	      if (strcmp((const char *)subtype,"tablet") || sub_n)
-		update_mlabel(e_object, sub_n ? sub_n : type);
-	      m_object_index = m_label_col_index;
-	      break;
-	    case e_surface:
-	      subtype = type;
-	      type = uc("locator");
-	      if (!m_object_index)
-		m_label_col_index = 0;
-	      update_mlabel(e_surface,
-			    blocktokp->nano ? ucc(blocktokp->nano) : (sub_n ? sub_n : subtype));
-	      break;
-	    case e_column:
-	      subtype = type;
-	      type = uc("locator");
-	      update_mlabel(e_column,l);
-	      break;
-	    default:
-	      break;
-	    }
-	}
-      else if (!xstrcmp("locator",type))
-	{
-	  subtype = l;
-	  type = uc("locator");
-	  m_label_col_index = 0;
-	  update_mlabel(e_surface,l);
-	}
-      else if (!xstrcmp("division",type))
-	{
-	  static unsigned char buf[32];
-	  unsigned char *n = l;
-	  type = uc("division");
-	  m_label_col_index = 0;	      
-	  while (*n && !isspace(*n))
-	    ++n;
-	  if (*n)
-	    {
-	      *n++ = '\0';
-	      while (isspace(*n))
-		++n;
-	      if (!*n)
-		n = NULL;
-	    }
-	  if (n)
-	    {
-	      if (!xstrcmp(l,"segment"))
-		sprintf((char*)buf,"Seg.%s,",n);
-	      else if (!xstrcmp(l,"paragraph"))
-		sprintf((char*)buf,"Par.%s,",n);
-	      else if (!xstrcmp(l,"exemplar"))
-		sprintf((char*)buf,"Ex.%s,",n);
-	      else
-		sprintf((char*)buf,"%s,",(char*)l);
-	      subtype = l;
-	      m_div_n = n;
-	      update_mlabel(e_surface,buf);
-	    }
-	  else
-	    {
-	      subtype = l;
-	      update_mlabel(e_surface,l);
-	    }
-	}
-      else if (!xstrcmp("textdesc",type))
-	{
-	  type = uc("textdesc");
-	  if (!strcmp((const char*)sub_n, "-"))
-	    *sub_n = '\0';
-	  m_div_n = sub_n;
-	}
-      else if (!xstrcmp("textname",type))
-	{
-	  type = uc("textdesc");
-	  m_div_n = sub_n;
-	}
-    }
-  else
-    {
-      l += xxstrlen(l);
-      if (!xstrcmp(type,"body")
-	  || !xstrcmp(type,"catchline")
-	  || !xstrcmp(type,"colophon")
-	  || !xstrcmp(type,"date")
-	  || !xstrcmp(type,"linecount")
-	  || !xstrcmp(type,"sealings")
-	  || !xstrcmp(type,"signature")
-	  || !xstrcmp(type,"summary")
-	  || !xstrcmp(type,"witnesses"))
-	{
-	  subtype = type;
-	  /* curr_discourse gets reset later to point to the
-	     pool_copy'd version of the subtype */
-	  curr_discourse = type = uc("discourse");
-	  if (!xstrcmp(subtype,"body"))
-	    {
-	      extern const char *default_discourse_level;
-	      default_discourse_level = "preamble";
-	    }
-	}
-      else if (!xstrcmp("fragment",bp->name) || !xstrcmp("cfragment",bp->name))
-	{
-	  ++l;
-	  while (*l && isspace(*l))
-	    ++l;
-	  if (l)
-	    {
-	      unsigned char *end = l + xxstrlen(l);
-	      unsigned char buf[32];
-	      while (end > l && isspace(end[-1]))
-		--end;
-	      *end = '\0';
-	      type = uc("locator");
-	      subtype = uc("fragment");
-	      if (doctype != e_composite)
-		{
-		  label_frag(current,l);
-		  update_labels(current,transtype);
-		}
-	      else
-		{
-		  if (xxstrlen(l)+5 > 32)
-		    warning("fragment label too long (max 26 letters)");
-		  else
-		    {
-		      xstrcpy(buf,"frg.");
-		      xstrcat(buf,l);
-		      if ('c' == *bp->name)
-			update_mlabel(e_enum_top,buf);
-		      else
-			update_mlabel(e_surface,buf);
-		    }
-		}
-	    }
-	  else
-	    warning("@fragment must have frag indicator");
-	}
-    }
-  appendAttr(m,attr(a_type,type));
-  if (subtype)
-    {
-      appendAttr(m,attr(a_subtype,subtype));
-      if (curr_discourse)
-	curr_discourse = getAttr(m,"subtype");
-    }
-  if (m_div_n)
-    {
-      appendAttr(m,attr(a_n,m_div_n));
-      *m_div_n = '\0';
-    }
-    
-  if (*l)
-    appendChild(m,cdata(l));
-  return m;
-#endif
 }
-
-#if 0
-	 /* @textdesc and @textname were defined in oxx but are not
-	    valid types in xtf.rnc so they have probably never been
-	    used and therefore are probably not needed */
-     else if (!strcmp(toks[0], "textdesc"))
-       {
-	 type = "textdesc";
-	 if (toks[1])
-	   {
-	     if (strcmp(toks_n, "-"))
-	       {
-		 unsigned char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
-		 m_div_n = pool_copy(tmp, atfmp->pool);
-		 free(tmp);
-	       }
-	   }
-	 else
-	   mesg_verr(bp->np->mloc, "@textdesc incomplete (needs text description)");
-       }
-     else if (!strcmp(toks[0], "textname"))
-       {
-	 type = "textname";
-	 if (toks[1])
-	   {
-	     unsigned char *tmp = vec_to_str(&toks[1], vec_len(&toks[1]), " ");
-	     m_div_n = pool_copy(tmp, atfmp->pool);
-	     free(tmp);
-	   }
-	 else
-	   mesg_verr(bp->np->mloc, "@textname incomplete (needs text name)");
-       }
-#endif

@@ -85,6 +85,7 @@ note_create_id(void)
 {
   static int note_id = 0;
   char *nid = malloc(16);
+  memo_list(nid);
   (void)sprintf(nid,"n%04d",++note_id);
   return nid;
 }

@@ -195,7 +195,7 @@ gdlparse_term(void)
   free(tcurr->user);
   tree_term(tcurr);
   gdl_balance_term();
-  gdl_modq_term();
+  /* Most gdlparse_term is taken care of in gdl_GDL_free */
 }
 
 void

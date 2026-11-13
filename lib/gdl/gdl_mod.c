@@ -246,6 +246,12 @@ void
 gdl_modq_init(void)
 {
   modq = list_create(LIST_SINGLE);
+  modm = memo_init(sizeof(gvl_g), 32);
+}
+
+void
+gdl_mod_term(void)
+{
 }
 
 void
@@ -278,13 +284,6 @@ gdl_modq_flush(void)
 	}
     }
   gdl_modq_reset();
-}
-
-void
-gdl_modq_term(void)
-{
-  list_free(modq, NULL);
-  modq = NULL;
 }
 
 void
@@ -375,6 +374,7 @@ gdl_mod_wrap_q(Node *np)
 	      /*((gvl_g*)np->user)->orig = ((gvl_g*)np->user)->c10e = o; */
 	    }
 	}  
+      free(res);
     }
 }
 

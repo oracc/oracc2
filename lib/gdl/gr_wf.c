@@ -145,20 +145,25 @@ grf(m)(Node *np, FILE *fp)
   fprintf(fp, "@%s", np->text);
   return 0;
 }
-
+/* cdli.atf can produce np->name = "g:N" with no kids; needs looking into */
 int
 grf(n)(Node *np, FILE *fp)
 {
-  gdlr_node(np->kids, fp);
-  fputc('(', fp);
-  gdlr_node(np->kids->next, fp);
-  fputc(')', fp);
-  if (np->kids->next->next) /* modifiers after closing paren */
+  if (np->kids)
     {
-      Node *n;
-      for (n = np->kids->next->next; n; n = n->next)
-	gdlr_node(n, fp);
+      gdlr_node(np->kids, fp);
+      fputc('(', fp);
+      gdlr_node(np->kids->next, fp);
+      fputc(')', fp);
+      if (np->kids->next->next) /* modifiers after closing paren */
+	{
+	  Node *n;
+	  for (n = np->kids->next->next; n; n = n->next)
+	    gdlr_node(n, fp);
+	}
     }
+  else
+    fputs(np->text, fp);
   return 0;
 }
 
@@ -376,6 +381,7 @@ GDLR_config gdlr_wfa_config =
     ['m'] = grf(m),
     ['M'] = grf(m),
     ['n'] = grf(n),
+    ['N'] = grf(n),
     ['o'] = gr_wf_o_a,
     ['p'] = grf(p),
     ['q'] = grf(q),
@@ -405,6 +411,7 @@ GDLR_config gdlr_wfc_config =
     ['m'] = grf(m),
     ['M'] = grf(m),
     ['n'] = grf(n),
+    ['N'] = grf(n),
     ['o'] = grf(o),
     ['p'] = grf(p),
     ['q'] = grf(q),
@@ -434,6 +441,7 @@ GDLR_config gdlr_wfo_config =
     ['m'] = grf(m),
     ['M'] = grf(m),
     ['n'] = grf(n),
+    ['N'] = grf(n),
     ['o'] = grf(o),
     ['p'] = grf(p),
     ['q'] = grf(q),

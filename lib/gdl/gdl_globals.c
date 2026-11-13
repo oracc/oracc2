@@ -381,12 +381,16 @@ gdl_GDL_free(GDL *gp)
     list_free(gp->c_implicit_gps_, NULL);
   if (gp->modq_)
     list_free(gp->modq_, NULL);
+  if (gp->modm_)
+    memo_term(gp->modm_);
   if (gp->break_stack_)
     stck_term(gp->break_stack_);
   if (gp->lang_stack_)
     stck_term(gp->lang_stack_);
   if (gp->state_stack_)
     stck_term(gp->state_stack_);
+  if (gp->glosstck_)
+    stck_term(gp->glosstck_);
   if (gp->sstck_)
     stck_term(gp->sstck_);
   if (gp->mgstck_)

@@ -101,6 +101,7 @@ atf_term(void)
 #endif
 
   hash_free(atfp->hlabmap, NULL);
+  hash_free(atfp->lzr_sparse,  NULL);
   free(atfp);
   atfp = NULL;
 
@@ -162,9 +163,10 @@ atf_wrapup(Wheret where)
     }
   else if (where == WH_GROUP)
     {
-      if (list_len(atfmp->llines))
+      if (atfmp->llines)
 	{
-	  curr_group->lines = (Line**)list2array_c(atfmp->llines, &curr_group->nlines);
+	  if (list_len(atfmp->llines))
+	    curr_group->lines = (Line**)list2array_c(atfmp->llines, &curr_group->nlines);
 	  list_free(atfmp->llines, NULL);
 	  atfmp->llines = NULL;
 	}

@@ -71,6 +71,7 @@ extern Tree *tcurr;
 #define mgstck	(tcurrG->mgstck_)
 #define mlstck	(tcurrG->mlstck_)
 #define modq	(tcurrG->modq_)
+#define modm	(tcurrG->modm_)
 #define nonw_found	(tcurrG->nonw_found_)
 #define pst	(tcurrG->pst_)
 #define rst	(tcurrG->rst_)
@@ -249,5 +250,7 @@ extern int gdl_no_xml_ids, gdl_xmlids;
 extern GDL*gdl_GDL(void);
 extern void gdl_CDLI(void);
 extern void gdl_GDL_free(GDL*gp);
+
+extern void gdl_mod_init(void);
 
 #endif/*GDLLIB_H*/

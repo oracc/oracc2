@@ -220,6 +220,7 @@ typedef struct GDL {
   List *c_explicit_gps_;
   List *c_implicit_gps_;
   List *modq_;
+  Memo *modm_;
   const char *c_last_implicit_delim_;
   int c_delim_sentinel_;
   int c_implicit_times_reset_;

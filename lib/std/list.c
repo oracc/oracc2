@@ -5,6 +5,7 @@
  $Id: list.c,v 0.4 1997/09/08 14:50:05 sjt Exp $
 */
 
+#include <memo.h>
 #include <list.h>
 
 const char *list_vec_sep_str = "\t\n ";
@@ -396,7 +397,7 @@ list_from_str (char *str, char *(*tok)(char *), List_types_e type)
       s = (NULL == tok) ? strtok (str, list_vec_sep_str) : tok (str);
       if (NULL == s)
 	break;
-      list_add(tmp, strdup(s));
+      list_add(tmp, memo_dup(s));
       if (list_len (tmp) == 1)
         str = NULL;
     }
