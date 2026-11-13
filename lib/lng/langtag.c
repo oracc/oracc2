@@ -23,6 +23,20 @@ static Pool *langtag_pool;
 static void langtag_error(const char *file, int lnum, 
 			  const char *tag, const char *mess);
 
+static void
+lng_poolify_lt(struct lang_tag *lt)
+{
+#define ltp(t)   if (lt->t) lt->t = (char*)hpool_copy((uccp)lt->t, langtag_pool)
+  ltp(tag);
+  ltp(lang);
+  ltp(xlang);
+  ltp(script);
+  ltp(region);
+  ltp(variant);
+  ltp(x);
+#undef ltp
+}
+
 void
 lng_init(void)
 {
@@ -193,9 +207,18 @@ langtag_parse(const char *tag, const char *file, int lnum)
   else
     {
       tmp = calloc(1,sizeof(struct lang_tag));
+#if 1
+      tagcopy = memo_dup(tag);
+#else
       tagcopy = (char*)pool_copy((unsigned char *)tag, langtag_pool);
+#endif
     }
+#if 1
+  tmp->tag = memo_dup(tag);
+#else
   tmp->tag = (char *)pool_copy((unsigned char *)tag, langtag_pool);
+#endif
+
   tmp->lang = s = tagcopy;
   while (*s && '-' != *s)
     ++s;
@@ -307,7 +330,11 @@ langtag_compose(struct lang_tag *def, const char *lang,
     sprintf(buf+strlen(buf),"-%s",x);
   else if (def->x)
     sprintf(buf+strlen(buf),"-%s",def->x);
+#if 1
+  return memo_dup(buf);
+#else
   return (char *)hpool_copy((unsigned char *)buf,langtag_pool);
+#endif
 }
 
 struct lang_tag *
@@ -375,7 +402,10 @@ langtag_create(struct lang_context *base, const char *tag,
 	  if (!(ret = hash_find(langtag_hash,(unsigned char*)fulltag)))
 	    {
 	      if ((ret = langtag_parse(fulltag, file, lnum)))
-		hash_add(langtag_hash, (unsigned char *)ret->tag, ret);
+		{
+		  lng_poolify_lt(ret);
+		  hash_add(langtag_hash, (unsigned char *)ret->tag, ret);
+		}
 	      else
 		ret = hash_find(langtag_hash,(unsigned char *)"sux");
 	    }
@@ -391,6 +421,7 @@ langtag_create(struct lang_context *base, const char *tag,
 	      struct langcore *lc = langcore_of(ret->lang);
 	      if (lc && !ret->script)
 		ret->script = lc->script;
+	      lng_poolify_lt(ret);
 	      hash_add(langtag_hash, (unsigned char *)ret->tag, ret);
 	    }
 	  else

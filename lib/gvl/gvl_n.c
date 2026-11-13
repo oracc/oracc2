@@ -13,9 +13,16 @@ gvl_n(Node *ynp)
 
   if (!nnp->kids->text && nnp->kids->next->text)
     nnp = nnp->kids;
-  
+
+  /* This pool_alloc is persistent because it goes into the sl hash */
+#if 1
+  char n[strlen(nnp->kids->text) + strlen(nnp->kids->next->text) + 3];
+  sprintf(n, "%s(%s)", nnp->kids->text, nnp->kids->next->text);
+  p = (ucp)hpool_copy((uccp)n, curr_sl->p);
+#else
   p = (ucp)pool_alloc(strlen(nnp->kids->text) + strlen(nnp->kids->next->text) + 3, curr_sl->p);
   sprintf((char*)p, "%s(%s)", nnp->kids->text, nnp->kids->next->text);
+#endif
 
   if (ynp->kids && ynp->kids->next && N_U_GVL == ynp->kids->next->utype)
     {

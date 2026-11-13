@@ -212,7 +212,7 @@ gvl_i_init_(const char *name)
   curr_sl = sl;
   sl->h = hash_create(1024);
   sl->m = memo_init(sizeof(gvl_g), 1024);
-  sl->p = pool_init();
+  sl->p = hpool_init();
 
   if (!sl->h || !sl->p)
     return NULL;
