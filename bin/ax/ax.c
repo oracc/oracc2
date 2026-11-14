@@ -328,7 +328,8 @@ opts(int opt, const char *arg)
 	  if (lem_mode++ >= 2)
 	    sigsets_debug = 1;
 	}
-       lem_mode = xcl_output = xml_output = 1;
+      check_mode = 0;
+      lem_mode = xcl_output = xml_output = 1;
       break;
     case 'm':
       memuse_mode = 1;
@@ -357,6 +358,7 @@ opts(int opt, const char *arg)
 	}
       break;
     case 'x':
+      check_mode = 0;
       xml_output = 1;
       break;
     default:

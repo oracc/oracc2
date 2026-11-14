@@ -367,7 +367,7 @@ gr_node_wf(Node *np, FILE *fp)
 GDLR_config gdlr_wfa_config =
   {
     [0] = gr_node_wf,
-    [1] = gdlr_orig_text,
+    [1] = gdlr_ascii_text,
     ['a'] = grf(a),
     ['A'] = grf(a),
     ['b'] = grf(b),
