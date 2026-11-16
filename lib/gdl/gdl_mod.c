@@ -175,12 +175,12 @@ gdl_mod_wrap(Node *ynp, int sub_simplexg)
     c = list_concat(cp);
     o = list_concat(op);
 
-    ynp->user = gp = memo_new(curr_sl->m);
+    ynp->user = gp = memo_new(modm);
     ynp->utype = N_U_GVL;
     gp->type = ynp->name + 2;
-    ((gvl_g*)ynp->user)->c10e = pool_copy(c,curr_sl->p);
+    ((gvl_g*)ynp->user)->c10e = pool_copy(c,gdlpool);
     if (strcmp((ccp)c, (ccp)o))
-      ((gvl_g*)ynp->user)->orig = pool_copy(o,curr_sl->p);
+      ((gvl_g*)ynp->user)->orig = pool_copy(o,gdlpool);
     else
       ((gvl_g*)ynp->user)->orig = ((gvl_g*)ynp->user)->c10e;
     if (gvl_lookup(c) && !gdl_orig_mode)
