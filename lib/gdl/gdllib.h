@@ -111,6 +111,8 @@ extern Tree *tcurr;
 extern struct mapi *scripttok(const char *k, int len);
 extern struct lang_context *gdl_lang_context;
 
+extern GDL *GDL_default_p;
+
 extern Gstck*gstck_new(int i);
 
 extern void gdl_pop_wd_list(void *vp);
@@ -252,5 +254,9 @@ extern void gdl_CDLI(void);
 extern void gdl_GDL_free(GDL*gp);
 
 extern void gdl_mod_init(void);
+
+extern GDL*gdl_GDL(void);
+extern void gdl_GDL_free(GDL *gp);
+extern GDL *gdl_GDL_reset(GDL *gp);
 
 #endif/*GDLLIB_H*/

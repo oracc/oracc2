@@ -12,6 +12,7 @@ typedef struct gdl_config
 {
   Hash *h;
   Memo *m;
+  Tree *t; /* provides Treemem for all gt_token calls between gt_init and gt_term */
 } Gt_cfg;
 
 typedef struct gdl_token
@@ -43,5 +44,7 @@ extern void gt_set_oids(Hash *o);
 extern void gt_load_oids(const char *dom);
 extern Hash *gt_get_hash(void);
 extern Gt *gt_get_token(uccp n);
+extern Tree *gt_get_tree(void);
+extern void gt_xml(FILE *fp, Gt *t);
 
 #endif/*GT_H_*/

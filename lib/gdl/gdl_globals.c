@@ -8,7 +8,7 @@ static GDL GDL_defaults = { .deep_parse_ = 0, .gdl_unicode_ = 1, .word_lang_tag_
 
 static GDL CDLI_defaults = { .deep_parse_ = 0, .gdl_ascii_ = 1, .gdl_unicode_ = 0, .word_lang_tag_ = "sux" };
 
-static GDL *GDL_default_p = &GDL_defaults;
+GDL *GDL_default_p = &GDL_defaults;
 
 /* multiple gdl instances share this */
 int gdlflextrace = 0;
@@ -368,8 +368,8 @@ gdl_GDL(void)
   return gp;
 }
 
-void
-gdl_GDL_free(GDL *gp)
+GDL *
+gdl_GDL_reset(GDL *gp)
 {
   if (gp->wd_list_)
     list_free(gp->wd_list_, NULL);
@@ -397,5 +397,14 @@ gdl_GDL_free(GDL *gp)
     memo_term(gp->mgstck_);
   if (gp->mlstck_)
     memo_term(gp->mlstck_);
+
+  *gp = *GDL_default_p;
+  return gp;
+}
+
+void
+gdl_GDL_free(GDL *gp)
+{
+  gdl_GDL_reset(gp);
   free(gp);
 }

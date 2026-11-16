@@ -374,7 +374,7 @@ gdl_mod_wrap_q(Node *np)
 	      /*((gvl_g*)np->user)->orig = ((gvl_g*)np->user)->c10e = o; */
 	    }
 	}  
-      free(res);
+      free((void*)res);
     }
 }
 

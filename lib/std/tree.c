@@ -76,8 +76,13 @@ Tree *
 tree_init_mem(Treemem *tmp)
 {
   Tree *tp = calloc(1, sizeof(Tree));
-  tp->tm = tmp;
-  tp->memless = 1;
+  if (tmp)
+    {
+      tp->tm = tmp;
+      tp->memless = 1;
+    }
+  else
+    tp->tm = tmem_init();
   return tp;
 }
 

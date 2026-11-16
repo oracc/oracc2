@@ -27,6 +27,12 @@ gt_get_hash(void)
   return gtcfg.h;
 }
 
+Tree *
+gt_get_tree(void)
+{
+  return gtcfg.t;
+}
+
 Gt *
 gt_get_token(uccp n)
 {
@@ -54,6 +60,7 @@ gt_init(void)
       m_gt = memo_init(sizeof(Gt), 512);
       p_gt = pool_init();
       gt_config(h_gt, m_gt);
+      gtcfg.t = tree_init();
     }
 }
 void
@@ -66,6 +73,7 @@ gt_term(void)
       hash_free(h_gt, NULL);
       memo_term(m_gt);
       pool_term(p_gt);
+      tree_term(gtcfg.t);
     }
 }
 
@@ -74,13 +82,6 @@ gt_config(Hash *h, Memo *m)
 {
   gtcfg.h = h;
   gtcfg.m = m;
-}
-
-static Tree *
-gt_gdl(Mloc *locp, unsigned char *s)
-{
-  mesg_init();
-  return gdlparse_string(locp, (char*)s);
 }
 
 static int
@@ -163,7 +164,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       else
 	{
 	  extern int gdlsig_depth_mode;
-	  tp = gt_gdl(locp, t);
+	  tp = gdlparse_string(locp, (char*)t);
 
 	  /* deep? or a special mode for unicode rendering? */
 	  gdlsig_depth_mode = -1;
@@ -189,6 +190,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	    }		
 	}
       tokp->priority = 100;
+#if 0
       if (gdl_word_mode)
 	{
 	  if (tp->root->kids)
@@ -202,13 +204,17 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	}
       else
 	{
+#endif
 	  tokp->gdl = tp->root;
 	  tokp->gdl->name = "g:w";
+#if 0
 	}
+#endif
 
       if (!tokp->gdl->mloc)
 	tokp->gdl->mloc = mloc_mloc(locp);
 
+#if 0
       if (!gdl_word_mode)
 	{
 	  Node *np;
@@ -218,6 +224,7 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
 	    }
 	}
+#endif
 
       tokp->gsh = gsort_prep(tp);
       tokp->gsig = gsig;
@@ -304,4 +311,12 @@ gt_snames_of(unsigned const char *oids)
   ret = list_join(l, "");
   list_free(l,NULL);
   return ret;
+}
+
+void
+gt_xml(FILE *fp, Gt *t)
+{
+  fprintf(fp, "<gt t=\"%s\">", t->t);
+  
+  fputs("</gt>", fp);
 }

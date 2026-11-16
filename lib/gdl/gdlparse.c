@@ -1,4 +1,5 @@
 #include <oraccsys.h>
+#include <tree.h>
 #include <lng.h>
 #include "gdl.tab.h"
 #include "gdllib.h"
@@ -12,13 +13,13 @@
  * (1) One tree life-cycle is used by applications that use
  * gdlparse_string directly.  These need to do:
  *
- * gdllib_init() -- prepares the GDL library
+ * gdllib_init() -- start of run
  *
- * gdl_GDL() -- gets a GDL structure
+ * gdl_GDL() -- before options parsing
  *
  * [[ set the GDL structure options as needed ]]
  *
- * gdlparse_init(GDL*) -- sets up tcurr
+ * gdlparse_init(Treemem *tm, GDL*) -- sets up tcurr with a new Tree but with common Treemem 
  *
  * Tree *tp = gdlparse_string(m, s) -- parses string and returns the Tree
  *
@@ -27,6 +28,8 @@
  * [[ gdlparse_reset(tp) -- gdlparse_string() -- repeat parse ]]
  *
  * gdlparse_term(tp) -- release all memory used by parser and GDL
+ *
+ *
  *
  * (2) The other tree life-cycle is used by applications that embed
  * GDL parsing in another parser--at present this is only done by ax.
@@ -49,7 +52,6 @@
  *
  * ATF inline text can include GDL parsing--this is done by using tree
  * life-cycle (1) within the current life-cycle (2) framework.
- *
  *
  */
 
@@ -161,10 +163,10 @@ gdlparse_deep(Node *np, void *mptr)
 }
 
 void
-gdlparse_init(GDL *gp)
+gdlparse_init(Treemem *tm, GDL *gp)
 {
   assert(gp != NULL);
-  tcurr = tree_init();
+  tcurr = tree_init_mem(tm);
   tcurr->user = gp;
   (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
   /* lang_switch uses memo_auto so for the global_lang we clone it into persistent mem */
@@ -182,19 +184,19 @@ gdlparse_init(GDL *gp)
 void
 gdlparse_reset(void)
 {
-  GDL *gp = tcurr->user;
+  Treemem *tm = tcurr->tm;
   tree_term(tcurr);
-  tcurr = tree_init();
-  tcurr->user = gp;
+  tcurr = tree_init_mem(tm);
+  tcurr->user = gdl_GDL_reset(tcurr->user);
   gdl_balance_reset();
 }
 
 void
 gdlparse_term(void)
 {
-  free(tcurr->user);
-  tree_term(tcurr);
   gdl_balance_term();
+  gdl_GDL_free(tcurr->user);
+  tree_term(tcurr);
   /* Most gdlparse_term is taken care of in gdl_GDL_free */
 }
 
@@ -214,37 +216,3 @@ gdlparse_stop(void)
   gdl_GDL_free(tcurr->user);
   tcurr = NULL;
 }
-
-#if 0
-Stck *GDL_stack = NULL;
-void
-gdl_push_tree(Tree *tp)
-{
-  stck_push(GDL_stack, (intptr_t)tp);
-}
-Tree *
-gdl_pop_tree(void)
-{
-  intptr_t ptr = stck_pop(GDL_stack);
-  if (-1 == ptr)
-    return NULL;
-  else
-    return (Tree*)ptr;
-}
-void
-gdl_stack_init(void)
-{
-  if (!GDL_stack)
-    GDL_stack = stck_init(3);
-}
-
-void
-gdl_stack_term(void)
-{
-  if (GDL_stack)
-    {
-      stck_term(GDL_stack);
-      GDL_stack = NULL;
-    }
-}
-#endif

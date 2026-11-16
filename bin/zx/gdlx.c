@@ -13,8 +13,10 @@
 #include <ns-asl.h>
 #include <rnvif.h>
 #include <rnvxml.h>
-#include <gvl.h>
+#include <gdllib.h>
+#include <gt.h>
 #include <gsort.h>
+#include <gvl.h>
 
 /* test harness for gvl/gdl libraries */
 
@@ -43,6 +45,7 @@ int cuneify_mode = 0;
 int gdlseq_mode = 0;
 int gdlseq_oid_mode = 0;
 extern int gdlsig_depth_mode;
+int gt_mode = 0;
 int error_stdout = 0;
 const char *fname = NULL;
 int gdl_c10e_mode = 1;
@@ -88,34 +91,25 @@ test_identity(char *s, Tree *t)
 }
 
 void
-do_one(char *s)
+gdlx_gt_init(void)
 {
-  Tree *tp = NULL;
+  gsort_init();
+  gt_load_oids("sl");
+  gt_init();
+  gdlparse_init(gt_get_tree()->tm, gp);
+}
+
+void
+gdlx_gt_term(void)
+{
+  gdlparse_term();
+  gt_term();
+}
+
+void
+process_one(Tree *tp, char *s)
+{
   List *mp = NULL;
-  static int saved_deep = -1;
-
-  if (-1 == saved_deep)
-    saved_deep = gdlsig_depth_mode;
-  
-  if (s[strlen(s)-1] == '\n')
-    s[strlen(s)-1] = '\0';
-  if (s[strlen(s)-1] == '+')
-    {
-      s[strlen(s)-1] = '\0';
-      saved_deep = gdlsig_depth_mode;
-      gdlsig_depth_mode = 1;
-    }
-  if (ml.line)
-    gdlparse_reset();
-  else
-    gdlparse_init(gp);
-  
-  ++ml.line;
-  mesg_init();
-  gdlparse_string(&ml, s);
-
-  tp = tcurr;
-  
   if (cuneify_mode)
     {
       const unsigned char *ucun = (uccp)gvl_cuneify_tree(tp), *ivs;
@@ -215,6 +209,54 @@ do_one(char *s)
 	    tree_xml(stdout, tp);
 	}
     }
+}
+
+void
+do_one_gt(char *s)
+{
+  if (ml.line)
+    gdlparse_reset();
+  ++ml.line;
+  mesg_init();
+#if 1
+  Gt *tokp = gt_token(&ml, (ucp)s, 0, NULL);
+#else
+  Tree *tp = gdlparse_string(&ml, s);
+#endif
+  gt_xml(stdout, tokp);
+}
+
+void
+do_one(char *s)
+{
+  Tree *tp = NULL;
+  static int saved_deep = -1;
+
+  if (-1 == saved_deep)
+    saved_deep = gdlsig_depth_mode;
+  
+  if (s[strlen(s)-1] == '\n')
+    s[strlen(s)-1] = '\0';
+  if (s[strlen(s)-1] == '+')
+    {
+      s[strlen(s)-1] = '\0';
+      saved_deep = gdlsig_depth_mode;
+      gdlsig_depth_mode = 1;
+    }
+  
+  if (ml.line)
+    gdlparse_reset();
+  else
+    gdlparse_init(NULL, gp);
+  
+  ++ml.line;
+  mesg_init();
+  gdlparse_string(&ml, s);
+
+  tp = tcurr;
+
+  process_one(tp, s);
+  
   gdlparse_reset();
   gdlsig_depth_mode = saved_deep;
   /*tree_term(tp);*/
@@ -237,6 +279,10 @@ do_many(const char *fn)
       ml.line = 0;
       if (wrapper)
 	printf("<gdlx>");
+
+      if (gt_mode)
+	gdlx_gt_init();
+
       while ((s = fgets(buf, 1024, fp)))
 	{
 	  if (key)
@@ -266,10 +312,16 @@ do_many(const char *fn)
 	      if (gsort_mode)
 		hash_add(keyhash, pool_copy((uccp)s, keypool), orig_s);
 	    }
-	  do_one(s);
+	  if (gt_mode)
+	    do_one_gt(s);
+	  else
+	    do_one(s);
 	}
       if (wrapper)
 	printf("</gdlx>");
+
+      if (gt_mode)
+	gdlx_gt_term();
     }
   else
     fprintf(stderr, "gdlx: file %s can't be read\n", fn);
@@ -292,12 +344,20 @@ main(int argc, char **argv)
     
   gdl_flex_debug = gdldebug = 0;
   gp = gdl_GDL();
-  options(argc, argv, "1abcCdef:gG:ik:lnop:PqQrstuUvwW");
+  options(argc, argv, "abcCdef:gG:ik:lnop:PqQrstTuUvwW");
+
   gp->gdl_auto_id_ = 1;
   gp->gdlpool_ = pool_init();
 
+  /* This ensures that the options set on the command-line become
+     default options for each parse in a do_many */
+  *GDL_default_p = *gp;
+
   gdllib_init();
 
+  if (gt_mode)
+    gdlx_gt_init();
+  
   gdl_flex_debug = gdldebug = trace_mode;
   if (trace_mode > 1)
     gdlflextrace = 1;
@@ -333,12 +393,15 @@ main(int argc, char **argv)
       gsort_init();
       gslp = list_create(LIST_SINGLE);
     }
-  
+
   if (argv[optind])
     {
       ml.file = "<argv1>";
       ml.line = 0;
-      do_one(argv[optind]);
+      if (gt_mode)
+	do_one_gt(argv[optind]);
+      else
+	do_one(argv[optind]);
     }
   else if (fname)
     do_many(fname);
@@ -365,6 +428,9 @@ main(int argc, char **argv)
 
   gdllib_term();
 
+  if (gt_mode)
+    gdlx_gt_term();
+  
   return 0;
 }
 
@@ -373,9 +439,11 @@ opts(int opt, const char *arg)
 {
   switch (opt)
     {
+#if 0
     case '1':
       gdl_one_off_mode = 1;
       break;
+#endif
     case 'a':
       gp->gdl_ascii_ = 1;
       gp->gdl_unicode_ = 0;
@@ -448,6 +516,9 @@ opts(int opt, const char *arg)
       break;
     case 't':
       ++trace_mode;
+      break;
+    case 'T':
+      gt_mode = 1;
       break;
     case 'u': /* uptranslate to canonicalized version */
       gdl_c10e_mode = 1;
