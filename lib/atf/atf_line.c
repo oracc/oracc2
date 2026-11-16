@@ -32,7 +32,7 @@ atf_set_line_id(Mloc *mp)
   extern char line_id_buf[MAX_LINE_ID_BUF+1];
   extern char *line_id_insertp;
   size_t nl = MAX_LINE_ID_BUF - strlen(line_id_buf);
-  size_t nr = snprintf(line_id_insertp, nl, "%d", line_id);
+  size_t nr = snprintf(line_id_insertp, nl, "%d", ++line_id);
   if (nr >= nl)
     mesg_verr(mp,
 	      "line_id beginning `%s' is too long (> %d)\n",
