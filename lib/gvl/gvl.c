@@ -486,6 +486,7 @@ g_attr(Node *ynp, gvl_g *gp)
 }
 
 const char *gvl_name_from_type[256] = {
+  ['g'] = "g:s",
   ['n'] = "g:n",
   ['p'] = "g:p",
   ['s'] = "g:s",

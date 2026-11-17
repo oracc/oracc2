@@ -173,9 +173,6 @@ segment:
 	| 	space
 	| 	linebreak
 	| 	transliteration
-	|	error transliteration	       	{ mesg_print(stderr); mesg_init();
-		    				  /*fprintf(stderr, "transliteration error trap\n");*/
-		    		 		  yyclearin; yyerrok; }
 		;
 
 comment:
@@ -290,7 +287,7 @@ s:
 
 compound:
 		c cmaybemodflags       		{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
-	    			       		  gdl_modq_flush();
+	    			       		  if (list_len(modq)) gdl_modq_flush();
 				       		  gvl_compound(ycp);
 				       		  $$ = ycp;
 	    			       		  ynp = gdl_pop(ytp,"g:c");

@@ -215,7 +215,7 @@ s:
 
 compound:
 		c cmaybemodflags       		{ ycp->mloc = ynp->mloc = mloc_mloc(&@1);
-	    			       		  gdl_modq_flush();
+	    			       		  if (list_len(modq)) gdl_modq_flush();
 				       		  gvl_compound(ycp);
 				       		  $$ = ycp;
 	    			       		  ynp = gdl_pop(ytp,"g:c");
