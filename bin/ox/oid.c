@@ -9,6 +9,7 @@ const char *oo_domain = NULL;
 const char *oo_edits = NULL;
 int oo_identity = 0;
 const char *oo_keyfile = NULL;
+int oo_next_free = 0;
 int oo_nowrite = 0;
 const char *oo_oidfile = NULL;
 const char *oo_outfile = NULL;
@@ -33,7 +34,7 @@ main(int argc, char * const*argv)
 
   mesg_init();
 
-  options(argc, argv, "acd:e:f:iI:k:no:p:qtvwx");
+  options(argc, argv, "acd:e:f:iI:k:nN:o:p:qtvwx");
 
   if (oo_outfile)
     {
@@ -59,7 +60,7 @@ main(int argc, char * const*argv)
 	  oo_identity = 0;
 	}
     }
-  
+
   if (oo_assign)
     {
       struct oid_domain *dp = NULL;
@@ -112,6 +113,15 @@ main(int argc, char * const*argv)
   
   o = oid_load();
   o->project = oo_project;
+
+  if (oo_next_free)
+    {
+      int32_t*newids = oid_new_oids(o, oo_next_free);
+      int i;
+      for (i = 0; i < oo_next_free; ++i)
+	printf("o%07d\n", newids[i]);
+      exit(0);
+    }
 
   if (oo_assign)
     o->h_ignore = hash_create(7);
@@ -233,6 +243,10 @@ opts(int opt, const char *arg)
       break;
     case 'n':
       oo_nowrite = 1;
+      break;
+    case 'N':
+      oo_next_free = atoi(arg);
+      break;
     case 'o':
       oo_oidfile = arg;
       break;

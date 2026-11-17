@@ -4,8 +4,6 @@
 #include <list.h>
 #include <oid.h>
 
-static int32_t* oid_new_oids(Oids *o, int n);
-
 int oo_xids = 0;
 int oo_verbose = 0;
 
@@ -98,7 +96,7 @@ oid_ok_pair_last(struct oid_ok_pair *lp)
   return lp;
 }
 
-static int32_t *
+int32_t *
 oid_new_oids(Oids *o, int n)
 {
   int i, j;
