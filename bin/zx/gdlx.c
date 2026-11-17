@@ -218,11 +218,7 @@ do_one_gt(char *s)
     gdlparse_reset();
   ++ml.line;
   mesg_init();
-#if 1
   Gt *tokp = gt_token(&ml, (ucp)s, 0, NULL);
-#else
-  Tree *tp = gdlparse_string(&ml, s);
-#endif
   gt_xml(stdout, tokp);
 }
 
@@ -257,7 +253,6 @@ do_one(char *s)
 
   process_one(tp, s);
   
-  gdlparse_reset();
   gdlsig_depth_mode = saved_deep;
   /*tree_term(tp);*/
 }
