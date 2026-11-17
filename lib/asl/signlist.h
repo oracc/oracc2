@@ -9,15 +9,9 @@
 #include <mesg.h>
 #include <gsort.h>
 
-#define UseGt
-
-#ifdef UseGt
 #include <gt.h>
 #define sl_token gdl_token
 #define tokfind(h,n) gt_get_token(n)
-#else
-#define tokfind(h,n) hash_find(h,n)
-#endif
 
 struct sl_inst;
 struct sl_listdef;
@@ -167,22 +161,6 @@ struct sl_signlist
   Mloc mloc;
   Mloc eloc;
 };
-
-#ifndef UseGt
-struct sl_token
-{
-  const unsigned char *t;	/* sign/form/value/base/list name token */
-  Node *gdl;			/* token as GDL */
-  GS_head *gsh;			/* GDL gsort data */
-  const char *gsig;		/* return value from gdlsig run on
-				   parsed GDL; NULL if the token was a
-				   literal l*/
-  const char *deep;		/* deep sig from gdlsig */
-  struct sl_inst *oid_ip;	/* instance to use for retrieving OID */
-  int s;			/* sort code for token */
-  int priority;			/* for registering nums */
-};
-#endif
 
 struct sl_liga
 {

@@ -7,6 +7,7 @@
 #include <gutil.h>
 #include <sll.h>
 #include <gdllib.h>
+#include <gdlparse.h>
 #include <gt.h>
 #include <oid.h>
 #include <asl.tab.h>
@@ -105,9 +106,6 @@ struct sl_signlist *
 asl_bld_init(void)
 {
   struct sl_signlist *sl = calloc(1, sizeof(struct sl_signlist));
-#ifndef UseGt
-  sl->htoken = hash_create(4192);
-#endif
   sl->hkeys = hash_create(4192);
   sl->linkdefs = hash_create(3);
   sl->listdefs = hash_create(7);
@@ -171,9 +169,6 @@ asl_bld_term(struct sl_signlist *sl)
 {
   if (sl)
     {
-#ifndef UseGt
-      hash_free(sl->htoken, NULL);
-#endif
       hash_free(sl->listdefs, free);
       hash_free(sl->sysdefs, free);
       hash_free(sl->hsentry, NULL);
@@ -226,19 +221,6 @@ asl_bld_singleton_string(Mloc *locp, const unsigned char *t, const char *tag, un
       *seen = 1;
     }
 }
-
-#if 0
-static Tree *
-asl_bld_gdl(Mloc *locp, unsigned char *s)
-{
-  Tree *tp = NULL;
-  mesg_init();
-  gdl_auto_id();
-  tp = gdlparse_string(locp, (char*)s);
-  gdlparse_reset();
-  return tp;
-}
-#endif
 
 static uccp
 reset_num_n(struct sl_signlist *sl, const unsigned char *n, const unsigned char *asif)
@@ -329,20 +311,14 @@ asl_bld_num(Mloc *locp, struct sl_signlist *sl, const uchar *n, struct sl_token 
 struct sl_token *
 asl_bld_token(Mloc *locp, struct sl_signlist *sl, unsigned char *t, int literal)
 {
-#ifdef UseGt
-  /* Future use of GDL token interface derived from the ASL/SX token stuff */
+  static int nth = 0;
+  if (nth++)
+    gdlparse_reset();
   Gt *tokp = gt_token(locp, t, (literal>0) || asl_literal_flag, sl->curr_inst);
   if (!tokp)
     fprintf(stderr, "asl_bld_token: %s -> NULL\n", t);
-#if 0
-  else
-    fprintf(stderr, "asl_bld_token: %s -> %p\n", t, (void*)tokp);
-#endif
   asl_literal_flag = 0;
   return tokp;
-#else
-  /* cut out the old code but keep the UseGt stubs for a bit longer */
-#endif
 }
 
 /* This routine builds the signlist tree of letter/group/signs */
