@@ -31,7 +31,7 @@ gvl_c(gvl_g *cp)
       cp->oid = (ccp)l;
       cp->sign = gvl_lookup(sll_tmp_key(l,""));
       if (strcmp((ccp)cp->orig, (ccp)cp->c10e) && gvl_strict)
-	cp->mess = gvl_vmess("compound %s should be %s", cp->orig, cp->c10e);
+	cp->mess = gvl_vmess("%s => %s", cp->orig, cp->c10e);
     }
   else
     {
@@ -42,7 +42,7 @@ gvl_c(gvl_g *cp)
 	  cp->sign = gvl_lookup(sll_tmp_key(l,""));
 	  if (strcmp((ccp)cp->orig, (ccp)cp->c10e) && gvl_strict)
 	    {
-	      cp->mess = gvl_vmess("compound %s should be %s", cp->orig, c10e_no_p);
+	      cp->mess = gvl_vmess("%s => %s", cp->orig, c10e_no_p);
 	      cp->c10e = pool_copy(c10e_no_p, curr_sl->p);
 	    }
 	}
@@ -53,11 +53,11 @@ gvl_c(gvl_g *cp)
 	  if (!gvl_void_messages && !gdl_corrq && !strchr((ccp)cp->orig,'X'))
 	    {
 	      if (strcmp((ccp)cp->orig, (ccp)cp->c10e) && c10e_no_p && strcmp((ccp)cp->c10e, (ccp)c10e_no_p))
-		cp->mess = gvl_vmess("unknown compound: %s (also tried %s/%s)", cp->orig, cp->c10e, c10e_no_p);
+		cp->mess = gvl_vmess("unknown compound: %s\n\t(also tried %s/%s)", cp->orig, cp->c10e, c10e_no_p);
 	      else if (strcmp((ccp)cp->orig, (ccp)cp->c10e))
-		cp->mess = gvl_vmess("unknown compound: %s (also tried %s)", cp->orig, cp->c10e);
+		cp->mess = gvl_vmess("unknown compound: %s\n\t(also tried %s)", cp->orig, cp->c10e);
 	      else if (c10e_no_p && strcmp((ccp)cp->orig, (ccp)c10e_no_p))
-		cp->mess = gvl_vmess("unknown compound: %s (also tried %s)", cp->orig, c10e_no_p);
+		cp->mess = gvl_vmess("unknown compound: %s\n\t(also tried %s)", cp->orig, c10e_no_p);
 	      else
 		cp->mess = gvl_vmess("unknown compound: %s", cp->orig);
 	    }

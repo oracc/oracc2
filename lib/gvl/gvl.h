@@ -57,6 +57,7 @@ struct oiv_data
 
 extern int gvl_do_setup;
 
+#define QFWS (q_fixed ? "\n\t" : "")
 #define QFIX (q_fixed ? (ccp)q_fixed : "")
 
 extern int gvl_sans_report;

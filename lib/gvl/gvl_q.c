@@ -173,6 +173,18 @@ gvl_q(Node *ynp)
     }
 }
 
+static void
+undot(char*s)
+{
+  while (*s)
+    if ('|' == *s)
+      s = strchr(s+1, '|') + 1;
+    else if ('.' == *s)
+      *s++ = ' ';
+    else
+      ++s;
+}
+
 int
 gvl_corrq(Node *np)
 {
@@ -309,8 +321,8 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	q_bad = 1;
       else if (strcmp((ccp)qp->orig, (ccp)qp->sign))
 	{
-	  q_fixed = malloc(strlen((ccp)qp->orig) + strlen((ccp)qp->sign) + strlen(" [ <= ] "));
-	  (void)sprintf((char*)q_fixed," [%s <= %s]", qp->sign, qp->orig);
+	  q_fixed = malloc(strlen((ccp)qp->orig) + strlen((ccp)qp->sign) + strlen("[ <= ] "));
+	  (void)sprintf((char*)q_fixed,"[%s <= %s]", qp->sign, qp->orig);
 	}
     }
   else
@@ -320,7 +332,7 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
   if (v_bad && q_bad)
     {
       if (!gvl_void_messages)
-	vq->mess = gvl_vmess("[vq]: value %s and qualifier %s both unknown%s", vp->orig, qp->orig, QFIX);
+	vq->mess = gvl_vmess("[vq]: value %s and qualifier %s both unknown%s%s", vp->orig, qp->orig, QFWS, QFIX);
     }
   else if (v_bad)
     {
@@ -331,9 +343,11 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	{
 	  unsigned const char *tmp2 = gvl_lookup(sll_tmp_key((uccp)qp->oid, "values"));
 	  if (tmp2)
-	    vq->mess = gvl_vmess("[vq]: %s::%s unknown. Known for %s: %s%s", vp->orig, qp->sign, qp->sign, tmp2, QFIX);
+	    vq->mess = gvl_vmess("[vq]: %s::%s unknown.\n\tKnown for %s: %s%s%s",
+				 vp->orig, qp->sign, qp->sign, tmp2, QFWS, QFIX);
 	  else
-	    vq->mess = gvl_vmess("[vq]: %s::%s unknown. No known values for %s%s", vp->orig, qp->sign, qp->sign, QFIX);
+	    vq->mess = gvl_vmess("[vq]: %s::%s unknown. No known values for %s%s%s",
+				 vp->orig, qp->sign, qp->sign, QFWS, QFIX);
 	}
       else
 	{
@@ -341,9 +355,9 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	     uppercase; then if value == qp->sign, elide the value and
 	     just print the qp-sign with no parens [FIRST ERROR MESSAGE MAY BE IN WRONG PLACE] */
 	  if (gvl_v_isupper(vp->orig) && !strcmp((ccp)(altindex=g_uc(altindex)), (ccp)qp->sign))
-	    vq->mess = gvl_vmess("[sb1] %s: should be %s%s", vq->orig, qp->sign, QFIX);
+	    vq->mess = gvl_vmess("[sb1] %s: should be %s%s%s", vq->orig, qp->sign, QFWS, QFIX);
 	  else if (strcmp((ccp)vp->orig,(ccp)altindex) || (ccp)q_fixed)
-	    vq->mess = gvl_vmess("[sb2] %s: should be %s(%s)%s", vq->orig, altindex, qp->sign, QFIX);
+	    vq->mess = gvl_vmess("[sb2] %s: should be %s(%s)%s%s", vq->orig, altindex, qp->sign, QFWS, QFIX);
 	}
     }
   else if (q_bad)
@@ -354,16 +368,18 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	  unsigned const char *tmp2 = gvl_lookup(sll_tmp_key(vp->orig, "q"));
 	  if (tmp2)
 	    {
-	      char *tmp3 = sll_snames_of(tmp2);
-	      vq->mess = gvl_vmess("[vq]: q %s unknown: known for %s: %s%s",
-				   qp->orig, vp->orig, tmp3, QFIX);
+	      char *tmp3 = (char*)sll_snames_of(tmp2);
+	      undot(tmp3);
+	      vq->mess = gvl_vmess("[vq]: q %s unknown:\n\tKnown for %s: %s%s%s",
+				   qp->orig, vp->orig, tmp3, QFWS, QFIX);
 	      free(tmp3);
 	    }
 	  else if (!strchr((ccp)qp->orig,'X'))
 	    {
-	      char *tmp3 = sll_snames_of(vp->sign);
-	      vq->mess = gvl_vmess("[vq]: q %s unknown: %s known as %s%s",
-				   qp->orig, vp->orig, tmp3, QFIX);
+	      char *tmp3 = (char*)sll_snames_of(vp->sign);
+	      undot(tmp3);
+	      vq->mess = gvl_vmess("[vq]: q %s unknown\n\t%s known as %s%s%s",
+				   qp->orig, vp->orig, tmp3, QFWS, QFIX);
 	      free(tmp3);
 	    }
 	}
@@ -413,7 +429,7 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	  vq->sign = gvl_lookup(sll_tmp_key((uccp)qp->oid,""));
 	  /* add gp->orig to g hash as key of tmp2 ? */
 	  if (gvl_strict && strcmp((ccp)vq->orig, (ccp)tmp2))
-	    vq->mess = gvl_vmess("[sb3] %s(%s): should be %s%s", vp->orig, qp->orig, tmp2, QFIX);
+	    vq->mess = gvl_vmess("[sb3] %s(%s): should be %s%s%s", vp->orig, qp->orig, tmp2, QFWS, QFIX);
 	  ret = 1;
 	}
       else if (('s' == *vp->type || 'c' == *vp->type) && 'c' != *qp->type)
@@ -439,11 +455,11 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 		  voids = gvl_oid_set(vp);
 		  qoids = gvl_oid_set(qp);
 		  common = gvl_common_oids(voids, qoids);
-		  memo_list(common);			
+		  memo_list((void*)common);			
 		  if (!common)
 		    {
-		      vq->mess = gvl_vmess("[vq] %s(%s): value and qualifier are different signs (%s vs %s)%s",
-					   vp->orig, qp->orig, vp->sign, qp->sign, QFIX);
+		      vq->mess = gvl_vmess("[vq] %s(%s): value and qualifier are different signs (%s vs %s)%s%s",
+					   vp->orig, qp->orig, vp->sign, qp->sign, QFWS, QFIX);
 		    }
 		  else if (strchr(common, ' '))
 		    {
@@ -486,8 +502,9 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 		      else
 			{
 			  unsigned char *snames = sll_snames_of((uccp)common);
-			  vq->mess = gvl_vmess("[vq] %s(%s): could mean multiple possible signs: %s%s",
-					       vp->orig, qp->orig, snames, QFIX);
+			  undot((char*)snames);
+			  vq->mess = gvl_vmess("[vq] %s(%s): could mean multiple possible signs: %s%s%s",
+					       vp->orig, qp->orig, snames, QFWS, QFIX);
 			  free(snames);
 			}
 		    }
@@ -521,8 +538,8 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	      vq->oid = qp->oid;
 	      vq->sign = gvl_lookup(sll_tmp_key((uccp)qp->oid,""));
 	      if (gvl_strict)
-		vq->mess = gvl_vmess("[vq] %s(%s): unnecessary qualifier on value%s",
-				     vp->orig, qp->orig, QFIX);
+		vq->mess = gvl_vmess("[vq] %s(%s): unnecessary qualifier on value%s%s",
+				     vp->orig, qp->orig, QFWS, QFIX);
 	      ret = 1; /* this is still OK--we have resolved the issue deterministically */
 	    }
 	  else
@@ -554,14 +571,17 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 			      unsigned const char *q_for_v = gvl_lookup(sll_tmp_key(vp->orig, "q"));
 			      if (q_for_v)
 				{
-				  char *tmp4 = sll_snames_of(q_for_v);
-				  vq->mess = gvl_vmess("[vq] %s(%s): unknown. Known for %s: %s%s",
-						       vp->orig, qp->orig, vp->orig, tmp4, QFIX);
+				  char *tmp4 = (char*)sll_snames_of(q_for_v);
+				  undot(tmp4);
+				  const char *tmp5 = (ccp)gvl_lookup(sll_tmp_key((uccp)qp->oid, "values"));
+				  vq->mess = gvl_vmess("[vq] %s(%s): unknown\n\tKnown for %s: %s%s%s%s%s",
+						       vp->orig, qp->orig, vp->orig, tmp4, QFWS, QFIX,
+						       tmp5 ? "\n\tValues " : "", tmp5 ? tmp5 : "");
 				  free(tmp4);
 				}
 			      else
-				vq->mess = gvl_vmess("[vq] %s(%s): %s is %s not %s%s",
-						     vp->orig, qp->orig, vp->orig, vp->sign, qp->orig, QFIX);
+				vq->mess = gvl_vmess("[vq] %s(%s): %s is %s not %s%s%s",
+						     vp->orig, qp->orig, vp->orig, vp->sign, qp->orig, QFWS, QFIX);
 			    }
 			}
 		      else if ('p' == *vp->type)
@@ -609,13 +629,13 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
 	      else
 		{
 		  if (gvl_v_isupper(vp->orig) && !strcmp((ccp)(altindex=g_uc(altindex)), (ccp)qp->sign))
-		    vq->mess = gvl_vmess("[sb4] %s: should be %s%s", vq->orig, qp->sign, QFIX);
+		    vq->mess = gvl_vmess("[sb4] %s => %s%s%s", vq->orig, qp->sign, QFWS, QFIX);
 		  else if (strcmp((ccp)vp->orig,(ccp)altindex))
-			vq->mess = gvl_vmess("[sb5] %s: should be %s(%s)%s", vq->orig, altindex, qp->sign, QFIX);
+		    vq->mess = gvl_vmess("[sb5] %s => %s(%s)%s%s", vq->orig, altindex, qp->sign, QFWS, QFIX);
 		  else if ((ccp)q_fixed)
 		    {
 		      if (gvl_strict)
-			vq->mess = gvl_vmess("[sb6] %s: should be %s(%s)%s", vq->orig, altindex, qp->sign, QFIX);
+			vq->mess = gvl_vmess("[sb6] %s => %s(%s)%s%s", vq->orig, altindex, qp->sign, QFWS, QFIX);
 		    }
 		}
 	    }
@@ -624,7 +644,7 @@ gvl_q_c10e(Node *np, gvl_g *vp, gvl_g *qp, gvl_g *vq)
     }
       
   if (!vp && !qp)
-    vq->mess = gvl_vmess("[vq] unknown validation failure%s", QFIX);
+    vq->mess = gvl_vmess("[vq] unknown validation failure%s%s", QFWS, QFIX);
       
   if (q_fixed)
     free(q_fixed);

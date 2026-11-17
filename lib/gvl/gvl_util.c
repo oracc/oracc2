@@ -38,31 +38,6 @@ gvl_v_isupper(unsigned const char *v)
   return iswupper(wv[i]);
 }
 
-#if 0
-void
-gvl_iterator_pre_fnc(Node *np, void *user)
-{
-  if (np && np->name && !strcmp(np->name, "g:g"))
-    {
-      gvl_g *g = gvl_validate((uccp)np->data);
-      g->orig = (uccp)np->data;
-      np->parsed = g;
-    }
-}
-
-void
-gvl_iterator_post_fnc(Node *np, void *user)
-{
-  if (np && np->name)
-    {
-      if (!strcmp(np->name, "g:q"))
-	np->parsed = gvl_q_node(np);
-      else if (!strcmp(np->name, "g:c"))
-	np->parsed = gvl_c_node(np);
-    }
-}
-#endif
-
 unsigned char *
 gvl_vmess(char *s, ...)
 {
