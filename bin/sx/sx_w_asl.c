@@ -25,7 +25,7 @@ sx_w_asl_init(FILE *fp, const char *fname)
   sx_w_asl_fncs.let = sx_w_a_letter;
   sx_w_asl_fncs.grp = sx_w_a_group;
   sx_w_asl_fncs.sgn = sx_w_a_sign;
-  sx_w_asl_fncs.lst = sx_w_a_list;
+  sx_w_asl_fncs.lxt = sx_w_a_list;
   sx_w_asl_fncs.frm = sx_w_a_form;
   sx_w_asl_fncs.val = sx_w_a_value;
   sx_w_asl_fncs.inh = sx_w_a_ivalue;

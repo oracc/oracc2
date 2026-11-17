@@ -10,7 +10,8 @@
 #include <asl.h>
 #include <inl.h>
 #include <ns-asl.h>
-#include <gdl.h>
+#include <gdllib.h>
+#include <gdlparse.h>
 #include <gt.h>
 #include <joxer.h>
 #include <rnvif.h>
@@ -69,7 +70,7 @@ struct sl_signlist *parent_asl;
 int boot_mode = 0;
 int check_mode = 0;
 int trace_mode = 0;
-extern int asl_flex_debug, gdl_flex_debug, gdl_unicode, asldebug;
+extern int asl_flex_debug, gdl_flex_debug, asldebug;
 
 char *idata_file = NULL;
 char *idata_type = NULL;
@@ -95,10 +96,16 @@ main(int argc, char * const*argv)
   signals(argc, argv);
   
   xo_loc = malloc(sizeof(Mloc));
-  mesg_init();
   asl_flex_debug = gdl_flex_debug = 0;
-  gdl_unicode = inl_rnv = gdl_no_xml_ids = gdl_word_mode = 1;
+  mesg_init();
+  lang_init();
+  gdllib_init();
+  inl_rnv = gdl_no_xml_ids = 1;
+  GDL *gp = gdl_GDL();
+  gp->gdlpool_ = pool_init();
+  *GDL_default_p = *gp;
   gt_init();
+  gdlparse_init(gt_get_tree()->tm, gp);
   gsort_init();
   inl_set_pool(inl_pool = pool_init());
   
@@ -122,15 +129,6 @@ main(int argc, char * const*argv)
       if (gvl_script_type)
 	gvl_set_script(gvl_script_type);
     }
-
-#if 0
-  /* deprecated */
-  else if (unicode_from_parent)
-    {
-      fprintf(stderr, "sx: -U used without -p. Stop.\n");
-      exit(1);
-    }
-#endif
 
   else if (gvl_script_type)
     {
@@ -195,8 +193,6 @@ main(int argc, char * const*argv)
   nodeh_register(treexml_o_handlers, NS_SL, treexml_o_generic);
   nodeh_register(treexml_c_handlers, NS_SL, treexml_c_generic);
 
-  lang_init();
-  gdl_init();
   asl_init(&sxconfig);
   sl = aslyacc(file);
 
@@ -361,7 +357,7 @@ main(int argc, char * const*argv)
     }
 
   gt_term();
-  gdl_term();
+  gdllib_term();
   lang_term();
   asl_term();
   asl_bld_term(sl);

@@ -15,10 +15,6 @@ Hash *oid_sort_keys;
 Hash *oid_warned = NULL;
 static struct sl_signlist *cmpsl = NULL;
 
-#ifndef UseGt
-static int via_tok_cmp(const void *a, const void *b);
-#endif
-
 int sx_show_tokens = 0;
 
 static void
@@ -234,24 +230,6 @@ static int signs_inst_cmp(const void *a, const void *b)
     return 0;
 }
 
-#ifndef UseGt
-static int toks_cmp(const void *a, const void *b)
-{
-#if 1
-  const char *cc1 = (*(char**)a);
-  const char *cc2 = (*(char**)b);
-  struct sl_token *t1 = hash_find(cmpsl->htoken, (uccp)cc1);
-  struct sl_token *t2 = hash_find(cmpsl->htoken, (uccp)cc2);
-  return gsort_cmp(&t1->gsh, &t2->gsh);
-#else
-  unsigned const char *t_a = ((struct sl_token*)a)->t;
-  unsigned const char *t_b = ((struct sl_token*)b)->t;
-  /* This cast is a hack; collate_cmp_graphemes expects its args to be unsigned char ** */
-  return collate_cmp_graphemes((ucp)&t_a, (ucp)&t_b);
-#endif
-}
-#endif
-
 static int values_cmp(const void *a, const void *b)
 {
   int a1 = (*(struct sl_value**)a)->sort;
@@ -263,29 +241,6 @@ static int values_cmp(const void *a, const void *b)
   else
     return 0;
 }
-
-#ifndef UseGt
-int via_tok_cmp(const void *a, const void *b)
-{
-  const char *cc1 = (*(char**)a);
-  const char *cc2 = (*(char**)b);
-  struct sl_token *t1 = hash_find(cmpsl->htoken, (uccp)cc1);
-  struct sl_token *t2 = hash_find(cmpsl->htoken, (uccp)cc2);
-#ifdef UseGt
-  int a1 = t1->c;
-  int b1 = t2->c;
-#else
-  int a1 = t1->s;
-  int b1 = t2->s;
-#endif
-  if (a1 < b1)
-    return -1;
-  else if (a1 > b1)
-    return 1;
-  else
-    return 0;
-}
-#endif
 
 /* NOTE: oidindexes stores index+1 so that 0 return from hash_find means not-in-hash */
 static void
@@ -479,15 +434,9 @@ sx_marshall(struct sl_signlist *sl)
   
   /* Sort the tokens and set the token sort codes */
   cmpsl = sl;
-#ifdef UseGt
   keys = hash_keys2(gt_get_hash(), &nkeys);
   if (nkeys > 1)
     qsort(keys, nkeys, sizeof(char*), (cmp_fnc_t)gt_toks_gcmp);
-#else
-  keys = hash_keys2(sl->htoken, &nkeys);
-  if (nkeys > 1)
-    qsort(keys, nkeys, sizeof(char*), (cmp_fnc_t)toks_cmp);
-#endif
   sl->tokens = malloc((nkeys+1) * sizeof(struct sl_token *));
   if (sx_show_tokens)
     fprintf(stderr, "===sorted tokens===\n");
@@ -496,25 +445,14 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = tokfind(sl->htoken, (ucp)keys[i]);
       /* tp->gdl is a g:w node that wraps the grapheme; the first
 	 grapheme node is tp->gdl->kids */
-#ifdef UseGt
       if (tp->gdl && tp->gdl->kids && !strcmp(tp->gdl->kids->name, "g:n"))
 	tp->c = i+1;
       else
 	tp->c = i+1;
-#else
-      if (tp->gdl && tp->gdl->kids && !strcmp(tp->gdl->kids->name, "g:n"))
-	tp->s = i+1;
-      else
-	tp->s = i+1;
-#endif
       sl->tokens[i] = tp;
       if (sx_show_tokens)
 	{
-#ifdef UseGt
 	  fprintf(stderr, "%d\t", tp->c);
-#else
-	  fprintf(stderr, "%d\t", tp->s);
-#endif
 	  gsort_show(tp->gsh);
 	}
     }
@@ -534,11 +472,7 @@ sx_marshall(struct sl_signlist *sl)
       if (!(tp = tokfind(sl->htoken, sl->signs[i]->name)))
 	continue;
 
-#ifdef UseGt
       sl->signs[i]->sort = tp->c;
-#else
-      sl->signs[i]->sort = tp->s;
-#endif
       if (sl->signs[i]->smap)
 	list_add(smap_list, sl->signs[i]);
 
@@ -615,11 +549,7 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       sl->forms[i] = hash_find(sl->hfentry, (ucp)keys[i]);
       tp = tokfind(sl->htoken, (ucp)keys[i]);
-#ifdef UseGt
       sl->forms[i]->sort = tp->c;
-#else
-      sl->forms[i]->sort = tp->s;
-#endif
       if (!(sl->forms[i]->oid = hash_find(oids, sl->forms[i]->name)))
 	{
 	  if (sl->forms[i]->aka)
@@ -723,11 +653,7 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       sl->lists[i] = hash_find(sl->hlentry, (ucp)keys[i]);
       tp = tokfind(sl->htoken, (ucp)keys[i]);
-#ifdef UseGt
       sl->lists[i]->sort = tp->c;
-#else
-      sl->lists[i]->sort = tp->s;
-#endif
     }
   /* Sort the lists */
   qsort(sl->lists, sl->nlists, sizeof(struct sl_list*), (cmp_fnc_t)lists_cmp);
@@ -744,10 +670,6 @@ sx_marshall(struct sl_signlist *sl)
 		{
 		  int j, k;
 		  const char **vkeys = hash_keys2(ip->lv->hventry, &ip->lv->nvalues);
-#if 0
-		  if (ip->lv->nvalues > 1)
-		    qsort(vkeys, ip->lv->nvalues, sizeof(char*), (cmp_fnc_t)via_tok_cmp);
-#endif
 		  ip->lv->values = memo_new_array(sl->m_insts_p, ip->lv->nvalues);
 		  for (j = k = 0; j < ip->lv->nvalues; ++j)
 		    {
@@ -777,11 +699,7 @@ sx_marshall(struct sl_signlist *sl)
       struct sl_token *tp = NULL;
       sl->values[i] = hash_find(sl->hventry, (ucp)keys[i]);
       tp = tokfind(sl->htoken, (ucp)keys[i]);
-#ifdef UseGt
       sl->values[i]->sort = tp->c;
-#else
-      sl->values[i]->sort = tp->s;
-#endif
       /* Sort fowners if there are any */
       if (sl->values[i]->fowners)
 	{

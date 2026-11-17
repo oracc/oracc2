@@ -16,11 +16,7 @@ sx_sortcodes(struct sl_signlist *sl)
 	if (s->oid)
 	  {
 	    struct sl_token *tp = tokfind(sl->htoken, s->name);
-#ifdef UseGt
 	    printf("%s\t%d\n", s->oid, tp->c);
-#else
-	    printf("%s\t%d\n", s->oid, tp->s);
-#endif
 	  }
     }
   for (i = 0; i < sl->nforms; ++i)
@@ -34,22 +30,10 @@ sx_sortcodes(struct sl_signlist *sl)
 	      if (f->oid && ip->valid)
 		{
 		  struct sl_token *tp = tokfind(sl->htoken, f->name);
-#ifdef UseGt
 		  printf("%s\t%d\n", f->oid, tp->c);
-#else
-		  printf("%s\t%d\n", f->oid, tp->s);
-#endif
 		  break;
 		}
 	    }
 	}
     }
-#if 0
-  if (sl && sl->tokens)
-    {
-      int i;
-      for (i = 0; sl->tokens[i]; ++i)
-	printf("%s\t%d\n", sl->tokens[i]->t, sl->tokens[i]->s);
-    }
-#endif
 }

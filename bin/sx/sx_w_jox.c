@@ -1,6 +1,6 @@
 #include <list.h>
 #include <xml.h>
-#include <gdl.h>
+#include <gdlx.h>
 #include <signlist.h>
 #include <oraccsys.h>
 #include <sx.h>
@@ -43,7 +43,7 @@ sx_w_jox_init(void)
   sx_w_jox_fncs.let = sx_w_jx_letter;
   sx_w_jox_fncs.grp = sx_w_jx_group;
   sx_w_jox_fncs.sgn = sx_w_jx_sign;
-  sx_w_jox_fncs.lst = sx_w_jx_list;
+  sx_w_jox_fncs.lxt = sx_w_jx_list;
   sx_w_jox_fncs.frm = sx_w_jx_form;
   sx_w_jox_fncs.val = sx_w_jx_value;
   sx_w_jox_fncs.inh = sx_w_jx_ivalue;
@@ -179,11 +179,7 @@ sx_w_jx_numbers(struct sx_functions *f, struct sl_signlist *sl)
 	    {
 	      struct sl_number *np = &sl->numbers[j];
 	      char sort[10];
-#ifdef UseGt
 	      sprintf(sort, "%d", np->t->c);
-#else
-	      sprintf(sort, "%d", np->t->s);
-#endif
 	      if (np->sset)
 		ratts = rnvval_aa("x",
 				  "n", np->t->t,
@@ -231,11 +227,7 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 	continue;
 
       char ssort[32];
-#ifdef UseGt
       sprintf(ssort,"%d",tp->c);
-#else
-      sprintf(ssort,"%d",tp->s);
-#endif
       ratts = rnvval_aa("x",
 			"xml:id", hash_find(sl->homophone_ids, (uccp)keys[i]),
 			"n", keys[i],
@@ -250,17 +242,10 @@ sx_w_jx_homophones(struct sx_functions *f, struct sl_signlist *sl)
 	{
 	  struct sl_token *vp = tokfind(sl->htoken, (uccp)spv->v);
 	  char vsort[32];
-#ifdef UseGt
 	  if (vp)
 	    sprintf(vsort, "%d", vp->c);
 	  else
 	    *vsort = '\0';
-#else
-	  if (vp)
-	    sprintf(vsort, "%d", vp->s);
-	  else
-	    *vsort = '\0';
-#endif
 	  char ssort[32];
 	  if (spv->oid)
 	    sprintf(ssort, "%d", (int)(uintptr_t)hash_find(oid_sort_keys, (uccp)spv->oid));
@@ -676,18 +661,10 @@ sx_w_jx_glyfs(struct sx_functions *f, struct sl_signlist *sl, List *a)
   for (ip = list_first(a); ip; ip = list_next(a))
     {
       static char s[10];
-#ifdef UseGt
       sprintf(s, "%d", ip->u.g->t->c);
-#else
-      sprintf(s, "%d", ip->u.g->t->s);
-#endif
       List *a = list_create(LIST_SINGLE);
       list_add(a, "n");
       list_add(a, (void*)xmlify((uccp)ip->u.g->nam));
-#if 0
-      list_add(a, "num");
-      list_add(a, (void*)ip->u.g->tag);
-#endif
       list_add(a, "sort");
       list_add(a, s);
       list_add(a, "ucun");
@@ -699,11 +676,6 @@ sx_w_jx_glyfs(struct sx_functions *f, struct sl_signlist *sl, List *a)
 	  list_add(a, "cvnn");
 	  list_add(a, (void*)ip->u.g->otf);
 	}
-	
-#if 0
-      list_add(a, "ref");
-      list_add(a, ip->u.g->ref ? "yes" : "no");
-#endif
       const char **atts = list2chars(a);
       ratts = rnvval_aa_qatts((char**)atts, list_len(a)/2);
       list_free(a, NULL);

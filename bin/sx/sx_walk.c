@@ -45,13 +45,13 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 			      if (sl->letters[i].groups[j].signs[k]->u.s->nlists)
 				{
 				  int l;
-				  f->lst(f, sl, NULL, sx_pos_init);
+				  f->lxt(f, sl, NULL, sx_pos_init);
 				  for (l = 0; l < sl->letters[i].groups[j].signs[k]->u.s->nlists; ++l)
 				    {
-				      f->lst(f, sl, sl->letters[i].groups[j].signs[k]->u.s->lists[l], sx_pos_inst);
+				      f->lxt(f, sl, sl->letters[i].groups[j].signs[k]->u.s->lists[l], sx_pos_inst);
 				      f->not(f, sl, sl->letters[i].groups[j].signs[k]->u.s->lists[l]);
 				    }
-				  f->lst(f, sl, NULL, sx_pos_term);
+				  f->lxt(f, sl, NULL, sx_pos_term);
 				}
 			      f->not(f, sl, sl->letters[i].groups[j].signs[k]);
 			      f->uni(f, sl, &sl->letters[i].groups[j].signs[k]->u.s->U);
@@ -94,14 +94,14 @@ sx_walk(struct sx_functions *f, struct sl_signlist *sl)
 				      if (sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nlists)
 					{
 					  int m;
-					  f->lst(f, sl, NULL, sx_pos_init);
+					  f->lxt(f, sl, NULL, sx_pos_init);
 					  for (m = 0; m < sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->nlists; ++m)
 					    {
-					      f->lst(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->lists[m],
+					      f->lxt(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->lists[m],
 						     sx_pos_inst);
 					      f->not(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]->lv->lists[m]);
 					    }
-					  f->lst(f, sl, NULL, sx_pos_term);
+					  f->lxt(f, sl, NULL, sx_pos_term);
 					}
 				      f->not(f, sl, sl->letters[i].groups[j].signs[k]->u.s->forms[l]);
 				      f->uni(f, sl, &sl->letters[i].groups[j].signs[k]->u.s->forms[l]->u.f->sign->U);

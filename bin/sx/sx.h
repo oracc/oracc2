@@ -26,9 +26,9 @@ struct sx_functions
   sx_signlist_f *	sll;
   sx_letter_f *	let;
   sx_group_f *	grp;
-  sx_sign_f *		sgn;
-  sx_form_f *		frm;
-  sx_list_f *		lst;
+  sx_sign_f *	sgn;
+  sx_form_f *	frm;
+  sx_list_f *	lxt;
   sx_value_f *	val;
   sx_value_f *	inh;
   sx_value_f *	qvs;

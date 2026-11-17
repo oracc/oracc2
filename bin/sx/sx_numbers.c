@@ -45,11 +45,7 @@ nums_cmp(const void *a, const void *b)
   if (strcmp((ccp)n1->rep, (ccp)n2->rep))
     return nums_rep_cmp(n1->rep, n2->rep);
 
-#ifdef UseGt
   return n1->t->c - n2->t->c;
-#else
-  return n1->t->s - n2->t->s;
-#endif
 }
 
 static void
@@ -108,92 +104,78 @@ sx_num_data(struct sl_signlist *sl, struct sl_number *np, struct sl_token *tp)
     stok = "LAGAB~a";
   
   struct sl_token *set_tok = tokfind(sl->htoken, (uccp)stok);
-#ifdef UseGt
   if (set_tok)
     np->setsort = set_tok->c;
   else
     fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);
-#else
-  if (set_tok)
-    np->setsort = set_tok->s;
-  else
-    fprintf(stderr, "sx_num_data: no token for np->set %s\n", np->set);
-#endif
 
   if (!hash_find(numsets, np->set))
     hash_add(numsets, np->set, "");
   /*np->oid = (uccp)tp->gsig;*/
-#if 0
-  if ('q' == *np->oid)
+  struct sl_sign *s = hash_find(sl->hsentry, tp->t);
+  if (s)
     {
-#endif
-      struct sl_sign *s = hash_find(sl->hsentry, tp->t);
-      if (s)
+      np->oid = (uccp)s->oid;
+      if (s->xref)
 	{
-	  np->oid = (uccp)s->oid;
-	  if (s->xref)
+	  struct sl_inst *ip = list_first(s->xref->insts);
+	  np->ref = (uccp)ip->iid;
+	  np->oid = (uccp)ip->u.f->oid;
+	}
+      else
+	np->ref = (uccp)s->oid;
+    }
+  else
+    {
+      struct sl_value *v = hash_find(sl->hventry, tp->t);
+      if (v)
+	{
+	  /* Special case adjustment of black-circle form of šar₂
+	     to cuneiform version */
+	  if (!strcmp((ccp)v->name, "1(šar₂)") || !strcmp((ccp)v->name, "1(šargal)"))
+	    np->sset = "ss02";
+	  if (v->sowner)
 	    {
-	      struct sl_inst *ip = list_first(s->xref->insts);
-	      np->ref = (uccp)ip->iid;
-	      np->oid = (uccp)ip->u.f->oid;
+	      np->oid = (uccp)v->sowner->oid;
+	      if (v->sowner->xref)
+		np->ref = (uccp)((struct sl_inst *)list_first(v->sowner->xref->insts))->iid;
+	      else
+		np->ref = (uccp)v->sowner->oid;
 	    }
-	  else
-	    np->ref = (uccp)s->oid;
+	  else if (v->fowners)
+	    {
+	      np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
+	      np->ref = (uccp)((struct sl_inst *)list_first(v->fowners))->iid;
+	    }
 	}
       else
 	{
-	  struct sl_value *v = hash_find(sl->hventry, tp->t);
-	  if (v)
+	  s = hash_find(sl->hsentry, g_uc(tp->t));
+	  if (!s)
 	    {
-	      /* Special case adjustment of black-circle form of šar₂
-		 to cuneiform version */
-	      if (!strcmp((ccp)v->name, "1(šar₂)") || !strcmp((ccp)v->name, "1(šargal)"))
-		np->sset = "ss02";
-	      if (v->sowner)
-		{
-		  np->oid = (uccp)v->sowner->oid;
-		  if (v->sowner->xref)
-		    np->ref = (uccp)((struct sl_inst *)list_first(v->sowner->xref->insts))->iid;
-		  else
-		    np->ref = (uccp)v->sowner->oid;
-		}
-	      else if (v->fowners)
-		{
-		  np->oid = (uccp)((struct sl_inst *)list_first(v->fowners))->u.f->oid;
-		  np->ref = (uccp)((struct sl_inst *)list_first(v->fowners))->iid;
-		}
+	      if (tp->oid_ip->type == 'v')
+		s = (tp->oid_ip->parent_s ? tp->oid_ip->parent_s->u.s : tp->oid_ip->parent_f->u.f->sign);
+	      else if (tp->oid_ip->type == 'f')
+		s = tp->oid_ip->u.f->sign;
+	      else
+		s = tp->oid_ip->u.s;
 	    }
-	  else
+	  if (s)
 	    {
-	      s = hash_find(sl->hsentry, g_uc(tp->t));
-	      if (!s)
+	      np->oid = (uccp)s->oid;
+	      if (s->xref)
 		{
-		  if (tp->oid_ip->type == 'v')
-		    s = (tp->oid_ip->parent_s ? tp->oid_ip->parent_s->u.s : tp->oid_ip->parent_f->u.f->sign);
-		  else if (tp->oid_ip->type == 'f')
-		    s = tp->oid_ip->u.f->sign;
-		  else
-		    s = tp->oid_ip->u.s;
-		}
-	      if (s)
-		{
-		  np->oid = (uccp)s->oid;
-		  if (s->xref)
-		    {
-		      struct sl_inst *ip = list_first(s->xref->insts);
-		      np->ref = (uccp)ip->iid;
-		      np->oid = (uccp)ip->u.f->oid;
-		    }
-		  else
-		    np->ref = (uccp)s->oid;
+		  struct sl_inst *ip = list_first(s->xref->insts);
+		  np->ref = (uccp)ip->iid;
+		  np->oid = (uccp)ip->u.f->oid;
 		}
 	      else
-		fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
+		np->ref = (uccp)s->oid;
 	    }
+	  else
+	    fprintf(stderr, "sx_numbers: failed to set oid for %s(%s)\n", np->rep, np->set);
 	}
-#if 0
     }
-#endif
   /*assert(np->ref != NULL);*/
   if (np->ref == NULL)
     {

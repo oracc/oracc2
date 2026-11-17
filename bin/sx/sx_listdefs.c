@@ -141,13 +141,8 @@ sx_list_row(FILE *f, struct sl_signlist *sl, const unsigned char *name,
   if (lp && lp->type == sl_ll_lref)
     lrefmarker = "►";
 
-#ifdef UseGt
   fprintf(f, "%s%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s", lrefmarker, name, oid,
 	  tp->c, sf_sort, sf_name, code, ucun, nonull(note));
-#else
-  fprintf(f, "%s%s\t%s\t%d\t%d\t%s\t%s\t%s\t%s", lrefmarker, name, oid,
-	  tp->s, sf_sort, sf_name, code, ucun, nonull(note));
-#endif
 
   if (lp)
     fprintf(f, "\t%s\t%s\t%s\t%s\t%s", nonull(lp->feat), nonull(lp->sname),

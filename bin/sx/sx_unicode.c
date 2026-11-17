@@ -762,11 +762,7 @@ sx_unicode_table(FILE *f, struct sl_signlist *sl)
   list_free(xseq, NULL);
   
   u = hash_keys2(uneeds, &nu);
-#ifdef UseGt
   qsort(u, nu, sizeof(const char *), gt_toks_ccmp);
-#else
-  qsort(u, nu, sizeof(const char *), via_tok_cmp);
-#endif
   for (i = 0; u[i]; ++i)
     fprintf(f, "need\t%s\n", u[i]);
 }
@@ -784,21 +780,6 @@ sx_unicode_p(struct sl_signlist *sl)
 	  if (!Up->utf8)
 	    {
 	      Up->utf8 = hash_find(parent_sl, sll_tmp_key((uccp)oid, "uchar"));
-#if 0
-	      if (gvl_script_type)
-		{
-		  int nivs = 0;
-		  unsigned const char *ren = NULL;
-		  unsigned const char *ivs = gvl_ivs(Up->utf8, &nivs);
-		  if (nivs)
-		    {
-		      Up->ivs = ivs;
-		      /* Up->ident = ... ; Up->ren = ... ? */
-		    }
-		  else
-		    Up->ivs = Up->utf8;
-		}
-#endif
 	      if (Up->utf8)
 		{
 		  const char *ucode = hash_find(parent_sl, sll_tmp_key((uccp)oid, "ucode"));

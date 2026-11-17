@@ -2,7 +2,9 @@ include ../../oracc-am-rules.txt
 
 SUBDIRS=sxweb
 
-bin_PROGRAMS=sx slix slx csldist slboot
+bin_PROGRAMS=sx slix csldist slboot
+
+# slx 
 
 bin_SCRIPTS=\
 	sxcmp.sh sxnorm.sh sxclean.sh \
@@ -16,10 +18,6 @@ bin_SCRIPTS=\
 data_DATA=sx-list-*.xml sx-udata-*.xml sx-udata-codes.tsv Makefile.csl
 
 scriptdata_DATA=*.xsl
-
-slx_SOURCES=slx.c
-slx_LDADD = $(xLDADD) 
-slx_DEPENDENCIES = $(xLDADD)
 
 sx_SOURCES=sx.c sx_marshall.c sx_homophones.c sx_compounds.c sx_digests.c \
 	sx_inherited.c sx_listdefs.c sx_values.c sx_qualified.c sx_unicode.c \
@@ -42,3 +40,7 @@ csldist_DEPENDENCIES = $(xLDADD)
 slboot_SOURCES=slboot.c
 slboot_LDADD = $(xLDADD) 
 slboot_DEPENDENCIES = $(xLDADD)
+
+# slx_SOURCES=slx.c
+# slx_LDADD = $(xLDADD) 
+# slx_DEPENDENCIES = $(xLDADD)
