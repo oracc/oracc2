@@ -342,7 +342,7 @@ sll_snames_of(unsigned const char *oids)
     {
       const char *xsave = NULL;
       xoid = x;      
-      while (*x && !(strchr(".&%*:+-_", *x)))
+      while (*x && !(strchr(".&%*:+-_ ", *x)))
 	++x;
       if (*x)
 	{
