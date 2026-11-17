@@ -57,6 +57,15 @@ tmem_term(Treemem *tmem)
 }
 
 Tree *
+tree_clone(Tree *tp)
+{
+  Tree *c = malloc(sizeof(Tree));
+  memo_list(c);
+  *c = *tp;
+  return c;
+}
+
+Tree *
 tree_init(void)
 {
   Tree *tp = calloc(1, sizeof(Tree));

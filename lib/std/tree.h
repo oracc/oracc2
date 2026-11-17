@@ -83,6 +83,7 @@ extern void nodeh_register(nodehandlers nh, nscode c, nodehandler fnc);
 extern Tree *tree_init(void);
 extern Tree *tree_init_mini(void);
 extern Tree *tree_init_mem(Treemem *tmp);
+extern Tree *tree_clone(Tree *tp);
 extern void tree_reset(Tree *tp);
 extern void tree_term(Tree *tp);
 extern Node *tree_pop(Tree *tp);
