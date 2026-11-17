@@ -55,19 +55,9 @@ static const char *s_of_oc[END];
 #define OC_ALLOC	4
 
 void
-gdl_balance_init(void)
+gdl_balance_init_map(void)
 {
   int i;
-
-  if (state_stack)
-    {
-      stck_reset(break_stack);
-      stck_reset(state_stack);
-      stck_reset(lang_stack);
-      memo_reset(mgstck);
-      return;
-    }
-
   for (i = 0; o_c_map[i] > 0; ++i)
     {
       if (i%2)
@@ -78,6 +68,24 @@ gdl_balance_init(void)
   
   for (i = 0; s_o_c_map[i].tok != -1; ++i)    
     s_of_oc[s_o_c_map[i].tok] = s_o_c_map[i].str;
+}
+
+void
+gdl_balance_init(void)
+{
+  int init_once = 0;
+
+  if (!init_once++)
+    gdl_balance_init_map();
+  
+  if (state_stack)
+    {
+      stck_reset(break_stack);
+      stck_reset(state_stack);
+      stck_reset(lang_stack);
+      memo_reset(mgstck);
+      return;
+    }
 
   break_stack = stck_init(OC_ALLOC);
   state_stack = stck_init(OC_ALLOC);
@@ -86,15 +94,6 @@ gdl_balance_init(void)
     mgstck = memo_init(sizeof(Gstck), 16);
   if (!mlstck)
     mlstck = memo_init(sizeof(Lstck), 16);
-}
-
-void
-gdl_balance_reset(void)
-{
-  stck_reset(break_stack);
-  stck_reset(state_stack);
-  stck_reset(lang_stack);
-  memo_reset(mgstck);
 }
 
 void
@@ -119,12 +118,6 @@ gstck_new(int i)
 void
 gdl_break_node(Node *np)
 {
-#if 0
-  /* Now that break is handled in lex we need to let this go on the
-     g:[rR] and then move it up to g:n later if necessary */
-  if ('r' == np->name[2] || 'R' == np->name[2])
-    np = np->rent;
-#endif
   intptr_t p = gdl_break_peek();
   if (p > 0)
     gstck_np(p) = np;
@@ -240,5 +233,5 @@ gdl_balance_flush(Mloc *mlp)
     mesg_verr(mlp, "unclosed break opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
   while ((tok = gdl_state_pop()) != -1)
     mesg_verr(mlp, "unclosed state opener '%s' [tok=%d]", s_of_oc[gstck_i(tok)], gstck_i(tok));
-  gdl_balance_reset();
+  gdl_balance_init();
 }

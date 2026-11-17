@@ -405,6 +405,6 @@ gdl_GDL_reset(GDL *gp)
 void
 gdl_GDL_free(GDL *gp)
 {
-  gdl_GDL_reset(gp);
+  (void)gdl_GDL_reset(gp);
   free(gp);
 }

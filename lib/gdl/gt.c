@@ -160,7 +160,10 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
       tokp = memo_new(gtcfg.m);
       tokp->t = t;
       if (literal > 0)
-	tp = gdl_literal(locp, (char*)t);
+	{
+	  tp = gdl_literal(locp, (char*)t);
+	  tp->user = tcurr->user;
+	}
       else
 	{
 	  extern int gdlsig_depth_mode;
@@ -189,42 +192,20 @@ gt_token(Mloc *locp, unsigned char *t, int literal, void *user)
 		}
 	    }		
 	}
+
       tokp->priority = 100;
-#if 0
-      if (gdl_word_mode)
-	{
-	  if (tp->root->kids)
-	    tokp->gdl = tp->root->kids;
-	  else
-	    {
-	      /* SX uses g:gdl sans kids for list-num literals */
-	      tp->root->name = "g:t";
-	      tokp->gdl = tp->root;
-	    }
-	}
+
+      if (tp->root->kids)
+	tokp->gdl = tp->root->kids;
       else
 	{
-#endif
+	  /* SX uses g:gdl sans kids for list-num literals */
+	  tp->root->name = "g:t";
 	  tokp->gdl = tp->root;
-	  tokp->gdl->name = "g:w";
-#if 0
 	}
-#endif
 
       if (!tokp->gdl->mloc)
 	tokp->gdl->mloc = mloc_mloc(locp);
-
-#if 0
-      if (!gdl_word_mode)
-	{
-	  Node *np;
-	  for (np = tokp->gdl; np; np = np->next)
-	    {
-	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "form", np->text);
-	      gdl_prop_kv(np, GP_ATTRIBUTE, PG_GDL_INFO, "xml:lang", "sux");
-	    }
-	}
-#endif
 
       tokp->gsh = gsort_prep(tp);
       tokp->gsig = gsig;

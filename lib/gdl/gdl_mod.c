@@ -257,7 +257,13 @@ gdl_mod_term(void)
 void
 gdl_modq_reset(void)
 {
-  modq = list_reset(modq);
+  if (modq)
+    {
+      modq = list_reset(modq);
+      memo_reset(modm);
+    }
+  else
+    gdl_modq_init();
 }
 
 void

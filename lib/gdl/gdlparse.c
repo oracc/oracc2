@@ -63,7 +63,7 @@ static void gdlparse_deep(Node *np, void *mptr);
 Tree*
 gdl_literal(Mloc *m, char *s)
 {
-  Tree *tp = tree_init();
+  Tree *tp = tree_clone(tcurr);
   (void)tree_root(tp, NS_GDL, "g:gdl", 1, NULL);
   tp->root->text = s;
   return tp;
@@ -185,10 +185,13 @@ void
 gdlparse_reset(void)
 {
   Treemem *tm = tcurr->tm;
+  GDL *tgp = tcurr->user;
   tree_term(tcurr);
   tcurr = tree_init_mem(tm);
-  tcurr->user = gdl_GDL_reset(tcurr->user);
-  gdl_balance_reset();
+  tcurr->user = gdl_GDL_reset(tgp);
+  (void)tree_root(tcurr, NS_GDL, "g:gdl", 1, NULL);
+  gdl_balance_init();
+  gdl_modq_init();
 }
 
 void

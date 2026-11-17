@@ -173,6 +173,9 @@ segment:
 	| 	space
 	| 	linebreak
 	| 	transliteration
+	|	error transliteration	       	{ mesg_print(stderr); mesg_init();
+		    				  /*fprintf(stderr, "transliteration error trap\n");*/
+		    		 		  yyclearin; yyerrok; }
 		;
 
 comment:
