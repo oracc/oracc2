@@ -331,9 +331,12 @@ mesg_print2(FILE *fp, List *mlist)
 	  qsort(mp, list_len(mlist), sizeof(char*), msg_cmp);
 	  for (i = 0; mp[i]; ++i)
 	    {
-	      if (mesg_prefix_string)
-		fputs(mesg_prefix_string, fp);
-	      fputs(mp[i], fp);
+	      if (i==0 || strcmp(mp[i-1], mp[i]))
+		{
+		  if (mesg_prefix_string)
+		    fputs(mesg_prefix_string, fp);
+		  fputs(mp[i], fp);
+		}
 	    }
 	  free(mp);
 	}
