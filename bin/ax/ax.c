@@ -227,7 +227,7 @@ main(int argc, char * const*argv)
   f_log = stderr;
 
   gdl_flex_debug = gdldebug = 0;
-  options(argc, argv, "ACDcfgGI:lmstuvx");
+  options(argc, argv, "ACDcfgGI:lmrstuvx");
 
   /* -l sets xcl_output and xml_output so this ensures that -cl doesn't do output */
   if (check_mode)
@@ -336,6 +336,9 @@ opts(int opt, const char *arg)
       break;
     case 'p':
       project = optarg;
+      break;
+    case 'r':
+      gvl_sans_report = 1;
       break;
     case 's':
       xml_to_stdout = 1;
