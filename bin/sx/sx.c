@@ -30,6 +30,7 @@ const char *parent_sl_project = NULL;
 const char *project_config = NULL;
 
 const char *file;
+const char *boot_asl;
 int quiet, verbose;
 int asltrace,rnvtrace;
 
@@ -109,7 +110,7 @@ main(int argc, char * const*argv)
   gsort_init();
   inl_set_pool(inl_pool = pool_init());
   
-  if (options(argc, argv, "abcCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQs::StTuUvVxX:?"))
+  if (options(argc, argv, "ab::cCD:d:eg:iI:jJ:K:l:L:m:nNMoOP:p:qQs::StTuUvVxX:?"))
     exit(1);
 
   if (trace_mode == 2)
@@ -148,7 +149,10 @@ main(int argc, char * const*argv)
     {
       sll_output = 1;
       gvl_do_setup = 0;
-      file = "00lib/osl.asl";
+      if (boot_asl)
+	file = boot_asl;
+      else
+	file = "00lib/osl.asl";
       if (!freopen(file, "r", stdin))
 	{
 	  fprintf(stderr, "sx: unable to read from %s\n", file);
@@ -379,6 +383,8 @@ opts(int opt, const char *arg)
       break;
     case 'b':
       boot_mode = 1; /* write sll output to 02pub/sl/sl.tsv */
+      if (arg)
+	boot_asl = arg;
       break;
     case 'c':
       check_mode = 1;

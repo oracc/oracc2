@@ -310,7 +310,12 @@ NOTEMARK	"^"[0-9]+"^"
 ":'"			{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":\""			{ /*"*/ GIN=1; gsave; return PUNCT; }
 "::"      		{ /*"*/ GIN=1; gsave; return PUNCT; }
-"/"/[ \t\n\(\]]		{ /*"*/ GIN=1; gsave; return PUNCT; }
+
+"/"/([ \t\n\(\]]|$)    	{ /*"*/ GIN=1; gsave; return PUNCT; }
+"/"/("|"|{G})	       	{ return '/'; } /* alternation */
+"//"			{ return LINEBREAK; }
+"/"    			{ /*"*/ GIN=1; gsave; return PUNCT; }
+
 
 {L}			{ gsave; return LISTNUM; }
 
@@ -356,10 +361,6 @@ NOTEMARK	"^"[0-9]+"^"
 <INITIAL,N>"--"	       	{ GIN=0; return ENHYPHEN; }
 <INITIAL,N>-		{ GIN=0; return agtext[0]; }
 [+:.]     		{ GIN=0; return agtext[0]; }
-
-"/"/("|"|{G})	       	{ return '/'; } /* alternation */
-
-"//"			{ return LINEBREAK; }
 
 <INITIAL,N>[ \t]+/[#"~=@^]    	{ GIN=0; SIN=1; gsave; return SPACE; }
 <INITIAL,N>[ \t]+	       	{ GIN=0; gsave; return SPACE; }
