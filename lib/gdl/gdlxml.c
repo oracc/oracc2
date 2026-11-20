@@ -118,7 +118,7 @@ gdl_xml_o(Node *np, void *user)
 	}
       fprintf(xhp->fp, "</props>");
     }
-  if (np->user)
+  if (np->user && N_U_GVL == ((Node*)np->user)->utype)
     gdlxml_parsed((gvl_g*)np->user, user);
 }
 
