@@ -305,7 +305,8 @@ NOTEMARK	"^"[0-9]+"^"
 <Q>[ \t]+	       	{ QIN=GIN=0; mesg_vwarning(agfile,aglineno,"missing ')' in qv");
 			  ag_cvq_reset(); }
 
-":"/[ \t\n\(\]]        	{ /*"*/ GIN=1; gsave; return PUNCT; }
+":"/[ \t\n\r\(\]]      	{ /*"*/ GIN=1; gsave; return PUNCT; } /* : followed by whitespace */
+":"			{ /*"*/ GIN=1; gsave; return PUNCT; } /* : followed by EOF as in ASL '@v :' */
 ":."			{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":'"			{ /*"*/ GIN=1; gsave; return PUNCT; }
 ":\""			{ /*"*/ GIN=1; gsave; return PUNCT; }
@@ -360,7 +361,7 @@ NOTEMARK	"^"[0-9]+"^"
 <INITIAL,N>"..."       	{ GIN=0; gsave; return ELLIPSIS; }
 <INITIAL,N>"--"	       	{ GIN=0; return ENHYPHEN; }
 <INITIAL,N>-		{ GIN=0; return agtext[0]; }
-[+:.]     		{ GIN=0; return agtext[0]; }
+[+:.]/[^ \t\n\r]       	{ GIN=0; return agtext[0]; } /* + : . followed by non-whitespace */
 
 <INITIAL,N>[ \t]+/[#"~=@^]    	{ GIN=0; SIN=1; gsave; return SPACE; }
 <INITIAL,N>[ \t]+	       	{ GIN=0; gsave; return SPACE; }
@@ -414,7 +415,7 @@ NOTEMARK	"^"[0-9]+"^"
 				     aglval.text=(char*)gdl_lexnames[(int)*yytext];
 			  	     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag(&aglloc,(uccp)yytext); } }
 <C,N>"#"	       	{ gdl_lex_flag(&aglloc,(uccp)yytext); }
-<INITIAL,C,N>[:"~=@^]   { if (SIN) { SIN=0;
+<INITIAL,C,N>["~=@^]   { if (SIN) { SIN=0;
 				     aglval.text=(char*)gdl_lexnames[(int)*yytext];
 				     return gdl_lexfld[(int)*yytext]; } else { gdl_lex_flag(&aglloc,(uccp)yytext); } }
 <INITIAL,N>[#"=@^]/{G} 	{ if (gdl_lexical) {
